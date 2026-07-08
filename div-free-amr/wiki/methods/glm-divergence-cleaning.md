@@ -62,7 +62,16 @@ $\alpha = \Delta t_d/\Delta t_a$. Their stated motive for the collocated
 route: single-location variables ease extension to adaptive grids, extra
 physics, and higher order.
 
+On AMR the architectural argument cashes out: in PLUTO-Chombo the
+magnetic field is just another cell-centered conserved variable, so level
+transfer needs **no dedicated magnetic operators** — standard conservative
+interpolation, averaging, and refluxing handle everything, for MHD and
+RMHD alike ([Mignone et al. (2012)](/sources/mignone-2012.md)). The
+constraint class is unchanged (controlled, not held); what is bought is
+uniformity of the AMR machinery across all physics.
+
 # Citations
 
 1. [Dedner et al. (2002)](/sources/dedner-2002.md), §2–5, Appendix.
 2. [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md), §§2–4.
+3. [Mignone et al. (2012)](/sources/mignone-2012.md), §§2, 4.

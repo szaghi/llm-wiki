@@ -2,6 +2,25 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Etienne, Liu & Shapiro (2010)](/sources/etienne-2010.md)
+  — text extraction. Created
+  [Vector-potential evolution](/methods/vector-potential-evolution.md):
+  the third AMR strategy — transfer the unconstrained potential, take the
+  curl; the $P_D$ problem dissolved by the exactness converse, at the
+  price of derivative count and gauge control.
+
+* **Ingestion**: [Mignone et al. (2012)](/sources/mignone-2012.md) — text
+  extraction. No new pages; merged the AMR realization (no dedicated
+  magnetic transfer operators under collocated+GLM) into
+  [GLM divergence cleaning](/methods/glm-divergence-cleaning.md).
+
+* **Ingestion**: [Miniati & Martin (2011)](/sources/miniati-martin-2011.md)
+  — text extraction. No new pages; merged reflux-curl production naming
+  into [Electric-field correction](/methods/electric-field-correction.md)
+  and the **subcycling caveat** (time interpolation breaks the
+  divergence-free premise for ghost fills) into
+  [$P_D$](/operators/divergence-free-prolongation.md).
+
 * **Ingestion**: [Wang & Petersson (2019)](/sources/wang-petersson-2019.md)
   — text extraction. No new pages; merged the strong-imposition (SBP-GP)
   alternative and the SAT time-step trade into

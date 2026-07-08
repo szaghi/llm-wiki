@@ -53,6 +53,15 @@ subcycling uses the reconstruction directly.
   subcycled hierarchy additionally needs the
   [electric-field correction](/methods/electric-field-correction.md) and
   area-weighted restriction $R$.
+* **Production caveat — the premise fails mid-subcycle**: $P_D$'s
+  exactness guarantee is conditional on divergence-free *input*, but ghost
+  filling during subcycling interpolates the coarse field **in time**
+  (first-order), producing data that is not divergence-free — at which
+  point $P_D$-class schemes degrade to ordinary interpolation.
+  [Miniati & Martin (2011)](/sources/miniati-martin-2011.md) accordingly
+  found divergence-free ghost interpolation "neither practical nor
+  necessary," reserving exactness machinery for the synchronization points
+  where its premise actually holds.
 
 ## The Tóth–Roe construction
 
@@ -70,3 +79,5 @@ prove the locality trichotomy across storage choices —
 
 1. [Balsara (2001)](/sources/balsara-2001.md), §III–IV.
 2. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.
+3. [Miniati & Martin (2011)](/sources/miniati-martin-2011.md), §3.
+4. [Etienne, Liu & Shapiro (2010)](/sources/etienne-2010.md) — the [vector-potential route](/methods/vector-potential-evolution.md) that dissolves the transfer problem instead of solving it.

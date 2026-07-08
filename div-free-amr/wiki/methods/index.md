@@ -11,6 +11,7 @@ Algorithms and schemes.
 * [Refluxing (coarse-fine flux correction)](/methods/refluxing.md) — Restores discrete conservation at AMR interfaces by replacing the coarse flux with the accumulated sum of fine fluxes on shared edges.
 * [SBP-SAT technique](/methods/sbp-sat.md) — Imposes boundary and interface conditions weakly through penalty terms that preserve the SBP energy estimate, coupling multi-block high-order FD schemes stably and conservatively.
 * [Projection method (divergence cleaning by Poisson solve)](/methods/projection-method.md) — Removes the divergence of the updated field by solving a Poisson problem and subtracting a gradient; constraint held to solver tolerance.
+* [Vector-potential evolution](/methods/vector-potential-evolution.md) — Evolves the magnetic vector potential instead of the field; B = curl A is exactly divergence-free on any grid, and AMR transfer acts on the unconstrained potential.
 * [Yee scheme (FDTD)](/methods/yee-scheme.md) — Leapfrog update of Maxwell's curl equations on the Yee lattice: electric field on edges, magnetic field on faces, staggered in space and time.
 * [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md) — Reconstructs point values of the magnetic field from face data so that the interpolated field itself satisfies the divergence constraint to high order.
 * [Electric-field correction](/methods/electric-field-correction.md) — Restores divergence-free consistency at AMR interfaces by replacing coarse edge EMFs with time-averaged sums of the subcycled fine edge EMFs.

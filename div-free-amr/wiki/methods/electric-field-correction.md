@@ -37,6 +37,13 @@ $D_h^{\mathrm{f}} B_h = 0$ invariant ([notation](/notation.md),
 Storage mirrors refluxing: edge registers on fine-patch perimeters,
 accumulated during subcycling, applied at synchronization.
 
+In production the operation appears as the **reflux-curl** operator
+(Chombo vocabulary): edge EMF registers on coarse–fine interfaces, coarse
+faces incremented by the curl of the EMF mismatch — validated at
+cosmological scale with multilevel divergence at a few $\times 10^{-13}$
+([Miniati & Martin (2011)](/sources/miniati-martin-2011.md)).
+
 # Citations
 
 1. [Balsara (2001)](/sources/balsara-2001.md), §V, Fig. 3.
+2. [Miniati & Martin (2011)](/sources/miniati-martin-2011.md), §3.
