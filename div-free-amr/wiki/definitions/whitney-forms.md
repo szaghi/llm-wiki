@@ -57,7 +57,15 @@ are discrete Hodge operators, and in edge-finite-element form they are
 functions ([Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md)) —
 two derivations, one object.
 
+Within [FEEC](/definitions/finite-element-exterior-calculus.md), Whitney
+forms are the lowest member of a two-family hierarchy:
+$\mathcal{P}_1^-\Lambda^k$, isomorphic to simplicial cochains — with
+higher-degree families $\mathcal{P}_r\Lambda^k, \mathcal{P}_r^-\Lambda^k$
+extending the same complex structure to arbitrary polynomial order
+([Arnold, Falk & Winther (2006)](/sources/arnold-falk-winther-2006.md)).
+
 # Citations
 
 1. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
 2. [Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md), §3.
+3. [Arnold, Falk & Winther (2006)](/sources/arnold-falk-winther-2006.md), §1.

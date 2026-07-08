@@ -2,6 +2,22 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Christiansen et al. (2011)](/sources/christiansen-2011.md)
+  — **scoped read** (§5 at claim level; §§2–4 out of domain, not
+  compiled). No new pages; merged the finite-element-systems
+  generalization into [FEEC](/definitions/finite-element-exterior-calculus.md).
+
+* **Ingestion**: [Arnold, Falk & Winther (2009)](/sources/arnold-falk-winther-2009.md)
+  — **scoped read** (§§1, 3 closely). No new pages; merged the two-hypothesis
+  master stability criterion into
+  [FEEC](/definitions/finite-element-exterior-calculus.md).
+
+* **Ingestion**: [Arnold, Falk & Winther (2006)](/sources/arnold-falk-winther-2006.md)
+  — **scoped read** (§1 of 155 pp.; technical sections flagged unread).
+  Created [FEEC](/definitions/finite-element-exterior-calculus.md). Merged
+  into [Whitney forms](/definitions/whitney-forms.md) (two-family
+  hierarchy).
+
 * **Ingestion**: [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md)
   — text extraction. No new pages; merged CTU-GLM production realization,
   EGLM trade, and the same-code three-way comparison into
