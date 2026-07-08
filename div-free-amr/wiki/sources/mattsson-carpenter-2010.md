@@ -8,7 +8,7 @@ authors: [Mattsson K., Carpenter M.H.]
 year: 2010
 venue: "SIAM J. Sci. Comput. 32(4):2298-2320"
 local_file: "~/papers/mosaic/div-free-amr/2010-SISC-Mattsson-101137090750068.pdf"
-tags: [sbp, sat, interpolation, nonconforming, 2-1-interface, multi-block, conservation]
+tags: [sbp, sat, interpolation, nonconforming, coarse-fine-interface, multi-block, conservation]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

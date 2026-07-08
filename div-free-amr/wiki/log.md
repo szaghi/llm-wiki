@@ -2,6 +2,30 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Wang & Petersson (2019)](/sources/wang-petersson-2019.md)
+  — text extraction. No new pages; merged the strong-imposition (SBP-GP)
+  alternative and the SAT time-step trade into
+  [SBP-SAT](/methods/sbp-sat.md).
+
+* **Ingestion**: [Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md)
+  — text extraction; authorship Crossref-verified. No new pages; merged the
+  interpolation accuracy bound ($q_{C2F}+q_{F2C} \le 2p+1$) and the
+  order-preserving two-pair remedy into
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md).
+
+* **Deep lint #3** (after 30 ingestions). Findings and fixes: (1) tag
+  synonym `2-1-interface` consolidated into `coarse-fine-interface`
+  (2 pages); (2) FEEC element families
+  ($\mathcal{P}_r\Lambda^k, \mathcal{P}_r^-\Lambda^k$) recur across three
+  concept pages — registered in [notation](/notation.md). Both
+  `Contradictions` blocks current; timestamps uniform; no orphans.
+
+* **Ingestion**: [Nissen et al. (2014)](/sources/nissen-2014.md) — text
+  extraction. No new pages; merged junction/corner treatment into
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md)
+  (resolving the pending pointer) and the block-oriented SAMR variant into
+  [Block-structured AMR](/definitions/block-structured-amr.md).
+
 * **Ingestion**: [Christiansen et al. (2011)](/sources/christiansen-2011.md)
   — **scoped read** (§5 at claim level; §§2–4 out of domain, not
   compiled). No new pages; merged the finite-element-systems

@@ -40,6 +40,13 @@ conservation maintainable.
   propagation speed), and clustering heuristics emit new patches; nesting is
   enforced by construction.
 
+**Variant: block-oriented SAMR.** Non-overlapping blocks of equal point
+count, refined whole-block (possibly anisotropically), adjoining blocks
+within a factor 2 per direction — less grid-management overhead and
+simpler parallel data dependencies than patch hierarchies; the topology
+preferred by the SBP-SAT community
+([Nissen et al. (2014)](/sources/nissen-2014.md)).
+
 **Variant: tree-based (octree) AMR.** The other major structured-AMR
 flavor refines cell-by-cell on a tree — e.g. RAMSES's fully threaded tree
 of "octs" (8-cell sibling groups)
@@ -60,3 +67,4 @@ concerns smoothly moving zones, not patch hierarchies.
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §2–6.
 2. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.5.
+3. [Nissen et al. (2014)](/sources/nissen-2014.md), §2.

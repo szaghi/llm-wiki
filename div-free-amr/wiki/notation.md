@@ -55,6 +55,13 @@ instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
 Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
 is irrelevant to the claim.
 
+## FEEC element families
+
+(Added 2026-07-08, deep lint #3.) The two finite-element differential-form
+families: $\mathcal{P}_r\Lambda^k$ (full polynomial degree $r$) and
+$\mathcal{P}_r^-\Lambda^k$ (Koszul-trimmed); $\mathcal{P}_1^-\Lambda^k$
+are the Whitney forms.
+
 ## Interface interpolation (SBP)
 
 (Added 2026-07-08, Mattsson–Carpenter-2010 ingestion.) Trace-space

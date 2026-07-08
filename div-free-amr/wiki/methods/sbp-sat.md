@@ -50,7 +50,21 @@ and even different operator orders, keeping strict stability, accuracy,
 and conservation
 ([Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md)).
 
+## The strong-imposition alternative
+
+SAT is not the only stable interface treatment: **SBP-GP** imposes
+conditions strongly through ghost points, and at hanging-node refinement
+interfaces the two were connected and compared by
+[Wang & Petersson (2019)](/sources/wang-petersson-2019.md) — the improved
+one-sided-ghost GP variant achieves fourth order with energy stability and
+**no explicit time-step reduction** relative to the periodic problem,
+where the SAT coupling pays an interface stiffness penalty. The choice
+between weak and strong imposition is therefore a genuine trade
+(implementation simplicity and generality vs time-step and system size),
+not a settled default.
+
 # Citations
 
 1. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§3–5.
 2. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md), §§3–4.
+3. [Wang & Petersson (2019)](/sources/wang-petersson-2019.md), §§2–5.

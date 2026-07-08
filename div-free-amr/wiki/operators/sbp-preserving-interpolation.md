@@ -5,7 +5,7 @@ description: "Interface interpolation pair between nonconforming SBP blocks that
 status: established
 symbol: "$I_{C2F}, I_{F2C}$"
 aliases: [SBP interpolation operators, glue operators]
-tags: [sbp, interpolation, 2-1-interface, nonconforming, conservation]
+tags: [sbp, interpolation, coarse-fine-interface, nonconforming, conservation]
 timestamp: 2026-07-08T00:00:00Z
 ---
 
@@ -32,6 +32,20 @@ iff ([notation](/notation.md)):
    ends — the trace analog of SBP boundary closures; in practice
    $p$th-order interpolation preserves the $p$th-order scheme.
 
+## The accuracy bound and its circumvention
+
+For second-derivative PDEs the interface truncation error was later shown
+to cost **one full order of global convergence**, and the cause is a
+theorem, not an implementation defect: interpolation accuracy is capped by
+the quadrature order of the SBP norm — for interior order $2p$,
+$q_{C2F} + q_{F2C} \le 2p+1$. The **order-preserving (OP) remedy**
+([Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md)): use *two*
+interpolation pairs, each obeying the bound but with the accuracy budget
+split oppositely, placed asymmetrically in the SATs so the accurate
+direction covers the error that matters — full conforming-interface
+convergence restored, with existence proved for any two diagonal-norm SBP
+schemes and any interface point distribution.
+
 ## Structural remarks
 
 * The adjoint condition is the same discipline as the mimetic
@@ -55,11 +69,17 @@ discontinuous piecewise polynomials, each projection compatible with its
 own block's $\mathsf{H}$-norm. Coupling factors through the intermediary,
 so operators are built once per SBP operator regardless of the far side —
 extending provably stable coupling to curved interfaces, non-matching
-block corners, and SBP–DG hybrids (the Mattsson–Carpenter pairs required
-matching corners; Nissen et al. removed that at fixed refinement ratio —
-corpus paper, pending).
+block corners, and SBP–DG hybrids. On the adaptive-grid side,
+[Nissen et al. (2014)](/sources/nissen-2014.md) take the pairs into
+genuine block-AMR: stable **junction (corner) operators** where interfaces
+of different refinement meet — the configuration two-block analyses never
+see — plus interior-stencil coupling across same-level block boundaries,
+paying a local accuracy tax at junctions that numerically does not
+dominate the global error.
 
 # Citations
 
 1. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md), §§2–4, Lemma 3.4.
 2. [Kozdon & Wilcox (2015)](/sources/kozdon-wilcox-2015.md), §§2–4.
+3. [Nissen et al. (2014)](/sources/nissen-2014.md), §§3–5.
+4. [Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md), §§3–4, 7.
