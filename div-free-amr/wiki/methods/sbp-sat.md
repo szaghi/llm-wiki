@@ -68,3 +68,7 @@ not a settled default.
 1. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§3–5.
 2. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md), §§3–4.
 3. [Wang & Petersson (2019)](/sources/wang-petersson-2019.md), §§2–5.
+4. [Kozdon, Erickson & Wilcox (2021)](/sources/kozdon-2021.md) — the
+   hybridized form: independent trace variables on block faces carry all
+   coupling; Schur elimination of volume unknowns leaves a small SPD
+   face-only system (elliptic problems, repeated solves).

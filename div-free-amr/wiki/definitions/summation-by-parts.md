@@ -74,3 +74,21 @@ order ([Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md)).
 2. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§4–5.
 3. [Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md), §§2–3.
 4. [Del Rey Fernández et al. (2014)](/sources/delreyfernandez-2014.md), §§2, 8–9.
+
+**Convergence rates** are their own theory: the boundary-localized
+truncation error is *weakened* rather than dominant, and the size of the
+gain is governed by the **determinant condition** (nonsingularity of the
+Laplace-space boundary system for $\mathrm{Re}(s)\ge 0$) — two orders when
+it holds, but many common closures fail it at $s=0$ and the actual gain
+can fall either side of two; energy stability alone certifies only half an
+order ([Wang & Kreiss (2017)](/sources/wang-kreiss-2017.md)).
+
+The theory extends to 2D by diagonalization into 1D mode families, with
+line-distributed and **corner-localized** truncation errors carrying
+different gains
+([Wang, Nissen & Kreiss (2017)](/sources/wang-nissen-kreiss-2017.md)) —
+the accuracy-side companion of the block-AMR junction-point stability
+treatments.
+
+5. [Wang & Kreiss (2017)](/sources/wang-kreiss-2017.md), §§1, 3–4.
+6. [Wang, Nissen & Kreiss (2017)](/sources/wang-nissen-kreiss-2017.md), §§1–2.

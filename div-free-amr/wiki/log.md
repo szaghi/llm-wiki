@@ -2,6 +2,25 @@
 
 ## 2026-07-08
 
+* **Deep lint #5** (after 50 ingestions). Clean pass: no notation drift,
+  no orphans, both `Contradictions` blocks current. Singleton tags
+  reviewed — `hybrid` (FD–FV mesh hybrid) and `hybridization` (static
+  condensation) deliberately kept distinct: different concepts despite
+  similar names.
+
+* **Ingestion**: [Kozdon, Erickson & Wilcox (2021)](/sources/kozdon-2021.md)
+  — text extraction. No new pages; merged the hybridized trace-variable
+  formulation into [SBP-SAT](/methods/sbp-sat.md).
+
+* **Ingestion**: [Wang, Nissen & Kreiss (2017)](/sources/wang-nissen-kreiss-2017.md)
+  — text extraction. No new pages; merged the 2D/corner extension of the
+  convergence theory into [SBP](/definitions/summation-by-parts.md).
+
+* **Ingestion**: [Wang & Kreiss (2017)](/sources/wang-kreiss-2017.md) —
+  text extraction. No new pages; merged the convergence-gain /
+  determinant-condition theory into
+  [SBP](/definitions/summation-by-parts.md).
+
 * **Ingestion**: [Friedrich et al. (2018)](/sources/friedrich-2018.md) —
   text extraction. No new pages; merged the nonlinear caveat
   (energy-stable interface coupling ≠ entropy-stable; mortar
