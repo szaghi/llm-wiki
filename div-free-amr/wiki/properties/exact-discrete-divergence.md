@@ -65,7 +65,8 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   global discrete divergence is held. Basis-level exactness within cells
   plus unconstrained interfaces is precisely the pattern the AMR
   transfer problem exhibits at coarse–fine boundaries.
-* **Stencil consistency is testable.** The 3D field-loop advection test
+* **Stencil consistency is testable.** The 3D
+  [field-loop advection](/benchmarks/field-loop-advection.md) test
   ($(x,y)$-plane loop, $v_z \ne 0$) detects mismatch operationally: if the
   constraint is held on a stencil different from the one used to build the
   $B_z$ fluxes, $B_z$ grows unphysically; round-off-constant $B_z$
@@ -92,3 +93,7 @@ class is not a numerical nicety but a physics-level decision.
 4. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §1, §6.
 5. [Olivares et al. (2019)](/sources/olivares-2019.md), abstract, §5.
 6. [Li & Shu (2005)](/sources/li-shu-2005.md), §1.
+7. [Zampa (2024)](/sources/zampa-2024.md) — the 2024 frontier: exact
+   face-based invariants now coexist with well-balancing and unstructured
+   mixed-element grids in hybrid FV/FE form; collocated high-order FD at
+   2:1 AMR interfaces remains outside even the newest synthesis.

@@ -66,6 +66,13 @@ extending the same complex structure to arbitrary polynomial order
 
 # Citations
 
+The identification of Nédélec's edge elements *as* Whitney forms is due to
+Bossavit, whose book consolidates the edge-element school — including
+**complementarity**: solving the two dual variational formulations to
+bracket energy quantities from both sides
+([Bossavit (1998)](/sources/bossavit-1998.md)).
+
 1. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
 2. [Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md), §3.
 3. [Arnold, Falk & Winther (2006)](/sources/arnold-falk-winther-2006.md), §1.
+4. [Bossavit (1998)](/sources/bossavit-1998.md).

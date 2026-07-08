@@ -41,6 +41,38 @@ simplicial meshes of any dimension
 but the theory is *formal* — convergence to the smooth counterparts is,
 by the authors' own statement, mostly not proved.
 
+The lineage runs to production: DEC-family operators, rebuilt VEM-style
+with mimetic stabilization for arbitrary (even non-planar) polygons, are
+the numerical layer of modern geometry-processing pipelines
+([de Goes, Butts & Desbrun (2020)](/sources/degoes-2020.md)).
+
+# Citations
+
+Two thesis-level points sharpen the picture
+([Hirani (2003)](/sources/hirani-2003.md)): DEC is built **discrete-first**
+— the mesh is "the only given thing," objects but never the mesh are
+interpolated, as opposed to truncating smooth operators on an approximated
+manifold — and the primal/dual pairing makes operators *proliferate*
+(primal–primal, primal–dual, …): one continuous operator corresponds to a
+discrete family, and choosing among them is scheme design.
+
+# Citations
+
+Pointwise values require leaving pure cochain calculus: the DEC school's
+own reconstruction operator is the **Whitney bridge** — Whitney $k$-forms
+interpolating cochains into fields
+([Desbrun, Kanso & Tong (2008)](/sources/desbrun-kanso-tong-2008.md)) —
+making DEC-plus-Whitney and FEEC two descriptions of one junction. The
+machinery is now standard curriculum
+([Crane (2025)](/sources/crane-2025.md)), whose running *no-free-lunch
+principle* — every discrete definition preserves a different subset of
+continuous properties, and none preserves all — is the pedagogical form of
+the operator-proliferation fact above.
+
 # Citations
 
 1. [Desbrun, Hirani, Leok & Marsden (2005)](/sources/desbrun-hirani-2005.md), §§3–9, 11.
+2. [de Goes, Butts & Desbrun (2020)](/sources/degoes-2020.md).
+3. [Hirani (2003)](/sources/hirani-2003.md), abstract.
+4. [Desbrun, Kanso & Tong (2008)](/sources/desbrun-kanso-tong-2008.md), §6.
+5. [Crane (2025)](/sources/crane-2025.md).

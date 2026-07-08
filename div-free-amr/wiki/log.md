@@ -2,6 +2,52 @@
 
 ## 2026-07-08
 
+* **Deep lint #6 + closing audit** (corpus complete, 61/61). Corrective
+  action: created [Field-loop advection](/benchmarks/field-loop-advection.md)
+  — the multi-source admission criterion had been met (4 sources) while
+  `benchmarks/` sat empty; granularity debt repaid. `software/` left
+  deliberately empty: production evidence lives on Source pages and no
+  code earned a standalone page. **Root [index](/index.md) recurated**
+  into a six-step reading guide reflecting the completed bundle; bundle
+  `CLAUDE.md` status updated with the scoped-read re-ingestion targets.
+  Final state: 97 conformant pages, 2 `Contradictions` blocks (one
+  resolved by convergence, one live), 5 registry extensions, 0 orphans.
+
+* **Ingestions**: [Bossavit (1998)](/sources/bossavit-1998.md) and
+  [Shashkov (1996)](/sources/shashkov-1996.md) — both **scoped** (front
+  matter/positioning; bodies deferred to the research-grade article
+  sources). Lineage anchors for the edge-element and support-operator
+  schools. **Filename error caught**: the Shashkov PDF is CRC Press 1996,
+  not "2009-Wiley" as the filename claims. **Corpus complete: 61/61
+  sources ingested.**
+
+* **Ingestions**: [Desbrun, Kanso & Tong (2008)](/sources/desbrun-kanso-tong-2008.md)
+  (Whitney bridge) and [Crane (2025)](/sources/crane-2025.md) (**scoped**:
+  TOC/framing; pedagogical consolidation, no-free-lunch principle). No new
+  pages; both merged into [DEC](/definitions/discrete-exterior-calculus.md).
+
+* **Ingestion**: [Zampa (2024)](/sources/zampa-2024.md) — **scoped read**
+  (abstract, framing, Ch. 4 divergence machinery at claim level). No new
+  pages; merged the 2024-frontier note into
+  [Exact discrete divergence](/properties/exact-discrete-divergence.md).
+
+* **Ingestion**: [Hirani (2003)](/sources/hirani-2003.md) — **scoped
+  supplement** (front matter/abstract; body deferred to the 2005 paper).
+  No new pages; merged discrete-first philosophy and operator
+  proliferation into [DEC](/definitions/discrete-exterior-calculus.md).
+  Integrity note: a pattern-guessed thesis DOI was caught before staging
+  and replaced by the CaltechTHESIS repository pointer — no verifiable
+  DOI exists for this record.
+
+* **Ingestion**: [de Goes, Butts & Desbrun (2020)](/sources/degoes-2020.md)
+  — text extraction. No new pages; merged the industrial-deployment note
+  into [DEC](/definitions/discrete-exterior-calculus.md).
+
+* **Ingestion**: [Teixeira (2013)](/sources/teixeira-2013.md) — text
+  extraction. Created [Orientation (inner/outer)](/definitions/orientation.md)
+  — promoted to a page on multi-source convergence: three communities
+  (CDO, Delft, lattice field theory), three vocabularies, one distinction.
+
 * **Ingestion**: [Trask, Bochev & Perego (2020)](/sources/trask-2020.md) —
   text extraction. No new pages; merged the meshfree frontier (virtual
   faces, structure-attaches-to-operators) into

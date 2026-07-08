@@ -35,6 +35,9 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
-Pilot phase: Evans & Hawley 1988 (scan → visual-read path) and Tóth 2000
-(clean text → merge/contradiction path) are the pilot ingestions, subject to
-human audit before bulk compilation of the remaining corpus.
+**Corpus complete (2026-07-08): 61/61 sources ingested**, 97 conformant
+pages, six deep-lint passes. Books and long reviews were scoped reads with
+coverage recorded on their Source pages (Bossavit, Shashkov, Hiptmair
+§§4–6, AFW 2006 §§2–11, Christiansen §§2–4, Crane body) — those are the
+known re-ingestion targets if deeper coverage is ever needed. New sources
+append per repo law; the worklist stays authoritative.
