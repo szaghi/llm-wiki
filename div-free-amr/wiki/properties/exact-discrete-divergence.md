@@ -57,6 +57,14 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   precision over one run; double-precision field evolution holds
   $10^{-15}$–$10^{-14}$).
 
+* **"Local" exactness is a distinct, weaker class.** Locally
+  divergence-free DG ([Li & Shu (2005)](/sources/li-shu-2005.md)) builds
+  the constraint into element-local polynomial bases — exactly solenoidal
+  *inside* each element, at *reduced* cost (a smaller space) — but the
+  normal-component jumps across element interfaces are uncontrolled, so no
+  global discrete divergence is held. Basis-level exactness within cells
+  plus unconstrained interfaces is precisely the pattern the AMR
+  transfer problem exhibits at coarse–fine boundaries.
 * **Stencil consistency is testable.** The 3D field-loop advection test
   ($(x,y)$-plane loop, $v_z \ne 0$) detects mismatch operationally: if the
   constraint is held on a stencil different from the one used to build the
@@ -83,3 +91,4 @@ class is not a numerical nicety but a physics-level decision.
 3. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), eqs. (6)–(10).
 4. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §1, §6.
 5. [Olivares et al. (2019)](/sources/olivares-2019.md), abstract, §5.
+6. [Li & Shu (2005)](/sources/li-shu-2005.md), §1.

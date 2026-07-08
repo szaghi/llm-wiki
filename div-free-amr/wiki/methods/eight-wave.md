@@ -84,3 +84,8 @@ requirement.
 2. [Tóth (2000)](/sources/toth-2000.md), §§2–3, 6.3, 7.
 3. [Dedner et al. (2002)](/sources/dedner-2002.md), §5.
 4. [Balsara (2004)](/sources/balsara-2004.md), §1 (Issue 3).
+5. [Derigs et al. (2018)](/sources/derigs-2018.md) — thermodynamic
+   rederivation: allowing $\nabla\cdot\mathbf{B}\ne 0$ from first
+   principles *produces* the non-conservative terms, recasting them as
+   required physics wherever the constraint is not pointwise exact
+   (the strongest published defense of the source-term family).

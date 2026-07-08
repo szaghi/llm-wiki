@@ -77,6 +77,19 @@ see — plus interior-stencil coupling across same-level block boundaries,
 paying a local accuracy tax at junctions that numerically does not
 dominate the global error.
 
+## The nonlinear caveat
+
+Interface machinery certified in the $L_2$ energy norm does **not**
+automatically preserve nonlinear invariants: at h/p nonconforming DG
+interfaces, the standard mortar projection "does not guarantee entropy
+stability for non-linear problems, which can lead to instabilities" — a
+targeted modification of the coupling restores provable entropy stability
+at unchanged cost
+([Friedrich et al. (2018)](/sources/friedrich-2018.md)). The pattern
+mirrors the accuracy story above: each additional property (conservation,
+accuracy order, entropy) imposes its own condition on the transfer
+operators, and none is implied by the others.
+
 # Citations
 
 1. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md), §§2–4, Lemma 3.4.
@@ -84,3 +97,4 @@ dominate the global error.
 3. [Nissen et al. (2014)](/sources/nissen-2014.md), §§3–5.
 4. [Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md), §§3–4, 7.
 5. [Lundquist, Malan & Nordström (2018)](/sources/lundquist-2018.md) — general-mesh hybrid extension: the coupling conditions posed on arbitrary node sets, enabling stable high-order-FD-to-unstructured-FV interfaces.
+6. [Friedrich et al. (2018)](/sources/friedrich-2018.md), §§3–4.

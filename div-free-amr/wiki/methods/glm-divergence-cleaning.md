@@ -75,3 +75,9 @@ uniformity of the AMR machinery across all physics.
 1. [Dedner et al. (2002)](/sources/dedner-2002.md), §2–5, Appendix.
 2. [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md), §§2–4.
 3. [Mignone et al. (2012)](/sources/mignone-2012.md), §§2, 4.
+4. [Derigs et al. (2018)](/sources/derigs-2018.md) — the entropy-consistent
+   **ideal GLM-MHD** synthesis: Powell terms + GLM cleaning in one
+   nine-wave, Galilean-invariant system with an entropy pair; notable
+   caveat proved en route — *not all common GLM extensions are
+   thermodynamically consistent*, so the cleaning coupling is a
+   second-law design decision, not a free choice.

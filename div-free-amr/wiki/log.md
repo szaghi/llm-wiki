@@ -2,6 +2,23 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Friedrich et al. (2018)](/sources/friedrich-2018.md) —
+  text extraction. No new pages; merged the nonlinear caveat
+  (energy-stable interface coupling ≠ entropy-stable; mortar
+  modification) into
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md).
+
+* **Ingestion**: [Derigs et al. (2018)](/sources/derigs-2018.md) — text
+  extraction. No new pages; merged the entropy-consistent nine-wave
+  synthesis into [GLM cleaning](/methods/glm-divergence-cleaning.md) and
+  the thermodynamic rederivation of the source terms into
+  [Eight-wave](/methods/eight-wave.md).
+
+* **Ingestion**: [Li & Shu (2005)](/sources/li-shu-2005.md) — text
+  extraction. No new pages; merged the locally-divergence-free class
+  (basis-level exactness, uncontrolled interelement jumps) into
+  [Exact discrete divergence](/properties/exact-discrete-divergence.md).
+
 * **Ingestion**: [Kreeft & Gerritsma (2013)](/sources/kreeft-gerritsma-2013.md)
   — text extraction. Created
   [Mimetic spectral elements](/methods/mimetic-spectral-elements.md):
