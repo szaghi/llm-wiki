@@ -1,0 +1,9 @@
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+.wiki/
+# binary captures stay on disk, out of history; text captures are committed
+*/raw/docs/*.pdf
+*/raw/docs/*.pptx
+*/raw/docs/*.docx
