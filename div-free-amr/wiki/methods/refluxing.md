@@ -43,6 +43,14 @@ exactly analogous
 [electric-field correction](/methods/electric-field-correction.md) on edge
 EMFs ([Balsara (2001)](/sources/balsara-2001.md)).
 
+For diffusive/elliptically-coupled systems the correction generalizes:
+flux mismatches enter the right-hand sides of *elliptic refluxing solves*
+rather than being added pointwise, and face-velocity mismatches get their
+own elliptic sync solve —
+[AMR projection method](/methods/amr-projection-method.md)
+([Almgren et al. (1998)](/sources/almgren-1998.md)).
+
 # Citations
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §3, Figs. 3.1–3.2.
+2. [Almgren et al. (1998)](/sources/almgren-1998.md), §3.

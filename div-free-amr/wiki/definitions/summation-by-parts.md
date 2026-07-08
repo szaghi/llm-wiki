@@ -45,6 +45,15 @@ high-order* one-dimensional building blocks; its relevance to the
 divergence-constraint problem is that any high-order FD divergence/gradient
 pair inherits its stability theory from operators of this class.
 
+Boundary and interface conditions are imposed weakly by the
+[SAT technique](/methods/sbp-sat.md); the framework extends to multi-block
+curvilinear grids with conservation and strict stability **conditional on
+discrete metric conditions**
+([Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md)) —
+the Jacobian enters the norm, and non-smooth meshes put the metric terms on
+the critical path.
+
 # Citations
 
 1. [Strand (1994)](/sources/strand-1994.md), §1–2.
+2. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§4–5.

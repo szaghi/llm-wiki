@@ -43,6 +43,14 @@ updated by the standard CT circulation, preserving $D_h^{\mathrm{f}} B_h$
   accurate CT variant; transport-flux-CT fails to run some 2D tests without
   limiter changes.
 
+The averaging step is the family's acknowledged weak point and was later
+superseded twice over: by genuinely two-dimensional four-state upwind EMFs
+([Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md)), and
+by direct evaluation of the EMF at zone edges from the multidimensional
+Riemann data, with second/third-order unsplit time integration
+([Balsara (2004)](/sources/balsara-2004.md) §2 — resolving his "Issue 4").
+
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md), §4.2–4.4, §6–7, Table IX.
+2. [Balsara (2004)](/sources/balsara-2004.md), §2.

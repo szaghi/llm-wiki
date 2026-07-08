@@ -56,8 +56,21 @@ transverse gradients from both sides. The discontinuity decays at second
 order. A structural caution for any claim of globally smooth
 divergence-free reconstruction at low order.
 
+## Consolidation (Balsara 2004)
+
+[Balsara (2004)](/sources/balsara-2004.md) turns the reconstruction into
+the scheme-design workhorse: limiting is applied to the **face-centered
+fundamental variables** (TVD, characteristic, and WENO $r = 2, 3$
+variants), the zone-centered field is defined as the *volume average of
+the reconstruction polynomial* rather than an ad hoc arithmetic mean, the
+normal component stays $C^0$-continuous at faces (eliminating the jump
+that troubled seven-wave Riemann solvers), and the construction extends to
+cylindrical, spherical, and tetrahedral meshes — carrying divergence-free
+AMR to those geometries in the same stroke.
+
 # Citations
 
 1. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
 3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.3.
+4. [Balsara (2004)](/sources/balsara-2004.md), §§3–4.

@@ -2,6 +2,29 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Balsara (2004)](/sources/balsara-2004.md) — text
+  extraction; **filename DOI tag found wrong**, identity Crossref-verified
+  (10.1086/381377). Consolidation source: no new pages; merged into
+  [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+  (face-variable limiting, WENO, curvilinear/unstructured),
+  [Flux-CT](/methods/flux-ct.md) (direct edge EMFs supersede averaging),
+  [Eight-wave](/methods/eight-wave.md) (Issue-3 critique: C0 normal
+  continuity removes the motivating premise).
+
+* **Ingestion**: [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md)
+  — text extraction; report number as permanent identifier (no DOI exists).
+  Created [SBP-SAT technique](/methods/sbp-sat.md). Merged into
+  [SBP](/definitions/summation-by-parts.md). Scope note recorded: this is
+  the *conforming*-interface baseline; nonconforming 2:1 SBP interfaces are
+  later corpus papers.
+
+* **Ingestion**: [Almgren et al. (1998)](/sources/almgren-1998.md) — text
+  extraction. Created [AMR projection method](/methods/amr-projection-method.md)
+  and [Free-stream preservation](/properties/free-stream-preservation.md).
+  Merged into [MAC method](/methods/mac-method.md) (afterlife as MAC
+  projection), [Refluxing](/methods/refluxing.md) (elliptic
+  generalization), [Projection method](/methods/projection-method.md).
+
 * **Ingestion**: [Hiptmair (2002)](/sources/hiptmair-2002.md) — **scoped
   read**: §§1–3 of 104 pp. compiled; §§4–6 (eigenvalue/source problems,
   regularization) explicitly not read, flagged on the Source page for a

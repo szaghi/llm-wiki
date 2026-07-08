@@ -66,8 +66,21 @@ laws intact; in the Dedner et al. comparisons GLM is more robust than the
 Powell source terms with significantly smaller divergence errors
 ([Dedner et al. (2002)](/sources/dedner-2002.md)).
 
+A sharper attack targets the *motivation*:
+[Balsara (2004)](/sources/balsara-2004.md) (his "Issue 3") notes the
+eighth wave exists to handle the jump in the normal field component at
+zone faces, which makes seven-wave Riemann solvers ill-defined — but
+[divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+keeps that component $C^0$-continuous by construction, "thereby
+eliminating the need for an eight-wave model" (with the absence of
+physical magnetic monopoles invoked against monopole-introducing source
+terms). The critique removes the premise, not the scheme: the eight-wave
+formulation remains valid where cell-centered storage is a hard
+requirement.
+
 # Citations
 
 1. [Powell et al. (1999)](/sources/powell-1999.md), §§2–3.
 2. [Tóth (2000)](/sources/toth-2000.md), §§2–3, 6.3, 7.
 3. [Dedner et al. (2002)](/sources/dedner-2002.md), §5.
+4. [Balsara (2004)](/sources/balsara-2004.md), §1 (Issue 3).

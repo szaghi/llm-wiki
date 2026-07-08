@@ -52,6 +52,16 @@ Martin & Moyce experiments; Rayleigh–Taylor of a falling free surface;
 splash problems ([Harlow & Welch (1965)](/sources/harlow-welch-1965.md),
 Figs. 5–7). Stability observed without artificial viscosity.
 
+## Afterlife
+
+The face-collocated pressure solve survives as the **MAC projection** — an
+intermediate step inside modern schemes: the
+[AMR projection method](/methods/amr-projection-method.md) MAC-projects its
+face-based advection velocities each step precisely because the compact
+$D_h^{\mathrm{f}}$ constraint is the one worth holding exactly on faces
+([Almgren et al. (1998)](/sources/almgren-1998.md)).
+
 # Citations
 
 1. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), eqs. (4)–(10), Figs. 1–4.
+2. [Almgren et al. (1998)](/sources/almgren-1998.md), §2.

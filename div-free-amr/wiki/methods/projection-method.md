@@ -35,7 +35,9 @@ assessment is [Tóth (2000)](/sources/toth-2000.md). Within the
 [GLM framework](/methods/glm-divergence-cleaning.md) the projection is the
 elliptic member of the cleaning family — the limit $\mathcal{D}(\psi) = 0$
 of the generalized-Lagrange-multiplier coupling
-([Dedner et al. (2002)](/sources/dedner-2002.md)).
+([Dedner et al. (2002)](/sources/dedner-2002.md)). Its subcycled AMR
+realization, with the attendant interface synchronization solves, is the
+[AMR projection method](/methods/amr-projection-method.md).
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
