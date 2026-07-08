@@ -103,6 +103,7 @@ registry uses sans-serif for SBP matrices:
 | $B_h$ | discrete magnetic field (collocation stated per method) |
 | $u_h$ | discrete velocity field |
 | $E_h$ | discrete electric field / electromotive force (edge-collocated in CT schemes) |
+| $A_h$ | discrete magnetic vector potential, edge-collocated ($B_h = C_h A_h$); added at deep lint #4 |
 | $\phi_h$, $\psi_h$ | discrete scalar potentials (projection, cleaning) |
 
 The central algebraic invariant of the domain is written $D_h B_h = 0$.

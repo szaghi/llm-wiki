@@ -37,8 +37,16 @@ explicitly, where boundary conditions can then be imposed stably.
   both the achievable boundary order and — decisively — for first-order
   hyperbolic *systems*, provable stability exists only for diagonal norms
   ([families and orders](/results/sbp-operator-existence.md)).
-* $\mathsf{H}$ doubles as a quadrature: the SBP inner product is the
-  discrete $L_2$ norm in which energy estimates hold.
+* $\mathsf{H}$ doubles as a quadrature — precisely: the diagonal norm of a
+  $2p$-order operator is a $2p$-accurate quadrature rule
+  ([Del Rey Fernández et al. (2014)](/sources/delreyfernandez-2014.md)).
+  This identity carries the modern theory: **dual-consistent**
+  discretizations deliver functionals superconvergent at order $2p$
+  despite $p$-order boundary closures, and it caps interface-interpolation
+  accuracy (the bound circumvented at
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md)).
+  Defining SBP *through* the quadrature property generalizes the class to
+  nodal pseudo-spectral and DG operators under one umbrella.
 
 Within this corpus, SBP is the finite-difference route to *provably stable
 high-order* one-dimensional building blocks; its relevance to the
@@ -65,3 +73,4 @@ order ([Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md)).
 1. [Strand (1994)](/sources/strand-1994.md), §1–2.
 2. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§4–5.
 3. [Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md), §§2–3.
+4. [Del Rey Fernández et al. (2014)](/sources/delreyfernandez-2014.md), §§2, 8–9.

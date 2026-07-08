@@ -2,6 +2,28 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Lundquist, Malan & Nordström (2018)](/sources/lundquist-2018.md)
+  — text extraction. No new pages; merged the general-mesh hybrid
+  extension into
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md).
+
+* **Deep lint #4** (after 40 ingestions). One registry gap: the vector
+  potential $A_h$ recurred across four pages unregistered — added to
+  [notation](/notation.md). Tag vocabulary healthy (no new synonyms);
+  both `Contradictions` blocks current; recurring math symbols otherwise
+  all registered.
+
+* **Ingestion**: [Del Rey Fernández et al. (2014)](/sources/delreyfernandez-2014.md)
+  — text extraction. No new pages; merged the quadrature identity of
+  $\mathsf{H}$, dual consistency/superconvergence, and generalized SBP
+  into [SBP](/definitions/summation-by-parts.md).
+
+* **Ingestion**: [Stone et al. (2020)](/sources/stone-2020.md) — text
+  extraction. No new pages; merged the line-weighted EMF matching and the
+  same-level bitwise-determinism requirement into
+  [Electric-field correction](/methods/electric-field-correction.md).
+  Closes the astro production line.
+
 * **Ingestion**: [Olivares et al. (2019)](/sources/olivares-2019.md) —
   text extraction. No new pages; merged the coordinate-independent $P_D$
   generalization into

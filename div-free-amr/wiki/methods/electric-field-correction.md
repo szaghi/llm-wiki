@@ -41,9 +41,19 @@ In production the operation appears as the **reflux-curl** operator
 (Chombo vocabulary): edge EMF registers on coarse–fine interfaces, coarse
 faces incremented by the curl of the EMF mismatch — validated at
 cosmological scale with multilevel divergence at a few $\times 10^{-13}$
-([Miniati & Martin (2011)](/sources/miniati-martin-2011.md)).
+([Miniati & Martin (2011)](/sources/miniati-martin-2011.md)). Athena++
+implements the curvilinear-ready line-weighted form
+($e_c \Delta l_c = \sum e_f \Delta l_f$) and adds a requirement invisible
+in the algebra: **determinism** — shared-edge EMFs must be *bitwise
+identical* across MeshBlocks, and even same-level edges disagree under
+nondeterministic MPI ordering and *roundoff that differs between blocks
+computing the same EMF*, so both sides are explicitly averaged
+([Stone et al. (2020)](/sources/stone-2020.md)). The machine-precision
+invariant is only as strong as the bitwise agreement of its shared
+inputs.
 
 # Citations
 
 1. [Balsara (2001)](/sources/balsara-2001.md), §V, Fig. 3.
 2. [Miniati & Martin (2011)](/sources/miniati-martin-2011.md), §3.
+3. [Stone et al. (2020)](/sources/stone-2020.md), §2.4, Figs. 7–8.

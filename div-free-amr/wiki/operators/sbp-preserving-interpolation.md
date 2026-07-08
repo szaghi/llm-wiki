@@ -83,3 +83,4 @@ dominate the global error.
 2. [Kozdon & Wilcox (2015)](/sources/kozdon-wilcox-2015.md), §§2–4.
 3. [Nissen et al. (2014)](/sources/nissen-2014.md), §§3–5.
 4. [Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md), §§3–4, 7.
+5. [Lundquist, Malan & Nordström (2018)](/sources/lundquist-2018.md) — general-mesh hybrid extension: the coupling conditions posed on arbitrary node sets, enabling stable high-order-FD-to-unstructured-FV interfaces.
