@@ -54,6 +54,19 @@ subcycling uses the reconstruction directly.
   [electric-field correction](/methods/electric-field-correction.md) and
   area-weighted restriction $R$.
 
+## The Tóth–Roe construction
+
+[Tóth & Roe (2002)](/sources/toth-roe-2002.md) give an independent
+second-order construction in flux variables: limited linear interpolation
+on the coarse faces, with the interior fine components determined by
+requiring all eight fine-cell divergences to equal $\tfrac18$ of the coarse
+divergence — plus variants that preserve the discrete *curl* as well. They
+also supply the restriction half ($D_H R = R\, D_h$ by flux summation) and
+prove the locality trichotomy across storage choices —
+[locality limits](/results/transfer-operator-locality-limits.md): the pair
+(local $P_D$, local $R$) exists only for face-staggered data.
+
 # Citations
 
 1. [Balsara (2001)](/sources/balsara-2001.md), §III–IV.
+2. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.

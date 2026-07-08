@@ -2,6 +2,31 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Hiptmair (2002)](/sources/hiptmair-2002.md) — **scoped
+  read**: §§1–3 of 104 pp. compiled; §§4–6 (eigenvalue/source problems,
+  regularization) explicitly not read, flagged on the Source page for a
+  follow-up pass. Created [Whitney forms](/definitions/whitney-forms.md).
+  Merged the cohomology-aware FE counterpart into
+  [Discrete exactness theorems](/results/discrete-exactness-theorems.md).
+
+* **Ingestion**: [Tóth & Roe (2002)](/sources/toth-roe-2002.md) — text
+  extraction. Created
+  [Locality limits of divergence-preserving transfer](/results/transfer-operator-locality-limits.md).
+  Merged into [$P_D$](/operators/divergence-free-prolongation.md) (second,
+  independent construction) and
+  [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md).
+  **Contradictions development**: the Balsara-vs-Tóth AMR-nesting dispute at
+  [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
+  is effectively settled by convergence — Tóth's own 2002 conclusion
+  recommends face-centered storage for divergence-free AMR.
+
+* **Ingestion**: [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md)
+  — text extraction. Created
+  [Discrete exactness theorems](/results/discrete-exactness-theorems.md)
+  (the discrete Poincaré lemma with converses) and
+  [Support-operator method](/definitions/support-operator-method.md).
+  Opens the mimetic branch of the bundle.
+
 * **Deep lint #1** (after 11 ingestions). Findings and fixes: (1) notation
   drift — [flux-CT](/methods/flux-ct.md) used base-scheme flux symbols
   $f^{x,*}$ without registry backing; fixed by extending

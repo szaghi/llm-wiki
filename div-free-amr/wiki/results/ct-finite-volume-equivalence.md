@@ -55,13 +55,24 @@ zone-centered formulation of Tóth does not satisfy this property." The
 corner-centered volumes of $D_h^{\mathrm{k}}$ (diagonally rotated) do not
 tile under 2:1 refinement the way faces do.
 
-**Status (compiled):** no direct rebuttal in the corpus so far. The two
-results are formally compatible — Tóth's identity is stated on a single
-uniform grid; Balsara's claim concerns level transfer — but the *practical*
-force of the equivalence ("staggering unnecessary") is contested exactly
-where AMR begins. Open; no supersession recorded.
+**Development:** [Tóth & Roe (2002)](/sources/toth-roe-2002.md) — Tóth's
+own subsequent work — proves the locality trichotomy
+([transfer locality limits](/results/transfer-operator-locality-limits.md))
+and concludes that face-centered storage is indicated "for AMR schemes
+which require the divergence-free property." On the AMR question the two
+camps have effectively converged; the single-grid equivalence itself stands
+unrefuted.
+
+**Status (compiled):** the two results are formally compatible — Tóth's
+identity is stated on a single uniform grid; Balsara's claim concerns level
+transfer — and the 2002 development resolves the *practical* dispute in
+favor of staggered storage at interfaces, from Tóth's own hand. The
+single-grid equivalence remains valid; its "staggering unnecessary" reading
+does not extend to hierarchies. Effectively settled by convergence of the
+parties; no formal supersession.
 
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md), §4.4, eqs. (23)–(27), §7.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
+3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §7.

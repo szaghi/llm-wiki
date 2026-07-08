@@ -45,7 +45,19 @@ area-weighted integration over fine faces is precisely the
 [$P_D$ prolongation](/operators/divergence-free-prolongation.md), which is
 why reconstruction quality governs AMR transfer quality.
 
+## Continuous interpolation and its limit
+
+[Tóth & Roe (2002)](/sources/toth-roe-2002.md) §3.3 give continuous
+interpolating polynomials matching their discrete transfer formulas
+(useful for field-line/streamline tracing) — continuous in the normal
+component but with an **unavoidable transverse discontinuity** at cell
+boundaries at this polynomial order: flux conservation forbids matching the
+transverse gradients from both sides. The discontinuity decays at second
+order. A structural caution for any claim of globally smooth
+divergence-free reconstruction at low order.
+
 # Citations
 
 1. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
+3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.3.

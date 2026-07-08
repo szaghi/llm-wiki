@@ -1,0 +1,46 @@
+---
+type: Definition
+title: "Support-operator method (mimetic discretization)"
+description: "Discretize one prime operator to satisfy its integral identity exactly; define the remaining operators as its adjoints in discrete inner products."
+status: established
+aliases: [SOM, mimetic finite differences]
+tags: [mimetic, support-operator, adjoint, discrete-vector-analysis]
+timestamp: 2026-07-08T00:00:00Z
+---
+
+# Support-operator method (mimetic discretization)
+
+The construction discipline of mimetic finite differences
+([Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md)): choose one
+first-order operator as the **prime** operator and discretize it so a
+discrete integral identity holds *exactly* — e.g. $D_h$ from the discrete
+Gauss theorem, $C_h$ from the discrete Stokes theorem. Then define the
+**derived** operators as adjoints in the chosen discrete inner products,
+e.g.
+$$G_h := -\,D_h^{*},$$
+so that the discrete integration-by-parts identity
+$(D_h \vec A, \varphi)_{V_h^3} + (\vec A, G_h \varphi)_{V_h^2} = \text{boundary terms}$
+holds by construction rather than by verification.
+
+Why the adjoint step is unavoidable: the *natural* operators alone have
+mismatched domains and ranges
+($G_h: V_h^0 \to V_h^1$ but $D_h: V_h^2 \to V_h^3$,
+[notation](/notation.md)) — compound operators like
+$\operatorname{div}\operatorname{grad}$, $\operatorname{grad}\operatorname{div}$,
+$\operatorname{curl}\operatorname{curl}$ cannot be formed from them.
+The adjoints supply the complementary-collocation copies, and they inherit
+discrete analogs of the same vector-analysis theorems.
+
+What the method buys, per the source: operators valid on nonuniform,
+nonorthogonal, nonsmooth logically-rectangular (and unstructured) grids;
+integral identities exact by construction, which is the substrate for
+energy estimates, convergence and stability proofs, and constraint
+preservation — the finite-difference sibling of
+[SBP](/definitions/summation-by-parts.md)'s
+mimic-integration-by-parts discipline, with the
+[discrete exactness theorems](/results/discrete-exactness-theorems.md) as
+its structural payoff.
+
+# Citations
+
+1. [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md), §1, conclusions.
