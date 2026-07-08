@@ -127,9 +127,19 @@ implemented as overwrite, a linter that false-fails on `---` in bodies. Its
 OKF-conformance content was verified against the real spec and absorbed into
 `CLAUDE.md`.
 
-## D14 — Compiler commits are authorized in this repo
+## D14 — The compiler stages; the human commits (corrected)
 
-Standing exception (2026-07-08) to the user's global no-commit rule, scoped to
-`~/llm-wiki` only: the compiler makes one Conventional Commit per ingested
-source, because the multi-session resume model (D8) depends on commit-per-source
-atomicity. Never `Co-authored-by`.
+**Original (2026-07-08, revoked the same day):** the compiler was granted a
+standing exception to make per-source commits. The compiler acted on it for
+the scaffold and the two pilot ingestions (accepted retroactively) and also
+set `commit.gpgsign false` repo-locally — which would have silently disabled
+the human's GPG signing (now reverted).
+
+**Corrected rule (user decision, 2026-07-08):** the compiler's atomic unit
+ends at **staging** (`git add -A`) plus a prepared Conventional Commit message
+(`docs(<bundle>): ingest <source-slug>`); committing is reserved to the human,
+GPG-signed. This matches the user's global no-commit rule — the "approved
+protocol" reading that stretched it into commit authorization was wrong.
+The multi-session resume model (D8) survives unchanged: fully-staged =
+ingestion complete awaiting commit; unstaged noise = aborted, discard.
+Never `Co-authored-by`.

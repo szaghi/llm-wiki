@@ -154,14 +154,18 @@ For each source, in order:
 5. **Append to `log.md`** (dated entry, pages touched).
 6. **Update affected `index.md` files.**
 7. **Lint**: `python3 tools/lint_okf.py <bundle>/wiki` must pass.
-8. **Commit**: one commit per source, `docs(<bundle>): ingest <source-slug>`.
+8. **Stage and hand off**: `git add -A`, then present the prepared commit
+   message `docs(<bundle>): ingest <source-slug>` to the human. **The compiler
+   never commits** — commits are reserved to the human (GPG-signed).
 
 "Is it ingested?" has exactly one answer: a Source page exists. There is no
 inbox, no queue file — the worklist is derived (`tools/worklist.sh`).
 
 **Interrupted work:** ingestion is atomic at source granularity —
-complete-and-commit or discard (`git checkout`). The resume point is always the
-last commit; `git status` tells any session whether the previous one ended clean.
+complete-and-stage or discard (`git checkout`). The resume point is always the
+last commit; `git status` tells any session how the previous one ended:
+clean = committed by the human; fully staged = ingestion complete, awaiting the
+human's commit; unstaged noise = aborted mid-source, discard it.
 
 ## Granularity — what earns a page
 
@@ -198,7 +202,7 @@ external search dependency. Revisit only if the bundle outgrows navigation
 ## Git discipline
 
 - Conventional Commits. **Never** add `Co-authored-by` lines.
-- Per-source commits by the compiler are **authorized in this repository**
-  (standing exception, granted 2026-07-08, to the user's global no-commit rule —
-  the multi-session resume model depends on them). This exception does not extend
-  to any other repository.
+- **The compiler stages; the human commits.** One staged unit + prepared
+  message per ingested source (`docs(<bundle>): ingest <source-slug>`); the
+  human commits with their GPG key. The compiler never runs `git commit` and
+  never touches `commit.gpgsign`. (Rule corrected 2026-07-08 — see D14.)
