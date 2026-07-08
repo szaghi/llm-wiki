@@ -37,6 +37,17 @@ projection of [FEEC](/definitions/finite-element-exterior-calculus.md)
 realized concretely — and the natural benchmark any high-order FD
 construction with exactness claims must be measured against.
 
+The framework behind the method
+([Palha et al. (2014)](/sources/palha-2014.md)): quantities split into
+forms and pseudo-forms by orientation, the Hodge-$\star$ is the sole
+metric crossing, and two equivalent architectures result — a dual-grid
+description resembling staggered finite volumes and a single-grid
+description resembling finite elements, proved to deliver equivalent
+solutions on the volume-form Poisson problem. The design principle in
+their words: the discrete system behaves like the continuous one exactly
+when the operators **commute with the projection**.
+
 # Citations
 
 1. [Kreeft & Gerritsma (2013)](/sources/kreeft-gerritsma-2013.md), §§3–5.
+2. [Palha et al. (2014)](/sources/palha-2014.md), §§1–6.

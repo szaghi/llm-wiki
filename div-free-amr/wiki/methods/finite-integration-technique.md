@@ -47,6 +47,15 @@ $D_h C_h = 0$.
   dual-staggered time axis), and discrete energy conservation is proved
   for it algebraically.
 
+The split later acquired an analysis: **compatible discrete operator
+(CDO)** schemes formalize "all error in the Hodge" for elliptic problems
+on polyhedral meshes, identify the two local design properties of the
+discrete Hodge operator that yield optimal energy error estimates, and
+organize the whole construction around inner/outer *orientation* — the
+reason a dual mesh exists at all
+([Bonelle & Ern (2014)](/sources/bonelle-ern-2014.md)).
+
 # Citations
 
 1. [Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md), §§1–4.
+2. [Bonelle & Ern (2014)](/sources/bonelle-ern-2014.md), §§1–4.

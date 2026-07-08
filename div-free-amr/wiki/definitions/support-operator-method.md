@@ -65,3 +65,9 @@ an interface exception.
 1. [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md), §1, conclusions.
 2. [Brezzi, Lipnikov & Shashkov (2005)](/sources/brezzi-lipnikov-shashkov-2005.md), §§4–5.
 3. [Lipnikov, Manzini & Shashkov (2014)](/sources/lipnikov-2014.md), §§1–2.
+4. [Trask, Bochev & Perego (2020)](/sources/trask-2020.md) — the meshfree
+   frontier: on point clouds the missing faces are constructed
+   *algebraically* (virtual face moments via GMLS or graph-Laplacians),
+   and the discrete divergence theorem with local conservation survives
+   at first order — the mimetic structure attaches to operator relations,
+   not to mesh entities.

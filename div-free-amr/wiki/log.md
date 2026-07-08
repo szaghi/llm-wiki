@@ -2,6 +2,21 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Trask, Bochev & Perego (2020)](/sources/trask-2020.md) —
+  text extraction. No new pages; merged the meshfree frontier (virtual
+  faces, structure-attaches-to-operators) into
+  [Support-operator method](/definitions/support-operator-method.md).
+
+* **Ingestion**: [Palha et al. (2014)](/sources/palha-2014.md) — text
+  extraction. No new pages; merged the forms/pseudo-forms framework and
+  single/dual-grid equivalence into
+  [Mimetic spectral elements](/methods/mimetic-spectral-elements.md).
+
+* **Ingestion**: [Bonelle & Ern (2014)](/sources/bonelle-ern-2014.md) —
+  text extraction. No new pages; merged the CDO analysis (Hodge design
+  properties, orientation) into
+  [Finite integration technique](/methods/finite-integration-technique.md).
+
 * **Deep lint #5** (after 50 ingestions). Clean pass: no notation drift,
   no orphans, both `Contradictions` blocks current. Singleton tags
   reviewed — `hybrid` (FD–FV mesh hybrid) and `hybridization` (static
