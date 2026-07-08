@@ -48,6 +48,21 @@ error dynamics:
   $c_p$ is unrestricted by stability; $c_p \to \infty$ recovers the purely
   hyperbolic variant.
 
+## Production realization: CTU-GLM
+
+[Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md) build
+the fully cell-centered unsplit CTU-GLM scheme (PLUTO) and benchmark it
+head-to-head — same code, same integrator — against eight-wave and
+staggered CT: competitive with CT in accuracy and robustness while
+"considerably easier to implement." Two additions to the family record:
+the **EGLM** variant (Dedner's divergence source terms in momentum/energy)
+trades conservation for robustness in strongly magnetized flows, and the
+damping parameter acquires the physical reading
+$\alpha = \Delta t_d/\Delta t_a$. Their stated motive for the collocated
+route: single-location variables ease extension to adaptive grids, extra
+physics, and higher order.
+
 # Citations
 
 1. [Dedner et al. (2002)](/sources/dedner-2002.md), §2–5, Appendix.
+2. [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md), §§2–4.

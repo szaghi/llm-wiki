@@ -40,6 +40,15 @@ conservation maintainable.
   propagation speed), and clustering heuristics emit new patches; nesting is
   enforced by construction.
 
+**Variant: tree-based (octree) AMR.** The other major structured-AMR
+flavor refines cell-by-cell on a tree — e.g. RAMSES's fully threaded tree
+of "octs" (8-cell sibling groups)
+([Fromang et al. (2006)](/sources/fromang-2006.md)) — rather than by
+rectangular patches. The 2:1 coarse–fine interface and its transfer
+operators are the same mathematical object in both flavors; what changes
+is granularity, data structure, and where interfaces occur (everywhere, at
+single-cell granularity, in the tree case).
+
 Within this corpus, this hierarchy — and specifically its $r=2$ coarse–fine
 interface with $\Gamma$, $R$, and prolongation $P$ as the transfer
 operators — is the structure on which every AMR divergence-constraint
@@ -50,3 +59,4 @@ concerns smoothly moving zones, not patch hierarchies.
 # Citations
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §2–6.
+2. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.5.

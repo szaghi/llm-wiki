@@ -57,6 +57,13 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   precision over one run; double-precision field evolution holds
   $10^{-15}$–$10^{-14}$).
 
+* **Stencil consistency is testable.** The 3D field-loop advection test
+  ($(x,y)$-plane loop, $v_z \ne 0$) detects mismatch operationally: if the
+  constraint is held on a stencil different from the one used to build the
+  $B_z$ fluxes, $B_z$ grows unphysically; round-off-constant $B_z$
+  certifies preservation on the *consistent* stencil
+  ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)).
+
 ## Why it matters
 
 Nonzero numerical divergence produces an anomalous force component parallel
@@ -69,3 +76,4 @@ primary source not yet ingested).
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §III–IV, eq. (4.7)–(4.9), (5.6).
 2. [Tóth (2000)](/sources/toth-2000.md), §1.1, §4.4, §7, Appendix A.
 3. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), eqs. (6)–(10).
+4. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §1, §6.

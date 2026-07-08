@@ -2,6 +2,26 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md)
+  — text extraction. No new pages; merged CTU-GLM production realization,
+  EGLM trade, and the same-code three-way comparison into
+  [GLM divergence cleaning](/methods/glm-divergence-cleaning.md).
+
+* **Ingestion**: [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)
+  — text extraction. No new pages; merged into
+  [Constrained transport](/methods/constrained-transport.md) (unsplit CTU,
+  upwind $\mathcal{E}^c$) and
+  [Exact discrete divergence](/properties/exact-discrete-divergence.md)
+  (field-loop test as stencil-consistency detector).
+
+* **Ingestion**: [Fromang et al. (2006)](/sources/fromang-2006.md) — text
+  extraction. No new pages; merged into
+  [Block-structured AMR](/definitions/block-structured-amr.md)
+  (tree-based/octree variant distinguished) and
+  [Constrained transport](/methods/constrained-transport.md) (production
+  deployment). Interface-prolongation details deferred to Teyssier et al.
+  2006, not in corpus — recorded as a gap.
+
 * **Ingestion**: [Brezzi, Lipnikov & Shashkov (2005)](/sources/brezzi-lipnikov-shashkov-2005.md)
   — text extraction. Created
   [MFD convergence on polyhedral meshes](/results/mfd-convergence.md)

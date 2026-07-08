@@ -95,9 +95,18 @@ field-loop infall, and accretion-disk formation; the divergence diagnostic
 holds at $\sim 10^{-15}$ (double precision) through all runs.
 In [Tóth (2000)](/sources/toth-2000.md)'s ten-problem shock-capturing
 comparison, flux-CT ranks among the three most accurate and reliable schemes.
+In production, CT runs on tree-based (octree) AMR in RAMSES-MHD with
+2D-Riemann edge EMFs ([Fromang et al. (2006)](/sources/fromang-2006.md)),
+and in Athena via unsplit CTU with the upwind-biased $\mathcal{E}^c$ EMF
+([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)) — where
+dimensional splitting is ruled out on principle (the constraint couples
+all field components, so they must update together), and the scheme
+reduces exactly to its 1D form for grid-aligned flow.
 
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §II–V.
 2. [Tóth (2000)](/sources/toth-2000.md), §4, §7.
 3. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
+4. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.
+5. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §§3–4.
