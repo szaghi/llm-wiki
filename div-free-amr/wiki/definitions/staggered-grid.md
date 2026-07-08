@@ -33,6 +33,14 @@ eqs. 4.1–4.3) allow stretched and time-varying ("adaptive") spacings, at the
 cost of progressive loss of second-order truncation accuracy when adjacent
 zones differ by more than a few percent.
 
+Staggering is a *sufficient* arrangement for the CT constraint mechanism, not
+a necessary one: for the Godunov CT variants the staggered field can be
+eliminated entirely, yielding an identical pure finite-volume scheme on
+cell-centered data whose exact invariant is a corner-centered divergence —
+see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
+([Tóth (2000)](/sources/toth-2000.md)).
+
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §IV(a)–(b), Figs. 1–2.
+2. [Tóth (2000)](/sources/toth-2000.md), §4.4.

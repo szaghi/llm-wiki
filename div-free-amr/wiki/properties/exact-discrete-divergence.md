@@ -28,9 +28,25 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   boundary inflow can still inject violation.
 * **The operator is scheme-specific.** "Exact" is always relative to one
   particular $D_h$ — for [constrained transport](/methods/constrained-transport.md)
-  it is the face-flux difference over a cell (Evans & Hawley eq. 4.9, the
-  discrete Gauss theorem). A field exactly solenoidal in one discretization
-  is generally not solenoidal in another.
+  it is the face-flux difference over a cell, $D_h^{\mathrm{f}}$
+  (Evans & Hawley eq. 4.9, the discrete Gauss theorem). A field exactly
+  solenoidal in one discretization is generally not solenoidal in another.
+  [Tóth (2000)](/sources/toth-2000.md) makes the stencil-dependence
+  systematic: the collocated recast of the CT variants conserves the
+  corner-centered $D_h^{\mathrm{k}}$ but *not* the natural cell-centered
+  $D_h^{\mathrm{c}}$
+  ([CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md));
+  central-difference schemes conserve $D_h^{\mathrm{c}}$ to roundoff; the
+  [projection method](/methods/projection-method.md) enforces
+  $D_h^{\mathrm{c}}$ to solver tolerance;
+  [eight-wave](/methods/eight-wave.md) bounds it by truncation error only.
+* **No stencil choice is physically privileged.** For conservative
+  shock-capturing schemes, no discrete divergence constraint eliminates all
+  unphysical Lorentz-force effects — exact orthogonality of the discrete
+  acceleration to $B_h$ in every cell is incompatible with momentum
+  conservation
+  ([conservation–orthogonality incompatibility](/results/conservation-orthogonality-incompatibility.md));
+  Tóth: the choice of discretization "is always somewhat arbitrary."
 * **Roundoff behavior.** The invariant is exact in exact arithmetic; in
   floating point it accumulates roundoff at a problem-dependent rate
   (Evans & Hawley observe drift from $10^{-15}$ to $10^{-10}$ in single
@@ -47,3 +63,4 @@ primary source not yet ingested).
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §III–IV, eq. (4.7)–(4.9), (5.6).
+2. [Tóth (2000)](/sources/toth-2000.md), §1.1, §4.4, §7, Appendix A.

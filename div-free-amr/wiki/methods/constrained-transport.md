@@ -59,13 +59,34 @@ of the magnetic field to machine roundoff, introduced by
   field, avoiding the anomalous current oscillations produced by second
   differences of monotonically-advected quantities.
 
+## Shock-capturing combinations and the collocated recast
+
+CT as introduced is a finite-difference discretization; it was subsequently
+combined with conservative Godunov-type base schemes by supplying the edge
+EMF from base-scheme data — the field-CT / flux-CT / transport-flux-CT family
+([Flux-CT and the Godunov CT variants](/methods/flux-ct.md);
+[Tóth (2000)](/sources/toth-2000.md) §4).
+
+[Tóth (2000)](/sources/toth-2000.md) further proves that these CT variants
+are algebraically *identical* to pure finite-volume schemes on the
+cell-centered field, conserving a corner-centered divergence
+$D_h^{\mathrm{k}} B_h$ exactly —
+[CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md).
+The constraint mechanism of this family is therefore not staggering per se
+but the symmetrized, once-per-edge assembly of the EMF; the staggered and
+collocated formulations are two representations of one scheme, each exact in
+its own divergence stencil.
+
 # Examples
 
 Evans & Hawley calibrate CT against three vector-potential codes on Cartesian
 square-wave advection, radial accretion onto a Schwarzschild hole, closed
 field-loop infall, and accretion-disk formation; the divergence diagnostic
 holds at $\sim 10^{-15}$ (double precision) through all runs.
+In [Tóth (2000)](/sources/toth-2000.md)'s ten-problem shock-capturing
+comparison, flux-CT ranks among the three most accurate and reliable schemes.
 
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §II–V.
+2. [Tóth (2000)](/sources/toth-2000.md), §4, §7.

@@ -1,0 +1,49 @@
+---
+type: Result
+title: "CT–finite-volume equivalence"
+description: "The Godunov CT variants are algebraically identical to pure finite-volume schemes on the cell-centered field, which conserve a corner-centered divergence exactly."
+status: established
+tags: [constrained-transport, finite-volume, equivalence, collocation]
+timestamp: 2026-07-08T00:00:00Z
+---
+
+# CT–finite-volume equivalence
+
+**Statement** ([Tóth (2000)](/sources/toth-2000.md) §4.4). Each of the
+field-, flux-, and transport-flux-interpolated
+[CT variants](/methods/flux-ct.md) can be rewritten, by composing the
+staggered update with the face-to-center interpolation, as a *pure finite
+volume scheme* for the cell-centered field $B_h$: a conservative flux-form
+update whose fluxes $\bar f$ are symmetric averages of base-scheme data over
+a wider stencil (6 cells × 2 time levels for field-CT). In terms of the cell
+centered variables $\rho, \rho v, e, B_h$ the recast scheme is **identical**
+to the original staggered one — "the staggered representation of the magnetic
+field is unnecessary."
+
+**The conserved invariant relocates.** The recast scheme does not conserve
+the cell-centered divergence $D_h^{\mathrm{c}} B_h$; it conserves the
+corner-centered $D_h^{\mathrm{k}} B_h$ ([notation](/notation.md)) — a contour
+integral over a diagonally rotated volume — exactly, to roundoff: if the
+staggered field satisfies $D_h^{\mathrm{f}} b = 0$ in the four cells meeting
+a corner, the interpolated cell-centered field satisfies
+$D_h^{\mathrm{k}} B_h = 0$ there, and the $\bar f$-updates maintain it.
+
+## Consequences
+
+* **Staggering is a representation choice, not the constraint mechanism**,
+  for these schemes: the divergence-preserving structure survives intact in
+  a fully collocated (cell-centered) formulation — at the cost of wider,
+  symmetrized flux stencils ([staggered grid](/definitions/staggered-grid.md)).
+* "Exact divergence" claims must always name their stencil: the equivalence
+  moves the invariant from $D_h^{\mathrm{f}}$ (staggered view) to
+  $D_h^{\mathrm{k}}$ (collocated view) — see
+  [exact discrete divergence](/properties/exact-discrete-divergence.md).
+
+**Scope.** Proved for the Godunov CT variants in 2D with the standard
+face-to-center averaging (generalization to nonuniform grids and 3D stated);
+it is a statement about these particular schemes, not a claim that every
+staggered scheme admits a collocated rewrite.
+
+# Citations
+
+1. [Tóth (2000)](/sources/toth-2000.md), §4.4, eqs. (23)–(27), §7.

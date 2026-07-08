@@ -43,6 +43,18 @@ $$V_h^0 \xrightarrow{G_h} V_h^1 \xrightarrow{C_h} V_h^2 \xrightarrow{D_h} V_h^3$
 Exactness identities, when a scheme provides them:
 $D_h C_h = 0$ and $C_h G_h = 0$.
 
+When one page must distinguish concrete divergence stencils, mark the
+instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
+
+| Symbol | Stencil |
+|---|---|
+| $D_h^{\mathrm{f}}$ | face-flux difference over a cell (staggered/Gauss sense) |
+| $D_h^{\mathrm{c}}$ | cell-centered central difference on collocated DOFs |
+| $D_h^{\mathrm{k}}$ | corner-centered (nodal) difference on collocated DOFs |
+
+Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
+is irrelevant to the claim.
+
 ## Fields
 
 | Symbol | Meaning |
