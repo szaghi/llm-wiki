@@ -73,7 +73,11 @@ requirement for building (high-order) schemes with a unique EMF — the
 design-time collocation of the update. Neither refutes the other; whether
 "necessary" means "ineliminable from the final algebra" (no) or "forced on
 the construction" (yes) is exactly the live question of this domain. Both
-positions stand; no supersession recorded.
+positions stand; no supersession recorded. *Development:* on the AMR
+question specifically, Tóth's own later locality results favor staggered
+storage — see the resolved dispute at
+[CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
+and [transfer locality limits](/results/transfer-operator-locality-limits.md).
 
 # Citations
 

@@ -53,7 +53,15 @@ discrete metric conditions**
 the Jacobian enters the norm, and non-smooth meshes put the metric terms on
 the critical path.
 
+Second derivatives have their own SBP operators
+$\mathsf{D}_2 = \mathsf{H}^{-1}(A + \mathsf{B}S)$, $A + A^T \le 0$, built
+on the **same norm** as $\mathsf{D}_1$ so mixed problems close under one
+energy estimate; minimal-width forms match the first-derivative stencil,
+and boundary closures two orders below the interior preserve the design
+order ([Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md)).
+
 # Citations
 
 1. [Strand (1994)](/sources/strand-1994.md), §1–2.
 2. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§4–5.
+3. [Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md), §§2–3.

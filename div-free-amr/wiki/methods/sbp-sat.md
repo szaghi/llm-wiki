@@ -40,14 +40,17 @@ coupled quantities. Findings of the curvilinear analysis:
   the discrete metric terms — non-smooth meshes put the metric derivatives
   on the critical path.
 
-## Scope note for this bundle
+## Nonconforming interfaces
 
-Everything here is the **conforming** case. The 2:1 nonconforming interface
-— SBP-preserving interpolation between grids of different resolution, the
-setting of this bundle's central question — is later work
-(Mattsson-line and successors, pending ingestion); this page records the
-baseline those works extend.
+The conforming-interface assumptions above were later removed:
+[SBP-preserving interpolation operators](/operators/sbp-preserving-interpolation.md)
+($I_{C2F}, I_{F2C}$, adjoint in the interface norms and non-amplifying)
+couple blocks of different resolution — including the 2:1 compression —
+and even different operator orders, keeping strict stability, accuracy,
+and conservation
+([Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md)).
 
 # Citations
 
 1. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§3–5.
+2. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md), §§3–4.

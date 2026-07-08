@@ -2,6 +2,30 @@
 
 ## 2026-07-08
 
+* **Deep lint #2** (after 20 ingestions). Findings and fixes: (1) registry
+  gap — $\mathsf{D}_2$ used on the [SBP page](/definitions/summation-by-parts.md)
+  but unregistered; added to [notation](/notation.md). (2) Redundant tag
+  `summation-by-parts` removed from the Strand source (duplicate of `sbp`).
+  (3) The [staggered-grid Contradictions block](/definitions/staggered-grid.md)
+  now cross-references the Tóth–Roe 2002 development recorded at the
+  equivalence page. $D_h$ stencil superscripts fully consistent (f/c/k);
+  no orphans; $\mathcal{D}$ and glue-space remain deliberately inline-named.
+
+* **Ingestion**: [Kozdon & Wilcox (2015)](/sources/kozdon-wilcox-2015.md) —
+  text extraction. No new pages; merged the glue-space generalization into
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md).
+
+* **Ingestion**: [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md)
+  — text extraction. Created
+  [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md)
+  (second Operator page). Merged into [SBP-SAT](/methods/sbp-sat.md)
+  (nonconforming extension). **Registry extension**: interface
+  interpolation block ($I_{C2F}, I_{F2C}$, adjoint condition).
+
+* **Ingestion**: [Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md)
+  — text extraction. No new pages; merged second-derivative SBP operators
+  into [SBP](/definitions/summation-by-parts.md).
+
 * **Ingestion**: [Balsara (2004)](/sources/balsara-2004.md) — text
   extraction; **filename DOI tag found wrong**, identity Crossref-verified
   (10.1086/381377). Consolidation source: no new pages; merged into

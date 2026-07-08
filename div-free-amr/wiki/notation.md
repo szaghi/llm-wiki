@@ -55,6 +55,20 @@ instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
 Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
 is irrelevant to the claim.
 
+## Interface interpolation (SBP)
+
+(Added 2026-07-08, Mattsson–Carpenter-2010 ingestion.) Trace-space
+counterparts of $P$/$R$ acting on interface data between nonconforming
+blocks:
+
+| Symbol | Meaning |
+|---|---|
+| $I_{C2F}$ | coarse-to-fine interface interpolation |
+| $I_{F2C}$ | fine-to-coarse interface interpolation |
+
+SBP-preserving pair: $\mathsf{H}_F\, I_{C2F} = I_{F2C}^T\, \mathsf{H}_C$
+(adjoints in the interface norms).
+
 ## Base-scheme (Godunov) quantities
 
 (Added 2026-07-08, deep lint #1.) Starred symbols denote values produced by
@@ -73,6 +87,7 @@ registry uses sans-serif for SBP matrices:
 | $\mathsf{H}$ | SBP norm/quadrature matrix, SPD, defining $(u,v)_h = u^T \mathsf{H} v$ |
 | $\mathsf{Q}$ | almost-skew-symmetric part: $\mathsf{Q} + \mathsf{Q}^T = \mathsf{B}$ (boundary terms) |
 | $\mathsf{D}_1 = \mathsf{H}^{-1}\mathsf{Q}$ | SBP first-derivative operator |
+| $\mathsf{D}_2 = \mathsf{H}^{-1}(A + \mathsf{B}S)$ | SBP second-derivative operator, $A + A^T \le 0$ (added at deep lint #2) |
 
 ## Fields
 
