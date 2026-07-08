@@ -2,6 +2,24 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Kreeft & Gerritsma (2013)](/sources/kreeft-gerritsma-2013.md)
+  — text extraction. Created
+  [Mimetic spectral elements](/methods/mimetic-spectral-elements.md):
+  the corpus's constructive proof that high order and pointwise exactness
+  coexist (FE/spectral family, conforming curvilinear meshes; 2:1
+  interfaces untouched).
+
+* **Ingestion**: [Lipnikov, Manzini & Shashkov (2014)](/sources/lipnikov-2014.md)
+  — **scoped read** (§1 closely, remainder at claim level). No new pages;
+  merged the S1/S2 architecture, scheme families, and hanging-node inner
+  products into
+  [Support-operator method](/definitions/support-operator-method.md).
+
+* **Ingestion**: [Perot (2011)](/sources/perot-2011.md) — text extraction.
+  Created [Secondary conservation](/properties/secondary-conservation.md)
+  (taxonomy; the divergence constraint positioned as the corpus's
+  archetypal secondary invariant).
+
 * **Ingestion**: [Lundquist, Malan & Nordström (2018)](/sources/lundquist-2018.md)
   — text extraction. No new pages; merged the general-mesh hybrid
   extension into
