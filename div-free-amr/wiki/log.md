@@ -2,6 +2,26 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Chorin (1968)](/sources/chorin-1968.md) — text extraction.
+  Merged into [Projection method](/methods/projection-method.md) (origin:
+  discrete Hodge decomposition; collocated central operators with
+  $2\Delta x$-spaced composite Laplacian). No new pages — the method page
+  already existed from the Tóth ingestion; this run grounded it in its
+  primary source.
+
+* **Ingestion**: [Yee (1966)](/sources/yee-1966.md) — read visually (6/6
+  pages). Created [Yee scheme (FDTD)](/methods/yee-scheme.md). Merged into
+  [Staggered grid](/definitions/staggered-grid.md) (EM instance; time
+  staggering). Integrity note: divergence preservation is *implicit* in
+  Yee (1966) — recorded as unstated, not attributed to the paper.
+
+* **Ingestion**: [Harlow & Welch (1965)](/sources/harlow-welch-1965.md) —
+  text-poor scan, read visually (8/8 article pages). Created
+  [MAC method](/methods/mac-method.md). Merged into
+  [Staggered grid](/definitions/staggered-grid.md) (origin of staggering) and
+  [Exact discrete divergence](/properties/exact-discrete-divergence.md)
+  (velocity/incompressibility ancestry).
+
 * **Ingestion**: [Tóth (2000)](/sources/toth-2000.md) — clean text extraction.
   Created [Flux-CT and the Godunov CT variants](/methods/flux-ct.md),
   [Projection method](/methods/projection-method.md),

@@ -17,6 +17,17 @@ locations. Collocation is load-bearing for this domain: which discrete
 divergence a scheme can hold exactly is determined by where its field
 degrees of freedom live.
 
+The arrangement originates with the
+[MAC method](/methods/mac-method.md) of
+[Harlow & Welch (1965)](/sources/harlow-welch-1965.md): face-normal
+velocities and cell-centered pressure, giving a compact two-point
+divergence per direction and a five-point pressure Laplacian free of
+checkerboard modes. Its electromagnetic counterpart is the
+[Yee lattice](/methods/yee-scheme.md) ([Yee (1966)](/sources/yee-1966.md)):
+$E_h$ on edges, $B_h$ on faces — chosen there so perfectly-conducting
+boundary conditions are imposed exactly by the placement — plus *time*
+staggering (leapfrog, fields offset by half a step).
+
 In the [constrained transport](/methods/constrained-transport.md) arrangement
 of [Evans & Hawley (1988)](/sources/evans-hawley-1988.md) (their Figs. 1–2):
 thermodynamic quantities at cell centers; velocities and momenta
@@ -42,5 +53,7 @@ see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
 
 # Citations
 
-1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §IV(a)–(b), Figs. 1–2.
-2. [Tóth (2000)](/sources/toth-2000.md), §4.4.
+1. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), Fig. 2.
+2. [Yee (1966)](/sources/yee-1966.md), Fig. 1.
+3. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §IV(a)–(b), Figs. 1–2.
+4. [Tóth (2000)](/sources/toth-2000.md), §4.4.

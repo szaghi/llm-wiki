@@ -15,7 +15,11 @@ $$D_h B_h = 0$$
 $D_h : V_h^2 \to V_h^3$ ([notation](/notation.md)) annihilates the evolved
 field by construction of the update, so the constraint holds to machine
 roundoff at every step, independent of resolution, time step, or solution
-smoothness.
+smoothness. The velocity analog $D_h u_h = 0$ (incompressibility) is the
+older sibling: the [MAC method](/methods/mac-method.md)
+([Harlow & Welch (1965)](/sources/harlow-welch-1965.md)) already enforced
+the face-difference stencil $D_h^{\mathrm{f}} u_h = 0$ cell-by-cell — though
+by elliptic solve (tolerance-level), not algebraically.
 
 Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md):
 
@@ -64,3 +68,4 @@ primary source not yet ingested).
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §III–IV, eq. (4.7)–(4.9), (5.6).
 2. [Tóth (2000)](/sources/toth-2000.md), §1.1, §4.4, §7, Appendix A.
+3. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), eqs. (6)–(10).

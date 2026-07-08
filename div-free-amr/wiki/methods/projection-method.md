@@ -14,9 +14,24 @@ After the base scheme produces a provisional field $B_h^*$, solve
 $$D_h^{\mathrm{c}} G_h\, \phi_h = D_h^{\mathrm{c}} B_h^{*},$$
 then correct $B_h = B_h^* - G_h \phi_h$, removing the cell-centered discrete
 divergence ([notation](/notation.md)) to the tolerance of the Poisson solver.
-The MHD usage is analyzed in depth by [Tóth (2000)](/sources/toth-2000.md)
-(the scheme's hydrodynamic ancestry and its MHD origin—Brackbill & Barnes—are
-not yet ingested as primary sources).
+
+## Origin
+
+The method is [Chorin (1968)](/sources/chorin-1968.md)'s scheme for
+incompressible Navier–Stokes, transplanted to the induction equation:
+advance an auxiliary field without the constraint-enforcing gradient, then
+perform the **discrete Hodge decomposition**
+$u_h^{\mathrm{aux}} = u_h^{n+1} + b^{-1} G_h \phi_h$ with
+$D_h u_h^{n+1} = 0$ — keep the divergence-free part, discard the gradient
+part into the pressure. Chorin works *collocated* with central $D_h$ and
+$G_h$, so his composite Laplacian $D_h^{\mathrm{c}} G_h$ is a five-point
+stencil of spacing $2\Delta x$ (the compact staggered alternative is the
+[MAC](/methods/mac-method.md) pressure equation, which enforces the same
+constraint family through the momentum update rather than as a separate
+projection). The existence and uniqueness of the decomposition is inherited
+from the well-posedness of the continuous problem. The MHD adaptation
+(Brackbill & Barnes) is not yet ingested as a primary source; its modern
+assessment is [Tóth (2000)](/sources/toth-2000.md).
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
@@ -40,4 +55,5 @@ not yet ingested as primary sources).
 
 # Citations
 
-1. [Tóth (2000)](/sources/toth-2000.md), §5, §7, Table IX.
+1. [Chorin (1968)](/sources/chorin-1968.md), eqs. (3)–(5), (20)–(22).
+2. [Tóth (2000)](/sources/toth-2000.md), §5, §7, Table IX.
