@@ -63,6 +63,15 @@ subcycling uses the reconstruction directly.
   necessary," reserving exactness machinery for the synchronization points
   where its premise actually holds.
 
+## The coordinate-independent generalization
+
+[Olivares et al. (2019)](/sources/olivares-2019.md) derive a general class
+of divergence-preserving prolongation operators for face-allocated
+variables valid in **arbitrary coordinates and stationary curved
+spacetimes** — generalizing the Cartesian constructions below — with the
+full AMR implementation (ghost exchange, coarse–fine and polar-axis
+treatment) documented in the production GRMHD code BHAC.
+
 ## The Tóth–Roe construction
 
 [Tóth & Roe (2002)](/sources/toth-roe-2002.md) give an independent
@@ -81,3 +90,4 @@ prove the locality trichotomy across storage choices —
 2. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.
 3. [Miniati & Martin (2011)](/sources/miniati-martin-2011.md), §3.
 4. [Etienne, Liu & Shapiro (2010)](/sources/etienne-2010.md) — the [vector-potential route](/methods/vector-potential-evolution.md) that dissolves the transfer problem instead of solving it.
+5. [Olivares et al. (2019)](/sources/olivares-2019.md), §§3–4.

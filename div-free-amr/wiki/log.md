@@ -2,6 +2,23 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Olivares et al. (2019)](/sources/olivares-2019.md) —
+  text extraction. No new pages; merged the coordinate-independent $P_D$
+  generalization into
+  [$P_D$](/operators/divergence-free-prolongation.md) and the
+  qualitative-differences production finding into
+  [Exact discrete divergence](/properties/exact-discrete-divergence.md).
+
+* **Ingestion**: [Etienne et al. (2015)](/sources/etienne-2015.md) — text
+  extraction. No new pages; merged the damped generalized Lorenz gauge
+  into [Vector-potential evolution](/methods/vector-potential-evolution.md).
+
+* **Ingestion**: [Etienne et al. (2012)](/sources/etienne-2012.md) — text
+  extraction. No new pages; merged the gauge-mode diagnosis (static modes
+  + interface interpolation → spurious constraint-consistent fields) and
+  Lorenz-gauge cure into
+  [Vector-potential evolution](/methods/vector-potential-evolution.md).
+
 * **Ingestion**: [Etienne, Liu & Shapiro (2010)](/sources/etienne-2010.md)
   — text extraction. Created
   [Vector-potential evolution](/methods/vector-potential-evolution.md):

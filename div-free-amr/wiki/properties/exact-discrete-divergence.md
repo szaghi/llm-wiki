@@ -69,7 +69,12 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
 Nonzero numerical divergence produces an anomalous force component parallel
 to the magnetic field, corrupting dynamics (Brackbill & Barnes 1980, as
 reviewed in [Evans & Hawley (1988)](/sources/evans-hawley-1988.md) §III —
-primary source not yet ingested).
+primary source not yet ingested). At production scale the stakes are
+documented: in GRMHD black-hole accretion, "the choice of the
+divergence-control method can produce qualitative differences in the
+simulation results for scientifically relevant … problems"
+([Olivares et al. (2019)](/sources/olivares-2019.md)) — the constraint
+class is not a numerical nicety but a physics-level decision.
 
 # Citations
 
@@ -77,3 +82,4 @@ primary source not yet ingested).
 2. [Tóth (2000)](/sources/toth-2000.md), §1.1, §4.4, §7, Appendix A.
 3. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), eqs. (6)–(10).
 4. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §1, §6.
+5. [Olivares et al. (2019)](/sources/olivares-2019.md), abstract, §5.
