@@ -2,6 +2,27 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Powell et al. (1999)](/sources/powell-1999.md) — text
+  extraction. No new pages; grounded
+  [Eight-wave formulation](/methods/eight-wave.md) in its primary source
+  (symmetrizable form, divergence wave, discrete source term) and layered
+  it against Tóth's assessment.
+
+* **Ingestion**: [Berger & Colella (1989)](/sources/berger-colella-1989.md) —
+  text extraction; DOI absent from the scan, Crossref-verified. Created
+  [Block-structured AMR](/definitions/block-structured-amr.md) and
+  [Refluxing](/methods/refluxing.md). First concrete instances of registry
+  operators $R$ (conservative averaging) and $\Gamma$ (bilinear +
+  linear-in-time ghost fill). Opens the AMR branch of the bundle.
+
+* **Ingestion**: [Strand (1994)](/sources/strand-1994.md) — fully image-only
+  scan, read visually (21/21 pages). Created
+  [Summation by parts (SBP)](/definitions/summation-by-parts.md) and
+  [SBP operator existence and families](/results/sbp-operator-existence.md).
+  **Registry extension**: SBP block ($\mathsf{H}, \mathsf{Q}, \mathsf{D}_1$)
+  — literature's $H$ renamed to avoid collision with coarse spacing $H$.
+  Opens the SBP branch of the bundle.
+
 * **Ingestion**: [Chorin (1968)](/sources/chorin-1968.md) — text extraction.
   Merged into [Projection method](/methods/projection-method.md) (origin:
   discrete Hodge decomposition; collocated central operators with

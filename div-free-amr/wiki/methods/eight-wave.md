@@ -10,15 +10,30 @@ timestamp: 2026-07-08T00:00:00Z
 
 # Eight-wave formulation
 
-Powell's modification of the conservative MHD system: source terms
-proportional to $\nabla\cdot\mathbf{B}$ are added (derivable from physical
-principles when the $\nabla\cdot\mathbf{B}=0$ Maxwell equation is not
-invoked), plus a matching eighth wave in the Riemann solver. Divergence
-errors are not eliminated but *advected with the flow*, preventing local
-accumulation; the constraint holds to truncation error only — the weakest
-guarantee among the families compared by
-[Tóth (2000)](/sources/toth-2000.md) (Powell's primary reports are not yet
-ingested).
+Powell's modification of the conservative MHD system
+([Powell et al. (1999)](/sources/powell-1999.md)): the equations are solved
+in their **symmetrizable form** — Godunov's result that pure divergence form
+is not symmetrizable, and becomes so exactly when a multiple of
+$\nabla\cdot\mathbf{B}$ is added to each equation. The added source terms
+(momentum, induction, energy rows) give the Roe-type Riemann solver an
+eighth wave: the *divergence wave*, advecting at the flow speed $u$.
+
+## The analytical mechanism
+
+With the source terms,
+$$\partial_t(\nabla\cdot\mathbf{B}) + \nabla\cdot(\mathbf{u}\,\nabla\cdot\mathbf{B}) = 0,$$
+i.e. $\nabla\cdot\mathbf{B}/\rho$ is a passively convected scalar: clean
+initial and boundary data stay clean along particle paths, to truncation
+error. Divergence errors are not eliminated but *advected with the flow*,
+preventing local accumulation. What the symmetrizable form buys: Galilean
+invariance, an entropy conservation law, and no zero eigenvalue in the flux
+Jacobian — none of which the unmodified conservative system has. Known
+ambiguity, acknowledged in the primary source: isolated recirculating
+regions cut off from boundaries. Discretely, the cell source uses the
+face-integral divergence
+$\frac{1}{V_i}\sum_{\text{faces}} \mathbf{B}\cdot\hat{n}\,dS$ — evaluated as
+a source, never held as an invariant; the constraint guarantee is the
+weakest among the families compared by [Tóth (2000)](/sources/toth-2000.md).
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
@@ -38,6 +53,13 @@ ingested).
   (contrast the roundoff-exact compatibility CT requires:
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
 
+The conservation trade-off is stated openly in the primary source: local
+conservation errors are accepted in exchange for symmetrizability. Tóth's
+rotated shock-tube result is the concrete realization of the risk that trade
+admits — the two sources agree on the mechanism and differ in emphasis on
+how often it bites.
+
 # Citations
 
-1. [Tóth (2000)](/sources/toth-2000.md), §§2–3, 6.3, 7.
+1. [Powell et al. (1999)](/sources/powell-1999.md), §§2–3.
+2. [Tóth (2000)](/sources/toth-2000.md), §§2–3, 6.3, 7.

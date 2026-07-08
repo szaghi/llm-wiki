@@ -55,6 +55,18 @@ instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
 Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
 is irrelevant to the claim.
 
+## SBP operators
+
+(Added 2026-07-08, Strand-1994 ingestion.) Literature convention writes the
+SBP norm matrix as $H$, which collides with our coarse grid spacing — the
+registry uses sans-serif for SBP matrices:
+
+| Symbol | Meaning |
+|---|---|
+| $\mathsf{H}$ | SBP norm/quadrature matrix, SPD, defining $(u,v)_h = u^T \mathsf{H} v$ |
+| $\mathsf{Q}$ | almost-skew-symmetric part: $\mathsf{Q} + \mathsf{Q}^T = \mathsf{B}$ (boundary terms) |
+| $\mathsf{D}_1 = \mathsf{H}^{-1}\mathsf{Q}$ | SBP first-derivative operator |
+
 ## Fields
 
 | Symbol | Meaning |
