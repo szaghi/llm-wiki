@@ -6,6 +6,7 @@ Algorithms and schemes.
 * [Constrained transport (CT)](/methods/constrained-transport.md) — Evolves face magnetic fluxes from once-computed edge EMFs so the discrete divergence of the field is conserved identically.
 * [GLM divergence cleaning](/methods/glm-divergence-cleaning.md) — Couples the divergence constraint to the induction equation via a generalized Lagrange multiplier; divergence errors propagate at finite speed and are damped.
 * [MAC method (marker-and-cell)](/methods/mac-method.md) — Staggered primitive-variable scheme for incompressible flow: a pressure Poisson equation enforces the face-difference velocity divergence to zero each cycle.
+* [Finite integration technique (FIT)](/methods/finite-integration-technique.md) — Discretizes Maxwell's integral equations exactly as topological matrix equations on a primal-dual grid pair, confining all error and material content to discrete Hodge matrices.
 * [Flux-CT and the Godunov CT variants](/methods/flux-ct.md) — Constrained transport driven by a shock-capturing base scheme: corner EMFs assembled from upwind fluxes (flux-CT) or interpolated fields (field-CT).
 * [Refluxing (coarse-fine flux correction)](/methods/refluxing.md) — Restores discrete conservation at AMR interfaces by replacing the coarse flux with the accumulated sum of fine fluxes on shared edges.
 * [SBP-SAT technique](/methods/sbp-sat.md) — Imposes boundary and interface conditions weakly through penalty terms that preserve the SBP energy estimate, coupling multi-block high-order FD schemes stably and conservatively.

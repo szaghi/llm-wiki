@@ -50,6 +50,14 @@ statement of the collocation constraint that runs through the whole domain:
 (FE), and the [mimetic natural operators](/definitions/support-operator-method.md)
 are the same placement discipline in three languages.
 
+The engineering counterpart: the material matrices of the
+[finite integration technique](/methods/finite-integration-technique.md)
+are discrete Hodge operators, and in edge-finite-element form they are
+*exactly* the mass matrices obtained by quadrature of Whitney shape
+functions ([Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md)) —
+two derivations, one object.
+
 # Citations
 
 1. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
+2. [Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md), §3.

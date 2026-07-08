@@ -41,6 +41,16 @@ mimic-integration-by-parts discipline, with the
 [discrete exactness theorems](/results/discrete-exactness-theorems.md) as
 its structural payoff.
 
+The method's promises were later made rigorous: on general polyhedral
+meshes (nonconvex and degenerate elements included), the mixed-form
+mimetic discretization is provably stable with optimal convergence for
+both variables —
+[MFD convergence](/results/mfd-convergence.md)
+([Brezzi, Lipnikov & Shashkov (2005)](/sources/brezzi-lipnikov-shashkov-2005.md)),
+with the design criteria (conservation, adjointness, null spaces) serving
+as the proof's hypotheses.
+
 # Citations
 
 1. [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md), §1, conclusions.
+2. [Brezzi, Lipnikov & Shashkov (2005)](/sources/brezzi-lipnikov-shashkov-2005.md), §§4–5.

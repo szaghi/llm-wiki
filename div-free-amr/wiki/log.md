@@ -2,6 +2,27 @@
 
 ## 2026-07-08
 
+* **Ingestion**: [Brezzi, Lipnikov & Shashkov (2005)](/sources/brezzi-lipnikov-shashkov-2005.md)
+  — text extraction. Created
+  [MFD convergence on polyhedral meshes](/results/mfd-convergence.md)
+  (2:1 interfaces enter the proven class as degenerate polyhedra). Merged
+  into [Support-operator method](/definitions/support-operator-method.md).
+
+* **Ingestion**: [Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md) —
+  text extraction. Created
+  [Discrete exterior calculus](/definitions/discrete-exterior-calculus.md).
+  Merged the DEC Poincaré lemma into
+  [Discrete exactness theorems](/results/discrete-exactness-theorems.md)
+  (third independent derivation). Formality caveat recorded (convergence
+  mostly unproved, per the authors). Hirani (2003) thesis to be a scoped
+  supplement later.
+
+* **Ingestion**: [Clemens & Weiland (2001)](/sources/clemens-weiland-2001.md)
+  — text extraction. Created
+  [Finite integration technique](/methods/finite-integration-technique.md).
+  Merged into [Whitney forms](/definitions/whitney-forms.md) (Hodge/mass
+  matrix identity).
+
 * **Deep lint #2** (after 20 ingestions). Findings and fixes: (1) registry
   gap — $\mathsf{D}_2$ used on the [SBP page](/definitions/summation-by-parts.md)
   but unregistered; added to [notation](/notation.md). (2) Redundant tag

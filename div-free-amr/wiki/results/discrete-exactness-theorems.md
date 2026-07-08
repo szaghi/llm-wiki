@@ -64,7 +64,16 @@ exactness live *inside the finite element family* — a property Hiptmair
 shows fails for componentwise Lagrangian elements, where the potential
 escapes to a non-local $C^1$ space.
 
+On simplicial meshes,
+[discrete exterior calculus](/definitions/discrete-exterior-calculus.md)
+proves its **discrete Poincaré lemma** constructively, via an explicit
+homotopy operator ([Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md)
+§11) — the third independent derivation of the same exactness structure
+(mimetic FD, Whitney FE, DEC), each with its own scope and proof
+technique.
+
 # Citations
 
 1. [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md), §§4–5, conclusions.
 2. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
+3. [Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md), §11.
