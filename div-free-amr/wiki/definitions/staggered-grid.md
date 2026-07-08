@@ -51,9 +51,34 @@ cell-centered data whose exact invariant is a corner-centered divergence —
 see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
 ([Tóth (2000)](/sources/toth-2000.md)).
 
+## Contradictions
+
+**Is staggering necessary?** Two sources from the same year take opposite
+positions:
+
+* [Tóth (2000)](/sources/toth-2000.md) §4.4: "the staggered representation
+  of the magnetic field is unnecessary" — the Godunov CT variants are
+  algebraically identical to collocated finite-volume schemes.
+* [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md) §3:
+  staggered collocation "is by no means a numerical trick but arises in a
+  consistent way" — a unique EMF flux function at common points *entails
+  necessarily* the staggered placement.
+
+**Scoped resolution (compiled):** the claims quantify over different
+things. Tóth's is an algebraic identity for specific second-order schemes —
+staggering can be *rewritten away* after the fact, at the cost of wider
+symmetrized stencils and relocating the exact invariant to
+$D_h^{\mathrm{k}}$. Londrillo & Del Zanna's is a *constructive* consistency
+requirement for building (high-order) schemes with a unique EMF — the
+design-time collocation of the update. Neither refutes the other; whether
+"necessary" means "ineliminable from the final algebra" (no) or "forced on
+the construction" (yes) is exactly the live question of this domain. Both
+positions stand; no supersession recorded.
+
 # Citations
 
 1. [Harlow & Welch (1965)](/sources/harlow-welch-1965.md), Fig. 2.
 2. [Yee (1966)](/sources/yee-1966.md), Fig. 1.
 3. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §IV(a)–(b), Figs. 1–2.
 4. [Tóth (2000)](/sources/toth-2000.md), §4.4.
+5. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3.

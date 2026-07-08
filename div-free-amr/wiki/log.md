@@ -2,6 +2,44 @@
 
 ## 2026-07-08
 
+* **Deep lint #1** (after 11 ingestions). Findings and fixes: (1) notation
+  drift — [flux-CT](/methods/flux-ct.md) used base-scheme flux symbols
+  $f^{x,*}$ without registry backing; fixed by extending
+  [notation](/notation.md) with the starred base-scheme-quantity
+  convention. (2) $\psi_h$/$\psi$ inconsistency on
+  [GLM cleaning](/methods/glm-divergence-cleaning.md); unified. (3) Tag
+  synonyms consolidated: `divergence-free` → `divergence-constraint`
+  (3 pages), `collocated` → `collocation` (1 page). No stale
+  contradictions (both blocks current, no supersession available in
+  ingested corpus); no orphan pages.
+
+* **Ingestion**: [Dedner et al. (2002)](/sources/dedner-2002.md) — text
+  extraction. Created
+  [GLM divergence cleaning](/methods/glm-divergence-cleaning.md). Merged
+  into [Eight-wave](/methods/eight-wave.md) (conservation contrast) and
+  [Projection method](/methods/projection-method.md) (elliptic limit of the
+  GLM family). Completes the constraint-method taxonomy: exact-algebraic
+  (CT), tolerance (projection), truncation (eight-wave), controlled (GLM).
+
+* **Ingestion**: [Balsara (2001)](/sources/balsara-2001.md) — text
+  extraction. Created
+  [Divergence-space prolongation $P_D$](/operators/divergence-free-prolongation.md)
+  (first Operator page) and
+  [Electric-field correction](/methods/electric-field-correction.md).
+  Merged into [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+  (now multi-source), [Refluxing](/methods/refluxing.md), and
+  [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
+  — **second `Contradictions` block**: Balsara's nesting claim against the
+  zone-centered formulation on AMR hierarchies (open, no supersession).
+
+* **Ingestion**: [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md)
+  — text extraction. Created
+  [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md).
+  Merged into [Constrained transport](/methods/constrained-transport.md)
+  (high-order extension) and [Staggered grid](/definitions/staggered-grid.md).
+  **First `Contradictions` block** recorded (Tóth vs Londrillo–Del Zanna on
+  the necessity of staggering), with scoped resolution, no supersession.
+
 * **Ingestion**: [Powell et al. (1999)](/sources/powell-1999.md) — text
   extraction. No new pages; grounded
   [Eight-wave formulation](/methods/eight-wave.md) in its primary source

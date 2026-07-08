@@ -8,7 +8,7 @@ authors: [Chorin A.J.]
 year: 1968
 venue: "Math. Comp. 22:745-762"
 local_file: "~/papers/mosaic/div-free-amr/1968-MathComp-Chorin-101090S00255718196802423922.pdf"
-tags: [projection, incompressible, hodge-decomposition, collocated, implicit]
+tags: [projection, incompressible, hodge-decomposition, collocation, implicit]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

@@ -59,6 +59,16 @@ of the magnetic field to machine roundoff, introduced by
   field, avoiding the anomalous current oscillations produced by second
   differences of monotonically-advected quantities.
 
+## High-order extension
+
+The scheme's divergence guarantee is a statement about cell/face *averages*;
+above second order it survives only if the reconstruction of point values is
+itself [divergence-free](/methods/divergence-free-reconstruction.md), and
+the corner EMF becomes a genuinely two-dimensional four-state upwind flux
+rather than an average —
+[Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), who
+build a third-order ENO-based CT scheme on these two ingredients.
+
 ## Shock-capturing combinations and the collocated recast
 
 CT as introduced is a finite-difference discretization; it was subsequently
@@ -90,3 +100,4 @@ comparison, flux-CT ranks among the three most accurate and reliable schemes.
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §II–V.
 2. [Tóth (2000)](/sources/toth-2000.md), §4, §7.
+3. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.

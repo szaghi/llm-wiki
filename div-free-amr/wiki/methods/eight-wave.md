@@ -59,7 +59,15 @@ rotated shock-tube result is the concrete realization of the risk that trade
 admits — the two sources agree on the mechanism and differ in emphasis on
 how often it bites.
 
+[GLM cleaning](/methods/glm-divergence-cleaning.md) later kept the
+advect-the-error philosophy while removing the trade: its source term sits
+only in the unphysical $\psi$ equation, leaving the physical conservation
+laws intact; in the Dedner et al. comparisons GLM is more robust than the
+Powell source terms with significantly smaller divergence errors
+([Dedner et al. (2002)](/sources/dedner-2002.md)).
+
 # Citations
 
 1. [Powell et al. (1999)](/sources/powell-1999.md), §§2–3.
 2. [Tóth (2000)](/sources/toth-2000.md), §§2–3, 6.3, 7.
+3. [Dedner et al. (2002)](/sources/dedner-2002.md), §5.

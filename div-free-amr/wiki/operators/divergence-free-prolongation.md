@@ -1,0 +1,59 @@
+---
+type: Operator
+title: "Divergence-space prolongation $P_D$"
+description: "Prolongation of face magnetic fields constructed so the prolonged fine field is exactly divergence-free whenever the coarse field is."
+status: established
+symbol: "$P_D$"
+aliases: [divergence-free prolongation]
+tags: [amr, prolongation, divergence-constraint, coarse-fine-interface]
+timestamp: 2026-07-08T00:00:00Z
+---
+
+# Divergence-space prolongation $P_D$
+
+The transfer operator $P_D : V_H^2 \to V_h^2$ ([notation](/notation.md))
+carrying coarse face-field data to fine faces such that the divergence
+constraint survives the transfer:
+$$D_H B_H = 0 \;\Rightarrow\; D_h (P_D B_H) = 0,$$
+the prolongation half of the commutation requirement $D_h P = P_D D_H$.
+
+## The Balsara construction
+
+[Balsara (2001)](/sources/balsara-2001.md) §IV instantiates $P_D$ at second
+order on the staggered ($D_h^{\mathrm{f}}$) formulation:
+
+1. From the six coarse-zone face averages, build the
+   [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+   — limited linear face profiles plus interior quadratic polynomials
+   constrained to be divergence-free *pointwise in the whole zone*.
+2. **Prolong by area-weighted integration** of those polynomials over each
+   fine face (his eq. 4.19). Because the underlying vector field is
+   divergence-free in the continuous sense, every fine control volume
+   inherits $D_h^{\mathrm{f}}$-exactness to machine precision.
+
+Properties of the construction, per the source: reduces to the plain
+reconstruction when face cross-terms vanish; extends to any integer
+refinement ratio (recursion for $2^k$, new formulas otherwise), to
+orthogonal curvilinear geometries, and to triangular/tetrahedral meshes;
+used to initialize newly refined patches, while ghost (halo) filling during
+subcycling uses the reconstruction directly.
+
+## Structural remarks
+
+* The construction is *integral*, not algebraic: exactness comes from
+  prolonging an exactly solenoidal continuous field, not from tuning
+  stencil coefficients — the reason it generalizes across ratios and
+  geometries.
+* It presumes **nested staggered control volumes**: fine face unions tile
+  coarse faces. This is the property
+  [Balsara (2001)](/sources/balsara-2001.md) claims zone-centered
+  formulations lack
+  ([CT–finite-volume equivalence, Contradictions](/results/ct-finite-volume-equivalence.md)).
+* $P_D$ alone handles refinement; keeping the invariant through *time* on a
+  subcycled hierarchy additionally needs the
+  [electric-field correction](/methods/electric-field-correction.md) and
+  area-weighted restriction $R$.
+
+# Citations
+
+1. [Balsara (2001)](/sources/balsara-2001.md), §III–IV.

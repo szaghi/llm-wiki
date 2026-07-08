@@ -31,7 +31,11 @@ constraint family through the momentum update rather than as a separate
 projection). The existence and uniqueness of the decomposition is inherited
 from the well-posedness of the continuous problem. The MHD adaptation
 (Brackbill & Barnes) is not yet ingested as a primary source; its modern
-assessment is [Tóth (2000)](/sources/toth-2000.md).
+assessment is [Tóth (2000)](/sources/toth-2000.md). Within the
+[GLM framework](/methods/glm-divergence-cleaning.md) the projection is the
+elliptic member of the cleaning family — the limit $\mathcal{D}(\psi) = 0$
+of the generalized-Lagrange-multiplier coupling
+([Dedner et al. (2002)](/sources/dedner-2002.md)).
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
@@ -57,3 +61,4 @@ assessment is [Tóth (2000)](/sources/toth-2000.md).
 
 1. [Chorin (1968)](/sources/chorin-1968.md), eqs. (3)–(5), (20)–(22).
 2. [Tóth (2000)](/sources/toth-2000.md), §5, §7, Table IX.
+3. [Dedner et al. (2002)](/sources/dedner-2002.md), §2.

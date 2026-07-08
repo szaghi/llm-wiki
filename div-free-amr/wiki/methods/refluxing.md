@@ -38,9 +38,10 @@ Refluxing repairs conservation of *cell* quantities ($V_h^3$ densities) at
 interfaces. It says nothing about *face* quantities: a face-flux invariant
 like $D_h B_h = 0$
 ([exact discrete divergence](/properties/exact-discrete-divergence.md))
-needs its own interface synchronization — the analogous consistency
-condition on shared faces, which is exactly where the AMR
-divergence-constraint problem of this corpus lives.
+needs its own interface synchronization — supplied for staggered CT by the
+exactly analogous
+[electric-field correction](/methods/electric-field-correction.md) on edge
+EMFs ([Balsara (2001)](/sources/balsara-2001.md)).
 
 # Citations
 

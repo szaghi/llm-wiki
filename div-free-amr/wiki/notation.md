@@ -55,6 +55,13 @@ instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
 Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
 is irrelevant to the claim.
 
+## Base-scheme (Godunov) quantities
+
+(Added 2026-07-08, deep lint #1.) Starred symbols denote values produced by
+the shock-capturing base scheme: $f^{x,*}, f^{y,*}$ are its upwind numerical
+fluxes for the magnetic-field components, $B_h^{*}$ (and $u_h^{*}$) a
+provisional field before a correction/projection step.
+
 ## SBP operators
 
 (Added 2026-07-08, Strand-1994 ingestion.) Literature convention writes the

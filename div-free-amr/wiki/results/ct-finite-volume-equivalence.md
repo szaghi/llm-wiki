@@ -44,6 +44,24 @@ face-to-center averaging (generalization to nonuniform grids and 3D stated);
 it is a statement about these particular schemes, not a claim that every
 staggered scheme admits a collocated rewrite.
 
+## Contradictions
+
+**Does the equivalence survive AMR?**
+[Balsara (2001)](/sources/balsara-2001.md) §III (intro) claims it does not
+carry over to hierarchies: divergence-free transfer between levels requires
+the constraint's control volumes at finer levels to nest inside coarse
+ones — "all the staggered mesh formulations satisfy this property; the
+zone-centered formulation of Tóth does not satisfy this property." The
+corner-centered volumes of $D_h^{\mathrm{k}}$ (diagonally rotated) do not
+tile under 2:1 refinement the way faces do.
+
+**Status (compiled):** no direct rebuttal in the corpus so far. The two
+results are formally compatible — Tóth's identity is stated on a single
+uniform grid; Balsara's claim concerns level transfer — but the *practical*
+force of the equivalence ("staggering unnecessary") is contested exactly
+where AMR begins. Open; no supersession recorded.
+
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md), §4.4, eqs. (23)–(27), §7.
+2. [Balsara (2001)](/sources/balsara-2001.md), §III.
