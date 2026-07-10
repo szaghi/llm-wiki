@@ -30,6 +30,9 @@ other repository (see `DECISIONS.md` D12).
   cleaning → SBP/mimetic/DEC machinery → AMR-interface papers → recent sweep).
   Early papers define concepts; later papers exercise the merge path.
 - Worklist: `tools/worklist.sh div-free-amr` (corpus minus existing Source pages).
+- Bibliography: `wiki/bibliography.bib` (canonical) + generated `wiki/bibliography.md`
+  per repo law (D15). Pending reference-list extractions:
+  `python3 tools/bib_to_md.py div-free-amr/wiki --pending`.
 - Lint: `python3 tools/lint_okf.py div-free-amr/wiki` — must pass before commit.
 - Commits: `docs(div-free-amr): ingest <source-slug>`.
 
@@ -41,3 +44,8 @@ coverage recorded on their Source pages (Bossavit, Shashkov, Hiptmair
 §§4–6, AFW 2006 §§2–11, Christiansen §§2–4, Crane body) — those are the
 known re-ingestion targets if deeper coverage is ever needed. New sources
 append per repo law; the worklist stays authoritative.
+
+**Bibliography backfill in progress (started 2026-07-10):** the corpus
+predates D15; `bibliography.bib` is seeded with the 61 ingested sources and
+their reference lists are being merged in batches (~10 sources per staged
+unit, scoped reads scoped per repo law). `--pending` is authoritative.

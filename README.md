@@ -111,10 +111,9 @@ Two actors throughout. **You** review sources, make decisions, and commit. **Cla
 
 Open Claude Code in `~/llm-wiki` (resident mode — the constitution auto-loads) and say:
 
-```text
-Create a new bundle named <name> for <one-sentence domain description>.
+*prompt*
+> Create a new bundle named <name> for <one-sentence domain description>.
 The primary corpus lives at <path-to-archive>. Seed the notation registry with <conventions, if any>.
-```
 
 Claude scaffolds `<name>/{CLAUDE.md, raw/, wiki/...}`, writes the bundle law, seeds
 `notation.md` / `index.md` / `log.md`, lints, and stages. **You** review the scaffold and
@@ -129,15 +128,13 @@ cd ~/llm-wiki && git commit -m "docs: scaffold <name> bundle"
 Recommended: start with a **two-source pilot** (one clean source, one hard case — a
 scanned PDF, a long book) and audit the resulting pages before bulk work. Prompts:
 
-```text
-Run a pilot ingestion on <bundle>: ingest <source A> and <source B>, then stop for my audit.
-```
+*prompt*
+> Run a pilot ingestion on <bundle>: ingest <source A> and <source B>, then stop for my audit.
 
 then, after your audit:
 
-```text
-Continue ingesting the <bundle> sources, foundations first. Stage after each source.
-```
+*prompt*
+> Continue ingesting the <bundle> sources, foundations first. Stage after each source.
 
 Claude works in tranches — each source atomically (read → extract → create-or-merge →
 notation map → log → indexes → lint → stage) — and reports what entered the wiki, with
@@ -154,22 +151,34 @@ Any modality. You reviewed it, so it is trusted; Claude will still verify its
 *identity* (page-1 metadata, DOI against Crossref) because trust and identity are
 different things. Prompts by source type:
 
-```text
-# a paper already in the archive
-Ingest ~/papers/<archive>/<file>.pdf into <bundle>.
+---
+a paper already in the archive
 
-# a paper not yet downloaded — Claude will ask for or fetch the PDF as agreed
-Ingest doi:10.xxxx/yyyy into <bundle>.
+*prompt*
+> Ingest ~/papers/<archive>/<file>.pdf into <bundle>.
+---
+a paper not yet downloaded — Claude will ask for or fetch the PDF as agreed
 
-# a blog post / web page — captured to raw/web/ first, against link rot
-Ingest https://example.org/post into <bundle>. Capture it to raw/.
+*prompt*
+> Ingest doi:10.xxxx/yyyy into <bundle>.
+---
 
-# your own notes / slides / a report — claims that are yours get status: hypothesis
-Ingest my notes at <path> into <bundle>. These are working hypotheses, mark them as such.
+a blog post / web page — captured to raw/web/ first, against link rot
 
-# a book or long thesis — scoped read
-Ingest <path-to-book> into <bundle> as a scoped read: chapters <X–Y> in depth, record coverage.
-```
+*prompt*
+> Ingest https://example.org/post into <bundle>. Capture it to raw/.
+---
+your own notes / slides / a report — claims that are yours get status: hypothesis
+
+*prompt*
+> Ingest my notes at <path> into <bundle>. These are working hypotheses, mark them as such.
+
+---
+a book or long thesis — scoped read
+
+*prompt*
+> Ingest <path-to-book> into <bundle> as a scoped read: chapters <X–Y> in depth, record coverage.
+---
 
 In every case Claude ends at **staged + commit message**; you commit.
 
@@ -178,18 +187,26 @@ In every case Claude ends at **staged + commit message**; you commit.
 The deterministic linter runs automatically at every ingestion, but you can invoke
 everything on demand:
 
-```text
-# fast conformance check (also directly: python3 tools/lint_okf.py <bundle>/wiki)
-Lint the <bundle> wiki.
+---
+fast conformance check (also directly: python3 tools/lint_okf.py <bundle>/wiki)
 
-# semantic audit — notation drift, tag synonyms, stale contradictions, orphans
-Run a deep lint on <bundle>.
+*prompt*
+> Lint the <bundle> wiki.
+---
+semantic audit — notation drift, tag synonyms, stale contradictions, orphans
 
-# targeted audits
-Audit the Contradictions blocks in <bundle> — anything superseded by newer ingestions?
+*prompt*
+> Run a deep lint on <bundle>.
+---
+
+targeted audits
+
+*prompt*
+> Audit the Contradictions blocks in <bundle> — anything superseded by newer ingestions?
 Audit the notation maps of the last five Source pages against the originals.
 Recurate the root index of <bundle> — the reading guide is stale.
-```
+
+---
 
 Deep lints are also mandatory by law every ~10 ingestions; findings land in the bundle's
 `log.md` with fixes applied in the same pass.

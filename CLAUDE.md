@@ -34,8 +34,10 @@ Never reference, read from, or depend on other projects' repos in bundle content
 - Every non-reserved `.md` under `wiki/` is a **Concept Document**: parseable YAML
   frontmatter with a non-empty `type`, then a Markdown body.
 - Reserved files: `index.md` (directory catalog, **no frontmatter** — except the
-  bundle root `index.md`, which carries only `okf_version: "0.1"`), and `log.md`
-  (append-only change history, no frontmatter, newest-first `## YYYY-MM-DD` groups).
+  bundle root `index.md`, which carries only `okf_version: "0.1"`), `log.md`
+  (append-only change history, no frontmatter, newest-first `## YYYY-MM-DD` groups),
+  and `bibliography.md` (generated citation record, no frontmatter, never
+  hand-edited — see **Bibliography**).
 - Filenames: kebab-case.
 - Conventional body sections where applicable: `# Schema`, `# Examples`,
   `# Citations`, plus this repo's `# Notation map` (Source pages) and
@@ -132,6 +134,38 @@ identifier is recoverable, use the best stable URL and say so in the body.
   conceptual importance, with a short reading guide. It is the entry point every
   session reads first.
 
+## Bibliography
+
+Each bundle with scholarly sources maintains a **complete citation record**:
+every work cited by any ingested source, whether or not it is itself ingested.
+Ingesting a paper means reading its reference list — that reading is captured,
+not discarded. (Rationale: D15.)
+
+- **Canonical store: `wiki/bibliography.bib`** — a compiler-owned data artifact
+  (not a Concept Document) in a strict BibTeX subset (`field = {value}`, one
+  entry per work, entries sorted by key, `%` comments). Entry keys use the same
+  kebab-case `firstauthor-year[-disambig]` convention as Source-page slugs; an
+  entry whose key matches `sources/<key>.md` **is** that ingested source —
+  ingested-ness is derived from the key match, never stored in a field.
+- Every entry carries the custom field `citedby = {slug-1, slug-2}` (sorted,
+  duplicate-free): the ingested sources in whose reference lists the work
+  appears. This is the bundle's citation graph; heavily cited non-ingested
+  entries are the **derived ingestion frontier** — candidates the corpus
+  itself does not yet contain.
+- Reference lists are merged **complete, unfiltered**: relevance filtering is a
+  judgment call that destroys data; dedup and `citedby` counts do the ranking.
+  For scoped reads (books, long reviews), the reference extraction may be
+  scoped to the chapters read — record the scope on the Source page.
+- Metadata comes from the citing source's reference list (and from page 1 of
+  the PDF for ingested works). Never fabricate a DOI: include one only when
+  printed in the reference list or verified.
+- **Generated view: `wiki/bibliography.md`** — written by
+  `python3 tools/bib_to_md.py <bundle>/wiki`, never hand-edited. The linter
+  fails when it is out of sync with the `.bib`.
+- Progress is derived, never stored (D8): a source's reference list is merged
+  iff its slug appears in ≥1 `citedby` field;
+  `python3 tools/bib_to_md.py <bundle>/wiki --pending` lists the remainder.
+
 ## Ingestion protocol (atomic per source)
 
 For each source, in order:
@@ -151,10 +185,14 @@ For each source, in order:
      `status: hypothesis` attribution.
 4. **Write the Source page**: verified metadata, `# Notation map`, and an audit
    list of every page created or updated in this run.
-5. **Append to `log.md`** (dated entry, pages touched).
-6. **Update affected `index.md` files.**
-7. **Lint**: `python3 tools/lint_okf.py <bundle>/wiki` must pass.
-8. **Stage and hand off**: `git add -A`, then present the prepared commit
+5. **Merge the reference list** into `wiki/bibliography.bib` (see
+   **Bibliography**): one entry per cited work, complete and unfiltered; dedup
+   by key; append this source's slug to each cited entry's `citedby`; then
+   regenerate `wiki/bibliography.md` (`python3 tools/bib_to_md.py <bundle>/wiki`).
+6. **Append to `log.md`** (dated entry, pages touched).
+7. **Update affected `index.md` files.**
+8. **Lint**: `python3 tools/lint_okf.py <bundle>/wiki` must pass.
+9. **Stage and hand off**: `git add -A`, then present the prepared commit
    message `docs(<bundle>): ingest <source-slug>` to the human. **The compiler
    never commits** — commits are reserved to the human (GPG-signed).
 

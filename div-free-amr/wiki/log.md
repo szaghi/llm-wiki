@@ -1,5 +1,17 @@
 # Directory Update Log
 
+## 2026-07-10
+
+* **Bundle bibliography introduced (D15).** Canonical
+  [`bibliography.bib`](/bibliography.bib) — every work cited by any ingested
+  source, complete and unfiltered, with the `citedby` citation graph — plus
+  the generated view [Bibliography](/bibliography.md)
+  (`tools/bib_to_md.py`; sync linter-enforced). Seeded with the 61 ingested
+  sources from Source-page frontmatter; the `citedby` graph is empty pending
+  the reference-list backfill (batches of ~10 sources;
+  `tools/bib_to_md.py div-free-amr/wiki --pending` is the derived worklist).
+  Root [index](/index.md) catalog gained the Bibliography entry.
+
 ## 2026-07-08
 
 * **Deep lint #6 + closing audit** (corpus complete, 61/61). Corrective

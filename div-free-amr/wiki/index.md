@@ -78,6 +78,9 @@ every page — then follow the reading guide.
 * [Benchmarks](/benchmarks/index.md) — standard test problems.
 * [Software](/software/index.md) — codes embodying the methods (production evidence currently lives on Source pages).
 * [Sources](/sources/index.md) — one page per ingested source, with notation maps.
+* [Bibliography](/bibliography.md) — complete citation record: every work cited
+  by an ingested source, ingested or not, with the citation graph (generated
+  from `bibliography.bib`).
 
 ## Change history
 

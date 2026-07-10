@@ -13,6 +13,8 @@ Checks (see CLAUDE.md):
   Index every concept listed exactly once in its folder's index.md, with the
         index description matching frontmatter ``description``.
   Math  no ``\\(``/``\\[`` delimiters; balanced ``$``/``$$`` outside code.
+  Bib   bibliography.bib parses and validates (keys, citedby slugs, sort);
+        bibliography.md is the freshly generated view (sync enforced).
   Graph orphan concept pages (warning only).
 """
 
@@ -24,7 +26,7 @@ from pathlib import Path
 
 import yaml
 
-RESERVED = {"index.md", "log.md"}
+RESERVED = {"index.md", "log.md", "bibliography.md"}
 TYPE_FOLDERS = {
     "definitions": "Definition",
     "methods": "Method",
@@ -197,6 +199,37 @@ def main(wiki_dir: str) -> int:
                     fail(
                         Path(folder) / "index.md",
                         f"description drift for {key} (index line != frontmatter)",
+                    )
+
+    # --- bibliography: canonical .bib valid, .md view in sync ---
+    bib, bib_md = wiki / "bibliography.bib", wiki / "bibliography.md"
+    if bib.exists() or bib_md.exists():
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import bib_to_md
+
+        if not bib.exists():
+            fail(Path("bibliography.md"), "exists without canonical bibliography.bib")
+        else:
+            try:
+                entries = bib_to_md.parse_bib(bib.read_text(encoding="utf-8"))
+            except ValueError as e:
+                fail(Path("bibliography.bib"), str(e))
+            else:
+                for msg in bib_to_md.validate(entries, wiki):
+                    fail(Path("bibliography.bib"), msg)
+                if not bib_md.exists() or bib_md.read_text(
+                    encoding="utf-8"
+                ) != bib_to_md.render_md(entries, wiki):
+                    fail(
+                        Path("bibliography.md"),
+                        "out of sync with bibliography.bib — run tools/bib_to_md.py",
+                    )
+                todo = bib_to_md.pending(entries, wiki)
+                if todo:
+                    warn(
+                        Path("bibliography.bib"),
+                        f"{len(todo)} ingested source(s) with no reference list "
+                        f"merged (tools/bib_to_md.py --pending)",
                     )
 
     # --- orphans (warning) ---
