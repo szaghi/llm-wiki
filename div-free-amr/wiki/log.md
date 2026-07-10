@@ -2,6 +2,26 @@
 
 ## 2026-07-10
 
+* **Bibliography backfill batch 1** — reference lists of 10 sources merged
+  (harlow-welch-1965, yee-1966, chorin-1968, evans-hawley-1988,
+  berger-colella-1989, strand-1994, hyman-shashkov-1997, almgren-1998,
+  nordstrom-carpenter-1999, trask-2020): 263 printed references,
+  [bibliography](/bibliography.md) grows 61 → 299 entries (238 cited but not
+  ingested; 10/61 lists merged). Image-only scans (Evans & Hawley, Strand,
+  Harlow & Welch body) read visually. Identity resolutions: "Shashkov 1995,
+  *Conservative Finite-Difference Schemes on General Grids*" merged into
+  shashkov-1996 (variant year/title recorded in the entry note);
+  Hawley–Smarr–Wilson "1984a/1984b" → hawley-1984-a / hawley-1984-b. Nine
+  printed references excluded as un-citable, all lacking a printed year:
+  Rabinowitz (to appear; chorin-1968), Hyman–Scovel (personal communication)
+  and Hyman–Shashkov (in preparation) (hyman-shashkov-1997), Adjerid–Flaherty,
+  Chern–Colella, Colella LBL-17023, Dwyer AIAA 83-0449 (berger-colella-1989),
+  Harlow–Welch (to be published; harlow-welch-1965), Masud–Hughes (entry
+  truncated in the citing paper's printed list; trask-2020). ApJ/JCP-footnote
+  reference styles print no titles — those entries carry the explicit
+  placeholder "[title not printed in citing reference]" rather than
+  reconstructed titles.
+
 * **Bundle bibliography introduced (D15).** Canonical
   [`bibliography.bib`](/bibliography.bib) — every work cited by any ingested
   source, complete and unfiltered, with the `citedby` citation graph — plus
