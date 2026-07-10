@@ -2,6 +2,28 @@
 
 ## 2026-07-10
 
+* **Bibliography backfill batch 2** — reference lists of 10 sources merged
+  (powell-1999, londrillo-delzanna-2000, toth-2000, balsara-2001,
+  clemens-weiland-2001, dedner-2002, hiptmair-2002, toth-roe-2002,
+  hirani-2003, balsara-2004): 541 printed references,
+  [bibliography](/bibliography.md) grows 299 → 662 entries (20/61 lists
+  merged). Hiptmair's scoped-read Acta Numerica review contributed its full
+  consolidated list (161 refs) per the complete-and-unfiltered rule. Identity
+  resolutions, all recorded in entry notes: Berger–Oliger and Evans–Hawley
+  cited with year 1989 by balsara-2001 (merged into berger-1984 /
+  evans-hawley-1988); Colella JCP 87:171 cited under two different titles;
+  Ryu et al. ApJ volume misprint 504→509; "Harlow & Welsch, The MAC
+  method…" identified as harlow-welch-1965 by venue 8:2182; Schuhmann &
+  Weiland cited as "this volume" (= PIER 32) by its companion paper;
+  Dai–Woodward 1994 venue conflict between citing sources recorded, not
+  resolved. A transcription-format defect (space-separated initials) briefly
+  produced nine duplicate entries — all found and merged; the merge tool is
+  fixed. Ten references excluded as un-citable (no printed year: in press /
+  to appear / no year on book). **Frontier signal now live**: most-cited
+  non-ingested work is Brackbill & Barnes 1980 (8 of 20 processed sources),
+  then Balsara & Spicer 1999, Brio & Wu 1988, DeVore 1991, Powell's ICASE
+  report 94-24 (6 each).
+
 * **Bibliography backfill batch 1** — reference lists of 10 sources merged
   (harlow-welch-1965, yee-1966, chorin-1968, evans-hawley-1988,
   berger-colella-1989, strand-1994, hyman-shashkov-1997, almgren-1998,
