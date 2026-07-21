@@ -2,6 +2,45 @@
 
 ## 2026-07-21
 
+* **Bibliography backfill batch 4** — reference lists of 10 sources merged
+  (etienne-2010, mignone-tzeferacos-2010, perot-2011, miniati-martin-2011,
+  christiansen-2011, mignone-2012, etienne-2012, teixeira-2013,
+  kreeft-gerritsma-2013, delreyfernandez-2014): 859 printed references,
+  [bibliography](/bibliography.md) grows 907 → 1504 entries (40/61 lists
+  merged). Christiansen's Acta Numerica review (145 refs) and Teixeira's
+  CEM review (162 printed, 2 in-list duplicates collapsed) contributed
+  complete consolidated lists. **New safeguard**: a venue-number cross-check
+  now guards placeholder-title merges — it caught six same-key different-work
+  collisions the title check cannot see (Harten–Lax–van Leer SIAM Rev. 25 vs
+  Harten JCP 49; Jiang–Shu WENO vs Jiang–Wu–Povinelli; two De Villiers–Hawley
+  2003, two J.D. Brown 2009, two Tadmor 1984, two De Rango–Zingg 2001).
+  Identity resolutions: two sources cite a **different work carrying the
+  citing source's own slug key** (Christiansen & Scheid 2011 →
+  christiansen-scheid-2011; Del Rey Fernández, Boom & Zingg JCP 266 →
+  delreyfernandez-boom-2014); first-author citations of ingested sources
+  mapped to slugs (harlow-welch, evans-hawley, berger-colella, toth-roe,
+  gardiner-stone, mignone-tzeferacos, mattsson-carpenter, balsara-2004,
+  arnold-falk-winther-2009 cited as its 2010 Bull. AMS form,
+  desbrun-kanso-tong-2008 cited as its 2005 SIGGRAPH course-notes form);
+  letter-swap untangled vs master for mattsson-2008-a/-b; year-variant
+  merges with notes (svard-2007→svard-2008-a, yee-2000→yee-1999-b,
+  mattsson-2007→mattsson-2006-b, flanders-1989→flanders-1990,
+  deschamps-1982→deschamps-1981, subramanian-2007→subramanian-2006,
+  berger-1991 report/IEEE-journal forms). **Pre-batch repair**: master
+  desbrun-2003 ("Discrete exterior calculus (in preparation)", cited by
+  hirani-2003) merged into desbrun-hirani-2005 as its early form — freeing
+  the key for Teixeira's distinct CDC-2003 DEC paper. Volume misprints
+  recorded in notes (mattsson-carpenter-2010 prints JCP 225 + wrong third
+  author for the no-slip Svärd–Nordström paper; JCP 111:354 venue belongs
+  to dai-woodward-1994). Nine references excluded as un-citable (no printed
+  year): Cactus/HARM code URLs, a private communication, two Lorenz-gauge
+  editorial footnotes in etienne-2012, two "submitted" Kreeft preprints, an
+  ICCFD7 paper, one duplicate-only). Seven placeholder titles upgraded;
+  three arXiv ids filled. **Frontier update**: brackbill-1980 (15 of 40),
+  balsara-1999 (13), ryu-1998 and whitney-1957 (10 each), brio-1988 (9),
+  nedelec-1980, powell-1994, zachary-1994 (8 each) — the FEEC/DEC/mimetic
+  cluster (whitney, nedelec) now rivals the MHD core.
+
 * **Bibliography backfill batch 3** — reference lists of 10 sources merged
   (mattsson-nordstrom-2004, brezzi-lipnikov-shashkov-2005, desbrun-hirani-2005,
   li-shu-2005, arnold-falk-winther-2006, fromang-2006, desbrun-kanso-tong-2008,
