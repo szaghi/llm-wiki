@@ -2,6 +2,45 @@
 
 ## 2026-07-21
 
+* **Bibliography backfill batch 5** — reference lists of 10 sources merged
+  (bonelle-ern-2014, lipnikov-2014, nissen-2014, palha-2014, etienne-2015,
+  kozdon-wilcox-2015, wang-kreiss-2017, wang-nissen-kreiss-2017, derigs-2018,
+  friedrich-2018): 621 printed references, [bibliography](/bibliography.md)
+  grows 1504 → 1804 entries (50/61 lists merged). Lipnikov–Manzini–Shashkov's
+  mimetic review contributed a complete 276-item list (one verbatim in-list
+  duplicate collapsed). The citation graph is closing on itself: the SBP
+  cluster's lists land mostly on existing keys (kozdon-wilcox-2015: 16 of 19
+  refs already present), and five sources cite other ingested sources in
+  preprint/published year-variants, all merged with notes
+  (kreeft-gerritsma-2013 cited as arXiv 2012 by lipnikov-2014 and palha-2014;
+  kozdon-wilcox-2015 cited as SISC 2016; nissen-2014 as JSC 2015;
+  wang-kreiss-2017 cited by its twin; shashkov-1996 under a short book
+  title). Identity resolutions: a batch-3 informational silence
+  (bossavit-1998 short-title variant) was found masking a genuinely
+  different work — bonelle-ern-2014 and palha-2014 cite the four-part JSAEM
+  "On the geometry of electromagnetism" series collectively under the
+  book's key; the silence is removed, the collective citation now lives at
+  bossavit-1998-f, and the five-part "Computational electromagnetism and
+  geometry" series is reconciled across three citing sources
+  (bossavit-2000 collective + bossavit-1999-c part 2). Same-title
+  same-year pairs from three sources' own lists trusted as distinct
+  (gyrya-2012 square/rectangular, lipnikov-2011 monotonicity pair,
+  aavatsmark-1998 I/II). Notable merges: lipnikov's Castillo-first
+  "High-order mimetic FDM on nonuniform grids" identified as hyman-1995
+  (ICOSAHOM 95 = Houston J. Math. special issue); Svärd–Nordström SBP
+  review (svard-2013-a) united with its JCP 268 published form;
+  duez-2005/shibata-2006 GRMHD placeholder pairs disambiguated by venue
+  against etienne-2015's titled citations (20 placeholder titles upgraded,
+  the largest single-source enrichment so far); Derigs' DOI-rich list
+  filled 20 missing identifiers. Nine references excluded as un-citable
+  (no printed year): five in derigs-2018 (incl. an arXiv-only lecture-notes
+  set and a DOI-only in-press item), the Kranc code URL, plus the two
+  "submitted" Kreeft preprints now entering via palha-2014's dated
+  citations. **Frontier update**: brackbill-1980 (16 of 50), balsara-1999
+  (15), whitney-1957 (12), brio-1988 and ryu-1998 (10), kreiss-1974 and
+  nedelec-1980 and zachary-1994 (9) — Kreiss–Scherer 1974 (SBP origin)
+  enters the top tier.
+
 * **Bibliography backfill batch 4** — reference lists of 10 sources merged
   (etienne-2010, mignone-tzeferacos-2010, perot-2011, miniati-martin-2011,
   christiansen-2011, mignone-2012, etienne-2012, teixeira-2013,
