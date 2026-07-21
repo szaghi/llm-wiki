@@ -1,5 +1,42 @@
 # Directory Update Log
 
+## 2026-07-21
+
+* **Bibliography backfill batch 3** — reference lists of 10 sources merged
+  (mattsson-nordstrom-2004, brezzi-lipnikov-shashkov-2005, desbrun-hirani-2005,
+  li-shu-2005, arnold-falk-winther-2006, fromang-2006, desbrun-kanso-tong-2008,
+  gardiner-stone-2008, arnold-falk-winther-2009, mattsson-carpenter-2010):
+  464 printed references, [bibliography](/bibliography.md) grows 662 → 907
+  entries (30/61 lists merged). The two FEEC reviews contributed complete
+  consolidated lists (100 + 90 refs) per the complete-and-unfiltered rule.
+  Identity resolutions, all recorded in entry notes where they carry
+  information: preprint/submitted forms merged into published entries
+  (arnold-2005→arnold-2007, christiansen-2005→christiansen-2007,
+  boffi-2002→boffi-2001 [M2AN publication of the "submitted" form],
+  monk-2003-b→monk-2001, desbrun-2003→desbrun-2004 [Discrete Poincaré lemma],
+  Bossavit's Extrusion/contraction preprint→bossavit-2003 [COMPEL]);
+  first-author-only citations of ingested sources mapped to their slugs
+  (evans-1988, londrillo-2000, berger-1989, toth-2002, brezzi-2005,
+  desbrun-2005, mattsson-2004, hyman-1997, arnold-2006-c = the ingested
+  Acta Numerica review); the two Mattsson fragments assigned opposite
+  -a/-b letters to Gustafsson 1995 (GKO book vs Gustafsson–Olsson JCP 117) —
+  untangled, book kept at gustafsson-1996 with year-variant note; colliding
+  distinct works split per house convention (second-author key when
+  authorship differs: bochev-gunzburger-2005, marsden-pekarsky-1999,
+  marsden-west-2001, dodziuk-patodi-1976, mattsson-nordstrom-2003; letter
+  suffix otherwise: boffi-2001-b, monk-1992-b, hiptmair-2001-c). Six
+  placeholder titles upgraded from titled citations; eprint filled for
+  desbrun-hirani-2005. **Pre-batch defect repaired**: duplicate dodziuk-1973
+  (year misprint in hyman-shashkov-1997's list; Amer. J. Math. 98 appeared
+  1976) merged into dodziuk-1976. Nine references excluded as un-citable
+  (no printed year): seven software-website citations in
+  arnold-falk-winther-2009, Qiu & Shu "to appear" in li-shu-2005,
+  mattsson-carpenter-2010's own URL-only arXiv preprint. **Frontier update**:
+  brackbill-1980 leads at 11 of 30 processed sources, then balsara-1999 (9),
+  ryu-1998 (8), brio-1988 and powell-1994 and stone-1992 (7 each) —
+  whitney-1957 (6) is the first non-MHD entry, pushed up by the FEEC/DEC
+  cluster.
+
 ## 2026-07-10
 
 * **Bibliography backfill batch 2** — reference lists of 10 sources merged

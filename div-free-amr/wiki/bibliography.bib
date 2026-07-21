@@ -3,6 +3,22 @@
 % citedby = {slug, ...} lists ingested sources whose reference lists
 % cite the work. Generated view: bibliography.md (tools/bib_to_md.py).
 
+@article{abarbanel-1997,
+  author = {Abarbanel, S. and Ditkowski, A.},
+  title = {Asymptotically stable fourth-order accurate schemes for the diffusion equation on complex shapes},
+  journal = {J. Comput. Phys., 133 (1997), pp. 279-288},
+  year = {1997},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
+}
+
+@techreport{abarbanel-1998,
+  author = {Abarbanel, S. and Ditkowski, A. and Yefet, A.},
+  title = {Bounded error schemes for the wave equation on complex domains},
+  institution = {Technical Report 9850, ICASE, Institute for Computer Applications in Science and Engineering, NASA Langley Research Center},
+  year = {1998},
+  citedby = {mattsson-nordstrom-2004},
+}
+
 @article{abbott-1998,
   author = {Abbott, B. and et, al.},
   title = {[title not printed in citing reference]},
@@ -25,7 +41,7 @@
   title = {Manifolds, tensor analysis, and applications},
   publisher = {volume 75 of Applied Mathematical Sciences, Springer-Verlag, New York, second edition},
   year = {1988},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008, hirani-2003},
 }
 
 @article{achterberg-1983,
@@ -58,8 +74,17 @@
   title = {r-torsion and linking numbers from simplicial abelian gauge theories},
   publisher = {(none printed)},
   year = {1996},
+  eprint = {hep-th/9612009},
   note = {URL e-print hep-th/9612009 (printed as "URL e-printhep-th/9612009")},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
+}
+
+@article{adams-2005,
+  author = {Adams, S. and Cockburn, B.},
+  title = {A mixed finite element method for elasticity in three dimensions},
+  journal = {J. Sci. Comput. 25 (2005), no. 3, 515-521},
+  year = {2005},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @article{aftosmis-1997,
@@ -86,6 +111,14 @@
   year = {2001},
   note = {printed year "2001a"; report},
   citedby = {hiptmair-2002},
+}
+
+@article{ainsworth-2003,
+  author = {Ainsworth, M. and Coyle, J.},
+  title = {Hierarchic finite element bases on unstructured tetrahedral meshes},
+  journal = {Internat. J. Numer. Methods Engrg. 58, 2103-2130},
+  year = {2003},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{ainsworth-coyle-2001,
@@ -179,12 +212,20 @@
   citedby = {hiptmair-2002},
 }
 
+@article{amara-1979,
+  author = {Amara, M. and Thomas, J.M.},
+  title = {Equilibrium finite elements for the linear elastic problem},
+  journal = {Numer. Math. 33, 367-383},
+  year = {1979},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{amrouche-1998,
   author = {Amrouche, C. and Bernardi, C. and Dauge, M. and Girault, V.},
   title = {Vector potentials in three-dimensional nonsmooth domains},
   journal = {Math. Meth. Appl. Sci. 21, 823-864},
   year = {1998},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @book{anselone-1971,
@@ -253,6 +294,46 @@
   citedby = {hyman-shashkov-1997},
 }
 
+@book{arnold-1978,
+  author = {Arnold, V.I.},
+  title = {Mathematical Methods of Classical Mechanics},
+  publisher = {Springer-Verlag, New York},
+  year = {1978},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{arnold-1982,
+  author = {Arnold, D.},
+  title = {An interior penalty finite element method with discontinuous elements},
+  journal = {SIAM J. Numer. Anal., 19 (1982), pp. 742-760},
+  year = {1982},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
+@article{arnold-1984-a,
+  author = {Arnold, D.N. and Brezzi, F. and Douglas, Jr., J.},
+  title = {PEERS: a new mixed finite element for plane elasticity},
+  journal = {Japan J. Appl. Math. 1 (1984), 347-367},
+  year = {1984},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{arnold-1984-b,
+  author = {Arnold, D.N. and Douglas, Jr., J. and Gupta, C.P.},
+  title = {A family of higher order mixed finite element methods for plane elasticity},
+  journal = {Numer. Math. 45 (1984), 1-22},
+  year = {1984},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{arnold-1988,
+  author = {Arnold, D.N. and Falk, R.S.},
+  title = {A new mixed formulation for elasticity},
+  journal = {Numer. Math. 53, 13-30},
+  year = {1988},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @book{arnold-1989,
   author = {Arnol'd, V.I.},
   title = {Mathematical methods of classical mechanics},
@@ -262,12 +343,105 @@
   citedby = {hirani-2003},
 }
 
+@article{arnold-1997-a,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Preconditioning discrete approximations of the Reissner-Mindlin plate model},
+  journal = {RAIRO Mod\'el. Math. Anal. Num\'er. 31, 517-557},
+  year = {1997},
+  note = {printed year "1997a"},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{arnold-1997-b,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Preconditioning in H(div) and applications},
+  journal = {Math. Comp. 66, 957-984},
+  year = {1997},
+  note = {printed year "1997b"},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{arnold-2000,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Multigrid in H(div) and H(curl)},
+  journal = {Numer. Math. 85, 197-217},
+  year = {2000},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@inproceedings{arnold-2002-a,
+  author = {Arnold, D.N.},
+  title = {Differential complexes and numerical stability},
+  booktitle = {Proceedings of the International Congress of Mathematicians, Vol. I (Beijing, 2002), Higher Education Press, Beijing, pp. 137-157},
+  year = {2002},
+  citedby = {arnold-falk-winther-2006, desbrun-hirani-2005},
+}
+
+@article{arnold-2002-b,
+  author = {Arnold, D.N. and Winther, R.},
+  title = {Mixed finite elements for elasticity},
+  journal = {Numer. Math. 92 (2002), 401-419},
+  year = {2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@book{arnold-2006-a,
+  editor = {Arnold, D.N. and Bochev, P.B. and Lehoucq, R.B. and Nicolaides, R.A. and Shashkov, M.},
+  title = {Compatible Spatial Discretizations},
+  publisher = {Vol. 142 of The IMA Volumes in Mathematics and its Applications, Springer, Berlin},
+  year = {2006},
+  note = {printed year "2006a"; edited volume},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@inproceedings{arnold-2006-b,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Differential complexes and stability of finite element methods. I. The de Rham complex},
+  booktitle = {Compatible Spatial Discretizations, IMA Vol. Math. Appl., vol. 142, Springer, New York, 2006, pp. 24-46},
+  year = {2006},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@inproceedings{arnold-2006-c,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Differential complexes and stability of finite element methods. II. The elasticity complex},
+  booktitle = {Compatible Spatial Discretizations, IMA Vol. Math. Appl., vol. 142, Springer, New York, 2006, pp. 47-67},
+  year = {2006},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{arnold-2007,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Mixed finite element methods for linear elasticity with weakly imposed symmetry},
+  journal = {Math. Comp. 76 (2007), no. 260, 1699-1723 (electronic)},
+  year = {2007},
+  note = {cited as submitted to Math. Comput. (2005) by arnold-falk-winther-2006},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{arnold-2008,
+  author = {Arnold, D.N. and Awanou, G. and Winther, R.},
+  title = {Finite elements for symmetric tensors in three dimensions},
+  journal = {Math. Comp. 77 (2008), no. 263, 1229-1251},
+  year = {2008},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{arnold-2009,
+  author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
+  title = {Geometric decompositions and local bases for spaces of finite element differential forms},
+  journal = {Comput. Methods Appl. Mech. Engrg. 198 (2009), 1660-1672},
+  year = {2009},
+  citedby = {arnold-falk-winther-2009},
+}
+
 @article{arnold-falk-winther-2006,
   author = {Arnold, D.N. and Falk, R.S. and Winther, R.},
   title = {Finite element exterior calculus, homological techniques, and applications},
   journal = {Acta Numerica 15:1-155},
   year = {2006},
   doi = {10.1017/S0962492906210018},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{arnold-falk-winther-2009,
@@ -301,7 +475,7 @@
   title = {Developing numerical fluxes with new sonic fix for MHD equations},
   journal = {J. Comput. Phys. 133:43},
   year = {1997},
-  citedby = {dedner-2002},
+  citedby = {dedner-2002, li-shu-2005},
 }
 
 @article{assous-1993,
@@ -325,7 +499,16 @@
   title = {Error bounds for the finite element method},
   journal = {Numer. Math. 16, 322-333},
   year = {1971},
-  citedby = {hiptmair-2002},
+  note = {printed year 1970/1971 in arnold-falk-winther-2009},
+  citedby = {arnold-falk-winther-2009, hiptmair-2002},
+}
+
+@inproceedings{babuska-1972,
+  author = {Babu\v{s}ka, I. and Aziz, A.K.},
+  title = {Survey lectures on the mathematical foundations of the finite element method},
+  booktitle = {The Mathematical Foundations of the Finite Element Method with Applications to Partial Differential Equations (Proc. Sympos., Univ. Maryland, Baltimore, MD, 1972), Academic Press, New York, pp. 1-359},
+  year = {1972},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{babuska-1976,
@@ -342,7 +525,7 @@
   title = {Eigenvalue problems},
   journal = {in Finite Element Methods, Part 1 (P. G. Ciarlet and J. Lions, eds), Vol. 2 of Handbook of Numerical Analysis, Elsevier, Amsterdam, pp. 641-787},
   year = {1991},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{babuska-1994,
@@ -361,6 +544,22 @@
   citedby = {hiptmair-2002},
 }
 
+@inproceedings{baker-1983,
+  author = {Baker, G.A.},
+  title = {Combinatorial Laplacians and Sullivan-Whitney forms},
+  booktitle = {Differential geometry (College Park, Md., 1981/1982), Progr. Math., vol. 32, Birkh{\"a}user Boston, Mass., 1983, pp. 1-33},
+  year = {1983},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{baker-1990,
+  author = {Baker, G.A. and Jureidini, W.N. and Karakashian, O.A.},
+  title = {Piecewise solenoidal vector fields and the Stokes problem},
+  journal = {SIAM J. Numer. Anal. 27, 1466-1485},
+  year = {1990},
+  citedby = {li-shu-2005},
+}
+
 @techreport{bakirova-1981,
   author = {Bakirova, M. and Burdiashvili, M. and Vo'tenko, D. and Ivanov, A. and Karpov, V. and Kirov, A. and Korshiaya, T. and Krukovskii, A. and Lubimov, B. and Tishkin, V. and Favorskii, A. and Shashkov, M.},
   title = {On simulation of a magnetic field in a spiral band reel},
@@ -368,6 +567,22 @@
   year = {1981},
   note = {in Russian},
   citedby = {hyman-shashkov-1997},
+}
+
+@article{balbus-1991,
+  author = {Balbus, S. and Hawley, J.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJ, 376, 214},
+  year = {1991},
+  citedby = {fromang-2006},
+}
+
+@article{balbus-1998,
+  author = {Balbus, S. and Hawley, J.},
+  title = {Instability, turbulence, and enhanced transport in accretion disks},
+  journal = {Rev. Mod. Phys., 70, 1},
+  year = {1998},
+  citedby = {fromang-2006, gardiner-stone-2008},
 }
 
 @inproceedings{baldomir-1986,
@@ -408,7 +623,7 @@
   journal = {J. Comput. Phys. 149:270},
   year = {1999},
   doi = {10.1006/jcph.1998.6153},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, fromang-2006, gardiner-stone-2008, li-shu-2005, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
 }
 
 @article{balsara-1999-b,
@@ -441,7 +656,7 @@
   journal = {J. Comput. Phys. 174:614-648},
   year = {2001},
   doi = {10.1006/jcph.2001.6917},
-  citedby = {balsara-2004, toth-roe-2002},
+  citedby = {balsara-2004, fromang-2006, li-shu-2005, toth-roe-2002},
 }
 
 @article{balsara-2001-b,
@@ -467,6 +682,7 @@
   journal = {Astrophys. J. Suppl. Ser. 151:149-184},
   year = {2004},
   doi = {10.1086/381377},
+  citedby = {li-shu-2005},
 }
 
 @book{balsara-kim-2004,
@@ -484,6 +700,14 @@
   journal = {Parallel Comput. 27:37},
   year = {2001},
   citedby = {balsara-2001},
+}
+
+@article{banerjee-2006,
+  author = {Banerjee, R. and Pudritz, R.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJ, 641, 949},
+  year = {2006},
+  citedby = {fromang-2006},
 }
 
 @article{barmin-1996,
@@ -518,6 +742,14 @@
   year = {1999},
   note = {book chapter / proceedings},
   citedby = {dedner-2002, powell-1999},
+}
+
+@article{bayliss-1986,
+  author = {Bayliss, A. and Jordan, K.E. and Lemesurier, B.J. and Turkel, E.},
+  title = {A fourth order accurate finite difference scheme for the computation of elastic waves},
+  journal = {Bull. Seismol. Soc. Amer., 76 (1986), pp. 1115-1132},
+  year = {1986},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @article{beck-1998,
@@ -628,7 +860,7 @@
   journal = {J. Comput. Phys. 53, 484 (1984)},
   year = {1984},
   note = {balsara-2001 prints year 1989 and page 64},
-  citedby = {almgren-1998, balsara-2001, berger-colella-1989},
+  citedby = {almgren-1998, balsara-2001, berger-colella-1989, fromang-2006},
 }
 
 @article{berger-1985,
@@ -664,13 +896,21 @@
   citedby = {almgren-1998, balsara-2001},
 }
 
+@article{berger-1997,
+  author = {Berger, M.A.},
+  title = {Magnetic helicity in a periodic domain},
+  journal = {J. Geophys. Res. 102 (1997) 2637},
+  year = {1997},
+  citedby = {gardiner-stone-2008},
+}
+
 @article{berger-colella-1989,
   author = {Berger, M.J. and Colella, P.},
   title = {Local adaptive mesh refinement for shock hydrodynamics},
   journal = {J. Comput. Phys. 82:64-84},
   year = {1989},
   doi = {10.1016/0021-9991(89)90035-1},
-  citedby = {almgren-1998, balsara-2001, balsara-2004, powell-1999},
+  citedby = {almgren-1998, balsara-2001, balsara-2004, fromang-2006, powell-1999},
 }
 
 @inproceedings{bern-1995,
@@ -682,12 +922,36 @@
   citedby = {hirani-2003},
 }
 
+@article{berndt-2001,
+  author = {Berndt, M. and Lipnikov, K. and Moulton, J.D. and Shashkov, M.},
+  title = {Convergence of mimetic finite difference discretizations of the diffusion equation},
+  journal = {East-West J. Numer. Math., 9 (2001), pp. 253-284},
+  year = {2001},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
+@article{berndt-2005,
+  author = {Berndt, M. and Lipnikov, K. and Shashkov, M. and Wheeler, M. and Yotov, I.},
+  title = {Superconvergence of the velocity in mimetic finite difference methods on quadrilaterals},
+  journal = {SIAM J. Numer. Anal., 43 (2005), pp. 1728-1749},
+  year = {2005},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @inproceedings{bernstein-1912,
   author = {Bernstein, S.N.},
   title = {Demonstration du theoreme de Weistrass fondee sur le calcul de probalite},
   booktitle = {Proceedings of the Mathematical Society of Kharkov, XIII},
   year = {1912},
   citedby = {nordstrom-carpenter-1999},
+}
+
+@inproceedings{bernstein-1975,
+  author = {Bern\v{s}te\u{i}n, I.N. and Gel'fand, I.M. and Gel'fand, S.I.},
+  title = {Differential operators on the base affine space and a study of g-modules},
+  booktitle = {Lie Groups and Their Representations (Proc. Summer School, Bolyai J\'anos Math. Soc., Budapest, 1971), Halsted, New York, pp. 21-64},
+  year = {1975},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{bespalov-1988,
@@ -714,6 +978,14 @@
   citedby = {hiptmair-2002},
 }
 
+@article{bjorner-1995,
+  author = {Bj{\"o}rner, A. and Welker, V.},
+  title = {The homology of "k-equal" manifolds and related partition lattices},
+  journal = {Advances in Math. 110 (1995), 277-313},
+  year = {1995},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
 @article{blandford-1977,
   author = {Blandford, R.D. and Znajek, R.L.},
   title = {[title not printed in citing reference]},
@@ -728,6 +1000,14 @@
   journal = {M.N.R.A.S., 199, 883},
   year = {1982},
   citedby = {evans-hawley-1988},
+}
+
+@book{bobenko-1999,
+  editor = {Bobenko, A. and Seiler, R.},
+  title = {Discrete integrable geometry and physics},
+  publisher = {Clarendon Press},
+  year = {1999},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{bochev-2005,
@@ -745,7 +1025,7 @@
   title = {Principles of mimetic discretizations of differential operators},
   booktitle = {in: D.N. Arnold, P.B. Bochev, R.B. Lehoucq, R.A. Nicolaides, M. Shashkov (Eds.), Compatible Spatial Discretizations, in: The IMA Volumes in Mathematics and Its Applications, vol. 142, Springer, New York, 2006, pp. 89–119},
   year = {2006},
-  citedby = {trask-2020},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, trask-2020},
 }
 
 @article{bochev-2013,
@@ -756,6 +1036,22 @@
   doi = {10.1016/j.cma.2012.10.009},
   note = {http://www.sciencedirect.com/science/article/pii/S0045782512003179},
   citedby = {trask-2020},
+}
+
+@article{bochev-gunzburger-2005,
+  author = {Bochev, P. and Gunzburger, M.D.},
+  title = {On least-squares finite element methods for the Poisson equation and their connection to the Dirichlet and Kelvin principles},
+  journal = {SIAM J. Numer. Anal. 43, 340-362},
+  year = {2005},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{boffi-1997,
+  author = {Boffi, D. and Brezzi, F. and Gastaldi, L.},
+  title = {On the convergence of eigenvalues for mixed formulations},
+  journal = {Ann. Scuola Norm. Sup. Pisa Cl. Sci. (4) 25, 131-154 (1998)},
+  year = {1997},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{boffi-1999,
@@ -771,7 +1067,7 @@
   title = {Discrete compactness and Fortin operator for edge elements},
   journal = {Numer. Math. 87, 229-246},
   year = {2000},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
 }
 
 @article{boffi-2001,
@@ -779,8 +1075,32 @@
   title = {Edge finite elements for the approximation of Maxwell resolvent operator},
   journal = {Submitted to RAIRO M2AN},
   year = {2001},
-  note = {submitted},
-  citedby = {hiptmair-2002},
+  note = {submitted; published as M2AN Math. Model. Numer. Anal. 36:293-305 (2002); cited as 2002 by arnold-falk-winther-2006},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
+}
+
+@article{boffi-2001-b,
+  author = {Boffi, D.},
+  title = {A note on the de Rham complex and a discrete compactness property},
+  journal = {Appl. Math. Lett. 14 (2001), 33-38},
+  year = {2001},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@inproceedings{boffi-2006,
+  author = {Boffi, D.},
+  title = {Compatible discretizations for eigenvalue problems},
+  booktitle = {Compatible Spatial Discretizations, IMA Vol. Math. Appl., vol. 142, Springer, New York, 2006, pp. 121-142},
+  year = {2006},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{boffi-2007,
+  author = {Boffi, D.},
+  title = {Approximation of eigenvalues in mixed form, discrete compactness property, and application to hp mixed finite elements},
+  journal = {Comput. Methods Appl. Mech. Engrg. 196 (2007), no. 37-40, 3672-3681},
+  year = {2007},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{boffi-brezzi-2000,
@@ -788,7 +1108,7 @@
   title = {On the problem of spurious eigenvalues in the approximation of linear elliptic problems in mixed form},
   journal = {Math. Comp. 69, 121-140},
   year = {2000},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @book{boissonnat-1998,
@@ -846,7 +1166,7 @@
   title = {Whitney forms: a class of finite elements for three-dimensional computations in electromagnetism},
   booktitle = {IEE Proc. 135 (8) (1988) 493–500},
   year = {1988},
-  citedby = {hiptmair-2002, trask-2020},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002, trask-2020},
 }
 
 @book{bossavit-1988-b,
@@ -900,7 +1220,7 @@
   year = {1998},
   isbn = {978-0-12-118710-1},
   note = {Academic Press Series in Electromagnetism},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {desbrun-kanso-tong-2008, hiptmair-2002, hirani-2003},
 }
 
 @article{bossavit-1998-b,
@@ -961,7 +1281,7 @@
   title = {Generalized finite differences in computational electromagnetics},
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, PIERS, Boston, MA, pp. 45-64},
   year = {2001},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {desbrun-hirani-2005, hiptmair-2002, hirani-2003},
 }
 
 @book{bossavit-2002,
@@ -970,7 +1290,7 @@
   publisher = {(none printed)},
   year = {2002},
   note = {cited as 2002a; no venue printed},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @book{bossavit-2002-b,
@@ -979,7 +1299,7 @@
   publisher = {(none printed)},
   year = {2002},
   note = {cited as 2002b; no venue printed},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{bossavit-2003,
@@ -987,7 +1307,8 @@
   title = {Extrusion, contraction : their discretization via whitney forms},
   journal = {COMPEL : The International Journal for Computation and Mathematics in Electrical and Electronic Engineering, 22(3):470-480},
   year = {2003},
-  citedby = {hirani-2003},
+  note = {cited as 2002 preprint by desbrun-hirani-2005},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{bossavit-kettunen-1999,
@@ -1004,7 +1325,7 @@
   title = {Differential Forms in Algebraic Topology},
   publisher = {Springer, New York},
   year = {1982},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{brackbill-1980,
@@ -1012,7 +1333,7 @@
   title = {The effect of nonzero ∇·B on the numerical solution of the magnetohydrodynamic equations},
   journal = {J. Comp. Phys., 35, 426},
   year = {1980},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, evans-hawley-1988, londrillo-delzanna-2000, powell-1999, toth-2000, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, evans-hawley-1988, fromang-2006, gardiner-stone-2008, li-shu-2005, londrillo-delzanna-2000, powell-1999, toth-2000, toth-roe-2002},
 }
 
 @article{brackbill-1982,
@@ -1031,12 +1352,36 @@
   citedby = {balsara-2001, balsara-2004, dedner-2002},
 }
 
+@article{braess-1983,
+  author = {Braess, D. and Hackbusch, W.},
+  title = {A new convergence proof for the multigrid method including the V-cycle},
+  journal = {SIAM J. Numer. Anal. 20, 967-975},
+  year = {1983},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{braess-2000,
   author = {Braess, D. and Schwab, C.},
   title = {Approximation on simplices with respect to weighted Sobolev norms},
   journal = {J. Approx. Theory 103, 329-337},
   year = {2000},
   citedby = {hiptmair-2002},
+}
+
+@article{bramble-1970,
+  author = {Bramble, J.H. and Hilbert, S.R.},
+  title = {Estimation of linear functionals on Sobolev spaces with application to Fourier transforms and spline interpolation},
+  journal = {SIAM J. Numer. Anal. 7 (1970), 112-124},
+  year = {1970},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{bramble-1988,
+  author = {Bramble, J.H. and Pasciak, J.E.},
+  title = {A preconditioning technique for indefinite systems resulting from mixed approximations of elliptic problems},
+  journal = {Math. Comp. 50, 1-17},
+  year = {1988},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{bramble-1990,
@@ -1046,6 +1391,46 @@
   year = {1990},
   note = {http://www.jstor.org/stable/2008789},
   citedby = {trask-2020},
+}
+
+@book{bramble-1993,
+  author = {Bramble, J.H.},
+  title = {Multigrid Methods},
+  publisher = {Vol. 294 of Pitman Research Notes in Mathematics Series, Longman Scientific & Technical, Harlow},
+  year = {1993},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{bramble-1997,
+  author = {Bramble, J.H. and Pasciak, J.E.},
+  title = {Iterative techniques for time dependent Stokes problems},
+  journal = {Comput. Math. Appl. 33, 13-30},
+  year = {1997},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{brandenburg-1995,
+  author = {Brandenburg, A. and Nordlund, A. and Stein, R.F. and Torkelsson, U.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJ, 446, 741},
+  year = {1995},
+  citedby = {fromang-2006},
+}
+
+@article{brandenburg-2002,
+  author = {Brandenburg, A. and Dobler, W.},
+  title = {[title not printed in citing reference]},
+  journal = {Comput. Phys. Commun., 147, 471},
+  year = {2002},
+  citedby = {fromang-2006},
+}
+
+@article{brandenburg-2004,
+  author = {Brandenburg, A. and Matthaeus, W.H.},
+  title = {Magnetic helicity evolution in a periodic domain with imposed field},
+  journal = {Phys. Rev. E 69 (2004) 056407},
+  year = {2004},
+  citedby = {gardiner-stone-2008},
 }
 
 @article{brandt-1977,
@@ -1061,7 +1446,7 @@
   title = {A simulation study of east–west IMF effects on the magnetosphere},
   journal = {Geophys. Res. Lett. 8:397},
   year = {1981},
-  citedby = {balsara-2001, balsara-2004, dedner-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, li-shu-2005},
 }
 
 @article{brecht-1985,
@@ -1070,6 +1455,31 @@
   journal = {Space Sci. Rev., 42, 169},
   year = {1985},
   citedby = {evans-hawley-1988},
+}
+
+@book{brenner-1994,
+  author = {Brenner, S. and Scott, L.},
+  title = {The Mathematical Theory of Finite Element Methods},
+  publisher = {Springer-Verlag, Berlin},
+  year = {1994},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
+@book{brenner-2002,
+  author = {Brenner, S.C. and Scott, L.R.},
+  title = {The Mathematical Theory of Finite Element Methods},
+  publisher = {Vol. 15 of Texts in Applied Mathematics, 2nd edn, Springer, New York},
+  year = {2002},
+  note = {second edition},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{brezzi-1974,
+  author = {Brezzi, F.},
+  title = {On the existence, uniqueness and approximation of saddle-point problems arising from Lagrangian multipliers},
+  journal = {Rev. Fran{\c c}aise Automat. Informat. Recherche Op{\'e}rationnelle S{\'e}r. Rouge 8 (1974), 129-151},
+  year = {1974},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @article{brezzi-1980,
@@ -1085,7 +1495,23 @@
   title = {Two families of mixed finite elements for 2nd order elliptic problems},
   journal = {Numer. Math. 47, 217-235},
   year = {1985},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
+}
+
+@article{brezzi-1987,
+  author = {Brezzi, F. and Douglas, Jr., J. and Dur\'an, R. and Fortin, M.},
+  title = {Mixed finite elements for second order elliptic problems in three variables},
+  journal = {Numer. Math. 51, 237-250},
+  year = {1987},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{brezzi-1990,
+  author = {Brezzi, F. and Bathe, K.-J.},
+  title = {A discourse on the stability conditions for mixed finite element formulations},
+  journal = {Comput. Methods Appl. Mech. Engrg. 82 (1990), 27-57},
+  year = {1990},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @book{brezzi-1991,
@@ -1093,7 +1519,15 @@
   title = {Mixed and Hybrid Finite Element Methods},
   publisher = {Springer, Berlin, 1991},
   year = {1991},
-  citedby = {hiptmair-2002, trask-2020},
+  citedby = {arnold-falk-winther-2006, brezzi-lipnikov-shashkov-2005, hiptmair-2002, trask-2020},
+}
+
+@article{brezzi-2005,
+  author = {Brezzi, F. and Lipnikov, K. and Simoncini, V.},
+  title = {A family of mimetic finite difference methods on polygonal and polyhedral meshes},
+  journal = {Math. Models Methods Appl. Sci., 15 (2005), pp. 1533-1551},
+  year = {2005},
+  citedby = {brezzi-lipnikov-shashkov-2005},
 }
 
 @article{brezzi-lipnikov-shashkov-2005,
@@ -1102,6 +1536,7 @@
   journal = {SIAM J. Numer. Anal. 43(5):1872-1896},
   year = {2005},
   doi = {10.1137/040613950},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{brio-1988,
@@ -1109,7 +1544,7 @@
   title = {An upwind differencing scheme for the equations of ideal magnetohydrodynamics},
   journal = {J. Comput. Phys. 75:400},
   year = {1988},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, powell-1999, toth-2000},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, li-shu-2005, londrillo-delzanna-2000, powell-1999, toth-2000},
 }
 
 @article{brio-2001,
@@ -1136,6 +1571,14 @@
   journal = {J. Fluid Mech. 64(4), 775 (1974)},
   year = {1974},
   citedby = {almgren-1998},
+}
+
+@article{bruning-1992,
+  author = {Br{\"u}ning, J. and Lesch, M.},
+  title = {Hilbert complexes},
+  journal = {J. Funct. Anal. 108 (1992), no. 1, 88-132},
+  year = {1992},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{buffa-2001,
@@ -1170,7 +1613,15 @@
   title = {Applied Differential Geometry},
   publisher = {Cambridge University Press, Cambridge},
   year = {1985},
-  citedby = {hiptmair-2002},
+  citedby = {desbrun-kanso-tong-2008, hiptmair-2002},
+}
+
+@techreport{burton-1994,
+  author = {Burton, D.},
+  title = {Multidimensional Discretization of Conservation Laws for Unstructured Polyhedral Grids},
+  institution = {Technical report UCRL-JC-118306, Lawrence Livermore National Laboratory, Livermore, CA},
+  year = {1994},
+  citedby = {brezzi-lipnikov-shashkov-2005},
 }
 
 @article{busse-1967,
@@ -1179,6 +1630,22 @@
   journal = {J. Math. Phys., v. 46, 1967, p. 140},
   year = {1967},
   citedby = {chorin-1968},
+}
+
+@article{campbell-2001,
+  author = {Campbell, J. and Shashkov, M.},
+  title = {A tensor artificial viscosity using a mimetic finite difference algorithm},
+  journal = {J. Comput. Phys., 172 (2001), pp. 739-765},
+  year = {2001},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
+@book{cannasdasilva-1999,
+  author = {Cannas da Silva, A. and Weinstein, A.},
+  title = {Geometric Models for Noncommutative Algebras},
+  publisher = {Berkeley Mathematics Lecture Notes vol. 10, American Mathematical Society},
+  year = {1999},
+  citedby = {desbrun-hirani-2005},
 }
 
 @techreport{caorsi-1999,
@@ -1198,12 +1665,20 @@
   citedby = {hiptmair-2002},
 }
 
+@article{cap-2001,
+  author = {\v{C}ap, A. and Slov\'ak, J. and Sou\v{c}ek, V.},
+  title = {Bernstein-Gelfand-Gelfand sequences},
+  journal = {Ann. of Math. (2) 154, 97-113},
+  year = {2001},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{cargo-1997,
   author = {Cargo, P. and Gallice, G.},
   title = {Roe matrices for ideal MHD and systematic construction of Roe matrices for systems of conservation laws},
   journal = {J. Comput. Phys. 136:446},
   year = {1997},
-  citedby = {dedner-2002, londrillo-delzanna-2000},
+  citedby = {dedner-2002, fromang-2006, londrillo-delzanna-2000},
 }
 
 @article{carpenter-1994,
@@ -1211,7 +1686,7 @@
   title = {The Stability of Numerical Boundary Treatments for Compact High-Order Finite-Difference Schemes},
   journal = {J. Comput. Phys., 108, No. 2, pp. 272-295},
   year = {1994},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-nordstrom-2004, nordstrom-carpenter-1999},
 }
 
 @article{carpenter-1995,
@@ -1227,7 +1702,7 @@
   title = {A Stable and Conservative Interface Treatment of Arbitrary Spatial Accuracy},
   journal = {J. Comput. Phys., 148, No. 2, pp. 341-365},
   year = {1999},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999},
 }
 
 @article{carpenter-gottlieb-1994,
@@ -1235,7 +1710,7 @@
   title = {Time-Stable Boundary Conditions for Finite-Difference Schemes Solving Hyperbolic Systems: Methodology and Application to High-Order Compact Schemes},
   journal = {J. Comput. Phys., 111, No. 2, pp. 220-236},
   year = {1994},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, nordstrom-carpenter-1999},
 }
 
 @techreport{carpenter-kennedy-1994,
@@ -1245,6 +1720,22 @@
   year = {1994},
   note = {report number printed as "NASA-TM-10911L" (OCR garble of NASA-TM-109112)},
   citedby = {nordstrom-carpenter-1999},
+}
+
+@book{carroll-2003,
+  author = {Carroll, S.},
+  title = {Spacetime and geometry: An introduction to general relativity},
+  publisher = {Pearson Education},
+  year = {2003},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@book{cartan-1945,
+  author = {Cartan, {\'E}.},
+  title = {Les syst{\`e}mes differentiels exterieurs et leurs applications g{\'e}ometriques},
+  publisher = {Hermann, Paris},
+  year = {1945},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @book{cartan-1967,
@@ -1272,6 +1763,14 @@
   citedby = {hyman-shashkov-1997},
 }
 
+@misc{castrillonlopez-2003,
+  author = {Castrill{\'o}n-L{\'o}pez, M.},
+  title = {Discrete variational problems on forms},
+  howpublished = {(in preparation)},
+  year = {2003},
+  citedby = {desbrun-hirani-2005},
+}
+
 @article{chan-1980,
   author = {Chan, K.L. and Hendriksen, R.N.},
   title = {[title not printed in citing reference]},
@@ -1286,7 +1785,7 @@
   publisher = {Internat. Series of Monographs on Physics, Clarendon Press, Oxford, 1961},
   year = {1961},
   note = {MR 23 #1270},
-  citedby = {chorin-1968},
+  citedby = {chorin-1968, fromang-2006},
 }
 
 @book{chapman-2002,
@@ -1304,6 +1803,22 @@
   journal = {Math. Comput. Simulation, 54(1-3):33-64},
   year = {2000},
   citedby = {hirani-2003},
+}
+
+@article{charney-1950,
+  author = {Charney, J.G. and Fj{\"o}rtoft, R. and von Neumann, J.},
+  title = {Numerical integration of the barotropic vorticity equation},
+  journal = {Tellus 2 (1950), 237-254},
+  year = {1950},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{cheeger-1979,
+  author = {Cheeger, J.},
+  title = {Analytic torsion and the heat equation},
+  journal = {Ann. of Math. (2) 109 (1979), no. 2, 259-322},
+  year = {1979},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{chen-1995,
@@ -1409,6 +1924,23 @@
   citedby = {hiptmair-2002},
 }
 
+@article{christiansen-2007,
+  author = {Christiansen, S.H.},
+  title = {Stability of Hodge decompositions in finite element spaces of differential forms in arbitrary dimension},
+  journal = {Numer. Math. 107 (2007), no. 1, 87-106},
+  year = {2007},
+  note = {cited as 2005 Univ. of Oslo preprint by arnold-falk-winther-2006},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{christiansen-2008,
+  author = {Christiansen, S.H. and Winther, R.},
+  title = {Smoothed projections in finite element exterior calculus},
+  journal = {Math. Comp. 77 (2008), no. 262, 813-829},
+  year = {2008},
+  citedby = {arnold-falk-winther-2009},
+}
+
 @article{christiansen-2011,
   author = {Christiansen, S.H. and Munthe-Kaas, H.Z. and Owren, B.},
   title = {Topics in structure-preserving discretization},
@@ -1422,7 +1954,7 @@
   title = {The Finite Element Method for Elliptic Problems},
   journal = {Vol. 4 of Studies in Mathematics and its Applications, North-Holland, Amsterdam},
   year = {1978},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, brezzi-lipnikov-shashkov-2005, hiptmair-2002},
 }
 
 @article{ciarletjr-1999,
@@ -1517,12 +2049,52 @@
   citedby = {hiptmair-2002},
 }
 
+@article{clement-1975,
+  author = {Cl{\'e}ment, P.},
+  title = {Approximation by finite element functions using local regularization},
+  journal = {Rev. Fran{\c c}aise Automat. Informat. Recherche Op{\'e}rationnelle S{\'e}r. Rouge, RAIRO Analyse Num{\'e}rique 9 (1975), 77-84},
+  year = {1975},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{cockburn-1989,
+  author = {Cockburn, B. and Lin, S.-Y. and Shu, C.-W.},
+  title = {TVB Runge-Kutta local projection discontinuous Galerkin finite element method for conservation laws III: One dimensional systems},
+  journal = {J. Comput. Phys. 84, 90-113},
+  year = {1989},
+  citedby = {li-shu-2005},
+}
+
+@article{cockburn-1990,
+  author = {Cockburn, B. and Hou, S. and Shu, C.-W.},
+  title = {The Runge-Kutta local projection discontinuous Galerkin finite element method for conservation laws IV: The multidimensional case},
+  journal = {Math. Comput. 54, 545-581},
+  year = {1990},
+  citedby = {li-shu-2005},
+}
+
 @article{cockburn-1998,
   author = {Cockburn, B. and Shu, C.-W.},
   title = {The Runge–Kutta Discontinuous Galerkin Method for Conservation Laws V},
   journal = {J. Comput. Phys. 141:199},
   year = {1998},
-  citedby = {balsara-2001, balsara-2004},
+  citedby = {balsara-2001, balsara-2004, li-shu-2005},
+}
+
+@article{cockburn-2001,
+  author = {Cockburn, B. and Shu, C.-W.},
+  title = {Runge-Kutta Discontinuous Galerkin methods for convection-dominated problems},
+  journal = {J. Sci. Comput. 16, 173-261},
+  year = {2001},
+  citedby = {li-shu-2005},
+}
+
+@article{cockburn-2004,
+  author = {Cockburn, B. and Li, F. and Shu, C.-W.},
+  title = {Locally divergence-free discontinuous Galerkin methods for the Maxwell equations},
+  journal = {J. Comput. Phys. 194, 588-610},
+  year = {2004},
+  citedby = {li-shu-2005},
 }
 
 @inproceedings{coirier-1993,
@@ -1535,10 +2107,10 @@
 
 @article{colella-1984,
   author = {Colella, P. and Woodward, P.R.},
-  title = {[title not printed in citing reference]},
+  title = {The piecewise parabolic method (PPM) for gas-dynamical simulations},
   journal = {J. Comp. Phys., 54, 174},
   year = {1984},
-  citedby = {evans-hawley-1988},
+  citedby = {evans-hawley-1988, gardiner-stone-2008},
 }
 
 @article{colella-1985,
@@ -1555,7 +2127,7 @@
   journal = {J. Comput. Phys. 87, 171 (1990)},
   year = {1990},
   note = {almgren-1998 cites the same JCP 87:171 as "A multidimensional second order Godunov scheme for conservation laws"},
-  citedby = {almgren-1998, balsara-2001},
+  citedby = {almgren-1998, balsara-2001, gardiner-stone-2008},
 }
 
 @inproceedings{colella-glaz-1985,
@@ -1595,7 +2167,7 @@
   title = {A coercive bilinear form for Maxwell's equations},
   journal = {J. Math. Anal. Appl. 157, 527-541},
   year = {1991},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @book{costabel-1998,
@@ -1631,6 +2203,14 @@
   citedby = {hiptmair-2002},
 }
 
+@article{courant-1928,
+  author = {Courant, R. and Friedrichs, K. and Lewy, H.},
+  title = {{\"U}ber die partiellen Differenzengleichungen der mathematischen Physik},
+  journal = {Math. Ann. 100 (1928), no. 1, 32-74},
+  year = {1928},
+  citedby = {arnold-falk-winther-2009},
+}
+
 @misc{crane-2025,
   author = {Crane, K.},
   title = {Discrete differential geometry: an applied introduction},
@@ -1638,6 +2218,14 @@
   year = {2025},
   url = {https://www.cs.cmu.edu/~kmcrane/Projects/DDG/},
   note = {lecture notes, updated January 2025},
+}
+
+@article{crockett-2005,
+  author = {Crockett, R.K. and Colella, P. and Fisher, R.T. and Klein, R.I. and McKee, C.F.},
+  title = {An unsplit, cell-centered Godunov method for ideal MHD},
+  journal = {J. Comput. Phys., 203, 422},
+  year = {2005},
+  citedby = {fromang-2006, gardiner-stone-2008},
 }
 
 @article{croisille-1995,
@@ -1688,7 +2276,7 @@
   journal = {J. Comput. Phys. 142:331},
   year = {1998},
   doi = {10.1006/jcph.1998.5944},
-  citedby = {dedner-2002, toth-2000, toth-roe-2002},
+  citedby = {dedner-2002, li-shu-2005, toth-2000, toth-roe-2002},
 }
 
 @book{dauge-1988,
@@ -1696,7 +2284,7 @@
   title = {Elliptic Boundary Value Problems on Corner Domains},
   publisher = {Vol. 1341 of Lecture Notes in Mathematics, Springer, Berlin},
   year = {1988},
-  citedby = {hiptmair-2002},
+  citedby = {brezzi-lipnikov-shashkov-2005, hiptmair-2002},
 }
 
 @book{dautray-1990,
@@ -1730,7 +2318,7 @@
   journal = {J. Comput. Phys. 175:645-673},
   year = {2002},
   doi = {10.1006/jcph.2001.6961},
-  citedby = {toth-roe-2002},
+  citedby = {fromang-2006, li-shu-2005, toth-roe-2002},
 }
 
 @article{degoes-2020,
@@ -1757,6 +2345,14 @@
   doi = {10.1016/j.compfluid.2014.02.016},
 }
 
+@article{delzanna-2001,
+  author = {Del Zanna, L. and Velli, M. and Londrillo, P.},
+  title = {Parametric decay of circularly polarized Alfvén waves: multidimensional simulations in periodic and open domains},
+  journal = {Astron. Astrophys. 367 (2001) 705},
+  year = {2001},
+  citedby = {gardiner-stone-2008},
+}
+
 @techreport{demkowicz-1999,
   author = {Demkowicz, L. and Monk, P. and Schwab, C. and Vardapetyan, L.},
   title = {Maxwell eigenvalues and discrete compactness in two dimensions},
@@ -1764,6 +2360,14 @@
   year = {1999},
   note = {report},
   citedby = {hiptmair-2002},
+}
+
+@article{demkowicz-2000,
+  author = {Demkowicz, L. and Monk, P. and Vardapetyan, L. and Rachowicz, W.},
+  title = {de Rham diagram for hp finite element spaces},
+  journal = {Comput. Math. Appl. 39 (2000), 29-38},
+  year = {2000},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @inproceedings{demkowicz-2001,
@@ -1791,6 +2395,14 @@
   citedby = {hyman-shashkov-1997},
 }
 
+@misc{derango-2001,
+  author = {De Rango, S. and Zingg, D.W.},
+  title = {High-Order Aerodynamic Computations on Multi Block Grids},
+  howpublished = {AIAA Paper 2001-2631, 2001},
+  year = {2001},
+  citedby = {mattsson-carpenter-2010},
+}
+
 @article{derigs-2018,
   author = {Derigs, D. and Winters, A.R. and Gassner, G.J. and Walch, S. and Bohm, M.},
   title = {Ideal GLM-MHD: about the entropy consistent nine-wave magnetic field divergence diminishing ideal magnetohydrodynamics equations},
@@ -1816,13 +2428,22 @@
   citedby = {hirani-2003},
 }
 
+@article{desbrun-2004,
+  author = {Desbrun, M. and Leok, M. and Marsden, J.E.},
+  title = {Discrete Poincar{\'e} Lemma},
+  journal = {Appl. Num. Math. (2004)},
+  year = {2004},
+  note = {cited as 2003 (Appl. Numer. Math., submitted) by desbrun-hirani-2005},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008},
+}
+
 @article{desbrun-hirani-2005,
   author = {Desbrun, M. and Hirani, A.N. and Leok, M. and Marsden, J.E.},
   title = {Discrete exterior calculus},
   journal = {arXiv:math/0508341v2 [math.DG]},
   year = {2005},
   eprint = {math/0508341},
-  citedby = {trask-2020},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, trask-2020},
 }
 
 @article{desbrun-kanso-tong-2008,
@@ -1894,7 +2515,23 @@
   title = {Multidimensional Analysis and Discrete Models},
   publisher = {CRC Press, Boca Raton, FL},
   year = {1995},
-  citedby = {hiptmair-2002, hirani-2003, hyman-shashkov-1997},
+  citedby = {desbrun-hirani-2005, hiptmair-2002, hirani-2003, hyman-shashkov-1997},
+}
+
+@article{diener-2007,
+  author = {Diener, P. and Dorband, E.N. and Schnetter, E. and Tiglio, M.},
+  title = {Optimized high-order derivative and dissipation operators satisfying summation by parts, and applications in three-dimensional multiblock evolutions},
+  journal = {J. Sci. Comput., 32 (2007), pp. 109-145},
+  year = {2007},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{dimakis-1994,
+  author = {Dimakis, A. and M{\"u}ller-Hoissen, F.},
+  title = {Discrete Differential Calculus, Graphs, Topologies, and Gauge Theory},
+  journal = {Journal of Mathematical Physics 35 (1994), 6703-6735},
+  year = {1994},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @techreport{diyankov-2008,
@@ -1914,20 +2551,29 @@
   citedby = {hyman-shashkov-1997},
 }
 
-@article{dodziuk-1973,
-  author = {Dodziuk, J.},
-  title = {Finite-difference approach to the Hodge theory of harmonic forms},
-  journal = {American Journal of Mathematics 98 (1):79-104},
-  year = {1973},
-  citedby = {hyman-shashkov-1997},
-}
-
 @article{dodziuk-1976,
   author = {Dodziuk, J.},
   title = {Finite-difference approach to the Hodge theory of harmonic forms},
   journal = {Amer. J. Math. 98, 79-104},
   year = {1976},
-  citedby = {hiptmair-2002},
+  note = {also cited with year 1973 by hyman-shashkov-1997 (Amer. J. Math. 98 appeared 1976)},
+  citedby = {arnold-falk-winther-2009, hiptmair-2002, hyman-shashkov-1997},
+}
+
+@article{dodziuk-patodi-1976,
+  author = {Dodziuk, J. and Patodi, V.K.},
+  title = {Riemannian structures and triangulations of manifolds},
+  journal = {J. Indian Math. Soc. (N.S.) 40 (1976), no. 1-4, 1-52},
+  year = {1976},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@book{doran-2003,
+  editor = {Doran, C. and Lasenby, A.},
+  title = {Geometric algebra for physicists},
+  publisher = {Cambridge University Press},
+  year = {2003},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{dorfi-1986,
@@ -1936,6 +2582,14 @@
   journal = {Comput. Phys. Comm., 43, 1},
   year = {1986},
   citedby = {evans-hawley-1988},
+}
+
+@article{douglas-1985,
+  author = {Douglas, Jr., J. and Roberts, J.E.},
+  title = {Global estimates for mixed methods for second order elliptic equations},
+  journal = {Math. Comp. 44 (1985), 39-52},
+  year = {1985},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, brezzi-lipnikov-shashkov-2005},
 }
 
 @inproceedings{drobny-2000,
@@ -1947,12 +2601,44 @@
   citedby = {clemens-weiland-2001},
 }
 
+@article{dryja-1995,
+  author = {Dryja, M. and Widlund, O.B.},
+  title = {Schwarz methods of Neumann-Neumann type for three-dimensional elliptic finite element problems},
+  journal = {Comm. Pure Appl. Math. 48, 121-155},
+  year = {1995},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{dupont-1980,
   author = {Dupont, T. and Scott, R.},
   title = {Polynomial approximation of functions in Sobolev spaces},
   journal = {Math. Comp. 34, 441-463},
   year = {1980},
   citedby = {hiptmair-2002},
+}
+
+@article{eastwood-2000,
+  author = {Eastwood, M.},
+  title = {A complex from linear elasticity},
+  journal = {Rend. Circ. Mat. Palermo (2) Suppl. (2000), no. 63, 23-29},
+  year = {2000},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, desbrun-hirani-2005},
+}
+
+@inproceedings{edelsbrunner-2000,
+  author = {Edelsbrunner, H. and Letscher, D. and Zomorodian, A.},
+  title = {Topological persistence and simplification},
+  booktitle = {IEEE Symposium on Foundations of Computer Science, 2000, pp. 454-463},
+  year = {2000},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@article{elcott-2007,
+  author = {Elcott, S. and Tong, Y. and Kanso, E. and Desbrun, M. and Schr{\"o}der, P.},
+  title = {Discrete, Circulation-Preserving and Stable Simplicial Fluid},
+  journal = {ACM Trans. on Graphics 26(1) (2007)},
+  year = {2007},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{etienne-2010,
@@ -2002,7 +2688,7 @@
   journal = {Graduate Studies in Mathematics (Amer. Math. Soc., Providence, RI, 1998), Vol. 19},
   year = {1998},
   note = {book},
-  citedby = {dedner-2002},
+  citedby = {arnold-falk-winther-2009, dedner-2002},
 }
 
 @article{evans-hawley-1988,
@@ -2011,8 +2697,8 @@
   journal = {Astrophys. J. 332:659-677},
   year = {1988},
   doi = {10.1086/166684},
-  note = {balsara-2001 prints year 1989},
-  citedby = {balsara-2001, dedner-2002, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
+  note = {balsara-2001 prints year 1989; fromang-2006 prints ApJ volume 33 (misprint for 332)},
+  citedby = {balsara-2001, dedner-2002, fromang-2006, gardiner-stone-2008, li-shu-2005, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
 }
 
 @inproceedings{eymard-2000,
@@ -2022,6 +2708,14 @@
   year = {2000},
   note = {http://www.sciencedirect.com/science/article/pii/S1570865900070058},
   citedby = {trask-2020},
+}
+
+@article{falk-1980,
+  author = {Falk, R.S. and Osborn, J.E.},
+  title = {Error estimates for mixed methods},
+  journal = {RAIRO Anal. Num{\'e}r. 14 (1980), 249-277},
+  year = {1980},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @article{falle-1998,
@@ -2037,7 +2731,15 @@
   title = {[title not printed in citing reference]},
   journal = {ApJ, 577, L123},
   year = {2002},
-  citedby = {balsara-2004},
+  citedby = {balsara-2004, fromang-2006},
+}
+
+@article{farhloul-1997,
+  author = {Farhloul, M. and Fortin, M.},
+  title = {Dual hybrid methods for the elasticity and the Stokes problems: a unified approach},
+  journal = {Numer. Math. 76, 419-440},
+  year = {1997},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{favorskii-1979,
@@ -2096,7 +2798,7 @@
   title = {Geometric Measure Theory},
   publisher = {Springer, New York},
   year = {1969},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{fernandes-1997,
@@ -2124,12 +2826,77 @@
   citedby = {evans-hawley-1988},
 }
 
+@inproceedings{fisher-2007,
+  author = {Fisher, M. and Schr{\"o}der, P. and Desbrun, M. and Hoppe, H.},
+  title = {Design of tangent vector fields},
+  booktitle = {SIGGRAPH '07: ACM SIGGRAPH 2007 Papers (New York), ACM, 2007, paper 56},
+  year = {2007},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{fix-1981,
+  author = {Fix, G.J. and Gunzburger, M.D. and Nicolaides, R.A.},
+  title = {On mixed finite element methods for first-order elliptic systems},
+  journal = {Numer. Math. 37, 29-48},
+  year = {1981},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@book{flanders-1990,
+  author = {Flanders, H.},
+  title = {Differential forms and applications to physical sciences},
+  publisher = {Dover},
+  year = {1990},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@book{flanders-2001,
+  editor = {Flanders, H.},
+  title = {Geometric methods for computational electromagnetics},
+  publisher = {EMW Publishing, Cambridge Mass.},
+  year = {2001},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@article{forman-2002,
+  author = {Forman, R.},
+  title = {Discrete Morse theory and the cohomology ring},
+  journal = {Trans. Amer. Math. Soc., 354(12):5063-5085 (electronic)},
+  year = {2002},
+  citedby = {desbrun-hirani-2005},
+}
+
+@article{forman-2003,
+  author = {Forman, R.},
+  title = {Bochner's Method for Cell Complexes and Combinatorial Ricci Curvature},
+  journal = {J. of Discrete and Computational Geom. 29 (2003), no. 3, 323-374},
+  year = {2003},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@inproceedings{fraeijsdeveubeke-1965,
+  author = {Fraeijs de Veubeke, B.M.},
+  title = {Displacement and equilibrium models in the finite element method},
+  booktitle = {Stress Analysis (O. C. Zienkiewicz and G. S. Holister, eds.), Wiley, New York, 1965, pp. 145-197},
+  year = {1965},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
 @article{frank-1996,
   author = {Frank, A. and Jones, T.W. and Ryu, D. and Gaalaas, J.B.},
   title = {The magnetohydrodynamic Kelvin–Helmholtz instability: A two-dimensional numerical study},
   journal = {Astrophys. J. 460:777},
   year = {1996},
   citedby = {dedner-2002},
+}
+
+@book{frankel-2004,
+  author = {Frankel, T.},
+  title = {The geometry of physics},
+  publisher = {Cambridge University Press},
+  year = {2004},
+  note = {Second Edition},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{friedlander-1958,
@@ -2198,6 +2965,22 @@
   citedby = {chorin-1968},
 }
 
+@book{fulton-1991,
+  author = {Fulton, W. and Harris, J.},
+  title = {Representation Theory},
+  publisher = {Vol. 129 of Graduate Texts in Mathematics, Springer, New York},
+  year = {1991},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{gaffney-1951,
+  author = {Gaffney, M.P.},
+  title = {The harmonic operator for exterior differential forms},
+  journal = {Proc. Nat. Acad. Sci. USA 37 (1951), 48-50},
+  year = {1951},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
 @article{gallice-1995,
   author = {Gallice, G.},
   title = {Resolution numerique des equations de la magnetohydrodynamique ideale bidimmensionale},
@@ -2214,6 +2997,24 @@
   year = {1956},
   note = {MR 19, 583},
   citedby = {chorin-1968},
+}
+
+@article{gardiner-2005-a,
+  author = {Gardiner, T.A. and Stone, J.M.},
+  title = {An unsplit Godunov method for ideal MHD via constrained transport},
+  journal = {J. Comput. Phys., 205, 509},
+  year = {2005},
+  note = {printed year "2005a"},
+  citedby = {fromang-2006, gardiner-stone-2008},
+}
+
+@misc{gardiner-2005-b,
+  author = {Gardiner, T.A. and Stone, J.M.},
+  title = {[title not printed in citing reference]},
+  howpublished = {ArXiv Astrophysics e-prints},
+  year = {2005},
+  note = {printed year "2005b"; no arXiv id printed},
+  citedby = {fromang-2006},
 }
 
 @article{gardiner-stone-2008,
@@ -2242,12 +3043,28 @@
   citedby = {hyman-shashkov-1997},
 }
 
+@article{gerritsen-1996,
+  author = {Gerritsen, M. and Olsson, P.},
+  title = {Designing an efficient solution strategy for fluid flows},
+  journal = {J. Comput. Phys. 129 (1996) 245-262},
+  year = {1996},
+  citedby = {mattsson-nordstrom-2004},
+}
+
 @book{girault-1986,
   author = {Girault, V. and Raviart, P.},
   title = {Finite Element Methods for Navier-Stokes Equations},
   publisher = {Springer, Berlin},
   year = {1986},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
+}
+
+@article{glotko-2003,
+  author = {Glotko, N.V.},
+  title = {On the complex of Sobolev spaces associated with an abstract Hilbert complex},
+  journal = {Sibirsk. Mat. Zh. 44 (2003), no. 5, 992-1014},
+  year = {2003},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{godunov-1972,
@@ -2267,6 +3084,22 @@
   citedby = {powell-1999},
 }
 
+@article{goldreich-1965,
+  author = {Goldreich, P. and Lynden-Bell, D.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 130, 125},
+  year = {1965},
+  citedby = {fromang-2006},
+}
+
+@article{goldstein-1978,
+  author = {Goldstein, M.L.},
+  title = {An instability of finite amplitude circularly polarized Alfvén waves},
+  journal = {Astrophys. J. 219 (1978) 700},
+  year = {1978},
+  citedby = {gardiner-stone-2008},
+}
+
 @article{goloviznin-1982,
   author = {Goloviznin, V.M. and Korshunov, V.K. and Samarskii, A.A.},
   title = {Two-dimensional difference schemes of magnetohydrodynamics on triangle Lagrange meshes},
@@ -2281,6 +3114,15 @@
   journal = {Diff. Eqns. 20 (7):852-858},
   year = {1984},
   citedby = {hyman-shashkov-1997},
+}
+
+@book{golub-1989,
+  author = {Golub, G.H. and Van Loan, C.F.},
+  title = {Matrix Computations},
+  publisher = {Johns Hopkins University Press, Baltimore},
+  year = {1989},
+  note = {second ed.},
+  citedby = {mattsson-nordstrom-2004},
 }
 
 @article{gombosi-1994,
@@ -2307,6 +3149,22 @@
   year = {2000},
   note = {technical report; Submitted to Math. Comp.},
   citedby = {hiptmair-2002},
+}
+
+@article{gopalakrishnan-2005,
+  author = {Gopalakrishnan, J. and Garc\'ia-Castillo, L.E. and Demkowicz, L.F.},
+  title = {N\'ed\'elec spaces in affine coordinates},
+  journal = {Comput. Math. Appl. 49, 1285-1294},
+  year = {2005},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{gortler-2006,
+  author = {Gortler, S.J. and Gotsman, C. and Thurston, D.},
+  title = {Discrete one-forms on meshes and applications to 3D mesh parameterization},
+  journal = {Comput. Aided Geom. Design 23 (2006), no. 2, 83-112},
+  year = {2006},
+  citedby = {arnold-falk-winther-2009, desbrun-kanso-tong-2008},
 }
 
 @book{gozalo-2001,
@@ -2363,7 +3221,15 @@
   title = {Elliptic Problems in Nonsmooth Domains},
   publisher = {Pitman, Boston},
   year = {1985},
-  citedby = {hiptmair-2002},
+  citedby = {brezzi-lipnikov-shashkov-2005, hiptmair-2002},
+}
+
+@article{gromov-1992,
+  author = {Gromov, M. and Shubin, M.A.},
+  title = {Near-cohomology of Hilbert complexes and topology of nonsimply connected manifolds},
+  journal = {Ast{\'e}risque (1992), no. 210, 9-10, 283-294, M{\'e}thodes semi-classiques, Vol. 2 (Nantes, 1991)},
+  year = {1992},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{gropp-1980,
@@ -2397,7 +3263,15 @@
   title = {Data structures for geometric and topological aspects of finite element algorithms},
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, PIERS, Boston, MA, pp. 151-169},
   year = {2001},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {desbrun-hirani-2005, hiptmair-2002, hirani-2003},
+}
+
+@book{gross-2004,
+  author = {Gross, P.W. and Kotiuga, R.},
+  title = {Electromagnetic Theory and Computation: A Topological Approach},
+  publisher = {Cambridge University Press},
+  year = {2004},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{grote-1998,
@@ -2416,6 +3290,39 @@
   citedby = {hirani-2003},
 }
 
+@inproceedings{gu-2003,
+  author = {Gu, X. and Yau, S.-T.},
+  title = {Global conformal surface parameterization},
+  booktitle = {Proceedings of the Eurographics/ACM SIGGRAPH Symposium on Geometry Processing, Eurographics Association, 2003, pp. 127-137},
+  year = {2003},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@book{gu-2008,
+  author = {Gu, X.D. and Yau, S.-T.},
+  title = {Computational conformal geometry},
+  publisher = {Advanced Lectures in Mathematics (ALM), vol. 3, International Press, Somerville, MA},
+  year = {2008},
+  note = {With 1 CD-ROM (Windows, Macintosh and Linux)},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@book{guillemin-1999,
+  author = {Guillemin, V.W. and Sternberg, S.},
+  title = {Supersymmetry and Equivariant de Rham Theory},
+  publisher = {Mathematics Past and Present, Springer, Berlin},
+  year = {1999},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{gustafsson-1972,
+  author = {Gustafsson, B. and Kreiss, H.O. and Sundstr{\"o}m, A.},
+  title = {Stability theory of difference approximations for mixed initial boundary value problems},
+  journal = {Math. Comp., 26 (1972), pp. 649-686},
+  year = {1972},
+  citedby = {mattsson-carpenter-2010},
+}
+
 @article{gustafsson-1975,
   author = {Gustafsson, B.},
   title = {The Convergence Rate for Difference Approximations to Mixed Initial Boundary Value Problems},
@@ -2429,7 +3336,15 @@
   title = {The Convergence Rate for Difference Approximations to General Mixed Initial Boundary Value Problems},
   journal = {SIAM J. Numer. Anal., 18, No. 2},
   year = {1981},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999},
+}
+
+@article{gustafsson-1995,
+  author = {Gustafsson, B. and Olsson, P.},
+  title = {Fourth-order difference methods for hyperbolic IBVPs},
+  journal = {J. Comput. Phys., 117 (1995), pp. 300-317},
+  year = {1995},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
 }
 
 @book{gustafsson-1996,
@@ -2437,8 +3352,8 @@
   title = {Time Dependent Problems and Difference Methods},
   publisher = {John Wiley and Sons},
   year = {1996},
-  note = {OCR printed author as "ÖLIGER" (Oliger)},
-  citedby = {nordstrom-carpenter-1999},
+  note = {OCR printed author as "ÖLIGER" (Oliger); Wiley publication year is 1995; cited as 1995 by mattsson-carpenter-2010 and mattsson-nordstrom-2004},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999},
 }
 
 @phdthesis{gutschling-1998,
@@ -2472,7 +3387,8 @@
   title = {Iterative Solution of Large Sparse Systems of Equations},
   publisher = {Vol. 95 of Applied Mathematical Sciences, Springer, New York},
   year = {1993},
-  citedby = {hiptmair-2002},
+  note = {also cited with year 1994 by arnold-falk-winther-2006},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
 }
 
 @phdthesis{hahne-1992,
@@ -2543,6 +3459,22 @@
   citedby = {hirani-2003},
 }
 
+@techreport{harrison-2005,
+  author = {Harrison, J.},
+  title = {Ravello Lecture Notes on Geometric Calculus -- Part I},
+  institution = {UC Berkeley},
+  year = {2005},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@article{harten-1978,
+  author = {Harten, A.},
+  title = {The artificial compression method for computation of shocks and contact discontinuities: self adjusting hybrid schemes},
+  journal = {Math. Comp. 32 (1978) 363-389},
+  year = {1978},
+  citedby = {mattsson-nordstrom-2004},
+}
+
 @article{harten-1983,
   author = {Harten, A.},
   title = {High resolution schemes for hyperbolic conservation laws},
@@ -2580,7 +3512,8 @@
   title = {Algebraic topology},
   publisher = {Cambridge University Press, Cambridge},
   year = {2002},
-  citedby = {hirani-2003},
+  note = {cited as 2001 by desbrun-hirani-2005 and as 2004 by desbrun-kanso-tong-2008},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008, hirani-2003},
 }
 
 @article{hawley-1984-a,
@@ -2607,6 +3540,14 @@
   publisher = {in Radiation Hydrodynamics in Stars and Compact Objects, ed. D. Mihalas and K.-H. A. Winkler (New York: Springer Verlag), p. 369},
   year = {1986},
   citedby = {evans-hawley-1988},
+}
+
+@article{hawley-1995,
+  author = {Hawley, J.F. and Gammie, C.F. and Balbus, S.A.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJ, 440, 742},
+  year = {1995},
+  citedby = {fromang-2006},
 }
 
 @article{hazard-1996,
@@ -2644,6 +3585,14 @@
   citedby = {harlow-welch-1965},
 }
 
+@article{hennebelle-2004,
+  author = {Hennebelle, P. and Whitworth, A.P. and Cha, S.-H. and Goodwin, S.P.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 348, 687},
+  year = {2004},
+  citedby = {fromang-2006},
+}
+
 @article{hestenes-1954,
   author = {Hestenes, M.R. and Stiefel, E.},
   title = {Methods of conjugate gradients for solving linear systems},
@@ -2670,13 +3619,47 @@
   citedby = {nordstrom-carpenter-1999},
 }
 
+@article{hesthaven-1998,
+  author = {Hesthaven, J.S.},
+  title = {A stable penalty method for the compressible Navier-Stokes equations: III. Multidimensional domain decomposition schemes},
+  journal = {SIAM J. Sci. Comput., 20 (1998), pp. 62-93},
+  year = {1998},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{hildebrandt-2004,
+  author = {Hildebrandt, K. and Polthier, K.},
+  title = {Anisotropic filtering of non-linear surface features},
+  journal = {Computer Graphics Forum (Grenoble, France) (M.-P. Cani and M. Slater, eds.), vol. 23, September 2004, Proc. Eurographics 2004},
+  year = {2004},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@book{hilton-1997,
+  author = {Hilton, P.J. and Stammbach, U.},
+  title = {A Course in Homological Algebra},
+  publisher = {Vol. 4 of Graduate Texts in Mathematics, 2nd edn, Springer, New York},
+  year = {1997},
+  note = {second edition},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{hiptmair-1997,
+  author = {Hiptmair, R.},
+  title = {Multigrid method for H(div) in three dimensions},
+  journal = {Electron. Trans. Numer. Anal. 6, 133-152 (electronic)},
+  year = {1997},
+  note = {Special issue on Multilevel Methods (Copper Mountain, CO, 1997)},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{hiptmair-1999,
   author = {Hiptmair, R.},
   title = {Canonical construction of finite elements},
   journal = {Math. Comp. 68, 1325-1346},
   year = {1999},
   note = {printed year "1999a"},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, desbrun-hirani-2005, hiptmair-2002, hirani-2003},
 }
 
 @article{hiptmair-1999-b,
@@ -2685,7 +3668,7 @@
   journal = {SIAM J. Numer. Anal. 36, 204-225},
   year = {1999},
   note = {printed year "1999b"},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
 }
 
 @techreport{hiptmair-2000,
@@ -2713,7 +3696,16 @@
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, EMW Publishing, Cambridge, MA, pp. 271-299},
   year = {2001},
   note = {printed year "2001c"},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, desbrun-hirani-2005, hiptmair-2002},
+}
+
+@article{hiptmair-2001-c,
+  author = {Hiptmair, R.},
+  title = {Discrete Hodge-operators: An algebraic perspective},
+  journal = {Progress in Electromagnetics Research, PIER, 32:247-269},
+  year = {2001},
+  note = {printed year "2001a"},
+  citedby = {desbrun-hirani-2005},
 }
 
 @article{hiptmair-2002,
@@ -2722,7 +3714,7 @@
   journal = {Acta Numerica 11:237-339},
   year = {2002},
   doi = {10.1017/S0962492902000041},
-  citedby = {hirani-2003},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, desbrun-hirani-2005, hirani-2003},
 }
 
 @book{hiptmair-2002-b,
@@ -2739,7 +3731,7 @@
   title = {Overlapping and multilevel Schwarz methods for vector valued elliptic problems in three dimensions},
   publisher = {in Parallel Solution of Partial Differential Equations (P. Bjorstad and M. Luskin, eds), Vol 120 of IMA Volumes in Mathematics and its Applications, Springer, Berlin, pp. 181-202},
   year = {1999},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
 }
 
 @book{hirani-2001,
@@ -2758,6 +3750,7 @@
   year = {2003},
   url = {https://thesis.library.caltech.edu/},
   note = {CaltechTHESIS; PhD thesis, 2003},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008},
 }
 
 @article{holland-1983,
@@ -2774,6 +3767,23 @@
   journal = {East-West J. Numer. Anal. 7, 159-175},
   year = {1999},
   citedby = {hiptmair-2002},
+}
+
+@book{hormander-2007,
+  author = {H{\"o}rmander, L.},
+  title = {The analysis of linear partial differential operators. III},
+  publisher = {Classics in Mathematics, Springer, Berlin},
+  year = {2007},
+  note = {Pseudo-differential operators, Reprint of the 1994 edition},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{hosking-2004,
+  author = {Hosking, J.G. and Whitworth, A.P.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 347, 1001},
+  year = {2004},
+  citedby = {fromang-2006},
 }
 
 @article{howell-1997,
@@ -2810,6 +3820,14 @@
   citedby = {nordstrom-carpenter-1999},
 }
 
+@article{hyman-1997,
+  author = {Hyman, J. and Shashkov, M. and Steinberg, S.},
+  title = {The numerical solution of diffusion problems in strongly heterogeneous non-isotropic materials},
+  journal = {J. Comput. Phys., 132 (1997), pp. 130-148},
+  year = {1997},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @article{hyman-1999,
   author = {Hyman, J. and Shashkov, M.},
   title = {Mimetic discretizations for Maxwell's equations},
@@ -2823,7 +3841,15 @@
   title = {Mimetic finite difference methods for Maxwell's equations and the equations of magnetic diffusion},
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, PIERS, Boston, MA, pp. 89-121},
   year = {2001},
-  citedby = {hiptmair-2002},
+  citedby = {brezzi-lipnikov-shashkov-2005, hiptmair-2002},
+}
+
+@article{hyman-2002,
+  author = {Hyman, J. and Morel, J. and Shashkov, M. and Steinberg, S.},
+  title = {Mimetic finite difference methods for diffusion equations},
+  journal = {Comput. Geosci., 6 (2002), pp. 333-352},
+  year = {2002},
+  citedby = {brezzi-lipnikov-shashkov-2005},
 }
 
 @article{hyman-shashkov-1997,
@@ -2832,7 +3858,7 @@
   journal = {Comput. Math. Appl. 33(4):81-104},
   year = {1997},
   doi = {10.1016/S0898-1221(97)00009-6},
-  citedby = {hirani-2003, trask-2020},
+  citedby = {desbrun-kanso-tong-2008, hirani-2003, trask-2020},
 }
 
 @book{ihlenburg-1998,
@@ -2868,6 +3894,15 @@
   citedby = {hiptmair-2002},
 }
 
+@book{jackson-1998,
+  author = {Jackson, J.D.},
+  title = {Classical Electrodynamics},
+  publisher = {Wiley},
+  year = {1998},
+  note = {third edition},
+  citedby = {desbrun-hirani-2005},
+}
+
 @article{jameson-1991,
   author = {Jameson, A.},
   title = {Time dependent calculations using multigrid, with applications to unsteady flows past airfoils and wings},
@@ -2894,6 +3929,15 @@
   citedby = {clemens-weiland-2001},
 }
 
+@book{janich-2001,
+  author = {J{\"a}nich, K.},
+  title = {Vector Analysis},
+  publisher = {Undergraduate Texts in Mathematics, Springer, New York},
+  year = {2001},
+  note = {Translated from the second German (1993) edition by Leslie Kay},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
 @book{jeffrey-1964,
   author = {Jeffrey, A. and Taniuti, T.},
   title = {Nonlinear Wave Propagation},
@@ -2908,7 +3952,7 @@
   title = {The origin of spurious solutions in computational electromagnetics},
   journal = {J. Comput. Phys. 125(1):104},
   year = {1996},
-  citedby = {dedner-2002},
+  citedby = {dedner-2002, li-shu-2005},
 }
 
 @book{jiang-1998,
@@ -2922,10 +3966,10 @@
 
 @article{jiang-1999,
   author = {Jiang, G.-S. and Wu, C.-C.},
-  title = {[title not printed in citing reference]},
+  title = {A high-order WENO finite difference scheme for the equations of ideal magnetohydrodynamics},
   journal = {J. Comput. Phys., 150, 561},
   year = {1999},
-  citedby = {londrillo-delzanna-2000},
+  citedby = {li-shu-2005, londrillo-delzanna-2000},
 }
 
 @article{jiang-shu-1996,
@@ -2950,6 +3994,47 @@
   journal = {Appl. Anal. 66, 189-203},
   year = {1997},
   citedby = {hiptmair-2002},
+}
+
+@article{johnson-1978,
+  author = {Johnson, C. and Mercier, B.},
+  title = {Some equilibrium finite element methods for two-dimensional elasticity problems},
+  journal = {Numer. Math. 30 (1978), 103-116},
+  year = {1978},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@book{kaczynski-2004,
+  author = {Kaczynski, T. and Mischaikow, K. and Mrozek, M.},
+  title = {Computational homology},
+  publisher = {Applied Mathematical Sciences vol. 157, Springer-Verlag},
+  year = {2004},
+  citedby = {desbrun-hirani-2005},
+}
+
+@article{kanso-2007,
+  author = {Kanso, E. and Arroyo, M. and Tong, Y. and Yavari, A. and Marsden, J.E. and Desbrun, M.},
+  title = {On the Geometric Character of Continuum Mechanics},
+  journal = {Z. angew. Math. Phys. 58 (2007)},
+  year = {2007},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@article{karakashian-1998,
+  author = {Karakashian, O.A. and Jureidini, W.N.},
+  title = {A nonconforming finite element method for the stationary Navier-Stokes equations},
+  journal = {SIAM J. Numer. Anal. 35, 93-120},
+  year = {1998},
+  citedby = {li-shu-2005},
+}
+
+@book{kato-1995,
+  author = {Kato, T.},
+  title = {Perturbation Theory for Linear Operators},
+  publisher = {Classics in Mathematics, Springer, Berlin},
+  year = {1995},
+  note = {Reprint of the 1980 edition},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @inproceedings{katz-2009,
@@ -3016,6 +4101,14 @@
   citedby = {toth-2000},
 }
 
+@article{khokhlov-1998,
+  author = {Khokhlov, A.M.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 143, 519},
+  year = {1998},
+  citedby = {fromang-2006},
+}
+
 @techreport{khoromskij-2001,
   author = {Khoromskij, B. and Melenk, J.},
   title = {Boundary concentrated finite element methods},
@@ -3039,7 +4132,7 @@
   title = {On a discrete compactness property for the Nédélec finite elements},
   journal = {J. Fac. Sci., Univ. Tokyo, Sect. I A 36, 479-490},
   year = {1989},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{kim-1999,
@@ -3066,6 +4159,14 @@
   year = {2000},
   note = {to appear},
   citedby = {hiptmair-2002},
+}
+
+@article{klawonn-1998,
+  author = {Klawonn, A.},
+  title = {An optimal preconditioner for a class of saddle point problems with a penalty term},
+  journal = {SIAM J. Sci. Comput. 19, 540-552 (electronic)},
+  year = {1998},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{knobloch-2008,
@@ -3119,6 +4220,14 @@
   citedby = {nordstrom-carpenter-1999},
 }
 
+@article{kopriva-1996,
+  author = {Kopriva, D.A. and Kolias, J.H.},
+  title = {A conservative staggered-grid Chebyshev multidomain method for compressible flows},
+  journal = {J. Comput. Phys., 125 (1996), pp. 244-261},
+  year = {1996},
+  citedby = {mattsson-carpenter-2010},
+}
+
 @article{korobitsin-1989,
   author = {Korobitsin, V.A.},
   title = {Axisymmetric difference operators in an orthogonal coordinate system},
@@ -3141,6 +4250,15 @@
   journal = {Beitr. Physik. Ahn., v. 39, 1966, p. 1},
   year = {1966},
   citedby = {chorin-1968},
+}
+
+@phdthesis{kotiuga-1984,
+  author = {Kotiuga, P.R.},
+  title = {Hodge decompositions and computational electromagnetics},
+  school = {McGill University},
+  year = {1984},
+  note = {PhD in Electrical Engineering},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{kozdon-2021,
@@ -3182,7 +4300,7 @@
   journal = {Tellus XXIV, 3},
   year = {1972},
   note = {OCR printed author as "ÖLIGER" (Oliger)},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, nordstrom-carpenter-1999},
 }
 
 @book{kreiss-1974,
@@ -3190,7 +4308,15 @@
   title = {Finite element and finite difference methods for hyperbolic partial differential equations},
   publisher = {Mathematical Aspects of Finite Elements in Partial Differential Equations, Academic Press, New York},
   year = {1974},
-  citedby = {nordstrom-carpenter-1999, strand-1994},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999, strand-1994},
+}
+
+@techreport{kreiss-1977,
+  author = {Kreiss, H.-O. and Scherer, G.},
+  title = {On the existence of energy estimates for difference approximations for hyperbolic systems},
+  institution = {Technical Report, Department of Scientific Computing, Uppsala University},
+  year = {1977},
+  citedby = {mattsson-nordstrom-2004},
 }
 
 @book{kreiss-1989,
@@ -3275,6 +4401,14 @@
   citedby = {hiptmair-2002},
 }
 
+@article{kuznetsov-2004,
+  author = {Kuznetsov, Y. and Lipnikov, K. and Shashkov, M.},
+  title = {Mimetic finite difference method on polygonal meshes for diffusion-type problems},
+  journal = {Comput. Geosci., 8 (2004), pp. 301-324},
+  year = {2004},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @book{ladyzhenskaia-1963,
   author = {Ladyzhenskaia, O.A.},
   title = {The Mathematical Theory of Viscous Incompressible Flow},
@@ -3297,7 +4431,7 @@
   title = {Differential and Riemannian Manifolds},
   publisher = {Vol. 160 of Graduate Texts in Mathematics, Springer, New York},
   year = {1995},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{lax-1960,
@@ -3306,6 +4440,14 @@
   journal = {Comm. Pure Appl. Math. 13:217},
   year = {1960},
   citedby = {toth-2000},
+}
+
+@inproceedings{lazarus-1999,
+  author = {Lazarus, F. and Verroust, A.},
+  title = {Level Set Diagrams of Polyhedral Objects},
+  booktitle = {Proceedings of the 5th ACM Symposium on Solid Modeling and Applications, 1999, pp. 130-140},
+  year = {1999},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{lebedev-1957,
@@ -3341,12 +4483,36 @@
   citedby = {hyman-shashkov-1997},
 }
 
+@article{lehner-2005,
+  author = {Lehner, L. and Reula, O. and Tiglio, M.},
+  title = {Multi-block simulations in general relativity: High-order discretizations, numerical stability and applications},
+  journal = {Classical Quantum Gravity, 22 (2005), pp. 5283-5321},
+  year = {2005},
+  citedby = {mattsson-carpenter-2010},
+}
+
 @book{leis-1986,
   author = {Leis, R.},
   title = {Initial Boundary Value Problems in Mathematical Physics},
   publisher = {B.G. Teubner, Stuttgart},
   year = {1986},
   citedby = {hiptmair-2002},
+}
+
+@article{lele-1992,
+  author = {Lele, S.K.},
+  title = {Compact finite difference schemes with spectral-like resolution},
+  journal = {J. Comput. Phys., 103 (1992), pp. 16-42},
+  year = {1992},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@misc{leok-2003,
+  author = {Leok, M. and Marsden, J.E. and Weinstein, A.},
+  title = {A discrete theory of connections on principal bundles},
+  howpublished = {(in preparation)},
+  year = {2003},
+  citedby = {desbrun-hirani-2005},
 }
 
 @book{leveque-2002,
@@ -3362,7 +4528,7 @@
   title = {Asynchronous variational integrators},
   journal = {Archive for Rational Mechanics And Analysis, 167:85-146},
   year = {2003},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{li-shu-2005,
@@ -3391,6 +4557,14 @@
   citedby = {powell-1999},
 }
 
+@article{lipnikov-2004,
+  author = {Lipnikov, K. and Morel, J. and Shashkov, M.},
+  title = {Mimetic finite difference methods for diffusion equations on non-orthogonal non-conformal meshes},
+  journal = {J. Comput. Phys., 199 (2004), pp. 589-597},
+  year = {2004},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @article{lipnikov-2014,
   author = {Lipnikov, K. and Manzini, G. and Shashkov, M.},
   title = {Mimetic finite difference method},
@@ -3398,6 +4572,15 @@
   year = {2014},
   doi = {10.1016/j.jcp.2013.07.031},
   citedby = {trask-2020},
+}
+
+@article{liska-2004,
+  author = {Liska, R. and Shashkov, M. and Ganza, V.},
+  title = {Analysis and optimization of inner products for mimetic finite difference methods on triangular grid},
+  journal = {Math. Comput. Simulation, 67 (2004), pp. 55-66},
+  year = {2004},
+  note = {third author printed as "Ganza" (elsewhere spelled Ganzha)},
+  citedby = {brezzi-lipnikov-shashkov-2005},
 }
 
 @article{liu-1994,
@@ -3422,6 +4605,22 @@
   journal = {J. Comput. Phys., 142, 304},
   year = {1998},
   citedby = {londrillo-delzanna-2000},
+}
+
+@book{loday-1992,
+  author = {Loday, J.-L.},
+  title = {Cyclic Homology},
+  publisher = {Grundlehren der Mathematischen Wissenschaften, vol. 301, Springer, Berlin},
+  year = {1992},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@misc{logg-2009,
+  author = {Logg, A. and Mardal, K.-A.},
+  title = {Finite element exterior calculus},
+  howpublished = {http://www.fenics.org/wiki/Finite_Element_Exterior_Calculus},
+  year = {2009},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{lohner-1988,
@@ -3449,13 +4648,21 @@
   citedby = {hiptmair-2002},
 }
 
+@article{londrillo-2004,
+  author = {Londrillo, P. and Del Zanna, L.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 195, 17},
+  year = {2004},
+  citedby = {fromang-2006},
+}
+
 @article{londrillo-delzanna-2000,
   author = {Londrillo, P. and Del Zanna, L.},
   title = {High-order upwind schemes for multidimensional magnetohydrodynamics},
   journal = {Astrophys. J. 530:508-524},
   year = {2000},
   doi = {10.1086/308344},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, toth-2000, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, fromang-2006, gardiner-stone-2008, toth-2000, toth-roe-2002},
 }
 
 @article{lou-1997,
@@ -3464,6 +4671,14 @@
   journal = {Geophysics, 62, pp. 487-494},
   year = {1997},
   citedby = {nordstrom-carpenter-1999},
+}
+
+@book{lovelock-1993,
+  author = {Lovelock, D. and Rund, H.},
+  title = {Tensors, differential forms, and variational principles},
+  publisher = {Dover Publications},
+  year = {1993},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @techreport{lowrie-1998,
@@ -3528,7 +4743,7 @@
   title = {On a variational complex for difference equations},
   journal = {In The geometrical study of differential equations (Washington, DC, 2000), volume 285 of Contemp. Math., pages 121-129, Amer. Math. Soc., Providence, RI},
   year = {2001},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{marder-1987,
@@ -3539,12 +4754,28 @@
   citedby = {dedner-2002},
 }
 
+@article{margolin-2000,
+  author = {Margolin, L. and Shashkov, M. and Smolarkiewicz, P.},
+  title = {A discrete operator calculus for finite difference approximations},
+  journal = {Comput. Methods Appl. Mech. Engrg., 187 (2000), pp. 365-383},
+  year = {2000},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @book{marrone-2001,
   author = {Marrone, M.},
   title = {Computational aspects of the cell method in electrodynamics},
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, PIERS, Boston, MA, pp. 317-356},
   year = {2001},
   citedby = {hiptmair-2002},
+}
+
+@article{marsden-1983,
+  author = {Marsden, J.E. and Weinstein, A.},
+  title = {Coadjoint orbits, vortices and Clebsch variables for incompressible fluids},
+  journal = {Physica D 7 (1983), 305-323},
+  year = {1983},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @book{marsden-1999,
@@ -3556,12 +4787,36 @@
   citedby = {hirani-2003},
 }
 
+@article{marsden-2000,
+  author = {Marsden, J.E. and Pekarsky, S. and Shkoller, S.},
+  title = {Symmetry reduction of discrete Lagrangian mechanics on Lie groups},
+  journal = {J. Geom. Phys., 36(1-2):140-151},
+  year = {2000},
+  citedby = {desbrun-hirani-2005},
+}
+
 @inproceedings{marsden-2001,
   author = {Marsden, J.E. and Shkoller, S.},
   title = {Global well-posedness of the lans-α equations},
   booktitle = {Proc. Royal Soc. London, (359):1449-1468},
   year = {2001},
   citedby = {hirani-2003},
+}
+
+@article{marsden-pekarsky-1999,
+  author = {Marsden, J.E. and Pekarsky, S. and Shkoller, S.},
+  title = {Discrete Euler-Poincar{\'e} and Lie-Poisson equations},
+  journal = {Nonlinearity, 12(6):1647-1662},
+  year = {1999},
+  citedby = {desbrun-hirani-2005},
+}
+
+@article{marsden-west-2001,
+  author = {Marsden, J.E. and West, M.},
+  title = {Discrete Mechanics and Variational Integrators},
+  journal = {Acta Numerica 10 (2001), 357-514},
+  year = {2001},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{martin-1952,
@@ -3580,12 +4835,20 @@
   citedby = {balsara-2004},
 }
 
+@article{matsumoto-2003,
+  author = {Matsumoto, T. and Hanawa, T.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJ, 595, 913},
+  year = {2003},
+  citedby = {fromang-2006},
+}
+
 @article{mattiussi-1997,
   author = {Mattiussi, C.},
   title = {An analysis of finite volume, finite element and finite difference methods using some concepts from algebraic topology},
   journal = {J. Comput. Phys. 133 (1997) 289–309},
   year = {1997},
-  citedby = {hirani-2003, trask-2020},
+  citedby = {desbrun-hirani-2005, hirani-2003, trask-2020},
 }
 
 @article{mattiussi-2000,
@@ -3593,7 +4856,63 @@
   title = {The finite volume, finite element and finite difference methods as numerical methods for physical field problems},
   journal = {Adv. Imaging Electron Physics 113, 1-146},
   year = {2000},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {desbrun-hirani-2005, hiptmair-2002, hirani-2003},
+}
+
+@article{mattsson-2003,
+  author = {Mattsson, K.},
+  title = {Boundary procedures for summation-by-parts operators},
+  journal = {J. Sci. Comput., 18 (2003), pp. 133-153},
+  year = {2003},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
+}
+
+@article{mattsson-2004,
+  author = {Mattsson, K. and Sv{\"a}rd, M. and Nordstr{\"o}m, J.},
+  title = {Stable and accurate artificial dissipation},
+  journal = {J. Sci. Comput., 21 (2004), pp. 57-79},
+  year = {2004},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
+}
+
+@article{mattsson-2006-a,
+  author = {Mattsson, K. and Nordstr{\"o}m, J.},
+  title = {High order finite difference methods for wave propagation in discontinuous media},
+  journal = {J. Comput. Phys., 220 (2006), pp. 249-269},
+  year = {2006},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{mattsson-2006-b,
+  author = {Mattsson, K. and Sv{\"a}rd, M. and Carpenter, M.H. and Nordstr{\"o}m, J.},
+  title = {High-order accurate computations for unsteady aerodynamics},
+  journal = {Comput. \& Fluids, 36 (2006), pp. 636-649},
+  year = {2006},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{mattsson-2008-a,
+  author = {Mattsson, K. and Ham, F. and Iaccarino, G.},
+  title = {Stable and accurate wave propagation in discontinuous media},
+  journal = {J. Comput. Phys., 227 (2008), pp. 8753-8767},
+  year = {2008},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{mattsson-2008-b,
+  author = {Mattsson, K. and Sv{\"a}rd, M. and Shoeybi, M.},
+  title = {Stable and accurate schemes for the compressible Navier-Stokes equations},
+  journal = {J. Comput. Phys., 227 (2008), pp. 2293-2316},
+  year = {2008},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{mattsson-2010,
+  author = {Mattsson, K. and Parisi, F.},
+  title = {Stable and accurate second-order formulation of the shifted wave equation},
+  journal = {Commun. Comput. Phys., 7 (2010), pp. 103-137},
+  year = {2010},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @article{mattsson-carpenter-2010,
@@ -3604,12 +4923,22 @@
   doi = {10.1137/090750068},
 }
 
+@techreport{mattsson-nordstrom-2003,
+  author = {Mattsson, K. and Nordstr{\"o}m, J.},
+  title = {Finite difference approximations of second derivatives on summation by parts form},
+  institution = {Technical Report 2003-012, Department of Information Technology, Uppsala University},
+  year = {2003},
+  note = {Available from http://www.it.uu.se/research/reports/2003-012/},
+  citedby = {mattsson-nordstrom-2004},
+}
+
 @article{mattsson-nordstrom-2004,
   author = {Mattsson, K. and Nordström, J.},
   title = {Summation by parts operators for finite difference approximations of second derivatives},
   journal = {J. Comput. Phys. 199:503-540},
   year = {2004},
   doi = {10.1016/j.jcp.2004.03.001},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @book{maxwell-1891,
@@ -3641,7 +4970,15 @@
   title = {Discrete Riemann surfaces and the Ising model},
   journal = {Commun. Math. Phys. 218, 177-216},
   year = {2001},
-  citedby = {hiptmair-2002},
+  citedby = {desbrun-kanso-tong-2008, hiptmair-2002},
+}
+
+@article{mercier-1981,
+  author = {Mercier, B. and Osborn, J. and Rappaz, J. and Raviart, P.-A.},
+  title = {Eigenvalue approximation by mixed and hybrid methods},
+  journal = {Math. Comp. 36, 427-453},
+  year = {1981},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @book{meyer-2002,
@@ -3649,7 +4986,8 @@
   title = {Discrete differential-geometry operators for triangulated 2-manifolds},
   publisher = {In International Workshop on Visualization and Mathematics, VisMath},
   year = {2002},
-  citedby = {hirani-2003},
+  note = {also cited as Visualization and Mathematics III, 2003, by desbrun-kanso-tong-2008},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008, hirani-2003},
 }
 
 @article{mignone-2012,
@@ -3690,6 +5028,14 @@
   journal = {SIAM J. Num. Anal. 18, 1033},
   year = {1981},
   citedby = {berger-colella-1989},
+}
+
+@article{miller-2002,
+  author = {Miller, G.H. and Colella, P.},
+  title = {A conservative three-dimensional Eulerian method for coupled solid-fluid shock capturing},
+  journal = {J. Comput. Phys. 183 (2002) 26},
+  year = {2002},
+  citedby = {gardiner-stone-2008},
 }
 
 @article{miniati-martin-2011,
@@ -3761,6 +5107,30 @@
   citedby = {evans-hawley-1988},
 }
 
+@article{mitrea-2001-a,
+  author = {Mitrea, D. and Mitrea, M. and Taylor, M.},
+  title = {Layer potentials, the Hodge Laplacian, and global boundary problems in nonsmooth Riemannian manifolds},
+  journal = {Mem. Amer. Math. Soc. 150, no. 713},
+  year = {2001},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{mitrea-2001-b,
+  author = {Mitrea, M.},
+  title = {Dirichlet integrals and Gaffney-Friedrichs inequalities in convex domains},
+  journal = {Forum Math. 13, 531-567},
+  year = {2001},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{miyoshi-2005,
+  author = {Miyoshi, T. and Kusano, K.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 208, 315},
+  year = {2005},
+  citedby = {fromang-2006},
+}
+
 @article{molteni-1999,
   author = {Molteni, D. and Tóth, G. and Kuznetsov, O.A.},
   title = {On the azimuthal stability of shock waves around black holes},
@@ -3786,6 +5156,14 @@
   citedby = {hiptmair-2002},
 }
 
+@article{monk-1992-b,
+  author = {Monk, P.},
+  title = {A finite element method for approximating the time-harmonic Maxwell equations},
+  journal = {Numer. Math. 63, 243-261},
+  year = {1992},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{monk-1994,
   author = {Monk, P.},
   title = {On the p and hp-extension of Nédélec's conforming elements},
@@ -3808,8 +5186,16 @@
   title = {A simple proof of convergence for an edge element discretization of Maxwell's equations},
   publisher = {Submitted to Math. Comp.},
   year = {2001},
-  note = {submitted},
-  citedby = {hiptmair-2002},
+  note = {submitted; published in Computational Electromagnetics (Kiel 2001), LNCSE 28, Springer, 2003; cited as 2003 by arnold-falk-winther-2006},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
+}
+
+@book{monk-2003,
+  author = {Monk, P.},
+  title = {Finite element methods for Maxwell's equations},
+  publisher = {Numerical Mathematics and Scientific Computation, Oxford University Press, New York},
+  year = {2003},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @article{monk-demkowicz-2001,
@@ -3817,7 +5203,7 @@
   title = {Discrete compactness and the approximation of Maxwell's equations in R^3},
   journal = {Math. Comp. 70, 507-523},
   year = {2001},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, hiptmair-2002},
 }
 
 @article{monkewitz-1982,
@@ -3828,6 +5214,14 @@
   citedby = {almgren-1998},
 }
 
+@article{morel-1998,
+  author = {Morel, J. and Roberts, R. and Shashkov, M.},
+  title = {A local support-operators diffusion discretization scheme for quadrilateral r-z meshes},
+  journal = {J. Comput. Phys., 144 (1998), pp. 17-51},
+  year = {1998},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @book{morgan-1995,
   author = {Morgan, F.},
   title = {Geometric Measure Theory: A Beginner's Guide},
@@ -3836,12 +5230,20 @@
   citedby = {hiptmair-2002},
 }
 
+@book{morita-2001,
+  author = {Morita, S.},
+  title = {Geometry of differential forms},
+  publisher = {Translations of Mathematical Monographs, Vol. 201, Am. Math. Soc.},
+  year = {2001},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
 @phdthesis{moritz-2000,
   author = {Moritz, B.},
   title = {Vector difference calculus},
   school = {PhD thesis, University of North Dakota},
   year = {2000},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{moritz-2001,
@@ -3849,7 +5251,15 @@
   title = {Triangle lattice Green functions for vector fields},
   journal = {J. Phys. A, 34(3):589-602},
   year = {2001},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
+}
+
+@article{morley-1989,
+  author = {Morley, M.E.},
+  title = {A family of mixed finite elements for linear elasticity},
+  journal = {Numer. Math. 55, 633-666},
+  year = {1989},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{morton-2001,
@@ -3873,7 +5283,7 @@
   title = {Analytic torsion and R-torsion of Riemannian manifolds},
   journal = {Adv. Math. 28, 233-305},
   year = {1978},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @article{muller-1982,
@@ -3884,12 +5294,20 @@
   citedby = {clemens-weiland-2001},
 }
 
+@article{muller-2002,
+  author = {M{\"u}ller, B. and Yee, H.C.},
+  title = {High order numerical simulation of sound generated by the Kirchhoff vortex},
+  journal = {Computing Visualization Sci. 4 (2002) 197-204},
+  year = {2002},
+  citedby = {mattsson-nordstrom-2004},
+}
+
 @book{munkres-1984,
   author = {Munkres, J.R.},
   title = {Elements of algebraic topology},
   publisher = {Addison-Wesley Publishing Company, Menlo Park, CA},
   year = {1984},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, desbrun-kanso-tong-2008, hirani-2003},
 }
 
 @article{munozsolar-1997,
@@ -3923,7 +5341,7 @@
   title = {Divergence correction techniques for Maxwell solvers based on a hyperbolic model},
   journal = {J. Comput. Phys. 161(2):484},
   year = {2000},
-  citedby = {dedner-2002},
+  citedby = {dedner-2002, li-shu-2005},
 }
 
 @phdthesis{myong-1996,
@@ -3948,7 +5366,7 @@
   title = {Mixed finite elements in R^3},
   journal = {Numer. Math. 35, 315-341},
   year = {1980},
-  citedby = {clemens-weiland-2001, hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, clemens-weiland-2001, hiptmair-2002},
 }
 
 @article{nedelec-1986,
@@ -3956,7 +5374,7 @@
   title = {A new family of mixed finite elements in R^3},
   journal = {Numer. Math. 50, 57-81},
   year = {1986},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
 }
 
 @book{nedelec-2001,
@@ -4016,7 +5434,7 @@
   title = {Convergence analysis of a covolume scheme for Maxwell's equations in three dimensions},
   journal = {Math. Comp. 67, 947-963},
   year = {1998},
-  citedby = {hiptmair-2002},
+  citedby = {desbrun-hirani-2005, hiptmair-2002},
 }
 
 @inproceedings{nicolaides-2006,
@@ -4024,7 +5442,7 @@
   title = {Covolume discretizations of differential forms},
   booktitle = {in: D.N. Arnold, P. Bochev, R. Lehoucq, R. Nicolaides, M. Shashkov (Eds.), Compatible Discretizations, in: Proceedings of IMA Hot Topics Workshop on Compatible Discretizations, vol. IMA 142, Springer Verlag, 2006, pp. 161–172},
   year = {2006},
-  citedby = {trask-2020},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, trask-2020},
 }
 
 @article{nissen-2014,
@@ -4058,7 +5476,7 @@
   journal = {Computers & Fluids, 24, No. 5, pp. 609-623},
   year = {1995},
   note = {OCR printed "&" as "k"},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-nordstrom-2004, nordstrom-carpenter-1999},
 }
 
 @article{nordstrom-1999,
@@ -4066,7 +5484,8 @@
   title = {Boundary and Interface Conditions for High Order Finite Difference Methods Applied to the Euler and Navier-Stokes Equations},
   journal = {J. Comput. Phys., 148, No. 2, pp. 621-645},
   year = {1999},
-  citedby = {nordstrom-carpenter-1999},
+  note = {mattsson-carpenter-2010 prints pages 341-365 (misprint; that range belongs to carpenter-1999)},
+  citedby = {mattsson-carpenter-2010, nordstrom-carpenter-1999},
 }
 
 @article{nordstrom-1999-b,
@@ -4075,6 +5494,30 @@
   journal = {Applied Numerical Mathematics, 30, Issue 4, pp. 447-457},
   year = {1999},
   citedby = {nordstrom-carpenter-1999},
+}
+
+@article{nordstrom-2001,
+  author = {Nordstr{\"o}m, J. and Carpenter, M.H.},
+  title = {High-order finite difference methods, multidimensional linear problems, and curvilinear coordinates},
+  journal = {J. Comput. Phys., 173 (2001), pp. 149-174},
+  year = {2001},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{nordstrom-2006,
+  author = {Nordstr{\"o}m, J. and Gong, J.},
+  title = {A stable hybrid method for hyperbolic problems},
+  journal = {J. Comput. Phys., 212 (2006), pp. 436-453},
+  year = {2006},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{nordstrom-2007,
+  author = {Nordstr{\"o}m, J. and Mattsson, K. and Swanson, R.C.},
+  title = {Boundary conditions for a divergence free velocity-pressure formulation of the incompressible Navier-Stokes equations},
+  journal = {J. Comput. Phys., 225 (2007), pp. 874-890},
+  year = {2007},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @techreport{nordstrom-carpenter-1999,
@@ -4138,7 +5581,15 @@
   title = {Summation by Parts, Projections, and Stability I},
   journal = {Math. Comp., 64, pp. 1035-1065},
   year = {1995},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999},
+}
+
+@article{olsson-1995-b,
+  author = {Olsson, P.},
+  title = {Summation by parts, projections, and stability. II},
+  journal = {Math. Comp., 64 (1995), pp. 1473-1493},
+  year = {1995},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
 }
 
 @article{orszag-1979,
@@ -4147,7 +5598,7 @@
   journal = {J. Fluid Mech. 90:129},
   year = {1979},
   note = {first author printed as "A. Orszag" in the paper (verified visually against the PDF page)},
-  citedby = {toth-2000},
+  citedby = {li-shu-2005, toth-2000},
 }
 
 @article{osborn-1975,
@@ -4156,6 +5607,14 @@
   journal = {Math. Comp. 29, 712-725},
   year = {1975},
   citedby = {hiptmair-2002},
+}
+
+@inproceedings{osborn-1979,
+  author = {Osborn, J.E.},
+  title = {Eigenvalue approximation by mixed methods},
+  booktitle = {Advances in Computer Methods for Partial Differential Equations III (Proc. Third IMACS Internat. Sympos., Lehigh Univ., Bethlehem, PA, 1979), IMACS, New Brunswick, NJ, pp. 158-161},
+  year = {1979},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{osher-1983,
@@ -4174,6 +5633,14 @@
   doi = {10.1016/j.jcp.2013.08.005},
 }
 
+@article{palmer-2000,
+  author = {Palmer, T. and Zika, M. and Madsen, N.},
+  title = {Unstructured polyhedral mesh thermal radiation diffusion},
+  journal = {Trans. Amer. Nuclear Soc., 83 (2000), pp. 248-249},
+  year = {2000},
+  citedby = {brezzi-lipnikov-shashkov-2005},
+}
+
 @article{pandolfini-2001,
   author = {Pandolfini, M. and D'Ambrosio, D.},
   title = {[title not printed in citing reference]},
@@ -4181,6 +5648,14 @@
   year = {2001},
   note = {printed after Powell, out of alphabetical order in the source},
   citedby = {balsara-2004},
+}
+
+@article{papaloizou-2004,
+  author = {Papaloizou, J.C.B. and Nelson, R.P. and Snellgrove, M.D.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 350, 829},
+  year = {2004},
+  citedby = {fromang-2006},
 }
 
 @article{paragios-2002,
@@ -4207,6 +5682,22 @@
   citedby = {chorin-1968, harlow-welch-1965},
 }
 
+@misc{pekarsky-2003,
+  author = {Pekarsky, S. and West, M.},
+  title = {Discrete diffeomorphism groupoids and circulation conserving fluid integrators},
+  howpublished = {(in preparation)},
+  year = {2003},
+  citedby = {desbrun-hirani-2005},
+}
+
+@article{pen-2003,
+  author = {Pen, U. and Arras, P. and Wong, S.},
+  title = {A free, fast, simple and efficient TVD MHD code},
+  journal = {Astrophys. J. Suppl. 149 (2003) 447},
+  year = {2003},
+  citedby = {gardiner-stone-2008},
+}
+
 @article{perot-2011,
   author = {Perot, J.B.},
   title = {Discrete conservation properties of unstructured mesh schemes},
@@ -4231,6 +5722,14 @@
   citedby = {balsara-2001},
 }
 
+@article{phillips-1985,
+  author = {Phillips, G.J. and Monaghan, J.J.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 216, 883},
+  year = {1985},
+  citedby = {fromang-2006},
+}
+
 @phdthesis{phinney-1983,
   author = {Phinney, E.S.},
   title = {[title not printed in citing reference]},
@@ -4245,7 +5744,15 @@
   title = {An elementary proof for a compact imbedding result in generalized electromagnetic theory},
   journal = {Math. Z. 187, 151-161},
   year = {1984},
-  citedby = {hiptmair-2002},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002},
+}
+
+@article{pinkall-1993,
+  author = {Pinkall, U. and Polthier, K.},
+  title = {Computing Discrete Minimal Surfaces},
+  journal = {Experimental Mathematics 2 (1993), no. 1, 15-36},
+  year = {1993},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{poedts-1997,
@@ -4270,7 +5777,7 @@
   institution = {ICASE Report No. 94-24, Langley, VA},
   year = {1994},
   note = {technical report},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, powell-1999, toth-2000},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, li-shu-2005, londrillo-delzanna-2000, powell-1999, toth-2000},
 }
 
 @article{powell-1995,
@@ -4288,7 +5795,25 @@
   journal = {J. Comput. Phys. 154:284-309},
   year = {1999},
   doi = {10.1006/jcph.1999.6299},
-  citedby = {balsara-2001, dedner-2002, toth-roe-2002},
+  citedby = {balsara-2001, dedner-2002, fromang-2006, toth-roe-2002},
+}
+
+@article{price-2004-a,
+  author = {Price, D.J. and Monaghan, J.J.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 348, 123},
+  year = {2004},
+  note = {printed year "2004a"},
+  citedby = {fromang-2006},
+}
+
+@article{price-2004-b,
+  author = {Price, D.J. and Monaghan, J.J.},
+  title = {[title not printed in citing reference]},
+  journal = {MNRAS, 348, 139},
+  year = {2004},
+  note = {printed year "2004b"},
+  citedby = {fromang-2006},
 }
 
 @article{pruett-1995,
@@ -4305,6 +5830,15 @@
   journal = {J. Comput. Phys. 130, 269 (1997)},
   year = {1997},
   citedby = {almgren-1998},
+}
+
+@article{qiu-2003,
+  author = {Qiu, J. and Shu, C.-W.},
+  title = {Hermite WENO schemes and their application as limiters for Runge-Kutta discontinuous Galerkin method: One dimensional case},
+  journal = {J. Comput. Phys. 193, 115-135},
+  year = {2003},
+  note = {printed year 2003 but volume 193 appeared 2004; transcribed as printed},
+  citedby = {li-shu-2005},
 }
 
 @article{rachowicz-2002,
@@ -4332,6 +5866,14 @@
   citedby = {almgren-1998},
 }
 
+@article{ramaswamy-2004,
+  author = {Ramaswamy, V. and Shapiro, V.},
+  title = {Combinatorial Laws for Physically Meaningful Design},
+  journal = {J. of Computing and Information Science in Engineering 4 (2004), no. 1, 3-10},
+  year = {2004},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
 @article{ramshaw-1983,
   author = {Ramshaw, J.D.},
   title = {A method for enforcing the solenoidal condition on magnetic fields in numerical calculation},
@@ -4345,7 +5887,7 @@
   title = {A mixed finite element method for second order elliptic problems},
   booktitle = {in: Galligani, E. Magenes (Eds.), Mathematical Aspects of the Finite Element Method, I, in: Lecture Notes in Math., vol. 606, Springer-Verlag, New York, 1977, pp. 293–315},
   year = {1977},
-  citedby = {hiptmair-2002, trask-2020},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, hiptmair-2002, trask-2020},
 }
 
 @article{roe-1981,
@@ -4373,12 +5915,21 @@
   citedby = {chorin-1968},
 }
 
+@article{rusten-1992,
+  author = {Rusten, T. and Winther, R.},
+  title = {A preconditioned iterative method for saddle-point problems},
+  journal = {SIAM J. Matrix Anal. Appl. 13, 887-904},
+  year = {1992},
+  note = {Special issue on Iterative Methods in Numerical Linear Algebra (Copper Mountain, CO, 1990)},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @article{ryu-1995,
   author = {Ryu, D. and Jones, T.W. and Frank, A.},
   title = {Numerical magnetohydrodynamics in astrophysics: Algorithm and tests for multi-dimensional flow},
   journal = {Astrophys. J. 452:785},
   year = {1995},
-  citedby = {balsara-2001, londrillo-delzanna-2000, toth-2000},
+  citedby = {balsara-2001, fromang-2006, gardiner-stone-2008, londrillo-delzanna-2000, toth-2000},
 }
 
 @article{ryu-1998,
@@ -4387,7 +5938,7 @@
   journal = {Astrophys. J. 509:244},
   year = {1998},
   note = {londrillo-delzanna-2000 prints ApJ 504, 244 (volume misprint) with abbreviation (RY)},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, fromang-2006, li-shu-2005, londrillo-delzanna-2000, toth-2000, toth-roe-2002},
 }
 
 @article{ryu-jones-1995,
@@ -4412,6 +5963,14 @@
   journal = {IEEE Trans. Antennas Propag. 43, 1460-1463},
   year = {1995},
   citedby = {hiptmair-2002},
+}
+
+@article{saltzman-1994,
+  author = {Saltzman, J.},
+  title = {An unsplit 3D upwind method for hyperbolic conservation laws},
+  journal = {J. Comput. Phys. 115 (1994) 153},
+  year = {1994},
+  citedby = {gardiner-stone-2008},
 }
 
 @article{samarskii-1962,
@@ -4473,6 +6032,15 @@
   citedby = {nordstrom-carpenter-1999, strand-1994},
 }
 
+@misc{schewchuck-2002,
+  author = {Schewchuck, J.R.},
+  title = {What is a good linear finite element? Interpolation, conditioning, anisotropy and quality measures},
+  howpublished = {URL http://www.cs.berkeley.edu/~jrs/papers/elemj.ps (preprint)},
+  year = {2002},
+  note = {author surname printed as "Schewchuck" (likely misprint of Shewchuk)},
+  citedby = {desbrun-hirani-2005},
+}
+
 @book{schey-1992,
   author = {Schey, H.M.},
   title = {Div, Grad, Curl, and All That; Informal Text on Vector Calculus},
@@ -4496,6 +6064,30 @@
   journal = {J. Comp. Phys., 35, 110},
   year = {1980},
   citedby = {evans-hawley-1988},
+}
+
+@techreport{schoberl-2005,
+  author = {Sch\"oberl, J.},
+  title = {A posteriori error estimates for Maxwell equations},
+  institution = {RICAM Report No. 2005-10},
+  year = {2005},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{schoberl-2008,
+  author = {Sch{\"o}berl, J.},
+  title = {A posteriori error estimates for Maxwell equations},
+  journal = {Math. Comp. 77 (2008), no. 262, 633-649},
+  year = {2008},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@misc{schreiber-2003,
+  author = {Schreiber, U.},
+  title = {On Superstrings in Schr{\"o}dinger Representation},
+  howpublished = {Preprint},
+  year = {2003},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @article{schuhmann-1998,
@@ -4544,7 +6136,7 @@
   title = {Vector difference calculus for physical lattice models},
   journal = {Phys. Rev. E (3), 59(1, part B):1217-1233},
   year = {1999},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @article{schwalm-2001,
@@ -4568,7 +6160,15 @@
   title = {Geometric discretization scheme applied to the abelian Chern-Simons theory},
   journal = {Phys. Rev. E (3), 61(3):3174-3185},
   year = {2000},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
+}
+
+@book{sharpe-1997,
+  author = {Sharpe, R.W.},
+  title = {Differential geometry: Cartan's generalization of Klein's Erlangen programm},
+  publisher = {Springer-Verlag, NY},
+  year = {1997},
+  citedby = {desbrun-kanso-tong-2008},
 }
 
 @techreport{shashkov-1991,
@@ -4623,12 +6223,20 @@
   citedby = {trask-2020},
 }
 
+@article{shu-1987,
+  author = {Shu, C.-W.},
+  title = {TVB uniformly high-order schemes for conservation laws},
+  journal = {Math. Comput. 49, 105-121},
+  year = {1987},
+  citedby = {li-shu-2005},
+}
+
 @article{shu-1988,
   author = {Shu, C.-W. and Osher, S.},
-  title = {[title not printed in citing reference]},
+  title = {Efficient implementation of essentially non-oscillatory shock-capturing schemes},
   journal = {J. Comput. Phys., 77, 439},
   year = {1988},
-  citedby = {balsara-2004, londrillo-delzanna-2000},
+  citedby = {balsara-2004, li-shu-2005, londrillo-delzanna-2000},
 }
 
 @article{shu-1989,
@@ -4647,6 +6255,39 @@
   year = {1997},
   note = {institutional report (ICASE), not a journal article},
   citedby = {londrillo-delzanna-2000},
+}
+
+@inproceedings{shu-1998,
+  author = {Shu, C.-W.},
+  title = {Essentially non-oscillatory and weighted essentially non-oscillatory schemes for hyperbolic conservation laws},
+  booktitle = {Cockburn, B., Johnson, C., Shu, C.-W., and Tadmor, E., Quarteroni, A. (eds.), Advanced Numerical Approximation of Nonlinear Hyperbolic Equations. Lecture Notes in Mathematics, Springer, Berlin, Vol. 1697, 325-432},
+  year = {1998},
+  note = {editor list as printed lumps chapter authors with editor A. Quarteroni},
+  citedby = {li-shu-2005},
+}
+
+@article{silvester-1994,
+  author = {Silvester, D. and Wathen, A.},
+  title = {Fast iterative solution of stabilised Stokes systems II: Using general block preconditioners},
+  journal = {SIAM J. Numer. Anal. 31, 1352-1367},
+  year = {1994},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@techreport{sjogreen-2000,
+  author = {Sjogreen, B.},
+  title = {Multiresolution wavelet based adaptive numerical dissipation control for shock-turbulence computations},
+  institution = {Technical Report 01.01, RIACS, NASA Ames Research Center},
+  year = {2000},
+  citedby = {mattsson-nordstrom-2004},
+}
+
+@techreport{sjogreen-2001,
+  author = {Sjogreen, B.},
+  title = {High Order Centered Difference Methods for the Compressible Navier-Stokes Equations},
+  institution = {Technical report 01.01, RIACS, NASA Ames Research Center},
+  year = {2001},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @article{sjogren-1995,
@@ -4671,6 +6312,14 @@
   publisher = {in Numerical Astrophysics, ed. J. Centrella, J. LeBlanc, and R. Bowers (Boston: Jones and Bartlett)},
   year = {1985},
   citedby = {evans-hawley-1988},
+}
+
+@book{smith-1996,
+  author = {Smith, B.F. and Bj{\o}rstad, P.E. and Gropp, W.D.},
+  title = {Domain Decomposition: Parallel Multilevel Methods for Elliptic Partial Differential Equations},
+  publisher = {Cambridge University Press, Cambridge},
+  year = {1996},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{sokolov-1999,
@@ -4732,12 +6381,44 @@
   citedby = {dedner-2002},
 }
 
+@article{stein-1990,
+  author = {Stein, E. and Rolfes, R.},
+  title = {Mechanical conditions for stability and optimal convergence of mixed finite elements for linear plane elasticity},
+  journal = {Comput. Methods Appl. Mech. Engrg. 84, 77-95},
+  year = {1990},
+  citedby = {arnold-falk-winther-2006},
+}
+
 @inproceedings{steinthorsson-1995,
   author = {Steinthorsson, E. and Modiano, D. and Crutchfield, W.Y. and Bell, J.B. and Colella, P.},
   title = {An adaptive semi-implicit scheme for simulations of unsteady viscous compressible flow},
   booktitle = {in 12th AIAA Computational Fluid Dynamics Conference, Orlando, FL, June 1995},
   year = {1995},
   citedby = {almgren-1998},
+}
+
+@article{stenberg-1986,
+  author = {Stenberg, R.},
+  title = {On the construction of optimal mixed finite element methods for the linear elasticity problem},
+  journal = {Numer. Math. 48 (1986), 447-462},
+  year = {1986},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@article{stenberg-1988-a,
+  author = {Stenberg, R.},
+  title = {A family of mixed finite elements for the elasticity problem},
+  journal = {Numer. Math. 53 (1988), 513-538},
+  year = {1988},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
+@inproceedings{stenberg-1988-b,
+  author = {Stenberg, R.},
+  title = {Two low-order mixed methods for the elasticity problem},
+  booktitle = {The Mathematics of Finite Elements and Applications, VI (Uxbridge, 1987), Academic Press, London, 1988, pp. 271-280},
+  year = {1988},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
 }
 
 @phdthesis{stevens-1994,
@@ -4771,7 +6452,24 @@
   title = {ZEUS-2D: A radiation magnetohydrodynamics code for astrophysical flows in two space dimensions. II. The magnetohydrodynamic algorithms and tests},
   journal = {Astrophys. J. Suppl. 80:791},
   year = {1992},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, toth-2000},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, fromang-2006, li-shu-2005, londrillo-delzanna-2000, toth-2000},
+}
+
+@article{stone-1992-a,
+  author = {Stone, J.M. and Norman, M.L.},
+  title = {[title not printed in citing reference]},
+  journal = {ApJS, 80, 753},
+  year = {1992},
+  note = {printed year "1992a"},
+  citedby = {fromang-2006},
+}
+
+@article{stone-2007,
+  author = {Stone, J.M. and Gardiner, T.A.},
+  title = {Nonlinear evolution of the magnetohydrodynamic Rayleigh–Taylor instability},
+  journal = {Phys. Fluids 19 (2007) 094104},
+  year = {2007},
+  citedby = {gardiner-stone-2008},
 }
 
 @article{stone-2020,
@@ -4804,7 +6502,7 @@
   journal = {J. Comput. Phys. 110:47-67},
   year = {1994},
   doi = {10.1006/jcph.1994.1023},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004, nordstrom-carpenter-1999},
 }
 
 @phdthesis{strand-1996,
@@ -4812,7 +6510,15 @@
   title = {High-Order Difference Approximations for Hyperbolic Initial Boundary Value Problems},
   school = {PhD Thesis, Uppsala University, Department of Scientific Computing},
   year = {1996},
-  citedby = {nordstrom-carpenter-1999},
+  citedby = {mattsson-nordstrom-2004, nordstrom-carpenter-1999},
+}
+
+@article{strang-1964,
+  author = {Strang, G.},
+  title = {Accurate partial difference methods II. Non-linear problems},
+  journal = {Numer. Math., 6 (1964), pp. 37-46},
+  year = {1964},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @article{strang-1968,
@@ -4831,6 +6537,22 @@
   citedby = {yee-1966},
 }
 
+@article{strikwerda-1977,
+  author = {Strikwerda, J.C.},
+  title = {Initial boundary value problems for incompletely parabolic systems},
+  journal = {Comm. Pure Appl. Math., 30 (1977), pp. 797-822},
+  year = {1977},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{strikwerda-1997,
+  author = {Strikwerda, J.C.},
+  title = {High-order-accurate schemes for incompressible viscous flow},
+  journal = {Internat. J. Numer. Methods Fluids, 24 (1997), pp. 715-734},
+  year = {1997},
+  citedby = {mattsson-carpenter-2010},
+}
+
 @article{suchkov-1994,
   author = {Suchkov, A. and Balsara, D.S.},
   title = {[title not printed in citing reference]},
@@ -4839,12 +6561,68 @@
   citedby = {balsara-2004},
 }
 
+@inproceedings{sullivan-1975,
+  author = {Sullivan, D.},
+  title = {Differential forms and the topology of manifolds},
+  booktitle = {Manifolds---Tokyo 1973 (Proc. Internat. Conf., Tokyo, 1973), Univ. Tokyo Press, Tokyo, 1975, pp. 37-49},
+  year = {1975},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{sullivan-1977,
+  author = {Sullivan, D.},
+  title = {Infinitesimal computations in topology},
+  journal = {Inst. Hautes {\'E}tudes Sci. Publ. Math. (1977), no. 47, 269-331 (1978)},
+  year = {1977},
+  citedby = {arnold-falk-winther-2009},
+}
+
 @article{sun-2001,
   author = {Sun, D.-K. and Lee, J.-F. and Cendes, Z.},
   title = {Construction of nearly orthogonal Nédélec bases for rapid convergence with multilevel preconditioned solvers},
   journal = {SIAM J. Sci. Comput. 23, 1053-1076},
   year = {2001},
   citedby = {hiptmair-2002},
+}
+
+@article{svard-2004,
+  author = {Sv{\"a}rd, M.},
+  title = {On coordinate transformation for summation-by-parts operators},
+  journal = {J. Sci. Comput., 20 (2004), pp. 29-42},
+  year = {2004},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{svard-2005,
+  author = {Sv{\"a}rd, M. and Mattsson, K. and Nordstr{\"o}m, J.},
+  title = {Steady-state computations using summation-by-parts operators},
+  journal = {J. Sci. Comput., 24 (2005), pp. 79-95},
+  year = {2005},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{svard-2006,
+  author = {Sv{\"a}rd, M. and Nordstr{\"o}m, J.},
+  title = {On the order of accuracy for difference approximations of initial-boundary value problems},
+  journal = {J. Comput. Phys., 218 (2006), pp. 333-352},
+  year = {2006},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{svard-2008-a,
+  author = {Sv{\"a}rd, M. and Carpenter, M.H. and Nordstr{\"o}m, J.},
+  title = {A stable high-order finite difference scheme for the compressible Navier-Stokes equations, far-field boundary conditions},
+  journal = {J. Comput. Phys., 225 (2008), pp. 1020-1038},
+  year = {2008},
+  citedby = {mattsson-carpenter-2010},
+}
+
+@article{svard-2008-b,
+  author = {Sv{\"a}rd, M. and Carpenter, M.H. and Nordstr{\"o}m, J.},
+  title = {A stable high-order finite difference scheme for the compressible Navier-Stokes equations, no-slip wall boundary conditions},
+  journal = {J. Comput. Phys., 225 (2008), pp. 4805-4824},
+  year = {2008},
+  citedby = {mattsson-carpenter-2010},
 }
 
 @article{sweby-1984,
@@ -4938,6 +6716,14 @@
   citedby = {hiptmair-2002},
 }
 
+@book{taylor-1996,
+  author = {Taylor, M.E.},
+  title = {Partial Differential Equations. I: Basic Theory},
+  publisher = {Applied Mathematical Sciences, vol. 115, Springer, New York},
+  year = {1996},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009},
+}
+
 @article{teixeira-1998,
   author = {Teixeira, F. and Chew, C.},
   title = {A general approach to extend Berenger's absorbing boundary conditions to anisotropic and dispersive media},
@@ -4960,7 +6746,7 @@
   title = {Geometric aspects of the simplicial discretization of Maxwell's equations},
   publisher = {in Geometric Methods for Computational Electromagnetics (F. Teixeira, ed.), Vol. 32 of PIER, PIERS, Boston, MA, pp. 171-188},
   year = {2001},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {desbrun-hirani-2005, hiptmair-2002, hirani-2003},
 }
 
 @article{teixeira-2013,
@@ -4969,6 +6755,23 @@
   journal = {ISRN Mathematical Physics 2013:487270},
   year = {2013},
   doi = {10.1155/2013/487270},
+}
+
+@article{teyssier-2002,
+  author = {Teyssier, R.},
+  title = {[title not printed in citing reference]},
+  journal = {A&A, 385, 337},
+  year = {2002},
+  citedby = {fromang-2006},
+}
+
+@article{teyssier-2006,
+  author = {Teyssier, R. and Fromang, S. and Dormy, E.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., in press},
+  year = {2006},
+  note = {printed as "in press"},
+  citedby = {fromang-2006},
 }
 
 @article{thoma-1996,
@@ -4985,6 +6788,14 @@
   journal = {IEEE Transactions on Magnetics, Vol. 34, No. 5, 2740-2743},
   year = {1998},
   citedby = {clemens-weiland-2001},
+}
+
+@techreport{thompson-1999,
+  author = {Thompson, K. and Adams, M.},
+  title = {A Spatial Discretization for Solving the Transport Equation on Unstructured Grids of Polyhedra},
+  institution = {Report LAUR-99-2121, Los Alamos National Laboratory, Los Alamos, NM},
+  year = {1999},
+  citedby = {brezzi-lipnikov-shashkov-2005},
 }
 
 @article{thorne-1982,
@@ -5016,7 +6827,7 @@
   title = {Discrete multiscale vector field decomposition},
   journal = {ACM Transactions on Graphics (SIGGRAPH), July 2003},
   year = {2003},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
 }
 
 @book{tonti-1996,
@@ -5049,7 +6860,31 @@
   title = {Finite formulation of electromagnetic field},
   journal = {IEEE Trans. Mag., 38:333-336},
   year = {2002},
-  citedby = {hirani-2003},
+  citedby = {desbrun-hirani-2005, hirani-2003},
+}
+
+@book{toro-1997,
+  author = {Toro, E.},
+  title = {Riemann solvers and numerical methods for fluid dynamics},
+  publisher = {Springer},
+  year = {1997},
+  citedby = {fromang-2006},
+}
+
+@article{torrilhon-2004-a,
+  author = {Torrilhon, M.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Plasma Phys., 69, 253},
+  year = {2004},
+  citedby = {fromang-2006},
+}
+
+@article{torrilhon-2004-b,
+  author = {Torrilhon, M. and Balsara, D.S.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 201, 586},
+  year = {2004},
+  citedby = {fromang-2006},
 }
 
 @article{toth-1996,
@@ -5090,7 +6925,7 @@
   journal = {J. Comput. Phys. 161:605-652},
   year = {2000},
   doi = {10.1006/jcph.2000.6519},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, fromang-2006, gardiner-stone-2008, li-shu-2005, toth-roe-2002},
 }
 
 @article{toth-odstrcil-1996,
@@ -5107,6 +6942,7 @@
   journal = {J. Comput. Phys. 180:736-750},
   year = {2002},
   doi = {10.1006/jcph.2002.7120},
+  citedby = {fromang-2006},
 }
 
 @article{trask-2017,
@@ -5140,6 +6976,14 @@
   journal = {SIAM J. Sci. Statist. Comput. 13:631},
   year = {1992},
   citedby = {toth-2000},
+}
+
+@article{vanleer-1977,
+  author = {van Leer, B.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 23, 276},
+  year = {1977},
+  citedby = {fromang-2006},
 }
 
 @article{vanleer-1979,
@@ -5207,6 +7051,22 @@
   citedby = {chorin-1968},
 }
 
+@article{vassilevski-1992,
+  author = {Vassilevski, P.S. and Wang, J.P.},
+  title = {Multilevel iterative methods for mixed finite element discretizations of elliptic problems},
+  journal = {Numer. Math. 63, 503-520},
+  year = {1992},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{velikhov-1959,
+  author = {Velikhov, E.P.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Exp. Theor. Phys. (USSR), 36, 1398},
+  year = {1959},
+  citedby = {fromang-2006},
+}
+
 @book{volkova-1985,
   author = {Volkova, R. and Kruglakova, L. and Misheskaya, E. and Tishkin, V. and Turina, N. and Favorskii, A. and Shashkov, M.},
   title = {SAFRA. Functional Filling. The Program for Solving 2-D Problems of the Controlled Laser Fusion. Manual},
@@ -5214,6 +7074,23 @@
   year = {1985},
   note = {in Russian},
   citedby = {hyman-shashkov-1997},
+}
+
+@article{vonneumann-1947,
+  author = {von Neumann, J. and Goldstine, H.H.},
+  title = {Numerical inverting of matrices of high order},
+  journal = {Bull. Amer. Math. Soc. 53 (1947), 1021-1099},
+  year = {1947},
+  citedby = {arnold-falk-winther-2009},
+}
+
+@article{wang-2006,
+  author = {Wang, K. and Weiwei and Tong, Y. and Desbrun, M. and Schr{\"o}der, P.},
+  title = {Edge subdivision schemes and the construction of smooth vector fields},
+  journal = {ACM Trans. on Graphics 25 (2006), 1041-1048},
+  year = {2006},
+  note = {second author printed as the single name "Weiwei"; fourth author printed "Desbrun Mathieu" (surname-first misprint)},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{wang-kreiss-2017,
@@ -5241,6 +7118,14 @@
   doi = {10.1137/18M1211465},
 }
 
+@article{warnick-1997,
+  author = {Warnick, K.F. and Selfridge, R.H. and Arnold, D.V.},
+  title = {Teaching Electromagnetic Field Theory Using Differential Forms},
+  journal = {IEEE Trans. on Education 40 (1997), no. 1, 53-68},
+  year = {1997},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
 @inproceedings{warren-1991,
   author = {Warren, G. and Anderson, W.K. and Thomas, J. and Krist, S.},
   title = {Grid convergence for adaptive methods},
@@ -5256,6 +7141,22 @@
   year = {2003},
   note = {no venue printed; year only},
   citedby = {hirani-2003},
+}
+
+@article{watwood-1968,
+  author = {Watwood, Jr., V.B. and Hartz, B.J.},
+  title = {An equilibrium stress field model for finite element solution of two-dimensional elastostatic problems},
+  journal = {Internat. J. Solids Structures 4, 857-873},
+  year = {1968},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{webb-1999,
+  author = {Webb, J.P.},
+  title = {Hierarchal vector basis functions of arbitrary order for triangular and tetrahedral finite elements},
+  journal = {IEEE Trans. Antennas and Propagation 47, 1244-1253},
+  year = {1999},
+  citedby = {arnold-falk-winther-2006},
 }
 
 @article{weber-1980,
@@ -5304,6 +7205,22 @@
   journal = {Internat. J. Numer. Modelling 9, 295-319},
   year = {1996},
   citedby = {clemens-weiland-2001, hiptmair-2002},
+}
+
+@inproceedings{weinstein-1996,
+  author = {Weinstein, A.},
+  title = {Lagrangian mechanics and groupoids},
+  booktitle = {Mechanics Day (Waterloo, ON, 1992), volume 7 of Fields Institute Communications, pages 207-231, American Mathematical Society},
+  year = {1996},
+  citedby = {desbrun-hirani-2005},
+}
+
+@inproceedings{weinstein-2001,
+  author = {Weinstein, A.},
+  title = {Groupoids: unifying internal and external symmetry. A tour through some examples},
+  booktitle = {Groupoids in Analysis, Geometry, and Physics (Boulder, CO, 1999), volume 282 of Contemporary Mathematics, pages 1-19, American Mathematical Society},
+  year = {2001},
+  citedby = {desbrun-hirani-2005},
 }
 
 @techreport{welch-1965,
@@ -5377,7 +7294,7 @@
   title = {Geometric Integration Theory},
   publisher = {Princeton University Press, Princeton},
   year = {1957},
-  citedby = {hiptmair-2002, hirani-2003},
+  citedby = {arnold-falk-winther-2006, arnold-falk-winther-2009, desbrun-hirani-2005, desbrun-kanso-tong-2008, hiptmair-2002, hirani-2003},
 }
 
 @phdthesis{wilkes-1963,
@@ -5405,6 +7322,14 @@
   citedby = {berger-colella-1989},
 }
 
+@phdthesis{wood-2003,
+  author = {Wood, Z.J.},
+  title = {Computational Topology Algorithms for Discrete 2-Manifolds},
+  school = {California Institute of Technology},
+  year = {2003},
+  citedby = {desbrun-hirani-2005},
+}
+
 @techreport{woodward-1983,
   author = {Woodward, P.},
   title = {[title not printed in citing reference]},
@@ -5430,12 +7355,37 @@
   citedby = {powell-1999},
 }
 
+@article{wu-1986,
+  author = {Wu, C.C.},
+  title = {An Kelvin-Helmholtz instability at the magnetopause boundary},
+  journal = {J. Geophys. Res. 91, 3042-3060},
+  year = {1986},
+  note = {title begins "An Kelvin-Helmholtz" as printed (misprint of "A Kelvin-Helmholtz")},
+  citedby = {li-shu-2005},
+}
+
 @article{wu-1987,
   author = {Wu, C.-C.},
   title = {[title not printed in citing reference]},
   journal = {Geophys. Res. Lett., 14, 668},
   year = {1987},
   citedby = {londrillo-delzanna-2000},
+}
+
+@article{xu-1992,
+  author = {Xu, J.},
+  title = {Iterative methods by space decomposition and subspace correction},
+  journal = {SIAM Rev. 34, 581-613},
+  year = {1992},
+  citedby = {arnold-falk-winther-2006},
+}
+
+@article{xu-2003,
+  author = {Xu, J. and Zikatanov, L.},
+  title = {Some observations on Babu{\v s}ka and Brezzi theories},
+  journal = {Numer. Math. 94 (2003), no. 1, 195-202},
+  year = {2003},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{yang-1990,
@@ -5452,7 +7402,7 @@
   journal = {IEEE Trans. Antennas Propag. AP-14(3):302-307},
   year = {1966},
   doi = {10.1109/TAP.1966.1138693},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, hiptmair-2002, toth-roe-2002},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, hiptmair-2002, li-shu-2005, toth-roe-2002},
 }
 
 @techreport{yee-1989,
@@ -5469,8 +7419,16 @@
   title = {High Order Shock-Capturing Methods Using Characteristic Filters},
   institution = {RIACS Report, May 1998; J. Comput. Phys. 150:1 (1999)},
   year = {1998},
-  note = {printed with dual venue — RIACS Report (May 1998) and J. Comput. Phys. 150, 1 (1999)},
-  citedby = {toth-2000},
+  note = {printed with dual venue — RIACS Report (May 1998) and J. Comput. Phys. 150, 1 (1999); cited as J. Comput. Phys. 150 (1999) by mattsson-nordstrom-2004},
+  citedby = {mattsson-nordstrom-2004, toth-2000},
+}
+
+@techreport{yee-1999-b,
+  author = {Yee, H.C. and Vinokur, M. and Djomehri, M.J.},
+  title = {Entropy splitting and numerical dissipation},
+  institution = {NASA/TM-1999-208793 and 8th International Symposium on CFD, September 5-10, 1999, Bremen, Germany},
+  year = {1999},
+  citedby = {mattsson-nordstrom-2004},
 }
 
 @book{york-1979,
@@ -5479,6 +7437,15 @@
   publisher = {in Sources of Gravitational Radiation, ed. L. Smarr (Cambridge: Cambridge University Press), p. 83},
   year = {1979},
   citedby = {evans-hawley-1988},
+}
+
+@book{yosida-1995,
+  author = {Yosida, K.},
+  title = {Functional analysis},
+  publisher = {Classics in Mathematics, Springer-Verlag, Berlin},
+  year = {1995},
+  note = {Reprint of the sixth (1980) edition},
+  citedby = {arnold-falk-winther-2009},
 }
 
 @article{zachary-1992,
@@ -5495,7 +7462,7 @@
   journal = {SIAM J. Sci. Comput. 15:263},
   year = {1994},
   note = {londrillo-delzanna-2000 prints "SIAM J. Sci. Stat. Comput."},
-  citedby = {balsara-2001, balsara-2004, dedner-2002, londrillo-delzanna-2000, toth-2000},
+  citedby = {balsara-2001, balsara-2004, dedner-2002, gardiner-stone-2008, londrillo-delzanna-2000, toth-2000},
 }
 
 @phdthesis{zampa-2024,
@@ -5504,6 +7471,38 @@
   school = {Doctoral School in Mathematics, University of Trento},
   year = {2024},
   note = {PhD thesis, University of Trento (supervisor M. Dumbser), December 2024},
+}
+
+@misc{zapatrin-1996,
+  author = {Zapatrin, R.},
+  title = {Polyhedral Representations of Discrete Differential Manifolds},
+  howpublished = {preprint},
+  year = {1996},
+  citedby = {desbrun-kanso-tong-2008},
+}
+
+@article{ziegler-1997,
+  author = {Ziegler, U. and Yorke, H.W.},
+  title = {[title not printed in citing reference]},
+  journal = {Comput. Phys. Commun., 101, 54},
+  year = {1997},
+  citedby = {fromang-2006},
+}
+
+@article{ziegler-2004,
+  author = {Ziegler, U.},
+  title = {[title not printed in citing reference]},
+  journal = {J. Comput. Phys., 196, 393},
+  year = {2004},
+  citedby = {fromang-2006},
+}
+
+@article{ziegler-2005,
+  author = {Ziegler, U.},
+  title = {[title not printed in citing reference]},
+  journal = {A&A, 435, 385},
+  year = {2005},
+  citedby = {fromang-2006},
 }
 
 @article{zienkiewiczo-1977,
@@ -5520,4 +7519,12 @@
   journal = {Int. J. for Num. Meth. in Eng., Vol. 20, 1529-1552},
   year = {1984},
   citedby = {clemens-weiland-2001},
+}
+
+@misc{zingg-1999,
+  author = {Zingg, D.W. and De Rango, S. and Nemec, M. and Pulliam, T.H.},
+  title = {Comparison of Several Spatial Discretizations for the Navier-Stokes equations},
+  howpublished = {AIAA Paper 99-3260, 1999},
+  year = {1999},
+  citedby = {mattsson-carpenter-2010, mattsson-nordstrom-2004},
 }
