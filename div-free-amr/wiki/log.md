@@ -34,6 +34,17 @@
   intentional. Final state: **2691 entries, 3889 citation edges**, graph
   invariant-clean.
 
+* **Backfill merger promoted to `tools/bib_merge.py` (D16).** The throwaway
+  batch harness was generalized into a documented, bundle-agnostic tool
+  (CLI-parameterized master/frags/resolutions; refuses `--write` while flags
+  are open) and its whole-corpus duplicate sweep made a first-class `--dupes`
+  subcommand. Regression-tested: it reproduces the batch-6 merge exactly
+  (FLAGS: 0, same entry count). Running `--dupes` on the audited master
+  immediately found **2 more cross-spelling duplicates the hand sweep missed**
+  (`bossavit-1991c`→`bossavit-1991-a`, same Eur. J. Mech. B/Fluids 10(5):474;
+  `nordstrom-2015`→`lundquist-2015`, same LiTH report, author order swapped) —
+  merged (2691 → **2689 entries**); the sweep is now clean at 0 groups.
+
 ## 2026-07-21
 
 * **Bibliography backfill batch 6 — FINAL; citation record complete

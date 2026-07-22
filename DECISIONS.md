@@ -170,3 +170,42 @@ complete. The `.bib` was seeded from Source-page frontmatter (metadata already
 page-1-verified at ingestion; titles recovered from the display-title
 convention `Authors (year) — <paper title>`); backfill batches reopen each
 PDF's reference list and may refine seeded venue strings.
+
+## D16 — Batched-backfill merger and mandatory duplicate sweep (2026-07-22)
+
+The D15 backfill of `div-free-amr` (61 sources, ~4000 references, six batches)
+was driven by a merge harness that hardened into a reusable tool,
+`tools/bib_merge.py`, after the first bundle proved its shape. Two lessons from
+that backfill are now encoded in the tool and in law:
+
+**The merger flags identities; the human resolves them.** Merging ten
+reference lists at once produces dense key collisions — the same slug-style key
+denoting different works in different fragments, title-less (ApJ/PRD/A&A)
+citations distinguishable only by venue numbers, near-duplicate variants. The
+tool never guesses: it emits `[conflict]`/`[venuecheck]`/`[suspect]` flags,
+takes human-reviewed resolution tables (a Python module: ALIASES, SILENCED,
+NOTES, REPAIRS, FIXUPS), and refuses `--write` while any flag is open. The
+`[venuecheck]` heuristic — placeholder-title merges whose journal/volume/page
+numbers do not overlap — is the decisive signal for title-less lists and
+caught real wrong-merges in every batch after it was added.
+
+**A `SILENCED` pair is a claim, not a dismissal.** Silencing a flag asserts two
+keys are genuinely distinct works; that assertion needs the same scrutiny as a
+merge. Wrongly silencing hid real duplicates twice (a batch-3 short-title
+Bossavit silence masking a distinct work; a batch-6 `stone-1992-c` silence
+hiding an identical ApJS 80:791 entry). Both were caught only at the closing
+audit.
+
+**The whole-corpus duplicate sweep (`--dupes`) is mandatory after the final
+batch, because the batch process is structurally blind to it.** The merge
+dedups by key, and keys follow each citing source's spelling — so the same work
+entered under two first-author spellings (OCR corruption, a mis-transcribed or
+reordered author list) lands under two keys that no per-batch check can relate.
+Only a whole-corpus grouping by (normalized title, year) finds them. On
+`div-free-amr` the closing sweep found 11 such duplicates the six batches all
+missed — including a JCP 150:561 paper filed once as `jiang-1999` and once, via
+a wrong-author transcription, as `hu-1999`.
+
+Scope: this tool is for the batched backfill only. A single new source's
+reference list (ordinary ingestion step 5) is hand-edited into the `.bib` —
+the merger's machinery earns its cost only at ~10 fragments per run.

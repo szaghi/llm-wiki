@@ -11,7 +11,7 @@ rules there, not by silently deviating.
 ~/llm-wiki/
 ├── CLAUDE.md            # this file — repo-wide law
 ├── DECISIONS.md         # rationale record (ADR-lite)
-├── tools/               # deterministic tooling (linter, worklist)
+├── tools/               # deterministic tooling (linter, bib generator/merger, worklist)
 └── <bundle>/            # one directory per knowledge bundle
     ├── CLAUDE.md        # bundle law (corpus location, domain notes)
     ├── raw/             # Layer 1 captures: web/ (md snapshots), docs/
@@ -165,6 +165,22 @@ not discarded. (Rationale: D15.)
 - Progress is derived, never stored (D8): a source's reference list is merged
   iff its slug appears in ≥1 `citedby` field;
   `python3 tools/bib_to_md.py <bundle>/wiki --pending` lists the remainder.
+- **Batched backfill merger: `tools/bib_merge.py`** (D16). For merging **many**
+  pre-existing sources' reference lists at once (the D15 backfill of a corpus
+  that predates the citation record), not the ordinary per-source ingestion
+  step — for one new source, hand-edit the `.bib`. It merges `frag-<slug>.bib`
+  fragments under a human-reviewed resolutions module, **flags** every identity
+  collision (same-key different-work `[conflict]`, placeholder-title venue
+  mismatch `[venuecheck]`, near-duplicate `[suspect]`) and refuses `--write`
+  until `FLAGS: 0`. Its `--dupes` mode is a **mandatory closing sweep after the
+  final batch**: the per-batch merge dedups by key and keys follow each citing
+  source's spelling, so the same work under two first-author spellings (OCR
+  variants, mis-transcribed or reordered authors) lands under two keys that no
+  per-batch check can relate — only a whole-corpus title+year sweep finds them.
+  Full workflow and resolution-table semantics are in the tool's docstring.
+  A `[venuecheck]` flag is the decisive signal for title-less (ApJ/PRD/A&A)
+  citations — heed it; and treat a `SILENCED` pair as a verified claim, never a
+  convenient dismissal.
 
 ## Ingestion protocol (atomic per source)
 
