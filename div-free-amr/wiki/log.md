@@ -1,5 +1,39 @@
 # Directory Update Log
 
+## 2026-07-22
+
+* **Deep lint #7 / closing audit — bibliography citation graph.** First audit
+  of the completed 2700-entry citation record (D15 backfill). **Structural
+  checks (deterministic):** 0 dangling `citedby` slugs, 0 self-citations,
+  61/61 ingested slugs present as entries, every source's reference list
+  non-empty; the 16 `citedby=0` entries are all recent/peripheral ingested
+  sources nothing else cites (correct). **Duplicate sweep found 9 same-work
+  entries under distinct keys that per-batch dedup missed** — all merged
+  (2700 → 2691): two placeholder-title duplicates a batch-6 silence wrongly
+  admitted (`stone-1992-c` = `stone-1992` ZEUS-2D II, both ApJS 80:791;
+  `harten-1978-b` = `harten-1978`, shashkov's "part II" label but identical
+  Math. Comp. 32:363-389); and seven cross-source surname-spelling variants
+  the stem-year grouping couldn't catch (`chiuekwanyu`→`chiu`, `detain`→
+  `demin`, `casilov`→`gasilov`, `ganhga`→`solovov`, `tishkin`→`favorskii`
+  author-order, `schewchuck`→`shewchuck`, and `hu-1999-a`→`jiang-1999` — a
+  wrong-author transcription in zampa's list, same JCP 150:561 Jiang–Wu
+  WENO-MHD paper). **LLM edge verification:** five agents re-read the PDFs
+  of the six sources contributing the most disambiguation keys (zampa,
+  lipnikov, delreyfernandez, olivares, stone, shashkov) and checked 194
+  disambiguated `citedby` edges against the printed reference lists —
+  **193 confirmed correct, 1 misattribution found and fixed**
+  (olivares-2019's Hawley–Smarr–Wilson edge pointed at `hawley-1984-b`
+  [ApJS 55:211] but olivares prints ApJ 277:296, a page variant of HSWa
+  [`hawley-1984-a`]; edge moved). One metadata inconsistency corrected
+  (`svard-2008-b` venue: the mattsson-carpenter-2010 misprint "JCP 225"
+  fixed to the real JCP 227:4805-4824, confirmed by delreyfernandez-2014).
+  Benign preprint-vs-published year labels (kreeft-gerritsma-2013 cited as
+  2012 arXiv, arnold-falk-winther-2009 as 2010 Bull. AMS) left as-is with
+  their existing notes; the two key-stem/year-field mismatches
+  (almquist-2018 slug, balsara-2014-b Part-II series sibling) are
+  intentional. Final state: **2691 entries, 3889 citation edges**, graph
+  invariant-clean.
+
 ## 2026-07-21
 
 * **Bibliography backfill batch 6 — FINAL; citation record complete
