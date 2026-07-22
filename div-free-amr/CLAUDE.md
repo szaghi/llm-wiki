@@ -45,7 +45,16 @@ coverage recorded on their Source pages (Bossavit, Shashkov, Hiptmair
 known re-ingestion targets if deeper coverage is ever needed. New sources
 append per repo law; the worklist stays authoritative.
 
-**Bibliography backfill in progress (started 2026-07-10):** the corpus
-predates D15; `bibliography.bib` is seeded with the 61 ingested sources and
-their reference lists are being merged in batches (~10 sources per staged
-unit, scoped reads scoped per repo law). `--pending` is authoritative.
+**Bibliography backfill complete (2026-07-21): 61/61 reference lists
+merged.** The corpus predated D15; its reference lists were merged in six
+staged batches (2026-07-10 → 07-21), growing `bibliography.bib` from the
+61 seeded ingested sources to **2700 works** (2639 cited but not ingested).
+`tools/bib_to_md.py div-free-amr/wiki --pending` is empty and the sync
+linter is warning-free. The three scoped-read sources' consolidated
+bibliographies were extracted whole with scope recorded on each fragment
+(Bossavit = 12 per-chapter lists deduplicated; Shashkov = end-of-book;
+Crane = single p.163 list). The derived ingestion frontier (heavily-cited
+non-ingested works) tops out at Balsara–Spicer 1999, Brackbill–Barnes 1980,
+Kreiss–Scherer 1974, Whitney 1957 — candidates if the corpus is extended.
+New sources append per repo law (ingestion now includes reference-list
+merge per D15, step 5); the worklist and `--pending` stay authoritative.

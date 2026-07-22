@@ -2,6 +2,47 @@
 
 ## 2026-07-21
 
+* **Bibliography backfill batch 6 — FINAL; citation record complete
+  (61/61 reference lists merged).** Reference lists of the last 11 sources
+  merged (almquist-2018, bossavit-1998, crane-2025, degoes-2020,
+  kozdon-2021, lundquist-2018, olivares-2019, shashkov-1996, stone-2020,
+  wang-petersson-2019, zampa-2024): 1195 printed references,
+  [bibliography](/bibliography.md) grows 1804 → 2700 entries. **All 61
+  ingested sources' reference lists are now merged; the `--pending`
+  worklist is empty and the sync linter is warning-free.** The three
+  scoped-read sources contributed their consolidated bibliographies whole,
+  scope recorded on each fragment: crane-2025 (single p.163 list, 17 refs),
+  shashkov-1996 (end-of-book Bibliography pp.341-354, 154 refs), and
+  bossavit-1998 — which has **no single bibliography**: references are 12
+  per-chapter lists, extracted and deduplicated to 273 distinct works
+  (28 cross-chapter duplicates collapsed). zampa-2024's thesis bibliography
+  (346 works) is the largest single list in the corpus. Identity
+  resolutions closed the graph on itself: the SBP cluster's four papers
+  cite each other and the earlier SBP corpus almost entirely into existing
+  keys (almquist: 15 of 29 refs already present), with published-form
+  merges onto ingested slugs (almquist-2019 → the ingested almquist-2018
+  SISC form; wang-2018 "2D wave" → wang-nissen-kreiss-2017's Math. Comp.
+  publication; friedrich-2017 → friedrich-2016; svard-2014 → svard-2013-a).
+  Same-key different-work collisions split by second-author or letter key
+  (berg-2012-b, nordstrom-2003-b, liu-2008-b, zhang-2006-b, mignone-2005-b,
+  jiang-2012-b, several Bossavit-book works at -g/-b, balsara-1999-d for
+  the pressure-positivity paper). **Data correction**: kozdon-2021 prints
+  Strand 1994's DOI suffix as .1994.1005 — a citing-list typo; the
+  authoritative .1994.1023 (from the ingested Source page) was kept, the
+  typo recorded in a note. The venue-number cross-check again earned its
+  keep, catching placeholder-title collisions the title check is blind to
+  (harten-lax vs harten, jiang Y.-F. vs R.-L., the six EHT companion
+  papers). Twenty-plus references excluded as un-citable across the batch
+  (no printed year: two Dumbser/Hu thesis-list items, code-website URLs,
+  in-press entries without year). **Final frontier**: balsara-1999 leads
+  at 17 of 61 processed sources, brackbill-1980 (16), then kreiss-1974 and
+  whitney-1957 (13), brio-1988 / carpenter-gottlieb-1994 / nedelec-1980
+  (11), raviart-1977 / ryu-1998 (10) — the ranking spans the full corpus:
+  MHD divergence control (Balsara, Brackbill, Brio), SBP (Kreiss,
+  Carpenter), and FEEC/mimetic (Whitney, Nédélec, Raviart) all in the top
+  tier. These heavily-cited non-ingested works are the derived ingestion
+  frontier if the corpus is ever extended.
+
 * **Bibliography backfill batch 5** — reference lists of 10 sources merged
   (bonelle-ern-2014, lipnikov-2014, nissen-2014, palha-2014, etienne-2015,
   kozdon-wilcox-2015, wang-kreiss-2017, wang-nissen-kreiss-2017, derigs-2018,
