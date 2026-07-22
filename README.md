@@ -13,6 +13,7 @@
 [![OKF](https://img.shields.io/badge/OKF-v0.1-blue)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
 [![Bundles](https://img.shields.io/badge/bundles-1-blue)](#-bundles)
 [![Lint](https://img.shields.io/badge/okf%20lint-passing-brightgreen)](tools/lint_okf.py)
+[![Citations](https://img.shields.io/badge/citation%20record-2689%20works-blue)](div-free-amr/wiki/bibliography.md)
 [![Math](https://img.shields.io/badge/math-KaTeX-orange)](div-free-amr/wiki/notation.md)
 [![Compiler](https://img.shields.io/badge/compiler-Claude-8A2BE2)](CLAUDE.md)
 [![Format](https://img.shields.io/badge/format-markdown%20%2B%20YAML-lightgrey)](DECISIONS.md)
@@ -49,6 +50,7 @@ with what a **scientific** knowledge base needs:
 | `status: established \| hypothesis` | claim-kind on every page — the wiki always knows what is literature and what is conjecture |
 | `## Contradictions` blocks | disagreements between sources are content, attributed and cited — recency never wins |
 | Verified identifiers | DOIs checked against page 1 and Crossref; filenames are never trusted (several wrong ones caught already) |
+| Complete citation record | ingesting a paper means reading its *reference list* — every work any source cites is captured in `bibliography.bib` with a `citedby` graph, whether or not it is itself ingested |
 
 ## 🏛️ Architecture
 
@@ -74,14 +76,18 @@ llm-wiki/
 ├── README.md            # you are here
 ├── tools/
 │   ├── lint_okf.py      # OKF conformance + repo law + links + indexes + math syntax
+│   ├── bib_to_md.py     # bibliography.bib → generated bibliography.md (sync-enforced)
+│   ├── bib_merge.py     # batched reference-list merger for the citation-record backfill
 │   └── worklist.sh      # derived worklist: corpus minus existing Source pages
 └── <bundle>/            # one directory per knowledge bundle
     ├── CLAUDE.md        # bundle law: corpus path, domain notes, status
     ├── raw/             # captures only (web/, docs/) — archives stay where they live
     └── wiki/            # the OKF bundle root
-        ├── index.md     # curated entry point with a reading guide
-        ├── log.md       # append-only journal of every ingestion and audit
-        ├── notation.md  # the normative symbol registry
+        ├── index.md            # curated entry point with a reading guide
+        ├── log.md              # append-only journal of every ingestion and audit
+        ├── notation.md         # the normative symbol registry
+        ├── bibliography.bib    # canonical citation record + citedby graph
+        ├── bibliography.md     # generated view of the above (never hand-edited)
         └── {definitions,methods,operators,properties,results,benchmarks,software,sources}/
 ```
 
@@ -89,7 +95,7 @@ llm-wiki/
 
 | Bundle | Domain | Scale | Entry point |
 | --- | --- | --- | --- |
-| [`div-free-amr`](div-free-amr/wiki/index.md) | Discrete divergence constraints ($D_h B_h = 0$, incompressibility) across numerical discretizations — staggered/CT, mimetic, Whitney/FEEC, SBP, DEC — with particular depth on high-order methods and 2:1 AMR interfaces | dozens of multi-modal sources (1965–2025), ~100 pages, corpus complete | [reading guide](div-free-amr/wiki/index.md) · [log](div-free-amr/wiki/log.md) |
+| [`div-free-amr`](div-free-amr/wiki/index.md) | Discrete divergence constraints ($D_h B_h = 0$, incompressibility) across numerical discretizations — staggered/CT, mimetic, Whitney/FEEC, SBP, DEC — with particular depth on high-order methods and 2:1 AMR interfaces | 61 multi-modal sources (1965–2025), ~100 pages, corpus complete; citation record of 2689 works (61 ingested, the rest the derived ingestion frontier) | [reading guide](div-free-amr/wiki/index.md) · [bibliography](div-free-amr/wiki/bibliography.md) · [log](div-free-amr/wiki/log.md) |
 
 Future bundles are siblings: same constitution, same linter, same worklist — see the
 [tutorial](#-tutorial) below.
@@ -137,9 +143,10 @@ then, after your audit:
 > Continue ingesting the <bundle> sources, foundations first. Stage after each source.
 
 Claude works in tranches — each source atomically (read → extract → create-or-merge →
-notation map → log → indexes → lint → stage) — and reports what entered the wiki, with
-the prepared commit message. **You** commit after each tranche (or per source, if you
-prefer fine-grained history). Check remaining work anytime:
+notation map → **merge reference list into the citation record** → log → indexes → lint →
+stage) — and reports what entered the wiki, with the prepared commit message. **You**
+commit after each tranche (or per source, if you prefer fine-grained history). Check
+remaining work anytime:
 
 ```bash
 ./tools/worklist.sh <bundle>
@@ -205,6 +212,7 @@ targeted audits
 > Audit the Contradictions blocks in <bundle> — anything superseded by newer ingestions?
 Audit the notation maps of the last five Source pages against the originals.
 Recurate the root index of <bundle> — the reading guide is stale.
+Audit the citation graph of <bundle> — spot-check citedby edges against the source PDFs, sweep for duplicate entries.
 
 ---
 
