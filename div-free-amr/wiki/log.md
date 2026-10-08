@@ -2,6 +2,35 @@
 
 ## 2026-10-08
 
+* **Ingested [Wu (2018)](/sources/wu-2018.md)**, source 8 of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2018-SINUM-Wu-10113718m1168017.pdf`;
+    venue verified on Crossref.
+  * **Created**
+    [positivity–divergence coupling](/results/positivity-divergence-coupling.md),
+    a Result with status established. For LF-type schemes in 2D and 3D,
+    provable positivity needs a discrete divergence-free condition on the
+    scheme's own stencil, and the first-order LF scheme preserves
+    $D_h^{\mathrm{c}}\bar B_h = 0$ exactly.
+  * **Registry:** $\mathcal{G}$ (admissible set) and $\alpha^{\mathrm{LF}}$
+    were added to [notation](/notation.md).
+  * **Updated**
+    [exact discrete divergence](/properties/exact-discrete-divergence.md)
+    (positivity as a second reason the constraint matters) and
+    [GLM](/methods/glm-divergence-cleaning.md) (no guarantee in the
+    controlled class). A compiler reading, marked as such, links this to the
+    low-$\beta$ GLM failure in the Zaghi (2026) record without claiming it
+    as the cause.
+  * **Scoped read:** proofs were read in outline only, and the Source page
+    says so.
+  * **Bibliography:** 54 references; the record goes from 2769 to 2793.
+    * 30 existing entries gained the citer, and 24 works are new.
+    * `wu-2018` (cited by zaghi-2026) was upgraded in place.
+    * `wu-shu-2018` gained the printed title. It is source 10 of this batch.
+    * The venue-less `zhang-shu-2010` was **not** folded into either new
+      JCP 229 Zhang–Shu entry. Identity is unverified, and a note records
+      this.
+
 * **Ingested [Felker & Stone (2018)](/sources/felker-2018.md)**, source 7
   of 16.
   * **Corpus:** the arXiv v2 preprint was moved to

@@ -118,7 +118,15 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
 
 ## Why it matters
 
-Nonzero numerical divergence produces an anomalous force component parallel
+**Positivity.** For Lax–Friedrichs-type conservative schemes in 2D and 3D,
+provable positivity of density and pressure requires a discrete
+divergence-free condition on the scheme's own flux stencil. Admissible data
+alone do not suffice, at any CFL number or viscosity. The first-order LF
+scheme in fact preserves $D_h^{\mathrm{c}}\bar B_h = 0$ exactly
+([positivity–divergence coupling](/results/positivity-divergence-coupling.md);
+[Wu (2018)](/sources/wu-2018.md)).
+
+**Dynamics.** Nonzero numerical divergence produces an anomalous force component parallel
 to the magnetic field, corrupting dynamics (Brackbill & Barnes 1980, as
 reviewed in [Evans & Hawley (1988)](/sources/evans-hawley-1988.md) §III —
 primary source not yet ingested). At production scale the stakes are
@@ -144,3 +152,4 @@ class is not a numerical nicety but a physics-level decision.
 9. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.4, 4.2, Table 3.
 10. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II, III.b.
 11. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §6.
+12. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.3, 4.5.

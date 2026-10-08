@@ -145,6 +145,15 @@ on the GLM page; they are registered here.)
 | $q$ | accuracy order of a ghost-fill operator $\Gamma$ (value error $O(h^q)$) |
 | $p_{\mathrm{obs}}$ | observed convergence order from a refinement ladder, $p_{\mathrm{obs}} = \log_2(e_h / e_{h/2})$ |
 
+## Admissibility (positivity)
+
+(Added 2026-10-08, wu-2018 ingestion.)
+
+| Symbol | Meaning |
+|---|---|
+| $\mathcal{G}$ | admissible state set: conserved states with positive density and positive internal energy (hence pressure) |
+| $\alpha^{\mathrm{LF}}$ | Lax–Friedrichs numerical-viscosity parameter of a flux, per direction |
+
 ## Writing rules
 
 - Inline math `$...$`, display math `$$...$$` (KaTeX). Never `\(...\)` / `\[...\]`.
