@@ -2,6 +2,20 @@
 
 ## 2026-10-08
 
+* **Layer-1 renames (user-authorized):** three archive filenames now embed
+  the Crossref-verified DOIs found by the DOI audit below.
+  * `2013-JCP-Kreeft-101016jjcp201212028.pdf` →
+    `2013-JCP-Kreeft-101016jjcp201210043.pdf`
+  * `1994-JCP-Strand-101006jcph19941023.pdf` (and its `.ocr.txt` sidecar) →
+    `1994-JCP-Strand-101006jcph19941005.pdf`
+  * `2020-JCP-Trask-101016jjcp2020109187.pdf` →
+    `2020-JCP-Trask-101016jjcp2019109187.pdf`
+
+  `local_file` and the Citations paths were updated on
+  [Kreeft & Gerritsma (2013)](/sources/kreeft-gerritsma-2013.md),
+  [Strand (1994)](/sources/strand-1994.md) and
+  [Trask et al. (2020)](/sources/trask-2020.md).
+
 * **Maintenance on user instruction:** the Gardiner filename fix, the eymard
   fold, and a DOI audit.
   * **Layer-1 rename** (user-authorized):

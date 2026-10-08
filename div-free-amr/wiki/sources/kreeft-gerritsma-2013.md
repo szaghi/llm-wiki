@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kreeft J., Gerritsma M.]
 year: 2013
 venue: "J. Comput. Phys. 240:284-309"
-local_file: "~/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201212028.pdf"
+local_file: "~/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201210043.pdf"
 tags: [mimetic, spectral-elements, high-order, divergence-constraint, stokes, curvilinear]
 timestamp: 2026-07-08T00:00:00Z
 ---
@@ -64,4 +64,4 @@ sizes**.
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201212028.pdf` (doi:10.1016/j.jcp.2012.10.043) — text extraction, pp. 284–309. **DOI corrected 2026-10-08 (DOI audit).** The DOI recorded earlier, 10.1016/j.jcp.2012.12.028, resolves on Crossref to a Multi Level Multi Domain particle-in-cell paper by Innocenti et al.; the correct DOI, verified on Crossref by title, authors and pages, is 10.1016/j.jcp.2012.10.043. The archive filename still embeds the old DOI.
+1. `~/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201210043.pdf` (doi:10.1016/j.jcp.2012.10.043) — text extraction, pp. 284–309. **DOI corrected 2026-10-08 (DOI audit).** The DOI recorded earlier, 10.1016/j.jcp.2012.12.028, resolves on Crossref to a Multi Level Multi Domain particle-in-cell paper by Innocenti et al.; the correct DOI, verified on Crossref by title, authors and pages, is 10.1016/j.jcp.2012.10.043. The archive file was renamed on 2026-10-08 to embed the correct DOI.
