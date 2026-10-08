@@ -41,6 +41,12 @@ indicators clearly better than component-wise ones).
 [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md) (no overshoots
 with AO(5,3) and AO(9,5,3)); [Rathan & Naga Raju (2017)](/sources/rathan-2017.md).
 
+**Later uses (batch 3).** Compact-reconstruction WENO on 200 points is
+sharper than WENO-JS and WENO-Z. With 60 points (0.57 s) it matches
+WENO-JS with 100 (0.55 s) ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 2).
+Seventh-order AFD-WENO captures the rarefaction, contact and shock
+([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -57,3 +63,5 @@ with AO(5,3) and AO(9,5,3)); [Rathan & Naga Raju (2017)](/sources/rathan-2017.md
 12. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.5.
 13. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.2.
 14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 6.
+15. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 2.
+16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.

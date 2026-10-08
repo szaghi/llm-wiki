@@ -42,13 +42,23 @@ an easier test than [Lax's](/benchmarks/lax-shock-tube.md)
 
 **Later uses (batch 2).** Grid convergence: WENO5 and WENO5M both
 converge at about 5/6 order in $L_1$ for density, WENO5M with about 10 %
-smaller errors, to $\Delta x = 1/102400$ ([Henrick et al. (2005)](/sources/henrick-2005.md),
+smaller errors, to $h = 1/102400$ ([Henrick et al. (2005)](/sources/henrick-2005.md),
 Table 9) — the convergence rate of captured contacts.
 [Borges et al. (2008)](/sources/borges-2008.md);
 [Martín et al. (2006)](/sources/martin-2006.md) (a pressure-ratio-2 tube:
 at $r = 4$, WENO-JS $q = 1$ and SYMOO show dispersive density errors);
 [Hu, Wang & Adams (2010)](/sources/hu-2010.md); [Fu, Hu & Adams (2016)](/sources/fu-2016.md);
 [Rathan & Naga Raju (2017)](/sources/rathan-2017.md) (a modified Sod).
+
+**Later uses (batch 3).** Compact-reconstruction WENO on 100 points
+smears the discontinuities less than WENO-JS and WENO-Z
+([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 3). GP-WENO
+($\ell/h = 12$, 128 cells): GP-R2 is comparable to WENO-JS on the same
+5-cell stencil, and GP-R3 is clean. GP-R1 smears most yet oscillates
+most at the shock, because its smoothness indicators approximate the
+RKHS norm worst ([Reyes et al. (2018)](/sources/reyes-2018.md), §5.4).
+Fifth-order AFD-WENO matches the exact solution
+([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
 
 # Citations
 
@@ -65,3 +75,6 @@ at $r = 4$, WENO-JS $q = 1$ and SYMOO show dispersive density errors);
 11. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.2.
 12. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.2.
 13. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 5.
+14. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 3.
+15. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.4.
+16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.

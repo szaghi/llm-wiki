@@ -99,6 +99,31 @@ the leading $O(h^5)$ flux errors cancel in the difference
 it is not local in the data ([Pirozzoli (2002)](/sources/pirozzoli-2002.md);
 [hybrid compact-WENO](/methods/hybrid-compact-weno.md)).
 
+**Later remarks (batch 3).**
+* For a linear equation, the FD scheme for $u$ is exactly an FV scheme
+  for the reconstruction pair $\mathcal{H}$. This carries FV positivity
+  limiting over to FD WENO through the split fluxes, but not a scalar
+  maximum principle: $\mathcal{H}$ has larger extrema than $u$, so
+  bounding it destroys accuracy ([Zhang & Shu (2012)](/sources/zhang-2012.md), §2.2;
+  [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)).
+* The same reconstruction routine delivers FV and FD fluxes, the latter
+  from cell averages of $\mathcal{H}$ built from $f(u_j)$
+  ([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.1).
+* The flux-splitting form is one of two FD routes. The *alternative*
+  form interpolates the solution, calls any Riemann solver at the
+  interface, and adds even-derivative corrections
+  ([AFD-WENO](/methods/alternative-finite-difference-weno.md)). The
+  classical form needs a smooth splitting, which restricts it to
+  Lax–Friedrichs or Roe-type fluxes, and it does not preserve free
+  streams on curvilinear meshes ([Balsara et al. (2025)](/sources/balsara-2025.md), §I).
+* FD needs eigenvectors for its characteristic splitting and smooth
+  structured meshes. FV runs on unstructured meshes and, with MUSTA,
+  without eigenstructure; in 2D FD is about three times cheaper (as
+  cited by [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.5). In
+  MHD with identical ingredients, FD updates are 7–14 times faster than
+  FV in 2D and 5–12 times in 3D
+  ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §§III–IV.
@@ -109,3 +134,8 @@ it is not local in the data ([Pirozzoli (2002)](/sources/pirozzoli-2002.md);
 6. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I–II, VII.b.
 7. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §2.
 8. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §2.
+9. [Zhang & Shu (2012)](/sources/zhang-2012.md), §§2.2, 3.1.
+10. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.1.
+11. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §I.
+12. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.5.
+13. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4.

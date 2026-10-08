@@ -52,9 +52,18 @@ needed, which is problem dependent, and Hu et al. add that hybrids of a
 linear high-order scheme and a nonlinear one can become unstable when
 discontinuities are only a few points apart.
 
+**Batch 3.** Hybrids switch to WENO through an indicator and lose
+spectral resolution near discontinuities; nonlinear compact schemes
+weight the compact stencils instead. The finite-volume
+[compact-reconstruction WENO](/methods/compact-reconstruction-weno.md)
+splits Pirozzoli's fifth-order upwind compact scheme into three
+third-order compact candidates under WENO-Z weights
+([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§1–2).
+
 # Citations
 
 1. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §§1–6.
 2. [Martín et al. (2006)](/sources/martin-2006.md), §1.
 3. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §1.
 4. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §1.
+5. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§1–2.

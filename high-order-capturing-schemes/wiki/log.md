@@ -2,6 +2,100 @@
 
 ## 2026-10-08
 
+* **Batch 3 (10 sources), ingested autonomously on user instruction** and
+  staged as one unit: [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md),
+  [Titarev & Toro (2004)](/sources/titarev-2004.md),
+  [Zhang & Shu (2010)](/sources/zhang-2010.md),
+  [Zhang & Shu (2012)](/sources/zhang-2012.md),
+  [Hu, Adams & Shu (2013)](/sources/hu-2013.md),
+  [Guo, Xiong & Shi (2014)](/sources/guo-2014.md),
+  [Christlieb et al. (2016)](/sources/christlieb-2016.md),
+  [Reyes et al. (2018)](/sources/reyes-2018.md),
+  [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md),
+  [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md).
+  * **Created** 20 concept pages:
+    * result: SSP order barriers;
+    * property: positivity preservation;
+    * methods: scaling and flux positivity limiters, compact-reconstruction
+      WENO, GP-WENO, alternative finite-difference WENO, Lax–Wendroff
+      (Taylor) time discretization, constrained transport, approximate
+      Riemann solvers;
+    * benchmarks: Sedov, double rarefaction, Leblanc, Mach 2000 jet, shock
+      diffraction, isentropic vortex, Orszag–Tang, MHD rotor, MHD blast,
+      shock–cloud.
+  * **Updated** SSP Runge–Kutta, WENO, finite-volume reconstruction,
+    conservative finite difference, characteristic decomposition, WENO-Z,
+    WENO-AO (new section on WENO-AO interpolation), smoothness indicator,
+    hybrid compact-WENO, monotone flux, central WENO, accuracy at critical
+    points, and the DMR, forward-step, blast-wave, Lax, Sod and Shu–Osher
+    benchmarks.
+  * **Contradictions**: **opened** on
+    [positivity preservation](/properties/positivity-preserving.md): is the
+    first-order Lax–Friedrichs MHD update provably positive? Christlieb et
+    al. say it is conjectured and unproven; Balsara et al. say Gurski proved
+    it. The scopes may differ, and Gurski is not in the corpus.
+  * **Not recorded as contradictions**, kept inline: Titarev & Toro's
+    1D RK3 stability condition (CFL $\le 1$, called "optimal" without
+    derivation) against Balsara & Shu's linear-stability 1.43
+    (SSP Runge–Kutta page); and Balsara et al.'s "FD cannot draw on ADER"
+    against the existence of FD single-step Taylor schemes (Taylor
+    time-discretization page). Both are scope or definition differences.
+  * **Registry extensions** ([notation](/notation.md)):
+    * positivity: $\rho(u)$, $p(u)$, $\epsilon_{\mathcal G}$, $\nu_0$,
+      $\mathcal P_i$, $K$, the Gauss–Lobatto points and weights,
+      $\theta_\rho$, $\theta_p$, $\hat f^{\mathrm{LO}}$/$\hat f^{\mathrm{HO}}$
+      and $\sigma$;
+    * Riemann solvers: $S_L$, $S_R$, $S_M$ (and $S_D$, $S_U$);
+    * time stepping: $\eta$, $K_{\mathrm L}$, $\mathcal F^n_i$;
+    * MHD: $\boldsymbol{\mathcal E}$, $\mathbf A$, the face and edge
+      averages;
+    * GP symbols;
+    * the directional spacings $h_x$, $h_y$, $h_z$.
+  * **Bibliography**: 10 fragments (455 printed references) merged with
+    `tools/bib_merge.py`. The resolutions module had 51 scoped aliases, 13
+    verified silences and 11 notes; the merge ran to FLAGS: 0. The record
+    grew from 342 to 597 works. The alias families:
+    * Shu (SISC 1988) printed before Shu & Osher (JCP 1988);
+    * the Zhang–Shu positivity and maximum-principle papers;
+    * the Balsara papers. Bare keys stay free for archived works awaiting
+      ingestion: `balsara-2009-b`, `balsara-2016-b`, `balsara-2023`,
+      `mignone-2010`, `chen-2016` (see bundle law).
+  * **Master renames**, done before the merge to follow the
+    published-year key rule (pre-merge copy kept in the session scratchpad):
+    * `balsara-1997` → `balsara-1999`;
+    * `balsara-2000-b` → `balsara-2001-b`, identified with ApJS 132:83;
+    * `gottlieb-1997` → `gottlieb-1998`;
+    * `tadmor-1997` → `tadmor-1998`, the report form of the LNM 1697 chapter;
+    * **correction of batch 2**: `kim-2006` → `kim-2005-b`. Kim & Kwon is
+      J. Comput. Phys. 210:554 (2005), verified on Crossref; martin-2006
+      had printed 215:417 (2006), and batch 2 had followed it.
+  * **Closing sweeps**:
+    * `--dupes` found two spelling duplicates, both folded: `loubcre-2005`
+      into `loubere-2005`, and `tao-1999` into `tang-1999`;
+    * the venue sweep found no real collisions;
+    * the fuzzy-title sweep found only distinct works and the known JCP
+      republications. `roe-1997` is noted as the JCP 135 republication of
+      `roe-1981` (verified on Crossref).
+  * **Versions read**:
+    * `hu-2013` as arXiv:1203.1540v5, although its filename says JCP;
+    * `guo-2014` as arXiv:1402.5618v2;
+    * `balsara-2025` as the author manuscript. Its slug takes the issue
+      year 2025 (online 2024); the bundle law now says the year is the
+      issue year.
+  * **Deep lint** (first one, due since 10 ingestions; whole bundle):
+    * tag synonyms fixed: `three-dimensional` → `3d`, `weno-ao` →
+      `adaptive-order`; `smooth` dropped;
+    * notation drift fixed in older pages: $\Delta x$ → $h$ in SSP
+      Runge–Kutta, MP limiting and Sod;
+    * notation drift fixed in new pages: GP indices and eigenpairs (the
+      Jacobian eigenvalue $\lambda$ and the weights $d_k$ were clashing),
+      $\lambda = \Delta t/h$ and the partition weights $\alpha_x$,
+      $\alpha_y$ in the flux-limiter page, the floors
+      $\epsilon_\rho$/$\epsilon_p$, and the vortex strength $\epsilon$;
+    * contradictions: two closed entries (MP fiat, Henrick supersession)
+      still hold; the WENO-ZQ entry is still open, with no new evidence in
+      batch 3.
+
 * **Batch 2 (10 sources), ingested autonomously on user instruction** and
   staged as one unit: [Pirozzoli (2002)](/sources/pirozzoli-2002.md),
   [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md),

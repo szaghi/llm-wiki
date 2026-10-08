@@ -93,7 +93,7 @@ report that their adaptive-order WENO needs no MP step at all
   $\sin(\pi x)$ and on Burgers before shock formation the bounds have no
   effect.
 * *Compiler reading:* the two tests differ in time step (CFL 0.05 versus
-  Balsara–Shu's $\Delta t \propto \Delta x^{(2r-1)/3}$) and in the base
+  Balsara–Shu's $\Delta t \propto h^{(2r-1)/3}$) and in the base
   interface value ($r = 3$ quartic versus $r = 5$ WENO), so the evidence
   is not one-to-one; the claim in dispute is the general one ("does not
   damage the order property"), which Balsara and Shu restrict to

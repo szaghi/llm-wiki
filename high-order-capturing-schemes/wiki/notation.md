@@ -36,7 +36,7 @@ common in the literature (Shu's reviews). It is wiki-native law from then on.
 | $x_i$ | cell centre (FV) or grid point (FD) |
 | $x_{i+1/2}$ | cell interface |
 | $I_i$ | cell $[x_{i-1/2}, x_{i+1/2}]$ |
-| $h$ | uniform spacing; $h_i$ on a non-uniform grid |
+| $h$ | uniform spacing; $h_i$ on a non-uniform grid; $h_x$, $h_y$, $h_z$ the directional spacings in multi-D (added in batch 3) |
 | $t^n$, $\Delta t$ | time level and time step |
 | $\nu$ | CFL number, $\nu = \Delta t \max_p |\lambda^{(p)}| / h$ |
 
@@ -144,6 +144,30 @@ Added 2026-10-08 (batch 2: henrick-2005, borges-2008, castro-2011, hu-2010, fu-2
 | $\chi_k$, $\delta_k$, $C_T$ | TENO normalized smoothness measure, its 0/1 cutoff, and the cutoff threshold |
 | $\gamma_{\mathrm{Hi}}$, $\gamma_{\mathrm{Lo}}$ | WENO-AO parameters setting the linear weights of the large central stencil and of the central small stencil |
 | $\vartheta$ | threshold of a hybrid scheme's switch to the capturing scheme |
+
+## Positivity, alternative finite differences and divergence constraints
+
+Added 2026-10-08 (batch 3: gottlieb-2001, titarev-2004, zhang-2010, zhang-2012, hu-2013, guo-2014, christlieb-2016, reyes-2018, balsara-2025, balsara-2026).
+
+| Symbol | Meaning |
+|---|---|
+| $\rho(u)$, $p(u)$ | density and pressure as functions of the conserved state; $p$ is concave in $u$ wherever $\rho > 0$, which makes $\mathcal{G}$ convex |
+| $\epsilon_{\mathcal{G}}$ | positivity floor of a limiter (e.g. $10^{-13}$); distinct from the weight regularization $\varepsilon$ |
+| $\nu_0$ | CFL bound under which the first-order scheme with a given flux keeps cell averages in $\mathcal{G}$ |
+| $\mathcal{P}_i(x)$, $K$ | the (vector) polynomial of degree $K$ that represents the solution in $I_i$ (FV reconstruction or DG), with cell average $\bar u_i$ |
+| $\hat x^{(a)}_i$, $\hat w_a$, $N_{\mathrm{GL}}$ | Gauss–Lobatto points in $I_i$ ($\hat x^{(1)}_i = x_{i-1/2}$, $\hat x^{(N_{\mathrm{GL}})}_i = x_{i+1/2}$) and weights on $[-\tfrac12, \tfrac12]$, $\sum_a \hat w_a = 1$, exact for degree $2N_{\mathrm{GL}} - 3 \ge K$ |
+| $\theta_\rho$, $\theta_p$ | scaling factors of the Zhang–Shu limiter for density and pressure (special cases of $\theta$) |
+| $\hat f^{\mathrm{LO}}_{i+1/2}$, $\hat f^{\mathrm{HO}}_{i+1/2}$ | first-order (positivity-preserving) and high-order numerical fluxes; a flux limiter uses $\theta_{i+1/2}\hat f^{\mathrm{HO}} + (1-\theta_{i+1/2})\hat f^{\mathrm{LO}}$ |
+| $S_L$, $S_R$, $S_M$ | left, right and contact wave-speed estimates of an HLL-type Riemann solver; $S_D$, $S_U$ the transverse pair of a 2D solver |
+| $\eta$ | coercivity constant of a linear operator, $\eta = \inf_{\vert u\vert = 1} -\operatorname{Re}\langle \mathcal{L}u, u\rangle / \vert \mathcal{L}u\vert^2$ |
+| $\mathcal{F}^n_i$ | time-averaged flux $\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} f(u(x_i, t))\,dt$ of a single-step (Picard/Taylor) scheme |
+| $\boldsymbol{\mathcal{E}}$, $\mathbf{A}$ | electric field (ideal MHD: $\boldsymbol{\mathcal{E}} = -\mathbf{v}\times\mathbf{B}$) and magnetic vector potential, $\mathbf{B} = \nabla\times\mathbf{A}$; $\boldsymbol{\mathcal{E}}$ avoids a clash with the energy $E$ |
+| $\bar B_{x;i+1/2,j,k}$ | face average of the normal field component on a Yee-type (staggered) mesh; $\bar{\mathcal{E}}_{z;i+1/2,j+1/2,k}$ the edge average |
+| $\mathcal{K}(x, y)$, $\ell$, $R$ | GP covariance kernel, its length hyperparameter, and the GP stencil radius ($2R+1$ cells; $R = r - 1$ for the same stencil as WENO) |
+| $\boldsymbol{\mathcal K}$, $\mathbf C$, $\mathbf t_*$, $\mathbf z$, $f_0$ | GP kernel matrix of point values, covariance matrix of cell averages, prediction vector, weights $\mathbf z = \mathbf C^{-1}\mathbf t_*$, constant prior mean |
+| $\mu^{(k)}_i$, $\mathbf e^{(k)}_i$, $c^{(k)}_i$ | eigenpairs of $\boldsymbol{\mathcal K}$ on sub-stencil $S_k$, and the coefficients of the point values in that eigenbasis (GP smoothness indicator) |
+| $K_{\mathrm{L}}$ | Lipschitz constant in time of a time-dependent linear operator $\mathcal{L}(t)$ |
+| $\sigma$ | constant $0 < \sigma < 1$ in the accuracy CFL condition $\nu \le \sigma/2$ of the Hu–Adams–Shu flux limiter |
 
 ## Spectral analysis
 

@@ -81,6 +81,17 @@ polynomial and small ones ([Zhu & Qiu (2016)](/sources/zhu-2016.md);
 indicator shared by all components
 ([characteristic decomposition](/methods/characteristic-decomposition.md)).
 
+**Batch 3.** For pointwise WENO *interpolation*, the Legendre-basis
+indicators are the same sums of perfect squares as for reconstruction
+([Balsara et al. (2025)](/sources/balsara-2025.md), §III). Gaussian-process
+WENO replaces derivative norms by the squared norm of the sub-stencil
+point values in the reproducing-kernel Hilbert space of the covariance
+kernel, $\beta_k = \sum_i \left(c^{(k)}_i\right)^2/\mu^{(k)}_i$ over the kernel
+matrix's eigenpairs. It equals, up to a constant, minus twice the log
+likelihood of the data, and no Taylor-expansion accuracy proof is given
+([Reyes et al. (2018)](/sources/reyes-2018.md), §2.5;
+[GP-WENO](/methods/gp-weno.md)).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §3.2 and acknowledgement.
@@ -88,3 +99,5 @@ indicator shared by all components
 3. [Shu (1998)](/sources/shu-1998.md), eqs. 2.61–2.63.
 4. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), eqs. 3.13–3.15.
 5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §III.
+6. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.
+7. [Reyes et al. (2018)](/sources/reyes-2018.md), §2.5.

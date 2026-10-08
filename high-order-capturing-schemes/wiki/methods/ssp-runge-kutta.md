@@ -68,7 +68,7 @@ Fig. 4.1).
   [Liu, Osher & Chan (1994)](/sources/liu-1994.md), which also prints a
   fourth-order variant; [Jiang & Shu (1996)](/sources/jiang-1996.md),
   "RK-3", together with the classical non-TVD fourth-order "RK-4" and
-  $\Delta t \propto \Delta x^{5/4}$ in accuracy tests so that RK-4 acts
+  $\Delta t \propto h^{5/4}$ in accuracy tests so that RK-4 acts
   as fifth order).
 * [Harten et al. (1987)](/sources/harten-1987.md) (Remark C2) found the
   semi-discrete ENO with Runge–Kutta time stepping non-oscillatory for
@@ -83,7 +83,7 @@ Fig. 4.1).
   $7$ with RK3 is linearly stable for CFL between 1.43 and 0.99, but
   non-oscillatory shock capturing needs much smaller CFL ($r = 5$ WENO:
   clean at 0.2, slightly oscillatory at 0.4); convergence tests use
-  $\Delta t \propto \Delta x^{(2r-1)/3}$.
+  $\Delta t \propto h^{(2r-1)/3}$.
 * The alternative is the Lax–Wendroff (Taylor) time discretization,
   compact and fully one-step, but algebraically heavy in multi-D and
   hard to analyze ([Shu (1998)](/sources/shu-1998.md), §4.2.3).
@@ -93,7 +93,7 @@ Fig. 4.1).
 
 **Later uses (batch 2).** RK3 is the default time stepping of every
 batch-2 scheme; to measure spatial order, time steps are shrunk
-($\Delta t \propto \Delta x^{5/3}$ in [Henrick et al. (2005)](/sources/henrick-2005.md);
+($\Delta t \propto h^{5/3}$ in [Henrick et al. (2005)](/sources/henrick-2005.md);
 reduced, grid-dependent steps also in [Borges et al. (2008)](/sources/borges-2008.md)
 and [Castro et al. (2011)](/sources/castro-2011.md), whose exact scalings
 are not legible in the copies read). Seventh-order tests use
@@ -102,6 +102,49 @@ fourth-order SSP(5,4) for nonlinear ones ([Rathan & Naga Raju (2017)](/sources/r
 WENO-AO cites the Spiteri–Ruuth SSP methods ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md));
 [Pirozzoli (2002)](/sources/pirozzoli-2002.md) uses non-TVD RK4 and a
 von Neumann analysis of the full discretization.
+
+**Later uses (batch 3).**
+* *Terminology and theory.* Gottlieb, Shu and Tadmor rename "TVD time
+  discretization" to *strong stability preserving*: the argument uses
+  only convexity, so any norm or convex functional is preserved, and a
+  weakened forward-Euler bound $\Vert u + \Delta t\mathcal{L}u\Vert \le (1 + O(\Delta t))\Vert u\Vert$
+  (TVB) carries over too. They give optimal linear methods of every
+  order with $\mathcal{C} = 1$, multistep methods, and the barriers
+  collected in [SSP order barriers](/results/ssp-order-barriers.md)
+  ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md)).
+  Their Fig. 2.1 reproduces Gottlieb and Shu's Burgers example: a
+  TVD MUSCL scheme overshoots at the shock with a non-SSP second-order
+  Runge–Kutta method and not with the SSP one.
+* *Positivity.* Because an SSP step is a convex combination of
+  forward-Euler steps, it keeps a convex admissible set, and the
+  positivity limiters are applied at every stage
+  ([positivity preservation](/properties/positivity-preserving.md)).
+  The stage wave speeds needed for the CFL bound are unknown at
+  $t^n$; a safety factor of 2–3 works in practice, and SSP multistep
+  methods avoid the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
+* *Stability limits in multi-D.* With RK3, FV-WENO is stated stable for
+  Courant numbers up to 1 in 1D and 1/2 in 2D — the limits of the
+  unsplit Godunov scheme — and, from numerical experiments, 1/3 in 3D.
+  Accuracy tests are run at a fixed Courant number (0.45 in 2D, 0.27 in
+  3D) rather than with $\Delta t \propto h^{5/3}$, which for $r = 4$
+  becomes $\Delta t \propto h^{7/3}$, stricter than a parabolic limit
+  ([Titarev & Toro (2004)](/sources/titarev-2004.md), §§2, 5). The 1D
+  value is below the linear-stability CFL of 1.43 reported for $r = 3$
+  by [Balsara & Shu (2000)](/sources/balsara-2000.md); Titarev and Toro
+  call theirs the "optimal" condition without derivation, so it is read
+  here as a working bound, not a competing stability limit.
+* *Accuracy tests at high order* use SSP-RK3 for third order and the
+  five-stage fourth-order SSP method of Spiteri–Ruuth for orders 5–9,
+  with $\Delta t$ scaled by $(1/2)^{5/4}$ or $(1/2)^{7/4}$ per mesh doubling
+  ([Balsara et al. (2025)](/sources/balsara-2025.md), §VI;
+  [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §6). GP-WENO
+  uses a fourth-order TVD Runge–Kutta method
+  ([Reyes et al. (2018)](/sources/reyes-2018.md), §5). IMEX Runge–Kutta
+  is recommended for stiff relaxation sources
+  ([Balsara et al. (2025)](/sources/balsara-2025.md), §V).
+* *The single-step alternative* for AMR and storage:
+  [Lax–Wendroff (Taylor) time discretization](/methods/taylor-time-discretization.md)
+  ([Christlieb et al. (2016)](/sources/christlieb-2016.md)).
 
 # Citations
 
@@ -119,3 +162,10 @@ von Neumann analysis of the full discretization.
 12. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §4.
 13. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.
 14. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §2.3.
+15. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §§1–7.
+16. [Titarev & Toro (2004)](/sources/titarev-2004.md), §§2, 5.
+17. [Zhang & Shu (2010)](/sources/zhang-2010.md), Remarks 2.2, 2.7.
+18. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§V–VI.
+19. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §6.
+20. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.
+21. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §1.

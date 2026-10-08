@@ -72,7 +72,14 @@ of central weights inside a finite-difference scheme.
 reconstructions that blend a single high-degree "optimal" polynomial
 with lower-degree ones; this page records the 1999 staggered scheme only.
 
+**Batch 3.** The $r = 3$ CWENO, being robust and able to capture
+extrema, is also the low-order level of pointwise WENO-AO
+*interpolation* in [AFD-WENO](/methods/alternative-finite-difference-weno.md).
+Its centred stencil gets weight $\gamma_{\mathrm{Lo}}$ and each biased one
+$(1 - \gamma_{\mathrm{Lo}})/2$ ([Balsara et al. (2025)](/sources/balsara-2025.md), §III.a).
+
 # Citations
 
 1. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §§1–5.
 2. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §1.
+3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.a.

@@ -51,9 +51,22 @@ with $df^+/du \ge 0 \ge df^-/du$, $\hat f(a,b) = f^+(a) + f^-(b)$ is
 monotone; the converse fails (Godunov)
 ([conservative finite difference](/methods/conservative-finite-difference.md)).
 
+**Positivity of first-order fluxes (batch 3).** Beyond monotonicity
+for scalar laws, a first-order flux for Euler can keep the admissible
+set: Godunov, Lax–Friedrichs (under $\nu \le 1$), Boltzmann-type, HLL,
+and HLLC with Batten et al.'s wave speeds. These are the building
+blocks of every high-order positivity-preserving scheme
+([positivity preservation](/properties/positivity-preserving.md);
+[Zhang & Shu (2010)](/sources/zhang-2010.md), §1;
+[Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4). Richer Riemann
+solvers used at high order are compared in
+[approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
+
 # Citations
 
 1. [Shu (1998)](/sources/shu-1998.md), §§2.3.1–2.3.2.
 2. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §2.
 3. [Harten et al. (1987)](/sources/harten-1987.md), §§4, 7.
 4. [Shu & Osher (1989)](/sources/shu-1989.md), §II.
+5. [Zhang & Shu (2010)](/sources/zhang-2010.md), §1, Remark 2.4.
+6. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.

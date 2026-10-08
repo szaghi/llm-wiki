@@ -46,10 +46,22 @@ to another bundle.
   - `1988-JCP-Shu-…` is ICASE Report 87-33 (May 1987), not the typeset
     JCP article; `1996-JCP-Jiang-…` is a 40-page preprint. Both are
     ingested under their published slugs with the version recorded.
-  - Three files are arXiv preprints of published works:
-    `2013-arXiv-Dumbser-…` (JCP 2013), `2014-arXiv-Guo-…`, and
-    `2016-arXiv-Rathan-…`. Before ingesting each, check on Crossref
-    whether a published version exists, and record the version read.
+  - Files that are arXiv preprints or author manuscripts of published
+    works: `2013-arXiv-Dumbser-…` (JCP 2013), `2014-arXiv-Guo-…`,
+    `2016-arXiv-Rathan-…`, and — despite journal-style names —
+    `2013-JCP-Hu-…` (arXiv:1203.1540v5), `2024-CAMC-Balsara-…` (author
+    manuscript of CAMC 7, 2025) and `2016-JSC-Baeza-…` (accepted
+    manuscript, arXiv:2501.17106). Before ingesting each, check on
+    Crossref whether a published version exists, and record the version
+    read.
+  - Slugs reserved for archived works whose bare key a same-year homonym
+    already holds (decided at batch 3): Balsara 2009 divergence-free
+    reconstruction + WENO (JCP 228:5040) → `balsara-2009-b` (ADER-WENO,
+    JCP 228:2480, is `balsara-2009`); Balsara & Kim 2016 subluminal RMHD
+    (JCP 312:357) → `balsara-2016-b` (WENO-AO is `balsara-2016`). The
+    bare keys `balsara-2023` (curl-constraint paper, CAMC 5:235),
+    `mignone-2010` (GLM-MHD FD, JCP 229:5896) and `chen-2016` (Chen, Tóth
+    & Gombosi) were kept free for their archived files.
   - Not yet in the archive: Zaghi, Salvadore & Di Mascio (2023,
     doi:10.1016/j.compfluid.2023.106040) and Dumbser & Balsara (2016,
     HLLEM, doi:10.1016/j.jcp.2015.10.014).
@@ -67,8 +79,10 @@ to another bundle.
 - **Keys and slugs.** Every bibliography key and every Source slug is
   `firstauthor-year[-b, -c, …]`, with the first author's surname in
   lowercase ASCII (no spaces or apostrophes). The year is that of the
-  published version; an ingested source takes the bare key and a cited
-  homonym takes a suffix. An undated citation takes the citing date,
+  published version — the issue (volume) year when an article appeared
+  online first, as in the standard "vol (year) pages" citation (decided
+  at batch 3: `reyes-2018`, `balsara-2025`); an ingested source takes the
+  bare key and a cited homonym takes a suffix. An undated citation takes the citing date,
   noted in the entry. One rule for both makes later citations of an
   ingested work land on its key without aliases.
 - **Batches.** The user authorized autonomous ingestion in batches of 10
@@ -102,7 +116,10 @@ to another bundle.
 
 ## Status
 
-**Batch 2 staged 2026-10-08:** 20 of 62 ingested (batch 1: origins, ENO,
+**Batch 3 staged 2026-10-08:** 30 of 62 ingested (batch 1: origins, ENO,
 WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
-WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes). The worklist
-is authoritative.
+WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes; batch 3: SSP
+theory, 3D FV-WENO, positivity limiters, compact and GP WENO, AFD-WENO,
+single-step MHD and divergence-preserving AFD-WENO). The first deep lint
+ran at batch 3; the next is due at 40 ingestions. The worklist is
+authoritative.

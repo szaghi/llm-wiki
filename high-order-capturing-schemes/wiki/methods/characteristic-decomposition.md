@@ -83,6 +83,28 @@ and the WENO indicators from density only, and compares per-field and
 global Lax–Friedrichs splittings (the global one 15 % cheaper, more
 dissipative).
 
+**Later uses (batch 3).** FV-WENO in 3D always reconstructs in local
+characteristic variables, found necessary in some cases despite the
+cost ([Titarev & Toro (2004)](/sources/titarev-2004.md), §3.4). In
+compact-reconstruction WENO the projection, with Roe-average
+eigenvectors that differ per interface, turns the scalar tridiagonal
+solve into a $3\times3$ block-tridiagonal one. Conservative-variable
+reconstruction is cheaper and adequate for smooth flows
+([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§2.3, 3). FD WENO with
+positivity limiting uses Roe-matrix eigenvectors at each interface
+([Zhang & Shu (2012)](/sources/zhang-2012.md), §3.1). A global rather
+than local Lax–Friedrichs speed in the splitting further reduces
+spurious oscillations for MHD ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.2).
+AFD-WENO projects each cell's neighbours onto that cell's eigenvectors
+for the interpolation. For the interface derivatives, componentwise
+interpolation works as well as projection
+([Balsara et al. (2025)](/sources/balsara-2025.md), §V). For relativistic
+MHD only primitive variables, projected on primitive-variable
+eigenvectors, discriminate speeds close to that of light
+([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §8). GP-WENO
+also reconstructs in characteristic variables
+([Reyes et al. (2018)](/sources/reyes-2018.md), §5).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -96,3 +118,10 @@ dissipative).
 9. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §4.
 10. [Borges et al. (2008)](/sources/borges-2008.md), §5.2.
 11. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.
+12. [Titarev & Toro (2004)](/sources/titarev-2004.md), §3.4.
+13. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§2.3, 3.
+14. [Zhang & Shu (2012)](/sources/zhang-2012.md), §3.1.
+15. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.2.
+16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §V.
+17. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §8.
+18. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.

@@ -52,6 +52,14 @@ fails ([Fu, Hu & Adams (2016)](/sources/fu-2016.md)); WENO-ZQ at 800
 points ([Zhu & Qiu (2016)](/sources/zhu-2016.md)); WENO-AO(5,3) at 400
 zones close to a 1000-zone result ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)).
 
+**Later uses (batch 3).** WENO-CU6-M1 cannot compute it without
+limiting; with the cut-off positivity limiter at $h = 2.5\times10^{-3}$ it
+is comparable to WENO-CU6-M2 ([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.3).
+Compact-reconstruction WENO with 200 cells resolves the smooth region
+better than WENO-JS and WENO-Z ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 5).
+AFD-WENO on 1000 zones, with flattening, matches a 4000-zone reference
+([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -65,3 +73,6 @@ zones close to a 1000-zone result ([Balsara, Garain & Shu (2016)](/sources/balsa
 9. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.3.
 10. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.7.
 11. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.3.
+12. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.3.
+13. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 5.
+14. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.

@@ -32,9 +32,16 @@ crisp vortex-sheet roll-up at $t = 3$, compared with WENO-ZQ
 ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)); WENO-ZQ and
 WENO-JS at $600 \times 200$, $t = 4$ ([Zhu & Qiu (2016)](/sources/zhu-2016.md)).
 
+**Later uses (batch 3).** Fifth-order HLL-based AFD-WENO on
+$1440\times480$ to $t = 0.4$, with the corner singularity treated as by
+Woodward–Colella and with flattening, gives sharp profiles and a
+pronounced roll-up of the vortex sheet
+([Balsara et al. (2025)](/sources/balsara-2025.md), §VIII.a).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
 2. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VII.a.
 3. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.6.
 4. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.9.
+5. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VIII.a.

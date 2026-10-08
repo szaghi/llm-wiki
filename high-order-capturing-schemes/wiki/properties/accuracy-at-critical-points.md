@@ -103,6 +103,14 @@ On $u_t + u_x = 0$, $u_0 = \sin^4(\pi x)$:
   every MP-bounded variant converges markedly more slowly
   ([Balsara & Shu (2000)](/sources/balsara-2000.md), Table V).
 
+**Batch 3.** Both WENO-Z-type devices recur in the new schemes:
+compact-reconstruction WENO adopts WENO-Z weights "which can avoid
+accuracy loss at critical points" ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2),
+and WENO-AO interpolation uses $\tau$ built from indicator differences
+for the same purpose, citing Borges et al.
+([Balsara et al. (2025)](/sources/balsara-2025.md), §III). Neither paper
+tests a critical-point problem directly.
+
 ## Contradictions
 
 **Is fifth-order WENO-JS fifth order at critical points?**
@@ -138,3 +146,5 @@ On $u_t + u_x = 0$, $u_0 = \sin^4(\pi x)$:
 12. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2.
 13. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §3.1.5.
 14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §3.
+15. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2.
+16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.

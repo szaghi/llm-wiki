@@ -146,6 +146,26 @@ Accuracy claims at critical points are collected on
 [accuracy at critical points](/properties/accuracy-at-critical-points.md).
 A centred, staggered variant is [central WENO](/methods/central-weno.md).
 
+**Batch 3 additions.** WENO weights on other approximations:
+[compact-reconstruction WENO](/methods/compact-reconstruction-weno.md)
+(weights on implicit compact stencils;
+[Guo, Xiong & Shi (2014)](/sources/guo-2014.md)) and
+[Gaussian-process WENO](/methods/gp-weno.md) (weights on kernel
+predictions with RKHS-norm indicators;
+[Reyes et al. (2018)](/sources/reyes-2018.md)). WENO *interpolation* of
+point values, as opposed to reconstruction from averages, drives the
+[alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md);
+the two produce polynomials of equal degree with different coefficients
+([Balsara et al. (2025)](/sources/balsara-2025.md), §I). For
+three-dimensional FV-WENO, dimension-by-dimension sweeps to face Gauss
+points need their own linear weights
+([finite-volume reconstruction](/methods/finite-volume-reconstruction.md);
+[Titarev & Toro (2004)](/sources/titarev-2004.md)). Standard WENO is not
+positivity-preserving for Euler; see the
+[scaling](/methods/positivity-preserving-scaling-limiter.md) and
+[flux](/methods/positivity-preserving-flux-limiter.md) limiters
+([Zhang & Shu (2010)](/sources/zhang-2010.md), §1).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §§3–4 (read visually; image-only scan).
@@ -158,3 +178,8 @@ A centred, staggered variant is [central WENO](/methods/central-weno.md).
 8. [Martín et al. (2006)](/sources/martin-2006.md), §1.
 9. [Borges et al. (2008)](/sources/borges-2008.md), §3.
 10. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.
+11. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.
+12. [Reyes et al. (2018)](/sources/reyes-2018.md), §2.5.
+13. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§I, III.
+14. [Titarev & Toro (2004)](/sources/titarev-2004.md), §3.
+15. [Zhang & Shu (2010)](/sources/zhang-2010.md), §1.

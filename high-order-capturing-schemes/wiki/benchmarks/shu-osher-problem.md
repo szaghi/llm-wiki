@@ -67,6 +67,21 @@ accuracy unless biased; WENO works without modification, and the biased
 * the seventh-order $L^1$-indicator scheme against WENO-BS7 and WENO-Z7
   ([Rathan & Naga Raju (2017)](/sources/rathan-2017.md)).
 
+**Later uses (batch 3).**
+* A modified version — a Mach 1.1 shock into a $1 + 0.1\sin 20\pi x$
+  density field, run to $t = 5$, more than ten times the usual time —
+  on 2000 cells: the Rusanov-based FV-WENO severely damps the acoustic
+  wave spreading upstream, while WENO-HLLC and WENO-MUSTA are about
+  twice as accurate ([Titarev & Toro (2004)](/sources/titarev-2004.md), §5.1).
+* Compact-reconstruction WENO captures the post-shock structures better
+  than WENO-JS and WENO-Z at 200 and 400 points
+  ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 4).
+* GP-WENO on 200 cells: GP-R3 is least diffusive; GP-R2 has slightly
+  better amplitudes than WENO-JS. With $\ell/h = 3$, about half the
+  post-shock wavelength, it is much more accurate; for large $\ell$ it
+  approaches WENO-JS ([Reyes et al. (2018)](/sources/reyes-2018.md), §5.3;
+  [GP-WENO](/methods/gp-weno.md)).
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
@@ -83,3 +98,6 @@ accuracy unless biased; WENO works without modification, and the biased
 12. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.4.
 13. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §5.2.
 14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 7.
+15. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.1.
+16. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 4.
+17. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.3.

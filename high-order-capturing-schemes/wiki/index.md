@@ -11,8 +11,8 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 20 sources compiled**: 20 published works, four of them read
-in a report or preprint version (see the [update log](/log.md)).
+**Corpus: 30 sources compiled**: 30 published works, seven of them read
+in a report, preprint or author-manuscript version (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -57,16 +57,42 @@ for every page.
    critical-point claim (closed `Contradictions` entry).
 7. **Making it work on systems and in time.**
    [Local characteristic decomposition](/methods/characteristic-decomposition.md),
-   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), and
-   [contact sharpening](/methods/contact-sharpening.md).
-8. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) with its
+   [order barriers](/results/ssp-order-barriers.md), the single-step
+   [Lax–Wendroff (Taylor)](/methods/taylor-time-discretization.md)
+   alternative, the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
+   and [contact sharpening](/methods/contact-sharpening.md).
+8. **Other routes to high order.** Three-dimensional
+   [finite-volume reconstruction](/methods/finite-volume-reconstruction.md),
+   the [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)
+   (WENO interpolation, any Riemann solver, even-derivative corrections),
+   [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md) and
+   non-polynomial [GP-WENO](/methods/gp-weno.md).
+9. **Staying physical.** [Positivity preservation](/properties/positivity-preserving.md)
+   — convex admissible set, positive first-order flux, SSP time
+   stepping — enforced by the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)
+   or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
+   Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
+   provably positive? For MHD the divergence constraint is kept by
+   [constrained transport](/methods/constrained-transport.md).
+10. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
    [interacting blast waves](/benchmarks/interacting-blast-waves.md),
    [composite advection](/benchmarks/composite-advection-profile.md),
    [double Mach reflection](/benchmarks/double-mach-reflection.md),
    [forward step](/benchmarks/forward-facing-step.md),
-   [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md).
+   [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
+   [isentropic vortex](/benchmarks/isentropic-vortex.md). Positivity:
+   [double rarefaction](/benchmarks/double-rarefaction.md),
+   [Sedov](/benchmarks/sedov-blast-wave.md),
+   [Leblanc](/benchmarks/leblanc-shock-tube.md),
+   [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md),
+   [shock diffraction](/benchmarks/shock-diffraction.md). MHD:
+   [Orszag–Tang](/benchmarks/orszag-tang-vortex.md),
+   [rotor](/benchmarks/mhd-rotor.md),
+   [low-β blast](/benchmarks/mhd-blast-wave.md),
+   [shock–cloud](/benchmarks/shock-cloud-interaction.md).
 
 ## Folders
 

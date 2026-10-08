@@ -69,6 +69,29 @@ $\gamma_{\mathrm{Lo}}$, both $0.85$ in the tests.
   The authors relate AO to MOOD: both drop order for stability, but AO is
   *a priori*, one update per zone.
 
+## WENO-AO interpolation (batch 3)
+
+The adaptive-order idea transfers from reconstruction to pointwise
+interpolation ([Balsara et al. (2025)](/sources/balsara-2025.md), §III):
+AO(3), AO(5,3), AO(7,3), AO(7,5,3) and AO(9,3) in the Legendre basis on
+$[-\frac12, \frac12]$, matching point values instead of averages. The
+smoothness indicators are unchanged sums of perfect squares, and the
+linear weights are built from $\gamma_{\mathrm{Hi}}, \gamma_{\mathrm{Lo}} \in [0.8, 0.95]$
+(plus a middle parameter in $[0.85, 0.95]$ for AO(7,5,3), whose weight
+arrangement follows Arbogast et al. and Kumar–Chandrashekar). A $\tau$
+built from indicator differences enters the weights to avoid loss at
+critical points. The authors read WENO-AO and WENO-ZQ as instances of
+one multiresolution idea — a large centred stencil hybridized with a
+stable low-order scheme — and the lowest level may also be piecewise
+linear (Zhu–Qiu) or first order (Zhu–Shu). A **boundary-centred**
+variant interpolates zone-centred $A\,\partial_x u$ to odd derivatives
+at interfaces for the flux corrections of
+[AFD-WENO](/methods/alternative-finite-difference-weno.md) (§IV), and
+2D WENO-AO interpolation formulas are given by
+[Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), Appendix A.
+Multiresolution (Zhu–Shu) hybridization gives comparable accuracy
+([Balsara et al. (2025)](/sources/balsara-2025.md), §VI).
+
 ## Contradictions
 
 **Is WENO-ZQ free of spurious extrema and clipping?**
@@ -91,3 +114,5 @@ $\gamma_{\mathrm{Lo}}$, both $0.85$ in the tests.
 
 1. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §§1–3.
 2. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §§1–6.
+3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§III–IV, VI.
+4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), Appendix A.

@@ -76,9 +76,18 @@ higher-order critical points, and compare their $L^1$-type seventh-order
 scheme against seventh-order WENO-Z with the Don–Borges $\tau$
 ([smoothness indicator](/definitions/smoothness-indicator.md)).
 
+**Batch 3.** WENO-Z weights with $q = 2$ and $\tau_5 = \vert\beta_2 - \beta_0\vert$
+weight the compact candidate stencils of
+[compact-reconstruction WENO](/methods/compact-reconstruction-weno.md),
+chosen to avoid accuracy loss at critical points
+([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2). WENO-Z is a
+baseline there, less sharp than the compact scheme on the Lax, Sod,
+Shu–Osher and blast-wave tests (§3).
+
 # Citations
 
 1. [Borges et al. (2008)](/sources/borges-2008.md), §§2–5 (eqs. 24–27, 42 and Table 1 read from the page images).
 2. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §§2–5.
 3. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §2.2.
 4. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §§1, 4.
+5. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§2.2, 3.
