@@ -105,6 +105,29 @@ construction to third and fourth order in a Legendre-moment basis.
   [UCT](/methods/upwind-constrained-transport.md). There the invariant
   lives on deconvolved variables; here it lives on face moments.
 
+## Projecting point values instead of building polynomials
+
+[Ding & Wu (2024)](/sources/ding-2024.md) enforce a discrete divergence condition on the
+*output* of an ordinary WENO reconstruction. No divergence-free polynomial
+is built.
+* The normal-field traces on a cell's faces are corrected by the
+  minimal-norm shift that makes their face-quadrature
+  ($D_h^{\mathrm{f}}$-type) divergence $\delta$ vanish
+  ([notation](/notation.md)). In 2D the shifts are
+  $\Delta x\,\delta/(2(1+(\Delta x/\Delta y)^2))$ on the $x$-faces and
+  $\Delta y\,\delta/(2(1+(\Delta y/\Delta x)^2))$ on the $y$-faces, with
+  opposite signs on opposite faces.
+* At second order this is exactly a slope correction of the linear
+  reconstruction. At higher order it keeps the reconstruction's accuracy.
+* The construction is cell-local. Unlike the
+  Balsara construction above, it does not make
+  the normal field continuous across faces; the face jumps are left to a
+  source term
+  ([positivity–divergence coupling](/results/positivity-divergence-coupling.md)).
+* Without the projection, fifth-order FV-WENO on Orszag–Tang, the rotor
+  and the blast shows growing divergence error, oscillations and
+  nonphysical structure.
+
 ## The controlled-class alternative
 
 [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)
@@ -123,3 +146,4 @@ benefit. The trade is the constraint class: no discrete divergence is held.
 5. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2–2.2.2.
 6. [Balsara (2009)](/sources/balsara-2009.md), §§2–4.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§1, 5.
+8. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3, Examples 4.2–4.4.

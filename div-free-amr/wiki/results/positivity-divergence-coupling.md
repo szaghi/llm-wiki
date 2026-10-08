@@ -95,8 +95,28 @@ $-(\nabla\cdot B)\,S(U)$.
     which are not guaranteed positivity-preserving.
 * **The price is conservation**, and the authors state it: "there is still
   a conflict" between the source term and conservation.
+* **A finite-volume, point-value version**
+  ([Ding & Wu (2024)](/sources/ding-2024.md)). Standard FV-WENO returns interface point
+  values, not polynomials, so a locally divergence-free basis is not
+  available. The paper replaces it with a **projection of the
+  reconstructed traces**.
+  * In each cell, the normal-field traces on the cell's own faces are
+    shifted by the minimal-norm correction that zeroes their
+    face-quadrature divergence. That cell-*local*, $D_h^{\mathrm{f}}$-type
+    divergence of the cell's own traces then vanishes exactly.
+  * The correction is an orthogonal projection, $P^2 = P$, and it keeps
+    the reconstruction's order (Theorem 2.7).
+  * A new, symmetric source term built from the face jumps of $B_n$,
+    evaluated at the averaged face state, handles the inter-cell part.
+    The authors report it allows a milder CFL than the Wu–Shu versions.
+  * With a point-value positivity limiter this is provably positive
+    (Theorem 2.1) with LF fluxes. Removing any of the three ingredients
+    voids the proof.
+  * The condition is enforced on the reconstruction at every stage; it is
+    not an invariant of evolved data. The cell averages $\bar B_h$ are not
+    held to any discrete divergence.
 
-Taken together, the two results give a trade-off rather than a free
+Taken together, the results give a trade-off rather than a free
 choice. An LF-type scheme gets provable positivity either by holding a
 discrete divergence on its own stencil, or by giving up exact conservation
 through the source term.
@@ -148,3 +168,4 @@ through the source term.
 2. [Wu & Shu (2018)](/sources/wu-shu-2018.md), Theorems 3.1, 3.4, Remarks 3.3, 3.6, §5, Appendix A.
 3. [Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 2.1–2.2, 4.1–4.3, Corollary 4.1, Remarks 4.1, 4.3, Proposition A.1.
 4. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.4.
+5. [Ding & Wu (2024)](/sources/ding-2024.md), Theorems 2.1, 2.6–2.7, §§2.3, 4.

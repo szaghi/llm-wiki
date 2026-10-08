@@ -2,6 +2,28 @@
 
 ## 2026-10-08
 
+* **Ingested [Ding & Wu (2024)](/sources/ding-2024.md)**, source 13 of 16.
+  * **Corpus:** the arXiv v1 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2024-SISC-Ding-10113723m1562081.pdf`.
+    The published SISC version was identified on Crossref by title, and the
+    slug follows the published year.
+  * **Updated** two pages:
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the FV point-value version. A projection of the traces replaces the
+      locally divergence-free DG basis. The page states that the
+      condition is cell-local and enforced on the reconstruction, not an
+      evolved invariant;
+    * [divergence-free reconstruction](/methods/divergence-free-reconstruction.md):
+      projecting point values instead of building polynomials, contrasted
+      with Balsara's continuous construction.
+  * **Scoped read:** the proof was read in outline only.
+  * **Bibliography:** 59 references; the record goes from 2860 to 2871.
+    * 49 existing entries gained the citer; 10 works are new, plus the self
+      entry.
+    * `fu-2018` gained its volume and pages.
+    * `powell-1994` gained a note on its 1997 Springer reprint, which is the
+      form cited here.
+
 * **Ingested [Mignone & Del Zanna (2021)](/sources/mignone-2021.md)**, source
   12 of 16.
   * **Corpus:** the arXiv v2 preprint was moved to
