@@ -5,7 +5,7 @@ description: "Restores discrete conservation at AMR interfaces by replacing the 
 status: established
 aliases: [flux correction, flux synchronization]
 tags: [amr, conservation, refluxing, coarse-fine-interface]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Refluxing (coarse-fine flux correction)
@@ -64,8 +64,19 @@ own elliptic sync solve —
 [AMR projection method](/methods/amr-projection-method.md)
 ([Almgren et al. (1998)](/sources/almgren-1998.md)).
 
+**With multistage time integration.** In Flash-X on AMReX, the flux
+register between each pair of levels can hold a linear combination of the
+Runge–Kutta stage fluxes. The correction is applied once at the end of
+the step. Paramesh, which advances all levels at once, needs a different
+path ([Couch et al. (2021)](/sources/couch-2021.md)).
+*Compiler reading:* this keeps the register consistent with the stage
+weights of the scheme. It is the conservation-side counterpart of the
+stage-coupling requirement recorded for the divergence invariant at
+seams ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
+
 # Citations
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §3, Figs. 3.1–3.2.
 2. [Almgren et al. (1998)](/sources/almgren-1998.md), §3.
 3. [Zaghi (2026)](/sources/zaghi-2026.md): issue #21 §2, #29; FLUME `verification.md` (conservation across AMR seams, MV-11).
+4. [Couch et al. (2021)](/sources/couch-2021.md), AMR and performance sections.

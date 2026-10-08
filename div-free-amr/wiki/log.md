@@ -2,6 +2,23 @@
 
 ## 2026-10-08
 
+* **Ingested [Couch et al. (2021)](/sources/couch-2021.md)** (Flash-X Spark), a
+  tier-C source added at the user's request.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2021-ParCo-Couch-101016jparco2021102830.pdf`.
+    `~/papers/re-download` is now empty.
+  * **Divergence content is thin:** the paper names a "cell-centered
+    approach" without specifying it, and none is inferred.
+  * **Updated** [refluxing](/methods/refluxing.md): flux registers holding
+    Runge–Kutta stage combinations. A compiler reading links this to the
+    stage-coupling requirement for the invariant.
+  * **Bibliography:** 22 references; the record goes from 3196 to 3209.
+    * 10 existing entries gained the citer; 12 works are new, plus the self
+      entry.
+    * Titles were filled for `fryxell-2000` (FLASH), `lee-2013-b` (USM)
+      and `grete-2009` (K-Athena).
+    * `zhang-2019` gained its printed DOI.
+
 * **Duplicate sweep and deep lint #8** after the 23 ingestions of this
   session (counter since #7 was past the every-10 cadence).
   * **`--dupes`** (`tools/bib_merge.py --dupes`): one identical-title+year
