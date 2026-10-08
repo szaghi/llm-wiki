@@ -36,6 +36,10 @@ period".
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), where the
   test motivates the divergence-balanced PPM source terms —
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
+* **The same distinction in the Athena code paper** ([Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md) §8.4). With the
+  loop axis along a grid direction, Athena keeps $B_z = 0$ to round-off.
+  With the loop inclined, the axial component is zero only to truncation
+  error, matching the rotated-loop result below.
 * **Fourth-order CT in 3D** ([Felker & Stone (2018)](/sources/felker-2018.md)). The loop
   is advected along the space diagonal with $v = (2,1,2)$, on a $[-1,1]\times[-0.5,0.5]\times[-1,1]$ box with $N = 64$ cells across $x_2$.
   * $B_z$ stays below machine epsilon for two periods.
@@ -118,3 +122,4 @@ forbids.
 9. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.1, Figs. 2–7.
 10. [Berta et al. (2024)](/sources/berta-2024.md), §5.4, Figs. 6–7.
 11. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.3, Figs. 4–7.
+12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §8.4, Fig. 34.

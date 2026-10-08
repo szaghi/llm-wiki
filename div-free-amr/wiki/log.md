@@ -2,6 +2,31 @@
 
 ## 2026-10-08
 
+* **Ingested [Stone et al. (2008)](/sources/stone-2008.md)** (Athena), a tier-C
+  source added at the user's request.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2008-ApJS-Stone-101086588755.pdf`.
+  * **Scope:** the algorithm sections and the divergence-relevant tests
+    were read in full. The steps that repeat GS05 and GS08 were read in
+    outline, as recorded on the Source page.
+  * **Updated** three pages:
+    * [CT](/methods/constrained-transport.md);
+    * [field loop](/benchmarks/field-loop-advection.md): aligned loops hold
+      to round-off, inclined loops to truncation;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the HLL-family statement, added to the scoped reading of the open
+      entry.
+  * **Bibliography:** 81 references; the record goes from 3177 to 3200.
+    * The cited-only self entry gained its title.
+    * 58 existing entries gained the citer; 23 works are new.
+    * Eight mis-printed or forward citations carry notes, among them
+      SG08 "in press", which maps to `stone-2009`, and Colella & Sekora
+      "submitted", which maps to `colella-2008`.
+    * The AIP proceedings paper Gardiner & Stone 2005b is keyed
+      `gardiner-2005`. Its relation to the existing e-print
+      `gardiner-2005-b` is unestablished, and it is left for the dupes
+      sweep.
+
 * **Ingested [Tomida et al. (2026)](/sources/tomida-2026.md)**, re-downloaded
   source 7 of 7. This completes the re-download batch.
   * **Corpus:** the arXiv v2 was moved to

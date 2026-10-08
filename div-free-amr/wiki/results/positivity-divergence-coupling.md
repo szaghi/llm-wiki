@@ -242,6 +242,12 @@ the averages vanish, so the condition is not met by construction. The
 scheme's practical guarantee does not depend on the disputed claim, since
 any zone that fails is repaired by the energy borrowing or source. What
 remains unsettled is whether the low-order fallback is positive by itself.
+[Stone et al. (2008)](/sources/stone-2008.md) §4.3 speak to the same
+point for the HLL family: the HLLE intermediate state is positive, so
+first-order 1D schemes built on it are positive. In multiple dimensions
+at higher than first order, positivity "depends on the details of the
+multidimensional integrator". That is consistent with this scoped reading,
+though it does not address the first-order multi-dimensional case itself.
 
 # Citations
 
@@ -256,3 +262,4 @@ remains unsettled is whether the low-order fallback is positive by itself.
 9. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§2, 5, 6.7, Claim 1.
 10. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
 11. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix B.
+12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §4.3.

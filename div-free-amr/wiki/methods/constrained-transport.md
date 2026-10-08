@@ -150,7 +150,12 @@ and in Athena via unsplit CTU with the upwind-biased $\mathcal{E}^c$ EMF
 ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)) — where
 dimensional splitting is ruled out on principle (the constraint couples
 all field components, so they must update together), and the scheme
-reduces exactly to its 1D form for grid-aligned flow.
+reduces exactly to its 1D form for grid-aligned flow. The Athena code paper
+([Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md)) documents the implementation, the second unsplit option VL+CT, and
+two cautions: 1D tests cannot reveal divergence errors, since there the
+normal field is simply constant, and the face-centred discretization is
+argued to be the consistent one because it conserves the flux, the
+cell-integrated monopole density, of every cell.
 
 # Citations
 
@@ -163,3 +168,4 @@ reduces exactly to its 1D form for grid-aligned flow.
 7. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§1, 3, 6.
 8. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4, 8.
 9. [Seo & Ryu (2023)](/sources/seo-2023.md), §§1, 2.3, 3.1–3.2, 3.6.
+10. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §§1, 3, 5–6, 8.
