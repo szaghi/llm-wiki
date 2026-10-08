@@ -53,6 +53,12 @@ period".
   * This differs from Felker & Stone's round-off $B_z$. In their geometry
     $B_z$ is the component whose update CT cancels exactly; here the axial
     component mixes all three.
+* **Fourth-order CT with point-value reconstruction, MHD and RMHD**
+  ([Berta et al. (2024)](/sources/berta-2024.md) §5.4). On a 2D loop at $256\times128$,
+  smearing and magnetic-energy decay fall steadily from second to fourth
+  order. WENO-Z is best; MP5 shows small over- and undershoots at the
+  loop's head and tail. The choice of Riemann solver matters only
+  marginally here.
 * **EMF-assembly dissipation**: magnetic-energy decay differentiates
   Riemann-solver and EMF-averaging choices
   ([Fromang et al. (2006)](/sources/fromang-2006.md), Roe vs
@@ -100,3 +106,4 @@ forbids.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §4.4, Figs. A.8–A.11.
 8. [Felker & Stone (2018)](/sources/felker-2018.md), §5.3, Figs. 12–14.
 9. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.1, Figs. 2–7.
+10. [Berta et al. (2024)](/sources/berta-2024.md), §5.4, Figs. 6–7.

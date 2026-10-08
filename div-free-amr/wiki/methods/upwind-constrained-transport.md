@@ -116,6 +116,26 @@ consistent with that invariant**:
     resolution, and its MRI Maxwell stress is about a third of UCT-HLLD's
     (0.07 against 0.21).
   * The new formula reproduces the original UCT-HLL.
+* **A second fourth-order FV realization, with point values**
+  ([Berta et al. (2024)](/sources/berta-2024.md)). Also on the McCorquodale–Colella base, it
+  differs from Felker & Stone in three ways.
+  * MP5 and WENO-Z are rewritten to reconstruct interface values directly
+    from cell-centre *point* values. There is one Riemann solve per face,
+    with no extra solve on face-averaged states, and fewer ghost layers
+    (3 instead of 4 transversally for the EMF).
+  * The edge EMF uses the composition formula above: UCT-HLLD for MHD, and
+    UCT-GFORCE extended to special-relativistic MHD.
+  * A discontinuity detector (Jameson's pressure sensor, or a new
+    odd/even-derivative ratio) triggers an order-reduction fallback. The
+    point-value recovery and flux quadrature revert to second order, and
+    the reconstruction drops to WENO3 or linear.
+  
+  Results: design order on vortices and CP Alfvén waves in MHD and RMHD.
+  Numerical decay of Alfvén waves scales as $N^{-5}$, against $N^{-3}$ at
+  second order. Accuracy that needs $512^3$ at second order is reached
+  with about $34^3$. The fallback was essential on the blast and the
+  cloud–shock problem. AMR and non-Cartesian grids are left to companion
+  work.
 * **Same construction for SR and GR MHD**, per the authors. They also claim
   a natural extension to AMR and unstructured grids; for the unstructured
   triangular counterpart they cite De Sterck's MUCT.
@@ -127,3 +147,4 @@ consistent with that invariant**:
 3. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §3.2.2: the first-order equivalence with $\mathcal{E}^\circ$.
 4. [Felker & Stone (2018)](/sources/felker-2018.md), §§4–5, Appendix A.
 5. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§4–7.
+6. [Berta et al. (2024)](/sources/berta-2024.md), §§3–6, Appendix B.

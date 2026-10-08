@@ -2,6 +2,27 @@
 
 ## 2026-10-08
 
+* **Ingested [Berta et al. (2024)](/sources/berta-2024.md)**, source 14 of 16.
+  * **Corpus:** the arXiv v4 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2024-JCP-Berta-101016jjcp2023112701.pdf`.
+    The published JCP version was identified on Crossref.
+  * **Updated** three pages:
+    * [UCT](/methods/upwind-constrained-transport.md): a second fourth-order
+      FV realization, with point-value reconstruction and the composition
+      formula;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the energy correction is still required at fourth order;
+    * [field loop](/benchmarks/field-loop-advection.md).
+  * **Bibliography:** 85 references; the record goes from 2871 to 2886.
+    * 71 existing entries gained the citer; 14 works are new, plus the self
+      entry.
+    * Placeholder titles were filled for `falle-1998`, `meyer-2012` and
+      `beckwith-2011`.
+    * `matsumoto-2016` (CANS+, "submitted") gained a note on its PASJ 2019
+      publication.
+    * `jameson-1981` is printed with no authors; the authors were taken
+      from Crossref via the printed DOI.
+
 * **Ingested [Ding & Wu (2024)](/sources/ding-2024.md)**, source 13 of 16.
   * **Corpus:** the arXiv v1 preprint was moved to
     `~/papers/mosaic/div-free-amr/2024-SISC-Ding-10113723m1562081.pdf`.

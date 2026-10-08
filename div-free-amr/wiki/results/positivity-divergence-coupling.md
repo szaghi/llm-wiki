@@ -142,7 +142,11 @@ through the source term.
   $D_h^{\mathrm{f}}B_h = 0$ ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md) §6.4,
   footnote 2). These are Godunov–Roe schemes, not LF-type, so the theorem
   above does not apply to them; the observation only shows that exactness
-  alone does not supply positivity.
+  alone does not supply positivity. The same holds at fourth order: in
+  [Berta et al. (2024)](/sources/berta-2024.md) the Balsara–Spicer case and an RMHD blast
+  needed the second-order energy correction. Felker & Stone's blast at
+  three times their magnetization was the strongest case the scheme could
+  run without it.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -169,3 +173,4 @@ through the source term.
 3. [Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 2.1–2.2, 4.1–4.3, Corollary 4.1, Remarks 4.1, 4.3, Proposition A.1.
 4. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.4.
 5. [Ding & Wu (2024)](/sources/ding-2024.md), Theorems 2.1, 2.6–2.7, §§2.3, 4.
+6. [Berta et al. (2024)](/sources/berta-2024.md), §5.7.
