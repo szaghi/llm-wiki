@@ -2,6 +2,38 @@
 
 ## 2026-10-08
 
+* **Ingested [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md)**,
+  source 6 of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2014-JCP-Christlieb-101016jjcp201403001.pdf`;
+    volume and pages were verified on Crossref.
+  * **Updated** five pages:
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      the collocated $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identity, until
+      now supported only by the hypothesis-grade Zaghi (2026) record, gains
+      a published fourth-order source on uniform grids. The seam claim stays
+      hypothesis;
+    * [vector-potential evolution](/methods/vector-potential-evolution.md):
+      the collocated high-order realization (Weyl gauge, weak hyperbolicity,
+      WENO-HJ limiting of the field, artificial resistivity), plus a
+      compiler reading, marked as such, on the untested AMR gauge
+      behavior;
+    * [constrained transport](/methods/constrained-transport.md): the
+      unstaggered potential-based line;
+    * [rotated shock tube](/benchmarks/rotated-shock-tube.md): base scheme
+      against CT;
+    * [collocated seam source](/results/collocated-seam-divergence-source.md):
+      no published exact collocated scheme has been run across a 2:1 seam.
+  * **Bibliography:** 47 references; the record goes from 2734 to 2753.
+    * 29 existing entries gained the citer; 18 works are new, plus the self
+      entry.
+    * `gottlieb-2009` was upgraded with the title and venue printed here.
+    * Misprinted venues were checked on Crossref and recorded in notes:
+      Helzel et al. 2011 (printed 227:9527, actually 230:3803), Cheng et
+      al. 2013 (no volume printed) and Seal et al. ("to appear").
+    * The MHDCLAW software page has no printed year. It is keyed
+      `rossmanith-2014` by its citation date, and the note says so.
+
 * **Ingested [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)**,
   source 5 of 16.
   * **Corpus:** the arXiv v2 preprint was moved to

@@ -5,7 +5,7 @@ description: "Evolves face magnetic fluxes from once-computed edge EMFs so the d
 status: established
 aliases: [CT]
 tags: [constrained-transport, staggered, mhd, induction-equation]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Constrained transport (CT)
@@ -97,6 +97,13 @@ but the symmetrized, once-per-edge assembly of the EMF; the staggered and
 collocated formulations are two representations of one scheme, each exact in
 its own divergence stencil.
 
+**Unstaggered CT via the potential.** A second collocated line evolves a
+collocated potential and replaces the predicted field with its central
+curl, which holds $D_h^{\mathrm{c}} B_h = 0$. It runs from Tóth and Rossmanith
+at second order to fourth order in
+[Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md). See
+[vector-potential evolution](/methods/vector-potential-evolution.md).
+
 # Examples
 
 Evans & Hawley calibrate CT against three vector-potential codes on Cartesian
@@ -121,3 +128,4 @@ reduces exactly to its 1D form for grid-aligned flow.
 4. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.
 5. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §§3–4.
 6. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.3, Appendix A.
+7. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§1, 3, 6.

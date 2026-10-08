@@ -85,6 +85,13 @@ staggered face/edge storage at the seam, with discrete Stokes telescoping
   This is untested: no long-horizon, fixed-$h$, source-free seam test exists
   for the upwind scheme.
 
+* **The interior identity is published; its seam behavior is not.**
+  [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md)
+  hold $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ at fourth order on uniform
+  grids and defer AMR to future work. In this corpus no published
+  collocated scheme with exact divergence has been run across a 2:1 seam.
+  This result therefore stands on the record alone.
+
 ## Revisions in the record
 
 * An earlier close-out called the post-fix seam divergence "bounded, not
@@ -107,3 +114,4 @@ staggered face/edge storage at the seam, with discrete Stokes telescoping
 1. [Zaghi (2026)](/sources/zaghi-2026.md): issue #21 (error chain, E0–E2, N3–N5), #29 (fix classes, the 100-step horizon, the energy diagnostic, resolution), #30 (Route 2), #31 (1:1 seam); `forest.md` §"The 2:1 seam is not div-free".
 2. [Tóth & Roe (2002)](/sources/toth-roe-2002.md): the cell-collocated locality assertion this result bears on.
 3. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md): the SBP interface framework whose absence explains the matched-operator instability.
+4. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§3, 6, 8.

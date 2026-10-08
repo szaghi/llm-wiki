@@ -74,6 +74,14 @@ also measures the jump conditions.
     ([GLM](/methods/glm-divergence-cleaning.md)), so its
     $\approx 10^{-2}$ level is not comparable with the monitors above.
 
+* **Base scheme against collocated CT**
+  ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md)). At
+  $\alpha = \tan^{-1}0.5$ on $180\times150$, fifth-order FD-WENO without
+  CT shows spurious oscillations in density, $B_\perp$ and $B_\parallel$.
+  The authors attribute them to divergence errors. With potential-based
+  CT the cuts agree with a 5000-cell 1D reference. No divergence norm is
+  reported.
+
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md): the rotated shock-tube test and the eight-wave failure.
@@ -81,3 +89,4 @@ also measures the jump conditions.
 3. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-8).
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §5.3, Fig. 10.
 5. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§4.2.1–4.2.2, Table 2, Fig. A.7.
+6. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.2, Figs. 2–4.

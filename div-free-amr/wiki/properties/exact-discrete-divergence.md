@@ -4,7 +4,7 @@ title: "Exact discrete divergence"
 description: "The algebraic invariant $D_h B_h = 0$: a specific discrete divergence of the evolved field vanishes identically, up to machine roundoff."
 status: established
 tags: [divergence-constraint, invariant, mhd]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Exact discrete divergence
@@ -94,7 +94,13 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   invariant is enforced matters as much as which stencil holds it.
 * **Collocated exactness is a uniform-grid property.** A collocated scheme
   whose curl and divergence share one antisymmetric derivative primitive
-  holds $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identically. The record
+  holds $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identically. The identity is
+  published at fourth order:
+  [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md) define $B_h$ as the
+  fourth-order central curl of a collocated potential, and the
+  commutativity of the central differences gives $D_h^{\mathrm{c}} B_h = 0$
+  (their eqs. 6.2, 6.8). The second-order versions are those of Tóth and
+  Rossmanith. Zaghi's record
   measures $2\cdot10^{-19}$, and exactly 0.0 on a source-free pulse. The
   identity rests on derivatives commuting on a tensor-product grid. A 2:1
   refinement seam breaks that commutation, so the invariant drops to a
@@ -137,3 +143,4 @@ class is not a numerical nicety but a physics-level decision.
 8. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (§2, E1a), #29, #31; `prism-regression.md` (inter-realm 1:1 anchor).
 9. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.4, 4.2, Table 3.
 10. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II, III.b.
+11. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §6.

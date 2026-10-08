@@ -5,7 +5,7 @@ description: "Evolves the magnetic vector potential instead of the field; B = cu
 status: established
 aliases: [A-method, potential-based CT]
 tags: [vector-potential, constrained-transport, amr, grmhd]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Vector-potential evolution
@@ -48,6 +48,41 @@ the potential-level parametrization.
   this bundle: exact constraint satisfaction does not certify a correct
   field — the constraint-consistent error channel simply moves elsewhere.
 
+## Collocated high-order realization
+
+[Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md) evolve the potential on the
+*same* collocated mesh as all other variables. They build on the
+unstaggered CT of Helzel et al. and Rossmanith, which this bundle has
+not ingested.
+* **Predictor–corrector per stage.** The base fifth-order FD-WENO scheme
+  predicts $B^*$. The potential is advanced alongside it, with the velocity
+  frozen at the stage. Then $B^*$ is replaced by
+  $B_h = C_h^{\mathrm{c}} A_h$, built from fourth-order central differences.
+  The total energy is kept, not the pressure.
+  The constraint held is $D_h^{\mathrm{c}} B_h = 0$
+  ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
+* **Gauge and hyperbolicity.** In the Weyl gauge (scalar potential zero),
+  the 3D potential system is non-conservative and only *weakly*
+  hyperbolic: eigenvectors are incomplete in four directions. In 2D it
+  reduces to strongly hyperbolic advection of a scalar $A_z$.
+* **The answer to the second-derivative objection.** The potential
+  equation is treated as a Hamilton–Jacobi equation. WENO weights are
+  computed from the *derivatives* of $A$, which are the field, so
+  oscillations are limited where Evans and Hawley located the problem.
+* **Missing dissipation is added by hand.** In 3D the upwinding supplies
+  resistivity in only two of three directions. A smoothness-switched
+  artificial resistivity fills the third. It is $O(\Delta x^6)$ on smooth
+  data, and its coefficient $\nu \in [0.02, 0.2]$ is tuned.
+* **Scope.** Fourth order in space and time (10-stage SSP-RK4, CFL 3) on
+  uniform or smoothly mapped grids. AMR is future work. The authors flag
+  that a many-stage integrator enlarges ghost regions and inter-patch
+  communication.
+
+The compiler's reading: the Weyl gauge, like the algebraic gauge diagnosed
+by Etienne et al., leaves a non-propagating sector. Here it is controlled
+by added resistivity on a uniform grid. Whether interface noise excites it
+under AMR is untested.
+
 The trade is precise: CT holds the invariant on the *field* and pays at
 interfaces (EMF corrections, $P_D$); the potential route holds it by
 *construction* and pays in derivative count and gauge control.
@@ -58,3 +93,4 @@ interfaces (EMF corrections, $P_D$); the potential route holds it by
 2. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §III (the second-derivative objection).
 3. [Etienne et al. (2012)](/sources/etienne-2012.md), §§I–III, V.
 4. [Etienne et al. (2015)](/sources/etienne-2015.md) — production form: damped generalized Lorenz gauge $\nabla_\mu A^\mu = \xi n_\mu A^\mu$ (transport *and* damping for the gauge sector, mirroring GLM's design).
+5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§2–6.
