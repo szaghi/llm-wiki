@@ -64,6 +64,10 @@ condition. The conservative form provably needs one
 This weighs against Tóth's wrong-jump result rather than closing it:
 Wu & Shu concede the loss of conservation, and they run no
 jump-convergence test of the kind Tóth used.
+At the PDE level, smooth solutions of the symmetrizable system provably
+keep density and pressure positive for any $\nabla\cdot B$. The result
+extends to HLL fluxes on general meshes
+([Wu & Shu (2019)](/sources/wu-shu-2019.md)).
 
 The conservation trade-off is stated openly in the primary source: local
 conservation errors are accepted in exchange for symmetrizability. Tóth's
@@ -102,3 +106,4 @@ requirement.
    required physics wherever the constraint is not pointwise exact
    (the strongest published defense of the source-term family).
 6. [Wu & Shu (2018)](/sources/wu-shu-2018.md), §§1, 3, 5.
+7. [Wu & Shu (2019)](/sources/wu-shu-2019.md), §4, Proposition A.1.

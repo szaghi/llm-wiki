@@ -26,10 +26,15 @@ $\mathcal{G}$ ([notation](/notation.md)). In more than one dimension:
    standard spectral radius. For the first-order scheme the condition is
    the collocated central divergence of the cell averages,
    $D_h^{\mathrm{c}}\bar B_h = 0$.
-3. **The first-order LF scheme keeps that condition.** The max-norm of
-   $D_h^{\mathrm{c}}\bar B_h$ never grows, and it stays exactly zero if it
-   starts at zero. The first-order 2D LF scheme is therefore provably
-   positivity-preserving.
+3. **The first-order LF scheme keeps that condition, on Cartesian
+   meshes.** With the global LF flux the max-norm of
+   $D_h^{\mathrm{c}}\bar B_h$ never grows, and it stays exactly zero if it starts
+   at zero. The first-order 2D LF scheme is therefore provably
+   positivity-preserving. On general meshes, and with HLL-type fluxes, the
+   DDF condition generalizes to a wave-speed-weighted face divergence, and
+   the conservative scheme no longer preserves it, so it is not
+   positivity-preserving in general
+   ([Wu & Shu (2019)](/sources/wu-shu-2019.md), eq. 4.9, Corollary 4.1).
 4. **High order.** For FV and DG schemes, the sufficient conditions are:
    * the reconstructed states are admissible at Gauss–Lobatto points, which
      a scaling limiter enforces;
@@ -70,10 +75,24 @@ $-(\nabla\cdot B)\,S(U)$.
   * With a positivity limiter and SSP time stepping, the scheme is
     provably positivity-preserving. The time-step factor $\theta$ stays
     close to 1 in the tests.
-* **The PDE-level motive.** Their Appendix A gives evidence, explicitly not
-  a proof, that the exact smooth solution of the *conservative* system can
-  lose pressure positivity when $\nabla\cdot B \ne 0$. The symmetrizable
-  form appears not to.
+* **The PDE-level motive.**
+  * The conservative side remains evidence, not proof (Wu & Shu 2018,
+    Appendix A): its exact smooth solution can lose pressure positivity
+    when $\nabla\cdot B \ne 0$.
+  * The symmetrizable side is now a theorem: any $C^1$ solution keeps
+    $\rho > 0$ and $p > 0$ whatever $\nabla\cdot B$ is, because density
+    and pressure obey $D_t\rho = -\rho\nabla\cdot v$ and
+    $D_t p = -\gamma p\nabla\cdot v$ along particle paths. The same holds
+    for Janhunen's system ([Wu & Shu (2019)](/sources/wu-shu-2019.md), Proposition A.1).
+* **General meshes and HLL fluxes**
+  ([Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 4.1, 4.2).
+  * The escape extends to HLL-type fluxes on arbitrary polytopal meshes in
+    any dimension.
+  * The penalty is discretized *upwind*, with the HLL wave speeds, through a
+    wave-speed-weighted face divergence. It reduces to the Cartesian LF
+    divergence for symmetric speeds.
+  * Explicit wave-speed bounds replace the Davis or Einfeldt estimates,
+    which are not guaranteed positivity-preserving.
 * **The price is conservation**, and the authors state it: "there is still
   a conflict" between the source term and conservation.
 
@@ -104,12 +123,19 @@ through the source term.
   fails the low-$\beta$ blast. It does not explain that failure, because
   the scheme there is not LF-type, and the record does not isolate the
   cause.
-* **Scope.** Uniform Cartesian meshes and the LF flux only. Extensions to
-  less dissipative fluxes and to non-uniform or unstructured meshes are
-  announced, not proved here. The behavior across AMR interfaces is
-  unaddressed.
+* **Scope.**
+  * The conservative-scheme statements are proved for LF on uniform
+    Cartesian meshes (Wu 2018). They are generalized to HLL-type fluxes on
+    polytopal meshes by Wu & Shu (2019).
+  * The non-conservative escape holds on the same general meshes.
+  * Numerics exist only in 1D and on 2D rectangles.
+  * No source addresses AMR interfaces. *Compiler reading:* if the
+    coarse cell at a 2:1 seam is read as a polygon with a hanging vertex,
+    the seam is a polytopal configuration that the general-mesh theorems
+    formally cover. No source tests it.
 
 # Citations
 
 1. [Wu (2018)](/sources/wu-2018.md), Theorems 2.11, 2.15, 3.1, 4.1, 4.3, 4.5–4.7, 4.10, Remarks 4.4, 4.8–4.9, §5.2, Appendix B.
 2. [Wu & Shu (2018)](/sources/wu-shu-2018.md), Theorems 3.1, 3.4, Remarks 3.3, 3.6, §5, Appendix A.
+3. [Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 2.1–2.2, 4.1–4.3, Corollary 4.1, Remarks 4.1, 4.3, Proposition A.1.

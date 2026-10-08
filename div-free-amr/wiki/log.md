@@ -2,6 +2,30 @@
 
 ## 2026-10-08
 
+* **Ingested [Wu & Shu (2019)](/sources/wu-shu-2019.md)**, source 10 of 16.
+  * **Corpus:** the arXiv v1 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2019-NumerMath-Wu-101007s00211-019-01042-w.pdf`;
+    venue verified on Crossref.
+  * **Updated**
+    [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+    * HLL fluxes on polytopal meshes;
+    * the conservative scheme preserves its DDF condition only on
+      Cartesian meshes with the global LF flux;
+    * smooth solutions of the symmetrizable system are now a theorem
+      (positive for any $\nabla\cdot B$); the conservative side is still
+      evidence only;
+    * the scope is rewritten, with a compiler reading, marked as such, that
+      a 2:1 seam is formally a polytopal case and untested.
+  * **Updated** [eight-wave](/methods/eight-wave.md): PDE-level positivity of
+    the symmetrizable system.
+  * **Scoped read:** proofs were read in outline only.
+  * **Bibliography:** 66 references; the record goes from 2799 to 2809.
+    * 57 existing entries gained the citer; 9 works are new, plus the self
+      entry.
+    * `dumbser-2014-a`, whose authors came from a garbled string, was renamed
+      `balsara-2014-c`. Crossref confirms Balsara, Dumbser, Abgrall as the
+      authors, and the DOI was added.
+
 * **Ingested [Wu & Shu (2018)](/sources/wu-shu-2018.md)**, source 9 of 16.
   * **Corpus:** the arXiv v1 preprint was moved to
     `~/papers/mosaic/div-free-amr/2018-SISC-Wu-10113718m1168042.pdf`. The
