@@ -2,6 +2,39 @@
 
 ## 2026-10-08
 
+* **Ingested [Balsara & Kim (2004)](/sources/balsara-kim-2004.md)**, source 2
+  of 16.
+  * **Corpus:** the arXiv preprint was moved to
+    `~/papers/mosaic/div-free-amr/2004-ApJ-Balsara-101086381051.pdf`.
+    Venue, pages and published title were verified on Crossref; the
+    published title differs from the preprint's.
+  * **Updated** three pages:
+    * [projection](/methods/projection-method.md): the three variants (the
+      wide-stencil SDC1 is Chorin's $D_h^{\mathrm{c}} G_h$), the
+      non-locality failure mode, and a new `## Contradictions` against
+      Tóth's top ranking. It is scoped to problems with persistent,
+      re-created divergence and left open.
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      exactness is not adequacy without locality.
+    * [staggered grid](/definitions/staggered-grid.md): a compiler note
+      that this comparison tests constraint mechanism, not placement, since
+      the "staggered" scheme is flux-CT, which Tóth proved collocated-equivalent.
+  * No new page: the supernova-turbulence test has a single source and is
+    under-specified (heating and cooling are delegated to other papers), so
+    it stays inline.
+  * **Bibliography:** 33 references; the record goes from 2715 to 2720.
+    * 27 existing entries gained the citer, and 6 works are new.
+    * The pre-existing cited-only `balsara-kim-2004` was upgraded in place
+      to verified metadata, keeping its 4 citers.
+    * Balsara 2003 "submitted" was mapped onto `balsara-2004`, the published
+      form.
+    * Printed typos were kept off the merge: Brackbill–Barnes "35, 462"
+      maps onto 35:426, and Evans–Hawley "1989" onto 1988.
+    * **A pre-existing duplicate was found and folded:** `dai-1994` and
+      `dai-woodward-1994` are both Dai & Woodward JCP 111:354. They now sit
+      under `dai-woodward-1994`, with citers balsara-2001 and toth-2000
+      added. The title+year sweep missed it because one entry is title-less.
+
 * **Ingested [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md)**,
   source 1 of 16 in the ADAM-bibliography div-free batch. The batch covers
   tiers A and B of the reviewed `~/papers/adam` list, real PDFs only.

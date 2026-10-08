@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 63 sources compiled**: 62 published works plus one code record
+**Corpus: 64 sources compiled**: 63 published works plus one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for

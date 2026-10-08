@@ -83,6 +83,15 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   ([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md)
   §§2.4, 4.2;
   [upwind constrained transport](/methods/upwind-constrained-transport.md)).
+* **Exactness is not adequacy without locality.** A wide-stencil
+  projection makes $D_h^{\mathrm{c}} B_h$ exactly zero after every pass, yet
+  on persistent converging flows it gives spurious energy spikes and
+  small-scale power. The causes are even–odd decoupling and the non-local
+  elliptic correction. A local exact update of the same field (flux-CT) was
+  clean on the same problem
+  ([Balsara & Kim (2004)](/sources/balsara-kim-2004.md);
+  [projection](/methods/projection-method.md) `Contradictions`). How the
+  invariant is enforced matters as much as which stencil holds it.
 * **Collocated exactness is a uniform-grid property.** A collocated scheme
   whose curl and divergence share one antisymmetric derivative primitive
   holds $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identically. The record
@@ -127,3 +136,4 @@ class is not a numerical nicety but a physics-level decision.
    2:1 AMR interfaces remains outside even the newest synthesis.
 8. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (§2, E1a), #29, #31; `prism-regression.md` (inter-realm 1:1 anchor).
 9. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.4, 4.2, Table 3.
+10. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II, III.b.

@@ -69,6 +69,11 @@ positions:
   Riemann solvers and the momentum fluxes on the staggered data, and
   measures monopole damage in the collocated counterparts
   ([UCT](/methods/upwind-constrained-transport.md)).
+* *Not evidence either way* (compiler note): [Balsara & Kim (2004)](/sources/balsara-kim-2004.md)
+  frame their comparison as "cleaning vs staggered mesh". Their staggered
+  scheme is flux-CT, which Tóth proved equivalent to a collocated
+  finite-volume scheme, so the test separates constraint *mechanism* (local
+  exact update vs global projection) and not field *placement*.
 
 **Scoped resolution (compiled):** the claims quantify over different
 things. Tóth's is an algebraic identity for specific second-order schemes —
@@ -104,3 +109,4 @@ is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 5. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3.
 6. [Zaghi (2026)](/sources/zaghi-2026.md): issues #29, #30.
 7. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.4, 4.
+8. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§I, II.d.

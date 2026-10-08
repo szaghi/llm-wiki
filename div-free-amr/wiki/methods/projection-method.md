@@ -59,8 +59,59 @@ realization, with the attendant interface synchronization solves, is the
 * **Top-ranked:** among the most accurate and reliable schemes across the
   ten-problem comparison (Table IX).
 
+## Variants and the non-locality failure mode
+
+[Balsara & Kim (2004)](/sources/balsara-kim-2004.md) separate three variants
+and test them against a staggered-mesh CT scheme on supernova-driven,
+radiatively cooling MHD turbulence:
+
+| Variant | Operator | Exact? | Defect |
+|---|---|---|---|
+| wide-stencil scalar (Chorin's $D_h^{\mathrm{c}} G_h$) | $2\Delta x$ Laplacian | $D_h^{\mathrm{c}} B_h = 0$ exactly | even–odd decoupling into $2^3$ sub-lattices |
+| compact-stencil scalar | 7-point Laplacian | no (a different residue after each pass) | not exact |
+| spectral vector | $\delta_{ij} - k_ik_j/k^2$ per mode | in Fourier space only | periodic uniform boxes only; no AMR |
+
+All three share the elliptic step's **non-locality**. A localized divergence
+source corrects the field everywhere, with a $1/r^2$ fall-off that is slower
+still for sheet-like sources. Applied every step, the correction
+accumulates. Persistent converging flows, such as colliding cooling shells,
+build divergence locally, and the projection spreads the defect across the
+box. The measured result: magnetic-energy spikes (the scalar variants
+saturate about 10× too high), polluted shell interiors, shifted field
+histograms and excess small-scale power. Only the local CT scheme was clean.
+The spectral variant fluctuates but eventually returns to the CT energy
+level.
+
+## Contradictions
+
+**Is projection as good as an exactly divergence-free local scheme?**
+
+* [Tóth (2000)](/sources/toth-2000.md): the projection scheme is consistent
+  and order-preserving even for discontinuous flows, and ranks among the most
+  accurate and reliable in a ten-problem 2D comparison (above).
+* [Balsara & Kim (2004)](/sources/balsara-kim-2004.md): on a stringent 3D
+  turbulence problem every projection variant gives spurious energetics,
+  structures, statistics and spectra. They judge the scalar variants
+  unsuitable for turbulence and dynamo studies.
+
+**Scoped reading (compiled, open).** The two claims are measured on
+different problem classes:
+* Tóth's tests are standard 2D problems in which divergence is created and
+  advected.
+* Balsara & Kim's failure needs *persistent, converging* flows that keep
+  regenerating divergence in one place for many steps. There the
+  non-locality of a per-step global correction accumulates.
+
+Neither result refutes the other, and no supersession is recorded. The
+open question is whether a projection error is benign when it is created
+locally once, or damaging when it is re-created in place. That is the same
+distinction met at
+[GLM's `Contradictions`](/methods/glm-divergence-cleaning.md) for interface
+sources.
+
 # Citations
 
 1. [Chorin (1968)](/sources/chorin-1968.md), eqs. (3)–(5), (20)–(22).
 2. [Tóth (2000)](/sources/toth-2000.md), §5, §7, Table IX.
 3. [Dedner et al. (2002)](/sources/dedner-2002.md), §2.
+4. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II.a–c, III.b, Table I.
