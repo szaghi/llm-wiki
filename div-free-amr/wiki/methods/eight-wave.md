@@ -5,7 +5,7 @@ description: "Powell's non-conservative source-term formulation: advects diverge
 status: established
 aliases: [Powell source terms, 8-wave]
 tags: [eight-wave, source-terms, divergence-constraint, shock-capturing]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Eight-wave formulation
@@ -53,6 +53,18 @@ weakest among the families compared by [Tóth (2000)](/sources/toth-2000.md).
   (contrast the roundoff-exact compatibility CT requires:
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
 
+**Positivity, a second argument for the source term** (alongside Derigs et al.'s thermodynamic one).
+[Wu & Shu (2018)](/sources/wu-shu-2018.md) prove that LF-type DG schemes for the
+symmetrizable form are positivity-preserving at any order. The schemes
+discretize the source term as a penalty, from $D_h^{\mathrm{c}}$ at first order
+and from normal-field jumps at faces at high order, and use a locally
+divergence-free basis. The proof needs no discrete divergence-free
+condition. The conservative form provably needs one
+([positivity–divergence coupling](/results/positivity-divergence-coupling.md)).
+This weighs against Tóth's wrong-jump result rather than closing it:
+Wu & Shu concede the loss of conservation, and they run no
+jump-convergence test of the kind Tóth used.
+
 The conservation trade-off is stated openly in the primary source: local
 conservation errors are accepted in exchange for symmetrizability. Tóth's
 rotated shock-tube result is the concrete realization of the risk that trade
@@ -89,3 +101,4 @@ requirement.
    principles *produces* the non-conservative terms, recasting them as
    required physics wherever the constraint is not pointwise exact
    (the strongest published defense of the source-term family).
+6. [Wu & Shu (2018)](/sources/wu-shu-2018.md), §§1, 3, 5.

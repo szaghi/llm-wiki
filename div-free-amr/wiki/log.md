@@ -2,6 +2,31 @@
 
 ## 2026-10-08
 
+* **Ingested [Wu & Shu (2018)](/sources/wu-shu-2018.md)**, source 9 of 16.
+  * **Corpus:** the arXiv v1 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2018-SISC-Wu-10113718m1168042.pdf`. The
+    published title differs from the preprint's ("A provably positive …
+    method"); verified on Crossref.
+  * **Updated** two pages:
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      it is now scoped to conservative schemes, and has a section on the
+      non-conservative escape. The symmetrizable form with penalty terms is
+      provably positive without a DDF condition, at the cost of exact
+      conservation;
+    * [eight-wave](/methods/eight-wave.md): positivity as a second argument
+      for the source term. It is weighed against Tóth's wrong-jump result,
+      not offered as closing it.
+  * **Scoped read:** proofs were read in outline only, and the Source page
+    says so.
+  * **Bibliography:** 58 references; the record goes from 2793 to 2799.
+    * 51 existing entries gained the citer, and 7 works are new.
+    * `wu-shu-2018` was upgraded to its published metadata.
+    * The duplicate `godunov-1972-a` was folded into `godunov-1972` (same
+      title, year and start page; the printed volume differs, and a note
+      records it).
+    * `powell-1995-b` (AIAA 12th CFD conference) is kept distinct from
+      `powell-1995` (a book chapter with the same title).
+
 * **Ingested [Wu (2018)](/sources/wu-2018.md)**, source 8 of 16.
   * **Corpus:** the arXiv v2 preprint was moved to
     `~/papers/mosaic/div-free-amr/2018-SINUM-Wu-10113718m1168017.pdf`;

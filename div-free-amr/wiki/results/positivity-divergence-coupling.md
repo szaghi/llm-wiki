@@ -48,7 +48,39 @@ $\mathcal{G}$ ([notation](/notation.md)). In more than one dimension:
    both large.
 
 Proved by [Wu (2018)](/sources/wu-2018.md) in 1D and 2D, with the 3D
-extension in its Appendix B.
+extension in its Appendix B. It is scoped to conservative schemes; see the
+non-conservative escape below.
+
+## The non-conservative escape
+
+The coupling is a statement about **conservative** schemes.
+[Wu & Shu (2018)](/sources/wu-shu-2018.md) prove positivity *without* any discrete
+divergence-free condition by discretizing Godunov's symmetrizable form,
+which carries the [eight-wave](/methods/eight-wave.md) source term
+$-(\nabla\cdot B)\,S(U)$.
+* **First order.** The LF scheme gains the penalty term
+  $-\Delta t\,(D_h^{\mathrm{c}}\bar B_h)\,S(\bar U)$. It is positivity-preserving
+  under a CFL-type condition corrected by $\max |B|/\sqrt\rho$, whatever
+  $D_h^{\mathrm{c}}\bar B_h$ is.
+* **High order.**
+  * DG in a *locally* divergence-free polynomial space gives zero
+    divergence inside each cell.
+  * Penalty terms built from the jumps of the normal field at each face
+    control the divergence across faces.
+  * With a positivity limiter and SSP time stepping, the scheme is
+    provably positivity-preserving. The time-step factor $\theta$ stays
+    close to 1 in the tests.
+* **The PDE-level motive.** Their Appendix A gives evidence, explicitly not
+  a proof, that the exact smooth solution of the *conservative* system can
+  lose pressure positivity when $\nabla\cdot B \ne 0$. The symmetrizable
+  form appears not to.
+* **The price is conservation**, and the authors state it: "there is still
+  a conflict" between the source term and conservation.
+
+Taken together, the two results give a trade-off rather than a free
+choice. An LF-type scheme gets provable positivity either by holding a
+discrete divergence on its own stencil, or by giving up exact conservation
+through the source term.
 
 ## Why it matters for this bundle
 
@@ -80,3 +112,4 @@ extension in its Appendix B.
 # Citations
 
 1. [Wu (2018)](/sources/wu-2018.md), Theorems 2.11, 2.15, 3.1, 4.1, 4.3, 4.5–4.7, 4.10, Remarks 4.4, 4.8–4.9, §5.2, Appendix B.
+2. [Wu & Shu (2018)](/sources/wu-shu-2018.md), Theorems 3.1, 3.4, Remarks 3.3, 3.6, §5, Appendix A.
