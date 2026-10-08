@@ -128,6 +128,41 @@ is built.
   and the blast shows growing divergence error, oscillations and
   nonphysical structure.
 
+## One degree down: curl-constrained reconstruction
+
+[Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md) carry the construction one level down the complex, to vector fields
+whose curl is constrained. Such fields arise in first-order hyperbolic
+models of heat conduction, hyperelasticity, multiphase flow, first-order
+reductions of the Einstein equations and the Schrödinger equation.
+* **Collocation.** The vector is an edge quantity in $V_h^1$, and the
+  potential that drives it sits at vertices, in $V_h^0$. If every edge
+  sharing a vertex uses the same, multidimensionally upwinded, vertex
+  potential, the update is a discrete gradient and the circulation over
+  every face is held: $C_h G_h = 0$ ([notation](/notation.md)) plays the
+  role $D_h C_h = 0$ plays for CT.
+* **Reconstruction.** One-dimensional WENO along the edges supplies the
+  edge moments. Correction terms that vanish on the edges then make the
+  interior polynomial exactly curl-free, or give it a prescribed curl. In
+  3D the prescribed curl is itself a divergence-free face field,
+  reconstructed with the divergence-free construction above. Each 3D zone
+  carries six circulation conditions, of which five are independent,
+  against one divergence condition.
+* **The same structure as the divergence-free case.** At fourth order the
+  edge moments no longer fix every mode. Zone-centred modes are needed,
+  and five free parameters remain in 2D. They are fixed by least squares
+  against an ordinary finite-volume WENO reconstruction, which keeps the
+  constraint exact. This parallels the face/volume split and the
+  energy-minimizing choice of Balsara (2009).
+* **A multidimensional Riemann solver is required** at the vertices. At
+  first order the scheme reduces to properly upwinded advection with
+  multidimensional dissipation. Von Neumann analysis gives maximum CFL
+  numbers of 1.15 at third order and 1.30 at fourth order.
+* **Measured.** The curl stays at machine precision with design order 2 to
+  4. Fourth order preserves the quadratic energy best over long runs. A
+  zone-centred Godunov scheme shows curl errors 2–4 orders of magnitude
+  larger, and it builds up circulation unregulated by the physical source
+  term.
+
 ## The controlled-class alternative
 
 [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)
@@ -147,3 +182,4 @@ benefit. The trade is the constraint class: no discrete divergence is held.
 6. [Balsara (2009)](/sources/balsara-2009.md), §§2–4.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§1, 5.
 8. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3, Examples 4.2–4.4.
+9. [Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md), §§2–5.

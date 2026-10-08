@@ -39,6 +39,11 @@ potentials. Consequences visible elsewhere in this bundle:
   [$P_D$](/operators/divergence-free-prolongation.md)) can equivalently be
   built as "prolong the potential, then take $C_h$" — exactness guarantees
   the two routes span the same targets.
+* The lower identity $C_h G_h = 0$ is a scheme-design principle in its
+  own right. Keeping a curl-constrained vector on edges and updating it
+  from one vertex potential per vertex holds its discrete circulation
+  exactly. That is the edge–vertex mirror of CT's face–edge structure
+  ([Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md)).
 * The theorems hold on *distorted* grids: exactness is combinatorial
   (topology of the complex), with the metric entering only through the
   operator coefficients — the topology–metric factorization of the source.
@@ -109,3 +114,4 @@ characterised exactly ([Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha
 2. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
 3. [Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md), §11.
 4. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.7–3.8, 3.18–3.20, 5.1, 5.6.
+5. [Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md), §§1–3, 5.

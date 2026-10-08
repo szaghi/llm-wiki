@@ -2,6 +2,27 @@
 
 ## 2026-10-08
 
+* **Ingested [Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md)**,
+  re-downloaded source 3 of 7.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2023-CAMC-Balsara-101007s42967-021-00160-3.pdf`.
+    The slug follows the printed volume year (2023), not the 2021 online
+    date that Crossref reports.
+  * **Updated** two pages:
+    * [divergence-free reconstruction](/methods/divergence-free-reconstruction.md):
+      a section on curl-constrained reconstruction, one degree down the
+      complex;
+    * [exactness theorems](/results/discrete-exactness-theorems.md):
+      $C_h G_h = 0$ as a design principle.
+
+    No page was created. The bundle's scope is divergence constraints,
+    and the paper enters as the mirror construction.
+  * **Bibliography:** 55 references; the record goes from 2987 to 3013.
+    * 30 existing entries gained the citer; 25 works are new, plus the self
+      entry.
+    * `balsara-2017` (Part III) and `balsara-2014-b` gained notes on the
+      printed volume and year.
+
 * **Ingested [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md)**,
   re-downloaded source 2 of 7.
   * **Corpus:** the PDF was moved to
