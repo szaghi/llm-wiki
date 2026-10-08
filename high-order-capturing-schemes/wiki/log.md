@@ -2,6 +2,16 @@
 
 ## 2026-10-08
 
+* **Human review of batch 6** (fiat decisions, recorded with
+  `status: hypothesis` attribution):
+  * [Constrained transport](/methods/constrained-transport.md): the Yee-mesh
+    contradiction (Balsara & Kim against Christlieb et al.) is *closed by
+    human fiat*. Both are reasonable, for different discrete divergences,
+    and both designs are kept.
+  * [Self-similarity](/properties/self-similarity.md): human note that ε is
+    not a non-dimensional parameter and that its mesh and flow dependences
+    are a real concern.
+
 * **Batch 6 (12 sources, the last of the archive), ingested autonomously on
   user instruction** and staged as one unit:
   [Balsara (2004)](/sources/balsara-2004.md),

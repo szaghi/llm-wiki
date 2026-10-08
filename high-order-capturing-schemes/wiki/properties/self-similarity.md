@@ -35,6 +35,11 @@ dependence on $h$ ([Jiang & Shu (1996)](/sources/jiang-1996.md), §2).
   [weight accuracy conditions](/results/weno-weight-accuracy-conditions.md)).
   This is a conflict of design principle with Shu's requirement, not a
   factual contradiction.
+* *Human note (2026-10-08), `status: hypothesis`.* ε is not a
+  non-dimensional parameter, and its dependence on the mesh and on the
+  flow (the solution's scale) is a real concern. Neither a fixed ε nor a
+  mesh-scaled ε is free of it. The human's judgment, recorded on request,
+  not a claim of any source.
 * *Boundary extrapolation weights.* Tan and Shu's WENO extrapolation for
   inverse Lax–Wendroff takes its linear weights as powers of $h$. Lu et al.
   (2021) call this a loss of self-similarity and use constant weights.

@@ -87,8 +87,9 @@ for every page.
    or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
    Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
    provably positive? For MHD the divergence constraint is kept by
-   [constrained transport](/methods/constrained-transport.md) (open
-   `Contradictions` entry: does it require a staggered mesh?), by
+   [constrained transport](/methods/constrained-transport.md) (staggered
+   and unstaggered designs both valid, each for its own discrete
+   divergence; closed by fiat), by
    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
    of staggered fields, by [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
    or by projection; without it high-order MHD runs fail. Curl constraints

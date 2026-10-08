@@ -228,7 +228,7 @@ evolved cell averages.
 ## Contradictions
 
 **Does exact divergence preservation require a staggered (Yee) mesh?**
-*Open.*
+*Closed by human fiat (2026-10-08).*
 * [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1: keeping the
   magnetic field divergence-free "requires the use of a staggered,
   Yee-type mesh"; "any divergence-free formulation of MHD requires the
@@ -242,8 +242,14 @@ evolved cell averages.
   different discrete divergences, a face-flux (Stokes) one and a central
   difference of point values. Each scheme keeps its own exactly zero.
   Whether the claims conflict depends on which divergence "divergence-free"
-  means, which neither side states in that form. A source that compares
-  the definitions would settle it.
+  means, which neither side states in that form.
+* **Closed by human fiat (2026-10-08): both claims hold, each for its own
+  discrete divergence.** The Yee requirement is right for the face-flux
+  (Stokes) divergence; unstaggered CT is right for the central divergence
+  of cell-centred values. Both designs are kept as valid alternatives.
+  *Fiat closure — `status: hypothesis` attribution: the closure is the
+  human's judgment, not a source superseding a source; a later source can
+  reopen it.*
 
 # Citations
 
