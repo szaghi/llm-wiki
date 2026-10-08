@@ -101,6 +101,13 @@ Neither replaces the projection they use.
 characteristic field from the source terms that define the formulation.
 Only the first is present here.
 
+**In a same-code comparison** ([Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix A), Powell source terms in
+Athena++, discretized with cell-centred differences, let the divergence
+grow steadily on a KH test with a localized field without crashing. They
+leave scaly, artificial field patterns that diffuse into the weakly
+magnetized region, though without GLM's propagation. The authors note
+that the method damps nothing and is not "cleaning".
+
 [GLM cleaning](/methods/glm-divergence-cleaning.md) later kept the
 advect-the-error philosophy while removing the trade: its source term sits
 only in the unphysical $\psi$ equation, leaving the physical conservation
@@ -135,3 +142,4 @@ requirement.
 7. [Wu & Shu (2019)](/sources/wu-shu-2019.md), §4, Proposition A.1.
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
 9. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.3, 3.4.
+10. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix A.

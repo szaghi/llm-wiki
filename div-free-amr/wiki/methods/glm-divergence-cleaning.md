@@ -134,6 +134,58 @@ solenoidal-data damping below. A cleaning step is not inert on resolved
 fields, and its dissipation enters the physics through the magnetic
 Reynolds number.
 
+## Failure modes of the conventional implementation
+
+[Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md) implement mixed GLM in Athena++ next to its CT and compare them on the
+same base scheme, with PLM, HLLD and van Leer integration.
+* **A time-varying $c_h$ breaks the derivation.** The error equation holds
+  only if the operator $\mathcal D$ commutes with the time and space
+  derivatives. The conventional choice $c_h = \eta_{\mathrm{CFL}}\,h_{\min}/\Delta t$
+  changes with every time step. After a sudden drop of $\Delta t$, $\psi_h$
+  grows about 40-fold within 10 steps. When the step recovers it is turned
+  into ripple-shaped, non-solenoidal field that dominates weakly magnetized
+  regions for hundreds of steps. CT and a constant $c_h$ are unaffected.
+* **Localized fields leak.** Divergence error made where the field is
+  strong is carried isotropically into weakly magnetized regions and
+  creates field there. This persists with a constant $c_h$, with optimal
+  damping and at higher resolution; stronger damping only shrinks the
+  affected zone.
+* **The damping constant is dimensional.** Dedner's $c_r = c_p^2/c_h$
+  depends on units. Rewritten as a timescale ratio at a scale $L$, the
+  original choice is $L = 1$ in code units, while PLUTO-like codes use
+  $L = h_{\min}$, which changes with AMR level. Large $L$ agreed better with
+  CT, and grid-scale $L$ produced unphysical structure.
+* **Stability.** In a subsonic KH test the scheme was stable once $c_h$
+  exceeded the maximum flow speed, even when the Alfvén speed exceeded
+  $c_h$.
+* **Applications.** In a primordial collapsing cloud with a weak seed
+  field, variable-$c_h$ runs amplify the field 3–5 orders of magnitude
+  beyond CT, with ripple patterns like those in published rapid-amplification
+  results. A constant $c_h$ with large $L$ agrees broadly with CT, but the
+  field near the disks is stronger and reversed. In a convective
+  atmosphere the error generated in the convective layer propagates into
+  the stable layer. There the $\psi_h$-related energy flux stays at 1–100%
+  of the Poynting flux, and the cleaned run is more diffusive.
+* **Energy.** Plain GLM omits the energy carried by $\psi_h$, which shows
+  up as thermal-energy error: about 30% on a low-$\beta$ CP Alfvén wave.
+  The EGLM energy source, or a conservative total energy that includes
+  $\psi_h$, removes it.
+* **Recommendations.** Keep $L$, $c_p$ and $c_h$ fixed in space and time,
+  with $L$ larger than the scale of interest and $c_h$ faster than any
+  speed the run will reach. Include the EGLM energy term. If $c_h$ must
+  change, first remove the divergence by projection and reset $\psi_h$ to
+  zero. The authors still find CT less arbitrary and more robust, and they
+  ask that cleaning-based amplification results be re-examined.
+
+*Compiler reading:* the Arepo and DG runs of
+[Pakmor et al. (2026)](/sources/pakmor-2026.md) set $c_h$ from the fastest
+speed at every step, which is the time-varying kind warned against here.
+Their driven boxes have smoothly varying steps and space-filling fields,
+the regime where this paper too finds cleaning and CT consistent.
+The leakage mechanism is the hyperbolic analogue of the non-locality that
+[Balsara & Kim (2004)](/sources/balsara-kim-2004.md) blamed for the
+projection's failure.
+
 ## Behavior at 2:1 seams and on solenoidal data (hypothesis-grade)
 
 Evidence from one code's verification record,
@@ -211,3 +263,4 @@ as conditional on the source not growing at the interface.
 6. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§2–4, Figs. A.7, A.11–A.12.
 7. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.10.
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
+9. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§2.3, 3, 4, Appendix B.

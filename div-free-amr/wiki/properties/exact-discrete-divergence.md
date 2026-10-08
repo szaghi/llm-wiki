@@ -174,6 +174,15 @@ Within CT the same holds for the order of the constraint step: in driven
 ISM- and ICM-like turbulence, fifth-order WENO runs with sixth-, fourth-
 and second-order CT give identical spectra. The upwind scheme's order is
 what extends them, compared with a second-order TVD code ([Seo & Ryu (2023)](/sources/seo-2023.md)).
+The regime matters, and a same-code comparison shows where it ends
+([Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md)). With weak, space-filling fields, CT and GLM with fixed parameters
+agree, CT being less diffusive. With strongly localized fields, GLM carries
+divergence error into weakly magnetized regions and creates field there;
+with time-varying cleaning speed, a sudden time-step drop produces
+spurious amplification by orders of magnitude in a collapsing-cloud run.
+*Compiler reading:* this, not a contradiction, is how the
+no-difference result of Pakmor et al. should be scoped: their regime is
+the one where both papers find agreement.
 
 # Citations
 
@@ -197,3 +206,4 @@ what extends them, compared with a second-order TVD code ([Seo & Ryu (2023)](/so
 15. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§6.2, 7 (preprint).
 16. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §1.
 17. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.9.
+18. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§3–5.

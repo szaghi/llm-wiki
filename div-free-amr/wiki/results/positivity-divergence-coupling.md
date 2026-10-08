@@ -173,6 +173,12 @@ through the source term.
   fields to the zone centre can still break admissibility in rare zones.
   These are repaired by borrowing thermal energy from a neighbour, or, if
   none can lend, by a low-order energy source.
+* **The cell-centre field is CT's weak point at low $\beta$.** On a
+  low-$\beta$ circularly polarized Alfvén wave, Athena++'s CT, which
+  averages the face fields to cell centres, gives thermal-energy errors of
+  about 30% in stripes. The authors expect negative pressure at still
+  lower $\beta$ ([Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix B). Plain GLM shows errors of the same size
+  for a different reason, the omitted energy of $\psi_h$.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -249,3 +255,4 @@ remains unsettled is whether the low-order fallback is positive by itself.
 8. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4.
 9. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§2, 5, 6.7, Claim 1.
 10. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
+11. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix B.

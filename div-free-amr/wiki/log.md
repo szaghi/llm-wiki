@@ -2,6 +2,29 @@
 
 ## 2026-10-08
 
+* **Ingested [Tomida et al. (2026)](/sources/tomida-2026.md)**, re-downloaded
+  source 7 of 7. This completes the re-download batch.
+  * **Corpus:** the arXiv v2 was moved to
+    `~/papers/mosaic/div-free-amr/2026-ApJS-Tomida-1038471538-4365ae8785.pdf`.
+    The published ApJS 285(2):64 version was found on Crossref, so this is
+    a published work and not a preprint.
+  * **Updated** four pages:
+    * [GLM](/methods/glm-divergence-cleaning.md): the failure modes of the
+      conventional implementation. A compiler reading notes that Pakmor
+      et al. use the time-varying $c_h$ warned against here, but in the
+      regime where both papers agree.
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      the "no difference" result is scoped, not contradicted;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      CT's low-$\beta$ face-to-centre weakness;
+    * [eight-wave](/methods/eight-wave.md).
+  * **Bibliography:** 63 references; the record goes from 3141 to 3177.
+    * The cited-only preprint entry `tomida-2026` (from pakmor-2026) was
+      upgraded in place to the published article, keeping its eprint.
+    * 27 existing entries gained the citer; 36 works are new.
+    * The citation of Mocz, Vogelsberger & Hernquist (2014) is a different
+      paper from the existing `mocz-2014`, so it is keyed `mocz-2014-b`.
+
 * **Ingested [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)**,
   re-downloaded source 6 of 7.
   * **Corpus:** the PDF was moved to
