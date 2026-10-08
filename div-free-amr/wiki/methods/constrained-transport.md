@@ -58,6 +58,15 @@ of the magnetic field to machine roundoff, introduced by
   potential, CT computes currents from a single difference of the evolved
   field, avoiding the anomalous current oscillations produced by second
   differences of monotonically-advected quantities.
+* **Embedded boundaries:** on a Cartesian mesh cut by a non-conforming
+  wall or material interface, extrapolated ghost fields are not solenoidal,
+  but they reach the active faces only through $E_h$. The invariant
+  therefore survives in the active domain, while magnetic flux through the
+  boundary is not conserved. A two-material interface keeps one global
+  $B_h$ with fraction-weighted edge EMFs; one field per side would create
+  monopoles
+  ([embedded-boundary CT](/methods/embedded-boundary-constrained-transport.md);
+  [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md)).
 
 ## High-order extension
 
@@ -129,3 +138,4 @@ reduces exactly to its 1D form for grid-aligned flow.
 5. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §§3–4.
 6. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.3, Appendix A.
 7. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§1, 3, 6.
+8. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4, 8.

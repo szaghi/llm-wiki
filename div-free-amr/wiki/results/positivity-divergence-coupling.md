@@ -147,6 +147,9 @@ through the source term.
   needed the second-order energy correction. Felker & Stone's blast at
   three times their magnetization was the strongest case the scheme could
   run without it.
+  [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) report the same
+  limit for their exact-CT base scheme: it loses thermal-energy positivity
+  in strongly shocked low-$\beta$ flows.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -174,3 +177,4 @@ through the source term.
 4. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.4.
 5. [Ding & Wu (2024)](/sources/ding-2024.md), Theorems 2.1, 2.6–2.7, §§2.3, 4.
 6. [Berta et al. (2024)](/sources/berta-2024.md), §5.7.
+7. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §8.

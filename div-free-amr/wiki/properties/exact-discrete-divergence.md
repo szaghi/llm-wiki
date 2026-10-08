@@ -119,6 +119,17 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   exactness claim is relative to a stencil and to a stage-coupling
   schedule. Value-exact ghost copies are not enough if they arrive at the
   wrong stage ([Zaghi (2026)](/sources/zaghi-2026.md), hypothesis).
+* **Boundary data need not be solenoidal.** In cut-cell CT, ghost fields
+  behind an embedded wall are extrapolated and are not divergence-free.
+  The invariant still holds on the active faces, because those faces are
+  updated only by $-C_h E_h$; the ghost data affect accuracy and boundary
+  flux, not $D_h^{\mathrm{f}}B_h$. The converse also holds: evolving one
+  field per side of a material interface and joining them by a
+  normal–tangential split is accurate only to truncation error, and creates
+  monopoles. The fix is one field with one $E_h$ per edge. Measured
+  divergence is about $10^{-18}$ on a curved two-material interface
+  ([embedded-boundary CT](/methods/embedded-boundary-constrained-transport.md);
+  [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md)).
 
 ## Why it matters
 
@@ -158,3 +169,4 @@ class is not a numerical nicety but a physics-level decision.
 11. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §6.
 12. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.3, 4.5.
 13. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.8, 3.19.
+14. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4.1–4.2, 7.9.

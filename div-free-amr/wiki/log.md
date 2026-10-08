@@ -2,6 +2,33 @@
 
 ## 2026-10-08
 
+* **Ingested [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md)**, source 15 of 16.
+  * **Corpus:** the arXiv v1 preprint (which prints the JCP DOI) was moved to
+    `~/papers/mosaic/div-free-amr/2026-JCP-Jones-101016jjcp2025114641.pdf`.
+    Volume and article number were verified on Crossref.
+  * **Created**
+    [embedded-boundary CT](/methods/embedded-boundary-constrained-transport.md).
+    It is a single-source page, earned as the paper's named contribution.
+    It carries one compiler reading, which relates the edge-EMF mechanism
+    to the [electric-field correction](/methods/electric-field-correction.md).
+  * **Updated** three pages:
+    * [constrained transport](/methods/constrained-transport.md):
+      embedded boundaries;
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      boundary ghost data need not be solenoidal, and one field per
+      interface is required;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the reported low-$\beta$ positivity limit.
+  * **Bibliography:** 47 references; the record goes from 2886 to 2926.
+    * 8 existing entries gained the citer; 39 works are new, plus the self
+      entry.
+    * The Clarke, Salas & Hassan AIAA paper is keyed `clarke-1986-b`, to
+      keep it distinct from the existing `clarke-1986` (an ApJ Letters
+      paper).
+    * `toro-1997` gained its printed DOI.
+    * The printed Osher, Fedkiw & Piechor (2004) DOI belongs to an Applied
+      Mechanics Reviews item, which is recorded in a note.
+
 * **Ingested [Berta et al. (2024)](/sources/berta-2024.md)**, source 14 of 16.
   * **Corpus:** the arXiv v4 preprint was moved to
     `~/papers/mosaic/div-free-amr/2024-JCP-Berta-101016jjcp2023112701.pdf`.
