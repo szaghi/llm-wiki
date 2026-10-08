@@ -84,6 +84,28 @@ rather than raise the order of $\mathcal{E}^c$. The authors also note that
 later literature has misidentified $\mathcal{E}^\circ$ as the final GS05
 scheme.
 
+**A comparison of the averaging family**
+([Mignone & Del Zanna (2021)](/sources/mignone-2021.md)). The paper renames the 2D EMF
+recipes: arithmetic averaging, "CT-Contact" (the $\mathcal{E}^c$ above),
+and "CT-Flux" (the dissipative terms doubled, as used by Minoshima et al.
+in high-order FD). It compares them with UCT schemes under one base scheme.
+* **Arithmetic averaging fails.** It has too little dissipation: a
+  checkerboard instability in the 3D field loop, and pressure fixes on
+  Orszag–Tang. With a third-order Roe base scheme on Orszag–Tang, both
+  arithmetic averaging and CT-Flux failed outright.
+* **The other two are viable.** CT-Contact and CT-Flux are "an efficient
+  and valid option, although not strictly compliant with the UCT
+  formalism". The authors agree with Felker & Stone that CT-Contact is at
+  most second order, and call its contact-mode selection rule empirically
+  supported only.
+* **Their dissipation is inherited.** On a Harris-sheet equilibrium,
+  CT-Contact reconnects early with a Roe base solver but stays nearly ideal
+  with HLLD. Roe diffusion carries pressure and field jumps into the EMF;
+  HLLD diffusion carries field jumps only. UCT-HLLD behaves the same with
+  either solver.
+* **Conclusion:** "the choice of the emf averaging scheme is as crucial as
+  the choice of the interface Riemann solver".
+
 **The monopole objection.**
 [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.4
 argue that a second weakness sits outside the EMF. These variants evolve
@@ -108,3 +130,4 @@ puts the staggered components into every flux.
 3. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2.1, 2.4, Table 3.
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§2.3, 3.2, 3.3.
 5. [Felker & Stone (2018)](/sources/felker-2018.md), §4, Appendix A.
+6. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§3, 6.

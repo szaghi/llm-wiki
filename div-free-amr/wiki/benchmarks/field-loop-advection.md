@@ -42,6 +42,17 @@ period".
   * Loop edges are resolved in 4 cells, against 6–8 at second order.
   * The second-order scheme opens a larger reconnection hole and
     overshoots the peak by about 20%, against about 8% at fourth order.
+* **A rotated 3D loop measures what CT does not hold**
+  ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md)).
+  * The loop is rotated about $y$ ($\tan\gamma = 1/2$), with $v = (1,1,2)$
+    on $64\times64\times128$.
+  * The field component along the loop axis is then zero only to
+    truncation error, not round-off. It ranks EMF schemes: UCT is best,
+    CT-Contact and CT-Flux are worse, and arithmetic averaging is worst,
+    disrupting the loop at third order.
+  * This differs from Felker & Stone's round-off $B_z$. In their geometry
+    $B_z$ is the component whose update CT cancels exactly; here the axial
+    component mixes all three.
 * **EMF-assembly dissipation**: magnetic-energy decay differentiates
   Riemann-solver and EMF-averaging choices
   ([Fromang et al. (2006)](/sources/fromang-2006.md), Roe vs
@@ -88,3 +99,4 @@ forbids.
 6. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§3.1, 3.3.1, 5.1.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §4.4, Figs. A.8–A.11.
 8. [Felker & Stone (2018)](/sources/felker-2018.md), §5.3, Figs. 12–14.
+9. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.1, Figs. 2–7.

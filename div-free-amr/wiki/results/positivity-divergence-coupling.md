@@ -115,6 +115,14 @@ through the source term.
   solenoidal in some other stencil does not qualify automatically. The
   same scheme-relative reading applies as for
   [exact discrete divergence](/properties/exact-discrete-divergence.md).
+* **Exactness on the staggered stencil is not positivity either.** On
+  the $\beta \approx 2.5\cdot10^{-4}$ blast, *no* CT scheme stayed positive
+  without the Balsara–Spicer energy correction, even with a minmod limiter.
+  This covers six EMF variants, all with an exactly held
+  $D_h^{\mathrm{f}}B_h = 0$ ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md) §6.4,
+  footnote 2). These are Godunov–Roe schemes, not LF-type, so the theorem
+  above does not apply to them; the observation only shows that exactness
+  alone does not supply positivity.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -139,3 +147,4 @@ through the source term.
 1. [Wu (2018)](/sources/wu-2018.md), Theorems 2.11, 2.15, 3.1, 4.1, 4.3, 4.5–4.7, 4.10, Remarks 4.4, 4.8–4.9, §5.2, Appendix B.
 2. [Wu & Shu (2018)](/sources/wu-shu-2018.md), Theorems 3.1, 3.4, Remarks 3.3, 3.6, §5, Appendix A.
 3. [Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 2.1–2.2, 4.1–4.3, Corollary 4.1, Remarks 4.1, 4.3, Proposition A.1.
+4. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.4.

@@ -96,6 +96,26 @@ consistent with that invariant**:
   own first-order identity with $\mathcal{E}^\circ$, this places the
   Athena EMF family inside second-order UCT. The equivalence is proved only
   for these cases.
+* **A composition formula for any Jacobian-free solver**
+  ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md) §5, eq. 33).
+  * Write the 1D induction flux at a face as weighted left/right fluxes
+    plus a diffusion term linear in the transverse field:
+    $a^L F^L + a^R F^R - (d^R B_t^R - d^L B_t^L)$.
+  * The edge EMF is then assembled from the four adjacent faces using only
+    two kinds of input: the base solver's $a$ and $d$ coefficients, and 1D
+    reconstructions of the transverse velocity and of the staggered field
+    to the edge.
+  * Coefficients are derived for LLF, HLL, HLLC, HLLD and GFORCE. HLLC
+    reduces to HLL when $B_n \ne 0$. HLLD needs a switch to the degenerate
+    three-wave limit as $B_n \to 0$.
+  * The two new schemes are UCT-HLLD and UCT-GFORCE.
+* **Measured ranking** (second order, Roe or HLLD base solver).
+  * UCT-HLLD is the least dissipative and stays stable, and its dissipation
+    is the same whichever 1D solver feeds the fluid.
+  * UCT-HLL is the most diffusive: it suppresses KH growth at low
+    resolution, and its MRI Maxwell stress is about a third of UCT-HLLD's
+    (0.07 against 0.21).
+  * The new formula reproduces the original UCT-HLL.
 * **Same construction for SR and GR MHD**, per the authors. They also claim
   a natural extension to AMR and unstructured grids; for the unstructured
   triangular counterpart they cite De Sterck's MUCT.
@@ -106,3 +126,4 @@ consistent with that invariant**:
 2. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md): the original four-state EMF and staggering-from-consistency argument.
 3. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §3.2.2: the first-order equivalence with $\mathcal{E}^\circ$.
 4. [Felker & Stone (2018)](/sources/felker-2018.md), §§4–5, Appendix A.
+5. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§4–7.

@@ -2,14 +2,14 @@
 type: Source
 title: "Gardiner & Stone (2008) — An unsplit Godunov method for ideal MHD via constrained transport in three dimensions"
 description: "The 3D Athena algorithm: unsplit CTU integration with upwind CT electric fields, PPM interface states with divergence-balanced MHD source terms, 6- and 12-solve variants."
-resource: "doi:10.1016/j.jcp.2007.12.003"
+resource: "doi:10.1016/j.jcp.2007.12.017"
 source_kind: paper
 authors: [Gardiner T.A., Stone J.M.]
 year: 2008
 venue: "J. Comput. Phys. 227:4123-4141"
 local_file: "~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712003.pdf"
 tags: [constrained-transport, ctu, unsplit, godunov, ppm, production-code, mhd]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Summary
@@ -68,4 +68,4 @@ in detail.
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712003.pdf` (doi:10.1016/j.jcp.2007.12.003) — text extraction, pp. 4123–4141.
+1. `~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712003.pdf` (doi:10.1016/j.jcp.2007.12.017) — text extraction, pp. 4123–4141. **DOI corrected 2026-10-08.** The DOI recorded here earlier, 10.1016/j.jcp.2007.12.003, which the archive filename also embeds, belongs to Artebrant & Torrilhon (2008), JCP 227:3405 (Crossref). The work read is Gardiner & Stone, JCP 227:4123–4141, DOI 10.1016/j.jcp.2007.12.017 (Crossref; printed by mignone-2021). The Layer-1 filename was left unchanged.

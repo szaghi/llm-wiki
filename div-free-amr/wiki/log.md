@@ -2,6 +2,41 @@
 
 ## 2026-10-08
 
+* **Ingested [Mignone & Del Zanna (2021)](/sources/mignone-2021.md)**, source
+  12 of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2021-JCP-Mignone-101016jjcp2020109748.pdf`;
+    venue verified on Crossref.
+  * **Updated** four pages:
+    * [UCT](/methods/upwind-constrained-transport.md): the composition
+      formula for Jacobian-free solvers, UCT-HLLD and UCT-GFORCE, and the
+      measured ranking;
+    * [flux-CT](/methods/flux-ct.md): the averaging-family comparison, and
+      CT-Contact dissipation inherited from the base solver;
+    * [field loop](/benchmarks/field-loop-advection.md): the rotated 3D
+      loop, at truncation level and distinct from Felker & Stone's
+      round-off geometry;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      exact $D_h^{\mathrm{f}}$ CT schemes still need an energy fix at
+      $\beta \approx 2.5\cdot10^{-4}$.
+  * **DOI correction (record error, fixed with visibility):**
+    [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md) carried
+    `doi:10.1016/j.jcp.2007.12.003` as its resource. That DOI is Artebrant
+    & Torrilhon's (Crossref). The correct DOI, 10.1016/j.jcp.2007.12.017,
+    is printed in this reference list and verified on Crossref.
+    * The Source page and the bib entry were corrected.
+    * The Layer-1 archive filename `2008-JCP-Gardiner-101016jjcp200712003.pdf`
+      also embeds the wrong DOI. It was left unchanged and flagged to the
+      human.
+  * **Bibliography:** 62 references; the record goes from 2845 to 2860.
+    * 48 existing entries gained the citer; 14 works are new, plus the self
+      entry.
+    * Placeholder titles were filled for `mignone-2006`, `mignone-2009`,
+      `mignone-2012-c`, `porth-2019` and `suresh-1997`.
+    * A second DOI swap was found and fixed: `balsara-1998` carried
+      10.1086/313093, which is the TVD paper `balsara-1998-b`. Its own DOI
+      is 10.1086/313092 (both verified on Crossref).
+
 * **Ingested [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)**,
   source 11 of 16.
   * **Corpus:** the arXiv v2 preprint was moved to
