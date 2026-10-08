@@ -120,6 +120,28 @@ non-oscillatory; the remedy is the Suresh–Huynh bound, giving MPWENO
 [Suresh & Huynh (1997)](/sources/suresh-1997.md) note that WENO is still
 diffusive, smearing discontinuities nearly as much as ENO.
 
+## The family after WENO-JS
+
+* **Weight design.** [Mapped WENO](/methods/mapped-weno.md) and
+  [WENO-Z](/methods/weno-z.md) restore order at critical points and
+  lower dissipation; [central-upwind WENO](/methods/central-upwind-weno.md)
+  and the [symmetric, bandwidth-optimized WENO](/methods/bandwidth-optimized-weno.md)
+  add a downwind stencil; [TENO](/methods/teno.md) replaces smooth weights
+  by a 0/1 selection; [adaptive-order WENO](/methods/weno-ao.md) blends one
+  large centred polynomial with small ones.
+* **Two sources of dissipation:** the linear (optimal) scheme and the
+  adaptation ([Martín et al. (2006)](/sources/martin-2006.md)); larger
+  weights on discontinuous stencils lower the second
+  ([Borges et al. (2008)](/sources/borges-2008.md)); for the same power
+  $q$, WENO-JS > WENO-Z > WENO-M in dissipation and larger $q$ is more
+  dissipative ([Castro, Costa & Don (2011)](/sources/castro-2011.md)).
+* **ε is not innocent:** it is dimensional and, if fixed, decides the
+  observed order on fine grids ([Henrick et al. (2005)](/sources/henrick-2005.md));
+  values in use range from $10^{-6}$ to $10^{-40}$, or $h^{r-1}$
+  ([weight accuracy conditions](/results/weno-weight-accuracy-conditions.md)).
+* **Hybrids** switch WENO on only near discontinuities
+  ([hybrid compact-WENO](/methods/hybrid-compact-weno.md)).
+
 Accuracy claims at critical points are collected on
 [accuracy at critical points](/properties/accuracy-at-critical-points.md).
 A centred, staggered variant is [central WENO](/methods/central-weno.md).
@@ -132,3 +154,7 @@ A centred, staggered variant is [central WENO](/methods/central-weno.md).
 4. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I–III.
 5. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §§3, 5.1.
 6. [Suresh & Huynh (1997)](/sources/suresh-1997.md), introduction.
+7. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §4.3.
+8. [Martín et al. (2006)](/sources/martin-2006.md), §1.
+9. [Borges et al. (2008)](/sources/borges-2008.md), §3.
+10. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.

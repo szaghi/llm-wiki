@@ -102,5 +102,7 @@ to another bundle.
 
 ## Status
 
-**Batch 1 staged 2026-10-08:** 10 of 62 ingested (origins, ENO, WENO,
-MP, CWENO, MPWENO). The worklist is authoritative.
+**Batch 2 staged 2026-10-08:** 20 of 62 ingested (batch 1: origins, ENO,
+WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
+WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes). The worklist
+is authoritative.

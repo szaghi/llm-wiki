@@ -69,6 +69,13 @@ zones, useful for MHD). The bounded schemes are robust at normal CFL,
 almost spectrally accurate for $r \ge 5$ on smooth problems, and the
 results depend little on the heuristic choices.
 
+**Later.** [Fu, Hu & Adams (2016)](/sources/fu-2016.md) list the MP
+technique among the robustness devices for very-high-order WENO and state
+that "it fails to maintain the formal order of the original WENO scheme"
+(citing Gerolymos et al.). [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)
+report that their adaptive-order WENO needs no MP step at all
+([adaptive-order WENO](/methods/weno-ao.md)).
+
 ## Contradictions
 
 **Does the MP bound degrade accuracy at smooth extrema?**
@@ -90,9 +97,17 @@ results depend little on the heuristic choices.
   interface value ($r = 3$ quartic versus $r = 5$ WENO), so the evidence
   is not one-to-one; the claim in dispute is the general one ("does not
   damage the order property"), which Balsara and Shu restrict to
-  solutions without very flat extrema. **Open.**
+  solutions without very flat extrema.
+* **Closed by human fiat (2026-10-08) in favour of Balsara & Shu:** the
+  MP bounds do degrade the order of accuracy at flat extrema; Suresh and
+  Huynh's "uniformly high-order" claim holds only for solutions without
+  such extrema. *Fiat closure — `status: hypothesis` attribution: the
+  closure is the human's judgment, not a source superseding a source; a
+  later source can reopen it.*
 
 # Citations
 
 1. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §§2–4 and Appendix.
 2. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I, III.d, IV.
+3. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §1.
+4. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.1.

@@ -59,6 +59,15 @@ than third-order central ENO; the old fourth-order central ENO
 (quartic polynomials) is more accurate than the fourth-order CWENO
 (parabolas), at higher cost.
 
+**The $r = 3$ CWENO in adaptive-order WENO.**
+[Balsara, Garain & Shu (2016)](/sources/balsara-2016.md) use the three
+third-order stencils with the central one weighted most (citing Levy,
+Puppo & Russo's compact central WENO of 2000 and Cravero–Semplice) as the
+fallback of WENO-AO, reporting that $r = 3$ CWENO "is extremely stable,
+rivaling the stability of TVD schemes" and preserves physical extrema
+([adaptive-order WENO](/methods/weno-ao.md)). This is a non-staggered use
+of central weights inside a finite-difference scheme.
+
 *Compiler note on naming:* later literature uses "CWENO" also for
 reconstructions that blend a single high-degree "optimal" polynomial
 with lower-degree ones; this page records the 1999 staggered scheme only.
@@ -66,3 +75,4 @@ with lower-degree ones; this page records the 1999 staggered scheme only.
 # Citations
 
 1. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §§1–5.
+2. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §1.

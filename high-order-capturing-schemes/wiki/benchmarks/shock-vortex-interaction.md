@@ -31,7 +31,17 @@ $(0.25, 0.5)$ for a shock at $x = 0.5$ on $[0, 2]\times[0, 1]$
   and then the wave front cross the shock. They conclude that tests
   should not be aligned with the grid.
 
+**Later uses (batch 2).** The oblique version on $150 \times 150$ with
+WENO-AO(5,3) and AO(9,5,3), the latter retaining more post-shock
+structure ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)). A
+different set-up — a Mach 3 shock and a Rankine-type vortex with
+periodic $y$ — compares WENO-JS, WENO-M and WENO-Z, with the
+Richtmyer–Meshkov instability of a Xe/Ar interface at Mach 4.46
+([Borges et al. (2008)](/sources/borges-2008.md), §5.3).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 5.
 2. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VII.c.
+3. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.7.
+4. [Borges et al. (2008)](/sources/borges-2008.md), §5.3.

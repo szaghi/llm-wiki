@@ -41,7 +41,10 @@ $$\begin{aligned}
 Where $f' \neq 0$, $\beta_k = (f'h)^2(1 + O(h^2))$, which gives fifth
 order. Jiang and Shu also state that at critical points
 $\beta_k = \tfrac{13}{12}(f''h^2)^2(1 + O(h^2))$ and conclude that the
-weights are fifth-order accurate there too (eq. 3.9;
+weights are fifth-order accurate there too (eq. 3.9). That expansion is
+wrong: $\beta_0$ and $\beta_2$ differ at $O(h^5)$ when $f' = 0$, so the
+relative agreement is only $O(h)$ and WENO5 is third order there
+([Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md);
 [accuracy at critical points](/properties/accuracy-at-critical-points.md)).
 [Balsara & Shu (2000)](/sources/balsara-2000.md) tabulate the indicators
 for $r = 4, 5, 6$ as quadratic forms in the stencil values.
@@ -49,6 +52,29 @@ for $r = 4, 5, 6$ as quadratic forms in the stencil values.
 integral for their central parabolas, with the remark that the
 indicators are $O(h^2)$ in smooth regions and $O(h^4)$ at critical
 points.
+
+**Global (reference) indicators.** Later weights compare each $\beta_k$
+with a higher-order combination over the whole stencil:
+$\tau_5 = \vert\beta_0 - \beta_2\vert = O(h^5)$
+([Borges et al. (2008)](/sources/borges-2008.md)); $\tau_{2r-1}$ for all
+odd orders and an optimal higher-order combination
+([Castro, Costa & Don (2011)](/sources/castro-2011.md)); $\tau_6$ from the
+six-point indicator ([Hu, Wang & Adams (2010)](/sources/hu-2010.md));
+averages of $\vert\beta_P - \beta_k\vert$ between a large central
+polynomial and small ones ([Zhu & Qiu (2016)](/sources/zhu-2016.md);
+[Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)). See
+[WENO-Z](/methods/weno-z.md), [central-upwind WENO](/methods/central-upwind-weno.md),
+[TENO](/methods/teno.md), [adaptive-order WENO](/methods/weno-ao.md).
+
+**Other local forms.**
+* In a Legendre basis the Jiang–Shu indicator is a sum of perfect squares
+  of the polynomial's moments, the same expression for every stencil of a
+  given $r$ and nested across $r$ ($r = 3$–$9$), which is both cheaper and
+  evidently positive ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §2).
+* $L^1$-type indicators: weighted absolute values of generalized undivided
+  differences, each a fourth-order approximation of a scaled derivative at
+  $x_{i+1/2}$, with balancing parameters, for a seventh-order scheme
+  ([Rathan & Naga Raju (2017)](/sources/rathan-2017.md); after Ha et al.).
 
 **For systems** the indicator can be computed per characteristic field
 (standard), from pressure and entropy (Jiang–Shu "PS"), or as one global

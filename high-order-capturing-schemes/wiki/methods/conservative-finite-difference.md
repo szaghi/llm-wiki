@@ -91,6 +91,14 @@ Systems are split in [local characteristic fields](/methods/characteristic-decom
 * [Suresh & Huynh (1997)](/sources/suresh-1997.md) build their 2D MP5
   scheme in this framework (ENO-LLF with the MP5 reconstruction).
 
+**Later remarks (batch 2).** $\mathcal{H} = f + O(h^2)$ but is not the
+exact flux for finite $h$; the same stencil for $\hat f_{i\pm1/2}$ makes
+the leading $O(h^5)$ flux errors cancel in the difference
+([Henrick et al. (2005)](/sources/henrick-2005.md), §2). A compact
+(implicit) flux keeps conservation and the Lax–Wendroff property though
+it is not local in the data ([Pirozzoli (2002)](/sources/pirozzoli-2002.md);
+[hybrid compact-WENO](/methods/hybrid-compact-weno.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §§III–IV.
@@ -99,3 +107,5 @@ Systems are split in [local characteristic fields](/methods/characteristic-decom
 4. [Jiang & Shu (1996)](/sources/jiang-1996.md), §2.
 5. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §3.
 6. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I–II, VII.b.
+7. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §2.
+8. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §2.

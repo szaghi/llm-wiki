@@ -37,9 +37,24 @@ $\beta = \log 2/(36\delta^2)$ as printed by
   skews them ([Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.a,
   Fig. 1; [PPM](/methods/ppm.md)).
 
+**Later uses (batch 2).** WENO-Z behaves like WENO-M, both better than
+WENO-JS, at $t = 8$ with 200 and 400 points ([Borges et al. (2008)](/sources/borges-2008.md));
+at eleventh order with 200 points, $q = 1$ oscillates for all of JS, Z, M,
+$q = 2$ only for WENO-M, $q = r - 1$ for none ([Castro et al. (2011)](/sources/castro-2011.md));
+WENO-AO(7,5,3) over 4000 points improves on AO(5,3) and on WENO-ZQ, which
+shows overshoots as published and flattening once modified
+([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md);
+`Contradictions` on [adaptive-order WENO](/methods/weno-ao.md)); a
+seventh-order $L^1$-indicator scheme against WENO-BS7 and WENO-Z7
+([Rathan & Naga Raju (2017)](/sources/rathan-2017.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.1.
 2. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §4.1 Example 2.
 3. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Test 4.
 4. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.a.
+5. [Borges et al. (2008)](/sources/borges-2008.md), §5.1.
+6. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.2.
+7. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.1.
+8. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 3.

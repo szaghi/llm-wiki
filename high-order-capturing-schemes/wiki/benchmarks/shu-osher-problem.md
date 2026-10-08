@@ -45,9 +45,41 @@ weak entropy wave; linear-theory amplitude 0.08744786. ENO-LF-4/5 lose
 accuracy unless biased; WENO works without modification, and the biased
 "WENO2" variants are better still; the pressure–entropy weights fail.
 
+**Later uses (batch 2).** Standard set-up on $[-5,5]$ to $t = 1.8$:
+* WENO5M resolves the post-shock waves better than WENO5 at 400 points,
+  "particularly … where the solution's first derivative vanishes"
+  ([Henrick et al. (2005)](/sources/henrick-2005.md));
+* WENO-M and WENO-Z at 200–300 points capture much more of the
+  high-frequency field than WENO-JS, also at $k = 10$
+  ([Borges et al. (2008)](/sources/borges-2008.md)); at orders 5–11 the
+  dissipation ranks JS > Z > M for each $q$
+  ([Castro et al. (2011)](/sources/castro-2011.md));
+* WENO-SYM resolves the extrema WENO-JS damps; a weak Mach 1.1 variant
+  and oblique versions at 22° and 45° ([Martín et al. (2006)](/sources/martin-2006.md));
+* WENO-CU6 beats WENO5, WENO-M and WENO-SYM
+  ([Hu, Wang & Adams (2010)](/sources/hu-2010.md)); TENO6 and TENO5-opt
+  keep the entropy-wave amplitude best ([Fu, Hu & Adams (2016)](/sources/fu-2016.md));
+* WENO-ZQ better than WENO-JS at 400 points ([Zhu & Qiu (2016)](/sources/zhu-2016.md));
+  WENO-AO closer to the reference at higher order
+  ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md));
+* hybrid compact-WENO H7 best at 200 points, H5 better than WENO5 and WENO7
+  ([Pirozzoli (2002)](/sources/pirozzoli-2002.md));
+* the seventh-order $L^1$-indicator scheme against WENO-BS7 and WENO-Z7
+  ([Rathan & Naga Raju (2017)](/sources/rathan-2017.md)).
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
 2. [Jiang & Shu (1996)](/sources/jiang-1996.md), §§8.2–8.3.
 3. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §4.2 Example 3.
 4. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.d.
+5. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §5.4.
+6. [Borges et al. (2008)](/sources/borges-2008.md), §5.2.2.
+7. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.4.
+8. [Martín et al. (2006)](/sources/martin-2006.md), §§5.3–5.5.
+9. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.4.
+10. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.4.
+11. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.6.
+12. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.4.
+13. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §5.2.
+14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 7.

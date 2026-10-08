@@ -2,6 +2,50 @@
 
 ## 2026-10-08
 
+* **Batch 2 (10 sources), ingested autonomously on user instruction** and
+  staged as one unit: [Pirozzoli (2002)](/sources/pirozzoli-2002.md),
+  [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md),
+  [Martín et al. (2006)](/sources/martin-2006.md),
+  [Borges et al. (2008)](/sources/borges-2008.md),
+  [Hu, Wang & Adams (2010)](/sources/hu-2010.md),
+  [Castro, Costa & Don (2011)](/sources/castro-2011.md),
+  [Fu, Hu & Adams (2016)](/sources/fu-2016.md),
+  [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md),
+  [Zhu & Qiu (2016)](/sources/zhu-2016.md),
+  [Rathan & Naga Raju (2017)](/sources/rathan-2017.md).
+  * **Created** 9 concept pages: methods (mapped WENO, WENO-Z,
+    central-upwind WENO, TENO, WENO-AO/ZQ, bandwidth-optimized WENO,
+    hybrid compact-WENO); definition (modified wavenumber); result (WENO
+    weight accuracy conditions). **Updated** WENO, central WENO,
+    smoothness indicator, accuracy at critical points, MP limiting, SSP
+    Runge–Kutta, conservative finite difference, characteristic
+    decomposition and all eight benchmarks.
+  * **Contradictions**: the MP-limiting entry (batch 1) **closed by human
+    fiat in favour of Balsara & Shu** (recorded on the page with
+    `status: hypothesis` attribution). The critical-point entry on
+    [accuracy at critical points](/properties/accuracy-at-critical-points.md)
+    **closed by explicit supersession**: Henrick et al. show WENO-JS loses
+    order at first-order critical points, confirmed by Borges et al. and
+    Castro et al. **Opened** on [WENO-AO](/methods/weno-ao.md): Zhu–Qiu's
+    non-oscillation claim for WENO-ZQ vs Balsara et al.'s composite-advection
+    overshoots.
+  * **Registry extended**: $n_{\mathrm{cp}}$, mapping $g_k(\omega)$,
+    $\tau_{2r-1}$, $\tau_6$, $C_w$, TENO $\gamma_k$, $\chi_k$, $\delta_k$,
+    $C_T$; AO $\gamma_{\mathrm{Hi}}, \gamma_{\mathrm{Lo}}$; hybrid switch
+    threshold $\vartheta$; wavenumber $\xi$ and modified wavenumber
+    $\tilde\xi$.
+  * **Bibliography**: 10 fragments, 295 references merged with
+    `tools/bib_merge.py` (FLAGS: 0); 190 → 342 works. 15 scoped key
+    aliases (Harten report/proceedings variants, misprinted years for
+    Henrick 2005 and Kim & Kwon 2006, same-key different-work splits
+    `martin-2006-b`, `fedkiw-2000-b`, `hu-2011-b`, `hu-2016-b`), three
+    silenced pairs (Levy 2000 vs Levy 1999 ×2, Harten 1983 self-pair).
+    Closing sweeps (`--dupes`, venue collisions, fuzzy titles): folded
+    `deng-2005` into `deng-2000`, renamed Liu & Osher's convex ENO to
+    `liu-1998-b`, and added a republication note to `harten-1997`.
+  * **Versions read**: rathan-2017 as arXiv:1611.06755v1 (slug and metadata
+    follow the Comput. Fluids version, verified on Crossref).
+
 * **Batch 1 (10 sources), ingested autonomously on user instruction** and
   staged as one unit: [Colella & Woodward (1984)](/sources/colella-1984.md),
   [Harten et al. (1987)](/sources/harten-1987.md),

@@ -40,6 +40,16 @@ an easier test than [Lax's](/benchmarks/lax-shock-tube.md)
 * Run with MPWENO with good results, not shown
   ([Balsara & Shu (2000)](/sources/balsara-2000.md)).
 
+**Later uses (batch 2).** Grid convergence: WENO5 and WENO5M both
+converge at about 5/6 order in $L_1$ for density, WENO5M with about 10 %
+smaller errors, to $\Delta x = 1/102400$ ([Henrick et al. (2005)](/sources/henrick-2005.md),
+Table 9) — the convergence rate of captured contacts.
+[Borges et al. (2008)](/sources/borges-2008.md);
+[Martín et al. (2006)](/sources/martin-2006.md) (a pressure-ratio-2 tube:
+at $r = 4$, WENO-JS $q = 1$ and SYMOO show dispersive density errors);
+[Hu, Wang & Adams (2010)](/sources/hu-2010.md); [Fu, Hu & Adams (2016)](/sources/fu-2016.md);
+[Rathan & Naga Raju (2017)](/sources/rathan-2017.md) (a modified Sod).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -49,3 +59,9 @@ an easier test than [Lax's](/benchmarks/lax-shock-tube.md)
 5. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §4.2.
 6. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Test 5.
 7. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.b.
+8. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §5.7.
+9. [Borges et al. (2008)](/sources/borges-2008.md), §5.2.1.
+10. [Martín et al. (2006)](/sources/martin-2006.md), §5.2.
+11. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.2.
+12. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.2.
+13. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 5.

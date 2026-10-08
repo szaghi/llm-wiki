@@ -129,3 +129,25 @@ Added 2026-10-08 (batch 1: harten-1987, shu-1988, shu-1989, shu-1998).
 | $\mathcal{D}^{\mathrm{M4}}_{i+1/2}$ | interface curvature $\operatorname{minmod}(4\delta^2\bar u_i - \delta^2\bar u_{i+1}, 4\delta^2\bar u_{i+1} - \delta^2\bar u_i, \delta^2\bar u_i, \delta^2\bar u_{i+1})$ |
 | $\Delta u_i$, $u_{6,i}$ | PPM parabola in cell $I_i$: jump $u^-_{i+1/2} - u^+_{i-1/2}$ and curvature coefficient $6\left(\bar u_i - \tfrac12(u^+_{i-1/2} + u^-_{i+1/2})\right)$ |
 | $\phi_i$ | PPM flattening coefficient, $0 \le \phi_i \le 1$ (1 = fully flattened to $\bar u_i$) |
+
+## Weight families after WENO-JS
+
+Added 2026-10-08 (batch 2: henrick-2005, borges-2008, castro-2011, hu-2010, fu-2016, balsara-2016, zhu-2016, rathan-2017, pirozzoli-2002, martin-2006).
+
+| Symbol | Meaning |
+|---|---|
+| $n_{\mathrm{cp}}$ | order of a critical point: $f' = \dots = f^{(n_{\mathrm{cp}})} = 0$, $f^{(n_{\mathrm{cp}}+1)} \neq 0$ ($n_{\mathrm{cp}} = 0$: no critical point) |
+| $g_k(\omega)$ | Henrick mapping of a weight toward $d_k$ |
+| $\tau_{2r-1}$, $\tau_6$ | global (reference) smoothness indicators built from several $\beta_k$ on the whole stencil; $\tau$ when the variant is clear from context |
+| $C_w$ | additive constant in weights of the form $\left(C_w + \tau/(\beta_k + \varepsilon)\right)^q$ (WENO-CU6, TENO); $C_w = 1$ with $q = 1$ is WENO-Z |
+| $\gamma_k$ | TENO per-stencil smoothness measure $\left(C_w + \tau_K/(\beta_k + \varepsilon)\right)^q$ before normalization (subscripted; distinct from the ratio of specific heats $\gamma$) |
+| $\chi_k$, $\delta_k$, $C_T$ | TENO normalized smoothness measure, its 0/1 cutoff, and the cutoff threshold |
+| $\gamma_{\mathrm{Hi}}$, $\gamma_{\mathrm{Lo}}$ | WENO-AO parameters setting the linear weights of the large central stencil and of the central small stencil |
+| $\vartheta$ | threshold of a hybrid scheme's switch to the capturing scheme |
+
+## Spectral analysis
+
+| Symbol | Meaning |
+|---|---|
+| $\xi$ | scaled wavenumber $k h$, $0 \le \xi \le \pi$ |
+| $\tilde\xi(\xi)$ | modified wavenumber of a scheme for $\partial_x$; $\operatorname{Re}\tilde\xi$ measures dispersion, $\operatorname{Im}\tilde\xi$ dissipation (negative for a dissipative upwind scheme on right-running waves) |

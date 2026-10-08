@@ -11,7 +11,7 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 10 sources compiled**: 10 published works, three of them read
+**Corpus: 20 sources compiled**: 20 published works, four of them read
 in a report or preprint version (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
@@ -37,18 +37,29 @@ for every page.
    (orders $r+1$, then $2r-1$, then up to 13), governed by the
    [smoothness indicator](/definitions/smoothness-indicator.md);
    a centred, Riemann-free variant: [central WENO](/methods/central-weno.md).
-4. **Limiting instead of adapting.** [PPM](/methods/ppm.md) and the
+   The conditions any weights must meet are collected in
+   [WENO weight accuracy conditions](/results/weno-weight-accuracy-conditions.md).
+4. **The family after WENO-JS.** Restoring order and lowering dissipation:
+   [mapped WENO](/methods/mapped-weno.md), [WENO-Z](/methods/weno-z.md),
+   [central-upwind WENO](/methods/central-upwind-weno.md),
+   [targeted ENO](/methods/teno.md), and the adaptive-order
+   [WENO-AO / WENO-ZQ](/methods/weno-ao.md) (open `Contradictions` entry on
+   WENO-ZQ's non-oscillation claim). Resolving turbulence:
+   [bandwidth-optimized WENO](/methods/bandwidth-optimized-weno.md),
+   [hybrid compact-WENO](/methods/hybrid-compact-weno.md), measured by the
+   [modified wavenumber](/definitions/modified-wavenumber.md).
+5. **Limiting instead of adapting.** [PPM](/methods/ppm.md) and the
    [monotonicity-preserving bounds](/methods/monotonicity-preserving-limiter.md)
-   of MP5/MPWENO — with an open `Contradictions` entry on whether they keep
-   the order at flat extrema.
-5. **Where order is lost.** [Accuracy at critical points](/properties/accuracy-at-critical-points.md)
-   collects every family's claim; WENO-JS's critical-point claim is
-   recorded as stated.
-6. **Making it work on systems and in time.**
+   of MP5/MPWENO — the flat-extremum dispute closed by human fiat in
+   favour of Balsara–Shu.
+6. **Where order is lost.** [Accuracy at critical points](/properties/accuracy-at-critical-points.md)
+   collects every family's claim; Henrick et al. supersede WENO-JS's
+   critical-point claim (closed `Contradictions` entry).
+7. **Making it work on systems and in time.**
    [Local characteristic decomposition](/methods/characteristic-decomposition.md),
    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), and
    [contact sharpening](/methods/contact-sharpening.md).
-7. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+8. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
    [interacting blast waves](/benchmarks/interacting-blast-waves.md),

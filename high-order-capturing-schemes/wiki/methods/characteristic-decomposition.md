@@ -73,6 +73,16 @@ states for the Riemann problem ([PPM](/methods/ppm.md)).
   components per characteristic field and choose the building block per
   field (LLF for linearly degenerate, RF for genuinely nonlinear).
 
+**Later uses (batch 2).** Roe-averaged characteristic decomposition with
+Lax–Friedrichs (global or per-field) splitting is the default of the
+batch-2 schemes ([Borges et al. (2008)](/sources/borges-2008.md);
+[Hu, Wang & Adams (2010)](/sources/hu-2010.md); [Fu, Hu & Adams (2016)](/sources/fu-2016.md);
+[Zhu & Qiu (2016)](/sources/zhu-2016.md); [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)).
+[Pirozzoli (2002)](/sources/pirozzoli-2002.md) computes the hybrid switch
+and the WENO indicators from density only, and compares per-field and
+global Lax–Friedrichs splittings (the global one 15 % cheaper, more
+dissipative).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -83,3 +93,6 @@ states for the Riemann problem ([PPM](/methods/ppm.md)).
 6. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §5.2.
 7. [Balsara & Shu (2000)](/sources/balsara-2000.md), §II.
 8. [Colella & Woodward (1984)](/sources/colella-1984.md), §3.
+9. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §4.
+10. [Borges et al. (2008)](/sources/borges-2008.md), §5.2.
+11. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.

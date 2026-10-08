@@ -91,6 +91,18 @@ Fig. 4.1).
   with natural continuous extensions to supply the time quadrature of
   a staggered central scheme ([central WENO](/methods/central-weno.md)).
 
+**Later uses (batch 2).** RK3 is the default time stepping of every
+batch-2 scheme; to measure spatial order, time steps are shrunk
+($\Delta t \propto \Delta x^{5/3}$ in [Henrick et al. (2005)](/sources/henrick-2005.md);
+reduced, grid-dependent steps also in [Borges et al. (2008)](/sources/borges-2008.md)
+and [Castro et al. (2011)](/sources/castro-2011.md), whose exact scalings
+are not legible in the copies read). Seventh-order tests use
+an $m$-stage linear SSP method for linear problems and the five-stage
+fourth-order SSP(5,4) for nonlinear ones ([Rathan & Naga Raju (2017)](/sources/rathan-2017.md));
+WENO-AO cites the Spiteri–Ruuth SSP methods ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md));
+[Pirozzoli (2002)](/sources/pirozzoli-2002.md) uses non-TVD RK4 and a
+von Neumann analysis of the full discretization.
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -101,3 +113,9 @@ Fig. 4.1).
 6. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §§1–2.
 7. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I, IV.
 8. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §2.1.
+9. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §5.3.
+10. [Borges et al. (2008)](/sources/borges-2008.md), §5.
+11. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.
+12. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §4.
+13. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.
+14. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §2.3.

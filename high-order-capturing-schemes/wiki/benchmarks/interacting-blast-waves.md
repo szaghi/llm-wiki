@@ -41,6 +41,17 @@ final time $t = 0.038$.
   ([Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.b; the text
   names $r = 5$, the figure caption $r = 6$).
 
+**Later uses (batch 2).** WENO5M resolves the three contacts near
+$x = 0.595, 0.765, 0.799$ better than WENO5 ([Henrick et al. (2005)](/sources/henrick-2005.md));
+WENO-Z sharper than WENO-M at $x \approx 0.78$ and $0.86$
+([Borges et al. (2008)](/sources/borges-2008.md)); WENO-CU6 improves the
+valley at $0.75$ and the peak at $0.78$ with a slight overshoot at 400
+points ([Hu, Wang & Adams (2010)](/sources/hu-2010.md)); TENO5/6 free of
+the velocity overshoots of WENO-JS, WENO-Z and WENO-CU6, and WENO-CU6-M
+fails ([Fu, Hu & Adams (2016)](/sources/fu-2016.md)); WENO-ZQ at 800
+points ([Zhu & Qiu (2016)](/sources/zhu-2016.md)); WENO-AO(5,3) at 400
+zones close to a 1000-zone result ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -48,3 +59,9 @@ final time $t = 0.038$.
 3. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.2 Example 3.
 4. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Test 8.
 5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VI.b, Fig. 2.
+6. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §5.5.
+7. [Borges et al. (2008)](/sources/borges-2008.md), §5.2.3.
+8. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.3.
+9. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.3.
+10. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.7.
+11. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.3.

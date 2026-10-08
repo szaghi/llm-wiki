@@ -34,8 +34,25 @@ shown ([Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3;
   the wall; using LLF near shocks removes it without loss of order
   ([Balsara & Shu (2000)](/sources/balsara-2000.md)).
 
+**Later uses (batch 2).** WENO-Z of orders 5, 9, 11 at up to
+$1600 \times 400$ (higher order compensates resolution; $q \le 2$
+unstable for WENO-M at $r > 3$ and WENO-Z at $r > 4$)
+([Castro et al. (2011)](/sources/castro-2011.md)); WENO-CU6 at
+$480 \times 120$ resolves vortical structure comparable to WENO5 at
+twice the resolution ([Hu, Wang & Adams (2010)](/sources/hu-2010.md));
+TENO6 at an effective $1024 \times 256$ comparable to ninth-order WENO-JS
+at $1/960$, WENO-CU6-M fails ([Fu, Hu & Adams (2016)](/sources/fu-2016.md));
+WENO-ZQ at $1600 \times 400$ ([Zhu & Qiu (2016)](/sources/zhu-2016.md));
+WENO-AO(7,5,3) at $1600 \times 400$ resolves the Kelvin–Helmholtz
+roll-up of the Mach-stem slip line ([Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
 2. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §4.3 Example 2.
 3. [Balsara & Shu (2000)](/sources/balsara-2000.md), §VII.b.
+4. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.5.
+5. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.7.
+6. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §5.5.
+7. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.8.
+8. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.5.
