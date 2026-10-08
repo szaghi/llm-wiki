@@ -91,6 +91,16 @@ staggered face/edge storage at the seam, with discrete Stokes telescoping
   grids and defer AMR to future work. In this corpus no published
   collocated scheme with exact divergence has been run across a 2:1 seam.
   This result therefore stands on the record alone.
+* **The grid-oscillation modes are characterised.** The record attributes
+  the seam growth to grid-oscillation modes and filters them with the
+  projection of
+  [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md) (their eq. 55). That paper
+  identifies them as the kernel of $\mathsf{D}_1^*$
+  ([notation](/notation.md)): discretely solenoidal, yet not curls, on
+  collocated tensor-product grids. *Compiler reading:* the same modes are
+  invisible to the interior identity
+  $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$, which is consistent with a seam source
+  that grows in them while the interior divergence stays at round-off.
 
 ## Revisions in the record
 
@@ -115,3 +125,4 @@ staggered face/edge storage at the seam, with discrete Stokes telescoping
 2. [Tóth & Roe (2002)](/sources/toth-roe-2002.md): the cell-collocated locality assertion this result bears on.
 3. [Mattsson & Carpenter (2010)](/sources/mattsson-carpenter-2010.md): the SBP interface framework whose absence explains the matched-operator instability.
 4. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§3, 6, 8.
+5. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), §§3.1, 3.7.

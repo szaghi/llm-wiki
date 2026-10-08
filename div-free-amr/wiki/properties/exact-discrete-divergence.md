@@ -100,7 +100,11 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   fourth-order central curl of a collocated potential, and the
   commutativity of the central differences gives $D_h^{\mathrm{c}} B_h = 0$
   (their eqs. 6.2, 6.8). The second-order versions are those of Tóth and
-  Rossmanith. Zaghi's record
+  Rossmanith. For tensor-product SBP operators the identity holds through
+  the boundary closures too. The kernel of $D_h^{\mathrm{c}}$ is, however,
+  larger than the image of $C_h^{\mathrm{c}}$ by grid-oscillation modes
+  ([Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md);
+  [exactness theorems](/results/discrete-exactness-theorems.md)). Zaghi's record
   measures $2\cdot10^{-19}$, and exactly 0.0 on a source-free pulse. The
   identity rests on derivatives commuting on a tensor-product grid. A 2:1
   refinement seam breaks that commutation, so the invariant drops to a
@@ -153,3 +157,4 @@ class is not a numerical nicety but a physics-level decision.
 10. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II, III.b.
 11. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §6.
 12. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.3, 4.5.
+13. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.8, 3.19.

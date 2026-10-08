@@ -1,10 +1,10 @@
 ---
 type: Result
 title: "Discrete exactness theorems"
-description: "On logically rectangular grids the natural discrete operators satisfy the vector-analysis theorems with converses: solenoidal iff a discrete curl, irrotational iff a discrete gradient."
+description: "On logically rectangular grids the natural staggered discrete operators satisfy the vector-analysis theorems with converses (solenoidal iff a discrete curl); collocated tensor-product SBP operators keep the identities but lose the converses by grid-oscillation modes."
 status: established
 tags: [mimetic, exactness, discrete-vector-analysis, divergence-constraint]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Discrete exactness theorems
@@ -72,8 +72,40 @@ homotopy operator ([Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md)
 (mimetic FD, Whitney FE, DEC), each with its own scope and proof
 technique.
 
+## The collocated SBP failure
+
+The converses are a property of the *staggered* complex. For **collocated
+tensor-product SBP operators** they fail, and the failure is
+characterised exactly ([Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)).
+* **The identities hold.** The 1D derivatives commute, so
+  $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ and $C_h^{\mathrm{c}} G_h = 0$
+  ([notation](/notation.md)). This holds on the whole grid, including the
+  SBP boundary closures.
+* **The converses fail.** Take a nullspace-consistent $\mathsf{D}_1$. The
+  kernel of $\mathsf{D}_1^*$ is one-dimensional, spanned by a 1D
+  grid-oscillation mode (alternating $\pm1$ in the interior).
+  * In 3D,
+    $\ker D_h^{\mathrm{c}} = \operatorname{im} C_h^{\mathrm{c}} \oplus \mathrm{span}$
+    of three fields, each a product of oscillation modes in two directions
+    placed in the remaining component.
+  * $\ker C_h^{\mathrm{c}} = \operatorname{im} G_h \oplus$ three
+    single-direction oscillation fields.
+  * In 2D there are two extra modes in each case.
+  * So a discretely solenoidal field need not be a discrete curl.
+* **The discrete Helmholtz–Hodge decomposition leaves a remainder.** Fields
+  carrying the all-direction oscillation mode (a product over every
+  direction) lie outside
+  $\operatorname{im} G_h + \operatorname{im} C_h^{\mathrm{c}}$, and a divergence-free
+  vector potential cannot always be chosen.
+* **The defect is spectral, not topological.** In the staggered and FE
+  complexes the gap between kernel and image is cohomology, set by Betti
+  numbers. Here it is a finite set of unresolved grid modes on a
+  contractible box. An $\mathsf{H}$-orthogonal filter removes them, and on
+  smooth data the remainder converges away at the expected order.
+
 # Citations
 
 1. [Hyman & Shashkov (1997)](/sources/hyman-shashkov-1997.md), §§4–5, conclusions.
 2. [Hiptmair (2002)](/sources/hiptmair-2002.md), §3.
 3. [Desbrun et al. (2005)](/sources/desbrun-hirani-2005.md), §11.
+4. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.7–3.8, 3.18–3.20, 5.1, 5.6.

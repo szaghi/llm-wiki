@@ -3,6 +3,7 @@
 One page per ingested source, with verified metadata, a notation map, and an
 audit list of pages touched.
 
+* [Ranocha, Ostaszewski & Heinisch (2020) — Discrete vector calculus and Helmholtz Hodge decomposition for classical FD SBP operators](/sources/ranocha-2020.md) — For collocated tensor-product SBP operators, div curl = 0 and curl grad = 0 hold exactly, but the potential-existence converses and the Helmholtz-Hodge decomposition fail by explicitly characterised grid-oscillation modes, removable by an orthogonal filter.
 * [Shashkov (1996) — Conservative finite-difference methods on general grids](/sources/shashkov-1996.md) — The support-operator monograph: systematic construction of conservative FD methods on general (distorted, non-orthogonal) grids, with accompanying software.
 * [Bossavit (1998) — Computational electromagnetism: variational formulations, complementarity, edge elements](/sources/bossavit-1998.md) — The canonical edge-element book: variational computational EM built on Whitney elements, with complementarity (dual formulations giving two-sided bounds) as an organizing principle.
 * [Harlow & Welch (1965) — Numerical calculation of time-dependent viscous incompressible flow with free surface](/sources/harlow-welch-1965.md) — Introduces the MAC method: the original staggered grid and pressure-Poisson enforcement of a face-difference discrete divergence of velocity.

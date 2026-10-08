@@ -2,6 +2,32 @@
 
 ## 2026-10-08
 
+* **Ingested [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)**,
+  source 11 of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2020-CAMC-Ranocha-101007s42967-019-00057-2.pdf`;
+    venue verified on Crossref.
+  * **Registry:** $\mathsf{D}_1^*$, the SBP adjoint whose kernel holds the
+    grid-oscillation mode, was added to [notation](/notation.md).
+  * **Updated** six pages:
+    * [exactness theorems](/results/discrete-exactness-theorems.md): a new
+      section on the collocated SBP failure. The description now scopes the
+      converses to staggered operators, and the index line follows;
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md);
+    * [vector-potential evolution](/methods/vector-potential-evolution.md):
+      the converse is a staggered-complex property;
+    * [collocated seam source](/results/collocated-seam-divergence-source.md):
+      the grid-oscillation modes are characterised, with a compiler
+      reading marked as such;
+    * [SBP](/definitions/summation-by-parts.md): nullspace consistency.
+  * **Bibliography:** 60 references; the record goes from 2809 to 2845.
+    * 24 existing entries gained the citer, and 36 works are new.
+    * The cited-only `ranocha-2019` (cited by zaghi-2026 for Remark 2.8 and
+      eq. 55, both matched in this paper) was folded into `ranocha-2020`.
+    * The tech-report entries `linders-2017` and `mattsson-2013-b` gained
+      notes recording their published versions, which are the ones cited
+      here.
+
 * **Ingested [Wu & Shu (2019)](/sources/wu-shu-2019.md)**, source 10 of 16.
   * **Corpus:** the arXiv v1 preprint was moved to
     `~/papers/mosaic/div-free-amr/2019-NumerMath-Wu-101007s00211-019-01042-w.pdf`;

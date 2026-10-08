@@ -2,7 +2,7 @@
 
 Theorems, proved properties, impossibility results.
 
-* [Discrete exactness theorems](/results/discrete-exactness-theorems.md) — On logically rectangular grids the natural discrete operators satisfy the vector-analysis theorems with converses: solenoidal iff a discrete curl, irrotational iff a discrete gradient.
+* [Discrete exactness theorems](/results/discrete-exactness-theorems.md) — On logically rectangular grids the natural staggered discrete operators satisfy the vector-analysis theorems with converses (solenoidal iff a discrete curl); collocated tensor-product SBP operators keep the identities but lose the converses by grid-oscillation modes.
 * [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md) — The Godunov CT variants are algebraically identical to pure finite-volume schemes on the cell-centered field, which conserve a corner-centered divergence exactly.
 * [Conservation–orthogonality incompatibility](/results/conservation-orthogonality-incompatibility.md) — No conservative scheme can guarantee the discrete Lorentz acceleration is exactly orthogonal to the magnetic field in every cell; proved by counterexample.
 * [MFD convergence on polyhedral meshes](/results/mfd-convergence.md) — The mixed-form mimetic finite difference method is stable and converges at optimal rates for scalar and flux variables on general polyhedral meshes, including degenerate elements.

@@ -5,7 +5,7 @@ description: "Difference operators mimicking integration by parts in a discrete 
 status: established
 aliases: [SBP]
 tags: [sbp, energy-method, high-order, boundary-closure]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Summation by parts (SBP)
@@ -68,6 +68,19 @@ energy estimate; minimal-width forms match the first-derivative stencil,
 and boundary closures two orders below the interior preserve the design
 order ([Mattsson & Nordström (2004)](/sources/mattsson-nordstrom-2004.md)).
 
+## Nullspace consistency and grid oscillations
+
+An SBP derivative is **nullspace consistent** when
+$\ker\mathsf{D}_1 = \mathrm{span}\{1\}$: only constants are annihilated.
+Its $\mathsf{H}$-adjoint $\mathsf{D}_1^*$ ([notation](/notation.md)) then
+has a one-dimensional kernel, spanned by a **grid-oscillation mode** that
+alternates $\pm1$ in the interior, with boundary values set by the
+closure. These modes are orthogonal to everything $\mathsf{D}_1$ can
+produce. In tensor-product form they are exactly what separates the
+kernels from the images in collocated discrete vector calculus
+([exactness theorems](/results/discrete-exactness-theorems.md);
+[Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)).
+
 # Citations
 
 1. [Strand (1994)](/sources/strand-1994.md), §1–2.
@@ -92,3 +105,4 @@ treatments.
 
 5. [Wang & Kreiss (2017)](/sources/wang-kreiss-2017.md), §§1, 3–4.
 6. [Wang, Nissen & Kreiss (2017)](/sources/wang-nissen-kreiss-2017.md), §§1–2.
+7. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), §§2–3.1.

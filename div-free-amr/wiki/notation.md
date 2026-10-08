@@ -102,6 +102,7 @@ registry uses sans-serif for SBP matrices:
 | $\mathsf{Q}$ | almost-skew-symmetric part: $\mathsf{Q} + \mathsf{Q}^T = \mathsf{B}$ (boundary terms) |
 | $\mathsf{D}_1 = \mathsf{H}^{-1}\mathsf{Q}$ | SBP first-derivative operator |
 | $\mathsf{D}_2 = \mathsf{H}^{-1}(A + \mathsf{B}S)$ | SBP second-derivative operator, $A + A^T \le 0$ (added at deep lint #2) |
+| $\mathsf{D}_1^* = \mathsf{H}^{-1}\mathsf{D}_1^{T}\mathsf{H}$ | $\mathsf{H}$-adjoint of $\mathsf{D}_1$; for a nullspace-consistent $\mathsf{D}_1$ ($\ker\mathsf{D}_1 = \mathrm{span}\{1\}$) its kernel is one-dimensional, spanned by the **grid-oscillation mode** (added 2026-10-08, ranocha-2020) |
 
 ## Fields
 

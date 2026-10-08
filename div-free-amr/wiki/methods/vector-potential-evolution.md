@@ -29,7 +29,12 @@ the potential-level parametrization.
   ([$P_D$](/operators/divergence-free-prolongation.md),
   [locality limits](/results/transfer-operator-locality-limits.md)) is
   dissolved rather than solved, by the exactness converse: every
-  solenoidal field is a curl, so transfer the preimage.
+  solenoidal field is a curl, so transfer the preimage. *The converse is a
+  staggered-complex property.* On collocated tensor-product SBP grids,
+  grid-oscillation modes are discretely solenoidal without being curls
+  ([Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)). A collocated field
+  carrying them has no potential to transfer, although potential-evolved
+  fields never contain them.
 * **The historical costs return**: evolving $A$ was the *original* CT-era
   alternative, and [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   rejected it on uniform grids because the Lorentz force needs *second*
@@ -94,3 +99,4 @@ interfaces (EMF corrections, $P_D$); the potential route holds it by
 3. [Etienne et al. (2012)](/sources/etienne-2012.md), §§I–III, V.
 4. [Etienne et al. (2015)](/sources/etienne-2015.md) — production form: damped generalized Lorenz gauge $\nabla_\mu A^\mu = \xi n_\mu A^\mu$ (transport *and* damping for the gauge sector, mirroring GLM's design).
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§2–6.
+6. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Theorems 3.8, 3.19.
