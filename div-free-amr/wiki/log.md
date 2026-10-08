@@ -2,6 +2,25 @@
 
 ## 2026-10-08
 
+* **Ingested [Seo & Ryu (2023)](/sources/seo-2023.md)**, re-downloaded source
+  4 of 7.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2023-ApJ-Seo-1038471538-4357acdf4b.pdf`.
+  * **Updated** three pages:
+    * [constrained transport](/methods/constrained-transport.md): the
+      high-order staggered FD CT. A compiler reading notes that its
+      commuting one-axis differences imply an identity-level invariant,
+      while the paper words it as "up to truncation error"; the text does
+      not settle which.
+    * [field loop](/benchmarks/field-loop-advection.md);
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      turbulence spectra are independent of the CT order.
+  * **Bibliography:** 71 references; the record goes from 3013 to 3042.
+    * 43 existing entries gained the citer; 28 works are new, plus the self
+      entry.
+    * The CANS+ PASJ 2019 citation maps to `matsumoto-2016`, which already
+      notes that publication.
+
 * **Ingested [Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md)**,
   re-downloaded source 3 of 7.
   * **Corpus:** the PDF was moved to

@@ -88,6 +88,29 @@ inversion's precision ($10^{-7}$–$10^{-6}$ maxima at third order)
 Appendix A). High-order CT on point values therefore holds the invariant on
 a variable that the fluxes never see directly.
 
+**A second-order CT step caps a high-order code.** With fifth-order
+finite-difference WENO fluxes, the second-order CT of Ryu et al. (1998)
+gives second-order convergence on 3D linear and circularly polarized
+Alfvén waves. [Seo & Ryu (2023)](/sources/seo-2023.md) restore fifth order with a high-order staggered CT:
+* the edge "advective fluxes" ($E_h$) are assembled from WENO-reconstructed
+  magnetic fluxes, interpolated to edges at fourth order, and corrected to
+  edge point values;
+* faces are updated by fourth- or sixth-order central differences of those
+  edge values (CT4, CT6);
+* the cell-centred field is a sixth-order interpolation of the faces.
+
+Both CT4 and CT6 converge at fifth order, at almost the same cost as the
+second-order step. The paper states that the divergence is preserved "up
+to the numerical truncation error"; its rotor diagnostic saturates there.
+*Compiler reading:* each face update is a difference, along one axis, of
+a single-valued edge array, and the divergence is evaluated with the
+matching one-axis differences. Differences along different axes commute on
+a tensor-product grid, so the update preserves that divergence identically,
+as in [exact discrete divergence](/properties/exact-discrete-divergence.md).
+The paper's "truncation" wording therefore probably refers to the
+saturation level of its diagnostic rather than to a defect of the identity;
+the text alone does not settle it.
+
 ## Shock-capturing combinations and the collocated recast
 
 CT as introduced is a finite-difference discretization; it was subsequently
@@ -139,3 +162,4 @@ reduces exactly to its 1D form for grid-aligned flow.
 6. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.3, Appendix A.
 7. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§1, 3, 6.
 8. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4, 8.
+9. [Seo & Ryu (2023)](/sources/seo-2023.md), §§1, 2.3, 3.1–3.2, 3.6.

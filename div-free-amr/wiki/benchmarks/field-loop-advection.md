@@ -90,6 +90,16 @@ period".
   * In a scheme without an exact invariant the test therefore reads the
     seam as one more truncation source, not as a distinct defect.
 
+**High-order FD-WENO with high-order CT** ([Seo & Ryu (2023)](/sources/seo-2023.md)). In 2D, with the
+loop crossing the domain 20 times at $256\times128$, the CT order is
+visible. The second-order CT distorts the loop, while CT4 and CT6 keep it
+circular. At $t = 20$ and $N = 128$, about 96% of the magnetic energy is
+retained with the high-order CT, against about 95% with the second-order
+one, with a larger gap at coarser grids. A nearly grid-aligned loop
+($\tan\theta = 1/100$) shows few-percent oscillations along $y$ that do not
+grow. In 3D the tilted cylindrical loop erodes at its core and rim with the
+second-order CT only.
+
 The test's virtue is that it is *trivial physics with unforgiving
 algebra*: any constraint-consistent error channel — wrong stencil, biased
 EMF, transfer-operator leakage — shows up as structure the exact solution
@@ -107,3 +117,4 @@ forbids.
 8. [Felker & Stone (2018)](/sources/felker-2018.md), §5.3, Figs. 12–14.
 9. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §6.1, Figs. 2–7.
 10. [Berta et al. (2024)](/sources/berta-2024.md), §5.4, Figs. 6–7.
+11. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.3, Figs. 4–7.

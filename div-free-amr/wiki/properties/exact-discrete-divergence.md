@@ -170,6 +170,10 @@ one regime where none appear. Nor does it contradict
 [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), whose spurious
 turbulence statistics came from elliptic projection, a cleaning method
 this comparison does not test.
+Within CT the same holds for the order of the constraint step: in driven
+ISM- and ICM-like turbulence, fifth-order WENO runs with sixth-, fourth-
+and second-order CT give identical spectra. The upwind scheme's order is
+what extends them, compared with a second-order TVD code ([Seo & Ryu (2023)](/sources/seo-2023.md)).
 
 # Citations
 
@@ -192,3 +196,4 @@ this comparison does not test.
 14. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4.1–4.2, 7.9.
 15. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§6.2, 7 (preprint).
 16. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §1.
+17. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.9.
