@@ -36,6 +36,12 @@ period".
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), where the
   test motivates the divergence-balanced PPM source terms —
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
+* **Fourth-order CT in 3D** ([Felker & Stone (2018)](/sources/felker-2018.md)). The loop
+  is advected along the space diagonal with $v = (2,1,2)$, on a $[-1,1]\times[-0.5,0.5]\times[-1,1]$ box with $N = 64$ cells across $x_2$.
+  * $B_z$ stays below machine epsilon for two periods.
+  * Loop edges are resolved in 4 cells, against 6–8 at second order.
+  * The second-order scheme opens a larger reconnection hole and
+    overshoots the peak by about 20%, against about 8% at fourth order.
 * **EMF-assembly dissipation**: magnetic-energy decay differentiates
   Riemann-solver and EMF-averaging choices
   ([Fromang et al. (2006)](/sources/fromang-2006.md), Roe vs
@@ -81,3 +87,4 @@ forbids.
 5. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-9, "MHD on weno-riemann" table); captured field-loop div(B) histories.
 6. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§3.1, 3.3.1, 5.1.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §4.4, Figs. A.8–A.11.
+8. [Felker & Stone (2018)](/sources/felker-2018.md), §5.3, Figs. 12–14.

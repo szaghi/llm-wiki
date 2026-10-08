@@ -2,6 +2,31 @@
 
 ## 2026-10-08
 
+* **Ingested [Felker & Stone (2018)](/sources/felker-2018.md)**, source 7
+  of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2018-JCP-Felker-101016jjcp201808025.pdf`.
+    The DOI was found by a Crossref title search, which also verified
+    volume and pages.
+  * **Updated** three pages:
+    * [UCT](/methods/upwind-constrained-transport.md): the fourth-order FV
+      realization, and the Appendix-A relation to $\mathcal{E}^c$. The
+      limiting-case agreement at second order complements GS05's
+      first-order identity with $\mathcal{E}^\circ$. It is scoped, not a
+      contradiction;
+    * [flux-CT](/methods/flux-ct.md): the structural second-order ceiling
+      of $\mathcal{E}^c$;
+    * [field loop](/benchmarks/field-loop-advection.md): the 3D
+      fourth-order run with $B_z$ below machine epsilon.
+  * **Bibliography:** 64 references; the record goes from 2753 to 2769.
+    * 48 existing entries gained the citer, and 16 works are new.
+    * The pre-existing cited-only `felker-2018` (cited by stone-2020) was
+      upgraded in place.
+    * Placeholder titles were filled for 13 existing entries, including
+      `mccorquodale-colella-2011`, `stone-2009`, `delzanna-2007` and
+      `miyoshi-2005`. DOIs printed in this list were added where entries
+      lacked them.
+
 * **Ingested [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md)**,
   source 6 of 16.
   * **Corpus:** the arXiv v2 preprint was moved to

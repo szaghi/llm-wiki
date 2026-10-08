@@ -5,7 +5,7 @@ description: "Constrained transport driven by a shock-capturing base scheme: cor
 status: established
 aliases: [flux-interpolated CT, field-interpolated CT, transport-flux-CT]
 tags: [constrained-transport, godunov, shock-capturing]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Flux-CT and the Godunov CT variants
@@ -71,6 +71,19 @@ the coupling exact and the defect measurable.
     of the Riemann solver: the choice carried into the 3D
     [Athena scheme](/sources/gardiner-stone-2008.md).
 
+**The second-order ceiling of $\mathcal{E}^c$**
+([Felker & Stone (2018)](/sources/felker-2018.md) §4). Three of the four limits are
+replaceable: the second-order Taylor estimate of the corner EMF, the
+midpoint face EMFs, and the face-average definition of the cell field. The
+fourth is structural. The upwinded slopes difference a 1D Riemann flux
+against a cell-centered reference $E$, so only a dimensionally split
+approximation of the corner Riemann fan is captured, and that difference
+caps the order at two. A fourth-order CT therefore has to change
+construction, to [upwind CT](/methods/upwind-constrained-transport.md),
+rather than raise the order of $\mathcal{E}^c$. The authors also note that
+later literature has misidentified $\mathcal{E}^\circ$ as the final GS05
+scheme.
+
 **The monopole objection.**
 [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.4
 argue that a second weakness sits outside the EMF. These variants evolve
@@ -94,3 +107,4 @@ puts the staggered components into every flux.
 2. [Balsara (2004)](/sources/balsara-2004.md), §2.
 3. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2.1, 2.4, Table 3.
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§2.3, 3.2, 3.3.
+5. [Felker & Stone (2018)](/sources/felker-2018.md), §4, Appendix A.

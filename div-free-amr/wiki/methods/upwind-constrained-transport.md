@@ -65,6 +65,37 @@ consistent with that invariant**:
   precision ($10^{-7}$–$10^{-6}$ maxima at third order). The alternative is
   to evolve the point-value vector potential and take its two-point curl
   ([vector-potential evolution](/methods/vector-potential-evolution.md)).
+* **Fourth-order finite-volume realization**
+  ([Felker & Stone (2018)](/sources/felker-2018.md)). The base scheme is the
+  McCorquodale–Colella fourth-order FV method: PPM4 reconstruction,
+  average↔point conversions by transverse Laplacians, and an SSP-RK4
+  integrator. UCT is carried at the same order:
+  * the face averages of $B_h$ are never reconstructed; the cell averages
+    the fluid needs are recovered from them by an unlimited fourth-order
+    "inverse reconstruction";
+  * the four corner states of $E_h$ come from PPM4 transverse
+    reconstruction of the face Riemann states of $v$ and $B$;
+  * a single-valued corner EMF is selected by the HLL four-state formula,
+    with Einfeldt wavespeeds taken from the four adjacent face solves.
+  
+  On smooth problems the measured order is four; at $128\times64$ the
+  error is nearly four orders of magnitude below that of second-order
+  $\mathcal{E}^c$. In 3D the invariant is held to round-off
+  ([field loop](/benchmarks/field-loop-advection.md)). AMR is future work
+  and needs fourth-order prolongation and restriction operators.
+* **Relation to $\mathcal{E}^c$**
+  ([Felker & Stone (2018)](/sources/felker-2018.md), Appendix A). In two limiting cases, the
+  HLL-UCT corner EMF built from second-order reconstruction agrees to second
+  order with the $\mathcal{E}^c$ algorithm of Gardiner & Stone:
+  * a stationary domain, where $\mathcal{E}^c$ reduces to the unbiased
+    average with correct viscosity;
+  * supersonic grid-aligned flow, which additionally requires identical
+    Riemann states of $B_2$.
+  
+  In general the two cannot match exactly. Combined with Gardiner & Stone's
+  own first-order identity with $\mathcal{E}^\circ$, this places the
+  Athena EMF family inside second-order UCT. The equivalence is proved only
+  for these cases.
 * **Same construction for SR and GR MHD**, per the authors. They also claim
   a natural extension to AMR and unstructured grids; for the unstructured
   triangular counterpart they cite De Sterck's MUCT.
@@ -74,3 +105,4 @@ consistent with that invariant**:
 1. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§1.1, 2.1–2.4, 3, 4, Appendix A.
 2. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md): the original four-state EMF and staggering-from-consistency argument.
 3. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §3.2.2: the first-order equivalence with $\mathcal{E}^\circ$.
+4. [Felker & Stone (2018)](/sources/felker-2018.md), §§4–5, Appendix A.
