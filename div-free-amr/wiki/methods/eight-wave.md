@@ -89,6 +89,18 @@ precision ([Pakmor et al. (2026)](/sources/pakmor-2026.md)).
 *Compiler reading:* the flow is subsonic, so Tóth's wrong-jump failure is
 not exercised by this test.
 
+**The eigensystem without the source terms.** [Jiang & Wu (1999)](/sources/jiang-1999.md) use Powell's $8\times8$
+eigensystem only to decompose the flux for characteristic WENO
+reconstruction; they add no source terms. Its effect is a nonzero
+dissipative flux in the normal-field equation, which the $7\times7$
+system leaves at zero. Without divergence correction this delays the
+Orszag–Tang failure from $t \approx 2.5$ to $t \approx 3.9$; the authors
+report that a fourth-order diffusion added to that equation does the same.
+Neither replaces the projection they use.
+*Compiler reading:* this isolates the dissipation carried by the eighth
+characteristic field from the source terms that define the formulation.
+Only the first is present here.
+
 [GLM cleaning](/methods/glm-divergence-cleaning.md) later kept the
 advect-the-error philosophy while removing the trade: its source term sits
 only in the unphysical $\psi$ equation, leaving the physical conservation
@@ -122,3 +134,4 @@ requirement.
 6. [Wu & Shu (2018)](/sources/wu-shu-2018.md), §§1, 3, 5.
 7. [Wu & Shu (2019)](/sources/wu-shu-2019.md), §4, Proposition A.1.
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
+9. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.3, 3.4.

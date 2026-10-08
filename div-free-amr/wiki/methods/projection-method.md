@@ -5,7 +5,7 @@ description: "Removes the divergence of the updated field by solving a Poisson p
 status: established
 aliases: [Hodge projection, divergence cleaning (elliptic)]
 tags: [projection, poisson, divergence-constraint]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Projection method
@@ -58,6 +58,26 @@ realization, with the attendant interface synchronization solves, is the
   identical to the base scheme whenever $D_h^{\mathrm{c}} B_h^* = 0$ already.
 * **Top-ranked:** among the most accurate and reliable schemes across the
   ten-problem comparison (Table IX).
+
+## High-order finite-difference use
+
+[Jiang & Wu (1999)](/sources/jiang-1999.md) pair a fifth-order point-value WENO finite-difference scheme for MHD,
+with dimension-by-dimension Lax–Friedrichs flux splitting, with a Poisson
+correction of the updated field, solved by relaxation. The paper does not
+specify the discrete divergence and gradient stencils, or whether the
+correction is applied per Runge–Kutta stage.
+* **Without it the scheme fails.** Orszag–Tang on $192^2$ loses pressure
+  positivity and blows up, at $t \approx 3.9$ with Powell's $8\times8$
+  eigensystem and at $t \approx 2.5$ with the $7\times7$ one. With the
+  correction both run to $t = 8$ and agree.
+* **Without it the waves are wrong.** On a Brio–Wu shock tube rotated by
+  $45°$ on a $600^2$ grid, the uncorrected run shows spurious oscillations
+  at the slow rarefaction inside the compound wave. The corrected run
+  matches the 1D solution.
+
+This is the elliptic route to divergence control above second order, which
+[GLM](/methods/glm-divergence-cleaning.md)'s high-order finite-difference
+realization was later designed to avoid.
 
 ## Variants and the non-locality failure mode
 
@@ -115,3 +135,4 @@ sources.
 2. [Tóth (2000)](/sources/toth-2000.md), §5, §7, Table IX.
 3. [Dedner et al. (2002)](/sources/dedner-2002.md), §2.
 4. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II.a–c, III.b, Table I.
+5. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 3.4.

@@ -129,6 +129,14 @@ through the source term.
   This result adds a theorem: without a discrete divergence-free condition,
   no LF-type scheme can guarantee positive pressure, however much viscosity
   it adds.
+* **An early observation of the coupling.** A fifth-order WENO
+  finite-difference scheme with Lax–Friedrichs flux splitting loses
+  pressure positivity on Orszag–Tang without divergence control, and runs
+  stably with a projection ([Jiang & Wu (1999)](/sources/jiang-1999.md)).
+  *Compiler reading:* this is the failure the theorem predicts for LF-type
+  schemes. It is not covered by the theorem, which is proved for
+  finite-volume and DG schemes, and the projection holds a divergence on a
+  stencil the paper does not specify.
 * **The stencil matters again.** The condition is tied to the flux form the
   scheme actually uses: a collocated central divergence at first order, a
   quadrature face divergence at high order. A field held exactly
@@ -178,3 +186,4 @@ through the source term.
 5. [Ding & Wu (2024)](/sources/ding-2024.md), Theorems 2.1, 2.6–2.7, §§2.3, 4.
 6. [Berta et al. (2024)](/sources/berta-2024.md), §5.7.
 7. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §8.
+8. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4.

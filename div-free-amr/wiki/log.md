@@ -2,6 +2,28 @@
 
 ## 2026-10-08
 
+* **Ingested [Jiang & Wu (1999)](/sources/jiang-1999.md)**, re-downloaded
+  source 1 of 7.
+  * **Corpus:** the re-downloaded PDF was moved from `~/papers/re-download/`
+    to `~/papers/mosaic/div-free-amr/1999-JCP-Jiang-101006jcph19996207.pdf`.
+  * **Updated** three pages:
+    * [projection](/methods/projection-method.md): its high-order
+      finite-difference use, which is necessary for stability there;
+    * [eight-wave](/methods/eight-wave.md): the $8\times8$ eigensystem's
+      normal-field dissipation, used without source terms (compiler
+      reading);
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the early observation, with a compiler reading on why the theorem
+      does not cover it.
+  * **Bibliography:** 36 references; the record goes from 2962 to 2973.
+    * The cited-only `jiang-1999` entry was upgraded in place with its
+      DOI and pages.
+    * 25 existing entries gained the citer; 11 works are new.
+    * Titles were filled for `clarke-1986`, `harten-1987`, `liu-lax-1996`,
+      `liu-1994`, `shu-1997` and `wu-1987`.
+    * The printed AIAA 1995 Powell et al. paper (p. 661) was folded into
+      `powell-1995-b`, with a note.
+
 * **Ingested [Pakmor et al. (2026)](/sources/pakmor-2026.md)**, source 16 of 16.
   This completes the A + B ingestion list.
   * **Corpus:** the arXiv v1 preprint was moved to
