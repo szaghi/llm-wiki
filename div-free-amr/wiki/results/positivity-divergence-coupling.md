@@ -158,6 +158,15 @@ through the source term.
   [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) report the same
   limit for their exact-CT base scheme: it loses thermal-energy positivity
   in strongly shocked low-$\beta$ flows.
+* **Restoring the constraint can itself break positivity.** In
+  potential-based CT the field is overwritten by the curl of the potential
+  after each step, which changes the magnetic energy. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) keep the pressure
+  instead, adjusting the total energy, whenever their positivity limiter is
+  on. That costs exact energy conservation; the measured error stays below
+  1% except on the coarsest meshes, grows linearly in time and falls with
+  refinement. The limiter was required for the rotor, both blasts and the 3D
+  cloud–shock at $256^3$.
+  Without CT, Orszag–Tang crashes at $t = 1.67$.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -177,6 +186,30 @@ through the source term.
     the seam is a polytopal configuration that the general-mesh theorems
     formally cover. No source tests it.
 
+## Contradictions
+
+**Is the first-order LF update positivity-preserving for admissible data
+in more than one dimension?**
+
+* [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) build their limiter on this claim, conjectured by Cheng et al.
+  (2013): admissible data and CFL $\le 0.5$ give an admissible LF update.
+  They state it is unproven, verified only on random states, and that
+  their limiter assumes it.
+* [Wu (2018)](/sources/wu-2018.md), Theorem 4.1: for every CFL number and
+  every viscosity multiple there are admissible 2D data whose LF update
+  leaves $\mathcal{G}$. Wu presents this as the refutation of exactly that
+  conjecture.
+
+**Closed by explicit supersession** (Wu 2018 addresses the conjecture
+directly). The limiter therefore guarantees positivity only when its
+low-order LF update does, which by Statement 2 requires a discrete
+divergence-free condition. *Compiler reading:* Christlieb et al.'s field is
+the fourth-order central curl of the potential. It is annihilated by the
+matching fourth-order central divergence, but not by the second-order
+$D_h^{\mathrm{c}}$ that the first-order theorem uses, so the sufficient
+condition is not met by construction. Their runs did not fail; this is a
+gap in the guarantee, not an observed failure.
+
 # Citations
 
 1. [Wu (2018)](/sources/wu-2018.md), Theorems 2.11, 2.15, 3.1, 4.1, 4.3, 4.5–4.7, 4.10, Remarks 4.4, 4.8–4.9, §5.2, Appendix B.
@@ -187,3 +220,4 @@ through the source term.
 6. [Berta et al. (2024)](/sources/berta-2024.md), §5.7.
 7. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §8.
 8. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4.
+9. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§2, 5, 6.7, Claim 1.

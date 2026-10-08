@@ -83,6 +83,19 @@ not ingested.
   that a many-stage integrator enlarges ghost regions and inter-patch
   communication.
 
+**A single-stage, single-step variant.** [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) replace the Runge–Kutta
+integrator with a third-order Taylor (Lax–Wendroff) step. The fluid uses
+the Picard-integral WENO formulation, with one WENO reconstruction per step
+against the three and ten of the 2014 third- and fourth-order schemes. The
+potential uses a Lax–Wendroff Hamilton–Jacobi WENO update, with higher time
+derivatives by Cauchy–Kovalevskaya and central differences. $B_h$ is still
+the fourth-order central curl. The resulting stencil is 11 points wide, and
+the 3D artificial resistivity needs only $\nu \approx 0.01$. The stated
+motive is AMR: a multistage integrator needs ghost values at intermediate
+stages, which time-interpolated ghosts cannot supply to high order. In 2D and 3D,
+convergence is fourth order in space and third in time; AMR itself is left
+to future work.
+
 The compiler's reading: the Weyl gauge, like the algebraic gauge diagnosed
 by Etienne et al., leaves a non-propagating sector. Here it is controlled
 by added resistivity on a uniform grid. Whether interface noise excites it
@@ -124,4 +137,5 @@ interfaces (EMF corrections, $P_D$); the potential route holds it by
 4. [Etienne et al. (2015)](/sources/etienne-2015.md) — production form: damped generalized Lorenz gauge $\nabla_\mu A^\mu = \xi n_\mu A^\mu$ (transport *and* damping for the gauge sector, mirroring GLM's design).
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§2–6.
 6. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Theorems 3.8, 3.19.
+8. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§1, 4, 6.1.
 7. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §6.3 (preprint).

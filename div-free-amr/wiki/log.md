@@ -2,6 +2,30 @@
 
 ## 2026-10-08
 
+* **Ingested [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md)**,
+  re-downloaded source 2 of 7.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2016-JCP-Christlieb-101016jjcp201604016.pdf`.
+  * **Updated** three pages:
+    * [vector-potential evolution](/methods/vector-potential-evolution.md):
+      the single-stage, single-step variant;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the energy adjustment after the curl reset;
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      the published AMR stage-coupling motive, linked to Zaghi's
+      stage-refresh finding by a compiler reading.
+  * **New `Contradictions` entry, closed** on the positivity page. The
+    paper's limiter assumes Claim 1 (LF positivity for admissible data);
+    [Wu (2018)](/sources/wu-2018.md), Theorem 4.1, refutes that conjecture
+    explicitly. It is closed by explicit supersession. A compiler reading
+    notes that the scheme's fourth-order curl does not meet the theorem's
+    second-order divergence condition.
+  * **Bibliography:** 63 references; the record goes from 2973 to 2987.
+    * The cited-only self entry gained its DOI.
+    * 49 existing entries gained the citer; 14 works are new.
+    * The 1997 SHASTA reprint maps to `boris-1973`; the online-first
+      Seal et al. maps to `seal-2016`; both carry notes.
+
 * **Ingested [Jiang & Wu (1999)](/sources/jiang-1999.md)**, re-downloaded
   source 1 of 7.
   * **Corpus:** the re-downloaded PDF was moved from `~/papers/re-download/`

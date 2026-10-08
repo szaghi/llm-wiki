@@ -119,6 +119,13 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   exactness claim is relative to a stencil and to a stage-coupling
   schedule. Value-exact ghost copies are not enough if they arrive at the
   wrong stage ([Zaghi (2026)](/sources/zaghi-2026.md), hypothesis).
+  A published motive points the same way for accuracy:
+  [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) choose a single-stage, single-step integrator for AMR because
+  multistage Runge–Kutta needs intermediate-stage ghost values that
+  time-interpolated ghosts cannot provide to high order.
+  *Compiler reading:* the two are distinct claims, one on the invariant and
+  one on accuracy, with the same cause: stage-level coupling across a
+  seam.
 * **Boundary data need not be solenoidal.** In cut-cell CT, ghost fields
   behind an embedded wall are extrapolated and are not divergence-free.
   The invariant still holds on the active faces, because those faces are
@@ -184,3 +191,4 @@ this comparison does not test.
 13. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.8, 3.19.
 14. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4.1–4.2, 7.9.
 15. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§6.2, 7 (preprint).
+16. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §1.
