@@ -2,6 +2,46 @@
 
 ## 2026-10-08
 
+* **Ingested [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md)**,
+  source 1 of 16 in the ADAM-bibliography div-free batch. The batch covers
+  tiers A and B of the reviewed `~/papers/adam` list, real PDFs only.
+  * **Corpus:** the PDF was moved, as the human asked, from `~/papers/adam`
+    to `~/papers/mosaic/div-free-amr/2004-JCP-Londrillo-101016jjcp200309016.pdf`.
+    The worklist now counts 62.
+  * **Created** two pages:
+    * [Upwind constrained transport](/methods/upwind-constrained-transport.md):
+      the paper's named contribution; Mignone & Del Zanna (2021), later in
+      the batch, merges here.
+    * [Rotated shock tube](/benchmarks/rotated-shock-tube.md): it now meets
+      the ≥2-sources rule (Tóth 2000, this paper, the ADAM record).
+  * **Updated** six pages:
+    * [flux-CT](/methods/flux-ct.md): the monopole objection to feeding
+      cell-centered averages into fluxes, reconciled with Tóth's
+      equivalence as two different stencils;
+    * [CT](/methods/constrained-transport.md): the point-value high-order
+      form;
+    * [divergence-free reconstruction](/methods/divergence-free-reconstruction.md);
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      the same field on two stencils, and time splitting;
+    * [conservation–orthogonality](/results/conservation-orthogonality-incompatibility.md):
+      the truncation-order loophole, with two compiler cautions on its
+      discontinuity remainder;
+    * [staggered grid](/definitions/staggered-grid.md): further support for
+      the Londrillo–Del Zanna side of the `Contradictions`; still open.
+  * **Bibliography:** all 35 references were merged; the record grows from
+    2707 to 2715.
+    * 27 existing entries gained the citer; 8 works are new.
+    * The pre-existing cited-only key `londrillo-2004` is the same work. It
+      was folded into the ingested key `londrillo-delzanna-2004`, and its 4
+      citers carried over.
+    * `toth-2002` (JCP 182:346, Lorentz-force discretization) is new and
+      carries a note: it is a different work from `toth-roe-2002`, which an
+      earlier backfill resolution had aliased to first-author "toth-2002"
+      citations.
+    * Two printed venue typos were mapped onto existing entries: Komissarov
+      "343 (1999) 366" (which reads as pages 343–366 of MNRAS 303) and
+      Del Zanna et al. "A&A 307" (vol. 367).
+
 * **Ingested [Zaghi (2026)](/sources/zaghi-2026.md), the ADAM verification
   record.** It is the first non-corpus source and the first `source_kind: code`.
   * **Capture (Layer 1, frozen):** `raw/docs/zaghi-2026/` holds 8 doc

@@ -62,7 +62,13 @@ positions:
 * [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md) §3:
   staggered collocation "is by no means a numerical trick but arises in a
   consistent way" — a unique EMF flux function at common points *entails
-  necessarily* the staggered placement.
+  necessarily* the staggered placement. Their
+  [2004 formalization](/sources/londrillo-delzanna-2004.md) §2.1 explicitly
+  rejects the "persistent viewpoint" that staggering only serves to express
+  the divergence and suits upwinding poorly. It builds reconstruction, the
+  Riemann solvers and the momentum fluxes on the staggered data, and
+  measures monopole damage in the collocated counterparts
+  ([UCT](/methods/upwind-constrained-transport.md)).
 
 **Scoped resolution (compiled):** the claims quantify over different
 things. Tóth's is an algebraic identity for specific second-order schemes —
@@ -97,3 +103,4 @@ is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 4. [Tóth (2000)](/sources/toth-2000.md), §4.4.
 5. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3.
 6. [Zaghi (2026)](/sources/zaghi-2026.md): issues #29, #30.
+7. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.4, 4.

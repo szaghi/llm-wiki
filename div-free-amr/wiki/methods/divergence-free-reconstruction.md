@@ -32,6 +32,20 @@ prolongation problem: any operator producing point/fine values from face
 averages must commute with the divergence to the scheme's order, or the
 built-in invariant is silently destroyed at the reconstruction stage.
 
+**What does not need reconstructing**
+([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.2).
+* A face component is continuous across a discontinuity along its own
+  coordinate. Its two face values already give the cell value and the
+  parallel derivative to second order, so it is reconstructed only
+  transversally.
+* The parallel derivative may still jump. By the divergence relation and
+  the commutativity of two-point differences, its jump equals transverse
+  differences of the other components.
+* Above second order, they reconstruct the vector potential as a scalar and
+  take the face fields as its *fixed-stencil* two-point curl. Reconstructing
+  $A$ alone is not enough; the fixed stencil is what preserves the
+  divergence.
+
 ## The Balsara TVD construction
 
 [Balsara (2001)](/sources/balsara-2001.md) §III gives a concrete
@@ -74,3 +88,4 @@ AMR to those geometries in the same stroke.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
 3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.3.
 4. [Balsara (2004)](/sources/balsara-2004.md), §§3–4.
+5. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2–2.2.2.

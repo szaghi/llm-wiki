@@ -17,3 +17,4 @@ Algorithms and schemes.
 * [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md) — Reconstructs point values of the magnetic field from face data so that the interpolated field itself satisfies the divergence constraint to high order.
 * [Electric-field correction](/methods/electric-field-correction.md) — Restores divergence-free consistency at AMR interfaces by replacing coarse edge EMFs with time-averaged sums of the subcycled fine edge EMFs.
 * [Eight-wave formulation](/methods/eight-wave.md) — Powell's non-conservative source-term formulation: advects divergence errors with the flow, holding the constraint to truncation error only.
+* [Upwind constrained transport (UCT)](/methods/upwind-constrained-transport.md) — CT design in which staggered face fields are primary data everywhere (reconstruction, Riemann solvers, fluxes) and the edge EMF is a four-state upwind flux, making the divergence condition built-in.

@@ -68,6 +68,16 @@ the corner EMF becomes a genuinely two-dimensional four-state upwind flux
 rather than an average —
 [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), who
 build a third-order ENO-based CT scheme on these two ingredients.
+Their 2004 formalization,
+[upwind constrained transport](/methods/upwind-constrained-transport.md),
+says where the exact invariant lives on point values. The evolved primary
+data are deconvolved face variables, whose point-value divergence is
+preserved to machine precision. The point values that feed the fluxes are
+recovered by an implicit inversion, so their divergence is exact only to the
+inversion's precision ($10^{-7}$–$10^{-6}$ maxima at third order)
+([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md),
+Appendix A). High-order CT on point values therefore holds the invariant on
+a variable that the fluxes never see directly.
 
 ## Shock-capturing combinations and the collocated recast
 
@@ -110,3 +120,4 @@ reduces exactly to its 1D form for grid-aligned flow.
 3. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
 4. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.
 5. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), §§3–4.
+6. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.3, Appendix A.

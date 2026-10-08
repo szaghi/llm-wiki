@@ -50,7 +50,25 @@ by direct evaluation of the EMF at zone edges from the multidimensional
 Riemann data, with second/third-order unsplit time integration
 ([Balsara (2004)](/sources/balsara-2004.md) §2 — resolving his "Issue 4").
 
+**The monopole objection.**
+[Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.4
+argue that a second weakness sits outside the EMF. These variants evolve
+staggered data but feed *cell-centered averages* into the momentum and
+energy fluxes. The orthogonality defect of the Lorentz force is then
+governed by $D_h^{\mathrm{c}}$ of the averaged field, not by the exactly
+held staggered divergence, and that residual is $O(1)$ wherever the field's
+parallel derivative jumps. Numerical monopoles therefore arise despite exact
+CT. The two views do not conflict:
+* Tóth's equivalence says *which* divergence these schemes hold
+  ($D_h^{\mathrm{k}}$);
+* Londrillo & Del Zanna say *which* divergence the momentum flux sees,
+  which is a different stencil.
+
+Their remedy, [upwind constrained transport](/methods/upwind-constrained-transport.md),
+puts the staggered components into every flux.
+
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md), §4.2–4.4, §6–7, Table IX.
 2. [Balsara (2004)](/sources/balsara-2004.md), §2.
+3. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2.1, 2.4, Table 3.

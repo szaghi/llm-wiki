@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 62 sources compiled**: 61 published works plus one code record
+**Corpus: 63 sources compiled**: 62 published works plus one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
@@ -36,7 +36,9 @@ every page — then follow the reading guide.
    [discrete exactness theorems](/results/discrete-exactness-theorems.md)
    as the shared payoff.
 3. **The methods.** [Constrained transport](/methods/constrained-transport.md)
-   and its [Godunov variants](/methods/flux-ct.md) with
+   and its [Godunov variants](/methods/flux-ct.md), the
+   [upwind CT](/methods/upwind-constrained-transport.md) design (staggered
+   data in every flux, which cancels monopoles), with
    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md);
    [projection](/methods/projection-method.md) and its
    [AMR form](/methods/amr-projection-method.md);
@@ -72,7 +74,8 @@ every page — then follow the reading guide.
    [MFD convergence](/results/mfd-convergence.md) (2:1 interfaces as
    degenerate polyhedra), and the production evidence that the
    constraint-control choice changes physics
-   ([field-loop advection](/benchmarks/field-loop-advection.md)).
+   ([field-loop advection](/benchmarks/field-loop-advection.md);
+   [rotated shock tube](/benchmarks/rotated-shock-tube.md)).
 
 ## Catalog
 

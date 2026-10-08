@@ -46,6 +46,23 @@ not forbid orthogonality to truncation error, nor non-conservative
 formulations (which trade away correct jump conditions — see
 [eight-wave](/methods/eight-wave.md)).
 
+**The truncation-order loophole, occupied.**
+[Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.4
+show that for second-order conservative fluxes the orthogonality defect
+equals $|B|^2$ times the divergence on the stencil the momentum fluxes use,
+plus a remainder. [Upwind constrained transport](/methods/upwind-constrained-transport.md)
+feeds the exactly held staggered field into those fluxes, so the first term
+vanishes identically and only the remainder is left. This is consistent with
+the theorem, which forbids only exact cell-wise orthogonality. Two compiler
+cautions:
+* The estimate concerns the smooth (centered) part of the flux; the upwind
+  dissipation contributes only a diffusive term.
+* The remainder is a two-point-averaging error derived for smooth data
+  ($O(h^2)$). The paper does not bound it separately at discontinuities, so
+  "monopole-free" there means "free of the divergence term", not
+  "orthogonal to $O(h^2)$".
+
 # Citations
 
 1. [Tóth (2000)](/sources/toth-2000.md), §1.1, Appendix A, Fig. 21.
+2. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §2.4, eqs. 48–52.

@@ -72,6 +72,17 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   $B_z$ fluxes, $B_z$ grows unphysically; round-off-constant $B_z$
   certifies preservation on the *consistent* stencil
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)).
+* **The same field on two stencils, measured.** On rotated shock tubes an
+  upwind-CT scheme holds its staggered $D_h^{\mathrm{f}} B_h$ at
+  $10^{-13}$–$10^{-12}$. The central $D_h^{\mathrm{c}}$ of the *same field*,
+  interpolated to cell centers, is $O(10$–$100)$ at the fronts. The
+  consequence is that a scheme's exactness certifies nothing about a
+  divergence computed on another stencil. Monopoles appear wherever the
+  momentum fluxes see such a stencil. Cancellation also needs every flux at
+  the same stage: time splitting breaks it
+  ([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md)
+  §§2.4, 4.2;
+  [upwind constrained transport](/methods/upwind-constrained-transport.md)).
 * **Collocated exactness is a uniform-grid property.** A collocated scheme
   whose curl and divergence share one antisymmetric derivative primitive
   holds $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identically. The record
@@ -115,3 +126,4 @@ class is not a numerical nicety but a physics-level decision.
    mixed-element grids in hybrid FV/FE form; collocated high-order FD at
    2:1 AMR interfaces remains outside even the newest synthesis.
 8. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (§2, E1a), #29, #31; `prism-regression.md` (inter-realm 1:1 anchor).
+9. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.4, 4.2, Table 3.
