@@ -2,6 +2,35 @@
 
 ## 2026-10-08
 
+* **Ingested [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)**,
+  source 5 of 16.
+  * **Corpus:** the arXiv v2 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp201004013.pdf`;
+    volume, issue and pages were verified on Crossref.
+  * **Updated** four pages:
+    * [GLM](/methods/glm-divergence-cleaning.md): a high-order
+      finite-difference section. It covers the separate upwinding of the
+      $(B_n, \psi_h)$ pair, which is the construction behind the Zaghi (2026)
+      solenoidal-damping observation; the scheme-dependent divergence
+      monitor; and the order-dependent optimum of $\alpha_p$;
+    * [divergence-free reconstruction](/methods/divergence-free-reconstruction.md):
+      the controlled-class alternative;
+    * [rotated shock tube](/benchmarks/rotated-shock-tube.md) and
+      [field-loop advection](/benchmarks/field-loop-advection.md): the
+      high-order cleaning runs in 2D and 3D.
+  * Record inconsistencies are noted on the Source page: CTU-GLM is cited
+    as "ApJS 229", and Colella–Sekora as volume "277".
+  * **Bibliography:** 54 references; the record goes from 2729 to 2734.
+    * 47 existing entries gained the citer, and 7 works are new.
+    * The pre-existing cited-only `mignone-2010-c` (3 citers) is this work.
+      It was renamed to the slug and upgraded to verified metadata.
+    * Two duplicates surfaced and were folded:
+      * `dumbser-2008` into `dumbser-2008-b` (same JCP 227:8209);
+      * `woodward-1998` into `dai-woodward-1998` (same JCP 142:331,
+        authors reversed by powell-1999).
+    * DOIs were added from Crossref to `artebrant-2008` (printed
+      "Arterant") and to `balsara-2008-a` (now published, JCP 228:2480).
+
 * **Ingested [Balsara (2009)](/sources/balsara-2009.md)**, source 4 of 16.
   * **Corpus:** the author preprint was moved to
     `~/papers/mosaic/div-free-amr/2009-JCP-Balsara-101016jjcp200903038.pdf`;

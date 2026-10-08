@@ -4,7 +4,7 @@ title: "Field-loop advection"
 description: "Passive advection of a weak magnetic loop; the standard detector of divergence-constraint violations and stencil inconsistency in MHD schemes."
 status: established
 tags: [benchmark, divergence-constraint, mhd, constrained-transport]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Field-loop advection
@@ -43,6 +43,14 @@ period".
 * **Constraint machinery on unstructured/hybrid meshes**: 2D and 3D loop
   advection validates the exactly divergence-free hybrid schemes of
   [Zampa (2024)](/sources/zampa-2024.md).
+* **High-order cleaning, uniform grid**
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)).
+  * 2D on $128\times64$, and 3D on $128\times128\times256$ with
+    $v = (1,1,2)$ and the loop rotated about one axis.
+  * Fifth-order schemes are visibly less diffusive than third-order ones in
+    both shape and magnetic-energy decay.
+  * The divergence error depends on the damping parameter in an
+    order-dependent way. See [GLM](/methods/glm-divergence-cleaning.md).
 * **A cleaning scheme across 2:1 seams** ([Zaghi (2026)](/sources/zaghi-2026.md),
   hypothesis). Collocated WENO MHD with
   [GLM](/methods/glm-divergence-cleaning.md), with a $v_z$ component so that
@@ -72,3 +80,4 @@ forbids.
 4. [Zampa (2024)](/sources/zampa-2024.md), §4.6.4.
 5. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-9, "MHD on weno-riemann" table); captured field-loop div(B) histories.
 6. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§3.1, 3.3.1, 5.1.
+7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §4.4, Figs. A.8–A.11.

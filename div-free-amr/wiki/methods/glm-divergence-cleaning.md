@@ -5,7 +5,7 @@ description: "Couples the divergence constraint to the induction equation via a 
 status: established
 aliases: [hyperbolic divergence cleaning, Dedner cleaning, GLM-MHD]
 tags: [glm, divergence-cleaning, hyperbolic, finite-volume]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # GLM divergence cleaning
@@ -70,6 +70,42 @@ RMHD alike ([Mignone et al. (2012)](/sources/mignone-2012.md)). The
 constraint class is unchanged (controlled, not held); what is bought is
 uniformity of the AMR machinery across all physics.
 
+## High-order finite-difference realization
+
+[Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)
+carry GLM to third and fifth order in a conservative point-value
+finite-difference scheme (PLUTO; uniform Cartesian grids only).
+* **Why GLM above second order.** Every variable, $B$ included, is a
+  collocated point value, and fluxes are reconstructed along 1D stencils.
+  The authors present this as avoiding both the elliptic step and the
+  genuinely multidimensional reconstruction that held-class schemes need
+  above second order
+  ([divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
+  The price is the constraint class: controlled, not held.
+* **The $(B_n, \psi_h)$ subsystem is upwinded separately.** The normal
+  field and $\psi_h$ form a constant-coefficient $2\times2$ system with
+  speeds $\pm c_h$. Its two characteristic variables
+  $\tfrac12(\psi_h \mp c_h B_n)$ are reconstructed with the same WENO or MP
+  operator as the flow. The resulting interface $B_n$ is then a fixed
+  parameter of the ordinary 7-wave solve. This construction is what
+  damps already-solenoidal fields in the hypothesis-grade evidence below.
+* **The measured divergence is scheme-dependent.** Their $\nabla\cdot B$
+  monitor differences the *reconstructed* interface values of $B_n$. It is
+  not a fixed operator such as $D_h^{\mathrm{c}}$
+  ([notation](/notation.md)), so its magnitudes are not comparable with
+  those of other papers.
+* **Damping is order-dependent.** With
+  $\alpha_p = \Delta h\, c_h / c_p^2$:
+  * on the field loop, fifth-order schemes minimize the divergence error
+    at $\alpha_p \gtrsim 0.4$, while third-order schemes do better at
+    $\alpha_p \lesssim 0.2$;
+  * on rotated shock tubes the error saturates for $\alpha_p \gtrsim 0.4$
+    and is typically $\lesssim 10^{-2}$, with no growth under refinement;
+  * on the smooth vortex it converges with resolution, below $10^{-8}$ at
+    $128^3$ with fifth-order schemes.
+* No AMR is run and no long-time boundedness test at fixed $h$ is
+  reported.
+
 ## Behavior at 2:1 seams and on solenoidal data (hypothesis-grade)
 
 Evidence from one code's verification record,
@@ -88,7 +124,8 @@ Evidence from one code's verification record,
   diagonal field at fifth order: $8.5\cdot10^{-12}$ at 48 cells,
   $2.7\cdot10^{-13}$ at 96, on a $c_h = 3$ run. Without divergence control
   the field stays at round-off. Cleaning is therefore not inert on fields
-  that are already solenoidal.
+  that are already solenoidal. The $(B_n, \psi_h)$ upwinding is the
+  high-order construction of Mignone, Tzeferacos & Bodo described above.
 * **Damping versus reflux.** With damping, $\int\psi_h$ is not conserved
   across 2:1 faces; the physical integrals are.
 * **EGLM and the robustness trade, partly isolated.**
@@ -143,3 +180,4 @@ as conditional on the source not growing at the interface.
    thermodynamically consistent*, so the cleaning coupling is a
    second-law design decision, not a free choice.
 5. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (E2, E2′), #29 (fix class E, the damping sweep); FLUME `index.md`, `models.md`, `verification.md` (EV-3, EV-4, VV-5, MV-12).
+6. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§2–4, Figs. A.7, A.11–A.12.

@@ -4,7 +4,7 @@ title: "Divergence-free reconstruction"
 description: "Reconstructs point values of the magnetic field from face data so that the interpolated field itself satisfies the divergence constraint to high order."
 status: established
 tags: [high-order, reconstruction, divergence-constraint, constrained-transport]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # Divergence-free reconstruction
@@ -105,6 +105,15 @@ construction to third and fourth order in a Legendre-moment basis.
   [UCT](/methods/upwind-constrained-transport.md). There the invariant
   lives on deconvolved variables; here it lives on face moments.
 
+## The controlled-class alternative
+
+[Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)
+skip this construction at third and fifth order. They keep $B$ as a
+collocated point value, reconstruct along 1D stencils, and control the
+divergence with [GLM](/methods/glm-divergence-cleaning.md). The authors
+count the absence of genuinely multidimensional interpolation as a
+benefit. The trade is the constraint class: no discrete divergence is held.
+
 # Citations
 
 1. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
@@ -113,3 +122,4 @@ construction to third and fourth order in a Legendre-moment basis.
 4. [Balsara (2004)](/sources/balsara-2004.md), §§3–4.
 5. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2–2.2.2.
 6. [Balsara (2009)](/sources/balsara-2009.md), §§2–4.
+7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§1, 5.

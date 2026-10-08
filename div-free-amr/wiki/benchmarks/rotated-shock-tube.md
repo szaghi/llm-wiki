@@ -59,6 +59,20 @@ also measures the jump conditions.
   45° (256 cells), first order. The record quotes $3.7\cdot10^{-3}$ at 63.4°
   for Tóth's second-order base scheme. At discontinuities the scheme order
   barely matters for this measure.
+* **High-order cleaning at 45° and in 3D**
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)).
+  * 2D Brio–Wu on a $600\times6$ strip. The authors choose $\alpha = 45°$
+    because it minimizes the $B_n$ error, which is the configuration the
+    angle caveat above calls least discriminating.
+  * 3D Ryu–Jones on $768\times8\times8$, rotated by $\tan\alpha = -1/2$,
+    $\tan\beta = 1/4$, so that planar symmetry is an integer cell shift.
+  * Third- and fifth-order schemes reach $\epsilon_1(B_1) \approx
+    2$–$9\cdot10^{-5}$, with a peak $B_n$ oscillation of about 0.7% for
+    MP5. Going from third to fifth order gains only a factor 1.5–2 at
+    discontinuities.
+  * Their divergence monitor is built from reconstructed interface values
+    ([GLM](/methods/glm-divergence-cleaning.md)), so its
+    $\approx 10^{-2}$ level is not comparable with the monitors above.
 
 # Citations
 
@@ -66,3 +80,4 @@ also measures the jump conditions.
 2. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §4.2, Tables 2–3, Figs. 4–7.
 3. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-8).
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §5.3, Fig. 10.
+5. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§4.2.1–4.2.2, Table 2, Fig. A.7.
