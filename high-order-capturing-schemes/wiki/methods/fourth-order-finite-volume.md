@@ -102,7 +102,43 @@ hierarchies with subcycling. McCorquodale and Colella add conservative
 refluxing of the total flux and ghost cells consistent with the
 Runge–Kutta stages ([high-order AMR](/methods/high-order-amr.md)).
 
+## Pointwise reconstruction for MHD and relativistic MHD
+
+([Berta et al. (2024)](/sources/berta-2024.md), §§3–5; arXiv v4;
+implemented in [PLUTO](/software/pluto.md).) The same identities, used in
+a different order. Cell averages are first converted to cell-centre point
+values, $u_i = \bar u_i - \frac{h^2}{24}\Delta_h\bar u_i$, which are
+converted to primitive variables pointwise. Finite-difference formulas
+then interpolate point values to the face centre: MP5 on the five-point
+formula $(3, -20, 90, 60, -5)/128$, or WENO-Z with point-value linear
+weights $\tfrac1{16}, \tfrac58, \tfrac5{16}$ instead of the cell-average
+$\tfrac1{10}, \tfrac6{10}, \tfrac3{10}$ (eqs. 23–26). One Riemann problem
+per face gives a point flux, made a face average by
+$+\frac{h^2}{24}\Delta^\perp_h$ (eq. 30). The authors believe this is the
+first pointwise reconstruction inside a finite-volume scheme.
+* The magnetic field is Yee-staggered with fourth-order upwind CT
+  ([constrained transport](/methods/constrained-transport.md)). Time
+  stepping is a five-stage fourth-order SSP-RK.
+* **Order reduction.** A discontinuity detector, either Jameson's or a new
+  ratio of third (or fourth) to first (or second) differences, flags cells
+  and their neighbours. There the $\frac{1}{24}$ corrections are dropped
+  and reconstruction falls back to WENO3 or linear. The threshold has no
+  numerical value in the paper, and its descriptions of the fallback order
+  disagree (first, second).
+* **Results.** Alfvén waves converge at exactly 4.00; vortices above 4.
+  A cost model calibrated on them estimates that second order on $512^3$
+  is matched by fourth order on about $34^3$, roughly $10^4$ times faster
+  ([circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)).
+
+**The conversion in relativistic MHD.** One-step ADER-WENO for
+relativistic MHD uses the same $\frac{1}{24}$ identities to do the
+conserved-to-primitive inversion once per cell, at the centre. A flattener
+multiplies the correction, 1 in smooth flow and towards 0 at shocks
+([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2, eqs. 2.6–2.7).
+
 # Citations
 
 1. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2, 4 (equations checked on the page images).
 2. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §§2–5 (accepted manuscript).
+3. [Berta et al. (2024)](/sources/berta-2024.md), §§3–5 (arXiv v4).
+4. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.

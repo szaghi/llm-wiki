@@ -115,6 +115,23 @@ positivity condition on the reconstruction and lower the order locally
 until it holds; since the test is $O(h)$ in smooth regions, the
 asymptotic order is unaffected.
 
+**Later uses (batch 6): the reviews.**
+* *Sign property* (Fjordholm, Mishra and Tadmor, as surveyed by
+  [Shu (2020)](/sources/shu-2020.md), §2.3.2). For ENO reconstruction the interface jump
+  $u^+_{i+1/2} - u^-_{i+1/2}$ has the sign of $\bar u_{i+1} - \bar u_i$, and
+  their ratio is bounded by a constant that depends only on the degree.
+  This rules out saw-tooth reconstructions and opens the way to
+  entropy-stable ENO of any order. It cannot be proved for biased ENO and
+  holds for WENO only in a very special class.
+* *Why WENO replaced ENO* ([Shu (2020)](/sources/shu-2020.md), §3). The discarded stencils could help
+  in smooth regions. The digital stencil choice makes the result at most
+  Lipschitz in the data, which may hurt steady-state convergence. It can
+  pick downwind-biased stencils, and for data with monotone derivatives
+  such as $e^x$ the stencil can be very biased, with possible stability
+  and accuracy issues (Rogerson and Meiburg, cited).
+* The monotonicity of the polynomial in a discontinuous cell carries over
+  to WENO's convex combination ([Shu (2009)](/sources/shu-2009.md), §2.1; [WENO](/methods/weno.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–7 and Appendix.
@@ -123,3 +140,5 @@ asymptotic order is unaffected.
 4. [Shu (1998)](/sources/shu-1998.md), §§2.2.1, 2.3.3–2.3.4.
 5. [Jiang & Shu (1996)](/sources/jiang-1996.md), §1.
 6. [Suresh & Huynh (1997)](/sources/suresh-1997.md), introduction.
+7. [Shu (2020)](/sources/shu-2020.md), §§2–3.
+8. [Shu (2009)](/sources/shu-2009.md), §2.1.

@@ -108,8 +108,14 @@ meshes ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §6;
 the robust scheme of the
 [a posteriori subcell limiter](/methods/a-posteriori-subcell-limiting.md).
 
+**In the reviews (batch 6).** Shu cites Dumbser and Käser among the
+schemes that take arbitrary positive linear weights, accepting the
+small-stencil order on unstructured meshes ([Shu (2020)](/sources/shu-2020.md), §§3.2.2–3.3;
+[negative linear weights](/methods/negative-linear-weights.md)).
+
 # Citations
 
 1. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §§2, 5, 6 (eqs. 19–25 read from the page images).
 2. [Balsara et al. (2009)](/sources/balsara-2009.md), §2 (eqs. 6–15 read from the page image).
 3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §2.2.
+4. [Shu (2020)](/sources/shu-2020.md), §§3.2.2–3.3.

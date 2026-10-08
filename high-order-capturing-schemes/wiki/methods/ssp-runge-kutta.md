@@ -194,6 +194,37 @@ von Neumann analysis of the full discretization.
   and a DG solid solver share one SSP-RK3, so they exchange data at every
   stage ([Liu et al. (2025)](/sources/liu-2025.md), §3.1).
 
+**Later uses (batch 6).**
+* *Many stages, large steps.* Ketcheson's 10-stage, fourth-order,
+  low-storage SSP-RK(10,4) keeps FD-WENO5 essentially non-oscillatory up to
+  CFL 3.07 (Gottlieb et al., cited). It runs at CFL 3.0 and beats non-SSP
+  RK4 at CFL 0.8. The many stages enlarge ghost regions under AMR
+  ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3).
+* *SSP(5,4).* Its SSP coefficient, $1.50818004975927$, is used directly
+  as the CFL number for WENO5 MHD, about 50% cheaper than RK4 at CFL 0.8
+  with identical results ([Seo & Ryu (2023)](/sources/seo-2023.md), §§2.3, 3.5).
+  Equating the SSP coefficient with the admissible CFL assumes forward
+  Euler is stable at CFL 1, which the paper does not show. A five-stage
+  fourth-order variant with all coefficients printed drives fourth-order
+  finite volume ([Berta et al. (2024)](/sources/berta-2024.md), §3.3, eq. 31).
+* *Von Neumann limits* for mimetic edge schemes: 0.7071, 1.1507 and 1.3040
+  for orders 2, 3 and 4 with SSP-RK2, SSP-RK3 and SSP-RK(5,4). SSP-RK3's
+  own dissipation keeps third-order damping at the level of second order
+  ([Balsara et al. (2023)](/sources/balsara-2023.md), §4).
+* *Not SSP.* The low-storage RK3 of Spalart, Moser and Rogers (one
+  negative coefficient) in a production hybrid WENO DNS code
+  ([Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.2;
+  [STREAmS](/software/streams.md)). A second-order scheme labelled "TVD
+  Runge–Kutta … simply the Heun scheme" but printed as the explicit
+  midpoint rule, which is not SSP ([Balsara (2004)](/sources/balsara-2004.md),
+  eq. 2.5; recorded as printed).
+* *Forward Euler and RK2 are linearly unstable with WENO5* and "should
+  not be used even if the problem is steady state and no time accuracy is
+  needed" (Wang and Spiteri, as cited by [Shu (2009)](/sources/shu-2009.md), §3.1).
+* *Stage accuracy with RK3.* To show fourth-order spatial accuracy with
+  SSP-RK3, the step must shrink faster than the mesh
+  ([Balsara (2009b)](/sources/balsara-2009-b.md), §3.3).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -231,3 +262,11 @@ von Neumann analysis of the full discretization.
 33. [Liu et al. (2023)](/sources/liu-2023.md), §2.
 34. [Liu et al. (2022)](/sources/liu-2022.md), §§2.2, 3.1.3.
 35. [Liu et al. (2025)](/sources/liu-2025.md), §3.1.
+36. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3 (arXiv v2).
+37. [Seo & Ryu (2023)](/sources/seo-2023.md), §§2.3, 3.5.
+38. [Berta et al. (2024)](/sources/berta-2024.md), §3.3 (arXiv v4).
+39. [Balsara et al. (2023)](/sources/balsara-2023.md), §4.
+40. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.2.
+41. [Balsara (2004)](/sources/balsara-2004.md), §2.
+42. [Balsara (2009b)](/sources/balsara-2009-b.md), §3.3 (author manuscript).
+43. [Shu (2009)](/sources/shu-2009.md), §3.1.

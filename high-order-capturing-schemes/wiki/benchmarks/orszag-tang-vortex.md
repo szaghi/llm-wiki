@@ -53,6 +53,27 @@ and run fifth-order FD-WENO on $192^2$
 * At $t = 3$ the result agrees with Zachary et al., and a pressure cut at
   $y = 0.625\pi$ is more oscillatory without the projection (Fig. 15).
 
+**Later uses (batch 6).**
+* The original unstaggered-CT FD-WENO, same set-up on $192^2$, runs to
+  $t = 30$ with no negative pressure anywhere. Its base scheme without CT
+  reaches negative pressure at about $t = 4.0$
+  ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.3).
+* *On $[0, 1]^2$* ($\mathbf v = (-\sin 2\pi y, \sin 2\pi x)$,
+  $\mathbf B = (-\sin 2\pi y, \sin 4\pi x)$) with GLM cleaning on $256^2$: at
+  $t = 1$ the fifth-order schemes, MP5 especially, form a central magnetic
+  island with a dense spot that third order misses. The authors attribute
+  it to lower effective resistivity at the central current sheet
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.5).
+* Fourth-order finite volume with upwind CT resolves the central island
+  already on $64^2$ with MP5 and HLLD. A relativistic version with halved
+  velocity shows several islands on $1024^2$
+  ([Berta et al. (2024)](/sources/berta-2024.md), §5.6).
+* $200^2$, fifth-order FV-WENO: without divergence projection and
+  positivity limiter the code fails at $t = 3.11$, and without the
+  projection alone it oscillates severely by $t = 4$. With the projection
+  the discrete divergence of the traces stays near $10^{-14}$
+  ([Ding & Wu (2024)](/sources/ding-2024.md), Example 4.2).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
@@ -60,3 +81,7 @@ and run fifth-order FD-WENO on $192^2$
 3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4, Table 5.
 4. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.2.
 5. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4, Tables VI–VII.
+6. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.3 (arXiv v2).
+7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.5 (arXiv v2).
+8. [Berta et al. (2024)](/sources/berta-2024.md), §5.6 (arXiv v4).
+9. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.2 (arXiv v1).

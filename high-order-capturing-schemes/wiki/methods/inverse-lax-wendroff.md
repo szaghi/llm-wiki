@@ -268,6 +268,19 @@ PDEs. There is no sub-iteration.
   without oscillations (§5). The interface procedure can take more CPU
   time than the flow solvers (Tables 8, 10, 12).
 
+## In the reviews (batch 6)
+
+[Shu (2020)](/sources/shu-2020.md), §8, credits the inverse Lax–Wendroff procedure jointly to Huang,
+Shu and Zhang (2008), boundary conditions for fast-sweeping WENO
+Eikonal solvers, and to Tan and Shu (2010). He cites Goldberg and Tadmor
+for earlier discussions of the procedure. Solid walls and symmetry lines
+use (anti)symmetric ghosts. Outflow extrapolation of suitable order is
+stable, and inflow is the hard case, especially for cut cells. The review
+also lists the moving-boundary, convection–diffusion and simplified
+variants above. In 2009, ghost values came from the boundary condition
+with local characteristic decomposition, or from one-sided WENO
+([Shu (2009)](/sources/shu-2009.md), §3.5.4).
+
 # Citations
 
 1. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §§1–5 (§2.2–2.5 formulas and Tables 3.1–3.2 read from the page images).
@@ -278,3 +291,5 @@ PDEs. There is no sub-iteration.
 6. [Liu et al. (2023)](/sources/liu-2023.md), §§2–4 (eqs. 2.9–2.21 read from the page images).
 7. [Liu et al. (2022)](/sources/liu-2022.md), §§2–5, Appendices B–C.
 8. [Liu et al. (2025)](/sources/liu-2025.md), §§3–5.
+9. [Shu (2020)](/sources/shu-2020.md), §8.
+10. [Shu (2009)](/sources/shu-2009.md), §3.5.4.

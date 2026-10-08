@@ -78,8 +78,18 @@ extrema, is also the low-order level of pointwise WENO-AO
 Its centred stencil gets weight $\gamma_{\mathrm{Lo}}$ and each biased one
 $(1 - \gamma_{\mathrm{Lo}})/2$ ([Balsara et al. (2025)](/sources/balsara-2025.md), §III.a).
 
+**Later (batch 6).** Shu credits central WENO with the first use of
+unequal-size candidate stencils with free positive weights, later taken
+up by WENO-ZQ and multi-resolution WENO ([Shu (2020)](/sources/shu-2020.md), §3.2.3;
+[WENO-AO / WENO-ZQ](/methods/weno-ao.md)). For central WENO,
+componentwise reconstruction works at third and even fourth order, but
+very high order needs characteristic decomposition (Qiu and Shu, as cited
+by [Shu (2009)](/sources/shu-2009.md), §3.5.5; [characteristic decomposition](/methods/characteristic-decomposition.md)).
+
 # Citations
 
 1. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), §§1–5.
 2. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §1.
 3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.a.
+4. [Shu (2020)](/sources/shu-2020.md), §3.2.3.
+5. [Shu (2009)](/sources/shu-2009.md), §3.5.5.

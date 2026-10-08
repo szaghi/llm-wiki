@@ -113,9 +113,17 @@ is 1 for *no* flattening, the opposite of $\phi_i$ here
 ([fourth-order finite volume](/methods/fourth-order-finite-volume.md);
 [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5).
 
+**Later uses (batch 6).** For relativistic MHD, a flattener built from the
+undivided divergence of the four-velocity, compared with the smallest
+relativistic sound speed over 27 cells, and spread to neighbours across
+pressure jumps ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), eqs. 2.8–2.9).
+Its flattening coefficient is 0 in smooth flow, like $\phi_i$ here, while the same paper's
+factor in the average–point conversion uses the opposite convention.
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
 2. [Suresh & Huynh (1997)](/sources/suresh-1997.md), introduction and §2.
 3. [Balsara & Shu (2000)](/sources/balsara-2000.md), §I, §§IV.b, VI.a, VII.c.
 4. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5.
+5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.

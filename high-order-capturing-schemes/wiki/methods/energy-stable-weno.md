@@ -94,6 +94,19 @@ WENO-Z ([accuracy at critical points](/properties/accuracy-at-critical-points.md
 * A reacting supersonic hydrogen–air mixing layer shows
   Kelvin–Helmholtz roll-up with shocks, with no extra filtering.
 
+**Later uses (batch 6).** The weights of Yamaleev and Carpenter's
+*third-order* energy-stable scheme, without its stabilizing dissipation,
+improve third-order WENO ("WENO+3"):
+$\tilde\omega_k = d_k\left(1 + \tau/(\varepsilon + \beta_k)\right)$ with
+$\tau = (\delta^2 f_i)^2$ and $\varepsilon = h^2$, quoted as required to avoid
+accuracy loss at critical points
+([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.2.1).
+A point-value version, with linear weights $\tfrac34, \tfrac14$, serves
+fourth-order finite volume ([Berta et al. (2024)](/sources/berta-2024.md), §3.2).
+Both sit at the $O(h^2)$ end of the window above.
+
 # Citations
 
 1. [Fisher et al. (2011)](/sources/fisher-2011.md), §§1–7 and Appendices A–B (eqs. 13, 19, 41–42, 73–75 read from the page images).
+2. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.2.1 (arXiv v2).
+3. [Berta et al. (2024)](/sources/berta-2024.md), §3.2 (arXiv v4).

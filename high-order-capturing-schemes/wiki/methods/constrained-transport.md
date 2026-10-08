@@ -1,9 +1,9 @@
 ---
 type: Method
 title: "Constrained transport for high-order capturing schemes (MHD)"
-description: "Keeping the magnetic field discretely divergence-free alongside a high-order capturing scheme: the unstaggered vector-potential variant (evolve A on the cell mesh, set B as its discrete curl) and the Yee-staggered variant (face-averaged B updated by edge electric fields from a multidimensional Riemann solver)."
+description: "Keeping the magnetic field discretely divergence-free alongside a high-order capturing scheme: the unstaggered vector-potential variant (evolve A on the cell mesh, set B as its discrete curl), Yee-staggered variants (face fields updated by edge electric fields from a multidimensional Riemann solver, from upwind CT, or from high-order staggered differences of WENO fluxes), and the related projection and trace-projection treatments."
 status: established
-aliases: [CT, unstaggered constrained transport, vector-potential constrained transport, Yee mesh, divergence-preserving update]
+aliases: [CT, unstaggered constrained transport, vector-potential constrained transport, Yee mesh, divergence-preserving update, upwind constrained transport, UCT, high-order CT]
 tags: [mhd, divergence-free, constrained-transport, involution]
 timestamp: 2026-10-08T00:00:00Z
 ---
@@ -15,20 +15,35 @@ evolution, but discretizations of the transport equation alone
 accumulate divergence errors. These produce an unphysical force along
 $\mathbf B$ and often crash the code. The options are the eight-wave
 method, projection, hyperbolic divergence cleaning and constrained
-transport ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §1).
-Three constrained-transport designs appear in this corpus. Hyperbolic divergence cleaning is the alternative used on adaptive meshes, and projection the earliest one.
+transport ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §1;
+[Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §1).
+Several constrained-transport designs appear in this corpus, unstaggered
+and staggered. The alternatives are [hyperbolic (GLM) cleaning](/methods/hyperbolic-divergence-cleaning.md),
+used with cell-centred finite differences and on adaptive meshes,
+projection (the earliest), and a projection of reconstructed interface
+traces (below). The curl analogue is the
+[curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md).
 
 ## Unstaggered, vector potential
 
-([Christlieb et al. (2016)](/sources/christlieb-2016.md), §§2, 4; the
-Rossmanith framework.) Faraday's law with ideal Ohm's law gives
+([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md),
+§§2–6, the original FD-WENO scheme, after Helzel, Rossmanith and Taetz;
+[Christlieb et al. (2016)](/sources/christlieb-2016.md), §§2, 4, its
+single-step sequel.) Faraday's law with ideal Ohm's law gives
 $\partial_t\mathbf A + (\nabla\times\mathbf A)\times\mathbf v = -\nabla\psi$;
 the Weyl gauge $\psi = 0$ is stable. $\mathbf A$ lives on the same
-mesh as the conserved variables. Each step updates the MHD variables
-(including a provisional $\mathbf B$), updates $\mathbf A$, overwrites
-$\mathbf B$ with the discrete curl of $\mathbf A$, and — only when the
-positivity limiter is on — corrects the energy so the pressure is
-unchanged. The last step sacrifices energy conservation.
+mesh as the conserved variables. Each step, or each Runge–Kutta stage,
+updates the MHD variables (including a provisional $\mathbf B$), updates
+$\mathbf A$, and overwrites $\mathbf B$ with the discrete curl of
+$\mathbf A$. The fourth-order central curl is exactly divergence-free for
+the matching central divergence, because the central operators commute
+(2014, §6). Optionally the energy is corrected so the pressure is
+unchanged, which sacrifices energy conservation. The 2014 scheme never
+applies this correction; the 2016 scheme does, where its positivity
+limiter acts.
+* *Why Hamilton–Jacobi WENO.* WENO applied to differences of $\mathbf A$
+  measures the smoothness of $\nabla\mathbf A$, that is of $\mathbf B$, so
+  it controls oscillations in the physical field (2014, §5.1, Fig. 1).
 * In 2D only $A_z$ is needed:
   $\partial_t A_z + v_x\partial_x A_z + v_y\partial_y A_z = 0$, a strongly
   hyperbolic Hamilton–Jacobi equation. Treated with HJ technology
@@ -36,12 +51,20 @@ unchanged. The last step sacrifices energy conservation.
   $\mathbf B$ with non-oscillatory derivatives; the curl is fourth-order
   central.
 * In 3D the $\mathbf A$ system is only weakly hyperbolic and needs
-  artificial resistivity. A smoothness-indicator-gated term of size
-  $O(h^6)$ in smooth regions and $O(h)$ at kinks, with coefficient
-  $\nu \approx 0.01$, controls field oscillations.
+  artificial resistivity: each component gets upwind dissipation in only
+  two of the three directions (2014, eqs. 5.16–5.19). A
+  smoothness-indicator-gated term of size $O(h^6)$ in smooth regions and
+  $O(h)$ at kinks controls field oscillations. Its coefficient is
+  between 0.02 and 0.2 (0.1 in the runs) with the 10-stage SSP-RK(10,4) at
+  CFL 3.0 (2014, §5.3), and about 0.01 in the single-step 2016 scheme. The
+  weak hyperbolicity is an artifact of freezing the velocity, since full
+  MHD stays strongly hyperbolic (Helzel et al., cited in 2014, §2.2).
 * Without CT the rotated shock tube develops unphysical oscillations
-  and the [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) run
-  crashes at $t = 1.67$.
+  ([grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md)).
+  The [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) run crashes
+  at $t = 1.67$ with the 2016 scheme and reaches negative pressure at about
+  $t = 4.0$ with the 2014 base scheme. With CT the 2014 scheme runs to
+  $t = 30$ (§7.3).
 
 ## Yee-staggered, multidimensional Riemann solver
 
@@ -74,16 +97,35 @@ cost low; high-order divergence-preserving AMR remains available. The
 same algorithm, unchanged, solves electrodynamics, MHD and relativistic
 MHD at orders up to 9.
 
+**Relativistic MHD** ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §4).
+A multidimensional solver built from HLLC/HLLEM pieces works at the
+vertices, keeping linear sub-structure of the entropy and Alfvén waves in
+the strongly interacting state. The edge field is
+$\mathcal E_z = \tfrac12\left(-(f^{**}_x)_7 + (f^{**}_y)_6\right)$, the
+mean of two multidimensionally upwinded numerical fluxes. Such solvers
+remove any need to double the dissipation in the electric field, as the
+earlier HLL-based scheme did (§1; Balsara et al. 2009, below;
+[approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+
 **Comparison.** The vector-potential route needs no staggering, which
 eases embedding in AMR, but it breaks energy conservation where the
 positivity fix acts. The staggered route conserves exactly except in
 rare cells, where the first-order PCP fallback adds an energy source
 ([positivity preservation](/properties/positivity-preserving.md)).
 
-## Staggered, divergence-free reconstruction with ADER
+## Staggered, divergence-free reconstruction
 
-([Balsara et al. (2009)](/sources/balsara-2009.md), §§2.3, 4.1.) Balsara's earlier route, extended here to
-[ADER](/methods/ader.md) one-step time stepping. The face-normal field
+([Balsara (2004)](/sources/balsara-2004.md), §§2–3, second order;
+[Balsara (2009b)](/sources/balsara-2009-b.md), RK-WENO to fourth order;
+[Balsara et al. (2009)](/sources/balsara-2009.md), §§2.3, 4.1, with
+[ADER](/methods/ader.md) one-step time stepping;
+[divergence-free reconstruction](/methods/divergence-free-reconstruction.md).)
+At second order, each face gets four Riemann problems, at points next to
+its four edges. Each edge electric field is built from the one-sided
+fluxes of the four faces at that single point, which the author stresses
+is not a spatial average (Balsara 2004, eqs. 2.10–2.12). With one Riemann
+problem per face plus averaging, the pressure of a low-β blast is not
+evolved properly (§7.3). The face-normal field
 components and their facial moments are WENO-limited within each face.
 Imposing $\nabla\cdot\mathbf B = 0$ then fixes a polynomial field
 inside the whole zone that is divergence-free to all orders. Some of its
@@ -102,7 +144,8 @@ reconstruction for the zone-centred field
 **Hyperbolic divergence cleaning (GLM).** On the space–time adaptive
 meshes of [high-order AMR](/methods/high-order-amr.md), the MHD system is
 augmented with a scalar that transports divergence errors out of the
-domain at a cleaning speed (Dedner et al.). A staggered field is not
+domain at a cleaning speed (Dedner et al.; details on
+[hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)). A staggered field is not
 used ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2). The rotor then shows none of the spurious
 density and magnetic-pressure oscillations reported for Godunov schemes
 without divergence treatment ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [MHD rotor](/benchmarks/mhd-rotor.md)).
@@ -128,6 +171,80 @@ term ([characteristic decomposition](/methods/characteristic-decomposition.md)).
   shows spurious oscillations near the slow rarefaction without the
   projection (§3.1).
 
+## Yee-staggered, upwind CT at fourth order
+
+([Berta et al. (2024)](/sources/berta-2024.md), §4; arXiv v4.) Inside
+the [fourth-order finite-volume](/methods/fourth-order-finite-volume.md)
+scheme, the edge electric field is the upwind-CT combination of
+Londrillo and Del Zanna, generalized by Mignone and Del Zanna. It takes
+the transverse velocities and normal fields reconstructed from face
+centres to the edge, and the flux and diffusion coefficients of the 1D
+Riemann solver (eq. 39), with no multidimensional Riemann solver. A
+second difference along the edge, divided by 24, turns the edge-centre
+value into the edge average (eq. 40). Coefficients are given for HLL,
+HLLC, HLLD and GFORCE, with a new GFORCE average for relativistic MHD
+(Appendix B). Beyond a moderate magnetization in 3D blasts the scheme
+needs a Balsara–Spicer energy correction (§5.7).
+
+## Staggered finite-difference CT from WENO fluxes
+
+([Seo & Ryu (2023)](/sources/seo-2023.md), §2.4; [HOW-MHD](/software/how-mhd.md).)
+With finite-difference WENO, face point values of the normal field are
+updated by staggered differences of edge fields of fourth order
+(coefficients $\tfrac98$, $-\tfrac1{24}$) or sixth order ($\tfrac{75}{64}$,
+$-\tfrac{25}{384}$, $\tfrac{3}{640}$) (eq. 27).
+* The edge fields come from the upwinded parts of the 1D WENO fluxes of
+  the induction equation along the two transverse directions, plus
+  fourth-order interpolated cross terms (eqs. 12–21).
+* A plain difference of these fields is not enough, since each combines
+  fluxes reconstructed in different directions. They are corrected by
+  $\frac{1}{24}$ second differences in the two transverse directions
+  (eq. 23).
+* The zone-centred field comes from sixth-order interpolation. With
+  fourth-order interpolation the scheme converges only at fourth order
+  (eq. 30).
+* The discrete divergence stays at round-off. On 3D linear waves the
+  scheme converges at fifth order with either staggered difference,
+  against second order with the original second-order CT
+  ([circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)).
+  On shock problems the CT order makes no visible difference.
+
+## Projection of reconstructed traces
+
+([Ding & Wu (2024)](/sources/ding-2024.md), §2.3; arXiv v1.) A
+cell-local, unstaggered alternative for finite-volume WENO, which
+returns only point values at face quadrature nodes. The discrete
+divergence is defined from each cell's own interior traces, by quadrature
+of the normal components around the cell (eq. 9). The traces of $B_x$ and
+$B_y$ are then shifted by cell-wise constants $\mp A^{\mathrm{DDF}}_x$,
+$\mp A^{\mathrm{DDF}}_y$ that make this divergence zero. The shift is the
+minimum-norm correction (Prop. 2.3), it is $O(h^k)$ for a $k$-th-order
+reconstruction, so the order is kept (Thm. 2.7), and it needs no
+polynomial and no Poisson solve. It is the key to a provable positivity
+result ([positivity preservation](/properties/positivity-preserving.md)).
+The paper does not show what happens to a discrete divergence of the
+evolved cell averages.
+
+## Contradictions
+
+**Does exact divergence preservation require a staggered (Yee) mesh?**
+*Open.*
+* [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1: keeping the
+  magnetic field divergence-free "requires the use of a staggered,
+  Yee-type mesh"; "any divergence-free formulation of MHD requires the
+  use of a Yee-type mesh". [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md),
+  §§1–4, derive the Yee collocation from Stokes' theorem.
+* [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md),
+  §§1, 6, and [Christlieb et al. (2016)](/sources/christlieb-2016.md):
+  unstaggered CT keeps the central discrete divergence of the cell-centred
+  field exactly zero, and Tóth showed that staggering is unnecessary.
+* *Compiler's note on scope, not a resolution:* the two sides use
+  different discrete divergences, a face-flux (Stokes) one and a central
+  difference of point values. Each scheme keeps its own exactly zero.
+  Whether the claims conflict depends on which divergence "divergence-free"
+  means, which neither side states in that form. A source that compares
+  the definitions would settle it.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 4, 6.
@@ -136,3 +253,10 @@ term ([characteristic decomposition](/methods/characteristic-decomposition.md)).
 4. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.
 6. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 3.4.
+7. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§1–7 (arXiv v2).
+8. [Balsara (2004)](/sources/balsara-2004.md), §§1–3, 7.3.
+9. [Balsara (2009b)](/sources/balsara-2009-b.md), §§2–3 (author manuscript).
+10. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4.
+11. [Berta et al. (2024)](/sources/berta-2024.md), §§4, 5.7, Appendix B (arXiv v4).
+12. [Seo & Ryu (2023)](/sources/seo-2023.md), §§2.4, 3.
+13. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3 (arXiv v1).

@@ -113,6 +113,19 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
   their absolute size, set dimensionless weights
   ([weighted extrapolation](/methods/weighted-extrapolation.md); [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4).
 
+**In the reviews (batch 6).**
+* Shu calls the indicator "a scaled sum of the square $L^2$ norms of all
+  the derivatives", and later prefers "roughness indicator". The scaling
+  makes it independent of $h$ on uniform meshes, and on non-uniform meshes
+  dependent only on mesh-size ratios ([Shu (2009)](/sources/shu-2009.md), eq. 2.8; [Shu (2020)](/sources/shu-2020.md), §3.1).
+* *For point-value interpolation* the fifth-order indicators are quadratic
+  forms such as
+  $\beta_1 = \tfrac13\left(4u_{i-2}^2 - 19u_{i-2}u_{i-1} + 25u_{i-1}^2 + 11u_{i-2}u_i - 31u_{i-1}u_i + 10u_i^2\right)$
+  ([Shu (2009)](/sources/shu-2009.md), eq. 2.9, read from the page image).
+* *For an $m$-th derivative*, the sum must start at derivative order
+  $m + 1$ ([Shu (2020)](/sources/shu-2020.md), §3.4.1).
+* A Zhang–Shu indicator improves steady-state convergence ([Shu (2009)](/sources/shu-2009.md), §2.3.5).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §3.2 and acknowledgement.
@@ -126,3 +139,5 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
 9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2.3 (eqs. 23–25 read from the page image).
 10. [Fisher et al. (2011)](/sources/fisher-2011.md), eq. 19.
 11. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.
+12. [Shu (2009)](/sources/shu-2009.md), §§2.1, 2.3.5.
+13. [Shu (2020)](/sources/shu-2020.md), §§3.1, 3.4.1.

@@ -144,6 +144,33 @@ least-squares sense, the same device as polynomial WENO's constrained
 reconstruction ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §3.2;
 [high-order AMR](/methods/high-order-amr.md)).
 
+**Later uses (batch 6).**
+* *Interpolation inside finite volume.* After the $\frac{h^2}{24}$
+  deconvolution, point values can be interpolated to faces with
+  finite-difference formulas and point-value linear weights:
+  $\tfrac1{16}, \tfrac58, \tfrac5{16}$ for fifth order and $\tfrac34, \tfrac14$
+  for third, against $\tfrac1{10}, \tfrac6{10}, \tfrac3{10}$ and $\tfrac23, \tfrac13$
+  from averages ([Berta et al. (2024)](/sources/berta-2024.md), §3.2;
+  [fourth-order finite volume](/methods/fourth-order-finite-volume.md)).
+  Two-point Gauss quadrature would need 4 Riemann problems per 3D face.
+* *Flexibility and cost.* FV reconstruction needs no uniform or smooth
+  mesh, since coefficients and weights become local constants
+  ([Shu (2009)](/sources/shu-2009.md), §2.3.2). In 2D it costs two to five times the FD scheme above
+  second order, a range that refines Shu's 1998 factor of four
+  ([Shu (2009)](/sources/shu-2009.md), §3.4; [conservative finite difference](/methods/conservative-finite-difference.md)).
+  On unstructured meshes the optimal weights depend on the local mesh and
+  can be negative ([negative linear weights](/methods/negative-linear-weights.md)).
+* *Gauss–Lobatto edge nodes.* Fifth-order 2D FV-WENO uses 4-point
+  Gauss–Lobatto nodes instead of 3-point Gauss, because the latter gives a
+  negative linear weight at the midpoint (Shi, Hu & Shu). The same nodes
+  serve the positivity limiter ([Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2).
+* *Constrained vector reconstruction.* Magnetic fields can be rebuilt from
+  face moments under a divergence constraint
+  ([divergence-free reconstruction](/methods/divergence-free-reconstruction.md)),
+  and curl-constrained fields from edge moments, with zone-centred WENO
+  only as least-squares targets at fourth order
+  ([curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1, 3 and Appendix.
@@ -158,3 +185,6 @@ reconstruction ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), 
 10. [Balsara et al. (2009)](/sources/balsara-2009.md), §2.
 11. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.2, 3.2.
 12. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §3 (accepted manuscript).
+13. [Berta et al. (2024)](/sources/berta-2024.md), §3.2 (arXiv v4).
+14. [Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2 (arXiv v1).
+15. [Shu (2009)](/sources/shu-2009.md), §§2.3.2, 3.4.

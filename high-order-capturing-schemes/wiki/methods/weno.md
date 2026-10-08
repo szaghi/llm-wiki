@@ -50,6 +50,8 @@ the data and cheap (rational, not exponential)
 | [Levy, Puppo & Russo (1999)](/sources/levy-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, central |
 | [Balsara & Shu (2000)](/sources/balsara-2000.md) | 2 | $10^{-10}$ | Jiang–Shu, $r = 4$–$7$ |
 | [Jiang & Wu (1999)](/sources/jiang-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, $r = 3$, MHD |
+| [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md) | 1 (WENO-Z form) | $h^2$ | undivided differences, $r = 2$, MHD |
+| [Seo & Ryu (2023)](/sources/seo-2023.md) | 2 | $10^{-8}$ | Jiang–Shu, $r = 3$, MHD |
 
 Jiang and Shu find $q = 2$ adequate for essentially non-oscillatory
 results at $r = 2, 3$; Levy et al. find the scheme almost insensitive to
@@ -206,6 +208,44 @@ positivity-preserving for Euler; see the
   ([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md);
   [Ding, Shu & Zhang (2020)](/sources/ding-2020.md)).
 
+**Batch 6 additions: the reviews.**
+* *An approximation procedure.* Shu presents WENO as independent of any
+  PDE, in three forms: interpolation of point values, reconstruction from
+  cell averages, and approximation of derivatives and integrals
+  ([Shu (2009)](/sources/shu-2009.md), §2; [Shu (2020)](/sources/shu-2020.md), §3). The fifth-order interpolation candidates are
+  $\tfrac38 u_{i-2} - \tfrac54 u_{i-1} + \tfrac{15}{8}u_i$,
+  $-\tfrac18 u_{i-1} + \tfrac34 u_i + \tfrac38 u_{i+1}$ and
+  $\tfrac38 u_i + \tfrac34 u_{i+1} - \tfrac18 u_{i+2}$, with linear weights
+  $\tfrac1{16}, \tfrac58, \tfrac5{16}$ ([Shu (2009)](/sources/shu-2009.md), eqs. 2.1–2.5;
+  [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)).
+* *Why a discontinuity in every stencil is harmless.* If a jump lies in
+  the target interval, every candidate and the big-stencil polynomial are
+  monotone there, so their convex combination is too, whatever the
+  nonlinear weights ([Shu (2009)](/sources/shu-2009.md), §2.1; [Shu (2020)](/sources/shu-2020.md), §3.1;
+  [ENO](/methods/eno-reconstruction.md)).
+* *For derivatives*, the indicator sum must start one order higher than
+  the derivative approximated. Including the derivative itself is "a
+  common mistake", costing accuracy and causing oscillations
+  ([Shu (2020)](/sources/shu-2020.md), §3.4.1; [Shu (2009)](/sources/shu-2009.md), §2.3.4). Derivative and integral linear weights
+  are often negative ([negative linear weights](/methods/negative-linear-weights.md)).
+* *Practice.* Fifth, ninth and thirteenth order "perform better than"
+  third, seventh and eleventh, on unpublished experiments. New users should
+  start with WENO-JS5, because "the benefits of these modifications and
+  improvements are not universal" ([Shu (2020)](/sources/shu-2020.md), §§3.1–3.2). High-order WENO may
+  use 3 to 10 times the CPU time of a second-order scheme and still pay
+  off ([Shu (2009)](/sources/shu-2009.md), §1).
+* *Scale invariance.* With ε a small fraction of the solution's size,
+  WENO schemes are self-similar
+  ([self-similarity](/properties/self-similarity.md); [Shu (2009)](/sources/shu-2009.md), §3.5.1).
+* *Accuracy behind shocks.* For scalar problems full order holds away from
+  a discontinuity. For systems, characteristics of other fields cross the
+  shock and carry its error downstream: in a quasi-1D nozzle the
+  downstream order is about 2 with regular integration, and about 4 with
+  subcell integration in the shock cell ([Shu (2009)](/sources/shu-2009.md), §3.5.2, Table 3.1).
+* *Open problems* (2009): implicit WENO, whose weights defeat Newton
+  iteration near shocks at large steps; tailored weights; 3D unstructured
+  WENO; non-polynomial bases; analysis of the unmodified schemes ([Shu (2009)](/sources/shu-2009.md), §7).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §§3–4 (read visually; image-only scan).
@@ -233,3 +273,5 @@ positivity-preserving for Euler; see the
 23. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.
 24. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2–3.
 25. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §1.
+26. [Shu (2009)](/sources/shu-2009.md), §§1–3, 7.
+27. [Shu (2020)](/sources/shu-2020.md), §§3–4.

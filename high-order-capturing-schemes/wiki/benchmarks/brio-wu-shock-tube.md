@@ -44,8 +44,19 @@ dissipation (§§1, 4).
   WENO-JS ([Reyes et al. (2018)](/sources/reyes-2018.md), §5;
   [GP-WENO](/methods/gp-weno.md)).
 
+**Later uses (batch 6).** With GLM cleaning, rotated by 45°, MP5 gives the
+best normal field and the gain from third to fifth order is a factor
+1.5–2 ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.2.1).
+The 1D problem also confirms that FD-WENO with SSP-RK(10,4) stays
+essentially non-oscillatory up to CFL 3.07, without results shown
+([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3).
+Rotated versions and other MHD Riemann problems are collected on
+[grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 4, Figs. 2–4.
 2. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§VI–VII.
 3. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.
+4. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.2.1 (arXiv v2).
+5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3 (arXiv v2).

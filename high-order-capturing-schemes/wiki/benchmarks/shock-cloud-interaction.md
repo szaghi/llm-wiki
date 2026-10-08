@@ -26,7 +26,23 @@ $t = 0.06$ ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5).
   divergence-preserving AFD-WENO
   ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.3, Fig. 20).
 
+**Later uses (batch 6).**
+* The original FD-WENO with unstaggered CT gives the full states: left
+  $(3.86859, 11.2536, 0, 0, 167.345, 0, 2.1826182, -2.1826182)$ and right
+  $(1, 0, 0, 0, 1, 0, 0.56418958, 0.56418958)$, cloud density 10, radius
+  0.15, $256^2$, $t = 0.06$. The structure near $x = 0.75$ appears in a
+  second-order FV code only at $512^2$, which the authors take as evidence
+  that it is physical. A 2.5D version computes $B_z$ by CT, and a 3D run
+  on $128^3$ has no positivity problem
+  ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.4).
+* A mirrored 3D version (shock at $x = 0.6$, cloud at $(0.8, 0.5, 0.5)$,
+  upstream flow towards $-x$), MHD and relativistic, $256^3$. Order
+  reduction with selective flux integration was "fundamental"
+  ([Berta et al. (2024)](/sources/berta-2024.md), §5.8).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.3.
+3. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.4 (arXiv v2).
+4. [Berta et al. (2024)](/sources/berta-2024.md), §5.8 (arXiv v4).

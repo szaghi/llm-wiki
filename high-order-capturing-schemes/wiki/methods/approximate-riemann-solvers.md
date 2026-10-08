@@ -84,6 +84,32 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   $\vert A\vert = R\vert\Lambda\vert L$
   ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), eqs. 30–31).
 
+**Later uses (batch 6).**
+* *Relativistic MHD.* HLLC (Mignone–Bodo; Kim–Balsara, modified so that
+  both star states share the normal velocity and total pressure) and
+  HLLEM (Dumbser–Balsara), which keeps isolated contacts and Alfvén
+  discontinuities without iteration. Relativistic HLLD is expensive and
+  brittle. Positivity proofs exist only for first-order 1D HLL, HLLEM and
+  HLLC, and none for a subluminal RMHD solver
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4.1, Appendix B).
+* *Multidimensional solvers with sub-structure.* At a vertex, four states
+  bound a strongly interacting state by $[S_L, S_R]\times[S_D, S_U]$.
+  Keeping linear variation of the entropy and Alfvén waves inside it
+  reduces dissipation, and without it the solver is the multidimensional
+  HLL ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §4.2;
+  [constrained transport](/methods/constrained-transport.md)). An LLF
+  version at vertices upwinds a scalar potential, with dissipation
+  $\frac{|v_d|}{2h_d}$ times a second difference in each direction
+  ([Balsara et al. (2023)](/sources/balsara-2023.md), §§2.5, 3.4;
+  [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md)).
+* *HLLD and GFORCE* serve fourth-order finite volume for MHD and RMHD, with
+  upwind-CT coefficients for each. On field-loop advection the solver
+  choice matters only marginally ([Berta et al. (2024)](/sources/berta-2024.md), §§3.3, 5.4, Appendix B).
+* *Accuracy versus dissipation at second order.* On the MHD vortex, Roe
+  and HLLE errors are comparable, but HLLE is more dissipative on decaying
+  Alfvén waves. HLLE also costs less as the number of species grows, and is
+  carbuncle-free ([Balsara (2004)](/sources/balsara-2004.md), §§3.4, 6, 7.1).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §§2, 4, 5.
@@ -96,3 +122,7 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 8. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §2.3.
 9. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §3.2.
 10. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.
+11. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4, Appendix B.
+12. [Balsara et al. (2023)](/sources/balsara-2023.md), §§2.5, 3.4.
+13. [Berta et al. (2024)](/sources/berta-2024.md), §§3.3, 5.4, Appendix B (arXiv v4).
+14. [Balsara (2004)](/sources/balsara-2004.md), §§3.4, 6, 7.1.

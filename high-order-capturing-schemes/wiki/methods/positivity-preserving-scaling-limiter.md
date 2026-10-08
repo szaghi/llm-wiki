@@ -97,6 +97,21 @@ avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
   step limit for geometric, gravity, reaction and radiative-cooling
   sources ([Zhang & Shu (2012)](/sources/zhang-2012.md), §§4.2–4.3).
 
+* **MHD, point values only, divergence-free traces**
+  ([Ding & Wu (2024)](/sources/ding-2024.md), §2.4; arXiv v1). No
+  polynomial is built. In 2D the interior Gauss–Lobatto values are
+  replaced by one remainder state: the cell average minus the
+  $\hat w_1$-weighted edge averages of the traces, divided by
+  $1 - 2\hat w_1$, which must also lie in $\mathcal G$. The second step
+  scales the whole state about $\bar u_i$ by a ratio, using the concavity
+  of the internal energy $\rho e(u)$ and Jensen's inequality, with no
+  quadratic solve. Because the scaling is affine about the cell mean, it
+  keeps the discrete divergence of the traces zero (Thm. 2.9). Floors are
+  cell-wise, $\min\{10^{-13}, \bar\rho_i\}$ and
+  $\min\{10^{-13}, \rho e(\bar u_i)\}$. The theory allows a Courant number
+  of $\hat w_1 = 1/12$ at fifth order, but the runs use 0.3, with the CFL
+  definition not given ([positivity preservation](/properties/positivity-preserving.md)).
+
 **Alternatives.** The [flux limiter](/methods/positivity-preserving-flux-limiter.md)
 of Hu, Adams and Shu limits fluxes instead of point values and needs a
 weaker time-step condition for accuracy.
@@ -107,3 +122,4 @@ weaker time-step condition for accuracy.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), §§2–5 (Theorem 3.1, eqs. 3.7–3.11 and Remark 3.3 read from the page images).
 3. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
 4. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.4.
+5. [Ding & Wu (2024)](/sources/ding-2024.md), §§2.4, 3 (arXiv v1).

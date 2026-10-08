@@ -92,8 +92,20 @@ alternative recomputes troubled cells with a different scheme on a
 subgrid instead of post-processing them
 ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
 
+**Later (batch 6): the reviews.** DG is more flexible than WENO on
+unstructured meshes but "less robust in dealing with solutions with
+strong shocks", because its limiters lag behind WENO ([Shu (2009)](/sources/shu-2009.md), §5.1). WENO
+reconstruction suits troubled cells because it keeps high order where a
+smooth cell is flagged by mistake, and no troubled-cell indicator "is
+bullet-proof". After the first, wider limiters came compact ones (Zhong
+and Shu; Zhu et al.) and multi-resolution limiters, which "appear to be
+quite robust". Hermite WENO fits DG's compact data structure
+([Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3).
+
 # Citations
 
 1. [Qiu & Shu (2005)](/sources/qiu-2005.md), §§1–4.
 2. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§1, 3.1.
 3. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §6.
+4. [Shu (2009)](/sources/shu-2009.md), §5.1.
+5. [Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3.

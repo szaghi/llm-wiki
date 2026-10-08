@@ -114,9 +114,18 @@ block-adaptive curvilinear grids with
 costs about 3 times the second-order scheme
 ([high-order AMR](/methods/high-order-amr.md)).
 
+**In the reviews (batch 6).** Shu describes the alternative form as WENO
+interpolation plus "all the even-order derivatives of the flux function",
+and stresses that it "allows use of all monotone fluxes, regardless of
+their smoothness". He promises other advantages without discussing them
+([Shu (2020)](/sources/shu-2020.md), §4.2). The interpolation candidates and weights are on the
+[WENO](/methods/weno.md) page ([Shu (2009)](/sources/shu-2009.md), §2.1).
+
 # Citations
 
 1. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§I–IX (eqs. 2–12 read from the page images).
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1, 2, 4, 7.4, 8.
 3. [Shu & Osher (1988)](/sources/shu-1988.md), §III.
 4. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§1–3, 6 (accepted manuscript).
+5. [Shu (2020)](/sources/shu-2020.md), §4.2.
+6. [Shu (2009)](/sources/shu-2009.md), §2.1.

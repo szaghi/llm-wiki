@@ -58,6 +58,12 @@ evaluations ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §2.3; [Zanotti 
 is what lets each level of a [high-order AMR](/methods/high-order-amr.md)
 grid take its own time step.
 
+**Later (batch 6).** Shu groups ADER and generalized-Riemann-problem
+(GRP) schemes with Lax–Wendroff time discretization as one class. Hybrid
+multiderivative integrators, multi-stage Lax–Wendroff, are a newer
+branch (Seal, Güçlü and Christlieb; Li and Du) ([Shu (2020)](/sources/shu-2020.md), §7;
+[ADER](/methods/ader.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §4.
@@ -68,3 +74,4 @@ grid take its own time step.
 6. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.
 7. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
 8. [Balsara et al. (2009)](/sources/balsara-2009.md), §3.
+9. [Shu (2020)](/sources/shu-2020.md), §7.

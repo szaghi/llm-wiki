@@ -91,6 +91,18 @@ the squared third undivided difference. It requires a dimensional
 $\varepsilon$ between $O(h^3)$ and $O(h^2)$ for design order at critical
 points ([energy-stable WENO](/methods/energy-stable-weno.md); [Fisher et al. (2011)](/sources/fisher-2011.md), §§2.2, 5.2).
 
+**Later uses (batch 6).** WENO-Z ($q = 1$, $\tau_5 = |\beta_0 - \beta_2|$,
+$\varepsilon = 10^{-40}$) on characteristic, globally Lax–Friedrichs split
+fluxes for GLM-MHD. It costs about 1.45–1.48 times third-order WENO and is
+slightly behind MP5 in accuracy and sharpness. The printed $\beta_1$ in
+the preprint has a misprint ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md),
+§3.2.3). A point-value version with linear weights
+$\tfrac1{16}, \tfrac58, \tfrac5{16}$ serves fourth-order finite volume
+([Berta et al. (2024)](/sources/berta-2024.md), §3.2). Applied in
+characteristic variables with 4-point Gauss–Lobatto nodes, it is the
+reconstruction of a provably positive MHD scheme
+([Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2).
+
 # Citations
 
 1. [Borges et al. (2008)](/sources/borges-2008.md), §§2–5 (eqs. 24–27, 42 and Table 1 read from the page images).
@@ -99,3 +111,6 @@ points ([energy-stable WENO](/methods/energy-stable-weno.md); [Fisher et al. (20
 4. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §§1, 4.
 5. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§2.2, 3.
 6. [Fisher et al. (2011)](/sources/fisher-2011.md), §§2.2, 5.2.
+7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.2.3 (arXiv v2).
+8. [Berta et al. (2024)](/sources/berta-2024.md), §3.2 (arXiv v4).
+9. [Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2 (arXiv v1).

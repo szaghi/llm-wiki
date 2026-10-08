@@ -34,8 +34,23 @@ same limiter, and WENO5 with the
 all complete the run. The results agree with each other at equal
 resolution.
 
+**A magnetized variant (batch 6).** $\gamma = 1.4$, jet density 10 times
+the ambient, speed 800, $p = 1$, field $\sqrt{200}$ along the jet, on half
+the domain with $200\times600$ cells, to $t = 0.002$. The provably
+positive fifth-order FV-WENO scheme runs it, and with the positivity
+limiter off it blows up quickly ([Ding & Wu (2024)](/sources/ding-2024.md),
+Example 4.5). It is a different set-up from the hydrodynamic jet above.
+
+**In the reviews (batch 6).** In Ha et al.'s simulations, third-order
+WENO worked and fifth-order WENO failed on the Mach 2000 jet without a
+positivity limiter (as cited by [Shu (2020)](/sources/shu-2020.md), §9). [Shu (2009)](/sources/shu-2009.md), §6, cites a Mach 80
+radiative jet on which "many high resolution schemes become unstable".
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.4.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.4.
 3. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.2.
+4. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.5 (arXiv v1).
+5. [Shu (2020)](/sources/shu-2020.md), §9.
+6. [Shu (2009)](/sources/shu-2009.md), §6.

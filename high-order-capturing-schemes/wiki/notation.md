@@ -227,6 +227,21 @@ Added 2026-10-08 (batch 5: jiang-1999, mccorquodale-2011, chen-2016, owen-2018, 
 | $\chi$, $k_m$ | fraction of a coarse step in a Runge–Kutta dense output, $0 \le \chi \le 1$, and the stage increments $k_m = \Delta t\,\mathcal L(u^{(m-1)})$ (distinct from the TENO measure $\chi_k$) |
 | $M_s$, $\mathrm{Re}$, $\mathrm{Pr}$ | shock Mach number, Reynolds number, Prandtl number |
 
+## MHD divergence and curl constraints, reviews and codes
+
+Added 2026-10-08 (batch 6: balsara-2004, balsara-2009-b, mignone-2010, christlieb-2014, balsara-2016-b, balsara-2023, seo-2023, berta-2024, ding-2024, bernardini-2021, shu-2009, shu-2020).
+
+| Symbol | Meaning |
+|---|---|
+| $\psi$ | gauge scalar of the vector-potential equation, $\partial_t\mathbf A + (\nabla\times\mathbf A)\times\mathbf v = -\nabla\psi$ (Weyl gauge $\psi = 0$); in use since batch 3, registered at the batch-6 deep lint |
+| $\psi_{\mathrm{GLM}}$, $c_h$, $c_p$, $\alpha_p$ | GLM cleaning scalar, cleaning speed, damping parameter, and dimensionless damping $\alpha_p = c_h\min_d h_d/c_p^2$ |
+| $c_f$, $c_A$, $c_s$; $c_{f,d}$ | fast magnetosonic, Alfvén and slow speeds; $c_{f,d}$ the fast speed in direction $d$ |
+| $\hat B_{x,\mathbf m}$ | coefficient of the mode $\mathbf m$ (monomial or Legendre, written as letters, e.g. $\hat B_{x,xx}$ for the $x^2$ term) of the reconstructed $B_x$ inside one zone; cyclically for $B_y$, $B_z$ |
+| $f^{**}_x$, $f^{**}_y$ | numerical fluxes from the strongly interacting state of a multidimensional Riemann solver at an edge or vertex |
+| $A^{\mathrm{DDF}}_x$, $A^{\mathrm{DDF}}_y$ | cell-wise constant shifts of the normal-field traces that make a discrete divergence of the traces vanish |
+| $\rho e(u)$ | internal-energy density as a function of the conserved state, concave for $\rho > 0$ |
+| $\mathbf J$, $\boldsymbol\Omega$ | a curl-constrained vector field (edge-collocated) and its curl $\boldsymbol\Omega = \nabla\times\mathbf J$, divergence-free (distinct from the mapped-grid Jacobian $\mathcal J$) |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

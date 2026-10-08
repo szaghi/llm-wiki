@@ -57,11 +57,12 @@ to another bundle.
     `2018-CompFluids-Owen-…` (author manuscript). `2025-arXiv-Wang-…`
     (arXiv:2511.08335v1) has no published version on Crossref; a later JCP
     paper by four of its five authors, with a different title, is not
-    taken as the same work. Page 1 of these not-yet-ingested files also
-    shows a preprint: `2010-JCP-Mignone-…`, `2014-JCP-Christlieb-…`,
-    `2024-JCP-Berta-…` and `2024-SISC-Ding-…` (arXiv). Before ingesting
-    each, check on Crossref whether a published version exists, and record
-    the version read.
+    taken as the same work. Batch 6 added `2009-JCP-Balsara-…` (author
+    manuscript, most likely the submitted version), `2010-JCP-Mignone-…`
+    (arXiv:1001.2832v2), `2014-JCP-Christlieb-…` (arXiv:1309.3344v2),
+    `2024-JCP-Berta-…` (arXiv:2310.11831v4) and `2024-SISC-Ding-…`
+    (arXiv:2305.14820v1). For any future file, check on Crossref whether a
+    published version exists, and record the version read.
   - Slugs reserved for archived works whose bare key a same-year homonym
     already holds (decided at batch 3): Balsara 2009 divergence-free
     reconstruction + WENO (JCP 228:5040) → `balsara-2009-b` (ADER-WENO,
@@ -128,7 +129,7 @@ to another bundle.
 
 ## Status
 
-**Batch 5 staged 2026-10-08:** 50 of 62 ingested (batch 1: origins, ENO,
+**Batch 6 staged 2026-10-08:** all 62 archived sources ingested (batch 1: origins, ENO,
 WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
 WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes; batch 3: SSP
 theory, 3D FV-WENO, positivity limiters, compact and GP WENO, AFD-WENO,
@@ -137,6 +138,12 @@ polynomial WENO, WENO-limited and a posteriori subcell-limited DG, ADER
 AMR, energy-stable WENO boundary closures, inverse Lax–Wendroff and
 weighted extrapolation; batch 5: the rest of the ILW line (sign-changing
 wind, conservation, moving bodies, fluid–structure interfaces),
-block-structured high-order AMR in FV and FD, and FD-WENO for MHD). Deep
-lints ran at batches 3, 4 and 5. The next is due at 60 ingestions. The
-worklist is authoritative.
+block-structured high-order AMR in FV and FD, and FD-WENO for MHD;
+batch 6: MHD divergence treatments (divergence-free reconstruction, GLM,
+high-order and upwind CT, trace projection with provable positivity),
+relativistic MHD, curl-preserving reconstruction, the STREAmS code, and
+Shu's 2009 and 2020 surveys). Deep lints ran at batches 3, 4, 5 and 6, and
+the closing bibliography sweeps (`--dupes`, venue, fuzzy title) ran over
+the whole corpus after batch 6. A new source added to the archive is
+ingested per source, with a hand-edited `.bib` (repo law), and a deep
+lint is due every 10 further ingestions. The worklist is authoritative.

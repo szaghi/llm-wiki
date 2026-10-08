@@ -139,6 +139,23 @@ with the claim that finite-difference schemes, lacking a volumetric
 reconstruction, cannot use ADER predictors
 ([Lax–Wendroff (Taylor) time discretization](/methods/taylor-time-discretization.md)).
 
+**Later uses (batch 6): a primitive-variable predictor for relativistic MHD.**
+([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §3.) To keep
+velocities below the speed of light, the predictor evolves the primitive
+vector with the four-velocity, in quasi-linear form, with the Jacobians
+inverted numerically at each node. Runge–Kutta was rejected because its
+internal stages carry no subluminal guarantee. The corrector stays
+conservative, so the order is not lost.
+* Second order is a Lax–Wendroff step. At third and fourth order the
+  predictor is nodal collocation: the spatial modes stay fixed, the PDE is
+  enforced at chosen space–time nodes, and the nodes at $t^n$ are
+  evaluated once.
+* It uses two Picard iterations at third order and three at fourth,
+  citing Dumbser et al. (2008). That is $K$ iterations for order $K + 1$,
+  against the $K + 1$ reported above for the ADER-CG predictor. The
+  predictors differ, so this is a difference of practice, not a
+  contradiction.
+
 # Citations
 
 1. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §§1, 3, 4, 6.
@@ -146,3 +163,4 @@ reconstruction, cannot use ADER predictors
 3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §§1, 2, 5.
 4. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§1, 2.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §§1, 3.
+6. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§2–3.

@@ -42,8 +42,41 @@ the pressure positive. The authors credit the divergence-free
 reconstruction of the zone-centred field
 ([Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5; [constrained transport](/methods/constrained-transport.md)).
 
+**Later uses (batch 6).**
+* *Second order, $200^2$, $t = 0.01$, ambient beta $2.51\times10^{-4}$.*
+  Pressure stays positive with fast TVD slopes, and with $r = 3$ WENO
+  slopes held by a multidimensional limiter. The limiter alone gives a
+  small pressure drop at oblique shock segments. One Riemann problem per
+  face with averaged edge fields does not evolve the pressure properly
+  ([Balsara (2004)](/sources/balsara-2004.md), §7.3;
+  [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
+  Fourth-order RK-WENO captures the fast shock crisply with positive
+  pressure ([Balsara (2009b)](/sources/balsara-2009-b.md), §5.3).
+* *Field along $x$*, $B = 100/\sqrt{4\pi}$, $p = 10^3$ inside $r = 0.1$ and
+  0.1 outside, $200^2$: with the positivity limiter off the code fails from
+  negative pressure, and without the divergence projection it oscillates.
+  The final time is not printed; 0.01 is inferred from a figure axis
+  ([Ding & Wu (2024)](/sources/ding-2024.md), Example 4.4).
+* *3D, three cases on $192^3$*: Felker and Stone's case at three times
+  their field, the largest the scheme affords without an energy
+  correction; the Balsara–Spicer case with the correction; and a
+  relativistic case. Point symmetry is kept, and the fallback to lower
+  order "played an essential role" ([Berta et al. (2024)](/sources/berta-2024.md), §5.7, Table 3).
+* *3D, milder.* $B_0 = 10$ diagonal, pressure 100 inside $r_0 = 0.125$
+  (printed swapped in eq. 47), $200^3$, $t = 0.02$, no positivity
+  treatment mentioned ([Seo & Ryu (2023)](/sources/seo-2023.md), §3.7).
+* *Relativistic*, $400^2$, the set-up above: stable "near-infinite
+  shocks". The paper states both third and fourth order for this run
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.2).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§7.2–7.3.
 3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5.
+4. [Balsara (2004)](/sources/balsara-2004.md), §7.3.
+5. [Balsara (2009b)](/sources/balsara-2009-b.md), §5.3 (author manuscript).
+6. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.4 (arXiv v1).
+7. [Berta et al. (2024)](/sources/berta-2024.md), §5.7 (arXiv v4).
+8. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.7.
+9. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.2.

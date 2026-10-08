@@ -72,6 +72,33 @@ periodic box and returns to its start after one period
   converges at order 3.96–3.99 on the two finest pairs
   ([Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.5, Table 3).
 
+**Later uses (batch 6): MHD and relativistic vortices.**
+* *The MHD vortex* was introduced at second order on $[-5, 5]^2$, with
+  background $(\rho, p, v_x, v_y) = (1, 1, 1, 1)$, $\gamma = 5/3$, and
+  velocity and field perturbations of the same Gaussian form, balanced by
+  a pressure perturbation (eqs. 6.1–6.5). With $r = 3$ WENO slopes it needs
+  a little more than half the zones per direction of $r = 2$ for the same
+  error, at $L^1$ order 2.0 ([Balsara (2004)](/sources/balsara-2004.md),
+  §6, Tables 1–7). At third and fourth order with divergence-free
+  reconstruction it reaches orders 2.99 and 4.41
+  ([Balsara (2009b)](/sources/balsara-2009-b.md), §4.1, Table I).
+* With GLM finite differences, $L^1(B_x)$ orders reach 2.9 and 4.9 in 2D.
+  A new 3D version reaches 4.8–4.9, with divergence below $10^{-8}$ at
+  $128^3$. The authors warn that $L^2$ errors sit systematically below
+  $L^1$ ones, so comparisons across norms "may be deceitful"
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.3).
+* Fourth-order finite volume with upwind CT converges at rates above 4.
+  An iso-enthalpy relativistic vortex, a new exact equilibrium, does the
+  same ([Berta et al. (2024)](/sources/berta-2024.md), §5.2, Table 1).
+* *Lorentz-boosted vortices* for relativistic hydrodynamics and MHD,
+  boosted at $(0.5, 0.5)$ so that they are contracted on the mesh,
+  converge at orders 2.2, 2.9 and 4.4–4.5. The third-order hydro and MHD
+  tables are numerically identical, which looks like a duplicated table
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §5, Tables 1–6).
+* *A low-pressure vortex* with minimum pressure about $5.3\times10^{-12}$,
+  so that the positivity limiter acts, converges at fifth order
+  ([Ding & Wu (2024)](/sources/ding-2024.md), Example 4.1, Table 4.1).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
@@ -85,3 +112,9 @@ periodic box and returns to its start after one period
 9. [Fisher et al. (2011)](/sources/fisher-2011.md), §6.3.
 10. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.9.
 11. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.5 (accepted manuscript).
+12. [Balsara (2004)](/sources/balsara-2004.md), §6.
+13. [Balsara (2009b)](/sources/balsara-2009-b.md), §4.1 (author manuscript).
+14. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.3 (arXiv v2).
+15. [Berta et al. (2024)](/sources/berta-2024.md), §5.2 (arXiv v4).
+16. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §5.
+17. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.1 (arXiv v1).

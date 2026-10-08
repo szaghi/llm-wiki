@@ -2,6 +2,108 @@
 
 ## 2026-10-08
 
+* **Batch 6 (12 sources, the last of the archive), ingested autonomously on
+  user instruction** and staged as one unit:
+  [Balsara (2004)](/sources/balsara-2004.md),
+  [Balsara (2009b)](/sources/balsara-2009-b.md),
+  [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md),
+  [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md),
+  [Balsara & Kim (2016)](/sources/balsara-2016-b.md),
+  [Balsara et al. (2023)](/sources/balsara-2023.md),
+  [Seo & Ryu (2023)](/sources/seo-2023.md),
+  [Berta et al. (2024)](/sources/berta-2024.md),
+  [Ding & Wu (2024)](/sources/ding-2024.md),
+  [Bernardini et al. (2021)](/sources/bernardini-2021.md),
+  [Shu (2009)](/sources/shu-2009.md),
+  [Shu (2020)](/sources/shu-2020.md).
+  All 62 archived PDFs are now ingested. Papers were read by parallel
+  subagents into scratch notes and reference fragments; the compiler wrote
+  every page from those notes.
+  * **Created** 11 concept pages:
+    * methods: divergence-free reconstruction, hyperbolic (GLM) divergence
+      cleaning, edge-centred curl-preserving reconstruction, negative
+      linear weights;
+    * property: self-similarity;
+    * benchmarks: circularly polarized Alfvén waves, field-loop
+      advection, grid-oblique MHD shock tubes;
+    * software (the folder's first pages): STREAmS, HOW-MHD, PLUTO.
+  * **Updated**:
+    * methods: constrained transport (primary source for the unstaggered
+      design, new sections on fourth-order upwind CT, staggered FD-CT from
+      WENO fluxes and projection of reconstructed traces), fourth-order
+      finite volume (pointwise reconstruction), WENO, ENO, WENO-AO,
+      WENO-Z, mapped WENO, central WENO, WENO-limited DG, MP limiting,
+      energy-stable WENO, hybrid compact-WENO, PPM, ADER, Lax–Wendroff,
+      Riemann solvers, characteristic decomposition, SSP Runge–Kutta,
+      conservative FD, FV reconstruction, alternative FD-WENO,
+      polynomial WENO, inverse Lax–Wendroff, scaling limiter;
+    * definition: smoothness indicator; result: weight accuracy
+      conditions;
+    * properties: positivity preservation, accuracy at critical points;
+    * benchmarks: Orszag–Tang, rotor, blast, shock–cloud, Brio–Wu,
+      high-Mach jet, shock–vortex, isentropic vortex (MHD and relativistic
+      variants);
+    * the root reading guide: items 3, 9, a new item 12 (codes), 13.
+  * **Contradictions.**
+    * *Opened* on constrained transport: Balsara and Kim state that
+      divergence-free MHD "requires" a Yee mesh; Christlieb et al.'s
+      unstaggered CT keeps its central discrete divergence exactly zero.
+      The compiler notes that the two use different discrete divergences.
+    * *Open, new evidence:* first-order Lax–Friedrichs MHD positivity.
+      Ding and Wu report a proof by Wu (2018), conditional on a discrete
+      divergence-free property. This is secondhand; Wu (2018) is the
+      decisive ingestion target.
+    * *Closed, later position recorded:* critical points. Shu (2020) still
+      calls the Jiang–Shu proof valid but concedes the degeneracy for some
+      extrema, which he says needs ε of $10^{-10}$ or smaller; the closure
+      stands.
+    * *Open, unchanged:* WENO-ZQ non-oscillation (Shu 2020 runs no tests).
+  * **Kept inline**: $K$ against $K + 1$ ADER predictor iterations; the
+    CT resistivity coefficient (about 0.01 in 2016, 0.02–0.2 in 2014, with
+    different integrators); global against local Lax–Friedrichs for MHD
+    (2014 found no difference); Shu's view that $\varepsilon = 10^{-6}$ is
+    legitimate design, against Henrick et al.'s "masking"; Shu's
+    self-similarity principle against mesh-dependent ε (a design-principle
+    conflict); the parametric-instability statements of the two
+    torsional-wave papers.
+  * **Recorded as printed**: Balsara (2004) labels the explicit midpoint
+    rule "TVD … Heun"; Balsara and Kim's Tables 3 and 4 are identical;
+    Balsara (2009b) labels RK tables "ADER"; Seo and Ryu's eq. 47 swaps the
+    blast pressures; Shu (2020) calls $10^{-12}$ "close to machine zero".
+  * **Registry extensions** ([notation](/notation.md)): $\psi$ (in use since
+    batch 3, now registered), $\psi_{\mathrm{GLM}}$, $c_h$, $c_p$,
+    $\alpha_p$, $c_f$, $c_A$, $c_s$, $\hat B_{x,\mathbf m}$, $f^{**}_x$,
+    $A^{\mathrm{DDF}}_x$, $\rho e(u)$, $\mathbf J$, $\boldsymbol\Omega$.
+  * **Bibliography**: 1086 printed references merged with 0 flags under
+    155 scoped aliases, 41 checked silences, 21 notes and 3 field fixes;
+    1003 → 1494 entries. Many citing lists number same-author-year works in
+    printed order, so their `-b`/`-c` suffixes swap against the master; a
+    resolver matched each fragment entry to an existing work by printed
+    vol:page or near-identical title (same surname stem), allocated fresh
+    suffixes otherwise, and every match and allocation was reviewed. Twelve
+    manual overrides fix resolver errors or settle identities (e.g. chou-2006/2007 and
+    xing-2006-b/-c are distinct works).
+    * Same-key venue check: all mismatches explained (Brackbill & Barnes
+      35:462 for 426; Colella–Sekora vol. 277 for 227; Helzel et al.
+      227:9527 for 230:3803, Crossref; SIAM page B1302).
+    * Field fixes: Stone & Norman 80:791 is ApJS (Crossref); Wu & Shu's
+      SIAM page B1302; MHDCLAW's year is the citing date.
+  * **Closing sweeps (final batch, whole corpus).** `--dupes` found three
+    spelling variants (Del Zanna printed "Zanna", Merriman printed
+    "Merryman", Friedrich printed "Friedrichs"), folded. The fuzzy-title
+    and venue sweeps found two misprinted citations (Roe's 1981 paper with
+    Sod's venue, now on roe-1981; Mock & Lax with reversed authors) and
+    three report or submitted versions of published papers, folded into
+    them: jiang-1997-b into jiang-2000, powell-2009 into powell-1994,
+    xiong-2013 into xiong-2016. One citation stays undecided (pao-1981-b
+    carries Meadows et al.'s title). Edition pairs (Toro 1997/2009) and
+    conference/journal pairs (Aftosmis 1997/1998) stay separate.
+  * **Deep lint (62 ingestions, corpus complete)**: four registry
+    collisions in the new text fixed ($\gamma$ for the Lorentz factor,
+    $\eta$ and $\nu$ for a flattener and a resistivity coefficient); tag
+    `curvilinear` merged into `mapped-grid`; the unregistered gauge scalar
+    $\psi$ registered; contradiction entries reviewed as above.
+
 * **Batch 5 (10 sources), ingested autonomously on user instruction** and
   staged as one unit: [Jiang & Wu (1999)](/sources/jiang-1999.md),
   [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md),

@@ -47,6 +47,12 @@ ADER-DG with $K = 5$ and subcell limiting at $h = 1/100$ to $t = 0.7$
 captures the shock and the vortex with its acoustic waves. Limiting
 stays at the shocks ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.7).
 
+**Later uses (batch 6).** A relativistic MHD version: a Lorentz-boosted
+vortex crosses an oblique standing shock along $y = -x - 2$ on $500^2$, at
+third order to $t = 10$. It emits sound waves, keeps its shape, and looks
+rounder afterwards because the slower post-shock flow contracts it less
+([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.3).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 5.
@@ -54,3 +60,4 @@ stays at the shocks ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.7).
 3. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.7.
 4. [Borges et al. (2008)](/sources/borges-2008.md), §5.3.
 5. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.7.
+6. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.3.

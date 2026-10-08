@@ -108,6 +108,53 @@ consistent with the later observation that *simple averaging* of face
 fields to cell centres is what costs PCP in rare cells
 (Balsara, Bhoriya & Shu above).
 
+**Later uses (batch 6).**
+* *Earliest form of the claim.* The same attribution is made at second
+  order, ambient plasma beta $2.51\times10^{-4}$. The author claims only
+  that the reconstruction "helps overcome some of the problems" and that
+  corrective fixes may still be needed at extremely low beta
+  ([Balsara (2004)](/sources/balsara-2004.md), §§3.2, 7.3, Conclusion 5;
+  [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
+  The RK-WENO sibling of the ADER paper repeats it at fourth order. No
+  paper shows a run without the reconstruction, so the causal claim is
+  asserted, not demonstrated ([Balsara (2009b)](/sources/balsara-2009-b.md), §5.3).
+* *A provable high-order route.* Ding and Wu prove positivity of the cell
+  averages of a finite-volume WENO scheme for MHD, for orders 2 and above,
+  under $\Delta t\,(\alpha_x/h_x + \alpha_y/h_y) < \hat w_1$
+  (Thm. 2.1, eq. 15). Three ingredients are required.
+  * Interface traces that are discretely divergence-free, obtained by a
+    projection ([constrained transport](/methods/constrained-transport.md)).
+  * An interface discretization of the Godunov–Powell source term.
+  * A Zhang–Shu-type scaling of the point values and of one interior
+    remainder state. The second step scales the whole state by a ratio,
+    using concavity of the internal energy, instead of a quadratic solve
+    ([scaling limiter](/methods/positivity-preserving-scaling-limiter.md)).
+
+  The Lax–Friedrichs speeds are enlarged by a term in the jump of the
+  normal field. The divergence coupling defeats the usual convex
+  decomposition into first-order updates, so the proof uses geometric
+  quasilinearization instead. Without the projection or the limiter the
+  fifth-order scheme fails on the Orszag–Tang vortex, the blast and the
+  magnetized jet ([Ding & Wu (2024)](/sources/ding-2024.md), §§1–4; arXiv v1).
+* *Relativistic MHD.* The admissible set adds $|\mathbf v| < 1$.
+  Reconstructing the four-velocity guarantees it by construction, but no
+  multi-D high-order RMHD corrector guarantees it, and positivity proofs
+  exist only for first-order 1D HLL-type solvers
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1–2).
+* *No limiter at all.* A fifth-order FD-WENO code with high-order CT runs
+  the rotor and a 3D blast (ambient beta about 0.02 by the compiler's
+  arithmetic) without any positivity treatment
+  ([Seo & Ryu (2023)](/sources/seo-2023.md), §§3.6–3.7).
+
+**In the reviews (batch 6).** WENO is usually robust without an extra
+limiter, but negative pressure appears in high-speed flows, where the
+internal energy is a small difference of large numbers. This is more
+likely at higher order, which has less dissipation. For Mach 2000 jets a
+third-order WENO scheme "was used successfully" and a fifth-order one
+"would fail" (Ha et al., as cited by [Shu (2020)](/sources/shu-2020.md), §9). Shu calls the Zhang–Shu
+limiter "very simple and local", most convenient for FV and extended to FD
+"under stronger assumptions" ([high-Mach jet](/benchmarks/high-mach-astrophysical-jet.md)).
+
 ## Contradictions
 
 **Is the first-order Lax–Friedrichs MHD scheme provably positive?**
@@ -125,6 +172,18 @@ fields to cell centres is what costs PCP in rare cells
   CFL stated). Neither source cites the other's reference on this
   point, and the cited proof (Gurski 2004) is not in the corpus.
   Ingesting it, or a later analysis, would settle the claim.
+* *Batch 6 evidence, still not decisive.* [Ding & Wu (2024)](/sources/ding-2024.md),
+  §1, report that the Lax–Friedrichs positivity Christlieb et al. assume
+  was "later proven rigorously" by Wu (2018). They also report that Cheng
+  et al. proved it only in 1D, under assumptions on exact Riemann
+  solutions, and only conjectured it in multi-D, as Christlieb et al.
+  say. Citing Wu (2018), they add that for the standard MHD system
+  positivity of FV and DG schemes is tied to a discrete divergence-free
+  condition and can fail if it is violated "even slightly". On that report
+  the multi-D statement is conditional, which would explain both the
+  "proved" and the "conjectured" claims. This is a secondhand account:
+  neither Wu (2018) nor Gurski (2004) is in the corpus, and the entry stays
+  open. Wu (2018) is the decisive ingestion target.
 
 # Citations
 
@@ -136,3 +195,9 @@ fields to cell centres is what costs PCP in rare cells
 6. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
 7. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§4.3, 6.
 8. [Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5.
+9. [Balsara (2004)](/sources/balsara-2004.md), §§3.2, 7.3.
+10. [Balsara (2009b)](/sources/balsara-2009-b.md), §5.3 (author manuscript).
+11. [Ding & Wu (2024)](/sources/ding-2024.md), §§1–4 (arXiv v1).
+12. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1–2.
+13. [Seo & Ryu (2023)](/sources/seo-2023.md), §§3.6–3.7.
+14. [Shu (2020)](/sources/shu-2020.md), §9.

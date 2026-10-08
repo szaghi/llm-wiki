@@ -92,6 +92,24 @@ at interfaces for the flux corrections of
 Multiresolution (Zhu–Shu) hybridization gives comparable accuracy
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VI).
 
+## In the reviews (batch 6)
+
+[Shu (2020)](/sources/shu-2020.md), §3.2.3, eq. 3.6 (read from the page image), writes the
+unequal-stencil device as Zhu and Qiu do, with any positive linear
+weights, typically 0.8 or 0.9 on the large stencil and the rest shared
+equally. It returns a whole polynomial on the cell.
+* *Origin.* Shu places the idea first in central WENO (Levy, Puppo and
+  Russo; Capdeville), before its use in FD and FV WENO by Zhu and Qiu
+  ([central WENO](/methods/central-weno.md)).
+* *Multi-resolution WENO* (Zhu and Shu) uses only central stencils, of 7,
+  5, 3 and 1 cells in 1D. Shu advocates it for 2D and 3D unstructured
+  meshes, derivatives and integrals (§§3.3–3.4).
+* *Weights.* The small stencils are only second order, so the nonlinear
+  weights must sit closer to the linear ones than in classical WENO, and
+  mapped or WENO-Z weights "would be preferable" in practice. This is an
+  accuracy argument. Shu runs no tests and does not address the
+  non-oscillation dispute below, which stays open.
+
 ## Contradictions
 
 **Is WENO-ZQ free of spurious extrema and clipping?**
@@ -116,3 +134,4 @@ Multiresolution (Zhu–Shu) hybridization gives comparable accuracy
 2. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §§1–6.
 3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§III–IV, VI.
 4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), Appendix A.
+5. [Shu (2020)](/sources/shu-2020.md), §§3.2.3–3.4.

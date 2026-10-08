@@ -95,6 +95,22 @@ data (§1). Two departures follow.
   similar to MP5's but give no flat-extremum test, so this adds no
   evidence on the dispute below.
 
+**Later uses (batch 6).**
+* MP5 on characteristic, globally Lax–Friedrichs split flux point values
+  for GLM-MHD. It is judged the best of four reconstructions, at about
+  1.24–1.31 times the cost of third-order WENO and cheaper than WENO-Z. The
+  bound is stated for $\nu \le 1/(1+\kappa)$ per stage, and $\kappa = 4$
+  "still allows larger" Courant numbers; 0.8, 0.4 and 0.3 are used in 1D,
+  2D and 3D. The skip test is printed strict, without Suresh and Huynh's
+  tolerance. The paper repeats that MP does not degenerate to first order
+  near smooth extrema but runs no flat-extremum test, so this adds no
+  evidence to the dispute below
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §§3.2.4, 4).
+* MP5 on point values inside fourth-order finite volume, with the bounds
+  unchanged. On field-loop advection it shows small over- and undershoots,
+  which the authors attribute to "small clipping of its limiting
+  procedure" ([Berta et al. (2024)](/sources/berta-2024.md), §§3.2, 5.4).
+
 ## Contradictions
 
 **Does the MP bound degrade accuracy at smooth extrema?**
@@ -131,3 +147,5 @@ data (§1). Two departures follow.
 3. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §1.
 4. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.1.
 5. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§1, 2.2, 4.1, 5.4, 6 (accepted manuscript).
+6. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §§3.2.4, 4 (arXiv v2).
+7. [Berta et al. (2024)](/sources/berta-2024.md), §§3.2, 5.4 (arXiv v4).

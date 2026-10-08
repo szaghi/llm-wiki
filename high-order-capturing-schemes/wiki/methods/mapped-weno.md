@@ -17,6 +17,11 @@ $\omega_k = d_k + O(h)$ and fifth-order [WENO](/methods/weno.md) drops
 to third order; the ε recommended in the literature, $10^{-6}$, had
 masked this by dominating the indicators on fine grids
 ([accuracy at critical points](/properties/accuracy-at-critical-points.md)).
+Shu reads the same mechanism the other way: the degeneracy appears only
+for ε of $10^{-10}$ or smaller, "not necessary in practical computation"
+([Shu (2020)](/sources/shu-2020.md), §3.2.1). The two accounts agree on
+the mechanism and differ on whether $\varepsilon = 10^{-6}$ is masking or
+legitimate design.
 
 **The mapping.** For each $k$,
 $$g_k(\omega) = \frac{\omega\left(d_k + d_k^2 - 3 d_k\,\omega + \omega^2\right)}{d_k^2 + \omega\,(1 - 2 d_k)},$$
@@ -62,3 +67,4 @@ order ([Castro et al. (2011)](/sources/castro-2011.md), §5;
 1. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §§3–6 (eqs. 37–46 and 60 read from the page images).
 2. [Borges et al. (2008)](/sources/borges-2008.md), §2.
 3. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §§2, 4–5.
+4. [Shu (2020)](/sources/shu-2020.md), §3.2.1.

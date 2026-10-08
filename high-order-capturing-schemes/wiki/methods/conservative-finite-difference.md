@@ -165,6 +165,34 @@ boundary closures or ghost values.
   ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§3–4;
   [high-order AMR](/methods/high-order-amr.md)).
 
+**Later remarks (batch 6).**
+* *Why only smooth meshes.* The surface reason is that the Shu–Osher
+  lemma needs a constant $h$. The deeper one, after Merryman, is that a
+  conservative finite difference with a local flux "cannot achieve higher
+  than second order accuracy on arbitrary nonuniform nonsmooth meshes"
+  ([Shu (2009)](/sources/shu-2009.md), §3.2). Residual-distribution FD-WENO keeps FD cost and
+  conservation on non-smooth tensor-product curvilinear meshes, and
+  multidomain FD-WENO couples overlapping patches by WENO interpolation
+  ([Shu (2009)](/sources/shu-2009.md), §3.5.5).
+* *Cost against finite volume.* In 1D the two cost the same and FV is more
+  flexible, "clearly the winner". In 2D, FV above second order "is two to
+  five times as expensive", depending on coding and computer, and the gap
+  grows in 3D. Recommendation: FD whenever a uniform Cartesian or smooth
+  curvilinear mesh is possible ([Shu (2009)](/sources/shu-2009.md), §§3.3–3.4). Shu's 1998 estimate
+  above was a factor of four. In 3D, FD-WENO with CT is reported faster
+  than third-order FV-CT at the same resolution, without numbers
+  ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §8).
+* *Central fluxes.* A kinetic-energy-preserving split-form central flux,
+  recast as a conservative flux of order 2 to 8, can be hybridized with
+  WENO interface by interface. A wall placed on an interface, where the
+  convective flux vanishes, conserves mass exactly and doubles the stable
+  time step ([Bernardini et al. (2021)](/sources/bernardini-2021.md), §§2.1, 3.1;
+  [STREAmS](/software/streams.md)).
+* *With MHD divergence cleaning*, all variables stay at cell centres and
+  every direction uses 1D stencils
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §§III–IV.
@@ -188,3 +216,7 @@ boundary closures or ghost values.
 19. [Lu et al. (2021)](/sources/lu-2021.md), §2.1.
 20. [Jiang & Wu (1999)](/sources/jiang-1999.md), §2.2.
 21. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§3–4.
+22. [Shu (2009)](/sources/shu-2009.md), §§3.2–3.5.
+23. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §8 (arXiv v2).
+24. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§2.1, 3.1.
+25. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3 (arXiv v2).

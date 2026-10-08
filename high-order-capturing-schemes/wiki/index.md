@@ -11,9 +11,11 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 50 sources compiled**: 49 published works, thirteen of them
-read in a report, preprint or author-manuscript version, and one
-unpublished preprint (see the [update log](/log.md)).
+**Corpus: 62 sources compiled (the whole archive)**: 61 published works,
+eighteen of them read in a report, preprint or author-manuscript version,
+and one unpublished preprint (see the [update log](/log.md)). Two
+surveys by Shu ([2009](/sources/shu-2009.md), [2020](/sources/shu-2020.md))
+are the best overviews of the field.
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -39,7 +41,10 @@ for every page.
    [smoothness indicator](/definitions/smoothness-indicator.md);
    a centred, Riemann-free variant: [central WENO](/methods/central-weno.md).
    The conditions any weights must meet are collected in
-   [WENO weight accuracy conditions](/results/weno-weight-accuracy-conditions.md).
+   [WENO weight accuracy conditions](/results/weno-weight-accuracy-conditions.md);
+   when accuracy forces [negative linear weights](/methods/negative-linear-weights.md)
+   they need special treatment. A design principle behind the indicators:
+   [self-similarity](/properties/self-similarity.md).
 4. **The family after WENO-JS.** Restoring order and lowering dissipation:
    [mapped WENO](/methods/mapped-weno.md), [WENO-Z](/methods/weno-z.md),
    [central-upwind WENO](/methods/central-upwind-weno.md),
@@ -82,8 +87,12 @@ for every page.
    or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
    Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
    provably positive? For MHD the divergence constraint is kept by
-   [constrained transport](/methods/constrained-transport.md), cleaning or
-   projection; without it high-order MHD runs fail. On curvilinear grids,
+   [constrained transport](/methods/constrained-transport.md) (open
+   `Contradictions` entry: does it require a staggered mesh?), by
+   [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+   of staggered fields, by [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
+   or by projection; without it high-order MHD runs fail. Curl constraints
+   have their dual: [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md). On curvilinear grids,
    uniform flow must stay uniform:
    [free-stream preservation](/properties/free-stream-preservation.md).
 10. **Limiting high-order DG.** A priori:
@@ -103,7 +112,9 @@ for every page.
    local time stepping on trees, or Runge–Kutta subcycling on
    block-structured hierarchies, where ghost values must match the stages
    and refluxing costs finite differences their order.
-12. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+12. **Codes.** [PLUTO](/software/pluto.md), [HOW-MHD](/software/how-mhd.md)
+   and the GPU DNS code [STREAmS](/software/streams.md).
+13. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
    [interacting blast waves](/benchmarks/interacting-blast-waves.md),
@@ -122,6 +133,9 @@ for every page.
    [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md),
    [shock diffraction](/benchmarks/shock-diffraction.md). MHD:
    [Brio–Wu](/benchmarks/brio-wu-shock-tube.md),
+   [grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md),
+   [Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md),
+   [field loop](/benchmarks/field-loop-advection.md),
    [Orszag–Tang](/benchmarks/orszag-tang-vortex.md),
    [rotor](/benchmarks/mhd-rotor.md),
    [low-β blast](/benchmarks/mhd-blast-wave.md),

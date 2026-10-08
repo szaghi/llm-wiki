@@ -153,6 +153,37 @@ also reconstructs in characteristic variables
   ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §1;
   [monotonicity-preserving limiting](/methods/monotonicity-preserving-limiter.md)).
 
+**Later uses (batch 6).**
+* *Arithmetic means of primitive variables* for the MHD interface state,
+  with Barth's entropy-variable scaling of the eigenvectors. Global and
+  local Lax–Friedrichs speeds made no significant difference in SSP-RK
+  FD-WENO with CT ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §4, Remarks 1–3).
+  That qualifies the 2016 statement above, made for a different
+  (single-step) scheme.
+* *GLM-MHD.* The nine-wave system splits into a constant-coefficient
+  $2\times2$ part, reconstructed grid-wide with no local projection, and
+  the usual $7\times7$ MHD eigensystem
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.1;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+* *Isothermal MHD* has six waves and no entropy mode; HOW-MHD uses
+  Ryu–Jones (adiabatic) and Kim et al. (isothermal) eigenvectors
+  ([Seo & Ryu (2023)](/sources/seo-2023.md), §2.2).
+* *Second-order MHD slopes* can be limited per characteristic family,
+  with WENO optimal weights biased by wave direction, because MHD "seem[s]
+  to require more limiting than the corresponding hydrodynamic" case
+  ([Balsara (2004)](/sources/balsara-2004.md), §§3.3–3.4).
+* *Relativistic MHD.* Reconstructing the four-velocity resolves speeds
+  that bunch near 1: $v_x = 0.999$ and 0.9999 differ by 0.0009, while
+  the four-velocity components are 22.344 and 70.704 ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2).
+
+**In the reviews (batch 6).** Componentwise reconstruction "usually"
+suffices up to third order, and characteristic reconstruction is better
+at higher order, at greater cost ([Shu (2009)](/sources/shu-2009.md), §3.5.3). It is satisfactory for
+smooth or weak-shock problems but "could lead to spurious oscillations"
+for strong shocks and for several discontinuities from one initial jump.
+The interface state is the Roe average, or the arithmetic mean where no
+Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -184,3 +215,10 @@ also reconstructs in characteristic variables
 27. [Lu et al. (2021)](/sources/lu-2021.md), §§2.2–2.3.
 28. [Liu et al. (2025)](/sources/liu-2025.md), §3.2.
 29. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §1.
+30. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §4 (arXiv v2).
+31. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.1 (arXiv v2).
+32. [Seo & Ryu (2023)](/sources/seo-2023.md), §2.2.
+33. [Balsara (2004)](/sources/balsara-2004.md), §§3.3–3.4.
+34. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.
+35. [Shu (2009)](/sources/shu-2009.md), §3.5.3.
+36. [Shu (2020)](/sources/shu-2020.md), §4.1.

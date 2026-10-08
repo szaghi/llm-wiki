@@ -152,6 +152,19 @@ two families agree on the scaling's ceiling but not on its floor.
   the original tests could not detect it; confirmed independently by
   [Borges et al. (2008)](/sources/borges-2008.md) and
   [Castro et al. (2011)](/sources/castro-2011.md).
+* *The original author's later position (batch 6), recorded, not
+  reopening.* [Shu (2009)](/sources/shu-2009.md) does not repeat the
+  critical-point claim and cites Henrick et al. as the improvement "to
+  enhance accuracy … especially at smooth extrema" (§2.3.5).
+  [Shu (2020)](/sources/shu-2020.md), §3.2.1, still writes that Jiang and
+  Shu "proved and numerically tested" fifth order "including at smooth
+  extrema". He concedes that the order "could degenerate for functions with
+  certain types of extrema", but says the degeneracy shows "only when ε is
+  taken as an extremely small number, for example ε = 10⁻¹⁰ or even
+  smaller, which is not necessary in practical computation". The mechanism
+  is the same as Henrick et al.'s, ε dominating the indicators. The
+  disagreement left is about practical relevance, not about the expansion,
+  so the closure stands.
 
 # Citations
 
@@ -173,3 +186,5 @@ two families agree on the scaling's ceiling but not on its floor.
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.
 17. [Fisher et al. (2011)](/sources/fisher-2011.md), §5.2 and Appendix A (eqs. 42 and 75 read from the page images).
 18. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4, 4.3.
+19. [Shu (2009)](/sources/shu-2009.md), §2.3.5.
+20. [Shu (2020)](/sources/shu-2020.md), §3.2.1.

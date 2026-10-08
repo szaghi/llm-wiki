@@ -66,6 +66,18 @@ priori; ε is dimensional
 use $\varepsilon = h^{r-1}$ and note that $\varepsilon \sim h^2$ separates
 flat from rough data like a conditional.
 
+**In the reviews (batch 6).**
+* Shu's form of the sufficient condition at fifth order is
+  $\omega_k = d_k + O(h^2)$, "when the function u(x) is smooth in the large
+  stencil", with weights $O(h^4)$ on a discontinuous stencil ([Shu (2009)](/sources/shu-2009.md), eq. 2.7).
+* With unequal stencils whose small members are only second order, the
+  weights must sit closer to the linear ones than in classical WENO
+  ([Shu (2020)](/sources/shu-2020.md), §3.2.3). The WENO-ZQ condition above is the quantitative form.
+* On ε, Shu requires a value relative to the solution's size, with no
+  mesh-dependent thresholds ([Shu (2009)](/sources/shu-2009.md), §§3.5.1, 7). That conflicts as a design
+  principle with $\varepsilon = h^{r-1}$ and similar choices
+  ([self-similarity](/properties/self-similarity.md)).
+
 # Citations
 
 1. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §§3–4.
@@ -76,3 +88,5 @@ flat from rough data like a conditional.
 6. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2.
 7. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §3.1.5.
 8. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §3.
+9. [Shu (2009)](/sources/shu-2009.md), §§2.1, 3.5.1, 7.
+10. [Shu (2020)](/sources/shu-2020.md), §3.2.3.

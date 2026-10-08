@@ -4,7 +4,7 @@ title: "Free-stream preservation on curvilinear grids"
 description: "A scheme on a mapped (curvilinear) grid preserves free streams if a uniform flow, an exact steady solution, stays uniform to round-off; for high-order finite differences this requires the discrete metric identities, obtained by writing the metrics in conservative form and differencing them with the flux operator itself."
 status: established
 aliases: [freestream preservation, free-stream preserving, geometric conservation law, metric identities]
-tags: [curvilinear, mapped-grid, finite-difference, finite-volume, amr]
+tags: [mapped-grid, finite-difference, finite-volume, amr]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

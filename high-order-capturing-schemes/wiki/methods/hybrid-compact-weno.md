@@ -60,6 +60,16 @@ splits Pirozzoli's fifth-order upwind compact scheme into three
 third-order compact candidates under WENO-Z weights
 ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§1–2).
 
+**A central/WENO hybrid (batch 6).** [STREAmS](/software/streams.md) swaps
+the compact upwind flux for a non-dissipative central one. It uses a
+kinetic-energy-preserving split flux of order 2 to 8 in conservative form,
+switched at shocks to characteristic WENO of order 1 to 7 by a Ducros-type
+dilatation/vorticity sensor, with threshold 0.05 in the channel runs. The
+switch needs flow-specific reference scales, which agrees with the
+problem-dependent detector noted above. Full WENO3 and WENO5 damp
+wall-turbulence statistics where the hybrid does not
+([Bernardini et al. (2021)](/sources/bernardini-2021.md), §§2.1, 3.1).
+
 # Citations
 
 1. [Pirozzoli (2002)](/sources/pirozzoli-2002.md), §§1–6.
@@ -67,3 +77,4 @@ third-order compact candidates under WENO-Z weights
 3. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §1.
 4. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §1.
 5. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §§1–2.
+6. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§2.1, 3.1.
