@@ -7,7 +7,8 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 61 sources compiled** (see the [update log](/log.md)).
+**Corpus: 62 sources compiled**: 61 published works plus one code record
+(see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
 every page — then follow the reading guide.
@@ -53,6 +54,11 @@ every page — then follow the reading guide.
    [transfer locality limits](/results/transfer-operator-locality-limits.md)
    and the resolved
    [CT–FV equivalence dispute](/results/ct-finite-volume-equivalence.md).
+   Production evidence on the collocated side (hypothesis-grade, from the
+   [ADAM](/software/adam.md) record): the
+   [seam divergence source](/results/collocated-seam-divergence-source.md)
+   (exact interior, convergent-but-secular seam, five failed local fixes) and
+   the [point-value restriction bound](/results/point-value-restriction-compatibility.md).
 5. **The SBP route to high order.**
    [SBP](/definitions/summation-by-parts.md) (incl. convergence-gain
    theory), [SBP-SAT](/methods/sbp-sat.md), and
@@ -76,7 +82,7 @@ every page — then follow the reading guide.
 * [Methods](/methods/index.md) — algorithms and schemes.
 * [Results](/results/index.md) — theorems, proved properties, impossibility results.
 * [Benchmarks](/benchmarks/index.md) — standard test problems.
-* [Software](/software/index.md) — codes embodying the methods (production evidence currently lives on Source pages).
+* [Software](/software/index.md) — codes embodying the methods (ADAM; other production evidence lives on Source pages).
 * [Sources](/sources/index.md) — one page per ingested source, with notation maps.
 * [Bibliography](/bibliography.md) — complete citation record: every work cited
   by an ingested source, ingested or not, with the citation graph (generated

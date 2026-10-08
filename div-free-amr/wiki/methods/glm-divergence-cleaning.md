@@ -70,6 +70,67 @@ RMHD alike ([Mignone et al. (2012)](/sources/mignone-2012.md)). The
 constraint class is unchanged (controlled, not held); what is bought is
 uniformity of the AMR machinery across all physics.
 
+## Behavior at 2:1 seams and on solenoidal data (hypothesis-grade)
+
+Evidence from one code's verification record,
+[Zaghi (2026)](/sources/zaghi-2026.md); all `status: hypothesis`.
+
+* **Collocated upwind MHD with GLM.** In a WENO flux-divergence scheme, the
+  seam divergence sits at the level of the interior truncation error, which
+  is never zero. On short runs it is described as kept bounded. The
+  compiler's reading of the captured histories agrees with "at interior
+  level" and finds no test of long-time boundedness at fixed $h$.
+* **Exact-interior collocated Maxwell with GLM.** Here the seam is the only
+  divergence source, and cleaning does not bound it. See `Contradictions`
+  below.
+* **An accuracy cost on solenoidal data.** GLM's upwind treatment of the
+  $(B_n, \psi_h)$ pair damps an exactly static, discretely solenoidal
+  diagonal field at fifth order: $8.5\cdot10^{-12}$ at 48 cells,
+  $2.7\cdot10^{-13}$ at 96, on a $c_h = 3$ run. Without divergence control
+  the field stays at round-off. Cleaning is therefore not inert on fields
+  that are already solenoidal.
+* **Damping versus reflux.** With damping, $\int\psi_h$ is not conserved
+  across 2:1 faces; the physical integrals are.
+* **EGLM and the robustness trade, partly isolated.**
+  * The cost side is measured: EGLM's nonconservative sources move the total
+    energy by $3.0$–$4.4\cdot10^{-4}$ on Orszag–Tang, against round-off for
+    the mixed GLM.
+  * The benefit side is not isolated. The record motivates EGLM by the mixed
+    GLM failing the Balsara–Spicer blast at plasma $\beta = 2.5\cdot10^{-4}$.
+    Under EGLM the flux-splitting scheme still fails at step 3; only the
+    HLLD Riemann scheme completes it.
+  * Without a GLM + HLLD run, the gain cannot be split between the cleaning
+    variant and the base scheme. The case is consistent with the
+    conservation-for-robustness exchange recorded above for Mignone &
+    Tzeferacos, but does not demonstrate it.
+
+## Contradictions
+
+**Does GLM keep the divergence error bounded?**
+
+* This page's established reading of
+  [Dedner et al. (2002)](/sources/dedner-2002.md): the guarantee is
+  boundedness and smallness, tunable through $c_h$ and $c_p$. Production
+  evidence of robustness comes from
+  [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md).
+* [Zaghi (2026)](/sources/zaghi-2026.md) (hypothesis), on 2:1 seams of a
+  centered collocated scheme with exact interior divergence:
+  * Full GLM never bounds the seam divergence over 100 steps at fixed $h$.
+    Across the damping sweep, weaker damping is better and still grows.
+  * With a first-order seam ghost fill, cleaning helped early, crossed over
+    near step 120, and ended 3.1× worse than no cleaning at step 200.
+  * With a fourth-order fill it stayed below the uncleaned run for 200 steps
+    (ratio 0.18 → 0.88), still without bounding it.
+
+**Scoped reading (compiled, open).** The guarantee concerns errors that the
+cleaning system can transport away. A source that stays fixed in time stays
+bounded under the damped telegraph dynamics. The seam source is neither
+transported nor constant: it is re-created locally every step and grows
+(the record attributes it to grid-oscillation modes fed by the seam
+operator). The two claims therefore quantify over different error
+mechanisms. Neither is superseded; the boundedness guarantee should be read
+as conditional on the source not growing at the interface.
+
 # Citations
 
 1. [Dedner et al. (2002)](/sources/dedner-2002.md), §2–5, Appendix.
@@ -81,3 +142,4 @@ uniformity of the AMR machinery across all physics.
    caveat proved en route — *not all common GLM extensions are
    thermodynamically consistent*, so the cleaning coupling is a
    second-law design decision, not a free choice.
+5. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (E2, E2′), #29 (fix class E, the damping sweep); FLUME `index.md`, `models.md`, `verification.md` (EV-3, EV-4, VV-5, MV-12).

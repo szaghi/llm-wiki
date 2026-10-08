@@ -78,6 +78,16 @@ question specifically, Tóth's own later locality results favor staggered
 storage — see the resolved dispute at
 [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
 and [transfer locality limits](/results/transfer-operator-locality-limits.md).
+*Further development (hypothesis-grade):*
+[Zaghi (2026)](/sources/zaghi-2026.md) is a collocated code that *does* hold
+an exact interior divergence without staggering ($D_h^{\mathrm{c}}
+C_h^{\mathrm{c}} = 0$ on uniform grids), which is a point for the
+"eliminable" reading. At 2:1 seams it loses that exactness, and after five
+failed local fixes it names re-staggering the field at the seam as the only
+exact route ([seam divergence source](/results/collocated-seam-divergence-source.md)).
+That is a point for the "forced on the construction" reading, precisely at
+refinement interfaces. The dispute's scoped resolution survives: staggering
+is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 
 # Citations
 
@@ -86,3 +96,4 @@ and [transfer locality limits](/results/transfer-operator-locality-limits.md).
 3. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §IV(a)–(b), Figs. 1–2.
 4. [Tóth (2000)](/sources/toth-2000.md), §4.4.
 5. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3.
+6. [Zaghi (2026)](/sources/zaghi-2026.md): issues #29, #30.

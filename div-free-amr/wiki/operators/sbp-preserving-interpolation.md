@@ -60,6 +60,24 @@ schemes and any interface point distribution.
   the open question this bundle orbits — here the SBP branch delivers its
   strongest interface tool, and it is a stability/conservation tool, not a
   constraint-invariant one.
+* **Partial answer, hypothesis-grade** ([Zaghi (2026)](/sources/zaghi-2026.md)).
+  A sixth-order collocated FD code tested the question at its 2:1 seams.
+  Two findings point to *no*:
+  * The energy-stable route targets the wrong invariant. On the failing run
+    the field energy stays flat (−3%) while the seam divergence grows 145×,
+    so an SBP–SAT coupling would bound what is already bounded. The record
+    cites Koley et al. for the absence of a discrete divergence bound in that
+    framework.
+  * A matched seam operator that does carry the divergence structure,
+    telescoping $D_h^{\mathrm{c}} C_h^{\mathrm{c}}$ to order 6 across the
+    jump, is eigenvalue-unstable. It lacks exactly the adjointness that
+    condition 1 above supplies.
+
+  So, in the tested constructions, the energy structure and the divergence
+  structure each impose their own interface condition, and no single
+  operator met both ([seam divergence source](/results/collocated-seam-divergence-source.md)).
+  This is the pattern of the nonlinear caveat below, now for the
+  divergence.
 
 ## Glue-space generalization
 
@@ -98,3 +116,4 @@ operators, and none is implied by the others.
 4. [Almquist, Wang & Werpers (2019)](/sources/almquist-2018.md), §§3–4, 7.
 5. [Lundquist, Malan & Nordström (2018)](/sources/lundquist-2018.md) — general-mesh hybrid extension: the coupling conditions posed on arbitrary node sets, enabling stable high-order-FD-to-unstructured-FV interfaces.
 6. [Friedrich et al. (2018)](/sources/friedrich-2018.md), §§3–4.
+7. [Zaghi (2026)](/sources/zaghi-2026.md): issue #29 (E3, fix-class A, the energy diagnostic).

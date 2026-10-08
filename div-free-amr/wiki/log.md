@@ -1,5 +1,63 @@
 # Directory Update Log
 
+## 2026-10-08
+
+* **Ingested [Zaghi (2026)](/sources/zaghi-2026.md), the ADAM verification
+  record.** It is the first non-corpus source and the first `source_kind: code`.
+  * **Capture (Layer 1, frozen):** `raw/docs/zaghi-2026/` holds 8 doc
+    snapshots at commit `d99e61f0`, the divb-peak oracle, issue threads #21,
+    #29, #30 and #31 (full, with comments) and 6 FLUME div(B) run histories.
+    Only the snapshots are read, so the bundle has no live dependency on the
+    code repository (D12). #13 was fetched and then dropped unread, so it is
+    not claimed as read.
+  * **Status:** every claim compiled from this source is `hypothesis` (D3:
+    the human's own record).
+  * **Created** three pages:
+    * [Divergence source at collocated 2:1 seams](/results/collocated-seam-divergence-source.md)
+    * [Restriction-compatibility bound for point-value prolongation](/results/point-value-restriction-compatibility.md)
+    * [ADAM](/software/adam.md), the first Software page
+  * **Updated** seven pages:
+    * [transfer locality limits](/results/transfer-operator-locality-limits.md):
+      evidence on the cell-collocated row;
+    * [SBP-preserving interpolation](/operators/sbp-preserving-interpolation.md):
+      a partial answer to its open structural question;
+    * [GLM](/methods/glm-divergence-cleaning.md): a new `## Contradictions`
+      on boundedness under a growing seam source, scoped and left open; the
+      accuracy cost on solenoidal data; EGLM evidence;
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      collocated exactness as a uniform-grid property; time coupling as part
+      of the claim;
+    * [refluxing](/methods/refluxing.md);
+    * [field-loop advection](/benchmarks/field-loop-advection.md);
+    * [staggered grid](/definitions/staggered-grid.md): a further
+      development of its `Contradictions`.
+  * **Registry extension** ([notation](/notation.md)): $C_h^{\mathrm{c}}$ (the
+    collocated curl), $R P = I$ round-trip compatibility, and a new
+    "Cleaning and verification quantities" table ($c_h$ and $c_p$, already in
+    use on the GLM page but unregistered until now, plus $q$ and
+    $p_{\mathrm{obs}}$).
+  * **Bibliography:** the reference list was merged with a recorded scope:
+    the References sections of FLUME `numerics.md` and `models.md`, inline
+    author-year citations in the captured docs, and every citation in the
+    four issue threads.
+    * 26 existing entries gained `zaghi-2026` in `citedby`.
+    * 17 new entries, plus the source's own entry: 2689 → 2707.
+    * Metadata is as printed. Author initials not printed by the citing text
+      were deliberately left out.
+    * Four citations with no year or title stay unresolved, listed on the
+      Source page: Mishra–Svärd, Cheng, the Guzik dissertation, Wang 2018.
+  * **Compiler analysis recorded separately from the source's claims:**
+    * the FLUME/PRISM "bounded vs unbounded" seam verdicts are explained by
+      constraint class, not by a contradiction;
+    * the FLUME divb-peak seam oracle has no boundedness assertion;
+    * the field-loop seam peak occurs at the seam crossing, not at the first
+      step.
+  * **Corrections caught during compilation:** an EGLM robustness claim was
+    narrowed (the benefit is not isolated from the HLLD base scheme). An
+    earlier verbal claim that the "+2" convergence figure was only a
+    prediction was withdrawn: it is measured on step-1 ladders.
+  * Deep-lint counter: 1 ingestion since deep lint #7.
+
 ## 2026-07-22
 
 * **Deep lint #7 / closing audit — bibliography citation graph.** First audit

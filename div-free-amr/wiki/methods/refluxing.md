@@ -43,6 +43,20 @@ exactly analogous
 [electric-field correction](/methods/electric-field-correction.md) on edge
 EMFs ([Balsara (2001)](/sources/balsara-2001.md)).
 
+The separation is directly measured in one AMR library
+([Zaghi (2026)](/sources/zaghi-2026.md), hypothesis):
+* In its MHD solver, reflux keeps the volume integrals of a periodic box
+  with 2:1 seams at round-off ($\le 4.7\cdot10^{-14}$), $B_h$ and $\psi_h$
+  included. The Euler version of the test drifts at $10^{-5}$ without
+  reflux.
+* In its collocated Maxwell solver, reflux on and off leaves the 2:1 seam
+  divergence bit-identical.
+* The finite-volume variant with active reflux reproduces the
+  finite-difference seam-divergence runaway to 4–5 significant figures.
+
+Conservation and solenoidality are different defects with different
+mechanisms ([seam divergence source](/results/collocated-seam-divergence-source.md)).
+
 For diffusive/elliptically-coupled systems the correction generalizes:
 flux mismatches enter the right-hand sides of *elliptic refluxing solves*
 rather than being added pointwise, and face-velocity mismatches get their
@@ -54,3 +68,4 @@ own elliptic sync solve —
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §3, Figs. 3.1–3.2.
 2. [Almgren et al. (1998)](/sources/almgren-1998.md), §3.
+3. [Zaghi (2026)](/sources/zaghi-2026.md): issue #21 §2, #29; FLUME `verification.md` (conservation across AMR seams, MV-11).

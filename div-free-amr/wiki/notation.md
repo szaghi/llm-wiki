@@ -55,6 +55,13 @@ instantiation with a superscript (added 2026-07-08, Tóth-2000 ingestion):
 Unmarked $D_h$ means "the scheme's own discrete divergence" when the stencil
 is irrelevant to the claim.
 
+The collocated counterpart of the curl (added 2026-10-08, zaghi-2026
+ingestion): $C_h^{\mathrm{c}}$ is the cell-centered central-difference curl
+on collocated DOFs. When $C_h^{\mathrm{c}}$ and $D_h^{\mathrm{c}}$ are built
+from one shared antisymmetric 1D derivative primitive, the derivatives
+commute on a uniform tensor-product grid and $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$
+holds identically. This is the collocated analog of $D_h C_h = 0$.
+
 ## FEEC element families
 
 (Added 2026-07-08, deep lint #3.) The two finite-element differential-form
@@ -121,6 +128,22 @@ Commutation conventions (fixed operand order):
 
 - restriction: $D_H R = R\, D_h$
 - prolongation: $D_h P = P_D\, D_H$
+
+Round-trip compatibility (added 2026-10-08, zaghi-2026 ingestion):
+$R P = I$ means that restricting a prolonged field returns the coarse data
+exactly.
+
+## Cleaning and verification quantities
+
+(Added 2026-10-08, zaghi-2026 ingestion. $c_h$ and $c_p$ were already in use
+on the GLM page; they are registered here.)
+
+| Symbol | Meaning |
+|---|---|
+| $c_h$ | GLM cleaning (hyperbolic transport) speed |
+| $c_p$ | GLM parabolic damping parameter; the damping rate of $\psi_h$ is $c_h^2/c_p^2$ |
+| $q$ | accuracy order of a ghost-fill operator $\Gamma$ (value error $O(h^q)$) |
+| $p_{\mathrm{obs}}$ | observed convergence order from a refinement ladder, $p_{\mathrm{obs}} = \log_2(e_h / e_{h/2})$ |
 
 ## Writing rules
 

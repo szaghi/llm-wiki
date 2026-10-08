@@ -44,6 +44,33 @@ adaptive mesh refinement context."
   storage ("does not seem to lend itself") — the cell-collocated case is an
   open assertion, not a proof.
 
+## Evidence on the cell-collocated row (hypothesis-grade)
+
+[Zaghi (2026)](/sources/zaghi-2026.md), a high-order collocated
+finite-difference code with an exact interior divergence, adds three
+things. All are `status: hypothesis` (from the human's own record):
+
+* **A narrow theorem.** For point values with the conservation-consistent
+  mean restriction, exact $R P = I$ caps the prolongation at second order
+  ([point-value restriction bound](/results/point-value-restriction-compatibility.md)).
+  A conservation-compatible round trip and high order are mutually
+  exclusive at a collocated interface. Face-staggered fluxes escape this
+  because flux summation is additive.
+* **A constructive negative.** A matched collocated seam operator that makes
+  $D_h^{\mathrm{c}} C_h^{\mathrm{c}}$ telescope to sixth order across the
+  2:1 jump exists, and it is eigenvalue-unstable. So for this route, too,
+  the obstruction is not the existence of a divergence-preserving formula.
+  It is the conflict between that formula and stability.
+* **An inductive verdict.** Five classes of local fix were ruled out with
+  evidence, and the record concludes that "no local collocated-FD fix
+  exists" ([seam divergence source](/results/collocated-seam-divergence-source.md)).
+
+Together these strengthen the "not found / not found" row without proving
+it: the row stays an assertion, now with a partial theorem and a failed
+construction behind it. The record's only exact route is the one this
+result recommends, face-staggered storage at the seam.
+
 # Citations
 
 1. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §§3–4, 7.
+2. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (N0), #29, #30.

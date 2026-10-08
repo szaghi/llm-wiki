@@ -72,6 +72,23 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   $B_z$ fluxes, $B_z$ grows unphysically; round-off-constant $B_z$
   certifies preservation on the *consistent* stencil
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)).
+* **Collocated exactness is a uniform-grid property.** A collocated scheme
+  whose curl and divergence share one antisymmetric derivative primitive
+  holds $D_h^{\mathrm{c}} C_h^{\mathrm{c}} = 0$ identically. The record
+  measures $2\cdot10^{-19}$, and exactly 0.0 on a source-free pulse. The
+  identity rests on derivatives commuting on a tensor-product grid. A 2:1
+  refinement seam breaks that commutation, so the invariant drops to a
+  truncation-order seam source
+  ([seam divergence source](/results/collocated-seam-divergence-source.md);
+  [Zaghi (2026)](/sources/zaghi-2026.md), hypothesis).
+* **Time coupling is part of the claim too.** At a 1:1 seam between
+  independently stepped blocks, the invariant holds exactly (0.0 for 100
+  steps) only if the seam ghosts are refreshed at every Runge–Kutta stage.
+  With end-of-step coupling the stage buffers read stale or empty ghosts and
+  the divergence leaks ($4.56\cdot10^{2}$ in the negative control). An
+  exactness claim is relative to a stencil and to a stage-coupling
+  schedule. Value-exact ghost copies are not enough if they arrive at the
+  wrong stage ([Zaghi (2026)](/sources/zaghi-2026.md), hypothesis).
 
 ## Why it matters
 
@@ -97,3 +114,4 @@ class is not a numerical nicety but a physics-level decision.
    face-based invariants now coexist with well-balancing and unstructured
    mixed-element grids in hybrid FV/FE form; collocated high-order FD at
    2:1 AMR interfaces remains outside even the newest synthesis.
+8. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (§2, E1a), #29, #31; `prism-regression.md` (inter-realm 1:1 anchor).

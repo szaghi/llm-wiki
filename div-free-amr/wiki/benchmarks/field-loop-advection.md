@@ -32,6 +32,21 @@ identically zero.
 * **Constraint machinery on unstructured/hybrid meshes**: 2D and 3D loop
   advection validates the exactly divergence-free hybrid schemes of
   [Zampa (2024)](/sources/zampa-2024.md).
+* **A cleaning scheme across 2:1 seams** ([Zaghi (2026)](/sources/zaghi-2026.md),
+  hypothesis). Collocated WENO MHD with
+  [GLM](/methods/glm-divergence-cleaning.md), with a $v_z$ component so that
+  $\partial_t B_z$ measures the divergence error.
+  * The generated $\langle|B_z|\rangle$ stays at the cleaning level and
+    decreases under refinement.
+  * Magnetic energy retained at 64/128 cells: 0.872/0.937 with flux
+    splitting, 0.887/0.944 with HLLD on characteristic variables.
+  * On a 2:1 grid, the compiler's reading of the captured histories: the
+    seam divergence peaks when the loop crosses the seam
+    ($9.75\cdot10^{-4}$ at $t \approx 0.38$, 64²), not at the first step as
+    the code's docs state. It then decays about 3×, to the uniform-grid
+    interior level, by $t = 1$.
+  * In a scheme without an exact invariant the test therefore reads the
+    seam as one more truncation source, not as a distinct defect.
 
 The test's virtue is that it is *trivial physics with unforgiving
 algebra*: any constraint-consistent error channel — wrong stencil, biased
@@ -44,3 +59,4 @@ forbids.
 2. [Fromang et al. (2006)](/sources/fromang-2006.md), §3.
 3. [Balsara (2004)](/sources/balsara-2004.md), §7.
 4. [Zampa (2024)](/sources/zampa-2024.md), §4.6.4.
+5. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-9, "MHD on weno-riemann" table); captured field-loop div(B) histories.
