@@ -28,7 +28,19 @@ $[0, 2\pi]^2$, $\gamma = 5/3$
   well at third to ninth order
   ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.2).
 
+**Later uses (batch 4).** In the $4\pi$-scaled normalization
+($\rho = \gamma^2$, $p = \gamma$,
+$\mathbf B = \sqrt{4\pi}(-\sin y, \sin 2x)$, $\gamma = 5/3$) with GLM
+divergence cleaning:
+* third-order ADER-WENO with AMR (equivalent $800^2$) to $t = 5$
+  matches the uniform fine grid, Jiang and Wu's fifth-order FD-WENO and
+  an unstructured WENO solution, at 1.8 times less CPU ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4);
+* ADER-DG with $K = 5$, subcell limiting and AMR (equivalent $270^2$)
+  agrees with the uniform grid and the same references ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.2).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.2.
+3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4, Table 5.
+4. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.2.

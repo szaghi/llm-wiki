@@ -166,6 +166,28 @@ positivity-preserving for Euler; see the
 [flux](/methods/positivity-preserving-flux-limiter.md) limiters
 ([Zhang & Shu (2010)](/sources/zhang-2010.md), §1).
 
+**Batch 4 additions.**
+* *As a DG limiter.* Finite-volume WENO rebuilds the polynomial of
+  troubled DG cells from neighbouring averages
+  ([WENO limiters for DG](/methods/weno-limited-dg.md); [Qiu & Shu (2005)](/sources/qiu-2005.md)).
+* *Whole polynomials.* Blending full-degree candidates with a dominant
+  central linear weight trades optimality for positivity of the linear
+  weights on any mesh. It supplies the entire polynomial that one-step
+  [ADER](/methods/ader.md) predictors need
+  ([polynomial WENO](/methods/polynomial-weno.md); [Dumbser & Käser (2007)](/sources/dumbser-2007.md); [Balsara et al. (2009)](/sources/balsara-2009.md); [Dumbser et al. (2013)](/sources/dumbser-2013.md)).
+* *On subgrids.* Third-order ADER-WENO recomputes troubled DG cells in
+  the [a posteriori subcell limiter](/methods/a-posteriori-subcell-limiting.md) ([Dumbser et al. (2014)](/sources/dumbser-2014.md)).
+* *Energy stability.* A WENO-Z-type fourth-order central scheme in
+  summation-by-parts form, plus design-order dissipation, is provably
+  $L^2$-stable for linear systems
+  ([energy-stable WENO](/methods/energy-stable-weno.md); [Fisher et al. (2011)](/sources/fisher-2011.md)).
+* *Near boundaries.* The upwind-biased linear schemes of orders 3–13 are
+  WENO with the nonlinear weights turned off. They serve as the
+  prototype for the stability analysis of
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) boundaries ([Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.1).
+  WENO-type [weighted extrapolation](/methods/weighted-extrapolation.md)
+  fills ghost cells on complex domains ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md)).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §§3–4 (read visually; image-only scan).
@@ -183,3 +205,11 @@ positivity-preserving for Euler; see the
 13. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§I, III.
 14. [Titarev & Toro (2004)](/sources/titarev-2004.md), §3.
 15. [Zhang & Shu (2010)](/sources/zhang-2010.md), §1.
+16. [Qiu & Shu (2005)](/sources/qiu-2005.md), §2.
+17. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2.3.
+18. [Balsara et al. (2009)](/sources/balsara-2009.md), §2.
+19. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §2.2.
+20. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §4.
+21. [Fisher et al. (2011)](/sources/fisher-2011.md), §2.
+22. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.1.
+23. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.

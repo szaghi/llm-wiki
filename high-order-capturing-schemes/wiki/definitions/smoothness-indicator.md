@@ -92,6 +92,27 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
 ([Reyes et al. (2018)](/sources/reyes-2018.md), §2.5;
 [GP-WENO](/methods/gp-weno.md)).
 
+**Modal, reference-element and boundary forms (batch 4).**
+* In the scaled Legendre basis the third-order indicator is
+  $\beta = \left(\hat u^{(1)}\right)^2 + \tfrac{13}{3}\left(\hat u^{(2)}\right)^2$,
+  and the fourth-order one is
+  $\left(\hat u^{(1)} + \hat u^{(3)}/10\right)^2 + \tfrac{13}{3}\left(\hat u^{(2)}\right)^2 + \tfrac{781}{20}\left(\hat u^{(3)}\right)^2$.
+  Both are sums of squares, so their positivity is evident
+  ([Balsara et al. (2009)](/sources/balsara-2009.md), eqs. 9, 15; [polynomial WENO](/methods/polynomial-weno.md)).
+  This is the same structure Balsara, Garain and Shu exploit.
+* On unstructured meshes, integrating the squared derivatives over the
+  *reference* element removes the cell size. The indicator becomes
+  $\beta_k = \hat{\mathbf u}_k^{\mathsf T}\mathsf B\,\hat{\mathbf u}_k$ of the reconstructed coefficients,
+  with one universal matrix $\mathsf B$ that depends only on the basis
+  ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), eqs. 23–25).
+* Two-point candidates use squared first differences,
+  $\beta_k = (f_{j+1} - f_j)^2$ and its shifts, together with
+  $\tau = (\Delta^3 f_{j-1})^2$ ([energy-stable WENO](/methods/energy-stable-weno.md); [Fisher et al. (2011)](/sources/fisher-2011.md)).
+* For boundary *extrapolation* the Jiang–Shu integral is taken over the
+  whole stencil, not one cell. Ratios of such indicators, rather than
+  their absolute size, set dimensionless weights
+  ([weighted extrapolation](/methods/weighted-extrapolation.md); [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §3.2 and acknowledgement.
@@ -101,3 +122,7 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
 5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §III.
 6. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.
 7. [Reyes et al. (2018)](/sources/reyes-2018.md), §2.5.
+8. [Balsara et al. (2009)](/sources/balsara-2009.md), §2 (eqs. 9 and 15 read from the page image).
+9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2.3 (eqs. 23–25 read from the page image).
+10. [Fisher et al. (2011)](/sources/fisher-2011.md), eq. 19.
+11. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.

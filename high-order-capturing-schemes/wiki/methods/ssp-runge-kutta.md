@@ -146,6 +146,25 @@ von Neumann analysis of the full discretization.
   [Lax–Wendroff (Taylor) time discretization](/methods/taylor-time-discretization.md)
   ([Christlieb et al. (2016)](/sources/christlieb-2016.md)).
 
+**Later uses (batch 4).**
+* *Linear stability limits.* For the linear upwind-biased schemes of
+  orders 3, 5, 7, 9, 11 and 13 with SSP-RK3, the largest stable Courant
+  numbers are 1.62, 1.43, 1.24, 1.12, 1.04 and 0.99 ([Li, Shu & Zhang (2016)](/sources/li-2016.md), Table 3.1).
+  The values for orders 5 to 13 agree with Balsara and Shu's range,
+  1.43 to 0.99 for $r = 3$–$7$.
+* *Boundary data inside stages.* Imposing $g(t^n + \Delta t)$ and
+  $g(t^n + \Delta t/2)$ in the two inner RK3 stages reduces accuracy to
+  second order. The stages must instead receive $g + \Delta t\,g'$ and
+  $g + \tfrac12\Delta t\,g' + \tfrac14\Delta t^2 g''$ at $t^n$
+  (Carpenter et al.; [Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.2; [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+* *RKDG* uses SSP-RK3 with the limiter after each stage ([Qiu & Shu (2005)](/sources/qiu-2005.md), §1).
+  The barriers are also the argument for one-step [ADER](/methods/ader.md):
+  explicit RK needs more stages than order beyond four, and in practice
+  RKDG stops at third order ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1; [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1). On AMR grids,
+  intermediate stages need consistent ghost data on every level, which
+  a one-step method avoids ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §1).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -169,3 +188,9 @@ von Neumann analysis of the full discretization.
 19. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §6.
 20. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.
 21. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §1.
+22. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §§2.2, 3.2 (Table 3.1 read from the page image).
+23. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.
+24. [Qiu & Shu (2005)](/sources/qiu-2005.md), §1.
+25. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1.
+26. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
+27. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §1.

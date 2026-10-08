@@ -33,7 +33,17 @@ $\gamma = 4/3$, $t = 4$ (§7.3).
   ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§7.2–7.3;
   [flux limiter](/methods/positivity-preserving-flux-limiter.md)).
 
+**Later uses (batch 4).** Balsara and Spicer's 2D blast on
+$[-0.5, 0.5]^2$, $200^2$, ambient plasma beta $2.51\times10^{-4}$,
+$t = 0.01$, and a stricter 3D version on $151^3$ with $\gamma = 1.4$.
+Fourth-order ADER-WENO with HLL captures the nearly circular, then
+nearly spherical, fast shock crisply, without oscillations, and keeps
+the pressure positive. The authors credit the divergence-free
+reconstruction of the zone-centred field
+([Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5; [constrained transport](/methods/constrained-transport.md)).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§7.2–7.3.
+3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5.

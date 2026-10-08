@@ -48,6 +48,15 @@ shows overshoots as published and flattening once modified
 seventh-order $L^1$-indicator scheme against WENO-BS7 and WENO-Z7
 ([Rathan & Naga Raju (2017)](/sources/rathan-2017.md)).
 
+**Later uses (batch 4).** The same profile in the density of the
+linearized Euler equations, run for ten periods ($t = 20$) on 3D
+tetrahedral meshes stretched 1:20 into thin plates ($L = 0.3$) or
+needles ($L = 0.00075$). ADER-FV with
+[polynomial WENO](/methods/polynomial-weno.md) of second to fourth order
+improves with order and stays essentially non-oscillatory. The reason
+is that the stencils are regular in the reference coordinates
+([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §5.3.2).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.1.
@@ -58,3 +67,4 @@ seventh-order $L^1$-indicator scheme against WENO-BS7 and WENO-Z7
 6. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §5.2.
 7. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.1.
 8. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 3.
+9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §5.3.2.

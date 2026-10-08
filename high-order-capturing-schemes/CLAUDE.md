@@ -50,10 +50,14 @@ to another bundle.
     works: `2013-arXiv-Dumbser-…` (JCP 2013), `2014-arXiv-Guo-…`,
     `2016-arXiv-Rathan-…`, and — despite journal-style names —
     `2013-JCP-Hu-…` (arXiv:1203.1540v5), `2024-CAMC-Balsara-…` (author
-    manuscript of CAMC 7, 2025) and `2016-JSC-Baeza-…` (accepted
-    manuscript, arXiv:2501.17106). Before ingesting each, check on
-    Crossref whether a published version exists, and record the version
-    read.
+    manuscript of CAMC 7, 2025), `2016-JSC-Baeza-…` (accepted
+    manuscript, arXiv:2501.17106), `2014-JCP-Dumbser-…`
+    (arXiv:1406.7416v3) and `2015-CompFluids-Zanotti-…`
+    (arXiv:1412.0081v2). Page 1 of these not-yet-ingested files also shows
+    a preprint or manuscript: `2010-JCP-Mignone-…`, `2014-JCP-Christlieb-…`,
+    `2024-JCP-Berta-…`, `2024-SISC-Ding-…` (arXiv) and `2016-JCP-Chen-…`
+    (accepted manuscript). Before ingesting each, check on Crossref whether
+    a published version exists, and record the version read.
   - Slugs reserved for archived works whose bare key a same-year homonym
     already holds (decided at batch 3): Balsara 2009 divergence-free
     reconstruction + WENO (JCP 228:5040) → `balsara-2009-b` (ADER-WENO,
@@ -89,7 +93,11 @@ to another bundle.
   (2026-10-08), each staged as one unit with a single commit message
   naming every slug, reviewed by the user between batches. A batch's
   reference lists are merged with `tools/bib_merge.py` (D16) and closed
-  with `--dupes` plus the venue and fuzzy-title sweeps.
+  with `--dupes` plus the venue and fuzzy-title sweeps. Before `--write`,
+  also compare the printed vol:page of every same-key merge with the entry
+  it lands on, because `bib_merge` flags same-key conflicts only for
+  dissimilar titles (decided at batch 4, after it found series siblings
+  such as Cockburn & Shu 1989 II/III merged under one key).
 - Ingestion order for the initial corpus: foundations first, so that early
   papers define the concepts and later papers exercise the merge path.
   1. Origins: PPM, ENO (Harten et al. 1987; Shu & Osher 1988, 1989).
@@ -116,10 +124,12 @@ to another bundle.
 
 ## Status
 
-**Batch 3 staged 2026-10-08:** 30 of 62 ingested (batch 1: origins, ENO,
+**Batch 4 staged 2026-10-08:** 40 of 62 ingested (batch 1: origins, ENO,
 WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
 WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes; batch 3: SSP
 theory, 3D FV-WENO, positivity limiters, compact and GP WENO, AFD-WENO,
-single-step MHD and divergence-preserving AFD-WENO). The first deep lint
-ran at batch 3; the next is due at 40 ingestions. The worklist is
-authoritative.
+single-step MHD and divergence-preserving AFD-WENO; batch 4: ADER and
+polynomial WENO, WENO-limited and a posteriori subcell-limited DG, ADER
+AMR, energy-stable WENO boundary closures, inverse Lax–Wendroff and
+weighted extrapolation). Deep lints ran at batches 3 and 4. The next is
+due at 50 ingestions. The worklist is authoritative.

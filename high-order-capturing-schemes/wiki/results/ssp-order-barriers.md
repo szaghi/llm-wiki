@@ -55,6 +55,12 @@ The results below are all from Gottlieb, Shu & Tadmor unless stated.
 * **Two-step two-stage hybrids**: third order reaches $\mathcal{C} \approx 0.473$;
   fourth order with nonnegative coefficients is impossible (Proposition 4.3).
 
+**Consequences drawn in later sources.** Authors of one-step schemes
+cite the barriers as the reason to leave Runge–Kutta at high order. The
+number of stages exceeds the order beyond four (Butcher), and the
+fourth-order SSP method is complex enough that RKDG is used up to third
+order in practice ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1; [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1; [ADER](/methods/ader.md)).
+
 ## Multistep
 
 For $u^{n+1} = \sum_{i=1}^{m}\left(a_i u^{n+1-i} + \Delta t\, b_i\,\mathcal{L}(u^{n+1-i})\right)$:
@@ -97,3 +103,5 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 1. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §§2–6 (Propositions 3.1–6.3, Table 3.1).
 2. [Shu (1998)](/sources/shu-1998.md), §4.2.
 3. [Shu & Osher (1988)](/sources/shu-1988.md), §II.
+4. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1.
+5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.

@@ -16,7 +16,7 @@ accumulate divergence errors. These produce an unphysical force along
 $\mathbf B$ and often crash the code. The options are the eight-wave
 method, projection, hyperbolic divergence cleaning and constrained
 transport ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §1).
-Two constrained-transport designs appear in this corpus.
+Three constrained-transport designs appear in this corpus, and hyperbolic divergence cleaning is the alternative used on adaptive meshes.
 
 ## Unstaggered, vector potential
 
@@ -80,7 +80,37 @@ positivity fix acts. The staggered route conserves exactly except in
 rare cells, where the first-order PCP fallback adds an energy source
 ([positivity preservation](/properties/positivity-preserving.md)).
 
+## Staggered, divergence-free reconstruction with ADER
+
+([Balsara et al. (2009)](/sources/balsara-2009.md), §§2.3, 4.1.) Balsara's earlier route, extended here to
+[ADER](/methods/ader.md) one-step time stepping. The face-normal field
+components and their facial moments are WENO-limited within each face.
+Imposing $\nabla\cdot\mathbf B = 0$ then fixes a polynomial field
+inside the whole zone that is divergence-free to all orders. Some of its
+coefficients (for example the cubic terms in a third-order scheme) exist
+only because of the constraint. They take part in fluxes and Riemann
+problems but not in the time evolution. The face averages are updated
+from space–time averages of the edge electric fields, which come from
+1D Riemann solutions at the face points nearest each edge, averaged
+over the four faces meeting there. With HLL fluxes, doubling the
+dissipation bracket when $S_L < 0 < S_R$ gives enough upwinding for the
+electric field. The authors attribute the positive pressure in their
+low-β [blast problems](/benchmarks/mhd-blast-wave.md) to using this
+reconstruction for the zone-centred field
+([positivity preservation](/properties/positivity-preserving.md)).
+
+**Hyperbolic divergence cleaning (GLM).** On the space–time adaptive
+meshes of [high-order AMR](/methods/high-order-amr.md), the MHD system is
+augmented with a scalar that transports divergence errors out of the
+domain at a cleaning speed (Dedner et al.). A staggered field is not
+used ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2). The rotor then shows none of the spurious
+density and magnetic-pressure oscillations reported for Godunov schemes
+without divergence treatment ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [MHD rotor](/benchmarks/mhd-rotor.md)).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 4, 6.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–5 (eq. 12 read from the page image).
+3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§2.3, 4.1, 7.
+4. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.

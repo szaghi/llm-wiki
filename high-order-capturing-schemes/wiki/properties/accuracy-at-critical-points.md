@@ -111,6 +111,17 @@ for the same purpose, citing Borges et al.
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §III). Neither paper
 tests a critical-point problem directly.
 
+**Batch 4.** The fourth-order central [energy-stable WENO](/methods/energy-stable-weno.md)
+uses WENO-Z-form weights $d_k\left(1 + \tau/(\varepsilon + \beta_k)\right)$
+with $\tau = (\Delta^3 f_{j-1})^2$. Its truncation analysis gives
+design order for any number of vanishing derivatives if
+$O(h^3) \le \varepsilon \le O(h^2)$. With only $\varepsilon > 0$ the
+order can fall from four to two. The paper's implementation recipe,
+however, sets $\varepsilon \propto h^4$, below that window, and no
+critical-point test isolates the effect ([Fisher et al. (2011)](/sources/fisher-2011.md), §5.2 and eq. 75). Since
+the upper end matches the $\varepsilon \sim h^2$ switch of WENO-Z, the
+two families agree on the scaling's ceiling but not on its floor.
+
 ## Contradictions
 
 **Is fifth-order WENO-JS fifth order at critical points?**
@@ -148,3 +159,4 @@ tests a critical-point problem directly.
 14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §3.
 15. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2.
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.
+17. [Fisher et al. (2011)](/sources/fisher-2011.md), §5.2 and Appendix A (eqs. 42 and 75 read from the page images).

@@ -38,6 +38,21 @@ Woodward–Colella and with flattening, gives sharp profiles and a
 pronounced roll-up of the vortex sheet
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VIII.a).
 
+**Later uses (batch 4).**
+* Fourth-order ADER-WENO at $240\times80$, $480\times160$ and
+  $960\times320$ to $t = 4$. Roll-up of the vortex sheet starts at
+  $480\times160$. The authors judge that an exceptionally good second-order
+  scheme would need $960\times320$ to show it ([Balsara et al. (2009)](/sources/balsara-2009.md), §6.3).
+* Third-order ADER-WENO on AMR (equivalent $2400\times800$, $t = 2.5$)
+  rolls up the slip line much better than a second-order AMR run
+  ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [high-order AMR](/methods/high-order-amr.md)).
+* ADER-DG with $K = 5$ and subcell limiting on $300\times100$ to $t = 4$.
+  Kelvin–Helmholtz vortices along the upper shear layer emit acoustic
+  waves visible in the isolines, and limiting is confined to the
+  shocks ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.5). With AMR, on a $150\times50$ base and
+  $r_{\mathrm{AMR}} = 4$, the instability is well resolved
+  ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.4).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -45,3 +60,7 @@ pronounced roll-up of the vortex sheet
 3. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.6.
 4. [Zhu & Qiu (2016)](/sources/zhu-2016.md), Example 3.9.
 5. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VIII.a.
+6. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.3.
+7. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+8. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.5.
+9. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.4.

@@ -2,6 +2,130 @@
 
 ## 2026-10-08
 
+* **Batch 4 (10 sources), ingested autonomously on user instruction** and
+  staged as one unit: [Qiu & Shu (2005)](/sources/qiu-2005.md),
+  [Dumbser & Käser (2007)](/sources/dumbser-2007.md),
+  [Balsara et al. (2009)](/sources/balsara-2009.md),
+  [Dumbser et al. (2013)](/sources/dumbser-2013.md),
+  [Dumbser et al. (2014)](/sources/dumbser-2014.md),
+  [Zanotti et al. (2015)](/sources/zanotti-2015.md),
+  [Fisher et al. (2011)](/sources/fisher-2011.md),
+  [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md),
+  [Li, Shu & Zhang (2016)](/sources/li-2016.md),
+  [Lu et al. (2016)](/sources/lu-2016.md).
+  * **Created** 10 concept pages:
+    * methods: ADER, polynomial WENO, WENO limiters for DG, a posteriori
+      subcell limiting (MOOD), high-order AMR, inverse Lax–Wendroff,
+      weighted extrapolation, energy-stable WENO;
+    * benchmarks: 2D Riemann problems, cylindrical and spherical explosion.
+  * **Updated**:
+    * methods: WENO, finite-volume reconstruction, Lax–Wendroff (Taylor),
+      SSP Runge–Kutta, constrained transport (new section on staggered
+      divergence-free reconstruction with ADER, and on GLM cleaning),
+      approximate Riemann solvers, WENO-Z, conservative finite difference,
+      characteristic decomposition;
+    * definition: smoothness indicator;
+    * result: SSP order barriers;
+    * properties: positivity preservation, accuracy at critical points;
+    * benchmarks: interacting blast waves, Shu–Osher, DMR (including a
+      triangle-ramp variant), forward step, Lax, Sod, isentropic vortex,
+      Orszag–Tang, rotor, MHD blast, shock–vortex, composite profile;
+    * the root reading guide: new items 10 (limiting high-order DG) and
+      11 (boundaries and adaptive meshes).
+  * **Contradictions**: none opened. Kept inline as scope, parameter or
+    attribution differences:
+    * Li et al.'s 1D stability of outflow Lagrange extrapolation, against
+      Baeza et al.'s mild instability of Lagrange extrapolation on complex
+      2D domains (ILW page);
+    * Zanotti et al. attribute $\delta_{\mathrm{DMP}} = \max(\delta_0, \dots)$
+      to Dumbser et al. (2014), whose arXiv version read here has no
+      $\delta_0$ (subcell-limiting page);
+    * different polynomial-WENO parameters across papers
+      ($d_{\mathrm c} = 10^3$, 100 or $10^5$; $q = 4$ or 8);
+    * different rotor variants (taper, $\gamma$).
+  * **Flagged inside one source**: Fisher et al. require
+    $O(h^3) \le \varepsilon \le O(h^2)$ for design order at critical points
+    but prescribe $\varepsilon \propto h^4$ in the implementation recipe
+    (energy-stable WENO page). Also recorded as printed:
+    * Dumbser et al. (2014) print the Shu–Osher data as $\sin(5\pi x)$ and
+      $t = 0.18$;
+    * Zanotti et al. give the 3D explosion degree as 3 in the text and 5
+      in the caption.
+  * **Agreement noted**: Li et al.'s SSP-RK3 limits for orders 5–13
+    (1.43 to 0.99) match Balsara and Shu's range.
+  * **Registry extensions** ([notation](/notation.md)):
+    * modal and DG: $\zeta$, $P_l(\zeta)$, $\hat u^{(l)}_i$;
+    * polynomial WENO: $d_{\mathrm c}$, $\mathsf B$;
+    * one-step schemes: $u^{\mathrm p}_i$;
+    * DG limiting: $\mathcal{B}_i$, $N_{\mathrm s}$, $\bar v_{i,m}$, $\Pi$,
+      $\mathcal R$, $\delta_{\mathrm{DMP}}$ (with $\delta_0$,
+      $\epsilon_{\mathrm{DMP}}$), $V_i$, $M$, $\operatorname{minmod}_M$,
+      $x_G$, $w_G$;
+    * boundaries: $g(t)$, $C_a$, $u^{*(k)}$, $n_{\mathrm b}$,
+      $k_{\mathrm{ILW}}$, $\mu$, $\theta_{\mathrm{ILW}}$, $\varsigma$,
+      $x_N$, $e_j$, $\omega^{\mathrm{ext}}_k$, $x^{\mathrm g}$,
+      $\breve u_k$, $\lambda_{\mathrm{UW}}$;
+    * summation by parts: $\mathsf P$, $\mathsf Q$, $\mathsf D$;
+    * time stepping: $\nu_{\max}$;
+    * AMR: $r_{\mathrm{AMR}}$, $N_{\mathrm{lev}}$;
+    * the GP amplitude $\Sigma^2$, which was used on the GP-WENO page but
+      unregistered.
+  * **Bibliography**: 10 fragments (575 printed references) merged with
+    `tools/bib_merge.py`. The resolutions module had 63 scoped aliases, 10
+    verified silences and 13 notes; the merge ran to FLAGS: 0. The record
+    grew from 597 to 845 works. The alias families: Qiu & Shu 2004–2005,
+    Dumbser 2005–2014, the Balsara pairs, and the Cockburn and Carpenter
+    pairs.
+  * **Master renames**, done before the merge (pre-merge copy kept in the
+    session scratchpad):
+    * `qiu-2005` → `qiu-2005-b` (the CMAME Lax–Wendroff DG paper), so the
+      ingested SISC paper takes the bare key;
+    * `friedrichs-1998` → `friedrich-1998` (Crossref: Oliver Friedrich);
+    * `berger-1990` → `berger-1989` (Crossref: JCP 82 is the May 1989 issue).
+  * **Identity checks on Crossref**:
+    * Hermite WENO I is JCP 193 (2004): `qiu-2004`;
+    * JCP 248:200 is Zhu, Zhong, Shu & Qiu, printed with scrambled authors:
+      `zhu-2013-b`;
+    * Abgrall is JCP 114:45; the citing lists misprint 144.
+  * **New check — same-key venue comparison.** `bib_merge` flags a same-key
+    conflict only for *dissimilar* titles, so near-identical titles merge
+    silently. Comparing the printed vol:page of every same-key merge found:
+    * in batch 4, swapped Cockburn & Shu 1989 parts II/III in three lists,
+      a second van Leer 1979 print landing on the TICOM proceedings entry,
+      and Schulz-Rinne's two 1993 papers;
+    * run retroactively over batches 1–3, two citations attached to the
+      wrong work: castro-2011's Yamaleev & Carpenter JCP 228:3025, from
+      batch 2; and zhang-2012's Cockburn et al. JCP 84:90 (part III), from
+      batch 3. Both are moved, with notes;
+    * three printed misprints, now noted.
+
+    The check is not part of `bib_merge` yet.
+  * **Closing sweeps**:
+    * `--dupes`: one same-stem group, `yang-2009` / `yang-2009-b` (AIAA
+      paper vs journal paper, distinct);
+    * venue sweep: one real duplicate, `filbert-2013` folded into
+      `filbet-2013`;
+    * fuzzy-title sweep: only known distinct works.
+  * **Versions read**:
+    * `dumbser-2013` as arXiv:1212.3585v3;
+    * `dumbser-2014` as arXiv:1406.7416v3 and `zanotti-2015` as
+      arXiv:1412.0081v2, despite their journal-style filenames;
+    * `baeza-2016` as the accepted manuscript (arXiv:2501.17106v1).
+
+    All are checked on Crossref against the published versions.
+  * **Deep lint** (due at 40 ingestions; whole bundle):
+    * no $\Delta x$ or $\epsilon$ drift left in concept pages;
+    * the new ghost index (was $p$, now $\varsigma$), the plasma beta, the
+      CFL symbols and the extrapolation recurrence (was $u^{(k)}$, which
+      collides with RK stages) were rewritten into registry notation;
+    * a GP amplitude clash was resolved: the oscillation-indicator matrix
+      became $\mathsf B$;
+    * tags: no synonyms found (`spectral-analysis` and
+      `spectral-resolution` are distinct);
+    * contradictions: the two closed entries still hold; the open WENO-ZQ
+      and MHD-positivity entries have no new evidence;
+    * the retroactive bibliography venue check above.
+
 * **Batch 3 (10 sources), ingested autonomously on user instruction** and
   staged as one unit: [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md),
   [Titarev & Toro (2004)](/sources/titarev-2004.md),

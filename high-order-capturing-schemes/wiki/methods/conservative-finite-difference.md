@@ -124,6 +124,19 @@ it is not local in the data ([Pirozzoli (2002)](/sources/pirozzoli-2002.md);
   FV in 2D and 5–12 times in 3D
   ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4).
 
+**Later remarks (batch 4): boundaries.** Wide stencils need either
+boundary closures or ghost values.
+* *Summation-by-parts closures* keep the conservative telescoping
+  difference up to the boundary on a dual grid whose flux points are
+  non-uniform near each end, fixed by the stability norm. This yields
+  provably $L^2$-stable fourth-order WENO with stencil biasing at every
+  point ([energy-stable WENO](/methods/energy-stable-weno.md); [Fisher et al. (2011)](/sources/fisher-2011.md)).
+* *Ghost values on Cartesian grids cut by the boundary.* These come from
+  inflow Taylor expansions whose derivatives follow from the PDE
+  ([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md); [Li, Shu & Zhang (2016)](/sources/li-2016.md); [Lu et al. (2016)](/sources/lu-2016.md))
+  or from weighted extrapolation along the boundary normal
+  ([weighted extrapolation](/methods/weighted-extrapolation.md); [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §§III–IV.
@@ -139,3 +152,7 @@ it is not local in the data ([Pirozzoli (2002)](/sources/pirozzoli-2002.md);
 11. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §I.
 12. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.5.
 13. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4.
+14. [Fisher et al. (2011)](/sources/fisher-2011.md), §§2–3.
+15. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.
+16. [Lu et al. (2016)](/sources/lu-2016.md), §2.
+17. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §3.

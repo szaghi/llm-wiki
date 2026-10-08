@@ -61,7 +61,7 @@ cells each.
 |---|---|
 | $r$ | number of candidate stencils, and cells per candidate stencil |
 | $S_k$ | candidate stencil $k = 0,\dots,r-1$, ordered left to right (stencil index convention fixed per page) |
-| $p_k(x)$ | candidate polynomial of degree $r-1$ on $S_k$ |
+| $p_k(x)$ | candidate polynomial of degree $r-1$ on $S_k$ (degree $K$ in polynomial WENO, degree $k$ in a nested extrapolation; stated on those pages) |
 | $q_k$ | candidate approximation at the target point (e.g. $p_k(x_{i+1/2})$) |
 | $P(x)$ | polynomial on the big stencil $\bigcup_k S_k$, degree $2r-2$ |
 | $d_k$ | linear (optimal) weights, $\sum_k d_k = 1$, with $\sum_k d_k q_k$ reproducing the big-stencil value |
@@ -163,11 +163,44 @@ Added 2026-10-08 (batch 3: gottlieb-2001, titarev-2004, zhang-2010, zhang-2012, 
 | $\mathcal{F}^n_i$ | time-averaged flux $\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} f(u(x_i, t))\,dt$ of a single-step (Picard/Taylor) scheme |
 | $\boldsymbol{\mathcal{E}}$, $\mathbf{A}$ | electric field (ideal MHD: $\boldsymbol{\mathcal{E}} = -\mathbf{v}\times\mathbf{B}$) and magnetic vector potential, $\mathbf{B} = \nabla\times\mathbf{A}$; $\boldsymbol{\mathcal{E}}$ avoids a clash with the energy $E$ |
 | $\bar B_{x;i+1/2,j,k}$ | face average of the normal field component on a Yee-type (staggered) mesh; $\bar{\mathcal{E}}_{z;i+1/2,j+1/2,k}$ the edge average |
-| $\mathcal{K}(x, y)$, $\ell$, $R$ | GP covariance kernel, its length hyperparameter, and the GP stencil radius ($2R+1$ cells; $R = r - 1$ for the same stencil as WENO) |
+| $\mathcal{K}(x, y)$, $\ell$, $\Sigma^2$, $R$ | GP covariance kernel, its length hyperparameter, its amplitude (signal variance), and the GP stencil radius ($2R+1$ cells; $R = r - 1$ for the same stencil as WENO) |
 | $\boldsymbol{\mathcal K}$, $\mathbf C$, $\mathbf t_*$, $\mathbf z$, $f_0$ | GP kernel matrix of point values, covariance matrix of cell averages, prediction vector, weights $\mathbf z = \mathbf C^{-1}\mathbf t_*$, constant prior mean |
 | $\mu^{(k)}_i$, $\mathbf e^{(k)}_i$, $c^{(k)}_i$ | eigenpairs of $\boldsymbol{\mathcal K}$ on sub-stencil $S_k$, and the coefficients of the point values in that eigenbasis (GP smoothness indicator) |
 | $K_{\mathrm{L}}$ | Lipschitz constant in time of a time-dependent linear operator $\mathcal{L}(t)$ |
 | $\sigma$ | constant $0 < \sigma < 1$ in the accuracy CFL condition $\nu \le \sigma/2$ of the Hu–Adams–Shu flux limiter |
+
+## One-step schemes, DG limiting, AMR and numerical boundaries
+
+Added 2026-10-08 (batch 4: qiu-2005, dumbser-2007, balsara-2009, dumbser-2013, dumbser-2014, zanotti-2015, fisher-2011, baeza-2016, li-2016, lu-2016).
+
+| Symbol | Meaning |
+|---|---|
+| $\zeta$ | local cell coordinate $\zeta = (x - x_i)/h \in [-\tfrac12, \tfrac12]$ (distinct from the scaled wavenumber $\xi$) |
+| $P_l(\zeta)$ | Legendre polynomials scaled to $[-\tfrac12, \tfrac12]$: $P_0 = 1$, $P_1 = \zeta$, $P_2 = \zeta^2 - \tfrac1{12}$, $P_3 = \zeta^3 - \tfrac{3}{20}\zeta$ |
+| $\hat u^{(l)}_i$ | modal coefficient (moment) of the cell polynomial, $\mathcal{P}_i = \sum_{l=0}^{K} \hat u^{(l)}_i P_l(\zeta)$, $\hat u^{(0)}_i = \bar u_i$; in multi-D, products $P_l P_m$ with coefficients $\hat u^{(lm)}_i$ |
+| $d_{\mathrm c}$ | unnormalized linear weight of the central stencil in polynomial (Dumbser–Käser) WENO, where every one-sided stencil has linear weight 1 |
+| $u^{\mathrm p}_i(x,t)$ | element-local space–time predictor polynomial on $I_i \times [t^n, t^{n+1}]$ (ADER) |
+| $\mathcal{B}_i$ | troubled-cell flag (limiter status), $\mathcal{B}_i \in \{0, 1\}$ |
+| $N_{\mathrm s}$, $\bar v_{i,m}$ | number of subcells per direction in a DG cell, and the subcell averages of the a posteriori subcell limiter |
+| $\Pi$, $\mathcal{R}$ | cell-to-subcell projection (subcell averaging of $\mathcal{P}_i$) and subcell-to-cell reconstruction (constrained least squares); $\mathcal{R}\circ\Pi = I$ for $N_{\mathrm s} \ge K + 1$ |
+| $\delta_{\mathrm{DMP}}$, $\delta_0$, $\epsilon_{\mathrm{DMP}}$ | relaxation of a discrete maximum principle, its absolute floor and its relative factor |
+| $g(t)$ | boundary data, $u(a, t) = g(t)$ at an inflow boundary $x = a$ |
+| $C_a$ | offset of the first grid point from the boundary, $x_0 = a + C_a h$, $C_a \in [0, 1)$ ("cut cell" when $C_a \to 0$) |
+| $u^{*(k)}$, $n_{\mathrm b}$ | boundary approximations of $\partial^k_x u(a, t)$, $k = 0, \dots, n_{\mathrm b} - 1$, used in the ghost-point Taylor expansion |
+| $k_{\mathrm{ILW}}$ | number of the $u^{*(k)}$ obtained by the inverse Lax–Wendroff procedure in its simplified version; the rest are extrapolated |
+| $\mu$, $\theta_{\mathrm{ILW}}$ | diffusion coefficient of $u_t + f(u)_x = \mu u_{xx}$, and the convection/diffusion blending weight of the boundary derivatives |
+| $\omega^{\mathrm{ext}}_k$ | weights of a weighted (WENO-type) boundary extrapolation; distinct from the reconstruction weights $\omega_k$ |
+| $r_{\mathrm{AMR}}$, $N_{\mathrm{lev}}$ | refinement factor between consecutive AMR levels and number of levels above the base grid |
+| $M$, $\operatorname{minmod}_M$ | TVB constant and TVB-modified minmod: $\operatorname{minmod}_M(a_1, \dots) = a_1$ if $\vert a_1\vert \le M h^2$, else $\operatorname{minmod}(a_1, \dots)$ |
+| $x_G$, $w_G$ | Gauss-type quadrature points in $I_i$ and their weights (Gauss or Gauss–Lobatto) |
+| $V_i$ | cell $I_i$ with its node-sharing (Voronoi) neighbours |
+| $\mathsf B$ | universal oscillation-indicator matrix of polynomial WENO on a reference element, $\beta_k = \hat{\mathbf u}_k^{\mathsf T}\mathsf B\,\hat{\mathbf u}_k$ for the coefficient vector $\hat{\mathbf u}_k$ of candidate $k$ |
+| $\mathsf P$, $\mathsf Q$, $\mathsf D$ | summation-by-parts norm (symmetric positive definite), the matrix with $\mathsf Q + \mathsf Q^{\mathsf T}$ zero except its two corner entries, and the derivative operator $\mathsf D = \mathsf P^{-1}\mathsf Q$ |
+| $\varsigma$, $x_N$ | index of a ghost point beyond a boundary ($x_{-\varsigma}$ at inflow, $x_{N+\varsigma}$ at outflow), and the last interior grid point |
+| $e_j$ | Lagrange extrapolation coefficients to an outflow ghost point, $u_{N+\varsigma} = \sum_j e_j u_{N+1-j}$ |
+| $\nu_{\max}$ | largest Courant number for which a given spatial scheme with a given time integrator is linearly stable |
+| $x^{\mathrm g}$, $\breve u_k$ | target (ghost) point of a weighted extrapolation and its nested partial results, $\breve u_0 = u_{j_0}$ at the nearest node |
+| $\lambda_{\mathrm{UW}}$ | tuning parameter of the single-weight extrapolation map $\omega \mapsto (e^{\lambda_{\mathrm{UW}}\omega} - 1)/(e^{\lambda_{\mathrm{UW}}} - 1)$ |
 
 ## Spectral analysis
 

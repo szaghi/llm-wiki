@@ -60,6 +60,14 @@ RKHS norm worst ([Reyes et al. (2018)](/sources/reyes-2018.md), §5.4).
 Fifth-order AFD-WENO matches the exact solution
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
 
+**Later uses (batch 4).** ADER-DG with $K = 9$ and subcell limiting on
+only $20\times5$ cells to $t = 0.2$ resolves the shock within one cell
+at the exact location. The contact is an S-shaped profile inside a
+single unlimited cell ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1). With AMR the contact cell is at
+the finest level and stays unlimited. With $K = 2$ and about 15% of
+cells limited, the limiter overhead is about 1.5 in CPU time
+([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -78,3 +86,5 @@ Fifth-order AFD-WENO matches the exact solution
 14. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 3.
 15. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.4.
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.
+17. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1.
+18. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2.

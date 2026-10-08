@@ -60,6 +60,29 @@ AFD-WENO at $1920\times480$, with a flattening algorithm, captures the
 instabilities around the Mach stem
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VIII.a).
 
+**Later uses (batch 4).**
+* RKDG with WENO limiters, $K = 1$–$3$, up to $1920\times480$. Only
+  2–25% of cells are troubled, and results are comparable to TVB at
+  $M = 50$ ([Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.9, Table 4).
+* Fourth-order ADER-WENO with HLL on $960\times240$ and $1920\times480$
+  resolves the Mach-stem roll-up. Following Cockburn and Shu, the
+  authors state that second order would need four times more zones per
+  direction ([Balsara et al. (2009)](/sources/balsara-2009.md), §6.4).
+* Third-order ADER-WENO on AMR ($150\times50$ base, $r_{\mathrm{AMR}} = 4$,
+  two levels, equivalent $2400\times800$) agrees qualitatively with
+  published roll-up ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4).
+* ADER-DG with subcell limiting on $350\times100$, $K = 1, 2, 5, 9$.
+  Higher $K$ flags fewer cells in the vortex region and keeps more
+  small-scale structure ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.4). With AMR ($75\times25$ base,
+  $K = 2, 5, 8$) the vortex roll-up grows richer from $K = 2$ to 5 ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.3).
+* *A geometric variant:* a vertical Mach 10 shock hitting an equilateral
+  triangle embedded in a Cartesian grid (upper half by symmetry,
+  $t = 0.2$). The ramp boundary is imposed by weighted extrapolation of
+  ghost cells. High-order extrapolation resolves the reflection pattern
+  better than first order, with WLS-GAW best
+  ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.2.3;
+  [weighted extrapolation](/methods/weighted-extrapolation.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -73,3 +96,9 @@ instabilities around the Mach stem
 9. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.3.
 10. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.4.
 11. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VIII.a.
+12. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.9.
+13. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.4.
+14. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+15. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.4.
+16. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.3.
+17. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.2.3.

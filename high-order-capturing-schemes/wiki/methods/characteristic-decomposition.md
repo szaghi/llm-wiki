@@ -105,6 +105,27 @@ eigenvectors, discriminate speeds close to that of light
 also reconstructs in characteristic variables
 ([Reyes et al. (2018)](/sources/reyes-2018.md), §5).
 
+**Later uses (batch 4).**
+* *Troubled-cell detection* in RKDG uses a characteristic TVB detector.
+  The componentwise one is cheaper but flags far too many good cells,
+  and the WENO limiter's reconstruction is always characteristic ([Qiu & Shu (2005)](/sources/qiu-2005.md), §2).
+* *Modal FV reconstruction.* 1D moments are reconstructed in
+  characteristic variables, cross moments in conserved variables to save
+  cost. For the most stringent problems the 1D moments are built both
+  ways and the smaller is kept, after Dumbser and Käser, which
+  stabilizes without hurting order ([Balsara et al. (2009)](/sources/balsara-2009.md), §4.2).
+* *Componentwise* WENO suffices for linear systems ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1). The
+  third-order ADER-WENO AMR runs of the Orszag–Tang vortex use
+  componentwise reconstruction ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4), while the AMR-DG Riemann
+  problems and explosions use characteristic reconstruction ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1).
+* *Boundaries.* Characteristic decomposition with Roe-averaged
+  eigenvectors at each flux point precedes Lax–Friedrichs splitting in
+  energy-stable WENO; the order holds although the Roe average is only
+  second-order accurate ([Fisher et al. (2011)](/sources/fisher-2011.md), §6.3). At inflow boundaries, the
+  incoming characteristic variables take the boundary data while the
+  outgoing ones are extrapolated ([Lu et al. (2016)](/sources/lu-2016.md), §§2.3–2.5;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -125,3 +146,10 @@ also reconstructs in characteristic variables
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §V.
 17. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §8.
 18. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.
+19. [Qiu & Shu (2005)](/sources/qiu-2005.md), §2.
+20. [Balsara et al. (2009)](/sources/balsara-2009.md), §4.2.
+21. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.
+22. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+23. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.
+24. [Fisher et al. (2011)](/sources/fisher-2011.md), §6.3 and Appendix B.
+25. [Lu et al. (2016)](/sources/lu-2016.md), §§2.3–2.5.

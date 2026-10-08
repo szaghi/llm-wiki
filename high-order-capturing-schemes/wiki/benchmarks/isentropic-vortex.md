@@ -44,9 +44,31 @@ periodic box and returns to its start after one period
   and for MHD with constrained transport
   ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), Table 2).
 
+**Later uses (batch 4).**
+* ADER-WENO of second to fourth order with vortex strength 5. For
+  fourth order the domain is enlarged to $[-10, 10]^2$ and the run to
+  $t = 20$, because the exponential tails at the periodic boundary are
+  felt on $[-5, 5]^2$. Third order on $128^2$ matches second order on
+  $256^2$ ([Balsara et al. (2009)](/sources/balsara-2009.md), §5.1). A magnetized isodensity vortex is the MHD
+  analogue (§5.2).
+* Third- and fourth-order ADER-WENO with AMR, $r_{\mathrm{AMR}} = 3$, on $[0, 10]^2$
+  ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4, Table 2). ADER-DG with subcell limiting, $K = 2$–$9$,
+  never activates the limiter ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.2, Table 2). With AMR,
+  $K = 2$–$8$, refinement is triggered by a density threshold of 0.75
+  ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.1, Table 1).
+* Energy-stable WENO with SAT boundaries on a bounded domain reaches
+  third order (diagonal norm) and fourth order (block norm). It is less
+  accurate than the linear target on coarse grids and equal to it once
+  the critical regions are resolved ([Fisher et al. (2011)](/sources/fisher-2011.md), §6.3).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.1.
 3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VI.
 4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §6.2.
+5. [Balsara et al. (2009)](/sources/balsara-2009.md), §§5.1–5.2.
+6. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+7. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.2.
+8. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.1.
+9. [Fisher et al. (2011)](/sources/fisher-2011.md), §6.3.

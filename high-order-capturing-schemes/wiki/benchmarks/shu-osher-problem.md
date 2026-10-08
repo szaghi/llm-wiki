@@ -82,6 +82,23 @@ accuracy unless biased; WENO works without modification, and the biased
   approaches WENO-JS ([Reyes et al. (2018)](/sources/reyes-2018.md), §5.3;
   [GP-WENO](/methods/gp-weno.md)).
 
+**Later uses (batch 4).**
+* RKDG with WENO limiters, 200 cells. Raising the TVB constant flags
+  fewer cells and resolves the post-shock waves better, but at
+  $M = 300$ the weak shocks go unflagged and small oscillations appear
+  ([Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.7).
+* Fourth-order ADER-WENO on 200 zones has almost converged to an
+  800-zone reference and shows all its extrema, with no more than 11
+  points between extrema. Third order is close, and a TVD MC-limiter
+  scheme misses the reference by a wide margin ([Balsara et al. (2009)](/sources/balsara-2009.md), §6.2).
+* ADER-DG with $K = 9$ and subcell limiting on $40\times5$ cells. The
+  shock is kept as a jump over one or two subcells, and the leftmost
+  steepening waves, contained within single cells, are flagged before
+  they become shocks. The paper prints the pre-shock density as
+  $1 + 0.2\sin(5\pi x)$ and the final time as $0.18$. These differ from the
+  $\sin(5x)$ and $t = 1.8$ printed by Qiu and Shu (2005) and recorded
+  here as printed ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3).
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
@@ -101,3 +118,6 @@ accuracy unless biased; WENO works without modification, and the biased
 15. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.1.
 16. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 4.
 17. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.3.
+18. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.7.
+19. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.2.
+20. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3.

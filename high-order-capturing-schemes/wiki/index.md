@@ -11,7 +11,7 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 30 sources compiled**: 30 published works, seven of them read
+**Corpus: 40 sources compiled**: 40 published works, eleven of them read
 in a report, preprint or author-manuscript version (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
@@ -60,14 +60,19 @@ for every page.
    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) with its
    [order barriers](/results/ssp-order-barriers.md), the single-step
    [Lax–Wendroff (Taylor)](/methods/taylor-time-discretization.md)
-   alternative, the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
+   alternative and its finite-volume/DG branch, one-step
+   [ADER](/methods/ader.md) (one reconstruction per step, equal order in
+   space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    and [contact sharpening](/methods/contact-sharpening.md).
 8. **Other routes to high order.** Three-dimensional
    [finite-volume reconstruction](/methods/finite-volume-reconstruction.md),
    the [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)
    (WENO interpolation, any Riemann solver, even-derivative corrections),
-   [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md) and
-   non-polynomial [GP-WENO](/methods/gp-weno.md).
+   [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md),
+   non-polynomial [GP-WENO](/methods/gp-weno.md), and
+   [polynomial WENO](/methods/polynomial-weno.md) (whole candidate
+   polynomials with a dominant central stencil, for unstructured meshes
+   and ADER).
 9. **Staying physical.** [Positivity preservation](/properties/positivity-preserving.md)
    — convex admissible set, positive first-order flux, SSP time
    stepping — enforced by the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)
@@ -75,7 +80,21 @@ for every page.
    Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
    provably positive? For MHD the divergence constraint is kept by
    [constrained transport](/methods/constrained-transport.md).
-10. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+10. **Limiting high-order DG.** A priori:
+   [WENO limiters](/methods/weno-limited-dg.md) rebuild troubled cells from
+   neighbouring averages. A posteriori:
+   [subcell limiting](/methods/a-posteriori-subcell-limiting.md) (MOOD)
+   recomputes cells that fail positivity or a relaxed maximum principle,
+   using ADER-WENO on $2K+1$ subcells.
+11. **Boundaries and adaptive meshes.** Ghost values on Cartesian grids cut
+   by the boundary come from [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)
+   expansions (stable for any cut-cell distance) or from
+   [weighted extrapolation](/methods/weighted-extrapolation.md). Provably
+   stable closures come from summation by parts:
+   [energy-stable WENO](/methods/energy-stable-weno.md).
+   [High-order AMR](/methods/high-order-amr.md) relies on one-step updates
+   for local time stepping.
+12. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
    [interacting blast waves](/benchmarks/interacting-blast-waves.md),
@@ -83,7 +102,9 @@ for every page.
    [double Mach reflection](/benchmarks/double-mach-reflection.md),
    [forward step](/benchmarks/forward-facing-step.md),
    [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
-   [isentropic vortex](/benchmarks/isentropic-vortex.md). Positivity:
+   [isentropic vortex](/benchmarks/isentropic-vortex.md),
+   [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
+   [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Positivity:
    [double rarefaction](/benchmarks/double-rarefaction.md),
    [Sedov](/benchmarks/sedov-blast-wave.md),
    [Leblanc](/benchmarks/leblanc-shock-tube.md),

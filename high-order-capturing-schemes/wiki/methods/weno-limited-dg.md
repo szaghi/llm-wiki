@@ -1,0 +1,99 @@
+---
+type: Method
+title: "WENO limiters for discontinuous Galerkin schemes"
+description: "Limiting RKDG by first flagging troubled cells (TVB minmod) and then replacing their polynomial — cell average kept — by one rebuilt from WENO reconstructions of neighbouring cell averages at Gauss-type points, which keeps the DG order where good cells are wrongly flagged."
+status: established
+aliases: [WENO limiter, RKDG with WENO limiters, troubled-cell indicator, TVB limiter, Hermite WENO limiter]
+tags: [weno, dg, limiter, finite-volume]
+timestamp: 2026-10-08T00:00:00Z
+---
+
+# WENO limiters for discontinuous Galerkin schemes
+
+**Setting** ([Qiu & Shu (2005)](/sources/qiu-2005.md), §§1–2). The
+Runge–Kutta DG method of Cockburn and Shu represents the solution in
+$I_i$ by $\mathcal{P}_i = \sum_{l=0}^{K}\hat u^{(l)}_i P_l(\zeta)$. It
+evolves the moments by testing with each basis function, with a
+[monotone flux](/definitions/monotone-flux.md) or Riemann solver at
+interfaces, and advances in time with [SSP Runge–Kutta](/methods/ssp-runge-kutta.md).
+Smooth solutions and weak shocks need nothing more. Strong shocks
+produce oscillations and nonlinear instability, and the authors call
+robust limiters "one of the bottlenecks" of DG for conservation laws.
+
+**The standard TVB limiter.** Replace each deviation of an interface
+value from the mean, $\mathcal{P}_i(x_{i+1/2}) - \bar u_i$ and
+$\bar u_i - \mathcal{P}_i(x_{i-1/2})$, by
+$\operatorname{minmod}_M(\cdot,\ \bar u_{i+1} - \bar u_i,\ \bar u_i - \bar u_{i-1})$.
+This returns its first argument when $\vert a_1\vert \le M h^2$ and the
+plain minmod otherwise, so the constant $M$ sets how large a second
+derivative at a smooth extremum is left alone. A
+small $M$ degrades accuracy at extrema, and a large $M$ lets oscillations
+through. For systems $M$ is hard to estimate
+([Qiu & Shu (2005)](/sources/qiu-2005.md), eqs. 2.4–2.5).
+
+## Two-step WENO limiting
+
+([Qiu & Shu (2005)](/sources/qiu-2005.md), §2.)
+1. **Troubled cells.** A cell is troubled ($\mathcal{B}_i = 1$) when
+   the TVB limiter would change its interface values. False alarms
+   cost time but not order, so the detector need not be sharp. For
+   systems a characteristic-based detector is used, because the
+   componentwise one flags many good cells.
+2. **Reconstruction.** In troubled cells only $\bar u_i$ is kept. The
+   point values at $K + 1$ Gauss-type points come from finite-volume
+   [WENO](/methods/weno.md) of order at least $2K + 1$ on the
+   $2K + 1$ cells $I_{i-K}, \dots, I_{i+K}$. The moments are then
+   rebuilt by quadrature,
+   $\hat u^{(l)}_i \propto \sum_G w_G\, u(x_G)\, P_l(x_G)$, $l \ge 1$,
+   with Gauss-type points $x_G$ and weights $w_G$.
+   The points are two-point Gauss for $K = 1$, four-point
+   Gauss–Lobatto for $K = 2$, and four-point Gauss for $K = 3$.
+   At three-point Gauss for $K = 2$ the linear weights of the middle
+   point are negative, which Gauss–Lobatto avoids (Remark 2.1). For
+   $K = 2$ the linear weights are $\tfrac1{10}$, $\tfrac6{10}$,
+   $\tfrac3{10}$ at $x_{i+1/2}$, and
+   $\tfrac{91 + 9\sqrt5}{440}$, $\tfrac{129}{220}$,
+   $\tfrac{91 - 9\sqrt5}{440}$ at $x_i + \sqrt5 h/10$, left to right.
+   The [smoothness indicators](/definitions/smoothness-indicator.md)
+   are those of Jiang and Shu and are shared by all points of the cell.
+   They use $q = 2$ and $\varepsilon = 10^{-6}$.
+   Reconstructing the moments directly from averages works for $K = 1, 2$,
+   but the linear weights do not exist for $K = 3$ (Remark 2.2).
+
+**Evidence** ([Qiu & Shu (2005)](/sources/qiu-2005.md), §3).
+* With $M = 0.01$, which flags many good cells, the WENO limiter keeps
+  both the order and the error size of unlimited RKDG ($K = 1$–$3$, 1D
+  and 2D Burgers, 2D Euler, non-uniform meshes). The TVB limiter alone
+  at that $M$ would fall to second order in $L^1$.
+* Larger $M$ flags fewer cells and resolves contacts and the
+  post-shock waves of the [Shu–Osher problem](/benchmarks/shu-osher-problem.md)
+  better, so RKDG resolves better than the WENO reconstruction it
+  replaces. $M = 300$ is too large: weak shocks are no longer flagged
+  and small oscillations appear.
+* In the [double Mach reflection](/benchmarks/double-mach-reflection.md)
+  only 2–25% of cells are troubled, more at higher $K$ and small $M$
+  (Table 4). Results are comparable to TVB with $M = 50$.
+
+**Limitations seen later.** In a review of a priori DG limiters,
+[Dumbser et al. (2014)](/sources/dumbser-2014.md) (§3.1) group them
+into three families: artificial viscosity, slope or moment limiters
+(TVB, moment-based, hierarchical vertex-based), and (H)WENO limiters
+of this kind. Two drawbacks of WENO limiting are noted.
+* Moments rebuilt from main-grid averages lose part of DG's subcell
+  resolution.
+* Detection depends on parameters that are often problem-dependent.
+
+Hermite WENO limiters, which also use derivatives, were introduced for
+compactness (Qiu and Shu 2003, 2005, cited there). A polynomial
+reconstruction on unstructured meshes was proposed as a DG limiter by
+[Dumbser & Käser (2007)](/sources/dumbser-2007.md) (§6;
+[polynomial WENO](/methods/polynomial-weno.md)). The a posteriori
+alternative recomputes troubled cells with a different scheme on a
+subgrid instead of post-processing them
+([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
+
+# Citations
+
+1. [Qiu & Shu (2005)](/sources/qiu-2005.md), §§1–4.
+2. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§1, 3.1.
+3. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §6.

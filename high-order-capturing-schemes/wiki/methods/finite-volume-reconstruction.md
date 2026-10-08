@@ -108,6 +108,24 @@ interpolant of the two interface values and three neighbouring means
 ([Zhang & Shu (2012)](/sources/zhang-2012.md), §2.1;
 [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)).
 
+**Entire polynomials and unstructured meshes** ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2). A
+high-order reconstruction on triangles or tetrahedra maps every stencil
+cell to the reference element of the target cell. The Jacobians cancel
+from the conservation equations, which avoids the ill-conditioning of
+physical-space reconstruction noted by Abgrall. The basis is a
+hierarchical orthogonal one, as in DG. Stencils carry 50–100% more cells
+than unknowns and are solved by constrained least squares that conserve
+exactly in the target cell, a choice made for robustness on general
+meshes. The output is the whole polynomial, not point values at face
+quadrature points, which is what [ADER](/methods/ader.md) needs
+([polynomial WENO](/methods/polynomial-weno.md)). On Cartesian meshes the
+same object is built modally: Legendre moments along each axis come
+from 1D reconstructions, and the cross moments of finite-volume
+reconstruction (absent from pointwise WENO) come from small diagonal
+stencils ([Balsara et al. (2009)](/sources/balsara-2009.md), §2). Subcell averages of a DG polynomial and their
+inverse, the subcell reconstruction $\mathcal{R}$, are the same
+recovery problem ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1, 3 and Appendix.
@@ -118,3 +136,5 @@ interpolant of the two interface values and three neighbouring means
 6. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §I.
 7. [Reyes et al. (2018)](/sources/reyes-2018.md), §2.3.
 8. [Zhang & Shu (2012)](/sources/zhang-2012.md), §2.1.
+9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2.
+10. [Balsara et al. (2009)](/sources/balsara-2009.md), §2.

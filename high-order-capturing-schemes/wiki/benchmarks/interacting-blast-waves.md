@@ -60,6 +60,23 @@ better than WENO-JS and WENO-Z ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md),
 AFD-WENO on 1000 zones, with flattening, matches a 4000-zone reference
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
 
+**Later uses (batch 4).**
+* RKDG with WENO limiters, $K = 1$–$3$, 400 cells, at $t = 0.038$.
+  Resolution improves with the TVB constant up to $M = 10$, but $M = 300$
+  is slightly worse. It improves from $K = 1$ to 2 and deteriorates
+  slightly from 2 to 3 ([Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.8;
+  [WENO limiters for DG](/methods/weno-limited-dg.md)).
+* Fourth-order ADER-WENO with a linearized Riemann solver at CFL 0.8:
+  400 zones capture the left-going contact and every structure of a
+  1600-zone run ([Balsara et al. (2009)](/sources/balsara-2009.md), §6.1).
+* Third-order ADER-WENO with two AMR levels on a $300\times10$ base
+  grid, in 2D with periodic $y$ and reflecting $x$. It agrees with a
+  3600-point TVD reference at the collision ($t = 0.028$) and at
+  $t = 0.038$ ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4).
+* Reflecting walls by weighted least-squares extrapolation (WLS-GAW)
+  give satisfactory profiles against a $h = 1/16000$ reference
+  ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.3; [weighted extrapolation](/methods/weighted-extrapolation.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -76,3 +93,7 @@ AFD-WENO on 1000 zones, with flattening, matches a 4000-zone reference
 12. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.3.
 13. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 5.
 14. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.
+15. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.8.
+16. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.1.
+17. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
+18. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.3.

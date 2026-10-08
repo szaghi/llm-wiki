@@ -87,6 +87,27 @@ non-conservative energy source
 ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.1;
 [constrained transport](/methods/constrained-transport.md)).
 
+**A posteriori enforcement (batch 4).** Instead of limiting the
+high-order solution to stay in $\mathcal{G}$, MOOD-type schemes check
+the candidate solution after the step, physical admissibility first
+(e.g. $\rho, p > 0$). Failed cells are recomputed from $t^n$ with a more
+robust scheme. For DG this is third-order ADER-WENO on subcells, and
+the last resort is a first-order Godunov update "supposed" positive
+under its CFL condition ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md);
+[Dumbser et al. (2014)](/sources/dumbser-2014.md), §4.3). The subcell WENO scheme itself may fail positivity for
+very complex systems. The proposed remedies are a further MOOD layer or
+Balsara's self-adjusting positivity method ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §6).
+
+**MHD, divergence-free reconstruction.** In low-β blast waves (ambient
+plasma beta $2.5\times10^{-4}$), fourth-order ADER-WENO keeps the
+pressure positive where the strong shock runs oblique to the mesh. The
+authors attribute this directly to computing the zone-centred field
+from the divergence-free reconstruction ([Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5;
+[constrained transport](/methods/constrained-transport.md)). This is
+consistent with the later observation that *simple averaging* of face
+fields to cell centres is what costs PCP in rare cells
+(Balsara, Bhoriya & Shu above).
+
 ## Contradictions
 
 **Is the first-order Lax–Friedrichs MHD scheme provably positive?**
@@ -113,3 +134,5 @@ non-conservative energy source
 4. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
 5. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 5.
 6. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
+7. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§4.3, 6.
+8. [Balsara et al. (2009)](/sources/balsara-2009.md), §§7.4–7.5.

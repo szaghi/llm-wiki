@@ -47,6 +47,15 @@ WENO-JS with 100 (0.55 s) ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Exam
 Seventh-order AFD-WENO captures the rarefaction, contact and shock
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §VII.a).
 
+**Later uses (batch 4).**
+* RKDG with WENO limiters, 200 cells, $t = 1.3$. Contact resolution
+  improves as the TVB constant $M$ grows and fewer cells are flagged
+  ([Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.6).
+* ADER-DG with $K = 9$ and subcell limiting on $20\times5$ cells to
+  $t = 0.14$, alone ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1) and with AMR ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2). The
+  shock stays within one main cell and the contact stays unlimited
+  ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -65,3 +74,6 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
 14. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 6.
 15. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 2.
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.
+17. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.6.
+18. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1.
+19. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2.

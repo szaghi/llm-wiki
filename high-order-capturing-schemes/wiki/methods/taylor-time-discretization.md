@@ -46,9 +46,25 @@ of two over SSP-RK. This concerns ADER's space–time predictor; it
 does not exclude FD single-step schemes of Lax–Wendroff/Taylor type such
 as PIF-WENO, which in Christlieb et al.'s taxonomy are a separate family.
 
+**ADER, the finite-volume and DG branch** ([ADER](/methods/ader.md)).
+Toro and Titarev's ADER is the Cauchy–Kowalewski procedure applied to a
+generalized Riemann problem at each interface ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §1). For linear
+systems the reconstruction is evolved inside each element and only the
+time-integrated boundary values enter the Riemann solver ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3).
+The algebra becomes impracticable for complex nonlinear systems and
+fails with stiff sources. ADER therefore moved to an element-local
+space–time Galerkin predictor that needs only pointwise flux
+evaluations ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §2.3; [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1; [Balsara et al. (2009)](/sources/balsara-2009.md), §3). The one-step structure
+is what lets each level of a [high-order AMR](/methods/high-order-amr.md)
+grid take its own time step.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §4.
 2. [Shu (1998)](/sources/shu-1998.md), §4.2.3.
 3. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 3, 4, 7.
 4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4.
+5. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §§1, 2.3.
+6. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.
+7. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
+8. [Balsara et al. (2009)](/sources/balsara-2009.md), §3.
