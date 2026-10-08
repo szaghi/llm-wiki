@@ -2,6 +2,32 @@
 
 ## 2026-10-08
 
+* **Ingested [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)**,
+  re-downloaded source 6 of 7.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2026-CAMC-Balsara-101007s42967-025-00517-y.pdf`.
+    The slug follows the printed volume year (2026).
+  * **Updated** two pages:
+    * [UCT](/methods/upwind-constrained-transport.md): the
+      finite-difference realization up to ninth order;
+    * [positivity–divergence coupling](/results/positivity-divergence-coupling.md):
+      the staggered positivity repair.
+  * **New `Contradictions` entry, open**, on the positivity page: the
+    paper calls the first-order HLL/LLF zone update positive (citing
+    Gurski 2004), against Wu (2018) and Wu & Shu (2019). A scoped reading
+    notes that the cited proof is 1D as far as the citing text shows, and
+    that the scheme's energy repair makes its own guarantee independent of
+    the claim.
+  * **Bibliography:** 91 references; the record goes from 3109 to 3141.
+    * 59 existing entries gained the citer; 32 works are new, plus the self
+      entry.
+    * Titles were filled for `donnert-2019`, `vanderholst-2008` and
+      `komissarov-1999`.
+    * **Duplicate fold:** `balsara-2009-b`, created at the christlieb-2016
+      ingestion, is the published form of the existing `balsara-2008-a`.
+      It was folded into that entry and its citers were merged.
+    * A malformed printed DOI for Bhoriya et al. (2024) was not recorded.
+
 * **Ingested [Blomquist et al. (2024)](/sources/blomquist-2024.md)**,
   re-downloaded source 5 of 7.
   * **Corpus:** the PDF was moved to

@@ -167,6 +167,12 @@ through the source term.
   refinement. The limiter was required for the rotor, both blasts and the 3D
   cloud–shock at $256^3$.
   Without CT, Orszag–Tang crashes at $t = 1.67$.
+* **The same repair for a staggered high-order scheme.** In
+  [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), a first-order zone update is hybridized with the high-order one,
+  zone by zone, until every zone is admissible. Averaging the exact face
+  fields to the zone centre can still break admissibility in rare zones.
+  These are repaired by borrowing thermal energy from a neighbour, or, if
+  none can lend, by a low-order energy source.
 * **Controlled-class schemes carry no guarantee.**
   [GLM](/methods/glm-divergence-cleaning.md) and other cleaning methods
   hold no discrete divergence exactly, so this result gives them no
@@ -210,6 +216,27 @@ $D_h^{\mathrm{c}}$ that the first-order theorem uses, so the sufficient
 condition is not met by construction. Their runs did not fail; this is a
 gap in the guarantee, not an observed failure.
 
+**Is the first-order HLL/LLF zone update positivity-preserving in more
+than one dimension?** (open)
+
+* [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md) state that a first-order zone-centred MHD update with HLL or LLF face
+  fluxes "will indeed be PCP, as was first proved by Gurski" (2004), and
+  build their low-order fallback on it. They do not cite Wu (2018).
+* [Wu (2018)](/sources/wu-2018.md) proves that for the LF scheme in 2D,
+  admissible data alone do not suffice, at any CFL and viscosity; a
+  discrete divergence-free condition on the scheme's own stencil is
+  needed. [Wu & Shu (2019)](/sources/wu-shu-2019.md) extend this to HLL.
+
+**Scoped reading (compiled, open).** The cited Gurski proof is not ingested;
+as far as the citing text shows, it concerns a one-dimensional Riemann
+solver. The multi-dimensional statement then needs Wu's condition. The
+zone-centred field here is the average of exactly divergence-free face
+fields, which in general does not make the collocated central divergence of
+the averages vanish, so the condition is not met by construction. The
+scheme's practical guarantee does not depend on the disputed claim, since
+any zone that fails is repaired by the energy borrowing or source. What
+remains unsettled is whether the low-order fallback is positive by itself.
+
 # Citations
 
 1. [Wu (2018)](/sources/wu-2018.md), Theorems 2.11, 2.15, 3.1, 4.1, 4.3, 4.5–4.7, 4.10, Remarks 4.4, 4.8–4.9, §5.2, Appendix B.
@@ -221,3 +248,4 @@ gap in the guarantee, not an observed failure.
 7. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §8.
 8. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4.
 9. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§2, 5, 6.7, Claim 1.
+10. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.

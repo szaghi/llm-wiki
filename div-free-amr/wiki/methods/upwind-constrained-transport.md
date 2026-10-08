@@ -136,6 +136,23 @@ consistent with that invariant**:
   with about $34^3$. The fallback was essential on the blast and the
   cloud–shock problem. AMR and non-Cartesian grids are left to companion
   work.
+* **A finite-difference realization, to ninth order** ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)). Zone-centred
+  variables are point values advanced by alternative-FD WENO; only the
+  face-averaged $B_h$ keeps a finite-volume, Stokes-law update.
+  * No volumetric divergence-free reconstruction is built. Face fields
+    are reconstructed in 2D within each face, then interpolated to zone
+    centres for the fluxes.
+  * The edge EMF from a 2D LLF Riemann solver is the average of the four
+    zone-centred point values of $E$, WENO-interpolated to the edge, plus
+    a dissipation term proportional to the jumps of the face-reconstructed
+    normal fields at that edge. An HLL version with eight supersonic cases
+    is also given.
+  * Point values of the EMF are turned into edge averages by 1D WENO
+    interpolation along the edge.
+  * The same algorithm covers electrodynamics, MHD and relativistic MHD.
+    Design orders 3, 5, 7 and 9 are met. On one core the FD scheme is 7 to
+    14 times faster than an FV-WENO scheme in 2D and 5 to 12 times in 3D,
+    without the ADER and flux-count economies FV could use.
 * **Same construction for SR and GR MHD**, per the authors. They also claim
   a natural extension to AMR and unstructured grids; for the unstructured
   triangular counterpart they cite De Sterck's MUCT.
@@ -148,3 +165,4 @@ consistent with that invariant**:
 4. [Felker & Stone (2018)](/sources/felker-2018.md), §§4–5, Appendix A.
 5. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§4–7.
 6. [Berta et al. (2024)](/sources/berta-2024.md), §§3–6, Appendix B.
+7. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–4, 6, 7.4.
