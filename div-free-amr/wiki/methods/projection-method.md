@@ -102,6 +102,40 @@ histograms and excess small-scale power. Only the local CT scheme was clean.
 The spectral variant fluctuates but eventually returns to the CT energy
 level.
 
+## The iterated collocated projection
+
+When the velocity and the potential share the same nodes, the composite
+Laplacian is not the composition of the nodal divergence and gradient, so
+$I - G\,L^{-1}D$ is not a projection: one pass leaves a residual
+divergence. [Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md) turn this into a convergent procedure on non-graded
+quadtrees and octrees.
+* **The limit is exact.** The operator leaves discretely divergence-free
+  fields unchanged, and its eigenvalue-1 eigenspace is exactly the
+  incompressible space. If the iteration converges, its limit is the
+  canonical projection onto that space.
+* **Stability through the staggered complex.** On periodic uniform grids
+  the nodal divergence and gradient are the staggered $D_h$ and $G_h$
+  ([notation](/notation.md)) composed with linear node–edge
+  interpolations that are transposes of each other, while the nodal
+  Laplacian equals the staggered $D_h G_h$. Since averaging has norm at
+  most one, the operator is a contraction, and its spectrum lies in
+  $[0, 1]$.
+* **On adaptive grids** a sufficient condition for convergence is a
+  spectral-radius bound below 1 on a product of the interpolations. The
+  only free ingredient is the ghost-value rule used by the divergence at
+  hanging nodes (see the
+  [AMR projection method](/methods/amr-projection-method.md)). The
+  condition is not proved for the rule used, and boundary effects are
+  outside the analysis; stability is verified numerically.
+* **In practice** one to three passes reach a tolerance of $10^{-3}$, and
+  a single pass already gives second order in velocity and potential. The
+  constraint class is therefore tolerance-level.
+
+*Compiler reading:* this answers the "different residue after each pass"
+of the compact-stencil variant in the table above. The residue is not
+noise: under the contraction condition, repeated passes converge to the
+exact projection.
+
 ## Contradictions
 
 **Is projection as good as an exactly divergence-free local scheme?**
@@ -136,3 +170,4 @@ sources.
 3. [Dedner et al. (2002)](/sources/dedner-2002.md), §2.
 4. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II.a–c, III.b, Table I.
 5. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 3.4.
+6. [Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md), §§1, 3, 4.2.

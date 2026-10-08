@@ -2,6 +2,24 @@
 
 ## 2026-10-08
 
+* **Ingested [Blomquist et al. (2024)](/sources/blomquist-2024.md)**,
+  re-downloaded source 5 of 7.
+  * **Corpus:** the PDF was moved to
+    `~/papers/mosaic/div-free-amr/2024-JCP-Blomquist-101016jjcp2023112695.pdf`.
+  * **Updated** two pages:
+    * [projection](/methods/projection-method.md): the iterated collocated
+      projection, with a compiler reading on the compact-stencil variant of
+      Balsara & Kim;
+    * [AMR projection](/methods/amr-projection-method.md): the tree-based
+      variant. A compiler reading links its hanging-node divergence rule
+      to the bundle's seam-operator theme.
+  * **Bibliography:** 74 references; the record goes from 3042 to 3109.
+    * 8 existing entries gained the citer; 66 works are new, plus the self
+      entry.
+    * The `zhang-2019` (AMReX) placeholder title was filled.
+    * Temam (1969) parts I and II are printed with identical pages, which
+      is recorded in a note.
+
 * **Ingested [Seo & Ryu (2023)](/sources/seo-2023.md)**, re-downloaded source
   4 of 7.
   * **Corpus:** the PDF was moved to

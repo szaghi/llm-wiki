@@ -5,7 +5,7 @@ description: "Subcycled projection-method incompressible flow on patch hierarchi
 status: established
 aliases: [adaptive projection, IAMR method]
 tags: [amr, projection, incompressible, subcycling, synchronization]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-08T00:00:00Z
 ---
 
 # AMR projection method
@@ -44,6 +44,30 @@ constrained systems, interface consistency is itself an *elliptic* problem —
 local flux fixes are not sufficient, and skipping the elliptic
 synchronization demonstrably costs accuracy.
 
+## Tree-based, collocated variant
+
+[Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md) project node-collocated velocities on non-graded quadtrees and octrees,
+with no subcycling and no synchronization suite: the tree is one mesh, and
+hanging nodes at T-junctions get ghost values.
+* **The divergence's ghost rule decides stability.** Using the same
+  third-order ghost interpolation for the divergence as for the gradient
+  and Laplacian is unstable. Quadratic, linear, ENO and WENO ghost
+  interpolation are all stable in tests, and the stability condition
+  depends on that rule alone.
+* **A first-order divergence on purpose.** The divergence uses the plain
+  central formula, first-order accurate on the adaptive stencil, because
+  the second-order weighted form leads to instability in the purely nodal
+  setting.
+* Second order overall, randomly refined quadtrees included; CFL up to 10
+  on oscillating and fixed cylinders.
+
+*Compiler reading:* this is the incompressible counterpart of the
+divergence-at-seams theme of this bundle. At an AMR interface the
+stability of the constraint step is set by how the divergence reaches
+across the level jump, not by the interior operators, just as the
+[seam divergence source](/results/collocated-seam-divergence-source.md) is
+set by the seam operator.
+
 ## Constraint class
 
 Tolerance-level, twice over: solver tolerance in the MAC/sync solves and
@@ -57,3 +81,4 @@ extensions.
 # Citations
 
 1. [Almgren et al. (1998)](/sources/almgren-1998.md), §§2–3.
+2. [Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md), §§3.3–3.4, 4–5.
