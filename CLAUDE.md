@@ -26,6 +26,12 @@ Never reference, read from, or depend on other projects' repos in bundle content
 - **Layer 1 (immutable):** `raw/` captures and every externally referenced source
   location (e.g. a PDF archive named in bundle law) are read-only. Never modify,
   rename, or delete. Captures are written once at ingestion, then frozen.
+- **Sibling-project records** (docs, issues, run data of another repository)
+  enter only as a frozen capture under `raw/docs/<slug>/`, pinned to a commit
+  or date, never read live. Their claims are `hypothesis` and can neither
+  promote a claim to `established` nor close a `Contradictions` entry on
+  their own. An evolved record gets a new capture and a new slug (D12
+  amendment).
 - **Layer 2 (compiler-owned):** `wiki/` is yours to write. The human browses it.
 - Anything git-ignored or stateful (caches, indexes) is disposable.
 

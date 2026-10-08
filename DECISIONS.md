@@ -118,6 +118,18 @@ once from good existing conventions and is wiki-native law with no back-pointer.
 may later exploit it, but that coupling is decided and recorded in *those*
 projects, never here.
 
+**Amendment (2026-10-08, user decision): frozen captures of sibling
+projects.** A sibling project's records (docs, issue threads, run data) may
+be ingested as a source, but only as a frozen Layer 1 capture under
+`raw/docs/<slug>/`, pinned to a commit or date. The bundle never reads the
+live repository. Claims from such sources are `status: hypothesis` (D3),
+and they can never, on their own, promote a claim to `established` or close
+a `Contradictions` entry. An evolved record is re-captured under a new slug;
+captures are never refreshed in place. **Why:** D12 forbids coupling, not
+content. A frozen capture keeps the bundle self-sufficient, and the
+conditions stop the human's own work from re-entering the wiki as external
+confirmation. First instance: `zaghi-2026`.
+
 ## D13 — The building guide is superseded, never ingested
 
 `llm-wiki-building-guide.md` remains as the origin document with a superseded
