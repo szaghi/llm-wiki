@@ -82,6 +82,29 @@ that troubled seven-wave Riemann solvers), and the construction extends to
 cylindrical, spherical, and tetrahedral meshes — carrying divergence-free
 AMR to those geometries in the same stroke.
 
+## Beyond second order (Balsara 2009)
+
+[Balsara (2009)](/sources/balsara-2009.md) carries the
+construction to third and fourth order in a Legendre-moment basis.
+* Face components are expanded in face moments: 3, 6 and 10 per face at
+  orders 2, 3 and 4.
+* Interior components are complete expansions one order higher in their
+  own direction.
+* Two structural facts:
+  1. The face moments to order $r$ fix every interior coefficient needed
+     at order $r$, so the faces carry all the information.
+  2. The coefficients the constraint leaves free are set by **minimizing
+     the integrated magnetic energy** in the zone, which the author links
+     to pressure positivity.
+* The constant-term relation is the integral form of
+  $D_h^{\mathrm{f}} B_h = 0$, so the high-order reconstruction stays
+  consistent with the exactly held staggered invariant.
+* Coupled to WENO face reconstruction and SSP-RK, the finite-volume scheme
+  meets its design order (2.0, 3.0, 4.4–4.5 on smooth 2D and 3D problems).
+* This is the finite-volume counterpart of the point-value high-order CT of
+  [UCT](/methods/upwind-constrained-transport.md). There the invariant
+  lives on deconvolved variables; here it lives on face moments.
+
 # Citations
 
 1. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md), §3–4.
@@ -89,3 +112,4 @@ AMR to those geometries in the same stroke.
 3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §3.3.
 4. [Balsara (2004)](/sources/balsara-2004.md), §§3–4.
 5. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2–2.2.2.
+6. [Balsara (2009)](/sources/balsara-2009.md), §§2–4.

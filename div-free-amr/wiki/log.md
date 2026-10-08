@@ -2,6 +2,27 @@
 
 ## 2026-10-08
 
+* **Ingested [Balsara (2009)](/sources/balsara-2009.md)**, source 4 of 16.
+  * **Corpus:** the author preprint was moved to
+    `~/papers/mosaic/div-free-amr/2009-JCP-Balsara-101016jjcp200903038.pdf`;
+    venue and pages were verified on Crossref.
+  * **Updated** two pages:
+    * [divergence-free reconstruction](/methods/divergence-free-reconstruction.md):
+      third and fourth order in a Legendre-moment basis; the face moments
+      fix the interior; energy minimization closes the free constraints;
+      compared with UCT's point-value invariant;
+    * [$P_D$](/operators/divergence-free-prolongation.md): refinement ratio
+      3 and recursive 2·3 ratios, claimed but not demonstrated.
+  * A record inconsistency is noted on the Source page: the tables label
+    the runs "ADER" while the text describes RK-WENO.
+  * **Bibliography:** 35 references (two are numbered [26]); the record
+    goes from 2725 to 2729.
+    * 31 existing entries gained the citer, and 4 works are new, including
+      the "submitted" Balsara–Rumpf–Dumbser–Munz ADER-WENO paper as
+      `balsara-2008-a`.
+    * The pre-existing cited-only `balsara-2009` (3 citers) is this work;
+      it was upgraded in place to verified metadata.
+
 * **Ingested [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md)**,
   source 3 of 16.
   * **Corpus:** the arXiv preprint was moved to

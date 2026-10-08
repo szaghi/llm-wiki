@@ -38,6 +38,14 @@ orthogonal curvilinear geometries, and to triangular/tetrahedral meshes;
 used to initialize newly refined patches, while ghost (halo) filling during
 subcycling uses the reconstruction directly.
 
+**Higher order and refinement ratio 3**
+([Balsara (2009)](/sources/balsara-2009.md) §2). The fourth-order
+[reconstruction](/methods/divergence-free-reconstruction.md) carries 10
+face moments, one more than the 9 that a ratio-3 prolongation must fix
+per face. Ratio 3 is therefore available, and recursion with the ratio-2
+formulas reaches any ratio built from factors 2 and 3. The claim is made
+in the source without an AMR demonstration.
+
 ## Structural remarks
 
 * The construction is *integral*, not algebraic: exactness comes from
@@ -91,3 +99,4 @@ prove the locality trichotomy across storage choices —
 3. [Miniati & Martin (2011)](/sources/miniati-martin-2011.md), §3.
 4. [Etienne, Liu & Shapiro (2010)](/sources/etienne-2010.md) — the [vector-potential route](/methods/vector-potential-evolution.md) that dissolves the transfer problem instead of solving it.
 5. [Olivares et al. (2019)](/sources/olivares-2019.md), §§3–4.
+6. [Balsara (2009)](/sources/balsara-2009.md), §2 (observations 2–3).
