@@ -143,8 +143,23 @@ on the GLM page; they are registered here.)
 |---|---|
 | $c_h$ | GLM cleaning (hyperbolic transport) speed |
 | $c_p$ | GLM parabolic damping parameter; the damping rate of $\psi_h$ is $c_h^2/c_p^2$ |
+| $\mathcal{D}$ | the linear operator coupling $\psi_h$ to the divergence in the GLM system, $\mathcal{D}(\psi) + \nabla\cdot B = 0$; its choice selects the cleaning family (added at deep lint #8, already in use) |
 | $q$ | accuracy order of a ghost-fill operator $\Gamma$ (value error $O(h^q)$) |
 | $p_{\mathrm{obs}}$ | observed convergence order from a refinement ladder, $p_{\mathrm{obs}} = \log_2(e_h / e_{h/2})$ |
+
+## Edge-EMF constructions
+
+(Added at deep lint #8. These symbols had been in use on the CT pages since
+the gardiner-stone-2005 ingestion without being registered.)
+
+| Symbol | Meaning |
+|---|---|
+| $\mathcal{E}^{\circ}$ | edge EMF as the plain arithmetic average of the four face values (Gardiner & Stone) |
+| $\mathcal{E}^{\alpha}$ | edge EMF with Lax–Friedrichs-type dissipation added to the average |
+| $\mathcal{E}^{c}$ | edge EMF upwinded by the sign of the contact (mass-flux) mode, the Athena choice; "CT-Contact" elsewhere |
+
+All three are values of $E_h \in V_h^1$; the superscript names the
+construction, not a different field.
 
 ## Admissibility (positivity)
 

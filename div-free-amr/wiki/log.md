@@ -2,6 +2,52 @@
 
 ## 2026-10-08
 
+* **Duplicate sweep and deep lint #8** after the 23 ingestions of this
+  session (counter since #7 was past the every-10 cadence).
+  * **`--dupes`** (`tools/bib_merge.py --dupes`): one identical-title+year
+    group, `powell-1995` / `powell-1995-b`. It was reviewed earlier as two
+    distinct works (book chapter versus AIAA conference paper) and is left
+    alone.
+  * **Supplementary sweeps.** Placeholder titles are invisible to
+    `--dupes`, so two more sweeps were run: a journal-volume-page collision
+    sweep and a fuzzy cross-year title sweep.
+    * **Folded** four same-work pairs, each with a citedby union and a note:
+      * `godunov-1972-b` into `godunov-1961` (Dokl. 139:521);
+      * `yee-1969` into `yee-1966` (IEEE Trans. AP vol. 14);
+      * `samarski-1983` into `samarskii-1982` (Diff. Eqns. 18:881, where
+        1983 is the translation year);
+      * `mirzaei-2011` into `mirzaei-2012` (online-first versus print).
+    * **Flagged, not folded:** `eymard-2008` / `eymard-2010` (no venue on
+      the 2008 entry).
+    * **Kept distinct:** editions, parts I/II, and report-versus-journal
+      forms, per earlier convention.
+    * The record goes from 3200 to 3196.
+  * **Parse repair:** `losasso-2004` had absorbed a page footer during the
+    blomquist-2024 merge. Its booktitle was restored to
+    "ACM SIGGRAPH 2004 Papers, pp. 457–462", and no other entry carries the
+    footer.
+  * **Notation drift.** These symbols were in use on concept pages but
+    unregistered:
+    * $\mathcal{E}^{\circ}$, $\mathcal{E}^{\alpha}$ and $\mathcal{E}^{c}$
+      (CT pages, since the gardiner-stone-2005 ingestion), now in a new
+      "Edge-EMF constructions" section;
+    * Dedner's $\mathcal{D}$ (GLM and projection pages).
+
+    Both are now in [notation](/notation.md). No paper-native symbols were
+    found in the concept pages touched this session.
+  * **Tag synonyms** introduced this session were normalized to the older
+    vocabulary:
+    * `code-comparison` to `comparison` (pakmor-2026, tomida-2026);
+    * `relativistic-mhd` to `relativistic` (berta-2024, balsara-2026);
+    * `helmholtz-hodge` to `hodge-decomposition` (ranocha-2020).
+  * **Contradictions review.** The five `## Contradictions` sections were
+    re-read.
+    * The GLM entry's scoped reading gained the Tomida et al.
+      commutativity precondition, noting that it does not explain the
+      ADAM seam growth, which was observed at fixed $c_h$.
+    * The positivity entries were already updated this session.
+    * No other entry is stale.
+
 * **Ingested [Stone et al. (2008)](/sources/stone-2008.md)** (Athena), a tier-C
   source added at the user's request.
   * **Corpus:** the PDF was moved to

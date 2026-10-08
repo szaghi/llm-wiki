@@ -8,7 +8,7 @@ authors: [Ranocha H., Ostaszewski K., Heinisch P.]
 year: 2020
 venue: "Commun. Appl. Math. Comput. 2(4):581-611 (arXiv:1908.08732)"
 local_file: "~/papers/mosaic/div-free-amr/2020-CAMC-Ranocha-101007s42967-019-00057-2.pdf"
-tags: [sbp, collocation, discrete-vector-analysis, exactness, helmholtz-hodge, grid-oscillations, mhd]
+tags: [sbp, collocation, discrete-vector-analysis, exactness, hodge-decomposition, grid-oscillations, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

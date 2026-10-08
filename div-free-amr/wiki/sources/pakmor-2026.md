@@ -8,7 +8,7 @@ authors: [Pakmor R., Guillet T., Bieri R., Pfrommer C., Springel V., Teyssier R.
 year: 2026
 venue: "arXiv:2607.06660 (preprint, MNRAS style; not peer-reviewed)"
 local_file: "~/papers/mosaic/div-free-amr/2026-arXiv-Pakmor-1048550arXiv260706660.pdf"
-tags: [code-comparison, turbulence, small-scale-dynamo, constrained-transport, eight-wave, glm, vector-potential, moving-mesh]
+tags: [comparison, turbulence, small-scale-dynamo, constrained-transport, eight-wave, glm, vector-potential, moving-mesh]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

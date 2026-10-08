@@ -248,6 +248,16 @@ operator). The two claims therefore quantify over different error
 mechanisms. Neither is superseded; the boundedness guarantee should be read
 as conditional on the source not growing at the interface.
 
+*Added at deep lint #8:* a second precondition is now published.
+[Tomida et al. (2026)](/sources/tomida-2026.md) show that the shared error
+equation itself holds only if $\mathcal{D}$ commutes with the time and
+space derivatives. With a cleaning speed tied to the time step, or varying
+across AMR levels, the equation fails, and $\psi_h$ can amplify rather
+than damp the error. The boundedness guarantee is therefore conditional on
+fixed cleaning parameters as well. That is a further reason the seam
+evidence and Dedner's claim need not conflict. It does not explain the
+seam growth, however: the captured runs use fixed values of $c_h$ (3 or 5).
+
 # Citations
 
 1. [Dedner et al. (2002)](/sources/dedner-2002.md), §2–5, Appendix.

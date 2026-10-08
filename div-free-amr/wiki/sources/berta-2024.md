@@ -8,7 +8,7 @@ authors: [Berta V., Mignone A., Bugli M., Mattia G.]
 year: 2024
 venue: "J. Comput. Phys. 499:112701 (arXiv:2310.11831)"
 local_file: "~/papers/mosaic/div-free-amr/2024-JCP-Berta-101016jjcp2023112701.pdf"
-tags: [constrained-transport, upwind-emf, high-order, finite-volume, relativistic-mhd, production-code, mhd]
+tags: [constrained-transport, upwind-emf, high-order, finite-volume, relativistic, production-code, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---
 
