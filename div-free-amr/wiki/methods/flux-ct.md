@@ -50,6 +50,27 @@ by direct evaluation of the EMF at zone edges from the multidimensional
 Riemann data, with second/third-order unsplit time integration
 ([Balsara (2004)](/sources/balsara-2004.md) §2 — resolving his "Issue 4").
 
+**Why plain averaging fails, quantified.**
+[Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) §§2.3–3.2 make
+the coupling exact and the defect measurable.
+* **The coupling.** Defining the cell-centered field as the mean of its two
+  faces forces the finite-volume flux of each cell-centered component to
+  equal the average of the two adjacent corner EMFs. The CT EMF is the
+  corrector of the Riemann flux, not a separate quantity.
+* **The defect.** Under that coupling the arithmetic four-face average
+  reproduces the 1D flux of a grid-aligned flow with its numerical viscosity
+  **halved**, so the scheme no longer reduces to its own 1D solver.
+* **The remedy.** Treat the corner EMF as an integration from the face
+  centers with an estimated derivative. Every such choice reduces exactly
+  to the 1D solver; the choices differ only in multidimensional
+  dissipation:
+  * $\mathcal{E}^\alpha$, Lax–Friedrichs: diffusive;
+  * $\mathcal{E}^\circ$, not upwinded: oscillatory. At first order it equals
+    the [upwind-CT](/methods/upwind-constrained-transport.md) EMF;
+  * $\mathcal{E}^c$, upwinded by the sign of the mass flux, so independent
+    of the Riemann solver: the choice carried into the 3D
+    [Athena scheme](/sources/gardiner-stone-2008.md).
+
 **The monopole objection.**
 [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md) §2.4
 argue that a second weakness sits outside the EMF. These variants evolve
@@ -72,3 +93,4 @@ puts the staggered components into every flux.
 1. [Tóth (2000)](/sources/toth-2000.md), §4.2–4.4, §6–7, Table IX.
 2. [Balsara (2004)](/sources/balsara-2004.md), §2.
 3. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.2.1, 2.4, Table 3.
+4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§2.3, 3.2, 3.3.

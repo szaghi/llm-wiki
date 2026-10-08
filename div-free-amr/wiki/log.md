@@ -2,6 +2,31 @@
 
 ## 2026-10-08
 
+* **Ingested [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md)**,
+  source 3 of 16.
+  * **Corpus:** the arXiv preprint was moved to
+    `~/papers/mosaic/div-free-amr/2005-JCP-Gardiner-101016jjcp200411016.pdf`;
+    venue and pages were verified on Crossref.
+  * **Updated** four pages:
+    * [flux-CT](/methods/flux-ct.md): the FV–CT consistency relations; the
+      proof that the arithmetic EMF average halves numerical viscosity on
+      grid-aligned flow; the $\mathcal{E}^\alpha/\mathcal{E}^\circ/\mathcal{E}^c$
+      family;
+    * [UCT](/methods/upwind-constrained-transport.md): at first order the
+      UCT EMF equals $\mathcal{E}^\circ$, the oscillatory member;
+    * [rotated shock tube](/benchmarks/rotated-shock-tube.md): the
+      macro-cell diagnostic;
+    * [field-loop advection](/benchmarks/field-loop-advection.md): the 2D
+      origin of the test.
+  * **Bibliography:** 33 references; the record goes from 2720 to 2725.
+    * 28 existing entries gained the citer, and 5 works are new.
+    * The pre-existing cited-only `gardiner-2005-a` (8 citers) is this work;
+      it was folded into the ingested key `gardiner-stone-2005`.
+      `gardiner-2005-b`, a separate 2005 e-print cited by Fromang, is left
+      as is.
+    * Crockett et al. "in press" was mapped onto `crockett-2005`, and the
+      Evans–Hawley "ApJ 322" typo onto 332.
+
 * **Ingested [Balsara & Kim (2004)](/sources/balsara-kim-2004.md)**, source 2
   of 16.
   * **Corpus:** the arXiv preprint was moved to

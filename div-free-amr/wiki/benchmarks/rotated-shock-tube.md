@@ -30,6 +30,16 @@ also measures the jump conditions.
   $x$ and $y$ jumps, so $B_n$ is constant only approximately, even for a
   scheme that holds its divergence exactly.
 
+* **Read through macro-cells.** At a generic angle the discrete solution
+  varies on the grid scale along the fronts, so even an exact-CT scheme
+  shows a roughly 10% oscillation of the cell-centered $B_n$ at fast shocks.
+  Averaged conservatively onto macro-cells, which are the grid's symmetry
+  period ($2\times1$ cells for $\tan^{-1}2$), $B_n$ is constant to
+  round-off. Schemes that create a true *jump* in $B_n$ cannot pass this
+  test. Removing the cell-level oscillation would need a viscosity stencil
+  at least macro-cell-wide
+  ([Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) §5.3).
+
 ## What it has shown
 
 * **Non-conservative source terms give wrong jumps.** The
@@ -55,3 +65,4 @@ also measures the jump conditions.
 1. [Tóth (2000)](/sources/toth-2000.md): the rotated shock-tube test and the eight-wave failure.
 2. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §4.2, Tables 2–3, Figs. 4–7.
 3. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-8).
+4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §5.3, Fig. 10.

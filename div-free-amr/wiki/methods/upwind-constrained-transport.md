@@ -31,7 +31,12 @@ consistent with that invariant**:
    upwind flux: the average of the four reconstructed edge states, minus the
    upwind dissipation from *both* overlapping 1D Riemann fans. There are
    Roe-type and HLL forms; for LLF the formula reduces to the
-   Kurganov–Noelle–Petrova central flux.
+   Kurganov–Noelle–Petrova central flux. At first order the UCT EMF equals
+   the $\mathcal{E}^\circ$ algorithm of
+   [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md). That
+   construction is not upwinded in the multidimensional derivatives, and it
+   goes oscillatory on field-loop advection, which motivated their
+   contact-upwinded $\mathcal{E}^c$ ([flux-CT](/methods/flux-ct.md)).
 5. **Time integration.** All fluxes are evaluated at the same stage, with
    no time splitting.
 
@@ -68,3 +73,4 @@ consistent with that invariant**:
 
 1. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§1.1, 2.1–2.4, 3, 4, Appendix A.
 2. [Londrillo & Del Zanna (2000)](/sources/londrillo-delzanna-2000.md): the original four-state EMF and staggering-from-consistency argument.
+3. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §3.2.2: the first-order equivalence with $\mathcal{E}^\circ$.

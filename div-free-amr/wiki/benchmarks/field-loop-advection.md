@@ -16,6 +16,17 @@ loop's shape, decay of magnetic energy, and — the diagnostic that made
 the test canonical — spurious growth of field components that should stay
 identically zero.
 
+**Origin.** The 2D form was introduced by
+[Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) §3.3.1. A loop
+with $A_z = A_0(R - r)$ and $\beta = 2\cdot10^6$ is advected along the
+diagonal of a periodic $2N\times N$ grid, so the field is effectively a
+passive scalar. Its first job there was to discriminate the dissipation of
+corner-EMF algorithms: an unbiased EMF goes oscillatory and a
+Lax–Friedrichs one diffuses. It also exposes missing multidimensional
+source terms in the interface states: without them "the field loop
+disintegrates in oscillations before completing a fraction of an orbital
+period".
+
 ## What it detects, per the compiled sources
 
 * **Stencil inconsistency** (the sharpest use): in 3D, a loop confined to
@@ -60,3 +71,4 @@ forbids.
 3. [Balsara (2004)](/sources/balsara-2004.md), §7.
 4. [Zampa (2024)](/sources/zampa-2024.md), §4.6.4.
 5. [Zaghi (2026)](/sources/zaghi-2026.md): FLUME `verification.md` (MV-9, "MHD on weno-riemann" table); captured field-loop div(B) histories.
+6. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§3.1, 3.3.1, 5.1.
