@@ -2,7 +2,7 @@
 type: Source
 title: "Trask, Bochev & Perego (2020) — A conservative, consistent, and scalable meshfree mimetic method"
 description: "Meshfree mimetic divergence on point clouds: virtual faces built from GMLS or graph-Laplacian moments satisfy a discrete divergence theorem and local conservation without any mesh."
-resource: "doi:10.1016/j.jcp.2020.109187"
+resource: "doi:10.1016/j.jcp.2019.109187"
 source_kind: paper
 authors: [Trask N., Bochev P., Perego M.]
 year: 2020
@@ -56,4 +56,4 @@ finite-volume scheme for conservation laws on point clouds.
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/2020-JCP-Trask-101016jjcp2020109187.pdf` (doi:10.1016/j.jcp.2020.109187) — text extraction, 28 pp.
+1. `~/papers/mosaic/div-free-amr/2020-JCP-Trask-101016jjcp2020109187.pdf` (doi:10.1016/j.jcp.2019.109187) — text extraction, 28 pp. **DOI corrected 2026-10-08 (DOI audit).** The DOI recorded earlier, 10.1016/j.jcp.2020.109187, does not resolve on Crossref; the registered DOI, verified by title and authors, is 10.1016/j.jcp.2019.109187. The archive filename still embeds the old DOI.

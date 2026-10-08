@@ -2,11 +2,11 @@
 type: Source
 title: "Wang, Nissen & Kreiss (2017) — Convergence of finite difference methods for the wave equation in two space dimensions"
 description: "Extends normal-mode accuracy analysis to 2D by diagonalization, separately treating truncation errors along entire boundaries and errors localized at corners."
-resource: "arXiv:1702.01383 (SIAM J. Numer. Anal. 56(5), 2018)"
+resource: "arXiv:1702.01383 (published Math. Comp. 87:2737-2763, 2018, doi:10.1090/mcom/3319)"
 source_kind: paper
 authors: [Wang S., Nissen A., Kreiss G.]
 year: 2017
-venue: "arXiv:1702.01383v2; SINUM 56(5):3016-3048"
+venue: "arXiv:1702.01383v2; Math. Comp. 87:2737-2763 (2018)"
 local_file: "~/papers/mosaic/div-free-amr/2017-arXiv-Wang-1048550arXiv170201383.pdf"
 tags: [sbp, convergence, normal-mode-analysis, accuracy, corner-points, wave-equation]
 timestamp: 2026-07-08T00:00:00Z
@@ -49,4 +49,4 @@ to be not limited to SBP methods.
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/2017-arXiv-Wang-1048550arXiv170201383.pdf` (arXiv:1702.01383) — text extraction, 30 pp.
+1. `~/papers/mosaic/div-free-amr/2017-arXiv-Wang-1048550arXiv170201383.pdf` (arXiv:1702.01383) — text extraction, 30 pp. **Venue corrected 2026-10-08 (DOI audit).** The published venue was recorded earlier as SIAM J. Numer. Anal. 56(5):3016-3048, which page 1 does not support; Crossref places the paper in Math. Comp. 87:2737-2763 (2018), doi:10.1090/mcom/3319.

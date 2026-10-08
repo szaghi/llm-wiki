@@ -2,6 +2,44 @@
 
 ## 2026-10-08
 
+* **Maintenance on user instruction:** the Gardiner filename fix, the eymard
+  fold, and a DOI audit.
+  * **Layer-1 rename** (user-authorized):
+    `2008-JCP-Gardiner-101016jjcp200712003.pdf` was renamed to
+    `2008-JCP-Gardiner-101016jjcp200712017.pdf`, and `local_file` on
+    [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md) was updated.
+  * **Fold by user decision:** `eymard-2008` (lipnikov-2014, no venue) was
+    folded into `eymard-2010` (IMA J. Numer. Anal. 30:1009). The record goes
+    from 3209 to 3208.
+  * **DOI audit of all 87 Source pages** against Crossref, and DataCite for
+    arXiv/Zenodo.
+    * 72 are correct, 10 have no DOI by nature (books, theses, URLs, arXiv
+      records), and 2 flags were wording differences (balsara-kim-2004,
+      londrillo-delzanna-2004).
+    * **Corrected, on both the Source page and the bibliography:**
+      * [Kreeft & Gerritsma (2013)](/sources/kreeft-gerritsma-2013.md):
+        `10.1016/j.jcp.2012.12.028` (an Innocenti et al. PIC paper) to
+        `10.1016/j.jcp.2012.10.043`;
+      * [Strand (1994)](/sources/strand-1994.md): `10.1006/jcph.1994.1023`
+        (Andreassen et al.) to `10.1006/jcph.1994.1005`. This reverses an
+        earlier bibliography note that had called kozdon-2021's printed
+        `.1005` a typo. That note was wrong.
+      * [Trask et al. (2020)](/sources/trask-2020.md):
+        `10.1016/j.jcp.2020.109187` (does not resolve) to
+        `10.1016/j.jcp.2019.109187`.
+    * **Venue corrected:**
+      [Wang, Nissen & Kreiss (2017)](/sources/wang-nissen-kreiss-2017.md) is
+      published in Math. Comp. 87:2737-2763, doi:10.1090/mcom/3319. The
+      earlier "SINUM 56(5):3016-3048" was unsupported by page 1.
+    * **Published DOI added** to the venue of
+      [Arnold, Falk & Winther (2009)](/sources/arnold-falk-winther-2009.md)
+      (verified).
+    * **Not renamed:** the archive files for Kreeft, Strand and Trask still
+      embed the wrong DOIs. Renaming them awaits the user's authorization.
+    * **Scope:** the audit covered Source-page identifiers only. The DOIs of
+      the roughly 3,100 cited-only bibliography entries were not
+      re-verified.
+
 * **Ingested [Couch et al. (2021)](/sources/couch-2021.md)** (Flash-X Spark), a
   tier-C source added at the user's request.
   * **Corpus:** the PDF was moved to

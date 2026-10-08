@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Gardiner T.A., Stone J.M.]
 year: 2008
 venue: "J. Comput. Phys. 227:4123-4141"
-local_file: "~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712003.pdf"
+local_file: "~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712017.pdf"
 tags: [constrained-transport, ctu, unsplit, godunov, ppm, production-code, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---
@@ -68,4 +68,4 @@ in detail.
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712003.pdf` (doi:10.1016/j.jcp.2007.12.017) — text extraction, pp. 4123–4141. **DOI corrected 2026-10-08.** The DOI recorded here earlier, 10.1016/j.jcp.2007.12.003, which the archive filename also embeds, belongs to Artebrant & Torrilhon (2008), JCP 227:3405 (Crossref). The work read is Gardiner & Stone, JCP 227:4123–4141, DOI 10.1016/j.jcp.2007.12.017 (Crossref; printed by mignone-2021). The Layer-1 filename was left unchanged.
+1. `~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712017.pdf` (doi:10.1016/j.jcp.2007.12.017) — text extraction, pp. 4123–4141. **DOI corrected 2026-10-08.** The DOI recorded here earlier, 10.1016/j.jcp.2007.12.003, which the archive filename also embeds, belongs to Artebrant & Torrilhon (2008), JCP 227:3405 (Crossref). The work read is Gardiner & Stone, JCP 227:4123–4141, DOI 10.1016/j.jcp.2007.12.017 (Crossref; printed by mignone-2021). The Layer-1 file, originally `2008-JCP-Gardiner-101016jjcp200712003.pdf`, was renamed on the user's instruction to embed the correct DOI.

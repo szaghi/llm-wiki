@@ -2,7 +2,7 @@
 type: Source
 title: "Strand (1994) — Summation by parts for finite difference approximations for d/dx"
 description: "Constructs and catalogues SBP first-derivative operators for diagonal, full, and restricted-full norms, with boundary/interior order combinations and explicit coefficients."
-resource: "doi:10.1006/jcph.1994.1023"
+resource: "doi:10.1006/jcph.1994.1005"
 source_kind: paper
 authors: [Strand B.]
 year: 1994
@@ -74,4 +74,4 @@ Registry extension made during this ingestion: the SBP block
 
 # Citations
 
-1. `~/papers/mosaic/div-free-amr/1994-JCP-Strand-101006jcph19941023.pdf` (doi:10.1006/jcph.1994.1023) — read visually, pp. 47–67.
+1. `~/papers/mosaic/div-free-amr/1994-JCP-Strand-101006jcph19941023.pdf` (doi:10.1006/jcph.1994.1005) — read visually, pp. 47–67. **DOI corrected 2026-10-08 (DOI audit).** The DOI recorded earlier, 10.1006/jcph.1994.1023, resolves on Crossref to Andreassen et al., on spectral viscosity in a stratified atmosphere; the correct DOI, verified on Crossref by title, authors and pages, is 10.1006/jcph.1994.1005. The archive filename still embeds the old DOI.
