@@ -76,6 +76,25 @@ that "it fails to maintain the formal order of the original WENO scheme"
 report that their adaptive-order WENO needs no MP step at all
 ([adaptive-order WENO](/methods/weno-ao.md)).
 
+**Later uses (batch 5).** [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md)
+apply MP5 to *point values* of primitive variables, interpolated to faces
+with the fifth-order formula $(3, -20, 90, 60, -5)/128$, in a
+finite-difference scheme without characteristic decomposition. They do
+not state how the MP5 constraints are adapted (§2.2). They find MP5 "as
+well or better than" fifth-order CWENO in their experience, without
+data (§1). Two departures follow.
+* The unlimited flux correction of their alternative finite-difference
+  form makes the final scheme not monotonicity-preserving. Its
+  over/undershoots on a square wave stay small because the correction
+  coefficients are small (§§2.2, 5.4, 6).
+* For ghost-cell interpolation on non-uniform stencils at AMR
+  resolution changes, they use a simplified MP-like limiter. It clips the
+  unlimited value to an interval spanned by the median of two linear
+  extrapolations and one linear interpolation and by the two nearest
+  data, with no curvature terms (§4.1). They claim accuracy near extrema
+  similar to MP5's but give no flat-extremum test, so this adds no
+  evidence on the dispute below.
+
 ## Contradictions
 
 **Does the MP bound degrade accuracy at smooth extrema?**
@@ -111,3 +130,4 @@ report that their adaptive-order WENO needs no MP step at all
 2. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§I, III.d, IV.
 3. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §1.
 4. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.1.
+5. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§1, 2.2, 4.1, 5.4, 6 (accepted manuscript).

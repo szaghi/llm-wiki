@@ -1,10 +1,10 @@
 ---
 type: Method
 title: "Inverse Lax–Wendroff numerical boundary treatment"
-description: "Ghost-point values for wide-stencil high-order finite differences on Cartesian grids cut by an arbitrary boundary: a Taylor expansion from the boundary point whose normal derivatives come from the boundary data through the PDE (inflow) or from extrapolation (outflow), stable under the periodic CFL limit for any cut-cell distance."
+description: "Ghost-point values for wide-stencil high-order finite differences on Cartesian grids cut by an arbitrary boundary: a Taylor expansion from the boundary point whose normal derivatives come from the boundary data through the PDE (inflow) or from extrapolation (outflow), stable under the periodic CFL limit for any cut-cell distance; extended to sign-changing wind, exact conservation, moving bodies and fluid–structure interfaces."
 status: established
-aliases: [ILW, simplified inverse Lax-Wendroff, SILW, inverse Lax-Wendroff procedure, cut-cell boundary treatment]
-tags: [boundary-treatment, finite-difference, weno, stability, cut-cell]
+aliases: [ILW, simplified inverse Lax-Wendroff, SILW, inverse Lax-Wendroff procedure, cut-cell boundary treatment, moving-boundary ILW]
+tags: [boundary-treatment, finite-difference, weno, stability, cut-cell, moving-boundary, conservation]
 timestamp: 2026-10-08T00:00:00Z
 ---
 
@@ -122,10 +122,159 @@ u_{xx} = (1 - \theta_{\mathrm{ILW}})u^{\mathrm{ilw}}_{xx} + \theta_{\mathrm{ILW}
 (§1) note that the outflow WENO extrapolation weights of the ILW papers
 are neither dimensionless nor scale-independent, which a later
 modification overcame, and they propose dimensionless weights
-([weighted extrapolation](/methods/weighted-extrapolation.md)).
+([weighted extrapolation](/methods/weighted-extrapolation.md)). The ILW
+papers themselves later criticize the explicit $h$ in the Tan–Shu weights
+and replace it with constant linear weights
+([Lu et al. (2021)](/sources/lu-2021.md), §2.1). A 3D moving-body
+variant still uses weights built from $h_x^2 + h_y^2 + h_z^2$
+([Liu et al. (2022)](/sources/liu-2022.md), Appendix C).
+
+## Sign-changing wind: expanding the flux separately
+
+([Lu et al. (2021)](/sources/lu-2021.md), §2.) Every ILW derivative
+above divides by $f'(g)$. The procedure therefore needs the wind to stay
+away from zero at the boundary, and it loses robustness where a boundary
+turns from inflow to outflow through a sonic point. The fix exploits the
+fact that a Lax–Friedrichs split flux needs both $u$ and $f(u)$ at the
+ghost points, and nothing forces the ghost flux to equal $f$ of the ghost
+state. The two get separate Taylor expansions:
+$$u_{-\varsigma} = \sum_{k=0}^{4}\frac{\left((C_a - \varsigma)h\right)^k}{k!}u^{*(k)},\qquad
+f_{-\varsigma} = \sum_{k=0}^{4}\frac{\left((C_a - \varsigma)h\right)^k}{k!}f^{*(k)},$$
+with $u^{*(0)} = g$, $f^{*(0)} = f(g)$ and $f^{*(1)} = -g'(t)$ from the
+PDE. Every other derivative is extrapolated from the interior (eqs.
+2.6–2.8). No eigenvalue appears in a denominator.
+* **Systems.** At $x = a$ the signs of $v_x - c$, $v_x$ and $v_x + c$ decide
+  how many conditions are imposed (four cases). The missing conserved
+  component comes from the extrapolated outgoing characteristic
+  variables, dividing only by entries of the eigenvector matrices. A
+  solid wall is imposed as $\rho v_x = 0$ instead of by reflection. In 2D
+  the same is done in a frame rotated to the boundary normal (§§2.2–2.3;
+  [characteristic decomposition](/methods/characteristic-decomposition.md)).
+* **Results.** Fifth order with FD-WENO in 1D and 2D, including
+  boundaries where the wind changes sign and the
+  [isentropic vortex](/benchmarks/isentropic-vortex.md) (§3). Double Mach
+  reflection on the true ramp and the Mach 3
+  [cylinder](/benchmarks/supersonic-cylinder-flow.md) run stably.
+* **Stability caveat.** For $u$ itself only $u^{*(0)}$ comes from the
+  data. That is below the SILW threshold in the table above, whose
+  analysis does not cover the split $u$/$f$ expansion. The authors flag
+  stability as a possible issue above fifth order (§4). No CFL number is
+  printed for the runs.
+
+## Conservation
+
+([Ding, Shu & Zhang (2020)](/sources/ding-2020.md).) A conservative
+finite-difference scheme conserves $h\sum_j u_j$, which approximates the
+true total mass only to second order once the solution is not periodic
+(eq. 1.7). With ILW boundaries the conservation error therefore sits at
+truncation level: $10^{-3}$ to $10^{-8}$ in their tests (Tables 2.1,
+2.8–2.10).
+* **A high-order mass.** Define
+  $\tilde{\mathcal M} = h\sum_j \varpi_j u_j$ with Mock–Lax boundary
+  quadrature weights. For fifth order and a grid point on the boundary,
+  $\varpi_0, \dots, \varpi_3 = \tfrac{251}{720}, \tfrac{299}{240}, \tfrac{211}{240}, \tfrac{739}{720}$,
+  and $\varpi_j = 1$ further in (eq. 2.12). For a cut cell the weights
+  are polynomials in the offset (eq. 2.14).
+* **One modified flux.** By summation by parts, $\tilde{\mathcal M}$
+  changes only by boundary terms. Requiring that the inflow term equal
+  $\int_{t^n}^{t^{n+1}} f(g(t))\,dt$ fixes the single flux
+  $\hat f_{-1/2}$ (eq. 2.18). The outflow side is left alone, since the
+  high-order flux already gives the outgoing flux accurately. Only the
+  Runge–Kutta-averaged flux of the final stage,
+  $\hat f^{\mathrm{tot}}_{i+1/2} = \tfrac16\left(\hat f^{n} + \hat f^{(1)} + 4\hat f^{(2)}\right)_{i+1/2}$
+  for TVD-RK3, is modified (eq. 2.10).
+* **2D.** The weights come from polygon quadratures over the cut cells
+  and are not unique (Appendix A). The defect is spread over one inflow
+  flux per grid line, in proportion to the local flux magnitudes. $x$- or
+  $y$-fluxes are chosen by whether the inflow normal lies within 45° of
+  the $x$ direction (eqs. 2.37–2.41).
+* **Effect.** The conservation error drops to $10^{-15}$–$10^{-16}$ with
+  fifth order unchanged. Only one test differs visibly: in a long
+  [interacting-blast-wave](/benchmarks/interacting-blast-waves.md) run
+  ($t = 19$, $N = 800$) the non-conservative shock is misplaced (Fig. 2.5).
+  The double Mach reflection on the real wedge and the Mach 3
+  [cylinder](/benchmarks/supersonic-cylinder-flow.md) look the same with
+  and without the fix.
+
+## Moving boundaries
+
+A boundary moving across the fixed grid changes three things
+([Liu et al. (2023)](/sources/liu-2023.md), §2;
+[Liu et al. (2022)](/sources/liu-2022.md), §§2–3).
+* **Relative speed.** The data are differentiated along the moving
+  boundary, $g'(t) = u_t + \dot a\,u_x$, so every ILW relation uses the
+  speed relative to the boundary, $f'(g) - \dot a$. Inflow means
+  $f'(g) - \dot a > 0$ at a left boundary (eq. 2.9).
+* **Mesh motion.** The body may move at most one cell per step. Points
+  that leave the body ("newly emerging points") need no special
+  treatment beyond one extra ghost layer, after Tan and Shu (2011)
+  ([Liu et al. (2023)](/sources/liu-2023.md), §2;
+  [Liu et al. (2022)](/sources/liu-2022.md), eq. 15).
+* **Runge–Kutta stages.** The boundary is held at its $t^n$ position.
+  $u_t$ and $u_{tt}$ come from the material derivative and so involve the
+  boundary velocity and acceleration. The mixed derivative $u_{tx}$,
+  needed only to first order, is extrapolated linearly from the
+  interior values of $u_t$ instead of being derived by Lax–Wendroff
+  ([Liu et al. (2023)](/sources/liu-2023.md), eqs. 2.20–2.21;
+  [Liu et al. (2022)](/sources/liu-2022.md), §3.2.3).
+
+**Convection–diffusion on moving boundaries**
+([Liu et al. (2023)](/sources/liu-2023.md), §2). With $\dot a = 0$ the
+blending weight is that of Lu et al. (2016), with $f'(g)$ replaced by
+$f'(g) - \dot a$. The ILW quotients are multiplied through by the weights,
+and the two weights are regularized by $\epsilon_{\mathrm{ILW}} = 10^{-6}$:
+$$\frac{(f'(g) - \dot a)^2h^2}{(f'(g) - \dot a)^2h^2 + (3\mu + \epsilon_{\mathrm{ILW}})^2}\ \ \text{on } u_x,\qquad
+\frac{9\mu^2}{(f'(g) - \dot a + \epsilon_{\mathrm{ILW}})^2h^2 + 9\mu^2}\ \ \text{on the ILW part of } u_{xx}$$
+(eqs. 2.15–2.18). Then nothing divides by a vanishing speed or diffusion
+coefficient, and one algorithm covers pure convection, pure diffusion and
+everything between. Third order holds in 1D and 2D, with the boundary
+speed equal to the wave speed in one case, and for Navier–Stokes with an
+isothermal no-slip wall on a flow-driven rigid body (§§3–4). There the
+density at the wall comes from the outgoing acoustic characteristic, and
+the blend uses the sound speed $c$ (eqs. 3.15–3.18). No stability
+analysis is given.
+
+**Three dimensions** ([Liu et al. (2022)](/sources/liu-2022.md), §3).
+The frame rotated to the boundary normal is not unique in 3D. The ILW
+ghost values do not depend on the choice of tangent vectors (Theorem 1,
+proved for Euler, asserted for Navier–Stokes). A material derivative
+defined only on the moving surface equals the usual one under
+no-penetration (Theorem 2). With third-order WENO and SILW
+($k_{\mathrm{ILW}} = 2$ of $n_{\mathrm b} = 3$, the threshold above),
+an isentropic flow around a moving cylinder converges at third order
+($L^1$ order 3.21 at $h = 1/40$, Table 1). Shock–cylinder and
+shock–sphere runs at $M_s = 3$ and 6 are robust but reported only as
+contour plots ([shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md)).
+
+## Interfaces between two media
+
+([Liu et al. (2025)](/sources/liu-2025.md), §§3–4.) At a moving interface
+between a compressible fluid (third-order FD-WENO on a fixed Cartesian
+grid) and an elastic solid (DG on a Lagrangian mesh), the boundary data
+are themselves unknown. For each derivative order $k = 0, 1, 2$, the
+normal derivatives of both sides are solved together in one local linear
+system. Its rows are the outgoing characteristics of each medium, with
+extrapolated data, and the velocity and traction conditions, together
+with their time derivatives converted to space derivatives through the
+PDEs. There is no sub-iteration.
+* **Added mass.** A weakly coupled version, in which each solver takes
+  the other side's value separately, is stable for all $C_a$ only while
+  the fluid-to-solid density ratio stays below about 1.67. The coupled
+  version is stable for all $C_a \in [0, 1)$ at density ratios from
+  $10^{-2}$ to $10^2$ (eigenvalue spectra, §4, Figs. 5–6). The analysis
+  runs at a Courant number of 0.2, set by the DG solid, far below the
+  fluid scheme's own limit $\nu_{\max} = 1.62$.
+* **Results.** Third order in 1D and 2D, and shock-induced deformation
+  without oscillations (§5). The interface procedure can take more CPU
+  time than the flow solvers (Tables 8, 10, 12).
 
 # Citations
 
 1. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §§1–5 (§2.2–2.5 formulas and Tables 3.1–3.2 read from the page images).
 2. [Lu et al. (2016)](/sources/lu-2016.md), §§1–4 (eqs. 2.10–2.11 read from the page image).
 3. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §1.
+4. [Lu et al. (2021)](/sources/lu-2021.md), §§2–4 (eqs. 2.6–2.15 read from the page images).
+5. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §§1–2 (eqs. 2.8–2.18 read from the page images; Appendix A weights not transcribed).
+6. [Liu et al. (2023)](/sources/liu-2023.md), §§2–4 (eqs. 2.9–2.21 read from the page images).
+7. [Liu et al. (2022)](/sources/liu-2022.md), §§2–5, Appendices B–C.
+8. [Liu et al. (2025)](/sources/liu-2025.md), §§3–5.

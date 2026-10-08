@@ -2,6 +2,95 @@
 
 ## 2026-10-08
 
+* **Batch 5 (10 sources), ingested autonomously on user instruction** and
+  staged as one unit: [Jiang & Wu (1999)](/sources/jiang-1999.md),
+  [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md),
+  [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md),
+  [Owen, Guzik & Gao (2018)](/sources/owen-2018.md),
+  [Wang et al. (2025)](/sources/wang-2025.md),
+  [Ding, Shu & Zhang (2020)](/sources/ding-2020.md),
+  [Lu et al. (2021)](/sources/lu-2021.md),
+  [Liu et al. (2022)](/sources/liu-2022.md),
+  [Liu et al. (2023)](/sources/liu-2023.md),
+  [Liu et al. (2025)](/sources/liu-2025.md).
+  Papers were read by parallel subagents into scratch notes and reference
+  fragments; every page was written by the compiler from those notes.
+  * **Created** 5 concept pages:
+    * method: fourth-order finite volume with average–point conversions;
+    * property: free-stream preservation on curvilinear grids;
+    * benchmarks: Brio–Wu MHD shock tube, supersonic flow past a
+      cylinder, shock-driven cylinder lift-off.
+  * **Updated**:
+    * methods: inverse Lax–Wendroff (new sections on sign-changing wind,
+      conservation, moving boundaries, interfaces between two media),
+      high-order AMR (new section on block-structured hierarchies with
+      Runge–Kutta subcycling; the $r_{\mathrm{AMR}} \ge K$ rule now
+      attributed to the tree design), weighted extrapolation (new section
+      on multi-resolution WENO extrapolation), constrained transport (new
+      section on projection), WENO, characteristic decomposition,
+      conservative finite difference, alternative FD-WENO, MP limiting,
+      PPM, finite-volume reconstruction (the Gauss-quadrature sentence
+      qualified at fourth order), SSP Runge–Kutta;
+    * property: accuracy at critical points;
+    * benchmarks: Orszag–Tang, double Mach reflection, interacting blast
+      waves, isentropic vortex, Sod, Lax, Shu–Osher, 2D Riemann problems;
+    * the root reading guide: items 8, 9, 11 and 12.
+  * **Contradictions**: none opened. Kept inline as design trade-offs or
+    scope differences:
+    * Chen et al. omit refluxing because it costs FD its order, and Wang
+      et al. reflux anyway for robustness and accept second-order
+      conservation error. Both report the same order effect (AMR page).
+    * Lu et al. (2021) take only $u^{*(0)}$ from the data, below the SILW
+      threshold; the authors flag stability above fifth order (ILW page).
+    * Liu et al. (2025) analyse stability only at the DG solid's Courant
+      number, far below the fluid scheme's limit (ILW page).
+    * Owen et al. and Chen et al. run fourth and fifth order with
+      $r_{\mathrm{AMR}} = 2$, outside the tree rule $r_{\mathrm{AMR}} \ge K$
+      (AMR page).
+  * **Recorded as printed** (internal inconsistencies of single sources):
+    Ding et al.'s Example 5 exact solution does not satisfy its PDE; Wang
+    et al. call their prolongation fourth order and their restriction fifth
+    order, where the coefficients give sixth (compiler's check), and print
+    12/32 for 21/32; Liu et al. (2025) eq. 4.1 has a sign that their own
+    eigenvectors contradict; Jiang and Wu write $B_x^2 + B_y^2$ for
+    $B_y^2 + B_z^2$ once.
+  * **Registry extensions** ([notation](/notation.md)): $c$, $T$, $T_b$,
+    $\Phi$, $f^{*(k)}$, $f_{-\varsigma}$, $\varpi_j$, $\tilde{\mathcal M}$,
+    $\hat f^{\mathrm{tot}}_{i+1/2}$, $\hat f^{\mathrm R}_{i+1/2}$, $\dot a$,
+    $\epsilon_{\mathrm{ILW}}$, $\mathbf X$, $\mathcal J$, $\tilde m^a_b$,
+    $\tilde f^a$, $\mathbf e_d$, $\Delta_h$, $\Delta^\perp_h$, $\mathbf W$,
+    $\langle w\rangle_i$, $\langle w\rangle_{i+1/2}$, $C_2$, $C_3$, $\chi$,
+    $k_m$, $M_s$, $\mathrm{Re}$, $\mathrm{Pr}$. Collisions avoided: Ding
+    et al.'s quadrature weights $\omega_j$ (now $\varpi_j$), Liu et al.'s
+    swapped $\epsilon$/$\mu$, the computational coordinates $\xi, \eta, \zeta$
+    (now $X^a$), McCorquodale and Colella's flattening coefficient (1 means
+    none, the opposite of $\phi_i$).
+  * **Bibliography**: 351 printed references (348 fragment entries, after
+    three repeats within Wang et al.'s list) merged with 0 flags, under 21
+    scoped aliases, 3 checked silences, 14 notes and 4 field fixes;
+    845 → 1003 entries.
+    * Same-key venue check: all mismatches explained. Two master entries
+      were wrong and are fixed against Crossref: Roe & Balsara (1996) is in
+      SIAM J. Appl. Math., not SIAM J. Numer. Anal.; Peskin (2002) starts
+      at Acta Numer. 11:479, not 11:1. Berger & Colella's first page
+      printed as 67 by Chen et al. is a misprint (Crossref: 64).
+      Jeffrey & Taniuti's second author is T., not A.
+    * Identities settled: Jiang, Shu & Zhang's free-stream report is the
+      published jiang-2014; Zhang, Johansen & Colella's preprint is
+      SISC 34:B179 (zhang-2012-c); the Brown preprint cited by Liu et al.
+      (2022) is liu-2023; "Vanna" is De Vanna (devanna-2020); JCAM 400 is
+      the 2022 issue (li-2022).
+    * Closing sweeps: `--dupes` found one cross-stem pair (the De Vanna
+      spelling, folded); the fuzzy-title sweep found the two editions of the
+      Chombo design document (2009 and 2014, kept separate with notes);
+      the venue sweep found no duplicates.
+  * **Deep lint (50 ingestions)**: no notation drift in the batch-5 pages
+    and no paper-native symbols in concept pages. Tag synonyms normalized:
+    `viscous` → `navier-stokes`, `runge-kutta` → `time-discretization`
+    (including gottlieb-2001 from batch 3), `characteristic-decomposition`
+    → `eigenvectors`, `monotonicity-preserving` → `monotonicity`. The four
+    `Contradictions` entries (two open, two closed) have no new evidence.
+
 * **Batch 4 (10 sources), ingested autonomously on user instruction** and
   staged as one unit: [Qiu & Shu (2005)](/sources/qiu-2005.md),
   [Dumbser & Käser (2007)](/sources/dumbser-2007.md),

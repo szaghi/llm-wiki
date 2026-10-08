@@ -60,7 +60,10 @@ for WENO).
 products: two successive one-dimensional reconstructions per point in 2D
 ($n$ in $n$ dimensions). Above second order the face fluxes also need
 Gaussian quadrature, and for WENO the linear weights differ at each
-quadrature point. [Shu (1998)](/sources/shu-1998.md) (§3.3) concludes
+quadrature point. At fourth order there is an alternative: one flux
+evaluation at the face centre plus a transverse-Laplacian correction
+([fourth-order finite volume](/methods/fourth-order-finite-volume.md);
+[McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §2.2). [Shu (1998)](/sources/shu-1998.md) (§3.3) concludes
 that multi-D finite-volume schemes above second order are rarely used,
 and that the finite-difference version costs about a factor of four less
 in 2D ([conservative finite difference](/methods/conservative-finite-difference.md)).
@@ -126,6 +129,21 @@ stencils ([Balsara et al. (2009)](/sources/balsara-2009.md), §2). Subcell avera
 inverse, the subcell reconstruction $\mathcal{R}$, are the same
 recovery problem ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
 
+**Later uses (batch 5).** Fourth-order finite volume can be built from
+two identities instead of quadrature. Point values and cell averages
+differ by $\frac{h^2}{24}\Delta_h$, and face averages and face centres by
+$\frac{h^2}{24}\Delta^\perp_h$. A product rule handles nonlinear
+functions of averaged data. Applying each correction to a lower-order
+argument keeps the stencil small at an $O(h^4)$ cost
+([fourth-order finite volume](/methods/fourth-order-finite-volume.md);
+[McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §2.2;
+[Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §3). Coarse-to-fine
+AMR interpolation uses a constrained least-squares cubic that matches the
+coarse average exactly and the neighbouring averages in the
+least-squares sense, the same device as polynomial WENO's constrained
+reconstruction ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §3.2;
+[high-order AMR](/methods/high-order-amr.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1, 3 and Appendix.
@@ -138,3 +156,5 @@ recovery problem ([a posteriori subcell limiting](/methods/a-posteriori-subcell-
 8. [Zhang & Shu (2012)](/sources/zhang-2012.md), §2.1.
 9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §2.
 10. [Balsara et al. (2009)](/sources/balsara-2009.md), §2.
+11. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.2, 3.2.
+12. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §3 (accepted manuscript).

@@ -83,6 +83,32 @@ instabilities around the Mach stem
   ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.2.3;
   [weighted extrapolation](/methods/weighted-extrapolation.md)).
 
+**Later uses (batch 5).**
+* *On the real wedge.* The 30° wedge cut through a Cartesian grid, with a
+  vertical Mach 10 shock starting at the wedge foot and the wall imposed
+  by fifth-order SILW plus WENO extrapolation; $h = 1/320$, $t = 0.2$.
+  Exactly conservative boundary fluxes and plain SILW look the same
+  ([Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 9). The
+  flux-based ILW runs the same configuration at $h = \sqrt3/480$ and
+  $\sqrt3/960$ ([Lu et al. (2021)](/sources/lu-2021.md), Example 3.10;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+* *On adaptive grids.* Fourth-order finite volume on two levels with
+  refinement ratio 4 (effective $1024\times256$) is called "comparable to
+  that of the best state-of-the-art shock-capturing methods". No set-up
+  or error measure is given ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §4.4;
+  [fourth-order finite volume](/methods/fourth-order-finite-volume.md)).
+  Fifth-order FD with MP5 on a three-level dynamic grid (base
+  $240\times60$, effective $960\times240$, CFL 0.8) resolves the
+  Kelvin–Helmholtz roll-up. It costs about 3 times the second-order
+  scheme, on one processor and on 32 with AMR
+  ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.7, Table 6;
+  [high-order AMR](/methods/high-order-amr.md)).
+  Fifth-order FD-WENO on three levels (base $720\times240$, ratio 2)
+  fails at once with negative density when inter-level transfer uses
+  pure WENO or Lagrange interpolation. A hybrid that switches to
+  conservative second-order interpolation at shocks runs to the end
+  ([Wang et al. (2025)](/sources/wang-2025.md), §6.4.2, preprint).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -102,3 +128,8 @@ instabilities around the Mach stem
 15. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.4.
 16. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.3.
 17. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.2.3.
+18. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 9.
+19. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.10.
+20. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §4.4.
+21. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.7 (accepted manuscript).
+22. [Wang et al. (2025)](/sources/wang-2025.md), §6.4.2 (arXiv preprint).

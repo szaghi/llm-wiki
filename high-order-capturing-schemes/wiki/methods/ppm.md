@@ -101,8 +101,21 @@ $r = 5$ MPWENO ([monotonicity-preserving limiting](/methods/monotonicity-preserv
 five-point interface value of MP5 is less prone to staircasing than the
 four-point PPM value because its leading error is dissipative.
 
+**Later uses (batch 5).** A fourth-order finite-volume scheme keeps the
+PPM edge formula as a fourth-order face average but replaces the PPM
+limiter with a modified Colella–Sekora extremum-preserving one. It drops
+PPM's first stage, which bounds the face value between neighbouring
+averages, as redundant and too dissipative with RK4. It keeps the
+overshoot reset away from extrema and limits at extrema only when a
+third-derivative test fails. Flattening and an artificial viscosity made
+$O(h^4)$ in smooth flow handle strong shocks. Its flattening coefficient
+is 1 for *no* flattening, the opposite of $\phi_i$ here
+([fourth-order finite volume](/methods/fourth-order-finite-volume.md);
+[McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5).
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
 2. [Suresh & Huynh (1997)](/sources/suresh-1997.md), introduction and §2.
 3. [Balsara & Shu (2000)](/sources/balsara-2000.md), §I, §§IV.b, VI.a, VII.c.
+4. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5.

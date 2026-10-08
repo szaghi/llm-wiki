@@ -88,6 +88,18 @@ stencil ([Suresh & Huynh (1997)](/sources/suresh-1997.md), Fig. 2.1).
   untouched; they do degrade order on the flat extrema of $\sin^4$
   ([monotonicity-preserving limiting](/methods/monotonicity-preserving-limiter.md),
   where the disagreement is recorded).
+* **Extremum-preserving PPM limiting**: the Colella–Sekora limiter
+  fires at smooth multi-D extrema, for example those of $x^3 - xy^2$
+  along $x = \pm y/\sqrt3$, and costs fourth order in the max norm. A
+  third-derivative test that spares small perturbations of a cubic
+  restores it ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §2.4;
+  [fourth-order finite volume](/methods/fourth-order-finite-volume.md)).
+* **Adaptive meshes**: order can also be lost where nothing is
+  singular. Ghost values at coarse–fine boundaries that do not match the
+  fine Runge–Kutta stages trigger the limiter on smooth data, and the
+  convergence rate falls to 1.39–1.59
+  ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §4.3, Table 5;
+  [high-order AMR](/methods/high-order-amr.md)).
 
 ## Numerical evidence in this corpus
 
@@ -160,3 +172,4 @@ two families agree on the scaling's ceiling but not on its floor.
 15. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2.
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.
 17. [Fisher et al. (2011)](/sources/fisher-2011.md), §5.2 and Appendix A (eqs. 42 and 75 read from the page images).
+18. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4, 4.3.

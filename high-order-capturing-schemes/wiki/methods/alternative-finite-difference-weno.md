@@ -95,8 +95,28 @@ for the most stringent cases.
 part of it (fewer Riemann calls, and ADER, which gives about a factor
 of two over SSP-RK) ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.4).
 
+**With MP5 on adaptive curvilinear grids.** [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md)
+use the alternative form with MP5-limited primitive variables instead of
+WENO, and any Riemann solver (HLLE in their tests). They build the
+correction only from the face flux and cell-centre physical fluxes,
+$\hat f_{i+1/2} = \hat f^{\mathrm R}_{i+1/2} - \tfrac16\left(f_i - 2\hat f^{\mathrm R}_{i+1/2} + f_{i+1}\right) + \tfrac1{180}\left(f_{i-1} - 9f_i + 16\hat f^{\mathrm R}_{i+1/2} - 9f_{i+1} + f_{i+2}\right)$,
+where $\hat f^{\mathrm R}$ is the Riemann flux and $f_j = f(u_j)$
+(eqs. 5–6, checked on the page image). The stencil is then three cells
+per side and needs three ghost layers. The correction expands to the
+$-\frac{h^2}{24}$, $\frac{7h^4}{5760}$ series above (a compiler's Taylor
+check, not stated in the paper). It is left unlimited, so the scheme is
+not monotonicity-preserving, and its oscillations stay small (§§2.2, 6).
+The authors trace the route to Del Zanna's "FD-Primitive" scheme and the
+explicit weighted compact nonlinear schemes of Deng et al. They rejected
+global Lax–Friedrichs flux splitting as "quite diffusive" (§1). It runs on
+block-adaptive curvilinear grids with
+[free-stream preservation](/properties/free-stream-preservation.md) and
+costs about 3 times the second-order scheme
+([high-order AMR](/methods/high-order-amr.md)).
+
 # Citations
 
 1. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §§I–IX (eqs. 2–12 read from the page images).
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1, 2, 4, 7.4, 8.
 3. [Shu & Osher (1988)](/sources/shu-1988.md), §III.
+4. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§1–3, 6 (accepted manuscript).

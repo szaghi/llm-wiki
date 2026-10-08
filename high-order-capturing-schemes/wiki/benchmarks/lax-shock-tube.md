@@ -56,6 +56,18 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
   shock stays within one main cell and the contact stays unlimited
   ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
 
+**Later uses (batch 5).**
+* Fifth-order alternative FD with MP5 on a 1D refined grid and on a
+  refined polar grid, $t = 1.3$. The density oscillates more on the refined
+  grid because a resolution change sits just behind the contact. Finer
+  runs converge, and in 2D the shock front stays straight across the
+  refined box ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.5).
+* With regridding every 10 steps, non-conservative WENO inter-level
+  interpolation oscillates behind the contact and gets the shock speed
+  wrong; the hybrid conservative interpolation matches the reference
+  ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.2, preprint;
+  [high-order AMR](/methods/high-order-amr.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -77,3 +89,5 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
 17. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.6.
 18. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1.
 19. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2.
+20. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.5 (accepted manuscript).
+21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.2 (arXiv preprint).

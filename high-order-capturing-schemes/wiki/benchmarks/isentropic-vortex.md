@@ -61,6 +61,17 @@ periodic box and returns to its start after one period
   accurate than the linear target on coarse grids and equal to it once
   the critical regions are resolved ([Fisher et al. (2011)](/sources/fisher-2011.md), §6.3).
 
+**Later uses (batch 5).**
+* With boundary data from the exact solution on $(-0.5, 1)^2$, where the
+  normal velocity changes sign along the boundary, flux-based ILW keeps
+  $L^1$ order near 5 (4.80 on the finest grid; $L^\infty$ 4.11)
+  ([Lu et al. (2021)](/sources/lu-2021.md), Example 3.9).
+* *A different variant:* a stationary *viscous* vortex with thermally
+  perfect multispecies properties, measured by Richardson extrapolation
+  rather than against an exact solution. Fourth-order finite volume
+  converges at order 3.96–3.99 on the two finest pairs
+  ([Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.5, Table 3).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
@@ -72,3 +83,5 @@ periodic box and returns to its start after one period
 7. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.2.
 8. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.1.
 9. [Fisher et al. (2011)](/sources/fisher-2011.md), §6.3.
+10. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.9.
+11. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.5 (accepted manuscript).

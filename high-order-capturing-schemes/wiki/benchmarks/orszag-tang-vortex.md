@@ -38,9 +38,25 @@ divergence cleaning:
 * ADER-DG with $K = 5$, subcell limiting and AMR (equivalent $270^2$)
   agrees with the uniform grid and the same references ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.2).
 
+**Later uses (batch 5).** Jiang and Wu state the same set-up with
+$p = \gamma$ and unscaled $\mathbf B$, "identical to Zachary et al.",
+and run fifth-order FD-WENO on $192^2$
+([Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4):
+* $L^1$ density errors against a $512^2$ reference fall from
+  $1.8\times10^{-2}$ ($16^2$) to $6.8\times10^{-7}$ ($256^2$) at
+  $t = 0.2$, with orders 2.4, 3.6, 4.3 and 4.4 (Table VI). By $t = 0.5$ the
+  global order drops to 2.6–3.4 (Table VII).
+* Without a divergence projection the pressure turns negative and the
+  run fails at $t \approx 3.9$ or 2.5, depending on the eigensystem.
+  With it, the run is stable to $t = 8$
+  ([projection](/methods/constrained-transport.md)).
+* At $t = 3$ the result agrees with Zachary et al., and a pressure cut at
+  $y = 0.625\pi$ is more oscillatory without the projection (Fig. 15).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.2.
 3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4, Table 5.
 4. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.2.
+5. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.4, Tables VI–VII.

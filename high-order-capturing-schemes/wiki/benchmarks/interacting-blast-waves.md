@@ -77,6 +77,19 @@ AFD-WENO on 1000 zones, with flattening, matches a 4000-zone reference
   give satisfactory profiles against a $h = 1/16000$ reference
   ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.3; [weighted extrapolation](/methods/weighted-extrapolation.md)).
 
+**Later uses (batch 5).** With the reflecting walls imposed by
+inverse Lax–Wendroff ghost values instead of mirroring:
+* Fifth-order SILW conserves mass and energy only to truncation level,
+  with errors growing to about $2\times10^{-3}$ and $5\times10^{-3}$ by
+  $t = 0.5$ at $N = 1600$. Exactly conservative boundary fluxes bring
+  both to $10^{-15}$. In a long run ($t = 19$, $N = 800$) the
+  non-conservative shock is visibly misplaced
+  ([Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 4, Tables 2.8–2.9, Fig. 2.5;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+* The flux-based ILW with the wall imposed as zero mass flux agrees at
+  $t = 0.038$ with a mirrored-wall reference on $h = 1/5120$
+  ([Lu et al. (2021)](/sources/lu-2021.md), Example 3.4).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -97,3 +110,5 @@ AFD-WENO on 1000 zones, with flattening, matches a 4000-zone reference
 16. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.1.
 17. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 18. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.3.
+19. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 4.
+20. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.4.

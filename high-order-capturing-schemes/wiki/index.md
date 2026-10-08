@@ -11,8 +11,9 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 40 sources compiled**: 40 published works, eleven of them read
-in a report, preprint or author-manuscript version (see the [update log](/log.md)).
+**Corpus: 50 sources compiled**: 49 published works, thirteen of them
+read in a report, preprint or author-manuscript version, and one
+unpublished preprint (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -69,17 +70,22 @@ for every page.
    the [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)
    (WENO interpolation, any Riemann solver, even-derivative corrections),
    [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md),
-   non-polynomial [GP-WENO](/methods/gp-weno.md), and
+   non-polynomial [GP-WENO](/methods/gp-weno.md),
    [polynomial WENO](/methods/polynomial-weno.md) (whole candidate
    polynomials with a dominant central stencil, for unstructured meshes
-   and ADER).
+   and ADER), and the [fourth-order finite volume](/methods/fourth-order-finite-volume.md)
+   of the Colella group (average–point conversions instead of Gauss
+   points).
 9. **Staying physical.** [Positivity preservation](/properties/positivity-preserving.md)
    — convex admissible set, positive first-order flux, SSP time
    stepping — enforced by the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)
    or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
    Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
    provably positive? For MHD the divergence constraint is kept by
-   [constrained transport](/methods/constrained-transport.md).
+   [constrained transport](/methods/constrained-transport.md), cleaning or
+   projection; without it high-order MHD runs fail. On curvilinear grids,
+   uniform flow must stay uniform:
+   [free-stream preservation](/properties/free-stream-preservation.md).
 10. **Limiting high-order DG.** A priori:
    [WENO limiters](/methods/weno-limited-dg.md) rebuild troubled cells from
    neighbouring averages. A posteriori:
@@ -89,11 +95,14 @@ for every page.
 11. **Boundaries and adaptive meshes.** Ghost values on Cartesian grids cut
    by the boundary come from [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)
    expansions (stable for any cut-cell distance) or from
-   [weighted extrapolation](/methods/weighted-extrapolation.md). Provably
-   stable closures come from summation by parts:
-   [energy-stable WENO](/methods/energy-stable-weno.md).
-   [High-order AMR](/methods/high-order-amr.md) relies on one-step updates
-   for local time stepping.
+   [weighted extrapolation](/methods/weighted-extrapolation.md); the ILW
+   line extends to sign-changing wind, exact conservation, moving bodies
+   and fluid–structure interfaces. Provably stable closures come from
+   summation by parts: [energy-stable WENO](/methods/energy-stable-weno.md).
+   [High-order AMR](/methods/high-order-amr.md): one-step updates for
+   local time stepping on trees, or Runge–Kutta subcycling on
+   block-structured hierarchies, where ghost values must match the stages
+   and refluxing costs finite differences their order.
 12. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
@@ -104,12 +113,15 @@ for every page.
    [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
    [isentropic vortex](/benchmarks/isentropic-vortex.md),
    [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
-   [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Positivity:
+   [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Embedded
+   boundaries: [supersonic cylinder](/benchmarks/supersonic-cylinder-flow.md),
+   [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md). Positivity:
    [double rarefaction](/benchmarks/double-rarefaction.md),
    [Sedov](/benchmarks/sedov-blast-wave.md),
    [Leblanc](/benchmarks/leblanc-shock-tube.md),
    [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md),
    [shock diffraction](/benchmarks/shock-diffraction.md). MHD:
+   [Brio–Wu](/benchmarks/brio-wu-shock-tube.md),
    [Orszag–Tang](/benchmarks/orszag-tang-vortex.md),
    [rotor](/benchmarks/mhd-rotor.md),
    [low-β blast](/benchmarks/mhd-blast-wave.md),

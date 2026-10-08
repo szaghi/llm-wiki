@@ -53,11 +53,15 @@ to another bundle.
     manuscript of CAMC 7, 2025), `2016-JSC-Baeza-…` (accepted
     manuscript, arXiv:2501.17106), `2014-JCP-Dumbser-…`
     (arXiv:1406.7416v3) and `2015-CompFluids-Zanotti-…`
-    (arXiv:1412.0081v2). Page 1 of these not-yet-ingested files also shows
-    a preprint or manuscript: `2010-JCP-Mignone-…`, `2014-JCP-Christlieb-…`,
-    `2024-JCP-Berta-…`, `2024-SISC-Ding-…` (arXiv) and `2016-JCP-Chen-…`
-    (accepted manuscript). Before ingesting each, check on Crossref whether
-    a published version exists, and record the version read.
+    (arXiv:1412.0081v2), `2016-JCP-Chen-…` (accepted manuscript) and
+    `2018-CompFluids-Owen-…` (author manuscript). `2025-arXiv-Wang-…`
+    (arXiv:2511.08335v1) has no published version on Crossref; a later JCP
+    paper by four of its five authors, with a different title, is not
+    taken as the same work. Page 1 of these not-yet-ingested files also
+    shows a preprint: `2010-JCP-Mignone-…`, `2014-JCP-Christlieb-…`,
+    `2024-JCP-Berta-…` and `2024-SISC-Ding-…` (arXiv). Before ingesting
+    each, check on Crossref whether a published version exists, and record
+    the version read.
   - Slugs reserved for archived works whose bare key a same-year homonym
     already holds (decided at batch 3): Balsara 2009 divergence-free
     reconstruction + WENO (JCP 228:5040) → `balsara-2009-b` (ADER-WENO,
@@ -124,12 +128,15 @@ to another bundle.
 
 ## Status
 
-**Batch 4 staged 2026-10-08:** 40 of 62 ingested (batch 1: origins, ENO,
+**Batch 5 staged 2026-10-08:** 50 of 62 ingested (batch 1: origins, ENO,
 WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
 WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes; batch 3: SSP
 theory, 3D FV-WENO, positivity limiters, compact and GP WENO, AFD-WENO,
 single-step MHD and divergence-preserving AFD-WENO; batch 4: ADER and
 polynomial WENO, WENO-limited and a posteriori subcell-limited DG, ADER
 AMR, energy-stable WENO boundary closures, inverse Lax–Wendroff and
-weighted extrapolation). Deep lints ran at batches 3 and 4. The next is
-due at 50 ingestions. The worklist is authoritative.
+weighted extrapolation; batch 5: the rest of the ILW line (sign-changing
+wind, conservation, moving bodies, fluid–structure interfaces),
+block-structured high-order AMR in FV and FD, and FD-WENO for MHD). Deep
+lints ran at batches 3, 4 and 5. The next is due at 60 ingestions. The
+worklist is authoritative.

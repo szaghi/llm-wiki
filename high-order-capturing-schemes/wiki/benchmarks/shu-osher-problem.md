@@ -99,6 +99,13 @@ accuracy unless biased; WENO works without modification, and the biased
   $\sin(5x)$ and $t = 1.8$ printed by Qiu and Shu (2005) and recorded
   here as printed ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3).
 
+**Later uses (batch 5).** On $[0, 10]$ with the shock at $x = 1$ and
+density $1 + 0.2\sin(5x)$, two AMR levels on a base of 128 points against a
+2048-point reference: hybrid and WENO inter-level interpolation are less
+dissipative than Berger–Colella second-order interpolation. The caption
+gives $t = 0.2$, and no error numbers are reported
+([Wang et al. (2025)](/sources/wang-2025.md), §6.3.3, preprint).
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
@@ -121,3 +128,4 @@ accuracy unless biased; WENO works without modification, and the biased
 18. [Qiu & Shu (2005)](/sources/qiu-2005.md), Example 3.7.
 19. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.2.
 20. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3.
+21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.3 (arXiv preprint).

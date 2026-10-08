@@ -165,6 +165,35 @@ von Neumann analysis of the full discretization.
   intermediate stages need consistent ghost data on every level, which
   a one-step method avoids ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §1).
 
+**Later uses (batch 5).**
+* *Classical RK4, not SSP.* Fifth-order FD-WENO for MHD uses it in every
+  test, with $\Delta t \sim h^{5/4}$ in accuracy runs
+  ([Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.2, 3.2). Fourth-order
+  finite volume uses it with a linear stability limit of 1.3925 for the
+  sum of directional Courant numbers, from RK4 with first-order upwinding
+  ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), eq. 57;
+  [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §3.1;
+  [fourth-order finite volume](/methods/fourth-order-finite-volume.md)).
+* *Dense output for AMR subcycling.* Coarse-step stages give a cubic
+  (RK4) or quadratic (SSP-RK3) interpolant in time. Fine-level ghost
+  values must match the fine intermediate stages, not just the stage
+  times, or limiters fire on smooth data
+  ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §3.1;
+  [Wang et al. (2025)](/sources/wang-2025.md), §4.2.3;
+  [high-order AMR](/methods/high-order-amr.md)).
+* *Conservation through the stages.* Exact boundary conservation is
+  imposed only on the RK-averaged flux of the last stage,
+  $\tfrac16(\hat f^n + \hat f^{(1)} + 4\hat f^{(2)})$ for SSP-RK3
+  ([Ding, Shu & Zhang (2020)](/sources/ding-2020.md), eq. 2.10). Refluxing
+  accumulates the stage fluxes with the Butcher weights
+  ([Wang et al. (2025)](/sources/wang-2025.md), §4.3).
+* *Moving boundaries and interfaces.* SSP-RK3 stage data at a moving
+  boundary are taken with the boundary frozen at $t^n$
+  ([Liu et al. (2023)](/sources/liu-2023.md), §2;
+  [Liu et al. (2022)](/sources/liu-2022.md), eq. 29). A fluid FD solver
+  and a DG solid solver share one SSP-RK3, so they exchange data at every
+  stage ([Liu et al. (2025)](/sources/liu-2025.md), §3.1).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -194,3 +223,11 @@ von Neumann analysis of the full discretization.
 25. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1.
 26. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
 27. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §1.
+28. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.2, 3.2.
+29. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.1, 3.1, eq. 57.
+30. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §3.1 (accepted manuscript).
+31. [Wang et al. (2025)](/sources/wang-2025.md), §§4.2.3, 4.3 (arXiv preprint).
+32. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §2.1.
+33. [Liu et al. (2023)](/sources/liu-2023.md), §2.
+34. [Liu et al. (2022)](/sources/liu-2022.md), §§2.2, 3.1.3.
+35. [Liu et al. (2025)](/sources/liu-2025.md), §3.1.

@@ -49,6 +49,7 @@ the data and cheap (rational, not exponential)
 | [Jiang & Shu (1996)](/sources/jiang-1996.md) | 2 | $10^{-6}$ | $L^2$ norms of derivatives |
 | [Levy, Puppo & Russo (1999)](/sources/levy-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, central |
 | [Balsara & Shu (2000)](/sources/balsara-2000.md) | 2 | $10^{-10}$ | Jiang–Shu, $r = 4$–$7$ |
+| [Jiang & Wu (1999)](/sources/jiang-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, $r = 3$, MHD |
 
 Jiang and Shu find $q = 2$ adequate for essentially non-oscillatory
 results at $r = 2, 3$; Levy et al. find the scheme almost insensitive to
@@ -188,6 +189,23 @@ positivity-preserving for Euler; see the
   WENO-type [weighted extrapolation](/methods/weighted-extrapolation.md)
   fills ghost cells on complex domains ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md)).
 
+**Batch 5 additions.**
+* *Ideal MHD.* Fifth-order FD-WENO, written as the fourth-order central
+  flux minus a nonlinear correction, with characteristic decomposition on
+  Brio–Wu normalized eigenvectors, reaches $L^1$ order 4.5–4.8 on smooth
+  MHD data. Extrapolated to 3D at equal accuracy, third-order ENO needs
+  2.5 times and a second-order scheme 20 times its CPU time. It is
+  insensitive to $\varepsilon \in [10^{-7}, 10^{-5}]$, and it needs
+  divergence control to stay stable
+  ([Jiang & Wu (1999)](/sources/jiang-1999.md), §§2–3;
+  [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md);
+  [constrained transport](/methods/constrained-transport.md)).
+* *Conservation with physical boundaries.* With inverse Lax–Wendroff
+  boundaries, the mass that FD-WENO conserves is accurate only to
+  second order unless it is redefined with boundary quadrature weights
+  ([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md);
+  [Ding, Shu & Zhang (2020)](/sources/ding-2020.md)).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §§3–4 (read visually; image-only scan).
@@ -213,3 +231,5 @@ positivity-preserving for Euler; see the
 21. [Fisher et al. (2011)](/sources/fisher-2011.md), §2.
 22. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.1.
 23. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.
+24. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2–3.
+25. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §1.

@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Weighted (WENO-type) extrapolation for ghost values"
-description: "Ghost-cell values for finite-difference WENO on Cartesian grids cut by complex boundaries, extrapolated along boundary normals with dimensionless, scale-independent weights that raise the extrapolation degree only where the data are smooth, optionally blended with a least-squares fit for stability."
+description: "Ghost-cell values for finite-difference WENO on Cartesian grids cut by complex boundaries, extrapolated along boundary normals with weights that raise the extrapolation degree only where the data are smooth: Baeza et al.'s dimensionless nested weights with a least-squares blend for stability, and the multi-resolution WENO extrapolation with constant linear weights used with inverse Lax–Wendroff."
 status: established
 aliases: [weighted extrapolation, WENO extrapolation, WLS-GAW, weighted least squares extrapolation, boundary extrapolation]
 tags: [boundary-treatment, finite-difference, weno, cut-cell]
@@ -93,6 +93,51 @@ Jiang–Shu-type indicators integrated over the whole stencil
   also handles shock interaction with multiple cylinders and steady
   supersonic flow past a triangle.
 
+## Multi-resolution WENO extrapolation
+
+([Lu et al. (2021)](/sources/lu-2021.md), §2.1, eqs. 2.9–2.15, read from
+the page images.) The extrapolation that Tan and Shu pair with
+[inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) takes its linear
+weights as powers of $h$ ($h^4, h^3, h^2, h$ and the remainder) and its
+power $q$ per problem. Lu et al. call this a loss of self-similarity and
+replace it with a multi-resolution construction after Zhu and Shu.
+* Nested stencils $\{x_{N-k}, \dots, x_N\}$, $k = 0, \dots, 4$, carry
+  interpolants $p_k$. These are recombined into hierarchical polynomials
+  whose combination with constant linear weights
+  $d_k = \tfrac1{15}, \tfrac2{15}, \tfrac15, \tfrac4{15}, \tfrac13$
+  reproduces the degree-4 interpolant.
+* The weights are WENO-Z-type,
+  $\tilde\omega_k = d_k\left(1 + \left(\tau/(\varepsilon + \beta_k)\right)^4\right)$,
+  with $\varepsilon = 10^{-4}$. The global indicator $\tau$ combines
+  differences of the $\beta_k$ with $L^2$ distances between the
+  candidates, and $\beta_0 = 0.1\,\beta_1$ (the constant has no
+  indicator). A small factor on $\beta_0$ drives the result to constant
+  extrapolation when a discontinuity lies next to the boundary.
+* All boundary derivatives are taken from the weighted polynomial. In 2D,
+  a least-squares degree-4 fit on a disc of radius about $5h$ gives the
+  values on the normal, and the same nonlinear weights serve the
+  tangential derivatives.
+* **Caveat.** The paper argues self-similarity only from the constant
+  $d_k$. The $L^2$ distances in $\tau$ are not normalized by $h$, so the
+  weights are not dimensionless in Baeza et al.'s sense. No test
+  isolates the new extrapolation from the old.
+
+**Other variants in the ILW line.** For a 3D moving body, three nested
+least-squares candidates on balls of radius $1.1h$, $2.1h$ and $3.1h$
+are blended with WENO-JS weights. Their linear weights are
+$h_x^2 + h_y^2 + h_z^2$, its square root, and the remainder, so they
+depend on the grid scale
+([Liu et al. (2022)](/sources/liu-2022.md), Appendix C). Lagrange or
+least-squares extrapolation is used where the solution is smooth, and the
+WENO-type one only near shocks
+([Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §2;
+[Lu et al. (2021)](/sources/lu-2021.md), Remark 2.3;
+[Liu et al. (2025)](/sources/liu-2025.md), §3.2).
+
 # Citations
 
 1. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§1–6.
+2. [Lu et al. (2021)](/sources/lu-2021.md), §2.1, Remark 2.3, §2.4.
+3. [Liu et al. (2022)](/sources/liu-2022.md), Appendix C.
+4. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §2.
+5. [Liu et al. (2025)](/sources/liu-2025.md), §3.2.

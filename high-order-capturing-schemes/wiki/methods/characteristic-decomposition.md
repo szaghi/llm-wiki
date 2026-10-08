@@ -126,6 +126,33 @@ also reconstructs in characteristic variables
   outgoing ones are extrapolated ([Lu et al. (2016)](/sources/lu-2016.md), §§2.3–2.5;
   [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
 
+**Later uses (batch 5).**
+* *MHD eigenvectors.* Fifth-order FD-WENO for ideal MHD uses Brio–Wu
+  normalized eigenvectors, which stay complete and nonsingular where the
+  fast, Alfvén and slow speeds coincide. The degeneracy tests are relaxed
+  by a threshold of about $10^{-12}$. The interface state is the
+  arithmetic mean, which differs little from a Roe average for
+  time-dependent problems (a single Roe state exists only for
+  $\gamma = 2$). In 2D a seven-wave system (normal-field equation
+  dropped) and Powell's eight-wave system give the same flux except in
+  the normal-field component, and the eight-wave one adds diffusion there
+  ([Jiang & Wu (1999)](/sources/jiang-1999.md), §2.3).
+* *Boundary case selection.* At a boundary whose normal velocity changes
+  sign, the signs of the characteristic speeds decide how many conditions
+  are imposed. The missing conserved component is recovered from the
+  extrapolated outgoing characteristic variables, dividing only by
+  eigenvector entries, never by an eigenvalue
+  ([Lu et al. (2021)](/sources/lu-2021.md), §§2.2–2.3;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+* *Interfaces.* At a fluid–structure interface the outgoing characteristics
+  of both media, plus the interface conditions, close one local linear
+  system ([Liu et al. (2025)](/sources/liu-2025.md), §3.2).
+* *Avoided by design.* A fifth-order FD scheme for block-adaptive
+  curvilinear grids interpolates primitive variables with an MP5 limiter
+  instead, to stay equation-agnostic and cheap
+  ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §1;
+  [monotonicity-preserving limiting](/methods/monotonicity-preserving-limiter.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -153,3 +180,7 @@ also reconstructs in characteristic variables
 23. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.
 24. [Fisher et al. (2011)](/sources/fisher-2011.md), §6.3 and Appendix B.
 25. [Lu et al. (2016)](/sources/lu-2016.md), §§2.3–2.5.
+26. [Jiang & Wu (1999)](/sources/jiang-1999.md), §2.3.
+27. [Lu et al. (2021)](/sources/lu-2021.md), §§2.2–2.3.
+28. [Liu et al. (2025)](/sources/liu-2025.md), §3.2.
+29. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §1.

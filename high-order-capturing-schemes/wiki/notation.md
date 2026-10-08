@@ -202,6 +202,31 @@ Added 2026-10-08 (batch 4: qiu-2005, dumbser-2007, balsara-2009, dumbser-2013, d
 | $x^{\mathrm g}$, $\breve u_k$ | target (ghost) point of a weighted extrapolation and its nested partial results, $\breve u_0 = u_{j_0}$ at the nearest node |
 | $\lambda_{\mathrm{UW}}$ | tuning parameter of the single-weight extrapolation map $\omega \mapsto (e^{\lambda_{\mathrm{UW}}\omega} - 1)/(e^{\lambda_{\mathrm{UW}}} - 1)$ |
 
+## Boundary conservation, moving boundaries, mapped grids and block AMR
+
+Added 2026-10-08 (batch 5: jiang-1999, mccorquodale-2011, chen-2016, owen-2018, wang-2025, ding-2020, lu-2021, liu-2022, liu-2023, liu-2025).
+
+| Symbol | Meaning |
+|---|---|
+| $c$ | sound speed, $c = \sqrt{\gamma p/\rho}$ (Euler) |
+| $T$, $T_b$ | temperature, and its prescribed value on an isothermal wall |
+| $\Phi$ | potential of a divergence projection, $\nabla^2\Phi + \nabla\cdot\mathbf B = 0$, $\mathbf B \leftarrow \mathbf B + \nabla\Phi$ (distinct from the PPM flattening $\phi_i$) |
+| $f^{*(k)}$, $f_{-\varsigma}$ | boundary approximations of $\partial^k_x f(u(a, t))$, and ghost-point flux values expanded from them independently of the ghost state ($f_{-\varsigma} \ne f(u_{-\varsigma})$ in general) |
+| $\varpi_j$, $\tilde{\mathcal M}$ | boundary quadrature weights of a high-order total mass ($\varpi_j = 1$ away from the boundary), and that mass $\tilde{\mathcal M} = h\sum_j \varpi_j u_j$ (distinct from the nonlinear weights $\omega_k$) |
+| $\hat f^{\mathrm{tot}}_{i+1/2}$ | Runge–Kutta total flux, the stage fluxes weighted as in the final update, e.g. $\tfrac16(\hat f^{(0)} + 2\hat f^{(1)} + 2\hat f^{(2)} + \hat f^{(3)})$ for RK4 and $\tfrac16(\hat f^{n} + \hat f^{(1)} + 4\hat f^{(2)})$ for SSP-RK3 |
+| $\hat f^{\mathrm R}_{i+1/2}$ | Riemann-solver flux at a face, before any derivative correction |
+| $\dot a$ | velocity of a moving boundary $x = a(t)$ |
+| $\epsilon_{\mathrm{ILW}}$ | small constant that regularizes the convection/diffusion blending weights of a moving-boundary ILW (e.g. $10^{-6}$) |
+| $\mathbf X = (X^1, X^2, X^3)$, $\mathcal J$ | computational coordinates of a mapped grid, and the Jacobian $\mathcal J = \det(\partial\mathbf x/\partial\mathbf X)$ (distinct from the wavenumber $\xi$ and the cell coordinate $\zeta$) |
+| $\tilde m^a_b$, $\tilde f^a$ | metric terms $\mathcal J\,\partial X^a/\partial x^b$ and contravariant fluxes $\tilde f^a = \sum_b \tilde m^a_b f_b$ |
+| $\mathbf e_d$ | unit vector of coordinate direction $d$ (distinct from the extrapolation coefficients $e_j$) |
+| $\Delta_h$, $\Delta^\perp_h$ | second-order discrete Laplacian (divided by $h^2$), and its restriction to the directions tangential to a face |
+| $\mathbf W$ | primitive state $(\rho, \mathbf v, p)$ |
+| $\langle w\rangle_i$, $\langle w\rangle_{i+1/2}$ | cell average and face average of a function $w$ of the solution (used where $\bar{\ }$ would be ambiguous, e.g. for $\mathbf W$ or products) |
+| $C_2$, $C_3$ | curvature-ratio and third-derivative constants of the modified Colella–Sekora limiter (1.25 and 0.1) |
+| $\chi$, $k_m$ | fraction of a coarse step in a Runge–Kutta dense output, $0 \le \chi \le 1$, and the stage increments $k_m = \Delta t\,\mathcal L(u^{(m-1)})$ (distinct from the TENO measure $\chi_k$) |
+| $M_s$, $\mathrm{Re}$, $\mathrm{Pr}$ | shock Mach number, Reynolds number, Prandtl number |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

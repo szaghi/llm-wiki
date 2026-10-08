@@ -46,6 +46,15 @@ HLL-type Riemann solvers (Balsara, cited by
   bottom-left quadrant boundary), and the limiter works only at the
   finest level ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.5).
 
+* **Fifth-order FD-WENO on block-structured AMR**, one configuration
+  with discontinuities at $x = y = 0.8$ on $[0, 1]^2$, $t = 0.8$, three
+  levels on a $448^2$ base. The paper prints the states
+  $(\rho, v_x, v_y, p) = (1.5, 0, 0, 1.5)$, $(0.5323, 1.206, 0, 0.3)$,
+  $(0.138, 1.206, 1.206, 0.029)$ and $(0.5323, 0, 1.206, 0.3)$ (eq. 34). Its
+  troubled-cell detector flags shocks and shocklets while filtering weak
+  acoustic waves. The results are qualitative
+  ([Wang et al. (2025)](/sources/wang-2025.md), §6.4.1, preprint).
+
 **Reading.** Agreement with Kurganov and Tadmor concerns the main wave
 structures. The additional roll-up at very low dissipation is a
 resolution effect, with no physical viscosity in the Euler equations.
@@ -58,3 +67,4 @@ quantity.
 1. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 2. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.6.
 3. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.5.
+4. [Wang et al. (2025)](/sources/wang-2025.md), §6.4.1 (arXiv preprint).

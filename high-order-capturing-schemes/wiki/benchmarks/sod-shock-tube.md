@@ -68,6 +68,16 @@ the finest level and stays unlimited. With $K = 2$ and about 15% of
 cells limited, the limiter overhead is about 1.5 in CPU time
 ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2).
 
+**Later uses (batch 5).** A dimensional, thermally perfect air version
+with Sod's ratios ($\rho_L/\rho_R = 8$, $p_L/p_R = 10$, $\rho_R = 0.125$ kg/m³,
+$p_R = 10^4$ Pa) runs on two AMR levels with fourth-order finite volume:
+"good agreement" with the exact solution and "no severe oscillations"
+([Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.1). With two
+levels (finest $h = 1/256$, $t = 0.2$), WENO and hybrid inter-level
+interpolation are indistinguishable when regridding every 2 steps. At
+every 5 steps WENO interpolation oscillates at the shock and contact and
+overshoots the shock speed ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.1, preprint).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -88,3 +98,5 @@ cells limited, the limiter overhead is about 1.5 in CPU time
 16. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §VII.a.
 17. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.1.
 18. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2.
+19. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.1 (accepted manuscript).
+20. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.1 (arXiv preprint).

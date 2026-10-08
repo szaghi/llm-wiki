@@ -16,7 +16,7 @@ accumulate divergence errors. These produce an unphysical force along
 $\mathbf B$ and often crash the code. The options are the eight-wave
 method, projection, hyperbolic divergence cleaning and constrained
 transport ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §1).
-Three constrained-transport designs appear in this corpus, and hyperbolic divergence cleaning is the alternative used on adaptive meshes.
+Three constrained-transport designs appear in this corpus. Hyperbolic divergence cleaning is the alternative used on adaptive meshes, and projection the earliest one.
 
 ## Unstaggered, vector potential
 
@@ -107,6 +107,27 @@ used ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [Zanotti et al. (2
 density and magnetic-pressure oscillations reported for Godunov schemes
 without divergence treatment ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §4; [MHD rotor](/benchmarks/mhd-rotor.md)).
 
+## Projection (Brackbill–Barnes)
+
+([Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.) After each WENO
+update, solve the Poisson equation $\nabla^2\Phi + \nabla\cdot\mathbf B = 0$
+(by relaxation) and replace $\mathbf B$ with $\mathbf B + \nabla\Phi$,
+which is divergence-free. The paper does not say whether this is done per
+Runge–Kutta stage or per step, nor which discrete divergence and gradient
+are used. The divergence errors of a high-order scheme are small in
+smooth regions but first order across discontinuities. Powell's
+eight-wave system is used only for its eigenvectors, without its source
+term ([characteristic decomposition](/methods/characteristic-decomposition.md)).
+* **Divergence control decides stability.** Without the projection the
+  [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) reaches
+  negative pressure and fails at $t \approx 3.9$ (eight-wave
+  eigensystem) or $t \approx 2.5$ (seven-wave). With it, both run to
+  $t = 8$ and agree (§3.4). This parallels the crash without CT reported
+  above.
+* The rotated [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md)
+  shows spurious oscillations near the slow rarefaction without the
+  projection (§3.1).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 4, 6.
@@ -114,3 +135,4 @@ without divergence treatment ([Dumbser et al. (2013)](/sources/dumbser-2013.md),
 3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§2.3, 4.1, 7.
 4. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.
+6. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 3.4.

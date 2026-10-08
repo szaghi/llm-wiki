@@ -137,6 +137,34 @@ boundary closures or ghost values.
   or from weighted extrapolation along the boundary normal
   ([weighted extrapolation](/methods/weighted-extrapolation.md); [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md)).
 
+**Later remarks (batch 5).**
+* *What is conserved.* The scheme conserves $\sum_i u_i h$. That sum is
+  spectrally accurate for periodic or compactly supported data but only
+  second-order accurate otherwise, so with physical boundaries the
+  conserved total mass is $O(h^2)$ from the true one. A high-order total
+  mass needs boundary quadrature weights and a matching boundary flux
+  ([Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §1, eq. 1.7;
+  [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
+* *Ghost fluxes.* With Lax–Friedrichs splitting the stencil needs both
+  $u_j$ and $f(u_j)$ at ghost points, and nothing forces the ghost flux
+  to equal $f$ of the ghost state. Expanding the two separately removes
+  $f'(g)$ from every denominator of the boundary treatment
+  ([Lu et al. (2021)](/sources/lu-2021.md), §2.1).
+* *Splitting speed.* Global Lax–Friedrichs takes the maximum over the
+  whole grid line, local over the six-point stencil. At high order the
+  choice of splitting matters much less than at low order
+  ([Jiang & Wu (1999)](/sources/jiang-1999.md), §2.2).
+* *Curvilinear and adaptive grids.* A fifth-order FD scheme stays inside
+  the smooth-grid restriction on block-adaptive curvilinear meshes. It
+  preserves free streams by computing the metrics in conservative form
+  with the same difference operator as the fluxes
+  ([free-stream preservation](/properties/free-stream-preservation.md)).
+  It bridges factor-2 resolution jumps by high-order ghost-cell
+  interpolation instead of a non-uniform difference, and it gives up
+  exact conservation there, because refluxing would cut the order to two
+  ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§3–4;
+  [high-order AMR](/methods/high-order-amr.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §§III–IV.
@@ -156,3 +184,7 @@ boundary closures or ghost values.
 15. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §2.
 16. [Lu et al. (2016)](/sources/lu-2016.md), §2.
 17. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §3.
+18. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §1.
+19. [Lu et al. (2021)](/sources/lu-2021.md), §2.1.
+20. [Jiang & Wu (1999)](/sources/jiang-1999.md), §2.2.
+21. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§3–4.

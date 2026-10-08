@@ -8,7 +8,7 @@ authors: [Gottlieb S., Shu C.-W., Tadmor E.]
 year: 2001
 venue: "SIAM Rev. 43:89-112"
 local_file: "~/papers/mosaic/high-order-capturing-schemes/2001-SIAMRev-Gottlieb-101137S003614450036757X.pdf"
-tags: [ssp, time-discretization, runge-kutta, multistep, review]
+tags: [ssp, time-discretization, multistep, review]
 timestamp: 2026-10-08T00:00:00Z
 ---
 
