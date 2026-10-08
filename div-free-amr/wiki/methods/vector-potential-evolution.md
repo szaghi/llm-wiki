@@ -88,6 +88,30 @@ by Etienne et al., leaves a non-propagating sector. Here it is controlled
 by added resistivity on a uniform grid. Whether interface noise excites it
 under AMR is untested.
 
+## A moving-mesh failure (preprint evidence)
+
+The Arepo-CT scheme of Mocz et al. (2016) evolves a cell-averaged
+potential on a moving Voronoi mesh, in the Weyl gauge. Fluxes through
+Delaunay faces are contour integrals of the potential, so every Delaunay
+tetrahedron is exactly divergence-free. In driven subsonic turbulence it
+is unstable at high resolution: granular artifacts at $128^3$, and at
+$256^3$ excess tails in field, velocity and density that no other scheme
+shows. The authors advise against production use. Their diagnosis:
+* the potential is not a conserved quantity, and its advection term can
+  dominate the electric-field source;
+* cell averaging and the curl do not commute, so cell geometry injects
+  local errors into $B$;
+* Delaunay flips change the reconstructed field discontinuously;
+* the electric-field source is cell-centred and not upwinded, which is
+  known to destabilize CT even on fixed meshes;
+* the formulation is not Galilean-invariant.
+
+A stable, Galilean-invariant moving-mesh CT is stated as still open
+([Pakmor et al. (2026)](/sources/pakmor-2026.md) §6.3, preprint).
+*Compiler reading:* this is a second instance of the moral above. Exact
+satisfaction of the constraint certified neither stability nor a correct
+field.
+
 The trade is precise: CT holds the invariant on the *field* and pays at
 interfaces (EMF corrections, $P_D$); the potential route holds it by
 *construction* and pays in derivative count and gauge control.
@@ -100,3 +124,4 @@ interfaces (EMF corrections, $P_D$); the potential route holds it by
 4. [Etienne et al. (2015)](/sources/etienne-2015.md) — production form: damped generalized Lorenz gauge $\nabla_\mu A^\mu = \xi n_\mu A^\mu$ (transport *and* damping for the gauge sector, mirroring GLM's design).
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §§2–6.
 6. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Theorems 3.8, 3.19.
+7. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §6.3 (preprint).

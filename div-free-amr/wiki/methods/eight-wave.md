@@ -75,6 +75,20 @@ rotated shock-tube result is the concrete realization of the risk that trade
 admits — the two sources agree on the mechanism and differ in emphasis on
 how often it bites.
 
+**Low dissipation, measured in turbulence (preprint).** In driven
+subsonic turbulence, Powell runs give the fastest kinematic dynamo at fixed
+resolution: about 3 times Dedner on the same moving-mesh hydrodynamics,
+2 times Dedner in a DG code, and up to 3–4 times a second-order CT code.
+Arepo-Powell at $128^3$ matches Ramses-CT at $256^3$ in its kinematic
+magnetic spectrum. On Arepo's moving Voronoi mesh the divergence arises
+mainly from the continual change of the gradient discretization, and the
+source terms remove most of it. The DG variant pairs a locally
+divergence-free basis with a face Powell term, the same structure as
+Wu & Shu's positive DG. Total momentum is no longer conserved to machine
+precision ([Pakmor et al. (2026)](/sources/pakmor-2026.md)).
+*Compiler reading:* the flow is subsonic, so Tóth's wrong-jump failure is
+not exercised by this test.
+
 [GLM cleaning](/methods/glm-divergence-cleaning.md) later kept the
 advect-the-error philosophy while removing the trade: its source term sits
 only in the unphysical $\psi$ equation, leaving the physical conservation
@@ -107,3 +121,4 @@ requirement.
    (the strongest published defense of the source-term family).
 6. [Wu & Shu (2018)](/sources/wu-shu-2018.md), §§1, 3, 5.
 7. [Wu & Shu (2019)](/sources/wu-shu-2019.md), §4, Proposition A.1.
+8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).

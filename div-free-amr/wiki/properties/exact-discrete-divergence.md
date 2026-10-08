@@ -151,6 +151,19 @@ simulation results for scientifically relevant … problems"
 ([Olivares et al. (2019)](/sources/olivares-2019.md)) — the constraint
 class is not a numerical nicety but a physics-level decision.
 
+**A regime where it did not matter (preprint).** In driven subsonic
+turbulence with a weak seed field, [Pakmor et al. (2026)](/sources/pakmor-2026.md) find no difference that separates
+the exact-divergence CT codes from the Powell and Dedner codes. This
+holds for dynamo growth, saturation, field-structure statistics and
+spectra. The residual differences track numerical dissipation and other
+scheme details, and the authors stress the idealized setting.
+*Compiler reading:* this scopes the Olivares claim rather than
+contradicting it. "Can produce qualitative differences" is not refuted by
+one regime where none appear. Nor does it contradict
+[Balsara & Kim (2004)](/sources/balsara-kim-2004.md), whose spurious
+turbulence statistics came from elliptic projection, a cleaning method
+this comparison does not test.
+
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §III–IV, eq. (4.7)–(4.9), (5.6).
@@ -170,3 +183,4 @@ class is not a numerical nicety but a physics-level decision.
 12. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.3, 4.5.
 13. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Remark 2.8, Theorems 3.8, 3.19.
 14. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4.1–4.2, 7.9.
+15. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§6.2, 7 (preprint).

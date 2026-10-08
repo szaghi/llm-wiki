@@ -109,6 +109,31 @@ finite-difference scheme (PLUTO; uniform Cartesian grids only).
 * No AMR is run and no long-time boundedness test at fixed $h$ is
   reported.
 
+## Cleaning as effective resistivity (preprint evidence)
+
+[Pakmor et al. (2026)](/sources/pakmor-2026.md) compare cleaning, Powell and CT on driven subsonic turbulence with a
+weak seed field and purely numerical dissipation, from $32^3$ to $256^3$.
+The paper is an arXiv preprint, not peer-reviewed.
+* **Dedner is the more resistive choice.** With the hydrodynamics solver
+  held fixed, the kinematic dynamo grows about 3 times slower with Dedner
+  than with Powell in Arepo, and about 2 times slower in a DG code. In that
+  regime the field is dynamically irrelevant, so the authors read the gap
+  as a difference in effective resistivity set by the divergence treatment
+  and its coupling to mesh and scheme.
+* **Small scales are smeared.** DG-Dedner shows less small-scale field
+  structure than DG-Powell, which the authors attribute to the cleaning.
+  Arepo-Dedner lacks the largest currents and curvatures that every other
+  scheme reaches.
+* **Parameters.** In Arepo, $c_h$ is the maximum fast speed in the box and
+  the damping time is $2r_{\mathrm{cell}}/c_h$. In DG, $c_h$ is 1.05 times
+  the fastest signal speed with Dedner's dimensional damping constant
+  $0.18$, which the authors note is not portable across problems.
+
+*Compiler reading:* this is the turbulence-scale counterpart of the
+solenoidal-data damping below. A cleaning step is not inert on resolved
+fields, and its dissipation enters the physics through the magnetic
+Reynolds number.
+
 ## Behavior at 2:1 seams and on solenoidal data (hypothesis-grade)
 
 Evidence from one code's verification record,
@@ -185,3 +210,4 @@ as conditional on the source not growing at the interface.
 5. [Zaghi (2026)](/sources/zaghi-2026.md): issues #21 (E2, E2′), #29 (fix class E, the damping sweep); FLUME `index.md`, `models.md`, `verification.md` (EV-3, EV-4, VV-5, MV-12).
 6. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§2–4, Figs. A.7, A.11–A.12.
 7. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.10.
+8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).

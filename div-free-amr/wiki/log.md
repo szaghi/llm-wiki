@@ -2,6 +2,33 @@
 
 ## 2026-10-08
 
+* **Ingested [Pakmor et al. (2026)](/sources/pakmor-2026.md)**, source 16 of 16.
+  This completes the A + B ingestion list.
+  * **Corpus:** the arXiv v1 preprint was moved to
+    `~/papers/mosaic/div-free-amr/2026-arXiv-Pakmor-1048550arXiv260706660.pdf`.
+    No journal version was found on Crossref. It is the corpus's first
+    non-peer-reviewed paper, so each claim it adds to a concept page is
+    marked "preprint"; no page status changed. The root index now counts
+    it separately.
+  * **Updated** four pages:
+    * [GLM](/methods/glm-divergence-cleaning.md): cleaning as effective
+      resistivity, with a compiler reading linking it to the
+      solenoidal-data damping;
+    * [eight-wave](/methods/eight-wave.md): measured low dissipation;
+    * [vector-potential evolution](/methods/vector-potential-evolution.md):
+      the Arepo-CT moving-mesh instability;
+    * [exact discrete divergence](/properties/exact-discrete-divergence.md):
+      a regime with no systematic class difference. A compiler reading
+      scopes it against Olivares (2019) and Balsara & Kim (2004); no
+      Contradictions entry is opened.
+  * **Bibliography:** 48 references; the record goes from 2926 to 2962.
+    * 13 existing entries gained the citer; 35 works are new, plus the self
+      entry.
+    * `teyssier-2006` ("in press") gained its published volume and page.
+    * The DOI printed for `feldmann-2026` is malformed
+      (`214394`); the hyphenated form was verified on Crossref and the
+      title filled from there.
+
 * **Ingested [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md)**, source 15 of 16.
   * **Corpus:** the arXiv v1 preprint (which prints the JCP DOI) was moved to
     `~/papers/mosaic/div-free-amr/2026-JCP-Jones-101016jjcp2025114641.pdf`.
