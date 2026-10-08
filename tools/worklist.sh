@@ -7,7 +7,7 @@ bundle="${1:-div-free-amr}"
 repo="$(cd "$(dirname "$0")/.." && pwd)"
 sources_dir="$repo/$bundle/wiki/sources"
 
-corpus_dir="$HOME/papers/mosaic/div-free-amr"   # per bundle CLAUDE.md
+corpus_dir="$HOME/papers/mosaic/$bundle"   # Layer-1 archive is named after the bundle (D17)
 [[ -d "$corpus_dir" ]] || { echo "corpus not found: $corpus_dir" >&2; exit 1; }
 
 pending=0

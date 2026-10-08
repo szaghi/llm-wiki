@@ -11,7 +11,7 @@
 > No vector database, no embeddings, no retrieval lottery — the knowledge is **compiled once, navigated forever**.
 
 [![OKF](https://img.shields.io/badge/OKF-v0.1-blue)](https://github.com/GoogleCloudPlatform/knowledge-catalog/blob/main/okf/SPEC.md)
-[![Bundles](https://img.shields.io/badge/bundles-1-blue)](#-bundles)
+[![Bundles](https://img.shields.io/badge/bundles-2-blue)](#-bundles)
 [![Lint](https://img.shields.io/badge/okf%20lint-passing-brightgreen)](tools/lint_okf.py)
 [![Citations](https://img.shields.io/badge/citation%20record-2689%20works-blue)](div-free-amr/wiki/bibliography.md)
 [![Math](https://img.shields.io/badge/math-KaTeX-orange)](div-free-amr/wiki/notation.md)
@@ -96,6 +96,7 @@ llm-wiki/
 | Bundle | Domain | Scale | Entry point |
 | --- | --- | --- | --- |
 | [`div-free-amr`](div-free-amr/wiki/index.md) | Discrete divergence constraints ($D_h B_h = 0$, incompressibility) across numerical discretizations — staggered/CT, mimetic, Whitney/FEEC, SBP, DEC — with particular depth on high-order methods and 2:1 AMR interfaces | 61 multi-modal sources (1965–2025), ~100 pages, corpus complete; citation record of 2689 works (61 ingested, the rest the derived ingestion frontier) | [reading guide](div-free-amr/wiki/index.md) · [bibliography](div-free-amr/wiki/bibliography.md) · [log](div-free-amr/wiki/log.md) |
+| [`high-order-capturing-schemes`](high-order-capturing-schemes/wiki/index.md) | High-order shock-capturing schemes for hyperbolic conservation laws: ENO/WENO and variants (WENO-M/Z/AO, TENO, CWENO), MP and PPM reconstruction, ADER and a posteriori limiting, positivity-preserving limiters, SSP time stepping, ILW boundaries, high-order AMR, MHD | scaffolded 2026-10-08; 62-PDF archive, ingestion starting | [reading guide](high-order-capturing-schemes/wiki/index.md) · [bibliography](high-order-capturing-schemes/wiki/bibliography.md) · [log](high-order-capturing-schemes/wiki/log.md) |
 
 Future bundles are siblings: same constitution, same linter, same worklist — see the
 [tutorial](#-tutorial) below.

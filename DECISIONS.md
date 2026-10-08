@@ -221,3 +221,26 @@ a wrong-author transcription, as `hu-1999`.
 Scope: this tool is for the batched backfill only. A single new source's
 reference list (ordinary ingestion step 5) is hand-edited into the `.bib` —
 the merger's machinery earns its cost only at ~10 fragments per run.
+
+## D17 — Second bundle; each bundle owns a self-contained archive (2026-10-08)
+
+**Decision (user):** a second bundle, `high-order-capturing-schemes`,
+covers high-order shock-capturing schemes with a broad scope. It overlaps
+heavily with `div-free-amr`: WENO-based MHD, high-order CT and AMR papers
+belong to both. Bundles stay mutually independent:
+- An overlapping work is ingested separately in each bundle, as an
+  independent Source page read for that bundle's subject and written in
+  that bundle's notation.
+- A bundle never links to another bundle's pages and never reuses its
+  registry or bibliography.
+
+**Archive rule.** Each bundle's Layer-1 archive is
+`~/papers/mosaic/<bundle>/`, named after the bundle. A work shared with
+another bundle's archive is **copied** into it, never referenced across
+archives. `tools/worklist.sh` derives the corpus path from the bundle name.
+
+**Why:** one archive per bundle keeps the derived worklist correct (D8);
+pointing into a sibling archive would list all its files as pending. It
+also keeps a bundle relocatable without the other. Duplicated PDFs cost
+disk space only. Copying never modifies the source archive, so Layer-1
+immutability holds.
