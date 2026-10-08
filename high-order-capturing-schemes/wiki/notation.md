@@ -48,7 +48,7 @@ common in the literature (Shu's reviews). It is wiki-native law from then on.
 | $u_i$ | point value $u(x_i)$ (finite difference) |
 | $u^-_{i+1/2}$, $u^+_{i+1/2}$ | reconstructed interface states from the left and from the right of $x_{i+1/2}$ |
 | $\hat f_{i+1/2}$ | numerical flux at $x_{i+1/2}$; conservative semi-discretization $\frac{d}{dt} u_i = -\frac{1}{h}\left(\hat f_{i+1/2} - \hat f_{i-1/2}\right)$ |
-| $\mathcal{H}$ | Shu–Osher flux primitive of the conservative FD form: $f(u(x)) = \frac{1}{h}\int_{x-h/2}^{x+h/2} \mathcal{H}(\xi)\, d\xi$, so $\hat f_{i+1/2}$ approximates $\mathcal{H}(x_{i+1/2})$ |
+| $\mathcal{H}$ | Shu–Osher flux function of the conservative FD form: $f(u(x)) = \frac{1}{h}\int_{x-h/2}^{x+h/2} \mathcal{H}(\xi)\, d\xi$, so $\hat f_{i+1/2}$ approximates $\mathcal{H}(x_{i+1/2})$; its primitive is known at interfaces, $\int^{x_{i+1/2}} \mathcal{H} = h\sum_{j \le i} f(u_j)$ |
 | $f^+$, $f^-$ | flux splitting $f = f^+ + f^-$ with $\partial f^+/\partial u \ge 0$, $\partial f^-/\partial u \le 0$ |
 | $\alpha$ | Lax–Friedrichs splitting speed, $f^\pm = \frac{1}{2}\left(f \pm \alpha u\right)$, $\alpha \ge \max |\lambda|$ |
 
@@ -87,3 +87,45 @@ cells each.
 |---|---|
 | $\mathcal{G}$ | admissible set of states (e.g. $\rho > 0$, $p > 0$ for Euler) |
 | $\theta$ | scaling or blending parameter of a positivity-preserving limiter, $\theta \in [0,1]$ |
+
+## Primitive functions and divided differences
+
+Added 2026-10-08 (batch 1: harten-1987, shu-1988, shu-1989, shu-1998).
+
+| Symbol | Meaning |
+|---|---|
+| $\mathcal{U}(x)$ | primitive of the solution, $\mathcal{U}(x) = \int_{x_{1/2}}^{x} u(\xi)\,d\xi$; exactly known at interfaces from cell averages, $\mathcal{U}(x_{i+1/2}) = \sum_{j \le i} h_j \bar u_j$ |
+| $w[x_a, \dots, x_b]$ | Newton divided difference of a function $w$ over the listed points |
+| $\Delta^{l} w_i$ | $l$-th undivided (forward) difference, $\Delta^{l} w_i = \Delta^{l-1} w_{i+1} - \Delta^{l-1} w_i$, $\Delta^0 w_i = w_i$ (uniform grids) |
+
+## Fluxes and upwinding
+
+| Symbol | Meaning |
+|---|---|
+| $\hat f(a, b)$ | two-argument monotone flux: Lipschitz, nondecreasing in $a$, nonincreasing in $b$, $\hat f(a,a) = f(a)$; the interface flux is $\hat f_{i+1/2} = \hat f(u^-_{i+1/2}, u^+_{i+1/2})$ |
+| $\hat a_{i+1/2}$ | Roe speed, $\hat a_{i+1/2} = (f(u_{i+1}) - f(u_i))/(u_{i+1} - u_i)$ (scalar); for systems the eigenvalues of a Roe or arithmetic-mean Jacobian at $x_{i+1/2}$ |
+| $\alpha_{i+1/2}$ | local Lax–Friedrichs speed (the maximum of $\vert f'(u)\vert$ over the states between $u_i$ and $u_{i+1}$, or over the stencil) |
+| $\ell^{(p)}$, $r^{(p)}$ | $p$-th left (row) and right (column) eigenvectors of the Jacobian frozen at $x_{i+1/2}$; local characteristic variable $w^{(p)}_j = \ell^{(p)} u_j$ |
+
+## Runge–Kutta in Shu–Osher form
+
+| Symbol | Meaning |
+|---|---|
+| $u^{(i)}$ | stage value, $u^{(0)} = u^n$, $u^{(s)} = u^{n+1}$ |
+| $a_{ik}$, $b_{ik}$ | Shu–Osher coefficients, $u^{(i)} = \sum_{k=0}^{i-1}\left(a_{ik} u^{(k)} + b_{ik}\,\Delta t\,\mathcal{L}(u^{(k)})\right)$, $a_{ik} \ge 0$, $\sum_k a_{ik} = 1$; with all $b_{ik} \ge 0$, $\mathcal{C} = \min_{i,k} a_{ik}/b_{ik}$ |
+| $\tilde{\mathcal{L}}$ | downwind ("adjoint") operator: approximates the same derivative as $\mathcal{L}$ but is stable for forward Euler run backward in time; replaces $\mathcal{L}$ where $b_{ik} < 0$ |
+
+## Limiting
+
+| Symbol | Meaning |
+|---|---|
+| $\operatorname{minmod}(z_1,\dots,z_k)$ | smallest argument in magnitude if all have one sign, else 0 |
+| $\operatorname{median}(x,y,z)$ | the argument lying between the other two; $\operatorname{median}(x,y,z) = x + \operatorname{minmod}(y-x, z-x)$ |
+| $\delta^2 \bar u_i$ | second difference $\bar u_{i-1} - 2\bar u_i + \bar u_{i+1}$ |
+| $\kappa$ | Suresh–Huynh monotonicity constant in $u^{\mathrm{MP}}_{i+1/2} = \bar u_i + \operatorname{minmod}(\bar u_{i+1} - \bar u_i,\ \kappa(\bar u_i - \bar u_{i-1}))$ |
+| $u^{\mathrm{or}}_{i+1/2}$ | unlimited ("original") high-order interface value before an MP bound |
+| $u^{\mathrm{MD}}$, $u^{\mathrm{LC}}$ | MP auxiliary values: median value and large-curvature value adjoined to enlarge the admissible interval near extrema |
+| $u^{\min}$, $u^{\max}$ | ends of the MP admissible interval; the limited value is $\operatorname{median}(u^{\mathrm{or}}, u^{\min}, u^{\max})$ |
+| $\mathcal{D}^{\mathrm{M4}}_{i+1/2}$ | interface curvature $\operatorname{minmod}(4\delta^2\bar u_i - \delta^2\bar u_{i+1}, 4\delta^2\bar u_{i+1} - \delta^2\bar u_i, \delta^2\bar u_i, \delta^2\bar u_{i+1})$ |
+| $\Delta u_i$, $u_{6,i}$ | PPM parabola in cell $I_i$: jump $u^-_{i+1/2} - u^+_{i-1/2}$ and curvature coefficient $6\left(\bar u_i - \tfrac12(u^+_{i-1/2} + u^-_{i+1/2})\right)$ |
+| $\phi_i$ | PPM flattening coefficient, $0 \le \phi_i \le 1$ (1 = fully flattened to $\bar u_i$) |

@@ -1,0 +1,64 @@
+---
+type: Definition
+title: "Smoothness indicator"
+description: "The per-stencil measure β_k that drives WENO weights: O(h²) on smooth data, O(1) across a jump; its form (undivided differences vs. L² norms of derivatives) decides the achievable order, including at critical points."
+status: established
+aliases: [smoothness indicator, smoothness measurement, IS_k, beta_k]
+tags: [weno, nonlinear-weights, definition]
+timestamp: 2026-10-08T00:00:00Z
+---
+
+# Smoothness indicator
+
+The quantity $\beta_k$ assigned to candidate stencil $S_k$ in the
+[WENO](/methods/weno.md) weights. It must be $O(1)$ when $S_k$ contains a
+discontinuity and small when the data on $S_k$ are smooth; to reach
+order $2r-1$ the indicators of all smooth stencils must agree to
+relative order $h^{r-1}$, $\beta_k = D\left(1 + O(h^{r-1})\right)$.
+
+**Undivided differences** ([Liu, Osher & Chan (1994)](/sources/liu-1994.md)):
+the sum, over orders $l = 1, \dots, r-1$, of the averaged squares of the
+$l$-th undivided differences on the stencil. For $r = 2$ it is
+$(\bar u_j - \bar u_{j-1})^2$. Squares were Shu's suggestion; the
+original absolute values work too but give a merely Lipschitz flux
+(acknowledgement of the paper). This indicator is $O(h^2)$ on smooth
+data but its leading term differs between stencils at $O(h)$ relative
+size, so for $r = 3$ it gives fourth order in smooth monotone regions
+and third order at critical points
+([Jiang & Shu (1996)](/sources/jiang-1996.md), §2).
+
+**$L^2$ norms of derivatives** ([Jiang & Shu (1996)](/sources/jiang-1996.md), eq. 3.1):
+$$\beta_k = \sum_{l=1}^{r-1}\int_{x_{i-1/2}}^{x_{i+1/2}} h^{2l-1}\left(\frac{d^l p_k}{dx^l}\right)^2 dx,$$
+"emulating the idea of minimizing the total variation"; the factor
+$h^{2l-1}$ removes the $h$-dependence, which keeps the scheme
+self-similar. For $r = 2$ it coincides with the Liu–Osher–Chan
+indicator. For $r = 3$, in flux values,
+$$\begin{aligned}
+\beta_0 &= \tfrac{13}{12}\left(f_{i-2} - 2f_{i-1} + f_i\right)^2 + \tfrac14\left(f_{i-2} - 4f_{i-1} + 3f_i\right)^2,\\
+\beta_1 &= \tfrac{13}{12}\left(f_{i-1} - 2f_i + f_{i+1}\right)^2 + \tfrac14\left(f_{i-1} - f_{i+1}\right)^2,\\
+\beta_2 &= \tfrac{13}{12}\left(f_i - 2f_{i+1} + f_{i+2}\right)^2 + \tfrac14\left(3f_i - 4f_{i+1} + f_{i+2}\right)^2 .
+\end{aligned}$$
+Where $f' \neq 0$, $\beta_k = (f'h)^2(1 + O(h^2))$, which gives fifth
+order. Jiang and Shu also state that at critical points
+$\beta_k = \tfrac{13}{12}(f''h^2)^2(1 + O(h^2))$ and conclude that the
+weights are fifth-order accurate there too (eq. 3.9;
+[accuracy at critical points](/properties/accuracy-at-critical-points.md)).
+[Balsara & Shu (2000)](/sources/balsara-2000.md) tabulate the indicators
+for $r = 4, 5, 6$ as quadratic forms in the stencil values.
+[Levy, Puppo & Russo (1999)](/sources/levy-1999.md) use the same
+integral for their central parabolas, with the remark that the
+indicators are $O(h^2)$ in smooth regions and $O(h^4)$ at critical
+points.
+
+**For systems** the indicator can be computed per characteristic field
+(standard), from pressure and entropy (Jiang–Shu "PS"), or as one global
+indicator shared by all components
+([characteristic decomposition](/methods/characteristic-decomposition.md)).
+
+# Citations
+
+1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §3.2 and acknowledgement.
+2. [Jiang & Shu (1996)](/sources/jiang-1996.md), §§2–3 (eqs. 3.1–3.9 read from the page images).
+3. [Shu (1998)](/sources/shu-1998.md), eqs. 2.61–2.63.
+4. [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), eqs. 3.13–3.15.
+5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §III.

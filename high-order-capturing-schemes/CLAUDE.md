@@ -37,10 +37,15 @@ to another bundle.
   - `1994-JCP-Liu-…` (Liu, Osher & Chan, WENO) is an image-only scan:
     `pdftotext` yields nothing. Read it visually, page by page, and never
     guess an equation.
-  - `1997-ICASE-Shu-NASA-CR-97-206253.pdf` is the ICASE report 97-65.
-    It is not the Lecture Notes in Mathematics 1697 chapter (1998),
-    which is a distinct publication. The Source page identifies the
-    report, not the LNM DOI.
+  - `1997-ICASE-Shu-NASA-CR-97-206253.pdf` is the ICASE report 97-65,
+    the report form of the Lecture Notes in Mathematics 1697 chapter
+    (1998, same title). Its slug is `shu-1998` and its resource the LNM
+    DOI; the Source page records that the report was read (decided at
+    batch 1, reversing the scaffold note, for consistency with the slug
+    rule below).
+  - `1988-JCP-Shu-…` is ICASE Report 87-33 (May 1987), not the typeset
+    JCP article; `1996-JCP-Jiang-…` is a 40-page preprint. Both are
+    ingested under their published slugs with the version recorded.
   - Three files are arXiv preprints of published works:
     `2013-arXiv-Dumbser-…` (JCP 2013), `2014-arXiv-Guo-…`, and
     `2016-arXiv-Rathan-…`. Before ingesting each, check on Crossref
@@ -59,6 +64,18 @@ to another bundle.
   - Two collisions are settled by the registry: $h$ is the grid spacing,
     so Shu–Osher's flux function is $\mathcal{H}$; $\alpha$ is the
     Lax–Friedrichs speed, so unnormalized weights are $\tilde\omega_k$.
+- **Keys and slugs.** Every bibliography key and every Source slug is
+  `firstauthor-year[-b, -c, …]`, with the first author's surname in
+  lowercase ASCII (no spaces or apostrophes). The year is that of the
+  published version; an ingested source takes the bare key and a cited
+  homonym takes a suffix. An undated citation takes the citing date,
+  noted in the entry. One rule for both makes later citations of an
+  ingested work land on its key without aliases.
+- **Batches.** The user authorized autonomous ingestion in batches of 10
+  (2026-10-08), each staged as one unit with a single commit message
+  naming every slug, reviewed by the user between batches. A batch's
+  reference lists are merged with `tools/bib_merge.py` (D16) and closed
+  with `--dupes` plus the venue and fuzzy-title sweeps.
 - Ingestion order for the initial corpus: foundations first, so that early
   papers define the concepts and later papers exercise the merge path.
   1. Origins: PPM, ENO (Harten et al. 1987; Shu & Osher 1988, 1989).
@@ -85,5 +102,5 @@ to another bundle.
 
 ## Status
 
-**Scaffolded 2026-10-08:** 62 PDFs in the archive, 0 ingested. The
-worklist is authoritative.
+**Batch 1 staged 2026-10-08:** 10 of 62 ingested (origins, ENO, WENO,
+MP, CWENO, MPWENO). The worklist is authoritative.

@@ -11,15 +11,53 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 0 sources compiled** (see the [update log](/log.md)).
+**Corpus: 10 sources compiled**: 10 published works, three of them read
+in a report or preprint version (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
 
 ## Reading guide
 
-The guide is curated as the corpus is compiled. Until then, enter through
-the folder indexes:
+1. **What a capturing scheme must reconcile.** High order in smooth
+   regions against no Gibbs oscillation at jumps. The stability notions
+   that frame the trade:
+   [total variation diminishing](/properties/total-variation-diminishing.md)
+   (and why it forces first order at extrema), and its weakening,
+   [essentially non-oscillatory](/definitions/essentially-non-oscillatory.md).
+2. **The two approximation problems.**
+   [Reconstruction from cell averages](/methods/finite-volume-reconstruction.md)
+   (finite volume, any mesh) and the
+   [conservative finite-difference formulation](/methods/conservative-finite-difference.md)
+   (point values, uniform or mapped grids, cheap in multi-D), joined by the
+   primitive-function identity; the interface flux is a
+   [monotone flux](/definitions/monotone-flux.md) or a flux splitting.
+3. **Adaptive and weighted stencils.**
+   [ENO](/methods/eno-reconstruction.md) → [WENO](/methods/weno.md)
+   (orders $r+1$, then $2r-1$, then up to 13), governed by the
+   [smoothness indicator](/definitions/smoothness-indicator.md);
+   a centred, Riemann-free variant: [central WENO](/methods/central-weno.md).
+4. **Limiting instead of adapting.** [PPM](/methods/ppm.md) and the
+   [monotonicity-preserving bounds](/methods/monotonicity-preserving-limiter.md)
+   of MP5/MPWENO — with an open `Contradictions` entry on whether they keep
+   the order at flat extrema.
+5. **Where order is lost.** [Accuracy at critical points](/properties/accuracy-at-critical-points.md)
+   collects every family's claim; WENO-JS's critical-point claim is
+   recorded as stated.
+6. **Making it work on systems and in time.**
+   [Local characteristic decomposition](/methods/characteristic-decomposition.md),
+   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), and
+   [contact sharpening](/methods/contact-sharpening.md).
+7. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+   [Lax](/benchmarks/lax-shock-tube.md),
+   [Shu–Osher](/benchmarks/shu-osher-problem.md),
+   [interacting blast waves](/benchmarks/interacting-blast-waves.md),
+   [composite advection](/benchmarks/composite-advection-profile.md),
+   [double Mach reflection](/benchmarks/double-mach-reflection.md),
+   [forward step](/benchmarks/forward-facing-step.md),
+   [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md).
+
+## Folders
 
 * [Definitions](/definitions/index.md)
 * [Methods](/methods/index.md)
