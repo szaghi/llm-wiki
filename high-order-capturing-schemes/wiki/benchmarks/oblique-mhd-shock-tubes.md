@@ -5,7 +5,7 @@ description: "One-dimensional MHD Riemann problems (Brio–Wu, Ryu–Jones, and 
 status: established
 aliases: [rotated shock tube, oblique MHD shock tube, rotated Ryu–Jones problem, rotated Brio–Wu problem]
 tags: [benchmark, mhd, riemann-problem, divergence-free, 2d, 3d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Grid-oblique MHD shock tubes
@@ -53,6 +53,23 @@ be shifted-periodic and the run compared with a fine 1D solution.
   [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6;
   [constrained transport](/methods/constrained-transport.md)).
 
+**Later uses (batch 7).**
+* *Provenance.* The rotated "Ryu–Jones" problem with two fast shocks, two
+  rotational discontinuities, two slow shocks and a contact is Dai and
+  Woodward's Table 1a problem, popularized by Ryu and Jones
+  ([Ryu & Jones (1995)](/sources/ryu-1995.md), Fig. 2a;
+  [Ryu–Jones shock tubes](/benchmarks/ryu-jones-shock-tubes.md)).
+* *Second order, four schemes.* Tóth's 2D tube rotated by $\tan^{-1}2$ with
+  $(2, -1)$ shifted boundaries, and the 3D Gardiner–Stone tube on
+  $768\times8\times8$: the normal-field $L^1$ error is 9.6 (eight-wave)
+  against 0.4 (CT, GLM, EGLM) $\times10^{-2}$ in 2D, and 3.6 against 0.5
+  $\times10^{-4}$ in 3D. The eight-wave scheme gives wrong normal-field jumps
+  ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.3, Tables 2–3).
+* *Entropy-stable GLM* on the Ryu–Jones–Frank colliding-flow tube at
+  $\tan^{-1}2$: cleaning cuts the parallel-field error "significantly", and
+  the full and Janhunen non-conservative terms are indistinguishable
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §5.5).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.1.
@@ -61,3 +78,6 @@ be shifted-periodic and the run compared with a fine 1D solution.
 4. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.5.
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.2 (arXiv v2).
 6. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.
+7. [Ryu & Jones (1995)](/sources/ryu-1995.md), §4.
+8. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.3.
+9. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.5.

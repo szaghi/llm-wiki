@@ -5,7 +5,7 @@ description: "Smooth periodic MHD data that steepen into interacting shocks and 
 status: established
 aliases: [Orszag-Tang problem, Orszag-Tang vortex]
 tags: [benchmark, mhd, 2d, divergence-free]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Orszag–Tang vortex
@@ -74,6 +74,14 @@ and run fifth-order FD-WENO on $192^2$
   the discrete divergence of the traces stays near $10^{-14}$
   ([Ding & Wu (2024)](/sources/ding-2024.md), Example 4.2).
 
+**Later uses (batch 7).**
+* *Divergence history on block AMR* (to $256^2$, $t = 0.5$): without
+  cleaning the integrated divergence grows to about 1.07, with
+  entropy-stable GLM it stays at 0.17–0.19, and density and pressure lose
+  the oscillations of the uncleaned run ([Derigs et al. (2018)](/sources/derigs-2018.md), §5.4).
+* *Relativistic Orszag–Tang* on $1000^2$ to $t = 0.8$ with fourth-order
+  ADER-WENO ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.7).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
@@ -85,3 +93,5 @@ and run fifth-order FD-WENO on $192^2$
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.5 (arXiv v2).
 8. [Berta et al. (2024)](/sources/berta-2024.md), §5.6 (arXiv v4).
 9. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.2 (arXiv v1).
+10. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.4.
+11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.7.

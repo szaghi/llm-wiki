@@ -5,7 +5,7 @@ description: "Linear advection on a periodic domain of a combination of narrow G
 status: established
 aliases: [Jiang-Shu linear test, Shu's linear test, four-wave advection]
 tags: [benchmark, linear-advection, dispersion, extrema]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Composite-profile linear advection (Jiang–Shu test)
@@ -57,6 +57,14 @@ improves with order and stays essentially non-oscillatory. The reason
 is that the stencils are regular in the reference coordinates
 ([Dumbser & Käser (2007)](/sources/dumbser-2007.md), §5.3.2).
 
+**Later uses (batch 7).**
+* On 400 zones to $t = 10$ at CFL 0.6: MC with RK2 degrades badly; classical
+  PPM with RK3 keeps the Gaussian, triangle and ellipse distinguishable,
+  with an upwind bias on the ellipse; third- and fourth-order CWENO show no
+  over- or undershoots. The resolution and run length differ from the
+  200-zone, ten-traversal comparison above, so the better showing of PPM is
+  not a contradiction ([Balsara (2017)](/sources/balsara-2017-d.md), §§II–III).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.1.
@@ -68,3 +76,4 @@ is that the stencils are regular in the reference coordinates
 7. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.1.
 8. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), Example 3.
 9. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §5.3.2.
+10. [Balsara (2017)](/sources/balsara-2017-d.md), §§II–III.

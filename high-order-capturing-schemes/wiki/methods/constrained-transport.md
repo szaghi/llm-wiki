@@ -5,7 +5,7 @@ description: "Keeping the magnetic field discretely divergence-free alongside a 
 status: established
 aliases: [CT, unstaggered constrained transport, vector-potential constrained transport, Yee mesh, divergence-preserving update, upwind constrained transport, UCT, high-order CT]
 tags: [mhd, divergence-free, constrained-transport, involution]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Constrained transport for high-order capturing schemes
@@ -225,6 +225,35 @@ result ([positivity preservation](/properties/positivity-preserving.md)).
 The paper does not show what happens to a discrete divergence of the
 evolved cell averages.
 
+**Later evidence (batch 7).**
+* *Same-code comparisons.* At second order in PLUTO, GLM and CT give equal
+  normal-field errors on 2D and 3D oblique shock tubes, and the eight-wave
+  scheme gives wrong jumps. On a 3D blast at plasma beta $2\times10^{-4}$,
+  CT "failed even with a minmod limiter" while EGLM ran
+  ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §§4.3, 4.7). In Athena++, CT is the least
+  diffusive and the more robust of the two, and the only one free of the
+  leakage and time-step artifacts of cleaning ([Tomida et al. (2026)](/sources/tomida-2026.md), §5;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+* *CT's weak point at low β.* When the cell-centred field is a linear
+  average of face fields, the thermal-energy error on a circularly
+  polarized Alfvén wave at plasma beta $1.98\times10^{-4}$ reaches about
+  30%, as large as plain GLM's ([Tomida et al. (2026)](/sources/tomida-2026.md), App. B.3). This is the
+  same deficiency the divergence-free reconstruction section credits for
+  positive pressures in low-β blasts.
+* *Each scheme's own divergence.* In FLASH the staggered USM solver keeps
+  its face divergence at machine precision, while its cell-centred central
+  divergence is not zero and is comparable to that of the GLM scheme
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §5.3). This is direct evidence for the scoped reading
+  recorded under Contradictions: exactness belongs to a stated discrete
+  divergence.
+* *The 2001 starting point.* The first divergence-free AMR scheme on a
+  Yee mesh still takes edge fields as the Balsara–Spicer average of four
+  face fluxes; evaluating them without spatial averaging is the 2004
+  change. It argues for staggered over zone-centred CT because the latter's
+  control volumes do not tile the mesh, align with refinement patches or
+  nest for multigrid ([Balsara (2001)](/sources/balsara-2001.md), §§II–III;
+  [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
+
 ## Contradictions
 
 **Does exact divergence preservation require a staggered (Yee) mesh?**
@@ -266,3 +295,7 @@ evolved cell averages.
 11. [Berta et al. (2024)](/sources/berta-2024.md), §§4, 5.7, Appendix B (arXiv v4).
 12. [Seo & Ryu (2023)](/sources/seo-2023.md), §§2.4, 3.
 13. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3 (arXiv v1).
+14. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §§4.3, 4.7.
+15. [Tomida et al. (2026)](/sources/tomida-2026.md), §5, App. B.3.
+16. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
+17. [Balsara (2001)](/sources/balsara-2001.md), §§II–III.

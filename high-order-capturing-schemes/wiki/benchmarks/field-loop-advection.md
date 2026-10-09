@@ -5,7 +5,7 @@ description: "A weak cylindrical current loop (A_z = A_0(R − r) inside radius 
 status: established
 aliases: [field loop, magnetic loop advection, Gardiner–Stone loop]
 tags: [benchmark, mhd, divergence-free, dissipation, 2d, 3d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Magnetic field-loop advection
@@ -42,8 +42,17 @@ central singularity.
   marginally. Fifth-order FD also loses about 5% of the magnetic energy
   ([Berta et al. (2024)](/sources/berta-2024.md), §5.4).
 
+**Later uses (batch 7).**
+* *Second order, with $v_z = 1$.* On $128\times64$ to $t = 2$, CT and GLM
+  keep the loop and the eight-wave scheme distorts it. The growth of
+  $\langle|B_z|\rangle$, a divergence monitor, is about $10^{-3}$ of the initial
+  field and converges at order 0.6–0.7. Divergence is minimized for
+  $\alpha_p \gtrsim 0.01$ in 2D and $\gtrsim 0.03$ in the 3D loop
+  ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §§4.4–4.5).
+
 # Citations
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.4 (arXiv v2).
 2. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.3.
 3. [Berta et al. (2024)](/sources/berta-2024.md), §5.4 (arXiv v4).
+4. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §§4.4–4.5.

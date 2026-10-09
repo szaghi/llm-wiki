@@ -5,7 +5,7 @@ description: "Fully discrete one-step finite-volume and DG schemes that evolve t
 status: established
 aliases: [ADER, ADER-WENO, ADER-DG, ADER-CG, generalized Riemann problem, local space-time DG predictor, arbitrary derivative Riemann problem]
 tags: [ader, single-step, time-discretization, finite-volume, dg, amr]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # ADER one-step schemes
@@ -156,6 +156,22 @@ conservative, so the order is not lost.
   predictors differ, so this is a difference of practice, not a
   contradiction.
 
+**Later uses (batch 7).**
+* *A third-order toy predictor in 1D* with six space–time nodes and the
+  explicit Galerkin relations $\hat u_t = -\hat f_x$, $\hat u_{tt} = -\hat f_{xt}/2$,
+  $\hat u_{xt} = -2\hat f_{xx}$ in the predictor's local modes ([Balsara (2017)](/sources/balsara-2017-d.md),
+  §V.2, eqs. 58–67), and the 2D analogue (eq. 77).
+* *Iteration count.* "For a temporally Nth order scheme, one only needs
+  (N-1) steps": two iterations at third order, three at fourth, then a
+  final repetition of the nodal flux evaluation (a "polish", Steps 7–8 of
+  the stepwise box). The Balsara et al. (2009) statement above says $K + 1$
+  iterations for order $K + 1$. *Compiler's reading:* the two counts agree
+  if the polish is counted as an iteration; the review does not say so.
+* *Time-step table for PNPM* (from Dumbser et al. 2008): limiting 1D CFL
+  numbers 1.00, about 0.32, 0.17, 0.10 and 0.069 for evolved degree 0 to 4
+  with matched space–time order, divided by the dimension in multi-D
+  (§VI).
+
 # Citations
 
 1. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §§1, 3, 4, 6.
@@ -164,3 +180,4 @@ conservative, so the order is not lost.
 4. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§1, 2.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §§1, 3.
 6. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§2–3.
+7. [Balsara (2017)](/sources/balsara-2017-d.md), §§V, VI.

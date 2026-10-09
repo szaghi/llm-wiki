@@ -5,7 +5,7 @@ description: "Limiting RKDG by first flagging troubled cells (TVB minmod) and th
 status: established
 aliases: [WENO limiter, RKDG with WENO limiters, troubled-cell indicator, TVB limiter, Hermite WENO limiter]
 tags: [weno, dg, limiter, finite-volume]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin schemes
@@ -102,6 +102,24 @@ and Shu; Zhu et al.) and multi-resolution limiters, which "appear to be
 quite robust". Hermite WENO fits DG's compact data structure
 ([Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3).
 
+**Later uses (batch 7).**
+* *Viscous flows need no oscillation limiter.* Euler DG with only the
+  positivity limiter becomes more oscillatory under refinement or higher
+  degree, and oscillations can move shocks. Navier–Stokes DG with only the
+  positivity limiter becomes less oscillatory once the viscous scales are
+  resolved. TVB-limited DG cannot run a Mach 10 corner problem without the
+  positivity limiter and smears its Kelvin–Helmholtz roll-ups
+  ([Zhang (2017)](/sources/zhang-2017.md), §§1.7, 6).
+* *The compact limiter in full* at third order in 2D: each von Neumann
+  neighbour's polynomial is shifted into the zone with its mean replaced
+  by the zone's; the indicator is
+  $(\hat u^{(10)})^2 + (\hat u^{(01)})^2 + \tfrac{13}{3}\left((\hat u^{(20)})^2 + (\hat u^{(02)})^2\right) + \tfrac76(\hat u^{(11)})^2$;
+  linear weights 0.96 for the zone and 0.01 for each neighbour, power 2,
+  $\varepsilon = 10^{-12}$, attributed to Zhong and Shu (2013), not in the
+  corpus ([Balsara (2017)](/sources/balsara-2017-d.md), §VI.2, eqs. 95–109).
+* *PNPM in perspective*: evolving degree 1 or 2 and reconstructing higher
+  "often" gives most of the accuracy of DG at larger time steps (§VI).
+
 # Citations
 
 1. [Qiu & Shu (2005)](/sources/qiu-2005.md), §§1–4.
@@ -109,3 +127,5 @@ quite robust". Hermite WENO fits DG's compact data structure
 3. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §6.
 4. [Shu (2009)](/sources/shu-2009.md), §5.1.
 5. [Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3.
+6. [Zhang (2017)](/sources/zhang-2017.md), §§1.7, 6.
+7. [Balsara (2017)](/sources/balsara-2017-d.md), §VI.

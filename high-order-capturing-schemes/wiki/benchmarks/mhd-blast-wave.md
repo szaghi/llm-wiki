@@ -5,7 +5,7 @@ description: "An over-pressured region expanding into a strongly magnetized, low
 status: established
 aliases: [magnetized blast wave, MHD blast problem, RMHD blast wave]
 tags: [benchmark, mhd, positivity, low-beta, 2d, 3d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # MHD blast wave in a low-β medium
@@ -69,6 +69,18 @@ reconstruction of the zone-centred field
   shocks". The paper states both third and fourth order for this run
   ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.2).
 
+**Later uses (batch 7).**
+* *Two 3D blasts at second order* on $200^3$. At plasma beta $2\times10^{-2}$
+  ($B_0 = 10$, $p = 100 \mid 1$, $r_0 = 0.125$, $t = 0.02$, printed in the right
+  order) GLM, EGLM and CT are indistinguishable. At $2\times10^{-4}$
+  ($B_0 = 100$, $p = 10^4 \mid 1$, $t = 2.5\times10^{-3}$) only EGLM runs; CT fails
+  even with a minmod limiter ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.7).
+* *A 3D "extreme" blast* on $257^3$: $|\mathbf B| = 150$ along the diagonal,
+  $p = 1000 \mid 0.1$, plasma beta $1.117\times10^{-4}$, $t = 0.0075$, third-order
+  ADER-WENO with a multidimensional Riemann solver and Balsara's
+  self-adjusting positivity method; density and pressure stay positive
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.4).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
@@ -80,3 +92,5 @@ reconstruction of the zone-centred field
 7. [Berta et al. (2024)](/sources/berta-2024.md), §5.7 (arXiv v4).
 8. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.7.
 9. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.2.
+10. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.7.
+11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.4.

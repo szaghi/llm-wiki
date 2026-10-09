@@ -5,7 +5,7 @@ description: "A Mach 10 shock hitting a 30° wedge (posed as a 60° shock on a f
 status: established
 aliases: [double Mach reflection, DMR]
 tags: [benchmark, euler, 2d, strong-shocks]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Double Mach reflection
@@ -109,6 +109,15 @@ instabilities around the Mach stem
   conservative second-order interpolation at shocks runs to the end
   ([Wang et al. (2025)](/sources/wang-2025.md), §6.4.2, preprint).
 
+**Later uses (batch 7).**
+* *Euler vs Navier–Stokes DG with only the positivity limiter.* Euler DG
+  shows more structure than TVB-limited DG but becomes more oscillatory on
+  finer meshes and at higher degree; at $\mathrm{Re} = 100$ and 500 the
+  viscous runs become less oscillatory under refinement, a version of the
+  problem in which convergence is meaningful ([Zhang (2017)](/sources/zhang-2017.md), Example 8).
+* Fourth-order ADER-WENO on $1920\times480$ resolves the Mach-stem roll-up
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.2).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -133,3 +142,5 @@ instabilities around the Mach stem
 20. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §4.4.
 21. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.7 (accepted manuscript).
 22. [Wang et al. (2025)](/sources/wang-2025.md), §6.4.2 (arXiv preprint).
+23. [Zhang (2017)](/sources/zhang-2017.md), Example 8.
+24. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.2.

@@ -5,7 +5,7 @@ description: "A conservative linear rescaling of the high-order polynomial about
 status: established
 aliases: [Zhang-Shu limiter, positivity limiter, linear scaling limiter, maximum-principle-satisfying limiter]
 tags: [positivity, limiter, weno, dg, finite-difference]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Zhang–Shu positivity-preserving scaling limiter
@@ -116,6 +116,30 @@ avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
 of Hu, Adams and Shu limits fluxes instead of point values and needs a
 weaker time-step condition for accuracy.
 
+**Later variants (batch 7).**
+* *The single-ratio internal-energy factor.* Scaling the whole
+  density-limited state about the mean by one ratio $\theta_e$, with no
+  quadratic per point, is used for Euler and Navier–Stokes DG and
+  attributed to Wang, Zhang, Shu and Ning (2012), earlier than its use by
+  Ding and Wu. It is "crude": if the solution touches the floor it costs
+  at least $O(h^2)$; if $\rho e \ge m > 2\epsilon_{\mathcal G}$ it keeps high
+  order ([Zhang (2017)](/sources/zhang-2017.md), §4.2, eq. 37b).
+* *Fewer points.* Only the remainder state of the interior Gauss–Lobatto
+  points is needed, by the mean-value theorem, plus the DG volume
+  quadrature points so that the DG integrands are admissible too
+  (§§4.3, 5.2). On triangles a per-edge CFL bound,
+  $\Delta t\,\frac{|e_i|}{|K|}\beta^{\mathrm v}_i \le \tfrac23\hat w_1$, replaces the summed
+  one (eq. 33, Remark 3).
+* *Restart.* The trial step comes from the convective speed only; any stage
+  that yields an inadmissible average is restarted with $\Delta t$ halved,
+  which terminates by the theorem's bound (§5.3).
+* *A two-sided, solution-dependent variant* (Balsara's self-adjusting
+  method): the target is the range of the neighbour averages, widened in
+  smooth flow and narrowed at shocks by a flattener, not a floor; density
+  uses Barth's two-sided ratio; the nodes are the $3\times3$ Gauss–Lobatto
+  tensor grid with the vertices. No CFL theorem is claimed
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §VII, eqs. 115–126).
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §§1–4 (Theorem 2.1, Lemma 2.5, Table 2.1; eqs. 2.1–2.12 read from the page images).
@@ -123,3 +147,5 @@ weaker time-step condition for accuracy.
 3. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
 4. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.4.
 5. [Ding & Wu (2024)](/sources/ding-2024.md), §§2.4, 3 (arXiv v1).
+6. [Zhang (2017)](/sources/zhang-2017.md), §§4.2–4.3, 5.2–5.3.
+7. [Balsara (2017)](/sources/balsara-2017-d.md), §VII.

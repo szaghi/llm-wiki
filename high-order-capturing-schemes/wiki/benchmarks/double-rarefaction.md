@@ -5,7 +5,7 @@ description: "Two rarefactions moving apart from a symmetric Riemann state, leav
 status: established
 aliases: [double rarefaction, 1-2-3 problem, Einfeldt strong rarefaction, vacuum Riemann problem]
 tags: [benchmark, euler, positivity, low-density, riemann-problem]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Double-rarefaction (near-vacuum) Riemann problems
@@ -45,6 +45,12 @@ and amplifies their errors.
   radius grows; GP-R2 is slightly worse than WENO-JS there
   ([Reyes et al. (2018)](/sources/reyes-2018.md), §5.5).
 
+**Later uses (batch 7).**
+* A viscous variant ($\rho = 7$, $v_x = \mp1$, $p = 0.2$, $\mathrm{Re} = 1000$) with
+  DG of degree 2–5 on 200 and 400 cells: the low density and pressure are
+  captured with the positivity-preserving viscous flux ([Zhang (2017)](/sources/zhang-2017.md),
+  Example 3).
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3.
@@ -52,3 +58,4 @@ and amplifies their errors.
 3. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.1.
 4. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Examples 6, 8.
 5. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.5.
+6. [Zhang (2017)](/sources/zhang-2017.md), Example 3.

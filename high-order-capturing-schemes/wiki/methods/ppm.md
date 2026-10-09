@@ -5,7 +5,7 @@ description: "Colella–Woodward higher-order Godunov method: fourth-order edge 
 status: established
 aliases: [PPM, piecewise parabolic method]
 tags: [reconstruction, godunov, limiter, finite-volume]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Piecewise parabolic method (PPM)
@@ -120,6 +120,16 @@ pressure jumps ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), eqs. 2.8–2
 Its flattening coefficient is 0 in smooth flow, like $\phi_i$ here, while the same paper's
 factor in the average–point conversion uses the opposite convention.
 
+**Later uses (batch 7).**
+* *A gentler overshoot reset.* With MC-limited differences inside the
+  fourth-order edge formula, the author prefers resetting an overshooting
+  zone to its MC linear profile, $u^\mp_{i\pm1/2} \to \bar u_i \pm \tfrac12\Delta u_i$,
+  over the original reset to the constant ([Balsara (2017)](/sources/balsara-2017-d.md), §II.2,
+  eqs. 16–17b). The review states that the original PPM was "restricted to
+  second order accuracy by the use of a monotonicity preserving limiter"
+  (citing Woodward 1986), and that the modern trend is to forgo steepeners
+  (§III.1).
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
@@ -127,3 +137,4 @@ factor in the average–point conversion uses the opposite convention.
 3. [Balsara & Shu (2000)](/sources/balsara-2000.md), §I, §§IV.b, VI.a, VII.c.
 4. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5.
 5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.
+6. [Balsara (2017)](/sources/balsara-2017-d.md), §§II.2, III.1.

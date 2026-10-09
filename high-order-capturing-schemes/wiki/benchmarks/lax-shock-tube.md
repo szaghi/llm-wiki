@@ -5,7 +5,7 @@ description: "The 1D Riemann problem (0.445, 0.698, 3.528 | 0.5, 0, 0.571), with
 status: established
 aliases: [Lax problem, Lax's problem]
 tags: [benchmark, euler, riemann-problem, 1d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Lax shock tube
@@ -68,6 +68,11 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
   ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.2, preprint;
   [high-order AMR](/methods/high-order-amr.md)).
 
+**Later uses (batch 7).**
+* DG of degree 2–7 on 200 cells with only the positivity limiter is
+  oscillatory for Euler; the Navier–Stokes version ($\mathrm{Re} = 100$, 1000)
+  is compared with a 64000-point reference ([Zhang (2017)](/sources/zhang-2017.md), Example 2).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -91,3 +96,4 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
 19. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.2.
 20. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.5 (accepted manuscript).
 21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.2 (arXiv preprint).
+22. [Zhang (2017)](/sources/zhang-2017.md), Example 2.

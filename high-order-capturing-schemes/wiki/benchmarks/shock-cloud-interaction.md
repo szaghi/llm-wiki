@@ -5,7 +5,7 @@ description: "A strong magnetized shock overrunning a dense stationary cloud; te
 status: established
 aliases: [cloud-shock interaction, shock-cloud problem]
 tags: [benchmark, mhd, 2d, 3d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Shock–cloud interaction
@@ -40,9 +40,18 @@ $t = 0.06$ ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5).
   reduction with selective flux integration was "fundamental"
   ([Berta et al. (2024)](/sources/berta-2024.md), §5.8).
 
+**Later uses (batch 7).**
+* *3D, on a divergence-free AMR hierarchy.* Root grid $96\times64\times64$ on
+  $[-0.5, 1]\times[-0.5, 0.5]^2$, cloud of radius 0.3 and ten times the
+  ambient density, Mach 10 magnetosonic shock, two levels of ratio 2
+  (Gaussian units). The refinement follows the shocks, contact and jet,
+  and the undivided divergence stays below $10^{-13}$ of $|\mathbf B|$
+  ([Balsara (2001)](/sources/balsara-2001.md), §VI.a).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5.
 2. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §7.3.
 3. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.4 (arXiv v2).
 4. [Berta et al. (2024)](/sources/berta-2024.md), §5.8 (arXiv v4).
+5. [Balsara (2001)](/sources/balsara-2001.md), §VI.a.

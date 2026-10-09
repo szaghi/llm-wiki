@@ -5,7 +5,7 @@ description: "A point release of energy into a cold gas of near-zero pressure; t
 status: established
 aliases: [Sedov blast, planar Sedov problem, point-blast wave]
 tags: [benchmark, euler, positivity, low-density, blast-wave]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Sedov point-blast wave
@@ -40,9 +40,21 @@ self-similar (Sedov; Korobeinikov).
   internal energy $4.7\times10^{-3}$ and $10^{-12}$
   ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 9).
 
+**Later uses (batch 7).**
+* *DG with only the positivity limiter.* On $160^2$ over $[0, 1.1]^2$ with
+  background pressure $10^{-5}$ and corner-cell energy $0.244816/h^2$, Euler
+  and Navier–Stokes ($\mathrm{Re} = 200$) DG of degree 2–4 run to completion
+  with no TVB or WENO limiter ([Zhang (2017)](/sources/zhang-2017.md), Example 6). *Compiler's
+  note, flagged for human review:* this sits uneasily with the statement
+  above that RKDG "blows up" without the TVB limiter even with the
+  positivity limiter. The set-ups differ (background state, a step rule
+  with $\max\{\cdot, 2h^2\}$ and restarts), so the two may not be
+  comparable, and neither paper addresses the other.
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.2.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), Examples 5.2–5.3.
 3. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §§3.1–3.2.
 4. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 9.
+5. [Zhang (2017)](/sources/zhang-2017.md), Example 6.

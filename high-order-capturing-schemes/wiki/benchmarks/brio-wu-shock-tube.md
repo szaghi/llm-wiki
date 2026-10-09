@@ -5,7 +5,7 @@ description: "The MHD analogue of Sod's problem, (ρ, p, B_y) = (1, 1, 1 | 0.125
 status: established
 aliases: [Brio-Wu problem, Brio–Wu Riemann problem, MHD shock tube]
 tags: [benchmark, mhd, riemann-problem, 1d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -53,6 +53,23 @@ essentially non-oscillatory up to CFL 3.07, without results shown
 Rotated versions and other MHD Riemann problems are collected on
 [grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md).
 
+**Later uses (batch 7).**
+* *What the compound wave is.* At 8192 cells and $\gamma = 5/3$, a TVD code
+  forms a "2-4" intermediate shock followed by a slow rarefaction
+  (pre-shock Alfvénic Mach number 1.03, post-shock 0.910). A nonlinear
+  Riemann solver that admits rotational discontinuities instead returns a
+  rotational discontinuity and a slow shock, so code and exact solver
+  disagree only there. An analogous fast compound problem, with
+  $(\rho, p) = (1, 1 \mid 0.4, 0.4)$, $B_y = \pm1$ and $B_x = 1.3$, forms a "1-3"
+  intermediate shock preceded by a fast rarefaction. The authors take no
+  side on the reality of intermediate shocks ([Ryu & Jones (1995)](/sources/ryu-1995.md), §§4–5;
+  [Ryu–Jones shock tubes](/benchmarks/ryu-jones-shock-tubes.md)).
+* *Entropy tests.* Rotated 45° on a periodic box with an
+  entropy-conservative flux, the entropy error scales as $\Delta t^3$ down to
+  round-off; a modified Brio–Wu with $v_{x,L} = 1.75$ shows Roe's entropy
+  glitch in the rarefaction, which an entropy-stable flux avoids
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §§5.6–5.7).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 4, Figs. 2–4.
@@ -60,3 +77,5 @@ Rotated versions and other MHD Riemann problems are collected on
 3. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.
 4. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.2.1 (arXiv v2).
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3 (arXiv v2).
+6. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§4–5.
+7. [Derigs et al. (2018)](/sources/derigs-2018.md), §§5.6–5.7.

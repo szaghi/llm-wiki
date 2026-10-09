@@ -1,5 +1,57 @@
 # Directory Update Log
 
+## 2026-10-09
+
+* **Batch 7: gap closure against the ADAM paper collection** (7 sources).
+  A cross-check of the ADAM bibliography's numerics and MHD papers against
+  this bundle found these missing. Archive copies were added: four from the
+  div-free-amr archive (D17), Ryu & Jones from the ADAM collection, and two
+  downloaded because the collection held HTML error pages in their place
+  (Zhang 2017 from the author's page; Balsara 2017 from NSF PAR).
+  * Ingested [Ryu & Jones (1995)](/sources/ryu-1995.md),
+    [Balsara (2001)](/sources/balsara-2001.md),
+    [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md),
+    [Zhang (2017)](/sources/zhang-2017.md),
+    [Balsara (2017)](/sources/balsara-2017-d.md) (213-page review, whole
+    text read), [Derigs et al. (2018)](/sources/derigs-2018.md) and
+    [Tomida et al. (2026)](/sources/tomida-2026.md). Two other "missing"
+    papers were already ingested under their journal DOIs
+    ([Guo et al. (2014)](/sources/guo-2014.md), [Rathan & Naga Raju (2017)](/sources/rathan-2017.md)).
+  * Created [Ryu–Jones and Dai–Woodward MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md).
+  * Rewrote [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md):
+    CTU-GLM and the origin of $\alpha_p$, EGLM, the entropy-consistent
+    system, the consistency conditions on the cleaning parameters, AMR, and a
+    **new open `Contradictions` entry**: should the cleaning speed follow the
+    time step (Mignone et al. against Tomida et al.)?
+  * Corrected the attribution of the second-order divergence-free
+    reconstruction formulas on
+    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md):
+    they first appear in Balsara (2001), not (2004); added its AMR section.
+  * Added "Later uses (batch 7)" blocks to 31 pages: CT, high-order AMR,
+    positivity, scaling limiter, WENO-limited DG, characteristic
+    decomposition, Riemann solvers, ADER, PPM, WENO, SSP-RK, subcell
+    limiting, TVD, PLUTO and 17 benchmarks. Flagged for human review:
+    [Sedov](/benchmarks/sedov-blast-wave.md), where Zhang (2017) runs DG
+    with only the positivity limiter to completion against an earlier
+    "blows up" statement; and an attribution tension on the ADER-CG
+    iteration count ([ADER](/methods/ader.md)).
+  * [Notation registry](/notation.md): new section "Cleaning parameters,
+    MHD eigensystems and viscous positivity" ($L_{\mathrm{GLM}}$, $C_r$,
+    $\hat\psi_{\mathrm{GLM}}$, $\alpha_f$, $\alpha_s$, $B_\perp$,
+    $\mathbf f^{\mathrm v}$, $\boldsymbol\tau$, $\mathbf q$, $\beta^{\mathrm v}_{i+1/2}$,
+    $\theta_e$, $\hat f^{\mathrm{EC}}$, $\hat f^{\mathrm{ES}}$).
+  * Bibliography: 585 references merged with `tools/bib_merge.py`, using
+    the vol:page resolver, nine manual overrides and 11 reviewed silences of
+    distinct pairs, plus one temporary silence for the Kurganov fold (FLAGS 0); seed entries for derigs-2018 and tomida-2026. Folds:
+    `harten-1983-b` into `harten-1983` (balsara-2001 prints the same
+    misprinted venue with the title, which settles the open identity), the
+    UCLA report `kurganov-2001` into `kurganov-2000`, and, from the closing
+    `--dupes` and fuzzy-title sweeps, five spelling or author-order variants
+    and `deng-2005` into `deng-2000`. Crossref-checked: Antón et al. 2010
+    (ApJS 188:1, printed 187:1) and Ha et al. 2005 (J. Sci. Comput. 24:29).
+    `dai-1994` keeps ryu-1995's title-less "in press" citation by inference,
+    recorded in its note. 1494 → 1707 entries.
+
 ## 2026-10-08
 
 * **Human review of batch 6** (fiat decisions, recorded with

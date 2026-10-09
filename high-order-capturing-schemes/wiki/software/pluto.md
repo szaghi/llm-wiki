@@ -5,7 +5,7 @@ description: "Multi-physics finite-volume and finite-difference code for classic
 status: established
 aliases: [PLUTO, PLUTO-AMR]
 tags: [software, mhd, finite-volume, finite-difference, constrained-transport]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # PLUTO
@@ -30,8 +30,16 @@ They do not describe the code itself.
   Runge–Kutta AMR codes ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §3;
   [high-order AMR](/methods/high-order-amr.md)).
 
+**Later uses (batch 7).**
+* PLUTO hosts the second-order CTU-GLM, CTU-EGLM, eight-wave and CTU-CT
+  schemes compared in [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md) (§4). It sets the GLM damping length
+  to the finest cell, so under AMR the damping time changes with the
+  finest level ([Tomida et al. (2026)](/sources/tomida-2026.md), §2.3.3).
+
 # Citations
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §§3–4 (arXiv v2).
 2. [Berta et al. (2024)](/sources/berta-2024.md), §§3–5 (arXiv v4).
 3. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §3.
+4. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.
+5. [Tomida et al. (2026)](/sources/tomida-2026.md), §2.3.3.

@@ -5,7 +5,7 @@ description: "A Mach 5.09 shock passing a backward step; the strong expansion be
 status: established
 aliases: [shock diffraction, backward-facing step diffraction]
 tags: [benchmark, euler, positivity, 2d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Shock diffraction at a backward-facing corner
@@ -25,7 +25,14 @@ values, and their results match the published ones. A reactive variant —
 detonation diffraction at a 90° corner — is run with the same limiter
 ([Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.5).
 
+**Later uses (batch 7).**
+* *DG with only the positivity limiter* at $h = 1/64$, degree 2–3 on
+  rectangles: the Euler run is highly oscillatory and at degree 3 the
+  oscillations shift the shock; the Navier–Stokes run at $\mathrm{Re} = 200$
+  is clean ([Zhang (2017)](/sources/zhang-2017.md), Example 7).
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.5.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), Examples 5.3, 5.5.
+3. [Zhang (2017)](/sources/zhang-2017.md), Example 7.

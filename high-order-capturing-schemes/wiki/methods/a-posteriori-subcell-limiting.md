@@ -5,7 +5,7 @@ description: "Run the unlimited high-order scheme, test the candidate solution f
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiter, subcell limiter, SCL, DG-PN + WENO3 SCL]
 tags: [limiter, a-posteriori, dg, finite-volume, ader, positivity, amr]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # A posteriori subcell finite-volume limiting (MOOD paradigm)
@@ -119,7 +119,20 @@ systems. The suggested remedies are a further MOOD layer, a second-order
 TVD or first-order Godunov subgrid scheme, or Balsara's self-adjusting
 positivity method ([positivity preservation](/properties/positivity-preserving.md)).
 
+**Later uses (batch 7).**
+* A review attributes the floor $\delta_{\mathrm{DMP}} = \max(\delta_0, \epsilon_{\mathrm{DMP}}(\max - \min))$
+  with $\delta_0 = 10^{-4}$ and $\epsilon_{\mathrm{DMP}} = 10^{-3}$ to Dumbser et al.
+  (2014), as Zanotti et al. (2015) do. That suggests the published 2014
+  paper has $\delta_0$, which the version read here lacks; it is not
+  verified ([Balsara (2017)](/sources/balsara-2017-d.md), §VI.3, eq. 114).
+* The same review presents MOOD for DG with at least $(K+1)^d$ subcells,
+  not $2K+1$ per direction, and a TVD or low-order WENO subgrid fallback;
+  it calls MOOD-limited DG "recursive and difficult to implement" (§§I.2,
+  VI.3). This is a different presentation, not a contradiction of the
+  choice argued above.
+
 # Citations
 
 1. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §§1, 3, 4, 5, 6 (eqs. 17, 23–25 and 29 read from the page images).
 2. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §§1, 4, 5, 6 (eq. 17 read from the page image).
+3. [Balsara (2017)](/sources/balsara-2017-d.md), §§I.2, VI.3.

@@ -5,7 +5,7 @@ description: "Woodward–Colella Mach 3 inflow over a step (0.2 high at x = 0.6 
 status: established
 aliases: [forward facing step, Mach 3 step]
 tags: [benchmark, euler, 2d, vortex-sheet]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Mach 3 wind tunnel with a forward-facing step
@@ -53,6 +53,11 @@ pronounced roll-up of the vortex sheet
   $r_{\mathrm{AMR}} = 4$, the instability is well resolved
   ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.4).
 
+**Later uses (batch 7).**
+* The sixth-order ADER-DG run with subcell limiting on $300\times100$ is
+  reproduced at CFL 0.4; "a very small fraction of zones" is limited
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.1).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -64,3 +69,4 @@ pronounced roll-up of the vortex sheet
 7. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 8. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.5.
 9. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.4.
+10. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.1.

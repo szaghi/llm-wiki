@@ -242,6 +242,20 @@ Added 2026-10-08 (batch 6: balsara-2004, balsara-2009-b, mignone-2010, christlie
 | $\rho e(u)$ | internal-energy density as a function of the conserved state, concave for $\rho > 0$ |
 | $\mathbf J$, $\boldsymbol\Omega$ | a curl-constrained vector field (edge-collocated) and its curl $\boldsymbol\Omega = \nabla\times\mathbf J$, divergence-free (distinct from the mapped-grid Jacobian $\mathcal J$) |
 
+## Cleaning parameters, MHD eigensystems and viscous positivity
+
+Added 2026-10-09 (batch 7: zhang-2017, balsara-2017-d, ryu-1995, derigs-2018, mignone-2010-b, tomida-2026, balsara-2001).
+
+| Symbol | Meaning |
+|---|---|
+| $L_{\mathrm{GLM}}$, $C_r$ | GLM damping length and the dimensionless ratio $C_r = c_p^2/(c_h L_{\mathrm{GLM}})$; then $\alpha_p = \min_d h_d/(C_r L_{\mathrm{GLM}})$ |
+| $\hat\psi_{\mathrm{GLM}}$ | GLM scalar in field units, $\psi_{\mathrm{GLM}} = c_h\hat\psi_{\mathrm{GLM}}$ (the convention of the entropy-consistent GLM system) |
+| $\alpha_f$, $\alpha_s$; $B_\perp$ | normalization factors of the fast and slow MHD eigenvectors; magnitude of the field tangential to the sweep direction (subscripted, so distinct from the Lax–Friedrichs speed $\alpha$) |
+| $\mathbf f^{\mathrm v}$, $\boldsymbol\tau$, $\mathbf q$ | viscous flux of the compressible Navier–Stokes equations, $\partial_t u + \nabla\cdot\mathbf f(u) = \nabla\cdot\mathbf f^{\mathrm v}$; viscous stress tensor; heat-flux vector (bold, so distinct from the WENO-Z $\tau$ and the weight power $q$) |
+| $\beta^{\mathrm v}_{i+1/2}$ | penalty coefficient of a Lax–Friedrichs-type viscous (or total) numerical flux |
+| $\theta_e$ | single-ratio internal-energy scaling factor of the scaling limiter (one ratio for the whole state, no quadratic solve) |
+| $\hat f^{\mathrm{EC}}$, $\hat f^{\mathrm{ES}}$ | entropy-conservative and entropy-stable numerical fluxes |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

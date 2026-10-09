@@ -5,7 +5,7 @@ description: "A convex combination of all r ENO candidate reconstructions with n
 status: established
 aliases: [WENO, weighted essentially non-oscillatory, WENO-JS, WENO5]
 tags: [weno, reconstruction, shock-capturing, nonlinear-weights]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # WENO reconstruction (weighted ENO)
@@ -246,6 +246,16 @@ positivity-preserving for Euler; see the
   iteration near shocks at large steps; tailored weights; 3D unstructured
   WENO; non-polynomial bases; analysis of the unmodified schemes ([Shu (2009)](/sources/shu-2009.md), §7).
 
+**Later uses (batch 7).**
+* *A finite-volume recipe.* For modal third-order FV WENO: linear weights
+  1, 50 to 400, 1 (left, centre, right), power 4, $\varepsilon = 10^{-12}$, as
+  in central WENO; the reconstruction is then only third order. The
+  author warns that "it might be safer to not impart too large a weight to
+  the central stencil" for extreme astrophysical flows, and claims the
+  optimal-weight accuracy gain is "only most effective" for finite
+  differences, and that the power should increase with order
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §III.1, eqs. 19–29).
+
 # Citations
 
 1. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §§3–4 (read visually; image-only scan).
@@ -275,3 +285,4 @@ positivity-preserving for Euler; see the
 25. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §1.
 26. [Shu (2009)](/sources/shu-2009.md), §§1–3, 7.
 27. [Shu (2020)](/sources/shu-2020.md), §§3–4.
+28. [Balsara (2017)](/sources/balsara-2017-d.md), §III.1.

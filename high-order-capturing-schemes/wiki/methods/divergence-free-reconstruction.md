@@ -5,7 +5,7 @@ description: "Balsara's reconstruction for Yee-staggered MHD: from the normal co
 status: established
 aliases: [divergence-free reconstruction, divergence-free prolongation, Balsara reconstruction]
 tags: [mhd, divergence-free, constrained-transport, reconstruction, staggered, amr]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Divergence-free reconstruction of face-centred magnetic fields
@@ -25,7 +25,10 @@ by construction, answers the first three.
 
 ## Second order
 
-([Balsara (2004)](/sources/balsara-2004.md), §3.1, eqs. 3.1–3.17.) Each
+([Balsara (2001)](/sources/balsara-2001.md), §III, eqs. 3.5–3.39, where
+the formulas first appear, with minmod-limited face slopes; restated in
+[Balsara (2004)](/sources/balsara-2004.md), §3.1, eqs. 3.1–3.17, whose
+equation numbers are used below.) Each
 face carries the normal component and its two transverse slopes. Inside
 the zone, in local coordinates centred on the zone, the field is
 $$B_x = \hat B_{x,0} + \hat B_{x,x}\,x + \hat B_{x,y}\,y + \hat B_{x,z}\,z + \hat B_{x,xx}\,x^2 + \hat B_{x,xy}\,xy + \hat B_{x,xz}\,xz,$$
@@ -71,7 +74,7 @@ that the net flux through the six faces vanishes (eq. 18).
   fluxes and Riemann problems but are not evolved
   ([Balsara et al. (2009)](/sources/balsara-2009.md), §2.3).
 * The reconstruction is also an AMR prolongation. Ratio 2 is given in
-  Balsara's 2001 paper. For ratio 3 the 9 degrees of freedom per face are
+  Balsara's 2001 paper, at second order (see the AMR section below). For ratio 3 the 9 degrees of freedom per face are
   obtained by relaxing one of the 10 fourth-order moments, and products of
   2 and 3 follow by recursion (Balsara 2009b, §2, observation 2;
   [high-order AMR](/methods/high-order-amr.md)).
@@ -87,6 +90,35 @@ that the net flux through the six faces vanishes (eq. 18).
     compiler's reading).
   * One-step [ADER](/methods/ader.md)-WENO
     ([Balsara et al. (2009)](/sources/balsara-2009.md)).
+
+## On adaptive meshes
+
+([Balsara (2001)](/sources/balsara-2001.md), §§III–VI.) The
+second-order reconstruction is the first piece of a complete
+divergence-free AMR scheme on a Yee mesh.
+* **1D limit.** With variation along $x$ only, the reconstruction reduces
+  to van Leer's MUSCL, so the fluxes coincide with a zone-centred TVD
+  scheme (eq. 3.40).
+* **Prolongation, ratio 2.** Where a coarse face overlies four fine faces,
+  its profile gains a bilinear term fitted exactly to the four fine
+  values, and the zone polynomial gains twelve terms under three further
+  divergence constraints (eqs. 4.1–4.19). The system is under-determined;
+  three coefficients are fixed by a simplifying choice that reduces the
+  prolongation to the reconstruction when the cross terms vanish
+  (eqs. 4.12–4.14), not by the energy minimization of the third- and
+  fourth-order closure. Ratios 4 and 8 follow by recursion.
+* **Restriction** averages the four fine face fields onto the coarse face
+  (eq. 5.4).
+* **Electric-field correction.** After the fine steps, coarse faces that
+  share only an edge with the fine patch are corrected by the difference
+  between the space–time average of the fine edge fields and the coarse
+  one (eqs. 5.5–5.7): Berger–Colella refluxing moved from faces to edges
+  ([high-order AMR](/methods/high-order-amr.md)). That this keeps the
+  coarse field divergence-free is argued, not proved, and no run without
+  the correction is shown.
+* A divergence-*preserving* variant, which drops the constraint and
+  prolongs a nonzero divergence faithfully, is suggested for nearly
+  incompressible flow (§IV item 10).
 
 **Scope.** A cheaper alternative builds no volumetric reconstruction:
 finite-difference cell variables plus finite-volume face fields
@@ -104,3 +136,4 @@ analogue is the [curl-preserving reconstruction](/methods/curl-preserving-recons
 3. [Balsara et al. (2009)](/sources/balsara-2009.md), §2.3.
 4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–4.
 5. [Balsara et al. (2023)](/sources/balsara-2023.md), §1.
+6. [Balsara (2001)](/sources/balsara-2001.md), §§III–VI.

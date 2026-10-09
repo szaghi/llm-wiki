@@ -5,7 +5,7 @@ description: "A dense, rapidly spinning disc in a magnetized ambient medium laun
 status: established
 aliases: [rotor problem, Balsara-Spicer rotor]
 tags: [benchmark, mhd, 2d, positivity, low-beta]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # MHD rotor
@@ -59,6 +59,18 @@ the very-low-β version of Waagan, cited) or 0.13 (Balsara et al.)
   resolution caveat for this benchmark. Runs on $2500^2$ and $4700^2$ at
   third order ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.1).
 
+**Later uses (batch 7).**
+* *GLM vs CT at second order* (Tóth's first rotor, $400^2$, $t = 0.15$):
+  "extremely similar" Mach contours ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.6).
+* *Entropy-stable GLM on block AMR* up to $512^2$: much smaller divergence
+  artifacts than without cleaning, close to staggered CT; density and
+  pressure minima that the CT run shows only at $2048^2$
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §5.3).
+* *Fourth-order ADER-WENO on $1000^2$* with a multidimensional Riemann
+  solver, taper kept at six zones; and a relativistic rotor with Lorentz
+  factor 30, which needs at least $3500^2$ and was run at $4700^2$
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.4.
@@ -71,3 +83,6 @@ the very-low-β version of Waagan, cited) or 0.13 (Balsara et al.)
 8. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.6.
 9. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.3 (arXiv v1).
 10. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.1.
+11. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.6.
+12. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
+13. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6.

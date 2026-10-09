@@ -92,6 +92,8 @@ for every page.
    divergence; closed by fiat), by
    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
    of staggered fields, by [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
+   (open `Contradictions` entry: should the cleaning speed follow the time
+   step? Time-step changes and AMR break the cleaning's assumptions)
    or by projection; without it high-order MHD runs fail. Curl constraints
    have their dual: [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md). On curvilinear grids,
    uniform flow must stay uniform:
@@ -134,6 +136,7 @@ for every page.
    [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md),
    [shock diffraction](/benchmarks/shock-diffraction.md). MHD:
    [Brio–Wu](/benchmarks/brio-wu-shock-tube.md),
+   [Ryu–Jones shock tubes](/benchmarks/ryu-jones-shock-tubes.md),
    [grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md),
    [Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md),
    [field loop](/benchmarks/field-loop-advection.md),

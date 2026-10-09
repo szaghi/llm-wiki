@@ -5,7 +5,7 @@ description: "Adaptive Cartesian meshes for better-than-second-order schemes: ce
 status: established
 aliases: [AMR, space-time adaptive mesh refinement, cell-by-cell AMR, local time stepping, high-order AMR, block-structured AMR, subcycling, refluxing]
 tags: [amr, ader, single-step, finite-volume, finite-difference, dg, time-discretization]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # High-order adaptive mesh refinement for capturing schemes
@@ -206,6 +206,27 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 22.42 s on 32 processors for double Mach reflection
 ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), Table 6).
 
+**MHD on refined meshes (batch 7).**
+* *Divergence-free AMR on a Yee mesh* ([Balsara (2001)](/sources/balsara-2001.md), §§IV–VI). Fine
+  faces are prolonged with a divergence-free reconstruction that matches
+  the four fine faces under each coarse face (ratio 2; 4 and 8 by
+  recursion). Coarse face fields are restricted as the average of the fine
+  ones. Coarse faces that only share an edge with the fine patch are then
+  corrected by the difference between the space–time average of the fine
+  edge electric fields and the coarse one: Berger–Colella refluxing moved
+  from faces to edges. Second order, RK2 at Courant number 0.4 on all
+  levels with ratio-2 subcycling and proper nesting. The undivided
+  divergence stays below $10^{-13}$ in 3D runs; no run without the
+  correction is shown ([divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
+* *Cleaning on AMR.* GLM's derivation needs a constant, uniform cleaning
+  speed and damping. A damping length set to the finest cell, a time step
+  halved by each new level, and level-local time steps all break it; in an
+  AMR cloud collapse a time-step-tied cleaning speed inflates the peak
+  field by five orders of magnitude over CT ([Tomida et al. (2026)](/sources/tomida-2026.md), §§2.3.3, 3.4;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+* *Entropy-stable GLM on block AMR* gives rotor and Orszag–Tang results
+  close to staggered CT in FLASH ([Derigs et al. (2018)](/sources/derigs-2018.md), §§5.3–5.4).
+
 # Citations
 
 1. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §§1, 3, 4, 5.
@@ -215,3 +236,6 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 5. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§4–5 (accepted manuscript).
 6. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §§3.3–3.5, 4.6 (accepted manuscript).
 7. [Wang et al. (2025)](/sources/wang-2025.md), §§4–6, Appendix A (arXiv preprint).
+8. [Balsara (2001)](/sources/balsara-2001.md), §§IV–VI.
+9. [Tomida et al. (2026)](/sources/tomida-2026.md), §§2.3.3, 3.4.
+10. [Derigs et al. (2018)](/sources/derigs-2018.md), §§5.3–5.4.

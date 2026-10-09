@@ -5,7 +5,7 @@ description: "A scheme is positivity-preserving if cell averages (or point value
 status: established
 aliases: [positivity-preserving, physical-constraint-preserving, PCP, invariant-domain preserving]
 tags: [positivity, euler, mhd, admissible-set]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Positivity preservation
@@ -155,6 +155,39 @@ third-order WENO scheme "was used successfully" and a fifth-order one
 limiter "very simple and local", most convenient for FV and extended to FD
 "under stronger assumptions" ([high-Mach jet](/benchmarks/high-mach-astrophysical-jet.md)).
 
+**Later uses (batch 7).**
+* *Viscous flows.* For compressible Navier–Stokes, treating
+  $\mathbf f - \mathbf f^{\mathrm v}$ as one flux lets the three ingredients
+  carry over unchanged. The first-order building block is a
+  Lax–Friedrichs-type viscous flux, the central flux plus
+  $\tfrac12\beta^{\mathrm v}_{i+1/2}(u^+ - u^-)$, admissible for
+  $\beta^{\mathrm v} > \frac{1}{2\rho^2 e}\left(\sqrt{\rho^2 q_n^2 + 2\rho^2 e\,|\boldsymbol\tau\mathbf n|^2} + \rho|q_n|\right)$,
+  $q_n = \mathbf q\cdot\mathbf n$, for any equation of state and any stress
+  and heat-flux law ([Zhang (2017)](/sources/zhang-2017.md), §1.5, Lemma 6). Weak-positivity
+  theorems hold for FV and DG on rectangles and triangles (Theorems 1–3).
+  Two caveats from the same paper: the positivity bound allows
+  $\Delta t = O(h)$ for smooth viscous flow while linear stability needs
+  $O(\mathrm{Re}\,h^2)$, so errors can grow exponentially with positivity and
+  $L^1$ stability intact (Remark 2); and the single-ratio internal-energy
+  limiter is "crude", at least second-order inaccurate where the solution
+  touches the floor (§4.2;
+  [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)).
+* *MHD energy accounting.* Without the non-conservative energy term,
+  magnetic-energy errors from $\nabla\cdot\mathbf B \ne 0$ are booked as
+  internal-energy loss, and "the pressure could easily become negative"
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §2, an argument with no test). Plain GLM omits the
+  energy of the cleaning field; on a low-β Alfvén wave its thermal-energy
+  error, and CT's with face-averaged cell fields, reach about 30%, while
+  EGLM's does not ([Tomida et al. (2026)](/sources/tomida-2026.md), App. B;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+* *Balsara's self-adjusting method*, described in full: a flattener
+  narrows extended neighbour bounds at strong shocks, density is rescaled
+  Barth-style, and a common factor for all variables comes from a per-node
+  quadratic in pressure. It is "designed to save a code from a rare code
+  crash", claims no CFL theorem, and does not cure Toro's
+  tangential-velocity anomaly. With it a 3D MHD blast at plasma beta
+  $1.117\times10^{-4}$ stays positive ([Balsara (2017)](/sources/balsara-2017-d.md), §§VII, IX.4).
+
 ## Contradictions
 
 **Is the first-order Lax–Friedrichs MHD scheme provably positive?**
@@ -201,3 +234,7 @@ limiter "very simple and local", most convenient for FV and extended to FD
 12. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1–2.
 13. [Seo & Ryu (2023)](/sources/seo-2023.md), §§3.6–3.7.
 14. [Shu (2020)](/sources/shu-2020.md), §9.
+15. [Zhang (2017)](/sources/zhang-2017.md), §§1.5, 4.2, Lemma 6, Theorems 1–3.
+16. [Derigs et al. (2018)](/sources/derigs-2018.md), §2.
+17. [Tomida et al. (2026)](/sources/tomida-2026.md), App. B.
+18. [Balsara (2017)](/sources/balsara-2017-d.md), §§VII, IX.4.

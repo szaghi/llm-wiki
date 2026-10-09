@@ -5,7 +5,7 @@ description: "The interface fluxes used by FV and alternative-FD WENO schemes in
 status: established
 aliases: [Riemann solver, HLLC, HLL, MUSTA, FORCE, HLLI, Rusanov flux]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Approximate Riemann solvers as building blocks
@@ -110,6 +110,34 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   Alfvén waves. HLLE also costs less as the number of species grows, and is
   carbuncle-free ([Balsara (2004)](/sources/balsara-2004.md), §§3.4, 6, 7.1).
 
+**Later uses (batch 7).**
+* *A Roe-type TVD solver for MHD* ([Ryu & Jones (1995)](/sources/ryu-1995.md), §2.3). Harten's
+  second-order TVD scheme on the renormalized MHD eigensystem with
+  arithmetic interface states, a per-family entropy fix (parameter 0.1,
+  0.2, 0.1, 0 for the fast, Alfvén, slow and entropy families) and
+  steepening of the Alfvén families. A nonlinear MHD Riemann solver with
+  exact rarefactions, replacing Dai and Woodward's "rarefaction shocks",
+  serves as reference (§3).
+* *Entropy-conservative and entropy-stable fluxes for GLM-MHD*
+  ([Derigs et al. (2018)](/sources/derigs-2018.md), §§4.2–4.5). $\hat f^{\mathrm{EC}}$ from arithmetic and
+  logarithmic means, then $\hat f^{\mathrm{ES}}$ by adding Lax–Friedrichs,
+  local Lax–Friedrichs or matrix dissipation in entropy variables. Roe's
+  solver shows an entropy glitch in the sonic rarefaction of Toro's
+  modified Sod problem and of a modified Brio–Wu problem; the ES flux does
+  not (§5.7).
+* *HLLI* adds to HLL a linear sub-structure for chosen intermediate
+  families with weight
+  $\delta_p = 1 - \min(\lambda^{(p)}, 0)/S_L - \max(\lambda^{(p)}, 0)/S_R$; it is
+  "complete" when all are included, and HLLD lacks the slow waves
+  ([Balsara (2017)](/sources/balsara-2017-d.md), Apps. D–E).
+* *Solver quality against order.* On torsional Alfvén-wave decay, HLL with
+  a multidimensional solver without sub-structure dissipates about 6 times
+  more than HLLI with sub-structure at second order, 3 times more at
+  third, and "almost negligible" more at fourth ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.5).
+* *An exact face solve of the cleaning subsystem* before a seven-wave Roe
+  solver ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §3.2;
+  [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §§2, 4, 5.
@@ -126,3 +154,7 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 12. [Balsara et al. (2023)](/sources/balsara-2023.md), §§2.5, 3.4.
 13. [Berta et al. (2024)](/sources/berta-2024.md), §§3.3, 5.4, Appendix B (arXiv v4).
 14. [Balsara (2004)](/sources/balsara-2004.md), §§3.4, 6, 7.1.
+15. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2.3, 3.
+16. [Derigs et al. (2018)](/sources/derigs-2018.md), §§4.2–4.5, 5.7.
+17. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.5, Apps. D–E.
+18. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §3.2.

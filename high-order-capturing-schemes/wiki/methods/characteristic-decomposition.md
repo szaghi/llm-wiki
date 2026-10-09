@@ -5,7 +5,7 @@ description: "Applying scalar ENO/WENO/MP reconstruction to the characteristic v
 status: established
 aliases: [characteristic-wise reconstruction, field-by-field decomposition]
 tags: [systems, eigenvectors, reconstruction]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Local characteristic decomposition
@@ -184,6 +184,27 @@ for strong shocks and for several discontinuities from one initial jump.
 The interface state is the Roe average, or the arithmetic mean where no
 Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 
+**Later uses (batch 7).**
+* *Normalized MHD eigenvectors written out.* The natural fast and slow
+  eigenvectors are singular where $B_x = 0$ or $B_\perp = 0$. The
+  Brio–Wu renormalization uses
+  $\alpha_f = \sqrt{c_f^2 - c_A^2}/\sqrt{c_f^2 - c_s^2}$ and
+  $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$ with the tangential
+  direction cosines, set to $1/\sqrt2$ when $B_\perp = 0$, and
+  $\alpha_f = \alpha_s = 1$ at the triple point. Multiplying the slow pair
+  (if $c^2 > c_A^2$) or the fast pair (if $c^2 < c_A^2$) by the sign of the
+  tangential field makes them continuous. For planar fields the Alfvén
+  eigenvectors are trivial, so no rotational discontinuities form
+  ([Ryu & Jones (1995)](/sources/ryu-1995.md), §2.2, eqs. 2.27–2.79). These are the Ryu–Jones
+  eigenvectors HOW-MHD uses. The arithmetic interface state agrees with
+  the Jiang–Wu remark: at $\gamma = 2$ it does "just as well" as the Roe
+  linearization (§2.3).
+* *Zone-centred eigensystem.* Neighbours can be projected onto the left
+  eigenvectors of the *zone centre*, limited, and projected back
+  ([Balsara (2017)](/sources/balsara-2017-d.md), §II.1, eqs. 9–11), as Suresh and Huynh do, rather
+  than at a Roe interface state. MHD and RMHD are non-convex, so genuinely
+  nonlinear families can bring "their own further pathologies".
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -222,3 +243,5 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 34. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.
 35. [Shu (2009)](/sources/shu-2009.md), §3.5.3.
 36. [Shu (2020)](/sources/shu-2020.md), §4.1.
+37. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2.2–2.3.
+38. [Balsara (2017)](/sources/balsara-2017-d.md), §II.1.

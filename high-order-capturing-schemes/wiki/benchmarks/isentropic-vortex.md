@@ -5,7 +5,7 @@ description: "A smooth isentropic vortex advected diagonally through a periodic 
 status: established
 aliases: [vortex evolution problem, isentropic vortex, Shu vortex]
 tags: [benchmark, euler, accuracy, 2d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Isentropic vortex advection
@@ -99,6 +99,15 @@ periodic box and returns to its start after one period
   so that the positivity limiter acts, converges at fifth order
   ([Ding & Wu (2024)](/sources/ding-2024.md), Example 4.1, Table 4.1).
 
+**Later uses (batch 7).**
+* *A strong, low-density vortex* (strength 9.5 on $[0, 10]^2$, minimum
+  density $4.22\times10^{-3}$ and pressure $4.74\times10^{-4}$, $t = 0.1$) tests
+  the accuracy of the efficient positivity limiter in DG: orders near
+  $K + 1$ for $K = 2$–5 on rectangles and triangles ([Zhang (2017)](/sources/zhang-2017.md),
+  Example 4, Tables 2–3).
+* Third-order cell averages need more than the centre value: the review
+  uses the centre and the four face midpoints ([Balsara (2017)](/sources/balsara-2017-d.md), §VIII.1).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
@@ -118,3 +127,5 @@ periodic box and returns to its start after one period
 15. [Berta et al. (2024)](/sources/berta-2024.md), §5.2 (arXiv v4).
 16. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §5.
 17. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.1 (arXiv v1).
+18. [Zhang (2017)](/sources/zhang-2017.md), Example 4.
+19. [Balsara (2017)](/sources/balsara-2017-d.md), §VIII.1.

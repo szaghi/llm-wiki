@@ -5,7 +5,7 @@ description: "An exact nonlinear MHD wave, oblique to the mesh: run for a few pe
 status: established
 aliases: [circularly polarized Alfvén wave, torsional Alfvén wave, smooth Alfvén wave, Alfvén-wave decay]
 tags: [benchmark, mhd, accuracy, dissipation, 2d, 3d]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Circularly polarized (torsional) Alfvén waves
@@ -76,6 +76,20 @@ also at high beta and that the set-up is designed to ameliorate them
 ([Balsara (2009b)](/sources/balsara-2009-b.md), §4.2). Neither reports
 an instability in its runs.
 
+**Later uses (batch 7).**
+* *Second-order convergence of four schemes* in 2D ($\tan\alpha = 2$) and 3D:
+  at $N_x = 256$ and Courant number 0.8 in 2D, GLM $8.48\times10^{-5}$, CT
+  $6.73\times10^{-5}$, eight-wave $7.29\times10^{-5}$, all about second order
+  ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.1, Table 1).
+* *A thermal-energy diagnostic at very low β* ($p_0 = 10^{-4}$, plasma beta
+  $1.98\times10^{-4}$, $256\times128$, five periods): CT and GLM make errors
+  of about 30% of both signs, EGLM a nearly uniform slow increase
+  ([Tomida et al. (2026)](/sources/tomida-2026.md), App. B.3).
+* *Long-term decay, quantified.* An incomplete solver dissipates about 6
+  times more than a complete one at second order, 3 times at third, and
+  almost no more at fourth; second order with the complete solver beats
+  third order with the incomplete one ([Balsara (2017)](/sources/balsara-2017-d.md), §§IX.5, IX.8).
+
 # Citations
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.1 (arXiv v2).
@@ -87,3 +101,6 @@ an instability in its runs.
 7. [Berta et al. (2024)](/sources/berta-2024.md), §5.3 (arXiv v4).
 8. [Balsara (2004)](/sources/balsara-2004.md), §7.1.
 9. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.5.
+10. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.1.
+11. [Tomida et al. (2026)](/sources/tomida-2026.md), App. B.3.
+12. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.5, IX.8.

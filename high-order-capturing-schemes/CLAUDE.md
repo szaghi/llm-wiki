@@ -129,6 +129,14 @@ to another bundle.
 
 ## Status
 
+**Batch 7 staged 2026-10-09:** 69 of 69 archived sources ingested. The batch
+closed gaps found against the ADAM paper collection: ryu-1995 (arXiv preprint,
+no figures or tables), balsara-2001, mignone-2010-b (arXiv v1), zhang-2017
+(author's revised preprint), balsara-2017-d (NSF PAR author manuscript, not
+arXiv v1), derigs-2018 (arXiv v3) and tomida-2026 (arXiv v2). Their archive
+copies came from the div-free-amr archive (D17), the ADAM collection, or a
+fresh download where the collection held HTML error pages.
+
 **Batch 6 staged 2026-10-08:** all 62 archived sources ingested (batch 1: origins, ENO,
 WENO, MP, CWENO, MPWENO; batch 2: mapped WENO, WENO-Z, WENO-CU6, TENO,
 WENO-AO/ZQ, bandwidth-optimized and hybrid compact schemes; batch 3: SSP

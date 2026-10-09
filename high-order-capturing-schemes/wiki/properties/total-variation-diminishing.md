@@ -5,7 +5,7 @@ description: "TVD: the discrete total variation does not grow; TVB: it stays uni
 status: established
 aliases: [TVD, TVB, total variation diminishing, total variation bounded]
 tags: [stability, tvd, nonlinear-stability]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # Total variation diminishing (TVD) and bounded (TVB)
@@ -54,6 +54,14 @@ inequality) the spatial operator has
 ([Shu & Osher (1988)](/sources/shu-1988.md);
 [Shu (1998)](/sources/shu-1998.md), §4.2).
 
+**Later uses (batch 7).**
+* *Applied field by field to MHD.* Harten's (1983) second-order TVD scheme
+  on the seven characteristic fields of ideal MHD, with a Roe-type
+  linearization and steepening of the Alfvén families; in 1D the
+  divergence-free reconstruction of face fields reduces to the same MUSCL
+  profile. No TVD property is proved for the system
+  ([Ryu & Jones (1995)](/sources/ryu-1995.md), §2.3; [Balsara (2001)](/sources/balsara-2001.md), eq. 3.40).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–2, Remark 1.3.
@@ -61,3 +69,5 @@ inequality) the spatial operator has
 3. [Shu (1998)](/sources/shu-1998.md), §§1, 2.3.4, 4.2.
 4. [Suresh & Huynh (1997)](/sources/suresh-1997.md), §2.
 5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §I.
+6. [Ryu & Jones (1995)](/sources/ryu-1995.md), §2.3.
+7. [Balsara (2001)](/sources/balsara-2001.md), §III.

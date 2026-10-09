@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods written as convex combinations of f
 status: established
 aliases: [TVD Runge-Kutta, SSP Runge-Kutta, Shu-Osher Runge-Kutta, SSP-RK3]
 tags: [time-discretization, ssp, tvd, method-of-lines]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-09T00:00:00Z
 ---
 
 # TVD / strong-stability-preserving Runge–Kutta methods
@@ -225,6 +225,19 @@ von Neumann analysis of the full discretization.
   SSP-RK3, the step must shrink faster than the mesh
   ([Balsara (2009b)](/sources/balsara-2009-b.md), §3.3).
 
+**Later uses (batch 7).**
+* The five-stage fourth-order SSP scheme at CFL 1.5 in 1D, printed with
+  15-digit coefficients (first stage $0.391752226571890\,\Delta t$); the
+  permitted CFL divides by the dimension; boundary values are needed at
+  every stage ([Balsara (2017)](/sources/balsara-2017-d.md), §IV.1, eq. 38).
+* *Restart on failure with positivity limiting* ([Zhang (2017)](/sources/zhang-2017.md), §5.3).
+  SSP-RK3 with the limiter before every stage; the trial step is
+  $\min\{a\,h/\alpha^*,\ b\,\mathrm{Re}\,h^2\}$ from the convective speed only,
+  since the viscous penalty grows at shocks; a stage average outside the
+  admissible set halves the step and restarts it. A bound checked at the
+  first stage does not guarantee the second, because the stage speeds are
+  unknown in advance.
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -270,3 +283,5 @@ von Neumann analysis of the full discretization.
 41. [Balsara (2004)](/sources/balsara-2004.md), §2.
 42. [Balsara (2009b)](/sources/balsara-2009-b.md), §3.3 (author manuscript).
 43. [Shu (2009)](/sources/shu-2009.md), §3.1.
+44. [Balsara (2017)](/sources/balsara-2017-d.md), §IV.1.
+45. [Zhang (2017)](/sources/zhang-2017.md), §5.3.
