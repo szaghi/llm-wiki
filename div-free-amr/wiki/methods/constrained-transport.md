@@ -146,6 +146,10 @@ In [Tóth (2000)](/sources/toth-2000.md)'s ten-problem shock-capturing
 comparison, flux-CT ranks among the three most accurate and reliable schemes.
 In production, CT runs on tree-based (octree) AMR in RAMSES-MHD with
 2D-Riemann edge EMFs ([Fromang et al. (2006)](/sources/fromang-2006.md)),
+in fourth-order ADER-WENO finite volume for special-relativistic MHD with
+edge fields from a multidimensional (MuSIC) Riemann solver
+([Balsara & Kim (2016)](/sources/balsara-kim-2016.md); no divergence
+diagnostic is reported there),
 and in Athena via unsplit CTU with the upwind-biased $\mathcal{E}^c$ EMF
 ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)) — where
 dimensional splitting is ruled out on principle (the constraint couples
@@ -169,3 +173,4 @@ cell-integrated monopole density, of every cell.
 8. [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md), §§4, 8.
 9. [Seo & Ryu (2023)](/sources/seo-2023.md), §§1, 2.3, 3.1–3.2, 3.6.
 10. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §§1, 3, 5–6, 8.
+11. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.

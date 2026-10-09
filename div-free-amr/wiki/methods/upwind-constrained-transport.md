@@ -136,6 +136,17 @@ consistent with that invariant**:
   with about $34^3$. The fallback was essential on the blast and the
   cloud–shock problem. AMR and non-Cartesian grids are left to companion
   work.
+* **A finite-volume ADER realization for relativistic MHD** ([Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §4.2).
+  The four states meeting at a vertex feed a two-dimensional MuSIC Riemann
+  solver: 1D HLLC or HLLEM problems bound a strongly interacting state,
+  which carries a linear sub-structure in the entropy and Alfvén waves.
+  The edge field is the mean of two components of the resulting vertex
+  fluxes, so it is single-valued and multidimensionally upwinded.
+  Whether the scheme meets UCT's other requirements (staggered normal
+  components in the momentum and energy fluxes, face fields not
+  reconstructed along their own direction) is not stated. The paper
+  reconstructs a zone-centred field and does not say how it relates to
+  the face fields.
 * **A finite-difference realization, to ninth order** ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)). Zone-centred
   variables are point values advanced by alternative-FD WENO; only the
   face-averaged $B_h$ keeps a finite-volume, Stokes-law update.
@@ -166,3 +177,4 @@ consistent with that invariant**:
 5. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§4–7.
 6. [Berta et al. (2024)](/sources/berta-2024.md), §§3–6, Appendix B.
 7. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–4, 6, 7.4.
+8. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §4.2.

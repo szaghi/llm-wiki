@@ -1,5 +1,30 @@
 # Directory Update Log
 
+## 2026-10-09
+
+* **Ingested [Balsara & Kim (2016)](/sources/balsara-kim-2016.md)** (J. Comput. Phys.
+  312:357–384, Version of Record; archive copy added from the high-order bundle's
+  archive per D17). Gap found by cross-checking the ADAM paper collection against
+  this bundle.
+  * Updated [Staggered grid](/definitions/staggered-grid.md): the unscoped
+    "any divergence-free formulation requires a Yee-type mesh" premise, attributed
+    to the necessity side as a citation, not as evidence. The scoped resolution
+    is unchanged.
+  * Updated [Flux-CT](/methods/flux-ct.md),
+    [Upwind constrained transport](/methods/upwind-constrained-transport.md) and
+    [Constrained transport](/methods/constrained-transport.md): edge fields from a
+    two-dimensional MuSIC Riemann solver, the RMHD finite-volume realization, and
+    the unverified no-doubled-dissipation claim.
+  * Bibliography: the existing entry `balsara-2016-d` was re-keyed to
+    `balsara-kim-2016` (the bundle's two-author slug convention), and the 73-entry
+    reference list was merged: 19 new works, 54 existing, 7 placeholder titles
+    upgraded. Merged with `tools/bib_merge.py` for its collision checks. The
+    resolver's aliases were reviewed by vol:page, and the fragment's first-author
+    keys of ingested sources were mapped onto their multi-author keys
+    (`gardiner-stone-2005`, `gardiner-stone-2008`, `jiang-shu-1996`,
+    `mccorquodale-colella-2011`). `komissarov-2006-b` (AIP Conf. Proc. 856:129) was
+    split from `komissarov-2006` (MNRAS 368:993). 3208 → 3227 entries.
+
 ## 2026-10-08
 
 * **Layer-1 renames (user-authorized):** three archive filenames now embed

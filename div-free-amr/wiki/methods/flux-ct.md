@@ -49,6 +49,13 @@ superseded twice over: by genuinely two-dimensional four-state upwind EMFs
 by direct evaluation of the EMF at zone edges from the multidimensional
 Riemann data, with second/third-order unsplit time integration
 ([Balsara (2004)](/sources/balsara-2004.md) §2 — resolving his "Issue 4").
+A later step in the same line takes the edge field from the vertex fluxes
+of a genuinely two-dimensional (MuSIC) Riemann solver, as
+$E_z = \tfrac12\left(-(F_{\mathrm{num}})_7 + (G_{\mathrm{num}})_6\right)$, in
+special-relativistic MHD. Its authors claim this removes any need to double
+the dissipation of the electric field and avoids Gardiner and Stone's
+objections. No test in that paper checks the claim
+([Balsara & Kim (2016)](/sources/balsara-kim-2016.md) §§1, 4.2).
 
 **Why plain averaging fails, quantified.**
 [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) §§2.3–3.2 make
@@ -131,3 +138,4 @@ puts the staggered components into every flux.
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §§2.3, 3.2, 3.3.
 5. [Felker & Stone (2018)](/sources/felker-2018.md), §4, Appendix A.
 6. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§3, 6.
+7. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.2.

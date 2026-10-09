@@ -69,6 +69,15 @@ positions:
   Riemann solvers and the momentum fluxes on the staggered data, and
   measures monopole damage in the collocated counterparts
   ([UCT](/methods/upwind-constrained-transport.md)).
+* [Balsara & Kim (2016)](/sources/balsara-kim-2016.md) §1 take the
+  necessity side in its strongest, unscoped form: "any divergence-free
+  formulation of MHD requires the use of a Yee-type mesh". The statement is
+  a premise. It comes with no argument, and Tóth (2000) is not cited. The
+  only reason given is constructive: the electric field lives at edges, so
+  the fluxes must be upwinded multidimensionally there. That is Londrillo
+  and Del Zanna's reading, so the source adds a citation to that side, not
+  new evidence. Read literally, as a universal claim, it is contradicted by
+  the collocated results above.
 * *Not evidence either way* (compiler note): [Balsara & Kim (2004)](/sources/balsara-kim-2004.md)
   frame their comparison as "cleaning vs staggered mesh". Their staggered
   scheme is flux-CT, which Tóth proved equivalent to a collocated
@@ -110,3 +119,4 @@ is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 6. [Zaghi (2026)](/sources/zaghi-2026.md): issues #29, #30.
 7. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.4, 4.
 8. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§I, II.d.
+9. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
