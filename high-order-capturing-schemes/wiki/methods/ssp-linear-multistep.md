@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "SSP linear multistep methods"
-description: "Explicit linear multistep methods written as convex combinations of forward-Euler steps from past states, with one operator evaluation per step; the fixed-step optimal coefficients, the sharp bound (Ω−p)/(Ω−1) and closed-form optimal formulae for variable steps, greedy CFL-following step selection, and why they are recommended with positivity limiters."
+description: "Explicit linear multistep methods written as convex combinations of forward-Euler steps from past states, with one operator evaluation per step; the fixed-step optimal coefficients, a sharp bound on the SSP coefficient in terms of the step history and closed-form optimal formulae for variable steps, greedy CFL-following step selection, and why they are recommended with positivity limiters."
 status: established
 aliases: [SSP LMM, SSP multistep, TVD multistep, variable-step SSP multistep, SSPMSV]
 tags: [time-discretization, ssp, multistep]
@@ -64,8 +64,8 @@ the step history:
 * **Greedy step selection** (§4, eqs. 36, 39). Since $\mathcal C$ depends on
   the new step, the condition is implicit. Solved in closed form at
   second order, the new step is the smallest past forward-Euler limit
-  times $S/(S + \min_i\Delta t_{\mathrm{FE}})$, where $S$ is the sum of
-  the last $m - 1$ steps; at third order the limit enters the
+  multiplied by a ratio: the sum of the last $m - 1$ steps, divided by
+  that sum plus the limit; at third order the limit enters the
   denominator twice. The step tends to the fixed-step SSP step
   $\frac{m - p_{\mathrm t}}{m - 1}\Delta t_{\mathrm{FE}}$ (Theorems 6–7;
   third order needs a slow-variation assumption). This is CFL following,

@@ -5,7 +5,7 @@ description: "Ghost-point values for wide-stencil high-order finite differences 
 status: established
 aliases: [ILW, simplified inverse Lax-Wendroff, SILW, inverse Lax-Wendroff procedure, cut-cell boundary treatment, moving-boundary ILW]
 tags: [boundary-treatment, finite-difference, weno, stability, cut-cell, moving-boundary, conservation]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Inverse Lax–Wendroff numerical boundary treatment
@@ -281,6 +281,27 @@ variants above. In 2009, ghost values came from the boundary condition
 with local characteristic decomposition, or from one-sided WENO
 ([Shu (2009)](/sources/shu-2009.md), §3.5.4).
 
+**Later uses (batch 10).** The alternatives named above now have pages:
+[immersed-boundary methods](/methods/immersed-boundary-method.md) and [cut-cell finite volume](/methods/cut-cell-finite-volume.md).
+* *What "changes the PDE" means.* Peskin's method replaces the wall
+  condition by a singular body force spread with a discrete delta
+  function; it is equivalent to the stress-jump conditions but smears the
+  interface over about one cell and is first order there ([Peskin (2002)](/sources/peskin-2002.md),
+  §§3, 8). ILW keeps a sharp wall and a high-order ghost-point formula.
+* *Ghost-cell IB for compressible flow* fills ghost points from an image
+  point, as ILW does from the wall, but with interpolation from the fluid
+  instead of the PDE. Near shocks, quadratic interpolation gave negative
+  density and pressure, and the boundary order was dropped to
+  inverse-distance weighting ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6).
+* *Conservation at the wall.* On a cold-wall hypersonic cylinder a
+  ghost-cell solver misses the stagnation heat flux by a factor of about
+  40 while a conservative cut-cell method matches the body-fitted result;
+  switching off the conservative flux treatment in the cut-cell solver
+  also gives a clearly wrong, though closer, heat flux. The authors
+  attribute the failure to conservation, as a hypothesis ([Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5). This goes further than
+  the conservation section above, where the error of non-conservative
+  ILW was visible in one test only.
+
 # Citations
 
 1. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §§1–5 (§2.2–2.5 formulas and Tables 3.1–3.2 read from the page images).
@@ -293,3 +314,6 @@ with local characteristic decomposition, or from one-sided WENO
 8. [Liu et al. (2025)](/sources/liu-2025.md), §§3–5.
 9. [Shu (2020)](/sources/shu-2020.md), §8.
 10. [Shu (2009)](/sources/shu-2009.md), §3.5.4.
+11. [Peskin (2002)](/sources/peskin-2002.md), §§3, 8.
+12. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).
+13. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5 (arXiv v1).

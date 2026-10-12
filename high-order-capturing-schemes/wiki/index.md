@@ -9,9 +9,10 @@ ENO and WENO and their variants (mapped, Z, adaptive-order, targeted
 ENO, central WENO, compact hybrids), monotonicity-preserving and PPM
 reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
-boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
+boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
+immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 83 sources compiled (the whole archive)**: 82 published works,
+**Corpus: 90 sources compiled (the whole archive)**: 89 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -133,6 +134,11 @@ for every page.
    line extends to sign-changing wind, exact conservation, moving bodies
    and fluid–structure interfaces. Provably stable closures come from
    summation by parts: [energy-stable WENO](/methods/energy-stable-weno.md).
+   Bodies that do not fit the grid: [immersed-boundary methods](/methods/immersed-boundary-method.md)
+   (Peskin's forcing; ghost cells, not conservative at the wall) and
+   conservative [cut-cell finite volume](/methods/cut-cell-finite-volume.md),
+   whose small-cell problem [state redistribution](/methods/state-redistribution.md)
+   solves, with re-redistribution at AMR interfaces.
    [High-order AMR](/methods/high-order-amr.md): one-step updates for
    local time stepping on trees, or Runge–Kutta subcycling on
    block-structured hierarchies, where ghost values must match the stages
@@ -151,7 +157,10 @@ for every page.
    [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
    [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Embedded
    boundaries: [supersonic cylinder](/benchmarks/supersonic-cylinder-flow.md),
-   [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md). Shock
+   [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md),
+   [supersonic vortex in a quarter annulus](/benchmarks/supersonic-vortex-annulus.md),
+   [shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md),
+   [Schardin's problem](/benchmarks/schardin-problem.md). Shock
    instability: [Quirk's odd–even test](/benchmarks/quirk-odd-even-test.md),
    [stationary normal shock](/benchmarks/stationary-normal-shock.md),
    [Mach 20 blunt body](/benchmarks/hypersonic-blunt-body.md). Positivity:

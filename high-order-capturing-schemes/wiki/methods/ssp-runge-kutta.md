@@ -251,7 +251,8 @@ von Neumann analysis of the full discretization.
   $n^2 - n$, SSP(5,3) $\approx 2.6506$ (§§2.2, 4.1).
 * *Storage.* SSP(4,3), with $\mathcal C = 2$, runs in two registers and
   keeps $u^n$; the two-register figure $\mathcal C \approx 0.32$ above
-  belongs to the Williamson form ([low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)).
+  belongs to the three-stage Williamson form; five-stage Williamson
+  methods reach 1.40 ([low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)).
 * *Entropy inequalities need forward Euler to satisfy them.* The
   convex-functional argument above transfers an entropy inequality only
   when forward Euler satisfies it. For an entropy-conservative

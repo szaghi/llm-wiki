@@ -19,11 +19,11 @@ regardless of $s$ ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), �
 
 ## Storage classes
 
-* **2N (Williamson).** Only $u$ and an increment $\delta u$ are kept:
-  $\delta u^{(i)} = A_i\,\delta u^{(i-1)} + \Delta t\,\mathcal L(u^{(i-1)})$,
-  $u^{(i)} = u^{(i-1)} + B_i\,\delta u^{(i)}$, $i = 1,\dots,s$
-  ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), eq. 4.4;
-  $A_i$, $B_i$ are that form's scalars). Van der Houwen's
+* **2N (Williamson).** Only the solution and one increment register are
+  kept: each stage scales the increment by a constant, adds
+  $\Delta t\,\mathcal L$ of the current stage, and adds a multiple of the
+  increment to the solution
+  ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), eq. 4.4). Van der Houwen's
   construction is the other classical 2N route
   ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §3).
 * **2N\*.** A 2N method that also keeps $u^n$ for the whole step, which a
@@ -33,18 +33,18 @@ regardless of $s$ ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), �
   the column of $u^n$, $b_{ik}$ only on the first subdiagonal (eq. 24,
   Algorithm 1).
 * **3S\*, 3S\*₊, 2R.** Ketcheson's counting, used for pairs: 3S\* is three
-  registers including an error estimate, valid when an assignment
-  $S \leftarrow S + \mathcal L(S)$ costs one register plus lower-order
-  memory; the subscript ₊ adds one register for the embedded solution.
+  registers including an error estimate, valid when overwriting a
+  register with itself plus $\mathcal L$ of itself costs one register
+  plus lower-order memory; the subscript ₊ adds one register for the embedded solution.
   Three registers is the minimum when an error estimate and step
   rejection are required ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §2.1, Algorithms 1–2).
 
 ## Which SSP coefficients survive
 
-* **Williamson form, third order:** the best SSP method found in that
-  class has $\mathcal C = 0.32$ (a one-parameter family, with $c = 0.924574$),
-  against $\mathcal C = 1$ for the optimal three-stage method in the
-  usual form; no SSP member of the Carpenter–Kennedy five-stage
+* **Williamson form, three stages, third order:** the best SSP method
+  found in that class (a one-parameter family; four free coefficients)
+  has $\mathcal C = 0.32$, against $\mathcal C = 1$ for the optimal
+  three-stage method in the usual form; no SSP member of the Carpenter–Kennedy five-stage
   fourth-order 2N class with positive coefficients was found, and a
   low-storage method with a negative $b_{ik}$ cannot use
   $\tilde{\mathcal L}$ without losing its storage property
@@ -55,8 +55,9 @@ regardless of $s$ ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), �
   ($\mathcal C = 2$). The optimal SSP($n^2$,3), $\mathcal C = n^2 - n$
   (Ketcheson 2008), are 2N but not 2N\*
   ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2.2, 3).
-  So the 0.32 figure is a property of the Williamson form, not of two
-  registers.
+  So the 0.32 figure is a property of the three-stage Williamson form,
+  not of two registers; five-stage Williamson methods reach
+  $\mathcal C = 1.40$ (Higueras & Roldán, Table 1).
 * **Five stages, third order.** The optimal SSP(5,3) has
   $\mathcal C \approx 2.6506$, the real root of $x^3 - 5x^2 + 10x - 10$.
   Under a structure that RK-Opt runs show and the paper then assumes, no
@@ -95,7 +96,7 @@ the stricter storage constraints, the missing FSAL, and an embedded
 stability region smaller than the main one in places (§5.5.4).
 * **SSP3(2)4 in 3S\*₊.** Kraaijevanger's four-stage third-order SSP
   method with the Conde–Fekete–Shadid embedded method runs in three
-  registers ($u^n$, $u$, $\hat u$): three forward-Euler half steps, the
+  registers (the old solution, the current stage and the embedded solution): three forward-Euler half steps, the
   combination $\tfrac23 u^n + \tfrac13 u$, and a fourth half step
   (App. A, eqs. A1–A2). It was the most efficient method on several
   stability-limited flows (§§5.5.2, 7).

@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Relaxation Runge–Kutta methods"
-description: "Scale the Runge–Kutta update by a scalar γ found from one scalar equation per step, so that a convex functional (an entropy) changes by exactly the method's own quadrature of its rate: fully discrete entropy conservation or dissipation for any Runge–Kutta method, order kept when the step is assigned to t^n + γΔt (RRK) and lost by one when assigned to t^n + Δt (IDT)."
+description: "Scale the Runge–Kutta update by a relaxation parameter found from one scalar equation per step, so that a convex functional (an entropy) changes by exactly the method's own quadrature of its rate: fully discrete entropy conservation or dissipation for any Runge–Kutta method, order kept when the result is assigned to the relaxed time (RRK) and lost by one when assigned to the full step (IDT)."
 status: established
 aliases: [RRK, relaxation RK, incremental direction technique, IDT, fully discrete entropy stability]
 tags: [time-discretization, runge-kutta, entropy]
@@ -59,8 +59,8 @@ the ODE tests, bisection to machine precision in the 3D solver; §§2.4, 4).
 * **Retained structure.** Linear invariants (total mass on a periodic
   domain) are conserved although $\gamma^n_{\mathrm R}$ is nonlinear.
   Several convex quantities are all dissipated by taking the smallest
-  root. SSP properties are retained "as long as $\gamma_n$ deviates not
-  too much from unity", cited from Ketcheson (2019) with no bound given
+  root, when all $\mathsf b_j \ge 0$. SSP properties are retained as long
+  as $\gamma^n_{\mathrm R}$ stays close to 1, cited from Ketcheson (2019) with no bound given
   (§2.3).
 
 ## Fully discrete entropy-stable CFD

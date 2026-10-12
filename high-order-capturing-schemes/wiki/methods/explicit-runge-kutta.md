@@ -47,7 +47,7 @@ step control, without an automatic rule.
 
 For the test equation $u' = \lambda u$, with $z = \Delta t\lambda$, one step
 multiplies by the **stability function**
-$R_{\mathrm{st}}(z) = 1 + z\,\mathsf b^{\mathsf T}(I - z\mathsf A)^{-1}\mathbf 1$,
+$R_{\mathrm{st}}(z) = 1 + z\,\mathsf b^{\mathsf T}(\mathsf I - z\mathsf A)^{-1}\mathbf 1$,
 a polynomial of degree $s$ for an explicit method
 ([Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), eq. 4.3).
 Linear stability does not imply a monotone or positive solution: SSP(3,3)
@@ -63,9 +63,10 @@ A **pair** adds weights $\hat{\mathsf b}$ of a lower order
 $\hat p_{\mathrm t}$ on the same stages; the difference of the two updates
 estimates the local error ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §2, eqs. 2–4).
 In a FSAL ("first same as last") pair the embedded method also uses
-$\mathcal L(u^{n+1})$, which the next step needs anyway. Names follow
-"NAME$p_{\mathrm t}(\hat p_{\mathrm t})s$", with a trailing F for FSAL
-(e.g. BS3(2)3F, BS5(4)7F, DP5(4)6F). The estimate drives
+$\mathcal L(u^{n+1})$, which the next step needs anyway. Names give the main order, the embedded order in parentheses, then the
+effective number of operator evaluations per step (one less than the
+stage count for a FSAL pair), with a trailing F for FSAL: BS3(2)3F,
+BS5(4)7F, DP5(4)6F. The estimate drives
 [step-size control](/methods/runge-kutta-step-size-control.md).
 
 ## Methods that change the weights after the stages

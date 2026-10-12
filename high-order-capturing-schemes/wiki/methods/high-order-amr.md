@@ -5,7 +5,7 @@ description: "Adaptive Cartesian meshes for better-than-second-order schemes: ce
 status: established
 aliases: [AMR, space-time adaptive mesh refinement, cell-by-cell AMR, local time stepping, high-order AMR, block-structured AMR, subcycling, refluxing]
 tags: [amr, ader, single-step, finite-volume, finite-difference, dg, time-discretization]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # High-order adaptive mesh refinement for capturing schemes
@@ -227,6 +227,19 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 * *Entropy-stable GLM on block AMR* gives rotor and Orszag–Tang results
   close to staggered CT in FLASH ([Derigs et al. (2018)](/sources/derigs-2018.md), §§5.3–5.4).
 
+**Later uses (batch 10): cut cells at refinement interfaces.**
+* Redistributing small cut cells level by level moves conserved
+  quantities into covered coarse cells and fine ghost cells, outside the
+  composite solution, and a reflux correction added to a tiny cut cell is
+  unstable. The repair, re-redistribution, merges the redistribution
+  register with the reflux register and spreads it over uncovered coarse
+  neighbours; it restores conservation to round-off but still fails for
+  coarse cut cells below a volume fraction of about $10^{-4}$
+  ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2.4, 3.4, 4.1; [state redistribution](/methods/state-redistribution.md)).
+* The simpler practice is to keep coarse–fine boundaries off the cut
+  cells ([Giuliani et al. (2022)](/sources/giuliani-2022.md), §4) or to refine every cut cell to the finest
+  level ([Natarajan et al. (2022)](/sources/natarajan-2022.md), §3.1).
+
 # Citations
 
 1. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §§1, 3, 4, 5.
@@ -239,3 +252,6 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 8. [Balsara (2001)](/sources/balsara-2001.md), §§IV–VI.
 9. [Tomida et al. (2026)](/sources/tomida-2026.md), §§2.3.3, 3.4.
 10. [Derigs et al. (2018)](/sources/derigs-2018.md), §§5.3–5.4.
+11. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2.4, 3.4, 4.1 (arXiv v1).
+12. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §4 (arXiv v2).
+13. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §3.1 (arXiv v1).

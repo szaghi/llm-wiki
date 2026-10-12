@@ -5,7 +5,7 @@ description: "Ghost-cell values for finite-difference WENO on Cartesian grids cu
 status: established
 aliases: [weighted extrapolation, WENO extrapolation, WLS-GAW, weighted least squares extrapolation, boundary extrapolation]
 tags: [boundary-treatment, finite-difference, weno, cut-cell]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Weighted (WENO-type) extrapolation for ghost values
@@ -134,6 +134,13 @@ WENO-type one only near shocks
 [Lu et al. (2021)](/sources/lu-2021.md), Remark 2.3;
 [Liu et al. (2025)](/sources/liu-2025.md), §3.2).
 
+**Later uses (batch 10).** A sharp-interface ghost-cell immersed-boundary
+solver met the failure weighted extrapolation addresses: quadratic
+interpolation to the image points produced negative density and
+pressure behind shocks. It fell back to inverse-distance weighting, which
+reproduces only constants (compiler's observation), rather than to a nonlinear weighted
+extrapolation ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6; [immersed-boundary methods](/methods/immersed-boundary-method.md)).
+
 # Citations
 
 1. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§1–6.
@@ -141,3 +148,4 @@ WENO-type one only near shocks
 3. [Liu et al. (2022)](/sources/liu-2022.md), Appendix C.
 4. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §2.
 5. [Liu et al. (2025)](/sources/liu-2025.md), §3.2.
+6. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).

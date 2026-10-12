@@ -93,6 +93,14 @@ overshoots at the discontinuities. Relaxation neither removes nor
 smears them, and $\vert\gamma^n_{\mathrm R} - 1\vert < 5\times10^{-4}$
 ([Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3, Figs. 8–9a; [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md)).
 
+**Later uses (batch 10).** *In a rotated channel with AMR.* The Sod states
+in a 2D channel slanted at 30° to the grid, so both walls are cut cells,
+with one adaptive level whose coarse–fine boundaries cross the walls and
+move. With weighted state redistribution and re-redistribution the
+profiles approach the exact solution as $h$ halves twice, and mass is
+conserved; no error norms are given ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2, Fig. 4;
+[state redistribution](/methods/state-redistribution.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -118,3 +126,4 @@ smears them, and $\vert\gamma^n_{\mathrm R} - 1\vert < 5\times10^{-4}$
 21. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.7.
 22. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.
 23. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3 (arXiv v4).
+24. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2 (arXiv v1).

@@ -129,6 +129,16 @@ instabilities around the Mach stem
   the entropy-control term the kinks are "barely noticeable"
   ([Xie et al. (2021)](/sources/xie-2021.md), §6.3; [numerical shock instability](/definitions/numerical-shock-instability.md)).
 
+**Later uses (batch 10).** *On an embedded wedge.* The wall is a 30°
+ramp cutting the Cartesian grid through $(1/6, 0)$ in $[0, 3]\times[0, 1.75]$,
+so the shock is aligned with the grid and the wall is not. Second-order
+MUSCL with [state redistribution](/methods/state-redistribution.md),
+CFL 0.85, $h = 1/240$ and $1/480$, run to $t = 0.2$, with smallest volume
+fractions $1.65\times10^{-6}$ and $2.95\times10^{-7}$. The results are
+comparable to grid-aligned runs at the same resolution; the wall shocks
+agree across three resolutions and the unstable contact shifts slightly
+([Berger & Giuliani (2021)](/sources/berger-2021.md), §5.3, Figs. 12–13).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -158,3 +168,4 @@ instabilities around the Mach stem
 25. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.5.
 26. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.2.
 27. [Xie et al. (2021)](/sources/xie-2021.md), §6.3.
+28. [Berger & Giuliani (2021)](/sources/berger-2021.md), §5.3 (arXiv v1).

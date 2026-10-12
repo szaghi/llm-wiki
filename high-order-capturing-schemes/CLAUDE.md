@@ -16,7 +16,10 @@ Scope is broad by user decision (2026-10-08):
   added by user decision, 2026-10-12, with the time-integration class of
   the ADAM paper collection; weather leapfrog filters were left out);
 * numerical boundary treatment for high-order FD (inverse Lax–Wendroff,
-  weighted extrapolation);
+  weighted extrapolation), and immersed-boundary and cut-cell
+  (embedded-boundary) methods with their small-cell cures (added by user
+  decision, 2026-10-12, with the immersed-boundary class of the ADAM paper
+  collection);
 * high-order AMR (refinement interfaces for capturing schemes);
 * extensions to MHD, including how a capturing scheme coexists with a
   divergence constraint;
@@ -102,6 +105,14 @@ to another bundle.
     - `2019-JSC-Higueras-…` is arXiv:1809.04807v1;
     - `2022-CAMC-Ranocha-…` is the publisher PDF (open access);
     - `1895-MathAnn-Runge-…` is the publisher scan (German, image only).
+  - Batch 10 files:
+    - `2002-ActaNumer-Peskin-…` is the published article;
+    - `2021-JCP-Berger-…` is arXiv:2005.05734v1 (collection key "marsha-2020");
+    - `2022-JCP-Giuliani-…` is arXiv:2112.12360v2;
+    - `2024-JCP-BarrioSanchez-…` is arXiv:2309.06372v1;
+    - `2022-JCP-Natarajan-…` is arXiv:2108.00126v1;
+    - `2020-CompFluids-Seshadri-…` is the author manuscript;
+    - `2024-CompFluids-Baskaya-…` is arXiv:2309.09657v1.
   - Not yet in the archive: Zaghi, Salvadore & Di Mascio (2023,
     doi:10.1016/j.compfluid.2023.106040). A repository copy now sits in
     `~/papers/re-download/`; the user assigned the ADAM AMR-framework class
@@ -160,6 +171,15 @@ to another bundle.
 - Commits: `docs(high-order-capturing-schemes): ingest <source-slug>`.
 
 ## Status
+
+**Batch 10 staged 2026-10-12:** 90 of 90 archived sources ingested. The
+batch took the immersed- and embedded-boundary class of the ADAM paper
+collection: peskin-2002, berger-2021, giuliani-2022, barriosanchez-2024,
+natarajan-2022, seshadri-2020 and baskaya-2024 (Secchi's MHD
+well-posedness note deferred as out of scope). With batch 9 that is 13
+ingestions since the last deep lint, so a deep lint ran with this batch
+(see `log.md`). Remaining ADAM class assigned here: benchmarks and
+experiments (no PDFs yet).
 
 **Batch 9 staged 2026-10-12:** 83 of 83 archived sources ingested. The
 batch took the time-integration class of the ADAM paper collection:

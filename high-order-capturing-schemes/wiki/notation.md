@@ -112,7 +112,7 @@ Added 2026-10-08 (batch 1: harten-1987, shu-1988, shu-1989, shu-1998).
 | Symbol | Meaning |
 |---|---|
 | $u^{(i)}$ | stage value, $u^{(0)} = u^n$, $u^{(s)} = u^{n+1}$ |
-| $a_{ik}$, $b_{ik}$ | Shu–Osher coefficients, $u^{(i)} = \sum_{k=0}^{i-1}\left(a_{ik} u^{(k)} + b_{ik}\,\Delta t\,\mathcal{L}(u^{(k)})\right)$, $a_{ik} \ge 0$, $\sum_k a_{ik} = 1$; with all $b_{ik} \ge 0$, $\mathcal{C} = \min_{i,k} a_{ik}/b_{ik}$ |
+| $a_{ik}$, $b_{ik}$ | Shu–Osher coefficients, $u^{(i)} = \sum_{k=0}^{i-1}\left(a_{ik} u^{(k)} + b_{ik}\,\Delta t\,\mathcal{L}(u^{(k)})\right)$, $a_{ik} \ge 0$, $\sum_k a_{ik} = 1$; with all $b_{ik} \ge 0$, $\min_{i,k} a_{ik}/b_{ik}$ is a lower bound on $\mathcal{C}$, equal to it for an optimal representation (the coefficient belongs to the method; amended 2026-10-12, deep lint) |
 | $\tilde{\mathcal{L}}$ | downwind ("adjoint") operator: approximates the same derivative as $\mathcal{L}$ but is stable for forward Euler run backward in time; replaces $\mathcal{L}$ where $b_{ik} < 0$ |
 
 ## Limiting
@@ -309,6 +309,28 @@ Added 2026-10-12 (batch 9: ranocha-2020, ranocha-2022, nusslein-2021, hadjimicha
 | $m$ (multistep) | number of steps of a linear multistep method, as on the [barrier page](/results/ssp-order-barriers.md) (distinct from the system size $m$ by context) |
 | $\Omega_{\Delta t}$ | step-history sum of a variable-step multistep method, $\Omega_{\Delta t} = 1 + \sum_{j=1}^{m-1}\Delta t^{n-j}/\Delta t^{n}$, equal to $m$ for fixed steps (distinct from a domain $\Omega$) |
 | $\Delta t_{\mathrm{FE}}(u)$ | forward-Euler step limit evaluated at the state $u$ (extends $\Delta t_{\mathrm{FE}}$) |
+| $a_{i,n}$, $b_{i,n}$ | coefficients of a variable-step $m$-step method, $u^{n+1} = \sum_{i=1}^{m}\left(a_{i,n}u^{n+1-i} + \Delta t^n b_{i,n}\mathcal L(u^{n+1-i})\right)$, depending on the step history (two indices, so distinct from the Shu–Osher $a_{ik}$, $b_{ik}$) |
+| $\mathcal L(t, u)$ | the operator of a non-autonomous system $u' = \mathcal L(t, u)$ (extends $\mathcal L(u)$) |
+| $\mathsf I$, $\mathbf 1$ | identity matrix and vector of ones in Butcher-form formulas |
+| $N_{\mathrm{dof}}$, $u^{n+1}_{\mathrm{emb}}$ | number of unknowns in an error norm, and the embedded solution of a pair |
+| $\mathtt{atol}$, $\mathtt{rtol}$ | absolute and relative error tolerances of step-size control |
+
+## Immersed and embedded boundaries
+
+Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanchez-2024, natarajan-2022, seshadri-2020, baskaya-2024).
+
+| Symbol | Meaning |
+|---|---|
+| $\kappa_i$ | volume fraction of a cut cell, $\vert I_i\vert = \kappa_i h^d$, $0 < \kappa_i \le 1$ ($\kappa_i = 1$ for a regular cell; subscripted, so distinct from the Suresh–Huynh constant $\kappa$) |
+| $u^{\mathrm{pr}}_i$ | provisional state of a cell after a step whose $\Delta t$ is set by the regular cells, before small-cell stabilization |
+| $\mathcal N_i$, $N^{\mathrm{ov}}_i$ | merging neighbourhood of cell $I_i$ in state redistribution ($\mathcal N_i = \{i\}$ for a cell that needs none), and the number of neighbourhoods that contain $I_i$, its own included |
+| $\widehat{\mathcal V}_i$, $\hat{\mathbf x}_i$ | weighted volume $\sum_{j\in\mathcal N_i}\vert I_j\vert/N^{\mathrm{ov}}_j$ and weighted centroid of a merging neighbourhood |
+| $\bar u^{\mathcal N}_i$, $q^{\mathcal N}_i(\mathbf x)$ | weighted average of $u^{\mathrm{pr}}$ over $\mathcal N_i$, and its limited linear reconstruction about $\hat{\mathbf x}_i$ |
+| $(\nabla\cdot\mathbf f)^{\mathrm c}_i$, $(\nabla\cdot\mathbf f)^{\mathrm{nc}}_i$ | conservative flux divergence of a cut cell (flux balance over its volume) and the non-conservative neighbourhood average used by flux redistribution |
+| $\mathsf W$ | redistribution matrix of state redistribution, $\widehat{\mathcal V} = \mathsf W\,\vert I\vert$ (vector of cell volumes); the scheme is conservative iff every column of $\mathsf W$ sums to one |
+| $\eta^{\mathrm{self}}_i$, $\eta^{\mathrm{nb}}_i$ | weights of weighted state redistribution: the share a small cell keeps of its own provisional state, and the share its neighbourhood contributes (superscripted, so distinct from the coercivity constant $\eta$) |
+| $\mathbf X_{\mathrm{IB}}(t)$, $\mathbf F_{\mathrm{IB}}$, $\mathbf b_{\mathrm{IB}}$ | Lagrangian configuration of an immersed boundary (a function of the Lagrangian labels), its force density, and the Eulerian body force it produces (distinct from the mapped coordinates $\mathbf X$) |
+| $\delta_h$, $\phi_{\mathrm{IB}}(\varrho_{\mathrm{IB}})$ | discrete delta function of the immersed-boundary method (in $d$ dimensions, $h^{-d}$ times the product of $\phi_{\mathrm{IB}}$ over the coordinate directions), its one-dimensional kernel, and the kernel argument $\varrho_{\mathrm{IB}}$, a distance in meshwidths (subscripted, so distinct from the radial $\varrho$) |
 
 ## Spectral analysis
 

@@ -208,7 +208,36 @@ limiter "very simple and local", most convenient for FV and extended to FD
   the unknown stage wave speeds of Zhang & Shu's Remark 2.7; both are
   recorded on [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
 
+**Later uses (batch 10): cut cells and immersed boundaries.**
+* Flux redistribution produced mass fractions below 0 and above 1 in a
+  reacting 3D run where state redistribution did not
+  ([Giuliani et al. (2022)](/sources/giuliani-2022.md), §6.1). State redistribution itself is not monotone and
+  its positivity is asserted only qualitatively ([Berger & Giuliani (2021)](/sources/berger-2021.md), §§2–3;
+  [state redistribution](/methods/state-redistribution.md)).
+* Re-redistribution at an AMR interface gives negative energy and
+  pressure when a coarse cut cell there is below a volume fraction of about
+  $10^{-4}$ ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.1).
+* Quadratic interpolation to ghost-cell image points gives negative
+  density and pressure behind shocks; the fix was to drop to
+  inverse-distance weighting ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6; [immersed-boundary methods](/methods/immersed-boundary-method.md)).
+
 ## Contradictions
+
+**Does positivity limiting inside Runge–Kutta stages reduce the order?**
+*Open* (recorded at the 2026-10-12 deep lint).
+* [Zhang & Shu (2010)](/sources/zhang-2010.md), §2.2, and
+  [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.3: the limiter's
+  modification is $O(h^{K+1})$ for smooth solutions bounded away from
+  vacuum, so the order is not degraded.
+* [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1: "Use of
+  Runge–Kutta methods in conjunction with the limiter can lead to order
+  reduction, so linear multistep methods are recommended", citing
+  Gottlieb, Ketcheson & Shu (2011) and Zhang & Shu's maximum-principle
+  paper, neither ingested; the paper shows no test of it.
+* The scopes may differ: the proofs bound the per-stage spatial
+  modification, while the order-reduction remark concerns the full
+  Runge–Kutta step. Ingesting the cited sources, or a convergence test of
+  a limited Runge–Kutta step, would settle it.
 
 **Is the first-order Lax–Friedrichs MHD scheme provably positive?**
 *Open.*
@@ -262,3 +291,7 @@ limiter "very simple and local", most convenient for FV and extended to FD
 20. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §2.2.
 21. [Ranocha et al. (2020)](/sources/ranocha-2020.md), Conclusions (arXiv v4).
 22. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1 (arXiv v2).
+23. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §6.1 (arXiv v2).
+24. [Berger & Giuliani (2021)](/sources/berger-2021.md), §§2–3 (arXiv v1).
+25. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.1 (arXiv v1).
+26. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).

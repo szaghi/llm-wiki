@@ -2,6 +2,125 @@
 
 ## 2026-10-12
 
+* **Deep lint (90 ingestions; the pages of batches 9 and 10).** Two
+  read-only auditors re-read 25 concept pages and the 13 new Source pages
+  against [notation](/notation.md), the reader notes and the PDFs; the
+  compiler applied the fixes. Metadata of all 13 sources matched Crossref,
+  and every audit list matched the backlinks.
+  * **Corrections to batch 9–10 text.**
+    * The low-storage reading of Gottlieb, Shu & Tadmor's
+      $\mathcal C = 0.32$ (on [low-storage](/methods/low-storage-runge-kutta.md),
+      [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and
+      [SSP barriers](/results/ssp-order-barriers.md)) said "Williamson
+      form". It is the best **three-stage** Williamson method; five-stage
+      Williamson methods reach 1.40 (Higueras & Roldán, Table 1).
+    * Başkaya et al.'s heat-flux result was overgeneralized on
+      [IB](/methods/immersed-boundary-method.md),
+      [cut cells](/methods/cut-cell-finite-volume.md) and
+      [ILW](/methods/inverse-lax-wendroff.md). The factor of about 40
+      belongs to one ghost-cell solver (CHESS); the other is closer but
+      still wrong. The conservation explanation is the authors'
+      hypothesis.
+    * Other corrections:
+      * the naming convention for embedded pairs counts effective
+        evaluations, not stages;
+      * multi-functional relaxation needs $\mathsf b_j \ge 0$;
+      * the 0.132 ramp jump is for 2×2 merging only;
+      * the 2022 weighted-SRD implementation's assumption that the
+        coarse–fine boundary crosses no cut cell is not a rule;
+      * on the ranocha-2020 Source page, the existence theorem's convexity
+        condition was missing and the $\gamma$ bound belongs to the rod run
+        only.
+    * A compiler remark (inverse-distance weighting reproduces only
+      constants) was marked as such.
+  * **Two contradictions recorded, both open:**
+    * whether positivity limiting inside Runge–Kutta stages reduces the
+      order ([positivity](/properties/positivity-preserving.md));
+    * what order flux redistribution gives and what limits it on moving
+      bodies ([cut cells](/methods/cut-cell-finite-volume.md)).
+  * **Notation:**
+    * the registry row of $a_{ik}$, $b_{ik}$ now says
+      $\min a_{ik}/b_{ik}$ is a lower bound on $\mathcal C$;
+    * new rows: $a_{i,n}$, $b_{i,n}$, $\mathcal L(t,u)$, $\mathsf I$,
+      $\mathbf 1$, $N_{\mathrm{dof}}$, $u^{n+1}_{\mathrm{emb}}$,
+      $\mathtt{atol}$, $\mathtt{rtol}$,
+      $(\nabla\cdot\mathbf f)^{\mathrm c}$,
+      $(\nabla\cdot\mathbf f)^{\mathrm{nc}}$, and $\varrho_{\mathrm{IB}}$
+      for the IB kernel argument (was $r$);
+    * paper-native $A_i$, $B_i$, $c$, $S$, $\hat u$, $\gamma_n$ and a
+      bare $\mu$ unit were removed from concept pages.
+  * **Tags:** the batch-10 cut-cell pages now use `embedded-boundary`
+    (`cut-cell` keeps its ILW meaning, a small boundary offset);
+    `eigensystem` was merged into `eigenvectors`.
+  * **Bibliography:** `giuliani-2022` and `berger-2021` corrected from
+    page 1 and Crossref (volume, author name, DOI).
+
+* **Batch 10: immersed and embedded boundaries from the ADAM paper
+  collection** (7 sources). The user assigned this class to the bundle
+  (2026-10-12). Ingested [Peskin (2002)](/sources/peskin-2002.md),
+  [Berger & Giuliani (2021)](/sources/berger-2021.md),
+  [Giuliani et al. (2022)](/sources/giuliani-2022.md),
+  [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md),
+  [Natarajan et al. (2022)](/sources/natarajan-2022.md),
+  [Seshadri & De (2020)](/sources/seshadri-2020.md) and
+  [Başkaya et al. (2024)](/sources/baskaya-2024.md). Three files were copied
+  from the collection, four came from fresh downloads (arXiv preprints).
+  * **Identity corrections.**
+    * The collection's "marsha-2020" is Berger & Giuliani, published as
+      J. Comput. Phys. 428:109820 (2021), so it is `berger-2021`.
+    * "barrio-2024" is keyed by the first author's surname,
+      `barriosanchez-2024`.
+  * **Deferred:** the collection's "paolo-2024", Secchi's note on the
+    well-posedness of ideal MHD with perfectly conducting walls in a
+    quarter space (Nonlinear Anal. Real World Appl. 84, 2025). It is PDE
+    analysis, not a boundary method; the collection's "immersed-boundary"
+    tag is wrong. It can be added on request.
+  * **Created:**
+    * [immersed-boundary methods](/methods/immersed-boundary-method.md),
+      [cut-cell finite volume](/methods/cut-cell-finite-volume.md) and
+      [state redistribution](/methods/state-redistribution.md);
+    * benchmarks [supersonic vortex in a quarter annulus](/benchmarks/supersonic-vortex-annulus.md),
+      [shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md)
+      and [Schardin's problem](/benchmarks/schardin-problem.md).
+  * **Updated:**
+    * [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md),
+      [weighted extrapolation](/methods/weighted-extrapolation.md) and
+      [high-order AMR](/methods/high-order-amr.md);
+    * [double Mach reflection](/benchmarks/double-mach-reflection.md)
+      (embedded wedge) and [Sod](/benchmarks/sod-shock-tube.md) (rotated
+      channel with AMR);
+    * [free-stream preservation](/properties/free-stream-preservation.md),
+      [positivity preservation](/properties/positivity-preserving.md) and the
+      root index.
+  * **Claims recorded with a correction.**
+    * Natarajan et al. conclude that a mass error falling from 0.92 % to
+      0.31 % under refinement "ensures conservation". That is a
+      non-sequitur, recorded as consistency without discrete conservation.
+    * The ghost-cell heat flux of 0.167 MW/m² (Başkaya et al., Table 7)
+      is as printed.
+  * **Notation:** new registry section "Immersed and embedded boundaries"
+    ($\kappa_i$, $u^{\mathrm{pr}}$, $\mathcal N_i$, $N^{\mathrm{ov}}_i$,
+    $\widehat{\mathcal V}_i$, $\bar u^{\mathcal N}_i$, $q^{\mathcal N}_i$,
+    $\mathsf W$, $\eta^{\mathrm{self}}_i$, $\eta^{\mathrm{nb}}_i$,
+    $\mathbf X_{\mathrm{IB}}$, $\mathbf F_{\mathrm{IB}}$, $\mathbf b_{\mathrm{IB}}$,
+    $\delta_h$, $\phi_{\mathrm{IB}}$).
+  * **Bibliography:** 399 references merged (2114 → 2418 entries).
+    Resolver merges overridden as distinct works:
+    * Saye 2017 Parts I/II, and Yang et al. 1997 Parts A/B;
+    * Berger's 1982 thesis and Berger & Oliger (1984);
+    * Zhu's 2001 thesis and Zhu & Peskin (2002);
+    * the two Giuliani 2022 papers (the weighted-SRD paper owns
+      `giuliani-2022`).
+
+    Folded or annotated:
+    * "Muralidhara" into `muralidharan-2016` (the `--dupes` sweep);
+    * Berger's Appl. Numer. Math. 96:180, printed 2016, into `berger-2015`;
+    * the ghost fluid method into its existing key `fedkiw-2000`;
+    * a vol:page note on `berger-1991`.
+
+    Undated references take the citing year (bundle rule). `peskin-2002`'s
+    author is corrected to C.S. Peskin from page 1.
+
 * **Batch 9: time integration from the ADAM paper collection** (6
   sources). The user assigned this class to the bundle (2026-10-12).
   Ingested [Ranocha et al. (2020)](/sources/ranocha-2020.md),

@@ -37,7 +37,7 @@ Euler and Navier–Stokes. Merged into
    dissipative. The Fehlberg and Dormand–Prince 5(4) pairs have
    $\mathsf b_5 < 0$ (Remark 2.3).
 3. **Existence** (Lemmas 2.4, 2.6; Theorems 2.8, 2.15). Every method of order
-   $\ge 2$ has, for small $\Delta t$, a unique positive root
+   $\ge 2$ has, for small $\Delta t$ and if $\mathcal S''(u^n)(\mathcal L(u^n), \mathcal L(u^n)) > 0$, a unique positive root
    $\gamma^n_{\mathrm R} = 1 + O(\Delta t^{p_{\mathrm t}-1})$, and
    $\Psi^n(1) = O(\Delta t^{p_{\mathrm t}+1})$ (Corollary 2.13).
 4. **IDT against RRK** (p. 4; Theorem 2.11). Assigned to $t^n + \Delta t$
@@ -69,8 +69,9 @@ Euler and Navier–Stokes. Merged into
 * *Sod* (§4.3) and *Titarev–Toro sine–shock* (§4.4): degree 3, no shock
   capturing; small overshoots, identical with and without relaxation,
   $\vert\gamma^n_{\mathrm R} - 1\vert < 5\times10^{-4}$.
-* *Lid-driven cavity* (§4.5) and *supersonic square rod* (§4.6, Mach 1.5,
-  Re $10^4$): stable, $\vert\gamma^n_{\mathrm R} - 1\vert \le 2.5\times10^{-7}$.
+* *Lid-driven cavity* (§4.5): relaxation adds no significant dissipation.
+  *Supersonic square rod* (§4.6, Mach 1.5, Re $10^4$): stable,
+  $\vert\gamma^n_{\mathrm R} - 1\vert \le 2.5\times10^{-7}$.
 
 # Notation map
 
@@ -88,7 +89,7 @@ Euler and Navier–Stokes. Merged into
 # Pages created or updated
 
 * Created [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md), [Explicit Runge–Kutta methods](/methods/explicit-runge-kutta.md).
-* Updated [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) (entropy needs forward Euler), [Low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md), [Positivity preservation](/properties/positivity-preserving.md), [Isentropic vortex](/benchmarks/isentropic-vortex.md), [Sod](/benchmarks/sod-shock-tube.md), [Shu–Osher problem](/benchmarks/shu-osher-problem.md).
+* Updated [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) (entropy needs forward Euler), [Low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md) (contributed; created with ranocha-2022), [Positivity preservation](/properties/positivity-preserving.md), [Isentropic vortex](/benchmarks/isentropic-vortex.md), [Sod](/benchmarks/sod-shock-tube.md), [Shu–Osher problem](/benchmarks/shu-osher-problem.md).
 * Updated [Notation registry](/notation.md): $\gamma^n_{\mathrm R}$, $\Psi^n$, $\mathcal S$, $U$, Butcher symbols.
 
 # Citations

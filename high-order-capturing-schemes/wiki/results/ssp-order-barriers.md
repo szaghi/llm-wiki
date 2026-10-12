@@ -100,13 +100,14 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 
 **Later uses (batch 9).**
 * *The low-storage line, read in context.* Gottlieb, Shu and Tadmor's
-  $\mathcal C = 0.32$ is the best method found in the Williamson 2N form
-  (their eq. 4.4), which they compare with the three-stage optimum
+  $\mathcal C = 0.32$ is the best three-stage method found in the
+  Williamson 2N form (their eq. 4.4; four free coefficients), which they compare with the three-stage optimum
   $\mathcal C = 1$ (§4.2, read from the text layer). In the 2N\* Shu–Osher
   form SSP(4,3) reaches $\mathcal C = 2$ in two registers, and the
   optimal SSP($n^2$,3) reach $n^2 - n$ in 2N ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2.2, 3;
   [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)). The bullet above is therefore a statement about the
-  Williamson form, not about two registers.
+  three-stage Williamson form, not about two registers; five-stage
+  Williamson methods reach 1.40 (Higueras & Roldán, Table 1).
 * *More optimal Runge–Kutta coefficients* ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2.2, 4.1,
   citing Kraaijevanger and Ketcheson): SSP($s$,1) $\mathcal C = s$
   (agrees with the bullet above), SSP($s$,2) $s - 1$, SSP($n^2$,3)

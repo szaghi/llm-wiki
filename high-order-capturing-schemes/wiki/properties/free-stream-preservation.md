@@ -5,7 +5,7 @@ description: "A scheme on a mapped (curvilinear) grid preserves free streams if 
 status: established
 aliases: [freestream preservation, free-stream preserving, geometric conservation law, metric identities]
 tags: [mapped-grid, finite-difference, finite-volume, amr]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Free-stream preservation on curvilinear grids
@@ -53,8 +53,17 @@ discrete sum is zero, so that uniform flow stays uniform to round-off
   [fourth-order finite volume](/methods/fourth-order-finite-volume.md);
   [high-order AMR](/methods/high-order-amr.md)).
 
+**Later uses (batch 10).** *Moving embedded boundaries.* The analogue for a
+cut-cell grid with a moving body is that a uniform flow moving with the
+body stays uniform. The wall fluxes then integrate to zero because
+$\oint\mathbf n\,dA = 0$, and a freshly cleared cell must be filled
+consistently, by the volume-weighted average of its fluid neighbours
+([Natarajan et al. (2022)](/sources/natarajan-2022.md), §2.1; [cut-cell finite volume](/methods/cut-cell-finite-volume.md)). The test is a body moving into gas
+at the flow speed: no waves may appear before the shock arrives (§3.3).
+
 # Citations
 
 1. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §§3, 5.3.2, 5.6 (accepted manuscript).
 2. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.6 (accepted manuscript).
 3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §I.
+4. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §§2.1, 3.3 (arXiv v1).

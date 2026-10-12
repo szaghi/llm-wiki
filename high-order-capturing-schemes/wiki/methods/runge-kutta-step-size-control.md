@@ -22,8 +22,8 @@ changing it ([Runge (1895)](/sources/runge-1895.md), pp. 172, 177–178).
 ## Error estimate and controller
 
 [Ranocha et al. (2022)](/sources/ranocha-2022.md) (§2.2, eqs. 6–7) use the
-weighted root-mean-square error over all $N$ unknowns,
-$$\mathrm{err}^{n+1} = \left(\frac1N\sum_{i=1}^{N}\left(\frac{u^{n+1}_i - \hat u^{n+1}_i}{\mathtt{atol} + \mathtt{rtol}\max\{\vert u^{n+1}_i\vert, \vert\hat u^{n+1}_i\vert\}}\right)^2\right)^{1/2},$$
+weighted root-mean-square error over all $N_{\mathrm{dof}}$ unknowns,
+$$\mathrm{err}^{n+1} = \left(\frac{1}{N_{\mathrm{dof}}}\sum_{i=1}^{N_{\mathrm{dof}}}\left(\frac{u^{n+1}_i - u^{n+1}_{\mathrm{emb},i}}{\mathtt{atol} + \mathtt{rtol}\max\{\vert u^{n+1}_i\vert, \vert u^{n+1}_{\mathrm{emb},i}\vert\}}\right)^2\right)^{1/2},$$
 usually with $\mathtt{atol} = \mathtt{rtol} = \mathtt{tol}$, and the PID controller
 $$\Delta t^{n+1} = (\mathrm{err}^{n+1})^{-\beta^{\mathrm c}_1/k_{\mathrm c}}\,(\mathrm{err}^{n})^{-\beta^{\mathrm c}_2/k_{\mathrm c}}\,(\mathrm{err}^{n-1})^{-\beta^{\mathrm c}_3/k_{\mathrm c}}\,\Delta t^{n},\qquad k_{\mathrm c} = \min(p_{\mathrm t}, \hat p_{\mathrm t}) + 1,$$
 with a smooth limiter on the step factor. A step is accepted if the
