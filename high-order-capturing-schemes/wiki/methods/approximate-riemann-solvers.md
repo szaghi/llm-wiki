@@ -33,7 +33,7 @@ restricted to Lax–Friedrichs or Roe-type fluxes
   With the wave speeds of Batten et al. it resolves isolated shocks and
   contacts exactly. The star states stay in $\mathcal{G}$, so the
   first-order scheme is positivity-preserving under
-  $\Delta t\,\Vert\vert u\vert + c\Vert_\infty/h \le 1$
+  $\Delta t\,\Vert\vert\mathbf v\vert + c\Vert_\infty/h \le 1$
   ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4, Remark 1). Being
   less dissipative, it can leave oscillations in velocity and internal
   energy near vacuum, where Lax–Friedrichs is cleaner (Examples 6, 8).
@@ -183,7 +183,9 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
     calls HLLE "carbuncle-free" (batch-6 bullet above). Simon & Mandal
     agree that HLL is free of shock instability because it dissipates the
     linear waves ([Simon & Mandal (2019)](/sources/simon-2019.md), §4.1;
-    [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §4).
+    [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §4). In shallow
+    water the two-wave HLLS solver stays free of carbuncles where the
+    complete augmented Roe solver does not ([Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.1).
   * **Against, Kitamura & Shima.** "Any flux functions including
     flux-vector-splitting (FVS) by Van Leer can generate carbuncles". They
     class the robust group as "almost (but not perfectly) free", citing
@@ -191,13 +193,17 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
     ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§I, II.B, III.E).
   * **Against, Xie et al.** On the [stationary normal shock](/benchmarks/stationary-normal-shock.md),
     HLLE with Einfeldt speeds is as unstable as HLLEM for sub-cell shock
-    positions 0–0.3 (Table 1), the one-dimensional carbuncle. They give
-    no two-dimensional HLLE run ([Xie et al. (2021)](/sources/xie-2021.md), §3.1.2).
-  * **Status.** A scoped reading would reconcile Balsara with Xie et al.:
-    HLLE resists the multidimensional carbuncle but not the 1D steady-shock
-    instability. No source states that reading, and Kitamura & Shima's
-    claim is broader. Neither side's evidence uses a high-order
-    reconstruction.
+    positions 0–0.3 (Table 1), the one-dimensional carbuncle
+    ([Xie et al. (2021)](/sources/xie-2021.md), §3.1.2). Their 2D HLLE runs
+    (a flat-plate boundary layer, and Elling's vortex filament through a
+    Mach 20 shock) show HLLE smearing shear but no spurious carbuncle;
+    HLLE is not run on their carbuncle tests (§§6.1–6.6).
+  * **Status.** Xie et al.'s own data fit a scoped reading: HLLE is
+    unstable on the 1D steady shock yet shows no carbuncle in their 2D
+    runs. No source states that reading as a claim, and Kitamura &
+    Shima's claim is broader. Neither side's evidence uses a high-order
+    reconstruction. (Corrected at the batch-8 deep lint: the first version
+    said Xie et al. give no 2D HLLE run.)
 
 # Citations
 

@@ -4,7 +4,7 @@ title: "Hyperbolic (GLM) divergence cleaning"
 description: "Dedner's generalized-Lagrange-multiplier treatment of ∇·B: an extra scalar couples to the induction equation so that divergence errors propagate away at a cleaning speed and are damped, keeping all variables cell-centred; second-order CTU and high-order finite-difference forms, the non-conservative EGLM and entropy-consistent variants, and the consistency conditions on the cleaning speed and damping that time-step changes and AMR violate."
 status: established
 aliases: [GLM, GLM-MHD, divergence cleaning, mixed hyperbolic–parabolic cleaning, Dedner cleaning, EGLM, ideal GLM-MHD]
-tags: [mhd, divergence-free, finite-difference, amr]
+tags: [mhd, divergence-free, finite-difference, amr, glm]
 timestamp: 2026-10-09T00:00:00Z
 ---
 
@@ -223,6 +223,20 @@ every variable at cell centres.
   side is supported on its own tests. Whether the time-step-tied choice is
   acceptable for runs with a smooth time-step history is not settled by
   either.
+
+**Is constrained transport or cleaning the more robust?** *Open* (recorded
+at the batch-8 deep lint; both sides were already in the text).
+* [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md) §4.7: on a 3D blast at plasma beta $2\times10^{-4}$,
+  constrained transport "failed even with a minmod limiter" while CTU-EGLM
+  ran.
+* [Tomida et al. (2026)](/sources/tomida-2026.md) §5: in Athena++, constrained transport is the less
+  diffusive and the more robust choice, and cleaning should be "used with
+  caution".
+* *Scope:* the comparisons differ in the cleaning variant (EGLM with
+  non-conservative sources against plain or mixed GLM), the code and the
+  tests (an extreme low-β blast against Kelvin–Helmholtz, AMR and wave
+  tests). Neither tests the other's failure case. See also
+  [constrained transport](/methods/constrained-transport.md).
 
 # Citations
 

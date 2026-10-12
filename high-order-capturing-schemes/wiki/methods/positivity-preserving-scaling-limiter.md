@@ -57,7 +57,7 @@ $\hat w_1 = 1/12$, for seventh order $1/20$
 sufficient, not necessary; in practice it is enforced only when a trial
 step produces a negative density or pressure. With Runge–Kutta the
 stage wave speeds are unknown in advance, and a safety factor of 2–3 on
-$\Vert(\vert u\vert + c)\Vert_\infty$ worked in all tests; multistep SSP
+$\Vert(\vert\mathbf v\vert + c)\Vert_\infty$ worked in all tests; multistep SSP
 avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
 
 ## Variants
@@ -93,7 +93,7 @@ avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
   $\hat w_1$; the polynomial is still local, so the accuracy argument
   carries over (Remark 2).
 * Source terms and general equations of state: split the update as
-  $\frac12(F + S)$, with $S = u + 2\Delta t\,s(u)$ positive under its own
+  $\frac12(F + u^{\mathrm S})$, with $u^{\mathrm S} = u + 2\Delta t\,\mathbf s(u)$ positive under its own
   step limit for geometric, gravity, reaction and radiative-cooling
   sources ([Zhang & Shu (2012)](/sources/zhang-2012.md), §§4.2–4.3).
 
@@ -122,13 +122,13 @@ weaker time-step condition for accuracy.
   quadratic per point, is used for Euler and Navier–Stokes DG and
   attributed to Wang, Zhang, Shu and Ning (2012), earlier than its use by
   Ding and Wu. It is "crude": if the solution touches the floor it costs
-  at least $O(h^2)$; if $\rho e \ge m > 2\epsilon_{\mathcal G}$ it keeps high
+  at least $O(h^2)$; if $\rho e$ stays above a constant larger than $2\epsilon_{\mathcal G}$ it keeps high
   order ([Zhang (2017)](/sources/zhang-2017.md), §4.2, eq. 37b).
 * *Fewer points.* Only the remainder state of the interior Gauss–Lobatto
   points is needed, by the mean-value theorem, plus the DG volume
   quadrature points so that the DG integrands are admissible too
   (§§4.3, 5.2). On triangles a per-edge CFL bound,
-  $\Delta t\,\frac{|e_i|}{|K|}\beta^{\mathrm v}_i \le \tfrac23\hat w_1$, replaces the summed
+  $\Delta t\,\frac{|\partial_i\mathcal T|}{|\mathcal T|}\beta^{\mathrm v}_i \le \tfrac23\hat w_1$, replaces the summed
   one (eq. 33, Remark 3).
 * *Restart.* The trial step comes from the convective speed only; any stage
   that yields an inadmissible average is restarted with $\Delta t$ halved,

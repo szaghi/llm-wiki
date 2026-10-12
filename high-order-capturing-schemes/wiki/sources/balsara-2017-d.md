@@ -111,6 +111,7 @@ relativistic rotor (Lorentz factor 30, $4700^2$) and Orszag–Tang.
 
 * Updated [WENO](/methods/weno.md), [PPM](/methods/ppm.md), [ADER](/methods/ader.md), [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), [WENO limiters for DG](/methods/weno-limited-dg.md), [A posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md), [Local characteristic decomposition](/methods/characteristic-decomposition.md), [Zhang–Shu scaling limiter](/methods/positivity-preserving-scaling-limiter.md), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
 * Updated [Circularly polarized Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md), [MHD rotor](/benchmarks/mhd-rotor.md), [Composite advection profile](/benchmarks/composite-advection-profile.md).
+* Also updated in the same run (list completed at the batch-8 deep lint): [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Forward-facing step](/benchmarks/forward-facing-step.md), [Isentropic vortex](/benchmarks/isentropic-vortex.md), [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [Positivity preservation](/properties/positivity-preserving.md).
 
 # Citations
 

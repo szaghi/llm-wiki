@@ -102,6 +102,7 @@ correction, so its necessity is argued, not shown.
 * Updated [Divergence-free reconstruction](/methods/divergence-free-reconstruction.md): origin of the second-order formulas; prolongation, restriction and the electric-field correction.
 * Updated [Constrained transport](/methods/constrained-transport.md) and [High-order AMR](/methods/high-order-amr.md).
 * Updated [Shock–cloud interaction](/benchmarks/shock-cloud-interaction.md).
+* Also updated in the same run (list completed at the batch-8 deep lint): [Total variation diminishing](/properties/total-variation-diminishing.md).
 
 # Citations
 

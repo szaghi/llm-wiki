@@ -8,7 +8,7 @@ authors: [Derigs D., Winters A.R., Gassner G.J., Walch S., Bohm M.]
 year: 2018
 venue: "J. Comput. Phys. 364:420-467"
 local_file: "~/papers/mosaic/high-order-capturing-schemes/2018-JCP-Derigs-101016jjcp201803002.pdf"
-tags: [mhd, divergence-free, glm, entropy-stable]
+tags: [mhd, divergence-free, glm, entropy]
 timestamp: 2026-10-09T00:00:00Z
 ---
 
@@ -98,6 +98,7 @@ SSP-RK3, CFL 0.8).
 * Updated [Positivity preservation](/properties/positivity-preserving.md): the non-conservative energy term.
 * Updated [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [MHD rotor](/benchmarks/mhd-rotor.md), [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), [Grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md), [Sod shock tube](/benchmarks/sod-shock-tube.md).
 * Updated [Notation registry](/notation.md): $\hat\psi_{\mathrm{GLM}}$, $\hat f^{\mathrm{EC}}$, $\hat f^{\mathrm{ES}}$.
+* Also updated in the same run (list completed at the batch-8 deep lint): [Ryu–Jones shock tubes](/benchmarks/ryu-jones-shock-tubes.md), [High-order AMR](/methods/high-order-amr.md).
 
 # Citations
 

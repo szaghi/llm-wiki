@@ -36,7 +36,7 @@ benchmarks.
 2. **Lemma 6** (App. B), for an admissible state and unit normal:
    * $\alpha u \pm f(u)\cdot\mathbf n$ is admissible iff
      $\alpha > |\mathbf v\cdot\mathbf n| + \sqrt{p^2/(2\rho^2e)}$
-     (the usual $|\mathbf v\cdot\mathbf n| + c$ for an ideal gas);
+     (for an ideal gas the root equals $(\gamma - 1)\sqrt{e/2}$, below $c$, so the usual $|\mathbf v\cdot\mathbf n| + c$ suffices; $e$ is the specific internal energy);
    * $\beta u \pm \mathbf f^{\mathrm v}\cdot\mathbf n$ is admissible iff
      $\beta > \frac{1}{2\rho^2 e}\left(\sqrt{\rho^2 q_n^2 + 2\rho^2 e\,|\boldsymbol\tau\mathbf n|^2} + \rho|q_n|\right)$, $q_n = \mathbf q\cdot\mathbf n$;
    * the joint flux has the analogous bound with $|\mathbf v\cdot\mathbf n|$

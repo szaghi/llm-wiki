@@ -5,7 +5,7 @@ description: "For point-value DOFs with the conservation-consistent mean restric
 status: hypothesis
 aliases: [R P = I wall, point-value Guzik constraint]
 tags: [amr, prolongation, restriction, ghost-fill, collocation]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Restriction-compatibility bound for point-value prolongation
@@ -55,6 +55,20 @@ $[-1, 8, 1]/8$ and $[1, 8, -1]/8$ satisfies $R P = I$ for arbitrary data. $\blac
   conservation-consistent round trips for point values, not about transfer
   operators in general.
 
+**Data points from a GPU lattice-Boltzmann AMR** (point values at cell
+centres, mean restriction, linear or cubic ghost fill;
+[Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §§3.4, 5.3). The paper does not test $R P = I$.
+* Cubic ghost fill, which reproduces quadratics and so is not
+  restriction-compatible, gives a drag coefficient on a square cylinder
+  that matches the finest uniform grid. Linear fill "is seen to degrade
+  accuracy". This is consistent with order, not compatibility, being
+  load-bearing.
+* The authors' attempt at a cubic fine-to-coarse restriction was unstable
+  "even when the root grid was refined and the mesh adaptivity was
+  disabled", so they kept the mean. This is single-source and given
+  without analysis.
+
 # Citations
 
 1. [Zaghi (2026)](/sources/zaghi-2026.md): issue #21, comment N0 (proof and amended design), N3 (A/B measurement), closing summary item 2.
+2. [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §§3.4.3, 5.3, Table 7.

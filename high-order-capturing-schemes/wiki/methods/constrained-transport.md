@@ -256,6 +256,10 @@ evolved cell averages.
 
 ## Contradictions
 
+* *Robustness of CT against cleaning:* recorded as open on the
+  [GLM cleaning page](/methods/hyperbolic-divergence-cleaning.md)
+  (Mignone & Tzeferacos 2010 against Tomida et al. 2026).
+
 **Does exact divergence preservation require a staggered (Yee) mesh?**
 *Closed by human fiat (2026-10-08).*
 * [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1: keeping the

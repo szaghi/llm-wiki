@@ -2,6 +2,60 @@
 
 ## 2026-10-12
 
+* **Deep lint (77 ingestions; the pages of batches 7 and 8).** Two
+  read-only auditors re-read 46 concept pages and 15 Source pages against
+  [notation](/notation.md); the compiler applied the fixes.
+  * **Corrections to batch-8 text.**
+    * The HLLE `Contradictions` entry on
+      [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+      said Xie et al. give no 2D HLLE run. They do (a flat plate and
+      Elling's test), with smearing and no carbuncle. The entry now says so
+      and adds Navas-Montilla & Murillo's HLLS evidence; the status stays
+      open.
+    * [Numerical shock instability](/definitions/numerical-shock-instability.md)
+      no longer cites Xie et al. §6 for HLLE's robustness.
+    * [HLLEM](/methods/hllem-riemann-solver.md) now writes the clipped
+      speeds as $S_L^-$, $S_R^+$ and states the condition under which
+      $\delta_p$ reduces to Einfeldt's form.
+  * **A false gloss fixed** on [Zhang (2017)](/sources/zhang-2017.md): the
+    Lemma 6 root is $(\gamma-1)\sqrt{e/2}$, below $c$, not equal to it.
+  * **Three contradictions recorded that were stated only in prose**, all
+    open:
+    * CT against cleaning robustness, on [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
+      (pointer from [CT](/methods/constrained-transport.md));
+    * positivity-limited DG on [Sedov](/benchmarks/sedov-blast-wave.md);
+    * the Picard iteration count on [ADER](/methods/ader.md).
+  * **Notation drift fixed:**
+    * rotation angles were written as $\alpha$, $\gamma$ and $\theta$ (now
+      $\theta_{\mathrm{rot}}$, $\phi_{\mathrm{rot}}$), and radii as $r$
+      (now $\varrho$);
+    * $u$ was used as a velocity on seven pages (now $v_x$ or
+      $\vert\mathbf v\vert$);
+    * $M$ and $m$ were used as lower bounds;
+    * a bare source $s(u)$, a triangle written $K$, $e_i$, and the modal
+      derivatives of ADER;
+    * the PPM parabola variable ($\xi$ is now the cell coordinate
+      $\zeta$) and the MC slope.
+    * Registry section "Deep-lint additions".
+  * **Batch-7 audit lists completed** on four Source pages (balsara-2017-d,
+    derigs-2018, balsara-2001, mignone-2010-b).
+  * **Tags merged:** steady-state→steady, spectral-analysis→spectral-resolution,
+    shock-tube→riemann-problem, nonlinear-stability→stability,
+    entropy-stable→entropy, balance-law→source-terms,
+    preconditioning→low-mach. Missing tags added (glm, hllem,
+    shock-instability).
+  * **Left for later, flagged for human review:**
+    * whether Harten et al. (1987) put Lax's problem in Figs. 11–15 or
+      12–16;
+    * two pages give the label "Ryu–Jones 1a/2a" to different problems;
+    * the angle conventions on the Alfvén-wave page;
+    * whether Derigs et al.'s cleaning speed bears on the open cleaning-speed
+      entry (needs a PDF check);
+    * candidate pages: a flat-plate boundary-layer benchmark (3 sources), a
+      Kelvin–Helmholtz benchmark and an AUSM-family page;
+    * prose Unicode ε and plasma β, and the remaining unregistered set-up
+      constants.
+
 * **Batch 8: Riemann solvers and shock anomalies from the ADAM paper
   collection** (8 sources). The user assigned this class of the ADAM
   collection to this bundle (2026-10-12). The bundle scope gains

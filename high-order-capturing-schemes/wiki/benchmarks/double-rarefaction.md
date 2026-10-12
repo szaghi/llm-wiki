@@ -11,12 +11,12 @@ timestamp: 2026-10-12T00:00:00Z
 # Double-rarefaction (near-vacuum) Riemann problems
 
 **Variants.**
-* *Linde–Roe*: $\rho = 7$, $u = \mp1$, $p = 0.2$, $\gamma = 1.4$, $t = 0.6$;
+* *Linde–Roe*: $\rho = 7$, $v_x = \mp1$, $p = 0.2$, $\gamma = 1.4$, $t = 0.6$;
   the exact solution contains vacuum
   ([Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3, in 1D and 2D;
   [Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.2;
   [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 8, $h = 0.005$).
-* *Einfeldt type* (Einfeldt et al. 1991): $\rho = 1$, $u = \mp2$.
+* *Einfeldt type* (Einfeldt et al. 1991): $\rho = 1$, $v_x = \mp2$.
   Guo et al. use $p = 0.4$, $h = 0.0025$, $t = 0.1$ (Example 6). Hu et al.
   use $p = 0.1$ on the left with $h = 2.5\times10^{-3}$, $t = 0.1$, where a
   vacuum forms ([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.1).

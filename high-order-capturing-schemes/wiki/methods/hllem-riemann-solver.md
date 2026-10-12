@@ -4,7 +4,7 @@ title: "HLLEM (HLLI) Riemann solver"
 description: "HLL with a linear sub-structure along chosen intermediate characteristic fields, which subtracts an anti-diffusive term from the HLL flux: Einfeldt's Euler solver, generalized by Dumbser and Balsara to any conservative or path-conservative system with a diagonal anti-diffusion matrix (alias HLLI); it keeps stationary contacts, shear and Alfvén waves, and is shock-unstable unless cured."
 status: established
 aliases: [HLLEM, HLLI, HLLEM-NC, Einfeldt HLLEM, anti-diffusive HLL]
-tags: [riemann-solver, numerical-flux, well-balanced, shock-instability]
+tags: [riemann-solver, numerical-flux, well-balanced, shock-instability, hllem]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -16,14 +16,14 @@ lets the state vary linearly inside the fan along chosen intermediate
 families $p \in \mathcal I$. This leaves $u^{\mathrm{HLL}}_*$ unchanged
 for a conservation law and subtracts an anti-diffusive term from the HLL
 flux ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §2.2, eqs. 26–30):
-$$\hat f^{\mathrm{HLLEM}} = \frac{S_R f(u^-) - S_L f(u^+)}{S_R - S_L} + \frac{S_L S_R}{S_R - S_L}\left(u^+ - u^-\right) - \frac{S_L S_R}{S_R - S_L}\sum_{p\in\mathcal I}\delta_p\, r^{(p)}\,\ell^{(p)}\left(u^+ - u^-\right),$$
-$$\delta_p = 1 - \frac{\min(\lambda^{(p)}, 0)}{S_L} - \frac{\max(\lambda^{(p)}, 0)}{S_R}, \qquad 0 < \delta_p \le 1.$$
-The speeds are clipped at zero: $S_L$ is the smallest of 0 and the
-eigenvalues at $u^-$ and at the mean state $\tfrac12(u^- + u^+)$, and
-$S_R$ the largest of 0 and those at $u^+$ and at the mean state (eq. 5).
+$$\hat f^{\mathrm{HLLEM}} = \frac{S_R^+ f(u^-) - S_L^- f(u^+)}{S_R^+ - S_L^-} + \frac{S_L^- S_R^+}{S_R^+ - S_L^-}\left(u^+ - u^-\right) - \frac{S_L^- S_R^+}{S_R^+ - S_L^-}\sum_{p\in\mathcal I}\delta_p\, r^{(p)}\,\ell^{(p)}\left(u^+ - u^-\right),$$
+$$\delta_p = 1 - \frac{\min(\lambda^{(p)}, 0)}{S_L^-} - \frac{\max(\lambda^{(p)}, 0)}{S_R^+}, \qquad 0 < \delta_p \le 1.$$
+The speeds are clipped at zero (eq. 5): $S_L^-$ is the smallest of 0 and
+the eigenvalues at $u^-$ and at the mean state $\tfrac12(u^- + u^+)$, and
+$S_R^+$ the largest of 0 and those at $u^+$ and at the mean state.
 The eigenvectors and eigenvalues of the intermediate fields are evaluated
 once per face, at the mean state or at a Roe average. Since
-$S_L S_R \le 0$, the last term lowers the HLL dissipation on the chosen
+$S_L^- S_R^+ \le 0$, the last term lowers the HLL dissipation on the chosen
 fields.
 * **Where $\delta_p$ comes from.** Write the flux as
   $\tfrac12(f(u^-) + f(u^+)) - \tfrac12\Theta_{i+1/2}(u^+ - u^-)$.
@@ -32,7 +32,8 @@ fields.
   upper bound. At the bound the intermediate fields get Roe-like upwind
   dissipation $\vert\lambda^{(p)}\vert$ (App. B). For the single Euler
   contact $\delta_p$ reduces to Einfeldt's
-  $(S_R - S_L)/(S_R - S_L + 2\vert v_n\vert)$. Xie et al. reach the same
+  $(S_R - S_L)/(S_R - S_L + 2\vert v_n\vert)$ when the speeds are
+  symmetric about the contact, $S_L + S_R = 2v_n$. Xie et al. reach the same
   bound from the contact stability condition, so $\delta_p$ cannot simply
   be raised further ([Xie et al. (2021)](/sources/xie-2021.md), eqs. 43–44).
 * **Einfeldt's Euler form**, as used in the shock-instability papers.
@@ -40,7 +41,8 @@ fields.
   $\delta_p = c/(c + \vert v_n\vert)$ at the Roe state and Einfeldt's
   speeds $S_L = \min(v_n^- - c^-,\ v_n - c)$ and
   $S_R = \max(v_n^+ + c^+,\ v_n + c)$, the second argument at the Roe
-  state ([Simon & Mandal (2019b)](/sources/simon-2019-b.md), eqs. 9, 13–17;
+  state, clipped at zero in the flux (Simon & Mandal write the 0 into
+  the same minimum and maximum) ([Simon & Mandal (2019b)](/sources/simon-2019-b.md), eqs. 9, 13–17;
   [Xie et al. (2021)](/sources/xie-2021.md), eqs. 10, 13–20). With
   $S_{L,R} = v_n \mp c$ at the Roe state, the two expressions for
   $\delta_p$ coincide, and HLLEM is identical to Roe's solver

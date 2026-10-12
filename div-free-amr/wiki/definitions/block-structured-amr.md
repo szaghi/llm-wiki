@@ -5,7 +5,7 @@ description: "Adaptive refinement by a hierarchy of properly nested rectangular 
 status: established
 aliases: [SAMR, patch-based AMR, Berger-Colella AMR]
 tags: [amr, block-structured, hierarchy, subcycling]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Block-structured AMR
@@ -63,8 +63,49 @@ question is posed. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)'s
 claim that CT admits adaptive meshes naturally predates this framework and
 concerns smoothly moving zones, not patch hierarchies.
 
+**Frameworks and codes (added 2026-10-12).**
+* *Patch hierarchies without parent–child links.* CASTRO, on BoxLib,
+  needs only that the union of level-$(l+1)$ grids lie inside the union of
+  level-$l$ grids. The proper-nesting buffer is two level-$l$ cells for
+  $r = 2$ and one for $r = 4$, because the PPM stencil needs four ghost
+  cells; $r$ is always 2 or 4, and every grid has an even cell count per
+  direction. The step is the most restrictive over levels,
+  $\Delta t_0 = \min_l(r^{(0\to l)}\Delta t_l^*)$, where $r^{(0\to l)}$ is the
+  ratio of level-0 to level-$l$ spacing. The paper sorts codes by these
+  choices: FLASH (equal patches, one time step), RAGE (cell by cell, one
+  step), ENZO and CASTRO (arbitrary patches, subcycling), with ENZO and
+  FLASH imposing strict parent–child nesting ([Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 6.1–6.2).
+* *Subcycling is a choice, not part of the definition.* AMReX supports
+  level-by-level advance "with or without subcycling in time", or
+  full-hierarchy strategies ([Zhang et al. (2019)](/sources/zhang-2019.md)). ADAM's 2023 compressible
+  solver takes one global time step from the smallest cell ([Zaghi et al. (2023)](/sources/zaghi-2023.md), eq. 9).
+* *Subcycling without time interpolation.* A GPU lattice-Boltzmann AMR
+  fills **two** fine ghost layers once per coarse step, by linear or cubic
+  spatial interpolation. The band absorbs the two fine substeps, so no
+  temporal interpolation of ghost data is needed ([Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §4.1).
+* *More tree-based variants.*
+  * A cell-based Cartesian cut-cell tree, ordered along a
+    [space-filling curve](/definitions/space-filling-curve.md) for partitioning and multigrid coarsening ([Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md)).
+  * A block octree of identical Cartesian blocks with 2:1 balance, whose
+    tree sits in a CPU hash map keyed by a Morton-type index while the
+    field lives on the GPU ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §2.2;
+    [ADAM](/software/adam.md)).
+  * A GPU-resident forest of block quadtrees and octrees, stored as integer
+    ID lists with explicit neighbor links rather than a curve, with 2:1
+    balance enforced at all times ([Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §§3.1–3.3).
+  * A forest of element trees on an unstructured hybrid coarse mesh
+    (t8code), where a pyramid refines into 6 pyramids and 4 tetrahedra
+    rather than $2^d$ children, and only face neighbors are encoded. The
+    paper defines no transfer operators and no 2:1 balance ([Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3).
+
 # Citations
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §2–6.
 2. [Fromang et al. (2006)](/sources/fromang-2006.md), §2.5.
 3. [Nissen et al. (2014)](/sources/nissen-2014.md), §2.
+4. [Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 6.1–6.2.
+5. [Zhang et al. (2019)](/sources/zhang-2019.md).
+6. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §2.2, eq. 9.
+7. [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §§3–4.
+8. [Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §§2–4.
+9. [Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3.

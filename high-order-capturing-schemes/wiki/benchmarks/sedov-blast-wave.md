@@ -16,7 +16,7 @@ use total energy $10^{-12}$ with $E_0/h$, $E_0 = 3.2\times10^6$, in the
 centre cell, $\gamma = 1.4$, $t = 0.001$
 ([Zhang & Shu (2010)](/sources/zhang-2010.md), §4.2;
 [Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.2). Hu et al. and
-Guo et al. use $(\rho, u, p) = (1, 0, 4\times10^{-13})$ with
+Guo et al. use $(\rho, v_x, p) = (1, 0, 4\times10^{-13})$ with
 $p = 2.56\times10^{8}$ in the centre cell on $[0, 4]$, $h = 0.005$,
 $t = 0.001$ ([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.1;
 [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 9). The 2D
@@ -50,6 +50,16 @@ self-similar (Sedov; Korobeinikov).
   positivity limiter. The set-ups differ (background state, a step rule
   with $\max\{\cdot, 2h^2\}$ and restarts), so the two may not be
   comparable, and neither paper addresses the other.
+
+## Contradictions
+
+* **Does positivity-limited DG survive the Sedov problem without a TVB or
+  WENO limiter?** *Open* (recorded at the batch-8 deep lint, from the
+  compiler's note above). The earlier statement on this page says RKDG
+  "blows up" without the TVB limiter even with the positivity limiter;
+  [Zhang (2017)](/sources/zhang-2017.md) (Example 6) runs DG of degree 2–4
+  to completion with the positivity limiter alone. The set-ups differ in
+  the background state and the step rule, so the claims may not conflict.
 
 # Citations
 

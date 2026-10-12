@@ -4,7 +4,7 @@ title: "Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes"
 description: "A set of one-dimensional ideal-MHD Riemann problems, several taken from Dai and Woodward and popularized by Ryu and Jones, that together produce every 1D wave structure: fast and slow shocks and rarefactions, rotational and contact discontinuities, switch-on and switch-off waves, tangential discontinuities and compound waves; checked against a nonlinear Riemann solver."
 status: established
 aliases: [Ryu–Jones shock tube, Dai–Woodward shock tube, RJ2a, MHD Riemann problems]
-tags: [mhd, riemann-problem, shock-tube, verification]
+tags: [mhd, riemann-problem, verification, benchmark, 1d]
 timestamp: 2026-10-09T00:00:00Z
 ---
 

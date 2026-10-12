@@ -5,7 +5,7 @@ description: "Restores discrete conservation at AMR interfaces by replacing the 
 status: established
 aliases: [flux correction, flux synchronization]
 tags: [amr, conservation, refluxing, coarse-fine-interface]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Refluxing (coarse-fine flux correction)
@@ -64,6 +64,26 @@ own elliptic sync solve —
 [AMR projection method](/methods/amr-projection-method.md)
 ([Almgren et al. (1998)](/sources/almgren-1998.md)).
 
+**Refluxing changes elliptic sources: self-gravity.** In CASTRO each
+synchronization volume-averages level $l+1$ onto level $l$, then refluxes
+level-$l$ cells next to, but not covered by, the fine grids. Refluxing
+changes the coarse density and with it the gravitational source. The
+refluxing-only density change is therefore kept apart, and a **second
+flux register** records the mismatch of $\partial\phi_{\mathrm g}/\partial n$ (the
+gravitational potential) between coarse and fine faces. Both drive a
+two-level composite correction solve, whose result corrects momentum
+and energy. It is then added to the next-coarser register, so the
+correction propagates down the hierarchy ([Almgren et al. (2010)](/sources/almgren-2010.md), §6.2.3,
+eqs. 36–40; [AMR projection method](/methods/amr-projection-method.md)).
+
+**Codes without a flux register.**
+* A GPU lattice-Boltzmann AMR couples levels only through interpolated
+  ghost distributions and averaged interface cells. It claims no
+  conservation across levels and measures none ([Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §3.4).
+* ADAM's 2023 paper never mentions refluxing ([Zaghi et al. (2023)](/sources/zaghi-2023.md)).
+* The AMReX software paper names only an unspecified "multilevel
+  synchronization" ([Zhang et al. (2019)](/sources/zhang-2019.md)).
+
 **With multistage time integration.** In Flash-X on AMReX, the flux
 register between each pair of levels can hold a linear combination of the
 Runge–Kutta stage fluxes. The correction is applied once at the end of
@@ -80,3 +100,7 @@ seams ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
 2. [Almgren et al. (1998)](/sources/almgren-1998.md), §3.
 3. [Zaghi (2026)](/sources/zaghi-2026.md): issue #21 §2, #29; FLUME `verification.md` (conservation across AMR seams, MV-11).
 4. [Couch et al. (2021)](/sources/couch-2021.md), AMR and performance sections.
+5. [Almgren et al. (2010)](/sources/almgren-2010.md), §§6.2.1, 6.2.3.
+6. [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §3.4.
+7. [Zaghi et al. (2023)](/sources/zaghi-2023.md).
+8. [Zhang et al. (2019)](/sources/zhang-2019.md).

@@ -1,5 +1,76 @@
 # Directory Update Log
 
+## 2026-10-12
+
+* **Batch: AMR frameworks and octrees from the ADAM paper collection** (6
+  sources, staged as one unit). The user assigned this class to the bundle
+  (2026-10-12); the scope note in bundle law records it.
+  * **Readers.** Papers were read by parallel subagents into scratch notes
+    and reference fragments. The compiler wrote every page from those
+    notes.
+  * **Archive copies.** Three were copied from the collection: AMReX,
+    Aftosmis et al. and Knapp et al. Three repository copies were moved
+    in from a fresh download: Zaghi et al., Jaber et al. and CASTRO.
+  * **Left out.** Baert et al. (2013), on out-of-core voxel octrees, is
+    computer graphics and outside the scope.
+  * Ingested:
+    * [Zhang et al. (2019)](/sources/zhang-2019.md), the AMReX software
+      paper;
+    * [Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md),
+      the extended abstract, not the final paper;
+    * [Knapp et al. (2026)](/sources/knapp-2026.md), an arXiv preprint;
+      the collection's key "david-2026" used the first author's given
+      name;
+    * [Zaghi et al. (2023)](/sources/zaghi-2023.md), the published
+      version;
+    * [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md),
+      arXiv v3;
+    * [Almgren et al. (2010)](/sources/almgren-2010.md), CASTRO, arXiv v1.
+
+    None of the six has divergence-constraint content.
+  * Created:
+    * [Space-filling curve](/definitions/space-filling-curve.md) (Morton
+      and Peano–Hilbert; four sources plus one counterexample);
+    * [AMReX](/software/amrex.md) and [CASTRO](/software/castro.md).
+  * Updated:
+    * [Block-structured AMR](/definitions/block-structured-amr.md): the
+      CASTRO nesting rules and code taxonomy; subcycling as a choice
+      (AMReX, ADAM); subcycling without time interpolation (Jaber et al.);
+      four more tree variants.
+    * [Refluxing](/methods/refluxing.md): CASTRO's second flux register
+      for the gravitational potential, and codes without a register.
+    * [AMR projection method](/methods/amr-projection-method.md): the
+      self-gravity synchronization as an elliptic analog.
+    * [Point-value restriction bound](/results/point-value-restriction-compatibility.md):
+      two data points from Jaber et al. Cubic ghost fill is more accurate
+      than linear, and a cubic restriction was unstable.
+    * [ADAM](/software/adam.md): a published-record section. Zaghi et al.
+      (2023) support the octree, 2:1 balance, Morton-keyed tree, GPU-resident
+      field and WENO lineage. At its 2023 state the code differs in two
+      respects (CUDA Fortran rather than OpenACC; second-order rather than
+      tricubic ghost fill), recorded as version differences. The paper is
+      silent on every divergence claim, so the page keeps
+      `status: hypothesis`.
+  * [Notation registry](/notation.md): $l$, $r$, $m(E)$, $\phi_{\mathrm g}$.
+  * **Bibliography.** 316 references merged with `tools/bib_merge.py`.
+    * The resolver's aliases were reviewed, with overrides for
+      multi-author keys (`berger-colella-1989`, `jiang-shu-1996`,
+      `harten-lax-1983`).
+    * `aftosmis-1998` was sent to the wrong key by the resolver and
+      corrected.
+    * Venue identities were settled with Crossref:
+      * JCP 59:264 is Colella & Glaz (1985). It merges onto
+        `colella-woodward-1985`, whose citing source had misattributed
+        it; a note records this.
+      * Berger & Rigoutsos: the report and the IEEE journal version.
+      * Taylor (1950), printed as 201:192, matches neither part on
+        Crossref and is kept apart as `taylor-1950-b`.
+    * 10 reviewed silences (FLAGS 0). A per-fragment collision check and a
+      cross-fragment venue sweep were clean, and so was `--dupes`.
+    * The malformed AMReX self-entry (author list "et, al.") was corrected
+      to the 17 Crossref authors.
+    * 3227 → 3487 entries.
+
 ## 2026-10-09
 
 * **Ingested [Balsara & Kim (2016)](/sources/balsara-kim-2016.md)** (J. Comput. Phys.

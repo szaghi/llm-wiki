@@ -27,8 +27,8 @@ a centred four-point formula. The slope entering the general
 (variable-mesh) formula is monotonized first, so that $u_{i+1/2}$ lies
 between $\bar u_i$ and $\bar u_{i+1}$.
 
-**The parabola** in cell $I_i$, with $x = (\xi - x_{i-1/2})/h_i$, is
-$$u(\xi) = u^+_{i-1/2} + x\left(\Delta u_i + u_{6,i}(1 - x)\right),$$
+**The parabola** in cell $I_i$, in the cell coordinate $\zeta$, is
+$$u(x) = u^+_{i-1/2} + \left(\zeta + \tfrac12\right)\left(\Delta u_i + u_{6,i}\left(\tfrac12 - \zeta\right)\right),$$
 with $\Delta u_i$ and $u_{6,i}$ as in the [registry](/notation.md); it
 has average $\bar u_i$ by construction.
 
@@ -123,7 +123,7 @@ factor in the average–point conversion uses the opposite convention.
 **Later uses (batch 7).**
 * *A gentler overshoot reset.* With MC-limited differences inside the
   fourth-order edge formula, the author prefers resetting an overshooting
-  zone to its MC linear profile, $u^\mp_{i\pm1/2} \to \bar u_i \pm \tfrac12\Delta u_i$,
+  zone to its MC linear profile, $u^\mp_{i\pm1/2} \to \bar u_i \pm \tfrac12\delta^{\mathrm{MC}}\bar u_i$ (the MC-limited slope),
   over the original reset to the constant ([Balsara (2017)](/sources/balsara-2017-d.md), §II.2,
   eqs. 16–17b). The review states that the original PPM was "restricted to
   second order accuracy by the use of a monotonicity preserving limiter"

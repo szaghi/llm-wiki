@@ -31,7 +31,7 @@ be shifted-periodic and the run compared with a fine 1D solution.
     [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
 * *Rotated Ryu–Jones problems* (two fast shocks, two slow shocks, two
   rotational discontinuities and a contact).
-  * 3D, rotated by $\tan\alpha = -\tfrac12$ and $\tan\gamma = 1/(2\sqrt5)$
+  * 3D, rotated by $\tan\theta_{\mathrm{rot}} = -\tfrac12$ and $\tan\phi_{\mathrm{rot}} = 1/(2\sqrt5)$
     on $768\times8\times8$ cells: $L^1$ density errors from
     $1.82\times10^{-3}$ (WENO+3) to $1.07\times10^{-3}$ (MP5), with no
     prominent overshoots
@@ -57,7 +57,7 @@ be shifted-periodic and the run compared with a fine 1D solution.
 * *Provenance.* The rotated "Ryu–Jones" problem with two fast shocks, two
   rotational discontinuities, two slow shocks and a contact is Dai and
   Woodward's Table 1a problem, popularized by Ryu and Jones
-  ([Ryu & Jones (1995)](/sources/ryu-1995.md), Fig. 2a;
+  ([Ryu & Jones (1995)](/sources/ryu-1995.md), problem 2a;
   [Ryu–Jones shock tubes](/benchmarks/ryu-jones-shock-tubes.md)).
 * *Second order, four schemes.* Tóth's 2D tube rotated by $\tan^{-1}2$ with
   $(2, -1)$ shifted boundaries, and the 3D Gardiner–Stone tube on

@@ -38,6 +38,14 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**AMR-frameworks batch staged 2026-10-12:** 93 archived sources plus one
+frozen code record, all ingested. The user assigned the AMR-framework and
+octree class of the ADAM paper collection to this bundle (2026-10-12). It
+covers AMR infrastructure (frameworks, trees, space-filling curves, GPU
+AMR) as context for the interface problem, even where a source has no
+divergence content. Deep lint #9 is due after 10 ingestions since #8
+(8 so far: couch-2021, balsara-kim-2016 and this batch).
+
 **Corpus complete (2026-07-08): 61/61 sources ingested**, 97 conformant
 pages, six deep-lint passes. Books and long reviews were scoped reads with
 coverage recorded on their Source pages (Bossavit, Shashkov, Hiptmair

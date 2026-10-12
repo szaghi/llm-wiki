@@ -4,7 +4,7 @@ title: "Shock diffraction at a backward-facing corner"
 description: "A Mach 5.09 shock diffracting around a 90° corner: the strong expansion behind the corner drives density and pressure towards zero, so unlimited high-order schemes need ad hoc fixes, and the diffracted normal shock exposes the shock instability of low-dissipation Riemann solvers."
 status: established
 aliases: [shock diffraction, backward-facing step diffraction]
-tags: [benchmark, euler, positivity, 2d]
+tags: [benchmark, euler, positivity, 2d, shock-instability]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

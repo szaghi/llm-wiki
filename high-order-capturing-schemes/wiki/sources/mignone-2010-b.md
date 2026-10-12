@@ -85,6 +85,7 @@ into the [GLM](/methods/hyperbolic-divergence-cleaning.md) and
 * Updated [Constrained transport](/methods/constrained-transport.md): the same-code comparison and CT's failure on the low-β blast.
 * Updated [Grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md), [Field-loop advection](/benchmarks/field-loop-advection.md), [MHD rotor](/benchmarks/mhd-rotor.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md), [Circularly polarized Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md).
 * Updated [PLUTO](/software/pluto.md).
+* Also updated in the same run (list completed at the batch-8 deep lint): [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
 
 # Citations
 

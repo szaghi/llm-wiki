@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Notation registry
@@ -20,6 +20,9 @@ in a `# Notation map` section. Extend this registry (and record the extension in
 |---|---|
 | $h$, $H$ | fine- and coarse-level grid spacing ($H = 2h$ at a 2:1 interface) |
 | $\Omega_h$ | discrete grid (a level of a hierarchy) |
+| $l$, $r$ | level index of an AMR hierarchy (0 = coarsest) and refinement ratio between consecutive levels (added 2026-10-12; $r$ as a polynomial degree appears only as the FEEC subscript $\mathcal P_r$) |
+| $\phi_{\mathrm g}$ | gravitational potential, $\mathbf g = -\nabla\phi_{\mathrm g}$ (distinct from the projection potential; added 2026-10-12) |
+| $m(E)$ | space-filling-curve index of a cell, block or element $E$ (added 2026-10-12) |
 | $\mathbf{x}_{ijk}$ | node/cell-center location, context per collocation |
 
 ## Discrete spaces and the complex

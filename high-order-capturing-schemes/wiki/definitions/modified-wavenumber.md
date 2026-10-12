@@ -4,7 +4,7 @@ title: "Modified wavenumber (dispersion and dissipation analysis)"
 description: "The Fourier symbol of a discrete first-derivative operator: applied to e^{ikx} it returns i·ξ̃(ξ)/h; Re ξ̃ against ξ = kh measures dispersion and Im ξ̃ dissipation, the standard tool for judging capturing schemes for turbulence."
 status: established
 aliases: [modified wavenumber, transfer function, spectral resolution, ADR analysis]
-tags: [spectral-analysis, dispersion, dissipation, definition]
+tags: [spectral-resolution, dispersion, dissipation, definition]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

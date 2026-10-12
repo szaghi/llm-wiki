@@ -158,8 +158,8 @@ conservative, so the order is not lost.
 
 **Later uses (batch 7).**
 * *A third-order toy predictor in 1D* with six space–time nodes and the
-  explicit Galerkin relations $\hat u_t = -\hat f_x$, $\hat u_{tt} = -\hat f_{xt}/2$,
-  $\hat u_{xt} = -2\hat f_{xx}$ in the predictor's local modes ([Balsara (2017)](/sources/balsara-2017-d.md),
+  explicit Galerkin relations $\hat u^{(t)} = -\hat f^{(x)}$, $\hat u^{(tt)} = -\hat f^{(xt)}/2$,
+  $\hat u^{(xt)} = -2\hat f^{(xx)}$ in the predictor's local modes ([Balsara (2017)](/sources/balsara-2017-d.md),
   §V.2, eqs. 58–67), and the 2D analogue (eq. 77).
 * *Iteration count.* "For a temporally Nth order scheme, one only needs
   (N-1) steps": two iterations at third order, three at fourth, then a
@@ -171,6 +171,17 @@ conservative, so the order is not lost.
   numbers 1.00, about 0.32, 0.17, 0.10 and 0.069 for evolved degree 0 to 4
   with matched space–time order, divided by the dimension in multi-D
   (§VI).
+
+## Contradictions
+
+* **How many Picard iterations does an order-$(K+1)$ predictor need?**
+  *Open, probably a counting convention* (recorded at the batch-8 deep
+  lint). Above, [Balsara et al. (2009)](/sources/balsara-2009.md) give
+  $K + 1$ for the ADER-CG predictor; [Balsara & Kim (2016)](/sources/balsara-2016-b.md)
+  and [Balsara (2017)](/sources/balsara-2017-d.md) give $K$, the latter
+  followed by a final nodal flux evaluation. The counts agree if that
+  final evaluation is counted as an iteration; no source says so. Closing
+  it needs a check of the 2009 paper's step list.
 
 # Citations
 

@@ -12,11 +12,11 @@ timestamp: 2026-10-09T00:00:00Z
 
 **Set-up** (Gardiner and Stone, as used by the sources below). On
 $[-1, 1]\times[-\tfrac12, \tfrac12]$, periodic, a loop of radius $R = 0.3$
-is set from the vector potential $A_z = A_0(R - r)$ for $r \le R$, with
+is set from the vector potential $A_z = A_0(R - \varrho)$ for $\varrho \le R$, with
 $A_0 = 10^{-3}$, so the magnetic pressure is negligible and the field is
-advected passively by a uniform flow of speed $\sqrt5$ at $\tan\theta = 1/2$
+advected passively by a uniform flow of speed $\sqrt5$ at $\tan\theta_{\mathrm{rot}} = 1/2$
 to the mesh. The field is discontinuous at the rim and singular at the
-centre. Some versions modify $A_z$ for $r \le 0.2R$ to remove the
+centre. Some versions modify $A_z$ for $\varrho \le 0.2R$ to remove the
 central singularity.
 
 **Results.**
@@ -31,7 +31,7 @@ central singularity.
   distorts the loop, while fourth- and sixth-order CT keep it circular and
   remove the perimeter oscillations almost completely. At $t = 20$ and
   $N = 128$ about 96% of the magnetic energy remains, against 95% for the
-  second-order CT. A grazing case ($\tan\theta = 1/100$) shows oscillations
+  second-order CT. A grazing case ($\tan\theta_{\mathrm{rot}} = 1/100$) shows oscillations
   of a few percent that do not grow, and a tilted 3D cylindrical loop is
   preserved ([Seo & Ryu (2023)](/sources/seo-2023.md), §3.3;
   [constrained transport](/methods/constrained-transport.md)).

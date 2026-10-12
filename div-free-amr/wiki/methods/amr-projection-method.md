@@ -5,7 +5,7 @@ description: "Subcycled projection-method incompressible flow on patch hierarchi
 status: established
 aliases: [adaptive projection, IAMR method]
 tags: [amr, projection, incompressible, subcycling, synchronization]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # AMR projection method
@@ -68,6 +68,32 @@ across the level jump, not by the interior operators, just as the
 [seam divergence source](/results/collocated-seam-divergence-source.md) is
 set by the seam operator.
 
+## Analog: multilevel self-gravity
+
+CASTRO meets the same structural problem with the Poisson equation for
+gravity, which is not a divergence constraint
+([Almgren et al. (2010)](/sources/almgren-2010.md), §6.2.3).
+* **The mismatch.** With subcycling the code can afford only level solves
+  during the fine steps. Replacing a composite solve by separate level
+  solves "generates a mismatch in the normal gradient of $\phi_{\mathrm g}$ at the
+  boundary between each level", even when averaging and refluxing leave
+  the density unchanged.
+* **The cure** has two parts:
+  * a lagged correction, after Miniati & Colella (2007): the difference
+    between a composite and a level solve at the start of the step is
+    added at the start and the end, which makes the end-of-step potential
+    exact when the density does not change;
+  * a two-level composite correction solve, driven by a flux register of
+    the normal-gradient mismatch together with the refluxing-induced
+    density change (see [refluxing](/methods/refluxing.md)).
+* **The interface stencil** of the composite Laplacian is the multilevel
+  stencil of the projection literature.
+* **Not tested.** The synchronization is not exercised by any test with
+  refinement in the paper (§8).
+
+It confirms the lesson above that interface consistency of an
+elliptically coupled field is itself an elliptic problem.
+
 ## Constraint class
 
 Tolerance-level, twice over: solver tolerance in the MAC/sync solves and
@@ -82,3 +108,4 @@ extensions.
 
 1. [Almgren et al. (1998)](/sources/almgren-1998.md), §§2–3.
 2. [Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md), §§3.3–3.4, 4–5.
+3. [Almgren et al. (2010)](/sources/almgren-2010.md), §§6.2.3, 8.

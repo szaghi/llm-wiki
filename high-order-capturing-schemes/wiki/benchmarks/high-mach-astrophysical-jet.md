@@ -11,7 +11,7 @@ timestamp: 2026-10-08T00:00:00Z
 # High-Mach-number astrophysical jet
 
 **Set-up** (Ha et al.'s model without radiative cooling). $\gamma = 5/3$;
-ambient state $(\rho, u, v, p) = (\rho_a, 0, 0, 0.4127)$; a jet
+ambient state $(\rho, v_x, v_y, p) = (\rho_a, 0, 0, 0.4127)$; a jet
 $(5, u_j, 0, 0.4127)$ enters at the left for $\vert y\vert < 0.05$; the
 other boundaries are outflow.
 * Mach 80: $u_j = 30$, $\rho_a = 5$, domain $[0,2]\times[-0.5,0.5]$,

@@ -58,7 +58,7 @@ $\max|B_z|$ measures numerical dissipation.
   ([Balsara (2009b)](/sources/balsara-2009-b.md), §5.1;
   [Balsara et al. (2009)](/sources/balsara-2009.md), §7.2;
   [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
-* After about 100 crossings ($\tan\alpha = 6$, $120\times20$ cells,
+* After about 100 crossings ($\tan\theta_{\mathrm{rot}} = 6$, $120\times20$ cells,
   $t = 16.5$), about 94% of the amplitude remains at fifth order, 20% at
   third and 3% for second-order TVD with the MC limiter
   ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.1.3).
@@ -77,7 +77,7 @@ also at high beta and that the set-up is designed to ameliorate them
 an instability in its runs.
 
 **Later uses (batch 7).**
-* *Second-order convergence of four schemes* in 2D ($\tan\alpha = 2$) and 3D:
+* *Second-order convergence of four schemes* in 2D ($\tan\theta_{\mathrm{rot}} = 2$) and 3D:
   at $N_x = 256$ and Courant number 0.8 in 2D, GLM $8.48\times10^{-5}$, CT
   $6.73\times10^{-5}$, eight-wave $7.29\times10^{-5}$, all about second order
   ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.1, Table 1).

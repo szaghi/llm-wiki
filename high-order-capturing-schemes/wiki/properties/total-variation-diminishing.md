@@ -4,7 +4,7 @@ title: "Total variation diminishing (TVD) and bounded (TVB)"
 description: "TVD: the discrete total variation does not grow; TVB: it stays uniformly bounded. TVD yields convergent subsequences but forces first-order accuracy at smooth extrema, which is why high-order capturing schemes give it up."
 status: established
 aliases: [TVD, TVB, total variation diminishing, total variation bounded]
-tags: [stability, tvd, nonlinear-stability]
+tags: [stability, tvd]
 timestamp: 2026-10-09T00:00:00Z
 ---
 

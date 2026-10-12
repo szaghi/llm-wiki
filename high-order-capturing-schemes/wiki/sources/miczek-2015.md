@@ -8,7 +8,7 @@ authors: [Miczek F., Röpke F.K., Edelmann P.V.F.]
 year: 2015
 venue: "Astron. Astrophys. 576:A50"
 local_file: "~/papers/mosaic/high-order-capturing-schemes/2015-A&A-Miczek-10105100046361201425059.pdf"
-tags: [riemann-solver, low-mach, preconditioning]
+tags: [riemann-solver, low-mach]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

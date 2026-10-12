@@ -30,7 +30,8 @@ $\beta = \log 2/(36\delta^2)$ as printed by
   in the square wave than WENO/ENO with Roe flux, and an unexplained
   asymmetry in the right hump at 400 cells
   ([Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Fig. 5.2).
-* After ten traversals (2000 mesh points), $r = 5$ MPWENO keeps peak
+* After ten traversals of the 200-zone grid (the profile advected over
+  2000 mesh points), $r = 5$ MPWENO keeps peak
   heights, the inflection that distinguishes the Gaussians from the
   triangle, symmetric profiles and about seven points across the square
   wave's edges; PPM flattens every peak and its steepener squares and

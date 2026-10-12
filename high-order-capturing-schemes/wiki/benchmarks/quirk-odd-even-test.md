@@ -25,7 +25,7 @@ cells 25 and 26 ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §III.D, 
     Xie et al. use $\pm 0.001$);
   * $10^{-6}$ ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.2;
     [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.1).
-* The Simon & Mandal papers print the ambient velocity as $u = 1.0$ for
+* The Simon & Mandal papers print the ambient velocity as $v_x = 1.0$ for
   a "stationary fluid", which is recorded as printed. They run until the
   shock reaches $x = 650$.
 * Xie et al. report the solution at $t = 25$ and $50$.

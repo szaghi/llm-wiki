@@ -57,8 +57,9 @@ waves exactly are vulnerable: Godunov's exact solver, Roe, HLLC,
 for shallow water. HLL and HLLE, which dissipate the linear waves, are
 robust ([Simon & Mandal (2019)](/sources/simon-2019.md), §4.1;
 [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §4;
-[Xie et al. (2021)](/sources/xie-2021.md), §6;
-[Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.1).
+[Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.1),
+and Godunov, Roe, HLLEM and HLLC all fail Xie et al.'s carbuncle tests
+([Xie et al. (2021)](/sources/xie-2021.md), §6).
 How robust HLLE is remains disputed; see `Contradictions` on the
 [Riemann-solver page](/methods/approximate-riemann-solvers.md). Kitamura
 & Shima sort first-order fluxes into three groups. Roe, even with an

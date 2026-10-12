@@ -52,7 +52,7 @@ reconstruction of the zone-centred field
   [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
   Fourth-order RK-WENO captures the fast shock crisply with positive
   pressure ([Balsara (2009b)](/sources/balsara-2009-b.md), §5.3).
-* *Field along $x$*, $B = 100/\sqrt{4\pi}$, $p = 10^3$ inside $r = 0.1$ and
+* *Field along $x$*, $B = 100/\sqrt{4\pi}$, $p = 10^3$ inside $\varrho = 0.1$ and
   0.1 outside, $200^2$: with the positivity limiter off the code fails from
   negative pressure, and without the divergence projection it oscillates.
   The final time is not printed; 0.01 is inferred from a figure axis
@@ -62,7 +62,7 @@ reconstruction of the zone-centred field
   correction; the Balsara–Spicer case with the correction; and a
   relativistic case. Point symmetry is kept, and the fallback to lower
   order "played an essential role" ([Berta et al. (2024)](/sources/berta-2024.md), §5.7, Table 3).
-* *3D, milder.* $B_0 = 10$ diagonal, pressure 100 inside $r_0 = 0.125$
+* *3D, milder.* $B_0 = 10$ diagonal, pressure 100 inside $\varrho = 0.125$
   (printed swapped in eq. 47), $200^3$, $t = 0.02$, no positivity
   treatment mentioned ([Seo & Ryu (2023)](/sources/seo-2023.md), §3.7).
 * *Relativistic*, $400^2$, the set-up above: stable "near-infinite
@@ -71,7 +71,7 @@ reconstruction of the zone-centred field
 
 **Later uses (batch 7).**
 * *Two 3D blasts at second order* on $200^3$. At plasma beta $2\times10^{-2}$
-  ($B_0 = 10$, $p = 100 \mid 1$, $r_0 = 0.125$, $t = 0.02$, printed in the right
+  ($B_0 = 10$, $p = 100 \mid 1$, $\varrho = 0.125$, $t = 0.02$, printed in the right
   order) GLM, EGLM and CT are indistinguishable. At $2\times10^{-4}$
   ($B_0 = 100$, $p = 10^4 \mid 1$, $t = 2.5\times10^{-3}$) only EGLM runs; CT fails
   even with a minmod limiter ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.7).

@@ -153,9 +153,9 @@ to another bundle.
 **Batch 8 staged 2026-10-12:** 77 of 77 archived sources ingested. The
 batch took the Riemann-solver and shock-anomaly class of the ADAM paper
 collection: simon-2019, simon-2019-b, miczek-2015, edelmann-2021,
-xie-2021, dumbser-2016, navasmontilla-2019 and kitamura-2019. A **deep
-lint is overdue**: 15 ingestions since the batch-6 deep lint (batches 7
-and 8). Remaining ADAM classes assigned here (time integration, immersed
+xie-2021, dumbser-2016, navasmontilla-2019 and kitamura-2019. The deep lint
+for batches 7–8 ran on 2026-10-12 (see `log.md`); the next is due after
+10 further ingestions. Remaining ADAM classes assigned here (time integration, immersed
 and embedded boundaries, benchmarks and experiments) await later batches.
 
 **Batch 7 staged 2026-10-09:** 69 of 69 archived sources ingested. The batch

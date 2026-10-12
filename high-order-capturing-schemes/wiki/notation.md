@@ -279,6 +279,17 @@ Added 2026-10-12 (batch 8: simon-2019, simon-2019-b, miczek-2015, edelmann-2021,
 | $\mathbf s(u)$, $u^{\mathrm{eq}}$ | source term of a balance law $\partial_t u + \nabla\cdot\mathbf f(u) = \mathbf s(u)$ (bold, so distinct from the stage count $s$), and a known steady (equilibrium) state of it |
 | $\varphi_{\mathrm g}$, $\mathbf g$ | gravitational potential and acceleration, $\mathbf g = -\nabla\varphi_{\mathrm g}$ (distinct from the PPM flattening $\phi_i$ and the boundary data $g(t)$) |
 
+## Deep-lint additions (2026-10-12)
+
+| Symbol | Meaning |
+|---|---|
+| $\theta_{\mathrm{rot}}$, $\phi_{\mathrm{rot}}$ | in-plane and out-of-plane angles of a problem rotated against the grid (distinct from the limiter $\theta$ and the PPM $\phi_i$) |
+| $\varrho$ | radial distance from a set-up centre (distinct from the density $\rho$ and the stencil count $r$) |
+| $\mathcal T$, $\vert\mathcal T\vert$, $\vert\partial_i\mathcal T\vert$ | a triangular cell, its area and the length of its edge $i$ |
+| $\delta^{\mathrm{MC}}\bar u_i$ | monotonized-central limited slope of cell $I_i$ (distinct from the PPM jump $\Delta u_i$) |
+| $u^{\mathrm S}$ | source-term half-step state $u + 2\Delta t\,\mathbf s(u)$ of a split positivity-preserving update |
+| $\hat u^{(t)}$, $\hat f^{(x)}$, … | space–time modal coefficients of the predictor, indexed by the derivative they represent (extends $\hat u^{(lm)}$) |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

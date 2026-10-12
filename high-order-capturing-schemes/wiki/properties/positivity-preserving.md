@@ -67,7 +67,7 @@ blends the high-order flux towards a first-order one.
 smooth solutions bounded away from vacuum: the modification is
 $O(h^{K+1})$ ([Zhang & Shu (2010)](/sources/zhang-2010.md), §2.2;
 [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.3). The proofs need
-$\rho, p \ge M > 0$; near vacuum there is no accuracy claim.
+$\rho$ and $p$ bounded below by a positive constant; near vacuum there is no accuracy claim.
 A conservative positivity-preserving scheme is $L^1$-stable
 ([Zhang & Shu (2012)](/sources/zhang-2012.md), §1).
 

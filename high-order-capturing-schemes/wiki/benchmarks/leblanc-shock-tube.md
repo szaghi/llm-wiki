@@ -11,10 +11,10 @@ timestamp: 2026-10-08T00:00:00Z
 # Leblanc shock tube
 
 **Set-up.** Two versions appear.
-* $\rho_L = 2$, $\rho_R = 0.001$, $u = 0$, $p_L = 10^9$, $p_R = 1$,
+* $\rho_L = 2$, $\rho_R = 0.001$, $v_x = 0$, $p_L = 10^9$, $p_R = 1$,
   $\gamma = 1.4$, $t = 10^{-4}$ ([Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3).
 * Domain $[0, 9]$, $\gamma = 5/3$, a jump of $10^6$ in internal energy
-  and $10^3$ in density, right state $(\rho, u, p) = (10^{-3}, 0, 10^{-7})$,
+  and $10^3$ in density, right state $(\rho, v_x, p) = (10^{-3}, 0, 10^{-7})$,
   $t = 6$ ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 10;
   [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.3, $h = 9/800$).
 The solution is a strong rarefaction, a contact and a shock.
