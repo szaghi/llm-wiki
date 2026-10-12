@@ -72,6 +72,24 @@ from then on.
 | $\mathsf f_{\mathrm E}$ | Eddington tensor, $\mathsf P_{\mathrm r} = \mathsf f_{\mathrm E}E_{\mathrm r}$ |
 | $\kappa$ | opacity (per unit mass, with subscripts for absorption and scattering) |
 
+## Additions, batch 1 (2026-10-12)
+
+| Symbol | Meaning |
+|---|---|
+| $P^*$ | total pressure $p + \tfrac12 B^2$ (magnetic field in the units of the registry row for $\mathbf B$) |
+| $\mathbf J$ | current density, $\mathbf J = \nabla\times\mathbf B$ |
+| $\boldsymbol{\mathcal E}$ | electric field (EMF) of ideal MHD, $\boldsymbol{\mathcal E} = -\mathbf v\times\mathbf B$; in constrained transport its components live on cell edges |
+| $\psi$, $c_h$, $c_p$ | GLM cleaning scalar, its propagation speed, and the damping parameter ($\partial_t\psi + c_h^2\nabla\cdot\mathbf B = -(c_h^2/c_p^2)\psi$) |
+| $\hat c$, $f_c$ | reduced speed of light used in the radiation time derivatives, and the reduction factor $f_c = \hat c/c$ |
+| $f_{\mathrm r}$, $\chi_{\mathrm E}$, $\hat{\mathbf n}$ | reduced flux $\vert\mathbf F_{\mathrm r}\vert/(cE_{\mathrm r})$ (or $\vert\mathbf F_{\mathrm{ph}}\vert/(cN_{\mathrm{ph}})$ in photon-number form), Eddington factor, and flux direction of the M1 closure, $\mathsf f_{\mathrm E} = \tfrac{1-\chi_{\mathrm E}}{2}\mathsf I + \tfrac{3\chi_{\mathrm E}-1}{2}\hat{\mathbf n}\hat{\mathbf n}$ |
+| $N_{\mathrm{ph}}$, $\mathbf F_{\mathrm{ph}}$ | photon number density and photon number flux (moments written in photon number rather than energy) |
+| $\tau$ (optical depth) | optical depth across a length scale, written $\tau_{\max}$ or $\tau_\lambda$ when the scale matters (the unsubscripted $\tau$ is otherwise the Valencia energy, below) |
+| $\mathsf T_{\mathbf g}$, $E_{\mathrm g}$ | gravitational stress tensor $\frac{1}{4\pi G}\left(\nabla\Phi\nabla\Phi - \tfrac12\vert\nabla\Phi\vert^2\mathsf I\right)$, with $\nabla\cdot\mathsf T_{\mathbf g} = -\rho\mathbf g$, and a gravitational energy density |
+| $a$ | cosmological scale factor (comoving formulations) |
+| $\eta_1$, $\eta_2$ | dual-energy thresholds: select the internal-energy equation where the thermal fraction of the energy is below $\eta_1$, and resynchronize it from the total energy where it exceeds $\eta_2$ |
+| $\omega_{\mathrm{SOR}}$ | over-relaxation parameter of a Gauss–Seidel smoother |
+| $\hat f^{\rho}_{i+1/2}$ | mass (density) component of the numerical flux at $x_{i+1/2}$ |
+
 ## Relativistic (magneto)hydrodynamics
 
 | Symbol | Meaning |

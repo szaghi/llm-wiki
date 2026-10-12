@@ -88,4 +88,10 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
-**Scaffolded 2026-10-12:** 35-PDF archive, 0 sources ingested.
+**Batch 1 staged 2026-10-12:** 10 of 35 archived sources ingested (the
+frameworks: stone-2008, stone-2020, mignone-2012, almgren-2010, bryan-2014,
+zhang-2018, rosdahl-2013, skinner-2013, tomida-2023, mullen-2021). Next:
+the module papers (sinks, Jeans, cooling, chemistry, self-gravity energy,
+relativistic primitive recovery, EOS, pseudo-Newtonian potential), then
+the GPU codes, then comparisons and applications. The first deep lint ran
+with this batch (see `log.md`); the next is due after 10 more ingestions.
