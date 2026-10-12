@@ -185,6 +185,7 @@ and 3D, and a GR torus (§4.3). The paper has no Sod shock tube.
 * [Constrained transport](/methods/constrained-transport.md), [Unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md), [Adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 * [Linear wave convergence](/benchmarks/linear-wave-convergence.md), [Field-loop advection](/benchmarks/field-loop-advection.md), [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md), [Sedov–Taylor blast wave](/benchmarks/sedov-taylor-blast-wave.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md).
 * Also cited on [Sod shock tube](/benchmarks/sod-shock-tube.md), [Athena (astrophysical MHD code)](/software/athena.md), [Enzo (AMR code for cosmological and astrophysical fluid flow)](/software/enzo.md), [PLUTO (multiphysics code for astrophysical gas dynamics, with Chombo AMR)](/software/pluto.md).
+* Also cited on [General equations of state in Godunov codes](/methods/general-equation-of-state.md), [Primitive-variable recovery in relativistic MHD](/methods/primitive-variable-recovery.md).
 
 # Citations
 

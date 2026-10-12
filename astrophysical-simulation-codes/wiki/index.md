@@ -11,7 +11,7 @@ numerical methods (self-gravity, sink particles, cooling and chemistry,
 radiation moments, equations of state, relativistic primitive recovery);
 code comparisons; and GPU and performance-portable frameworks, astro or
 not.
-**Corpus: 10 of 35 archived sources compiled** (see the [update log](/log.md)).
+**Corpus: 20 of 35 archived sources compiled** (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -38,6 +38,13 @@ for every page.
    and [conservative self-gravity](/methods/conservative-self-gravity.md).
    Radiation: [M1 two-moment transport](/methods/m1-radiation-transport.md)
    and the [reduced speed of light](/definitions/reduced-speed-of-light.md).
+   Star formation: [sink particles](/methods/sink-particles.md) and the
+   [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md).
+   Thermodynamics: [cooling and chemistry integration](/methods/radiative-cooling-integration.md)
+   (with the [Grackle](/software/grackle.md) library) and
+   [general equations of state](/methods/general-equation-of-state.md).
+   Relativity: [primitive-variable recovery](/methods/primitive-variable-recovery.md)
+   and [pseudo-Newtonian potentials](/methods/pseudo-newtonian-potentials.md).
 5. **Verification.** [Linear wave convergence](/benchmarks/linear-wave-convergence.md),
    [Sod](/benchmarks/sod-shock-tube.md), [Brio–Wu](/benchmarks/brio-wu-shock-tube.md),
    [Orszag–Tang](/benchmarks/orszag-tang-vortex.md),
@@ -46,7 +53,10 @@ for every page.
    [Sedov–Taylor](/benchmarks/sedov-taylor-blast-wave.md),
    [double Mach reflection](/benchmarks/double-mach-reflection.md),
    [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md),
-   [Jeans wave](/benchmarks/jeans-wave.md).
+   [Jeans wave](/benchmarks/jeans-wave.md),
+   [singular isothermal sphere collapse](/benchmarks/singular-isothermal-sphere-collapse.md),
+   [self-gravitating polytrope](/benchmarks/self-gravitating-polytrope.md),
+   [hydrostatic white dwarf](/benchmarks/hydrostatic-white-dwarf.md).
 
 Folder indexes: [Software](/software/index.md) · [Methods](/methods/index.md) ·
 [Definitions](/definitions/index.md) · [Operators](/operators/index.md) ·

@@ -232,9 +232,29 @@ qualitative figure comparisons, and no convergence-order study is presented.
   [Athena++](/software/athena-plus-plus.md) than the public versions of FLASH,
   PLUTO and Enzo (§3.6.1).
 
+## Later uses (batch 2)
+
+* **Grackle.** The chemistry and cooling library
+  [Grackle](/software/grackle.md) was extracted in 2012 from Enzo's cooling
+  and chemistry solver, itself from Anninos et al. (1997)
+  ([Smith et al. (2017)](/sources/smith-2017.md), §2, §3). This agrees with
+  the coupled-physics list above: Grackle carries the same hierarchy of
+  primordial networks up to twelve species, Cloudy-based metal cooling
+  tables and UV backgrounds, and integrates chemistry and cooling sub-cycled
+  inside the step handed over by the host (§3.1–§4). Its primordial
+  chemistry is "closely based on" Enzo's, but it includes processes absent
+  from Enzo 2.5, for example tunnelling in the collisional dissociation of
+  H$_2$ (§3, §3.1). Enzo is one of the 14 listed host codes (§8.2). The
+  sub-cycling limits Grackle uses (each sub-step changes the H and electron
+  densities, and the internal energy, by at most 10 %; eqs. 9, 11) are
+  Grackle's; the paper does not state whether Enzo's built-in solver uses
+  the same rule. See
+  [integrating cooling and chemistry source terms](/methods/radiative-cooling-integration.md).
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §§1–13, Appendix (arXiv v1).
 2. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §4.2 (arXiv v1).
 3. [Tomida & Stone (2023)](/sources/tomida-2023.md), §3.3.1, App. B (arXiv v1).
 4. [Stone et al. (2020)](/sources/stone-2020.md), §2.2, §3.6.1.
+5. [Smith et al. (2017)](/sources/smith-2017.md), §§2–4, 8.2 (arXiv v2).

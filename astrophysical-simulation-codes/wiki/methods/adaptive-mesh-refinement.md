@@ -372,6 +372,64 @@ codes refine whole blocks or octs into $2^d$ children
   with AMR"
   ([Stone et al. (2020)](/sources/stone-2020.md), §§3.3.5, 3.4.4).
 
+## Later uses (batch 2)
+
+### Refinement for self-gravitating collapse and sink particles
+
+* **Jeans refinement.** [Federrath et al. (2010)](/sources/federrath-2010.md)
+  run the block-AMR code FLASH with the Truelove condition of at least 4
+  cells per Jeans length (§2.2.1), and note the claim of Heitsch et al.
+  (2001) that MHD needs more than four. In practice they refine to keep at
+  least 12 cells per Jeans length on every level below the finest and
+  resolve it with 5 cells on the finest, where the
+  [sink-particle](/methods/sink-particles.md) accretion radius is about
+  2.5 cells (§4.2.1); their gas–sink gravity test refines at 6 and
+  derefines above 12 cells per Jeans length (§3.2), and the cluster run adds
+  shock refinement (§4.2). See the
+  [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md).
+* **Why sinks are needed.** The Truelove and Heitsch criteria "are only
+  meaningful in regions that are undergoing self-gravitational collapse".
+  Pure AMR satisfies them only for the first object to collapse, because
+  the Courant step of the finest level then stalls the whole run; sink
+  particles cut the runaway off "in a controlled fashion"
+  ([Federrath et al. (2010)](/sources/federrath-2010.md), §2.2.1). The
+  refinement criterion drives collapsing gas to the finest level, and sinks
+  may form only there; an extra criterion keeps every cell within a sink's
+  accretion radius at the finest level (§2.2.2).
+* **Sink-centred refinement.**
+  [Krumholz, McKee & Klein (2004)](/sources/krumholz-2004.md) use a
+  Berger–Oliger code with subcycled levels and a synchronization step for
+  conservation across levels, and refine so that a sink's accretion zone
+  is always on the finest level; every cell size and time step they quote
+  is the finest level's (§2.1). In their shock–accretor application,
+  refinement keeps the distance to the sink at no less than 32 cells, down
+  to a finest cell of 1/512 of the Bondi radius (§4). They assert that the
+  sink algorithm "is not dependent on any of the details of the AMR
+  framework" and applies equally to fixed grids (§2.1).
+* **Gravity near Cartesian boundaries.** In FLASH's gas–sink gravity test
+  on a static singular isothermal sphere ($32^3$ root grid plus 2 levels,
+  isolated boundaries), test-particle orbits broaden after about 100 inner
+  orbits because the multigrid potential loses spherical symmetry near the
+  Cartesian boundaries; the authors find it "hard to maintain perfect
+  spherical symmetry for more than 10-100 sink particle orbits"
+  ([Federrath et al. (2010)](/sources/federrath-2010.md), §3.2, Figs. 5–6).
+
+### Castro in 2016
+
+[Katz et al. (2016)](/sources/katz-2016.md) add, for
+[Castro](/software/castro.md): subcycling with as many substeps as the
+refinement jump (two jumps of 4 give 16 finest steps per root step);
+refined grids may not reach the domain boundary; the final multilevel
+gravity synchronization is optional and disabled for their merger runs
+(§2.1, §2.3); boxes a multiple of 16 zones per side for multigrid
+efficiency, maximum grid size 32–64 (§5); tagging by distance from each
+star (twice the Roche radius) on the root level and by density on finer
+levels (§3.2). The default box distribution is a Morton space-filling
+curve, while a knapsack algorithm proved most efficient for their problem
+(§5); the 2010 description of an automatic switch between the two (Load
+balancing, above) and this statement of the default differ, and neither
+paper dates the change.
+
 ## Contradictions
 
 **Is time subcycling worth its cost?** *Open.*
@@ -405,3 +463,6 @@ the issue, and none quantifies it.
 5. [Zhang et al. (2018)](/sources/zhang-2018.md), §§3.1, 3.3, 4, 5.1 (arXiv v4).
 6. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §§5–5.3, App. D (arXiv v2).
 7. [Tomida & Stone (2023)](/sources/tomida-2023.md), §§3.1, 3.2.1, 5 (arXiv v1).
+8. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.2.1–2.2.2, 3.2, 4.2 (arXiv v2).
+9. [Krumholz, McKee & Klein (2004)](/sources/krumholz-2004.md), §§2.1, 4 (arXiv v1).
+10. [Katz et al. (2016)](/sources/katz-2016.md), §§2.1, 2.3, 3.2, 5 (arXiv v2).

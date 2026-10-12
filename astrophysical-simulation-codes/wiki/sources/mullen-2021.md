@@ -146,6 +146,7 @@ conservative scheme settles (Fig. 8).
 * Updated [Athena++](/software/athena-plus-plus.md),
   [Jeans wave](/benchmarks/jeans-wave.md).
 * Also cited on [Athena (astrophysical MHD code)](/software/athena.md).
+* Also cited on [Self-gravitating polytrope](/benchmarks/self-gravitating-polytrope.md).
 
 # Citations
 

@@ -162,6 +162,7 @@ or MHD blast test.
 * [Enzo](/software/enzo.md).
 * [Constrained transport](/methods/constrained-transport.md), [GLM divergence cleaning](/methods/glm-divergence-cleaning.md), [Unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md), [Dual-energy formalism](/methods/dual-energy-formalism.md), [Adaptive mesh refinement](/methods/adaptive-mesh-refinement.md), [Poisson solvers for self-gravity on adaptive meshes](/methods/multigrid-self-gravity.md).
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [Sod shock tube](/benchmarks/sod-shock-tube.md), [Sedov–Taylor blast wave](/benchmarks/sedov-taylor-blast-wave.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md).
+* Also cited on [Jeans resolution criterion (Truelove condition)](/definitions/jeans-resolution-criterion.md), [Integrating cooling and chemistry source terms](/methods/radiative-cooling-integration.md).
 
 # Citations
 

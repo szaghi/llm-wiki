@@ -90,6 +90,37 @@ from then on.
 | $\omega_{\mathrm{SOR}}$ | over-relaxation parameter of a Gauss–Seidel smoother |
 | $\hat f^{\rho}_{i+1/2}$ | mass (density) component of the numerical flux at $x_{i+1/2}$ |
 
+## Additions, batch 2 (2026-10-12)
+
+| Symbol | Meaning |
+|---|---|
+| $\lambda_{\mathrm J}$, $N_{\mathrm J}$ | Jeans length, and cells per Jeans length $N_{\mathrm J} = \lambda_{\mathrm J}/h$ (Truelove's number is $1/N_{\mathrm J}$, written in words because $J$ is the current density) |
+| $t_{\mathrm{ff}}$ | free-fall time |
+| $\rho_{\mathrm{thr}}$ | sink-formation density threshold |
+| $M_{\mathrm s}$, $\mathbf v_{\mathrm s}$ | sink-particle mass and velocity |
+| $r_{\mathrm{acc}}$, $r_{\mathrm{soft}}$, $r_K$ | sink accretion radius, gravitational softening radius, accretion-kernel radius |
+| $r_{\mathrm B}$, $r_{\mathrm{BH}}$, $\lambda_{\mathrm B}$ | Bondi and Bondi–Hoyle radii, and the Bondi constant (subscripted, so distinct from the eigenvalues $\lambda^{(p)}$) |
+| $\dot M$ | mass accretion rate |
+| $\infty$ (subscript) | far-field (ambient) state |
+| $\Lambda(T)$, $\Lambda_{\mathrm{ref}}$, $T_{\mathrm{ref}}$, $\alpha_{\mathrm c}$ | cooling function (energy per unit volume per unit time per $n_{\mathrm e}n_{\mathrm H}$ or as stated), its reference value and temperature, and a power-law exponent of $\Lambda$ |
+| $t_{\mathrm{cool}}$, $Y(T)$ | cooling time, and Townsend's temporal evolution function |
+| $n_{\mathrm{tot}}$, $n_i$, $n_{\mathrm e}$, $n_{\mathrm H}$ | total, species, electron and hydrogen number densities (subscripted, so distinct from the time level $n$) |
+| $C_i$, $D_i$ | creation and destruction terms of species $i$ in a chemistry network |
+| $\Delta t_{\mathrm{sub}}$ | sub-cycle step of a stiff source integration |
+| $\mu$, $\mu_{\mathrm e}$, $\mu_{\mathrm H}$, $\mu_Z$ | mean molecular weight and its electron, hydrogen and metal variants (dimensionless; the corresponding mass per particle is $\mu m_{\mathrm H}$) |
+| $k_{\mathrm B}$, $m_{\mathrm H}$, $T_{\mathrm{CMB}}$ | Boltzmann constant, hydrogen mass, cosmic-microwave-background temperature |
+| $\Gamma_1$ | first (generalized) adiabatic index $\Gamma_1 = \rho c_s^2/p$ (distinct from $\gamma$, which is the ideal-gas constant) |
+| $\eta_{\mathrm{tab}}$ | exponent used to tabulate a general EOS |
+| $h_{\mathrm{rel}}$ | relativistic specific enthalpy $1 + e + p/\rho$ (the bare $h$ is the cell size) |
+| $Y_{\mathrm e}$ | electron fraction |
+| $\mu_{\mathrm r}$, $f_{\mathrm m}$, $\Delta_\mu$ | Kastaun's recovery variable $1/(Wh_{\mathrm{rel}})$, the master function whose root it is, and the root tolerance (subscripted, so distinct from $\mu$ and $f$) |
+| $M_{\mathrm{BH}}$, $r_{\mathrm g}$ | black-hole mass and gravitational radius $GM_{\mathrm{BH}}/c^2$ |
+| $r_{\mathrm{ph}}$, $r_{\mathrm{mb}}$, $r_{\mathrm{ms}}$ | photon-orbit, marginally bound and marginally stable radii |
+| $\Phi_{\mathrm N}$, $\Phi_{\mathrm{PW}}$, $\Phi_{\mathrm{NW}}$, $\Phi_{\mathrm G}$ | Newtonian, Paczyński–Wiita, Nowak–Wagoner and Tejeda–Rosswog generalized potentials of a point mass (not solutions of the self-gravity Poisson equation for $\Phi$; $\Phi_{\mathrm G}$ depends on velocity) |
+| $r_{\mathrm t}$, $r_{\mathrm p}$ | tidal and pericentre radii |
+| $\mathbf F_{\mathrm g}$ | gravitational energy flux of the conservative self-gravity energy equation |
+| $N$ | number of cells per dimension of a test grid (resolution); the bare capital, distinct from the subscripted $N_{\mathrm b}$, $N_{\mathrm J}$, $N_{\mathrm{ph}}$ |
+
 ## Relativistic (magneto)hydrodynamics
 
 | Symbol | Meaning |

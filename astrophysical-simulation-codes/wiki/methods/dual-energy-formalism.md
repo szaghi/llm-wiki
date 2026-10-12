@@ -53,7 +53,38 @@ reconstructed primitive variables, and its
 returns an interface $\rho e$ without calling the EOS (§5.2, eqs. 27–29,
 34).
 
+## Later uses (batch 2)
+
+### The same cancellation in relativistic MHD
+
+[Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md) quantify, for
+ideal relativistic MHD, the problem that motivates the dual-energy
+formalism: the specific internal energy $e$ is recovered from the evolved
+conserved variables as a small difference of the total energy and the
+kinetic and magnetic parts. See
+[primitive-variable recovery](/methods/primitive-variable-recovery.md).
+* **Round-off** (§IV B). Cancellation in $e$ loses digits of order
+  $(W\vert\mathbf v\vert)^2/e$ and of order the squared field strength per
+  unit conserved density times $W/e$; together with the conditioning of the
+  root-find this sets a floor on the attainable accuracy at high Lorentz
+  factor or very small $e$ (Fig. 3).
+* **Evolution errors** (§V B–C, Fig. 6). Relative errors in the conserved
+  energy or field are amplified into $e$ by factors that grow with the
+  magnetic and kinetic energy relative to $e$; for a field of $10^{15}$ G, a
+  relative error of $10^{-4}$ in the field or the energy dominates $e$ at
+  densities of about $10^{8}$ g cm$^{-3}$. In magnetically dominated regions
+  the momentum is not amplified; only $e$ suffers the cancellation.
+* **Floor corrections** (§III A, §V D). When the recovered $e$ falls below
+  the zero-temperature value, only the conserved energy $\tau$ is changed;
+  density and momentum are untouched. The resulting positive bias causes
+  spurious heating until the thermal energy reaches the width of the energy
+  error distribution.
+* The paper proposes no dual-energy or entropy fallback; it accepts the
+  loss as "a fundamental consequence of evolving the conserved variables"
+  (§V).
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §4.1.1, §4.3, §4.4, §11.2.3, §11.2.5 (arXiv v1).
 2. [Almgren et al. (2010)](/sources/almgren-2010.md), §5.1–5.2 (arXiv v1).
+3. [Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md), §§III A, IV B, V B–D (arXiv v2).

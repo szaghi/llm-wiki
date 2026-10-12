@@ -70,7 +70,55 @@ conservative gravity coupling holds total energy to round-off through
 nonlinear collapse ([Mullen et al. (2021)](/sources/mullen-2021.md),
 §4.2.2).
 
+## Later uses (batch 2): 1D and 2D variants
+
+[Jiang et al. (2013)](/sources/jiang-2013.md) run the test in 1D and 2D in
+[Athena](/software/athena.md) to verify their conservative total-energy
+coupling (see [conservative self-gravity](/methods/conservative-self-gravity.md)):
+CTU, HLLC, Courant number 0.8, uniform cells, periodic boundaries, FFT
+Poisson solver (Table 1, §5). Background uniform and adiabatic with
+$c_s^2 = \gamma p/\rho$, $\gamma = 5/3$, relative density perturbation
+$10^{-6}$; the dispersion relation is the one above (eq. 17), with Jeans
+length $\sqrt{\pi c_s^2/(G\rho)}$. "Non-conservative" (nc) below means
+their variant with the conservative momentum flux but a source-form energy
+update.
+
+**Stable wave** (wavelength half the Jeans length; error after one
+period, relative L2 norm, eq. 18):
+* 1D (§4.1.1, sims. B–F, Fig. 1 right): 32 to 512 cells per Jeans length;
+  the error of $\Phi$ converges at second order. Total energy (eq. 19) is
+  conserved to round-off; the nc algorithm also conserves energy "to very
+  high precision" in 1D.
+* 2D oblique, wavevector components equal (§4.1.2, sims. B2–F2, Fig. 2):
+  $23^2$ (wavelength 16 cells) to $362^2$ (256 cells); the density error
+  converges at second order, from about $10^{-7}$ to about $10^{-10}$ as
+  read from the figure; the nc algorithm is "essentially identical" (not
+  plotted).
+
+**Unstable wave** (wavelength twice the Jeans length):
+* 1D growth (§4.1.1, sim. A, Fig. 1 left): 256 cells (Jeans length 128
+  cells); the volume integral of $\Phi^2$ follows the linear growth rate
+  until saturation.
+* 2D collapse (§4.1.2, sims. H–O, Jc; Table 2, Figs. 3–5): the
+  perturbation is raised by 2 % at the box centre relative to the edges to
+  force collapse to a single filament. With the conservative scheme total
+  energy is conserved to round-off, also on a Mach 10 advected background
+  ($91^2$, sim. P). The nc scheme's fractional total-energy error between
+  the start and virialization is 0.65, 0.32, 0.18, 0.09, 0.05 for
+  $\gamma = 5/3$ ($22^2$ to $362^2$ cells) and 0.09, 0.05, 0.03 for
+  $\gamma = 4/3$, "roughly $O(1/N)$"; the error accumulates where kinetic
+  energy peaks (Fig. 3), and the nc clump becomes asymmetric and rotates
+  from zero angular momentum (Fig. 5). Recorded as printed: Fig. 5 is at
+  "t = 1.1" without units, inconsistent with the time scale of Figs. 3–4;
+  the text announces "three snapshots" in Fig. 4 and lists four.
+
+These variants are grid-aligned (1D) or have equal wavevector components
+(2D), unlike the oblique 3D
+set-ups above, and use the unstable wavelength 2 Jeans lengths rather than
+1.1 or 1.5.
+
 # Citations
 
 1. [Tomida & Stone (2023)](/sources/tomida-2023.md), §4.3 (arXiv v1).
 2. [Mullen et al. (2021)](/sources/mullen-2021.md), §4.2 (arXiv v1).
+3. [Jiang et al. (2013)](/sources/jiang-2013.md), §§4.1, 5, Tables 1–2 (arXiv v2).

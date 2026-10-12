@@ -1,0 +1,156 @@
+---
+type: Method
+title: "General equations of state in Godunov codes"
+description: "How finite-volume Godunov codes replace the ideal-gas law by an arbitrary equation of state: Athena++'s three-function interface and gamma-replacement recipe with log-space bilinear tables and a PVRS wave-speed estimate for HLLC, CASTRO's EOS called on density and internal energy with Newton–Raphson temperature inversion, and the verification of both against exact general-EOS Riemann solutions."
+status: established
+aliases: [general EOS, non-ideal equation of state, tabulated EOS, tabular EOS, Helmholtz EOS, real-gas EOS]
+tags: [hydro, mhd, equation-of-state, riemann-solver, verification]
+timestamp: 2026-10-12T00:00:00Z
+---
+
+# General equations of state in Godunov codes
+
+An ideal-gas code uses $\gamma$ in a handful of places: to convert
+between conserved and primitive variables, in the sound speed for the
+Courant condition and the wave speeds, and inside the Riemann solver.
+Replacing the ideal-gas law by an arbitrary equation of state (EOS)
+therefore means fixing which thermodynamic functions the code may call.
+Below, $\Gamma_1 \equiv \partial\ln p/\partial\ln\rho$ at constant entropy $= \rho c_s^2/p$
+is the generalized adiabatic index, equal to $\gamma$ for an ideal gas.
+
+## The Athena++ interface
+
+[Coleman (2020)](/sources/coleman-2020.md) (§§2–3) extends
+[Athena++](/software/athena-plus-plus.md) to non-relativistic (M)HD with
+any EOS for which $(\partial p/\partial\rho)_e > 0$ and
+$(\partial p/\partial e)_\rho > 0$, conditions called "sufficient, but not
+necessary" for a unique Riemann solution, citing Chen et al. (2019)
+(eqs. 4–5; asserted, not proved here).
+* **Three functions** (eqs. 13–15): $p(\rho, \rho e)$, $\rho e(\rho, p)$ and
+  $c_s^2(\rho, p)$. The code evolves $E$ and uses $p$ as primitive, so it
+  obtains $\rho e$ by subtracting the kinetic and magnetic energies from $E$
+  before calling the first. $c_s^2$ feeds the Courant condition and the
+  Riemann solver. "Any EOS which is able to provide these functions ...
+  can work in this framework, even a piecewise EOS." Recorded as printed:
+  the text assigns the first two functions to the
+  primitive-to-conserved and reverse conversions, the opposite of what
+  their arguments imply.
+* **Recipe** (eqs. 16–18): every occurrence of $\gamma$ was replaced,
+  $p = (\gamma-1)\rho e \Rightarrow p(\rho,\rho e)$,
+  $\rho e = p/(\gamma-1) \Rightarrow \rho e(\rho,p)$,
+  $c_s^2 = \gamma p/\rho \Rightarrow c_s^2(\rho,p)$; that this preserves
+  the characteristic speeds is deferred to Chen et al. (2019). The one
+  exception is the Roe-average wave speed (below). Characteristic
+  reconstruction does not support a general EOS (footnote 3), which agrees
+  with [Stone et al. (2020)](/sources/stone-2020.md), §3.2.1; all runs use
+  PLM on primitives with VL2.
+* **Tables** (§3.2, eqs. 19–28): $\log(p/\rho e)$, $\log(\rho e/p)$ and
+  $\log\Gamma_1$ on a regular grid in $\log\rho$ and in the log of internal
+  energy or pressure times $\rho^{\eta_{\mathrm{tab}}}$ (a user exponent),
+  interpolated bilinearly, which "guarantees the preservation of
+  monotonicity". Off-table requests are extrapolated linearly; floors on
+  $p$, $\rho e$ and $\rho$ are recommended. For an ideal gas the three
+  quantities are constants, so a $2\times2$ table reproduces the ideal EOS
+  "exactly (to machine precision)" (asserted; no data shown).
+* **Analytic EOSs in the tests** (§4, §4.4): the hydrogen-ionization EOS
+  root-finds $T$ by Brent–Dekker to one part in $10^{12}$ at every call,
+  chosen over a table so that table resolution does not contaminate
+  convergence; the Helmholtz EOS is evaluated in $(\rho, T)$ with $T$ from
+  bisection, secant and Newton–Raphson seeded by the last value.
+* **Scope** (§1, §4.4): non-relativistic only; the EOS functions take no
+  passive scalars, so composition-dependent tests were not attempted.
+  [Stone et al. (2020)](/sources/stone-2020.md) describe the Athena++ EOS
+  as any analytic or tabulated pressure of density and internal energy
+  (§3.1).
+
+## Wave speeds for HLL-type solvers
+
+([Coleman (2020)](/sources/coleman-2020.md), §3.3, §5, App. A; see
+[approximate Riemann solvers](/methods/approximate-riemann-solvers.md).)
+* **HLLC.** The Roe-average estimate needs a fourth EOS function, the
+  sound speed at the Roe-averaged density and enthalpy (eq. A4); the Hu et
+  al. (2009) variant also needs four. Athena++ now defaults to a
+  generalized primitive-variable (PVRS) estimate (Toro 1999) that needs
+  only the three: from arithmetic means of the left and right densities
+  and sound speeds, a linearized star pressure and velocity, star
+  densities, $\Gamma_1$ at each star state, and a shock factor that
+  scales each outer sound speed when the star pressure exceeds that side's
+  pressure (eqs. A8–A17). Measured "significant reduction of errors and
+  improved convergence" on the double-shock tests, with no loss for the
+  ideal gas. Recorded as printed: eq. A11 writes $p_{x,R}$, $p_{x,L}$ where
+  $p_R$, $p_L$ are presumably meant.
+* **HLLD** keeps the Miyoshi & Kusano (2005) estimate; PVRS "is not
+  readily extendable to MHD". On the double shocks HLLD errors are up to
+  3× those of HLLC with PVRS, and HLLC with the HLLD estimator reproduces
+  this, so the estimator is blamed (§5.2).
+* **HLLE**, with every estimator tried, "did not converge to the correct
+  solution" on the two hydrogen double-shock tests, and was a few tens of
+  per cent worse than HLLC on the others; with the Roe estimator it does
+  converge on their ideal-gas analogues (§5.1.4, footnote 10, §6). So
+  HLLE is extended to a general EOS, as
+  [Stone et al. (2020)](/sources/stone-2020.md), §3.2.2, state, but it
+  fails to converge on general-EOS double shocks; Coleman's abstract and
+  §6 recommend only HLLC and HLLD.
+
+## CASTRO
+
+[CASTRO](/software/castro.md) was built for a general EOS from the start.
+* The EOS is called with density, specific internal energy and
+  composition; gamma law, Helmholtz (Timmes & Swesty 2000) and
+  Lattimer–Swesty are shipped, and tabular EOSs are inverted by
+  Newton–Raphson ([Almgren et al. (2010)](/sources/almgren-2010.md), §3).
+* Its two-shock-type Riemann solver carries $\rho e$ and needs no EOS call
+  ([Almgren et al. (2010)](/sources/almgren-2010.md), §5.2).
+* In the white-dwarf merger runs the Helmholtz EOS inverts
+  $(\rho, e)\to T$ by Newton–Raphson with default relative tolerance
+  $10^{-8}$; on non-convergence a temperature floor (typically $10^5$ K)
+  applies ([Katz et al. (2016)](/sources/katz-2016.md), §2.2).
+* **Energy-consistency choice** (§2.2): either keep $e$ and accept
+  thermodynamic inconsistency with the floored $T$ (the original CASTRO
+  behaviour), or reset $e$ to match $T$, which is more accurate in strong
+  1D shocks that reach the floor but drifts total energy over long runs
+  through the resets and the Newton tolerance. Katz et al. keep $e$.
+  Their energy conservation in binary orbits is worse than that of
+  Marcello & Tohline (2012) because negative internal energies are reset to
+  the temperature floor (§4.4).
+
+[Coleman (2020)](/sources/coleman-2020.md) (§1) says CASTRO ran similar
+general-EOS tests (Zingale & Katz 2015, not ingested) but is hydro-only,
+and calls Athena++ "the first publicly-available open-source MHD code"
+whose general-EOS capability is verified with a test suite (asserted).
+
+## Verification against exact general-EOS solutions
+
+[Coleman (2020)](/sources/coleman-2020.md) (§4, Tables 2–4, App. B–C)
+publishes exact constant states for 1D problems run at
+$N = 64$–$2048$ cells, Courant number 0.4, $L_1$ and $L_2$ errors per
+cell:
+* **Hydrogen-ionization EOS** (Saha), six hydrodynamic Riemann problems:
+  two Sod-like, two asymmetric shock–shock, two rarefaction–rarefaction.
+  Near-linear convergence except the shock–shock pair, whose errors are
+  "nearly constant for $512\le N\le2048$" (§5.1.2). The paper attributes
+  the stall to cells straddling the shocks, whose averaged
+  $(\rho, p)$ give a $\Gamma_1$ below its value on either side because
+  $\Gamma_1$ is non-monotonic there, by about the same amount at $N = 64$
+  and $N = 2048$: a limitation of "finite volume methods without front
+  tracking" (interpretation, not demonstrated).
+* **MHD Riemann problem** with the Ryu & Jones (1995) test-2a states and
+  the hydrogen EOS: all seven waves are discontinuities, so the exact
+  solution solves 49 jump conditions; near-linear convergence with HLLD
+  (§4.2).
+* **Linear waves** in the hydrogen EOS at a temperature where $\Gamma_1$
+  varies fastest: sound and fast magnetosonic modes converge near second
+  order (§4.3; see
+  [linear wave convergence](/benchmarks/linear-wave-convergence.md)).
+* **Helmholtz EOS**: a Sod-like problem converges well; a shock–shock
+  problem behaves better than its hydrogen analogues (§4.4).
+* Serna & Marquina (2014) van der Waals tests give "comparable results" by
+  visual comparison (§4).
+
+# Citations
+
+1. [Coleman (2020)](/sources/coleman-2020.md), §§1–6, eqs. 4–28,
+   Tables 2–4, App. A–C (arXiv v3).
+2. [Almgren et al. (2010)](/sources/almgren-2010.md), §§3, 5.2 (arXiv v1).
+3. [Katz et al. (2016)](/sources/katz-2016.md), §§2.2, 4.4 (arXiv v2).
+4. [Stone et al. (2020)](/sources/stone-2020.md), §§3.1–3.2.2.

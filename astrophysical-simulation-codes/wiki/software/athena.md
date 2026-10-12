@@ -288,6 +288,37 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   VL+CT, for its MHD solver
   ([Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §3.2).
 
+## Later uses (batch 2)
+
+* **Conservative total-energy self-gravity.**
+  [Jiang et al. (2013)](/sources/jiang-2013.md) add to Athena's unsplit CTU
+  algorithm a self-gravity coupling that conserves total energy (internal
+  plus kinetic plus $\tfrac12\rho\Phi$) to round-off, with a gravitational
+  energy flux and a second Poisson-type solve per step for $\partial_t\Phi$
+  driven by the Riemann mass fluxes (§§2–3); see
+  [conservative self-gravity](/methods/conservative-self-gravity.md). They
+  state that the conservative momentum equation with the gravitational
+  stress tensor $\mathsf T_{\mathbf g}$ "has already been implemented in
+  many grid-based codes, such as Athena" (§1), which agrees with the
+  momentum-conserving self-gravity listed under Physics modules. The runs
+  are hydrodynamic only, with HLLC, Courant number 0.8, periodic boundaries
+  and an FFT Poisson solver; the paper asserts without a test that MHD does
+  not change the gravity implementation, gives no Athena version, and does
+  not say whether the option is in a public release (§3, §4). Tests: 1D and
+  2D [Jeans waves](/benchmarks/jeans-wave.md) and Jeans collapse, and a 3D
+  collapsing polytrope (§4).
+* **The stress tensor judged by a Castro paper.**
+  [Katz et al. (2016)](/sources/katz-2016.md), §2.3.1, note that the
+  stress-tensor momentum source "is used by Jiang et al. (2013) for ATHENA"
+  and conserves momentum to round-off, but reject it for
+  [Castro](/software/castro.md): the divergence of the discrete acceleration
+  "is no longer guaranteed to equal the zone density", and the mixing of
+  acceleration components lets truncation error imply a density "much
+  different than the zone's actual density", harmful in low-density ambient
+  gas (asserted, no test). They also avoid Jiang et al.'s total-energy
+  variable, because recovering $E$ by subtracting the potential energy in
+  low-density regions gives "unphysical energies or temperatures".
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §§1–9, App. C (journal version).
@@ -295,3 +326,5 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 3. [Stone et al. (2020)](/sources/stone-2020.md), §1, §3.2.3, §3.3.6.
 4. [Mullen, Hanawa & Gammie (2021)](/sources/mullen-2021.md), §2.3.1, §3.3 (arXiv v1).
 5. [Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §3.2 (arXiv v4).
+6. [Jiang et al. (2013)](/sources/jiang-2013.md), §§1–4 (arXiv v2).
+7. [Katz et al. (2016)](/sources/katz-2016.md), §2.3.1 (arXiv v2).

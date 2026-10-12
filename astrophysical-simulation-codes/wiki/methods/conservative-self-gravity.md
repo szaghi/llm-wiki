@@ -161,9 +161,141 @@ by a predictor–corrector with a Poisson re-solve, and adds momentum and
 energy "sync sources" from a correction solve after refluxing
 ([Almgren et al. (2010)](/sources/almgren-2010.md), §§5.1, 6.2.3).
 
+## Later uses (batch 2)
+
+### Origin of the conservative energy form: Jiang et al. (2013)
+
+[Jiang et al. (2013)](/sources/jiang-2013.md) derive the conservative
+energy law quoted under Conservative forms (§2, eqs. 9–14). Requiring
+that $E+\tfrac12\rho\Phi$ obey a conservation law whose flux is
+$(E+p)\mathbf v$ plus a gravitational energy flux (eq. 9), and using
+$\nabla^2\partial_t\Phi = 4\pi G\,\partial_t\rho = -4\pi G\nabla\cdot(\rho\mathbf v)$
+(eq. 12), the gravitational energy flux is
+$$\frac{1}{8\pi G}\left(\Phi\nabla\partial_t\Phi - \partial_t\Phi\,\nabla\Phi\right) + \rho\mathbf v\Phi$$
+(eq. 14), which gives global conservation when the flux falls off faster
+than the inverse square of the distance and the system is bounded; a similar flux "has been proposed by
+Pen (1998)". The momentum form with $\mathsf T_{\mathbf g}$ (eqs. 7–8) is
+not new: "already been implemented in many grid-based codes, such as
+Athena" (§1).
+
+**Flux discretization** (§3), added to [Athena](/software/athena.md)'s CTU
+algorithm:
+1. solve the Poisson equation for $\Phi$ at $t^n$ (FFT, periodic);
+2. in the predictor, add the acceleration over $\Delta t/2$ to the
+   interface velocities;
+3. after the Riemann solve, solve eq. 12 for $\partial_t\Phi$ at
+   $t^{n+1/2}$ with the Poisson source replaced by minus the divergence of
+   the Riemann mass fluxes;
+4. update the density, solve for $\Phi$ at $t^{n+1}$, and form
+   $\mathsf T_{\mathbf g}$ and the energy flux from the time average of the
+   two potentials and from $\partial_t\Phi$, with face potentials by spatial
+   averaging;
+5. update momentum and total energy by face differences of
+   $\mathsf T_{\mathbf g}$ and of the energy flux; the energy update also
+   exchanges $\tfrac12\rho\Phi$ between $t^n$ and $t^{n+1}$ cell by cell
+   (eqs. 15–16; $E$ excludes potential energy).
+
+The face stencils of the gradients and of $\mathsf T_{\mathbf g}$ are not
+given. The cost is one extra Poisson solve per step: almost a factor of two
+slower when the Poisson solver dominates, "almost as efficient as the
+original method" with FFTs (§5; asserted, no timings). This is the extra
+elliptic solve that the source-term scheme of Mullen et al. avoids.
+
+**Results** (§4; HLLC, Courant number 0.8, FFT, periodic). Total energy is
+conserved "to round-off error" in 1D, 2D (also with a Mach 10 advected
+background) and 3D; no round-off magnitude is printed. Stable
+[Jeans waves](/benchmarks/jeans-wave.md) converge at second order in 1D and
+2D, and so does a non-conservative variant that keeps the conservative
+momentum flux but uses the energy source $-(\rho\mathbf v)\cdot\nabla\Phi$
+with face-averaged mass fluxes and the time-averaged potential. In 2D
+Jeans collapse that variant makes fractional total-energy errors of
+0.65, 0.32, 0.18, 0.09, 0.05 ($\gamma=5/3$, $22^2$ to $362^2$ cells) and
+0.09, 0.05, 0.03 ($\gamma=4/3$), "roughly $O(1/N)$" (Table 2); the collapse
+loses symmetry and spins up from zero angular momentum (Fig. 5). In 3D the
+collapse of a polytrope of index 3 with $\gamma = 1.36$ run non-conservatively
+reaches a much higher peak central density, loses spherical symmetry and
+develops a central hole, while the conservative run stays nearly periodic
+and spherical (§4.2, Figs. 6–8). For small oscillations of a $\gamma=5/3$
+polytrope both algorithms agree and the old one is "just as good" (§6);
+the authors recommend the conservative form where small energy errors
+matter, such as $\gamma\approx4/3$ flows.
+
+**Non-uniqueness** (App. A). The pair (energy density, flux) is fixed only
+up to gauge terms. One alternative is $E_{\mathrm g} = \rho\Phi + \vert\nabla\Phi\vert^2/(8\pi G)$
+with flux $\rho\Phi\mathbf v - \frac{1}{4\pi G}\partial_t\Phi\,\nabla\Phi$
+(eq. A1), which is Galilean-covariant where the pair of eq. 14 is not; the
+authors keep $E_{\mathrm g} = \tfrac12\rho\Phi$ because the alternative is
+non-negative in near-vacuum, so small errors in it could produce large
+errors in specific kinetic or internal energy. Recorded as printed: App. A
+refers to equation (13) for the energy flux where eq. 14 is meant.
+
+### Castro's face-based energy source: Katz et al. (2016)
+
+The statements above about [Castro](/software/castro.md) describe the 2010
+code. [Katz et al. (2016)](/sources/katz-2016.md) update it:
+* **Energy** (§2.3.1, eqs. 9–11, after Springel 2010; option
+  `castro.grav_source_type = 4`). The conserved total is
+  $\int(E + \tfrac12\rho\Phi)\,dV$ (eq. 9). Moving the mass transported
+  through a face from the cell centre to the face does work against the
+  potential difference between centre and face, with the face potential the
+  mean of the two adjacent cells; the energy change of a cell is minus one
+  half the sum, over its faces, of the Riemann mass transported through the
+  face in the step times the difference of the potential between the two
+  cells sharing it (eq. 11). Second order in time needs the time-centred
+  potential, the mean of the potentials at $t^n$ and $t^{n+1}$, available
+  because Castro re-solves the Poisson equation after the hydro step; the
+  source is applied at the end of the step. Eq. 11 applies to any
+  conservative potential, and the same update is used for the centrifugal
+  potential in a rotating frame (eq. 30).
+* **Proof** (App. B, eqs. B1–B4). Summed over cells the face terms cancel,
+  leaving $\frac{1}{8\pi G}$ times the sum of $\Phi^{n+1}\nabla^2\Phi^n - \Phi^n\nabla^2\Phi^{n+1}$,
+  which vanishes by Green's second identity when boundary terms vanish.
+  Proved in the continuum; the discrete analogue is asserted. In practice
+  conservation is not exact, because the domain is finite and the Poisson
+  equation holds only to the multigrid tolerance.
+* **Momentum** (§2.3.1, eqs. 5, 7–8) stays the cell-centred $\rho\mathbf g$
+  with the predictor–corrector. In 1D with the 3-point Laplacian and a
+  central gradient the source telescopes, so momentum is conserved up to
+  leakage through ghost cells (eq. 7); in 3D the terms "may not be cancelled
+  at all", depending on the discretization. The stress-tensor form
+  conserves momentum to round-off but is rejected: the divergence of the
+  discrete acceleration "is no longer guaranteed to equal the zone
+  density", and mixing of acceleration components lets truncation error
+  imply a density "much different than the zone's actual density", harmful
+  in low-density ambient gas (asserted, no test). This is an update to the
+  Castro description above, not a contradiction: the momentum source is
+  still non-conservative, the energy source is not.
+* **Rejected energy alternatives** (§2.3.1). A cell-centred
+  $\rho\mathbf v\cdot\mathbf g$ "can result in a significant leaking of
+  energy", because the energy changes at the centre while mass moves at
+  faces; evolving a total energy that includes $\tfrac12\rho\Phi$ (Jiang et
+  al. 2013; Springel 2010) is avoided because recovering $E$ by subtraction
+  near the stellar edges gives "unphysical energies or temperatures", and
+  Jiang et al.'s flux has terms not proportional to $\rho$.
+* **Measured** (§4.4, Table 1). Relative total-energy change after one
+  Keplerian orbit of a white-dwarf binary, inertial frame: $4.8\times10^{-2}$
+  (cell-centred source), $4.9\times10^{-2}$ (cell-centred with corrected
+  momenta), $1.1$ (total energy reset from internal plus kinetic, which
+  abandons total-energy conservation) and $4.4\times10^{-4}$ (face-based
+  scheme), "nearly two orders of magnitude better". The table does not say
+  which binary it reports.
+
+Katz et al.'s energy source uses the two ingredients that
+[Mullen et al. (2021)](/sources/mullen-2021.md) later require: the Riemann
+mass flux of the continuity equation and a time-centred potential, with a
+second Poisson solve after the hydro step. Their objection to the stress
+tensor is asserted without a test. Mullen et al. §4.3.2 (Fig. 7) give
+independent measured support for it: with a Poisson residual even their
+new tensor drives spurious velocities in low-density gas, because the
+force implies a local density different from the cell's. They also
+quantify a defect of Athena's stress tensor, its non-zero curl near light
+atmospheres (above).
+
 # Citations
 
 1. [Mullen et al. (2021)](/sources/mullen-2021.md), §§2–6, Apps. A–B (arXiv v1).
 2. [Tomida & Stone (2023)](/sources/tomida-2023.md), §3.2.3 (arXiv v1).
 3. [Almgren et al. (2010)](/sources/almgren-2010.md), §§2, 5.1, 6.2.3 (arXiv v1 numbering).
 4. [Stone et al. (2008)](/sources/stone-2008.md), §§8.3, 9.
+5. [Jiang et al. (2013)](/sources/jiang-2013.md), §§1–6, App. A (arXiv v2).
+6. [Katz et al. (2016)](/sources/katz-2016.md), §2.3.1, §4.4, App. B (arXiv v2).

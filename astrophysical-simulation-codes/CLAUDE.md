@@ -88,6 +88,14 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Batch 2 staged 2026-10-12:** 20 of 35 archived sources ingested (the
+physics modules: krumholz-2004, federrath-2010, townsend-2009, smith-2017,
+jiang-2013, siegel-2018, kastaun-2021, tejeda-2013, coleman-2020,
+katz-2016). Next: the GPU codes (lesur-2023, caddy-2024, stone-2024,
+rossazza-2026, wibking-2022, shankar-2023, zaghi-2023, bernardini-2021,
+jansson-2024), then comparisons and applications. Deep lint #2 (20
+ingestions) ran with this batch as its audit; the next is due after 10 more.
+
 **Batch 1 staged 2026-10-12:** 10 of 35 archived sources ingested (the
 frameworks: stone-2008, stone-2020, mignone-2012, almgren-2010, bryan-2014,
 zhang-2018, rosdahl-2013, skinner-2013, tomida-2023, mullen-2021). Next:

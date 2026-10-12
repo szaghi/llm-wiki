@@ -169,6 +169,60 @@ cell updates per CPU second (Stone et al. 2008, §7, Table 1):
 | Isothermal MHD | 108 | — | 124 |
 | Adiabatic MHD | 85.9 | — | 97.6 |
 
+## Later uses (batch 2)
+
+### Wave speeds for a general equation of state
+
+[Coleman (2020)](/sources/coleman-2020.md) extends the nonrelativistic
+solvers of [Athena++](/software/athena-plus-plus.md) to an arbitrary EOS
+that supplies only $p(\rho,\rho e)$, $\rho e(\rho,p)$ and $c_s^2(\rho,p)$
+(§3.1; see [general equations of state in Godunov codes](/methods/general-equation-of-state.md)).
+Replacing every ideal-gas relation by these functions carries the solvers
+over, with one exception: the wave-speed estimate (§3.3, App. A).
+* **HLLC.** The previous estimate took the extremal speeds from a
+  Roe-average state: the left bound is the smaller of the left state's
+  $v_x - c_s$ and the Roe state's $v_x - c_s$, the right bound the larger of
+  the right state's $v_x + c_s$ and the Roe state's $v_x + c_s$
+  (eqs. A6–A7); for a general EOS the Roe-average sound speed needs a
+  *fourth* EOS function, the sound speed as a function of density and
+  enthalpy (eq. A4). The variant of Hu et al. (2009) also needs four. The
+  new default is a generalized primitive-variable Riemann solver (PVRS)
+  estimate (Toro 1999; eqs. A8–A17): a linearized star pressure and
+  velocity from the arithmetic means of the two densities and sound
+  speeds, star densities on each side, and a shock factor on each side
+  equal to 1 when the star pressure does not exceed that side's pressure,
+  and otherwise built from the pressure ratio and the first adiabatic index
+  of the star state; the left bound is the left state's $v_x$ minus its
+  $c_s$ times the left factor, the right bound the right state's $v_x$ plus
+  its $c_s$ times the right factor. It needs
+  only the three EOS functions. Measured, not proved: "significant
+  reduction of errors and improved convergence in tests 3 and 4 … without
+  negatively affecting the accuracy of solutions using an ideal gas EOS"
+  (§3.3); the Hu et al. variant gives errors comparable to the Roe
+  extension and worse than PVRS on those tests. Recorded as printed:
+  eq. A11 writes the pressures as $p_{x,R}$, $p_{x,L}$.
+* **HLLD.** Keeps the Miyoshi & Kusano (2005) estimate (their eq. 12) "as
+  originally used in Athena++"; PVRS "is not readily extendable to MHD"
+  (§3.3, §5.2). Rerunning the hydro tests as MHD with $\mathbf B = 0$, HLLD
+  matches HLLC except on the double-shock tests 3 and 4, where convergence is
+  slightly worse and errors up to 3× larger; HLLC with the HLLD estimate
+  reproduces this, so the paper attributes it to the estimator (§5.2). On
+  the all-discontinuity MHD Riemann problem (Ryu & Jones 2a states with the
+  hydrogen EOS) HLLD converges close to linearly in every variable (§4.2).
+* **HLLE.** None of the estimators tried changed the results on tests 1, 2,
+  5 and 6, where HLLE errors were "a few tens of per cent worse than HLLC";
+  on tests 3 and 4 HLLE "did not converge to the correct solution for any of
+  the wavespeed estimators we tried" (§5.1.4), although with the Roe
+  estimator it converges on the ideal-gas analogues of those tests
+  (footnote 10). "We were unable to find a modification to HLLE that
+  enabled it to properly converge to the solutions of tests 3 and 4" (§6).
+  This qualifies, and does not contradict, Stone et al.'s statement that
+  HLLE is extended to a general EOS: HLLE runs with a general EOS, but it
+  fails to converge on general-EOS double shocks.
+* **Two-shock lineage.** Colella & Glaz (1985) are credited for general-EOS
+  Godunov methods, and CASTRO for a general EOS (§1), consistent with the
+  two-shock section above.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -179,3 +233,4 @@ cell updates per CPU second (Stone et al. 2008, §7, Table 1):
 6. [Zhang et al. (2018)](/sources/zhang-2018.md), §3.2, §5.1–5.2 (arXiv v4).
 7. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §3.2, §6.4, §6.8 (arXiv v2).
 8. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §3.3, §4.3.5 (arXiv v1).
+9. [Coleman (2020)](/sources/coleman-2020.md), §§1, 3.3, 4.2, 5.1.4, 5.2, 6, App. A (arXiv v3).

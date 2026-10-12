@@ -294,9 +294,113 @@ From [Stone et al. (2020)](/sources/stone-2020.md) unless stated:
 * The fully conservative gravity coupling is not available with AMR
   ([Mullen, Hanawa & Gammie (2021)](/sources/mullen-2021.md), §6).
 
+## Later uses (batch 2)
+
+### General equations of state
+
+[Coleman (2020)](/sources/coleman-2020.md) documents how the
+nonrelativistic (M)HD of the public Athena++ was extended to an arbitrary
+equation of state; see
+[general equations of state in Godunov codes](/methods/general-equation-of-state.md).
+* **Interface** (§3.1, eqs. 13–15). The EOS supplies three functions:
+  $p(\rho,\rho e)$, $\rho e(\rho,p)$ and $c_s^2(\rho,p)$, the last being the
+  derivative of $p$ with respect to $\rho$ at constant entropy. Athena++
+  evolves $E$ and takes $p$ as the primitive, so $\rho e$ is obtained by
+  subtracting the kinetic and magnetic parts of $E$ before $p(\rho,\rho e)$
+  is called. The sound speed feeds the CFL condition and the Riemann
+  solvers. The EOS must have positive derivatives of $p$ with respect to
+  $\rho$ at fixed internal energy and with respect to internal energy at
+  fixed $\rho$ (eqs. 4–5), conditions the paper calls "sufficient, but not
+  necessary" for a unique Riemann solution, citing Chen et al. (2019).
+  Recorded as printed: the text says the first two functions convert
+  primitives to conservatives "and the inverse, respectively", the reverse
+  of their roles.
+* **Recipe** (§3.1, eqs. 16–18). Every ideal-gas relation
+  ($p=(\gamma-1)\rho e$, $\rho e = p/(\gamma-1)$, $c_s^2=\gamma p/\rho$) was
+  replaced by the corresponding general function: "we found all instances
+  of $\gamma$ and replaced them", with one caveat, the HLLC wave-speed
+  estimate (below). Characteristic reconstruction "does not support general
+  EOS" (footnote 3), which agrees with the restriction of characteristic
+  reconstruction to the ideal EOS stated above. Every run of the paper uses
+  PLM on primitives with VL2.
+* **Tabular EOS** (§3.2, eqs. 19–28). A utility tabulates the logarithms of
+  $p/(\rho e)$, $\rho e/p$ and the first adiabatic index on a grid regular in
+  $\log\rho$ and in the logarithm of the internal energy or pressure scaled
+  by a power of $\rho$, interpolates bilinearly, which "guarantees the
+  preservation of monotonicity", and extrapolates linearly off the table
+  (floors on $p$, $\rho e$ and $\rho$ are recommended). For an ideal gas the
+  tabulated quantities are constants, so a $2\times2$ table reproduces the
+  ideal EOS "exactly (to machine precision)"; asserted, no data shown.
+* **Analytic EOSs in the tests** (§4, §4.4): a Saha-ionization hydrogen EOS
+  evaluated through a Brent–Dekker temperature root-find to one part in
+  $10^{12}$, preferred to a table so that table resolution does not
+  contaminate convergence, and the Helmholtz EOS evaluated as a function of
+  $(\rho,T)$ with a bisection/secant/Newton–Raphson temperature solve.
+* **Riemann solvers** (§3.3, §5.1.4, §5.2, App. A). HLLC's extremal wave
+  speeds were previously estimated from a Roe-average state, which needs a
+  fourth EOS function; the default is now a generalized PVRS estimate that
+  needs only the three functions and markedly improves the asymmetric
+  double-shock tests without degrading ideal-gas results. HLLD keeps the
+  Miyoshi & Kusano (2005) estimate. HLLE did not converge on the two
+  double-shock tests with any estimator tried, while running on the other
+  hydrogen-EOS tests with errors "a few tens of per cent worse than HLLC"
+  (§5.1.4, §6). This qualifies the §3.2.2 statement that HLLE is extended
+  to a general EOS: it runs, but fails to converge on general-EOS double
+  shocks (see [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+* **Scope** (§1, §4.4). Nonrelativistic only: the general EOS does not
+  apply to the relativistic modules. The EOS functions take no passive
+  scalars, so composition-dependent tests were not attempted. The
+  hydrogen-EOS tests use "publicly available version 19.0 of Athena++"
+  (§4.1); the version for the other tests is not stated.
+* **Verification** (§4–§5; PLM, VL2, CFL number 0.4, $N=64$ to 2048 cells):
+  six hydrodynamic Riemann problems and one MHD Riemann problem (the Ryu &
+  Jones 2a states, all seven waves discontinuities) with the hydrogen EOS,
+  HD sound and MHD fast [linear waves](/benchmarks/linear-wave-convergence.md)
+  with the hydrogen EOS, and two Helmholtz-EOS Riemann problems, among them a
+  "Sod-like" one (see [Sod shock tube](/benchmarks/sod-shock-tube.md)). The
+  paper calls the Riemann-problem convergence "close to linear" and the
+  linear-wave convergence "near quadratic"; it prints errors, not orders.
+  On the two hydrogen double-shock problems convergence stalls: the density
+  L1 error is 3.64848e-08 at $N=512$ and 3.0004e-08 at $N=2048$ (test 3,
+  Table 8). The paper offers, without demonstration, that cells straddling
+  the shocks pass cell-averaged states to the EOS where the adiabatic index
+  is non-monotonic, a limitation of finite-volume methods without front
+  tracking (§5.1.2, §6). The Serna & Marquina (2014) van der Waals tests are
+  reproduced by visual comparison only. Recorded as printed: the text calls
+  the Helmholtz tests "tests 8 and 9" while the tables and figures number
+  them 10 and 11, and eq. 3 omits $v_x$ from the energy flux.
+* **Priority claim** (§1, asserted): Athena++ is called "the first
+  publicly-available open-source MHD code whose general EOS capabilities
+  have been explicitly verified with a suite of (M)HD tests utilizing a
+  non-trivial EOS"; CASTRO is said to have run similar tests but to be
+  hydro-only.
+
+### The relativistic inversion
+
+The Newman & Hamlin (2014) inversion that Athena++ uses (§4 above) is one
+of five schemes compared stand-alone by
+[Siegel et al. (2018)](/sources/siegel-2018.md); see
+[primitive-variable recovery](/methods/primitive-variable-recovery.md).
+In their Lorentz-factor–magnetization sweep it recovers the largest
+fraction of points for every EOS tested (79.1 %, 77.1 % and 77.4 % for the
+ideal gas, LS220 and Helmholtz, Table 2), and they recommend it for analytic
+EOSs; on the tabulated LS220 EOS it costs 331 EOS calls on average against
+11.3 for their 3D Newton–Raphson scheme (Table 1), because each iteration
+needs an enthalpy-to-temperature inversion (§4.2, §5).
+[Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md) classify it as
+iterating on the pressure with an EOS of the form $p(\rho,h_{\mathrm{rel}})$, without EOS
+derivatives, with a bounded step count and no initial guess, and, citing
+Siegel et al., as the only existing scheme that consistently needs fewer
+than about 10 steps also at relativistic velocities (§IV D, Table I). The
+two counts measure different things: EOS calls per inversion against
+root-finder steps.
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §§1–4, §§3.6.1–3.6.5 (journal version).
 2. [Tomida & Stone (2023)](/sources/tomida-2023.md), §§2–5 (arXiv v1).
 3. [Mullen, Hanawa & Gammie (2021)](/sources/mullen-2021.md), §§2–6, App. B (arXiv v1).
 4. [Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §5.2 (arXiv v4).
+5. [Coleman (2020)](/sources/coleman-2020.md), §§1–6, App. A (arXiv v3).
+6. [Siegel et al. (2018)](/sources/siegel-2018.md), §§4.2, 5, Tables 1–2 (arXiv v2).
+7. [Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md), §IV D, Table I (arXiv v2).

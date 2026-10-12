@@ -177,6 +177,132 @@ except the hydrostatic star):
   homologous dust collapse, a reacting-bubbles comparison with FLASH, and a
   Type Ia supernova demonstration (§8.1.2–§8.1.3, §8.5–§8.7).
 
+## Later uses (batch 2)
+
+[Katz et al. (2016)](/sources/katz-2016.md) document the changes made to
+CASTRO since the 2010 paper, for white-dwarf merger simulations with
+hydrodynamics, Poisson self-gravity, rotation and the Helmholtz EOS;
+reactions and flux-limited-diffusion radiation exist but are disabled in
+every run (§2.2).
+
+* **Code** (§2, §3, §5). Repository `https://github.com/BoxLib-Codes/Castro`
+  on BoxLib (`https://github.com/BoxLib-Codes/BoxLib`); set-up and analysis
+  in `https://github.com/BoxLib-Codes/wdmerger`. No version numbers are
+  printed; the git hashes of BoxLib, CASTRO and wdmerger are stored in every
+  plotfile.
+* **PPM limiter** (§2.1). The default limiter, a "slightly modified"
+  Colella & Sekora (2008) extremum-preserving limiter (`castro.ppm_type = 2`),
+  "can yield negative densities" at the steep star/ambient interface because
+  it treats the gradients "as being true minima"; the paper uses the original
+  Colella & Woodward (1984) limiter (`castro.ppm_type = 1`), "strictly
+  monotonicity preserving". Asserted, no figure.
+* **Reconstruction and source changes** (App. A). Passive scalars are traced
+  under the contact speed only, because the reference state of Miller &
+  Colella (2002) traces them under the fastest wave when $v_x<0<v_x+c_s$
+  (eqs. A1–A8). The edge-state source predictor replaces the time-$t^n$
+  source by a lagged linear extrapolation of the summed source (gravity,
+  rotation, external) from $t^n$ and $t^{n-1}$ (eq. A9), not applied when no
+  earlier data exist; both variants are second order, the new one
+  "slightly more accurate in absolute terms" (no data). Sources are
+  reconstructed parabolically and traced under each characteristic instead
+  of adding $\frac{\Delta t}{2}\mathbf g$ at the end (eqs. A10–A13,
+  `castro.ppm_trace_sources`), so the transverse Riemann solves also see
+  gravity; the paper argues that the $\Delta t$ factor of the original PPM
+  paper should be $\Delta t/2$. Flattening follows Zingale & Katz (2015).
+* **Density floor** (§2.1). A non-conservative reset is chosen over a
+  positivity-preserving diffusive flux: a cell below the floor (typically
+  $10^{-5}$ g cm$^{-3}$) copies density, momentum, energy and temperature
+  from its densest neighbour if that one is above the floor, otherwise it is
+  set to the floor density and the temperature floor (typically $10^5$ K)
+  at rest ("very rare", "last resort").
+* **EOS** (§2.2). Helmholtz; $(\rho,e)\to T$ by Newton–Raphson with default
+  relative tolerance $10^{-8}$ and a temperature floor on non-convergence.
+  Of two policies, keeping $e$ (thermodynamically inconsistent) or resetting
+  $e$ to match $T$ (more accurate in strong 1D shocks reaching the floor,
+  but drifting total energy over long runs), the paper keeps $e$, the
+  energy-conserving choice. See
+  [general equations of state in Godunov codes](/methods/general-equation-of-state.md).
+* **Gravity coupling** (§2.3.1; see
+  [conservative self-gravity](/methods/conservative-self-gravity.md)). The
+  energy source is now evaluated at cell faces from the hydrodynamic mass
+  fluxes times potential differences with a time-centred potential, after
+  Springel (2010) (`castro.grav_source_type = 4`); total energy including
+  $\tfrac12\rho\Phi$ is conserved up to boundary terms and the multigrid
+  tolerance (App. B). The momentum source stays the cell-centred $\rho\mathbf g$,
+  time-centred by the predictor–corrector (eq. 5), by deliberate choice: the
+  stress-tensor form is rejected (asserted, no test). After one Keplerian
+  orbit the relative total-energy change is $4.4\times10^{-4}$ with the new
+  scheme against $4.8\times10^{-2}$ with the cell-centred $\rho\mathbf v\cdot\mathbf g$
+  (inertial frame, Table 1, which does not say which of the two binaries it reports), "nearly two orders of magnitude better".
+* **Poisson boundary values** (§2.3.2–§2.3.3, App. C). The monopole is
+  replaced by a multipole expansion of the interior mass, cost $O(N^3)$ per
+  solve, default order 6, where the relative L2 error of $\Phi$ is "already
+  well below $10^{-4}$" (Fig. 1); the expansion breaks down above about
+  order 18 because ambient mass in the domain corners lies outside the
+  sphere through the face-centre boundary points. A direct sum, $O(N^5)$, is
+  kept as a reference option. Multigrid relative tolerance $10^{-10}$ in all
+  tests and production runs (§2.3.3).
+* **Rotating frame** (§2.4, eqs. 21–33). Coriolis and centrifugal sources,
+  cell-centred and time-centred by the same predictor–corrector; the
+  new-time Coriolis term is solved implicitly in closed form (eqs. 25–26;
+  "This improvement is small"); centrifugal work enters through a rotational
+  potential with the same face-based energy update as gravity (eq. 30,
+  `castro.rot_source_type = 4`). CASTRO conserves linear, not angular,
+  momentum; an angular-momentum-conserving form is not implemented, and in
+  the inertial frame at moderate resolution "a secular loss of angular
+  momentum ... eventually will result in a spurious merger". Recorded as
+  flagged by the reading: the printed sign of the rotational potential
+  (eq. 28) appears inconsistent with the gravity convention used in eq. 30;
+  unverified against the published version.
+* **AMR** (§2.1, §2.3, §3.2). $r_{\mathrm{ref}}\in\{2,4\}$, 3D Cartesian
+  uniform spacing, subcycling with as many substeps as the refinement jump;
+  refined grids may not reach the domain boundary. The final multilevel
+  gravity synchronization (the correction solve above) is **disabled** for
+  merger runs "because the grid boundaries never lie in regions of high
+  density". Tagging: on the coarse level all zones within twice the
+  Eggleton Roche radius, on finer levels $\rho > 1$ g cm$^{-3}$. Time step
+  ramped from a few orders of magnitude below the CFL limit by 1 % per step,
+  capped at half the CFL limit; an outer velocity sponge (eqs. 37–38).
+* **Parallelization** (§5). Boxes over MPI; the default distribution is a
+  Morton space-filling curve, but a knapsack algorithm (efficiency demand
+  0.9) "is actually" the most efficient for this problem. The 2010 paper
+  describes an automatic switch between the two on the ratio of grids to
+  processors; the two descriptions of the default differ and neither paper
+  says when it changed. Boxes are a multiple of 16 zones per side because
+  multigrid efficiency "sharply decreases" otherwise; maximum grid size
+  32–64. OpenMP tiling with one parallel region per hydro call (Zhang et al.
+  2015) replaced loop-level OpenMP; a GPU port is in development.
+* **Scaling** (§5, Figs. 18–19, Blue Waters). Weak scaling of a
+  uniform-grid binary from $128^3$ on 8 to $2048^3$ on 32,768 processors,
+  10 steps with two Poisson solves each: "excellent weak scaling through
+  4,096 processors", and at 32,768 "slightly less than 1.5 times" the
+  smallest run's time per step, attributed to multigrid; called "a
+  significant improvement" over the 2010 Poisson scaling. Strong scaling is
+  good with at least 2 grids per processor and degrades near 1.
+* **Verification** (§4). Poisson convergence on a uniform sphere and cube:
+  the cube shows "perfect second-order scaling at all resolutions", while the
+  sphere's apparent order is inflated and then stalls because its mass on
+  the grid changes with resolution (§2.3.3, Fig. 2). A $0.9\,M_\odot$ white
+  dwarf held for 200 s expands to a larger equilibrium than its 1D model,
+  approximately in equilibrium only with a factor-4 refined level on the
+  $256^3$ grid, and its final kinetic energy is not lower at the highest
+  resolution (§4.1, Figs. 4–5); this is a longer run with a different
+  diagnostic than the 1 s hydrostatic test of 2010. The same star moving
+  across the grid is "much worse at maintaining hydrostatic equilibrium"
+  (§4.3.2). Free fall of two stars is in "excellent agreement" with the
+  analytic curve (§4.2). Kelvin–Helmholtz with bulk flows up to about Mach 70: with
+  sharp initial interfaces the instability "completely fails to develop" at
+  low resolution and high bulk speed, with smoothed interfaces the
+  disruption "quickly converges away" (§4.3.1). Keplerian orbits converge
+  at $1024^3$ effective resolution in the inertial frame, more slowly in
+  the rotating frame (§4.4).
+
+[Coleman (2020)](/sources/coleman-2020.md), §1, states that CASTRO ran
+general-EOS Riemann tests (Zingale & Katz 2015, not ingested) but is
+hydro-only.
+
 # Citations
 
 1. [Almgren et al. (2010)](/sources/almgren-2010.md), §§1–8 (arXiv v1).
+2. [Katz et al. (2016)](/sources/katz-2016.md), §§2–5, Apps. A–C (arXiv v2).
+3. [Coleman (2020)](/sources/coleman-2020.md), §1 (arXiv v3).
