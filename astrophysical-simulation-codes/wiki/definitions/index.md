@@ -1,0 +1,3 @@
+# Definitions
+
+Precise domain terms.

@@ -244,3 +244,24 @@ pointing into a sibling archive would list all its files as pending. It
 also keeps a bundle relocatable without the other. Duplicated PDFs cost
 disk space only. Copying never modifies the source archive, so Layer-1
 immutability holds.
+
+## D18 — Third bundle for simulation codes (2026-10-12)
+
+**Decision (user):** classes 7 and 8 of the ADAM paper collection
+(astrophysics codes and physics; GPU/HPC frameworks), out of scope for
+both existing bundles, get a third bundle, `astrophysical-simulation-codes`.
+Its scope is "codes of both kinds": astrophysical (M)HD frameworks and
+their physics modules, and GPU or performance-portable frameworks for
+compressible flow whether astrophysical or not.
+
+**How it relates to D12 and D17:** the frameworks that the class-7 papers
+extend (Athena, Athena++, PLUTO, Castro, a GPU AMR code, STREAmS) are
+already ingested in the other bundles; they are copied into this bundle's
+archive and re-ingested for their code-design content, with no links
+across bundles.
+
+**Why:** the material is about software architecture, physics modules and
+performance, a different subject from discretizing divergence constraints
+or designing capturing schemes; folding it into either bundle would have
+diluted that bundle's registry and reading guide.
+
