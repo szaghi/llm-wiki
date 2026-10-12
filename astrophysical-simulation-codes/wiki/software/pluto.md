@@ -183,7 +183,60 @@ measured there.
   than the public versions of FLASH, PLUTO and Enzo, "in some cases by as much
   as a factor of 10" (§3.6.1).
 
+## Later uses (batch 3)
+
+### IDEFIX, a PLUTO-compatible Kokkos code
+
+[IDEFIX](/software/idefix.md) was written from scratch on Kokkos rather
+than by porting PLUTO, but keeps PLUTO's input-file format and keywords,
+variable names, several preprocessor macros and VTK output conventions;
+restart dumps are not compatible ([Lesur et al. (2023)](/sources/lesur-2023.md),
+§1, §3.2–§3.3). The paper states three facts about PLUTO:
+* **Pressure as a source.** PLUTO treats pressure gradients as a momentum
+  source term (§2.3), consistent with the momentum equation above, which
+  writes $\nabla P^*$ outside the flux divergence. IDEFIX puts the pressure
+  in the flux, which adds pressure source terms in curvilinear geometry,
+  so the two codes' results "are expected to differ, even if the same
+  algorithm combination is chosen".
+* **Courant number.** PLUTO's Courant number carries a dimension
+  prefactor (IDEFIX's $\nu$ equals the number of dimensions times
+  PLUTO's), and PLUTO computes global hyperbolic and parabolic steps
+  separately (§2.7, eq. 10). IDEFIX cites for this Mignone et al. (2012,
+  A&A 545:152, eq. 7), the orbital-advection paper, not the PLUTO-CHOMBO
+  paper ingested here, whose eq. 23 (above) combines the advective rate
+  and the diffusive rates in one Courant number with $\nu \le 1$ (2D) and
+  $\nu \le 1/2$ (3D). The two descriptions come from different PLUTO
+  papers and possibly different modules, so they are recorded side by
+  side as a qualification, not as a contradiction.
+* **Comparisons.** IDEFIX's Brio–Wu run is checked against a PLUTO 4.3 Roe
+  solution with 8000 points (§4.2, Fig. 6). In weak scaling on AMD EPYC
+  7H12 nodes (Irene Rome) up to 1024 nodes (131 072 cores), IDEFIX's
+  efficiency, above 80%, is "very close to Pluto's" (PLUTO 4.4, pure MPI),
+  slightly better beyond 10 000 cores, which the authors attribute
+  "probably" to device-side packing (§5, Fig. 18).
+
+### gPLUTO, the GPU rewrite
+
+[gPLUTO](/software/gpluto.md) is "a complete C++ rewrite of the legacy
+code" that runs the whole time step on NVIDIA GPUs through OpenACC
+directives ([Rossazza et al. (2026)](/sources/rossazza-2026.md), abstract,
+§1, §3). The paper gives the rewrite's language (C++) but not the legacy
+code's. It covers only ideal MHD on uniform Cartesian meshes: SSP-RK3
+method of lines with WENOZ or parabolic reconstruction of primitive
+variables, HLLD, and either upwind constrained transport (UCT-HLLD of
+Mignone & Del Zanna 2021) or GLM cleaning (§2); the code "offers a variety
+of algorithms", of which only these were run. The method-of-lines runs
+therefore do not contradict the CTU integrator described above. The Chombo
+AMR path, relativistic and non-ideal physics, particles and other
+coordinates are deferred to a later paper. Legacy PLUTO's ArrayLib halo
+exchange is replaced by device-packed buffers and non-blocking MPI with up
+to 26 neighbours in 3D (§3.4). On Leonardo a node of 4 A100 GPUs is about
+9× faster than a node of 2×56-core Xeon 8480+ CPUs (node against node,
+FP64, 3D Orszag–Tang weak scaling, Table 3); details on the gPLUTO page.
+
 # Citations
 
 1. [Mignone et al. (2012)](/sources/mignone-2012.md), §§1–7, App. A–B (journal version).
 2. [Stone et al. (2020)](/sources/stone-2020.md), §2.2, §3.6.1.
+3. [Lesur et al. (2023)](/sources/lesur-2023.md), §1, §2.3, §2.7, §3.2–§3.3, §4.2, §5, Fig. 18 (arXiv v1).
+4. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§1–5, Table 3 (arXiv v1).

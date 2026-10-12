@@ -301,8 +301,31 @@ every run (§2.2).
 general-EOS Riemann tests (Zingale & Katz 2015, not ingested) but is
 hydro-only.
 
+## Later uses (batch 3)
+
+* **GPU status.** [Katz et al. (2016)](/sources/katz-2016.md), §5, report a
+  GPU port in development. [Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+  §4.1, cite CASTRO (Almgren et al. 2020, not ingested) as an AMReX-based
+  GPU hydrodynamics code whose scaling "to thousands of GPUs" they expect
+  [Quokka](/software/quokka.md), built on the same library, to match. This
+  is a later state of the code, not a contradiction; no ingested source
+  documents CASTRO's GPU implementation.
+* **AMReX.** [Shankar et al. (2023)](/sources/shankar-2023.md), §III,
+  present AMReX as the successor framework to BoxLib, with CUDA, HIP and
+  DPC++/SYCL back ends; [GRaM-X](/software/gram-x.md) is built on it.
+  GRaM-X uses AMReX block-structured AMR **without** subcycling and without
+  refluxing (§III A, §III C), while Quokka subcycles on AMReX with
+  flux-register synchronization
+  ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2), as
+  CASTRO does on BoxLib above.
+  [Stone et al. (2026)](/sources/stone-2026.md), §1, cite AMReX only as
+  another GPU-enabled block-structured AMR package.
+
 # Citations
 
 1. [Almgren et al. (2010)](/sources/almgren-2010.md), §§1–8 (arXiv v1).
 2. [Katz et al. (2016)](/sources/katz-2016.md), §§2–5, Apps. A–C (arXiv v2).
 3. [Coleman (2020)](/sources/coleman-2020.md), §1 (arXiv v3).
+4. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§2.2, 4.1.
+5. [Shankar et al. (2023)](/sources/shankar-2023.md), §§III, III A, III C (arXiv v2).
+6. [Stone et al. (2026)](/sources/stone-2026.md), §1 (arXiv v1).

@@ -98,9 +98,83 @@ solutions at a fraction of the cost
 physical structure the uniform grid misses
 ([Zhang et al. (2018)](/sources/zhang-2018.md), §5.1(iv)).
 
+## Later uses (batch 3)
+
+### Non-relativistic
+
+* *3D, Cholla* ([Caddy & Schneider (2024)](/sources/caddy-2024.md),
+  §3.1.5, Fig. 11; [Cholla](/software/cholla.md)). The domain and grid of
+  the Stone et al. (2008) 3D run, $1\times1.5\times1$ with
+  $200\times300\times200$ cells, $t = 0.2$, now with printed parameters:
+  ambient $\rho = 1$, $p = 0.1$, $\mathbf B = (1/\sqrt2, 1/\sqrt2, 0)$
+  (plasma beta 0.2), and $p = 10$ inside a sphere of radius 0.1. VL+CT
+  with HLLD. Smooth, symmetric contours; qualitative. "Like Stone &
+  Gardiner (2009), we find instabilities if β is decreased by a factor of
+  10", i.e. at plasma beta 0.02.
+* *2D, AMR against uniform on one GPU, AthenaK*
+  ([Stone et al. (2026)](/sources/stone-2026.md), §5.1, Fig. 20;
+  [AthenaK](/software/athenak.md)). Pressure 100 times the background
+  inside a circle; uniform $4096^2$ with $64^2$ MeshBlocks against AMR on
+  a $1024^2$ root with $64^2$ blocks and two levels, refining where the
+  density exceeds 1.1 times the background; $t = 0.4$; one NVIDIA A100,
+  precision not stated. The densities are "essentially identical"
+  (visual). Throughput falls from 181 to 141 million cell updates per
+  second with AMR ("roughly 20% overhead"; 22% from the printed numbers),
+  and the AMR run takes 18% of the uniform wall time (the caption says
+  "5.4× faster"; $1/0.18 = 5.6$). The authors say the overhead is "likely
+  amplified" in 2D; the 3D problem does not fit on one device.
+
+Cholla's instability at plasma beta 0.02 qualifies, and does not
+contradict, the Stone et al. (2008) statement above that CTU with
+constrained transport is "robust for low-β flows" down to beta 0.02:
+that statement comes from the isothermal 2D case integrated with CTU,
+while Cholla's run is adiabatic, 3D and integrated with VL+CT.
+
+### Relativistic
+
+* *Komissarov cylindrical explosions, AthenaK*
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3.5, Fig. 10). Inner
+  $\rho = 10^{-2}$, $p = 1.0$ within radius 1; ambient $\rho = 10^{-4}$,
+  $p = 3\times10^{-5}$; an exponential ramp between them; field
+  $B_x = 0.1$ and $B_x = 1$; pressure-based AMR with $20\times20$
+  MeshBlocks. With the first-order flux
+  correction (FOFC) fallback the problem runs "robustly" without the
+  floors, background changes or artificial viscosity other codes need.
+  Visual; robustness only.
+* *Komissarov weak-field case, GRaM-X*
+  ([Shankar et al. (2023)](/sources/shankar-2023.md), §IV B, eqs. 14–15,
+  Fig. 4; [GRaM-X](/software/gram-x.md)). The GRHydro set-up after
+  Komissarov: radii 0.8 and 1.0, $\rho = 10^{-2}$ inside and $10^{-4}$
+  outside, $p = 1.0$ inside and $3\times10^{-5}$ outside, exponential
+  transition (eq. 14), $\mathbf B = (0.1, 0, 0)$, adiabatic index 4/3;
+  $200\times200\times8$ cells on $[-6, 6]^2$ ($h = 0.06$), constrained
+  transport, TVD-minmod, HLLE, RK4, CFL 0.25, $t = 4$, no AMR; static
+  Minkowski spacetime, on a GPU. Visual comparison with the GRHydro and
+  Komissarov figures; small deviations in 1D cuts are attributed to cell-
+  against vertex-centred initial data and "go away" (not shown) with the
+  same discretization.
+
+These two are a **further relativistic variant**, not the set-up of
+Mignone et al. (2012) and Stone et al. (2020) above: the ambient pressure
+is $3\times10^{-5}$ instead of $5\times10^{-3}$. The inner radius is
+printed differently in the two (radius 1 with a ramp in AthenaK, radii
+0.8 to 1.0 in GRaM-X). AthenaK's §3.5 also shows a test that its text
+calls the relativistic MHD blast wave of Stone et al. (2020), §4.3.1,
+"as proposed by Mignone et al. (2012)", while the Fig. 9 caption calls it
+an "SRMHD shock tube test"; it is not counted here.
+
+The batch-3 runs add a GPU instance of the AMR-against-uniform comparison
+(identical density, about a fifth of the wall time; Stone et al. 2026),
+the low-beta limit of VL+CT (Caddy & Schneider 2024), and the
+low-ambient-pressure relativistic variant as a robustness test (Stone et
+al. 2026; Shankar et al. 2023). All comparisons remain visual.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
 2. [Zhang et al. (2018)](/sources/zhang-2018.md), §5.1(iv) (arXiv v4).
 3. [Mignone et al. (2012)](/sources/mignone-2012.md), §6.4, §6.5.
 4. [Stone et al. (2020)](/sources/stone-2020.md), §4.3.3.
+5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.5 (arXiv v2).
+6. [Stone et al. (2026)](/sources/stone-2026.md), §3.5, §5.1 (arXiv v1).
+7. [Shankar et al. (2023)](/sources/shankar-2023.md), §IV B (arXiv v2).

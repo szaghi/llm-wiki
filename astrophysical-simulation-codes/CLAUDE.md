@@ -44,8 +44,10 @@ from scratch for their code-design content, with no links across bundles.
     bryan-2014, katz-2016, siegel-2018, coleman-2020, kastaun-2021,
     mathew-2021, wibking-2022, shankar-2023, tomida-2023, caddy-2024,
     rossazza-2026.
-  - `2024-arXiv-Stone-…` (AthenaK) has no published version on Crossref
-    as of 2026-10-12; its slug is `stone-2024`.
+  - `2024-arXiv-Stone-…` (AthenaK, arXiv:2409.16053v1) was published as
+    ApJS 283:27 (2026, doi:10.3847/1538-4365/ae3717; found on Crossref
+    at ingestion, batch 3), so its slug follows the published year:
+    `stone-2026`. The archive file keeps its preprint name.
   - 6 copied from sibling archives (D17): Athena (stone-2008), Athena++
     (stone-2020), PLUTO AMR (mignone-2012), Castro (almgren-2010) and GPU
     AMR (zaghi-2023) from div-free-amr; STREAmS (bernardini-2021) from
@@ -87,6 +89,13 @@ from scratch for their code-design content, with no links across bundles.
 - Commits: `docs(astrophysical-simulation-codes): ingest <source-slug>`.
 
 ## Status
+
+**Batch 3 staged 2026-10-12:** 29 of 35 archived sources ingested (the
+GPU codes: lesur-2023, caddy-2024, stone-2026, rossazza-2026,
+wibking-2022, shankar-2023, zaghi-2023, bernardini-2021, jansson-2024).
+Next: comparisons and applications (porth-2019, kim-2017,
+villasenor-2021, ohlmann-2016, bai-2017, mathew-2021). Deep lint: 9
+ingestions since #2, with a batch audit; #3 is due with the next batch.
 
 **Batch 2 staged 2026-10-12:** 20 of 35 archived sources ingested (the
 physics modules: krumholz-2004, federrath-2010, townsend-2009, smith-2017,

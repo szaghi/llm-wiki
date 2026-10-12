@@ -51,8 +51,24 @@ the AMR gain must be read against the same block size
 ([Stone et al. (2020)](/sources/stone-2020.md), §3.4.2). All
 comparisons are qualitative.
 
+## Later uses (batch 3)
+
+* [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1, Fig. 3;
+  [IDEFIX](/software/idefix.md). Initial conditions deferred to the 1984
+  Colella–Woodward work (cited in that author order); $1920\times480$,
+  $t = 0.2$, several combinations of reconstruction, Riemann solver and
+  integrator. LimO3 and PPM give a more vigorous jet and the onset of
+  Kelvin–Helmholtz rolls. Visual comparison with Stone et al. (2008),
+  Fig. 16, and Mignone et al. (2007), Fig. 2.
+
+This agrees with the reading above that PPM is less diffusive than PLM
+on this test, adds LimO3 to the less diffusive side, and uses about 3.7
+times as many cells per direction as the larger Stone et al. (2008) run
+(1920 against 520 along $x$). It remains qualitative.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.3.
 2. [Bryan et al. (2014)](/sources/bryan-2014.md), §11.2.4 (arXiv v1).
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.4.2.
+4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1 (arXiv v1).

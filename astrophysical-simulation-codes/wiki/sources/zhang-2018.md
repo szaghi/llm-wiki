@@ -143,6 +143,7 @@ helicity above 98%, also used as the scaling problem (Figs. 15–17).
   [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md),
   [MHD blast wave](/benchmarks/mhd-blast-wave.md).
 * Also cited on [Athena++ (block-based AMR framework for astrophysical MHD)](/software/athena-plus-plus.md), [Athena (astrophysical MHD code)](/software/athena.md).
+* Also cited on (batch 3) [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md), [Porting compressible-flow codes to GPUs](/methods/gpu-porting.md).
 
 # Citations
 

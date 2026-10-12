@@ -65,8 +65,35 @@ inclined 3D loop) ([Stone et al. (2008)](/sources/stone-2008.md), §8.4,
 improves with refinement ([Mignone et al. (2012)](/sources/mignone-2012.md),
 §5.2). None of the sources reports a convergence order.
 
+## Later uses (batch 3)
+
+* *3D, tilted spherical loop, GPU code*
+  ([Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.3, eq. 36,
+  Figs. 4–5; [Cholla](/software/cholla.md)). A new 3D variant: the loop is
+  spherical and tilted, from a vector potential whose $y$ and $z$
+  components equal $10^{-3}$ times (0.3 minus the distance from the
+  centre) inside radius 0.3 and whose $x$ component is zero; $\rho = 1$,
+  $p = 1$, $\mathbf v = (1, 1, 2)$; domain $1\times1\times2$ centred at
+  the origin, $N\times N\times2N$ with $N = 32$, 64, 128, 256; $t = 2$
+  (two periods); VL+CT with HLLD and PPM with characteristic limiting.
+  At $t = 2$ the volume-averaged $B^2$ normalized to its initial value is
+  about 0.97 at $N = 256$ and about 0.80 at $N = 32$ (read from Fig. 4,
+  left); the dissipation rate "improves at approximately first order",
+  "comparable" to Stone et al. (2008). The maximum $|\nabla\cdot\mathbf B|$
+  stays at about $10^{-17}$–$10^{-15}$, "near round off", for the whole
+  run (Fig. 4, right), and the field outside the loop stays near zero.
+  The loop images (Fig. 5) use PLM because "PPMC introduced spurious
+  oscillations in the direction of advection".
+
+Cholla's "approximately first order" is a qualitative reading of Fig. 4
+with no fitted rate, so it qualifies the statement above that none of the
+sources reports a convergence order. The divergence result agrees with
+the [constrained-transport](/methods/constrained-transport.md) runs above:
+round-off level throughout.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
 2. [Mignone et al. (2012)](/sources/mignone-2012.md), §5.2.
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.5.2.
+4. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.3 (arXiv v2).

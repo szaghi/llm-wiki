@@ -4,7 +4,7 @@ title: "M1 two-moment radiation transport"
 description: "Radiation transport by the zeroth and first angular moments of the transfer equation closed with the local M1 Eddington tensor, advanced by explicit Godunov schemes with HLL or global Lax–Friedrichs fluxes and operator-split matter coupling, as implemented in RAMSES-RT and Athena's Hyperion module."
 status: established
 aliases: [M1 closure, two-moment radiation hydrodynamics, moment method, M1 radiative transfer, Levermore closure]
-tags: [radiation, riemann-solver, reduced-speed-of-light, conservation]
+tags: [radiation, riemann-solver, reduced-speed-of-light, conservation, amr, gpu]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -211,7 +211,129 @@ light-speed time step differently.
   1.5 × (1 + 4/9 × number of groups), about 3.5 for three groups
   ([Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §5.2).
 
+## Later uses (batch 3)
+
+### Quokka: a third implementation, on GPUs with AMR
+
+[Quokka](/software/quokka.md) solves gray mixed-frame two-moment
+radiation hydrodynamics on AMReX block-structured AMR, on GPUs
+([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§1.2, 2).
+
+**Equations** (§2.1, eqs. 11–17). The radiation subsystem is written in
+flux form,
+$$\partial_t E_{\mathrm r} + \nabla\cdot\left(\frac{\hat c}{c}\mathbf F_{\mathrm r}\right) = \hat c\rho\left(\kappa_{\mathrm P}a_{\mathrm r}T^4 - \kappa_{\mathrm E}E_{\mathrm r}\right) + \rho\kappa_{\mathrm F}\frac{\hat c}{c}\frac{\mathbf v}{c}\cdot\mathbf F_{\mathrm r},\qquad \partial_t\mathbf F_{\mathrm r} + \nabla\cdot\left(c\hat c\,\mathsf P_{\mathrm r}\right) = -\hat c\rho\kappa_{\mathrm F}\mathbf F_{\mathrm r},$$
+with $a_{\mathrm r}$ the radiation constant and Planck ($\kappa_{\mathrm P}$),
+energy-mean ($\kappa_{\mathrm E}\approx\kappa_{\mathrm P}$) and flux-mean
+($\kappa_{\mathrm F}\approx$ Rosseland) opacities. Multiplying Hyperion's
+equations above by $\hat c$ puts $\hat c$ in the same place, the time
+derivatives only; Quokka differs from Hyperion in keeping distinct mean
+opacities and in dropping the velocity term of the flux equation (the
+"relativistic work term"), which matters only where velocity over light
+speed times optical depth is of order one, a regime closed to the
+[reduced speed of light](/definitions/reduced-speed-of-light.md) (§2.1).
+
+**Closure** (§2.2.2, eqs. 23–25). The default is Levermore (1984), the
+same formula as above; Minerbo (1978) is offered, and any map from
+$f_{\mathrm r}$ to $\chi_{\mathrm E}$ can be plugged in "at no cost in
+computational performance". The direction term is dropped at zero flux.
+The Su–Olson test shows the limit of every such local closure: regions
+near the source with $\chi_{\mathrm E} < 1/3$ cannot be represented
+(§3.2.2, Fig. 10).
+
+**Transport** (§2.2.2).
+
+| | Quokka |
+|---|---|
+| Order | method of lines, RK2-SSP; PPM (or PLM) reconstruction of $E_{\mathrm r}$ and of the reduced flux vector $\mathbf F_{\mathrm r}/(cE_{\mathrm r})$, no flattening |
+| Flux | HLL with wave speeds computed from Eddington factors frozen at the start of the step (Balsara 1999), so the closure is swappable |
+| Light speed in transport | $\hat c$ (fluxes $\frac{\hat c}{c}\mathbf F_{\mathrm r}$ and $c\hat c\,\mathsf P_{\mathrm r}$) |
+| Mesh | AMReX block-structured AMR, radiation subcycled within each level |
+
+* The frozen-Eddington-factor wave speeds are the stated contrast with
+  solvers "restricted to a single local closure" (González et al. 2007;
+  [Skinner & Ostriker (2013)](/sources/skinner-2013.md); Skinner et al.
+  2019) — that is, with the tabulated eigenvalues of RAMSES-RT and the
+  closed-form eigenvalues of Hyperion.
+* Reconstructing the reduced flux suppresses
+  $\vert\mathbf F_{\mathrm r}\vert > cE_{\mathrm r}$ in 1D but not in
+  multiple dimensions; for evaluating the closure only, the flux is
+  rescaled to $\vert\mathbf F_{\mathrm r}\vert = cE_{\mathrm r}$. PLM is
+  needed for optically thin fronts not aligned with the grid.
+* An optically thick correction of the Riemann solver (Audit et al. 2002
+  type) is disabled in cells where it would produce a causality-violating
+  state; the authors advocate refining on the gradient of the optical depth
+  per cell.
+
+**Coupling and time stepping** (§2.2, §2.2.3).
+* Per hydro step: one explicit hydro update, a set of explicit radiation
+  substeps, and after each substep a local implicit exchange. Hyperion
+  likewise subcycles radiation inside the gas step (above).
+* Energy exchange: backward Euler after Howell & Greenough (2003),
+  extended to $\hat c$, with Newton–Raphson on the gas and radiation
+  residuals and a $2\times2$ Jacobian (eqs. 26–38). Convergence is
+  measured relative to $\rho e + (c/\hat c)E_{\mathrm r}$ (plus the
+  source term), the same combination Hyperion conserves in its exchange.
+  Default tolerance $10^{-10}$, the same value as Hyperion's quartic
+  solve; larger tolerances "produce unacceptably inaccurate solutions",
+  and very stiff problems need about $10^{-15}$; at most 400 iterations.
+* Flux absorption is backward Euler, the flux divided by
+  $1 + \rho\kappa_{\mathrm F}\hat c\Delta t$ with $\kappa_{\mathrm F}$ at
+  the updated temperature; the gas momentum receives minus the flux
+  change over $c\hat c$ (after Skinner et al. 2019); the radiation work is
+  applied as a change of gas kinetic energy (eqs. 39–43).
+* Across AMR levels the radiation **is** subcycled: each level advance
+  takes at most a set number of radiation substeps (default 10), and the
+  coarse–fine radiation flux mismatch is added to the adjacent coarse
+  cells; a maximum of one reproduces RAMSES-RT's flux synchronization
+  (§2.2.4). RAMSES-RT, by contrast, does not subcycle radiation (above).
+  The authors warn that too large a maximum can break the positivity of
+  $E_{\mathrm r}$ or flux causality on the coarse level. See
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+
+**Tests** ([Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+§§3.2–3.3).
+* Marshak wave against the Su & Olson (1996) diffusion solution,
+  $\hat c = c$: "excellent agreement" where the flux is well below
+  $cE_{\mathrm r}$; the deviation near the front is attributed to the finite
+  light speed absent from diffusion theory (§3.2.1, Fig. 9).
+* Su–Olson transport problem: the Levermore result lies between the
+  diffusion and transport solutions; Minerbo is better at early times (not
+  shown) (§3.2.2, Fig. 10).
+* Radiation–matter energy exchange: agreement with the exact solution
+  "better than one part in $10^5$ at each timestep" for $\hat c = c$ and
+  $\hat c = 0.1c$ (§3.2.3, Fig. 11).
+* [Radiation shadow test](/benchmarks/radiation-shadow-test.md): a sharp
+  shadow, with residual artefacts inside it from a transient beam curving
+  around the cloud, "an unavoidable artefact of using a local VET closure"
+  (§3.2.4, Fig. 12). Hyperion also keeps a sharp shadow (above).
+* Beam: narrow with small diffusion; a transient bow-shock-like feature
+  at the beam head is attributed to the nonlinear local closure, since the
+  Levermore-closed moment equations are equivalent to an
+  ultrarelativistic gas (Hanawa & Audit 2014) (§3.2.5, Fig. 13).
+* Radiation pressure tube within 0.2 % of the diffusion solution at
+  $\hat c$ equal to 10 sound speeds (§3.3.1); optically thin
+  radiation-driven wind in "excellent agreement" (§3.3.2).
+* [Subcritical radiative shock](/benchmarks/subcritical-radiative-shock.md)
+  with the Eddington closure: 0.4 % L1 error in gas temperature after a
+  drift correction (§3.3.3). Hyperion's 0.49 % with fixed Eddington wave
+  speeds (above) is not a like-for-like comparison: closure, solver, error
+  measure and resolution differ.
+* Radiation-driven dust shell after Skinner & Ostriker (2013), $128^3$,
+  PLM, $\hat c$ equal to 860 sound speeds: shell velocities slightly
+  below thin-shell theory, whereas, by Quokka's reading, Skinner & Ostriker
+  found them slightly above; exact agreement is not expected because the
+  source and shell widths are not given in the original (§3.3.4, Fig. 17).
+  This is a difference between runs of an underspecified set-up, not a
+  contradiction.
+
+**Cost.** On one V100 the radiation-driven shell runs at 22.55 million
+cell updates per second with 10 radiation substeps per hydro step, and at
+39.04 million on one A100; 4-GPU node efficiency drops because each
+radiation substep exchanges ghost cells (§4, Tables 3–4). Precision is not
+stated.
+
 # Citations
 
 1. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §§1.1.2, 2, 3–3.3, 4.1, 4.4, 5–5.3, 6, 7, App. D (arXiv v2).
 2. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §§2.1–2.3, 3.1–3.4, 4.1–4.3, 5 (arXiv v1).
+3. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§1.2, 2.1–2.2.4, 3.2–3.3, 4 (arXiv v2).

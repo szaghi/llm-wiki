@@ -2,6 +2,108 @@
 
 ## 2026-10-12
 
+* **Batch 3: the GPU codes** (9 sources). Ingested
+  [Lesur et al. (2023)](/sources/lesur-2023.md) (IDEFIX),
+  [Caddy & Schneider (2024)](/sources/caddy-2024.md) (Cholla MHD),
+  [Stone et al. (2026)](/sources/stone-2026.md) (AthenaK),
+  [Rossazza et al. (2026)](/sources/rossazza-2026.md) (gPLUTO),
+  [Wibking & Krumholz (2022)](/sources/wibking-2022.md) (Quokka),
+  [Shankar et al. (2023)](/sources/shankar-2023.md) (GRaM-X),
+  [Zaghi et al. (2023)](/sources/zaghi-2023.md) (ADAM),
+  [Bernardini et al. (2021)](/sources/bernardini-2021.md) (STREAmS) and
+  [Jansson et al. (2024)](/sources/jansson-2024.md) (Neko). Same mode as
+  batches 1–2: nine readers, seven drafters.
+  * **Versions:**
+    * Read as preprints: IDEFIX, Cholla, AthenaK, gPLUTO, Quokka, GRaM-X
+      and Neko. Each Source page records the version.
+    * Neko's preprint (2021) prints 65 references; the published version
+      has 71.
+    * AthenaK was published as ApJS 283:27 (2026), found on Crossref at
+      ingestion, so its slug is `stone-2026`, not the planned
+      `stone-2024`. Bundle law updated.
+  * **Created:**
+    * 9 Software pages: [AthenaK](/software/athenak.md),
+      [IDEFIX](/software/idefix.md), [gPLUTO](/software/gpluto.md),
+      [Cholla](/software/cholla.md), [Quokka](/software/quokka.md),
+      [GRaM-X](/software/gram-x.md), [ADAM](/software/adam.md),
+      [STREAmS](/software/streams.md), [Neko](/software/neko.md);
+    * Methods: [porting to GPUs](/methods/gpu-porting.md),
+      [super-time-stepping](/methods/super-time-stepping.md);
+    * Definitions: [cell-update throughput](/definitions/cell-updates-per-second.md),
+      [parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md);
+    * 8 Benchmarks: Shu–Osher, Liska–Wendroff implosion,
+      Kelvin–Helmholtz, circularly polarized Alfvén wave, relativistic
+      magnetic rotor, ambipolar C-shock, radiation shadow, subcritical
+      radiative shock. Each is run by at least two sources.
+  * **Updated** (add-only, checked by a lost-lines diff):
+    * Software: Athena, Athena++, PLUTO, GAMER, Castro.
+    * Methods: AMR, unsplit integrators, Riemann solvers, constrained
+      transport, GLM cleaning, M1 transport, primitive recovery.
+    * The reduced-speed-of-light definition.
+    * Eight existing benchmarks. Rayleigh–Taylor is unchanged; no
+      batch-3 source runs it.
+  * **Contradictions opened**, on the auditor's recommendation:
+    * [unsplit integrators](/methods/unsplit-godunov-integrators.md):
+      whether RK2 at $\nu = 1$ is stable in 3D (Athena++ against Quokka's
+      bound). It hinges on Athena++'s unprinted $\Delta t$ normalization.
+    * [linear wave convergence](/benchmarks/linear-wave-convergence.md):
+      Athena++ RK3+PPM keeps converging to $N = 256$ (Stone et al. 2020)
+      against stalling in IDEFIX's Athena++ run.
+    * [reduced speed of light](/definitions/reduced-speed-of-light.md):
+      Skinner & Ostriker against Quokka on whether steady states depend on
+      $\hat c$. A proposed resolution is attached; closing it is the
+      human's call.
+  * **Qualifications, not contradictions** (kept in the prose):
+    * Brio–Wu PPM oscillations, Cholla against Athena++;
+    * Cholla's low-β blast against Athena's CTU claim;
+    * rotor Lorentz factor, PLUTO against GRaM-X;
+    * IDEFIX's arithmetic EMF average against Stone et al. (2008);
+    * AthenaK's $\nu \le 1/d$ usage;
+    * GPU block-size advice against Athena++'s CPU advice.
+  * **Notation:** registry section "Additions, batch 3": $a_{\mathrm r}$,
+    the Planck, energy, flux and Rosseland mean opacities,
+    $\Delta t_{\mathrm{hyp}}$, $\Delta t_{\mathrm{par}}$, $s_{\mathrm{RKL}}$.
+  * **Bibliography:** 686 references merged; the record grew from 1049 to
+    1509 entries, with `FLAGS: 0` and a clean `--dupes` sweep. The venue
+    and fuzzy-title sweeps also ran.
+    * Corrections verified on Crossref:
+      * Powell et al. (1999) is JCP 154:284; Stone et al. (2008) printed
+        153.
+      * Crockett et al. (2005) is JCP 203:422; Stone et al. (2008)
+        printed 203:255.
+      * Ryu & Jones (1995) is ApJ 442:228; Caddy printed 422.
+    * Other misprints folded with notes:
+      * Caddy's Brio–Wu (75:40) and Einfeldt (92:213);
+      * Caddy's Toro DOI, which does not resolve on Crossref;
+      * K-Athena (arXiv:1905.04341), printed with year 2009 by Stone et
+        al. (2020), rekeyed `grete-2019`.
+    * Preprints merged into their published versions: AthenaK (cited by
+      gPLUTO) and H-AMR (`liska-2022`).
+    * Same key, different work, separated:
+      * Rossazza's D. Zhang (2018, Galaxies) had merged by key into the
+        ingested GAMER slug; it is now `zhang-2018-c`;
+      * Jansson's Dongarra (2011) is `dongarra-2011-b`;
+      * Zaghi's Berger & LeVeque (1989) is `berger-1989-b`;
+      * Caddy's 2003 AIAA van Leer is `vanleer-2006-b`.
+    * Two undated citations took the citing year (`amd-2026`,
+      `mignone-2026`). Cholla's Zenodo archive is `caddy-2024-b`.
+  * **Batch audit.** A read-only auditor spot-checked about 65 numbers
+    against the PDFs. Fixes:
+    * gPLUTO's printed SSP-RK3 last stage lacks a factor 2 on the
+      operator term; the page now gives the standard form, and the Source
+      page records the misprint.
+    * IDEFIX's PPM error floor of $10^{-2}$ was wrongly called a misprint.
+    * Cholla's "at most a 55% drop" is a loose bound, not a conflict.
+    * One IDEFIX "GPU" is one MI250X module, so its per-node rate is about
+      155 Mcell/s per GCD.
+    * ADAM's block-size comparison now holds GPU count fixed.
+    * Quokka's radiation throughput counting rule is now stated.
+    * Smaller fixes: dimensionless $\mu$ on the two radiation benchmarks,
+      $\nu$ for Cholla's printed $C_{CFL}$, the rotor's shared
+      $\gamma = 5/3$, a missing `hydro` tag.
+    * The audit verified the drafters' Orszag–Tang normalization mapping
+      and the Cholla vector potential.
+
 * **Batch 2: the physics modules** (10 sources). Ingested
   [Krumholz, McKee & Klein (2004)](/sources/krumholz-2004.md) and
   [Federrath et al. (2010)](/sources/federrath-2010.md) (sink particles),

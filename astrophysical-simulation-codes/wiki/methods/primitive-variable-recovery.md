@@ -193,6 +193,41 @@ Noble) are less robust than 1D Brent, failing on up to 1.5 % of points.
 Neither recovery paper tests its scheme inside an evolution code; Kastaun
 et al. defer this to future work (§IV C).
 
+## Later uses (batch 3)
+
+Two GPU codes report recovery schemes inside evolution codes.
+
+* **[GRaM-X](/software/gram-x.md)** ([Shankar et al. (2023)](/sources/shankar-2023.md),
+  §II C) uses the chain Siegel et al. recommend for a three-parameter
+  EOS, with a third stage added: a 3D Newton–Raphson in $W$,
+  $\rho h_{\mathrm{rel}}W^2$ and $T$ first; on non-convergence the Newman &
+  Hamlin one-dimensional iteration; as last resort bisection in
+  temperature, "guaranteed to converge ... but much more expensive". The
+  ordering is justified by "the number of EoS calls is ∼ 20 times larger in
+  case of Newman's method compared to 3D-NR", citing Siegel et al. That is
+  a rounded figure: the ratio of the LS220 density–temperature means above
+  is 331/11.3 ≈ 29, and with the ideal gas all schemes need under 10.
+  Listed failure modes: non-convergence, negative density or pressure,
+  speed above $c$, and leaving the table bounds in $\rho$, $T$,
+  $Y_{\mathrm e}$. The tabulated EOS (19 quantities in
+  $(\rho, T, Y_{\mathrm e})$) sits in CUDA unified memory. No tolerances,
+  failure statistics or recovery timings are reported.
+* **[AthenaK](/software/athenak.md)** ([Stone et al. (2026)](/sources/stone-2026.md),
+  §3.5–§3.6) uses the Kastaun et al. (2021) recovery for special- and
+  general-relativistic hydro and MHD, "in a departure from Athena++", with
+  frame transformations in GR. The evidence of robustness is visual: the
+  Komissarov cylindrical explosions with field 0.1 and 1, run "robustly"
+  together with a first-order flux fallback (Fig. 10), and a
+  Blandford–Znajek monopole at magnetization 100 (Fig. 13). Cost
+  (Table 2, Mzone-cycles/s per device): on an Intel Xeon Gold 6326
+  SR-hydro (16) runs slower than SR-MHD (20), attributed to the recovery
+  root finder: "Likely this algorithm requires further tuning on CPUs". On
+  an NVIDIA A100 the order is reversed (378 against 178).
+
+With these, Kastaun et al.'s scheme has been run inside an evolution code,
+which the two recovery papers had left open; neither code paper reports a
+recovery failure rate.
+
 ## Contradictions
 
 * **Is the extra temperature inversion an inherent cost?** *Open.*
@@ -214,3 +249,6 @@ et al. defer this to future work (§IV C).
 2. [Kastaun et al. (2021)](/sources/kastaun-2021.md), §§I–V, eqs. 2–82,
    Table I, App. A (arXiv v2).
 3. [Stone et al. (2020)](/sources/stone-2020.md), §4.
+4. [Shankar et al. (2023)](/sources/shankar-2023.md), §II C (arXiv v2).
+5. [Stone et al. (2026)](/sources/stone-2026.md), §§3.5–3.6, Table 2,
+   Figs. 10, 13 (arXiv v1).

@@ -142,6 +142,7 @@ processors in 3D); Kelvin–Helmholtz (AMR ≈40× faster); 3D shock–cloud;
 * [PLUTO](/software/pluto.md).
 * [Constrained transport](/methods/constrained-transport.md) (why the AMR version avoids CT), [GLM divergence cleaning](/methods/glm-divergence-cleaning.md), [Unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md), [Adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 * [Field-loop advection](/benchmarks/field-loop-advection.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md) (relativistic variants), [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md).
+* Also cited on (batch 3) [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md), [Relativistic magnetic rotor](/benchmarks/relativistic-magnetic-rotor.md).
 
 # Citations
 

@@ -117,7 +117,92 @@ The dispersion relations, extended to include $\hat c$, show:
   time ratio of about 13
   ([Skinner & Ostriker (2013)](/sources/skinner-2013.md), §§4.3.2–4.3.3).
 
-# Citations
+## Later uses (batch 3)
+
+### Quokka: same placement, a closed-box bias
+
+**Placement.** [Quokka](/software/quokka.md) writes the radiation
+equations as
+$\partial_t E_{\mathrm r} + \nabla\cdot(\frac{\hat c}{c}\mathbf F_{\mathrm r})$
+and $\partial_t\mathbf F_{\mathrm r} + \nabla\cdot(c\hat c\,\mathsf P_{\mathrm r})$,
+with $\hat c$ times the radiation four-force on the right
+([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.1, eqs. 11–12).
+Multiplied through by $\hat c$, Hyperion's form above is the same, so the
+two codes place $\hat c$ alike: in the time derivatives only. Citing
+[Skinner & Ostriker (2013)](/sources/skinner-2013.md), the paper states
+that with $\hat c\neq c$ neither total energy nor momentum is conserved
+(§2.1). Quokka subcycles the explicit radiation inside each hydro step
+(§2.2).
+
+**Closed-box equilibrium** (§3.2.3, eqs. 57–58, Fig. 11). With a gas heat
+capacity proportional to $T^3$, a closed, uniform box conserves
+$\rho e + (c/\hat c)E_{\mathrm r}$, not $\rho e + E_{\mathrm r}$. The
+equilibrium temperature it reaches therefore depends on $\hat c$ whenever
+$\hat c\neq c$. In the radiation–matter exchange test (after Turner &
+Stone 2001; initial $E_{\mathrm r} = 10^{12}$ and gas energy $10^2$ erg
+cm⁻³, $\rho = 10^{-7}$ g cm⁻³) the code matches the exact solution of
+the modified system to better than one part in $10^5$ per step, and with
+$\hat c = 0.1c$ ($f_c = 0.1$) the equilibrium temperature is about 20 %
+higher than the physical one. The authors call this "a generic failing of
+the RSLA" and present it as "contrary to previous claims in the
+literature", without naming those claims.
+
+**How this relates to Hyperion's statement.**
+[Skinner & Ostriker (2013)](/sources/skinner-2013.md), §2.1, state that
+quasi-steady radiation fields do not depend on $\hat c$, because $\hat c$
+multiplies only the time derivatives; they also give the conserved
+combination $E + (c/\hat c)E_{\mathrm r}$ (above). Quokka's result follows
+from that same combination: the steady-state equations do not contain
+$\hat c$, but which steady state a closed system reaches is fixed by the
+conserved combination, which does. The two statements concern different
+things (the form of the steady equations against the end state of an
+isolated system). Quokka's own reconciliation is the same: with open
+boundaries that do not conserve the combination, the correct steady state
+is reached (§3.3, §5.1). Because Quokka presents its result as contrary to
+earlier claims, the disagreement is kept open under Contradictions, with
+this reconciliation as the proposed resolution.
+
+**Open-boundary runs** ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.3).
+* Radiation pressure tube (Krumholz et al. 2007): $\hat c$ equal to 10
+  initial sound speeds, about $4.03\times10^8$ cm s⁻¹, optical depth per
+  cell about $10^2$; agreement with the diffusion solution better than
+  0.2 % (§3.3.1, Fig. 14). Skinner & Ostriker use the same factor of 10
+  for this test (above).
+* Optically thin radiation-driven wind with $\hat c$ equal to 10 times a
+  flow Mach number of the solution times the isothermal sound speed
+  (§3.3.2).
+* [Subcritical radiative shock](/benchmarks/subcritical-radiative-shock.md)
+  with $\hat c$ equal to 10 times the upstream velocity plus sound speed
+  (§3.3.3).
+* Radiation-driven dust shell with $\hat c$ equal to 860 sound speeds, the
+  largest value Skinner & Ostriker use (§3.3.4).
+
+**Validity** (§5.1). $\hat c$ must exceed the speed of the fastest
+radiation-driven fronts in streaming problems, and about $c$ divided by
+the optical depth in diffusion problems; following Skinner & Ostriker
+(2013), no constant $\hat c$ preserves the ordering of hydrodynamic,
+diffusion and reduced light speeds everywhere. This agrees with the
+time-scale criterion above. The paper also drops the velocity terms of
+order velocity over light speed times optical depth beyond the flux term,
+because they matter only where that product reaches one, where the
+approximation cannot be used (§2.1); this matches the dynamic-diffusion
+exclusion in the table above.
+
+## Contradictions
+
+* **Do quasi-steady states depend on $\hat c$?** *Open.*
+  [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §2.1: quasi-steady
+  radiation fields do not depend on $\hat c$, which multiplies only the
+  time derivatives. [Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+  §3.2.3: in a closed box the equilibrium temperature does depend on
+  $\hat c$ (about 20 % too high at $f_c = 0.1$), "contrary to previous
+  claims in the literature". *Proposed resolution (compiler, not a
+  closure):* the steady equations are $\hat c$-free, but a closed system
+  conserves $E + (c/\hat c)E_{\mathrm r}$, which fixes which steady state
+  it reaches; Skinner & Ostriker give the same conserved combination. The
+  entry closes by a source that states this, or by the human.
+
 
 1. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §§4.1–4.3, 5.4, 6.2, 6.4, 6.5, 6.8 (arXiv v2).
 2. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §§2.1, 3.1–3.2, 4.3.2–4.3.6, 5 (arXiv v1).
+3. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§2.1–2.2, 3.2.3, 3.3, 5.1 (arXiv v2).

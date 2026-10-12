@@ -167,6 +167,7 @@ positions.
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md),
   [Adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 * Also cited on [Integrating cooling and chemistry source terms](/methods/radiative-cooling-integration.md).
+* Also cited on (batch 3) [Radiation shadow test](/benchmarks/radiation-shadow-test.md).
 
 # Citations
 

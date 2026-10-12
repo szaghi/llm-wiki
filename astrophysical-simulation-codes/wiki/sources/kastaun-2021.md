@@ -171,6 +171,7 @@ $\mathbf v$, $W$, $e$, $p$ or $\mu$.
 * Created [Primitive-variable recovery](/methods/primitive-variable-recovery.md).
 * Updated [Dual-energy formalism](/methods/dual-energy-formalism.md).
 * Also cited on [Athena++ (block-based AMR framework for astrophysical MHD)](/software/athena-plus-plus.md).
+* Also cited on (batch 3) [AthenaK (performance-portable Kokkos version of the Athena++ AMR framework)](/software/athenak.md).
 
 # Citations
 

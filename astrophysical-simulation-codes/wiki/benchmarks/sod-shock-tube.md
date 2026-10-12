@@ -51,8 +51,31 @@ Its remaining uses here are solver comparison on equal grids and the
 check that AMR across the waves reduces the error (by factors of about
 2.4 to 3.3 in the Bryan et al. table).
 
+## Later uses (batch 3)
+
+* [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1, Fig. 2;
+  [IDEFIX](/software/idefix.md). $\gamma = 1.4$, $t = 0.2$; Roe, PLM, RK2,
+  500 points, against the analytic solution; visual only. Recorded as
+  printed: the text gives the left pressure as 0.1, but Fig. 2 shows 1.0,
+  the standard Sod value; the right state is printed as
+  $(\rho, p) = (0.125, 0.1)$.
+* [Caddy & Schneider (2024)](/sources/caddy-2024.md), §4.2.1;
+  [Cholla](/software/cholla.md). Not a validation run but a calibration of
+  the test suite: Sod results differ by about $5\times10^{-15}$ across
+  hardware and compilers, which set the absolute tolerance of $10^{-14}$
+  in the code's floating-point comparisons (a comparison passes if either
+  this absolute check or a check of at most 4 units in the last place
+  passes).
+
+The new run adds nothing beyond the visual agreement already recorded
+above, consistent with Stone et al.'s judgement that the test no longer
+discriminates. Cholla's use is a different one: a reproducibility
+reference for automated testing.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.1.
 2. [Almgren et al. (2010)](/sources/almgren-2010.md), §8.1.1 (arXiv v1).
 3. [Bryan et al. (2014)](/sources/bryan-2014.md), §11.2.1 (arXiv v1).
+4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1 (arXiv v1).
+5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §4.2.1 (arXiv v2).

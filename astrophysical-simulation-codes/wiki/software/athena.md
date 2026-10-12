@@ -319,6 +319,43 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   variable, because recovering $E$ by subtracting the potential energy in
   low-density regions gives "unphysical energies or temperatures".
 
+## Later uses (batch 3)
+
+* **Athena's VL+CT in a GPU code.** [Cholla](/software/cholla.md) adopts
+  the VL+CT integrator of Stone & Gardiner (2009) as its default, replacing
+  CTU as "more robust than the CTU algorithm described in Schneider &
+  Robertson (2015)", with HLLD fluxes
+  ([Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2). Its edge-EMF
+  figure is "based on Figure 5 of Stone et al. 2008", and its PLM projects
+  onto characteristic variables with the eigenvectors of
+  [Stone et al. (2008)](/sources/stone-2008.md) (§2.2.4, §2.2.6). Measured
+  on Cholla's VL+CT: formally limited to $\nu \le 0.5$, it is not stable at
+  0.5 but stable at 0.4, and is typically run at 0.3 (§2.2.1, footnote 4).
+* **Comparisons Cholla draws with Athena results.** PPM linear-wave errors
+  "comparable to" Stone & Gardiner (2009) (§3.1.1); field-loop
+  magnetic-energy dissipation "comparable" to Stone et al. (2008)
+  (§3.1.3); the Felker & Stone (2018) PPM "significantly reduces
+  oscillations" in the Brio–Wu problem compared with the PPM of Stone et
+  al. (2008) (§3.1.4); the 3D Orszag–Tang vortex is compared qualitatively
+  with Stone et al. (2008), Fig. 22 (§3.1.6). In the 3D MHD blast wave
+  "Like Stone & Gardiner (2009), we find instabilities if β is decreased by
+  a factor of 10", i.e. at plasma beta 0.02 (§3.1.5). This does not
+  contradict Athena's "robust for low-β flows" above, which refers to
+  CTU+CT with an isothermal equation of state
+  ([Stone et al. (2008)](/sources/stone-2008.md), §8.4); Cholla's run is
+  adiabatic VL+CT.
+* **IDEFIX.** Its default edge EMF is the Gardiner–Stone upwind variant,
+  "similar to Athena", selectable at run time
+  ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.4); its double Mach
+  reflection is compared visually with Stone et al. (2008), Fig. 16
+  (§4.1), and its Orszag–Tang cuts are taken at $y = 0.316$ and 0.425
+  against Athena's 0.3125 and 0.427 (§4.2). See [IDEFIX](/software/idefix.md).
+* **AthenaK.** The AthenaK paper cites Stone et al. (2008) as an earlier
+  version in the Athena lineage and, like Athena++, does not implement CTU,
+  which "does not extend easily to the relativistic equations of motion"
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3). See
+  [AthenaK](/software/athenak.md).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §§1–9, App. C (journal version).
@@ -328,3 +365,6 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 5. [Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §3.2 (arXiv v4).
 6. [Jiang et al. (2013)](/sources/jiang-2013.md), §§1–4 (arXiv v2).
 7. [Katz et al. (2016)](/sources/katz-2016.md), §2.3.1 (arXiv v2).
+8. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2, §2.2.1, §2.2.4, §2.2.6, §3.1.1, §3.1.3–§3.1.6 (arXiv v2).
+9. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.4, §4.1, §4.2 (arXiv v1).
+10. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).

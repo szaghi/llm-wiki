@@ -4,7 +4,7 @@ title: "Constrained transport"
 description: "Staggered discretization of the induction equation: face-area-averaged magnetic field updated from edge-centred EMFs, which keeps the discrete divergence of each cell at its initial value to round-off; production codes build the edge EMFs from the face Godunov fluxes (Gardiner–Stone upwind construction or Balsara–Spicer averaging) and, on AMR, add area-weighted restriction, divergence-free prolongation and an EMF correction at coarse–fine edges."
 status: established
 aliases: [CT, upwind constrained transport, staggered-mesh constrained transport, face-centred constrained transport, MHD-CT]
-tags: [mhd, constrained-transport, amr, conservation]
+tags: [mhd, constrained-transport, amr, conservation, gpu]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -151,6 +151,98 @@ Face- and edge-centred data need their own inter-level operators.
   "robust for low-β flows" after isothermal runs at $\beta = 0.02$
   (Stone et al. 2008, §8.4, Figs. 28–30).
 
+## Later uses (batch 3)
+
+Five more codes use CT: [Cholla](/software/cholla.md),
+[IDEFIX](/software/idefix.md), [AthenaK](/software/athenak.md),
+[gPLUTO](/software/gpluto.md) (CT or GLM) and
+[GRaM-X](/software/gram-x.md) (vector potential on edges).
+
+* **Cholla** ([Caddy & Schneider (2024)](/sources/caddy-2024.md)). Face
+  $\mathbf B$ advanced inside the VL+CT integrator; the cell-centred field
+  is the arithmetic mean of the two face values (eq. 13), recomputed every
+  time it is needed and never stored, because "Cholla is generally limited
+  instead by GPU memory" (§2.2.1, §2.3.1). The edge EMF is the mean of the
+  four adjacent face values plus derivative terms formed between face
+  values and a cell-centre reference
+  $\boldsymbol{\mathcal E} = -\mathbf v\times\mathbf B$ (eqs. 15–18,
+  Fig. 1, "based on Figure 5 of Stone et al. 2008"). The derivatives are
+  upwinded by the sign of the face-normal velocity, with the mean of both
+  sides otherwise (eq. 16); whether that velocity is the contact
+  (mass-flux) velocity of Stone et al. (2008) is not stated. The code
+  advances $\mathbf B$ with the electric field rather than the magnetic flux
+  with the EMF, which the paper says differ only by factors of unit length
+  (§2.2.4). Recorded as printed: eq. 15 adds the two derivative terms in
+  each direction and eq. 17 writes its example derivative as face value
+  minus reference, the opposite arrangement to Stone et al. (2008), eq. 81,
+  above; only one derivative is printed, so whether this is a sign
+  convention or a misprint cannot be decided from the text. Stated reasons
+  for CT on GPUs: "its overall accuracy, because the algorithm pairs well
+  with static structured grids, and because the computational efficiency
+  of GPUs is a good match to the algebraic complexity of CT" (§1).
+* **IDEFIX** ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.4). Face
+  $\mathbf B$ by CT after Evans & Hawley (1988). Edge EMFs from the face
+  Riemann fluxes (arithmetic average, or the two Gardiner–Stone 2005 upwind
+  variants, the paper's E⁰ and Eᶜ, Eᶜ being the default and "similar to
+  Athena") or from 2D Riemann solvers at edges (Londrillo & Del Zanna 2004;
+  2D HLL and HLLD after Mignone & Del Zanna 2021), selectable at run time.
+  The Hall-effect EMF uses the arithmetic average of the fluxes; adding Hall
+  to the upwind variant "led to numerical instabilities" (§2.5). This
+  qualifies, without contradicting, Stone et al.'s (2008) statement that
+  simple averaging "does not work" for their unsplit integrators: IDEFIX
+  uses it, with no instability reported, under a method-of-lines
+  integrator and the diffusive HLL solver.
+* **Vector-potential formulation** (IDEFIX, §2.4, eqs. 7–8). Optionally the
+  edge-centred vector potential is advanced by minus the edge EMF and
+  $\mathbf B$ is its discrete curl: "mathematically equivalent to the
+  original CT algorithm", but round-off no longer accumulates in
+  $\nabla\cdot\mathbf B$. Costs: memory for the potential, initial
+  conditions coded as a potential, and possible overflow of the potential
+  under a large-scale constant EMF, removed by a periodic gauge
+  transformation.
+* **Round-off growth.** IDEFIX states that with plain CT the divergence
+  grows by round-off as the square root of the number of cycles with
+  explicit Runge–Kutta, and linearly with Runge–Kutta–Legendre
+  [super-time-stepping](/methods/super-time-stepping.md), "potentially
+  significant" over billions of steps; it recommends the vector potential
+  when super-time-stepping is used on a parabolic MHD term (§2.4, §2.8).
+  The growth law is asserted, not shown in a figure. This qualifies "to
+  round-off" in the opening section, and matches Athena++'s reason for
+  averaging EMFs on shared edges (errors "that CT never removes", above).
+* **AthenaK** ([Stone et al. (2026)](/sources/stone-2026.md), §3).
+  Face-area-averaged $\mathbf B$, Evans–Hawley CT with the upwinded
+  electric fields of Gardiner & Stone (2005, 2008); "the staggered mesh
+  version of CT is critical for some problems." How the coarse–fine EMF
+  correction is implemented on the device is not described.
+* **gPLUTO** ([Rossazza et al. (2026)](/sources/rossazza-2026.md)). CT "in
+  the more recent formulation by" Mignone & Del Zanna (2021), the upwind
+  "UCT HLLD" average, with Londrillo & Del Zanna (2004) as an origin
+  (§2.1, §4.1). The strong-scaling runs switch to
+  [GLM cleaning](/methods/glm-divergence-cleaning.md) "because this
+  algorithm requires less device memory than the constrained transport
+  method", to fit a slightly larger grid; no memory figures are given
+  (§4.1).
+* **GRaM-X** ([Shankar et al. (2023)](/sources/shankar-2023.md), §III B).
+  The vector potential sits on cell edges of AMReX's staggered layout,
+  which is said to keep $\nabla\cdot\mathbf B$ zero to round-off "in
+  particular near mesh refinement interfaces". The EMF construction, gauge
+  and prolongation are not described, and no divergence measurement is
+  reported.
+
+Evidence added in batch 3:
+* **[Field-loop advection](/benchmarks/field-loop-advection.md), Cholla.**
+  Tilted spherical loop in 3D: the maximum divergence stays at about
+  $10^{-17}$–$10^{-15}$, "near round off", for the whole run, and the
+  zero-field exterior stays near zero (Caddy & Schneider 2024, §3.1.3,
+  Fig. 4).
+* **[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), IDEFIX.**
+  $\vert\nabla\cdot\mathbf B\vert \ll 10^{-12}$ in all runs
+  (Lesur et al. 2023, §4.2).
+* **[Circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md),
+  Cholla.** Second order with VL+CT in 3D (Caddy & Schneider 2024,
+  §3.1.2, Fig. 3). gPLUTO runs the same test with CT for weak scaling only,
+  without accuracy diagnostics (Rossazza et al. 2026, §4.2).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -158,3 +250,8 @@ Face- and edge-centred data need their own inter-level operators.
 3. [Bryan et al. (2014)](/sources/bryan-2014.md), §3.3, §4.3, §11.2.10 (arXiv v1).
 4. [Zhang et al. (2018)](/sources/zhang-2018.md), §3.1–3.3, §5.1 (arXiv v4).
 5. [Mignone et al. (2012)](/sources/mignone-2012.md), §1, §3, §7.
+6. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §1, §2.2.1, §2.2.4, §2.3.1, §3.1.2–§3.1.3 (arXiv v2).
+7. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.4, §2.5, §2.8, §4.2 (arXiv v1).
+8. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).
+9. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.1, §4.1–§4.2 (arXiv v1).
+10. [Shankar et al. (2023)](/sources/shankar-2023.md), §III B (arXiv v2).

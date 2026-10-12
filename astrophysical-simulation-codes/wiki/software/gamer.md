@@ -144,6 +144,72 @@ From [Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §5.1:
   force-free field relaxation test, which conserves total energy to machine
   precision and also serves as the scaling benchmark.
 
+## Later uses (batch 3)
+
+GAMER keeps all data in host memory and streams patch groups to the GPU.
+The seven batch-3 codes below state their data placement, and all do the
+opposite: the solution stays resident on the device (see
+[porting compressible-flow codes to GPUs](/methods/gpu-porting.md)). These are
+contrasting designs of different codes, not contradictions.
+
+* **[Cholla](/software/cholla.md)** used the host-resident design first: its
+  older versions ran "an extreme version of the 'offload' model", copying
+  the conserved arrays between CPU and GPU every step. The current version
+  keeps all data on the GPU, sends MPI messages directly from GPU buffers,
+  and leaves only initial conditions and file I/O on the CPU; the change is
+  credited with a "considerable speedup", not timed
+  ([Caddy et al. (2024)](/sources/caddy-2024.md), §2.3.1, §5).
+* **[IDEFIX](/software/idefix.md)** keeps all arrays and loops on the device,
+  the host serving I/O ([Lesur et al. (2023)](/sources/lesur-2023.md), §3.1, §6).
+* **[AthenaK](/software/athenak.md)** keeps all field data on the device,
+  moved to the host only for output, and runs prolongation and restriction
+  on the device; only the block tree stays on the host
+  ([Stone et al. (2026)](/sources/stone-2026.md), §2).
+* **[gPLUTO](/software/gpluto.md)**: "The entire computational workload is
+  handled by the GPUs", with no host–device transfers during computation,
+  using CUDA Unified Memory plus explicit data directives
+  ([Rossazza et al. (2026)](/sources/rossazza-2026.md), §3.1, §3.3).
+* **[GRaM-X](/software/gram-x.md)**: "all data are stored on the
+  accelerator's built-in memory at all times", moved to the host only for
+  I/O, with the AMR operations of its driver GPU-enabled
+  ([Shankar et al. (2023)](/sources/shankar-2023.md), §III, §III C).
+* **[ADAM](/software/adam.md)** is the closest design: like GAMER it keeps the
+  octree and the refinement on the CPU, but its field stays on the GPU for
+  the whole compute phase and is copied to the host only at I/O and AMR
+  updates. Its serial AMR update grows from 0.74 s at 1562 blocks to
+  527.97 s at 684,258 blocks ([Zaghi et al. (2023)](/sources/zaghi-2023.md),
+  §2.2, §3.2, Table 1), whereas GAMER overlaps its CPU-side AMR work with
+  the GPU solver.
+* **[STREAmS](/software/streams.md)** (no AMR) copies its solution to the
+  device once before time marching and back at the end
+  ([Bernardini et al. (2021)](/sources/bernardini-2021.md), §4.1). It
+  implements the remedy GAMER proposes for its growing MPI share, overlap
+  of communication with computation (interior fluxes during the ghost
+  exchange), and reports about 97% weak-scaling efficiency on 1024 V100
+  GPUs (§4.3, Fig. 13). GRaM-X, without such overlap, also blames
+  ghost-zone communication for its 40–50% weak-scaling efficiency at 2304
+  nodes, measured against one node of 6 GPUs
+  ([Shankar et al. (2023)](/sources/shankar-2023.md), §V B). The three
+  efficiencies are not on a common baseline (see
+  [parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md)).
+
+GAMER's single-P100 throughput (above) cannot be set against the batch-3
+figures as a speed-up: the GPU generations (P100 against V100, A100, H100),
+the schemes, the precision (GAMER prints it; Cholla and Quokka do not) and
+the normalization (per GPU against per node of 4 GPUs for gPLUTO) all differ
+([Caddy et al. (2024)](/sources/caddy-2024.md), §3.2;
+[Wibking & Krumholz (2022)](/sources/wibking-2022.md), §4;
+[Rossazza et al. (2026)](/sources/rossazza-2026.md), §4; see
+[cell-update throughput](/definitions/cell-updates-per-second.md)).
+
 # Citations
 
 1. [Zhang, Schive & Chiueh (2018)](/sources/zhang-2018.md), §§1–6 (arXiv v4).
+2. [Caddy et al. (2024)](/sources/caddy-2024.md), §§2.3.1, 3.2, 5.
+3. [Lesur et al. (2023)](/sources/lesur-2023.md), §§3.1, 6.
+4. [Stone et al. (2026)](/sources/stone-2026.md), §2 (arXiv v1).
+5. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§3.1, 3.3, 4.
+6. [Shankar et al. (2023)](/sources/shankar-2023.md), §§III, V B (arXiv v2).
+7. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §§2.2, 3.2, Table 1.
+8. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§4.1, 4.3, Fig. 13.
+9. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §4.

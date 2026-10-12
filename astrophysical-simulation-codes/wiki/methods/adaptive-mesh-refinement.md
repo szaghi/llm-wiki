@@ -4,7 +4,7 @@ title: "Adaptive mesh refinement in astrophysical codes"
 description: "Structured AMR as built into astrophysical codes: cell-based, patch-based and block-based hierarchies, subcycled versus global time stepping, refluxing and EMF correction, conservative restriction and limited prolongation, nesting rules, refinement criteria and load balancing, compared across Athena++, GAMER, PLUTO, Castro, Enzo and RAMSES."
 status: established
 aliases: [AMR, SAMR, block-structured AMR, patch-based AMR, octree AMR, Berger–Oliger AMR, Berger–Colella AMR, subcycling, refluxing, flux correction]
-tags: [amr, conservation, performance]
+tags: [amr, conservation, performance, gpu]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -430,6 +430,197 @@ curve, while a knapsack algorithm proved most efficient for their problem
 balancing, above) and this statement of the default differ, and neither
 paper dates the change.
 
+## Later uses (batch 3)
+
+### GPU codes with AMR
+
+Four batch-3 codes refine their meshes. The three that state a ratio use
+$r_{\mathrm{ref}} = 2$; AthenaK keeps the Athena++ design.
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| [Quokka](/software/quokka.md) (AMReX `AMRCore`) | block-structured grids sized by `blocking_factor` and `max_grid_size` | 2 only | not stated | subcycled, $\Delta t_l = \Delta t_0/2^l$ |
+| [AthenaK](/software/athenak.md) | MeshBlocks in a binary tree, quadtree or octree, as Athena++ | not restated | not restated | single global $\Delta t$ |
+| [GRaM-X](/software/gram-x.md) (CarpetX on AMReX) | blocks of runtime size, "typical" $8^3$ | 2 | proper nesting | single global $\Delta t$ |
+| [ADAM](/software/adam.md) | identical blocks in an octree, $2^3$ children | 2 | 2:1 between contiguous blocks | single global $\Delta t$ |
+
+Sources for the table:
+[Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§2.2, 2.2.4, 4;
+[Stone et al. (2026)](/sources/stone-2026.md), §2;
+[Shankar et al. (2023)](/sources/shankar-2023.md), §III A;
+[Zaghi et al. (2023)](/sources/zaghi-2023.md), §§2.2, 3.1.
+
+**Quokka** ([Wibking & Krumholz (2022)](/sources/wibking-2022.md)).
+* Berger–Oliger / Berger–Colella AMR on Cartesian grids through AMReX's
+  lower-level `AMRCore` interface, which supplies grid generation,
+  coarse–fine interpolation, domain decomposition and communication;
+  Quokka does the time stepping and the refinement criteria (§2.2).
+* $r_{\mathrm{ref}} = 2$ only, "to minimize numerical glitches" at
+  coarse–fine boundaries; linear conservative interpolation on
+  refinement, conservative averaging on derefinement; a flux-register
+  synchronization "at the end of every two time steps on level $l>0$"
+  keeps conservation to machine precision (§2.2).
+* **Radiation across levels** (§2.2.4). After discussing the options of
+  [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), Quokka subcycles
+  the explicit radiation within each level: the coarse step is chosen so
+  that each level advance takes at most a set number of radiation
+  substeps (default 10, used in all tests), and the coarse–fine radiation
+  flux mismatch is added to the adjacent coarse cells at the end of each
+  level advance. A maximum of one reproduces RAMSES's flux
+  synchronization. Too large a maximum can break positivity of
+  $E_{\mathrm r}$ or flux causality on the coarse level. This is a working
+  design for what RAMSES-RT calls "not possible (or at least nontrivial)"
+  (Where subcycling bites, above), with the stated risk as its price; see
+  [M1 radiation transport](/methods/m1-radiation-transport.md).
+* **Criteria.** Relative density gradient above 0.2 (Kelvin–Helmholtz,
+  §3.1.8); relative $E_{\mathrm r}$ gradient above 0.1 (shadow and beam
+  tests, §§3.2.4–3.2.5); relative density gradient (AMR scaling run, §4.2).
+  The authors advocate refining on the gradient of the optical depth per
+  cell where the optically thick Riemann correction fails (§2.2.2).
+* **Grid sizes.** `blocking_factor` = `max_grid_size` = 128 in the uniform
+  runs; `blocking_factor` 32 and `max_grid_size` 128 in the AMR run (§4).
+
+**AthenaK** ([Stone et al. (2026)](/sources/stone-2026.md), §2).
+The Athena++ design is kept (MeshBlocks in a binary, quad- or octree,
+Z-ordering, flux correction at level boundaries, one global time step),
+and "very little of the overall design was changed". On the GPU:
+* All MeshBlocks of a device form one MeshBlockPack, so one kernel launch
+  covers them; this "greatly enhances performance when there are a large
+  number of small MeshBlocks on the same device".
+* Field data stay on the device and are moved to the host only for
+  output; the tree is created, stored and refined on the host.
+* Ghost cells are packed inside device kernels and sent by point-to-point
+  MPI, one message per MeshBlock of the pack; prolongation and
+  restriction are done "all at once inside parallel kernels".
+* The first-order flux correction fallback must run before the
+  level-boundary flux corrections (§3).
+
+**GRaM-X** ([Shankar et al. (2023)](/sources/shankar-2023.md)).
+* The Cactus driver CarpetX implements Berger–Oliger block-structured AMR
+  on AMReX: $r_{\mathrm{ref}} = 2$ ("Each level has half the spacing"),
+  proper nesting, ghost zones filled by prolongation from the coarser
+  level, restriction of overlaid coarse data, blocks of runtime-chosen size
+  (§III A). AMReX's inter-mesh operators were extended to higher-order
+  templated stencils for vertex-centred (spacetime) and conservative
+  cell-centred (fluid) data (§III).
+* **No subcycling**: one $\Delta t$ on all levels, "for simplicity" and
+  because it "increases parallel scalability ... since all refinement
+  levels can be evolved simultaneously. Subcycling in time necessarily
+  serializes evolving different refinement levels." (§III A). This is a
+  reason for the global step not in the Athena++ list above.
+* Fine face fluxes are restricted (averaged) to coarse faces so that
+  integrated fluxes agree on all levels; "As we are using a global time
+  step, so-called refluxing is not necessary." (§III C 3).
+* Edge-centred vector potential keeps $\nabla\cdot\mathbf B$ zero to
+  round-off "in particular near mesh refinement interfaces" (§III B); the
+  algorithm is not described.
+* "All of CarpetX's basic operations are fully GPU enabled", and all data
+  stay in device memory, moved to the host only for I/O (§§III, III C). The paper reports no AMR performance numbers (all
+  benchmarks are unigrid, §V).
+
+**ADAM** ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §2.2).
+* Block-based octree: one root block, each block splits into 8 identical
+  children and 8 siblings can rejoin. The tree is a hash map keyed by a
+  64-bit linearization of level and block coordinates, replicated on all
+  processes and updated "essentially" serially (a stated limitation).
+* AMR update in three steps: marking by a back-end (GPU) routine, e.g. on
+  a gradient criterion, then a CPU pass that
+  enforces the 2:1 rule, sibling-complete recomposition and the maximum
+  level; refinement and coarsening on the CPU "by interpolation" (order
+  and conservation not stated) after copying the field from the GPU; load
+  balancing along Morton space-filling curves, then copy back.
+* Ghost cells across level jumps use second-order interpolation;
+  inter-process exchange uses CUDA-aware MPI.
+* **Criteria.** Density-gradient modulus with target coarse and fine
+  cell sizes (shock test, §3.2); enthalpy gradient (vortex test, App.).
+  To avoid "flip-flop", blocks split above one threshold and recompose
+  below a smaller one, leaving a persistence band.
+* One global $\Delta t$ from the minimum over cells (§3.1, eq. 9); no
+  subcycling is described. The paper does not discuss conservation across
+  level jumps (refluxing); NASTO is a finite-difference scheme.
+
+**Codes without AMR.** [IDEFIX](/software/idefix.md) uses stretched
+rectilinear grids instead, and its sequential dimension-by-dimension
+ghost exchange is stated to be unsuited to a future AMR version
+([Lesur et al. (2023)](/sources/lesur-2023.md), §§2.6, 3.4).
+[Cholla](/software/cholla.md) is static-mesh only with one time step; on
+Frontier it reaches $19{,}278^3 \approx 7.2\times10^{12}$ cells without
+AMR ([Caddy & Schneider (2024)](/sources/caddy-2024.md), §1).
+[gPLUTO](/software/gpluto.md) as described is uniform-mesh; PLUTO's
+Chombo AMR is not part of the GPU rewrite
+([Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2).
+[STREAmS](/software/streams.md) has one Cartesian mesh, uniform in the
+streamwise and spanwise directions and stretched in the wall-normal one
+(error-function or sinh mapping) ([Bernardini et al. (2021)](/sources/bernardini-2021.md),
+§§3.1–3.2).
+
+### Cost and overhead on GPUs
+
+* **Block size.** On one A100 at fixed total grid, AthenaK throughput
+  falls from 614 to 413, 242 and 126 million cell updates per second as
+  MeshBlocks shrink from $128^3$ to $64^3$, $32^3$ and $16^3$; "Running
+  small problems on GPUs is not an effective use of resources"
+  ([Stone et al. (2026)](/sources/stone-2026.md), §5.1). ADAM on V100s
+  finds blocks of $16^3$ cheaper per cell than $8^3$ (grind time 0.25 →
+  0.16 at equal GPU count, runs 4 and 7 on 8 GPUs; labelled seconds, the printed values are seconds per million
+  cells per GPU per iteration), while $32^3$ on 64 GPUs
+  raises the MPI ghost time ([Zaghi et al. (2023)](/sources/zaghi-2023.md),
+  §3.2, Fig. 6, Table 1 runs 1, 7, 8). Quokka recommends at least $256^3$
+  cells per GPU per level ([Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+  §4.2). These GPU findings qualify, for GPUs, the CPU recommendation of
+  $8^3$–$16^3$ blocks with AMR in Athena++ (Cost and overhead, above);
+  the hardware differs, so they do not contradict it.
+* **AMR overhead.** AthenaK's 2D MHD blast on one A100 runs at 181
+  million cell updates per second on a uniform $4096^2$ grid and 141 with
+  AMR, "roughly 20%" overhead (22 % from the printed numbers), the same
+  fraction Athena++ reported on CPUs (above); the authors expect 2D to
+  amplify the overhead ([Stone et al. (2026)](/sources/stone-2026.md),
+  §5.1, Fig. 20). Quokka's single-node per-GPU AMR throughput is about
+  50 % below the uniform grid, attributed to fewer than $256^3$ cells per
+  GPU per level and to sequential level-by-level stepping
+  ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §4.2).
+* **Regridding.** ADAM's serial octree update costs 4.25 s on 1 GPU and
+  still 1.84 s on 32 (7008 blocks), and grows from 0.74 s at 1562 blocks
+  to 527.97 s at 684,258 blocks, "dramatically high when the number of
+  blocks increases" ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.2,
+  Table 1).
+* **Scaling with AMR.** Quokka's AMR strong scaling ($256^3$ root plus 2
+  levels, V100s) gives 100 %, 86.70 %, 65.83 % and 52.69 % efficiency on
+  4, 8, 16 and 32 GPUs ([Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+  §4.2, Table 5). AthenaK's AMR weak scaling on Frontier is "nearly
+  perfect" to 4096 GCDs with MeshBlocks fixed at $32^3$, migrating over 5
+  million MeshBlocks for load balance
+  ([Stone et al. (2026)](/sources/stone-2026.md), §5.2, Fig. 22).
+
+### Observed effects of refinement (GPU codes)
+
+* AthenaK's 2D MHD blast with a $1024^2$ root and two levels gives density
+  "essentially identical" to the uniform $4096^2$ run in 18 % of the wall
+  time; the caption says "5.4× faster", while $1/0.18$ is 5.6
+  ([Stone et al. (2026)](/sources/stone-2026.md), §5.1, Fig. 20).
+* Quokka's Kelvin–Helmholtz run with 4 levels on a $2048^2$ base (peak
+  $32{,}768^2$, $128^2$ local grids) took about 4.5 h on one GPU and shows
+  no visible artefacts at level boundaries (qualitative)
+  ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.1.8, Fig. 7).
+* In ADAM's shock–sphere runs, halving the finest target cell size
+  multiplies the cell count by "between 4 and 5" instead of 8; the finest
+  run has 350 million cells "instead of the 8 billions it would have with
+  uniform refinement", a cell-count ratio rather than a measured time
+  ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.2, Table 1 runs
+  9–13). The moving-vortex appendix reports that refinement jumps "seem to
+  not pollute the solution" (visual).
+
+### Bearing on the open entries
+
+* **Is time subcycling worth its cost?** Batch 3 adds one subcycled code
+  (Quokka) and three with a global step (AthenaK, GRaM-X, ADAM). GRaM-X
+  adds a reason, that subcycling serializes the levels and hurts parallel
+  scalability, and Quokka attributes part of its AMR efficiency loss to
+  sequential level-by-level stepping; neither measures the trade-off
+  against the alternative on a common problem, so the entry stays open.
+* **Level-dependent derived quantities.** No batch-3 source discusses the
+  issue.
+
 ## Contradictions
 
 **Is time subcycling worth its cost?** *Open.*
@@ -466,3 +657,11 @@ the issue, and none quantifies it.
 8. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.2.1–2.2.2, 3.2, 4.2 (arXiv v2).
 9. [Krumholz, McKee & Klein (2004)](/sources/krumholz-2004.md), §§2.1, 4 (arXiv v1).
 10. [Katz et al. (2016)](/sources/katz-2016.md), §§2.1, 2.3, 3.2, 5 (arXiv v2).
+11. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §§2.2, 2.2.2, 2.2.4, 3.1.8, 3.2.4–3.2.5, 4–4.2 (arXiv v2).
+12. [Stone et al. (2026)](/sources/stone-2026.md), §§2, 3, 5.1–5.2 (arXiv v1).
+13. [Shankar et al. (2023)](/sources/shankar-2023.md), §§III, III A–III C, V (arXiv v2).
+14. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §§2.2, 3.1–3.2, App.
+15. [Lesur et al. (2023)](/sources/lesur-2023.md), §§2.6, 3.4.
+16. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §1 (arXiv v2).
+17. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2.
+18. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§3.1–3.2.

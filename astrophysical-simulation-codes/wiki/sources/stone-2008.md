@@ -160,6 +160,7 @@ Fig. 32); oblique Alfvén wave; two 3D field loops (Fig. 34); oblique RJ2a;
 * [Athena](/software/athena.md).
 * [Constrained transport](/methods/constrained-transport.md), [Unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md), [Conservative self-gravity](/methods/conservative-self-gravity.md).
 * [Linear wave convergence](/benchmarks/linear-wave-convergence.md), [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [Field-loop advection](/benchmarks/field-loop-advection.md), [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), [Sod shock tube](/benchmarks/sod-shock-tube.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md), [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md).
+* Also cited on (batch 3) [Circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md), [Liska–Wendroff implosion](/benchmarks/liska-wendroff-implosion.md), [Relativistic magnetic rotor](/benchmarks/relativistic-magnetic-rotor.md), [Shu–Osher shock tube](/benchmarks/shu-osher-shock-tube.md), [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md), [Cholla (GPU-native astrophysical MHD code)](/software/cholla.md).
 
 # Citations
 

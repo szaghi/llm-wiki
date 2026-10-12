@@ -113,9 +113,126 @@ mainly by error constant ([Stone et al. (2020)](/sources/stone-2020.md),
 §3.3.1), and it probes [AMR](/methods/adaptive-mesh-refinement.md) boundary communication
 through $L_\infty$ (§3.4.1).
 
-# Citations
+## Later uses (batch 3)
+
+* *1D hydro and MHD with fourth-order reconstructions*
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3.1–§3.2, Figs. 1 and 3;
+  [AthenaK](/software/athenak.md), one CPU core). Exact eigenmode after
+  Stone et al. (2020), one period, $N$ from about 8 to about 1000 (read
+  from the plot axis); RK2+PLM, RK3+PPM4, RK3+PPMX and RK3+WENOZ, all
+  reconstructing primitive variables; amplitude and CFL number not
+  printed. Hydro (sound and entropy waves): fourth order for the
+  extremum-preserving PPMX and WENOZ "until either non-linear effects or
+  round-off error becomes important", second order for PPM4 and PLM; the
+  errors bottom out near $10^{-11}$–$10^{-12}$ at $N \approx 128$ (plot).
+  MHD: fourth order for RK3+PPMX and RK3+WENOZ on the slow and Alfvén
+  waves, but "the fast wave only converges at second-order even in
+  one-dimension"; PPM4 and PLM are second order for all waves. The paper
+  does not explain the fast-wave order loss. No error values are printed.
+* *3D MHD, oblique, solver and reconstruction comparison*
+  ([Lesur et al. (2023)](/sources/lesur-2023.md), §4.2, eq. 14, Figs. 7–8;
+  [IDEFIX](/software/idefix.md)). The Gardiner–Stone geometry of Stone et
+  al. (2008): domain $(3.0, 1.5, 1.5)$, grid $2N\times N\times N$,
+  periodic; $\rho = 1$, $p = 1/\gamma = 3/5$; in the frame of the
+  wavevector a field of 1 along it and 3/2 across it, and a background
+  velocity of 1 along it for the entropy mode only (fast, Alfvén and slow
+  speeds 2, 1 and 0.5); amplitude $10^{-6}$; one domain-crossing time.
+  The error (eq. 14) is the square root of the sum over variables of the
+  squared L1 errors, each normalized by the amplitude and the number of
+  cells and components. With PLM+RK2, the Rusanov (Lax–Friedrichs), HLL,
+  HLLD and Roe solvers all converge at second order (Fig. 7). With HLLD
+  (Fig. 8), LimO3+RK3 and PPM+RK3 are less diffusive than PLM+RK2,
+  notably for the entropy mode, but PPM "stops converging" at high
+  resolution, worst for the slow mode; the same stall appears with HLL
+  and in an Athena++ PPM run with primitive-variable reconstruction
+  (dashed curve); the stalled PPM curves rise back to about $10^{-2}$ at
+  the finest grid. The authors recommend LimO3. Recorded as printed: the
+  text says LimO3
+  "shows proper second order convergence", the Fig. 8 caption "slightly
+  larger than second order".
+* *3D MHD, grid-aligned* ([Caddy & Schneider (2024)](/sources/caddy-2024.md),
+  §3.1.1, eqs. 33–35, Fig. 2; [Cholla](/software/cholla.md)). Periodic
+  unit cube, $N\times16\times16$ cells with $N = 16$ to 512 in powers of
+  2, the wave along $x$ (not oblique), wavelength 1, amplitude $10^{-6}$,
+  $\gamma = 5/3$; $\rho = 1$, $\mathbf v = 0$ (background $v_x = 1$ for
+  the contact wave), $p = 1/\gamma$, $\mathbf B = (1, 1.5, 0)$;
+  eigenvectors of Gardiner & Stone (2008); one period; VL+CT with HLLD.
+  The error is the L2 norm over variables of the per-variable L1 norms.
+  Slow, fast, Alfvén and entropy waves all converge at second order. PPM
+  with characteristic limiting is "approximately an order of magnitude"
+  more accurate than PLM with characteristic limiting at every
+  resolution, still at second order (PPM is "formally second order"
+  inside this integrator, §2.2.6), and "comparable to" Stone & Gardiner
+  (2009). Runs along all three axes and in both directions give
+  "identical results". The CFL number is not stated.
+* *1D hydro sound wave on a GPU AMR code*
+  ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.1.1, eq. 45,
+  Fig. 1; [Quokka](/software/quokka.md)). After Stone et al. (2008):
+  $\rho = 1$, $\mathbf v = 0$, $p = 1/\gamma$, $\gamma = 5/3$, amplitude
+  $10^{-6}$, periodic $[0, 1]$, one period, PPM, CFL 0.1, $N = 16$ to
+  1024. The error, the rms over components of the L1 error (eq. 45), is
+  $1.0\times10^{-7}$ at $N = 16$, $1.6\times10^{-9}$ at $N = 128$ and
+  $1.7\times10^{-11}$ at $N = 1024$, scaling as $N^{-2}$ (Fig. 1), in
+  "excellent agreement" with Athena (Stone et al. 2008, Fig. 7). Recorded
+  as printed: the eigenvector $(1, -1, 1, 1, 1.5)$ has nonzero transverse
+  velocity components, unusual for a pure sound wave from rest.
+* *Radiation-modified wave, discrete-angle transport*
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3.7, Fig. 15). A
+  gas-dominated wave in Minkowski spacetime after White et al. (2023),
+  with one angle per octant so that the Eddington tensor is exact; RK2+PLM;
+  run until the perturbation has decayed by a factor 2. Convergence is
+  better than first order (the plot carries an $N^{-2}$ guide line); the
+  authors call the expected rate "non-trivial" because the operator-split
+  backward-Euler source is first order in time. 1D is shown; 3D inclined
+  waves are "confirmed" but not shown. This is specific-intensity
+  transport on an angular grid, not the moment method of the
+  Skinner & Ostriker runs above.
+* *As a performance workload.* A 3D linear wave on a uniform mesh is
+  AthenaK's single-device throughput and weak-scaling problem, and a 3D
+  sound wave along the mesh diagonal with one refinement level its AMR
+  weak-scaling problem ([Stone et al. (2026)](/sources/stone-2026.md),
+  §5.1–§5.2, Tables 1–2, Figs. 21–22). Cholla's weak and strong scaling
+  use the slow magnetosonic wave of its convergence set-up, $459^3$ cells
+  per MI250X GCD for weak scaling, double precision, PLM with
+  characteristic limiting ([Caddy & Schneider (2024)](/sources/caddy-2024.md),
+  §3.2, Figs. 13–14). The numbers are on
+  [cell-update throughput](/definitions/cell-updates-per-second.md) and
+  [parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md).
+
+Three further codes (IDEFIX, Cholla, Quokka) find second order in every
+family with second-order configurations, and Cholla confirms that PPM
+lowers the error constant without raising the order inside a
+second-order integrator. Two results qualify the higher-order runs above.
+(i) IDEFIX's PPM+RK3 stalls at high resolution, and so does an Athena++
+PPM run with primitive reconstruction
+([Lesur et al. (2023)](/sources/lesur-2023.md), §4.2); the Stone et al.
+(2020) entry above reports RK3+PPM errors at least 10 times below VL2+PLM
+and some families near third order for $N \le 256$; see Contradictions. (ii) With fourth-order
+reconstructions in 1D, AthenaK reaches fourth order except for the MHD
+fast wave, which stays second order
+([Stone et al. (2026)](/sources/stone-2026.md), §3.2).
+
+## Contradictions
+
+* **Does Athena++ RK3+PPM keep converging on 3D linear waves up to
+  $N = 256$?** *Open.* [Stone et al. (2020)](/sources/stone-2020.md):
+  RK3+PPM errors at least 10 times below VL2+PLM, some wave families near
+  third order, for $N$ from 16 to 256 (entry above).
+  [Lesur et al. (2023)](/sources/lesur-2023.md), §4.2, Fig. 8: an Athena++
+  run with PPM and primitive-variable reconstruction on the oblique 3D
+  wave stalls from about $N = 64$–$128$ (128–256 cells along $x_1$) and
+  its error rises back to about $10^{-2}$, like IDEFIX's PPM. Same code,
+  test family and resolution range. Neither source prints the full
+  configuration (Stone et al. not the reconstruction variables, Lesur et
+  al. not the Athena++ version or options), so the difference may lie in
+  the set-up; the entry closes when a source identifies it.
+
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.1, §8.2, §8.6.
 2. [Stone et al. (2020)](/sources/stone-2020.md), §3.3.1, §3.3.2, §3.4.1.
 3. [Zhang et al. (2018)](/sources/zhang-2018.md), §5.1(i) (arXiv v4).
 4. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §4.1.2, §4.3.4 (arXiv v1).
+5. [Stone et al. (2026)](/sources/stone-2026.md), §3.1, §3.2, §3.7, §5.1, §5.2 (arXiv v1).
+6. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.2 (arXiv v1).
+7. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.1, §3.2 (arXiv v2).
+8. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.1.1 (arXiv v2).

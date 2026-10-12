@@ -166,6 +166,7 @@ $N$; the authors claim the crossover lies above most practical resolutions.
   [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md),
   [Linear wave convergence](/benchmarks/linear-wave-convergence.md).
 * Also cited on [Enzo (AMR code for cosmological and astrophysical fluid flow)](/software/enzo.md).
+* Also cited on (batch 3) [Radiation shadow test](/benchmarks/radiation-shadow-test.md), [Subcritical radiative shock](/benchmarks/subcritical-radiative-shock.md), [Quokka](/software/quokka.md).
 
 # Citations
 

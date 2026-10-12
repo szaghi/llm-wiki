@@ -395,6 +395,78 @@ than about 10 steps also at relativistic velocities (§IV D, Table I). The
 two counts measure different things: EOS calls per inversion against
 root-finder steps.
 
+## Later uses (batch 3)
+
+### AthenaK, the Kokkos successor
+
+The "Kokkos version of the whole framework" noted above is
+[AthenaK](/software/athenak.md). [Stone et al. (2026)](/sources/stone-2026.md)
+rewrote the framework from scratch but changed "very little of the overall
+design": MeshBlocks in a binary tree, quadtree or octree, Z-ordering, flux
+correction at level boundaries, one global time step and task lists are
+kept (§2). What changes:
+* **Kept on the device.** All field data stay in device memory as Kokkos
+  Views indexed by MeshBlock, all MeshBlocks of a device form one
+  MeshBlockPack updated by one kernel launch, and ghost-cell packing,
+  prolongation and restriction run in device kernels; the tree stays on
+  the host. The communication infrastructure "has been largely
+  re-designed" (§2).
+* **Dropped.** Curvilinear coordinates (Cartesian only, so no 2D
+  axisymmetric runs), characteristic reconstruction, the configure script
+  (CMake, with run-time selection of all options), super-time-stepping and
+  implicit diffusion ("have not been ported from Athena++"), and, for now,
+  self-gravity (§2, §3, §3.3, §6). In GR only Cartesian Kerr–Schild and
+  Minkowski coordinates remain, and "our algorithm does not conserve
+  angular momentum to machine precision as HARM" (§3.6), unlike the
+  machine-precision conservation recorded above for ignorable coordinates.
+* **Added.** PPMX and WENOZ reconstruction, the LLF solver, RK4, IMEX
+  integrators, two-fluid ion–neutral MHD, first-order flux correction,
+  discrete-angle GR radiation and a particle module whose inter-rank
+  migration is a "significant design difference" (§3–§4). "In a departure
+  from Athena++", the relativistic inversion is that of
+  [Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md) instead of
+  Newman & Hamlin (2014) (§3.5).
+* **Performance.** AthenaK's CPU throughput is called "comparable to that
+  reported for Athena++" (§5.1). Its AMR overhead on one A100 GPU, 181 →
+  141 Mzone-cycles/s ("roughly 20%", 2D MHD blast, §5.1), agrees with the
+  ≈20% measured above for Athena++ on CPUs. The block-size advice does not
+  carry over: on the A100 the throughput falls from 614 to 126
+  Mzone-cycles/s as $N_{\mathrm b}$ drops from 128 to 16 (§5.1), whereas the
+  CPU cost model above recommends $8^3$–$16^3$ blocks for AMR. Different
+  hardware, so a qualification, not a contradiction.
+* **Courant number.** AthenaK defines $\Delta t$ through the minimum of
+  $h/\max_p\vert\lambda^{(p)}\vert$ over cells and directions and
+  "generally" uses $\nu \le 1/d$ (eq. 3), while the Athena++ paper gives
+  $\nu = 1$ for RK2 and RK3. The Athena++ paper's definition of $\nu$ is
+  not recorded here, and AthenaK's value is a practice, not a stated
+  stability bound, so the two numbers are not comparable limits; recorded
+  as a qualification.
+
+### IDEFIX on Athena++
+
+[Lesur et al. (2023)](/sources/lesur-2023.md) compare their Kokkos code
+[IDEFIX](/software/idefix.md) with Athena++ on three points:
+* **Ghost exchange.** Athena++ exchanges with all 26 neighbours at once;
+  IDEFIX exchanges dimension by dimension, which direct timings in IDEFIX
+  found "generally faster, especially on NVidia GPUs" (§3.4). A measurement
+  in another code, not of Athena++.
+* **PPM on linear waves.** In IDEFIX's oblique MHD linear-wave test, PPM
+  stops converging at high resolution, worst for the slow mode, and the
+  same happens "in Athena++ with primitive reconstruction" (Fig. 8, dashed
+  curve) (§4.2). This qualifies the RK3 + PPM errors "at least 10× lower"
+  recorded above: IDEFIX states no Athena++ configuration beyond primitive
+  reconstruction, while the Athena++ entry does not record which
+  reconstruction variables or resolutions produced its figure. Not
+  recorded as a contradiction, because the two runs are not shown to share
+  a configuration.
+* **K-Athena.** IDEFIX's arrays follow K-Athena's aliasing of Kokkos
+  Views, and the two codes' performance is called "quantitatively
+  similar", without numbers (§3.1, §6).
+
+IDEFIX's RKL2 super-time-stepping agrees with the RKL1/RKL2 stage-count
+scaling recorded above; see
+[super-time-stepping](/methods/super-time-stepping.md).
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §§1–4, §§3.6.1–3.6.5 (journal version).
@@ -404,3 +476,5 @@ root-finder steps.
 5. [Coleman (2020)](/sources/coleman-2020.md), §§1–6, App. A (arXiv v3).
 6. [Siegel et al. (2018)](/sources/siegel-2018.md), §§4.2, 5, Tables 1–2 (arXiv v2).
 7. [Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md), §IV D, Table I (arXiv v2).
+8. [Stone et al. (2026)](/sources/stone-2026.md), §§2–6 (arXiv v1).
+9. [Lesur et al. (2023)](/sources/lesur-2023.md), §3.1, §3.4, §4.2, §6 (arXiv v1).

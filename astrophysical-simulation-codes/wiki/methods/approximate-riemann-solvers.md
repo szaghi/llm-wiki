@@ -3,8 +3,8 @@ type: Method
 title: "Approximate Riemann solvers"
 description: "The interface flux functions of the astrophysical Godunov codes — HLLE/HLL, HLLC, HLLD, Roe, Rusanov/Lax–Friedrichs and the two-shock solver — which code offers which, what the sources recommend and measure, and the positivity fallbacks and carbuncle fixes they wrap around them, including HLL and Lax–Friedrichs fluxes for M1 radiation."
 status: established
-aliases: [Riemann solver, HLLE, HLL, HLLC, HLLD, Roe solver, Rusanov flux, local Lax-Friedrichs, LLF, global Lax-Friedrichs, GLF, two-shock Riemann solver, H-correction]
-tags: [riemann-solver, hydro, mhd, radiation]
+aliases: [Riemann solver, HLLE, HLL, HLLC, HLLD, Roe solver, Rusanov flux, local Lax-Friedrichs, LLF, global Lax-Friedrichs, GLF, two-shock Riemann solver, H-correction, FOFC, first-order flux correction, flux-vector splitting]
+tags: [riemann-solver, hydro, mhd, radiation, gpu]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -223,6 +223,127 @@ over, with one exception: the wave-speed estimate (§3.3, App. A).
   Godunov methods, and CASTRO for a general EOS (§1), consistent with the
   two-shock section above.
 
+## Later uses (batch 3)
+
+| Code | Solvers | Source |
+|---|---|---|
+| [AthenaK](/software/athenak.md) | LLF, HLLE, HLLC, HLLD, Roe; first-order flux correction (FOFC) with LLF | [Stone et al. (2026)](/sources/stone-2026.md), §3 |
+| [IDEFIX](/software/idefix.md) | Rusanov (LF), HLL, HLLC (hydro), HLLD (MHD), Roe; HLL with whistler speed for Hall MHD | [Lesur et al. (2023)](/sources/lesur-2023.md), §2.3, §2.5 |
+| [Cholla](/software/cholla.md) (MHD) | HLLD only | [Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2.3 |
+| [gPLUTO](/software/gpluto.md) | HLLD in all runs | [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2, §4.1 |
+| [Quokka](/software/quokka.md) | HLLC (hydro), HLL (radiation) | [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2.1–2.2.2 |
+| [GRaM-X](/software/gram-x.md) | HLLE only (general-relativistic MHD) | [Shankar et al. (2023)](/sources/shankar-2023.md), §II C |
+| [ADAM](/software/adam.md) (NASTO), [STREAmS](/software/streams.md) | Lax–Friedrichs (Rusanov) flux-vector splitting with WENO, not an interface Riemann solver | [Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.1; [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.1 |
+
+### Per code
+
+* **AthenaK** offers LLF, HLLE, HLLC, HLLD and Roe
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3). Because "the number
+  of registers is extremely limited on many GPUs", templating algorithmic
+  options such as the Riemann solver "reduces register spillage and can
+  greatly improve performance" (§2). MHD runs about two times slower per
+  cell than hydro, attributed to the Riemann solver and CT (§5.1,
+  Table 2). Choices in its tests: HLLE for the SRMHD shock tube and the
+  GR Bondi flow, HLLC for a multiphase supernova run, HLLD for MHD
+  turbulence, LLF for a Kelvin–Helmholtz tracer test (§3.1–3.6, §4.1).
+* **IDEFIX** lists its solvers from most to least diffusive: Rusanov
+  (LF), HLL (Einfeldt et al. 1991), HLLC (Toro et al. 1994; replaced by
+  HLLD of Miyoshi & Kusano 2005 in MHD), Roe (Cargo & Gallice 1997),
+  selectable at run time ([Lesur et al. (2023)](/sources/lesur-2023.md),
+  §2.3). Pressure sits in the momentum flux handled by the Riemann
+  solver, unlike PLUTO, which treats the pressure gradient as a source
+  term; in curvilinear geometry this adds pressure source terms, so
+  PLUTO and IDEFIX results "are expected to differ, even if the same
+  algorithm combination is chosen" (§2.3). On MHD linear waves with PLM
+  and RK2, Lax–Friedrichs, HLL, HLLD and Roe all converge at second
+  order (§4.2, Fig. 7), as in Athena, where the solvers differ by the
+  error constant. For the Hall effect the whistler speed is added to the
+  HLL fan for the magnetic-field fluxes only, the ideal speeds being kept
+  for the other components (Lesur et al. 2014; Marchand et al. 2019);
+  HLL is "our only solver compatible with the Hall effect", stated to be
+  diffusive but stable (§2.5, §4.3). IDEFIX also offers 2D Riemann
+  solvers at cell edges (HLL and HLLD) to build CT electric fields
+  (§2.4).
+* **Cholla** implements HLLD "exactly as described in Miyoshi & Kusano
+  (2005)" and names no other MHD solver
+  ([Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2.3). The
+  longitudinal field is the face value, not reconstructed; Table 1 maps
+  the HLLD magnetic fluxes of each sweep direction onto face-centred
+  electric fields for CT (§2.2.3). On the GPU, fusing piecewise-constant
+  reconstruction into the Riemann kernel cut total run time by about
+  10 %, while fusing characteristic PLM into it slowed the code by about
+  10–15 % through higher register use and lower occupancy, an outcome
+  that "depends on compiler optimizations" (§2.3.1). The 3D Einfeldt
+  strong rarefaction with HLLD shows "no spurious oscillations or
+  unphysical negative values" (§3.1.4).
+* **gPLUTO** uses HLLD for all runs and prints the generic upwind flux as
+  the average of the two physical fluxes minus half a dissipation matrix
+  applied to the jump of the conserved states (eq. 8)
+  ([Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2, §4.1).
+  Direction-dependent kernels, the Riemann solver among them, are
+  templated on the sweep direction so that small local arrays stay in
+  registers (§3.3, Fig. 3).
+* **Quokka** uses HLLC with "primitive variable Riemann solver" wave
+  speeds and intermediate states (Toro 2013)
+  ([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2.1), the
+  same family as the PVRS estimate Coleman made Athena++'s general-EOS
+  default (above). A stationary contact keeps exactly zero error, an
+  HLLC property (§3.1.2). In the Einfeldt 1-2-3 rarefaction its specific
+  internal energy "compares favourably" with approximate-solver results,
+  which Toro (2013) shows with factor 2–3 errors (§3.1.7). For radiation
+  it uses HLL with wave speeds from Eddington factors frozen at the start
+  of the step (Balsara 1999), so any closure can be plugged in without
+  changing the solver, in contrast to the closure-specific M1 eigenvalues
+  of RAMSES-RT and Hyperion (§2.2.2; see
+  [M1 radiation transport](/methods/m1-radiation-transport.md)).
+* **GRaM-X** implements only HLLE; Roe and Marquina are planned because
+  "methods which are compute intensive but not memory intensive add
+  little extra cost on GPUs" — asserted, not measured
+  ([Shankar et al. (2023)](/sources/shankar-2023.md), §II C).
+* **Flux-vector splitting.** ADAM/NASTO and STREAmS use the Lax–Friedrichs
+  (Rusanov) dissipation as a flux-vector splitting: the positive and
+  negative parts of the flux are reconstructed by WENO in a
+  finite-difference scheme, instead of a Riemann solver acting on
+  reconstructed interface states
+  ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.1;
+  [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.1). STREAmS
+  splits characteristic fluxes and switches to this flux only where a
+  modified Ducros sensor flags shocks, using an energy-preserving central
+  flux elsewhere (§2.1).
+
+### First-order flux correction (FOFC)
+
+AthenaK's positivity safeguard is the "first-order flux-correction" of
+Lemaster & Stone (2009): in each SSP-RK stage, if density or pressure in
+any cell would become negative, the fluxes on all faces of that cell are
+recomputed with piecewise-constant reconstruction and the LLF solver,
+before the flux corrections at AMR level boundaries
+([Stone et al. (2026)](/sources/stone-2026.md), §3). It was applied "once
+in every ∼$10^{10}$ cell updates" in Lemaster & Stone's turbulence run;
+in AthenaK "it significantly reduces the need for floors" in GRMHD
+accretion, and it lets the relativistic cylindrical explosions of
+Komissarov (1999) run "robustly" without the floors, background changes
+or artificial viscosity other codes need (§3, §3.5, Fig. 10; visual
+only). The authors attribute loss of positivity to truncation error,
+not round-off (§3). The positivity safeguards on this page differ in scope
+and fallback flux (Enzo and AthenaK both cite Lemaster & Stone 2009):
+* Athena recomputes one interface with HLLE (or an exact solver) when Roe
+  gives a negative intermediate state (above);
+* Enzo recomputes the fluxes of the offending cell with HLL and redoes the
+  update, citing Lemaster & Stone (2009) (above);
+* AthenaK recomputes all faces of the offending cell with first-order
+  reconstruction and LLF, inside each RK stage.
+
+### Carbuncle
+
+Quokka acknowledges that its HLLC is subject to the carbuncle and has
+not fixed it; the planned fix is an adaptive switch to HLL perpendicular
+to strong shocks ([Wibking & Krumholz (2022)](/sources/wibking-2022.md),
+§2.2.1), the kind of switch PLUTO already has (shock-adaptive switch,
+above). It joins Athena++, which "does not yet implement" the
+H-correction (above), among the codes that state an open carbuncle
+problem.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -234,3 +355,11 @@ over, with one exception: the wave-speed estimate (§3.3, App. A).
 7. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §3.2, §6.4, §6.8 (arXiv v2).
 8. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §3.3, §4.3.5 (arXiv v1).
 9. [Coleman (2020)](/sources/coleman-2020.md), §§1, 3.3, 4.2, 5.1.4, 5.2, 6, App. A (arXiv v3).
+10. [Stone et al. (2026)](/sources/stone-2026.md), §2, §3, §3.1–3.6, §4.1, §5.1 (arXiv v1).
+11. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.3–2.5, §4.2–4.3 (arXiv v1).
+12. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2.3, §2.3.1, §3.1.4 (arXiv v2).
+13. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2, §3.3, §4.1 (arXiv v1).
+14. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2.1–2.2.2, §3.1.2, §3.1.7 (arXiv v2).
+15. [Shankar et al. (2023)](/sources/shankar-2023.md), §II C (arXiv v2).
+16. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.1.
+17. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.1.

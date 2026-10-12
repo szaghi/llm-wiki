@@ -159,6 +159,7 @@ qualitative.
 * [Sod shock tube](/benchmarks/sod-shock-tube.md), [Sedov–Taylor blast wave](/benchmarks/sedov-taylor-blast-wave.md), [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md).
 * Also cited on [Enzo (AMR code for cosmological and astrophysical fluid flow)](/software/enzo.md) (its gravity time-centring).
 * Also cited on [Hydrostatic white dwarf](/benchmarks/hydrostatic-white-dwarf.md), [General equations of state in Godunov codes](/methods/general-equation-of-state.md).
+* Also cited on (batch 3) [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md).
 
 # Citations
 

@@ -121,6 +121,15 @@ from then on.
 | $\mathbf F_{\mathrm g}$ | gravitational energy flux of the conservative self-gravity energy equation |
 | $N$ | number of cells per dimension of a test grid (resolution); the bare capital, distinct from the subscripted $N_{\mathrm b}$, $N_{\mathrm J}$, $N_{\mathrm{ph}}$ |
 
+## Additions, batch 3 (2026-10-12)
+
+| Symbol | Meaning |
+|---|---|
+| $a_{\mathrm r}$ | radiation constant, $E_{\mathrm r} = a_{\mathrm r}T^4$ in equilibrium |
+| $\kappa_{\mathrm P}$, $\kappa_{\mathrm E}$, $\kappa_{\mathrm F}$, $\kappa_{\mathrm R}$ | Planck-mean, energy-mean, flux-mean and Rosseland-mean opacities (subscripted forms of the registry $\kappa$) |
+| $\Delta t_{\mathrm{hyp}}$, $\Delta t_{\mathrm{par}}$ | time-step limits of the hyperbolic (advective) and parabolic (diffusive) terms |
+| $s_{\mathrm{RKL}}$ | number of stages of a Runge–Kutta–Legendre super-time-step |
+
 ## Relativistic (magneto)hydrodynamics
 
 | Symbol | Meaning |
