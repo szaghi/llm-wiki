@@ -1,5 +1,95 @@
 # Directory Update Log
 
+## 2026-10-12
+
+* **Batch 8: Riemann solvers and shock anomalies from the ADAM paper
+  collection** (8 sources). The user assigned this class of the ADAM
+  collection to this bundle (2026-10-12). The bundle scope gains
+  Riemann-solver design as it bears on capturing schemes: shock
+  instabilities and their cures, HLLEM, low-Mach fluxes and
+  well-balancing (bundle law). Five of the files came from fresh downloads
+  (the collection held HTML error pages): arXiv for Xie et al.,
+  institutional repositories for Dumbser & Balsara, Navas-Montilla &
+  Murillo and Kitamura & Shima, and arXiv for Simon & Mandal (2019). The
+  other three were copied from the collection.
+  * **Two identity corrections.** The collection's "simon-2019" file
+    (arXiv:1806.03187) is Simon & Mandal's HLLEM paper (IJNMF 89:533), not
+    the JCP 378:477 HLLC paper its DOI names; the arXiv record carries the
+    wrong DOI. Both are ingested: the HLLC preprint (arXiv:1803.04922),
+    fetched separately, as `simon-2019`, and the HLLEM paper as
+    `simon-2019-b`. The collection's "samala-2016" is arXiv:1611.06755,
+    already ingested as [Rathan & Naga Raju (2017)](/sources/rathan-2017.md),
+    so it was dropped.
+  * Ingested [Simon & Mandal (2019)](/sources/simon-2019.md),
+    [Simon & Mandal (2019b)](/sources/simon-2019-b.md),
+    [Miczek et al. (2015)](/sources/miczek-2015.md),
+    [Edelmann et al. (2021)](/sources/edelmann-2021.md),
+    [Xie et al. (2021)](/sources/xie-2021.md),
+    [Dumbser & Balsara (2016)](/sources/dumbser-2016.md),
+    [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md) and
+    [Kitamura & Shima (2019)](/sources/kitamura-2019.md). Every one is a
+    preprint or author manuscript; each Source page records which. None
+    uses a reconstruction above second order. Edelmann et al. contains no
+    shocks at all, and its link to this bundle is flux design.
+  * Created:
+    * [Numerical shock instability](/definitions/numerical-shock-instability.md)
+      and the [slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md);
+    * [Cures for numerical shock instability](/methods/shock-instability-cures.md),
+      [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md) and
+      [low-Mach-number fluxes](/methods/low-mach-number-fluxes.md);
+    * [Well-balanced schemes](/properties/well-balanced.md);
+    * benchmarks: [Quirk's odd–even test](/benchmarks/quirk-odd-even-test.md),
+      [hypersonic blunt body](/benchmarks/hypersonic-blunt-body.md) and
+      [stationary normal shock](/benchmarks/stationary-normal-shock.md).
+  * [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md):
+    a batch-8 block, and a **new open `Contradictions` entry** on whether
+    HLLE is carbuncle-free. Balsara (2004) and Simon & Mandal say yes;
+    Kitamura & Shima, and Xie et al.'s 1D steady shock, say no. The block
+    records that Dumbser & Balsara (2016) name the solver HLLEM, with HLLI
+    as an alias, and do not mention LLFI. The bundle's "HLLI / LLFI
+    (Dumbser–Balsara)" bullet therefore rests on Balsara et al. (2025) for
+    LLFI.
+  * Batch-8 blocks on [double Mach reflection](/benchmarks/double-mach-reflection.md),
+    [forward step](/benchmarks/forward-facing-step.md),
+    [shock diffraction](/benchmarks/shock-diffraction.md) (description
+    widened to the instability use), [double rarefaction](/benchmarks/double-rarefaction.md),
+    [Sod](/benchmarks/sod-shock-tube.md), [Brio–Wu](/benchmarks/brio-wu-shock-tube.md)
+    and [supersonic cylinder](/benchmarks/supersonic-cylinder-flow.md)
+    (a pointer to the different Mach 20 test).
+  * Both Simon & Mandal papers print the double Mach reflection end time as
+    $t = 0.02$. It is recorded as printed and flagged, not corrected.
+  * [Notation registry](/notation.md): new section "Riemann-solver design,
+    shock instability, low Mach and well-balancing":
+    * $u^{\mathrm{HLL}}_*$, $u^{\mathrm{HLLC}}_{*L,R}$, $S_L^-$, $S_R^+$,
+      $\mathbf d^{\mathrm{HLL}}$, $\delta_p$, $\mathcal I$, $v_n$, $v_t$,
+      $\Theta_{i+1/2}$;
+    * $S^{\mathrm w}_{L,R}$, $\alpha_{\mathrm{SWM}}$, $\epsilon_{\mathrm{SWM}}$,
+      $\omega_{\mathrm p}$, $\varphi_{\mathrm p}$, $\nu_y$;
+    * $\mathrm{Ma}$, $\mathrm{Ma}_r$, $\mathrm{Ma}_{\mathrm{cut}}$,
+      $M_{\mathrm{prop}}$, $M_{\mathrm{sig}}$, $\epsilon_{\mathrm{sh}}$,
+      $\epsilon_{\mathrm g}$, $P_{\mathrm{pc}}$, $\mu_{\mathrm{pc}}$,
+      $\delta_{\mathrm{pc}}$;
+    * $\mathbf s(u)$, $u^{\mathrm{eq}}$, $\varphi_{\mathrm g}$, $\mathbf g$.
+  * **Bibliography.** 436 references merged with `tools/bib_merge.py`,
+    using the vol:page resolver and reviewed overrides:
+    * `kappeli-2016` (A&A 587:A94 = 587:94) and `toro-2009` (3rd ed.) kept
+      on their existing keys;
+    * `zhang-2016-b` (Comput. Fluids 134:11) and `zhang-2017-b` (IJNMF
+      84:135), so neither lands on an unrelated key, `zhang-2017` being the
+      ingested source;
+    * Edelmann et al.'s "accepted in CiCP" Berberich 2020 onto
+      `berberich-2021` (Crossref, same four authors), with the thesis as
+      `berberich-2021-b` and the Comput. Fluids paper as `berberich-2021-c`;
+    * this last one was first wrongly merged into the thesis, caught by a
+      per-fragment collision check and redone from the pre-batch file;
+    * 15 reviewed silences of distinct pairs (FLAGS 0); `xie-2021` merged
+      first so that `simon-2019` lands in its published form.
+    * **Closing sweeps.** `--dupes` folded two first-author spelling
+      variants (`pandolfini-2001` into `pandolfi-2001`, `gressiera-2000`
+      into `gressier-2000`). The fuzzy-title sweep left distinct editions,
+      a reprint and a conference/journal pair apart.
+    * 1707 → 1957 entries.
+
 ## 2026-10-09
 
 * **Batch 7: gap closure against the ADAM paper collection** (7 sources).

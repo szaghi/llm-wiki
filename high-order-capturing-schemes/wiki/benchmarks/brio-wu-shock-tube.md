@@ -5,7 +5,7 @@ description: "The MHD analogue of Sod's problem, (ρ, p, B_y) = (1, 1, 1 | 0.125
 status: established
 aliases: [Brio-Wu problem, Brio–Wu Riemann problem, MHD shock tube]
 tags: [benchmark, mhd, riemann-problem, 1d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -70,6 +70,12 @@ Rotated versions and other MHD Riemann problems are collected on
   glitch in the rarefaction, which an entropy-stable flux avoids
   ([Derigs et al. (2018)](/sources/derigs-2018.md), §§5.6–5.7).
 
+**Later uses (batch 8).**
+* *Gaussian units, $\gamma = 5/3$.* HLLEM with GLM cleaning at second
+  order runs the Brio–Wu data in Gaussian units
+  ($B_x = \tfrac34\sqrt{4\pi}$, $B_y = \pm\sqrt{4\pi}$) but with
+  $\gamma = 5/3$ instead of 2, against an exact solution ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.5).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 4, Figs. 2–4.
@@ -79,3 +85,4 @@ Rotated versions and other MHD Riemann problems are collected on
 5. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §3 (arXiv v2).
 6. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§4–5.
 7. [Derigs et al. (2018)](/sources/derigs-2018.md), §§5.6–5.7.
+8. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.5.

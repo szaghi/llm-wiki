@@ -5,7 +5,7 @@ description: "Two rarefactions moving apart from a symmetric Riemann state, leav
 status: established
 aliases: [double rarefaction, 1-2-3 problem, Einfeldt strong rarefaction, vacuum Riemann problem]
 tags: [benchmark, euler, positivity, low-density, riemann-problem]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Double-rarefaction (near-vacuum) Riemann problems
@@ -51,6 +51,16 @@ and amplifies their errors.
   captured with the positivity-preserving viscous flux ([Zhang (2017)](/sources/zhang-2017.md),
   Example 3).
 
+**Later uses (batch 8).**
+* *Einfeldt data in 2D.* $(\rho, v_x, v_y, p) = (1, \mp2, 0, 0.4)$ on
+  $100\times50$ to $t = 0.1$ at first order. A sheared variant,
+  $(1, \mp1, \mp2, 5)$, runs to $t = 0.11$ (the caption says 0.1). HLLC
+  with selective wave modification runs without failure. The authors
+  suggest it is positivity-preserving from these runs, without proof
+  ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.1).
+* The 1D Einfeldt problem (Toro's RP2) is robust with HLLEM at second
+  order, at very low density ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1).
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3.
@@ -59,3 +69,5 @@ and amplifies their errors.
 4. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Examples 6, 8.
 5. [Reyes et al. (2018)](/sources/reyes-2018.md), §5.5.
 6. [Zhang (2017)](/sources/zhang-2017.md), Example 3.
+7. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.1.
+8. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.

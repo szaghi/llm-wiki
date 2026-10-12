@@ -256,6 +256,29 @@ Added 2026-10-09 (batch 7: zhang-2017, balsara-2017-d, ryu-1995, derigs-2018, mi
 | $\theta_e$ | single-ratio internal-energy scaling factor of the scaling limiter (one ratio for the whole state, no quadratic solve) |
 | $\hat f^{\mathrm{EC}}$, $\hat f^{\mathrm{ES}}$ | entropy-conservative and entropy-stable numerical fluxes |
 
+## Riemann-solver design, shock instability, low Mach and well-balancing
+
+Added 2026-10-12 (batch 8: simon-2019, simon-2019-b, miczek-2015, edelmann-2021, xie-2021, dumbser-2016, navasmontilla-2019, kitamura-2019).
+
+| Symbol | Meaning |
+|---|---|
+| $u^{\mathrm{HLL}}_*$; $u^{\mathrm{HLLC}}_{*L}$, $u^{\mathrm{HLLC}}_{*R}$ | HLL intermediate (star) state, and the two HLLC star states (distinct from the ILW boundary derivatives $u^{*(k)}$) |
+| $S_L^-$, $S_R^+$ | clipped wave speeds $\min(S_L, 0)$ and $\max(S_R, 0)$ of the upwind form of an HLL-type flux |
+| $\mathbf d^{\mathrm{HLL}}$ | dissipation vector of the HLL flux in central form, $\hat f^{\mathrm{HLL}} = \tfrac12\left(f(u^-) + f(u^+)\right) + \mathbf d^{\mathrm{HLL}}$ |
+| $\delta_p$, $\mathcal I$ | anti-diffusion coefficient of intermediate family $p$ in an HLLEM (HLLI) flux, $0 < \delta_p \le 1$ (in use since batch 7; distinct from the TENO cutoff $\delta_k$), and the set of intermediate families resolved |
+| $v_n$, $v_t$ | velocity components normal and tangential to a face, $v_n = \mathbf v\cdot\mathbf n$ |
+| $\Theta_{i+1/2}$ | numerical viscosity matrix, $\hat f_{i+1/2} = \tfrac12\left(f(u^-) + f(u^+)\right) - \tfrac12\Theta_{i+1/2}(u^+ - u^-)$ |
+| $S^{\mathrm w}_L$, $S^{\mathrm w}_R$; $\alpha_{\mathrm{SWM}}$, $\epsilon_{\mathrm{SWM}}$ | widened wave speeds $S_L - \alpha_{\mathrm{SWM}}\epsilon_{\mathrm{SWM}}$, $S_R + \alpha_{\mathrm{SWM}}\epsilon_{\mathrm{SWM}}$ of a selective-wave-modified HLL dissipation; tuning coefficient and sensor-sized increment (subscripted, so distinct from the Lax–Friedrichs $\alpha$ and the weight regularization $\varepsilon$) |
+| $\omega_{\mathrm p}$ | pressure-ratio shock sensor, $0 < \omega_{\mathrm p} \le 1$, near 1 in smooth flow (distinct from the nonlinear weights $\omega_k$) |
+| $\varphi_{\mathrm p}$ | entropy-control factor, $\varphi_{\mathrm p} \le 1$, scaling the pressure part of the entropy-wave strength |
+| $\nu_y$ | Courant number $\sqrt\gamma\,\Delta t/h_y$ of the linear saw-tooth perturbation analysis across a grid-aligned shock |
+| $\mathrm{Ma}$, $\mathrm{Ma}_r$, $\mathrm{Ma}_{\mathrm{cut}}$ | local flow Mach number $\vert\mathbf v\vert/c$, reference Mach number of a nondimensionalization, and the lower cut-off of a low-Mach rescaling (distinct from the TVB constant $M$ and the shock Mach number $M_s$) |
+| $M_{\mathrm{prop}}$, $M_{\mathrm{sig}}$ | grid-frame shock propagation speed over the upstream sound speed (equals $M_s$ into gas at rest), and the post-shock signal Mach number $c_{\mathrm{post}}/c_{\mathrm{pre}}$ as a function of $M_s$ |
+| $\epsilon_{\mathrm{sh}}$, $\epsilon_{\mathrm g}$ | sub-cell position of a captured steady shock, $\epsilon_{\mathrm{sh}} \in [0, 1)$, and the alternating centreline grid displacement of Quirk's test, in cell sizes |
+| $P_{\mathrm{pc}}$, $\mu_{\mathrm{pc}}$, $\delta_{\mathrm{pc}}$ | low-Mach preconditioning matrix applied to the dissipation only, its Mach parameter $\mu_{\mathrm{pc}} = \min[1, \max(\mathrm{Ma}, \mathrm{Ma}_{\mathrm{cut}})]$, and $\delta_{\mathrm{pc}} = 1/\mu_{\mathrm{pc}} - 1$ |
+| $\mathbf s(u)$, $u^{\mathrm{eq}}$ | source term of a balance law $\partial_t u + \nabla\cdot\mathbf f(u) = \mathbf s(u)$ (bold, so distinct from the stage count $s$), and a known steady (equilibrium) state of it |
+| $\varphi_{\mathrm g}$, $\mathbf g$ | gravitational potential and acceleration, $\mathbf g = -\nabla\varphi_{\mathrm g}$ (distinct from the PPM flattening $\phi_i$ and the boundary data $g(t)$) |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

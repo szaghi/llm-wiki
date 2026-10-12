@@ -1,0 +1,81 @@
+---
+type: Benchmark
+title: "Stationary normal shock test (one-dimensional carbuncle)"
+description: "A steady normal shock captured with one interior cell, whose state lies on the Hugoniot curve at a chosen sub-cell position, in 1D, in a thin 2D strip, as a small 2D grid for a matrix stability analysis, or inclined to the grid: the most direct test of whether a numerical flux keeps a strong steady shock stable."
+status: established
+aliases: [steady shock test, one-dimensional carbuncle test, matrix stability analysis of a shock, inclined stationary shock]
+tags: [benchmark, euler, shock-instability, steady]
+timestamp: 2026-10-12T00:00:00Z
+---
+
+# Stationary normal shock test
+
+**One-dimensional and 1.5-dimensional versions**
+([Xie et al. (2021)](/sources/xie-2021.md), §§3.1, 3.4–3.5, after Kitamura, Roe & Ismail).
+* **Set-up.** 50 cells, Rankine–Hugoniot states left and right. Cell 13
+  holds an intermediate state on the Hugoniot curve, placed by the
+  sub-cell shock position $\epsilon_{\mathrm{sh}} \in \{0, 0.1, \dots, 0.9\}$.
+  The outflow mass flux is fixed, and $M_s$ runs up to beyond 20. The
+  scheme is first order with a three-stage first-order Runge–Kutta step,
+  CFL 0.5, 40 000 steps. The 1.5D version has $50\times25$ cells.
+* **1D results.** HLLE and HLLEM are unstable for
+  $\epsilon_{\mathrm{sh}} = 0$–$0.3$ in Table 1. The text says 0.1–0.3,
+  an inconsistency recorded as printed. The intermediate state oscillates
+  and enters "an approximate limit cycle involving the shedding of
+  spurious waves", and the residual does not converge.
+* **Stabilizing with entropy control.** At $M_s = 6$ and
+  $\epsilon_{\mathrm{sh}} = 0.3$, applying the entropy control in cell 13
+  only stabilizes the shock once $\varphi_{\mathrm p}$ falls below a
+  threshold of about 0.73–0.76 over $M_s \approx 4$–22 (read from plots).
+  The 1.5D version needs much smaller factors: 0.33 at $M_s = 6$, and
+  about 0.16–0.34 over the range. Once stable, the residual falls to about
+  $10^{-25}$ ([cures](/methods/shock-instability-cures.md)).
+
+**Matrix stability analysis** ([Simon & Mandal (2019)](/sources/simon-2019.md), §8,
+after Dumbser, Moschetta & Gressier).
+* **Set-up.** A thin shock between cells 6 and 7 of an $11\times11$ grid
+  on $[0,1]^2$, periodic in $y$. At $M_s = 7$ the upstream state is
+  $(\rho, v_x, v_y, p) = (1, 1, 0, 0.01457)$, with the Rankine–Hugoniot
+  state downstream. The spectrum of the linearized first-order spatial
+  operator is computed. The method also covers $M_s$ = 3, 10 and 20.
+* **Spectrum.** The largest real part is $+8.15562$ for HLLC at
+  $M_s = 7$. It falls with the selective-wave-modification coefficient,
+  through $+0.55869$ at 1.0, to $-0.66053$ at 3.5. Higher $M_s$ raises the
+  growth rate at every coefficient, reaching about 17 for HLLC at
+  $M_s = 20$.
+* **Nonlinear run** ($t = 20$). Plain HLLC develops a saw-tooth
+  post-shock density. The modified scheme is stable only for a
+  coefficient of at least 2.5, so the linear and nonlinear thresholds
+  differ.
+
+**Shock-speed map.** The stationary shock is the $M_{\mathrm{prop}} = 0$
+row of Kitamura & Shima's map on Quirk's grid, with the shock on a cell
+interface. There grid perturbations have no influence, since the shock
+does not cross cells. Each flux has its own "comfortable" shock location.
+Stationary shocks are "either more or less stable than moving ones,
+depending on the flux functions"
+([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V;
+[Quirk's test](/benchmarks/quirk-odd-even-test.md)).
+
+**Inclined stationary shock** (after Ohwada et al.).
+* **Set-up.** A Mach 7 shock along $y = 2(x - 12)$, at 63.43° to the
+  grid, on $50\times30$ cells over $[0,50]\times[0,30]$, run to $t = 5$
+  at first order. The states are
+  $(\rho, v_x, v_y, p) = (1, 447.26, -223.50, 3644.31)$ and
+  $(5.444, 82.15, -41.05, 207725.94)$
+  ([Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.6).
+* **Results.** HLLC and HLLEM show a saw-tooth density behind the shock.
+  Selective wave modification and anti-diffusion control keep it clean,
+  and the pressure-sensor HLLC variant comes "close to exact". The
+  shear-only control of Xie et al. (2017) fails
+  ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.3;
+  [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.6).
+
+See [numerical shock instability](/definitions/numerical-shock-instability.md).
+
+# Citations
+
+1. [Xie et al. (2021)](/sources/xie-2021.md), §§3.1, 3.4–3.5.
+2. [Simon & Mandal (2019)](/sources/simon-2019.md), §§8, 9.3.
+3. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.6.
+4. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V.

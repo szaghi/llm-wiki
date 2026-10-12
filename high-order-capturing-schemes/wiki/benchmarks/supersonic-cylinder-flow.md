@@ -5,7 +5,7 @@ description: "Mach 3 flow past a unit cylinder computed on a Cartesian grid that
 status: established
 aliases: [Mach 3 cylinder, bow shock around a cylinder, supersonic cylinder]
 tags: [benchmark, euler, 2d, boundary-treatment, cut-cell, steady-state]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Supersonic flow past a circular cylinder
@@ -41,8 +41,13 @@ shock. Details differ between papers:
 All results are qualitative contour plots; no paper reports a
 quantitative measure such as the shock stand-off distance.
 
+**Not to be confused with** the Mach 20 cylinder on a body-fitted grid
+used to provoke the carbuncle ([hypersonic blunt-body test](/benchmarks/hypersonic-blunt-body.md);
+[Simon & Mandal (2019)](/sources/simon-2019.md), §9.4).
+
 # Citations
 
 1. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 10.
 2. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.11.
 3. [Lu et al. (2016)](/sources/lu-2016.md), §3.
+4. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.4.

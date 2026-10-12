@@ -11,9 +11,10 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 62 sources compiled (the whole archive)**: 61 published works,
-eighteen of them read in a report, preprint or author-manuscript version,
-and one unpublished preprint (see the [update log](/log.md)). Two
+**Corpus: 77 sources compiled (the whole archive)**: 76 published works,
+many of them read in a report, preprint or author-manuscript version (each
+Source page records which), and one unpublished preprint (see the
+[update log](/log.md)). Two
 surveys by Shu ([2009](/sources/shu-2009.md), [2020](/sources/shu-2020.md))
 are the best overviews of the field.
 
@@ -70,6 +71,16 @@ for every page.
    [ADER](/methods/ader.md) (one reconstruction per step, equal order in
    space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    and [contact sharpening](/methods/contact-sharpening.md).
+   **Riemann-solver design.** The [HLLEM (HLLI) solver](/methods/hllem-riemann-solver.md)
+   keeps contacts and shear. Solvers that do suffer
+   [numerical shock instability](/definitions/numerical-shock-instability.md)
+   (carbuncle, odd–even decoupling, kinked Mach stem), which
+   [sensor-driven cures](/methods/shock-instability-cures.md) remove. An
+   open `Contradictions` entry asks whether HLLE is carbuncle-free. Related
+   anomalies: the [slowly moving shock](/definitions/slowly-moving-shock-anomaly.md)
+   and the loss of accuracy of upwind fluxes at
+   [low Mach number](/methods/low-mach-number-fluxes.md). This literature
+   works at first and second order.
 8. **Other routes to high order.** Three-dimensional
    [finite-volume reconstruction](/methods/finite-volume-reconstruction.md),
    the [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)
@@ -97,7 +108,9 @@ for every page.
    or by projection; without it high-order MHD runs fail. Curl constraints
    have their dual: [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md). On curvilinear grids,
    uniform flow must stay uniform:
-   [free-stream preservation](/properties/free-stream-preservation.md).
+   [free-stream preservation](/properties/free-stream-preservation.md); with
+   source terms, equilibria must stay steady:
+   [well-balanced schemes](/properties/well-balanced.md).
 10. **Limiting high-order DG.** A priori:
    [WENO limiters](/methods/weno-limited-dg.md) rebuild troubled cells from
    neighbouring averages. A posteriori:
@@ -129,7 +142,10 @@ for every page.
    [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
    [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Embedded
    boundaries: [supersonic cylinder](/benchmarks/supersonic-cylinder-flow.md),
-   [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md). Positivity:
+   [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md). Shock
+   instability: [Quirk's odd–even test](/benchmarks/quirk-odd-even-test.md),
+   [stationary normal shock](/benchmarks/stationary-normal-shock.md),
+   [Mach 20 blunt body](/benchmarks/hypersonic-blunt-body.md). Positivity:
    [double rarefaction](/benchmarks/double-rarefaction.md),
    [Sedov](/benchmarks/sedov-blast-wave.md),
    [Leblanc](/benchmarks/leblanc-shock-tube.md),

@@ -5,7 +5,7 @@ description: "Woodward–Colella Mach 3 inflow over a step (0.2 high at x = 0.6 
 status: established
 aliases: [forward facing step, Mach 3 step]
 tags: [benchmark, euler, 2d, vortex-sheet]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Mach 3 wind tunnel with a forward-facing step
@@ -58,6 +58,14 @@ pronounced roll-up of the vortex sheet
   reproduced at CFL 0.4; "a very small fraction of zones" is limited
   ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.1).
 
+**Later uses (batch 8).**
+* *Solver failure at second order* ($120\times40$, $t = 4$, limited
+  Green–Gauss gradients). HLLC and HLLEM perturb the normal-shock stems
+  near both walls and badly kink the reflected-shock stem. The
+  [shock-instability cures](/methods/shock-instability-cures.md) remove the
+  perturbations and improve the kink "considerably"
+  ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.7; [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -70,3 +78,5 @@ pronounced roll-up of the vortex sheet
 8. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.5.
 9. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.4.
 10. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.1.
+11. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.7.
+12. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5.

@@ -5,7 +5,7 @@ description: "The interface fluxes used by FV and alternative-FD WENO schemes in
 status: established
 aliases: [Riemann solver, HLLC, HLL, MUSTA, FORCE, HLLI, Rusanov flux]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Approximate Riemann solvers as building blocks
@@ -138,6 +138,67 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   solver ([Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §3.2;
   [hyperbolic divergence cleaning](/methods/hyperbolic-divergence-cleaning.md)).
 
+**Later uses (batch 8).**
+* *HLLEM has its own page* ([HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md)).
+  [Dumbser & Balsara (2016)](/sources/dumbser-2016.md) are the primary source of the HLLI weight $\delta_p$
+  quoted above. They name the solver HLLEM throughout and offer "HLLI"
+  only as an alternative name (abstract, §4). "LLFI" does not occur in
+  that paper, so the bullet "HLLI / LLFI (Dumbser–Balsara)" rests on
+  [Balsara et al. (2025)](/sources/balsara-2025.md) for LLFI. The paper
+  asserts, but does not prove, that HLLEM inherits the positivity of HLL.
+* *Complete solvers and shock instability.* HLLC is HLL plus an
+  anti-diffusive term, $\hat f^{\mathrm{HLL}} + S_L(u^{\mathrm{HLLC}}_{*L} - u^{\mathrm{HLL}}_*)$
+  for $S_L \le 0 \le S_M$ ([Simon & Mandal (2019)](/sources/simon-2019.md), eq. 13). Solvers that resolve the
+  contact and shear waves (Godunov, Roe, HLLC, HLLEM) are prone to the
+  carbuncle, odd–even decoupling and kinked Mach stems at strong
+  grid-aligned shocks ([Simon & Mandal (2019)](/sources/simon-2019.md); [Simon & Mandal (2019b)](/sources/simon-2019-b.md); [Xie et al. (2021)](/sources/xie-2021.md), §6;
+  [numerical shock instability](/definitions/numerical-shock-instability.md), [cures for numerical shock instability](/methods/shock-instability-cures.md)).
+* *Wave-speed estimates.* Einfeldt's are $S_L = \min(v_n^- - c^-,\ v_n - c)$
+  and $S_R = \max(v_n^+ + c^+,\ v_n + c)$, the second argument at the Roe
+  state; they give the exact speed of an isolated shock. Davis's are
+  $S_L = \min(v_n^- - c^-,\ v_n^+ - c^+)$ and $S_R = \max(v_n^- + c^-,\ v_n^+ + c^+)$.
+  They are more diffusive and "useful for suppressing possible post-shock
+  oscillations" ([Xie et al. (2021)](/sources/xie-2021.md), eqs. 10–11, §5).
+* *Source waves inside the solver* (shallow water with a bed slope). The
+  augmented Roe solver adds the source as a stationary wave. It is
+  complete and well balanced, but it develops carbuncles. HLLS is HLL plus
+  the same stationary wave and ignores the contact. It is free of
+  carbuncles and smears shear waves ([Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§3, 4.2.1;
+  [well-balanced schemes](/properties/well-balanced.md)).
+* *Flux families beyond Godunov type.* For first-order AUSM-family and
+  flux-vector-splitting fluxes, Kitamura & Shima rank robustness at
+  shocks. Roe is vulnerable, AUSM+-up, LDFSS and SLAU sit in the middle,
+  and van Leer, AUSMPW+, RoeM2 and SLAU2 are "almost (but not perfectly)
+  free" ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§II.B, III.E).
+* *Low Mach.* Roe's dissipation in the momentum equations scales like
+  $1/\mathrm{Ma}$, so it swamps the flux as the Mach number falls.
+  Rescaling only the dissipation cures it
+  ([Miczek et al. (2015)](/sources/miczek-2015.md); [Edelmann et al. (2021)](/sources/edelmann-2021.md), §3.2;
+  [low-Mach-number fluxes](/methods/low-mach-number-fluxes.md)).
+
+## Contradictions
+
+* **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
+  * **For.** [Balsara (2004)](/sources/balsara-2004.md) (§§3.4, 6, 7.1)
+    calls HLLE "carbuncle-free" (batch-6 bullet above). Simon & Mandal
+    agree that HLL is free of shock instability because it dissipates the
+    linear waves ([Simon & Mandal (2019)](/sources/simon-2019.md), §4.1;
+    [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §4).
+  * **Against, Kitamura & Shima.** "Any flux functions including
+    flux-vector-splitting (FVS) by Van Leer can generate carbuncles". They
+    class the robust group as "almost (but not perfectly) free", citing
+    earlier work; they do not run HLLE themselves
+    ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§I, II.B, III.E).
+  * **Against, Xie et al.** On the [stationary normal shock](/benchmarks/stationary-normal-shock.md),
+    HLLE with Einfeldt speeds is as unstable as HLLEM for sub-cell shock
+    positions 0–0.3 (Table 1), the one-dimensional carbuncle. They give
+    no two-dimensional HLLE run ([Xie et al. (2021)](/sources/xie-2021.md), §3.1.2).
+  * **Status.** A scoped reading would reconcile Balsara with Xie et al.:
+    HLLE resists the multidimensional carbuncle but not the 1D steady-shock
+    instability. No source states that reading, and Kitamura & Shima's
+    claim is broader. Neither side's evidence uses a high-order
+    reconstruction.
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §§2, 4, 5.
@@ -158,3 +219,11 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 16. [Derigs et al. (2018)](/sources/derigs-2018.md), §§4.2–4.5, 5.7.
 17. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.5, Apps. D–E.
 18. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §3.2.
+19. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), abstract, §§2–4.
+20. [Simon & Mandal (2019)](/sources/simon-2019.md), §§4–5, eq. 13.
+21. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §§4–7.
+22. [Xie et al. (2021)](/sources/xie-2021.md), eqs. 10–11, §§5–6.
+23. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§3, 4.2.1.
+24. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§II.B, III.E.
+25. [Miczek et al. (2015)](/sources/miczek-2015.md), §§6–8.
+26. [Edelmann et al. (2021)](/sources/edelmann-2021.md), §3.2.

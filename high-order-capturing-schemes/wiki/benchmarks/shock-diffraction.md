@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock diffraction at a backward-facing corner"
-description: "A Mach 5.09 shock passing a backward step; the strong expansion below and behind the corner drives density and pressure towards zero, so unlimited high-order schemes need ad hoc fixes."
+description: "A Mach 5.09 shock diffracting around a 90° corner: the strong expansion behind the corner drives density and pressure towards zero, so unlimited high-order schemes need ad hoc fixes, and the diffracted normal shock exposes the shock instability of low-dissipation Riemann solvers."
 status: established
 aliases: [shock diffraction, backward-facing step diffraction]
 tags: [benchmark, euler, positivity, 2d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Shock diffraction at a backward-facing corner
@@ -31,8 +31,24 @@ detonation diffraction at a 90° corner — is run with the same limiter
   oscillations shift the shock; the Navier–Stokes run at $\mathrm{Re} = 200$
   is clean ([Zhang (2017)](/sources/zhang-2017.md), Example 7).
 
+**Later uses (batch 8).**
+* *A 90° corner in the unit square, as a shock-instability test.* A Mach
+  5.09 shock on $[0,1]^2$ with $400\times400$ cells and the corner at
+  $(0.05, 0.45)$, run to $t = 0.1561$ at second order. HLLC and HLLEM
+  partly distort the diffracted normal shock. Selective wave modification
+  and anti-diffusion control keep it, the latter most cleanly
+  ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.6; [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.4).
+* With the corner at the middle of the left boundary, $t = 0.15$, second
+  order: Godunov, Roe, HLLEM and HLLC all show post-shock oscillations,
+  which the entropy-control term removes ([Xie et al. (2021)](/sources/xie-2021.md), §6.2).
+* The failure in both is [numerical shock instability](/definitions/numerical-shock-instability.md),
+  not positivity.
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.5.
 2. [Zhang & Shu (2012)](/sources/zhang-2012.md), Examples 5.3, 5.5.
 3. [Zhang (2017)](/sources/zhang-2017.md), Example 7.
+4. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.6.
+5. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.4.
+6. [Xie et al. (2021)](/sources/xie-2021.md), §6.2.

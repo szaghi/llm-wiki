@@ -5,7 +5,7 @@ description: "The 1D Riemann problem (1, 0, 1 | 0.125, 0, 0.1): rarefaction, con
 status: established
 aliases: [Sod problem, Sod's problem]
 tags: [benchmark, euler, riemann-problem, 1d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Sod shock tube
@@ -83,6 +83,10 @@ overshoots the shock speed ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.1
   shows an entropy-violating glitch that shrinks with resolution but never
   vanishes; an entropy-stable flux does not ([Derigs et al. (2018)](/sources/derigs-2018.md), §5.7).
 
+**Later uses (batch 8).**
+* *Toro's modified Sod with HLLEM* at second order: no sonic glitch, in
+  contrast to Roe ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -106,3 +110,4 @@ overshoots the shock speed ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.1
 19. [Owen, Guzik & Gao (2018)](/sources/owen-2018.md), §4.1 (accepted manuscript).
 20. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.1 (arXiv preprint).
 21. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.7.
+22. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.

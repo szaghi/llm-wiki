@@ -15,7 +15,12 @@ Scope is broad by user decision (2026-10-08):
   weighted extrapolation);
 * high-order AMR (refinement interfaces for capturing schemes);
 * extensions to MHD, including how a capturing scheme coexists with a
-  divergence constraint.
+  divergence constraint;
+* Riemann-solver design as it bears on capturing schemes: numerical shock
+  instabilities (carbuncle, odd–even decoupling, slowly moving shocks) and
+  their cures, HLL-type solvers with sub-structure (HLLEM/HLLI), low-Mach
+  fluxes and well-balancing (added by user decision, 2026-10-12, when the
+  Riemann-solver class of the ADAM paper collection was assigned here).
 
 This bundle is a standalone second brain on this field. It is independent
 of every other bundle and agnostic of every other repository (see
@@ -71,9 +76,25 @@ to another bundle.
     bare keys `balsara-2023` (curl-constraint paper, CAMC 5:235),
     `mignone-2010` (GLM-MHD FD, JCP 229:5896) and `chen-2016` (Chen, Tóth
     & Gombosi) were kept free for their archived files.
+  - Batch 8 files (all preprints or author manuscripts; each Source page
+    records the version):
+    - `2019-JCP-Simon-…` is arXiv:1803.04922v1;
+    - `2019-IJNMF-Simon-…` is arXiv:1806.03187v1, whose arXiv record wrongly
+      carries the JCP DOI;
+    - `2015-A&A-Miczek-…` is arXiv:1409.8289v2;
+    - `2021-A&A-Edelmann-…` is arXiv:2102.13111v2;
+    - `2021-CAMWA-Xie-…` is arXiv:1901.01866v3, with a different fifth
+      author from the published record;
+    - `2016-JCP-Dumbser-…` is the revised author manuscript (Trento IRIS);
+    - `2019-JCP-NavasMontilla-…` is an author manuscript (Zaragoza
+      Zaguan);
+    - `2019-AIAAJ-Kitamura-…` is the R1 author manuscript (Yokohama NU).
+
+    The `&` in the A&A filenames needs quoting in shells.
   - Not yet in the archive: Zaghi, Salvadore & Di Mascio (2023,
-    doi:10.1016/j.compfluid.2023.106040) and Dumbser & Balsara (2016,
-    HLLEM, doi:10.1016/j.jcp.2015.10.014).
+    doi:10.1016/j.compfluid.2023.106040). A repository copy now sits in
+    `~/papers/re-download/`; the user assigned the ADAM AMR-framework class
+    to div-free-amr (2026-10-12).
 - Future sources of any kind land per repo law (capture to `raw/` if
   undurable).
 
@@ -128,6 +149,14 @@ to another bundle.
 - Commits: `docs(high-order-capturing-schemes): ingest <source-slug>`.
 
 ## Status
+
+**Batch 8 staged 2026-10-12:** 77 of 77 archived sources ingested. The
+batch took the Riemann-solver and shock-anomaly class of the ADAM paper
+collection: simon-2019, simon-2019-b, miczek-2015, edelmann-2021,
+xie-2021, dumbser-2016, navasmontilla-2019 and kitamura-2019. A **deep
+lint is overdue**: 15 ingestions since the batch-6 deep lint (batches 7
+and 8). Remaining ADAM classes assigned here (time integration, immersed
+and embedded boundaries, benchmarks and experiments) await later batches.
 
 **Batch 7 staged 2026-10-09:** 69 of 69 archived sources ingested. The batch
 closed gaps found against the ADAM paper collection: ryu-1995 (arXiv preprint,

@@ -5,7 +5,7 @@ description: "A Mach 10 shock hitting a 30° wedge (posed as a 60° shock on a f
 status: established
 aliases: [double Mach reflection, DMR]
 tags: [benchmark, euler, 2d, strong-shocks]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Double Mach reflection
@@ -118,6 +118,17 @@ instabilities around the Mach stem
 * Fourth-order ADER-WENO on $1920\times480$ resolves the Mach-stem roll-up
   ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.2).
 
+**Later uses (batch 8).**
+* *Kinked Mach stem at first order.* On $480\times120$ with CFL 0.8,
+  first-order HLLC and HLLEM kink the Mach stem and form a spurious triple
+  point. Selective wave modification and anti-diffusion control remove
+  it. Both papers print the end time as $t = 0.02$, not 0.2, recorded as
+  printed ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.5; [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.2).
+* On $960\times240$ to $t = 0.2$, first order in space with third-order
+  TVD Runge–Kutta, Godunov, Roe, HLLEM and HLLC all kink the stem. With
+  the entropy-control term the kinks are "barely noticeable"
+  ([Xie et al. (2021)](/sources/xie-2021.md), §6.3; [numerical shock instability](/definitions/numerical-shock-instability.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -144,3 +155,6 @@ instabilities around the Mach stem
 22. [Wang et al. (2025)](/sources/wang-2025.md), §6.4.2 (arXiv preprint).
 23. [Zhang (2017)](/sources/zhang-2017.md), Example 8.
 24. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.2.
+25. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.5.
+26. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.2.
+27. [Xie et al. (2021)](/sources/xie-2021.md), §6.3.
