@@ -5,7 +5,7 @@ description: "A scheme is positivity-preserving if cell averages (or point value
 status: established
 aliases: [positivity-preserving, physical-constraint-preserving, PCP, invariant-domain preserving]
 tags: [positivity, euler, mhd, admissible-set]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Positivity preservation
@@ -188,6 +188,26 @@ limiter "very simple and local", most convenient for FV and extended to FD
   tangential-velocity anomaly. With it a 3D MHD blast at plasma beta
   $1.117\times10^{-4}$ stays positive ([Balsara (2017)](/sources/balsara-2017-d.md), §§VII, IX.4).
 
+**Later uses (batch 9).**
+* *Positivity at the end of the step.* Instead of limiting every stage,
+  the Runge–Kutta weights can be re-chosen after the stages by a linear
+  program that makes $u^{n+1} \ge 0$ and keeps the order conditions up
+  to some order. Stages may go negative, the bounds must be linear in
+  the weights, and every linear invariant is kept, whereas clipping
+  negative values breaks mass conservation ([Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md); [positivity-preserving adaptive Runge–Kutta](/methods/positivity-preserving-adaptive-runge-kutta.md)).
+* *Reject and retry.* Error-controlled DG runs with no limiter reject a
+  step that produces negative density or pressure and retry it with
+  $\Delta t/4$ ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §2.2); the restart of Zhang (2017) above
+  halves the step.
+* *Relaxation and limiters.* How a relaxation step, which rescales the
+  update by $\gamma^n_{\mathrm R}$, combines with positivity limiters is
+  left open ([Ranocha et al. (2020)](/sources/ranocha-2020.md), Conclusions; [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md)).
+* *Why multistep.* SSP multistep methods are recommended with the
+  limiter because Runge–Kutta methods with the limiter "can lead to
+  order reduction" ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1). This is a different reason from
+  the unknown stage wave speeds of Zhang & Shu's Remark 2.7; both are
+  recorded on [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
+
 ## Contradictions
 
 **Is the first-order Lax–Friedrichs MHD scheme provably positive?**
@@ -238,3 +258,7 @@ limiter "very simple and local", most convenient for FV and extended to FD
 16. [Derigs et al. (2018)](/sources/derigs-2018.md), §2.
 17. [Tomida et al. (2026)](/sources/tomida-2026.md), App. B.
 18. [Balsara (2017)](/sources/balsara-2017-d.md), §§VII, IX.4.
+19. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §§1–5 (arXiv v2).
+20. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §2.2.
+21. [Ranocha et al. (2020)](/sources/ranocha-2020.md), Conclusions (arXiv v4).
+22. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1 (arXiv v2).

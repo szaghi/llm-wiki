@@ -5,7 +5,7 @@ description: "TVD: the discrete total variation does not grow; TVB: it stays uni
 status: established
 aliases: [TVD, TVB, total variation diminishing, total variation bounded]
 tags: [stability, tvd]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Total variation diminishing (TVD) and bounded (TVB)
@@ -62,6 +62,14 @@ inequality) the spatial operator has
   profile. No TVD property is proved for the system
   ([Ryu & Jones (1995)](/sources/ryu-1995.md), §2.3; [Balsara (2001)](/sources/balsara-2001.md), eq. 3.40).
 
+**Later uses (batch 9).** *Observed SSP coefficient.* The largest step
+at which a scheme stays TVD on a test, divided by the forward-Euler TVD
+step on the same test, $\mathcal C_{\mathrm{obs}}$. On Buckley–Leverett
+with a Koren limiter, SSP(4,3) is sharp ($2.04$ against $\mathcal C = 2$);
+every other third-order method tested exceeds its $\mathcal C$, the two
+new 2N\* methods by 5 % and 14 % ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §6.1, Table 1;
+[low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–2, Remark 1.3.
@@ -71,3 +79,4 @@ inequality) the spatial operator has
 5. [Balsara & Shu (2000)](/sources/balsara-2000.md), §I.
 6. [Ryu & Jones (1995)](/sources/ryu-1995.md), §2.3.
 7. [Balsara (2001)](/sources/balsara-2001.md), §III.
+8. [Higueras & Roldán (2019)](/sources/higueras-2019.md), §6.1 (arXiv v1).

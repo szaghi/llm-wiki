@@ -5,7 +5,7 @@ description: "Two strong blast waves between reflecting walls that collide (pres
 status: established
 aliases: [two interacting blast waves, Woodward-Colella blast wave, double blast wave]
 tags: [benchmark, euler, strong-shocks, positivity]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -90,6 +90,13 @@ inverse Lax–Wendroff ghost values instead of mirroring:
   $t = 0.038$ with a mirrored-wall reference on $h = 1/5120$
   ([Lu et al. (2021)](/sources/lu-2021.md), Example 3.4).
 
+**Later uses (batch 9).** Run to $t = 0.04$, not $0.038$, with the TVD
+MC scheme on $h = 1/512$, to show a variable-step SSP multistep method's
+step following the largest wave speed: it grows as the shocks approach,
+drops at the collision and grows again, with the Courant number near
+$1/4$ (second order) and $1/6$ (third order) ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §6.6,
+Fig. 1b; [SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -112,3 +119,4 @@ inverse Lax–Wendroff ghost values instead of mirroring:
 18. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §5.1.3.
 19. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 4.
 20. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.4.
+21. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §6.6 (arXiv v2).

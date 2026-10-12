@@ -290,6 +290,26 @@ Added 2026-10-12 (batch 8: simon-2019, simon-2019-b, miczek-2015, edelmann-2021,
 | $u^{\mathrm S}$ | source-term half-step state $u + 2\Delta t\,\mathbf s(u)$ of a split positivity-preserving update |
 | $\hat u^{(t)}$, $\hat f^{(x)}$, … | space–time modal coefficients of the predictor, indexed by the derivative they represent (extends $\hat u^{(lm)}$) |
 
+## Butcher form, step-size control, relaxation and multistep methods
+
+Added 2026-10-12 (batch 9: ranocha-2020, ranocha-2022, nusslein-2021, hadjimichael-2016, higueras-2019, runge-1895).
+
+| Symbol | Meaning |
+|---|---|
+| $\mathsf a_{ij}$, $\mathsf b_j$, $\mathsf c_i$ | Butcher tableau of an $s$-stage Runge–Kutta method: stage values $Y_i = u^n + \Delta t\sum_j \mathsf a_{ij}\mathcal L(Y_j)$ at times $t^n + \mathsf c_i\Delta t$, update $u^{n+1} = u^n + \Delta t\sum_j \mathsf b_j\mathcal L(Y_j)$ (sans-serif, so distinct from the Shu–Osher $a_{ik}$, $b_{ik}$; explicit iff $\mathsf a_{ij} = 0$ for $j \ge i$); $\mathsf A$, $\mathsf b$, $\mathsf c$ are the matrix and vectors |
+| $Y_i$ | Butcher stage value, $i = 1,\dots,s$ ($Y_1 = u^n$ for an explicit method); not the Shu–Osher $u^{(i)}$, whose stages are combinations of forward-Euler steps |
+| $p_{\mathrm t}$, $\hat p_{\mathrm t}$, $\tilde p_{\mathrm t}$ | order of a time integrator, of its embedded method, and of a method with modified weights (distinct from the pressure $p$ and the field index $(p)$) |
+| $\hat{\mathsf b}_j$, $\tilde{\mathsf b}_j$ | weights of the embedded method of a pair (error estimate $\Delta t\sum_j(\mathsf b_j - \hat{\mathsf b}_j)\mathcal L(Y_j)$), and weights modified after the stages are known |
+| $z$, $R_{\mathrm{st}}(z)$ | $z = \Delta t\,\lambda$ for the test equation $u' = \lambda u$, and the stability function, $u^{n+1} = R_{\mathrm{st}}(z)\,u^n$ (distinct from the eigenvector matrix $R$) |
+| $\mathcal C_{\mathrm{eff}}$, $\mathcal C_{\mathrm{obs}}$ | effective SSP coefficient $\mathcal C/s$ (per operator evaluation), and the observed coefficient: the largest $\Delta t/\Delta t_{\mathrm{FE}}$ at which a test stays monotone, both steps measured on that test |
+| $\mathrm{err}^{n+1}$, $\mathtt{tol}$ | weighted root-mean-square local error estimate of a step, $\mathrm{err}^{n+1} \le 1$ meaning "within tolerance", and the tolerance |
+| $\beta^{\mathrm c}_1$, $\beta^{\mathrm c}_2$, $\beta^{\mathrm c}_3$; $k_{\mathrm c}$ | PID step-size controller coefficients and its exponent order, $\Delta t^{n+1} = (\mathrm{err}^{n+1})^{-\beta^{\mathrm c}_1/k_{\mathrm c}}(\mathrm{err}^{n})^{-\beta^{\mathrm c}_2/k_{\mathrm c}}(\mathrm{err}^{n-1})^{-\beta^{\mathrm c}_3/k_{\mathrm c}}\Delta t^n$ (distinct from the smoothness indicators $\beta_k$) |
+| $U(u)$, $\mathcal S(u)$ | convex entropy function of a conservation law, and a convex functional of the discrete solution (the global entropy $\int U(u)\,dx$ in its quadrature form, or any convex quantity a time integrator must not increase) |
+| $\gamma^n_{\mathrm R}$, $\Psi^n(\gamma)$ | relaxation parameter of step $n$, and the relaxation residual whose positive root it is (subscripted, so distinct from the ratio of specific heats $\gamma$) |
+| $m$ (multistep) | number of steps of a linear multistep method, as on the [barrier page](/results/ssp-order-barriers.md) (distinct from the system size $m$ by context) |
+| $\Omega_{\Delta t}$ | step-history sum of a variable-step multistep method, $\Omega_{\Delta t} = 1 + \sum_{j=1}^{m-1}\Delta t^{n-j}/\Delta t^{n}$, equal to $m$ for fixed steps (distinct from a domain $\Omega$) |
+| $\Delta t_{\mathrm{FE}}(u)$ | forward-Euler step limit evaluated at the state $u$ (extends $\Delta t_{\mathrm{FE}}$) |
+
 ## Spectral analysis
 
 | Symbol | Meaning |

@@ -2,6 +2,79 @@
 
 ## 2026-10-12
 
+* **Batch 9: time integration from the ADAM paper collection** (6
+  sources). The user assigned this class to the bundle (2026-10-12).
+  Ingested [Ranocha et al. (2020)](/sources/ranocha-2020.md),
+  [Ranocha et al. (2022)](/sources/ranocha-2022.md),
+  [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md),
+  [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md),
+  [Higueras & Roldán (2019)](/sources/higueras-2019.md) and
+  [Runge (1895)](/sources/runge-1895.md). Three files were copied from the
+  collection (all arXiv preprints) and three came from fresh downloads
+  (the Springer publisher PDF of Ranocha et al. 2022, arXiv for Higueras &
+  Roldán, the Zenodo scan of Runge).
+  * **Deferred, not ingested:** Williams (2011, the RAW filter) and Robert
+    (1966), leapfrog filters for semi-implicit weather models, outside the
+    capturing-scheme scope. They can be added on request.
+  * **Created:** [explicit Runge–Kutta methods](/methods/explicit-runge-kutta.md),
+    [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md),
+    [step-size control](/methods/runge-kutta-step-size-control.md),
+    [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md),
+    [SSP linear multistep methods](/methods/ssp-linear-multistep.md) and
+    [positivity-preserving adaptive Runge–Kutta](/methods/positivity-preserving-adaptive-runge-kutta.md).
+  * **Updated:** [SSP Runge–Kutta](/methods/ssp-runge-kutta.md),
+    [SSP order barriers](/results/ssp-order-barriers.md),
+    [positivity preservation](/properties/positivity-preserving.md),
+    [TVD](/properties/total-variation-diminishing.md),
+    [isentropic vortex](/benchmarks/isentropic-vortex.md),
+    [Sod](/benchmarks/sod-shock-tube.md),
+    [Shu–Osher problem](/benchmarks/shu-osher-problem.md) and
+    [interacting blast waves](/benchmarks/interacting-blast-waves.md), plus the
+    root index.
+  * **Clarifications, not contradictions.**
+    * The SSP page's "the methods preserve … entropy inequalities" holds
+      only when forward Euler satisfies the inequality; for an
+      entropy-conservative semi-discretization it does not, and Ranocha et
+      al. show SSP methods changing the entropy. Recorded as a qualifier.
+    * The barrier page's "best two-register third-order method found has
+      $\mathcal C = 0.32$" was re-read in Gottlieb, Shu & Tadmor §4.2. It
+      concerns the Williamson 2N form; SSP(4,3) reaches $\mathcal C = 2$ in
+      two registers in the 2N\* Shu–Osher form (Higueras & Roldán).
+    * The barrier page's two-step second-order SSP value $1/2$ needs a
+      negative coefficient ($b_2 = -2/5$, checked against Gottlieb, Shu &
+      Tadmor's Proposition 5.2), consistent with Lenferink's bound.
+    * Two reasons for multistep methods with positivity limiters (unknown
+      stage wave speeds; order reduction of Runge–Kutta with the limiter)
+      are recorded side by side.
+  * **Notation:** new registry section "Butcher form, step-size control,
+    relaxation and multistep methods" ($\mathsf a_{ij}$, $\mathsf b_j$,
+    $\mathsf c_i$, $Y_i$, $p_{\mathrm t}$, $R_{\mathrm{st}}$,
+    $\mathcal C_{\mathrm{eff}}$, $\mathcal C_{\mathrm{obs}}$,
+    $\mathrm{err}^{n+1}$, $\beta^{\mathrm c}$, $U$, $\mathcal S$,
+    $\gamma^n_{\mathrm R}$, $\Psi^n$, $\Omega_{\Delta t}$).
+  * **Bibliography:** 216 references merged (1957 → 2114 entries, 157
+    new). Resolutions:
+    * the ingested SISC paper owns `ranocha-2020`, and the other Ranocha
+      2020 works take `-b` (Numer. Math.), `-c` (J. Sci. Comput.) and `-d`
+      (Comput. Math. Appl.);
+    * Del Rey Fernández, printed "Fernández", is keyed
+      `delreyfernandez-*`;
+    * Kennedy & Carpenter's NASA TM 109112, printed with the authors
+      reversed, folds into `carpenter-1994`;
+    * Titarev & Toro printed 2014 is `titarev-2004`;
+    * Shu's ICASE report is `shu-1998`, with a note;
+    * Tadmor (1987) has two DOIs, of which the JSTOR one redirects to the
+      AMS one (doi.org, checked);
+    * a PETSc manual revision (`balay-2020`) and Lenferink's 1991 implicit
+      paper are kept distinct from their near-namesakes.
+    `--dupes` and the fuzzy-title sweep show only edition pairs (Butcher
+    2008/2016, Hairer 1993/2008), which are kept.
+  * **Runge (1895) has no reference list** (no bibliography, no
+    footnotes), so nothing was merged for it. The linter's pending
+    warning for `runge-1895` is expected. It cannot be cleared without
+    inventing a citation; a tool-level "no references" marker is a
+    decision for the human.
+
 * **Deep lint (77 ingestions; the pages of batches 7 and 8).** Two
   read-only auditors re-read 46 concept pages and 15 Source pages against
   [notation](/notation.md); the compiler applied the fixes.

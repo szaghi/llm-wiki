@@ -11,7 +11,7 @@ reconstruction, ADER and space–time predictors, a posteriori limiting,
 positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation),
 high-order AMR, and their extension to MHD.
-**Corpus: 77 sources compiled (the whole archive)**: 76 published works,
+**Corpus: 83 sources compiled (the whole archive)**: 82 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -67,7 +67,16 @@ for every page.
    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) with its
    [order barriers](/results/ssp-order-barriers.md), the single-step
    [Lax–Wendroff (Taylor)](/methods/taylor-time-discretization.md)
-   alternative and its finite-volume/DG branch, one-step
+   alternative and its finite-volume/DG branch. Beyond SSP:
+   [explicit Runge–Kutta methods](/methods/explicit-runge-kutta.md) from
+   Runge (1895) on, their [low-storage](/methods/low-storage-runge-kutta.md)
+   forms, [SSP multistep methods](/methods/ssp-linear-multistep.md) with
+   variable steps, [step-size control](/methods/runge-kutta-step-size-control.md)
+   by embedded pairs, and two ways to re-choose the weights after the
+   stages: [relaxation](/methods/relaxation-runge-kutta.md) for fully
+   discrete entropy stability and
+   [positivity adaptation](/methods/positivity-preserving-adaptive-runge-kutta.md).
+   Then one-step
    [ADER](/methods/ader.md) (one reconstruction per step, equal order in
    space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    and [contact sharpening](/methods/contact-sharpening.md).

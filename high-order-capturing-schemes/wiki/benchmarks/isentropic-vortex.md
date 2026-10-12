@@ -5,7 +5,7 @@ description: "A smooth isentropic vortex advected diagonally through a periodic 
 status: established
 aliases: [vortex evolution problem, isentropic vortex, Shu vortex]
 tags: [benchmark, euler, accuracy, 2d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Isentropic vortex advection
@@ -108,6 +108,19 @@ periodic box and returns to its start after one period
 * Third-order cell averages need more than the centre value: the review
   uses the centre and the four face midpoints ([Balsara (2017)](/sources/balsara-2017-d.md), §VIII.1).
 
+**Later uses (batch 9).**
+* *3D version for time integrators.* $[-5, 5]^3$, free-stream Mach
+  number 0.5, strength 5, flow at 45°, $t = 10$. Entropy-conservative
+  flux-differencing SBP–SAT with relaxation Runge–Kutta reaches $L^2$
+  rates 4.21, 5.17 and 6.15 for polynomial degrees 3, 4 and 5, and
+  conserves the total entropy to quadruple precision on nonconforming
+  grids ([Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.1, Table 1, Fig. 7; [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md)).
+* *For step-size control*, with the axis along $(1, 1, 0)$, Mach 0.5 and
+  strength 5: the error is dominated by space (about
+  $5.78\times10^{-4}$ for all methods at degree 2), and the step is
+  accuracy-limited only for tolerances below about $10^{-6}$
+  ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §5.2; [step-size control](/methods/runge-kutta-step-size-control.md)).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
@@ -129,3 +142,5 @@ periodic box and returns to its start after one period
 17. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.1 (arXiv v1).
 18. [Zhang (2017)](/sources/zhang-2017.md), Example 4.
 19. [Balsara (2017)](/sources/balsara-2017-d.md), §VIII.1.
+20. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.1 (arXiv v4).
+21. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §5.2.

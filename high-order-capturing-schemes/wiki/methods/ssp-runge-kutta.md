@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods written as convex combinations of f
 status: established
 aliases: [TVD Runge-Kutta, SSP Runge-Kutta, Shu-Osher Runge-Kutta, SSP-RK3]
 tags: [time-discretization, ssp, tvd, method-of-lines]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # TVD / strong-stability-preserving Runge–Kutta methods
@@ -238,6 +238,43 @@ von Neumann analysis of the full discretization.
   first stage does not guarantee the second, because the stage speeds are
   unknown in advance.
 
+**Later uses (batch 9).**
+* *Origin of the second-order methods.* The Heun method above is Runge's
+  "chord trapezoid", and the midpoint method his "tangent trapezoid";
+  Runge proved second order by Taylor matching and said nothing about
+  stability ([Runge (1895)](/sources/runge-1895.md), eqs. 2–3; [explicit Runge–Kutta methods](/methods/explicit-runge-kutta.md)).
+* *The SSP coefficient belongs to the method.* $\min a_{ik}/b_{ik}$ over
+  one Shu–Osher form is only a lower bound. The method's coefficient is
+  Kraaijevanger's radius of absolute monotonicity, which an "optimal"
+  representation attains ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §2, eqs. 9–11, 16, Defs. 1–2).
+  Optimal values: SSP($s$,2) $s - 1$, SSP(4,3) $2$, SSP($n^2$,3)
+  $n^2 - n$, SSP(5,3) $\approx 2.6506$ (§§2.2, 4.1).
+* *Storage.* SSP(4,3), with $\mathcal C = 2$, runs in two registers and
+  keeps $u^n$; the two-register figure $\mathcal C \approx 0.32$ above
+  belongs to the Williamson form ([low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)).
+* *Entropy inequalities need forward Euler to satisfy them.* The
+  convex-functional argument above transfers an entropy inequality only
+  when forward Euler satisfies it. For an entropy-conservative
+  semi-discretization forward Euler produces entropy, and SSPRK(2,2),
+  SSPRK(3,3) and SSPRK(10,4) all change the total entropy ([Ranocha et al. (2020)](/sources/ranocha-2020.md),
+  Fig. 7a); SSPRK(3,3) also gains energy on a pendulum (§3.3). The fix
+  is [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md).
+* *Linear stability is not positivity.* SSP(3,3) at $\Delta t = 1/3$ on a
+  linear positive two-component system, inside its linear stability
+  interval, returns a negative component ([Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §2.1).
+* *Under error control.* SSP-RK3 and Kraaijevanger's SSP(4,3), each with
+  the Conde–Fekete–Shadid embedded method, run as pairs. In its
+  low-storage form every stage of SSP3(2)4 is a forward-Euler half step
+  of a convex combination, so $\mathcal C = 2$ (compiler's reading of
+  App. A; the paper speaks only of a long real stability interval). It
+  was about 50 % cheaper than BS3(2)3F on stability-limited flows, but
+  its embedded estimate is unreliable at tight tolerances, and CFL
+  control at $\nu = 1$ crashed it once. Ketcheson's SSP-RK(10,4) cannot
+  run under error control: no PID controller tested is control-stable
+  with its existing embedded method ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §§5, 7; [step-size control](/methods/runge-kutta-step-size-control.md)).
+* *Multistep methods with variable steps* are on [SSP linear multistep methods](/methods/ssp-linear-multistep.md)
+  ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -285,3 +322,9 @@ von Neumann analysis of the full discretization.
 43. [Shu (2009)](/sources/shu-2009.md), §3.1.
 44. [Balsara (2017)](/sources/balsara-2017-d.md), §IV.1.
 45. [Zhang (2017)](/sources/zhang-2017.md), §5.3.
+46. [Runge (1895)](/sources/runge-1895.md), pp. 167–170.
+47. [Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2, 4 (arXiv v1).
+48. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §§3.3, 4.1 (arXiv v4).
+49. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §2.1 (arXiv v2).
+50. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §§5, 7, App. A.
+51. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§1–4 (arXiv v2).

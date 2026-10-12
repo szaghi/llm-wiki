@@ -87,6 +87,12 @@ overshoots the shock speed ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.1
 * *Toro's modified Sod with HLLEM* at second order: no sonic glitch, in
   contrast to Roe ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1).
 
+**Later uses (batch 9).** Entropy-conservative or entropy-stable SBP DG
+of degree 3 on 128 elements, with RK4 and no shock capturing, shows small
+overshoots at the discontinuities. Relaxation neither removes nor
+smears them, and $\vert\gamma^n_{\mathrm R} - 1\vert < 5\times10^{-4}$
+([Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3, Figs. 8–9a; [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -111,3 +117,4 @@ overshoots the shock speed ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.1
 20. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.1 (arXiv preprint).
 21. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.7.
 22. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.
+23. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3 (arXiv v4).

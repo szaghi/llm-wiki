@@ -10,7 +10,11 @@ Scope is broad by user decision (2026-10-08):
 * ADER and space–time predictors, and a posteriori (MOOD/subcell) limiting
   of high-order schemes, including WENO-limited DG;
 * positivity-preserving and physical-constraint-preserving limiters;
-* SSP time discretization, as the time half of a capturing scheme;
+* SSP time discretization, as the time half of a capturing scheme, and
+  time integration more broadly (Runge–Kutta theory, low storage,
+  step-size control, multistep, relaxation and positivity adaptation;
+  added by user decision, 2026-10-12, with the time-integration class of
+  the ADAM paper collection; weather leapfrog filters were left out);
 * numerical boundary treatment for high-order FD (inverse Lax–Wendroff,
   weighted extrapolation);
 * high-order AMR (refinement interfaces for capturing schemes);
@@ -91,6 +95,13 @@ to another bundle.
     - `2019-AIAAJ-Kitamura-…` is the R1 author manuscript (Yokohama NU).
 
     The `&` in the A&A filenames needs quoting in shells.
+  - Batch 9 files:
+    - `2020-SISC-Ranocha-…` is arXiv:1905.09129v4;
+    - `2021-CAMCoS-Nusslein-…` is arXiv:2005.06268v2;
+    - `2016-SINUM-Hadjimichael-…` is arXiv:1504.04107v2;
+    - `2019-JSC-Higueras-…` is arXiv:1809.04807v1;
+    - `2022-CAMC-Ranocha-…` is the publisher PDF (open access);
+    - `1895-MathAnn-Runge-…` is the publisher scan (German, image only).
   - Not yet in the archive: Zaghi, Salvadore & Di Mascio (2023,
     doi:10.1016/j.compfluid.2023.106040). A repository copy now sits in
     `~/papers/re-download/`; the user assigned the ADAM AMR-framework class
@@ -149,6 +160,15 @@ to another bundle.
 - Commits: `docs(high-order-capturing-schemes): ingest <source-slug>`.
 
 ## Status
+
+**Batch 9 staged 2026-10-12:** 83 of 83 archived sources ingested. The
+batch took the time-integration class of the ADAM paper collection:
+ranocha-2020, ranocha-2022, nusslein-2021, hadjimichael-2016,
+higueras-2019 and runge-1895. Runge (1895) has no reference list, so it
+stays on `--pending` by design (lint warning). Deep lint: 6 ingestions
+since the 2026-10-12 lint; the next is due after 4 more. Remaining ADAM
+classes assigned here: immersed and embedded boundaries, benchmarks and
+experiments.
 
 **Batch 8 staged 2026-10-12:** 77 of 77 archived sources ingested. The
 batch took the Riemann-solver and shock-anomaly class of the ADAM paper

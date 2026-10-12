@@ -5,7 +5,7 @@ description: "What strong-stability-preserving Runge–Kutta and multistep metho
 status: established
 aliases: [SSP barriers, SSP order barrier, optimal SSP methods]
 tags: [time-discretization, ssp, impossibility]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Order barriers and optimal coefficients of SSP time discretizations
@@ -98,6 +98,39 @@ then stable under the same condition, with growth $\vert u^n\vert \le e^{3K_{\ma
 for a Lipschitz constant $K_{\mathrm{L}}$ of $\mathcal{L}(t)$ (Proposition 3.3), improving the Levy–Tadmor bound
 $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 
+**Later uses (batch 9).**
+* *The low-storage line, read in context.* Gottlieb, Shu and Tadmor's
+  $\mathcal C = 0.32$ is the best method found in the Williamson 2N form
+  (their eq. 4.4), which they compare with the three-stage optimum
+  $\mathcal C = 1$ (§4.2, read from the text layer). In the 2N\* Shu–Osher
+  form SSP(4,3) reaches $\mathcal C = 2$ in two registers, and the
+  optimal SSP($n^2$,3) reach $n^2 - n$ in 2N ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2.2, 3;
+  [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md)). The bullet above is therefore a statement about the
+  Williamson form, not about two registers.
+* *More optimal Runge–Kutta coefficients* ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2.2, 4.1,
+  citing Kraaijevanger and Ketcheson): SSP($s$,1) $\mathcal C = s$
+  (agrees with the bullet above), SSP($s$,2) $s - 1$, SSP($n^2$,3)
+  $n^2 - n$, and SSP(5,3) the real root of $x^3 - 5x^2 + 10x - 10$,
+  $\approx 2.6506$.
+* *A storage barrier with an empirical premise.* No optimal SSP(5,3)
+  method has the 2N\* form (Proposition 1). The proof assumes a
+  coefficient structure that RK-Opt runs exhibit but that is not proved,
+  and the abstract states the result more broadly than the proposition
+  ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §4).
+* *The multistep values follow from one bound.* For $m \ge p_{\mathrm t}$,
+  $\mathcal C \le (m - p_{\mathrm t})/(m - 1)$ (Lenferink), with variable
+  steps $\mathcal C \le (\Omega_{\Delta t} - p_{\mathrm t})/(\Omega_{\Delta t} - 1)$,
+  sharp at second order and at third order for four and five steps
+  ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), Theorem 2, Proposition 1). It reproduces $1/2$, $2/3$,
+  $1/3$ and $1/2$ above. The two-step second-order value $1/2$ is not
+  covered: that method has a negative coefficient ($b_2 = -2/5$) and
+  needs $\tilde{\mathcal L}$ ([SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
+* *A positivity barrier, second-hand.* No Runge–Kutta or general linear
+  method that is unconditionally positive for all positive ODEs exceeds
+  first order (Bolley and Crouzeix, as cited by [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §1; not
+  in the corpus). It is the positivity counterpart of the implicit-method
+  barrier above.
+
 # Citations
 
 1. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §§2–6 (Propositions 3.1–6.3, Table 3.1).
@@ -105,3 +138,6 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 3. [Shu & Osher (1988)](/sources/shu-1988.md), §II.
 4. [Dumbser & Käser (2007)](/sources/dumbser-2007.md), §3.1.1.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
+6. [Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2–4 (arXiv v1).
+7. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§3.1–3.2 (arXiv v2).
+8. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §1 (arXiv v2).

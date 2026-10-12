@@ -5,7 +5,7 @@ description: "A Mach 3 shock running into a sinusoidal density (entropy) field: 
 status: established
 aliases: [Shu-Osher problem, shock-entropy wave interaction, Shu's problem]
 tags: [benchmark, euler, shock-turbulence, high-order]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-12T00:00:00Z
 ---
 
 # Shu–Osher shock/entropy-wave interaction
@@ -106,6 +106,12 @@ dissipative than Berger–Colella second-order interpolation. The caption
 gives $t = 0.2$, and no error numbers are reported
 ([Wang et al. (2025)](/sources/wang-2025.md), §6.3.3, preprint).
 
+**Later uses (batch 9).** The Titarev–Toro variant ($[-5, 5]$,
+$1 + 0.1\sin 20\pi x$, $t = 5$) with degree-3 SBP DG on 256 elements and
+no shock capturing gives indistinguishable results with and without
+relaxation ([Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.4, Fig. 10). The printed left-state
+velocity lacks its decimal point ("0523346").
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
@@ -129,3 +135,4 @@ gives $t = 0.2$, and no error numbers are reported
 19. [Balsara et al. (2009)](/sources/balsara-2009.md), §6.2.
 20. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3.
 21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.3 (arXiv preprint).
+22. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.4 (arXiv v4).
