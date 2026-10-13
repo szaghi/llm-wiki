@@ -15,8 +15,9 @@ with conservative shock-capturing (Godunov-type) base schemes: the corner/edge
 EMF $E_h$ is assembled from base-scheme data, then the staggered field is
 updated by the standard CT circulation, preserving $D_h^{\mathrm{f}} B_h$
 ([notation](/notation.md)) to roundoff. The variants, as catalogued by
-[Tóth (2000)](/sources/toth-2000.md) §4 (primary source ingested for flux-CT,
-[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md); the others not
+[Tóth (2000)](/sources/toth-2000.md) §4 (primary sources ingested for flux-CT,
+[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), and for
+transport-flux-CT, [Ryu et al. (1998)](/sources/ryu-1998.md); field-CT not
 yet ingested):
 
 * **Field-interpolated CT** (Dai & Woodward): interpolate cell-centered
@@ -70,6 +71,47 @@ the basic scheme, and no standing-shock test is shown. These are the
 "shock-sensing switches" that
 [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) credit with
 restoring the upwind bias.
+
+**Transport-flux CT in its primary source**
+([Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md) §2, eqs. 3–18).
+The scheme puts the staggered field into an existing second-order
+Harten-TVD code, replacing its explicit Poisson cleaning.
+* **Placement.** $B_h \in V_h^2$ on faces is the evolved field. The
+  cell-centred field fed to the TVD step is the two-face average (eqs.
+  3–4), recomputed from the faces every step rather than advanced
+  separately (contrast the two cell-centred fields of Balsara & Spicer
+  above).
+* **The "transport part".** On an $x$-face the flux used for the EMF is the
+  central average of the advective product, the transverse field times the
+  normal velocity, plus the full seven-wave TVD dissipation of that field
+  component; the $y$-face analogue uses the other product (eqs. 6–7). The
+  other term of the induction flux "causes no problems" and is left out
+  (p. 246).
+* **Edge EMF.** $E_h$ at each edge is the plain average of the two such
+  fluxes in each direction, hence the weight $\tfrac12$ (eq. 15), "a
+  simple arithmetic average, which still keeps second-order accuracy".
+* **Update and invariant.** Faces are updated by
+  $B_h^{n+1} = B_h^n - \Delta t\, C_h E_h$ (eqs. 16–17), so the net face
+  flux of every cell is zero at $n+1$ "if it is zero at step $n$" (eq. 18):
+  $D_h^{\mathrm f}$ is preserved, not imposed. The field update is unsplit
+  and follows Strang-split fluid sweeps. No projection or source term is
+  used, and no divergence value is reported in any test.
+* **1D reduction, as claimed.** On grid-aligned 1D problems the 2D code
+  reproduces the 1D code exactly; "with Dai & Woodward's (1998) advective
+  fluxes, that is not necessarily true" (pp. 246–247). The authors call the
+  class "method of characteristics, constrained transport" (MoCCT, §4).
+
+*Compiler reading:* the halved viscosity that
+[Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) find (below) is
+derived for the four-flux average of Balsara & Spicer. Ryu et al. average
+two transport fluxes per direction and assert exact 1D reduction without
+analysing the dissipation, so the two statements concern different
+constructions and do not conflict on their face. Likewise, Tóth's report
+that transport-flux-CT needs limiter changes to run some 2D tests concerns
+the variant as run inside his comparison; the original Harten-TVD code ran
+its own 2D tests (diagonal shock tubes, Orszag–Tang, clouds, a jet) with no
+limiter change reported. Different implementations and tests, so a
+qualification, not a contradiction.
 
 ## Properties
 
@@ -197,3 +239,4 @@ puts the staggered components into every flux.
 6. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§3, 6.
 7. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.2.
 8. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§2.1–2.2, eqs. 4–26, pp. 275–280.
+9. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1–2, 4, eqs. 3–18.

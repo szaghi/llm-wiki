@@ -5,7 +5,7 @@ description: "Couples the divergence constraint to the induction equation via a 
 status: established
 aliases: [hyperbolic divergence cleaning, Dedner cleaning, GLM-MHD]
 tags: [glm, divergence-cleaning, hyperbolic, finite-volume]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # GLM divergence cleaning
@@ -25,6 +25,15 @@ error dynamics:
 | $\psi/c_p^2$ | heat equation | parabolic (Marder) |
 | $\partial_t\psi/c_h^2$ | wave equation, speed $c_h$ | hyperbolic |
 | $\partial_t\psi/c_h^2 + \psi/c_p^2$ | telegraph equation | **mixed** (recommended): transport *and* damping |
+
+**The "Brackbill–Barnes" label, qualified.** The elliptic row matches the
+one-sentence Poisson correction of
+[Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md) (p. 428)
+up to the sign and scaling of the potential. That paper only names the
+correction, in continuous form, and sets it aside; its adopted cure is a
+nonconservative momentum equation. "Brackbill–Barnes projection" is
+therefore the later literature's label, not the paper's method
+([projection](/methods/projection-method.md)).
 
 ## Properties
 
@@ -274,3 +283,4 @@ seam growth, however: the captured runs use fixed values of $c_h$ (3 or 5).
 7. [Wu (2018)](/sources/wu-2018.md), Theorems 4.1, 4.10.
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
 9. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§2.3, 3, 4, Appendix B.
+10. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 428–429.

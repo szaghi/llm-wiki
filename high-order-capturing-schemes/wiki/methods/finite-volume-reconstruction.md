@@ -171,6 +171,42 @@ reconstruction ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), 
   only as least-squares targets at fourth order
   ([curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md)).
 
+**Later uses (batch 14).** *The origin of second-order reconstruction*
+([van Leer (1979)](/sources/vanleer-1979.md); [MUSCL](/methods/muscl.md)).
+* *Stored slopes.* Van Leer's cells carry $\mathcal P_i = \bar u_i + \hat u^{(1)}_i\zeta$,
+  the $K = 1$ case of the problem above, but the slope is "independent of
+  the slab averages; [it] can not be derived from the latter and must be
+  stored separately" (§2.2, eqs. 39–41, p. 107). The cell thus holds its
+  first Legendre moment as an unknown, as the modal and DG polynomials of
+  the "entire polynomials" paragraph do, rather than recovering it from
+  neighbours. With every slope zero the scheme is Godunov's, "This
+  accounts for the first-order accuracy of Godunov's scheme" (p. 107).
+* *Three ways to get the slope* (App. B). Central differencing of the
+  averages, $\hat u^{(1)}_i = \tfrac12(\bar u_{i+1} - \bar u_{i-1})$
+  (eq. B1); differencing of the two interface values after a step (used in
+  MUSCL's Lagrangean step, eq. 51.5); and least-squares fitting of the
+  zeroth and first moments (used in its remap). By the linear analysis
+  quoted there, moment fitting is "vastly superior", with a convective
+  error smaller "by two orders" of the mesh size.
+* *The limiters, as printed.* At the start of each Lagrangean step
+  (§3.3, eq. 101)
+  $$\hat u^{(1)}_i \leftarrow \operatorname{minmod}\left(2\Delta^1\bar u_{i-1},\ \hat u^{(1)}_i,\ 2\Delta^1\bar u_i\right),$$
+  so the linear profile stays within the neighbouring averages and is flat
+  at their extrema; with the B1 slope this is $\delta^{\mathrm{MC}}\bar u_i$.
+  The harmonic-mean alternative is
+  $\hat u^{(1)}_i = 2\Delta^1\bar u_{i-1}\Delta^1\bar u_i/(\Delta^1\bar u_{i-1} + \Delta^1\bar u_i)$
+  when the two differences share a sign, else 0 (eq. B2). The factors 2 may
+  be lowered, but not below 1 plus a term of the order of the data jump,
+  "lest the scheme lose its second-order accuracy" (p. 118), and both limiters "clip real peaks to
+  the same degree as a first-order method would do" (p. 119).
+* *Time integration is part of the reconstruction step.* Van Leer reaches
+  second order in time in one step: the characteristic equations at each
+  interface discontinuity, with the cell slopes as space derivatives, give
+  time-centred interface values (§§2.3–2.4, eqs. 64–90). This differs
+  from the semi-discrete form above, where the reconstruction supplies
+  only $u^\pm_{i+1/2}$ and a Runge–Kutta method supplies the time
+  accuracy.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1, 3 and Appendix.
@@ -188,3 +224,4 @@ reconstruction ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), 
 13. [Berta et al. (2024)](/sources/berta-2024.md), §3.2 (arXiv v4).
 14. [Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2 (arXiv v1).
 15. [Shu (2009)](/sources/shu-2009.md), §§2.3.2, 3.4.
+16. [van Leer (1979)](/sources/vanleer-1979.md), §§2.2–2.4, 3.3, App. B.

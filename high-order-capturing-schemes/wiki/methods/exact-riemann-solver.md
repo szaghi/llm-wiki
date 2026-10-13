@@ -159,6 +159,55 @@ MHD Riemann solvers with an exact or approximate nonlinear structure
 page; the three-wave approximation of this fan is the
 [HLLC Riemann solver](/methods/hllc-riemann-solver.md).
 
+**Later uses (batch 14).**
+
+**Godunov's own solver** ([Godunov (1959)](/sources/godunov-1959.md),
+Ch. II §4, eqs. 6–8, pp. 287–292). The original is Lagrangian: the
+interface sits on the contact, so no sampling of the fan at $x/t = 0$ is
+needed, and the interface flux needs only $p_*$ and $v_{n*}$. With the
+mass fluxes through the left and right waves, the star pressure is the
+combination of $p^-$ and $p^+$ weighted by the *opposite* mass flux, plus
+the product of the two mass fluxes times $v^- - v^+$, all over their sum;
+$v_{n*}$ follows from a similar linear formula. The mass fluxes depend on
+$p_*$ through the shock relation (Hugoniot) or, for $p_* < p^\mp$, the
+rarefaction relation, so Godunov iterates on $p_*$: evaluate both mass
+fluxes at the previous iterate, update $p_*$, then $v_{n*}$ (formulas on
+the [source page](/sources/godunov-1959.md)). The plain iteration
+"converges if the decay does not produce very strong rarefaction waves";
+for all cases Godunov averages new and old iterates with a weight given
+in closed form from the ratio of $p_*$ to $p^- + p^+$, zero when the
+formula turns negative (p. 292). The convergence analysis is omitted as
+"standard". This relaxation is Godunov's; the halving of the
+under-relaxation on non-convergence in the *Uses* list above is Chorin's
+modification as Sod reports it. With constant mass fluxes the formulas
+reduce to the linear acoustic interface state of Ch. I.
+
+**Step bound and wave interaction.** Godunov bounds the step by the
+interface spacing over the largest Lagrangian wave speed, a Courant
+number of 1, and justifies it by experiment ("a large number of varied
+computations convincingly show" stability), not by proof. The stricter
+condition that waves from neighbouring interfaces do not *meet* (half
+the step) appears only as the case in which the in-layer solution is
+analytically simple (pp. 292–293). This agrees with Toro's account above:
+stable to Courant number 1, twice the no-interaction limit.
+
+**Entropy.** Godunov proves that the specific entropy of each layer
+average does not decrease over a step (eq. 9) and that limits satisfy
+the entropy condition. This supports Toro's statement above that the
+method is entropy satisfying, so that the sonic glitch should vanish as
+$h \to 0$ ([Godunov's method](/methods/godunov-method.md)).
+
+**Later uses (batch 14): van Leer's iteration.** In the Lagrangean
+MUSCL scheme of [van Leer (1979)](/sources/vanleer-1979.md) (pp. 109–110, App. A) the iteration starts from
+the acoustic (linear-wave) guess for the interface pressure (eq. 60). It
+replaces Godunov's chord iteration, which gains a factor of the order of
+the data jumps per cycle, by a tangent (Newton-type) iteration suggested
+by P. J. Bedijn, which gains the square of that factor (eqs. A1–A3). In
+smooth flow the linear guess alone "is more than adequate"; the code
+iterates only where it differs from the neighbouring pressures by more
+than 1 %, until successive iterates agree within 1.5 %, at 2–3 % of the
+cost of the Lagrangean step on the shock tube (p. 110).
+
 # Citations
 
 1. [Toro (1997)](/sources/toro-1997.md), §§4.2–4.7, 6.2–6.4, 9.2.1, 12.3.4, Tables 4.1–4.3, 6.2.
@@ -168,3 +217,5 @@ page; the three-wave approximation of this fan is the
 5. [Xie et al. (2021)](/sources/xie-2021.md), §6.3.
 6. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2–3 (arXiv v1).
 7. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §§5–6 (arXiv v2).
+8. [Godunov (1959)](/sources/godunov-1959.md), Ch. II §4 (reader's translation of the Russian original).
+9. [van Leer (1979)](/sources/vanleer-1979.md), pp. 109–110, App. A.

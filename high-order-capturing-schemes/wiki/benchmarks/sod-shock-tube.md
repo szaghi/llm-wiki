@@ -171,6 +171,33 @@ states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
   * Lax–Friedrichs pairs odd and even cell values and spreads the shock
     over about 8 cells; the second-order Richtmyer scheme oscillates.
 
+**Later uses (batch 14).** *Two early runs bear on the end time.*
+* [van Leer (1979)](/sources/vanleer-1979.md) (§4, Fig. 6) runs "the same
+  one-dimensional shock tube problem as Sod" with [MUSCL](/methods/muscl.md)
+  and **prints the diaphragm at $x = 0.5$** ($\rho = p = 1$ for $x < 0.5$,
+  $\rho = 0.125$, $p = 0.1$ for $x > 0.5$, gas at rest), $h = 0.01$ (100
+  cells on $[0, 1]$) and $\nu = 0.9$, Sod's own grid and Courant number. The
+  output is after 34 steps at **$t = 0.14154$**, "the time that the shock
+  wave moving to the right has approximately reached $x = 0.75$". These are
+  the earliest printed diaphragm position and end time in the bundle; they
+  are van Leer's choice, not Sod's print, and they agree with the batch-11
+  compiler reading $t \approx 0.14$. The profiles are called "superior to
+  all methods tested by Sod, including Phoenical SHASTA"; no error norms
+  are given.
+* [Roe (1981)](/sources/roe-1981.md) (pp. 367–370, Fig. 2, Table I) runs
+  Sod's data for 35 steps at $\Delta t/h = 0.411$, which he calls "Sod's
+  standard comparison", on 99 intervals (inferred from his timing
+  arithmetic; neither domain nor end time is printed). *Compiler reading:*
+  that is $t \approx 0.144$ for $h = 0.01$, a third, independent
+  support for $t \approx 0.14$. First-order upwind through Roe's
+  approximate solver and Godunov with the exact solver differ by at most
+  0.0003 in density (cells 72–80, largest near the shock), at 1.09 s
+  against 2.02 s of CPU time
+  ([approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+  The exact and approximate density fans differ visibly but enclose equal
+  areas (Fig. 1).
+* Every use above with $t = 0.2$ or $t = 0.25$ postdates both runs.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -200,3 +227,5 @@ states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
 25. [Sod (1978)](/sources/sod-1978.md), §§3–4, Figs. 2–15, Tables II–IV.
 26. [Toro (1997)](/sources/toro-1997.md), §§4.3.3, 6.4, 10.8, 11.4–11.5, 12.4, Figs. 9.5–9.12, Tables 4.1, 4.3, 6.2.
 27. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III B, Fig. 3.
+28. [van Leer (1979)](/sources/vanleer-1979.md), §4, Fig. 6.
+29. [Roe (1981)](/sources/roe-1981.md), pp. 367–370, Figs. 1–2, Table I.

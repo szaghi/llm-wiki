@@ -168,6 +168,28 @@ first-order Godunov and MUSCL.
   MUSCL turn unstable, and the PPM forms are about 3–5 times more
   efficient than BBC.
 
+**Later uses (batch 14).** *What PPM inherits from MUSCL*
+([van Leer (1979)](/sources/vanleer-1979.md); [MUSCL](/methods/muscl.md)).
+* *Specific volume, velocity and pressure.* Van Leer's Lagrangean step
+  already distributes these, not total energy, because the more accurate
+  energy-based distribution would make the monotonicity algorithm implicit
+  in $p$ (eqs. 47–48, p. 107).
+* *Second order in the wave interaction.* "Following van Leer" means: an
+  iterated interface Riemann problem, then time derivatives of the
+  resolved state from the characteristic equations at a discontinuity,
+  and a half-step time-centring; only $O(\Delta t^2)$ accuracy is asked of
+  the interface values (§§2.3–2.4, p. 110).
+* *The MC-limited slope of the batch-7 reset* is van Leer's Lagrangean
+  monotonicity algorithm applied to the central slope: eq. 101 with
+  eq. B1 is $\delta^{\mathrm{MC}}\bar u_i$ (an identity; van Leer does not
+  use the name).
+* *Two forms.* Van Leer's MUSCL already separates the Lagrangean step from
+  a least-squares remap (§3.2), whose moment fitting he calls "vastly
+  superior" to the interface differencing of the Lagrangean step (App. B).
+  *Compiler reading:* this asymmetry fits Woodward and Colella's advice to
+  remap with one extra order and the accuracy gap between MUSCL's two
+  forms, but neither paper links them.
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
@@ -177,3 +199,4 @@ first-order Godunov and MUSCL.
 5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.
 6. [Balsara (2017)](/sources/balsara-2017-d.md), §§II.2, III.1.
 7. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIa–VII.
+8. [van Leer (1979)](/sources/vanleer-1979.md), §§2.2–2.4, 3.2–3.3, App. B.

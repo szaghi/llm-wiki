@@ -161,14 +161,48 @@ scheme in fact preserves $D_h^{\mathrm{c}}\bar B_h = 0$ exactly
 [Wu (2018)](/sources/wu-2018.md)).
 
 **Dynamics.** Nonzero numerical divergence produces an anomalous force component parallel
-to the magnetic field, corrupting dynamics (Brackbill & Barnes 1980, as
-reviewed in [Evans & Hawley (1988)](/sources/evans-hawley-1988.md) §III —
-primary source not yet ingested). At production scale the stakes are
+to the magnetic field, corrupting dynamics ([Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md) eq. 8, as
+reviewed in [Evans & Hawley (1988)](/sources/evans-hawley-1988.md) §III). At production scale the stakes are
 documented: in GRMHD black-hole accretion, "the choice of the
 divergence-control method can produce qualitative differences in the
 simulation results for scientifically relevant … problems"
 ([Olivares et al. (2019)](/sources/olivares-2019.md)) — the constraint
 class is not a numerical nicety but a physics-level decision.
+
+**The parallel force in its primary source.** Brackbill & Barnes write
+the magnetic force in conservation form as the divergence of the Maxwell
+stress (eq. 7). Its component along the field is
+$$\mathbf B\cdot\nabla\cdot\left(\mathbf B\mathbf B - \tfrac12(\mathbf B\cdot\mathbf B)\,I\right) = (\mathbf B\cdot\mathbf B)\,\nabla\cdot\mathbf B$$
+(eq. 8), nonzero whenever $\nabla\cdot\mathbf B \ne 0$. The error is a force
+proportional to $\mathbf B$; it matters more the smaller the flow speed is
+relative to the Alfvén speed, so it dominates low-β equilibria and
+instabilities integrated over many transit times (p. 427). On a uniform
+equilibrium in an implicit Lagrangian code, the conservative form drives
+field-aligned flows that invert cells, while the nonconservative form
+leaves a kinetic energy 1/4000 as large (Figs. 1–2). No divergence value
+is reported. Two qualifications:
+* The identity holds for the conservative (Maxwell-stress) momentum
+  equation only. With the nonconservative force
+  $-\mathbf B\times(\nabla\times\mathbf B)$ the parallel component is zero
+  for any divergence (p. 429).
+* The paper's cure is that nonconservative momentum equation, not the
+  enforcement of $D_h B_h = 0$: it removes the parallel force without
+  reducing the divergence, at the price of momentum conservation to
+  truncation error only. A Poisson correction is named and set aside
+  ([projection](/methods/projection-method.md)). Citing it as the case
+  for enforcing $D_h B_h = 0$, as
+  [positivity–divergence coupling](/results/positivity-divergence-coupling.md)
+  does, follows the later literature's reading, not the paper's own
+  conclusion.
+
+Later sources repeat the attribution.
+[Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md) §1 add that the
+divergence "usually grows exponentially", which they assert without
+evidence, and object that the nonconservative momentum form risks
+"unphysical results because of the nonconservation of momentum". Their
+remedy is a face-centred CT field whose net face flux per cell stays
+exactly zero (eq. 18), $D_h^{\mathrm f}B_h^{n+1} = D_h^{\mathrm f}B_h^n$;
+they report no measured divergence.
 
 **A regime where it did not matter (preprint).** In driven subsonic
 turbulence with a weak seed field, [Pakmor et al. (2026)](/sources/pakmor-2026.md) find no difference that separates
@@ -220,3 +254,5 @@ the one where both papers find agreement.
 17. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.9.
 18. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§3–5.
 19. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), abstract, §§2.1–2.2, 4, eqs. 13–15.
+20. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 426–430, eqs. 4, 7–8, Figs. 1–2.
+21. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §1, eqs. 16–18.

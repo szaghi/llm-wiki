@@ -63,6 +63,48 @@ blocks of every high-order positivity-preserving scheme
 solvers used at high order are compared in
 [approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
 
+**Later uses (batch 14).**
+
+**Origin of "monotone".** [Godunov (1959)](/sources/godunov-1959.md)
+(Ch. I §§1–2) asks a scheme to behave qualitatively like the exact
+solution and keep monotone data monotone. For a linear two-level scheme
+this holds iff all its coefficients are nonnegative; with coefficients
+summing to 1 the scheme is also max-norm stable. Godunov's "monotone" is
+the property later called monotonicity preserving
+([Harten (1983)](/sources/harten-1983.md), §2), which for linear schemes
+coincides with the monotone scheme of this page
+([Godunov's order barrier](/results/godunov-order-barrier.md)).
+
+**The Godunov flux formula.** The scalar $\min$/$\max$ form in the
+examples above is not in Godunov (1959), which treats linear equations
+and Lagrangian gas dynamics only; the bundle's attribution to Shu (1998)
+and Liu, Osher & Chan (1994) stands as the source of that statement
+([Godunov's method](/methods/godunov-method.md)).
+
+**Monotone schemes** ([Harten (1983)](/sources/harten-1983.md), §2,
+pp. 360–361). A scheme is monotone when each new value is a
+nondecreasing function of every old value it depends on. Such schemes
+are $l_1$-contractive and hence TVD (Theorem 2.1, citing Crandall &
+Majda), and they are "necessarily first order accurate": their modified
+equation carries a diffusion coefficient that is nonnegative and not
+identically zero (eq. 2.7). They converge, and the limit satisfies
+Oleinik's entropy condition, which identifies it uniquely (citing
+Crandall & Majda and Harten, Hyman & Lax)
+([TVD](/properties/total-variation-diminishing.md)).
+
+**Upwinding without an entropy fix** (§5). The least dissipative member
+of Harten's three-point TVD family, numerical viscosity
+$\Theta_{i+1/2} = \vert\hat a_{i+1/2}\vert$ (Roe-type upstream
+differencing), keeps a stationary discontinuity with equal fluxes on
+both sides "regardless of whether or not it satisfies the entropy
+condition", because its viscosity vanishes at zero Courant number.
+Harten's fix replaces $\vert\hat a_{i+1/2}\vert$ near zero by a smooth
+parabolic floor (parameter 0.1 on genuinely nonlinear fields, 0 on
+linearly degenerate ones). He also remarks that Godunov's scheme
+"actually exhibits a surprisingly poor entropy enforcement" (p. 374).
+This is a different device from the "Roe with entropy fix" flux above,
+which switches to local Lax–Friedrichs.
+
 # Citations
 
 1. [Shu (1998)](/sources/shu-1998.md), §§2.3.1–2.3.2.
@@ -71,3 +113,5 @@ solvers used at high order are compared in
 4. [Shu & Osher (1989)](/sources/shu-1989.md), §II.
 5. [Zhang & Shu (2010)](/sources/zhang-2010.md), §1, Remark 2.4.
 6. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
+7. [Godunov (1959)](/sources/godunov-1959.md), Ch. I §§1–2 (reader's translation of the Russian original).
+8. [Harten (1983)](/sources/harten-1983.md), §§2, 5.

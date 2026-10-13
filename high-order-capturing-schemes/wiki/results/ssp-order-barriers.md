@@ -139,6 +139,19 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
   in the corpus). It is the positivity counterpart of the implicit-method
   barrier above.
 
+**Later uses (batch 14).**
+
+* *"Harten's lemma" is explicit in its source.* Lemma 2.2 of
+  [Harten (1983)](/sources/harten-1983.md) (§2, eqs. 2.9–2.12) gives
+  sufficient conditions for TVD on an explicit scheme in incremental
+  form, $u^{n+1}$ computed from $u^n$ alone: nonnegative incremental
+  coefficients whose sum at each interface is at most 1. The paper states
+  no implicit version. The statement under *Implicit methods* above, that
+  backward Euler is unconditionally TVD by "Harten's lemma for implicit
+  schemes", therefore does not rest on the 1983 paper; which work it
+  rests on is not recorded in this bundle
+  ([TVD](/properties/total-variation-diminishing.md)).
+
 # Citations
 
 1. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §§2–6 (Propositions 3.1–6.3, Table 3.1).
@@ -149,3 +162,4 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 6. [Higueras & Roldán (2019)](/sources/higueras-2019.md), §§2–4 (arXiv v1).
 7. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§3.1–3.2 (arXiv v2).
 8. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §1 (arXiv v2).
+9. [Harten (1983)](/sources/harten-1983.md), §2 (Lemma 2.2).

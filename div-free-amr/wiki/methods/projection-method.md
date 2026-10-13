@@ -5,7 +5,7 @@ description: "Removes the divergence of the updated field by solving a Poisson p
 status: established
 aliases: [Hodge projection, divergence cleaning (elliptic)]
 tags: [projection, poisson, divergence-constraint]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Projection method
@@ -30,7 +30,9 @@ stencil of spacing $2\Delta x$ (the compact staggered alternative is the
 constraint family through the momentum update rather than as a separate
 projection). The existence and uniqueness of the decomposition is inherited
 from the well-posedness of the continuous problem. The MHD adaptation
-(Brackbill & Barnes) is not yet ingested as a primary source; its modern
+(Brackbill & Barnes) is ingested as
+[Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), with the
+qualification below; its modern
 assessment is [Tóth (2000)](/sources/toth-2000.md). Within the
 [GLM framework](/methods/glm-divergence-cleaning.md) the projection is the
 elliptic member of the cleaning family — the limit $\mathcal{D}(\psi) = 0$
@@ -38,6 +40,39 @@ of the generalized-Lagrange-multiplier coupling
 ([Dedner et al. (2002)](/sources/dedner-2002.md)). Its subcycled AMR
 realization, with the attendant interface synchronization solves, is the
 [AMR projection method](/methods/amr-projection-method.md).
+
+**What Brackbill & Barnes actually propose: a qualification.** The
+primary source states the correction in one sentence, in continuous form
+only (p. 428): solve a Poisson problem for a potential with the divergence
+as source and add its gradient to the field. In registry terms this is
+$B_h = B_h^* - G_h\phi_h$ with the opposite sign convention for the
+potential. The paper gives no discrete operators, boundary conditions,
+solver or test, and sets the idea aside: "one can eliminate the parallel
+force without having to solve a potential problem". Its adopted cure is a
+nonconservative momentum equation that removes the force component along
+$\mathbf B$ without reducing the divergence
+([exact discrete divergence](/properties/exact-discrete-divergence.md)).
+"The MHD adaptation" is therefore an attribution made by later sources,
+not a method the paper develops. The bundle's reading of
+[Dedner et al. (2002)](/sources/dedner-2002.md) §2 identifies their
+elliptic member with the Brackbill–Barnes projection, and
+[Jiang & Wu (1999)](/sources/jiang-1999.md) solve the same equation, with
+the same sign convention, following Brackbill–Barnes. The discrete MHD
+projection as practiced is documented by [Tóth (2000)](/sources/toth-2000.md),
+Jiang & Wu and [Balsara & Kim (2004)](/sources/balsara-kim-2004.md).
+
+**What removing it bought one code.** Ryu, Miniati, Jones & Frank replaced
+their code's explicit Poisson cleaning with constrained transport. The new
+code ran "about 20% faster", which they attribute to "the absence of an
+explicit divergence-cleaning step". By their account the cleaning
+worked only where boundary effects are negligible or the domain is
+periodic on a "more or less regular" grid, and an oblique-field
+cloud problem was "difficult to simulate with the old code because of its
+lack of a suitable periodic space for solving Poisson's equation"
+([Ryu et al. (1998)](/sources/ryu-1998.md) §§1, 2, 3.3).
+*Compiler reading:* this sits beside Tóth's ≈6% overhead below without
+contradicting it; the two are different codes and Poisson solvers, and the
+cost of the elliptic step is implementation-dependent.
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
@@ -171,3 +206,5 @@ sources.
 4. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§II.a–c, III.b, Table I.
 5. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 3.4.
 6. [Blomquist, West, Binswanger & Theillard (2024)](/sources/blomquist-2024.md), §§1, 3, 4.2.
+7. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 428–429.
+8. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1, 2, 3.3.

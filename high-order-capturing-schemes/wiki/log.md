@@ -2,6 +2,39 @@
 
 ## 2026-10-13
 
+* **Batch 14 (frontier): ingested [Godunov (1959)](/sources/godunov-1959.md),
+  [van Leer (1979)](/sources/vanleer-1979.md), [Roe (1981)](/sources/roe-1981.md)
+  and [Harten (1983)](/sources/harten-1983.md)**, the user's downloads of
+  the bundle's most-cited works not yet ingested, filed into the archive
+  (116 of 116).
+  * **New pages:** [Godunov's method](/methods/godunov-method.md),
+    [MUSCL](/methods/muscl.md) and
+    [Godunov's order barrier](/results/godunov-order-barrier.md); linked
+    from the reading guide and the folder indexes.
+  * **Updated:** [total variation diminishing](/properties/total-variation-diminishing.md),
+    [monotone flux](/definitions/monotone-flux.md),
+    [exact Riemann solver](/methods/exact-riemann-solver.md),
+    [SSP order barriers](/results/ssp-order-barriers.md),
+    [approximate Riemann solvers](/methods/approximate-riemann-solvers.md),
+    [finite-volume reconstruction](/methods/finite-volume-reconstruction.md),
+    [Sod shock tube](/benchmarks/sod-shock-tube.md), [PPM](/methods/ppm.md)
+    and the [forward-facing step](/benchmarks/forward-facing-step.md)
+    (van Leer's runs; the $45 \times 15$ run is a steady state at
+    $t = 16.02$).
+  * **No new Contradictions entry.** Qualifications: "Harten's lemma for
+    implicit schemes" is not in Harten (1983), whose Lemma 2.2 is for
+    explicit schemes; Roe (1981) prints no averaged density.
+  * **Notation:** the [registry](/notation.md) row $q_{\mathrm{Roe}}$ now
+    attributes the $\sqrt\rho$-weighted velocities and enthalpy to Roe
+    (1981) and the geometric-mean density to the later Roe–Pike form
+    (Toro); it had credited all three to Roe.
+  * **Bibliography** (3104 entries): 57 references merged; vanleer-1979
+    given its full title and DOI (Crossref); godunov-1959's first page
+    confirmed as 271 on the original (several citing sources print 357);
+    Harten's three in-press reports resolved by Crossref to their journal
+    versions (harten-1983-c, -d, -e); Roe's 7th ICNMFD paper kept apart
+    from the J. Comput. Phys. paper and the RAE report (roe-1981-c).
+
 * **Seven new concept pages** (user decision, from the deep lint's
   candidates; the Roe solver page was declined):
   * [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md)

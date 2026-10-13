@@ -18,6 +18,55 @@ $\nabla\cdot\mathbf{B}$ is added to each equation. The added source terms
 (momentum, induction, energy rows) give the Roe-type Riemann solver an
 eighth wave: the *divergence wave*, advecting at the flow speed $u$.
 
+**The primary report (1994).** The scheme first appeared in
+[Powell (1994)](/sources/powell-1994.md), an ICASE report, by a different
+route. In primitive variables the multi-dimensional system has a singular
+flux Jacobian: the row of the normal field is zero, giving a zero
+eigenvalue that Powell calls "clearly non-physical" (§2, eq. 8). He
+replaces the Jacobian by a non-singular $8\times8$ matrix found "with
+Maple" from four criteria: the seven 1D eigenpairs unchanged, an eighth
+eigenvalue equal to $u$, sensible eighth eigenvectors, and reduction to the
+seven-wave problem when the normal field is constant (eq. 9). The eighth
+wave, which Powell names the "divergence wave", has speed $u$ and carries
+only the jump of the normal field; the other seven carry none (eqs.
+10–13). In conservative variables the modification is the source term
+$$-(0,\ \mathbf B,\ \mathbf u,\ \mathbf u\cdot\mathbf B)^T\,\nabla\cdot\mathbf B$$
+(eq. 14): zero on the mass row, nonzero on the momentum, induction and
+total-energy rows. It
+removes exactly the terms proportional to $\nabla\cdot\mathbf B$ hidden in
+the conservative system (eq. 15), and turns $\partial_t(\nabla\cdot\mathbf
+B) = 0$ into the passive-scalar law below (eqs. 16–17), "clearly the more
+numerically stable of the two"; no stability proof is given. The solver is
+first-order Roe-type with an arithmetic-average interface state, and the
+source "is calculated in each cell, and added to the residual" with no
+discrete divergence formula printed (p. 8). Powell's motivation is the
+discrete constraint itself: the face-flux divergence
+$D_h^{\mathrm f}B_h = 0$ allows a jump of the normal field across one face
+if the other faces balance it (§1, eq. 5).
+*Correction of scope:* the 1994 report contains no symmetrizability
+argument, no Godunov citation, no Galilean invariance and no entropy law.
+The attributions of these properties on this page are to
+[Powell et al. (1999)](/sources/powell-1999.md) and stand; none of them
+belongs to the 1994 report. Its own statement of the conservation trade is
+weaker: "the deviations from conservation will be very small" (p. 6).
+
+**Lineage: Brackbill & Barnes.** Powell (1994, pp. 6–7) presents the
+source term as explaining an earlier observation, that "solving the
+momentum equation in non-conservative form can remove instabilities
+related to non-zero $\nabla\cdot\mathbf B$"
+([Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md)). Brackbill
+& Barnes put only the momentum equation in nonconservative form
+(force $-\mathbf B\times(\nabla\times\mathbf B)$) and keep the induction and
+energy equations conservative; momentum is then
+conserved only to truncation error. They scope the risk to shocks:
+conservation form "may be imperative only for high-speed flows where
+Rankine–Hugoniot conditions across shocks would not be satisfied
+otherwise" (p. 427).
+*Compiler reading:* their nonconservative momentum equation is the
+conservative one minus $\mathbf B\,(\nabla\cdot\mathbf B)$, the momentum row
+of the eight-wave source. Brackbill & Barnes never write it as a source
+term.
+
 ## The analytical mechanism
 
 With the source terms,
@@ -52,6 +101,25 @@ weakest among the families compared by [Tóth (2000)](/sources/toth-2000.md).
 * Initial/boundary data must satisfy the constraint to second-order accuracy
   (contrast the roundoff-exact compatibility CT requires:
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
+
+**Powell's own rotated shock tube: a qualification.** The 1994 report
+runs a 45°-rotated Brio–Wu tube with the first-order scheme on 600 and
+1200 cells ([rotated shock tube](/benchmarks/rotated-shock-tube.md)).
+Rotated and unrotated results are "nearly indistinguishable for all but the
+normal component of velocity", and the normal-field errors, "on the order
+of a few percent … on the coarse grid", "are reduced as the grid is
+refined" (§3, Figs. 5, 8). This does not contradict Tóth's wrong-jump
+result. The quantities differ: Powell measures the amplitude of
+normal-field spikes at two resolutions, Tóth the post-shock states. So do
+the schemes (first order against Tóth's second-order base scheme) and the
+evidence (two grids, no convergence study of the plateau values). Powell's
+visible offset of the normal velocity in the post-shock plateau (Fig. 5) is
+the kind of error Tóth reports, and it was plotted on the fine grid only.
+
+**An untested assessment.** Ryu, Miniati, Jones & Frank judge that the
+source-term method "works well for some problems with open boundaries but
+not for others, including those with periodic boundaries"; they give no
+test ([Ryu et al. (1998)](/sources/ryu-1998.md) §1).
 
 **Positivity, a second argument for the source term** (alongside Derigs et al.'s thermodynamic one).
 [Wu & Shu (2018)](/sources/wu-shu-2018.md) prove that LF-type DG schemes for the
@@ -157,3 +225,6 @@ requirement.
 9. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.3, 3.4.
 10. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix A.
 11. [Brio & Wu (1988)](/sources/brio-wu-1988.md), §§II, IV.2–IV.3.
+12. [Powell (1994)](/sources/powell-1994.md), §§1–4, eqs. 5, 8–17, Figs. 2–8.
+13. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 427–429.
+14. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §1.

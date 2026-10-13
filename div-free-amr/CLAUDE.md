@@ -38,6 +38,11 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch 2 staged 2026-10-13:** brackbill-barnes-1980,
+powell-1994 (ICASE report) and ryu-1998, from the user's downloads (101
+sources). Key brackbill-1980 renamed to the slug. No contradiction opened.
+Deep lint: 5 ingestions since #9.
+
 **Frontier batch staged 2026-10-13:** the bundle's two most-cited works
 not yet ingested whose PDFs sat in a sibling archive, copied into this
 bundle's archive (D17): balsara-spicer-1999 and brio-wu-1988 (98 sources).

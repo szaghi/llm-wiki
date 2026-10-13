@@ -2,6 +2,36 @@
 
 ## 2026-10-13
 
+* **Frontier batch 2: ingested [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md),
+  [Powell (1994)](/sources/powell-1994.md) and [Ryu et al. (1998)](/sources/ryu-1998.md)**,
+  from the user's downloads of the most-cited works not yet ingested (101 sources).
+  * Brackbill & Barnes: extended [exact discrete divergence](/properties/exact-discrete-divergence.md)
+    (the parallel force, eq. 8, and its scope), [projection](/methods/projection-method.md)
+    and [GLM cleaning](/methods/glm-divergence-cleaning.md) (the paper
+    mentions the Poisson correction in one sentence; calling the MHD
+    projection "the Brackbill–Barnes method" overstates it, written as a
+    qualification) and [eight-wave](/methods/eight-wave.md) (the
+    nonconservative momentum lineage).
+  * Powell: extended [eight-wave](/methods/eight-wave.md) from the primary
+    ICASE report (eqs. 8–17, first-order solver, rotated shock tube).
+    Symmetrizability belongs to Powell et al. (1999), not to this report;
+    Powell's shrinking normal-field errors and Tóth's non-converging jumps
+    measure different quantities (qualifications, no contradiction).
+  * Ryu et al.: extended [flux-CT](/methods/flux-ct.md) (the
+    transport-flux variant from its primary source),
+    [constrained transport](/methods/constrained-transport.md),
+    [projection](/methods/projection-method.md),
+    [exact discrete divergence](/properties/exact-discrete-divergence.md)
+    and [eight-wave](/methods/eight-wave.md).
+  * **Compiler correction** on [Tóth (2000)](/sources/toth-2000.md): the
+    table remark now says the RMJA primary source is ingested; only DW is not.
+  * **Bibliography** (3654 entries): 44 references merged; key
+    brackbill-1980 renamed to the slug; Roe & Balsara printed as "J.
+    Comput. Phys., to appear" (1994) resolved to the 1996 SIAM J. Appl.
+    Math. paper; LeVeque's Saas-Fee notes printed as 1997 resolved to
+    leveque-1998; the two submitted Miniati papers and Ryu, Yun & Choe
+    (1995) kept apart from their neighbours by venue.
+
 * **Frontier batch: ingested [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md)
   and [Brio & Wu (1988)](/sources/brio-wu-1988.md)**, the two most-cited
   works the bundle had not ingested (cited by 37 and 19 of its sources),

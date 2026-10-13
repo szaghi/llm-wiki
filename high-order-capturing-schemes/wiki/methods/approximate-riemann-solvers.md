@@ -373,6 +373,89 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   weighted-average-flux (WAF) method in TVD form with the MINBEE limiter;
   the WAF chapter of the book was not read, so WAF has no page.
 
+**Later uses (batch 14).** *Roe's solver at the source*
+([Roe (1981)](/sources/roe-1981.md); no separate Roe page, by user
+decision).
+* *Linearized Riemann problem and Property U* (p. 359). Each Riemann
+  problem is replaced by the exact solution of a linear problem with a
+  constant matrix of $u^-$ and $u^+$, the Roe matrix, which must (i) map
+  states linearly to fluxes, (ii) tend to $A(u)$ as $u^-$ and $u^+$ tend to
+  $u$, (iii) map $u^- - u^+$ exactly to $f(u^-) - f(u^+)$ for any pair, and
+  (iv) have linearly independent eigenvectors. The source prints four
+  conditions, not three, and requires no real eigenvalues of the matrix
+  itself. "Property U" stands for "uniform validity across
+  discontinuities" (p. 360). Condition (iii) suffices for conservation;
+  (iii) with (iv) is "necessary and sufficient" for the scheme to
+  "recognize" a shock: if the flux jump is a shock speed times the state
+  jump, that speed is an eigenvalue, the jump lies on one eigenvector, and
+  the Riemann solution is exact (pp. 359–360). The Jacobian at the
+  arithmetic-mean state, and the mean of the two Jacobians, fail (iii) in
+  general (p. 359). *Compiler reading:* HLLEM is identical to Roe's solver
+  when evaluated at the Roe state ([HLLEM (HLLI)](/methods/hllem-riemann-solver.md)),
+  so an HLLEM evaluated at a mean state does not inherit (iii).
+* *Construction* (pp. 361–363, eqs. 6–17). A valid matrix always exists
+  as the Jacobian integrated along the straight path between the states,
+  but has no closed form in general; building a rational one from the
+  identities $[\![ab]\!] = \{\!\{a\}\!\}[\![b]\!] + \{\!\{b\}\!\}[\![a]\!]$
+  and $[\![1/a]\!] = -[\![a]\!]/(a^-a^+)$ is "far from unique". For the
+  Euler equations Roe instead uses the parameter vector
+  $\sqrt\rho\,(1, v_x, v_y, v_z, (E+p)/\rho)^{\mathsf T}$: every component of
+  $u$ and of the three fluxes is quadratic in it, so both the state jump
+  and the flux jump are matrices linear in its arithmetic means times its
+  jump, and the Roe matrix is their quotient. That a parameter vector
+  "has so far worked each time that it has been tried" (p. 362) is a
+  report of experience, not a theorem, consistent with Brio and Wu
+  finding no Roe matrix for MHD at general $\gamma$
+  ([characteristic decomposition](/methods/characteristic-decomposition.md)).
+* *The averages* (pp. 364–365, eqs. 18–21). The eigenstructure is that of
+  $A$ at $v_{x,\mathrm{Roe}} = (\sqrt{\rho^-}v_x^- + \sqrt{\rho^+}v_x^+)/(\sqrt{\rho^-} + \sqrt{\rho^+})$,
+  likewise $v_y$, $v_z$ and the total specific enthalpy $(E+p)/\rho$, with
+  $c_{\mathrm{Roe}}^2 = (\gamma-1)\left[\left((E+p)/\rho\right)_{\mathrm{Roe}} - \tfrac12\vert\mathbf v_{\mathrm{Roe}}\vert^2\right]$;
+  the eigenvalues are $v_{x,\mathrm{Roe}} \mp c_{\mathrm{Roe}}$ and the
+  triple $v_{x,\mathrm{Roe}}$, the eigenvectors and wave strengths are
+  printed in closed form (eqs. 20, 22), and the eigenvector determinant,
+  $2c_{\mathrm{Roe}}^3/(\gamma-1)$, is "never small unless the Mach number is
+  very large". The 1981 paper prints **no averaged density**: the
+  $\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$ of the batch-12 bullet
+  "Roe's flux, as printed" comes from Toro's Roe–Pike route (and, for MHD
+  at $\gamma = 2$, from Brio and Wu), and is not needed by Roe's
+  eigenstructure.
+* *The flux, as first printed* (p. 370). The first-order scheme splits
+  $f(u^+) - f(u^-) = \sum_p\lambda^{(p)}\,\ell^{(p)}(u^+ - u^-)\,r^{(p)}$
+  into its $\lambda^{(p)} < 0$ part, sent to the left cell, and its
+  $\lambda^{(p)} > 0$ part, sent to the right. This is equivalent to the
+  first two of Toro's three forms in the batch-12 bullet; the central form
+  is not in the 1981 paper. The intended use is a "mechanism" (Roe's 7th
+  ICNMFD paper) that carries any linear-advection scheme over to systems,
+  reportedly with accuracy kept "at least to third order" (p. 359,
+  unpublished results).
+* *Entropy, in Roe's words* (pp. 359, 370–371). The approximation "suffers
+  the theoretical disadvantage of not having a naturally constructed
+  entropy condition". When a wave is in fact a fan spanning the interface,
+  and in the extreme case of equal fluxes from unequal states, both parts
+  vanish and nothing breaks up "the unrealistic discontinuity". The cure
+  offered is empirical, an artificial equal and opposite contribution in
+  each interval containing a sonic point, with no formula, no parameter and
+  "a fuller theoretical justification" still to come; users "would be
+  advised to employ either an empirical device … or some form of
+  artificial viscosity". The sonic glitches of the batch-7 and batch-12
+  bullets are this predicted defect; the Harten–Hyman fix quoted above is
+  later work, not Roe's.
+* *Cost against the exact solver* (pp. 368–370, Table I). On Sod's problem,
+  35 steps at $\Delta t/h = 0.411$, first-order upwind through the
+  approximate solver differs from Godunov with the exact solver by at most
+  0.0003 in density, and takes 1.09 s against 2.02 s of CPU time
+  ([Sod shock tube](/benchmarks/sod-shock-tube.md)). The approximate
+  density fan is "not very close" to the exact one, but the areas under
+  the two curves are identical (Fig. 1).
+* *Multi-D caveat* (p. 360). Under operator splitting the solver works
+  while shocks are grid-aligned; oblique shocks cause problems
+  "particularly severe as the solution attempts to reach a steady state",
+  since "neither of the split operators, by itself, recognizes the oblique
+  shock as being in equilibrium". This is a steady-state convergence
+  remark; the paper says nothing about the carbuncle or odd–even
+  decoupling, which rest on the batch-8 sources above.
+
 ## Contradictions
 
 * **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
@@ -446,3 +529,4 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 30. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2, 5.5, 5.7.
 31. [Toro (1997)](/sources/toro-1997.md), §§6.4.2, 9.3–9.5, 10.5, 10.8, 11.1–11.5, 12.3–12.4.
 32. [Yeom & Chang (2010)](/sources/yeom-2010.md), §3.2.
+33. [Roe (1981)](/sources/roe-1981.md), pp. 357–371, eqs. 5–22, Table I.

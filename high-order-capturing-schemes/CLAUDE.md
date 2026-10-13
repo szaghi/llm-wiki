@@ -171,6 +171,12 @@ to another bundle.
 
 ## Status
 
+**Batch 14 staged 2026-10-13:** the frontier classics godunov-1959 (Russian
+original), vanleer-1979, roe-1981 and harten-1983, from the user's
+downloads (116 of 116), with three new pages (Godunov's method, MUSCL,
+Godunov's order barrier). No contradiction opened. Deep lint: 4
+ingestions since the whole-bundle lint of batch 13.
+
 **Batch 13 staged 2026-10-13:** Mittal et al. (2008), the last missing
 paper, filed from the user's manual download and ingested (`mittal-2008`,
 112 of 112), with a whole-bundle deep lint (see `log.md`).

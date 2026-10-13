@@ -113,6 +113,18 @@ sheet from the triple point is captured "very well", judged visually
 ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.1;
 [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
 
+**Later uses (batch 14).** *Van Leer's runs.* The "earlier results by
+van Leer" are [van Leer (1979)](/sources/vanleer-1979.md), §4, Figs. 7–11 (runs by P. R. Woodward): Mach 3
+inflow, step one fifth of the entrance height, plane symmetry,
+impulsively started, $\gamma = 1.4$, square meshes. MUSCL on
+$60 \times 20$, $30 \times 10$ and $15 \times 5$ cells, and Godunov's
+method (all slopes set to zero) on a mesh printed as $80 \times 30$, at
+$t \approx 4$ in units of entrance height over inflow sound speed: the
+paper states that these results "are far from stationary", and that the
+Mach stem on the $15 \times 5$ grid is "an artifact due to the
+monotonicity algorithms" (p. 123). MUSCL on $45 \times 15$ cells is run
+to a steady state at $t = 16.02$ (Fig. 10).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -129,3 +141,4 @@ sheet from the triple point is captured "very well", judged visually
 12. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5.
 13. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVb, VIb, Figs. 3, 7, 8.
 14. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.1.
+15. [van Leer (1979)](/sources/vanleer-1979.md), §4, Figs. 7–11.

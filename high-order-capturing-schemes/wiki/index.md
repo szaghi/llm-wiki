@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 112 sources compiled (the whole archive)**: 111 published works,
+**Corpus: 116 sources compiled (the whole archive)**: 115 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -30,6 +30,12 @@ for every page.
    [total variation diminishing](/properties/total-variation-diminishing.md)
    (and why it forces first order at extrema), and its weakening,
    [essentially non-oscillatory](/definitions/essentially-non-oscillatory.md).
+   Why the schemes must be nonlinear at all:
+   [Godunov's order barrier](/results/godunov-order-barrier.md) (no
+   monotone linear scheme is second order). The first-order base they all
+   build on is [Godunov's method](/methods/godunov-method.md), and its
+   first second-order sequel, with limited slopes, is
+   [MUSCL](/methods/muscl.md).
 2. **The two approximation problems.**
    [Reconstruction from cell averages](/methods/finite-volume-reconstruction.md)
    (finite volume, any mesh) and the

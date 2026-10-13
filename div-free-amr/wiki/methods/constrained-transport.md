@@ -143,6 +143,29 @@ cell-centred scheme without cleaning fails on the rotor, with undivided
 divergence-to-field ratios of $\pm0.66$ (§3, Fig. 3e). No divergence
 measure of the CT runs is reported.
 
+**The transport-flux primary source.**
+[Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md) put CT into a
+second-order Harten-TVD code, contemporary with Dai & Woodward and before
+Balsara & Spicer. In their account earlier CT codes were
+artificial-viscosity based, and staggering was "unnatural" for
+Riemann-solver schemes until Dai & Woodward (1998) (§1).
+* $B_h \in V_h^2$ on faces is the evolved field; the cell-centred field is
+  the two-face average, recomputed each step (eqs. 3–4).
+* $E_h$ at each edge is averaged from two TVD fluxes per direction, each
+  the central average of the advective product plus the full seven-wave
+  TVD dissipation of the field component (eqs. 6–7, 15).
+* The face update $B_h^{n+1} = B_h^n - \Delta t\, C_h E_h$ (eqs. 16–17)
+  gives an exactly zero net face flux per cell at $n+1$ if it was zero at
+  $n$ (eq. 18).
+* No projection and no source term are used. Dropping the code's earlier
+  Poisson cleaning made it about 20% faster
+  ([projection](/methods/projection-method.md)).
+* No divergence value is reported in any test; exactness rests on eq. 18.
+
+Details of the EMF are on [flux-CT](/methods/flux-ct.md). This is the
+second-order CT step that [Seo & Ryu (2023)](/sources/seo-2023.md) find
+caps a fifth-order WENO code (above).
+
 [Tóth (2000)](/sources/toth-2000.md) further proves that these CT variants
 are algebraically *identical* to pure finite-volume schemes on the
 cell-centered field, conserving a corner-centered divergence
@@ -199,3 +222,4 @@ cell-integrated monopole density, of every cell.
 10. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §§1, 3, 5–6, 8.
 11. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
 12. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§1, 3, Fig. 3.
+13. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1–2, eqs. 3–18.
