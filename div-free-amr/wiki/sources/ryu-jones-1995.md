@@ -99,6 +99,9 @@ normalization and for its shock-tube set.
    ($k = 3, 5$), $0.0$ ($k = 4$) (2.95). Time step
    $\Delta t^n = C_{\rm cour}\Delta x/\max(|v^n_{x,i+1/2}| + c^n_{f,i+1/2})$,
    $C_{\rm cour}$ typically 0.8 (p. 14).
+
+**Harten's scheme and entropy fix.** The flux (2.88–2.89) is Harten's ULT1 (his eqs. 7.1b, 7.2) and the entropy fix (2.94) is his eq. 5.4 verbatim; Harten adopts widths 0.1 (genuinely nonlinear) and 0 (linearly degenerate) ([Harten (1983)](/sources/harten-1983.md), p. 375).
+
 9. **Steepening** (§2.3, eqs. 2.96–2.98). For the Alfvén families
    ($k = 2, 6$) the limiter is augmented by a switched steepener; it
    resolves rotational discontinuities in 3–5 cells against 6–8 without.
@@ -161,6 +164,8 @@ Findings (§4 and abstract):
   hydrodynamic signals.
 * **No divergence measurement in any test**; in 1D, with $B_x$ fixed, none
   is possible.
+
+**Origins checked against the published Dai & Woodward (1994).** Four of the five "DW" problems are in [Dai & Woodward (1994)](/sources/dai-woodward-1994.md): 1a = Table VI, 1b = Table IIIa, 2a = Table Ia, 3a = Table IIa (Gaussian units). 2b ("DW table 5a") does not match Table Va (normal field 5 against 3); the numbering differs, so the "in press" version cited was another. *Compiler reading:* in all four matches the seventh state entry equals Dai & Woodward's pressure; in 1a a total energy of 20 would be below the kinetic energy 50, so the entry is presumably the pressure.
 
 # Notation map
 

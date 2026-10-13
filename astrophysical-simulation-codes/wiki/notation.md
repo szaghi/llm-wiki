@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Notation registry
@@ -143,3 +143,14 @@ from then on.
 | Symbol | Meaning |
 |---|---|
 | $\beta_{\mathrm p}$ | plasma beta, the ratio of thermal to magnetic pressure $2p/B^2$ (subscripted, so distinct from the shift $\beta^i$) |
+
+## Additions, deep lint #4 (2026-10-13)
+
+| Symbol | Meaning |
+|---|---|
+| $\lambda^-_{i+1/2}$, $\lambda^+_{i+1/2}$, $\lambda_{\max}$ | lower and upper signal-speed bounds of an HLL-type solver at $x_{i+1/2}$, and the largest signal speed (superscript $\mp$ and subscript $\max$, so distinct from the eigenvalues $\lambda^{(p)}$ and from $\lambda_{\mathrm J}$, $\lambda_{\mathrm B}$) |
+| $K_{\mathrm{Lap}}$ | coefficient of the PPM/Lapidus diffusive flux |
+| $\mathcal E^\circ$, $\mathcal E^c$ | Gardiner–Stone (2005) corner EMFs (components of $\boldsymbol{\mathcal E}$ at a cell edge): the arithmetic-average-plus-gradient variant and the contact-upwinded one |
+| $L_1$, $L_2$, $L_\infty$ | discrete error norms |
+| $c_{\mathrm{sl}}$ | slow magnetosonic speed (several papers write $c_s$, which is the sound speed here) |
+| $\mathsf I$ | identity tensor |

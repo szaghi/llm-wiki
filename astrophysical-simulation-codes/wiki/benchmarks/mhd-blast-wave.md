@@ -176,7 +176,7 @@ al. 2026; Shankar et al. 2023). All comparisons remain visual.
   Stone et al. (2008) above defer: domain $[-0.5,0.5]^2$, $200\times200$;
   $\rho = 1$, $\mathbf v = 0$, $B_x = B_y = 10/\sqrt2$ (field magnitude 10),
   $B_z = 0$; $p = 100$ (plasma beta 2) inside radius 0.125, $p = 1$ (beta
-  0.02) outside; adiabatic, $\gamma = 5/3$; $t = 0.2$; boundary conditions
+  0.02) outside; adiabatic, $\gamma = 5/3$; $t = 0.2$ as printed (probably 0.02; see below); boundary conditions
   not stated. Ranges at $t = 0.2$: density 0.192–3.31, pressure 1.0–32.1,
   magnetic energy density 23.5–77.7. The scheme is called "stable and
   accurate for low-β plasma problems involving strong MHD shock waves",
@@ -193,6 +193,31 @@ pressure ratio, 100 ($p = 10$ in a background of 0.1), but how its
 beta-0.02 variant was set up is not printed, so the cases are not
 otherwise compared.
 
+## Later uses (batch 9)
+
+* *3D, adiabatic, 6-solve CTU+CT, Londrillo–Del Zanna parameters*
+  ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.5, Fig. 8).
+  Unit cube $[-0.5,0.5]^3$ at $200^3$; $\rho = 1$, $\mathbf v = 0$,
+  $B_x = B_z = 10/\sqrt2$, $B_y = 0$ (field magnitude 10); $p = 100$ (plasma
+  beta 2) inside radius 0.125, $p = 1$ (beta 0.02) outside; **$t = 0.02$**
+  (text and caption); slices at $y = 0$; boundary conditions not stated.
+  Ranges at $t = 0.02$: density 0.190–2.98, pressure 1.0–42.4, magnetic
+  energy density 25.2–64.9, kinetic energy density 0–33.1. The structure is
+  as in 2D: a weakly compressive, magnetically dominated outer fast shock,
+  and two dense shells along $\mathbf B$ bounded by a slow shock and a
+  contact; the maximum slow-shock compression, about 3.3, is "the same as
+  was found in the 2D calculation" (as printed; the Fig. 8 density range implies 2.98). The scheme is robust at
+  $\beta_{\mathrm p}\sim10^{-2}$ and keeps the symmetry.
+
+This is a third 3D non-relativistic run, distinct from Stone et al.'s
+(domain $(1, 1.5, 1)$, $t = 0.2$) and Zhang et al.'s (beta 0.2).
+It is a 3D adiabatic CTU+CT data point at the ambient beta, 0.02, at which
+Cholla's 3D VL+CT run turns unstable (batch 3): the dimension and the
+equation of state now match, the integrator still differs, so the batch-3
+qualification stands.
+
+**The 2D output time as printed.** The 2005 arXiv v1 prints $t = 0.2$ twice: in §5.6 ("The solution to this problem at time t = 0.2, using a 200 × 200 grid", p. 38) and in the Fig. 13 caption ("time=0.2", p. 39). Fig. 13 contradicts that value: its outer fast-shock front lies about 0.4 box-widths from the centre, as in the $t = 0.02$ 3D run of Gardiner & Stone (2008, Fig. 8), and with an ambient fast speed of at least 10 the front would have travelled about 2 length units by $t = 0.2$. The printed 0.2 is probably a misprint for 0.02 — an inference from the figure (compiler reading at deep lint #4), not a printed statement; the JCP version is not in the archive. Recorded as printed; not a contradiction.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
@@ -203,3 +228,4 @@ otherwise compared.
 6. [Stone et al. (2026)](/sources/stone-2026.md), §3.5, §5.1 (arXiv v1).
 7. [Shankar et al. (2023)](/sources/shankar-2023.md), §IV B (arXiv v2).
 8. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.6 (arXiv v1).
+9. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.5, Fig. 8.

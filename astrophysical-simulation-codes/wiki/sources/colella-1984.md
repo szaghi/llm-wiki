@@ -32,7 +32,7 @@ limiting near shocks, supplied by flattening, an explicit diffusive flux
 or an oscillating grid (§4, Appendix). The authors call the algorithms
 "the minimal ones": every simplification they tried degraded the results
 (§5). The paper has no test section of its own; its comparisons are in
-the companion paper, Woodward & Colella (1984), J. Comput. Phys. 54:115.
+the companion paper, [Woodward & Colella (1984)](/sources/woodward-1984.md), J. Comput. Phys. 54:115.
 
 # Key claims
 
@@ -79,17 +79,19 @@ Equations below are in the [registry](/notation.md) notation
    The blending weight rises with a normalized third derivative and is
    nonzero only where the second derivative changes sign, the first and
    third derivatives have opposite signs, and the jump is not small
-   (relative threshold 0.01). Constants of Woodward & Colella: 20 and 0.05
-   for the two coefficients of the weight (p. 181). It is applied just
+   (relative threshold 0.01). The two coefficients of the weight are 20 and 0.05, stated (p. 181) as the values of the companion runs; [Woodward & Colella (1984)](/sources/woodward-1984.md) do not print them. It is applied just
    before the monotonicity step; if it fires in smooth flow "the scheme
    remains second-order accurate" (p. 180). In gas dynamics it acts on
    density only and only at contacts, flagged where $\gamma$ times a
-   problem-dependent constant (0.1 in Woodward & Colella) times
+   problem-dependent constant (0.1, likewise stated as the companion runs' value) times
    $\vert\rho_{i+1} - \rho_{i-1}\vert/\min(\rho_{i+1}, \rho_{i-1})$ is at
    least $\vert p_{i+1} - p_{i-1}\vert/\min(p_{i+1}, p_{i-1})$ (p. 181,
    eq. 3.2). It is not used in the pure Lagrangian scheme ("contact
    discontinuities automatically remain sharp", p. 183) and is used on
    density in the remap of the two-step scheme (p. 187).
+
+(Batch 9: [Woodward & Colella (1984)](/sources/woodward-1984.md) prints no detector constants; its only PPM 0.1 is the PPMDE Lapidus viscosity coefficient, pp. 141, 156.)
+
 7. **Lagrangian scheme** (§2, eqs. 2.1–2.10, Fig. 4). Mass coordinate,
    geometry index 0, 1, 2 (planar, cylindrical, spherical), $\gamma$-law
    gas. The interpolated variables are specific volume, velocity and
@@ -169,11 +171,11 @@ Equations below are in the [registry](/notation.md) notation
     values of the parameters is not recommended" (p. 201).
 14. **Diffusive flux** (eqs. 4.2–4.5). An explicit term proportional to
     $u_i - u_{i+1}$ is added to $\hat f_{i+1/2}$ with coefficient
-    $K\max(v_{x,i} - v_{x,i+1}, 0)$ in 1D, akin to Lapidus (eq. 4.4), and
+    $K_{\mathrm{Lap}}\max(v_{x,i} - v_{x,i+1}, 0)$ in 1D, akin to Lapidus (eq. 4.4), and
     in multi-D a coefficient from an undivided-difference
     $-\nabla\cdot\mathbf v$, needed to detect shocks transverse to the
-    sweep (eq. 4.5). Single-step Eulerian PPM used $K = 0.1$; MacCormack's
-    method needed $K = 1$ (p. 196). Alternatively the grid oscillates by
+    sweep (eq. 4.5). Single-step Eulerian PPM used $K_{\mathrm{Lap}} = 0.1$; MacCormack's
+    method needed $K_{\mathrm{Lap}} = 1$ (p. 196). Alternatively the grid oscillates by
     the same amount on alternate steps, which adds only the advection
     scheme's own dissipation (eq. 4.3) and requires two successive sweeps
     per direction.
@@ -232,7 +234,7 @@ evidence printed here:
 | $K_0$ | contact-detection constant, in words | |
 | $f_j$, $\tilde f_j$ | flattening coefficient, in words | **collision** with the flux $f$; 1 = fully flattened |
 | $w_j$, $s_j$, $\omega_j$, $\kappa_j$, $\sigma_j$ | in words | **collision**: $\kappa$ is the opacity |
-| $\nu_{j+1/2}$, $K$ | diffusion coefficient, in words; $K$ kept in prose | **collision**: $\nu$ is the Courant number |
+| $\nu_{j+1/2}$, $K$ | diffusion coefficient, in words; $K_{\mathrm{Lap}}$ | **collision**: $\nu$ is the Courant number |
 | $u$ (sweep velocity), $v$ (transverse) | $v_x$, transverse velocity | **collision**: $u$ is the registry state |
 | $\tau$ (specific volume) | $1/\rho$ | **collision** with the Valencia $\tau$ |
 | $c$ | $c_s$ | **collision**: $c$ is the speed of light |
@@ -255,6 +257,7 @@ evidence printed here:
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md):
   PPM's own Riemann solver (eq. 2.8, fixed Newton iterations, 2 against 6
   iterations).
+* Batch 9: cited by [Godunov's method](/methods/godunov-method.md).
 
 # Citations
 

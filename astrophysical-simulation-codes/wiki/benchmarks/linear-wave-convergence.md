@@ -13,7 +13,7 @@ timestamp: 2026-10-13T00:00:00Z
 **Set-up.** A single eigenmode (sound, shear, entropy; or fast, Alfvén,
 slow and entropy in MHD) of amplitude $10^{-6}$ relative to a uniform
 background is laid on a periodic domain and propagated for one period.
-The exact solution then equals the initial state, so the L1 norm of the
+The exact solution then equals the initial state, so the $L_1$ norm of the
 difference between the final and initial cell values, per variable,
 measures the error with no reference solution. In multi-dimensional
 versions the wavevector is oblique to the grid (Gardiner–Stone geometry),
@@ -32,7 +32,7 @@ dominate truncation error.
   and Roe errors are nearly identical and second order; HLLE errors are
   slightly larger, with a slightly lower rate. Errors are dominated by
   diffusion; dispersion is nearly absent at 16 or more points per
-  wavelength. Suggested code checks: L1 errors identical to every digit for
+  wavelength. Suggested code checks: $L_1$ errors identical to every digit for
   left- and right-moving waves, and a standing-wave variant with
   background $v_x = -c_s$.
 * *1D MHD* ([Stone et al. (2008)](/sources/stone-2008.md), §8.2, Fig. 12).
@@ -48,7 +48,7 @@ dominate truncation error.
 * *3D MHD, integrator comparison* ([Stone et al. (2020)](/sources/stone-2020.md),
   §3.3.1, Fig. 11). Domain $(3.0, 1.5, 1.5)$, grid $2N\times N\times N$,
   $N = 16$–256, wavelength 1, wave along the grid diagonal, HLLD; error is
-  the rms over variables of volume-weighted L1 norms (eq. 21). Strictly
+  the rms over variables of volume-weighted $L_1$ norms (eq. 21). Strictly
   second order whenever VL2 or PLM is used. RK3+PPM errors are at least
   10 times lower than VL2+PLM, and for some families convergence is near
   third order (the entropy-wave panel approaches a fourth-order guide
@@ -138,7 +138,7 @@ through $L_\infty$ (§3.4.1).
   velocity of 1 along it for the entropy mode only (fast, Alfvén and slow
   speeds 2, 1 and 0.5); amplitude $10^{-6}$; one domain-crossing time.
   The error (eq. 14) is the square root of the sum over variables of the
-  squared L1 errors, each normalized by the amplitude and the number of
+  squared $L_1$ errors, each normalized by the amplitude and the number of
   cells and components. With PLM+RK2, the Rusanov (Lax–Friedrichs), HLL,
   HLLD and Roe solvers all converge at second order (Fig. 7). With HLLD
   (Fig. 8), LimO3+RK3 and PPM+RK3 are less diffusive than PLM+RK2,
@@ -157,7 +157,7 @@ through $L_\infty$ (§3.4.1).
   $\gamma = 5/3$; $\rho = 1$, $\mathbf v = 0$ (background $v_x = 1$ for
   the contact wave), $p = 1/\gamma$, $\mathbf B = (1, 1.5, 0)$;
   eigenvectors of Gardiner & Stone (2008); one period; VL+CT with HLLD.
-  The error is the L2 norm over variables of the per-variable L1 norms.
+  The error is the $L_2$ norm over variables of the per-variable $L_1$ norms.
   Slow, fast, Alfvén and entropy waves all converge at second order. PPM
   with characteristic limiting is "approximately an order of magnitude"
   more accurate than PLM with characteristic limiting at every
@@ -170,7 +170,7 @@ through $L_\infty$ (§3.4.1).
   Fig. 1; [Quokka](/software/quokka.md)). After Stone et al. (2008):
   $\rho = 1$, $\mathbf v = 0$, $p = 1/\gamma$, $\gamma = 5/3$, amplitude
   $10^{-6}$, periodic $[0, 1]$, one period, PPM, CFL 0.1, $N = 16$ to
-  1024. The error, the rms over components of the L1 error (eq. 45), is
+  1024. The error, the rms over components of the $L_1$ error (eq. 45), is
   $1.0\times10^{-7}$ at $N = 16$, $1.6\times10^{-9}$ at $N = 128$ and
   $1.7\times10^{-11}$ at $N = 1024$, scaling as $N^{-2}$ (Fig. 1), in
   "excellent agreement" with [Athena](/software/athena.md) (Stone et al. 2008, Fig. 7). Recorded
@@ -222,7 +222,7 @@ fast wave, which stays second order
   $(1, \sqrt2, 1/2)$ in the frame of the wavevector, background velocity 1
   along it for the entropy mode only; slow, Alfvén and fast speeds 1/2, 1
   and 2; right eigenvectors printed (App. A); one wavelength of travel.
-  Error: the per-component L1 norm of the final minus initial cell values
+  Error: the per-component $L_1$ norm of the final minus initial cell values
   (cell-centred field), combined as the square root of the sum of squares
   (eqs. 80–81). 2D CTU+CT with PPM and the Roe solver: fitted orders **fast
   2.0, Alfvén 2.26, slow 2.29, entropy 2.11**, errors between about
@@ -240,13 +240,32 @@ fast wave, which stays second order
   (computed at ingestion): the stated 2/5 is the consistent value, and eq.
   79 omits the division by the wavelength. The damped-wave entry above
   records "wavelength 1 at $\tan^{-1}2$" in the same domain for Stone et
-  al. (2020); that entry may echo the printed eq. 79 of the original or be
-  a transcription slip. It is recorded here as a printed inconsistency,
-  not a contradiction; the Stone et al. (2020) text should be rechecked.
+  al. (2020). Stone et al. (2020, §3.3.2) print λ = 1 and k = 2π
+  explicitly, so they repeat the original's printed inconsistency; this is
+  not a transcription slip (checked on the Stone et al. (2020) PDF at deep
+  lint #4). It is recorded here as a printed inconsistency, not a
+  contradiction.
 
 The original adds a 2D CTU+CT data point to "What it shows": second order
 in all four MHD families in 2D, with PPM changing the error constant and
 slightly raising the fitted rates, PLM giving exactly second order.
+
+## Later uses (batch 9)
+
+* *The damping rate attributed to "Ryu et al. (1995)".* The damped fast-wave
+  entry above says the measured decay rate of Stone et al. (2020)
+  converges to "the analytic rate of Ryu et al. (1995)". That rate is not
+  in [Ryu & Jones (1995)](/sources/ryu-1995.md), the bundle's `ryu-1995`:
+  that paper is two-author, strictly 1D and ideal (no viscosity or
+  resistivity), and its tests are Riemann problems, not damped waves
+  (§§2, 4). "Ryu et al." names three or more authors, and the reference
+  list of Stone et al. (2020), as merged into the bibliography, holds
+  Ryu, Jones & Frank (1995, Astrophys. J. 452:785, `ryu-1995-b`, not
+  ingested) and not `ryu-1995`. Which paper derives the rate is not
+  settled here; the attribution is recorded as a qualification of the
+  entry above, not as a contradiction.
+
+* *3D MHD, both CTU variants* ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.2, eqs. 53–56, Fig. 3, App. A). Amplitude $10^{-6}$; background $\rho = 1$, $p = 3/5$, $\mathbf B = (1, 3/2, 0)$, velocity 1 along the wave for the entropy mode and 0 otherwise (slow, Alfvén, fast speeds 1/2, 1, 2); domain $[0,3]\times[0,1.5]^2$ on $2N\times N\times N$, periodic; rotation sines $2/3$ and $2/\sqrt5$, wavelength 1; one crossing time; per-component $L_1$ errors combined in quadrature. Second order for all four families with the 6- and 12-solve CTU+CT; the 6-solve errors are lower except for the slow wave. This is the primary source of the 3D geometry and background attributed above to "Gardiner & Stone"; App. A prints the eigenvectors.
 
 ## Contradictions
 
@@ -274,3 +293,5 @@ slightly raising the fitted rates, PLM giving exactly second order.
 7. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.1, §3.2 (arXiv v2).
 8. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.1.1 (arXiv v2).
 9. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.4, eqs. 79–81, Fig. 11, App. A (arXiv v1).
+10. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2, 4 (arXiv preprint).
+11. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.2, App. A.

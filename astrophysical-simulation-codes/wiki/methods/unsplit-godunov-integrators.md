@@ -171,7 +171,7 @@ are not directly comparable:
   with $\nu \le 1$ (eq. 78); $\nu \le 1/2$ for the 3D six-solve CTU
   (eq. 95) (Stone et al. 2008, with $c_{f,x}$ the fast speed in $x$; the
   paper allows a different cell size per direction).
-* Castro: the minimum over directions of $h/(\vert v_d\vert + c_s)$,
+* Castro: the minimum over directions of $h/(\vert v_x\vert + c_s)$ and its $y$, $z$ analogues,
   times $\nu \in (0,1)$ (Almgren et al. 2010, §5.1, eqs. 23–24).
 * PLUTO: the largest directional advective rate plus a sum of diffusive
   rates (eq. 23, above).
@@ -529,7 +529,7 @@ above. Its 2D construction agrees with that summary and adds:
   12- and 6-solve counts quoted for Athena and PLUTO above therefore
   originate here. Colella states **no Courant limit** for either 3D
   variant: the pairing of 12 solves with $\nu \le 1$ and of 6 with
-  $\nu \le 1/2$ is Stone et al.'s (2008), who cite Saltzman (1994) for the
+  $\nu \le 1/2$ is Stone et al.'s (2008) (refined in batch 9: first printed by [Gardiner & Stone (2008)](/sources/gardiner-2008.md)), who cite Saltzman (1994) for the
   full scheme; Colella cites Saltzman & Colella only for Lagrangian grid
   motion. Which variant to use is "undoubtedly problem dependent".
 * **Cost** (§6, p. 198). Twice the Riemann solves of the split algorithm
@@ -577,6 +577,78 @@ and thickness of the waves (§7.2). Fig. 22 lists unsplit PPM "for
 illustrative purposes only; they are not present in the current version".
 This adds a split-scheme data point to Split schemes still in use, above.
 
+## Later uses (batch 9)
+
+### 3D CTU+CT in its primary source
+
+[Gardiner & Stone (2008)](/sources/gardiner-2008.md) is the 3D scheme
+summarized under "Athena 3D" above. It agrees with that summary in
+substance and adds or refines the following.
+
+* **Who pairs the solve counts with the Courant limits.** The 12-solve
+  CTU (after Colella 1990, Saltzman 1994 and Miller & Colella 2002) is
+  "optimally stable for CFL numbers ≤ 1" (§4.1); the 6-solve variant is
+  "stable for CFL < 1/2", a strict bound found experimentally, with no
+  proof (§4.2). The pairing is therefore printed first by Gardiner & Stone
+  (2008) and restated by Stone et al. (2008), who cite them. This refines
+  the batch-8 statement that the pairing "is Stone et al.'s (2008)"; the
+  point that Colella (1990) prints no Courant limit for either 3D variant
+  stands.
+* **Whose words.** The phrases "as accurate as the twelve-solve method"
+  and "dramatically simpler to implement" quoted under "Athena 3D" are
+  Stone et al.'s (2008) characterization of Gardiner & Stone. Gardiner &
+  Stone themselves write that both variants are "accurate and robust for
+  approximately the same computational cost" and prefer the 6-solve one
+  "as a result of its simplicity and smaller memory footprint" (§6). Two
+  6-solve steps at a Courant number of 1/2 cost about one 12-solve step at
+  1 (§4.2).
+* **The 12-solve scheme for MHD** (§4.1, eqs. 21–34). Each interface state
+  is first advanced by $\Delta t/3$ of a single transverse flux gradient,
+  then by $\Delta t/2$ of the transverse gradients built from those cross
+  fluxes. As written it is not a useful MHD method: parallel gradients
+  enter in primitive form and transverse ones in conservative form, so the
+  MHD source terms are dropped and the result is formally first order, with
+  secular field evolution in the field-loop test. The authors implemented
+  the corrections but do not print them.
+* **The 6-solve scheme** (§4.2, eqs. 35–50), in six steps: PPM interface
+  states with multidimensional induction terms and Riemann fluxes; edge
+  EMFs; a $\Delta t/2$ transverse correction with source terms; Riemann
+  fluxes at $t^{n+1/2}$; edge EMFs at $t^{n+1/2}$, with a cell-centre
+  reference EMF from face-averaged $\mathbf B$ and from $\rho$, $\rho\mathbf v$
+  after a conservative $\Delta t/2$ update with the first fluxes (eq. 48);
+  the full update. It reduces exactly to 2D CTU and to 1D PPM under the
+  corresponding symmetry.
+* **Where minmod enters.** In two places, not one. (i) The characteristic
+  interface-state step adds limited transverse induction terms, e.g. for
+  the $x$ interface
+  $\partial_tB_y + \partial_x(v_xB_y) - B_x\partial_xv_y - v_y\,\mathrm{minmod}(\partial_xB_x,\ -\partial_yB_y) = 0$
+  (eqs. 15–20). (ii) The $\Delta t/2$ transverse correction adds limited
+  source terms to the energy and to the transverse field components
+  (eqs. 39, 43, 46). The momentum source $\mathbf B\,\partial_xB_x$ is
+  **not** limited (eq. 38), and the interface-normal field needs no source
+  term: it is advanced by a loop of edge EMFs (eq. 40).
+* **Corner EMF.** No new 3D EMF is defined: both variants reuse the
+  contact-upwinded EMF of [Gardiner & Stone (2005)](/sources/gardiner-2005.md)
+  (§4 intro); see [constrained transport](/methods/constrained-transport.md).
+* **Accuracy and the Courant number** (§5.2–5.3, §6). On 3D linear waves
+  both variants converge at second order for all four families, the
+  6-solve with lower errors except for the slow wave; on the circularly
+  polarized Alfvén wave the 12-solve run at Courant number 0.4 matches the
+  6-solve one, and at 0.8 its travelling-wave error is slightly lower and
+  its standing-wave error higher. The authors attribute the dominant error
+  difference to the Courant-number dependence of the truncation error.
+* **Time step.** No time-step formula and no Courant number for the
+  6-solve runs are printed; eq. 95 of Stone et al. (2008) (Time-step
+  definitions, above) has no counterpart here.
+* **Low β in 3D.** The 3D adiabatic blast wave at ambient plasma beta 0.02
+  runs robustly with the 6-solve CTU+CT to $t = 0.02$ (§5.5; see
+  [MHD blast wave](/benchmarks/mhd-blast-wave.md)). Cholla's 3D VL+CT
+  instability at the same beta (Van Leer + CT in Cholla, above) concerns a
+  different integrator, so this is a further qualification, not a
+  contradiction.
+* **Scope.** Static and adaptive refinement with these integrators are
+  deferred to a future paper (§6).
+
 ## Contradictions
 
 * **Is RK2 with $\nu = 1$ stable in 3D?** *Open.*
@@ -622,3 +694,4 @@ This adds a split-scheme data point to Split schemes still in use, above.
 17. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 2.1, 3.1, 3.3.1, 4.1–4.3, 5.4, 5.6, 6, eqs. 25–33, 52, 57–78 (arXiv v1).
 18. [Colella (1990)](/sources/colella-1990.md), §§1–6, eqs. 1.2–1.6, 2.5–2.17, 4.7–4.10, Figs. 9–10.
 19. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.2, 7.2, Fig. 22.
+20. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §§1, 3.1, 4.1–4.2, 5.2–5.5, 6, eqs. 15–50.

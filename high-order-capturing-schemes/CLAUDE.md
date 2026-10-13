@@ -171,6 +171,13 @@ to another bundle.
 
 ## Status
 
+**Batch 17 (frontier 4a) staged 2026-10-13:** dedner-2002, toth-2000,
+colella-1990, evans-1988, zachary-1994, dai-1998, copied from sibling
+archives (D17); 131 sources. New page methods/corner-transport-upwind. No
+contradiction opened; the parallel-force entry gains Dedner et al.'s eq. 22
+on the plus side and stays Open (human's fiat pending). Key blandford-1982
+repaired (now blandford-1976). Deep lint: 7 ingestions since the batch-16 lint.
+
 **Code record staged 2026-10-13:** zaghi-2026, a frozen capture of ADAM
 FLUME kernels (D12 amendment), recording implicit evidence for the plus
 sign in the Open parallel-force entry; the entry and the cut-cell entry

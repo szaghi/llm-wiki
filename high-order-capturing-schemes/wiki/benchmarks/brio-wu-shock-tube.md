@@ -139,6 +139,8 @@ Rotated versions and other MHD Riemann problems are collected on
   §6). This is the origin, at $\gamma = 2$, of the observation credited to
   Ryu & Jones in the batch-7 block, who make it at $\gamma = 5/3$.
 
+**Later uses (batch 17).** Gaussian-scaled data ($B_x = 0.75\sqrt{4\pi}$, $B_y = \pm\sqrt{4\pi}$), $\gamma = 2$, 800 points, 400 steps, with a split second-order Godunov scheme and a linearized Engquist–Osher solver: "excellent agreement", sharp shocks. The strong variant ($B_x = 0$, left pressure 1000) is run at $\gamma = 5/3$ on 200 points for 100 steps: "we could solve this problem with a $\gamma \ne 2$, while the Brio and Wu solver could not" ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.1, Figs. 3–4).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 4, Figs. 2–4.
@@ -151,3 +153,4 @@ Rotated versions and other MHD Riemann problems are collected on
 8. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.5.
 9. [Brio & Wu (1988)](/sources/brio-1988.md), §§V–VII, Figs. 2–9.
 10. [Dai & Woodward (1994)](/sources/dai-1994.md), p. 368, Tables IVa–b, §6.
+11. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.1, Figs. 3–4.

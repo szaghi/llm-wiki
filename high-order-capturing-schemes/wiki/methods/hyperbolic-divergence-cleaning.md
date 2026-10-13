@@ -233,6 +233,77 @@ details on [constrained transport](/methods/constrained-transport.md)).
   conservative (eq. 9), where the Godunov–Powell system has sources in
   momentum, induction and energy.
 
+**Later uses (batch 17).** *The origin*
+([Dedner et al. (2002)](/sources/dedner-2002.md), §§2–6).
+* *A family of cleanings.* $\psi_{\mathrm{GLM}}$ enters the induction flux
+  as $\psi_{\mathrm{GLM}}\mathsf I$ and is tied to Gauss's law by a linear
+  operator. Setting it to zero gives the Brackbill–Barnes projection;
+  $\psi_{\mathrm{GLM}}/c_p^2$ gives parabolic cleaning, rejected because an
+  explicit scheme limits $c_p$ by stability;
+  $c_h^{-2}\partial_t\psi_{\mathrm{GLM}}$ gives purely hyperbolic cleaning;
+  their sum is the mixed form above (eqs. 12–19). The system above, the
+  telegraph equation, the conservation of $\rho$, $\rho\mathbf v$,
+  $\mathbf B$ and $E$, the nine waves and the $\pm c_h$ modes that alone
+  carry jumps in $B_x$ and $\psi_{\mathrm{GLM}}$ are all in the 2002 paper
+  (eqs. 17–19, §3, p. 653). The face states $B_x^*$, $\psi^*_{\mathrm{GLM}}$
+  of the CTU-GLM paragraph are its eq. 42, with the flux
+  $(\psi^*_{\mathrm{GLM}}, c_h^2B_x^*)$ added to any MHD flux that takes
+  $B_x^*$ as its normal field (eq. 43), on unstructured triangles.
+* *The time-step-tied $c_h$ originates here.* $c_h$ is $\nu$ times the
+  smallest triangle height over $\Delta t$, uniform over the grid, "the
+  maximal value which is compatible with" the time step, so it is
+  recomputed every step (§4, eq. 40, p. 656). The rule the Mignone papers
+  use is therefore Dedner's.
+* *Damping and the value 0.18.* The exact split step
+  $\psi_{\mathrm{GLM}} \leftarrow \psi_{\mathrm{GLM}}\,e^{-\Delta t\,c_h^2/c_p^2}$,
+  "unconditionally stable", is eqs. 44–45. Three ways to set $c_p$ are
+  offered: a constant $c_p$, whose optimum "significantly depends on the
+  grid size and the scheme used"; a fixed per-step factor
+  $e^{-\Delta t\,c_h^2/c_p^2}$ (eq. 46); and a fixed $c_p^2/c_h$, with
+  which the results are "quite independent of the grid resolution and the
+  scheme used". Only the last is run. Its value "about 0.18" is the
+  optimum for one test, an advected peak in $B_x$ on $[-0.5, 1.5]^2$ with
+  the Dai–Woodward flux, "independent of the grid resolution and the order
+  of the scheme" (§5, p. 661, Fig. 2). No unit is discussed. In the
+  registry's terms the paper fixes $C_rL_{\mathrm{GLM}} = 0.18$ in the
+  problem's length unit, not $L_{\mathrm{GLM}} = \min_d h_d$ (compiler's
+  reading).
+* *EGLM, as printed.* The two sources quoted above are eqs. 24b and 24d;
+  the induction equation has none (eq. 24c). They come from writing the
+  Lorentz force of the GLM–Maxwell system as
+  $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right) - (\nabla\cdot\mathbf B)\mathbf B$
+  (eq. 22, p. 651) and keeping the second term, which "usually … is
+  dropped". A Galilean-invariant variant (eq. 38) adds
+  $-(\nabla\cdot\mathbf B)\mathbf v$ to the induction,
+  $-(\nabla\cdot\mathbf B)\,\mathbf v\cdot\mathbf B$ to the energy and
+  $-\mathbf v\cdot\nabla\psi_{\mathrm{GLM}}$ to the cleaning equation, and
+  moves the cleaning waves to $v_x \mp c_h$; it "is no longer
+  conservative". The EGLM model of [Zaghi (2026)](/sources/zaghi-2026.md)
+  has the $\nabla\cdot\mathbf B$ sources of eq. 38, not of eq. 24
+  (compiler's comparison), so "EGLM" names different source sets.
+* *Mixed GLM is recommended over EGLM.* "We have observed a significant
+  loss of conservation caused by hyperbolic source terms, which are not
+  present in the mixed GLM formulation. Thus we recommend using the mixed
+  GLM scheme" (§6). EGLM also shows "some problems with the intermediate
+  states, which are not present in the GLM case" (p. 664). This qualifies
+  the robustness of EGLM reported above: Dedner's tests are on adaptive
+  triangles and include no strongly magnetized low-β case (the
+  Kelvin–Helmholtz run has $p = 50$, $B_x = 1$), the regime where Mignone
+  and Tzeferacos and Tomida et al. found the sources useful.
+* *Orders* (Table II, colliding-flow Riemann problem, first-order
+  Dai–Woodward flux, $L^1$ errors on a cut): mixed GLM falls from 6.455 on
+  1,024 to 0.228 on 1,048,576 elements, with EOC 1.061, 0.875, 0.804,
+  1.069, 1.014; mixed EGLM is within 5% of it; Powell's source terms give
+  EOC 0.880, 0.622, 0.432 and no solution on the two finest grids
+  ([grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md)).
+* *Divergence.* Across the tests, mixed GLM and mixed EGLM have the smallest
+  maximum face-jump divergence; on a 2D Riemann problem the GLM variants'
+  errors are "at least 50% smaller" than without correction or with
+  source terms, and the uncorrected and source-term runs need at least 50%
+  more time on the adaptive grid (§5).
+
+* *The counts in the CTU-GLM paragraph.* The 6-solve count is Colella's reduced 3D variant without corner coupling, and the 3D limit of 1/2 is Mignone and Tzeferacos's: [Colella (1990)](/sources/colella-1990.md) (§6) states no 3D Courant limit; his full 3D CTU needs 12 solves ([corner transport upwind](/methods/corner-transport-upwind.md)).
+
 ## Contradictions
 
 **Should the cleaning speed follow the time step?** *Open.*
@@ -269,6 +340,16 @@ details on [constrained transport](/methods/constrained-transport.md)).
   side is supported on its own tests. Whether the time-step-tied choice is
   acceptable for runs with a smooth time-step history is not settled by
   either.
+* *Batch 17, the originator (a qualification, not a resolution).*
+  [Dedner et al. (2002)](/sources/dedner-2002.md), §4, eq. 40, p. 656,
+  define $c_h$ as the largest value the time step allows, recomputed every
+  step, and run it on dynamically adapted triangular grids (shock
+  reflection, 2D Riemann problem, Kelvin–Helmholtz) with smaller
+  divergence errors than without cleaning and no failure. The time step
+  is a global minimum over the grid. The paper reports no abrupt drop of
+  $\Delta t$, no constant-$c_h$ run and no comparison with constrained
+  transport, so it is evidence of the same scope as Mignone's and does
+  not test Tomida et al.'s failure case.
 
 **Is constrained transport or cleaning the more robust?** *Open* (recorded
 at the batch-8 deep lint; both sides were already in the text).
@@ -333,6 +414,30 @@ at the batch-8 deep lint; both sides were already in the text).
   $\mathbf B$, the sign Brackbill & Barnes print. The code never states the
   sign (compiler's reading of its flux and source); its plain GLM model
   adds no momentum source and keeps the parallel force.
+* *Batch 17, two peer-reviewed sources for the plus sign (printed
+  identity, projection not printed).*
+  [Dedner et al. (2002)](/sources/dedner-2002.md) print, as eq. 22
+  (p. 651, checked on the page image),
+  $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right) - (\nabla\cdot\mathbf B)\mathbf B$,
+  and their EGLM momentum equation (eq. 24b) keeps the conservative
+  Maxwell-stress flux with the source $-(\nabla\cdot\mathbf B)\mathbf B$.
+  Since $(\nabla\times\mathbf B)\times\mathbf B$ is orthogonal to
+  $\mathbf B$, the conservative force has the component
+  $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$ along $\mathbf B$, the sign
+  Brackbill & Barnes print; the one-line projection is the compiler's,
+  Dedner et al. do not write it. [Tóth (2000)](/sources/toth-2000.md)
+  prints the eight-wave momentum equation the same way, conservative flux
+  with the source $-(\nabla\cdot\mathbf B)\mathbf B$ (eq. 11, read from
+  the text layer), credits all the source terms to Brackbill & Barnes,
+  and names acceleration "parallel to the field lines" as the usual
+  unphysical effect (§1.1); he states neither the sign nor that the
+  source is meant to cancel that component, so eq. 11 implies the plus
+  sign only on that reading. Appendix A proves that no conservative scheme
+  keeps the discrete Lorentz acceleration exactly orthogonal to
+  $\mathbf B$ in every cell. *Status stays Open:* both papers predate
+  Derigs et al. (2018) and cannot supersede it; closing the entry still
+  needs a source that addresses Derigs et al.'s printed sign, or the
+  human's fiat.
 
 # Citations
 
@@ -347,3 +452,6 @@ at the batch-8 deep lint; both sides were already in the text).
 9. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.
 10. [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430 (read from page images).
 11. [Zaghi (2026)](/sources/zaghi-2026.md), key claims 1–4 (frozen capture at commit 4a3a0815).
+12. [Dedner et al. (2002)](/sources/dedner-2002.md), §§2–6, eqs. 12–24, 38, 40–46, Table II (eqs. 22 and 24 checked on the page image).
+13. [Tóth (2000)](/sources/toth-2000.md), §§1.1, 3, Appendix A.
+14. [Colella (1990)](/sources/colella-1990.md), §6.

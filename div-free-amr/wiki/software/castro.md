@@ -57,7 +57,10 @@ predecessor of [AMReX](/software/amrex.md)
 The code has no MHD and no divergence constraint. It enters this bundle
 for its AMR synchronization of an elliptically coupled field.
 
+**Corner coupling.** The unsplit corner-coupled framework is [Colella (1990)](/sources/colella-1990.md)'s [CTU](/methods/corner-transport-upwind.md), built on piecewise-linear slopes; Colella names PPM interpolants a straightforward extension without implementing them (§6, p. 198).
+
 # Citations
 
 1. [Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 5–8 (arXiv:1005.0114v1).
 2. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), Introduction, §§2, 4, eq. 1.10.
+3. [Colella (1990)](/sources/colella-1990.md), §6, p. 198.

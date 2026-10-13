@@ -78,8 +78,7 @@ The related free-fall time is
 $t_{\mathrm{ff}} = \sqrt{3\pi/(32G\rho)}$
 ([Federrath et al. (2010)](/sources/federrath-2010.md), eq. 1).
 
-The original Truelove et al. (1997) paper is not in the archive; the
-condition is recorded here as the ingested sources state it.
+The condition above is recorded as later sources state it; the original, [Truelove et al. (1997)](/sources/truelove-1997.md), is summarized in Later uses (batch 5).
 
 ## Later uses (batch 4)
 
@@ -128,7 +127,7 @@ condition is recorded here as the ingested sources state it.
 ## Later uses (batch 5): the original paper
 
 The original, [Truelove et al. (1997)](/sources/truelove-1997.md), is now
-ingested; the line above saying it is not in the archive is out of date.
+ingested.
 * **What it states.** The Jeans number is the cell size over
   $\lambda_{\mathrm J}$, i.e. $1/N_{\mathrm J}$ (eq. 2). Keeping it at or
   below 0.25 ($N_{\mathrm J} \ge 4$) "avoids the growth of numerical
@@ -177,7 +176,7 @@ ingested; the line above saying it is not in the archive is out of date.
   each spatial point and at all times during the calculation", as "a
   valid constraint for any calculation made with a code employing
   multiple grids or rezoning", restricted only to isothermal gas
-  ([Truelove et al. (1997)](/sources/truelove-1997.md), §2). The original's
+  ([Truelove et al. (1997)](/sources/truelove-1997.md), §2). *Compiler note, not a source claim:* The original's
   mechanism acts only where gas is Jeans-unstable, which makes Federrath
   et al.'s reading defensible, but their "by definition" is not the
   original's definition.

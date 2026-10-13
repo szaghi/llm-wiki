@@ -2,6 +2,51 @@
 
 ## 2026-10-13
 
+* **Frontier batch 4a: ingested [Colella (1990)](/sources/colella-1990.md),
+  [Dai & Woodward (1994)](/sources/dai-woodward-1994.md),
+  [Harten (1983)](/sources/harten-1983.md), [Roe (1981)](/sources/roe-1981.md),
+  [Shu & Osher (1988)](/sources/shu-osher-1988.md),
+  [Shu & Osher (1989)](/sources/shu-osher-1989.md),
+  [Harten, Lax & van Leer (1983)](/sources/harten-lax-vanleer-1983.md) and
+  [Sod (1978)](/sources/sod-1978.md)**, the bundle's most-cited works not yet
+  ingested whose PDFs sat in sibling archives, copied into this bundle's
+  archive (D17); 117 sources. Shu & Osher (1988) read as ICASE Report 87-33.
+  * **New pages:** [corner transport upwind](/methods/corner-transport-upwind.md),
+    [Roe's solver](/methods/roe-solver.md), [HLL solver](/methods/hll-solver.md),
+    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md),
+    [total variation diminishing](/properties/total-variation-diminishing.md),
+    [Sod shock tube](/benchmarks/sod-shock-tube.md).
+  * **Updated:** [PPM](/methods/ppm.md) (the unsplit framework is Colella's 1990
+    CTU), [WENO](/methods/weno.md) (the flux form, the ENO splittings and the
+    integrators traced to Shu & Osher; local Lax–Friedrichs splitting is their
+    ENO-LLF), [eight-wave](/methods/eight-wave.md) (Dai & Woodward's nonlinear
+    solver; arithmetic averages lose Roe's property U),
+    [rotated shock tube](/benchmarks/rotated-shock-tube.md) (only four of the
+    five "DW" problems are in the published 1994 paper; a stray tab in
+    $8\times8$ repaired), [upwind CT](/methods/upwind-constrained-transport.md)
+    (what HLL proves and does not), [constrained transport](/methods/constrained-transport.md),
+    [CASTRO](/software/castro.md), and the Source pages of Jiang & Shu (1996),
+    Mignone, Tzeferacos & Bodo (2010), Ryu, Jones & Frank (1995), Ryu & Jones
+    (1995), Brio & Wu (1988), Gardiner & Stone (2008) and Miniati & Martin
+    (2011) (attributions checked against the new primary sources: Harten has
+    no rotational steepener; the flux primitive is Shu & Osher 1989; Roe calls
+    his first construction "far from unique").
+  * **No contradiction opened.** Qualifications instead: Sod's $\gamma$ is 1.4,
+    Brio & Wu's 2; Dai & Woodward find the Brio–Wu data admit a solution without
+    the compound wave ("does not have a unique solution"); classical RK4 is TVD
+    only with a downwinded operator. *Compiler reading* recorded on the rotated
+    shock tube and Ryu & Jones pages: the seventh Ryu–Jones state entry is a
+    pressure, not a total energy.
+  * **Bibliography** (3779 entries): 171 references merged. Keys renamed to the
+    slugs (shu-1988, shu-1989, harten-lax-1983); the Shu & Osher DOIs corrected
+    (hyphen missing; Crossref). Roe's 1980 ICNMFD paper is the new roe-1981-b
+    (Lecture Notes in Physics 141:354); Harten's ICASE 87-56 is harten-1989
+    (NTRS 19870018924); Rusanov cited in the 1962 English translation merged
+    into rusanov-1961 (Crossref). Correction: Tóth (2000) ref. 10 prints the
+    title of Dai & Woodward's PPM paper with the venue of their Riemann-solver
+    paper; its citation moved from dai-woodward-1994 to dai-woodward-1994-b
+    (title and in-text use).
+
 * **Deep lint #10** (13 ingestions since #9: the three frontier batches).
   Two read-only audits (concept pages; Source pages and every
   `Contradictions` entry), fixes applied with checks against the PDFs:

@@ -9,7 +9,7 @@ year: 2008
 venue: "J. Comput. Phys. 227:4123-4141"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712017.pdf"
 tags: [constrained-transport, ctu, unsplit, godunov, ppm, production-code, mhd]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -51,6 +51,8 @@ in detail.
    from the CT camp.
 5. **6-solve vs 12-solve**: the economical variant halves the Riemann
    solves per zone per step; trade-offs assessed on a 3D test suite.
+
+**Origin of the two variants.** Both counts are printed in [Colella (1990)](/sources/colella-1990.md) §6 (p. 199): 12 Riemann solutions per zone per step for the 3D analogue of CTU that keeps all three of his design criteria, 6 when the maximum principle is relaxed with donor-cell-type transverse predictors ([CTU](/methods/corner-transport-upwind.md)).
 
 # Notation map
 

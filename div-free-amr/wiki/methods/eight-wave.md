@@ -221,6 +221,29 @@ the regularity paragraph below); this is the normalization
 zero eigenvalue and no divergence wave: in 1D the constraint is just a
 constant normal field (§§II, IV).
 
+**A nonlinear solver for the same system.**
+[Dai & Woodward (1994)](/sources/dai-woodward-1994.md) solve the 1D MHD
+Riemann problem on the same seven-wave system, in a Lagrangian mass
+coordinate: the normal field "is a constant" with no evolution equation
+(p. 356), and the solver has no provision for a jump of the normal field
+across the interface. All seven waves are treated as jump-condition
+discontinuities, so the solver is exact without rarefactions (p. 366).
+The degenerate cases (zero transverse field, zero normal field) get
+separate formulas (pp. 358, 362–365). Where wave speeds coincide, the
+non-uniqueness Brio & Wu found is left to added dissipation: "it must be
+the responsibility of the programmer to add appropriate physical and/or
+numerical dissipation terms" (p. 359). For the Brio–Wu data they find a
+solution with a rotational discontinuity in place of the compound wave
+and conclude that the problem "does not have a unique solution" (p. 368;
+[rotated shock tube](/benchmarks/rotated-shock-tube.md)). The paper has no
+multidimensional content. *Compiler reading:* a solver of this kind is
+what [Balsara (2004)](/sources/balsara-2004.md) calls ill-defined when
+the normal field jumps at a face (below);
+[Powell (1994)](/sources/powell-1994.md) names Dai–Woodward among the
+earlier upwind schemes that keep the normal field constant.
+
+**Roe-type, not Property U.** An arithmetic-average interface state is among the candidates that [Roe (1981)](/sources/roe-1981.md) says "in general" fail the exact jump identity (p. 359), so the solver is Roe-type in its wave decomposition only ([Roe's approximate Riemann solver](/methods/roe-solver.md)).
+
 **The normalization the eight-wave solver uses.**
 [Roe & Balsara (1996)](/sources/roe-balsara-1996.md) rescale the fast and
 slow eigenvectors of the same seven-wave system so that each right–left
@@ -341,3 +364,5 @@ requirement.
 16. [Ryu & Jones (1995)](/sources/ryu-jones-1995.md), §§2.1–2.2, eqs. 2.6, 2.10–2.16, 2.21–2.74.
 17. [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md), §§2.2–2.4.
 18. [Roe & Balsara (1996)](/sources/roe-balsara-1996.md), abstract, pp. 57, 60–61, 64–66, eqs. 7–9, 15, §§4, 6.
+19. [Dai & Woodward (1994)](/sources/dai-woodward-1994.md), §§2–6, pp. 356–368.
+20. [Roe (1981)](/sources/roe-1981.md), p. 359.

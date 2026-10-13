@@ -19,7 +19,7 @@ cylindrical or spherical geometry (§2), which with a remap onto the fixed
 mesh is the **two-step (Lagrange-plus-remap) Eulerian** scheme, an
 approach the paper credits to Noh; and a **single-step (direct)
 Eulerian** scheme (§3). Its verification is in the companion paper,
-Woodward & Colella (1984), not ingested here. Below, all statements
+[Woodward & Colella (1984)](/sources/woodward-1984.md), ingested in batch 9. Below, all statements
 without another citation are from Colella & Woodward (1984).
 
 ## Reconstruction
@@ -69,12 +69,11 @@ toward the edges of the limited linear profiles of the two neighbouring
 cells, with a weight between 0 and 1 that grows with a normalized third
 derivative. It is nonzero only where the second derivative changes sign,
 the first and third derivatives have opposite signs and the jump exceeds
-a relative threshold of 0.01; the two weight coefficients are 20 and 0.05
-in Woodward & Colella (p. 181). It runs just before the monotonicity step;
+a relative threshold of 0.01; the two weight coefficients are 20 and 0.05, stated by Colella & Woodward (p. 181) as the values of the companion runs; [Woodward & Colella (1984)](/sources/woodward-1984.md) do not print them. It runs just before the monotonicity step;
 if it fires in smooth flow "the scheme remains second-order accurate"
 (p. 180). In gas dynamics it acts **on density only and only at
 contacts**: a cell qualifies when $\gamma$ times a problem-dependent
-constant (0.1 in Woodward & Colella) times
+constant (0.1, likewise stated by Colella & Woodward as the companion runs' value) times
 $\vert\rho_{i+1} - \rho_{i-1}\vert/\min(\rho_{i+1}, \rho_{i-1})$ is at
 least $\vert p_{i+1} - p_{i-1}\vert/\min(p_{i+1}, p_{i-1})$ (eq. 3.2). The
 pure Lagrangian scheme does without it ("contact discontinuities
@@ -161,10 +160,10 @@ not recommended" (pp. 200–201).
 
 **Diffusive flux** (eqs. 4.2–4.5). A term proportional to $u_i - u_{i+1}$
 is added to $\hat f_{i+1/2}$ with coefficient
-$K\max(v_{x,i} - v_{x,i+1}, 0)$ in 1D, akin to Lapidus; in multi-D an
+$K_{\mathrm{Lap}}\max(v_{x,i} - v_{x,i+1}, 0)$ in 1D, akin to Lapidus; in multi-D an
 undivided-difference $-\nabla\cdot\mathbf v$ replaces the velocity jump,
 to detect shocks transverse to the sweep. Single-step Eulerian PPM used
-$K = 0.1$, MacCormack's method $K = 1$ (p. 196). Alternatively the grid
+$K_{\mathrm{Lap}} = 0.1$, MacCormack's method $K_{\mathrm{Lap}} = 1$ (p. 196). Alternatively the grid
 oscillates by the same amount on alternate steps, adding only the
 advection scheme's own dissipation (eq. 4.3).
 
@@ -393,7 +392,7 @@ PROMETHEUS:
   of a split sweep (§§2, 3.2); this agrees with Castro's count and not
   with Enzo's three (Ghost cells, above).
 * **Diffusion.** The Lapidus multidimensional viscosity has "Typically a
-  coefficient of 0.1", the value of $K$ in single-step Eulerian PPM; it is
+  coefficient of 0.1", the value of $K_{\mathrm{Lap}}$ in single-step Eulerian PPM; it is
   "not required to stabilize shocks" and reduces stair-casing of diagonal
   shocks (§3.2).
 * **Splitting.** The diagonal Sod tube shows "slightly larger oscillations
@@ -417,6 +416,70 @@ only 1D flattening per sweep (pp. 197–198): an early statement that 1D
 flattening is not enough in multiple dimensions, the finding that Quokka
 reports (Flattening conventions, above).
 
+## Later uses (batch 9)
+
+### The verification paper
+
+The companion paper that the opening paragraph names,
+[Woodward & Colella (1984)](/sources/woodward-1984.md), is now ingested.
+It runs PPM in both forms, Lagrange-plus-remap (PPMLR) and direct
+Eulerian (PPMDE), against five other schemes on the
+[interacting blast waves](/benchmarks/interacting-blast-waves.md), the Mach 3
+step and the [double Mach reflection](/benchmarks/double-mach-reflection.md).
+
+* **Detector constants.** The contact-steepening coefficients 20 and 0.05
+  and the constant 0.1 in the contact test, credited to "Woodward &
+  Colella (p. 181)" in this page's batch-6 text (corrected at deep lint #4), are not printed in Woodward & Colella (1984): page 181
+  belongs to Colella & Woodward (1984), which states them as the values of
+  the companion runs (see the [Colella & Woodward (1984)](/sources/colella-1984.md)
+  Source page). The only coefficient 0.1 the verification paper prints for
+  PPM is that of the Lapidus viscosity in PPMDE (pp. 141, 156). The
+  attribution of the detector constants therefore rests on Colella &
+  Woodward's statement, not on the verification paper.
+* **Lapidus viscosity and shock broadening** (§Vc, p. 141). Slowly moving
+  strong shocks are broadened to "about 2 zone widths in the worst cases"
+  to prevent post-shock oscillations of "about 1 to 2%". Flattening plus a
+  Lapidus viscosity of coefficient 0.1, a tenth of the coefficient used with
+  MacCormack in 2D, gives a diffusive error in smooth flow that is
+  "third-order small"; oscillating ("jiggling") the remap grid instead gives
+  "fifth-order small". This agrees with $K_{\mathrm{Lap}} = 0.1$ for single-step Eulerian
+  PPM and with the grid oscillation of eq. 4.3 under Diffusive flux, above,
+  and with FLASH's "Typically a coefficient of 0.1" (batch 8).
+* **Stationary strong shocks** (Figs. 7a, 7e, 8, pp. 155–156). Noise is
+  emitted where a slowly moving, grid-aligned strong shock moves from one
+  zone column to the next, in Godunov and single-step MUSCL; the cure in
+  PPM is extra dissipation that broadens such shocks slightly — flattening
+  plus jiggling in PPMLR, flattening plus Lapidus viscosity in PPMDE. This
+  qualifies the "Unsolved case" above, where Colella & Woodward state that
+  no flattening removes the errors: the verification runs add dissipation
+  beyond flattening.
+* **Riemann iterations** (pp. 141–142). Colella's approximate solver,
+  which treats rarefactions as rarefaction shocks, needs at most two Newton
+  iterations ("more than two iterations are never required"), one except
+  for very strong shocks, two in the blast-wave problem. Colella & Woodward's
+  Fig. 8 found "very large errors" with two iterations behind a nearly
+  stationary, extremely strong shock. Different tests: a qualification,
+  like the FLASH note in batch 8.
+* **Lagrange-plus-remap against direct Eulerian** (§VII, pp. 157,
+  167–168). PPMDE and PPMLR are equivalent in accuracy and cost, which the
+  authors tie to the PPM remap being one order more accurate than the
+  Lagrangian step ("a remap be performed with one extra order of accuracy
+  over the Lagrangian step"); MUSCL and Godunov show no such equivalence.
+  Lagrange-plus-remap suits multifluid problems, the single-step form
+  "complicated spatially dependent source terms". On the Mach 3 step PPMLR
+  takes 18 % more time than PPMDE.
+* **Measured accuracy.** On the interacting blast waves only PPM converges
+  about as fast as $h$ (finest-pair rates 1.07 for PPMDE and 0.98 for
+  PPMLR; all others below 0.86), and matching the 200-zone PPMLR accuracy
+  costs 1.6 to 13.5 times more CPU time with the other schemes (Table I,
+  p. 146). PPM ranks first by accuracy on a given grid and by accuracy per
+  CPU second (§VII). On the double Mach reflection PPM costs 20 % more per
+  run than MUSCL and is more efficient than BBC and MacCormack by factors
+  above 4.4 and 1.2.
+* **Cost per zone** (§VII, p. 167). MacCormack is "about 6 times faster
+  than PPM" per zone; hybridizing PPM with simple difference equations in
+  smooth zones gains "a factor of two" on a CRAY-1 (p. 123).
+
 ## Contradictions
 
 **Order of the interface interpolation on a non-uniform mesh.** *Open.*
@@ -425,12 +488,9 @@ reports (Flattening conventions, above).
   cumulative integrals, with limited slopes) is "third-order accurate for
   variable mesh spacing, even where the mesh spacing changes
   discontinuously" (Interface value, above).
-* [Fryxell et al. (2000)](/sources/fryxell-2000.md), §3.1.1, eqs. 20–26:
-  the same interpolation, a cubic with the correct zone averages
-  (eqs. 20–24) whose average slope is limited as in MUSCL (eq. 26), has
-  "fourth-order accuracy", and "The above
-  equations retain their fourth-order accuracy even in the presence of
-  nonuniform zoning."
+  *Compiler note, not a closure:* Colella & Woodward's statement follows their switch to limited slopes (eq. 1.8); in smooth monotone regions the limited and unlimited values coincide, so the two orders still conflict there.
+* [Woodward & Colella (1984)](/sources/woodward-1984.md), p. 165: "the PPM remap is formally third-order accurate" (restated on pp. 167–168 as "the third-order accuracy of the PPM remap step"; about the remap, not the interface value alone).
+* [Fryxell et al. (2000)](/sources/fryxell-2000.md), §3.1.1, eqs. 20–24 (before the limiter of eq. 26 is introduced): the cubic with the correct zone averages has "fourth-order accuracy", and "The above equations retain their fourth-order accuracy even in the presence of nonuniform zoning."
 * Both statements concern the same interpolant on non-uniform meshes and
   state different orders. Neither paper measures the error. The entry
   closes when a source derives or measures the order on a non-uniform
@@ -454,3 +514,4 @@ reports (Flattening conventions, above).
 14. [Porth et al. (2019)](/sources/porth-2019.md), §6, Table 1, App. A (arXiv v2).
 15. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§2, 3–3.2, 7.2, eqs. 25–26, 37–53.
 16. [Colella (1990)](/sources/colella-1990.md), §4, eqs. 4.9–4.10, pp. 197–198.
+17. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIa, VII, Table I, Figs. 7–9, pp. 123, 141–142, 155–157, 165, 167–168.

@@ -239,7 +239,8 @@ levels is $h = 1/16$ and 9 levels $h = 1/2048$ on a unit domain (§7.5).
 5. **Woodward–Colella interacting blast waves** (§7.5, Figs. 32–33).
    Reflecting walls; reference solution at 10 levels; L1 self-convergence
    at $t = 0.038$ for 2–9 levels is "only linear", and "Woodward & Colella
-   (1984) found that only PPM achieved even linear convergence".
+   (1984) found that only PPM achieved even linear convergence"
+   ([Woodward & Colella (1984)](/sources/woodward-1984.md)).
 6. **Emery Mach 3 step** (§7.6, Figs. 34–37). No corner treatment: an
    entropy error at the corner, an artificial second Mach stem at low
    resolution, and Kelvin–Helmholtz growth behind the Mach stem that "does
@@ -256,6 +257,8 @@ levels is $h = 1/16$ and 9 levels $h = 1/2048$ on a unit domain (§7.5).
 8. **Performance** (§8): ASCI Nirvana (SGI Origin 2000), ASCI Red
    (Pentium II Xeon) and Blue Pacific (PowerPC 604e); results in claims
    21–22. No zone-cycles-per-second figure is printed.
+
+**Batch 9.** The interacting-blast-wave run now has a benchmark page, [interacting blast waves](/benchmarks/interacting-blast-waves.md); Woodward & Colella's finest-pair rates are PPMDE 1.07, PPMLR 0.98, all others ≤ 0.85 (Table I), which agrees with "only PPM achieved even linear convergence". On the Emery step, Woodward & Colella (p. 131) give a corner treatment (four plus two zones reset to the corner entropy and enthalpy) whose absence produces the numerical boundary layer and spurious Mach reflections that FLASH reports.
 
 # Notation map
 

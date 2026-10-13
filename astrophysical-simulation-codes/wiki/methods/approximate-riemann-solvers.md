@@ -417,6 +417,138 @@ Enzo entry names no origin.
 
 * **The two-shock solver in FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.1.6–3.1.7, eqs. 68–91: both waves are treated as shocks ("accurate to third order in the size of the entropy jump"). The star pressure comes from Newton–Raphson, "two to three iterations" for "reasonably strong shocks", and simple linear iteration may need 10 or more. A secant iteration with Colella & Glaz's two adiabatic indices handles a general EOS. Inside a rarefaction the state is linearly interpolated between head and foot. Interface mass fractions are clipped and renormalized (§3.1.8).
 
+## Later uses (batch 9)
+
+### Godunov's original solver: exact and iterative
+
+The solver of [Godunov's method](/methods/godunov-method.md) is exact, not
+approximate: for an ideal gas in 1D Lagrangian form, the interface pressure
+is a mean of the two pressures weighted by the left and right Lagrangian
+wave speeds, each speed taken from a shock branch (Hugoniot adiabat) or a
+rarefaction branch (adiabat and Riemann invariant) according to whether the
+current pressure iterate exceeds that side's pressure; the iteration is
+fixed-point, with a relaxed variant "if very strong rarefaction waves"
+arise, its convergence analysis omitted
+([Godunov (1959)](/sources/godunov-1959.md), Ch. II §4, eq. 8,
+pp. 287–292). This agrees with Sod's description of the exact solver as
+"Godunov's iteration as modified by Chorin", with shock and rarefaction
+branches split at a pressure ratio of 1
+([Sod (1978)](/sources/sod-1978.md), §2, eqs. 12–19). It differs from the
+two-shock solvers above, which use the shock-type wave speed on both sides
+whatever the wave (Colella & Woodward 1984, batch-6 section): Godunov's
+original switches to the rarefaction branch.
+
+### HLL as printed
+
+The two-wave solver of the HLLE / HLL section is the one-intermediate-state
+solver of [Harten et al. (1983)](/sources/harten-1983.md) (§3B(i),
+eqs. 3.13–3.16). As printed:
+* **Wave speeds.** A left and a right speed that are "lower and upper
+  bounds, respectively, for the smallest and largest signal velocity,
+  calculated according to some algorithm". Only the bounding property is
+  required; the algorithm is left open.
+* **State and flux.** One constant intermediate state, (right bound ×
+  $u^+_{i+1/2}$ − left bound × $u^-_{i+1/2}$ −
+  $(f(u^+_{i+1/2}) - f(u^-_{i+1/2}))$) over the bound difference (3.14). The
+  flux is $f(u^-_{i+1/2})$ when the left bound is positive,
+  $f(u^+_{i+1/2})$ when the right bound is negative, and otherwise (right
+  bound × $f(u^-_{i+1/2})$ − left bound × $f(u^+_{i+1/2})$ + left bound ×
+  right bound × $(u^+_{i+1/2} - u^-_{i+1/2})$) over the bound difference
+  (3.15a–b).
+* **Proved.** The intermediate state is the mean of the exact Riemann
+  solution over the fan, so the solver satisfies the entropy inequality
+  (Jensen, p. 50) and is of Godunov type; with a bound equal to the speed of
+  a single shock of the first or last family it is exact for that shock
+  (3.16).
+* **Not proved.** Positivity. The paper only cautions that schemes for
+  compressible flow must keep density and pressure positive (§1, p. 38).
+  The positivity statements on this page (Athena's "positive-definite in
+  1D", Hyperion's "positivity-preserving for one-dimensional problems")
+  come from later sources, not from the original solver.
+
+**HLLE.** The page credits Athena's HLLE to Einfeldt (1991, eq. 61) and
+names no origin of the two-wave flux. The flux itself is Harten, Lax & van
+Leer's eq. 3.15; the bounds the entry describes (the extreme Roe-matrix
+eigenvalues against the side states' speeds, eqs. 62–63) fill the part
+that Harten et al. leave open. Including zero in the bounds, as Athena and RAMSES-RT do,
+reproduces the one-sided branches of eq. 3.15a (checked at ingestion). This
+extends the HLLE entry; it does not contradict it.
+
+**GLF is HLL with symmetric bounds.** Setting the bounds to
+$\lambda^-_{i+1/2} = -\lambda_{\max}$ and $\lambda^+_{i+1/2} = +\lambda_{\max}$
+in eq. 3.15 gives
+$\hat f_{i+1/2} = \tfrac12[f(u_i) + f(u_{i+1})] - \tfrac{\lambda_{\max}}{2}(u_{i+1} - u_i)$;
+with $\lambda_{\max} = \hat c$ this is exactly RAMSES-RT's eq. 24 in the Rusanov / Lax–Friedrichs section
+(checked at ingestion), which agrees with that entry's reading.
+
+**The generic upwind form.** gPLUTO's eq. 8, the mean of the two physical
+fluxes minus half a dissipation matrix applied to the jump, is the
+representation Harten et al. introduce for every three-point conservative
+flux (§2, eq. 2.11a); a scheme is upstream when the dissipation is $\vert A\vert$
+at the mean state times the jump to leading order (eq. 2.11c).
+
+### Roe: stationary entropy violation and an MHD variant
+
+* Roe's dissipation, $\vert A\vert$ of the Roe matrix times the jump, vanishes at
+  any stationary discontinuity "whether or not the entropy condition ... is
+  satisfied", so Roe's scheme "may admit nonphysical solutions"; the fix is
+  cited to Harten & Hyman (Harten et al. 1983, §2, eq. 2.20, p. 43). Every
+  system with a convex entropy has a Roe-type linearization (Thm. 2.1,
+  proved).
+* [Ryu & Jones (1995)](/sources/ryu-1995.md) build their 1D MHD code on a
+  Roe-type linearized solver inside Harten's TVD scheme, but with
+  **arithmetic** interface averages of $\rho$, $\mathbf v$, $B_y$, $B_z$ and
+  $P^*$: Brio & Wu showed that no analytic Roe average exists for MHD with
+  $\gamma \ne 2$, and at $\gamma = 2$ "the above simple averaging would do
+  just as well" as full Roe linearization (§2.3, eqs. 2.80–2.86). Harten's
+  entropy fix replaces each $\vert\lambda^{(p)}\vert\Delta t/h$ below a
+  threshold by a parabola, with parameter 0.1 (fast), 0.2 (Alfvén), 0.1
+  (slow) and 0 (entropy) (eqs. 2.94–2.95). The eigenvectors are the Brio–Wu
+  renormalized ones, with a sign rule for continuity (eqs. 2.27–2.38,
+  2.74). This is a different route from Athena's Cargo & Gallice
+  linearization in the Roe section above.
+
+### Two intermediate states
+
+Harten et al. (1983) also give a solver with two star states separated by a
+middle speed computed from the jump of the entropy variables (§3B(ii),
+eqs. 3.17–3.33, Fig. 2). Proved: the middle speed is bounded by the extreme
+eigenvalues and equals the shock speed under Rankine–Hugoniot, so isolated
+shocks and contacts are exact (Lemma 3.2). Asserted, not proved: a flux
+correction with suitable constants gives the entropy condition (p. 54).
+The one-middle-wave, two-star-state structure is that of the HLLC solvers
+in the tables above; the paper does not use the name, and "more
+experimentation is needed" on accuracy (p. 54).
+
+### Flux-vector splitting cannot hold a stationary discontinuity
+
+Harten et al. (1983) write flux-vector splitting as the positive split flux
+of the left state plus the negative split flux of the right (§4, eq. 4.1)
+and show that "split-flux schemes" cannot resolve stationary
+discontinuities exactly, because equal physical fluxes do not imply equal
+split dissipations (eq. 4.27); "a contact discontinuity ... will keep on
+spreading with the use of any split flux scheme", from "the diffusive
+nature of the underlying Boltzmann model" (p. 60). The paper analyses the
+Steger–Warming and van Leer splittings, not the Lax–Friedrichs splitting
+that ADAM/NASTO and STREAmS use (batch-3 section); its statement is made
+for any split flux. This qualifies the flux-vector-splitting entry; no
+source in the bundle measures it on those codes.
+
+### A nonlinear MHD Riemann solver as reference
+
+Ryu & Jones (1995) check their code against a nonlinear MHD Riemann solver
+after Dai & Woodward, with fast and slow rarefactions integrated exactly
+instead of as "rarefaction shocks": eight states, Newton–Raphson with a
+numerical Jacobian on four unknowns until the jumps of $\mathbf v$ and
+$P^*$ at the contact vanish to a relative $10^{-6}$; switch-on and
+switch-off waves need a seed transverse field of about $10^{-3}$ of the
+larger one (§3). It is the reference of the Ryu–Jones shock tubes that
+Athena, Athena++, Cholla and GAMER run (Ryu & Jones 1995, §4; see the
+Source page for the states).
+
+* **The first MHD Roe solver** ([Brio & Wu (1988)](/sources/brio-1988.md), §§III–IV). An exact Roe matrix (flux-difference property 9A) exists only for $\gamma = 2$, with square-root-density averages; for other $\gamma$ the Jacobian at arithmetic averages of density, velocity, field and total pressure gives up 9A ("we are not able to solve it analytically"). Averaging the energy "may lead to a negative averaged pressure". The eigenvectors are renormalized to stay complete where the normal or the transverse field vanishes. The upwind scheme costs "about 10 times more floating point operations" per point and step than Lax–Wendroff, but is more efficient at 200 points than Lax–Wendroff at 800.
+* **PPM's solver in the comparison paper** ([Woodward & Colella (1984)](/sources/woodward-1984.md), pp. 141–142, 155–157). Colella's approximate solver treats rarefactions as rarefaction shocks; "more than two iterations are never required". The paper documents post-shock noise from strong, slowly moving, grid-aligned shocks in Godunov and MUSCL (Fig. 8), cured by slight extra dissipation; it never uses the word carbuncle, and the phenomenon is post-shock noise, not shock-front deformation. It also predicts that approximate solvers (Harten–Lax, Roe) "will be in much greater demand" for MHD.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -442,3 +574,9 @@ Enzo entry names no origin.
 21. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §2 (arXiv v1).
 22. [Colella & Woodward (1984)](/sources/colella-1984.md), eq. 2.8, pp. 185, 191, §4, Fig. 8.
 23. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.1.6–3.1.8.
+24. [Godunov (1959)](/sources/godunov-1959.md), Ch. II §4, eq. 8.
+25. [Harten et al. (1983)](/sources/harten-1983.md), §1, §2 (eqs. 2.11, 2.20, Thm. 2.1), §3B (eqs. 3.13–3.33, Lemma 3.2), §4 (eqs. 4.1, 4.27).
+26. [Ryu & Jones (1995)](/sources/ryu-1995.md), §2.2–2.3 (eqs. 2.27–2.38, 2.74, 2.80–2.95), §3, §4 (arXiv preprint).
+27. [Sod (1978)](/sources/sod-1978.md), §2, eqs. 12–19.
+28. [Brio & Wu (1988)](/sources/brio-1988.md), §§III–IV.
+29. [Woodward & Colella (1984)](/sources/woodward-1984.md), pp. 141–142, 155–157.

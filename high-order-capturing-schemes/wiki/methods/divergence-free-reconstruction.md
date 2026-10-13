@@ -140,6 +140,24 @@ $\tfrac14$ sum over two fine edges and two fine half-steps, has the same
 structure at $r_{\mathrm{AMR}} = 2$, with edges in place of faces. The
 1989 algorithm is for the Euler equations and has no magnetic field.
 
+**Later uses (batch 17).** *The pre-shock pressure drop credited to
+Tóth.* The comparison cited under "Pressure positivity" is Balsara's
+report: [Balsara (2004)](/sources/balsara-2004.md), §7.3, writes that "Toth (2000) has reported that a
+very large and unphysical drop in pressure takes place immediately ahead
+of the shock, especially in regions where the outer fast shock is
+propagating obliquely to the mesh". [Tóth (2000)](/sources/toth-2000.md)
+has no blast-wave test and reports no pre-shock pressure drop (§6: Alfvén
+wave, rotated shock tubes, Orszag–Tang, cloud–shock, two rotors). Its
+pressure finding is on the [rotor](/benchmarks/mhd-rotor.md): "many of the
+schemes produce undershoots in pressure", seen as spurious Mach-number
+peaks, which an energy correction holding the thermal energy fixed
+removes at a total-energy error below 0.4% (§§5.3, 6.6, eq. 40). Its
+arithmetic-mean zone field, the mean of the two faces, belongs to the
+field-CT scheme (eq. 18), whose pressure is not singled out. The
+attribution of a blast-wave pressure drop to Tóth (2000) is therefore
+Balsara's, and that paper does not support it; whether Balsara meant
+another of Tóth's works is not stated.
+
 # Citations
 
 1. [Balsara (2004)](/sources/balsara-2004.md), §§1, 3, 4, 7.3, Appendix C.
@@ -149,3 +167,4 @@ structure at $r_{\mathrm{AMR}} = 2$, with edges in place of faces. The
 5. [Balsara et al. (2023)](/sources/balsara-2023.md), §1.
 6. [Balsara (2001)](/sources/balsara-2001.md), §§III–VI.
 7. [Berger & Colella (1989)](/sources/berger-1989.md), §3.
+8. [Tóth (2000)](/sources/toth-2000.md), §§4.2, 5.3, 6, eqs. 18, 40.

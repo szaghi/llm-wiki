@@ -5,7 +5,7 @@ description: "Mixed hyperbolic–parabolic control of the magnetic divergence (D
 status: established
 aliases: [GLM, Dedner cleaning, Dedner divergence cleaning, generalized Lagrange multiplier, mixed hyperbolic/parabolic divergence cleaning, MUSCL-Dedner]
 tags: [mhd, divergence-cleaning, amr, gpu]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # GLM divergence cleaning
@@ -104,6 +104,85 @@ Neither source reports a convergence order for its GLM solver.
   describe CT only ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.4;
   [Stone et al. (2026)](/sources/stone-2026.md), §3).
 
+## Later uses (batch 9)
+
+### The method in its primary source
+
+[Dedner et al. (2002)](/sources/dedner-2002.md) is the origin of the
+formulation above. Its induction and $\psi$ equations (eqs. 4, 19) are
+those printed above from Mignone et al. (2012), with the induction flux
+written as $\nabla\cdot(\mathbf v\mathbf B - \mathbf B\mathbf v)$.
+
+* **A family of corrections** (§2, eqs. 12–19). The operator linking $\psi$
+  to $\nabla\cdot\mathbf B$ may be elliptic (a Poisson projection after
+  Brackbill & Barnes, rejected as nonlocal), parabolic
+  ($\psi = -c_p^2\nabla\cdot\mathbf B$, a diffusion of the divergence whose
+  explicit form limits $c_p$), hyperbolic (a wave equation: errors carried
+  away at speed $c_h$) or mixed. The mixed choice is the equation above: a
+  telegraph equation in which the damping is a source, so it puts no
+  stability limit on $c_p$, and $c_p \to \infty$ recovers the hyperbolic
+  case. With the hyperbolic or mixed correction the system stays hyperbolic
+  and in conservation form for $\rho$, $\rho\mathbf v$, $\mathbf B$ and $E$
+  (p. 650).
+* **Choice of $c_h$** (§4, eq. 40, p. 656). The time step is set by the
+  Courant number $\nu$ and the largest $\vert v_n\vert + c_f$ alone, and
+  $c_h$ is then "the maximal value which is compatible with" it: $\nu$
+  times the smallest cell height divided by $\Delta t$, recomputed every
+  step and uniform in space. This extends "Choice of $c_h$ and $c_p$"
+  above: Enzo's constant $c_h$ departs from the original prescription,
+  and PLUTO's $c_h = 1$ in the relativistic rotor is a separate choice; both
+  are qualifications, not contradictions.
+* **Choice of $c_p$** (eqs. 44–46, p. 657, §5). The damping is applied by
+  operator splitting with the exact factor
+  $\psi \leftarrow \exp\!\left(-\Delta t\,c_h^2/c_p^2\right)\psi$,
+  "unconditionally stable"; this is the operator-split damping PLUTO uses
+  above. A constant $c_p$ proved grid- and scheme-dependent, so the ratio
+  $c_p^2/c_h$ is fixed instead, at **0.18**, found optimal on the
+  peak-in-$B_x$ test "independent of the order and the grid resolution"
+  (Fig. 2) and used in all runs. The ratio has the dimension of a length
+  (reader's remark at ingestion; the paper does not discuss it), so 0.18
+  refers to the test domains of extent 1–2.
+* **Riemann problem for the cleaning pair** (eqs. 41–43). In 1D the normal
+  field $B_x$ and $\psi$ decouple from the MHD waves and travel at
+  $\pm c_h$; the interface values solve a linear $2\times2$ Riemann problem,
+  $\tilde B_{x,i+1/2} = \tfrac12(B_x^- + B_x^+) - \tfrac{1}{2c_h}(\psi^+ - \psi^-)$,
+  $\tilde\psi_{i+1/2} = \tfrac12(\psi^- + \psi^+) - \tfrac{c_h}{2}(B_x^+ - B_x^-)$
+  (superscripts $\mp$ as for $u^\mp_{i+1/2}$),
+  and any MHD flux is then evaluated with $\tilde B_{x,i+1/2}$ as its normal field. The
+  correction is thus an add-on to an existing solver, on unstructured
+  triangles in the paper.
+* **EGLM and Powell's terms** (eqs. 20–24, 36). The extended system
+  (EGLM), derived from GLM–Maxwell, adds $-(\nabla\cdot\mathbf B)\mathbf B$
+  to the momentum equation and $-\mathbf B\cdot\nabla\psi$ to the energy
+  equation, starting from (eq. 22)
+  $$\mathbf J\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right) - (\nabla\cdot\mathbf B)\,\mathbf B$$
+  (eq. 22 and the sign of the momentum source, eq. 24b, checked by the
+  compiler on the page image). Since $\mathbf J\times\mathbf B$ is
+  orthogonal to $\mathbf B$, the component of the divergence-form force
+  along $\mathbf B$ is $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$
+  (projection by the compiler; Dedner et al. do not state it). EGLM has the
+  same eigenvalues as GLM, but its nonconservative terms can violate
+  conservation even for divergence-free data. Powell's source terms
+  (momentum $-(\nabla\cdot\mathbf B)\mathbf B$, induction
+  $-(\nabla\cdot\mathbf B)\mathbf v$, energy $-(\nabla\cdot\mathbf B)\,\mathbf v\cdot\mathbf B$)
+  instead advect the errors with the flow.
+* **Convergence order** (§5, Table II). On the Dai–Woodward 1D Riemann
+  problem run in 2D with a first-order scheme, the $L_1$ error of mixed GLM
+  falls from 6.45517676 to 0.22792806 over 1,024 to 1,048,576 elements, with
+  experimental orders 1.061, 0.875, 0.804, 1.069, 1.014; mixed EGLM is
+  similar; Powell's terms degrade (0.880, 0.622, 0.432) and fail on the two
+  finest grids with negative pressures. This qualifies the statement under
+  Evidence that no source reports a convergence order for its GLM solver:
+  the original does, for a first-order solver on a discontinuous problem.
+* **Recommendation** (§5–6). Mixed GLM over mixed EGLM, hyperbolic GLM,
+  Powell's terms and no correction: smallest divergence errors, no loss of
+  conservation, robustness on a shock reflection, a 2D MHD Riemann problem
+  and an MHD Kelvin–Helmholtz flow, where the uncorrected scheme fails or
+  costs about 50 % more time. Applicability "on arbitrary grids in 2D and
+  3D" is stated; the tests are 2D only. The paper's motivation — local,
+  explicit, usable with "any existing MHD solver ... on arbitrary grids" —
+  agrees with PLUTO's AMR reason above.
+
 # Citations
 
 1. [Mignone et al. (2012)](/sources/mignone-2012.md), §1, §2.3, §3, §3.1, §3.3, §5.2, §6.3, §7.
@@ -112,3 +191,4 @@ Neither source reports a convergence order for its GLM solver.
 4. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §1 (arXiv v2).
 5. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.4 (arXiv v1).
 6. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).
+7. [Dedner et al. (2002)](/sources/dedner-2002.md), §§1–6, eqs. 4–49, Tables I–II, Fig. 2.

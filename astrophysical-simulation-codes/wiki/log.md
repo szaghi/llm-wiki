@@ -2,6 +2,89 @@
 
 ## 2026-10-13
 
+* **Deep lint #4** (15 ingestions since #3: frontier batches 6–9 and
+  Truelove 1997). Two read-only audits (concept pages and registry; Source
+  pages and every `Contradictions` entry), then fixes checked against the PDFs.
+  * **Flags of batch 9 closed.** MHD blast wave: the 2005 arXiv v1 prints
+    $t = 0.2$ twice (§5.6 and the Fig. 13 caption), so the transcription was
+    right; the figure's front position and the ambient fast speed point to
+    0.02 (compiler reading, recorded as printed). Berger & Colella's "factor
+    of 4 increase in resolution" (p. 79, now quoted verbatim) is consistent:
+    the double Mach reflection is self-similar, so resolution compares as
+    $h/t$, giving $(1/120)/0.2 \div (1/800)/0.12 = 4.0$ (compiler computation;
+    the Fig. 7.1 caption's $t = 0.12$ is the consistent value).
+  * **Contradictions.** PPM order on non-uniform meshes (Open): Fryxell et al.'s
+    fourth-order statement sits before their limiter (eqs. 20–24); a compiler
+    note on Colella & Woodward's limited-slope context and Woodward &
+    Colella's "the PPM remap is formally third-order accurate" (p. 165) added;
+    still Open. Time subcycling (Open): Berger & Colella (1989) and Fryxell et
+    al. (2000) evidence folded into the entry. Jeans criterion: the uncited
+    commentary marked as a compiler note. Multigrid self-gravity entry flagged
+    to the human as possibly below the bar (both sides agree the method is
+    inconsistent); unchanged.
+  * **Claims.** PLUTO's rotated tube: Mignone et al. (2012) eq. 55 rotates
+    the Ryu–Jones 2a states with the matrix of Mignone et al. (2010); the
+    earliest ingested 3D inclined 2a is Gardiner & Stone (2008) §5.4. The PPM
+    detector constants 20, 0.05 and 0.1 are Colella & Woodward's statement,
+    not printed in Woodward & Colella (1984). The 12/6-solve CFL pairing
+    credited first to Gardiner & Stone (2008) on the integrator and Athena
+    pages. Stone et al. (2020) print λ = 1 and k = 2π (checked), so the linear
+    wave entry's recheck is done. Stale "not in the archive" / "not
+    reproduced" lines replaced (Jeans criterion, Brio–Wu, FLASH); drafter
+    scratch wording removed from four audit lists.
+  * **Notation.** Registered $\lambda^\mp_{i+1/2}$, $\lambda_{\max}$ (HLL
+    bounds; $\hat c$ was misused for them), $K_{\mathrm{Lap}}$, $\mathcal E^\circ$,
+    $\mathcal E^c$, $L_1$, $L_2$, $L_\infty$, $c_{\mathrm{sl}}$ and $\mathsf I$;
+    the GLM cleaning-pair face states rewritten in the $\mp$ convention;
+    $\sqrt{-g}$, $v_d$, bare $J$ and paper-native $\Delta x$ removed.
+  * **Bibliography.** Titles of gardiner-2008 and woodward-1984 taken from
+    page 1; DOIs of truelove-1997, fryxell-2000, woodward-1984 and ryu-1995
+    added (as verified at ingestion).
+
+* **Frontier batch 9: ingested [Gardiner & Stone (2008)](/sources/gardiner-2008.md),
+  [Woodward & Colella (1984)](/sources/woodward-1984.md),
+  [Brio & Wu (1988)](/sources/brio-1988.md), [Dedner et al. (2002)](/sources/dedner-2002.md),
+  [Godunov (1959)](/sources/godunov-1959.md), [Harten et al. (1983)](/sources/harten-1983.md)
+  and [Ryu & Jones (1995)](/sources/ryu-1995.md)**, the bundle's most-cited works
+  not yet ingested whose PDFs sat in sibling archives, copied into this
+  bundle's archive (D17); 50 of 50. Godunov read in the Russian original;
+  Ryu & Jones as the arXiv preprint.
+  * **New pages:** [Godunov's method](/methods/godunov-method.md) and
+    [interacting blast waves](/benchmarks/interacting-blast-waves.md).
+  * **Updated:** [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md)
+    and [Athena](/software/athena.md) (the 12-solve/CFL ≤ 1 and 6-solve/CFL < 1/2
+    pairing is printed first by Gardiner & Stone 2008; "as accurate as the
+    twelve-solve method" and "dramatically simpler" are Stone et al.'s words),
+    [GLM cleaning](/methods/glm-divergence-cleaning.md) (the method in its primary
+    source; Dedner's eq. 22 checked on the page image), [PPM](/methods/ppm.md) (the
+    detector constants are not printed in Woodward & Colella 1984; the "not
+    ingested here" phrase replaced), [approximate Riemann solvers](/methods/approximate-riemann-solvers.md),
+    [constrained transport](/methods/constrained-transport.md), [FLASH](/software/flash.md),
+    [PLUTO](/software/pluto.md) (the 3D rotated Ryu–Jones tube is not in the 1D paper),
+    and the benchmarks [Brio–Wu](/benchmarks/brio-wu-shock-tube.md) (the output
+    time $t = 0.1$ derived; the paper prints none),
+    [double Mach reflection](/benchmarks/double-mach-reflection.md) (60° between
+    shock and wall, the page's 30° being the normal's angle),
+    [field loop](/benchmarks/field-loop-advection.md),
+    [MHD blast wave](/benchmarks/mhd-blast-wave.md),
+    [linear waves](/benchmarks/linear-wave-convergence.md),
+    [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
+    and [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md); notes on
+    the Source pages of Stone et al. (2008), Berger & Colella (1989), Colella &
+    Woodward (1984), Fryxell et al. (2000), Mignone et al. (2012) and Gardiner &
+    Stone (2005).
+  * **No contradiction opened.** Flagged, not resolved: the 2D MHD blast wave's
+    $t = 0.2$ recorded for Gardiner & Stone (2005) against their 2008 run to
+    $t = 0.02$ (a recheck of the 2005 PDF is due); Berger & Colella's "4 times
+    finer" against $h = 1/120$ vs $1/800$ (about 6.7). A linear-wave damping rate
+    credited to "Ryu et al. (1995)" is not in the 1D paper (qualification).
+  * **Bibliography** (2407 entries): 187 references merged. Gropp printed 1:191
+    (Crossref 10.1137/0901012; the entry had 4:191); Godunov et al. cited in the
+    Russian original merged into godunov-1961; Bolstad's thesis "in preparation"
+    is bolstad-1982; Brio & Wu printed 75:500 by Ryu & Jones; Harten & Hyman's
+    LA-9105 report is harten-1983-c (Crossref 50:235); Dedner et al.'s fourth
+    author corrected to C.-D. Munz from page 1.
+
 * **Frontier batch 8: ingested [Fryxell et al. (2000)](/sources/fryxell-2000.md)
   and [Colella (1990)](/sources/colella-1990.md)**, the user's downloads
   (43 of 43).

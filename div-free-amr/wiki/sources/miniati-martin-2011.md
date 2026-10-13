@@ -9,7 +9,7 @@ year: 2011
 venue: "Astrophys. J. Suppl. Ser. 195:5"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2011-ApJS-Miniati-1010880067004919515.pdf"
 tags: [constrained-transport, amr, ctu, refluxing, production-code, cosmology]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -44,6 +44,8 @@ $|\Delta x\,\nabla\cdot B|/|B| \sim$ few$\times 10^{-13}$ throughout.
 3. **Simplified MHD source terms**: the multidimensional predictor terms
    (cf. [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md)) applied
    in a reduced 3D form "without loss of accuracy or robustness."
+
+**CTU.** The integrator is Colella's [corner transport upwind](/methods/corner-transport-upwind.md); the 12-solve count is printed first in [Colella (1990)](/sources/colella-1990.md) §6.
 
 # Notation map
 

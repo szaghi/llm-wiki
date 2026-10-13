@@ -324,6 +324,26 @@ von Neumann analysis of the full discretization.
   ([Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.2–2.3,
   Table 1; [RKDG](/methods/rkdg.md)).
 
+**Later uses (batch 17).** *Which unsplit Godunov limit.* The batch-3
+line credits FV-WENO with RK3 with Courant numbers up to "1/2 in 2D — the
+limits of the unsplit Godunov scheme" (Titarev and Toro). Colella's two
+first-order unsplit schemes have different 2D limits: donor cell, which
+upwinds normal to each edge only, needs the *sum* of the directional
+Courant numbers to be at most 1, which allows each only $\tfrac12$ when
+they are equal; corner transport upwind, which adds a transverse
+correction, needs only their *maximum* to be at most 1, the limit of
+operator splitting (eqs. 1.5–1.6, stated as sufficient and necessary
+respectively, by Fourier analysis). For systems the corner-coupled
+second-order scheme has the limit 1, proved when the directional
+Jacobians commute (eq. 2.17) ([Colella (1990)](/sources/colella-1990.md),
+§§1–2; [corner transport upwind](/methods/corner-transport-upwind.md)).
+The 1/2 in 2D is therefore the donor-cell (no corner coupling) limit, not
+that of every unsplit Godunov scheme. *Compiler's reading:* a
+method-of-lines update has no corner coupling, so the sum-form limit is
+the relevant comparison, as in the RK4 limit "with no corner coupling" of
+[McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md) (eq. 57).
+Colella states no 3D limit.
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -380,3 +400,4 @@ von Neumann analysis of the full discretization.
 52. [Shu & Osher (1989)](/sources/shu-1989.md), §§1, 3.
 53. [Shu (1988b)](/sources/shu-1988-b.md), §§1–4, Proposition 2.1, Remark 3.3, Tables 1, 2, 4.
 54. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.2–2.3, Table 1.
+55. [Colella (1990)](/sources/colella-1990.md), §§1–2, eqs. 1.5–1.6, 2.17.

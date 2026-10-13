@@ -77,7 +77,7 @@ reference for automated testing.
 **The problem as printed** ([Sod (1978)](/sources/sod-1978.md), §3,
 Figs. 2–3, p. 14). Left state $\rho = 1.0$, $p = 1.0$, right state
 $\rho = 0.125$, $p = 0.1$, both at rest, $\gamma = 1.4$, as in the
-Set-up above. "In all of the calculations $\Delta x = 0.01$", 100 points
+Set-up above. "In all of the calculations [$h$] $= 0.01$", 100 points
 (p. 24), figure axes on $[0, 1]$, Courant number $\nu = 0.9$ for every
 scheme. **No diaphragm position and no end time are printed**: the
 diaphragm appears only as a symbol in Figs. 2–3, and the captions give no
@@ -87,7 +87,7 @@ time.
 the printed problem only in values Sod does not print (domain placement,
 interface, end time) or in resolution; none attributes to Sod a value the
 paper does not print.
-* Stone et al. (2008): 100 cells matches Sod's $\Delta x$; the domain
+* Stone et al. (2008): 100 cells matches Sod's $h$; the domain
   $-0.5 < x < 0.5$ and $t = 0.25$ are not Sod's.
 * Almgren et al. (2010): the domain $[0, 1]$ matches Sod's axes and CFL
   0.9 matches his $\nu$; the interface at 0.5 and $t = 0.2$ are not

@@ -431,8 +431,49 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   its design requirements, and 6 when the maximum principle is dropped by
   using donor-cell-type transverse derivatives. It states no Courant limit
   for either variant, so the pairing with $\nu\le1$ and $\nu\le1/2$ is
-  Stone et al.'s (2008), not Colella's. See
+  Stone et al.'s (2008), not Colella's (refined in batch 9: first printed by [Gardiner & Stone (2008)](/sources/gardiner-2008.md)). See
   [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md).
+
+## Later uses (batch 9)
+
+* **The 3D algorithm in its primary source.** The opening paragraph calls
+  Athena the implementation reference for the Gardiner–Stone CT algorithm
+  in 3D. [Gardiner & Stone (2008)](/sources/gardiner-2008.md) is that
+  algorithm. It changes two of the three parts of the 2D scheme: minmod-limited
+  multidimensional induction terms in the PPM interface states (§3.1,
+  eqs. 15–20) and source terms in the CTU transverse correction (§4.2,
+  eqs. 38–46). The third part, the corner EMF, is the contact-upwinded
+  construction of 2005, reused unchanged in 3D (§4 intro). This agrees with
+  the minmod limiting and the reduction to 2D and 1D listed under
+  Integrators; the momentum source term is not limited (eq. 38).
+* **Who pairs the solve counts with the Courant limits.** The 12-solve CTU
+  is "optimally stable for CFL numbers ≤ 1" and the six-solve variant
+  "stable for CFL < 1/2", the latter found experimentally (§4.1–4.2). The
+  pairing listed under Integrators is therefore printed first by Gardiner &
+  Stone (2008); Stone et al. (2008) restate it. This refines the batch-8
+  statement that the pairing is "Stone et al.'s (2008), not Colella's": it
+  is not Colella's, and it originates with Gardiner & Stone.
+* **Whose words.** "As accurate as the twelve-solve method" and
+  "dramatically simpler to implement", quoted under Integrators, are Stone
+  et al.'s (2008) wording. Gardiner & Stone call the two variants "accurate
+  and robust for approximately the same computational cost" and prefer the
+  six-solve one "as a result of its simplicity and smaller memory footprint"
+  (§6). They also state that the 12-solve scheme, as written, drops the MHD
+  source terms and is formally first order for MHD; its corrections are not
+  printed (§4.1).
+* **3D verification in the primary source** (§5): field-loop advection
+  with the loop oblique to all three axes, linear waves (second order for
+  all four families with both variants), the circularly polarized Alfvén
+  wave, the Ryu–Jones 2a Riemann problem inclined to the grid, and a 3D
+  adiabatic blast wave at ambient plasma beta 0.02, run robustly with the
+  six-solve CTU+CT to $t = 0.02$. The last adds a 3D CTU data point to the
+  low-β record above (Stone et al. 2008 isothermal; Gardiner & Stone 2005 in
+  2D) and further qualifies Cholla's 3D VL+CT instability at the same beta,
+  which concerns a different integrator. See
+  [field-loop advection](/benchmarks/field-loop-advection.md) and
+  [MHD blast wave](/benchmarks/mhd-blast-wave.md).
+* **Mesh.** Static and adaptive refinement with these integrators are left
+  to a future paper (§6), in line with the Mesh section above.
 
 # Citations
 
@@ -450,3 +491,4 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 3.1, 3.2.2, 4, 4.3, 5.6, 6, eqs. 31–33, 42–52, 61–73 (arXiv v1).
 13. [Berger & Colella (1989)](/sources/berger-1989.md), §§1, 3.
 14. [Colella (1990)](/sources/colella-1990.md), §6.
+15. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §§3.1, 4–6, eqs. 15–46.

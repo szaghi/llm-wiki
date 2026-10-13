@@ -668,7 +668,7 @@ not measured against a global step, so the subcycling entry stays open.
 
 * **Jeans refinement in the original.** [Truelove et al. (1997)](/sources/truelove-1997.md)
   refine with ratio 4 wherever the Jeans number (cell size over Jeans
-  length) reaches a threshold, "immediately reducing $J$ there by a
+  length) reaches a threshold, "immediately reducing [the Jeans number] there by a
   factor of 4", evaluated in every cell at every step, and estimate that
   a uniform grid covering 9 decades of collapse with 10 cells across the
   final cloud would need more than $10^{12}$ cells (§2, Fig. 1). They add
@@ -922,11 +922,13 @@ the issue, and none quantifies it.
   design (Castro adds a multilevel gravity correction solve for it);
   [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2 (Quokka), and
   [Porth et al. (2019)](/sources/porth-2019.md), §4.1.5 (H-AMR's locally
-  adaptive time stepping, claimed to give a factor 3–5) also subcycle.
+  adaptive time stepping, claimed to give a factor 3–5) also subcycle;
+  [Berger & Colella (1989)](/sources/berger-1989.md), §2, pp. 67–68 (the origin: one ratio in space and time "so the same explicit difference scheme is stable on all grids"; truncation errors of equal order; "the smaller time step of the fine grid is not imposed globally").
 * One global step, with reasons: [Stone et al. (2026)](/sources/stone-2026.md)
   (AthenaK), [Shankar et al. (2023)](/sources/shankar-2023.md) (GRaM-X:
   subcycling serializes the levels) and [Zaghi et al. (2023)](/sources/zaghi-2023.md)
-  (ADAM); see the batch-3 notes above.
+  (ADAM); see the batch-3 notes above;
+  [Fryxell et al. (2000)](/sources/fryxell-2000.md), §2 (FLASH: extra memory for temporary copies, a block ordering that "can have a damaging effect on load balance"; the arguments for subcycling listed, nothing measured).
 * No source measures the interpolation error or the cost trade-off on a
   common problem; the entry closes when one does.
 

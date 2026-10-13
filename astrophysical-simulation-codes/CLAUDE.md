@@ -90,6 +90,13 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Frontier batch 9 staged 2026-10-13:** gardiner-2008, woodward-1984,
+brio-1988, dedner-2002, godunov-1959, harten-1983 (Harten, Lax & van Leer),
+ryu-1995, copied from sibling archives (D17); 50 of 50. New pages
+methods/godunov-method and benchmarks/interacting-blast-waves. No
+contradiction opened. Deep lint #4 ran with this batch (15 ingestions
+since #3); the next is due after 10 more.
+
 **Frontier batch 8 staged 2026-10-13:** fryxell-2000 and colella-1990
 (user downloads); 43 of 43. One Open contradiction (PPM interpolation order
 on non-uniform meshes). Deep lint: 8 ingestions since #3.

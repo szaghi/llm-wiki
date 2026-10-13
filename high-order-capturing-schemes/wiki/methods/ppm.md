@@ -190,6 +190,49 @@ first-order Godunov and MUSCL.
   remap with one extra order and the accuracy gap between MUSCL's two
   forms, but neither paper links them.
 
+**Later uses (batch 17).** *PPM's tracing without splitting, and in MHD.*
+* *Colella's unsplit, corner-coupled framework*
+  ([Colella (1990)](/sources/colella-1990.md), §§2, 4–6;
+  [corner transport upwind](/methods/corner-transport-upwind.md)). One of
+  its design criteria is that on a grid-aligned 1D problem the scheme
+  reduces to the second-order Godunov method of Colella and Woodward
+  (p. 173). Its normal predictor discards the components of waves that do
+  not reach the edge and takes the reference state from the
+  farthest-reaching wave, which for piecewise-linear data is the PPM
+  characteristic tracing (eqs. 2.10–2.12); a transverse correction from
+  transverse Riemann fluxes replaces the second sweep of operator
+  splitting, and all fluxes are differenced in one step. *Multidimensional
+  flattening:* one coefficient, the minimum of the two directional ones,
+  multiplies the slopes in both directions (eqs. 4.9–4.10), with
+  parameters 0.33, 0.75 and 0.85 and a 2D Lapidus flux with coefficient
+  0.1, "all as in" Colella and Woodward; Colella's coefficient is 1 for
+  *no* flattening, the opposite of $\phi_i$ here. On the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) the
+  unsplit scheme needed this multidimensional flattening against
+  low-amplitude post-shock noise, where splitting needed only 1D
+  flattening per sweep (§5). It costs twice the Riemann solves of
+  splitting in 2D, about 50 % more time, and 12 (or 6 without corner
+  coupling) against 3 per zone in 3D (§6).
+* *Flattening is not enough for MHD* ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md),
+  §2.2, p. 267). In a Strang-split MHD Godunov scheme, MUSCL slopes in
+  primitive variables gave "moderate amplitude (5–10%) fluctuations at
+  shocks, compound waves, and certain types of rarefaction waves", and
+  Colella's flattening "does not fix the problem"; the authors limit
+  each characteristic field against the MUSCL slope instead
+  ([characteristic decomposition](/methods/characteristic-decomposition.md)).
+  On the [Sod shock tube](/benchmarks/sod-shock-tube.md) (100 points, 50
+  steps) their scheme and PPM with and without contact detection are
+  very similar, apart from a small undershoot at the base of the
+  rarefaction from their linearized solver; PPM with contact detection
+  has the sharper contact (§3.1, Figs. 1–2).
+* *Per-family domain-of-dependence states in MHD*
+  ([Dai & Woodward (1998)](/sources/dai-1998.md), p. 324). The left and
+  right Riemann states are averages over each wave family's own domain of
+  dependence; "if the left (or right) states for different waves were
+  treated as the same, the resulting scheme would be only first-order
+  accurate". This is the PPM Riemann-state construction carried to the
+  seven MHD waves, with linear interpolation.
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
@@ -200,3 +243,6 @@ first-order Godunov and MUSCL.
 6. [Balsara (2017)](/sources/balsara-2017-d.md), §§II.2, III.1.
 7. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIa–VII.
 8. [van Leer (1979)](/sources/vanleer-1979.md), §§2.2–2.4, 3.2–3.3, App. B.
+9. [Colella (1990)](/sources/colella-1990.md), §§2, 4–6, eqs. 2.10–2.12, 4.9–4.10.
+10. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §§2.2, 3.1, Figs. 1–2.
+11. [Dai & Woodward (1998)](/sources/dai-1998.md), p. 324.

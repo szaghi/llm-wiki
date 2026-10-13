@@ -5,15 +5,15 @@ description: "The one-dimensional MHD Riemann problem of Brio and Wu with normal
 status: established
 aliases: [Brio-Wu, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Brio–Wu MHD shock tube
 
 **Set-up.** A 1D MHD Riemann problem with normal field $B_x = 0.75$ and
 $\gamma = 2$ (Brio & Wu 1988). The left and right states are tabulated in
-[Stone et al. (2008)](/sources/stone-2008.md), Table 2, and not reproduced
-here. Solutions are compared with high-resolution reference runs.
+[Stone et al. (2008)](/sources/stone-2008.md), Table 2, and reproduced
+from the original under Later uses (batch 9). Solutions are compared with high-resolution reference runs.
 
 **Runs.**
 
@@ -97,6 +97,71 @@ slightly sharper rarefaction. What the four sources share is that PPM's
 behaviour on this test depends on the integrator, the limiter and the
 reconstruction variables together.
 
+## Later uses (batch 9)
+
+### The problem in its primary source
+
+[Brio & Wu (1988)](/sources/brio-1988.md), §V, Figs. 2–6, define the
+problem as a test of their Roe-type upwind MHD scheme.
+
+* **States** (read at 300 dpi). Left $\rho = 1$, $\mathbf v = 0$, $p = 1$,
+  $B_y = 1$; right $\rho = 0.125$, $\mathbf v = 0$, $p = 0.1$, $B_y = -1$;
+  $B_x = 0.75$, $\gamma = 2$; $v_z$ and $B_z$ are not printed (coplanar, so
+  zero). The hydrodynamic data are "identical to those in Sod's shock tube
+  problem" (see [Sod shock tube](/benchmarks/sod-shock-tube.md)). These are
+  the states the Set-up above defers to Stone et al. (2008), Table 2. Units
+  carry no $4\pi$.
+* **Run parameters and output time.** 800 grid points with $h = 1$,
+  $\Delta t = 0.2$ (Courant number about 0.8), output after 400 steps, the
+  discontinuity at the middle. The paper prints no dimensionless time: the
+  output is at $t = 80$ on a domain of length 800, which on a unit domain is
+  **$t = 0.1$** (derived at ingestion). The 0.1 of Stone et al. (2020) and
+  Caddy & Schneider (2024) matches this derived time; the 0.08 of Stone et
+  al. (2008) is a different choice. The original's 800 points agree with
+  the 800 zones of Stone et al.'s text, not the 400 of their caption.
+* **Wave structure** (Fig. 2). To the left a fast rarefaction and a
+  **slow compound wave** (a slow shock with an attached slow rarefaction);
+  to the right a contact, a slow shock and a fast rarefaction; checked with
+  Riemann invariants and jump conditions. The transverse field changes sign
+  across the slow shock of the compound wave, an intermediate shock that
+  "all numerical schemes tested" admit (§VI).
+* **Why the compound wave exists** (§VI). With eigenvectors renormalized to
+  stay complete where the transverse field vanishes, the derivative of the
+  eigenvalue along its eigenvector is proportional to the transverse field
+  near its zero, for the fast field if $c_s < c_A$ and the slow field if
+  $c_s > c_A$: ideal MHD is **nonconvex**, and shocks with attached
+  rarefactions of the same family follow. The rarefaction tail predicted
+  from the numerical left state of the slow shock ($\rho = 0.6965$,
+  $v_x = 0.5987$, $v_y = -1.583$, $B_y = -0.5341$, $p = 0.5157$) agrees with
+  the second-order upwind run (0.6963, 0.5997, −1.578, −0.5341, 0.5133):
+  "The agreement is excellent." The "compound wave" in the description of
+  this page is this slow compound wave.
+* **Schemes compared.** The second-order upwind scheme (Harten's approach,
+  artificial compression on the linearly degenerate field) against
+  Lax–Wendroff with Lapidus viscosity (undershoot at the rarefaction tail,
+  oscillations around the compound wave, contact over 10–15 points),
+  Lax–Friedrichs (slow shock over about 20 points; with 20,000 points it
+  coincides with the upwind result except at the contact) and FCT at
+  Courant number about 0.4 (oscillations in the plateaus, worse at 0.8). For
+  $\gamma = 2$ the upwind scheme uses an exact Roe matrix; the
+  arithmetic-average variant for general $\gamma$ agrees "up to 4
+  significant digits" in constant states. No error norms.
+* **Variants in the same paper.** Right $B_y = -0.4$: an "almost
+  stationary slow intermediate shock", which Lax–Wendroff could not run
+  stably "with any value of artificial viscosity" (no figure). $B_x = 0$
+  with a left density printed as 1000: a hydrodynamic Riemann problem in
+  total pressure with a Mach 15.5 shock (Fig. 7; the printed density is
+  recorded as printed on the Source page).
+
+The original thus supplies the states, the $\gamma = 2$ definition and the
+basis for $t = 0.1$; IDEFIX's $\gamma = 5/3$ run remains a variant. The
+oscillation reports above concern later schemes and are not addressed by
+the original, whose comparison is with central and FCT schemes.
+
+### A γ = 5/3 variant
+
+* [Ryu & Jones (1995)](/sources/ryu-1995.md), §4, Figs. 5a, 6a (test 5a; arXiv preprint). An early **$\gamma = 5/3$ variant**: the Brio–Wu states $(\rho, v_x, v_y, v_z, B_y, B_z, p) = (1, 0, 0, 0, 1, 0, 1)$ left and $(0.125, 0, 0, 0, -1, 0, 0.1)$ right, $B_x = 0.75$, $t = 0.1$, 512 cells, Harten TVD with a Roe-type solver, against a nonlinear MHD Riemann solver (the seventh entry is printed "E" but is the pressure; see the Source page). With 8192 cells (Fig. 6a) the slow compound wave is read as a "2-4" intermediate shock (Alfvénic Mach number $1.03 \to 0.910$) followed by a slow rarefaction, whereas an exact solver that allows rotational discontinuities gives a rotational discontinuity plus a slow shock (§5). Like IDEFIX's run, a variant of the set-up, not a conflict with the $\gamma = 2$ definition.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.2, Table 2.
@@ -105,3 +170,5 @@ reconstruction variables together.
 4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.2 (arXiv v1).
 5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.4 (arXiv v2).
 6. [Shankar et al. (2023)](/sources/shankar-2023.md), §IV A (arXiv v2).
+7. [Brio & Wu (1988)](/sources/brio-1988.md), §§V–VII, Figs. 2–10.
+8. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§4–5, Figs. 5a, 6a (arXiv preprint).

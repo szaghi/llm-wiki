@@ -66,6 +66,21 @@ design (§6, eq. 6.5).
   applied direction by direction.
   [Jiang & Wu (1999)](/sources/jiang-1999.md) require a uniform or
   smoothly varying grid for third and higher order.
+
+  **Origin of the flux form.** The point-value flux framework is Shu &
+  Osher's. The 1988 paper builds the numerical flux by ENO interpolation
+  of each split flux plus fixed Taylor corrections in even derivatives,
+  which make the conservative difference of order $2m$ on $2m+1$ points
+  ([Shu & Osher (1988)](/sources/shu-osher-1988.md), eqs. 3.5–3.9); it
+  introduces no flux primitive. The flux primitive, the primitive of an
+  implicit function whose cell averages are the point fluxes, is Lemma 2.1
+  of the 1989 sequel, with divided differences taken directly from those
+  of the flux ([Shu & Osher (1989)](/sources/shu-osher-1989.md),
+  eqs. 2.1–2.5). The two are equivalent in accuracy; the flux-primitive
+  form is the one Jiang & Shu restate (eqs. 2.2–2.3). Point-value and
+  cell-average ENO coincide for linear 1D equations only (1989, p. 36).
+  The stencil must start on the upwind side: a downwind start is unstable
+  for Burgers even with ENO selection up to third order (1989, p. 36).
 * **FV-WENO.** The unknowns are cell averages; the same weighting is
   applied to reconstruct interface values of the *state* from cell
   averages, and the fluxes come from Riemann solvers. This form is what
@@ -97,10 +112,45 @@ A cheaper variant takes the weights from pressure and entropy; it fails
 at reflective walls, where those variables cannot see jumps in the normal
 velocity, and the density goes negative (§8.3).
 
+**Splittings in the ENO lineage.** The 1988 Shu–Osher scheme uses global
+Lax–Friedrichs splitting, one constant $\alpha^{\mathrm{LF}}$ bounding the
+characteristic speed, and for systems a frozen-state matrix built from
+bounds on $|\lambda_k|$ ([Shu & Osher (1988)](/sources/shu-osher-1988.md),
+eq. 3.1, p. 22). The 1989 paper adds three variants that keep high order
+at sonic points ([Shu & Osher (1989)](/sources/shu-osher-1989.md),
+Algs. 2.1–2.3):
+* **ENO-Roe**: the stencil starts on the side given by the sign of the
+  Roe speed; one divided-difference table, half the cost; it admits
+  entropy-violating expansion shocks;
+* **ENO-LLF**: local Lax–Friedrichs splitting, with $\alpha^{\mathrm{LF}}$
+  per interface the maximum of the characteristic speed between the two
+  adjacent states (eq. 2.12), and for systems the maximum of $|\lambda_k|$
+  at the two states, field by field (eqs. 4.3–4.4);
+* **ENO-RF**: ENO-Roe where the characteristic speed keeps its sign
+  across the interface, ENO-LLF where it changes sign. Observed, not
+  proved, to give the entropy solution even for nonconvex fluxes (p. 40);
+  the authors' preferred scheme (§VI).
+
+Numerical viscosity, hence shock smearing, decreases from global LF to
+LLF to Roe (Remark 2.2d). The local characteristic decomposition at the
+arithmetic-mean or Roe-averaged state that Jiang & Shu use is Algorithm 4.1
+of the same paper. The "RF" splitting that Jiang & Shu reference to Shu &
+Osher is this ENO-RF construction.
+
 **Time integration.** The third-order TVD Runge–Kutta of Shu & Osher,
 later called SSP-RK3, and the classical fourth-order RK, which is not TVD
 (eqs. 1.3–1.4). Linear-stability CFL numbers for three-point stencils: 1.434 (RK3),
 1.731 (RK4) (Table 5).
+
+**Origin and TVD status of the integrators.** The third-order scheme is
+eq. 2.18 of [Shu & Osher (1988)](/sources/shu-osher-1988.md), TVD under
+the forward-Euler CFL limit times a coefficient of 1; the 1989 paper only
+re-lists it (Table I). Classical RK4 is TVD there too, at coefficient
+$\frac23$, but only if a downwinded spatial operator replaces the plain one
+at the stages with negative weights (eq. 2.20); used with the plain
+operator, as Jiang & Shu use it, it is not TVD. The TVD coefficient and
+the linear-stability limits above are different quantities
+([SSP Runge–Kutta methods](/methods/ssp-runge-kutta.md)).
 
 ## Uses and variants in this bundle
 
@@ -117,6 +167,11 @@ later called SSP-RK3, and the classical fourth-order RK, which is not TVD
   ([Seo & Ryu (2023)](/sources/seo-2023.md)) is that code's choice; the
   scheme is attributed to Jiang & Shu and Jiang & Wu there, but Jiang &
   Shu test only global splitting.
+  **Origin of local splitting.** Local Lax–Friedrichs splitting in the
+  point-value flux ENO framework predates HOW-MHD: it is ENO-LLF of
+  [Shu & Osher (1989)](/sources/shu-osher-1989.md) (Alg. 2.2, eq. 2.12;
+  for systems eqs. 4.3–4.4). HOW-MHD's choice is to use it inside
+  Jiang–Shu WENO, which Jiang & Shu allow in words but do not test.
 * **Other weights and indicators.** WENO-Z and WENO+3 in PLUTO
   ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md);
   [Berta et al. (2024)](/sources/berta-2024.md), with a WENO3 fallback);
@@ -181,3 +236,5 @@ reflective walls; it has no divergence content.
 12. [Balsara (2009)](/sources/balsara-2009.md), §§2–4.
 13. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–3, 7.4.
 14. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3.
+15. [Shu & Osher (1988)](/sources/shu-osher-1988.md), §§II–III, eqs. 2.18, 2.20, 3.1, 3.5–3.9, p. 22 (read as ICASE Report 87-33).
+16. [Shu & Osher (1989)](/sources/shu-osher-1989.md), §§I–II, IV, VI, Lemma 2.1, Algs. 2.1–2.3, 4.1, eqs. 2.12, 4.3–4.4, Table I.

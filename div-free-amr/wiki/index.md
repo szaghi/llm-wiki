@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 109 sources compiled**: 106 published works, two preprints and one code record
+**Corpus: 117 sources compiled**: 114 published works, two preprints and one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
@@ -52,6 +52,12 @@ every page — then follow the reading guide.
    Under many of these schemes sits a constraint-agnostic reconstruction,
    [WENO](/methods/weno.md) or [PPM](/methods/ppm.md): neither keeps the
    divergence by itself, so each MHD use pairs it with one of the above.
+   The same holds for the hydrodynamic building blocks beneath them: the
+   [Roe](/methods/roe-solver.md) and [HLL](/methods/hll-solver.md)
+   Riemann solvers, the [CTU](/methods/corner-transport-upwind.md)
+   integrator, [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) time
+   stepping and the [TVD](/properties/total-variation-diminishing.md)
+   property.
 4. **The AMR interface problem** — the bundle's central question.
    [Block-structured AMR](/definitions/block-structured-amr.md) and
    [refluxing](/methods/refluxing.md);
@@ -86,7 +92,9 @@ every page — then follow the reading guide.
    constraint-control choice changes physics
    ([field-loop advection](/benchmarks/field-loop-advection.md);
    [rotated shock tube](/benchmarks/rotated-shock-tube.md);
-   [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)).
+   [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md); the
+   [Sod shock tube](/benchmarks/sod-shock-tube.md) is their hydrodynamic
+   base).
 
 ## Catalog
 

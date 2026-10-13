@@ -9,7 +9,7 @@ year: 2012
 venue: "Astrophys. J. Suppl. 198:7"
 local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2012-ApJS-Mignone-1010880067004919817.pdf"
 tags: [software, mhd, amr, divergence-cleaning, unsplit, riemann-solver, performance, benchmark]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -108,6 +108,8 @@ rotor; cylindrical and 3D spherical
 relativistic set-ups, AMR ~4.5× faster in 2D, efficiency > 0.75 to 2048
 processors in 3D); Kelvin–Helmholtz (AMR ≈40× faster); 3D shock–cloud;
 3D jet. No convergence-order study is reported.
+
+Batch 9: the "3D rotated Ryu–Jones shock tube" (§5.1.2) is not in [Ryu & Jones (1995)](/sources/ryu-1995.md), which is strictly 1D; PLUTO rotates the Ryu–Jones 2a states (eq. 55), with the rotation matrix of Mignone et al. (2010); the earliest 3D inclined 2a among the ingested sources is [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.4, which this paper lists among later uses (see [PLUTO](/software/pluto.md), batch 9).
 
 # Notation map
 

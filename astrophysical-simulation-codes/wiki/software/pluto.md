@@ -252,6 +252,17 @@ FP64, 3D Orszag–Tang weak scaling, Table 3); details on the gPLUTO page.
   Colella describes, which drops the maximum principle (§6). See
   [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md).
 
+## Later uses (batch 9)
+
+* **The "Ryu–Jones 3D rotated shock tube".** The Verification section
+  (and Mignone et al. 2012, §5.1.2) runs a 3D rotated shock tube under
+  the Ryu–Jones name, and the bibliography lists `ryu-1995` among Mignone
+  et al.'s references. [Ryu & Jones (1995)](/sources/ryu-1995.md) is
+  strictly one-dimensional: 1D conservative equations (§2.1, eqs.
+  2.1–2.9) and twelve shock tubes on $x \in [0, 1]$ with 512 cells,
+  $\gamma = 5/3$ (§4). The rotation into 3D is not in that paper. PLUTO rotates the Ryu–Jones 2a states ([Mignone et al. (2012)](/sources/mignone-2012.md), eq. 55), with the rotation matrix of Mignone et al. (2010). The earliest 3D inclined 2a among the ingested sources is [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.4, which Mignone et al. list among later uses. The 1D paper [Ryu & Jones (1995)](/sources/ryu-1995.md) contains no rotation. This qualifies the attribution; it does not
+  contradict the run.
+
 # Citations
 
 1. [Mignone et al. (2012)](/sources/mignone-2012.md), §§1–7, App. A–B (journal version).
@@ -259,3 +270,5 @@ FP64, 3D Orszag–Tang weak scaling, Table 3); details on the gPLUTO page.
 3. [Lesur et al. (2023)](/sources/lesur-2023.md), §1, §2.3, §2.7, §3.2–§3.3, §4.2, §5, Fig. 18 (arXiv v1).
 4. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§1–5, Table 3 (arXiv v1).
 5. [Colella (1990)](/sources/colella-1990.md), §§2, 5–6, eqs. 2.13–2.17.
+6. [Ryu & Jones (1995)](/sources/ryu-1995.md), §2.1, §4 (arXiv preprint).
+7. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.4.

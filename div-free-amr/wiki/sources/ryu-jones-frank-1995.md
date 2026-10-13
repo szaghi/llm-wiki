@@ -48,6 +48,9 @@ later replaced with constrained transport.
    (eqs. 2.20–2.21). Courant number typically 0.6, "up to 0.9" sufficient
    for most runs. Harten's contact and rotational steepeners are dropped:
    they produced "spurious numerical oscillations" (p. 6).
+
+**Attribution of the steepeners.** [Harten (1983)](/sources/harten-1983.md) contains only a contact steepener for linearly degenerate fields (eqs. 5.7–5.8, his scheme ULT1C); the paper is gas dynamics and has no rotational (Alfvén) steepener. The Alfvén-family steepener is [Ryu & Jones (1995)](/sources/ryu-jones-1995.md)'s own (their eqs. 2.96–2.98). "Harten's contact and rotational steepeners" therefore means Harten's contact steepener plus Ryu & Jones's rotational one.
+
 2. **Strang splitting** (§2.3, eq. 2.22). $q^{n+1} = L_zL_yL_xq^n$, with
    the sweep order permuted over six steps "to maintain second-order
    accuracy"; $\Delta t$ is fixed over each six-step sequence. In each

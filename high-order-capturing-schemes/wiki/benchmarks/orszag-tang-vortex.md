@@ -91,6 +91,23 @@ cells to $t = 0.8$, fourth-order ADER–WENO with the multidimensional HLLI
 Same grid, order and end time as the review's run in the batch-7 entry
 above.
 
+**Later uses (batch 17).** *Seven divergence treatments, one code*
+([Tóth (2000)](/sources/toth-2000.md), §6.4, Table VII, Fig. 16). On
+$[0, 2\pi]^2$ with $\rho = 25/9 = \gamma^2$, $p = 5/3 = \gamma$,
+$\mathbf v = (-\sin y, \sin x)$, $\mathbf B = (-\sin y, \sin 2x)$ (the
+unscaled normalization of Jiang and Wu above), $\gamma = 5/3$, $N = 50$,
+100, 200, with errors averaged against two $400^2$ references (projection
+and field-CT):
+* at $t = 1$, $\bar\delta_{200}$ runs from 0.0026 (field-CD) and 0.0029
+  (field-CT) to 0.0045 (transport-flux-CT), a rate of about 1.6;
+* at $t = 3.14$, from 0.0300 (field-CD) and 0.0340 (projection) to 0.0478
+  (eight-wave) and 0.0705 (the base scheme, which needed the minmod
+  limiter at $N = 200$: with MC it fails), a rate of about 1;
+* field-CT and field-CD look sharpest, but field-CT has spurious features.
+
+* *What Zachary et al. state.* $192^2$, periodic, $\mathbf v = (-\sin y, \sin x)$, $\mathbf B = (-\sin y, \sin 2x)$ (unscaled), Mach number 1 and plasma beta 10/3. $\gamma$, the base density and pressure, and the domain are not stated, and the printed definitions of the Mach number and beta are garbled. One time is shown, "after 300 timesteps (approximately 2 Alfvén transit times)", with a pressure cut at grid row 60. No $t = 3$ is printed ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.2.2, Fig. 9). Jiang and Wu's "identical to Zachary et al." and their agreement "at $t = 3$" are their statements; this paper alone cannot confirm $p = \gamma$ or the time.
+* *A $[0,1]^2$ normalization.* $\mathbf v = (-\sin 2\pi y, \sin 2\pi x)$, $\mathbf B = (-\sin 2\pi y, \sin 4\pi x)$, Gaussian plasma beta 10/3 and Mach number 1, $128^2$–$512^2$, $t = 0.5$, qualitative only, attributed to Dahlburg and Picone (1989) and Picone and Dahlburg (1991) ([Dai & Woodward (1998)](/sources/dai-1998.md), Figs. 6–7).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
@@ -105,3 +122,6 @@ above.
 10. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.4.
 11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.7.
 12. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.6.
+13. [Tóth (2000)](/sources/toth-2000.md), §6.4, Table VII.
+14. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.2.2, Fig. 9.
+15. [Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 6–7.

@@ -344,6 +344,169 @@ that the batch-7 paragraph and Berta et al. refer to.
   earliest" option is a statement about naming, not about what this note
   tested.
 
+**Later uses (batch 17).** *The origin of CT, the face-averaged Godunov
+variant, and the 1994 projection.*
+* *Evans and Hawley's construction* ([Evans & Hawley (1988)](/sources/evans-1988.md),
+  §§IIc, IV, Figs. 1–2). The induction equation in integral form, for the
+  magnetic flux through a surface, gives the rate of change of each face
+  flux as minus the sum of the electromotive forces on its four edges.
+  The face updates (eqs. 4.13a–c) have the signs of the Yee update of the
+  section above (reader's check). Each edge value "is calculated *once*
+  even though each contribution is used in two separate evolution
+  equations", so in the sum over a cell's faces "each EMF edge
+  contribution appears in the full sum exactly twice with opposite
+  signs", and the total flux out of the cell "continues to vanish if it
+  did originally, even though the cell position and shape may change"
+  (p. 665). Their exact divergence is this face-flux sum (eq. 4.9), the
+  Stokes divergence of the closed entry below. "The CT scheme only
+  guarantees that field evolution *changes* are divergence free. If the
+  initial magnetic field fails to satisfy the constraint, it will
+  continue to do so" (p. 666); inflow and outflow boundaries can admit
+  non-solenoidal field. In the runs a normalized divergence stays near
+  $10^{-15}$, growing by round-off to $10^{-10}$ in one long run (§V).
+* *Staggering against the velocity.* In Evans and Hawley's Fig. 1 each
+  field component shares a face with the *transverse* velocity
+  component: the CT cell is the dual of the hydrodynamic zone, centred on
+  a zone corner (p. 664). The sections above, after Balsara and Spicer,
+  put the face fields on the faces of the cell that carries the conserved
+  variables; both are Yee collocations of the field, staggered
+  differently against the flow variables.
+* *The vector potential on the edges.* Since a face flux is the
+  circulation of $\mathbf A$, $\mathbf A$ sits on the same edges as the
+  electromotive forces, and face fields defined as its discrete curl
+  satisfy the discrete divergence exactly: divergence-free initial and
+  inflow data (eqs. 4.14–4.17). The motivation for evolving the field
+  rather than $\mathbf A$ is the defect the unstaggered vector-potential
+  section addresses with Hamilton–Jacobi WENO: monotone advection of
+  $\mathbf A$ gives a field with new extrema and a current that
+  oscillates and changes sign, from the second difference of a
+  monotonically advected potential (§§III, Va, Vc, Figs. 3b, 4). CT is
+  "simply obtaining a monotonic distribution of" the derivatives of the
+  potential "rather than of" the potential (p. 667). *Compiler's reading:*
+  this supports the reason given above for applying WENO to differences
+  of $\mathbf A$; Evans and Hawley do not discuss that remedy.
+* *How the 1988 edge field is built.* In 2D axisymmetry it is the product
+  of plain averages of the velocities and upwind, van Leer-interpolated
+  field components (eqs. 4.18–4.24), not Godunov fluxes. Because the same
+  product is a transport term in one face equation and a shear term in
+  the other, "upwind differencing is required for each such term"
+  (p. 666). The update is also written for a moving, adaptive mesh, where
+  "a straightforward differencing of the adaptive mesh equation (2.10)
+  would be disastrous to constraint satisfaction" (p. 666). Generality to
+  3D, to any transport order and to non-ideal MHD is asserted, not
+  tested: every run is 2D, ideal and second order.
+* *Parallel force.* Evans and Hawley repeat the Brackbill–Barnes argument
+  that a nonzero divergence "can produce an anomalous force *parallel* to
+  the magnetic field, especially when one uses the conservative form of
+  the momentum equation", with the kinetic-energy reduction "by a factor
+  of 4000" (p. 661), which agrees with the batch-15 paragraph. They give
+  no sign or formula for the force.
+* *Face-averaged field in a Godunov scheme* ([Dai & Woodward (1998)](/sources/dai-1998.md),
+  §§2–4). Mass, momentum and energy stay cell averages; only the field is
+  face-averaged. The face update by line- and time-averaged edge values
+  of $-\boldsymbol{\mathcal E}$ (eqs. 17–25) is called exact and keeps the
+  net flux through each cell surface constant (eq. 23), while the fluid
+  update keeps its exact conservative form, so the authors claim all
+  eight conservation laws and the divergence-free condition at once. The
+  face update is an operator applied after an unsplit integrator or after
+  each half of a Strang-split sequence (eqs. 26–27); the field itself
+  "should be updated in an unsplit manner" (§2). A cell-centred field is
+  carried only as an intermediate for fluxes and edge values, and its own
+  divergence is interpolation-dependent and $O(1)$ at its maximum in all
+  problems (§4). The 2D edge value is $\mathbf v\times\mathbf B$ at the
+  corner from time-centred four-cell averages of the cell-centred
+  $\mathbf v$ and $\mathbf B$ (eqs. 31–32), which agrees with Balsara and
+  Spicer's description of earlier CT as rebuilding edge fields from
+  centred variables ([Balsara & Spicer (1999)](/sources/balsara-1999.md), §1). For an unsplit
+  scheme the paper itself proposes taking the edge values from the
+  time-averaged face fluxes, which "will look more natural", and leaves
+  open whether interpolating among split sweeps keeps second order in
+  time (§4, p. 335).
+* *A qualification of the introduction's "often crash the code".* With the
+  same second-order split Godunov scheme, runs with and without the face
+  update are "not significantly different, although some differences
+  exist in small scales", on a Mach 15 shock overrunning a cloud of
+  density 10; density differences are "very hard to find", and the run
+  without it has its largest net cell flux in the shear layer of the tail
+  (Figs. 12–19). The authors conclude that "It is the conservation laws
+  which play the crucial role in the simulations for supersonic flows"
+  ([Dai & Woodward (1998)](/sources/dai-1998.md), §§3–4). The crash
+  statements above are Christlieb et al.'s for their own high-order
+  finite-difference schemes on the Orszag–Tang vortex and Jiang and Wu's
+  for fifth-order FD-WENO; Dai and Woodward's evidence is one
+  second-order conservative scheme, compared visually. Different schemes
+  and problems, so this bounds the generality of "often", without
+  contradicting the reported crashes.
+* *Projection in a higher-order Godunov MHD scheme, 1994*
+  ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.4).
+  The centred, unstaggered scheme keeps $\nabla\cdot\mathbf B = 0$ "only to
+  the truncation error of the method", which "could be O(1)" at
+  discontinuities, and optionally applies a Brackbill–Barnes projection at
+  the end of each step, with second-order central gradient and
+  divergence, which gives "nonstandard discretizations of the Laplacian"
+  solved by multigrid. This names the discrete operators that the
+  projection section notes Jiang and Wu and the 1980 note leave open. The
+  printed eq. 34 and its update ($\nabla^2\Phi$ plus the divergence equal
+  to zero, then $\mathbf B$ *minus* $\nabla\Phi$) are sign-inconsistent as
+  printed; the registry convention above is the self-consistent one (see
+  the Source page). "For the two-dimensional problems presented in this
+  paper, we did not find any noticeable difference regardless of whether
+  or not we applied a projection" (p. 275), on runs that include the
+  [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) to about two
+  Alfvén transit times. This differs in setting from Jiang and Wu's
+  "Divergence control decides stability" (fifth-order FD-WENO in
+  conservation form, run to $t = 8$): Zachary et al.'s scheme is second
+  order, split, and written in a nonconservative form that, they say,
+  "appears to suppress the occurrence of monopole forces" (p. 283). A
+  qualification, not a contradiction.
+* *Projection criticized for supersonic flows* ([Dai & Woodward (1998)](/sources/dai-1998.md),
+  §1). Beyond the cost and boundary remarks of Balsara and Spicer: it
+  needs global data, poorly suited to parallel machines; it removes a
+  divergence evaluated with $O(1)$ errors at discontinuities; and "more
+  seriously" it destroys conservation of energy and of the field, with
+  $O(1)$ errors in the jump conditions of a strong oblique shock. This
+  extends to supersonic flows the batch-15 note's judgment that exact
+  conservation form is "imperative only for high-speed flows".
+
+**Later uses (batch 17), Tóth's comparison.** *Seven treatments in one code*
+([Tóth (2000)](/sources/toth-2000.md), §§4–7, Tables I, IV, IX).
+* *CT without staggering.* Field-CT (after Dai and Woodward), flux-CT
+  (after Balsara and Spicer, edge field the mean of four face fluxes) and
+  transport-flux-CT (after Ryu, Miniati, Jones and Frank) are each
+  "identical with the original staggered schemes in terms of the cell
+  centered variables" to a conservative cell-centred update with averaged
+  fluxes over a wider stencil (eqs. 23–25). What they conserve is the
+  corner divergence, a contour integral over a diagonally rotated volume
+  (eq. 27), not the central divergence (eq. 26) (Table IV). This is the
+  precise content of "Tóth showed that staggering is unnecessary" in the
+  closed entry below, and it agrees with that closure: each scheme keeps
+  its own discrete divergence.
+* *Central-difference CT.* Field-CD and flux-CD (eqs. 28–31) update the
+  cell field by central differences of a cell electric field and conserve
+  the central divergence exactly, with "no checker-board like
+  instability"; field-CD needs no spatial interpolation.
+* *Projection.* The discrete divergence vanishes exactly only if the
+  Laplacian is built as the divergence of the gradient with the same
+  difference operators (§5.1). The projection is the minimal $L^2$
+  correction when the operators are antisymmetric, and its error is
+  bounded by the worse of the base-scheme and CT/CD orders, also for
+  discontinuous solutions (§§5.2–5.3). Cost: about 15% on Cartesian and
+  30% on general structured grids with a few CG or BiCGSTAB iterations;
+  multigrid "may not pay off" (§5.4).
+* *Boundary conditions (a qualification of Balsara and Spicer's §1
+  remark above).* "It is not the projection scheme, but their particular
+  Poisson solver (fast Fourier transform) that restricts the possible
+  boundary conditions to a few simple cases" (§5.5). Tóth says this of
+  Ryu, Miniati, Jones and Frank's remark, and gives ghost-cell rules for
+  periodic, shifted-periodic, fixed, open, conducting-wall and
+  antisymmetric boundaries.
+* *Ranking* (Table IX, errors relative to the best scheme per test):
+  "The projection, the new field-CD, and the flux-CT schemes are the most
+  accurate for these test problems"; field-CT has spurious oscillations;
+  transport-flux-CT is "more complicated, less versatile, and typically
+  not more accurate than the flux-CT scheme"; only the eight-wave scheme
+  is non-conservative and can converge to wrong jumps.
+
 ## Contradictions
 
 * *Robustness of CT against cleaning:* recorded as open on the
@@ -395,3 +558,7 @@ that the batch-7 paragraph and Berta et al. refer to.
 17. [Balsara (2001)](/sources/balsara-2001.md), §§II–III.
 18. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §§1–4 (eqs. 7–9, 13–15, 17–26 read from the page images).
 19. [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430, Figs. 1–2 (read from page images).
+20. [Evans & Hawley (1988)](/sources/evans-1988.md), §§II–V, eqs. 4.7–4.24, Figs. 1–4 (image-only scan, read from page images).
+21. [Dai & Woodward (1998)](/sources/dai-1998.md), §§1–4, eqs. 15–32, Figs. 12–19.
+22. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.4, eq. 34, pp. 275, 283.
+23. [Tóth (2000)](/sources/toth-2000.md), §§4–7, Tables I, IV, IX.

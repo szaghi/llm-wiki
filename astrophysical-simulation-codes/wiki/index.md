@@ -11,7 +11,7 @@ numerical methods (self-gravity, sink particles, cooling and chemistry,
 radiation moments, equations of state, relativistic primitive recovery);
 code comparisons; and GPU and performance-portable frameworks, astro or
 not.
-**Corpus: 43 of 43 archived sources compiled** (see the [update log](/log.md)).
+**Corpus: 50 of 50 archived sources compiled** (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -43,7 +43,7 @@ for every page.
    (CTU, VL2, SSP Runge–Kutta), the reconstruction most of them inherit,
    the [piecewise parabolic method](/methods/ppm.md) (open `Contradictions`
    entry: third or fourth order on non-uniform meshes?), the [Riemann solvers](/methods/approximate-riemann-solvers.md)
-   they offer, and the two ways of controlling the magnetic divergence:
+   they offer (all descended from [Godunov's method](/methods/godunov-method.md)), and the two ways of controlling the magnetic divergence:
    [constrained transport](/methods/constrained-transport.md) and
    [GLM cleaning](/methods/glm-divergence-cleaning.md). Where kinetic energy
    dominates, the [dual-energy formalism](/methods/dual-energy-formalism.md);
@@ -72,6 +72,7 @@ for every page.
    [MHD blast wave](/benchmarks/mhd-blast-wave.md),
    [Sedov–Taylor](/benchmarks/sedov-taylor-blast-wave.md),
    [double Mach reflection](/benchmarks/double-mach-reflection.md),
+   [interacting blast waves](/benchmarks/interacting-blast-waves.md),
    [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md),
    [Jeans wave](/benchmarks/jeans-wave.md),
    [singular isothermal sphere collapse](/benchmarks/singular-isothermal-sphere-collapse.md),

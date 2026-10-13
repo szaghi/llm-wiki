@@ -9,7 +9,7 @@ year: 2008
 venue: "Astrophys. J. Suppl. 178:137–177"
 local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2008-ApJS-Stone-101086588755.pdf"
 tags: [software, mhd, hydro, constrained-transport, unsplit, riemann-solver, verification, benchmark, performance]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -80,6 +80,9 @@ MHD. Merged into [Athena](/software/athena.md),
    accurate as the twelve-solve method" and "dramatically simpler to
    implement". The $\nabla\cdot\mathbf B$ source terms are minmod-limited
    (eqs. 88–89). It reduces exactly to 2D or 1D under symmetry.
+
+(Batch 9: the quoted phrases are Stone et al.'s characterization; [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §6, write "accurate and robust for approximately the same computational cost" and prefer the 6-solve "as a result of its simplicity and smaller memory footprint"; they print the 12↔CFL ≤ 1 and 6↔CFL < 1/2 pairing first, §4.1–4.2.)
+
 8. **H-correction** (App. C). The Sanders et al. (1998) carbuncle fix:
    each Roe eigenvalue modulus is bounded below by the maximum of a
    half wave-speed difference over a five-point (2D) or nine-point (3D)

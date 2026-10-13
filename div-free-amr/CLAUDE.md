@@ -38,6 +38,14 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch 4a staged 2026-10-13:** colella-1990, dai-woodward-1994,
+harten-1983, roe-1981, shu-osher-1988, shu-osher-1989,
+harten-lax-vanleer-1983, sod-1978, copied from sibling archives (D17); 117
+sources. New pages methods/corner-transport-upwind, methods/roe-solver,
+methods/hll-solver, methods/ssp-runge-kutta, properties/total-variation-diminishing,
+benchmarks/sod-shock-tube. Keys shu-1988, shu-1989, harten-lax-1983 renamed
+to the slugs. No contradiction opened. Deep lint: 8 ingestions since #10.
+
 **Frontier batch 3b staged 2026-10-13, with deep lint #10:**
 ryu-jones-1995, ryu-jones-frank-1995, zachary-malagoli-colella-1994,
 dai-woodward-1998, dai-woodward-1998-b, roe-balsara-1996 (user downloads);

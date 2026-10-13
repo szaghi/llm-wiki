@@ -33,6 +33,20 @@ also measures the jump conditions.
   1D the normal field is a fixed parameter of the scheme, so the unrotated
   problem cannot test the divergence constraint; rotation against the grid
   is what makes it one.
+  * **Sod's data, not Sod's $\gamma$.** The density and pressure data are
+    those of the [Sod shock tube](/benchmarks/sod-shock-tube.md), but Sod
+    uses $\gamma = 1.4$; $\gamma = 2$ is Brio & Wu's choice
+    ([Sod (1978)](/sources/sod-1978.md) §3).
+  * **A solution without the compound wave.**
+    [Dai & Woodward (1994)](/sources/dai-woodward-1994.md) solve the
+    Brio–Wu data ($\gamma = 2$, Gaussian units) with their three-component
+    nonlinear Riemann solver: two fast rarefactions, two slow shocks (Mach
+    2.2 and 1.05), a −180° rotational discontinuity and a contact (Table
+    IV). Fed back as a Riemann problem with only shocks and
+    discontinuities, a 1D simulation still produces the compound wave, and
+    they conclude: "Apparently, this Riemann problem does not have a unique
+    solution" (p. 368). The compound wave "will be generated through the
+    conservation law … no matter what approximation we use" (§6).
   * **The compound wave at high resolution.** At 8192 cells and
     $\gamma = 5/3$, [Ryu & Jones (1995)](/sources/ryu-jones-1995.md) §5
     resolve the slow compound structure as a "2-4" intermediate shock
@@ -66,6 +80,21 @@ also measures the jump conditions.
   [Felker & Stone (2018)](/sources/felker-2018.md) names it by this figure
   number. The full set is on the Source page. In 1D, as for Brio–Wu, the normal field
   is a fixed parameter and no divergence can be measured.
+  * **Which problems are Dai & Woodward's: a qualification.** Ryu & Jones
+    cite Dai & Woodward "in press". In the published paper
+    ([Dai & Woodward (1994)](/sources/dai-woodward-1994.md)) four of the
+    five problems they credit to it appear, after conversion from Gaussian
+    units: 1a is Table VI (same states, $t = 0.08$; Dai & Woodward also run
+    it on 200 zones), 1b is Table IIIa, 2a is Table Ia, 3a is Table IIa.
+    2b, credited to "DW table 5a", does not match Table Va, which has
+    normal field 5 against 3. The table numbering also differs (RJ's
+    "table 7" is Table VI), so Ryu & Jones quoted another version.
+  * *Compiler reading:* in all four matches the seventh entry of the state
+    equals Dai & Woodward's pressure, not a total energy (1a: 20 and 1;
+    a total energy of 20 is below the kinetic energy 50 of the left state).
+    The entry is presumably the pressure; the
+    [Ryu & Jones](/sources/ryu-jones-1995.md) Source page and the sentence
+    above record it as total energy.
 * **Narrow strip** ([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md),
   credited to Tóth): a domain $[0,1]\times[0, 2/N]$ on an $N\times2$ grid
   with shifted periodic boundaries, rotation angle $\tan^{-1}2 \approx 63.4°$. It
@@ -107,7 +136,7 @@ also measures the jump conditions.
   is reported.
 * **The 45° Brio–Wu tube with and without projection.**
   [Jiang & Wu (1999)](/sources/jiang-1999.md) §3.1 run the Brio–Wu problem
-  rotated by 45° on $600^2$ with fifth-order WENO and Powell's $8	imes8$
+  rotated by 45° on $600^2$ with fifth-order WENO and Powell's $8\times8$
   eigensystem. Without the Poisson correction the run shows spurious
   oscillations near the slow rarefaction inside the compound wave; with it
   the run agrees with their 1D result on 800 points
@@ -198,3 +227,5 @@ also measures the jump conditions.
 14. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §3, Figs. 3–5.
 15. [Powell (1994)](/sources/powell-1994.md), §3, Figs. 2–8.
 16. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.1, Fig. 3.
+17. [Dai & Woodward (1994)](/sources/dai-woodward-1994.md), §5, Tables I–VI, Fig. 8.
+18. [Sod (1978)](/sources/sod-1978.md), §3.

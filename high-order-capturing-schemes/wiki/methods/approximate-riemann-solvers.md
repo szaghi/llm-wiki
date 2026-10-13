@@ -545,6 +545,8 @@ and Lax–Friedrichs at the source.*
   argues that Eulerian contact spreading cannot be prevented without
   moving meshes.
 
+**Later uses (batch 17).** *An Engquist–Osher flux for MHD.* The flux is the physical flux of the left state plus an alternating sum of physical fluxes at the sonic points of each wave's linearly interpolated speed, with eigenvectors frozen at the arithmetic mean of the primitive states. Any split of the flux has its own such flux, so part of it can be differenced as a gradient (eqs. 20–28). Where the fast speed at the mean state is below the jump of the entropy speed, it is replaced by HLLE with $S_R = \max(\lambda_R^+, \lambda_e^+, 0)$ and $S_L = \min(\lambda_L^-, \lambda_e^-, 0)$ (eqs. 29–30). At transonic degeneracies the correction of the two degenerate waves becomes Rusanov dissipation (eq. 33) ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.3).
+
 ## Contradictions
 
 * **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
@@ -622,3 +624,4 @@ and Lax–Friedrichs at the source.*
 34. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §§2–4, Theorems 2.1, 3.1.
 35. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§3–6, Propositions 3.1–3.2.
 36. [Lax (1954)](/sources/lax-1954.md), pp. 163, 177–180.
+37. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.3, eqs. 20–33.

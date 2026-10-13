@@ -100,9 +100,14 @@ The standing case uses a velocity of 1 along a field of 1 (Alfvén speed
 second-order convergence on this test rests on Stone et al. (2008) and
 Caddy & Schneider (2024) above, not on the original.
 
+## Later uses (batch 9)
+
+* *3D, 6- against 12-solve CTU+CT* ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.3, eqs. 57–58, Figs. 4–6). Domain and rotation of their linear waves; along-wave field 1, amplitude 0.1, $\rho = 1$, $p = 0.1$; along-wave velocity 0 (travelling) or $+1$ (standing, as printed, with transverse velocity and field perturbations of equal sign, which is self-consistent). Second order with both schemes; the 12-solve at Courant number 0.4 matches the 6-solve, at 0.8 it is slightly better travelling and worse standing. Vector-potential initialization leaves magnetic-pressure truncation errors that drive compressive waves; the fluctuating-field helicity oscillates with amplitude scaling as $N^{-2}$. Cholla's $-1$ for the standing wave goes with its own perturbation sign, which is not printed, so the two are not compared.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
 2. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.1–§3.1.2.
 3. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §4.2.
 4. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.3.2, 5.2 (arXiv v1).
+5. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.3.

@@ -126,7 +126,7 @@ Face- and edge-centred data need their own inter-level operators.
   restriction at fine–coarse interfaces
   ([Mignone et al. (2012)](/sources/mignone-2012.md), §1, §3, §7).
 * In general relativity Athena++ keeps the same CT discretization with
-  $\sqrt{-g}$-weighted lengths, areas and volumes (Stone et al. 2020, §4).
+  $\alpha_{\mathrm L}\sqrt{\det\gamma_{ij}}$-weighted lengths, areas and volumes (Stone et al. 2020, §4).
 
 ## Evidence
 
@@ -183,7 +183,7 @@ Five more codes use CT: [Cholla](/software/cholla.md),
 * **IDEFIX** ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.4). Face
   $\mathbf B$ by CT after Evans & Hawley (1988). Edge EMFs from the face
   Riemann fluxes (arithmetic average, or the two Gardiner–Stone 2005 upwind
-  variants, the paper's E⁰ and Eᶜ, Eᶜ being the default and "similar to
+  variants, the paper's $\mathcal E^\circ$ and $\mathcal E^c$, $\mathcal E^c$ being the default and "similar to
   Athena") or from 2D Riemann solvers at edges (Londrillo & Del Zanna 2004;
   2D HLL and HLLD after Mignone & Del Zanna 2021), selectable at run time.
   The Hall-effect EMF uses the arithmetic average of the fluxes; adding Hall
@@ -352,8 +352,8 @@ AthenaK, H-AMR and the IDEFIX default use.
   loop, $\mathcal E_z^\circ$ oscillates on the advected loop, and
   $\mathcal E_z^c$ does neither (§3.3.1); on a standing Alfvén wave the
   Lax–Friedrichs variant dissipates about twice as fast (§3.3.2).
-  $\mathcal E_z^c$ is used for all second-order tests. These are the E⁰ and
-  Eᶜ that IDEFIX offers (batch 3). Because the cell-size factors cancel, the
+  $\mathcal E_z^c$ is used for all second-order tests. These are the $\mathcal E^\circ$ and
+  $\mathcal E^c$ that IDEFIX offers (batch 3). Because the cell-size factors cancel, the
   construction is stated to apply to corner-reconstruction schemes
   (Balsara), wave-propagation and central schemes as well (§6).
 * **Inside CTU.** The predictor advances the face normal fields by
@@ -479,6 +479,11 @@ kinematic only: the field does not act on the flow, and the Lorentz force
   hydrodynamics is that of the host code of Hawley, Smarr & Wilson
   (1984b), to which the paper defers every hydrodynamic detail.
 
+## Later uses (batch 9)
+
+* **3D EMFs in the Gardiner–Stone scheme** ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §4). No new 3D EMF is defined: the contact-upwinded $\mathcal E^c$ of 2005 is reused in both 3D CTU variants. CT is framed as predictor (Godunov electric fields) and corrector (CT electric fields). At $t^{n+1/2}$ the cell-centre reference EMF uses face-averaged $\mathbf B$ and $\rho$, $\rho\mathbf v$ from a conservative $\Delta t/2$ update with the first fluxes (eq. 48). This agrees with the attributions of Athena++ and AthenaK to "Gardiner & Stone (2005, 2008)" above.
+* **A cleaning paper's case against CT** ([Dedner et al. (2002)](/sources/dedner-2002.md), §1, p. 646): CT schemes are "restricted to structured grids and require large stencils", and "the underlying base scheme is only partially used". This is the authors' position, stated without a test.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -494,3 +499,5 @@ kinematic only: the field does not act on the flow, and the Lorentz force
 11. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1, §4.1.1–§4.1.2, §4.1.8, §6, Table 1, App. A (arXiv v2).
 12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§2.1–2.3, 3.2.1–3.2.2, 3.3.1–3.3.2, 4.1–4.2, 5.3, 6, eqs. 19–24, 34–51, 69–78 (arXiv v1).
 13. [Evans & Hawley (1988)](/sources/evans-1988.md), §§I–VI, eqs. 2.4–2.12, 4.4–4.25, 5.6, Figs. 1–6.
+14. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §4, eq. 48.
+15. [Dedner et al. (2002)](/sources/dedner-2002.md), §1.

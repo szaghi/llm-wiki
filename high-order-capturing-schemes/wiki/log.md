@@ -2,6 +2,53 @@
 
 ## 2026-10-13
 
+* **Batch 17 (frontier 4a): ingested [Dedner et al. (2002)](/sources/dedner-2002.md),
+  [Tóth (2000)](/sources/toth-2000.md), [Colella (1990)](/sources/colella-1990.md),
+  [Evans & Hawley (1988)](/sources/evans-1988.md),
+  [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md) and
+  [Dai & Woodward (1998)](/sources/dai-1998.md)**, the bundle's most-cited works
+  not yet ingested whose PDFs sat in sibling archives, copied into this
+  bundle's archive (D17); 131 sources.
+  * **New page:** [corner transport upwind](/methods/corner-transport-upwind.md).
+  * **Updated:** [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
+    (the GLM family, the time-step-tied $c_h$ and $c_p^2/c_h = 0.18$ originate
+    in Dedner et al.; mixed GLM recommended over EGLM; "EGLM" names different
+    source sets), [constrained transport](/methods/constrained-transport.md)
+    (Evans & Hawley's CT; Dai & Woodward's face-averaged CT; Tóth's seven
+    treatments, the corner divergence that the unstaggered CT schemes keep,
+    projection accuracy and cost, the FFT boundary-condition remark),
+    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) (the 2D limit 1/2 is the
+    donor-cell limit; CTU's is 1), [characteristic decomposition](/methods/characteristic-decomposition.md),
+    [PPM](/methods/ppm.md), [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
+    (the blast-wave pressure drop credited to Tóth's comparison: Tóth (2000)
+    has no blast test; the attribution is Balsara 2004's),
+    [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+    (Zachary et al.'s Engquist–Osher flux), and the benchmarks
+    [MHD rotor](/benchmarks/mhd-rotor.md), [Orszag–Tang](/benchmarks/orszag-tang-vortex.md),
+    [oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md),
+    [double Mach reflection](/benchmarks/double-mach-reflection.md),
+    [shock–cloud](/benchmarks/shock-cloud-interaction.md) and
+    [Brio–Wu](/benchmarks/brio-wu-shock-tube.md).
+  * **Contradictions.** None opened. Parallel-force sign entry (Open): a bullet
+    on the plus side — Dedner et al.'s eq. 22, a printed identity checked on the
+    page image, with the EGLM source $-(\nabla\cdot\mathbf B)\mathbf B$ (eq. 24b),
+    entails $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$ along the field
+    (projection by the compiler); Tóth's eq. 11 is consistent with it. Both predate
+    Derigs et al. (2018), so the entry stays Open. Cleaning-speed entry (Open): a
+    qualification bullet (Dedner originated the rule; his tests do not probe
+    Tomida et al.'s failure case). Qualifications: the rotor velocity distortion
+    (Tóth: not caused by $\nabla\cdot\mathbf B$; different runs from Balsara &
+    Spicer's), Dai & Woodward's runs with and without the constraint against the
+    CT page's "often crash the code" (different schemes).
+  * **Bibliography** (3270 entries): 207 references merged. Repaired: the entry
+    keyed blandford-1982 carried Blandford's single-author 1976 paper (MNRAS
+    176:465), as printed by Roe & Balsara; rekeyed blandford-1976 (Crossref), and
+    blandford-1982 is now the real Blandford & Payne, MNRAS 199:883 (Crossref),
+    cited by Evans & Hawley. Tóth's ref. 10 (PPM title, Riemann-solver venue)
+    assigned to dai-1994-b by title and in-text use; Liu printed 1981 is
+    liu-1975 (Crossref); Yee et al. "150, 1" is the issue (yee-1999); Powell et
+    al. in Numerical Methods for Fluid Dynamics V is powell-1995-b.
+
 * **Ingested [Zaghi (2026)](/sources/zaghi-2026.md)**, a frozen capture
   (D12 amendment) of three ADAM FLUME source files at commit 4a3a0815, in
   `raw/docs/zaghi-2026/`, on the human's request to record its evidence on

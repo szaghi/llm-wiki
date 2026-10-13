@@ -111,6 +111,42 @@ shown qualitatively ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.
 It is the same resolution and order as the review's run in the batch-7
 entry above.
 
+**Later uses (batch 17).** *Tóth's two rotors*
+([Tóth (2000)](/sources/toth-2000.md), §6.6, Table VIII, Figs. 19–20).
+* *First rotor:* speed 2 at $r = 0.1$, taper to $r = 0.115$, $p = 1$,
+  $B_x = 5/\sqrt{4\pi}$, $\gamma = 1.4$, $t = 0.15$, unsplit TVD-MUSCL
+  with the MC limiter, $\nu \le 0.6$. This is the "Tóth's first rotor" of
+  the batch-6 and batch-7 entries; the paper's domain is $[0, 1]^2$, so the
+  $[-0.5, 0.5]^2$ listed there is Seo and Ryu's shift.
+* *Second rotor*, "used to obtain the plots in BS": speed 1, $p = 0.5$,
+  $B_x = 2.5/\sqrt{4\pi}$, $\gamma = 5/3$, taper 0.1–0.115, $t = 0.295$,
+  one-step TVD with MC. "By mistake the final time and the plots in BS do
+  not correspond to the initial condition described in the text (BS,
+  private communication)." This agrees with the erratum reading of the
+  batch-11 entry.
+* *Errors.* Relative $L^1$ errors $\bar\delta_{50,100,200}$ fall at first
+  order. First rotor: projection 0.1145/0.0603/0.0276 (best), eight-wave
+  0.1152/0.0621/0.0285, flux-CT 0.1191/0.0624/0.0298, field-CT
+  0.1537/0.0893/0.0488 (worst). Second rotor: projection
+  0.1146/0.0625/0.0324 (best), field-CT 0.1404/0.0777/0.0453.
+* *Pressure undershoots.* Many schemes undershoot in pressure, seen as
+  spurious Mach-number peaks; an energy correction that holds the
+  thermal energy fixed removes them, at a total-energy error below 0.4%,
+  and was used for every second-rotor run.
+* *The velocity distortion and $\nabla\cdot\mathbf B$ (a qualification of
+  the batch-11 "Why the test exists").* The base scheme and field-CT
+  distort the rotating velocity field in the centre, an error that "looks
+  similar to the one shown by BS in Fig. 3 for their dimensionally split
+  base scheme". Field-CT keeps its discrete divergence at round-off and
+  shows "very distorted velocity contours", while the eight-wave scheme,
+  with finite divergence errors, does not; so Balsara and Spicer's
+  explanation of the error by the divergence is "not support[ed]" by these
+  simulations (Fig. 20). The two papers ran different schemes: Balsara and
+  Spicer's evidence is their own zone-centred scheme with and without
+  cleaning, Tóth's a comparison across seven treatments in one code. Each
+  claim stands on its own runs, so this is recorded as a qualification of
+  the explanation, not as a contradiction.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.4.
@@ -128,3 +164,4 @@ entry above.
 13. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6.
 14. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.1 and the erratum (J. Comput. Phys. 153:671).
 15. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.3.
+16. [Tóth (2000)](/sources/toth-2000.md), §6.6, Table VIII, Figs. 19–20.

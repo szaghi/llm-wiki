@@ -59,6 +59,9 @@ eigenvector normalization used by [Jiang & Wu (1999)](/sources/jiang-1999.md).
    enthalpy, the geometric-mean density, and $\sqrt\rho$-weighted
    transverse fields. Applied to the Euler equations, the procedure
    reproduces Roe's average uniquely.
+
+**Uniqueness, as the primary source states it.** [Roe (1981)](/sources/roe-1981.md) calls his first, rational construction of the matrix "far from unique" (p. 361), since the result depends on the order in which products are split; for the parameter-vector route (eqs. 11–19), which gives the square-root-density averages, he claims no uniqueness. The uniqueness of the Euler average is Brio & Wu's statement about their mean-value procedure, not Roe's ([Roe's approximate Riemann solver](/methods/roe-solver.md)).
+
 4. **General $\gamma$: no Roe matrix found** (§IV.1, p. 407). The nonlinear
    system "does not decouple ... we are not able to solve it analytically.
    Neither do we succeed in finding an appropriate parameterization as
@@ -135,6 +138,9 @@ eigenvector normalization used by [Jiang & Wu (1999)](/sources/jiang-1999.md).
     transverse field $-0.5341$, pressure 0.5157) against the numerical one
     (0.6963, 0.5997, $-1.578$, $-0.5341$, 0.5133): "The agreement is
     excellent."
+
+**Sod's γ differs.** The density and pressure data are [Sod (1978)](/sources/sod-1978.md)'s, whose tube has $\gamma = 1.4$. **Not unique.** [Dai & Woodward (1994)](/sources/dai-woodward-1994.md) Table IV solve these data with two slow shocks and a −180° rotational discontinuity in place of the compound wave, yet a 1D simulation still forms the compound wave: "Apparently, this Riemann problem does not have a unique solution" (p. 368).
+
 * **High-Mach Riemann problem** (§V, p. 416, Fig. 7). As above with zero
   normal field and left pressure 1000 (hydrodynamics with total pressure);
   right-moving shock of Mach 15.5, compared with the exact solution.
@@ -183,7 +189,8 @@ No divergence measure is reported; the problems are 1D.
      (they are in §IV.3).
    * **Reference list.** 20 entries, all merged; Crossref's reference count
      agrees. Three Harten 1983 entries were resolved by venue: SIAM Rev.
-     25:35 is `harten-lax-1983`, J. Comput. Phys. 49:357 is `harten-1983`,
+     25:35 is `harten-lax-vanleer-1983` (keyed `harten-lax-1983` until
+     2026-10-13), J. Comput. Phys. 49:357 is `harten-1983`,
      Harten & Hyman (J. Comput. Phys. 50:235) is the new `harten-1983-c`.
      Osher & Chakravarthy (J. Comput. Phys. 50:447) is `osher-1983-b`,
      distinct from `osher-1983` (Osher & Sanders, Math. Comp. 41:321;

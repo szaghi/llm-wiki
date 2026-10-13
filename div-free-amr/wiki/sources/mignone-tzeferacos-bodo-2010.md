@@ -9,7 +9,7 @@ year: 2010
 venue: "J. Comput. Phys. 229(17):5896-5920 (arXiv:1001.2832)"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp201004013.pdf"
 tags: [glm, high-order, finite-difference, weno, collocation, production-code, mhd]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -36,6 +36,8 @@ evidence that GLM matches CT in accuracy.
 
 The file read is the arXiv v2 preprint. Volume, issue and pages were
 verified on Crossref.
+
+**"Flux-primitive form."** Here this means the primitive of the implicit function whose cell averages are the point fluxes, Lemma 2.1 of [Shu & Osher (1989)](/sources/shu-osher-1989.md). It does not mean primitive variables. The 1988 paper has no such form ([Shu & Osher (1988)](/sources/shu-osher-1988.md), eqs. 3.5–3.9).
 
 # Key claims
 

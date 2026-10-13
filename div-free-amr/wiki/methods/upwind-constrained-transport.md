@@ -40,6 +40,20 @@ consistent with that invariant**:
 5. **Time integration.** All fluxes are evaluated at the same stage, with
    no time splitting.
 
+**Where the HLL forms come from.** The 1D flux behind the HLL forms of the
+edge EMF is the one-intermediate-state solver of
+[Harten, Lax & van Leer (1983)](/sources/harten-lax-vanleer-1983.md)
+(§3B(i), eqs. 3.13–3.15b; [HLL Riemann solver](/methods/hll-solver.md)).
+That paper is one-dimensional: the four-state edge combination is
+Londrillo & Del Zanna's. It leaves the two signal-speed bounds to "some
+algorithm", so the Einfeldt wavespeeds used by Felker & Stone are a later
+choice. What it proves is that the intermediate state is the mean of the
+exact Riemann solution over the fan, hence the entropy inequality, provided
+the bounds are true signal-speed bounds (p. 50). It does not claim
+positivity of the intermediate state; the bundle's positivity statements
+for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
+(HLLE) and [Wu & Shu (2019)](/sources/wu-shu-2019.md) (MHD wave speeds).
+
 ## Properties
 
 * **Monopole cancellation.** For second-order fluxes the component of the
@@ -202,3 +216,4 @@ consistent with that invariant**:
 8. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §4.2.
 9. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §§1, 3, eqs. 1.9–1.10.
 10. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §2, Table 2.
+11. [Harten, Lax & van Leer (1983)](/sources/harten-lax-vanleer-1983.md), §3B(i), eqs. 3.13–3.15b, p. 50.

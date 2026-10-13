@@ -225,6 +225,8 @@ printed):
 
 No Orszag–Tang vortex is run.
 
+Batch 9: reading the Ryu & Jones 1a states as pressures agrees with [Ryu & Jones (1995)](/sources/ryu-1995.md), whose preprint mislabels the seventh entry $E$ (see its Recorded as printed).
+
 # Notation map
 
 | Gardiner & Stone (2005) | Registry ([notation](/notation.md)) | Note |
@@ -295,6 +297,7 @@ No Orszag–Tang vortex is run.
      no boundary conditions for the blast wave. The paper does not name
      the code; its acknowledgements thank P. Teuben for "contributions to
      the implementation".
+     * **The 2D blast-wave output time.** The 2005 arXiv v1 prints $t = 0.2$ twice: in §5.6 ("The solution to this problem at time t = 0.2, using a 200 × 200 grid", p. 38) and in the Fig. 13 caption ("time=0.2", p. 39). Fig. 13 contradicts that value: its outer fast-shock front lies about 0.4 box-widths from the centre, as in the $t = 0.02$ 3D run of [Gardiner & Stone (2008)](/sources/gardiner-2008.md), Fig. 8,, and with an ambient fast speed of at least 10 the front would have travelled about 2 length units by $t = 0.2$. The printed 0.2 is probably a misprint for 0.02 — an inference from the figure (compiler reading at deep lint #4), not a printed statement; the JCP version is not in the archive. Recorded as printed; not a contradiction.
    * **Reference list:** 33 entries. Evans & Hawley printed ApJ 322:659
      (Crossref 332:659) lands on `evans-1988`; 19 title-less entries gained
      their titles in the merge; references printed without a year (two

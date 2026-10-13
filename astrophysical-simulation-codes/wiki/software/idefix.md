@@ -104,7 +104,7 @@ From [Lesur et al. (2023)](/sources/lesur-2023.md), §2.
   [constrained transport](/methods/constrained-transport.md).
 * **EMF reconstruction** (§2.4): from the Riemann face fluxes
   (Gardiner & Stone 2005: arithmetic average and the
-  $\boldsymbol{\mathcal E}^0$ and $\boldsymbol{\mathcal E}^c$ variants) or
+  $\boldsymbol{\mathcal E}^\circ$ and $\boldsymbol{\mathcal E}^c$ variants) or
   from 2D Riemann solvers at edges (Londrillo & Del Zanna 2004; 2D HLL and
   HLLD after Mignone & Del Zanna 2021). The default is
   $\boldsymbol{\mathcal E}^c$, "similar to Athena".
@@ -287,7 +287,7 @@ curvilinear convergence; strong scaling.
 * **Sod set-up** ([Sod (1978)](/sources/sod-1978.md), §3). The left
   pressure 1.0 that Fig. 2 of Lesur et al. shows is Sod's printed value,
   as is $\gamma = 1.4$; the 500 points and $t = 0.2$ are IDEFIX's choices,
-  since Sod prints $\Delta x = 0.01$ (100 points) and no end time; see
+  since Sod prints $h = 0.01$ (100 points) and no end time; see
   [Sod shock tube](/benchmarks/sod-shock-tube.md).
 
 # Citations

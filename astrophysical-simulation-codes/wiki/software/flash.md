@@ -19,7 +19,8 @@ star-formation papers state about the configurations they ran,
 module) and [Mathew & Federrath (2021)](/sources/mathew-2021.md) (an
 application with sinks and sub-grid feedback), together with statements
 about FLASH in other ingested sources. Neither paper describes FLASH's
-reconstruction scheme or time integrator.
+reconstruction scheme or time integrator (the code paper,
+[Fryxell et al. (2000)](/sources/fryxell-2000.md), does; see batch 8).
 
 ## Code and version
 
@@ -338,6 +339,10 @@ that paper and concerns that version.
 * **Language.** Fortran, with MPI; PARAMESH is "a package of FORTRAN 90
   subroutines" (§2).
 
+## Later uses (batch 9)
+
+The interacting-blast-wave run now has a benchmark page, [interacting blast waves](/benchmarks/interacting-blast-waves.md); Woodward & Colella's finest-pair rates are PPMDE 1.07, PPMLR 0.98, all others ≤ 0.85 (Table I), which agrees with "only PPM achieved even linear convergence". On the Emery step, Woodward & Colella (p. 131) give a corner treatment (four plus two zones reset to the corner entropy and enthalpy) whose absence produces the numerical boundary layer and spurious Mach reflections that FLASH reports.
+
 # Citations
 
 1. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1–2.5, 3–4, 4.2.1, 4.3.4, eqs. 14, 20, 30–32, App. B (arXiv v2).
@@ -349,3 +354,4 @@ that paper and concerns that version.
 7. [Coleman (2020)](/sources/coleman-2020.md), §1 (arXiv v3).
 8. [Berger & Colella (1989)](/sources/berger-1989.md), §§2, 5.
 9. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§1–9, eqs. 1–3, 25–26, 33–53, 93, 96, Figs. 1–4, 22.
+10. [Woodward & Colella (1984)](/sources/woodward-1984.md), p. 131, Table I.

@@ -5,7 +5,7 @@ description: "A strong magnetized shock overrunning a dense stationary cloud; te
 status: established
 aliases: [cloud-shock interaction, shock-cloud problem]
 tags: [benchmark, mhd, 2d, 3d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Shock–cloud interaction
@@ -48,6 +48,8 @@ $t = 0.06$ ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5).
   and the undivided divergence stays below $10^{-13}$ of $|\mathbf B|$
   ([Balsara (2001)](/sources/balsara-2001.md), §VI.a).
 
+**Later uses (batch 17).** An early variant with all three field components: preshock $(\rho, p, v_x, v_y, v_z, B_x, B_y, B_z) = (1, 1, 0, 0, 0, 2, 2, 2)$, postshock $(3.94258, 399.481, 17.3463, -0.040403, -0.040403, 2, 7.89899, 7.89899)$ (Mach 15). Domain $1.5\times1$, cloud of radius 0.15 at $(0.375, 0.5)$ with 10 times the preshock density, grids up to $768\times512$, $t = 0.055$; plus a Mach 12 "MHD"-letters robustness case at density 50. Its data differ from the set-up above, so it is a separate variant ([Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 8–11).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5.
@@ -55,3 +57,4 @@ $t = 0.06$ ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.5).
 3. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.4 (arXiv v2).
 4. [Berta et al. (2024)](/sources/berta-2024.md), §5.8 (arXiv v4).
 5. [Balsara (2001)](/sources/balsara-2001.md), §VI.a.
+6. [Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 8–19.

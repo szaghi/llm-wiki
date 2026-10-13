@@ -59,6 +59,9 @@ sources, chiefly the MHD extension of
    with entropy fix ("RF") is referenced to Shu & Osher. Local splitting is
    allowed in words ("either globally or locally", §2; §4 for systems),
    but every LF scheme tested is global LF.
+
+**Relation to Shu & Osher.** The flux-primitive form of claim 1 is Lemma 2.1 of [Shu & Osher (1989)](/sources/shu-osher-1989.md) (eqs. 2.1–2.3). The 1988 paper builds the same flux by ENO interpolation of the split fluxes plus Taylor corrections in even derivatives (eqs. 3.5–3.9) and has no flux primitive ([Shu & Osher (1988)](/sources/shu-osher-1988.md), read as ICASE Report 87-33). The "RF" splitting referenced to Shu & Osher is ENO-RF of the 1989 paper (Alg. 2.3; ENO-Roe and ENO-LLF are Algs. 2.1–2.2). The 1988 paper has only global LF and general E-flux building blocks, and no Roe-type ENO scheme (eqs. 3.1, 3.20–3.21). The RK-3 of claim 13 is eq. 2.18 of the 1988 paper, CFL coefficient 1.
+
 3. **Candidate stencils and weighted flux** (eqs. 2.7–2.14, Tables 1–2).
    The $r$ stencils are $S_k = (x_{j+k-r+1},\dots,x_{j+k})$,
    $k = 0,\dots,r-1$, each giving $q_k^r = \sum_l a^r_{k,l} f_{j+k-r+1+l}$.

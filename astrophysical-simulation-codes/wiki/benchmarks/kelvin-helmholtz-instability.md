@@ -5,7 +5,7 @@ description: "The shear-layer instability run in several distinct set-ups — a 
 status: established
 aliases: [KHI, Kelvin-Helmholtz test, shear-layer instability]
 tags: [benchmark, hydro, mhd, amr, relativity, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -176,6 +176,10 @@ thing. What remains open is whether the grid runs of Passy et al. (2012)
 were in the under-resolved regime where the suppression occurs; Ohlmann
 et al. do not show it.
 
+## Later uses (batch 9)
+
+* *MHD shear layers as a divergence-control test* ([Dedner et al. (2002)](/sources/dedner-2002.md), §5, Table I). $\gamma = 1.4$, $[0,1]\times[-1,1]$, periodic, $\rho = 1$, $B_x = 1$, $p = 50$, two tanh shear layers at $y = \pm0.5$ with a $\sin(2\pi x)$ transverse seed, $t = 0.5$, on triangles. Mixed GLM keeps the symmetry; uncorrected is distorted and costs 53 % more time. A set-up distinct from all groups above.
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §3.3.6, §3.4.3, §4.3.2.
@@ -184,3 +188,4 @@ et al. do not show it.
 4. [Katz et al. (2016)](/sources/katz-2016.md), §4.3.1 (arXiv v2).
 5. [Mignone et al. (2012)](/sources/mignone-2012.md), §6.6.
 6. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §§2–4, Figs. 1–4 (arXiv v1).
+7. [Dedner et al. (2002)](/sources/dedner-2002.md), §5, Table I.

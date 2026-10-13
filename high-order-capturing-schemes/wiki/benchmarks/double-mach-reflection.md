@@ -256,6 +256,8 @@ $t = 1.20$ and the caption $t = 0.12$.
   Shu". Cockburn and Shu's own statement compares degree 2 (third order)
   with degree 1 (second order): a factor 2 per direction at the Mach stems.
 
+**Later uses (batch 17).** *Unsplit against split.* At $400\times100$, $h = 1/100$, $t = 0.2$, Colella's unsplit corner-transport-upwind scheme and the operator-split scheme are "essentially identical" (visual only, no norms). The unsplit run needed the normal-predicted states as inputs to the transverse Riemann problems (eq. 2.15; with cell averages, eq. 2.13, the wall jet loses resolution), careful reflecting-wall conditions, and multidimensional flattening against post-shock noise ([Colella (1990)](/sources/colella-1990.md), §5, Figs. 8–10; [corner transport upwind](/methods/corner-transport-upwind.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -293,3 +295,4 @@ $t = 1.20$ and the caption $t = 0.12$.
 33. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.2.
 34. [Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.1, Tables I–II.
 35. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.1, Figs. 4.1–4.3.
+36. [Colella (1990)](/sources/colella-1990.md), §5, Figs. 8–10.

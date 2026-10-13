@@ -330,6 +330,50 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   times $\alpha_s$ (printed "$\tau\alpha_s$"; $\tau$ is undefined in the
   paper and presumably $1/\rho$).
 
+**Later uses (batch 17).** *Characteristic limiting of second-order
+slopes, and the 1994 MHD Godunov scheme.*
+* *Limiting coefficients, not reconstructing variables*
+  ([Colella (1990)](/sources/colella-1990.md), eqs. 2.5–2.6, after
+  Harten). In a second-order unsplit scheme the central difference and
+  twice each one-sided difference of a cell are expanded on the
+  $r^{(p)}$; each field's limited coefficient is the smallest of the three
+  in magnitude, with the sign of the central one, when the one-sided
+  coefficients agree in sign, and zero otherwise; the slope is the sum of
+  the limited coefficients times the $r^{(p)}$. This is the
+  monotonized-central limit applied per field. The predictor then
+  discards, per field, the part of the slope carried by waves that do not
+  move toward the edge (eqs. 2.10–2.12), the [PPM](/methods/ppm.md)
+  tracing for piecewise-linear data
+  ([corner transport upwind](/methods/corner-transport-upwind.md)). For
+  gas dynamics the tracing runs in primitive variables with explicit
+  eigenvectors (§4, p. 190).
+* *A hybrid characteristic/MUSCL slope for MHD*
+  ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md),
+  §2.2, eqs. 7–12). In primitive variables, the backward, forward and
+  centred differences and the fourth-order MUSCL slope are each expanded
+  on the eigenvectors. The limited coefficient is the smallest in
+  magnitude among twice the one-sided, the centred and the MUSCL
+  coefficients, with the sign of the centred one, if the one-sided ones
+  agree in sign (eq. 10). The factor 2 drops to 1 where the field is
+  locally linearly degenerate, detected by a sign change of its structure
+  coefficient $\nabla\lambda^{(p)}\cdot r^{(p)}$ between neighbouring
+  cells (eq. 11). The MUSCL term is there because characteristic limiting
+  alone does not keep each primitive variable monotone, and pure MUSCL
+  slopes gave "moderate amplitude (5–10%) fluctuations at shocks, compound
+  waves, and certain types of rarefaction waves" (p. 267).
+* *Eigenvectors and the interface state in that scheme.* The Riemann
+  solver expands the jump in primitive variables on eigenvectors frozen at
+  the arithmetic mean of the two primitive states (eqs. 18–19), another
+  instance of the arithmetic-mean interface state of the batch-5 and
+  batch-6 blocks. The eigenvectors are Zachary and Colella's of 1992, not
+  reprinted: "We always have a set of complete, linearly independent
+  eigenvectors" (p. 273), with no normalization stated, so the Roe–Balsara
+  erratum to the 1992 left slow eigenvector (batch 16) cannot be checked
+  against this paper. Structure coefficients also gate the degeneracy
+  treatment of the flux, with Bell, Colella and Trangenstein's test
+  (constant 0.1) and an empirical Alfvén/slow test (eqs. 31–32;
+  [nonconvexity of ideal MHD](/results/mhd-nonconvexity.md)).
+
 ## Contradictions
 
 **Is Brio & Wu's eq. 40 $\alpha_s$ the same quantity as Roe & Balsara's
@@ -403,3 +447,5 @@ dimensionless $\alpha_s$ (is the $1/c_f$ intended)?** *Open*
 42. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2 (closing remark).
 43. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.
 44. [Roe & Balsara (1996)](/sources/roe-1996.md), §§2–4, p. 60, eqs. 7–9, 15–16, 21.
+45. [Colella (1990)](/sources/colella-1990.md), §§2, 4, eqs. 2.5–2.12.
+46. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §§2.2–2.3, eqs. 7–12, 18–19, 31–32.

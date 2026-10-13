@@ -160,8 +160,10 @@ All runs use the second-order Godunov method of Colella on a Cray X-MP/22
    $1600\times320$), 149 coarse steps, error estimated every other coarse
    step, buffer one cell, grid efficiency 65 %, tolerance 0.02 on the
    truncation error of density, no tagging beyond a set distance behind
-   the incident shock. The finest grids are 4 times finer per direction
-   than the finest run of Woodward & Colella (1984). Finding: a
+   the incident shock. "The finest grids in this calculation represent a
+   factor of 4 increase in resolution in each spatial direction over the
+   finest grid calculation in [22]" (p. 79), [22] being
+   [Woodward & Colella (1984)](/sources/woodward-1984.md). Finding: a
    Kelvin–Helmholtz roll-up of the principal slip line, swept into the
    wall-jet roll-up.
    * **Table I** (FLOWTRACE, % of 5674 CPU s): integration 78.29;
@@ -184,6 +186,9 @@ All runs use the second-order Godunov method of Colella on a Cray X-MP/22
      $8.94\times10^5$ words; even with 4 arrays the uniform run needs
      $2.0\times10^6$ words, "a factor of 2.2 larger". Much AMR memory holds
      two time levels per grid.
+
+(Batch 9 flag withdrawn at deep lint #4: consistent in $h/t$; see [double Mach reflection](/benchmarks/double-mach-reflection.md).)
+
 3. **Low-$\gamma$ double Mach reflection, Mach 8, 35°, $\gamma = 1.107$**
    (§7, Fig. 7.2, $t = 0.115$ and $0.230$). Seven Mach triple points,
    including a third on the top shock; "the limit of resolution" on the
@@ -247,7 +252,7 @@ Courant number are not printed.
      (pp. 66–70, 74–75, 78–80, 84), because the OCR garbles them. The
      contour figures (6.1, 6.2, 7.1, 7.2) give no quantitative values.
    * **Recorded as printed.** §7 says Fig. 7.1a shows the grids "at time
-     $t = 1.20$", the Fig. 7.1 caption $t = 0.12$; not resolved. The
+     $t = 1.20$", the Fig. 7.1 caption $t = 0.12$; the caption's 0.12 is the consistent value (see double Mach reflection). The
      restriction formula prints the coarse index as $l,j$ (p. 69). The
      uniform-grid memory is printed "≈ 4.5 × 10^6 words" for
      $9\cdot320\cdot1600 = 4.61\times10^6$ (computed at ingestion); the
@@ -263,5 +268,5 @@ Courant number are not printed.
      report version of `colella-1990`, not verified); Adjerid & Flaherty,
      Chern & Colella and Dwyer, printed without a year, are keyed with the
      citing year 1989. Berger & Oliger (J. Comput. Phys. 53:484) and
-     Woodward & Colella (54:115) land on the existing entries. The
+     [Woodward & Colella](/sources/woodward-1984.md) (54:115) land on the existing entries. The
      bibliography holds 2200 entries after the merge.

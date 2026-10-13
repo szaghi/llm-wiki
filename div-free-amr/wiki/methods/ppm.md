@@ -67,6 +67,19 @@ to second order in time (§2). No convergence table is given.
   ([Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), CTU;
   [Almgren et al. (2010)](/sources/almgren-2010.md)).
 
+**The unsplit framework is Colella's (1990).** The CTU of Gardiner &
+Stone is [corner transport upwind](/methods/corner-transport-upwind.md),
+the unsplit, corner-coupled Godunov integrator introduced by
+[Colella (1990)](/sources/colella-1990.md). It is built there on
+piecewise-linear slopes, and its characteristic tracing is "essentially
+that given in" Colella & Woodward (p. 182). Quadratic (PPM) interpolants
+are named a straightforward extension and not implemented (§6, p. 198).
+So the unsplit framework dates from 1990 and unsplit *PPM* remains a later
+construction, as stated above. The same section gives the 3D counts used
+by the codes below: 12 Riemann solutions per zone per step for the full
+corner-coupled analogue, 6 when the maximum principle is relaxed, against
+3 for operator splitting (p. 199).
+
 ## Discontinuity handling
 
 * **Contact steepening** (eqs. 1.14–1.17, 3.2), on density only and only at
@@ -93,7 +106,8 @@ is CASTRO's statement.
 PPM is **constraint-agnostic**: divergence preservation in its MHD uses
 comes from the CT layer and from consistent source terms, never from the
 reconstruction.
-* **Athena.** PPM interface states with Colella's CTU and staggered
+* **Athena.** PPM interface states with Colella's
+  [CTU](/methods/corner-transport-upwind.md) and staggered
   [CT](/methods/constrained-transport.md). For MHD the characteristic
   tracing needs multidimensional source terms proportional to normal-field
   derivatives, balanced so as to respect the divergence relation
@@ -136,3 +150,4 @@ The limiter formula printed in the primary source carries a typo
 8. [Mignone et al. (2012)](/sources/mignone-2012.md).
 9. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §2.
 10. [Pakmor et al. (2026)](/sources/pakmor-2026.md).
+11. [Colella (1990)](/sources/colella-1990.md), §§2, 6, pp. 182, 198–199.

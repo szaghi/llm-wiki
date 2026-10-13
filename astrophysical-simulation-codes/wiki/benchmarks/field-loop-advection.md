@@ -130,6 +130,42 @@ The original runs one resolution, and its fit is a decay law in time, not
 an order in $h$; the statement above that no source reports a convergence
 order is unchanged by it.
 
+## Later uses (batch 9)
+
+* *3D, origin of the 3D test* ([Gardiner & Stone (2008)](/sources/gardiner-2008.md),
+  §5.1, eqs. 51–52, Figs. 1–2). Domain $[-0.5,0.5]^2\times[-1,1]$ on
+  $N\times N\times2N$ cells, periodic; $\rho = 1$, $p = 1$,
+  $\mathbf v = (1, 1, 2)$. The loop is a cylinder whose axis lies along
+  $(-1, 0, 2)/\sqrt5$, from a vector potential along the axis equal to
+  $10^{-3}$ times (0.3 minus the distance from the axis) inside radius 0.3
+  and zero outside, with periodic images. 6-solve CTU+CT; Riemann solver
+  and Courant number not stated.
+  * The volume-averaged $B^2$ fits the decay law of the 2D original with
+    time constants $3.22\times10^2$, $3.68\times10^3$ and $2.65\times10^4$
+    and exponents 0.365, 0.328 and 0.320 for $N = 32$, 64 and 128 (2D:
+    $1.061\times10^4$ and 0.291).
+  * The mean absolute axial field, normalized by the loop amplitude, is
+    the error measure; it "converges at about first order" and
+    concentrates on the loop axis and edge, where the initial current is
+    singular (Fig. 2). As printed, the Fig. 1 caption names the mean
+    squared axial field instead.
+  * For a $z$-invariant loop both 3D variants reproduce the 2D result
+    exactly and keep $B_z = 0$.
+* **The velocity is not perpendicular to the loop axis** in this set-up:
+  its component along the axis is $3/\sqrt5$ (computed at reading). The 3D
+  version (ii) of Stone et al. (2008) above, "advected along a
+  perpendicular diagonal (after Gardiner & Stone 2008)" in a $(1, 1, 1)$
+  domain at $128^3$, is therefore Stone et al.'s modification of the
+  original, not the original set-up; the attribution is Stone et al.'s.
+* **Cholla's run** in batch 3 uses the original's velocity $(1, 1, 2)$,
+  domain $1\times1\times2$ and $N\times N\times2N$ grid, with its own
+  spherical, tilted vector potential; the loop geometry therefore differs.
+* **Convergence order.** Gardiner & Stone state an approximately
+  first-order convergence of the axial-field error, read from a resolution
+  study at $N = 32$ to 128. This qualifies the statement under "What it
+  shows" that none of the sources reports a convergence order (the batch-6
+  note on the 2D original stands: its fit is a decay law in time).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
@@ -137,3 +173,4 @@ order is unchanged by it.
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.5.2.
 4. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.3 (arXiv v2).
 5. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.3.1, 4.1.2, 5.1, eq. 53 (arXiv v1).
+6. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.1, eqs. 51–52, Figs. 1–2.

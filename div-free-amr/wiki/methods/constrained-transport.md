@@ -136,6 +136,8 @@ local Lax–Friedrichs splitting is its own choice, since Jiang & Shu test
 only global splitting ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md),
 §§2, 4; [WENO reconstruction](/methods/weno.md)).
 
+**Origin of local splitting.** Local Lax–Friedrichs splitting in the point-value flux framework is ENO-LLF of [Shu & Osher (1989)](/sources/shu-osher-1989.md) (Alg. 2.2, eq. 2.12; systems eqs. 4.3–4.4). What is HOW-MHD's own is its use inside Jiang–Shu WENO, which Jiang & Shu allow in words but do not test ([WENO reconstruction](/methods/weno.md)).
+
 ## Shock-capturing combinations and the collocated recast
 
 CT as introduced is a finite-difference discretization; it was subsequently
@@ -249,6 +251,8 @@ normal field is simply constant, and the face-centred discretization is
 argued to be the consistent one because it conserves the flux, the
 cell-integrated monopole density, of every cell.
 
+**The integrator.** Athena's unsplit CTU is Colella's [corner transport upwind](/methods/corner-transport-upwind.md) ([Colella (1990)](/sources/colella-1990.md)), a pure-hydrodynamics integrator with no divergence property of its own.
+
 # Citations
 
 1. [Evans & Hawley (1988)](/sources/evans-hawley-1988.md), §II–V.
@@ -268,3 +272,5 @@ cell-integrated monopole density, of every cell.
 15. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§2, 4.
 16. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§1–3.2, 5, eqs. 18–28, 52.
 17. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§1–3, eqs. 15–27, Figs. 12–18.
+18. [Shu & Osher (1989)](/sources/shu-osher-1989.md), Alg. 2.2, eqs. 2.12, 4.3–4.4.
+19. [Colella (1990)](/sources/colella-1990.md), §6.
