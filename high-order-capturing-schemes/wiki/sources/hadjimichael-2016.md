@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Hadjimichael Y., Ketcheson D.I., Lóczi L., Németh A.]
 year: 2016
 venue: "SIAM J. Numer. Anal. 54:2799–2832"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2016-SINUM-Hadjimichael-10113715m101717x.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-SINUM-Hadjimichael-10113715m101717x.pdf"
 tags: [time-discretization, ssp, multistep]
 timestamp: 2026-10-12T00:00:00Z
 ---

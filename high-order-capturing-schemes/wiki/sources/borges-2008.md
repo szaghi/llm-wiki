@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Borges R., Carmona M., Costa B., Don W.S.]
 year: 2008
 venue: "J. Comput. Phys. 227:3191-3211"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2008-JCP-Borges-101016jjcp200711038.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2008-JCP-Borges-101016jjcp200711038.pdf"
 tags: [weno, weno-z, nonlinear-weights, dissipation]
 timestamp: 2026-10-08T00:00:00Z
 ---

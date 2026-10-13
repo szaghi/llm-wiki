@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zhang U.-H., Schive H.-Y., Chiueh T.]
 year: 2018
 venue: "Astrophys. J. Suppl. 236:50"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2018-ApJS-Zhang-1038471538-4365aac49e.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2018-ApJS-Zhang-1038471538-4365aac49e.pdf"
 tags: [software, mhd, amr, constrained-transport, gpu, performance, unsplit, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

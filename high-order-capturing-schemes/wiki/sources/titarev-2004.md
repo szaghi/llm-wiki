@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Titarev V.A., Toro E.F.]
 year: 2004
 venue: "J. Comput. Phys. 201:238-260"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2004-JCP-Titarev-101016jjcp200405015.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2004-JCP-Titarev-101016jjcp200405015.pdf"
 tags: [weno, finite-volume, 3d, riemann-solver, hllc, musta]
 timestamp: 2026-10-08T00:00:00Z
 ---

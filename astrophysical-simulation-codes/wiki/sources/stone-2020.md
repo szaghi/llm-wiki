@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Stone J.M., Tomida K., White C.J., Felker K.G.]
 year: 2020
 venue: "Astrophys. J. Suppl. 249:4"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2020-ApJS-Stone-1038471538-4365ab929b.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2020-ApJS-Stone-1038471538-4365ab929b.pdf"
 tags: [software, mhd, amr, constrained-transport, time-integration, riemann-solver, performance, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

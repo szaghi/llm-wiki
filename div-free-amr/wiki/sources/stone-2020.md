@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Stone J.M., Tomida K., White C.J., Felker K.G.]
 year: 2020
 venue: "Astrophys. J. Suppl. Ser. 249:4"
-local_file: "~/papers/mosaic/div-free-amr/2020-ApJS-Stone-1038471538-4365ab929b.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2020-ApJS-Stone-1038471538-4365ab929b.pdf"
 tags: [constrained-transport, amr, production-code, mhd, relativistic, task-parallelism]
 timestamp: 2026-07-08T00:00:00Z
 ---

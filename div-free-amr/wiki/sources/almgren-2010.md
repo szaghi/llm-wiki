@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Almgren A.S., Beckner V.E., Bell J.B., Day M.S., Howell L.H., Joggerst C.C., Lijewski M.J., Nonaka A., Singer M., Zingale M.]
 year: 2010
 venue: "Astrophys. J. 715:1221-1238"
-local_file: "~/papers/mosaic/div-free-amr/2010-ApJ-Almgren-1010880004-637X7152-1221.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2010-ApJ-Almgren-1010880004-637X7152-1221.pdf"
 tags: [amr, block-structured, subcycling, self-gravity, production-code]
 timestamp: 2026-10-12T00:00:00Z
 ---

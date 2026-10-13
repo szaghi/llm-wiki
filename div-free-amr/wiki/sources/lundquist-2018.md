@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Lundquist T., Malan A., Nordström J.]
 year: 2018
 venue: "J. Comput. Phys. 362:49-68"
-local_file: "~/papers/mosaic/div-free-amr/2018-JCP-Lundquist-101016jjcp201801047.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-JCP-Lundquist-101016jjcp201801047.pdf"
 tags: [sbp, sat, interpolation, hybrid, unstructured, coarse-fine-interface]
 timestamp: 2026-07-08T00:00:00Z
 ---

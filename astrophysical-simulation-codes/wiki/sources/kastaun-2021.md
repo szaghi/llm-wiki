@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kastaun W., Kalinani J.V., Ciolfi R.]
 year: 2021
 venue: "Phys. Rev. D 103:023018"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2021-PRD-Kastaun-101103physrevd103023018.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2021-PRD-Kastaun-101103physrevd103023018.pdf"
 tags: [mhd, relativity, primitive-recovery, equation-of-state, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Tzeferacos P., Bodo G.]
 year: 2010
 venue: "J. Comput. Phys. 229:5896-5920"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2010-JCP-Mignone-101016jjcp201004013.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2010-JCP-Mignone-101016jjcp201004013.pdf"
 tags: [mhd, finite-difference, divergence-free, weno, monotonicity]
 timestamp: 2026-10-08T00:00:00Z
 ---

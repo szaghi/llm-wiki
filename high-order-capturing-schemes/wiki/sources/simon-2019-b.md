@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Simon S., Mandal J.C.]
 year: 2019
 venue: "Int. J. Numer. Methods Fluids 89:533-569"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2019-IJNMF-Simon-101002fld4710.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2019-IJNMF-Simon-101002fld4710.pdf"
 tags: [riemann-solver, shock-instability, hllem]
 timestamp: 2026-10-12T00:00:00Z
 ---

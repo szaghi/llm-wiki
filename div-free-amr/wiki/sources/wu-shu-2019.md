@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Wu K., Shu C.-W.]
 year: 2019
 venue: "Numer. Math. 142(4):995-1047 (arXiv:1807.11467)"
-local_file: "~/papers/mosaic/div-free-amr/2019-NumerMath-Wu-101007s00211-019-01042-w.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2019-NumerMath-Wu-101007s00211-019-01042-w.pdf"
 tags: [positivity, dg, finite-volume, eight-wave, locally-divergence-free, hll, unstructured, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

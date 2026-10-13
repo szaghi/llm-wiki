@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Barrio Sanchez I., Almgren A.S., Bell J.B., Henry de Frahan M.T., Zhang W.]
 year: 2024
 venue: "J. Comput. Phys. 504:112879"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2024-JCP-BarrioSanchez-101016jjcp2024112879.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2024-JCP-BarrioSanchez-101016jjcp2024112879.pdf"
 tags: [embedded-boundary, amr, conservation, boundary-treatment]
 timestamp: 2026-10-12T00:00:00Z
 ---

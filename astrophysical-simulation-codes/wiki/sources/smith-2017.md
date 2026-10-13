@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Smith B.D., Bryan G.L., Glover S.C.O., Goldbaum N.J., Turk M.J., Regan J., Wise J.H., Schive H.-Y., Abel T., Emerick A., O'Shea B.W., Anninos P., Hummels C.B., Khochfar S.]
 year: 2017
 venue: "Mon. Not. R. Astron. Soc. 466:2217–2234"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2017-MNRAS-Smith-101093mnrasstw3291.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2017-MNRAS-Smith-101093mnrasstw3291.pdf"
 tags: [software, cooling, chemistry, time-integration, cosmology, performance, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

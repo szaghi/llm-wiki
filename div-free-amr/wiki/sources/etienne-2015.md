@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Etienne Z.B., Paschalidis V., Haas R., Mösta P., Shapiro S.L.]
 year: 2015
 venue: "Class. Quantum Grav. 32:175009 (arXiv:1501.07276)"
-local_file: "~/papers/mosaic/div-free-amr/2015-CQG-Etienne-1010880264938132175009.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2015-CQG-Etienne-1010880264938132175009.pdf"
 tags: [vector-potential, gauge, grmhd, amr, production-code, open-source]
 timestamp: 2026-07-08T00:00:00Z
 ---

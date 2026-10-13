@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Nissen A., Kormann K., Grandin M., Virta K.]
 year: 2014
 venue: "J. Sci. Comput. 65:486-511 (arXiv:1405.0735)"
-local_file: "~/papers/mosaic/div-free-amr/2014-arXiv-Nissen-101007s10915-014-9969-z.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2014-arXiv-Nissen-101007s10915-014-9969-z.pdf"
 tags: [sbp, sat, amr, block-structured, corner-points, interface-conditions]
 timestamp: 2026-07-08T00:00:00Z
 ---

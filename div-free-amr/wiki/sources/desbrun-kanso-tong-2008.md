@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Desbrun M., Kanso E., Tong Y.]
 year: 2008
 venue: "Oberwolfach Seminars 38 (Discrete Differential Geometry), Birkhäuser, pp. 287-323"
-local_file: "~/papers/mosaic/div-free-amr/2008-Birkhauser-Desbrun-1010079783764386214_16.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2008-Birkhauser-Desbrun-1010079783764386214_16.pdf"
 tags: [dec, whitney-forms, differential-forms, pedagogy]
 timestamp: 2026-07-08T00:00:00Z
 ---

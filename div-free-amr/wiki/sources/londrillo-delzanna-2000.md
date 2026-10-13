@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Londrillo P., Del Zanna L.]
 year: 2000
 venue: "Astrophys. J. 530:508-524"
-local_file: "~/papers/mosaic/div-free-amr/2000-ApJ-Londrillo-101086308344.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2000-ApJ-Londrillo-101086308344.pdf"
 tags: [constrained-transport, high-order, eno, divergence-free-reconstruction, upwind-emf]
 timestamp: 2026-07-08T00:00:00Z
 ---

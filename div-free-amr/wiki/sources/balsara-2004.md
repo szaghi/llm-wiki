@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2004
 venue: "Astrophys. J. Suppl. Ser. 151:149-184"
-local_file: "~/papers/mosaic/div-free-amr/2004-ApJS-Balsara-103847.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2004-ApJS-Balsara-103847.pdf"
 tags: [constrained-transport, divergence-constraint, reconstruction, weno, unsplit, curvilinear, unstructured]
 timestamp: 2026-07-08T00:00:00Z
 ---

@@ -1,5 +1,19 @@
 # Directory Update Log
 
+## 2026-10-13
+
+* **Source-page paths made absolute** on user instruction, as the repo
+  schema asks: `local_file` in all 90 Source pages now reads
+  `/home/stefano/...` instead of `~/...`. Every path was checked to exist.
+  Citation lines in page bodies are unchanged.
+
+* **Deferred papers dropped** by user decision: Williams (2011, the RAW
+  filter), Robert (1966) and Secchi's MHD well-posedness note (the
+  collection's "paolo-2024") will not be ingested. They had been deferred
+  as out of scope (batches 9 and 10). No pages change.
+* **Runge (1895) pending warning kept** by user decision: the work prints
+  no references, and the linter's `--pending` warning for it stays.
+
 ## 2026-10-12
 
 * **Deep lint (90 ingestions; the pages of batches 9 and 10).** Two

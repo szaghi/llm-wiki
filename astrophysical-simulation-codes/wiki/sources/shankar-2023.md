@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Shankar S., Mösta P., Brandt S.R., Haas R., Schnetter E., de Graaf Y.]
 year: 2023
 venue: "Class. Quantum Grav. 40:205009"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2023-CQG-Shankar-1010881361-6382acf2d9.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2023-CQG-Shankar-1010881361-6382acf2d9.pdf"
 tags: [software, mhd, relativity, gpu, amr, primitive-recovery, equation-of-state, performance, scaling, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

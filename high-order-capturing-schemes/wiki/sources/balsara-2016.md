@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Garain S., Shu C.-W.]
 year: 2016
 venue: "J. Comput. Phys. 326:780-804"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2016-JCP-Balsara-101016jjcp201609009.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-JCP-Balsara-101016jjcp201609009.pdf"
 tags: [weno, adaptive-order, legendre-basis, central-weno]
 timestamp: 2026-10-08T00:00:00Z
 ---

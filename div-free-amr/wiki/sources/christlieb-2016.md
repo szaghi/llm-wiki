@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Christlieb A.J., Feng X., Seal D.C., Tang Q.]
 year: 2016
 venue: "J. Comput. Phys. 316:218-242"
-local_file: "~/papers/mosaic/div-free-amr/2016-JCP-Christlieb-101016jjcp201604016.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2016-JCP-Christlieb-101016jjcp201604016.pdf"
 tags: [vector-potential, constrained-transport, positivity, weno, finite-difference, lax-wendroff, high-order, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Harten A., Engquist B., Osher S., Chakravarthy S.R.]
 year: 1987
 venue: "J. Comput. Phys. 71:231-303"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1987-JCP-Harten-1010160021-99918790031-3.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1987-JCP-Harten-1010160021-99918790031-3.pdf"
 tags: [eno, reconstruction, finite-volume, systems, euler]
 timestamp: 2026-10-08T00:00:00Z
 ---

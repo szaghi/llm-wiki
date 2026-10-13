@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Tomida K., Sadanari K.E., Takasao S., Iwasaki K.]
 year: 2026
 venue: "Astrophys. J. Suppl. 285(2):64 (arXiv:2605.07928)"
-local_file: "~/papers/mosaic/div-free-amr/2026-ApJS-Tomida-1038471538-4365ae8785.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2026-ApJS-Tomida-1038471538-4365ae8785.pdf"
 tags: [comparison, glm, constrained-transport, divergence-cleaning, eight-wave, amr, star-formation, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

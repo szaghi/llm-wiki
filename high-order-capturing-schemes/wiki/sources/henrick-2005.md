@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Henrick A.K., Aslam T.D., Powers J.M.]
 year: 2005
 venue: "J. Comput. Phys. 207:542-567"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2005-JCP-Henrick-101016jjcp200501023.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2005-JCP-Henrick-101016jjcp200501023.pdf"
 tags: [weno, mapped-weno, critical-points, accuracy]
 timestamp: 2026-10-08T00:00:00Z
 ---

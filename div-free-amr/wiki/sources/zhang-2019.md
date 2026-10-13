@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zhang W., Almgren A., Beckner V., Bell J., Blaschke J., Chan C., Day M., Friesen B., Gott K., Graves D., Katz M.P., Myers A., Nguyen T., Nonaka A., Rosso M., Williams S., Zingale M.]
 year: 2019
 venue: "J. Open Source Softw. 4:1370"
-local_file: "~/papers/mosaic/div-free-amr/2019-JOSS-Zhang-1021105joss01370.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2019-JOSS-Zhang-1021105joss01370.pdf"
 tags: [amr, block-structured, framework, gpu]
 timestamp: 2026-10-12T00:00:00Z
 ---

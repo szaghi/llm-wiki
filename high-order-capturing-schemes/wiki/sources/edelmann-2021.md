@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Edelmann P.V.F., Horst L., Berberich J.P., Andrassy R., Higl J., Leidi G., Klingenberg C., Röpke F.K.]
 year: 2021
 venue: "Astron. Astrophys. 652:A53"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2021-A&A-Edelmann-10105100046361202140653.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2021-A&A-Edelmann-10105100046361202140653.pdf"
 tags: [well-balanced, low-mach, gravity, source-terms]
 timestamp: 2026-10-12T00:00:00Z
 ---

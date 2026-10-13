@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Lesur G.R.J., Baghdadi S., Wafflard-Fernandez G., Mauxion J., Robert C.M.T., Van den Bossche M.]
 year: 2023
 venue: "Astron. Astrophys. 677:A9"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2023-A&A-Lesur-10105100046361202346005.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2023-A&A-Lesur-10105100046361202346005.pdf"
 tags: [software, mhd, hydro, gpu, kokkos, performance-portability, constrained-transport, riemann-solver, time-integration, performance, scaling, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

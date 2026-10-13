@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Olivares H., Porth O., Davelaar J., Most E.R., Fromm C.M., Mizuno Y., Younsi Z., Rezzolla L.]
 year: 2019
 venue: "Astron. Astrophys. 629:A61"
-local_file: "~/papers/mosaic/div-free-amr/2019-A&A-Olivares-10105100046361201935559.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2019-A&A-Olivares-10105100046361201935559.pdf"
 tags: [constrained-transport, amr, grmhd, prolongation, production-code, upwind-emf]
 timestamp: 2026-07-08T00:00:00Z
 ---

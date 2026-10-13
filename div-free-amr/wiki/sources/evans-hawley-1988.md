@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Evans C.R., Hawley J.F.]
 year: 1988
 venue: "Astrophys. J. 332:659-677"
-local_file: "~/papers/mosaic/div-free-amr/1988-ApJ-Evans-101086166684.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1988-ApJ-Evans-101086166684.pdf"
 tags: [constrained-transport, staggered, mhd, induction-equation, general-relativity]
 timestamp: 2026-07-08T00:00:00Z
 ---

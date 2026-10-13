@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Skinner M.A., Ostriker E.C.]
 year: 2013
 venue: "Astrophys. J. Suppl. 206:21"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2013-ApJS-Skinner-1010880067-0049206221.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2013-ApJS-Skinner-1010880067-0049206221.pdf"
 tags: [software, radiation, reduced-speed-of-light, riemann-solver, unsplit, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

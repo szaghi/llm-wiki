@@ -7,7 +7,7 @@ source_kind: report
 authors: [Nordström J., Carpenter M.H.]
 year: 1999
 venue: "NASA/CR-1999-209834, ICASE Report 99-54"
-local_file: "~/papers/mosaic/div-free-amr/1999-ICASE-Nordstrom-NASA-CR-1999-209834.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1999-ICASE-Nordstrom-NASA-CR-1999-209834.pdf"
 tags: [sbp, sat, interface-conditions, curvilinear, multi-block, stability]
 timestamp: 2026-07-08T00:00:00Z
 ---

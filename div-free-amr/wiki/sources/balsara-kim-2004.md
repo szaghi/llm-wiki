@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Kim J.]
 year: 2004
 venue: "Astrophys. J. 602:1079-1090"
-local_file: "~/papers/mosaic/div-free-amr/2004-ApJ-Balsara-101086381051.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2004-ApJ-Balsara-101086381051.pdf"
 tags: [projection, divergence-cleaning, constrained-transport, turbulence, non-locality]
 timestamp: 2026-10-08T00:00:00Z
 ---

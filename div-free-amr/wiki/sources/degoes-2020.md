@@ -7,7 +7,7 @@ source_kind: paper
 authors: [de Goes F., Butts A., Desbrun M.]
 year: 2020
 venue: "ACM Trans. Graph. 39(4):110"
-local_file: "~/papers/mosaic/div-free-amr/2020-ACM-TOG-deGoes-10114533865693392389.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2020-ACM-TOG-deGoes-10114533865693392389.pdf"
 tags: [mimetic, polygonal, discrete-calculus, graphics, virtual-element]
 timestamp: 2026-07-08T00:00:00Z
 ---

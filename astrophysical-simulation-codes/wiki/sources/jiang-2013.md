@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jiang Y.-F., Belyaev M., Goodman J., Stone J.M.]
 year: 2013
 venue: "New Astron. 19:48–55"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2013-NewAstron-Jiang-101016jnewast201208002.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2013-NewAstron-Jiang-101016jnewast201208002.pdf"
 tags: [self-gravity, conservation, hydro, unsplit, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Wang S., Kreiss G.]
 year: 2017
 venue: "J. Sci. Comput. 71:219-245"
-local_file: "~/papers/mosaic/div-free-amr/2017-JSC-Wang-101007s10915-016-0297-3.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2017-JSC-Wang-101007s10915-016-0297-3.pdf"
 tags: [sbp, sat, convergence, normal-mode-analysis, accuracy, wave-equation]
 timestamp: 2026-07-08T00:00:00Z
 ---

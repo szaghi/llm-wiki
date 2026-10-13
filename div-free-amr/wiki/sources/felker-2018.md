@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Felker K.G., Stone J.M.]
 year: 2018
 venue: "J. Comput. Phys. 375:1365-1400 (arXiv:1711.07439)"
-local_file: "~/papers/mosaic/div-free-amr/2018-JCP-Felker-101016jjcp201808025.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-JCP-Felker-101016jjcp201808025.pdf"
 tags: [constrained-transport, upwind-emf, high-order, finite-volume, athena, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: thesis
 authors: [Hirani A.N.]
 year: 2003
 venue: "PhD thesis, California Institute of Technology"
-local_file: "~/papers/mosaic/div-free-amr/2003-PhDThesis-Hirani-Caltech-DEC.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2003-PhDThesis-Hirani-Caltech-DEC.pdf"
 tags: [dec, differential-forms, simplicial, dual-grid, thesis]
 timestamp: 2026-07-08T00:00:00Z
 ---

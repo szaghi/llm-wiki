@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Simon S., Mandal J.C.]
 year: 2019
 venue: "J. Comput. Phys. 378:477-496"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2019-JCP-Simon-101016jjcp201811022.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2019-JCP-Simon-101016jjcp201811022.pdf"
 tags: [riemann-solver, shock-instability, hllc]
 timestamp: 2026-10-12T00:00:00Z
 ---

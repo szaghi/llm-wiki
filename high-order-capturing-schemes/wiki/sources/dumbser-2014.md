@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Dumbser M., Zanotti O., Loubère R., Diot S.]
 year: 2014
 venue: "J. Comput. Phys. 278:47-75"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2014-JCP-Dumbser-101016jjcp201408009.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2014-JCP-Dumbser-101016jjcp201408009.pdf"
 tags: [dg, limiter, a-posteriori, ader, weno]
 timestamp: 2026-10-08T00:00:00Z
 ---

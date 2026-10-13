@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Gardiner T.A., Stone J.M.]
 year: 2008
 venue: "J. Comput. Phys. 227:4123-4141"
-local_file: "~/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712017.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2008-JCP-Gardiner-101016jjcp200712017.pdf"
 tags: [constrained-transport, ctu, unsplit, godunov, ppm, production-code, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

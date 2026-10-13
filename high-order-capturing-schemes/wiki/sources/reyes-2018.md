@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Reyes A., Lee D., Graziani C., Tzeferacos P.]
 year: 2018
 venue: "J. Sci. Comput. 76:443-480"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2018-JSC-Reyes-101007s10915-017-0625-2.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2018-JSC-Reyes-101007s10915-017-0625-2.pdf"
 tags: [weno, gaussian-process, non-polynomial, finite-volume, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Tzeferacos P., Bodo G.]
 year: 2010
 venue: "J. Comput. Phys. 229(17):5896-5920 (arXiv:1001.2832)"
-local_file: "~/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp201004013.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp201004013.pdf"
 tags: [glm, high-order, finite-difference, weno, collocation, production-code, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Blomquist M., West S.R., Binswanger A.L., Theillard M.]
 year: 2024
 venue: "J. Comput. Phys. 499:112695"
-local_file: "~/papers/mosaic/div-free-amr/2024-JCP-Blomquist-101016jjcp2023112695.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2024-JCP-Blomquist-101016jjcp2023112695.pdf"
 tags: [projection, incompressible, octree, amr, collocated, hanging-nodes]
 timestamp: 2026-10-08T00:00:00Z
 ---

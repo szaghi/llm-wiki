@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Bernardini M., Modesti D., Salvadore F., Pirozzoli S.]
 year: 2021
 venue: "Comput. Phys. Commun. 263:107906"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2021-CPC-Bernardini-101016jcpc2021107906.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2021-CPC-Bernardini-101016jcpc2021107906.pdf"
 tags: [software, finite-difference, weno, hybrid, turbulence, gpu]
 timestamp: 2026-10-08T00:00:00Z
 ---

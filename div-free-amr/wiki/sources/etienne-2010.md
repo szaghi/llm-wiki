@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Etienne Z.B., Liu Y.T., Shapiro S.L.]
 year: 2010
 venue: "Phys. Rev. D 82:084031 (arXiv:1007.2848)"
-local_file: "~/papers/mosaic/div-free-amr/2010-PRD-Etienne-101103PhysRevD82084031.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2010-PRD-Etienne-101103PhysRevD82084031.pdf"
 tags: [vector-potential, amr, grmhd, constrained-transport, general-relativity, production-code]
 timestamp: 2026-07-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zhang X.]
 year: 2017
 venue: "J. Comput. Phys. 328:301-343"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2017-JCP-Zhang-101016jjcp201610002.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2017-JCP-Zhang-101016jjcp201610002.pdf"
 tags: [positivity, dg, navier-stokes, limiter]
 timestamp: 2026-10-09T00:00:00Z
 ---

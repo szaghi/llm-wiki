@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Wibking B.D., Krumholz M.R.]
 year: 2022
 venue: "Mon. Not. R. Astron. Soc. 512:1430–1449"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2022-MNRAS-Wibking-101093mnrasstac439.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2022-MNRAS-Wibking-101093mnrasstac439.pdf"
 tags: [software, radiation, reduced-speed-of-light, amr, gpu, riemann-solver, time-integration, performance, scaling, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

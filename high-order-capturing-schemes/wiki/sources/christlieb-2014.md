@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Christlieb A.J., Rossmanith J.A., Tang Q.]
 year: 2014
 venue: "J. Comput. Phys. 268:302-325"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2014-JCP-Christlieb-101016jjcp201403001.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2014-JCP-Christlieb-101016jjcp201403001.pdf"
 tags: [mhd, constrained-transport, weno, finite-difference, divergence-free]
 timestamp: 2026-10-08T00:00:00Z
 ---

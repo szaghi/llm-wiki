@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Caddy R.V., Schneider E.E.]
 year: 2024
 venue: "Astrophys. J. 970:44"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2024-ApJ-Caddy-1038471538-4357ad464a.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2024-ApJ-Caddy-1038471538-4357ad464a.pdf"
 tags: [software, mhd, gpu, cuda, constrained-transport, unsplit, riemann-solver, performance, scaling, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Knapp D., Holke J.A., Spenke T., Burstedde C., Dreyer L.]
 year: 2026
 venue: "arXiv:2602.20887 (preprint, v3)"
-local_file: "~/papers/mosaic/div-free-amr/2026-arXiv-Knapp-1048550arXiv260220887.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2026-arXiv-Knapp-1048550arXiv260220887.pdf"
 tags: [amr, tree-amr, partitioning, hybrid-mesh]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Derigs D., Winters A.R., Gassner G.J., Walch S., Bohm M.]
 year: 2018
 venue: "J. Comput. Phys. 364:420-467"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2018-JCP-Derigs-101016jjcp201803002.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2018-JCP-Derigs-101016jjcp201803002.pdf"
 tags: [mhd, divergence-free, glm, entropy]
 timestamp: 2026-10-09T00:00:00Z
 ---

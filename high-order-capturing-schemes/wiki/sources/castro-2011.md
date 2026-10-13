@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Castro M., Costa B., Don W.S.]
 year: 2011
 venue: "J. Comput. Phys. 230:1766-1792"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2011-JCP-Castro-101016jjcp201011028.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2011-JCP-Castro-101016jjcp201011028.pdf"
 tags: [weno, weno-z, very-high-order, dissipation]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2004
 venue: "Astrophys. J. Suppl. Ser. 151:149-184"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2004-ApJS-Balsara-103847.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2004-ApJS-Balsara-103847.pdf"
 tags: [mhd, divergence-free, constrained-transport, reconstruction, staggered]
 timestamp: 2026-10-08T00:00:00Z
 ---

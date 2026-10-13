@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Trask N., Bochev P., Perego M.]
 year: 2020
 venue: "J. Comput. Phys. 409:109187"
-local_file: "~/papers/mosaic/div-free-amr/2020-JCP-Trask-101016jjcp2019109187.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2020-JCP-Trask-101016jjcp2019109187.pdf"
 tags: [mimetic, meshfree, conservation, gmls, divergence-constraint]
 timestamp: 2026-07-08T00:00:00Z
 ---

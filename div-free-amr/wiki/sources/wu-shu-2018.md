@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Wu K., Shu C.-W.]
 year: 2018
 venue: "SIAM J. Sci. Comput. 40(5):B1302-B1329 (arXiv:1807.00246)"
-local_file: "~/papers/mosaic/div-free-amr/2018-SISC-Wu-10113718m1168042.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-SISC-Wu-10113718m1168042.pdf"
 tags: [positivity, dg, eight-wave, locally-divergence-free, admissibility, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

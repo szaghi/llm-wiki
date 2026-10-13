@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Tzeferacos P.]
 year: 2010
 venue: "J. Comput. Phys. 229:2117-2138"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2010-JCP-Mignone-101016jjcp200911026.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2010-JCP-Mignone-101016jjcp200911026.pdf"
 tags: [mhd, divergence-free, glm, second-order]
 timestamp: 2026-10-09T00:00:00Z
 ---

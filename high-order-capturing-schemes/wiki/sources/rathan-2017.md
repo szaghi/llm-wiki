@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Rathan S., Naga Raju G.]
 year: 2017
 venue: "Comput. Fluids 156:496-514 (read as arXiv:1611.06755v1, 2016)"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2016-arXiv-Rathan-1048550arXiv161106755.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-arXiv-Rathan-1048550arXiv161106755.pdf"
 tags: [weno, nonlinear-weights, critical-points, very-high-order]
 timestamp: 2026-10-08T00:00:00Z
 ---

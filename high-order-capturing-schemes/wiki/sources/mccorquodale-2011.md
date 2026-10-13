@@ -7,7 +7,7 @@ source_kind: paper
 authors: [McCorquodale P., Colella P.]
 year: 2011
 venue: "Commun. Appl. Math. Comput. Sci. 6:1-25"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2011-CAMCoS-McCorquodale-102140camcos201161.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2011-CAMCoS-McCorquodale-102140camcos201161.pdf"
 tags: [amr, finite-volume, fourth-order, ppm, time-discretization]
 timestamp: 2026-10-08T00:00:00Z
 ---

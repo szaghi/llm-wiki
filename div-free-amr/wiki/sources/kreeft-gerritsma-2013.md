@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kreeft J., Gerritsma M.]
 year: 2013
 venue: "J. Comput. Phys. 240:284-309"
-local_file: "~/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201210043.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2013-JCP-Kreeft-101016jjcp201210043.pdf"
 tags: [mimetic, spectral-elements, high-order, divergence-constraint, stokes, curvilinear]
 timestamp: 2026-07-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mathew S.S., Federrath C.]
 year: 2021
 venue: "Mon. Not. R. Astron. Soc. 507:2448–2467"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2021-MNRAS-Mathew-101093mnrasstab2338.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2021-MNRAS-Mathew-101093mnrasstab2338.pdf"
 tags: [software, mhd, amr, self-gravity, multigrid, sink-particles, riemann-solver, equation-of-state]
 timestamp: 2026-10-12T00:00:00Z
 ---

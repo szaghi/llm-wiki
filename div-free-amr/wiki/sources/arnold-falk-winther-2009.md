@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Arnold D.N., Falk R.S., Winther R.]
 year: 2009
 venue: "arXiv:0906.4325v3; Bull. Amer. Math. Soc. 47:281-354 (2010), doi:10.1090/S0273-0979-10-01278-4"
-local_file: "~/papers/mosaic/div-free-amr/2009-arXiv-Arnold-1048550arXiv09064325.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2009-arXiv-Arnold-1048550arXiv09064325.pdf"
 tags: [feec, hilbert-complex, stability, hodge, cohomology, cochain-projection]
 timestamp: 2026-07-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2001
 venue: "J. Comput. Phys. 174:614-648"
-local_file: "~/papers/mosaic/div-free-amr/2001-JCP-Balsara-101006jcph20016917.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2001-JCP-Balsara-101006jcph20016917.pdf"
 tags: [amr, constrained-transport, divergence-free-reconstruction, prolongation, restriction, subcycling]
 timestamp: 2026-07-08T00:00:00Z
 ---

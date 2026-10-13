@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jansson N., Karp M., Podobas A., Markidis S., Schlatter P.]
 year: 2024
 venue: "Comput. Fluids 275:106243"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2024-CompFluids-Jansson-101016jcompfluid2024106243.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2024-CompFluids-Jansson-101016jcompfluid2024106243.pdf"
 tags: [software, gpu, performance-portability, performance, scaling, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Gardiner T.A., Stone J.M.]
 year: 2005
 venue: "J. Comput. Phys. 205(2):509-539"
-local_file: "~/papers/mosaic/div-free-amr/2005-JCP-Gardiner-101016jjcp200411016.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2005-JCP-Gardiner-101016jjcp200411016.pdf"
 tags: [constrained-transport, upwind-emf, godunov, ctu, field-loop]
 timestamp: 2026-10-08T00:00:00Z
 ---

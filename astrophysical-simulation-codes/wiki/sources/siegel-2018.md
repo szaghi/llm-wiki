@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Siegel D.M., Mösta P., Desai D., Wu S.]
 year: 2018
 venue: "Astrophys. J. 859:71"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2018-ApJ-Siegel-1038471538-4357aabcc5.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2018-ApJ-Siegel-1038471538-4357aabcc5.pdf"
 tags: [mhd, relativity, primitive-recovery, equation-of-state, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

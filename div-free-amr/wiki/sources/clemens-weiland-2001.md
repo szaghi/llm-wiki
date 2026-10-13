@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Clemens M., Weiland T.]
 year: 2001
 venue: "Progress In Electromagnetics Research (PIER) 32:65-87"
-local_file: "~/papers/mosaic/div-free-amr/2001-PIER-Clemens-102528PIER00080103.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2001-PIER-Clemens-102528PIER00080103.pdf"
 tags: [fit, electromagnetics, dual-grid, hodge, maxwell, conservation]
 timestamp: 2026-07-08T00:00:00Z
 ---

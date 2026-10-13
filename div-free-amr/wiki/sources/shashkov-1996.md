@@ -7,7 +7,7 @@ source_kind: book
 authors: [Shashkov M.]
 year: 1996
 venue: "CRC Press, ed. S. Steinberg"
-local_file: "~/papers/mosaic/div-free-amr/2009-Wiley-Shashkov-book-CFDGeneralGrids.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2009-Wiley-Shashkov-book-CFDGeneralGrids.pdf"
 tags: [mimetic, support-operator, book, logically-rectangular, conservation]
 timestamp: 2026-07-08T00:00:00Z
 ---

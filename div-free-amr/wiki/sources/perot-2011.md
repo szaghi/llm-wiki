@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Perot J.B.]
 year: 2011
 venue: "Annu. Rev. Fluid Mech. 43:299-318"
-local_file: "~/papers/mosaic/div-free-amr/2011-AnnRevFluidMech-Perot-101146annurev-fluid-122109-160645.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2011-AnnRevFluidMech-Perot-101146annurev-fluid-122109-160645.pdf"
 tags: [conservation, secondary-conservation, unstructured, discrete-calculus, review]
 timestamp: 2026-07-08T00:00:00Z
 ---

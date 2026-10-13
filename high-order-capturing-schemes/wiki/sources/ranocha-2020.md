@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Ranocha H., Sayyari M., Dalcin L., Parsani M., Ketcheson D.I.]
 year: 2020
 venue: "SIAM J. Sci. Comput. 42:A612–A638"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2020-SISC-Ranocha-10113719m1263480.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2020-SISC-Ranocha-10113719m1263480.pdf"
 tags: [time-discretization, runge-kutta, entropy]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: book
 authors: [Bossavit A.]
 year: 1998
 venue: "Academic Press, 373 pp."
-local_file: "~/papers/mosaic/div-free-amr/1998-AcademicPress-Bossavit-book.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1998-AcademicPress-Bossavit-book.pdf"
 tags: [edge-elements, whitney-forms, electromagnetics, variational, book]
 timestamp: 2026-07-08T00:00:00Z
 ---

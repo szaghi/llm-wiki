@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Lipnikov K., Manzini G., Shashkov M.]
 year: 2014
 venue: "J. Comput. Phys. 257:1163-1227"
-local_file: "~/papers/mosaic/div-free-amr/2014-JCP-Lipnikov-101016jjcp201307031.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2014-JCP-Lipnikov-101016jjcp201307031.pdf"
 tags: [mimetic, review, polyhedral, consistency, stability, discrete-vector-analysis]
 timestamp: 2026-07-08T00:00:00Z
 ---

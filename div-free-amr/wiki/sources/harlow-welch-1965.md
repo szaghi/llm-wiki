@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Harlow F.H., Welch J.E.]
 year: 1965
 venue: "Phys. Fluids 8(12):2182-2189"
-local_file: "~/papers/mosaic/div-free-amr/1965-PhysFluids-Harlow-101063_11761178.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1965-PhysFluids-Harlow-101063_11761178.pdf"
 tags: [mac, staggered, incompressible, pressure-poisson, free-surface]
 timestamp: 2026-07-08T00:00:00Z
 ---

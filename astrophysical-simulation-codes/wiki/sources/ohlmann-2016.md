@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Ohlmann S.T., Röpke F.K., Pakmor R., Springel V.]
 year: 2016
 venue: "Astrophys. J. Lett. 816:L9"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2016-ApJL-Ohlmann-1038472041-82058161l9.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2016-ApJL-Ohlmann-1038472041-82058161l9.pdf"
 tags: [software, hydro, self-gravity, conservation]
 timestamp: 2026-10-12T00:00:00Z
 ---

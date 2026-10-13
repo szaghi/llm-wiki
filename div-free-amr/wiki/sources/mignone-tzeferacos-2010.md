@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Tzeferacos P.]
 year: 2010
 venue: "J. Comput. Phys. 229:2117-2138 (arXiv:0911.3410)"
-local_file: "~/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp200911026.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2010-JCP-Mignone-101016jjcp200911026.pdf"
 tags: [glm, ctu, unsplit, collocation, production-code, comparison, mhd]
 timestamp: 2026-07-08T00:00:00Z
 ---

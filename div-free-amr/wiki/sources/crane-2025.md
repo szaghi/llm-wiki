@@ -7,7 +7,7 @@ source_kind: notes
 authors: [Crane K.]
 year: 2025
 venue: "CMU lecture notes, 174 pp., updated 2025-01-29"
-local_file: "~/papers/mosaic/div-free-amr/2025-Crane-DDG-AppliedIntroduction.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2025-Crane-DDG-AppliedIntroduction.pdf"
 tags: [dec, differential-forms, pedagogy, discrete-calculus]
 timestamp: 2026-07-08T00:00:00Z
 ---

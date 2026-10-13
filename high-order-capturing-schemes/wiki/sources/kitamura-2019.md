@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kitamura K., Shima E.]
 year: 2019
 venue: "AIAA J. 57:1763-1772"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2019-AIAAJ-Kitamura-1025141J057366.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2019-AIAAJ-Kitamura-1025141J057366.pdf"
 tags: [riemann-solver, shock-instability, ausm, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

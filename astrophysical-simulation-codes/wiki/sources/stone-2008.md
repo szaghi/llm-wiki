@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Stone J.M., Gardiner T.A., Teuben P., Hawley J.F., Simon J.B.]
 year: 2008
 venue: "Astrophys. J. Suppl. 178:137–177"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2008-ApJS-Stone-101086588755.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2008-ApJS-Stone-101086588755.pdf"
 tags: [software, mhd, hydro, constrained-transport, unsplit, riemann-solver, verification, benchmark, performance]
 timestamp: 2026-10-12T00:00:00Z
 ---

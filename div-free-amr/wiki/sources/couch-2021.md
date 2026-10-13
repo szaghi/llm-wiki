@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Couch S.M., Carlson J., Pajkos M., O'Shea B.W., Dubey A., Klosterman T.]
 year: 2021
 venue: "Parallel Comput. 108:102830"
-local_file: "~/papers/mosaic/div-free-amr/2021-ParCo-Couch-101016jparco2021102830.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2021-ParCo-Couch-101016jparco2021102830.pdf"
 tags: [production-code, amr, performance-portability, gpu, refluxing, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

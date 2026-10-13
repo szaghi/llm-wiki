@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Arnold D.N., Falk R.S., Winther R.]
 year: 2006
 venue: "Acta Numerica 15:1-155"
-local_file: "~/papers/mosaic/div-free-amr/2006-ActaNum-Arnold-FEEC-homological.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2006-ActaNum-Arnold-FEEC-homological.pdf"
 tags: [feec, finite-elements, de-rham, cohomology, stability, hodge-laplacian]
 timestamp: 2026-07-08T00:00:00Z
 ---

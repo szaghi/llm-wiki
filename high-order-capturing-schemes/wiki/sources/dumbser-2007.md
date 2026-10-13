@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Dumbser M., Käser M.]
 year: 2007
 venue: "J. Comput. Phys. 221:693-723"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2007-JCP-Dumbser-101016jjcp200606043.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2007-JCP-Dumbser-101016jjcp200606043.pdf"
 tags: [ader, weno, unstructured, finite-volume]
 timestamp: 2026-10-08T00:00:00Z
 ---

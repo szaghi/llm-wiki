@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Del Zanna L.]
 year: 2021
 venue: "J. Comput. Phys. 424:109748 (arXiv:2004.10542)"
-local_file: "~/papers/mosaic/div-free-amr/2021-JCP-Mignone-101016jjcp2020109748.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2021-JCP-Mignone-101016jjcp2020109748.pdf"
 tags: [constrained-transport, upwind-emf, riemann-solver, hlld, production-code, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zhang X., Shu C.-W.]
 year: 2012
 venue: "J. Comput. Phys. 231:2245-2258"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2012-JCP-Zhang-101016jjcp201111020.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2012-JCP-Zhang-101016jjcp201111020.pdf"
 tags: [positivity, limiter, finite-difference, weno, euler]
 timestamp: 2026-10-08T00:00:00Z
 ---

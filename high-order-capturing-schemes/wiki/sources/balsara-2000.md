@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Shu C.-W.]
 year: 2000
 venue: "J. Comput. Phys. 160:405-452"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2000-JCP-Balsara-101006jcph20006443.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2000-JCP-Balsara-101006jcph20006443.pdf"
 tags: [weno, monotonicity, very-high-order, mhd, benchmark]
 timestamp: 2026-10-08T00:00:00Z
 ---

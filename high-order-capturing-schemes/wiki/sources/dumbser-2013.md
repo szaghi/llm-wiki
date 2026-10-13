@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Dumbser M., Zanotti O., Hidalgo A., Balsara D.S.]
 year: 2013
 venue: "J. Comput. Phys. 248:257-286"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2013-arXiv-Dumbser-1048550arXiv12123585.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2013-arXiv-Dumbser-1048550arXiv12123585.pdf"
 tags: [ader, amr, weno, finite-volume, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

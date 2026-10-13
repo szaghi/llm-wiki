@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Hyman J.M., Shashkov M.]
 year: 1997
 venue: "Comput. Math. Appl. 33(4):81-104"
-local_file: "~/papers/mosaic/div-free-amr/1997-CMA-Hyman-101016S0898122197000096.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1997-CMA-Hyman-101016S0898122197000096.pdf"
 tags: [mimetic, support-operator, discrete-vector-analysis, logically-rectangular, curvilinear]
 timestamp: 2026-07-08T00:00:00Z
 ---

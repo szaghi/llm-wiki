@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Almquist M., Wang S., Werpers J.]
 year: 2019
 venue: "SIAM J. Sci. Comput. 41(2):A1201-A1227 (arXiv:1806.01931, 2018)"
-local_file: "~/papers/mosaic/div-free-amr/2018-SISC-Almquist-10113718M1191609.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-SISC-Almquist-10113718M1191609.pdf"
 tags: [sbp, interpolation, nonconforming, coarse-fine-interface, second-derivative, accuracy]
 timestamp: 2026-07-08T00:00:00Z
 ---

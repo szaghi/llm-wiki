@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Zanni C., Tzeferacos P., van Straalen B., Colella P., Bodo G.]
 year: 2012
 venue: "Astrophys. J. Suppl. Ser. 198:7"
-local_file: "~/papers/mosaic/div-free-amr/2012-ApJS-Mignone-1010880067004919817.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2012-ApJS-Mignone-1010880067004919817.pdf"
 tags: [glm, amr, ctu, collocation, production-code, relativistic, mhd]
 timestamp: 2026-07-08T00:00:00Z
 ---

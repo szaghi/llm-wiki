@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Bhoriya D., Shu C.-W., Kumar H.]
 year: 2025
 venue: "Commun. Appl. Math. Comput. 7:2189-2242 (online 2024; read as the 100-page author manuscript)"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2024-CAMC-Balsara-101007s42967-023-00360-z.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2024-CAMC-Balsara-101007s42967-023-00360-z.pdf"
 tags: [finite-difference, weno, interpolation, adaptive-order, riemann-solver]
 timestamp: 2026-10-08T00:00:00Z
 ---

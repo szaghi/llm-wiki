@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Stone J.M., Mullen P.D., Fielding D., Grete P., Guo M., Kempski P., Most E.R., White C.J., Wong G.N.]
 year: 2026
 venue: "Astrophys. J. Suppl. 283:27"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2024-arXiv-Stone-1048550arXiv240916053.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2024-arXiv-Stone-1048550arXiv240916053.pdf"
 tags: [software, mhd, hydro, amr, gpu, kokkos, performance-portability, relativity, constrained-transport, riemann-solver, time-integration, performance, scaling, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

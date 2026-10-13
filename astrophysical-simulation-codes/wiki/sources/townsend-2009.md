@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Townsend R.H.D.]
 year: 2009
 venue: "Astrophys. J. Suppl. 181:391–397"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2009-ApJS-Townsend-1010880067-00491812391.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2009-ApJS-Townsend-1010880067-00491812391.pdf"
 tags: [cooling, time-integration, hydro, performance, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Krumholz M.R., McKee C.F., Klein R.I.]
 year: 2004
 venue: "Astrophys. J. 611:399–412"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2004-ApJ-Krumholz-101086421935.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2004-ApJ-Krumholz-101086421935.pdf"
 tags: [amr, self-gravity, hydro, benchmark, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Rossazza M., Mignone A., Bugli M., Truzzi S., Riha L., Panoc T., Vysocky O., Shukla N., Romeo A., Berta V.]
 year: 2026
 venue: "Astron. Comput. 55:101076"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2026-AstronComput-Rossazza-101016jascom2026101076.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2026-AstronComput-Rossazza-101016jascom2026101076.pdf"
 tags: [software, mhd, gpu, openacc, constrained-transport, divergence-cleaning, performance, scaling]
 timestamp: 2026-10-12T00:00:00Z
 ---

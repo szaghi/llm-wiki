@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Tomida K., Sadanari K.E., Takasao S., Iwasaki K.]
 year: 2026
 venue: "Astrophys. J. Suppl. 285:64"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2026-ApJS-Tomida-1038471538-4365ae8785.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2026-ApJS-Tomida-1038471538-4365ae8785.pdf"
 tags: [mhd, divergence-free, glm, constrained-transport, amr]
 timestamp: 2026-10-09T00:00:00Z
 ---

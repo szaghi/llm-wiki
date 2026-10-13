@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Bonelle J., Ern A.]
 year: 2014
 venue: "ESAIM: M2AN 48:553-581"
-local_file: "~/papers/mosaic/div-free-amr/2014-ESAIM-M2AN-Bonelle-101051m2an2013104.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2014-ESAIM-M2AN-Bonelle-101051m2an2013104.pdf"
 tags: [mimetic, hodge, polyhedral, error-analysis, dual-grid, elliptic]
 timestamp: 2026-07-08T00:00:00Z
 ---

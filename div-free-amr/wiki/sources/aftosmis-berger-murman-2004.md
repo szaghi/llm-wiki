@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Aftosmis M.J., Berger M.J., Murman S.M.]
 year: 2004
 venue: "42nd AIAA Aerospace Sciences Meeting, AIAA Paper 2004-1232"
-local_file: "~/papers/mosaic/div-free-amr/2004-AIAA-Aftosmis-10251462004-1232.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2004-AIAA-Aftosmis-10251462004-1232.pdf"
 tags: [amr, tree-amr, partitioning, multigrid]
 timestamp: 2026-10-12T00:00:00Z
 ---

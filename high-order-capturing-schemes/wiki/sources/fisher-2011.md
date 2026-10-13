@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Fisher T.C., Carpenter M.H., Yamaleev N.K., Frankel S.H.]
 year: 2011
 venue: "J. Comput. Phys. 230:3727-3752"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2011-JCP-Fisher-101016jjcp201101043.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2011-JCP-Fisher-101016jjcp201101043.pdf"
 tags: [weno, boundary-treatment, summation-by-parts, stability, finite-difference]
 timestamp: 2026-10-08T00:00:00Z
 ---

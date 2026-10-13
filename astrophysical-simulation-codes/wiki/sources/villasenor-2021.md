@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Villasenor B., Robertson B., Madau P., Schneider E.]
 year: 2021
 venue: "Astrophys. J. 912:138"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2021-ApJ-Villasenor-1038471538-4357abed5a.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2021-ApJ-Villasenor-1038471538-4357abed5a.pdf"
 tags: [software, hydro, cosmology, gpu, dual-energy, self-gravity, cooling, chemistry, verification, performance]
 timestamp: 2026-10-12T00:00:00Z
 ---

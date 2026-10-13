@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Ranocha H., Dalcin L., Parsani M., Ketcheson D.I.]
 year: 2022
 venue: "Commun. Appl. Math. Comput. 4:1191–1228"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2022-CAMC-Ranocha-101007s42967-021-00159-w.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2022-CAMC-Ranocha-101007s42967-021-00159-w.pdf"
 tags: [time-discretization, runge-kutta, step-size-control, low-storage]
 timestamp: 2026-10-12T00:00:00Z
 ---

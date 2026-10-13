@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Londrillo P., Del Zanna L.]
 year: 2004
 venue: "J. Comput. Phys. 195:17-48"
-local_file: "~/papers/mosaic/div-free-amr/2004-JCP-Londrillo-101016jjcp200309016.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2004-JCP-Londrillo-101016jjcp200309016.pdf"
 tags: [constrained-transport, upwind-emf, divergence-free-reconstruction, monopoles, godunov]
 timestamp: 2026-10-08T00:00:00Z
 ---

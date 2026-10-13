@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Dedner A., Kemm F., Kröner D., Munz C.-D., Schnitzer T., Wesenberg M.]
 year: 2002
 venue: "J. Comput. Phys. 175:645-673"
-local_file: "~/papers/mosaic/div-free-amr/2002-JCP-Dedner-101006jcph20016961.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2002-JCP-Dedner-101006jcph20016961.pdf"
 tags: [glm, divergence-cleaning, hyperbolic, lagrange-multiplier, finite-volume]
 timestamp: 2026-07-08T00:00:00Z
 ---

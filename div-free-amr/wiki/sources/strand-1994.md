@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Strand B.]
 year: 1994
 venue: "J. Comput. Phys. 110:47-67"
-local_file: "~/papers/mosaic/div-free-amr/1994-JCP-Strand-101006jcph19941005.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1994-JCP-Strand-101006jcph19941005.pdf"
 tags: [sbp, high-order, boundary-closure, energy-method]
 timestamp: 2026-07-08T00:00:00Z
 ---

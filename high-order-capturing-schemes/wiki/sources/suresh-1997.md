@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Suresh A., Huynh H.T.]
 year: 1997
 venue: "J. Comput. Phys. 136:83-99"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1997-JCP-Suresh-101006jcph19975745.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1997-JCP-Suresh-101006jcph19975745.pdf"
 tags: [limiter, monotonicity, high-order, mp5]
 timestamp: 2026-10-08T00:00:00Z
 ---

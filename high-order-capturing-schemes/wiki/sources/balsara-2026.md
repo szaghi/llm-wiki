@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Bhoriya D., Shu C.-W.]
 year: 2026
 venue: "Commun. Appl. Math. Comput. 8:1730-1798"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2026-CAMC-Balsara-101007s42967-025-00517-y.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2026-CAMC-Balsara-101007s42967-025-00517-y.pdf"
 tags: [finite-difference, weno, mhd, constrained-transport, positivity, multidimensional-riemann-solver]
 timestamp: 2026-10-08T00:00:00Z
 ---

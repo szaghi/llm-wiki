@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Berger M., Giuliani A.]
 year: 2021
 venue: "J. Comput. Phys. 428:109820"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2021-JCP-Berger-101016jjcp2020109820.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2021-JCP-Berger-101016jjcp2020109820.pdf"
 tags: [embedded-boundary, boundary-treatment, conservation]
 timestamp: 2026-10-12T00:00:00Z
 ---

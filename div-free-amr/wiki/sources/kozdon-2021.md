@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kozdon J.E., Erickson B.A., Wilcox L.C.]
 year: 2021
 venue: "J. Sci. Comput. 87:85"
-local_file: "~/papers/mosaic/div-free-amr/2021-JSC-Kozdon-101007s10915-021-01448-5.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2021-JSC-Kozdon-101007s10915-021-01448-5.pdf"
 tags: [sbp, sat, hybridization, elliptic, trace-variables, multi-block]
 timestamp: 2026-07-08T00:00:00Z
 ---

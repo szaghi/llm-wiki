@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Colella P., Woodward P.R.]
 year: 1984
 venue: "J. Comput. Phys. 54:174-201"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1984-JCP-Colella-1010160021-99918490143-8.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1984-JCP-Colella-1010160021-99918490143-8.pdf"
 tags: [ppm, godunov, reconstruction, limiter, contact-discontinuity]
 timestamp: 2026-10-08T00:00:00Z
 ---

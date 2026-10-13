@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Bryan G.L., Norman M.L., O'Shea B.W., Abel T., Wise J.H., Turk M.J., Reynolds D.R., Collins D.C., Wang P., Skillman S.W., Smith B., Harkness R.P., Bordner J., Kim J.-h., Kuhlen M., Xu H., Goldbaum N., Hummels C., Kritsuk A.G., Tasker E., Skory S., Simpson C.M., Hahn O., Oishi J.S., So G.C., Zhao F., Cen R., Li Y.]
 year: 2014
 venue: "Astrophys. J. Suppl. 211:19"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2014-ApJS-Bryan-1010880067-004921121.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2014-ApJS-Bryan-1010880067-004921121.pdf"
 tags: [software, hydro, mhd, amr, cosmology, dual-energy, constrained-transport, divergence-cleaning, riemann-solver, self-gravity, multigrid, radiation, gpu, performance, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

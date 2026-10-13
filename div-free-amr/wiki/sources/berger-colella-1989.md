@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Berger M.J., Colella P.]
 year: 1989
 venue: "J. Comput. Phys. 82:64-84"
-local_file: "~/papers/mosaic/div-free-amr/1989-JCP-Berger.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1989-JCP-Berger.pdf"
 tags: [amr, block-structured, refluxing, conservation, shock-capturing]
 timestamp: 2026-07-08T00:00:00Z
 ---

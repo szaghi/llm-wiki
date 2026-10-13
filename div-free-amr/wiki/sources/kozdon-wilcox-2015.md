@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Kozdon J.E., Wilcox L.C.]
 year: 2015
 venue: "SIAM J. Sci. Comput. 38(2), arXiv:1410.5746"
-local_file: "~/papers/mosaic/div-free-amr/2015-SISC-Kozdon-10113715M1022823.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2015-SISC-Kozdon-10113715M1022823.pdf"
 tags: [sbp, sat, nonconforming, projection, glue-space, dg-coupling, interface-conditions]
 timestamp: 2026-07-08T00:00:00Z
 ---

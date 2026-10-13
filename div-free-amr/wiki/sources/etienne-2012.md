@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Etienne Z.B., Paschalidis V., Liu Y.T., Shapiro S.L.]
 year: 2012
 venue: "Phys. Rev. D 85:024013 (arXiv:1110.4633)"
-local_file: "~/papers/mosaic/div-free-amr/2012-PRD-Etienne-101103PhysRevD85024013.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2012-PRD-Etienne-101103PhysRevD85024013.pdf"
 tags: [vector-potential, gauge, amr, grmhd, stability]
 timestamp: 2026-07-08T00:00:00Z
 ---

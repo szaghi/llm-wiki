@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Dumbser M., Balsara D.S.]
 year: 2016
 venue: "J. Comput. Phys. 304:275-319"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2016-JCP-Dumbser-101016jjcp201510014.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-JCP-Dumbser-101016jjcp201510014.pdf"
 tags: [riemann-solver, hllem, path-conservative, well-balanced]
 timestamp: 2026-10-12T00:00:00Z
 ---

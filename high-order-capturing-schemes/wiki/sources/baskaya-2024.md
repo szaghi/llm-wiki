@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Başkaya A.O., Capriati M., Turchi A., Magin T., Hickel S.]
 year: 2024
 venue: "Comput. Fluids 270:106134"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2024-CompFluids-Baskaya-101016jcompfluid2023106134.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2024-CompFluids-Baskaya-101016jcompfluid2023106134.pdf"
 tags: [immersed-boundary, embedded-boundary, hypersonic, conservation]
 timestamp: 2026-10-12T00:00:00Z
 ---

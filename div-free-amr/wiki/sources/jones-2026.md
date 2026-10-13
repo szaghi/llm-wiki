@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jones S.W., McNally C.P., Reynolds M.]
 year: 2026
 venue: "J. Comput. Phys. 550:114641 (arXiv:2601.04099)"
-local_file: "~/papers/mosaic/div-free-amr/2026-JCP-Jones-101016jjcp2025114641.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2026-JCP-Jones-101016jjcp2025114641.pdf"
 tags: [constrained-transport, embedded-boundary, cut-cell, ghost-fluid, level-set, resistive-mhd, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---

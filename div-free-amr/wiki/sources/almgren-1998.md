@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Almgren A.S., Bell J.B., Colella P., Howell L.H., Welcome M.L.]
 year: 1998
 venue: "J. Comput. Phys. 142:1-46"
-local_file: "~/papers/mosaic/div-free-amr/1998-JCP-Almgren-101006jcph19985890.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1998-JCP-Almgren-101006jcph19985890.pdf"
 tags: [amr, projection, incompressible, subcycling, synchronization, free-stream]
 timestamp: 2026-07-08T00:00:00Z
 ---

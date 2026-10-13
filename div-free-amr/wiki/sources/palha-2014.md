@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Palha A., Rebelo P.P., Hiemstra R., Kreeft J., Gerritsma M.]
 year: 2014
 venue: "J. Comput. Phys. 257:1394-1422 (arXiv:1304.6908)"
-local_file: "~/papers/mosaic/div-free-amr/2014-JCP-Palha-101016jjcp201308005.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2014-JCP-Palha-101016jjcp201308005.pdf"
 tags: [mimetic, differential-forms, dual-grid, hodge, spectral-elements]
 timestamp: 2026-07-08T00:00:00Z
 ---

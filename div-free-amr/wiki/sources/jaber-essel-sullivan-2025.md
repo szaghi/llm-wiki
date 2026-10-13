@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jaber K., Essel E.E., Sullivan P.E.]
 year: 2025
 venue: "Comput. Phys. Commun. 311:109543"
-local_file: "~/papers/mosaic/div-free-amr/2025-CPC-Jaber-101016jcpc2025109543.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2025-CPC-Jaber-101016jcpc2025109543.pdf"
 tags: [amr, tree-amr, gpu, lattice-boltzmann]
 timestamp: 2026-10-12T00:00:00Z
 ---

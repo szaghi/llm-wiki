@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Martín M.P., Taylor E.M., Wu M., Weirs V.G.]
 year: 2006
 venue: "J. Comput. Phys. 220:270-289"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2006-JCP-Martin-101016jjcp200605009.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2006-JCP-Martin-101016jjcp200605009.pdf"
 tags: [weno, low-dissipation, turbulence, spectral-resolution]
 timestamp: 2026-10-08T00:00:00Z
 ---

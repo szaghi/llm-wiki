@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Powell K.G., Roe P.L., Linde T.J., Gombosi T.I., De Zeeuw D.L.]
 year: 1999
 venue: "J. Comput. Phys. 154:284-309"
-local_file: "~/papers/mosaic/div-free-amr/1999-JCP-Powell-101006jcph19996299.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/1999-JCP-Powell-101006jcph19996299.pdf"
 tags: [eight-wave, symmetrizable, riemann-solver, godunov, adaptive, space-physics]
 timestamp: 2026-07-08T00:00:00Z
 ---

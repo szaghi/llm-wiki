@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jiang G.-S., Wu C.-C.]
 year: 1999
 venue: "J. Comput. Phys. 150:561-594"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1999-JCP-Jiang-101006jcph19996207.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1999-JCP-Jiang-101006jcph19996207.pdf"
 tags: [weno, mhd, finite-difference, divergence-free, eigenvectors]
 timestamp: 2026-10-08T00:00:00Z
 ---

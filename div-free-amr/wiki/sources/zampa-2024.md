@@ -7,7 +7,7 @@ source_kind: thesis
 authors: [Zampa E.]
 year: 2024
 venue: "Doctoral School in Mathematics, University of Trento"
-local_file: "~/papers/mosaic/div-free-amr/2024-Thesis-Zampa-Trento-StructurePreserving.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2024-Thesis-Zampa-Trento-StructurePreserving.pdf"
 tags: [structure-preserving, divergence-constraint, hybrid, unstructured, well-balancing, multisymplectic, mhd]
 timestamp: 2026-07-08T00:00:00Z
 ---

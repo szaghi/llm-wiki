@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Teixeira F.L.]
 year: 2013
 venue: "ISRN Mathematical Physics 2013:487270"
-local_file: "~/papers/mosaic/div-free-amr/2013-ISRN-MP-Teixeira-101155_2013_487270.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2013-ISRN-MP-Teixeira-101155_2013_487270.pdf"
 tags: [differential-forms, electromagnetics, dual-grid, hodge, orientation, review]
 timestamp: 2026-07-08T00:00:00Z
 ---

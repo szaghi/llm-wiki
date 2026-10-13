@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mullen P.D., Hanawa T., Gammie C.F.]
 year: 2021
 venue: "Astrophys. J. Suppl. 252:30"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2021-ApJS-Mullen-1038471538-4365abcfbd.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2021-ApJS-Mullen-1038471538-4365abcfbd.pdf"
 tags: [software, self-gravity, conservation, hydro, time-integration, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

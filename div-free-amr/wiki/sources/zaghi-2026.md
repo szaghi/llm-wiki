@@ -7,7 +7,7 @@ source_kind: code
 authors: [Zaghi S.]
 year: 2026
 venue: "ADAM repository: documentation and issue tracker"
-local_file: "~/llm-wiki/div-free-amr/raw/docs/zaghi-2026/"
+local_file: "/home/stefano/llm-wiki/div-free-amr/raw/docs/zaghi-2026/"
 tags: [amr, coarse-fine-interface, divergence-constraint, glm, collocation, ghost-fill, verification]
 timestamp: 2026-10-08T00:00:00Z
 ---

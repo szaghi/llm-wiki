@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Christiansen S.H., Munthe-Kaas H.Z., Owren B.]
 year: 2011
 venue: "Acta Numerica 20:1-119"
-local_file: "~/papers/mosaic/div-free-amr/2011-ActaNum-Christiansen-101017S096249291100002X.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2011-ActaNum-Christiansen-101017S096249291100002X.pdf"
 tags: [feec, finite-element-systems, polyhedral, cochain-projection, structure-preserving]
 timestamp: 2026-07-08T00:00:00Z
 ---

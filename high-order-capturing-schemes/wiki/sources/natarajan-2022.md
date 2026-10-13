@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Natarajan M., Grout R., Zhang W., Day M.]
 year: 2022
 venue: "J. Comput. Phys. 465:111315"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2022-JCP-Natarajan-101016jjcp2022111315.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2022-JCP-Natarajan-101016jjcp2022111315.pdf"
 tags: [embedded-boundary, moving-boundary, amr, boundary-treatment]
 timestamp: 2026-10-12T00:00:00Z
 ---

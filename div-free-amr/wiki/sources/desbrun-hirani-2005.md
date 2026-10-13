@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Desbrun M., Hirani A.N., Leok M., Marsden J.E.]
 year: 2005
 venue: "arXiv:math/0508341v2 [math.DG]"
-local_file: "~/papers/mosaic/div-free-amr/2005-arXiv-Desbrun-1048550arXivmath0508341.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2005-arXiv-Desbrun-1048550arXivmath0508341.pdf"
 tags: [dec, differential-forms, simplicial, dual-grid, hodge, discrete-vector-analysis]
 timestamp: 2026-07-08T00:00:00Z
 ---

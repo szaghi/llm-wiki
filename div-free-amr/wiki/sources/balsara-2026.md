@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Bhoriya D., Shu C.-W.]
 year: 2026
 venue: "Commun. Appl. Math. Comput. 8:1730-1798"
-local_file: "~/papers/mosaic/div-free-amr/2026-CAMC-Balsara-101007s42967-025-00517-y.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2026-CAMC-Balsara-101007s42967-025-00517-y.pdf"
 tags: [constrained-transport, upwind-emf, multidimensional-riemann-solver, finite-difference, weno, high-order, positivity, mhd, relativistic, electrodynamics]
 timestamp: 2026-10-08T00:00:00Z
 ---

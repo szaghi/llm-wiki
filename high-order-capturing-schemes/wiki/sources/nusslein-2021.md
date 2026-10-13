@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Nüßlein S., Ranocha H., Ketcheson D.I.]
 year: 2021
 venue: "Commun. Appl. Math. Comput. Sci. 16:155–179"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2021-CAMCoS-Nusslein-102140camcos202116155.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2021-CAMCoS-Nusslein-102140camcos202116155.pdf"
 tags: [time-discretization, runge-kutta, positivity]
 timestamp: 2026-10-12T00:00:00Z
 ---

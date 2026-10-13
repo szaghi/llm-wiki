@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mattsson K., Nordström J.]
 year: 2004
 venue: "J. Comput. Phys. 199:503-540"
-local_file: "~/papers/mosaic/div-free-amr/2004-JCP-Mattsson-101016jjcp20040301.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2004-JCP-Mattsson-101016jjcp20040301.pdf"
 tags: [sbp, second-derivative, parabolic, high-order, boundary-closure]
 timestamp: 2026-07-08T00:00:00Z
 ---

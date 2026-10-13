@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Giuliani A., Almgren A.S., Bell J.B., Berger M.J., Henry de Frahan M.T., Rangarajan D.]
 year: 2022
 venue: "J. Comput. Phys. 464:111305"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2022-JCP-Giuliani-101016jjcp2022111305.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2022-JCP-Giuliani-101016jjcp2022111305.pdf"
 tags: [embedded-boundary, boundary-treatment, conservation, amr]
 timestamp: 2026-10-12T00:00:00Z
 ---

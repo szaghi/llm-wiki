@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Tomida K., Stone J.M.]
 year: 2023
 venue: "Astrophys. J. Suppl. 266:7"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2023-ApJS-Tomida-1038471538-4365acc2c0.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2023-ApJS-Tomida-1038471538-4365acc2c0.pdf"
 tags: [software, self-gravity, multigrid, amr, performance, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

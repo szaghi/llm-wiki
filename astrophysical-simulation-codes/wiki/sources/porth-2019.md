@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Porth O., Chatterjee K., Narayan R., Gammie C.F., Mizuno Y., Anninos P., Baker J.G., Bugli M., Chan C., Davelaar J., Del Zanna L., Etienne Z.B., Fragile P.C., Kelly B.J., Liska M., Markoff S., McKinney J.C., Mishra B., Noble S.C., Olivares H., Prather B., Rezzolla L., Ryan B.R., Stone J.M., Tomei N., White C.J., Younsi Z.]
 year: 2019
 venue: "Astrophys. J. Suppl. 243:26"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2019-ApJS-Porth-1038471538-4365ab29fd.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2019-ApJS-Porth-1038471538-4365ab29fd.pdf"
 tags: [mhd, relativity, benchmark, verification, constrained-transport, riemann-solver, primitive-recovery, amr, gpu, performance]
 timestamp: 2026-10-12T00:00:00Z
 ---

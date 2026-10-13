@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Del Rey Fernández D.C., Hicken J.E., Zingg D.W.]
 year: 2014
 venue: "Computers & Fluids 95:171-196"
-local_file: "~/papers/mosaic/div-free-amr/2014-CompFluids-DelReyFernandez-101016jcompfluid20140216.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2014-CompFluids-DelReyFernandez-101016jcompfluid20140216.pdf"
 tags: [sbp, sat, quadrature, dual-consistency, superconvergence, review]
 timestamp: 2026-07-08T00:00:00Z
 ---

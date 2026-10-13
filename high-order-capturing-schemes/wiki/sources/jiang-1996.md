@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Jiang G.-S., Shu C.-W.]
 year: 1996
 venue: "J. Comput. Phys. 126:202-228 (read as the 40-page preprint)"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1996-JCP-Jiang-101006jcph19960130.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1996-JCP-Jiang-101006jcph19960130.pdf"
 tags: [weno, finite-difference, nonlinear-weights, benchmark]
 timestamp: 2026-10-08T00:00:00Z
 ---

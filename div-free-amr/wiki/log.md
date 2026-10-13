@@ -1,5 +1,12 @@
 # Directory Update Log
 
+## 2026-10-13
+
+* **Source-page paths made absolute** on user instruction, as the repo
+  schema asks: `local_file` in all 94 Source pages now reads
+  `/home/stefano/...` instead of `~/...`. Every path was checked to exist.
+  Citation lines in page bodies are unchanged.
+
 ## 2026-10-12
 
 * **Batch: AMR frameworks and octrees from the ADAM paper collection** (6

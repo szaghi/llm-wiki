@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Brezzi F., Lipnikov K., Shashkov M.]
 year: 2005
 venue: "SIAM J. Numer. Anal. 43(5):1872-1896"
-local_file: "~/papers/mosaic/div-free-amr/2005-SINUM-Brezzi-101137040613950.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2005-SINUM-Brezzi-101137040613950.pdf"
 tags: [mimetic, convergence, polyhedral, stability, diffusion, mixed-form]
 timestamp: 2026-07-08T00:00:00Z
 ---

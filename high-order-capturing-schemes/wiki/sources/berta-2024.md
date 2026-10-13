@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Berta V., Mignone A., Bugli M., Mattia G.]
 year: 2024
 venue: "J. Comput. Phys. 499:112701"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2024-JCP-Berta-101016jjcp2023112701.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2024-JCP-Berta-101016jjcp2023112701.pdf"
 tags: [mhd, relativistic, finite-volume, fourth-order, constrained-transport]
 timestamp: 2026-10-08T00:00:00Z
 ---

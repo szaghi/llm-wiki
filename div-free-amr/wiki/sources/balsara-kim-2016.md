@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Kim J.]
 year: 2016
 venue: "J. Comput. Phys. 312:357-384"
-local_file: "~/papers/mosaic/div-free-amr/2016-JCP-Balsara-101016jjcp201602001.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2016-JCP-Balsara-101016jjcp201602001.pdf"
 tags: [constrained-transport, staggered, multidimensional-riemann-solver, relativistic-mhd, high-order]
 timestamp: 2026-10-09T00:00:00Z
 ---

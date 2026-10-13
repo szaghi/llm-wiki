@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2009
 venue: "J. Comput. Phys. 228(14):5040-5056"
-local_file: "~/papers/mosaic/div-free-amr/2009-JCP-Balsara-101016jjcp200903038.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2009-JCP-Balsara-101016jjcp200903038.pdf"
 tags: [divergence-free-reconstruction, high-order, weno, constrained-transport, amr]
 timestamp: 2026-10-08T00:00:00Z
 ---

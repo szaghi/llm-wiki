@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Hiptmair R.]
 year: 2002
 venue: "Acta Numerica 11:237-339"
-local_file: "~/papers/mosaic/div-free-amr/2002-ActaNum-Hiptmair-101017S0962492902000041.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2002-ActaNum-Hiptmair-101017S0962492902000041.pdf"
 tags: [finite-elements, differential-forms, whitney-forms, de-rham, electromagnetics, edge-elements]
 timestamp: 2026-07-08T00:00:00Z
 ---

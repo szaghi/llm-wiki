@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zhang X., Shu C.-W.]
 year: 2010
 venue: "J. Comput. Phys. 229:8918-8934"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2010-JCP-Zhang-101016jjcp201008016.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2010-JCP-Zhang-101016jjcp201008016.pdf"
 tags: [positivity, limiter, dg, finite-volume, euler]
 timestamp: 2026-10-08T00:00:00Z
 ---

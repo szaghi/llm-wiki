@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Wang S., Nissen A., Kreiss G.]
 year: 2017
 venue: "arXiv:1702.01383v2; Math. Comp. 87:2737-2763 (2018)"
-local_file: "~/papers/mosaic/div-free-amr/2017-arXiv-Wang-1048550arXiv170201383.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2017-arXiv-Wang-1048550arXiv170201383.pdf"
 tags: [sbp, convergence, normal-mode-analysis, accuracy, corner-points, wave-equation]
 timestamp: 2026-07-08T00:00:00Z
 ---

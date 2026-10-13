@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Rumpf T., Dumbser M., Munz C.-D.]
 year: 2009
 venue: "J. Comput. Phys. 228:2480-2516"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2009-JCP-Balsara-101016jjcp200812003.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2009-JCP-Balsara-101016jjcp200812003.pdf"
 tags: [ader, weno, mhd, constrained-transport, legendre-basis, finite-volume]
 timestamp: 2026-10-08T00:00:00Z
 ---

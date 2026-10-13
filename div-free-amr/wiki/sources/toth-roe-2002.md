@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Tóth G., Roe P.L.]
 year: 2002
 venue: "J. Comput. Phys. 180:736-750"
-local_file: "~/papers/mosaic/div-free-amr/2002-JCP-Toth-101006jcph20027120.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2002-JCP-Toth-101006jcph20027120.pdf"
 tags: [amr, prolongation, restriction, divergence-constraint, curl-preserving, collocation]
 timestamp: 2026-07-08T00:00:00Z
 ---

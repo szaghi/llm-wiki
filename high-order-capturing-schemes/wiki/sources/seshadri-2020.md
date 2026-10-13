@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Seshadri P.K., De A.]
 year: 2020
 venue: "Comput. Fluids 206:104579"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2020-CompFluids-Seshadri-101016jcompfluid2020104579.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2020-CompFluids-Seshadri-101016jcompfluid2020104579.pdf"
 tags: [immersed-boundary, moving-boundary, boundary-treatment]
 timestamp: 2026-10-12T00:00:00Z
 ---

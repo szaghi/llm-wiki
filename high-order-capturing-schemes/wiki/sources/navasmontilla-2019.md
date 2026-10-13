@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Navas-Montilla A., Murillo J.]
 year: 2019
 venue: "J. Comput. Phys. 378:445-476"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2019-JCP-NavasMontilla-101016jjcp201811023.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2019-JCP-NavasMontilla-101016jjcp201811023.pdf"
 tags: [riemann-solver, shock-instability, shallow-water, well-balanced]
 timestamp: 2026-10-12T00:00:00Z
 ---

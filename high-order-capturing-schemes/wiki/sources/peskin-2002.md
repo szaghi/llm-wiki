@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Peskin C.S.]
 year: 2002
 venue: "Acta Numer. 11:479–517"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2002-ActaNumer-Peskin-101017s0962492902000077.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2002-ActaNumer-Peskin-101017s0962492902000077.pdf"
 tags: [immersed-boundary, boundary-treatment, review]
 timestamp: 2026-10-12T00:00:00Z
 ---

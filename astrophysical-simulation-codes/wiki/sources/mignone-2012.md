@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Mignone A., Zanni C., Tzeferacos P., van Straalen B., Colella P., Bodo G.]
 year: 2012
 venue: "Astrophys. J. Suppl. 198:7"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2012-ApJS-Mignone-1010880067004919817.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2012-ApJS-Mignone-1010880067004919817.pdf"
 tags: [software, mhd, amr, divergence-cleaning, unsplit, riemann-solver, performance, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

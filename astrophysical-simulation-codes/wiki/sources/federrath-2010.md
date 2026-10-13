@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Federrath C., Banerjee R., Clark P.C., Klessen R.S.]
 year: 2010
 venue: "Astrophys. J. 713:269–290"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2010-ApJ-Federrath-1010880004-637x7131269.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2010-ApJ-Federrath-1010880004-637x7131269.pdf"
 tags: [amr, self-gravity, multigrid, hydro, benchmark, verification, performance]
 timestamp: 2026-10-12T00:00:00Z
 ---

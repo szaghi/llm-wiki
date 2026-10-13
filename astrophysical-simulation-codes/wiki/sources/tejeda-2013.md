@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Tejeda E., Rosswog S.]
 year: 2013
 venue: "Mon. Not. R. Astron. Soc. 433:1930–1940"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2013-MNRAS-Tejeda-101093mnrasstt853.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2013-MNRAS-Tejeda-101093mnrasstt853.pdf"
 tags: [pseudo-newtonian, relativity, verification]
 timestamp: 2026-10-12T00:00:00Z
 ---

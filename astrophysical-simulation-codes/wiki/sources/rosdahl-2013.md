@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Rosdahl J., Blaizot J., Aubert D., Stranex T., Teyssier R.]
 year: 2013
 venue: "Mon. Not. R. Astron. Soc. 436:2188–2231"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2013-MNRAS-Rosdahl-101093mnrasstt1722.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2013-MNRAS-Rosdahl-101093mnrasstt1722.pdf"
 tags: [software, radiation, reduced-speed-of-light, amr, riemann-solver, cosmology, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---

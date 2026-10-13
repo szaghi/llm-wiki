@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Pirozzoli S.]
 year: 2002
 venue: "J. Comput. Phys. 178:81-117"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2002-JCP-Pirozzoli-101006jcph20027021.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2002-JCP-Pirozzoli-101006jcph20027021.pdf"
 tags: [compact-scheme, hybrid, turbulence, spectral-resolution]
 timestamp: 2026-10-08T00:00:00Z
 ---

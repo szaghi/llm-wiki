@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2001
 venue: "J. Comput. Phys. 174:614-648"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2001-JCP-Balsara-101006jcph20016917.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2001-JCP-Balsara-101006jcph20016917.pdf"
 tags: [mhd, divergence-free, amr, staggered, reconstruction]
 timestamp: 2026-10-09T00:00:00Z
 ---

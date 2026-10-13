@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Derigs D., Winters A.R., Gassner G.J., Walch S., Bohm M.]
 year: 2018
 venue: "J. Comput. Phys. 364:420-467 (arXiv:1711.06269)"
-local_file: "~/papers/mosaic/div-free-amr/2018-JCP-Derigs-101016jjcp201803002.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-JCP-Derigs-101016jjcp201803002.pdf"
 tags: [glm, eight-wave, entropy, divergence-constraint, mhd, amr]
 timestamp: 2026-07-08T00:00:00Z
 ---

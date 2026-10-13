@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zanotti O., Fambri F., Dumbser M., Hidalgo A.]
 year: 2015
 venue: "Comput. Fluids 118:204-224"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2015-CompFluids-Zanotti-101016jcompfluid201506020.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2015-CompFluids-Zanotti-101016jcompfluid201506020.pdf"
 tags: [dg, ader, amr, limiter, a-posteriori]
 timestamp: 2026-10-08T00:00:00Z
 ---

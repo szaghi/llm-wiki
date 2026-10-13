@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S., Käppeli R., Boscheri W., Dumbser M.]
 year: 2023
 venue: "Commun. Appl. Math. Comput. 5:235-294"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2023-CAMC-Balsara-101007s42967-021-00160-3.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2023-CAMC-Balsara-101007s42967-021-00160-3.pdf"
 tags: [involution, reconstruction, staggered, multidimensional-riemann-solver, weno]
 timestamp: 2026-10-08T00:00:00Z
 ---

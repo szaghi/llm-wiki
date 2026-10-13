@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Runge C.]
 year: 1895
 venue: "Math. Ann. 46:167–178"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/1895-MathAnn-Runge-101007bf01446807.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1895-MathAnn-Runge-101007bf01446807.pdf"
 tags: [time-discretization, runge-kutta]
 timestamp: 2026-10-12T00:00:00Z
 ---

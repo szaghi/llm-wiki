@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Miniati F., Martin D.F.]
 year: 2011
 venue: "Astrophys. J. Suppl. Ser. 195:5"
-local_file: "~/papers/mosaic/div-free-amr/2011-ApJS-Miniati-1010880067004919515.pdf"
+local_file: "/home/stefano/papers/mosaic/div-free-amr/2011-ApJS-Miniati-1010880067004919515.pdf"
 tags: [constrained-transport, amr, ctu, refluxing, production-code, cosmology]
 timestamp: 2026-07-08T00:00:00Z
 ---

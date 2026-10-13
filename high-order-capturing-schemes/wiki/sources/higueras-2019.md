@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Higueras I., Roldán T.]
 year: 2019
 venue: "J. Sci. Comput. 79:1882–1906"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2019-JSC-Higueras-101007s10915-019-00916-3.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2019-JSC-Higueras-101007s10915-019-00916-3.pdf"
 tags: [time-discretization, ssp, low-storage, runge-kutta]
 timestamp: 2026-10-12T00:00:00Z
 ---

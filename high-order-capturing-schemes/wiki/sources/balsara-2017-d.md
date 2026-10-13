@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Balsara D.S.]
 year: 2017
 venue: "Living Rev. Comput. Astrophys. 3:2"
-local_file: "~/papers/mosaic/high-order-capturing-schemes/2017-LRCA-Balsara-101007s41115-017-0002-8.pdf"
+local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2017-LRCA-Balsara-101007s41115-017-0002-8.pdf"
 tags: [review, weno, ader, dg, positivity, mhd]
 timestamp: 2026-10-09T00:00:00Z
 ---

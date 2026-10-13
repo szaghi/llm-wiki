@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Zaghi S., Salvadore F., Di Mascio A., Rossi G.]
 year: 2023
 venue: "Comput. Fluids 266:106040"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2023-CompFluids-Zaghi-101016jcompfluid2023106040.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2023-CompFluids-Zaghi-101016jcompfluid2023106040.pdf"
 tags: [software, hydro, amr, gpu, cuda, performance, scaling]
 timestamp: 2026-10-12T00:00:00Z
 ---

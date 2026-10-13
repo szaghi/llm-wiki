@@ -7,7 +7,7 @@ source_kind: paper
 authors: [Coleman M.S.B.]
 year: 2020
 venue: "Astrophys. J. Suppl. 248:7"
-local_file: "~/papers/mosaic/astrophysical-simulation-codes/2020-ApJS-Coleman-1038471538-4365ab82ff.pdf"
+local_file: "/home/stefano/papers/mosaic/astrophysical-simulation-codes/2020-ApJS-Coleman-1038471538-4365ab82ff.pdf"
 tags: [software, hydro, mhd, equation-of-state, riemann-solver, verification, benchmark]
 timestamp: 2026-10-12T00:00:00Z
 ---
