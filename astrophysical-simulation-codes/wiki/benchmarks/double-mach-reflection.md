@@ -5,7 +5,7 @@ description: "The Woodward–Colella problem of a Mach 10 shock reflecting at 30
 status: established
 aliases: [DMR, Woodward–Colella double Mach reflection]
 tags: [benchmark, hydro, verification, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Double Mach reflection
@@ -66,9 +66,14 @@ on this test, adds LimO3 to the less diffusive side, and uses about 3.7
 times as many cells per direction as the larger Stone et al. (2008) run
 (1920 against 520 along $x$). It remains qualitative.
 
+## Later uses (batch 8)
+
+* **Unsplit against split in the CTU paper.** [Colella (1990)](/sources/colella-1990.md), §5, Figs. 8–10, runs a Mach 10 shock on a 30° wall at $400\times100$ zones, $h = 1/120$, the wall starting 20 mesh lengths from the lower left corner, $t = 0.2$ ("the finest grid results" of Woodward & Colella). His unsplit CTU and operator-split results with the same parameters are "essentially identical". The transverse choice of his eq. 2.13 gives "considerably lower resolution in the jet along the wall" (pp. 197–198). The Courant number is not printed. The mesh implies a $3.33\times0.83$ domain (inferred, not printed).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.3.
 2. [Bryan et al. (2014)](/sources/bryan-2014.md), §11.2.4 (arXiv v1).
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.4.2.
 4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1 (arXiv v1).
+5. [Colella (1990)](/sources/colella-1990.md), §5, Figs. 8–10, pp. 197–198.

@@ -109,6 +109,8 @@ corner, from shock-tube studies at low $M_s$.
   simulation must include them ([Gnani et al. (2014)](/sources/gnani-2014.md),
   §§2–4).
 
+**Later uses (batch 16).** *The DG runs behind the "ad hoc positivity correction" above* ([Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.3). Boundary conditions as printed there: inflow at $x = 0$, outflow at $x = 13$, reflecting walls along the step, and Neumann conditions on the bottom ($1 \le x \le 13$, $y = 0$) and top ($y = 11$); no corner treatment; $\gamma$ is not printed. Rectangles, $h = 1/10$ to $1/80$, global Lax–Friedrichs flux, $t = 2.3$. "It is easy to get negative density and/or pressure": for both degree 1 and 2, density and total energy slopes are rescaled when a cell-minimum bound built from the mean and the absolute moments fails, a conservative fix without an admissibility proof ([RKDG](/methods/rkdg.md)).
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.5.
@@ -120,3 +122,4 @@ corner, from shock-tube studies at low $M_s$.
 7. [Kleine et al. (1995)](/sources/kleine-1995.md), §§1–4, Eq. 1, Figs. 1–6.
 8. [Kleine et al. (2006)](/sources/kleine-2006.md), §2.3, Fig. 2.
 9. [Gnani et al. (2014)](/sources/gnani-2014.md), §§1–4.
+10. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.3.

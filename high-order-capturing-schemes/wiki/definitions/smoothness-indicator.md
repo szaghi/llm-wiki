@@ -89,7 +89,7 @@ polynomial and small ones ([Zhu & Qiu (2016)](/sources/zhu-2016.md);
 indicator shared by all components
 ([characteristic decomposition](/methods/characteristic-decomposition.md)).
 
-**Batch 3.** For pointwise WENO *interpolation*, the Legendre-basis
+**Later uses (batch 3).** For pointwise WENO *interpolation*, the Legendre-basis
 indicators are the same sums of perfect squares as for reconstruction
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §III). Gaussian-process
 WENO replaces derivative norms by the squared norm of the sub-stencil

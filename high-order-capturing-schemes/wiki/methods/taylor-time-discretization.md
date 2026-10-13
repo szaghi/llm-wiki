@@ -5,7 +5,7 @@ description: "Single-stage, single-step time stepping that expands the solution 
 status: established
 aliases: [Lax-Wendroff time discretization, Cauchy-Kowalewski procedure, Taylor method, PIF-WENO, single-step method]
 tags: [time-discretization, lax-wendroff, single-step, amr]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Lax–Wendroff (Taylor) single-step time discretization
@@ -58,11 +58,13 @@ evaluations ([Dumbser et al. (2013)](/sources/dumbser-2013.md), §2.3; [Zanotti 
 is what lets each level of a [high-order AMR](/methods/high-order-amr.md)
 grid take its own time step.
 
-**Later (batch 6).** Shu groups ADER and generalized-Riemann-problem
+**Later uses (batch 6).** Shu groups ADER and generalized-Riemann-problem
 (GRP) schemes with Lax–Wendroff time discretization as one class. Hybrid
 multiderivative integrators, multi-stage Lax–Wendroff, are a newer
 branch (Seal, Güçlü and Christlieb; Li and Du) ([Shu (2020)](/sources/shu-2020.md), §7;
 [ADER](/methods/ader.md)).
+
+**Later uses (batch 16).** Fully discrete Lax–Wendroff (Taylor) time discretizations are proven TVD only at second order, and with a $u$-dependent source they are "very messy" and may lose the TVD or TVB property, which method-of-lines multistep schemes keep ([Shu (1988b)](/sources/shu-1988-b.md), §3, pp. 1077, 1080).
 
 # Citations
 
@@ -75,3 +77,4 @@ branch (Seal, Güçlü and Christlieb; Li and Du) ([Shu (2020)](/sources/shu-202
 7. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §1.
 8. [Balsara et al. (2009)](/sources/balsara-2009.md), §3.
 9. [Shu (2020)](/sources/shu-2020.md), §7.
+10. [Shu (1988b)](/sources/shu-1988-b.md), §3.

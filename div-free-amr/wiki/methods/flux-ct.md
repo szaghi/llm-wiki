@@ -17,12 +17,13 @@ updated by the standard CT circulation, preserving $D_h^{\mathrm{f}} B_h$
 ([notation](/notation.md)) to roundoff. The variants, as catalogued by
 [Tóth (2000)](/sources/toth-2000.md) §4 (primary sources ingested for flux-CT,
 [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), and for
-transport-flux-CT, [Ryu et al. (1998)](/sources/ryu-1998.md); field-CT not
-yet ingested):
+transport-flux-CT, [Ryu et al. (1998)](/sources/ryu-1998.md); and for
+field-CT, [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) and
+[Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md)):
 
 * **Field-interpolated CT** (Dai & Woodward): interpolate cell-centered
-  $\mathbf{v}$ and $\mathbf{B}$ (two time levels, four cells) to the corner
-  and form $E_h = -\bar{\mathbf{v}}\times\bar{\mathbf{B}}$ there.
+  $\mathbf{u}$ and $\mathbf{B}$ (two time levels, four cells) to the corner
+  and form $E_h = -\bar{\mathbf{u}}\times\bar{\mathbf{B}}$ there.
 * **Flux-interpolated CT** (Balsara & Spicer): average the four
   appropriately-signed upwind magnetic-field fluxes of the base scheme
   adjacent to the corner,
@@ -32,6 +33,50 @@ yet ingested):
   flux-CT but averaging only the *transport part* of the upwind fluxes, with
   weight $\tfrac12$; coincides with the base scheme for 1D slab-symmetric
   problems.
+
+**Field-CT in its primary sources**
+([Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) §§2–3.6,
+eqs. 11–28, 47–52; [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md)
+§2, eqs. 11–32). The two papers present one scheme.
+* **Placement.** $B_h \in V_h^2$ is the face average of each component and
+  is the evolved field; density, momentum and energy are cell averages. The
+  face update is the integral induction law with space–time averages of
+  $E_h$ along edges, "exact" as a statement on averages, so the net face
+  flux of every cell never changes. In 2D the out-of-plane component stays
+  a cell average updated by the finite-volume step.
+* **A second cell-centred field.** The dimensionally split Godunov sweeps
+  advance the fluid and a cell-averaged field $B_h^{*}$, initialized as the
+  two-face average, that is not divergence-free and serves "only for an
+  approximate calculation of the time-averaged flux" (JCP eqs. 27–28). As
+  with Balsara & Spicer below, the scheme carries two field
+  representations; whether $B_h^{*}$ is reset to the face average each step
+  is not stated (ApJ p. 323).
+* **Edge EMF.** In 2D the corner value is $E_h = -\bar{\mathbf u}\times\bar{\mathbf B}$
+  with each factor the mean of the old and new time levels; the new-level
+  corner values are plain averages of the four adjacent split-updated cells
+  (JCP eqs. 50–51, ApJ eqs. 31–32). In 3D the edge line averages "are
+  approximately calculated through" the cell values, with no stencil
+  printed. No dissipation enters $E_h$ except through the Godunov sweep
+  that produced the cell values. The papers call it "our current
+  algorithm" and suggest a multidimensional Riemann solver at cell corners
+  instead (JCP §5, ApJ §4).
+* **Unsplit field, split fluid.** "The magnetic field … should be updated in
+  an unsplit manner in order to exactly maintain the divergence-free
+  condition" (JCP p. 336); the field update is applied once after each
+  triple of split sweeps (JCP eq. 52, ApJ eq. 27).
+* **What is not shown.** No divergence value of the face field and no
+  error norm or convergence rate is printed. The ApJ paper notes that its
+  split fluxes come from three different instants and that it is "not
+  clear" whether interpolating between them keeps second order in time
+  (§4).
+
+*Compiler reading:* Tóth's ranking of field-CT as the least accurate CT
+variant (below) concerns his implementation inside a common base scheme;
+Dai & Woodward compare only against their own scheme without the field
+update. Ryu et al.'s remark that exact 1D reduction "is not necessarily
+true" with Dai & Woodward's edge values is consistent with the centred,
+two-level corner product, which on a grid-aligned problem is not the 1D
+Godunov flux; Dai & Woodward do not discuss the reduction.
 
 **Flux-CT in its primary source**
 ([Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) §2.1). The face
@@ -169,7 +214,8 @@ of numerical diffusion in the time evolution of the magnetic field". No
 analysis or test supports the statement. Gardiner & Stone find the
 opposite defect in the same average: the numerical viscosity of a
 grid-aligned flow is halved, which is too little dissipation, not too much.
-The two statements point in opposite directions and are not incompatible.
+Both statements say the average adds no dissipation; Gardiner & Stone show
+that this is the defect (half the 1D viscosity), not a virtue.
 Balsara & Spicer's own §2.2 switches act precisely on grid-aligned shocks,
 the case where the halving matters, and changed nothing on their
 moving-shock tests. Likewise, "inheriting the base scheme's upwinding"
@@ -240,3 +286,5 @@ puts the staggered components into every flux.
 7. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.2.
 8. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§2.1–2.2, eqs. 4–26, pp. 275–280.
 9. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1–2, 4, eqs. 3–18.
+10. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§2–3.6, 5, eqs. 11–28, 47–52.
+11. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§2–2.1, 4, eqs. 11–32.

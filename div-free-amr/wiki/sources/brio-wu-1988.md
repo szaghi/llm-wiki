@@ -1,7 +1,7 @@
 ---
 type: Source
 title: "Brio & Wu (1988) — An upwind differencing scheme for the equations of ideal magnetohydrodynamics"
-description: "Roe-type upwind scheme for the 1D ideal-MHD system with constant normal field: an exact Roe matrix for gamma = 2 only, a renormalized right-eigenvector set well defined at the MHD degeneracies, the coplanar shock tube with a slow compound wave, and a proof that the MHD system is nonconvex."
+description: "Roe-type upwind scheme for the 1D ideal-MHD system with constant normal field: an exact Roe matrix for gamma = 2 only, a renormalized right-eigenvector set claimed well defined everywhere (eq. 46 fixes the factors at the triple umbilic by assignment), the coplanar shock tube with a slow compound wave, and a proof that the MHD system is nonconvex."
 resource: "doi:10.1016/0021-9991(88)90120-9"
 source_kind: paper
 authors: [Brio M., Wu C.C.]
@@ -22,8 +22,9 @@ is held constant (§IV, eqs. 16–23).
   an arithmetic average state, which loses the exact flux-difference
   property (§IV.1).
 * Its lasting contribution is a **renormalized complete set of right
-  eigenvectors** (eqs. 39–46), well defined at the MHD degeneracies (zero
-  normal field; zero transverse field).
+  eigenvectors** (eqs. 39–46), claimed well defined everywhere, including
+  zero normal field and zero transverse field; eq. 46 fixes the factors at
+  the triple umbilic by assignment.
 * The coplanar Riemann problem of §V, the "Brio–Wu shock tube", has a
   solution containing a **slow compound wave**.
 * With the complete eigenvector set, §VI shows that the MHD system is
@@ -76,8 +77,13 @@ eigenvector normalization used by [Jiang & Wu (1999)](/sources/jiang-1999.md).
    built from the fast, slow, sound and normal Alfvén speeds (eqs. 39–40),
    transverse directions by the unit transverse-field components (eqs.
    41–42), Alfvén eigenvectors by the inverse transverse Alfvén speed, with
-   explicit limits at the degeneracies (eqs. 45–46). Result: "a set of right
-   eigenvectors which is well defined everywhere." Continuity as the
+   explicit limits at the degeneracies (eqs. 45–46). Eq. 46 sets both the
+   fast and the slow factor to 1 where the transverse field vanishes and
+   the sound speed equals the normal Alfvén speed (the triple umbilic): a
+   definition by assignment, not a limit. Result: "a set of right
+   eigenvectors which is well defined everywhere." With this normalization
+   some entries "are not continuous" as both transverse components
+   approach zero (p. 410). Continuity as the
    transverse field passes through zero also needs a sign factor on the
    slow or fast eigenvectors; this is irrelevant for the Roe scheme but
    "crucial" for §VI (p. 410).
@@ -143,7 +149,7 @@ No divergence measure is reported; the problems are 1D.
 | $B_y, B_z$ | words: transverse field | |
 | $\nabla\cdot B = 0$ | $\nabla\cdot\mathbf B = 0$ | no discrete form in the paper |
 | $\lambda_k$ | $\lambda_k$ | eigenvalues; no registry conflict |
-| $f_{i+1/2}$ | $f^{x,*}$ | base-scheme upwind numerical flux |
+| $f_{i+1/2}$ | words: base-scheme numerical flux of the full system | $f^{x,*}$ is registered for field components only |
 | $A$, $A_{i+1/2}$ (Roe matrix) | words | **collision:** $A_h$ is the vector potential |
 | $R_k$ (eigenvectors) | words | **collision:** $R$ is restriction |
 | $C_k$ (wave strengths) | words | **collision:** $C_h$ is the discrete curl |

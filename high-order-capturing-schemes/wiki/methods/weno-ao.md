@@ -114,7 +114,7 @@ equally. It returns a whole polynomial on the cell.
 ## Contradictions
 
 **Is WENO-ZQ free of spurious extrema and clipping?**
-* [Zhu & Qiu (2016)](/sources/zhu-2016.md): the scheme escapes
+* [Zhu & Qiu (2016)](/sources/zhu-2016.md), abstract, §§1–3: the scheme escapes
   "nonphysical oscillations adjacent strong shocks or contact
   discontinuities", and behaves like a TVD scheme with a van Albada-like
   limiter near them (their tests: Burgers, Euler smooth cases, Lax,

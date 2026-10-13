@@ -104,7 +104,7 @@ $-(\nabla\cdot B)\,S(U)$.
     shifted by the minimal-norm correction that zeroes their
     face-quadrature divergence. That cell-*local*, $D_h^{\mathrm{f}}$-type
     divergence of the cell's own traces then vanishes exactly.
-  * The correction is an orthogonal projection, $P^2 = P$, and it keeps
+  * The correction is an orthogonal projection $\Pi$ ($\Pi^2 = \Pi$), and it keeps
     the reconstruction's order (Theorem 2.7).
   * A new, symmetric source term built from the face jumps of $B_n$,
     evaluated at the averaged face state, handles the inter-cell part.
@@ -124,8 +124,9 @@ through the source term.
 ## Why it matters for this bundle
 
 * **It is a second reason for the constraint.** The classical case for
-  $D_h B_h = 0$ is the anomalous parallel force
-  ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
+  $D_h B_h = 0$ is the anomalous parallel force (for the conservative
+  Maxwell-stress momentum form; see the qualification at
+  [exact discrete divergence](/properties/exact-discrete-divergence.md)).
   This result adds a theorem: without a discrete divergence-free condition,
   no LF-type scheme can guarantee positive pressure, however much viscosity
   it adds.

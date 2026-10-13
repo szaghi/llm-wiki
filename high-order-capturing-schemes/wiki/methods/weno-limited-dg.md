@@ -92,7 +92,7 @@ alternative recomputes troubled cells with a different scheme on a
 subgrid instead of post-processing them
 ([a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
 
-**Later (batch 6): the reviews.** DG is more flexible than WENO on
+**Later uses (batch 6).** *The reviews.* DG is more flexible than WENO on
 unstructured meshes but "less robust in dealing with solutions with
 strong shocks", because its limiters lag behind WENO ([Shu (2009)](/sources/shu-2009.md), §5.1). WENO
 reconstruction suits troubled cells because it keeps high order where a
@@ -121,6 +121,37 @@ Both limiter families have their own pages: [Hermite WENO](/methods/hermite-weno
 * *PNPM in perspective*: evolving degree 1 or 2 and reconstructing higher
   "often" gives most of the accuracy of DG at larger time steps (§VI).
 
+**Later uses (batch 16).** *The TVB limiter at its multi-D source*
+([Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.3, 3.4;
+[RKDG](/methods/rkdg.md)).
+* *Formula.* On rectangles each face deviation from the mean,
+  $\tfrac12\hat u^{(10)}$ in $x$ and $\tfrac12\hat u^{(01)}$ in $y$, is
+  replaced by $\operatorname{minmod}_M$ of itself and the two mean
+  differences in that direction, threshold $M h^2$ per direction (eqs.
+  3.6–3.7): the standard limiter above, written for the linear moments.
+* *Choice of $M$.* "Usually, the numerical results are not sensitive to
+  the choice of M in a large range. In all the calculations in this paper
+  we take M to be 50", with an estimate from second derivatives referred
+  to part II of the series. This is the $M = 50$ of the Qiu–Shu
+  comparison above. Qiu and Shu's "for systems $M$ is hard to estimate"
+  and Cockburn and Shu's insensitivity are different emphases: neither
+  paper tests the other's claim.
+* *Characteristic limiting.* For systems the slope and the two mean
+  differences are projected with the left eigenvectors of the directional
+  Jacobian at the cell mean, limited componentwise and projected back; on
+  triangles the direction is from the barycentre to each edge midpoint
+  ([local characteristic decomposition](/methods/characteristic-decomposition.md)).
+* *Only the linear part.* Assuming, without proof ("still an open
+  problem"), that oscillations show in the $P^1$ part whenever present,
+  a cell whose $P^1$ part the limiter leaves unchanged keeps all its
+  moments, and otherwise its moments above the first are discarded and
+  the limited linear function is kept. The WENO limiter above rebuilds
+  those moments instead of discarding them.
+* *Required properties and triangles.* Linear functions unchanged, mean
+  kept, gradient not increased; on triangles the edge-midpoint deviations
+  are limited against 1.5 times a combination of neighbour mean
+  differences and rescaled to sum to zero (§3.4.2).
+
 # Citations
 
 1. [Qiu & Shu (2005)](/sources/qiu-2005.md), §§1–4.
@@ -130,3 +161,4 @@ Both limiter families have their own pages: [Hermite WENO](/methods/hermite-weno
 5. [Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3.
 6. [Zhang (2017)](/sources/zhang-2017.md), §§1.7, 6.
 7. [Balsara (2017)](/sources/balsara-2017-d.md), §VI.
+8. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.3, 3.4.

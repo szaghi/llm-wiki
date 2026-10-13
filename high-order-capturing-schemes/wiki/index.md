@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 118 sources compiled (the whole archive)**: 117 published works,
+**Corpus: 124 sources compiled (the whole archive)**: 123 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -70,7 +70,9 @@ for every page.
    collects every family's claim; Henrick et al. supersede WENO-JS's
    critical-point claim (closed `Contradictions` entry).
 7. **Making it work on systems and in time.**
-   [Local characteristic decomposition](/methods/characteristic-decomposition.md),
+   [Local characteristic decomposition](/methods/characteristic-decomposition.md)
+   (open `Contradictions` entry: does Brio & Wu's slow-wave factor carry
+   $1/c_f$?),
    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) with its
    [order barriers](/results/ssp-order-barriers.md), the single-step
    [Lax–Wendroff (Taylor)](/methods/taylor-time-discretization.md)
@@ -143,7 +145,9 @@ for every page.
    [free-stream preservation](/properties/free-stream-preservation.md); with
    source terms, equilibria must stay steady:
    [well-balanced schemes](/properties/well-balanced.md).
-10. **Limiting high-order DG.** A priori:
+10. **Limiting high-order DG.** The base scheme is the
+   [Runge–Kutta discontinuous Galerkin method](/methods/rkdg.md) with its
+   TVB slope limiter. A priori:
    [WENO limiters](/methods/weno-limited-dg.md) rebuild troubled cells from
    neighbouring averages. A posteriori:
    [subcell limiting](/methods/a-posteriori-subcell-limiting.md) (MOOD)

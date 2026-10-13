@@ -44,7 +44,7 @@ energy kept after 10 steps against 13 % for WENO-Z). $C_w$ of order 10
 changes dissipation only slightly; much larger values risk instability
 with strong shocks.
 
-**Later.** [Fu, Hu & Adams (2016)](/sources/fu-2016.md) list the
+**Later uses (batch 2).** [Fu, Hu & Adams (2016)](/sources/fu-2016.md) list the
 drawback that spurious waves can appear at marginally resolved
 wavenumbers because the central background scheme cannot suppress
 accumulated dispersion error; a variant WENO-CU6-M ($C_w = 1000$, $q = 4$)

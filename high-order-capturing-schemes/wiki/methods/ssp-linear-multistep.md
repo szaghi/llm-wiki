@@ -102,9 +102,75 @@ The variable-step condition shows the multistep method's price: it
 avoids unknown future stage speeds but must take the minimum of the
 forward-Euler limits over all past states it uses.
 
+**Later uses (batch 16).** *The origin: TVD multistep methods* ([Shu (1988b)](/sources/shu-1988-b.md), §3).
+* *Form and proof* (eqs. 3.7–3.16, Proposition 3.1). The $m$-step method
+  above, with $\tilde{\mathcal L}$ in place of $\mathcal L$ where
+  $b_i < 0$, $a_i \ge 0$, $a_i = 0$ only if $b_i = 0$, and
+  $\sum_i a_i = 1$, is a convex combination of forward-Euler steps from
+  the past levels, hence TVD for
+  $\Delta t \le \min_i(a_i/\vert b_i\vert)\,\Delta t_{\mathrm{FE}}$. This is
+  the convexity argument of the later SSP framework, proved here for the
+  total variation. The paper counts *past* levels, so its $m$ is this
+  page's $m - 1$.
+* *Order conditions* (eq. 3.11, re-indexed by the compiler and checked on
+  every row below): order $p_{\mathrm t}$ if, besides $\sum_i a_i = 1$,
+  $$\sum_{i=1}^{m}\left[(i-1)^{l}a_i - l\,(i-1)^{l-1}b_i\right] = (-1)^{l},\qquad l = 1,\dots,p_{\mathrm t}\quad(0^0 = 1).$$
+* *Every order is reachable* (Corollary 3.1). For a TVD space
+  discretization of a given order, an $m$-step method of the same order,
+  $p_{\mathrm t} = m$, with positive $\mathcal C$ exists for given $a_i$
+  (e.g. all $1/m$): the
+  $b_i$ solve a nonsingular linear system. Existence only; the $b_i$ may
+  be negative.
+* *Cost and choice* (Remarks 3.1–3.3). More steps give a larger
+  $\mathcal C$; requiring $b_i \ge 0$ avoids $\tilde{\mathcal L}$, which
+  "will reduce the work of each timestep by one half". A negative $b_i$
+  without $\tilde{\mathcal L}$ runs the upwind scheme backward in time,
+  "unstable in any sense". Runge–Kutta methods are self-starting and need
+  less storage, but "for very high-order methods (order $\ge 5$)
+  multilevel methods may be simpler".
+* *Table 1* (p. 1079), in this page's indexing ($a_1$, $b_1$ act on
+  $u^n$), with the printed $\mathcal C$; "by no means exhaustive, nor …
+  the optimal of the corresponding order":
+
+  | $m$ | $p_{\mathrm t}$ | $\mathcal C$ | $a_1,\dots,a_m$ | $b_1,\dots,b_m$ |
+  |---|---|---|---|---|
+  | 2 | 2 | 0.5 | 4/5, 1/5 | 8/5, −2/5 |
+  | 3 | 2 | 0.5 | 3/4, 0, 1/4 | 3/2, 0, 0 |
+  | 4 | 2 | 0.67 | 8/9, 0, 0, 1/9 | 4/3, 0, 0, 0 |
+  | 4 | 2 | 0.75 | 16/17, 0, 0, 1/17 | 64/51, 0, 0, −4/51 |
+  | 3 | 3 | 0.27 | 4/7, 2/7, 1/7 | 25/12, −20/21, 37/84 |
+  | 4 | 3 | 0.33 | 16/27, 0, 0, 11/27 | 16/9, 0, 0, 44/27 (as printed; see below) |
+  | 5 | 3 | 0.5 | 25/32, 0, 0, 0, 7/32 | 25/16, 0, 0, 0, 5/16 |
+  | 6 | 3 | 0.57 | 108/125, 0, 0, 0, 0, 17/125 | 36/25, 0, 0, 0, 0, 6/25 |
+  | 4 | 4 | 0.15 | 29/72, 7/24, 1/4, 1/18 | 481/192, −1055/576, 937/576, −197/576 |
+  | 6 | 4 | 0.245 | 747/1280, 0, 0, 0, 81/256, 1/10 | 237/128, 0, 0, 0, 165/128, −3/8 |
+  | 5 | 5 | 0.077 | 1/4, 1/4, 7/24, 1/6, 1/24 | 185/64, −851/288, 91/24, −151/96, 199/576 |
+  | 6 | 5 | 0.1298 | 7/20, 3/10, 4/15, 0, 7/120, 1/40 | 291201/108000, −198401/86400, 88063/43200, 0, −17969/43200, 73061/432000 |
+
+  In exact arithmetic eleven rows satisfy the order conditions to the
+  stated order and not the next, and $\min a_i/\vert b_i\vert$ reproduces
+  the printed $\mathcal C$. The four-step third-order row does not: the
+  printed $b_4 = 44/27$ fails the first condition. With $b_2 = b_3 = 0$ the
+  conditions fix $b_4 = 4/9$, which gives third order and
+  $\min a_i/\vert b_i\vert = 1/3$, the printed $\mathcal C$ (compiler's
+  derivation, recorded beside the printed value). The first row is the
+  optimal two-step method quoted above, in its first appearance; the
+  three-step, four-step second-order, four-step third-order and five-step
+  third-order rows are the fixed-step values above.
+* *Source terms and several dimensions* (Propositions 3.2–3.4). With a
+  source Lipschitz in $u$ and $x$ the methods are TVB of the same order.
+  Applied dimension by dimension they keep their order, and they are
+  bounded in the maximum norm for
+  $\Delta t \le \frac{1}{2d}\min_i(a_i/\vert b_i\vert)\,\Delta t_{\mathrm{FE}}$
+  with the one-dimensional $\Delta t_{\mathrm{FE}}$, a bound the
+  conservation form doubles (Remark 3.4).
+* No time-dependent test of these methods is in the paper; results are
+  referred to Shu's TVB paper (p. 1079).
+
 # Citations
 
 1. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§1–6 (arXiv v2).
 2. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §5.
 3. [Shu (1998)](/sources/shu-1998.md), §4.2.2.
 4. [Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7.
+5. [Shu (1988b)](/sources/shu-1988-b.md), §3, Propositions 3.1–3.4, Corollary 3.1, Remarks 3.1–3.4, Table 1 (read from the page images).

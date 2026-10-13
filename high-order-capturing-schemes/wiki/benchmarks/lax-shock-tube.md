@@ -10,7 +10,7 @@ timestamp: 2026-10-13T00:00:00Z
 
 # Lax shock tube
 
-**Set-up** (Lax 1954): $(\rho, v, p)_L = (0.445, 0.698, 3.528)$,
+**Set-up** (named after Lax; the data are not in Lax (1954), see the batch-16 block): $(\rho, v, p)_L = (0.445, 0.698, 3.528)$,
 $(\rho, v, p)_R = (0.5, 0, 0.571)$, $\gamma = 1.4$
 ([Liu, Osher & Chan (1994)](/sources/liu-1994.md);
 [Jiang & Shu (1996)](/sources/jiang-1996.md)).
@@ -85,6 +85,33 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
   largest overshoot values across the shock"; HLL-BVD is much sharper
   than HLL without overshoot (§III C 1, Figs. 5–6).
 
+**Later uses (batch 16).** *The data are not in Lax (1954).* The
+set-up line above attributes the states $(0.445, 0.698, 3.528)$ |
+$(0.5, 0, 0.571)$ with $\gamma = 1.4$ to "Lax 1954". The paper, now
+ingested, contains no such problem: the numbers and $\gamma = 1.4$ appear
+nowhere in its pp. 159–193 (reader's check of the text and of every
+table on the page images) ([Lax (1954)](/sources/lax-1954.md)). Its Euler
+Riemann problems, all computed with the staggered Lax–Friedrichs scheme
+at $\Delta t/h = 0.25$, are:
+* a single shock, left $(\rho, v_x, p) = (50, 2, 50)$, right
+  $(10, 0, 0)$, $\gamma = 1.5$; shock speed 2.5, measured 2.48 and 2.50
+  (Ex. 5);
+* the same with left velocity 1: rarefaction, contact and shock, with the
+  star velocity and pressure reproduced to about $\pm 0.01$ and
+  $\pm 0.3$ while the contact smears the density (Ex. 6);
+* left $(50, 2, 100)$, right as before, $\gamma = 2$, where the mesh ratio
+  exceeds the CFL limit in the star state and an instability "is indeed
+  beginning to show around the shock front" (Ex. 7);
+* a Lagrangian shock problem and its reflection from a rigid wall,
+  $\gamma = 2$ (Ex. 8, §2).
+
+So "Lax" is the problem's name, not its source. The earliest ingested
+source that prints the data is [Harten (1983)](/sources/harten-1983.md)
+(§7.I, eq. 7.7, in conserved variables, as "Lax's shock tube"); where
+the data originate is not settled by the corpus. Harten's conserved
+left state $(0.445, 0.311, 8.928)$ gives $v_x = 0.311/0.445 \approx 0.699$,
+not the $0.698$ of the set-up line (compiler's conversion).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -110,3 +137,5 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
 21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.2 (arXiv preprint).
 22. [Zhang (2017)](/sources/zhang-2017.md), Example 2.
 23. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III C, Figs. 4–6.
+24. [Lax (1954)](/sources/lax-1954.md), §§1–2, Exs. 5–8.
+25. [Harten (1983)](/sources/harten-1983.md), §7.I, eq. 7.7.

@@ -468,6 +468,115 @@ grid-aligned flow.
   called "ideally suited" to static or adaptive refinement (§1, §6),
   stated without a demonstration.
 
+## Later uses (batch 8)
+
+### CTU in its primary source
+
+[Colella (1990)](/sources/colella-1990.md) is the origin of the corner
+transport upwind scheme summarized under Corner transport upwind (CTU),
+above. Its 2D construction agrees with that summary and adds:
+
+* **Where the name comes from** (§1, eqs. 1.2–1.6, Figs. 1–2). The
+  first-order scheme for linear advection integrates the upstream data
+  over the region the characteristics sweep through each edge, corners
+  included. Its limit is the per-direction maximum,
+  $\max(v_x\Delta t/h,\ v_y\Delta t/h) \le 1$ (sufficient), where unsplit
+  donor cell, without the transverse term, needs
+  $v_x\Delta t/h + v_y\Delta t/h \le 1$ (necessary).
+* **"A second set of Riemann problems" is literal** (§2, eqs. 2.13–2.15).
+  The transverse correction is an upwind difference of fluxes from
+  transverse Riemann problems, solved either between cell-centred states
+  (eq. 2.13, first-order Godunov transverse fluxes, "sufficiently
+  accurate ... to yield an algorithm that is second-order accurate") or
+  between the normal-predictor states of the transverse edges (eq. 2.15);
+  the edge Riemann problem follows. The count is twice that of the split
+  scheme (§6).
+* **Design requirements** (p. 173): reduction to the 1D Colella–Woodward
+  method for grid-aligned 1D problems, equal linear Courant limits for the
+  unlimited and fully limited schemes and for the split scheme, and a
+  maximum principle for limited linear advection. The first is the
+  "reduces exactly to the 1D algorithm" property stated for Athena and
+  Gardiner & Stone above.
+* **Stability** (eq. 2.17). $\Delta t\max_{i,j,p}(\vert\lambda^{(p)}_x\vert/h,\ \vert\lambda^{(p)}_y\vert/h) \le 1$,
+  proved (by Fourier analysis) only when the two flux Jacobians commute,
+  and used as the time-step control of all runs with "no evidence of
+  instability". This is the per-direction form of Athena's eq. 78
+  (Time-step definitions, above).
+* **Limiting variables.** For general systems the slopes are limited in
+  characteristic amplitudes (eqs. 2.5–2.6); the gas-dynamics algorithm of
+  §4 limits primitive variables componentwise (eqs. 4.7–4.8) with the
+  steeper slope of Colella (1985). Characteristic limiting in Athena's CTU
+  is therefore not the 1990 gas-dynamics choice.
+* **Reference states** (eqs. 2.10–2.11, p. 183). The reference state is
+  the extrapolation under the fastest wave toward the edge, and the
+  predictor's second-order consistency with the characteristic relations
+  holds for smooth nonlinear flow only if the reference state differs
+  from the cell value by $O(h)$. PLUTO's remark that "both classical
+  reference-state choices" may lose second order (above) concerns this
+  construction; whether PLUTO's choices include exactly eq. 2.11 cannot
+  be judged from either paper.
+* **Robustness** (§5 end, §6, pp. 197–198). The unsplit scheme is "more
+  sensitive to various details of the implementation": eq. 2.15 is
+  "essential" (otherwise "considerably lower resolution in the jet along
+  the wall in the double Mach region"), as are careful wall conditions and
+  a multidimensional flattening (see [PPM](/methods/ppm.md)). As printed,
+  p. 192 says the §5 runs used the cell-centred (eq. 2.13-type) states;
+  the inconsistency is recorded on the Source page.
+* **3D** (§6, p. 199). The 3D analogue with all three requirements
+  "requires 12 solutions to the Riemann problem per zone per time step",
+  against 3 for splitting; dropping the maximum principle, with
+  donor-cell-type transverse derivatives in the predictor, gives 6. The
+  12- and 6-solve counts quoted for Athena and PLUTO above therefore
+  originate here. Colella states **no Courant limit** for either 3D
+  variant: the pairing of 12 solves with $\nu \le 1$ and of 6 with
+  $\nu \le 1/2$ is Stone et al.'s (2008), who cite Saltzman (1994) for the
+  full scheme; Colella cites Saltzman & Colella only for Lagrangian grid
+  motion. Which variant to use is "undoubtedly problem dependent".
+* **Cost** (§6, p. 198). Twice the Riemann solves of the split algorithm
+  and, with the Riemann solve half of the 1D cost, **50 % more time**; a
+  vectorized Cray-1 code advanced "about 24,000 zones by one time step in
+  each cpu second". Castro's about 2× in 2D (Cost, above) is a later,
+  different implementation.
+* **Split against unsplit** (§5, Figs. 9–10). On the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) at
+  $h = 1/120$ the unsplit and operator-split results with the same
+  parameters are "essentially identical". The stated aim is "the same
+  robustness and resolution as the existing operator split algorithms";
+  the motivations are settings that need unsplit updates (front tracking,
+  Lagrangian and porous-media codes, implicit–explicit hybrids), not a
+  split-scheme accuracy defect. This qualifies, and does not contradict,
+  the evidence under Against dimensional splitting, which comes from other
+  problems (Rayleigh–Taylor, Liska–Wendroff) and other codes.
+* **Method of lines against CTU.** The advection limits above (maximum
+  for CTU, sum for donor cell) are the contrast behind Quokka's statement
+  that the method of lines "formally needs a smaller step than CTU by a
+  factor $1/d$" (Method of lines, above). They are CTU results, not
+  method-of-lines ones, and neither close nor reopen the RK2 entry under
+  Contradictions.
+
+**Attributions checked.** PLUTO's CTU (corner-coupled states from
+first-order Godunov transverse fluxes between cell-centred states, $\nu \le 1$
+in 2D) is Colella's eq. 2.13 with the limit of eq. 2.17; Gardiner &
+Stone's path (normal states, Riemann solve, transverse correction) is
+Colella's eq. 2.15. GAMER's statement that CTU is "generally less
+diffusive than the VL scheme" is GAMER's own; Colella has no VL
+comparison.
+
+### A split code: FLASH's first version
+
+| Code | Integrators | Source |
+|---|---|---|
+| [FLASH](/software/flash.md) (first version) | dimensionally split PPM, Strang-type with the sweep order reversed every step; unsplit PPM not present | [Fryxell et al. (2000)](/sources/fryxell-2000.md), §3.2, Fig. 22 |
+
+[Fryxell et al. (2000)](/sources/fryxell-2000.md) give the alternation
+"second-order accuracy in time" (§3.2). Their 2D Sod tube along the
+diagonal shows "slightly larger oscillations (on the order of a few
+percent)" at the rarefaction tail and the contact than the grid-aligned
+one, attributed to the directional splitting, with the same location
+and thickness of the waves (§7.2). Fig. 22 lists unsplit PPM "for
+illustrative purposes only; they are not present in the current version".
+This adds a split-scheme data point to Split schemes still in use, above.
+
 ## Contradictions
 
 * **Is RK2 with $\nu = 1$ stable in 3D?** *Open.*
@@ -511,3 +620,5 @@ grid-aligned flow.
 16. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1, §2.2.2, §2.2.5
     (arXiv v2).
 17. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 2.1, 3.1, 3.3.1, 4.1–4.3, 5.4, 5.6, 6, eqs. 25–33, 52, 57–78 (arXiv v1).
+18. [Colella (1990)](/sources/colella-1990.md), §§1–6, eqs. 1.2–1.6, 2.5–2.17, 4.7–4.10, Figs. 9–10.
+19. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.2, 7.2, Fig. 22.

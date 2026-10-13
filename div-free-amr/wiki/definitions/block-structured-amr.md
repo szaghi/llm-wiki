@@ -71,9 +71,8 @@ concerns smoothly moving zones, not patch hierarchies.
   level-$l$ grids. The proper-nesting buffer is two level-$l$ cells for
   $r = 2$ and one for $r = 4$, because the PPM stencil needs four ghost
   cells; $r$ is always 2 or 4, and every grid has an even cell count per
-  direction. The step is the most restrictive over levels,
-  the level-0 step is the minimum over levels of each level's own stable
-  step times the ratio of level-0 to level-$l$ spacing. The paper sorts codes by these
+  direction. The level-0 step is the minimum over levels of each level's
+  stable step times $h_0/h_l$ (§6.2). The paper sorts codes by these
   choices: FLASH (equal patches, one time step), RAGE (cell by cell, one
   step), ENZO and CASTRO (arbitrary patches, subcycling), with ENZO and
   FLASH imposing strict parent–child nesting ([Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 6.1–6.2).

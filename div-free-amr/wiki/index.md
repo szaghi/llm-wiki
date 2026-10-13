@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 103 sources compiled**: 100 published works, two preprints and one code record
+**Corpus: 109 sources compiled**: 106 published works, two preprints and one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
@@ -40,9 +40,11 @@ every page — then follow the reading guide.
    [upwind CT](/methods/upwind-constrained-transport.md) design (staggered
    data in every flux, which cancels monopoles), with
    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md);
-   [projection](/methods/projection-method.md) and its
+   [projection](/methods/projection-method.md) (open `Contradictions`
+   entry: does it keep conservation at discontinuities?) and its
    [AMR form](/methods/amr-projection-method.md);
-   [eight-wave](/methods/eight-wave.md);
+   [eight-wave](/methods/eight-wave.md) (open entry: are Brio & Wu's
+   renormalized eigenvectors well defined at the triple umbilic?);
    [GLM cleaning](/methods/glm-divergence-cleaning.md);
    [vector-potential evolution](/methods/vector-potential-evolution.md);
    [mimetic spectral elements](/methods/mimetic-spectral-elements.md)
@@ -83,7 +85,8 @@ every page — then follow the reading guide.
    degenerate polyhedra), and the production evidence that the
    constraint-control choice changes physics
    ([field-loop advection](/benchmarks/field-loop-advection.md);
-   [rotated shock tube](/benchmarks/rotated-shock-tube.md)).
+   [rotated shock tube](/benchmarks/rotated-shock-tube.md);
+   [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)).
 
 ## Catalog
 

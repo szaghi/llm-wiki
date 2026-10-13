@@ -140,10 +140,11 @@ consistent with that invariant**:
     point-value recovery and flux quadrature revert to second order, and
     the reconstruction drops to WENO3 or linear.
   
-  **WENO lineage.** MP5 and WENO-Z here, and the WENO3 fallback, are
-  variants of the WENO-JS weighting, reformulated for point-value
-  interface reconstruction; their optimal weights differ from WENO-JS's
-  because the reconstruction target differs
+  **WENO lineage.** WENO-Z and WENO3 are variants of the WENO-JS
+  weighting, reformulated here for point-value interface reconstruction;
+  their optimal weights differ from WENO-JS's because the reconstruction
+  target differs. MP5 is a limiter-based alternative
+  (monotonicity-preserving bounds on a fifth-order linear interpolant)
   ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md), Table 2;
   [WENO reconstruction](/methods/weno.md)).
 

@@ -67,7 +67,7 @@ $r = 6$. The general weight uses $(\tau_{2r-1}/(\beta_k + \varepsilon))^q$.
   stated" that Henrick et al. credited WENO-M's shock results to its
   critical-point order; Henrick et al. made no such causal claim.
 
-**Later uses.** WENO-Z is the base of the
+**Later uses (batch 2).** WENO-Z is the base of the
 [central-upwind](/methods/central-upwind-weno.md) and
 [targeted ENO](/methods/teno.md) weights;
 [Fu, Hu & Adams (2016)](/sources/fu-2016.md) note it was suggested to set
@@ -81,7 +81,7 @@ higher-order critical points, and compare their $L^1$-type seventh-order
 scheme against seventh-order WENO-Z with the Don–Borges $\tau$
 ([smoothness indicator](/definitions/smoothness-indicator.md)).
 
-**Batch 3.** WENO-Z weights with $q = 2$ and $\tau_5 = \vert\beta_2 - \beta_0\vert$
+**Later uses (batch 3).** WENO-Z weights with $q = 2$ and $\tau_5 = \vert\beta_2 - \beta_0\vert$
 weight the compact candidate stencils of
 [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md),
 chosen to avoid accuracy loss at critical points
@@ -89,7 +89,7 @@ chosen to avoid accuracy loss at critical points
 baseline there, less sharp than the compact scheme on the Lax, Sod,
 Shu–Osher and blast-wave tests (§3).
 
-**Batch 4.** The energy-stable WENO of Yamaleev and Carpenter uses the
+**Later uses (batch 4).** The energy-stable WENO of Yamaleev and Carpenter uses the
 same functional form, $d_k\left(1 + \tau/(\varepsilon + \beta_k)\right)$,
 on two-point candidates of a fourth-order central scheme, with $\tau$
 the squared third undivided difference. It requires a dimensional

@@ -65,8 +65,8 @@ refined.
 
 **With shocks.** A survey figure (reproduced from Zhang, Shu and Zhou,
 2006, not ingested) shows a ninth-order WENO simulation of the flow at
-$T = 6.0$ and of a Mach 12 shock hitting the interface from above or
-below at $T = 3.0$; the shocks "speed up the transition" to full
+$t = 6.0$ and of a Mach 12 shock hitting the interface from above or
+below at $t = 3.0$; the shocks "speed up the transition" to full
 instability. The set-up is not printed
 ([Shu (2009)](/sources/shu-2009.md), §6, Fig. 6.2).
 

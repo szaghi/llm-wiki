@@ -348,6 +348,94 @@ they implement.
   instabilities; unsplit new-limiter PPM is cleanest
   ([Almgren et al. (2010)](/sources/almgren-2010.md), §8.3).
 
+## Later uses (batch 8)
+
+### FLASH's PPM in its code paper
+
+[Fryxell et al. (2000)](/sources/fryxell-2000.md), §3, describe the PPM
+of the first [FLASH](/software/flash.md) version, inherited from
+PROMETHEUS:
+
+| Code | PPM as stated | Source |
+|---|---|---|
+| [FLASH](/software/flash.md) (first version) | direct-Eulerian Colella–Woodward PPM, dimensionally split with the sweep order reversed every step; reconstructs $\rho$, velocity, $p$, the energy index and the mass fractions; steepening on density and composition; two-shock solver iterated by Newton–Raphson (secant for a general EOS); Lapidus viscosity 0.1; $n_{\mathrm g} = 4$ | [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§2, 3.1–3.2 |
+
+* **Agreements with the original.** The uniform-mesh interface value is
+  eq. 1.9 (their eq. 25); the contact-steepening constants are the
+  relative threshold 0.01, the coefficients 20 and 0.05, and 0.1 in the
+  shock test (eqs. 37, 39, 40); the flattening shock test uses a relative
+  pressure jump of 1/3 and expansion, the coefficient rises with slope 10
+  above a steepness of 0.75, and the neighbour on the lower-pressure side
+  is also taken (eqs. 45–48). Their overshoot condition,
+  $(u^-_{i+1/2} - u^+_{i-1/2})\left[u^+_{i-1/2} - (3u_i^n - 2u^-_{i+1/2})\right] < 0$
+  (eq. 53), is reset 2 above rewritten: expanding both conditions gives
+  the same inequality (checked here).
+* **Additions.** Steepening also acts on the species mass fractions,
+  where Colella & Woodward act on density only; interface mass fractions
+  are clipped to $[0, 1]$ and renormalized, without which there can be
+  "disastrous effects, especially for reactive flows" (§3.1.8).
+* **Flattening convention checked.** In FLASH a coefficient of 0 leaves
+  the edge values unchanged and 1 gives first-order Godunov (eqs. 49–50),
+  so the statement under Flattening conventions that "FLASH keeps the
+  original convention" now rests on FLASH's own paper.
+* **Riemann iterations.** FLASH iterates Newton–Raphson, and "Reasonably
+  strong shocks can now be handled adequately with two to three
+  iterations" (§3.1.6); Colella & Woodward's two fixed iterations gave
+  "very large errors" behind a nearly stationary, extremely strong shock
+  (Fig. 8). Different settings (an iteration count judged adequate in
+  general against a fixed count in one extreme test): a qualification.
+* **Order.** "PPM is formally accurate to only second order in both space
+  and time", with "the most critical steps ... performed to third- or
+  fourth-order accuracy" (§3), in line with Measured behaviour across
+  codes above.
+* **Ghost cells.** FLASH uses four guard cells because PPM "requires four
+  guard cells at each spatial boundary", counting the nine-point stencil
+  of a split sweep (§§2, 3.2); this agrees with Castro's count and not
+  with Enzo's three (Ghost cells, above).
+* **Diffusion.** The Lapidus multidimensional viscosity has "Typically a
+  coefficient of 0.1", the value of $K$ in single-step Eulerian PPM; it is
+  "not required to stabilize shocks" and reduces stair-casing of diagonal
+  shocks (§3.2).
+* **Splitting.** The diagonal Sod tube shows "slightly larger oscillations
+  (on the order of a few percent)" than the grid-aligned one, attributed
+  to the directional splitting (§7.2).
+
+### Multidimensional flattening in Colella (1990)
+
+[Colella (1990)](/sources/colella-1990.md), §4, eqs. 4.9–4.10, carries
+Colella–Woodward flattening into an unsplit scheme with "One important
+modification": one coefficient per zone multiplies the slopes in every
+direction, the minimum over directions, each directional value being the
+minimum of the zone's and its upwind-in-pressure neighbour's. The
+coefficient is 1 below a steepness of 0.75, 0 above 0.85 and linear
+between, active in compression where the relative pressure jump exceeds
+0.33; **1 means no flattening**, the convention attributed above to
+Castro, opposite to Colella & Woodward's eq. 4.1. A Lapidus viscosity of
+coefficient 0.1 is kept. It was "required to eliminate low-amplitude noise
+behind the shocks" of the unsplit scheme, where the split schemes needed
+only 1D flattening per sweep (pp. 197–198): an early statement that 1D
+flattening is not enough in multiple dimensions, the finding that Quokka
+reports (Flattening conventions, above).
+
+## Contradictions
+
+**Order of the interface interpolation on a non-uniform mesh.** *Open.*
+* [Colella & Woodward (1984)](/sources/colella-1984.md), §1, eqs. 1.6–1.8:
+  the interface value (the derivative of the quartic through the
+  cumulative integrals, with limited slopes) is "third-order accurate for
+  variable mesh spacing, even where the mesh spacing changes
+  discontinuously" (Interface value, above).
+* [Fryxell et al. (2000)](/sources/fryxell-2000.md), §3.1.1, eqs. 20–26:
+  the same interpolation, a cubic with the correct zone averages
+  (eqs. 20–24) whose average slope is limited as in MUSCL (eq. 26), has
+  "fourth-order accuracy", and "The above
+  equations retain their fourth-order accuracy even in the presence of
+  nonuniform zoning."
+* Both statements concern the same interpolant on non-uniform meshes and
+  state different orders. Neither paper measures the error. The entry
+  closes when a source derives or measures the order on a non-uniform
+  mesh.
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–5, eqs. 1.4–1.17, 2.5–2.10, 3.1–3.8, 4.1–4.5, Appendix, Figs. 2, 6, 8.
@@ -364,3 +452,5 @@ they implement.
 12. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §2.2.
 13. [Zhang et al. (2018)](/sources/zhang-2018.md), §5.2 (arXiv v4).
 14. [Porth et al. (2019)](/sources/porth-2019.md), §6, Table 1, App. A (arXiv v2).
+15. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§2, 3–3.2, 7.2, eqs. 25–26, 37–53.
+16. [Colella (1990)](/sources/colella-1990.md), §4, eqs. 4.9–4.10, pp. 197–198.

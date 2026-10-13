@@ -171,6 +171,12 @@ to another bundle.
 
 ## Status
 
+**Batch 16 staged 2026-10-13:** lax-1954, harten-1983-d, einfeldt-1991,
+shu-1988-b, cockburn-1998, roe-1996 (user downloads); 124 of 124. New page
+methods/rkdg. One Open contradiction (Brio & Wu's α_s factor, on
+characteristic-decomposition). Deep lint run with this batch
+(12 ingestions since the whole-bundle lint of batch 13).
+
 **Batch 15 staged 2026-10-13:** brackbill-1980 and berger-1989, copied
 from sibling archives (D17); 118 of 118. One Open contradiction (the
 printed sign of the parallel force, Brackbill & Barnes vs Derigs et al.).

@@ -22,8 +22,8 @@ independent one-dimensional interpolations produces "a numerical
 $\nabla\cdot\mathbf{B}$ of any size."
 
 **Requirement**: the multidimensional interpolant of the field must be
-built so that, for reconstruction accuracy of order $r$, the divergence of
-the interpolated field vanishes to order $r{+}1$, with each normal
+built so that the divergence of the interpolated field vanishes to one
+order higher than the reconstruction's order of accuracy, with each normal
 component continuous along its own longitudinal coordinate (discontinuities
 admitted only transversally, where the characteristic modes live). The
 reconstruction is therefore a *constrained, genuinely multidimensional*
@@ -74,7 +74,7 @@ divergence-free reconstruction at low order.
 
 [Balsara (2004)](/sources/balsara-2004.md) turns the reconstruction into
 the scheme-design workhorse: limiting is applied to the **face-centered
-fundamental variables** (TVD, characteristic, and WENO $r = 2, 3$
+fundamental variables** (TVD, characteristic, and WENO $k_{\mathrm s} = 2, 3$
 variants), the zone-centered field is defined as the *volume average of
 the reconstruction polynomial* rather than an ad hoc arithmetic mean, the
 normal component stays $C^0$-continuous at faces (eliminating the jump
@@ -82,10 +82,11 @@ that troubled seven-wave Riemann solvers), and the construction extends to
 cylindrical, spherical, and tetrahedral meshes — carrying divergence-free
 AMR to those geometries in the same stroke.
 
-**Which WENO.** "WENO $r = 2, 3$" follows the stencil convention of the
-WENO-JS paper, where $r$-point candidate stencils give order $2r-1$: third
-and fifth order. That $r$ is a stencil size, not the refinement ratio of
-the [registry](/notation.md). The WENO in this page's constructions
+**Which WENO.** "WENO $k_{\mathrm s} = 2, 3$" follows the stencil
+convention of the WENO-JS paper (its $r$), where $k_{\mathrm s}$-point
+candidate stencils give order $2k_{\mathrm s}-1$: third and fifth order.
+$k_{\mathrm s}$ is the stencil size of the [registry](/notation.md), not
+the refinement ratio $r$. The WENO in this page's constructions
 reconstructs from cell or face averages (finite-volume WENO). The primary
 WENO-JS paper presents only the finite-difference flux version on point
 values, and has no magnetic field
@@ -101,8 +102,8 @@ construction to third and fourth order in a Legendre-moment basis.
 * Interior components are complete expansions one order higher in their
   own direction.
 * Two structural facts:
-  1. The face moments to order $r$ fix every interior coefficient needed
-     at order $r$, so the faces carry all the information.
+  1. The face moments up to a given order fix every interior coefficient
+     needed at that order, so the faces carry all the information.
   2. The coefficients the constraint leaves free are set by **minimizing
      the integrated magnetic energy** in the zone, which the author links
      to pressure positivity.

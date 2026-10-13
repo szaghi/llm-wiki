@@ -420,6 +420,20 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   with the primary source, [Berger & Colella (1989)](/sources/berger-1989.md),
   §§1, 3; see [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 
+## Later uses (batch 8)
+
+* **Where the 12- and 6-solve counts come from.** The Integrators section
+  states that full 3D CTU needs 12 Riemann solves per cell per step "for
+  stability up to $\nu\le1$" and that the six-solve variant is stable for
+  $\nu\le1/2$. The primary source of CTU,
+  [Colella (1990)](/sources/colella-1990.md), §6, already gives both
+  counts: 12 solves per zone per step for the 3D analogue that keeps all
+  its design requirements, and 6 when the maximum principle is dropped by
+  using donor-cell-type transverse derivatives. It states no Courant limit
+  for either variant, so the pairing with $\nu\le1$ and $\nu\le1/2$ is
+  Stone et al.'s (2008), not Colella's. See
+  [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §§1–9, App. C (journal version).
@@ -435,3 +449,4 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 11. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 (arXiv v2).
 12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 3.1, 3.2.2, 4, 4.3, 5.6, 6, eqs. 31–33, 42–52, 61–73 (arXiv v1).
 13. [Berger & Colella (1989)](/sources/berger-1989.md), §§1, 3.
+14. [Colella (1990)](/sources/colella-1990.md), §6.

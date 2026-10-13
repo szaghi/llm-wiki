@@ -8,7 +8,7 @@ authors: [Friedrich L., Winters A.R., Del Rey Fernández D.C., Gassner G.J., Par
 year: 2018
 venue: "J. Sci. Comput. 77:689-725 (arXiv:1712.10234)"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2018-JSC-Friedrich-101007s10915-018-0733-7.pdf"
-tags: [discontinuous-galerkin, sbp, entropy, nonconforming, coarse-fine-interface, stability]
+tags: [dg, sbp, entropy, nonconforming, coarse-fine-interface, stability]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

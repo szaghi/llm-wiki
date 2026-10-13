@@ -92,6 +92,38 @@ question.
   stationary slow intermediate shock forms, on which Lax–Wendroff could
   not be stabilized "with any value of artificial viscosity" (§V).
 
+**Later uses (batch 16).** *Closed forms and the triple umbilic*
+([Roe & Balsara (1996)](/sources/roe-1996.md), §§3–5, eqs. 19–24).
+* *Structure coefficients.* With the orthonormal eigenvectors of
+  [local characteristic decomposition](/methods/characteristic-decomposition.md)
+  (batch 16), $\nabla\lambda^{(p)}\cdot r^{(p)}$ taken in primitive
+  variables is, for an ideal gas,
+  $$\alpha_f c_f\left[\tfrac{\gamma+1}{2}\alpha_f^2 + \tfrac32\alpha_s^2\right]\ \text{(fast fields)},\qquad \alpha_s c_s\left[\tfrac{\gamma+1}{2}\alpha_s^2 + \tfrac32\alpha_f^2\right]\ \text{(slow fields)}$$
+  (eqs. 23–24; for a general equation of
+  state $\tfrac{\gamma+1}{2}$ becomes one plus the logarithmic density
+  derivative of $c$ at constant entropy). With $\alpha_f = 1$, $\alpha_s = 0$
+  (fast) or $\alpha_s = 1$, $\alpha_f = 0$ (slow), the wave in the guise of
+  an acoustic wave, they reduce to the acoustic result. Near $B_\perp = 0$ the vanishing factor is
+  $\alpha_f$ when $c^2 < c_A^2$ and $\alpha_s$ when $c^2 > c_A^2$, and
+  $\alpha_f\alpha_s$ is proportional to $B_\perp$: the same fields and
+  conditions as the Brio–Wu statement above, which Roe and Balsara call
+  "the 'loss of convexity' first observed in" Brio and Wu. There the wave
+  is "neither expansive nor compressive".
+* *Wave paths near the triple umbilic* (§3, Fig. 3). Fast and slow
+  integral curves near the point where $c_A = c$ and $B_\perp = 0$ have a
+  topology of Schaeffer–Shearer type IV, of a shape independent of
+  $\gamma$ (integrated for $\gamma = 5/3$). The dissipationless Riemann
+  problem is then well posed "if compressive shocks are the only ones
+  admitted" (citing Isaacson et al.). Whether a scheme without modelled
+  dissipation captures the dissipative internal structure of waves near
+  the point is "an open question" (§4). Both statements fit **What is not
+  settled** above without closing it.
+* *Entropy fixes* (§5). Zachary and Colella add dissipation from the
+  structure coefficients, after Bell, Colella and Trangenstein. That extra
+  dissipation is needed only at stationary sonic points, as Roe found for
+  Euler, "appears to be confirmed" for MHD by Aslan's thesis, "but only
+  extensive testing will decide the issue".
+
 # Citations
 
 1. [Brio & Wu (1988)](/sources/brio-1988.md), §§IV.3, V–VII, eqs. 53–55, Figs. 8–9.
@@ -99,3 +131,4 @@ question.
 3. [Ryu & Jones (1995)](/sources/ryu-1995.md), §5.
 4. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 4.
 5. [Balsara (2017)](/sources/balsara-2017-d.md), §II.1.
+6. [Roe & Balsara (1996)](/sources/roe-1996.md), §§3–5, eqs. 19–24.

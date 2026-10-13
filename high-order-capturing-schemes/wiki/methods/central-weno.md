@@ -72,13 +72,13 @@ of central weights inside a finite-difference scheme.
 reconstructions that blend a single high-degree "optimal" polynomial
 with lower-degree ones; this page records the 1999 staggered scheme only.
 
-**Batch 3.** The $r = 3$ CWENO, being robust and able to capture
+**Later uses (batch 3).** The $r = 3$ CWENO, being robust and able to capture
 extrema, is also the low-order level of pointwise WENO-AO
 *interpolation* in [AFD-WENO](/methods/alternative-finite-difference-weno.md).
 Its centred stencil gets weight $\gamma_{\mathrm{Lo}}$ and each biased one
 $(1 - \gamma_{\mathrm{Lo}})/2$ ([Balsara et al. (2025)](/sources/balsara-2025.md), §III.a).
 
-**Later (batch 6).** Shu credits central WENO with the first use of
+**Later uses (batch 6).** Shu credits central WENO with the first use of
 unequal-size candidate stencils with free positive weights, later taken
 up by WENO-ZQ and multi-resolution WENO ([Shu (2020)](/sources/shu-2020.md), §3.2.3;
 [WENO-AO / WENO-ZQ](/methods/weno-ao.md)). For central WENO,

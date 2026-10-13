@@ -74,10 +74,11 @@ fields. The underlying two-wave solver is on the [HLL Riemann solver](/methods/h
   glitch in Toro's modified Sod problem. It "naturally inherits the
   positivity properties and the entropy enforcement" of HLL, but this is
   asserted, not proved, and asserted for general conservative and
-  non-conservative systems (abstract, §§1, 3.6.1). The proved result is
-  narrower: Einfeldt et al. showed positivity for the HLL/HLLEM class
+  non-conservative systems (abstract, §§1, 3.6.1). Balsara & Kim state
+  that Einfeldt et al. proved positivity for the HLL/HLLEM class
   applied to one-dimensional first-order schemes for Euler flow
-  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1). It costs one
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1) (HLLE only,
+  per the batch-16 block below). It costs one
   eigen-decomposition per face. The authors say it outperforms the
   Dumbser–Osher–Toro solver "by a wide margin" at similar quality, but
   report no timings (§4).
@@ -182,6 +183,49 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
   against HLL"). The book has no HLLEM: HLLC restores the contact with a
   second star state, HLLEM with the linear sub-structure above.
 
+**Later uses (batch 16).** *Einfeldt's HLLEM as printed in 1991*
+([Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §5, eqs. 5.1–5.10).
+* *Origin.* The paper credits HLLEM, and its equivalence with Roe's
+  scheme, to Einfeldt (1988), which is not ingested; the 1991 paper
+  restates it. Inside the fan the state varies linearly along the contact
+  and shear eigenvectors at the Roe state, centred on the mean speed
+  $\tfrac12(S_L + S_R)$; the flux is the HLLE flux minus
+  $\frac{S_R^+S_L^-}{S_R^+ - S_L^-}\sum_{p\in\mathcal I}\delta_p\,\ell^{(p)}(u^+ - u^-)\,r^{(p)}$
+  (5.5b), the form at the top of this page.
+* *The weight, a precision of "Einfeldt's Euler form" above.* Eq. 5.6
+  prints $\delta_p = c_{\mathrm{Roe}}/\left(c_{\mathrm{Roe}} + \tfrac12\vert S_L + S_R\vert\right)$
+  for both families: the sound speed is the Roe one, but the velocity is
+  the mean of the two signal speeds, not the Roe velocity. The two
+  readings coincide when the speeds are the Roe eigenvalues; with the
+  bounding speeds of eq. 4.5 they differ in general. Read with
+  $c_{\mathrm{Roe}} = \tfrac12(S_R - S_L)$ and $v_n = \tfrac12(S_L + S_R)$,
+  eq. 5.6 is the $(S_R - S_L)/(S_R - S_L + 2\vert v_n\vert)$ quoted above
+  (reader's algebra). The 1991 paper does not print the eigenvalue-bound stability
+  condition; it says only that $\delta_p$ removes "excess dissipation in
+  the linear degenerate fields, subject to the restriction that the
+  stability of the HLLE-schemes is to be preserved".
+* *Viscosity form* (5.9–5.10). The eigenvalues of $\Theta_{i+1/2}$ are
+  $\frac{S_R^+ + S_L^-}{S_R^+ - S_L^-}\lambda^{(p)} - 2\frac{S_R^+S_L^-}{S_R^+ - S_L^-}$
+  on the acoustic families and the same with the second term multiplied
+  by $1 - \delta_p$ on the contact and shear families ($\lambda^{(p)}$ at
+  the Roe state).
+* *Roe speeds fail, bounding speeds are claimed to work* (§5, eqs. 5.7–5.8).
+  With $S_{L,R}$ the Roe eigenvalues HLLEM is Roe's scheme, and on
+  symmetric double-rarefaction data its star density can be negative
+  because those speeds "underestimate the physical signal velocities".
+  With the speeds of eq. 4.5 the authors state that the scheme "does not
+  require an artificial entropy fix and does not suffer under the
+  instabilities described in Section 3".
+* *Positivity: asserted, also at the source.* No proof is given for
+  HLLEM with $\delta_p \ne 0$. On data without shear the intermediate
+  wave strengths vanish and HLLEM reduces to HLLE, which is proved
+  positive; on the sheared problem the paper runs HLLEM only with the
+  shear weight set to zero (§6, Fig. 6.6). The 1991 paper therefore
+  supports Balsara & Kim's "HLL/HLLEM class" attribution under
+  "Claimed properties" for HLLE only; the HLLEM part may rest on Einfeldt
+  (1988) ([HLL](/methods/hll-riemann-solver.md);
+  [positivity preservation](/properties/positivity-preserving.md)).
+
 # Citations
 
 1. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §§2–4, App. B.
@@ -193,3 +237,4 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 7. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2–3.
 8. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C.
 9. [Toro (1997)](/sources/toro-1997.md), §10.7.
+10. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§5–6, eqs. 5.1–5.10.

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Notation registry
@@ -96,7 +96,7 @@ provisional field before a correction/projection step.
 
 ## Reconstruction (WENO, PPM)
 
-(Added 2026-10-13, batch 6, with the WENO and PPM pages.) $w$ is a generic
+(Added 2026-10-13, frontier batch 3a, with the WENO and PPM pages.) $w$ is a generic
 scalar being reconstructed: one conserved or characteristic component.
 
 | Symbol | Meaning |
@@ -187,6 +187,20 @@ construction, not a different field.
 |---|---|
 | $\mathcal{G}$ | admissible state set: conserved states with positive density and positive internal energy (hence pressure) |
 | $\alpha^{\mathrm{LF}}$ | Lax–Friedrichs numerical-viscosity parameter of a flux, per direction |
+
+## MHD state and wave quantities
+
+(Added 2026-10-13, deep lint #10. These symbols were already in use on
+concept pages without being registered.)
+
+| Symbol | Meaning |
+|---|---|
+| $B_n$ | normal magnetic-field component at a face, or the (constant) normal component in a 1D problem |
+| $\beta$ | plasma beta, ratio of thermal to magnetic pressure (never an angle) |
+| $\gamma$ | adiabatic index (ratio of specific heats; never an angle) |
+| $\lambda_k$ | characteristic speed (eigenvalue of the flux Jacobian) of the $k$-th wave |
+| $\bar B_h$ | cell averages of the magnetic field held as cell-centred DOFs, the field the conservative finite-volume update evolves (bar = cell average, as $\bar w_j$ above) |
+| $S(U)$ | eight-wave (Powell) source vector, multiplied by $-\nabla\cdot B$ in the symmetrizable form; $U$ is the conserved state vector |
 
 ## Writing rules
 

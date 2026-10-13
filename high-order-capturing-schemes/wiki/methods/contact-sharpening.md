@@ -81,6 +81,20 @@ contact; the truncation error does. Shocks are smeared by both.
   better" than Boris–Book antidiffusion, while noting that all such
   corrective procedures carry problem-dependent parameters (§4).
 
+**Later uses (batch 14).** *Artificial compression in a second-order TVD
+scheme* ([Harten (1983)](/sources/harten-1983.md), §5, eqs. 5.7–5.8;
+§7, Figs. 2–3). Harten adds an extra limited compressive term in the
+linearly degenerate (contact) field only, switched by a sensor: the
+absolute difference of the two adjacent wave strengths over the sum of
+their absolute values (5.8a). "It is easy to verify" that second order
+and the TVD property are kept; no proof is printed. Remark 2 records an
+abandoned entropy-viscosity alternative, "elegant and amenable to
+rigorous analysis" but slower and worse. On the
+[Lax shock tube](/benchmarks/lax-shock-tube.md) the compressed scheme
+(ULT1C) sharpens the contact without changing the other waves; it is also
+the scheme of his [Sod](/benchmarks/sod-shock-tube.md) run
+([TVD](/properties/total-variation-diminishing.md)).
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §III.
@@ -90,3 +104,4 @@ contact; the truncation error does. Shocks are smeared by both.
 5. [Colella & Woodward (1984)](/sources/colella-1984.md), §1.
 6. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §4.
 7. [Sod (1978)](/sources/sod-1978.md), §§1–4, Table IV.
+8. [Harten (1983)](/sources/harten-1983.md), §§5, 7, eqs. 5.7–5.8, Figs. 2–3.

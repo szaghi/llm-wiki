@@ -144,6 +144,35 @@ EMF from base-scheme data — the field-CT / flux-CT / transport-flux-CT family
 ([Flux-CT and the Godunov CT variants](/methods/flux-ct.md);
 [Tóth (2000)](/sources/toth-2000.md) §4).
 
+**The field-CT primary sources.**
+[Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) and
+[Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) derive the
+Godunov combination from the integral form. The face average of each
+field component changes by the space–time averages of $E_h$ along the
+edges of its face, an exact statement on averages, so the net face flux
+of every cell is unchanged (JCP eqs. 18–24; ApJ eqs. 17–23). Their stated
+reason that conservation and the constraint can hold together is
+structural: the conservation law of each field component has no
+derivative along that component, so eight conservation laws and the
+constraint fit one set of eight difference equations (JCP §2, ApJ §2).
+* They do not call the scheme CT. In their account Evans–Hawley CT, as
+  used by Stone & Norman, satisfies the constraint exactly "although the
+  conservation laws are satisfied to the accuracy of the algorithms" (JCP
+  §1); theirs is claimed to conserve all eight quantities exactly as well.
+* The fluid may be split, the field may not: it "should be updated in an
+  unsplit manner in order to exactly maintain the divergence-free
+  constraint" (ApJ p. 320).
+* No divergence value is printed; exactness of the face invariant is
+  stated for all runs. The EMF construction is on
+  [flux-CT](/methods/flux-ct.md).
+* **Does exactness matter if conservation holds?** On a Mach-15
+  shock–cloud problem the same conservative scheme with and without the
+  field update gives solutions "not significantly different", differing in
+  small scales where the uncontrolled run has its largest net cell flux
+  (ApJ §3, Figs. 12–18). The authors leave the question open ("unable to
+  and do not intend to fully answer" it, JCP §5). One problem, visual
+  comparison only.
+
 **The flux-CT primary source.**
 [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) motivate the
 combination by a duality: the magnetic components of a Godunov scheme's
@@ -237,3 +266,5 @@ cell-integrated monopole density, of every cell.
 13. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1–2, eqs. 3–18.
 14. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §1.
 15. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§2, 4.
+16. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§1–3.2, 5, eqs. 18–28, 52.
+17. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§1–3, eqs. 15–27, Figs. 12–18.

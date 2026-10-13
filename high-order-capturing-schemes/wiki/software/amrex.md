@@ -149,8 +149,8 @@ AMReX ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4;
   one AMR level, run to 0.9 ms on 4 nodes of 36 Skylake cores (NREL
   Eagle). Adaptive refinement at the wall, made possible by
   re-redistribution, gives the flow of full wall refinement at 10.1 s
-  per step against 44.0 at 0.45 ms, and 14.4 against 45.3 at 0.9 ms (3.2
-  times faster). Keeping the wall one level coarser costs 10.4 and 10.0 s
+  per step against 44.0 at 0.45 ms, and 14.4 against 45.3 at 0.9 ms
+  (printed "3.2 times faster"; $45.3/14.4 \approx 3.15$). Keeping the wall one level coarser costs 10.4 and 10.0 s
   per step but diffuses the jets after they reach the wall.
   The production practice before this work was that coarser option;
   refining the whole wall to the finest of six levels is called
@@ -160,9 +160,11 @@ AMReX ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4;
 ([Berger & Colella (1989)](/sources/berger-1989.md), §§2–4). The
 sequence above (coarse first, subcycled finer levels, average-down and
 the flux correction at synchronization) is the paper's. Two precisions:
-fine ghost cells are first copied from adjacent same-level grids, and
-only the remainder is interpolated from coarser data, bilinearly in space
-and linearly in time (§4); and the 1989 paper allows only even refinement
+fine ghost values come from adjacent same-level grids where available,
+else from interpolation of coarser data, bilinearly in space and linearly
+in time (Berger & Colella implement it as interpolate-then-overwrite:
+the whole border is interpolated, then same-level values replace the
+interpolated ones where they exist) (§4); and the 1989 paper allows only even refinement
 ratios, equal in space and time (§2). How AMReX itself fills ghost cells
 is not stated by the sources of this page
 ([high-order AMR](/methods/high-order-amr.md)).

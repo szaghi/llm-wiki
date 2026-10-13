@@ -197,7 +197,7 @@ order: the paper bears on this bundle as the baseline that
 | $u$, $v$ (velocity) | $\mathbf v$ | **collision** with the state $u$ |
 | $\rho E$ | $E$ | paper $E$ is specific total energy; registry $E$ is the energy density |
 | $u_{i,j}$ | $\bar u_{i,j}$ | cell average |
-| $F_{i+1/2,j}$, $G_{i,j+1/2}$ | $(\hat f_x)_{i+1/2,j}$, $(\hat f_y)_{i,j+1/2}$ | numerical fluxes |
+| $F_{i+1/2,j}$, $G_{i,j+1/2}$ | $\hat f_{x;i+1/2,j}$, $\hat f_{y;i,j+1/2}$ | numerical fluxes (direction before the semicolon; $(\hat f_x)_k$ is the registry's component form) |
 | $\Delta x$, $\Delta y$; $h$, $k$ (§6) | $h_x$, $h_y$; $h$, $\Delta t$ | |
 | $r$ | $r_{\mathrm{AMR}}$ | **collision**: registry $r$ is the number of WENO candidate stencils |
 | $l$, $l_{\max}$ | level index; $N_{\mathrm{lev}} = l_{\max} - 1$ | registry counts levels above the base |

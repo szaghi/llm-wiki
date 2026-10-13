@@ -150,7 +150,7 @@ Accuracy claims at critical points are collected on
 A centred, staggered variant is [central WENO](/methods/central-weno.md).
 Nested central stencils down to one cell give [multi-resolution WENO](/methods/multi-resolution-weno.md), and two data per cell give [Hermite WENO](/methods/hermite-weno.md).
 
-**Batch 3 additions.** WENO weights on other approximations:
+**Later uses (batch 3).** WENO weights on other approximations:
 [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md)
 (weights on implicit compact stencils;
 [Guo, Xiong & Shi (2014)](/sources/guo-2014.md)) and
@@ -170,7 +170,7 @@ positivity-preserving for Euler; see the
 [flux](/methods/positivity-preserving-flux-limiter.md) limiters
 ([Zhang & Shu (2010)](/sources/zhang-2010.md), §1).
 
-**Batch 4 additions.**
+**Later uses (batch 4).**
 * *As a DG limiter.* Finite-volume WENO rebuilds the polynomial of
   troubled DG cells from neighbouring averages
   ([WENO limiters for DG](/methods/weno-limited-dg.md); [Qiu & Shu (2005)](/sources/qiu-2005.md)).
@@ -192,7 +192,7 @@ positivity-preserving for Euler; see the
   WENO-type [weighted extrapolation](/methods/weighted-extrapolation.md)
   fills ghost cells on complex domains ([Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md)).
 
-**Batch 5 additions.**
+**Later uses (batch 5).**
 * *Ideal MHD.* Fifth-order FD-WENO, written as the fourth-order central
   flux minus a nonlinear correction, with characteristic decomposition on
   Brio–Wu normalized eigenvectors, reaches $L^1$ order 4.5–4.8 on smooth
@@ -209,7 +209,7 @@ positivity-preserving for Euler; see the
   ([inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md);
   [Ding, Shu & Zhang (2020)](/sources/ding-2020.md)).
 
-**Batch 6 additions: the reviews.**
+**Later uses (batch 6).** *The reviews.*
 * *An approximation procedure.* Shu presents WENO as independent of any
   PDE, in three forms: interpolation of point values, reconstruction from
   cell averages, and approximation of derivatives and integrals

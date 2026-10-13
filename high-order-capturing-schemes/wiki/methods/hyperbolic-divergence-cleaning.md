@@ -106,7 +106,7 @@ has a component along $\mathbf B$ of size $-(\nabla\cdot\mathbf B)|\mathbf B|$
 (eqs. 2.16, 2.21). The cleaning field enters through a convective
 (Lagrangian) ansatz. In field units,
 $\partial_t\hat\psi_{\mathrm{GLM}} + c_h\nabla\cdot\mathbf B + \mathbf v\cdot\nabla\hat\psi_{\mathrm{GLM}} = 0$,
-the induction flux gains $c_h\hat\psi_{\mathrm{GLM}}\mathbf I$, and the total
+the induction flux gains $c_h\hat\psi_{\mathrm{GLM}}\mathsf I$, and the total
 energy contains $\tfrac12\hat\psi_{\mathrm{GLM}}^2$ (eqs. 3.16–3.18).
 * The system is Galilean invariant: its cleaning waves move at
   $v_x \pm c_h$ instead of $\pm c_h$ (eq. 3.28). The cleaning speed is
@@ -226,7 +226,7 @@ details on [constrained transport](/methods/constrained-transport.md)).
   nonconservative momentum equation differs from the conservative one by
   exactly the momentum source $-(\nabla\cdot\mathbf B)\mathbf B$ that EGLM
   and the Godunov–Powell terms add, since
-  $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathbf I\right) - \mathbf B(\nabla\cdot\mathbf B)$
+  $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right) - \mathbf B(\nabla\cdot\mathbf B)$
   (compiler's identity). The choices differ elsewhere: the note's flux
   statement carries the induction term $\mathbf v(\nabla\cdot\mathbf B)$
   (eq. 3), but its scheme drops it and keeps induction and energy
@@ -298,10 +298,10 @@ at the batch-8 deep lint; both sides were already in the text).
 (recorded at batch 15).
 * [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), eqs. 7–8 (p. 427):
   for the conservative force
-  $\nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathbf I\right)$,
+  $\nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right)$,
   its dot product with $\mathbf B$ is $+\vert\mathbf B\vert^2\,\nabla\cdot\mathbf B$.
 * [Derigs et al. (2018)](/sources/derigs-2018.md), eqs. 2.20–2.21: for the same
-  force, written $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathbf I - \mathbf B\otimes\mathbf B\right)$,
+  force, written $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathsf I - \mathbf B\otimes\mathbf B\right)$,
   its projection on $\mathbf B/\vert\mathbf B\vert$ is $-(\nabla\cdot\mathbf B)\vert\mathbf B\vert$.
 * *Compiler's note, not a resolution:* expanding the divergence gives
   $(\nabla\cdot\mathbf B)\mathbf B + (\mathbf B\cdot\nabla)\mathbf B - \tfrac12\nabla\vert\mathbf B\vert^2$,
@@ -311,6 +311,16 @@ at the batch-8 deep lint; both sides were already in the text).
   proportional to the divergence, and unphysical; only the printed sign
   differs. A derivation is not a source: the entry stays open until a
   source settles it or the human closes it.
+* *Derigs et al.'s own equations entail the plus sign.* Their eq. 2.18
+  writes the Lorentz force with the non-conservative term as
+  $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathsf I - \mathbf B\otimes\mathbf B\right) - (\nabla\cdot\mathbf B)\mathbf B$,
+  and eq. 2.19 states that its projection on $\mathbf B/\vert\mathbf B\vert$
+  is zero; the force of eq. 2.20 is that force plus
+  $(\nabla\cdot\mathbf B)\mathbf B$, so its projection is
+  $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$, against their eq. 2.21
+  (compiler's reading of eqs. 2.18–2.21, arXiv v3, p. 5). A printed-sign
+  erratum in Derigs et al. is the likely reading; closing needs the
+  human's fiat.
 
 # Citations
 

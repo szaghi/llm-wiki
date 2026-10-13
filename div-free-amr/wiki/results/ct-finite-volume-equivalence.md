@@ -14,9 +14,9 @@ field-, flux-, and transport-flux-interpolated
 [CT variants](/methods/flux-ct.md) can be rewritten, by composing the
 staggered update with the face-to-center interpolation, as a *pure finite
 volume scheme* for the cell-centered field $B_h$: a conservative flux-form
-update whose fluxes $\bar f$ are symmetric averages of base-scheme data over
+update whose symmetrized fluxes are symmetric averages of base-scheme data over
 a wider stencil (6 cells × 2 time levels for field-CT). In terms of the cell
-centered variables $\rho, \rho v, e, B_h$ the recast scheme is **identical**
+centered variables (density, momentum, energy and $B_h$) the recast scheme is **identical**
 to the original staggered one — "the staggered representation of the magnetic
 field is unnecessary."
 
@@ -24,9 +24,9 @@ field is unnecessary."
 the cell-centered divergence $D_h^{\mathrm{c}} B_h$; it conserves the
 corner-centered $D_h^{\mathrm{k}} B_h$ ([notation](/notation.md)) — a contour
 integral over a diagonally rotated volume — exactly, to roundoff: if the
-staggered field satisfies $D_h^{\mathrm{f}} b = 0$ in the four cells meeting
+staggered field satisfies $D_h^{\mathrm{f}} B_h = 0$ in the four cells meeting
 a corner, the interpolated cell-centered field satisfies
-$D_h^{\mathrm{k}} B_h = 0$ there, and the $\bar f$-updates maintain it.
+$D_h^{\mathrm{k}} B_h = 0$ there, and the updates with the symmetrized fluxes maintain it.
 
 ## Consequences
 
@@ -49,6 +49,24 @@ authors state that the two differ by "the order of magnitude of the
 discretization error", and reconcile them only in the total energy, by an
 optional correction (eq. 16). Each step restarts from the interpolated
 face field. The paper does not discuss the equivalence.
+
+**The field-CT primary sources.**
+[Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) and
+[Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) have the same
+structure as Balsara & Spicer: the split Godunov sweeps advance a
+cell-averaged field $B_h^{*}$, set initially to the two-face average, that
+"does not exactly satisfy the divergence-free condition" (JCP §3.2). Its
+divergence is "interpolation-dependent" and "O(1) if strong shocks are
+involved, no matter what kind of interpolation is used" (JCP §5), with no
+stencil named; the net cell flux computed from it is one order lower than
+in the same scheme without the field update (ApJ §4, Figs. 18–19). The
+papers do not say whether $B_h^{*}$ is reset to the face average each step.
+*Compiler reading:* the equivalence holds the corner divergence of the
+face-average field, not of $B_h^{*}$, so the O(1) values do not bear on it.
+The stencil count above agrees with the printed construction: a face
+update differences two corner values, each a four-cell average at two
+time levels, and the two corners together span six cells (JCP eqs. 25–26,
+50–51; the four-cell average is printed for the new level).
 
 **Scope.** Proved for the Godunov CT variants in 2D with the standard
 face-to-center averaging (generalization to nonuniform grids and 3D stated);
@@ -88,3 +106,5 @@ parties; no formal supersession.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
 3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §7.
 4. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §2.1, eqs. 10–12, 16.
+5. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§3.2, 3.6, 5, eqs. 25–28, 50–51.
+6. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §4, p. 323, Figs. 18–19.

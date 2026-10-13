@@ -2,6 +2,72 @@
 
 ## 2026-10-13
 
+* **Deep lint #10** (13 ingestions since #9: the three frontier batches).
+  Two read-only audits (concept pages; Source pages and every
+  `Contradictions` entry), fixes applied with checks against the PDFs:
+  * **Contradictions.** The eight-wave entry "Are Brio & Wu's renormalized
+    eigenvectors well defined everywhere?", opened in this batch, was
+    re-classified before commit as a qualification: Brio & Wu fix the
+    factors at the triple umbilic by assignment (eq. 46) and concede the
+    discontinuity (p. 410); Roe & Balsara call the indeterminacy unavoidable
+    and credit Brio & Wu with diagonalisability (p. 57); Ryu & Jones assign
+    the same values (eq. 2.38). Now the paragraph "Regularity at the triple
+    umbilic: defined by convention" on [eight-wave](/methods/eight-wave.md).
+    The projection entry was retitled to its real question (does the loss of
+    local conservation corrupt jump conditions?), Tóth's concession and the
+    "numerical experience" basis quoted, the energy half moved to a scoped
+    note, and 45°-only visual evidence (Ryu, Jones & Frank; Jiang & Wu)
+    added; still Open.
+  * **Claims.** The 45° caveat on the [rotated shock tube](/benchmarks/rotated-shock-tube.md)
+    qualified (every divergence stencil reduces to a difference of $B_n$;
+    exact only for schemes that hold it), with the Powell and Jiang & Wu
+    45° runs added; the Dai & Woodward compiler reading replaced; MP5 no
+    longer called a WENO variant; flux-CT "opposite directions" corrected;
+    "the primary source" on eight-wave now names Powell et al. (1999);
+    Brackbill & Barnes' projection now "attributed", not "ingested as";
+    the block-structured-AMR step rule rewritten (Almgren §6.2).
+  * **Notation.** Registered $B_n$, $\beta$ (plasma beta), $\gamma$
+    (adiabatic index), $\lambda_k$, $\bar B_h$ and $S(U)$; stale maps on
+    the Jiang & Shu, Colella & Woodward, Powell, Brio & Wu, Roe & Balsara
+    and Zachary et al. pages remapped; bare $r$, $\alpha$, $\epsilon$,
+    angles, $\bar f$, $P^2 = P$ replaced; tag merges (collocated,
+    discontinuous-galerkin, eigensystem, ghost-points, polygonal,
+    divergence-free-projection → trace-projection).
+  * **Deferred to deep lint #11:** a bundle-wide velocity symbol
+    ($\mathbf u$, $\mathbf v$, $\mathbf V$ in use), one `**Status:**` label
+    per Contradictions entry, section locators on older entries.
+
+* **Frontier batch 3b: ingested [Ryu & Jones (1995)](/sources/ryu-jones-1995.md),
+  [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md),
+  [Zachary, Malagoli & Colella (1994)](/sources/zachary-malagoli-colella-1994.md),
+  [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md),
+  [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) and
+  [Roe & Balsara (1996)](/sources/roe-balsara-1996.md)**, the user's
+  downloads (109 sources; the two Ryu papers read as arXiv preprints).
+  * **New page:** [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+    (the set-ups as printed and what 16+ sources report on it).
+  * **Updated:** [projection](/methods/projection-method.md) (Ryu, Jones &
+    Frank's FFT projection; a direct solve is exact to round-off for the
+    matching stencil, a qualification of "solver tolerance"; Zachary et
+    al.'s optional projection, whose eq. 34 as printed doubles the
+    divergence, checked on the page images; a new Open entry, see deep
+    lint #10), [eight-wave](/methods/eight-wave.md),
+    [rotated shock tube](/benchmarks/rotated-shock-tube.md),
+    [flux-CT](/methods/flux-ct.md) (field-CT from its primary sources),
+    [constrained transport](/methods/constrained-transport.md),
+    [CT–FV equivalence](/results/ct-finite-volume-equivalence.md),
+    [exact discrete divergence](/properties/exact-discrete-divergence.md)
+    and [staggered grid](/definitions/staggered-grid.md).
+  * **Compiler corrections:** the "field-CT not yet ingested" remark on
+    flux-CT and "DW not yet ingested" on [Tóth (2000)](/sources/toth-2000.md)
+    now point to the ingested papers.
+  * **Bibliography** (3711 entries): 172 references merged; keys renamed to
+    the slugs (dai-1998, zachary-1994, ryu-1995, roe-1996); "Blandford &
+    Payne 1982" with Blandford's 1976 title and venue filed as
+    blandford-1976 (Crossref); Strang printed 5:505 (Crossref 5:506); Dai &
+    Woodward's "ApJ, 776, 436" is 436:776 (Crossref); two Dai & Woodward
+    preprint/in-press citations identified by context, marked unverified.
+
 * **Frontier batch 3a: ingested [Jiang & Shu (1996)](/sources/jiang-shu-1996.md)
   and [Colella & Woodward (1984)](/sources/colella-woodward-1984.md)**, the
   bundle's most-cited works not yet ingested (cited by 18 and 15 of its

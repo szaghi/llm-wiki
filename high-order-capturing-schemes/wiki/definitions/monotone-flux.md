@@ -105,6 +105,54 @@ linearly degenerate ones). He also remarks that Godunov's scheme
 This is a different device from the "Roe with entropy fix" flux above,
 which switches to local Lax–Friedrichs.
 
+**Later uses (batch 16).**
+
+**The Lax–Friedrichs scheme as printed** ([Lax (1954)](/sources/lax-1954.md),
+§1, p. 163). Lax replaces the flux derivative by a centred difference
+and the time derivative by the new value minus the **average of the two
+neighbours**, on a staggered lattice where each time level uses every
+other point:
+$$u^{n+1}_i = \tfrac12\left(u^n_{i+1} + u^n_{i-1}\right) - \frac{\Delta t}{2h}\left(f(u^n_{i+1}) - f(u^n_{i-1})\right).$$
+In conservative form this is the global Lax–Friedrichs flux of the
+examples above with $\alpha = h/\Delta t$ (reader's algebra; Lax does not
+write a numerical flux), so the condition $\alpha \ge \max\vert f'\vert$
+is the CFL condition $\max\vert f'\vert\,\Delta t/h \le 1$. Without the
+average (forward time, centred space) the scheme is "unconditionally
+unstable" (footnote 5). The scheme is the forward-time, centred-space
+discretization of $\partial_t u + \partial_x f(u) = \mu\,\partial_{xx}u$
+with $\mu = h^2/(2\Delta t)$ (p. 165). Lax names as the novelty "the use
+of the conservation form … and, to a lesser extent, the particular way
+of differencing" (p. 159).
+
+**A positive-coefficient argument before Godunov** (Lax (1954), §5,
+eqs. 11–13). For a scalar law, the difference of two solutions' discrete
+primitives (partial sums) obeys a recursion with positive coefficients
+summing to one when $\vert f'\vert\,\Delta t/h$ "should not exceed one",
+hence a maximum principle in a weak (integrated) norm; with genuine
+nonlinearity Lax proves $L^1$ compactness of the solution set. This
+predates Godunov's (1959) monotonicity argument quoted above, but it is
+stated for the primitive and the weak norm, not as monotonicity of the
+scheme in $u$.
+
+**Why the conservation form** (Lax (1954), §3, pp. 186–187). For
+$\partial_t u + u^2\partial_x u = 0$ a non-conservative one-sided scheme with
+step data converges to a discontinuity moving at about 0.388, against the
+weak-solution speed 0.333. If a conservative scheme converges boundedly
+a.e., its limit is a weak solution (pp. 163–164; a strong limit is
+required). Lax conjectures, without proof, that his scheme forms
+compression shocks but no rarefaction shocks (pp. 183–185).
+
+**Upwinding and stationary shocks** ([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md),
+§2, eqs. 2.2–2.3, 2.12). Courant–Isaacson–Rees upwinding is monotone
+under $\vert f'\vert\,\Delta t/h \le 1$; its modified-equation viscosity
+$\tfrac12 h\vert f'\vert\left(1 - \vert f'\vert\,\Delta t/h\right)$
+vanishes at zero speed, which "will allow perfectly resolved stationary
+shocks but may also result in admitting entropy violating
+discontinuities", the same mechanism as Harten's §5 above. In general, a
+three-point conservative scheme resolves an admissible stationary shock
+exactly iff its dissipation vanishes for equal-flux states joined by an
+admissible jump, and it must not vanish for an inadmissible one (2.12).
+
 # Citations
 
 1. [Shu (1998)](/sources/shu-1998.md), §§2.3.1–2.3.2.
@@ -115,3 +163,5 @@ which switches to local Lax–Friedrichs.
 6. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
 7. [Godunov (1959)](/sources/godunov-1959.md), Ch. I §§1–2 (reader's translation of the Russian original).
 8. [Harten (1983)](/sources/harten-1983.md), §§2, 5.
+9. [Lax (1954)](/sources/lax-1954.md), §§1, 3, 5, pp. 159–165, 183–191.
+10. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §2, eqs. 2.2–2.3, 2.12.

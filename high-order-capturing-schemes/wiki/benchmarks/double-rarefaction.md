@@ -16,7 +16,7 @@ timestamp: 2026-10-13T00:00:00Z
   ([Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3, in 1D and 2D;
   [Zhang & Shu (2012)](/sources/zhang-2012.md), Example 5.2;
   [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), Example 8, $h = 0.005$).
-* *Einfeldt type* (Einfeldt et al. 1991): $\rho = 1$, $v_x = \mp2$.
+* *Einfeldt type* ([Einfeldt et al. (1991)](/sources/einfeldt-1991.md); data confirmed at the source, batch 16): $\rho = 1$, $v_x = \mp2$.
   Guo et al. use $p = 0.4$, $h = 0.0025$, $t = 0.1$ (Example 6). Hu et al.
   use $p = 0.1$ on the left with $h = 2.5\times10^{-3}$, $t = 0.1$, where a
   vacuum forms ([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §3.1).
@@ -88,8 +88,32 @@ and amplifies their errors.
   "Test 2 is also useful in assessing the performance of numerical
   methods for low density flows, see Einfeldt et al." (p. 129). The
   batch-8 label "Toro's RP2" and this page's alias "1-2-3 problem" fit
-  Toro. Einfeldt et al. (1991) are not ingested, so whether their paper
-  contains the same data is open; the attribution line stays as written.
+  Toro. Einfeldt et al. (1991) were not ingested at batch 12; the batch-16
+  block below settles whether their paper contains the same data; the
+  attribution line stays as written.
+
+**Later uses (batch 16).** *The Einfeldt attribution, settled*
+([Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §6, Figs. 6.1–6.3).
+The paper contains the data, in conserved variables: the "1–2–0–3
+problem", $(\rho, \rho v_x, \rho v_y, E) = (1, \mp2, 0, 3)$, i.e.
+$\rho = 1$, $v_x = \mp2$, $p = 0.4$ at $\gamma = 1.4$ (reader's
+conversion; $\gamma$ is not stated for the runs), on spacing 0.01 with
+output at $t = 0.05$ and $0.1$, not Toro's $t = 0.15$. The left momentum is
+printed $+2$, a misprint for $-2$ (the text describes two rarefactions
+moving apart). This resolves the batch-12 "open" remark for the data;
+neither source says that Toro's "123" name derives from the label.
+First-order results: Roe "explodes after a few time-steps", and with the
+Harten–Hyman or Harten (1983) entropy fixes it oscillates or fails; HLLE
+with bounding speeds runs "without any difficulties". The data lie in the
+non-linearizable range of Proposition 3.1, so no linearized solver can keep
+them positive ([positivity preservation](/properties/positivity-preserving.md)).
+*The sheared variant.* Einfeldt et al.'s "1–1–2–5 problem" is
+$(\rho, \rho v_x, \rho v_y, E) = (1, \mp1, \mp2, 5)$ (the printed equal
+transverse momenta are probably a misprint for $\mp2$): the 5 is the total
+energy, giving $p = 1.0$ at $\gamma = 1.4$ (reader's arithmetic), not
+$p = 5$. Whether Simon & Mandal's $(1, \mp1, \mp2, 5)$ above is in
+$(\rho, v_x, v_y, p)$ as labelled, or relabels Einfeldt's conserved data,
+is not checkable from the bundle; recorded as a qualification.
 
 # Citations
 
@@ -102,3 +126,4 @@ and amplifies their errors.
 7. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.1.
 8. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.
 9. [Toro (1997)](/sources/toro-1997.md), §§4.3, 6.4, 10.8, 11.5, 12.4, Tables 4.1, 4.3, 6.2.
+10. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§3, 6, Figs. 6.1–6.6.

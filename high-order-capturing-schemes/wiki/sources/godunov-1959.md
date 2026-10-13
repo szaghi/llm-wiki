@@ -218,15 +218,15 @@ All tests are graphs; no error tables and no grid-convergence study.
 | Godunov (1959) | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $u$ (Ch. I §§1–3) | $u$ | scalar unknown |
-| $u$ (Ch. II) | $v$ (1D $v_x$, $v_n$) | velocity; **collision**: the registry $u$ is the conserved state |
-| $v$ | $1/\rho$ | specific volume; **collision**: the registry $v$ is velocity |
+| $u$ (Ch. II) | $v_x$ (or $v_n$) | velocity, the registry $\mathbf v$ in 1D; **collision**: the registry $u$ is the conserved state |
+| $v$ | $1/\rho$ | specific volume; **collision**: the registry $\mathbf v$ is velocity |
 | $E$ | words (specific internal energy) | **collision**: the registry $E$ is the total energy density; the registry has only $\rho e(u)$ |
 | $p$, $\gamma$ | $p$, $\gamma$ | |
 | $P_m$, $U_m$ (Ch. II); $P_{m+1/2}$, $U_{m+1/2}$ (Ch. I) | $p_*$, $v_{n*}$ at the interface | Ch. I numbers interfaces half-integer, Ch. II integer (p. 285) |
 | $P_0^{(i)}$ | $p_*$ at iteration $i$ | |
 | $a_0$, $b_0$ | words (left and right mass fluxes); kept as $a_0$, $b_0$ on this page only | no registry symbol (proposal: $W_L$, $W_R$); not the Eulerian $S_L$, $S_R$ |
 | $p_{\mp1/2}$, $u_{\mp1/2}$, $v_{\mp1/2}$ (decay data) | $p^\mp$, $v^\mp$, $1/\rho^\mp$ | the two layers adjacent to the interface |
-| $B$ | words (Lagrangian scaling constant) | **collision**: TVB bound $B$, magnetic field $\mathbf B$ |
+| $B$ | words (Lagrangian scaling constant) | **collision**: magnetic field $\mathbf B$; not the TVB bound $B_{\mathrm{TV}}$ |
 | $A$, $B$ (Ch. I linear system) | words | not the flux Jacobian; the Jacobian eigenvalues are $\pm\sqrt{AB}$ |
 | $\tau$ | $\Delta t$ | **collision**: WENO-Z $\tau$ |
 | $h$ | $h$ | a Lagrangian step in Ch. II |

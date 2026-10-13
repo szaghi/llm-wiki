@@ -90,6 +90,10 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Frontier batch 8 staged 2026-10-13:** fryxell-2000 and colella-1990
+(user downloads); 43 of 43. One Open contradiction (PPM interpolation order
+on non-uniform meshes). Deep lint: 8 ingestions since #3.
+
 **Frontier batch 7 staged 2026-10-13:** evans-1988 and sod-1978, copied
 from sibling archives (D17); 41 of 41. No contradiction opened. Deep lint:
 6 ingestions since #3.

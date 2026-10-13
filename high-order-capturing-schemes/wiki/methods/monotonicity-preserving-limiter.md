@@ -5,7 +5,7 @@ description: "Suresh–Huynh bound on a high-order interface value: keep it unle
 status: established
 aliases: [MP limiter, MP5, MPWENO, monotonicity-preserving bounds]
 tags: [limiter, monotonicity, high-order, weno]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Monotonicity-preserving (MP) limiting
@@ -69,7 +69,7 @@ zones, useful for MHD). The bounded schemes are robust at normal CFL,
 almost spectrally accurate for $r \ge 5$ on smooth problems, and the
 results depend little on the heuristic choices.
 
-**Later.** [Fu, Hu & Adams (2016)](/sources/fu-2016.md) list the MP
+**Later uses (batch 2).** [Fu, Hu & Adams (2016)](/sources/fu-2016.md) list the MP
 technique among the robustness devices for very-high-order WENO and state
 that "it fails to maintain the formal order of the original WENO scheme"
 (citing Gerolymos et al.). [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md)

@@ -2,6 +2,34 @@
 
 ## 2026-10-13
 
+* **Frontier batch 8: ingested [Fryxell et al. (2000)](/sources/fryxell-2000.md)
+  and [Colella (1990)](/sources/colella-1990.md)**, the user's downloads
+  (43 of 43).
+  * **Updated:** [FLASH](/software/flash.md) (the code paper as primary
+    source; the sentence "has not ingested a FLASH code paper" and the
+    description updated), [PPM](/methods/ppm.md),
+    [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md),
+    [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md),
+    [Athena](/software/athena.md), [PLUTO](/software/pluto.md),
+    [double Mach reflection](/benchmarks/double-mach-reflection.md),
+    [Sod shock tube](/benchmarks/sod-shock-tube.md),
+    [Sedov–Taylor blast wave](/benchmarks/sedov-taylor-blast-wave.md),
+    [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+    and [general equations of state](/methods/general-equation-of-state.md).
+  * **New Open `Contradictions` entry** on [PPM](/methods/ppm.md): Colella &
+    Woodward (1984) call the interface interpolation "third-order accurate
+    for variable mesh spacing"; Fryxell et al. (2000) §3.1.1 say it keeps
+    "fourth-order accuracy even in the presence of nonuniform zoning".
+  * Qualifications: the 12 and 6 Riemann solves per zone are Colella's,
+    their pairing with Courant limits is Stone et al.'s; Colella's split and
+    unsplit double Mach results are "essentially identical"; FLASH's first
+    version has one global time step (no subcycling).
+  * **Bibliography** (2314 entries): 96 references merged; Timmes & Arnett
+    printed at their last page (125:294) merged into timmes-1999; Colella's
+    MUSCL paper printed at 6:107 merged into colella-1985-c; van Leer's
+    Computing Methods VI chapter is vanleer-1984-b; fryxell-2000 given its
+    printed title.
+
 * **Frontier batch 7: ingested [Evans & Hawley (1988)](/sources/evans-1988.md)
   and [Sod (1978)](/sources/sod-1978.md)**, cited by 9 and 8 of the
   bundle's sources, from PDFs copied out of sibling archives into this

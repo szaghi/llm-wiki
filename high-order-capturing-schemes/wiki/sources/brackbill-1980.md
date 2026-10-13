@@ -60,7 +60,7 @@ projection" name that later sources use.
    constants of the motion" (p. 427).
 3. **Conservation form is correct only for $\nabla\cdot\mathbf B = 0$**
    (pp. 426–427, eq. 7). Then the magnetic force of eq. 4 equals the
-   divergence of the Maxwell stress, $\nabla\cdot\left\{-\tfrac12\vert\mathbf B\vert^2\mathbf I + \mathbf B\mathbf B\right\}$.
+   divergence of the Maxwell stress, $\nabla\cdot\left\{-\tfrac12\vert\mathbf B\vert^2\mathsf I + \mathbf B\mathbf B\right\}$.
    Differencing that form conserves flux, energy and momentum "even when
    $\nabla\cdot\mathbf B \neq 0$". Both forms are consistent with the
    divergence-free equations, since the divergence is of truncation-error
@@ -139,7 +139,7 @@ run and no cost data are reported.
 | $\rho$, $p$ | $\rho$, $p$ | |
 | $\mu$ | words (unit permeability) | appears only in the energy integrals; **collision**: registry $\mu$ is a diffusion coefficient |
 | $\mathbf F$ | words (conservative magnetic force) | no registry symbol; a bold $\mathbf F$ would read as a flux |
-| $\mathbf I$ | $\mathbf I$ | identity tensor |
+| $\mathbf I$ | $\mathsf I$ | identity tensor |
 | $\phi$ | $\Phi$ | projection potential, same sign convention as the registry; **collision**: $\phi_i$ is the PPM flattening |
 | $\mathbf B'$ | $\mathbf B$ after $\leftarrow$ | projected field |
 | $\Delta x^m$, $\Delta t^n$ | words (orders in $h$ and $\Delta t$) | **collision**: registry $m$ is the system size |

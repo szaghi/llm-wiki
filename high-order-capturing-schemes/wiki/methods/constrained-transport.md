@@ -358,7 +358,7 @@ that the batch-7 paragraph and Berta et al. refer to.
   use of a Yee-type mesh". [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md),
   §§1–4, derive the Yee collocation from Stokes' theorem.
 * [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md),
-  §§1, 6, and [Christlieb et al. (2016)](/sources/christlieb-2016.md):
+  §§1, 6, and [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1–2, 4:
   unstaggered CT keeps the central discrete divergence of the cell-centred
   field exactly zero, and Tóth showed that staggering is unnecessary.
 * *Compiler's note on scope, not a resolution:* the two sides use

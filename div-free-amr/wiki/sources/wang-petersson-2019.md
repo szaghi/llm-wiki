@@ -8,7 +8,7 @@ authors: [Wang S., Petersson N.A.]
 year: 2019
 venue: "SIAM J. Sci. Comput. 41(5) (arXiv:1809.04310)"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2019-SISC-WangPetersson-10113718M1211465.pdf"
-tags: [sbp, ghost-points, coarse-fine-interface, wave-equation, second-derivative, stability]
+tags: [sbp, ghost-fill, coarse-fine-interface, wave-equation, second-derivative, stability]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

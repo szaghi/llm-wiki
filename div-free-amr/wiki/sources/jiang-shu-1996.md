@@ -191,12 +191,12 @@ All scalar or Euler; none is MHD, and no divergence is measured.
 | $L(u)$ | words | semi-discrete spatial operator; no registry symbol |
 | $\hat f_{j+\frac12}$ | words | numerical flux at a face; the registry's $f^{x,*}$ is reserved for the magnetic base-scheme fluxes |
 | $\alpha = \max|f'|$ (eq. 2.5) | $\alpha^{\mathrm{LF}}$ | global over the whole range, per direction |
-| $r$ (stencil count and base ENO order) | words ("$r$-point stencils") | **collision**: registry $r$ is the refinement ratio |
+| $r$ (stencil count and base ENO order) | $k_{\mathrm s}$ | **collision**: registry $r$ is the refinement ratio |
 | $S_k$, $q_k^r$, $a^r_{k,l}$ | words | candidate stencils and interpolants |
-| $C_k^r$ | words ("linear weights") | |
-| $\omega_k$, $\alpha_k$ | words ("nonlinear weights") | $\alpha_k$ collides with $\alpha^{\mathrm{LF}}$; the paper reuses $\alpha$ for Yang's constant (eq. 5.4) and the eq. 8.2 threshold |
-| $IS_k$ | words ("smoothness indicator") | |
-| $\epsilon$, $p$ | words | $p$ is close to the registry's $p_{\mathrm{obs}}$ |
+| $C_k^r$ | $d_k$ | linear (optimal) weights |
+| $\omega_k$; $\alpha_k$ | $\omega_k$; words (unnormalized weights) | $\alpha_k$ collides with $\alpha^{\mathrm{LF}}$; the paper reuses $\alpha$ for Yang's constant (eq. 5.4) and the eq. 8.2 threshold |
+| $IS_k$ | $\mathrm{IS}_k$ | smoothness indicator |
+| $\epsilon$, $p$ | $\epsilon_{\mathrm W}$, $p_{\mathrm W}$ | subscripted to avoid $p_{\mathrm{obs}}$ |
 | $l_s$, $r_s$, $A_{j+\frac12}$ | words | $l$ collides with the AMR level index |
 | $u^{(1)}, u^{(2)}$; $\Delta t$; superscript $n$ | $\Delta t$; superscript $n$ | stage values need no symbol |
 | $P$ (pressure) | words | **collision** with prolongation $P$ |

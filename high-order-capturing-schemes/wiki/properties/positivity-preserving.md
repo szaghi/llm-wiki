@@ -221,6 +221,46 @@ limiter "very simple and local", most convenient for FV and extended to FD
   density and pressure behind shocks; the fix was to drop to
   inverse-distance weighting ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6; [immersed-boundary methods](/methods/immersed-boundary-method.md)).
 
+**Later uses (batch 16): the first-order building block at its source.**
+* *"Positively conservative"* ([Einfeldt et al. (1991)](/sources/einfeldt-1991.md),
+  §§1–2, eq. 2.4) is this page's property for first-order Euler schemes:
+  density and internal energy "remain positive throughout the
+  computational process", with the same admissible set $\mathcal G$.
+* *Godunov and HLLE, proved there* (§§2, 4). Both updates are convex
+  averages of the states of interface Riemann solutions, exact for
+  Godunov and the HLL star state for HLLE, so they stay in the convex
+  $\mathcal G$ provided the exact interface solutions contain no vacuum
+  and, for HLLE, the wave speeds bound the physical ones (eq. 4.5; the
+  bounding property is asserted, not proved). Convexity of $\mathcal G$ is
+  stated there, not proved (ingredient 1 above proves it), and no
+  time-step condition is stated with the proofs; the runs use
+  $\Delta t\max_i(\vert v_{x,i}\vert + c_i)/h \le \tfrac12$. A sharper speed
+  choice is proved positive by direct algebra on the star state (eqs.
+  4.9–4.10, App.; [HLL](/methods/hll-riemann-solver.md)). This is the
+  primary support for the Godunov and HLL entries of ingredient 2; HLLEM
+  with nonzero anti-diffusion is only asserted to share it
+  ([HLLEM](/methods/hllem-riemann-solver.md)).
+* *Linearized solvers cannot be positive* (§3, Propositions 3.1–3.2). For
+  symmetric double-rarefaction data, with or without shear, there are
+  problems whose exact solution is physical and vacuum-free while every
+  linearization yields a negative density or internal energy; at
+  $\gamma = 1.4$ the 1D failure starts at Mach number 0.94. The proof
+  covers Jacobians at a symmetric average state consistent with the
+  ideal-gas relations (reader's reading of eqs. 3.10–3.11). For Roe-type
+  solvers this sharpens Balsara & Kim's statement that no positivity
+  proof exists for Roe- or Osher-type solvers (batch-6 bullet
+  "Relativistic MHD" of the Riemann-solver page) to "positivity is
+  impossible" within that scope; Osher-type solvers are not covered
+  ([double rarefaction](/benchmarks/double-rarefaction.md);
+  [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+* *Not in Harten, Lax & van Leer.* That paper only cautions that a scheme
+  must keep density and pressure positive (p. 38) and proves no positivity
+  ([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md)).
+* *Lax (1954)* proves no positivity for gas dynamics; on one of his Euler
+  shock tubes the mesh ratio exceeds the CFL limit in the star state and
+  an instability "is indeed beginning to show around the shock front"
+  ([Lax (1954)](/sources/lax-1954.md), Ex. 7).
+
 ## Contradictions
 
 **Does positivity limiting inside Runge–Kutta stages reduce the order?**
@@ -306,3 +346,6 @@ limiter "very simple and local", most convenient for FV and extended to FD
 24. [Berger & Giuliani (2021)](/sources/berger-2021.md), §§2–3 (arXiv v1).
 25. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.1 (arXiv v1).
 26. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).
+27. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§1–4, 6, eqs. 2.4, 4.5–4.10, App.
+28. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §1, p. 38.
+29. [Lax (1954)](/sources/lax-1954.md), Ex. 7.

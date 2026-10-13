@@ -1,7 +1,7 @@
 ---
 type: Software
 title: "FLASH"
-description: "Block-structured AMR code on the PARAMESH library, documented here through two star-formation papers: an HLL5R MHD solver, multigrid self-gravity after Ricker (2008), Jeans-length refinement, accreting sink particles with creation checks and (in the 2021 configuration) intrinsic spin, a barotropic piecewise-polytropic closure, and turbulence-driving and protostellar-feedback sub-grid modules."
+description: "Block-structured AMR code on the PARAMESH library: its first version from the code paper (8-cell blocks, no subcycling, fine-flux sums, Löhner refinement, split direct-Eulerian PPM with a two-shock solver, Helmholtz EOS, nuclear networks, ASCI scaling), and two star-formation configurations: an HLL5R MHD solver, multigrid self-gravity after Ricker (2008), Jeans-length refinement, accreting sink particles with creation checks and (in the 2021 configuration) intrinsic spin, a barotropic piecewise-polytropic closure, and turbulence-driving and protostellar-feedback sub-grid modules."
 status: established
 aliases: [FLASH code, flash4, FLASH4, FLASH/PARAMESH]
 tags: [software, mhd, hydro, amr, self-gravity, multigrid, sink-particles, riemann-solver, equation-of-state, verification, performance]
@@ -11,8 +11,9 @@ timestamp: 2026-10-13T00:00:00Z
 # FLASH
 
 FLASH (Fryxell et al. 2000; Dubey et al. 2008) is a block-based AMR code
-built on the PARAMESH library (MacNeice et al. 2000). The bundle has not
-ingested a FLASH code paper. This page collects what two ingested
+built on the PARAMESH library (MacNeice et al. 2000). Its code paper,
+[Fryxell et al. (2000)](/sources/fryxell-2000.md), describes the first
+version and is summarized in Later uses (batch 8) below. This page collects what two ingested
 star-formation papers state about the configurations they ran,
 [Federrath et al. (2010)](/sources/federrath-2010.md) (the sink-particle
 module) and [Mathew & Federrath (2021)](/sources/mathew-2021.md) (an
@@ -228,6 +229,115 @@ realizations at one resolution, identical except for the outflow module
   those points cannot be checked. See
   [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 
+## Later uses (batch 8)
+
+### The first version in its code paper
+
+[Fryxell et al. (2000)](/sources/fryxell-2000.md) describe FLASH's
+"first version" (Abstract, §9); the Fig. 22 caption names "FLASH 1.5" as
+"the current development version". Everything in this subsection is from
+that paper and concerns that version.
+
+* **Code** (§§1, 6). A modular MPI code in single-program-multiple-data
+  style for compressible reactive flow (X-ray bursts, classical novae,
+  Type Ia supernovae). Modules and submodules carry inherited sources and
+  stubs; a `setup` script assembles a build, with problem and system
+  directories overriding sources by filename; runtime parameters are read
+  as `variable = value`. Data are shared through common blocks, and
+  Fortran 90 derived types are announced for the next version (§6,
+  Figs. 21–23).
+* **Mesh** (§2, Figs. 1–4). PARAMESH blocks of $N_{\mathrm b} = 8$ cells
+  per direction with $n_{\mathrm g} = 4$ guard cells (PPM "requires four
+  guard cells at each spatial boundary"), cell-centred data only, in an
+  oct- or quad-tree; $r_{\mathrm{ref}} = 2$ and "a jump of no more than
+  one refinement level across adjacent blocks"; guard cells at a
+  refinement jump by quadratic interpolation; a work-weighted Morton-curve
+  redistribution after each change of refinement. The memory overhead of
+  identical blocks is "rarely more than about 30%". The authors class
+  PARAMESH as block-structured AMR, "similar to" De Zeeuw & Powell (1993),
+  and set it apart from Berger-style subgrids. See
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+* **Refinement criterion** (§2, eqs. 1–3). Löhner's normalized second
+  derivative with noise filter 0.01, on density, pressure and temperature,
+  every four steps by default; a block refines above 0.8 and derefines
+  below 0.2.
+* **Hydrodynamics** (§3). Split, direct-Eulerian [PPM](/methods/ppm.md)
+  from PROMETHEUS, with contact steepening (on density and composition),
+  flattening (1 = first-order Godunov), characteristic tracing, a
+  two-shock Riemann solver iterated by Newton–Raphson, and a secant
+  iteration with the two adiabatic indices of Colella & Glaz for a general
+  EOS (§§3.1–3.1.7); interface mass fractions are clipped and renormalized
+  (§3.1.8). Sweeps alternate order every step; a Lapidus viscosity of
+  coefficient 0.1 is added (§3.2). The scheme is "formally accurate to only
+  second order in both space and time". See
+  [approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
+* **EOS** (§4). Gamma law, the analytic Nadyozhin EOS and the tabulated
+  Helmholtz-free-energy EOS (recommended; thermodynamically consistent "to
+  the limits of IEEE 64 bit arithmetic", about twice as fast as
+  Nadyozhin), each called with temperature and density, the temperature
+  found by Newton–Raphson "in two to four iterations". See
+  [general equations of state](/methods/general-equation-of-state.md).
+* **Nuclear burning** (§5). Hard-wired α-chain and hydrogen-burning
+  networks (7, 13, 19 and 17 isotopes), integrated by a variable-order
+  Bader–Deuflhard method with the MA28 sparse solver, operator split from
+  the hydro.
+* **Gravity.** Only an external field; the source is time-centred as the
+  average of the old- and new-time products of density and acceleration
+  (§3.1.8, eqs. 93, 96, read from the text layer only). Self-gravity is a
+  future module (§9).
+* **Verification** (§7). Hydro only, gamma law: advection of square and
+  Gaussian pulses, the [Sod shock tube](/benchmarks/sod-shock-tube.md)
+  (2–3 zones per discontinuity, 1–2 % errors, a few percent more along the
+  diagonal, attributed to splitting), a strong shock tube, the
+  [Sedov blast](/benchmarks/sedov-taylor-blast-wave.md) in 2D and 3D, the
+  Woodward–Colella interacting blast waves (L1 self-convergence "only
+  linear"), the Emery Mach 3 step and a shock crossing a forced refinement
+  jump. No Courant number is printed.
+* **Performance** (§8). On ASCI Red weak scaling is "nearly perfect ...
+  up to 1024 processors when one processor per node is used"; AMR at fixed
+  work scales worse than a uniform grid because guard-cell communication
+  grows relative to computation; AMR beats the uniform grid "beyond a
+  refinement level of six (corresponding to a uniform mesh with 512 cells
+  per side)", and only while at most 60 % (2D) or 40 % (3D) of the mesh is
+  maximally refined (§§8.2–8.4).
+
+### Open points of this page answered
+
+* **Reconstruction and time integrator** (introduction above). For the
+  first version: split direct-Eulerian PPM with alternating sweeps (§3.2).
+  The later configurations of Federrath et al. and Mathew & Federrath are
+  still undescribed on this point.
+* **Subcycling and coarse–fine fluxes** (Later uses, batch 6). The first
+  version does not subcycle: "The FLASH code does not currently take
+  advantage of this capability of PARAMESH" (§2), for reasons of memory
+  and load balance, with no measurement. At a refinement jump the fine
+  face fluxes are summed and replace the coarse flux (Fig. 4); area
+  weighting is not stated. Later versions are not covered.
+* **AMR family** (Mesh and AMR, Later uses batch 6). The authors' own
+  classification is block-structured AMR, distinct from Berger's subgrids
+  (§2). This agrees with [Stone et al. (2020)](/sources/stone-2020.md) and
+  [Bryan et al. (2014)](/sources/bryan-2014.md), and confirms that the
+  citation of Berger & Colella (1989) by Mathew & Federrath names the
+  family, not FLASH's design.
+* **Flattening convention** (Solvers, as described by Castro's authors).
+  The primary source agrees: a coefficient of 0 leaves the edge values
+  unchanged and 1 gives first-order Godunov (§3.1.3, eqs. 49–50).
+* **Gravity time-centring** (Solvers, as described by Castro's authors).
+  [Almgren et al. (2010)](/sources/almgren-2010.md) describe an
+  extrapolation of the acceleration from $t^n$ and $t^{n-1}$; the first
+  version has only an external field and time-centres the source as the
+  average of old- and new-time products. Different code versions;
+  Almgren et al. do not date their statement. A qualification, not a
+  contradiction.
+* **Non-ideal EOS tests** ([Coleman (2020)](/sources/coleman-2020.md)).
+  The code paper agrees: all its tests use the gamma law, and general-EOS
+  tests are deferred to "a subsequent paper" (§7).
+* **Throughput comparison** ([Stone et al. (2020)](/sources/stone-2020.md),
+  §3.6.1). The code paper prints no zone-cycles per second, so the
+  factor-10 claim cannot be checked against it.
+* **Language.** Fortran, with MPI; PARAMESH is "a package of FORTRAN 90
+  subroutines" (§2).
+
 # Citations
 
 1. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1–2.5, 3–4, 4.2.1, 4.3.4, eqs. 14, 20, 30–32, App. B (arXiv v2).
@@ -238,3 +348,4 @@ realizations at one resolution, identical except for the outflow module
 6. [Tomida & Stone (2023)](/sources/tomida-2023.md), footnote 4 (arXiv v1).
 7. [Coleman (2020)](/sources/coleman-2020.md), §1 (arXiv v3).
 8. [Berger & Colella (1989)](/sources/berger-1989.md), §§2, 5.
+9. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§1–9, eqs. 1–3, 25–26, 33–53, 93, 96, Figs. 1–4, 22.

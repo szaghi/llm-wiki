@@ -203,7 +203,7 @@ Colella's Mach 3 step on a $10\times30$ grid.
 
 # Tests
 
-All Euler, $\gamma = 1.4$, conserved state $(\rho, \rho v, E)$.
+All Euler, $\gamma = 1.4$, conserved state $(\rho, \rho v_x, E)$.
 
 1. **Lax's shock tube** (§7.I, eq. 7.7, Figs. 2a–d). Left
    $(0.445, 0.311, 8.928)$, right $(0.5, 0, 1.4275)$ in conserved
@@ -273,7 +273,7 @@ All Euler, $\gamma = 1.4$, conserved state $(\rho, \rho v, E)$.
 | $R^k$, $L^k$, $a^k$ | $r^{(p)}$, $\ell^{(p)}$, $\lambda^{(p)}$ | field index $k \to (p)$ |
 | $\alpha^k_{j+1/2}$ | $\ell^{(p)}\Delta^1 u_i$ | wave strength; **collision**: Lax–Friedrichs $\alpha$ |
 | $\hat u$, $\hat H$, $\hat c$ (6.4) | $v_{\mathrm{Roe}}$, $H_{\mathrm{Roe}}$, $c_{\mathrm{Roe}}$ | $H$ total specific enthalpy (not registered) |
-| $u$, $m = \rho u$ (§6) | $v$, $\rho v$ | |
+| $u$, $m = \rho u$ (§6) | $v_x$, $\rho v_x$ | the registry $\mathbf v$ in 1D |
 | $\theta_i$, $\sigma(\nu)$ (5.7–5.8) | words | **collisions**: limiter $\theta$, flux-limiter constant $\sigma$ |
 | $M_1$ | words (upstream Mach number) | the registry $M$ is the TVB constant |
 
@@ -284,6 +284,10 @@ All Euler, $\gamma = 1.4$, conserved state $(\rho, \rho v, E)$.
 * Updated [Total variation diminishing](/properties/total-variation-diminishing.md) (batch-14 block: the primary definition, Theorem 2.1, Lemma 2.2, the modified-flux construction and its CFL condition, the systems extension).
 * Updated [Monotone numerical flux](/definitions/monotone-flux.md) (batch-14 block: monotone schemes are TVD, $l_1$-contractive, first order and entropy-convergent).
 * Updated [Order barriers and optimal coefficients of SSP time discretizations](/results/ssp-order-barriers.md) (batch-14 block: Lemma 2.2 is for explicit schemes only).
+* Updated [Sod shock tube](/benchmarks/sod-shock-tube.md) (batch-14 block: the conserved data, ULT1C run and the sonic variant, eqs. 7.8a–b; added at the 2026-10-13 deep lint).
+* Updated [Stationary normal shock test (one-dimensional carbuncle)](/benchmarks/stationary-normal-shock.md) (batch-14 block: the 1D stationary and expansion shocks, eq. 7.9; added at the 2026-10-13 deep lint).
+* Updated [Mach 3 wind tunnel with a forward-facing step](/benchmarks/forward-facing-step.md) (batch-14 block: the $10\times30$ run, §7.III; added at the 2026-10-13 deep lint).
+* Updated [Contact-discontinuity sharpening (subcell resolution, artificial compression, steepening)](/methods/contact-sharpening.md) (batch-14 block: artificial compression in the contact field, eqs. 5.7–5.8; added at the 2026-10-13 deep lint).
 
 # Citations
 

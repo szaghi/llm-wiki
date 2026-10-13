@@ -108,19 +108,27 @@ later called SSP-RK3, and the classical fourth-order RK, which is not TVD
   the Jiang–Shu ingredients as their paper states them: point-value
   fluxes, characteristic decomposition at the arithmetic-mean state,
   global LF splitting, the WENO-JS weights with constant $10^{-6}$, RK4.
-  Their CFL 0.8 for MHD is their own choice: Jiang & Shu's Euler runs use
-  CFL 0.6, and 0.8 appears only on a scalar figure. Jiang & Wu's page
+  Their CFL 0.8 for MHD is their own choice. Jiang & Shu's Euler runs use
+  CFL 0.6 (Figs. 4, 7, 10–13) or $\Delta t = 0.6\Delta x$ (Figs. 5–6
+  and the 2D tests of §8.3); 0.8 appears only on the scalar
+  Buckley–Leverett figure (Fig. 3, §8.1 Ex. 2). Jiang & Wu's page
   records no power.
 * **Local LF splitting** in HOW-MHD's fifth-order FD-WENO
   ([Seo & Ryu (2023)](/sources/seo-2023.md)) is that code's choice; the
   scheme is attributed to Jiang & Shu and Jiang & Wu there, but Jiang &
   Shu test only global splitting.
-* **Other weights and indicators.** WENO-Z, MP5 and WENO+3 in PLUTO
+* **Other weights and indicators.** WENO-Z and WENO+3 in PLUTO
   ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md);
   [Berta et al. (2024)](/sources/berta-2024.md), with a WENO3 fallback);
   Borges indicators in Flash-X's Spark
   ([Couch et al. (2021)](/sources/couch-2021.md)); WENO-3 to WENO-9 and
   TENO-5 in ALPACA ([Hoppe et al. (2022)](/sources/hoppe-2022.md)).
+  WENO-Z and WENO3 are variants of the WENO-JS weighting.
+* **MP5**, used alongside them in PLUTO
+  ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md);
+  [Berta et al. (2024)](/sources/berta-2024.md)), is not a WENO variant:
+  it is a limiter-based alternative (monotonicity-preserving bounds on a
+  fifth-order linear interpolant).
 * **Hamilton–Jacobi WENO** for the vector potential, with weights on
   derivatives of the potential so that the field is limited
   ([Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md);

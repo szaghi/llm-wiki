@@ -226,8 +226,10 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   sets $\alpha_s = 1$. This qualified the batch-7 line, which credited
   $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$ to Brio and Wu
   until the 2026-10-13 deep lint: that formula is Ryu and Jones's. Eq. 40 prints the Brio–Wu factor in two
-  forms that agree through $c_f^2c_s^2 = c^2c_A^2$, so it is a different
-  scaling, not a misprint. An eigenvector's scale is free, so completeness
+  forms that agree through $c_f^2c_s^2 = c^2c_A^2$: two consistent forms
+  rule out a one-symbol typo but not an error of derivation; whether the
+  factor is intended cannot be decided from the paper (see
+  `Contradictions`). An eigenvector's scale is free, so completeness
   is unaffected. The wave strengths
   have a closed form: sums and differences of paired strengths split the
   decomposition into two $3\times3$ systems and one scalar equation
@@ -279,6 +281,82 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   [Shu (2020)](/sources/shu-2020.md) uses where no Roe average exists.
   The scheme is run on a [shock passing a sphere](/benchmarks/shock-sphere-interaction.md).
 
+**Later uses (batch 16).** *An orthonormal MHD eigensystem*
+([Roe & Balsara (1996)](/sources/roe-1996.md), §§2–4, eqs. 7–9, 15–16, 21).
+* *The normalization.* In primitive variables and Gaussian units,
+  $$\alpha_f^2 = \frac{c^2 - c_s^2}{c_f^2 - c_s^2},\qquad \alpha_s^2 = \frac{c_f^2 - c^2}{c_f^2 - c_s^2},\qquad \alpha_f^2 + \alpha_s^2 = 1,$$
+  with right eigenvectors scaled by $\alpha_{f,s}$ and left ones by
+  $\alpha_{f,s}/(2c^2)$, so the fast and slow eigenvectors are orthonormal
+  (eqs. 7–9). This $\alpha_s$ is the Ryu–Jones $\alpha_s$ of the batch-7
+  block. This $\alpha_f$ is the Ryu–Jones (and Brio–Wu eq. 39) $\alpha_f$
+  times $c/c_f$, which the authors state themselves: "our $\alpha_f$ has an
+  additional factor $a/c_f$" ($a$ their sound speed, here $c$; p. 60). The
+  two conventions differ by the free scale of an eigenvector; a page or
+  code that quotes $\alpha_f$ must say which it means.
+* *The triple umbilic, qualified.* Where $c_A \simeq c$ and
+  $B_\perp \simeq 0$ the factors are indeterminate, "but since
+  $\alpha_f^2 + \alpha_s^2 = 1$, the eigenvectors cannot be singular".
+  Their limits depend on the direction of approach: $\alpha_f$ tends to the
+  sine and $\alpha_s$ to the cosine of half the approach angle in the
+  plane of normal and tangential Alfvén velocity over $c$ (eq. 15). The
+  setting $\alpha_f = \alpha_s = 1$ of the batch-7 and batch-11 blocks is
+  therefore not a limit value in this normalization (it violates
+  $\alpha_f^2 + \alpha_s^2 = 1$). It is a choice of scale in a
+  normalization that is not orthonormal, not a competing limit.
+* *Why arbitrary choices at the degeneracies do not matter* (§4, eq. 21,
+  Fig. 4). Fast and slow eigenvectors are combinations, with coefficients
+  $\pm\alpha_f$ and $\pm\alpha_s$, of an acoustic and a transverse vector
+  that do not depend on the linearization state. Moving that state a
+  small distance from the triple umbilic changes the individual fast and
+  slow wave strengths by $O(1)$, but they are multiplied by speeds that
+  differ by at most that distance times $c$, so a Roe-type flux changes
+  only to first order in the distance.
+  Near $\mathbf B = 0$ the flux likewise does not depend on how the shear
+  wave is split between slow and Alfvén waves, which "provides a
+  justification for assigning arbitrary values" to the tangential
+  direction cosines; both are set to $1/\sqrt2$, as Brio and Wu and Ryu
+  and Jones do. This supports the Jiang–Wu relaxation of the degeneracy
+  tests by a threshold (batch 5; compiler's reading).
+* *Completeness has one exception.* In cases I–IV (normal or tangential
+  field small, away from the triple umbilic) the normalized eigenvectors
+  stay well formed and independent. In the vacuum limit (Alfvén speeds
+  far above $c$) both slow eigenvectors collapse onto the entropy
+  eigenvector: "the eigenvector system is no longer complete and … the
+  MHD equations are ill posed in a way that cannot be removed by any
+  renormalization" (eq. 16). This qualifies the batch-11 line that the
+  Brio–Wu renormalization "gives a complete set": not in that limit.
+* *An erratum to Zachary and Colella* (p. 60, footnote 1): the last
+  component of their left slow eigenvector should be the specific volume
+  times $\alpha_s$ (printed "$\tau\alpha_s$"; $\tau$ is undefined in the
+  paper and presumably $1/\rho$).
+
+## Contradictions
+
+**Is Brio & Wu's eq. 40 $\alpha_s$ the same quantity as Roe & Balsara's
+dimensionless $\alpha_s$ (is the $1/c_f$ intended)?** *Open*
+(recorded at batch 16; question restated at the 2026-10-13 deep lint).
+* [Brio & Wu (1988)](/sources/brio-1988.md), eq. 40, prints
+  $\alpha_s = \frac{1}{c_A}\frac{\sqrt{c_A^2 - c_s^2}}{\sqrt{c_f^2 - c_s^2}} = \frac{\sqrt{c_f^2 - c^2}}{\sqrt{c_f^2 - c_s^2}}\frac{1}{c_f}$,
+  an inverse speed, in two forms that agree through $c_fc_s = c\,c_A$;
+  yet their eq. 46 sets $\alpha_s = 1$ at the triple umbilic, which is
+  impossible for an inverse speed (dimensionally inconsistent unless the
+  $1/c_f$ is not intended). The batch-11 reading "a different scaling,
+  not a misprint" is withdrawn (2026-10-13 deep lint): two consistent
+  forms rule out a one-symbol typo, not an error of derivation, and the
+  Source page's "cannot be decided from the paper" stands.
+* [Roe & Balsara (1996)](/sources/roe-1996.md), p. 60: "$\alpha_s$ is
+  defined here identically", for their dimensionless
+  $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$, which has no
+  $1/c_f$; in the same sentence they record the $c/c_f$ difference in
+  $\alpha_f$. Their
+  acknowledgment thanks M. Brio for comments on the first draft
+  (circumstantial only: it does not show that Brio endorsed the
+  statement).
+* *Scope.* Both statements are about the same printed definition. Roe and
+  Balsara do not say "misprint", and supersession is not explicit, so the
+  entry stays open; completeness is unaffected either way, since an
+  eigenvector's scale is free.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -324,3 +402,4 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 41. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.
 42. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2 (closing remark).
 43. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.
+44. [Roe & Balsara (1996)](/sources/roe-1996.md), §§2–4, p. 60, eqs. 7–9, 15–16, 21.

@@ -21,7 +21,7 @@ error dynamics:
 
 | $\mathcal{D}(\psi)$ | Error equation | Family |
 |---|---|---|
-| $0$ | Poisson (instantaneous removal) | elliptic = [projection](/methods/projection-method.md) (Brackbill–Barnes, rediscovered) |
+| $0$ | Poisson (instantaneous removal) | elliptic = [projection](/methods/projection-method.md) (the Poisson correction Brackbill & Barnes name) |
 | $\psi/c_p^2$ | heat equation | parabolic (Marder) |
 | $\partial_t\psi/c_h^2$ | wave equation, speed $c_h$ | hyperbolic |
 | $\partial_t\psi/c_h^2 + \psi/c_p^2$ | telegraph equation | **mixed** (recommended): transport *and* damping |
@@ -69,8 +69,9 @@ staggered CT: competitive with CT in accuracy and robustness while
 "considerably easier to implement." Two additions to the family record:
 the **EGLM** variant (Dedner's divergence source terms in momentum/energy)
 trades conservation for robustness in strongly magnetized flows, and the
-damping parameter acquires the physical reading
-$\alpha = \Delta t_d/\Delta t_a$. Their stated motive for the collocated
+damping parameter acquires the physical reading of a ratio of time
+scales, the diffusive (damping) time over the advective (cleaning-wave)
+time. Their stated motive for the collocated
 route: single-location variables ease extension to adaptive grids, extra
 physics, and higher order.
 
@@ -107,11 +108,11 @@ finite-difference scheme (PLUTO; uniform Cartesian grids only).
   ([notation](/notation.md)), so its magnitudes are not comparable with
   those of other papers.
 * **Damping is order-dependent.** With
-  $\alpha_p = \Delta h\, c_h / c_p^2$:
+  $\alpha_{\mathrm p} = h\, c_h / c_p^2$:
   * on the field loop, fifth-order schemes minimize the divergence error
-    at $\alpha_p \gtrsim 0.4$, while third-order schemes do better at
-    $\alpha_p \lesssim 0.2$;
-  * on rotated shock tubes the error saturates for $\alpha_p \gtrsim 0.4$
+    at $\alpha_{\mathrm p} \gtrsim 0.4$, while third-order schemes do better at
+    $\alpha_{\mathrm p} \lesssim 0.2$;
+  * on rotated shock tubes the error saturates for $\alpha_{\mathrm p} \gtrsim 0.4$
     and is typically $\lesssim 10^{-2}$, with no growth under refinement;
   * on the smooth vortex it converges with resolution, below $10^{-8}$ at
     $128^3$ with fifth-order schemes.
@@ -134,7 +135,7 @@ The paper is an arXiv preprint, not peer-reviewed.
   Arepo-Dedner lacks the largest currents and curvatures that every other
   scheme reaches.
 * **Parameters.** In Arepo, $c_h$ is the maximum fast speed in the box and
-  the damping time is $2r_{\mathrm{cell}}/c_h$. In DG, $c_h$ is 1.05 times
+  the damping time is twice the cell radius divided by $c_h$. In DG, $c_h$ is 1.05 times
   the fastest signal speed with Dedner's dimensional damping constant
   $0.18$, which the authors note is not portable across problems.
 
@@ -149,8 +150,8 @@ Reynolds number.
 same base scheme, with PLM, HLLD and van Leer integration.
 * **A time-varying $c_h$ breaks the derivation.** The error equation holds
   only if the operator $\mathcal D$ commutes with the time and space
-  derivatives. The conventional choice $c_h = \eta_{\mathrm{CFL}}\,h_{\min}/\Delta t$
-  changes with every time step. After a sudden drop of $\Delta t$, $\psi_h$
+  derivatives. The conventional choice, $c_h \propto h_{\min}/\Delta t$ at a fixed
+  CFL number, changes with every time step. After a sudden drop of $\Delta t$, $\psi_h$
   grows about 40-fold within 10 steps. When the step recovers it is turned
   into ripple-shaped, non-solenoidal field that dominates weakly magnetized
   regions for hundreds of steps. CT and a constant $c_h$ are unaffected.
@@ -160,17 +161,17 @@ same base scheme, with PLM, HLLD and van Leer integration.
   damping and at higher resolution; stronger damping only shrinks the
   affected zone.
 * **The damping constant is dimensional.** Dedner's $c_r = c_p^2/c_h$
-  depends on units. Rewritten as a timescale ratio at a scale $L$, the
-  original choice is $L = 1$ in code units, while PLUTO-like codes use
-  $L = h_{\min}$, which changes with AMR level. Large $L$ agreed better with
-  CT, and grid-scale $L$ produced unphysical structure.
+  depends on units. Rewritten as a timescale ratio at a damping length $L_{\mathrm d}$, the
+  original choice is $L_{\mathrm d} = 1$ in code units, while PLUTO-like codes use
+  $L_{\mathrm d} = h_{\min}$, which changes with AMR level. Large $L_{\mathrm d}$ agreed better with
+  CT, and grid-scale $L_{\mathrm d}$ produced unphysical structure.
 * **Stability.** In a subsonic KH test the scheme was stable once $c_h$
   exceeded the maximum flow speed, even when the Alfvén speed exceeded
   $c_h$.
 * **Applications.** In a primordial collapsing cloud with a weak seed
   field, variable-$c_h$ runs amplify the field 3–5 orders of magnitude
   beyond CT, with ripple patterns like those in published rapid-amplification
-  results. A constant $c_h$ with large $L$ agrees broadly with CT, but the
+  results. A constant $c_h$ with large $L_{\mathrm d}$ agrees broadly with CT, but the
   field near the disks is stronger and reversed. In a convective
   atmosphere the error generated in the convective layer propagates into
   the stable layer. There the $\psi_h$-related energy flux stays at 1–100%
@@ -179,8 +180,8 @@ same base scheme, with PLM, HLLD and van Leer integration.
   up as thermal-energy error: about 30% on a low-$\beta$ CP Alfvén wave.
   The EGLM energy source, or a conservative total energy that includes
   $\psi_h$, removes it.
-* **Recommendations.** Keep $L$, $c_p$ and $c_h$ fixed in space and time,
-  with $L$ larger than the scale of interest and $c_h$ faster than any
+* **Recommendations.** Keep $L_{\mathrm d}$, $c_p$ and $c_h$ fixed in space and time,
+  with $L_{\mathrm d}$ larger than the scale of interest and $c_h$ faster than any
   speed the run will reach. Include the EGLM energy term. If $c_h$ must
   change, first remove the divergence by projection and reset $\psi_h$ to
   zero. The authors still find CT less arbitrary and more robust, and they

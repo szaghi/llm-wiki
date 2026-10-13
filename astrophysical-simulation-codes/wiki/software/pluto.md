@@ -5,7 +5,7 @@ description: "Godunov-type code for Newtonian and relativistic MHD whose adaptiv
 status: established
 aliases: [PLUTO, PLUTO-CHOMBO, PLUTO-AMR]
 tags: [software, mhd, hydro, amr, divergence-cleaning, unsplit, riemann-solver, time-integration, performance, verification, relativity]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # PLUTO
@@ -234,9 +234,28 @@ to 26 neighbours in 3D (§3.4). On Leonardo a node of 4 A100 GPUs is about
 9× faster than a node of 2×56-core Xeon 8480+ CPUs (node against node,
 FP64, 3D Orszag–Tang weak scaling, Table 3); details on the gPLUTO page.
 
+## Later uses (batch 8)
+
+* **PLUTO's CTU against its primary source.** The CTU attribution of the
+  Integrator section agrees with [Colella (1990)](/sources/colella-1990.md).
+  Building the corner-coupled states from first-order Godunov transverse
+  fluxes between cell-centred states is Colella's choice (2.13), which he
+  calls "sufficiently accurate ... to yield an algorithm that is
+  second-order accurate" (§2, p. 182), and PLUTO's $\nu \le 1$ in 2D is his
+  limit (eq. 2.17). Colella also reports that on the double Mach
+  reflection the alternative (2.15), Riemann problems between the
+  normal-predictor states, was "essential", (2.13) giving "considerably
+  lower resolution in the jet along the wall" (pp. 197–198); his own
+  account of which choice the runs used is inconsistent (p. 192; see the
+  Source page). This qualifies the choice, and does not contradict it.
+  The six solves per zone in 3D are the relaxed variant
+  Colella describes, which drops the maximum principle (§6). See
+  [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md).
+
 # Citations
 
 1. [Mignone et al. (2012)](/sources/mignone-2012.md), §§1–7, App. A–B (journal version).
 2. [Stone et al. (2020)](/sources/stone-2020.md), §2.2, §3.6.1.
 3. [Lesur et al. (2023)](/sources/lesur-2023.md), §1, §2.3, §2.7, §3.2–§3.3, §4.2, §5, Fig. 18 (arXiv v1).
 4. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§1–5, Table 3 (arXiv v1).
+5. [Colella (1990)](/sources/colella-1990.md), §§2, 5–6, eqs. 2.13–2.17.

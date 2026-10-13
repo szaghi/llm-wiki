@@ -125,6 +125,18 @@ Mach stem on the $15 \times 5$ grid is "an artifact due to the
 monotonicity algorithms" (p. 123). MUSCL on $45 \times 15$ cells is run
 to a steady state at $t = 16.02$ (Fig. 10).
 
+*Harten's run* ([Harten (1983)](/sources/harten-1983.md), §7.III,
+eqs. 7.12–7.15, Fig. 9): the same tunnel (width 1, length 3, step of
+height 0.2 at 0.6), Mach 3 inflow with $\rho = 1.4$, $p = 1$, to $t = 4$
+on a $10\times30$ grid ($h = 0.1$), with Strang-type splitting at
+$\nu = 0.75$ and a sharp corner without rounding or extra viscosity; 30
+density contours. A 2D hybrid of Lax–Wendroff and first order is set
+against the 2D second-order TVD scheme with contact compression (ULT1C):
+one-dimensional high resolution "is also obtainable in two-dimensional
+calculations".
+
+**Later uses (batch 16).** *RKDG without corner treatment* ([Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.2, Figs. 4.4–4.10; [RKDG](/methods/rkdg.md)). The standard set-up to $t = 4$ with no modification near the corner, which is known to cause an erroneous entropy layer and a spurious Mach stem on the downstream bottom wall; both decrease with refinement. Degree 1 and 2 DG on rectangles, $h = 1/40$ to $1/320$, local Lax–Friedrichs, TVB $M = 50$: degree 2 improves on degree 1, especially the slip line from the triple point. On triangles refined near the corner (size ratio 1 to 1/8) strong spurious entropy production at the corner pollutes the downstream flow and decreases with corner refinement; triangles match rectangles of about the same density but needed an ad hoc positivity correction.
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -142,3 +154,5 @@ to a steady state at $t = 16.02$ (Fig. 10).
 13. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVb, VIb, Figs. 3, 7, 8.
 14. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.1.
 15. [van Leer (1979)](/sources/vanleer-1979.md), §4, Figs. 7–11.
+16. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.2.
+17. [Harten (1983)](/sources/harten-1983.md), §7.III, eqs. 7.12–7.15, Fig. 9.

@@ -51,6 +51,18 @@ cell-centered data whose exact invariant is a corner-centered divergence —
 see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
 ([Tóth (2000)](/sources/toth-2000.md)).
 
+**Staggering the field only.** In the Godunov combination of
+[Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) and
+[Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) only the
+magnetic field is face-centred; density, momentum and energy stay cell
+averages, unlike the Evans–Hawley arrangement above with face-centred
+velocities (ApJ §4). The authors note that face averages and staggered
+grids are "generally… not favored in hyperbolic systems of conservation
+laws", and justify them for the field alone: each field component's
+conservation law has no derivative along that component, and a face
+average is "well defined even if a discontinuity surface … coincides with
+an interface" (JCP §§2, 5; ApJ §2).
+
 ## Contradictions
 
 **Is staggering necessary?** Sources take opposite positions:
@@ -130,3 +142,5 @@ is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 8. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§I, II.d.
 9. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
 10. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§1, 2.1, 3.
+11. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§2, 5, eqs. 11–14.
+12. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§2, 4.

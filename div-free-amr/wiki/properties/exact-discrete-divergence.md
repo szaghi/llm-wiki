@@ -69,6 +69,22 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   supports the round-off reading, and the §4 phrase is best read as loose
   wording ([flux-CT](/methods/flux-ct.md)).
 
+* **Field-CT's primary sources assert the face invariant and measure
+  another.** [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md)
+  define exactness as a zero area-weighted net face flux in every cell,
+  $D_h^{\mathrm f} B_h = 0$ (eqs. 15–16), and state that it stays "exactly
+  the same as its initial value all the time in all these simulations"
+  (§4), without printing a value. Their split-updated cell field $B_h^{*}$
+  is not held: its divergence is "interpolation-dependent" and "O(1) if
+  strong shocks are involved" (§5).
+  [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) give the
+  only numbers: the net cell flux computed from the cell-centred field
+  spans $-4.75\cdot10^{-3}$ to $2.75\cdot10^{-3}$ with the face update and
+  $-2.84\cdot10^{-2}$ to $1.74\cdot10^{-2}$ without it, on one shock–cloud
+  run (Figs. 18–19; colour-bar ranges, units and interpolation not stated).
+  The pattern is the one Londrillo & Del Zanna measure below: one stencil
+  exact, another $O(1)$ at fronts.
+
 * **"Local" exactness is a distinct, weaker class.** Locally
   divergence-free DG ([Li & Shu (2005)](/sources/li-shu-2005.md)) builds
   the constraint into element-local polynomial bases — exactly solenoidal
@@ -204,6 +220,23 @@ remedy is a face-centred CT field whose net face flux per cell stays
 exactly zero (eq. 18), $D_h^{\mathrm f}B_h^{n+1} = D_h^{\mathrm f}B_h^n$;
 they report no measured divergence.
 
+**The earlier statement of the growth claim.** [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md) §2.4 make the same assertion for their split TVD code: the error "usually grows exponentially during the computations, causing an artificial force parallel to the magnetic field", citing Schmidt-Voigt (1987) "e.g."; it is asserted there too, with no demonstration. [Zachary, Malagoli & Colella (1994)](/sources/zachary-malagoli-colella-1994.md) §2.4 place their own scheme in the truncation-error class: it preserves the constraint "only to the truncation error of the method. In principle, that truncation error could be $O(1)$" at discontinuities.
+
+**Conservation without the constraint, in one test.**
+[Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) run one
+fully conservative scheme with and without its CT field update on a
+Mach-15 shock–cloud problem. The uncontrolled run does not fail, and the
+two solutions are "not significantly different, although some differences
+exist in small scales", located where the uncontrolled run has its largest
+net cell flux (§3, Figs. 12–18). The authors conclude that "it is the
+conservation laws which play the crucial role" for supersonic flows (§4),
+while the companion paper states that whether divergence errors matter
+when conservation is exact "remains unknown"
+([Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md) §5).
+*Compiler reading:* one problem and a visual comparison; it sits beside
+the failures without divergence control reported elsewhere in the bundle
+for other problems and schemes, and contradicts none of them.
+
 **A regime where it did not matter (preprint).** In driven subsonic
 turbulence with a weak seed field, [Pakmor et al. (2026)](/sources/pakmor-2026.md) find no difference that separates
 the exact-divergence CT codes from the Powell and Dedner codes. This
@@ -256,3 +289,7 @@ the one where both papers find agreement.
 19. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), abstract, §§2.1–2.2, 4, eqs. 13–15.
 20. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 426–430, eqs. 4, 7–8, Figs. 1–2.
 21. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §1, eqs. 16–18.
+22. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §§2, 4, 5, eqs. 15–16.
+23. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§3–4, Figs. 12–19.
+24. [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md), §2.4.
+25. [Zachary, Malagoli & Colella (1994)](/sources/zachary-malagoli-colella-1994.md), §2.4.

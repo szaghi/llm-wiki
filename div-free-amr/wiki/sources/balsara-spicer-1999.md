@@ -193,6 +193,7 @@ No divergence measure of the CT scheme is reported in any test.
 * Updated [Positivity–divergence coupling](/results/positivity-divergence-coupling.md): the energy correction as printed.
 * Updated [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md): the separately advanced cell-centred field is not the face average.
 * Updated [Staggered grid](/definitions/staggered-grid.md): no necessity argument.
+* Updated [Tóth (2000)](/sources/toth-2000.md): the BS table remark.
 
 # Citations
 

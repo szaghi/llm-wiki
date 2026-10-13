@@ -373,3 +373,12 @@ Added 2026-10-08 (batch 2, with the modified-wavenumber definition; dated from t
 | $\mathrm{TOL}$, $Q_{\mathrm{user}}$ | convergence tolerance of the star-pressure iteration, and the pressure-ratio threshold that switches an adaptive Riemann solver between estimates |
 | $q^{\mathrm w}_L$, $q^{\mathrm w}_R$, $\bar c_{\mathrm E}$ | pressure-based correction factors of the HLL-type wave speeds $S_L = v_n^- - c^- q^{\mathrm w}_L$, $S_R = v_n^+ + c^+ q^{\mathrm w}_R$, and the averaged sound speed of Einfeldt's estimate, $S_{L,R}$ = a mean normal velocity $\mp \bar c_{\mathrm E}$ |
 | $q_{\mathrm{Roe}}$ (e.g. $\rho_{\mathrm{Roe}}$, $c_{\mathrm{Roe}}$) | ($q$ a generic placeholder, distinct from the weight power $q$) a quantity evaluated at the Roe-averaged state of $u^-$ and $u^+$ ($\sqrt\rho$-weighted velocities and total enthalpy, Roe 1981; $\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$ from the later Roe–Pike form, Toro; $c_{\mathrm{Roe}}$ from them); the Roe speeds $\hat a_{i+1/2}$ are the eigenvalues of $A$ at this state |
+
+## Deep-lint additions (2026-10-13)
+
+| Symbol | Meaning |
+|---|---|
+| $TV(u)$ | total variation of a grid function, $TV(u) = \sum_i \vert\Delta^1 u_i\vert$ (added 2026-10-13, deep lint) |
+| $B_{\mathrm{TV}}$ | TVB bound, $TV(u^n) \le B_{\mathrm{TV}}$ for all $n$ up to a fixed final time, depending only on $TV(u^0)$ (subscripted, so distinct from the magnetic field $\mathbf B$, the matrix $\mathsf B$ and the TVB constant $M$) (added 2026-10-13, deep lint) |
+| $P^K$ | space of polynomials of degree at most $K$ on a cell, the DG approximation space ($P^1$, $P^2$, …) (superscripted, so distinct from the big-stencil polynomial $P(x)$ and the summation-by-parts norm $\mathsf P$) (added 2026-10-13, deep lint) |
+| $a_i$, $b_i$ | coefficients of a fixed-step $m$-step method, $u^{n+1} = \sum_{i=1}^{m}\left(a_i u^{n+1-i} + \Delta t\, b_i\,\mathcal L(u^{n+1-i})\right)$; the fixed-step case of $a_{i,n}$, $b_{i,n}$ (one index, so distinct from the Shu–Osher $a_{ik}$, $b_{ik}$) (added 2026-10-13, deep lint) |

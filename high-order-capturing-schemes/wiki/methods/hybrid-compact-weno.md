@@ -5,7 +5,7 @@ description: "Pirozzoli's conservative scheme: a fifth-order compact upwind flux
 status: established
 aliases: [hybrid compact-WENO, compact upwind WENO, H5, H7]
 tags: [compact-scheme, hybrid, turbulence, spectral-resolution]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Hybrid compact-WENO schemes
@@ -52,7 +52,7 @@ needed, which is problem dependent, and Hu et al. add that hybrids of a
 linear high-order scheme and a nonlinear one can become unstable when
 discontinuities are only a few points apart.
 
-**Batch 3.** Hybrids switch to WENO through an indicator and lose
+**Later uses (batch 3).** Hybrids switch to WENO through an indicator and lose
 spectral resolution near discontinuities; nonlinear compact schemes
 weight the compact stencils instead. The finite-volume
 [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md)

@@ -170,10 +170,11 @@ no divergence measurement.
 
 | Colella & Woodward (1984) | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
-| $a$, $a_j^n$ | words ("zone average") | generic advected scalar; no registry symbol |
+| $a$, $a_j^n$ | $w$, $\bar w_j$ | generic advected scalar and its zone average |
 | $\xi_{j+1/2}$, $\Delta\xi_j$ | $\mathbf x$; $h$ on a uniform mesh | non-uniform zone width has no registry symbol |
 | $\Delta t$, $t^n$ | $\Delta t$, superscript $n$ | |
-| $a_{L,j}$, $a_{R,j}$, $\Delta a_j$, $a_{6,j}$ | words | parabola edge values and coefficients |
+| $a_{L,j}$, $a_{R,j}$ | $w^+_{j-1/2}$, $w^-_{j+1/2}$ | parabola edge values in zone $j$ |
+| $\Delta a_j$, $a_{6,j}$ | words | parabola coefficients |
 | $\delta a_j$, $\delta_m a_j$, $\delta^2 a_j$ | words | slopes and second difference |
 | $\eta_j$ and constants | words | $\eta$ is conventionally resistivity in MHD |
 | $f_j$ (flattening) | words | close to the registry's $f^{x,*}$ |

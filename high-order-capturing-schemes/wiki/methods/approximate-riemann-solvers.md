@@ -92,7 +92,8 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   HLLEM (Dumbser–Balsara), which keeps isolated contacts and Alfvén
   discontinuities without iteration. Relativistic HLLD is expensive and
   brittle. Positivity proofs exist only for first-order 1D schemes: for
-  the HLL/HLLEM class on Euler flow (Einfeldt; Einfeldt et al.), for HLLC
+  the HLL/HLLEM class on Euler flow (Einfeldt; Einfeldt et al.; qualified
+  for HLLEM in the batch-16 block), for HLLC
   on 1D Euler and 1D MHD; none exist for Roe- or Osher-type solvers, and
   none for a subluminal RMHD solver
   ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4.1, Appendix B).
@@ -150,10 +151,11 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   that paper, so the bullet "HLLI / LLFI (Dumbser–Balsara)" rests on
   [Balsara et al. (2025)](/sources/balsara-2025.md) for LLFI. The paper
   asserts, but does not prove, that HLLEM inherits the positivity of HLL,
-  for general (conservative and non-conservative) hyperbolic systems. The
-  proved result is narrower: Einfeldt et al.'s positivity of the HLL/HLLEM
-  class for 1D first-order schemes on Euler flow
-  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1).
+  for general (conservative and non-conservative) hyperbolic systems.
+  Balsara & Kim state that Einfeldt et al. proved positivity for the
+  HLL/HLLEM class for 1D first-order schemes on Euler flow
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1) (HLLE only,
+  per the batch-16 block below).
 * *Complete solvers and shock instability.* HLLC is HLL plus an
   anti-diffusive term, $\hat f^{\mathrm{HLL}} + S_L(u^{\mathrm{HLLC}}_{*L} - u^{\mathrm{HLL}}_*)$
   for $S_L \le 0 \le S_M$ ([Simon & Mandal (2019)](/sources/simon-2019.md), eq. 13). Solvers that resolve the
@@ -456,6 +458,93 @@ decision).
   remark; the paper says nothing about the carbuncle or odd–even
   decoupling, which rest on the batch-8 sources above.
 
+**Later uses (batch 16).** *The framework paper, the low-density paper
+and Lax–Friedrichs at the source.*
+* *Godunov-type and upstream schemes* ([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md),
+  §§2–3). A scheme is *Godunov-type* when its approximate Riemann
+  solution is consistent with the integral forms of the conservation law
+  and of the entropy inequality (Theorem 3.1); such a scheme is
+  conservative, satisfies a cell entropy inequality, and takes the
+  upwind flux when all signal speeds have one sign. An *upstream* scheme
+  is conservative, linearizes to Courant–Isaacson–Rees upwinding for
+  nearby states, and takes the upwind flux when all signal speeds have one
+  sign. The paper sorts the known solvers by their viscosity matrix
+  $\Theta_{i+1/2}$: $\vert A\vert$ at the arithmetic mean, the mean of
+  $\vert A(u^-)\vert$ and $\vert A(u^+)\vert$ (van Leer, which "somewhat
+  smears stationary shocks but … excludes nonphysical discontinuities"),
+  Huang's, Roe's, and Osher's path integral (eqs. 2.13–2.23).
+* *Roe's entropy failure, the mechanism* (pp. 43, 49). At a stationary
+  discontinuity $u^+ - u^-$ is a null vector of the Roe matrix, so the
+  dissipation vanishes "whether or not the entropy condition … is
+  satisfied"; this is the defect Roe predicted (batch-14 bullet "Entropy,
+  in Roe's words"), and the fix cited is Harten & Hyman's. Any perfectly
+  resolving conservative scheme can be corrected by subtracting from its
+  flux a viscosity that vanishes on admissible shocks (p. 54).
+* *A Roe-type matrix always exists when there is an entropy* (Theorem
+  2.1, Harten–Lax). For any system with a convex entropy, a matrix with
+  the exact jump property, real eigenvalues and a complete set of
+  eigenvectors exists: the product of a symmetric matrix and a positive
+  definite one, built in entropy variables, similar to a symmetric matrix.
+  This is an existence result without a closed form; beside the
+  batch-14 bullet "Construction" (Roe's straight-path Jacobian integral),
+  it is a construction whose real eigenvalues and complete eigenvectors
+  are proved.
+* *Osher* (pp. 41–43, 49). Osher's limits satisfy the entropy condition;
+  his scheme resolves a stationary contact exactly and needs at least one
+  intermediate state for a stationary shock; it "is not of Godunov type in
+  the sense of (3.9)", since its path is not a single-valued approximate
+  Riemann solution.
+* *A two-intermediate-state solver in 1983, not HLLC* (§3B(ii)). Two star
+  states separated by a middle speed built from entropy variables, equal
+  to the shock or contact speed whenever Rankine–Hugoniot holds, exact for
+  an isolated shock or contact of any family, made entropy-satisfying by
+  an added viscosity whose constants are not given. Its middle speed,
+  star-state closure and viscosity all differ from HLLC's.
+* *Flux-vector splitting* (§4(f)). Split fluxes cannot resolve stationary
+  discontinuities exactly: van Leer's, like Osher's, gives a stationary
+  shock "at best, one intermediate state", and "a contact discontinuity,
+  however, will keep on spreading with the use of any split flux scheme".
+  Background to the carbuncle entry below, not evidence on it.
+* *Every linearization fails at low density* ([Einfeldt et al. (1991)](/sources/einfeldt-1991.md),
+  §3, Propositions 3.1–3.2). On symmetric double-rarefaction data with a
+  physical, vacuum-free exact solution, every linearized Riemann solution
+  produces a negative density or internal energy once the Mach number
+  exceeds $\sqrt{2/(\gamma(3-\gamma))}$ (0.94 at $\gamma = 1.4$); with
+  shear, "in most cases the failure of linearizations is caused by a shear
+  flow" (p. 281). This is Toro's "this anomaly afflicts all
+  linearised Riemann solvers" (batch-12 bullet "Roe fails at low
+  density"), with the scope of the proof: Jacobians at a symmetric
+  average state with the ideal-gas relations (reader's reading). The
+  cause, in the authors' words: Roe's signal speeds "underestimate the
+  physical signal velocities" (§5).
+* *Entropy fixes do not cure it* (§6, Fig. 6.1). On the 1–2–0–3 problem
+  ($\rho = 1$, $v_x = \mp2$, $p = 0.4$ at $\gamma = 1.4$, reader's
+  conversion) Roe's scheme "explodes after a few time-steps", Roe with the
+  Harten–Hyman fix shows "unphysical oscillations", and Roe with Harten's
+  1983 fix "also fails after a few time steps"; HLLE with bounding speeds
+  runs ([double rarefaction](/benchmarks/double-rarefaction.md)). Toro's
+  "Einfeldt et al.'s modification" is this choice of speeds in HLLE or
+  HLLEM.
+* *Two formulas called "Einfeldt's", partly settled.* The 1991 paper
+  prints only the min/max form of the batch-8 bullet (eq. 4.5), a
+  Lax–Friedrichs-type member (4.7) and a sharper positive set (4.10).
+  Toro's $\bar c_{\mathrm E}$ formula is not in it; Einfeldt (1988), not
+  ingested, remains a candidate ([HLL](/methods/hll-riemann-solver.md)).
+* *Scope of the "HLL/HLLEM class"* (batch-6 and batch-8 bullets above).
+  The 1991 paper proves positivity for HLLE (and Godunov's method), at
+  first order for Euler; for HLLEM it asserts, without proof, freedom from
+  the low-density failure, and runs its shear test with the shear
+  anti-diffusion off. The HLLEM part of Balsara & Kim's attribution, which
+  also cites Einfeldt (1988), is not supported by the 1991 paper
+  ([HLLEM](/methods/hllem-riemann-solver.md)).
+* *Lax–Friedrichs at the source* ([Lax (1954)](/sources/lax-1954.md),
+  pp. 163, 177–180). Lax defines the scheme on a staggered lattice, each
+  time level using every other point, consistent with the odd–even
+  pairing of the batch-12 bullet. His runs show the shock width staying constant while a
+  contact spreads like the square root of the number of cycles, and he
+  argues that Eulerian contact spreading cannot be prevented without
+  moving meshes.
+
 ## Contradictions
 
 * **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
@@ -530,3 +619,6 @@ decision).
 31. [Toro (1997)](/sources/toro-1997.md), §§6.4.2, 9.3–9.5, 10.5, 10.8, 11.1–11.5, 12.3–12.4.
 32. [Yeom & Chang (2010)](/sources/yeom-2010.md), §3.2.
 33. [Roe (1981)](/sources/roe-1981.md), pp. 357–371, eqs. 5–22, Table I.
+34. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §§2–4, Theorems 2.1, 3.1.
+35. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§3–6, Propositions 3.1–3.2.
+36. [Lax (1954)](/sources/lax-1954.md), pp. 163, 177–180.

@@ -115,7 +115,7 @@ varied computations convincingly show" stability), not by proof.
   [PPM](/methods/ppm.md)).
 * *Fallback.* The a posteriori limiting cascade ends at a first-order
   Godunov update, "supposed" monotone and positivity-preserving under its
-  CFL condition ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §4;
+  CFL condition ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §4.1;
   [a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).
 * *Stability properties.* Godunov's scheme is TVD in the scalar case
   ([Harten et al. (1987)](/sources/harten-1987.md);
@@ -157,6 +157,44 @@ varied computations convincingly show" stability), not by proof.
   [Simon & Mandal (2019)](/sources/simon-2019.md), §4.1;
   [Woodward & Colella (1984)](/sources/woodward-1984.md), §VIb).
 
+**Later uses (batch 16).**
+* *Eulerian form and entropy, restated* ([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md),
+  §3A, eqs. 3.3–3.6, pp. 45–46). The update is the cell average of the
+  exact solutions of the interface Riemann problems, equal to the
+  conservative scheme whose flux is the physical flux of the exact
+  solution on the interface. It satisfies a cell entropy inequality, by
+  the exact solution's entropy inequality and Jensen's inequality, the
+  argument of Godunov's §4 above. Two Courant bounds are kept apart:
+  neighbouring Riemann problems do not interact for
+  $\Delta t\max_p\vert\lambda^{(p)}\vert/h < \tfrac12$, while the conservative
+  form "remains consistent" with the averaging up to $\le 1$, the bound of
+  the Eulerian bullet above. The Godunov flux is only piecewise
+  differentiable; for linear systems it is Courant–Isaacson–Rees upwinding.
+* *What "Godunov-type" means* (Theorem 3.1). The alias on this page has a
+  precise definition there: an approximate Riemann solution consistent
+  with the integral forms of both the conservation law and the entropy
+  inequality, averaged over the half cells. Such schemes are conservative
+  and entropy-satisfying, and "if such a scheme converges, the limit
+  satisfies the conservation law and the entropy condition in the weak
+  sense"; convergence is assumed, not proved (p. 38). The paper presents
+  Roe's solver as Godunov-type in the sense of its flux formula (3.9),
+  which needs only the conservation condition, and says Osher's is not
+  (§3B)
+  ([approximate Riemann solvers](/methods/approximate-riemann-solvers.md);
+  [HLL](/methods/hll-riemann-solver.md)).
+* *Positivity* ([Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §2).
+  Godunov's method is positively conservative: the averages stay in the
+  convex admissible set if "no vacuum occurs in the exact solution to the
+  Riemann problem at the cell interfaces". The time-step condition is not
+  stated with the proof; the paper's runs use
+  $\Delta t\max_i(\vert v_{x,i}\vert + c_i)/h \le \tfrac12$
+  ([positivity preservation](/properties/positivity-preserving.md)).
+* *The weak-limit statement before Godunov* ([Lax (1954)](/sources/lax-1954.md),
+  pp. 163–164). Lax had shown for his conservative scheme that a bounded
+  a.e. (strong) limit is a weak solution, insisting that "a weak limit of
+  weak solutions is not a weak solution unless it is also a strong
+  limit"; Godunov cites the paper.
+
 # Citations
 
 1. [Godunov (1959)](/sources/godunov-1959.md), Ch. I §§2–5, Ch. II §§2–7, Appendices I–III (reader's translation of the Russian original).
@@ -171,3 +209,6 @@ varied computations convincingly show" stability), not by proof.
 10. [Sod (1978)](/sources/sod-1978.md), eqs. 12–19, Table I.
 11. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IIIc, VIa–VIb.
 12. [Simon & Mandal (2019)](/sources/simon-2019.md), §4.1.
+13. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §3A, eqs. 3.3–3.8, pp. 38, 45–46.
+14. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§2, 6.
+15. [Lax (1954)](/sources/lax-1954.md), pp. 163–164.

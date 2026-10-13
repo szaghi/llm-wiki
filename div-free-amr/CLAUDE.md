@@ -38,6 +38,12 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch 3b staged 2026-10-13, with deep lint #10:**
+ryu-jones-1995, ryu-jones-frank-1995, zachary-malagoli-colella-1994,
+dai-woodward-1998, dai-woodward-1998-b, roe-balsara-1996 (user downloads);
+109 sources. New page benchmarks/orszag-tang-vortex; one new Open
+contradiction (projection and jump conditions). Deep lint: 0 since #10.
+
 **Frontier batch 3a staged 2026-10-13:** jiang-shu-1996 and
 colella-woodward-1984, copied from a sibling archive (D17); 103 sources.
 New pages methods/weno and methods/ppm; registry section *Reconstruction

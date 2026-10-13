@@ -18,7 +18,8 @@ identically zero.
 
 **Origin.** The 2D form was introduced by
 [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) §3.3.1. A loop
-with $A_z = A_0(R - r)$ and $\beta = 2\cdot10^6$ is advected along the
+whose out-of-plane vector potential is proportional to the distance
+inside the loop radius, measured from the loop's edge (zero outside), with $\beta = 2\cdot10^6$, is advected along the
 diagonal of a periodic $2N\times N$ grid, so the field is effectively a
 passive scalar. Its first job there was to discriminate the dissipation of
 corner-EMF algorithms: an unbiased EMF goes oscillatory and a
@@ -56,7 +57,7 @@ period".
     overshoots the peak by about 20%, against about 8% at fourth order.
 * **A rotated 3D loop measures what CT does not hold**
   ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md)).
-  * The loop is rotated about $y$ ($\tan\gamma = 1/2$), with $v = (1,1,2)$
+  * The loop is rotated about $y$ (rotation angle with tangent 1/2), with $v = (1,1,2)$
     on $64\times64\times128$.
   * The field component along the loop axis is then zero only to
     truncation error, not round-off. It ranks EMF schemes: UCT is best,

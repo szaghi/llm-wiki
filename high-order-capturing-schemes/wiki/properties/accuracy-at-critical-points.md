@@ -115,7 +115,7 @@ On $u_t + u_x = 0$, $u_0 = \sin^4(\pi x)$:
   every MP-bounded variant converges markedly more slowly
   ([Balsara & Shu (2000)](/sources/balsara-2000.md), Table V).
 
-**Batch 3.** Both WENO-Z-type devices recur in the new schemes:
+**Later uses (batch 3).** Both WENO-Z-type devices recur in the new schemes:
 compact-reconstruction WENO adopts WENO-Z weights "which can avoid
 accuracy loss at critical points" ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.2),
 and WENO-AO interpolation uses $\tau$ built from indicator differences
@@ -123,7 +123,7 @@ for the same purpose, citing Borges et al.
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §III). Neither paper
 tests a critical-point problem directly.
 
-**Batch 4.** The fourth-order central [energy-stable WENO](/methods/energy-stable-weno.md)
+**Later uses (batch 4).** The fourth-order central [energy-stable WENO](/methods/energy-stable-weno.md)
 uses WENO-Z-form weights $d_k\left(1 + \tau/(\varepsilon + \beta_k)\right)$
 with $\tau = (\Delta^3 f_{j-1})^2$. Its truncation analysis gives
 design order for any number of vanishing derivatives if
@@ -150,8 +150,8 @@ two families agree on the scaling's ceiling but not on its floor.
 * **Closed (2026-10-08):** Henrick et al. explicitly supersede the
   earlier claim, identifying the error in the expansion and the reason
   the original tests could not detect it; confirmed independently by
-  [Borges et al. (2008)](/sources/borges-2008.md) and
-  [Castro et al. (2011)](/sources/castro-2011.md).
+  [Borges et al. (2008)](/sources/borges-2008.md), §§2, 4, and
+  [Castro et al. (2011)](/sources/castro-2011.md), §4.
 * *The original author's later position (batch 6), recorded, not
   reopening.* [Shu (2009)](/sources/shu-2009.md) does not repeat the
   critical-point claim and cites Henrick et al. as the improvement "to

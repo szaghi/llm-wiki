@@ -141,6 +141,15 @@ The cures (selective wave modification, entropy control) are on the
 The overview of all solvers and their roles in capturing schemes is the
 [approximate Riemann solvers](/methods/approximate-riemann-solvers.md) page.
 
+**Later uses (batch 16).** *Not in Harten, Lax & van Leer.* The 1983 paper
+([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §3B(ii)) already
+builds a two-intermediate-state Godunov-type solver, but it is not HLLC: its
+middle speed is an entropy-variable average equal to the shock or contact
+speed whenever Rankine–Hugoniot holds, its star states come from a numerical
+line flux, and an added viscosity, with unspecified constants, enforces the
+entropy inequality. The alias "Harten–Lax–van Leer–contact" names the HLL
+lineage, not this solver.
+
 # Citations
 
 1. [Toro (1997)](/sources/toro-1997.md), §§10.2–10.8, 17.1–17.2.
@@ -154,3 +163,4 @@ The overview of all solvers and their roles in capturing schemes is the
 9. [Berta et al. (2024)](/sources/berta-2024.md), §§3.2–3.3 (arXiv v4).
 10. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §3.1.
 11. [Baskaya et al. (2024)](/sources/baskaya-2024.md) (arXiv v1).
+12. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §3B(ii).

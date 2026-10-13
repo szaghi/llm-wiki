@@ -10,9 +10,9 @@ timestamp: 2026-10-13T00:00:00Z
 
 # Total variation diminishing (TVD) and bounded (TVB)
 
-With $TV(u) = \sum_i \vert u_{i+1} - u_i\vert$, a scheme is **TVD** if
-$TV(u^{n+1}) \le TV(u^n)$, and **TVB** if $TV(u^n) \le B$ for a bound $B$
-depending only on $TV(u^0)$, for all $n$ and $\Delta t$ with $t^n$ up
+With $TV(u) = \sum_i \vert \Delta^1 u_i\vert$, a scheme is **TVD** if
+$TV(u^{n+1}) \le TV(u^n)$, and **TVB** if $TV(u^n) \le B_{\mathrm{TV}}$ for a
+bound $B_{\mathrm{TV}}$ depending only on $TV(u^0)$, for all $n$ and $\Delta t$ with $t^n$ up
 to a fixed final time. Uniform boundedness of the total variation gives a
 subsequence converging in $L^1_{\mathrm{loc}}$ to a weak solution
 (with a conservative scheme, by the Lax–Wendroff theorem); an entropy
@@ -166,6 +166,17 @@ a narrow-base limiter built on saved interface values, which limits less
 near peaks (eq. 104). *Compiler reading:* it anticipates the enlarged
 admissible interval of [monotonicity-preserving limiting](/methods/monotonicity-preserving-limiter.md).
 
+**Later uses (batch 16).** *The Lax–Wendroff theorem with entropy*
+([Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §1, Theorem 1.1):
+a conservative scheme consistent with a discrete entropy inequality, if it
+converges boundedly in $L^1_{\mathrm{loc}}$ at fixed $\Delta t/h$, has a limit
+that is a weak solution satisfying the entropy inequality; the total-entropy
+estimate alone "is not strong enough to prove the pointwise boundedness …
+nor the existence of convergent subsequences" (p. 38), which is the gap a
+TVD bound fills. Lax & Wendroff (1960) itself is not ingested.
+
+**Later uses (batch 16).** *A multi-D barrier, quoted, and source terms* ([Shu (1988b)](/sources/shu-1988-b.md), pp. 1077–1082). No local-stencil scheme of order above one was proven TVD in two or more dimensions; Goodman and LeVeque proved that in 2D a TVD scheme, for the total variation summed over both directions with mesh-size weights, is at most first order. Shu notes that this does not exclude high-order TVB schemes, and that dimension-split 1D TVD schemes increase this total variation mostly by "distortions of level curves rather than by oscillations", so it "may not be the best choice". With a source Lipschitz in $u$ and $x$, TVD schemes become TVB of the same order (Proposition 3.2).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–2, Remark 1.3.
@@ -179,3 +190,5 @@ admissible interval of [monotonicity-preserving limiting](/methods/monotonicity-
 9. [Godunov (1959)](/sources/godunov-1959.md), Ch. I §§2–3 (reader's translation of the Russian original).
 10. [Harten (1983)](/sources/harten-1983.md), §§2–6 (Theorem 2.1, Lemmas 2.2, 3.1–3.4, 4.2, Corollary 4.3).
 11. [van Leer (1979)](/sources/vanleer-1979.md), §§3.3, 4.
+12. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §1, Theorem 1.1, p. 38.
+13. [Shu (1988b)](/sources/shu-1988-b.md), §3, p. 1082.

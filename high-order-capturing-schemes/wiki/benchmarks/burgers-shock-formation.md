@@ -73,10 +73,10 @@ Finest-grid orders as printed ($L^1$, then $L^\infty$).
 
 | Source | Scheme | Grid | Orders |
 |---|---|---|---|
-| [Harten et al. (1987)](/sources/harten-1987.md), Tables IA–IB | [ENO](/methods/eno-reconstruction.md) $r = 4$, 5 with a [Taylor](/methods/taylor-time-discretization.md) step, Roe flux, CFL 0.6 | $J = 128$ | reconstruction via primitive: $L^\infty$ 3.02 ($r = 4$) and 4.50 ($r = 5$); via deconvolution: $L^1$ 4.53 and 5.53, $L^\infty$ 4.76 and 5.36 |
+| [Harten et al. (1987)](/sources/harten-1987.md), Tables IA–IB | [ENO](/methods/eno-reconstruction.md) $r = 4$, 5 with a [Taylor](/methods/taylor-time-discretization.md) step, Roe flux, CFL 0.6 | 128 cells | reconstruction via primitive: $L^\infty$ 3.02 ($r = 4$) and 4.50 ($r = 5$); via deconvolution: $L^1$ 4.53 and 5.53, $L^\infty$ 4.76 and 5.36 |
 | [Shu & Osher (1988)](/sources/shu-1988.md), Table 1 | flux ENO, Lax–Friedrichs building block, [TVD Runge–Kutta](/methods/ssp-runge-kutta.md), orders 3 and 4 | $h = 1/40$ | 3.13 and 2.89 (third); 4.76 and 4.35 (fourth) |
 | [Liu, Osher & Chan (1994)](/sources/liu-1994.md), Table III | [WENO](/methods/weno.md) $r = 3$, Roe flux with entropy fix | 320 | 4.79 and 6.21; the $L^\infty$ order is 3.41 between 80 and 160 |
-| [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Table 5.3 | [central WENO](/methods/central-weno.md), $m = 3$ and 4 | 640 | 3.11 and 3.53 ($m = 3$, above 4 on middle grids); 4.19 and 4.18 ($m = 4$) |
+| [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Table 5.3 | [central WENO](/methods/central-weno.md), orders 3 and 4 (Levy et al.'s $m$) | 640 | 3.11 and 3.53 (order 3, above 4 on middle grids); 4.19 and 4.18 (order 4) |
 | [Balsara & Shu (2000)](/sources/balsara-2000.md), Table VI | ninth-order [MPWENO](/methods/monotonicity-preserving-limiter.md), LLF flux, RK3 with $\Delta t \propto h^{3}$ | 160 | 8.52 and 8.53 |
 | [Qiu & Shu (2005)](/sources/qiu-2005.md), Table 1 | [WENO-limited RKDG](/methods/weno-limited-dg.md), $P^1$–$P^3$, perturbed meshes | 320 | $P^3$: 3.98 and 4.22 limited, 4.00 and 4.22 unlimited; $P^2$: 2.81 and 2.75 limited, 2.81 and 2.60 unlimited |
 | [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), Table 2 | [WENO-ZQ and WENO-AO](/methods/weno-ao.md), RK4 with a step shrunk to expose spatial order | 80–160 | ZQ 5.37 and 4.88; AO(7,5,3) 7.30 and 6.98; AO(9,5,3) 8.87 and 8.57 |
@@ -105,8 +105,9 @@ stable for the fifth-order scheme where 3 is predicted, for $1 + \tfrac12\sin x$
   same at $t = 0.55$ and find fifth order, $L^1$ 6.70 and $L^\infty$
   5.72 between 160 and 320 points, and conclude that "error propagation
   of the schemes is still very local" (Table IV). Pirozzoli's $L^1$
-  error outside $\pm 0.1$ of the shock scales overall as $N^{-5}$; on
-  coarse grids the shock dominates, and from $N = 320$ the
+  error outside $\pm 0.1$ of the shock scales overall as the inverse fifth
+  power of the number of points; on coarse grids the shock dominates, and
+  from 320 points the
   [hybrid compact-WENO](/methods/hybrid-compact-weno.md) schemes are 2–3
   times more accurate than WENO of the same order (Fig. 9, graph only).
 * **The shock itself.** Shu and Osher print the pointwise errors at ten
@@ -134,13 +135,14 @@ $L^\infty$ error at $h = 1/40$ as 5.4e-5, which does not match its order
 $L^\infty$ entry (1.2158e-5, order 4.88) for WENO-ZQ and WENO-AO(5,3).
 Baeza et al.'s Table 10 prints 9.45e-6 for the $L^\infty$ error at both
 160 and 320 points, against orders 8.70 and 5.37. Ding et al.'s 2D
-captions print $\Delta x = \Delta y = 1/80$ against $\Delta x = 2/N_x$
+captions print $h_x = h_y = 1/80$ against $h_x$ = 2 over the number of cells in $x$
 in their tables. Balsara and Shu's run time $1/\pi$ is before breaking
 by a factor of two. These are compiler's checks.
 
 **Related.** An "isentropic Euler–Burgers" problem sets the Euler
-velocity to a Burgers wave that breaks at a printed time $t_s = 1$, with
-density and pressure from isentropic relations, and runs to $4t_s$ to
+velocity to a Burgers wave that breaks at a printed time $t = 1$, with
+density and pressure from isentropic relations, and runs to four times
+the breaking time to
 pass the shock through AMR interfaces
 ([Wang et al. (2025)](/sources/wang-2025.md), §6.2; preprint;
 [high-order AMR](/methods/high-order-amr.md)). Burgers Riemann problems

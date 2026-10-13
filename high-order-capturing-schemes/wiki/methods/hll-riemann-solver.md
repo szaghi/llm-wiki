@@ -4,7 +4,7 @@ title: "HLL Riemann solver and wave-speed estimates"
 description: "Harten, Lax and van Leer's two-wave approximate Riemann solver: one constant star state between the speeds S_L and S_R, its flux in three-branch, clipped and central (dissipation) forms, the wave-speed estimates that complete it (Davis, Roe-average, the two forms called Einfeldt's, pressure-based), Rusanov and Lax–Friedrichs as its symmetric special cases, its contact and shear diffusion, what is and is not proved about its positivity, its robustness at strong shocks, and HLL-BVD."
 status: established
 aliases: [HLL, HLLE, HLL flux, Harten–Lax–van Leer solver, two-wave Riemann solver, Davis wave speeds, Einfeldt wave speeds]
-tags: [riemann-solver, numerical-flux, positivity, shock-instability, contact-discontinuity]
+tags: [riemann-solver, hll, numerical-flux, positivity, shock-instability, contact-discontinuity]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -56,7 +56,7 @@ result covers any approximate solver consistent with the integral form of
 the conservation laws ([Toro (1997)](/sources/toro-1997.md), §10.3, p. 298).
 Xie et al. likewise list HLLE among the Godunov-type schemes that satisfy a
 discrete entropy condition ([Xie et al. (2021)](/sources/xie-2021.md), §1).
-Both are secondhand: the 1983 paper is not in the corpus.
+Both are secondhand; the 1983 paper is now ingested as [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), and what it proves is in the batch-16 block below.
 
 ## Wave-speed estimates
 
@@ -201,8 +201,8 @@ Lax–Friedrichs or Roe-type fluxes
   for the HLL/HLLEM class applied to one-dimensional first-order schemes
   for Euler flow, and no proof exists for Roe- or Osher-type solvers
   ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1). Einfeldt et al.
-  (1991) is not in the corpus, so every HLL positivity claim in this bundle
-  rests on citation.
+  (1991) is now ingested as [Einfeldt et al. (1991)](/sources/einfeldt-1991.md);
+  what it proves is in the batch-16 block below.
 * **MHD.** A first-order scheme with HLL or LLF face fluxes "will indeed be
   PCP, as was first proved by Gurski" ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.1);
   whether the first-order Lax–Friedrichs MHD scheme is provably positive is
@@ -292,6 +292,90 @@ page (batch-11 bullet "HLL-BVD").
   ([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md)); HLL among the face
   fluxes of fourth-order FV for MHD ([Berta et al. (2024)](/sources/berta-2024.md), §§3.2–3.3).
 
+**Later uses (batch 16).** *The primary sources are now ingested:*
+[Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md) and
+[Einfeldt et al. (1991)](/sources/einfeldt-1991.md). The "secondhand"
+remarks above predate them; what the papers
+themselves say follows.
+* *The solver as printed* (Harten, Lax & van Leer, §3B(i), eqs.
+  3.13–3.15b). The star state (3.14) and the three-branch flux (3.15a)
+  agree term by term with the Toro formulas at the top of this page; the
+  printed middle-branch condition has the right state where the right
+  speed $S_R$ belongs, a misprint quoted on the Source page. The
+  one-line form with speeds clipped at zero is already in the original as
+  (3.15b), so the clipped-speed form above goes back to it. $S_L$ and
+  $S_R$ are only "lower and upper bounds, respectively, for the smallest
+  and largest signal velocity, calculated according to some algorithm":
+  the paper gives no algorithm, which fits the statement above that Davis
+  and Einfeldt made the solver practical. If the data are joined by a
+  single shock of the first (last) family and the speed algorithm returns
+  its speed, the solver is exact (3.16).
+* *What is proved about convergence and entropy* (§§1, 3A–3B; a correction
+  of the "Convergence and entropy, as reported" paragraph, which follows
+  Toro). Theorem 3.1 defines a Godunov-type scheme by **two** conditions
+  on the approximate Riemann solution: consistency with the integral form
+  of the conservation law (3.7a) **and** with the integral form of the
+  entropy inequality (3.7b). Under both, the scheme satisfies a cell
+  entropy inequality, and by Theorem 1.1, "if such a scheme converges, the
+  limit satisfies the conservation law and the entropy condition in the
+  weak sense". Condition (3.7a) alone gives conservation form only, so the
+  result does not cover "any approximate solver consistent with the
+  integral form of the conservation laws". Convergence is assumed, not
+  proved: the entropy estimate "is not strong enough to prove the
+  pointwise boundedness … nor the existence of convergent subsequences"
+  (p. 38). The limit satisfies the weak entropy inequality for the entropy
+  pair used; the paper says nothing about uniqueness, so "proved that the
+  limit is the entropy solution" overstates it. For HLL, (3.7b) holds by
+  Jensen's inequality because $u^{\mathrm{HLL}}_*$ is the exact mean of
+  the Riemann solution over $(S_L\Delta t, S_R\Delta t)$, which requires
+  $S_L$ and $S_R$ to bound the true signal speeds (p. 50).
+* *No positivity result in Harten, Lax & van Leer.* Its only statement on
+  positivity is a caution that a scheme must keep density and pressure
+  positive (p. 38). The Zhang & Shu citation in "Cited, not proved here"
+  therefore points to a paper that does not prove it.
+* *Positivity of HLLE, proved* (Einfeldt et al., §4, eqs. 4.4–4.12, App.).
+  With the speeds (4.5),
+  $S_L = \min(v_{n,\mathrm{Roe}} - c_{\mathrm{Roe}},\ v_n^- - c^-)$ and
+  $S_R = \max(v_{n,\mathrm{Roe}} + c_{\mathrm{Roe}},\ v_n^+ + c^+)$, which
+  is Xie et al.'s min/max form above, the first-order scheme is
+  positively conservative: the speeds are "lower and upper bounds for the
+  physical signal velocity", so the star state is an average of the exact
+  solution and lies in the convex set $\mathcal G$ "as long as no vacuum is
+  present". The bounding property is asserted, not proved, and no
+  time-step condition is stated with the proof (the runs use
+  $\Delta t\max_i(\vert v_{x,i}\vert + c_i)/h \le \tfrac12$). A sharper
+  set, with $c^\mp$ in the cell arguments multiplied by
+  $\sqrt{(\gamma - 1)/(2\gamma)}$ (4.10), keeps positivity by a direct
+  algebraic argument on the star state (4.9, "the sharpest possible (in
+  the one-dimensional case)"), and is less dissipative at most
+  rarefactions; for a single shock both sets return the Roe eigenvalue
+  (4.12). With $S_L = -S_R$ and $S_R$ the largest $\vert v_n\vert + c$ at
+  the Roe state and in the two cells, HLLE becomes a flux "of
+  Lax–Friedrich type", "very diffusive" (4.7–4.8).
+* *Scope of "HLL/HLLEM class"* (a qualification of Balsara & Kim's
+  attribution in "Cited, not proved here"). The 1991 paper proves
+  positivity for HLLE (and Godunov's method), first order, Euler, with
+  1D interface proofs in a 2D setting stated to extend to 3D. For HLLEM it
+  only asserts that the scheme "does not suffer under the instabilities
+  described in Section 3" (Remark after eq. 5.9), and its shear test runs
+  HLLEM with the shear anti-diffusion set to zero; with Roe-eigenvalue
+  speeds HLLEM is Roe's scheme and fails (§5). The HLLEM part of the
+  attribution may rest on Einfeldt (1988), which is not ingested
+  ([HLLEM](/methods/hllem-riemann-solver.md)).
+* *Which formulas are "Einfeldt's"* (§4). The 1991 paper prints only the
+  min/max speeds (4.5), the Lax–Friedrichs-type member (4.7) and the
+  sharper speeds (4.10). Toro's $\bar c_{\mathrm E}$ form is not in it;
+  its origin is not settled by this batch (Einfeldt (1988) is a candidate,
+  not ingested). The paper calls HLL with its speeds "the HLLE scheme",
+  crediting Harten, Lax & van Leer and Einfeldt (1988). Near sonic points
+  a Roe eigenvalue can fall outside the two cells' eigenvalues (Vinokur);
+  the bounding speeds then add dissipation, a failure the authors call
+  "not significant" (4.13–4.14).
+* *Lax–Friedrichs at the source.* The $S = h/\Delta t$ case above
+  reproduces the scheme Lax prints, written on a staggered lattice
+  (reader's algebra, [Lax (1954)](/sources/lax-1954.md), p. 163;
+  [monotone numerical flux](/definitions/monotone-flux.md)).
+
 # Citations
 
 1. [Toro (1997)](/sources/toro-1997.md), Ch. 10 introduction, §§6.4.2, 10.2–10.3, 10.5, 10.7–10.8.
@@ -314,3 +398,6 @@ page (batch-11 bullet "HLL-BVD").
 18. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.1.
 19. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md).
 20. [Berta et al. (2024)](/sources/berta-2024.md), §§3.2–3.3 (arXiv v4).
+21. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §§1, 3, eqs. 3.7, 3.13–3.16.
+22. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§4–6, eqs. 4.4–4.14, 5.9, App.
+23. [Lax (1954)](/sources/lax-1954.md), p. 163.

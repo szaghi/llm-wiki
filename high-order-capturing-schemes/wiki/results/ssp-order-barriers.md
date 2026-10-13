@@ -152,6 +152,47 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
   rests on is not recorded in this bundle
   ([TVD](/properties/total-variation-diminishing.md)).
 
+**Later uses (batch 16).**
+* *The first-order bullet, at its origin.* The earliest form of "an
+  $s$-stage first-order method reaches $\mathcal C = s$" in the corpus is
+  Shu's steady-state scheme: stage coefficients $i/(s(s-i+1))$, one cycle
+  equal to the $s$-th power of a forward-Euler-type operator of step
+  $\Delta t/s$, TVD under CFL number $s$
+  ([Shu (1988b)](/sources/shu-1988-b.md), Proposition 2.1, eqs. 2.4–2.10).
+  Its nonlinear coefficients are frozen at the start of each cycle, so it
+  is a linear iteration, not a Runge–Kutta method applied to a nonlinear
+  $\mathcal L$. The bullet above is Gottlieb, Shu and Tadmor's.
+* *The multistep values come from Shu (1988b), Table 1.* Two-step second
+  order $0.5$, three-step $0.5$, four-step second order $0.67$, four-step
+  third order $0.33$, five- and six-step third order $0.5$ and $0.57$,
+  six-step fourth order $0.245$ and six-step fifth order $0.1298$ are all
+  rows of that table ([SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
+  For four-step fourth order and five-step fifth order Shu's methods have
+  $0.15$ and $0.077$, below the $0.159$ and $0.085$ above; Shu calls his
+  table "by no means exhaustive, nor … the optimal of the corresponding
+  order". A four-step second-order method with a negative coefficient
+  reaches $0.75$, above the $2/3$ quoted here, at the cost of
+  $\tilde{\mathcal L}$, whose avoidance "will reduce the work of each
+  timestep by one half" (Remark 3.1).
+* *The barrier, seen in the table.* Every $m$-step method of order $m$
+  in Table 1 has a negative coefficient, consistent with Proposition 5.1
+  above; Shu states no such theorem. He never asserts the belief that
+  fourth order forces negative coefficients, which the five-step bullet
+  above disproves; his table merely contains no fourth-order method with
+  all $b_i \ge 0$.
+* *Existence at every order* (Corollary 3.1). For any TVD space
+  discretization of a given order there are $m$-step TVD multistep
+  methods of the same order, $p_{\mathrm t} = m$, with positive CFL number; the coefficients solve a nonsingular
+  (Vandermonde-type) linear system, and may be negative, so
+  $\tilde{\mathcal L}$ is then needed. The four-step third-order row of
+  Table 1 is misprinted (see the multistep page).
+* *A spatial barrier, quoted.* No local-stencil scheme of order above one
+  was proven TVD in two or more dimensions, and Goodman and LeVeque proved
+  that in 2D a TVD scheme, for the total variation summed over both
+  directions, is at most first order; Shu notes that this does not exclude
+  high-order TVB schemes and that this 2D total variation "may not be the
+  best choice" (p. 1082; [TVD](/properties/total-variation-diminishing.md)).
+
 # Citations
 
 1. [Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §§2–6 (Propositions 3.1–6.3, Table 3.1).
@@ -163,3 +204,4 @@ $\Delta t \le \eta/31$ to $\Delta t \le 2\eta$.
 7. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§3.1–3.2 (arXiv v2).
 8. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §1 (arXiv v2).
 9. [Harten (1983)](/sources/harten-1983.md), §2 (Lemma 2.2).
+10. [Shu (1988b)](/sources/shu-1988-b.md), §§2–3, Proposition 2.1, Corollary 3.1, Remark 3.1, Table 1, p. 1082.

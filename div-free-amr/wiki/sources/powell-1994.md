@@ -131,7 +131,7 @@ those are in [Powell et al. (1999)](/sources/powell-1999.md).
 | $\mathbf u = (u,v,w)$ | $\mathbf u$, $u_h$ | |
 | $B_n$ | words: normal field | as on the rotated-shock-tube page |
 | $\sum_{\text{faces}} B_n\,ds = 0$ (eq. 5) | $D_h^{\mathrm f} B_h = 0$ | stated as the constraint only, not as the divergence used in the source |
-| $(0,\mathbf B,\mathbf u,\mathbf u\cdot\mathbf B)^T$ | $S(U)$ as on [positivity–divergence coupling](/results/positivity-divergence-coupling.md) | |
+| $(0,\mathbf B,\mathbf u,\mathbf u\cdot\mathbf B)^T$ | words: eight-wave source vector | multiplied by $\nabla\cdot\mathbf B$ |
 | $E$ (total energy) | words | **collision:** $E_h$ is the EMF |
 | $A_p, B_p, C_p$, $A'_p$ (Jacobians) | words | **collision:** $A_h$, $B_h$, $C_h$ |
 | $\tilde\ell_k$, $\tilde r_k$ | words | **collision:** $l$ (level), $r$ (ratio) |
@@ -170,5 +170,5 @@ those are in [Powell et al. (1999)](/sources/powell-1999.md).
    * **Reference list.** 7 entries, all merged. The two "[?]" citations
      cannot be identified from this source and are not merged. Roe &
      Balsara, printed "J. Comput. Phys., to appear" (1994), was merged into
-     `roe-1996` (SIAM J. Appl. Math. 56:57). The bibliography holds 3654
+     `roe-1996` (SIAM J. Appl. Math. 56:57; key renamed `roe-balsara-1996` when that source was ingested, 2026-10-13). The bibliography holds 3654
      entries after this batch.

@@ -5,7 +5,7 @@ description: "How finite-volume Godunov codes replace the ideal-gas law by an ar
 status: established
 aliases: [general EOS, non-ideal equation of state, tabulated EOS, tabular EOS, Helmholtz EOS, real-gas EOS]
 tags: [hydro, mhd, equation-of-state, riemann-solver, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # General equations of state in Godunov codes
@@ -147,6 +147,10 @@ cell:
 * Serna & Marquina (2014) van der Waals tests give "comparable results" by
   visual comparison (§4).
 
+## Later uses (batch 8)
+
+* **FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §4, ships three EOS: a gamma law, the analytic Nadyozhin EOS (maximum error about 0.1 %) and the Helmholtz EOS (recommended). The Helmholtz table is a biquintic Hermite fit, consistent "to the limits of IEEE 64 bit arithmetic", with typical error about $10^{-7}$. It covers $10^{-10}$ to $10^{11}$ g cm$^{-3}$ in $\rho Y_{\mathrm e}$ and $10^4$ to $10^{11}$ K, 211 × 71 points, about 1 MB, and runs about twice as fast as Nadyozhin. Each EOS is called in temperature and density, with temperature found by Newton–Raphson in 2–4 iterations. The hydro needs both $\gamma$ and $\Gamma_1$ (§3.1). All tests in the paper use the gamma law (§7), in agreement with Coleman (2020).
+
 # Citations
 
 1. [Coleman (2020)](/sources/coleman-2020.md), §§1–6, eqs. 4–28,
@@ -154,3 +158,4 @@ cell:
 2. [Almgren et al. (2010)](/sources/almgren-2010.md), §§3, 5.2 (arXiv v1).
 3. [Katz et al. (2016)](/sources/katz-2016.md), §§2.2, 4.4 (arXiv v2).
 4. [Stone et al. (2020)](/sources/stone-2020.md), §§3.1–3.2.2.
+5. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.1, 4–4.4, 7.

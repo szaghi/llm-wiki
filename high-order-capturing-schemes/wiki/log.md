@@ -2,6 +2,78 @@
 
 ## 2026-10-13
 
+* **Deep lint** (12 ingestions since the whole-bundle lint of batch 13).
+  Two read-only audits, fixes checked against the PDFs:
+  * **Contradictions.** Parallel-force sign entry: added that Derigs et
+    al.'s own eqs. 2.18–2.20 entail the plus sign against their eq. 2.21; a
+    printed-sign erratum is the likely reading; still Open, for the
+    human's fiat. α_s entry restated (is the $1/c_f$ intended?), Brio &
+    Wu's eq. 46 ($\alpha_s = 1$) added, and the batch-11 compiler reading
+    "a different scaling, not a misprint" withdrawn. The cut-cell entry is
+    flagged to the human as possibly a scope difference (local first order
+    vs global L² second order); unchanged.
+  * **Claims.** "HLL/HLLEM class" sentences now attribute the claim to
+    Balsara & Kim (HLLE only proved); Lax shock-tube set-up no longer
+    credited to Lax (1954); RKDG cost "8 times fewer cells as the paper
+    counts them (4.8 with the CFLs used)"; AMReX ghost-fill order matched
+    to Berger & Colella; Harten (1983) evidence added to the Sod,
+    stationary-shock, forward-facing-step and contact-sharpening pages it
+    linked to; section locators added to four Contradictions sides.
+  * **Notation.** Registered $TV(u)$, $B_{\mathrm{TV}}$, $P^K$ and the
+    fixed-step $a_i$, $b_i$; $\mathbf I$ → $\mathsf I$; bare $r$, $T$, $J$,
+    $N$, $\epsilon$, $\alpha$ replaced; non-conforming "Later" block labels
+    renamed; tag merges (flux-vector-splitting, steady-state,
+    conservation-form; `hll` added).
+  * **Deferred:** the order tables on the multi-resolution WENO and Burgers
+    pages are verified against the PDFs but not yet transcribed onto their
+    Source pages.
+
+* **Batch 16 (frontier 3b): ingested [Lax (1954)](/sources/lax-1954.md),
+  [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md),
+  [Einfeldt et al. (1991)](/sources/einfeldt-1991.md),
+  [Shu (1988)](/sources/shu-1988-b.md), [Cockburn & Shu (1998)](/sources/cockburn-1998.md)
+  and [Roe & Balsara (1996)](/sources/roe-1996.md)**, the user's downloads of
+  the bundle's most-cited works not yet ingested (124 of 124).
+  * **New page:** [Runge–Kutta discontinuous Galerkin method](/methods/rkdg.md)
+    (the scheme, the TVB minmod limiter with $M = 50$, characteristic
+    limiting, the $P^1$-only limiting assumption, triangles); linked from
+    the reading guide.
+  * **Updated:** [HLL](/methods/hll-riemann-solver.md), [HLLEM](/methods/hllem-riemann-solver.md),
+    [HLLC](/methods/hllc-riemann-solver.md), [approximate Riemann solvers](/methods/approximate-riemann-solvers.md),
+    [Godunov's method](/methods/godunov-method.md), [monotone flux](/definitions/monotone-flux.md),
+    [positivity preservation](/properties/positivity-preserving.md),
+    [total variation diminishing](/properties/total-variation-diminishing.md),
+    [Lax shock tube](/benchmarks/lax-shock-tube.md), [double rarefaction](/benchmarks/double-rarefaction.md),
+    [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), [SSP order barriers](/results/ssp-order-barriers.md),
+    [SSP multistep](/methods/ssp-linear-multistep.md), [Taylor time discretization](/methods/taylor-time-discretization.md),
+    [WENO-limited DG](/methods/weno-limited-dg.md), [double Mach reflection](/benchmarks/double-mach-reflection.md),
+    [forward-facing step](/benchmarks/forward-facing-step.md), [shock diffraction](/benchmarks/shock-diffraction.md),
+    [characteristic decomposition](/methods/characteristic-decomposition.md)
+    and [MHD nonconvexity](/results/mhd-nonconvexity.md).
+  * **New Open `Contradictions` entry** on
+    [characteristic decomposition](/methods/characteristic-decomposition.md):
+    does Brio & Wu's printed $\alpha_s$ (eq. 40) carry $1/c_f$, read in
+    batch 11 as "a different scaling, not a misprint", when Roe & Balsara
+    (p. 60) say their $\alpha_s$ is "defined here identically"?
+  * **Qualifications, not contradictions:** Harten, Lax & van Leer prove an
+    entropy inequality for a convergent limit, not "the entropy solution",
+    and have no positivity result; Einfeldt et al. prove positivity for
+    HLLE only, HLLEM asserted; the "Lax shock tube" data are not in Lax
+    (1954); "four times more zones" on the double Mach reflection is
+    Balsara et al.'s figure, Cockburn & Shu's is a factor 2 per direction.
+    The "not in the corpus" sentences on the HLL and double-rarefaction
+    pages now point to the ingested papers.
+  * Shu (1988) Table 1, row (3 steps, third order): the printed
+    $\beta_3 = 44/27$ fails the first order condition; the order conditions
+    give $4/9$, which reproduces the printed CFL 1/3 (compiler's
+    derivation, recorded beside the printed value).
+  * **Bibliography** (3184 entries): 132 references merged; the Annals of
+    Mathematics Studies chapter cited by Lax without year keyed lax-1955
+    (Crossref); Osher's two 1981 papers are osher-1981-b and -c, apart from
+    Osher & Solomon; Roe printed 53:357 by Einfeldt merged into roe-1981;
+    Harten & Hyman's "JCP 235" is harten-1983-c; the HLL paper's
+    bibliography title corrected to "Godunov-type".
+
 * **Batch 15 (frontier 3a): ingested [Brackbill & Barnes (1980)](/sources/brackbill-1980.md)
   and [Berger & Colella (1989)](/sources/berger-1989.md)**, cited by 14
   sources each, from PDFs copied out of sibling archives into this

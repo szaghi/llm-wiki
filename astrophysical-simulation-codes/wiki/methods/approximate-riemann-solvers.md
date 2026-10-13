@@ -413,6 +413,10 @@ very large errors are generated in the single zone just behind the shock"
 Ferguson 1997; Bell, Colella & Trangenstein 1989), not this equation; the
 Enzo entry names no origin.
 
+## Later uses (batch 8)
+
+* **The two-shock solver in FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.1.6–3.1.7, eqs. 68–91: both waves are treated as shocks ("accurate to third order in the size of the entropy jump"). The star pressure comes from Newton–Raphson, "two to three iterations" for "reasonably strong shocks", and simple linear iteration may need 10 or more. A secant iteration with Colella & Glaz's two adiabatic indices handles a general EOS. Inside a rarefaction the state is linearly interpolated between head and foot. Interface mass fractions are clipped and renormalized (§3.1.8).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -437,3 +441,4 @@ Enzo entry names no origin.
 20. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.1 (arXiv v2).
 21. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §2 (arXiv v1).
 22. [Colella & Woodward (1984)](/sources/colella-1984.md), eq. 2.8, pp. 185, 191, §4, Fig. 8.
+23. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§3.1.6–3.1.8.

@@ -92,6 +92,20 @@ second order* ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F, e
   filed here; the attribution is recorded as printed on the
   [Quirk test](/benchmarks/quirk-odd-even-test.md) page.
 
+**Later uses (batch 14).** *An early one-dimensional version*
+([Harten (1983)](/sources/harten-1983.md), §7.I, eq. 7.9, Figs. 4–5).
+* **Set-up.** Two states related by the Rankine–Hugoniot conditions of
+  the $v_x - c$ field with zero shock speed, upstream $\rho = p = 1$,
+  $\gamma = 1.4$; upstream Mach number 4 (pressure ratio 18.5) and 10
+  (ratio 116.5); 100 cells, 50 steps, $\nu = 0.95$; Harten's simplified
+  second-order TVD scheme (ULT2); pressure profiles only.
+* **Results.** At Mach 4 the entropy-fix parameter is set to 0.1 and
+  0.25, at Mach 10 to 0.1 "for robustness". The inverted, inadmissible
+  Mach 4 discontinuity is broken up with parameter 0.1, while with 0 it
+  is "an entropy-violating stationary solution for ULT2" (Fig. 5). This
+  is a one-dimensional test of entropy enforcement, not of the
+  multidimensional instability the tests above probe.
+
 # Citations
 
 1. [Xie et al. (2021)](/sources/xie-2021.md), §§3.1, 3.4–3.5.
@@ -99,3 +113,4 @@ second order* ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F, e
 3. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.6.
 4. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V.
 5. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F.
+6. [Harten (1983)](/sources/harten-1983.md), §7.I, eq. 7.9, Figs. 4–5.

@@ -284,6 +284,46 @@ von Neumann analysis of the full discretization.
 * *Multistep methods with variable steps* are on [SSP linear multistep methods](/methods/ssp-linear-multistep.md)
   ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md)).
 
+**Later uses (batch 16).**
+* *Not the source of the coefficients.* Shu's SIAM paper on
+  "total-variation-diminishing time discretizations" prints no coefficient
+  of the second- and third-order methods above; it credits them to Shu &
+  Osher ([Shu (1988b)](/sources/shu-1988-b.md), Remark 3.3). It states the
+  motivation of **Why nonlinear stability matters** in its own words:
+  "linear stability is not enough for convergence in the presence of
+  discontinuities, and a stronger nonlinear stability such as TVD is
+  needed" (§1, p. 1074).
+* *A steady-state multistage scheme.* An $s$-stage scheme with stage
+  coefficients $i/(s(s-i+1))$, whose nonlinear incremental coefficients
+  are frozen at the start of each cycle, makes one cycle the $s$-th power
+  of a forward-Euler-type operator of step $\Delta t/s$. It is TVD under
+  CFL number $s$ and first order in time (Proposition 2.1). It is a linear
+  iteration with frozen coefficients, not a Runge–Kutta method applied to
+  the nonlinear $\mathcal L$. Computing the coefficients once per cycle
+  cuts the work: 54 cycles against 321 forward-Euler steps on a linear
+  steady problem, and 90 cycles ($s = 6$) where forward Euler with a
+  third-order flux does not converge within 2000 steps on a steady shock
+  (§4, Tables 2 and 4; [SSP order barriers](/results/ssp-order-barriers.md)).
+* *Origin of the multistep line above.* "TVD multistep methods exist to
+  third order with $\mathcal C = 0.5$ per evaluation; none of fourth order
+  without negative coefficients was found" summarizes Table 1 of
+  [Shu (1988b)](/sources/shu-1988-b.md): its five-step third-order method
+  has $\mathcal C = 0.5$ (six steps: $0.57$), and every fourth- and
+  fifth-order method in it has a negative coefficient
+  ([SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
+* *In RKDG the order follows the degree.* Cockburn and Shu use the
+  second-order method above with degree-1 DG and the third-order method
+  with degree 2 (order $K + 1$), with the limiter on the initial
+  projection and after every stage; their Table 1 coefficients are those
+  above, with $\mathcal C = 1$. This qualifies the batch-4 line "*RKDG*
+  uses SSP-RK3": that holds for $K = 2$. They impose boundary data at the
+  stage times $t^n + \mathsf c\,\Delta t$, $\mathsf c = 0, 1, \tfrac12$,
+  the treatment the batch-4 bullet on boundary data reports to reduce
+  accuracy to second order in finite differences; they show no
+  convergence test, so the two are not compared on the same problem
+  ([Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.2–2.3,
+  Table 1; [RKDG](/methods/rkdg.md)).
+
 # Citations
 
 1. [Shu & Osher (1988)](/sources/shu-1988.md), §II (eqs. 2.12–2.19 read from the page images).
@@ -338,3 +378,5 @@ von Neumann analysis of the full discretization.
 50. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §§5, 7, App. A.
 51. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§1–4 (arXiv v2).
 52. [Shu & Osher (1989)](/sources/shu-1989.md), §§1, 3.
+53. [Shu (1988b)](/sources/shu-1988-b.md), §§1–4, Proposition 2.1, Remark 3.3, Tables 1, 2, 4.
+54. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§2.2–2.3, Table 1.

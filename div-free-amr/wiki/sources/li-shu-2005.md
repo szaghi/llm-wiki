@@ -8,7 +8,7 @@ authors: [Li F., Shu C.-W.]
 year: 2005
 venue: "J. Sci. Comput. 22-23:413-442"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2005-JSC-Li-101007s10915-004-4146-4.pdf"
-tags: [discontinuous-galerkin, divergence-constraint, mhd, high-order]
+tags: [dg, divergence-constraint, mhd, high-order]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

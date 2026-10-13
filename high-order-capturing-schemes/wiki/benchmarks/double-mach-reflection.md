@@ -233,6 +233,29 @@ X-MP/22, estimated at one eighth of a uniform fine grid's
 ([high-order AMR](/methods/high-order-amr.md)). The text gives
 $t = 1.20$ and the caption $t = 0.12$.
 
+**Later uses (batch 16).** *RKDG with the TVB limiter*
+([Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.1, Figs. 4.1–4.3;
+[RKDG](/methods/rkdg.md)).
+* *Runs.* The set-up line above to $t = 0.2$, rectangles, local
+  Lax–Friedrichs flux, TVB constant $M = 50$; degree 1 with second-order
+  and degree 2 with third-order SSP Runge–Kutta, on $240\times60$,
+  $480\times120$, $960\times240$ and $1920\times480$; 30 density contours
+  from 1.3965 to 22.682. These are the TVB reference runs of the batch-4
+  Qiu–Shu comparison.
+* *Findings.* Whole-domain plots show no significant difference between
+  degrees 1 and 2. Near the Mach stems, degree 2 at $h = 1/240$ has
+  qualitatively the resolution of degree 1 at $h = 1/480$, and degree 2 at
+  $1/480$ is much better than degree 1 at $1/480$. Half the mesh per
+  direction is 8 times fewer space–time cells in 2D as the paper counts
+  them (at equal Courant number; 4.8 with the CFL numbers $\nu = 0.3$ and
+  $0.18$ used), and the net CPU saving
+  is about 2.1, "even more significant for 3D".
+* *Precision on the batch-4 line.* "Second order would need four times more
+  zones per direction" is [Balsara et al. (2009)](/sources/balsara-2009.md)'s
+  figure, for their fourth-order ADER-WENO, given "following Cockburn and
+  Shu". Cockburn and Shu's own statement compares degree 2 (third order)
+  with degree 1 (second order): a factor 2 per direction at the Mach stems.
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -269,3 +292,4 @@ $t = 1.20$ and the caption $t = 0.12$.
 32. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III H, Fig. 14.
 33. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.2.
 34. [Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.1, Tables I–II.
+35. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), Example 4.1, Figs. 4.1–4.3.

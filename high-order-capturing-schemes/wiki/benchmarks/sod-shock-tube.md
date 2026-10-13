@@ -197,6 +197,16 @@ states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
   The exact and approximate density fans differ visibly but enclose equal
   areas (Fig. 1).
 * Every use above with $t = 0.2$ or $t = 0.25$ postdates both runs.
+* [Harten (1983)](/sources/harten-1983.md) (eq. 7.8a, Fig. 3) prints
+  Sod's states in conserved variables, left $(1, 0, 2.5)$ and right
+  $(0.125, 0, 0.25)$ for $(\rho, \rho v_x, E)$ with $\gamma = 1.4$, and
+  runs his second-order TVD scheme with contact compression (ULT1C) on
+  100 cells for 50 steps at $\nu = 0.95$; no end time is printed. A
+  variant translated by $v_x = 0.5$, left $(1, 0.5, 2.625)$ and right
+  $(0.125, 0.0625, 0.265625)$, puts a sonic point in the rarefaction; with
+  the entropy fix the results "look almost identical to those of Fig. 3"
+  up to the shift (eq. 7.8b, no figure)
+  ([TVD](/properties/total-variation-diminishing.md)).
 
 # Citations
 
@@ -229,3 +239,4 @@ states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
 27. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III B, Fig. 3.
 28. [van Leer (1979)](/sources/vanleer-1979.md), §4, Fig. 6.
 29. [Roe (1981)](/sources/roe-1981.md), pp. 367–370, Figs. 1–2, Table I.
+30. [Harten (1983)](/sources/harten-1983.md), §7.I, eqs. 7.8a–b, Fig. 3.

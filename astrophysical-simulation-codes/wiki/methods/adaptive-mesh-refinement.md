@@ -822,6 +822,81 @@ Sources for the row: §§2, 5, 7, 8.
   solution at a point as the finest grid's value (§2) and does not discuss
   derived quantities; the question is unchanged.
 
+## Later uses (batch 8)
+
+### FLASH's first version from its code paper
+
+[Fryxell et al. (2000)](/sources/fryxell-2000.md), §2, describe the
+PARAMESH mesh of the first [FLASH](/software/flash.md) version. In the
+format of the table at the top, replacing for that version the "not
+stated" entries of the batch-4 row:
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| [FLASH](/software/flash.md) (first version, PARAMESH) | fixed-size blocks of $8^d$ cells in an oct- or quad-tree, each refining into $2^d$ children | 2 | at most one level jump across adjacent blocks | single global $\Delta t$ (PARAMESH could subcycle; FLASH does not) |
+
+* **Family.** The authors class PARAMESH as block-structured AMR,
+  "similar to" De Zeeuw & Powell (1993), and contrast it with Berger-style
+  overlapping or rotated subgrids ("very complex and has proven to be very
+  difficult to parallelize") and with Khokhlov's cell-based tree. This
+  agrees with the Taxonomy above and with the batch-6 check of the
+  Berger & Colella citation.
+* **Refluxing** (Fig. 4). At a refinement jump the fine-face fluxes of
+  mass, momentum, energy and composition are summed and replace the
+  coarse-face flux, printed as the plain sum of the four fine fluxes in
+  3D; area weighting is not stated. Without subcycling no time sum is needed. This
+  agrees in kind with the Athena++ replacement (Synchronization, above).
+* **Prolongation.** "The FLASH code employs quadratic interpolation for
+  the guard cell filling operation"; conservation and limiting are not
+  stated.
+* **Ghost layers.** $n_{\mathrm g} = 4$, because PPM "requires four guard
+  cells at each spatial boundary" (§§2, 3.2), against Enzo's 3 for PPM.
+* **Refinement criterion** (eqs. 1–3). The Löhner estimator with the
+  noise filter 0.01, as in PLUTO and Enzo; a block is refined when the
+  estimator's maximum over its interior plus a halo two guard cells wide
+  exceeds 0.8 and derefined below 0.2, on density, pressure and
+  temperature, evaluated "defaulting to once every four time steps". The
+  multidimensional form (eq. 3) is printed with an apparent misprint (see
+  the Source page).
+* **Load balancing.** A work-weighted Morton space-filling curve (after
+  Warren & Salmon 1993): keys by bit-interleaving integer block
+  coordinates, a parallel bitonic sort of the keys only, equal-work cuts,
+  then the data move; run only when the refinement changes. Compare
+  Athena++'s Z-ordering and Castro's Morton option (Load balancing, above).
+* **Cost and overhead** (§§2, 8). Identical blocks cost "rarely more than
+  about 30%" extra memory. At fixed total work AMR scales worse than a
+  uniform grid, because the guard-cell communication grows relative to the
+  computation. AMR is faster than the uniform grid "beyond a refinement
+  level of six (corresponding to a uniform mesh with 512 cells per side)",
+  and only while "at most 60% of the mesh in two dimensions, or 40% in
+  three dimensions" is maximally refined (Figs. 45–48).
+* **Observed effects of refinement** (§§7.6–7.7). On the Emery Mach 3
+  step the default thresholds 0.8/0.2 leave the slip line near the Mach
+  stem unrefined, which changes the Kelvin–Helmholtz result; 0.6 refines
+  it: "refinement criterion and thresholds need to be carefully considered
+  for any particular problem". A Sedov front crossing a static jump from 7
+  to 6 levels is broader and lower on the coarse side and emits a
+  **reflected shock**, stronger the smaller the angle between the shock
+  direction and the jump, while head-on crossing errors "appear small and
+  well behaved"; forced jumps "should only be used for regions ... not
+  critical". Enzo's "shock pool" finds no significant reflection for PPM
+  (above): that is a shock crossing a refined region of subcycled patches,
+  qualitative, and agrees with FLASH's head-on case; the reflection FLASH
+  reports is for oblique incidence. A qualification by geometry, not a
+  contradiction. It is the kind of coarse–fine shock error Berger &
+  Colella describe (§6 of their paper; batch 6 above).
+
+### Bearing on the open entries (batch 8)
+
+* **Is time subcycling worth its cost?** FLASH's first version takes the
+  global-step side, with reasons: per-level steps need extra memory for
+  temporary solution copies and force an ordering of block advances that
+  "can have a damaging effect on load balance"; the authors also list the
+  arguments for subcycling (less accumulated diffusion on coarse blocks,
+  with a counter-argument, and saved work). Nothing is measured, so the
+  entry stays open.
+* **Level-dependent derived quantities.** Not discussed.
+
 ## Open question: level-dependent derived quantities
 
 Recorded at deep lint #1 as a contradiction and moved here at deep lint #3,
@@ -879,3 +954,4 @@ the issue, and none quantifies it.
 20. [Porth et al. (2019)](/sources/porth-2019.md), §§3, 4.1.5 (arXiv v2).
 21. [Truelove et al. (1997)](/sources/truelove-1997.md), §2, Fig. 1.
 22. [Berger & Colella (1989)](/sources/berger-1989.md), §§1–8, eqs. 1–3, Tables I–II, Figs. 2.1, 6.1–6.2.
+23. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§2, 3.2, 7.6–7.7, 8.2–8.4, eqs. 1–3, Figs. 1–4, 41, 45–48.

@@ -127,6 +127,10 @@ multidimensional problems" (§4, p. 25). Stone et al.'s "should no longer
 be considered a discriminating test" (above) is a later form of the same
 judgement.
 
+## Later uses (batch 8)
+
+* **FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §7.2, Figs. 25–27: standard states, $\gamma = 1.4$, 2D with 6 levels (effective $256^2$), $t = 0.2$, split PPM. Discontinuities span 2–3 zones, with 1–2 % errors near the contact and in the rarefaction and no oscillation. Along the diagonal there are "slightly larger oscillations (on the order of a few percent)", attributed to directional splitting. The authors call Sod "not a very discriminating test for modern codes" (§7.3), in agreement with Stone et al. (2008). A strong shock tube (densities 10 and 1, pressures 100 and 1, 1D, 8 levels, $t = 0.4$) is "virtually indistinguishable from the analytical solution" (no norm).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.1.
@@ -135,3 +139,4 @@ judgement.
 4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1 (arXiv v1).
 5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §4.2.1 (arXiv v2).
 6. [Sod (1978)](/sources/sod-1978.md), §§2–4, Tables I–IV, Figs. 2–15.
+7. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§7.2–7.3, Figs. 25–28.
