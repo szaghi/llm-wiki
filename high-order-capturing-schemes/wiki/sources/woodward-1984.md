@@ -239,10 +239,12 @@ and 1.2.
    * **Reference list:** 56 entries, 56 keys. The two Colella
      1984 papers printed in this list were resolved by identity, not by
      printed-order suffix: PPM is `colella-1984`, direct Eulerian MUSCL
-     `colella-1984-b`. "Colella, Woodward & Zalesak, in preparation" is
+     `colella-1984-b` (folded into its published form `colella-1985`,
+     SIAM J. Sci. Stat. Comput. 6:104, at batch 12). "Colella, Woodward & Zalesak, in preparation" is
      `colella-1984-d`; Colella's LBL-14442 report is `colella-1984-e`; the
      LBL-15776 report is `colella-1983`, kept distinct from
-     `colella-1984-c` (a first merge had collapsed `-d` and the LBL-14442
+     `colella-1984-c` (rekeyed `colella-1985-b` at batch 12, when its
+     published form, J. Comput. Phys. 59:264, was cited) (a first merge had collapsed `-d` and the LBL-14442
      report into one key; separated at the deep lint). The Russian original of Godunov, Zabrodin &
      Prokopov is merged into `godunov-1961`. Boris's NRL memorandum is
      `boris-1976-b` (also cited by Brio & Wu). Berger & Oliger,

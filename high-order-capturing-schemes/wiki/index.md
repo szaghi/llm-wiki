@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 100 sources compiled (the whole archive)**: 99 published works,
+**Corpus: 111 sources compiled (the whole archive)**: 110 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -81,6 +81,8 @@ for every page.
    Then one-step
    [ADER](/methods/ader.md) (one reconstruction per step, equal order in
    space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
+   built on the [exact Riemann solver](/methods/exact-riemann-solver.md) of
+   the Euler equations or on the three-wave [HLLC solver](/methods/hllc-riemann-solver.md),
    and [contact sharpening](/methods/contact-sharpening.md).
    **Riemann-solver design.** The [HLLEM (HLLI) solver](/methods/hllem-riemann-solver.md)
    keeps contacts and shear; [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)
@@ -167,6 +169,11 @@ for every page.
    [supersonic vortex in a quarter annulus](/benchmarks/supersonic-vortex-annulus.md),
    [shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md),
    [Schardin's problem](/benchmarks/schardin-problem.md). Shock
+   reflection and diffraction, with experiments to compare against (the
+   vocabulary: [regular and Mach reflection](/definitions/mach-reflection.md)):
+   [shock passing a sphere](/benchmarks/shock-sphere-interaction.md),
+   [double concave wedges](/benchmarks/double-concave-shock-reflection.md),
+   and the corner experiments behind [shock diffraction](/benchmarks/shock-diffraction.md). Shock
    instability: [Quirk's odd–even test](/benchmarks/quirk-odd-even-test.md),
    [stationary normal shock](/benchmarks/stationary-normal-shock.md),
    [Mach 20 blunt body](/benchmarks/hypersonic-blunt-body.md). Positivity:

@@ -1,7 +1,7 @@
 ---
 type: Definition
 title: "Slowly moving shock anomaly"
-description: "Spurious post-shock oscillations, and a spike in the conserved flux of the shock cell, produced when a captured shock moves slowly relative to the grid; the captured intermediate state is an admissible point of the curved Hugoniot locus, so the anomaly appears with any Riemann solver and does not shrink under grid refinement."
+description: "Spurious post-shock oscillations, and a spike in the conserved flux of the shock cell, produced when a captured shock moves slowly relative to the grid; the captured intermediate state is an admissible point of the curved Hugoniot locus, which Navas-Montilla & Murillo argue makes the anomaly appear with any Riemann solver (contested: Osher's solver with O-ordering, see Contradictions) and not shrink under grid refinement."
 status: established
 aliases: [slowly-moving shock, post-shock oscillations, discharge spike]
 tags: [shock-instability, riemann-solver, robustness, definition]
@@ -39,7 +39,8 @@ Hugoniot curve is curved and not monotone in the flux, the intermediate
 flux exceeds the constant flux of the end states, and that excess is the
 spike. On this account:
 * the anomaly is "always present with independence of the choice for the
-  Riemann solver";
+  Riemann solver" (an inference from the mechanism, contested; see
+  Contradictions);
 * it would vanish for linear Hugoniot curves, even in a nonlinear system;
 * refining the grid does not shrink the spike, only raises its frequency;
 * numerical diffusion "barely helps" across transcritical shocks, where a
@@ -110,6 +111,38 @@ anomaly for strong shocks in gas dynamics.
   "demonstrates the extra sensitivity of single-step Eulerian schemes to
   vanishing characteristic speeds".
 
+**Later uses (batch 12).**
+* *Euler, Toro's shock-collision test* (Table 6.2 Test 4 = Table 4.1
+  Test 5). With first-order Godunov and the exact solver, its slow left
+  shock is sharp (two cells) but not
+  monotone, with low-frequency spurious oscillations, "so far … an
+  unresolved difficulty" ([Toro (1997)](/sources/toro-1997.md), §6.4.1).
+  Osher's solver with O-ordering does not show them, which Toro calls "a
+  distinguishing property of the Osher approach" (§12.4). See
+  Contradictions.
+
+## Contradictions
+
+* **Is the anomaly independent of the Riemann solver?** *Open.*
+  Navas-Montilla & Murillo argue from the Hugoniot geometry of the
+  intermediate state that it is "always present with independence of the
+  choice for the Riemann solver"
+  ([Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md),
+  §4.1; shallow-water equations). Toro reports that Osher's solver with
+  O-ordering shows no slow-shock oscillations on his Euler shock-collision
+  test (Table 6.2 Test 4), where
+  the exact Godunov scheme does ([Toro (1997)](/sources/toro-1997.md),
+  §§6.4.1, 12.4). The systems differ (shallow water against Euler) and
+  Toro's evidence is one first-order test, but the claims are
+  incompatible as stated. Two further limits of scope: the quantities
+  differ (Navas-Montilla & Murillo's anomaly is the flux spike of the
+  captured intermediate state; Toro's evidence is the absence of visible
+  low-frequency oscillations in one 100-cell plot, which a small spike
+  would not show), and the universal claim is inferred, not tested
+  (Navas-Montilla & Murillo compare two solvers, both with Roe speeds).
+  Neither source shows whether Osher's captured intermediate state lies on
+  the Hugoniot locus, the premise in dispute.
+
 # Citations
 
 1. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§4.1–4.2, 5.1, 6.1.
@@ -117,3 +150,4 @@ anomaly for strong shocks in gas dynamics.
 3. [Colella & Woodward (1984)](/sources/colella-1984.md), §4.
 4. [Xie et al. (2021)](/sources/xie-2021.md), §5.
 5. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIb–VIc.
+6. [Toro (1997)](/sources/toro-1997.md), §§6.4.1, 12.4.

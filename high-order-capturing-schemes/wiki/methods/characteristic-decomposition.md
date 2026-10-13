@@ -252,6 +252,31 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   $c^2 < c_A^2$) or the slow field (if $c^2 > c_A^2$)
   ([nonconvexity of ideal MHD](/results/mhd-nonconvexity.md)).
 
+**Later uses (batch 12).**
+* *Face-frozen eigenvectors in a TVD scheme.* A dimensionally split
+  Harten–Yee TVD scheme on body-fitted curvilinear grids projects the
+  three increments $u_{i} - u_{i-1}$, $u_{i+1} - u_i$ and
+  $u_{i+2} - u_{i+1}$ that enter the flux at $x_{i+1/2}$ all with the
+  $\ell^{(p)}$ of $x_{i+1/2}$, instead of each with the left eigenvectors
+  of its own face as in the original scheme. The authors call these
+  "pseudocharacteristic" variables and use them "to reduce the influence
+  of the geometric parameters of distant cells"
+  ([Martyushov, Igra & Elperin (2016)](/sources/martyushov-2016.md), §2).
+  This is the choice the **How** paragraph above describes for ENO and
+  WENO: all stencil data projected with the interface's $\ell^{(p)}$. No
+  comparison with the original projection is shown; the 1D validation is
+  referred to Il'in and Timofeev (1991) and not shown.
+* *Safeguarding the Roe state.* The same scheme checks the Roe-averaged
+  sound speed at $x_{i+1/2}$: where it falls outside $[c_i, c_{i+1}]$,
+  which makes the eigenvectors incorrect and can flip eigenvalue signs,
+  the Roe interpolation is replaced by the arithmetic mean of the
+  corresponding variables of the two cells. The Roe sound-speed formula
+  the paper attributes to Vinokur (1989) is announced but not printed
+  ([Martyushov, Igra & Elperin (2016)](/sources/martyushov-2016.md), §2).
+  It is a different trigger for the arithmetic-mean fallback that
+  [Shu (2020)](/sources/shu-2020.md) uses where no Roe average exists.
+  The scheme is run on a [shock passing a sphere](/benchmarks/shock-sphere-interaction.md).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -293,3 +318,4 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 37. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2.2–2.3.
 38. [Balsara (2017)](/sources/balsara-2017-d.md), §II.1.
 39. [Brio & Wu (1988)](/sources/brio-1988.md), §§IV–V.
+40. [Martyushov, Igra & Elperin (2016)](/sources/martyushov-2016.md), §2.

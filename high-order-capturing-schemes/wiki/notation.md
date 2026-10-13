@@ -353,3 +353,21 @@ Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanch
 | $\nabla_u$ | gradient with respect to the conserved state $u$ |
 | $S$ | single signal speed of a local Lax–Friedrichs (Rusanov) flux, where no left/right pair $S_L$, $S_R$ is used |
 | $RU$, $LU$, $LD$, $RD$ (subscripts) | the four states meeting at a cell edge in a multidimensional Riemann problem: right/left, up/down |
+
+## Shock reflection, diffraction and bodies in a shock tube (batch 12, 2026-10-13)
+
+| Symbol | Meaning |
+|---|---|
+| $\theta_{\mathrm w}$ | angle of the reflecting wall: the half-angle of a wedge or cone, or the local inclination of a curved wall, measured as the page that uses it states (subscripted, so distinct from the limiter $\theta$ and $\theta_{\mathrm{rot}}$) |
+| $\theta_{\mathrm{tr}}$ | wall angle at which regular reflection turns into Mach reflection |
+| $M_s^*$ | shock Mach number at which the flow behind a shock moving into gas at rest becomes sonic in the laboratory frame ($\approx 2.07$ for $\gamma = 1.4$) |
+| $D$ | diameter of a body (cylinder or sphere) |
+| $C_D$ | drag coefficient: the drag force over $\tfrac12\rho\vert\mathbf v\vert^2$ of the post-shock flow times the frontal area of the body |
+| $\Gamma$ | circulation, the integral of the vorticity $\nabla\times\mathbf v$ over an area |
+| $p_*$, $v_{n*}$; $\rho_{*L}$, $\rho_{*R}$; $c_{*L}$, $c_{*R}$ | pressure and normal velocity of the star region of a Riemann problem between $u^-$ and $u^+$, and the densities and sound speeds on either side of its contact |
+| $f^{\mathrm p}_L$, $f^{\mathrm p}_R$, $f^{\mathrm p}$ | pressure functions of the exact Euler Riemann solver: the velocity jump across the left or right wave as a function of the star pressure, and $f^{\mathrm p} = f^{\mathrm p}_L + f^{\mathrm p}_R + v_n^+ - v_n^-$, whose root is $p_*$ |
+| $g^{\mathrm{TS}}_L$, $g^{\mathrm{TS}}_R$ | shock factors of the pressure functions, as used by the two-shock approximation |
+| $p_{\mathrm{PV}}$, $p_{\mathrm{TR}}$, $p_{\mathrm{TS}}$ | star-pressure estimates of the primitive-variable, two-rarefaction and two-shock approximate-state Riemann solvers |
+| $\mathrm{TOL}$, $Q_{\mathrm{user}}$ | convergence tolerance of the star-pressure iteration, and the pressure-ratio threshold that switches an adaptive Riemann solver between estimates |
+| $q^{\mathrm w}_L$, $q^{\mathrm w}_R$, $\bar c_{\mathrm E}$ | pressure-based correction factors of the HLL-type wave speeds $S_L = v_n^- - c^- q^{\mathrm w}_L$, $S_R = v_n^+ + c^+ q^{\mathrm w}_R$, and the averaged sound speed of Einfeldt's estimate, $S_{L,R}$ = a mean normal velocity $\mp \bar c_{\mathrm E}$ |
+| $q_{\mathrm{Roe}}$ (e.g. $\rho_{\mathrm{Roe}}$, $c_{\mathrm{Roe}}$) | a quantity evaluated at the Roe-averaged state of $u^-$ and $u^+$ ($\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$; velocities and total enthalpy $\sqrt\rho$-weighted; $c_{\mathrm{Roe}}$ from them) |

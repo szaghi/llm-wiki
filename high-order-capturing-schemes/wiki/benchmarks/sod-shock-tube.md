@@ -129,6 +129,40 @@ printed.
 * Sod's "energy" plots are the specific internal energy (2.5 on the left,
   2.0 on the right), not the energy density $E$.
 
+**Later uses (batch 12).** [Toro (1997)](/sources/toro-1997.md) uses Sod's
+states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
+(Table 4.1, "the so called Sod test problem").
+* *Exact star values* (Table 4.3): $p_* = 0.30313$, $v_{n*} = 0.92745$,
+  $\rho_{*L} = 0.42632$, $\rho_{*R} = 0.26557$. Sod's Glimm plateau and
+  post-shock values (batch-11 paragraph, Table II: 0.426, 0.927, 0.303
+  and 0.266) agree with them to the printed digits (compiler
+  comparison).
+* *A third time convention.* Toro plots the exact Sod solution at
+  $t = 0.25$ (Fig. 4.7) and prints no diaphragm position, beside the
+  $t = 0.2$ of later uses noted in the batch-11 paragraph.
+* *Toro's modified Sod* (Table 6.2, Test 1; already in the 1st edition):
+  $(\rho, v_x, p) = (1, 0.75, 1)$ on the left and $(0.125, 0, 0.1)$ on the
+  right, diaphragm at $x = 0.3$, $t = 0.2$, 100 cells on $[0, 1]$,
+  $\nu = 0.9$, transmissive boundaries. The left rarefaction is sonic,
+  "very useful in assessing the entropy satisfaction property". At first
+  order (§§6.4, 10.8, 11.4–11.5, 12.4; Figs. 9.5–9.12):
+  * exact Godunov gives a monotone shock over about 4 cells and contact
+    over about 20, and a small "entropy glitch" in the rarefaction, which
+    "arises only in the presence of sonic rarefaction waves" and, Godunov
+    being entropy satisfying, should vanish as $h \to 0$. The glitch is
+    therefore not Roe's alone; the batch-7 statement that it never
+    vanishes concerns Roe's solver;
+  * Roe without a fix computes an entropy-violating jump inside the
+    rarefaction ("obviously incorrect", Fig. 11.4); with the Harten–Hyman
+    fix it is "almost indistinguishable" from exact Godunov and slightly
+    better near the sonic point ([approximate Riemann solvers](/methods/approximate-riemann-solvers.md));
+  * HLLC is "more accurate than the corresponding results using the exact
+    Riemann solver" near the sonic point ([HLLC](/methods/hllc-riemann-solver.md));
+    Osher's solver with O-ordering is close to exact there too; PVRS and
+    the adaptive approximate-state solver are comparable to exact;
+  * Lax–Friedrichs pairs odd and even cell values and spreads the shock
+    over about 8 cells; the second-order Richtmyer scheme oscillates.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -156,3 +190,4 @@ printed.
 23. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3 (arXiv v4).
 24. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2 (arXiv v1).
 25. [Sod (1978)](/sources/sod-1978.md), §§3–4, Figs. 2–15, Tables II–IV.
+26. [Toro (1997)](/sources/toro-1997.md), §§4.3.3, 6.4, 10.8, 11.4–11.5, 12.4, Figs. 9.5–9.12, Tables 4.1, 4.3, 6.2.

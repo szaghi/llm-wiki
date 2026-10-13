@@ -172,6 +172,34 @@ later sources.
   steady reflected shock while MUSCL as Lagrange plus remap is not
   (Fig. 10).
 
+**Later uses (batch 12).** *Single Mach reflection on wedges, a weak-shock
+relative* ([Toro (1997)](/sources/toro-1997.md), §17.2,
+Figs. 17.9–17.12). Not the Mach 10 set-up above.
+* *Reflection types.* Toro lists four: regular, single Mach, complex Mach
+  and double Mach reflection, citing Ben-Dor and Glaz et al.
+  ([regular and Mach reflection](/definitions/mach-reflection.md)).
+* *Set-up.* Domain $25.0\times16.5$, wedge apex at $x = 4.69$, initial
+  shock at $x = 4.0$, air at rest ($\rho = 1.225$ kg/m³,
+  $p = 1.01325\times10^5$ Pa), post-shock state from the
+  Rankine–Hugoniot relations. To avoid start-up errors the shock runs
+  90 % of the way to the apex and the state behind it is then reset. WAF
+  with dimensional splitting, [HLLC](/methods/hllc-riemann-solver.md),
+  the VANLEER limiter, Courant number 0.9.
+* *Runs.* $M_s = 1.7$ on a 25° wedge, on a curvilinear $800\times528$
+  mesh and with a CHIMERA–AMR–Cartesian method (base $50\times33$, two
+  levels, factor 4): a single Mach reflection, in "excellent"
+  qualitative agreement with a photograph by K. Takayama. $M_s = 1.2$ on
+  a 30° wedge, curvilinear $420\times240$: a single Mach reflection,
+  "satisfactory". The comparison is with photographs only; no
+  triple-point angles or positions are printed.
+* *HLL against HLLC.* On the $M_s = 1.2$ case Colella's piecewise-linear
+  method with HLLC is close to WAF–HLLC, while with HLL it smears the
+  slip surface "very significantly" (PLM runs by T. Saito), the 2D face
+  of HLL's contact defect ([HLLEM](/methods/hllem-riemann-solver.md)).
+* The $M_s = 1.7$, 25° configuration is the gas-only case of
+  [Yeom & Chang (2010)](/sources/yeom-2010.md), who compare with an
+  interferogram reproduced from the book's 2nd edition (§4.1).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -203,3 +231,5 @@ later sources.
 27. [Xie et al. (2021)](/sources/xie-2021.md), §6.3.
 28. [Berger & Giuliani (2021)](/sources/berger-2021.md), §5.3 (arXiv v1).
 29. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVc, VIc, Figs. 4, 9, 10.
+30. [Toro (1997)](/sources/toro-1997.md), §17.2.
+31. [Yeom & Chang (2010)](/sources/yeom-2010.md), §4.1.

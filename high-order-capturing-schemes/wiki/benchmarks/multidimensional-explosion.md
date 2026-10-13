@@ -5,7 +5,7 @@ description: "A Sod-type state jump on a circle or sphere in [-1, 1]^d (inside �
 status: established
 aliases: [explosion problem, cylindrical explosion, spherical explosion, multidimensional Sod problem]
 tags: [benchmark, euler, 2d, 3d, riemann-problem]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Cylindrical and spherical explosion problem
@@ -48,8 +48,30 @@ scheme keeps the symmetry.
     caption of Fig. 11. The limiter is active only at the shock, the
     contact and the rarefaction head.
 
+**Later uses (batch 12).** *Toro's own set-up and run*
+([Toro (1997)](/sources/toro-1997.md), §§17.1.1, 17.1.3, Fig. 17.4).
+The book confirms the "Toro's test" attribution of the set-up line, with
+these precisions.
+* *Set-up.* The domain is $[0, 2]^2$ with the circle of radius 0.4
+  centred at $(1, 1)$, the set-up above translated;
+  $(\rho, v_x, v_y, p) = (1, 0, 0, 1)$ inside and $(0.125, 0, 0, 0.1)$
+  outside, $\gamma = 1.4$, $t = 0.25$. These are the 2013 parameters; the
+  radius 0.5 and $t = 0.2$ of the 2014 and 2015 runs are a variant. The
+  3D version is the cube $[0, 2]^3$ with a sphere of radius 0.4 at
+  $(1, 1, 1)$, the same data and $t = 0.25$.
+* *Run.* Toro's weighted-average-flux (WAF) scheme with dimensional
+  splitting, the [HLLC](/methods/hllc-riemann-solver.md) solver and the
+  VANLEER limiter, Courant number 0.9, $101\times101$ cells, with
+  area-weighted initial data in the cells cut by the circle. The
+  reference solves the 1D radial equations with the geometric source
+  (cylindrical or spherical) by the random choice method on 1000 cells at
+  Courant number 0.4, against the 10,000-point TVD reference of 2013. The
+  shock is resolved with two mesh points and the contact with two to
+  three.
+
 # Citations
 
 1. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4 (Table 3).
 2. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.8.
 3. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.6.
+4. [Toro (1997)](/sources/toro-1997.md), §§17.1.1, 17.1.3.

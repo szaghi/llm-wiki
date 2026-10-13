@@ -172,6 +172,16 @@ to another bundle.
 
 ## Status
 
+**Batch 12 staged 2026-10-13:** 111 of 111 archived sources ingested (the
+second half of the user's manual downloads): the shock-diffraction and
+reflection papers bryson-1961, kleine-1995, kleine-2006, gnani-2014,
+zhang-2017-c, brahmi-2020, brahmi-2020-b, martyushov-2016, yeom-2010 and
+tsai-2012, plus Toro's book (toro-1997; 1st edition, scoped read of
+Ch. 4, 6, 9–12 and §§17.1–17.2, full reference list). All are publisher
+versions; bryson-1961, kleine-1995 and toro-1997 are scans read from page
+images where the OCR layer fails. A deep lint (11 ingestions since the
+last) ran with this batch. Still missing: Mittal et al. (2008).
+
 **Batch 11 staged 2026-10-13:** 100 of 111 archived sources ingested.
 From the user's manual downloads of 2026-10-13 (the ADAM benchmarks and
 experiments class plus missing papers of classes 2, 3 and 9): sod-1978,

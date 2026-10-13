@@ -5,7 +5,7 @@ description: "Bodies on a Cartesian grid that does not fit them: Peskin's contin
 status: established
 aliases: [IB method, immersed boundary, ghost-cell immersed boundary, direct forcing, continuous forcing, Peskin method]
 tags: [boundary-treatment, immersed-boundary, cartesian-grid, moving-boundary]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Immersed-boundary methods
@@ -96,8 +96,27 @@ explanation, that conservation errors scale with the truncation error
 and matter only where gradients are steep, is stated, not measured
 ([Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5, Table 7).
 
+**Later uses (batch 12).**
+* *Ray-traced IB with multiresolution and WENO5.* Brahmi et al. run
+  viscous shock reflection over two concave arcs with the solid
+  "embedded in a Cartesian grid tracked using a ray-tracing technique",
+  as in Seshadri & De's node classification above, combined with
+  adaptive multiresolution refinement, WENO5 inviscid fluxes,
+  fourth-order central viscous fluxes and third-order Runge–Kutta, on
+  grids of up to 33.55 million points
+  ([Brahmi et al. (2020)](/sources/brahmi-2020.md), §2.1;
+  [Brahmi et al. (2020b)](/sources/brahmi-2020-b.md), §2;
+  [shock reflection from double concave wedges](/benchmarks/double-concave-shock-reflection.md)).
+  Neither paper states the IB variant (ghost cell or forcing), the
+  interpolation or the wall's thermal condition; the method is deferred
+  to Chaudhuri et al. (2011, 2012), not ingested. No boundary accuracy or
+  conservation error is measured, so these uses add no evidence on the
+  order or conservation questions above.
+
 # Citations
 
 1. [Peskin (2002)](/sources/peskin-2002.md), §§2, 4–9.
 2. [Seshadri & De (2020)](/sources/seshadri-2020.md), §§3–6, 8 (author manuscript).
 3. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§3, 4.5, 5 (arXiv v1).
+4. [Brahmi et al. (2020)](/sources/brahmi-2020.md), §2.1.
+5. [Brahmi et al. (2020b)](/sources/brahmi-2020-b.md), §2.

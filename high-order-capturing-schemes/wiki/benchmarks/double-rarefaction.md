@@ -5,7 +5,7 @@ description: "Two rarefactions moving apart from a symmetric Riemann state, leav
 status: established
 aliases: [double rarefaction, 1-2-3 problem, Einfeldt strong rarefaction, vacuum Riemann problem]
 tags: [benchmark, euler, positivity, low-density, riemann-problem]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Double-rarefaction (near-vacuum) Riemann problems
@@ -61,6 +61,36 @@ and amplifies their errors.
 * The 1D Einfeldt problem (Toro's RP2) is robust with HLLEM at second
   order, at very low density ([Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1).
 
+**Later uses (batch 12).**
+* *Toro's Test 2, "the 123 problem"* ([Toro (1997)](/sources/toro-1997.md),
+  Tables 4.1, 4.3, 6.2). $(\rho, v_x, p) = (1, -2, 0.4)$ on the left and
+  $(1, 2, 0.4)$ on the right, $\gamma = 1.4$; the scheme runs put the
+  diaphragm at $x = 0.5$ on $[0, 1]$, with 100 cells and $t = 0.15$, the
+  time Reyes et al. use above. Exact star values: $p_* = 0.00189$,
+  $v_{n*} = 0$, $\rho_{*L} = \rho_{*R} = 0.02185$. This is near vacuum, not
+  vacuum: the data satisfy the pressure-positivity
+  (no-vacuum) condition of the
+  [exact Riemann solver](/methods/exact-riemann-solver.md) (eq. 4.40), and since both
+  waves are rarefactions the two-rarefaction pressure is exact.
+* *Which first-order solvers fail* (§§6.4, 10.8, 11.5, 12.4). Exact
+  Godunov is good in $\rho$, $v_x$ and $p$ but poor in the specific internal
+  energy; Lax–Friedrichs is inaccurate in internal energy; HLLC does not
+  fail but is less accurate in velocity and internal energy
+  ([HLLC Riemann solver](/methods/hllc-riemann-solver.md)). Roe's solver
+  "does actually fail" and needs Einfeldt et al.'s modification; Osher's
+  solver fails with O-ordering and runs with P-ordering; the
+  second-order Richtmyer scheme fails
+  ([approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+* *Attribution, a qualification of the "Einfeldt type" line above.* That
+  line attributes the $\rho = 1$, $v_x = \mp2$ data with $p = 0.4$ to
+  Einfeldt et al. (1991). Toro, who names the problem "the 123 problem",
+  does not attribute the data to them: he cites them only as background,
+  "Test 2 is also useful in assessing the performance of numerical
+  methods for low density flows, see Einfeldt et al." (p. 129). The
+  batch-8 label "Toro's RP2" and this page's alias "1-2-3 problem" fit
+  Toro. Einfeldt et al. (1991) are not ingested, so whether their paper
+  contains the same data is open; the attribution line stays as written.
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.3.
@@ -71,3 +101,4 @@ and amplifies their errors.
 6. [Zhang (2017)](/sources/zhang-2017.md), Example 3.
 7. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.1.
 8. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.
+9. [Toro (1997)](/sources/toro-1997.md), §§4.3, 6.4, 10.8, 11.5, 12.4, Tables 4.1, 4.3, 6.2.

@@ -161,6 +161,26 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
   that HLLC and HLLEM "share similar shock instability problems". They
   do not run HLLEM ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C).
 
+**Later uses (batch 12).**
+* *The defect HLLEM repairs, in Toro's analysis*
+  ([Toro (1997)](/sources/toro-1997.md), §10.7, eq. 10.62). For a passive
+  scalar advected with the normal velocity $v_n$ (an isolated contact),
+  HLL with $S_{L,R} = v_n \mp c$ weights the scalar fluxes of the left and
+  right cells by $\tfrac12(1 + c/v_n)$ and $\tfrac12(1 - c/v_n)$ (the
+  reciprocal of the signed Mach number $v_n/c$). This is more diffusive than
+  Godunov's flux whenever the flow is subsonic, and, as printed, reduces
+  to the Lax–Friedrichs flux when that signed Mach number equals
+  $v_n\Delta t/h$. The exact,
+  HLLC, Roe and Osher solvers instead resolve a stationary contact
+  exactly. On an isolated stationary contact run to $t = 2$ on 100 cells,
+  HLL smears it over the whole domain while HLLC keeps it (Fig. 10.9).
+  The book has no HLLEM: HLLC restores the contact with a second star
+  state ([HLLC Riemann solver](/methods/hllc-riemann-solver.md)), HLLEM
+  with the linear sub-structure above. A 2D counterpart: on a single
+  Mach reflection a piecewise-linear scheme with HLL smears the slip
+  surface "very significantly" where HLLC does not (§17.2,
+  Figs. 17.11–17.12; [double Mach reflection](/benchmarks/double-mach-reflection.md)).
+
 # Citations
 
 1. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §§2–4, App. B.
@@ -171,3 +191,4 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 6. [Balsara et al. (2025)](/sources/balsara-2025.md), §II.
 7. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2–3.
 8. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C.
+9. [Toro (1997)](/sources/toro-1997.md), §§10.7, 17.2.

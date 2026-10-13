@@ -2,6 +2,83 @@
 
 ## 2026-10-13
 
+* **Batch 12: the user's manual downloads, second half** (11 sources).
+  The shock-diffraction and reflection papers, experiments and
+  simulations, and Toro's book:
+  [Bryson & Gross (1961)](/sources/bryson-1961.md),
+  [Kleine, Ritzerfeld & Grönig (1995)](/sources/kleine-1995.md),
+  [Kleine, Grönig & Takayama (2006)](/sources/kleine-2006.md),
+  [Gnani et al. (2014)](/sources/gnani-2014.md),
+  [Zhang et al. (2017)](/sources/zhang-2017-c.md),
+  [Brahmi et al. (2020)](/sources/brahmi-2020.md) and
+  [(2020b)](/sources/brahmi-2020-b.md),
+  [Martyushov, Igra & Elperin (2016)](/sources/martyushov-2016.md),
+  [Yeom & Chang (2010)](/sources/yeom-2010.md),
+  [Tsai et al. (2012)](/sources/tsai-2012.md) and
+  [Toro (1997)](/sources/toro-1997.md) (1st edition; scoped read of
+  Ch. 4, 6, 9–12 and §§17.1–17.2, full 387-entry reference list).
+  Bryson & Gross, Kleine (1995) and Toro are scans, read from page images
+  where the OCR layer fails.
+  * **Created:**
+    * the Definition [regular and Mach reflection](/definitions/mach-reflection.md);
+    * the Benchmarks [shock passing a sphere](/benchmarks/shock-sphere-interaction.md)
+      and [shock reflection from double concave wedges](/benchmarks/double-concave-shock-reflection.md);
+    * the Methods [exact Riemann solver](/methods/exact-riemann-solver.md)
+      and [HLLC Riemann solver](/methods/hllc-riemann-solver.md).
+  * **Updated** ("Later uses (batch 12)" blocks, no old text reworded):
+    shock reflection from a cylinder, shock diffraction, Sod, double
+    rarefaction, multidimensional explosion, double Mach reflection,
+    approximate Riemann solvers, HLLEM, characteristic decomposition,
+    immersed boundaries, slowly moving shock anomaly.
+  * **Corrections from the origin paper** (stated in the batch-12 block of
+    the cylinder page, which quotes the lines it qualifies): Bryson &
+    Gross show regular reflection first and Mach reflection from 40°–50°
+    of azimuth, not a detached bow shock at once; their triple-point loci
+    (Fig. 6) are quantitative data; they print no times, so the compared
+    times are simulation times. The page's description was rewritten to
+    cover body-fitted runs (Tsai et al.); its set-up lines are left as
+    written, with the qualifications in the block (the bundle's add-only
+    convention; the deep lint proposed editing them in place).
+  * **Contradiction opened** on the
+    [slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md):
+    is it independent of the Riemann solver (Navas-Montilla & Murillo)
+    when Osher's solver with O-ordering shows no slow-shock oscillations
+    (Toro)? Open, with the differences of system, quantity and evidence
+    recorded; the page's description and mechanism bullet now attribute
+    the claim.
+  * **Notation:** registry sections "Shock reflection, diffraction and
+    bodies in a shock tube (batch 12)" ($\theta_{\mathrm w}$,
+    $\theta_{\mathrm{tr}}$, $M_s^*$, $D$, $C_D$, $\Gamma$) plus the
+    exact-solver and HLL-type symbols ($p_*$, $v_{n*}$, $\rho_{*L}$,
+    $f^{\mathrm p}$, $g^{\mathrm{TS}}$, $p_{\mathrm{PV}}$, $p_{\mathrm{TR}}$,
+    $p_{\mathrm{TS}}$, $\mathrm{TOL}$, $Q_{\mathrm{user}}$,
+    $q^{\mathrm w}$, $\bar c_{\mathrm E}$, $q_{\mathrm{Roe}}$).
+  * **Bibliography** (3002 entries): merged with `bib_merge.py`, then
+    folded by hand where one work had two keys: `colella-1984-c` (the
+    in-preparation Colella & Glaz) into `colella-1985-b`, `colella-1984-b`
+    (in-press MUSCL) into `colella-1985`, `boris-1975` into `book-1975`
+    (Crossref author order), `zeeuw-1993` into `dezeeuw-1993`,
+    `chakraborty-1994` into `toro-1994-c`, and `boris-1987` into
+    `oran-1987` (Toro prints the book twice). Rekeyed by Crossref year:
+    `bazhenova-1979`, `vanleer-1984-c`, `yuen-1978`; the "E. Weinan"
+    report is `e-1992`. `taub-1948` corrected to Phys. Rev. 74:328
+    (Crossref) and `yang-1990`'s year field to 1990.
+  * **Deep lint** (11 ingestions since the last): two auditors, on the
+    batch-12 concept pages and Source pages. Fixed: notation drift (Roe
+    averages now $q_{\mathrm{Roe}}$, a signed Mach number written out,
+    scalar $v$ replaced by $v_x$, a paper-native $\bar u$ removed); the
+    unstated conventions of quoted transition angles (Tanno via Zhang,
+    Brahmi) no longer labelled $\theta_{\mathrm{tr}}$; attribution of
+    Zhang et al.'s sphere-drag reading; the HLLC contact verdict scoped to
+    the strong Lax problem; "vacuum condition" corrected to the
+    no-vacuum condition; Kleine's transition-regime features scoped; the
+    printed-vs-figure drag values flagged; the two $p_{\mathrm{PV}}$
+    floors; the ambiguous "Toro's Test 4"; duplicate "Created" claims in
+    the audit lists; the bibliography notes above. Kept: the HLLC
+    material on the Riemann-solver overview duplicates the new HLLC page
+    (add-only convention; the overview's `HLLC` alias was dropped so the
+    alias points one way).
+
 * **Batch 11: the user's manual downloads, first half** (10 sources).
   Ingested the origin papers of several benchmarks the bundle already
   described, plus four method papers:

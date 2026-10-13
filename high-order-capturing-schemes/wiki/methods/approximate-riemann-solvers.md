@@ -3,7 +3,7 @@ type: Method
 title: "Approximate Riemann solvers as building blocks of capturing schemes"
 description: "The interface fluxes used by FV and alternative-FD WENO schemes in this corpus: Lax–Friedrichs/Rusanov, Roe, HLL and HLLC (with positivity-preserving wave speeds), HLLI/LLFI, the Riemann-solver-free MUSTA flux, and multidimensional HLL/LLF solvers for edge electric fields."
 status: established
-aliases: [Riemann solver, HLLC, HLL, MUSTA, FORCE, HLLI, Rusanov flux, HLL-BVD, Roe-type MHD solver]
+aliases: [Riemann solver, HLL, MUSTA, FORCE, HLLI, Rusanov flux, HLL-BVD, Roe-type MHD solver]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity]
 timestamp: 2026-10-13T00:00:00Z
 ---
@@ -253,6 +253,121 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 * *Bearing on the HLLE contradiction below:* Deng, Boivin & Xiao's HLL
   runs are recorded in the entry as batch-11 evidence.
 
+**Later uses (batch 12).**
+* *Own pages.* The exact solver and HLLC now have pages with their
+  formulas: [exact Riemann solver](/methods/exact-riemann-solver.md) and
+  [HLLC Riemann solver](/methods/hllc-riemann-solver.md). The source is
+  Toro's textbook, which runs every solver below through first-order
+  Godunov on one set of 1D tests (100 cells, Courant number 0.9)
+  ([Toro (1997)](/sources/toro-1997.md), Tables 4.1, 6.2).
+* *Approximate-state solvers* (Ch. 9). They approximate $p_*$ and
+  $v_{n*}$ in closed form and then use the exact wave relations.
+  * PVRS linearizes the primitive-variable equations about arithmetic
+    means (eqs. 9.19–9.21):
+    $p_{\mathrm{PV}} = \tfrac12(p^- + p^+) - \tfrac18(v_n^+ - v_n^-)(\rho^- + \rho^+)(c^- + c^+)$,
+    $v_{n*} = \tfrac12(v_n^- + v_n^+) + \dfrac{2(p^- - p^+)}{(\rho^- + \rho^+)(c^- + c^+)}$,
+    $\rho_{*L} = \rho^- + (v_n^- - v_{n*})\dfrac{\rho^- + \rho^+}{c^- + c^+}$ and
+    $\rho_{*R} = \rho^+ + (v_{n*} - v_n^+)\dfrac{\rho^- + \rho^+}{c^- + c^+}$.
+    It is exact for an isolated contact or shear wave whatever the
+    averages. A variant uses the acoustic impedances $\rho^\mp c^\mp$ at
+    the feet of the characteristics (eq. 9.28).
+  * TRRS is exact when both nonlinear waves are rarefactions, which
+    $f^{\mathrm p}(\min(p^-, p^+)) \ge 0$ detects a priori (eq. 9.39).
+    TSRS takes $p_{\mathrm{TS}}$ with $g^{\mathrm{TS}}_{L,R}$ evaluated at
+    $\max(0, p_{\mathrm{PV}})$ (eq. 9.45; the initial guess of the exact
+    solver floors at $\mathrm{TOL}$ instead, eq. 4.48) and
+    $v_{n*} = \tfrac12(v_n^- + v_n^+) + \tfrac12\left[(p_* - p^+)g^{\mathrm{TS}}_R - (p_* - p^-)g^{\mathrm{TS}}_L\right]$
+    (eqs. 9.42–9.45). Direct quadratic two-shock formulas are rejected:
+    non-unique and complex roots "can occur very often" (p. 283).
+  * The adaptive scheme uses PVRS when $\max(p^-, p^+)/\min(p^-, p^+) < Q_{\mathrm{user}}$
+    and $p_{\mathrm{PV}}$ lies between $p^-$ and $p^+$, otherwise TRRS if
+    $p_{\mathrm{PV}} \le \min(p^-, p^+)$ and TSRS if not (eqs.
+    9.46–9.49). With $Q_{\mathrm{user}} = 2$, "over 90% of all Riemann
+    problems are handled by the cheap linearised Riemann solver"
+    (p. 285), and the non-iterative PVRS–TRRS–TSRS scheme "is
+    recommended for practical applications" (p. 286). PVRS alone shows
+    slight oscillations behind the right shock of the shock-collision
+    test, a sign it "may not be robust enough" (p. 287).
+* *Roe's flux, as printed* (Ch. 11, eqs. 11.27–11.29). With
+  $\lambda^{(p)}$, $\ell^{(p)}$, $r^{(p)}$ at the Roe state and the wave
+  strengths $\ell^{(p)}(u^+ - u^-)$,
+  $$\hat f = f(u^-) + \sum_{\lambda^{(p)} \le 0}\lambda^{(p)}\,\ell^{(p)}(u^+ - u^-)\,r^{(p)} = f(u^+) - \sum_{\lambda^{(p)} \ge 0}\lambda^{(p)}\,\ell^{(p)}(u^+ - u^-)\,r^{(p)} = \tfrac12\left(f(u^-) + f(u^+)\right) - \tfrac12\sum_p\vert\lambda^{(p)}\vert\,\ell^{(p)}(u^+ - u^-)\,r^{(p)},$$
+  so the Roe matrix itself is never formed. The Roe–Pike route computes
+  the strengths directly from primitive jumps, e.g.
+  $\frac{1}{2c_{\mathrm{Roe}}^2}\left[(p^+ - p^-) \mp \rho_{\mathrm{Roe}} c_{\mathrm{Roe}}\,(v_n^+ - v_n^-)\right]$ for the
+  acoustic families and $(\rho^+ - \rho^-) - (p^+ - p^-)/c_{\mathrm{Roe}}^2$ for the
+  entropy wave, with $\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$, $\sqrt\rho$-weighted
+  velocities and enthalpy, and $c_{\mathrm{Roe}}$ from them; the averages are "identical
+  to the Roe averages obtained by the original Roe method" (eqs. 11.113,
+  11.118, p. 333).
+* *Harten–Hyman entropy fix, as printed* (§11.4.2, eqs. 11.119–11.134).
+  For the first family, if $v_n^- - c^- < 0 < v_{n*} - c_{*L}$ (a
+  transonic left rarefaction), the Roe jump is split by an intermediate
+  state and
+  $$\hat f = f(u^-) + (v_n^- - c^-)\,\frac{(v_{n*} - c_{*L}) - \lambda^{(1)}}{(v_{n*} - c_{*L}) - (v_n^- - c^-)}\;\ell^{(1)}(u^+ - u^-)\,r^{(1)}.$$
+  For the last family $m$, if $v_{n*} + c_{*R} < 0 < v_n^+ + c^+$,
+  $$\hat f = f(u^+) - (v_n^+ + c^+)\,\frac{\lambda^{(m)} - (v_{n*} + c_{*R})}{(v_n^+ + c^+) - (v_{n*} + c_{*R})}\;\ell^{(m)}(u^+ - u^-)\,r^{(m)}.$$
+  The star values come from the Roe intermediate states, from PVRS, TRRS
+  or TSRS, or from the adaptive scheme ("even better", p. 339); PVRS and
+  Roe-linearized star speeds "may fail in the vicinity of low density
+  flow". On the modified Sod problem, Roe without the fix computes an
+  entropy-violating jump inside the sonic rarefaction (Fig. 11.4; the
+  glitch of the batch-7 bullet); with it the result is "almost
+  indistinguishable" from exact Godunov (Fig. 11.5;
+  [Sod shock tube](/benchmarks/sod-shock-tube.md)).
+* *Roe fails at low density.* "The Roe method, as described, does
+  actually fail" on the 123 problem, and Einfeldt et al.'s modification
+  is needed (p. 340); Einfeldt et al. "showed that in fact this anomaly
+  afflicts all linearised Riemann solvers" (p. 313;
+  [double rarefaction](/benchmarks/double-rarefaction.md)).
+* *Osher's solver: the ordering matters* (§12.3, eqs. 12.94–12.96).
+  O-ordering (Osher's original) gives unrealistically large intersection
+  pressures in strong rarefactions and fails on the 123 problem. Its
+  intersection pressure is undefined, and the scheme fails, when
+  $c^- + c^+ + \tfrac{\gamma-1}{2}(v_n^+ - v_n^-) \le 0$, which two
+  colliding streams with strong shocks reach. P-ordering runs both but
+  shows "spurious oscillations … near the shocks" of the colliding
+  streams (p. 373). With O-ordering the slowly moving shock of the
+  collision test has no post-shock oscillations, "a distinguishing
+  property of the Osher approach" (§12.4;
+  [slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md)).
+* *Rusanov and Lax–Friedrichs are HLL cases* (eqs. 10.42–10.45). With
+  $S_L = -S$, $S_R = S$ the HLL flux becomes
+  $\tfrac12\left(f(u^-) + f(u^+)\right) - \tfrac12 S(u^+ - u^-)$; Davis's
+  $S = \max(\vert v_n^- - c^-\vert, \vert v_n^+ - c^+\vert, \vert v_n^- + c^-\vert, \vert v_n^+ + c^+\vert)$
+  gives Rusanov, and $S = h/\Delta t$ gives Lax–Friedrichs. First-order
+  Lax–Friedrichs pairs odd and even cell values and spreads a shock over
+  about 8 cells (§6.4.2).
+* *Two formulas called "Einfeldt's".* The batch-8 bullet "Wave-speed
+  estimates" quotes Xie et al.'s min/max form as Einfeldt's speeds.
+  Toro prints a different formula under Einfeldt's name, a mean velocity
+  plus and minus a $\sqrt\rho$-weighted sound speed augmented by a
+  velocity-jump term, and credits the plain Roe-average eigenvalues
+  $v_n \mp c$ to "Davis and Einfeldt" (eqs. 10.39–10.48;
+  [HLLC Riemann solver](/methods/hllc-riemann-solver.md) for both
+  formulas). Both forms circulate under the name, so the batch-8 quote
+  is one of them, not the only one. Toro's Davis min/max estimate
+  (eq. 10.38) agrees with the batch-8 quote.
+* *HLLC at low density*, against the bullet at the top: Toro finds that
+  HLLC does not fail on the 123 problem but is less accurate in velocity
+  and internal energy than the exact and approximate-state solvers
+  (§10.8, Fig. 10.6), which fits both Titarev & Toro's statement that it works for low
+  density and Guo et al.'s oscillations near vacuum.
+* *HLL for a non-conservative two-fluid model*
+  ([Yeom & Chang (2010)](/sources/yeom-2010.md), §3.2, eqs. 37–51). An
+  eight-equation gas–droplet model with non-conservative
+  interfacial-pressure terms. The face flux is HLL; the interface gas
+  volume fraction that multiplies the non-conservative terms is weighted
+  with the same coefficients, $S_R/(S_R - S_L)$ on the left value and
+  $-S_L/(S_R - S_L)$ on the right, which suppresses "artificial source
+  and sink" (after Saurel & Abgrall). The wave speeds are either the
+  "simple" estimate, the minimum and maximum over both phases of
+  $v_n \mp c$, or Nguyen et al.'s effective sound speeds of the mixture;
+  Nguyen's is called more accurate and the simple one more robust;
+  Nguyen's is used except for solid copper particles. Second order comes from Toro's
+  weighted-average-flux (WAF) method in TVD form with the MINBEE limiter;
+  the WAF chapter of the book was not read, so WAF has no page.
+
 ## Contradictions
 
 * **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
@@ -324,3 +439,5 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 28. [Dai & Woodward (1994)](/sources/dai-1994.md), §§4–6.
 29. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§II, III F–H.
 30. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2, 5.5, 5.7.
+31. [Toro (1997)](/sources/toro-1997.md), §§6.4.2, 9.3–9.5, 10.5, 10.8, 11.1–11.5, 12.3–12.4.
+32. [Yeom & Chang (2010)](/sources/yeom-2010.md), §3.2.
