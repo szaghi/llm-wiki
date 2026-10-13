@@ -88,6 +88,7 @@ shock–bubble. No comparison with SSP Runge–Kutta, no timings.
 * Created [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
 * Updated [SSP order barriers](/results/ssp-order-barriers.md) (Lenferink and variable-step bounds), [SSP Runge–Kutta](/methods/ssp-runge-kutta.md), [Positivity preservation](/properties/positivity-preserving.md) (why multistep), [Step-size control](/methods/runge-kutta-step-size-control.md), [Interacting blast waves](/benchmarks/interacting-blast-waves.md).
 * Updated [Notation registry](/notation.md): $m$ (multistep), $\Omega_{\Delta t}$, $\Delta t_{\mathrm{FE}}(u)$.
+* Also cited on [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md) (created 2026-10-13).
 
 # Citations
 

@@ -103,6 +103,7 @@ There is no multidimensional test and no shock-instability test.
 * Created [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Well-balanced schemes](/properties/well-balanced.md).
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (the HLLI attribution and the LLFI caveat), [Sod shock tube](/benchmarks/sod-shock-tube.md), [Double rarefaction](/benchmarks/double-rarefaction.md), [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md).
 * Updated [Notation registry](/notation.md): $\delta_p$, $\mathcal I$, $\Theta_{i+1/2}$, $u^{\mathrm{HLL}}_*$.
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

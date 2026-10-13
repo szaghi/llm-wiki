@@ -73,6 +73,8 @@ it (§4.4, Table 1).
 * Contributed to [State redistribution](/methods/state-redistribution.md) (re-redistribution), [Cut-cell finite volume](/methods/cut-cell-finite-volume.md), [Shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md).
 * Updated [High-order AMR](/methods/high-order-amr.md), [Sod shock tube](/benchmarks/sod-shock-tube.md), [Positivity preservation](/properties/positivity-preserving.md).
 * Also cited on [Exact Riemann solver for the Euler equations](/methods/exact-riemann-solver.md) (created in batch 12).
+* Also cited on [AMReX and PeleC](/software/amrex.md) (created 2026-10-13).
+* Also cited on [Flux redistribution for small cut cells](/methods/flux-redistribution.md) (created 2026-10-13).
 
 # Citations
 

@@ -103,6 +103,7 @@ benchmarks.
 
 * Created [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Numerical shock instability](/definitions/numerical-shock-instability.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md), [Quirk's odd–even decoupling test](/benchmarks/quirk-odd-even-test.md), [Hypersonic blunt-body carbuncle test](/benchmarks/hypersonic-blunt-body.md), [Stationary normal shock test](/benchmarks/stationary-normal-shock.md).
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Forward-facing step](/benchmarks/forward-facing-step.md), [Shock diffraction](/benchmarks/shock-diffraction.md).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

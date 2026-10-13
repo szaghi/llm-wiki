@@ -80,6 +80,7 @@ and [characteristic decomposition](/methods/characteristic-decomposition.md).
 * Created [Total variation diminishing (TVD) and bounded (TVB)](/properties/total-variation-diminishing.md).
 * Updated [Notation registry](/notation.md): batch-1 registry extensions.
 * Also cited on [Lax–Wendroff (Taylor) single-step time discretization](/methods/taylor-time-discretization.md).
+* Also cited on [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md) (created 2026-10-13).
 
 # Citations
 

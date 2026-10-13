@@ -107,6 +107,7 @@ reconstruction and no stability analysis. Merged into the
 
 * Created [Slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md), [Numerical shock instability](/definitions/numerical-shock-instability.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md), [Well-balanced schemes](/properties/well-balanced.md), [Hypersonic blunt-body carbuncle test](/benchmarks/hypersonic-blunt-body.md) (shallow-water analogue).
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (ARoe and HLLS).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

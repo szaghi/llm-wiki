@@ -81,6 +81,7 @@ blast and shock–cloud benchmarks.
 * Updated [WENO-Z](/methods/weno-z.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
 * Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

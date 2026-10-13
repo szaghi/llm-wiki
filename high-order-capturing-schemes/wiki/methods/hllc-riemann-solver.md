@@ -21,6 +21,7 @@ with $f(u^-)$ for $0 \le S_L$ and $f(u^+)$ for $0 \ge S_R$
 The two-wave model is exact only for $2\times2$ systems. For the Euler
 equations it smears contacts, shear waves and material interfaces, which
 "is unacceptable" when they are stationary (p. 293).
+HLL itself has its own page: [HLL Riemann solver](/methods/hll-riemann-solver.md).
 
 **The HLLC model** (§10.4, eqs. 10.26–10.36). A middle wave of speed
 $S_M$ splits the fan into two star states $u^{\mathrm{HLLC}}_{*L}$ and

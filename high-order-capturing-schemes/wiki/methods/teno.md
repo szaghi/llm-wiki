@@ -51,7 +51,7 @@ Gaussian pulse; Sod and Lax monotone; blast waves sharper than WENO-JS
 and WENO-Z and free of the overshoots of WENO-JS, WENO-Z and WENO-CU6;
 Shu–Osher entropy waves retained best by TENO6 and TENO5-opt; double
 Mach reflection at $1024 \times 256$ comparable to WENO-JS at
-$1/960$; Rayleigh–Taylor; a viscous shock-tube matching the reference.
+$1/960$; [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md); a viscous shock-tube matching the reference.
 WENO-CU6-M fails the blast-wave and double Mach tests. Cost is about
 that of classical WENO.
 

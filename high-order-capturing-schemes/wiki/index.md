@@ -83,7 +83,8 @@ for every page.
    space and time; open `Contradictions` entry on how many Picard
    iterations its predictor needs), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    built on the [exact Riemann solver](/methods/exact-riemann-solver.md) of
-   the Euler equations or on the three-wave [HLLC solver](/methods/hllc-riemann-solver.md),
+   the Euler equations, on the two-wave [HLL solver](/methods/hll-riemann-solver.md)
+   with its wave-speed estimates, or on the three-wave [HLLC solver](/methods/hllc-riemann-solver.md),
    and [contact sharpening](/methods/contact-sharpening.md).
    **Riemann-solver design.** The [HLLEM (HLLI) solver](/methods/hllem-riemann-solver.md)
    keeps contacts and shear; [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)
@@ -108,7 +109,7 @@ for every page.
    (WENO interpolation, any Riemann solver, even-derivative corrections),
    [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md),
    non-polynomial [GP-WENO](/methods/gp-weno.md),
-   [polynomial WENO](/methods/polynomial-weno.md) (whole candidate
+   [polynomial WENO](/methods/polynomial-weno.md), [multi-resolution WENO](/methods/multi-resolution-weno.md) (nested central stencils), [Hermite WENO](/methods/hermite-weno.md) (averages and derivatives; review-level only) (whole candidate
    polynomials with a dominant central stencil, for unstructured meshes
    and ADER), and the [fourth-order finite volume](/methods/fourth-order-finite-volume.md)
    of the Colella group (average–point conversions instead of Gauss
@@ -155,15 +156,15 @@ for every page.
    (Peskin's forcing; ghost cells, not conservative at the wall) and
    conservative [cut-cell finite volume](/methods/cut-cell-finite-volume.md)
    (open entry: what order does flux redistribution give?),
-   whose small-cell problem [state redistribution](/methods/state-redistribution.md)
-   solves, with re-redistribution at AMR interfaces.
+   whose small-cell problem [flux redistribution](/methods/flux-redistribution.md) and [state redistribution](/methods/state-redistribution.md)
+   solve, with re-redistribution at AMR interfaces.
    [High-order AMR](/methods/high-order-amr.md): one-step updates for
    local time stepping on trees, or Runge–Kutta time stepping on
    block-structured hierarchies (subcycled or with one global step), where ghost values must match the stages
    and refluxing costs finite differences their order.
-12. **Codes.** [PLUTO](/software/pluto.md), [HOW-MHD](/software/how-mhd.md)
+12. **Codes.** [PLUTO](/software/pluto.md), [HOW-MHD](/software/how-mhd.md), the [AMReX framework and PeleC](/software/amrex.md)
    and the GPU DNS code [STREAmS](/software/streams.md).
-13. **Tests.** [Sod](/benchmarks/sod-shock-tube.md),
+13. **Tests.** [Burgers shock formation](/benchmarks/burgers-shock-formation.md), [Sod](/benchmarks/sod-shock-tube.md),
    [Lax](/benchmarks/lax-shock-tube.md),
    [Shu–Osher](/benchmarks/shu-osher-problem.md),
    [interacting blast waves](/benchmarks/interacting-blast-waves.md),
@@ -172,6 +173,7 @@ for every page.
    [forward step](/benchmarks/forward-facing-step.md),
    [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
    [isentropic vortex](/benchmarks/isentropic-vortex.md),
+   [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md),
    [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
    [cylindrical and spherical explosion](/benchmarks/multidimensional-explosion.md). Embedded
    boundaries: [supersonic cylinder](/benchmarks/supersonic-cylinder-flow.md),

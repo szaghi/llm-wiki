@@ -68,7 +68,9 @@ interpolant's derivative.
 * **Upwinding by the first point.** The initial stencil point fixes the
   upwind bias; starting on the wrong side was unstable for Burgers'
   equation even with ENO stencil choice up to third order
-  ([Shu & Osher (1989)](/sources/shu-1989.md)).
+  ([Shu & Osher (1989)](/sources/shu-1989.md)). The smooth-data Burgers
+  test that the ENO papers run is on
+  [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md).
 
 ## Accuracy and stability
 

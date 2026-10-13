@@ -45,6 +45,8 @@ by the regular cells ([Berger & Giuliani (2021)](/sources/berger-2021.md), §1):
   (Berger & Giuliani, §§1–2). In a reacting 3D run it produced mass
   fractions below 0 and above 1 where state redistribution did not
   ([Giuliani et al. (2022)](/sources/giuliani-2022.md), §6.1).
+  The algorithm, its weights and its properties are on the
+  [flux redistribution](/methods/flux-redistribution.md) page.
 * **Cell merging**, stable but hard to do robustly in general 3D
   geometry; **h-box**, second order at cut cells but not extended to 3D;
   cell linking, and implicit updates on the cut cells only (Berger &

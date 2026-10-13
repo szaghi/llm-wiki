@@ -83,6 +83,7 @@ and the rotor, blast, vortex, shock–vortex and Alfvén-wave benchmarks.
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
 * Also cited on [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 * Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

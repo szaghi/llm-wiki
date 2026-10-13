@@ -103,7 +103,8 @@ equally. It returns a whole polynomial on the cell.
   ([central WENO](/methods/central-weno.md)).
 * *Multi-resolution WENO* (Zhu and Shu) uses only central stencils, of 7,
   5, 3 and 1 cells in 1D. Shu advocates it for 2D and 3D unstructured
-  meshes, derivatives and integrals (§§3.3–3.4).
+  meshes, derivatives and integrals (§§3.3–3.4). See
+  [multi-resolution WENO](/methods/multi-resolution-weno.md).
 * *Weights.* The small stencils are only second order, so the nonlinear
   weights must sit closer to the linear ones than in classical WENO, and
   mapped or WENO-Z weights "would be preferable" in practice. This is an

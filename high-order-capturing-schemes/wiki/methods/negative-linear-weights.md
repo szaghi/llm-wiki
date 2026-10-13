@@ -58,7 +58,7 @@ designs avoid the loss:
   weights keep the large stencil's order. Shu traces this device to
   central WENO (Levy, Puppo and Russo) and advocates its multi-resolution
   form for unstructured meshes, derivatives and integrals (Shu 2020,
-  §3.2.3).
+  §3.2.3; [multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
 # Citations
 

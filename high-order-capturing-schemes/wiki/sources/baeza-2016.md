@@ -74,6 +74,7 @@ pages.
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
 * Also cited on [Self-similarity (scale invariance) of capturing schemes](/properties/self-similarity.md).
 * Also cited on [Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md).
+* Also cited on [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md) (created 2026-10-13).
 
 # Citations
 

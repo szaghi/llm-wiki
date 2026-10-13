@@ -71,6 +71,7 @@ smoothness-indicator and modified-wavenumber pages and the benchmarks.
 * Created [Unequal-stencil and adaptive-order WENO (WENO-ZQ, WENO-AO)](/methods/weno-ao.md).
 * Updated [WENO-Z](/methods/weno-z.md).
 * Updated [Notation registry](/notation.md): batch-2 registry extensions.
+* Also cited on [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md) (created 2026-10-13).
 
 # Citations
 

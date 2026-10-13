@@ -5,7 +5,7 @@ description: "Limiting RKDG by first flagging troubled cells (TVB minmod) and th
 status: established
 aliases: [WENO limiter, RKDG with WENO limiters, troubled-cell indicator, TVB limiter, Hermite WENO limiter]
 tags: [weno, dg, limiter, finite-volume]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin schemes
@@ -101,6 +101,7 @@ bullet-proof". After the first, wider limiters came compact ones (Zhong
 and Shu; Zhu et al.) and multi-resolution limiters, which "appear to be
 quite robust". Hermite WENO fits DG's compact data structure
 ([Shu (2020)](/sources/shu-2020.md), §§3.2.4, 4.3).
+Both limiter families have their own pages: [Hermite WENO](/methods/hermite-weno.md) and [multi-resolution WENO](/methods/multi-resolution-weno.md).
 
 **Later uses (batch 7).**
 * *Viscous flows need no oscillation limiter.* Euler DG with only the

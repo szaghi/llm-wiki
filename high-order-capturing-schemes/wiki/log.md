@@ -2,6 +2,32 @@
 
 ## 2026-10-13
 
+* **Seven new concept pages** (user decision, from the deep lint's
+  candidates; the Roe solver page was declined):
+  * [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md)
+    (20 sources; the overview keeps its text and links it; the corpus
+    holds no positivity proof for HLL itself, only Zhang & Shu's for
+    Lax–Friedrichs);
+  * [flux redistribution](/methods/flux-redistribution.md) (4 sources;
+    the two printed weightings, never compared, are both recorded);
+  * [multi-resolution WENO](/methods/multi-resolution-weno.md) (5
+    sources; Balsara et al.'s own third-order table falls short of their
+    "comparable" summary, recorded as a qualification);
+  * [Hermite WENO](/methods/hermite-weno.md) (borderline: defined by both
+    Shu reviews, with Dumbser et al.'s critique, but no ingested source
+    prints its formulas or tests; the page says so);
+  * [AMReX and PeleC](/software/amrex.md) (4 sources; GPU support stated,
+    never measured);
+  * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)
+    (2 sources, set-up gaps recorded);
+  * [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md)
+    (16 sources that run it; those that do not were checked and left out).
+  * Linked from the overview, HLLC, HLLEM, cut-cell, state-redistribution,
+    WENO, WENO-AO, weighted-extrapolation, negative-weights, WENO-limited
+    DG, high-order AMR, immersed-boundary, ENO and TENO pages, the folder
+    indexes and the reading guide; every cited Source page lists the new
+    page. No new Contradictions entry.
+
 * **Ingested [Mittal et al. (2008)](/sources/mittal-2008.md)**, the last
   missing paper of the user's manual downloads (112 sources): the
   incompressible ghost-cell sharp-interface immersed-boundary method

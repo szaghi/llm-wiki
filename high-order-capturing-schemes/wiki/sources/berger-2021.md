@@ -72,6 +72,7 @@ embedded wedge (smallest $2.95\times10^{-7}$).
 * Created [State redistribution](/methods/state-redistribution.md), [Cut-cell finite volume](/methods/cut-cell-finite-volume.md), [Supersonic vortex in a quarter annulus](/benchmarks/supersonic-vortex-annulus.md), [Shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md).
 * Updated [Double Mach reflection](/benchmarks/double-mach-reflection.md) (embedded wedge), [Positivity preservation](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): $\kappa_i$, $u^{\mathrm{pr}}$, $\mathcal N_i$, $N^{\mathrm{ov}}_i$, $\widehat{\mathcal V}_i$, $\bar u^{\mathcal N}_i$, $q^{\mathcal N}_i$.
+* Also cited on [Flux redistribution for small cut cells](/methods/flux-redistribution.md) (created 2026-10-13).
 
 # Citations
 

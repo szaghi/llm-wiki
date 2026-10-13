@@ -70,6 +70,8 @@ fluidized-bed gas flow (MFIX-Exa). Merged into
 * Updated [High-order AMR](/methods/high-order-amr.md), [Positivity preservation](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): $\eta^{\mathrm{self}}_i$, $\eta^{\mathrm{nb}}_i$, $\mathsf W$.
 * Also cited on [Exact Riemann solver for the Euler equations](/methods/exact-riemann-solver.md) (created in batch 12).
+* Also cited on [AMReX and PeleC](/software/amrex.md) (created 2026-10-13).
+* Also cited on [Flux redistribution for small cut cells](/methods/flux-redistribution.md) (created 2026-10-13).
 
 # Citations
 

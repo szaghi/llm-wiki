@@ -5,7 +5,7 @@ description: "Post-processing that stabilizes small cut cells under a full time 
 status: established
 aliases: [SRD, weighted state redistribution, WSRD, re-redistribution, state redistribution algorithm]
 tags: [boundary-treatment, embedded-boundary, conservation, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # State redistribution for cut cells
@@ -35,7 +35,8 @@ linear part integrates to zero about the weighted centroid (§4.4), and
 exact preservation of linear functions (§4.3), which flux redistribution
 lacks. The authors note that this is not an order-of-accuracy proof.
 Naive overlapping merging, which averages the merged values, is not
-conservative (§2, eq. 6).
+conservative (§2, eq. 6). The comparison with the flux-based cure is on the
+[flux redistribution](/methods/flux-redistribution.md) page.
 
 **What is not proved.** Stability in 2D and 3D (the half-cell threshold
 is a 1D result; "We have not encountered any issues"). Positivity is

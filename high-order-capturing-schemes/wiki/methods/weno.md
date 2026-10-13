@@ -148,6 +148,7 @@ diffusive, smearing discontinuities nearly as much as ENO.
 Accuracy claims at critical points are collected on
 [accuracy at critical points](/properties/accuracy-at-critical-points.md).
 A centred, staggered variant is [central WENO](/methods/central-weno.md).
+Nested central stencils down to one cell give [multi-resolution WENO](/methods/multi-resolution-weno.md), and two data per cell give [Hermite WENO](/methods/hermite-weno.md).
 
 **Batch 3 additions.** WENO weights on other approximations:
 [compact-reconstruction WENO](/methods/compact-reconstruction-weno.md)

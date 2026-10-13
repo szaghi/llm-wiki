@@ -102,6 +102,7 @@ order measurement, no experimental data.
 * Created [Shock reflection from double concave wedges](/benchmarks/double-concave-shock-reflection.md).
 * Contributed to [Regular and Mach reflection](/definitions/mach-reflection.md).
 * Updated [Immersed-boundary methods](/methods/immersed-boundary-method.md).
+* Also cited on [Multi-resolution WENO](/methods/multi-resolution-weno.md) (created 2026-10-13).
 
 # Citations
 

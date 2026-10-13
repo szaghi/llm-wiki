@@ -69,6 +69,8 @@ oscillating cylinders at Re 40–185. Comparisons are mostly graphical.
 
 * Contributed to [Cut-cell finite volume](/methods/cut-cell-finite-volume.md) (moving bodies, flux redistribution), [Shock reflection from a cylinder](/benchmarks/shock-reflection-from-cylinder.md), [Schardin's problem](/benchmarks/schardin-problem.md).
 * Updated [High-order AMR](/methods/high-order-amr.md), [Free-stream preservation](/properties/free-stream-preservation.md).
+* Also cited on [AMReX and PeleC](/software/amrex.md) (created 2026-10-13).
+* Also cited on [Flux redistribution for small cut cells](/methods/flux-redistribution.md) (created 2026-10-13).
 
 # Citations
 

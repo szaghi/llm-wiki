@@ -74,6 +74,7 @@ pages and into five new benchmarks.
 * Created [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
 * Also cited on [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

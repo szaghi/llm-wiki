@@ -61,6 +61,7 @@ and benchmark pages.
 * Updated [Accuracy at critical points](/properties/accuracy-at-critical-points.md).
 * Updated [Accuracy conditions on WENO nonlinear weights](/results/weno-weight-accuracy-conditions.md).
 * Updated [Notation registry](/notation.md): batch-2 registry extensions.
+* Also cited on [Burgers equation: shock formation](/benchmarks/burgers-shock-formation.md) (created 2026-10-13).
 
 # Citations
 

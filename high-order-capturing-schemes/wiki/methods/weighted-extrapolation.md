@@ -100,7 +100,8 @@ the page images.) The extrapolation that Tan and Shu pair with
 [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) takes its linear
 weights as powers of $h$ ($h^4, h^3, h^2, h$ and the remainder) and its
 power $q$ per problem. Lu et al. call this a loss of self-similarity and
-replace it with a multi-resolution construction after Zhu and Shu.
+replace it with a multi-resolution construction after Zhu and Shu
+([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 * Nested stencils $\{x_{N-k}, \dots, x_N\}$, $k = 0, \dots, 4$, carry
   interpolants $p_k$. These are recombined into hierarchical polynomials
   whose combination with constant linear weights

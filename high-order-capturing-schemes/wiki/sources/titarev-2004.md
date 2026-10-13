@@ -69,6 +69,7 @@ with benchmark updates.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
 * Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

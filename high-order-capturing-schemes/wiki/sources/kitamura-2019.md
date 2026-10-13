@@ -91,6 +91,7 @@ the [slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md),
 * Created [Numerical shock instability](/definitions/numerical-shock-instability.md), [Slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md), [Quirk's odd–even decoupling test](/benchmarks/quirk-odd-even-test.md), [Stationary normal shock test](/benchmarks/stationary-normal-shock.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md).
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (AUSM-family robustness; `Contradictions` on HLLE).
 * Updated [Notation registry](/notation.md): $M_{\mathrm{prop}}$, $M_{\mathrm{sig}}$, $\epsilon_{\mathrm{sh}}$, $\epsilon_{\mathrm g}$.
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

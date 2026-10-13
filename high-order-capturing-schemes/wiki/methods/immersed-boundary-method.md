@@ -17,6 +17,8 @@ appear in this corpus. The conservative alternative, which cuts the
 cells, is [cut-cell finite volume](/methods/cut-cell-finite-volume.md);
 the high-order finite-difference alternative is
 [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md).
+The cut-cell codes of the AMReX framework, PeleC among them, are on the
+[AMReX and PeleC](/software/amrex.md) page.
 
 ## Continuous forcing (Peskin)
 

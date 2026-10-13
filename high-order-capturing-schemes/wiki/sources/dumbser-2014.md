@@ -86,6 +86,7 @@ and positivity pages and eight benchmarks.
 * Created [WENO limiters for discontinuous Galerkin schemes](/methods/weno-limited-dg.md).
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Hermite WENO](/methods/hermite-weno.md) (created 2026-10-13).
 
 # Citations
 

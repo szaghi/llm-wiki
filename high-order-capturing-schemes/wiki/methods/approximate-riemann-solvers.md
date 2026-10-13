@@ -18,6 +18,8 @@ resolution and robustness. Finite-volume WENO and
 solver. Classical FD-WENO needs a smooth flux splitting and so is
 restricted to Lax–Friedrichs or Roe-type fluxes
 ([Balsara et al. (2025)](/sources/balsara-2025.md), §I).
+HLL, its wave-speed estimates and its Rusanov and Lax–Friedrichs special
+cases are gathered on the [HLL Riemann solver](/methods/hll-riemann-solver.md) page.
 
 * **Lax–Friedrichs / Rusanov / LLF**: centred average plus dissipation
   $\alpha$. It is robust and positivity-preserving for Euler under

@@ -81,6 +81,7 @@ and the MHD benchmarks.
 * Updated [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
 * Also cited on [Divergence-free reconstruction of face-centred magnetic fields](/methods/divergence-free-reconstruction.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

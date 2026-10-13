@@ -114,6 +114,7 @@ existing benchmarks.
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (HLLC as HLL plus anti-diffusion; `Contradictions` on HLLE), [Low-Mach-number fluxes](/methods/low-mach-number-fluxes.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Forward-facing step](/benchmarks/forward-facing-step.md), [Shock diffraction](/benchmarks/shock-diffraction.md), [Double rarefaction](/benchmarks/double-rarefaction.md), [Supersonic cylinder flow](/benchmarks/supersonic-cylinder-flow.md).
 * Updated [Notation registry](/notation.md): $u^{\mathrm{HLL}}_*$, $\mathbf d^{\mathrm{HLL}}$, $S^{\mathrm w}_{L,R}$, $\alpha_{\mathrm{SWM}}$, $\epsilon_{\mathrm{SWM}}$, $\omega_{\mathrm p}$, $\nu_y$.
 * Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md), [Exact Riemann solver for the Euler equations](/methods/exact-riemann-solver.md) (created in batch 12).
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

@@ -24,7 +24,7 @@ $S_R^+$ the largest of 0 and those at $u^+$ and at the mean state.
 The eigenvectors and eigenvalues of the intermediate fields are evaluated
 once per face, at the mean state or at a Roe average. Since
 $S_L^- S_R^+ \le 0$, the last term lowers the HLL dissipation on the chosen
-fields.
+fields. The underlying two-wave solver is on the [HLL Riemann solver](/methods/hll-riemann-solver.md) page.
 * **Where $\delta_p$ comes from.** Write the flux as
   $\tfrac12(f(u^-) + f(u^+)) - \tfrac12\Theta_{i+1/2}(u^+ - u^-)$.
   Einfeldt's stability condition, that the eigenvalues of $\Theta_{i+1/2}$

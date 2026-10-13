@@ -77,6 +77,7 @@ pages, and the rotor, blast, Alfvén-wave and vortex benchmarks.
 * Updated [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [HLL Riemann solver and wave-speed estimates](/methods/hll-riemann-solver.md) (created 2026-10-13).
 
 # Citations
 

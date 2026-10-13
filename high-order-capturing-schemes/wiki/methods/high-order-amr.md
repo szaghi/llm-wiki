@@ -241,6 +241,9 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 * The simpler practice is to keep coarse–fine boundaries off the cut
   cells ([Giuliani et al. (2022)](/sources/giuliani-2022.md), §4) or to refine every cut cell to the finest
   level ([Natarajan et al. (2022)](/sources/natarajan-2022.md), §3.1).
+* These three papers and [Wang et al. (2025)](/sources/wang-2025.md) run on
+  the AMReX framework, described with its codes on the
+  [AMReX and PeleC](/software/amrex.md) page.
 
 # Citations
 
