@@ -1,0 +1,14 @@
+{
+  "name": "llm-wiki",
+  "owner": {
+    "name": "Stefano Zaghi"
+  },
+  "description": "LLM-compiled scientific knowledge bundles (OKF v0.1) and the skill that consults them",
+  "plugins": [
+    {
+      "name": "llm-wiki",
+      "source": "./",
+      "description": "Consult the llm-wiki knowledge bundles (OKF v0.1) from any Claude Code session"
+    }
+  ]
+}

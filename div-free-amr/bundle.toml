@@ -1,0 +1,12 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Divergence-free discretizations and AMR"
+summary = "Discrete divergence constraints (div B = 0 in MHD, incompressibility in CFD) across discretizations: staggered grids and constrained transport, projection and cleaning, mimetic and compatible operators, SBP, Whitney forms and DEC, with particular depth on high-order methods and 2:1 AMR refinement interfaces."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/div-free-amr"
+keywords = [
+  "divergence-free", "div B = 0", "incompressibility", "constrained transport",
+  "flux-CT", "projection", "divergence cleaning", "eight-wave", "staggered grid",
+  "mimetic", "compatible discretization", "SBP", "DEC", "Whitney forms",
+  "block-structured AMR", "prolongation", "restriction", "refluxing",
+]

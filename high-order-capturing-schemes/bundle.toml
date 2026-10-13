@@ -1,0 +1,12 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "High-order shock-capturing schemes"
+summary = "High-order shock-capturing schemes for hyperbolic conservation laws: ENO/WENO and their variants (mapped, Z, AO, TENO, CWENO), MP and PPM reconstruction, ADER and a posteriori limiting, positivity-preserving limiters, Riemann solvers, SSP and Runge-Kutta time stepping, boundary treatment (inverse Lax-Wendroff, immersed boundaries, cut cells), high-order AMR and MHD."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/high-order-capturing-schemes"
+keywords = [
+  "WENO", "ENO", "TENO", "CWENO", "WENO-Z", "WENO-AO", "PPM", "MP5",
+  "shock capturing", "reconstruction", "Riemann solver", "HLL", "HLLC", "ADER",
+  "MOOD", "positivity-preserving", "SSP Runge-Kutta", "inverse Lax-Wendroff",
+  "immersed boundary", "cut cell", "shock diffraction",
+]

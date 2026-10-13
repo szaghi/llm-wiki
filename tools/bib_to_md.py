@@ -169,6 +169,7 @@ def _cited_by_suffix(entry: dict) -> str:
     links = ", ".join(f"[{s}](/sources/{s}.md)" for s in cb)
     return f" Cited by {len(cb)}: {links}."
 
+
 def render_md(entries: list[dict], wiki: Path) -> str:
     slugs = source_slugs(wiki)
     ingested = sorted((e for e in entries if e["key"] in slugs), key=lambda e: e["key"])
@@ -184,7 +185,7 @@ def render_md(entries: list[dict], wiki: Path) -> str:
         "",
         f"Complete citation record of the bundle: every work cited by any ingested "
         f"source, ingested or not. **{len(entries)} works** — {len(ingested)} ingested, "
-        f"{len(frontier)} cited but not ingested. \"Cited by\" counts the ingested "
+        f'{len(frontier)} cited but not ingested. "Cited by" counts the ingested '
         f"sources in whose reference lists the work appears "
         f"({len(processed)}/{len(slugs)} reference lists merged).",
         "",

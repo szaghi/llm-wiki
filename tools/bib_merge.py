@@ -105,12 +105,25 @@ from bib_to_md import parse_bib  # noqa: E402
 
 PLACEHOLDER = "[title not printed in citing reference]"
 FIELD_ORDER = [
-    "author", "editor", "title", "journal", "booktitle", "school",
-    "institution", "publisher", "howpublished", "series", "year",
-    "doi", "eprint", "url", "isbn", "note", "citedby",
+    "author",
+    "editor",
+    "title",
+    "journal",
+    "booktitle",
+    "school",
+    "institution",
+    "publisher",
+    "howpublished",
+    "series",
+    "year",
+    "doi",
+    "eprint",
+    "url",
+    "isbn",
+    "note",
+    "citedby",
 ]
-VENUE_FIELDS = ("journal", "booktitle", "school", "institution",
-                "publisher", "howpublished", "series")
+VENUE_FIELDS = ("journal", "booktitle", "school", "institution", "publisher", "howpublished", "series")
 
 
 def norm_title(t: str) -> str:
@@ -174,8 +187,7 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
         return 2
 
     master_text = master.read_text(encoding="utf-8")
-    header = "".join(ln + "\n" for ln in master_text.splitlines()
-                     if ln.startswith("%"))
+    header = "".join(ln + "\n" for ln in master_text.splitlines() if ln.startswith("%"))
     entries = {e["key"]: e for e in parse_bib(master_text)}
 
     for dup, canon, note in REPAIRS:
@@ -186,8 +198,7 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
         cb = {s.strip() for s in c["fields"].get("citedby", "").split(",") if s.strip()}
         cb |= {s.strip() for s in d["fields"].get("citedby", "").split(",") if s.strip()}
         c["fields"]["citedby"] = ", ".join(sorted(cb))
-        c["fields"]["note"] = ((c["fields"]["note"] + "; ")
-                               if c["fields"].get("note") else "") + note
+        c["fields"]["note"] = ((c["fields"]["note"] + "; ") if c["fields"].get("note") else "") + note
 
     flags: list[str] = []
     stats: dict[str, dict] = {}
@@ -200,8 +211,7 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
     for frag in frags:
         slug = frag.stem.removeprefix("frag-")
         new = parse_bib(frag.read_text(encoding="utf-8"))
-        st = {"printed": len(new), "added": 0, "cited_existing": 0,
-              "title_upgrades": 0, "id_filled": 0}
+        st = {"printed": len(new), "added": 0, "cited_existing": 0, "title_upgrades": 0, "id_filled": 0}
         stats[slug] = st
         for e in new:
             key, f = e["key"], e["fields"]
@@ -219,31 +229,34 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
                 if mt == PLACEHOLDER and nt and nt != PLACEHOLDER:
                     mf["title"] = nt
                     st["title_upgrades"] += 1
-                elif (nt and nt != PLACEHOLDER and mt != PLACEHOLDER
-                      and title_sim(mt, nt) < 0.55 and (key, key) not in SILENCED):
-                    flags.append(f"[conflict] {key} (via {slug}): master title "
-                                 f"{mt!r} vs printed {nt!r}")
+                elif (
+                    nt
+                    and nt != PLACEHOLDER
+                    and mt != PLACEHOLDER
+                    and title_sim(mt, nt) < 0.55
+                    and (key, key) not in SILENCED
+                ):
+                    flags.append(f"[conflict] {key} (via {slug}): master title {mt!r} vs printed {nt!r}")
                 if (mt == PLACEHOLDER or nt == PLACEHOLDER) and (key, key) not in SILENCED:
                     mn, fn = venue_nums(mf), venue_nums(f)
                     if mn and fn and not (mn & fn):
-                        flags.append(f"[venuecheck] {key} (via {slug}): no shared "
-                                     f"venue numbers, master {sorted(mn)} vs "
-                                     f"printed {sorted(fn)}")
+                        flags.append(
+                            f"[venuecheck] {key} (via {slug}): no shared "
+                            f"venue numbers, master {sorted(mn)} vs "
+                            f"printed {sorted(fn)}"
+                        )
                 for idf in ("doi", "eprint"):
                     if f.get(idf) and not mf.get(idf):
                         mf[idf] = f[idf]
                         st["id_filled"] += 1
-                    elif (f.get(idf) and mf.get(idf) and f[idf] != mf[idf]
-                          and (key, key) not in SILENCED):
-                        flags.append(f"[conflict] {key} (via {slug}): {idf} "
-                                     f"{mf[idf]!r} vs {f[idf]!r}")
+                    elif f.get(idf) and mf.get(idf) and f[idf] != mf[idf] and (key, key) not in SILENCED:
+                        flags.append(f"[conflict] {key} (via {slug}): {idf} {mf[idf]!r} vs {f[idf]!r}")
             else:
                 s, y = stem(key), key_year(key)
                 nt = f.get("title", "")
                 for ok, oe in entries.items():
                     os_ = stem(ok)
-                    related = (os_ == s or os_.startswith(s + "-")
-                               or s.startswith(os_ + "-"))
+                    related = os_ == s or os_.startswith(s + "-") or s.startswith(os_ + "-")
                     if ok == key or not related or abs(key_year(ok) - y) > 1:
                         continue
                     if (key, ok) in SILENCED:
@@ -251,8 +264,9 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
                     ot = oe["fields"].get("title", "")
                     sim = title_sim(ot, nt) if PLACEHOLDER not in (ot, nt) else -1.0
                     if os_ != s or sim >= 0.7 or (key_year(ok) == y and sim < 0):
-                        flags.append(f"[suspect] new {key} (via {slug}) ~ existing "
-                                     f"{ok}: sim={sim:.2f} new={nt!r} old={ot!r}")
+                        flags.append(
+                            f"[suspect] new {key} (via {slug}) ~ existing {ok}: sim={sim:.2f} new={nt!r} old={ot!r}"
+                        )
                 e["fields"]["citedby"] = slug
                 entries[key] = e
                 st["added"] += 1
@@ -271,9 +285,11 @@ def merge(master: Path, frag_dir: Path, res: Path, write: bool) -> int:
             flags.append(f"[error] NOTES key not present after merge: {key}")
 
     for slug, st in sorted(stats.items()):
-        print(f"{slug}: {st['printed']} refs -> {st['added']} new, "
-              f"{st['cited_existing']} existing, {st['title_upgrades']} title "
-              f"upgrades, {st['id_filled']} doi/eprint filled")
+        print(
+            f"{slug}: {st['printed']} refs -> {st['added']} new, "
+            f"{st['cited_existing']} existing, {st['title_upgrades']} title "
+            f"upgrades, {st['id_filled']} doi/eprint filled"
+        )
     print(f"\nTOTAL entries after merge: {len(entries)}")
     print(f"FLAGS: {len(flags)}")
     for fl in flags:
@@ -300,6 +316,7 @@ def dupes(master: Path) -> int:
     and merge duplicates by hand."""
     entries = parse_bib(master.read_text(encoding="utf-8"))
     from collections import defaultdict
+
     byt: dict = defaultdict(list)
     for e in entries:
         t = e["fields"].get("title", "")
@@ -317,8 +334,10 @@ def dupes(master: Path) -> int:
         print(f"  [{y}] {ks}{tag}")
         if len(stems) > 1:
             print(f"        {t[:76]}")
-    print(f"\n{cross} cross-stem group(s) — review each; same work under two "
-          f"spellings must be merged (citedby union), distinct works left alone.")
+    print(
+        f"\n{cross} cross-stem group(s) — review each; same work under two "
+        f"spellings must be merged (citedby union), distinct works left alone."
+    )
     return 0
 
 
@@ -329,8 +348,7 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--resolutions", help="Python module of resolution tables")
     ap.add_argument("--report", action="store_true", help="dry run: plan + flags")
     ap.add_argument("--write", action="store_true", help="apply (refused if flags)")
-    ap.add_argument("--dupes", action="store_true",
-                    help="whole-corpus cross-key duplicate sweep (post-final)")
+    ap.add_argument("--dupes", action="store_true", help="whole-corpus cross-key duplicate sweep (post-final)")
     a = ap.parse_args(argv)
     master = Path(a.wiki).resolve() / "bibliography.bib"
     if not master.is_file():
@@ -342,8 +360,7 @@ def main(argv: list[str]) -> int:
         ap.error("choose --report, --write, or --dupes")
     if not a.frags or not a.resolutions:
         ap.error("--frags and --resolutions are required for --report/--write")
-    return merge(master, Path(a.frags).resolve(),
-                 Path(a.resolutions).resolve(), a.write)
+    return merge(master, Path(a.frags).resolve(), Path(a.resolutions).resolve(), a.write)
 
 
 if __name__ == "__main__":

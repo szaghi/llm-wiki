@@ -265,3 +265,38 @@ performance, a different subject from discretizing divergence constraints
 or designing capturing schemes; folding it into either bundle would have
 diluted that bundle's registry and reading guide.
 
+
+## D19 — Public site, bundle cards and the consultation plugin (2026-10-13)
+
+**Decision (user):** the repository becomes consumable by other people. It
+is published (public repository, documentation site on GitHub Pages built
+with VitePress like the user's other projects), every bundle is rendered on
+the site, the bundles get a generated list and a visual map, and the
+consultation skill ships in the repository as a Claude Code plugin.
+
+**What it adds:**
+* `<bundle>/bundle.toml`, the bundle card: `title`, `summary`, `keywords`
+  (the skill's trigger vocabulary) and an optional `corpus` path that
+  `tools/worklist.sh` reads. These are the only hand-written facts about a
+  bundle; every count is derived from the wiki at call time
+  (`tools/bundles.py`), in keeping with D8.
+* Generated regions in `README.md` and `skills/llm-wiki/SKILL.md`, rewritten
+  by `tools/bundles.py --write` and checked by `--check` in CI, so the
+  bundle list cannot go stale.
+* `tools/site_sync.py`, which copies each wiki into the site with its
+  bundle-root links rewritten, and derives the page graphs and the
+  bundle map. Its output is git-ignored and never edited; the bundles
+  themselves are untouched.
+
+**How it relates to D12:** bundle content still never links across
+bundles. The bundle map's overlaps (cited works shared by DOI or title and
+year, sources ingested in several bundles, pages with the same name or a
+shared alias) are computed at build time and live only in the site. They
+are navigation, not claims: an alias match can be loose, and the map shows
+the matched name so a reader can judge it.
+
+**Why:** a wiki only its author can navigate is a private notebook. The
+rendered site lets a reader without Claude Code use the bundles; the plugin
+lets a Claude Code user consult them from any directory; the generated
+registry keeps the public bundle list honest; and KaTeX at build time turns
+the math law into a check over every page.

@@ -69,7 +69,7 @@ def split_frontmatter(text: str) -> tuple[str | None, str]:
 
 
 def strip_code(body: str) -> str:
-    body = re.sub(r"^```.*?^```", "", body, flags=re.S | re.M)
+    body = re.sub(r"^(```|~~~).*?^\1", "", body, flags=re.S | re.M)
     return re.sub(r"`[^`\n]*`", "", body)
 
 
@@ -101,6 +101,8 @@ def main(wiki_dir: str) -> int:
         print(f"no such directory: {wiki}")
         return 2
 
+    errors.clear()  # module-level accumulators: a second call in one process starts clean
+    warnings.clear()
     pages: dict[Path, dict] = {}  # concept pages: path -> frontmatter
     incoming: set[str] = set()  # wiki-relative posix paths that are link targets
 
@@ -117,9 +119,9 @@ def main(wiki_dir: str) -> int:
                         fail(rel, "root index.md frontmatter may carry only okf_version")
                 else:
                     fail(rel, f"reserved file {path.name} must have no frontmatter")
-            for line in body.splitlines():
-                m = MD_LINK.search(line)
-                if m and not resolve_link(wiki, path, m.group(1)):
+            check_math(rel, body)
+            for m in MD_LINK.finditer(strip_code(body)):
+                if not resolve_link(wiki, path, m.group(1)):
                     fail(rel, f"broken link: {m.group(1)}")
             continue
 
@@ -155,6 +157,10 @@ def main(wiki_dir: str) -> int:
         elif ctype:
             if meta.get("status") not in STATUS_VALUES:
                 fail(rel, "concept page 'status' must be 'established' or 'hypothesis'")
+
+        for field in ("title", "description"):
+            if not str(meta.get(field, "") or "").strip():
+                fail(rel, f"frontmatter missing non-empty '{field}'")
 
         ts = meta.get("timestamp")
         if ts is None or not ISO8601.match(str(ts).replace(" ", "T", 1)):
@@ -217,9 +223,7 @@ def main(wiki_dir: str) -> int:
             else:
                 for msg in bib_to_md.validate(entries, wiki):
                     fail(Path("bibliography.bib"), msg)
-                if not bib_md.exists() or bib_md.read_text(
-                    encoding="utf-8"
-                ) != bib_to_md.render_md(entries, wiki):
+                if not bib_md.exists() or bib_md.read_text(encoding="utf-8") != bib_to_md.render_md(entries, wiki):
                     fail(
                         Path("bibliography.md"),
                         "out of sync with bibliography.bib — run tools/bib_to_md.py",
@@ -228,8 +232,7 @@ def main(wiki_dir: str) -> int:
                 if todo:
                     warn(
                         Path("bibliography.bib"),
-                        f"{len(todo)} ingested source(s) with no reference list "
-                        f"merged (tools/bib_to_md.py --pending)",
+                        f"{len(todo)} ingested source(s) with no reference list merged (tools/bib_to_md.py --pending)",
                     )
 
     # --- orphans (warning) ---

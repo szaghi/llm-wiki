@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "llm-wiki-tools"
+version = "0.1.0"
+description = "Linter, bibliography tools, bundle registry and site generator of the llm-wiki knowledge bundles"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Stefano Zaghi" }]
+dependencies = ["PyYAML>=6"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "pytest-cov>=5", "ruff>=0.6"]
+
+[project.urls]
+Documentation = "https://szaghi.github.io/llm-wiki/"
+Repository = "https://github.com/szaghi/llm-wiki"
+
+# the tools are scripts run as `python3 tools/<name>.py`; installing them as top-level modules
+# lets the tests import them and lets tools import each other
+[tool.setuptools]
+package-dir = { "" = "tools" }
+py-modules = ["bib_merge", "bib_to_md", "bundles", "lint_okf", "site_sync"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+# only the Python tooling: recent ruff also formats code blocks in Markdown, and the wiki pages are compiler-owned
+include = ["tools/*.py", "tests/*.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "RUF", "C4"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["tools"]
+addopts = "--cov=tools --cov-report=term-missing"

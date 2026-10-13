@@ -11,8 +11,12 @@ rules there, not by silently deviating.
 ~/llm-wiki/
 ├── CLAUDE.md            # this file — repo-wide law
 ├── DECISIONS.md         # rationale record (ADR-lite)
-├── tools/               # deterministic tooling (linter, bib generator/merger, worklist)
+├── tools/               # deterministic tooling (linter, bib generator/merger, worklist,
+│                        #   bundle registry, site generator); tests/ covers it
+├── skills/llm-wiki/     # the consultation skill, also a Claude Code plugin (.claude-plugin/)
+├── docs/                # VitePress documentation site (D19); docs/bundles/<slug>/ is generated
 └── <bundle>/            # one directory per knowledge bundle
+    ├── bundle.toml      # bundle card: title, summary, keywords, optional corpus path (D19)
     ├── CLAUDE.md        # bundle law (corpus location, domain notes)
     ├── raw/             # Layer 1 captures: web/ (md snapshots), docs/
     └── wiki/            # Layer 2: OKF v0.1 bundle root
@@ -20,6 +24,13 @@ rules there, not by silently deviating.
 
 Bundles are mutually independent and **agnostic of any external repository**.
 Never reference, read from, or depend on other projects' repos in bundle content.
+The documentation site computes overlaps between bundles at build time (D19);
+that is navigation in the site, never a link or a claim in bundle content.
+
+A new bundle is scaffolded with its `bundle.toml` (`title`, `summary`,
+`keywords`, and `corpus` when the sources live in an archive), its
+`CLAUDE.md`, `raw/` and a `wiki/` holding `index.md`, `log.md` and
+`notation.md`.
 
 ## Layer rules
 
@@ -33,7 +44,9 @@ Never reference, read from, or depend on other projects' repos in bundle content
   their own. An evolved record gets a new capture and a new slug (D12
   amendment).
 - **Layer 2 (compiler-owned):** `wiki/` is yours to write. The human browses it.
-- Anything git-ignored or stateful (caches, indexes) is disposable.
+- Anything git-ignored or stateful (caches, indexes) is disposable. The
+  site pages and data that `tools/site_sync.py` writes under `docs/` are
+  generated: never hand-edit them; fix the wiki and regenerate.
 
 ## OKF conformance (v0.1)
 
@@ -212,7 +225,9 @@ For each source, in order:
    by key; append this source's slug to each cited entry's `citedby`; then
    regenerate `wiki/bibliography.md` (`python3 tools/bib_to_md.py <bundle>/wiki`).
 6. **Append to `log.md`** (dated entry, pages touched).
-7. **Update affected `index.md` files.**
+7. **Update affected `index.md` files**, then the bundle registry:
+   `python3 tools/bundles.py --write` (rewrites the generated bundle tables
+   of `README.md` and `skills/llm-wiki/SKILL.md`).
 8. **Lint**: `python3 tools/lint_okf.py <bundle>/wiki` must pass.
 9. **Stage and hand off**: `git add -A`, then present the prepared commit
    message `docs(<bundle>): ingest <source-slug>` to the human. **The compiler
@@ -246,7 +261,8 @@ contradiction lives.
 ## Verification
 
 - **Deterministic lint** (`tools/lint_okf.py`) at every ingestion; must pass
-  before commit.
+  before commit. `make check` runs it on every bundle plus the registry
+  check (`tools/bundles.py --check`); CI runs the same, with the tool tests.
 - **Deep lint** (LLM audit) every 10 ingestions and before any human-declared
   milestone: re-read a folder against `notation.md` and related pages; flag
   notation drift, stale contradictions, tag synonyms; record findings in `log.md`;

@@ -7,3 +7,17 @@ __pycache__/
 */raw/docs/*.pdf
 */raw/docs/*.pptx
 */raw/docs/*.docx
+# python tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+*.egg-info/
+# documentation site: dependencies, build output and everything tools/site_sync.py generates
+docs/node_modules/
+docs/.vitepress/cache/
+docs/.vitepress/dist/
+docs/.vitepress/generated/
+docs/public/data/
+docs/public/bundles/
+docs/bundles/*/
