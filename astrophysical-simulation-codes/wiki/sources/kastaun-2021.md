@@ -172,6 +172,7 @@ $\mathbf v$, $W$, $e$, $p$ or $\mu$.
 * Updated [Dual-energy formalism](/methods/dual-energy-formalism.md).
 * Also cited on [Athena++ (block-based AMR framework for astrophysical MHD)](/software/athena-plus-plus.md).
 * Also cited on (batch 3) [AthenaK (performance-portable Kokkos version of the Athena++ AMR framework)](/software/athenak.md).
+* Also cited on (batch 4) [Density and pressure floors](/methods/numerical-floors.md).
 
 # Citations
 

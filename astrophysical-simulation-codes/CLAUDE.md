@@ -90,6 +90,13 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Batch 4 staged 2026-10-12:** all 35 archived sources ingested (the
+comparisons and applications: porth-2019, kim-2017, villasenor-2021,
+ohlmann-2016, bai-2017, mathew-2021). Deep lint #3 (35 ingestions) ran
+with this batch. Still outside the archive: Truelove et al. (1997), which
+needs a manual download. The next deep lint is due after 10 more
+ingestions.
+
 **Batch 3 staged 2026-10-12:** 29 of 35 archived sources ingested (the
 GPU codes: lesur-2023, caddy-2024, stone-2026, rossazza-2026,
 wibking-2022, shankar-2023, zaghi-2023, bernardini-2021, jansson-2024).

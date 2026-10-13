@@ -4,7 +4,7 @@ title: "Enzo (AMR code for cosmological and astrophysical fluid flow)"
 description: "Open-source Cartesian patch-based AMR code in comoving coordinates (version 2.3) with four interchangeable fluid solvers (split PPM, unsplit MUSCL with GLM cleaning, constrained-transport MHD, ZEUS), the dual-energy formalism, subcycled level-by-level time stepping with flux correction, FFT plus grid-by-grid multigrid gravity, and coupled N-body, chemistry, cooling and radiation."
 status: established
 aliases: [ENZO, Enzo 2.3]
-tags: [software, hydro, mhd, amr, cosmology, dual-energy, constrained-transport, divergence-cleaning, riemann-solver, self-gravity, multigrid, gpu, performance, verification]
+tags: [software, hydro, mhd, amr, cosmology, dual-energy, constrained-transport, divergence-cleaning, riemann-solver, self-gravity, multigrid, gpu, performance, verification, cooling, chemistry]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -251,6 +251,36 @@ qualitative figure comparisons, and no convergence-order study is presented.
   the same rule. See
   [integrating cooling and chemistry source terms](/methods/radiative-cooling-integration.md).
 
+## Later uses (batch 4)
+
+[Villasenor et al. (2021)](/sources/villasenor-2021.md) use Enzo as the
+main reference code for the cosmology extension of
+[Cholla](/software/cholla.md); the Enzo version and solver settings of
+these runs are not stated.
+* **[Zel'dovich pancake](/benchmarks/zeldovich-pancake.md)** (§3.1,
+  Fig. 1): the Bryan et al. set-up reproduced on 256 uniform Cholla
+  cells; differences from Enzo at redshift 0 below 10 % in density and
+  temperature except at the sharp shock features, about 20 % in velocity
+  at the shock fronts, and below 1 % outside the shocks.
+* **Dark-matter power spectrum** (§3.2, Fig. 2): agreement below 0.1 % at
+  large and below 0.3 % at small scales, once Cholla's FFT solver uses the
+  continuous Green's function (minus the inverse squared wavenumber); with
+  Cholla's discrete-Laplacian Green's function the small-scale difference
+  reaches "as much as ≈ 28%". This is consistent with the continuous
+  option of Enzo's root-grid FFT solver listed above (§5.1 of Bryan et
+  al.); Villasenor et al. do not state which option the Enzo run used,
+  so this is implied by their choice, not stated. See [particle-mesh N-body](/methods/particle-mesh-gravity.md).
+* **Adiabatic gas power spectrum** (§3.3, Figs. 3–4): below 1 % at large
+  and below 15 % at small scales.
+* **Dual energy** (§2.3, §3.4, Figs. 5–6): Cholla's switch is "similar to
+  that used in Enzo"; in the mean-cosmic-temperature test Enzo heats from
+  redshift about 15 and follows the virial-temperature estimate below
+  redshift 6. See [dual-energy formalism](/methods/dual-energy-formalism.md).
+* **Chemistry with a UV background** (§3.5, Figs. 7–8): projected fields
+  agree qualitatively at redshift 0; the fitted intergalactic temperature
+  at mean density and the slope of the temperature–density relation
+  differ by less than 1 %.
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §§1–13, Appendix (arXiv v1).
@@ -258,3 +288,4 @@ qualitative figure comparisons, and no convergence-order study is presented.
 3. [Tomida & Stone (2023)](/sources/tomida-2023.md), §3.3.1, App. B (arXiv v1).
 4. [Stone et al. (2020)](/sources/stone-2020.md), §2.2, §3.6.1.
 5. [Smith et al. (2017)](/sources/smith-2017.md), §§2–4, 8.2 (arXiv v2).
+6. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.3, 3.1–3.5, Figs. 1–8 (arXiv v2).

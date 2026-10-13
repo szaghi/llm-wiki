@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "M1 two-moment radiation transport"
-description: "Radiation transport by the zeroth and first angular moments of the transfer equation closed with the local M1 Eddington tensor, advanced by explicit Godunov schemes with HLL or global Lax–Friedrichs fluxes and operator-split matter coupling, as implemented in RAMSES-RT and Athena's Hyperion module."
+description: "Radiation transport by the zeroth and first angular moments of the transfer equation closed with the local M1 Eddington tensor, advanced by explicit Godunov schemes with HLL or global Lax–Friedrichs fluxes and operator-split or implicit matter coupling, as implemented in RAMSES-RT, Athena's Hyperion module and the GPU AMR code Quokka."
 status: established
 aliases: [M1 closure, two-moment radiation hydrodynamics, moment method, M1 radiative transfer, Levermore closure]
 tags: [radiation, riemann-solver, reduced-speed-of-light, conservation, amr, gpu]

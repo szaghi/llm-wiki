@@ -4,7 +4,7 @@ title: "Singular isothermal sphere collapse"
 description: "Inside-out collapse of an isothermal sphere with an r^-2 density profile, whose Shu (1977) similarity solution gives a constant accretion rate; it tests sink-particle accretion and the gas flow around a sink, including a sink advected across the grid."
 status: established
 aliases: [Shu collapse, Shu (1977) collapse, SIS collapse, isothermal sphere collapse, inside-out collapse]
-tags: [benchmark, self-gravity, verification]
+tags: [benchmark, self-gravity, verification, sink-particles]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

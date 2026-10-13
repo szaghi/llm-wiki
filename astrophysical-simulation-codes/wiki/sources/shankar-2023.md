@@ -142,6 +142,7 @@ efficiency 0.19 at 1000 nodes relative to 8 nodes. Precision not stated.
   [MHD blast wave](/benchmarks/mhd-blast-wave.md) (drafted by other
   drafters; the compiler confirms the final list).
 * Also cited on (batch 3) [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md), [Constrained transport](/methods/constrained-transport.md).
+* Also cited on (batch 4) [H-AMR](/software/h-amr.md).
 
 # Citations
 

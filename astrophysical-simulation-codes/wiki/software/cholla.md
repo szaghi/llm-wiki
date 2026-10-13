@@ -1,10 +1,10 @@
 ---
 type: Software
 title: "Cholla (GPU-native astrophysical MHD code)"
-description: "GPU-native finite-volume code on a static uniform Cartesian mesh, in C++ with CUDA or HIP, whose MHD extension runs the VL+CT integrator with HLLD fluxes, characteristic PLM or PPM and Gardiner–Stone constrained transport entirely in GPU memory, and weak-scales to 74,088 MI250X GCDs of Frontier."
+description: "GPU-native finite-volume code on a static uniform Cartesian mesh, in C++ with CUDA or HIP, whose MHD extension runs the VL+CT integrator with HLLD fluxes, characteristic PLM or PPM and Gardiner–Stone constrained transport entirely in GPU memory and weak-scales to 74,088 MI250X GCDs of Frontier, and whose cosmology extension adds super-comoving coordinates, FFT self-gravity, particle-mesh dark matter, a dual-energy formalism and Grackle chemistry on the host."
 status: established
 aliases: [Cholla, Cholla-MHD]
-tags: [software, mhd, hydro, gpu, cuda, constrained-transport, unsplit, riemann-solver, performance, scaling, verification]
+tags: [software, mhd, hydro, gpu, cuda, constrained-transport, unsplit, riemann-solver, performance, scaling, verification, cosmology, self-gravity, dual-energy]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -226,9 +226,115 @@ with the VL+CT integrator, Athena++ with its method-of-lines integrators.
   ([Stone et al. (2026)](/sources/stone-2026.md), §5.1); the AthenaK
   solver options and precision of that measurement are not stated.
 
+## Later uses (batch 4)
+
+### Cosmology extension
+
+[Villasenor et al. (2021)](/sources/villasenor-2021.md) extend Cholla to
+cosmological hydrodynamics plus N-body, "by engineering gas self-gravity,
+a Fourier-space Poisson solver, a particle integrator, a comoving
+coordinate scheme, and a coupling to the GRACKLE heating and cooling
+library" (§1, §2, §7). The hydro solver of that version is the Godunov
+finite-volume update with PPM reconstruction (Colella & Woodward 1984),
+which the paper calls "third-order accurate in space and second-order
+accurate in time" (§2.2, eq. 12); the integrator and the Riemann solver
+are not named (details deferred to Schneider & Robertson 2015). This
+qualifies, and does not contradict, the "formally second order" PPM
+statement above: Villasenor et al. describe the reconstruction's spatial
+order, with no measured convergence order, in a version that predates
+VL+CT as default.
+* **Super-comoving coordinates** (§2.1.2, eqs. 7–11), after Martel &
+  Shapiro (1998), as used in Ramses by Teyssier (2002). With rescaled
+  time, velocity, energies, pressure and potential, the adiabatic
+  equations for $\gamma = 5/3$ take the form of the non-expanding
+  equations, which "allows the extension of the hydrodynamics solver to
+  an expanding frame system without any significant changes to the
+  original solver". The evolved state adds the internal energy to
+  density, momentum and total energy (eq. 12).
+* **[Dual energy](/methods/dual-energy-formalism.md)** (§2.3, eq. 13): an
+  Enzo-like single-threshold switch with threshold 0.035; see that page.
+* **Gravity** (§2.4, eqs. 16–22): FFT Poisson solver (PFFT library) with
+  the Green's function of the second-order discrete Laplacian and a
+  fourth-order potential gradient; see
+  [particle-mesh N-body](/methods/particle-mesh-gravity.md). The gravity
+  sources are added after the hydro update, time-centred,
+  $$\begin{aligned}
+  (\rho\mathbf v)^{n+1}_i &= (\rho\mathbf v)^{*}_i + \tfrac12\Delta t^n\left(\rho^n_i + \rho^{n+1}_i\right)\mathbf g^{n+1/2}_i,\\
+  E^{n+1}_i &= E^{*}_i + \tfrac12\Delta t^n\left[(\rho\mathbf v)^n_i + (\rho\mathbf v)^{*}_i\right]\cdot\mathbf g^{n+1/2}_i,
+  \end{aligned}$$
+  with $^{*}$ the post-hydro state, all in super-comoving variables
+  (eqs. 20–21). The half-step potential is linearly extrapolated,
+  $\Phi^n + \frac{\Delta t^n}{2\Delta t^{n-1}}(\Phi^n - \Phi^{n-1})$, times
+  a scale-factor conversion (eq. 22). This is a source-form energy
+  coupling, not the flux form of
+  [conservative self-gravity](/methods/conservative-self-gravity.md).
+* **Dark matter** (§2.5): CIC deposit and interpolation, kick–drift–kick
+  (eqs. 23–28); see [particle-mesh N-body](/methods/particle-mesh-gravity.md).
+* **Chemistry and cooling**: [Grackle](/software/grackle.md), called at
+  the end of each step after the hydro update and the gravity sources,
+  after which $E$ is reset from the updated internal energy (§2.6–2.7,
+  eqs. 29–30); H and He ionization states are advected as passive scalars
+  in the hydro update.
+* **Time step** (§2.8, eqs. 33–35): the global minimum of a gas limit
+  (scale factor times $h$ over $|v|+c_s$ per direction, Courant number
+  0.3 by default, agreeing with the $\nu = 0.3$ above), a particle limit
+  (coefficient 0.3) and an expansion limit (scale factor changing by
+  1 %).
+* **Small-step cell fix** (§2.8). Where a cell's gas time step falls below
+  1/50 of the particle step, its density, momentum, total and internal
+  energy are replaced by the average of its six nearest neighbours. This
+  is not conservative. It happens "less than a dozen times per
+  simulation" in the high-resolution runs; its effect is asserted, not
+  tested, to be insignificant.
+* The mesh is uniform, with one global time step (§1, §2.8), agreeing with
+  the Mesh section above. The paper argues that a uniform grid samples
+  the low-density, volume-filling intergalactic gas better than AMR or
+  SPH at equal cost, "making the use of AMR unnecessary and inefficient";
+  this is argued, not measured (§1).
+
+### Host/device split (2021 version)
+
+Only the hydro solver, including the advection of the ionization
+species, runs on the GPUs; the FFT Poisson solver, the particle
+integrator and the chemistry solver run on the host CPUs (§2.9). At
+submission "an entirely GPU based distributed FFT solver has been
+recently integrated into Cholla", and moving the particles and the H+He
+network to the GPU was in progress. Grackle "is the slowest step in our
+implementation" (§2.9), consuming "about half of the computational time"
+(§4). This dates a hybrid stage between the offload model and the fully
+GPU-resident design described above; see
+[GPU porting](/methods/gpu-porting.md).
+
+### Verification and performance (cosmology)
+
+From [Villasenor et al. (2021)](/sources/villasenor-2021.md), §3, §4,
+App. A:
+* [Zel'dovich pancake](/benchmarks/zeldovich-pancake.md) against
+  [Enzo](/software/enzo.md), 256 cells (§3.1, Fig. 1).
+* Dark-matter-only matter power spectra ($256^3$ particles and cells)
+  against Nyx, Ramses and Enzo: sub-per-cent once each code's gradient
+  stencil and Green's function is matched (§3.2, Fig. 2).
+* Adiabatic gas power spectra: against Ramses (Cholla run with the Ramses
+  dual-energy condition) about 1 % or less at large scales and up to
+  about 7 % at small scales for redshift below 1; against Enzo below 1 %
+  at large and below 15 % at small scales (§3.3, Figs. 3–4). The authors
+  state that small-scale gas power is "highly sensible [sic] to the
+  numerical implementation of the hydrodynamics solver" and that they
+  know of no robust code comparison of it.
+* A mean-cosmic-temperature test of the dual-energy switch (§3.4); a
+  chemistry plus UV-background run against Enzo with fitted
+  intergalactic temperature–density relations agreeing within 1 % (§3.5).
+* Resolution study at $512^3$, $1024^3$ and $2048^3$ cells and particles:
+  the two finer runs "agree well"; no convergence rate is given (App. A,
+  Fig. 17).
+* **Performance** (§4): each $2048^3$ production run took 512 Summit
+  GPUs for about 11 hours (about 1000 node-hours). No cell-update rate,
+  precision or scaling study is printed.
+
 # Citations
 
 1. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §§1–5, Tables 1–2, Figs. 1–14 (arXiv v2).
 2. [Stone et al. (2008)](/sources/stone-2008.md) (eigenvectors and comparison figures, as cited by Caddy & Schneider).
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.3.3.
 4. [Stone et al. (2026)](/sources/stone-2026.md), §5.1 (arXiv v1).
+5. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§1–4, eqs. 7–35, App. A (arXiv v2).

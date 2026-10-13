@@ -4,7 +4,7 @@ title: "PLUTO (multiphysics code for astrophysical gas dynamics, with Chombo AMR
 description: "Godunov-type code for Newtonian and relativistic MHD whose adaptive version couples a cell-centred, dimensionally unsplit second-order CTU scheme with GLM divergence cleaning to the Chombo patch-based AMR library, with subcycling, refluxing, unsplit parabolic terms and a leaf-cell time step for stiff local sources."
 status: established
 aliases: [PLUTO, PLUTO-CHOMBO, PLUTO-AMR]
-tags: [software, mhd, hydro, amr, divergence-cleaning, unsplit, riemann-solver, time-integration, performance, verification]
+tags: [software, mhd, hydro, amr, divergence-cleaning, unsplit, riemann-solver, time-integration, performance, verification, relativity]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

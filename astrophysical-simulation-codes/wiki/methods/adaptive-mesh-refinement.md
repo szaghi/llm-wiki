@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Adaptive mesh refinement in astrophysical codes"
-description: "Structured AMR as built into astrophysical codes: cell-based, patch-based and block-based hierarchies, subcycled versus global time stepping, refluxing and EMF correction, conservative restriction and limited prolongation, nesting rules, refinement criteria and load balancing, compared across Athena++, GAMER, PLUTO, Castro, Enzo and RAMSES."
+description: "Structured AMR as built into astrophysical codes: cell-based, patch-based and block-based hierarchies, subcycled versus global time stepping, refluxing and EMF correction, conservative restriction and limited prolongation, nesting rules, refinement criteria and load balancing, compared across Athena++, AthenaK, GAMER, PLUTO, Castro, Enzo, FLASH, RAMSES, Quokka, GRaM-X and ADAM, with the GPU codes' block-size and host-side bookkeeping findings."
 status: established
 aliases: [AMR, SAMR, block-structured AMR, patch-based AMR, octree AMR, Berger–Oliger AMR, Berger–Colella AMR, subcycling, refluxing, flux correction]
 tags: [amr, conservation, performance, gpu]
@@ -610,7 +610,7 @@ streamwise and spanwise directions and stretched in the wall-normal one
   9–13). The moving-vortex appendix reports that refinement jumps "seem to
   not pollute the solution" (visual).
 
-### Bearing on the open entries
+### Bearing on the open entries (batch 3)
 
 * **Is time subcycling worth its cost?** Batch 3 adds one subcycled code
   (Quokka) and three with a global step (AthenaK, GRaM-X, ADAM). GRaM-X
@@ -620,6 +620,58 @@ streamwise and spanwise directions and stretched in the wall-normal one
   against the alternative on a common problem, so the entry stays open.
 * **Level-dependent derived quantities.** No batch-3 source discusses the
   issue.
+
+## Later uses (batch 4)
+
+### FLASH in a 2021 production configuration
+
+[Mathew & Federrath (2021)](/sources/mathew-2021.md) document the
+refinement set-up of a [FLASH](/software/flash.md) ("flash4") application,
+eleven years after the configuration of
+[Federrath et al. (2010)](/sources/federrath-2010.md) in Later uses
+(batch 2):
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| [FLASH](/software/flash.md) (PARAMESH) | block, after Berger & Colella (1989) | not stated | not stated | not stated |
+
+* **Jeans refinement at 16 cells.** On all levels below the finest the
+  Jeans length is resolved by $N_{\mathrm J} \ge 16$ cells "to prevent
+  underestimation of the turbulent energy and to resolve the local
+  collapse reasonably well" (citing Federrath et al. 2011), against at
+  least 12 in Federrath et al. (2010), §4.2.1. The new reason concerns the
+  turbulent energy, not artificial fragmentation. On the finest level the
+  sink size $2r_{\mathrm{acc}} = 5h$ keeps 5 cells per Jeans length, the
+  2010 value, which the authors say satisfies the Truelove criterion
+  (§2.3). See the
+  [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md).
+* **Grid.** A triple-periodic 2 pc box at effective $N = 4096$, finest
+  $h = 100$ AU; the root grid size and the number of levels are not
+  stated, and no criterion besides the Jeans one is named (§2.6,
+  Table 1).
+* **No resolution study.** All runs use one finest resolution; ten
+  turbulence realizations per model replace a resolution sweep, and the
+  authors name resolution as the main caveat (§§3, 6.1). The paper reports
+  no AMR cost or overhead.
+
+### Bearing on the open entries (batch 4)
+
+Mathew & Federrath do not describe FLASH's time stepping across levels or
+any level-dependent quantity. [Porth et al. (2019)](/sources/porth-2019.md),
+§3, §4.1.5, describe H-AMR's locally adaptive time stepping, which decouples
+temporal from spatial refinement levels and is called "superior to the
+'standard' hierarchical timestepping", with 3–4 levels giving a further
+factor 3–5 in speed; the factor is quoted from Chatterjee et al. (2019),
+not measured against a global step, so the subcycling entry stays open.
+
+## Open question: level-dependent derived quantities
+
+Recorded at deep lint #1 as a contradiction and moved here at deep lint #3,
+because only one side is stated: [Stone et al. (2020)](/sources/stone-2020.md), §1, argue that
+covering each point by one level only avoids level-dependent derived
+quantities (e.g. a temperature used by cooling) that afflict patch-based
+AMR; the patch-based sources (Castro, Enzo, PLUTO-Chombo) do not discuss
+the issue, and none quantifies it.
 
 ## Contradictions
 
@@ -634,16 +686,16 @@ streamwise and spanwise directions and stretched in the wall-normal one
   [Mignone et al. (2012)](/sources/mignone-2012.md), §4;
   [Zhang et al. (2018)](/sources/zhang-2018.md), §3.3;
   [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §5.1: subcycle by
-  design (Castro adds a multilevel gravity correction solve for it).
+  design (Castro adds a multilevel gravity correction solve for it);
+  [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2 (Quokka), and
+  [Porth et al. (2019)](/sources/porth-2019.md), §4.1.5 (H-AMR's locally
+  adaptive time stepping, claimed to give a factor 3–5) also subcycle.
+* One global step, with reasons: [Stone et al. (2026)](/sources/stone-2026.md)
+  (AthenaK), [Shankar et al. (2023)](/sources/shankar-2023.md) (GRaM-X:
+  subcycling serializes the levels) and [Zaghi et al. (2023)](/sources/zaghi-2023.md)
+  (ADAM); see the batch-3 notes above.
 * No source measures the interpolation error or the cost trade-off on a
   common problem; the entry closes when one does.
-
-**Do patch-based hierarchies suffer level-dependent derived quantities?**
-*Open.* [Stone et al. (2020)](/sources/stone-2020.md), §1, argue that
-covering each point by one level only avoids level-dependent derived
-quantities (e.g. a temperature used by cooling) that afflict patch-based
-AMR; the patch-based sources (Castro, Enzo, PLUTO-Chombo) do not discuss
-the issue, and none quantifies it.
 
 # Citations
 
@@ -665,3 +717,5 @@ the issue, and none quantifies it.
 16. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §1 (arXiv v2).
 17. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.2.
 18. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§3.1–3.2.
+19. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.1, 2.3, 2.6, 3, 6.1, Table 1 (arXiv v2).
+20. [Porth et al. (2019)](/sources/porth-2019.md), §§3, 4.1.5 (arXiv v2).

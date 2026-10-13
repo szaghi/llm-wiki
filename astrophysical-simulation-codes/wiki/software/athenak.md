@@ -4,7 +4,7 @@ title: "AthenaK (performance-portable Kokkos version of the Athena++ AMR framewo
 description: "From-scratch Kokkos C++ reimplementation of the Athena++ block-based AMR framework that keeps all field data device-resident, packs every MeshBlock of a device into one MeshBlockPack, runs on CPUs and NVIDIA, AMD and ARM hardware, and carries Newtonian, special- and general-relativistic (M)HD, two-fluid ion–neutral MHD, discrete-angle GR radiation and particles."
 status: established
 aliases: [AthenaK, Athena-K]
-tags: [software, mhd, hydro, amr, constrained-transport, riemann-solver, time-integration, relativity, gpu, kokkos, performance-portability, performance, scaling, verification]
+tags: [software, mhd, hydro, amr, constrained-transport, riemann-solver, time-integration, relativity, gpu, kokkos, performance-portability, performance, scaling, verification, primitive-recovery]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

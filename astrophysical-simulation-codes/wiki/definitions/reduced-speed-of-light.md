@@ -1,7 +1,7 @@
 ---
 type: Definition
 title: "Reduced speed of light approximation"
-description: "Replacing the speed of light c by a smaller ĉ = f_c c in the time derivatives of explicit radiation moment equations to relax the light-speed time step, with two validity criteria: one from ionization-front propagation (RAMSES-RT) and one from time-scale ordering in the streaming and static-diffusion regimes (Hyperion)."
+description: "Replacing the speed of light c by a smaller ĉ = f_c c in the time derivatives of explicit radiation moment equations to relax the light-speed time step, with two validity criteria (ionization-front propagation in RAMSES-RT; time-scale ordering in Hyperion), and Quokka's finding that a closed system then relaxes to a biased equilibrium, about 20 % too hot at ĉ = 0.1c."
 status: established
 aliases: [RSLA, reduced speed of light, RSL, ĉ approximation]
 tags: [radiation, reduced-speed-of-light, time-integration]
@@ -202,6 +202,7 @@ exclusion in the table above.
   it reaches; Skinner & Ostriker give the same conserved combination. The
   entry closes by a source that states this, or by the human.
 
+# Citations
 
 1. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §§4.1–4.3, 5.4, 6.2, 6.4, 6.5, 6.8 (arXiv v2).
 2. [Skinner & Ostriker (2013)](/sources/skinner-2013.md), §§2.1, 3.1–3.2, 4.3.2–4.3.6, 5 (arXiv v1).

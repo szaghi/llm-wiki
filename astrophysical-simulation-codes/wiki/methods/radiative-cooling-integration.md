@@ -154,6 +154,45 @@ cooling layers ([Townsend (2009)](/sources/townsend-2009.md), §4). Enzo
 can refine where the cooling time is shorter than the sound-crossing time
 ([Bryan et al. (2014)](/sources/bryan-2014.md), §3.6).
 
+## Later uses (batch 4)
+
+* **Athena/TIGRESS: implicit cooling sub-cycled at the cooling time.**
+  [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1, in
+  [TIGRESS](/software/tigress.md): the net cooling (losses
+  $n_{\mathrm H}^2\Lambda(T)$ minus photoelectric heating) is "solved fully
+  implicitly in an operator-split manner before the integrator step". When
+  the cooling time, the thermal energy over the net cooling rate, is
+  shorter than $\Delta t$, the update is sub-cycled with "an adaptive time
+  step corresponding to the instantaneous cooling time", i.e.
+  $\Delta t_{\mathrm{sub}} = t_{\mathrm{cool}}$. The implicit scheme,
+  root-finder and tolerance are not stated, and the paper has no test of
+  the cooling integrator.
+* **Cooling function and $\mu$.** $\Lambda(T)$ is the Koyama & Inutsuka
+  (2002) fit below $10^{4.2}$ K and Sutherland & Dopita (1993)
+  collisional-ionization-equilibrium cooling at solar metallicity above;
+  $\mu(T)$ is interpolated between 1.295 and 0.618 and found "iteratively
+  for a given pair of P and ρ"; the photoelectric heating is uniform in
+  space and varies in time (§2.1, §2.3.1, Fig. 1). No chemistry is
+  evolved. The stated requirements of Townsend's exact integration above
+  ($\Lambda$ depending on $T$ alone, constant $\mu$, losses only) are
+  therefore not met in this configuration.
+* **Against Townsend's implicit-root failure: a qualification.** Townsend
+  (2009) shows a backward-Euler cooling update at $10^6$ K departing from
+  the exact solution for steps from $0.3\,t_{\mathrm{cool}}$ upward and
+  jumping between roots (above). TIGRESS sub-cycles at a step equal to the
+  instantaneous cooling time, inside that range, with an implicit scheme
+  it does not specify. The cooling functions, temperature ranges and
+  definitions of $t_{\mathrm{cool}}$ (net rate including heating in Kim &
+  Ostriker, losses only in Townsend) differ; Kim & Ostriker report no
+  failure and Townsend does not test this code. Neither source makes a
+  claim about the other's scheme, so this is recorded as a qualification,
+  not a contradiction.
+* **Numerical conduction.** TIGRESS has no explicit conduction; numerical
+  diffusion acts as a "numerical conductivity" larger than the physical
+  one, thickening the interface between cold and warm gas and raising the
+  thermally unstable fraction at low resolution (§3, footnote 4). This
+  joins the resolution requirements above.
+
 # Citations
 
 1. [Townsend (2009)](/sources/townsend-2009.md), §§1–5, eqs. 1–30,
@@ -164,3 +203,5 @@ can refine where the cooling time is shorter than the sound-crossing time
    App. A.
 4. [Bryan et al. (2014)](/sources/bryan-2014.md), §§3.6, 6.1, 6.2.1
    (arXiv v1).
+5. [Kim & Ostriker (2017)](/sources/kim-2017.md), §§2.1, 2.3.1, 3,
+   Fig. 1, footnote 4 (arXiv v2).

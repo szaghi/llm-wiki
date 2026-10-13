@@ -4,7 +4,7 @@ title: "Athena++ (block-based AMR framework for astrophysical MHD)"
 description: "C++ rewrite of Athena around a physics-agnostic block-based tree AMR mesh with a single global time step and task-list execution, carrying finite-volume upwind-CT MHD (Newtonian, special and general relativistic) with method-of-lines integrators, a multigrid self-gravity solver and a fully conservative self-gravity coupling."
 status: established
 aliases: [Athena++, athena++, Athena++ AMR framework]
-tags: [software, mhd, hydro, amr, constrained-transport, unsplit, riemann-solver, time-integration, self-gravity, multigrid, conservation, performance, verification]
+tags: [software, mhd, hydro, amr, constrained-transport, unsplit, riemann-solver, time-integration, self-gravity, multigrid, conservation, performance, verification, relativity, equation-of-state, primitive-recovery]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -467,6 +467,98 @@ IDEFIX's RKL2 super-time-stepping agrees with the RKL1/RKL2 stage-count
 scaling recorded above; see
 [super-time-stepping](/methods/super-time-stepping.md).
 
+## Later uses (batch 4)
+
+### Non-ideal MHD with the Hall term (Bai 2017)
+
+[Bai (2017)](/sources/bai-2017.md) runs 2D axisymmetric global
+protoplanetary-disk simulations with Athena++, which he calls "the
+successor of the widely used Athena MHD code" (§2). The paper is an
+application and presents no new numerical method.
+* **Hall term.** "All three non-ideal MHD terms have been implemented
+  (Bai & Stone 2017)" (§2): the induction equation carries Ohmic, Hall and
+  ambipolar terms (eq. 3). The Equations section above, from Stone et al.
+  (2020), lists Ohmic resistivity and ambipolar diffusion but no Hall
+  term; Bai attributes the Hall implementation to a separate paper (Bai &
+  Stone 2017, not ingested). A qualification of scope, not a
+  contradiction. Bai gives no Hall-specific numerics: no EMF construction,
+  Riemann-solver change, time-step limit or sub-cycling, and no treatment
+  of the parabolic terms is stated.
+* **Diffusivities** come from tables of the Ohmic diffusivity, the Hall
+  diffusivity over $\vert\mathbf B\vert$ and the ambipolar diffusivity over
+  $B^2$, computed from an equilibrium chemistry network (175 species, 2147
+  reactions, 0.1 µm grains), driven by ray-traced column densities; in the
+  far-UV-ionized layer the smaller of the table value and an analytic
+  value is used, "which guarantees a smooth transition" (§2.4.2–§2.4.3).
+  The ray tracing "involves global communications" and runs only every 0.5
+  inverse Keplerian angular frequencies at the inner radius ("at least a
+  few thousand timesteps"), "so that it does not affect the overall code
+  performance" (§2.5). No performance numbers are given.
+* **Energy equation.** The non-ideal heating and Poynting-flux terms are
+  deliberately omitted, which the author calls "not fully
+  self-consistent" and "largely irrelevant" because the temperature is
+  relaxed to a target value on a prescribed time-scale instead of using a
+  cooling function (§2.1, §2.3, eqs. 4, 12–13). Recorded as printed: the
+  sign of the relaxation term in eq. 12 combined with eq. 4 heats gas
+  hotter than the target, and its symbol changes between eqs. 4 and 12;
+  the intent is clear from the text.
+* **Geometry.** Spherical-polar coordinates with geometric source terms
+  "properly implemented that guarantees angular momentum conservation"
+  (§2), agreeing with the curvilinear-source item above. Logarithmic
+  radial spacing from 0.6 to 60 AU; the polar spacing grows by a constant
+  factor per cell from the midplane, with a maximum-to-minimum ratio of 3.5,
+  and leaves only a 2° cone at each pole; $1152\times512$ cells, about 15
+  (radial) and 20 (polar) cells per disk scale height at 3 AU (§2.5).
+* **Robustness devices** (§2.5, §5, App. A). A density floor of $10^{-8}$
+  times the midplane density at the same radius. A standard outflow inner
+  boundary "would violate causality, and can become unstable in the
+  presence of magnetic fields", so the inner ghost state is held nearly
+  fixed and a buffer from the inner radius to 1.5 times it ramps all
+  diffusivities linearly to zero and damps the poloidal velocities. The
+  poloidal field is set from a vector potential so that
+  $\nabla\cdot\mathbf B = 0$. The Hall term is ramped in as the fourth power
+  of the elapsed time over 5 local orbits after a restart, because with
+  aligned field and Hall active from the start the outcome depends on the
+  initial condition; the same procedure is "less successful for some other
+  runs".
+* **Stated limitations** (§4.3, §5.1, §6.2). The inner boundary "gradually
+  attracts magnetic flux", making the inner few AU "not very trustable";
+  those regions are excluded. All nine runs use one grid; no convergence
+  study, and resolution is asserted qualitatively (a current layer "well
+  resolved by more than 10 cells").
+
+### GRMHD in the EHT code comparison (Porth et al. 2019)
+
+Athena++ is one of the nine codes of the
+[EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md)
+([Porth et al. (2019)](/sources/porth-2019.md)), on a Fishbone–Moncrief
+torus around a spinning black hole.
+* **Configuration** (Table 1, §4.1.1). VL2, two-wave HLL, PPM and the
+  Gardiner & Stone (2005) CT; radial domain $[1.152, 50]\,r_{\mathrm g}$
+  and the full polar range; proper cell spacing $(0.506, 0.393, 0.788)\,r_{\mathrm g}$
+  in $(r,\theta,\phi)$ in the midplane at $r = 12\,r_{\mathrm g}$ for the
+  low-resolution run. The mesh is statically derefined by factors of 2
+  toward the poles. The paper's "HLL" and the Relativistic MHD item's
+  HLLE above are the same solver family.
+* **Pole and floors** (§4.1.1). The polar boundary communicates across the
+  pole and uses "the magnetic fluxes at the pole to help construct
+  edge-centered electric fields", agreeing with the "polar" boundary
+  recorded above. Floors add mass or internal energy to keep the
+  magnetization below 100 and the plasma beta above $10^{-3}$, with the
+  normal-frame Lorentz factor capped at 50; the field is not modified,
+  agreeing with the Relativistic MHD item above.
+* **Outer boundary** (§5.3, §5.4). With the outer boundary at
+  $50\,r_{\mathrm g}$, close to the torus, the outflow boundary removes mass:
+  Athena++, iharm3D and KORAL show smaller tori, and kinks are visible.
+* **Reconstruction** (App. A, Table 3). With PLM (the Mignone 2014 van
+  Leer limiter) instead of PPM, Athena++ and H-AMR give time-averaged
+  accretion rates "a factor of two to almost six" below their PPM runs
+  even at $192^3$. Porth et al. also state that the Gardiner–Stone UCT
+  used by Athena++ and H-AMR "reproduces the correct solution for
+  plane-parallel grid-aligned fields, however the amount of dissipation of
+  the scheme is effectively doubled" relative to arithmetic EMF averaging;
+  asserted, no test shown.
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §§1–4, §§3.6.1–3.6.5 (journal version).
@@ -478,3 +570,5 @@ scaling recorded above; see
 7. [Kastaun, Kalinani & Ciolfi (2021)](/sources/kastaun-2021.md), §IV D, Table I (arXiv v2).
 8. [Stone et al. (2026)](/sources/stone-2026.md), §§2–6 (arXiv v1).
 9. [Lesur et al. (2023)](/sources/lesur-2023.md), §3.1, §3.4, §4.2, §6 (arXiv v1).
+10. [Bai (2017)](/sources/bai-2017.md), §§2–6, App. A (arXiv v1, accepted manuscript).
+11. [Porth et al. (2019)](/sources/porth-2019.md), Table 1, §4.1.1, §§5.3–5.4, App. A (arXiv v2).

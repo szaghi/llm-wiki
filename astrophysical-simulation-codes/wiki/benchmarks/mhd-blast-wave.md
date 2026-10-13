@@ -73,7 +73,7 @@ radii 0.8 and 1.
   levels (effective $640^3$), HLLD. Maximum Lorentz factor about 6.3;
   frozen-flux scaling from 32 to 2048 processors with efficiency above
   0.75 for a maximum box size of 20 (27,661 blocks), worse for 40.
-* *2D and 3D, Athena++* ([Stone et al. (2020)](/sources/stone-2020.md),
+* *2D and 3D, [Athena++](/software/athena-plus-plus.md)* ([Stone et al. (2020)](/sources/stone-2020.md),
   §4.3.3, Figs. 40–41). Density $10^{-2}$ inside radius 0.8 falling to
   $10^{-4}$ outside radius 1 (pressure 1 to $5\times10^{-3}$); field
   components $B^x = B^y = 1/\sqrt{20}$ in 2D and $1/\sqrt{200}$ in 3D;

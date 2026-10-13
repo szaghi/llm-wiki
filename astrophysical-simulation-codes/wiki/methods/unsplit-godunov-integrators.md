@@ -368,14 +368,43 @@ to the Riemann solver and CT ([Stone et al. (2026)](/sources/stone-2026.md),
 with RK2 to tabulated EOS with RK4 (twice the stages; two changes at
 once) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A).
 
+## Later uses (batch 4)
+
+| Code | Integrators | Source |
+|---|---|---|
+| [TIGRESS](/software/tigress.md) ([Athena](/software/athena.md) modules) | VL+CT (Stone & Gardiner 2009) with PLM and Roe | [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 |
+
+* **A production MHD use of Athena's VL+CT.**
+  [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1, run the
+  predictor–corrector of Stone & Gardiner (2009) with piecewise-linear
+  reconstruction, the Roe solver and
+  [constrained transport](/methods/constrained-transport.md) for
+  supernova-driven, self-gravitating shearing-box turbulence. Two
+  safeguards are added: the H-correction where the signal-speed difference
+  exceeds 20 km s⁻¹, and the first-order flux correction of Lemaster &
+  Stone (2009) in cells with negative density or pressure after the
+  second-order update (see
+  [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+  Cooling is operator-split before the integrator step. No integrator
+  comparison is made, and the Courant number is not stated.
+* **Particles in the same step.** Sink/star particles are advanced with a
+  symplectic kick–drift–kick: each step begins
+  with the previous step's second kick, and particle positions are
+  advanced before the MHD step (§2.2.2, §2.2.5; see
+  [sink particles](/methods/sink-particles.md)).
+
 ## Contradictions
 
 * **Is RK2 with $\nu = 1$ stable in 3D?** *Open.*
   [Stone et al. (2020)](/sources/stone-2020.md), §3.2.3: RK2 and RK3 have
-  SSP coefficient 1, so their CFL constraint is $\nu = 1$, and "in
-  practice, the limit $C_0 = 1$ seems to work for both PLM and PPM
-  reconstruction for most problems", with no dependence on dimension
-  stated; VL2 needs $\nu = 1/2$ in 2D and 3D.
+  SSP coefficient 1, so their CFL constraint is $\nu = 1$, which in
+  practice "seems to work for both PLM and PPM reconstruction for most
+  problems", with no dependence on dimension stated; VL2 needs
+  $\nu = 1/2$ in 2D and 3D. Non-closing evidence on the other side:
+  AthenaK, of the same lineage, bounds the step by the per-direction
+  minimum and "generally" uses $\nu \le 1/d$
+  ([Stone et al. (2026)](/sources/stone-2026.md), §3, eq. 3), a usage
+  convention, not a stability claim.
   [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2.1, eqs. 19–21
   and footnote 3: for RK2-SSP the stability coefficient is 1 when the
   step is bounded by the cell maximum of the sum over directions of the
@@ -387,6 +416,7 @@ once) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A).
   over directions, they agree. The entry closes when a source states the
   Athena++ normalization.
 
+# Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §1, §4.2, §5.1, §6, §7, §8.3.
 2. [Stone et al. (2020)](/sources/stone-2020.md), §3.2.3, §3.3.1, §3.3.5.
@@ -403,3 +433,5 @@ once) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A).
 13. [Shankar et al. (2023)](/sources/shankar-2023.md), §II C, §III, §IV, §V A (arXiv v2).
 14. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.1.
 15. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.2.
+16. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1, §2.2.2, §2.2.5
+    (arXiv v2).

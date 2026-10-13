@@ -41,7 +41,7 @@ figures and between schemes or grids.
   42.8 s. The CFL number is not printed.
 
 **What it shows.** Sensitivity to reconstruction (PPM slightly less
-diffusive than PLM) and to the carbuncle, which both Athena papers
+diffusive than PLM) and to the carbuncle, which both [Athena](/software/athena.md) papers
 suppress, by the H-correction ([Stone et al. (2008)](/sources/stone-2008.md))
 or by the HLLE solver ([Stone et al. (2020)](/sources/stone-2020.md)); see
 [approximate Riemann solvers](/methods/approximate-riemann-solvers.md).

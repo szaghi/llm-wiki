@@ -164,6 +164,7 @@ or MHD blast test.
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [Sod shock tube](/benchmarks/sod-shock-tube.md), [Sedov–Taylor blast wave](/benchmarks/sedov-taylor-blast-wave.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md).
 * Also cited on [Jeans resolution criterion (Truelove condition)](/definitions/jeans-resolution-criterion.md), [Integrating cooling and chemistry source terms](/methods/radiative-cooling-integration.md).
 * Also cited on (batch 3) [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md), [Porting compressible-flow codes to GPUs](/methods/gpu-porting.md).
+* Also cited on (batch 4) [Zel'dovich pancake](/benchmarks/zeldovich-pancake.md), [Particle-mesh N-body in grid codes](/methods/particle-mesh-gravity.md), [FLASH](/software/flash.md).
 
 # Citations
 

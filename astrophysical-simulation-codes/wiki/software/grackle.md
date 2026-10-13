@@ -154,7 +154,43 @@ GASOLINE, Gear, Gizmo, RAMSES (the host of
 [RAMSES-RT](/software/ramses-rt.md), whose own thermochemistry is a
 different implementation), SPHS and SWIFT.
 
+## Later uses (batch 4)
+
+### Cholla as a host
+
+[Villasenor et al. (2021)](/sources/villasenor-2021.md) couple Grackle to
+[Cholla](/software/cholla.md), which is not among the fourteen hosts
+listed above (§2.6–2.7, §2.9, §4). The coupling agrees with the
+operator-split, point-local description above and answers, for this host,
+the open question of where in the step Grackle is called:
+* Grackle runs "at the end of each time step, after the gas conserved
+  variables have been updated by the hydro solver and additional
+  gravitational source terms", sub-cycling the rate equations within one
+  hydro step. It adds the net heating minus cooling, times the scale
+  factor and the step, to the internal energy, after which Cholla resets
+  the total energy from the internal energy (eqs. 29–30); see
+  [dual-energy formalism](/methods/dual-energy-formalism.md).
+* The non-equilibrium atomic network (H I, H II, He I, He II, He III,
+  electrons, and metals) is advected by the hydro solver as passive
+  scalars (§2.6).
+* The UV background is uniform and time dependent, from tabulated
+  photoionization and photoheating rates (eqs. 31–32); the paper's runs use
+  the Haardt & Madau (2012) and Puchwein et al. (2019) backgrounds. The
+  paper describes optional metal-cooling tables computed with CLOUDY 17.02
+  (Solar metallicity, ionization equilibrium, primordial contribution
+  subtracted, stored in HDF5), in line with the table construction
+  above; the production runs use primordial gas without metal cooling
+  (§2.7, §4).
+* **Cost** (§2.9, §4): Grackle runs on the host CPUs while the hydro runs
+  on the GPUs; it "is the slowest step in our implementation" and takes
+  "about half of the computational time" of the production runs. Moving
+  the H+He network to the GPU was in progress.
+* In a $256^3$ chemistry plus UV-background run against
+  [Enzo](/software/enzo.md), the fitted intergalactic temperature at mean
+  density and the temperature–density slope agree within 1 % (§3.5).
+
 # Citations
 
 1. [Smith et al. (2017)](/sources/smith-2017.md), §§2–8, Tables 1–2,
    Figs. 5–8 (arXiv v2).
+2. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.6–2.9, 3.5, 4, eqs. 29–32 (arXiv v2).

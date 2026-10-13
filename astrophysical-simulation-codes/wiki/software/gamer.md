@@ -4,7 +4,7 @@ title: "GAMER (GPU-accelerated octree AMR code), MHD extension"
 description: "GPU-accelerated octree patch-based AMR code whose MHD extension runs Athena's CTU+CT and VL+CT unsplit schemes on the GPU per group of eight patches, keeps the divergence-free constraint across levels with Balsara prolongation and EMF correction, and overlaps GPU work with CPU-side AMR operations under hybrid MPI/OpenMP/GPU parallelism."
 status: established
 aliases: [GAMER, GAMER-MHD]
-tags: [software, mhd, amr, gpu, constrained-transport, unsplit, riemann-solver, performance, verification]
+tags: [software, mhd, amr, gpu, constrained-transport, unsplit, riemann-solver, performance, verification, cuda]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

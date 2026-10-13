@@ -151,6 +151,7 @@ A100 (Fig. 20). Performance: Tables 1–2, Figs. 20–22. Details on
 * [GLM divergence cleaning](/methods/glm-divergence-cleaning.md).
 * [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md).
 * [Linear wave convergence](/benchmarks/linear-wave-convergence.md), [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md), [Shu–Osher shock tube](/benchmarks/shu-osher-shock-tube.md), [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md), [Ambipolar C-shock](/benchmarks/ambipolar-c-shock.md).
+* Also cited on (batch 4) [Magnetized Fishbone–Moncrief torus](/benchmarks/magnetized-torus-accretion.md), [Density and pressure floors](/methods/numerical-floors.md), [EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md), [H-AMR](/software/h-amr.md).
 
 # Citations
 

@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Poisson solvers for self-gravity on adaptive meshes"
-description: "Solving the gravitational Poisson equation on AMR hierarchies: Enzo's root FFT plus grid-by-grid multigrid with interpolated Dirichlet data, Castro's level and composite multigrid solves with a post-subcycling correction solve, and Athena++'s globally consistent FAS multigrid V-cycle over the whole octree with conservative level-boundary ghost cells."
+description: "Solving the gravitational Poisson equation on AMR hierarchies: Enzo's root FFT plus grid-by-grid multigrid with interpolated Dirichlet data, Castro's level and composite multigrid solves with a post-subcycling correction solve, Athena++'s globally consistent FAS multigrid V-cycle over the whole octree, FLASH's block solver with an inter-level correction, and Cholla's uniform-grid FFT solve, whose Green's function and gradient stencil change small-scale power by tens of per cent."
 status: established
 aliases: [multigrid self-gravity, AMR Poisson solver, FAS multigrid, full multigrid, FMG, level-by-level gravity solve, composite Poisson solve]
 tags: [self-gravity, multigrid, amr, performance, conservation]
@@ -218,6 +218,65 @@ where noted.
   "clear second order convergence in the max norm" of the velocity
   ([Almgren et al. (2010)](/sources/almgren-2010.md), §8.4, Fig. 11).
 
+## Later uses (batch 4)
+
+### FLASH multigrid
+
+* [FLASH](/software/flash.md) solves gas self-gravity with the
+  "multi-grid Poisson solver ... (Ricker 2008)" in the 2021 production
+  configuration of [Mathew & Federrath (2021)](/sources/mathew-2021.md),
+  §2.1, as in [Federrath et al. (2010)](/sources/federrath-2010.md), §2.1,
+  where it is "implemented in flash v2.5, recently refined for v3 by
+  Ricker 2008". Neither paper describes the algorithm.
+  [Tomida & Stone (2023)](/sources/tomida-2023.md), footnote 4, describe
+  Ricker's solver as a direct solve on blocks combined with an
+  inter-level correction rather than a multigrid over the whole hierarchy.
+* Sink particles act on the gas, and on each other, by direct summation
+  over sinks and cells, not through the Poisson source (Mathew &
+  Federrath, §2.3; Federrath et al., §2.4); see
+  [sink particles](/methods/sink-particles.md).
+* Federrath et al. (2010) measured a symmetry loss of the multigrid
+  potential near Cartesian boundaries (§3.2; Later uses (batch 2) of
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)).
+  Mathew & Federrath run a triple-periodic box and report no gravity test.
+
+### FFT Poisson solver on a uniform grid: Cholla
+
+[Villasenor et al. (2021)](/sources/villasenor-2021.md), §2.4, add
+self-gravity to the uniform-grid [Cholla](/software/cholla.md) for
+cosmology. There is no mesh hierarchy, so the question of coupling levels
+does not arise; the solver is a periodic FFT as on Enzo's root grid
+(above).
+* **Equation.** In comoving coordinates, as for Enzo, $\nabla^2\Phi$
+  equals $4\pi G/a$ times the total (gas plus dark matter) density minus
+  its mean (eq. 16).
+* **Green's function.** The transform of the potential is the transform
+  of the density times the Green's function of the second-order centred
+  discrete Laplacian (Hockney & Eastwood 1988), not the continuous one
+  (eqs. 17–18). 3D FFTs use PFFT with a box decomposition.
+* **Gradient.** $\mathbf g = -\nabla\Phi$ by a fourth-order centred
+  difference over $\Phi_{i\pm1}$ and $\Phi_{i\pm2}$ (eq. 19).
+* **Coupling.** Gravity sources are added after the hydrodynamic update,
+  time-centred with the mean of the old and new densities (momentum) and
+  momenta (energy), using a potential extrapolated linearly in time to
+  $t^{n+1/2}$ from $t^n$ and $t^{n-1}$ (eqs. 20–22). This is the
+  extrapolation that [Almgren et al. (2010)](/sources/almgren-2010.md),
+  §5.1, attribute to FLASH and Enzo (Coupling to the hydrodynamic step,
+  above), and the energy coupling is the source-term form, not a
+  [conservative](/methods/conservative-self-gravity.md) one.
+* **Host, not device.** The FFT solver runs on the host CPUs while the
+  hydrodynamics runs on the GPUs; an all-GPU distributed FFT was "recently
+  integrated" at submission (§2.9).
+* **Measured effect of the discretization** (§3.2, Fig. 2). In a
+  dark-matter-only comparison ($256^3$ particles on a $256^3$ grid), the
+  choice between the discrete-Laplacian and the continuous Green's
+  function changes the small-scale matter power spectrum "by as much as
+  ≈ 28%" relative to Enzo, and a second-order instead of fourth-order
+  gradient changes it by "about 15%". With the continuous Green's function
+  Cholla agrees with Enzo to below 0.1 % at large and below 0.3 % at small
+  scales. The sub-percent agreements therefore required matching each
+  code's Green's function and gradient stencil.
+
 ## Contradictions
 
 **Are level-by-level Poisson solvers adequate?** *Open.*
@@ -233,10 +292,15 @@ where noted.
   work, without quantifying the error.
 * The two agree that the method is inconsistent; they differ on how much it
   matters, and no source measures it on an implemented level-by-level
-  solver.
+  solver. A third design, FLASH's block solve with an inter-level
+  correction (Ricker 2008, as described by Tomida & Stone, footnote 4; see
+  the batch-4 section above), is not assessed by any source either.
 
 # Citations
 
 1. [Tomida & Stone (2023)](/sources/tomida-2023.md), §§2–5, Apps. A–B (arXiv v1).
 2. [Almgren et al. (2010)](/sources/almgren-2010.md), §§4, 5.1, 6.2.2–6.2.3, 7.4, 8.4 (arXiv v1 numbering).
 3. [Bryan et al. (2014)](/sources/bryan-2014.md), §§2.1, 3, 4.1, 5.1, 11.2.6, 12.2.3, 14 (arXiv v1).
+4. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.1, 2.3 (arXiv v2).
+5. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1, 2.4, 3.2 (arXiv v2).
+6. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.4, 2.9, 3.2, eqs. 16–22, Fig. 2 (arXiv v2).

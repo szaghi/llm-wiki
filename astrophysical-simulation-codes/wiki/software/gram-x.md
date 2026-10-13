@@ -4,7 +4,7 @@ title: "GRaM-X"
 description: "GPU-accelerated dynamical-spacetime GRMHD code for the Einstein Toolkit: Z4c spacetime on vertices and Valencia GRMHD on cells, TVD or WENO5 reconstruction with HLLE fluxes, a 3D Newton–Raphson / Newman / temperature-bisection primitive-recovery chain, tabulated nuclear EOS in unified memory, and block-structured AMR without subcycling through the CarpetX driver on AMReX, with all data kept on the GPU."
 status: established
 aliases: [GRaM-X, General Relativistic accelerated Magnetohydrodynamics on AMReX, CarpetX]
-tags: [software, mhd, relativity, gpu, amr, primitive-recovery, equation-of-state, riemann-solver, time-integration, performance, scaling, verification]
+tags: [software, mhd, relativity, gpu, amr, primitive-recovery, equation-of-state, riemann-solver, time-integration, performance, scaling, verification, cuda]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

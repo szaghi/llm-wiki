@@ -4,7 +4,7 @@ title: "RAMSES-RT (radiation hydrodynamics in RAMSES)"
 description: "Multigroup radiative transfer of ionizing photons built into the cell-based oct-tree AMR code RAMSES: M1-closed photon-number moment equations advanced by an explicit first-order HLL or global Lax–Friedrichs scheme under a reduced speed of light, operator-split from a quasi-implicit non-equilibrium H/He thermochemistry, and multi-stepped across AMR levels with the hydrodynamics so that photons are conserved."
 status: established
 aliases: [RAMSES-RT, RAMSES RT]
-tags: [software, radiation, reduced-speed-of-light, amr, hydro, cosmology, verification]
+tags: [software, radiation, reduced-speed-of-light, amr, hydro, cosmology, verification, chemistry, cooling]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

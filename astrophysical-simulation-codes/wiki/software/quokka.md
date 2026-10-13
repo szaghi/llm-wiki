@@ -4,7 +4,7 @@ title: "Quokka"
 description: "GPU-native block-structured AMR radiation hydrodynamics code on AMReX: method-of-lines RK2-SSP hydrodynamics with PPM and HLLC, gray two-moment radiation with a reduced speed of light, a pluggable local Eddington-factor closure and HLL fluxes, explicit radiation subcycled per level, and a local Newton–Raphson matter–radiation exchange."
 status: established
 aliases: [QUOKKA, quokka-code]
-tags: [software, radiation, reduced-speed-of-light, amr, gpu, hydro, riemann-solver, time-integration, performance, scaling, verification]
+tags: [software, radiation, reduced-speed-of-light, amr, gpu, hydro, riemann-solver, time-integration, performance, scaling, verification, cuda]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

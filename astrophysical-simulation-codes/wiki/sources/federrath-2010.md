@@ -164,6 +164,7 @@ formation efficiency (~26%) 49 vs 50 sinks, KS probability 55% (Fig. 17).
   [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md).
 * Updated [Adaptive mesh refinement in astrophysical codes](/methods/adaptive-mesh-refinement.md).
 * Also cited on [Singular isothermal sphere collapse](/benchmarks/singular-isothermal-sphere-collapse.md).
+* Also cited on (batch 4) [Poisson solvers for self-gravity on adaptive meshes](/methods/multigrid-self-gravity.md), [Particle-mesh N-body in grid codes](/methods/particle-mesh-gravity.md), [FLASH](/software/flash.md).
 
 # Citations
 

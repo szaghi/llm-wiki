@@ -160,6 +160,7 @@ qualitative.
 * Also cited on [Enzo (AMR code for cosmological and astrophysical fluid flow)](/software/enzo.md) (its gravity time-centring).
 * Also cited on [Hydrostatic white dwarf](/benchmarks/hydrostatic-white-dwarf.md), [General equations of state in Godunov codes](/methods/general-equation-of-state.md).
 * Also cited on (batch 3) [Cell-update throughput](/definitions/cell-updates-per-second.md), [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md).
+* Also cited on (batch 4) [Density and pressure floors](/methods/numerical-floors.md), [FLASH](/software/flash.md).
 
 # Citations
 

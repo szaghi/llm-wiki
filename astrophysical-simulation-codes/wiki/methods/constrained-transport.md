@@ -148,7 +148,7 @@ Face- and edge-centred data need their own inter-level operators.
   Dedner solvers give "approximately equal effective resolution"; the
   resolution is not printed (Bryan et al. 2014, §11.2.10, Fig. 14).
 * **[MHD blast](/benchmarks/mhd-blast-wave.md).** Athena calls CTU+CT
-  "robust for low-β flows" after isothermal runs at $\beta = 0.02$
+  "robust for low-β flows" after isothermal runs at plasma beta $\beta_{\mathrm p} = 0.02$
   (Stone et al. 2008, §8.4, Figs. 28–30).
 
 ## Later uses (batch 3)
@@ -243,6 +243,47 @@ Evidence added in batch 3:
   §3.1.2, Fig. 3). gPLUTO runs the same test with CT for weak scaling only,
   without accuracy diagnostics (Rossazza et al. 2026, §4.2).
 
+## Later uses (batch 4)
+
+**Production GRMHD.** The nine codes of the
+[EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md) all
+"preserve the divergence of the magnetic field to machine precision"
+([Porth et al. (2019)](/sources/porth-2019.md), §6), with five
+induction schemes (Table 1, §3, §4.1):
+* upwind constrained transport (UCT) of Del Zanna et al. (2007): BHAC,
+  ECHO (UCT after Londrillo & Del Zanna 2000, 2004);
+* staggered upwind CT after Gardiner & Stone (2005):
+  [Athena++](/software/athena-plus-plus.md), [H-AMR](/software/h-amr.md);
+* staggered CT of Fragile et al. (2012): Cosmos++;
+* cell-centred Flux-CT of Tóth (2000): iharm3D, KORAL, and HARM-Noble with
+  PPM-reconstructed edge EMFs (Noble et al. 2009);
+* vector-potential evolution: IllinoisGRMHD, which reduces to staggered
+  Flux-CT on uniform grids and "enables any interpolation scheme to be used
+  at AMR refinement boundaries" (§4.1.8).
+
+Athena++ in GR uses the magnetic fluxes at the pole to help build the
+edge EMFs of its polar boundary (§4.1.1), as in the polar-boundary EMF
+averaging above.
+
+**Arithmetic EMF averaging in production** (App. A). KORAL, following
+Gammie et al. (2003), keeps a cell-centred field and averages EMFs
+arithmetically (the paper's "ACT"); H-AMR and Athena++ use staggered UCT
+after Gardiner & Stone (2005). "In contrast to ACT methods, the UCT scheme
+reproduces the correct solution for plane-parallel grid-aligned fields,
+however the amount of dissipation of the scheme is effectively doubled."
+This is offered as one reason why KORAL's PLM runs stay closer to its PPM
+runs; the doubled dissipation is stated, not isolated in a dedicated test.
+It qualifies, without contradicting, Stone et al.'s (2008) statement that
+simple averaging "does not work" for their unsplit (CTU) integrators: the
+averaging codes here use other second-order integrators (KORAL's is
+"2nd order", iharm3D's a method-of-lines predictor–corrector), as IDEFIX
+does with a method of lines (batch 3, above).
+
+**Staggered fields and floors** (§4.1.2). BHAC with staggered fields needed
+floors 10 times higher than with centred fields, because interpolating the
+staggered field to cell centres "introduces an additional error"; see
+[density and pressure floors](/methods/numerical-floors.md).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -255,3 +296,4 @@ Evidence added in batch 3:
 8. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).
 9. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.1, §4.1–§4.2 (arXiv v1).
 10. [Shankar et al. (2023)](/sources/shankar-2023.md), §III B (arXiv v2).
+11. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1, §4.1.1–§4.1.2, §4.1.8, §6, Table 1, App. A (arXiv v2).

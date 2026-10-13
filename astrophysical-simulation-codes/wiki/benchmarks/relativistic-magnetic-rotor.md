@@ -29,7 +29,7 @@ different test.
 
 ## Runs
 
-* *PLUTO-CHOMBO, AMR* ([Mignone et al. (2012)](/sources/mignone-2012.md),
+* *[PLUTO](/software/pluto.md)-CHOMBO, AMR* ([Mignone et al. (2012)](/sources/mignone-2012.md),
   §6.3, Figs. 26–27). Base $64^2$ with 6 levels (effective $4096^2$),
   HLL, $\nu = 0.5$, refinement tagged on the ratio of the total energy to
   $D$ with threshold 0.15;
@@ -40,7 +40,7 @@ different test.
   (2008). Strong scaling on 8–512 CPUs with maximum box size 16 or 32
   (11,921 and 6735 blocks): AMR 5–10 times faster than a uniform grid,
   efficiency above 0.7 below 256 processors.
-* *GRaM-X, uniform grid, GPU* ([Shankar et al. (2023)](/sources/shankar-2023.md),
+* *[GRaM-X](/software/gram-x.md), uniform grid, GPU* ([Shankar et al. (2023)](/sources/shankar-2023.md),
   §IV C, Fig. 5). $400\times400\times8$ cells ($h = 0.0025$), static flat
   spacetime, [constrained transport](/methods/constrained-transport.md),
   TVD minmod, HLLE, RK4, $\nu = 0.25$ as $\Delta t/h$

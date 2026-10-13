@@ -176,6 +176,7 @@ time (§4.4, Fig. 12).
   [Jeans wave](/benchmarks/jeans-wave.md).
 * Also cited on [Enzo (AMR code for cosmological and astrophysical fluid flow)](/software/enzo.md).
 * Also cited on (batch 3) [Parallel scaling efficiency](/definitions/parallel-scaling-efficiency.md), [AthenaK (performance-portable Kokkos version of the Athena++ AMR framework)](/software/athenak.md).
+* Also cited on (batch 4) [FLASH](/software/flash.md).
 
 # Citations
 

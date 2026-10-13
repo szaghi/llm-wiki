@@ -2,6 +2,116 @@
 
 ## 2026-10-12
 
+* **Batch 4: comparisons and applications** (6 sources). Ingested
+  [Porth et al. (2019)](/sources/porth-2019.md) (EHT GRMHD code
+  comparison), [Kim & Ostriker (2017)](/sources/kim-2017.md) (TIGRESS),
+  [Villasenor et al. (2021)](/sources/villasenor-2021.md) (Cholla
+  cosmology), [Ohlmann et al. (2016)](/sources/ohlmann-2016.md) (AREPO
+  common envelope), [Bai (2017)](/sources/bai-2017.md) (Athena++ non-ideal
+  MHD disk) and [Mathew & Federrath (2021)](/sources/mathew-2021.md)
+  (FLASH star-cluster formation). All six were read as arXiv versions; the
+  archive is now fully compiled (35 of 35).
+  * **Created:**
+    * Software: [FLASH](/software/flash.md), [TIGRESS](/software/tigress.md),
+      [H-AMR](/software/h-amr.md);
+    * Result: [EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md);
+    * Methods: [density and pressure floors](/methods/numerical-floors.md),
+      [particle-mesh N-body](/methods/particle-mesh-gravity.md);
+    * Benchmarks: [Zel'dovich pancake](/benchmarks/zeldovich-pancake.md),
+      [magnetized torus](/benchmarks/magnetized-torus-accretion.md).
+  * **Rejected:**
+    * An MRI quality-factor page: one source.
+    * An AREPO Software page: it was drafted, then removed at the audit.
+      The second source only lists AREPO, and no source presents it as a
+      substantive contribution. AREPO content stays on the Ohlmann Source
+      page and the Kelvin–Helmholtz page.
+  * **Updated** (add-only, checked by a lost-lines diff):
+    * Software: Athena, Athena++, Cholla, Enzo, Grackle.
+    * Methods: AMR, Poisson solvers, Riemann solvers, constrained
+      transport, unsplit integrators, primitive recovery, sinks, cooling,
+      dual energy.
+    * Definitions: cell-update throughput, the Jeans criterion.
+    * Benchmarks: Kelvin–Helmholtz.
+  * **Qualifications, not contradictions** (kept in the prose):
+    * Ohlmann's Galilean-invariance attribution against Katz et al. on
+      Kelvin–Helmholtz;
+    * Kim's implicit cooling against Townsend;
+    * Mathew's sink–gas gravity wording against Federrath et al.;
+    * Villasenor's "third-order" PPM against Caddy & Schneider;
+    * upwind CT dissipation against Stone et al. (2008).
+  * **Open questions recorded:**
+    * TIGRESS creates sinks without the Jeans and boundedness checks, in
+      the regime where Federrath et al. call them necessary.
+    * TIGRESS evolves collapsing gas below the Truelove condition before
+      creating a sink.
+  * **Later evidence on open entries, not closing them:**
+    * FLASH sinks now carry intrinsic spin (Mathew & Federrath 2021); this
+      says nothing about the 2004 Krumholz scheme.
+    * H-AMR's locally adaptive time stepping (claimed factor 3–5) joins
+      the subcycling side of the AMR entry.
+  * **Bibliography:** 785 references merged; the record grew from 1509 to
+    2157 entries, with `FLAGS: 0` and a clean `--dupes` sweep.
+    * Two keys had to be freed for the ingested papers:
+      * `kim-2017` was rekeyed `kim-2017-b` (Kim J.-G. et al., ApJ
+        851:93), so the ingested Kim & Ostriker (2017) owns its key.
+      * Mathew's bare `federrath-2010` (Highlights Astron. 15:404) would
+        have taken the ingested key, like `zhang-2018` in batch 3. It is
+        `federrath-2010-c`, and Mathew's "2010c" maps to the ingested
+        paper.
+    * Misprints folded with notes:
+      * Zel'dovich (1970), printed A&A 500:13 (A&A 5:84);
+      * Giacomazzo & Rezzolla, printed 24:235 (S235);
+      * Lesur et al. (2014), printed A56.
+    * Olivares et al.'s arXiv preprint was merged into its A&A version.
+    * The venue sweep found two older duplicates, now folded:
+      `abbott-2017b` into `abbott-2017-b`, and `pareshi-2005` into
+      `pareschi-2005`. Three keys without a hyphen before the suffix were
+      rekeyed: `abbott-2017-c`, `ciolfi-2020-b`, `ciolfi-2020-c`.
+  * **Batch audit.** A read-only auditor checked about 65 numbers against
+    the PDFs. Fixes:
+    * A misattributed Kim & Ostriker quote: their "additional criteria"
+      are the potential-minimum and convergence checks, not the Jeans and
+      boundedness checks.
+    * The spurious-sink paragraph now uses Federrath et al.'s own scope
+      statements (opacity limit, magnetic effects).
+    * KORAL's Table 4/Table 2 ratio is 1.6–2.7.
+    * The H-AMR throughput "reconciliation" was removed: different
+      hardware and years.
+    * Cholla's dual-energy resynchronization runs both ways.
+    * The EHT spread is non-monotone (8.6 at N = 128).
+    * The Zel'dovich set-up is attributed to both sources.
+    * The H-AMR library reference is §6.5.
+  * **Deep lint #3 (35 ingestions).** A second read-only auditor re-read
+    every concept page. Fixes:
+    * Contradictions:
+      * The AMR subcycling entry now lists the batch-3 and batch-4 codes
+        on both sides.
+      * The one-sided "level-dependent derived quantities" entry (deep
+        lint #1) became an open question in prose.
+      * The Poisson entry notes FLASH's block solver.
+      * The RK2 stability entry paraphrases Athena++'s $C_0$ and cites
+        AthenaK.
+      * The sink angular-momentum algebra is marked as a compiler
+        hypothesis.
+    * Pages:
+      * The Riemann-solver table gained FLASH, TIGRESS and H-AMR rows.
+      * Software links were added on the particle-mesh, rotor,
+        linear-wave, blast, Orszag–Tang, Brio–Wu and double-Mach pages.
+      * Seven stale descriptions were refreshed: AMR, Poisson, M1, dual
+        energy, reduced speed of light, Cholla, EHT.
+      * Missing tags were added on 13 pages.
+      * The duplicate AMR heading was suffixed.
+      * Two `# Citations` headings that a batch-3 edit had dropped were
+        restored (linear wave, reduced speed of light; the integrators
+        page via its batch-4 draft).
+    * Registry:
+      * The seed relativistic section was moved up.
+      * The $c_s$ row now covers the isothermal case.
+      * $\beta_{\mathrm p}$ (plasma beta) was registered.
+      * Proposed but not yet registered (pages use words): magnetization,
+        black-hole spin, Mach number, polytropic index, error norms, and
+        efficiency symbols for the two performance definitions.
+
 * **Batch 3: the GPU codes** (9 sources). Ingested
   [Lesur et al. (2023)](/sources/lesur-2023.md) (IDEFIX),
   [Caddy & Schneider (2024)](/sources/caddy-2024.md) (Cholla MHD),

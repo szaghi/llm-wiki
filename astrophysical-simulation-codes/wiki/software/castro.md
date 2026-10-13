@@ -4,7 +4,7 @@ title: "CASTRO (compressible astrophysics code on BoxLib AMR)"
 description: "BoxLib-based C++/Fortran 90 code for multicomponent compressible hydrodynamics with a general equation of state, reactions and self-gravity, using an unsplit PPM Godunov method with full corner coupling and a two-shock-type Riemann solver on subcycled Berger–Oliger patch AMR with refluxing and a multilevel Poisson synchronization."
 status: established
 aliases: [CASTRO, Castro]
-tags: [software, hydro, amr, unsplit, riemann-solver, self-gravity, multigrid, dual-energy, performance, verification]
+tags: [software, hydro, amr, unsplit, riemann-solver, self-gravity, multigrid, dual-energy, performance, verification, equation-of-state]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

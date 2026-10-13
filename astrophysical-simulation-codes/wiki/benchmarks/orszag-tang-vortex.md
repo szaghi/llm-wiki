@@ -82,7 +82,7 @@ divergence-control schemes. No error norms are reported.
   $\mathbf v = (-\sin 2\pi y,\ \sin 2\pi x + \cos 2\pi z,\ \cos 2\pi x)$ and
   field components $B_0$ times $(-\sin 2\pi y,\ \sin 4\pi x,\ \cos 2\pi x + \sin 2\pi y)$,
   $B_0 = 1/\sqrt{4\pi}$, to $t = 1.0$; HLLD, PLM, RK2, double precision.
-  The solution is compared with PLUTO "to check for convergence", but no
+  The solution is compared with [PLUTO](/software/pluto.md) "to check for convergence", but no
   result is shown. The throughput and weak-scaling numbers are on the
   [IDEFIX](/software/idefix.md) page.
 * *3D, Cholla* ([Caddy & Schneider (2024)](/sources/caddy-2024.md),

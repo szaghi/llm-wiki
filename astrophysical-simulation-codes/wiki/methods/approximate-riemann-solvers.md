@@ -344,6 +344,50 @@ above). It joins Athena++, which "does not yet implement" the
 H-correction (above), among the codes that state an open carbuncle
 problem.
 
+## Later uses (batch 4)
+
+| Code | Solvers | Source |
+|---|---|---|
+| [FLASH](/software/flash.md) | HLL5R (5-wave HLL, Waagan et al. 2011) in the 2021 configuration | [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.1 |
+| [TIGRESS](/software/tigress.md) (on Athena) | Roe, H-correction above a 20 km s⁻¹ signal-speed difference, first-order flux correction | [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 |
+| [H-AMR](/software/h-amr.md) | HLL | [Porth et al. (2019)](/sources/porth-2019.md), Table 1 |
+
+AREPO, in an application run, uses an HLLC-type solver on its moving mesh
+([Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §2).
+
+### Two-wave solvers in production GRMHD
+
+The nine codes of the
+[EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md) split
+between HLL (Athena++, Cosmos++, ECHO, [H-AMR](/software/h-amr.md),
+IllinoisGRMHD) and LLF (BHAC, HARM-Noble, iharm3D, KORAL); HARM-Noble's
+solver is "LLF" in Table 1 and "LF" in §4.1.6
+([Porth et al. (2019)](/sources/porth-2019.md), Table 1, §4.1, §6). Table 1
+lists no other solver.
+The paper cites Flock et al. (2010): with PPM, HLL and LLF resolve linear
+MRI growth with 10 cells per mode, against 16 with PLM, so that PPM
+"compensates for the large dissipation" of these two solvers (App. A).
+Its own PLM runs agree: at fixed second order, PLM runs of H-AMR and
+Athena++ give accretion rates "a factor of two to almost six" below their
+PPM runs (App. A, Table 3).
+
+### TIGRESS on Athena: H-correction threshold and FOFC
+
+The TIGRESS configuration of [Athena](/software/athena.md) uses the VL
+predictor–corrector, PLM and the Roe solver
+([Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1). Two safeguards:
+* **H-correction** (Sanders et al. 1998) applied only "when the
+  difference in signal speed is larger than 20 km s⁻¹", to suppress the
+  carbuncle from supernova blast waves — a usage threshold the Athena
+  description above does not state.
+* **First-order flux correction** (Lemaster & Stone 2009) applied "to
+  cells with negative pressure and/or density after the second-order
+  update", which strong rarefactions in turbulence can produce. The
+  fallback flux and reconstruction are not stated, so this use cannot be
+  placed against AthenaK's LLF or Enzo's HLL fallback (above). With it,
+  Athena has two positivity safeguards in the sources: the per-interface
+  HLLE re-solve of Stone et al. (2008) and this per-cell correction.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -363,3 +407,7 @@ problem.
 15. [Shankar et al. (2023)](/sources/shankar-2023.md), §II C (arXiv v2).
 16. [Zaghi et al. (2023)](/sources/zaghi-2023.md), §3.1.
 17. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.1.
+18. [Porth et al. (2019)](/sources/porth-2019.md), §4.1, §4.1.6, §6, Tables 1, 3, App. A (arXiv v2).
+19. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 (arXiv v2).
+20. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.1 (arXiv v2).
+21. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §2 (arXiv v1).

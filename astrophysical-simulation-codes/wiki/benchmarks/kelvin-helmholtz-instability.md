@@ -136,6 +136,46 @@ comparable.
 * With sharp initial interfaces or long run times there is no converged
   reference, and conclusions are qualitative (Katz et al. 2016).
 
+## Later uses (batch 4)
+
+### Shear instabilities in a moving-mesh production run
+
+[Ohlmann et al. (2016)](/sources/ohlmann-2016.md) do not run a
+Kelvin–Helmholtz test; they report the instability in an application, the
+common-envelope spiral-in computed with the moving-mesh code AREPO, and
+attribute its appearance to the code's Galilean invariance.
+* **What is observed** (§3, Figs. 1–4). Large-scale Kelvin–Helmholtz
+  instabilities develop between adjacent spiral shocks in the envelope.
+  Recorded as printed: the abstract places them "after about 20 orbits",
+  while §3 places the first instabilities at about 7 orbits (40 d) and the
+  large-scale overlap at 90 d. About $1.8\times10^6$ cells at the start and
+  $2.7\times10^6$ at the end (§2). No run at a second resolution and no
+  resolution study of the instability are presented.
+* **The attribution** (§3, last paragraph; §4). "The violation of Galilean
+  invariance in conventional grid-based hydrodynamics codes (when altering
+  the background velocity at the same resolution) suppresses
+  Kelvin-Helmholtz instabilities on a static mesh", illustrated by
+  Springel (2010), Fig. 33; AREPO's scheme "is Galilean invariant, thus,
+  shear instabilities may also develop on top of background velocities".
+  The absence of the instability in the earlier grid simulations of Passy
+  et al. (2012) is attributed to their background velocity field, and in
+  their SPH simulations to numerical diffusion. Both attributions are
+  stated as a suspicion ("We suspect") and are not tested.
+
+**Relation to the bulk-flow runs above — a qualification, not a
+contradiction.** Ohlmann et al. restrict their claim to fixed resolution
+and support it with the Springel (2010) sharp-interface test, which is
+Katz et al.'s IC A; for IC A Katz et al. likewise find that the
+instability "completely fails to develop" at low resolution and high bulk
+speed. Katz et al.'s finding that the disruption "quickly converges away"
+holds for the smooth IC B, and their refusal to call the McNally et al.
+behaviour a deficiency of fixed grids concerns the late-time secondary
+instabilities. Neither source measures the effect in a common-envelope
+configuration, so the two do not make incompatible claims about the same
+thing. What remains open is whether the grid runs of Passy et al. (2012)
+were in the under-resolved regime where the suppression occurs; Ohlmann
+et al. do not show it.
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §3.3.6, §3.4.3, §4.3.2.
@@ -143,3 +183,4 @@ comparable.
 3. [Stone et al. (2026)](/sources/stone-2026.md), §4.1 (arXiv v1).
 4. [Katz et al. (2016)](/sources/katz-2016.md), §4.3.1 (arXiv v2).
 5. [Mignone et al. (2012)](/sources/mignone-2012.md), §6.6.
+6. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §§2–4, Figs. 1–4 (arXiv v1).

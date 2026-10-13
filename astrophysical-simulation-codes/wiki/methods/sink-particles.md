@@ -4,7 +4,7 @@ title: "Sink particles in Eulerian grid codes"
 description: "Lagrangian accreting point masses that replace unresolvable gravitational collapse on a grid: creation where gas exceeds a Jeans-derived density threshold (alone, or with converging-flow, potential-minimum, Jeans-instability and boundedness checks), accretion by a Bondi–Hoyle rate or of the bound mass above the threshold, softened gas–particle gravity, particle time-step limits with sub-cycling, and merging."
 status: established
 aliases: [sink particle, accreting sink particle, Lagrangian sink particle, sinks]
-tags: [self-gravity, amr, conservation, time-integration]
+tags: [self-gravity, amr, conservation, time-integration, sink-particles]
 timestamp: 2026-10-12T00:00:00Z
 ---
 
@@ -230,6 +230,126 @@ converging; the merged sink inherits linear and angular momentum (§3.5).
 Neither paper reports a convergence study in $r_{\mathrm{acc}}$ or
 $N_{\mathrm J}$.
 
+## Later uses (batch 4)
+
+Two later implementations, one in a different host code and one a later
+configuration of the FLASH module:
+
+| | [Kim & Ostriker (2017)](/sources/kim-2017.md) | [Mathew & Federrath (2021)](/sources/mathew-2021.md) |
+|---|---|---|
+| host | [TIGRESS](/software/tigress.md) in [Athena](/software/athena.md): uniform grid, shearing box, FFT gravity | [FLASH](/software/flash.md) 4: PARAMESH block AMR, multigrid gravity |
+| creation | Larson–Penston threshold, potential minimum, convergence along every axis | $\rho_{\mathrm{thr}} = \pi c_s^2/(4Gr_{\mathrm{acc}}^2)$ plus the checks of Federrath et al. (2010) |
+| $r_{\mathrm{acc}}$ | control volume of $3^3$ cells, radius $1.5h$ | $2.5h$ ($2r_{\mathrm{acc}} = 5h$), 250 AU |
+| accretion | Riemann mass and momentum fluxes through the control-volume boundary, only under three-axis convergence | mass, linear and angular momentum updated each accretion step; sink moved to the centre of mass |
+| gravity | particle mass deposited by TSC into the Poisson source | "direct summation over all the sink particles and grid cells"; softened within $r_{\mathrm{acc}}$ |
+| sink orbits | Quinn et al. (2010) symplectic kick–drift–kick, generalized to shear | second-order leapfrog |
+| merging | within twice the control radius, at the centre of mass | not stated |
+| spin | not stated | intrinsic spin |
+
+### TIGRESS (Kim & Ostriker 2017)
+
+From [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.2, a modified
+Gong & Ostriker (2013) scheme:
+* **Threshold** (§2.2.1, eq. 7): the Larson–Penston density at half a
+  cell, $\rho_{\mathrm{thr}} = 8.86\,c_s^2/(\pi Gh^2)$, with $c_s$ the
+  isothermal sound speed $(p/\rho)^{1/2}$. Rationale: the Larson–Penston
+  solution is an attractor of collapse for arbitrary turbulent flows, and
+  its asymptote guarantees supersonic infall at $-3.28$ times the
+  isothermal sound speed. The paper notes that the Truelove threshold has
+  "the same parameter dependence, but with a coefficient of π/16 instead
+  of 8.86/π"; the ratio of the printed coefficients (computed here, not
+  stated) is about 14, so this threshold is about 14 times the
+  $N_{\mathrm J} = 4$ density bound of Krumholz et al.
+* **Checks.** Convergence is required along every axis, "not simply
+  ∇·v < 0", which agrees with check 2 of Federrath et al. above; a
+  potential minimum over the control volume agrees with check 3; no
+  creation within twice the control radius of an existing particle
+  corresponds to check 6. Of the potential-minimum and convergence checks
+  the authors note that "if the resolution is high enough, the additional
+  criteria are essentially always satisfied (see GO13)". The
+  Jeans-instability and boundedness checks (4 and 5) are absent and not
+  discussed.
+* **Creation step.** The control volume is reset like ghost zones (face,
+  side and corner cells average 1, 2 and 3 contact cells, the host cell
+  6), with the shear velocity removed before averaging and restored
+  after; magnetic fields are not reset; the particle takes the mass and
+  momentum difference.
+* **Accretion** (§2.2.2, eqs. 9–11): the face-summed, particle-frame mass
+  fluxes must point into the control volume on both sides along all three
+  axes, evaluated at $t^{n+1/2}$; mass and momentum accretion are the
+  Riemann fluxes through the control-volume boundary, plus the change of
+  control volume when the particle crosses cells. Particle positions are
+  advanced before the MHD step to preserve Galilean invariance. Accretion
+  stops at the particle's first supernova.
+* **Gravity and orbits.** Particle density enters the Poisson source by
+  TSC deposition on $3^3$ cells (§2.1), unlike Federrath et al., whose
+  sink potentials are not in the Poisson source. Explicit, implicit and
+  semi-implicit kick–drift–kick "are not symplectic in a shearing box";
+  the Quinn et al. (2010) integrator is used, and each step starts with the
+  previous step's second kick because self-gravity at $t^{n+1}$ needs the
+  updated gas (§2.2.5). In the epicyclic-orbit test it conserves energy
+  where explicit and implicit kick–drift–kick drift secularly, and its
+  mean phase error converges at second order in $\Delta t$ (Fig. 4).
+* **Tests.** In a collapsing non-isothermal sphere at $h = 0.031$ and
+  0.078 pc, the sink criterion gives "essentially the same" profiles at
+  both resolutions, while without sinks "unphysical overshoots of density
+  and out-of-equilibrium temperature" appear (§2.2.1, Fig. 2;
+  qualitative). The control radius is not varied; the paper's resolution
+  study (2 to 64 pc) is of the whole ISM system (see
+  [TIGRESS](/software/tigress.md)).
+* **Spurious sinks: an open question, not a contradiction.** Federrath
+  et al. (2010) state that the Jeans and boundedness checks remain
+  necessary in shock-dominated, high-dispersion flows, that "magnetic
+  effects are not taken into account by the potential minimum check, but
+  are covered with the Jeans instability and bound state checks", and that
+  the extra checks "are only necessary, if sink particles are created at
+  densities below the opacity limit (about $10^{-14}$ g cm$^{-3}$)"
+  (§2.2); they measure a large excess of sinks with a threshold alone
+  (§4.3). TIGRESS creates sinks far below the opacity limit, in
+  magnetized, supernova-driven turbulence, without those two checks, so it
+  is in the regime where Federrath et al. call them necessary. Kim &
+  Ostriker make no counter-claim and report no spurious-sink test; no
+  source measures spurious sinks in this scheme.
+
+### FLASH, later configuration (Mathew & Federrath 2021)
+
+From [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.3, a
+production star-cluster configuration of the FLASH sinks:
+* $\rho_{\mathrm{thr}} = \pi c_s^2/(G\lambda_{\mathrm J}^2) = \pi c_s^2/(4Gr_{\mathrm{acc}}^2)$
+  with $r_{\mathrm{acc}} = \lambda_{\mathrm J}/2$ (eq. 4), plus "a series of
+  tests as described by" Federrath et al. (2010; cited there as 2010c).
+  $2r_{\mathrm{acc}} = 5h$ at the finest level, which "ensures that the
+  Truelove et al. (1997) criterion is satisfied", with $h = 100$ AU and
+  $r_{\mathrm{acc}} = 250$ AU; this agrees with the $r_{\mathrm{acc}}\simeq2.5h$
+  of Federrath et al. above. Recorded as printed: Table 1 gives
+  $\rho_{\mathrm{thr}} = 3.8\times10^{-16}$ g cm⁻³, while eq. 4 with the
+  printed $c_s = 0.2$ km s⁻¹ and $r_{\mathrm{acc}} = 250$ AU gives about
+  $3.4\times10^{-16}$ (recomputed at ingestion; the paper does not
+  explain the difference).
+* **Spin.** "In order to conserve total angular momentum, an intrinsic
+  angular momentum (spin) is introduced for the sink particle, which stores
+  the accreted angular momentum"; the spin sets the axis of the sub-grid
+  outflow module, which returns a fraction 0.9 of the accreted angular
+  momentum to the outflow (§2.3, §2.5.2). This answers, for the 2021 FLASH
+  configuration (following Federrath et al. 2014), the open note above that
+  Federrath et al. (2010) do not say whether the FLASH sinks carry spin; it
+  agrees with their App. B argument that spin is required. It does not
+  document the 2010 module itself.
+* **Gravity.** Sink–gas and sink–sink interactions are "calculated by
+  direct summation over all the sink particles and grid cells", with the
+  potential "softened within the accretion radius" (§2.3, §5.2), and the
+  sinks are advanced by "A second-order leapfrog integrator". The wording
+  reads as a direct sum also for gas → sink, where Federrath et al. (2010)
+  interpolate the mesh acceleration by cloud-in-cell. Different code
+  versions and terse wording: recorded as stated differently, not as a
+  contradiction.
+* No new sink forms within 250 AU of an existing one (§5.2), as in check 6.
+* **No convergence study.** One resolution ($h = 100$ AU); the authors
+  name resolution as the main caveat (peak of the mass distribution
+  overestimated by about 2, close binaries unresolved; §6.1), and call the
+  separation distribution below about 200 AU "only a lower limit" (§5.2).
+  Neither batch-4 paper varies $r_{\mathrm{acc}}$ or $N_{\mathrm J}$.
+
 ## Contradictions
 
 * **Angular momentum of accretion.** *Open.*
@@ -242,10 +362,18 @@ $N_{\mathrm J}$.
   leave the angular momentum in the gas, and assert conservation of mass,
   momentum and angular momentum to machine precision, without a
   measurement. The two statements disagree on what the 2004 scheme does;
-  the published 2004 text has not been checked. The 2004 claim can be
-  checked algebraically: radial kicks to the gas and the opposite kick to
-  the sink both act along lines through the sink, so they cancel in the
-  total angular momentum without any spin.
+  the published 2004 text has not been checked. *Compiler hypothesis,
+  not a source claim:* the 2004 claim can be checked algebraically, since
+  radial kicks to the gas and the opposite kick to the sink both act along
+  lines through the sink and so cancel in the total angular momentum
+  without any spin. The entry closes on the published 2004 text or by the
+  human.
+  * *Later evidence (batch 4), not closing.*
+    [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.3, state that
+    the (later) FLASH sinks carry an intrinsic spin "In order to conserve
+    total angular momentum". This agrees with the App. B argument of
+    Federrath et al. for FLASH, but says nothing about the 2004 Krumholz
+    et al. scheme; the entry stays open.
 
 # Citations
 
@@ -253,3 +381,7 @@ $N_{\mathrm J}$.
    eqs. 5–17, Table 1 (arXiv preprint v1).
 2. [Federrath et al. (2010)](/sources/federrath-2010.md), §§1–5,
    eqs. 1–33, Apps. A–B (arXiv v2).
+3. [Kim & Ostriker (2017)](/sources/kim-2017.md), §§2.1–2.2, eqs. 7–21,
+   Figs. 2, 4 (arXiv v2).
+4. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.3, 2.5.2,
+   5.2, 6.1, eq. 4, Table 1 (arXiv v2).

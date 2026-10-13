@@ -144,7 +144,7 @@ through $L_\infty$ (§3.4.1).
   (Fig. 8), LimO3+RK3 and PPM+RK3 are less diffusive than PLM+RK2,
   notably for the entropy mode, but PPM "stops converging" at high
   resolution, worst for the slow mode; the same stall appears with HLL
-  and in an Athena++ PPM run with primitive-variable reconstruction
+  and in an [Athena++](/software/athena-plus-plus.md) PPM run with primitive-variable reconstruction
   (dashed curve); the stalled PPM curves rise back to about $10^{-2}$ at
   the finest grid. The authors recommend LimO3. Recorded as printed: the
   text says LimO3
@@ -173,7 +173,7 @@ through $L_\infty$ (§3.4.1).
   1024. The error, the rms over components of the L1 error (eq. 45), is
   $1.0\times10^{-7}$ at $N = 16$, $1.6\times10^{-9}$ at $N = 128$ and
   $1.7\times10^{-11}$ at $N = 1024$, scaling as $N^{-2}$ (Fig. 1), in
-  "excellent agreement" with Athena (Stone et al. 2008, Fig. 7). Recorded
+  "excellent agreement" with [Athena](/software/athena.md) (Stone et al. 2008, Fig. 7). Recorded
   as printed: the eigenvector $(1, -1, 1, 1, 1.5)$ has nonzero transverse
   velocity components, unusual for a pure sound wave from rest.
 * *Radiation-modified wave, discrete-angle transport*
@@ -227,6 +227,7 @@ fast wave, which stays second order
   al. not the Athena++ version or options), so the difference may lie in
   the set-up; the entry closes when a source identifies it.
 
+# Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.1, §8.2, §8.6.
 2. [Stone et al. (2020)](/sources/stone-2020.md), §3.3.1, §3.3.2, §3.4.1.

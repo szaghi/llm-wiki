@@ -116,6 +116,24 @@ match.
   peak for one kernel, and time per step for the whole solver
   ([Jansson et al. (2024)](/sources/jansson-2024.md), §6, §9).
 
+## Later uses (batch 4)
+
+| Source | Unit of normalization | Value(s) as printed | Hardware | Precision | Problem and scheme |
+|---|---|---|---|---|---|
+| [H-AMR](/software/h-amr.md) ([Porth et al. (2019)](/sources/porth-2019.md), §4.1.5, quoting Chatterjee et al. 2019) | one GPU | "3 − 5 × 10⁸ zone-cycles/s/GPU", including a speed-up of 3–5 from 3–4 levels of locally adaptive time stepping | not stated | not stated | not stated |
+| [H-AMR](/software/h-amr.md) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A, quoting Liska et al.) | one GPU | "∼ 0.85 × 10⁸ zone-cycles/s" | Summit V100 | not stated | "a similar physics setup" to GRaM-X's, not specified |
+
+* **Time-step-adaptive speed-ups folded into the rate.** H-AMR's
+  $3$–$5\times10^8$ zone-cycles/s per GPU is an *effective* rate: it
+  includes the factor 3–5 gained from locally adaptive time stepping, which
+  decouples temporal from spatial refinement levels
+  ([Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1.5), so it is not
+  comparable with rates measured with one global time step. The
+  $0.85\times10^8$ figure (one V100, 2022) is not comparable with it
+  either: the larger figure is quoted from Chatterjee et al. (2019) with no
+  hardware stated, and neither source says whether the smaller one
+  includes the speed-up.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §7, Table 1.
@@ -136,3 +154,4 @@ match.
     Figs. 21–22 (arXiv v1).
 14. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§4.1, 4.3, Fig. 6
     (arXiv v1).
+15. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1.5 (arXiv v2).

@@ -164,6 +164,7 @@ $L_1(\rho)$ from 64 to 2048 cells (not printed in the paper) gives 0.41 and
   [Stone et al. (2020)](/sources/stone-2020.md), not a contradiction) and
   [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
 * Also cited on [CASTRO (compressible astrophysics code on BoxLib AMR)](/software/castro.md).
+* Also cited on (batch 4) [Density and pressure floors](/methods/numerical-floors.md), [FLASH](/software/flash.md).
 
 # Citations
 

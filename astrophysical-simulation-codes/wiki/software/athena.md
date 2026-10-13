@@ -356,6 +356,33 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   ([Stone et al. (2026)](/sources/stone-2026.md), §3). See
   [AthenaK](/software/athenak.md).
 
+## Later uses (batch 4)
+
+* **TIGRESS.** [Kim & Ostriker (2017)](/sources/kim-2017.md) build the
+  [TIGRESS](/software/tigress.md) modules (sink/star particles, FUV
+  heating, supernova feedback) into Athena and run it as a production
+  shearing-box MHD code: the van Leer predictor–corrector of Stone &
+  Gardiner (2009), piecewise-linear reconstruction, the Roe solver and
+  constrained transport, with FFT self-gravity on shearing-periodic
+  horizontal and vacuum vertical boundaries (§2.1). This agrees with the
+  shearing box listed under Physics modules. No Athena version is printed.
+* **Usage rule for the H-correction.** TIGRESS applies the H-correction
+  only "when the difference in signal speed is larger than 20 km s⁻¹", to
+  suppress the carbuncle in supernova blast waves (§2.1); the
+  H-correction entry above, from Stone et al. (2008), records no such
+  threshold.
+* **A second positivity safeguard.** Besides the per-interface HLLE
+  re-solve of the Roe solver described above, TIGRESS applies the
+  first-order flux correction of Lemaster & Stone (2009) "to cells with
+  negative pressure and/or density after the second-order update" (§2.1);
+  the fallback flux and reconstruction are not stated. See
+  [approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
+* **Cooling.** Net cooling is integrated "fully implicitly in an
+  operator-split manner before the integrator step", sub-cycled at the
+  instantaneous cooling time when that is shorter than $\Delta t$ (§2.1;
+  see [cooling integration](/methods/radiative-cooling-integration.md)).
+* No performance, scaling or wall-clock numbers are reported.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §§1–9, App. C (journal version).
@@ -368,3 +395,4 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 8. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §2.2, §2.2.1, §2.2.4, §2.2.6, §3.1.1, §3.1.3–§3.1.6 (arXiv v2).
 9. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.4, §4.1, §4.2 (arXiv v1).
 10. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).
+11. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 (arXiv v2).

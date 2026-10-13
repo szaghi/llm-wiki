@@ -29,7 +29,7 @@ from then on.
 | $\rho$, $\mathbf v$, $p$, $E$ | density, velocity, (thermal) pressure, total energy density |
 | $e$, $T$ | specific internal energy and temperature |
 | $\gamma$ | ratio of specific heats of an ideal gas (adiabatic index) |
-| $c_s$ | adiabatic sound speed |
+| $c_s$ | adiabatic sound speed; for an isothermal gas, as in the sink-particle and Jeans pages, $c_s = (p/\rho)^{1/2}$ |
 | $\mathbf B$ | magnetic field, in the units of each code as mapped on its Source page (Heaviside–Lorentz unless stated) |
 | $c_f$, $c_A$ | fast magnetosonic and Alfvén speeds |
 
@@ -71,6 +71,14 @@ from then on.
 | $E_{\mathrm r}$, $\mathbf F_{\mathrm r}$, $\mathsf P_{\mathrm r}$ | radiation energy density, flux and pressure tensor |
 | $\mathsf f_{\mathrm E}$ | Eddington tensor, $\mathsf P_{\mathrm r} = \mathsf f_{\mathrm E}E_{\mathrm r}$ |
 | $\kappa$ | opacity (per unit mass, with subscripts for absorption and scattering) |
+
+## Relativistic (magneto)hydrodynamics
+
+| Symbol | Meaning |
+|---|---|
+| $W$ | Lorentz factor |
+| $\alpha_{\mathrm L}$, $\beta^i$, $\gamma_{ij}$ | lapse, shift and spatial metric of the 3+1 split (the indexed $\gamma_{ij}$ is distinct from the adiabatic index $\gamma$) |
+| $D$, $S_i$, $\tau$ | conserved density, momentum and energy of the Valencia formulation |
 
 ## Additions, batch 1 (2026-10-12)
 
@@ -130,10 +138,8 @@ from then on.
 | $\Delta t_{\mathrm{hyp}}$, $\Delta t_{\mathrm{par}}$ | time-step limits of the hyperbolic (advective) and parabolic (diffusive) terms |
 | $s_{\mathrm{RKL}}$ | number of stages of a Runge–Kutta–Legendre super-time-step |
 
-## Relativistic (magneto)hydrodynamics
+## Additions, batch 4 (2026-10-12)
 
 | Symbol | Meaning |
 |---|---|
-| $W$ | Lorentz factor |
-| $\alpha_{\mathrm L}$, $\beta^i$, $\gamma_{ij}$ | lapse, shift and spatial metric of the 3+1 split (the indexed $\gamma_{ij}$ is distinct from the adiabatic index $\gamma$) |
-| $D$, $S_i$, $\tau$ | conserved density, momentum and energy of the Valencia formulation |
+| $\beta_{\mathrm p}$ | plasma beta, the ratio of thermal to magnetic pressure $2p/B^2$ (subscripted, so distinct from the shift $\beta^i$) |

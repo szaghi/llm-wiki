@@ -228,6 +228,32 @@ With these, Kastaun et al.'s scheme has been run inside an evolution code,
 which the two recovery papers had left open; neither code paper reports a
 recovery failure rate.
 
+## Later uses (batch 4)
+
+The codes of the [EHT GRMHD code comparison](/results/eht-grmhd-code-comparison.md)
+document their recovery chains inside production evolution codes
+([Porth et al. (2019)](/sources/porth-2019.md), §4.1):
+
+| Code | Chain as described |
+|---|---|
+| Cosmos++ | "2D" scheme of Noble et al. (2006); a 5D numerical inversion as backup; then the entropy |
+| ECHO | 3D scheme of Bucciantini & Del Zanna (2013); then the 1D scheme of Porth et al. (2017); then the entropy; then a floor reset with zero Eulerian velocity and unchanged field |
+| HARM-Noble | "2D" then "1D_W" of Noble et al. (2006); the entropy replaces the energy when the solve fails, gives unphysical primitives, or the internal energy density falls below $10^{-2}$ times the squared fluid-frame field |
+| BHAC | the advected entropy whenever the plasma beta is below $10^{-2}$ |
+| [H-AMR](/software/h-amr.md) | the advected entropy as backup |
+| iharm3D | failed cells replaced by an average over a neighbour stencil |
+| IllinoisGRMHD | conserved variables violating physicality inequalities adjusted before a Noble-type solve (Etienne et al. 2012) |
+
+* The Noble et al. two-unknown scheme of Siegel et al.'s table above thus
+  runs inside two evolution codes (Cosmos++, HARM-Noble), always with
+  fallbacks behind it. As in the batch-3 code papers, no failure rates,
+  tolerances or timings are reported.
+* Several chains end in the advected entropy, the relativistic analogue of
+  the [dual-energy formalism](/methods/dual-energy-formalism.md) switch,
+  which Kastaun et al. (2021) do not propose (above). Others end in
+  neighbour averaging or a floor reset; see
+  [density and pressure floors](/methods/numerical-floors.md).
+
 ## Contradictions
 
 * **Is the extra temperature inversion an inherent cost?** *Open.*
@@ -252,3 +278,4 @@ recovery failure rate.
 4. [Shankar et al. (2023)](/sources/shankar-2023.md), §II C (arXiv v2).
 5. [Stone et al. (2026)](/sources/stone-2026.md), §§3.5–3.6, Table 2,
    Figs. 10, 13 (arXiv v1).
+6. [Porth et al. (2019)](/sources/porth-2019.md), §4.1 (arXiv v2).

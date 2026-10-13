@@ -53,7 +53,7 @@ reported. See also [approximate Riemann solvers](/methods/approximate-riemann-so
   [IDEFIX](/software/idefix.md). A **variant with $\gamma = 5/3$**, with an
   "initial condition identical to Mignone et al. (2007)"; the states are
   not printed, and Fig. 6 shows $B_x = 0.75$. Roe, PLM (primitive
-  variables), RK2, 500 points, against a PLUTO 4.3 Roe run with 8000
+  variables), RK2, 500 points, against a [PLUTO](/software/pluto.md) 4.3 Roe run with 8000
   points: "excellent agreement", with a "small amplitude oscillation of the
   post-shock velocity that is typical of the primitive variable
   reconstruction". 1D, so the EMF reconstruction is not exercised. Visual
