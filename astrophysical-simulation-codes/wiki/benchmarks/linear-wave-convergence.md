@@ -5,7 +5,7 @@ description: "A small-amplitude eigenmode of the (magneto)hydrodynamic or radiat
 status: established
 aliases: [linear wave test, linear wave convergence, oblique linear wave]
 tags: [benchmark, verification, mhd, hydro, radiation, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Linear wave convergence test
@@ -212,6 +212,42 @@ reconstructions in 1D, AthenaK reaches fourth order except for the MHD
 fast wave, which stays second order
 ([Stone et al. (2026)](/sources/stone-2026.md), §3.2).
 
+## Later uses (batch 6)
+
+* *2D MHD, oblique: the origin of the Gardiner–Stone geometry*
+  ([Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.4, eqs. 79–81,
+  Fig. 11, App. A; arXiv v1). Domain $[0, 2/\sqrt5]\times[0, 1/\sqrt5]$ on
+  $2N\times N$ cells, periodic, wavevector at $\tan^{-1}2$; amplitude
+  $10^{-6}$; $\rho = 1$, $p = 1/\gamma = 3/5$, $\gamma = 5/3$; field
+  $(1, \sqrt2, 1/2)$ in the frame of the wavevector, background velocity 1
+  along it for the entropy mode only; slow, Alfvén and fast speeds 1/2, 1
+  and 2; right eigenvectors printed (App. A); one wavelength of travel.
+  Error: the per-component L1 norm of the final minus initial cell values
+  (cell-centred field), combined as the square root of the sum of squares
+  (eqs. 80–81). 2D CTU+CT with PPM and the Roe solver: fitted orders **fast
+  2.0, Alfvén 2.26, slow 2.29, entropy 2.11**, errors between about
+  $10^{-7}$ and $10^{-10}$ for $N$ from about 8 to 128 (plot axes); with PLM
+  every mode scales as $N^{-2}$ with a slightly larger error. The 1D MHD
+  background of Stone et al. (2008) above and IDEFIX's field of 1 along and
+  3/2 across the wavevector ($\sqrt{2 + 1/4} = 3/2$) are this background.
+  The 3D geometry above (domain $(3, 3/2, 3/2)$) is not in this paper,
+  which is 2D only.
+* *Wavelength as printed.* Gardiner & Stone state the wavelength as 2/5
+  (read from the rendered page), while their eq. 79 prints the phase as
+  $\cos(2\pi x_1)$, i.e. wavelength 1, with $x_1$ along the wavevector. In
+  this domain and angle the projections of the domain sides on the
+  wavevector are both 2/5, so only wavelengths 2/5, 1/5, … are periodic
+  (computed at ingestion): the stated 2/5 is the consistent value, and eq.
+  79 omits the division by the wavelength. The damped-wave entry above
+  records "wavelength 1 at $\tan^{-1}2$" in the same domain for Stone et
+  al. (2020); that entry may echo the printed eq. 79 of the original or be
+  a transcription slip. It is recorded here as a printed inconsistency,
+  not a contradiction; the Stone et al. (2020) text should be rechecked.
+
+The original adds a 2D CTU+CT data point to "What it shows": second order
+in all four MHD families in 2D, with PPM changing the error constant and
+slightly raising the fitted rates, PLM giving exactly second order.
+
 ## Contradictions
 
 * **Does Athena++ RK3+PPM keep converging on 3D linear waves up to
@@ -237,3 +273,4 @@ fast wave, which stays second order
 6. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.2 (arXiv v1).
 7. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.1, §3.2 (arXiv v2).
 8. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §3.1.1 (arXiv v2).
+9. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.4, eqs. 79–81, Fig. 11, App. A (arXiv v1).

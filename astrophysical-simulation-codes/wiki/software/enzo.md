@@ -5,7 +5,7 @@ description: "Open-source Cartesian patch-based AMR code in comoving coordinates
 status: established
 aliases: [ENZO, Enzo 2.3]
 tags: [software, hydro, mhd, amr, cosmology, dual-energy, constrained-transport, divergence-cleaning, riemann-solver, self-gravity, multigrid, gpu, performance, verification, cooling, chemistry]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Enzo
@@ -281,6 +281,33 @@ these runs are not stated.
   at mean density and the slope of the temperature–density relation
   differ by less than 1 %.
 
+## Later uses (batch 6)
+
+* **AMR against the original Berger–Colella design.** The Adaptive mesh
+  refinement section above labels Enzo's structure "Berger–Colella
+  structured AMR". The primary source,
+  [Berger & Colella (1989)](/sources/berger-1989.md), agrees on rectangular
+  patches on coarse grid lines, conservative averaging of covered cells and
+  the correction of uncovered coarse cells with the fine fluxes (§3; the
+  construction behind Enzo's eq. 27). Two Enzo rules are its own, not the
+  original's: subgrids wholly inside one parent, where the original's
+  proper nesting is "not as stringent as requiring a fine grid to be
+  contained in only one coarser level grid" (§2, Fig. 2.1); and a free
+  $\Delta t_l$, where the original refines time by exactly the spatial
+  ratio, $\Delta t_l/h_l$ equal on all levels (§2). The original also
+  clusters by bisection and merging under a minimum flagged fraction of
+  about 60 % (§5), not by Berger–Rigoutsos signatures. These qualify the
+  label; they contradict nothing either source states. See
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+* **Which Gardiner–Stone CT.** The MHD-CT entry above notes that Bryan et
+  al. do not name the Gardiner & Stone (2005) variant.
+  [Gardiner & Stone (2005)](/sources/gardiner-2005.md) give three corner-EMF
+  constructions (a Lax–Friedrichs one, $\mathcal E_z^\circ$ and
+  $\mathcal E_z^c$), recommend the contact-upwinded $\mathcal E_z^c$ and use
+  only it in their second-order tests (§3.2.2, §3.3.1, §5); the paper is 2D
+  only. Which one Enzo uses remains unstated. See
+  [constrained transport](/methods/constrained-transport.md).
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §§1–13, Appendix (arXiv v1).
@@ -289,3 +316,5 @@ these runs are not stated.
 4. [Stone et al. (2020)](/sources/stone-2020.md), §2.2, §3.6.1.
 5. [Smith et al. (2017)](/sources/smith-2017.md), §§2–4, 8.2 (arXiv v2).
 6. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.3, 3.1–3.5, Figs. 1–8 (arXiv v2).
+7. [Berger & Colella (1989)](/sources/berger-1989.md), §§2–3, 5, Fig. 2.1.
+8. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.2.2, 3.3.1, 5 (arXiv v1).

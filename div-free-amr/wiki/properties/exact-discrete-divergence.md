@@ -4,7 +4,7 @@ title: "Exact discrete divergence"
 description: "The algebraic invariant $D_h B_h = 0$: a specific discrete divergence of the evolved field vanishes identically, up to machine roundoff."
 status: established
 tags: [divergence-constraint, invariant, mhd]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Exact discrete divergence
@@ -56,6 +56,18 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   (Evans & Hawley observe drift from $10^{-15}$ to $10^{-10}$ in single
   precision over one run; double-precision field evolution holds
   $10^{-15}$–$10^{-14}$).
+* **Flux-CT's primary source asserts the property; it neither proves nor
+  measures it.** [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md)
+  derive the invariant from "a discrete version of Stokes' theorem" and the
+  earlier CT literature, without writing the divergence out, and report no
+  divergence diagnostic for their scheme in any test. Their wording is also
+  inconsistent: "up to the computer's round-off error" (abstract), "to
+  machine accuracy" (§2.2), but "strictly solenoidal up to discretization
+  error" (§4). *Compiler reading:* their face update (eqs. 13–15) is
+  $B_h^{n+1} = B_h^n - \Delta t\, C_h E_h^{n+1/2}$ with one $E_h$ per edge,
+  so $D_h^{\mathrm{f}} B_h$ is conserved by $D_h C_h = 0$; the update
+  supports the round-off reading, and the §4 phrase is best read as loose
+  wording ([flux-CT](/methods/flux-ct.md)).
 
 * **"Local" exactness is a distinct, weaker class.** Locally
   divergence-free DG ([Li & Shu (2005)](/sources/li-shu-2005.md)) builds
@@ -207,3 +219,4 @@ the one where both papers find agreement.
 16. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §1.
 17. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.9.
 18. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§3–5.
+19. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), abstract, §§2.1–2.2, 4, eqs. 13–15.

@@ -5,7 +5,7 @@ description: "A finite-amplitude, circularly polarized Alfvén wave, an exact no
 status: established
 aliases: [CPAW, circularly polarised Alfvén wave, Tóth Alfvén wave, nonlinear Alfvén wave]
 tags: [benchmark, mhd, verification, constrained-transport, divergence-cleaning, scaling]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -72,8 +72,37 @@ small-amplitude linear waves (§3.1.1–§3.1.2). Its regular, smooth 3D
 set-up also makes it a scaling workload
 ([Rossazza et al. (2026)](/sources/rossazza-2026.md), §4.2).
 
+## Later uses (batch 6)
+
+* *2D, the oblique initialization* ([Gardiner & Stone (2005)](/sources/gardiner-2005.md),
+  §3.3.2, §5.2, Figs. 4–5, 9; arXiv v1). The initialization that Stone et
+  al. (2008) above cite, with conditions "slightly different than in the
+  original description" of Tóth (2000): domain $[0,\sqrt5]\times[0,\sqrt5/2]$
+  on $2N\times N$ cells, periodic, wavevector at $\tan^{-1}2$, wavelength
+  1; $\rho = 1$, $p = 0.1$; field 1 along the wavevector and transverse
+  components $0.1\sin$ and $0.1\cos$ of the phase, with matching velocity
+  components; velocity along the wavevector 0 (travelling) or 1 (standing);
+  in-plane field from a vector potential; $t = 5$.
+  * *First-order scheme, $N = 8$.* On the standing wave the Lax–Friedrichs
+    corner-EMF variant dissipates "approximately twice" as fast as the
+    other two; on the travelling wave the difference is smaller.
+  * *Second-order CTU+CT, $N = 4$ to 32* (plus the $N = 64$ initial
+    condition; the Fig. 9 legend lists $128\times64$ to $8\times4$).
+    Planar symmetry is kept and the results "compare well" with published
+    ones. **No error norm or convergence order is reported**; the
+    comparison is visual (transverse field against position along the
+    wavevector).
+  * No parametric instability appears "for the parameters adopted here",
+    although the wave's susceptibility to it is noted.
+
+The standing case uses a velocity of 1 along a field of 1 (Alfvén speed
+1), consistent with the counter-flow description in the Set-up. The
+second-order convergence on this test rests on Stone et al. (2008) and
+Caddy & Schneider (2024) above, not on the original.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
 2. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.1–§3.1.2.
 3. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §4.2.
+4. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.3.2, 5.2 (arXiv v1).

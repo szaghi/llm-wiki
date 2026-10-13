@@ -5,7 +5,7 @@ description: "1D MHD Riemann problems rotated obliquely to the grid; the exactly
 status: established
 aliases: [oblique shock tube]
 tags: [benchmark, divergence-constraint, mhd]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Rotated shock tube
@@ -19,6 +19,20 @@ also measures the jump conditions.
 
 ## Setup
 
+* **The unrotated Brio–Wu problem**
+  ([Brio & Wu (1988)](/sources/brio-wu-1988.md) §V), the most common
+  initial data. Left state: density 1, velocity 0, pressure 1, transverse
+  field 1. Right state: density 0.125, velocity 0, pressure 0.1, transverse
+  field $-1$. Normal field $0.75$, $\gamma = 2$; the data are Sod's
+  hydrodynamic tube with a field added. The original reference uses 800
+  points. The solution has fast rarefactions on both sides, a contact, a
+  slow shock, and a **slow compound wave**: a slow shock with an attached
+  slow rarefaction. The transverse field changes sign across that slow
+  shock, so it is an intermediate shock. The paper proves that the MHD
+  system is nonconvex, which is what admits the compound wave (§VI). In
+  1D the normal field is a fixed parameter of the scheme, so the unrotated
+  problem cannot test the divergence constraint; rotation against the grid
+  is what makes it one.
 * **Narrow strip** ([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md),
   credited to Tóth): a domain $[0,1]\times[0, 2/N]$ on an $N\times2$ grid
   with shifted periodic boundaries, $\alpha = \tan^{-1}2 \approx 63.4°$. It
@@ -90,3 +104,4 @@ also measures the jump conditions.
 4. [Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md), §5.3, Fig. 10.
 5. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§4.2.1–4.2.2, Table 2, Fig. A.7.
 6. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.2, Figs. 2–4.
+7. [Brio & Wu (1988)](/sources/brio-wu-1988.md), §§IV, V, VI, Figs. 2, 9.

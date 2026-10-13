@@ -5,7 +5,7 @@ description: "Second-order, directionally unsplit time integrators of the astrop
 status: established
 aliases: [CTU, corner transport upwind, CTU+CT, VL+CT, VL2, van Leer integrator, MUSCL-Hancock, method-of-lines Runge-Kutta, unsplit integrator, SSP-RK3, IMEX Runge-Kutta]
 tags: [time-integration, unsplit, hydro, mhd, constrained-transport, gpu]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Unsplit Godunov integrators
@@ -393,6 +393,81 @@ once) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A).
   advanced before the MHD step (§2.2.2, §2.2.5; see
   [sink particles](/methods/sink-particles.md)).
 
+## Later uses (batch 6)
+
+### 2D CTU+CT in its primary source
+
+[Gardiner & Stone (2005)](/sources/gardiner-2005.md) (arXiv v1 read)
+construct the 2D CTU+CT that Athena implements (Corner transport upwind,
+above). Their single-step scheme combines [PPM](/methods/ppm.md) interface
+states, Colella's CTU and face-centred
+[constrained transport](/methods/constrained-transport.md), in eight steps
+(§4.3): PPM interface states with multidimensional terms; Riemann solve;
+contact-upwinded corner EMFs; transverse correction with source terms;
+second Riemann solve; corner EMFs at $t^{n+1/2}$; CT update of the face
+fields; finite-volume update of the rest. It is "second order accurate,
+unsplit, and preserves the $\nabla\cdot\mathbf B = 0$ constraint throughout
+the time step", and reduces exactly to 1D PPM for plane-parallel
+grid-aligned flow.
+
+* **Against dimensional splitting** (§1, §2.1). For MHD with a
+  cell-centred field, split updates "will not generally satisfy the
+  divergence free constraint between directional sweeps"; this is the
+  stated reason for an unsplit integrator, an MHD argument alongside the
+  hydrodynamic ones of the section on splitting above.
+* **Multidimensional terms in the characteristic step** (§3.1, eqs. 25–33).
+  In 2D the primitive induction equation keeps terms in the normal
+  derivative of the normal field that vanish in 1D. The $x$-direction
+  characteristic evolution adds $v_y\,\partial_xB_x$ to the $B_y$
+  equation, evaluated as $v_{y,i}(B_{x,i+1/2} - B_{x,i-1/2})/h$ from the face
+  values (eq. 32), and the $y$ sweep adds $v_x\,\partial_yB_y$ to the $B_x$
+  equation; the normal field at an interface is the face value, not
+  reconstructed. Without these terms "the field loop disintegrates in
+  oscillations before completing a fraction of an orbital period"
+  (§3.3.1). These terms are distinct from the source terms of the
+  transverse step below.
+* **What hydrodynamic CTU lacks** (§4.1). The hydrodynamic transverse
+  correction (eqs. 57–60) "fail[s] to preserve the $\nabla\cdot\mathbf B = 0$
+  condition". Two changes: the face fluxes are integrated to the corners
+  with a CT EMF, equivalent to advancing the face normal fields to
+  $t^{n+1/2}$ by CT (eqs. 65–70); and the states receive $\Delta t/2$ times
+  (eqs. 61–64, 72–73)
+  $$s_{x,i,j} = \left(0,\ B_x,\ B_y,\ B_z,\ 0,\ 0,\ v_z,\ B_zv_z\right)^{\mathsf T}_{i,j}\ \frac{B_{x,i+1/2,j} - B_{x,i-1/2,j}}{h}$$
+  in the conserved order $(\rho, \rho\mathbf v, \mathbf B, E)$, and its
+  analogue in $y$, needed because primitive interface states are not
+  formally advanced by $\Delta t/2$ (eq. 71). These are numerical terms,
+  not physical sources. The $v_z\,\partial_xB_x$ term is placed here and
+  not in the characteristic step; otherwise a loop advected with uniform
+  $v_z$ grows a spurious coherent $B_z$ (§4.1.2). This is the origin of the
+  "$\nabla\cdot\mathbf B$ source terms" of Athena's 2D CTU+CT above.
+* **Corrector EMF** (§4.2, eqs. 74–78). The reference EMF
+  $v_yB_x - v_xB_y$ is evaluated at $t^{n+1/2}$ from the half-step face
+  fields and a half-step finite-volume update of density and momenta.
+* **Riemann solver and the H-correction.** All tests use the Roe solver
+  of Cargo & Gallice (1997); no carbuncle fix is mentioned. The
+  "H-correction if needed" in Athena's step list above is not part of the
+  2005 description.
+* **Time step.** A Courant number is printed only for the first-order
+  scheme, $\Delta t = 0.4\min\left(h/\max_p\vert\lambda^{(p)}_x\vert,\ h/\max_p\vert\lambda^{(p)}_y\vert\right)$
+  with the directional maxima of the eigenvalue moduli (eq. 52); none is
+  printed for the CTU+CT tests. This neither agrees nor disagrees with the
+  $\nu \le 1$ of Athena's eq. 78 (Time-step definitions, above).
+* **PLM against PPM** (§5.4, Fig. 11). On 2D linear waves the CTU+CT
+  scheme with PPM converges at fitted orders 2.0 (fast), 2.26 (Alfvén),
+  2.29 (slow) and 2.11 (entropy); with PLM every mode scales as $N^{-2}$
+  with a slightly larger error. This agrees with the statement above that
+  PPM lowers the error amplitude, not the formal order. See
+  [linear wave convergence](/benchmarks/linear-wave-convergence.md).
+* **Low β.** The 2D adiabatic Londrillo & Del Zanna blast wave at ambient
+  plasma beta 0.02 runs "stable and accurate" with CTU+CT (§5.6). The
+  Cholla instability at the same beta (Van Leer + CT in Cholla, above)
+  concerns VL+CT in 3D, so this is a further qualification, not a
+  contradiction; see [MHD blast wave](/benchmarks/mhd-blast-wave.md).
+* **Scope.** 2D only; the 3D extension "principally involves
+  modifications to the 'source terms'" and is deferred (§6). The scheme is
+  called "ideally suited" to static or adaptive refinement (§1, §6),
+  stated without a demonstration.
+
 ## Contradictions
 
 * **Is RK2 with $\nu = 1$ stable in 3D?** *Open.*
@@ -435,3 +510,4 @@ once) ([Shankar et al. (2023)](/sources/shankar-2023.md), §V A).
 15. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §2.2.
 16. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1, §2.2.2, §2.2.5
     (arXiv v2).
+17. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 2.1, 3.1, 3.3.1, 4.1–4.3, 5.4, 5.6, 6, eqs. 25–33, 52, 57–78 (arXiv v1).

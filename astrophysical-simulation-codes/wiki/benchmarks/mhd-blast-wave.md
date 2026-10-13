@@ -5,7 +5,7 @@ description: "An over-pressured region expanding into a uniformly magnetized med
 status: established
 aliases: [magnetized blast wave, MHD blast]
 tags: [benchmark, mhd, verification, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # MHD blast wave
@@ -169,6 +169,30 @@ the low-beta limit of VL+CT (Caddy & Schneider 2024), and the
 low-ambient-pressure relativistic variant as a robustness test (Stone et
 al. 2026; Shankar et al. 2023). All comparisons remain visual.
 
+## Later uses (batch 6)
+
+* *2D, adiabatic, CTU+CT, parameters printed* ([Gardiner & Stone (2005)](/sources/gardiner-2005.md),
+  §5.6, Fig. 13; arXiv v1). The Londrillo & Del Zanna (2000) parameters that
+  Stone et al. (2008) above defer: domain $[-0.5,0.5]^2$, $200\times200$;
+  $\rho = 1$, $\mathbf v = 0$, $B_x = B_y = 10/\sqrt2$ (field magnitude 10),
+  $B_z = 0$; $p = 100$ (plasma beta 2) inside radius 0.125, $p = 1$ (beta
+  0.02) outside; adiabatic, $\gamma = 5/3$; $t = 0.2$; boundary conditions
+  not stated. Ranges at $t = 0.2$: density 0.192–3.31, pressure 1.0–32.1,
+  magnetic energy density 23.5–77.7. The scheme is called "stable and
+  accurate for low-β plasma problems involving strong MHD shock waves",
+  with symmetry preserved and "no indication of grid related artifacts".
+  Stone et al.'s adiabatic run above uses a field of magnitude 1, so the two
+  are not the same case.
+
+This is an adiabatic low-beta data point for 2D CTU+CT at the ambient
+beta, 0.02, at which Cholla's 3D VL+CT run turns unstable (batch 3), and
+complements the isothermal one of Stone et al. (2008). The qualification
+recorded in batch 3 stands: the integrator (CTU against VL) and the
+dimension (2D against 3D) differ. Cholla's printed base run has the same
+pressure ratio, 100 ($p = 10$ in a background of 0.1), but how its
+beta-0.02 variant was set up is not printed, so the cases are not
+otherwise compared.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
@@ -178,3 +202,4 @@ al. 2026; Shankar et al. 2023). All comparisons remain visual.
 5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.5 (arXiv v2).
 6. [Stone et al. (2026)](/sources/stone-2026.md), §3.5, §5.1 (arXiv v1).
 7. [Shankar et al. (2023)](/sources/shankar-2023.md), §IV B (arXiv v2).
+8. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.6 (arXiv v1).

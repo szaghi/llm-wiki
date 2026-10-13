@@ -2,6 +2,42 @@
 
 ## 2026-10-13
 
+* **Frontier batch 6: ingested [Colella & Woodward (1984)](/sources/colella-1984.md),
+  [Berger & Colella (1989)](/sources/berger-1989.md) and
+  [Gardiner & Stone (2005)](/sources/gardiner-2005.md)**, the bundle's
+  most-cited works not yet ingested (cited by 15, 11 and 10 of its
+  sources), from PDFs copied out of sibling archives into this bundle's
+  (39 of 39). Gardiner & Stone read as the arXiv preprint.
+  * **New page:** [piecewise parabolic method](/methods/ppm.md): the
+    original method (reconstruction, monotonicity constraint, contact
+    steepening, flattening, dissipation, characteristic averaging, its
+    iterative Riemann solver, Lagrange-plus-remap and direct Eulerian
+    forms) and how the bundle's codes use it, each from the code's own
+    source. Linked from the reading guide.
+  * **Updated** [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+    (PPM's own solver), [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
+    (the Berger–Colella design and every attribution to it checked),
+    [Enzo](/software/enzo.md) and [FLASH](/software/flash.md) (where they
+    depart from the paper), [constrained transport](/methods/constrained-transport.md),
+    [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md),
+    [Athena](/software/athena.md), and the benchmarks
+    [field-loop advection](/benchmarks/field-loop-advection.md),
+    [linear-wave convergence](/benchmarks/linear-wave-convergence.md) (the
+    printed wavelength inconsistency recorded),
+    [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
+    and [MHD blast wave](/benchmarks/mhd-blast-wave.md).
+  * No contradiction opened: Katz et al. on PPM's time-step factor and the
+    Enzo and FLASH departures are written as qualifications; Cholla's
+    low-β instability against Gardiner & Stone's stable run stays the
+    existing qualification (different integrator and dimension).
+  * **Bibliography** (2200 entries): 67 references merged; references
+    printed with no year keyed by the citing year (Berger & Colella's
+    Adjerid & Flaherty, Chern & Colella, Dwyer, and Colella's LBL-17023),
+    or by the published year when identified on Crossref (Colella's direct
+    Eulerian MUSCL, SIAM 6:104, 1985); "Collela & Woodward, JCP 59, 264"
+    is Colella & Glaz (Crossref); Evans & Hawley printed as ApJ 322:659 by
+    Gardiner & Stone (332:659).
+
 * **Ingested [Truelove et al. (1997)](/sources/truelove-1997.md)**, the
   origin of the Jeans condition, from the user's manual download (36 of
   36 archived sources). Published Letter, read with equations and numbers

@@ -5,7 +5,7 @@ description: "For conservative Lax-Friedrichs-type MHD schemes in 2D and 3D, pro
 status: established
 aliases: [PP-DDF coupling, positivity requires discrete divergence-free]
 tags: [positivity, divergence-constraint, mhd, admissibility, lax-friedrichs]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Positivity–divergence coupling
@@ -158,6 +158,21 @@ through the source term.
   [Jones, McNally & Reynolds (2026)](/sources/jones-2026.md) report the same
   limit for their exact-CT base scheme: it loses thermal-energy positivity
   in strongly shocked low-$\beta$ flows.
+* **The energy correction as printed.** In
+  [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) the correction
+  is the last step of the flux-CT update (eq. 16). At the end of a step two
+  cell-centred fields exist: the one advanced by the base scheme and the
+  average of the new face fields. They differ by discretization error,
+  which at low $\beta$ "can be substantial enough to cause the pressure to
+  become negative". The total energy is corrected by the difference of
+  their magnetic energies. The authors call the step "optional": it costs
+  "a slight loss of total energy conservation at the level of
+  discretization error", several applications and tests ran without it
+  with no pressure problem, and it is "very useful" for "very low $\beta$
+  plasmas" (p. 278). Their blast, with ambient
+  $\beta \approx 2.5\cdot10^{-4}$ (compiler arithmetic from the printed
+  set-up), is the "Balsara–Spicer case" above; the paper does not say
+  whether the correction was used on it.
 * **Restoring the constraint can itself break positivity.** In
   potential-based CT the field is overwritten by the curl of the potential
   after each step, which changes the magnetic energy. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) keep the pressure
@@ -263,3 +278,4 @@ though it does not address the first-order multi-dimensional case itself.
 10. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
 11. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix B.
 12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §4.3.
+13. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §2.1 (step 6, eq. 16), §3.2.

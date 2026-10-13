@@ -11,7 +11,7 @@ numerical methods (self-gravity, sink particles, cooling and chemistry,
 radiation moments, equations of state, relativistic primitive recovery);
 code comparisons; and GPU and performance-portable frameworks, astro or
 not.
-**Corpus: 36 of 36 archived sources compiled** (see the [update log](/log.md)).
+**Corpus: 39 of 39 archived sources compiled** (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -40,7 +40,8 @@ for every page.
    [STREAmS](/software/streams.md) (CUDA Fortran DNS) and
    [Neko](/software/neko.md) (spectral elements).
 3. **How they integrate (M)HD.** [Unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md)
-   (CTU, VL2, SSP Runge–Kutta), the [Riemann solvers](/methods/approximate-riemann-solvers.md)
+   (CTU, VL2, SSP Runge–Kutta), the reconstruction most of them inherit,
+   the [piecewise parabolic method](/methods/ppm.md), the [Riemann solvers](/methods/approximate-riemann-solvers.md)
    they offer, and the two ways of controlling the magnetic divergence:
    [constrained transport](/methods/constrained-transport.md) and
    [GLM cleaning](/methods/glm-divergence-cleaning.md). Where kinetic energy

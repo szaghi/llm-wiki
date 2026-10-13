@@ -678,6 +678,150 @@ not measured against a global step, so the subcycling entry stays open.
   [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md)
   page.
 
+## Later uses (batch 6)
+
+### The original patch-based AMR (Berger & Colella 1989)
+
+[Berger & Colella (1989)](/sources/berger-1989.md) is the primary source
+for the conservative patch-based AMR that the codes above cite. Its 2D
+design, in the format of the table at the top:
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| Berger–Colella code (unnamed, 3000 lines of Fortran) | logically rectangular patches on coarse grid lines, clustered, possibly overlapping on one level | even only; 4 in the runs | proper nesting, conditions (i)–(ii) below | subcycled, $\Delta t_l/h_l$ equal on all levels |
+
+Sources for the row: §§2, 5, 7, 8.
+
+* **Hierarchy** (§2). Each level is a union of rectangles that are subsets
+  of one discretization of the domain; rectangles of one level may
+  overlap, but the solution must not depend on the decomposition, and the
+  value at a point is that of the finest grid containing it. Patch
+  boundaries lie on coarse grid lines, unlike the rotated patches of
+  Berger & Oliger, which "greatly simplifies the maintenance of
+  conservation" (§1).
+* **Proper nesting** (§2): "(i) a fine grid starts and ends at the corner
+  of a cell in the next coarser grid. (ii) There must be at least one
+  level $l-1$ cell in some level $l-1$ grid separating a grid cell at level
+  $l$ from a cell at level $l-2$", except at the physical boundary; this is
+  "not as stringent as requiring a fine grid to be contained in only one
+  coarser level grid" (Fig. 2.1).
+* **Time refinement** (§2). The same ratio in space and time, so that one
+  explicit scheme is stable on all levels; the stated reasons are that
+  spatial and temporal truncation errors are often of the same order and
+  that "the smaller time step of the fine grid is not imposed globally".
+  Before a grid advances, all finer grids have reached its time (§3).
+* **Restriction** (§3). After every coarse step a covered coarse cell takes
+  the average of its $r_{\mathrm{ref}}^2$ fine cells, which is "equivalent
+  (within roundoff error)" to redefining the coarse fluxes as time sums of
+  fine fluxes but needs no flux storage.
+* **Flux register** (§3, eqs. 2–3). For an uncovered coarse cell whose
+  left face borders a fine grid, the net correction after the
+  $r_{\mathrm{ref}}$ fine steps is
+  $$u^{\mathrm{coarse}} \leftarrow u^{\mathrm{coarse}} + \frac{\Delta t_l}{h_l}\left(\frac{1}{r_{\mathrm{ref}}^{2}}\sum_{\text{fine steps}}\ \sum_{\text{fine faces}}\hat f^{\mathrm{fine}} - \hat f^{\mathrm{coarse}}_{i+1/2}\right),$$
+  with the sign reversed for a right face (2D, $r_{\mathrm{ref}}$ fine faces
+  and $r_{\mathrm{ref}}$ fine steps; the weight is $1/r_{\mathrm{ref}}$ for
+  area times $1/r_{\mathrm{ref}}$ for the step ratio). It is accumulated in
+  a register per coarse–fine face, initialized to minus the coarse flux and
+  incremented after each fine step, stored per fine grid; with overlapping
+  fine grids a marker array corrects each coarse edge once. Cost "approximately
+  0.3% of a typical run time". This is the construction behind the
+  refluxing formulas of Enzo, PLUTO, Castro and GAMER above.
+* **Ghost values** (§4). From same-level neighbours where possible,
+  otherwise bilinear interpolation in space from coarser levels and, "if
+  necessary", linear interpolation in time; filled per boundary patch, with
+  same-level data overwriting interpolated data. Conservation or limiting
+  of the interpolation is not stated. A first point-by-point version "took
+  40% of the run time and had to be rewritten".
+* **Regridding** (§5). Recursive from the finest level; at most one new
+  level per regrid, except at $t = 0$; a buffer of flagged cells ("two
+  cells in each direction is typical"), traded against regrid frequency;
+  extra flags under grids two levels finer to keep the nesting.
+* **Clustering** (§5). One patch around all flagged cells, bisected along
+  its long side while its fraction of flagged cells is below a minimum
+  (e.g. 60 %; 65 % in the runs), then pairs merged when the merged grid
+  costs less, with a cost proportional to $mn + m + n$ for an $m\times n$
+  grid (fluxes plus perimeter work); "approximately 1.7% of the CPU time".
+* **Refinement criterion** (§6). Richardson extrapolation: two steps on a
+  grid minus one double step on the grid coarsened by 2, divided by
+  $2^3 - 2 = 6$ for a second-order scheme (the paper gives the general
+  formula), estimates the local truncation error; all four fine cells are
+  flagged where it exceeds a tolerance (0.02 on density in the runs). It
+  is scheme-independent but always large at captured discontinuities. A
+  captured shock between constant states need not be refined, because it
+  spreads over a fixed number of zones; contacts and slip lines spread
+  with time and usually must be.
+* **Strong shocks across coarse–fine interfaces** (§6, Figs. 6.1–6.2).
+  Captured fluxes near a shock differ by $O(1)$ from exact ones; on a
+  uniform grid these errors cancel in time, but across an interface
+  between two mesh sizes they do not, and they enter the post-shock state
+  as spurious waves whose observed amplitude is proportional to the jump in
+  the characteristic quantities. Above a threshold strength, shocks "must
+  be refined everywhere, if they are to be refined anywhere".
+* **Cost** (§7, Tables I–II; Cray X-MP, oblique shock reflection, three
+  levels of ratio 4, effective $1600\times320$). Integration 78.29 % of
+  5674 CPU s; interpolation 12.95 %, output 2.87 %, grid updates 2.78 %,
+  grid generation 1.71 %, memory management 0.59 %; error estimation 3 %
+  of the integration. Over 90 % of the integrated cells are on the finest
+  level ($1.13\times10^8$ of about $1.2\times10^8$ cell updates). With the
+  finest grids on about 10 % of the domain, "an equivalent uniform grid
+  computation would require a factor of 8 more CPU time" and at least 2.2
+  times the memory. The AMR overhead outside integration and output is
+  about 18 % (sum of the printed rows, computed here). See
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) for the
+  problem family.
+
+### Attributions checked against the original
+
+* **Refluxing and restriction** (Synchronization and Restriction, above):
+  the attribution of the coarse-cell correction to Berger & Colella
+  agrees with §3; the original adds the flux register, the
+  once-per-edge rule and the equivalence of restriction to fine-flux
+  sums.
+* **"Berger–Oliger / Berger–Colella"** (Taxonomy, above). The two are one
+  family, but the original distinguishes them: Berger & Colella align
+  patches with the coarse grid and make global conservation explicit,
+  where Berger & Oliger allowed rotated patches (§1).
+* **Proper nesting.** PLUTO-Chombo's rule (a level-$(l+1)$ cell separated
+  from level $l-1$ by a row of level-$l$ cells) is condition (ii) of the
+  original; the original adds condition (i), patches starting and ending
+  on coarse-cell corners. Castro's absence of a parent–child relation
+  agrees with the original, which does not require a fine grid to lie in
+  a single coarser grid.
+* **Enzo** (table at the top). Enzo's subgrids lie wholly in one parent
+  and its finer steps are not tied to the coarse step divided by a power
+  of 2 ([Bryan et al. (2014)](/sources/bryan-2014.md), §3); the original
+  does not require containment in one parent, and it fixes the time ratio
+  at exactly $r_{\mathrm{ref}}$. These are Enzo's departures from the
+  original, not contradictions of it.
+* **Disjoint patches.** PLUTO's and Castro's grids are disjoint or
+  non-overlapping; the original allows same-level overlap and handles it
+  in the flux correction (§§2–3). The later codes are stricter.
+* **Clustering** (Grid generation, above). The original does not use the
+  Berger–Rigoutsos algorithm but bisection and merging under an efficiency
+  threshold; Enzo's acceptance of proto-subgrids "typically over 30%"
+  flagged is a different algorithm and parameter, not a disagreement.
+* **FLASH** (batch-4 table). "Block, after Berger & Colella (1989)" is
+  [Mathew & Federrath (2021)](/sources/mathew-2021.md)'s citation for
+  FLASH's AMR; the original describes clustered patches of variable size,
+  not the fixed-size blocks of PARAMESH.
+* **Temporal interpolation.** The ghost filling of the original is linear
+  in time (§4); this is the kind of temporal interpolation that
+  [Stone et al. (2020)](/sources/stone-2020.md) name as a source of error
+  under subcycling (Time stepping, above). The original does not measure
+  its error.
+
+### Bearing on the open entries (batch 6)
+
+* **Is time subcycling worth its cost?** The original gives the accuracy
+  rationale for subcycling (truncation errors of equal order in space and
+  time; the fine step is not imposed globally) and a cost table in which
+  the finest level dominates the cell updates; its factor-8 estimate
+  compares with a uniform grid, not with a global step on the same
+  hierarchy. The entry stays open.
+* **Level-dependent derived quantities.** The original defines the
+  solution at a point as the finest grid's value (§2) and does not discuss
+  derived quantities; the question is unchanged.
+
 ## Open question: level-dependent derived quantities
 
 Recorded at deep lint #1 as a contradiction and moved here at deep lint #3,
@@ -734,3 +878,4 @@ the issue, and none quantifies it.
 19. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.1, 2.3, 2.6, 3, 6.1, Table 1 (arXiv v2).
 20. [Porth et al. (2019)](/sources/porth-2019.md), §§3, 4.1.5 (arXiv v2).
 21. [Truelove et al. (1997)](/sources/truelove-1997.md), §2, Fig. 1.
+22. [Berger & Colella (1989)](/sources/berger-1989.md), §§1–8, eqs. 1–3, Tables I–II, Figs. 2.1, 6.1–6.2.

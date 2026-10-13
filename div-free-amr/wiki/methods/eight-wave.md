@@ -5,7 +5,7 @@ description: "Powell's non-conservative source-term formulation: advects diverge
 status: established
 aliases: [Powell source terms, 8-wave]
 tags: [eight-wave, source-terms, divergence-constraint, shock-capturing]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Eight-wave formulation
@@ -101,6 +101,19 @@ Neither replaces the projection they use.
 characteristic field from the source terms that define the formulation.
 Only the first is present here.
 
+**The seven-wave system it augments.**
+[Brio & Wu (1988)](/sources/brio-wu-1988.md) built their Roe-type scheme
+on the 1D system with the normal field held constant: seven equations and
+a $7\times7$ Jacobian with no normal-field row (§IV). That system is not
+strictly hyperbolic. Up to five of its seven eigenvalues coincide, at zero
+normal field or zero transverse field, and there the standard right
+eigenvectors become ill defined and their matrix singular. Brio and Wu
+renormalize them into "a set of right eigenvectors which is well defined
+everywhere" (§IV.3, eqs. 39–46); this is the normalization
+[Jiang & Wu (1999)](/sources/jiang-1999.md) use. The paper discusses no
+zero eigenvalue and no divergence wave: in 1D the constraint is just a
+constant normal field (§§II, IV).
+
 **In a same-code comparison** ([Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix A), Powell source terms in
 Athena++, discretized with cell-centred differences, let the divergence
 grow steadily on a KH test with a localized field without crashing. They
@@ -143,3 +156,4 @@ requirement.
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
 9. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§2.3, 3.4.
 10. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix A.
+11. [Brio & Wu (1988)](/sources/brio-wu-1988.md), §§II, IV.2–IV.3.

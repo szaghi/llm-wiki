@@ -5,7 +5,7 @@ description: "Second-order, directionally unsplit Godunov code for compressible 
 status: established
 aliases: [ATHENA, Athena (C), Hyperion]
 tags: [software, mhd, hydro, constrained-transport, unsplit, riemann-solver, radiation, reduced-speed-of-light, performance, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Athena
@@ -383,6 +383,43 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
   see [cooling integration](/methods/radiative-cooling-integration.md)).
 * No performance, scaling or wall-clock numbers are reported.
 
+## Later uses (batch 6)
+
+* **The 2D algorithm in its primary source.** The opening paragraph calls
+  Athena the implementation reference for the Gardiner–Stone CT algorithm
+  in 2D. [Gardiner & Stone (2005)](/sources/gardiner-2005.md) (arXiv v1
+  read) is that algorithm, and it is the origin of the three novelties
+  listed there: the corner EMF built from the face Godunov fluxes with
+  upwinded gradients and a cell-centre reference EMF (§3.2.2, eqs. 42–51;
+  the contact-upwinded variant is the one selected); multidimensional terms
+  in the PPM characteristic step (§3.1, eqs. 31–33); and the extension of
+  CTU to MHD with a CT half-step of the face fields and source terms in the
+  transverse correction (§4, eqs. 61–73). It agrees that the 2D scheme
+  reduces exactly to the 1D algorithm for grid-aligned flow (§1, §4.3, §6).
+  The paper does not name the code; its acknowledgements thank P. Teuben
+  for "contributions to the implementation".
+* **Differences from the Athena description.** Gardiner & Stone run the
+  Roe solver of Cargo & Gallice in all tests and mention no carbuncle fix,
+  so the H-correction step of Athena's 2D CTU+CT is not part of the 2005
+  description; they
+  print no Courant number for CTU+CT (only 0.4 for their first-order
+  scheme, eq. 52), against $\nu \le 1$ in Stone et al. (2008), eq. 78.
+  Neither point contradicts Athena's paper. See
+  [unsplit Godunov integrators](/methods/unsplit-godunov-integrators.md)
+  and [constrained transport](/methods/constrained-transport.md).
+* **Low-β robustness.** Gardiner & Stone run the Londrillo & Del Zanna
+  blast wave adiabatically in 2D with CTU+CT at ambient plasma beta 0.02
+  and call the scheme "stable and accurate for low-β plasma problems
+  involving strong MHD shock waves" (§5.6). This adds an adiabatic data
+  point to the isothermal "robust for low-β flows" statement of Stone et
+  al. (2008), and bears on the Cholla instability recorded in batch 3,
+  which concerns VL+CT in 3D; see
+  [MHD blast wave](/benchmarks/mhd-blast-wave.md).
+* **AMR conservation.** The Mesh section's statement that conservation at
+  fine/coarse boundaries is needed, citing Berger & Colella (1989), agrees
+  with the primary source, [Berger & Colella (1989)](/sources/berger-1989.md),
+  §§1, 3; see [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §§1–9, App. C (journal version).
@@ -396,3 +433,5 @@ All with CTU+CT unless stated ([Stone et al. (2008)](/sources/stone-2008.md), §
 9. [Lesur et al. (2023)](/sources/lesur-2023.md), §2.4, §4.1, §4.2 (arXiv v1).
 10. [Stone et al. (2026)](/sources/stone-2026.md), §3 (arXiv v1).
 11. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 (arXiv v2).
+12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§1, 3.1, 3.2.2, 4, 4.3, 5.6, 6, eqs. 31–33, 42–52, 61–73 (arXiv v1).
+13. [Berger & Colella (1989)](/sources/berger-1989.md), §§1, 3.

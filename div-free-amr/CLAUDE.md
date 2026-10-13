@@ -38,6 +38,12 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch staged 2026-10-13:** the bundle's two most-cited works
+not yet ingested whose PDFs sat in a sibling archive, copied into this
+bundle's archive (D17): balsara-spicer-1999 and brio-wu-1988 (98 sources).
+Their bibliography keys were renamed to the slugs (balsara-1999,
+brio-1988). No contradiction opened. Deep lint: 2 ingestions since #9.
+
 **AMR-frameworks batch staged 2026-10-12:** 93 archived sources plus one
 frozen code record, all ingested. The user assigned the AMR-framework and
 octree class of the ADAM paper collection to this bundle (2026-10-12). It

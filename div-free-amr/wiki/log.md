@@ -2,6 +2,39 @@
 
 ## 2026-10-13
 
+* **Frontier batch: ingested [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md)
+  and [Brio & Wu (1988)](/sources/brio-wu-1988.md)**, the two most-cited
+  works the bundle had not ingested (cited by 37 and 19 of its sources),
+  from PDFs copied out of a sibling archive into this bundle's (98 sources).
+  * Balsara & Spicer, the primary source of flux-CT: extended
+    [flux-CT](/methods/flux-ct.md) (eqs. 7–9 and 13–15, the separately
+    evolved cell-centred field and the optional energy correction, the
+    switched variant eq. 26; their "no significant numerical diffusion"
+    written as a qualification beside Gardiner & Stone's halved viscosity,
+    not as a contradiction: the claims point in opposite directions),
+    [constrained transport](/methods/constrained-transport.md) (the history
+    they give), [exact discrete divergence](/properties/exact-discrete-divergence.md)
+    (no proof or diagnostic in the primary source; round-off vs
+    discretization-error wording), [positivity–divergence coupling](/results/positivity-divergence-coupling.md),
+    [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
+    and [staggered grid](/definitions/staggered-grid.md) (evidence neither
+    way on the open necessity entry).
+  * Brio & Wu: extended [eight-wave](/methods/eight-wave.md) (the seven-wave
+    system and its renormalized eigenvectors) and the
+    [rotated shock tube](/benchmarks/rotated-shock-tube.md) (the unrotated
+    problem); no separate benchmark page.
+  * **Notation:** registered $\Delta t$ and the time-level superscripts
+    $n$, $n+1/2$, $n+1$ in the [registry](/notation.md); several concept
+    pages already used them unregistered.
+  * **Compiler correction** on [Tóth (2000)](/sources/toth-2000.md): the
+    table remark "primary sources not yet ingested" now says the
+    Balsara–Spicer primary source is ingested.
+  * **Bibliography** (3639 entries): 52 references merged; keys
+    balsara-1999 and brio-1988 renamed to the slugs; Evans & Hawley printed
+    as 1989 and Brackbill & Barnes as 35:462 by Balsara & Spicer (noted);
+    three Harten 1983 works resolved by venue; Osher & Chakravarthy (1983)
+    kept apart from Osher & Sanders (Crossref).
+
 * **Ingested [Hoppe et al. (2022)](/sources/hoppe-2022.md) and
   [Irsalinda et al. (2026)](/sources/irsalinda-2026.md)**, the user's manual
   downloads for the AMR-framework class (96 sources).

@@ -24,6 +24,7 @@ in a `# Notation map` section. Extend this registry (and record the extension in
 | $\phi_{\mathrm g}$ | gravitational potential, $\mathbf g = -\nabla\phi_{\mathrm g}$ (distinct from the projection potential; added 2026-10-12) |
 | $m(E)$ | space-filling-curve index of a cell, block or element $E$ (added 2026-10-12) |
 | $\mathbf{x}_{ijk}$ | node/cell-center location, context per collocation |
+| $\Delta t$; superscripts $n$, $n+1/2$, $n+1$ | time step and time level of a discrete field ($B_h^n$, $E_h^{n+1/2}$); registered 2026-10-13, already in use on several pages |
 
 ## Discrete spaces and the complex
 

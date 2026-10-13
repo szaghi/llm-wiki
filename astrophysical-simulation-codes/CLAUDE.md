@@ -90,6 +90,12 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Frontier batch 6 staged 2026-10-13:** the bundle's most-cited works not
+yet ingested, whose PDFs were already in sibling archives and were copied
+into this bundle's archive (D17): colella-1984 (PPM), berger-1989 and
+gardiner-2005 (39 of 39). New page: methods/ppm. No contradiction opened.
+Deep lint: 4 ingestions since #3.
+
 **Truelove et al. (1997) staged 2026-10-13:** the manual download was
 filed and ingested (`truelove-1997`, 36 of 36). It opened a contradiction
 on the Jeans criterion's scope. Deep lint: 1 ingestion since #3.

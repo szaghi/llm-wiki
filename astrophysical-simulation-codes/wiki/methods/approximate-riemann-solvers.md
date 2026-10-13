@@ -5,7 +5,7 @@ description: "The interface flux functions of the astrophysical Godunov codes �
 status: established
 aliases: [Riemann solver, HLLE, HLL, HLLC, HLLD, Roe solver, Rusanov flux, local Lax-Friedrichs, LLF, global Lax-Friedrichs, GLF, two-shock Riemann solver, H-correction, FOFC, first-order flux correction, flux-vector splitting]
 tags: [riemann-solver, hydro, mhd, radiation, gpu]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Approximate Riemann solvers
@@ -388,6 +388,31 @@ predictor–corrector, PLM and the Roe solver
   Athena has two positivity safeguards in the sources: the per-interface
   HLLE re-solve of Stone et al. (2008) and this per-cell correction.
 
+## Later uses (batch 6)
+
+### PPM's own Riemann solver
+
+The original [PPM](/methods/ppm.md) paper solves one Riemann problem per
+interface for the time-averaged interface pressure and velocity
+([Colella & Woodward (1984)](/sources/colella-1984.md), eq. 2.8, p. 185).
+Each side contributes one equation in which the wave speed is that side's
+Lagrangian shock speed, a function of the unknown interface pressure
+through the factor $1 + \frac{\gamma+1}{2\gamma}(\text{pressure ratio} - 1)$;
+the same shock-type speed serves both sides whatever the wave, the
+structure this page calls two-shock (the paper does not use the term). The
+pair is solved by van Leer's Newton iteration "with a fixed number of
+iterations"; in smooth flow the equations are a finite-difference
+approximation of the characteristic equations. The direct-Eulerian scheme
+uses the Cartesian form with the same iteration and takes the state inside
+a rarefaction fan by linear interpolation between the states on either
+side (p. 191). The iteration count matters: in a first-order Godunov run of
+a nearly stationary, extremely strong shock (pressure jump over six
+orders), 6 iterations are used, and "if only 2 iterations are performed,
+very large errors are generated in the single zone just behind the shock"
+(§4, Fig. 8). The Castro entry above cites later work (Colella, Glaz &
+Ferguson 1997; Bell, Colella & Trangenstein 1989), not this equation; the
+Enzo entry names no origin.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -411,3 +436,4 @@ predictor–corrector, PLM and the Roe solver
 19. [Kim & Ostriker (2017)](/sources/kim-2017.md), §2.1 (arXiv v2).
 20. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.1 (arXiv v2).
 21. [Ohlmann et al. (2016)](/sources/ohlmann-2016.md), §2 (arXiv v1).
+22. [Colella & Woodward (1984)](/sources/colella-1984.md), eq. 2.8, pp. 185, 191, §4, Fig. 8.

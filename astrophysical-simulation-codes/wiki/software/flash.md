@@ -5,7 +5,7 @@ description: "Block-structured AMR code on the PARAMESH library, documented here
 status: established
 aliases: [FLASH code, flash4, FLASH4, FLASH/PARAMESH]
 tags: [software, mhd, hydro, amr, self-gravity, multigrid, sink-particles, riemann-solver, equation-of-state, verification, performance]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # FLASH
@@ -212,6 +212,22 @@ realizations at one resolution, identical except for the outflow module
   for more than 10-100 sink particle orbits" with the multigrid potential
   (§3.2).
 
+## Later uses (batch 6)
+
+* **What the Berger & Colella citation covers.** The Mesh and AMR section
+  records that Mathew & Federrath cite Berger & Colella (1989) for FLASH's
+  AMR. The primary source, [Berger & Colella (1989)](/sources/berger-1989.md),
+  describes logically rectangular patches of variable size, built by
+  clustering flagged cells (bisection and merging under an efficiency
+  threshold) and allowed to overlap on one level (§§2, 5), not the
+  fixed-size blocks that [Stone et al. (2020)](/sources/stone-2020.md) and
+  [Bryan et al. (2014)](/sources/bryan-2014.md) attribute to
+  FLASH/PARAMESH. The citation names the AMR family; FLASH's block design
+  is not the paper's. No FLASH source in this bundle states whether FLASH
+  subcycles or how it corrects coarse–fine fluxes, so the agreement on
+  those points cannot be checked. See
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+
 # Citations
 
 1. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1–2.5, 3–4, 4.2.1, 4.3.4, eqs. 14, 20, 30–32, App. B (arXiv v2).
@@ -221,3 +237,4 @@ realizations at one resolution, identical except for the outflow module
 5. [Almgren et al. (2010)](/sources/almgren-2010.md), §§5.1–5.2, 8.6 (arXiv v1 numbering).
 6. [Tomida & Stone (2023)](/sources/tomida-2023.md), footnote 4 (arXiv v1).
 7. [Coleman (2020)](/sources/coleman-2020.md), §1 (arXiv v3).
+8. [Berger & Colella (1989)](/sources/berger-1989.md), §§2, 5.

@@ -15,7 +15,9 @@ with conservative shock-capturing (Godunov-type) base schemes: the corner/edge
 EMF $E_h$ is assembled from base-scheme data, then the staggered field is
 updated by the standard CT circulation, preserving $D_h^{\mathrm{f}} B_h$
 ([notation](/notation.md)) to roundoff. The variants, as catalogued by
-[Tóth (2000)](/sources/toth-2000.md) §4 (primary sources not yet ingested):
+[Tóth (2000)](/sources/toth-2000.md) §4 (primary source ingested for flux-CT,
+[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md); the others not
+yet ingested):
 
 * **Field-interpolated CT** (Dai & Woodward): interpolate cell-centered
   $\mathbf{v}$ and $\mathbf{B}$ (two time levels, four cells) to the corner
@@ -29,6 +31,45 @@ updated by the standard CT circulation, preserving $D_h^{\mathrm{f}} B_h$
   flux-CT but averaging only the *transport part* of the upwind fluxes, with
   weight $\tfrac12$; coincides with the base scheme for 1D slab-symmetric
   problems.
+
+**Flux-CT in its primary source**
+([Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) §2.1). The face
+field $B_h \in V_h^2$ is an area-weighted face average and $E_h \in V_h^1$
+sits at edge centres. The magnetic components of the Godunov face fluxes
+are electric-field values (their eqs. 4–6), so the formula above is their
+eq. 9, the plain average $\mathcal{E}^\circ$; eqs. 7–8 give the other two
+edge orientations in 3D. The fluxes are second order and time-centred at
+$t^{n+1/2}$. Faces are then updated by a discrete Stokes theorem with edge
+lengths and face areas (eqs. 13–15), in registry form
+$B_h^{n+1} = B_h^n - \Delta t\, C_h E_h^{n+1/2}$.
+* **Two cell-centred fields.** Each step starts by interpolating $B_h$ to
+  cell centres. The base scheme then advances that cell-centred field with
+  its own fluxes (eqs. 10–12), giving $B_h^{*}$, which at the end of the
+  step differs from the cell average of the new $B_h$ by discretization
+  error. An optional step replaces the magnetic energy of $B_h^{*}$ in the
+  total energy by that of the face average (eq. 16), for pressure
+  positivity at low $\beta$
+  ([positivity–divergence coupling](/results/positivity-divergence-coupling.md)).
+* **Scope as printed.** Eqs. 7–9 hold for uniform zoning; on varying zone
+  sizes "the averaging should be viewed as a reconstruction step". An
+  unsplit base scheme accumulates all edge contributions at once; a
+  multi-stage scheme applies eqs. 7–9 at every stage. Above second order
+  eqs. 7–9 must change, and finite-volume schemes also need a higher-order
+  edge quadrature in eqs. 13–15, left to later work (pp. 275–278).
+
+**The shock-switched variant** (Balsara & Spicer §2.2, eqs. 17–26). Two
+switches are evaluated on the four cells around an edge: summed pressure
+jumps above half the minimum pressure, and a velocity divergence more
+negative than a tenth of a fast-speed bound. Where both fire, $E_h$ is a convex combination of the
+average of the two $x$-face fluxes and the average of the two $y$-face
+fluxes, weighted by the share of the $x$ pressure jump in the summed jumps.
+Elsewhere the weight is $\tfrac12$ and eq. 9 is recovered. The target is
+standing magnetosonic shocks aligned with the grid. On all the paper's
+tests, which have moving shocks, the variant is "practically identical" to
+the basic scheme, and no standing-shock test is shown. These are the
+"shock-sensing switches" that
+[Gardiner & Stone (2005)](/sources/gardiner-stone-2005.md) credit with
+restoring the upwind bias.
 
 ## Properties
 
@@ -78,6 +119,21 @@ the coupling exact and the defect measurable.
   * $\mathcal{E}^c$, upwinded by the sign of the mass flux, so independent
     of the Riemann solver: the choice carried into the 3D
     [Athena scheme](/sources/gardiner-stone-2008.md).
+
+**The dissipation of the average: a qualification.** Balsara & Spicer
+(p. 276) state that, since $E_h$ "is not a quantity that we evolve in
+time", interpolating the fluxes "does not introduce any significant level
+of numerical diffusion in the time evolution of the magnetic field". No
+analysis or test supports the statement. Gardiner & Stone find the
+opposite defect in the same average: the numerical viscosity of a
+grid-aligned flow is halved, which is too little dissipation, not too much.
+The two statements point in opposite directions and are not incompatible.
+Balsara & Spicer's own §2.2 switches act precisely on grid-aligned shocks,
+the case where the halving matters, and changed nothing on their
+moving-shock tests. Likewise, "inheriting the base scheme's upwinding"
+above is Balsara & Spicer's own description ("properly upwinded fluxes");
+Gardiner & Stone show that the average does not reduce to the 1D upwind
+flux.
 
 **The second-order ceiling of $\mathcal{E}^c$**
 ([Felker & Stone (2018)](/sources/felker-2018.md) §4). Three of the four limits are
@@ -140,3 +196,4 @@ puts the staggered components into every flux.
 5. [Felker & Stone (2018)](/sources/felker-2018.md), §4, Appendix A.
 6. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§3, 6.
 7. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.2.
+8. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§2.1–2.2, eqs. 4–26, pp. 275–280.

@@ -16,6 +16,19 @@ maintains the [exact discrete divergence](/properties/exact-discrete-divergence.
 of the magnetic field to machine roundoff, introduced by
 [Evans & Hawley (1988)](/sources/evans-hawley-1988.md).
 
+**Earlier history, as Balsara & Spicer give it.**
+[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) §1 trace the
+staggered, Stokes-theorem-based field transport further back. It "was first
+proposed by Yee" for electromagnetic fields
+([Yee scheme](/methods/yee-scheme.md)). Brecht et al. (1981) combined it
+with a nonlinear FCT limiter in global magnetosphere MHD. Evans and Hawley
+then "applied the hybrid scheme utilized by Brecht et al. to an artificial
+viscosity based scheme, coining the term 'constrained transport'";
+DeVore applied it to FCT at about the same time. In this account Evans &
+Hawley named the method and carried it into their scheme; they did not
+originate the staggered update. The Brecht et al. and DeVore papers are not
+ingested.
+
 ## Construction
 
 1. **Integral form, flux as the variable.** The induction equation is placed
@@ -119,6 +132,17 @@ EMF from base-scheme data — the field-CT / flux-CT / transport-flux-CT family
 ([Flux-CT and the Godunov CT variants](/methods/flux-ct.md);
 [Tóth (2000)](/sources/toth-2000.md) §4).
 
+**The flux-CT primary source.**
+[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) motivate the
+combination by a duality: the magnetic components of a Godunov scheme's
+face fluxes are upwinded electric-field values, so the edge EMF can be
+assembled from them directly. On a rotor, a low-$\beta$ blast and an
+oblique Alfvén wave they find the staggered scheme as robust and accurate
+as a cell-centred Godunov scheme with divergence cleaning. The same
+cell-centred scheme without cleaning fails on the rotor, with undivided
+divergence-to-field ratios of $\pm0.66$ (§3, Fig. 3e). No divergence
+measure of the CT runs is reported.
+
 [Tóth (2000)](/sources/toth-2000.md) further proves that these CT variants
 are algebraically *identical* to pure finite-volume schemes on the
 cell-centered field, conserving a corner-centered divergence
@@ -174,3 +198,4 @@ cell-integrated monopole density, of every cell.
 9. [Seo & Ryu (2023)](/sources/seo-2023.md), §§1, 2.3, 3.1–3.2, 3.6.
 10. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §§1, 3, 5–6, 8.
 11. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
+12. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§1, 3, Fig. 3.

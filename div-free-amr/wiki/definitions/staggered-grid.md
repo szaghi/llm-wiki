@@ -82,6 +82,16 @@ see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
   scheme is flux-CT, which Tóth proved equivalent to a collocated
   finite-volume scheme, so the test separates constraint *mechanism* (local
   exact update vs global projection) and not field *placement*.
+* *Not evidence either way* (compiler note):
+  [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), the flux-CT
+  primary source, do not argue necessity. They argue compatibility: with
+  upwinded Godunov fluxes, "the concerns usually associated with staggered
+  collocation of data ... have ... been ameliorated" (§1), and their
+  staggered scheme matches a cleaned cell-centred one (§3). The method
+  "relies on a conceptual interpretation of magnetic fields as
+  area-weighted variables collocated at the centers of zone faces" (§1),
+  which is a design choice, not a claim that no collocated scheme can hold
+  the invariant.
 
 **Scoped resolution (compiled):** the claims quantify over different
 things. Tóth's is an algebraic identity for specific second-order schemes —
@@ -119,3 +129,4 @@ is avoidable on uniform grids and, so far, unavoidable at 2:1 interfaces.
 7. [Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md), §§2.1, 2.4, 4.
 8. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), §§I, II.d.
 9. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
+10. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§1, 2.1, 3.

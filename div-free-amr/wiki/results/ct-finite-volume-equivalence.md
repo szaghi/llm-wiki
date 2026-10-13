@@ -4,7 +4,7 @@ title: "CT–finite-volume equivalence"
 description: "The Godunov CT variants are algebraically identical to pure finite-volume schemes on the cell-centered field, which conserve a corner-centered divergence exactly."
 status: established
 tags: [constrained-transport, finite-volume, equivalence, collocation]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # CT–finite-volume equivalence
@@ -38,6 +38,17 @@ $D_h^{\mathrm{k}} B_h = 0$ there, and the $\bar f$-updates maintain it.
   moves the invariant from $D_h^{\mathrm{f}}$ (staggered view) to
   $D_h^{\mathrm{k}}$ (collocated view) — see
   [exact discrete divergence](/properties/exact-discrete-divergence.md).
+
+**Which cell-centred field.** The equivalence concerns the cell-centred
+field defined as the face-to-centre average of the staggered field. The
+flux-CT primary source,
+[Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md) §2.1, also
+advances a separate cell-centred field with the base scheme's own fluxes
+(eqs. 10–12) within each step. That field is not the face average: the
+authors state that the two differ by "the order of magnitude of the
+discretization error", and reconcile them only in the total energy, by an
+optional correction (eq. 16). Each step restarts from the interpolated
+face field. The paper does not discuss the equivalence.
 
 **Scope.** Proved for the Godunov CT variants in 2D with the standard
 face-to-center averaging (generalization to nonuniform grids and 3D stated);
@@ -76,3 +87,4 @@ parties; no formal supersession.
 1. [Tóth (2000)](/sources/toth-2000.md), §4.4, eqs. (23)–(27), §7.
 2. [Balsara (2001)](/sources/balsara-2001.md), §III.
 3. [Tóth & Roe (2002)](/sources/toth-roe-2002.md), §7.
+4. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §2.1, eqs. 10–12, 16.

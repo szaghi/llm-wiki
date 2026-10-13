@@ -5,7 +5,7 @@ description: "Staggered discretization of the induction equation: face-area-aver
 status: established
 aliases: [CT, upwind constrained transport, staggered-mesh constrained transport, face-centred constrained transport, MHD-CT]
 tags: [mhd, constrained-transport, amr, conservation, gpu]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Constrained transport
@@ -284,6 +284,99 @@ floors 10 times higher than with centred fields, because interpolating the
 staggered field to cell centres "introduces an additional error"; see
 [density and pressure floors](/methods/numerical-floors.md).
 
+## Later uses (batch 6)
+
+[Gardiner & Stone (2005)](/sources/gardiner-2005.md) (arXiv v1 read; 2D
+only) is the primary source of the upwind CT that Athena, Athena++,
+AthenaK, H-AMR and the IDEFIX default use.
+
+* **Why CT is the representation.** Keeping $\nabla\cdot\mathbf B = 0$
+  "in an integral sense" is called "as fundamental as ... the conservation
+  of mass in a finite volume method"; cell-centred CT (Tóth 2000) keeps a
+  divergence on "a different (larger) stencil" (§2.2). Directional
+  splitting is rejected because split updates of the cell-centred field
+  "will not generally satisfy the divergence free constraint between
+  directional sweeps" (§2.1).
+* **Finite-volume–CT consistency** (§2.3, eqs. 21–24). With the cell-centred
+  field defined as the mean of the two face values (eqs. 19–20, as in the
+  Staggering section above), keeping that definition at $t^{n+1}$ forces
+  the finite-volume flux of each transverse cell-centred component to be
+  the mean of the two corner EMFs on that face: the $B_x$ component of the
+  $y$-flux at face $(i, j+1/2)$ is
+  $\tfrac12(\mathcal E_{z,i-1/2,j+1/2} + \mathcal E_{z,i+1/2,j+1/2})$, and
+  the $B_y$ component of the $x$-flux at face $(i+1/2, j)$ is
+  $-\tfrac12(\mathcal E_{z,i+1/2,j-1/2} + \mathcal E_{z,i+1/2,j+1/2})$.
+  The Godunov fluxes of those components are replaced by these averages,
+  "regardless of the details of the CT algorithm".
+* **Why plain averaging fails** (§3.2.1, eqs. 34–38). With the corner EMF
+  equal to the mean of the four face EMFs, a plane-parallel grid-aligned
+  flow gives a scheme whose "numerical viscosity is reduced by a factor of
+  2", which "does not reduce to the underlying integration algorithm"; "the
+  stability of this approach is questionable", for "the lack of a
+  directional bias". This is an argument from the discrete equations, not a
+  failing run: the paper shows none. It is the reasoning behind Stone et
+  al.'s (2008) "does not work" above, and it leaves room for the IDEFIX and
+  KORAL uses of averaging recorded in batches 3 and 4, under other
+  integrators. Porth et al.'s statement that upwind CT has "effectively
+  doubled" dissipation relative to averaging (batch 4) is the same factor
+  2 seen from the other side: Gardiner & Stone call the average deficient,
+  Porth et al. call upwind CT more dissipative. Gardiner & Stone read
+  Balsara & Spicer (1999) as built on this average, with shock-sensor
+  weights restoring a directional bias.
+* **The upwind construction in the original** (§3.2.2, eqs. 42–51). The
+  corner EMF is the mean of the four face EMFs plus $h/8$ times
+  differences of EMF derivatives at the quarter points on either side of
+  the corner (eq. 42), each a one-sided difference between a face EMF and
+  a cell-centre reference EMF. Eq. 46 writes the quarter point on the $+x$
+  side of the cell centre as face minus centre,
+  $$\left(\partial_x\mathcal E_z\right)_{i+1/4,j} = \frac{2\left(\mathcal E_{z,i+1/2,j} - \mathcal E_{z,i,j}\right)}{h},$$
+  where Stone et al. (2008), eq. 81 (above), write the quarter point on the
+  $-y$ side as centre minus face; both are the difference in the direction
+  of increasing coordinate, so they agree. For the Cholla note in batch 3
+  (Caddy & Schneider, eq. 17, face value minus reference): that arrangement
+  is the original's for a quarter point on the $+$ side of the centre, so it
+  need not be a misprint; which quarter point eq. 17 refers to is still not
+  stated, so the note stays undecided.
+* **Three variants** (§3.2.2). A Lax–Friedrichs flux of the differentiated
+  induction equation with a maximum wave speed (eq. 49); its zero-speed
+  limit $\mathcal E_z^\circ$, equal to doubling the viscous part of the
+  plain average (eqs. 39–40), "not an upwinded approximation", and for a
+  first-order Godunov scheme identical to the CT of Londrillo & Del Zanna
+  (2004); and $\mathcal E_z^c$ (eq. 51), each derivative taken from the
+  upwind cell by the sign of the face-normal (mass-flux) velocity, the
+  mean when it vanishes, usable with "any approximate or exact Riemann
+  solver". All three reduce exactly to the 1D scheme for plane-parallel
+  grid-aligned flow and "differ only in their numerical viscosity for
+  multidimensional problems". On the first-order field loop the
+  Lax–Friedrichs variant shows "unacceptable" diffusion of a stationary
+  loop, $\mathcal E_z^\circ$ oscillates on the advected loop, and
+  $\mathcal E_z^c$ does neither (§3.3.1); on a standing Alfvén wave the
+  Lax–Friedrichs variant dissipates about twice as fast (§3.3.2).
+  $\mathcal E_z^c$ is used for all second-order tests. These are the E⁰ and
+  Eᶜ that IDEFIX offers (batch 3). Because the cell-size factors cancel, the
+  construction is stated to apply to corner-reconstruction schemes
+  (Balsara), wave-propagation and central schemes as well (§6).
+* **Inside CTU.** The predictor advances the face normal fields by
+  $\Delta t/2$ with CT, so $\nabla\cdot\mathbf B = 0$ holds at
+  $t^{n+1/2}$ too, and the corrector EMF uses a reference EMF built from
+  the half-step state (§4.1.1, eqs. 69–70; §4.2, eqs. 74–78), as in the
+  2D CTU+CT steps recorded above from Stone et al. (2008).
+* **Evidence: grid-scale oscillations are not divergence errors** (§5.3,
+  Fig. 10). In a shock tube rotated by $\tan^{-1}2$ on $256\times128$
+  cells, the cell-centred field component along the wavevector oscillates
+  by "roughly 10%" near the fast shocks; the Lax–Friedrichs variant does
+  not reduce it, and averaged over macro-cells of $2\times1$ cells it is
+  constant to round-off. The authors read the oscillation as grid-scale
+  transverse variation of the discrete solution, not a CT defect.
+* **Evidence: field loop.** The loop's magnetic energy decays smoothly
+  (fit in [field-loop advection](/benchmarks/field-loop-advection.md)),
+  and with uniform $v_z$ the out-of-plane field stays at round-off with
+  "an incoherent structure", which the paper attributes to placing the
+  $v_z\,\partial_xB_x$ term in the transverse correction rather than the
+  characteristic step (§4.1.2; asserted, no figure).
+* **Scope.** The paper is 2D only; the 3D extension is deferred (§6), so
+  the 3D statements above rest on Stone et al. (2008) and later sources.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -297,3 +390,4 @@ staggered field to cell centres "introduces an additional error"; see
 9. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §2.1, §4.1–§4.2 (arXiv v1).
 10. [Shankar et al. (2023)](/sources/shankar-2023.md), §III B (arXiv v2).
 11. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1, §4.1.1–§4.1.2, §4.1.8, §6, Table 1, App. A (arXiv v2).
+12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§2.1–2.3, 3.2.1–3.2.2, 3.3.1–3.3.2, 4.1–4.2, 5.3, 6, eqs. 19–24, 34–51, 69–78 (arXiv v1).

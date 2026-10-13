@@ -5,7 +5,7 @@ description: "A weak circular loop of magnetic field is advected by a uniform fl
 status: established
 aliases: [advection of a field loop, Gardiner–Stone field loop]
 tags: [benchmark, mhd, verification, constrained-transport, divergence-cleaning, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Field-loop advection
@@ -91,9 +91,49 @@ sources reports a convergence order. The divergence result agrees with
 the [constrained-transport](/methods/constrained-transport.md) runs above:
 round-off level throughout.
 
+## Later uses (batch 6)
+
+* *2D, origin of the test* ([Gardiner & Stone (2005)](/sources/gardiner-2005.md),
+  §3.3.1, §5.1, eq. 53, Figs. 1–3, 6–8; arXiv v1). The set-up the runs
+  above defer to: domain $[-1,1]\times[-0.5,0.5]$ on $2N\times N$ cells with
+  $N = 64$, periodic; $\rho = 1$, $p = 1$; velocity of magnitude $\sqrt5$
+  with components $(2, 1, 0)$, one orbit along the grid diagonal by
+  $t = 1$, or zero for a pure diffusion test; in-plane field from a $z$
+  vector potential $10^{-3}(0.3 - r)$ inside radius 0.3, zero outside;
+  plasma beta $2\times10^6$ inside. These agree with the parameters
+  Mignone et al. (2012) print above, on a twice finer base grid.
+  * *First-order scheme, three corner-EMF variants* (§3.3.1, $t = 2$). A
+    stationary loop: the Lax–Friedrichs variant shows "unacceptable"
+    diffusion (a central hole by reconnection), $\mathcal E_z^\circ$ and
+    $\mathcal E_z^c$ are "essentially identical". An advected loop:
+    $\mathcal E_z^\circ$ develops oscillations that dominate by $t = 2$.
+    Without the multidimensional terms in the characteristic step, "the
+    field loop disintegrates in oscillations before completing a fraction
+    of an orbital period". The test thus separates corner-EMF dissipation
+    and the treatment of the normal-field derivative; see
+    [constrained transport](/methods/constrained-transport.md).
+  * *Second-order CTU+CT* (§5.1, $128\times64$, $t = 2$, $\mathcal E_z^c$,
+    Roe). Dissipation concentrates at the loop centre and edge, where the
+    initial current is singular. The volume-averaged $B^2$ fits
+    $3.463\times10^{-8}\left[1 - (t/10{,}614)^{0.2914}\right]$ (Fig. 7),
+    falling to about $3.1\times10^{-8}$ by $t = 2$ (plot reading), i.e. to
+    about 90 % of its initial value (computed here). Field lines, contours
+    of the vector potential rebuilt from the face fields, stay circular;
+    the innermost is dissipated by $t = 2$. Diagnostics are magnetic
+    pressure, field lines and the $B^2$ history, not the current density.
+  * With uniform $v_z$ the out-of-plane field stays at round-off "with an
+    incoherent structure", attributed to where the $v_z\,\partial_xB_x$
+    term is placed in the integrator (§4.1.2; asserted, no figure). This
+    agrees with the round-off result of Stone et al. (2008) above.
+
+The original runs one resolution, and its fit is a decay law in time, not
+an order in $h$; the statement above that no source reports a convergence
+order is unchanged by it.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
 2. [Mignone et al. (2012)](/sources/mignone-2012.md), §5.2.
 3. [Stone et al. (2020)](/sources/stone-2020.md), §3.5.2.
 4. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §3.1.3 (arXiv v2).
+5. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.3.1, 4.1.2, 5.1, eq. 53 (arXiv v1).
