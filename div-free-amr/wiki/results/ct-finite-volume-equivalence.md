@@ -73,9 +73,12 @@ face-to-center averaging (generalization to nonuniform grids and 3D stated);
 it is a statement about these particular schemes, not a claim that every
 staggered scheme admits a collocated rewrite.
 
-## Contradictions
+## Qualification: AMR hierarchies
 
-**Does the equivalence survive AMR?**
+**Does the equivalence survive AMR?** *Recorded as a qualification by the
+human's fiat (2026-10-13; hypothesis-grade): the two claims concern
+different settings and are not incompatible.* Formerly a `Contradictions`
+entry.
 [Balsara (2001)](/sources/balsara-2001.md) §III (intro) claims it does not
 carry over to hierarchies: divergence-free transfer between levels requires
 the constraint's control volumes at finer levels to nest inside coarse
@@ -92,13 +95,13 @@ which require the divergence-free property." On the AMR question the two
 camps have effectively converged; the single-grid equivalence itself stands
 unrefuted.
 
-**Status (compiled):** the two results are formally compatible — Tóth's
+**Compiler reading:** the two results are formally compatible — Tóth's
 identity ([Tóth (2000)](/sources/toth-2000.md) §4.4) is stated on a single uniform grid; Balsara's claim concerns level
 transfer — and the 2002 development resolves the *practical* dispute in
 favor of staggered storage at interfaces, from Tóth's own hand. The
 single-grid equivalence remains valid; its "staggering unnecessary" reading
-does not extend to hierarchies. Effectively settled by convergence of the
-parties; no formal supersession.
+does not extend to hierarchies. No source supersedes either side; the
+classification as a qualification is the human's fiat.
 
 # Citations
 

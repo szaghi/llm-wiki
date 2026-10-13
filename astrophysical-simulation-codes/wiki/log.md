@@ -2,6 +2,12 @@
 
 ## 2026-10-13
 
+* **Human ruling (2026-10-13).** The [multigrid self-gravity](/methods/multigrid-self-gravity.md)
+  entry "Are level-by-level Poisson solvers adequate?" is a contradiction (the
+  deep lint #4 doubt about the bar withdrawn); it stays Open.
+  [Hunter (2007)](/sources/hunter-2007.md) prints no reference list: its
+  permanent `--pending` warning is accepted.
+
 * **Frontier batch 10: ingested [Berger & Oliger (1984)](/sources/berger-1984.md),
   [Teyssier (2002)](/sources/teyssier-2002.md), [Colella & Glaz (1985)](/sources/colella-1985.md),
   [Hunter (2007)](/sources/hunter-2007.md), [Turk et al. (2011)](/sources/turk-2011-c.md) and

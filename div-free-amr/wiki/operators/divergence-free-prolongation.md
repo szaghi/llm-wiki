@@ -6,7 +6,7 @@ status: established
 symbol: "$P_D$"
 aliases: [divergence-free prolongation]
 tags: [amr, prolongation, divergence-constraint, coarse-fine-interface]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Divergence-space prolongation $P_D$
@@ -56,7 +56,7 @@ in the source without an AMR demonstration.
   coarse faces. This is the property
   [Balsara (2001)](/sources/balsara-2001.md) claims zone-centered
   formulations lack
-  ([CT–finite-volume equivalence, Contradictions](/results/ct-finite-volume-equivalence.md)).
+  ([CT–finite-volume equivalence, AMR qualification](/results/ct-finite-volume-equivalence.md)).
 * $P_D$ alone handles refinement; keeping the invariant through *time* on a
   subcycled hierarchy additionally needs the
   [electric-field correction](/methods/electric-field-correction.md) and

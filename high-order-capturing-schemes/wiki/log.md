@@ -2,6 +2,10 @@
 
 ## 2026-10-13
 
+* **Human ruling (2026-10-13).** The parallel-force sign entry of
+  [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md) stays an Open
+  question: no fiat.
+
 * **Deep lint** (19 ingestions since the batch-16 lint: Zaghi (2026),
   batches 17 and 18). Two read-only audits; two fixers on disjoint page sets,
   each fix checked against the Source pages or PDFs:

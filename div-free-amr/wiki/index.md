@@ -65,8 +65,8 @@ every page — then follow the reading guide.
    [electric-field correction](/methods/electric-field-correction.md);
    the decisive negative/limiting results:
    [transfer locality limits](/results/transfer-operator-locality-limits.md)
-   and the resolved
-   [CT–FV equivalence dispute](/results/ct-finite-volume-equivalence.md).
+   and the
+   [CT–FV equivalence and its AMR qualification](/results/ct-finite-volume-equivalence.md).
    Production evidence on the collocated side (hypothesis-grade, from the
    [ADAM](/software/adam.md) record): the
    [seam divergence source](/results/collocated-seam-divergence-source.md)

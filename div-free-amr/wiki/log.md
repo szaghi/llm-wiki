@@ -2,6 +2,15 @@
 
 ## 2026-10-13
 
+* **Human rulings (fiat, 2026-10-13).** The AMR entry of
+  [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md) is a
+  qualification, not a contradiction: moved from `Contradictions` to a
+  "Qualification: AMR hierarchies" section, the fiat recorded there
+  (hypothesis-grade); the compiler's "effectively settled" wording replaced.
+  Links on the root index and [$P_D$](/operators/divergence-free-prolongation.md)
+  updated. The optional download of the ApJ version of Ryu, Jones & Frank
+  (1995) is dropped; the projection entry stays Open on the printed eq. 2.24.
+
 * **Deep lint #11** (14 ingestions since #10: frontier batches 4a and 4b). Two
   read-only audits (concept pages and registry; Source pages and every
   `Contradictions` entry), fixes checked against the Source pages and PDFs.
