@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 270:106134"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2024-CompFluids-Baskaya-101016jcompfluid2023106134.pdf"
 tags: [immersed-boundary, embedded-boundary, hypersonic, conservation]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -41,7 +41,10 @@ conservative wall treatment. Merged into
    right, against an earlier attribution to linear temperature
    interpolation.
 6. **Controlled experiment** (§5, Fig. 18): with the conservative flux
-   treatment off, INCA fails like CHESS on heat flux and blowing rate.
+   treatment off, INCA fails too: on the cylinder heat flux it is closer
+   than CHESS but "clearly wrong", and on the ablator it gives "a very
+   similar overprediction" of the blowing rate (corrected at the
+   2026-10-13 deep lint; it read "fails like CHESS").
 7. **Scaling of the error** (§5): expected to follow the truncation error
    and matter only at steep wall gradients, as at cold walls (stated, not
    measured).
@@ -68,6 +71,7 @@ inviscid [hypersonic blunt body](/benchmarks/hypersonic-blunt-body.md).
 
 * Contributed to [Immersed-boundary methods](/methods/immersed-boundary-method.md), [Cut-cell finite volume](/methods/cut-cell-finite-volume.md).
 * Updated [Inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md) (conservation at the wall).
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
 
 # Citations
 

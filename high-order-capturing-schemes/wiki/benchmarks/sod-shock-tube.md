@@ -129,6 +129,14 @@ printed.
 * Sod's "energy" plots are the specific internal energy (2.5 on the left,
   2.0 on the right), not the energy density $E$.
 
+**Later uses (batch 11, merged at the 2026-10-13 deep lint).** *A
+two-wave solver at contacts.* Sod's states on 100 cells to $t = 0.25$,
+at second order (MUSCL): HLL, HLLC and HLL-BVD give "very similar"
+density and pressure profiles, except the contact, "slightly thinner"
+with HLL-BVD. The comparison is visual
+([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III B, Fig. 3;
+[approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+
 **Later uses (batch 12).** [Toro (1997)](/sources/toro-1997.md) uses Sod's
 states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
 (Table 4.1, "the so called Sod test problem").
@@ -191,3 +199,4 @@ states as Test 1 of the [exact Riemann solver](/methods/exact-riemann-solver.md)
 24. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2 (arXiv v1).
 25. [Sod (1978)](/sources/sod-1978.md), §§3–4, Figs. 2–15, Tables II–IV.
 26. [Toro (1997)](/sources/toro-1997.md), §§4.3.3, 6.4, 10.8, 11.4–11.5, 12.4, Figs. 9.5–9.12, Tables 4.1, 4.3, 6.2.
+27. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III B, Fig. 3.

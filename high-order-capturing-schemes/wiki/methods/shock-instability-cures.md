@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Cures for numerical shock instability"
-description: "Sensor-driven fixes that make low-dissipation Riemann solvers stable at strong shocks while keeping contacts and shear: widening the HLL wave speeds only inside the dissipation (selective wave modification), scaling the anti-diffusion near shocks, adding an entropy-control term on the entropy wave, adding dissipation only to the shear wave, or switching to a dissipative flux near shocks; all tested at first or second order only."
+description: "Sensor-driven fixes that make low-dissipation Riemann solvers stable at strong shocks while keeping contacts and shear: widening the HLL wave speeds only inside the dissipation (selective wave modification), scaling the anti-diffusion near shocks, adding an entropy-control term on the entropy wave, adding dissipation only to the shear wave, or switching to a dissipative flux near shocks; the sensor-based cures are tested at first or second order only, and flux switching is the one cure tested at high order (MPWENO)."
 status: established
 aliases: [carbuncle cure, carbuncle fix, selective wave modification, HLLC-SWM, HLLEM-SWM, anti-diffusion control, entropy control, shear-wave dissipation]
 tags: [riemann-solver, shock-instability, robustness, numerical-flux]
@@ -147,9 +147,14 @@ work ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V).
 
 ## Status at high order
 
-All these cures are tested at first order, some also at second order
-with limited linear reconstruction. None is tested with WENO or another
-high-order reconstruction. The entropy-control term is a flux add-on and
+The sensor-based cures above (selective wave modification, anti-diffusion
+control, entropy control, shear-wave dissipation) are tested at first
+order, some also at second order with limited linear reconstruction; none
+of them is tested with WENO or another high-order reconstruction. Flux
+switching is the exception: Balsara & Shu cure the carbuncle of their
+double Mach reflection with MPWENO by switching to local Lax–Friedrichs
+near shocks ([Balsara & Shu (2000)](/sources/balsara-2000.md), §§VI–VII;
+corrected at the 2026-10-13 deep lint). The entropy-control term is a flux add-on and
 so formally independent of the reconstruction; its authors name high
 order as future work ([Xie et al. (2021)](/sources/xie-2021.md), §7).
 
@@ -176,7 +181,8 @@ order as future work ([Xie et al. (2021)](/sources/xie-2021.md), §7).
   Rankine–Hugoniot jump conditions", which smears contacts (§I, citing
   earlier work).
 * *Status at high order* is unchanged: HLL-BVD is tested with MUSCL
-  (second order) only.
+  (second order) only, so flux switching remains the one cure tested at
+  high order.
 
 # Citations
 
@@ -185,5 +191,5 @@ order as future work ([Xie et al. (2021)](/sources/xie-2021.md), §7).
 3. [Xie et al. (2021)](/sources/xie-2021.md), §§3.3, 5–7.
 4. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§5.3–5.4, 6.2, 6.4.
 5. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V.
-6. [Balsara & Shu (2000)](/sources/balsara-2000.md).
+6. [Balsara & Shu (2000)](/sources/balsara-2000.md), §§VI–VII.
 7. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§I, II D, III F–H.

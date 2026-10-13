@@ -132,8 +132,9 @@ also reconstructs in characteristic variables
   fast, Alfvén and slow speeds coincide. The degeneracy tests are relaxed
   by a threshold of about $10^{-12}$. The interface state is the
   arithmetic mean, which differs little from a Roe average for
-  time-dependent problems (a single Roe state exists only for
-  $\gamma = 2$). In 2D a seven-wave system (normal-field equation
+  time-dependent problems; for $\gamma = 2$ a single Roe-average state
+  can be obtained, while in general Roe averaging needs more than one
+  average of the field components (after Powell et al.). In 2D a seven-wave system (normal-field equation
   dropped) and Powell's eight-wave system give the same flux except in
   the normal-field component, and the eight-wave one adds diffusion there
   ([Jiang & Wu (1999)](/sources/jiang-1999.md), §2.3).
@@ -186,10 +187,11 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 
 **Later uses (batch 7).**
 * *Normalized MHD eigenvectors written out.* The natural fast and slow
-  eigenvectors are singular where $B_x = 0$ or $B_\perp = 0$. The
-  Brio–Wu renormalization uses
+  eigenvectors are singular where $B_x = 0$ or $B_\perp = 0$. Ryu and
+  Jones's form of the Brio–Wu renormalization uses
   $\alpha_f = \sqrt{c_f^2 - c_A^2}/\sqrt{c_f^2 - c_s^2}$ and
-  $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$ with the tangential
+  $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$ (Brio and Wu's own
+  $\alpha_s$ differs by a factor, batch 11 below) with the tangential
   direction cosines, set to $1/\sqrt2$ when $B_\perp = 0$, and
   $\alpha_f = \alpha_s = 1$ at the triple point. Multiplying the slow pair
   (if $c^2 > c_A^2$) or the fast pair (if $c^2 < c_A^2$) by the sign of the
@@ -221,9 +223,9 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   $\alpha_s$ is **not**: eq. 40 prints
   $\alpha_s = \frac{\sqrt{c_f^2 - c^2}}{\sqrt{c_f^2 - c_s^2}}\frac{1}{c_f}$,
   the Ryu–Jones $\alpha_s$ times $1/c_f$, an inverse speed, while eq. 46
-  sets $\alpha_s = 1$. This qualifies the batch-7 line "The Brio–Wu
-  renormalization uses … $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$":
-  that formula is Ryu and Jones's. Eq. 40 prints the Brio–Wu factor in two
+  sets $\alpha_s = 1$. This qualified the batch-7 line, which credited
+  $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$ to Brio and Wu
+  until the 2026-10-13 deep lint: that formula is Ryu and Jones's. Eq. 40 prints the Brio–Wu factor in two
   forms that agree through $c_f^2c_s^2 = c^2c_A^2$, so it is a different
   scaling, not a misprint. An eigenvector's scale is free, so completeness
   is unaffected. The wave strengths
@@ -236,9 +238,9 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   the sum of $B_y/\sqrt\rho$ (and $B_z/\sqrt\rho$) over the two sides
   ([Brio & Wu (1988)](/sources/brio-1988.md), eq. 29); for general $\gamma$ "we are not able to solve it
   analytically" and no parameterization was found (§IV.1, eqs. 24–30).
-  This qualifies the batch-5 line "a single Roe state exists only for
-  $\gamma = 2$": the origin reports that none was *found*, not that none
-  exists. Their arithmetic mean is of density, velocity, field and
+  This qualified the batch-5 line, which read "a single Roe state exists
+  only for $\gamma = 2$" until the 2026-10-13 deep lint: the origin
+  reports that none was *found*, not that none exists. Their arithmetic mean is of density, velocity, field and
   **total pressure**, which keeps the eigenvalues real; averaging the
   energy instead "may lead to a negative averaged pressure". That
   Jacobian loses the exact jump property
@@ -319,3 +321,6 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 38. [Balsara (2017)](/sources/balsara-2017-d.md), §II.1.
 39. [Brio & Wu (1988)](/sources/brio-1988.md), §§IV–V.
 40. [Martyushov, Igra & Elperin (2016)](/sources/martyushov-2016.md), §2.
+41. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §3.
+42. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2 (closing remark).
+43. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §5.

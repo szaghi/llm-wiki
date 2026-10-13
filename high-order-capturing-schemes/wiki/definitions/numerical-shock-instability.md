@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Numerical shock instability (carbuncle and related anomalies)"
-description: "Spurious growth of small perturbations inside a captured strong shock aligned with the grid: the carbuncle ahead of a blunt body, odd–even decoupling along a moving shock, the kinked Mach stem and the one-dimensional steady-shock limit cycle; it strikes low-dissipation complete Riemann solvers and is studied almost only at first and second order."
+description: "Spurious growth of small perturbations inside a captured strong shock aligned with the grid: the carbuncle ahead of a blunt body, odd–even decoupling along a moving shock, the kinked Mach stem and the one-dimensional steady-shock limit cycle; it strikes low-dissipation complete Riemann solvers and is studied mostly at first and second order (Godunov, MUSCL, first-order fluxes), with PPM and flux-switched WENO the higher-order evidence."
 status: established
 aliases: [carbuncle, carbuncle phenomenon, odd–even decoupling, kinked Mach stem, shock instability, one-dimensional carbuncle]
-tags: [riemann-solver, shock-instability, robustness, definition]
-timestamp: 2026-10-12T00:00:00Z
+tags: [riemann-solver, shock-instability, robustness]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Numerical shock instability
@@ -59,7 +59,20 @@ robust ([Simon & Mandal (2019)](/sources/simon-2019.md), §4.1;
 [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §4;
 [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.1),
 and Godunov, Roe, HLLEM and HLLC all fail Xie et al.'s carbuncle tests
-([Xie et al. (2021)](/sources/xie-2021.md), §6).
+([Xie et al. (2021)](/sources/xie-2021.md), §6). At second order (MUSCL)
+Deng, Boivin & Xiao see the same split: HLLC shows odd–even decoupling
+behind a perturbed stationary Mach 20 shock, carbuncle-type oscillations
+along the axes of a Cartesian [Sedov blast](/benchmarks/sedov-blast-wave.md)
+and a kinked Mach stem in the double Mach reflection, while HLL (and their
+HLL-BVD) stay clean ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md),
+§§III F–H). The instability predates the Riemann-solver taxonomy:
+Woodward & Colella report a "numerical instability of 2-D, strong,
+stationary shocks" nearly aligned with the mesh for Godunov's method and
+MUSCL in the forward-facing-step wind tunnel, near the bottom wall and
+behind the Mach stem, with noise emitted where the shock jumps from one
+zone column to the next; their cure is more dissipation at such shocks
+([Woodward & Colella (1984)](/sources/woodward-1984.md), §VIb, Figs. 7a,
+7e, 8).
 How robust HLLE is remains disputed; see `Contradictions` on the
 [Riemann-solver page](/methods/approximate-riemann-solvers.md). Kitamura
 & Shima sort first-order fluxes into three groups. Roe, even with an
@@ -114,9 +127,16 @@ $0 < M_{\mathrm{prop}} < M_{\mathrm{sig}} \approx 0.44\,M_s$ for
 $\gamma = 1.4$, where downstream noise can catch up with the shock
 ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§III.B, IV.B, V).
 
-**Order of accuracy.** Every batch-8 source studies first-order schemes,
-some also second order, and none uses WENO. They cite two claims without
-testing them. Gressier: higher order reduces the instability but does not
+**Order of accuracy.** Most of this literature works at first and second
+order: every batch-8 source studies first-order schemes, some also second
+order, and none uses WENO; Deng, Boivin & Xiao (2019) and Woodward &
+Colella (1984, Godunov and MUSCL) add second-order evidence above. The
+exceptions above second order are Woodward & Colella's PPM runs, in
+which the instability their Godunov and MUSCL runs show is "essentially
+eliminated", with shocks slightly broader than MUSCL's (§VIb, Figs. 7f,
+9f), and Balsara & Shu's flux switching below. The batch-8 sources cite two
+claims without testing them (the sentence previously said "every batch-8
+source"; generalised at the 2026-10-13 deep lint). Gressier: higher order reduces the instability but does not
 remove it ([Simon & Mandal (2019)](/sources/simon-2019.md), §9;
 [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7). Unnamed earlier
 work: second order makes post-shock oscillations of moving shocks more
@@ -136,3 +156,5 @@ For remedies, see [cures for numerical shock instability](/methods/shock-instabi
 4. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§I–V.
 5. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §4.2.
 6. [Balsara & Shu (2000)](/sources/balsara-2000.md).
+7. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§III F–H.
+8. [Woodward & Colella (1984)](/sources/woodward-1984.md), §VIb (Figs. 7a, 7e–f, 8, 9e–f).

@@ -4,7 +4,7 @@ title: "Weighted (WENO-type) extrapolation for ghost values"
 description: "Ghost-cell values for finite-difference WENO on Cartesian grids cut by complex boundaries, extrapolated along boundary normals with weights that raise the extrapolation degree only where the data are smooth: Baeza et al.'s dimensionless nested weights with a least-squares blend for stability, and the multi-resolution WENO extrapolation with constant linear weights used with inverse Lax–Wendroff."
 status: established
 aliases: [weighted extrapolation, WENO extrapolation, WLS-GAW, weighted least squares extrapolation, boundary extrapolation]
-tags: [boundary-treatment, finite-difference, weno, cut-cell]
+tags: [boundary-treatment, finite-difference, weno, cartesian-grid]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -22,7 +22,7 @@ extrapolation along the normal. This takes three steps:
 2. At Dirichlet boundaries, these are re-interpolated to an equally
    spaced stencil that starts at the boundary point. Outflow boundaries
    use the normal points directly.
-3. A 1D extrapolation to $P$ follows.
+3. A 1D extrapolation to the ghost point $x^{\mathrm g}$ follows.
 
 Node spacing no smaller than $h$ was found stable for high-order
 extrapolation, and the selection is done once for fixed boundaries.

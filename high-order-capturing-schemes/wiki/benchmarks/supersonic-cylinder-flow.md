@@ -4,7 +4,7 @@ title: "Supersonic flow past a circular cylinder (Cartesian embedded boundary)"
 description: "Mach 3 flow past a unit cylinder computed on a Cartesian grid that does not fit the body, run to a steady bow shock; the standard robustness test of inverse Lax–Wendroff wall treatments for finite-difference WENO."
 status: established
 aliases: [Mach 3 cylinder, bow shock around a cylinder, supersonic cylinder]
-tags: [benchmark, euler, 2d, boundary-treatment, cut-cell, steady]
+tags: [benchmark, euler, 2d, boundary-treatment, cartesian-grid, steady]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

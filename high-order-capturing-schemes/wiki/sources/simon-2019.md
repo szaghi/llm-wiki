@@ -113,6 +113,7 @@ existing benchmarks.
 * Created [Numerical shock instability](/definitions/numerical-shock-instability.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md), [Quirk's odd–even decoupling test](/benchmarks/quirk-odd-even-test.md), [Hypersonic blunt-body carbuncle test](/benchmarks/hypersonic-blunt-body.md), [Stationary normal shock test](/benchmarks/stationary-normal-shock.md).
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (HLLC as HLL plus anti-diffusion; `Contradictions` on HLLE), [Low-Mach-number fluxes](/methods/low-mach-number-fluxes.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Forward-facing step](/benchmarks/forward-facing-step.md), [Shock diffraction](/benchmarks/shock-diffraction.md), [Double rarefaction](/benchmarks/double-rarefaction.md), [Supersonic cylinder flow](/benchmarks/supersonic-cylinder-flow.md).
 * Updated [Notation registry](/notation.md): $u^{\mathrm{HLL}}_*$, $\mathbf d^{\mathrm{HLL}}$, $S^{\mathrm w}_{L,R}$, $\alpha_{\mathrm{SWM}}$, $\epsilon_{\mathrm{SWM}}$, $\omega_{\mathrm p}$, $\nu_y$.
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md), [Exact Riemann solver for the Euler equations](/methods/exact-riemann-solver.md) (created in batch 12).
 
 # Citations
 

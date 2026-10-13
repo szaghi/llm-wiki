@@ -69,8 +69,8 @@ to another bundle.
     `2018-CompFluids-Owen-…` (author manuscript). `2025-arXiv-Wang-…`
     (arXiv:2511.08335v1) has no published version on Crossref; a later JCP
     paper by four of its five authors, with a different title, is not
-    taken as the same work. Batch 6 added `2009-JCP-Balsara-…` (author
-    manuscript, most likely the submitted version), `2010-JCP-Mignone-…`
+    taken as the same work. Batch 6 added `2009-JCP-Balsara-…jcp200903038` (author
+    manuscript, most likely the submitted version), `2010-JCP-Mignone-…jcp201004013`
     (arXiv:1001.2832v2), `2014-JCP-Christlieb-…` (arXiv:1309.3344v2),
     `2024-JCP-Berta-…` (arXiv:2310.11831v4) and `2024-SISC-Ding-…`
     (arXiv:2305.14820v1). For any future file, check on Crossref whether a
@@ -113,10 +113,9 @@ to another bundle.
     - `2022-JCP-Natarajan-…` is arXiv:2108.00126v1;
     - `2020-CompFluids-Seshadri-…` is the author manuscript;
     - `2024-CompFluids-Baskaya-…` is arXiv:2309.09657v1.
-  - Not yet in the archive: Zaghi, Salvadore & Di Mascio (2023,
-    doi:10.1016/j.compfluid.2023.106040). A repository copy now sits in
-    `~/papers/re-download/`; the user assigned the ADAM AMR-framework class
-    to div-free-amr (2026-10-12).
+  - Not this bundle's: Zaghi, Salvadore & Di Mascio (2023,
+    doi:10.1016/j.compfluid.2023.106040) was assigned with the ADAM
+    AMR-framework class to div-free-amr (2026-10-12) and ingested there.
 - Future sources of any kind land per repo law (capture to `raw/` if
   undurable).
 
@@ -171,6 +170,10 @@ to another bundle.
 - Commits: `docs(high-order-capturing-schemes): ingest <source-slug>`.
 
 ## Status
+
+**Batch 13 staged 2026-10-13:** Mittal et al. (2008), the last missing
+paper, filed from the user's manual download and ingested (`mittal-2008`,
+112 of 112), with a whole-bundle deep lint (see `log.md`).
 
 **Batch 12 staged 2026-10-13:** 111 of 111 archived sources ingested (the
 second half of the user's manual downloads): the shock-diffraction and

@@ -4,8 +4,8 @@ title: "Central WENO (staggered, Levy–Puppo–Russo)"
 description: "A WENO reconstruction with weights symmetric about the cell centre, used inside a staggered Nessyahu–Tadmor-type central scheme with Runge–Kutta natural continuous extensions: no Riemann solver, no characteristic decomposition; fourth order from parabolas."
 status: established
 aliases: [CWENO, central WENO, Levy-Puppo-Russo scheme]
-tags: [central-scheme, weno, staggered, riemann-free]
-timestamp: 2026-10-08T00:00:00Z
+tags: [central-scheme, weno, staggered]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Central WENO (staggered, Levy–Puppo–Russo)
@@ -22,10 +22,10 @@ and Bianco–Puppo–Russo at third and higher with ENO).
 by a centred WENO reconstruction.
 
 **CWENO reconstruction.** In each cell $I_j$, three parabolas
-$P_{j-1}, P_j, P_{j+1}$ are built, each interpolating the cell averages
-of three consecutive cells centred on its own cell. The reconstruction
-in $I_j$ is the convex combination $R_j = \sum_k \omega_k P_k$ (a
-five-cell stencil); it reproduces $\bar u_j$, but no other interpolation
+$p_0, p_1, p_2$ are built, centred on $I_{j-1}$, $I_j$ and $I_{j+1}$,
+each interpolating the cell averages of the three consecutive cells
+centred on its own cell. The reconstruction in $I_j$ is the convex
+combination $\sum_k \omega_k p_k(x)$ (a five-cell stencil); it reproduces $\bar u_j$, but no other interpolation
 condition. The constants $d_k$ are chosen symmetric about the cell
 centre — the "central" choice — in two sets: one for the
 reconstruction from cell averages and one for the point-value
@@ -93,3 +93,4 @@ by [Shu (2009)](/sources/shu-2009.md), §3.5.5; [characteristic decomposition](/
 3. [Balsara, Bhoriya, Shu & Kumar (2025)](/sources/balsara-2025.md), §III.a.
 4. [Shu (2020)](/sources/shu-2020.md), §3.2.3.
 5. [Shu (2009)](/sources/shu-2009.md), §3.5.5.
+6. [Jiang & Shu (1996)](/sources/jiang-1996.md), §2.

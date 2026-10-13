@@ -8,7 +8,7 @@ authors: [Bryson A.E., Gross R.W.F.]
 year: 1961
 venue: "J. Fluid Mech. 10:1–16"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1961-JFM-Bryson-101017s0022112061000019.pdf"
-tags: [mach-reflection, benchmark]
+tags: [mach-reflection, benchmark, experiment]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

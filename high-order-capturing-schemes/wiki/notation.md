@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Notation registry
@@ -25,7 +25,7 @@ common in the literature (Shu's reviews). It is wiki-native law from then on.
 | $f(u)$ | physical flux; $\partial_t u + \partial_x f(u) = 0$ in 1D, $\partial_t u + \nabla\cdot \mathbf{f}(u) = 0$ in $d$ dimensions |
 | $A(u)$ | flux Jacobian $f'(u)$ |
 | $\lambda^{(p)}$, $\Lambda$ | eigenvalues of $A$, $p = 1,\dots,m$; $\Lambda = \mathrm{diag}(\lambda^{(p)})$ |
-| $R$, $L$ | right and left eigenvector matrices, $A = R \Lambda L$, $L = R^{-1}$ |
+| $R$, $L$ | right and left eigenvector matrices, $A = R \Lambda L$, $L = R^{-1}$ (distinct from the GP stencil radius $R$, which is used only on GP pages) |
 | $\rho$, $\mathbf{v}$, $p$, $E$, $\gamma$ | density, velocity, pressure, total energy density, ratio of specific heats (Euler) |
 | $\mathbf{B}$ | magnetic field (MHD) |
 
@@ -68,7 +68,7 @@ cells each.
 | $\beta_k$ | smoothness indicator of $S_k$ |
 | $\varepsilon$ | regularization in the nonlinear weights |
 | $\tilde\omega_k$ | unnormalized nonlinear weight (e.g. $d_k / (\varepsilon + \beta_k)^{q}$) |
-| $q$ | power in the unnormalized weight |
+| $q$ | power in the unnormalized weight (the bare letter; the jump/average notation $[\![q]\!]$, $\{\!\{q\}\!\}$ and the subscript form $q_{\mathrm{Roe}}$ below use $q$ as a generic placeholder, and $q_k$ is the candidate value) |
 | $\omega_k$ | normalized nonlinear weight, $\omega_k = \tilde\omega_k / \sum_l \tilde\omega_l$; the reconstruction is $\sum_k \omega_k q_k$ |
 | $\tau$ | global smoothness indicator of WENO-Z-type weights |
 
@@ -96,15 +96,15 @@ Added 2026-10-08 (batch 1: harten-1987, shu-1988, shu-1989, shu-1998).
 |---|---|
 | $\mathcal{U}(x)$ | primitive of the solution, $\mathcal{U}(x) = \int_{x_{1/2}}^{x} u(\xi)\,d\xi$; exactly known at interfaces from cell averages, $\mathcal{U}(x_{i+1/2}) = \sum_{j \le i} h_j \bar u_j$ |
 | $w[x_a, \dots, x_b]$ | Newton divided difference of a function $w$ over the listed points |
-| $\Delta^{l} w_i$ | $l$-th undivided (forward) difference, $\Delta^{l} w_i = \Delta^{l-1} w_{i+1} - \Delta^{l-1} w_i$, $\Delta^0 w_i = w_i$ (uniform grids) |
+| $\Delta^{l} w_i$ | $l$-th undivided (forward) difference, $\Delta^{l} w_i = \Delta^{l-1} w_{i+1} - \Delta^{l-1} w_i$, $\Delta^0 w_i = w_i$ (uniform grids); the order is always written, $\Delta^1 w_i$ included, since an unsuperscripted $\Delta u_i$ is the PPM jump |
 
 ## Fluxes and upwinding
 
 | Symbol | Meaning |
 |---|---|
 | $\hat f(a, b)$ | two-argument monotone flux: Lipschitz, nondecreasing in $a$, nonincreasing in $b$, $\hat f(a,a) = f(a)$; the interface flux is $\hat f_{i+1/2} = \hat f(u^-_{i+1/2}, u^+_{i+1/2})$ |
-| $\hat a_{i+1/2}$ | Roe speed, $\hat a_{i+1/2} = (f(u_{i+1}) - f(u_i))/(u_{i+1} - u_i)$ (scalar); for systems the eigenvalues of a Roe or arithmetic-mean Jacobian at $x_{i+1/2}$ |
-| $\alpha_{i+1/2}$ | local Lax–Friedrichs speed (the maximum of $\vert f'(u)\vert$ over the states between $u_i$ and $u_{i+1}$, or over the stencil) |
+| $\hat a_{i+1/2}$ | Roe speed, $\hat a_{i+1/2} = (f(u_{i+1}) - f(u_i))/(u_{i+1} - u_i)$ (scalar); for systems the eigenvalues of a Roe or arithmetic-mean Jacobian at $x_{i+1/2}$ (a speed; the Roe-averaged state quantities themselves are written $q_{\mathrm{Roe}}$, batch 12) |
+| $\alpha_{i+1/2}$ | local Lax–Friedrichs speed (the maximum of $\vert f'(u)\vert$ over the states between $u_i$ and $u_{i+1}$, or over the stencil); Riemann-solver pages write the same speed of a Rusanov flux as $S$ (batch 11) |
 | $\ell^{(p)}$, $r^{(p)}$ | $p$-th left (row) and right (column) eigenvectors of the Jacobian frozen at $x_{i+1/2}$; local characteristic variable $w^{(p)}_j = \ell^{(p)} u_j$ |
 
 ## Runge–Kutta in Shu–Osher form
@@ -127,7 +127,7 @@ Added 2026-10-08 (batch 1: harten-1987, shu-1988, shu-1989, shu-1998).
 | $u^{\mathrm{MD}}$, $u^{\mathrm{LC}}$ | MP auxiliary values: median value and large-curvature value adjoined to enlarge the admissible interval near extrema |
 | $u^{\min}$, $u^{\max}$ | ends of the MP admissible interval; the limited value is $\operatorname{median}(u^{\mathrm{or}}, u^{\min}, u^{\max})$ |
 | $\mathcal{D}^{\mathrm{M4}}_{i+1/2}$ | interface curvature $\operatorname{minmod}(4\delta^2\bar u_i - \delta^2\bar u_{i+1}, 4\delta^2\bar u_{i+1} - \delta^2\bar u_i, \delta^2\bar u_i, \delta^2\bar u_{i+1})$ |
-| $\Delta u_i$, $u_{6,i}$ | PPM parabola in cell $I_i$: jump $u^-_{i+1/2} - u^+_{i-1/2}$ and curvature coefficient $6\left(\bar u_i - \tfrac12(u^+_{i-1/2} + u^-_{i+1/2})\right)$ |
+| $\Delta u_i$, $u_{6,i}$ | PPM parabola in cell $I_i$ (no superscript, so distinct from the undivided difference $\Delta^1 w_i$): jump $u^-_{i+1/2} - u^+_{i-1/2}$ and curvature coefficient $6\left(\bar u_i - \tfrac12(u^+_{i-1/2} + u^-_{i+1/2})\right)$ |
 | $\phi_i$ | PPM flattening coefficient, $0 \le \phi_i \le 1$ (1 = fully flattened to $\bar u_i$) |
 
 ## Weight families after WENO-JS
@@ -140,8 +140,8 @@ Added 2026-10-08 (batch 2: henrick-2005, borges-2008, castro-2011, hu-2010, fu-2
 | $g_k(\omega)$ | Henrick mapping of a weight toward $d_k$ |
 | $\tau_{2r-1}$, $\tau_6$ | global (reference) smoothness indicators built from several $\beta_k$ on the whole stencil; $\tau$ when the variant is clear from context |
 | $C_w$ | additive constant in weights of the form $\left(C_w + \tau/(\beta_k + \varepsilon)\right)^q$ (WENO-CU6, TENO); $C_w = 1$ with $q = 1$ is WENO-Z |
-| $\gamma_k$ | TENO per-stencil smoothness measure $\left(C_w + \tau_K/(\beta_k + \varepsilon)\right)^q$ before normalization (subscripted; distinct from the ratio of specific heats $\gamma$) |
-| $\chi_k$, $\delta_k$, $C_T$ | TENO normalized smoothness measure, its 0/1 cutoff, and the cutoff threshold |
+| $\gamma_k$ | TENO per-stencil smoothness measure $\left(C_w + \tau_K/(\beta_k + \varepsilon)\right)^q$ before normalization (subscripted; distinct from the ratio of specific heats $\gamma$); $\tau_K$ is Fu et al.'s global indicator over the full stencil of $K$ points, a member of the $\tau_{2r-1}$, $\tau_6$ family above: here $K$ counts points, distinct from the polynomial degree $K$ (batch 3) |
+| $\chi_k$, $\delta_k$, $C_T$ | TENO normalized smoothness measure, its 0/1 cutoff, and the cutoff threshold (distinct from the DMP floor $\delta_0$, batch 4, and the HLLEM coefficient $\delta_p$) |
 | $\gamma_{\mathrm{Hi}}$, $\gamma_{\mathrm{Lo}}$ | WENO-AO parameters setting the linear weights of the large central stencil and of the central small stencil |
 | $\vartheta$ | threshold of a hybrid scheme's switch to the capturing scheme |
 
@@ -155,7 +155,7 @@ Added 2026-10-08 (batch 3: gottlieb-2001, titarev-2004, zhang-2010, zhang-2012, 
 | $\epsilon_{\mathcal{G}}$ | positivity floor of a limiter (e.g. $10^{-13}$); distinct from the weight regularization $\varepsilon$ |
 | $\nu_0$ | CFL bound under which the first-order scheme with a given flux keeps cell averages in $\mathcal{G}$ |
 | $\mathcal{P}_i(x)$, $K$ | the (vector) polynomial of degree $K$ that represents the solution in $I_i$ (FV reconstruction or DG), with cell average $\bar u_i$ |
-| $\hat x^{(a)}_i$, $\hat w_a$, $N_{\mathrm{GL}}$ | Gauss–Lobatto points in $I_i$ ($\hat x^{(1)}_i = x_{i-1/2}$, $\hat x^{(N_{\mathrm{GL}})}_i = x_{i+1/2}$) and weights on $[-\tfrac12, \tfrac12]$, $\sum_a \hat w_a = 1$, exact for degree $2N_{\mathrm{GL}} - 3 \ge K$ |
+| $\hat x^{(a)}_i$, $\hat w_a$, $N_{\mathrm{GL}}$ | Gauss–Lobatto points in $I_i$ ($\hat x^{(1)}_i = x_{i-1/2}$, $\hat x^{(N_{\mathrm{GL}})}_i = x_{i+1/2}$) and weights on $[-\tfrac12, \tfrac12]$, $\sum_a \hat w_a = 1$, exact for degree $2N_{\mathrm{GL}} - 3 \ge K$ (the points of a positivity limiter; general quadrature points, e.g. of a DG moment projection, are $x_G$, $w_G$, batch 4) |
 | $\theta_\rho$, $\theta_p$ | scaling factors of the Zhang–Shu limiter for density and pressure (special cases of $\theta$) |
 | $\hat f^{\mathrm{LO}}_{i+1/2}$, $\hat f^{\mathrm{HO}}_{i+1/2}$ | first-order (positivity-preserving) and high-order numerical fluxes; a flux limiter uses $\theta_{i+1/2}\hat f^{\mathrm{HO}} + (1-\theta_{i+1/2})\hat f^{\mathrm{LO}}$ |
 | $S_L$, $S_R$, $S_M$ | left, right and contact wave-speed estimates of an HLL-type Riemann solver; $S_D$, $S_U$ the transverse pair of a 2D solver |
@@ -163,7 +163,7 @@ Added 2026-10-08 (batch 3: gottlieb-2001, titarev-2004, zhang-2010, zhang-2012, 
 | $\mathcal{F}^n_i$ | time-averaged flux $\frac{1}{\Delta t}\int_{t^n}^{t^{n+1}} f(u(x_i, t))\,dt$ of a single-step (Picard/Taylor) scheme |
 | $\boldsymbol{\mathcal{E}}$, $\mathbf{A}$ | electric field (ideal MHD: $\boldsymbol{\mathcal{E}} = -\mathbf{v}\times\mathbf{B}$) and magnetic vector potential, $\mathbf{B} = \nabla\times\mathbf{A}$; $\boldsymbol{\mathcal{E}}$ avoids a clash with the energy $E$ |
 | $\bar B_{x;i+1/2,j,k}$ | face average of the normal field component on a Yee-type (staggered) mesh; $\bar{\mathcal{E}}_{z;i+1/2,j+1/2,k}$ the edge average |
-| $\mathcal{K}(x, y)$, $\ell$, $\Sigma^2$, $R$ | GP covariance kernel, its length hyperparameter, its amplitude (signal variance), and the GP stencil radius ($2R+1$ cells; $R = r - 1$ for the same stencil as WENO) |
+| $\mathcal{K}(x, y)$, $\ell$, $\Sigma^2$, $R$ | GP covariance kernel, its length hyperparameter, its amplitude (signal variance), and the GP stencil radius ($2R+1$ cells; $R = r - 1$ for the same stencil as WENO; distinct from the eigenvector matrix $R$, which GP pages do not use) |
 | $\boldsymbol{\mathcal K}$, $\mathbf C$, $\mathbf t_*$, $\mathbf z$, $f_0$ | GP kernel matrix of point values, covariance matrix of cell averages, prediction vector, weights $\mathbf z = \mathbf C^{-1}\mathbf t_*$, constant prior mean |
 | $\mu^{(k)}_i$, $\mathbf e^{(k)}_i$, $c^{(k)}_i$ | eigenpairs of $\boldsymbol{\mathcal K}$ on sub-stencil $S_k$, and the coefficients of the point values in that eigenbasis (GP smoothness indicator) |
 | $K_{\mathrm{L}}$ | Lipschitz constant in time of a time-dependent linear operator $\mathcal{L}(t)$ |
@@ -183,7 +183,7 @@ Added 2026-10-08 (batch 4: qiu-2005, dumbser-2007, balsara-2009, dumbser-2013, d
 | $\mathcal{B}_i$ | troubled-cell flag (limiter status), $\mathcal{B}_i \in \{0, 1\}$ |
 | $N_{\mathrm s}$, $\bar v_{i,m}$ | number of subcells per direction in a DG cell, and the subcell averages of the a posteriori subcell limiter |
 | $\Pi$, $\mathcal{R}$ | cell-to-subcell projection (subcell averaging of $\mathcal{P}_i$) and subcell-to-cell reconstruction (constrained least squares); $\mathcal{R}\circ\Pi = I$ for $N_{\mathrm s} \ge K + 1$ |
-| $\delta_{\mathrm{DMP}}$, $\delta_0$, $\epsilon_{\mathrm{DMP}}$ | relaxation of a discrete maximum principle, its absolute floor and its relative factor |
+| $\delta_{\mathrm{DMP}}$, $\delta_0$, $\epsilon_{\mathrm{DMP}}$ | relaxation of a discrete maximum principle, its absolute floor and its relative factor ($\delta_0$ is one symbol, not the TENO cutoff $\delta_k$ at $k = 0$) |
 | $g(t)$ | boundary data, $u(a, t) = g(t)$ at an inflow boundary $x = a$ |
 | $C_a$ | offset of the first grid point from the boundary, $x_0 = a + C_a h$, $C_a \in [0, 1)$ ("cut cell" when $C_a \to 0$) |
 | $u^{*(k)}$, $n_{\mathrm b}$ | boundary approximations of $\partial^k_x u(a, t)$, $k = 0, \dots, n_{\mathrm b} - 1$, used in the ghost-point Taylor expansion |
@@ -192,7 +192,7 @@ Added 2026-10-08 (batch 4: qiu-2005, dumbser-2007, balsara-2009, dumbser-2013, d
 | $\omega^{\mathrm{ext}}_k$ | weights of a weighted (WENO-type) boundary extrapolation; distinct from the reconstruction weights $\omega_k$ |
 | $r_{\mathrm{AMR}}$, $N_{\mathrm{lev}}$ | refinement factor between consecutive AMR levels and number of levels above the base grid |
 | $M$, $\operatorname{minmod}_M$ | TVB constant and TVB-modified minmod: $\operatorname{minmod}_M(a_1, \dots) = a_1$ if $\vert a_1\vert \le M h^2$, else $\operatorname{minmod}(a_1, \dots)$ |
-| $x_G$, $w_G$ | Gauss-type quadrature points in $I_i$ and their weights (Gauss or Gauss–Lobatto) |
+| $x_G$, $w_G$ | Gauss-type quadrature points in $I_i$ and their weights (Gauss or Gauss–Lobatto), for general quadrature; the Gauss–Lobatto points of a positivity limiter are $\hat x^{(a)}_i$, $\hat w_a$ (batch 3) |
 | $V_i$ | cell $I_i$ with its node-sharing (Voronoi) neighbours |
 | $\mathsf B$ | universal oscillation-indicator matrix of polynomial WENO on a reference element, $\beta_k = \hat{\mathbf u}_k^{\mathsf T}\mathsf B\,\hat{\mathbf u}_k$ for the coefficient vector $\hat{\mathbf u}_k$ of candidate $k$ |
 | $\mathsf P$, $\mathsf Q$, $\mathsf D$ | summation-by-parts norm (symmetric positive definite), the matrix with $\mathsf Q + \mathsf Q^{\mathsf T}$ zero except its two corner entries, and the derivative operator $\mathsf D = \mathsf P^{-1}\mathsf Q$ |
@@ -334,6 +334,8 @@ Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanch
 
 ## Spectral analysis
 
+Added 2026-10-08 (batch 2, with the modified-wavenumber definition; dated from the log at the 2026-10-13 deep lint).
+
 | Symbol | Meaning |
 |---|---|
 | $\xi$ | scaled wavenumber $k h$, $0 \le \xi \le \pi$ |
@@ -344,14 +346,14 @@ Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanch
 | Symbol | Meaning |
 |---|---|
 | $\mu_{\mathrm{IP}}$, $\sigma_{\mathrm{DG}}$, $\omega_{\mathrm{DG}}$ | penalty coefficient, symmetry coefficient and jump-of-derivative coefficient of the interior-penalty DG diffusion family (subscripted, so distinct from the diffusion coefficient $\mu$, the flux-limiter constant $\sigma$ and the weights $\omega$) |
-| $[\![q]\!]_{i+1/2}$, $\{\!\{q\}\!\}_{i+1/2}$ | jump and average of $q$ across the interface $x_{i+1/2}$ |
+| $[\![q]\!]_{i+1/2}$, $\{\!\{q\}\!\}_{i+1/2}$ | jump and average of $q$ across the interface $x_{i+1/2}$ ($q$ a generic placeholder, distinct from the weight power $q$) |
 | $u^{\mathrm{rec}}_{i+1/2}$ | recovered polynomial spanning the two cells that share $x_{i+1/2}$ |
 | $\mathscr L^{(p)}$ | amplitude variation of the characteristic wave of family $p$ at a boundary (script, so distinct from the spatial operator $\mathcal L$; where pressure $p$ appears nearby, the families are written out as $\mathscr L^{(1)},\dots,\mathscr L^{(5)}$) |
 | $K_{\mathrm{NR}}$, $\sigma_{\mathrm{NR}}$, $p_\infty$ | relaxation coefficient and constant of a partially non-reflecting outflow condition, and the target pressure |
 | $L_x$ | domain length in $x$ |
 | $(\hat f_x)_k$, $(\hat f_y)_k$ | $k$-th component of the numerical flux in direction $x$ or $y$ |
 | $\nabla_u$ | gradient with respect to the conserved state $u$ |
-| $S$ | single signal speed of a local Lax–Friedrichs (Rusanov) flux, where no left/right pair $S_L$, $S_R$ is used |
+| $S$ | single signal speed of a local Lax–Friedrichs (Rusanov) flux, where no left/right pair $S_L$, $S_R$ is used; the same quantity as the local Lax–Friedrichs speed $\alpha_{i+1/2}$, written $S$ on Riemann-solver pages beside $S_L$, $S_R$ (distinct from the stencils $S_k$) |
 | $RU$, $LU$, $LD$, $RD$ (subscripts) | the four states meeting at a cell edge in a multidimensional Riemann problem: right/left, up/down |
 
 ## Shock reflection, diffraction and bodies in a shock tube (batch 12, 2026-10-13)
@@ -370,4 +372,4 @@ Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanch
 | $p_{\mathrm{PV}}$, $p_{\mathrm{TR}}$, $p_{\mathrm{TS}}$ | star-pressure estimates of the primitive-variable, two-rarefaction and two-shock approximate-state Riemann solvers |
 | $\mathrm{TOL}$, $Q_{\mathrm{user}}$ | convergence tolerance of the star-pressure iteration, and the pressure-ratio threshold that switches an adaptive Riemann solver between estimates |
 | $q^{\mathrm w}_L$, $q^{\mathrm w}_R$, $\bar c_{\mathrm E}$ | pressure-based correction factors of the HLL-type wave speeds $S_L = v_n^- - c^- q^{\mathrm w}_L$, $S_R = v_n^+ + c^+ q^{\mathrm w}_R$, and the averaged sound speed of Einfeldt's estimate, $S_{L,R}$ = a mean normal velocity $\mp \bar c_{\mathrm E}$ |
-| $q_{\mathrm{Roe}}$ (e.g. $\rho_{\mathrm{Roe}}$, $c_{\mathrm{Roe}}$) | a quantity evaluated at the Roe-averaged state of $u^-$ and $u^+$ ($\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$; velocities and total enthalpy $\sqrt\rho$-weighted; $c_{\mathrm{Roe}}$ from them) |
+| $q_{\mathrm{Roe}}$ (e.g. $\rho_{\mathrm{Roe}}$, $c_{\mathrm{Roe}}$) | ($q$ a generic placeholder, distinct from the weight power $q$) a quantity evaluated at the Roe-averaged state of $u^-$ and $u^+$ ($\rho_{\mathrm{Roe}} = \sqrt{\rho^-\rho^+}$; velocities and total enthalpy $\sqrt\rho$-weighted; $c_{\mathrm{Roe}}$ from them); the Roe speeds $\hat a_{i+1/2}$ are the eigenvalues of $A$ at this state |

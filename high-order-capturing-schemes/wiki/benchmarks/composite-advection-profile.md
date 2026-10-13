@@ -4,8 +4,8 @@ title: "Composite-profile linear advection (Jiang–Shu test)"
 description: "Linear advection on a periodic domain of a combination of narrow Gaussians, a square wave, a sharp triangle and a half-ellipse: separates smooth-but-sharp peaks from true discontinuities, and exposes extremum clipping and phase error over long times."
 status: established
 aliases: [Jiang-Shu linear test, Shu's linear test, four-wave advection]
-tags: [benchmark, linear-advection, dispersion, extrema]
-timestamp: 2026-10-09T00:00:00Z
+tags: [benchmark, linear-advection, dispersion, critical-points]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Composite-profile linear advection (Jiang–Shu test)
@@ -14,9 +14,11 @@ timestamp: 2026-10-09T00:00:00Z
 made of a smooth but narrow combination of Gaussians, a square wave, a
 sharp triangle and a half-ellipse, left to right
 ([Jiang & Shu (1996)](/sources/jiang-1996.md), §8.1 Example 1;
-constants $a = 0.5$, $z = -0.7$, $\delta = 0.005$, $\alpha = 10$,
-$\beta = \log 2/(36\delta^2)$ as printed by
-[Levy, Puppo & Russo (1999)](/sources/levy-1999.md)).
+constants as printed by [Levy, Puppo & Russo (1999)](/sources/levy-1999.md),
+written in words because their paper symbols collide with the registry:
+the Gaussians are centred at $-0.7$ and $-0.7 \pm 0.005$ with exponent
+coefficient $\log 2/(36\times 0.005^2)$, and the half-ellipses centred at
+$0.5$ and $0.5 \pm 0.005$ with inverse half-width 10).
 
 **What it shows.**
 * WENO4 and WENO5 beat ENO4 on all four waves; WENO4 is better at the

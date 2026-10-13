@@ -5,7 +5,7 @@ description: "Essentially non-oscillatory schemes: an adaptive stencil grown one
 status: established
 aliases: [ENO, essentially non-oscillatory schemes, adaptive stencil]
 tags: [eno, reconstruction, shock-capturing]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # ENO reconstruction and schemes
@@ -28,7 +28,7 @@ The stencil for cell $I_i$ starts from the two points
 $\{x_{i-1/2}, x_{i+1/2}\}$ (one cell) and grows by one point at a time,
 adding the left or the right neighbour according to which gives the
 smaller absolute divided difference of the next degree, until it has
-$k+1$ points ([Harten et al. (1987)](/sources/harten-1987.md), §3;
+$r+1$ points ($r$ cells, order $r$) ([Harten et al. (1987)](/sources/harten-1987.md), §3;
 [Shu (1998)](/sources/shu-1998.md), Procedure 2.1). On uniform grids
 undivided differences $\Delta^l$ are used instead.
 [Shu (1998)](/sources/shu-1998.md) reports that this hierarchy is more
@@ -37,18 +37,20 @@ highest-degree differences of all candidates.
 
 **Properties** for piecewise smooth data, starting from the two-point
 stencil ([Shu (1998)](/sources/shu-1998.md), §2.2.1):
-1. full accuracy, $P = \mathcal{U} + O(h^{k+1})$, in every cell not
+1. full accuracy: the interpolant of $\mathcal{U}$ on the chosen stencil
+   differs from $\mathcal{U}$ by $O(h^{r+1})$ in every cell not
    containing a discontinuity, i.e. right up to it;
-2. $P$ is monotone in a cell that contains a discontinuity;
+2. that interpolant is monotone in a cell that contains a discontinuity;
 3. the reconstruction is total variation bounded.
-Property 2 is proved for a step function by counting the zeros of $P'$.
+Property 2 is proved for a step function by counting the zeros of the
+interpolant's derivative.
 
 ## Schemes
 
 * **Cell-average ENO** ([Harten et al. (1987)](/sources/harten-1987.md)):
-  the abstract scheme reconstructs, evolves exactly and averages,
-  $\bar u^{n+1} = A_h E(\Delta t) R(\cdot; \bar u^n)$ (Godunov for
-  $r=1$, MUSCL-type for $r=2$). The exact "solution in the small" is
+  the abstract scheme reconstructs from $\bar u^n$, evolves the
+  reconstruction exactly over $\Delta t$, and takes the cell averages of
+  the result as $\bar u^{n+1}$ (Godunov for $r=1$, MUSCL-type for $r=2$). The exact "solution in the small" is
   replaced by a Cauchy–Kowalewski Taylor expansion in time of each
   cell's polynomial, a Gaussian quadrature of the interface flux in
   time, and a Riemann solver (Roe's) that serves only as a *pointer*
@@ -91,8 +93,8 @@ Property 2 is proved for a step function by counting the zeros of $P'$.
   [Shu (1998)](/sources/shu-1998.md), §2.2.2): the stencil can switch on
   round-off near zeros of the solution's derivatives, which can cost
   accuracy (Rogerson & Meiburg; repaired by biasing toward a preferred
-  stencil with a factor $b \approx 2$); the flux is not smooth; only one
-  of $k$ candidate stencils is used, giving order $k$ where $2k-1$ is
+  stencil with a factor of about 2); the flux is not smooth; only one
+  of $r$ candidate stencils is used, giving order $r$ where $2r-1$ is
   available; and the logical branches run poorly on vector machines.
   [Suresh & Huynh (1997)](/sources/suresh-1997.md) add that ENO (and
   WENO) smear discontinuities nearly as much as each other.

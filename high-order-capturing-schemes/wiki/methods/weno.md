@@ -5,7 +5,7 @@ description: "A convex combination of all r ENO candidate reconstructions with n
 status: established
 aliases: [WENO, weighted essentially non-oscillatory, WENO-JS, WENO5]
 tags: [weno, reconstruction, shock-capturing, nonlinear-weights]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # WENO reconstruction (weighted ENO)
@@ -50,7 +50,7 @@ the data and cheap (rational, not exponential)
 | [Levy, Puppo & Russo (1999)](/sources/levy-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, central |
 | [Balsara & Shu (2000)](/sources/balsara-2000.md) | 2 | $10^{-10}$ | Jiang–Shu, $r = 4$–$7$ |
 | [Jiang & Wu (1999)](/sources/jiang-1999.md) | 2 | $10^{-6}$ | Jiang–Shu, $r = 3$, MHD |
-| [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md) | 1 (WENO-Z form) | $h^2$ | undivided differences, $r = 2$, MHD |
+| [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md) | 1 (WENO+3: Yamaleev–Carpenter weights, a Z-type form; their WENO-Z uses $\varepsilon = 10^{-40}$) | $h^2$ | undivided differences, $r = 2$, MHD |
 | [Seo & Ryu (2023)](/sources/seo-2023.md) | 2 | $10^{-8}$ | Jiang–Shu, $r = 3$, MHD |
 
 Jiang and Shu find $q = 2$ adequate for essentially non-oscillatory
@@ -286,3 +286,5 @@ positivity-preserving for Euler; see the
 26. [Shu (2009)](/sources/shu-2009.md), §§1–3, 7.
 27. [Shu (2020)](/sources/shu-2020.md), §§3–4.
 28. [Balsara (2017)](/sources/balsara-2017-d.md), §III.1.
+29. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.2 (arXiv v2).
+30. [Seo & Ryu (2023)](/sources/seo-2023.md), §2.2.

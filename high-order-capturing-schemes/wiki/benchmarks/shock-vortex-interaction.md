@@ -5,7 +5,7 @@ description: "A small isentropic vortex convected through a stationary Mach 1.1 
 status: established
 aliases: [shock vortex interaction, Pao-Salas problem]
 tags: [benchmark, euler, 2d, acoustics]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Shock–vortex interaction
@@ -13,7 +13,7 @@ timestamp: 2026-10-08T00:00:00Z
 **Set-up** (Pao & Salas). A stationary Mach 1.1 shock, a vortex
 superposed on the upstream flow as perturbations of velocity,
 temperature $T = p/\rho$ and entropy, with strength $0.3$, critical
-radius $r_c = 0.05$ and decay parameter $0.204$, centred at
+radius 0.05 and decay parameter $0.204$, centred at
 $(0.25, 0.5)$ for a shock at $x = 0.5$ on $[0, 2]\times[0, 1]$
 ([Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 5).
 

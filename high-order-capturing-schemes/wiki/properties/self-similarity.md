@@ -4,7 +4,7 @@ title: "Self-similarity (scale invariance) of capturing schemes"
 description: "A scheme is self-similar if its result does not change when the solution is rescaled, or when the grid spacing and time step are scaled together at fixed ratio — no thresholds tied to the mesh size or to the solution's units; WENO keeps it through scaled smoothness indicators, and mesh-dependent regularizations or extrapolation weights break it."
 status: established
 aliases: [scale invariance, self-similar scheme, dimensionless weights]
-tags: [weno, nonlinear-weights, design-principle, boundary-treatment]
+tags: [weno, nonlinear-weights, boundary-treatment]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

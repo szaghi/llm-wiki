@@ -5,7 +5,7 @@ description: "Run the unlimited high-order scheme, test the candidate solution f
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiter, subcell limiter, SCL, DG-PN + WENO3 SCL]
 tags: [limiter, a-posteriori, dg, finite-volume, ader, positivity, amr]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # A posteriori subcell finite-volume limiting (MOOD paradigm)
@@ -69,9 +69,9 @@ admit negative states.
 
 **Why $N_{\mathrm s} = 2K + 1$** ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §4.5;
 [Zanotti et al. (2015)](/sources/zanotti-2015.md), §4). The DG step obeys
-$\Delta t \le \frac{1}{d(2K+1)}\frac{h}{\vert\lambda_{\max}\vert}$, and
+$\Delta t \le \frac{1}{d(2K+1)}\frac{h}{\max_p\vert\lambda^{(p)}\vert}$, and
 finite volume on subcells of size $h/N_{\mathrm s}$ obeys
-$\Delta t \le \frac{1}{d}\frac{h/N_{\mathrm s}}{\vert\lambda_{\max}\vert}$.
+$\Delta t \le \frac{1}{d}\frac{h/N_{\mathrm s}}{\max_p\vert\lambda^{(p)}\vert}$.
 With $N_{\mathrm s} = 2K + 1$ the two limits coincide. The subgrid scheme
 then runs at its largest Courant number, where ADER-FV truncation errors,
 which carry a factor $(1 - \mathrm{CFL})$, are smallest. With

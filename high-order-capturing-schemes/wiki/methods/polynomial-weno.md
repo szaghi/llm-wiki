@@ -5,7 +5,7 @@ description: "WENO that blends whole candidate polynomials of the full degree K 
 status: established
 aliases: [Dumbser-Käser WENO, unstructured WENO, reconstruction of entire polynomials, non-optimal WENO, modal WENO]
 tags: [weno, reconstruction, finite-volume, unstructured, legendre-basis, ader]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Polynomial WENO reconstruction with a dominant central stencil
@@ -110,8 +110,13 @@ the robust scheme of the
 
 **In the reviews (batch 6).** Shu cites Dumbser and Käser among the
 schemes that take arbitrary positive linear weights, accepting the
-small-stencil order on unstructured meshes ([Shu (2020)](/sources/shu-2020.md), §§3.2.2–3.3;
-[negative linear weights](/methods/negative-linear-weights.md)).
+small-stencil order on unstructured meshes ([Shu (2020)](/sources/shu-2020.md), §§3.2.2–3.3, p. 722;
+[negative linear weights](/methods/negative-linear-weights.md)). The two
+readings agree: each candidate here is already a full degree-$K$
+polynomial on its own (wider) stencil, so the scheme keeps order $K + 1$;
+what is given up is only the higher order that the union of all the
+candidate stencils could support with accuracy-fixed linear weights
+(compiler's reconciliation, 2026-10-13 deep lint).
 
 # Citations
 

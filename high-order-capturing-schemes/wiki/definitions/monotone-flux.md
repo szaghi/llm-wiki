@@ -4,8 +4,8 @@ title: "Monotone numerical flux"
 description: "A two-argument interface flux that is Lipschitz, nondecreasing in its left and nonincreasing in its right argument, and consistent; the first-order building block that high-order capturing schemes evaluate on reconstructed states."
 status: established
 aliases: [monotone flux, E-flux building block]
-tags: [numerical-flux, riemann-solver, definition]
-timestamp: 2026-10-08T00:00:00Z
+tags: [numerical-flux, riemann-solver]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Monotone numerical flux
@@ -27,9 +27,10 @@ building block of high-order schemes.
 * **Roe with entropy fix**: $f(a)$ if $f' \ge 0$ between $a$ and $b$,
   $f(b)$ if $f' \le 0$ there, local Lax–Friedrichs otherwise;
 * **local Lax–Friedrichs**:
-  $\tfrac12\left[f(a) + f(b) - \beta(b - a)\right]$ with $\beta$ the
-  maximum of $\vert f'\vert$ between $a$ and $b$; with a global constant
-  $\alpha$ in place of $\beta$, the Lax–Friedrichs flux.
+  $\tfrac12\left[f(a) + f(b) - \alpha_{i+1/2}(b - a)\right]$ with
+  $\alpha_{i+1/2}$ the maximum of $\vert f'\vert$ between $a$ and $b$; with
+  a global constant $\alpha$ in place of $\alpha_{i+1/2}$, the
+  Lax–Friedrichs flux.
 
 **Order dependence.** The choice matters much at first and second order
 and little at high order. Shu shows fourth-order ENO with Godunov and

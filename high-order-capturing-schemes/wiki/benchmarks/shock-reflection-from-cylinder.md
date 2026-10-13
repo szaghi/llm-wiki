@@ -1,7 +1,7 @@
 ---
 type: Benchmark
 title: "Shock reflection from a cylinder"
-description: "A planar shock (Mach 2 to 2.8, and relativistic variants) hits a circular cylinder: regular reflection turns into Mach reflection with triple points and slip lines, and the Mach stems collide behind the body; compared with the Bryson–Gross schlieren and triple-point loci, it is run on body-fitted grids and on Cartesian grids that do not fit the body, where it tests cut-cell small-cell stabilization, AMR interfaces crossing the body, and moving embedded boundaries."
+description: "A planar shock (Mach 1.34 to 2.84, and relativistic variants at Mach 1.2 to 1.7) hits a circular cylinder: regular reflection turns into Mach reflection with triple points and slip lines, and the Mach stems collide behind the body; compared with the Bryson–Gross schlieren and triple-point loci, it is run on body-fitted grids and on Cartesian grids that do not fit the body, where it tests cut-cell small-cell stabilization, AMR interfaces crossing the body, and moving embedded boundaries."
 status: established
 aliases: [shock diffraction by a cylinder, Bryson–Gross cylinder, shock–cylinder interaction]
 tags: [benchmark, euler, embedded-boundary, mach-reflection]
@@ -11,11 +11,15 @@ timestamp: 2026-10-13T00:00:00Z
 # Shock reflection from a cylinder
 
 **Set-up.** A planar shock moving into gas at rest strikes a circular
-cylinder. The incident shock reflects into a detached bow shock, Mach
-stems form on the cylinder with triple points and slip lines, and the
-diffracted shocks meet behind the body. The reference is the schlieren
-series of Bryson and Gross (1961). The body is not grid-fitted. It is
-distinct from the steady [supersonic cylinder flow](/benchmarks/supersonic-cylinder-flow.md)
+cylinder. The incident shock first reflects regularly; between 40° and
+50° from the forward stagnation point the reflection turns into Mach
+reflection, with Mach stems on the cylinder, triple points and slip
+lines, and the Mach shocks meet behind the body and reflect from the
+symmetry plane, again regularly first. The reference is the schlieren
+series of Bryson and Gross (1961). In the embedded-boundary variants
+the body is not grid-fitted; the body-fitted variant below runs it on an
+O-grid (both lines corrected at the 2026-10-13 deep lint, from the
+batch-12 reading of the original). It is distinct from the steady [supersonic cylinder flow](/benchmarks/supersonic-cylinder-flow.md)
 and from the free body of [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md).
 
 **Variants.**
@@ -47,7 +51,9 @@ and from the free body of [shock-driven cylinder lift-off](/benchmarks/shock-cyl
   §3.3, Fig. 6). Its printed post-shock density does not match its stated
   density ratio.
 
-All comparisons are qualitative; no error norms are reported.
+All simulation comparisons are qualitative: no error norms are reported,
+and no run scores itself against the experiment's triple-point loci
+(corrected at the 2026-10-13 deep lint, see below).
 
 **Later uses (batch 12).** *The original experiment.*
 [Bryson & Gross (1961)](/sources/bryson-1961.md) (§2, plates 2–4,
@@ -56,7 +62,9 @@ air in a 4 in. × 12 in. shock tube, mean $M_s = 2.82$ (plates at 2.81,
 2.82 and 2.84), photographed by schlieren over about 7 diameters of
 incident-shock travel, in two series a factor 10 apart in $\mathrm{Re}$
 ($7.79\times10^4$ and $0.78\times10^4$, the latter printed $0.87\times10^4$
-in the fig. 6 caption). It corrects or qualifies three lines of this page.
+in the fig. 6 caption). It corrected or qualified three lines of this
+page, quoted below in their earlier wording; the lines themselves were
+corrected in place at the 2026-10-13 deep lint.
 * *Set-up wording.* The line "The incident shock reflects into a detached
   bow shock, Mach stems form on the cylinder" compresses the sequence. The
   reflection is [regular](/definitions/mach-reflection.md) at first and

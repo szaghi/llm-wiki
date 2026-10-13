@@ -1,7 +1,7 @@
 ---
 type: Benchmark
 title: "Mach 3 wind tunnel with a forward-facing step"
-description: "Woodward–Colella Mach 3 inflow over a step (0.2 high at x = 0.6 in a [0,3]×[0,1] tunnel): reflected shocks, a Mach stem and a vortex sheet from it, plus a corner singularity."
+description: "Mach 3 inflow over a step (0.2 high at x = 0.6 in a [0,3]×[0,1] tunnel; Emery 1968, in the standard form of Woodward and Colella): reflected shocks, a Mach stem and a vortex sheet from it, plus a corner singularity."
 status: established
 aliases: [forward facing step, Mach 3 step]
 tags: [benchmark, euler, 2d, vortex-sheet]
@@ -10,7 +10,9 @@ timestamp: 2026-10-13T00:00:00Z
 
 # Mach 3 wind tunnel with a forward-facing step
 
-**Set-up** (Woodward & Colella). A tunnel 1 wide and 3 long; a step
+**Set-up** (introduced by Emery in 1968; standard form and corner
+treatment by Woodward & Colella, see *Later uses (batch 11)*; attribution
+corrected at the 2026-10-13 deep lint). A tunnel 1 wide and 3 long; a step
 0.2 high with its corner at $(0.6, 0.2)$; Mach 3 inflow
 ($\rho = 1.4$, $p = 1$, $\gamma = 1.4$) at the left, outflow at the
 right, reflecting walls; the corner singularity treated as Woodward and
@@ -70,10 +72,10 @@ pronounced roll-up of the vortex sheet
 [Woodward & Colella (1984)](/sources/woodward-1984.md) (§IVb) state
 that the problem "was introduced more than a decade ago" by Emery (1968,
 J. Comput. Phys. 2:306), with earlier results by van Leer and by Colella.
-This corrects the attribution in the description and set-up line above
-("Woodward–Colella Mach 3 inflow"): the problem originates with Emery;
-Woodward & Colella gave it its standard form, with the corner treatment
-below. Their set-up agrees with the line above and adds: initial state
+The description and set-up line above, which attributed the problem
+to Woodward–Colella, were corrected accordingly at the 2026-10-13 deep
+lint: the problem originates with Emery; Woodward & Colella gave it its
+standard form, with the corner treatment below. Their set-up agrees with the line above and adds: initial state
 equal to the inflow everywhere, with velocity 3 ($\rho = 1.4$, $p = 1$),
 zero gradients at the right, where the exit is always supersonic.
 * *Corner treatment* (pp. 131–132). In the first row of zones above the
@@ -104,6 +106,13 @@ zero gradients at the right, where the exit is always supersonic.
   and about 3.6 and 4.4 times more efficient than BBC and MacCormack;
   PPMLR equals it at 18 % more CPU time ([PPM](/methods/ppm.md)).
 
+**Later uses (batch 11, Balsara & Nkonga; merged at the 2026-10-13 deep
+lint).** Fourth-order ADER–WENO with a multidimensional HLLI solver at
+the vertices, $960\times320$ cells to $t = 4$: the roll-up of the vortex
+sheet from the triple point is captured "very well", judged visually
+([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.1;
+[multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -119,3 +128,4 @@ zero gradients at the right, where the exit is always supersonic.
 11. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.7.
 12. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5.
 13. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVb, VIb, Figs. 3, 7, 8.
+14. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.1.

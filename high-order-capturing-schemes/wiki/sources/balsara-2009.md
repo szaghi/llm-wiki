@@ -9,7 +9,7 @@ year: 2009
 venue: "J. Comput. Phys. 228:2480-2516"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2009-JCP-Balsara-101016jjcp200812003.pdf"
 tags: [ader, weno, mhd, constrained-transport, legendre-basis, finite-volume]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -42,8 +42,10 @@ pages.
    (eqs. 46–48). Some terms are "non-evolutionary".
 5. **ADER-CG** (§3): a continuous-in-time Galerkin predictor in modal
    space, with explicit third-order formulas (second and fourth in the
-   appendices). It uses $K + 1$ iterations for order $K + 1$ and cannot
-   handle stiff sources.
+   appendices). It uses $K + 1$ iterations for order $K + 1$ ("we used
+   two, three and four ADER iterations for the second, third and fourth
+   order schemes … the minimum permissible number", §4.2 step 5, p. 2494)
+   and cannot handle stiff sources.
 6. **Fluxes and electric fields** (§4.1): HLL speeds are frozen at the
    space–time barycentre. Edge electric fields are averaged over four
    faces. The HLL dissipation bracket is doubled for the electric field.

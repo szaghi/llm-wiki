@@ -12,9 +12,9 @@ timestamp: 2026-10-13T00:00:00Z
 
 **The accuracy problem.** Nondimensionalized with a reference Mach
 number $\mathrm{Ma}_r$, the Euler momentum flux carries the pressure with
-a factor $1/\mathrm{Ma}_r^2$. As $\mathrm{Ma}_r \to 0$, the expansion
-$p = p_0(t) + \mathrm{Ma}_r^2\,p_2 + \dots$ and $\nabla\cdot\mathbf v = 0$
-follow. A correct scheme must therefore meet two requirements: data
+a factor $1/\mathrm{Ma}_r^2$. As $\mathrm{Ma}_r \to 0$, the pressure
+becomes a leading part that depends on time only plus fluctuations of
+order $\mathrm{Ma}_r^2$, and $\nabla\cdot\mathbf v = 0$ follows. A correct scheme must therefore meet two requirements: data
 prepared with pressure fluctuations of order $\mathrm{Ma}_r^2$ stay
 incompressible, and kinetic energy is conserved. Sound waves form a
 second class of solutions, with pressure fluctuations linear in
@@ -42,12 +42,13 @@ $$\hat f_{i+1/2} = \tfrac12\left[f(u^-) + f(u^+) - P_{\mathrm{pc}}^{-1}\,\big\ve
   spurious mass and energy fluxes from pressure differences, which ruins
   hydrostatic equilibrium in stratified flows.
 * The new matrix is the identity plus off-diagonal terms. In primitive
-  variables $(\rho, \mathbf v, p)$, the density row has
-  $n_d\,\rho\,\delta_{\mathrm{pc}}\mathrm{Ma}_r/c$ in the velocity columns.
-  The velocity rows have $-n_d\,\delta_{\mathrm{pc}}/(\rho c\,\mathrm{Ma}_r)$
+  variables $(\rho, \mathbf v, p)$, each entry below carries, as a
+  factor, the component of the face normal $\mathbf n$ that matches its
+  velocity column or row (eq. 37). The density row has
+  $\rho\,\delta_{\mathrm{pc}}\mathrm{Ma}_r/c$ in the velocity columns.
+  The velocity rows have $-\delta_{\mathrm{pc}}/(\rho c\,\mathrm{Ma}_r)$
   in the pressure column. The pressure row has
-  $n_d\,\rho c\,\delta_{\mathrm{pc}}\mathrm{Ma}_r$ in the velocity columns.
-  Here $n_d$ are the components of the face normal (eq. 37). The
+  $\rho c\,\delta_{\mathrm{pc}}\mathrm{Ma}_r$ in the velocity columns. The
   preconditioned dissipation then has the Mach scaling of the physical
   Jacobian.
 * $\mu_{\mathrm{pc}} \le 1$, so $\delta_{\mathrm{pc}} = 0$ whenever the

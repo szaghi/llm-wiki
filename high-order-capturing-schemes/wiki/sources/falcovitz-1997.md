@@ -8,7 +8,7 @@ authors: [Falcovitz J., Alfandary G., Hanoch G.]
 year: 1997
 venue: "J. Comput. Phys. 138:83–102"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1997-JCP-Falcovitz-101006jcph19975808.pdf"
-tags: [embedded-boundary, moving-boundary, cut-cell, boundary-treatment, euler]
+tags: [embedded-boundary, moving-boundary, boundary-treatment, euler]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

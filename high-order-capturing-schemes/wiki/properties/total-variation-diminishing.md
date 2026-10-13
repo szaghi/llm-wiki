@@ -5,15 +5,15 @@ description: "TVD: the discrete total variation does not grow; TVB: it stays uni
 status: established
 aliases: [TVD, TVB, total variation diminishing, total variation bounded]
 tags: [stability, tvd]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Total variation diminishing (TVD) and bounded (TVB)
 
 With $TV(u) = \sum_i \vert u_{i+1} - u_i\vert$, a scheme is **TVD** if
 $TV(u^{n+1}) \le TV(u^n)$, and **TVB** if $TV(u^n) \le B$ for a bound $B$
-depending only on $TV(u^0)$, for all $n$ and $\Delta t$ with
-$n\Delta t \le T$. Uniform boundedness of the total variation gives a
+depending only on $TV(u^0)$, for all $n$ and $\Delta t$ with $t^n$ up
+to a fixed final time. Uniform boundedness of the total variation gives a
 subsequence converging in $L^1_{\mathrm{loc}}$ to a weak solution
 (with a conservative scheme, by the Lax–Wendroff theorem); an entropy
 condition then identifies the limit
@@ -29,7 +29,14 @@ extrema). The limiter that enforces TVD makes the leading error
 coefficient discontinuous there. [Suresh & Huynh (1997)](/sources/suresh-1997.md)
 add a geometric reason: over a three-point stencil an extremum and a
 discontinuity look the same, so a TVD limiter cannot tell them apart;
-five points are the minimum to distinguish them.
+five points are the minimum to distinguish them. In the $L^1$ norm the
+loss shows as second order: Colella and Woodward's PPM uses third-order
+interpolants but, being TVD, is "restricted to being second-order
+accurate in the $L^1$ norm even for smooth problems with extrema", and
+so is Chakravarthy and Osher's class of TVD schemes of increasing order
+for monotone data; the TVD limiters are "highly non-linear", which makes
+their effect hard to remove after the fact
+([Balsara & Shu (2000)](/sources/balsara-2000.md), §I).
 
 **Examples.** Godunov's scheme and the MUSCL scheme are TVD in the
 scalar case ([Harten et al. (1987)](/sources/harten-1987.md)). Second

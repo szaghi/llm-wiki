@@ -5,7 +5,7 @@ description: "Explicit linear multistep methods written as convex combinations o
 status: established
 aliases: [SSP LMM, SSP multistep, TVD multistep, variable-step SSP multistep, SSPMSV]
 tags: [time-discretization, ssp, multistep]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # SSP linear multistep methods
@@ -93,7 +93,10 @@ enforces bounds:
 * Runge–Kutta methods "in conjunction with the limiter can lead to order
   reduction" ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md),
   §1, citing Gottlieb, Ketcheson & Shu 2011 and the Zhang–Shu
-  maximum-principle paper).
+  maximum-principle paper). This second reason is an open entry
+  ([positivity preservation](/properties/positivity-preserving.md),
+  Contradictions: "Does positivity limiting inside Runge–Kutta stages
+  reduce the order?").
 
 The variable-step condition shows the multistep method's price: it
 avoids unknown future stage speeds but must take the minimum of the

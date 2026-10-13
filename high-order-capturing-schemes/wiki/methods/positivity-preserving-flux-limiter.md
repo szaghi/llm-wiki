@@ -4,8 +4,8 @@ title: "Positivity-preserving flux limiters (high/low-order flux blending)"
 description: "Limit each interface flux towards a first-order positivity-preserving flux, with a blending factor chosen so the forward-Euler update stays admissible: the Hu–Adams–Shu cut-off limiter, the parameterized limiter of Christlieb et al. for MHD, and the PCP hybridization of Balsara et al."
 status: established
 aliases: [cut-off flux limiter, parametrized flux limiter, PCP flux hybridization, HAS limiter]
-tags: [positivity, limiter, flux-limiter, mhd]
-timestamp: 2026-10-08T00:00:00Z
+tags: [positivity, limiter, mhd]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Positivity-preserving flux limiters
@@ -35,8 +35,9 @@ page images).
 
 **Accuracy is shown a posteriori**: under the extra condition
 CFL $\le \sigma/2$, for a constant $0 < \sigma < 1$ (eq. 20), the limiter
-changes the flux by $O(h^{k+1})$ for smooth solutions with
-$g \ge M > 0$ (§2.3). The condition is weaker than the $\hat w_1$
+changes the flux by no more than the high-order flux's own truncation
+error (one power of $h$ above the order of the scheme) for smooth
+solutions with $g$ bounded below by a positive constant (§2.3). The condition is weaker than the $\hat w_1$
 bounds of the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md),
 and the limiter applies to any conservative FV or FD scheme. On
 advection of $1 + 10^{-6} + \cos 2\pi x$ with WENO5 at the maximal
@@ -53,8 +54,14 @@ discontinuities, which the unlimited scheme cannot compute (§3).
 
 ([Christlieb et al. (2016)](/sources/christlieb-2016.md), §5.) The
 low-order flux is the global Lax–Friedrichs flux on the cell values;
-its positivity for MHD under CFL $\le 0.5$ is assumed, not proven
-([positivity preservation](/properties/positivity-preserving.md), Contradictions).
+its positivity for MHD under CFL $\le 0.5$ is assumed by Christlieb
+et al., who call it conjectured and "not proven". Later sources report
+proofs that are not in the corpus: Balsara, Bhoriya & Shu (2026, §5.1)
+cite Gurski, and Ding & Wu (2024, §1) cite Wu (2018), conditional in
+multi-D on a discrete divergence-free condition. The question stays open
+([positivity preservation](/properties/positivity-preserving.md),
+Contradictions: "Is the first-order Lax–Friedrichs MHD scheme provably
+positive?"; [Ding & Wu (2024)](/sources/ding-2024.md), §1).
 In 2D each cell's update is affine in four interface factors
 $(\theta_L, \theta_R, \theta_D, \theta_U)$, and the admissible sets in
 $[0,1]^4$ for density, and for density plus pressure, are convex (density
@@ -81,4 +88,5 @@ Hu et al.
 
 1. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §§2–3 (eqs. 11–21 read from the page images).
 2. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 5, 6.7.
-3. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §5.
+3. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§5, 5.1.
+4. [Ding & Wu (2024)](/sources/ding-2024.md), §1.

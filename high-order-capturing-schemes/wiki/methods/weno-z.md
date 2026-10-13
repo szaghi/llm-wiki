@@ -5,7 +5,7 @@ description: "Borges–Carmona–Costa–Don weights built from a global higher-
 status: established
 aliases: [WENO-Z, WENO-Z schemes]
 tags: [weno, nonlinear-weights, critical-points, dissipation]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # WENO-Z
@@ -47,10 +47,15 @@ $r = 6$. The general weight uses $(\tau_{2r-1}/(\beta_k + \varepsilon))^q$.
 * **Critical points:** raising $q$ restores order at critical points for
   WENO-Z only — with $q = r - 1$ the full order returns for
   $n_{\mathrm{cp}} < r - 1$; changing $q$ in WENO-JS or WENO-M does not
-  change their rates. Taking $\varepsilon$ of size $h^2$ (they use
-  $\varepsilon = h^{r-1}$) acts as an implicit conditional between flat
-  and rough regions and recovers the formal order at
-  $n_{\mathrm{cp}} = r - 1$.
+  change their rates. Taking $\varepsilon$ of size $h^2$ acts as an
+  implicit conditional between flat and rough regions: with
+  $\varepsilon = h^2$ and $q = 1$, WENO-Z of orders 5–11 recovers the
+  formal order at $n_{\mathrm{cp}} = r - 1$ (Table 5), and "the same
+  occurs for WENO-JS and WENO-M (not shown)" (§4). The value
+  $\varepsilon = h^{r-1}$ used in almost all their shock tests is a
+  separate compromise, chosen to stop a fixed ε from dominating and to
+  bound the ratio of the indicators (Remark 13); it is not the value of
+  the critical-point table (corrected at the 2026-10-13 deep lint).
 * **Dissipation hierarchy:** for the same $q$, WENO-JS is the most
   dissipative and WENO-M the least, WENO-Z in between; larger $q$
   increases dissipation for all three. With $q = 1$ none of the three
@@ -114,3 +119,5 @@ reconstruction of a provably positive MHD scheme
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §3.2.3 (arXiv v2).
 8. [Berta et al. (2024)](/sources/berta-2024.md), §3.2 (arXiv v4).
 9. [Ding & Wu (2024)](/sources/ding-2024.md), §2.2.2 (arXiv v1).
+10. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2 (eqs. 2.19–2.20).
+11. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §3.1 (eqs. 3.6–3.7).

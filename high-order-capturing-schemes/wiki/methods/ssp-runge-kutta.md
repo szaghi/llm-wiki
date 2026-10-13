@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods written as convex combinations of f
 status: established
 aliases: [TVD Runge-Kutta, SSP Runge-Kutta, Shu-Osher Runge-Kutta, SSP-RK3]
 tags: [time-discretization, ssp, tvd, method-of-lines]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # TVD / strong-stability-preserving Runge–Kutta methods
@@ -18,7 +18,8 @@ $$u^{(i)} = \sum_{k=0}^{i-1}\left(a_{ik}\,u^{(k)} + b_{ik}\,\Delta t\,\mathcal{L
 If also $b_{ik} \ge 0$, every stage is a convex combination of forward
 Euler steps with step $(b_{ik}/a_{ik})\Delta t$, hence TVD for
 $\Delta t \le \mathcal{C}\,\Delta t_{\mathrm{FE}}$ with
-$\mathcal{C} = \min a_{ik}/b_{ik}$. Where some $b_{ik} < 0$, the
+$\mathcal{C} \ge \min a_{ik}/b_{ik}$ (equal for an optimal Shu–Osher
+representation; see the registry and the batch-9 qualification below). Where some $b_{ik} < 0$, the
 operator is replaced by the downwind operator $\tilde{\mathcal{L}}$
 (Proposition 2.1). The total variation may be replaced by any convex
 functional (Remark 2.1): the methods preserve maximum-norm stability,
@@ -43,11 +44,18 @@ u^{n+1} &= \tfrac13 u^n + \tfrac23 u^{(2)} + \tfrac23\Delta t\,\mathcal{L}(u^{(2
 **Fourth order and above.** No four-stage, fourth-order method with
 nonnegative coefficients exists (proved by Gottlieb and Shu, cited in
 [Shu (1998)](/sources/shu-1998.md)). Their preferred four-stage
-fourth-order method uses $\tilde{\mathcal{L}}$, has $\mathcal{C} = 0.936$,
-and costs two operator evaluations at one stage, an effective
-$\mathcal{C}$ of $0.624$. A fifth-order method with $\tilde{\mathcal{L}}$
-is given by [Shu & Osher (1988)](/sources/shu-1988.md). Third-order
-low-storage methods (two registers) reach $\mathcal{C} \approx 0.32$.
+fourth-order method uses $\tilde{\mathcal{L}}$ and has $\mathcal{C} = 0.936$.
+Two $\tilde{\mathcal{L}}$ evaluations must be computed besides the four
+$\mathcal{L}$ evaluations, so compared with an ideal four-stage method
+without $\tilde{\mathcal{L}}$ its coefficient is worth
+$0.936 \times 4/6 = 0.624$ ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §4.1).
+That figure is relative to the ideal method, not the effective
+coefficient $\mathcal{C}_{\mathrm{eff}} = \mathcal{C}/s$ (corrected at the
+2026-10-13 deep lint). A fifth-order method with $\tilde{\mathcal{L}}$
+is given by [Shu & Osher (1988)](/sources/shu-1988.md). The best
+three-stage, third-order SSP method found in the two-register
+(Williamson) low-storage form has $\mathcal{C} \approx 0.32$
+([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §4.2).
 TVD multistep methods exist to third order with $\mathcal{C} = 0.5$
 per evaluation; none of fourth order without negative coefficients was
 found ([Shu (1998)](/sources/shu-1998.md), §4.2.2).
@@ -329,3 +337,4 @@ von Neumann analysis of the full discretization.
 49. [Nüßlein, Ranocha & Ketcheson (2021)](/sources/nusslein-2021.md), §2.1 (arXiv v2).
 50. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §§5, 7, App. A.
 51. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §§1–4 (arXiv v2).
+52. [Shu & Osher (1989)](/sources/shu-1989.md), §§1, 3.

@@ -25,7 +25,7 @@ sources here are by Balsara and co-workers.
 
 **Before such solvers.** An ADER–WENO MHD scheme averaged edge electric
 fields over the four adjoining faces and, for the electric fields only
-and only where $\lambda_L < 0 < \lambda_R$, doubled the HLL dissipation
+and only where $S_L < 0 < S_R$, doubled the HLL dissipation
 bracket ([Balsara et al. (2009)](/sources/balsara-2009.md),
 §4.1). A multidimensional solver removes any need for that doubling
 ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1), and doubling

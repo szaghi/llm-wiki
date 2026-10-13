@@ -4,7 +4,7 @@ title: "Inverse Lax–Wendroff numerical boundary treatment"
 description: "Ghost-point values for wide-stencil high-order finite differences on Cartesian grids cut by an arbitrary boundary: a Taylor expansion from the boundary point whose normal derivatives come from the boundary data through the PDE (inflow) or from extrapolation (outflow), stable under the periodic CFL limit for any cut-cell distance; extended to sign-changing wind, exact conservation, moving bodies and fluid–structure interfaces."
 status: established
 aliases: [ILW, simplified inverse Lax-Wendroff, SILW, inverse Lax-Wendroff procedure, cut-cell boundary treatment, moving-boundary ILW]
-tags: [boundary-treatment, finite-difference, weno, stability, cut-cell, moving-boundary, conservation]
+tags: [boundary-treatment, finite-difference, weno, stability, cartesian-grid, moving-boundary, conservation]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -98,11 +98,14 @@ visualizes the eigenvalue spectrum of the full matrix.
 $u_t + f(u)_x = \mu u_{xx}$ the two limits need opposite treatments.
 Pure convection takes $u_x$ from ILW and $u_{xx}$ from extrapolation.
 Pure diffusion takes $u_x$ from extrapolation and $u_{xx}$ from ILW,
-$u^{\mathrm{ilw}}_{xx} = \frac1\mu\left(g' + f'(g)\,u^{\mathrm{ext}}_x\right)$.
-The general case blends the two (eqs. 2.10–2.11, checked on the page image):
-$$\theta_{\mathrm{ILW}} = \frac{f'(g)^2h^2}{f'(g)^2h^2 + 9\mu^2},\qquad
-u_x = \theta_{\mathrm{ILW}}u^{\mathrm{ilw}}_x + (1 - \theta_{\mathrm{ILW}})u^{\mathrm{ext}}_x,\qquad
-u_{xx} = (1 - \theta_{\mathrm{ILW}})u^{\mathrm{ilw}}_{xx} + \theta_{\mathrm{ILW}}u^{\mathrm{ext}}_{xx}.$$
+that is from the boundary equation $\mu u_{xx} = g' + f'(g)\,u_x$ with
+the extrapolated $u_x$ inserted. The general case blends the two
+(eqs. 2.10–2.11, checked on the page image) with
+$$\theta_{\mathrm{ILW}} = \frac{f'(g)^2h^2}{f'(g)^2h^2 + 9\mu^2}:$$
+the boundary $u_x$ is $\theta_{\mathrm{ILW}}$ times its ILW value plus
+$1 - \theta_{\mathrm{ILW}}$ times its extrapolated value, and the
+boundary $u_{xx}$ is $1 - \theta_{\mathrm{ILW}}$ times its ILW value plus
+$\theta_{\mathrm{ILW}}$ times its extrapolated value.
 * **Systems.** The convective matrix is diagonalized for the
   convection-dominated treatment, imposing characteristic inflow data.
   The diffusion matrix is diagonalized for the diffusion-dominated one,

@@ -4,7 +4,7 @@ title: "Slowly moving shock anomaly"
 description: "Spurious post-shock oscillations, and a spike in the conserved flux of the shock cell, produced when a captured shock moves slowly relative to the grid; the captured intermediate state is an admissible point of the curved Hugoniot locus, which Navas-Montilla & Murillo argue makes the anomaly appear with any Riemann solver (contested: Osher's solver with O-ordering, see Contradictions) and not shrink under grid refinement."
 status: established
 aliases: [slowly-moving shock, post-shock oscillations, discharge spike]
-tags: [shock-instability, riemann-solver, robustness, definition]
+tags: [shock-instability, riemann-solver, robustness]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -142,6 +142,26 @@ anomaly for strong shocks in gas dynamics.
   (Navas-Montilla & Murillo compare two solvers, both with Roe speeds).
   Neither source shows whether Osher's captured intermediate state lies on
   the Hugoniot locus, the premise in dispute.
+  * *Later evidence on solver dependence* (added at the 2026-10-13 deep
+    lint). Several sources find that the **amplitude** of the post-shock
+    oscillations depends on the flux or scheme. On a slowly moving Euler
+    shock (1000 cells, second order, $t = 1.5$) HLLC gives "the maximum
+    oscillation amplitude in the post-shock state" and HLL-BVD "clearly"
+    the most stable solution (HLL, by elimination, lies between them)
+    ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III D,
+    Fig. 7). Fluxes that spread the shock over a few cells or carry
+    multidimensional dissipation are insensitive to shock speed
+    ([Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V).
+    MUSCL as a Lagrange step plus remap is not noisy along the nearly
+    steady reflected shock of the double Mach reflection where single-step
+    Eulerian MUSCL is ([Woodward & Colella (1984)](/sources/woodward-1984.md),
+    §VIc, Fig. 10).
+  * *Scope: presence against amplitude.* Navas-Montilla & Murillo's claim
+    is about **presence** (the spike exists with any solver); the evidence
+    above is about **amplitude**, which none of these sources measures as
+    zero, so it does not refute the presence claim. Only Toro's Osher
+    result asserts absence, and it rests on one visual plot. The entry
+    stays open.
 
 # Citations
 
@@ -151,3 +171,4 @@ anomaly for strong shocks in gas dynamics.
 4. [Xie et al. (2021)](/sources/xie-2021.md), §5.
 5. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIb–VIc.
 6. [Toro (1997)](/sources/toro-1997.md), §§6.4.1, 12.4.
+7. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III D, Fig. 7.

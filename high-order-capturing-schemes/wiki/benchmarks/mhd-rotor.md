@@ -102,6 +102,15 @@ $t = 0.295$; boundary conditions not printed.
   pressure-switch variant give identical results at $t = 0.295$
   ([constrained transport](/methods/constrained-transport.md)).
 
+**Later uses (batch 11, Balsara & Nkonga; merged at the 2026-10-13 deep
+lint).** Fourth-order ADER–WENO with the multidimensional HLLI (MuSIC)
+solver at the vertices, on $[-0.5, 0.5]^2$ with $1000^2$ cells, rotor
+radius 0.1, $t = 0.29$; the states are not printed and the result is
+shown qualitatively ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.3;
+[multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+It is the same resolution and order as the review's run in the batch-7
+entry above.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.4.
@@ -118,3 +127,4 @@ $t = 0.295$; boundary conditions not printed.
 12. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
 13. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6.
 14. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.1 and the erratum (J. Comput. Phys. 153:671).
+15. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.3.

@@ -5,7 +5,7 @@ description: "Henrick–Aslam–Powers correction of WENO-JS: each nonlinear wei
 status: established
 aliases: [WENO-M, WENO5M, mapped WENO]
 tags: [weno, nonlinear-weights, critical-points]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Mapped WENO (WENO-M)
@@ -44,7 +44,14 @@ five as ε takes over — the explanation of the "super-convergence"
 Applied once or twice to WENO of $r = 2$–$6$, the mapping recovers the
 design order for $1 \le n_{\mathrm{cp}} < r - 1$; at
 $n_{\mathrm{cp}} = r - 1$ the weights are $O(1)$ from ideal and no
-mapping helps.
+mapping helps ([Henrick et al. (2005)](/sources/henrick-2005.md), §6,
+an analysis with $\varepsilon = 0$). That limit depends on ε: with
+$\varepsilon = h^2$, Castro, Costa & Don recover the formal order at
+$n_{\mathrm{cp}} = r - 1$ for WENO-Z (orders 5–11, $q = 1$) and state
+that "the same occurs for WENO-JS and WENO-M (not shown)"
+([Castro et al. (2011)](/sources/castro-2011.md), §4, Table 5); their
+shock tests use $\varepsilon = h^{r-1}$ instead, as a compromise
+(Remark 13).
 
 **With shocks.** WENO5M is sharper than WENO5 on the Shu–Osher problem,
 the blast waves and Lax's problem, and about 10 % more accurate on Sod,
@@ -54,8 +61,10 @@ geometric", and enthusiasm for high order with shocks "should be
 proportionately tempered" ([Henrick et al. (2005)](/sources/henrick-2005.md), §§5.4–5.7).
 
 **Cost and dissipation.** The mapping adds 20–30 % CPU over WENO-JS
-([Borges et al. (2008)](/sources/borges-2008.md);
-[Castro, Costa & Don (2011)](/sources/castro-2011.md)). For the same
+([Castro, Costa & Don (2011)](/sources/castro-2011.md), §2.2). Borges
+et al. time it the other way round: WENO-Z, at the cost of WENO-JS, takes
+about 75 % of the CPU time of WENO-M, i.e. about 25 % less
+([Borges et al. (2008)](/sources/borges-2008.md), §§1, 5, Tables 5–6). For the same
 power $q$, WENO-M assigns the largest weights to discontinuous stencils
 of the three schemes (JS, Z, M), hence it is the least dissipative and
 also the one that needs the largest $q$ to stay non-oscillatory at high
@@ -65,6 +74,6 @@ order ([Castro et al. (2011)](/sources/castro-2011.md), §5;
 # Citations
 
 1. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §§3–6 (eqs. 37–46 and 60 read from the page images).
-2. [Borges et al. (2008)](/sources/borges-2008.md), §2.
+2. [Borges et al. (2008)](/sources/borges-2008.md), §§1–2, 5.
 3. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §§2, 4–5.
 4. [Shu (2020)](/sources/shu-2020.md), §3.2.1.

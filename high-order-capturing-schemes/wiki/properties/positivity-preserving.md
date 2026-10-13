@@ -5,7 +5,7 @@ description: "A scheme is positivity-preserving if cell averages (or point value
 status: established
 aliases: [positivity-preserving, physical-constraint-preserving, PCP, invariant-domain preserving]
 tags: [positivity, euler, mhd, admissible-set]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Positivity preservation
@@ -229,11 +229,22 @@ limiter "very simple and local", most convenient for FV and extended to FD
   [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.3: the limiter's
   modification is $O(h^{K+1})$ for smooth solutions bounded away from
   vacuum, so the order is not degraded.
+* *For, by test (added at the 2026-10-13 deep lint).*
+  [Zhang & Shu (2012)](/sources/zhang-2012.md), §5, Example 5.1,
+  Table 5.1: fifth-order FD WENO with the limiter applied at every stage
+  of third-order SSP Runge–Kutta (Remark 3.3) shows fifth order in $L^1$
+  on the near-vacuum isentropic vortex (lowest density about
+  $7.8 \times 10^{-15}$), refined to $h = 1/64$. The test takes
+  $\Delta t = h^{5/3}$ so that the spatial error dominates, and runs to
+  $t = 0.01$ only; it does not probe a time-step-dominated regime.
 * [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1: "Use of
   Runge–Kutta methods in conjunction with the limiter can lead to order
   reduction, so linear multistep methods are recommended", citing
   Gottlieb, Ketcheson & Shu (2011) and Zhang & Shu's maximum-principle
-  paper, neither ingested; the paper shows no test of it.
+  paper, neither ingested; the paper shows no test of it. The
+  "Against" side is thus a single secondhand remark without a test in
+  the corpus, while the "For" side has two proofs and one convergence
+  table.
 * The scopes may differ: the proofs bound the per-stage spatial
   modification, while the order-reduction remark concerns the full
   Runge–Kutta step. Ingesting the cited sources, or a convergence test of
@@ -270,7 +281,7 @@ limiter "very simple and local", most convenient for FV and extended to FD
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §§1–2.
-2. [Zhang & Shu (2012)](/sources/zhang-2012.md), §§1–4.
+2. [Zhang & Shu (2012)](/sources/zhang-2012.md), §§1–5 (Example 5.1, Table 5.1).
 3. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §§1–2.
 4. [Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4.
 5. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 5.

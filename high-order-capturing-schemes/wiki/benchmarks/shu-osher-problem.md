@@ -4,16 +4,17 @@ title: "Shu–Osher shock/entropy-wave interaction"
 description: "A Mach 3 shock running into a sinusoidal density (entropy) field: smooth structure behind a shock, where high-order capturing schemes show their largest advantage over TVD schemes."
 status: established
 aliases: [Shu-Osher problem, shock-entropy wave interaction, Shu's problem]
-tags: [benchmark, euler, shock-turbulence, high-order]
-timestamp: 2026-10-12T00:00:00Z
+tags: [benchmark, euler, turbulence, high-order]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Shu–Osher shock/entropy-wave interaction
 
 **Set-up** ([Shu & Osher (1989)](/sources/shu-1989.md), Example 8). The
 1D Euler equations with a right-moving Mach 3 shock entering a state
-whose density carries a sine perturbation of amplitude $\varepsilon$
-($\varepsilon = 0.2$; $\varepsilon = 0$ is a pure shock). The post-shock
+whose density carries a sine perturbation of amplitude 0.2 (amplitude
+0 is a pure shock; written in words, since $\varepsilon$ is the weight
+regularization). The post-shock
 state printed in later uses is
 $(\rho, v, p) = (3.857143,\ 2.629369,\ 10.3333)$
 ([Jiang & Shu (1996)](/sources/jiang-1996.md);
@@ -32,7 +33,7 @@ noise. Results in this corpus:
 * MP5 and WENO5 compared by [Suresh & Huynh (1997)](/sources/suresh-1997.md).
 
 **Weak-wave variant** ([Jiang & Shu (1996)](/sources/jiang-1996.md),
-§8.2 Example 2). Amplitude $\varepsilon = 0.01$, wave number $k = 13$ on
+§8.2 Example 2). Amplitude 0.01, wave number $k = 13$ on
 $[0, 5]$; the shock is run to $x = 4.5$ and shuffled back to remove the
 start-up transient. The amplified entropy wave is compared with the
 linear-theory amplitude 0.08690716. At 800 points (about 20 per

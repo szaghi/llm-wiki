@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Order barriers and optimal coefficients of SSP time discretizations"
-description: "What strong-stability-preserving Runge–Kutta and multistep methods can and cannot reach: SSP coefficient at most 1 for m-stage order-m methods, no four-stage fourth-order method without the downwind operator, multistep step-count barriers, and no implicit SSP method above first order."
+description: "What strong-stability-preserving Runge–Kutta and multistep methods can and cannot reach: SSP coefficient at most 1 for s-stage order-s methods, no four-stage fourth-order method without the downwind operator, multistep step-count barriers, and no implicit SSP method above first order."
 status: established
 aliases: [SSP barriers, SSP order barrier, optimal SSP methods]
 tags: [time-discretization, ssp, impossibility]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Order barriers and optimal coefficients of SSP time discretizations
@@ -14,41 +14,48 @@ The setting is the [SSP Runge–Kutta](/methods/ssp-runge-kutta.md)
 framework: forward Euler is strongly stable in some norm or convex
 functional for $\Delta t \le \Delta t_{\mathrm{FE}}$, and a higher-order
 method in Shu–Osher form inherits the property for
-$\Delta t \le \mathcal{C}\,\Delta t_{\mathrm{FE}}$ with
-$\mathcal{C} = \min a_{ik}/\vert b_{ik}\vert$ (using $\tilde{\mathcal{L}}$
-where $b_{ik} < 0$). "SSP" replaces the earlier name "TVD time
+$\Delta t \le \mathcal{C}\,\Delta t_{\mathrm{FE}}$, where
+$\min a_{ik}/\vert b_{ik}\vert$ (using $\tilde{\mathcal{L}}$ where
+$b_{ik} < 0$) is a lower bound on $\mathcal{C}$, equal to it for an
+optimal Shu–Osher representation (the coefficient belongs to the method,
+not to one representation; see [notation](/notation.md)). "SSP" replaces the earlier name "TVD time
 discretization", because nothing in the argument is specific to total
 variation ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), §1).
 The results below are all from Gottlieb, Shu & Tadmor unless stated.
 
 ## Runge–Kutta
 
-* **$\mathcal{C} \le 1$ for $m$ stages and order $m$** (Proposition 3.1):
-  with nonnegative coefficients, no $m$-stage method of order $m$ beats
+* **$\mathcal{C} \le 1$ for $s$ stages and order $s$** (Proposition 3.1):
+  with nonnegative coefficients, no $s$-stage method of order $s$ beats
   forward Euler's step, already for linear $\mathcal{L}$. Dropping the
-  order requirement lifts the bound: an $m$-stage first-order method
-  reaches $\mathcal{C} = m$ (suitable for steady states).
+  order requirement lifts the bound: an $s$-stage first-order method
+  reaches $\mathcal{C} = s$ (suitable for steady states).
 * **Linear problems, any order** (Proposition 3.2): for linear
-  $\mathcal{L}$ the unique $m$-stage order-$m$ method is SSP with
-  $\mathcal{C} = 1$. It is built as $m-1$ forward-Euler stages followed by
-  $$u^{(m)} = \sum_{k=0}^{m-2} a_{m,k}\,u^{(k)} + a_{m,m-1}\left(u^{(m-1)} + \Delta t\,\mathcal{L}u^{(m-1)}\right),$$
-  with $a_{m,k} = a_{m-1,k-1}/k$, $a_{m,m-1} = 1/m!$,
-  $a_{m,0} = 1 - \sum_{k\ge1} a_{m,k}$, all nonnegative. Examples are the
+  $\mathcal{L}$ the unique $s$-stage order-$s$ method is SSP with
+  $\mathcal{C} = 1$. It is built as $s-1$ forward-Euler stages followed by
+  $$u^{(s)} = \sum_{k=0}^{s-2} a_{s,k}\,u^{(k)} + a_{s,s-1}\left(u^{(s-1)} + \Delta t\,\mathcal{L}u^{(s-1)}\right),$$
+  with $a_{s,k} = a_{s-1,k-1}/k$, $a_{s,s-1} = 1/s!$,
+  $a_{s,0} = 1 - \sum_{k\ge1} a_{s,k}$, all nonnegative. Examples are the
   convex decompositions
   $\sum_{k=0}^{3}\frac{(\Delta t\mathcal{L})^k}{k!} = \frac13 + \frac12(I+\Delta t\mathcal{L}) + \frac16(I+\Delta t\mathcal{L})^3$
   and
   $\sum_{k=0}^{4}\frac{(\Delta t\mathcal{L})^k}{k!} = \frac38 + \frac13(I+\Delta t\mathcal{L}) + \frac14(I+\Delta t\mathcal{L})^2 + \frac1{24}(I+\Delta t\mathcal{L})^4$.
-  For nonlinear $\mathcal{L}$ the same schemes stay SSP but lose order $m$.
+  For nonlinear $\mathcal{L}$ the same schemes stay SSP but lose order $s$.
 * **Fourth order needs $\tilde{\mathcal{L}}$** (Proposition 4.2; proved
   in Gottlieb & Shu 1998): every four-stage fourth-order method with
   $\mathcal{C} > 0$ has a negative $b_{ik}$. The best method found has
-  $\mathcal{C} = 0.936$ with two $\tilde{\mathcal{L}}$ evaluations, an
-  effective $0.936 \times 4/6 = 0.624$; its optimality is not claimed.
+  $\mathcal{C} = 0.936$ but needs two extra $\tilde{\mathcal{L}}$ evaluations,
+  so relative to an ideal four-evaluation method it gives
+  $0.936 \times 4/6 = 0.624$ (not $\mathcal C_{\mathrm{eff}}$ in the registry
+  sense); its optimality is not claimed.
   This agrees with [Shu (1998)](/sources/shu-1998.md), §4.2.2, and with
   [Shu & Osher (1988)](/sources/shu-1988.md), whose search for fourth
   order could not avoid negative $b_{ik}$.
-* **Low storage**: the best two-register third-order method found has
-  $\mathcal{C} = 0.32$; no SSP five-stage fourth-order member of the
+* **Low storage**: the best three-stage third-order method found in the
+  Williamson low-storage form has $\mathcal{C} = 0.32$ (§4.2; two
+  registers do not by themselves cap $\mathcal{C}$ there: SSP(4,3) reaches
+  $\mathcal{C} = 2$ in two registers, see *Later uses (batch 9)* below;
+  corrected at the 2026-10-13 deep lint); no SSP five-stage fourth-order member of the
   Carpenter–Kennedy low-storage class with positive coefficients was
   found, and a low-storage method with a negative $b_{ik}$ cannot use
   $\tilde{\mathcal{L}}$ and so cannot be made SSP.

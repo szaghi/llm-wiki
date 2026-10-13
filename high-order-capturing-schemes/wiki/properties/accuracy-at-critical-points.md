@@ -5,7 +5,7 @@ description: "Whether a nonlinear capturing scheme keeps its design order where 
 status: established
 aliases: [order at extrema, critical-point accuracy, degeneracy at extrema]
 tags: [accuracy, weno, eno, limiter, critical-points]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Accuracy at critical points
@@ -58,7 +58,7 @@ stencil ([Suresh & Huynh (1997)](/sources/suresh-1997.md), Fig. 2.1).
   dominates the indicators on fine grids, which is why the earlier
   tests missed it. For $r \le 6$ and $\varepsilon = 0$ the rate near a
   critical point of order $n_{\mathrm{cp}}$ is
-  $$r_c = \max(2r - 2 - n_{\mathrm{cp}},\ n_{\mathrm{cp}}),$$
+  $$\max(2r - 2 - n_{\mathrm{cp}},\ n_{\mathrm{cp}}),$$
   two orders below design at $n_{\mathrm{cp}} = 1$ and down to $r - 1$
   (eq. 60). The fix: [mapped WENO](/methods/mapped-weno.md).
 * **Later weights.** [WENO-Z](/methods/weno-z.md): fourth order at

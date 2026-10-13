@@ -4,17 +4,22 @@ title: "Smoothness indicator"
 description: "The per-stencil measure β_k that drives WENO weights: O(h²) on smooth data, O(1) across a jump; its form (undivided differences vs. L² norms of derivatives) decides the achievable order, including at critical points."
 status: established
 aliases: [smoothness indicator, smoothness measurement, IS_k, beta_k]
-tags: [weno, nonlinear-weights, definition]
-timestamp: 2026-10-08T00:00:00Z
+tags: [weno, nonlinear-weights]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Smoothness indicator
 
 The quantity $\beta_k$ assigned to candidate stencil $S_k$ in the
 [WENO](/methods/weno.md) weights. It must be $O(1)$ when $S_k$ contains a
-discontinuity and small when the data on $S_k$ are smooth; to reach
-order $2r-1$ the indicators of all smooth stencils must agree to
-relative order $h^{r-1}$, $\beta_k = D\left(1 + O(h^{r-1})\right)$.
+discontinuity and small when the data on $S_k$ are smooth. Jiang and
+Shu's design rule asks the indicators of all smooth stencils to agree to
+relative order $h^{r-1}$: each $\beta_k$ equals one common nonzero
+quantity, independent of $k$, times $\left(1 + O(h^{r-1})\right)$. This
+makes each flux accurate to order $2r-1$ by itself; the order of the flux
+*difference* needs Henrick et al.'s further condition
+([accuracy conditions on WENO weights](/results/weno-weight-accuracy-conditions.md);
+[Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §3).
 
 **Undivided differences** ([Liu, Osher & Chan (1994)](/sources/liu-1994.md)):
 the sum, over orders $l = 1, \dots, r-1$, of the averaged squares of the
@@ -32,7 +37,10 @@ $$\beta_k = \sum_{l=1}^{r-1}\int_{x_{i-1/2}}^{x_{i+1/2}} h^{2l-1}\left(\frac{d^l
 "emulating the idea of minimizing the total variation"; the factor
 $h^{2l-1}$ removes the $h$-dependence, which keeps the scheme
 self-similar. For $r = 2$ it coincides with the Liu–Osher–Chan
-indicator. For $r = 3$, in flux values,
+indicator. Shu's lecture notes give the same integral with the explicit
+$r = 2$ and $r = 3$ formulas, and call it "similar to but smoother than"
+a total-variation measure based on the $L^1$ norm
+([Shu (1998)](/sources/shu-1998.md), eqs. 2.61–2.63). For $r = 3$, in flux values,
 $$\begin{aligned}
 \beta_0 &= \tfrac{13}{12}\left(f_{i-2} - 2f_{i-1} + f_i\right)^2 + \tfrac14\left(f_{i-2} - 4f_{i-1} + 3f_i\right)^2,\\
 \beta_1 &= \tfrac{13}{12}\left(f_{i-1} - 2f_i + f_{i+1}\right)^2 + \tfrac14\left(f_{i-1} - f_{i+1}\right)^2,\\
@@ -122,8 +130,8 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
   forms such as
   $\beta_1 = \tfrac13\left(4u_{i-2}^2 - 19u_{i-2}u_{i-1} + 25u_{i-1}^2 + 11u_{i-2}u_i - 31u_{i-1}u_i + 10u_i^2\right)$
   ([Shu (2009)](/sources/shu-2009.md), eq. 2.9, read from the page image).
-* *For an $m$-th derivative*, the sum must start at derivative order
-  $m + 1$ ([Shu (2020)](/sources/shu-2020.md), §3.4.1).
+* *For an $l$-th derivative*, the sum must start at derivative order
+  $l + 1$ ([Shu (2020)](/sources/shu-2020.md), §3.4.1).
 * A Zhang–Shu indicator improves steady-state convergence ([Shu (2009)](/sources/shu-2009.md), §2.3.5).
 
 # Citations
@@ -141,3 +149,10 @@ likelihood of the data, and no Taylor-expansion accuracy proof is given
 11. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §4.
 12. [Shu (2009)](/sources/shu-2009.md), §§2.1, 2.3.5.
 13. [Shu (2020)](/sources/shu-2020.md), §§3.1, 3.4.1.
+14. [Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), §§2–3.
+15. [Borges et al. (2008)](/sources/borges-2008.md), §3 (eqs. 25–28).
+16. [Castro, Costa & Don (2011)](/sources/castro-2011.md), §3 (Theorem 2).
+17. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), eqs. 24–27.
+18. [Zhu & Qiu (2016)](/sources/zhu-2016.md), §2 (eqs. 2.11–2.16).
+19. [Balsara, Garain & Shu (2016)](/sources/balsara-2016.md), §2.
+20. [Rathan & Naga Raju (2017)](/sources/rathan-2017.md), §3.

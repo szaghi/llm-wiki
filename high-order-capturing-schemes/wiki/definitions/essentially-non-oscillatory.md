@@ -4,20 +4,21 @@ title: "Essentially non-oscillatory (ENO property)"
 description: "A reconstruction or scheme is essentially non-oscillatory if it produces no Gibbs-like O(1) oscillations at discontinuities, while oscillations at the level of the truncation error are allowed."
 status: established
 aliases: [ENO property, essentially non-oscillatory]
-tags: [eno, definition, stability]
-timestamp: 2026-10-08T00:00:00Z
+tags: [eno, stability]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Essentially non-oscillatory (ENO property)
 
 **Harten et al.** ([Harten et al. (1987)](/sources/harten-1987.md)):
-a reconstruction $R(x; \bar w)$ of a piecewise smooth $w$ is
-essentially non-oscillatory when
-$$TV\left(R(\cdot; \bar w)\right) \le TV(w) + O(h^r)$$
-(their eq. 1.9c, with $r$ the order) — it does not generate $O(1)$ oscillations
-proportional to the jump at a discontinuity, though it may generate
-spurious oscillations of the size of the truncation error, $O(h^r)$, in
-smooth regions. In the scalar case the abstract ENO scheme inherits this
+a piecewise-polynomial reconstruction $\mathcal P$ from the cell
+averages of a piecewise smooth $w$, of degree $K$ in each cell and so of
+order $K + 1$, is essentially non-oscillatory when
+$$TV\left(\mathcal P\right) \le TV(w) + O(h^{K+1})$$
+(their eq. 1.9c, in registry symbols) — it does not generate $O(1)$
+oscillations proportional to the jump at a discontinuity, though it may
+generate spurious oscillations of the size of the truncation error,
+$O(h^{K+1})$, in smooth regions. In the scalar case the abstract ENO scheme inherits this
 property because the exact evolution and the cell averaging are both
 monotone.
 
@@ -32,7 +33,7 @@ The notion sits in a hierarchy that each step weakens:
 
 **Shu's reading** ([Shu (1998)](/sources/shu-1998.md)): an
 interpolation is essentially non-oscillatory when "the magnitude of the
-oscillations decays as $O(h^k)$ where $k$ is the order of accuracy", for
+oscillations decays as" $h$ to the power of the order of accuracy, for
 piecewise smooth functions; and the ENO reconstruction is TVB
 ([ENO](/methods/eno-reconstruction.md)).
 

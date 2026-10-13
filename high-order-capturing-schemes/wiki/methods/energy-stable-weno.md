@@ -5,7 +5,7 @@ description: "WENO finite differences recast as a summation-by-parts operator pl
 status: established
 aliases: [ESWENO, energy stable WENO, SBP-WENO, summation-by-parts WENO, ESWENO3-4-3, ESWENO2-4-2]
 tags: [weno, finite-difference, boundary-treatment, stability, summation-by-parts, nonlinear-weights]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Energy-stable WENO (ESWENO) with summation-by-parts boundary closures
@@ -14,7 +14,8 @@ timestamp: 2026-10-08T00:00:00Z
 Conventional WENO has no energy estimate: the symmetric part of its
 nonlinear operator can have eigenvalues in the right half-plane. Near
 boundaries it uses ad hoc closures. Discarding stencils that leave the
-domain cuts local accuracy from $2p$ to $p + 1$, ghost points tie the
+domain cuts the local accuracy of an even-order interior scheme to one
+more than half its order (sixth to fourth, say), ghost points tie the
 closure to particular boundary conditions, and Shen et al.'s wall
 treatment drops a fifth-order scheme to fourth. Most implementations rely on low-order
 closures for robustness. A boundary closure must be inward-biased,
@@ -29,10 +30,12 @@ data imposed weakly by a penalty term (SAT), the energy
 $u^{\mathsf T}\mathsf P u$ is bounded, which is $L^2$ stability. Two kinds of
 norm matter.
 * *Diagonal* norms also give stability proofs for variable coefficients
-  and some nonlinear forms. Their boundary stencils are limited to order
-  $p$, so a $2p$-order interior gives global order $p + 1$.
-* *Block* norms admit boundary order $2p - 1$, which keeps global order
-  $2p$ ([Fisher et al. (2011)](/sources/fisher-2011.md), §§2.1, 3.1).
+  and some nonlinear forms. Their boundary stencils are limited to half
+  the (even) interior order, so the global order is one more than that
+  half (fourth for a sixth-order interior).
+* *Block* norms admit a boundary order one below the interior order,
+  which keeps the global order equal to the interior order
+  ([Fisher et al. (2011)](/sources/fisher-2011.md), §§2.1, 3.1).
 
 **Construction** (Yamaleev and Carpenter's periodic ESWENO, extended
 to finite domains by [Fisher et al. (2011)](/sources/fisher-2011.md), §§2–4).

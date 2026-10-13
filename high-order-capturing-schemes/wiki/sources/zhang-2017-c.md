@@ -8,7 +8,7 @@ authors: [Zhang L.T., Wang T.H., Hao L.N., Huang B.Q., Chen W.J., Shi H.H.]
 year: 2017
 venue: "Shock Waves 27:97–107"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2017-ShockWaves-Zhang-101007s00193-016-0641-4.pdf"
-tags: [benchmark, 3d]
+tags: [benchmark, 3d, experiment]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

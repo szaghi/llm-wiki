@@ -1,36 +1,47 @@
 ---
 type: Result
 title: "Accuracy conditions on WENO nonlinear weights"
-description: "How close the nonlinear weights must be to the linear weights for a WENO flux difference to keep its design order: Jiang–Shu's sufficient condition, Henrick et al.'s necessary-and-sufficient set (with the condition missing from Jiang–Shu), the simple sufficient condition ω − d = O(h³) at fifth order, and its general form."
+description: "How close the nonlinear weights must be to the linear weights for a WENO flux difference to keep its design order: Jiang–Shu's per-flux condition, Henrick et al.'s necessary-and-sufficient set (with the condition missing from Jiang–Shu), the simple sufficient condition ω − d = O(h³) at fifth order, and its general form."
 status: established
 aliases: [WENO order conditions, weight convergence conditions]
 tags: [weno, accuracy, nonlinear-weights, critical-points]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Accuracy conditions on WENO nonlinear weights
 
-Write each candidate flux as $q_k = \mathcal{H}(x_{i+1/2}) + A_k h^r + O(h^{r+1})$
-and the WENO flux as
+Write each candidate flux as $q_k = \mathcal{H}(x_{i+1/2}) + O(h^r)$,
+whose leading error term is a $k$-dependent coefficient times $h^r$ (the
+candidate's *error constant*; written in words here, since the
+registry's $A$ is the flux Jacobian), and the WENO flux as
 $\hat f_{i+1/2} = \sum_k d_k q_k + \sum_k(\omega_k - d_k)\,q_k$
 ([WENO](/methods/weno.md)). The order of the *difference*
 $(\hat f_{i+1/2} - \hat f_{i-1/2})/h$ is what matters.
 
-**Jiang–Shu (sufficient).** $\omega_k = d_k + O(h^{r-1})$ gives order
-$2r-1$ for each flux; it follows if $\beta_k = D(1 + O(h^{r-1}))$
-([Jiang & Shu (1996)](/sources/jiang-1996.md), eqs. 2.14, 2.17).
+**Jiang–Shu (per flux).** $\omega_k = d_k + O(h^{r-1})$ makes each term
+of the correction sum $O(h^{2r-1})$, i.e. each flux *by itself* is
+accurate to order $2r-1$; it follows if every $\beta_k$ equals one common
+nonzero quantity, independent of $k$, times $\left(1 + O(h^{r-1})\right)$
+([Jiang & Shu (1996)](/sources/jiang-1996.md), eqs. 2.13–2.14, 2.17).
+For the order of the flux *difference* this is condition 3 below, and it
+is sufficient only together with Henrick et al.'s condition 2
+(corrected at the 2026-10-13 deep lint: the earlier label "sufficient"
+read the per-flux statement as one about the scheme).
 
 **Henrick–Aslam–Powers (fifth order, $r = 3$).** Considering the flux
 difference, with superscripts $\pm$ for the weights at $x_{i\pm1/2}$,
 fifth order holds if and only if
 1. $\sum_k \omega^\pm_k = 1$;
-2. $\sum_k A_k(\omega^+_k - \omega^-_k) = O(h^3)$ — explicitly
+2. the candidates' error constants, weighted by $\omega^+_k - \omega^-_k$
+   and summed, give $O(h^3)$ — explicitly
    $3\omega^+_0 - 3\omega^-_0 - \omega^+_1 + \omega^-_1 + \omega^+_2 - \omega^-_2 = O(h^3)$
    up to ordering;
 3. $\omega^\pm_k - d_k = O(h^2)$.
 
-Condition 2 "is not presented" by Jiang and Shu, whose constraints are
-therefore incomplete; a simple sufficient condition is
+Condition 2 "is not presented" by Jiang and Shu, whose constraints
+(sum to one and their eq. 2.14, i.e. conditions 1 and 3) are therefore
+incomplete for the flux difference; a simple sufficient condition, met
+by each flux in isolation, is
 $\omega_k - d_k = O(h^3)$
 ([Henrick, Aslam & Powers (2005)](/sources/henrick-2005.md), eqs. 25–29;
 restated by [Borges et al. (2008)](/sources/borges-2008.md) and
@@ -70,6 +81,10 @@ flat from rough data like a conditional.
 * Shu's form of the sufficient condition at fifth order is
   $\omega_k = d_k + O(h^2)$, "when the function u(x) is smooth in the large
   stencil", with weights $O(h^4)$ on a discontinuous stencil ([Shu (2009)](/sources/shu-2009.md), eq. 2.7).
+  This is Jiang–Shu's per-flux condition (condition 3 above), and Shu's
+  claim is a per-value one: the interpolated value $u_{i+1/2}$ is fifth
+  order. For the flux difference Henrick et al.'s condition 2 is also
+  needed (see **Jiang–Shu (per flux)** above).
 * With unequal stencils whose small members are only second order, the
   weights must sit closer to the linear ones than in classical WENO
   ([Shu (2020)](/sources/shu-2020.md), §3.2.3). The WENO-ZQ condition above is the quantitative form.

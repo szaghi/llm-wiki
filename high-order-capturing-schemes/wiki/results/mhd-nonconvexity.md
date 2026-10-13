@@ -12,7 +12,8 @@ timestamp: 2026-10-13T00:00:00Z
 
 **Setting.** The 1D ideal-MHD system has seven characteristic fields,
 with eigenvalues $v_x \mp c_f$, $v_x \mp c_A$, $v_x \mp c_s$ and $v_x$.
-A field $p$ is genuinely nonlinear if
+A characteristic field, of index $(p)$ (the bracketed field index,
+distinct from the pressure $p$ used below), is genuinely nonlinear if
 $\nabla_u\lambda^{(p)}\cdot r^{(p)} \ne 0$ for all states, and linearly
 degenerate if $\nabla_u\lambda^{(p)}\cdot r^{(p)} \equiv 0$ (Brio and
 Wu's definition, along the shock curve, §VI); a system is called convex

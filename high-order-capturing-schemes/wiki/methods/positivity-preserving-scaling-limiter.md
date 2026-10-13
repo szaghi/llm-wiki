@@ -5,7 +5,7 @@ description: "A conservative linear rescaling of the high-order polynomial about
 status: established
 aliases: [Zhang-Shu limiter, positivity limiter, linear scaling limiter, maximum-principle-satisfying limiter]
 tags: [positivity, limiter, weno, dg, finite-difference]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Zhang–Shu positivity-preserving scaling limiter
@@ -42,10 +42,15 @@ $\tilde{\mathcal{P}}_i(\hat x^{(a)}_i)$ lies in the convex set
 $\{\rho \ge \epsilon_{\mathcal{G}},\ p \ge \epsilon_{\mathcal{G}}\} \subset \mathcal{G}$
 (Lemma 2.5); and for smooth solutions bounded away from vacuum
 $1 - \theta_p = O(h^{K+1})$, so the limiter is accurate. Under SSP time
-stepping the limiter acts at every stage. Theorem 2.1 extends to
+stepping the limiter acts at every stage; whether that per-stage use
+reduces the order of the full Runge–Kutta step is an open entry
+([positivity preservation](/properties/positivity-preserving.md),
+Contradictions: "Does positivity limiting inside Runge–Kutta stages
+reduce the order?"). Theorem 2.1 extends to
 rectangular meshes by tensor quadratures — Gauss points along edges
 times Gauss–Lobatto points across them — with
-$\nu = \Delta t(\alpha_1/h_x + \alpha_2/h_y)$
+$\nu$ equal to $\Delta t$ times the sum, over the two directions, of the
+maximum wave speed in that direction divided by $h_x$ or $h_y$
 ([Zhang & Shu (2010)](/sources/zhang-2010.md), §3).
 
 **CFL bound.** With the Lax–Friedrichs flux and $\nu_0 = 1$ the bound is
@@ -72,7 +77,7 @@ avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
   degree-four $\mathcal{P}_i$ interpolates $u^\pm_{i\mp1/2}$ and the
   means of $I_{i-1}, I_i, I_{i+1}$
   ([Zhang & Shu (2012)](/sources/zhang-2012.md), §2.1). In practice only the
-  combination $\bar u_i - \hat w_1 u^+_{i-1/2} - \hat w_{N} u^-_{i+1/2}$
+  combination $\bar u_i - \hat w_1 u^+_{i-1/2} - \hat w_{N_{\mathrm{GL}}} u^-_{i+1/2}$
   is needed ([Guo, Xiong & Shi (2014)](/sources/guo-2014.md), §2.4).
 * **FD WENO** ([Zhang & Shu (2012)](/sources/zhang-2012.md), §3). With the
   global Lax–Friedrichs splitting $f^\pm = \frac12(f \pm \alpha u)$ the
@@ -114,7 +119,8 @@ avoids the issue ([Zhang & Shu (2010)](/sources/zhang-2010.md), Remark 2.7).
 
 **Alternatives.** The [flux limiter](/methods/positivity-preserving-flux-limiter.md)
 of Hu, Adams and Shu limits fluxes instead of point values and needs a
-weaker time-step condition for accuracy.
+weaker time-step condition for accuracy
+([Hu, Adams & Shu (2013)](/sources/hu-2013.md), §2.3).
 
 **Later variants (batch 7).**
 * *The single-ratio internal-energy factor.* Scaling the whole

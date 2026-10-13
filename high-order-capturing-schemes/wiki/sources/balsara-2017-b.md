@@ -145,6 +145,8 @@ All with ADER–WENO and the 2D MuSIC solver (1D HLLI at face centres).
 * Created [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 * Updated [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md) ("HLLI" names a family; the second weight), [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (primary source of the solver-quality factors).
 * Also cited on [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md).
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
+* Merged at the 2026-10-13 deep lint: updated [Isentropic vortex advection](/benchmarks/isentropic-vortex.md) (hydrodynamic and MHD vortices), [Mach 3 wind tunnel with a forward-facing step](/benchmarks/forward-facing-step.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [MHD rotor](/benchmarks/mhd-rotor.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md) (3D blast, §5.4), [Circularly polarized (torsional) Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md) (§§5.5, 5.7) and [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) (relativistic, §5.6).
 
 # Citations
 

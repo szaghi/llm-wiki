@@ -69,6 +69,7 @@ fluidized-bed gas flow (MFIX-Exa). Merged into
 * Contributed to [State redistribution](/methods/state-redistribution.md) (weighted variant), [Cut-cell finite volume](/methods/cut-cell-finite-volume.md), [Supersonic vortex](/benchmarks/supersonic-vortex-annulus.md).
 * Updated [High-order AMR](/methods/high-order-amr.md), [Positivity preservation](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): $\eta^{\mathrm{self}}_i$, $\eta^{\mathrm{nb}}_i$, $\mathsf W$.
+* Also cited on [Exact Riemann solver for the Euler equations](/methods/exact-riemann-solver.md) (created in batch 12).
 
 # Citations
 

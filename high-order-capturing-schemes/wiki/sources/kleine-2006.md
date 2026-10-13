@@ -8,7 +8,7 @@ authors: [Kleine H., Grönig H., Takayama K.]
 year: 2006
 venue: "Opt. Lasers Eng. 44:170–189"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2006-OptLasersEng-Kleine-101016joptlaseng200504009.pdf"
-tags: [2d, mach-reflection, blast-wave]
+tags: [2d, mach-reflection, blast-wave, experiment]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

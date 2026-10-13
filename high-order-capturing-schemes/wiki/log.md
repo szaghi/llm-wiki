@@ -2,6 +2,80 @@
 
 ## 2026-10-13
 
+* **Ingested [Mittal et al. (2008)](/sources/mittal-2008.md)**, the last
+  missing paper of the user's manual downloads (112 sources): the
+  incompressible ghost-cell sharp-interface immersed-boundary method
+  (image point, trilinear interpolation, implicit Dirichlet closure for
+  velocity, nominally first-order Neumann closure for the pressure
+  correction, closest-element classification, fresh-cell filling), with
+  second-order velocity convergence shown graphically. Updated
+  [immersed-boundary methods](/methods/immersed-boundary-method.md) (a
+  "Later uses (batch 13)" block; the description widened to cover
+  incompressible ghost-cell methods). Bibliography: 65 references merged
+  (3052 entries); Kim, Kim & Choi (2001) is `kim-2001-b`, Peskin's 1972
+  paper `peskin-1972-b`.
+
+* **Whole-bundle deep lint** (112 sources, 222 concept pages), by four
+  auditors (methods A–H, methods I–Z, the other concept folders with the
+  registry and root index, and a cross-cutting pass over contradictions,
+  tags and Source pages), then four fixer groups with disjoint pages. Every
+  finding was checked against the Source pages and, where cited, the PDFs;
+  none was rejected. Compiler wording that was stale or wrong was corrected
+  in place, with a note where it stood; no source-attributed claim was
+  removed; no Contradictions entry was closed.
+  * **Contradictions:** the ADER Picard-count entry restated as a genuine
+    one-update difference (Balsara et al. 2009, §4.2 step 5: "the minimum
+    permissible number"); the NSCBC entry rescoped to outflow with no
+    incoming characteristics (both sides agree at subsonic boundaries);
+    evidence added to the entries on the slowly moving shock (Deng et al.,
+    Kitamura & Shima, Woodward & Colella: amplitude, not presence), GLM
+    $c_h$ (Derigs et al.'s global rule; constant $c_h$ on cell-by-cell AMR
+    in Dumbser 2013 and Zanotti 2015), positivity limiting inside RK stages
+    (Zhang & Shu 2012, fifth order observed), flux-redistribution order
+    (Giuliani et al., by analogy) and the Sedov DG run (both set-ups made
+    explicit; kept open). The Alfvén-wave "tension" is not a contradiction
+    (both Balsara 2009 papers report the instability reduced, not absent);
+    the earlier sentence that neither reports it was wrong and is corrected.
+  * **Corrected compiler wording:** effective SSP coefficient 0.624 (two
+    extra $\tilde{\mathcal L}$ evaluations, not $\mathcal C_{\mathrm{eff}}$);
+    "two registers reach $\mathcal C \approx 0.32$" (three-stage Williamson
+    form); the SSP coefficient as $\min a_{ik}/b_{ik}$ (a lower bound);
+    Jiang–Shu's weight condition labelled "sufficient" (per flux, only
+    with Henrick's condition 2); shock-instability cures "tested only at
+    first or second order" (flux switching with MPWENO is the exception);
+    HLLEM positivity (Einfeldt's proof covers first-order 1D Euler); the
+    1989 finite-difference form as "equivalent" to 1988's (in order only);
+    Castro's $\varepsilon = h^2$ result at $n_{\mathrm{cp}} = r-1$; CPU costs of
+    mapped WENO attributed separately; Başkaya et al.'s INCA on/off
+    experiment stated as their diagnosis; the cylinder, forward-step and
+    Ryu–Jones set-up lines and descriptions; PLUTO's orders; the root
+    index's ILW, order-of-accuracy and open-entry lists.
+  * **Merged:** batch-11 runs of Deng et al. (2019) and Balsara & Nkonga
+    (2017) into 11 benchmark pages (Sedov gains a full-domain variant);
+    Woodward & Colella and Deng et al. into numerical shock instability.
+  * **Notation:** paper-native symbols replaced by registry symbols or
+    words on about 25 pages; the registry made self-consistent with
+    "distinct from" notes for $R$, $\delta_0$, $\alpha_{i+1/2}$/$S$, the
+    Gauss–Lobatto points, Roe averages, $\Delta u_i$ and the placeholder
+    $q$ (no symbol renamed); the "Spectral analysis" section dated.
+  * **Bibliography:** own entries seeded from the frontmatter for the 36
+    Source pages that had none (3088 entries, 112 ingested).
+  * **Audit lists:** 16 Source pages now list the batch-12 HLLC and exact
+    Riemann solver pages; deng-2019-b and balsara-2017-b list the merged
+    benchmarks. The "Updated notation.md" lines on Source pages are kept
+    as written (the registry credits batches, not sources).
+  * **Tags:** `cut-cell` replaced by `cartesian-grid` on the ILW and
+    weighted-extrapolation pages and added to the cut-cell page;
+    `mach-reflection` on double Mach reflection; `experiment` on the five
+    experimental sources; `multiphase` on Yeom & Chang; synonyms merged
+    (`extrema`, `flux-limiter`, `riemann-free`, `shock-turbulence`,
+    `kernel-methods`, `gaussian-process`); page-type tags dropped.
+  * **Candidates for new pages, not created (≥2 sources each):** a Roe
+    solver page and an HLL page split from the 440-line Riemann-solver
+    overview; flux redistribution; multi-resolution WENO; Hermite WENO;
+    an AMReX/PeleC Software page; Rayleigh–Taylor and scalar Burgers
+    benchmarks.
+
 * **Batch 12: the user's manual downloads, second half** (11 sources).
   The shock-diffraction and reflection papers, experiments and
   simulations, and Toro's book:

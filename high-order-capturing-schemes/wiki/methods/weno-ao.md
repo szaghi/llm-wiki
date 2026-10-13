@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Unequal-stencil and adaptive-order WENO (WENO-ZQ, WENO-AO)"
-description: "WENO reconstructions that blend one large centred high-order polynomial with small low-order ones through a weight-adjusted subtraction, so arbitrary positive linear weights keep full order: Zhu–Qiu's quartic plus two linear polynomials, and Balsara–Garain–Shu's adaptive-order WENO-AO(5,3), (7,3), (7,5,3), (9,5,3) with an r = 3 central WENO fallback."
+description: "WENO reconstructions that blend one large centred high-order polynomial with small low-order ones through a weight-adjusted subtraction, so arbitrary positive linear weights keep full order: Zhu–Qiu's quartic plus two linear polynomials, and Balsara–Garain–Shu's adaptive-order WENO-AO(5,3), (7,3), (9,3), (7,5,3), (9,5,3) with an r = 3 central WENO fallback."
 status: established
 aliases: [WENO-ZQ, WENO-AO, adaptive order WENO]
 tags: [weno, adaptive-order, central-weno, legendre-basis]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Unequal-stencil and adaptive-order WENO (WENO-ZQ, WENO-AO)

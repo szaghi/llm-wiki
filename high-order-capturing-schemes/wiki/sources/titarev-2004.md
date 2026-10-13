@@ -68,6 +68,7 @@ with benchmark updates.
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
 
 # Citations
 

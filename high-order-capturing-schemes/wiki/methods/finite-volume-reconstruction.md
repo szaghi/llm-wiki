@@ -1,27 +1,27 @@
 ---
 type: Method
 title: "Reconstruction from cell averages"
-description: "Recovering point values (or polynomials) of $k$-th order accuracy from cell averages via interpolation of the primitive function; the building block of finite-volume ENO/WENO/PPM schemes."
+description: "Recovering point values (or polynomials) of $r$-th order accuracy from the cell averages of an $r$-cell stencil via interpolation of the primitive function; the building block of finite-volume ENO/WENO/PPM schemes."
 status: established
 aliases: [reconstruction via primitive function, finite-volume reconstruction]
 tags: [reconstruction, finite-volume]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Reconstruction from cell averages
 
 **The problem** ([Shu (1998)](/sources/shu-1998.md), Problem 2.1): given
-cell averages $\bar u_i$, find in each cell a polynomial $p_i$ of degree
-at most $k-1$ with $p_i(x) = u(x) + O(h^k)$ in $I_i$. The interface values
-$u^-_{i+1/2} = p_i(x_{i+1/2})$ and $u^+_{i-1/2} = p_i(x_{i-1/2})$ are then
-$k$-th order accurate.
+cell averages $\bar u_i$, find in each cell a polynomial $\mathcal P_i$
+of degree at most $K = r-1$ with $\mathcal P_i(x) = u(x) + O(h^r)$ in
+$I_i$. The interface values $u^-_{i+1/2} = \mathcal P_i(x_{i+1/2})$ and
+$u^+_{i-1/2} = \mathcal P_i(x_{i-1/2})$ are then $r$-th order accurate.
 
 **Via the primitive** ([Harten et al. (1987)](/sources/harten-1987.md),
 "RP"). The primitive $\mathcal{U}$ is known exactly at interfaces from
-the averages. Interpolate it at the $k+1$ interface points of a
-$k$-cell stencil by a polynomial $P$ of degree $k$ and set $p = P'$.
-Then $p$ reproduces every cell average in the stencil, and
-$p = u + O(h^k)$ where $u$ is smooth there. The procedure needs no
+the averages. Interpolate it at the $r+1$ interface points of an
+$r$-cell stencil by a polynomial of degree $r$ and take its derivative
+as $\mathcal P_i$. Then $\mathcal P_i$ reproduces every cell average in
+the stencil, and $\mathcal P_i = u + O(h^r)$ where $u$ is smooth there. The procedure needs no
 uniform grid. Because the map from averages to interface values is
 linear, each stencil position relative to $x_{i+1/2}$ gives fixed
 constants that express $u_{i+1/2}$ as a linear combination of the
@@ -34,7 +34,7 @@ data, and are tabulated for uniform grids up to seventh order
 average of $u$. Taylor-expanding the sliding average gives a triangular,
 diagonally dominant linear system between derivatives of the averaged
 function and of $u$. Interpolating the averages and inverting the system
-(back substitution) recovers $u$ and its derivatives to $O(h^k)$.
+(back substitution) recovers $u$ and its derivatives to $O(h^r)$.
 
 **Adaptive stencils.** Fixed-stencil reconstruction of degree two or
 higher oscillates at discontinuities, with an $O(1)$ Gibbs-like

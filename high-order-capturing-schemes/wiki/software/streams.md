@@ -5,7 +5,7 @@ description: "Open-source Fortran/CUDA Fortran finite-difference DNS code for su
 status: established
 aliases: [STREAmS, Supersonic TuRbulEnt Accelerated navier-Stokes Solver]
 tags: [software, finite-difference, weno, hybrid, turbulence, gpu]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # STREAmS
@@ -22,7 +22,7 @@ boundary layer, and oblique shock/boundary-layer interaction.
 * *Locally conservative finite differences*
   ([conservative finite difference](/methods/conservative-finite-difference.md)).
   Smooth regions use a central, kinetic-energy-preserving split flux,
-  recast in conservative form, of order $2L = 2$ to 8. It conserves total
+  recast in conservative form, of even order 2 to 8. It conserves total
   kinetic energy discretely in the inviscid incompressible limit (eqs. 6–7).
 * *Hybridization.* Because the flux is local, any interface can switch to
   Lax–Friedrichs flux-vector splitting with WENO of order 1 to 7 on the

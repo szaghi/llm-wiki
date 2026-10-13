@@ -5,7 +5,7 @@ description: "Shu–Osher point-value formulation: the numerical flux approximat
 status: established
 aliases: [flux ENO, finite-difference ENO/WENO, Shu-Osher formulation]
 tags: [finite-difference, flux-splitting, eno, weno]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Conservative finite-difference (flux) formulation
@@ -29,8 +29,12 @@ divided differences of that primitive come from those of $f$
 Problem 2.2). [Shu & Osher (1988)](/sources/shu-1988.md) had obtained
 the same accuracy with correction terms,
 $\hat f_{i+1/2} = f_{i+1/2} + \sum_k a_{2k} h^{2k}\,\partial_x^{2k} f\big\vert_{i+1/2}$
-with $a_2 = -\tfrac{1}{24}$, $a_4 = \tfrac{7}{5760}$; the 1989 form is a
-simpler equivalent.
+with $a_2 = -\tfrac{1}{24}$, $a_4 = \tfrac{7}{5760}$. The 1989 form is
+simpler and equivalent to it in order (and, for linear equations, in
+the scheme itself); the 1988 correction form is otherwise a distinct
+route, the one that accepts any Riemann solver at the interface and
+preserves free streams on curvilinear meshes (see the batch-3 remarks
+below and [AFD-WENO](/methods/alternative-finite-difference-weno.md)).
 
 ## Upwinding
 
@@ -61,8 +65,7 @@ is set by the first stencil point or by the linear weights.
   points, where most E-fluxes are only Lipschitz
   ([Shu & Osher (1988)](/sources/shu-1988.md), §III).
 * [Balsara & Shu (2000)](/sources/balsara-2000.md) take the LLF speed as
-  $\chi$ times the maximum over the whole stencil, $\chi \approx 1.1$–$1.3$
-  (more robust at reflecting walls), use LLF in linearly degenerate
+  1.1–1.3 times the stencil maximum (more robust at reflecting walls), use LLF in linearly degenerate
   fields and RF in genuinely nonlinear ones, and cure a mild carbuncle
   at a grid-aligned shock by switching to LLF near shocks.
 

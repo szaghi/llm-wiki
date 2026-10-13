@@ -9,13 +9,14 @@ year: 2016
 venue: "J. Comput. Phys. 312:357-384"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-JCP-Balsara-101016jjcp201602001.pdf"
 tags: [mhd, relativistic, ader, constrained-transport, multidimensional-riemann-solver]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
 
 Keyed `balsara-2016-b`, since WENO-AO holds the bare key. Merged into the
-ADER, constrained-transport (including a new open Contradictions entry),
+ADER, constrained-transport (including a Contradictions entry, opened at
+ingestion and closed by human fiat on 2026-10-08),
 Riemann-solver, characteristic, fourth-order FV, PPM and positivity pages,
 and the rotor, blast, vortex, shock–vortex and Alfvén-wave benchmarks.
 
@@ -44,7 +45,9 @@ and the rotor, blast, vortex, shock–vortex and Alfvén-wave benchmarks.
    need to double the dissipation (§1).
 7. **Divergence** (§1): divergence-free MHD "requires the use of a
    staggered, Yee-type mesh". This conflicts with the unstaggered CT of
-   Christlieb et al., and is recorded as an open contradiction on the CT page.
+   Christlieb et al.; it was recorded as a contradiction on the CT page,
+   closed by human fiat on 2026-10-08 (both claims hold, each for its own
+   discrete divergence).
 8. **Tests** (§§5–6): Lorentz-boosted vortices (design order; Tables 3 and
    4 are identical, a probable duplicate); a relativistic rotor resolution
    study ($400^2$ never reaches the nominal Lorentz factor); blast (third or
@@ -79,6 +82,7 @@ and the rotor, blast, vortex, shock–vortex and Alfvén-wave benchmarks.
 * Updated [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
 * Also cited on [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
 
 # Citations
 

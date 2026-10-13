@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "PLUTO (astrophysical gas-dynamics and MHD code)"
-description: "Multi-physics finite-volume and finite-difference code for classical and relativistic MHD in which two high-order capturing schemes of this corpus are implemented: cell-centred finite-difference GLM-MHD with WENO-Z and MP5 (third and fifth order), and fourth-order finite volume with pointwise reconstruction and upwind constrained transport."
+description: "Multi-physics finite-volume and finite-difference code for classical and relativistic MHD in which two high-order capturing schemes of this corpus are implemented: cell-centred finite-difference GLM-MHD with WENO+3 and LimO3 (third order) and WENO-Z and MP5 (fifth order), and fourth-order finite volume with pointwise reconstruction and upwind constrained transport."
 status: established
 aliases: [PLUTO, PLUTO-AMR]
 tags: [software, mhd, finite-volume, finite-difference, constrained-transport]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # PLUTO

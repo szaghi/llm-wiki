@@ -207,25 +207,39 @@ following Strikwerda.
 
 ## Contradictions
 
-* **Does outflow extrapolation over-specify the boundary?** *Open.*
+* **Does extrapolation at an outflow boundary with no incoming
+  characteristic degrade the solution?** *Open* (rescoped at the
+  2026-10-13 deep lint from "does outflow extrapolation over-specify the
+  boundary?"). The sides conflict only where no characteristic enters.
   [Poinsot & Lele (1992)](/sources/poinsot-1992.md), §2.1: extrapolating
-  a variable at a boundary acts as an additional physical condition, so
-  the boundary is over-specified; their tests use zeroth-order
-  extrapolation with a sixth-order compact scheme and find no steady
-  state and spurious upstream waves (§§4–6).
-  [Li, Shu & Zhang (2016)](/sources/li-2016.md) report outflow
-  extrapolation as stable (Goldberg's theorem, one-dimensional), and
-  [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§5.2, 6, use
-  high-order (weighted) extrapolation at outflow with WENO in accurate
-  tests (see [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)).
-  The evidence on the two sides differs in extrapolation order and
-  scheme dissipation; no source tests high-order extrapolation with a
-  centred low-dissipation scheme, or NSCBC with upwind WENO, on a common
-  problem.
+  a variable acts as an additional physical condition and over-specifies
+  the boundary; §5: a vortex leaving through a Mach 1.1 plug-flow outlet
+  is distorted by their extrapolation reference outlet (zeroth-order
+  extrapolation of velocity and density, with a sixth-order compact
+  scheme), whose spurious waves travel upstream and spawn a new
+  vortex at the inlet; "Using supersonic outlets cannot be viewed as a
+  general simple solution." Their runs are Navier–Stokes, where a
+  supersonic outflow still needs 4 viscous conditions (Table I), so
+  extrapolating every variable there is not condition-free.
+  On the other side, [Li, Shu & Zhang (2016)](/sources/li-2016.md),
+  §3.1.1, cite Goldberg's theorem that a stable scheme with outflow
+  extrapolation is stable, for a *scalar* linear outflow boundary; and
+  [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§5, 6, use
+  high-order (weighted) extrapolation at outflow with WENO accurately, on
+  scalar problems and on supersonic Euler flow (the triangle of §5.2.5).
+  *Scope note:* at subsonic boundaries the two sides agree. There an
+  incoming characteristic needs data, and
+  [Lu et al. (2021)](/sources/lu-2021.md), §§2.2–2.3, extrapolate only
+  the outgoing characteristic variables and take the incoming ones from
+  the boundary conditions, as Poinsot & Lele prescribe. The evidence
+  still differs in extrapolation order and scheme dissipation; no source
+  tests high-order extrapolation with a centred low-dissipation scheme,
+  or NSCBC with upwind WENO, on a common supersonic-outflow problem.
 
 
 # Citations
 
 1. [Poinsot & Lele (1992)](/sources/poinsot-1992.md), §§1–6, Tables I–VI (equations and Tables I–IV read from the page images).
-2. [Li, Shu & Zhang (2016)](/sources/li-2016.md), stability of outflow extrapolation (as recorded on the ILW page).
-3. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§5.2, 6.
+2. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §3.1.1 (stability of scalar outflow extrapolation, after Goldberg).
+3. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§5, 6.
+4. [Lu et al. (2021)](/sources/lu-2021.md), §§2.2–2.3.

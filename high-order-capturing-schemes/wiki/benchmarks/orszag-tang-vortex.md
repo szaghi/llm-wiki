@@ -5,7 +5,7 @@ description: "Smooth periodic MHD data that steepen into interacting shocks and 
 status: established
 aliases: [Orszag-Tang problem, Orszag-Tang vortex]
 tags: [benchmark, mhd, 2d, divergence-free]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Orszag–Tang vortex
@@ -82,6 +82,15 @@ and run fifth-order FD-WENO on $192^2$
 * *Relativistic Orszag–Tang* on $1000^2$ to $t = 0.8$ with fourth-order
   ADER-WENO ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.7).
 
+**Later uses (batch 11, Balsara & Nkonga; merged at the 2026-10-13 deep
+lint).** *Relativistic Orszag–Tang* on the unit square with $1000^2$
+cells to $t = 0.8$, fourth-order ADER–WENO with the multidimensional HLLI
+(MuSIC) solver; the result is shown qualitatively
+([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.6;
+[multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+Same grid, order and end time as the review's run in the batch-7 entry
+above.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.3, 6.7.
@@ -95,3 +104,4 @@ and run fifth-order FD-WENO on $192^2$
 9. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.2 (arXiv v1).
 10. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.4.
 11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.7.
+12. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.6.

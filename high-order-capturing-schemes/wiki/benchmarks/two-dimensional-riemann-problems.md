@@ -5,7 +5,7 @@ description: "Four constant states meeting at the origin of [-0.5, 0.5]² (Schul
 status: established
 aliases: [2D Riemann problems, four-quadrant Riemann problem, Kurganov-Tadmor configurations, Lax-Liu configurations]
 tags: [benchmark, euler, 2d, riemann-problem]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -55,12 +55,30 @@ HLL-type Riemann solvers (Balsara, cited by
   acoustic waves. The results are qualitative
   ([Wang et al. (2025)](/sources/wang-2025.md), §6.4.1, preprint).
 
-**Reading.** Agreement with Kurganov and Tadmor concerns the main wave
-structures. The additional roll-up at very low dissipation is a
-resolution effect, with no physical viscosity in the Euler equations.
-As for the [double Mach reflection](/benchmarks/double-mach-reflection.md),
-it is a qualitative measure of numerical dissipation, not a converged
-quantity.
+* **Second-order HLL-type solvers** (MUSCL), two four-contact
+  configurations on $[-0.5, 0.5]^2$ with $600^2$ cells (printed states
+  $(\rho, v_x, v_y, p)$: case 1 $(2, 0.75, 0.5, 1)$ upper left,
+  $(1, -0.75, 0.5, 1)$ lower left, $(1, 0.75, -0.5, 1)$ upper right,
+  $(3, -0.75, -0.5, 1)$ lower right; case 2 the same with the signs of
+  $v_x$ reversed; end time and boundaries not printed). HLL-BVD resolves
+  contacts and shear better than HLL and HLLC; HLL is the most diffusive
+  and misses the Kelvin–Helmholtz roll-up. Comparisons are visual
+  ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III E,
+  eqs. 23–24, Figs. 8–9; merged at the 2026-10-13 deep lint).
+
+**Compiler's reading** (not a source claim; marked at the 2026-10-13
+deep lint). Agreement with Kurganov and Tadmor concerns the main wave
+structures. The Euler equations carry no physical viscosity, so the
+scale at which the extra roll-up appears is set by the numerical
+dissipation and the grid: as for the
+[double Mach reflection](/benchmarks/double-mach-reflection.md), it is a
+qualitative measure of numerical dissipation, not a converged quantity.
+This differs in emphasis from Dumbser et al. (2014), who take the
+Kelvin–Helmholtz structures as physical because a sixth-order AMR run at
+an equivalent $1250^2$ reproduces them in RP3 (above). The two readings
+are compatible if the instability of the shear waves is physical and only
+its onset scale is numerical; no source in the corpus settles the point
+with a convergence study.
 
 # Citations
 
@@ -68,3 +86,4 @@ quantity.
 2. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.6.
 3. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.1.5.
 4. [Wang et al. (2025)](/sources/wang-2025.md), §6.4.1 (arXiv preprint).
+5. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III E, eqs. 23–24, Figs. 8–9.

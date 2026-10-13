@@ -8,7 +8,7 @@ authors: [Kleine H., Ritzerfeld E., Grönig H.]
 year: 1995
 venue: "Shock Waves @ Marseille IV (Springer), pp. 117–122"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1995-ShockWaves-Kleine-101007978-3-642-79532-9_18.pdf"
-tags: [euler, 2d, godunov, tvd, riemann-solver, mach-reflection]
+tags: [euler, 2d, godunov, tvd, riemann-solver, mach-reflection, experiment]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

@@ -5,7 +5,7 @@ description: "Fully discrete one-step finite-volume and DG schemes that evolve t
 status: established
 aliases: [ADER, ADER-WENO, ADER-DG, ADER-CG, generalized Riemann problem, local space-time DG predictor, arbitrary derivative Riemann problem]
 tags: [ader, single-step, time-discretization, finite-volume, dg, amr]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # ADER one-step schemes
@@ -14,8 +14,8 @@ timestamp: 2026-10-09T00:00:00Z
 whose initial data are the two reconstructed polynomials rather than
 constants. The time-integrated flux it gives then updates the cell average in
 one step,
-$$\bar u^{n+1}_i = \bar u^n_i - \frac{\Delta t}{h}\left(\hat{\mathcal{F}}_{i+1/2} - \hat{\mathcal{F}}_{i-1/2}\right),\qquad
-\hat{\mathcal{F}}_{i+1/2} = \frac{1}{\Delta t}\int_{t^n}^{t^{n+1}}\hat f\left(u^{\mathrm p}_i(x_{i+1/2}, t),\, u^{\mathrm p}_{i+1}(x_{i+1/2}, t)\right)dt,$$
+$$\bar u^{n+1}_i = \bar u^n_i - \frac{1}{h}\int_{t^n}^{t^{n+1}}\left(\hat f_{i+1/2}(t) - \hat f_{i-1/2}(t)\right)dt,\qquad
+\hat f_{i+1/2}(t) = \hat f\left(u^{\mathrm p}_i(x_{i+1/2}, t),\, u^{\mathrm p}_{i+1}(x_{i+1/2}, t)\right),$$
 with a time quadrature (or exact integration) of the flux between
 the two predictors. The order in time then matches the order of the
 spatial reconstruction ([WENO](/methods/weno.md) or
@@ -71,8 +71,11 @@ fixed and only the time-dependent modes are iterated. This needs fewer
 flux evaluations, at the price of the weak form in time and of stiff
 sources. Explicit third-order formulas are given on structured meshes
 (second and fourth in appendices). The authors use exactly $K + 1$
-iterations for order $K + 1$ and report never needing more, justified
-by the Picard-iteration theory.
+iterations for order $K + 1$, "the minimum permissible number of ADER
+iterations", and report never needing more, justified by the
+Picard-iteration theory of Dumbser et al. The space–time-averaged
+fluxes are then computed in a separate step, rebuilt from the predictor
+([Balsara et al. (2009)](/sources/balsara-2009.md), §4.2, steps 5–6).
 
 ## Fluxes and the corrector
 
@@ -116,7 +119,7 @@ fields ([constrained transport](/methods/constrained-transport.md)).
 
 **Time step.** ADER-FV keeps the Godunov-type Courant limit. Explicit
 DG of degree $K$ is restricted to
-$$\Delta t \le \frac{1}{d\,(2K+1)}\,\frac{h}{\vert\lambda_{\max}\vert}$$
+$$\Delta t \le \frac{1}{d\,(2K+1)}\,\frac{h}{\max_p\vert\lambda^{(p)}\vert}$$
 in $d$ dimensions ([Dumbser et al. (2014)](/sources/dumbser-2014.md),
 eq. 17). ADER-DG and Lax–Wendroff DG are slightly stricter still
 ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §3.2). This bound
@@ -152,9 +155,8 @@ conservative, so the order is not lost.
   evaluated once.
 * It uses two Picard iterations at third order and three at fourth,
   citing Dumbser et al. (2008). That is $K$ iterations for order $K + 1$,
-  against the $K + 1$ reported above for the ADER-CG predictor. The
-  predictors differ, so this is a difference of practice, not a
-  contradiction.
+  one fewer than the $K + 1$ that Balsara et al. (2009) call the minimum
+  for their ADER-CG predictor (see **Contradictions**).
 
 **Later uses (batch 7).**
 * *A third-order toy predictor in 1D* with six space–time nodes and the
@@ -164,9 +166,11 @@ conservative, so the order is not lost.
 * *Iteration count.* "For a temporally Nth order scheme, one only needs
   (N-1) steps": two iterations at third order, three at fourth, then a
   final repetition of the nodal flux evaluation (a "polish", Steps 7–8 of
-  the stepwise box). The Balsara et al. (2009) statement above says $K + 1$
-  iterations for order $K + 1$. *Compiler's reading:* the two counts agree
-  if the polish is counted as an iteration; the review does not say so.
+  the stepwise box). Balsara et al. (2009) use $K + 1$ iterations for
+  order $K + 1$ *and* a separate flux evaluation afterwards, so counting
+  the polish as an iteration does not reconcile the two: the 2009 scheme
+  performs one more update of the time-dependent modes (see
+  **Contradictions**).
 * *Time-step table for PNPM* (from Dumbser et al. 2008): limiting 1D CFL
   numbers 1.00, about 0.32, 0.17, 0.10 and 0.069 for evolved degree 0 to 4
   with matched space–time order, divided by the dimension in multi-D
@@ -175,13 +179,23 @@ conservative, so the order is not lost.
 ## Contradictions
 
 * **How many Picard iterations does an order-$(K+1)$ predictor need?**
-  *Open, probably a counting convention* (recorded at the batch-8 deep
-  lint). Above, [Balsara et al. (2009)](/sources/balsara-2009.md) give
-  $K + 1$ for the ADER-CG predictor; [Balsara & Kim (2016)](/sources/balsara-2016-b.md)
-  and [Balsara (2017)](/sources/balsara-2017-d.md) give $K$, the latter
-  followed by a final nodal flux evaluation. The counts agree if that
-  final evaluation is counted as an iteration; no source says so. Closing
-  it needs a check of the 2009 paper's step list.
+  *Open* (recorded at the batch-8 deep lint; rescoped at the 2026-10-13
+  deep lint, which checked the 2009 step list). [Balsara et al. (2009)](/sources/balsara-2009.md),
+  §4.2 step 5: "we used two, three and four ADER iterations for the
+  second, third and fourth order schemes respectively", "the minimum
+  permissible number of ADER iterations"; step 6 then computes the
+  space–time-averaged fluxes, rebuilt from the predictor. So the 2009
+  scheme does $K + 1$ updates of the time-dependent modes plus a final
+  flux evaluation. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§3.2–3.3,
+  and [Balsara (2017)](/sources/balsara-2017-d.md), §V.2 stepwise box,
+  do $K$ updates ("only two iterations are needed" at third order, three
+  at fourth; "(N-1) steps"), the latter followed by the same kind of final
+  flux evaluation (Steps 7–8). The final evaluation exists on both sides,
+  so it cannot absorb the difference: this is a genuine one-update
+  difference, not a counting convention. Both sides cite Dumbser et al.'s
+  Picard-iteration argument for their count. No source in the corpus
+  reports accuracy with $K$ against $K + 1$ updates of the same
+  predictor; that comparison would decide it.
 
 # Citations
 

@@ -5,7 +5,7 @@ description: "When accuracy fixes the linear weights, some can be negative or fa
 status: established
 aliases: [negative weights, Shi–Hu–Shu technique, positive linear weights]
 tags: [weno, linear-weights, unstructured, nonlinear-weights]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Negative linear weights in WENO and their treatment
@@ -48,7 +48,11 @@ the largest on the most central stencil. This suits moving and
 unstructured meshes (Shu 2009, §2.3.3; Shu 2020, §§3.2.2–3.3). Two
 designs avoid the loss:
 * [polynomial WENO](/methods/polynomial-weno.md) blends whole candidates of
-  the full degree, so each is already of full order;
+  the full degree $K$, each on a stencil wide enough for it, so each is
+  already of full order. Shu lists Dumbser and Käser among the
+  order-sacrificing schemes (Shu 2020, p. 722); the two statements agree,
+  because the order given up is only that of the union of the candidate
+  stencils, never the degree-$K$ order of each candidate;
 * [unequal-stencil WENO](/methods/weno-ao.md) blends one large polynomial
   with small ones through a weight-adjusted subtraction, so any positive
   weights keep the large stencil's order. Shu traces this device to

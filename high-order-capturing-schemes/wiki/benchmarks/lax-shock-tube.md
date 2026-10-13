@@ -5,7 +5,7 @@ description: "The 1D Riemann problem (0.445, 0.698, 3.528 | 0.5, 0, 0.571), with
 status: established
 aliases: [Lax problem, Lax's problem]
 tags: [benchmark, euler, riemann-problem, 1d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Lax shock tube
@@ -73,6 +73,18 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
   oscillatory for Euler; the Navier–Stokes version ($\mathrm{Re} = 100$, 1000)
   is compared with a 64000-point reference ([Zhang (2017)](/sources/zhang-2017.md), Example 2).
 
+**Later uses (batch 11, merged at the 2026-10-13 deep lint).**
+* Lax's states on 100 cells at second order (MUSCL), end time not
+  printed: the rarefaction and the shock are "almost identical" with HLL,
+  HLLC and HLL-BVD, and HLL-BVD smears the contact "slightly" less
+  ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III C, Fig. 4).
+* The same paper's "strong Lax problem" is not Lax's problem despite the
+  name: $(\rho, v_x, p) = (1, -19.59745, 1000)$ for $x \le 0.8$ and
+  $(1, -19.59745, 0.01)$ otherwise, to $t = 0.012$, a strong shock with a
+  stationary contact. HLLC resolves the contact best but "produces the
+  largest overshoot values across the shock"; HLL-BVD is much sharper
+  than HLL without overshoot (§III C 1, Figs. 5–6).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -97,3 +109,4 @@ Seventh-order AFD-WENO captures the rarefaction, contact and shock
 20. [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), §5.5 (accepted manuscript).
 21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.2 (arXiv preprint).
 22. [Zhang (2017)](/sources/zhang-2017.md), Example 2.
+23. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III C, Figs. 4–6.

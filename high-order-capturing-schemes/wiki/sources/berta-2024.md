@@ -80,6 +80,7 @@ blast and shock–cloud benchmarks.
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [WENO-Z](/methods/weno-z.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
 
 # Citations
 

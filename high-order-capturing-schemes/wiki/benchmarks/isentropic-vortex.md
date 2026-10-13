@@ -5,7 +5,7 @@ description: "A smooth isentropic vortex advected diagonally through a periodic 
 status: established
 aliases: [vortex evolution problem, isentropic vortex, Shu vortex]
 tags: [benchmark, euler, accuracy, 2d]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Isentropic vortex advection
@@ -121,6 +121,21 @@ periodic box and returns to its start after one period
   accuracy-limited only for tolerances below about $10^{-6}$
   ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §5.2; [step-size control](/methods/runge-kutta-step-size-control.md)).
 
+**Later uses (batch 11, merged at the 2026-10-13 deep lint).**
+* *ADER–WENO with a multidimensional HLLI solver*, vortex advected at
+  45°, $64^2$ to $512^2$ cells: on $[-5, 5]^2$ to $t = 10$ at orders 2
+  and 3, and on $[-10, 10]^2$ to $t = 20$ at order 4, because the
+  exponential tail of the vortex is felt at the boundary of the smaller
+  box. $L^1$ orders on $512^2$ are 2.10, 2.98 and 3.76 ($L^\infty$ 2.12,
+  2.97, 4.24). The printed third-order $256^2$ $L^1$ error (1.0361E−6) is
+  inconsistent with the printed orders on either side, which imply
+  1.0361E−5 ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §4.1,
+  Table 1; [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+* *The MHD vortex* in the same runs: $B_x$ $L^1$ orders 2.00, 2.97 and
+  4.11. The third-order $L^\infty$ order falls across refinements (2.69,
+  2.60, 2.41) without comment, while the paper says all runs "meet the
+  expected order" (§4.2, Table 2).
+
 # Citations
 
 1. [Titarev & Toro (2004)](/sources/titarev-2004.md), §5.2.
@@ -144,3 +159,4 @@ periodic box and returns to its start after one period
 19. [Balsara (2017)](/sources/balsara-2017-d.md), §VIII.1.
 20. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.1 (arXiv v4).
 21. [Ranocha et al. (2022)](/sources/ranocha-2022.md), §5.2.
+22. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§4.1–4.2, Tables 1–2.

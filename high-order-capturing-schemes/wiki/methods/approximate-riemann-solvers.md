@@ -1,7 +1,7 @@
 ---
 type: Method
 title: "Approximate Riemann solvers as building blocks of capturing schemes"
-description: "The interface fluxes used by FV and alternative-FD WENO schemes in this corpus: Lax–Friedrichs/Rusanov, Roe, HLL and HLLC (with positivity-preserving wave speeds), HLLI/LLFI, the Riemann-solver-free MUSTA flux, and multidimensional HLL/LLF solvers for edge electric fields."
+description: "The interface fluxes used by capturing schemes in this corpus: Lax–Friedrichs/Rusanov, Roe with the Harten–Hyman entropy fix, Osher, the approximate-state solvers (PVRS, TRRS, TSRS, adaptive), HLL and HLLC (with positivity-preserving wave speeds), HLL-BVD, HLLI/LLFI, the Riemann-solver-free MUSTA flux, the MHD solvers of Brio–Wu (Roe-type) and Dai–Woodward (nonlinear), and multidimensional HLL/LLF solvers for edge electric fields."
 status: established
 aliases: [Riemann solver, HLL, MUSTA, FORCE, HLLI, Rusanov flux, HLL-BVD, Roe-type MHD solver]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity]
@@ -89,8 +89,10 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   both star states share the normal velocity and total pressure) and
   HLLEM (Dumbser–Balsara), which keeps isolated contacts and Alfvén
   discontinuities without iteration. Relativistic HLLD is expensive and
-  brittle. Positivity proofs exist only for first-order 1D HLL, HLLEM and
-  HLLC, and none for a subluminal RMHD solver
+  brittle. Positivity proofs exist only for first-order 1D schemes: for
+  the HLL/HLLEM class on Euler flow (Einfeldt; Einfeldt et al.), for HLLC
+  on 1D Euler and 1D MHD; none exist for Roe- or Osher-type solvers, and
+  none for a subluminal RMHD solver
   ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4.1, Appendix B).
 * *Multidimensional solvers with sub-structure.* At a vertex, four states
   bound a strongly interacting state by $[S_L, S_R]\times[S_D, S_U]$.
@@ -145,7 +147,11 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   only as an alternative name (abstract, §4). "LLFI" does not occur in
   that paper, so the bullet "HLLI / LLFI (Dumbser–Balsara)" rests on
   [Balsara et al. (2025)](/sources/balsara-2025.md) for LLFI. The paper
-  asserts, but does not prove, that HLLEM inherits the positivity of HLL.
+  asserts, but does not prove, that HLLEM inherits the positivity of HLL,
+  for general (conservative and non-conservative) hyperbolic systems. The
+  proved result is narrower: Einfeldt et al.'s positivity of the HLL/HLLEM
+  class for 1D first-order schemes on Euler flow
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1).
 * *Complete solvers and shock instability.* HLLC is HLL plus an
   anti-diffusive term, $\hat f^{\mathrm{HLL}} + S_L(u^{\mathrm{HLLC}}_{*L} - u^{\mathrm{HLL}}_*)$
   for $S_L \le 0 \le S_M$ ([Simon & Mandal (2019)](/sources/simon-2019.md), eq. 13). Solvers that resolve the
@@ -153,9 +159,11 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   carbuncle, odd–even decoupling and kinked Mach stems at strong
   grid-aligned shocks ([Simon & Mandal (2019)](/sources/simon-2019.md); [Simon & Mandal (2019b)](/sources/simon-2019-b.md); [Xie et al. (2021)](/sources/xie-2021.md), §6;
   [numerical shock instability](/definitions/numerical-shock-instability.md), [cures for numerical shock instability](/methods/shock-instability-cures.md)).
-* *Wave-speed estimates.* Einfeldt's are $S_L = \min(v_n^- - c^-,\ v_n - c)$
-  and $S_R = \max(v_n^+ + c^+,\ v_n + c)$, the second argument at the Roe
-  state; they give the exact speed of an isolated shock. Davis's are
+* *Wave-speed estimates.* What Xie et al. call Einfeldt's speeds are
+  $S_L = \min(v_n^- - c^-,\ v_n - c)$ and $S_R = \max(v_n^+ + c^+,\ v_n + c)$,
+  the second argument at the Roe state; they give the exact speed of an
+  isolated shock. Toro prints a different formula under Einfeldt's name
+  (batch-12 bullet "Two formulas called Einfeldt's" below). Davis's are
   $S_L = \min(v_n^- - c^-,\ v_n^+ - c^+)$ and $S_R = \max(v_n^- + c^-,\ v_n^+ + c^+)$.
   They are more diffusive and "useful for suppressing possible post-shock
   oscillations" ([Xie et al. (2021)](/sources/xie-2021.md), eqs. 10–11, §5).
@@ -178,23 +186,16 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 
 **Later uses (batch 11).**
 * *The original Roe-type MHD solver* ([Brio & Wu (1988)](/sources/brio-1988.md), §§IV.1, VII).
-  For $\gamma = 2$ an exact Roe matrix is the Jacobian at an averaged
-  state: Roe-averaged velocities and total enthalpy, the geometric-mean
-  density, and a $\sqrt\rho$-weighted tangential field (eqs. 26, 28–30).
-  For general $\gamma$ the authors could not solve the averaging problem
-  ("we are not able to solve it analytically") and use the Jacobian at
-  the arithmetic mean of density, velocity, field and total pressure.
-  That state keeps the eigenvalues real but does not satisfy
-  $f(u_{i+1}) - f(u_i) = A\,(u_{i+1} - u_i)$, so stationary
-  discontinuities are no longer exact steady solutions; averaging the
-  energy instead "may lead to a negative averaged pressure". On the
-  [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md) the two
-  versions agree to 4 significant digits in the constant states and to 2
-  in the transitions. The second-order scheme costs about 10 times the
-  floating-point operations of Lax–Wendroff per point and step, yet with
-  200 points it gives "a reasonable result" where Lax–Wendroff needs 800,
-  and is then the more efficient. Its renormalized eigenvectors are on
-  the [characteristic decomposition](/methods/characteristic-decomposition.md) page.
+  An exact Roe matrix for $\gamma = 2$ and, for general $\gamma$, the
+  Jacobian at an arithmetic-mean state; the averaging, its loss of the
+  exact jump property, the comparison of the two versions on the
+  [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md) and the
+  renormalized eigenvectors are on the
+  [characteristic decomposition](/methods/characteristic-decomposition.md)
+  page. The second-order scheme costs about 10 times the floating-point
+  operations of Lax–Wendroff per point and step, yet with 200 points it
+  gives "a reasonable result" where Lax–Wendroff needs 800, and is then
+  the more efficient.
 * *A nonlinear MHD Riemann solver* ([Dai & Woodward (1994)](/sources/dai-1994.md), §§4–6).
   A seven-wave solver in Lagrangian mass coordinates, meant to supply
   interface fluxes to a PPM-type Godunov scheme. Every wave is treated as
@@ -339,7 +340,9 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   Lax–Friedrichs pairs odd and even cell values and spreads a shock over
   about 8 cells (§6.4.2).
 * *Two formulas called "Einfeldt's".* The batch-8 bullet "Wave-speed
-  estimates" quotes Xie et al.'s min/max form as Einfeldt's speeds.
+  estimates" quoted Xie et al.'s min/max form as Einfeldt's speeds
+  without qualification (attributed to Xie et al. at the 2026-10-13 deep
+  lint).
   Toro prints a different formula under Einfeldt's name, a mean velocity
   plus and minus a $\sqrt\rho$-weighted sound speed augmented by a
   velocity-jump term, and credits the plain Roe-average eigenvalues
@@ -395,8 +398,8 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
     odd–even decoupling on a perturbed Mach 20 steady shock, no carbuncle
     in a 2D Sedov blast, no kinked stem in the double Mach reflection
     ("For" side, observed). Their §III F test is the 1.5D twin of Xie et
-    al.'s (51×26 cells with a sub-cell intermediate column at
-    $\lambda = 0.2$, 0.4, against 50×25 with a sub-cell intermediate
+    al.'s (51×26 cells with a sub-cell intermediate column of
+    perturbation weight 0.2 and 0.4, against 50×25 with a sub-cell intermediate
     state); the differences are Davis against Einfeldt speeds, MUSCL
     against first order, Mach 20, and a linear density mix rather than a
     state on the Hugoniot curve.

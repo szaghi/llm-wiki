@@ -4,7 +4,7 @@ title: "Double Mach reflection"
 description: "A Mach 10 shock hitting a 30° wedge (posed as a 60° shock on a flat wall): two Mach stems, a wall jet and slip-line roll-up; the standard 2D robustness and resolution test."
 status: established
 aliases: [double Mach reflection, DMR]
-tags: [benchmark, euler, 2d, strong-shocks]
+tags: [benchmark, euler, 2d, strong-shocks, mach-reflection]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -172,6 +172,23 @@ later sources.
   steady reflected shock while MUSCL as Lagrange plus remap is not
   (Fig. 10).
 
+**Later uses (batch 11, Riemann-solver papers; merged at the 2026-10-13
+deep lint).**
+* *A carbuncle test at second order.* Mach 10 shock at 60° to the
+  $x$-axis (the text also says "reflected by 30° ramp") on
+  $[0, 3.2]\times[0, 1]$ to $t = 0.2$, zero-gradient right boundary; the
+  grid and the other boundaries are not printed. With MUSCL, HLLC kinks
+  the Mach stem, "which gives rise to a spurious triple point and polluted
+  region after shock"; HLL and HLL-BVD show no kink, and HLL-BVD rolls up
+  the slip line with less diffusion than HLL
+  ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III H, Fig. 14;
+  [numerical shock instability](/definitions/numerical-shock-instability.md)).
+* *Fourth-order ADER–WENO with a multidimensional HLLI solver.* The
+  standard set-up on $[0, 4]\times[0, 1]$ with $1920\times480$ cells to
+  $t = 0.2$: a "very well-resolved roll-up of the Mach stem", judged
+  visually ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.2;
+  [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+
 **Later uses (batch 12).** *Single Mach reflection on wedges, a weak-shock
 relative* ([Toro (1997)](/sources/toro-1997.md), §17.2,
 Figs. 17.9–17.12). Not the Mach 10 set-up above.
@@ -233,3 +250,5 @@ Figs. 17.9–17.12). Not the Mach 10 set-up above.
 29. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVc, VIc, Figs. 4, 9, 10.
 30. [Toro (1997)](/sources/toro-1997.md), §17.2.
 31. [Yeom & Chang (2010)](/sources/yeom-2010.md), §4.1.
+32. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III H, Fig. 14.
+33. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.2.

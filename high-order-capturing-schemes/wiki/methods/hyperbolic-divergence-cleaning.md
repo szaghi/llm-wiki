@@ -5,7 +5,7 @@ description: "Dedner's generalized-Lagrange-multiplier treatment of ∇·B: an e
 status: established
 aliases: [GLM, GLM-MHD, divergence cleaning, mixed hyperbolic–parabolic cleaning, Dedner cleaning, EGLM, ideal GLM-MHD]
 tags: [mhd, divergence-free, finite-difference, amr, glm]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Hyperbolic (GLM) divergence cleaning
@@ -164,7 +164,8 @@ $L_{\mathrm{GLM}}$ must be constant in time and uniform in space.
 ## On adaptive meshes
 
 * Third-order ADER-WENO and ADER-DG with subcell limiting use GLM on
-  cell-by-cell AMR instead of a staggered field. The
+  cell-by-cell AMR, with time-accurate local time stepping and a constant
+  $c_h$ (2 and 4), instead of a staggered field. The
   [MHD rotor](/benchmarks/mhd-rotor.md) then shows none of the spurious
   density and magnetic-pressure oscillations reported for Godunov schemes
   without divergence treatment
@@ -217,6 +218,24 @@ every variable at cell centres.
   makes spurious divergent fields whenever $\Delta t$ drops abruptly, and is
   "strongly discouraged". Use a constant $c_h$ above the fastest speed of
   the whole run, or project and reset before changing it.
+* *Further evidence (added at the 2026-10-13 deep lint).*
+  [Derigs et al. (2018)](/sources/derigs-2018.md), §3.7, eq. 3.30, also tie
+  $c_h$ to the time step: $c_h$ is the largest eigenvalue minus the
+  largest fluid speed in the whole domain, global, chosen so that the
+  cleaning waves $v_x \pm c_h$ never shrink the step. The paper does not
+  say how often it is updated; since it is built from the current
+  largest eigenvalue, it varies in time as the step does (compiler's
+  reading). A local $c_h$ is named as future work. On the other side,
+  [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4, and
+  [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2, run GLM with a
+  *constant* $c_h$ (2 for the Orszag–Tang vortex and the MHD rotor in
+  the 2013 paper; 4 for the rotor in the 2015 paper) on cell-by-cell AMR
+  with time-accurate local time stepping, and report no spurious density
+  or magnetic-pressure oscillations on the rotor (see "On adaptive
+  meshes" above). That fits Tomida et al.'s recommendation of a constant
+  $c_h$, although neither paper reports a divergence norm or tests a
+  time-step-tied $c_h$, so it supports the constant choice without
+  refuting the other.
 * *Compiler's note on scope, not a resolution:* Mignone's tests have no
   abrupt change of $\Delta t$. Tomida et al.'s failures need one: an
   imposed drop, a new AMR level, or a transient near a discontinuity. Each
@@ -252,7 +271,7 @@ at the batch-8 deep lint; both sides were already in the text).
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §§1–4 (arXiv v2).
 2. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §§2–5 (arXiv v1).
-3. [Derigs et al. (2018)](/sources/derigs-2018.md), §§2–5 (arXiv v3).
+3. [Derigs et al. (2018)](/sources/derigs-2018.md), §§2–5, incl. §3.7 (arXiv v3).
 4. [Tomida et al. (2026)](/sources/tomida-2026.md), §§2–5, App. B (arXiv v2).
 5. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 6. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.

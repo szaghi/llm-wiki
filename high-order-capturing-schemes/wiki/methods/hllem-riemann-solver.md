@@ -73,7 +73,11 @@ fields.
 * **Claimed properties.** It needs no entropy fix and shows no sonic
   glitch in Toro's modified Sod problem. It "naturally inherits the
   positivity properties and the entropy enforcement" of HLL, but this is
-  asserted, not proved (abstract, §§1, 3.6.1). It costs one
+  asserted, not proved, and asserted for general conservative and
+  non-conservative systems (abstract, §§1, 3.6.1). The proved result is
+  narrower: Einfeldt et al. showed positivity for the HLL/HLLEM class
+  applied to one-dimensional first-order schemes for Euler flow
+  ([Balsara & Kim (2016)](/sources/balsara-2016-b.md), §1). It costs one
   eigen-decomposition per face. The authors say it outperforms the
   Dumbser–Osher–Toro solver "by a wide margin" at similar quality, but
   report no timings (§4).
@@ -172,14 +176,11 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
   to the Lax–Friedrichs flux when that signed Mach number equals
   $v_n\Delta t/h$. The exact,
   HLLC, Roe and Osher solvers instead resolve a stationary contact
-  exactly. On an isolated stationary contact run to $t = 2$ on 100 cells,
-  HLL smears it over the whole domain while HLLC keeps it (Fig. 10.9).
-  The book has no HLLEM: HLLC restores the contact with a second star
-  state ([HLLC Riemann solver](/methods/hllc-riemann-solver.md)), HLLEM
-  with the linear sub-structure above. A 2D counterpart: on a single
-  Mach reflection a piecewise-linear scheme with HLL smears the slip
-  surface "very significantly" where HLLC does not (§17.2,
-  Figs. 17.11–17.12; [double Mach reflection](/benchmarks/double-mach-reflection.md)).
+  exactly. Toro's 1D (isolated contact) and 2D (single Mach reflection)
+  comparisons of HLL against HLLC are stated in full on the
+  [HLLC Riemann solver](/methods/hllc-riemann-solver.md) page ("Contacts
+  against HLL"). The book has no HLLEM: HLLC restores the contact with a
+  second star state, HLLEM with the linear sub-structure above.
 
 # Citations
 
@@ -187,8 +188,8 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 2. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §§4–7.
 3. [Xie et al. (2021)](/sources/xie-2021.md), §§3, 6.
 4. [Balsara (2017)](/sources/balsara-2017-d.md), Apps. D–E.
-5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §4.1.
+5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§1, 4.1.
 6. [Balsara et al. (2025)](/sources/balsara-2025.md), §II.
 7. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2–3.
 8. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C.
-9. [Toro (1997)](/sources/toro-1997.md), §§10.7, 17.2.
+9. [Toro (1997)](/sources/toro-1997.md), §10.7.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "High-order adaptive mesh refinement for capturing schemes"
-description: "Adaptive Cartesian meshes for better-than-second-order schemes: cell-by-cell tree refinement with one-step ADER updates and local time stepping, and block-structured (Berger–Colella) hierarchies with Runge–Kutta subcycling, where ghost values must match the intermediate stages and refluxing, conservative interpolation and high order pull against each other."
+description: "Adaptive Cartesian meshes for better-than-second-order schemes: cell-by-cell tree refinement with one-step ADER updates and local time stepping, and block-structured (Berger–Colella) hierarchies with Runge–Kutta time stepping, usually subcycled, where ghost values must match the intermediate stages and refluxing, conservative interpolation and high order pull against each other."
 status: established
 aliases: [AMR, space-time adaptive mesh refinement, cell-by-cell AMR, local time stepping, high-order AMR, block-structured AMR, subcycling, refluxing]
 tags: [amr, ader, single-step, finite-volume, finite-difference, dg, time-discretization]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # High-order adaptive mesh refinement for capturing schemes
@@ -96,20 +96,22 @@ coarse–fine fluxes change.
   not seen in the original solutions
   ([Zanotti et al. (2015)](/sources/zanotti-2015.md), §6).
 
-## Block-structured hierarchies with Runge–Kutta subcycling
+## Block-structured hierarchies with Runge–Kutta time stepping
 
-The Berger–Colella design nests logically rectangular patches. Each level
-advances with its own step and is recursively caught up by the finer
-ones. Fine data are then averaged down, and the coarse cells next to the
+The Berger–Colella design nests logically rectangular patches. With
+subcycling, each level advances with its own step and is recursively
+caught up by the finer ones. Fine data are then averaged down, and the coarse cells next to the
 fine region are corrected by the difference between coarse and summed
-fine fluxes ("refluxing"). Three papers carry it past second order with
-method-of-lines time stepping: fourth-order finite volume with RK4
+fine fluxes ("refluxing"). Four papers carry it past second order with
+method-of-lines time stepping: fourth-order finite volume with RK4,
+subcycled
 ([McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md);
 [Owen, Guzik & Gao (2018)](/sources/owen-2018.md);
 [fourth-order finite volume](/methods/fourth-order-finite-volume.md)),
-and fifth-order finite differences with SSP-RK3
-([Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md), no subcycling;
-[Wang et al. (2025)](/sources/wang-2025.md), preprint).
+and fifth-order finite differences with SSP-RK3, subcycled in
+[Wang et al. (2025)](/sources/wang-2025.md) (preprint) and with one
+global time step in [Chen, Tóth & Gombosi (2016)](/sources/chen-2016.md)
+(no subcycling).
 
 **Ghost values in time must match the stages.** The coarse RK4 stages
 give a cubic dense output (Fok–Rosales),

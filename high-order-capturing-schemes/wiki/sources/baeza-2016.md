@@ -8,7 +8,7 @@ authors: [Baeza A., Mulet P., Zorío D.]
 year: 2016
 venue: "J. Sci. Comput. 69:170-200"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2016-JSC-Baeza-101007s10915-016-0188-7.pdf"
-tags: [boundary-treatment, weno, finite-difference, cut-cell]
+tags: [boundary-treatment, weno, finite-difference, cartesian-grid]
 timestamp: 2026-10-08T00:00:00Z
 ---
 

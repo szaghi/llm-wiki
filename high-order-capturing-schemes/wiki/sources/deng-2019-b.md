@@ -129,6 +129,8 @@ All compare HLL, HLLC and HLL-BVD, with MUSCL; comparisons are visual.
 # Pages created or updated
 
 * Updated [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (HLL-BVD; bearing on the HLLE contradiction), [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md), [Low-Mach-number numerical fluxes](/methods/low-mach-number-fluxes.md), [Stationary normal shock test](/benchmarks/stationary-normal-shock.md), [Quirk's odd–even decoupling test](/benchmarks/quirk-odd-even-test.md).
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
+* Merged at the 2026-10-13 deep lint: updated [Sod shock tube](/benchmarks/sod-shock-tube.md), [Lax shock tube](/benchmarks/lax-shock-tube.md) (and the "strong Lax problem"), [Two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md), [Sedov point-blast wave](/benchmarks/sedov-blast-wave.md) (full-domain centred variant), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Numerical shock instability](/definitions/numerical-shock-instability.md) and [Slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md).
 
 # Citations
 

@@ -8,7 +8,7 @@ authors: [Reyes A., Lee D., Graziani C., Tzeferacos P.]
 year: 2018
 venue: "J. Sci. Comput. 76:443-480"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2018-JSC-Reyes-101007s10915-017-0625-2.pdf"
-tags: [weno, gaussian-process, non-polynomial, finite-volume, mhd]
+tags: [weno, non-polynomial, finite-volume, mhd]
 timestamp: 2026-10-08T00:00:00Z
 ---
 
@@ -68,6 +68,7 @@ and benchmark pages.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
 * Also cited on [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md), [Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md).
+* Also cited on [HLLC Riemann solver](/methods/hllc-riemann-solver.md) (created in batch 12).
 
 # Citations
 

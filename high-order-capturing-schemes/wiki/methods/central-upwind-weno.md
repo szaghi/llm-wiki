@@ -5,7 +5,7 @@ description: "Hu–Wang–Adams sixth-order WENO: a downwind candidate stencil c
 status: established
 aliases: [WENO-CU6, adaptive central-upwind WENO]
 tags: [weno, low-dissipation, central-scheme, turbulence]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Central-upwind WENO (WENO-CU6)
@@ -55,3 +55,5 @@ Mach tests. TENO generalizes the idea ([targeted ENO](/methods/teno.md)).
 
 1. [Hu, Wang & Adams (2010)](/sources/hu-2010.md), §§2–3.
 2. [Fu, Hu & Adams (2016)](/sources/fu-2016.md), §§1, 2.3, 5.
+3. [Balsara & Shu (2000)](/sources/balsara-2000.md), §III.
+4. [Martín et al. (2006)](/sources/martin-2006.md), §§4–5.

@@ -4,7 +4,7 @@ title: "Regular and Mach reflection"
 description: "The two ways a shock reflects from a wall or a symmetry plane: regular reflection, with incident and reflected shocks meeting on the wall, and Mach reflection, where a Mach stem joins the wall to a triple point carrying a slip line; single and double triple points, the transition angle θ_tr, and the Mach stems that collide behind a body."
 status: established
 aliases: [regular reflection, Mach reflection, RR, MR, Mach stem, triple point, single triple point, double triple point, STP, DTP, transition angle]
-tags: [definition, mach-reflection, euler]
+tags: [mach-reflection, euler]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

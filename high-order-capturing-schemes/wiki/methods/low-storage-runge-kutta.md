@@ -5,7 +5,7 @@ description: "Runge–Kutta methods arranged to run in two or three solution-siz
 status: established
 aliases: [2N-storage Runge-Kutta, 2N*, 3S*, low-storage RK, Williamson form]
 tags: [time-discretization, runge-kutta, low-storage, ssp]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Low-storage Runge–Kutta methods
@@ -28,7 +28,8 @@ regardless of $s$ ([Gottlieb, Shu & Tadmor (2001)](/sources/gottlieb-2001.md), �
   ([Higueras & Roldán (2019)](/sources/higueras-2019.md), §3).
 * **2N\*.** A 2N method that also keeps $u^n$ for the whole step, which a
   variable-step code needs to reject a step without a third register
-  (Def. 3, after Gottlieb, Ketcheson & Shu 2011). In Shu–Osher form the
+  ([Higueras & Roldán (2019)](/sources/higueras-2019.md), Def. 3, after
+  Gottlieb, Ketcheson & Shu 2011). In Shu–Osher form the
   sparse pattern is: $a_{ik}$ nonzero only on the first subdiagonal and in
   the column of $u^n$, $b_{ik}$ only on the first subdiagonal (eq. 24,
   Algorithm 1).

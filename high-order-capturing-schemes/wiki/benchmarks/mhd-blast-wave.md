@@ -104,6 +104,17 @@ called a "more stringent variant" of Balsara's earlier blast.
   other direction. Whether the energy correction was used is not stated
   ([constrained transport](/methods/constrained-transport.md)).
 
+**Later uses (batch 11, Balsara & Nkonga; merged at the 2026-10-13 deep
+lint).** *The 3D "extreme" blast again* (§5.4): $\gamma = 1.4$,
+$\rho = 1$, $p = 0.1$ with $p = 1000$ inside radius 0.1,
+$B_x = B_y = B_z = 150/\sqrt3$, unit cube, $257^3$ cells, plasma beta
+$1.117\times10^{-4}$, CFL 0.4, $t = 0.0075$, third-order ADER–WENO with
+the multidimensional HLLI (MuSIC) solver. Density and pressure stay
+"positive as expected"; which positivity safeguards were active is not
+stated ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4;
+[multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+The set-up is that of the review's run in the batch-7 entry above.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
@@ -118,3 +129,4 @@ called a "more stringent variant" of Balsara's earlier blast.
 10. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.7.
 11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.4.
 12. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.
+13. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.

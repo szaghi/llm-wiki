@@ -4,7 +4,7 @@ title: "Well-balanced schemes"
 description: "A scheme for a balance law is well balanced if a discrete steady state of interest — lake at rest, hydrostatic or stationary flow — survives a time step exactly, so that small perturbations of it are not swamped by truncation error; obtained by matching the source and flux discretizations, by evolving the deviation from a known equilibrium, or by a Riemann solver that resolves the stationary source wave."
 status: established
 aliases: [well-balancing, C-property, exact preservation of equilibria, hydrostatic balance]
-tags: [source-terms, well-balanced, property]
+tags: [source-terms, well-balanced]
 timestamp: 2026-10-12T00:00:00Z
 ---
 

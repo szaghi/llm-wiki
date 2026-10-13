@@ -4,7 +4,7 @@ title: "Cut-cell (embedded-boundary) finite volume"
 description: "Finite volume on a Cartesian grid cut by the body: cut cells keep their fluid volume and face apertures so the scheme stays conservative, at the price of the small-cell problem — a time step set by the regular cells is unstable on tiny cut cells — which flux redistribution, cell merging, h-box and state redistribution remove; moving bodies and AMR add freshly cleared cells and coarse–fine synchronization."
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, EB finite volume, cut-cell method, flux redistribution]
-tags: [boundary-treatment, embedded-boundary, cartesian-grid, conservation, amr]
+tags: [boundary-treatment, embedded-boundary, cartesian-grid, conservation, amr, cut-cell]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -68,12 +68,15 @@ two-stage method of lines, with least-squares gradients and a
 Barth–Jespersen limiter evaluated at neighbour centroids at cut cells.
 
 **Conservation is what matters at cold walls.** A strictly conservative
-cut-element method on a Mach 8.98 reacting cylinder matches the
+cut-element method (INCA) on a Mach 8.98 reacting cylinder matches the
 body-fitted heat flux where the CHESS ghost-cell solver is low by a
-factor of about 40 and the same cut-cell solver with its conservative
-treatment switched off is closer but "clearly wrong"; the authors call
-conservation the cause, as a hypothesis, and note that the solvers differ
-in other respects too ([Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5; see
+factor of about 40. CHESS differs from INCA in other respects too, so
+the isolating experiment is INCA with its conservative flux treatment
+switched off, which differs from the cut-cell method in that treatment
+only: its heat flux is closer than CHESS's but "clearly wrong", and on
+an ablator its blowing rate is overpredicted much as CHESS's is. The
+authors take this to consolidate conservation as the cause
+([Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5, Fig. 18; see
 the [IB page](/methods/immersed-boundary-method.md)). That solver keeps
 every intersection of the grid with the surface triangulation, so one
 cut cell can hold several cut elements, and it fills ghost cells as well
@@ -165,14 +168,20 @@ bodies?** *Open* (recorded at the 2026-10-12 deep lint).
 * The scopes differ: Berger and Giuliani speak of the local error at cut
   cells, Natarajan et al. of a global entropy $L^2$ norm, where first-order
   cut cells on a codimension-one set need not cap the global order. A
-  static-body convergence test of the same scheme, or a moving test with
-  state redistribution, would separate the causes.
+  measurement for a different stabilization supports this scope reading:
+  with weighted state redistribution on a static body,
+  [Giuliani et al. (2022)](/sources/giuliani-2022.md), §3.2, Fig. 6b,
+  find second order in the volume and about 1.4 on the boundary: the
+  order at the cut cells falls below the order of a volume norm
+  (evidence by analogy, not a flux-redistribution measurement). A static-body convergence test of
+  the same scheme, or a moving test with state redistribution, would
+  separate the causes.
 
 # Citations
 
 1. [Berger & Giuliani (2021)](/sources/berger-2021.md), §§1–5 (arXiv v1).
-2. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §§2–6 (arXiv v2).
+2. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §§2–6, Fig. 6b (arXiv v2).
 3. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2–3 (arXiv v1).
 4. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §§2–3 (arXiv v1).
-5. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§3, 4.5, 5 (arXiv v1).
+5. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§3, 4.5, 5, Fig. 18 (arXiv v1).
 6. [Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), §§1–5.

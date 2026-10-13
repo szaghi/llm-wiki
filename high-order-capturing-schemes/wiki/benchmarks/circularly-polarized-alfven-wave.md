@@ -5,7 +5,7 @@ description: "An exact nonlinear MHD wave, oblique to the mesh: run for a few pe
 status: established
 aliases: [circularly polarized Alfvén wave, torsional Alfvén wave, smooth Alfvén wave, Alfvén-wave decay]
 tags: [benchmark, mhd, accuracy, dissipation, 2d, 3d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Circularly polarized (torsional) Alfvén waves
@@ -68,13 +68,23 @@ $\max|B_z|$ measures numerical dissipation.
   of magnitude below second order already at 8 cells, and scales as about
   $N^{-5}$ against $N^{-3}$ ([Berta et al. (2024)](/sources/berta-2024.md), §5.3).
 
-**A tension on instability.** Torsional waves are parametrically
-unstable. One paper runs at very high plasma beta, stating that this
-suppresses the instability ([Balsara et al. (2009)](/sources/balsara-2009.md), §5.3).
-Its RK sibling, with the same $p = 1000$, says the instabilities exist
-also at high beta and that the set-up is designed to ameliorate them
-([Balsara (2009b)](/sources/balsara-2009-b.md), §4.2). Neither reports
-an instability in its runs.
+**Parametric instability: not a contradiction.** Torsional waves are
+parametrically unstable at low and at high plasma beta; both Balsara
+papers say so, citing Goldstein, Del Zanna et al. and Jayanti & Hollweg.
+The ADER paper runs "at very high values of plasma-β where the growth of
+such instabilities is suppressed", because higher-order schemes "pick up
+on the slightest amount of numerical noise" and grow it as a physical
+fluctuation ([Balsara et al. (2009)](/sources/balsara-2009.md), §5.3).
+Its RK sibling, with the same $p = 1000$, says the set-up is designed "to
+ameliorate such instabilities as far as possible"
+([Balsara (2009b)](/sources/balsara-2009-b.md), §4.2). Both describe a
+reduced growth, not an absence, so the statements agree. The ADER paper
+also reports the instability in its runs: "very slight evidence" at
+fourth order on $48^3$ in the $L^1$ norm, and "slight traces" at second
+and third order on finer meshes with a lower pressure (§5.3, Table 3).
+(Corrected at the 2026-10-13 deep lint: this paragraph previously called
+the two statements a tension and said neither paper reports an
+instability.)
 
 **Later uses (batch 7).**
 * *Second-order convergence of four schemes* in 2D ($\tan\theta_{\mathrm{rot}} = 2$) and 3D:
@@ -90,11 +100,26 @@ an instability in its runs.
   almost no more at fourth; second order with the complete solver beats
   third order with the incomplete one ([Balsara (2017)](/sources/balsara-2017-d.md), §§IX.5, IX.8).
 
+**Later uses (batch 11, Balsara & Nkonga; merged at the 2026-10-13 deep
+lint).** *The primary source of the solver-quality factors.* Torsional
+Alfvén-wave decay at $9.462°$ to the $y$-axis, $[-3, 3]^2$, $120^2$
+cells, periodic, $t = 129$, ADER–WENO of orders 2–4: 1D HLL at the faces
+with a 2D multidimensional solver without sub-structure dissipates 6
+times more at second order and 3 times more at third than 1D HLLI with
+the multidimensional solver with sub-structure; at fourth order the
+difference is "almost negligible". Second order with the better solvers
+is less dissipative than third order with the inferior ones. The
+relativistic repeat (§5.7, after Balsara & Kim) gives the same ordering
+without factors ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md),
+§§5.5, 5.7; [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md);
+[approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+These are the factors the review restates in the batch-7 entry above.
+
 # Citations
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §4.1 (arXiv v2).
 2. [Balsara (2009b)](/sources/balsara-2009-b.md), §§4.2, 5.1 (author manuscript).
-3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§5, 7.2.
+3. [Balsara et al. (2009)](/sources/balsara-2009.md), §§5, 5.3 (Table 3), 7.2.
 4. [Christlieb, Rossmanith & Tang (2014)](/sources/christlieb-2014.md), §7.1 (arXiv v2).
 5. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.
 6. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.2.
@@ -104,3 +129,4 @@ an instability in its runs.
 10. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.1.
 11. [Tomida et al. (2026)](/sources/tomida-2026.md), App. B.3.
 12. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.5, IX.8.
+13. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§5.5, 5.7.

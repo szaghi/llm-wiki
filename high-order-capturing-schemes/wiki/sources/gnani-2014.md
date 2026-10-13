@@ -8,7 +8,7 @@ authors: [Gnani F., Lo K.H., Zare-Behtash H., Kontis K.]
 year: 2014
 venue: "Acta Astronaut. 99:143–152"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2014-ActaAstronaut-Gnani-101016jactaastro201402018.pdf"
-tags: [2d, vortex-sheet, mach-reflection]
+tags: [2d, vortex-sheet, mach-reflection, experiment]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

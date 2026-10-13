@@ -1,7 +1,7 @@
 ---
 type: Benchmark
 title: "Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes"
-description: "A set of one-dimensional ideal-MHD Riemann problems, several taken from Dai and Woodward and popularized by Ryu and Jones, that together produce every 1D wave structure: fast and slow shocks and rarefactions, rotational and contact discontinuities, switch-on and switch-off waves, tangential discontinuities and compound waves; checked against a nonlinear Riemann solver."
+description: "A set of one-dimensional ideal-MHD Riemann problems, four of them (1a, 1b, 2a, 3a) from Dai and Woodward's published tables, popularized by Ryu and Jones, that together produce every 1D wave structure: fast and slow shocks and rarefactions, rotational and contact discontinuities, switch-on and switch-off waves, tangential discontinuities and compound waves; checked against a nonlinear Riemann solver."
 status: established
 aliases: [Ryu–Jones shock tube, Dai–Woodward shock tube, RJ2a, MHD Riemann problems]
 tags: [mhd, riemann-problem, verification, benchmark, 1d]
@@ -20,11 +20,11 @@ position of the initial jump is not stated.
 
 | Problem | Left | Right | $B_x$ | $t$ | Waves |
 |---|---|---|---|---|---|
-| 1a (DW Table 7) | $(1, 10, 0, 0, 5/\sqrt{4\pi}, 0, 20)$ | $(1, -10, 0, 0, 5/\sqrt{4\pi}, 0, 1)$ | $5/\sqrt{4\pi}$ | 0.08 | two fast shocks, a slow rarefaction, a slow shock, a contact |
-| 1b (DW Table 3a) | $(1, 0, 0, 0, 5/\sqrt{4\pi}, 0, 1)$ | $(0.1, 0, 0, 0, 2/\sqrt{4\pi}, 0, 10)$ | $3/\sqrt{4\pi}$ | 0.03 | fast and slow shocks, contact, slow and fast rarefactions |
-| 2a (DW Table 1a) | $(1.08, 1.2, 0.01, 0.5, 3.6/\sqrt{4\pi}, 2/\sqrt{4\pi}, 0.95)$ | $(1, 0, 0, 0, 4/\sqrt{4\pi}, 2/\sqrt{4\pi}, 1)$ | $2/\sqrt{4\pi}$ | 0.2 | two fast shocks, two rotational discontinuities, two slow shocks, a contact |
-| 2b (DW Table 5a) | $(1, 0, 0, 0, 6/\sqrt{4\pi}, 0, 1)$ | $(0.1, 0, 2, 1, 1/\sqrt{4\pi}, 0, 10)$ | $3/\sqrt{4\pi}$ | 0.035 | as 2a, with rarefactions on the right |
-| 3a (DW Table 2a) | $(0.1, 50, 0, 0, -1/\sqrt{4\pi}, -2/\sqrt{4\pi}, 0.4)$ | $(0.1, 0, 0, 0, 1/\sqrt{4\pi}, 2/\sqrt{4\pi}, 0.2)$ | 0 | 0.01 | two magnetosonic shocks, a tangential discontinuity |
+| 1a (DW Table VI) | $(1, 10, 0, 0, 5/\sqrt{4\pi}, 0, 20)$ | $(1, -10, 0, 0, 5/\sqrt{4\pi}, 0, 1)$ | $5/\sqrt{4\pi}$ | 0.08 | two fast shocks, a slow rarefaction, a slow shock, a contact |
+| 1b (DW Table IIIa) | $(1, 0, 0, 0, 5/\sqrt{4\pi}, 0, 1)$ | $(0.1, 0, 0, 0, 2/\sqrt{4\pi}, 0, 10)$ | $3/\sqrt{4\pi}$ | 0.03 | fast and slow shocks, contact, slow and fast rarefactions |
+| 2a (DW Table Ia) | $(1.08, 1.2, 0.01, 0.5, 3.6/\sqrt{4\pi}, 2/\sqrt{4\pi}, 0.95)$ | $(1, 0, 0, 0, 4/\sqrt{4\pi}, 2/\sqrt{4\pi}, 1)$ | $2/\sqrt{4\pi}$ | 0.2 | two fast shocks, two rotational discontinuities, two slow shocks, a contact |
+| 2b (in no published DW table) | $(1, 0, 0, 0, 6/\sqrt{4\pi}, 0, 1)$ | $(0.1, 0, 2, 1, 1/\sqrt{4\pi}, 0, 10)$ | $3/\sqrt{4\pi}$ | 0.035 | as 2a, with rarefactions on the right |
+| 3a (DW Table IIa) | $(0.1, 50, 0, 0, -1/\sqrt{4\pi}, -2/\sqrt{4\pi}, 0.4)$ | $(0.1, 0, 0, 0, 1/\sqrt{4\pi}, 2/\sqrt{4\pi}, 0.2)$ | 0 | 0.01 | two magnetosonic shocks, a tangential discontinuity |
 | 3b | $(1, -1, 0, 0, 1, 0, 1)$ | $(1, 1, 0, 0, 1, 0, 1)$ | 0 | 0.1 | two magnetosonic rarefactions |
 | 4a | $(1, 0, 0, 0, 1, 0, 1)$ | $(0.2, 0, 0, 0, 0, 0, 0.1)$ | 1 | 0.15 | a switch-on fast shock |
 | 4b | $(0.4, -0.66991, 0.98263, 0, 0.0025293, 0, 0.52467)$ | $(1, 0, 0, 0, 1, 0, 1)$ | 1.3 | 0.15 | a contact and a switch-off fast rarefaction |
@@ -33,7 +33,11 @@ position of the initial jump is not stated.
 | 5a (Brio–Wu at $\gamma = 5/3$) | $(1, 0, 0, 0, 1, 0, 1)$ | $(0.125, 0, 0, 0, -1, 0, 0.1)$ | 0.75 | 0.1 | a slow compound wave |
 | 5b | $(1, 0, 0, 0, 1, 0, 1)$ | $(0.4, 0, 0, 0, -1, 0, 0.4)$ | 1.3 | 0.16 | a fast compound wave |
 
-The tabulated analytic solutions are not in the preprint read here.
+The tabulated analytic solutions are not in the preprint read here. The
+"DW Table" labels follow the published Dai & Woodward (1994) numbering;
+Ryu & Jones's figure captions cite the in-press numbering ("DW table 7"
+for 1a, "5a" for 2b, "3a" for 1b, "2a" for 3a), which the table showed
+until the 2026-10-13 deep lint (see *Later uses (batch 11)*).
 
 **What it measures.**
 * Planar-field problems (set 1) produce no rotational discontinuity, as the
@@ -64,19 +68,20 @@ The tabulated analytic solutions are not in the preprint read here.
 * *Dai–Woodward table numbers in the published paper.* The published
   [Dai & Woodward (1994)](/sources/dai-1994.md) numbers its tables in
   Roman numerals, Ia/Ib to Va/Vb and VI; the "DW Table" labels in the
-  table above were taken from Ryu & Jones and do not all match it. In the
+  table above were taken from Ryu & Jones and did not all match it
+  (corrected in the table at the 2026-10-13 deep lint). In the
   published paper (Gaussian units; fields here divided by $\sqrt{4\pi}$):
   * 2a is DW Table Ia, 3a is DW Table IIa and 1b is DW Table IIIa; states,
     $B_x$ and $\gamma$ agree.
-  * 1a is DW **Table VI** (Fig. 8). This corrects the label "1a (DW
-    Table 7)" above: the published paper has no Table 7.
+  * 1a is DW **Table VI** (Fig. 8). This corrected the earlier label "1a
+    (DW Table 7)": the published paper has no Table 7.
   * 2b is in **no** published DW table. DW Table Va is a different
     problem: left $(\rho, v_x, v_y, v_z, B_y, B_z, p) = (1.1, 4, 0, 0, 5/\sqrt{4\pi}, -3.5/\sqrt{4\pi}, 5.6)$,
     right $(1, -4, 0, 0, 4/\sqrt{4\pi}, 2/\sqrt{4\pi}, 1)$, $B_x = 5/\sqrt{4\pi}$,
     $\gamma = 5/3$ (the text prints the right $v_x$ as 0, Table Va as
-    $-4.0$, the state actually computed). This corrects the label "2b (DW
-    Table 5a)" above, and with it the description's "several taken from
-    Dai and Woodward" holds for 1a, 1b, 2a and 3a only. The source of the
+    $-4.0$, the state actually computed). This corrected the earlier label
+    "2b (DW Table 5a)", and with it the description's earlier "several
+    taken from Dai and Woodward", which holds for 1a, 1b, 2a and 3a only. The source of the
     Ryu–Jones labels is not recorded in either paper as read here.
   * DW Table IVa is the [Brio–Wu](/benchmarks/brio-wu-shock-tube.md)
     problem at its original $\gamma = 2$, where problem 5a uses 5/3

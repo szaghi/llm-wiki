@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 111 sources compiled (the whole archive)**: 110 published works,
+**Corpus: 112 sources compiled (the whole archive)**: 111 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -80,7 +80,8 @@ for every page.
    Diffusion terms in DG: [recovery DG](/methods/recovery-dg-diffusion.md).
    Then one-step
    [ADER](/methods/ader.md) (one reconstruction per step, equal order in
-   space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
+   space and time; open `Contradictions` entry on how many Picard
+   iterations its predictor needs), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    built on the [exact Riemann solver](/methods/exact-riemann-solver.md) of
    the Euler equations or on the three-wave [HLLC solver](/methods/hllc-riemann-solver.md),
    and [contact sharpening](/methods/contact-sharpening.md).
@@ -94,9 +95,13 @@ for every page.
    [sensor-driven cures](/methods/shock-instability-cures.md) remove. An
    open `Contradictions` entry asks whether HLLE is carbuncle-free. Related
    anomalies: the [slowly moving shock](/definitions/slowly-moving-shock-anomaly.md)
+   (open entry: is it independent of the Riemann solver?)
    and the loss of accuracy of upwind fluxes at
    [low Mach number](/methods/low-mach-number-fluxes.md). This literature
-   works at first and second order.
+   works mostly at first and second order; the higher-order evidence is
+   Balsara & Shu's switch to Lax–Friedrichs fluxes near shocks with
+   MPWENO, and Woodward & Colella's PPM, which suppresses the 2D
+   instability their Godunov and MUSCL runs show.
 8. **Other routes to high order.** Three-dimensional
    [finite-volume reconstruction](/methods/finite-volume-reconstruction.md),
    the [alternative finite-difference WENO](/methods/alternative-finite-difference-weno.md)
@@ -112,15 +117,17 @@ for every page.
    — convex admissible set, positive first-order flux, SSP time
    stepping — enforced by the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)
    or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
-   Open `Contradictions` entry: is the first-order Lax–Friedrichs MHD scheme
-   provably positive? For MHD the divergence constraint is kept by
+   Open `Contradictions` entries: is the first-order Lax–Friedrichs MHD
+   scheme provably positive? Does positivity limiting inside Runge–Kutta
+   stages reduce the order? For MHD the divergence constraint is kept by
    [constrained transport](/methods/constrained-transport.md) (staggered
    and unstaggered designs both valid, each for its own discrete
    divergence; closed by fiat), by
    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)
    of staggered fields, by [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
-   (open `Contradictions` entry: should the cleaning speed follow the time
-   step? Time-step changes and AMR break the cleaning's assumptions)
+   (open `Contradictions` entries: should the cleaning speed follow the
+   time step? Time-step changes and AMR break the cleaning's assumptions;
+   and is constrained transport or cleaning the more robust?)
    or by projection; without it high-order MHD runs fail. Curl constraints
    have their dual: [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md). On curvilinear grids,
    uniform flow must stay uniform:
@@ -135,7 +142,9 @@ for every page.
    using ADER-WENO on $2K+1$ subcells.
 11. **Boundaries and adaptive meshes.** Ghost values on Cartesian grids cut
    by the boundary come from [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)
-   expansions (stable for any cut-cell distance) or from
+   expansions (stable for any cut-cell distance, shown for 1D linear
+   advection when enough boundary derivatives come from the ILW procedure)
+   or from
    [weighted extrapolation](/methods/weighted-extrapolation.md), against which
    [Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md)
    argue that extrapolation over-specifies outflow (open entry); the ILW
@@ -144,12 +153,13 @@ for every page.
    summation by parts: [energy-stable WENO](/methods/energy-stable-weno.md).
    Bodies that do not fit the grid: [immersed-boundary methods](/methods/immersed-boundary-method.md)
    (Peskin's forcing; ghost cells, not conservative at the wall) and
-   conservative [cut-cell finite volume](/methods/cut-cell-finite-volume.md),
+   conservative [cut-cell finite volume](/methods/cut-cell-finite-volume.md)
+   (open entry: what order does flux redistribution give?),
    whose small-cell problem [state redistribution](/methods/state-redistribution.md)
    solves, with re-redistribution at AMR interfaces.
    [High-order AMR](/methods/high-order-amr.md): one-step updates for
-   local time stepping on trees, or Runge–Kutta subcycling on
-   block-structured hierarchies, where ghost values must match the stages
+   local time stepping on trees, or Runge–Kutta time stepping on
+   block-structured hierarchies (subcycled or with one global step), where ghost values must match the stages
    and refluxing costs finite differences their order.
 12. **Codes.** [PLUTO](/software/pluto.md), [HOW-MHD](/software/how-mhd.md)
    and the GPU DNS code [STREAmS](/software/streams.md).
@@ -178,7 +188,8 @@ for every page.
    [stationary normal shock](/benchmarks/stationary-normal-shock.md),
    [Mach 20 blunt body](/benchmarks/hypersonic-blunt-body.md). Positivity:
    [double rarefaction](/benchmarks/double-rarefaction.md),
-   [Sedov](/benchmarks/sedov-blast-wave.md),
+   [Sedov](/benchmarks/sedov-blast-wave.md) (open entry: does
+   positivity-limited DG survive it without a TVB limiter?),
    [Leblanc](/benchmarks/leblanc-shock-tube.md),
    [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md),
    [shock diffraction](/benchmarks/shock-diffraction.md). MHD:

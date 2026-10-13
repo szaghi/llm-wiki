@@ -1,22 +1,23 @@
 ---
 type: Benchmark
 title: "Magnetic field-loop advection"
-description: "A weak cylindrical current loop (A_z = A_0(R − r) inside radius R) advected obliquely across a periodic box: a pure test of how a scheme transports a discontinuous magnetic field, measured by the loop's shape, its spurious oscillations and the decay of magnetic energy."
+description: "A weak cylindrical current loop (vector potential A_z falling linearly from the centre to zero at the loop radius) advected obliquely across a periodic box: a pure test of how a scheme transports a discontinuous magnetic field, measured by the loop's shape, its spurious oscillations and the decay of magnetic energy."
 status: established
 aliases: [field loop, magnetic loop advection, Gardiner–Stone loop]
 tags: [benchmark, mhd, divergence-free, dissipation, 2d, 3d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Magnetic field-loop advection
 
 **Set-up** (Gardiner and Stone, as used by the sources below). On
-$[-1, 1]\times[-\tfrac12, \tfrac12]$, periodic, a loop of radius $R = 0.3$
-is set from the vector potential $A_z = A_0(R - \varrho)$ for $\varrho \le R$, with
-$A_0 = 10^{-3}$, so the magnetic pressure is negligible and the field is
+$[-1, 1]\times[-\tfrac12, \tfrac12]$, periodic, a loop of radius 0.3
+is set from the vector potential $A_z = 10^{-3}(0.3 - \varrho)$ for
+$\varrho \le 0.3$ (zero outside), a field of magnitude $10^{-3}$ inside
+the loop, so the magnetic pressure is negligible and the field is
 advected passively by a uniform flow of speed $\sqrt5$ at $\tan\theta_{\mathrm{rot}} = 1/2$
 to the mesh. The field is discontinuous at the rim and singular at the
-centre. Some versions modify $A_z$ for $\varrho \le 0.2R$ to remove the
+centre. Some versions modify $A_z$ for $\varrho \le 0.06$ (a fifth of the loop radius) to remove the
 central singularity.
 
 **Results.**
