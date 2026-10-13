@@ -76,6 +76,7 @@ WENO-Z, critical-point, smoothness-indicator and finite-difference pages.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [WENO-Z](/methods/weno-z.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Self-similarity (scale invariance) of capturing schemes](/properties/self-similarity.md).
 
 # Citations
 

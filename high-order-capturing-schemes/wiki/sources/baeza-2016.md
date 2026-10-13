@@ -72,6 +72,8 @@ pages.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Woodward–Colella interacting blast waves](/benchmarks/interacting-blast-waves.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Self-similarity (scale invariance) of capturing schemes](/properties/self-similarity.md).
+* Also cited on [Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md).
 
 # Citations
 

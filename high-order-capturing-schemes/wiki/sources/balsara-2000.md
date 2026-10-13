@@ -95,6 +95,7 @@ for very high order in compressible DNS/LES. Merged into
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Accuracy at critical points](/properties/accuracy-at-critical-points.md).
 * Updated [Total variation diminishing (TVD) and bounded (TVB)](/properties/total-variation-diminishing.md).
+* Also cited on [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md), [Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md), [Numerical shock instability (carbuncle and related anomalies)](/definitions/numerical-shock-instability.md), [Central-upwind WENO (WENO-CU6)](/methods/central-upwind-weno.md), [Cures for numerical shock instability](/methods/shock-instability-cures.md).
 
 # Citations
 

@@ -67,6 +67,7 @@ and benchmark pages.
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md), [Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md).
 
 # Citations
 

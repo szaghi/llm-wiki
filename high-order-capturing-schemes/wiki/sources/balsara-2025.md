@@ -80,6 +80,7 @@ WENO-AO, central WENO, Riemann-solver and benchmark pages.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Accuracy at critical points](/properties/accuracy-at-critical-points.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Free-stream preservation on curvilinear grids](/properties/free-stream-preservation.md), [Well-balanced schemes](/properties/well-balanced.md).
 
 # Citations
 

@@ -2,6 +2,105 @@
 
 ## 2026-10-13
 
+* **Batch 11: the user's manual downloads, first half** (10 sources).
+  Ingested the origin papers of several benchmarks the bundle already
+  described, plus four method papers:
+  [Sod (1978)](/sources/sod-1978.md),
+  [Woodward & Colella (1984)](/sources/woodward-1984.md),
+  [Brio & Wu (1988)](/sources/brio-1988.md),
+  [Dai & Woodward (1994)](/sources/dai-1994.md),
+  [Balsara & Spicer (1999)](/sources/balsara-1999.md),
+  [Falcovitz et al. (1997)](/sources/falcovitz-1997.md),
+  [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md),
+  [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md),
+  [van Leer & Nomura (2005)](/sources/vanleer-2005.md) and
+  [Poinsot & Lele (1992)](/sources/poinsot-1992.md). Five were image-only
+  scans or had unusable text layers and were read from page images.
+  * **Created:**
+    * [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md);
+    * [recovery DG for diffusion](/methods/recovery-dg-diffusion.md);
+    * [Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md);
+    * the Result [MHD nonconvexity](/results/mhd-nonconvexity.md).
+  * **Updated** ("Later uses (batch 11)" blocks, no old text reworded):
+    * 11 benchmarks: Sod, interacting blast waves, double Mach
+      reflection, forward-facing step, Brio–Wu, Ryu–Jones, MHD rotor, MHD
+      blast, shock–cylinder lift-off, stationary normal shock, Quirk.
+    * 12 methods: PPM, contact sharpening, characteristic decomposition,
+      constrained transport, cut cells, Riemann solvers, HLLEM,
+      shock-instability cures, low Mach, ILW, weighted extrapolation,
+      cleaning.
+    * The slowly-moving-shock definition.
+  * **Attribution corrections from the origin papers** (stated in the
+    batch-11 blocks, which quote the corrected line):
+    * Emery (1968) introduced the forward-facing step.
+    * The interacting blast waves come from Woodward (1982).
+    * No "30°" wedge angle is printed for the double Mach reflection.
+    * Sod prints neither a diaphragm position nor an end time; the figures
+      suggest about $t = 0.14$.
+    * The Balsara–Spicer erratum (JCP 153:671) gives the rotor parameters
+      actually used, which explains the page's two rotor normalizations.
+      The 1999 paper has no 3D blast.
+    * Falcovitz et al. (1997) is the original of the lift-off problem,
+      at lengths ×100.
+    * The Ryu–Jones page's "DW Table 7/5a" labels follow the preprint,
+      not the published Dai & Woodward.
+    * The Brio–Wu high-Mach "t = 0.012" is Jiang & Wu's.
+    * Brio & Wu found no Roe state for general γ; the page said none
+      exists.
+  * **Contradiction opened** on the
+    [NSCBC page](/methods/characteristic-boundary-conditions.md): does
+    outflow extrapolation over-specify the boundary (Poinsot & Lele
+    against Li, Shu & Zhang and Baeza et al.)? The deep lint judged it
+    incompatible in argument, not only in scope.
+  * **Batch-11 evidence added to two open entries, closing neither:**
+    * "Is HLLE carbuncle-free?" (Deng et al.'s 1.5D test, the twin of
+      Xie et al.'s);
+    * "Is constrained transport or cleaning the more robust?"
+      (Balsara & Spicer; Balsara & Nkonga).
+  * **Notation:** registry section "Recovery DG, characteristic
+    boundaries and MHD Roe matrices (batch 11)", plus $S$ and the
+    edge-state subscripts. The $\delta_p$ row now says its bound is
+    solver-specific.
+  * **Bibliography:** 365 references merged; the record grew from 2418 to
+    2578 entries, with `FLAGS: 0` and a clean `--dupes` sweep.
+    * Titles corrected from Crossref: `balsara-1999`, `balsara-2017-b`,
+      `brio-1988`, `poinsot-1992`.
+    * Misprints folded with notes:
+      * Roe (1981), printed 43:358;
+      * Brackbill & Barnes, printed 35:462;
+      * Godunov, printed Mat. Sb. 89:271;
+      * Harten–Lax–van Leer, printed SIAM Rev. 25:289.
+    * Same work, merged:
+      * the Russian original and English translation of Godunov &
+        Zabrodin;
+      * Castro-Díaz is `castro-2012`;
+      * Quirk's final report is `quirk-1994-b`.
+    * Distinct works, kept separate:
+      * Boris's NRL memo is `boris-1976-b`;
+      * Colella's LBL-14442 report is `colella-1984-e`;
+      * Noh's CEL chapter is `noh-1964`.
+    * The deep lint caught one alias-shadowing collapse: Colella,
+      Woodward & Zalesak (in preparation) and LBL-14442 had been merged
+      into one key. It is now separated.
+    * Notes record the year conflict of `roe-1988` (a 1986 paper) and the
+      unresolved identity of Poinsot's `gustafsson-1982`.
+  * **Deep lint (100 ingestions).** Two read-only auditors re-read the
+    batch-11 pages against the notes and PDFs; about 70 claims checked.
+    Fixes:
+    * The Brio–Wu eq. 40 factor is a deliberate scaling, not a misprint.
+    * The Balsara (2017) nonconvexity quote is now verbatim, with its
+      Ibáñez et al. attribution.
+    * The 0.5849 value is labelled numerical.
+    * The multidimensional-solver page now cites the primary source for
+      the rotor and blast, records "zone center" as printed, adds the
+      fourth-order CFL, and states the doubling condition.
+    * An unverified HLLC claim at Mach $10^{-5}$ was removed.
+    * The lift-off wording and the pressure-versus-family-index clash
+      were fixed.
+    * Source-page labels and paths were made consistent.
+  * **Also:** `Also cited on` lines were added to older Source pages
+    whose audit lists missed existing backlinks.
+
 * **Source-page paths made absolute** on user instruction, as the repo
   schema asks: `local_file` in all 90 Source pages now reads
   `/home/stefano/...` instead of `~/...`. Every path was checked to exist.

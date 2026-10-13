@@ -61,6 +61,7 @@ FV-reconstruction pages.
 * Created [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md).
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 
 # Citations
 

@@ -56,6 +56,7 @@ Merged into [hybrid compact-WENO](/methods/hybrid-compact-weno.md) and
 * Created [Hybrid compact-WENO schemes](/methods/hybrid-compact-weno.md).
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [Notation registry](/notation.md): batch-2 registry extensions.
+* Also cited on [Compact-reconstruction WENO (nonlinear compact schemes)](/methods/compact-reconstruction-weno.md).
 
 # Citations
 

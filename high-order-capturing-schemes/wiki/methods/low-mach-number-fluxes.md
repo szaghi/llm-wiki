@@ -5,7 +5,7 @@ description: "Why upwind (Godunov-type) fluxes lose accuracy as the Mach number 
 status: established
 aliases: [low-Mach preconditioning, flux preconditioning, preconditioned Roe, AUSM+-up, all-speed flux]
 tags: [riemann-solver, numerical-flux, low-mach]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Low-Mach-number numerical fluxes
@@ -96,8 +96,22 @@ On the [Riemann-solver page](/methods/approximate-riemann-solvers.md), the
 same split into central part and dissipation frames the Lax–Friedrichs
 flux.
 
+**Later uses (batch 11).** An isolated contact,
+$(\rho, v_x, p) = (1.4, 0.1, 1)$ for $x \le 0.5$ and $(1, 0.1, 1)$
+otherwise on $[0, 1]$ with 100 cells, is run at $\mathrm{Ma} = 0.1$ to
+$t = 2$ and again at $\mathrm{Ma} = 10^{-5}$ (velocity and end time not
+printed). At $\mathrm{Ma} = 10^{-5}$ HLL smears the contact completely,
+"consistently with previous reports" (the authors cite Guillard &
+Viozat, Thornber et al. and Rieper), and HLL-BVD keeps it sharp ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md),
+§III A, Fig. 2). This is not a fix of the kind on this page. HLL-BVD
+shrinks only the density jump in HLL's state-difference dissipation and
+leaves the momentum dissipation analysed above untouched. The paper gives
+no low-Mach analysis and no vortex test, so it adds one more report of
+an upwind flux failing at low Mach, on a density-only (contact) mode.
+
 # Citations
 
 1. [Miczek et al. (2015)](/sources/miczek-2015.md), §§1–3, 6–9, Table 1.
 2. [Edelmann et al. (2021)](/sources/edelmann-2021.md), §§3.2, 5.1, App. A.
 3. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.9.
+4. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III A.

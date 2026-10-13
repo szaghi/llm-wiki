@@ -5,7 +5,7 @@ description: "Finite volume on a Cartesian grid cut by the body: cut cells keep 
 status: established
 aliases: [embedded boundary method, Cartesian cut-cell method, EB finite volume, cut-cell method, flux redistribution]
 tags: [boundary-treatment, embedded-boundary, cartesian-grid, conservation, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Cut-cell (embedded-boundary) finite volume
@@ -112,6 +112,46 @@ repair, re-redistribution, is on the
 [state-redistribution page](/methods/state-redistribution.md); see also
 [high-order AMR](/methods/high-order-amr.md).
 
+**Later uses (batch 11): moving boundary tracking.**
+[Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), a
+moving-body Cartesian cut-cell scheme from the time of Pember et al.,
+whom it cites:
+* *Base scheme and splitting.* A dimensionally split second-order GRP
+  scheme; the boundary-node motion is split too, so each split phase moves
+  the polygonal body in one direction only (§§2–3). The base schemes above
+  are unsplit or method-of-lines.
+* *Swept volume.* Each boundary cell uses its old and new fluid volumes,
+  $\kappa_i^n h^2$ and $\kappa_i^{n+1}h^2$, time-averaged exposed face
+  areas, and a time-averaged projected boundary area that carries the wall
+  pressure and work (eqs. 6–9, 27–34). These are built so that a uniform
+  flow moving with the body is reproduced exactly (by construction, not
+  demonstrated numerically), and the boundary term uses the same
+  geometric quantities as the face apertures. This is a design contrast
+  with the Natarajan et al. update above, which divides by $\kappa_i^n$
+  and has no swept-volume term; the two papers do not contradict each
+  other ([free-stream preservation](/properties/free-stream-preservation.md)).
+* *Geometry.* All areas come from signed sums of trapezoids under the
+  polygon sides, and a proved lemma (Lemma 4.1) makes the time-averaged
+  covered lengths additive over sides, with closed-form integrals for each
+  side (§4).
+* *Cleared, covered and small cells.* A cell becoming fully covered, a
+  covered cell becoming partly exposed, and a cell whose partial length is
+  below a user fraction, "typically about 0.3" of a cell, are merged with
+  an adjacent wet cell, and the merged state is given to every member
+  (§3, p. 91). This answers the freshly covered cells that Natarajan et
+  al. do not discuss. The 0.3 is a length fraction in the split direction,
+  not the volume fraction of the half-cell threshold above, so the two are
+  not comparable.
+* *Wall flux and order.* The wall pressure comes from a one-sided piston
+  Riemann problem normal to each segment, consistent with the wall flux
+  above. Boundary cells carry piecewise-constant data, so the scheme is
+  first order there (stated, p. 91), in line with the loss of order at
+  cut cells reported above. No error or convergence data are given; the
+  only computation is the [shock-driven cylinder lift-off](/benchmarks/shock-cylinder-lift-off.md),
+  which this paper introduced.
+* *Conservation.* MBT is called exactly conservative in boundary cells,
+  unlike Forrer's mirroring scheme (§1).
+
 ## Contradictions
 
 **What order does flux redistribution give, and what limits it on moving
@@ -135,3 +175,4 @@ bodies?** *Open* (recorded at the 2026-10-12 deep lint).
 3. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2–3 (arXiv v1).
 4. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §§2–3 (arXiv v1).
 5. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§3, 4.5, 5 (arXiv v1).
+6. [Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), §§1–5.

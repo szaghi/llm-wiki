@@ -89,6 +89,7 @@ and seven benchmark pages.
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Accuracy at critical points](/properties/accuracy-at-critical-points.md).
+* Also cited on [Self-similarity (scale invariance) of capturing schemes](/properties/self-similarity.md), [Accuracy conditions on WENO nonlinear weights](/results/weno-weight-accuracy-conditions.md).
 
 # Citations
 

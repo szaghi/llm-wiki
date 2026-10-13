@@ -5,7 +5,7 @@ description: "A steady normal shock captured with one interior cell, whose state
 status: established
 aliases: [steady shock test, one-dimensional carbuncle test, matrix stability analysis of a shock, inclined stationary shock]
 tags: [benchmark, euler, shock-instability, steady]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Stationary normal shock test
@@ -73,9 +73,29 @@ depending on the flux functions"
 
 See [numerical shock instability](/definitions/numerical-shock-instability.md).
 
+**Later uses (batch 11).** *A perturbed-column variant at Mach 20, at
+second order* ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F, eq. 25).
+* **Set-up.** $51\times26$ cells, a steady normal shock at $M_s = 20$, with
+  Rankine–Hugoniot states in columns $i \le 39$ and $i \ge 41$. In the
+  intermediate column $i = 40$ the density is 0.2 times the left-state
+  density plus 0.8 times the right-state density in odd rows, and 0.4
+  plus 0.6 in even rows, with "other variables calculated based on" it. CFL 0.5; MUSCL reconstruction; output after $10^4$
+  and $4\times10^4$ steps. The domain size, upstream state and boundary
+  conditions are not printed.
+* **Results.** With HLLC the odd–even decoupling is "clearly visible",
+  and the paper says the steady shock "dies out after $4\times10^4$ time
+  steps". HLL and HLL-BVD are "free from carbuncle instability"
+  (Figs. 10–11).
+* **Attribution.** The paper calls this the "odd–even perturbation
+  problem" proposed by Quirk. The perturbation sits in the shock-cell
+  state of a stationary shock, not in the grid of a moving one, so it is
+  filed here; the attribution is recorded as printed on the
+  [Quirk test](/benchmarks/quirk-odd-even-test.md) page.
+
 # Citations
 
 1. [Xie et al. (2021)](/sources/xie-2021.md), §§3.1, 3.4–3.5.
 2. [Simon & Mandal (2019)](/sources/simon-2019.md), §§8, 9.3.
 3. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.6.
 4. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V.
+5. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F.

@@ -80,6 +80,7 @@ and the MHD benchmarks.
 * Updated [Unequal-stencil and adaptive-order WENO (WENO-ZQ, WENO-AO)](/methods/weno-ao.md).
 * Updated [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [Divergence-free reconstruction of face-centred magnetic fields](/methods/divergence-free-reconstruction.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 
 # Citations
 

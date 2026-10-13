@@ -72,6 +72,7 @@ Orszag–Tang, shock–cloud and Brio–Wu benchmarks.
 * Updated [Shock–cloud interaction (MHD and relativistic MHD)](/benchmarks/shock-cloud-interaction.md).
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md).
 
 # Citations
 

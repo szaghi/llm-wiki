@@ -73,6 +73,7 @@ the first-order Lax–Friedrichs MHD scheme.
 * Created [Lax–Wendroff (Taylor) single-step time discretization](/methods/taylor-time-discretization.md).
 * Updated [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [Circularly polarized (torsional) Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md), [Grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md).
 
 # Citations
 

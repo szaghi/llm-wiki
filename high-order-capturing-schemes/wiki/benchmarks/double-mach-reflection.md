@@ -5,7 +5,7 @@ description: "A Mach 10 shock hitting a 30° wedge (posed as a 60° shock on a f
 status: established
 aliases: [double Mach reflection, DMR]
 tags: [benchmark, euler, 2d, strong-shocks]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Double Mach reflection
@@ -139,6 +139,39 @@ comparable to grid-aligned runs at the same resolution; the wall shocks
 agree across three resolutions and the unstable contact shifts slightly
 ([Berger & Giuliani (2021)](/sources/berger-2021.md), §5.3, Figs. 12–13).
 
+**Later uses (batch 11).** *The original paper.*
+[Woodward & Colella (1984)](/sources/woodward-1984.md) (§IVc, p. 136)
+print the set-up line above, with these precisions. The shock "initially
+makes a 60° angle with a reflecting wall"; the paper tilts the shock
+rather than the wall to avoid oblique boundaries, and **prints no wedge
+angle**. The "30° wedge" of this page's description is the equivalent
+geometry ($90° - 60°$), a later reading, not a printed value. The shock
+foot at $x = 1/6$ follows from the condition that keeps the reflected
+shock attached, rather than being stated. The post-shock state is not
+printed; the right boundary at $x = 4$ has zero gradients. The paper does
+not discuss slip-line roll-up, which this page's description takes from
+later sources.
+* *Grids and scheme comparison* (Fig. 9, $h = 1/30$, $1/60$, $1/120$, so
+  up to $480\times120$; the PPMDE run of Fig. 4 is labelled Courant 0.8). Godunov does not resolve the wall
+  jet even on the finest grid. MacCormack is "far superior" to Godunov
+  here but oscillates where shocks are slow and grid-aligned. BBC is
+  MacCormack without the oscillations. ETBFCT gives staircase contours, a
+  misshapen main Mach stem and a jet without the mushroom tip. MUSCL
+  resolves the jet on the middle grid, but its thin shocks are unstable
+  where slow and grid-aligned. PPMDE with Lapidus viscosity 0.1 removes
+  that instability and is "more efficient by factors of more than 4.9
+  and 1.3" than BBC and MacCormack; PPMLR by more than 4.4 and 1.2 ([PPM](/methods/ppm.md)).
+* *Starting error.* Initializing and imposing the shock as a one-zone
+  jump creates an overheated strip about 2 zones wide, visible only in
+  the vertical velocity, from the upper right corner to the wall near
+  $x = 2$; it "mars all the computed results".
+* *Flow features.* A dense jet shoots right along the wall ("shaped
+  charge"). Under the reflected shock near the wall there is little
+  vertical motion, so schemes whose dissipation vanishes at zero velocity
+  oscillate there; single-step Eulerian MUSCL is noisy along the nearly
+  steady reflected shock while MUSCL as Lagrange plus remap is not
+  (Fig. 10).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -169,3 +202,4 @@ agree across three resolutions and the unstable contact shifts slightly
 26. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.2.
 27. [Xie et al. (2021)](/sources/xie-2021.md), §6.3.
 28. [Berger & Giuliani (2021)](/sources/berger-2021.md), §5.3 (arXiv v1).
+29. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVc, VIc, Figs. 4, 9, 10.

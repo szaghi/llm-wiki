@@ -82,6 +82,7 @@ pages and into several benchmarks.
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Created [Two-dimensional Riemann problems (four-quadrant configurations)](/benchmarks/two-dimensional-riemann-problems.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md).
 
 # Citations
 

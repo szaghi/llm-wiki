@@ -5,7 +5,7 @@ description: "Spurious post-shock oscillations, and a spike in the conserved flu
 status: established
 aliases: [slowly-moving shock, post-shock oscillations, discharge spike]
 tags: [shock-instability, riemann-solver, robustness, definition]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Slowly moving shock anomaly
@@ -81,9 +81,39 @@ tie this anomaly to [numerical shock instability](/definitions/numerical-shock-i
   interface in a quasi-steady sweep. The scheme is first order
   ([Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§5.1, 6.1).
 
+**Later uses (batch 11).** *An early account.*
+[Woodward & Colella (1984)](/sources/woodward-1984.md) describe the
+anomaly for strong shocks in gas dynamics.
+* *Size and persistence* (§Vc). Strong shocks that move slowly relative
+  to the grid, as do all shocks of the [step problem](/benchmarks/forward-facing-step.md)
+  after $t = 2$, leave post-shock oscillations of about 1–2 % amplitude.
+  Their wavelengths are many zones, so they cannot be damped once
+  generated.
+* *Cure in PPM* (§Vc). The shock is broadened to about 2 zones "in the
+  worst cases", by flattening plus either an alternating ("jiggled")
+  remap grid, a diffusive error that is fifth-order small, or Lapidus
+  viscosity with coefficient 0.1, third-order small in smooth flow
+  ([PPM](/methods/ppm.md)). This is the remedy listed first above, with
+  its error orders.
+* *Grid-aligned shocks in 2D* (§VIb). Thin captured shocks that are
+  nearly aligned with the mesh emit noise where they jump from one zone
+  column to the next, as in the 2D statement above. Godunov and MUSCL show
+  it on the step and the [double Mach reflection](/benchmarks/double-mach-reflection.md),
+  MUSCL more strongly because its shocks are thinner, in line with the
+  report that second-order schemes show these oscillations more readily.
+  The authors call it a "numerical instability of 2-D, strong, stationary
+  shocks" and cure it with more dissipation at such shocks
+  ([numerical shock instability](/definitions/numerical-shock-instability.md)).
+* *Vanishing characteristic speeds* (§VIc, Fig. 10). Single-step Eulerian
+  MUSCL is noisy along the nearly steady reflected shock of the double
+  Mach reflection, while MUSCL as Lagrange step plus remap is not, which
+  "demonstrates the extra sensitivity of single-step Eulerian schemes to
+  vanishing characteristic speeds".
+
 # Citations
 
 1. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§4.1–4.2, 5.1, 6.1.
 2. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§I, II.B, III.B, IV.B, V.
 3. [Colella & Woodward (1984)](/sources/colella-1984.md), §4.
 4. [Xie et al. (2021)](/sources/xie-2021.md), §5.
+5. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIb–VIc.

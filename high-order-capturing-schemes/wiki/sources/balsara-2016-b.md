@@ -78,6 +78,7 @@ and the rotor, blast, vortex, shock–vortex and Alfvén-wave benchmarks.
 * Updated [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [HLLEM (HLLI) Riemann solver](/methods/hllem-riemann-solver.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 
 # Citations
 

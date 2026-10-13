@@ -5,7 +5,7 @@ description: "HLL with a linear sub-structure along chosen intermediate characte
 status: established
 aliases: [HLLEM, HLLI, HLLEM-NC, Einfeldt HLLEM, anti-diffusive HLL]
 tags: [riemann-solver, numerical-flux, well-balanced, shock-instability, hllem]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # HLLEM (HLLI) Riemann solver
@@ -109,6 +109,58 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 ([Balsara et al. (2025)](/sources/balsara-2025.md)); see the
 [Riemann-solver page](/methods/approximate-riemann-solvers.md).
 
+**Later uses (batch 11).**
+* *"HLLI" names a family, not one solver* ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2.1–2.3).
+  They re-derive a 1D HLLI in which the fan state is linear in the
+  similarity variable scaled to the fan, and impose the first-moment
+  (Galerkin) constraint as well as the zeroth. The mean state stays
+  $u^{\mathrm{HLL}}_*$, but the mean flux is the HLL flux plus
+  $(S_R - S_L)/6$ times the slope of the fan state (eq. 2.7), with slope
+  $\sum_{p\in\mathcal I}2\delta_p\,\ell^{(p)}(u^+ - u^-)\,r^{(p)}$ (eq. 2.8).
+  The flux is (eq. 2.9c, checked on the page image)
+  $$\hat f = \hat f^{\mathrm{HLL}} - \frac12\sum_{p\in\mathcal I}2\delta_p\left[\frac{S_R + S_L}{S_R - S_L}\,\lambda^{(p)} - \frac{S_R - S_L}{3}\right]r^{(p)}\,\ell^{(p)}\left(u^+ - u^-\right),$$
+  with the weight (eq. 2.11)
+  $$\delta_p = \min\left(\frac{S_R\min(\lambda^{(p)}, 0) + S_L\max(\lambda^{(p)}, 0) - S_RS_L}{(S_R - S_L)^2/3 - \lambda^{(p)}(S_R + S_L)},\ -\frac{3S_RS_L}{(S_R - S_L)^2}\right)$$
+  when the denominator is positive, and $\delta_p$ equal to the cap
+  $-3S_RS_L/(S_R - S_L)^2$ otherwise. The first argument makes the
+  viscosity eigenvalues "minimally match or exceed" Roe's, which is the
+  same principle as Einfeldt's bound above. The cap keeps stationary
+  linearly degenerate waves exact and is "not mandated by mathematics".
+  In the subsonic case it is positive, with maximum 3/4 at $S_R = -S_L$;
+  when one speed is much smaller in magnitude than the other, $\delta_p \to 0$ and the
+  flux tends to HLL.
+* *Two HLLI weights.* The authors call the Dumbser–Balsara solver
+  "HLLI-type". Its weight is the $\delta_p$ at the top of this page
+  (their eq. 2.13); it omits the first-moment constraint, gives a fan flux
+  quadratic in the similarity variable and leaves the mean flux at HLL.
+  The paper says that weight allows larger values than eq. 2.11. The cost
+  is almost the same, since the eigenvectors dominate it, and "in
+  practice, both work equally well" (§2.3). So the alias "HLLI" in this
+  page's title, and the range $0 < \delta_p \le 1$ above, belong to the
+  Dumbser–Balsara weight; in Balsara's later papers "HLLI" can mean
+  either. In the 2D analogue the paper notes that the factors "can be
+  greater than unity" (§3;
+  [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
+* *Dissipation against Roe* (§2.2, Fig. 1). With $S_R - S_L = 1$ and one
+  subsonic intermediate wave, the dissipation of the Galerkin HLLI is at
+  most 23.2 % above Roe's $\vert\lambda^{(p)}\vert$, at
+  $(S_L, S_R) = (-0.9, 0.1)$, and 17.6 % at $(-0.2, 0.8)$. It equals Roe's
+  at $(-0.7, 0.3)$ and $(-0.5, 0.5)$, and practically at $(-0.01, 0.99)$.
+  It is zero for a stationary wave. The paper's summary "within ten to
+  twenty percent … under all circumstances" is exceeded by its own
+  23.2 % case, recorded as printed.
+* *Positivity, again a procedure* (§§2.1, 2.4). The HLL state plus and
+  minus half the slope is checked and the slope reduced if needed; at zero
+  slope the flux is HLL. Sub-structure is also skipped where the HLL
+  density or pressure is "substantially" outside the range of the input
+  states, with no threshold given. This matches the "asserted, not
+  proved" status above.
+* *Shock instability, from outside the HLLI line.* Deng, Boivin & Xiao
+  quote HLLEM as HLL plus an anti-diffusive term with a factor in
+  $[0, 1]$ and an eigenstructure matrix, reducing to HLL at 0, and state
+  that HLLC and HLLEM "share similar shock instability problems". They
+  do not run HLLEM ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C).
+
 # Citations
 
 1. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §§2–4, App. B.
@@ -117,3 +169,5 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 4. [Balsara (2017)](/sources/balsara-2017-d.md), Apps. D–E.
 5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §4.1.
 6. [Balsara et al. (2025)](/sources/balsara-2025.md), §II.
+7. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2–3.
+8. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C.

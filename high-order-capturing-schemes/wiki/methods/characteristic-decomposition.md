@@ -5,7 +5,7 @@ description: "Applying scalar ENO/WENO/MP reconstruction to the characteristic v
 status: established
 aliases: [characteristic-wise reconstruction, field-by-field decomposition]
 tags: [systems, eigenvectors, reconstruction]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Local characteristic decomposition
@@ -205,6 +205,53 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
   than at a Roe interface state. MHD and RMHD are non-convex, so genuinely
   nonlinear families can bring "their own further pathologies".
 
+**Later uses (batch 11).**
+* *Origin of the MHD renormalization.* The Jeffrey–Taniuti eigenvectors
+  of 1D ideal MHD are undefined (0/0) near $B_x = 0$ or $B_\perp = 0$,
+  and their matrix becomes singular there, with determinant proportional
+  to $(c_f^2 - c_s^2)^2$. Brio and Wu multiply the fast, slow and Alfvén
+  eigenvectors by $\alpha_f$, $\alpha_s$ and $\sqrt\rho/B_\perp$, which
+  gives a complete set; they set the tangential direction cosines to
+  $1/\sqrt2$ when $B_\perp = 0$, $\alpha_f = \alpha_s = 1$ when also
+  $c^2 = c_A^2$, and $\mathrm{sgn}(0) = 1$, and give the sign rule for
+  continuity of the fast or slow pair, which they call "crucial" for
+  classifying the characteristic fields
+  ([Brio & Wu (1988)](/sources/brio-1988.md), §IV.3, eqs. 34–46). Their
+  $\alpha_f$ (eq. 39) is the one quoted in the batch-7 block. Their
+  $\alpha_s$ is **not**: eq. 40 prints
+  $\alpha_s = \frac{\sqrt{c_f^2 - c^2}}{\sqrt{c_f^2 - c_s^2}}\frac{1}{c_f}$,
+  the Ryu–Jones $\alpha_s$ times $1/c_f$, an inverse speed, while eq. 46
+  sets $\alpha_s = 1$. This qualifies the batch-7 line "The Brio–Wu
+  renormalization uses … $\alpha_s = \sqrt{c_f^2 - c^2}/\sqrt{c_f^2 - c_s^2}$":
+  that formula is Ryu and Jones's. Eq. 40 prints the Brio–Wu factor in two
+  forms that agree through $c_f^2c_s^2 = c^2c_A^2$, so it is a different
+  scaling, not a misprint. An eigenvector's scale is free, so completeness
+  is unaffected. The wave strengths
+  have a closed form: sums and differences of paired strengths split the
+  decomposition into two $3\times3$ systems and one scalar equation
+  (§IV.4, eqs. 47–53).
+* *Roe state versus arithmetic mean, at the origin.* For $\gamma = 2$
+  Brio and Wu find an exact Roe matrix, with Roe-averaged velocities and
+  enthalpy, geometric-mean density, and a tangential field built from
+  the sum of $B_y/\sqrt\rho$ (and $B_z/\sqrt\rho$) over the two sides
+  ([Brio & Wu (1988)](/sources/brio-1988.md), eq. 29); for general $\gamma$ "we are not able to solve it
+  analytically" and no parameterization was found (§IV.1, eqs. 24–30).
+  This qualifies the batch-5 line "a single Roe state exists only for
+  $\gamma = 2$": the origin reports that none was *found*, not that none
+  exists. Their arithmetic mean is of density, velocity, field and
+  **total pressure**, which keeps the eigenvalues real; averaging the
+  energy instead "may lead to a negative averaged pressure". That
+  Jacobian loses the exact jump property
+  $f(u_{i+1}) - f(u_i) = A_{i+1/2}(u_{i+1} - u_i)$, so stationary
+  discontinuities are no longer exact steady solutions, but at
+  $\gamma = 2$ the second-order results agree with the Roe-matrix ones to
+  4 significant digits in the constant states and 2 in the transitions
+  (§§IV.1, V; [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md)).
+  Ideal MHD is nonconvex, so per-field classifications such as "genuinely
+  nonlinear" fail near $B_\perp = 0$ for the fast field (if
+  $c^2 < c_A^2$) or the slow field (if $c^2 > c_A^2$)
+  ([nonconvexity of ideal MHD](/results/mhd-nonconvexity.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§5–7.
@@ -245,3 +292,4 @@ Roe average exists ([Shu (2020)](/sources/shu-2020.md), §4.1).
 36. [Shu (2020)](/sources/shu-2020.md), §4.1.
 37. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2.2–2.3.
 38. [Balsara (2017)](/sources/balsara-2017-d.md), §II.1.
+39. [Brio & Wu (1988)](/sources/brio-1988.md), §§IV–V.

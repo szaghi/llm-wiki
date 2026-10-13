@@ -83,6 +83,7 @@ and [explosion](/benchmarks/multidimensional-explosion.md) benchmarks.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Woodward–Colella interacting blast waves](/benchmarks/interacting-blast-waves.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md), [PLUTO (astrophysical gas-dynamics and MHD code)](/software/pluto.md).
 
 # Citations
 

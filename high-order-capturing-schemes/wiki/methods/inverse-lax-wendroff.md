@@ -5,7 +5,7 @@ description: "Ghost-point values for wide-stencil high-order finite differences 
 status: established
 aliases: [ILW, simplified inverse Lax-Wendroff, SILW, inverse Lax-Wendroff procedure, cut-cell boundary treatment, moving-boundary ILW]
 tags: [boundary-treatment, finite-difference, weno, stability, cut-cell, moving-boundary, conservation]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Inverse Lax–Wendroff numerical boundary treatment
@@ -302,6 +302,27 @@ with local characteristic decomposition, or from one-sided WENO
   the conservation section above, where the error of non-conservative
   ILW was visible in one test only.
 
+**Later uses (batch 11).** A boundary treatment without ghost points,
+[Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md),
+rejects extrapolation on well-posedness grounds: extrapolating a variable
+"acts as an additional physical condition … and therefore overspecifies
+the boundary conditions" ([Poinsot & Lele (1992)](/sources/poinsot-1992.md), §2.1).
+With a non-dissipative sixth-order compact interior scheme, a
+zeroth-order extrapolation outlet gave no steady state in a ducted shear
+layer, wrong outlet profiles in Poiseuille flow, and spurious
+short-wavelength waves that travelled upstream and spawned a vortex at
+the inlet (§§4–6). Their argument is general (§2.1); their evidence is
+zeroth-order extrapolation of primitive variables with a centred,
+low-dissipation scheme, whereas Goldberg's theorem and the ILW tests
+concern high-order extrapolation with upwind-biased WENO. The
+disagreement is recorded as open on the
+[NSCBC page](/methods/characteristic-boundary-conditions.md). The two agree on the rest: incoming
+characteristics take boundary data and outgoing ones come from the
+interior, and Navier–Stokes conditions are built as inviscid conditions
+plus viscous ones following Strikwerda, as in the convection–diffusion
+section above. NSCBC deviates from Strikwerda's counts in two cases
+(§2.5).
+
 # Citations
 
 1. [Li, Shu & Zhang (2016)](/sources/li-2016.md), §§1–5 (§2.2–2.5 formulas and Tables 3.1–3.2 read from the page images).
@@ -317,3 +338,4 @@ with local characteristic decomposition, or from one-sided WENO
 11. [Peskin (2002)](/sources/peskin-2002.md), §§3, 8.
 12. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).
 13. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§4.5, 5 (arXiv v1).
+14. [Poinsot & Lele (1992)](/sources/poinsot-1992.md), §§2.1, 2.5, 4–6.

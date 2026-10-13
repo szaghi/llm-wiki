@@ -5,7 +5,7 @@ description: "A Mach 6 shock moving down a long duct whose grid centreline is di
 status: established
 aliases: [odd–even decoupling test, Quirk's test, moving-shock instability problem, perturbed duct test]
 tags: [benchmark, euler, shock-instability, 2d]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Quirk's odd–even decoupling test
@@ -63,9 +63,22 @@ Every source runs it at first order, except Xie et al., who use a
 second-order Runge–Kutta step and do not state the spatial order. See
 [numerical shock instability](/definitions/numerical-shock-instability.md).
 
+**Later uses (batch 11).** Deng, Boivin & Xiao name a test the "odd–even
+perturbation problem" and attribute it to Quirk
+([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F). Its
+set-up is different from Quirk's: a stationary Mach 20 shock on
+$51\times26$ cells whose intermediate column has a density alternating
+from row to row, not a moving Mach 6 shock in a duct with a perturbed
+centreline. It is recorded on the
+[stationary normal shock](/benchmarks/stationary-normal-shock.md) page;
+the attribution is recorded here as printed. Their result (odd–even
+decoupling with HLLC, none with HLL and HLL-BVD) bears on the same
+instability but is not a run of this test.
+
 # Citations
 
 1. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.2.
 2. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.1.
 3. [Xie et al. (2021)](/sources/xie-2021.md), §6.1.
 4. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§III–IV.
+5. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III F.

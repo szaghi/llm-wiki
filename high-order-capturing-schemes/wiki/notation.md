@@ -265,7 +265,7 @@ Added 2026-10-12 (batch 8: simon-2019, simon-2019-b, miczek-2015, edelmann-2021,
 | $u^{\mathrm{HLL}}_*$; $u^{\mathrm{HLLC}}_{*L}$, $u^{\mathrm{HLLC}}_{*R}$ | HLL intermediate (star) state, and the two HLLC star states (distinct from the ILW boundary derivatives $u^{*(k)}$) |
 | $S_L^-$, $S_R^+$ | clipped wave speeds $\min(S_L, 0)$ and $\max(S_R, 0)$ of the upwind form of an HLL-type flux |
 | $\mathbf d^{\mathrm{HLL}}$ | dissipation vector of the HLL flux in central form, $\hat f^{\mathrm{HLL}} = \tfrac12\left(f(u^-) + f(u^+)\right) + \mathbf d^{\mathrm{HLL}}$ |
-| $\delta_p$, $\mathcal I$ | anti-diffusion coefficient of intermediate family $p$ in an HLLEM (HLLI) flux, $0 < \delta_p \le 1$ (in use since batch 7; distinct from the TENO cutoff $\delta_k$), and the set of intermediate families resolved |
+| $\delta_p$, $\mathcal I$ | anti-diffusion coefficient of intermediate family $p$ in an HLLEM (HLLI) flux, $0 < \delta_p \le 1$ for the Dumbser–Balsara weight (the bound is solver-specific: Balsara & Nkonga's HLLI weight differs, and their 2D factors can exceed 1; batch 11) (in use since batch 7; distinct from the TENO cutoff $\delta_k$), and the set of intermediate families resolved |
 | $v_n$, $v_t$ | velocity components normal and tangential to a face, $v_n = \mathbf v\cdot\mathbf n$ |
 | $\Theta_{i+1/2}$ | numerical viscosity matrix, $\hat f_{i+1/2} = \tfrac12\left(f(u^-) + f(u^+)\right) - \tfrac12\Theta_{i+1/2}(u^+ - u^-)$ |
 | $S^{\mathrm w}_L$, $S^{\mathrm w}_R$; $\alpha_{\mathrm{SWM}}$, $\epsilon_{\mathrm{SWM}}$ | widened wave speeds $S_L - \alpha_{\mathrm{SWM}}\epsilon_{\mathrm{SWM}}$, $S_R + \alpha_{\mathrm{SWM}}\epsilon_{\mathrm{SWM}}$ of a selective-wave-modified HLL dissipation; tuning coefficient and sensor-sized increment (subscripted, so distinct from the Lax–Friedrichs $\alpha$ and the weight regularization $\varepsilon$) |
@@ -338,3 +338,18 @@ Added 2026-10-12 (batch 10: peskin-2002, berger-2021, giuliani-2022, barriosanch
 |---|---|
 | $\xi$ | scaled wavenumber $k h$, $0 \le \xi \le \pi$ |
 | $\tilde\xi(\xi)$ | modified wavenumber of a scheme for $\partial_x$; $\operatorname{Re}\tilde\xi$ measures dispersion, $\operatorname{Im}\tilde\xi$ dissipation (negative for a dissipative upwind scheme on right-running waves) |
+
+## Recovery DG, characteristic boundaries and MHD Roe matrices (batch 11, 2026-10-13)
+
+| Symbol | Meaning |
+|---|---|
+| $\mu_{\mathrm{IP}}$, $\sigma_{\mathrm{DG}}$, $\omega_{\mathrm{DG}}$ | penalty coefficient, symmetry coefficient and jump-of-derivative coefficient of the interior-penalty DG diffusion family (subscripted, so distinct from the diffusion coefficient $\mu$, the flux-limiter constant $\sigma$ and the weights $\omega$) |
+| $[\![q]\!]_{i+1/2}$, $\{\!\{q\}\!\}_{i+1/2}$ | jump and average of $q$ across the interface $x_{i+1/2}$ |
+| $u^{\mathrm{rec}}_{i+1/2}$ | recovered polynomial spanning the two cells that share $x_{i+1/2}$ |
+| $\mathscr L^{(p)}$ | amplitude variation of the characteristic wave of family $p$ at a boundary (script, so distinct from the spatial operator $\mathcal L$; where pressure $p$ appears nearby, the families are written out as $\mathscr L^{(1)},\dots,\mathscr L^{(5)}$) |
+| $K_{\mathrm{NR}}$, $\sigma_{\mathrm{NR}}$, $p_\infty$ | relaxation coefficient and constant of a partially non-reflecting outflow condition, and the target pressure |
+| $L_x$ | domain length in $x$ |
+| $(\hat f_x)_k$, $(\hat f_y)_k$ | $k$-th component of the numerical flux in direction $x$ or $y$ |
+| $\nabla_u$ | gradient with respect to the conserved state $u$ |
+| $S$ | single signal speed of a local Lax–Friedrichs (Rusanov) flux, where no left/right pair $S_L$, $S_R$ is used |
+| $RU$, $LU$, $LD$, $RD$ (subscripts) | the four states meeting at a cell edge in a multidimensional Riemann problem: right/left, up/down |

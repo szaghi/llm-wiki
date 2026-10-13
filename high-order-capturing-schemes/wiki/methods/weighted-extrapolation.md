@@ -5,7 +5,7 @@ description: "Ghost-cell values for finite-difference WENO on Cartesian grids cu
 status: established
 aliases: [weighted extrapolation, WENO extrapolation, WLS-GAW, weighted least squares extrapolation, boundary extrapolation]
 tags: [boundary-treatment, finite-difference, weno, cut-cell]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Weighted (WENO-type) extrapolation for ghost values
@@ -141,6 +141,21 @@ pressure behind shocks. It fell back to inverse-distance weighting, which
 reproduces only constants (compiler's observation), rather than to a nonlinear weighted
 extrapolation ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6; [immersed-boundary methods](/methods/immersed-boundary-method.md)).
 
+**Later uses (batch 11).** At outflow boundaries the ghost values above
+come from extrapolation of the interior data alone. For
+low-dissipation direct simulation, [Poinsot & Lele (1992)](/sources/poinsot-1992.md)
+argue that extrapolating a variable acts as an extra physical condition
+and over-specifies the boundary, and they replace it by
+[characteristic boundary conditions](/methods/characteristic-boundary-conditions.md)
+that solve the conservation equations on the boundary (§2.1). Their
+evidence is a zeroth-order extrapolation outlet with a centred sixth-order
+compact scheme, which gave no steady state and spurious upstream waves
+(§§4–6). Their argument (§2.1) is general, their evidence narrow: no
+test here uses their combination, and the nonlinear weights above target
+discontinuities next to the boundary, a problem Poinsot and Lele do not
+address. The disagreement is recorded as open on the
+[NSCBC page](/methods/characteristic-boundary-conditions.md).
+
 # Citations
 
 1. [Baeza, Mulet & Zorío (2016)](/sources/baeza-2016.md), §§1–6.
@@ -149,3 +164,4 @@ extrapolation ([Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6; [immers
 4. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), §2.
 5. [Liu et al. (2025)](/sources/liu-2025.md), §3.2.
 6. [Seshadri & De (2020)](/sources/seshadri-2020.md), §4.6 (author manuscript).
+7. [Poinsot & Lele (1992)](/sources/poinsot-1992.md), §§2.1, 4–6.

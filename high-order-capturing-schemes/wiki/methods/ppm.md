@@ -5,7 +5,7 @@ description: "Colella–Woodward higher-order Godunov method: fourth-order edge 
 status: established
 aliases: [PPM, piecewise parabolic method]
 tags: [reconstruction, godunov, limiter, finite-volume]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Piecewise parabolic method (PPM)
@@ -130,6 +130,44 @@ factor in the average–point conversion uses the opposite convention.
   (citing Woodward 1986), and that the modern trend is to forgo steepeners
   (§III.1).
 
+**Later uses (batch 11).** *The 1984 comparison.* The companion paper
+[Woodward & Colella (1984)](/sources/woodward-1984.md) runs PPM in both
+Eulerian forms, Lagrange step plus remap (PPMLR) and single step
+(PPMDE), against MacCormack with Lapidus viscosity, BBC, ETBFCT,
+first-order Godunov and MUSCL.
+* *Accuracy and cost.* PPM is first in accuracy on a given grid and per
+  CPU second, ahead of MUSCL, ETBFCT, BBC, MacCormack and Godunov (§VII).
+  On the [interacting blast waves](/benchmarks/interacting-blast-waves.md)
+  it is the only scheme whose density error converges at first order in
+  $h$, the fastest possible when the error sits at discontinuities; the
+  other schemes converge sub-linearly (§VIa). PPM costs about 20 % more
+  CPU time than MUSCL and ETBFCT, and about 6 times MacCormack per zone.
+* *Two forms, one accuracy.* PPMDE and PPMLR give nearly identical accuracy
+  and cost, unlike MUSCL or Godunov in their two forms. The authors credit
+  the third-order PPM remap and the slight broadening of stationary
+  shocks, and advise remapping "with one extra order of accuracy over the
+  Lagrangian step" (§§VIb–VII). This agrees with the "third-order in
+  general" accuracy stated above.
+* *The dissipation options for slow strong shocks* (§Vc). Without them,
+  strong shocks moving slowly relative to the grid leave post-shock
+  oscillations of about 1–2 % with wavelengths of many zones, which
+  cannot be damped afterwards. PPM broadens such shocks to about 2 zones
+  "in the worst cases". Flattening plus "jiggling" the remap grid gives a
+  diffusive error that is fifth-order small; flattening plus Lapidus
+  viscosity with coefficient 0.1 gives an error third-order small in
+  smooth flow ([slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md)).
+  The paper is inconsistent on which run used which: §Vc assigns the
+  jiggled grid to Fig. 4 and Lapidus 0.1 to Fig. 9f, both PPMDE, while
+  §VIb assigns the jiggled grid to PPMLR and Lapidus 0.1 to PPMDE.
+* *Riemann solver.* All Godunov-type schemes in the comparison use
+  Colella's approximate solver, which replaces rarefactions by rarefaction
+  shocks and needs at most two Newton iterations (§Vc).
+* On the [double Mach reflection](/benchmarks/double-mach-reflection.md)
+  and the [step](/benchmarks/forward-facing-step.md), PPMDE shows
+  essentially no noise at slow, grid-aligned shocks, where Godunov and
+  MUSCL turn unstable, and the PPM forms are about 3–5 times more
+  efficient than BBC.
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
@@ -138,3 +176,4 @@ factor in the average–point conversion uses the opposite convention.
 4. [McCorquodale & Colella (2011)](/sources/mccorquodale-2011.md), §§2.4–2.5.
 5. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §2.
 6. [Balsara (2017)](/sources/balsara-2017-d.md), §§II.2, III.1.
+7. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§Vc, VIa–VII.

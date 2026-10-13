@@ -5,7 +5,7 @@ description: "Woodward–Colella Mach 3 inflow over a step (0.2 high at x = 0.6 
 status: established
 aliases: [forward facing step, Mach 3 step]
 tags: [benchmark, euler, 2d, vortex-sheet]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Mach 3 wind tunnel with a forward-facing step
@@ -66,6 +66,44 @@ pronounced roll-up of the vortex sheet
   perturbations and improve the kink "considerably"
   ([Simon & Mandal (2019)](/sources/simon-2019.md), §9.7; [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5).
 
+**Later uses (batch 11).** *The Woodward–Colella paper and the origin.*
+[Woodward & Colella (1984)](/sources/woodward-1984.md) (§IVb) state
+that the problem "was introduced more than a decade ago" by Emery (1968,
+J. Comput. Phys. 2:306), with earlier results by van Leer and by Colella.
+This corrects the attribution in the description and set-up line above
+("Woodward–Colella Mach 3 inflow"): the problem originates with Emery;
+Woodward & Colella gave it its standard form, with the corner treatment
+below. Their set-up agrees with the line above and adds: initial state
+equal to the inflow everywhere, with velocity 3 ($\rho = 1.4$, $p = 1$),
+zero gradients at the right, where the exit is always supersonic.
+* *Corner treatment* (pp. 131–132). In the first row of zones above the
+  step, the first four zones right of the corner; in the next row, the
+  first two. There the density is reset so that the entropy equals that
+  of the zone just left of and below the corner, and the speed (not the
+  direction) so that the total enthalpy per unit mass equals that of the
+  same zone. It assumes nearly steady flow, is "clearly inappropriate at
+  the very outset", and leaves large errors in flow direction that may
+  cause the overexpansion seen at the corner.
+* *Evolution* (Fig. 3, PPMLR, $h = 1/80$, i.e. $240\times80$). A Mach stem
+  forms at about $t = 1.5$ and moves slowly upstream; the upper contact
+  shows a physical Kelvin–Helmholtz instability at $t = 2.5$–3, seeded by
+  small numerical entropy oscillations behind the Mach shock. The flow is
+  still unsteady at $t = 4$ and steady by $t = 12$. The Mach stem is the
+  slowest feature to converge: its formation is a threshold phenomenon,
+  and a slightly lower step gives regular reflection.
+* *Scheme comparison* (Fig. 7, $t = 4$, $h = 1/20$, $1/40$, $1/80$, mostly
+  Courant 0.8). Godunov misshapes and misplaces the shocks even on the
+  finest grid, shows a strong numerical boundary layer on the step with a
+  spurious second Mach reflection, rarefaction shocks near the sonic line
+  above the corner, and a 2D instability of strong stationary shocks
+  ([numerical shock instability](/definitions/numerical-shock-instability.md)).
+  MUSCL's shocks are one zone wide, thin enough to show the same
+  instability. ETBFCT shows staircase contours and spurious Mach
+  reflections on the step that do not diminish with refinement. PPMDE is
+  essentially noise-free, with the Mach stem right on the middle grid,
+  and about 3.6 and 4.4 times more efficient than BBC and MacCormack;
+  PPMLR equals it at 18 % more CPU time ([PPM](/methods/ppm.md)).
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 2.
@@ -80,3 +118,4 @@ pronounced roll-up of the vortex sheet
 10. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.1.
 11. [Simon & Mandal (2019)](/sources/simon-2019.md), §9.7.
 12. [Simon & Mandal (2019b)](/sources/simon-2019-b.md), §7.5.
+13. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVb, VIb, Figs. 3, 7, 8.

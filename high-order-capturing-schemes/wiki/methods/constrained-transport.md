@@ -5,7 +5,7 @@ description: "Keeping the magnetic field discretely divergence-free alongside a 
 status: established
 aliases: [CT, unstaggered constrained transport, vector-potential constrained transport, Yee mesh, divergence-preserving update, upwind constrained transport, UCT, high-order CT]
 tags: [mhd, divergence-free, constrained-transport, involution]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Constrained transport for high-order capturing schemes
@@ -254,6 +254,59 @@ evolved cell averages.
   nest for multigrid ([Balsara (2001)](/sources/balsara-2001.md), §§II–III;
   [divergence-free reconstruction](/methods/divergence-free-reconstruction.md)).
 
+**Later uses (batch 11): the Balsara–Spicer origin.**
+([Balsara & Spicer (1999)](/sources/balsara-1999.md), §§1–4.) The scheme
+that the batch-7 paragraph and Berta et al. refer to.
+* *Flux–electric-field duality.* With
+  $\boldsymbol{\mathcal E} = -\mathbf v\times\mathbf B$, the induction rows
+  of the directional fluxes are electric-field components: component 7 of
+  the $x$-flux is $-\mathcal E_z$ and component 6 of the $y$-flux is
+  $\mathcal E_z$, and cyclically (eq. 6; components counted in
+  $(\rho, \rho\mathbf v, E, \mathbf B)$, as for $(f^{**}_x)_7$ above).
+  So the upwinded, time-centred Godunov fluxes at face centres already
+  carry upwinded electric fields.
+* *Edge field.* Each edge field is the arithmetic mean of the four face
+  fluxes around the edge (eqs. 7–9),
+  $$\bar{\mathcal E}^{n+1/2}_{z;i+1/2,j+1/2,k} = \tfrac14\left[(\hat f_y)_{6;i,j+1/2,k} + (\hat f_y)_{6;i+1,j+1/2,k} - (\hat f_x)_{7;i+1/2,j,k} - (\hat f_x)_{7;i+1/2,j+1,k}\right],$$
+  called the most compact second-order edge representation on a uniform
+  mesh. The paper claims the averaging adds no significant numerical
+  diffusion, because $\boldsymbol{\mathcal E}$ is not an evolved quantity
+  (p. 276); this is asserted, not measured. The later HLL constructions
+  above, which evaluate edge fields without spatial averaging or double the
+  dissipation bracket (Balsara 2004; Balsara et al. 2009), and the
+  multidimensional Riemann solvers react to this averaged baseline. Their
+  statements concern specific HLL constructions, so this is recorded as
+  context, not as a contradiction.
+* *Face update.* The discrete Stokes law of the Yee section above, applied
+  over one step with the time-centred edge fields (eqs. 13–15), keeps the
+  face-flux divergence at round-off. This is the Yee side of the closed
+  contradiction below; the paper does not claim staggering is necessary.
+* *Dual storage and the energy correction.* The zone-centred field is
+  also evolved by the Godunov scheme; optionally the magnetic energy of
+  that field is replaced, inside $E$, by that of the face fields averaged
+  to the zone centre (eq. 16). This costs energy conservation at the level
+  of the discretization error and is meant for very low β. It is the
+  "Balsara–Spicer energy correction" of Berta et al.
+* *An early multidimensional upwinding.* A variant (§2.2) weights the two
+  flux pairs by the share of each direction in the local pressure jump,
+  where pressure-jump and compression switches detect a strong shock, and
+  uses $\tfrac12$ each elsewhere. It targets standing grid-aligned
+  magnetosonic shocks, but gave results "practically identical" to the
+  basic scheme on every test shown.
+* *Time stepping.* Edge fields are accumulated over dimensional sweeps of
+  a second-order TVD scheme, but the method does not depend on sweeping:
+  an unsplit scheme uses one step, and Shu–Osher multi-stage schemes apply
+  the average at every stage. Above second order the average must change,
+  and finite volume needs a Simpson-rule edge integral (p. 278).
+* *Evidence.* Without CT or cleaning, the zone-centred scheme forms
+  divergence errors at the edge of the [MHD rotor](/benchmarks/mhd-rotor.md),
+  while on the strong [blast](/benchmarks/mhd-blast-wave.md) it stays
+  "very similar". With upwinded fluxes the staggered scheme is as robust as
+  the zone-centred scheme with cleaning, against the earlier view, which
+  the authors trace to artificial-viscosity schemes (§§3.2, 4).
+  Projection is called fast with multigrid or FFT but not adaptable to all
+  boundary conditions and zonings (§1).
+
 ## Contradictions
 
 * *Robustness of CT against cleaning:* recorded as open on the
@@ -303,3 +356,4 @@ evolved cell averages.
 15. [Tomida et al. (2026)](/sources/tomida-2026.md), §5, App. B.3.
 16. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
 17. [Balsara (2001)](/sources/balsara-2001.md), §§II–III.
+18. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §§1–4 (eqs. 7–9, 13–15, 17–26 read from the page images).

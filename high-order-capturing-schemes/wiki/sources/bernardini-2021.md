@@ -58,6 +58,7 @@ the hybrid compact-WENO, conservative-FD and SSP pages.
 * Created [STREAmS (compressible wall-turbulence DNS on GPUs)](/software/streams.md).
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md).
 
 # Citations
 

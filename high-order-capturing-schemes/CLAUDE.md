@@ -172,6 +172,20 @@ to another bundle.
 
 ## Status
 
+**Batch 11 staged 2026-10-13:** 100 of 111 archived sources ingested.
+From the user's manual downloads of 2026-10-13 (the ADAM benchmarks and
+experiments class plus missing papers of classes 2, 3 and 9): sod-1978,
+woodward-1984, brio-1988, dai-1994, balsara-1999, falcovitz-1997,
+deng-2019-b, balsara-2017-b, vanleer-2005 and poinsot-1992. A deep lint
+(100 ingestions) ran with this batch. Next (batch 12): the shock-diffraction
+papers bryson-1961, kleine-1995, kleine-2006, gnani-2014, zhang-2017-c,
+brahmi-2020, brahmi-2020-b, martyushov-2016, yeom-2010 and tsai-2012, plus
+Toro (1997, toro-1997, scoped read). Still missing: Mittal et al. (2008).
+Slugs: the archived Balsara & Nkonga (2017, JCP 346:25) is
+`balsara-2017-b` and Deng, Boivin & Xiao (2019) is `deng-2019-b`, because
+the bare keys belong to same-year homonyms (the batch-3 rule); Zhang et al.
+(2017, Shock Waves) will be `zhang-2017-c`.
+
 **Batch 10 staged 2026-10-12:** 90 of 90 archived sources ingested. The
 batch took the immersed- and embedded-boundary class of the ADAM paper
 collection: peskin-2002, berger-2021, giuliani-2022, barriosanchez-2024,

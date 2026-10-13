@@ -76,6 +76,7 @@ A mapping of the weights fixes it. Merged into
 * Updated [Accuracy at critical points](/properties/accuracy-at-critical-points.md).
 * Created [Accuracy conditions on WENO nonlinear weights](/results/weno-weight-accuracy-conditions.md).
 * Updated [Notation registry](/notation.md): batch-2 registry extensions.
+* Also cited on [Self-similarity (scale invariance) of capturing schemes](/properties/self-similarity.md).
 
 # Citations
 

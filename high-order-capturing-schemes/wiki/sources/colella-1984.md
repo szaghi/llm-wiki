@@ -61,6 +61,7 @@ needs it. Merged into [PPM](/methods/ppm.md).
 * Created [Contact-discontinuity sharpening (subcell resolution, artificial compression, steepening)](/methods/contact-sharpening.md).
 * Created [Piecewise parabolic method (PPM)](/methods/ppm.md).
 * Updated [Notation registry](/notation.md): batch-1 registry extensions.
+* Also cited on [Slowly moving shock anomaly](/definitions/slowly-moving-shock-anomaly.md).
 
 # Citations
 

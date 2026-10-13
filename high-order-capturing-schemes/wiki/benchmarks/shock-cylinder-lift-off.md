@@ -5,7 +5,7 @@ description: "A Mach 3 (or 6) shock in a [0, 1] × [0, 0.2] channel hits a free 
 status: established
 aliases: [cylinder lift-off, shock–cylinder interaction with a moving body, Tan–Shu lift-off problem]
 tags: [benchmark, euler, navier-stokes, moving-boundary, boundary-treatment, fsi]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Shock-driven cylinder lift-off
@@ -37,8 +37,33 @@ boundary is imposed by moving-boundary
   $(x_c, y_c) = (0.33987, 0.076657)$
   ([Liu et al. (2025)](/sources/liu-2025.md), Example 6, Table 7).
 
+**Later uses (batch 11).** *Origin.* The problem was introduced by
+[Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), §5,
+Fig. 5, so the set-up line above ("after Tan and Shu 2011") names a later
+form of it, not its source. The original is the same problem in other
+units: domain $100\times20$ on $200\times40$ cells (mesh $R/10$); a
+50-sided polygon of radius $R = 5$ centred at $(15, 5)$, resting on the
+floor, density 0.01; gas at rest with $\rho = 0.0013$, $p = 10^{-6}$,
+$\gamma = 1.40$; an $M_s = 3.0$ shock starting 8 from the left;
+post-shock inflow on the left, non-reflecting outflow on the right, rigid
+walls top and bottom; CFL about 0.5. Every length is 100 times the
+Tan–Shu value, and the solid-to-gas density ratio is the same
+($0.01/0.0013 = 10.77/1.4 = 7.69$; the caption prints 8). Apart from the
+×100 lengths, only the gas state differs. *Compiler's arithmetic, not printed:* with the original
+sound speed $\sqrt{1.4\times10^{-6}/0.0013} = 0.0328$, one Tan–Shu time
+unit is about $3.05\times10^3$ original units, so the original plots at
+$T = 500$ and 1000 correspond to $t \approx 0.164$ and 0.33, and the
+grid to $h = 1/200$. The original scheme is a dimensionally split GRP
+scheme with conservative moving cut cells
+([cut-cell finite volume](/methods/cut-cell-finite-volume.md)), not ILW.
+It runs Mach 3 only (the Mach 6 case is later), and its output is
+qualitative: the initial lift comes from the asymmetric shock reflection
+at the floor; there is no trajectory, resolution study or comparison.
+Whether Tan and Shu cite the original cannot be checked here.
+
 # Citations
 
 1. [Liu et al. (2023)](/sources/liu-2023.md), Example 6.
 2. [Liu et al. (2022)](/sources/liu-2022.md), §§5.2–5.3.
 3. [Liu et al. (2025)](/sources/liu-2025.md), Example 6.
+4. [Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), §5.

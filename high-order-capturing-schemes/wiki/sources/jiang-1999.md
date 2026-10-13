@@ -82,6 +82,7 @@ conservative-finite-difference pages, the Orszag–Tang page, and the new
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Notation registry](/notation.md): batch-5 registry extensions.
+* Also cited on [Grid-oblique MHD shock tubes](/benchmarks/oblique-mhd-shock-tubes.md), [Nonconvexity of ideal MHD and compound waves](/results/mhd-nonconvexity.md).
 
 # Citations
 

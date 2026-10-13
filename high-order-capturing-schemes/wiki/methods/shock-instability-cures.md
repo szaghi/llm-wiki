@@ -5,7 +5,7 @@ description: "Sensor-driven fixes that make low-dissipation Riemann solvers stab
 status: established
 aliases: [carbuncle cure, carbuncle fix, selective wave modification, HLLC-SWM, HLLEM-SWM, anti-diffusion control, entropy control, shear-wave dissipation]
 tags: [riemann-solver, shock-instability, robustness, numerical-flux]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Cures for numerical shock instability
@@ -153,6 +153,31 @@ high-order reconstruction. The entropy-control term is a flux add-on and
 so formally independent of the reconstruction; its authors name high
 order as future work ([Xie et al. (2021)](/sources/xie-2021.md), §7).
 
+**Later uses (batch 11).**
+* *Starting from HLL: contact restoration without a contact wave*
+  ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§II D, III F–H).
+  Unlike the cures above, HLL-BVD has no sensor and no switch. The base
+  solver is the two-wave HLL, and only its contact dissipation is
+  reduced: the state-difference part of $\mathbf d^{\mathrm{HLL}}$ is
+  evaluated with the face density pair of smallest jump, chosen between
+  MUSCL and THINC (tanh) profiles ([approximate Riemann solvers](/methods/approximate-riemann-solvers.md)).
+  In the shared view above, it lowers the HLL dissipation by shrinking the
+  density jump rather than by adding an anti-diffusive term. The authors
+  argue that the unchanged wave structure keeps HLL's robustness. The
+  support is tests only: on a perturbed Mach 20 steady shock
+  ([stationary normal shock](/benchmarks/stationary-normal-shock.md)), a
+  Sedov blast on $160^2$ where HLLC oscillates along the grid axes, and
+  the double Mach reflection where HLLC kinks the Mach stem, HLL and
+  HLL-BVD stay clean. The THINC profile is built in every cell, and the
+  paper does not discuss whether it also steepens shocks.
+* *Against switching.* The same paper argues that the switching
+  parameters of hybrid cures "usually have some arbitrariness" that may
+  lead to failures, and that hybridization "may break the strict
+  Rankine–Hugoniot jump conditions", which smears contacts (§I, citing
+  earlier work).
+* *Status at high order* is unchanged: HLL-BVD is tested with MUSCL
+  (second order) only.
+
 # Citations
 
 1. [Simon & Mandal (2019)](/sources/simon-2019.md), §§5–9.
@@ -161,3 +186,4 @@ order as future work ([Xie et al. (2021)](/sources/xie-2021.md), §7).
 4. [Navas-Montilla & Murillo (2019)](/sources/navasmontilla-2019.md), §§5.3–5.4, 6.2, 6.4.
 5. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§IV.B, V.
 6. [Balsara & Shu (2000)](/sources/balsara-2000.md).
+7. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§I, II D, III F–H.

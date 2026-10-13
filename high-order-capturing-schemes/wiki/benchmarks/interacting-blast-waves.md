@@ -5,7 +5,7 @@ description: "Two strong blast waves between reflecting walls that collide (pres
 status: established
 aliases: [two interacting blast waves, Woodward-Colella blast wave, double blast wave]
 tags: [benchmark, euler, strong-shocks, positivity]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -97,6 +97,36 @@ drops at the collision and grows again, with the Courant number near
 $1/4$ (second order) and $1/6$ (third order) ([Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §6.6,
 Fig. 1b; [SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
 
+**Later uses (batch 11).** *The Woodward–Colella paper.*
+[Woodward & Colella (1984)](/sources/woodward-1984.md) (§IVa) print the
+set-up above: gas at rest between reflecting walls 1 apart, $\rho = 1$,
+$p = 1000$, 0.01 and 100 with interfaces at 0.1 and 0.9, $\gamma = 1.4$,
+results displayed at $t = 0.038$ (§VIa prints "0.38", a typo). They
+state that the problem "was introduced in" Woodward (1982, *Parallel
+Computation*). This qualifies the set-up line above: the name
+"Woodward–Colella" is the conventional one, the origin is Woodward (1982).
+* *Reference solution.* A PPMLR run that tracks the two contacts as three
+  fluids, is exact before the waves interact, and refines by 8 in space
+  and time near each discontinuity and the walls: 3096 zones of width
+  $1/2400$ to $1/9600$.
+* *Flow.* The blast waves collide at $t \approx 0.028$, in agreement with
+  the batch-4 remark above. The peak density stays below the limiting 36
+  (accurate to about 1 %) and falls to about 24 by $t = 0.030$. At the end
+  the left and middle contacts carry most of the error.
+* *Quantitative comparison* (Table I, 200 to 1200 zones, CRAY-1). The
+  error is the mean absolute deviation of cell-average density from the
+  reference. At 200 and 1200 zones: PPMLR 0.0760 and 0.0133, PPMDE 0.0990
+  and 0.0144, MUSCL 0.162 and 0.0401, ETBFCT 0.227 and 0.0606, BBC 0.196
+  and 0.0717, MacCormack 0.261 and 0.0862, Godunov 0.330 and 0.182. Only
+  [PPM](/methods/ppm.md) converges at first order; Godunov's error goes
+  like $h^{0.15}$ to $h^{0.4}$. Matching 200-zone PPMLR costs more CPU
+  time by 1.6 (PPMDE), 6.2 (MUSCL), 7.4 (BBC), 8.0 (MacCormack) and 13.5
+  (ETBFCT); Godunov cannot match it with 12 times the zones.
+* *Profiles* (Fig. 6). Godunov smears the three contacts "unacceptably";
+  ETBFCT shows a spurious contact at a density-slope discontinuity; both
+  PPM forms keep the outer contacts one zone wide at 200 zones and are
+  "essentially converged" at 1200.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7, Figs. 17–19.
@@ -120,3 +150,4 @@ Fig. 1b; [SSP linear multistep methods](/methods/ssp-linear-multistep.md)).
 19. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Example 4.
 20. [Lu et al. (2021)](/sources/lu-2021.md), Example 3.4.
 21. [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §6.6 (arXiv v2).
+22. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVa, VIa, Figs. 1, 2, 6, Table I.

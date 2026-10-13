@@ -5,7 +5,7 @@ description: "A dense, rapidly spinning disc in a magnetized ambient medium laun
 status: established
 aliases: [rotor problem, Balsara-Spicer rotor]
 tags: [benchmark, mhd, 2d, positivity, low-beta]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # MHD rotor
@@ -71,6 +71,37 @@ the very-low-β version of Waagan, cited) or 0.13 (Balsara et al.)
   factor 30, which needs at least $3500^2$ and was run at $4700^2$
   ([Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6).
 
+**Later uses (batch 11).** The origin, [Balsara & Spicer (1999)](/sources/balsara-1999.md),
+§3.1, prints in Gaussian units (field strength $B$ becomes
+$B/\sqrt{4\pi}$ in Heaviside–Lorentz units): unit square, $400^2$; ambient
+$\rho = 1$, $p = 1$, at rest; disc $\rho = 10$ inside $r = 0.1$, density and
+rotation tapering linearly to the ambient at $r = 0.115$ (six zones); rotation
+speed 2 at $r = 0.1$; $\gamma = 1.4$; $B_x = 5$; Courant number 0.8;
+$t = 0.295$; boundary conditions not printed.
+* *Erratum.* An "Update" (J. Comput. Phys. 153:671, 1999) states that the
+  paper's Figs. 2–3 were run with $p = 0.5$, $\gamma = 5/3$, speed 1 at
+  $r = 0.1$ and $B = 2.5$, densities and taper as printed; the printed set
+  "also produce[s] an interesting rotor problem but at earlier times".
+* *What this means for the batch-6 entries.* "Tóth's first rotor" above
+  (angular velocity 20, i.e. speed 2 at $r = 0.1$; taper width 0.015;
+  $\gamma = 1.4$; $5/\sqrt{4\pi}$) is the printed Balsara–Spicer set, and its
+  earlier output time (0.15 or 0.125) is consistent with the erratum's remark.
+  Ding & Wu's "another normalization" ($2.5/\sqrt{4\pi}$, $p = 0.5$, taper
+  0.1–0.115, $\gamma = 5/3$, $400^2$, $t = 0.295$) is the erratum-corrected
+  set, the one the origin's figures show. In every parameter this page
+  lists, neither is a separate normalization. The runs "consistent with
+  Balsara and Spicer" by Balsara (2004) and Balsara et al. (2009) use
+  $p = 1$ and a 0.13 taper, so they are a variant of the corrected set;
+  the agreement they report is with the figures' morphology.
+* *Why the test exists.* Without CT or cleaning, the zone-centred Godunov
+  scheme develops "magnetic monopoles" at the rotor edge, where the field
+  lines are most sheared ($2h\,\nabla\cdot\mathbf B/|\mathbf B|$ between
+  $-0.66$ and $0.66$ at $t = 0.317$), and a spurious solution; with a
+  cleaning step it matches the CT result. This is the origin of the
+  report cited by Dumbser et al. in batch 4. Balsara–Spicer CT and its
+  pressure-switch variant give identical results at $t = 0.295$
+  ([constrained transport](/methods/constrained-transport.md)).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §6.4.
@@ -86,3 +117,4 @@ the very-low-β version of Waagan, cited) or 0.13 (Balsara et al.)
 11. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.6.
 12. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
 13. [Balsara (2017)](/sources/balsara-2017-d.md), §§IX.3, IX.6.
+14. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.1 and the erratum (J. Comput. Phys. 153:671).

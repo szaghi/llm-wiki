@@ -75,6 +75,7 @@ shock-tube benchmarks.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [WENO-Z](/methods/weno-z.md).
 * Updated [Notation registry](/notation.md): batch-6 registry extensions.
+* Also cited on [Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md).
 
 # Citations
 

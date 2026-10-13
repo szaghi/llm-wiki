@@ -5,7 +5,7 @@ description: "An over-pressured region expanding into a strongly magnetized, low
 status: established
 aliases: [magnetized blast wave, MHD blast problem, RMHD blast wave]
 tags: [benchmark, mhd, positivity, low-beta, 2d, 3d]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # MHD blast wave in a low-β medium
@@ -81,6 +81,29 @@ reconstruction of the zone-centred field
   self-adjusting positivity method; density and pressure stay positive
   ([Balsara (2017)](/sources/balsara-2017-d.md), §IX.4).
 
+**Later uses (batch 11).** The origin, [Balsara & Spicer (1999)](/sources/balsara-1999.md),
+§3.2, Fig. 4, is 2D only. In Gaussian units: unit square (position not
+stated), $200^2$; $\rho = 1$; $p = 1000$ inside radius 0.1 and 0.1 outside;
+$\gamma = 1.4$; at rest; $B = 100$ along $x$ (ambient plasma beta
+$2.51\times10^{-4}$); $t = 0.01$, given only in the figure caption. It is
+called a "more stringent variant" of Balsara's earlier blast.
+* *Corrections of attribution.* The batch-4 line places the origin's blast
+  on $[-0.5, 0.5]^2$; that is the coordinate choice of Balsara et al.
+  (2009), not of the origin. Its "stricter 3D version on $151^3$" belongs
+  to Balsara et al. (2009) alone: the 1999 paper has no 3D run. Ding &
+  Wu's field-along-$x$ case (batch 6) is the origin set-up in
+  Heaviside–Lorentz units ($100/\sqrt{4\pi}$). The oblique lead set-up
+  ($B_x = B_y = 100/\sqrt{8\pi}$) is a later variant with the same field
+  magnitude, rotated by 45°.
+* *Findings.* Balsara–Spicer CT and the zone-centred Godunov scheme with
+  cleaning are "extraordinarily similar", and even the zone-centred scheme
+  without cleaning is "very similar": fast strong shocks do not expose
+  divergence errors, unlike the [rotor](/benchmarks/mhd-rotor.md). The
+  pressure-switch variant gives the same result; forcing its weight to one
+  direction everywhere degrades shock propagation only slightly in the
+  other direction. Whether the energy correction was used is not stated
+  ([constrained transport](/methods/constrained-transport.md)).
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
@@ -94,3 +117,4 @@ reconstruction of the zone-centred field
 9. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §6.2.
 10. [Mignone & Tzeferacos (2010)](/sources/mignone-2010-b.md), §4.7.
 11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.4.
+12. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.

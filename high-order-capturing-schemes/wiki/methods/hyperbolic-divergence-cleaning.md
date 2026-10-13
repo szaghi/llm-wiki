@@ -237,6 +237,16 @@ at the batch-8 deep lint; both sides were already in the text).
   tests (an extreme low-β blast against Kelvin–Helmholtz, AMR and wave
   tests). Neither tests the other's failure case. See also
   [constrained transport](/methods/constrained-transport.md).
+* *Batch 11 evidence, not decisive.*
+  [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4, run
+  staggered constrained transport with multidimensional (MuSIC) edge
+  fields on a third-order 3D blast at plasma beta $1.117\times10^{-4}$
+  ($257^3$) and report positive density and pressure; they do not say
+  which positivity safeguards were active.
+  [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2, find 2D
+  staggered constrained transport at plasma beta about $2.5\times10^{-4}$
+  as robust as a zone-centred scheme with projection cleaning (not GLM),
+  without saying whether their energy correction (eq. 16) was used.
 
 # Citations
 
@@ -247,3 +257,5 @@ at the batch-8 deep lint; both sides were already in the text).
 5. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §4.
 6. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §6.2.
 7. [Balsara et al. (2023)](/sources/balsara-2023.md), §5.
+8. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.
+9. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.

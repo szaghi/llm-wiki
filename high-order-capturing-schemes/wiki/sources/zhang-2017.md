@@ -107,6 +107,7 @@ diffraction on a wedge with a sharp corner, on unstructured triangles.
 * Updated [WENO limiters for DG](/methods/weno-limited-dg.md) and [SSP Runge–Kutta](/methods/ssp-runge-kutta.md).
 * Updated [Sedov blast wave](/benchmarks/sedov-blast-wave.md), [Shock diffraction](/benchmarks/shock-diffraction.md), [Double Mach reflection](/benchmarks/double-mach-reflection.md), [Lax shock tube](/benchmarks/lax-shock-tube.md), [Double rarefaction](/benchmarks/double-rarefaction.md), [Isentropic vortex](/benchmarks/isentropic-vortex.md).
 * Updated [Notation registry](/notation.md): $\mathbf f^{\mathrm v}$, $\boldsymbol\tau$, $\mathbf q$, $\beta^{\mathrm v}_{i+1/2}$, $\theta_e$.
+* Also cited on [Step-size control for Runge–Kutta integration of hyperbolic problems](/methods/runge-kutta-step-size-control.md).
 
 # Citations
 

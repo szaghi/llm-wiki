@@ -91,6 +91,7 @@ pages.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Updated [Woodward–Colella interacting blast waves](/benchmarks/interacting-blast-waves.md).
 * Updated [Notation registry](/notation.md): batch-4 registry extensions.
+* Also cited on [Circularly polarized (torsional) Alfvén waves](/benchmarks/circularly-polarized-alfven-wave.md), [Ryu–Jones and Dai–Woodward one-dimensional MHD shock tubes](/benchmarks/ryu-jones-shock-tubes.md), [Divergence-free reconstruction of face-centred magnetic fields](/methods/divergence-free-reconstruction.md), [Multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md).
 
 # Citations
 

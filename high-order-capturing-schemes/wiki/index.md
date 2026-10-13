@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 90 sources compiled (the whole archive)**: 89 published works,
+**Corpus: 100 sources compiled (the whole archive)**: 99 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -77,12 +77,16 @@ for every page.
    stages: [relaxation](/methods/relaxation-runge-kutta.md) for fully
    discrete entropy stability and
    [positivity adaptation](/methods/positivity-preserving-adaptive-runge-kutta.md).
+   Diffusion terms in DG: [recovery DG](/methods/recovery-dg-diffusion.md).
    Then one-step
    [ADER](/methods/ader.md) (one reconstruction per step, equal order in
    space and time), the interface [Riemann solvers](/methods/approximate-riemann-solvers.md),
    and [contact sharpening](/methods/contact-sharpening.md).
    **Riemann-solver design.** The [HLLEM (HLLI) solver](/methods/hllem-riemann-solver.md)
-   keeps contacts and shear. Solvers that do suffer
+   keeps contacts and shear; [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)
+   resolve the strongly interacting state at cell edges and corners. For
+   MHD, [nonconvexity](/results/mhd-nonconvexity.md) admits compound waves
+   that a solver must handle. Solvers that do suffer
    [numerical shock instability](/definitions/numerical-shock-instability.md)
    (carbuncle, odd–even decoupling, kinked Mach stem), which
    [sensor-driven cures](/methods/shock-instability-cures.md) remove. An
@@ -130,7 +134,9 @@ for every page.
 11. **Boundaries and adaptive meshes.** Ghost values on Cartesian grids cut
    by the boundary come from [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)
    expansions (stable for any cut-cell distance) or from
-   [weighted extrapolation](/methods/weighted-extrapolation.md); the ILW
+   [weighted extrapolation](/methods/weighted-extrapolation.md), against which
+   [Navier–Stokes characteristic boundary conditions](/methods/characteristic-boundary-conditions.md)
+   argue that extrapolation over-specifies outflow (open entry); the ILW
    line extends to sign-changing wind, exact conservation, moving bodies
    and fluid–structure interfaces. Provably stable closures come from
    summation by parts: [energy-stable WENO](/methods/energy-stable-weno.md).

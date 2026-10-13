@@ -72,6 +72,7 @@ negative results for implicit SSP methods. Merged into
 * Updated [TVD / strong-stability-preserving Runge–Kutta methods](/methods/ssp-runge-kutta.md).
 * Created [Order barriers and optimal coefficients of SSP time discretizations](/results/ssp-order-barriers.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md), [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
 
 # Citations
 

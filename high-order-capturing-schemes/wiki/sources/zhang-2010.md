@@ -73,6 +73,7 @@ pages and into five new benchmarks.
 * Updated [WENO reconstruction (weighted ENO)](/methods/weno.md).
 * Created [Positivity preservation (invariance of the admissible set)](/properties/positivity-preserving.md).
 * Updated [Notation registry](/notation.md): batch-3 registry extensions.
+* Also cited on [SSP linear multistep methods](/methods/ssp-linear-multistep.md).
 
 # Citations
 

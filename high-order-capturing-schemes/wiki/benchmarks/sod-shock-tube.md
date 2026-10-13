@@ -5,7 +5,7 @@ description: "The 1D Riemann problem (1, 0, 1 | 0.125, 0, 0.1): rarefaction, con
 status: established
 aliases: [Sod problem, Sod's problem]
 tags: [benchmark, euler, riemann-problem, 1d]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Sod shock tube
@@ -101,6 +101,34 @@ profiles approach the exact solution as $h$ halves twice, and mass is
 conserved; no error norms are given ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2, Fig. 4;
 [state redistribution](/methods/state-redistribution.md)).
 
+**Later uses (batch 11).** *The original paper.* [Sod (1978)](/sources/sod-1978.md)
+(§3, p. 14) prints the states and $\gamma$ of the set-up above, gas at
+rest on both sides of a diaphragm, $h = 0.01$ (100 points) and $\nu = 0.9$
+for every scheme. It prints **no diaphragm position, no end time and no
+boundary conditions**: the run stops before any wave reaches either
+end, and the figures span $x \in [0, 1]$. The usual diaphragm at
+$x = 0.5$ and end time $t = 0.2$ (the latter in some uses above) are
+therefore later conventions, not Sod's. *Compiler reading:* with the diaphragm at $x = 0.5$ (which the
+Glimm mass in Table III fits), the plotted shock and contact positions
+correspond to $t \approx 0.14$; this is inferred from the figures, not
+printed.
+* Sod runs nine schemes plus artificial-compression variants and reports
+  contact and shock widths in zones: Godunov 7–8 and 5–6, two-step
+  Lax–Wendroff 6–8 and 4–6, MacCormack 7–8 and 5–6, Rusanov 14–16 and
+  6–8, Boris–Book antidiffusion 5–7 and 1–2, the Harten–Zwas hybrid 8–9
+  and 5–6, Hyman's predictor–corrector 6–8 and 3–4. Artificial
+  compression brings Godunov to 3–4 and 1–2 and Rusanov to 2–3 and 1–2
+  ([contact sharpening](/methods/contact-sharpening.md)). Glimm's random
+  choice gives zero-width discontinuities at random but on-average exact
+  positions. An upwind scheme with centred pressure differences forms a
+  nonphysical shock at the left end of the rarefaction.
+* Without corrective procedures Godunov and Hyman are best. Sod calls the
+  problem a "sitting duck" for Riemann-solver-based methods and places a
+  method's "true value" in multidimensional problems (p. 25), a caveat
+  akin to the self-similarity remark of Harten et al. above.
+* Sod's "energy" plots are the specific internal energy (2.5 on the left,
+  2.0 on the right), not the energy density $E$.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -127,3 +155,4 @@ conserved; no error norms are given ([Barrio Sanchez et al. (2024)](/sources/bar
 22. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §3.6.1.
 23. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.3 (arXiv v4).
 24. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4.2 (arXiv v1).
+25. [Sod (1978)](/sources/sod-1978.md), §§3–4, Figs. 2–15, Tables II–IV.

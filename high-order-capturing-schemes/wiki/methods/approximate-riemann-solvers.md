@@ -3,9 +3,9 @@ type: Method
 title: "Approximate Riemann solvers as building blocks of capturing schemes"
 description: "The interface fluxes used by FV and alternative-FD WENO schemes in this corpus: Lax–Friedrichs/Rusanov, Roe, HLL and HLLC (with positivity-preserving wave speeds), HLLI/LLFI, the Riemann-solver-free MUSTA flux, and multidimensional HLL/LLF solvers for edge electric fields."
 status: established
-aliases: [Riemann solver, HLLC, HLL, MUSTA, FORCE, HLLI, Rusanov flux]
+aliases: [Riemann solver, HLLC, HLL, MUSTA, FORCE, HLLI, Rusanov flux, HLL-BVD, Roe-type MHD solver]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Approximate Riemann solvers as building blocks
@@ -176,6 +176,83 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
   ([Miczek et al. (2015)](/sources/miczek-2015.md); [Edelmann et al. (2021)](/sources/edelmann-2021.md), §3.2;
   [low-Mach-number fluxes](/methods/low-mach-number-fluxes.md)).
 
+**Later uses (batch 11).**
+* *The original Roe-type MHD solver* ([Brio & Wu (1988)](/sources/brio-1988.md), §§IV.1, VII).
+  For $\gamma = 2$ an exact Roe matrix is the Jacobian at an averaged
+  state: Roe-averaged velocities and total enthalpy, the geometric-mean
+  density, and a $\sqrt\rho$-weighted tangential field (eqs. 26, 28–30).
+  For general $\gamma$ the authors could not solve the averaging problem
+  ("we are not able to solve it analytically") and use the Jacobian at
+  the arithmetic mean of density, velocity, field and total pressure.
+  That state keeps the eigenvalues real but does not satisfy
+  $f(u_{i+1}) - f(u_i) = A\,(u_{i+1} - u_i)$, so stationary
+  discontinuities are no longer exact steady solutions; averaging the
+  energy instead "may lead to a negative averaged pressure". On the
+  [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md) the two
+  versions agree to 4 significant digits in the constant states and to 2
+  in the transitions. The second-order scheme costs about 10 times the
+  floating-point operations of Lax–Wendroff per point and step, yet with
+  200 points it gives "a reasonable result" where Lax–Wendroff needs 800,
+  and is then the more efficient. Its renormalized eigenvectors are on
+  the [characteristic decomposition](/methods/characteristic-decomposition.md) page.
+* *A nonlinear MHD Riemann solver* ([Dai & Woodward (1994)](/sources/dai-1994.md), §§4–6).
+  A seven-wave solver in Lagrangian mass coordinates, meant to supply
+  interface fluxes to a PPM-type Godunov scheme. Every wave is treated as
+  a discontinuity: fast and slow shocks, two rotational discontinuities
+  and a contact. Rarefactions become "rarefaction shocks" that obey the
+  jump conditions with an entropy decrease, so the solver is exact only
+  when no rarefaction is present and applies to weak rarefactions.
+  Closed formulas give the shock speed from the post-shock transverse
+  field, and a cubic gives the field jump from the shock speed. A Newton
+  iteration on three transverse-field values and the common field
+  orientation closes the fan at the contact. The initial guess blends a
+  linear Riemann-invariant solver with a one-strong-wave guess; a
+  relaxation factor handles several strong waves; where the solver
+  fails, the code takes the average of the left and right states for the
+  flux. Intermediate shocks are excluded by construction. One Newton
+  iteration is "enough to obtain sufficiently accurate fluxes in an
+  actual code even for very strong MHD shocks", and the unoptimized
+  solver does 348,143 Riemann problems per second on a Cray-C90. These
+  are the "rarefaction shocks" that Ryu & Jones replace by exact
+  rarefactions (batch-7 bullet above).
+* *HLL-BVD: HLL accurate at contacts* ([Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II).
+  With Davis's speeds and $S_L \le 0 \le S_R$,
+  $$\mathbf d^{\mathrm{HLL}} = \frac{S_R + S_L}{2(S_R - S_L)}\left(f(u^-) - f(u^+)\right) - \frac{S_L S_R}{S_R - S_L}\left(u^- - u^+\right),$$
+  and the paper identifies the density jump in the second,
+  state-difference term as what smears contacts. Each cell carries a
+  MUSCL polynomial and a THINC (tanh) jump profile of density, with
+  steepness 1.6 in every test. At each face a BVD (boundary variation
+  diminishing) selection takes, among the four combinations of the two
+  profiles from left and right, the density pair with the smallest jump,
+  and only that density enters the state-difference term (eqs. 15–17).
+  The wave speeds and the two-wave fan are unchanged. The paper does not
+  say which density enters $f(u^\mp)$ and the wave speeds. It is second
+  order (MUSCL) only, with no convergence study. In tests HLL-BVD
+  resolves contacts more sharply than HLL and, in most tests, HLLC, and
+  it shows none of HLLC's odd–even decoupling, Sedov axis oscillations or
+  kinked Mach stem (§§III F–H;
+  [cures for numerical shock instability](/methods/shock-instability-cures.md)).
+  The robustness is observed, not proved; HLL's positivity and entropy
+  properties are restated for HLL but not claimed for HLL-BVD. The paper
+  also reviews Mandal & Panwar's HLL fix, which replaces the density
+  jumps of the state-difference term by pressure jumps under a local
+  isentropy assumption that "may not always hold" (§II C).
+* *HLLI is a family.* Balsara & Nkonga derive a second HLLI with a
+  first-moment (Galerkin) constraint, a shifted mean flux and different
+  weights; they find both versions "work equally well" and give the first
+  comparison of HLLI dissipation with Roe's (at most 23.2 % above it in
+  the cases shown, zero for a stationary wave)
+  ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §2;
+  [HLLEM (HLLI)](/methods/hllem-riemann-solver.md)). Their 2D analogue is
+  on the [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md) page.
+* *Primary source of the solver-quality factors.* The 6 times and 3 times
+  factors of the batch-7 bullet "Solver quality against order" come from
+  [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md) (§5.5, Fig. 7),
+  with the same set-up ($120^2$, $t = 129$); the review repeats them. A
+  relativistic MHD repeat gives the same ordering, without factors (§5.7).
+* *Bearing on the HLLE contradiction below:* Deng, Boivin & Xiao's HLL
+  runs are recorded in the entry as batch-11 evidence.
+
 ## Contradictions
 
 * **Is HLLE carbuncle-free?** *Open* (recorded at batch 8).
@@ -198,6 +275,16 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
     (a flat-plate boundary layer, and Elling's vortex filament through a
     Mach 20 shock) show HLLE smearing shear but no spurious carbuncle;
     HLLE is not run on their carbuncle tests (§§6.1–6.6).
+  * **Batch 11 evidence, not closing.** [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md),
+    §§III F–H, run HLL with Davis's speeds at second order (MUSCL): no
+    odd–even decoupling on a perturbed Mach 20 steady shock, no carbuncle
+    in a 2D Sedov blast, no kinked stem in the double Mach reflection
+    ("For" side, observed). Their §III F test is the 1.5D twin of Xie et
+    al.'s (51×26 cells with a sub-cell intermediate column at
+    $\lambda = 0.2$, 0.4, against 50×25 with a sub-cell intermediate
+    state); the differences are Davis against Einfeldt speeds, MUSCL
+    against first order, Mach 20, and a linear density mix rather than a
+    state on the Hugoniot curve.
   * **Status.** Xie et al.'s own data fit a scoped reading: HLLE is
     unstable on the 1D steady shock yet shows no carbuncle in their 2D
     runs. No source states that reading as a claim, and Kitamura &
@@ -233,3 +320,7 @@ Gauss rule, so a Riemann solve is needed at each face Gauss point
 24. [Kitamura & Shima (2019)](/sources/kitamura-2019.md), §§II.B, III.E.
 25. [Miczek et al. (2015)](/sources/miczek-2015.md), §§6–8.
 26. [Edelmann et al. (2021)](/sources/edelmann-2021.md), §3.2.
+27. [Brio & Wu (1988)](/sources/brio-1988.md), §§IV.1, V, VII.
+28. [Dai & Woodward (1994)](/sources/dai-1994.md), §§4–6.
+29. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §§II, III F–H.
+30. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §§2, 5.5, 5.7.
