@@ -2,6 +2,22 @@
 
 ## 2026-10-13
 
+* **Ingested [Zaghi (2026)](/sources/zaghi-2026.md)**, a frozen capture
+  (D12 amendment) of three ADAM FLUME source files at commit 4a3a0815, in
+  `raw/docs/zaghi-2026/`, on the human's request to record its evidence on
+  the parallel-force sign. Claims are `hypothesis`-grade.
+  * **Updated** [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md):
+    a bullet in the Open entry on the sign of the parallel force. The EGLM
+    model adds $-(\nabla\cdot\mathbf B)\mathbf B$ to a conservative
+    Maxwell-stress flux, which together give $(\nabla\times\mathbf B)\times\mathbf B$:
+    implicit support for the plus sign. The entry stays Open by the human's
+    decision (a code record cannot close it).
+  * The human also decided to leave the cut-cell entry Open (deep-lint
+    flag of the same day).
+  * **Bibliography** (3185 entries): an entry for the record itself; its
+    code comments cite Derigs et al. (2018) and Dedner et al. (2002), both
+    merged.
+
 * **Deep lint** (12 ingestions since the whole-bundle lint of batch 13).
   Two read-only audits, fixes checked against the PDFs:
   * **Contradictions.** Parallel-force sign entry: added that Derigs et

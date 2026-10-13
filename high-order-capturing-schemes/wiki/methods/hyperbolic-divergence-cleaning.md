@@ -321,6 +321,18 @@ at the batch-8 deep lint; both sides were already in the text).
   (compiler's reading of eqs. 2.18–2.21, arXiv v3, p. 5). A printed-sign
   erratum in Derigs et al. is the likely reading; closing needs the
   human's fiat.
+* *Implicit evidence from a production code, for the plus sign
+  (hypothesis-grade; it cannot close the entry).* The EGLM model of
+  [Zaghi (2026)](/sources/zaghi-2026.md) keeps the conservative
+  Maxwell-stress momentum flux and adds the momentum source
+  $-(\nabla\cdot\mathbf B)\,\mathbf B$, citing Derigs et al. eqs.
+  3.16–3.18; flux and source together give
+  $(\nabla\times\mathbf B)\times\mathbf B$, with no component along
+  $\mathbf B$. That removal works only if the conservative force has the
+  component $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$ along
+  $\mathbf B$, the sign Brackbill & Barnes print. The code never states the
+  sign (compiler's reading of its flux and source); its plain GLM model
+  adds no momentum source and keeps the parallel force.
 
 # Citations
 
@@ -334,3 +346,4 @@ at the batch-8 deep lint; both sides were already in the text).
 8. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.
 9. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.
 10. [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430 (read from page images).
+11. [Zaghi (2026)](/sources/zaghi-2026.md), key claims 1–4 (frozen capture at commit 4a3a0815).

@@ -171,6 +171,11 @@ to another bundle.
 
 ## Status
 
+**Code record staged 2026-10-13:** zaghi-2026, a frozen capture of ADAM
+FLUME kernels (D12 amendment), recording implicit evidence for the plus
+sign in the Open parallel-force entry; the entry and the cut-cell entry
+stay Open (human's decision). 125 sources.
+
 **Batch 16 staged 2026-10-13:** lax-1954, harten-1983-d, einfeldt-1991,
 shu-1988-b, cockburn-1998, roe-1996 (user downloads); 124 of 124. New page
 methods/rkdg. One Open contradiction (Brio & Wu's α_s factor, on
