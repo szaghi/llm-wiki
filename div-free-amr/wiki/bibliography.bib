@@ -1500,6 +1500,14 @@
   citedby = {tomida-2026},
 }
 
+@inproceedings{atkins-1991,
+  author = {Atkins, H.},
+  title = {High-order ENO methods for the unsteady compressible Navier-Stokes equations},
+  booktitle = {AIAA 10th Computational Fluid Dynamics Conference, Honolulu, Hawaii, June 1991, AIAA paper 91-1557},
+  year = {1991},
+  citedby = {jiang-shu-1996},
+}
+
 @article{auchmann-2006,
   author = {Auchmann, B. and Kurz, S.},
   title = {A geometrically defined discrete hodge operator on simplicial cells},
@@ -5831,12 +5839,28 @@
   citedby = {hiptmair-2002},
 }
 
+@article{casper-1992,
+  author = {Casper, J.},
+  title = {Finite-volume implementation of high-order essentially non-oscillatory schemes in two dimensions},
+  journal = {AIAA J. 30:2829},
+  year = {1992},
+  citedby = {jiang-shu-1996},
+}
+
 @article{casper-1993,
   author = {Casper, J. and Atkins, H.L.},
   title = {[title not printed in citing reference]},
   journal = {J. Comput. Phys. 106:62},
   year = {1993},
   citedby = {balsara-spicer-1999},
+}
+
+@article{casper-1994,
+  author = {Casper, J. and Shu, C.-W. and Atkins, H.L.},
+  title = {A comparison of two formulations for high-order accurate essentially non-oscillatory schemes},
+  journal = {AIAA J. 32:1970},
+  year = {1994},
+  citedby = {jiang-shu-1996},
 }
 
 @article{cassak-2009,
@@ -7189,21 +7213,13 @@
   citedby = {aftosmis-berger-murman-2004},
 }
 
-@article{colella-1984,
-  author = {Colella, P. and Woodward, P.R.},
-  title = {The piecewise parabolic method (PPM) for gas-dynamical simulations},
-  journal = {J. Comp. Phys., 54, 174},
-  year = {1984},
-  doi = {10.1016/0021-9991(84)901438},
-  citedby = {almgren-2010, balsara-kim-2016, etienne-2010, etienne-2015, evans-hawley-1988, felker-2018, gardiner-stone-2005, gardiner-stone-2008, mignone-2012, mignone-tzeferacos-bodo-2010, miniati-martin-2011, olivares-2019, pakmor-2026, stone-2008, stone-2020},
-}
-
 @article{colella-1985,
   author = {Colella, P.},
   title = {A direct Eulerian MUSCL scheme for gas dynamics},
   journal = {SIAM J. Comput. 6, 104 (1985)},
   year = {1985},
-  citedby = {almgren-1998},
+  note = {printed as SIAM J. Sci. Statist. Comput., in press (1984), by colella-woodward-1984},
+  citedby = {almgren-1998, colella-woodward-1984},
 }
 
 @article{colella-1990,
@@ -7271,8 +7287,18 @@
   title = {Efficient solution algorithms for the Riemann problem for real gases},
   journal = {J. Comput. Phys. 59:264},
   year = {1985},
-  note = {Crossref: Colella & Glaz, J. Comput. Phys. 59:264-289; printed with second author Woodward by a citing source and keyed colella-woodward-1985 until deep lint #9; almgren-2010 cites it as Colella & Glaz (1985); colella-glaz-1985 is the Lecture Notes in Physics 218 paper},
-  citedby = {almgren-2010, berger-colella-1989},
+  note = {Crossref: Colella & Glaz, J. Comput. Phys. 59:264-289; printed with second author Woodward by a citing source and keyed colella-woodward-1985 until deep lint #9; almgren-2010 cites it as Colella & Glaz (1985); colella-glaz-1985 is the Lecture Notes in Physics 218 paper; printed as in preparation (1984) by colella-woodward-1984},
+  citedby = {almgren-2010, berger-colella-1989, colella-woodward-1984},
+}
+
+@article{colella-woodward-1984,
+  author = {Colella, P. and Woodward, P.R.},
+  title = {The piecewise parabolic method (PPM) for gas-dynamical simulations},
+  journal = {J. Comp. Phys., 54, 174},
+  year = {1984},
+  doi = {10.1016/0021-9991(84)90143-8},
+  note = {doi corrected 2026-10-13 on Crossref from the malformed 10.1016/0021-9991(84)901438 recorded earlier; key renamed from colella-1984 to the Source slug},
+  citedby = {almgren-2010, balsara-kim-2016, etienne-2010, etienne-2015, evans-hawley-1988, felker-2018, gardiner-stone-2005, gardiner-stone-2008, mignone-2012, mignone-tzeferacos-bodo-2010, miniati-martin-2011, olivares-2019, pakmor-2026, stone-2008, stone-2020},
 }
 
 @article{coleman-2020,
@@ -7543,6 +7569,14 @@
   year = {1928},
   doi = {10.1007/BF01448839},
   citedby = {arnold-falk-winther-2009, christiansen-2011, zaghi-2023},
+}
+
+@book{courant-1948,
+  author = {Courant, R. and Friedrichs, K.O.},
+  title = {Supersonic Flow and Shock Waves},
+  publisher = {Wiley-Interscience, New York},
+  year = {1948},
+  citedby = {colella-woodward-1984},
 }
 
 @article{courant-1952,
@@ -11842,7 +11876,7 @@
   title = {[title not printed in citing reference]},
   journal = {Math. Sb. 47:271},
   year = {1959},
-  citedby = {brio-wu-1988},
+  citedby = {brio-wu-1988, colella-woodward-1984},
 }
 
 @article{godunov-1961,
@@ -11852,6 +11886,14 @@
   year = {1961},
   note = {folded former key godunov-1972-b: powell-1999 prints the year 1972 and the title "quasiliner" for this Dokl. Akad. Nauk SSSR 139:521 paper (dupes sweep 2026-10-08)},
   citedby = {balsara-2023, powell-1999, zampa-2024},
+}
+
+@article{godunov-1961-b,
+  author = {Godunov, S.K. and Zabrodin, A.V. and Prokopov, G.P.},
+  title = {[title not printed in citing reference]},
+  journal = {USSR Comput. Math. Math. Phys. 1:1187},
+  year = {1961},
+  citedby = {colella-woodward-1984},
 }
 
 @article{godunov-1972,
@@ -13137,7 +13179,15 @@
   title = {Uniformly high-order accurate essentially non-oscillatory schemes, III},
   journal = {J. Comput. Phys., 71, 231},
   year = {1987},
-  citedby = {balsara-2026, balsara-spicer-1999, jiang-1999, londrillo-delzanna-2000, mignone-tzeferacos-bodo-2010},
+  citedby = {balsara-2026, balsara-spicer-1999, jiang-1999, jiang-shu-1996, londrillo-delzanna-2000, mignone-tzeferacos-bodo-2010},
+}
+
+@article{harten-1989,
+  author = {Harten, A.},
+  title = {ENO scheme with subcell resolution},
+  journal = {J. Comput. Phys. 83:148},
+  year = {1989},
+  citedby = {jiang-shu-1996},
 }
 
 @article{harten-1995,
@@ -14863,6 +14913,14 @@
   journal = {Phys. Rev. Lett., 80, 3256},
   year = {1998},
   citedby = {mignone-2012},
+}
+
+@phdthesis{jiang-1995,
+  author = {Jiang, G.-S.},
+  title = {Algorithm analysis and efficient computation of conservation laws},
+  school = {Division of Applied Mathematics, Brown University},
+  year = {1995},
+  citedby = {jiang-shu-1996},
 }
 
 @article{jiang-1996,
@@ -16950,7 +17008,7 @@
   title = {[title not printed in citing reference]},
   journal = {J. Comput. Phys. 2:154},
   year = {1967},
-  citedby = {brio-wu-1988},
+  citedby = {brio-wu-1988, colella-woodward-1984},
 }
 
 @article{larson-1969,
@@ -17034,7 +17092,7 @@
   title = {Weak solutions of nonlinear hyperbolic equations and their numerical computation},
   journal = {Comm. Pure Appl. Math. 7:159},
   year = {1954},
-  citedby = {brio-wu-1988, zaghi-2023},
+  citedby = {brio-wu-1988, jiang-shu-1996, zaghi-2023},
 }
 
 @article{lax-1960,
@@ -17813,7 +17871,7 @@
   journal = {J. Comput. Phys., 115, 200},
   year = {1994},
   doi = {10.1006/jcph.1994.1187},
-  citedby = {balsara-2004, blomquist-2024, etienne-2010, jiang-1999, seo-2023, zaghi-2023},
+  citedby = {balsara-2004, blomquist-2024, etienne-2010, jiang-1999, jiang-shu-1996, seo-2023, zaghi-2023},
 }
 
 @article{liu-1996,
@@ -17941,7 +17999,8 @@
   title = {Positive schemes for solving multi-dimensional hyperbolic systems of conservation laws},
   journal = {J. Comp. Fluid Dyn. 5 (1996) 133},
   year = {1996},
-  citedby = {jiang-1999, londrillo-delzanna-2004},
+  note = {printed without year as a preprint submitted to CFD Review by jiang-shu-1996},
+  citedby = {jiang-1999, jiang-shu-1996, londrillo-delzanna-2004},
 }
 
 @book{livingston-1996,
@@ -19249,6 +19308,14 @@
   journal = {Am. Soc. Mech. Eng. Early Career Tech. J. 9:27},
   year = {2010},
   citedby = {irsalinda-2026},
+}
+
+@article{mckenzie-1968,
+  author = {McKenzie, J. and Westphal, K.},
+  title = {Interaction of linear waves with oblique shock waves},
+  journal = {Phys. Fluids 11:2350},
+  year = {1968},
+  citedby = {jiang-shu-1996},
 }
 
 @article{mckinney-2004,
@@ -23684,7 +23751,8 @@
   journal = {J. Comput. Phys. 43:357},
   year = {1981},
   doi = {10.1016/0021-9991(81)90128-5},
-  citedby = {balsara-kim-2016, berta-2024, brio-wu-1988, felker-2018, hoppe-2022, jiang-1999, powell-1999, stone-2008, toth-2000},
+  note = {printed with the venue J. Comput. Phys. 27:1 (1978) of Sod's survey by jiang-shu-1996},
+  citedby = {balsara-kim-2016, berta-2024, brio-wu-1988, felker-2018, hoppe-2022, jiang-1999, jiang-shu-1996, powell-1999, stone-2008, toth-2000},
 }
 
 @article{roe-1986,
@@ -23711,6 +23779,14 @@
   doi = {10.1137/S003613999427084X},
   note = {londrillo-delzanna-2000 prints venue "SIAM J. Numerical Anal., 56, 57"; jiang-1999 prints the year as 1986; printed as J. Comput. Phys., to appear (1994) by powell-1994},
   citedby = {balsara-2001, balsara-2004, balsara-2009, balsara-2026, balsara-kim-2004, balsara-spicer-1999, derigs-2018, jiang-1999, londrillo-delzanna-2000, londrillo-delzanna-2004, mignone-tzeferacos-bodo-2010, miniati-martin-2011, powell-1994, powell-1999, ryu-1998, toth-2000},
+}
+
+@article{rogerson-1990,
+  author = {Rogerson, A. and Meiberg, E.},
+  title = {A numerical study of the convergence properties of ENO schemes},
+  journal = {J. Sci. Comput. 5:151},
+  year = {1990},
+  citedby = {jiang-shu-1996},
 }
 
 @article{roh-2019,
@@ -25267,7 +25343,7 @@
   journal = {J. Comput. Phys., 77, 439},
   year = {1988},
   doi = {10.1016/00219991(88)90177-5},
-  citedby = {balsara-2004, balsara-2009, balsara-2023, balsara-2026, balsara-spicer-1999, berta-2024, christlieb-2016, couch-2021, felker-2018, li-shu-2005, londrillo-delzanna-2000, seo-2023, zaghi-2023},
+  citedby = {balsara-2004, balsara-2009, balsara-2023, balsara-2026, balsara-spicer-1999, berta-2024, christlieb-2016, couch-2021, felker-2018, jiang-shu-1996, li-shu-2005, londrillo-delzanna-2000, seo-2023, zaghi-2023},
 }
 
 @article{shu-1988-b,
@@ -25285,7 +25361,15 @@
   year = {1989},
   doi = {10.1016/00219991(89)90222-2},
   note = {printed with author dash (———.) referring to preceding entry (Shu C.-W.; Osher S.)},
-  citedby = {balsara-2004, balsara-2009, balsara-2023, balsara-2026, christlieb-2016, felker-2018, jiang-1999, londrillo-delzanna-2000, londrillo-delzanna-2004, seo-2023, stone-2008, stone-2020, zaghi-2026},
+  citedby = {balsara-2004, balsara-2009, balsara-2023, balsara-2026, christlieb-2016, felker-2018, jiang-1999, jiang-shu-1996, londrillo-delzanna-2000, londrillo-delzanna-2004, seo-2023, stone-2008, stone-2020, zaghi-2026},
+}
+
+@article{shu-1990,
+  author = {Shu, C.-W.},
+  title = {Numerical experiments on the accuracy of ENO and modified ENO schemes},
+  journal = {J. Sci. Comput. 5:127},
+  year = {1990},
+  citedby = {jiang-shu-1996},
 }
 
 @book{shu-1992,
@@ -25294,6 +25378,14 @@
   publisher = {University Science Books, Mill Valley, CA},
   year = {1992},
   citedby = {seo-2023},
+}
+
+@article{shu-1992-b,
+  author = {Shu, C.-W. and Zang, T.A. and Erlebacher, G. and Whitaker, D. and Osher, S.},
+  title = {High-order ENO schemes applied to two- and three-dimensional compressible flow},
+  journal = {Appl. Numer. Math. 9:45},
+  year = {1992},
+  citedby = {jiang-shu-1996},
 }
 
 @article{shu-1997,
@@ -25618,7 +25710,7 @@
   year = {1978},
   doi = {10.1016/0021-9991(78)90023-2},
   note = {title printed as 'A survey of finite-difference methods for systems of nonlinear hyperbolic conservation laws' by powell-1994},
-  citedby = {almgren-2010, brio-wu-1988, derigs-2018, felker-2018, gardiner-stone-2005, hoppe-2022, jiang-1999, powell-1994, shashkov-1996, stone-2020, zaghi-2026},
+  citedby = {almgren-2010, brio-wu-1988, derigs-2018, felker-2018, gardiner-stone-2005, hoppe-2022, jiang-1999, jiang-shu-1996, powell-1994, shashkov-1996, stone-2020, zaghi-2026},
 }
 
 @book{sod-1985,
@@ -26133,7 +26225,7 @@
   title = {Accurate partial difference methods II. Non-linear problems},
   journal = {Numer. Math., 6 (1964), pp. 37-46},
   year = {1964},
-  citedby = {mattsson-carpenter-2010},
+  citedby = {jiang-shu-1996, mattsson-carpenter-2010},
 }
 
 @article{strang-1968,
@@ -28004,7 +28096,7 @@
   title = {[title not printed in citing reference]},
   journal = {J. Comput. Phys., 23, 276},
   year = {1977},
-  citedby = {balsara-2023, etienne-2010, fromang-2006},
+  citedby = {balsara-2023, colella-woodward-1984, etienne-2010, fromang-2006},
 }
 
 @article{vanleer-1979,
@@ -28012,7 +28104,15 @@
   title = {Towards the ultimate conservative difference scheme. V. A second order sequel to Godunov's method},
   journal = {J. Comput. Phys. 32:101},
   year = {1979},
-  citedby = {balsara-2001, balsara-2004, balsara-2023, balsara-kim-2004, londrillo-delzanna-2000, londrillo-delzanna-2004, toth-2000},
+  citedby = {balsara-2001, balsara-2004, balsara-2023, balsara-kim-2004, colella-woodward-1984, londrillo-delzanna-2000, londrillo-delzanna-2004, toth-2000},
+}
+
+@inproceedings{vanleer-1979-b,
+  author = {van Leer, B. and Woodward, P.R.},
+  title = {[title not printed in citing reference]},
+  booktitle = {Proceedings TICOM Conference, Austin, Texas},
+  year = {1979},
+  citedby = {colella-woodward-1984},
 }
 
 @article{vanleer-1982,
@@ -28030,6 +28130,15 @@
   booktitle = {Computing Methods in Applied Science and Engineering IV, edited by R. Glowinski and J. L. Lions (North-Holland, Amsterdam), p. 493},
   year = {1984},
   citedby = {balsara-spicer-1999},
+}
+
+@misc{vanleer-1984-b,
+  author = {van Leer, B.},
+  title = {[title not printed in citing reference]},
+  howpublished = {private communication},
+  year = {1984},
+  note = {private communication, no year printed; year is the citing date; private communication cited by colella-woodward-1984},
+  citedby = {colella-woodward-1984},
 }
 
 @inproceedings{vanleer-1989,
@@ -29298,6 +29407,14 @@
   citedby = {desbrun-hirani-2005},
 }
 
+@incollection{woodward-1981,
+  author = {Woodward, P.R. and Colella, P.},
+  title = {[title not printed in citing reference]},
+  booktitle = {Lecture Notes in Physics 141:434},
+  year = {1981},
+  citedby = {colella-woodward-1984},
+}
+
 @techreport{woodward-1983,
   author = {Woodward, P.},
   title = {[title not printed in citing reference]},
@@ -29309,11 +29426,11 @@
 
 @article{woodward-1984,
   author = {Woodward, P.R. and Colella, P.},
-  title = {[title not printed in citing reference]},
+  title = {The numerical simulation of two-dimensional fluid flow with strong shocks},
   journal = {J. Comp. Phys., 54, 115},
   year = {1984},
   note = {stone-2008 prints the page as 174 (WC84)},
-  citedby = {berger-colella-1989, brio-wu-1988, evans-hawley-1988, stone-2008, stone-2020, zaghi-2026},
+  citedby = {berger-colella-1989, brio-wu-1988, colella-woodward-1984, evans-hawley-1988, jiang-shu-1996, stone-2008, stone-2020, zaghi-2026},
 }
 
 @article{woodward-1994,
@@ -29668,10 +29785,10 @@
 
 @article{yang-1990,
   author = {Yang, H.},
-  title = {[title not printed in citing reference]},
+  title = {An artificial compression method for ENO schemes, the slope modification method},
   journal = {J. Comput. Phys., 89, 125},
   year = {1990},
-  citedby = {balsara-2004},
+  citedby = {balsara-2004, jiang-shu-1996},
 }
 
 @inproceedings{yang-2006,
@@ -29915,6 +30032,14 @@
   journal = {Appl. Numerische Mathematik, 198, 346-374},
   year = {2024},
   citedby = {zampa-2024},
+}
+
+@article{zang-1984,
+  author = {Zang, T.A. and Hussaini, M.Y. and Bushnell, D.M.},
+  title = {Numerical computations of turbulence amplification in shock wave interactions},
+  journal = {AIAA J. 22:13},
+  year = {1984},
+  citedby = {jiang-shu-1996},
 }
 
 @article{zanna-2001-a,

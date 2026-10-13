@@ -38,6 +38,12 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch 3a staged 2026-10-13:** jiang-shu-1996 and
+colella-woodward-1984, copied from a sibling archive (D17); 103 sources.
+New pages methods/weno and methods/ppm; registry section *Reconstruction
+(WENO, PPM)*. Key colella-1984 renamed to the slug. No contradiction
+opened. Deep lint: 7 ingestions since #9.
+
 **Frontier batch 2 staged 2026-10-13:** brackbill-barnes-1980,
 powell-1994 (ICASE report) and ryu-1998, from the user's downloads (101
 sources). Key brackbill-1980 renamed to the slug. No contradiction opened.

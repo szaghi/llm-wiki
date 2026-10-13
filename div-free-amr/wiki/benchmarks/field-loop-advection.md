@@ -4,7 +4,7 @@ title: "Field-loop advection"
 description: "Passive advection of a weak magnetic loop; the standard detector of divergence-constraint violations and stencil inconsistency in MHD schemes."
 status: established
 tags: [benchmark, divergence-constraint, mhd, constrained-transport]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Field-loop advection
@@ -36,6 +36,14 @@ period".
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), where the
   test motivates the divergence-balanced PPM source terms —
   [exact discrete divergence](/properties/exact-discrete-divergence.md)).
+  **The slot those terms fill.** The hydrodynamic template of "PPM
+  interface states" is the characteristic tracing of the PPM paper, which
+  already corrects its first-guess states with geometric and gravity
+  sources inside the tracing. The MHD source terms enter the same slot.
+  That paper has no magnetic field, so the divergence-balance requirement
+  is entirely post-1984 and MHD-specific
+  ([Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §3,
+  eqs. 3.3–3.7; [PPM](/methods/ppm.md)).
 * **The same distinction in the Athena code paper** ([Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md) §8.4). With the
   loop axis along a grid direction, Athena keeps $B_z = 0$ to round-off.
   With the loop inclined, the axial component is zero only to truncation
@@ -60,7 +68,7 @@ period".
 * **Fourth-order CT with point-value reconstruction, MHD and RMHD**
   ([Berta et al. (2024)](/sources/berta-2024.md) §5.4). On a 2D loop at $256\times128$,
   smearing and magnetic-energy decay fall steadily from second to fourth
-  order. WENO-Z is best; MP5 shows small over- and undershoots at the
+  order. WENO-Z ([WENO](/methods/weno.md)) is best; MP5 shows small over- and undershoots at the
   loop's head and tail. The choice of Riemann solver matters only
   marginally here.
 * **EMF-assembly dissipation**: magnetic-energy decay differentiates
@@ -123,3 +131,4 @@ forbids.
 10. [Berta et al. (2024)](/sources/berta-2024.md), §5.4, Figs. 6–7.
 11. [Seo & Ryu (2023)](/sources/seo-2023.md), §3.3, Figs. 4–7.
 12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §8.4, Fig. 34.
+13. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §3.

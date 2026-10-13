@@ -2,6 +2,40 @@
 
 ## 2026-10-13
 
+* **Frontier batch 3a: ingested [Jiang & Shu (1996)](/sources/jiang-shu-1996.md)
+  and [Colella & Woodward (1984)](/sources/colella-woodward-1984.md)**, the
+  bundle's most-cited works not yet ingested (cited by 18 and 15 of its
+  sources), from PDFs copied out of a sibling archive into this bundle's
+  (103 sources). Jiang & Shu read as the authors' preprint. Neither paper
+  has MHD or divergence content; the pages say so.
+  * **New pages:** [WENO reconstruction](/methods/weno.md) and
+    [piecewise parabolic method (PPM)](/methods/ppm.md), each defined from
+    its primary source, with the bundle's MHD uses of it; linked from the
+    reading guide and the folder index.
+  * **Updated:** [divergence-free reconstruction](/methods/divergence-free-reconstruction.md),
+    [constrained transport](/methods/constrained-transport.md),
+    [upwind CT](/methods/upwind-constrained-transport.md),
+    [field-loop advection](/benchmarks/field-loop-advection.md) (one link
+    added to an existing line),
+    [block-structured AMR](/definitions/block-structured-amr.md),
+    [CASTRO](/software/castro.md) and
+    [positivity–divergence coupling](/results/positivity-divergence-coupling.md).
+  * **No contradiction opened.** WENO-JS's fifth order at critical points
+    is recorded as the paper's own claim: no ingested source of this bundle
+    re-tests it. Printed slips recorded as printed: eq. 2.26 of Jiang & Shu;
+    the duplicated term in Colella & Woodward's eq. 1.8, their missing
+    eq. 1.18 and the Fig. 8 "entropy" against the text's "density".
+  * **Notation:** new registry section *Reconstruction (WENO, PPM)*:
+    $\bar w_j$, $w_j$, $w^\mp_{j+1/2}$, $k_{\mathrm s}$, $\mathrm{IS}_k$,
+    $d_k$, $\omega_k$, $\epsilon_{\mathrm W}$, $p_{\mathrm W}$.
+  * **Bibliography** (3669 entries): 33 references merged; key colella-1984
+    renamed to the slug and its malformed DOI corrected on Crossref; Roe's
+    1981 paper printed with Sod's venue by Jiang & Shu merged into roe-1981;
+    Liu & Lax's undated preprint merged into liu-lax-1996; the "in press"
+    MUSCL paper and the "in preparation" Colella & Glaz paper merged into
+    their 1985 entries; new keys shu-1992-b, godunov-1961-b (Godunov,
+    Zabrodin & Prokopov) and vanleer-1984-b (private communication).
+
 * **Frontier batch 2: ingested [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md),
   [Powell (1994)](/sources/powell-1994.md) and [Ryu et al. (1998)](/sources/ryu-1998.md)**,
   from the user's downloads of the most-cited works not yet ingested (101 sources).

@@ -11,7 +11,7 @@ numerical methods (self-gravity, sink particles, cooling and chemistry,
 radiation moments, equations of state, relativistic primitive recovery);
 code comparisons; and GPU and performance-portable frameworks, astro or
 not.
-**Corpus: 39 of 39 archived sources compiled** (see the [update log](/log.md)).
+**Corpus: 41 of 41 archived sources compiled** (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.

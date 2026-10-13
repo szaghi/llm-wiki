@@ -120,6 +120,17 @@ interaction in the wake
 [shock reflection from double concave wedges](/benchmarks/double-concave-shock-reflection.md),
 [Schardin's problem](/benchmarks/schardin-problem.md).
 
+**Later uses (batch 15).** *Low $\gamma$ multiplies triple points*
+([Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.2). At
+$M_s = 8$, wall angle $\theta_{\mathrm w} = 35°$ (the angle between the
+shock's direction of propagation and the wall) and $\gamma = 1.107$, an AMR
+computation shows seven Mach triple points in the double-Mach region,
+including a third along the top shock. The pattern is not fully resolved
+at $t = 0.115$ and adequately resolved at $t = 0.230$, which by the flow's
+self-similarity is a higher effective resolution. Uniform-grid runs by
+Colella and Glaz were not fully resolved for $\gamma < 1.25$, and the
+authors call this $\gamma$ the resolution limit on their machine.
+
 # Citations
 
 1. [Bryson & Gross (1961)](/sources/bryson-1961.md), §2, plates 1–6, figs. 2, 6, 9.
@@ -129,3 +140,4 @@ interaction in the wake
 5. [Zhang et al. (2017)](/sources/zhang-2017-c.md), §4.1.
 6. [Kleine, Grönig & Takayama (2006)](/sources/kleine-2006.md), §3.2, Fig. 6.
 7. [Toro (1997)](/sources/toro-1997.md), §17.2.
+8. [Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.2.

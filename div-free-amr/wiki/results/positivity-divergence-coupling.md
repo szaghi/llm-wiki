@@ -137,6 +137,13 @@ through the source term.
   schemes. It is not covered by the theorem, which is proved for
   finite-volume and DG schemes, and the projection holds a divergence on a
   stencil the paper does not specify.
+  **The base scheme's own paper.** The WENO-JS paper that Jiang & Wu
+  extend has no magnetic field. Its only positivity failure is
+  hydrodynamic: weights computed from pressure and entropy cannot see
+  normal-velocity jumps at reflective walls, and the density goes
+  negative. That failure has no divergence content and is not an instance
+  of this coupling ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md),
+  §8.3; [WENO reconstruction](/methods/weno.md)).
 * **The stencil matters again.** The condition is tied to the flux form the
   scheme actually uses: a collocated central divergence at first order, a
   quadrature face divergence at high order. A field held exactly
@@ -279,3 +286,4 @@ though it does not address the first-order multi-dimensional case itself.
 11. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), Appendix B.
 12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §4.3.
 13. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §2.1 (step 6, eq. 16), §3.2.
+14. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§4, 8.3.

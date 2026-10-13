@@ -41,6 +41,12 @@ ingested.
    $E_h \in V_h^1$, obtained by any suitable transport approximation (donor
    cell, van Leer monotonic, PPM, …). Every edge EMF is *calculated once* and
    enters the two adjacent face updates it borders with opposite signs.
+
+   **PPM as a transport approximation.** The advection scheme of the PPM
+   paper is a conservative transport scheme of exactly this kind. That
+   paper is pure hydrodynamics and applies it to no magnetic field or EMF
+   ([Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §1;
+   [PPM](/methods/ppm.md)).
 3. **Update.** In registry terms the scheme is
    $$\partial_t B_h = -\,C_h E_h,$$
    so the divergence is stationary by the complex identity:
@@ -123,6 +129,12 @@ as in [exact discrete divergence](/properties/exact-discrete-divergence.md).
 The paper's "truncation" wording therefore probably refers to the
 saturation level of its diagnostic rather than to a defect of the identity;
 the text alone does not settle it.
+
+**The base scheme.** The fifth-order FD-WENO is the point-value flux form
+of Jiang & Shu, which contains no MHD and no divergence control; HOW-MHD's
+local Lax–Friedrichs splitting is its own choice, since Jiang & Shu test
+only global splitting ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md),
+§§2, 4; [WENO reconstruction](/methods/weno.md)).
 
 ## Shock-capturing combinations and the collocated recast
 
@@ -223,3 +235,5 @@ cell-integrated monopole density, of every cell.
 11. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §§1, 4.
 12. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §§1, 3, Fig. 3.
 13. [Ryu, Miniati, Jones & Frank (1998)](/sources/ryu-1998.md), §§1–2, eqs. 3–18.
+14. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §1.
+15. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§2, 4.

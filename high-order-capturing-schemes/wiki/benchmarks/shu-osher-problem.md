@@ -113,6 +113,15 @@ no shock capturing gives indistinguishable results with and without
 relaxation ([Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.4, Fig. 10). The printed left-state
 velocity lacks its decimal point ("0523346").
 
+**Later uses (batch 15).** *The baseline interpolation of the batch-5
+comparison.* The 1989 algorithm fills fine ghost cells from coarser data
+by bilinear interpolation in space and linear interpolation in time,
+which is second order; it states no limiter and no conservation
+constraint, and does not specify the interpolation that initializes new
+fine grids ([Berger & Colella (1989)](/sources/berger-1989.md), §4;
+[high-order AMR](/methods/high-order-amr.md)). The batch-5 line agrees
+with it on the order; the 1989 paper has no Shu–Osher run.
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §V Example 8.
@@ -137,3 +146,4 @@ velocity lacks its decimal point ("0523346").
 20. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §5.3.
 21. [Wang et al. (2025)](/sources/wang-2025.md), §6.3.3 (arXiv preprint).
 22. [Ranocha et al. (2020)](/sources/ranocha-2020.md), §4.4 (arXiv v4).
+23. [Berger & Colella (1989)](/sources/berger-1989.md), §4.

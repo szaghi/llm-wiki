@@ -5,7 +5,7 @@ description: "Balsara's reconstruction for Yee-staggered MHD: from the normal co
 status: established
 aliases: [divergence-free reconstruction, divergence-free prolongation, Balsara reconstruction]
 tags: [mhd, divergence-free, constrained-transport, reconstruction, staggered, amr]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Divergence-free reconstruction of face-centred magnetic fields
@@ -129,6 +129,17 @@ reconstruction gives instability (as cited by
 [Balsara et al. (2023)](/sources/balsara-2023.md), §1). The curl
 analogue is the [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md).
 
+**Later uses (batch 15).** *The face-flux original of the edge
+correction* ([Berger & Colella (1989)](/sources/berger-1989.md), §3,
+eqs. 2–5). For a coarse cell next to a fine grid, the coarse flux through
+the shared face is replaced by the fine fluxes through the
+$r_{\mathrm{AMR}}$ fine faces summed over the $r_{\mathrm{AMR}}$ fine steps
+and divided by $r_{\mathrm{AMR}}^2$, through a flux register initialized
+with minus the coarse flux. The electric-field correction above, a
+$\tfrac14$ sum over two fine edges and two fine half-steps, has the same
+structure at $r_{\mathrm{AMR}} = 2$, with edges in place of faces. The
+1989 algorithm is for the Euler equations and has no magnetic field.
+
 # Citations
 
 1. [Balsara (2004)](/sources/balsara-2004.md), §§1, 3, 4, 7.3, Appendix C.
@@ -137,3 +148,4 @@ analogue is the [curl-preserving reconstruction](/methods/curl-preserving-recons
 4. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–4.
 5. [Balsara et al. (2023)](/sources/balsara-2023.md), §1.
 6. [Balsara (2001)](/sources/balsara-2001.md), §§III–VI.
+7. [Berger & Colella (1989)](/sources/berger-1989.md), §3.

@@ -94,6 +94,20 @@ the shock-capturing base scheme: $f^{x,*}, f^{y,*}$ are its upwind numerical
 fluxes for the magnetic-field components, $B_h^{*}$ (and $u_h^{*}$) a
 provisional field before a correction/projection step.
 
+## Reconstruction (WENO, PPM)
+
+(Added 2026-10-13, batch 6, with the WENO and PPM pages.) $w$ is a generic
+scalar being reconstructed: one conserved or characteristic component.
+
+| Symbol | Meaning |
+|---|---|
+| $\bar w_j$; $w_j$ | cell average of $w$ over cell $j$ (finite volume); point value at $x_j$ (finite difference) |
+| $w^-_{j+1/2}$, $w^+_{j+1/2}$ | reconstructed values at face $j+1/2$ from the cell on its left and on its right |
+| $k_{\mathrm s}$ | number of points of an ENO/WENO candidate stencil (Jiang–Shu's $r$; distinct from the refinement ratio $r$) |
+| $\mathrm{IS}_k$ | WENO smoothness indicator of candidate stencil $k$ |
+| $d_k$, $\omega_k$ | linear (optimal) and nonlinear WENO weights of stencil $k$; $\sum_k d_k = \sum_k \omega_k = 1$ |
+| $\epsilon_{\mathrm W}$, $p_{\mathrm W}$ | additive constant and power in the nonlinear weights |
+
 ## SBP operators
 
 (Added 2026-07-08, Strand-1994 ingestion.) Literature convention writes the

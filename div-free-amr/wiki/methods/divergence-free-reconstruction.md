@@ -4,7 +4,7 @@ title: "Divergence-free reconstruction"
 description: "Reconstructs point values of the magnetic field from face data so that the interpolated field itself satisfies the divergence constraint to high order."
 status: established
 tags: [high-order, reconstruction, divergence-constraint, constrained-transport]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Divergence-free reconstruction
@@ -81,6 +81,16 @@ normal component stays $C^0$-continuous at faces (eliminating the jump
 that troubled seven-wave Riemann solvers), and the construction extends to
 cylindrical, spherical, and tetrahedral meshes — carrying divergence-free
 AMR to those geometries in the same stroke.
+
+**Which WENO.** "WENO $r = 2, 3$" follows the stencil convention of the
+WENO-JS paper, where $r$-point candidate stencils give order $2r-1$: third
+and fifth order. That $r$ is a stencil size, not the refinement ratio of
+the [registry](/notation.md). The WENO in this page's constructions
+reconstructs from cell or face averages (finite-volume WENO). The primary
+WENO-JS paper presents only the finite-difference flux version on point
+values, and has no magnetic field
+([Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§1–2;
+[WENO reconstruction](/methods/weno.md)).
 
 ## Beyond second order (Balsara 2009)
 
@@ -183,3 +193,4 @@ benefit. The trade is the constraint class: no discrete divergence is held.
 7. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md), §§1, 5.
 8. [Ding & Wu (2024)](/sources/ding-2024.md), §2.3, Examples 4.2–4.4.
 9. [Balsara, Käppeli, Boscheri & Dumbser (2023)](/sources/balsara-2023.md), §§2–5.
+10. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§1–3.

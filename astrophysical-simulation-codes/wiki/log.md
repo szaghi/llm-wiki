@@ -2,6 +2,28 @@
 
 ## 2026-10-13
 
+* **Frontier batch 7: ingested [Evans & Hawley (1988)](/sources/evans-1988.md)
+  and [Sod (1978)](/sources/sod-1978.md)**, cited by 9 and 8 of the
+  bundle's sources, from PDFs copied out of sibling archives into this
+  bundle's (41 of 41). Evans & Hawley is a scan with no text layer, read
+  from page images.
+  * **Updated:** [constrained transport](/methods/constrained-transport.md)
+    (the original integral-form CT: edge EMFs used twice with opposite
+    signs, the van Leer upwinded EMF, the divergence diagnostic values,
+    kinematic tests only; the field layout relative to the hydro zones per
+    Fig. 1, checked by the compiler on the figure: $B^x$ with $v^y$, the
+    opposite of the later convention; "adaptive mesh" there is one moving
+    grid, not AMR), [IDEFIX](/software/idefix.md) and the
+    [Sod shock tube](/benchmarks/sod-shock-tube.md) (the problem as
+    printed has no diaphragm position and no end time: for each recorded
+    run, which values are Sod's and which are later conventions).
+  * **No contradiction opened.**
+  * **Bibliography** (2244 entries): 59 references merged; Hawley, Smarr &
+    Wilson Paper I printed as Ap. J. 277:276 merged into hawley-1984-b
+    (277:296 on Crossref; p. 276 lies inside another paper); the
+    bibliography title of sod-1978 corrected to the printed one; Godunov,
+    Zabrodin & Prokopov printed 1962 merged into godunov-1961.
+
 * **Frontier batch 6: ingested [Colella & Woodward (1984)](/sources/colella-1984.md),
   [Berger & Colella (1989)](/sources/berger-1989.md) and
   [Gardiner & Stone (2005)](/sources/gardiner-2005.md)**, the bundle's

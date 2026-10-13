@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 116 sources compiled (the whole archive)**: 115 published works,
+**Corpus: 118 sources compiled (the whole archive)**: 117 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -134,7 +134,9 @@ for every page.
    of staggered fields, by [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md)
    (open `Contradictions` entries: should the cleaning speed follow the
    time step? Time-step changes and AMR break the cleaning's assumptions;
-   and is constrained transport or cleaning the more robust?)
+   is constrained transport or cleaning the more robust? And what is the
+   printed sign of the force along $\mathbf B$ that a nonzero divergence
+   produces?)
    or by projection; without it high-order MHD runs fail. Curl constraints
    have their dual: [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md). On curvilinear grids,
    uniform flow must stay uniform:

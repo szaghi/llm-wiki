@@ -377,6 +377,108 @@ AthenaK, H-AMR and the IDEFIX default use.
 * **Scope.** The paper is 2D only; the 3D extension is deferred (§6), so
   the 3D statements above rest on Stone et al. (2008) and later sources.
 
+## Later uses (batch 7)
+
+[Evans & Hawley (1988)](/sources/evans-1988.md) is the origin of the
+method, cited for it by IDEFIX and AthenaK above. Its tests are
+kinematic only: the field does not act on the flow, and the Lorentz force
+"is left to a later paper" (§I).
+
+* **Integral form** (§IIc, eqs. 2.9–2.12; §IVc, eqs. 4.10–4.13). The
+  scheme evolves the magnetic flux through each face of a staggered cell.
+  Each face flux changes by the EMFs on its four edges, a
+  finite-difference Stokes theorem (after Schnack & Killeen 1980); each
+  edge EMF is the **line integral** along the edge of the EMF component
+  parallel to it (eq. 4.11). The face field is the flux over the face
+  area, "the face area averaged flux" (eq. 4.6), as in the Staggering
+  section above.
+* **Why the divergence is preserved** (§IVc, p. 665). Summed over the six
+  faces of a cell, the total flux "continues to vanish if it did
+  originally, even though the cell position and shape may change",
+  because "each EMF edge contribution appears in the full sum exactly
+  twice with opposing signs"; each edge EMF is "calculated *once* even
+  though each contribution is used in two separate evolution equations",
+  as face fluxes conserve mass. This cancellation is the whole argument;
+  there is no separate proof. The discrete divergence is the
+  finite-difference Gauss theorem over the cell (eqs. 4.7–4.9).
+* **The initial-value qualification in the original** (§IVc, p. 666). "The
+  CT scheme only guarantees that field evolution *changes* are divergence
+  free. If the initial magnetic field fails to satisfy the constraint, it
+  will continue to do so." Badly posed inflow/outflow boundaries "can lead
+  to subtle inflow of nondivergence-free magnetic field", so a global
+  constraint measure should be monitored. This is the primary-source form
+  of Bryan et al.'s point about ill-posed initial conditions (Staggering
+  section).
+* **Coordinates and moving meshes** (§II, eqs. 2.4–2.8). Written for the
+  vector density $\sqrt{\det\gamma_{ij}}\,B^i$ with contravariant
+  velocities, the induction equation has a "Cartesian" form in any
+  coordinates and in general relativity, the shift entering only through
+  the net velocity. The paper's "adaptive mesh" is **one moving,
+  stretching grid** (a grid velocity in the net velocity, eqs. 2.10–2.12,
+  4.20), not a hierarchy of refined grids: the restriction, prolongation
+  and EMF correction of the AMR section above have no counterpart in it.
+  The moving-grid update is written for field times zone width at both
+  time levels; a straightforward differencing of the moving-surface
+  equation "would be disastrous to constraint satisfaction" (§IVd).
+* **Layout relative to the hydrodynamics** (§IVa–b, eq. 4.4, Figs. 1–2).
+  The field components sit on the faces of a CT control volume "centered
+  on $(i,j,k)$" (Fig. 2), which in the paper's indices is a hydro-zone
+  corner; the velocities and momenta of the host code are face-centred on
+  the hydro zones at half-integer time levels (Fig. 1), a staggered
+  finite-difference layout rather than the cell-centred volume averages of
+  the Staggering section. Per Fig. 1, $B^x$ (the figure's label $\mathcal B^x$)
+  sits at the paper's $(i+\tfrac12, j)$ together with $v^y$ (label $V^y$),
+  and $B^y$ (label $\mathcal B^y$) at $(i, j+\tfrac12)$ together with
+  $v^x$ (label $V^x$), so each field component is tangential to
+  the hydro-zone face it lies on and the 2D edge EMF falls at a
+  hydro-zone centre (eq. 4.18). The later layout (field normal to the
+  hydro-zone faces, EMFs on hydro-zone edges; Stone et al. 2008 above) is
+  then a different placement of the same flux–EMF structure.
+* **The original EMF is not built from Godunov fluxes** (§IVd,
+  eqs. 4.18–4.24). In 2D axisymmetric spherical-polar coordinates each
+  transverse field component is interpolated to the edge upwind along the
+  velocity component it is paired with, with a van Leer limited slope and
+  time centring, and multiplied by an equal-weight average of the
+  velocity. Both the "transport" and the "shear" term must be upwinded:
+  "These terms must be differenced in a consistent manner." Donor cell is
+  "not recommended"; PPM is a named alternative. No Riemann solver or
+  characteristic decomposition enters, consistent with the kinematic
+  scope. The face-flux EMFs of the "Edge EMFs from face fluxes" section
+  (Gardiner–Stone, Balsara–Spicer) are a later construction.
+* **Edge-centred vector potential** (eqs. 4.14–4.17, 4.25). The face flux
+  is the circulation of the vector potential around the face, so the
+  potential sits on the EMF edges and its discrete curl satisfies the
+  discrete divergence exactly. The paper uses it for divergence-free
+  initial and boundary fields and states that CT "is related to a
+  particular numerical approach for advecting the vector potential". This
+  is the primary source behind IDEFIX's "mathematically equivalent to the
+  original CT algorithm" (batch 3).
+* **Why not the vector potential** (§III; §Va–d). The current needs two
+  derivatives of the potential; at sharp features monotonic schemes change
+  their weights abruptly and give "anomalous current, or force,
+  reversals". In square-wave advection CT gives two clean current peaks,
+  the monotonic and Wilson vector-potential codes "decidedly nonmonotonic
+  currents" that change sign; in the accretion tests the vector-potential
+  currents carry extra extrema "on the scale of $2\Delta x$". The price
+  stated: "Accurate CT calculations may therefore require slightly greater
+  resolution to maintain the same sharpness in the magnetic field"
+  (§Vc).
+* **The measured round-off floor** (§Vb, §Vd, eq. 5.6, Fig. 6). A
+  normalized global divergence diagnostic starts at about $10^{-15}$;
+  round-off "accumulates, but at a problem specific rate", to $10^{-10}$
+  by the end of one calculation and $10^{-13}$ in another, and stays at
+  $10^{-15}$–$10^{-14}$ when only the field is evolved in "double
+  precision" (baseline precision not stated). No growth law is given. It
+  is the earliest measured instance in this bundle of "to round-off" as a
+  drifting floor, which the IDEFIX growth law (batch 3) states for its
+  integrators.
+* **Scope claims** (abstract, §I, §IVd). Any coordinates, any order of the
+  transport scheme, 3D as well as 2D, nonideal MHD "Since Stoke's theorem
+  still applies". Only 2D axisymmetric and 2D Cartesian kinematic runs
+  are shown; 3D and nonideal MHD are asserted, not tested. The
+  hydrodynamics is that of the host code of Hawley, Smarr & Wilson
+  (1984b), to which the paper defers every hydrodynamic detail.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -391,3 +493,4 @@ AthenaK, H-AMR and the IDEFIX default use.
 10. [Shankar et al. (2023)](/sources/shankar-2023.md), §III B (arXiv v2).
 11. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1, §4.1.1–§4.1.2, §4.1.8, §6, Table 1, App. A (arXiv v2).
 12. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§2.1–2.3, 3.2.1–3.2.2, 3.3.1–3.3.2, 4.1–4.2, 5.3, 6, eqs. 19–24, 34–51, 69–78 (arXiv v1).
+13. [Evans & Hawley (1988)](/sources/evans-1988.md), §§I–VI, eqs. 2.4–2.12, 4.4–4.25, 5.6, Figs. 1–6.

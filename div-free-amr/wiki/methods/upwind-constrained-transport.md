@@ -83,6 +83,16 @@ consistent with that invariant**:
   $\mathcal{E}^c$. In 3D the invariant is held to round-off
   ([field loop](/benchmarks/field-loop-advection.md)). AMR is future work
   and needs fourth-order prolongation and restriction operators.
+
+  **Where PPM4's interface value comes from.** The fourth-order interface
+  value on a uniform mesh, seven-twelfths of the two adjacent averages
+  minus one-twelfth of the next two, is the formula of the original PPM
+  paper. That paper calls it fourth order only on uniform meshes in the
+  limit of vanishing time step, and its own scheme is dimensionally split
+  hydrodynamics with a limiter that clips smooth extrema. PPM4 with an
+  extremum-preserving limiter is the later McCorquodale–Colella method, not
+  the 1984 scheme ([Colella & Woodward (1984)](/sources/colella-woodward-1984.md),
+  eqs. 1.9–1.10; [PPM](/methods/ppm.md)).
 * **Relation to $\mathcal{E}^c$**
   ([Felker & Stone (2018)](/sources/felker-2018.md), Appendix A). In two limiting cases, the
   HLL-UCT corner EMF built from second-order reconstruction agrees to second
@@ -130,6 +140,13 @@ consistent with that invariant**:
     point-value recovery and flux quadrature revert to second order, and
     the reconstruction drops to WENO3 or linear.
   
+  **WENO lineage.** MP5 and WENO-Z here, and the WENO3 fallback, are
+  variants of the WENO-JS weighting, reformulated for point-value
+  interface reconstruction; their optimal weights differ from WENO-JS's
+  because the reconstruction target differs
+  ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md), Table 2;
+  [WENO reconstruction](/methods/weno.md)).
+
   Results: design order on vortices and CP Alfvén waves in MHD and RMHD.
   Numerical decay of Alfvén waves scales as $N^{-5}$, against $N^{-3}$ at
   second order. Accuracy that needs $512^3$ at second order is reached
@@ -150,6 +167,10 @@ consistent with that invariant**:
 * **A finite-difference realization, to ninth order** ([Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)). Zone-centred
   variables are point values advanced by alternative-FD WENO; only the
   face-averaged $B_h$ keeps a finite-volume, Stokes-law update.
+  Alternative-FD WENO interpolates states rather than the flux primitive
+  of the Jiang–Shu finite-difference form, which it extends
+  ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §2;
+  [WENO reconstruction](/methods/weno.md)).
   * No volumetric divergence-free reconstruction is built. Face fields
     are reconstructed in 2D within each face, then interpolated to zone
     centres for the fluxes.
@@ -178,3 +199,5 @@ consistent with that invariant**:
 6. [Berta et al. (2024)](/sources/berta-2024.md), §§3–6, Appendix B.
 7. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§1–4, 6, 7.4.
 8. [Balsara & Kim (2016)](/sources/balsara-kim-2016.md), §4.2.
+9. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), §§1, 3, eqs. 1.9–1.10.
+10. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §2, Table 2.

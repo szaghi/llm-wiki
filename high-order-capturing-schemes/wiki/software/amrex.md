@@ -156,9 +156,21 @@ AMReX ([Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §4;
   refining the whole wall to the finest of six levels is called
   computationally unfeasible.
 
+**Later uses (batch 15).** *The multilevel step in the primary source*
+([Berger & Colella (1989)](/sources/berger-1989.md), §§2–4). The
+sequence above (coarse first, subcycled finer levels, average-down and
+the flux correction at synchronization) is the paper's. Two precisions:
+fine ghost cells are first copied from adjacent same-level grids, and
+only the remainder is interpolated from coarser data, bilinearly in space
+and linearly in time (§4); and the 1989 paper allows only even refinement
+ratios, equal in space and time (§2). How AMReX itself fills ghost cells
+is not stated by the sources of this page
+([high-order AMR](/methods/high-order-amr.md)).
+
 # Citations
 
 1. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §§2.1–2.2, 4, 5.1–5.2, 6 (arXiv v2).
 2. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §§1–3 (arXiv v1).
 3. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2.1, 2.3, 3.4, 4, App. C (arXiv v1).
 4. [Wang et al. (2025)](/sources/wang-2025.md), §§3–4, 6.3, 7 (arXiv preprint).
+5. [Berger & Colella (1989)](/sources/berger-1989.md), §§2–4.

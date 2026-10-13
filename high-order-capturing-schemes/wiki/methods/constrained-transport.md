@@ -307,6 +307,43 @@ that the batch-7 paragraph and Berta et al. refer to.
   Projection is called fast with multigrid or FFT but not adaptable to all
   boundary conditions and zonings (§1).
 
+**Later uses (batch 15).** *The Brackbill–Barnes note*
+([Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430).
+* *The parallel force.* The introduction's "unphysical force along
+  $\mathbf B$" is this note's argument. With a nonzero discrete divergence,
+  the conservative magnetic force, the divergence of the Maxwell stress,
+  has a dot product $\vert\mathbf B\vert^2\,\nabla\cdot\mathbf B$ with
+  $\mathbf B$ (eq. 8). Its effect relative to the flow grows as the flow
+  slows against the Alfvén speed. In the note's only test, a uniform
+  plasma at beta $1.3\times10^{-8}$ in a uniform field, an implicit 2D
+  Lagrangian code with conservative momentum develops flow along
+  $\mathbf B$ that "eventually inverts cells and terminates the
+  calculation" (Fig. 1).
+* *What the note says about projection.* The page heading "Projection
+  (Brackbill–Barnes)" follows the usage of later sources. The note states
+  the continuous projection, $\nabla^2\Phi + \nabla\cdot\mathbf B = 0$ and
+  $\mathbf B \leftarrow \mathbf B + \nabla\Phi$, with the registry's sign
+  convention, in one sentence (p. 428), together with formulating MHD "in
+  terms of fluxes for which $\nabla\cdot\mathbf B = 0$ automatically". It
+  gives no discrete divergence, gradient or Laplacian, no solver, no
+  boundary condition and no projection run; the remark above that Jiang
+  and Wu leave the discrete operators open applies to the note as well.
+  Relaxation, multigrid, FFT, cost and boundary adaptability are not
+  discussed in it: those statements are Jiang and Wu's and Balsara and
+  Spicer's.
+* *The remedy it proposes instead.* Difference the momentum equation in
+  nonconservative ($(\nabla\times\mathbf B)\times\mathbf B$) form, and keep the induction
+  equation (without the $\mathbf v(\nabla\cdot\mathbf B)$ term) and the
+  energy equation in conservation form. Energy and magnetic flux are then
+  conserved, momentum only to truncation error, and the parallel force
+  vanishes for any divergence (eqs. 9–10). In the same test the mesh stays
+  undistorted after 300 transit times, with a kinetic energy "only 1/4000"
+  of the conservative run's (Fig. 2). The note judges exact conservation
+  form "imperative only for high-speed flows" with shocks (p. 427). This is
+  a non-conservative treatment, not a projection; calling projection "the
+  earliest" option is a statement about naming, not about what this note
+  tested.
+
 ## Contradictions
 
 * *Robustness of CT against cleaning:* recorded as open on the
@@ -357,3 +394,4 @@ that the batch-7 paragraph and Berta et al. refer to.
 16. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.3.
 17. [Balsara (2001)](/sources/balsara-2001.md), §§II–III.
 18. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §§1–4 (eqs. 7–9, 13–15, 17–26 read from the page images).
+19. [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430, Figs. 1–2 (read from page images).

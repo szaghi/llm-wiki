@@ -171,6 +171,11 @@ to another bundle.
 
 ## Status
 
+**Batch 15 staged 2026-10-13:** brackbill-1980 and berger-1989, copied
+from sibling archives (D17); 118 of 118. One Open contradiction (the
+printed sign of the parallel force, Brackbill & Barnes vs Derigs et al.).
+Deep lint: 6 ingestions since the whole-bundle lint of batch 13.
+
 **Batch 14 staged 2026-10-13:** the frontier classics godunov-1959 (Russian
 original), vanleer-1979, roe-1981 and harten-1983, from the user's
 downloads (116 of 116), with three new pages (Godunov's method, MUSCL,

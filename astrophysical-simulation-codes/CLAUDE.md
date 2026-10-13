@@ -90,6 +90,10 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Frontier batch 7 staged 2026-10-13:** evans-1988 and sod-1978, copied
+from sibling archives (D17); 41 of 41. No contradiction opened. Deep lint:
+6 ingestions since #3.
+
 **Frontier batch 6 staged 2026-10-13:** the bundle's most-cited works not
 yet ingested, whose PDFs were already in sibling archives and were copied
 into this bundle's archive (D17): colella-1984 (PPM), berger-1989 and

@@ -5,7 +5,7 @@ description: "Kokkos C++ finite-volume Godunov code for non-relativistic HD and 
 status: established
 aliases: [IDEFIX, Idefix]
 tags: [software, mhd, hydro, constrained-transport, riemann-solver, time-integration, gpu, kokkos, performance-portability, performance, scaling, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # IDEFIX
@@ -256,6 +256,42 @@ curvilinear convergence; strong scaling.
 * GPUs pay off only above about $64^3$ cells per GPU (§5).
 * Planned: self-gravity in several geometries, particle-in-cell (§6).
 
+## Later uses (batch 7)
+
+* **The Evans–Hawley attribution checked** ([Evans & Hawley (1988)](/sources/evans-1988.md)).
+  The primary source agrees with the Constrained transport bullet above
+  at the level it is stated: the face field is the face-area-averaged
+  magnetic flux, updated from edge EMFs by a finite-difference Stokes
+  theorem, each EMF used with opposite signs by the two faces that share
+  it (§IVc, eqs. 4.6, 4.10–4.13). The EMF reconstruction IDEFIX uses is
+  not the original's: Evans & Hawley interpolate each transverse field
+  component upwind along its paired velocity with a van Leer slope, with
+  no Riemann fluxes (§IVd, eqs. 4.18–4.24), and their tests are kinematic,
+  on one moving, stretching 2D grid. The original algorithm also places the
+  field relative to its face-centred hydrodynamic velocities in its own
+  way (per its Fig. 1; see
+  [constrained transport](/methods/constrained-transport.md), batch 7).
+* **Vector-potential equivalence.** Evans & Hawley centre the vector
+  potential on the EMF edges and show that its discrete curl has zero
+  discrete divergence exactly (eqs. 4.14–4.17), and state that CT "is
+  related to a particular numerical approach for advecting the vector
+  potential" (p. 667). This supports IDEFIX's "mathematically equivalent
+  to the original CT algorithm"; the original uses the potential only for
+  initial and boundary fields and for diagnostics, not as the evolved
+  variable.
+* **Round-off.** Evans & Hawley measured the divergence floor drifting
+  "at a problem specific rate", from about $10^{-15}$ to $10^{-10}$ in one
+  run and $10^{-13}$ in another, with no growth law (§Vb, §Vd). IDEFIX's
+  square-root and linear growth laws (§2.4, §2.8) remain its own,
+  asserted, statements.
+* **Sod set-up** ([Sod (1978)](/sources/sod-1978.md), §3). The left
+  pressure 1.0 that Fig. 2 of Lesur et al. shows is Sod's printed value,
+  as is $\gamma = 1.4$; the 500 points and $t = 0.2$ are IDEFIX's choices,
+  since Sod prints $\Delta x = 0.01$ (100 points) and no end time; see
+  [Sod shock tube](/benchmarks/sod-shock-tube.md).
+
 # Citations
 
 1. [Lesur et al. (2023)](/sources/lesur-2023.md), §§1–6, Tables 1–4, Figs. 1–18 (arXiv v1).
+2. [Evans & Hawley (1988)](/sources/evans-1988.md), §IVc–d, §Vb, §Vd, eqs. 4.6, 4.10–4.18, 4.24.
+3. [Sod (1978)](/sources/sod-1978.md), §3.

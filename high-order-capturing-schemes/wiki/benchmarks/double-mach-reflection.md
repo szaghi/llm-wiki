@@ -217,6 +217,22 @@ Figs. 17.9–17.12). Not the Mach 10 set-up above.
   [Yeom & Chang (2010)](/sources/yeom-2010.md), who compare with an
   interferogram reproduced from the book's 2nd edition (§4.1).
 
+**Later uses (batch 15).** *An early AMR run of the same case*
+([Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.1).
+$M_s = 10$, $\gamma = 1.4$, the shock's direction of propagation at 30°
+to the reflecting surface. Domain $2.0\times0.4$, coarse $h = 0.02$, three
+levels with $r_{\mathrm{AMR}} = 4$ (finest $h = 0.00125$, uniform
+equivalent $1600\times320$), 4 times finer per direction than Woodward
+and Colella's finest grid; the frame, boundary conditions and initial
+shock position are not printed, so this is not stated to be the
+$[0, 4]\times[0, 1]$ set-up above. The paper reports a Kelvin–Helmholtz
+roll-up of the principal slip line, not self-similar, formed where the
+weak shock from the second triple point meets the slip line and carried
+into the roll-up at the tip of the wall jet. Run time 5674 s on a Cray
+X-MP/22, estimated at one eighth of a uniform fine grid's
+([high-order AMR](/methods/high-order-amr.md)). The text gives
+$t = 1.20$ and the caption $t = 0.12$.
+
 # Citations
 
 1. [Jiang & Shu (1996)](/sources/jiang-1996.md), §8.3 Example 3.
@@ -252,3 +268,4 @@ Figs. 17.9–17.12). Not the Mach 10 set-up above.
 31. [Yeom & Chang (2010)](/sources/yeom-2010.md), §4.1.
 32. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III H, Fig. 14.
 33. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.2.
+34. [Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.1, Tables I–II.

@@ -5,7 +5,7 @@ description: "Compressible astrophysical hydrodynamics code on BoxLib/AMReX: uns
 status: established
 aliases: [Castro]
 tags: [amr, block-structured, subcycling, self-gravity, astrophysics]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # CASTRO
@@ -17,6 +17,14 @@ predecessor of [AMReX](/software/amrex.md)
 * **Hydrodynamics.** Unsplit PPM with characteristic tracing and full
   corner coupling, using a limiter that keeps accuracy at smooth extrema.
   It is "formally second-order in both space and time" (§5).
+  **Against the original PPM.** The 1984 PPM is dimensionally split, and
+  its limiter makes the profile constant at every local extremum, so it
+  does not keep accuracy at smooth extrema. CASTRO's unsplit, corner-coupled
+  PPM and its limiter are therefore later modifications. The 1984 paper
+  also computes the gas-dynamic wave interaction only to second order in
+  time, consistent with CASTRO's "formally second-order"
+  ([Colella & Woodward (1984)](/sources/colella-woodward-1984.md),
+  Introduction, §§2, 4, eq. 1.10; [PPM](/methods/ppm.md)).
 * **Hierarchy.**
   * Arbitrary-size, logically rectangular grids with refinement ratio 2
     or 4.
@@ -52,3 +60,4 @@ for its AMR synchronization of an elliptically coupled field.
 # Citations
 
 1. [Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 5–8 (arXiv:1005.0114v1).
+2. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), Introduction, §§2, 4, eq. 1.10.

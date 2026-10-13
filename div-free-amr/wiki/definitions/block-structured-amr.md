@@ -77,6 +77,11 @@ concerns smoothly moving zones, not patch hierarchies.
   choices: FLASH (equal patches, one time step), RAGE (cell by cell, one
   step), ENZO and CASTRO (arbitrary patches, subcycling), with ENZO and
   FLASH imposing strict parent–child nesting ([Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 6.1–6.2).
+  **The PPM ghost-cell count is CASTRO's.** The PPM paper states no
+  ghost-cell requirement. Its stencils are consistent with the count: an
+  interface value uses two zones on each side, and flattening reaches
+  further ([Colella & Woodward (1984)](/sources/colella-woodward-1984.md),
+  eqs. 1.9, A.2, A.6; [PPM](/methods/ppm.md)).
 * *Subcycling is a choice, not part of the definition.* AMReX supports
   level-by-level advance "with or without subcycling in time", or
   full-hierarchy strategies ([Zhang et al. (2019)](/sources/zhang-2019.md)). ADAM's 2023 compressible
@@ -143,3 +148,4 @@ concerns smoothly moving zones, not patch hierarchies.
 8. [Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §§2–4.
 9. [Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3.
 10. [Hoppe et al. (2022)](/sources/hoppe-2022.md), §§5, 7.1, 9; Algorithms 1–3.
+11. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), eqs. 1.9, A.2, A.6.

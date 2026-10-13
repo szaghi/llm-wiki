@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 101 sources compiled**: 98 published works, two preprints and one code record
+**Corpus: 103 sources compiled**: 100 published works, two preprints and one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
@@ -47,6 +47,9 @@ every page — then follow the reading guide.
    [vector-potential evolution](/methods/vector-potential-evolution.md);
    [mimetic spectral elements](/methods/mimetic-spectral-elements.md)
    (high order + pointwise exactness, conforming meshes).
+   Under many of these schemes sits a constraint-agnostic reconstruction,
+   [WENO](/methods/weno.md) or [PPM](/methods/ppm.md): neither keeps the
+   divergence by itself, so each MHD use pairs it with one of the above.
 4. **The AMR interface problem** — the bundle's central question.
    [Block-structured AMR](/definitions/block-structured-amr.md) and
    [refluxing](/methods/refluxing.md);

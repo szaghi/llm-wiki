@@ -245,6 +245,64 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
   the AMReX framework, described with its codes on the
   [AMReX and PeleC](/software/amrex.md) page.
 
+**Later uses (batch 15).** *The Berger–Colella algorithm as printed*
+([Berger & Colella (1989)](/sources/berger-1989.md), §§2–7). A
+second-order, 2D algorithm; the block-structured section above summarizes
+it correctly, and the primary source adds:
+* *Patches and nesting.* Patch edges lie on coarse-grid lines (no rotated
+  patches), which is what makes conservation simple. Proper nesting: a
+  fine patch starts and ends at a coarse cell corner, and at least one
+  level-$(l-1)$ cell separates level $l$ from level $l-2$ in each
+  coordinate direction, except at the physical boundary (§2). The buffer
+  of flagged neighbours is "two cells in each direction" as typical (§5)
+  and one cell in the test runs (§7); the buffer
+  $\lceil 5/r_{\mathrm{AMR}}\rceil + 2$ is McCorquodale and Colella's, not
+  part of the 1989 algorithm.
+* *Refinement in time.* The same $r_{\mathrm{AMR}}$ in space and time, so
+  $\Delta t/h$ is equal on all levels, and only **even**
+  $r_{\mathrm{AMR}}$ are allowed, to simplify the error estimator (§2). The
+  runs use $r_{\mathrm{AMR}} = 4$ with three levels. Coarse levels advance
+  first, and finer levels catch up before the coarse level moves on (§3).
+* *The flux register* (§3, eqs. 2–5). For an uncovered coarse cell next
+  to a fine grid, the coarse flux through the shared face is replaced by
+  the fine fluxes through the $r_{\mathrm{AMR}}$ fine faces, summed over the
+  $r_{\mathrm{AMR}}$ fine steps and divided by $r_{\mathrm{AMR}}^2$. The
+  register starts as minus the coarse flux, accumulates the fine fluxes
+  after each fine step, and is added to the coarse neighbour, times the
+  coarse $\Delta t/h_x$, after the last one. Each coarse edge is corrected
+  once even where fine grids overlap. Cost about 0.3 % of a run. The paper
+  calls it a correction pass, not "refluxing"; averaging down is the
+  separate fix-up for covered cells. The [flux](/methods/flux-redistribution.md)
+  and [state redistribution](/methods/state-redistribution.md) registers
+  of the batch-10 block are merged with this register.
+* *Ghost values* (§4). From same-level neighbours where they exist,
+  otherwise bilinear interpolation in space and, if needed, linear
+  interpolation in time from the coarser level: second order, with no
+  limiter and no conservation constraint stated. The interpolation that
+  initializes new fine grids is not specified. The fourth- and
+  fifth-order ghost-value constructions above replace this step.
+* *Error estimation by Richardson extrapolation* (§6). Two steps on a
+  grid against one step of twice the size on the grid coarsened by 2 give
+  the local truncation error, for any scheme of known order. The estimate
+  always flags captured discontinuities, since there it does not shrink
+  with $h$; shocks themselves need no refinement, but contacts widen in
+  time and do. This is a further refinement criterion beside the
+  undivided-difference and second-derivative indicators above.
+* *Clustering* (§5). Bisection of a bounding rectangle until the share of
+  flagged cells exceeds a minimum (e.g. 60 %), then merging where cheaper.
+* *Strong shocks crossing levels, the original mechanism* (§6,
+  Figs. 6.1–6.2). Captured fluxes near a shock are $O(1)$ wrong; on a
+  uniform grid those errors cancel in time, but at a resolution jump the
+  two grids' errors differ and emit $O(1)$ spurious waves, observed to
+  scale with the characteristic jump across the shock. Strong shocks "must
+  be refined everywhere, if they are to be refined anywhere". Wang et
+  al.'s failures of non-conservative interpolation, above, are a further
+  mechanism of the same scenario, not a contradiction.
+* *Cost* (§7, Tables I–II). Integration 78.29 % and interpolation 12.95 %
+  of 5674 s on a Cray X-MP; over 90 % of cell updates are on the finest
+  level, which covers about 10 % of the domain, for an estimated factor of
+  8 in CPU time and 2.2 or more in memory over a uniform fine grid.
+
 # Citations
 
 1. [Dumbser et al. (2013)](/sources/dumbser-2013.md), §§1, 3, 4, 5.
@@ -260,3 +318,4 @@ on uniform and adaptive grids alike. Ghost-cell filling takes 6.88 s of
 11. [Barrio Sanchez et al. (2024)](/sources/barriosanchez-2024.md), §§2.4, 3.4, 4.1 (arXiv v1).
 12. [Giuliani et al. (2022)](/sources/giuliani-2022.md), §4 (arXiv v2).
 13. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §3.1 (arXiv v1).
+14. [Berger & Colella (1989)](/sources/berger-1989.md), §§2–7, Tables I–II.

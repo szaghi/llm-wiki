@@ -2,6 +2,44 @@
 
 ## 2026-10-13
 
+* **Batch 15 (frontier 3a): ingested [Brackbill & Barnes (1980)](/sources/brackbill-1980.md)
+  and [Berger & Colella (1989)](/sources/berger-1989.md)**, cited by 14
+  sources each, from PDFs copied out of sibling archives into this
+  bundle's (118 of 118).
+  * **Updated:** [high-order AMR](/methods/high-order-amr.md) (the primary
+    Berger–Colella algorithm: nesting, Richardson error estimation,
+    subcycling, refluxing eqs. 2–5 and its cost, second-order ghost
+    interpolation, the strong-shock caveat; the buffer formula
+    McCorquodale & Colella state is theirs, not Berger & Colella's),
+    [constrained transport](/methods/constrained-transport.md) and
+    [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md) (the
+    "Projection (Brackbill–Barnes)" attribution: the note states the
+    Poisson projection in one sentence and proposes the nonconservative
+    momentum equation instead, a qualification),
+    [divergence-free reconstruction](/methods/divergence-free-reconstruction.md),
+    [AMReX](/software/amrex.md), [double Mach reflection](/benchmarks/double-mach-reflection.md),
+    [Mach reflection](/definitions/mach-reflection.md) and the
+    [Shu–Osher problem](/benchmarks/shu-osher-problem.md).
+  * **New Open `Contradictions` entry** on
+    [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md): Brackbill &
+    Barnes print the dot product of the conservative magnetic force with
+    $\mathbf B$ as $+\vert\mathbf B\vert^2\nabla\cdot\mathbf B$ (eq. 8);
+    Derigs et al. (2018) print its projection as
+    $-(\nabla\cdot\mathbf B)\vert\mathbf B\vert$ (eq. 2.21) for the same
+    force (eq. 2.20). The compiler's expansion supports the plus sign; a
+    derivation is not a source, so the entry stays open for the human.
+  * Brackbill & Barnes' eq. 3 is printed with $+\nabla\times(\mathbf v\times\mathbf B)$,
+    the opposite of the ideal induction law (checked on the page image);
+    recorded as printed.
+  * **Bibliography** (3122 entries): 27 references merged; Bolstad's
+    Stanford thesis re-keyed bolstad-1982 (dated June 1982, eScholarship;
+    it had been keyed by a citing year); Colella & Glaz's 9th ICNMFD paper
+    is colella-1985-c; Berger & Colella's "Colella & Woodward, J. Comput.
+    Phys. 59:264" merged into colella-1985-b (Colella & Glaz, by venue);
+    Gropp printed as vol. 4 merged into gropp-1980 (vol. 1, same page);
+    Osher & Sanders is osher-1983-b; Winkler's Göttingen thesis merged
+    into winkler-1976 with its identity to the MPI report marked unverified.
+
 * **Batch 14 (frontier): ingested [Godunov (1959)](/sources/godunov-1959.md),
   [van Leer (1979)](/sources/vanleer-1979.md), [Roe (1981)](/sources/roe-1981.md)
   and [Harten (1983)](/sources/harten-1983.md)**, the user's downloads of

@@ -206,6 +206,33 @@ every variable at cell centres.
   speeds and many extra fields ([Balsara et al. (2023)](/sources/balsara-2023.md), §5;
   [curl-preserving reconstruction](/methods/curl-preserving-reconstruction.md)).
 
+**Later uses (batch 15).** *What "Brackbill–Barnes" refers to*
+([Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430;
+details on [constrained transport](/methods/constrained-transport.md)).
+* *The projection of Tomida et al.'s recommendation.* The note states it
+  as $\nabla^2\Phi + \nabla\cdot\mathbf B = 0$, $\mathbf B \leftarrow \mathbf B + \nabla\Phi$,
+  in one sentence (p. 428), with no discrete operators, solver or test;
+  the name used above is consistent with that formula. The note's own
+  remedy is the nonconservative momentum equation, which avoids the
+  potential problem.
+* *The parallel force.* The note gives the dot product of the conservative
+  magnetic force with $\mathbf B$ as $\vert\mathbf B\vert^2\,\nabla\cdot\mathbf B$
+  (eq. 8), that is, a component $\vert\mathbf B\vert\,\nabla\cdot\mathbf B$
+  along $\mathbf B$; Derigs et al. are quoted above with
+  $-(\nabla\cdot\mathbf B)\vert\mathbf B\vert$. Both describe a force along
+  $\mathbf B$ proportional to the divergence, with opposite signs; see
+  the `Contradictions` entry on the sign of the parallel force below.
+* *A precursor of the non-conservative sources.* The note's
+  nonconservative momentum equation differs from the conservative one by
+  exactly the momentum source $-(\nabla\cdot\mathbf B)\mathbf B$ that EGLM
+  and the Godunov–Powell terms add, since
+  $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathbf I\right) - \mathbf B(\nabla\cdot\mathbf B)$
+  (compiler's identity). The choices differ elsewhere: the note's flux
+  statement carries the induction term $\mathbf v(\nabla\cdot\mathbf B)$
+  (eq. 3), but its scheme drops it and keeps induction and energy
+  conservative (eq. 9), where the Godunov–Powell system has sources in
+  momentum, induction and energy.
+
 ## Contradictions
 
 **Should the cleaning speed follow the time step?** *Open.*
@@ -267,6 +294,24 @@ at the batch-8 deep lint; both sides were already in the text).
   as robust as a zone-centred scheme with projection cleaning (not GLM),
   without saying whether their energy correction (eq. 16) was used.
 
+**What is the sign of the parallel force of the conservative magnetic force?** *Open*
+(recorded at batch 15).
+* [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), eqs. 7–8 (p. 427):
+  for the conservative force
+  $\nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathbf I\right)$,
+  its dot product with $\mathbf B$ is $+\vert\mathbf B\vert^2\,\nabla\cdot\mathbf B$.
+* [Derigs et al. (2018)](/sources/derigs-2018.md), eqs. 2.20–2.21: for the same
+  force, written $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathbf I - \mathbf B\otimes\mathbf B\right)$,
+  its projection on $\mathbf B/\vert\mathbf B\vert$ is $-(\nabla\cdot\mathbf B)\vert\mathbf B\vert$.
+* *Compiler's note, not a resolution:* expanding the divergence gives
+  $(\nabla\cdot\mathbf B)\mathbf B + (\mathbf B\cdot\nabla)\mathbf B - \tfrac12\nabla\vert\mathbf B\vert^2$,
+  whose last two terms have no component along $\mathbf B$, so the
+  projection is $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$, as Brackbill &
+  Barnes print. Both papers agree that the force is along $\mathbf B$,
+  proportional to the divergence, and unphysical; only the printed sign
+  differs. A derivation is not a source: the entry stays open until a
+  source settles it or the human closes it.
+
 # Citations
 
 1. [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-2010.md), §§1–4 (arXiv v2).
@@ -278,3 +323,4 @@ at the batch-8 deep lint; both sides were already in the text).
 7. [Balsara et al. (2023)](/sources/balsara-2023.md), §5.
 8. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.
 9. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.
+10. [Brackbill & Barnes (1980)](/sources/brackbill-1980.md), pp. 426–430 (read from page images).
