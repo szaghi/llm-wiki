@@ -5,7 +5,7 @@ description: "C++ rewrite of Athena around a physics-agnostic block-based tree A
 status: established
 aliases: [Athena++, athena++, Athena++ AMR framework]
 tags: [software, mhd, hydro, amr, constrained-transport, unsplit, riemann-solver, time-integration, self-gravity, multigrid, conservation, performance, verification, relativity, equation-of-state, primitive-recovery]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Athena++
@@ -559,6 +559,117 @@ torus around a spinning black hole.
   the scheme is effectively doubled" relative to arithmetic EMF averaging;
   asserted, no test shown.
 
+## Later uses (batch 10)
+
+### The GRMHD module in its method paper (White et al. 2016)
+
+[White et al. (2016)](/sources/white-2016.md) is the primary source of the
+Relativistic MHD item above, which Stone et al. (2020) attribute to it. It
+describes the code of 2016: static mesh refinement only, with AMR, PPM,
+RK3 and GR radiative transfer "being developed" (§7), so its statements
+date the module rather than restate the 2020 code.
+* **Scope and claim** (§1–§2). Arbitrary stationary spacetimes in 1, 2 or
+  3 dimensions, units with the gravitational constant and the speed of
+  light equal to 1 and $\sqrt{4\pi}$ absorbed into the field. Asserted:
+  "the only 3D finite-volume Godunov GRMHD code" combining HLL-family
+  solvers beyond HLLE and staggered-mesh CT, to the authors' knowledge.
+  This agrees with "a rewrite of Athena with GRMHD in arbitrary stationary
+  spacetimes" and with the coordinate list of the Mesh section.
+* **Metric-weighted finite volume** (§2, eqs. 7–15). Volumes, face areas
+  and edge lengths are integrals of $\alpha_{\mathrm L}\sqrt{\det\gamma_{ij}}$
+  over the cell, face or edge, which is the "metric-weighted lengths,
+  areas and volumes" of the Relativistic MHD item; the face field is
+  advanced by the edge-EMF circulation over the face area (eq. 15). See
+  [constrained transport](/methods/constrained-transport.md).
+* **HLLC and HLLD in GR through a frame transformation** (§3.3–§3.4,
+  Appendix). At each interface the left and right states are transformed
+  into an orthonormal frame whose time vector is the normal observer and
+  whose interface-normal vector, projected into the slice, is orthogonal to
+  the interface; a special-relativistic solver runs there and the fluxes
+  are transformed back. The interface moves in that frame with speed
+  $\beta^1/(\alpha_{\mathrm L}\sqrt{\gamma^{11}})$ ($\gamma^{11}$ the
+  component of the inverse of $\gamma_{ij}$; eq. 28), so the wave fan is
+  sampled along the interface's ray and the conserved state of the
+  selected region, not only its flux, is needed. The normal-observer frame
+  works inside the ergosphere and, in horizon-penetrating coordinates,
+  inside the horizon, where a frame of stationary observers fails; the
+  transformation can be singular at coordinate singularities such as the
+  polar axis. This is the "local frame transformations" of the item above
+  (Stone et al. 2020, §4.2.2), which AthenaK keeps (batch 3). Solvers:
+  LLF, HLLE (Einfeldt bounds), HLLC of Mignone & Bodo (2005) for hydro,
+  HLLD of Mignone, Ugliano & Bodo (2009) with a secant iteration for the
+  total pressure; the relativistic MHD HLLC is deliberately not
+  implemented. The LLF of the 2016 paper is absent from the 2020 solver
+  list above (HLLE, HLLC, HLLD, Roe), and the batch-3 section records LLF
+  as an AthenaK addition; whether the 2020 code kept it is not stated.
+  All HLL solvers "guarantee positivity" (asserted). See
+  [approximate Riemann solvers](/methods/approximate-riemann-solvers.md).
+* **Reconstruction** (§3.2). PLM on primitives with Mignone's (2014)
+  limiter, "proved to be TVD for all orthogonal coordinate systems", not
+  for non-orthogonal ones; agrees with the PLM item of the Solvers
+  section.
+* **Inversion, dated** (§3.1). In 2016 the GR inversion was based on the
+  1D_W scheme of Noble et al. (2006), a Newton–Raphson solve for
+  $\rho h_{\mathrm{rel}}W^2$; SR MHD followed Mignone & McKinney (2007) and
+  SR hydro solved a quartic in closed form (Schneider et al. 1993). The
+  Newman & Hamlin (2014) root-find of the Relativistic MHD item is the
+  2020 state. The two papers describe different epochs of the code, so
+  this dates the item; it contradicts nothing. Floors: density and gas
+  pressure floors and a Lorentz-factor ceiling "often chosen to be 100";
+  a non-converged inversion resets the cell to the floors and recomputes
+  its conserved variables. This agrees with "floors act on density and gas
+  pressure, never on the field" and adds the ceiling. See
+  [primitive-variable recovery](/methods/primitive-variable-recovery.md).
+* **Integrator** (§3.7). The van Leer predictor–corrector, whose first
+  half step "can" use first-order reconstruction and still converge at
+  second order; the Integrators item above (Stone et al. 2020) says the
+  VL2 predictor "must" use first-order donor-cell fluxes. Both are
+  statements of the code's practice, one permissive and one prescriptive,
+  from different epochs; a qualification. CTU is not used because it
+  "require[s] time-advanced variable estimates that are difficult to
+  generalize to arbitrary coordinate systems", a different reason from the
+  2020 one (characteristic projection too complex for relativity); the
+  two reasons are compatible. RK2 is "no better than the vanLeer method"
+  and RK3 needs extra storage.
+* **Source terms** (§3.6). With the free index lowered the source
+  vanishes for coordinates the metric does not depend on, and with a
+  stationary metric there is never a geometric energy source; the
+  primary source of the machine-precision conservation of energy and
+  $z$-angular momentum recorded above.
+* **Metric storage** (§3.8). 20 numbers per cell for hydro and 50 for
+  MHD; metric quantities are precomputed in separable 1D and 2D arrays,
+  never 3D (in Kerr–Schild: 22 values per radial cell, 32 per polar cell,
+  9 per azimuthal cell and 20 per radial–polar pair).
+* **Performance in 2016** (§6, Table 1, Fig. 17). One Xeon E5-2670 core,
+  in $10^5$ cell updates per second for SR / GR Minkowski / GR
+  Kerr–Schild: hydro "LLF-NT" 12.8 / 10.4 / 3.82 and HLLC 8.57 / 7.36 /
+  3.28; MHD "LLF-NT" 3.24 / 4.70 / 2.94, "LLF-T" — / 2.60 / 1.97 and HLLD
+  1.23 / 1.13 / 1.22 (the two LLF labels as printed); HLLE at 93 ± 6 % of
+  the LLF speed. Weak scaling on a Cray XC30 with one $64^3$ block per core to
+  6144 cores: ">97%" (hydro) and "indistinguishable from 100%" (MHD)
+  relative to 24 cores, after a 20 % per-core loss from one core to a
+  full node, attributed to memory-bus saturation; the full-node loss of
+  about 2× in Stone et al. (2020) is on other hardware and physics.
+  Recorded as printed: §6 says MHD runs "at 1/4 to 3/4 the speed of pure
+  hydrodynamics", while Table 1 gives HLLD/HLLC ratios of 0.14–0.15 and an
+  "LLF-NT" Kerr–Schild ratio of 0.77. Optimizations: precomputed metric
+  functions, unit-stride innermost loops for all three flux directions,
+  manual inlining for vectorization and fixed iteration counts in place
+  of convergence loops. See
+  [cell-update throughput](/definitions/cell-updates-per-second.md).
+* **Verification** (§4–§5). Second order on SR hydro and MHD
+  [linear waves](/benchmarks/linear-wave-convergence.md) and on GR waves
+  in "tilted" coordinates, with HLLC and HLLD errors below HLLE's by
+  1.4–4.8× depending on wave and geometry (no gain on sound or fast
+  waves); seven Komissarov (1999) shock tubes; hydro and magnetized
+  [blasts](/benchmarks/mhd-blast-wave.md) unchanged between Minkowski and
+  "snake" coordinates; second order on Bondi accretion and on the Gammie
+  (1999) magnetized inflow; a 2D hydro Fishbone–Moncrief torus at second
+  order; and a 3D MRI-turbulent
+  [torus](/benchmarks/magnetized-torus-accretion.md) run with LLF "just as
+  is used in Harm", compared with Shiokawa et al. (2012) and not with
+  another code.
+
 # Citations
 
 1. [Stone et al. (2020)](/sources/stone-2020.md), §§1–4, §§3.6.1–3.6.5 (journal version).
@@ -572,3 +683,4 @@ torus around a spinning black hole.
 9. [Lesur et al. (2023)](/sources/lesur-2023.md), §3.1, §3.4, §4.2, §6 (arXiv v1).
 10. [Bai (2017)](/sources/bai-2017.md), §§2–6, App. A (arXiv v1, accepted manuscript).
 11. [Porth et al. (2019)](/sources/porth-2019.md), Table 1, §4.1.1, §§5.3–5.4, App. A (arXiv v2).
+12. [White et al. (2016)](/sources/white-2016.md), §§1–7, eqs. 7–34, Table 1, Appendix.

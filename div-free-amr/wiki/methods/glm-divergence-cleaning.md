@@ -144,6 +144,8 @@ solenoidal-data damping below. A cleaning step is not inert on resolved
 fields, and its dissipation enters the physics through the magnetic
 Reynolds number.
 
+**Earliest HLLD + mixed GLM pairing in the bundle.** [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md) (§6.2) adopt mixed GLM as "easy to implement", "fast" and "conservative for the physical quantities", leaving CT with HLLD "beyond the scope". They state no $c_h$, $c_p$ and measure no divergence.
+
 ## Failure modes of the conventional implementation
 
 [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md) implement mixed GLM in Athena++ next to its CT and compare them on the
@@ -236,11 +238,11 @@ Evidence from one code's verification record,
 **Does GLM keep the divergence error bounded?**
 
 * This page's established reading of
-  [Dedner et al. (2002)](/sources/dedner-2002.md): the guarantee is
+  [Dedner et al. (2002)](/sources/dedner-2002.md) (§1, §6, Appendix): the guarantee is
   boundedness and smallness, tunable through $c_h$ and $c_p$. Production
   evidence of robustness comes from
-  [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md).
-* [Zaghi (2026)](/sources/zaghi-2026.md) (hypothesis), on 2:1 seams of a
+  [Mignone & Tzeferacos (2010)](/sources/mignone-tzeferacos-2010.md) (§5).
+* [Zaghi (2026)](/sources/zaghi-2026.md) (hypothesis; issues #21 E2/E2′, #29), on 2:1 seams of a
   centered collocated scheme with exact interior divergence:
   * Full GLM never bounds the seam divergence over 100 steps at fixed $h$.
     Across the damping sweep, weaker damping is better and still grows.
@@ -249,7 +251,7 @@ Evidence from one code's verification record,
   * With a fourth-order fill it stayed below the uncleaned run for 200 steps
     (ratio 0.18 → 0.88), still without bounding it.
 
-**Scoped reading (compiled, open).** The guarantee concerns errors that the
+**Status: Open.** Scoped reading (compiled): the guarantee concerns errors that the
 cleaning system can transport away. A source that stays fixed in time stays
 bounded under the damped telegraph dynamics. The seam source is neither
 transported nor constant: it is re-created locally every step and grows
@@ -285,3 +287,4 @@ seam growth, however: the captured runs use fixed values of $c_h$ (3 or 5).
 8. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §§2.1, 3, 6.2 (preprint).
 9. [Tomida, Sadanari, Takasao & Iwasaki (2026)](/sources/tomida-2026.md), §§2.3, 3, 4, Appendix B.
 10. [Brackbill & Barnes (1980)](/sources/brackbill-barnes-1980.md), pp. 428–429.
+11. [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md), §6.2.

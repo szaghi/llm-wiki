@@ -87,13 +87,13 @@ tile under 2:1 refinement the way faces do.
 **Development:** [Tóth & Roe (2002)](/sources/toth-roe-2002.md) — Tóth's
 own subsequent work — proves the locality trichotomy
 ([transfer locality limits](/results/transfer-operator-locality-limits.md))
-and concludes that face-centered storage is indicated "for AMR schemes
+and concludes (§7) that face-centered storage is indicated "for AMR schemes
 which require the divergence-free property." On the AMR question the two
 camps have effectively converged; the single-grid equivalence itself stands
 unrefuted.
 
 **Status (compiled):** the two results are formally compatible — Tóth's
-identity is stated on a single uniform grid; Balsara's claim concerns level
+identity ([Tóth (2000)](/sources/toth-2000.md) §4.4) is stated on a single uniform grid; Balsara's claim concerns level
 transfer — and the 2002 development resolves the *practical* dispute in
 favor of staggered storage at interfaces, from Tóth's own hand. The
 single-grid equivalence remains valid; its "staggering unnecessary" reading

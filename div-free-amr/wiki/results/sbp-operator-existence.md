@@ -4,7 +4,7 @@ title: "SBP operator existence and families"
 description: "SBP first-derivative operators exist at every interior order; the achievable boundary orders and parameter families are catalogued per norm class."
 status: established
 tags: [sbp, existence, boundary-closure, high-order]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # SBP operator existence and families
@@ -47,6 +47,9 @@ diagonals, $\tau=4$ to eleven.
    — an early flag of the exactness-vs-arithmetic gap that matters for any
    "exact algebraic invariant" claim.
 
+**Origin and the locus of the free parameters.** The diagonal-norm rows ($\tau = 1$–$4$, interior $2\tau$) and the full-norm rows ($\tau = 3, 5$) were first constructed by [Kreiss & Scherer (1974)](/sources/kreiss-scherer-1974.md) (Theorem 2.1, Table 1; Lemma 2.3, Table 2). They prove no SBP operator exists in the unweighted norm (Lemma 2.1). When the diagonal norm carries weights on the first $2\tau$ points, these weights are uniquely determined by their eq. 2.24. Strand's one- and three-parameter diagonal families at $\tau = 3, 4$ therefore live in the operator's boundary block, not in $\mathsf{H}$. For the full norm, Kreiss–Scherer additionally state interior order $\tau+2$ for even $\tau$ (Lemma 2.3, $\tau \le 8$). Caveat 1 is Strand's: Kreiss–Scherer apply their operators to symmetric systems without distinguishing norm classes (§3). Caveat 2 has a precursor in their "single precision only" eigenvalues (Table 2) and their doubt about $\tau > 4$ (p. 207).
+
 # Citations
 
 1. [Strand (1994)](/sources/strand-1994.md), Theorems 2.1–2.3, §4–6, Appendices A–B.
+2. [Kreiss & Scherer (1974)](/sources/kreiss-scherer-1974.md), §2, Lemmas 2.1–2.3, Theorem 2.1, Tables 1–2.

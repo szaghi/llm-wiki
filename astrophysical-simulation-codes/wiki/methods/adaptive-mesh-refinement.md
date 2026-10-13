@@ -897,6 +897,212 @@ stated" entries of the batch-4 row:
   entry stays open.
 * **Level-dependent derived quantities.** Not discussed.
 
+## Later uses (batch 10)
+
+### The original Berger–Oliger AMR (1984)
+
+[Berger & Oliger (1984)](/sources/berger-1984.md) is the primary source
+for the recursive space–time hierarchy that the codes above call
+Berger–Oliger. Its design, in the format of the table at the top:
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| Berger–Oliger code (unnamed, Fortran, IBM 370) | rectangular subgrids of arbitrary orientation overlaying the coarser grid, each with its own storage; same-level overlap allowed in 2D | any integer; 4 preferred, 10 and 4 in the runs | each fine point interior to the union of next-coarser grids ("level nesting") | subcycled, $\Delta t_l = \Delta t_{l-1}/r_{\mathrm{ref}}$ |
+
+Sources for the row: §§2–3, 6.
+
+* **Overlaid, not patched** (§2). "These subgrids are not patched into the
+  coarse grid. Rather, a subgrid should be thought of as overlaying a
+  coarser grid", with its own solution vector and storage; the rotated
+  rectangles align with shocks to reduce the refined area, and the
+  difference equations are transformed conservatively to the rotated
+  coordinates (§3).
+* **Time refinement** (§§1, 3). The same ratio in space and time keeps
+  $\Delta t_l/h_l$ constant on all levels, and "the overly restrictive
+  small time step of the finest grid is not applied over the entire
+  domain"; the authors call this space–time structure "a major factor in
+  the efficiency of the method". One coarse step is the recursive
+  procedure of Fig. 3.3: step the level, then integrate the next level to
+  the same time, then update.
+* **Richardson estimator** (§3, eqs. 3.1–3.2). Two steps on a grid minus
+  one step on the grid coarsened by 2, divided by $2^3 - 2 = 6$ for a
+  scheme second order in space and time (in general by two to the power
+  of the order plus one, minus two), estimates the local truncation error
+  independently of the equations and of the scheme. It needs equal orders
+  in space and time; for piecewise-constant data it is proportional to the
+  jump. This is the estimator Berger & Colella reuse (batch 6 above).
+* **Updating by injection, no flux correction** (§3). When the levels
+  reach the same time, coarse values are replaced by injected fine values
+  (interpolated for rotated grids). Conservative interface conditions are
+  "reported elsewhere"; the 1984 algorithm is not conservative across
+  level boundaries. In the 2D Burgers test the interpolation of the
+  injection smooths the discontinuities enough that the AMR error is below
+  the uniform fine-grid error (§6, Table III).
+* **Ghost values** (§3). From an overlapping same-level grid if possible,
+  else from coarser grids by Ciment's coarse-mesh approximation or by
+  interpolation. Refinement in space and time by any integer is "stable in
+  the sense of Kreiss" with Lax–Wendroff (proved in Berger's thesis, cited).
+* **Regridding and clustering** (§§3–4). "Typical calculations give an
+  optimal regridding frequency of approximately every 3–4 steps", with
+  buffer zones; regridding from finest to coarsest with extra flags under
+  grids two levels finer; nearest-neighbour clustering, then minimal
+  spanning trees, with a merge rejected below a flagged-point fraction
+  "typically between 1/2 and 3/4"; each rectangle oriented along the
+  eigenvectors of its points' second-moment matrix. This is the earliest
+  flagged-fraction efficiency test in the bundle, before Berger & Colella's
+  bisection at 60–65 % and the Berger–Rigoutsos clustering of the later
+  codes.
+* **Data structures** (§5). A tree (1D) or forest (2D) of grids with
+  parent and same-level intersection lists, and one storage array managed
+  by first-fit allocation.
+* **Cost** (§6, Tables I–III). Against uniform fine grids: 79.9 s against
+  347.0 s at equal error on Sod (2 levels, $r_{\mathrm{ref}} = 10$);
+  86.6 s against 588.0 s on a rotating cone ($r_{\mathrm{ref}} = 4$,
+  about 12 % refined), with about 9 s outside integration, mostly error
+  estimation and grid generation; 109 s against 155 s on 2D Burgers, where
+  much of the domain is refined. No run compares against a global step on
+  the same hierarchy. [Woodward & Colella (1984)](/sources/woodward-1984.md),
+  §IIIa, judge this approach as saving memory "at the cost of introducing
+  substantial program complexity", with time savings "not as great as one
+  might expect"; that is an unquantified assessment against measurements
+  on simple problems with Lax–Wendroff and MacCormack, a tension of scope,
+  not a contradiction.
+
+### RAMSES from its code paper (Teyssier 2002)
+
+[Teyssier (2002)](/sources/teyssier-2002.md) (read as the arXiv preprint)
+describes the first version of [RAMSES](/software/ramses.md), the RAMSES
+row of the table at the top:
+
+| Code | Unit of refinement | $r_{\mathrm{ref}}$ | Nesting rule | Time stepping |
+|---|---|---|---|---|
+| [RAMSES](/software/ramses.md) (code paper) | oct of $2^d$ cells in Khokhlov's fully threaded tree over a Cartesian coarse grid at $l = 0$ | 2 | every oct surrounded by $3^d - 1$ neighbouring parent cells (graded "even in the diagonal directions") | user choice: one global $\Delta t$, or two substeps per level, not necessarily equal, with no temporal interpolation |
+
+Sources for the row: §§2.1–2.1.1, 2.3.2.
+
+* **Refinement only** (§2.1.1). The refinement map is rebuilt each step
+  from $l_{\max}$ down, with a buffer expanded around marked cells; no
+  derefinement criteria are needed. The tree is modified incrementally,
+  never rebuilt (§2.1.2).
+* **Coarse data held constant** (§2.3.2). "The coarse solution is assumed
+  to remain constant in time during the advance of the fine solution":
+  with the adaptive step, coarse–fine boundaries are first order in time
+  while the global solution "remains second order (Khokhlov 1998)". This
+  is the opposite choice to PLUTO-Chombo's linear time interpolation and
+  to the original Berger–Colella ghost filling (above).
+* **Synchronization** (§2.3.2). Coarse–fine fluxes are replaced by
+  averages of the fine fluxes, and split cells take the average of their
+  updated children, in agreement with the refluxing and restriction
+  sections above.
+* **Prolongation** (§2.3.2). New cells and ghost data by conservative
+  interpolation with "a 3D generalization of the Min-Mod limiter (De Zeeuw
+  1993)".
+* **Ghost layers** (§2.3.1). $n_{\mathrm g} = 2$ per side and direction,
+  diagonals included, a stencil of $6^d$ cells per oct; PPM, needing 4,
+  was rejected for octs. The stencil overhead is estimated at about 50 %,
+  100 % and 200 % in 1, 2 and 3D on a full grid.
+* **Criteria** (§2.5). Quasi-Lagrangian mass thresholds (a mass per cell
+  over $h_l^d$), gradient and second-derivative criteria, spatial spheres
+  per level; the same idea as Enzo's baryon and particle mass criteria
+  (Refinement criteria, above).
+* **Cost** (§2.5). The AMR overhead "can be as large as a factor of 2 to
+  3", so at most "30 % to 50 %" of the grid can usefully be refined: an
+  estimate, of the same kind as FLASH's measured 60 % (2D) and 40 % (3D)
+  crossover (batch 8).
+* **Self-gravity** across levels is a one-way interface; see
+  [Poisson solvers on adaptive meshes](/methods/multigrid-self-gravity.md).
+
+### Attributions checked against the originals
+
+* **"Berger–Oliger / Berger–Colella"** (Taxonomy, above). Berger & Oliger's
+  grids are rotated, overlaid and updated by injection, with conservation
+  deferred; grid-aligned patches and refluxing are Berger & Colella's. As
+  used for Enzo, PLUTO, Castro, Quokka and GRaM-X, "Berger–Oliger" names
+  the recursive space–time hierarchy, not the 1984 grid geometry.
+  Krumholz, McKee & Klein's "Berger–Oliger code with ... a synchronization
+  step for conservation" (batch 2) and GRaM-X's "Berger–Oliger
+  block-structured AMR" (batch 3) describe features that the 1984 paper
+  does not have. GRaM-X uses no subcycling, the feature the original
+  calls a major factor in its efficiency. These are qualifications of the
+  label, not contradictions of the original.
+* **Subcycling** (Time stepping, above). PLUTO-Chombo's and Castro's
+  $\Delta t_{l+1} = \Delta t_l/r_{\mathrm{ref}}$ agrees with §3 of the
+  original. Enzo's free $\Delta t_l$ departs from it, as the batch-6 check
+  already says for Berger & Colella.
+* **RAMSES row** (table at the top). "2:1 grading" and "subcycled, time
+  ratio 2" come from Rosdahl et al. (2013). The code paper states a
+  stronger, diagonal grading rule and offers a global step as an
+  alternative, with substeps not necessarily equal: a qualification by
+  version and detail.
+* **Nesting.** Berger & Oliger's level nesting (interior of the union of
+  next-coarser grids, Fig. 2.1) agrees with Berger & Colella's refusal to
+  require a single parent (batch 6); Enzo's containment in one parent is
+  stricter than both.
+* **Richardson estimator** (batch 6). Berger & Colella's divisor 6 is
+  eq. 3.2 of Berger & Oliger for second order; the original adds the
+  convergence motivation (Gustafsson), the equal-order requirement and the
+  variant for unequal orders.
+
+### Refinement ratio: recommendations, not a contradiction
+
+Berger & Oliger "prefer a refinement ratio of 4 over the ratio of 2
+typically used with multigrid methods", because each refined grid carries
+an overhead, and note that one level of ratio $r_{\mathrm{ref}}$ is
+cheaper than two of $\sqrt{r_{\mathrm{ref}}}$ when one region needs
+refinement ([Berger & Oliger (1984)](/sources/berger-1984.md), §2).
+Enzo's authors report that $r_{\mathrm{ref}} = 2$ "typically provides the
+best performance" ([Bryan et al. (2014)](/sources/bryan-2014.md), §3);
+Quokka allows 2 only, "to minimize numerical glitches"
+([Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2); RAMSES
+fixes 2 by its oct structure ([Teyssier (2002)](/sources/teyssier-2002.md),
+§2.1). The recommendations point opposite ways, but they rest on
+different grounds (per-grid overhead of serial rotated grids in 1984;
+performance of 3D parallel patch codes; coarse–fine artefacts; data
+structure), and no source measures the other's choice on a common
+problem. Recorded as a qualification by setting.
+
+### Shocks crossing level jumps
+
+* **Teyssier's test** ([Teyssier (2002)](/sources/teyssier-2002.md), §3.5).
+  A Mach 5000 shock in 1D crossing from coarse to fine produces post-shock
+  oscillations "of the order of 5 %"; from fine to coarse there is no
+  visible oscillation. The paper generalizes: "if shock waves move from
+  high- to low-resolution regions, spurious effects associated to the mesh
+  structure are undetectable", so cosmological runs may refine on density
+  only (§§3.7, 4.2). Its multidimensional evidence is the 3D Sedov run
+  judged on spherically binned profiles ("Oscillations due to spurious
+  mesh reflections are not visible in the radial profiles", §3.6), with
+  refinement confined to spheres concentric with the blast (eq. 27), so
+  that the front meets the level boundaries close to normal incidence on
+  the scale of the spheres (inferred here, not stated by the paper).
+* **Against FLASH and Berger & Colella.** FLASH's Sedov front crossing a
+  static fine-to-coarse jump reflects a shock that is stronger the more
+  grazing the incidence, while head-on errors "appear small and well
+  behaved" (batch 8). Berger & Colella's Mach 10 incident shock forced
+  from fine to coarse in 2D shows oscillations below the interface (batch
+  6; incidence angle not recorded on that Source page). Teyssier's 1D
+  result agrees with FLASH's head-on case; his general statement covers
+  configurations, oblique incidence in 2D or 3D, that his tests do not
+  examine and in which the two other sources see errors. Recorded as a
+  qualification by geometry: Teyssier's wording is broader than his
+  evidence, and no source runs the same configuration with the opposite
+  result, so no contradiction entry is opened. The coarse-to-fine 5 %
+  oscillation is new evidence for the coarse–fine shock error that Berger
+  & Colella describe.
+
+### Bearing on the open entries (batch 10)
+
+* **Is time subcycling worth its cost?** Berger & Oliger are the origin of
+  the subcycling side ("a major factor in the efficiency of the method"),
+  but compare only with uniform grids, never with a global step on the
+  same hierarchy (§§1, 3, 6). Teyssier implements both options: the single
+  step is "more accurate (but time consuming)" for particles, which are
+  first order along trajectories crossing level boundaries under the
+  adaptive step (§2.2.5); for the 3D Sedov test it was "the fastest
+  solution" (§3.6); the cosmological runs use the adaptive step (§4.2). No
+  cost or error comparison on a common problem; the entry stays open.
+* **Level-dependent derived quantities.** Not discussed by either source.
+
 ## Open question: level-dependent derived quantities
 
 Recorded at deep lint #1 as a contradiction and moved here at deep lint #3,
@@ -923,12 +1129,14 @@ the issue, and none quantifies it.
   [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §2.2 (Quokka), and
   [Porth et al. (2019)](/sources/porth-2019.md), §4.1.5 (H-AMR's locally
   adaptive time stepping, claimed to give a factor 3–5) also subcycle;
-  [Berger & Colella (1989)](/sources/berger-1989.md), §2, pp. 67–68 (the origin: one ratio in space and time "so the same explicit difference scheme is stable on all grids"; truncation errors of equal order; "the smaller time step of the fine grid is not imposed globally").
+  [Berger & Colella (1989)](/sources/berger-1989.md), §2, pp. 67–68 (the origin: one ratio in space and time "so the same explicit difference scheme is stable on all grids"; truncation errors of equal order; "the smaller time step of the fine grid is not imposed globally");
+  [Berger & Oliger (1984)](/sources/berger-1984.md), §§1, 3, p. 485, p. 489 (the earlier origin: the same ratio in space and time, "a major factor in the efficiency of the method"; compared only with uniform grids).
 * One global step, with reasons: [Stone et al. (2026)](/sources/stone-2026.md)
   (AthenaK), [Shankar et al. (2023)](/sources/shankar-2023.md) (GRaM-X:
   subcycling serializes the levels) and [Zaghi et al. (2023)](/sources/zaghi-2023.md)
   (ADAM); see the batch-3 notes above;
   [Fryxell et al. (2000)](/sources/fryxell-2000.md), §2 (FLASH: extra memory for temporary copies, a block ordering that "can have a damaging effect on load balance"; the arguments for subcycling listed, nothing measured).
+* Both, as a user choice: [Teyssier (2002)](/sources/teyssier-2002.md), §§2.1, 2.2.5, 3.6, 4.2 (RAMSES: the single step "more accurate (but time consuming)" for particles and "the fastest solution" for the 3D Sedov test; the adaptive step in the cosmological runs; nothing measured against the alternative).
 * No source measures the interpolation error or the cost trade-off on a
   common problem; the entry closes when one does.
 
@@ -957,3 +1165,6 @@ the issue, and none quantifies it.
 21. [Truelove et al. (1997)](/sources/truelove-1997.md), §2, Fig. 1.
 22. [Berger & Colella (1989)](/sources/berger-1989.md), §§1–8, eqs. 1–3, Tables I–II, Figs. 2.1, 6.1–6.2.
 23. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§2, 3.2, 7.6–7.7, 8.2–8.4, eqs. 1–3, Figs. 1–4, 41, 45–48.
+24. [Berger & Oliger (1984)](/sources/berger-1984.md), §§1–7, eqs. 3.1–3.2, Fig. 3.3, Tables I–III.
+25. [Teyssier (2002)](/sources/teyssier-2002.md), §§2.1–2.5, 3.5–3.6, 3.7, 4.2 (arXiv v1).
+26. [Woodward & Colella (1984)](/sources/woodward-1984.md), §IIIa.

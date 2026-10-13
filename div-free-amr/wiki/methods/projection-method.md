@@ -26,7 +26,7 @@ inverse of the coefficient of the new time level in Chorin's time
 discretization) with $D_h u_h^{n+1} = 0$ — keep the divergence-free part, discard the gradient
 part into the pressure. Chorin works *collocated* with central $D_h$ and
 $G_h$, so his composite Laplacian $D_h^{\mathrm{c}} G_h$ is a five-point
-stencil of spacing $2\Delta x$ (the compact staggered alternative is the
+stencil of spacing $2h$ (the compact staggered alternative is the
 [MAC](/methods/mac-method.md) pressure equation, which enforces the same
 constraint family through the momentum update rather than as a separate
 projection). The existence and uniqueness of the decomposition is inherited
@@ -77,7 +77,7 @@ citing Brackbill & Barnes.
   is unambiguous.
 * [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md) §2.4,
   eqs. 2.23–2.24, project after every time step of a Strang-split TVD
-  code. The printed operator is the wide $2\Delta x$ Laplacian with the
+  code. The printed operator is the wide $2h$ Laplacian with the
   central divergence of the provisional field as source, i.e.
   $D_h^{\mathrm{c}} G_h\,\phi_h = D_h^{\mathrm{c}} B_h^*$ with
   $\phi_h$ the negative of their potential (their correction adds the
@@ -125,6 +125,31 @@ cost "≲5% of the total CPU time" with periodic boundaries and "≲30%" with
 reflecting or continuous boundaries, which need the doubled box.
 *Compiler reading:* the 1998 saving of about 20% is compatible only with
 the non-periodic cost; the 1998 timing does not state its boundary type.
+
+**A third early implementation: the modified wavenumber.**
+[Balsara (1998)](/sources/balsara-1998-b.md) §5 projects the collocated
+field of a TVD Godunov code by FFT on periodic boxes.
+* He calls "traditional" the solve with the inverse squared continuous
+  wavenumber (eqs. 5.2–5.4, citing Zachary et al.), and reports that on a
+  random vector field it leaves the central divergence $D_h^{\mathrm c}$
+  of eq. 5.1 "not exactly zero".
+* His fix writes the projection as the tensor $\delta_{ij} - k_ik_j/\lvert\mathbf k\rvert^2$
+  and replaces each wavenumber component by the central-difference symbol
+  $\sin(k_ih)/h$ (eqs. 5.5–5.6). This "makes equation (5.1) exactly zero".
+  No residual value is printed.
+* The printed signs of eqs. 5.2–5.3 repeat the inconsistency of Zachary et
+  al.'s eq. 34 noted above.
+* Cost: "no more than 2% of the total computational cost" (§6.2.2).
+
+*Compiler reading:* with the central-difference symbol the tensor is the
+Fourier form of $B_h = B_h^* - G_h\phi_h$ with
+$D_h^{\mathrm c} G_h\,\phi_h = D_h^{\mathrm c} B_h^*$ and central $G_h$,
+so it is the wide-stencil row of the variants table below, not the
+spectral-vector row, which is his "traditional" version. The modes where
+the symbol vanishes ($\mathbf k = 0$ and the grid-scale mode) are not discussed
+in the paper; the existing note on the Ryu–Jones–Frank FFT solve below
+covers them. Balsara's characterization of the earlier projections is
+the subject of an Open entry under `Contradictions`.
 
 ## Properties, per [Tóth (2000)](/sources/toth-2000.md)
 
@@ -201,9 +226,9 @@ radiatively cooling MHD turbulence:
 
 | Variant | Operator | Exact? | Defect |
 |---|---|---|---|
-| wide-stencil scalar (Chorin's $D_h^{\mathrm{c}} G_h$) | $2\Delta x$ Laplacian | $D_h^{\mathrm{c}} B_h = 0$ exactly | even–odd decoupling into $2^3$ sub-lattices |
+| wide-stencil scalar (Chorin's $D_h^{\mathrm{c}} G_h$) | $2h$ Laplacian | $D_h^{\mathrm{c}} B_h = 0$ exactly | even–odd decoupling into $2^3$ sub-lattices |
 | compact-stencil scalar | 7-point Laplacian | no (a different residue after each pass) | not exact |
-| spectral vector | $\delta_{ij} - k_ik_j/k^2$ per mode | in Fourier space only | periodic uniform boxes only; no AMR |
+| spectral vector | $\delta_{ij} - k_ik_j/\lvert\mathbf k\rvert^2$ per mode | in Fourier space only | periodic uniform boxes only; no AMR |
 
 All three share the elliptic step's **non-locality**. A localized divergence
 source corrects the field everywhere, with a fall-off inverse-square in distance that is slower
@@ -215,6 +240,18 @@ saturate about 10× too high), polluted shell interiors, shifted field
 histograms and excess small-scale power. Only the local CT scheme was clean.
 The spectral variant fluctuates but eventually returns to the CT energy
 level.
+
+**Does the stencil matter? The same author, six years apart: a
+qualification.** [Balsara (1998)](/sources/balsara-1998-b.md) §6.2.2
+(p. 149) states that "the discretized formulation in which this
+divergence-free condition for the magnetic field is imposed is not as
+important in obtaining good results as the fact that it is indeed
+imposed". The comparison above finds an order of magnitude between
+variants, with the wide-stencil scalar variant (the 1998 modified-symbol
+projection, per the compiler reading above) saturating about 10× too
+high. The regimes differ: short 2D shock and vortex tests against long 3D
+turbulence with persistent converging flows, and the 1998 paper compares
+no two formulations directly. The two statements do not meet.
 
 ## The iterated collocated projection
 
@@ -257,13 +294,13 @@ exact projection.
 
 * [Tóth (2000)](/sources/toth-2000.md): the projection scheme is consistent
   and order-preserving even for discontinuous flows, and ranks among the most
-  accurate and reliable in a ten-problem 2D comparison (above).
-* [Balsara & Kim (2004)](/sources/balsara-kim-2004.md): on a stringent 3D
+  accurate and reliable in a ten-problem 2D comparison (§7, Table IX).
+* [Balsara & Kim (2004)](/sources/balsara-kim-2004.md) (§III.b, Figs. 2–6): on a stringent 3D
   turbulence problem every projection variant gives spurious energetics,
   structures, statistics and spectra. They judge the scalar variants
   unsuitable for turbulence and dynamo studies.
 
-**Scoped reading (compiled, open).** The two claims are measured on
+**Status: Open.** Scoped reading (compiled): the two claims are measured on
 different problem classes:
 * Tóth's tests are standard 2D problems in which divergence is created and
   advected.
@@ -330,6 +367,36 @@ variable, so a projection "does not affect the total energy at all"
 eq. 40, which keeps the thermal energy of the base scheme. Dai & Woodward's
 energy claim holds only for that variant (compiler reading).
 
+**Which projection did Ryu, Jones & Frank (1995) use?**
+
+* [Balsara (1998)](/sources/balsara-1998-b.md) §6.2.1 (p. 147): Dai &
+  Woodward (1994b), Zachary et al. (1994) and Ryu, Jones & Frank
+  ("1996" in the text; the list gives ApJ 452:785, 1995) "experimented
+  with only the less accurate version of the divergence cleaning step",
+  the version he defines in §5 as the FFT solve with the continuous
+  wavenumber, which does not zero the central divergence (eqs. 5.2–5.4; the accurate version is eqs. 5.5–5.6).
+  No equation of theirs is quoted.
+* [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md) §2.4,
+  eqs. 2.23–2.24, as the bundle reads them (above): the printed Poisson
+  operator is the wide $2h$ Laplacian with the central divergence
+  as source, solved by FFT. Its Fourier symbol is the square of the
+  central-difference symbol, i.e. Balsara's own "accurate" operator, not
+  the continuous-wavenumber one. The gradient stencil of the correction
+  is not printed; with the central one implied by the factored
+  Laplacian, $D_h^{\mathrm c}B_h = 0$ to round-off.
+
+**Status: Open.** Both are claims about the same RJF projection, and they
+are incompatible on the printed Laplacian. Scope notes (compiler): the
+bundle read the arXiv preprint of RJF, so a change in the refereed ApJ
+version cannot be excluded; and if RJF's unprinted gradient were not the
+central one, their corrected field would not zero $D_h^{\mathrm c}$ either,
+which would make "less accurate" true in effect though not in Balsara's
+definition. For Zachary et al. the characterization is also inexact
+without being incompatible: they use central operators with a
+"nonstandard" Laplacian solved by multigrid, i.e. the wide-stencil row to
+solver tolerance, not the continuous-wavenumber FFT. Dai & Woodward
+(1994b) is not ingested.
+
 # Citations
 
 1. [Chorin (1968)](/sources/chorin-1968.md), eqs. (3)–(5), (20)–(22).
@@ -344,3 +411,4 @@ energy claim holds only for that variant (compiler reading).
 10. [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md), §§1, 2.4, 3.1, eqs. 2.23–2.24.
 11. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §1.
 12. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §1.
+13. [Balsara (1998)](/sources/balsara-1998-b.md), §§5, 6.2.1–6.2.2, eqs. 5.1–5.6.

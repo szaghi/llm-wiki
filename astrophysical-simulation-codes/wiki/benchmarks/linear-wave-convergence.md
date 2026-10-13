@@ -267,6 +267,10 @@ slightly raising the fitted rates, PLM giving exactly second order.
 
 * *3D MHD, both CTU variants* ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.2, eqs. 53–56, Fig. 3, App. A). Amplitude $10^{-6}$; background $\rho = 1$, $p = 3/5$, $\mathbf B = (1, 3/2, 0)$, velocity 1 along the wave for the entropy mode and 0 otherwise (slow, Alfvén, fast speeds 1/2, 1, 2); domain $[0,3]\times[0,1.5]^2$ on $2N\times N\times N$, periodic; rotation sines $2/3$ and $2/\sqrt5$, wavelength 1; one crossing time; per-component $L_1$ errors combined in quadrature. Second order for all four families with the 6- and 12-solve CTU+CT; the 6-solve errors are lower except for the slow wave. This is the primary source of the 3D geometry and background attributed above to "Gardiner & Stone"; App. A prints the eigenvectors.
 
+## Later uses (batch 10)
+
+**Relativistic linear waves, Athena++** ([White et al. (2016)](/sources/white-2016.md), §4.1, Figs. 3–6). SR hydro and MHD, plus GR waves in "tilted" coordinates (eq. 37) with a moving interface. All solvers converge at second order. HLLE's entropy error is 1.7× HLLC's (SR) and 2.8× (GR); HLLD beats HLLE by 3.1×, 1.7×, 1.4× in SR and 4.8×, 1.8×, 1.4× in GR (entropy, slow, Alfvén), with no gain on the fast wave.
+
 ## Contradictions
 
 * **Does Athena++ RK3+PPM keep converging on 3D linear waves up to
@@ -295,3 +299,4 @@ slightly raising the fitted rates, PLM giving exactly second order.
 9. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.4, eqs. 79–81, Fig. 11, App. A (arXiv v1).
 10. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§2, 4 (arXiv preprint).
 11. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.2, App. A.
+12. [White et al. (2016)](/sources/white-2016.md), §4.1, Figs. 3–6.

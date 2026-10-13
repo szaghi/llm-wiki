@@ -200,7 +200,7 @@ fan) and Fig. 2 (two-state wave pattern) are diagrams.
 # Pages created or updated
 
 * Created [HLL Riemann solver](/methods/hll-solver.md): the one-intermediate-state solver, its consistency, what is proved, the wave-speed requirement.
-* Created [Roe's approximate Riemann solver](/methods/roe-solver.md): Theorem 2.1, Roe as a Godunov-type solver, the stationary entropy defect.
+* Updated [Roe's approximate Riemann solver](/methods/roe-solver.md) (created in this batch): Theorem 2.1, Roe as a Godunov-type solver, the stationary entropy defect.
 * Updated [Upwind constrained transport (UCT)](/methods/upwind-constrained-transport.md): origin of the HLL flux, and what HLvL do and do not prove about it.
 
 # Citations

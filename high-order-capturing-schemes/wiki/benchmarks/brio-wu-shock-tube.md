@@ -141,6 +141,8 @@ Rotated versions and other MHD Riemann problems are collected on
 
 **Later uses (batch 17).** Gaussian-scaled data ($B_x = 0.75\sqrt{4\pi}$, $B_y = \pm\sqrt{4\pi}$), $\gamma = 2$, 800 points, 400 steps, with a split second-order Godunov scheme and a linearized Engquist–Osher solver: "excellent agreement", sharp shocks. The strong variant ($B_x = 0$, left pressure 1000) is run at $\gamma = 5/3$ on 200 points for 100 steps: "we could solve this problem with a $\gamma \ne 2$, while the Brio and Wu solver could not" ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.1, Figs. 3–4).
 
+**Later uses (batch 18).** Powell (1994) runs the standard states ($B_x = 3/4$, $\gamma = 2$) rotated by 45° on a 2D grid, first order ([Powell (1994)](/sources/powell-1994.md), §3; [grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md)). Balsara (1998) runs it in Gaussian units ($B_x = 0.75\sqrt{4\pi}$) on $[-0.5,0.5]$, 800 zones, CFL 0.8, $t = 0.1$, second-order TVD: contact in at most 4 zones, weak slow shock in little more than 2 ([Balsara (1998)](/sources/balsara-1998-b.md), §6.1, Fig. 2).
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §§1, 3.1, 4, Figs. 2–4.
@@ -154,3 +156,5 @@ Rotated versions and other MHD Riemann problems are collected on
 9. [Brio & Wu (1988)](/sources/brio-1988.md), §§V–VII, Figs. 2–9.
 10. [Dai & Woodward (1994)](/sources/dai-1994.md), p. 368, Tables IVa–b, §6.
 11. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.1, Figs. 3–4.
+12. [Powell (1994)](/sources/powell-1994.md), §3.
+13. [Balsara (1998)](/sources/balsara-1998-b.md), §6.1, Fig. 2.

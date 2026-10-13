@@ -136,7 +136,7 @@ two families agree on the scaling's ceiling but not on its floor.
 
 ## Contradictions
 
-**Is fifth-order WENO-JS fifth order at critical points?**
+**Is fifth-order WENO-JS fifth order at critical points?** *Closed (2026-10-08) by explicit supersession.*
 * [Jiang & Shu (1996)](/sources/jiang-1996.md), eq. 3.9: with their
   indicator the weights are "also 5th order accurate at critical points";
   repeated by [Shu (1998)](/sources/shu-1998.md); extended to

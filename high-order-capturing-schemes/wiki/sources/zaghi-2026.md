@@ -8,7 +8,7 @@ authors: [Zaghi S.]
 year: 2026
 venue: "ADAM repository: FLUME source code"
 local_file: "/home/stefano/llm-wiki/high-order-capturing-schemes/raw/docs/zaghi-2026/"
-tags: [mhd, glm, divergence-cleaning, source-terms, verification]
+tags: [mhd, glm, source-terms, verification]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -65,7 +65,7 @@ None in the captured files.
 | `B`, `B_n` | $\mathbf B$, normal component | |
 | `u` | $\mathbf v$ | velocity |
 | `p_t` | $p + \tfrac12\vert\mathbf B\vert^2$ | total pressure, written out |
-| `psi` | $\hat\psi_{\mathrm{GLM}}$ | GLM cleaning scalar (code's scaling not checked against the registry's) |
+| `psi` | $\hat\psi_{\mathrm{GLM}}$ | GLM cleaning scalar; scaling inferred from the `psi^2/2` energy term (Derigs convention), not verified against $c_h$ |
 | `n` (in `p_t n`) | $\mathsf I$ row along $\mathbf n$ | identity tensor applied to the normal |
 
 # Pages created or updated

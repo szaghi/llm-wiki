@@ -130,7 +130,8 @@ All in §4: $\gamma = 5/3$, $x \in [0,1]$, 512 cells, Courant number 0.8,
 rotational-discontinuity steepening on, contact steepening off. Code
 (dots) against the exact solver (lines); only the captions survive in the
 preprint (pp. 24–26). States are $(\rho, v_x, v_y, v_z, B_y, B_z, E)$,
-$E$ the total energy.
+with a seventh entry $E$ that Ryu & Jones label total energy (presumably
+the pressure; compiler reading below).
 
 | Fig. | Left state | Right state | $B_x$ | $t$ | Structures | Origin |
 |---|---|---|---|---|---|---|

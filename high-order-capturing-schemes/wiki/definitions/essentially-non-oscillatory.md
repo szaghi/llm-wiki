@@ -52,6 +52,38 @@ ENO or WENO schemes of order above two are TVB as time evolves
 ([Shu & Osher (1988)](/sources/shu-1988.md), §III;
 [Shu (1998)](/sources/shu-1998.md), §2.3.4).
 
+**Later uses (batch 18).** *The nonoscillatory rung at its source*
+([Harten & Osher (1987)](/sources/harten-1987-b.md), §§1–2), now ingested.
+* *Where the notion is introduced* (a correction of the attribution in the
+  hierarchy above). The requirement that the solution operator "diminish
+  the number of local extrema in the numerical solution" ("diminishing"
+  meaning nonincreasing) is defined in Harten & Osher's paper, which calls
+  itself "the first" of the series (§1, p. 280), not in the second paper.
+  Every essentially 3-point TVD scheme that is an average of monotone
+  Riemann solvers has the property; unlike TVD, a nonoscillatory scheme
+  may "occasionally accentuate a local extremum", and it is monotonicity
+  preserving.
+* *"Limits the order to 2" is not stated there.* Harten & Osher prove no
+  order limit. They present their second-order scheme as the first step of
+  a programme: "we show how to construct nonoscillatory schemes that are
+  uniformly high-order accurate … In this first paper we describe a
+  second-order accurate scheme of this type" (p. 280). The order-2 limit
+  of the hierarchy is the later statement of
+  [Harten et al. (1987)](/sources/harten-1987.md) (§2), to which it stays
+  attributed.
+* *The same argument, first for extrema* (§2, p. 281). Cell averaging is
+  nonoscillatory and exact evolution is TVD, so a reconstruct–evolve–average
+  scheme is nonoscillatory if the reconstruction has no more local extrema
+  than the data: "the design of nonoscillatory high-order accurate schemes
+  essentially boils down to a problem on the level of approximation of
+  functions". The ENO III argument above repeats it for the total
+  variation.
+* *What is given up* (§§2, 5). The paper's second-order scheme keeps
+  second order at extrema but loses TVD: its TV can grow, by an amount
+  bounded per step (5.5b), and uniform TV boundedness is not proved, for
+  "lack of theoretical tools to analyze pointwise regularity" (p. 291)
+  ([ENO](/methods/eno-reconstruction.md)).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–2.
@@ -59,3 +91,4 @@ ENO or WENO schemes of order above two are TVB as time evolves
 3. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §3.3, Definition 1.
 4. [Jiang & Shu (1996)](/sources/jiang-1996.md), §2.
 5. [Shu (1998)](/sources/shu-1998.md), §§1, 2.2.1, 2.3.4.
+6. [Harten & Osher (1987)](/sources/harten-1987-b.md), §§1–2, 5, pp. 280–291.

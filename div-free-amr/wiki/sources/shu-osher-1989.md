@@ -227,6 +227,9 @@ No MHD test and no divergence measurement.
   in this batch): Table I, multidimensional CFL condition.
 * Updated [WENO reconstruction](/methods/weno.md): the flux-primitive form
   (Lemma 2.1), local Lax–Friedrichs splitting as ENO-LLF, RF splitting.
+* Updated [Constrained transport](/methods/constrained-transport.md).
+* Updated Source pages of [Jiang & Shu (1996)](/sources/jiang-shu-1996.md) and
+  [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md).
 
 # Citations
 

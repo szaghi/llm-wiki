@@ -171,6 +171,14 @@ to another bundle.
 
 ## Status
 
+**Batch 18 (frontier 4b) staged 2026-10-13:** balsara-1998-b, balsara-2012,
+devore-1991, powell-1994, orszag-1979, cockburn-1989, einfeldt-1988,
+harten-1987-b, toro-1994, berger-2003, dumbser-2008, toro-2009 (scoped);
+143 sources. New page methods/self-adjusting-positivity-limiter. No
+contradiction opened; the parallel-force entry gains Powell's eqs. 14–15 on the
+plus side and stays Open. Deep lint ran with this batch (19 ingestions
+since the batch-16 lint); the next is due after 10 more.
+
 **Batch 17 (frontier 4a) staged 2026-10-13:** dedner-2002, toth-2000,
 colella-1990, evans-1988, zachary-1994, dai-1998, copied from sibling
 archives (D17); 131 sources. New page methods/corner-transport-upwind. No

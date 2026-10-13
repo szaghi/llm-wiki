@@ -95,6 +95,8 @@ rigorous analysis" but slower and worse. On the
 the scheme of his [Sod](/benchmarks/sod-shock-tube.md) run
 ([TVD](/properties/total-variation-diminishing.md)).
 
+**Later uses (batch 18).** Yang's steepener inside a characteristic TVD MHD scheme ([Balsara (1998)](/sources/balsara-1998-b.md), §2.2, eqs. 2.5–2.12): applied to the entropy and both Alfvén fields (only the Alfvén fields in isothermal MHD), with the balance-factor exponent 4.3 and compression constant 33.0 that the Balsara & Shu line cites.
+
 # Citations
 
 1. [Shu & Osher (1989)](/sources/shu-1989.md), §III.
@@ -105,3 +107,4 @@ the scheme of his [Sod](/benchmarks/sod-shock-tube.md) run
 6. [Liu, Osher & Chan (1994)](/sources/liu-1994.md), §4.
 7. [Sod (1978)](/sources/sod-1978.md), §§1–4, Table IV.
 8. [Harten (1983)](/sources/harten-1983.md), §§5, 7, eqs. 5.7–5.8, Figs. 2–3.
+9. [Balsara (1998)](/sources/balsara-1998-b.md), §2.2.

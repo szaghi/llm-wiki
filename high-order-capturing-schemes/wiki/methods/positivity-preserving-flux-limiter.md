@@ -84,9 +84,12 @@ face-centred magnetic field is limited consistently with the cell
 variables. The procedure is time-explicit, and the authors trace it to
 Hu et al.
 
+**Later uses (batch 18).** *Zalesak's FCT limiter written out* ([DeVore (1991)](/sources/devore-1991.md), §2, eqs. 7–13). The corrected update is the blend $\theta_{i+1/2}\hat f^{\mathrm{HO}} + (1-\theta_{i+1/2})\hat f^{\mathrm{LO}}$ with the FCT factor as $\theta$, but its bounds are local extrema of old and low-order values, not $\mathcal G$. DeVore is a secondary restatement; the primary FCT papers are not ingested.
+
 # Citations
 
 1. [Hu, Adams & Shu (2013)](/sources/hu-2013.md), §§2–3 (eqs. 11–21 read from the page images).
 2. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§1, 2, 5, 6.7.
 3. [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md), §§5, 5.1.
 4. [Ding & Wu (2024)](/sources/ding-2024.md), §1.
+5. [DeVore (1991)](/sources/devore-1991.md), §2.

@@ -124,6 +124,10 @@ original's finest grid and position.
 
 **Berger & Colella's resolution claim, checked.** They print (§7, p. 79): "The finest grids in this calculation represent a factor of 4 increase in resolution in each spatial direction over the finest grid calculation in [22]", [22] being [Woodward & Colella (1984)](/sources/woodward-1984.md). Their finest $h = 1/800$ is 6.7 times the original's $h = 1/120$, but the solution is self-similar in $(x/t, y/t)$, so resolution relative to the wave pattern scales as $h/t$: $(1/120)/0.2 \div (1/800)/0.12 = 4.0$ (compiler computation at deep lint #4, using the Fig. 7.1 caption's $t = 0.12$ — the text prints 1.20 — and assuming the same nondimensionalization, which Berger & Colella do not print). The printed factor 4 is consistent; the flag is withdrawn. At $t = 1.20$ the pattern would not fit the $2.0\times0.4$ domain, which supports the caption's value.
 
+## Later uses (batch 10)
+
+* **Real-gas complex Mach reflection** ([Colella & Glaz (1985)](/sources/colella-1985.md), §3). This is a different set-up: a 20° ramp, shock Mach number 7.19, air with $\gamma = 1.4$, Gilmore and Hansen EOSs, $510\times120$ zones. A second triple point appears with the two real-gas EOSs but not with $\gamma = 1.4$. Only Hansen matches the measured wall density "within 2–3 %".
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.3.
@@ -133,3 +137,4 @@ original's finest grid and position.
 5. [Colella (1990)](/sources/colella-1990.md), §5, Figs. 8–10, pp. 197–198.
 6. [Woodward & Colella (1984)](/sources/woodward-1984.md), §§IVc, VIc, Figs. 4, 9–10, p. 136.
 7. [Berger & Colella (1989)](/sources/berger-1989.md), §7, Fig. 7.1, p. 79.
+8. [Colella & Glaz (1985)](/sources/colella-1985.md), §3.

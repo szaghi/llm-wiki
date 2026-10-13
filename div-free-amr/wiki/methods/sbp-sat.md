@@ -5,7 +5,7 @@ description: "Imposes boundary and interface conditions weakly through penalty t
 status: established
 aliases: [simultaneous approximation term, penalty method]
 tags: [sbp, sat, interface-conditions, multi-block, stability]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # SBP-SAT technique
@@ -63,6 +63,19 @@ between weak and strong imposition is therefore a genuine trade
 (implementation simplicity and generality vs time-step and system size),
 not a settled default.
 
+**Strong imposition in the original construction.** The first SBP
+operators were used without penalties:
+[Kreiss & Scherer (1974)](/sources/kreiss-scherer-1974.md) (§3, eq. 3.4)
+semi-discretize a symmetric hyperbolic system with the boundary
+conditions on the ingoing characteristics imposed on the grid function
+itself (the grid function "satisfies the boundary conditions"), and
+assert that "there is no difficulty in deriving an
+energy estimate" without writing it out. They have no penalty terms, which
+is consistent with SAT originating later. They also assert that
+interpolation between overlapping grids can be built "in such a way that
+no stability problem arises" (p. 199), with neither construction nor
+reference: an unproved claim, not an interface result.
+
 # Citations
 
 1. [Nordström & Carpenter (1999)](/sources/nordstrom-carpenter-1999.md), §§3–5.
@@ -72,3 +85,4 @@ not a settled default.
    hybridized form: independent trace variables on block faces carry all
    coupling; Schur elimination of volume unknowns leaves a small SPD
    face-only system (elliptic problems, repeated solves).
+5. [Kreiss & Scherer (1974)](/sources/kreiss-scherer-1974.md), pp. 198–199, §3, eq. 3.4.

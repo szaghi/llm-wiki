@@ -115,6 +115,43 @@ stated ([Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4;
 [multidimensional Riemann solvers](/methods/multidimensional-riemann-solvers.md)).
 The set-up is that of the review's run in the batch-7 entry above.
 
+**Later uses (batch 18).** *The 1998 blasts and the 2012 3D blast.*
+* *Balsara's 1998 blasts* ([Balsara (1998)](/sources/balsara-1998-b.md),
+  §6.2.2, Figs. 9–11). Unit square, $200^2$, uniform $B_x = 10$ G,
+  second-order TVD. Adiabatic: $\rho = 1$, $p = 1000$ inside radius 0.05
+  and 1 outside, $\gamma = 1.4$, $t = 0.02$, Strang-split with the spectral
+  projection; ambient plasma beta about 0.25 (reader's arithmetic,
+  $8\pi p/B^2$); more symmetric than the isothermal case, and splitting
+  "does not seem to have affected the quality". Isothermal: $\rho = 100$
+  inside radius 0.05 and 1 outside, isothermal sound speed 1, $t = 0.09$;
+  without cleaning (and split) the magnetic pressure shows "a great deal of
+  small-scale fluctuations especially in the center", unlike the unsplit
+  cleaned run. By its parameters the adiabatic case is very likely the
+  "earlier blast" of which the batch-11 origin is a "more stringent
+  variant": the 1999 set-up raises the field to 100, the radius to 0.1 and
+  lowers the ambient pressure to 0.1 (reader's identification; the
+  batch-11 record does not name the reference). The adiabatic run is
+  cleaned, so it is no test of divergence errors; Balsara's evidence that
+  cleaning matters is the isothermal case, which changes splitting and
+  cleaning together, and so does not conflict with the batch-11 finding
+  that the uncleaned zone-centred scheme is "very similar" on the strong
+  adiabatic blast.
+* *The 2012 3D blast* ([Balsara (2012)](/sources/balsara-2012.md), §3.3,
+  Figs. 5–6). $\gamma = 1.4$, $\rho = 1$, $p = 0.1$ and 1000 inside radius
+  0.1 (centre not stated), $B_x = B_y = B_z = 50/\sqrt3$ (Gaussian,
+  $\vert\mathbf B\vert = 50$), plasma beta $1.005\times10^{-3}$, unit cube,
+  $129^3$, CFL 0.3, $t = 0.012$; third-order ADER-WENO with a linearized
+  solver and the [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md),
+  also run at second and fourth order. Mid-plane ranges:
+  $\rho \in [0.115, 2.53]$, $p \in [0.0135, 88.3]$,
+  $\vert\mathbf v\vert \le 8.94$, $\vert\mathbf B\vert \in [13.7, 64.1]$.
+  With floors only ($p \ge 10^{-8}$) the pressure reaches the floor and is
+  "totally corrupted… scientifically unusable", with peak
+  $\vert\mathbf v\vert$ 9.6 and $\vert\mathbf B\vert$ 67.2. Called the 3D
+  variant of Balsara and Spicer's 2D blast; it is milder than the batch-7
+  "extreme" blast ($\vert\mathbf B\vert = 150$, beta $1.117\times10^{-4}$,
+  $257^3$), which uses the same method.
+
 # Citations
 
 1. [Christlieb et al. (2016)](/sources/christlieb-2016.md), §§6.6–6.7.
@@ -130,3 +167,5 @@ The set-up is that of the review's run in the batch-7 entry above.
 11. [Balsara (2017)](/sources/balsara-2017-d.md), §IX.4.
 12. [Balsara & Spicer (1999)](/sources/balsara-1999.md), §3.2.
 13. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §5.4.
+14. [Balsara (1998)](/sources/balsara-1998-b.md), §6.2.2, Figs. 9–11.
+15. [Balsara (2012)](/sources/balsara-2012.md), §3.3, Figs. 5–6.

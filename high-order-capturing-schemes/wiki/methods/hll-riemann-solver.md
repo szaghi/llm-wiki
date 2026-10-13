@@ -360,13 +360,14 @@ themselves say follows.
   described in Section 3" (Remark after eq. 5.9), and its shear test runs
   HLLEM with the shear anti-diffusion set to zero; with Roe-eigenvalue
   speeds HLLEM is Roe's scheme and fails (§5). The HLLEM part of the
-  attribution may rest on Einfeldt (1988), which is not ingested
+  attribution may rest on Einfeldt (1988), which is not ingested (ingested at
+  batch 18)
   ([HLLEM](/methods/hllem-riemann-solver.md)).
 * *Which formulas are "Einfeldt's"* (§4). The 1991 paper prints only the
   min/max speeds (4.5), the Lax–Friedrichs-type member (4.7) and the
   sharper speeds (4.10). Toro's $\bar c_{\mathrm E}$ form is not in it;
   its origin is not settled by this batch (Einfeldt (1988) is a candidate,
-  not ingested). The paper calls HLL with its speeds "the HLLE scheme",
+  not ingested; ingested at batch 18). The paper calls HLL with its speeds "the HLLE scheme",
   crediting Harten, Lax & van Leer and Einfeldt (1988). Near sonic points
   a Roe eigenvalue can fall outside the two cells' eigenvalues (Vinokur);
   the bounding speeds then add dissipation, a failure the authors call
@@ -375,6 +376,95 @@ themselves say follows.
   reproduces the scheme Lax prints, written on a staggered lattice
   (reader's algebra, [Lax (1954)](/sources/lax-1954.md), p. 163;
   [monotone numerical flux](/definitions/monotone-flux.md)).
+
+**Later uses (batch 18).** *Einfeldt's 1988 paper and the HLLC paper are
+now ingested* ([Einfeldt (1988)](/sources/einfeldt-1988.md);
+[Toro, Spruce & Speares (1994)](/sources/toro-1994.md)). The remarks above
+that call Einfeldt (1988) "not ingested" or "a candidate" predate them.
+* *Speeds that need not bound* (Einfeldt, §3, p. 298; a qualification of
+  "meant as bounds" under Wave-speed estimates). Einfeldt takes $S_L$,
+  $S_R$ as "Lipschitz-continuous approximations" to the extreme signal
+  speeds and states: "In contrast to the original version, we do not
+  assume that the numerical signal velocities … are lower and upper bounds
+  for the physical signal velocities." The bounding requirement of Harten,
+  Lax & van Leer returns in Einfeldt et al. (1991), where it carries the
+  positivity proof.
+* *The stability condition instead* (Einfeldt, §4, eqs. 4.1–4.8). Written
+  as $\tfrac12\left(f(u^-) + f(u^+)\right) - \tfrac12\Theta_{i+1/2}(u^+ - u^-)$
+  with a Roe-type matrix in $\Theta_{i+1/2}$, the flux has viscosity
+  eigenvalues
+  $\left((S_R^+ + S_L^-)\lambda^{(p)} - 2S_R^+S_L^-\right)/(S_R^+ - S_L^-)$
+  (4.4, compiler's expansion), $\lambda^{(p)}$ the Roe-state eigenvalues.
+  They are nonnegative (4.5) if $S_L^- \le \lambda^{(p)} \le S_R^+$ for
+  every $p$ (4.6), and they are at least $\vert\lambda^{(p)}\vert$, the
+  TVD-type condition (4.7) that gives TVD for linear or scalar $f$ under
+  a CFL bound, "if and only if" (4.6) holds (p. 300). This is the
+  "Einfeldt's stability condition" of the [HLLEM](/methods/hllem-riemann-solver.md)
+  page.
+* *Roe-average eigenvalues at the source* (eqs. 5.1–5.3). Einfeldt's first
+  speed algorithm is exactly $v_{n,\mathrm{Roe}} \mp c_{\mathrm{Roe}}$,
+  which he calls "HLLR"; this agrees with Toro's credit above.
+* *Both formulas called "Einfeldt's" originate here* (settling the
+  batch-16 bullet "Which formulas are 'Einfeldt's'").
+  * Toro's $\bar c_{\mathrm E}$ is Einfeldt's second algorithm, "HELL"
+    (eqs. 5.4–5.8): an exact identity writes $c_{\mathrm{Roe}}^2$ as the
+    $\sqrt\rho$-weighted mean of $(c^\mp)^2$ plus a $\gamma$-dependent
+    coefficient times $(v_n^+ - v_n^-)^2$; replacing the coefficient by its
+    value at $\gamma = 2$, an upper bound "for most gases", gives the
+    formula above term by term, and the mean velocity left undefined on
+    Toro's page is the Roe velocity $v_{n,\mathrm{Roe}}$ (5.8). The speeds
+    are "well defined for a general convex equation of state" and, since
+    $\bar c_{\mathrm E} \ge c_{\mathrm{Roe}}$, satisfy (4.6) "for any
+    $\gamma$-law gas"; the general-EOS question is left open (5.9–5.10).
+  * The min/max form is HLLR with Einfeldt's modification (4.11):
+    $S_L$ replaced by its minimum with $v_n^- - c^-$ and $S_R$ by its
+    maximum with $v_n^+ + c^+$. Its 1988 motivation is an **entropy fix**
+    at sonic rarefactions, supported by an argument from Lax's entropy
+    inequality and by Figs. 10–12, not by a proof (4.12). The positivity
+    motivation that Xie et al. quote belongs to Einfeldt et al. (1991,
+    eq. 4.5), which reuses the form.
+* *No positivity result in Einfeldt (1988).* The paper neither states nor
+  proves positivity of density or pressure for any scheme. In "Cited, not
+  proved here", Simon & Mandal's "both positivity preserving and entropy
+  satisfying" for HLL with Einfeldt's speeds therefore rests, for
+  positivity, on Einfeldt et al. (1991) alone, and for entropy on the 1988
+  heuristic and experiments. The HLLEM part of Balsara & Kim's "HLL/HLLEM
+  class" has support in neither Einfeldt paper.
+* *Sonic points: depends on the speeds* (a qualification of "no entropy
+  fix is needed at a sonic rarefaction" under Contact and shear
+  diffusion). Einfeldt's sonic-rarefaction test (§6A, eq. 6.3) shows that
+  with the Roe-eigenvalue speeds HLL "admits" the same "entropy violating
+  stationary shock" as Roe's scheme (stated in the text, not plotted), and
+  that (4.11) removes it, leaving a kink "even smaller" than Godunov's
+  (Fig. 12). Toro's sentence is about his own runs, which use
+  pressure-based speeds ([Toro (1997)](/sources/toro-1997.md), Ch. 10;
+  likewise the sonic Sod test of Toro, Spruce & Speares, §6.1, with
+  hybrid speeds). Those speeds satisfy $S_L \le v_n^- - c^-$ and
+  $S_R \ge v_n^+ + c^+$ because $q^{\mathrm w} \ge 1$, the bracketing that
+  (4.11) enforces (compiler's reading). The two statements concern
+  different speed estimates, so they do not contradict each other: the
+  sonic property belongs to speeds that bracket the data eigenvalues,
+  not to every HLL speed choice.
+* *Pressure-based speeds at their source* (Toro, Spruce & Speares, §3.3,
+  eqs. 15–16). The paper calls them "hybrid estimates" and tests them with
+  $p_*$, $v_{n*}$ from a linearized (primitive-variable) estimate, "very
+  satisfactory". "The choice of $p^*$ is more critical than that of
+  $u^*$"; a $p_*$ above the exact one is desirable because shock speeds
+  are then overestimated. The two-rarefaction pressure $p_{\mathrm{TR}}$,
+  also for a covolume gas (eq. 17), is conjectured to be at least the exact
+  $p_*$, "a conjecture that would be useful to prove". Isentropic and
+  linearized speeds alone are "not sufficiently robust for very severe flow
+  regimes" (§3.4); a revision through $u^{\mathrm{HLL}}_*$ is proposed but
+  its announced tests are not in the paper. The paper also recalls Davis's
+  observation that $S_R = -S_L = h/\Delta t$ gives Lax–Friedrichs (p. 27).
+* *HLL contacts at second order* (Toro, Spruce & Speares, §§6.1–6.2, second-order
+  WAF). On Sod's problem with 100 cells (Superbee, CFL 0.8) HLL smears the
+  contact over "about 20 points" against "about 4" for HLLC; on the
+  Woodward–Colella blast waves with 3000 cells, the strongest contact over
+  "about 450 points" against "less than 10"
+  ([HLLC](/methods/hllc-riemann-solver.md)).
+
+*MHD caveat, stated not shown* ([Balsara (1998)](/sources/balsara-1998-b.md), §4, p. 136). HLLE cannot represent MHD slow shocks exactly, because they do not move at the extreme speeds. The same holds for HLLEM, and Alfvén waves are not at the arithmetic mean of the extreme speeds, so an MHD HLLEM is "trickier".
 
 # Citations
 
@@ -401,3 +491,6 @@ themselves say follows.
 21. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §§1, 3, eqs. 3.7, 3.13–3.16.
 22. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§4–6, eqs. 4.4–4.14, 5.9, App.
 23. [Lax (1954)](/sources/lax-1954.md), p. 163.
+24. [Einfeldt (1988)](/sources/einfeldt-1988.md), §§3–6, eqs. 3.7, 4.1–4.12, 5.1–5.10, Figs. 10–12.
+25. [Toro, Spruce & Speares (1994)](/sources/toro-1994.md), §§1, 2.4, 3.3–3.4, 6.1–6.2, eqs. 15–17.
+26. [Balsara (1998)](/sources/balsara-1998-b.md), §4.

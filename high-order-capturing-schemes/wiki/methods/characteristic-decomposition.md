@@ -374,6 +374,39 @@ slopes, and the 1994 MHD Godunov scheme.*
   (constant 0.1) and an empirical Alfvén/slow test (eqs. 31–32;
   [nonconvexity of ideal MHD](/results/mhd-nonconvexity.md)).
 
+**Later uses (batch 18).** *Field-dependent characteristic limiting in a
+TVD MHD scheme, and a claim that positivity makes it unnecessary.*
+* *Characteristic slopes, limited by field type*
+  ([Balsara (1998)](/sources/balsara-1998-b.md), §§2.1–2.2, eqs. 2.1–2.12).
+  In primitive variables, the neighbours are projected on the left
+  eigenvectors of the zone; each coefficient is the smallest of half the
+  central difference and a factor times each one-sided difference when the
+  one-sided differences agree in sign, else zero; the factor is 2 in
+  genuinely nonlinear fields (the monotonized-central limit) and 1 in
+  linearly degenerate ones (a minmod-type limit). This parallels Zachary
+  et al.'s factor 2 dropping to 1 in locally degenerate fields (batch 17),
+  here fixed by field type. Yang's artificial-compression steepener is
+  then added in the entropy and Alfvén fields
+  ([contact sharpening](/methods/contact-sharpening.md)). The stated
+  rationale: characteristic interpolation enforces entropy better,
+  primitive interpolation steepens linearly degenerate fields better, and
+  steepening on top of characteristic interpolation gives both (§2).
+  Eigenvectors are Roe and Balsara's (adiabatic) and Balsara's 1996 ones
+  (isothermal, six waves, no entropy mode).
+* *No characteristic limiting with a positivity step*
+  ([Balsara (2012)](/sources/balsara-2012.md), Abstract, Conclusions).
+  Third- and fourth-order ADER-WENO runs reconstructing conserved variables
+  componentwise, with the
+  [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md),
+  showed "no need to resort to characteristic limiting" on a Mach 800 jet, a
+  Mach 100 jet and a 3D MHD blast. The paper also says characteristic
+  reconstruction "might slightly ameliorate the problem, yet it usually does
+  not solve" positivity loss in multi-shock flows (§1). This qualifies the
+  review statement above that componentwise reconstruction "could lead to
+  spurious oscillations" for strong shocks: the evidence is three tests with
+  one positivity treatment, with no componentwise-against-characteristic
+  comparison shown.
+
 ## Contradictions
 
 **Is Brio & Wu's eq. 40 $\alpha_s$ the same quantity as Roe & Balsara's
@@ -449,3 +482,5 @@ dimensionless $\alpha_s$ (is the $1/c_f$ intended)?** *Open*
 44. [Roe & Balsara (1996)](/sources/roe-1996.md), §§2–4, p. 60, eqs. 7–9, 15–16, 21.
 45. [Colella (1990)](/sources/colella-1990.md), §§2, 4, eqs. 2.5–2.12.
 46. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §§2.2–2.3, eqs. 7–12, 18–19, 31–32.
+47. [Balsara (1998)](/sources/balsara-1998-b.md), §§2.1–2.2, eqs. 2.1–2.12.
+48. [Balsara (2012)](/sources/balsara-2012.md), §1, Abstract, Conclusions.

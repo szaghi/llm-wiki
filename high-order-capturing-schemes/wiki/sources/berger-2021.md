@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 428:109820"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2021-JCP-Berger-101016jjcp2020109820.pdf"
 tags: [embedded-boundary, boundary-treatment, conservation]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -54,6 +54,8 @@ time stepping); a Mach 2 [shock reflection from a cylinder](/benchmarks/shock-re
 (smallest volume fraction $1.17\times10^{-4}$); and a Mach 10
 [double Mach reflection](/benchmarks/double-mach-reflection.md) on an
 embedded wedge (smallest $2.95\times10^{-7}$).
+
+**Later evidence (batch 18).** The "h-box (second order …)" summary is qualified by the primary source, [Berger et al. (2003)](/sources/berger-2003.md). It proves second order for 1D advection with one small cell (Prop. 2) and observes it on irregular 1D grids and a 2D nonuniform tensor grid. It has no cut cells and states that no Cartesian embedded-boundary method was yet second order at boundary cells (§8). See [cut-cell finite volume](/methods/cut-cell-finite-volume.md).
 
 # Notation map
 

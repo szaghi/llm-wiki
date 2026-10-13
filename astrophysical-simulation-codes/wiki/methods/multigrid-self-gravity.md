@@ -5,7 +5,7 @@ description: "Solving the gravitational Poisson equation on AMR hierarchies: Enz
 status: established
 aliases: [multigrid self-gravity, AMR Poisson solver, FAS multigrid, full multigrid, FMG, level-by-level gravity solve, composite Poisson solve]
 tags: [self-gravity, multigrid, amr, performance, conservation]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Poisson solvers for self-gravity on adaptive meshes
@@ -277,6 +277,10 @@ does not arise; the solver is a periodic FFT as on Enzo's root grid
   scales. The sub-percent agreements therefore required matching each
   code's Green's function and gradient stencil.
 
+## Later uses (batch 10)
+
+* **RAMSES's one-way interface** ([Teyssier (2002)](/sources/teyssier-2002.md), §2.2.3, eqs. 2–4, arXiv v1). FFT on the coarse level with the Green function of the $(2d+1)$-point Laplacian. On finer levels: red–black Gauss–Seidel with $\omega_{\mathrm{SOR}} \simeq 2/(1+\pi/N)$ (Dirichlet) or $2/(1+2\pi/N)$ (periodic), $N$ being the mean patch size on AMR levels; Dirichlet data linearly reconstructed from level $l-1$; stop when the residual drops by $10^3$. Examples: 1.9 and 60 iterations for $128^3$ fully refined; 1.7 and 20 iterations on a cosmological level; ART used 1.25. "the coarse grid solution never 'sees' the effect of the fine grids ... it can not be better in any way"; a two-way scheme is "left for future work". Measured force errors against PM references of equivalent resolution are "at the percent level", with level-boundary conditions "the main source of inaccuracy in the N-body scheme" (§§3.1–3.2).
+
 ## Contradictions
 
 **Are level-by-level Poisson solvers adequate?** *Open.*
@@ -290,6 +294,9 @@ does not arise; the solver is a periodic FFT as on Enzo's root grid
   subgrid solve is the production method; the paper concedes it is not a
   coherent level-wide solve and announces a HYPRE-based AMR solver as future
   work, without quantifying the error.
+
+* [Teyssier (2002)](/sources/teyssier-2002.md), §§2.2.3, 3.1–3.2: the RAMSES author concedes the one-way solve is no better than the coarse grid alone, and measures percent-level force errors on point-mass and ΛCDM tests. This neither confirms nor refutes the "more than one order of magnitude" estimate.
+
 * The two agree that the method is inconsistent; they differ on how much it
   matters, and no source measures it on an implemented level-by-level
   solver. A third design, FLASH's block solve with an inter-level
@@ -304,3 +311,4 @@ does not arise; the solver is a periodic FFT as on Enzo's root grid
 4. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.1, 2.3 (arXiv v2).
 5. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1, 2.4, 3.2 (arXiv v2).
 6. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.4, 2.9, 3.2, eqs. 16–22, Fig. 2 (arXiv v2).
+7. [Teyssier (2002)](/sources/teyssier-2002.md), §§2.2.3, 3.1–3.2 (arXiv v1).

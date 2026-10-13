@@ -9,7 +9,7 @@ year: 2017
 venue: "Living Rev. Comput. Astrophys. 3:2"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2017-LRCA-Balsara-101007s41115-017-0002-8.pdf"
 tags: [review, weno, ader, dg, positivity, mhd]
-timestamp: 2026-10-09T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -90,6 +90,8 @@ RMHD vortices (log–log plots only, design order "met"); forward step
 ($1000^2$); a 3D extreme blast at plasma beta $1.117\times10^{-4}$ ($257^3$,
 positive with the self-adjusting method); torsional Alfvén decay;
 relativistic rotor (Lorentz factor 30, $4700^2$) and Orszag–Tang.
+
+**Later evidence (batch 18).** The primary source [Dumbser et al. (2008)](/sources/dumbser-2008.md), Table 1, gives 0.33 for $N = 1$, $M = 1$ and 0.32 for $M = 2, 3, 4$. The limits depend on $N$ alone, for every $M \ge N$. The analysis is 1D only, and "divided by the dimension in multi-D" is not in the 2008 paper: its 2D and 3D runs use $0.7/(2N+1)$, or $0.5/(2N+1)$ at fifth and sixth order (§5.2.1).
 
 # Notation map
 

@@ -8,7 +8,7 @@ authors: [Evans C.R., Hawley J.F.]
 year: 1988
 venue: "Astrophys. J. 332:659–677"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1988-ApJ-Evans-101086166684.pdf"
-tags: [mhd, divergence-free, constrained-transport, staggered-mesh, vector-potential]
+tags: [mhd, divergence-free, constrained-transport, staggered, vector-potential]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

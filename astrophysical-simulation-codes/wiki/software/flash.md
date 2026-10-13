@@ -343,6 +343,12 @@ that paper and concerns that version.
 
 The interacting-blast-wave run now has a benchmark page, [interacting blast waves](/benchmarks/interacting-blast-waves.md); Woodward & Colella's finest-pair rates are PPMDE 1.07, PPMLR 0.98, all others ≤ 0.85 (Table I), which agrees with "only PPM achieved even linear convergence". On the Emery step, Woodward & Colella (p. 131) give a corner treatment (four plus two zones reset to the corner entropy and enthalpy) whose absence produces the numerical boundary layer and spurious Mach reflections that FLASH reports.
 
+## Later uses (batch 10)
+
+The analysis toolkit yt read FLASH output "natively" in 2011, and FLASH,
+like Enzo, stores particles with the finest grid patch containing them
+([Turk et al. (2011)](/sources/turk-2011-c.md), §4, §4.3).
+
 # Citations
 
 1. [Federrath et al. (2010)](/sources/federrath-2010.md), §§2.1–2.5, 3–4, 4.2.1, 4.3.4, eqs. 14, 20, 30–32, App. B (arXiv v2).
@@ -355,3 +361,4 @@ The interacting-blast-wave run now has a benchmark page, [interacting blast wave
 8. [Berger & Colella (1989)](/sources/berger-1989.md), §§2, 5.
 9. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§1–9, eqs. 1–3, 25–26, 33–53, 93, 96, Figs. 1–4, 22.
 10. [Woodward & Colella (1984)](/sources/woodward-1984.md), p. 131, Table I.
+11. [Turk et al. (2011)](/sources/turk-2011-c.md), §4, §4.3.

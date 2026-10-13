@@ -549,6 +549,59 @@ Source page for the states).
 * **The first MHD Roe solver** ([Brio & Wu (1988)](/sources/brio-1988.md), §§III–IV). An exact Roe matrix (flux-difference property 9A) exists only for $\gamma = 2$, with square-root-density averages; for other $\gamma$ the Jacobian at arithmetic averages of density, velocity, field and total pressure gives up 9A ("we are not able to solve it analytically"). Averaging the energy "may lead to a negative averaged pressure". The eigenvectors are renormalized to stay complete where the normal or the transverse field vanishes. The upwind scheme costs "about 10 times more floating point operations" per point and step than Lax–Wendroff, but is more efficient at 200 points than Lax–Wendroff at 800.
 * **PPM's solver in the comparison paper** ([Woodward & Colella (1984)](/sources/woodward-1984.md), pp. 141–142, 155–157). Colella's approximate solver treats rarefactions as rarefaction shocks; "more than two iterations are never required". The paper documents post-shock noise from strong, slowly moving, grid-aligned shocks in Godunov and MUSCL (Fig. 8), cured by slight extra dissipation; it never uses the word carbuncle, and the phenomenon is post-shock noise, not shock-front deformation. It also predicts that approximate solvers (Harten–Lax, Roe) "will be in much greater demand" for MHD.
 
+## Later uses (batch 10)
+
+### The general-EOS two-shock solver in its primary source
+
+[Colella & Glaz (1985)](/sources/colella-1985.md) is the paper the batch-2
+and batch-8 entries credit for general-EOS Godunov solvers. It builds the
+structure this page calls two-shock for a general convex EOS:
+* **Exact solver first** (§1, eqs. 12–24): the star pressure and velocity
+  from the two wave curves, by a secant iteration started from two Godunov
+  iterations, or by van Leer's Newton iteration with closed-form shock
+  derivatives. Secant is preferred because "the thermodynamic derivatives
+  ... often are not available in real gas equation of state software" and
+  are costly when they are (p. 272), the reason FLASH's first version
+  repeats (batch 8).
+* **Approximate solver** (§2, eqs. 28–35): $\Gamma_1$ and an energy index
+  $p/(\rho e) + 1$ are carried per cell; the energy index is advanced
+  across each wave by a limited jump relation (eqs. 31–32), which gives the
+  Lagrangian wave speed in closed form, exact for a polytropic gas (eq. 34).
+  "The shock jump formula (28) is used to compute [the wave speed] even for
+  rarefaction waves" (p. 275), and states inside a fan are interpolated
+  linearly between the pre- and post-wave states. The error is argued to
+  be of higher order than a second-order scheme's truncation error, so
+  "a Godunov-type scheme which is second order accurate in smooth flow
+  remains so" (argued, not measured).
+* **Cost** (§4, Cray 1, μs per zone per step): 18.2 with the real-gas
+  solver and index transport but a dummy EOS call, against 12.8 for the
+  polytropic algorithm, and 24.2 with the real EOS call. The difference,
+  5.4, is "about a 40% increase", mostly in the Riemann solver and in
+  "guarding against zero denominators", and "still smaller than the time
+  required to perform the single EOS evaluation".
+* **Relation to the entries above.** The FLASH description (batch 8)
+  agrees with eqs. 7–8, 18 and p. 275. The Castro entry cites later work of
+  the same line (Colella, Glaz & Ferguson 1997), whose solver carries
+  $\rho e$ and calls no EOS; the 1985 solver instead carries the two indices
+  and needs one pressure evaluation per point per dimension per step
+  (p. 273). Both are two-shock in structure; they are different designs,
+  not conflicting statements.
+
+### RAMSES's almost exact solver
+
+The first [RAMSES](/software/ramses.md) uses an "almost exact" iterative
+solver inside a piecewise linear Godunov scheme: the contact pressure by
+Newton–Raphson ("typically, for strong shocks 10 Newton-Raphson iterations
+are required for single-precision accuracy of $10^{-7}$"), the only
+approximation being a linear profile inside rarefactions
+([Teyssier (2002)](/sources/teyssier-2002.md), §2.3.1, arXiv preprint).
+Its iteration count for strong shocks is higher than FLASH's "two to three"
+(batch 8) and PPM's fixed counts (batch 6); the three papers state these
+counts for their own solvers and accuracy targets, so they are not in
+conflict.
+
+**GR through a frame transformation (White et al. 2016).** [White et al. (2016)](/sources/white-2016.md) (§3.3–§3.4, Appendix) use HLLC (Mignone & Bodo 2005, hydro) and HLLD (Mignone, Ugliano & Bodo 2009) in general relativity, not only HLLE. Left and right states go into an orthonormal frame at each interface: its time vector is the normal observer, and its interface-normal vector, projected into the slice, is orthogonal to the interface. A special-relativistic solver runs there. The interface moves in that frame at $\beta^1/(\alpha_{\mathrm L}\sqrt{\gamma^{11}})$ (eq. 28, "in agreement with Pons et al. (1998)"), so the wave fan is sampled along the interface's ray, and the conserved state of the selected region is needed as well as its flux. The frame works inside the ergosphere and, in horizon-penetrating coordinates, inside the horizon; it can be singular on the polar axis. The relativistic MHD HLLC is deliberately not implemented ("in favor of HLLD"). On linear waves HLLC/HLLD beat HLLE by 1.4–4.8× (entropy, slow and Alfvén waves; SR and "tilted" GR coordinates), with no gain on sound or fast waves; LLF is "indistinguishable from HLLE" (§4.1). In 2016 White et al. report that, of 10 GRMHD codes, "All others restrict themselves to HLLE and LLF" (§1), an earlier census consistent with the two-wave solvers of Porth et al. All HLL solvers "guarantee positivity" (asserted).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §4.3, §7, §8.1–8.2, §8.5, App. C.
@@ -580,3 +633,6 @@ Source page for the states).
 27. [Sod (1978)](/sources/sod-1978.md), §2, eqs. 12–19.
 28. [Brio & Wu (1988)](/sources/brio-1988.md), §§III–IV.
 29. [Woodward & Colella (1984)](/sources/woodward-1984.md), pp. 141–142, 155–157.
+30. [Colella & Glaz (1985)](/sources/colella-1985.md), §§1–4, eqs. 7–8, 12–35, pp. 272–275.
+31. [Teyssier (2002)](/sources/teyssier-2002.md), §2.3.1 (arXiv v1).
+32. [White et al. (2016)](/sources/white-2016.md), §1, §§3.3–3.4, §4.1, eq. 28, Appendix.

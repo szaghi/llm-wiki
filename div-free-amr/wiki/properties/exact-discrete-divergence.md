@@ -30,6 +30,9 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   constraint (edge-differencing a vector potential yields exactly
   divergence-free initial fields in the matching discrete sense), and
   boundary inflow can still inject violation.
+
+**The invariant lives on the evolved field only.** In [DeVore (1991)](/sources/devore-1991.md)'s staggered FCT every stage is an edge-flux update and keeps $D_h^{\mathrm f}B_h$, while the single-component low-order fields used to size the limiter "are not divergence-free, but they are used solely to correct their associated partial antidiffusive fluxes" (Appendix, p. 157).
+
 * **The operator is scheme-specific.** "Exact" is always relative to one
   particular $D_h$ — for [constrained transport](/methods/constrained-transport.md)
   it is the face-flux difference over a cell, $D_h^{\mathrm{f}}$
@@ -95,7 +98,7 @@ Key structural facts, per [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   transfer problem exhibits at coarse–fine boundaries.
 * **Stencil consistency is testable.** The 3D
   [field-loop advection](/benchmarks/field-loop-advection.md) test
-  ($(x,y)$-plane loop, $v_z \ne 0$) detects mismatch operationally: if the
+  ($(x,y)$-plane loop, $u_z \ne 0$) detects mismatch operationally: if the
   constraint is held on a stencil different from the one used to build the
   $B_z$ fluxes, $B_z$ grows unphysically; round-off-constant $B_z$
   certifies preservation on the *consistent* stencil
@@ -293,3 +296,4 @@ the one where both papers find agreement.
 23. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§3–4, Figs. 12–19.
 24. [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md), §2.4.
 25. [Zachary, Malagoli & Colella (1994)](/sources/zachary-malagoli-colella-1994.md), §2.4.
+26. [DeVore (1991)](/sources/devore-1991.md), §2, Appendix.

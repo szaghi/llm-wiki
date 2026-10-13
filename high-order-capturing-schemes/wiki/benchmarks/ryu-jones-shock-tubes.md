@@ -106,6 +106,8 @@ until the 2026-10-13 deep lint (see *Later uses (batch 11)*).
   Their solver computes rarefactions as rarefaction shocks, so it is exact
   only for fans without rarefactions (§§4–5).
 
+**Later uses (batch 18).** Balsara (1998), Table 1 runs RJ 4a (row 1, field × $\sqrt{4\pi}$, $t = 0.15$; switch-on fast shock in ≤3 zones) and RJ 2a (row 3, cgs, $t = 0.2$, seven discontinuities, rotational discontinuities "not damaged"). Both use 800 zones and CFL 0.8. Row 4 is a pair of Mach 25.5 fast shocks attributed to Dai & Woodward (1994b), not in this page's table ([Balsara (1998)](/sources/balsara-1998-b.md), §6.1, Figs. 1, 3–4).
+
 # Citations
 
 1. [Ryu & Jones (1995)](/sources/ryu-1995.md), §§4–5 (arXiv preprint; no figures or tables).
@@ -117,3 +119,4 @@ until the 2026-10-13 deep lint (see *Later uses (batch 11)*).
 7. [Derigs et al. (2018)](/sources/derigs-2018.md), §5.5.
 8. [Dai & Woodward (1994)](/sources/dai-1994.md), §§4–5, Tables I–VI, Fig. 8.
 9. [Brio & Wu (1988)](/sources/brio-1988.md), §V.
+10. [Balsara (1998)](/sources/balsara-1998-b.md), §6.1, Table 1.

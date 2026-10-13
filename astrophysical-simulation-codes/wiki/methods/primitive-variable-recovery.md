@@ -5,7 +5,7 @@ description: "The pointwise inversion of the Valencia conserved variables to den
 status: established
 aliases: [conservative-to-primitive inversion, con2prim, c2p, primitive recovery, recovery scheme, RePrimAnd, Newman–Hamlin inversion]
 tags: [mhd, relativity, primitive-recovery, equation-of-state, time-integration, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Primitive-variable recovery in relativistic MHD
@@ -254,6 +254,33 @@ document their recovery chains inside production evolution codes
   neighbour averaging or a floor reset; see
   [density and pressure floors](/methods/numerical-floors.md).
 
+## Later uses (batch 10)
+
+**Athena++ in 2016: Noble 1D_W, dated.** The In codes section records
+that [Athena++](/software/athena-plus-plus.md) inverts with the Newman &
+Hamlin (2014) root-find (Stone et al. 2020, §4). The method paper of its
+GRMHD module, [White et al. (2016)](/sources/white-2016.md), §3.1, uses a
+scheme "based on" the 1D_W scheme of Noble et al. (2006) instead.
+* **GR.** Primitives are $\rho$, $p$ and the normal-observer spatial
+  velocity, which "describe subluminal motion no matter what values they
+  have"; Newton–Raphson solves for $\rho h_{\mathrm{rel}}W^2$; hydro uses
+  the same procedure with zero field.
+* **SR.** MHD uses Newton–Raphson in the same variable, as Mignone &
+  McKinney (2007), but on the residual of the conserved energy as a
+  function of it; SR hydro solves the quartic in $\vert\mathbf v\vert$ in
+  closed form (Schneider et al. 1993; eqs. 17–19), a non-iterative
+  inversion absent from the schemes compared above.
+* **Failure handling.** Density and pressure floors and a Lorentz-factor
+  ceiling "often chosen to be 100"; out-of-range primitives are moved to
+  the nearest admissible values; a non-converged iteration sets the
+  floors and the cell's conserved variables are recomputed. No entropy
+  fallback is described, unlike several chains of the batch-4 table.
+
+The two Athena++ statements describe different epochs of the code (2016
+and 2020); neither paper states when the inversion changed. This dates
+the In codes line; it contradicts nothing. With this, the 1D_W scheme has
+run inside a third evolution code besides HARM-Noble's chain (batch 4).
+
 ## Contradictions
 
 * **Is the extra temperature inversion an inherent cost?** *Open.*
@@ -279,3 +306,4 @@ document their recovery chains inside production evolution codes
 5. [Stone et al. (2026)](/sources/stone-2026.md), §§3.5–3.6, Table 2,
    Figs. 10, 13 (arXiv v1).
 6. [Porth et al. (2019)](/sources/porth-2019.md), §4.1 (arXiv v2).
+7. [White et al. (2016)](/sources/white-2016.md), §3.1, eqs. 16–19.

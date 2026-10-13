@@ -57,7 +57,7 @@ for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
 ## Properties
 
 * **Monopole cancellation.** For second-order fluxes the component of the
-  Maxwell-stress divergence along $B$ equals $|B|^2$ times the divergence on
+  Maxwell-stress divergence along $\mathbf B$ equals $|\mathbf B|^2$ times the divergence on
   the stencil the momentum fluxes use, plus a two-point-averaging remainder
   ($O(h^2)$ for smooth data). Item 3 makes that stencil the exactly held
   $D_h^{\mathrm{f}}$, so the divergence term vanishes identically, at
@@ -88,7 +88,7 @@ for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
     the fluid needs are recovered from them by an unlimited fourth-order
     "inverse reconstruction";
   * the four corner states of $E_h$ come from PPM4 transverse
-    reconstruction of the face Riemann states of $v$ and $B$;
+    reconstruction of the face Riemann states of $\mathbf u$ and $\mathbf B$;
   * a single-valued corner EMF is selected by the HLL four-state formula,
     with Einfeldt wavespeeds taken from the four adjacent face solves.
   
@@ -114,7 +114,7 @@ for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
   * a stationary domain, where $\mathcal{E}^c$ reduces to the unbiased
     average with correct viscosity;
   * supersonic grid-aligned flow, which additionally requires identical
-    Riemann states of $B_2$.
+    Riemann states of the transverse component of $B_h$.
   
   In general the two cannot match exactly. Combined with Gardiner & Stone's
   own first-order identity with $\mathcal{E}^\circ$, this places the
@@ -122,11 +122,12 @@ for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
   for these cases.
 * **A composition formula for any Jacobian-free solver**
   ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md) §5, eq. 33).
-  * Write the 1D induction flux at a face as weighted left/right fluxes
-    plus a diffusion term linear in the transverse field:
-    $a^L F^L + a^R F^R - (d^R B_t^R - d^L B_t^L)$.
+  * Write the 1D induction flux at a face as left and right fluxes, each
+    with a flux weight, plus a diffusion term linear in the transverse
+    field, with a transverse-field diffusion coefficient on each side.
   * The edge EMF is then assembled from the four adjacent faces using only
-    two kinds of input: the base solver's $a$ and $d$ coefficients, and 1D
+    two kinds of input: the base solver's left/right flux weights and
+    transverse-field diffusion coefficients, and 1D
     reconstructions of the transverse velocity and of the staggered field
     to the edge.
   * Coefficients are derived for LLF, HLL, HLLC, HLLD and GFORCE. HLLC
@@ -190,7 +191,7 @@ for the HLL family come from [Stone et al. (2008)](/sources/stone-2008.md)
     are reconstructed in 2D within each face, then interpolated to zone
     centres for the fluxes.
   * The edge EMF from a 2D LLF Riemann solver is the average of the four
-    zone-centred point values of $E$, WENO-interpolated to the edge, plus
+    zone-centred point values of $E_h$, WENO-interpolated to the edge, plus
     a dissipation term proportional to the jumps of the face-reconstructed
     normal fields at that edge. An HLL version with eight supersonic cases
     is also given.

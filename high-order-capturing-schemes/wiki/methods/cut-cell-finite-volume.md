@@ -157,6 +157,53 @@ whom it cites:
 * *Conservation.* MBT is called exactly conservative in boundary cells,
   unlike Forrer's mirroring scheme (§1).
 
+**Later uses (batch 18): the h-box method in its primary source.**
+[Berger et al. (2003)](/sources/berger-2003.md) is the systematic study of
+h-box methods, one of the cures listed above. It treats grids with small
+cells, not cut cells: the 1D grids have cells of length $\kappa_i h$
+($0 < \kappa_i \le 1$, the 1D analogue of the volume fraction), and the 2D
+grids are tensor grids with thin rows and columns of cells.
+* *Principle* (§§1, 3). The fluxes at the two faces of a small cell come
+  from Riemann problems between h-box values, averages over boxes of
+  length $h$ next to each face, so the step obeys $\nu \le 1$ with $\nu$
+  computed on $h$, not on $\kappa_i h$. The base scheme is LeVeque's
+  wave-propagation algorithm.
+* *The h-box values decide accuracy* (§3). Averaging the piecewise-constant
+  data gives an inconsistent scheme that is still first order
+  (Prop. 1, a supraconvergence proof). Linear interpolation, with the value
+  seen from inside the small cell at its inflow face
+  $$\frac{2\kappa_i\bar u_i + (1-\kappa_i)\bar u_{i+1}}{1+\kappa_i}$$
+  (eq. 3.3, symmetric at the other face), is consistent and exact for
+  linear data. With a second-order correction that uses $h$ (eq. 3.8; the
+  natural correction with $(1+\kappa_i)h/2$, eq. 3.7, was unstable at
+  $\nu \le 1$ on $h$), the scheme is **proved second order for 1D advection
+  with one small cell** (Prop. 2), although its local truncation error in
+  the small cell is first order. Stability is GKS, shown numerically for
+  $0 < \nu \le 1$ (Appendix A).
+* *Observed order* (§§5, 7). Second order on completely irregular 1D grids
+  (advection, observed orders 2.03 and 2.01; smooth Euler with cells
+  between $h/10$ and $h$, unlimited orders 1.67–1.94, Table 5.1) and on a
+  2D tensor grid with rows and columns of width $0.1h$ and $0.9h$
+  (2.19 and 2.09). The 2D method needs modified transverse propagation to
+  be stable for $\nu \le 1$; without it, $\nu \le \tfrac12$.
+* *Defects* (§6). With Godunov or Roe fluxes the h-box values produce
+  unphysical oscillations at transonic rarefactions that standard Godunov
+  schemes avoid; Lax–Friedrichs fluxes between h-box values cure them.
+* *What it does not show* (§8). It has no cut cells and no embedded
+  boundary, and states: "So far there is no Cartesian grid embedded
+  boundary method that leads to a second order accurate approximation at
+  boundary cells", announcing an h-box embedded-boundary scheme as
+  forthcoming work. The line above, "**h-box**, second order at cut cells
+  but not extended to 3D", is Berger & Giuliani's (2021, §1) summary; the
+  "not extended to 3D" part agrees with this paper (1D and 2D only), but
+  its "second order at cut cells" cannot rest on this paper, which proves
+  second order only for small non-cut cells. The bundle holds no source
+  for an h-box embedded-boundary scheme. This is a qualification, not a
+  contradiction: Berger & Giuliani speak of the h-box family as of 2021.
+* *Earlier small-cell methods* (§1). Pember et al. (1995) and Falcovitz et
+  al. (1997) are listed among embedded-boundary methods stable with a
+  regular-cell time step.
+
 ## Contradictions
 
 **What order does flux redistribution give, and what limits it on moving
@@ -178,6 +225,17 @@ bodies?** *Open* (recorded at the 2026-10-12 deep lint).
   (evidence by analogy, not a flux-redistribution measurement). A static-body convergence test of
   the same scheme, or a moving test with state redistribution, would
   separate the causes.
+* *Later evidence (batch 18), on a related distinction (truncation error
+  against solution error), not the local/global scope reading.* A first-order (even
+  inconsistent) local truncation error at small cells does not by itself
+  cap the global order: [Berger et al. (2003)](/sources/berger-2003.md)
+  prove first-order convergence of an inconsistent h-box scheme (Prop. 1)
+  and second order of one whose small-cell truncation error is first order
+  (Prop. 2), in 1D with one small (non-cut) cell. Its authors also state,
+  in 2003, that no Cartesian embedded-boundary method was yet second order
+  at boundary cells (§8), which, as of 2003, is consistent with Berger &
+  Giuliani's local first-order statement. It measures no flux redistribution, so the entry
+  stays Open.
 
 # Citations
 
@@ -187,3 +245,4 @@ bodies?** *Open* (recorded at the 2026-10-12 deep lint).
 4. [Natarajan et al. (2022)](/sources/natarajan-2022.md), §§2–3 (arXiv v1).
 5. [Başkaya et al. (2024)](/sources/baskaya-2024.md), §§3, 4.5, 5, Fig. 18 (arXiv v1).
 6. [Falcovitz, Alfandary & Hanoch (1997)](/sources/falcovitz-1997.md), §§1–5.
+7. [Berger et al. (2003)](/sources/berger-2003.md), §§1, 3–8, Props. 1–2, Appendix A.

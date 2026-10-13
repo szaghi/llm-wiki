@@ -7,7 +7,7 @@ okf_version: "0.1"
 Discrete divergence constraints ($D_h B_h = 0$ in MHD, incompressibility
 in CFD) across numerical discretizations, with particular depth on
 high-order methods and block-structured AMR refinement interfaces.
-**Corpus: 117 sources compiled**: 114 published works, two preprints and one code record
+**Corpus: 123 sources compiled**: 120 published works, two preprints and one code record
 (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md) — normative for
@@ -53,8 +53,8 @@ every page — then follow the reading guide.
    [WENO](/methods/weno.md) or [PPM](/methods/ppm.md): neither keeps the
    divergence by itself, so each MHD use pairs it with one of the above.
    The same holds for the hydrodynamic building blocks beneath them: the
-   [Roe](/methods/roe-solver.md) and [HLL](/methods/hll-solver.md)
-   Riemann solvers, the [CTU](/methods/corner-transport-upwind.md)
+   [Roe](/methods/roe-solver.md), [HLL](/methods/hll-solver.md) and
+   [HLLD](/methods/hlld-solver.md) Riemann solvers, the [CTU](/methods/corner-transport-upwind.md)
    integrator, [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) time
    stepping and the [TVD](/properties/total-variation-diminishing.md)
    property.

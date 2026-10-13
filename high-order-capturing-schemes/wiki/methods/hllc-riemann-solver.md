@@ -150,6 +150,63 @@ line flux, and an added viscosity, with unspecified constants, enforces the
 entropy inequality. The alias "Harten–Lax–van Leer–contact" names the HLL
 lineage, not this solver.
 
+**Later uses (batch 18).** *The original paper*
+([Toro, Spruce & Speares (1994)](/sources/toro-1994.md)), now ingested; the
+page above follows the 1997 book.
+* *What the original imposes* (§4, eqs. 18–28; a qualification of "HLLC
+  imposes equal pressure" in "The HLLC model"). The middle speed is set
+  equal to the star normal velocity, $v_{n*} = S_M$, and each star state
+  follows from the integral conservation law across its own outer wave,
+  $f(u^\mp) + S_{L,R}(u^{\mathrm{HLLC}}_{*L,R} - u^\mp)$ being the star
+  flux (18–19). The two star pressures,
+  $p^\mp + \rho^\mp(S_{L,R} - v_n^\mp)(S_M - v_n^\mp)$ (eqs. 23, 27,
+  compiler's expansion), are computed separately and are not forced
+  equal. Equalizing them by their mean "seems appropriate", but "numerical
+  experiments suggest that such condition might not be necessary", and the
+  estimated $p_*$ may be used in the energies instead (p. 29). With Batten
+  et al.'s $S_M$ the two expressions coincide identically, as stated under
+  Wave-speed estimates; for an independent $S_M$ the original imposes only
+  the common normal velocity.
+* *No first-order flux printed* (§§4–5, eqs. 29–36). The paper gives the
+  star fluxes, with closed forms for the far-side star flux in the two
+  supersonic cases, because HLLC is used only inside the second-order WAF
+  method, which needs the flux of every wave region. The four-branch flux
+  above is the book's. In WAF "no special measures to deal with sonic flow
+  are required" (p. 30).
+* *Its own speed estimates* (§3). Isentropic, linearized and "hybrid"
+  estimates; the hybrid ones are the pressure-based speeds above, there
+  tested with $p_*$, $v_{n*}$ from a linearized estimate. The printed
+  isentropic star velocity has $\tfrac12(v_n^- - v_n^+)$ where the
+  two-rarefaction solution has $\tfrac12(v_n^- + v_n^+)$, recorded as
+  printed (eq. 10). Details and the conjecture on $p_{\mathrm{TR}}$ are on
+  the [HLL](/methods/hll-riemann-solver.md) page.
+* *Motivation and cost* (§§1, 7). HLL with Davis or Einfeldt speeds is
+  "very efficient, robust and simple" but ruins contacts, vortex sheets and
+  shear waves; contacts matter in combustion. The target is real
+  (non-ideal) gases: ideal and covolume equations of state are treated
+  (eqs. 3, 17), and the savings against the exact solver are "modest
+  (about 50 %)" for these, expected larger for complex ones.
+* *Tests* (§6, WAF). Sod, 100 cells, CFL 0.8, Superbee, $t = 0.25$: the
+  contact over "about 4" points against "about 20" for HLL. A sonic Sod
+  (left velocity $3/4$, jump at $x = 0.4$, $t = 0.25$) handled without a
+  fix, qualitatively. Woodward–Colella blast waves: at 3000 cells and
+  $t = 0.028$ HLLC and the exact solver show "no difference", and the
+  strongest contact takes "less than 10" points against "about 450" for
+  HLL ([interacting blast waves](/benchmarks/interacting-blast-waves.md)).
+  A covolume shock tube credited to a different Einfeldt (1988) paper,
+  the Aachen proceedings one. A Mach 1.7 shock on a 25° wedge
+  ($350\times200$ cells) against a Takayama interferogram, with the slip
+  line "virtually identical" to the exact solver's: the configuration the
+  1997 book repeats ([double Mach reflection](/benchmarks/double-mach-reflection.md)).
+
+**Later uses (batch 18): the revised third-edition chapter.** [Toro (2009)](/sources/toro-2009.md), Ch. 10, "a substantially revised version":
+* *Middle speed.* The $S_M$ formula listed above as Batten et al.'s is derived inside HLLC from equal side star pressures $p^\mp + \rho^\mp(S_{L,R} - v_n^\mp)(S_M - v_n^\mp)$ (eqs. 10.36–10.37). "Thus, we only need to provide estimates for $S_L$ and $S_R$" (p. 325). Batten et al. are credited only with wave-speed estimates (p. 316). The §10.6 summary is $p_{\mathrm{PV}}$, then pressure-based $S_L$, $S_R$, then $S_M$ from (10.37), then the flux.
+* *Variants.* Variant 1 writes the star flux with the side star pressures, "relax[ing]" the equal-pressure condition. Variant 2 uses their mean (eqs. 10.40–10.44, 10.74–10.76). "For the tests considered, all three versions of HLLC give identical results" (p. 334).
+* *Recommendation revised.* "In computational practice we *could* use the hybrid scheme" (the first edition's "we use" is quoted above). "For ideal gases … the simplified PVRS scheme, with [$p_* = \max(0, p_{\mathrm{PV}})$] is very simple and also is found to be sufficiently robust" (pp. 331–332).
+* *Scope.* All manipulations hold "for any equation of state". Species mass fractions are carried by the star states (eqs. 10.45–10.46). HLLC is "a complete Riemann solver, for the Euler equations" but "becomes incomplete, tending to behave like HLL" for more than three distinct fields (p. 316).
+* *Open issues* (§10.9). The sign of the momentum flux (printed "Safranov", likely Safronov) and wave-speed failures for "very high speed flow" impinging on walls (Titarev, personal communication).
+* *Test numbering.* The isolated stationary and slowly moving contacts are Tests 6 and 7 in the third edition (Tests 5 and 6 in the first). The "Toro's Test 6" data used above ($\rho = 1.4 \mid 1$, $v = 0.1$) is Test 7 in the third edition. The new Test 5 is a stationary non-isolated contact, on which HLLC is comparable to the exact solver and HLL smears it.
+
 # Citations
 
 1. [Toro (1997)](/sources/toro-1997.md), §§10.2–10.8, 17.1–17.2.
@@ -164,3 +221,5 @@ lineage, not this solver.
 10. [Balsara & Nkonga (2017)](/sources/balsara-2017-b.md), §3.1.
 11. [Baskaya et al. (2024)](/sources/baskaya-2024.md) (arXiv v1).
 12. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §3B(ii).
+13. [Toro, Spruce & Speares (1994)](/sources/toro-1994.md), §§1, 3–7, eqs. 10–36, p. 29.
+14. [Toro (2009)](/sources/toro-2009.md), §§10.1–10.9 (scoped read).

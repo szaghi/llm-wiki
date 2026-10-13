@@ -261,6 +261,51 @@ limiter "very simple and local", most convenient for FV and extended to FD
   an instability "is indeed beginning to show around the shock front"
   ([Lax (1954)](/sources/lax-1954.md), Ex. 7).
 
+**Later uses (batch 18).** *Balsara's self-adjusting method at its origin*
+([Balsara (2012)](/sources/balsara-2012.md), §§1–3;
+[self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md)).
+* *Quadratic for Euler only.* The batch-7 description, from the review,
+  gives the common factor from "a per-node quadratic in pressure". In the
+  original that holds for Euler (eq. 12); for MHD only the free modes of the
+  divergence-free field are scaled, and the pressure condition is a
+  **cubic** (eqs. 13–15), solved by Newton's method safeguarded by
+  bisection. The pressure bound is one-sided (lower only), the density
+  bound two-sided (§2.3).
+* *Not the sufficient condition above.* The nodes are a minimal symmetric
+  set plus the zone vertices, explicitly not Gauss–Lobatto points, and no
+  CFL condition or cell-average theorem is given, so the Zhang–Shu convex
+  decomposition does not cover it: it is robust in its tests, not provably
+  positive. Its accuracy claim ("never degraded for smooth flow") comes
+  with no table.
+* *CFL, a tension rather than a counter-result.* Balsara reads Zhang and
+  Shu as claiming "that their method restricts the CFL number" and answers
+  that with ADER his method "works with sufficiently large CFL numbers"
+  (0.45 and 0.3; §§3.1, 3.3). That is an empirical statement about a different
+  method without a guarantee; it does not contradict Theorem 2.1, which is
+  a sufficient condition.
+* *Floors are not a substitute* (§3). With floors $\rho \ge 10^{-12}$ and
+  $p \ge 10^{-8}$ in the Riemann solver instead of the method, a Mach 800
+  dense jet cannot run with a linearized solver and loses symmetry with
+  HLL, and a 3D MHD blast at plasma beta $1.005\times10^{-3}$ hits the
+  pressure floor and is "totally corrupted". This adds evidence to the
+  definition paragraph's remark that replacing negative values is no cure.
+* *Where positivity is lost.* In the reconstructed profile inside a zone,
+  while the zone average stays positive; TVD limiting "only ensures that the
+  density does not become negative at the centers of zone faces", which is
+  not enough for multidimensional Riemann solvers at edges and vertices
+  (§1). The original's own wording is that the correction is "invoked in an
+  extremely small fraction of zones" (§2.1); the "rare code crash" phrase
+  above is the review's.
+
+*Uncleaned divergence and negative pressure, 1998*
+([Balsara (1998)](/sources/balsara-1998-b.md), §§6.2.1–6.2.2). Without
+divergence cleaning, small-scale divergence builds up slowly, mostly in
+stagnation regions; because total energy is updated, this can drive the
+pressure negative, so cleaning "is essential for physical realizability".
+The argument parallels the Derigs et al. energy-accounting bullet (batch
+7); the 2D runs offered for it vary splitting and cleaning together, and no
+negative-pressure run is shown ([constrained transport](/methods/constrained-transport.md)).
+
 ## Contradictions
 
 **Does positivity limiting inside Runge–Kutta stages reduce the order?**
@@ -277,6 +322,10 @@ limiter "very simple and local", most convenient for FV and extended to FD
   $7.8 \times 10^{-15}$), refined to $h = 1/64$. The test takes
   $\Delta t = h^{5/3}$ so that the spatial error dominates, and runs to
   $t = 0.01$ only; it does not probe a time-step-dominated regime.
+* *For, asserted without data (batch 18).*
+  [Balsara (2012)](/sources/balsara-2012.md), §§2.3, 3: limiting at every
+  Runge–Kutta stage; accuracy on the smooth suite "stays unchanged", no
+  table shown.
 * [Hadjimichael et al. (2016)](/sources/hadjimichael-2016.md), §1: "Use of
   Runge–Kutta methods in conjunction with the limiter can lead to order
   reduction, so linear multistep methods are recommended", citing
@@ -349,3 +398,5 @@ limiter "very simple and local", most convenient for FV and extended to FD
 27. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§1–4, 6, eqs. 2.4, 4.5–4.10, App.
 28. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §1, p. 38.
 29. [Lax (1954)](/sources/lax-1954.md), Ex. 7.
+30. [Balsara (2012)](/sources/balsara-2012.md), §§1–3, eqs. 9–15.
+31. [Balsara (1998)](/sources/balsara-1998-b.md), §§6.2.1–6.2.2.

@@ -5,7 +5,7 @@ description: "Evolves the magnetic vector potential instead of the field; B = cu
 status: established
 aliases: [A-method, potential-based CT]
 tags: [vector-potential, constrained-transport, amr, grmhd]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Vector-potential evolution
@@ -35,15 +35,18 @@ the potential-level parametrization.
   ([Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md)). A collocated field
   carrying them has no potential to transfer, although potential-evolved
   fields never contain them.
-* **The historical costs return**: evolving $A$ was the *original* CT-era
+* **The historical costs return**: evolving $A_h$ was the *original* CT-era
   alternative, and [Evans & Hawley (1988)](/sources/evans-hawley-1988.md)
   rejected it on uniform grids because the Lorentz force needs *second*
-  differences of $A$, generating anomalous currents under limited
-  reconstruction. The modern HRSC formulations evolve $A$ with the same
+  differences of $A_h$, generating anomalous currents under limited
+  reconstruction. The modern HRSC formulations evolve $A_h$ with the same
   shock-capturing machinery as the fluid, mitigating but not erasing the
   extra-derivative concern.
+
+**A second source.** [DeVore (1991)](/sources/devore-1991.md) §3 finds the same with FCT: the potential solver's current-density error is 90% against 79% for the field solver (rotating cylinder) and 113% against 88% (magnetic bubble), with current reversals above 70% and at 90%. Flux and field errors differ much less in these high-$\beta$, short runs.
+
 * **Gauge dynamics is the new constraint — diagnosed and priced**: in the
-  simple algebraic gauge the $A$-system carries a **static (zero-speed)
+  simple algebraic gauge the potential system carries a **static (zero-speed)
   gauge mode**; interpolation errors at refinement boundaries excite it in
   place, and the result is *spurious magnetic fields at interfaces* —
   divergence-free by construction, and wrong — that grow until the run
@@ -60,8 +63,8 @@ the potential-level parametrization.
 unstaggered CT of Helzel et al. and Rossmanith, which this bundle has
 not ingested.
 * **Predictor–corrector per stage.** The base fifth-order FD-WENO scheme
-  predicts $B^*$. The potential is advanced alongside it, with the velocity
-  frozen at the stage. Then $B^*$ is replaced by
+  predicts $B_h^*$. The potential is advanced alongside it, with the velocity
+  frozen at the stage. Then $B_h^*$ is replaced by
   $B_h = C_h^{\mathrm{c}} A_h$, built from fourth-order central differences.
   The total energy is kept, not the pressure.
   The constraint held is $D_h^{\mathrm{c}} B_h = 0$
@@ -72,7 +75,7 @@ not ingested.
   reduces to strongly hyperbolic advection of a scalar $A_z$.
 * **The answer to the second-derivative objection.** The potential
   equation is treated as a Hamilton–Jacobi equation. WENO weights are
-  computed from the *derivatives* of $A$, which are the field, so
+  computed from the *derivatives* of $A_h$, which are the field, so
   oscillations are limited where Evans and Hawley located the problem.
 * **Missing dissipation is added by hand.** In 3D the upwinding supplies
   resistivity in only two of three directions. A smoothness-switched
@@ -113,7 +116,7 @@ shows. The authors advise against production use. Their diagnosis:
 * the potential is not a conserved quantity, and its advection term can
   dominate the electric-field source;
 * cell averaging and the curl do not commute, so cell geometry injects
-  local errors into $B$;
+  local errors into $B_h$;
 * Delaunay flips change the reconstructed field discontinuously;
 * the electric-field source is cell-centred and not upwinded, which is
   known to destabilize CT even on fixed meshes;
@@ -139,3 +142,4 @@ interfaces (EMF corrections, $P_D$); the potential route holds it by
 6. [Ranocha, Ostaszewski & Heinisch (2020)](/sources/ranocha-2020.md), Theorems 3.8, 3.19.
 8. [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md), §§1, 4, 6.1.
 7. [Pakmor et al. (2026)](/sources/pakmor-2026.md), §6.3 (preprint).
+9. [DeVore (1991)](/sources/devore-1991.md), §§3–4.

@@ -24,6 +24,9 @@ in a `# Notation map` section. Extend this registry (and record the extension in
 | $\phi_{\mathrm g}$ | gravitational potential, $\mathbf g = -\nabla\phi_{\mathrm g}$ (distinct from the projection potential; added 2026-10-12) |
 | $m(E)$ | space-filling-curve index of a cell, block or element $E$ (added 2026-10-12) |
 | $\mathbf{x}_{ijk}$ | node/cell-center location, context per collocation |
+| $d$ | number of space dimensions (as in $2^d$ children); added 2026-10-13, deep lint #11 |
+| $\mathrm d$ | exterior derivative (upright, distinct from the dimension $d$); added 2026-10-13, deep lint #11 |
+| $\mathbf k$; $k_i$ | Fourier wavenumber vector and its components (FFT projection); added 2026-10-13, deep lint #11 |
 | $\Delta t$; superscripts $n$, $n+1/2$, $n+1$ | time step and time level of a discrete field ($B_h^n$, $E_h^{n+1/2}$); registered 2026-10-13, already in use on several pages |
 
 ## Discrete spaces and the complex
@@ -120,12 +123,20 @@ registry uses sans-serif for SBP matrices:
 | $\mathsf{Q}$ | almost-skew-symmetric part: $\mathsf{Q} + \mathsf{Q}^T = \mathsf{B}$ (boundary terms) |
 | $\mathsf{D}_1 = \mathsf{H}^{-1}\mathsf{Q}$ | SBP first-derivative operator |
 | $\mathsf{D}_2 = \mathsf{H}^{-1}(A + \mathsf{B}S)$ | SBP second-derivative operator, $A + A^T \le 0$ (added at deep lint #2) |
+| $\tau$ | boundary order of accuracy of an SBP operator (interior order $2\tau$ for diagonal norms); added 2026-10-13, deep lint #11 |
+| $z$ | Laplace-transform variable of the SBP convergence-rate (determinant-condition) analysis; added 2026-10-13, deep lint #11 |
 | $\mathsf{D}_1^* = \mathsf{H}^{-1}\mathsf{D}_1^{T}\mathsf{H}$ | $\mathsf{H}$-adjoint of $\mathsf{D}_1$; for a nullspace-consistent $\mathsf{D}_1$ ($\ker\mathsf{D}_1 = \mathrm{span}\{1\}$) its kernel is one-dimensional, spanned by the **grid-oscillation mode** (added 2026-10-08, ranocha-2020) |
+
+$u$, $v$ in $(u,v)_h$ and on the SBP pages are generic grid functions, not
+velocity (note added at deep lint #11).
 
 ## Fields
 
 | Symbol | Meaning |
 |---|---|
+| $\mathbf u$; $u_x, u_y, u_z$; $u_n$ | continuous velocity, its components, its face-normal component (pairs with $B_n$); discrete counterpart $u_h$ (added at deep lint #11; $\mathbf V$ and $v$ are retired as velocity) |
+| $\mathbf B$ | continuous magnetic field (bold); discrete counterpart $B_h$ (added at deep lint #11) |
+| $\rho$, $p$ | density, gas pressure (added at deep lint #11) |
 | $B_h$ | discrete magnetic field (collocation stated per method) |
 | $u_h$ | discrete velocity field |
 | $E_h$ | discrete electric field / electromotive force (edge-collocated in CT schemes) |
@@ -162,6 +173,7 @@ on the GLM page; they are registered here.)
 | $c_h$ | GLM cleaning (hyperbolic transport) speed |
 | $c_p$ | GLM parabolic damping parameter; the damping rate of $\psi_h$ is $c_h^2/c_p^2$ |
 | $\mathcal{D}$ | the linear operator coupling $\psi_h$ to the divergence in the GLM system, $\mathcal{D}(\psi) + \nabla\cdot B = 0$; its choice selects the cleaning family (added at deep lint #8, already in use) |
+| $\Pi$ | an orthogonal projector ($\Pi^2 = \Pi$), e.g. a divergence-cleaning correction; with a form-degree superscript, $\Pi^l$ is the canonical interpolation onto Whitney $l$-forms (added at deep lint #11) |
 | $q$ | accuracy order of a ghost-fill operator $\Gamma$ (value error $O(h^q)$) |
 | $p_{\mathrm{obs}}$ | observed convergence order from a refinement ladder, $p_{\mathrm{obs}} = \log_2(e_h / e_{h/2})$ |
 
@@ -200,6 +212,7 @@ concept pages without being registered.)
 | $\gamma$ | adiabatic index (ratio of specific heats; never an angle) |
 | $\lambda_k$ | characteristic speed (eigenvalue of the flux Jacobian) of the $k$-th wave |
 | $\bar B_h$ | cell averages of the magnetic field held as cell-centred DOFs, the field the conservative finite-volume update evolves (bar = cell average, as $\bar w_j$ above) |
+| $U$ | conserved state vector (own row added at deep lint #11) |
 | $S(U)$ | eight-wave (Powell) source vector, multiplied by $-\nabla\cdot B$ in the symmetrizable form; $U$ is the conserved state vector |
 
 ## Writing rules

@@ -143,6 +143,79 @@ alternative, conservative, provably admissible and accuracy-preserving.
 * *Compact limiting at third order in 2D*, with RKDG and MOOD limiters,
   in [Balsara (2017)](/sources/balsara-2017-d.md), §VI.
 
+**Later uses (batch 18).** *Part II of the series, the 1D framework*
+([Cockburn & Shu (1989)](/sources/cockburn-1989.md)), now ingested; the
+page above rests on part V.
+* *Framework* (§2, eqs. 2.2–2.14). The same weak form for the 1D scalar
+  law and any degree $K$, with moments normalized so the zeroth is
+  $\bar u_i$, a monotone two-point flux at the interfaces, and a cell-mean
+  equation that "resembles a MUSCL type finite difference scheme". The
+  interface flux is undefined in the weak form: "It is this freedom which
+  gives us a chance to adopt the successful finite difference
+  nonoscillatory methodology" (p. 415).
+* *The limiter at its source* (eqs. 2.21–2.24). The two face deviations
+  $u^-_{i+1/2} - \bar u_i$ and $\bar u_i - u^+_{i-1/2}$ are each replaced by
+  $\operatorname{minmod}_M$ of themselves, $\Delta^1\bar u_i$ and
+  $\Delta^1\bar u_{i-1}$; the TVB threshold is credited to Shu. For $K = 1$
+  this is the part-V rule above, since the face deviation is
+  $\tfrac12\hat u^{(1)}_i$ (compiler's conversion).
+* *The choice of $M$* (Lemma 2.2, eq. 2.25). $M = \tfrac23\max\vert\partial_{xx}u\vert$,
+  the maximum taken in practice over a neighbourhood of the smooth critical
+  points of the initial data, or a cell-dependent value "very small except
+  near critical points", leaves the accuracy untouched wherever
+  $u \in C^2$ with that bound. This is the second-derivative estimate that
+  part V and [WENO-limited DG](/methods/weno-limited-dg.md) refer to; part
+  V's runs use $M = 50$ without it.
+* *Higher moments after limiting: a different recipe from part V*
+  (eqs. 2.26–2.27). For $K = 2$ part II limits both face deviations and
+  rebuilds $\hat u^{(1)}_i$ and $\hat u^{(2)}_i$ from them (their sum and
+  three times their difference, compiler's conversion), so a limited
+  $P^2$ moment is kept, not discarded as in part V's $P^1$-part rule. For
+  $K \ge 3$ the moments above degree 2 are kept unless the first two
+  changed, and then set to zero. Different papers, different limiters: a
+  variant, not a contradiction.
+* *What is proved* (Lemmas 2.1–2.3, Prop. 2.11). TVD (minmod) or TVB
+  ($\operatorname{minmod}_M$) of the cell means, under a forward-Euler
+  bound of $\tfrac12$ on $\Delta t/h$ times the sum of the Lipschitz
+  constants of $\hat f$ in its two arguments, times the Runge–Kutta CFL
+  coefficient 1; TVB of the whole solution; a convergent subsequence; with
+  extra limiter arguments, convergence to the entropy solution
+  (Lemmas 2.8–2.9), whose constants "must be tuned for each individual
+  problem" and which the authors do not use. Order is "in the sense of
+  local truncation error"; "In practice, we suggest using the schemes in
+  (iii)", the TVB limiter with Lemma 2.2's $M$.
+* *Linear stability: sufficient bounds, not sharp limits* (Lemma 2.10,
+  eq. 2.35; a qualification of "1D von Neumann limits $1/3$ and $1/5$"
+  above). The unlimited scheme with the Runge–Kutta methods above is
+  linearly stable under $\nu \le 1/(2K+1)$ for $K = 1, 2$. This is proved
+  as a sufficient condition (the $K = 2$ proof "is more technical, and is
+  thus omitted"), with no claim that it is sharp, and "We do not know
+  whether (2.35) is the correct CFL condition for linear stability when
+  [$K \ge 3$]." Forward Euler is linearly unstable at any fixed CFL number.
+* *Why third order* (a partial answer to "without discussing why" above).
+  Part II proves linear stability only for $K = 1, 2$, and notes that its
+  Runge–Kutta form can be made of order $s$ with $s$ stages for
+  $s \le 4$ (§2; the paper's $r$ is the stage count).
+* *Quadrature* (Remark 2.6). In 1D the volume integral needs error
+  $O(h^{2K+2})$: Simpson for $K = 1$, three-point Gauss for $K = 2$;
+  Gauss–Lobatto points let the interface fluxes be reused.
+* *Boundaries* (§3, Prop. 3.1). At an inflow boundary the interface value
+  is the data $g(t)$ and the face deviation is limited also against
+  $2(\bar u_0 - g(t))$; at an outflow boundary against the inner mean
+  difference only. Both keep TVBM and TVB; the compact stencil makes this
+  simpler than wide-stencil finite-difference TVB.
+* *The convergence test the part-V runs lack* (§4, Tables 1–4; a
+  qualification of "No convergence-order test is shown there" under
+  Evidence). Third order ($K = 2$, RK3, Roe flux with entropy fix,
+  cell-dependent $M$) on Burgers' equation with
+  $u_0 = \tfrac14 + \tfrac12\sin\pi x$ at $t = 0.3$: $L^1$ orders 2.92,
+  2.97 and $L^\infty$ orders 2.86, 2.87 from $h = 1/10$ to $1/40$
+  (periodic); 2.90, 2.94 and 2.77, 2.78 with inflow/outflow boundaries.
+  Away from the shock (0.1 band, $h = 1/40$) the errors stay small after
+  it forms, "including at critical and sonic points". The CFL number and
+  $M$ are not printed
+  ([Burgers shock formation](/benchmarks/burgers-shock-formation.md)).
+
 # Citations
 
 1. [Cockburn & Shu (1998)](/sources/cockburn-1998.md), §§1–5, Table 1, eqs. 2.1–2.5, 3.6–3.7.
@@ -154,3 +227,4 @@ alternative, conservative, provably admissible and accuracy-preserving.
 7. [Shu (2009)](/sources/shu-2009.md), §5.1.
 8. [Dumbser et al. (2014)](/sources/dumbser-2014.md), §3.1.
 9. [Balsara (2017)](/sources/balsara-2017-d.md), §VI.
+10. [Cockburn & Shu (1989)](/sources/cockburn-1989.md), §§2–4, Lemmas 2.1–2.10, Prop. 2.11, Remarks 2.4–2.6, Tables 1–4.

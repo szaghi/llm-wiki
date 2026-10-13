@@ -66,6 +66,8 @@ branch (Seal, Güçlü and Christlieb; Li and Du) ([Shu (2020)](/sources/shu-202
 
 **Later uses (batch 16).** Fully discrete Lax–Wendroff (Taylor) time discretizations are proven TVD only at second order, and with a $u$-dependent source they are "very messy" and may lose the TVD or TVB property, which method-of-lines multistep schemes keep ([Shu (1988b)](/sources/shu-1988-b.md), §3, pp. 1077, 1080).
 
+**Later uses (batch 18).** "In a numerical context, Cauchy–Kowalewski procedure is also known as the Lax–Wendroff procedure" ([Toro (2009)](/sources/toro-2009.md), §19.3.2, p. 633). Its obstacle is "sheer complexity" rather than cost: "the use of symbolic manipulators is a must" (§19.6). For relativistic MHD the procedure "becomes impossible for orders greater than two" ([Dumbser et al. (2008)](/sources/dumbser-2008.md), §6.2).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §4.
@@ -78,3 +80,5 @@ branch (Seal, Güçlü and Christlieb; Li and Du) ([Shu (2020)](/sources/shu-202
 8. [Balsara et al. (2009)](/sources/balsara-2009.md), §3.
 9. [Shu (2020)](/sources/shu-2020.md), §7.
 10. [Shu (1988b)](/sources/shu-1988-b.md), §3.
+11. [Toro (2009)](/sources/toro-2009.md), §§19.3.2, 19.6.
+12. [Dumbser et al. (2008)](/sources/dumbser-2008.md), §6.2.

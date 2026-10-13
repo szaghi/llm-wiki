@@ -97,7 +97,8 @@ first-order member (his eq. 7.5) of a family whose second-order members are
 ## Cost
 
 On Sod's shock tube with a first-order upwind scheme, the Roe solver and
-Godunov's exact solver agree to within $3\times10^{-4}$ in density, and
+Godunov's exact solver agree to within $3\times10^{-4}$ in density in
+the shock region (indices 72–80), and
 the Roe run takes 1.09 s against 2.02 s (Roe 1981, Table I, pp. 369–370).
 Harten (1983) calls the Roe average "rather expensive" and says the
 arithmetic average "will do just as well" in many applications (§6,

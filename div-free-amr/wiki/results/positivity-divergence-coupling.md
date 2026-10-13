@@ -21,7 +21,7 @@ $\mathcal{G}$ ([notation](/notation.md)). In more than one dimension:
    divergence condition only slightly, at low pressure.
 2. **Divergence-free data suffice.** If the data are admissible and satisfy
    the discrete divergence-free condition, the update stays in
-   $\mathcal{G}$ under $\sum_\ell \alpha_\ell^{\mathrm{LF}}\Delta t/\Delta x_\ell \le 1$.
+   $\mathcal{G}$ under $\sum_\ell \alpha_\ell^{\mathrm{LF}}\Delta t/h_\ell \le 1$.
    This needs the generalized viscosity bound of the theorem, not the
    standard spectral radius. For the first-order scheme the condition is
    the collocated central divergence of the cell averages,
@@ -48,8 +48,8 @@ $\mathcal{G}$ ([notation](/notation.md)). In more than one dimension:
    and how to enforce both conditions at once is left open.
 5. **Quantitative form.** When the divergence condition fails, the new
    internal energy is bounded below by
-   $-\Delta t\,(\bar v\cdot\bar B)\,D_h B_h$. Negative pressure is
-   therefore most likely where $|v\cdot B|$ and the divergence error are
+   $-\Delta t\,(\bar{\mathbf u}\cdot\bar B_h)\,D_h B_h$. Negative pressure is
+   therefore most likely where $|\mathbf u\cdot\mathbf B|$ and the divergence error are
    both large.
 
 Proved by [Wu (2018)](/sources/wu-2018.md) in 1D and 2D, with the 3D
@@ -81,8 +81,8 @@ $-(\nabla\cdot B)\,S(U)$.
     when $\nabla\cdot B \ne 0$.
   * The symmetrizable side is now a theorem: any $C^1$ solution keeps
     $\rho > 0$ and $p > 0$ whatever $\nabla\cdot B$ is, because density
-    and pressure obey $D_t\rho = -\rho\nabla\cdot v$ and
-    $D_t p = -\gamma p\nabla\cdot v$ along particle paths. The same holds
+    and pressure obey $D_t\rho = -\rho\nabla\cdot\mathbf u$ and
+    $D_t p = -\gamma p\nabla\cdot\mathbf u$ along particle paths. The same holds
     for Janhunen's system ([Wu & Shu (2019)](/sources/wu-shu-2019.md), Proposition A.1).
 * **General meshes and HLL fluxes**
   ([Wu & Shu (2019)](/sources/wu-shu-2019.md), Theorems 4.1, 4.2).
@@ -145,6 +145,9 @@ through the source term.
   negative. That failure has no divergence content and is not an instance
   of this coupling ([Jiang & Shu (1996)](/sources/jiang-shu-1996.md),
   §8.3; [WENO reconstruction](/methods/weno.md)).
+
+* **An earlier statement, without a run.** [Balsara (1998)](/sources/balsara-1998-b.md) §6.2.2 (p. 152): because the scheme updates total energy, spurious magnetic energy "may on occasion cause the pressure to become negative"; divergence control is "essential for physical realizability". No run demonstrates it.
+
 * **The stencil matters again.** The condition is tied to the flux form the
   scheme actually uses: a collocated central divergence at first order, a
   quadrature face divergence at high order. A field held exactly
@@ -226,7 +229,7 @@ through the source term.
 **Is the first-order LF update positivity-preserving for admissible data
 in more than one dimension?**
 
-* [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) build their limiter on this claim, conjectured by Cheng et al.
+* [Christlieb, Feng, Seal & Tang (2016)](/sources/christlieb-2016.md) (§5, Claim 1) build their limiter on this claim, conjectured by Cheng et al.
   (2013): admissible data and CFL $\le 0.5$ give an admissible LF update.
   They state it is unproven, verified only on random states, and that
   their limiter assumes it.
@@ -235,7 +238,7 @@ in more than one dimension?**
   leaves $\mathcal{G}$. Wu presents this as the refutation of exactly that
   conjecture.
 
-**Closed by explicit supersession** (Wu 2018 addresses the conjecture
+**Status: Closed (explicit supersession).** (Wu 2018 addresses the conjecture
 directly). The limiter therefore guarantees positivity only when its
 low-order LF update does, which by Statement 2 requires a discrete
 divergence-free condition. *Compiler reading:* Christlieb et al.'s field is
@@ -246,17 +249,17 @@ condition is not met by construction. Their runs did not fail; this is a
 gap in the guarantee, not an observed failure.
 
 **Is the first-order HLL/LLF zone update positivity-preserving in more
-than one dimension?** (open)
+than one dimension?**
 
-* [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md) state that a first-order zone-centred MHD update with HLL or LLF face
+* [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md) (§5) state that a first-order zone-centred MHD update with HLL or LLF face
   fluxes "will indeed be PCP, as was first proved by Gurski" (2004), and
   build their low-order fallback on it. They do not cite Wu (2018).
-* [Wu (2018)](/sources/wu-2018.md) proves that for the LF scheme in 2D,
+* [Wu (2018)](/sources/wu-2018.md), Theorem 4.1, proves that for the LF scheme in 2D,
   admissible data alone do not suffice, at any CFL and viscosity; a
   discrete divergence-free condition on the scheme's own stencil is
-  needed. [Wu & Shu (2019)](/sources/wu-shu-2019.md) extend this to HLL.
+  needed. [Wu & Shu (2019)](/sources/wu-shu-2019.md) extend this to HLL (Theorem 2.2; Corollary 4.1, Theorem 4.3).
 
-**Scoped reading (compiled, open).** The cited Gurski proof is not ingested;
+**Status: Open.** Scoped reading (compiled): the cited Gurski proof is not ingested;
 as far as the citing text shows, it concerns a one-dimensional Riemann
 solver. The multi-dimensional statement then needs Wu's condition. The
 zone-centred field here is the average of exactly divergence-free face
@@ -271,6 +274,8 @@ first-order 1D schemes built on it are positive. In multiple dimensions
 at higher than first order, positivity "depends on the details of the
 multidimensional integrator". That is consistent with this scoped reading,
 though it does not address the first-order multi-dimensional case itself.
+
+**Miyoshi & Kusano on dimension (frontier batch 4b).** [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md) restrict their own HLLD/HLL positivity argument to 1D (§1, p. 317). They state that exact multi-dimensional positivity "may not be necessarily assured even in the HLLD solver" (§7). They also contest Gurski's 1D condition as weaker than theirs ("It is obvious that (98) and (100) are stronger than the conditions by Gurski [13]", pp. 331–332). They make no multi-dimensional claim, so they cannot close the question.
 
 # Citations
 
@@ -288,3 +293,5 @@ though it does not address the first-order multi-dimensional case itself.
 12. [Stone, Gardiner, Teuben, Hawley & Simon (2008)](/sources/stone-2008.md), §4.3.
 13. [Balsara & Spicer (1999)](/sources/balsara-spicer-1999.md), §2.1 (step 6, eq. 16), §3.2.
 14. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §§4, 8.3.
+15. [Balsara (1998)](/sources/balsara-1998-b.md), §6.2.2.
+16. [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md), §§1, 7, p. 331.

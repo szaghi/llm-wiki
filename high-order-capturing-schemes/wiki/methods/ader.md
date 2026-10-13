@@ -172,9 +172,104 @@ conservative, so the order is not lost.
   performs one more update of the time-dependent modes (see
   **Contradictions**).
 * *Time-step table for PNPM* (from Dumbser et al. 2008): limiting 1D CFL
-  numbers 1.00, about 0.32, 0.17, 0.10 and 0.069 for evolved degree 0 to 4
-  with matched space–time order, divided by the dimension in multi-D
+  numbers 1.00, about 0.32, 0.17, 0.10 and 0.069 for data degree 0 to 4
+  with matched space–time order (see the batch-18 bullet below), divided by the dimension in multi-D
   (§VI).
+
+**Later uses (batch 18).**
+* *The PNPM family, from its primary source*
+  ([Dumbser et al. (2008)](/sources/dumbser-2008.md), §§1–2, Fig. 1). The
+  data are polynomials of a degree called here the data degree; before each
+  step a linear constrained least-squares reconstruction ("M-exact",
+  whose first modes equal the data) raises them to degree $K$, and the
+  predictor and fluxes use that polynomial. Data degree 0 is ADER-FV, data
+  degree $K$ is ADER-DG, and the intermediate degrees are a new class from
+  third order up. The update tests the space–time weak form with the
+  data-degree functions, quadrature-free, with one Riemann problem per face
+  (§4).
+* *The continuous nodal predictor* (§§3.1–3.3). Dumbser et al. (2008)
+  introduce a local space–time Galerkin predictor that is *continuous* in
+  time: nodal, the nodes at $t^n$ fixed by the reconstruction and only the
+  later nodes iterated, with no integration by parts in time and the
+  initial condition imposed strongly; the discontinuous version described
+  above (Dumbser, Enaux & Toro 2008, as cited there) imposes it weakly, has
+  more degrees of freedom and handles stiff sources, while the continuous
+  one is for non-stiff sources only. This precedes the modal ADER-CG of
+  Balsara et al. (2009), which shares two of its authors. Convergence
+  (§3.2, eq. 26): by symbolic algebra, the flux iteration matrices are
+  nilpotent (only zero eigenvalues) up to sixth order and three dimensions,
+  conjectured beyond, and the source matrix has eigenvalues of modulus
+  below one, so for linear problems the iteration contracts "at least under
+  a suitable CFL stability condition", and for linear homogeneous scalar
+  problems it converges "for any initial guess vector after at most" $K$
+  iterations. At second order the predictor is "fully explicit" and, for
+  finite volume, "automatically reduces to the MUSCL scheme"
+  ([MUSCL](/methods/muscl.md)).
+* *Frozen-speed fluxes* (§4, eq. 33). Both the leading flux and its
+  corrector, linear in the two states and two fluxes, are Rusanov, with the
+  signal speeds computed at the face's space–time barycentre "and then …
+  frozen", credited to Dumbser, Käser, Titarev & Toro (2007): the same
+  device as the frozen HLL speeds of Balsara et al. (2009) above.
+* *The PNPM time-step table, attributed.* Table 1 of Dumbser et al.
+  (2008), §5.1, gives the largest stable 1D Courant number for linear
+  advection: 1.00 for data degree 0 at every $K$; 0.33 for data degree 1
+  with $K = 1$ and 0.32 with $K = 2, 3, 4$; 0.17, 0.10 and 0.069 for data
+  degrees 2, 3 and 4. "It is the polynomial degree" of the data
+  representation "that governs the stability", not the degree $K$ of
+  the reconstruction, so the table holds for every $K$ at fixed data degree, not
+  only for matched orders. The analysis is 1D only; no multi-D rule is
+  derived, and the 2D and 3D runs use $\nu$ equal to 0.7 (0.5 at fifth
+  and sixth order) divided by one plus twice the data degree (§5.2.1). The clause
+  "divided by the dimension in multi-D" in the batch-7 line above is
+  Balsara's (2017) addition, not in the 2008 paper (a qualification of the
+  attribution, not a contradiction). The ADER-FV entries agree with the
+  Godunov-type limit stated under **Time step**, and the DG entries lie
+  below $1/(2K+1)$.
+* *Efficiency and limits* (§§5.2, 6.2, 7). On smooth 2D Euler on
+  triangles, intermediate PNPM schemes with data degree close to $K$ are
+  as accurate as DG and finite volume is less accurate on the same mesh;
+  at an error of about $3\times10^{-5}$, degree-4 data costs about 900 s,
+  degree-3 data 450 s and degree-2 data 300 s (all $K = 4$, $32^2$), and
+  ADER-FV about 2800 s on $128^2$ (Table 3). Design order is reached up to
+  sixth on triangles (2D Euler) and tetrahedra (3D GLM-MHD). For
+  relativistic MHD a Cauchy–Kowalewski procedure "becomes impossible for
+  orders greater than two", while the Galerkin predictor needs only
+  pointwise flux evaluations. §7 lists the advantages under **Why one
+  step** above (no extra MPI exchange within a step, no time-accuracy
+  barrier, no stored stages, one flux per face).
+* *The generalized Riemann problem and the Toro–Titarev solver*
+  ([Toro (2009)](/sources/toro-2009.md), Chs. 19–20). GRP$_K$ is the
+  Cauchy problem with data that are polynomials of degree at most $K$ on
+  each side; GRP$_0$ is the classical Riemann problem and GRP$_1$ the
+  Ben-Artzi–Falcovitz one (§19.2). Toro and Titarev's solver writes the
+  interface state as a time Taylor series: the leading term is the Godunov
+  state of the classical Riemann problem between the extrapolated values,
+  from "a classical Riemann solver, exact or approximate" (pp. 636, 642),
+  which qualifies the "exact Riemann solver" in **Two ways to build the
+  predictor** above; the time derivatives come from Cauchy–Kowalewski,
+  sources included, with the interface space derivatives from $K$
+  classical Riemann problems for the derivatives, linearized about the
+  leading state, so one nonlinear and $K$ linear Riemann problems per
+  interface (§19.4). "For the non–linear case there appears to be no
+  theoretical justification available so far, although the empirical
+  evidence available is supportive" (§19.4.5), and the series "remains
+  valid only for small times" (§19.5.4, Table 19.1). For homogeneous linear
+  constant-coefficient systems this solver, Harten et al.'s and Castro &
+  Toro's are "algebraically equivalent", otherwise different but of the
+  same order (§19.6, p. 652).
+* *History and the second-order case* (Toro (2009), §§20.1–20.3). ADER was
+  put forward by Toro, Millington & Nejad (2001) for linear problems on
+  Cartesian meshes, up to tenth order; "for linear problems with constant
+  coefficients the ADER schemes are identical to the schemes of"
+  Harten et al. (one-step ENO), different but of the same order for
+  nonlinear ones; ADER extends the Ben-Artzi–Falcovitz GRP scheme and
+  Harten et al.'s extends MUSCL–Hancock. At second order with a linear
+  reaction source the flux "knows of the source term"; without source the
+  left, right and mean slopes give Warming–Beam, Lax–Wendroff and Fromm
+  (§20.3). ADER-DG on deliberately distorted triangles for 2D linearized
+  Euler, from Dumbser & Munz, reaches finest-mesh orders 9.6/10.1/10.0
+  ($L^\infty$/$L^1$/$L^2$) at tenth order (Table 20.1), consistent with
+  **Observed order** above.
 
 ## Contradictions
 
@@ -196,6 +291,23 @@ conservative, so the order is not lost.
   Picard-iteration argument for their count. No source in the corpus
   reports accuracy with $K$ against $K + 1$ updates of the same
   predictor; that comparison would decide it.
+* *Later evidence (batch 18): the cited argument itself.*
+  [Dumbser et al. (2008)](/sources/dumbser-2008.md), §3.2, p. 8218, the
+  "Dumbser et al." both sides cite, for its nodal continuous predictor:
+  (i) the continuous-Picard estimate gives an error $O(\Delta t^{K+1})$
+  after $K$ iterations, which supports the $K$-update count of Balsara & Kim
+  and Balsara (2017); (ii) for linear homogeneous scalar problems they
+  observed, by symbolic computation, convergence after at most $K$
+  iterations; (iii) in practice, "for
+  nonlinear systems only at most" $K$ "or" $K + 1$ "iterations were needed
+  to reach convergence to a precision of $10^{-9}$", compatible with the
+  $K + 1$ of Balsara et al. (2009); (iv) at second order ($K = 1$) the
+  predictor is "fully explicit" and needs no iteration, which differs from
+  the two iterations Balsara et al. (2009) use at second order for their
+  modal ADER-CG predictor. Its own runs iterate to a tolerance of
+  $10^{-9}$, not a fixed count, so it reports no accuracy comparison of
+  $K$ against $K + 1$ updates either. It refines the entry and does not
+  close it: *Open*.
 
 # Citations
 
@@ -206,3 +318,5 @@ conservative, so the order is not lost.
 5. [Zanotti et al. (2015)](/sources/zanotti-2015.md), §§1, 3.
 6. [Balsara & Kim (2016)](/sources/balsara-2016-b.md), §§2–3.
 7. [Balsara (2017)](/sources/balsara-2017-d.md), §§V, VI.
+8. [Dumbser et al. (2008)](/sources/dumbser-2008.md), §§1–5, 6.2, 7, Table 1.
+9. [Toro (2009)](/sources/toro-2009.md), Chs. 19–20 (scoped read).

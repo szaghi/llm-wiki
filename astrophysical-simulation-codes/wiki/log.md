@@ -2,6 +2,40 @@
 
 ## 2026-10-13
 
+* **Frontier batch 10: ingested [Berger & Oliger (1984)](/sources/berger-1984.md),
+  [Teyssier (2002)](/sources/teyssier-2002.md), [Colella & Glaz (1985)](/sources/colella-1985.md),
+  [Hunter (2007)](/sources/hunter-2007.md), [Turk et al. (2011)](/sources/turk-2011-c.md) and
+  [White et al. (2016)](/sources/white-2016.md)**, the user's downloads; 56 of 56.
+  Teyssier read as the arXiv preprint (figures are placeholder pages). Stone & Norman's
+  ZEUS-2D papers were not obtained and are dropped.
+  * **New page:** [RAMSES](/software/ramses.md).
+  * **Updated:** [AMR](/methods/adaptive-mesh-refinement.md) (Berger & Oliger's time refinement,
+    Richardson estimate and rotated subgrids; Teyssier's octree and per-level stepping; the
+    Open subcycling entry gains both as evidence), [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+    and [general EOS](/methods/general-equation-of-state.md) (Colella & Glaz's real-gas solver;
+    White et al.'s frame-transformation solvers), [Athena++](/software/athena-plus-plus.md),
+    [constrained transport](/methods/constrained-transport.md), [primitive-variable recovery](/methods/primitive-variable-recovery.md)
+    (Noble's 1D_W in 2016), [Enzo](/software/enzo.md), [FLASH](/software/flash.md),
+    [RAMSES-RT](/software/ramses-rt.md), [IDEFIX](/software/idefix.md),
+    [Poisson solvers on adaptive meshes](/methods/multigrid-self-gravity.md) (RAMSES's one-way
+    interface; the Open entry gains Teyssier's percent-level force errors, which neither confirm
+    nor refute the estimate), [particle-mesh gravity](/methods/particle-mesh-gravity.md),
+    [numerical floors](/methods/numerical-floors.md), [cell updates per second](/definitions/cell-updates-per-second.md),
+    and the benchmarks Sod, Sedov–Taylor, Zeldovich pancake, double Mach reflection, MHD blast,
+    linear waves and magnetized torus.
+  * **No contradiction opened.** Qualifications: Teyssier's "no artefact" for shocks crossing
+    level boundaries against FLASH's reflected shock at grazing incidence (his 3D evidence refines
+    on concentric spheres, so incidence is near normal; compiler reading); refinement ratio 4
+    (Berger & Oliger) against 2 (Enzo, Quokka), recommendations on different grounds; the 2016
+    and 2020 Athena++ papers describe two epochs of the code. matplotlib and yt get Source pages
+    only (analysis tooling is outside the bundle's scope); Hunter (2007) prints no reference list
+    and stays on `--pending` by design.
+  * **Bibliography** (2522 entries): 220 references merged. arXiv:1008.2801, cited as "Almgren et
+    al. 2010" by Turk et al., is the SciDAC 2010 MAESTRO/CASTRO/SEDONA paper (arXiv API), new key
+    almgren-2010-b; De Zeeuw's thesis, Kravtsov & Klypin and Collins et al. (arXiv) separated from
+    same-key entries; Evans & Hawley printed ApJ 322:659 by White et al.; the note on turk-2011-b
+    corrected (it is not the yt preprint, arXiv:1011.3514).
+
 * **Deep lint #4** (15 ingestions since #3: frontier batches 6–9 and
   Truelove 1997). Two read-only audits (concept pages and registry; Source
   pages and every `Contradictions` entry), then fixes checked against the PDFs.

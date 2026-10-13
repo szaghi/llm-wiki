@@ -31,7 +31,7 @@ period".
 ## What it detects, per the compiled sources
 
 * **Stencil inconsistency** (the sharpest use): in 3D, a loop confined to
-  the $(x,y)$-plane advected with $v_z \ne 0$ grows spurious $B_z$ unless
+  the $(x,y)$-plane advected with $u_z \ne 0$ grows spurious $B_z$ unless
   the divergence is held **on the same stencil used to construct the
   $B_z$ fluxes**; round-off-constant $B_z$ certifies consistency
   ([Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md), where the
@@ -50,14 +50,14 @@ period".
   With the loop inclined, the axial component is zero only to truncation
   error, matching the rotated-loop result below.
 * **Fourth-order CT in 3D** ([Felker & Stone (2018)](/sources/felker-2018.md)). The loop
-  is advected along the space diagonal with $v = (2,1,2)$, on a $[-1,1]\times[-0.5,0.5]\times[-1,1]$ box with $N = 64$ cells across $x_2$.
+  is advected along the space diagonal with $\mathbf u = (2,1,2)$, on a $[-1,1]\times[-0.5,0.5]\times[-1,1]$ box with $N = 64$ cells across $x_2$.
   * $B_z$ stays below machine epsilon for two periods.
   * Loop edges are resolved in 4 cells, against 6–8 at second order.
   * The second-order scheme opens a larger reconnection hole and
     overshoots the peak by about 20%, against about 8% at fourth order.
 * **A rotated 3D loop measures what CT does not hold**
   ([Mignone & Del Zanna (2021)](/sources/mignone-2021.md)).
-  * The loop is rotated about $y$ (rotation angle with tangent 1/2), with $v = (1,1,2)$
+  * The loop is rotated about $y$ (rotation angle with tangent 1/2), with $\mathbf u = (1,1,2)$
     on $64\times64\times128$.
   * The field component along the loop axis is then zero only to
     truncation error, not round-off. It ranks EMF schemes: UCT is best,
@@ -82,14 +82,14 @@ period".
 * **High-order cleaning, uniform grid**
   ([Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md)).
   * 2D on $128\times64$, and 3D on $128\times128\times256$ with
-    $v = (1,1,2)$ and the loop rotated about one axis.
+    $\mathbf u = (1,1,2)$ and the loop rotated about one axis.
   * Fifth-order schemes are visibly less diffusive than third-order ones in
     both shape and magnetic-energy decay.
   * The divergence error depends on the damping parameter in an
     order-dependent way. See [GLM](/methods/glm-divergence-cleaning.md).
 * **A cleaning scheme across 2:1 seams** ([Zaghi (2026)](/sources/zaghi-2026.md),
   hypothesis). Collocated WENO MHD with
-  [GLM](/methods/glm-divergence-cleaning.md), with a $v_z$ component so that
+  [GLM](/methods/glm-divergence-cleaning.md), with a $u_z$ component so that
   $\partial_t B_z$ measures the divergence error.
   * The generated $\langle|B_z|\rangle$ stays at the cleaning level and
     decreases under refinement.

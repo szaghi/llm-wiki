@@ -2,6 +2,82 @@
 
 ## 2026-10-13
 
+* **Deep lint** (19 ingestions since the batch-16 lint: Zaghi (2026),
+  batches 17 and 18). Two read-only audits; two fixers on disjoint page sets,
+  each fix checked against the Source pages or PDFs:
+  * **Contradictions.** Parallel-force sign entry consolidated: one *Open*
+    label (the heading), the scattered "stays Open"/"needs fiat" remarks
+    removed, Derigs et al.'s page locators corrected (eqs. 2.18–2.19 p. 5,
+    2.20–2.21 p. 6), Tóth's §3 wording quoted, and one closing bullet
+    stating the evidence for the human's fiat (printed plus: Brackbill &
+    Barnes eq. 8; printed minus: Derigs et al. eq. 2.21 only; plus by the
+    compiler's one-line projection: Derigs et al. eqs. 2.18–2.20, Dedner et
+    al. eqs. 22/24b, Tóth eq. 11, Powell eqs. 14–15; Zaghi (2026)
+    hypothesis-grade). No entry opened or closed.
+  * **Claims.** Donor-cell and CTU stability conditions on the SSP page had
+    the sufficient/necessary labels swapped (Colella 1990, eqs. 1.5–1.6);
+    "not ingested" remarks on Einfeldt (1988) dated to batch 16; mixed EGLM
+    "within 5%" → "within 6% (5.3% on the finest grid)"; Tóth's error
+    averaged over the non-zero primitive variables; Balsara (2012) §3.3 blast
+    bullet no longer attributes a divergence treatment §3.3 does not name;
+    Zachary et al.'s HLLE switch written in registry symbols; Cockburn & Shu
+    (1989) row added to the Burgers table; CFL locators (§§3.1, 3.3).
+  * **Notation.** Registered $\mathbf k$, $k_d$ (wavevector) and
+    $K_{\mathrm d}$ (PNPM data degree); the Einfeldt-speed row written as
+    $S_{L,R} = v_{n,\mathrm{Roe}} \mp \bar c_{\mathrm E}$; radius $r$ →
+    $\varrho$ on the MHD-rotor page; h-box $\kappa_k$ → $\kappa_i$; FORCE-α
+    spelled as the scheme name; one term ("data degree") on the ADER page.
+  * **Audit lists and tags.** Every page citing a batch-17/18 source is now
+    on that source's audit list (DeVore and Balsara 2012 leftovers
+    "sent to the compiler" replaced); "3380 entries" on all batch-18 Source
+    pages; tags merged (`staggered`, `unstructured`, `characteristic-limiting`;
+    `divergence-cleaning` dropped where `glm` is present).
+  * **Deferred.** Order-table audit trail: the Burgers measured-orders table
+    and the MR-WENO orders bullet carry numbers not found on their Source
+    pages; left unchanged pending a re-read of the PDFs.
+
+* **Batch 18 (frontier 4b): ingested [Balsara (1998)](/sources/balsara-1998-b.md),
+  [Balsara (2012)](/sources/balsara-2012.md), [DeVore (1991)](/sources/devore-1991.md),
+  [Powell (1994)](/sources/powell-1994.md), [Orszag & Tang (1979)](/sources/orszag-1979.md),
+  [Cockburn & Shu (1989)](/sources/cockburn-1989.md), [Einfeldt (1988)](/sources/einfeldt-1988.md),
+  [Harten & Osher (1987)](/sources/harten-1987-b.md), [Toro et al. (1994)](/sources/toro-1994.md),
+  [Berger et al. (2003)](/sources/berger-2003.md), [Dumbser et al. (2008)](/sources/dumbser-2008.md)
+  and [Toro (2009)](/sources/toro-2009.md)** (third edition, scoped to Chs. 10 and
+  18–20), the user's downloads plus Powell's ICASE report copied from a sibling
+  archive (D17); 143 sources.
+  * **New page:** [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md).
+  * **Updated:** [GLM cleaning](/methods/hyperbolic-divergence-cleaning.md) (Powell's
+    source terms at their origin), [constrained transport](/methods/constrained-transport.md)
+    (DeVore's staggered FCT; Balsara's 1998 projection), [HLL](/methods/hll-riemann-solver.md),
+    [HLLEM](/methods/hllem-riemann-solver.md), [HLLC](/methods/hllc-riemann-solver.md)
+    (Toro 1994: star pressures computed separately; Toro 2009's revised chapter; "Test 6" is
+    Test 7 in the third edition), [approximate Riemann solvers](/methods/approximate-riemann-solvers.md)
+    (FORCE, GFORCE), [RKDG](/methods/rkdg.md), [monotone flux](/definitions/monotone-flux.md),
+    [ENO definition](/definitions/essentially-non-oscillatory.md) and
+    [ENO reconstruction](/methods/eno-reconstruction.md) (the nonoscillatory notion is Harten &
+    Osher's part I), [ADER](/methods/ader.md), [cut-cell FV](/methods/cut-cell-finite-volume.md)
+    (h-box has no cut cells in its primary source), [positivity](/properties/positivity-preserving.md),
+    the scaling and flux limiters, [characteristic decomposition](/methods/characteristic-decomposition.md),
+    [PPM](/methods/ppm.md), [contact sharpening](/methods/contact-sharpening.md),
+    [Taylor time discretization](/methods/taylor-time-discretization.md), benchmarks
+    (Orszag–Tang origin, MHD blast, high-Mach jets, oblique and Brio–Wu tubes, Ryu–Jones tubes,
+    Lax tube, Burgers) and the Source pages of Cockburn & Shu (1998), Tsai et al. (2012),
+    Einfeldt et al. (1991), Berger & Giuliani (2021) and Balsara (2017).
+  * **Contradictions.** None opened. Parallel-force sign entry (Open): a bullet for the plus
+    sign from Powell's eqs. 14–15 (projection by the compiler; the report predates Derigs et
+    al.). Picard-count and cut-cell entries: evidence added, still Open. Qualifications: the
+    RKDG limits 1/3 and 1/5 are sufficient conditions; Einfeldt's entropy-violating stationary
+    shock concerns Roe-eigenvalue speeds, not the pressure-based speeds of the Toro line; no
+    Einfeldt paper proves positivity for HLLEM; "divided by the dimension" is Balsara 2017's.
+  * **Bibliography** (3380 entries): 442 references merged (Toro 2009 scoped to the 141 works
+    cited in the chapters read). Corrected: the toro-1994 title and venue from page 1 (an earlier
+    citing source's wording); DeVore's private communication split from Zalesak's IMACS paper
+    (zalesak-1987-b); Berger et al.'s author spelling LeVeque; Powell's title (no "Actually");
+    Dumbser et al.'s title; Balsara's "algorithim". Berger et al. cite their own 2002 preprint
+    (kept separate, berger-2002); a Käser & Iske title printed by Toro kept separate
+    (kaser-2005-b), its identity with kaser-2005 unverified. Notation: the Einfeldt-speed row
+    names the Roe-averaged velocity (eq. 5.8).
+
 * **Batch 17 (frontier 4a): ingested [Dedner et al. (2002)](/sources/dedner-2002.md),
   [Tóth (2000)](/sources/toth-2000.md), [Colella (1990)](/sources/colella-1990.md),
   [Evans & Hawley (1988)](/sources/evans-1988.md),

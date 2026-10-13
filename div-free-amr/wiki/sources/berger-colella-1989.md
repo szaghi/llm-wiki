@@ -9,7 +9,7 @@ year: 1989
 venue: "J. Comput. Phys. 82:64-84"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/1989-JCP-Berger.pdf"
 tags: [amr, block-structured, refluxing, conservation, shock-capturing]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary
@@ -55,6 +55,8 @@ against title/authors/volume/pages.)
    exploits finite propagation speed; level-$l$ cells under level-$l{+}2$
    interiors are force-flagged to preserve nesting; clustering heuristics
    emit large, low-overlap rectangles.
+
+**Provenance (Berger & Oliger 1984).** The Richardson error estimator, buffer zones, clustering, force-flagging under level-$l{+}2$ grids and space–time refinement at constant $\Delta t/h$ all originate in [Berger & Oliger (1984)](/sources/berger-oliger-1984.md) (eq. 3.2, §§3–4, p. 495). This paper's changes are grid alignment, conservative averaging instead of injection, and refluxing.
 
 # Notation map
 

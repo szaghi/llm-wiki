@@ -8,7 +8,7 @@ authors: [Cockburn B., Shu C.-W.]
 year: 1998
 venue: "J. Comput. Phys. 141:199–224"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/1998-JCP-Cockburn-101006jcph19985892.pdf"
-tags: [dg, rkdg, limiter, tvb, euler, unstructured, characteristic]
+tags: [dg, rkdg, limiter, tvb, euler, unstructured, characteristic-limiting]
 timestamp: 2026-10-13T00:00:00Z
 ---
 
@@ -183,6 +183,8 @@ on the earlier parts.
    and/or pressure"; the positivity correction was needed for $P^1$ and
    $P^2$. No quantitative comparison
    ([shock diffraction](/benchmarks/shock-diffraction.md)).
+
+**Later uses (batch 18).** *Item 3's citation.* The "[16, Proposition 2.1]" cited in §2.1 is part IV of the series (Cockburn, Hou & Shu, Math. Comp. 54:545, `cockburn-1990`), not part II. Part II ([Cockburn & Shu (1989)](/sources/cockburn-1989.md)) has no Proposition 2.1; its quadrature requirement is Remark 2.6: 1D volume error $O(h^{2K+2})$, Simpson for $K = 1$, three-point Gauss for $K = 2$. Read item 3 as "citing part IV, Prop. 2.1". Item 8's "estimate of $M$ from second derivatives" is part II's Lemma 2.2, $M = \tfrac23\max\vert\partial_{xx}u\vert$.
 
 # Notation map
 

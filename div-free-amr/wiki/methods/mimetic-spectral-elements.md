@@ -5,7 +5,7 @@ description: "Arbitrary-order tensor-product elements whose reduction-reconstruc
 status: established
 aliases: [MMSEM, mimetic spectral element method]
 tags: [mimetic, spectral-elements, high-order, divergence-constraint, curvilinear]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Mimetic spectral elements
@@ -16,7 +16,7 @@ degrees of freedom are integrals over $k$-cells (the cochain data of the
 complex, [notation](/notation.md)), reconstructed by tensor products of
 nodal and *edge* (histopolation) interpolation functions of arbitrary
 degree, with the projection $\pi = \mathcal{I}\circ\mathcal{R}$ satisfying
-$$\pi \circ d = d \circ \pi .$$
+$$\pi \circ \mathrm d = \mathrm d \circ \pi .$$
 The commutation is the whole method: differentiation is performed exactly
 in the finite-dimensional space, so for incompressible flow the discrete
 velocity is **pointwise divergence-free at every mesh size** — not

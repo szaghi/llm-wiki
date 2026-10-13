@@ -112,6 +112,10 @@ comparison is visual. Quokka's use measures throughput, not accuracy.
 
 * **FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §7.4, Figs. 29–31: unit energy in 3.5 finest cells, 2D cylindrical at 2–8 levels, $t = 0.05$. The shock is captured in about two zones, and 90 % of the swept mass lies in 4 / 17 / 69 zones at 4 / 6 / 8 levels. Under-resolution underestimates the peaks. In 3D at 5 levels the analytic peak (about 1.5 zones wide) is missed, and rms deviations reach "up to 40%" in the derefined region behind the shock. §7.7: the same front crossing a static 7→6 level jump reflects a shock, stronger at grazing incidence; the printed front positions contradict the text, as recorded on the Source page.
 
+## Later uses (batch 10)
+
+* **RAMSES** ([Teyssier (2002)](/sources/teyssier-2002.md), §§3.4, 3.6). Planar run (32 cells, 6 levels): correct shock speed, no visible post-shock oscillation, 130 cells against 2048 uniform. Spherical run ($32^3$ coarse, 6 levels, refinement confined to concentric spheres): "remarkable" agreement of spherically binned profiles, with a velocity departure near 60 % of the shock radius "Similar" to Fryxell et al. (2000). No mesh-reflection oscillations are visible in the radial profiles; comparisons are visual.
+
 # Citations
 
 1. [Almgren et al. (2010)](/sources/almgren-2010.md), §8.2 (arXiv v1).
@@ -120,3 +124,4 @@ comparison is visual. Quokka's use measures throughput, not accuracy.
 4. [Lesur et al. (2023)](/sources/lesur-2023.md), §4.1 (arXiv v1).
 5. [Wibking & Krumholz (2022)](/sources/wibking-2022.md), §4 (arXiv v2).
 6. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§7.4, 7.7, Figs. 29–31, 38–39.
+7. [Teyssier (2002)](/sources/teyssier-2002.md), §§3.4, 3.6.

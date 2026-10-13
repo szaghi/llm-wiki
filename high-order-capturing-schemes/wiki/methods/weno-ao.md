@@ -113,7 +113,7 @@ equally. It returns a whole polynomial on the cell.
 
 ## Contradictions
 
-**Is WENO-ZQ free of spurious extrema and clipping?**
+**Is WENO-ZQ free of spurious extrema and clipping?** *Open.*
 * [Zhu & Qiu (2016)](/sources/zhu-2016.md), abstract, §§1–3: the scheme escapes
   "nonphysical oscillations adjacent strong shocks or contact
   discontinuities", and behaves like a TVD scheme with a van Albada-like
@@ -127,7 +127,7 @@ equally. It returns a whole polynomial on the cell.
   limiter, which clips extrema.
 * *Compiler reading:* the two papers test different problems; Zhu and Qiu
   do not run the composite advection, Balsara et al. do. The disputed
-  claim is general non-oscillation. **Open.**
+  claim is general non-oscillation.
 
 # Citations
 

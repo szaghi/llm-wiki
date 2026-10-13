@@ -8,7 +8,7 @@ authors: [Dedner A., Kemm F., Kröner D., Munz C.-D., Schnitzer T., Wesenberg M.
 year: 2002
 venue: "J. Comput. Phys. 175:645–673"
 local_file: "/home/stefano/papers/mosaic/high-order-capturing-schemes/2002-JCP-Dedner-101006jcph20016961.pdf"
-tags: [mhd, divergence-cleaning, glm, source-terms, unstructured-grid]
+tags: [mhd, glm, source-terms, unstructured]
 timestamp: 2026-10-13T00:00:00Z
 ---
 

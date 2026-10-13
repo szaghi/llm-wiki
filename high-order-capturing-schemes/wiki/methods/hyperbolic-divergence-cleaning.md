@@ -293,7 +293,7 @@ details on [constrained transport](/methods/constrained-transport.md)).
 * *Orders* (Table II, colliding-flow Riemann problem, first-order
   Dai–Woodward flux, $L^1$ errors on a cut): mixed GLM falls from 6.455 on
   1,024 to 0.228 on 1,048,576 elements, with EOC 1.061, 0.875, 0.804,
-  1.069, 1.014; mixed EGLM is within 5% of it; Powell's source terms give
+  1.069, 1.014; mixed EGLM is within 6% of it (5.3% on the finest grid); Powell's source terms give
   EOC 0.880, 0.622, 0.432 and no solution on the two finest grids
   ([grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md)).
 * *Divergence.* Across the tests, mixed GLM and mixed EGLM have the smallest
@@ -303,6 +303,56 @@ details on [constrained transport](/methods/constrained-transport.md)).
   more time on the adaptive grid (§5).
 
 * *The counts in the CTU-GLM paragraph.* The 6-solve count is Colella's reduced 3D variant without corner coupling, and the 3D limit of 1/2 is Mignone and Tzeferacos's: [Colella (1990)](/sources/colella-1990.md) (§6) states no 3D Courant limit; his full 3D CTU needs 12 solves ([corner transport upwind](/methods/corner-transport-upwind.md)).
+
+**Later uses (batch 18).** *Powell's source terms at their origin*
+([Powell (1994)](/sources/powell-1994.md), §§1–2, eqs. 5–17, ICASE
+report).
+* *Where they come from.* A Roe-type solver for the full eight-equation
+  system, with the normal field not held constant. The primitive-variable
+  Jacobian then has a zero row for $B_x$, a "clearly non-physical" zero
+  eigenvalue whose mode "will be undamped" (eqs. 6–8). Powell zeroes the
+  $\partial_xB_x$ column except for $v_x$ on the diagonal (eq. 9): the seven
+  usual waves are unchanged, and an eighth, moving at $v_x$, carries only
+  jumps in $B_x$ (eqs. 10–13).
+* *The sources as printed* (eq. 14, sign checked on the page image). The
+  conservative system, with momentum flux
+  $\rho\mathbf v\mathbf v + \mathsf I\left(p + \tfrac12\vert\mathbf B\vert^2\right) - \mathbf B\mathbf B$,
+  gets the right-hand side $-\mathbf B\,\nabla\cdot\mathbf B$ in momentum,
+  $-\mathbf v\,\nabla\cdot\mathbf B$ in induction,
+  $-(\mathbf v\cdot\mathbf B)\,\nabla\cdot\mathbf B$ in energy and none in
+  continuity. These are the terms the ideal GLM-MHD paragraph calls
+  Godunov–Powell; the report never uses the name "Godunov".
+* *Why they remove something* (eq. 15). Expanding the conservative
+  equations exposes terms proportional to $\nabla\cdot\mathbf B$
+  (for momentum, $-\mathbf B\,\nabla\cdot\mathbf B$ beside
+  $\nabla(p + \tfrac12\vert\mathbf B\vert^2) - (\mathbf B\cdot\nabla)\mathbf B$);
+  the source "simply acts to remove the terms proportional to ∇·B that
+  appear in Equation 2". It vanishes at the PDE level, so "the deviations
+  from conservation will be very small".
+* *What happens to the divergence* (eqs. 16–17). The original system
+  freezes it, $\partial_t(\nabla\cdot\mathbf B) = 0$; with the sources,
+  $\partial_t(\nabla\cdot\mathbf B) + \nabla\cdot(\mathbf v\,\nabla\cdot\mathbf B) = 0$,
+  so "the quantity ∇·B/ρ is treated as a passive scalar" and "any local
+  ∇·B that is created is convected away". Errors thus move with the flow,
+  not at a cleaning speed $c_h$. Powell presents the advection as the
+  stabilizing feature; Derigs et al. describe the same mechanism as
+  accumulation at stagnation points: a difference of evaluation, not of
+  mechanism.
+* *Attribution.* Powell cites Brackbill & Barnes only for the
+  nonconservative momentum equation ("[1]", pp. 6–7); the induction and
+  energy sources come from his Jacobian modification. This qualifies
+  Tóth's statement that Brackbill & Barnes already contain all the source
+  terms, and agrees with the batch-15 block: the 1980 note keeps induction
+  and energy conservative.
+* *Scope of the report.* First order in space and time, an arithmetic-mean
+  interface state, the source evaluated per cell with an unstated discrete
+  divergence, one test (a Brio–Wu tube rotated by 45°, normal field off by
+  a few percent on the coarse grid and better on the fine one; no norms).
+  The EOC of "Powell's source terms" in Dedner et al.'s Table II above
+  belong to a later implementation, not to this report
+  ([grid-oblique shock tubes](/benchmarks/oblique-mhd-shock-tubes.md)).
+
+On tetrahedra with PNPM schemes up to sixth order, "We did not obtain the correct convergence rates without the use of the divergence cleaning approach … high order schemes alone are not able to resolve the problem of the divergence-free condition". With GLM cleaning, design order is reached. Pure DG is the most efficient for the field components, and intermediate PNPM schemes for $\rho$, $\mathbf v$, $p$ ([Dumbser et al. (2008)](/sources/dumbser-2008.md), §5.2.2, pp. 8227–8228).
 
 ## Contradictions
 
@@ -374,6 +424,12 @@ at the batch-8 deep lint; both sides were already in the text).
   staggered constrained transport at plasma beta about $2.5\times10^{-4}$
   as robust as a zone-centred scheme with projection cleaning (not GLM),
   without saying whether their energy correction (eq. 16) was used.
+* *Batch 18, not decisive.* [Balsara (2012)](/sources/balsara-2012.md)
+  §3.3: a 3D MHD blast at plasma beta $1.005\times10^{-3}$ run with the
+  positivity fix, whose MHD pressure step acts on a divergence-free
+  reconstruction of face-centred fields (§2.2), at third order (floors
+  alone: pressure "totally corrupted"); §3.3 itself does not name the
+  divergence treatment, and no cleaning run is shown.
 
 **What is the sign of the parallel force of the conservative magnetic force?** *Open*
 (recorded at batch 15).
@@ -381,7 +437,7 @@ at the batch-8 deep lint; both sides were already in the text).
   for the conservative force
   $\nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right)$,
   its dot product with $\mathbf B$ is $+\vert\mathbf B\vert^2\,\nabla\cdot\mathbf B$.
-* [Derigs et al. (2018)](/sources/derigs-2018.md), eqs. 2.20–2.21: for the same
+* [Derigs et al. (2018)](/sources/derigs-2018.md), eqs. 2.20–2.21 (arXiv v3, p. 6): for the same
   force, written $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathsf I - \mathbf B\otimes\mathbf B\right)$,
   its projection on $\mathbf B/\vert\mathbf B\vert$ is $-(\nabla\cdot\mathbf B)\vert\mathbf B\vert$.
 * *Compiler's note, not a resolution:* expanding the divergence gives
@@ -390,20 +446,18 @@ at the batch-8 deep lint; both sides were already in the text).
   projection is $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$, as Brackbill &
   Barnes print. Both papers agree that the force is along $\mathbf B$,
   proportional to the divergence, and unphysical; only the printed sign
-  differs. A derivation is not a source: the entry stays open until a
-  source settles it or the human closes it.
-* *Derigs et al.'s own equations entail the plus sign.* Their eq. 2.18
+  differs. A derivation is not a source.
+* *Compiler's reading of Derigs et al.'s eqs. 2.18–2.20 (derivation, not printed):* their eq. 2.18
   writes the Lorentz force with the non-conservative term as
   $-\nabla\cdot\left(\tfrac12\vert\mathbf B\vert^2\mathsf I - \mathbf B\otimes\mathbf B\right) - (\nabla\cdot\mathbf B)\mathbf B$,
   and eq. 2.19 states that its projection on $\mathbf B/\vert\mathbf B\vert$
   is zero; the force of eq. 2.20 is that force plus
   $(\nabla\cdot\mathbf B)\mathbf B$, so its projection is
   $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$, against their eq. 2.21
-  (compiler's reading of eqs. 2.18–2.21, arXiv v3, p. 5). A printed-sign
-  erratum in Derigs et al. is the likely reading; closing needs the
-  human's fiat.
+  (compiler's reading of eqs. 2.18–2.21, arXiv v3, pp. 5–6). A printed-sign
+  erratum in Derigs et al. is the likely reading.
 * *Implicit evidence from a production code, for the plus sign
-  (hypothesis-grade; it cannot close the entry).* The EGLM model of
+  (hypothesis-grade).* The EGLM model of
   [Zaghi (2026)](/sources/zaghi-2026.md) keeps the conservative
   Maxwell-stress momentum flux and adds the momentum source
   $-(\nabla\cdot\mathbf B)\,\mathbf B$, citing Derigs et al. eqs.
@@ -414,8 +468,9 @@ at the batch-8 deep lint; both sides were already in the text).
   $\mathbf B$, the sign Brackbill & Barnes print. The code never states the
   sign (compiler's reading of its flux and source); its plain GLM model
   adds no momentum source and keeps the parallel force.
-* *Batch 17, two peer-reviewed sources for the plus sign (printed
-  identity, projection not printed).*
+* *Batch 17, two peer-reviewed sources for the plus sign (Dedner: printed
+  identity; Tóth: printed equation said to come from the Lorentz force;
+  projection not printed in either).*
   [Dedner et al. (2002)](/sources/dedner-2002.md) print, as eq. 22
   (p. 651, checked on the page image),
   $(\nabla\times\mathbf B)\times\mathbf B = \nabla\cdot\left(\mathbf B\mathbf B - \tfrac12\vert\mathbf B\vert^2\mathsf I\right) - (\nabla\cdot\mathbf B)\mathbf B$,
@@ -430,14 +485,41 @@ at the batch-8 deep lint; both sides were already in the text).
   with the source $-(\nabla\cdot\mathbf B)\mathbf B$ (eq. 11, read from
   the text layer), credits all the source terms to Brackbill & Barnes,
   and names acceleration "parallel to the field lines" as the usual
-  unphysical effect (§1.1); he states neither the sign nor that the
-  source is meant to cancel that component, so eq. 11 implies the plus
-  sign only on that reading. Appendix A proves that no conservative scheme
+  unphysical effect (§1.1); he states that this form is derived from the
+  Lorentz force (§3, ref. [47]), so flux plus source is
+  $(\nabla\times\mathbf B)\times\mathbf B$, and the conservative force
+  then has the component $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$
+  along $\mathbf B$ (projection by the compiler; Tóth states neither the
+  sign nor the cancellation). Appendix A proves that no conservative scheme
   keeps the discrete Lorentz acceleration exactly orthogonal to
-  $\mathbf B$ in every cell. *Status stays Open:* both papers predate
-  Derigs et al. (2018) and cannot supersede it; closing the entry still
-  needs a source that addresses Derigs et al.'s printed sign, or the
-  human's fiat.
+  $\mathbf B$ in every cell.
+* *Batch 18, the eight-wave origin, for the plus sign (printed expansion,
+  projection not printed).* [Powell (1994)](/sources/powell-1994.md), eq. 14,
+  keeps the conservative Maxwell-stress momentum flux and adds the source
+  $-\mathbf B\,\nabla\cdot\mathbf B$; eq. 15 (page image p. 7) writes the
+  conservative momentum equation expanded as
+  $\partial_t(\rho\mathbf v) + \nabla\cdot(\rho\mathbf v\mathbf v) + \nabla\left(p + \tfrac12\vert\mathbf B\vert^2\right) - (\mathbf B\cdot\nabla)\mathbf B - \mathbf B\,\nabla\cdot\mathbf B = 0$,
+  the last term underlined as one of "the terms proportional to ∇·B that
+  appear in Equation 2". The conservative magnetic force is then
+  $-\nabla\left(\tfrac12\vert\mathbf B\vert^2\right) + (\mathbf B\cdot\nabla)\mathbf B + (\nabla\cdot\mathbf B)\mathbf B$,
+  whose first two terms sum to $(\nabla\times\mathbf B)\times\mathbf B$,
+  orthogonal to $\mathbf B$, so its component along $\mathbf B$ is
+  $+(\nabla\cdot\mathbf B)\vert\mathbf B\vert$, the sign Brackbill & Barnes
+  print. Powell never projects on $\mathbf B$ and never speaks of a force
+  along the field: the projection is the compiler's. Powell credits the
+  non-conservative momentum equation to Brackbill & Barnes (his ref. [1],
+  pp. 6–7).
+* *State of the evidence for the human's fiat (compiler's summary, not a
+  resolution).* Printed projections: plus, Brackbill & Barnes eq. 8;
+  minus, Derigs et al. eq. 2.21 only. Printed identities or forms that
+  entail plus by a one-line projection (the compiler's): Derigs et al.
+  eq. 2.18 with 2.19–2.20, Dedner et al. eqs. 22 and 24b, Tóth eq. 11,
+  Powell eqs. 14–15; code record (hypothesis-grade): Zaghi (2026). No
+  source other than eq. 2.21 prints the minus sign, and none addresses
+  eq. 2.21; every peer-reviewed plus-side source predates it, so none
+  supersedes it, and Powell and Tóth both credit the non-conservative form
+  to Brackbill & Barnes. Closing needs a source that supersedes eq. 2.21,
+  or the human's fiat.
 
 # Citations
 
@@ -455,3 +537,5 @@ at the batch-8 deep lint; both sides were already in the text).
 12. [Dedner et al. (2002)](/sources/dedner-2002.md), §§2–6, eqs. 12–24, 38, 40–46, Table II (eqs. 22 and 24 checked on the page image).
 13. [Tóth (2000)](/sources/toth-2000.md), §§1.1, 3, Appendix A.
 14. [Colella (1990)](/sources/colella-1990.md), §6.
+15. [Powell (1994)](/sources/powell-1994.md), §§1–4, eqs. 5–17 (ICASE Report 94-24; eqs. 14–15 checked on the page images).
+16. [Dumbser et al. (2008)](/sources/dumbser-2008.md), §5.2.2.

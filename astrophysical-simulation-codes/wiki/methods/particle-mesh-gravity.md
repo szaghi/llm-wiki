@@ -5,7 +5,7 @@ description: "Collisionless (dark-matter) particles coupled to a grid code by cl
 status: established
 aliases: [particle-mesh, PM, cloud-in-cell, CIC, PM N-body, kick-drift-kick, drift-kick-drift]
 tags: [self-gravity, cosmology, time-integration, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Particle-mesh N-body in grid codes
@@ -97,8 +97,13 @@ acceleration; final particle kick. The FFT solver and the particles run on
 the host CPUs, the hydrodynamics on the GPUs
 ([Villasenor et al. (2021)](/sources/villasenor-2021.md), §2.9).
 
+## Later uses (batch 10)
+
+* **RAMSES on AMR levels** ([Teyssier (2002)](/sources/teyssier-2002.md), §2.2, eqs. 5–7). Cloud-in-cell deposit per level, including clouds of particles in neighbouring parent cells, so the level density equals that of a uniform mesh. Symmetric 5-point gradient (no self-force); inverse cloud-in-cell to particles whose cloud lies inside the level, otherwise forces from level $l-1$. Kick–drift–kick midpoint integration that reduces to leapfrog for constant steps. With adaptive steps, particles crossing a level boundary see a factor-2 step jump and are first order along those trajectories (§2.2.5).
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §§2.1, 5.1–5.2, 11.2.6–11.2.7, eqs. 8, 61–62 (arXiv v1).
 2. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.4–2.5, 2.8–2.9, 3.2, eqs. 16–19, 25–28, 33–35, 40 (arXiv v2).
 3. [Federrath et al. (2010)](/sources/federrath-2010.md), §2.4.2.
+4. [Teyssier (2002)](/sources/teyssier-2002.md), §§2.2–2.2.5 (arXiv v1).

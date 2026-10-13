@@ -218,6 +218,10 @@ qualification stands.
 
 **The 2D output time as printed.** The 2005 arXiv v1 prints $t = 0.2$ twice: in §5.6 ("The solution to this problem at time t = 0.2, using a 200 × 200 grid", p. 38) and in the Fig. 13 caption ("time=0.2", p. 39). Fig. 13 contradicts that value: its outer fast-shock front lies about 0.4 box-widths from the centre, as in the $t = 0.02$ 3D run of Gardiner & Stone (2008, Fig. 8), and with an ambient fast speed of at least 10 the front would have travelled about 2 length units by $t = 0.2$. The printed 0.2 is probably a misprint for 0.02 — an inference from the figure (compiler reading at deep lint #4), not a printed statement; the JCP version is not in the archive. Recorded as printed; not a contradiction.
 
+## Later uses (batch 10)
+
+**Coordinate invariance** ([White et al. (2016)](/sources/white-2016.md), §4.3, Figs. 8–9). Hydro and magnetized ($\mathbf B = (1,1,0)$, HLLD) blasts on $200\times300$ cells at $\nu = 0.4$, run in Minkowski and in "snake" coordinates. Differences above 1 % appear only at the shocks and in the Richtmyer–Meshkov fingers; the field suppresses those fingers in both coordinate systems.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.4, §8.6.
@@ -229,3 +233,4 @@ qualification stands.
 7. [Shankar et al. (2023)](/sources/shankar-2023.md), §IV B (arXiv v2).
 8. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §5.6 (arXiv v1).
 9. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §5.5, Fig. 8.
+10. [White et al. (2016)](/sources/white-2016.md), §4.3, Figs. 8–9.

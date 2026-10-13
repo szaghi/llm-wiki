@@ -181,6 +181,9 @@ No magnetic test, no divergence measurement, no convergence table.
 
 * Created [Corner transport upwind (CTU)](/methods/corner-transport-upwind.md): the method from its primary source and its MHD uses in the bundle.
 * Updated [PPM](/methods/ppm.md): Colella's unsplit corner-coupled framework predates the unsplit PPM codes; the 6- and 12-solve counts.
+* Updated [Constrained transport](/methods/constrained-transport.md) (CTU as the unsplit integrator of CT codes).
+* Updated [CASTRO](/software/castro.md) (unsplit framework traced to Colella 1990).
+* Updated Source pages of [Gardiner & Stone (2008)](/sources/gardiner-stone-2008.md) and [Miniati & Martin (2011)](/sources/miniati-martin-2011.md) (CTU attribution checked).
 
 # Citations
 

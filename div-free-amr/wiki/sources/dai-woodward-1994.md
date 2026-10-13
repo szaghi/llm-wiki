@@ -176,6 +176,7 @@ Ryu–Jones Source page records it as total energy.
 
 * Updated [Rotated shock tube](/benchmarks/rotated-shock-tube.md): which Ryu–Jones problems are in this paper; the Brio–Wu problem without a compound wave.
 * Updated [Eight-wave formulation](/methods/eight-wave.md): a nonlinear seven-wave solver with the normal field a parameter.
+* Updated Source pages of [Brio & Wu (1988)](/sources/brio-wu-1988.md) and [Ryu & Jones (1995)](/sources/ryu-jones-1995.md).
 
 # Citations
 

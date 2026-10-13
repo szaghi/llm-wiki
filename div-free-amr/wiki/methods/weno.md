@@ -159,7 +159,7 @@ the linear-stability limits above are different quantities
   fluxes, characteristic decomposition at the arithmetic-mean state,
   global LF splitting, the WENO-JS weights with constant $10^{-6}$, RK4.
   Their CFL 0.8 for MHD is their own choice. Jiang & Shu's Euler runs use
-  CFL 0.6 (Figs. 4, 7, 10–13) or $\Delta t = 0.6\Delta x$ (Figs. 5–6
+  CFL 0.6 (Figs. 4, 7, 10–13) or $\Delta t = 0.6h$ (Figs. 5–6
   and the 2D tests of §8.3); 0.8 appears only on the scalar
   Buckley–Leverett figure (Fig. 3, §8.1 Ex. 2). Jiang & Wu's page
   records no power.

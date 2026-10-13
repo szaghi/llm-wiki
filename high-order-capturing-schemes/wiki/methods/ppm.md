@@ -233,6 +233,8 @@ first-order Godunov and MUSCL.
   accurate". This is the PPM Riemann-state construction carried to the
   seven MHD waves, with linear interpolation.
 
+**Later uses (batch 18).** *A flattener on bounds, not on the parabola* ([Balsara (2012)](/sources/balsara-2012.md), §2.1, eqs. 1–3). It compares the undivided velocity divergence with 0.4 times the smallest sound speed of the 3×3 block, spreads to pre-shock zones by a pressure test, and narrows positivity bounds instead of blending the profile toward $\bar u_i$. Credited to Colella & Woodward ([self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md)).
+
 # Citations
 
 1. [Colella & Woodward (1984)](/sources/colella-1984.md), §§1–4 and the Appendix.
@@ -246,3 +248,4 @@ first-order Godunov and MUSCL.
 9. [Colella (1990)](/sources/colella-1990.md), §§2, 4–6, eqs. 2.10–2.12, 4.9–4.10.
 10. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §§2.2, 3.1, Figs. 1–2.
 11. [Dai & Woodward (1998)](/sources/dai-1998.md), p. 324.
+12. [Balsara (2012)](/sources/balsara-2012.md), §2.1.

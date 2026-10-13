@@ -146,6 +146,28 @@ weaker time-step condition for accuracy
   tensor grid with the vertices. No CFL theorem is claimed
   ([Balsara (2017)](/sources/balsara-2017-d.md), §VII, eqs. 115–126).
 
+**Later uses (batch 18).** *The self-adjusting variant at its origin*
+([Balsara (2012)](/sources/balsara-2012.md), §§2.1–2.3; full description
+on [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md)).
+* *Nodes.* The $3\times3$ Gauss–Lobatto tensor grid of the batch-7 bullet
+  is the review's choice ([Balsara (2017)](/sources/balsara-2017-d.md),
+  §VII). The 2012 original rejects tensor-product Gauss–Lobatto points as
+  "an excessive number of nodes in multiple dimensions" and uses the
+  minimal symmetric nodal set of a nodal-to-modal transcription plus the
+  zone vertices (3D: 8, 21 and 21 nodes at orders 2, 3 and 4). The two are
+  variants of one method: the review is a 2D third-order presentation, and
+  a $3\times3$ Gauss–Lobatto grid also contains the vertices.
+* *One-sided pressure, MHD cubic.* Density is bounded on both sides by
+  Barth's ratio, pressure only from below. For MHD the per-node pressure
+  equation is a cubic, because only the free modes of the divergence-free
+  field are scaled while the modes fixed by face consistency are kept;
+  for Euler it is a quadratic, as in step 2 above.
+* *Relation to the Zhang–Shu limiter.* The same scaling about $\bar u_i$,
+  but towards solution-dependent bounds (the neighbour range, widened in
+  smooth flow and narrowed at shocks by a flattener) instead of the floor
+  $\epsilon_{\mathcal G}$, at nodes that do not enter a quadrature, so
+  Theorem 2.1 does not apply and no CFL bound is claimed.
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §§1–4 (Theorem 2.1, Lemma 2.5, Table 2.1; eqs. 2.1–2.12 read from the page images).
@@ -155,3 +177,4 @@ weaker time-step condition for accuracy
 5. [Ding & Wu (2024)](/sources/ding-2024.md), §§2.4, 3 (arXiv v1).
 6. [Zhang (2017)](/sources/zhang-2017.md), §§4.2–4.3, 5.2–5.3.
 7. [Balsara (2017)](/sources/balsara-2017-d.md), §VII.
+8. [Balsara (2012)](/sources/balsara-2012.md), §§2.1–2.3, eqs. 7–15.

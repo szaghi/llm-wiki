@@ -179,6 +179,7 @@ All visual comparisons; no error norms or convergence orders.
 | $\mathbf W_e$ | words (arithmetic mean state) | |
 | $F^{EO}$, $F^G$ | words (Engquist–Osher flux); HLL-type $\hat f$ | |
 | $b^+$, $b^-$ | $S_R$, $S_L$ | |
+| $\lambda^\pm_{L,R,e}$ | words | extreme speeds of the left, right and mean states |
 | $\nu$ (eq. 33) | $S$ | **collision**: registry $\nu$ is the CFL number |
 | $\sigma$ (eq. 35) | $\nu$ | **collision**: Hu–Adams–Shu $\sigma$ |
 | $v_f$, $v_{ax}$, $c_s$ | $c_f$, $c_A$, $c$ | **collision**: the paper's $c_s$ is the sound speed, the registry's the slow speed |
@@ -197,6 +198,7 @@ All visual comparisons; no error norms or convergence orders.
 * Updated [Piecewise parabolic method (PPM)](/methods/ppm.md) (batch-17
   block: the Sod comparison, flattening insufficient for MHD).
 * Cited on [Corner transport upwind (CTU)](/methods/corner-transport-upwind.md).
+* Cited on [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md) (batch-17 block), [Orszag–Tang vortex (2D MHD)](/benchmarks/orszag-tang-vortex.md) (what Zachary et al. state) and [Approximate Riemann solvers](/methods/approximate-riemann-solvers.md) (batch-17 block: the Engquist–Osher flux for MHD).
 
 # Citations
 

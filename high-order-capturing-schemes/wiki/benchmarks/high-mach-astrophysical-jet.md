@@ -5,7 +5,7 @@ description: "A supersonic jet injected into ambient gas, with kinetic energy so
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet]
 tags: [benchmark, euler, positivity, 2d, high-mach]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # High-Mach-number astrophysical jet
@@ -46,6 +46,8 @@ WENO worked and fifth-order WENO failed on the Mach 2000 jet without a
 positivity limiter (as cited by [Shu (2020)](/sources/shu-2020.md), §9). [Shu (2009)](/sources/shu-2009.md), §6, cites a Mach 80
 radiative jet on which "many high resolution schemes become unstable".
 
+**Later uses (batch 18).** *Two hydrodynamic jets at γ = 1.4* ([Balsara (2012)](/sources/balsara-2012.md), §§3.1–3.2). Jet $\rho = \gamma$, $p = 1$ (sound speed 1), equal ambient pressure, width 0.1, $[-0.5,0.5]\times[0,1.5]$, $400\times600$, CFL 0.45, fourth-order ADER-WENO with the [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md). *Dense, Mach 800:* ambient $\rho = 0.1\gamma$, $t = 0.002$, linearized solver; symmetric, $p \in [0.981, 52583.4]$. With floors it cannot run with the linearized solver; with HLL it runs at the pressure floor with a "dramatic and unphysical loss of symmetry". *Light, Mach 100:* ambient $\rho = 10\gamma$, $t = 0.03$, HLL; offered "as a more stringent variant of the problem discussed in Zhang and Shu". Not Ha et al.'s γ = 5/3 set-up, though called "very much like" it. The batch-6 magnetized variant matches the dense jet in every printed parameter on half the domain; whether Ding & Wu cite Balsara (2012) there is unverified.
+
 # Citations
 
 1. [Zhang & Shu (2010)](/sources/zhang-2010.md), §4.4.
@@ -54,3 +56,4 @@ radiative jet on which "many high resolution schemes become unstable".
 4. [Ding & Wu (2024)](/sources/ding-2024.md), Example 4.5 (arXiv v1).
 5. [Shu (2020)](/sources/shu-2020.md), §9.
 6. [Shu (2009)](/sources/shu-2009.md), §6.
+7. [Balsara (2012)](/sources/balsara-2012.md), §§3.1–3.2, Figs. 2–4.

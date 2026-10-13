@@ -69,6 +69,8 @@ Harten's proofs therefore do not cover the nonlinear seven-wave MHD
 system to which the bundle's TVD codes apply his characteristic-wise
 scheme.
 
+**Asserted, not proved, in a MUSCL-type MHD code.** [Balsara (1998)](/sources/balsara-1998-b.md) states that TVD "is already guaranteed by our choice of interpolation and Riemann solver" (§4, p. 137), with no proof for the MHD system. His fourth-order hyperviscosity is switched off where the largest characteristic switch exceeds 0.5 (eq. 4.11), after Swanson & Turkel (1992), to avoid damaging TVD.
+
 ## Uses in the bundle
 
 * **Harten-TVD MHD codes.** [Ryu & Jones (1995)](/sources/ryu-jones-1995.md)
@@ -100,3 +102,4 @@ scheme.
 6. [Jiang & Shu (1996)](/sources/jiang-shu-1996.md), §1, eqs. 1.2–1.4.
 7. [Shu & Osher (1988)](/sources/shu-osher-1988.md), §II, Proposition 2.1.
 8. [Balsara (2001)](/sources/balsara-2001.md); [Balsara (2004)](/sources/balsara-2004.md).
+9. [Balsara (1998)](/sources/balsara-1998-b.md), §4.

@@ -67,6 +67,26 @@ density and pressure must stay positive (§1).
   speeds are not guaranteed to work. The theorem fills the gap the 1983
   paper leaves open ("some algorithm") for ideal MHD
   ([positivity–divergence coupling](/results/positivity-divergence-coupling.md)).
+* **Positivity through HLLD (Miyoshi & Kusano 2005).**
+  [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md) (§5.3, p. 332)
+  argue 1D positivity of the four [HLLD](/methods/hlld-solver.md) states
+  when each outer speed exceeds the adjacent normal velocity by more than
+  $\sqrt{(\gamma-1)/(2\gamma)}$ times the adjacent fast speed, and write
+  that the proof "will also be applicable to the single-state HLL Riemann
+  solver since the one intermediate state of the HLL solver is given by the
+  average of the HLLD intermediate states contained in G" ($\mathcal G$).
+  They write that HLLD "clearly satisfies" this bound (their eq. 98) with
+  their simple speeds of eq. 67 (extreme normal velocity plus or minus the
+  larger fast speed), which also give the first assumption of the
+  derivation.
+  **A qualification, not a contradiction** of Wu & Shu's "not guaranteed":
+  the derivation also assumes that the outer speed exceeds the HLLD middle
+  speed by at least the fast speed, which Miyoshi & Kusano cannot confirm
+  "at any situation" and check only for strong expansions; their
+  conclusion is that HLLD "is thought to be a positively conservative
+  scheme", and they restrict it to 1D. Their claim is conditional where Wu
+  & Shu prove explicit sufficient bounds, so the two do not assert
+  incompatible things about the same speeds.
 * **First-order zone updates.** [Balsara, Bhoriya & Shu (2026)](/sources/balsara-2026.md)
   call a first-order zone update with HLL or LLF fluxes positive, "as was
   first proved by Gurski" (2004).
@@ -100,3 +120,4 @@ density and pressure must stay positive (§1).
 7. [Mignone & Del Zanna (2021)](/sources/mignone-2021.md), §§5–6.
 8. [Balsara & Kim (2004)](/sources/balsara-kim-2004.md), Summary (base scheme).
 9. [Balsara (2009)](/sources/balsara-2009.md), §5.1.
+10. [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md), §§4–5.3, p. 332.

@@ -4,8 +4,8 @@ title: "Fourth-order finite-volume method with average–point conversions"
 description: "The Colella-group fourth-order finite-volume scheme: cell averages are converted to point values (and back) with h²/24 Laplacian corrections, each face flux is one flux evaluation at a face-centre value plus a transverse-Laplacian correction (no Gauss points), limiting uses a modified Colella–Sekora PPM limiter, and classical RK4 advances the scheme; it extends to mapped grids, viscous fluxes and block-structured AMR."
 status: established
 aliases: [fourth-order FV, Colella–McCorquodale scheme, Chombo fourth-order method, average-to-point conversion]
-tags: [finite-volume, fourth-order, multi-d, ppm, amr, mapped-grid]
-timestamp: 2026-10-08T00:00:00Z
+tags: [finite-volume, fourth-order, multidimensional, ppm, amr, mapped-grid]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Fourth-order finite-volume method with average–point conversions

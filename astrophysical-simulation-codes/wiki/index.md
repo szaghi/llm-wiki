@@ -11,7 +11,7 @@ numerical methods (self-gravity, sink particles, cooling and chemistry,
 radiation moments, equations of state, relativistic primitive recovery);
 code comparisons; and GPU and performance-portable frameworks, astro or
 not.
-**Corpus: 50 of 50 archived sources compiled** (see the [update log](/log.md)).
+**Corpus: 56 of 56 archived sources compiled** (see the [update log](/log.md)).
 
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page.
@@ -23,7 +23,8 @@ for every page.
    [PLUTO](/software/pluto.md) (Chombo AMR), [Castro](/software/castro.md)
    (BoxLib AMR, general EOS), [Enzo](/software/enzo.md) (cosmological patch
    AMR), [GAMER](/software/gamer.md) (GPU octree AMR) and
-   [RAMSES-RT](/software/ramses-rt.md) (cell-based AMR with radiation),
+   [RAMSES](/software/ramses.md) (cell-based octree AMR) and its radiative
+   extension [RAMSES-RT](/software/ramses-rt.md),
    [FLASH](/software/flash.md) (PARAMESH block AMR, star formation) and
    [TIGRESS](/software/tigress.md) (Athena-based star-forming ISM).
 2. **The GPU codes.** How codes are ported:

@@ -18,6 +18,30 @@ comparison with other codes, by robustness (no negative pressure, no
 blow-up) and, in some papers, by the visible monopole damage of schemes
 without divergence control.
 
+**Origin.** The initial data are eq. 7 of
+[Orszag & Tang (1979)](/sources/orszag-tang-1979.md):
+$\mathbf u = (-\sin y, \sin x)$ and potential
+$A_z = \cos y + \tfrac12\cos 2x$, hence $\mathbf B = (-\sin y, \sin 2x)$
+on a $2\pi$-periodic box. That paper is a turbulence study of the
+**incompressible**, viscous and resistive equations in vorticity and
+potential form, computed pseudospectrally with up to $256^2$ modes, equal
+viscosity and magnetic diffusivity from 0.08 down to 0.005 (magnetic
+Prandtl numbers ½, 1, 2 also run). It has no
+density, pressure, $\gamma$, $\beta$ or Mach number, and no shocks; the
+divergence holds identically because only $A_z$ is evolved. Its
+structure is an S-shaped current sheet at the box centre at $t = 1$
+(Fig. 7), and its diagnostic the peak energy dissipation, about 20%
+lower per halving of the diffusivities (§3). "An analytical solution …
+does not seem possible" (§3).
+* **"Steepens into shocks": a qualification.** The opening sentence above
+  describes the compressible adaptation, not the original, which steepens
+  into current sheets. The bundle's sources take the compressible
+  parameters "after Dahlburg & Picone" (Dahlburg & Picone 1989, "Evolution
+  of the Orszag–Tang vortex system in a compressible medium", not
+  ingested); none of them claims the 1979 paper was compressible.
+* The unit-wavenumber form below matches eq. 7 exactly; the unit-box forms
+  are the same data rescaled.
+
 ## Set-up
 
 The compressible form used in this bundle's sources has plasma
@@ -43,11 +67,18 @@ in use.
 14–15) and [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md) §3
 (Figs. 6–7): velocity $(-\sin 2\pi y, \sin 2\pi x)$, field
 $(-\sin 2\pi y, \sin 4\pi x)$, uniform density and pressure,
-$\beta_0 = 8\pi p_0 = 10/3$, $M_0 = \rho_0/(\gamma p_0) = 1$ (Gaussian
+initial plasma beta $8\pi p = 10/3$ and Mach number, printed as $\rho/(\gamma p)$, equal to 1 (Gaussian
 units), unit periodic box, $128^2$–$512^2$, density and field lines at
 $t = 0.5$; qualitative only. The face divergence is stated exact; the net
 cell flux of the cell-centred field is one order lower than without the
 CT update for Orszag–Tang among other problems (ApJ §4).
+
+* **An isothermal variant** ([Balsara (1998)](/sources/balsara-1998-b.md)
+  §6.2.1, eqs. 6.1–6.2): the unit-wavenumber data on $(0, 2\pi)^2$,
+  $200^2$, unit density, velocity amplitude equal to the sound speed,
+  gas-to-rms-magnetic pressure ratio 10/3, shown at $t = 3.0$. Being
+  isothermal, it has no $\gamma$: an exception to the compressible
+  parameters stated above.
 
 *Compiler reading:* the forms have the same dimensionless parameters.
 Their times are in different units, so failure times quoted below are
@@ -97,6 +128,22 @@ measures a divergence on this test. *Compiler reading:* the claims do not
 meet; a same-scheme run past two transit times with and without the
 projection would decide whether Zachary et al.'s observation persists.
 
+**A second-order counterclaim, confounded: a qualification.**
+[Balsara (1998)](/sources/balsara-1998-b.md) §6.2.1 disputes "the
+opinion in the literature" that dropping the cleaning step makes no
+significant difference (citing Dai & Woodward, Zachary et al. and Ryu,
+Jones & Frank), claiming that "significant differences do indeed arise"
+after a long integration. On his isothermal run at $t = 3.0$ the uncleaned
+run's kinetic energy has "two tiny concentrations at the center that
+dominate the entire flow field" (Fig. 7c), absent with cleaning (Fig. 8c);
+density and total pressure are "reasonably similar". But the uncleaned
+run is Strang-split and the cleaned one unsplit, and the paper itself
+credits the unsplit scheme with "the real benefit of using
+multidimensional fluxes". No divergence is measured. The comparison
+therefore does not isolate the projection, and it does not decide the
+question left open above; it is a second-order scheme, so the order
+argument does not separate it from Zachary et al.
+
 **Monopole damage and EMF dissipation.**
 * Collocated base schemes show "structured filaments", while their
   [UCT](/methods/upwind-constrained-transport.md) counterparts do not
@@ -121,6 +168,8 @@ projection would decide whether Zachary et al.'s observation persists.
 and the face-based scheme summarized in
 [Zampa (2024)](/sources/zampa-2024.md).
 
+**A quantitative solver comparison.** [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md) (§6.2, Tables 1–2) run the unit-wavenumber form on $[0,2\pi]^2$ with density $\gamma^2$ and pressure $\gamma$ to $t = \pi$, at $N = 50$–$400$, first and second order, with mixed GLM cleaning (parameters not stated). They compare temperature in relative $L^1$. HLLD is within 1% of Roe in every case, and HLL lags (first order, $N = 400$: 0.0353 vs 0.0024). The $N = 800$ reference is second-order Roe with projection cleaning. No positivity failure and no divergence measurement are reported.
+
 # Citations
 
 1. [Zachary, Malagoli & Colella (1994)](/sources/zachary-malagoli-colella-1994.md), §§2.4, 3.2.2, Fig. 9.
@@ -141,3 +190,6 @@ and the face-based scheme summarized in
 16. [Zampa (2024)](/sources/zampa-2024.md), Chapter 4 (claim level).
 17. [Dai & Woodward (1998, JCP)](/sources/dai-woodward-1998.md), §4.2, Figs. 14–15.
 18. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§3–4, Figs. 6–7.
+19. [Orszag & Tang (1979)](/sources/orszag-tang-1979.md), §§2–4, eqs. 1–3, 7, Figs. 1, 7.
+20. [Balsara (1998)](/sources/balsara-1998-b.md), §6.2.1, eqs. 6.1–6.2, Figs. 7–8.
+21. [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md), §6.2, Tables 1–2.

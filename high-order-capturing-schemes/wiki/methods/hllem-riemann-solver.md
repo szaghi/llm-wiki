@@ -186,7 +186,8 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 **Later uses (batch 16).** *Einfeldt's HLLEM as printed in 1991*
 ([Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §5, eqs. 5.1–5.10).
 * *Origin.* The paper credits HLLEM, and its equivalence with Roe's
-  scheme, to Einfeldt (1988), which is not ingested; the 1991 paper
+  scheme, to Einfeldt (1988), which was not ingested at batch 16 (ingested
+  at batch 18; see below); the 1991 paper
   restates it. Inside the fan the state varies linearly along the contact
   and shear eigenvectors at the Roe state, centred on the mean speed
   $\tfrac12(S_L + S_R)$; the flux is the HLLE flux minus
@@ -226,6 +227,50 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
   (1988) ([HLL](/methods/hll-riemann-solver.md);
   [positivity preservation](/properties/positivity-preserving.md)).
 
+**Later uses (batch 18).** *The 1988 construction at its source*
+([Einfeldt (1988)](/sources/einfeldt-1988.md), §§3–4, 7), now ingested; it
+confirms the batch-16 "Origin" with these precisions.
+* *One intermediate field.* The paper treats the 1D Euler equations, so
+  the anti-diffusion acts on the contact alone (eqs. 3.12–3.15); there is
+  no shear family. The names "HLLEM" and "HLLE" do not occur; the paper's
+  names are "HLLR" and "HELL" for HLL with its two speed algorithms.
+* *Eigenvector from the speeds.* The contact eigenvector, its left
+  counterpart and the linear variation inside the fan are evaluated at the
+  velocity $\tfrac12(S_L + S_R)$ and sound speed $\tfrac12(S_R - S_L)$ read
+  off the speeds (3.14), not at the Roe state: "The approximate solution
+  (3.12) is thus completely defined by the numerical signal velocities"
+  (p. 299). The 1991 velocity "mean of the two signal speeds" in eq. 5.6
+  (batch-16 bullet) is inherited from this definition; the 1991 paper puts
+  the eigenvectors at the Roe state. The two agree for Roe-eigenvalue
+  speeds.
+* *The weight is given only for Roe speeds* (eqs. 4.15–4.20). The
+  anti-diffusion weight "should be chosen such that the stability
+  condition (4.7) is valid" for the contact field. With
+  $S_L^- = \min(\lambda^{(1)}, 0)$ and $S_R^+ = \max(\lambda^{(3)}, 0)$ at
+  the Roe state (4.19), the weight (4.20) is, in this page's dimensionless
+  form, $\delta_p = c_{\mathrm{Roe}}/(c_{\mathrm{Roe}} + \vert v_{n,\mathrm{Roe}}\vert)$
+  (reader's algebra). No weight is printed for other speeds; the
+  $(S_R - S_L)/(S_R - S_L + 2\vert v_n\vert)$ form above is the same expression
+  with (3.14), under that bullet's symmetry assumption (reader's algebra).
+* *Roe's scheme as HLL plus contact anti-diffusion* (eqs. 4.21–4.22). With
+  those speeds and that weight the dissipation equals Roe's term by term,
+  "the same as that of Roe's method": "Roe's scheme can be considered as a
+  Godunov-type method (3.7) with an antidiffusion term in the linear
+  degenerate field" (p. 302), "a new interpretation of Roe's scheme"
+  (§7). This is the equivalence quoted above from Xie et al.
+* *The stability condition* (eqs. 4.4–4.7) is the one under "Where
+  $\delta_p$ comes from": the viscosity eigenvalues must be at least
+  $\vert\lambda^{(p)}\vert$ at the Roe state (4.7), which holds iff
+  $S_L^- \le \lambda^{(p)} \le S_R^+$ for every $p$ (4.6); the weaker
+  necessary condition is their nonnegativity (4.5)
+  ([HLL](/methods/hll-riemann-solver.md)).
+* *No positivity, and never run.* The 1988 paper contains no positivity
+  statement for any scheme, and its anti-diffusive solver (3.15) is not
+  used in any test. Neither Einfeldt paper therefore supports the HLLEM
+  part of Balsara & Kim's "HLL/HLLEM class" attribution under "Claimed
+  properties", and Dumbser & Balsara's inherited positivity stays asserted,
+  not proved.
+
 # Citations
 
 1. [Dumbser & Balsara (2016)](/sources/dumbser-2016.md), §§2–4, App. B.
@@ -238,3 +283,4 @@ and HLLI/LLFI in [alternative finite-difference WENO](/methods/alternative-finit
 8. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §II C.
 9. [Toro (1997)](/sources/toro-1997.md), §10.7.
 10. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§5–6, eqs. 5.1–5.10.
+11. [Einfeldt (1988)](/sources/einfeldt-1988.md), §§3–4, 7, eqs. 3.12–3.15, 4.4–4.22.

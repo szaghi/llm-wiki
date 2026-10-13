@@ -90,6 +90,11 @@ from scratch for their code-design content, with no links across bundles.
 
 ## Status
 
+**Frontier batch 10 staged 2026-10-13:** berger-1984, teyssier-2002,
+colella-1985, hunter-2007, turk-2011-c, white-2016 (user downloads); 56 of 56.
+New page software/ramses. No contradiction opened. hunter-2007 prints no
+reference list (permanent `--pending` warning). Deep lint: 6 ingestions since #4.
+
 **Frontier batch 9 staged 2026-10-13:** gardiner-2008, woodward-1984,
 brio-1988, dedner-2002, godunov-1959, harten-1983 (Harten, Lax & van Leer),
 ryu-1995, copied from sibling archives (D17); 50 of 50. New pages

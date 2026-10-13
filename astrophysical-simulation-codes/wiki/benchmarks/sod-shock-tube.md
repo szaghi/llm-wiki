@@ -131,6 +131,11 @@ judgement.
 
 * **FLASH's first version.** [Fryxell et al. (2000)](/sources/fryxell-2000.md), §7.2, Figs. 25–27: standard states, $\gamma = 1.4$, 2D with 6 levels (effective $256^2$), $t = 0.2$, split PPM. Discontinuities span 2–3 zones, with 1–2 % errors near the contact and in the rarefaction and no oscillation. Along the diagonal there are "slightly larger oscillations (on the order of a few percent)", attributed to directional splitting. The authors call Sod "not a very discriminating test for modern codes" (§7.3), in agreement with Stone et al. (2008). A strong shock tube (densities 10 and 1, pressures 100 and 1, 1D, 8 levels, $t = 0.4$) is "virtually indistinguishable from the analytical solution" (no norm).
 
+## Later uses (batch 10)
+
+* **The first AMR Sod run** ([Berger & Oliger (1984)](/sources/berger-1984.md), §6, Table I): standard states, $t = 0.15$, two-step Lax–Wendroff, $r_{\mathrm{ref}} = 10$. $L_2$ errors at coarse points: 2.14E−2 (coarse $h = 0.01$), 1.15E−2 (uniform $h = 0.001$, 347.0 s), 1.15E−2 (two-level AMR, 79.9 s). The diaphragm position is ambiguous as printed.
+* **RAMSES** ([Teyssier (2002)](/sources/teyssier-2002.md), §3.3): 64 coarse cells and 6 levels (formal 4096), $\nu = 0.8$, $t = 0.245$, 560 cells (14 % of uniform). Shocks span 2–3 zones and contacts 6–10; no artefacts from the refinement; no norm given.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §8.1.
@@ -140,3 +145,5 @@ judgement.
 5. [Caddy & Schneider (2024)](/sources/caddy-2024.md), §4.2.1 (arXiv v2).
 6. [Sod (1978)](/sources/sod-1978.md), §§2–4, Tables I–IV, Figs. 2–15.
 7. [Fryxell et al. (2000)](/sources/fryxell-2000.md), §§7.2–7.3, Figs. 25–28.
+8. [Berger & Oliger (1984)](/sources/berger-1984.md), §6, Table I.
+9. [Teyssier (2002)](/sources/teyssier-2002.md), §3.3 (arXiv v1).

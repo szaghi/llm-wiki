@@ -112,6 +112,8 @@ the data originate is not settled by the corpus. Harten's conserved
 left state $(0.445, 0.311, 8.928)$ gives $v_x = 0.311/0.445 \approx 0.699$,
 not the $0.698$ of the set-up line (compiler's conversion).
 
+**Later uses (batch 18).** [Einfeldt (1988)](/sources/einfeldt-1988.md) (§6A, eq. 6.2) prints the data in primitive variables, $(\rho, v_x, p) = (0.445, 0.698, 3.528) \mid (0.5, 0.0, 0.571)$. That is the 0.698 of the set-up line. He attributes the problem to "Lax in [11]" (Lax 1954) and points to Harten (1983) for other experiments. This is one more secondhand attribution to Lax (1954); it neither overturns the bundle's check of Lax (1954) nor settles the origin. $\gamma$, grid and steps are not printed. First-order HLLR needs "about three more points" for the contact than Godunov.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7.
@@ -139,3 +141,4 @@ not the $0.698$ of the set-up line (compiler's conversion).
 23. [Deng, Boivin & Xiao (2019)](/sources/deng-2019-b.md), §III C, Figs. 4–6.
 24. [Lax (1954)](/sources/lax-1954.md), §§1–2, Exs. 5–8.
 25. [Harten (1983)](/sources/harten-1983.md), §7.I, eq. 7.7.
+26. [Einfeldt (1988)](/sources/einfeldt-1988.md), §6A, eq. 6.2.

@@ -36,7 +36,7 @@ nonnegative weights (eq. 1.2, Figs. 1–2). In conservation form
 $$\bar u^{n+1}_{i,j} = \bar u^n_{i,j} + \frac{v_x\Delta t}{h_x}\left(u^{n+1/2}_{i-1/2,j} - u^{n+1/2}_{i+1/2,j}\right) + \frac{v_y\Delta t}{h_y}\left(u^{n+1/2}_{i,j-1/2} - u^{n+1/2}_{i,j+1/2}\right),$$
 $$u^{n+1/2}_{i+1/2,j} = \bar u^n_{i,j} + \frac{v_y\Delta t}{2h_y}\left(\bar u^n_{i,j-1} - \bar u^n_{i,j}\right),\qquad u^{n+1/2}_{i,j+1/2} = \bar u^n_{i,j} + \frac{v_x\Delta t}{2h_x}\left(\bar u^n_{i-1,j} - \bar u^n_{i,j}\right).$$
 Donor cell is the same update without the transverse term; Colella
-describes it as donor cell minus a term that, to leading order in the
+describes CTU as donor cell minus a term that, to leading order in the
 truncation error, is always destabilizing (p. 175).
 
 **Courant limits** (eqs. 1.5–1.6, p. 175):

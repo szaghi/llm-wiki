@@ -5,7 +5,7 @@ description: "Lower bounds imposed on density, pressure, internal energy or temp
 status: established
 aliases: [floors, density floor, pressure floor, temperature floor, atmosphere floor, ceilings, floor reset]
 tags: [mhd, hydro, relativity, conservation, primitive-recovery]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Density and pressure floors
@@ -114,6 +114,10 @@ not round-off (§3). See
 Castro chose the floor reset over a positivity-preserving diffusive flux
 ([Katz et al. (2016)](/sources/katz-2016.md), §2.1).
 
+## Later uses (batch 10)
+
+**Athena++ in 2016** ([White et al. (2016)](/sources/white-2016.md), §3.1): density and pressure floors plus a Lorentz-factor ceiling "often chosen to be 100". A non-converged inversion resets the cell to the floors and recomputes its conserved variables; the field is not modified.
+
 # Citations
 
 1. [Porth et al. (2019)](/sources/porth-2019.md), §4, §4.1.1–§4.1.5, §6.3 (arXiv v2).
@@ -124,3 +128,4 @@ Castro chose the floor reset over a positivity-preserving diffusive flux
 6. [Bai (2017)](/sources/bai-2017.md), §2.5 (arXiv v1).
 7. [Kastaun et al. (2021)](/sources/kastaun-2021.md), §III A, §V D (arXiv v2).
 8. [Stone et al. (2026)](/sources/stone-2026.md), §3, §3.5–§3.6, Fig. 10 (arXiv v1).
+9. [White et al. (2016)](/sources/white-2016.md), §3.1.

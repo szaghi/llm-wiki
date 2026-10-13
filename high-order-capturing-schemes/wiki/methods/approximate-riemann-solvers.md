@@ -529,7 +529,7 @@ and Lax–Friedrichs at the source.*
   prints only the min/max form of the batch-8 bullet (eq. 4.5), a
   Lax–Friedrichs-type member (4.7) and a sharper positive set (4.10).
   Toro's $\bar c_{\mathrm E}$ formula is not in it; Einfeldt (1988), not
-  ingested, remains a candidate ([HLL](/methods/hll-riemann-solver.md)).
+  ingested at batch 16, remained a candidate (settled at batch 18, below) ([HLL](/methods/hll-riemann-solver.md)).
 * *Scope of the "HLL/HLLEM class"* (batch-6 and batch-8 bullets above).
   The 1991 paper proves positivity for HLLE (and Godunov's method), at
   first order for Euler; for HLLEM it asserts, without proof, freedom from
@@ -545,7 +545,49 @@ and Lax–Friedrichs at the source.*
   argues that Eulerian contact spreading cannot be prevented without
   moving meshes.
 
-**Later uses (batch 17).** *An Engquist–Osher flux for MHD.* The flux is the physical flux of the left state plus an alternating sum of physical fluxes at the sonic points of each wave's linearly interpolated speed, with eigenvectors frozen at the arithmetic mean of the primitive states. Any split of the flux has its own such flux, so part of it can be differenced as a gradient (eqs. 20–28). Where the fast speed at the mean state is below the jump of the entropy speed, it is replaced by HLLE with $S_R = \max(\lambda_R^+, \lambda_e^+, 0)$ and $S_L = \min(\lambda_L^-, \lambda_e^-, 0)$ (eqs. 29–30). At transonic degeneracies the correction of the two degenerate waves becomes Rusanov dissipation (eq. 33) ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.3).
+**Later uses (batch 17).** *An Engquist–Osher flux for MHD.* The flux is the physical flux of the left state plus an alternating sum of physical fluxes at the sonic points of each wave's linearly interpolated speed, with eigenvectors frozen at the arithmetic mean of the primitive states. Any split of the flux has its own such flux, so part of it can be differenced as a gradient (eqs. 20–28). Where the fast speed at the mean state is below the jump of the entropy speed, it is replaced by HLLE with $S_R$ the largest of the fastest right-going speed of $u^+$, that of the arithmetic-mean state, and 0, and $S_L$ the smallest of the fastest left-going speed of $u^-$, that of the mean state, and 0 (eqs. 29–30). At transonic degeneracies the correction of the two degenerate waves becomes Rusanov dissipation (eq. 33) ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.3).
+
+**Later uses (batch 18).** *Einfeldt (1988) and the original HLLC paper*
+([Einfeldt (1988)](/sources/einfeldt-1988.md);
+[Toro, Spruce & Speares (1994)](/sources/toro-1994.md)), now ingested.
+* *Two formulas called "Einfeldt's", settled.* Both originate in Einfeldt
+  (1988). Toro's $\bar c_{\mathrm E}$ formula is Einfeldt's "HELL" speed
+  (eqs. 5.7–5.8), with the Roe velocity as the mean velocity; the min/max
+  form of the batch-8 bullet is Einfeldt's Roe-eigenvalue speeds ("HLLR",
+  eqs. 5.1–5.3) with his modification (4.11), introduced as an entropy fix
+  at sonic rarefactions and reused in 1991 for positivity. Details on the
+  [HLL](/methods/hll-riemann-solver.md) page.
+* *The 1988 paper proves no positivity* (a qualification of "(Einfeldt;
+  Einfeldt et al.; …)" in the batch-6 bullet, which follows Balsara &
+  Kim). Einfeldt (1988) does not discuss positivity of density or pressure
+  for any scheme; the first-order Euler positivity result is Einfeldt et
+  al.'s (1991), for HLLE. The HLLEM part of the "HLL/HLLEM class" is
+  supported by neither paper ([HLLEM](/methods/hllem-riemann-solver.md)).
+* *Roe's flux inside the HLL family* (Einfeldt, eqs. 4.15–4.22). With
+  Roe-eigenvalue speeds and a contact anti-diffusion of a specific weight,
+  the HLL flux becomes Roe's exactly, so Roe's scheme is "a Godunov-type
+  method (3.7) with an antidiffusion term in the linear degenerate field"
+  (p. 302). With the same speeds and no anti-diffusion (HLLR), HLL shares
+  Roe's entropy-violating stationary shock at a sonic rarefaction (§6A).
+* *HLLC as first published* (a precision of the HLLC bullet at the top).
+  Toro, Spruce & Speares set the middle speed equal to the star normal
+  velocity and compute the two star states, and their two pressures,
+  separately from the integral conservation law across each outer wave
+  (eqs. 18–28); the first-order four-branch flux is not printed, and HLLC
+  is used only inside second-order WAF, where "no special measures to deal
+  with sonic flow are required" (p. 30). The stated motivation is real
+  gases; savings against the exact solver were "modest (about 50 %)" for
+  ideal and covolume gases (§7) ([HLLC](/methods/hllc-riemann-solver.md)).
+* *E-flux, at a DG source.* Cockburn & Shu class Roe's flux with entropy
+  fix as "an E-flux, which is a generalization of monotone fluxes", among
+  the fluxes their RKDG framework admits
+  ([Cockburn & Shu (1989)](/sources/cockburn-1989.md), Remark 2.4;
+  [monotone numerical flux](/definitions/monotone-flux.md)).
+
+**Later uses (batch 18): FORCE, GFORCE and complete solvers.** [Toro (2009)](/sources/toro-2009.md):
+* *FORCE* is the mean of the Lax–Friedrichs flux and the two-step Lax–Wendroff flux (§18.2.1). In the convex Lax–Friedrichs/Lax–Wendroff family for linear advection it is the optimal constant-weight monotone member and halves the Lax–Friedrichs viscosity. Godunov's upwind scheme, the weight $1/(1 + \vert\nu\vert)$, removes "a further 19% ($\ln 2 - 1/2$)", "the maximum possible reduction within the class of monotone methods" (p. 604). GFORCE uses that weight with a chosen Courant number; for nonlinear systems "the success is only partial".
+* *Multi-D FORCE* (§§18.3–18.5). Plain FORCE has a multi-D linear-stability problem. Edge-based staggered volumes give a version for Cartesian and unstructured meshes that needs no eigenstructure and no Riemann solver. It is monotone iff the sum of the squared directional Courant numbers is at most $\tfrac12$ in 2D and $\tfrac13$ in 3D (eq. 18.47). The empirical linear-stability region coincides.
+* *Complete and incomplete solvers* (§10.1, §18.1). Rusanov (one wave) and HLL (two waves) are incomplete. Flux-vector splitting behaves like one. On a stationary contact, Rusanov and HLL are more viscous than every centred FORCE-α scheme (Fig. 18.4): "unless one has a complete Riemann solver available, it is more convenient to use a centred–type method" (p. 598).
 
 ## Contradictions
 
@@ -625,3 +667,7 @@ and Lax–Friedrichs at the source.*
 35. [Einfeldt et al. (1991)](/sources/einfeldt-1991.md), §§3–6, Propositions 3.1–3.2.
 36. [Lax (1954)](/sources/lax-1954.md), pp. 163, 177–180.
 37. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.3, eqs. 20–33.
+38. [Einfeldt (1988)](/sources/einfeldt-1988.md), §§3–6, eqs. 4.11–4.22, 5.1–5.8.
+39. [Toro, Spruce & Speares (1994)](/sources/toro-1994.md), §§1, 4–5, 7, eqs. 18–30.
+40. [Cockburn & Shu (1989)](/sources/cockburn-1989.md), Remark 2.4.
+41. [Toro (2009)](/sources/toro-2009.md), §§10.1, 18.1–18.7 (scoped read).

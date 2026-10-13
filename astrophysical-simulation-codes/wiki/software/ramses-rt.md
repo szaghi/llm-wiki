@@ -5,7 +5,7 @@ description: "Multigroup radiative transfer of ionizing photons built into the c
 status: established
 aliases: [RAMSES-RT, RAMSES RT]
 tags: [software, radiation, reduced-speed-of-light, amr, hydro, cosmology, verification, chemistry, cooling]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # RAMSES-RT
@@ -158,6 +158,37 @@ positions; no convergence order or error norm is reported.
   groups are listed as future work (§7).
 * No strong- or weak-scaling numbers or parallel efficiencies are given.
 
+## Later uses (batch 10)
+
+The host code has its own page, [RAMSES](/software/ramses.md), from its
+code paper ([Teyssier (2002)](/sources/teyssier-2002.md), read as the
+arXiv preprint). Against what this page records from
+[Rosdahl et al. (2013)](/sources/rosdahl-2013.md):
+* **Hydro.** In 2002 the RAMSES hydrodynamics is a second-order piecewise
+  linear Godunov scheme after Colella (1990) and Saltzman (1994), split or
+  unsplit, with MinMod slopes, characteristic tracing and an "almost
+  exact" Riemann solver (Newton–Raphson for the contact pressure, a linear
+  rarefaction profile) (§§2.3, 2.3.1). This names the solver that the
+  2013 paper leaves unspecified (Coupling to the gas, above); neither
+  source states whether RAMSES-RT still uses it.
+* **Mesh.** The oct and $r_{\mathrm{ref}} = 2$ agree. The 2002 nesting rule
+  is stronger than the 2:1 grading quoted above: "any oct in the tree
+  structure has to be surrounded by $3^{\mathrm{dim}}-1$ neighboring
+  parent cells", so the transition is smooth "even in the diagonal
+  directions"; only refinement criteria are needed (§2.1.1). The 2002 base
+  is a regular Cartesian coarse grid at level 0, where the 2013 paper
+  starts from one root oct counted as level 1; a difference of description,
+  not a contradiction.
+* **Multi-stepping.** The 2002 code offers both a single global step and
+  the adaptive scheme with two substeps per level, the substeps not
+  necessarily equal; the coarse solution is held constant during the fine
+  advance, with no temporal interpolation (§§2.1, 2.3.2).
+* **Parallelism.** In 2002 RAMSES was vectorized (Fujitsu VPP 5000) with an
+  OpenMP shared-memory version; the distributed-memory version was "under
+  construction" (§5). The "MPI strategies already in place in RAMSES" that
+  RAMSES-RT reuses therefore postdate the code paper.
+
 # Citations
 
 1. [Rosdahl et al. (2013)](/sources/rosdahl-2013.md), §§1–7, App. A, D (arXiv v2).
+2. [Teyssier (2002)](/sources/teyssier-2002.md), §§2.1–2.3.2, 5 (arXiv v1).

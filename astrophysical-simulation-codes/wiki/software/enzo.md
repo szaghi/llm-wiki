@@ -308,6 +308,36 @@ these runs are not stated.
   only. Which one Enzo uses remains unstated. See
   [constrained transport](/methods/constrained-transport.md).
 
+## Later uses (batch 10)
+
+* **yt was built for Enzo.** [Turk et al. (2011)](/sources/turk-2011-c.md)
+  describe the analysis toolkit yt as "originally designed exclusively for
+  analyzing data from the AMR code Enzo", later generalized through
+  per-code frontends (§1, §4). Their paper describes yt's own regression
+  tests (§9) but not Enzo's answer-testing framework, so it neither
+  confirms nor qualifies the Development process item above, where yt
+  compares field statistics with "gold standard" results (Bryan et al.
+  2014).
+* **In-line analysis** (§6). An embedded Python interpreter per MPI task
+  wraps Enzo's memory, with no data movement between tasks; at
+  publication this interface existed only for Enzo, motivated by
+  Population III data dumps of "as much as 10 gigabytes per time step".
+* **Shared clustering mechanism** (§4.1). To read octree codes, yt
+  coalesces cells into patches with "the mechanism used by Enzo to create
+  subgrid patches" (axis histograms, cuts at zeros and at the strongest
+  zero crossings of the second derivative), stopping when the fine-cell
+  fraction exceeds an efficiency factor "typically set to be 0.2". The
+  Clustering item above (flagged fraction "typically over 30%") is the
+  same signature method with a different threshold for a different
+  purpose (analysis patches, not simulation grids); no conflict.
+* **Particles and output layout** (§4.3, §5.2). Enzo stores particles with
+  the finest grid patch containing them, which agrees with the Particles
+  item above. Enzo writes one file per processor with load-balanced, not
+  spatially local, grids, so yt's image-plane decomposition of
+  projections reads from many files; on a $5.5\times10^8$-cell Enzo data
+  set ($512^3$ root, six levels) yt's adaptive projections scale from 4 to
+  64 processors and its profiles to 128 (§5, Figs. 5–6).
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §§1–13, Appendix (arXiv v1).
@@ -318,3 +348,4 @@ these runs are not stated.
 6. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §§2.3, 3.1–3.5, Figs. 1–8 (arXiv v2).
 7. [Berger & Colella (1989)](/sources/berger-1989.md), §§2–3, 5, Fig. 2.1.
 8. [Gardiner & Stone (2005)](/sources/gardiner-2005.md), §§3.2.2, 3.3.1, 5 (arXiv v1).
+9. [Turk et al. (2011)](/sources/turk-2011-c.md), §§1, 4.1, 4.3, 5, 6, 9, Figs. 5–6.

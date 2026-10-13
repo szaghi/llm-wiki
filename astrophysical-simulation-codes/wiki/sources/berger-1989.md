@@ -199,6 +199,8 @@ See [double Mach reflection](/benchmarks/double-mach-reflection.md). The
 wedge set-up (initial shock position, frame, boundary conditions) and the
 Courant number are not printed.
 
+(Batch 10: [Colella & Glaz (1985)](/sources/colella-1985.md), the J. Comput. Phys. paper, has no low-$\gamma$ runs. Its only 2D test is a 20° ramp at shock Mach number 7.19 in air with three EOSs, so the "not fully resolved for $\gamma < 1.25$" statement does not rest on it. The reference list also cites Colella & Glaz in Lecture Notes in Physics 218 (`colella-1985-b`, not ingested), which may be the work meant; not verified.)
+
 # Notation map
 
 | Berger & Colella (1989) | Registry ([notation](/notation.md)) | Note |

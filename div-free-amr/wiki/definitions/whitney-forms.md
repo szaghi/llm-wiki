@@ -5,7 +5,7 @@ description: "Finite elements that extend cochain data on mesh facets into piece
 status: established
 aliases: [edge elements, face elements, Nédélec elements, discrete differential forms]
 tags: [finite-elements, whitney-forms, differential-forms, de-rham]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Whitney forms (discrete differential forms)
@@ -33,7 +33,7 @@ required to satisfy:
    pullback).
 
 Interpolation inherits the structure:
-$d \circ \Pi^l = \Pi^{l+1} \circ d$, so the discrete de Rham theorem holds
+$\mathrm d \circ \Pi^l = \Pi^{l+1} \circ \mathrm d$, so the discrete de Rham theorem holds
 for Whitney forms with cohomology of the correct Betti dimensions
 ([discrete exactness theorems](/results/discrete-exactness-theorems.md)).
 

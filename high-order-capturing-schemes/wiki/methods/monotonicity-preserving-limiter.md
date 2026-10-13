@@ -113,7 +113,7 @@ data (§1). Two departures follow.
 
 ## Contradictions
 
-**Does the MP bound degrade accuracy at smooth extrema?**
+**Does the MP bound degrade accuracy at smooth extrema?** *Closed by human fiat (2026-10-08).*
 * [Suresh & Huynh (1997)](/sources/suresh-1997.md): the
   accuracy-preserving constraint "preserves accuracy near extrema"; for
   advection the schemes are "uniformly high-order accurate", and the MP5

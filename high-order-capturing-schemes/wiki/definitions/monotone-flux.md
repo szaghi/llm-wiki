@@ -153,6 +153,21 @@ three-point conservative scheme resolves an admissible stationary shock
 exactly iff its dissipation vanishes for equal-flux states joined by an
 admissible jump, and it must not vanish for an inadmissible one (2.12).
 
+**Later uses (batch 18).**
+
+**Roe with entropy fix: an E-flux at its DG source** ([Cockburn & Shu (1989)](/sources/cockburn-1989.md),
+Remark 2.4, eq. 2.28). The fluxes the RKDG framework admits are listed as
+Engquist–Osher, Godunov, Lax–Friedrichs with a global $\alpha$, local
+Lax–Friedrichs with $\alpha_{i+1/2}$ (the maximum of $\vert f'\vert$
+between the two arguments), and Roe with entropy fix (2.28e). The last is
+called "an E-flux, which is a generalization of monotone fluxes", not a
+monotone flux; the examples above place it among the monotone fluxes
+following Shu (1998) and Liu, Osher & Chan (1994). A qualification of
+that list: Cockburn and Shu assert only the E-flux property for it, while
+their framework is stated for a Lipschitz, consistent, monotone flux
+(§2, eqs. 2.7–2.10). For convex $f$ they suggest
+local Lax–Friedrichs or Roe with entropy fix ([RKDG](/methods/rkdg.md)).
+
 # Citations
 
 1. [Shu (1998)](/sources/shu-1998.md), §§2.3.1–2.3.2.
@@ -165,3 +180,4 @@ admissible jump, and it must not vanish for an inadmissible one (2.12).
 8. [Harten (1983)](/sources/harten-1983.md), §§2, 5.
 9. [Lax (1954)](/sources/lax-1954.md), §§1, 3, 5, pp. 159–165, 183–191.
 10. [Harten, Lax & van Leer (1983)](/sources/harten-1983-d.md), §2, eqs. 2.2–2.3, 2.12.
+11. [Cockburn & Shu (1989)](/sources/cockburn-1989.md), Remark 2.4, eq. 2.28.

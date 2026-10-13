@@ -5,7 +5,7 @@ description: "For point-value DOFs with the conservation-consistent mean restric
 status: hypothesis
 aliases: [R P = I wall, point-value Guzik constraint]
 tags: [amr, prolongation, restriction, ghost-fill, collocation]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Restriction-compatibility bound for point-value prolongation
@@ -24,10 +24,10 @@ If $P$ reproduces quadratics exactly, then $R P \ne I$. Equivalently, a
 prolongation with exact round-trip compatibility $R P = I$ has ghost
 accuracy at most $q = 2$.
 
-**Proof.** Take $u = x_1^2$ around the coarse anchor $x_1 = 0$, so the
-coarse point value is $0$. A $P$ exact on quadratics returns $u$ at every
+**Proof.** Take $w = x_1^2$ around the coarse anchor $x_1 = 0$, so the
+coarse point value is $0$. A $P$ exact on quadratics returns $w$ at every
 fine center, $(\pm H/4)^2 = H^2/16$, so
-$$R P\, u = \frac{H^2}{16} \ne 0 = u(0).$$
+$$R P\, w = \frac{H^2}{16} \ne 0 = w(0).$$
 Hence $R P = I$ forces $P$ to be inexact on $x_1^2$. Exactness on linear
 functions is still available: the symmetric three-node pair
 $[-1, 8, 1]/8$ and $[1, 8, -1]/8$ satisfies $R P = I$ for arbitrary data. $\blacksquare$

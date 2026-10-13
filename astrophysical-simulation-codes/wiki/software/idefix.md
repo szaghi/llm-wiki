@@ -290,8 +290,13 @@ curvilinear convergence; strong scaling.
   since Sod prints $h = 0.01$ (100 points) and no end time; see
   [Sod shock tube](/benchmarks/sod-shock-tube.md).
 
+## Later uses (batch 10)
+
+The `yt_idefix` extension implements the frontend contract of [Turk et al. (2011)](/sources/turk-2011-c.md), §4.1: map fields and units to yt's format, localize on-disk data, and provide patch readers.
+
 # Citations
 
 1. [Lesur et al. (2023)](/sources/lesur-2023.md), §§1–6, Tables 1–4, Figs. 1–18 (arXiv v1).
 2. [Evans & Hawley (1988)](/sources/evans-1988.md), §IVc–d, §Vb, §Vd, eqs. 4.6, 4.10–4.18, 4.24.
 3. [Sod (1978)](/sources/sod-1978.md), §3.
+4. [Turk et al. (2011)](/sources/turk-2011-c.md), §4.1.

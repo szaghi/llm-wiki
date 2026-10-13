@@ -68,7 +68,8 @@ also measures the jump conditions.
   is Brio–Wu; the other six are new (switch-on and switch-off waves,
   compound waves). States
   are listed as density, three velocity components, two transverse field
-  components and total energy:
+  components and a seventh entry that Ryu & Jones label total energy
+  (presumably the pressure; compiler reading below):
 
   | Problem | Left | Right | Normal field | $t$ | Waves |
   |---|---|---|---|---|---|
@@ -92,9 +93,9 @@ also measures the jump conditions.
   * *Compiler reading:* in all four matches the seventh entry of the state
     equals Dai & Woodward's pressure, not a total energy (1a: 20 and 1;
     a total energy of 20 is below the kinetic energy 50 of the left state).
-    The entry is presumably the pressure; the
-    [Ryu & Jones](/sources/ryu-jones-1995.md) Source page and the sentence
-    above record it as total energy.
+    The entry is presumably the pressure; Ryu & Jones label it total
+    energy, and the [Ryu & Jones](/sources/ryu-jones-1995.md) Source page
+    records their label.
 * **Narrow strip** ([Londrillo & Del Zanna (2004)](/sources/londrillo-delzanna-2004.md),
   credited to Tóth): a domain $[0,1]\times[0, 2/N]$ on an $N\times2$ grid
   with shifted periodic boundaries, rotation angle $\tan^{-1}2 \approx 63.4°$. It

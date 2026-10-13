@@ -44,7 +44,7 @@ first-order CTU. Second order in smooth regions by a linear error
 analysis, with no amplified Fourier mode under eq. 1.5 (p. 176).
 
 **Systems** (§2). Four steps: limited slopes, time-centred left and right
-edge states $w^-_{i+1/2}$, $w^+_{i+1/2}$, a Riemann problem normal to the
+edge states (componentwise, at each edge), a Riemann problem normal to the
 edge, conservative differencing of the edge fluxes in both directions.
 * Slopes are limited in characteristic variables (eqs. 2.5–2.6).
 * The normal predictor is characteristic tracing: wave families that do

@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 131 sources compiled (the whole archive, plus one frozen code record)**: 129 published works,
+**Corpus: 143 sources compiled (the whole archive, plus one frozen code record)**: 141 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -127,7 +127,9 @@ for every page.
 9. **Staying physical.** [Positivity preservation](/properties/positivity-preserving.md)
    — convex admissible set, positive first-order flux, SSP time
    stepping — enforced by the [scaling limiter](/methods/positivity-preserving-scaling-limiter.md)
-   or by [flux limiters](/methods/positivity-preserving-flux-limiter.md).
+   or by [flux limiters](/methods/positivity-preserving-flux-limiter.md);
+   a non-theorem variant is the
+   [self-adjusting positivity limiter](/methods/self-adjusting-positivity-limiter.md).
    Open `Contradictions` entries: is the first-order Lax–Friedrichs MHD
    scheme provably positive? Does positivity limiting inside Runge–Kutta
    stages reduce the order? For MHD the divergence constraint is kept by

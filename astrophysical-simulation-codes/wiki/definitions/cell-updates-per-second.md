@@ -5,7 +5,7 @@ description: "The throughput metric of grid codes — cells advanced by one full
 status: established
 aliases: [cell updates per second, zone-cycles per second, zone updates per second, Mzone-cycles/s, Mzcps, cell-updates-per-device-second, grind time, time per point per iteration]
 tags: [performance, gpu, benchmark]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Cell-update throughput
@@ -134,6 +134,10 @@ match.
   hardware stated, and neither source says whether the smaller one
   includes the speed-up.
 
+## Later uses (batch 10)
+
+[White et al. (2016)](/sources/white-2016.md), Table 1: single-core GRMHD throughput in $10^5$ cell updates per second (Xeon E5-2670), e.g. HLLD 1.23 / 1.13 / 1.22 in SR / GR Minkowski / Kerr–Schild.
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §7, Table 1.
@@ -155,3 +159,4 @@ match.
 14. [Rossazza et al. (2026)](/sources/rossazza-2026.md), §§4.1, 4.3, Fig. 6
     (arXiv v1).
 15. [Porth et al. (2019)](/sources/porth-2019.md), §3, §4.1.5 (arXiv v2).
+16. [White et al. (2016)](/sources/white-2016.md), Table 1.

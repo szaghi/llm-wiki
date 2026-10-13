@@ -136,6 +136,52 @@ asymptotic order is unaffected.
 * The monotonicity of the polynomial in a discontinuous cell carries over
   to WENO's convex combination ([Shu (2009)](/sources/shu-2009.md), §2.1; [WENO](/methods/weno.md)).
 
+**Later uses (batch 18).** *The first paper of the series: UNO2*
+([Harten & Osher (1987)](/sources/harten-1987-b.md)), now ingested; it is
+the "second-order non-oscillatory modification of MUSCL (Harten & Osher)"
+of the opening paragraph.
+* *The modification is the slope* (§§3–4, 7, eqs. 3.2, 4.2, 7.1–7.3). The
+  scheme is a Godunov/MUSCL-type scheme with a piecewise-linear
+  reconstruction $\mathcal P_i = \bar u_i + \hat u^{(1)}_i\zeta$ and
+  $$\hat u^{(1)}_i = \operatorname{minmod}\left(\Delta^1\bar u_i - \tfrac12\operatorname{minmod}(\delta^2\bar u_i, \delta^2\bar u_{i+1}),\ \Delta^1\bar u_{i-1} + \tfrac12\operatorname{minmod}(\delta^2\bar u_{i-1}, \delta^2\bar u_i)\right),$$
+  the minmod of the one-sided derivatives (times $h$) of a nonoscillatory
+  piecewise-parabolic interpolant of the cell averages. Its TVD
+  counterpart TVD2 uses $\Delta^1\bar u_i$ and $\Delta^1\bar u_{i-1}$ in
+  the same minmod and differs "only in the reconstruction step". The UNO2
+  slope approximates $\partial_x u$ to $O(h^2)$ also at extrema, the TVD
+  slope only to $O(h)$, with a coefficient that is not smooth at extrema
+  (p. 282).
+* *A two-candidate precursor of the stencil choice* (§3, eq. 3.2d). On
+  $[x_i, x_{i+1}]$ the interpolant takes, of the parabolas through
+  $\{x_{i-1}, x_i, x_{i+1}\}$ and $\{x_i, x_{i+1}, x_{i+2}\}$, the one with
+  the smaller second difference, the one that "deviates the least from the
+  line" through the two shared points. It has no more local extrema than
+  the data (pp. 285–286). Growing such a choice one point at a time is
+  the ENO procedure above (reader's reading; the 1987 paper does not use
+  the word "ENO").
+* *Measured* (§7, Tables 2–3). Linear advection of $\sin\pi x$ to $t = 2$
+  at CFL 0.8: UNO2 is second order in $L_\infty$ and $L_1$, TVD2 "only
+  first-order accurate in $L_\infty$"; at 160 cells the $L_\infty$ errors
+  are $9.201\times10^{-5}$ and $5.975\times10^{-3}$. On smooth Burgers data
+  ($\sin\pi x$, $t = 0.15$, CFL 0.5) the same ordering holds, and the
+  nonlinear scheme is proved second order "including local extrema and
+  sonic ($f' = 0$) points" (eqs. 6.8–6.10, p. 294)
+  ([accuracy at critical points](/properties/accuracy-at-critical-points.md)).
+* *The price.* Not TVD: the TV may grow by a bounded amount per step
+  (5.5b), and uniform TV boundedness is not proved
+  ([essentially non-oscillatory](/definitions/essentially-non-oscillatory.md)).
+* *Primitive function, at second order* (§7, eqs. 7.10b–d). ANO2,
+  initialized with exact cell averages, recovers point values by
+  differentiating the interpolant of $\mathcal U(x_{i+1/2})$, the
+  reconstruction-via-primitive idea of the stencil-choice section above in
+  second-order form.
+* *Systems* (eqs. 7.12–7.15): a "formal extension" with a Roe average and
+  field-by-field slopes in local characteristic variables
+  ([characteristic decomposition](/methods/characteristic-decomposition.md)).
+* *No third order in it.* The paper builds only the second-order scheme
+  and its variants (UNO2, FNO2, ANO2); higher orders are announced for the
+  later papers of the series.
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §§1–7 and Appendix.
@@ -146,3 +192,4 @@ asymptotic order is unaffected.
 6. [Suresh & Huynh (1997)](/sources/suresh-1997.md), introduction.
 7. [Shu (2020)](/sources/shu-2020.md), §§2–3.
 8. [Shu (2009)](/sources/shu-2009.md), §2.1.
+9. [Harten & Osher (1987)](/sources/harten-1987-b.md), §§1–7, Tables 2–3.

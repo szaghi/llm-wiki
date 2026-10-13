@@ -213,6 +213,7 @@ All Euler, $\gamma = 1.4$, conserved variables (density, momentum, energy).
 
 * Created [Total variation diminishing (TVD)](/properties/total-variation-diminishing.md): definition, hierarchy, Harten's lemma, the modified-flux construction and its proved scope.
 * Created [Roe's approximate Riemann solver](/methods/roe-solver.md): the Euler Roe average as used in a TVD scheme, the arithmetic alternative, the entropy fix.
+* Updated Source pages of [Ryu & Jones (1995)](/sources/ryu-jones-1995.md) and [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md) (no rotational steepener in Harten).
 
 # Citations
 

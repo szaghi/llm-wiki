@@ -5,7 +5,7 @@ description: "A Fishbone–Moncrief equilibrium torus around a Kerr black hole, 
 status: established
 aliases: [Fishbone-Moncrief torus, FM torus, SANE torus, magnetized torus accretion, GR torus, EHT torus]
 tags: [benchmark, mhd, relativity, verification, amr]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Magnetized Fishbone–Moncrief torus
@@ -89,8 +89,13 @@ turbulence alive to $t = 10^4$ (§5.6–§5.7). The MRI quality factor, the
 wavelength of the fastest-growing MRI mode over the cell width in one
 direction (eqs. 25–26), is the resolution diagnostic.
 
+## Later uses (batch 10)
+
+**Athena++ in 2016** ([White et al. (2016)](/sources/white-2016.md), §5, Figs. 13–16). The 2D hydro torus (spin 0.95, $\gamma = 13/9$, HLLC) converges at second order; over three orbits at $64\times32$ the error is 0.030 with HLLE and 0.021 with HLLC. The 3D MRI torus has spin 0.9375, inner edge 6 and pressure maximum 12, outer radius 40, $\gamma = 13/9$, LLF, and runs to $t = 12{,}000$ with static derefinement at the poles. It is compared with Shiokawa et al. (2012), not with another code: plasma beta about 200 in the outer region (against below 60), and larger azimuthal correlation lengths that shrink with resolution.
+
 # Citations
 
 1. [Porth et al. (2019)](/sources/porth-2019.md), §4, §4.1.1, §5.1–§6.1, Tables 1–2, App. A (arXiv v2).
 2. [Stone et al. (2026)](/sources/stone-2026.md), §3.6, Fig. 14 (arXiv v1).
 3. [Stone et al. (2020)](/sources/stone-2020.md), §4.3.4, Fig. 42.
+4. [White et al. (2016)](/sources/white-2016.md), §5, Figs. 13–16.

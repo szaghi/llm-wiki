@@ -191,6 +191,8 @@ States are printed as $(\rho, \rho v_x, \rho v_y, E)$.
    results from the unmodified scheme are better behaved." HLLEM with the
    shear anti-diffusion on is not reported.
 
+**Later uses (batch 18).** The 1991 requirement that the speeds bound the physical signal speeds reverses [Einfeldt (1988)](/sources/einfeldt-1988.md) (p. 298): there they are explicitly not assumed to be bounds, and are constrained instead by the stability condition (4.6). The 1988 names are "HLLR" and "HELL", not "HLLE".
+
 # Notation map
 
 | Einfeldt et al. (1991) | Registry ([notation](/notation.md)) | Note |

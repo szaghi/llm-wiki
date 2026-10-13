@@ -2,6 +2,68 @@
 
 ## 2026-10-13
 
+* **Deep lint #11** (14 ingestions since #10: frontier batches 4a and 4b). Two
+  read-only audits (concept pages and registry; Source pages and every
+  `Contradictions` entry), fixes checked against the Source pages and PDFs.
+  * **Notation.** The deferred velocity symbol settled: continuous velocity
+    $\mathbf u$ ($u_x, u_y, u_z$, face-normal $u_n$; discrete $u_h$), $\mathbf V$ and
+    $v$ retired, replaced on eight pages. Registered $\mathbf u$, $\mathbf B$, $\rho$,
+    $p$, $U$, $d$ (space dimension), $\mathrm d$ (exterior derivative, now upright on
+    the DEC/FEEC pages), $\mathbf k$ (wavenumber), $\tau$ (SBP boundary order), $z$
+    (Laplace variable), $\Pi$ (orthogonal projector). Paper-native symbols removed
+    ($2\Delta x$, $\Delta x_l$, $\beta_0$, $M_0$, Mignone & Del Zanna's $a$, $d$, bare $r$,
+    $\lambda_i$ as norm weights, $p$ as SBP order).
+  * **Contradictions.** One `**Status:**` label per entry (staggered grid, GLM,
+    positivity–divergence coupling, projection); section locators added to the older
+    entries. The new projection entry checked against the PDFs and kept Open. The
+    CT–finite-volume equivalence entry does not meet the bar (the page calls the two
+    results formally compatible) and its "effectively settled" closure is neither
+    supersession nor fiat: flagged to the human, status unchanged.
+  * **Claims.** HLL page: the positivity bound is stated by Miyoshi & Kusano for their
+    eq. 67 speeds only; eight-wave: "Roe-type" now names the arithmetic-average solvers
+    (Brio & Wu, Powell), not Dai & Woodward's; rotated shock tube and Ryu & Jones: the
+    seventh state entry labelled as printed with the pressure reading; audit lists of
+    seven batch-4a Source pages completed.
+  * **Deferred:** none.
+
+* **Frontier batch 4b: ingested [DeVore (1991)](/sources/devore-1991.md),
+  [Balsara (1998)](/sources/balsara-1998-b.md), [Orszag & Tang (1979)](/sources/orszag-tang-1979.md),
+  [Kreiss & Scherer (1974)](/sources/kreiss-scherer-1974.md),
+  [Berger & Oliger (1984)](/sources/berger-oliger-1984.md) and
+  [Miyoshi & Kusano (2005)](/sources/miyoshi-kusano-2005.md)**, the user's downloads
+  (123 sources). Stone & Norman's ZEUS-2D papers and Whitney (1957) were not
+  obtained and are dropped.
+  * **New page:** [HLLD Riemann solver](/methods/hlld-solver.md).
+  * **Updated:** [projection](/methods/projection-method.md) (Balsara's
+    modified-wavenumber FFT projection; a new Open entry, below),
+    [constrained transport](/methods/constrained-transport.md) (DeVore's staggered
+    FCT; the "artificial-viscosity" grouping of Ryu et al. 1998 qualified),
+    [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) (the 1979 original is
+    incompressible and pseudospectral, with current sheets, not shocks; Miyoshi &
+    Kusano's solver comparison), [summation by parts](/definitions/summation-by-parts.md),
+    [SBP-SAT](/methods/sbp-sat.md), [SBP operator existence](/results/sbp-operator-existence.md)
+    (Kreiss & Scherer's construction; the systems caveat is Strand's),
+    [block-structured AMR](/definitions/block-structured-amr.md) and
+    [refluxing](/methods/refluxing.md) (Berger & Oliger's rotated-grid predecessor:
+    injection, no flux correction), [HLL](/methods/hll-solver.md),
+    [GLM](/methods/glm-divergence-cleaning.md), [positivity–divergence coupling](/results/positivity-divergence-coupling.md),
+    [vector-potential evolution](/methods/vector-potential-evolution.md),
+    [exact discrete divergence](/properties/exact-discrete-divergence.md),
+    [TVD](/properties/total-variation-diminishing.md), and the Source pages of Ryu et
+    al. (1998) and Berger & Colella (1989).
+  * **Contradictions.** One new Open entry on [projection](/methods/projection-method.md),
+    "Which projection did Ryu, Jones & Frank (1995) use?": Balsara (1998) says the
+    "less accurate" continuous-wavenumber version; RJF's printed eq. 2.24 is the wide
+    2Δx stencil, whose symbol is Balsara's "accurate" one. Qualifications: Balsara's
+    "formulation not as important" vs Balsara & Kim (2004); Miyoshi & Kusano's
+    conditional 1D positivity vs Wu & Shu's "not guaranteed".
+  * **Bibliography** (3834 entries): 121 references merged. Keys renamed to the slugs
+    (orszag-1979, kreiss-1974, berger-1984, miyoshi-2005). Book, Boris & Hain (1975) rekeyed
+    book-1975 from boris-1975 (Crossref first author); Kreiss & Scherer retyped as a book
+    chapter; Orszag's initials corrected to S.A. from page 1 (an earlier note had misread
+    a citing source as the paper); Gropp's volume 1:191 confirmed (Crossref) against the
+    entry's 4:191; Harten 1977 printed 30:661 by Balsara (Crossref 30:611).
+
 * **Frontier batch 4a: ingested [Colella (1990)](/sources/colella-1990.md),
   [Dai & Woodward (1994)](/sources/dai-woodward-1994.md),
   [Harten (1983)](/sources/harten-1983.md), [Roe (1981)](/sources/roe-1981.md),

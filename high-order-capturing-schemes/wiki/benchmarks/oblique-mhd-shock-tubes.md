@@ -94,7 +94,8 @@ be shifted-periodic and the run compared with a fine 1D solution.
   batch-7 provenance entry ($\rho = 1.08$, $p = 0.95$ left; $\rho = 1$,
   $p = 1$ right; $B_x = 2/\sqrt{4\pi}$) at 45°, $t = 0.2/\sqrt2$, half of
   Ryu, Miniati, Jones and Frank's. Here the eight-wave scheme is close
-  to the best (1.023 times the projection error, Table IX), and field-CT has about 1.5 times the best error.
+  to the best (1.023 times the projection error, Table IX), and field-CT has about 1.5 times the best error (Tóth's text, Table VI;
+  1.392 in Table IX).
   The wrong jumps of the eight-wave scheme are therefore problem-dependent.
 * *On unstructured triangles* ([Dedner et al. (2002)](/sources/dedner-2002.md),
   §5, Table II, Fig. 4). The same colliding-flow data, $v_x = \pm10$ and
@@ -110,6 +111,8 @@ be shifted-periodic and the run compared with a fine 1D solution.
 
 * *Dai & Woodward's 45° tubes.* Three shock tubes rotated by 45° (chosen so the initial data satisfy the face-flux divergence exactly), $256^2$, parallel field 5, $t = 0.06$, cuts along $y = x$; initial states shown only graphically. Jump conditions are satisfied, which the authors attribute to conserving all eight quantities. In the tube with two fast and two slow shocks, the parallel field dips to about 4.99997 (read from the Fig. 5 axis), "a symptom of truncation errors" ([Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 3–5).
 
+**Later uses (batch 18).** *The earliest rotated Brio–Wu run in the corpus* ([Powell (1994)](/sources/powell-1994.md), §3, Figs. 2–8). Rotated 45°, periodic along $x+y$ = const, first-order eight-wave solver, 600 and 1200 cells, $\Delta t/h = 0.2$, $\gamma = 2$. Fine-grid profiles are "nearly indistinguishable" from the unrotated run except the normal velocity and normal field. The normal field (exactly 0.75) is wrong by "a few percent" on the coarse grid and "reduced as the grid is refined"; no norms are given. This fits the page's "problem-dependent" reading of the eight-wave jump errors.
+
 # Citations
 
 1. [Jiang & Wu (1999)](/sources/jiang-1999.md), §3.1.
@@ -124,3 +127,4 @@ be shifted-periodic and the run compared with a fine 1D solution.
 10. [Tóth (2000)](/sources/toth-2000.md), §§6.3.2–6.3.3, Tables III–VI.
 11. [Dedner et al. (2002)](/sources/dedner-2002.md), §5, Table II.
 12. [Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 3–5.
+13. [Powell (1994)](/sources/powell-1994.md), §3 (ICASE Report 94-24).

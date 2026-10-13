@@ -484,6 +484,58 @@ kinematic only: the field does not act on the flow, and the Lorentz force
 * **3D EMFs in the Gardiner–Stone scheme** ([Gardiner & Stone (2008)](/sources/gardiner-2008.md), §4). No new 3D EMF is defined: the contact-upwinded $\mathcal E^c$ of 2005 is reused in both 3D CTU variants. CT is framed as predictor (Godunov electric fields) and corrector (CT electric fields). At $t^{n+1/2}$ the cell-centre reference EMF uses face-averaged $\mathbf B$ and $\rho$, $\rho\mathbf v$ from a conservative $\Delta t/2$ update with the first fluxes (eq. 48). This agrees with the attributions of Athena++ and AthenaK to "Gardiner & Stone (2005, 2008)" above.
 * **A cleaning paper's case against CT** ([Dedner et al. (2002)](/sources/dedner-2002.md), §1, p. 646): CT schemes are "restricted to structured grids and require large stencils", and "the underlying base scheme is only partially used". This is the authors' position, stated without a test.
 
+## Later uses (batch 10)
+
+[White et al. (2016)](/sources/white-2016.md) is the primary source of the
+general-relativistic CT of [Athena++](/software/athena-plus-plus.md) that
+the CT-on-adaptive-meshes section cites to Stone et al. (2020, §4).
+
+* **Metric-weighted staggering** (§2, eqs. 7–8, 14–15). Volumes, face
+  areas and edge lengths are the integrals of
+  $\alpha_{\mathrm L}\sqrt{\det\gamma_{ij}}$ over the cell, face or edge;
+  the face field is advanced by the circulation of the edge EMFs, each
+  times its metric-weighted edge length, divided by the metric-weighted
+  face area. This agrees with the line from Stone et al. (2020) above.
+* **The upwind construction in arbitrary stationary coordinates** (§3.5,
+  eqs. 29–32, Fig. 2), called the Gardiner & Stone (2005) algorithm
+  "extended to relativity", in five steps: face EMFs are the signed
+  field components of the Riemann fluxes of the induction equation; a
+  cell-centre reference EMF is built from the four-velocity and the
+  fluid-frame field; the eight centre-to-face EMF gradients are divided by
+  metric-weighted half-widths, the integral of the square root of the
+  diagonal metric component along the half-cell, in place of $h/2$
+  (eqs. 29–30); each gradient is upwinded by the sign of the face mass
+  flux (eq. 31); and the corner EMF follows Gardiner & Stone's corner
+  formula with these gradients (eq. 32). For a smoothly varying
+  metric and spacing the length factors "approximately cancel" between
+  eqs. 30 and 32. Eq. 31 states only the positive and negative cases; the
+  zero-mass-flux rule (the mean of both sides) of Stone et al. (2008),
+  eq. 80, and of Gardiner & Stone's $\mathcal E^c$ is not restated.
+* **Equation numbers.** White et al. cite Gardiner & Stone's eqs. (41) and
+  (50) for the corner formula and the upwinding, where the batch-6 section
+  (from the arXiv v1) has eq. 42 and eqs. 50–51; probably a
+  journal-versus-preprint numbering offset, not verified. Eq. 32 prints
+  the EMF itself at quarter points where the upwinded gradients are
+  meant, as recorded on the Source page.
+* **Relation to the original** (§3.5). The scheme differs from Evans &
+  Hawley (1988) in using cell-centred rather than face-centred
+  velocities, which agrees with the batch-7 reading of the original's
+  layout (velocities face-centred on the hydro zones); "The fundamentals
+  of CT were in fact developed within the context of general relativity".
+* **Divergence control in GRMHD codes in 2016** (§1). Of 10 GRMHD codes
+  listed, Anderson et al. use hyperbolic cleaning, IllinoisGRMHD a
+  staggered vector potential, Harm and GRHydro Flux-CT (Tóth 2000), "and
+  the remaining six use a staggered CT scheme". Of the cleaning family,
+  only the hyperbolic form is called "naturally able to respect causality
+  in relativistic settings"; vector-potential evolution is said to need
+  gauge care with mesh refinement. This earlier census and the batch-4
+  five-scheme census of Porth et al. (2019) cover different code sets
+  and do not conflict.
+* **Evidence.** The GR CT is exercised on the magnetized blast in
+  Minkowski and "snake" coordinates (same structure in both), Bondi
+  accretion with a radial monopole and the Gammie (1999) magnetized inflow
+  (second order), and a 3D MRI-turbulent torus (§4.3–§5).
+
 # Citations
 
 1. [Stone et al. (2008)](/sources/stone-2008.md), §3, §5.1, §5.3, §8.4, §8.6.
@@ -501,3 +553,4 @@ kinematic only: the field does not act on the flow, and the Lorentz force
 13. [Evans & Hawley (1988)](/sources/evans-1988.md), §§I–VI, eqs. 2.4–2.12, 4.4–4.25, 5.6, Figs. 1–6.
 14. [Gardiner & Stone (2008)](/sources/gardiner-2008.md), §4, eq. 48.
 15. [Dedner et al. (2002)](/sources/dedner-2002.md), §1.
+16. [White et al. (2016)](/sources/white-2016.md), §1, §2, §3.5, §§4.3–5, eqs. 7–8, 14–15, 29–32, Fig. 2.

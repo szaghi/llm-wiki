@@ -74,16 +74,16 @@ the very-low-β version of Waagan, cited) or 0.13 (Balsara et al.)
 **Later uses (batch 11).** The origin, [Balsara & Spicer (1999)](/sources/balsara-1999.md),
 §3.1, prints in Gaussian units (field strength $B$ becomes
 $B/\sqrt{4\pi}$ in Heaviside–Lorentz units): unit square, $400^2$; ambient
-$\rho = 1$, $p = 1$, at rest; disc $\rho = 10$ inside $r = 0.1$, density and
-rotation tapering linearly to the ambient at $r = 0.115$ (six zones); rotation
-speed 2 at $r = 0.1$; $\gamma = 1.4$; $B_x = 5$; Courant number 0.8;
+$\rho = 1$, $p = 1$, at rest; disc $\rho = 10$ inside $\varrho = 0.1$, density and
+rotation tapering linearly to the ambient at $\varrho = 0.115$ (six zones); rotation
+speed 2 at $\varrho = 0.1$; $\gamma = 1.4$; $B_x = 5$; Courant number 0.8;
 $t = 0.295$; boundary conditions not printed.
 * *Erratum.* An "Update" (J. Comput. Phys. 153:671, 1999) states that the
   paper's Figs. 2–3 were run with $p = 0.5$, $\gamma = 5/3$, speed 1 at
-  $r = 0.1$ and $B = 2.5$, densities and taper as printed; the printed set
+  $\varrho = 0.1$ and $B = 2.5$, densities and taper as printed; the printed set
   "also produce[s] an interesting rotor problem but at earlier times".
 * *What this means for the batch-6 entries.* "Tóth's first rotor" above
-  (angular velocity 20, i.e. speed 2 at $r = 0.1$; taper width 0.015;
+  (angular velocity 20, i.e. speed 2 at $\varrho = 0.1$; taper width 0.015;
   $\gamma = 1.4$; $5/\sqrt{4\pi}$) is the printed Balsara–Spicer set, and its
   earlier output time (0.15 or 0.125) is consistent with the erratum's remark.
   Ding & Wu's "another normalization" ($2.5/\sqrt{4\pi}$, $p = 0.5$, taper
@@ -113,7 +113,7 @@ entry above.
 
 **Later uses (batch 17).** *Tóth's two rotors*
 ([Tóth (2000)](/sources/toth-2000.md), §6.6, Table VIII, Figs. 19–20).
-* *First rotor:* speed 2 at $r = 0.1$, taper to $r = 0.115$, $p = 1$,
+* *First rotor:* speed 2 at $\varrho = 0.1$, taper to $\varrho = 0.115$, $p = 1$,
   $B_x = 5/\sqrt{4\pi}$, $\gamma = 1.4$, $t = 0.15$, unsplit TVD-MUSCL
   with the MC limiter, $\nu \le 0.6$. This is the "Tóth's first rotor" of
   the batch-6 and batch-7 entries; the paper's domain is $[0, 1]^2$, so the
@@ -124,7 +124,8 @@ entry above.
   not correspond to the initial condition described in the text (BS,
   private communication)." This agrees with the erratum reading of the
   batch-11 entry.
-* *Errors.* Relative $L^1$ errors $\bar\delta_{50,100,200}$ fall at first
+* *Errors.* Relative $L^1$ errors, averaged over the non-zero primitive
+  variables, on $N = 50, 100, 200$ cells per direction, fall at first
   order. First rotor: projection 0.1145/0.0603/0.0276 (best), eight-wave
   0.1152/0.0621/0.0285, flux-CT 0.1191/0.0624/0.0298, field-CT
   0.1537/0.0893/0.0488 (worst). Second rotor: projection

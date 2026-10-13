@@ -5,7 +5,7 @@ description: "Staggered CT on a Cartesian mesh cut by a non-conforming boundary 
 status: established
 aliases: [cut-cell CT, CT embedded boundary]
 tags: [constrained-transport, embedded-boundary, cut-cell, ghost-fluid, resistive-mhd, divergence-constraint]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Embedded-boundary constrained transport
@@ -29,7 +29,7 @@ in 2D.
    interpolated, dropping to first order if the stencil touches an empty
    cell. A Dirichlet or Neumann condition then fixes the ghost value. Face
    components of $B_h$ are interpolated from same-orientation faces.
-3. **A perfect-conductor wall.** The wall imposes $v = v_b$, zero
+3. **A perfect-conductor wall.** The wall imposes $\mathbf u = \mathbf u_{\mathrm b}$, zero
    tangential field and a given normal field. The tangential condition is
    curvature-corrected so that a current-free $1/R$ field is reproduced
    discretely. Plain linear extrapolation would create a spurious current

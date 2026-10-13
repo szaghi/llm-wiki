@@ -5,7 +5,7 @@ description: "Finite element spaces of differential forms organized into de Rham
 status: established
 aliases: [FEEC]
 tags: [feec, finite-elements, de-rham, cohomology, stability]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Finite element exterior calculus (FEEC)
@@ -21,7 +21,7 @@ degree in $n$ dimensions) that **reproduce the de Rham cohomology** on
 domains of arbitrary Betti numbers, connected to the continuous complex by
 **cochain projections**. Well-posedness of the discretization is inherited
 from the structure rather than verified case by case; the Hodge Laplacian
-$d\delta + \delta d$ unifies the applications (mixed Poisson, Maxwell,
+$\mathrm d\delta + \delta\mathrm d$ unifies the applications (mixed Poisson, Maxwell,
 div–curl systems, eigenvalue problems, elasticity via BGG).
 
 ## Why structure is not optional

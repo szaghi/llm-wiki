@@ -105,7 +105,7 @@ an interface" (JCP §§2, 5; ApJ §2).
   which is a design choice, not a claim that no collocated scheme can hold
   the invariant.
 
-**Scoped resolution (compiled):** the claims quantify over different
+**Status: Open.** Scoped resolution (compiled): the claims quantify over different
 things. Tóth's is an algebraic identity for specific second-order schemes —
 staggering can be *rewritten away* after the fact, at the cost of wider
 symmetrized stencils and relocating the exact invariant to

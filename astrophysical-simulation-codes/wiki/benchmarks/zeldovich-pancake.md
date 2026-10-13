@@ -5,7 +5,7 @@ description: "A 1D cosmological test in which a single sinusoidal mode collapses
 status: established
 aliases: [Zeldovich pancake, Zel'dovich pancake test, pancake collapse]
 tags: [benchmark, cosmology, hydro, self-gravity, dual-energy, verification]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Zel'dovich pancake
@@ -63,7 +63,12 @@ a switch that keeps the advected internal energy in shocked gas removes
 the pancake's shock heating
 ([Villasenor et al. (2021)](/sources/villasenor-2021.md), §3.1).
 
+## Later uses (batch 10)
+
+* **RAMSES** ([Teyssier (2002)](/sources/teyssier-2002.md), §3.7, eqs. 28–30): Einstein–de Sitter, baryon fraction 0.1, collapse at $1+z = 10$, start at $1+z = 100$, 32 coarse cells, 6 levels (formal 2048). These parameters differ from the Bryan/Villasenor set-up. Refining on density only (shocks unrefined) gives profiles "almost indistinguishable in the center" from refining shocks too, with no oscillation; qualitative.
+
 # Citations
 
 1. [Bryan et al. (2014)](/sources/bryan-2014.md), §11.2.9, eqs. 105–107, Fig. 13 (arXiv v1).
 2. [Villasenor et al. (2021)](/sources/villasenor-2021.md), §3.1, eqs. 36–39, Fig. 1 (arXiv v2).
+3. [Teyssier (2002)](/sources/teyssier-2002.md), §3.7.

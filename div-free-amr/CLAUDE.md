@@ -38,6 +38,12 @@ other repository (see `DECISIONS.md` D12).
 
 ## Status
 
+**Frontier batch 4b staged 2026-10-13:** devore-1991, balsara-1998-b,
+orszag-tang-1979, kreiss-scherer-1974, berger-oliger-1984, miyoshi-kusano-2005
+(user downloads); 123 sources. New page methods/hlld-solver. One new Open
+contradiction (which projection Ryu, Jones & Frank used). Deep lint #11 ran
+with this batch (14 ingestions since #10); the next is due after 10 more.
+
 **Frontier batch 4a staged 2026-10-13:** colella-1990, dai-woodward-1994,
 harten-1983, roe-1981, shu-osher-1988, shu-osher-1989,
 harten-lax-vanleer-1983, sod-1978, copied from sibling archives (D17); 117

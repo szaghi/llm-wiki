@@ -16,7 +16,7 @@ in their **symmetrizable form** — Godunov's result that pure divergence form
 is not symmetrizable, and becomes so exactly when a multiple of
 $\nabla\cdot\mathbf{B}$ is added to each equation. The added source terms
 (momentum, induction, energy rows) give the Roe-type Riemann solver an
-eighth wave: the *divergence wave*, advecting at the flow speed $u$.
+eighth wave: the *divergence wave*, advecting at the flow speed $u_n$.
 
 **The primary report (1994).** The scheme first appeared in
 [Powell (1994)](/sources/powell-1994.md), an ICASE report, by a different
@@ -25,9 +25,9 @@ flux Jacobian: the row of the normal field is zero, giving a zero
 eigenvalue that Powell calls "clearly non-physical" (§2, eq. 8). He
 replaces the Jacobian by a non-singular $8\times8$ matrix found "with
 Maple" from four criteria: the seven 1D eigenpairs unchanged, an eighth
-eigenvalue equal to $u$, sensible eighth eigenvectors, and reduction to the
+eigenvalue equal to $u_n$, sensible eighth eigenvectors, and reduction to the
 seven-wave problem when the normal field is constant (eq. 9). The eighth
-wave, which Powell names the "divergence wave", has speed $u$ and carries
+wave, which Powell names the "divergence wave", has speed $u_n$ and carries
 only the jump of the normal field; the other seven carry none (eqs.
 10–13). In conservative variables the modification is the source term
 $$-(0,\ \mathbf B,\ \mathbf u,\ \mathbf u\cdot\mathbf B)^T\,\nabla\cdot\mathbf B$$
@@ -97,7 +97,7 @@ not a $\nabla\cdot\mathbf B$ term (reader's reading; see the Source page).
 [Ryu, Jones & Frank (1995)](/sources/ryu-jones-frank-1995.md) §2.4 decline
 the "modified form of the MHD equations originally suggested in Brackbill &
 Barnes (1980)": it "is not suitable for our code and it does not remove
-$\nabla\cdot B$ completely anyway". They keep the conservative seven-wave
+$\nabla\cdot\mathbf B$ completely anyway". They keep the conservative seven-wave
 TVD scheme, hold the parallel field component constant in each split sweep,
 and [project](/methods/projection-method.md) after every step instead.
 
@@ -169,7 +169,7 @@ This weighs against Tóth's wrong-jump result rather than closing it:
 Wu & Shu concede the loss of conservation, and they run no
 jump-convergence test of the kind Tóth used.
 At the PDE level, smooth solutions of the symmetrizable system provably
-keep density and pressure positive for any $\nabla\cdot B$. The result
+keep density and pressure positive for any $\nabla\cdot\mathbf B$. The result
 extends to HLL fluxes on general meshes
 ([Wu & Shu (2019)](/sources/wu-shu-2019.md)).
 
@@ -242,7 +242,7 @@ the normal field jumps at a face (below);
 [Powell (1994)](/sources/powell-1994.md) names Dai–Woodward among the
 earlier upwind schemes that keep the normal field constant.
 
-**Roe-type, not Property U.** An arithmetic-average interface state is among the candidates that [Roe (1981)](/sources/roe-1981.md) says "in general" fail the exact jump identity (p. 359), so the solver is Roe-type in its wave decomposition only ([Roe's approximate Riemann solver](/methods/roe-solver.md)).
+**Roe-type, not Property U.** An arithmetic-average interface state is among the candidates that [Roe (1981)](/sources/roe-1981.md) says "in general" fail the exact jump identity (p. 359), so the arithmetic-average solvers of [Brio & Wu (1988)](/sources/brio-wu-1988.md) (general $\gamma$) and [Powell (1994)](/sources/powell-1994.md) are Roe-type in their wave decomposition only ([Roe's approximate Riemann solver](/methods/roe-solver.md)).
 
 **The normalization the eight-wave solver uses.**
 [Roe & Balsara (1996)](/sources/roe-balsara-1996.md) rescale the fast and

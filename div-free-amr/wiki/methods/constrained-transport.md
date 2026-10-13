@@ -11,7 +11,7 @@ timestamp: 2026-10-13T00:00:00Z
 # Constrained transport (CT)
 
 A finite-difference formulation of the ideal-MHD induction equation
-$\partial_t \mathbf{B} = \nabla \times (\mathbf{V} \times \mathbf{B})$ that
+$\partial_t \mathbf{B} = \nabla \times (\mathbf{u} \times \mathbf{B})$ that
 maintains the [exact discrete divergence](/properties/exact-discrete-divergence.md)
 of the magnetic field to machine roundoff, introduced by
 [Evans & Hawley (1988)](/sources/evans-hawley-1988.md).
@@ -26,8 +26,36 @@ then "applied the hybrid scheme utilized by Brecht et al. to an artificial
 viscosity based scheme, coining the term 'constrained transport'";
 DeVore applied it to FCT at about the same time. In this account Evans &
 Hawley named the method and carried it into their scheme; they did not
-originate the staggered update. The Brecht et al. and DeVore papers are not
-ingested.
+originate the staggered update. The Brecht et al. paper is not ingested.
+
+**The FCT primary source.** [DeVore (1991)](/sources/devore-1991.md)
+(received July 1989, after Evans & Hawley) evolves face-normal field
+components from edge fluxes of $\mathbf u\times\mathbf B$, so that, in
+registry terms, $\partial_t B_h = -C_h E_h$ and $D_h^{\mathrm f}B_h$ is
+held to roundoff: "if Gauss's law in its discrete integral form is
+satisfied by the field configuration initially, it is satisfied for all
+time" (§2, eqs. 5–6, p. 145). He credits the placement to Schnack &
+Killeen (1980) and Evans & Hawley (1988), not to Yee or Brecht et al.
+* **Limiting must also live on edges.** Every FCT stage (low-order
+  diffusion, high-order antidiffusion, source, corrected antidiffusion) is
+  an edge flux, so each intermediate field keeps the invariant; only
+  auxiliary single-component fields used to size the limiter are not
+  divergence-free (Appendix, p. 157). His contribution is the corrector: a
+  joint limiter on the total edge flux is "excessively diffuse", so each
+  edge flux is split into one partial flux per field component, each
+  limited against extrema of its own normal component and then recombined
+  (§2, eqs. 14–23). Monotonicity is then enforced only approximately (§4).
+* **A split field update is nonconservative.** Each edge flux changes four
+  face values along two directions, so "an operator-split integration for
+  the individual field components is necessarily nonconservative" (§4,
+  p. 156). Argued, not proved; the same rule appears later as Dai &
+  Woodward's unsplit-field requirement (below).
+* **Not an artificial-viscosity scheme: a qualification.** Ryu, Miniati,
+  Jones & Frank group DeVore with Evans & Hawley and Stone & Norman as
+  earlier CT that was "artificial-viscosity based" (below). DeVore's
+  scheme is FCT: explicit low-order diffusion plus limited antidiffusion
+  (Appendix, eqs. A3–A10), not an added viscosity term.
+* No divergence value is reported; the invariant is asserted.
 
 ## Construction
 
@@ -77,6 +105,16 @@ ingested.
   potential, CT computes currents from a single difference of the evolved
   field, avoiding the anomalous current oscillations produced by second
   differences of monotonically-advected quantities.
+
+  **Evidence from FCT.** [DeVore (1991)](/sources/devore-1991.md) §3
+  compares an FCT field solver, an FCT vector-potential solver and the
+  Evans–Hawley CT solver. Relative current-density errors: 79%, 90% and
+  91% after one rotation of a current-carrying cylinder; 88%, 113% and 88%
+  on a self-similar magnetic bubble. The potential solver shows current
+  reversals above 70% and at 90% of the interior value. The field and flux
+  errors differ much less, which DeVore attributes to high $\beta$ and
+  short runs; CT gives "the only monotonic profile, but the lowest
+  quantitative accuracy" in the rotation test.
 * **Embedded boundaries:** on a Cartesian mesh cut by a non-conforming
   wall or material interface, extrapolated ghost fields are not solenoidal,
   but they reach the active faces only through $E_h$. The invariant
@@ -205,6 +243,15 @@ Riemann-solver schemes until Dai & Woodward (1998) (§1).
   ([projection](/methods/projection-method.md)).
 * No divergence value is reported in any test; exactness rests on eq. 18.
 
+**The status quo in 1998, as one Godunov author put it.**
+[Balsara (1998)](/sources/balsara-1998-b.md) §5 notes that Evans & Hawley
+"have shown that this can be formally achieved using an area-weighted
+discretization" for artificial-viscosity schemes, while Godunov schemes
+had "so far relied on Hodge projection", because zone-centred variables
+are "very important for the conservation form". His own RIEMANN code then
+used a [projection](/methods/projection-method.md); the staggered Godunov
+combination followed in Balsara & Spicer (1999).
+
 Details of the EMF are on [flux-CT](/methods/flux-ct.md). This is the
 second-order CT step that [Seo & Ryu (2023)](/sources/seo-2023.md) find
 caps a fifth-order WENO code (above).
@@ -274,3 +321,5 @@ cell-integrated monopole density, of every cell.
 17. [Dai & Woodward (1998, ApJ)](/sources/dai-woodward-1998-b.md), §§1–3, eqs. 15–27, Figs. 12–18.
 18. [Shu & Osher (1989)](/sources/shu-osher-1989.md), Alg. 2.2, eqs. 2.12, 4.3–4.4.
 19. [Colella (1990)](/sources/colella-1990.md), §6.
+20. [DeVore (1991)](/sources/devore-1991.md), §§2–4, eqs. 5–6, 14–23, Appendix.
+21. [Balsara (1998)](/sources/balsara-1998-b.md), §5.

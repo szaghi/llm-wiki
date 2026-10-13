@@ -229,6 +229,9 @@ No Euler system, no MHD and no shock–entropy-wave test; that test is in
 * Updated [WENO reconstruction](/methods/weno.md): origin of the
   point-value flux form (Taylor corrections here, flux primitive in 1989),
   origin of the time integrator, the TVD status of classical RK4.
+* Updated [Total variation diminishing (TVD)](/properties/total-variation-diminishing.md).
+* Updated Source pages of [Jiang & Shu (1996)](/sources/jiang-shu-1996.md) and
+  [Mignone, Tzeferacos & Bodo (2010)](/sources/mignone-tzeferacos-bodo-2010.md).
 
 # Citations
 

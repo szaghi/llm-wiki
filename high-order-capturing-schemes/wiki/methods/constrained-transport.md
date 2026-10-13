@@ -468,7 +468,7 @@ variant, and the 1994 projection.*
   extends to supersonic flows the batch-15 note's judgment that exact
   conservation form is "imperative only for high-speed flows".
 
-**Later uses (batch 17), Tóth's comparison.** *Seven treatments in one code*
+**Later uses (batch 17): Tóth's comparison.** *Seven treatments in one code*
 ([Tóth (2000)](/sources/toth-2000.md), §§4–7, Tables I, IV, IX).
 * *CT without staggering.* Field-CT (after Dai and Woodward), flux-CT
   (after Balsara and Spicer, edge field the mean of four face fluxes) and
@@ -506,6 +506,84 @@ variant, and the 1994 projection.*
   transport-flux-CT is "more complicated, less versatile, and typically
   not more accurate than the flux-CT scheme"; only the eight-wave scheme
   is non-conservative and can converge to wrong jumps.
+
+**Later uses (batch 18).** *Flux-corrected transport on a staggered
+field, and a spectrally consistent projection.*
+* *DeVore's staggered FCT* ([DeVore (1991)](/sources/devore-1991.md),
+  §2, eqs. 3–6, Fig. 1). The normal field components sit on the faces of
+  the cell that carries the fluid variables, as in the Balsara–Spicer
+  sections above (not on Evans and Hawley's dual cell), and the fluxes
+  $\mathbf v\times\mathbf B$ on the edges. In 2D the face-area-weighted
+  change of $B_x$ over a step is the difference of the edge-length-weighted
+  $v_yB_x - v_xB_y = \mathcal E_z$ at its two edges (eq. 5), the Yee update
+  with the sign of the section above (reader's check). Pairwise
+  cancellation of the edge fluxes keeps the discrete Gauss law: "if
+  Gauss's law in its discrete integral form is satisfied by the field
+  configuration initially, it is satisfied for all time" (eq. 6, p. 145),
+  the same statement as Evans and Hawley's "only guarantees that field
+  evolution *changes* are divergence free". The edge values are built by
+  flux-corrected transport (high-order linear fluxes, limited against a
+  diffusive low-order solution), not by Riemann solvers.
+* *The split flux corrector* (eqs. 14–23). Zalesak's multidimensional FCT
+  limiter applied to the antidiffusive edge flux "is guaranteed to be
+  monotonic, but it also is excessively diffuse, in practice" (p. 147):
+  that flux is the difference of a part that antidiffuses $B_y$ and a part
+  that antidiffuses $B_x$, which "may oppose or reinforce each other, or
+  one may overwhelm the other", and the cross terms are antidiffusive only
+  for uniform coefficients with $\nabla\cdot\mathbf B = 0$ (eqs. 14–16).
+  DeVore limits each partial flux against its own field component, with
+  bounds taken along the transverse index only (three face values), and
+  recombines them (eqs. 17–23); monotonicity is then enforced only
+  "approximately" (p. 148), with a heuristic, unproved justification. The
+  field components must be corrected separately, though an operator-split
+  integration of them "is necessarily nonconservative" (§4, p. 156). FCT
+  on the field dissipates magnetic flux "much like a physical resistivity",
+  concentrated at current sheets (p. 157).
+* *FCT field, FCT potential and CT on the same tests* (§3). On a rigidly
+  rotated current-carrying cylinder ($100\times100$, one rotation): flux
+  function errors 6%, 4% and 14%; field errors 25%, 25% and 45%; current
+  errors 79%, 90% and 91% for the FCT field solver, the FCT
+  vector-potential solver and Evans–Hawley CT. The potential solver reverses
+  the current near the axis by more than 70%; CT gives the only monotone
+  current profile but the most smoothed. In Low's self-similar magnetic
+  bubble the current errors are 88%, 113% and 88%, with current reversals at
+  the 10% (field) and 90% (potential) levels. This agrees with the batch-17
+  reading that monotone advection of $\mathbf A$ gives a current that
+  oscillates and changes sign. As printed, §4 (p. 156) claims a small
+  advantage of the FCT field solver over both others "in the quantitative
+  accuracy to which the flux surfaces and field strengths are reproduced",
+  which the flux-function errors of the first test (6% against 4%) do not
+  support for flux surfaces against the potential solver (reader's
+  reading; recorded on the Source page).
+* *An FD-consistent spectral projection* ([Balsara (1998)](/sources/balsara-1998-b.md),
+  §5, eqs. 5.1–5.6). On periodic grids the Brackbill–Barnes projection
+  with the exact spectral symbol $1/\vert\mathbf k\vert^2$ leaves the
+  central-difference divergence of the zone-centred field nonzero. Applying
+  the projector $\mathsf I - \mathbf k\mathbf k^{\mathsf T}/\vert\mathbf k\vert^2$ (wavevector $\mathbf k$)
+  to all three field components, with $ik_x$ replaced by
+  $i\sin(k_xh_x)/h_x$ and likewise in $y$ and $z$, makes that divergence
+  "exactly zero", at the cost of transforming every component; the cost is
+  stated as "no more than 2%" of the run, without data. Like Tóth's
+  condition above, exactness needs the projection built from the same
+  discrete operators as the divergence. The printed eqs. 5.2–5.3 repeat the
+  sign inconsistency recorded for Zachary et al. eq. 34 (gradient
+  subtracted with $\nabla^2\Phi = -\nabla\cdot\mathbf B$); eqs. 5.4–5.5 are
+  consistent with the registry convention.
+* *"Cleaning matters", against the 1994 view* (Balsara 1998,
+  §§6.2.1–6.2.2). Balsara contests the view of Dai and Woodward, Zachary
+  et al. and Ryu, Jones and Frank that dropping the projection makes no
+  significant difference, because those authors used split schemes, short
+  times and a less accurate projection: without cleaning, small-scale
+  divergence builds up slowly in stagnation regions and, with total energy
+  updated, can drive the pressure negative. His 2D evidence compares a
+  split run without cleaning with an unsplit run with cleaning (isothermal
+  Orszag–Tang to $t = 3$; isothermal blast), so splitting and cleaning
+  change together. Zachary et al.'s "no noticeable difference" is stated
+  for their own problems, up to about two Alfvén transit times. Different
+  run lengths and schemes, and evidence that cannot isolate the cleaning:
+  a qualification of the 1994 statement, not a contradiction. Balsara also
+  states that imposing the constraint at all matters more than which
+  discretization of it is used (p. 149).
 
 ## Contradictions
 
@@ -562,3 +640,5 @@ variant, and the 1994 projection.*
 21. [Dai & Woodward (1998)](/sources/dai-1998.md), §§1–4, eqs. 15–32, Figs. 12–19.
 22. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §2.4, eq. 34, pp. 275, 283.
 23. [Tóth (2000)](/sources/toth-2000.md), §§4–7, Tables I, IV, IX.
+24. [DeVore (1991)](/sources/devore-1991.md), §§1–4, eqs. 5–6, 14–23 (scan; equations read from page images).
+25. [Balsara (1998)](/sources/balsara-1998-b.md), §§5–6, eqs. 5.1–5.6.

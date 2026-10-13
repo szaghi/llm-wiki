@@ -329,11 +329,11 @@ line credits FV-WENO with RK3 with Courant numbers up to "1/2 in 2D — the
 limits of the unsplit Godunov scheme" (Titarev and Toro). Colella's two
 first-order unsplit schemes have different 2D limits: donor cell, which
 upwinds normal to each edge only, needs the *sum* of the directional
-Courant numbers to be at most 1, which allows each only $\tfrac12$ when
-they are equal; corner transport upwind, which adds a transverse
-correction, needs only their *maximum* to be at most 1, the limit of
-operator splitting (eqs. 1.5–1.6, stated as sufficient and necessary
-respectively, by Fourier analysis). For systems the corner-coupled
+Courant numbers to be at most 1 (eq. 1.6, stated as necessary), which
+allows each only $\tfrac12$ when they are equal; corner transport upwind,
+which adds a transverse correction, is stable when their *maximum* is at
+most 1 (eq. 1.5, stated as sufficient), the limit of operator splitting
+(both by Fourier analysis). For systems the corner-coupled
 second-order scheme has the limit 1, proved when the directional
 Jacobians commute (eq. 2.17) ([Colella (1990)](/sources/colella-1990.md),
 §§1–2; [corner transport upwind](/methods/corner-transport-upwind.md)).

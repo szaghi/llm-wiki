@@ -5,7 +5,7 @@ description: "Calculus built directly on simplicial complexes: forms as cochains
 status: established
 aliases: [DEC]
 tags: [dec, differential-forms, simplicial, dual-grid, hodge]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Discrete exterior calculus (DEC)
@@ -14,12 +14,12 @@ An *ab initio* calculus on simplicial complexes
 ([Desbrun, Hirani, Leok & Marsden (2005)](/sources/desbrun-hirani-2005.md)):
 discrete $k$-forms are cochains (values on $k$-simplices), the exterior
 derivative is the coboundary — so the generalized Stokes theorem
-$\langle d\alpha, c\rangle = \langle\alpha, \partial c\rangle$ and
-$dd = 0$ hold **by definition** — and the metric enters through a
+$\langle \mathrm d\alpha, c\rangle = \langle\alpha, \partial c\rangle$ and
+$\mathrm d\mathrm d = 0$ hold **by definition** — and the metric enters through a
 **diagonal Hodge star** built from the volume ratios of primal simplices
-and their **circumcentric (Voronoi) dual** cells. From $d$ and $*$ the
+and their **circumcentric (Voronoi) dual** cells. From $\mathrm d$ and $*$ the
 rest follows: codifferential $\delta$, Laplace–deRham
-$\Delta = d\delta + \delta d$, and — DEC's distinctive extension —
+$\Delta = \mathrm d\delta + \delta\mathrm d$, and — DEC's distinctive extension —
 discrete *vector fields* with flat/sharp, contraction, and Lie
 derivatives, which is what forces circumcentric rather than barycentric
 duals.

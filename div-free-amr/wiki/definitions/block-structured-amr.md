@@ -12,11 +12,38 @@ timestamp: 2026-10-13T00:00:00Z
 
 Adaptive mesh refinement in which the refined region is a **hierarchy of
 rectangular grid patches**: level $l{+}1$ patches have mesh spacing
-$\Delta x_l / r$ for a fixed (even) refinement ratio $r$, with $r=2$ giving
+$h_l / r$ for a fixed (even) refinement ratio $r$, with $r=2$ giving
 the 2:1 interface. Defined by
 [Berger & Colella (1989)](/sources/berger-colella-1989.md), refining the
 earlier rotated-grid approach into grid-aligned patches specifically to make
 conservation maintainable.
+
+**The rotated-grid predecessor (Berger & Oliger 1984).** The earlier
+approach is [Berger & Oliger (1984)](/sources/berger-oliger-1984.md).
+Several items of the discipline below originate there.
+* *Grids:* subgrids are rectangles of arbitrary orientation, aligned with
+  features such as shocks, each an independent grid that overlays the
+  coarse grid rather than being merged into it (§§1–2). Points of a
+  level-$l$ grid must lie in the interior of the union of level-$(l-1)$
+  grids; there is no alignment to coarse cell corners and no one-cell
+  separation from level $l-2$ (pp. 487–488).
+* *Space–time refinement:* the ratio $r$ applies to $\Delta t$ as well,
+  so $\Delta t/h$ is the same on every level, named as a main source of
+  efficiency (§3, p. 489). The authors "prefer a refinement ratio of 4 over
+  the ratio of 2 typically used with multigrid methods" and run $r = 4$ and
+  $r = 10$ (p. 487, §6).
+* *Regridding:* a Richardson estimate of the local truncation error
+  (eq. 3.2), buffer zones, clustering with an efficiency cutoff "typically
+  between ½ and ¾", and force-flagging under level-$(l+2)$ grids to keep
+  nesting (§§3–4).
+* *Coupling:* fine boundary values by interpolation, or by Ciment's
+  coarse-mesh approximation, from the coarse grid (orders and time
+  interpolation unspecified); covered coarse values **updated by
+  injection** of fine values, not by a conservative average; **no flux
+  correction**. Conservative interface conditions are announced as
+  "reported elsewhere" (p. 493).
+
+The paper has no divergence content.
 
 ## Defining discipline (Berger–Colella formulation)
 
@@ -24,7 +51,7 @@ conservation maintainable.
   of cells of the next coarser level; a level-$l$ cell is separated from any
   level-$l{-}2$ cell by at least one level-$l{-}1$ cell in each coordinate
   direction (a patch may span several parent patches).
-* **Space–time refinement (subcycling)**: $\Delta t_l / \Delta x_l$ is
+* **Space–time refinement (subcycling)**: $\Delta t_l / h_l$ is
   constant across levels, so one coarse step corresponds to $r$ fine steps
   and the same explicit integrator runs unmodified on every level.
 * **Finest-wins solution**: the solution at a point is the value on the
@@ -148,3 +175,4 @@ concerns smoothly moving zones, not patch hierarchies.
 9. [Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3.
 10. [Hoppe et al. (2022)](/sources/hoppe-2022.md), §§5, 7.1, 9; Algorithms 1–3.
 11. [Colella & Woodward (1984)](/sources/colella-woodward-1984.md), eqs. 1.9, A.2, A.6.
+12. [Berger & Oliger (1984)](/sources/berger-oliger-1984.md), §§1–4, eq. 3.2, pp. 487–493.

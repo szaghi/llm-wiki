@@ -75,6 +75,7 @@ Finest-grid orders as printed ($L^1$, then $L^\infty$).
 |---|---|---|---|
 | [Harten et al. (1987)](/sources/harten-1987.md), Tables IA–IB | [ENO](/methods/eno-reconstruction.md) $r = 4$, 5 with a [Taylor](/methods/taylor-time-discretization.md) step, Roe flux, CFL 0.6 | 128 cells | reconstruction via primitive: $L^\infty$ 3.02 ($r = 4$) and 4.50 ($r = 5$); via deconvolution: $L^1$ 4.53 and 5.53, $L^\infty$ 4.76 and 5.36 |
 | [Shu & Osher (1988)](/sources/shu-1988.md), Table 1 | flux ENO, Lax–Friedrichs building block, [TVD Runge–Kutta](/methods/ssp-runge-kutta.md), orders 3 and 4 | $h = 1/40$ | 3.13 and 2.89 (third); 4.76 and 4.35 (fourth) |
+| [Cockburn & Shu (1989)](/sources/cockburn-1989.md), Tables 1, 3 | [RKDG](/methods/rkdg.md) $K = 2$, RK3, TVB limiter (cell-dependent $M$), Roe flux with entropy fix | $h = 1/40$ | 2.97 and 2.87 (periodic); 2.94 and 2.78 (inflow/outflow) |
 | [Liu, Osher & Chan (1994)](/sources/liu-1994.md), Table III | [WENO](/methods/weno.md) $r = 3$, Roe flux with entropy fix | 320 | 4.79 and 6.21; the $L^\infty$ order is 3.41 between 80 and 160 |
 | [Levy, Puppo & Russo (1999)](/sources/levy-1999.md), Table 5.3 | [central WENO](/methods/central-weno.md), orders 3 and 4 (Levy et al.'s $m$) | 640 | 3.11 and 3.53 (order 3, above 4 on middle grids); 4.19 and 4.18 (order 4) |
 | [Balsara & Shu (2000)](/sources/balsara-2000.md), Table VI | ninth-order [MPWENO](/methods/monotonicity-preserving-limiter.md), LLF flux, RK3 with $\Delta t \propto h^{3}$ | 160 | 8.52 and 8.53 |
@@ -150,6 +151,10 @@ pass the shock through AMR interfaces
 overshoot of a non-SSP Runge–Kutta method
 ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
 
+**Later uses (batch 18).**
+* Third-order RKDG ($K = 2$, RK3, TVB limiter) on $u_0 = \tfrac14 + \tfrac12\sin\pi x$, periodic, $t = 0.3$, $h = 1/10$–$1/40$: $L^1$ orders 2.92, 2.97 and $L^\infty$ orders 2.86, 2.87. With inflow/outflow boundaries and the exact solution as inflow data: 2.90, 2.94 and 2.77, 2.78. A shifted variant sends the shock out through the inflow boundary ([Cockburn & Shu (1989)](/sources/cockburn-1989.md), Examples 1–2, Tables 1–4).
+* $u_0 = \alpha + \sin\pi(x + \beta)$ on $[-1, 1]$, CFL 0.5. With $(0, 0)$ at $t = 0.15$, UNO2 is second order in $L_\infty$ and TVD2 is not (Table 3(a)). With $(2, 1)$ at $t = 0.35$, a shock moving at speed 2 ([Harten & Osher (1987)](/sources/harten-1987-b.md), §7).
+
 # Citations
 
 1. [Harten et al. (1987)](/sources/harten-1987.md), §7 A1, Tables IA–IIB, Figs. 2–4.
@@ -169,3 +174,5 @@ overshoot of a non-SSP Runge–Kutta method
 15. [Ding, Shu & Zhang (2020)](/sources/ding-2020.md), Exs. 3 and 8, Tables 2.6–2.7, 2.15–2.16.
 16. [Lu et al. (2021)](/sources/lu-2021.md), Exs. 3.2 and 3.7, Tables 3.2, 3.6.
 17. [Wang et al. (2025)](/sources/wang-2025.md), §6.2 (arXiv preprint).
+18. [Cockburn & Shu (1989)](/sources/cockburn-1989.md), §4, Tables 1–4.
+19. [Harten & Osher (1987)](/sources/harten-1987-b.md), §7, Table 3.

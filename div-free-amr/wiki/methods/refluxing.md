@@ -14,6 +14,13 @@ The correction pass that makes a conservative scheme remain conservative on
 a [block-structured AMR](/definitions/block-structured-amr.md) hierarchy,
 introduced by [Berger & Colella (1989)](/sources/berger-colella-1989.md).
 
+**Before refluxing.** The earlier AMR algorithm of
+[Berger & Oliger (1984)](/sources/berger-oliger-1984.md) has no flux
+correction: covered coarse values are updated by injection of fine values,
+and the paper states only that stable interface conditions maintaining the
+conservation form "have been derived" and "will also be reported
+elsewhere" (p. 493).
+
 At a coarse cell abutting a fine patch (but not covered by it), the
 uncorrected scheme uses the coarse flux on the shared edge while the fine
 patch used its own fine fluxes there — the two sides disagree and mass,
@@ -113,3 +120,4 @@ asserted by reference, not shown ([Hoppe et al. (2022)](/sources/hoppe-2022.md),
 7. [Zaghi et al. (2023)](/sources/zaghi-2023.md).
 8. [Zhang et al. (2019)](/sources/zhang-2019.md).
 9. [Hoppe et al. (2022)](/sources/hoppe-2022.md), Algorithm 1.
+10. [Berger & Oliger (1984)](/sources/berger-oliger-1984.md), §3, p. 493.

@@ -98,7 +98,7 @@ $\mathbf v = (-\sin y, \sin x)$, $\mathbf B = (-\sin y, \sin 2x)$ (the
 unscaled normalization of Jiang and Wu above), $\gamma = 5/3$, $N = 50$,
 100, 200, with errors averaged against two $400^2$ references (projection
 and field-CT):
-* at $t = 1$, $\bar\delta_{200}$ runs from 0.0026 (field-CD) and 0.0029
+* at $t = 1$, the averaged relative $L^1$ error on $200^2$ runs from 0.0026 (field-CD) and 0.0029
   (field-CT) to 0.0045 (transport-flux-CT), a rate of about 1.6;
 * at $t = 3.14$, from 0.0300 (field-CD) and 0.0340 (projection) to 0.0478
   (eight-wave) and 0.0705 (the base scheme, which needed the minmod
@@ -107,6 +107,43 @@ and field-CT):
 
 * *What Zachary et al. state.* $192^2$, periodic, $\mathbf v = (-\sin y, \sin x)$, $\mathbf B = (-\sin y, \sin 2x)$ (unscaled), Mach number 1 and plasma beta 10/3. $\gamma$, the base density and pressure, and the domain are not stated, and the printed definitions of the Mach number and beta are garbled. One time is shown, "after 300 timesteps (approximately 2 Alfvén transit times)", with a pressure cut at grid row 60. No $t = 3$ is printed ([Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.2.2, Fig. 9). Jiang and Wu's "identical to Zachary et al." and their agreement "at $t = 3$" are their statements; this paper alone cannot confirm $p = \gamma$ or the time.
 * *A $[0,1]^2$ normalization.* $\mathbf v = (-\sin 2\pi y, \sin 2\pi x)$, $\mathbf B = (-\sin 2\pi y, \sin 4\pi x)$, Gaussian plasma beta 10/3 and Mach number 1, $128^2$–$512^2$, $t = 0.5$, qualitative only, attributed to Dahlburg and Picone (1989) and Picone and Dahlburg (1991) ([Dai & Woodward (1998)](/sources/dai-1998.md), Figs. 6–7).
+
+**Later uses (batch 18).** *The origin, and an isothermal variant.*
+* *Origin* ([Orszag & Tang (1979)](/sources/orszag-1979.md), §§2–3,
+  eq. 7). The 1979 problem is **incompressible, viscous and resistive** 2D
+  MHD in vorticity–vector-potential form, solved by a Fourier
+  pseudospectral method on a $2\pi$-periodic square, as a study of
+  small-scale structure and possible finite-time singularities in 2D MHD
+  turbulence. Its initial condition is $\mathbf v = (-\sin y, \sin x)$,
+  $A_z = \cos y + \tfrac12\cos 2x$, hence $\mathbf B = (-\sin y, \sin 2x)$,
+  the velocity and field of the set-up above. It has no density, pressure,
+  $\gamma$, sound speed, Mach number or plasma beta, so no shocks can form;
+  the field is the curl of $A_z$, so $\nabla\cdot\mathbf B = 0$ holds by
+  construction. Runs use viscosity = diffusivity from 0.08 down to 0.005
+  (up to $256^2$ modes), field plots at $t = 1$ only (an S-shaped central
+  current structure, Fig. 7) and integral diagnostics to $t = 2$ and 4.5.
+* *A qualification of the description.* "Smooth periodic MHD data that
+  steepen into interacting shocks" describes the compressible adaptation,
+  not the 1979 problem: the density, pressure, $\gamma = 5/3$, Mach number
+  1 and plasma beta 10/3 of the sections above are later additions,
+  attributed by Dai and Woodward to Dahlburg and Picone (1989) and Picone
+  and Dahlburg (1991). The magnetic island and central current sheet
+  discussed in the batch-6 entries sit where the original shows its
+  central current structure, under different equations (historical
+  context only).
+* *Isothermal Orszag–Tang* ([Balsara (1998)](/sources/balsara-1998-b.md),
+  §6.2.1, Figs. 7–8). $(0, 2\pi)^2$, $200^2$, $\rho = 1$,
+  $\mathbf v = v_0(-\sin y, \sin x)$, $\mathbf B = B_0(-\sin y, \sin 2x)$,
+  $v_0$ equal to the isothermal sound speed, $B_0$ set by gas pressure over
+  rms magnetic pressure $= 10/3$, $t = 3.0$, second-order TVD. A
+  Strang-split run without cleaning and an unsplit run with a spectral
+  projection every step give "reasonably similar" density and total
+  pressure; the split, uncleaned kinetic energy shows "two tiny
+  concentrations at the center that dominate the entire flow field". Since
+  splitting and cleaning change together, the difference cannot be
+  attributed to cleaning alone (reader's observation); the paper presents
+  it as evidence that cleaning matters
+  ([constrained transport](/methods/constrained-transport.md)).
 
 # Citations
 
@@ -125,3 +162,5 @@ and field-CT):
 13. [Tóth (2000)](/sources/toth-2000.md), §6.4, Table VII.
 14. [Zachary, Malagoli & Colella (1994)](/sources/zachary-1994.md), §3.2.2, Fig. 9.
 15. [Dai & Woodward (1998)](/sources/dai-1998.md), §3, Figs. 6–7.
+16. [Orszag & Tang (1979)](/sources/orszag-1979.md), §§2–3, eq. 7, Figs. 1–12.
+17. [Balsara (1998)](/sources/balsara-1998-b.md), §6.2.1, Figs. 7–8.

@@ -181,6 +181,7 @@ Riemann solves and is more sensitive to implementation details.
 * Updated [Piecewise parabolic method (PPM)](/methods/ppm.md) (batch-17
   block: the unsplit corner-coupled framework, multidimensional
   flattening).
+* Cited on [Double Mach reflection](/benchmarks/double-mach-reflection.md) (batch-17 block: unsplit against split) and [Hyperbolic (GLM) divergence cleaning](/methods/hyperbolic-divergence-cleaning.md) (the CTU-GLM solve counts).
 
 # Citations
 
