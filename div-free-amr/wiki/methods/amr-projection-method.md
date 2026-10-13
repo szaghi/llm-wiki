@@ -5,7 +5,7 @@ description: "Subcycled projection-method incompressible flow on patch hierarchi
 status: established
 aliases: [adaptive projection, IAMR method]
 tags: [amr, projection, incompressible, subcycling, synchronization]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # AMR projection method
@@ -91,7 +91,7 @@ gravity, which is not a divergence constraint
 * **Not tested.** The synchronization is not exercised by any test with
   refinement in the paper (§8).
 
-It confirms the lesson above that interface consistency of an
+It applies the lesson above that interface consistency of an
 elliptically coupled field is itself an elliptic problem.
 
 ## Constraint class

@@ -5,7 +5,7 @@ description: "Evolves face magnetic fluxes from once-computed edge EMFs so the d
 status: established
 aliases: [CT]
 tags: [constrained-transport, staggered, mhd, induction-equation]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Constrained transport (CT)

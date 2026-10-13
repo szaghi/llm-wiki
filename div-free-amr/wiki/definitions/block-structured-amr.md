@@ -5,7 +5,7 @@ description: "Adaptive refinement by a hierarchy of properly nested rectangular 
 status: established
 aliases: [SAMR, patch-based AMR, Berger-Colella AMR]
 tags: [amr, block-structured, hierarchy, subcycling]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Block-structured AMR
@@ -18,7 +18,7 @@ the 2:1 interface. Defined by
 earlier rotated-grid approach into grid-aligned patches specifically to make
 conservation maintainable.
 
-## Defining discipline
+## Defining discipline (Berger–Colella formulation)
 
 * **Alignment and proper nesting**: every patch starts and ends on corners
   of cells of the next coarser level; a level-$l$ cell is separated from any
@@ -51,8 +51,10 @@ preferred by the SBP-SAT community
 flavor refines cell-by-cell on a tree — e.g. RAMSES's fully threaded tree
 of "octs" (8-cell sibling groups)
 ([Fromang et al. (2006)](/sources/fromang-2006.md)) — rather than by
-rectangular patches. The 2:1 coarse–fine interface and its transfer
-operators are the same mathematical object in both flavors; what changes
+rectangular patches. Where 2:1 balance is enforced, the 2:1 coarse–fine
+interface and its transfer operators are the same mathematical object in
+both flavors (Knapp et al. enforce no 2:1 balance, and Hoppe et al. state
+arbitrary resolution jumps, below); what changes
 is granularity, data structure, and where interfaces occur (everywhere, at
 single-cell granularity, in the tree case).
 
@@ -70,8 +72,8 @@ concerns smoothly moving zones, not patch hierarchies.
   $r = 2$ and one for $r = 4$, because the PPM stencil needs four ghost
   cells; $r$ is always 2 or 4, and every grid has an even cell count per
   direction. The step is the most restrictive over levels,
-  $\Delta t_0 = \min_l(r^{(0\to l)}\Delta t_l^*)$, where $r^{(0\to l)}$ is the
-  ratio of level-0 to level-$l$ spacing. The paper sorts codes by these
+  the level-0 step is the minimum over levels of each level's own stable
+  step times the ratio of level-0 to level-$l$ spacing. The paper sorts codes by these
   choices: FLASH (equal patches, one time step), RAGE (cell by cell, one
   step), ENZO and CASTRO (arbitrary patches, subcycling), with ENZO and
   FLASH imposing strict parent–child nesting ([Almgren et al. (2010)](/sources/almgren-2010.md), §§1, 6.1–6.2).
@@ -97,6 +99,37 @@ concerns smoothly moving zones, not patch hierarchies.
     (t8code), where a pyramid refines into 6 pyramids and 4 tetrahedra
     rather than $2^d$ children, and only face neighbors are encoded. The
     paper defines no transfer operators and no 2:1 balance ([Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3).
+* *Multiresolution-driven block tree with local time stepping.* ALPACA,
+  a CPU-only MPI code for compressible multi-phase flow, refines a binary,
+  quad or octree of fixed-size blocks ("e.g. $32^3$" cells) with $r = 2$.
+  * Parent nodes are kept, not only the leaves; their storage counts in the
+    paper's compression metric.
+  * Refinement is decided by Harten-type multiresolution rather than by
+    error-estimation flags. Wavelet details, the difference between the
+    fine data and its prediction $P$ from the coarse level, are set to zero
+    below a "level-dependent threshold"; zero details coarsen, non-zero
+    details refine. The threshold value, its level dependence, and the
+    stencil and order of $P$ are not given. Averaging stated to be
+    consistent with prediction is the registry round-trip $R P = I$, on cell
+    averages.
+  * The halo concept is said to keep the graded-tree property "even for
+    arbitrary resolution jumps between neighboring blocks". No 2:1 limit
+    is stated.
+  * Coarser levels take larger steps, with the step readjusted after every
+    finest-level step. Halo cells at a resolution jump are filled by
+    prediction from the coarser level, applied to the right-hand side as
+    well as the solution, and are then advanced by the same Runge–Kutta
+    operator as the interior. The paper describes no temporal
+    interpolation of ghost data. This is a third answer to the
+    subcycling ghost problem, next to linear-in-time interpolation and the
+    two-layer band above.
+  * Conservation at resolution jumps rests on a flux correction applied at
+    the last Runge–Kutta stage and stated only by citation
+    ([refluxing](/methods/refluxing.md)).
+  * Weak scaling to 512 nodes (24 576 cores) at efficiency "above 75%"
+    (Fig. 20b reads about 0.74–0.75 for the shuffle executable);
+    strong scaling is shown graphically to about $3\cdot10^4$ cores
+    ([Hoppe et al. (2022)](/sources/hoppe-2022.md), §§5, 7.1, 9; Algorithms 1–3).
 
 # Citations
 
@@ -109,3 +142,4 @@ concerns smoothly moving zones, not patch hierarchies.
 7. [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §§3–4.
 8. [Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §§2–4.
 9. [Knapp et al. (2026)](/sources/knapp-2026.md), §§2–3.
+10. [Hoppe et al. (2022)](/sources/hoppe-2022.md), §§5, 7.1, 9; Algorithms 1–3.

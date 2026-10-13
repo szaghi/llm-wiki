@@ -8,7 +8,7 @@ authors: [Fromang S., Hennebelle P., Teyssier R.]
 year: 2006
 venue: "Astron. Astrophys. 457:371-384"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2006-A&A-Fromang-10105100046361_20065371.pdf"
-tags: [constrained-transport, amr, octree, godunov, production-code, mhd]
+tags: [constrained-transport, amr, tree-amr, godunov, production-code, mhd]
 timestamp: 2026-07-08T00:00:00Z
 ---
 

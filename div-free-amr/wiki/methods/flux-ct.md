@@ -5,7 +5,7 @@ description: "Constrained transport driven by a shock-capturing base scheme: cor
 status: established
 aliases: [flux-interpolated CT, field-interpolated CT, transport-flux-CT]
 tags: [constrained-transport, godunov, shock-capturing]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Flux-CT and the Godunov CT variants
@@ -50,8 +50,9 @@ by direct evaluation of the EMF at zone edges from the multidimensional
 Riemann data, with second/third-order unsplit time integration
 ([Balsara (2004)](/sources/balsara-2004.md) §2 — resolving his "Issue 4").
 A later step in the same line takes the edge field from the vertex fluxes
-of a genuinely two-dimensional (MuSIC) Riemann solver, as
-$E_z = \tfrac12\left(-(F_{\mathrm{num}})_7 + (G_{\mathrm{num}})_6\right)$, in
+of a genuinely two-dimensional (MuSIC) Riemann solver: the edge value of
+$E_h$ is the mean of the sign-reversed seventh component of the $x$ vertex
+flux and the sixth component of the $y$ vertex flux, in
 special-relativistic MHD. Its authors claim this removes any need to double
 the dissipation of the electric field and avoids Gardiner and Stone's
 objections. No test in that paper checks the claim

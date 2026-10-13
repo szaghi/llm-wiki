@@ -1,7 +1,7 @@
 ---
 type: Source
 title: "Knapp, Holke, Spenke, Burstedde & Dreyer (2026) — A Morton-type space-filling curve for pyramid subdivision and hybrid adaptive mesh refinement"
-description: "Preprint adding pyramids to t8code's forest-of-trees AMR: a pyramid refines into 6 pyramids and 4 tetrahedra so that the split commutes with cubic refinement, a Morton-type index over (anchor, level, type) proved to be a space-filling-curve index, element and forest algorithms, and near-ideal scaling to 2^15–2^17 processes; no divergence content."
+description: "Preprint adding pyramids to t8code's forest-of-trees AMR: a pyramid refines into 6 pyramids and 4 tetrahedra so that the split commutes with cubic refinement, a Morton-type index over (anchor, level, type) proved to be a space-filling-curve index, element and forest algorithms, and scaling near-ideal to 2^15 processes, with runs up to 2^17 (about 63% efficiency from 2^14 to 2^17); no divergence content."
 resource: "arXiv:2602.20887"
 source_kind: paper
 authors: [Knapp D., Holke J.A., Spenke T., Burstedde C., Dreyer L.]
@@ -9,7 +9,7 @@ year: 2026
 venue: "arXiv:2602.20887 (preprint, v3)"
 local_file: "/home/stefano/papers/mosaic/div-free-amr/2026-arXiv-Knapp-1048550arXiv260220887.pdf"
 tags: [amr, tree-amr, partitioning, hybrid-mesh]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Summary

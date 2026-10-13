@@ -3,8 +3,8 @@ type: Software
 title: "ADAM"
 description: "Block-structured octree/quadtree AMR library (CPU and GPU) whose Maxwell (PRISM) and MHD (FLUME) solvers hold the divergence in two different constraint classes."
 status: hypothesis
-tags: [amr, coarse-fine-interface, glm, collocation, gpu]
-timestamp: 2026-10-12T00:00:00Z
+tags: [amr, coarse-fine-interface, glm, collocation, gpu, tree-amr]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # ADAM
@@ -42,7 +42,7 @@ comparison: the same seam machinery serves both.
 ## Published record (Zaghi et al. 2023)
 
 A peer-reviewed paper on the code at its 2023 state
-([Zaghi et al. (2023)](/sources/zaghi-2023.md)) independently supports, as published fact, the
+([Zaghi et al. (2023)](/sources/zaghi-2023.md), with the same first author) supports, as published fact, the
 infrastructure claims above. It supports none of the divergence-related
 ones, which is why this page keeps `status: hypothesis`.
 * **Supported.**

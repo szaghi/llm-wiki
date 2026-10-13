@@ -43,8 +43,8 @@ frozen code record, all ingested. The user assigned the AMR-framework and
 octree class of the ADAM paper collection to this bundle (2026-10-12). It
 covers AMR infrastructure (frameworks, trees, space-filling curves, GPU
 AMR) as context for the interface problem, even where a source has no
-divergence content. Deep lint #9 is due after 10 ingestions since #8
-(8 so far: couch-2021, balsara-kim-2016 and this batch).
+divergence content. Deep lint #9 ran on 2026-10-13 with hoppe-2022 and irsalinda-2026 (96
+sources); the next is due after 10 more ingestions.
 
 **Corpus complete (2026-07-08): 61/61 sources ingested**, 97 conformant
 pages, six deep-lint passes. Books and long reviews were scoped reads with

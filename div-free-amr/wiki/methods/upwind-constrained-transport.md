@@ -5,7 +5,7 @@ description: "CT design in which staggered face fields are primary data everywhe
 status: established
 aliases: [UCT, upwind CT]
 tags: [constrained-transport, upwind-emf, godunov, monopoles]
-timestamp: 2026-10-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Upwind constrained transport (UCT)

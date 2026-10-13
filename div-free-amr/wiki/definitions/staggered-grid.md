@@ -5,7 +5,7 @@ description: "Mesh arrangement placing different physical quantities at differen
 status: established
 aliases: [staggered mesh]
 tags: [collocation, discretization]
-timestamp: 2026-07-08T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Staggered grid
@@ -53,8 +53,7 @@ see [CT–finite-volume equivalence](/results/ct-finite-volume-equivalence.md)
 
 ## Contradictions
 
-**Is staggering necessary?** Two sources from the same year take opposite
-positions:
+**Is staggering necessary?** Sources take opposite positions:
 
 * [Tóth (2000)](/sources/toth-2000.md) §4.4: "the staggered representation
   of the magnetic field is unnecessary" — the Godunov CT variants are

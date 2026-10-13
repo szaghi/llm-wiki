@@ -2,6 +2,52 @@
 
 ## 2026-10-13
 
+* **Ingested [Hoppe et al. (2022)](/sources/hoppe-2022.md) and
+  [Irsalinda et al. (2026)](/sources/irsalinda-2026.md)**, the user's manual
+  downloads for the AMR-framework class (96 sources).
+  * Hoppe et al. (ALPACA): block octree with multiresolution refinement,
+    halos advanced with predicted right-hand sides, local time stepping,
+    a resolution-jump flux correction stated by citation only; no
+    divergence content. Extended [block-structured AMR](/definitions/block-structured-amr.md)
+    and [refluxing](/methods/refluxing.md).
+  * Irsalinda et al.: "mesh refinement" means adaptive resampling of PINN
+    collocation points, outside the bundle's AMR sense; no divergence
+    content; its comparative claims are not supported by its own tables.
+    Source page only (orphan by design).
+  * Bibliography: 149 references merged (3618 entries); LeVeque's 2nd
+    edition is `leveque-1992`; Munz, Ommes & Schneider is `munz-2000-b`;
+    Cohen, Kaber, Müller & Postel is `cohen-2001-b`; Wang et al. (2023,
+    curriculum learning) is `wang-2023-b`.
+* **Deep lint #9** (10 ingestions since #8: couch-2021, balsara-kim-2016,
+  the AMR-frameworks batch, hoppe-2022, irsalinda-2026). Fixed:
+  * Bibliography: own entries added for `knapp-2026`,
+    `jaber-essel-sullivan-2025` and `irsalinda-2026`; the ingested Aftosmis
+    paper, cited as `aftosmis-2004`, rekeyed `aftosmis-berger-murman-2004`
+    with its DOI; `almgren-2010` given its ten authors, title and DOI;
+    `colella-woodward-1985` corrected to Colella & Glaz and rekeyed
+    `colella-glaz-1985-b`; DOIs added to `balsara-kim-2016` and
+    `zaghi-2023`; `kutta-1901` venue corrected to Z. Math. Phys.
+  * Notation: the flux-CT edge-field formula in paper symbols rewritten in
+    words with $E_h$; two unregistered time-step symbols on the
+    block-structured-AMR page written out; the Morton bit count renamed
+    $b$ (it reused the SFC index $m$).
+  * Claims: Zaghi et al. (2023) no longer called independent support on
+    the ADAM page (same first author); CASTRO's synchronization "applies",
+    not "confirms", the elliptic-interface lesson; the coarsening ratio
+    "> 7" marked as the authors' unquantified statement beside their own
+    example (about 5.6); Knapp's scaling described as near-ideal to 2^15
+    (about 63% efficiency to 2^17); ALPACA's weak scaling given with the
+    figure reading.
+  * Scope: the block-structured-AMR "Defining discipline" heading scoped
+    to the Berger–Colella formulation, and the "same object in both
+    flavors" sentence scoped to 2:1-balanced trees, since Knapp and
+    ALPACA depart from both.
+  * Staleness: the staggering contradiction's lead sentence; timestamps.
+  * Tags: `relativistic-mhd` merged into `relativistic`, `octree` into
+    `tree-amr` (also added to ADAM), `load-balancing` dropped beside
+    `partitioning`.
+  * Audit list: couch-2021 now records its citation by AMReX.
+
 * **Source-page paths made absolute** on user instruction, as the repo
   schema asks: `local_file` in all 94 Source pages now reads
   `/home/stefano/...` instead of `~/...`. Every path was checked to exist.

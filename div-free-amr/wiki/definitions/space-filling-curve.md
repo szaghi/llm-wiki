@@ -4,8 +4,8 @@ title: "Space-filling curve (Morton and Peano–Hilbert ordering)"
 description: "A one-dimensional index over the cells, blocks or elements of a refinement tree, computed from integer coordinates and level alone, that is injective, monotone under refinement and local; AMR codes use it to order data, cut the mesh into partitions and coarsen it for multigrid."
 status: established
 aliases: [SFC, Morton order, Z-order, N-order, Peano–Hilbert order, U-order]
-tags: [amr, tree-amr, partitioning, load-balancing]
-timestamp: 2026-10-12T00:00:00Z
+tags: [amr, tree-amr, partitioning]
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Space-filling curve
@@ -24,7 +24,7 @@ then a set of contiguous segments of that order
 ([Knapp et al. (2026)](/sources/knapp-2026.md), §2, Def. 3.4).
 
 **Morton (Z- or N-order).** The index interleaves the bits of the integer
-coordinates. With $m$-bit coordinates $(x, y, z)$ it is the $3m$-bit word
+coordinates. With $b$-bit coordinates $(x, y, z)$ it is the $3b$-bit word
 formed bit by bit, $x^1 y^1 z^1\, x^2 y^2 z^2 \dots$. It is computable
 from a cell's coordinates and the maximum level alone ("compactness"),
 with no connectivity matrix.
@@ -53,9 +53,10 @@ with no connectivity matrix.
     ordering, though no numbers are given
     ([Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §4).
 * **Multigrid coarsening.** After one $O(N\log N)$ sort, one $O(N)$ pass
-  agglomerates contiguous runs of siblings into their parent. Coarsening
-  ratios typically exceed 7, and 4.5M cells reach 4500 after four
-  coarsenings ([Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §3).
+  agglomerates contiguous runs of siblings into their parent. The authors
+  state that coarsening ratios "typically exceed 7" for realistically
+  complex problems (not quantified); their example, 4.5M cells reaching
+  4500 after four coarsenings, averages about 5.6 per level ([Aftosmis, Berger & Murman (2004)](/sources/aftosmis-berger-murman-2004.md), §3).
 * **Block ordering and load balance.**
   * ADAM keys its block octree with a Morton-type index and balances load
     along Morton curves ([Zaghi et al. (2023)](/sources/zaghi-2023.md), §2.2).

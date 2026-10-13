@@ -64,6 +64,7 @@ asked for it to be added.
 # Pages created or updated
 
 * Updated [Refluxing](/methods/refluxing.md): flux registers under multistage Runge–Kutta, with a compiler reading on stage coupling.
+* Cited by [AMReX](/software/amrex.md) (created 2026-10-12).
 
 # Citations
 

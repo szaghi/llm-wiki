@@ -5,7 +5,7 @@ description: "Restores discrete conservation at AMR interfaces by replacing the 
 status: established
 aliases: [flux correction, flux synchronization]
 tags: [amr, conservation, refluxing, coarse-fine-interface]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Refluxing (coarse-fine flux correction)
@@ -94,6 +94,14 @@ weights of the scheme. It is the conservation-side counterpart of the
 stage-coupling requirement recorded for the divergence invariant at
 seams ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
 
+**A flux correction stated by citation only.** ALPACA, a block-tree
+multiresolution code with local time stepping, applies a "Resolution jump
+flux correction" at the last Runge–Kutta stage of each step (Algorithm 1).
+The paper gives no formula, no register description and no conservation
+measurement; all of it is deferred to Kaiser et al. (2019, J. Comput.
+Phys. X 4:100038). Conservation across resolution jumps is therefore
+asserted by reference, not shown ([Hoppe et al. (2022)](/sources/hoppe-2022.md), Algorithm 1).
+
 # Citations
 
 1. [Berger & Colella (1989)](/sources/berger-colella-1989.md), §3, Figs. 3.1–3.2.
@@ -104,3 +112,4 @@ seams ([exact discrete divergence](/properties/exact-discrete-divergence.md)).
 6. [Jaber, Essel & Sullivan (2025)](/sources/jaber-essel-sullivan-2025.md), §3.4.
 7. [Zaghi et al. (2023)](/sources/zaghi-2023.md).
 8. [Zhang et al. (2019)](/sources/zhang-2019.md).
+9. [Hoppe et al. (2022)](/sources/hoppe-2022.md), Algorithm 1.
