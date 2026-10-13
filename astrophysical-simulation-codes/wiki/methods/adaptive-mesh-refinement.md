@@ -5,7 +5,7 @@ description: "Structured AMR as built into astrophysical codes: cell-based, patc
 status: established
 aliases: [AMR, SAMR, block-structured AMR, patch-based AMR, octree AMR, Berger–Oliger AMR, Berger–Colella AMR, subcycling, refluxing, flux correction]
 tags: [amr, conservation, performance, gpu]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Adaptive mesh refinement in astrophysical codes
@@ -664,6 +664,20 @@ temporal from spatial refinement levels and is called "superior to the
 factor 3–5 in speed; the factor is quoted from Chatterjee et al. (2019),
 not measured against a global step, so the subcycling entry stays open.
 
+## Later uses (batch 5)
+
+* **Jeans refinement in the original.** [Truelove et al. (1997)](/sources/truelove-1997.md)
+  refine with ratio 4 wherever the Jeans number (cell size over Jeans
+  length) reaches a threshold, "immediately reducing $J$ there by a
+  factor of 4", evaluated in every cell at every step, and estimate that
+  a uniform grid covering 9 decades of collapse with 10 cells across the
+  final cloud would need more than $10^{12}$ cells (§2, Fig. 1). They add
+  an AMR-specific hazard: perturbations grow as they are advected into
+  finer grids, and coarse-to-fine interpolation at regridding seeds
+  errors (§2). The scope of the criterion is an open entry on the
+  [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md)
+  page.
+
 ## Open question: level-dependent derived quantities
 
 Recorded at deep lint #1 as a contradiction and moved here at deep lint #3,
@@ -719,3 +733,4 @@ the issue, and none quantifies it.
 18. [Bernardini et al. (2021)](/sources/bernardini-2021.md), §§3.1–3.2.
 19. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §§2.1, 2.3, 2.6, 3, 6.1, Table 1 (arXiv v2).
 20. [Porth et al. (2019)](/sources/porth-2019.md), §§3, 4.1.5 (arXiv v2).
+21. [Truelove et al. (1997)](/sources/truelove-1997.md), §2, Fig. 1.

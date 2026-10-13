@@ -54,9 +54,9 @@ from scratch for their code-design content, with no links across bundles.
     high-order-capturing-schemes. These are the frameworks the class-7
     papers extend.
   - The `&` in the A&A filename needs quoting in shells.
-- Not yet in the archive: Truelove et al. (1997, the Jeans condition,
-  doi:10.1086/310975). The collection holds an HTML page; it needs a
-  manual download.
+- Truelove et al. (1997, the Jeans condition, doi:10.1086/310975): the
+  collection held an HTML page; the user's manual download was filed as
+  `1997-ApJL-Truelove-101086310975.pdf` (2026-10-13).
 
 ## Bundle specifics
 
@@ -89,6 +89,10 @@ from scratch for their code-design content, with no links across bundles.
 - Commits: `docs(astrophysical-simulation-codes): ingest <source-slug>`.
 
 ## Status
+
+**Truelove et al. (1997) staged 2026-10-13:** the manual download was
+filed and ingested (`truelove-1997`, 36 of 36). It opened a contradiction
+on the Jeans criterion's scope. Deep lint: 1 ingestion since #3.
 
 **Batch 4 staged 2026-10-12:** all 35 archived sources ingested (the
 comparisons and applications: porth-2019, kim-2017, villasenor-2021,

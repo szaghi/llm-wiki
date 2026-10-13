@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Jeans resolution criterion (Truelove condition)"
-description: "The requirement that the local Jeans length be resolved by at least four cells (Truelove et al.), used as an AMR refinement criterion and, at the finest level, as the density threshold for sink-particle creation; stated to apply only to gas in self-gravitational collapse, with more cells needed for MHD."
+description: "The requirement that the local Jeans length be resolved by at least four cells (Truelove et al.), used as an AMR refinement criterion and, at the finest level, as the density threshold for sink-particle creation; stated by Federrath et al. to apply only to gas in self-gravitational collapse (contested by the original, which applies it everywhere), with more cells needed for MHD; the original calls it necessary but not in general sufficient."
 status: established
 aliases: [Truelove criterion, Truelove condition, Jeans condition, Jeans refinement criterion, cells per Jeans length, Jeans number]
 tags: [self-gravity, amr, sink-particles]
-timestamp: 2026-10-12T00:00:00Z
+timestamp: 2026-10-13T00:00:00Z
 ---
 
 # Jeans resolution criterion (Truelove condition)
@@ -125,6 +125,63 @@ condition is recorded here as the ingested sources state it.
   same 5 cells as in Federrath et al. (2010). The Jeans length is defined
   as above.
 
+## Later uses (batch 5): the original paper
+
+The original, [Truelove et al. (1997)](/sources/truelove-1997.md), is now
+ingested; the line above saying it is not in the archive is out of date.
+* **What it states.** The Jeans number is the cell size over
+  $\lambda_{\mathrm J}$, i.e. $1/N_{\mathrm J}$ (eq. 2). Keeping it at or
+  below 0.25 ($N_{\mathrm J} \ge 4$) "avoids the growth of numerical
+  perturbations into fragments" in the authors' runs (§2); the abstract
+  and conclusions say "below 0.25", the body "≤ 0.25". The paper never
+  states the condition as a cell count.
+* **Necessary, not sufficient.** The paper calls resolving
+  $\lambda_{\mathrm J}$ "a necessary (but not, in general, sufficient)
+  condition for convergence", and warns that non-isothermal physics may
+  need finer scales (abstract, §§2, 4). The line at the top of this page,
+  that Truelove et al. "found [it] sufficient to prevent artificial
+  fragmentation" (as Krumholz et al. and Federrath et al. state it), holds
+  only for the authors' isothermal Gaussian-cloud tests.
+* **Evidence.** One unnamed Berger–Colella AMR code with refinement ratio
+  4, which inserts finer grids wherever the Jeans number reaches the
+  threshold. Unseeded Boss (1991) Gaussian clouds at thresholds 0.5,
+  0.375, 0.25 and 0.125 fragment artificially at the first two and not
+  visibly at the last two (§2, Figs. 2–3); seeded runs give a spurious
+  binary at 0.5 and a single bar at 0.25, confirmed at doubled resolution
+  (§3, Fig. 4). The evidence is morphological plus one perturbation
+  measure, with no error norms.
+* **Mechanism and name.** Cell-scale discretization errors correlated on
+  scales above $\lambda_{\mathrm J}$ grow by the physical Jeans
+  instability; the paper calls the result **artificial fragmentation**
+  and sets it apart from numerical instabilities such as a Courant
+  violation (§§1–2). Perturbations also grow when advected into finer
+  grids, and coarse-to-fine interpolation at regridding seeds errors (§2).
+* **Artificial viscosity.** Arresting collapse with artificial viscosity
+  at a fixed finest grid leaves $\lambda_{\mathrm J}$ unresolved: the
+  Burkert & Bodenheimer (1996) runs reached Jeans numbers of 2.39 and
+  3.65 and fragment even without their seed (§4, Fig. 5).
+* **The 1998 citation.** Bryan et al.'s "Truelove et al. 1998" (under
+  Uses) is the companion methods paper (ApJ 495:821); the condition
+  itself originates in the 1997 Letter.
+
+## Contradictions
+
+* **Does the criterion apply only to collapsing, bound gas?** *Open.*
+  [Federrath et al. (2010)](/sources/federrath-2010.md) state that the
+  criteria "are only meaningful in regions that are undergoing
+  self-gravitational collapse" (§2.2.1) and that "By definition, the
+  Truelove criterion only applies to gravitationally bound gas in
+  freefall collapse" (§2.2.8), so that shocked gas may exceed the
+  corresponding density without violating it. The original defines the
+  condition with "the actual values of the density and temperature at
+  each spatial point and at all times during the calculation", as "a
+  valid constraint for any calculation made with a code employing
+  multiple grids or rezoning", restricted only to isothermal gas
+  ([Truelove et al. (1997)](/sources/truelove-1997.md), §2). The original's
+  mechanism acts only where gas is Jeans-unstable, which makes Federrath
+  et al.'s reading defensible, but their "by definition" is not the
+  original's definition.
+
 # Citations
 
 1. [Krumholz et al. (2004)](/sources/krumholz-2004.md), §§2.1–2.2,
@@ -136,3 +193,4 @@ condition is recorded here as the ingested sources state it.
    Fig. 3 (arXiv v2).
 5. [Mathew & Federrath (2021)](/sources/mathew-2021.md), §2.3, eq. 4
    (arXiv v2).
+6. [Truelove et al. (1997)](/sources/truelove-1997.md), §§1–4, eqs. 1–2, Figs. 1–5.

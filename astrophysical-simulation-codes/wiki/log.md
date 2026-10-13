@@ -2,6 +2,26 @@
 
 ## 2026-10-13
 
+* **Ingested [Truelove et al. (1997)](/sources/truelove-1997.md)**, the
+  origin of the Jeans condition, from the user's manual download (36 of
+  36 archived sources). Published Letter, read with equations and numbers
+  checked on page images.
+  * **Updated** the [Jeans resolution criterion](/definitions/jeans-resolution-criterion.md)
+    (a batch-5 section on what the original states: the Jeans number,
+    the 0.25 threshold, artificial fragmentation, the evidence; the top
+    line's "found sufficient" qualified, because the original calls the
+    condition necessary but not in general sufficient; the description
+    and its index line now attribute the collapse-only scope to Federrath
+    et al.) and [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
+    (Jeans refinement in the original, and its regridding hazard).
+  * **Contradiction opened** on the Jeans page: does the criterion apply
+    only to bound, collapsing gas (Federrath et al. 2010, "by definition")
+    or everywhere at all times (Truelove et al. 1997)?
+  * **Bibliography** (2168 entries): 16 references merged; the printed
+    self-citation "Truelove et al. 1997, ApJ, submitted" is the companion
+    paper `truelove-1998`, not the Letter; the Letter's entry got its
+    page-1 title and the fifth author L. H. Howell.
+
 * **Source-page paths made absolute** on user instruction, as the repo
   schema asks: `local_file` in all 35 Source pages now reads
   `/home/stefano/...` instead of `~/...`. Every path was checked to exist.
