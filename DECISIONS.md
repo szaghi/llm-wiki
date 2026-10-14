@@ -323,3 +323,25 @@ research literature beyond it. A textbook is a sound reference for
 definitions and standard results, but it prints no reference list, so it
 seeds no ingestion frontier; the bundles grow as the user files sources,
 and the works the book cites in its text form its reference list.
+
+## D21 — Arfken as second founding source; a fifth textbook-founded bundle (2026-10-14)
+
+**Decision (user):** Arfken, Weber & Harris, *Mathematical Methods for
+Physicists* (7th ed., 2013) is ingested as `arfken-2013` into the four D20
+bundles, each for its own chapters, and founds with Riley et al. a fifth
+bundle, `orthogonal-polynomials-and-quadrature` (orthogonal polynomials,
+the special functions numerical methods use, Gauss-type quadrature, and
+their use as bases).
+
+**How it relates to D12, D17 and D20:** the PDF is copied into each of the
+five archives. In the four existing bundles it is an ordinary ingestion
+through the merge path: shared claims gain a second citation, and where
+the two books differ in statement or scope the difference is recorded as a
+qualification or a `Contradictions` entry, never silently reconciled.
+
+**Why:** a second independent textbook gives every standard claim visible
+corroboration, fills gaps of the first (the discrete Fourier transform,
+differential forms), and, unlike Riley, brings chapter reading lists that
+seed each bundle's citation record. Orthogonal polynomials and quadrature
+were first set aside with Riley's special functions; they are the bases and
+quadratures of DG, spectral and multipole methods, so they earn a bundle.

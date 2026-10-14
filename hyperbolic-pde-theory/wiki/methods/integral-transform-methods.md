@@ -5,7 +5,7 @@ description: "Transform a linear PDE (or ODE) in one variable, Laplace in time f
 status: established
 aliases: [Laplace transform method, Fourier transform method, transform methods]
 tags: [transform-methods, diffusion, ode, greens-function]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Integral transform methods
@@ -63,7 +63,18 @@ separation constant gives an integral over that constant, which is an
 inverse Fourier transform, and the same solution (eq. 21.75,
 pp. 750–751).
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) defer integral transforms to
+a chapter not read here (Ch. 20; §9.1, p. 403; §9.8, p. 445). Their Ch. 9
+supports the relation above from the separation side: for an infinite rod
+the separated diffusion modes are superposed as an integral over a
+continuous wavenumber (eq. 9.102, p. 438). They also reach the heat-kernel
+integral of eq. 21.74 with no transform at all, by superposing translates of
+a Gaussian solution (eqs. 9.111–9.114, pp. 440–441; see
+[diffusion equation](/definitions/diffusion-equation.md)). The closed form
+therefore does not depend on the transform; the transform is one route to it.
+
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §15.1.5 (pp. 501–503),
   §21.4 (pp. 747–751).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.7 (pp. 438–441).

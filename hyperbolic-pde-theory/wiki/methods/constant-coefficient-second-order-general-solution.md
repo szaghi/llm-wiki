@@ -5,7 +5,7 @@ description: "For a11 u_xx + 2 a12 u_xy + a22 u_yy = 0 with constant coefficient
 status: established
 aliases: [characteristic coordinates, canonical form, reduction to u_xi_eta = 0]
 tags: [second-order, characteristics, general-solution, canonical-form]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # General solution of constant-coefficient second-order PDEs
@@ -38,6 +38,21 @@ $\beta = -a_{12}/a_{22}$. Trying $u = v(x,y)G(x + \beta y)$ requires $v$ to
 solve the equation, and $v = x$ gives
 $$u = F(x + \beta y) + x\,G(x + \beta y)$$
 (eq. 20.25, p. 690). The choice $v = y$ gives nothing new (p. 691).
+
+**Factorisation (Arfken et al.).** [Arfken et al. (2013)](/sources/arfken-2013.md)
+reach the hyperbolic case by factoring the operator. For
+$a_{11}\partial_x^2u + a_{22}\partial_y^2u = 0$ with $a_{11} > 0 > a_{22}$,
+the two commuting first-order factors
+$\sqrt{a_{11}}\,\partial_x \pm \sqrt{-a_{22}}\,\partial_y$ each have the
+general solution of a [first-order linear PDE](/methods/first-order-linear-pde-characteristics.md),
+and $u = F(\sqrt{-a_{22}}\,x - \sqrt{a_{11}}\,y) + G(\sqrt{-a_{22}}\,x + \sqrt{a_{11}}\,y)$
+(§9.3, eqs. 9.11–9.14, p. 409). These are Riley's arguments
+$x + \beta_{1,2}y$ up to a constant factor, since here
+$\beta_{1,2} = \pm\sqrt{-a_{11}/a_{22}}$ (compiler's check). The general
+factorisation with a mixed term is eq. 9.18 (see
+[classification](/definitions/second-order-pde-classification.md)). Arfken
+et al. do not write the repeated-root form $F + xG$; their parabolic case is
+reduced to a diagonal canonical form instead (eqs. 9.19–9.21, pp. 410–411).
 
 ## Characteristic coordinates
 
@@ -76,3 +91,4 @@ without a mixed derivative. This is the compiler's derivation.
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §20.3.3 (pp. 687–692),
   §20.6.2 (p. 703).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.3 (pp. 409–411).

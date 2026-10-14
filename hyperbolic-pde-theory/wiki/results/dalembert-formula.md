@@ -5,7 +5,7 @@ description: "The solution of the one-dimensional wave equation on the whole lin
 status: established
 aliases: [d'Alembert's solution, D'Alembert solution]
 tags: [hyperbolic, wave-equation, cauchy-problem, characteristics]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # d'Alembert's formula
@@ -15,6 +15,9 @@ $-\infty < x < \infty$ with Cauchy data $u(x,0) = u_0(x)$ and
 $\partial_tu(x,0) = u_1(x)$,
 $$u(x,t) = \tfrac12\left[u_0(x - ct) + u_0(x + ct)\right] + \frac{1}{2c}\int_{x-ct}^{x+ct}u_1(q)\,\mathrm dq$$
 ([Riley et al. (2006)](/sources/riley-2006.md), eq. 20.31, p. 694).
+[Arfken et al. (2013)](/sources/arfken-2013.md) give the same formula (§9.6,
+eq. 9.95, p. 436). They note that it "was also (and slightly earlier) found
+by Euler" (p. 436).
 
 **Derivation** (pp. 694). Insert the general solution
 $u = F(x - ct) + G(x + ct)$ of the [wave equation](/definitions/wave-equation.md)
@@ -22,6 +25,10 @@ into the data: $F + G = u_0$ and $-cF' + cG' = u_1$ at $t = 0$
 (eqs. 20.27–20.28). Integrating the second from an arbitrary lower limit
 gives $F$ and $G$ separately (eqs. 20.29–20.30). Adding them at
 $x \mp ct$ removes the arbitrary limit and the integration constant.
+Arfken et al. take a shorter route: they integrate the velocity condition
+between $x - ct$ and $x + ct$, add half the displacement data at the two
+ends, and the terms in $F$ and $G$ combine into $u(x,t)$ (eqs. 9.91–9.95,
+p. 436).
 
 **Interpretation** (pp. 694–695). The factor $\tfrac12$ reflects that half
 of a displacement profile starting at any point travels towards $x$ and
@@ -32,6 +39,12 @@ motion whose effects can reach $x$ within a time $t$", in both directions.
 Equivalently, $u(x,t)$ depends only on the data in $[x - ct, x + ct]$, the
 interval cut out of $t = 0$ by the two [characteristics](/definitions/characteristic-curve.md)
 through $(x,t)$. The term "domain of dependence" is not the book's.
+Arfken et al. say the same: the formula gives $u(x,t)$ "in terms of data at
+$t = 0$ that are within the distance $ct$ of the point $x$", since $ct$ is
+how far waves move in time $t$, and they call the integration interval the
+"region of influence" (p. 436). In the standard vocabulary that interval
+is the domain of dependence of $(x,t)$; neither book uses the term
+(compiler's remark).
 
 **Scope.** Infinite string, no boundaries. The book states no regularity
 requirements on $u_0$, $u_1$; the derivation differentiates $F$, $G$ and
@@ -45,3 +58,5 @@ functions.
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §20.4 (pp. 693–695),
   Exercise 20.16 (p. 709).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.6 (pp. 435–437),
+  Exercises 9.6.1–9.6.4.

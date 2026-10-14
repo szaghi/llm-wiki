@@ -9,7 +9,7 @@ year: 2006
 venue: "Cambridge University Press (3rd ed.)"
 local_file: "/home/stefano/papers/mosaic/curvilinear-metric-discretization/2006-CUP-Riley-101017CBO9780511810763.pdf"
 tags: [textbook, vector-calculus, integral-theorems, tensor-calculus, curvilinear-coordinates, metric]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Summary
@@ -182,6 +182,7 @@ solid angle (eq. (11.11)).
 * Created [Vector area of a closed surface](/results/closed-surface-vector-area.md)
 * Created [Vector operator identities](/results/vector-operator-identities.md)
 * Created [Quotient law](/results/quotient-law.md)
+* Cited on [Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md) (added with arfken-2013)
 
 # Citations
 

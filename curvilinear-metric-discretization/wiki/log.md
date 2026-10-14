@@ -1,5 +1,42 @@
 # Directory Update Log
 
+## 2026-10-14
+
+* **Ingestion of [arfken-2013](/sources/arfken-2013.md)** (Arfken, Weber &
+  Harris, *Mathematical Methods for Physicists*, 7th ed., 2013; D21), scoped
+  read: preface, Chs. 3 (vector analysis) and 4 (tensors and differential
+  forms) with exercises and Additional Readings; other chapters not read.
+  Printed page numbers cited (ebook offset +12 in Ch. 3, +11 in Ch. 4);
+  equations checked against page images where ambiguous; four misprints
+  recorded on the Source page; no illegible range. Merge path against
+  riley-2006.
+  * Notation registry extended (marked "added 2026-10-14, arfken-2013"): a
+    differential-forms section ($p$, $D$, $\Lambda^p$, $\alpha,\beta,\gamma$,
+    basis 1-forms $dx^i$, $\wedge$, $d$, $\star$, $\Omega$/$\partial\Omega$,
+    $\int_\Omega\alpha$) and the auxiliary $\mathbf y$, $\nabla_{\mathbf y}$,
+    $x_0,y_0$.
+  * Created 4 definitions: differential-form, wedge-product, hodge-star,
+    exterior-derivative (continuum operators in `definitions/`).
+  * Created 2 results: generalized-stokes-theorem, helmholtz-theorem.
+  * Updated, with Arfken citations next to Riley's and Arfken's extensions:
+    all 17 previous definitions, all 8 previous results, and the registry.
+  * Contradictions: none opened. Qualifications recorded (both sides
+    cited): connectivity hypothesis of the integral theorems (divergence
+    theorem, Stokes' theorem, Green's theorem in the plane, Stokes' theorem
+    for forms); continuity hypothesis of curl grad = 0 and div curl = 0
+    (vector operator identities); sign of the metric's diagonal elements
+    outside Euclidean space (metric tensor); naming of Green's identities;
+    Arfken's reversed Jacobian labelling in Example 4.4.2 (Jacobian);
+    Arfken's use of "Poincaré's lemma" for $d\circ d=0$ (exterior derivative).
+  * riley-2006 Source page: one audit line (cited on the new
+    generalized-stokes-theorem page).
+  * Bibliography: 29 entries (was 4); 25 added — arfken-2013 itself and the
+    24 works of its Chs. 3–4 Additional Readings (10 + 15 listed, 2 shared,
+    plus the 1970 second edition named in an annotation); no DOI printed or
+    added. Pending reference lists: 0 / 2.
+  * Folder indexes, sources index and root reading guide (new section 5,
+    *Differential forms*) updated.
+
 ## 2026-10-13
 
 * **Scaffolding and ingestion of [riley-2006](/sources/riley-2006.md)**

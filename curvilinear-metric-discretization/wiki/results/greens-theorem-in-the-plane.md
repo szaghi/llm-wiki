@@ -5,7 +5,7 @@ description: "For P(x,y), Q(x,y) with continuous derivatives on a plane region R
 status: established
 aliases: [Green's theorem, two-dimensional divergence theorem, planar Stokes theorem, shoelace area formula]
 tags: [integral-theorems, vector-calculus, two-dimensional]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Green's theorem in the plane
@@ -37,6 +37,20 @@ with $C$ traversed so that $R$ lies on the left (anticlockwise).
   The book calls it "sometimes called the divergence theorem in two
   dimensions" (p. 384).
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) obtain the theorem as the case $p=D=2$ of
+[Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md):
+for the 1-form $P\,dx+Q\,dy$, $d(P\,dx+Q\,dy)=(\partial_xQ-\partial_yP)\,dx\wedge dy$,
+and with the orientation $dx\wedge dy\mapsto dx\,dy$ the same formula
+follows (Example 4.7.1, eqs. (4.109)–(4.111), pp. 246–247). They derive the
+area formulas $\oint_Cx\,dy=A$ and $\oint_Cy\,dx=-A$ for counterclockwise
+traversal, and $\frac12\oint_C(x\,dy-y\,dx)=A$ via Stokes' theorem
+(exercise 3.8.6, p. 169), and stress that the counterclockwise convention
+and $dx\wedge dy\mapsto+dx\,dy$ are the user's choices, "not dictated by the
+theory of differential forms" (p. 247). Their statement assumes a simply
+connected region (via eq. (4.106)); Riley's covers multiply connected
+regions with every boundary positively traversed — a difference of
+hypothesis (see the [qualification](/results/generalized-stokes-theorem.md)).
+
 Exercise 11.8 (p. 410) asks the reader to find the flaw in a "proof" that
 $\pi=0$ obtained by applying the theorem to $\tan^{-1}(y/x)$ and
 $\tan^{-1}(x/y)$, functions that violate the continuity hypothesis in $R$.
@@ -44,3 +58,4 @@ $\tan^{-1}(x/y)$, functions that violate the continuity hypothesis in $R$.
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §11.3, pp. 384–387; §11.8, p. 402; §11.9, p. 407; exercise 11.8, p. 410.
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §4.7, pp. 245–247; exercise 3.8.6, p. 169.

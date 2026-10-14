@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Notation registry
@@ -58,6 +58,10 @@ that later sources map onto it in one line.
 | $\operatorname{diag}(d_1,\dots,d_N)$ | diagonal matrix |
 | $\exp A$ | matrix exponential, $\sum_{n\ge0}A^n/n!$ |
 | $[\mathbf c_1\ \cdots\ \mathbf c_N]$ | matrix with columns $\mathbf c_j$ |
+| $[A,B]$ | commutator $AB-BA$ of square matrices or of operators (added 2026-10-14, arfken-2013) |
+| $A\otimes B$ | direct (Kronecker) product: for $A$ of size $M\times N$, the $MM'\times NN'$ block matrix $(a_{ij}B)$ (added 2026-10-14, arfken-2013) |
+| $\varepsilon_{i_1i_2\cdots i_N}$ | Levi-Civita symbol: $+1$ ($-1$) for an even (odd) permutation of $1,\dots,N$, $0$ otherwise (added 2026-10-14, arfken-2013) |
+| $\mathcal A^{\mathsf H}$ | Hilbert-space adjoint of an abstract operator, $\langle f,\mathcal Ag\rangle=\langle\mathcal A^{\mathsf H}f,g\rangle$ for all $f$, $g$ of the space (boundary conditions enter through the space); its matrix in an orthonormal basis is $A^{\mathsf H}$. Distinct from the formal adjoint $\mathcal L^{*}$ of a differential operator (added 2026-10-14, arfken-2013) |
 
 ## Eigenproblems, forms and decompositions
 
@@ -69,6 +73,11 @@ that later sources map onto it in one line.
 | $S$ | non-singular change-of-basis (similarity) matrix, $A'=S^{-1}AS$; $A'$ the transformed matrix |
 | $\rho(A)$ | spectral radius $\max_k\lvert\lambda_k\rvert$ (reserved for iteration theory; not used by the founding source) |
 | $R_A(\mathbf x)$ | Rayleigh quotient $\mathbf x^{\mathsf H}A\mathbf x/\mathbf x^{\mathsf H}\mathbf x$ |
+| $R_{\mathcal L}(u)$ | Rayleigh quotient of an operator, $\langle u,\mathcal Lu\rangle/\langle u,u\rangle$ (the "expectation value" of physics texts when $\lVert u\rVert=1$) (added 2026-10-14, arfken-2013) |
+| $\lambda_{\min}$, $\lambda_{\max}$ | algebraically smallest and largest eigenvalue (added 2026-10-14, arfken-2013) |
+| $\tilde u$ | trial function of the variation method (added 2026-10-14, arfken-2013) |
+| $\vartheta$ | rotation angle of one step of the Jacobi eigenvalue method (added 2026-10-14, arfken-2013) |
+| $\Theta$ | upper-triangular coefficient matrix of Gram–Schmidt, $\hat{\mathbf z}_m=\sum_{l\le m}\Theta_{lm}\mathbf y_l$ (added 2026-10-14, arfken-2013) |
 | $U$, $\Sigma$, $V$ | singular value decomposition $A=U\Sigma V^{\mathsf H}$ ($U$ is $M\times M$ unitary, $\Sigma$ is $M\times N$ diagonal, $V$ is $N\times N$ unitary) — on SVD pages only |
 | $\sigma_k$; $\mathbf u_k$, $\mathbf v_k$ | singular values ($\sigma_1\ge\sigma_2\ge\dots\ge0$); left and right singular vectors |
 | $p$, $r$ | (SVD pages) $p=\min(M,N)$; $r$ the number of non-zero singular values |
@@ -121,6 +130,8 @@ $a_{i,i-1}$, diagonal $a_{ii}$, superdiagonal $a_{i,i+1}$.
 | $p_1(x)$ | first-order coefficient of a general second-order equation $pu''+p_1u'-qu+\lambda wu=0$ before reduction to Sturm–Liouville form |
 | $\mu$ | fixed constant in the shifted problem $\mathcal Lu-\mu wu=f$ |
 | $\Psi(x)$ | integrating factor that brings a second-order equation to Sturm–Liouville form |
+| $u_a(x)$, $u_b(x)$ | solutions of the homogeneous equation $\mathcal Lu=0$ that satisfy the boundary condition at $x=a$, respectively at $x=b$ (one-dimensional Green's-function construction) (added 2026-10-14, arfken-2013) |
+| $\mathcal W(x)$ | Wronskian $u_a u_b'-u_a'u_b$ (added 2026-10-14, arfken-2013) |
 | $\delta(x-x')$, $\delta(\mathbf r-\mathbf r')$ | Dirac delta |
 
 ## Elliptic boundary-value problems
@@ -138,7 +149,9 @@ $a_{i,i-1}$, diagonal $a_{ii}$, superdiagonal $a_{i,i+1}$.
 | $\phi$, $\psi$ | generic scalar functions in integral identities (Green's theorems); an eigenfunction always carries a subscript, $\phi_n$ |
 | $\nabla^2$ | Laplacian |
 | $u$, $f$ | unknown and source term; **Poisson's equation is $\nabla^2u=f$** (sign convention: sources writing $-\nabla^2u=f$ map $f\to-f$, and their Green's function changes sign) |
-| $\kappa$ | wavenumber in Helmholtz's equation $\nabla^2u+\kappa^2u=f$ |
+| $\kappa$ | wavenumber in Helmholtz's equation $\nabla^2u+\kappa^2u=f$; the modified Helmholtz equation is $\nabla^2u-\kappa^2u=f$ with $\kappa>0$ (modified form added 2026-10-14, arfken-2013) |
+| $H_0^{(1)}$, $K_0$ | Hankel function of the first kind and modified Bessel function of the second kind, both of order 0 (two-dimensional fundamental solutions) (added 2026-10-14, arfken-2013) |
+| $P_l$, $\chi$, $r_<$, $r_>$ | Legendre polynomial of degree $l$; angle between $\mathbf r$ and $\mathbf r'$; smaller and larger of $\lvert\mathbf r\rvert$, $\lvert\mathbf r'\rvert$ (multipole expansion of $G_0$) (added 2026-10-14, arfken-2013) |
 | $g_{\mathrm D}$, $g_{\mathrm N}$ | Dirichlet data ($u=g_{\mathrm D}$ on $\partial\Omega$) and Neumann data ($\partial_nu=g_{\mathrm N}$ on $\partial\Omega$) |
 | $G(\mathbf r,\mathbf r')$ | Green's function, $\mathcal L_{\mathbf r}G=\delta(\mathbf r-\mathbf r')$ (for the Laplacian, $\nabla^2_{\mathbf r}G=\delta(\mathbf r-\mathbf r')$); $G(x,x')$ in one dimension |
 | $G_0(\mathbf r,\mathbf r')$ | fundamental (free-space) solution, $G_0=-1/(4\pi\lvert\mathbf r-\mathbf r'\rvert)$ in $d=3$ |

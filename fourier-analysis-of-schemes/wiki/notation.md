@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Notation registry
@@ -78,14 +78,14 @@ theorem has a factor $\sqrt{2\pi}$. A source using the non-symmetric pair
 reverse) or the opposite sign is mapped by its constant and sign in its
 Notation map; concept pages never mix conventions.
 
-## Discrete Fourier analysis (reserved)
+## Discrete Fourier analysis
 
 | Symbol | Meaning |
 |---|---|
-| $\xi = kh$ | **reserved.** Scaled (non-dimensional) wavenumber of a grid mode $e^{\mathrm i k x_j} = e^{\mathrm i j\xi}$; sources writing it $w$, $\theta$, $\alpha$ or $\kappa$ map onto $\xi$ |
+| $\xi = kh$ | Scaled (non-dimensional) wavenumber of a grid mode $e^{\mathrm i k x_j} = e^{\mathrm i j\xi}$; sources writing it $w$, $\theta$, $\alpha$ or $\kappa$ map onto $\xi$. For the discrete Fourier transform on $N$ points of one period, $\xi = 2\pi m/N$ (in use from 2026-10-14, arfken-2013) |
 | $\tilde k$, $\tilde\xi = \tilde k h$ | **reserved.** Modified (effective) wavenumber of a difference operator, in general complex |
 | $G$, $G(\xi)$ | **reserved** as the amplification factor: the factor multiplying one mode (or, for a scalar recurrence, the solution) per time step, $y^{n+1} = G\,y^n$ |
-| $\hat f^{N}_m$ | **reserved.** Discrete Fourier coefficient of $N$ samples, $\hat f^{N}_m = \frac1N\sum_{j=0}^{N-1} f_j\,e^{-2\pi\mathrm i jm/N}$ (normalized so that it approximates $\hat f_m$); a source with another normalization is mapped by its constant |
+| $\hat f^{N}_m$ | Discrete Fourier coefficient of $N$ samples, $\hat f^{N}_m = \frac1N\sum_{j=0}^{N-1} f_j\,e^{-2\pi\mathrm i jm/N}$ (normalized so that it approximates $\hat f_m$), with inverse $f_j = \sum_{m=0}^{N-1}\hat f^{N}_m\,e^{2\pi\mathrm i jm/N}$; periodic in $m$ with period $N$. A source with another normalization or sign is mapped by its constant and sign (in use from 2026-10-14, arfken-2013: see [discrete Fourier transform](/definitions/discrete-fourier-transform.md)) |
 
 ## Generalized functions, convolution and correlation
 
@@ -124,10 +124,16 @@ Notation map; concept pages never mix conventions.
 |---|---|
 | $\mathrm{sinc}\,u$ | $(\sin u)/u$ (unnormalized) |
 | $J_0$ | Bessel function of the first kind, order zero |
+| $\Gamma$ | gamma function, $\Gamma(p+1) = p!$ for integer $p \ge 0$ (added 2026-10-14, arfken-2013) |
+| $\beta$ | real abscissa of the Bromwich (inverse Laplace) contour, to the right of every singularity of the transform (added 2026-10-14, arfken-2013) |
 | $r = \lvert\mathbf r\rvert$, $k = \lvert\mathbf k\rvert$ | radius and wavenumber magnitude (spherically symmetric transforms) |
 | $\sigma_x$, $\sigma_k$, $\sigma_t$, $\sigma_\omega$ | root mean square widths of a function and of its transform (never $\Delta$, which is reserved for steps) |
 | $f$, $g$ | generic functions; $\phi$ a generic function whose zeros are sought |
 | $\varphi$ | unknown of a model differential equation solved by transform; $\kappa_0$ a real constant in it |
+| $\varphi(x,t)$ | unknown of a model partial differential equation solved by transform (added 2026-10-14, arfken-2013; same symbol as the ODE unknown above) |
+| $c_0$ | constant wave (phase) speed of the model wave equation $\varphi_{tt} = c_0^2\varphi_{xx}$ (added 2026-10-14, arfken-2013) |
+| $\nu$ | constant diffusivity of the model heat equation $\varphi_t = \nu\,\varphi_{xx}$ (added 2026-10-14, arfken-2013) |
+| $\mathcal G(\mathbf r, \mathbf r_0)$, $\mathbf r_0$ | Green's function of a model equation, and its fixed source point; calligraphic so as not to clash with the amplification factor $G$ (added 2026-10-14, arfken-2013) |
 | $\alpha$ | complex constant in the exponential-multiplication rule |
 | $\omega_c$ | carrier angular frequency (modulation) |
 | $q$ | observed (convolved) distribution in the measurement model of convolution |

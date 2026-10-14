@@ -5,7 +5,7 @@ description: "The tensorial derivative of tensor components in general coordinat
 status: established
 aliases: [semicolon derivative, absolute derivative, intrinsic derivative, covariant differentiation, nabla v]
 tags: [tensor-calculus, operators, christoffel]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Covariant derivative
@@ -19,10 +19,22 @@ pp. 968–970)
 
 $$\frac{\partial\mathbf v}{\partial\xi^j}=v^i{}_{;j}\,\mathbf a_i,\qquad v^i{}_{;j}=\frac{\partial v^i}{\partial\xi^j}+\Gamma^i_{kj}v^k,\qquad v_{i;j}=\frac{\partial v_i}{\partial\xi^j}-\Gamma^k_{ij}v_k.$$
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) (§4.3, eqs. (4.51)–(4.58), pp. 222–223)
+derive the same two formulas, starting from the second-derivative term that
+appears when the Cartesian components $(\partial x^i/\partial\xi^k)v^k$ are
+differentiated (eq. (4.51)); the covariant one is their exercise 4.3.6
+(differentiate $\mathbf a^i\cdot\mathbf a_j=\delta^i_j$), and
+$v_{i;j}=g_{ik}v^k{}_{;j}$ is exercise 4.3.7. They call the semicolon notation
+"awkward" but standard, and give its physical meaning: it "includes the
+changes in the basis vectors ... and is therefore more appropriate for
+describing physical phenomena" (p. 223).
+
 The $v^i{}_{;j}$ are the mixed components of a second-order tensor
 $\nabla\mathbf v$ (by the [quotient law](/results/quotient-law.md), or
 directly from eqs. (26.84) and (26.78)); in Cartesians they reduce to
-$\partial v^i/\partial x^j$. Comma notation: $v^i{}_{,j}=\partial v^i/\partial\xi^j$.
+$\partial v^i/\partial x^j$. Arfken et al. read the tensor character off
+$d\mathbf v=v^k{}_{;j}\,d\xi^j\,\mathbf a_k$ with $d\xi^j$ contravariant
+(p. 223), the same quotient argument. Comma notation: $v^i{}_{,j}=\partial v^i/\partial\xi^j$.
 
 **Second-order tensors** (p. 971): one Christoffel term per index, with $+$
 for each upper and $-$ for each lower index,
@@ -35,7 +47,10 @@ $\phi_{;j}=\phi_{,j}$ (eq. (26.90)).
 ## Properties
 
 * **Metric compatibility**: $g_{ij;k}=0$ in every coordinate system
-  (exercise 26.29, p. 982; hint p. 983).
+  (exercise 26.29, p. 982; hint p. 983); also $g^{ij}{}_{;k}=0$ (Arfken et al.,
+  exercise 4.3.10, p. 226).
+* **Gradients**: for $v_i=\partial_i\phi$, $v_{i;j}-v_{j;i}=0$ (Arfken et al.,
+  exercise 4.3.12, p. 226), the tensor form of $\nabla\times\nabla\phi=\mathbf 0$.
 * **Commutation in Euclidean space**: the commutator defines the Riemann
   tensor, $v_{i;jk}-v_{i;kj}=R^l{}_{ijk}v_l$ with
   $R^l{}_{ijk}=\partial_j\Gamma^l_{ik}-\partial_k\Gamma^l_{ij}+\Gamma^m_{ik}\Gamma^l_{mj}-\Gamma^m_{ij}\Gamma^l_{mk}$;
@@ -44,7 +59,14 @@ $\phi_{;j}=\phi_{,j}$ (eq. (26.90)).
   (exercise 26.27, p. 981).
 * **Vector operators**: the contraction $v^i{}_{;i}$ is the
   [divergence](/definitions/divergence.md), the antisymmetrised $v_{i;j}-v_{j;i}$
-  the [curl](/definitions/curl.md) (§26.20).
+  the [curl](/definitions/curl.md) (§26.20; Arfken et al., eqs. (4.65),
+  (4.71), pp. 224–225).
+* **Forms avoid it.** Arfken et al. note that the
+  [exterior derivative](/definitions/exterior-derivative.md) of a $p$-form is
+  a $(p+1)$-form without any covariant-derivative correction (p. 235): the
+  antisymmetric combinations (curl, and divergence of the dual 2-form) are
+  the ones that need no Christoffel symbols, consistent with the
+  cancellation in the [curl](/definitions/curl.md).
 
 ## Absolute derivative along a curve
 
@@ -61,3 +83,4 @@ the right side becomes $(\ddot s/\dot s)\,d\xi^i/dt$ (exercise 26.28).
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §§26.19–26.22, pp. 968–977; exercises 26.27–26.29, pp. 981–982.
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §4.3, pp. 222–225; §4.5, p. 235; exercises 4.3.6, 4.3.7, 4.3.9, 4.3.10, 4.3.12, p. 226.

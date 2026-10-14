@@ -5,7 +5,7 @@ description: "Solve L u = psi by the response G to a unit point source: with hom
 status: established
 aliases: [Green's function, Dirichlet Green's function, Neumann Green's function, method of images, Green's representation formula, Poisson integral]
 tags: [greens-function, elliptic, boundary-conditions, method-of-images]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Green's functions for linear PDEs
@@ -54,7 +54,10 @@ factor $\alpha$ (Exercise 21.28, p. 773, posed as an exercise).
   $u(\mathbf x') = \int_\Omega G\psi\,\mathrm dV + \langle u\rangle_{\partial\Omega} - \oint_{\partial\Omega}Gh\,\mathrm dS$
   with $\langle u\rangle_{\partial\Omega}$ a free constant. The constant is
   absent when the boundary is at infinity and $u \to 0$ there (eq. 21.106,
-  p. 766).
+  p. 766). [Arfken et al. (2013)](/sources/arfken-2013.md) state the same
+  compatibility requirement for Laplace's equation in a sphere, as Gauss's
+  law: the surface integral of the normal derivative measures the enclosed
+  charge, so it must vanish (Example 9.4.4, pp. 428–429).
 
 ## Method of images
 
@@ -82,9 +85,15 @@ and in general the images are "very difficult" to find (p. 759).
 
 The [uniqueness theorem](/results/uniqueness-theorem-poisson.md) justifies
 the method: any function meeting the equation and the data is the
-solution (p. 706).
+solution (p. 706). Arfken et al. give the same justification with the
+grounded plane and its mirror charge (§9.5, p. 434). Their
+Green's-function chapter (Ch. 10) is not part of this ingestion, so the
+representation formula and the image constructions above rest on Riley et
+al. alone.
 
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §21.5 (pp. 751–767),
   Exercise 21.28 (p. 773).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), Example 9.4.4
+  (pp. 428–429), §9.5 (p. 434).

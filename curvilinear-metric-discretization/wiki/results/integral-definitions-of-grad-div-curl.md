@@ -5,7 +5,7 @@ description: "The coordinate-free definitions ∇φ = lim (1/V)∮φ dS, ∇·v 
 status: established
 aliases: [geometric definitions of grad div curl, flux definition of divergence, circulation definition of curl, finite-volume definition]
 tags: [integral-theorems, operators, vector-calculus, conservation-form]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Integral definitions of grad, div and curl
@@ -41,6 +41,19 @@ that all the above equations are consistent with our definitions", p. 398):
 Non-orthogonal coordinates are not treated in this section; there the
 book's route is the tensor form of §26.20.
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) do not state the limits as definitions,
+but derive the differential forms by the same element-level bookkeeping,
+which agrees with the scope above: the Cartesian divergence from the net
+outflow through the faces of a parallelepiped $dx\,dy\,dz$ (eq. (3.55),
+p. 148), the Cartesian curl from the circulation round a small rectangle
+(eq. (3.60), p. 151), and the orthogonal-coordinate divergence and curl from
+the outflow of a curvilinear volume element and the circulation round a
+curvilinear face element, with scale factors evaluated on the displaced faces
+and edges (eqs. (3.140)–(3.143), pp. 185–187). Both books thus obtain the
+orthogonal divergence and curl from flux and circulation, and neither does
+so for non-orthogonal coordinates, where Arfken too switches to the tensor
+forms (§4.3).
+
 These limits are the bridge from the differential operators to the
 [divergence theorem](/results/divergence-theorem.md) and
 [Stokes' theorem](/results/stokes-theorem.md), whose derivations in the
@@ -52,3 +65,4 @@ remark; the source does not discuss discretization).
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §11.7, pp. 398–400; §§11.8–11.9, pp. 401, 406.
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §3.5, pp. 147–151; §3.10, pp. 185–187.

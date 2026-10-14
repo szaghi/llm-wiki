@@ -9,7 +9,7 @@ year: 2006
 venue: "Cambridge University Press (3rd ed.)"
 local_file: "/home/stefano/papers/mosaic/linear-elliptic-solvers/2006-CUP-Riley-101017CBO9780511810763.pdf"
 tags: [textbook, linear-algebra, operator-theory, greens-function, poisson, direct-solver, iterative-solver]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Summary
@@ -203,6 +203,7 @@ reading.
 * Created [Eigenfunction expansion](/methods/eigenfunction-expansion.md)
 * Created [Method of images](/methods/method-of-images.md)
 * Created [Five-point discrete Laplacian](/operators/five-point-laplacian.md)
+* Cited on [Variation method](/methods/variation-method.md) (added with arfken-2013)
 
 # Citations
 

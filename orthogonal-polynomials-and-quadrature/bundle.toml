@@ -1,0 +1,26 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Orthogonal polynomials and quadrature"
+summary = "Orthogonal polynomials and the special functions built on them, as the bases and quadratures of numerical methods: Legendre, Chebyshev, Jacobi, Hermite and Laguerre polynomials, associated Legendre functions and spherical harmonics, Bessel functions, three-term recurrences, Rodrigues formulae, Gauss, Gauss-Radau and Gauss-Lobatto quadrature, and their use in spectral, DG and multipole methods."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/orthogonal-polynomials-and-quadrature"
+keywords = [
+  "orthogonal polynomials",
+  "Legendre polynomials",
+  "Chebyshev polynomials",
+  "Jacobi polynomials",
+  "Hermite polynomials",
+  "Laguerre polynomials",
+  "spherical harmonics",
+  "associated Legendre functions",
+  "Bessel functions",
+  "three-term recurrence",
+  "Rodrigues formula",
+  "Gaussian quadrature",
+  "Gauss-Lobatto",
+  "Gauss-Radau",
+  "quadrature nodes and weights",
+  "modal basis",
+  "nodal basis",
+  "multipole expansion",
+]

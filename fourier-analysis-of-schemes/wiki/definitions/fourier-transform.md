@@ -5,7 +5,7 @@ description: "Integral representation of a non-periodic, absolutely integrable f
 status: established
 aliases: [Fourier integral, Fourier transform pair, Fourier inversion theorem, Fourier sine transform, Fourier cosine transform]
 tags: [fourier-transform]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Fourier transform
@@ -26,6 +26,38 @@ the [convolution theorem](/results/convolution-theorem.md), the
 [Wiener–Khinchin theorem](/results/wiener-khinchin-theorem.md) and
 [Parseval's theorem](/results/parseval-theorem.md) depends on it.
 
+**Qualification: Arfken et al.'s sign.**
+[Arfken et al. (2013)](/sources/arfken-2013.md) use the same symmetric constant
+with the **opposite sign** of the exponent (eqs. 20.6, 20.10, 20.23–20.26).
+Their forward transform is
+$$\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} f(t)\,e^{+\mathrm i\omega t}\,\mathrm dt = \hat f(-\omega),$$
+and their inverse carries $e^{-\mathrm i\omega t}$. They keep the $1/\sqrt{2\pi}$ "because
+it causes the transform and its inverse to have formulas that are more
+symmetrical". They warn that "the notation for this transform is not entirely
+universal": some writers omit the prefactor, and periodic systems use the
+kernel $\exp(2\pi\mathrm i\omega t/a_0)$ with $a_0$ a lattice constant. "These
+differences in notation do not change the mathematics, but cause formulas to
+differ by powers of $2\pi$ or $a_0$. Caution is therefore advised when
+combining material from different sources" (p. 965). In §20.5 they use the
+pair "most physicists" use for signals, $\int f e^{-\mathrm i\omega t}\,\mathrm dt$
+forward and $\frac{1}{2\pi}\int\cdot\,e^{\mathrm i\omega t}\,\mathrm d\omega$ back
+(eqs. 20.100–20.101), which yields $\sqrt{2\pi}\,\hat f(\omega)$ in registry terms.
+The two books therefore differ in convention only, and every Arfken et al.
+formula on these pages is mapped. Their remark that the inverse differs from
+the forward transform only by the sign of the exponent, so that "two
+successive applications of the Fourier transform" are not the transform
+followed by its inverse (p. 970), holds under either sign.
+
+**Existence (qualification).** Riley et al. place one requirement on $f$, a
+finite $\int\lvert f\rvert$. Arfken et al. restrict the chapter "to functions
+for which the indicated operations can be carried out" (p. 964). In §20.10 they
+recall that a Fourier-transformable function "had to satisfy the Dirichlet
+conditions", with a transform that vanishes as $\omega\to\infty$ (eq. 20.199),
+the delta function excepted, whose transform is bounded. For the
+[Parseval relation](/results/parseval-theorem.md) they take $f$ square
+integrable (p. 988). These are different sufficient settings, not
+incompatible claims.
+
 ## Fourier's inversion theorem
 
 Writing the complex [Fourier series](/definitions/fourier-series.md) of a
@@ -37,6 +69,24 @@ $$f(t) = \frac{1}{2\pi}\int_{-\infty}^{\infty}\mathrm d\omega\,e^{\mathrm i\omeg
 The derivation is a limiting argument, not a proof: the existence of
 $\hat f(\omega)$ as $T\to\infty$ "is assumed here without proof" (p. 435).
 
+Arfken et al. reach the same **Fourier integral** (eq. 20.22) by a different
+route. They write $f$ against the delta sequence
+$\frac{1}{2\pi}\int_{-n}^{n}e^{\mathrm i\omega t}\,\mathrm d\omega$ (eq. 20.20),
+exchange the integrations and let $n\to\infty$ (eq. 20.21). They state that the
+derivation "did not provide a rigorous justification for the reversal of the
+order of integration and the passage to the infinite-$n$ limit" and refer to
+Sneddon (p. 970). Both sources therefore give a limiting argument and neither
+gives a proof.
+
+## Symmetry and reality
+
+(Arfken et al.) Even functions have real transforms and odd functions
+imaginary ones; a function that is neither has a complex transform (footnote,
+p. 970). This is consistent with Riley et al.'s $\hat f = -\mathrm i\hat f_s$ for
+odd $f$. $f$ is real if and only if $\hat f(-k) = \hat f(k)^*$, and pure
+imaginary if and only if $\hat f(-k) = -\hat f(k)^*$ (exercise 20.2.1, a
+statement independent of the sign convention).
+
 ## Sine and cosine transforms
 
 For odd $f$ the transform is odd in $\omega$ and reduces to the **Fourier sine
@@ -44,7 +94,12 @@ transform** pair (eqs. 13.35–13.36)
 $$\hat f_s(\omega) = \sqrt{\frac2\pi}\int_0^\infty f(t)\sin\omega t\,\mathrm dt,\qquad f(t) = \sqrt{\frac2\pi}\int_0^\infty \hat f_s(\omega)\sin\omega t\,\mathrm d\omega,$$
 with $\hat f(\omega) = -\mathrm i\,\hat f_s(\omega)$ for odd $f$. The pair needs
 $f$ only for $t > 0$. The cosine pair $\hat f_c$ is the same with $\cos$, for
-even $f$ (§13.1.6, pp. 445–446).
+even $f$ (§13.1.6, pp. 445–446). Arfken et al. print the identical sine and
+cosine pairs (eqs. 20.27–20.30, unaffected by the sign convention). Because
+they use data for $t \ge 0$ only, the inverses describe an odd (sine) or even
+(cosine) continuation for $t < 0$ (p. 971). On a half-line the sine transform
+imposes a Dirichlet condition at $x = 0$ and the cosine transform a Neumann
+condition (p. 985).
 
 ## Higher dimensions
 
@@ -55,7 +110,13 @@ f(\mathbf r) = \frac{1}{(2\pi)^{3/2}}\int \hat f(\mathbf k)\,e^{\mathrm i\mathbf
 spherically symmetric $f(r)$,
 $\hat f(k) = (2\pi)^{-3/2}\int_0^\infty 4\pi r^2 f(r)\,\frac{\sin kr}{kr}\,\mathrm dr$
 (worked example, p. 452); the axisymmetric two-dimensional analogue is a
-Hankel-type integral with $J_0$ (eq. 13.52).
+Hankel-type integral with $J_0$ (eq. 13.52). Arfken et al. print the same
+three-dimensional pair with their sign (eqs. 20.36–20.37). They ask for the
+radial form as a sine transform (exercise 20.2.16) and the two-dimensional
+radial form as a zero-order Hankel transform (exercise 20.2.15), both in
+agreement with Riley et al. They add the transforms of
+$e^{-\gamma r}/r$, $1/r$ and $1/r^2$: $(2\pi)^{-3/2}\,4\pi/(k^2+\gamma^2)$,
+$(2\pi)^{-3/2}\,4\pi/k^2$ and $(\pi/2)^{1/2}/k$ (eqs. 20.41–20.43).
 
 ## Spread in $x$ and $k$
 
@@ -70,6 +131,20 @@ ch. 24. For the intensities $\lvert f\rvert^2$ and $\lvert\hat f\rvert^2$ the
 product of the widths is $\tfrac12$ for the Gaussian, and the source states
 without proof that every other distribution gives a larger product, the
 Gaussian giving the minimum (p. 437).
+
+Arfken et al. obtain the Gaussian pair
+$\mathcal F[e^{-at^2}] = (2a)^{-1/2}e^{-\omega^2/4a}$, $a > 0$ (eq. 20.19, which
+the sign does not affect). Their derivation also completes the square, but it
+justifies the shift of the integration path by a contour argument: the
+displaced and real-axis paths enclose no singularity (fig. 20.3, pp. 968–969).
+They state the same inverse relation of widths. For $e^{-\gamma\lvert t\rvert}$,
+with transform $(2/\pi)^{1/2}\gamma/(\gamma^2+\omega^2)$, "the more localized
+is $f(t)$, the less localized will be" its transform (eq. 20.13, p. 967). For a
+wave train of $p$ cycles of $\sin\omega_ct$ the central maximum of the spectrum
+has half-width $\omega_c/p$ (eq. 20.35). "The inverse relationship between
+frequency spread and pulse length is a fundamental property of finite wave
+distributions", and its quantum form is the uncertainty principle
+(Example 20.2.4, pp. 971–973).
 
 ## Sampling and periodization (exercises only)
 
@@ -97,13 +172,22 @@ for the reader to prove:
   $\mathrm{sinc}\,u = (\sin u)/u$, via the series coefficients
   $\hat f_p = \frac{\sqrt{2\pi}}{T}\hat f(2\pi p/T)$.
 
-A dedicated page for the discrete Fourier transform waits for a source that
-develops it.
+The discrete transform is developed by Arfken et al. (§20.6) and has its own
+page, [discrete Fourier transform](/definitions/discrete-fourier-transform.md).
+That page maps $F_m$ of exercise 13.10 onto the registry normalization and
+records the compiler's reading of the unexplained disagreement for
+$m \ge N/2$ as aliasing (hypothesis).
 
 # Examples
 
 * One-sided exponential decay, $f = Ae^{-\gamma t}$ for $t\ge0$ and $0$ for
   $t<0$ ($\gamma > 0$): $\hat f(\omega) = \frac{A}{\sqrt{2\pi}(\gamma + \mathrm i\omega)}$ (p. 435).
+* Two-sided decay $e^{-\gamma\lvert t\rvert}$: the real transform
+  $(2/\pi)^{1/2}\gamma/(\gamma^2+\omega^2)$. Transforming that Lorentzian again
+  returns $e^{-\gamma\lvert\omega\rvert}$ by contour integration, and the inverse
+  formula gives an integral representation of $e^{-\gamma\lvert t\rvert}$ free of
+  absolute values (Arfken et al., Examples 20.2.1, 20.2.3, eqs. 20.13–20.17,
+  20.24).
 * Fraunhofer diffraction: the far-field intensity in a direction is
   proportional to $\lvert\hat f\rvert^2$ of the aperture function evaluated at
   the transverse wavenumber of that direction (eqs. 13.8–13.10).
@@ -111,3 +195,4 @@ develops it.
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §§13.1–13.1.2, 13.1.6, 13.1.10 (pp. 433–453); exercises 13.9–13.11 (pp. 461–462).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §§20.1–20.2 (eqs. 20.6–20.47, pp. 963–975), §20.3 (p. 985), §20.4 (p. 988), §20.5 (eqs. 20.100–20.101, pp. 997–998), §20.10 (eq. 20.199, p. 1038); exercises 20.2.1, 20.2.15, 20.2.16.

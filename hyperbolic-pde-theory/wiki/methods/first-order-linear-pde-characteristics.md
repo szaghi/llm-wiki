@@ -5,7 +5,7 @@ description: "The general solution of b1 u_x + b2 u_y = 0 is an arbitrary functi
 status: established
 aliases: [method of characteristics, first-order linear PDE, general solution in arbitrary functions]
 tags: [first-order, characteristics, general-solution]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # First-order linear PDEs: general solution along characteristics
@@ -41,6 +41,29 @@ $$b_1(x,y)\,\partial_x u + b_2(x,y)\,\partial_y u + c_0(x,y)\,u = \psi(x,y)$$
 5. **Fit the data.** Choose $F$ so that $u$ takes the prescribed values on
    the data curve.
 
+## Constant coefficients: rotated coordinates (Arfken et al.)
+
+[Arfken et al. (2013)](/sources/arfken-2013.md) solve the constant-coefficient
+case by a change of variables instead of the ansatz $u = F(\xi)$ (§9.2,
+pp. 404–407). With $\sigma = b_1x + b_2y$ along the characteristics and
+$\xi = b_2x - b_1y$ constant on them,
+$$b_1\partial_x u + b_2\partial_y u = (b_1^2 + b_2^2)\,\partial_\sigma u ,$$
+so $b_1\partial_x u + b_2\partial_y u = 0$ has the general solution
+$u = F(b_2x - b_1y)$ with $F$ arbitrary (eqs. 9.1–9.3, p. 404), and with a
+zeroth-order term and a forcing the equation becomes an ODE in $\sigma$
+with $\xi$ as a parameter (eqs. 9.8–9.9, pp. 406–407). This agrees with
+steps 2–4 above. Example 9.2.1: $\partial_x u + \partial_y u + (x + y)u = 0$
+gives $u = e^{-xy}F(x - y)$ (p. 407; checked by substitution by the
+compiler). Variable coefficients are left to Exercises 9.2.5–9.2.6
+($y\,\partial_x u + x\,\partial_y u = 0$, $x\,\partial_x u - y\,\partial_y u = 0$, p. 409).
+
+**Three variables** (pp. 407–408). For $\mathbf b\cdot\nabla u = 0$ with
+constant $\mathbf b$, the characteristics are the lines parallel to
+$\mathbf b$, and the general solution is an arbitrary function of two
+independent combinations of $(x, y, z)$ that are constant along them (eq.
+9.10). Riley et al. say the method "may be extended" to more variables but
+do not show it (p. 681); Arfken et al. show the constant-coefficient case.
+
 ## Worked cases
 
 * $x\,\partial_x u - 2y\,\partial_y u = 0$: $\mathrm dx/x = \mathrm dy/(-2y)$
@@ -71,6 +94,13 @@ pp. 700–701).
   does not show it (p. 681).
 * §20.6.1 allows $\psi(x,y,u)$ when analysing characteristics, but the
   solution method above is given only for the linear equation.
+* **Nonlinear equations.** Neither book solves a nonlinear first-order
+  PDE in the chapters read. Arfken et al. name
+  $\partial_t u + c(u)\,\partial_x u = 0$ "the simplest nonlinear wave
+  equation", in which the local propagation speed depends on the solution,
+  and contrast it with the linear $\partial_t u + c\,\partial_x u = 0$
+  (§9.3, eq. 9.23, p. 413). They do not analyse it; the scalar conservation
+  law and its characteristics wait for their sources.
 * Context (§20.2–20.3, pp. 680–681): a family of functions of one
   combination $\xi(x,y)$ satisfies a first-order PDE obtained by
   eliminating the function. The book notes that an $n$th-order PDE is not
@@ -86,3 +116,5 @@ pp. 700–701).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §20.2–20.3.2
   (pp. 680–687), §20.6.1 (pp. 699–701).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.2 (pp. 403–409),
+  §9.3 (p. 413).

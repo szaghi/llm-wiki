@@ -5,7 +5,7 @@ description: "A real C2 solution of the laplacian of u equals psi in a region, w
 status: established
 aliases: [uniqueness theorem, energy method]
 tags: [uniqueness, elliptic, well-posedness]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Uniqueness theorem for Poisson's equation
@@ -29,11 +29,27 @@ data on (some part of) $\partial\Omega$ make the constant zero. Under
 Neumann data the solutions may differ by an arbitrary constant. Green's
 first theorem is from Ch. 11 (not read).
 
+**Second source.** [Arfken et al. (2013)](/sources/arfken-2013.md) state the
+same theorem for Laplace's and Poisson's equations, Dirichlet data unique
+and Neumann data unique up to an additive constant (§9.5, p. 434). For
+the Neumann case their proof is Riley's: Green's theorem with both
+functions equal to the difference $v$ (eq. 9.88). For the Dirichlet case
+they argue differently: $v$ is harmonic, vanishes on $\partial\Omega$, and
+"cannot have extrema within the bounded region", so $v \equiv 0$
+(p. 434). The energy route for Dirichlet data is their Exercise 9.5.3.
+*Compiler's remark:* the extremum argument rests on their curvature
+argument for harmonic functions, which does not exclude degenerate
+stationary points (see [Laplace and Poisson equations](/definitions/laplace-and-poisson-equations.md)).
+The energy proof, common to both books, is the complete one in the
+chapters read.
+
 **Uses.** Any solution that fits the data, found by whatever means, is the
 solution. This justifies the method of images ([Green's functions for
 PDEs](/methods/greens-functions-for-pdes.md)) and solution by expansion
 ([separation of variables](/methods/separation-of-variables.md), §21.3.3)
-(pp. 706, 741–744). "Often the same general method" proves uniqueness for
+(pp. 706, 741–744). Arfken et al. cite the same use: a charge in front of
+a grounded plane plus its mirror image has the right boundary value, and
+uniqueness makes it the solution (p. 434). "Often the same general method" proves uniqueness for
 other equations and boundary conditions (p. 707). Exercise 20.25 (p. 711)
 applies it to $\nabla^2u - k^2u = 0$ (the book's Klein–Gordon form). The
 extra term $k^2\int|v|^2\,\mathrm dV$ forces $v = 0$ under Dirichlet or
@@ -42,9 +58,11 @@ Neumann data alike (hint, p. 712).
 **Scope.** Elliptic, linear, classical ($C^2$) solutions. The chapters read
 contain no uniqueness theorem for the wave or diffusion equation. For those
 only the [boundary-data table](/results/boundary-data-by-equation-type.md)
-is asserted.
+is asserted. The same holds for Arfken et al.'s Chs. 7 and 9.
 
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §20.7 (pp. 705–707),
   Exercise 20.25 (pp. 711–712), §21.3.3 (pp. 741–744).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.5 (pp. 433–434),
+  Exercise 9.5.3.

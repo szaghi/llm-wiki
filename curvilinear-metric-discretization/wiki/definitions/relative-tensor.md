@@ -5,7 +5,7 @@ description: "A set of components that transforms like a general tensor times th
 status: established
 aliases: [tensor density, weight of a tensor, pseudotensor, scalar density, relative scalar, pseudovector, dual tensor]
 tags: [tensor-calculus, coordinate-transformation, jacobian]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Relative tensor
@@ -46,11 +46,21 @@ $T'_{ij\cdots k}=\det L\;L_{il}L_{jm}\cdots L_{kn}T_{lm\cdots n}$, are
 **Cartesian pseudotensors** (eq. (26.39), p. 947): they behave as tensors
 under proper rotations and change sign under improper ones (reflections,
 inversion). Relative tensors of weight $\pm1$ both satisfy this definition
-(p. 964). The vector product $\varepsilon_{ijk}b_jc_k$ of two vectors is a
+(p. 964). [Arfken et al. (2013)](/sources/arfken-2013.md) give the same Cartesian definition,
+$\mathbf v'=\det L\;L\mathbf v$ for pseudovectors (eqs. (3.30), (4.26),
+pp. 136, 215) and its extension to pseudotensors of any rank (p. 216), with
+the multiplication rule tensor $\otimes$ pseudotensor = pseudotensor,
+pseudotensor $\otimes$ pseudotensor = tensor (eq. (4.27)); the scalar triple
+product is a pseudoscalar (p. 137). They treat pseudotensors in Cartesian
+systems only, "for practical reasons" (§4.2, p. 215), and do not introduce
+weights or densities for general coordinates. The vector product $\varepsilon_{ijk}b_jc_k$ of two vectors is a
 pseudovector: it gives the components of $\mathbf b\times\mathbf c$ only in a
 right-handed frame (§26.10, p. 948). The **dual** of an antisymmetric
 second-order tensor, $p_i=\tfrac12\varepsilon_{ijk}A_{jk}$, is a pseudovector
-with $A_{ij}=\varepsilon_{ijk}p_k$ (§26.11, eq. (26.40), pp. 949–950). The
+with $A_{ij}=\varepsilon_{ijk}p_k$ (§26.11, eq. (26.40), pp. 949–950;
+Arfken et al., eqs. (4.31)–(4.33), pp. 216–217, and exercise 4.2.7, which
+call the pair "dual tensors ... simply different representations of the
+same information"). The
 book stresses that physical quantities (velocity, magnetic field, angular
 momentum) are vectors, not pseudovectors; pseudovectors are a property of a
 component representation under passive improper transformations
@@ -59,3 +69,4 @@ component representation under passive improper transformations
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §26.10, pp. 946–949; §26.11, pp. 949–950; §26.17, pp. 963–965.
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §3.3, pp. 136–137; §4.2, pp. 215–218 (Cartesian pseudotensors and duals only).

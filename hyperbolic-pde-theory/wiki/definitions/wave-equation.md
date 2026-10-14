@@ -5,7 +5,7 @@ description: "The model hyperbolic equation, laplacian of u equals u_tt over c s
 status: established
 aliases: [one-dimensional wave equation, d'Alembert equation]
 tags: [model-equation, hyperbolic, characteristics]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Wave equation
@@ -16,6 +16,10 @@ membrane, solid, gas or liquid, and field components in electromagnetic
 waves; $c$ is the speed of propagation
 ([Riley et al. (2006)](/sources/riley-2006.md), eq. 20.1, p. 676). It is
 [hyperbolic](/definitions/second-order-pde-classification.md).
+[Arfken et al. (2013)](/sources/arfken-2013.md) call it "the prototype
+hyperbolic PDE" and list it, with the Klein–Gordon, telegraphy and elastic
+wave equations, among the most frequent PDEs of physics (§9.1, p. 403;
+§9.6, p. 435).
 
 **Derivation (string).** For small transverse displacements of a uniform
 string under uniform tension, the net vertical force on an element is the
@@ -41,6 +45,17 @@ $2C_1\cos(kct)\cos kx$, with nodes where
 $\cos kx = 0$ (p. 693; the book keeps a phase constant). Cauchy data on $t = 0$ give
 [d'Alembert's formula](/results/dalembert-formula.md).
 
+Arfken et al. state the same general solution from the two characteristic
+families (§9.6, eq. 9.90, p. 435). They stress that $F$ and $G$ "need not
+be sinusoidal or periodic, but may be entirely irregular", and need not be
+related to each other. Their standing wave is
+$\sin(x - ct) + \sin(x + ct) = 2\sin x\cos ct$, whose nodes are fixed while
+those of a travelling wave move at $\pm c$ (p. 435). Separation of
+variables yields standing waves, but "the totality of the solution set
+from the separated variables has the same content as the traveling-wave
+solutions": $\sin x\cos ct \pm \cos x\sin ct = \sin(x \pm ct)$
+(pp. 435–436).
+
 ## Three dimensions
 
 $u = F(\hat{\mathbf n}\cdot\mathbf x - ct) + G(\hat{\mathbf n}\cdot\mathbf x + ct)$
@@ -54,7 +69,7 @@ a special case of eq. 20.33 (§21.1, eqs. 21.6–21.8, p. 716).
 ## Separated solutions and modes
 
 Writing $u = U(\mathbf x)\mathcal T(t)$ with separation constant $k^2$
-gives the **Helmholtz equation** $\nabla^2 U + k^2U = 0$ and
+gives the [Helmholtz equation](/definitions/helmholtz-equation.md) $\nabla^2 U + k^2U = 0$ and
 $\mathcal T = c_1e^{i\omega t} + c_2e^{-i\omega t}$, $\omega = kc$
 (eqs. 21.52–21.54, p. 737; [separation of variables](/methods/separation-of-variables.md)).
 For a circular membrane of radius $R_0$ clamped at its rim, the modes are
@@ -77,3 +92,5 @@ hyperbolic, open, Cauchy (Exercise 20.23(d), answer p. 712).
 * [Riley et al. (2006)](/sources/riley-2006.md), §20.1.1 (pp. 676–677),
   §20.3.3 (pp. 689–690), §20.4 (pp. 693–695), §20.6.2 (p. 704), §21.1
   (pp. 714–716), §21.3.2 (pp. 737–741).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §9.1 (p. 403), §9.3
+  (p. 411), §9.6 (pp. 435–436).

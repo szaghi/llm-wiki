@@ -9,8 +9,12 @@ Linear algebra for discretized PDEs and the solution of elliptic problems: vecto
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 1 source, scoped read — [Riley, Hobson & Bence (2006)](/sources/riley-2006.md),
-Chs. 8, 17, §21.5, §§27.1–27.3 and §27.8. Citation record: [bibliography](/bibliography.md).
+**Corpus:** 2 sources, both scoped reads — [Riley, Hobson & Bence (2006)](/sources/riley-2006.md),
+Chs. 8, 17, §21.5, §§27.1–27.3 and §27.8; [Arfken, Weber & Harris (2013)](/sources/arfken-2013.md),
+Chs. 2, 5, 6, 8 and 10. Citation record: [bibliography](/bibliography.md).
+Where the two books differ, the concept pages record a qualification or a
+`Contradictions` entry (one open, on the
+[matrix eigenvalue problem](/definitions/eigenvalue-problem.md) page).
 
 ## Reading guide
 
@@ -22,10 +26,12 @@ Chs. 8, 17, §21.5, §§27.1–27.3 and §27.8. Citation record: [bibliography](
 (rank–nullity, existence and uniqueness of $A\mathbf x=\mathbf b$).
 
 **2. Spectral structure.** The [matrix eigenvalue problem](/definitions/eigenvalue-problem.md)
-(similarity, diagonalisation), the
+(similarity, diagonalisation, the Jacobi eigenvalue method), the
 [spectral theorem for normal matrices](/results/spectral-theorem-normal-matrices.md),
 [quadratic and Hermitian forms](/definitions/quadratic-and-hermitian-forms.md)
-(positive definiteness, Rayleigh quotient) and the
+(positive definiteness, Rayleigh quotient and its eigenvalue bounds), the
+[variation method](/methods/variation-method.md) for the lowest eigenvalue,
+and the
 [singular value decomposition](/methods/singular-value-decomposition.md)
 (rank, minimum-norm least squares).
 
@@ -42,14 +48,17 @@ systems the [determinant and Cramer's rule](/definitions/determinant.md).
 Scalar root finding: [Newton–Raphson](/methods/newton-raphson-method.md).
 
 **5. Continuum operator theory.** [Adjoint and Hermitian differential operators](/definitions/hermitian-operator.md),
-the [Sturm–Liouville problem](/definitions/sturm-liouville-problem.md),
+the [Sturm–Liouville problem](/definitions/sturm-liouville-problem.md)
+(the two books' sign and weight conventions mapped there),
 [eigenfunction expansion](/methods/eigenfunction-expansion.md) and
 [Gram–Schmidt orthogonalisation](/methods/gram-schmidt-orthogonalisation.md).
 
 **6. Elliptic problems and Green's functions.** The
 [Poisson boundary-value problem](/definitions/poisson-boundary-value-problem.md)
 (Dirichlet, Neumann, free space), the [Green's function](/definitions/greens-function.md)
-and fundamental solutions, [Green's representation formula](/results/greens-representation-formula.md),
+(one-dimensional construction, fundamental solutions of the Laplace,
+Helmholtz and modified Helmholtz operators, the sign convention),
+[Green's representation formula](/results/greens-representation-formula.md),
 and the [method of images](/methods/method-of-images.md).
 
 **Not yet in the corpus:** SOR, Krylov methods, multigrid, preconditioning,

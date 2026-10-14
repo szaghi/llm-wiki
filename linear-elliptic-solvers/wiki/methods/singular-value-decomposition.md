@@ -5,7 +5,7 @@ description: "Factorisation A = U Sigma V^H of any M x N matrix into unitary fac
 status: established
 aliases: [SVD, singular values, pseudo-inverse, Moore-Penrose inverse, least squares, minimum-norm solution]
 tags: [linear-algebra, decomposition, least-squares]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Singular value decomposition
@@ -62,6 +62,19 @@ Moore–Penrose pseudo-inverse $A^{+}$; the book does not use the name.
 Neither the conditioning information carried by $\sigma_1/\sigma_r$ nor
 truncation of small singular values is discussed.
 
+**Second source.** [Arfken et al. (2013)](/sources/arfken-2013.md) do not
+treat the SVD in the text read; its structure appears only in exercise
+statements for a real square $A$: pairs with $A\mathbf v_k=\sigma_k\mathbf u_k$,
+$A^{\mathsf T}\mathbf u_k=\sigma_k\mathbf v_k$ make $\mathbf v_k$
+eigenvectors of $A^{\mathsf T}A$ and $\mathbf u_k$ of $AA^{\mathsf T}$ with
+eigenvalue $\sigma_k^2$, and $A=\sum_k\sigma_k\mathbf u_k\mathbf v_k^{\mathsf T}$
+(exercises 6.5.11–6.5.14, pp. 325–326; the book's $\lambda_n$). The
+exercises do not require $\sigma_k\ge0$ (exercise 6.5.14 has the value
+$-1$), so they describe the decomposition up to the sign convention, which
+a sign change of $\mathbf u_k$ restores; the name SVD is not used.
+
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §8.18.3 (pp. 301–307).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), exercises 6.5.11–6.5.14
+  (pp. 325–326).

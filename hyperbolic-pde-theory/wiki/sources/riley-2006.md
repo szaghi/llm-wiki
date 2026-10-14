@@ -9,7 +9,7 @@ year: 2006
 venue: "Cambridge University Press (3rd ed.)"
 local_file: "/home/stefano/papers/mosaic/hyperbolic-pde-theory/2006-CUP-Riley-101017CBO9780511810763.pdf"
 tags: [textbook, classification, characteristics, ode, separation-of-variables, greens-function, transform-methods]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Summary
@@ -158,6 +158,8 @@ ISBNs: hardback 978-0-521-86153-3, paperback 978-0-521-67971-8.
 * Created [Classification of second-order linear PDEs](/definitions/second-order-pde-classification.md), [Characteristic curves](/definitions/characteristic-curve.md), [Dirichlet, Neumann and Cauchy boundary conditions](/definitions/boundary-condition-types.md), [Homogeneous equations and homogeneous problems](/definitions/homogeneous-linear-problem.md), [Wronskian](/definitions/wronskian.md), [Fundamental solution](/definitions/fundamental-solution.md), [Wave equation](/definitions/wave-equation.md), [Diffusion equation](/definitions/diffusion-equation.md), [Laplace and Poisson equations](/definitions/laplace-and-poisson-equations.md).
 * Created [First-order linear PDEs: general solution along characteristics](/methods/first-order-linear-pde-characteristics.md), [General solution of constant-coefficient second-order PDEs](/methods/constant-coefficient-second-order-general-solution.md), [Separation of variables](/methods/separation-of-variables.md), [Integral transform methods](/methods/integral-transform-methods.md), [Green's functions for linear PDEs](/methods/greens-functions-for-pdes.md), [Green's functions for linear ODEs](/methods/greens-functions-for-linear-odes.md), [Variation of parameters](/methods/variation-of-parameters.md), [Solution methods for first-order ODEs](/methods/first-order-ode-solution-methods.md).
 * Created [d'Alembert's formula](/results/dalembert-formula.md), [Boundary data by equation type](/results/boundary-data-by-equation-type.md), [Uniqueness theorem for Poisson's equation](/results/uniqueness-theorem-poisson.md), [Structure of linear ODE solutions](/results/linear-ode-solution-structure.md).
+* Cited on [Helmholtz equation](/definitions/helmholtz-equation.md) (added with arfken-2013).
+* Cited on [Series solutions of linear ODEs (Frobenius' method)](/methods/frobenius-series-solutions.md) (added with arfken-2013).
 
 # Citations
 

@@ -9,11 +9,15 @@ Vector and tensor calculus in general coordinates and its discretization: integr
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 1 source, a scoped read —
-[Riley et al. (2006)](/sources/riley-2006.md), Chs. 10, 11 and 26 (continuum
-vector and tensor calculus). No source on metric discretization, the geometric
-conservation law or free-stream preservation is ingested yet; those topics
-have no pages. Citation record: [bibliography](/bibliography.md).
+**Corpus:** 2 sources, both scoped reads of textbooks —
+[Riley et al. (2006)](/sources/riley-2006.md), Chs. 10, 11 and 26, and
+[Arfken et al. (2013)](/sources/arfken-2013.md), Chs. 3 and 4 (continuum
+vector and tensor calculus; Arfken adds Jacobians and differential forms).
+Shared claims carry both citations; where the books differ in hypothesis or
+naming the pages record a qualification (no contradiction is open). No
+source on metric discretization, the geometric conservation law or
+free-stream preservation is ingested yet; those topics have no pages.
+Citation record: [bibliography](/bibliography.md).
 
 ## Reading guide
 
@@ -31,6 +35,7 @@ and the objects it induces at every point.
 * [Integral definitions of grad, div and curl](/results/integral-definitions-of-grad-div-curl.md) — operators as limits of surface and contour integrals.
 * [Divergence theorem](/results/divergence-theorem.md), [Stokes' theorem](/results/stokes-theorem.md), [Green's theorem in the plane](/results/greens-theorem-in-the-plane.md), [Green's identities](/results/greens-identities.md).
 * [Vector area element](/definitions/vector-area-element.md) and [vector area of a closed surface](/results/closed-surface-vector-area.md) — orientation, face area vectors, $\oint_S d\mathbf S=\mathbf 0$.
+* [Helmholtz theorem](/results/helmholtz-theorem.md) — a field is fixed by its divergence, curl and boundary normal component; irrotational plus solenoidal decomposition.
 
 **3. Vector operators in any coordinates.**
 
@@ -42,6 +47,15 @@ and the objects it induces at every point.
 
 * [Christoffel symbols](/definitions/christoffel-symbols.md) and the [covariant derivative](/definitions/covariant-derivative.md).
 * [General tensor](/definitions/general-tensor.md), [relative tensor](/definitions/relative-tensor.md) (weights, densities), [Cartesian tensor](/definitions/cartesian-tensor.md), [quotient law](/results/quotient-law.md), [Levi-Civita symbol](/definitions/levi-civita-symbol.md).
+
+**5. Differential forms.** The metric-free calculus of oriented integrands,
+the continuum layer onto which discrete exterior calculus maps.
+
+* [Differential form](/definitions/differential-form.md) — $p$-forms as oriented integrands of lines, surfaces, volumes; closed and exact forms.
+* [Wedge product](/definitions/wedge-product.md) — exterior algebra; the signed Jacobian appears by itself under a change of variables.
+* [Exterior derivative](/definitions/exterior-derivative.md) — $d$, with $d\circ d=0$; grad, curl, div as $d$ on 0-, 1-, 2-forms.
+* [Hodge star operator](/definitions/hodge-star.md) — $\star$, where the metric enters.
+* [Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md) — $\int_\Omega d\alpha=\int_{\partial\Omega}\alpha$, uniting Green, Stokes and the divergence theorem.
 
 Folder catalogs: [definitions](/definitions/index.md),
 [operators](/operators/index.md), [results](/results/index.md),

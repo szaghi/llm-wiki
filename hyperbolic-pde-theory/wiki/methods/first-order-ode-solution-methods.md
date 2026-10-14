@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Solution methods for first-order ODEs"
-description: "Closed-form methods for first-order ODEs of the kind the characteristic equations of first-order PDEs produce: separation of variables, exact equations and integrating factors (in particular exp of the integral of the coefficient for linear equations), homogeneous and isobaric substitutions, Bernoulli's equation, and for higher degree the factorisation and Clairaut forms with their singular solutions."
+description: "Closed-form methods for first-order ODEs of the kind the characteristic equations of first-order PDEs produce: separation of variables, exact equations and integrating factors (in particular exp of the integral of the coefficient for linear equations), homogeneous and isobaric substitutions, Bernoulli and Riccati equations, and for higher degree the factorisation and Clairaut forms with their singular solutions."
 status: established
-aliases: [integrating factor, separable ODE, exact ODE, Bernoulli equation, Clairaut equation, singular solution]
+aliases: [integrating factor, separable ODE, exact ODE, Bernoulli equation, Riccati equation, Clairaut equation, singular solution]
 tags: [ode, first-order, characteristics]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Solution methods for first-order ODEs
@@ -45,6 +45,35 @@ one-variable case by an integrating factor (§20.3.1, pp. 682–684).
   ratio of linear functions is made homogeneous by shifting the origin to
   the intersection of the two lines (eqs. 14.22–14.26, pp. 478–480).
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) cover the same first-degree
+methods (§7.2, pp. 331–339): separable equations, exact equations with the
+criterion $\partial_yM = \partial_xN$ and the solution as a line integral
+(eqs. 7.6–7.10), equations homogeneous in $x$ and $y$, isobaric equations,
+and the linear equation with $\mu = \exp\int a_0\,\mathrm dx$ (eqs.
+7.11–7.17). They agree that an integrating factor always exists but that a
+systematic construction "is known only when a first-order ODE is linear"
+(p. 334). They add that every separable equation is exact, but not
+conversely (p. 333), and two theorems for the linear equation: its
+solution is unique up to an added multiple of the homogeneous solution, and
+the homogeneous equation has only one linearly independent solution
+(p. 337). Bernoulli's equation is linearised by the same substitution
+(eqs. 7.101–7.102, p. 378).
+
+**Riccati's equation** (Arfken et al., eqs. 7.103–7.104, p. 378),
+$y' = \chi_2(x)y^2 + \chi_1(x)y + \chi_0(x)$ with $\chi_2, \chi_0 \ne 0$,
+has no general method. If one solution $y_1$ is known, $y = y_1 + v$ turns
+it into the Bernoulli equation $v' = \chi_2v^2 + (2\chi_2y_1 + \chi_1)v$.
+
+**Nonlinear equations: movable singularities** (Arfken et al., §7.8,
+pp. 378–379). The solutions of a nonlinear ODE can have singularities whose
+position depends on the data. $y' = y^2$ with $y(0) = 1$ and $y(0) = 2$
+blows up at $x = 1$ and $x = 1/2$; the linear equation
+$y' + y/(x - 1) = 0$ is singular at $x = 1$ whatever the data. A nonlinear
+equation may also have special solutions outside its general solution
+(Example 7.8.2). For characteristic equations this means a solution
+carried along a characteristic can cease to exist at a finite distance
+fixed by the data (compiler's remark; neither book draws the conclusion).
+
 ## Higher degree
 
 For $F(x,y,y') = 0$ polynomial in $y'$ (eq. 14.27): factorise into
@@ -53,7 +82,9 @@ Otherwise solve for $x$ or $y$ and differentiate (§14.3.2–14.3.3).
 **Clairaut's equation** $y = xy' + F(y')$ has the general solution
 $y = c_1x + F(c_1)$, and a **singular solution**, with no arbitrary
 constant and not obtainable from the general one, from $F'(y') + x = 0$
-(eqs. 14.39–14.43, pp. 483–484). Higher-degree equations "do not occur
+(eqs. 14.39–14.43, pp. 483–484). Arfken et al. set the same equation as an
+exercise and note that "the singular solution is the envelope of the
+general solutions" (Exercise 7.8.4, pp. 379–380). Higher-degree equations "do not occur
 often in the description of physical systems" (p. 480).
 
 ## Scope
@@ -63,9 +94,14 @@ constants. The book assumes this, saying that "a totally general proof is
 difficult" (§14.1, p. 470). There is no existence or uniqueness theorem
 for initial-value problems (e.g. a Lipschitz condition) in the chapters
 read. Uniqueness along characteristics therefore rests on nothing stated
-here.
+here. Arfken et al. do not change this for nonlinear first-order equations:
+"there is no systematic way to solve the most general first-order ODE"
+(p. 331), and their only uniqueness statements concern linear equations
+(p. 337; Exercise 7.5.1).
 
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §14.1–14.3 (pp. 468–484),
   §20.3.1 (pp. 682–684).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §7.2 (pp. 331–339),
+  §7.8 (pp. 377–380).

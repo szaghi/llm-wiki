@@ -9,7 +9,7 @@ year: 2006
 venue: "Cambridge University Press (3rd ed.)"
 local_file: "/home/stefano/papers/mosaic/fourier-analysis-of-schemes/2006-CUP-Riley-101017CBO9780511810763.pdf"
 tags: [textbook, fourier-series, fourier-transform, laplace-transform, finite-difference, stability]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Summary
@@ -182,6 +182,8 @@ Created in this run (2026-10-13):
 * Created [Milne's central-difference method](/methods/milne-central-difference-method.md)
 * Created [Square wave](/benchmarks/square-wave.md)
 * Created [Exponential-decay test equation](/benchmarks/exponential-decay-test-equation.md)
+* Cited on [Discrete Fourier transform](/definitions/discrete-fourier-transform.md) (added with arfken-2013)
+* Cited on [Sawtooth wave](/benchmarks/sawtooth-wave.md) (added with arfken-2013)
 
 # Citations
 

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Notation registry
@@ -18,7 +18,12 @@ that the body-fitted-grid literature of computational fluid dynamics
 $\xi_x,\dots$, Jacobian, covariant and contravariant base vectors) maps onto
 it one symbol to one symbol. Symbols marked *reserved* are registered for the
 scope of the bundle (metric discretization, moving grids) but no concept page
-uses them yet.
+uses them yet. On 2026-10-14 the registry was extended from
+[Arfken et al. (2013)](/sources/arfken-2013.md) (Chs. 3, 4) with a section on
+differential forms, chosen so that the discrete-exterior-calculus literature
+(cochains, discrete exterior derivative, discrete Hodge star) can map its
+continuum symbols onto it one to one, and with two auxiliary symbols; every
+addition is marked "(added 2026-10-14, arfken-2013)".
 
 ## Index and summation conventions
 
@@ -138,3 +143,24 @@ uses them yet.
 | $Q$ | strength of a point source | |
 | $\Delta$ | finite increment, e.g. $\Delta\xi^i$, $\Delta V$ | |
 | $\phi_P$ | value of $\phi$ at a point $P$ | |
+| $\mathbf y$, $\nabla_{\mathbf y}$ | a second position vector (the source point of an integral representation) and del acting on it | (added 2026-10-14, arfken-2013); used on the [Helmholtz theorem](/results/helmholtz-theorem.md) page |
+| $x_0,y_0$ | arbitrary fixed reference values of Cartesian coordinates (lower limits of integration) | (added 2026-10-14, arfken-2013) |
+
+## Differential forms
+
+All entries (added 2026-10-14, arfken-2013). A form is written with Greek
+letters $\alpha,\beta,\gamma$ (scalar fields keep $\phi,\psi$, since a scalar field
+is a 0-form); the operators are prefix operators.
+
+| Symbol | Meaning | Notes |
+|---|---|---|
+| $p$ | degree of a differential form ("$p$-form") | $0\le p\le D$ |
+| $D$ | dimension of the underlying space | $D=3$ unless a page says otherwise |
+| $\Lambda^p$ | the space of $p$-forms on the region considered | registry choice (Arfken writes no symbol); a source writing $\Omega^p$ or $\mathcal F^p$ is mapped here |
+| $\alpha,\beta,\gamma$ | generic differential forms | $\alpha\in\Lambda^p$; Arfken's $\omega,\omega'$, $\omega_j$ |
+| $dx^i$, $d\xi^i$ | basis 1-forms: the exterior derivatives of the coordinate functions | in Cartesians $(dx^1,dx^2,dx^3)\equiv(dx,dy,dz)$; in integrals the same symbols are the differentials, which is consistent because $d$ of a 0-form is its differential |
+| $\wedge$ | wedge (exterior) product, $\Lambda^p\times\Lambda^q\to\Lambda^{p+q}$ | [wedge product](/definitions/wedge-product.md) |
+| $d$ | exterior derivative, $\Lambda^p\to\Lambda^{p+1}$; on a 0-form, $d\phi=\partial_k\phi\,dx^k$ | [exterior derivative](/definitions/exterior-derivative.md); its discrete counterpart (a coboundary operator) is a discrete operator and belongs in `operators/` |
+| $\star$ | Hodge star operator, $\Lambda^p\to\Lambda^{D-p}$; requires a metric and an orientation | [Hodge star](/definitions/hodge-star.md); Arfken's prefix asterisk $*$ |
+| $\Omega$, $\partial\Omega$ | an oriented $p$-dimensional region over which a $p$-form is integrated, and its oriented boundary | [Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md). The prefix $\partial$ on a region always means its boundary: $\partial V=S$, $\partial S=C$ |
+| $\int_\Omega\alpha$ | integral of a $p$-form over an oriented $p$-dimensional region | the sign depends on the orientation |

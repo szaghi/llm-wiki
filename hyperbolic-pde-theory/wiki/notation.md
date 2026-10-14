@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Notation registry
@@ -40,6 +40,7 @@ the flux, nor $\rho$, which is a density).
 | $\Gamma$ | curve (two variables) or surface carrying initial or boundary data |
 | $\sigma$ | parameter (arc length unless stated) along $\Gamma$ or along a characteristic |
 | $x'$, $\mathbf x'$ | source point of a Green's function; also a dummy integration variable |
+| $x_0$ | expansion point of a series solution of an ODE; point carrying one-point (initial) conditions $y(x_0)$, $y'(x_0)$ (added 2026-10-14, arfken-2013) |
 | $q$ | dummy integration variable (e.g. in $\operatorname{erf}$ and d'Alembert's formula) |
 
 ## Unknowns, data and coefficients
@@ -52,15 +53,18 @@ the flux, nor $\rho$, which is a density).
 | $g$, $h$ | prescribed value and prescribed normal derivative on $\Gamma$ or $\partial\Omega$: $u = g$, $\partial_n u = h$ |
 | $u_0(x)$, $u_1(x)$ | Cauchy (initial) data of a second-order-in-time problem: $u(x,0) = u_0$, $\partial_t u(x,0) = u_1$; for a first-order-in-time problem only $u_0$ |
 | $b_1$, $b_2$, $c_0$ | coefficients of the first-order linear operator $b_1\partial_x u + b_2\partial_y u + c_0 u$ (also the lower-order part of a second-order operator) |
+| $b_3$; $\mathbf b = (b_1, b_2, b_3)$ | coefficient of $\partial_z u$, and coefficient vector, of a first-order operator in three variables, $\mathbf b\cdot\nabla u$ (added 2026-10-14, arfken-2013) |
 | $a_{11}$, $a_{12}$, $a_{22}$ | principal coefficients of the second-order operator $a_{11}\partial_x^2 u + 2a_{12}\partial_x\partial_y u + a_{22}\partial_y^2 u$ |
 | $D = a_{12}^2 - a_{11}a_{22}$ | discriminant of the second-order operator |
 | $a_k(x)$ | coefficient of $y^{(k)}$ in a linear ODE of order $n$ |
 | $n$ | order of an ODE; also a summation / mode index |
 | $c$ | wave (propagation) speed |
+| $c(u)$ | propagation speed that depends on the solution, in the scalar quasi-linear equation $\partial_t u + c(u)\,\partial_x u = 0$ (added 2026-10-14, arfken-2013; for a conservation law $c(u) = f'(u)$) |
 | $\kappa$ | diffusivity (diffusion coefficient), dimensions length$^2$ time$^{-1}$ |
 | $\rho$ | mass density (never a coordinate, never a source) |
 | $\alpha(\mathbf x)$ | coefficient of a divergence-form operator $\nabla\cdot(\alpha\nabla u)$ |
 | $L$; $L_x$, $L_y$; $R_0$ | lengths: interval or bar length; rectangle sides; radius of a disc, cylinder or sphere |
+| $L_z$ | third side of a rectangular box (added 2026-10-14, arfken-2013) |
 | $c_j$, $C_j$, $B_n$ (also primed) | arbitrary constants and expansion coefficients, local to the page that defines them |
 | $u_h$, $u_s$ | homogeneous-problem part and steady-state part of a decomposed solution |
 
@@ -85,6 +89,7 @@ the flux, nor $\rho$, which is a density).
 |---|---|
 | $\xi$, $\eta$ | characteristic (canonical) coordinates of a second-order operator; $\xi$ alone is the invariant of a first-order operator, constant along its characteristics |
 | $\beta_1$, $\beta_2$ | roots of $a_{22}\beta^2 + 2a_{12}\beta + a_{11} = 0$; the characteristic coordinates of a constant-coefficient operator are $x + \beta_j y$ |
+| $\hat\xi$, $\hat\eta$ | non-characteristic coordinates that diagonalise a constant-coefficient principal part, $\hat\xi = a_{22}^{1/2}x - a_{22}^{-1/2}a_{12}y$, $\hat\eta = a_{22}^{-1/2}y$ ($a_{22} > 0$) (added 2026-10-14, arfken-2013) |
 | $F$, $G$ | arbitrary functions in a general solution, e.g. $u = F(x - ct) + G(x + ct)$ (a context of its own; $G$ with two arguments is a Green's function) |
 | $\zeta = x/(2\sqrt{\kappa t})$ | similarity variable of the one-dimensional diffusion equation |
 | $\hat{\mathbf n}\cdot\mathbf x \mp ct$ | phase of a plane wave travelling along the unit vector $\hat{\mathbf n}$ |
@@ -97,10 +102,12 @@ the flux, nor $\rho$, which is a density).
 | $y_c$, $y_p$ | complementary function, particular integral |
 | $W(y_1, \dots, y_n)$ | Wronskian |
 | $\nu_j$ | roots of the auxiliary (characteristic) polynomial of a constant-coefficient linear ODE |
+| $\nu$ | leading exponent of a Frobenius series $y = \sum_j C_j(x - x_0)^{\nu + j}$; the roots of its indicial equation are written $\nu_1, \nu_2$ (added 2026-10-14, arfken-2013) |
 | $\mu(x)$ | integrating factor of a first-order ODE |
 | $k_j(x)$ | varied parameters in variation of parameters |
 | $M(x,y)\,\mathrm dx + N(x,y)\,\mathrm dy = 0$ | first-order ODE written as a differential form |
 | $\gamma$ | exponent of Bernoulli's equation |
+| $\chi_0$, $\chi_1$, $\chi_2$ | coefficients of Riccati's equation $y' = \chi_2y^2 + \chi_1y + \chi_0$ (added 2026-10-14, arfken-2013) |
 | $U(x,y)$ | potential of an exact differential form, $M\,\mathrm dx + N\,\mathrm dy = \mathrm dU$ (ODE pages only) |
 | $x_a$, $x_b$ | ends of the interval of a boundary-value problem |
 | $y_b(x)$ | polynomial carrying inhomogeneous boundary values, subtracted to make them homogeneous |
@@ -113,6 +120,7 @@ the flux, nor $\rho$, which is a density).
 | $\tilde u(k) = \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty} u(x)\,e^{-ikx}\,\mathrm dx$ | Fourier transform (symmetric convention) |
 | $\bar u(p) = \int_0^\infty u(t)\,e^{-pt}\,\mathrm dt$ | Laplace transform; $p$ is the transform variable |
 | $k$, $\mathbf k$ | wavenumber, wave vector; separation constant written $\pm k^2$ |
+| $k_x$, $k_y$, $k_z$ | Cartesian components of $\mathbf k$ (separation constants of the Cartesian Helmholtz equation) (added 2026-10-14, arfken-2013) |
 | $\omega$ | angular frequency |
 | $X(x)$, $Y(y)$, $Z(z)$, $\mathcal T(t)$ | separated factors in Cartesian coordinates |
 | $U(\mathbf x)$ | spatial factor of a space–time separation $u = U(\mathbf x)\mathcal T(t)$ |
@@ -120,6 +128,7 @@ the flux, nor $\rho$, which is a density).
 | $\ell$ | Legendre degree (bare $\ell$, no superscript) |
 | $P_\ell$, $P_\ell^n$, $Q_\ell^n$ | Legendre and associated Legendre functions |
 | $J_n$, $Y_n$ | Bessel functions of the first and second kind of order $n$ |
+| $j_\ell$, $y_\ell$ | spherical Bessel functions, $j_\ell(kr) = \sqrt{\pi/(2kr)}\,J_{\ell+1/2}(kr)$, and the second solution $y_\ell$ (added 2026-10-14, arfken-2013) |
 | $\varphi_n$, $\lambda_n$ | eigenfunctions and eigenvalues of a linear operator, $\mathcal L\varphi_n = \lambda_n\varphi_n$ (subscript $n$; never confuse with $\lambda^{(p)}$) |
 
 ## Green's functions

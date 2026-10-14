@@ -5,13 +5,14 @@ description: "The scalar operator ∇²φ = ∇·∇φ: Σ∂²φ/∂x_k² in Ca
 status: established
 aliases: [del squared, Laplace operator, vector Laplacian, Laplace-Beltrami operator]
 tags: [vector-calculus, operators, curvilinear-coordinates]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Laplacian
 
 **Definition** ([Riley et al. (2006)](/sources/riley-2006.md), eqs. (10.34),
-(10.39), pp. 352, 356): $\nabla^2\phi=\nabla\cdot\nabla\phi$, in Cartesians
+(10.39), pp. 352, 356; [Arfken et al. (2013)](/sources/arfken-2013.md),
+eq. (3.62), p. 154): $\nabla^2\phi=\nabla\cdot\nabla\phi$, in Cartesians
 $\partial^2\phi/\partial x_k\partial x_k$. As a flux,
 $\nabla^2\phi=\lim_{V\to0}\frac1V\oint_S\nabla\phi\cdot d\mathbf S$ (p. 400).
 
@@ -20,11 +21,16 @@ $\nabla^2\phi=\lim_{V\to0}\frac1V\oint_S\nabla\phi\cdot d\mathbf S$ (p. 400).
 $$\nabla^2\phi=\frac{1}{h_1h_2h_3}\left[\partial_1\!\left(\frac{h_2h_3}{h_1}\partial_1\phi\right)+\partial_2\!\left(\frac{h_3h_1}{h_2}\partial_2\phi\right)+\partial_3\!\left(\frac{h_1h_2}{h_3}\partial_3\phi\right)\right],$$
 
 obtained by inserting the orthogonal [gradient](/definitions/gradient.md) into
-the orthogonal [divergence](/definitions/divergence.md). Cylindrical and
+the orthogonal [divergence](/definitions/divergence.md); identically in Arfken
+et al. (eq. (3.142), p. 186), who note that it "contains no cross
+derivatives ... because the coordinate system is orthogonal". Cylindrical and
 spherical forms: Tables 10.2–10.3; for spherical polars
 $\frac{1}{r^2}\partial_r(r^2\partial_r\phi)=\frac1r\partial_r^2(r\phi)$ (p. 363).
 Radial functions: $\nabla^2\phi(r)=\dfrac{d^2\phi}{dr^2}+\dfrac2r\dfrac{d\phi}{dr}$, and
-$\nabla^2(1/r)=-4\pi\delta(\mathbf x)$ (p. 355).
+$\nabla^2(1/r)=-4\pi\delta(\mathbf x)$ (p. 355); both also in Arfken et al.
+(Example 3.6.1, eqs. (3.120), (3.163), exercise 3.10.34; pp. 154, 177,
+192, 202), who stress that the delta-function form is "only meaningful when
+inserted into an integral".
 
 **General coordinates** (eq. (26.98), p. 974): with the contravariant
 components $v^j=g^{jk}\partial_k\phi$ of $\nabla\phi$ in the general divergence,
@@ -32,7 +38,8 @@ components $v^j=g^{jk}\partial_k\phi$ of $\nabla\phi$ in the general divergence,
 $$\nabla^2\phi=\frac{1}{\sqrt g}\frac{\partial}{\partial\xi^j}\left(\sqrt g\,g^{jk}\frac{\partial\phi}{\partial\xi^k}\right),$$
 
 which reduces to the orthogonal form with $\sqrt g=h_1h_2h_3$,
-$g^{jj}=h_j^{-2}$ (worked example, p. 974). Off-diagonal $g^{jk}$ of a
+$g^{jj}=h_j^{-2}$ (worked example, p. 974). Arfken et al. derive the same
+formula and the same reduction (eq. (4.70), p. 225). Off-diagonal $g^{jk}$ of a
 non-orthogonal system produce mixed derivatives.
 
 **Vector Laplacian.** $\nabla^2\mathbf v$ is defined through
@@ -42,7 +49,15 @@ coordinates) does it act component by component,
 $(\nabla^2\mathbf v)_i=\nabla^2v_i$ (eq. (10.42)); in cylindrical or
 spherical polars the derivatives of the basis vectors contribute, so
 $(\nabla^2\mathbf v)_R\ne\nabla^2\hat v_R$ in general (p. 357; exercise 10.18).
+Arfken et al. take the same identity as the definition (eq. (3.70), p. 155),
+state the same restriction to Cartesians, and give the components
+explicitly: in cylindrical polars
+$(\nabla^2\mathbf v)_R=\nabla^2\hat v_R-\hat v_R/R^2-(2/R^2)\partial_\varphi\hat v_\varphi$,
+$(\nabla^2\mathbf v)_\varphi=\nabla^2\hat v_\varphi-\hat v_\varphi/R^2+(2/R^2)\partial_\varphi\hat v_R$,
+$(\nabla^2\mathbf v)_z=\nabla^2\hat v_z$ (eq. (3.151), p. 190), and the
+spherical components in eq. (3.160) (p. 192).
 
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §§10.7.2, 10.8.2, pp. 352–357; §§10.9–10.10, pp. 360–369; §11.7, p. 400; §26.20, pp. 973–974; exercise 10.18, pp. 372–373.
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §3.6, pp. 154–155; §3.9, p. 177; §3.10, pp. 186, 189–192; §4.3, p. 225; exercise 3.10.34, p. 202.

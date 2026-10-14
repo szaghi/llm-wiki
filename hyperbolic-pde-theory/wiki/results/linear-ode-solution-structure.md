@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Structure of linear ODE solutions"
-description: "The general solution of an nth-order linear ODE is the complementary function, a superposition of n linearly independent homogeneous solutions with n arbitrary constants, plus any particular integral; with constant coefficients the homogeneous solutions come from the roots of the auxiliary polynomial (x^k e^{nu x} for a repeated root), and Euler, Legendre and canonical-form substitutions reduce some variable-coefficient cases."
+description: "The general solution of an nth-order linear ODE is the complementary function, a superposition of n linearly independent homogeneous solutions with n arbitrary constants, plus any particular integral (for second order, at most two independent solutions is proved); with constant coefficients the homogeneous solutions come from the roots of the auxiliary polynomial (x^k e^{nu x} for a repeated root), and Euler, Legendre and canonical-form substitutions reduce some variable-coefficient cases."
 status: established
 aliases: [complementary function, particular integral, auxiliary equation, Euler equation, reduction of order, undetermined coefficients]
 tags: [ode, linearity, superposition]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-14T00:00:00Z
 ---
 
 # Structure of linear ODE solutions
@@ -26,6 +26,26 @@ matter how simple (or complicated)" (p. 492). The superposition argument
 arbitrary constants is assumed: "a totally general proof is difficult"
 (§14.1, p. 470). No existence theorem is given.
 
+[Arfken et al. (2013)](/sources/arfken-2013.md) state the same structure,
+$y = c_1y_1 + c_2y_2 + y_p$ for second order (§7.5, eqs. 7.24–7.26,
+p. 346), and supply part of the missing theory for linear equations:
+
+* *At most $n$.* A second-order linear homogeneous ODE has at most two
+  independent solutions, proved with the [Wronskian](/definitions/wronskian.md);
+  the extension to $n$th order is asserted (§7.6, pp. 361–362).
+* *At least two, near a regular point.* About an ordinary or regular
+  singular point at least one power-series solution exists (Fuchs'
+  theorem, stated without proof), and a second follows from the Wronskian
+  integral, so the general solution is complete "assuming that the point
+  of expansion is no worse than a regular singularity" (§7.5, p. 355; §7.6,
+  p. 369; see [series solutions of linear ODEs](/methods/frobenius-series-solutions.md)).
+* *Initial-value uniqueness* for second order is posed as an exercise,
+  by comparing Taylor series (Exercise 7.5.1, p. 356).
+
+For first-order linear equations the theory is complete in both books
+(Arfken et al., §7.2, p. 337). For general $n$, and for a proof of Fuchs'
+theorem, both books leave the gap open.
+
 ## Constant coefficients
 
 Trying $y = e^{\nu x}$ in the homogeneous equation gives the auxiliary
@@ -37,6 +57,10 @@ roots $\nu_j$:
   $e^{\Re\nu\,x}(c_1\cos(\Im\nu\,x) + c_2\sin(\Im\nu\,x))$ (eq. 15.12);
 * a $k$-fold root $\nu$: $(c_1 + c_2x + \dots + c_kx^{k-1})e^{\nu x}$
   (eqs. 15.13–15.14, pp. 493).
+
+Arfken et al. agree (§7.3, eq. 7.18, p. 342). They motivate the repeated
+root by letting two roots merge: if $e^{\nu x}$ is a solution, so is
+$\partial_\nu e^{\nu x} = xe^{\nu x}$ (p. 342).
 
 **Particular integrals by undetermined coefficients:** for a forcing that
 is exponential, sinusoidal, polynomial, or a sum or product of these, try
@@ -62,11 +86,16 @@ transform](/methods/integral-transform-methods.md) (pp. 495, 501).
 * **Reduction of order:** with one homogeneous solution $y_1$ known,
   $y = y_1v$ gives an equation of order $n - 1$ in $v'$. For second order
   this yields both the second solution and a particular integral
-  (§15.2.3, pp. 506–507).
+  (§15.2.3, pp. 506–507). Arfken et al. obtain the second solution in
+  closed form from Abel's formula,
+  $y_2 = y_1\int^x \exp(-\int^{q}a_1)\,y_1(q)^{-2}\,\mathrm dq$
+  (eq. 7.67, p. 363), and show it is the same as substituting $y_2 = y_1v$
+  (Exercise 7.6.25, p. 374).
 * **Canonical form:** for $y'' + a_1y' + a_0y = \psi$,
   $y = v\exp(-\tfrac12\int a_1\,\mathrm dx)$ removes the first-derivative
   term, leaving $v'' + (a_0 - \tfrac14a_1^2 - \tfrac12a_1')v = \psi\exp(\tfrac12\int a_1\,\mathrm dx)$
-  (eqs. 15.70–15.73, pp. 516–517).
+  (eqs. 15.70–15.73, pp. 516–517). Arfken et al. give the same
+  transformation and coefficient (Exercise 7.6.12, p. 371).
 
 **Discrete analogue.** Linear recurrence relations with constant
 coefficients have the same complementary-plus-particular structure and a
@@ -77,3 +106,6 @@ compile them further (discrete theory is out of scope).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §14.1 (p. 470), §15
   introduction and §15.1–15.2 (pp. 490–517).
+* [Arfken et al. (2013)](/sources/arfken-2013.md), §7.3 (pp. 342–343),
+  §7.5 (pp. 346, 355–356), §7.6 (pp. 361–363, 369), Exercises 7.6.12,
+  7.6.25.

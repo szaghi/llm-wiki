@@ -32,8 +32,17 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
   filed as `2006-CUP-Riley-101017CBO9780511810763.pdf`, slug
   `riley-2006`. The same book founds four bundles; each reads only its
   own chapters: here Chs. 14–15 (first- and higher-order ODEs), 20 (PDEs: general and particular solutions), 21 (separation of variables, transform methods, Green's functions). PDF page = printed page + 30.
-- Further sources arrive as the user files them (their own database or
-  `~/papers/re-download/`).
+- Second source (2026-10-14, D21): Arfken, Weber & Harris, *Mathematical
+  Methods for Physicists*, 7th ed. (Academic Press, 2013;
+  doi:10.1016/C2009-0-30629-7, ISBN 978-0-12-384654-9, verified on
+  Crossref), slug `arfken-2013`, filed as
+  `2013-AcademicPress-Arfken-101016C20090306297.pdf`. Read here: Chs. 7 (ordinary differential equations) and 9 (partial differential equations).
+  An ebook conversion: the PDF-to-printed page offset drifts, so cite
+  printed page numbers. Its chapter-end "Additional Readings" are its
+  reference list.
+- Further sources: see `~/papers/mosaic/llm-wiki-planned-ingestions.md`
+  (a plan outside the repository; ingested-ness is derived from Source
+  pages).
 
 ## Bundle specifics
 
@@ -55,6 +64,8 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
 - Commits: `docs(hyperbolic-pde-theory): ingest <source-slug>`.
 
 ## Status
+
+**arfken-2013 staged 2026-10-14** (D21, scoped read): 2 new pages (Helmholtz equation, Frobenius series solutions); one Open contradiction (Helmholtz Dirichlet eigenvalues for the minus sign: Arfken p. 413 vs Riley Ex. 20.25); bibliography 27 entries.
 
 **Scaffolded 2026-10-13** with the founding source `riley-2006`
 (scoped read: Chs. 14–15 (first- and higher-order ODEs), 20 (PDEs: general and particular solutions), 21 (separation of variables, transform methods, Green's functions)).

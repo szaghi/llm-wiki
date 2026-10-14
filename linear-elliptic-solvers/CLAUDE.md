@@ -37,8 +37,17 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
   filed as `2006-CUP-Riley-101017CBO9780511810763.pdf`, slug
   `riley-2006`. The same book founds four bundles; each reads only its
   own chapters: here Chs. 8 (matrices and vector spaces), 17 (eigenfunction methods), 21.5 (Green's functions for inhomogeneous PDEs), 27.1–27.3 and 27.8 (numerical: equations, iteration, simultaneous linear equations, PDEs). PDF page = printed page + 30.
-- Further sources arrive as the user files them (their own database or
-  `~/papers/re-download/`).
+- Second source (2026-10-14, D21): Arfken, Weber & Harris, *Mathematical
+  Methods for Physicists*, 7th ed. (Academic Press, 2013;
+  doi:10.1016/C2009-0-30629-7, ISBN 978-0-12-384654-9, verified on
+  Crossref), slug `arfken-2013`, filed as
+  `2013-AcademicPress-Arfken-101016C20090306297.pdf`. Read here: Chs. 2 (determinants and matrices), 5 (vector spaces), 6 (eigenvalue problems), 8 (Sturm–Liouville theory), 10 (Green's functions).
+  An ebook conversion: the PDF-to-printed page offset drifts, so cite
+  printed page numbers. Its chapter-end "Additional Readings" are its
+  reference list.
+- Further sources: see `~/papers/mosaic/llm-wiki-planned-ingestions.md`
+  (a plan outside the repository; ingested-ness is derived from Source
+  pages).
 
 ## Bundle specifics
 
@@ -60,6 +69,8 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
 - Commits: `docs(linear-elliptic-solvers): ingest <source-slug>`.
 
 ## Status
+
+**arfken-2013 staged 2026-10-14** (D21, scoped read): 1 new page (methods/variation-method), 15 updated; one Open contradiction (is a non-unitary similarity a change of basis? Riley §8.15 vs Arfken §5.6); bibliography 36 entries.
 
 **Scaffolded 2026-10-13** with the founding source `riley-2006`
 (scoped read: Chs. 8 (matrices and vector spaces), 17 (eigenfunction methods), 21.5 (Green's functions for inhomogeneous PDEs), 27.1–27.3 and 27.8 (numerical: equations, iteration, simultaneous linear equations, PDEs)).
