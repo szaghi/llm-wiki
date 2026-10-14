@@ -1,0 +1,26 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Linear and elliptic solvers"
+summary = "Linear algebra for discretized PDEs and the solution of elliptic problems: vector spaces and operators, eigenproblems, Hermitian and Sturm-Liouville theory, direct and iterative solvers (relaxation, Krylov, multigrid, preconditioning), Poisson and Helmholtz problems with Green's functions and isolated boundary conditions."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/linear-elliptic-solvers"
+keywords = [
+  "linear algebra",
+  "eigenvalue",
+  "Hermitian operator",
+  "Sturm-Liouville",
+  "Green's function",
+  "Poisson equation",
+  "Helmholtz equation",
+  "Gauss-Seidel",
+  "Jacobi iteration",
+  "relaxation",
+  "SOR",
+  "Krylov",
+  "conjugate gradient",
+  "GMRES",
+  "multigrid",
+  "preconditioning",
+  "elliptic solver",
+  "isolated boundary conditions",
+]

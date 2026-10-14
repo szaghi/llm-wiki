@@ -1,0 +1,51 @@
+---
+type: Result
+title: "Stokes' theorem"
+description: "For a vector field on a two-sided open surface S with perimeter C, ∫_S (∇×v)·dS = ∮_C v·dx; with the corollaries ∫_S dS×∇φ = ∮_C φ dx and ∫_S (dS×∇)×b = ∮_C dx×b, and a tensor form."
+status: established
+aliases: [Kelvin-Stokes theorem, curl theorem]
+tags: [integral-theorems, vector-calculus]
+timestamp: 2026-10-13T00:00:00Z
+---
+
+# Stokes' theorem
+
+**Statement** ([Riley et al. (2006)](/sources/riley-2006.md), §11.9,
+eq. (11.23), p. 406). For a two-sided open surface $S$ bounded by the closed
+curve $C$, with $d\mathbf S$ oriented right-handedly with the traversal of
+$C$ ([vector area element](/definitions/vector-area-element.md)),
+
+$$\int_S(\nabla\times\mathbf v)\cdot d\mathbf S=\oint_C\mathbf v\cdot d\mathbf x.$$
+
+It holds for simply and multiply connected two-sided open surfaces.
+
+**Argument given** (p. 406): divide $S$ into small areas, apply the
+circulation definition of the [curl](/definitions/curl.md),
+$(\nabla\times\mathbf v)\cdot\hat{\mathbf n}_iS_i\approx\oint_{C_i}\mathbf v\cdot d\mathbf x$
+(eq. (11.17)); interior edges are traversed twice in opposite directions and
+cancel, leaving $C$.
+
+**Corollaries** (eqs. (11.24)–(11.25), p. 407; by $\mathbf v=\phi\mathbf c$
+and $\mathbf v=\mathbf b\times\mathbf c$ with $\mathbf c$ constant):
+
+$$\int_S d\mathbf S\times\nabla\phi=\oint_C\phi\,d\mathbf x,\qquad \int_S(d\mathbf S\times\nabla)\times\mathbf b=\oint_C d\mathbf x\times\mathbf b.$$
+
+With $\mathbf b=\mathbf x$ the second gives the vector area
+$\mathbf S=\frac12\oint_C\mathbf x\times d\mathbf x$ (p. 408;
+[closed-surface vector area](/results/closed-surface-vector-area.md)). In the
+plane, Stokes' theorem reduces to
+[Green's theorem in the plane](/results/greens-theorem-in-the-plane.md)
+(p. 407). It is the step (3)⇒(1) in the characterisation of a
+[conservative vector field](/definitions/conservative-vector-field.md), and it
+converts integral circulation laws into differential ones (§11.9.2,
+p. 408). Line singularities are admitted with a delta function
+($\nabla\times\mathbf u=2\pi\delta(R)$ for the line vortex, p. 409).
+
+**Tensor form** (§26.13, p. 955; stated by extension):
+$\int_S\varepsilon_{ijk}\,\partial v_k/\partial x_j\,\hat n_i\,dS=\oint_Cv_k\,dx_k$,
+and with $v_k$ replaced by any Cartesian tensor component carrying the index
+$k$ ([Levi-Civita symbol](/definitions/levi-civita-symbol.md)).
+
+# Citations
+
+* [Riley et al. (2006)](/sources/riley-2006.md), §11.9, pp. 406–409; §26.13, p. 955.

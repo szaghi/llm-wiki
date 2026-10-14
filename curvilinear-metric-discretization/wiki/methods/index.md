@@ -1,0 +1,3 @@
+# Methods
+
+Algorithms and schemes.

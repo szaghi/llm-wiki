@@ -1,0 +1,22 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Fourier analysis of schemes"
+summary = "Fourier series and transforms and their use on discretizations: convergence, Gibbs phenomenon, Parseval, the discrete Fourier transform, von Neumann stability, modified wavenumber, numerical dispersion and dissipation, spectral resolution of finite-difference and finite-volume schemes."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/fourier-analysis-of-schemes"
+keywords = [
+  "Fourier series",
+  "Fourier transform",
+  "Parseval",
+  "Gibbs phenomenon",
+  "discrete Fourier transform",
+  "FFT",
+  "von Neumann stability",
+  "amplification factor",
+  "modified wavenumber",
+  "numerical dispersion",
+  "numerical dissipation",
+  "spectral resolution",
+  "resolving efficiency",
+  "Laplace transform",
+]

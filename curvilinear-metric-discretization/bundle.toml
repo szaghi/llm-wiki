@@ -1,0 +1,23 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Curvilinear and metric discretization"
+summary = "Vector and tensor calculus in general coordinates and its discretization: integral theorems, curvilinear coordinates, metric tensor and Christoffel symbols, covariant derivatives, metric identities, the geometric conservation law, free-stream preservation, finite differences and finite volumes on curvilinear and moving grids."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/curvilinear-metric-discretization"
+keywords = [
+  "curvilinear coordinates",
+  "metric tensor",
+  "Christoffel symbols",
+  "covariant derivative",
+  "Jacobian",
+  "tensor calculus",
+  "divergence theorem",
+  "Stokes theorem",
+  "geometric conservation law",
+  "GCL",
+  "metric identities",
+  "free-stream preservation",
+  "moving grids",
+  "body-fitted grids",
+  "coordinate transformation",
+]

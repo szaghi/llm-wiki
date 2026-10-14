@@ -1,0 +1,23 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Hyperbolic PDE theory"
+summary = "Continuum theory of partial differential equations with emphasis on hyperbolic systems: classification, characteristics, general and particular solutions, separation of variables and transform methods, well-posedness and uniqueness, weak and entropy solutions, Riemann problems, characteristic boundary conditions."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/hyperbolic-pde-theory"
+keywords = [
+  "partial differential equations",
+  "hyperbolic system",
+  "characteristics",
+  "classification of PDEs",
+  "wave equation",
+  "diffusion equation",
+  "well-posedness",
+  "uniqueness",
+  "Cauchy problem",
+  "weak solution",
+  "entropy solution",
+  "Riemann problem",
+  "Rankine-Hugoniot",
+  "characteristic boundary conditions",
+  "separation of variables",
+]

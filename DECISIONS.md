@@ -300,3 +300,26 @@ rendered site lets a reader without Claude Code use the bundles; the plugin
 lets a Claude Code user consult them from any directory; the generated
 registry keeps the public bundle list honest; and KaTeX at build time turns
 the math law into a check over every page.
+
+## D20 — Four bundles founded on a textbook (2026-10-13)
+
+**Decision (user):** four new bundles, `linear-elliptic-solvers`,
+`curvilinear-metric-discretization`, `hyperbolic-pde-theory` and
+`fourier-analysis-of-schemes`, are founded on one textbook, Riley, Hobson &
+Bence, *Mathematical Methods for Physics and Engineering* (3rd ed., 2006),
+each reading only its own chapters. Further sources are filed by the user
+as needed. Variational methods were declined; integral equations and
+symmetry/probability topics were deferred as lower interest.
+
+**How it relates to D12 and D17:** the book's PDF is copied into each of
+the four archives, and each bundle ingests it as `riley-2006` for its own
+scope, with no links across bundles. `hyperbolic-pde-theory` and
+`fourier-analysis-of-schemes` overlap `high-order-capturing-schemes` by
+design: they compile continuum theory and analysis tools, and that bundle
+keeps the schemes.
+
+**Why:** the book's topics underlie the user's current work and have a
+research literature beyond it. A textbook is a sound reference for
+definitions and standard results, but it prints no reference list, so it
+seeds no ingestion frontier; the bundles grow as the user files sources,
+and the works the book cites in its text form its reference list.
