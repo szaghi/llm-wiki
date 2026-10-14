@@ -345,3 +345,35 @@ differential forms), and, unlike Riley, brings chapter reading lists that
 seed each bundle's citation record. Orthogonal polynomials and quadrature
 were first set aside with Riley's special functions; they are the bases and
 quadratures of DG, spectral and multipole methods, so they earn a bundle.
+
+## D22 — Plasma-propulsion bundle with a whole journal volume as context (2026-10-14)
+
+**Decision (user):** a bundle `plasma-propulsion-simulation` for the
+numerical modelling of electric and plasma thrusters, compiled from the
+108 PDFs of `~/papers/mosaic/plasma-propulsion-simulation`, in chunks of
+20 sources, each staged for the human's review and commit before the next
+starts, with a per-chunk digest of contradictions and other issues in
+`plasma-propulsion-simulation/INGESTION-ISSUES.md`.
+
+**The archive's composition, recorded because it shapes the bundle:** 16
+papers come from the propulsion and plasma literature; the other 92 are
+the complete *Acta Astronautica* vol. 151 (October 2018), including the
+issue's front matter and one paper misfiled under a Bird et al. (2009)
+filename, of which three papers (an ion-thruster plume PIC
+study, an ablative pulsed plasma thruster, a laser-ablation plasma
+thruster) are in the domain and a few more touch electric propulsion or
+plasma at a distance. Asked whether to ingest the core only, the user
+chose all 108.
+
+**How the scope is kept:** every file gets a Source page and its
+reference list in the bibliography, so "is it ingested?" keeps its single
+answer. Concept pages are created only for the plasma-propulsion domain;
+an off-domain Acta paper presenting its own named method does not seed a
+concept page, and its Source page says so. The core is ingested first so
+the registry and the reading guide are built from it.
+
+**Why:** the user's instruction is explicit and the compiler cannot judge
+what the human means to do with the volume. The cost is a bibliography in
+which much of the citation graph lies outside the domain; the ingestion
+frontier derived from it must be read with that in mind, and the scope
+rule keeps the concept layer from diluting.

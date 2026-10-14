@@ -1,0 +1,27 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Plasma propulsion simulation"
+summary = "Numerical modelling of electric and plasma thrusters: Hall, gridded-ion, helicon, pulsed and laser-ablation thrusters; particle-in-cell, DSMC, hybrid and fluid models of their discharges and plumes; anomalous electron transport, oscillations and instabilities; verification, uncertainty quantification and calibration; GPU particle codes. The archive also holds the complete Acta Astronautica volume 151 (2018) as space-engineering context."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/plasma-propulsion-simulation"
+keywords = [
+  "electric propulsion",
+  "Hall thruster",
+  "ion thruster",
+  "helicon thruster",
+  "pulsed plasma thruster",
+  "plasma plume",
+  "particle-in-cell",
+  "PIC-MCC",
+  "DSMC",
+  "hybrid fluid-kinetic model",
+  "electron fluid model",
+  "anomalous electron transport",
+  "breathing mode",
+  "electron drift instability",
+  "magnetic nozzle",
+  "low-temperature plasma",
+  "Bayesian calibration",
+  "uncertainty quantification",
+  "WarpX",
+]
