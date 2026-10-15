@@ -13,7 +13,7 @@ quantification and calibration; GPU particle codes.
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 61 of the archive's 108 files ingested. Chunk 1, the core (20):
+**Corpus:** 81 of the archive's 108 files ingested. Chunk 1, the core (20):
 three reviews of plasma-propulsion modelling
 ([Boyd 2005](/sources/boyd-2005.md), [Taccogna & Garrigues 2019](/sources/taccogna-2019.md),
 [Taccogna et al. 2023](/sources/taccogna-2023.md)), a review of helicon thrusters and
@@ -26,9 +26,11 @@ pages (high-speed aerothermodynamics and chemical propulsion papers,
 outside this bundle's domain); chunk 3 added the five that touch plasma or
 electric propulsion, ingested in full (an ion-beam shepherd, magnetic drag in
 the ionosphere, an electrospray CubeSat constellation, a plasma wind tunnel, an
-electrodynamic tether), and 15 more Source-only pages. Source-only pages are
+electrodynamic tether), and 15 more Source-only pages; chunk 4 added 20
+Source-only pages (spacecraft guidance and control, structures, missions,
+communications, SETI and policy papers). Source-only pages are
 listed in the [sources catalog](/sources/index.md) with the tag `context`. The
-[bibliography](/bibliography.md) lists the 2738 works the 61 sources cite.
+[bibliography](/bibliography.md) lists the 3360 works the 81 sources cite.
 
 ## Reading guide
 

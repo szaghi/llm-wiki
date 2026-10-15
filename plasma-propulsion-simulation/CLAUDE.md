@@ -108,7 +108,14 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
 
 ## Status
 
-**Chunk 3 staged 2026-10-15:** the five plasma-related Acta papers in full
+**Chunk 4 staged 2026-10-15:** 20 Source-only pages; 81 of 108 ingested,
+3360 bibliography entries; no concept page changed. Two re-slugs
+(hady-2018 → `ghassabian-2018`, le-2018 → `lemay-2018`); the old cited-work
+entries `kim-2018` and `liu-2018` were re-keyed to `kim-2018-b` and
+`liu-2018-e` first. Next: chunk 5, 20 Source-only pages including the
+front matter `unknown-2018`; first re-key the existing `wu-2018` entry.
+
+**Chunk 3 committed 2026-10-15 (20de74d):** the five plasma-related Acta papers in full
 (alpatov-2018, shuvalov-2018, gomezjenkins-2018, garciagarrido-2018,
 yang-2018) and 15 Source-only pages; 61 of 108 ingested, 2738 bibliography
 entries; two new concept pages (ion-beam shepherd, magnetized-body plasma

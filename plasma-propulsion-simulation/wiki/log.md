@@ -2,6 +2,24 @@
 
 ## 2026-10-15
 
+* **Chunk 4: 20 Source-only pages** (D23): ghassabian-2018, haley-2018,
+  helman-2018, hippke-2018, hippke-2018-b, hou-2018, huang-2018, huang-2018-b,
+  huang-2018-c, joffre-2018, ke-2018, kim-2018, kumar-2018, lemay-2018,
+  li-2018-b, li-2018-c, liu-2018, liu-2018-b, loureiro-2018, mcdowell-2018,
+  all outside this bundle's domain: each has a Source page tagged `context`
+  and its reference list. No concept page created or changed (scope rule).
+  * **Identity:** the file filed under "Hady" is by Ghassabian et al. (page 1
+    prints every name surname-first; Crossref swaps given and family names
+    for all six authors), slug `ghassabian-2018`; the file filed under "Le" is by Le May et
+    al. (Crossref family name), slug `lemay-2018`.
+  * **Bibliography:** before the merge, the cited-work entries `kim-2018`
+    (New J. Phys. 20:063033) and `liu-2018` (Rev. Sci. Instrum. 89:043502)
+    were re-keyed to `kim-2018-b` and `liu-2018-e`, freeing the slugs of two
+    chunk-4 papers. 20 reference lists merged with `tools/bib_merge.py`
+    (FLAGS 0, `--dupes` clean), 2738 → 3360 entries. hippke-2018's citation of
+    a different 2018 arXiv paper is `hippke-2018-c`; its citation of the arXiv
+    preprint of hippke-2018-b is merged into that ingested paper.
+
 * **Chunk 3: five plasma-related papers in full, 15 Source-only pages** (D23).
   Read by 20 reader agents into scratch notes, drafted by five drafters from
   the notes only, installed by the compiler, audited read-only before staging.

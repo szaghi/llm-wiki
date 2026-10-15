@@ -6,6 +6,75 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — 20 Source-only pages (2026-10-15)
+
+Sources: ghassabian-2018, haley-2018, helman-2018, hippke-2018, hippke-2018-b,
+hou-2018, huang-2018, huang-2018-b, huang-2018-c, joffre-2018, ke-2018,
+kim-2018, kumar-2018, lemay-2018, li-2018-b, li-2018-c, liu-2018, liu-2018-b,
+loureiro-2018, mcdowell-2018. These cover spacecraft GNC, structures and
+impact shielding, missions, communications, SETI, astrobiology and policy,
+all outside this bundle's domain (D23). No concept page changed, and the
+scope rule rules out any contradiction. Each paper's slips are on its Source
+page under "Recorded as printed". The read-only audit found no errors and 7
+minor items, all fixed.
+
+### Identity and metadata
+
+* **Two re-slugs:**
+  * **`ghassabian-2018`**, filed under "Hady". Page 1 prints all six names
+    surname-first: "Ghassabian G. Hady", "Calzada Diaz Abigail", and so on.
+    The e-mail is hady.ghassabian@…, and Crossref swaps given and family
+    names for all six authors. Only the running head reads "Hady" as the
+    surname.
+  * **`lemay-2018`**, filed under "Le". Crossref gives the family name
+    "Le May".
+* Page 1 matched the filename's title for all 20 files. Every file is the
+  publisher's typeset version, and every issue year is 2018.
+
+### Bibliography (2738 → 3360 entries, FLAGS 0, `--dupes` clean)
+
+* **Pre-step:** the cited-work entries `kim-2018` (New J. Phys. 20:063033) and
+  `liu-2018` (Rev. Sci. Instrum. 89:043502) were re-keyed to `kim-2018-b` and
+  `liu-2018-e` before the merge. Their slugs belong to chunk-4 papers. No wiki
+  page cited the old keys.
+* **Reserved-slug and self-key traps:**
+  * hippke-2018's ref. [10] (Interstellar Communication VIII, arXiv) is now
+    `hippke-2018-c`.
+  * huang-2018-c's refs. [2] and [6] are now `huang-2018-e` and `-f`.
+  * li-2018-c's ref. [19] is now `huang-2018-g`.
+  * huang-2018-b's "sun-2018" is a different work from the ingested core paper
+    and is now `sun-2018-b`.
+  * `ke-2018-b` and `mcdowell-2018-b` were checked and are free.
+* **Year re-keys from Crossref:** subbarao 2012→2008, singla 2012→2006,
+  bhat 2006→2000, gazi 2006→2005, greschik 2015→2007.
+* **Undated references:**
+  * DOI years: zhang-2017-k, kirsch-2005, guo-2014, gomez-2001.
+  * Years from a URL or conference: lewis-1992, munoz-2017,
+    nasaspaceflight-2012.
+  * 6 web entries take the citing year.
+* **Name swaps fixed from Crossref:** 7 entries. One author has two
+  spellings, Virgili and Bastida Virgili, now one stem.
+* **Venue and identifier slips:** 7 entries, each corrected with a note
+  (e.g. zhang-2016-g, cole-2011, kurokawa-1994, matney-2010).
+* A `$` in a cited title is escaped, because it broke the lint.
+
+### Decisions for you
+
+1. **Preprints merged into published versions.** This is the first case in
+   this bundle:
+   * hippke-2018 cites the arXiv preprint of the ingested hippke-2018-b, and
+     that citation now counts toward hippke-2018-b;
+   * it also cites both the preprint and the journal form of Learned et al.,
+     and both now point to `learned-2012`.
+
+   Each entry records the fold in a note. The handoff says to keep
+   conference, report and reprint forms separate. Preprints were not listed,
+   and another bundle merges them. Confirm, or ask for separate entries.
+2. **Years not verified on Crossref:** lewis-1992, munoz-2017 and
+   nasaspaceflight-2012 take their years from a URL or a conference date.
+3. Chunk 3's open decisions still stand: the `voland-2005` re-key,
+   `first-1973`, and the orphan-warning amendment.
+
 ## Chunk 3 — five papers in full, 15 Source-only pages (2026-10-15)
 
 Sources in full: alpatov-2018, shuvalov-2018, gomezjenkins-2018,
