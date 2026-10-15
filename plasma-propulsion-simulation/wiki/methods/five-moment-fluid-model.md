@@ -5,7 +5,7 @@ description: "Non-neutral, inertial fluid model that evolves density, momentum a
 status: established
 aliases: [5M model, five-moment model, five-moment fluid, inertial electron fluid model, full-fluid moment model]
 tags: [fluid, hall-thruster, kinetic, pic, sheath, wall-interaction, numerics, verification]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Five-moment electron fluid model
@@ -44,7 +44,7 @@ Without the inertial term the steady state recovers drift-diffusion (p. 4).
   (Xe), rate from Biagi v8.97 cross sections with a Maxwellian distribution.
 * **Anomalous transport** (eq. 8). Bohm-type
   $\nu_{\mathrm{ano}}=\alpha_{\mathrm B}\omega_{ce}/16$, isotropic, with
-  $\alpha_{\mathrm B}=0.16$ for $x<2.25$ cm, a linear ramp, and
+  $\alpha_{\mathrm B}=0.16$ for $x<2.25$ cm ($x$ axial, see the set-up below), a linear ramp, and
   $\alpha_{\mathrm B}=4$ for $x\ge2.75$ cm (the paper's coefficients 0.01 and
   0.25 multiply $\omega_{ce}$). The authors call this step profile "not
   representative" of experimentally inferred ones and choose it for the

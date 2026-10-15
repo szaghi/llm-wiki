@@ -108,7 +108,16 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
 
 ## Status
 
-**Chunk 5 staged 2026-10-15:** 20 Source-only pages, including the
+**Chunk 6 staged 2026-10-15 — the archive is complete:** the last 7
+Source-only pages; 108 of 108 ingested (`tools/worklist.sh`: pending 0),
+4084 bibliography entries, the front matter `unknown-2018` the only
+`--pending` entry (by design). Closing sweeps after the final chunk:
+`--dupes` 0 groups, cross-year fuzzy-title sweep 51 pairs all distinct,
+no corpus-wide merge. Deep lint #2 (all concept pages, registry, root
+index) applied with this chunk: 1 error fixed, unregistered symbols
+removed, `$\mathrm{Re}_m$` registered, 13 tag merges.
+
+**Chunk 5 committed 2026-10-15 (cd72295):** 20 Source-only pages, including the
 front matter `unknown-2018` (no reference list: a permanent `--pending`
 entry); 101 of 108 ingested, 3899 bibliography entries; no concept page
 changed. The old cited-work entry `wu-2018` was re-keyed to `wu-2018-d`

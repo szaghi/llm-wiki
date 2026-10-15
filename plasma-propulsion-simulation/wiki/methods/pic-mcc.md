@@ -4,8 +4,8 @@ title: "Particle-in-cell with Monte Carlo collisions (PIC-MCC)"
 description: "Kinetic plasma simulation in which macroparticles are pushed in grid fields that their own deposited charge determines, with collisions applied stochastically between pushes; used fully kinetically (electrons and ions as particles) or for heavy species only, in 1D to 3D thruster geometries."
 status: established
 aliases: [PIC, PIC/MCC, particle-in-cell, explicit electrostatic PIC, fully kinetic PIC]
-tags: [pic, mcc, kinetic, hall-thruster, numerics, software]
-timestamp: 2026-10-14T00:00:00Z
+tags: [pic, mcc, kinetic, hall-thruster, numerics]
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Particle-in-cell with Monte Carlo collisions (PIC-MCC)

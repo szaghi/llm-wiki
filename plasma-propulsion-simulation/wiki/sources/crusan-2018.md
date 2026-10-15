@@ -8,7 +8,7 @@ authors: [Crusan J., Galica C., Gill T.]
 year: 2018
 venue: "Acta Astronaut. 151:412–419"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Crusan_NASAs_eXploration_Systems_and_Habitation_X-Hab_Academic_Inno.pdf"
-tags: [context, education, nasa, habitation, programme-description]
+tags: [context, education, nasa, habitation, space-programme]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

@@ -4,8 +4,8 @@ title: "Hybrid PIC–fluid models"
 description: "Thruster models that move ions and neutrals as macroparticles (PIC, with MCC or DSMC collisions) and treat electrons as a fluid, usually quasi-neutral, from Boltzmann or polytropic relations to drift-diffusion with a generalized Ohm's law; the standard compromise for Hall-thruster, ion-thruster, helicon and plume simulation."
 status: established
 aliases: [hybrid PIC, hybrid particle-fluid model, hybrid fluid-kinetic model, PIC-ion/fluid-electron model, hybrid PIC-DSMC, EP2PLUS]
-tags: [hybrid, pic, fluid, dsmc, hall-thruster, ion-thruster, plume, numerics, review]
-timestamp: 2026-10-14T00:00:00Z
+tags: [hybrid, pic, fluid, dsmc, hall-thruster, ion-thruster, plume, numerics]
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Hybrid PIC–fluid models
@@ -109,8 +109,8 @@ moved; heavy-species collisions follow by
   *larger* than $\lambda_D$ (about $10^{-5}$ m) and of the order of the mean
   free path (about 0.1 m), which is consistent only because no Poisson
   equation is solved. About 2 million cells, $\Delta t=10^{-7}$ s, $W=2\times10^8$.
-  The axial plume force on a plate at 0.6–1.0 m agrees with a thrust balance
-  within a maximum relative error of 16.36 % (§4.1, Fig. 4). See
+  The axial plume force on a plate at 0.6–1.0 m over-predicts the
+  torsional-balance measurement by at most 16.36 % (§4.1, Fig. 4). See
   [EX-PWS](/software/ex-pws.md).
 * **Boundary conditions.** Taccogna et al. (2023, §IV A) report that adding
   non-neutral regions to a hybrid plume model raises the ion backflow current

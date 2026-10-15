@@ -5,7 +5,7 @@ description: "Electron cross-field transport produced by electron collisions wit
 status: established
 aliases: [NWC, wall collisionality, electron–wall collisions, wall-collision mobility]
 tags: [anomalous-transport, wall-interaction, sheath, hall-thruster, pic, fluid]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Near-wall conductivity
@@ -42,7 +42,7 @@ transport ([Boyd (2005)](/sources/boyd-2005.md), §3.4).
 * **Empirical wall collision term.** A constant frequency scaled from
   $10^7$ s⁻¹, applied inside the channel only, with an empirical energy
   loss proportional to the mean electron energy times the exponential of
-  minus 20 V divided by that energy (Taccogna & Garrigues 2019, eq. 30,
+  minus 20 eV divided by that energy (Taccogna & Garrigues 2019, eq. 30,
   Fig. 3, with coefficient 0.7, attributed to Boeuf &
   Garrigues 1998 and Hagelaar 2002). Values in use: scale factor 0.1 in
   the 1D axial comparison runs of

@@ -4,7 +4,7 @@ title: "Plasma drag augmentation of a magnetized body"
 description: "A body carrying its own dipole field in a hypersonic rarefied plasma flow has a drag coefficient that grows with the ratio of surface magnetic pressure to dynamic pressure and falls with the field–flow angle, by empirical laws measured on a magnetized sphere; a plasma jet injected into its mini-magnetosphere multiplies the drag by 2.7–3.8 depending on orientation, and the source's extrapolation to the ionosphere puts a 0.6–0.8 T body field near the drag pressure of two of the four ion-beam-shepherd beams it quotes."
 status: established
 aliases: [magnetic drag augmentation, Lorentz drag of a magnetized spacecraft, mini-magnetosphere drag]
-tags: [plasma-spacecraft-interaction, magnetic-field, drag]
+tags: [plasma-spacecraft-interaction, magnetic-field, drag, debris-removal]
 timestamp: 2026-10-15T00:00:00Z
 ---
 
@@ -129,7 +129,7 @@ parameters behind it are not tabulated.
 
 ## Limits
 
-* One laboratory, one gas (N$_2$, mean ion mass 19.6 amu), spheres of two
+* One laboratory, one gas (N$_2$, mean ion mass 19.6 u, $3.25\times10^{-26}$ kg), spheres of two
   radii; all laws are empirical fits with stated ranges, and the angular
   law was measured at a single pressure ratio.
 * The perpendicular-field fit reaches 7.7% error at $L_{\mathrm{so}}/r_w=5.9$,

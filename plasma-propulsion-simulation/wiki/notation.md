@@ -29,7 +29,7 @@ extension, before writing a symbol it lacks.
 | $L$ | a domain or channel length | qualified by subscript when several appear |
 
 Conventions: a vector component is written with the coordinate after a
-comma in the subscript, $u_{e,\theta}$, $j_{z}$, $E_{\theta}$; one-dimensional
+comma in the subscript, $u_{e,\theta}$, $j_{z}$, $E_{\theta}$; registered multi-index symbols ($v_{th,s}$, $S_{T,j}$) are exempt; one-dimensional
 axial models drop it ($u_i$ is the axial ion velocity) and say so. A
 subscript $0$ marks a reference or upstream value ($n_0$, $T_{e0}$).
 $\langle\cdot\rangle$ is an average (the page states over what: azimuth,
@@ -164,3 +164,4 @@ time, an ensemble) and $\tilde{(\cdot)}$ the fluctuation about it.
 | $r_w$ | radius of a spherical body | |
 | $L_{\mathrm{so}}$ | standoff distance of a mini-magnetosphere boundary from the body centre | not the domain length $L$ |
 | $F_{\mathrm{IT}}$, $F_{\mathrm{CT}}$ | thrusts of the impulse-transfer and compensation thrusters of an ion-beam shepherd | |
+| $\mathrm{Re}_m$ | magnetic Reynolds number | |

@@ -5,7 +5,7 @@ description: "A localized electrostatic potential drop, a few tens to hundreds o
 status: established
 aliases: [CFDL, double layer, helicon double layer, HDLT]
 tags: [helicon, magnetic-nozzle, kinetic, pic, sheath]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Current-free double layer
@@ -89,7 +89,7 @@ is compared.
 These computed drops are 1.1–1.2 times $T_e/e$, below the $5.18\,T_e/e$ of
 the Chen relation reported by [Takahashi (2019)](/sources/takahashi-2019.md).
 [Gallo et al. (2021)](/sources/gallo-2021.md) compare neither with that
-relation nor with measurement.
+relation nor with measurement. The gap is not recorded as a contradiction: no common device is modelled, and Gallo's drop is taken to a $\phi=0$ boundary at both ends (compiler note).
 
 # Citations
 

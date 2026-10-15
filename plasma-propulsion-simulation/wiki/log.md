@@ -2,6 +2,43 @@
 
 ## 2026-10-15
 
+* **Deep lint #2** (all 43 concept pages, the notation registry and the root
+  index; 2026-10-15), applied with chunk 6:
+  * **Error fixed:** [cross-field mobility](/definitions/electron-mobility-and-hall-parameter.md)
+    misstated Reza et al.'s Hall parameter (it is $\omega_{ce}/\nu_{\mathrm{ano}}$,
+    not $\Omega_e$); [reza-2022](/sources/reza-2022.md) aligned.
+  * **Notation:** unregistered $U$, $Q$ and paper-native $C$, $c_k$ removed
+    from concept pages; the §1 comma rule now exempts registered multi-index
+    symbols; $\mathrm{Re}_m$ (magnetic Reynolds number) added to §7.
+  * **Fidelity and wording:** ten smaller fixes (SEE and near-wall energy
+    units, ECCOPIC2S-M, the EX-PWS over-prediction, the anomalous-transport
+    median label, axis labels, compiler notes on two qualifications).
+  * **Tags:** `review` and `software` dropped from concept pages; 11 Source-page
+    tags merged into canonical forms (e.g. `uq`, `small-satellite`,
+    `deployable-structure`); cross-tags added to the two chunk-3 pages.
+  * The three Open contradictions re-verified; the GPU-priority entry still
+    awaits the human's closure.
+  * Pages touched: notation, electron-mobility-and-hall-parameter,
+    secondary-electron-emission, near-wall-conductivity,
+    anomalous-electron-transport, electron-drift-instability,
+    current-free-double-layer, hall-effect-thruster,
+    polytropic-electron-closure, ion-beam-shepherd, monte-carlo-collisions,
+    implicit-and-energy-conserving-pic, hybrid-pic-fluid-model,
+    electron-fluid-model, five-moment-fluid-model, boltzmann-electron-model,
+    gpu-acceleration-of-pic, pic-mcc, instability-enhanced-friction-force,
+    magnetized-body-plasma-drag, reza-2022, and the tags of 12 Source pages.
+
+* **Chunk 6: the last 7 Source-only pages** (D23): yamaguchi-2018,
+  yang-2018-b, yu-2018, yuan-2018, zhang-2018-b, zhang-2018-c, zhao-2018-b,
+  outside this bundle's domain (yamaguchi-2018 reports Hayabusa2 ion-engine
+  operating figures as mission context only). No concept page created. The
+  archive is complete: 108 of 108 ingested.
+  * **Bibliography:** 7 reference lists merged with `tools/bib_merge.py`
+    (FLAGS 0), 3899 → 4084 entries. Closing sweeps over the whole
+    bibliography: `--dupes` 0 groups, cross-year fuzzy-title sweep 51
+    candidate pairs all distinct works, no shared DOI across keys; no
+    corpus-wide merge needed.
+
 * **Chunk 5: 20 Source-only pages** (D23): meng-2018-b, miller-2018, mu-2018,
   nies-2018, pallone-2018, perez-2018, pestrenin-2018, sabatini-2018,
   semyonov-2018, unknown-2018, verspieren-2018, volpe-2018, wang-2018,

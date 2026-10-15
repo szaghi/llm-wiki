@@ -5,7 +5,7 @@ description: "The electron mobility tensor of a magnetized drift-diffusion model
 status: established
 aliases: [Hall parameter, electron mobility tensor, cross-field mobility, perpendicular mobility, classical mobility, electron magnetization]
 tags: [anomalous-transport, fluid, hall-thruster, numerics]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Cross-field electron mobility and the Hall parameter
@@ -57,9 +57,7 @@ the denominator $1+\Omega_e\,\omega_{ce}/(\nu_e+\nu_{\mathrm{ano}})$, the
 product of the classical and the effective Hall parameters; with an
 isotropic anomalous force both factors become effective.
 
-Reza et al. (2022, §3.1) call the ratio $\omega_{ce}/\nu_e$ the Hall
-parameter and specify their zone-wise Bohm closure through it
-([Reza et al. (2022)](/sources/reza-2022.md)).
+Reza et al. (2022, §3.1) specify their zone-wise Bohm closure through $\omega_{ce}/\nu_{\mathrm{ano}}$, which they call a Hall parameter; it is the Hall parameter of the anomalous collisions alone, not $\Omega_e$ ([Reza et al. (2022)](/sources/reza-2022.md), Notation map).
 
 ## Magnitudes and consequences
 

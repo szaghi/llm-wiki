@@ -5,7 +5,7 @@ description: "PIC time-integration schemes (direct-implicit, implicit-moment, en
 status: established
 aliases: [implicit PIC, direct-implicit method, DIM, implicit-moment method, IMM, ECPIC, ECSIM, energy-conserving PIC, semi-implicit PIC]
 tags: [pic, kinetic, numerics, hall-thruster, performance, verification]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Semi-implicit, implicit and energy-conserving PIC
@@ -46,7 +46,7 @@ or cooling, tied to the finite-grid instability.
   Newton–Krylov iteration; ECSIM is the semi-implicit alternative.
   Subcycling of the orbit integration improves conservation and is needed for
   charge conservation (Sec. V C b).
-* The RUB code ECCOPIC (implicit, energy-conserving, CUDA) was verified in
+* The RUB code ECCOPIC2S-M (implicit, energy-conserving, CUDA) was verified in
   the [axial–azimuthal Hall-thruster benchmark](/benchmarks/axial-azimuthal-pic-benchmark.md)
   and validated against experiment ([Taccogna et al. (2023)](/sources/taccogna-2023.md),
   Sec. V C b). Because the benchmark fixed $\Delta t$ and $\Delta x$ at the
@@ -61,7 +61,7 @@ by Groenewald et al.
 * **Field equation** (Eq. 9). In the Poisson equation for $\phi$ with
   electron charge density $-en_e$, the permittivity $\varepsilon_0$ is
   multiplied, inside the divergence, by one plus a quarter of an adjustable
-  constant (greater than 1; $C$ in the source) times $(\omega_{pe}\Delta t)^2$.
+  constant (greater than 1) times $(\omega_{pe}\Delta t)^2$.
   The added term stabilizes the electron plasma mode by raising its
   effective frequency. The authors note the resemblance to the
   direct-implicit method, which suffers numerical heating at large
@@ -149,4 +149,4 @@ in the explicit baseline:
 
 1. [Taccogna et al. (2023)](/sources/taccogna-2023.md) — Sec. V B, Sec. V C b.
 2. [Marks & Gorodetsky (2025)](/sources/marks-2025.md) — Methods (Eq. 9), Results (Table 5, Figs. 5–14, Eq. 10), Conclusion.
-3. [Taccogna & Garrigues (2019)](/sources/taccogna-2019.md) — wall-interaction modelling (1D radial PIC-MCC models), acceleration techniques.
+3. [Taccogna & Garrigues (2019)](/sources/taccogna-2019.md) — §§3, 3.2 (accepted manuscript).

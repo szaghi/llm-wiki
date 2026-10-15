@@ -4,8 +4,8 @@ title: "Hall-effect thruster"
 description: "A gridless electrostatic thruster in which a mainly radial magnetic field across an annular channel impedes the cathode electrons' axial motion, so that an axial electric field accelerates unmagnetized ions; built as the stationary plasma thruster (SPT, ceramic walls, long channel) or the anode-layer thruster (TAL, metallic walls, short channel), and the main simulation target of this bundle."
 status: established
 aliases: [Hall thruster, HET, HT, stationary plasma thruster, SPT, anode layer thruster, thruster with anode layer, TAL, E×B thruster]
-tags: [hall-thruster, review]
-timestamp: 2026-10-14T00:00:00Z
+tags: [hall-thruster]
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Hall-effect thruster

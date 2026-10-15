@@ -8,7 +8,7 @@ authors: [Haley D., Beck A., Pollok A., Grant A., McKilliam R.]
 year: 2018
 venue: "Acta Astronaut. 151:318–323"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Haley_Massive_scale_long_battery_life_direct_to_orbit_connectivity.pdf"
-tags: [context, satellite-communications, internet-of-things, nanosatellites]
+tags: [context, satellite-communications, internet-of-things, small-satellite]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

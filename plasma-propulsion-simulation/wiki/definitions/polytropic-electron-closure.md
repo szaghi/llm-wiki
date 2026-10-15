@@ -4,8 +4,8 @@ title: "Polytropic electron closure and plume cooling"
 description: "Closure of the electron energy equation by a polytropic law, $T_e\\propto n_e^{\\gamma-1}$, equivalent to a purely convective heat flux; used in plume and magnetic-nozzle models, where measured, kinetic and fitted indices range from near-isothermal to adiabatic and depend on the electron population and direction."
 status: established
 aliases: [polytropic closure, polytropic electrons, polytropic index, electron cooling, convective heat-flux closure, polytropic law]
-tags: [fluid, hybrid, plume, magnetic-nozzle, helicon, kinetic, review]
-timestamp: 2026-10-14T00:00:00Z
+tags: [fluid, hybrid, plume, magnetic-nozzle, helicon, kinetic]
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Polytropic electron closure and plume cooling

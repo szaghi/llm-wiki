@@ -8,7 +8,7 @@ authors: [Ghassabian G.H., Calzada Diaz A., Hettrich S., De Quattro N., Antonell
 year: 2018
 venue: "Acta Astronaut. 151:270–283"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Hady_ALCIDES_A_novel_lunar_mission_concept_study_for_the_demonstr.pdf"
-tags: [context, mission-study, lunar-exploration, human-robotic-operations, lunar-communications]
+tags: [context, mission-analysis, lunar-exploration, human-robotic-operations, lunar-communications]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

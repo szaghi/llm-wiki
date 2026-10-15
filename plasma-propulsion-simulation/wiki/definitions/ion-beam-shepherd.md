@@ -4,7 +4,7 @@ title: "Ion beam shepherd"
 description: "Contactless space-debris removal by a shepherd satellite whose impulse-transfer ion thruster pushes the debris with its plume while a compensation thruster cancels the reaction; the beam force is modelled with a self-similar conical far-plume model, and the concept is the reference against which magnetic drag augmentation is compared."
 status: established
 aliases: [IBS, ion-beam shepherd, ion beam debris removal]
-tags: [plume, ion-thruster, debris-removal]
+tags: [plume, ion-thruster, debris-removal, plasma-spacecraft-interaction]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

@@ -5,7 +5,7 @@ description: "Electron model that sets the electron density from the potential b
 status: established
 aliases: [Boltzmann electrons, Boltzmann relation, isothermal electrons, Boltzmann electron fluid, nonlinear Poisson-Boltzmann]
 tags: [hybrid, fluid, plume, ion-thruster, helicon, numerics]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Boltzmann-relation electrons
@@ -46,7 +46,7 @@ equation. In the quasi-1D helicon double-layer model of
 is further scaled by the square of the ratio of source radius to local duct
 radius (after Chen), the equation is
 $\mathrm d^2\phi/\mathrm dx^2=(e/\varepsilon_0)(n_e-n_i)$ with $\phi=0$ at both
-ends, $n_0$ comes from a global electron balance, and a dedicated scheme
+ends, $x$ the coordinate along the field line, $n_0$ comes from a global electron balance, and a dedicated scheme
 (citing Newton–Kantorovich papers) handles the exponential nonlinearity;
 Poisson and particle steps are iterated to convergence of thrust and
 specific impulse. In argon at $T_e=10$ eV the potential drop is 12 V; from 5 to

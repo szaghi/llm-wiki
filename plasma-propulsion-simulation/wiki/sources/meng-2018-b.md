@@ -8,7 +8,7 @@ authors: [Meng D., Lu W., Xu W., She Y., Wang X., Liang B., Yuan B.]
 year: 2018
 venue: "Acta Astronaut. 151:904–918"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Meng_Vibration_suppression_control_of_free-floating_space_robots.pdf"
-tags: [context, space-robotics, vibration-control, flexible-appendages, target-capture]
+tags: [context, space-robotics, vibration-control, flexible-spacecraft, target-capture]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

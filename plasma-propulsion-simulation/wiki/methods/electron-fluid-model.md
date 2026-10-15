@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Electron fluid models (drift-diffusion)"
-description: "Moment models of the electrons in thruster discharges, reduced in the slow-dynamics limit to a quasi-neutral drift-diffusion model with a generalized Ohm's law, a Fourier heat-flux law and empirical anomalous terms; the closure that hybrid and fully fluid Hall-thruster codes share, and whose heat-flux and transport terms kinetic results contradict."
+description: "Moment models of the electrons in thruster discharges, reduced in the slow-dynamics limit to a quasi-neutral drift-diffusion model with a generalized Ohm's law, a Fourier heat-flux law and empirical anomalous terms; the closure that hybrid and fully fluid Hall-thruster codes share, and whose heat-flux and transport terms kinetic comparisons show to be inadequate."
 status: established
 aliases: [drift-diffusion electron model, drift-diffusive electrons, slow-dynamics electron fluid model, generalized Ohm's law, fluid electrons, 8-moment electron model]
-tags: [fluid, hybrid, hall-thruster, anomalous-transport, numerics, review]
-timestamp: 2026-10-14T00:00:00Z
+tags: [fluid, hybrid, hall-thruster, anomalous-transport, numerics]
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Electron fluid models (drift-diffusion)

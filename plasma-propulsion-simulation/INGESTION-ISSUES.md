@@ -6,6 +6,78 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — the last 7 Source-only pages, closing sweeps, deep lint #2 (2026-10-15)
+
+Sources: yamaguchi-2018, yang-2018-b, yu-2018, yuan-2018, zhang-2018-b,
+zhang-2018-c, zhao-2018-b. They cover Hayabusa2 operations, structures and
+reflector accuracy, tether deployment, magnetically suspended actuators and
+pyroshock, all outside this bundle's domain (D23).
+
+**The archive is complete: 108 of 108 files are ingested** (`tools/worklist.sh`:
+pending 0). The audit found no errors and 5 minor items, all fixed.
+
+### Notes
+
+* **yamaguchi-2018** reports Hayabusa2's ion engines: four 10 mN engines,
+  about 3900 h and about 580 m/s by March 2018. These figures are mission
+  context in a planning paper, with no thruster model, so the page is
+  Source-only. The paper gives its 7000 h figure with two different scopes,
+  recorded as printed.
+* Page 1 matched the filename's title for all 7 files. Every file is the
+  publisher's version, and every issue year is 2018.
+
+### Bibliography (3899 → 4084 entries, FLAGS 0)
+
+* **Ingested-slug and self-key traps:**
+  * yang-2018-b's and yuan-2018's citations printed as `yang-2018` are not
+    the ingested tether paper. They are now `yang-2018-d` and `-f`.
+  * yang-2018-b's ref. [31] carried its own slug and is now `yang-2018-e`.
+  * zhang-2018-c's "li-2018" is now `li-2018-g`.
+* **Year re-keys from Crossref:** coleman 2011→2012, greschik 2015→2001,
+  wang 2012→2014.
+* **Venue slips corrected with notes:** six entries. One is `kanzawa-2016`,
+  which came in with chunk 4: its page 949 → 952, per Crossref.
+* yu-2018's ref. [16] title is kept exactly as printed ("are-entry
+  capsule"), with the correction in the note.
+* **Closing sweeps (mandatory after the final chunk):**
+  * `--dupes`: 0 groups.
+  * Cross-year fuzzy-title sweep: 51 candidate pairs, all distinct works.
+  * Placeholder titles grouped by venue: 0.
+  * Shared DOIs across keys: 0.
+  * Same-key vol:page check over the whole bibliography: 38 differences, all
+    intended variants with notes.
+
+  No corpus-wide merge was needed.
+
+### Deep lint #2 (all concept pages, registry, root index)
+
+Findings: 1 error, 3 law items, 24 minor items, 11 tag merges. All are
+applied except two optional items, listed below as decisions. The error:
+the mobility page misstated Reza et al.'s Hall parameter, which is
+$\omega_{ce}/\nu_{\mathrm{ano}}$, not $\Omega_e$. Unregistered symbols are
+gone from concept pages, and `$\mathrm{Re}_m$` is now registered. The three
+Open contradictions were re-verified. Details are in `wiki/log.md`.
+
+### Decisions for you
+
+1. **Issue-year rule:** `wang-2014-g` follows the Crossref issue year, while
+   `deng-2014` keeps its printed year because its article number marks it as
+   2014. If the rule is "issue year, always", deng-2014 becomes deng-2015.
+2. **Mangled keys:** `s-2002` and `m-1992` keep keys built from mangled
+   author strings. Corporate keys (`dod-2002`, `asm-1992`) would be cleaner;
+   re-key them?
+3. **`performance` tag:** it is used only for computational performance, so
+   it collides in meaning with thruster performance (registry §6). Rename it
+   to `computational-performance`? Not applied.
+4. **GPU-priority contradiction:** it has been Open since chunk 1 and is
+   recommended for your fiat closure.
+5. **Still open from chunks 3–5:**
+   * the `voland-2005` re-key across three bundles;
+   * dropping `first-1973`;
+   * the orphan-warning amendment and the lint exemption for `context` pages;
+   * the preprint folds (hippke-2018-b, learned-2012, lubin-2016);
+   * the unverified years and `neuhauster-2018`.
+
 ## Chunk 5 — 20 Source-only pages (2026-10-15)
 
 Sources: meng-2018-b, miller-2018, mu-2018, nies-2018, pallone-2018,

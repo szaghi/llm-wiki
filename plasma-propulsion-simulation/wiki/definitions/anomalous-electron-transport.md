@@ -5,7 +5,7 @@ description: "Electron transport across the magnetic field of a Hall thruster in
 status: established
 aliases: [anomalous electron transport, anomalous electron mobility, anomalous collision frequency, Bohm-type transport, anomalous collisionality, turbulent collision frequency]
 tags: [anomalous-transport, hall-thruster, instability, fluid, hybrid, pic, calibration]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Anomalous electron cross-field transport
@@ -132,7 +132,7 @@ Coefficients by source, converted to $\alpha_{\mathrm B}$:
 | [Reza et al. (2022)](/sources/reza-2022.md), §3.1 | three-zone step: $0<z\le0.5$ cm, $0.5<z\le1.2$ cm, $1.2<z\le2.5$ cm | 0.5; 0.053; 1.6 |
 | [Reza et al. (2022)](/sources/reza-2022.md), §5.1, Table 3 | two-zone step, channel / plume (after Panelli et al. 2021) | 0.035; 5.0 |
 | [Ahedo (2023)](/sources/ahedo-2023.md), Eq. 18, Fig. 4 | fitted function of $z$ in Hall thrusters, constant in electrodeless thrusters; no fitted values given | 0.16 for the turbulence level reported from 1D radial PIC |
-| [Eckels et al. (2024)](/sources/eckels-2024.md), Eq. 5, Table 3 | two-zone step, inside / outside the channel, with a pressure-shifted transition (Eq. 6); outside value a multiple of the inside one | posterior medians 0.109 (inside); 1.59 (outside) |
+| [Eckels et al. (2024)](/sources/eckels-2024.md), Eq. 5, Table 3 | two-zone step, inside / outside the channel, with a pressure-shifted transition (Eq. 6); outside value a multiple of the inside one | 0.109 (inside, posterior median); 1.59 (outside, product of the two medians, computed) |
 | [Muñoz Tejeda et al. (2025)](/sources/munoz-2025.md), Eq. 7, Table 1 | uniform | 0.01 |
 | [Troyetsky et al. (2026)](/sources/troyetsky-2026.md), Eq. 8 | two-zone step with a linear ramp: inside for $z<2.25$ cm, plume for $z\ge2.75$ cm | 0.16; 4.0 |
 | [Saravia et al. (2026)](/sources/saravia-2026.md), Eqs. 7, 21, Table 1 | two levels, channel / plume, joined by error functions | reference 0.1 (in); 1.0 (out) |

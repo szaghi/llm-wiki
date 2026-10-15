@@ -5,7 +5,7 @@ description: "The azimuthal electron drift instability produces a momentum-conse
 status: established
 aliases: [anomalous friction force, electron–ion friction force, instability-enhanced collisionality, enhanced mobility, Lafleur mobility, quasi-linear friction closure]
 tags: [anomalous-transport, instability, kinetic, pic, hall-thruster]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Instability-enhanced electron–ion friction and effective mobility
@@ -127,10 +127,7 @@ tension, not a contradiction.
 10.5 N m⁻³ at 50, 100, 200 and 400 A m⁻²) give ratios of 2.1–5 per
 doubling, not a clean factor 2 (reader's plot reading; approximate).
 
-² The printed eq. 34 uses $h$, the review's symbol for the channel width,
-where the Hall parameter is meant; see
-[Taccogna & Garrigues (2019)](/sources/taccogna-2019.md), Recorded as
-printed.
+² The printed eq. 34 has a symbol slip where the Hall parameter is meant; see [Taccogna & Garrigues (2019)](/sources/taccogna-2019.md), Recorded as printed.
 
 # Citations
 

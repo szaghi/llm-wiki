@@ -5,7 +5,7 @@ description: "Electron-induced emission from dielectric thruster walls and its e
 status: established
 aliases: [SEE, secondary electron emission, electron emission yield, EEY, space-charge saturation, SCS, space-charge-limited sheath, SCL sheath, charge-saturation limit, Bohm criterion, anode sheath]
 tags: [sheath, wall-interaction, hall-thruster, pic, fluid, kinetic, numerics]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Secondary electron emission and sheath regimes
@@ -35,7 +35,7 @@ gives $10^{-13}$–$10^{-14}$ s).
   2 eV ([Taccogna & Garrigues (2019)](/sources/taccogna-2019.md), eq. 37).
   [Troyetsky et al. (2026)](/sources/troyetsky-2026.md) use a linear law
   through zero, yield = impact energy / 51.1 eV for BN, with secondaries
-  half-Maxwellian at 2 eV. [Reza et al. (2022)](/sources/reza-2022.md)
+  half-Maxwellian at 2 eV. Its 51.1 eV differs from the 45 eV BN crossover of Taccogna & Garrigues' Tab. III (below); both are model inputs from different references, not competing measurements (compiler note). [Reza et al. (2022)](/sources/reza-2022.md)
   (§4.2, eq. 10) use a linear BN model with parameters 0.578, 2.9 (maximum
   yield) and 35.04 eV, secondaries at 1 eV; the equation is printed with
   $\max$ where a cap needs $\min$.
@@ -125,12 +125,11 @@ as the only anomalous mechanism underestimate the discharge current.
   ([Ahedo (2023)](/sources/ahedo-2023.md), eqs. 77–78).
 * **Empirical alternative.** Earlier models used a wall energy-loss rate
   equal to a coefficient times a reference frequency times the mean electron
-  energy times $\exp(-U/\text{mean energy})$, compared with the SEE and
-  saturation theory for $10^7$ s$^{-1}$, coefficient 0.7 and $U=20$ V
+  energy times $\exp(-20\ \mathrm{eV}/\text{mean energy})$, compared with the SEE and
+  saturation theory for $10^7$ s$^{-1}$ and coefficient 0.7
   ([Taccogna & Garrigues (2019)](/sources/taccogna-2019.md), eq. 30, Fig. 3,
   after Garrigues et al. 2006). The ad-hoc wall-collision model of Hagelaar et
-  al. 2002 (wall frequency 0.1 times about $10^7$ s$^{-1}$, energy loss with
-  $U=20$ eV, run as a fictitious MCC event) is the comparison case of
+  al. 2002 (wall frequency 0.1 times about $10^7$ s$^{-1}$, energy loss on the same 20 eV scale, run as a fictitious MCC event) is the comparison case of
   [Reza et al. (2022)](/sources/reza-2022.md) (§5.1, eqs. 14–15).
 * **Overestimate.** Fluid sheath models "tend to overestimate the wall
   losses" (Sydorenko et al. 2006; Kaganovich et al. 2007), which Giannetti et

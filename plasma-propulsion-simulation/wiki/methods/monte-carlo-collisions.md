@@ -5,7 +5,7 @@ description: "The stochastic collision step of PIC-MCC, in which each projectile
 status: established
 aliases: [MCC, Monte Carlo collision, null collision, null-collision method]
 tags: [mcc, pic, kinetic, numerics]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Monte Carlo collisions and the null-collision method
@@ -13,9 +13,8 @@ timestamp: 2026-10-14T00:00:00Z
 The collision step of [PIC-MCC](/methods/pic-mcc.md) changes particle
 velocities (and creates or removes particles) between pushes. Over one time
 step the distribution of a species is updated as
-$$f_s(t+\Delta t)=(1-P_c)\,f_s(t)+P_c\,Q,$$
-where $P_c$ is the collision probability and $Q$ the post-collision
-distribution ([Taccogna et al. (2023)](/sources/taccogna-2023.md), §II,
+$$f_s(t+\Delta t)=(1-P_c)\,f_s(t)+P_c\,(\text{post-collision distribution}),$$
+where $P_c$ is the collision probability ([Taccogna et al. (2023)](/sources/taccogna-2023.md), §II,
 Eq. 4, which attributes the rules to Nanbu and prints "the Nanbu (no-time
 counter) stochastic Monte Carlo rules"). The registry probability for one
 particle in one step is $P_c=1-\exp(-\nu\Delta t)$.
@@ -51,7 +50,7 @@ Vahedi & Surendra for it. [Charoy et al. (2020)](/sources/charoy-2020.md)
 a collision frequency per electron macroparticle and reaction $k$,
 $\nu_{ek}=n_k\,\sigma_{ek}\sqrt{|\mathbf v_e|^2+\bar v_k^{\,2}}$
 (Eq. 8, with $\sigma_{ek}$ evaluated at the reactant energy and $\bar v_k$
-a speed of the target species, as the paper's $c_k$), against a target built from
+a speed of the target species), against a target built from
 local cell properties; the null-collision method is not stated.
 
 Taccogna et al. (2023, §II) give the accuracy rule: "It is a good practice
@@ -95,7 +94,7 @@ velocity without energy loss: a Bohm-type
 $\nu_{\mathrm{ano}}=\alpha_{\mathrm B}\,\omega_{ce}/16$ with fitted
 $\alpha_{\mathrm B}=0.032$–$0.32$ in 2D $r$–$z$ PIC
 ([Taccogna & Garrigues (2019)](/sources/taccogna-2019.md), §3.3); a
-three-zone step in $x$ (axial: 0–0.5, 0.5–1.2, 1.2–2.5 cm)
+three-zone step in $z$ (0–0.5, 0.5–1.2, 1.2–2.5 cm)
 $\alpha_{\mathrm B}=0.5/0.053/1.6$, and a two-zone $\alpha_{\mathrm B}=0.035/5.0$ (Reza et al. 2022, §§3.1,
 5.1); $\alpha_{\mathrm B}=0.01$ with probability $\nu_{\mathrm{ano}}\Delta t$
 per step (Muñoz Tejeda et al. 2025, Eq. 7); an isotropic anomalous

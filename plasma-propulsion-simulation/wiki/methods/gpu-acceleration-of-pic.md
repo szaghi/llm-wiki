@@ -5,7 +5,7 @@ description: "Running particle-in-cell codes for plasma thrusters on GPUs: parti
 status: established
 aliases: [GPU PIC, GPU-accelerated PIC, CUDA PIC]
 tags: [gpu, pic, performance, numerics, hall-thruster]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # GPU acceleration of particle codes
@@ -127,7 +127,7 @@ cover the ~10 kHz [breathing mode](/definitions/breathing-mode.md), about
 
 ## Contradictions
 
-* **First GPU PIC simulation of a plasma thruster.** Status: Open,
+* **First GPU PIC simulation of a plasma thruster.** *Open*;
   recommended for closure by the human.
   [Gallo et al. (2021)](/sources/gallo-2021.md), §2.6, state, citing a
   single review (Kahnfeld et al. 2019), that their approach "is the very

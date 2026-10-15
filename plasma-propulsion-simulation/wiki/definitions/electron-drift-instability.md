@@ -5,7 +5,7 @@ description: "The azimuthal instability driven by the E x B electron drift in Ha
 status: established
 aliases: [ECDI, EDI, electron cyclotron drift instability, E x B electron drift instability, modified ion-acoustic instability, azimuthal instability]
 tags: [instability, anomalous-transport, hall-thruster, pic, kinetic, oscillation]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Electron drift instability (ECDI)
@@ -174,7 +174,7 @@ frequency in cycles per metre. See
   needed; [Charoy et al. (2020)](/sources/charoy-2020.md), pp. 17–18, at
   about 250 per cell, attribute the ion-acoustic character to physical
   nonlinear smearing of the cyclotron resonances (after Lampe et al. 1972)
-  and build their friction closure on it. Neither tests the other's
+  and build their friction closure on it. The review's own §3.4 reports that 2D axial–azimuthal PIC recovers ion-acoustic scalings, the plane of Charoy et al.'s runs, so its noise statement is not specific to that plane. Neither tests the other's
   mechanism.
 
 # Citations

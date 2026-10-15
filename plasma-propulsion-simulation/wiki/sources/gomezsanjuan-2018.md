@@ -8,7 +8,7 @@ authors: [Gómez-San-Juan A., Pérez-Grande I., Sanz-Andrés A.]
 year: 2018
 venue: "Acta Astronaut. 151:691–702"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Gómez-San-Juan_Uncertainty_calculation_for_spacecraft_thermal_models_using.pdf"
-tags: [context, thermal-control, uncertainty-quantification, monte-carlo, surrogate-model]
+tags: [context, thermal-control, uq, monte-carlo, surrogate-model]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

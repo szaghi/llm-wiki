@@ -8,7 +8,7 @@ authors: [Verspieren Q., Coral G., Pyne B., Roy H.]
 year: 2018
 venue: "Acta Astronaut. 151:919–927"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Verspieren_An_early_history_of_the_Philippine_space_development_program.pdf"
-tags: [context, space-policy, history, small-satellites]
+tags: [context, space-policy, history, small-satellite]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

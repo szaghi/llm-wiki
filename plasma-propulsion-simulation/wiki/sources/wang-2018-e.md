@@ -8,7 +8,7 @@ authors: [Wang X., Cai J., Yang R., Feng J.]
 year: 2018
 venue: "Acta Astronaut. 151:380–388"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Wang_Form-finding_of_deployable_mesh_reflectors_using_dynamic_rel.pdf"
-tags: [context, deployable-structures, mesh-reflector, form-finding, dynamic-relaxation]
+tags: [context, deployable-structure, mesh-reflector, form-finding, dynamic-relaxation]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

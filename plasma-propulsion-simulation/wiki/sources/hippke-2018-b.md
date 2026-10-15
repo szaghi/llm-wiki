@@ -8,7 +8,7 @@ authors: [Hippke M., Leyland P., Learned J.G.]
 year: 2018
 venue: "Acta Astronaut. 151:32–36"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2018_Crossref_Acta_Astronautica_Hippke_Benchmarking_inscribed_matter_probes.pdf"
-tags: [context, seti, interstellar-communication, interstellar-probes]
+tags: [context, seti, interstellar-communication, interstellar-flight]
 timestamp: 2026-10-15T00:00:00Z
 ---
 
