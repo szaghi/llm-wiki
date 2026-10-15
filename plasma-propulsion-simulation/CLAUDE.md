@@ -108,7 +108,14 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
 
 ## Status
 
-**Chunk 4 staged 2026-10-15:** 20 Source-only pages; 81 of 108 ingested,
+**Chunk 5 staged 2026-10-15:** 20 Source-only pages, including the
+front matter `unknown-2018` (no reference list: a permanent `--pending`
+entry); 101 of 108 ingested, 3899 bibliography entries; no concept page
+changed. The old cited-work entry `wu-2018` was re-keyed to `wu-2018-d`
+first. Next: chunk 6, the last 7 Source-only pages, then the whole-corpus
+`--dupes` and fuzzy-title sweeps and a deep lint.
+
+**Chunk 4 committed 2026-10-15 (8a867fb):** 20 Source-only pages; 81 of 108 ingested,
 3360 bibliography entries; no concept page changed. Two re-slugs
 (hady-2018 → `ghassabian-2018`, le-2018 → `lemay-2018`); the old cited-work
 entries `kim-2018` and `liu-2018` were re-keyed to `kim-2018-b` and

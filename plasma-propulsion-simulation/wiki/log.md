@@ -2,6 +2,20 @@
 
 ## 2026-10-15
 
+* **Chunk 5: 20 Source-only pages** (D23): meng-2018-b, miller-2018, mu-2018,
+  nies-2018, pallone-2018, perez-2018, pestrenin-2018, sabatini-2018,
+  semyonov-2018, unknown-2018, verspieren-2018, volpe-2018, wang-2018,
+  wang-2018-b, wang-2018-e, wang-2018-f, wu-2018, wu-2018-b, wu-2018-c,
+  xu-2018, all outside this bundle's domain: each has a Source page tagged
+  `context` and its reference list. No concept page created or changed.
+  * **Front matter:** [unknown-2018](/sources/unknown-2018.md) is the issue's
+    inside front cover (publication information, editorial board), recorded
+    as a `report` with no reference list; it stays in `--pending` by design.
+  * **Bibliography:** before the merge, the cited-work entry `wu-2018` (Acta
+    Astronaut. 149:11) was re-keyed to `wu-2018-d`, freeing the slug of a
+    chunk-5 paper. 19 reference lists merged with `tools/bib_merge.py`
+    (FLAGS 0, `--dupes` clean), 3360 → 3899 entries.
+
 * **Chunk 4: 20 Source-only pages** (D23): ghassabian-2018, haley-2018,
   helman-2018, hippke-2018, hippke-2018-b, hou-2018, huang-2018, huang-2018-b,
   huang-2018-c, joffre-2018, ke-2018, kim-2018, kumar-2018, lemay-2018,

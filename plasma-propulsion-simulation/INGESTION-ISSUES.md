@@ -6,6 +6,72 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — 20 Source-only pages (2026-10-15)
+
+Sources: meng-2018-b, miller-2018, mu-2018, nies-2018, pallone-2018,
+perez-2018, pestrenin-2018, sabatini-2018, semyonov-2018, unknown-2018,
+verspieren-2018, volpe-2018, wang-2018, wang-2018-b, wang-2018-e, wang-2018-f,
+wu-2018, wu-2018-b, wu-2018-c, xu-2018. They cover space robotics, GNC,
+structures, radiation dosimetry, operations, relativistic flight, history and
+the issue's front matter, all outside this bundle's domain (D23). No concept
+page changed. Each paper's slips are on its Source page under "Recorded as
+printed". The read-only audit found no errors and 4 minor items, all fixed.
+
+### Identity and metadata
+
+* Page 1 matched the filename's title for all 20 files. Every file is the
+  publisher's version, and every issue year is 2018.
+* **`unknown-2018` is the front matter:** the inside front cover with the
+  publication information, the IAA committee and the editorial board. Crossref
+  lists it as doi:10.1016/S0094-5765(18)31642-4. It is recorded as a `report`
+  and has no reference list, so `bib_to_md.py --pending` will list it
+  permanently. Two files in other bundles already have the same status.
+* semyonov-2018 discusses ion acceleration for an antimatter-powered rocket
+  only at feasibility level, with no thruster or plasma model, so it is
+  Source-only. Its Summary says so.
+
+### Bibliography (3360 → 3899 entries, FLAGS 0, `--dupes` clean)
+
+* **Pre-step:** the cited-work entry `wu-2018` (Wu & Sun, Acta Astronaut.
+  149:11, an ablative pulsed plasma thruster paper) was re-keyed to
+  `wu-2018-d` before the merge, freeing the slug of a chunk-5 paper.
+* **Self-key and reserved-slug traps:**
+  * verspieren-2018's ref. [12], a private interview, is now
+    `verspieren-2018-e`.
+  * Two citations printed as `wang-2018`, from wang-2018-f and wu-2018-b, are
+    now `wang-2018-g` and `-h`.
+  * wu-2018-b's "liu-2018" is a different work from the ingested paper and is
+    now `liu-2018-f`.
+* **Key collisions:** semyonov-2018's NASA 2017 press release is a different
+  work from the existing handbook entry, so it is now `nasa-2017-b`.
+  verspieren-2018's ref. [19] also collided with an existing key and is now
+  `verspieren-2017-d`.
+* **Internal duplicates:** wang-2018-f prints [2]=[41] and [27]=[48]; each
+  pair is now one entry.
+* **Year re-keys from Crossref:** yu 2012→2016, christian 2016→2017,
+  belvin 2015→1989, foix 2017→2011, lefebvre 2010→2008. Two of volpe-2018's
+  citations resolve to existing entries: sabatini 2017→2015, and
+  Clohessy–Wiltshire to the existing `clohessy-1960`.
+* **Kept as distinct works:** thomson-1999 vs thomson-2000; nies-2016, the
+  conference version of the ingested nies-2018; johnson-2012 vs 2013; eight
+  Philippine bills that the heuristic resolver wanted to merge.
+
+### Decisions for you
+
+1. **`sirohi-2000`:** Crossref has two versions with this exact title, a 2000
+   journal article and a 1999 SPIE paper. It is keyed by the journal version,
+   and no DOI is recorded.
+2. **Years not verified on Crossref:** campbell-1985 (printed 1984 and 1985),
+   verspieren-2017-c (IAC-17), nies-2016 (IAC 2016), and two entries dated by
+   their URLs.
+3. **`neuhauster-2018`** keeps the surname as printed; the author is probably
+   Neuhauser, which I did not verify.
+4. **semyonov-2018 cites Lubin in JBIS.** Its citation is merged onto the
+   existing `lubin-2016` entry, which keeps its arXiv form with a note. This
+   is one more preprint-vs-published case, alongside chunk 4's.
+5. Chunks 3 and 4's open decisions still stand: the `voland-2005` re-key,
+   `first-1973`, the orphan-warning amendment, and the preprint folds.
+
 ## Chunk 4 — 20 Source-only pages (2026-10-15)
 
 Sources: ghassabian-2018, haley-2018, helman-2018, hippke-2018, hippke-2018-b,
