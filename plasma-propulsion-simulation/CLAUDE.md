@@ -67,13 +67,14 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
   merged into the
   bibliography. It is an ingestion in the protocol's sense. Source-only
   pages carry the tag `context` and have no incoming links from concept
-  pages, so the lint reports each as an orphan warning; these warnings
-  are expected. The only other accepted orphan warning is a Source page
-  of a paper ingested in full that earns no concept page under the
-  granularity rule; its audit list says why, it carries no `context`
-  tag, and the warning clears when a later source makes a concept page
-  cite it (amendment 2026-10-15, chunk 3: gomezjenkins-2018,
-  garciagarrido-2018, yang-2018).
+  pages; the lint exempts them from the orphan warning (D24), so the tag
+  is load-bearing: never put it on an in-scope page. The only accepted
+  orphan warning is a Source page of a paper ingested in full that earns
+  no concept page under the granularity rule; its audit list says why,
+  it carries no `context` tag, and the warning is a marker that clears
+  when a later source makes a concept page cite it (amendment
+  2026-10-15, chunk 3: gomezjenkins-2018, garciagarrido-2018,
+  yang-2018).
 
 ## Bundle specifics
 

@@ -407,3 +407,24 @@ ingested there in full. One paper keeps one slug in every bundle.
 coherent technical fields with their own vocabulary that the user's CFD
 work touches; folding them into plasma propulsion would have diluted its
 registry, and a catch-all bundle would have had none.
+
+## D24 — Lint exemption for out-of-scope Source pages (2026-10-15)
+
+**Decision (user, option B of three):** `tools/lint_okf.py` does not
+report the orphan warning for a page with `type: Source` and the tag
+`context`. Concept pages are never exempt, whatever their tags.
+
+**Why:** the orphan check exists to catch a concept page or an in-scope
+Source page that lost its last incoming link. In
+`plasma-propulsion-simulation` the scope rule (D22, D23) makes 82
+Source-only pages uncitable by any concept page, so their 82 permanent
+warnings buried the three meaningful ones (full ingestions waiting for a
+second source). Links from `index.md`, `log.md` and `bibliography.md`
+still do not count as incoming, by design. The rejected options were
+keeping the warnings (signal masked) and a catalog concept page linking
+every context source (games the check, violates the no-stub rule).
+
+**Consequence:** `context` is a reserved tag with lint semantics. A
+bundle that uses it declares the page out of scope; putting it on an
+in-scope page would hide a genuine orphan. Tests in
+`tests/test_lint_okf.py` cover the exemption and its limits.

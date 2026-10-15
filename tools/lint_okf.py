@@ -15,7 +15,8 @@ Checks (see CLAUDE.md):
   Math  no ``\\(``/``\\[`` delimiters; balanced ``$``/``$$`` outside code.
   Bib   bibliography.bib parses and validates (keys, citedby slugs, sort);
         bibliography.md is the freshly generated view (sync enforced).
-  Graph orphan concept pages (warning only).
+  Graph orphan concept pages (warning only); Source pages tagged ``context``
+        are exempt: by bundle law no concept page may cite them (D24).
 """
 
 from __future__ import annotations
@@ -93,6 +94,12 @@ def resolve_link(wiki: Path, src: Path, target: str) -> bool:
     if target.startswith("/"):
         return (wiki / target.lstrip("/")).exists()
     return (src.parent / target).exists()
+
+
+def is_context_source(meta: dict) -> bool:
+    """True for a Source page tagged ``context``: out of its bundle's scope, so never cited (D24)."""
+    tags = meta.get("tags") or []
+    return str(meta.get("type", "")).strip() == "Source" and isinstance(tags, list) and "context" in tags
 
 
 def main(wiki_dir: str) -> int:
@@ -236,9 +243,12 @@ def main(wiki_dir: str) -> int:
                     )
 
     # --- orphans (warning) ---
-    for page in sorted(pages):
-        if page.as_posix() not in incoming and page.parts[-1] != "notation.md":
-            warn(page, "orphan: no incoming links")
+    for page, meta in sorted(pages.items()):
+        if page.as_posix() in incoming or page.parts[-1] == "notation.md":
+            continue
+        if is_context_source(meta):
+            continue  # D24: out-of-scope Source page, uncitable by bundle law
+        warn(page, "orphan: no incoming links")
 
     for line in errors + warnings:
         print(line)

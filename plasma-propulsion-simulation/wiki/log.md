@@ -17,6 +17,10 @@
     ([GPU acceleration](/methods/gpu-acceleration-of-pic.md)) is closed by
     human fiat against Gallo et al.'s priority claim; the closure is
     hypothesis-grade. Two contradictions remain Open.
+  * Orphan warnings: the lint now exempts Source pages tagged `context`
+    (DECISIONS.md D24); the bundle's 85 orphan warnings drop to 3
+    (gomezjenkins-2018, garciagarrido-2018, yang-2018, full ingestions
+    awaiting a second source).
 
 * **Deep lint #2** (all 43 concept pages, the notation registry and the root
   index; 2026-10-15), applied with chunk 6:

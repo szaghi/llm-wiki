@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import bib_to_md
 import lint_okf
 import pytest
 
@@ -57,6 +58,41 @@ def test_violations_fail(repo: Path, old: str, new: str, message: str) -> None:
     code, out = lint(repo / "mini" / "wiki")
     assert code == 1
     assert message in out
+
+
+def _add_orphan_source(wiki: Path, tags: str) -> None:
+    page = wiki / "sources" / "baz-2021.md"
+    page.write_text(
+        '---\ntype: Source\ntitle: "Baz (2021) — Off topic"\ndescription: "An off-topic paper."\n'
+        f'resource: "doi:10.1000/baz"\nsource_kind: paper\ntags: {tags}\n'
+        "timestamp: 2026-01-01T00:00:00Z\n---\n\n# Summary\n\nOff topic.\n",
+        encoding="utf-8",
+    )
+    with (wiki / "sources" / "index.md").open("a", encoding="utf-8") as f:
+        f.write("* [Baz (2021) — Off topic](/sources/baz-2021.md) — An off-topic paper.\n")
+    assert bib_to_md.main([str(wiki)]) == 0  # the generated view tracks ingested sources
+
+
+@pytest.mark.parametrize(("tags", "warned"), [("[context]", False), ("[demo]", True), ("[]", True)])
+def test_context_source_is_exempt_from_orphan_warning(repo: Path, tags: str, warned: bool) -> None:
+    wiki = repo / "mini" / "wiki"
+    _add_orphan_source(wiki, tags)
+    code, out = lint(wiki)
+    assert code == 0, out
+    assert ("sources/baz-2021.md: orphan" in out) is warned
+
+
+def test_context_tag_does_not_exempt_a_concept_page(repo: Path) -> None:
+    wiki = repo / "mini" / "wiki"
+    for rel, old, new in [
+        ("methods/foo.md", "tags: [demo]", "tags: [context]"),
+        ("index.md", "[Foo](/methods/foo.md)", "Foo"),
+        ("sources/bar-2020.md", "[Foo](/methods/foo.md)", "Foo"),
+    ]:
+        page = wiki / rel
+        page.write_text(page.read_text(encoding="utf-8").replace(old, new), encoding="utf-8")
+    _, out = lint(wiki)
+    assert "methods/foo.md: orphan" in out, out
 
 
 def test_unlisted_concept_fails(repo: Path) -> None:

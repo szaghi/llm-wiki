@@ -18,7 +18,10 @@ wiki; maintained by the compiler at every chunk.
    ingestions.
 3. **The GPU-priority contradiction is closed by fiat** against Gallo et
    al.'s claim (hypothesis-grade closure). Two contradictions stay Open.
-4. **Orphan warnings:** details requested; the decision is pending.
+4. **Orphan warnings: option B** (D24). The lint no longer warns for
+   Source pages tagged `context`, which cuts this bundle's orphan
+   warnings from 85 to the 3 full ingestions that wait for a second
+   source. The bundle-law amendment was trimmed to match.
 
 ## Chunk 6 — the last 7 Source-only pages, closing sweeps, deep lint #2 (2026-10-15)
 
