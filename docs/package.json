@@ -5,7 +5,7 @@
     "predocs:dev": "npm run docs:sync",
     "predocs:build": "npm run docs:sync",
     "docs:dev": "vitepress dev",
-    "docs:build": "node --max-old-space-size=8192 node_modules/vitepress/bin/vitepress.js build",
+    "docs:build": "node --max-old-space-size=12288 node_modules/vitepress/bin/vitepress.js build",
     "docs:preview": "vitepress preview"
   },
   "devDependencies": {
