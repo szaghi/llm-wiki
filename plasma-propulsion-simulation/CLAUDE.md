@@ -57,7 +57,7 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
   new bundles `high-speed-aerothermodynamics` (10) and
   `chemical-airbreathing-propulsion` (11), ingested in full there and as
   Source-only pages here; chunks 3–6 (20, 20, 20, 7) are the rest, the
-  five plasma-related papers first (gomez-2018, alpatov-2018,
+  five plasma-related papers first (gomezjenkins-2018, alpatov-2018,
   shuvalov-2018, garciagarrido-2018, yang-2018, ingested in full here),
   then the others as Source-only pages, in archive-filename order.
 - **Source-only page:** verified metadata, summary, key claims, notation
@@ -68,7 +68,12 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
   bibliography. It is an ingestion in the protocol's sense. Source-only
   pages carry the tag `context` and have no incoming links from concept
   pages, so the lint reports each as an orphan warning; these warnings
-  are expected and are the only accepted ones in this bundle.
+  are expected. The only other accepted orphan warning is a Source page
+  of a paper ingested in full that earns no concept page under the
+  granularity rule; its audit list says why, it carries no `context`
+  tag, and the warning clears when a later source makes a concept page
+  cite it (amendment 2026-10-15, chunk 3: gomezjenkins-2018,
+  garciagarrido-2018, yang-2018).
 
 ## Bundle specifics
 
@@ -103,7 +108,15 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
 
 ## Status
 
-**Chunk 2 staged 2026-10-14:** 21 *Acta Astronautica* papers as Source-only
+**Chunk 3 staged 2026-10-15:** the five plasma-related Acta papers in full
+(alpatov-2018, shuvalov-2018, gomezjenkins-2018, garciagarrido-2018,
+yang-2018) and 15 Source-only pages; 61 of 108 ingested, 2738 bibliography
+entries; two new concept pages (ion-beam shepherd, magnetized-body plasma
+drag), notation §7 added; no contradiction opened. gomez-2018 was re-slugged
+`gomezjenkins-2018` (Crossref family name). Next: chunk 4, 20 Source-only
+pages; first re-key the existing `kim-2018` and `liu-2018` entries.
+
+**Chunk 2 committed 2026-10-14 (4c3b34e):** 21 *Acta Astronautica* papers as Source-only
 pages (their full compilation is in high-speed-aerothermodynamics and
 chemical-airbreathing-propulsion, D23); 41 of 108 ingested, 2130
 bibliography entries; no concept page changed. Next: chunk 3, the five

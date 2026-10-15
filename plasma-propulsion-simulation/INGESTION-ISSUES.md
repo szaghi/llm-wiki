@@ -6,6 +6,119 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — five papers in full, 15 Source-only pages (2026-10-15)
+
+Sources in full: alpatov-2018, shuvalov-2018, gomezjenkins-2018,
+garciagarrido-2018, yang-2018. Source-only: ahmad-2018, an-2018, antoni-2018,
+bu-2018, cai-2018-b, cerf-2018, conte-2018, crusan-2018, delchambre-2018,
+dhara-2018, dong-2018, gagg-2018, grieve-2018, guo-2018, gomezsanjuan-2018.
+New concept pages: [ion-beam shepherd](wiki/definitions/ion-beam-shepherd.md)
+(alpatov, shuvalov, takahashi-2019, cai-2018) and
+[plasma drag augmentation of a magnetized body](wiki/results/magnetized-body-plasma-drag.md)
+(shuvalov). Notation §7 added (plasma–body interaction).
+
+### Contradictions opened
+
+None. Judged qualifications:
+* Alpatov's analytic far-plume force (collisionless, full momentum deposition,
+  no charge exchange, no reflection) vs the EX-PWS PIC-DSMC plate force of
+  cai-2018. The regimes differ (7 m in orbit vs 0.6–1.0 m in a chamber), and
+  Cai's own sensitivities support the simplifications: reflection changes the
+  force by 0.1–0.25 %, and CEX ions carry under 0.1 % of the momentum.
+* The beam pressures Shuvalov quotes for LEOSWEEP (8.43 and 4.04 mN/m² at 7 and
+  10 m) cannot be derived from Alpatov's LEOSWEEP beam in Table 2. The auditor
+  gets a disc mean of about 10.6 and 5.5 mN/m², and about 34 mN/m² on axis.
+  Shuvalov does not state the area or averaging, so this is recorded here only,
+  not in the wiki.
+
+### Printed inconsistencies worth your attention
+
+* **alpatov-2018:**
+  * Table 2 prints the Xe ion mass as 2.8×10⁻²⁵ kg; the correct value is
+    2.18×10⁻²⁵ kg. Only 2.18 reproduces the printed 0.031 N (0.0315 N vs
+    0.0405 N).
+  * Table 2 gives $I_{sp}$ = 3400 s next to an ion velocity of 71580 m/s, which
+    corresponds to about 7300 s. That implies a propellant utilization of about
+    0.47, which the paper never states.
+  * The 2×10⁻⁷ N/kg bound is an orbital-perturbation estimate, not a beam
+    force. The drafts had it wrong; the audit caught it and it is fixed.
+* **shuvalov-2018:**
+  * The boundary field is undoubled in Eqs. 4–5 and doubled in §§4–5.
+  * The printed ratio 3.72 uses the doubled field and the larger sphere: it
+    recomputes to 3.69, against 3.23 for the smaller sphere.
+  * The §5 value $B_W$ = 3.9×10⁻³ T is a misprint for 3.9×10⁻² T.
+  * The claim that 0.6–0.8 T matches the shepherd beam pressures holds only for
+    the 4.04 and 1.44 mN/m² beams, via Fig. 9. In the paper's own Fig. 8 at
+    700 km, the 8.43 mN/m² case needs about 2.6 T. The drafts overstated this;
+    it is fixed.
+  * The magnetic moment of 1.1–7.2 A·m² does not fit 0.2 T surface fields.
+  * The values the text gives for Fig. 8 are 1.3–1.5× the plotted markers.
+* Every Source page records its paper's other slips under "Recorded as printed".
+  Recomputations by readers are labelled "Reader's check" and kept separate.
+  The pages with the most (equation-level slips) are conte-2018, cai-2018-b,
+  delchambre-2018, gagg-2018, guo-2018, gomezjenkins-2018, garciagarrido-2018
+  and yang-2018.
+
+### Identity and metadata
+
+* **Re-slug:** the file filed under "Gomez" is by Gomez Jenkins, Krejci &
+  Lozano. Crossref gives the family name "Gomez Jenkins", and the paper's own
+  ref. [16] prints "Gomez-Jenkins". Its slug is `gomezjenkins-2018`, following
+  the bundle's convention for compound surnames (garciagarrido, gomezsanjuan).
+  The bundle law and the plan were updated to match.
+* Page 1 matched the filename for all 20 files. Every file is the publisher's
+  typeset version, and every issue year is 2018.
+
+### Bibliography (2130 → 2738 entries, FLAGS 0, `--dupes` clean)
+
+* Self-key traps re-keyed: three cited works carried the citing paper's own
+  slug.
+  * bu-2018's ref. [1] is now `bu-2018-d`.
+  * an-2018's ref. [13] is now `an-2018-b`.
+  * conte-2018's ref. [9] is now `conte-2018-b`.
+* cai-2018-b's ref. [13] is the authors' IAC 2017 version of the same paper. It
+  stays a separate entry, `cai-2017-c`.
+* Collisions with existing keys:
+  * alpatov's `zhou-1996` (Zhou, Doyle & Glover) and an-2018's `wang-2000`
+    (Wang & Stengel) are different works and got new suffixes.
+  * shuvalov's `bombardelli-2011` is the existing entry.
+* Year re-keys from Crossref: huang-2015 → huang-2016-g, fujii-2012 → 1996,
+  umetani-2010 → 1989, chacko-1986 → 1987, conte-2017 → conte-2018-b.
+* Undated references keyed by the year their DOI resolves to: qi-2015,
+  bezrouk-2018, committee-2010, cerf-2007, scott-2007. esa-2014 takes its year
+  from the reference's URL; 20 other undated entries take the citing year 2018,
+  with a note.
+* "de Almeida Prado" is keyed `dealmeidaprado-*`, following the repo convention
+  of keeping name particles in the stem.
+* Internal duplicates in garciagarrido-2018 ([9]=[29], [10]=[23]) and
+  antoni-2018's folded repeat printings (45 printed → 37 works) were verified.
+* grieve-2018's refs [24]/[25] are one title in two venues, kept as two
+  entries.
+
+### Decisions for you
+
+1. **`voland-2005` has the wrong year.** Crossref
+   (doi:10.1016/j.actaastro.2006.02.021) puts Acta Astronaut. 59:181 in 2006.
+   an-2018 prints the year correctly. The key is shared with the
+   high-speed-aerothermodynamics and chemical-airbreathing-propulsion
+   bibliographies, so re-keying it to `voland-2006` means changing three
+   bundles. I merged under the existing key and changed nothing. Re-key it?
+2. **Year-uncertain keys.** `folkner-2018` and `europeancommission-2018` follow
+   the citing-year rule; their real dates (2014; March 2017) cannot be verified
+   on Crossref. `esa-2014` takes its year from a URL.
+3. **`first-1973`** is antoni-2018's ref. [4], a list of the EU enlargement
+   waves, not a citable work. I kept it as `misc` with an honest title, because
+   the rule is to merge reference lists unfiltered. Drop it?
+4. **Orphan warnings, amended bundle law.** gomezjenkins-2018,
+   garciagarrido-2018 and yang-2018 are full ingestions, but none earns a
+   concept page, so the lint reports each as an orphan. I amended the bundle
+   law to accept that case, with the reason on each page and no `context` tag.
+   The amendment is yours to veto. The open question from chunk 2 still
+   stands: should the lint exempt pages tagged `context`?
+5. **Scope trim, applied.** The off-domain controller and propellant detail of
+   alpatov-2018 stays on its Source page. The ion-beam-shepherd page keeps only
+   a three-line summary of it, per the bundle's scope rule.
+
 ## Chunk 2 — 21 Source-only pages (2026-10-14)
 
 Sources: knight-2018, liu-2018-c, liu-2018-d, meng-2018, moradi-2018,

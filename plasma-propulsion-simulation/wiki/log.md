@@ -1,5 +1,39 @@
 # Directory Update Log
 
+## 2026-10-15
+
+* **Chunk 3: five plasma-related papers in full, 15 Source-only pages** (D23).
+  Read by 20 reader agents into scratch notes, drafted by five drafters from
+  the notes only, installed by the compiler, audited read-only before staging.
+  * **In full:** [alpatov-2018](/sources/alpatov-2018.md) and
+    [shuvalov-2018](/sources/shuvalov-2018.md) seed two concept pages:
+    [ion-beam shepherd](/definitions/ion-beam-shepherd.md) (also citing
+    takahashi-2019 and cai-2018) and
+    [plasma drag augmentation of a magnetized body](/results/magnetized-body-plasma-drag.md).
+    [gomezjenkins-2018](/sources/gomezjenkins-2018.md),
+    [garciagarrido-2018](/sources/garciagarrido-2018.md) and
+    [yang-2018](/sources/yang-2018.md) are full Source pages that no concept
+    page cites yet: none of their contributions meets the granularity rule
+    (each page says why).
+  * **Source-only (tag `context`):** ahmad-2018, an-2018, antoni-2018, bu-2018,
+    cai-2018-b, cerf-2018, conte-2018, crusan-2018, delchambre-2018,
+    dhara-2018, dong-2018, gagg-2018, grieve-2018, guo-2018,
+    gomezsanjuan-2018.
+  * **Identity:** the archive file filed under "Gomez" is by Gomez Jenkins,
+    Krejci & Lozano (Crossref family name "Gomez Jenkins"); slug
+    `gomezjenkins-2018`, not the planned `gomez-2018`.
+  * **Notation registry extended** ([notation](/notation.md) §7, plasma–body
+    interaction): $C_D$, $C_{D0}$, $p_{\mathrm{dyn}}$, $p_{Bw}$, $B_w$,
+    $r_w$, $L_{\mathrm{so}}$, $F_{\mathrm{IT}}$, $F_{\mathrm{CT}}$.
+  * **Bibliography:** 20 reference lists merged with `tools/bib_merge.py`
+    (FLAGS 0, `--dupes` clean), 2130 → 2738 entries. Citations keyed with
+    their citing paper's own slug were re-keyed (`bu-2018-d`, `an-2018-b`,
+    `conte-2018-b`); cai-2018-b's IAC 2017 conference version is a separate
+    entry (`cai-2017-c`); the existing key `voland-2005` carries a wrong year
+    (Crossref: 2006), merged under it pending the human's re-key.
+  * Source pages whose audit list changed: [cai-2018](/sources/cai-2018.md),
+    [takahashi-2019](/sources/takahashi-2019.md).
+
 ## 2026-10-14
 
 * **Chunk 2: 21 Source-only pages** (D23): knight-2018, liu-2018-c, liu-2018-d,

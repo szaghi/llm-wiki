@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-15T00:00:00Z
 ---
 
 # Notation registry
@@ -153,3 +153,14 @@ time, an ensemble) and $\tilde{(\cdot)}$ the fluctuation about it.
 | $I_{\mathrm{bit}}$ | impulse bit of a pulsed thruster | |
 | $F_s$, $F_B$, $F_w$ | magnetic-nozzle thrust components: source electron pressure, magnetic (diamagnetic $\mathbf j\times\mathbf B$), wall | $F=F_s+F_B+F_w$ |
 | $M_A$ | Alfvén Mach number | |
+
+## 7. Plasma–body interaction
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $C_D$ | drag coefficient of a body in a flowing plasma or gas, referred to its cross-section and the flow dynamic pressure | $C_{D0}$: the same body unmagnetized |
+| $p_{\mathrm{dyn}}$ | dynamic pressure of the incident flow, $\tfrac12 m_in_iu_i^2$ for an ion flow unless a page states the convention | |
+| $p_{Bw}$ | magnetic pressure $B_w^2/(2\mu_0)$ at the body surface | $B_w$ the surface field |
+| $r_w$ | radius of a spherical body | |
+| $L_{\mathrm{so}}$ | standoff distance of a mini-magnetosphere boundary from the body centre | not the domain length $L$ |
+| $F_{\mathrm{IT}}$, $F_{\mathrm{CT}}$ | thrusts of the impulse-transfer and compensation thrusters of an ion-beam shepherd | |

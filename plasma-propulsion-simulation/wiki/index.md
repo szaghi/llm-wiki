@@ -13,7 +13,7 @@ quantification and calibration; GPU particle codes.
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 41 of the archive's 108 files ingested. Chunk 1, the core (20):
+**Corpus:** 61 of the archive's 108 files ingested. Chunk 1, the core (20):
 three reviews of plasma-propulsion modelling
 ([Boyd 2005](/sources/boyd-2005.md), [Taccogna & Garrigues 2019](/sources/taccogna-2019.md),
 [Taccogna et al. 2023](/sources/taccogna-2023.md)), a review of helicon thrusters and
@@ -23,9 +23,12 @@ fluid models ([Ahedo 2023](/sources/ahedo-2023.md)), the 2017 Plasma Roadmap
 The other 88 files are the rest of *Acta Astronautica* vol. 151 (2018), compiled
 as context (bundle law, D22, D23): chunk 2 added 21 of them as Source-only
 pages (high-speed aerothermodynamics and chemical propulsion papers,
-outside this bundle's domain); they are listed in the
-[sources catalog](/sources/index.md) with the tag `context`. The
-[bibliography](/bibliography.md) lists the 2130 works the 41 sources cite.
+outside this bundle's domain); chunk 3 added the five that touch plasma or
+electric propulsion, ingested in full (an ion-beam shepherd, magnetic drag in
+the ionosphere, an electrospray CubeSat constellation, a plasma wind tunnel, an
+electrodynamic tether), and 15 more Source-only pages. Source-only pages are
+listed in the [sources catalog](/sources/index.md) with the tag `context`. The
+[bibliography](/bibliography.md) lists the 2738 works the 61 sources cite.
 
 ## Reading guide
 
@@ -79,6 +82,10 @@ outside this bundle's domain); they are listed in the
    [gas–surface interaction](/methods/gas-surface-interaction.md), the plume code
    [EX-PWS](/software/ex-pws.md), and the
    [laser-ablation plume model](/methods/laser-ablation-plume-model.md).
+8. **Plasma acting on spacecraft.** The [ion-beam shepherd](/definitions/ion-beam-shepherd.md)
+   (a thruster plume pushing a debris object, with its analytic far-plume force
+   model) and [plasma drag augmentation of a magnetized body](/results/magnetized-body-plasma-drag.md)
+   (a mini-magnetosphere in a flowing plasma).
 
 ## Open contradictions
 

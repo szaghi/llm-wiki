@@ -132,13 +132,14 @@ in Key claims 5–10, and on the concept pages listed below.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-14) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-14) created every page of the bundle; chunk 3 (2026-10-15) added the ion-beam-shepherd page. This source is cited on:
 
 * [Breathing mode](/definitions/breathing-mode.md)
 * [Charge-exchange ions](/definitions/charge-exchange-ions.md)
 * [Current-free double layer](/definitions/current-free-double-layer.md)
 * [Direct simulation Monte Carlo (DSMC)](/methods/dsmc.md)
 * [Helicon plasma thruster](/definitions/helicon-plasma-thruster.md)
+* [Ion beam shepherd](/definitions/ion-beam-shepherd.md)
 * [Magnetic nozzle](/definitions/magnetic-nozzle.md)
 * [Polytropic electron closure and plume cooling](/definitions/polytropic-electron-closure.md)
 * [Thrust decomposition of a magnetic nozzle](/results/magnetic-nozzle-thrust-decomposition.md)
