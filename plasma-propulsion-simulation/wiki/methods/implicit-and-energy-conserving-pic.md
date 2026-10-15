@@ -4,7 +4,7 @@ title: "Semi-implicit, implicit and energy-conserving PIC"
 description: "PIC time-integration schemes (direct-implicit, implicit-moment, energy-conserving, and the semi-implicit electrostatic scheme of Barnes) that relax the explicit Debye-length and plasma-frequency constraints at the price of numerical heating or cooling, with particle resampling and numerical heating as measured in a GPU Hall-thruster benchmark."
 status: established
 aliases: [implicit PIC, direct-implicit method, DIM, implicit-moment method, IMM, ECPIC, ECSIM, energy-conserving PIC, semi-implicit PIC]
-tags: [pic, kinetic, numerics, hall-thruster, performance, verification]
+tags: [pic, kinetic, numerics, hall-thruster, computational-performance, verification]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

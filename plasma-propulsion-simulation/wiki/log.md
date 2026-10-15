@@ -2,6 +2,15 @@
 
 ## 2026-10-15
 
+* **Human ruling (2026-10-15):** the tag `performance`, used here only for
+  computational performance, is renamed `computational-performance` so it no
+  longer reads as thruster performance (registry §6). Five pages retagged:
+  [implicit and energy-conserving PIC](/methods/implicit-and-energy-conserving-pic.md),
+  [reduced-order PIC](/methods/reduced-order-pic.md),
+  [GPU acceleration](/methods/gpu-acceleration-of-pic.md),
+  [WarpX](/software/warpx.md), [marks-2025](/sources/marks-2025.md). The other
+  open digest items stay as they are, by the human's choice.
+
 * **Human rulings (2026-10-15)** on decisions recorded in `INGESTION-ISSUES.md`:
   * `voland-2005` → `voland-2006` (Crossref doi:10.1016/j.actaastro.2006.02.021,
     print July 2006), also in the two bundles that share the key.

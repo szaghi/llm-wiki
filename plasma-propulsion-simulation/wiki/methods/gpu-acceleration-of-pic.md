@@ -4,7 +4,7 @@ title: "GPU acceleration of particle codes"
 description: "Running particle-in-cell codes for plasma thrusters on GPUs: particle sorting or atomic deposition, active-particle compaction, memory-bound particle kernels, and the field solver as the strong-scaling bottleneck, with measured timings from a MATLAB/CUDA heavy-species code and from WarpX on the axial–azimuthal benchmark."
 status: established
 aliases: [GPU PIC, GPU-accelerated PIC, CUDA PIC]
-tags: [gpu, pic, performance, numerics, hall-thruster]
+tags: [gpu, pic, computational-performance, numerics, hall-thruster]
 timestamp: 2026-10-15T00:00:00Z
 ---
 

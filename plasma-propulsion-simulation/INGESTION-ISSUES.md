@@ -22,6 +22,10 @@ wiki; maintained by the compiler at every chunk.
    Source pages tagged `context`, which cuts this bundle's orphan
    warnings from 85 to the 3 full ingestions that wait for a second
    source. The bundle-law amendment was trimmed to match.
+5. **The `performance` tag is renamed `computational-performance`** on its
+   five pages. Every other open item stays as it is: the `deng-2014` year
+   rule, the `s-2002` and `m-1992` keys, `first-1973`, the years not
+   verified on Crossref, and `neuhauster-2018`.
 
 ## Chunk 6 — the last 7 Source-only pages, closing sweeps, deep lint #2 (2026-10-15)
 

@@ -4,7 +4,7 @@ title: "Reduced-order (pseudo-2D) PIC"
 description: "Particle-in-cell scheme that replaces the 2D Poisson problem by 1D Poisson problems on region-averaged charge densities and approximates the potential as a sum of one-dimensional potentials, cutting cell and particle counts toward those of a 1D run."
 status: established
 aliases: [pseudo-2D PIC, reduced-order particle-in-cell, quasi-3D PIC, Poisson-decomposition PIC]
-tags: [pic, kinetic, numerics, hall-thruster, performance]
+tags: [pic, kinetic, numerics, hall-thruster, computational-performance]
 timestamp: 2026-10-14T00:00:00Z
 ---
 

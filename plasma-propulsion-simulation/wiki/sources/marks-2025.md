@@ -8,7 +8,7 @@ authors: [Marks T.A., Gorodetsky A.A.]
 year: 2025
 venue: "J. Electr. Propuls. 4:34"
 local_file: "/home/stefano/papers/mosaic/plasma-propulsion-simulation/2025_Crossref_Journal_of_Electric_Propulsion_Marks_GPU-accelerated_kinetic_Hall_thruster_simulations_in_WarpX.pdf"
-tags: [pic, gpu, performance, hall-thruster, benchmark, verification, software, instability]
+tags: [pic, gpu, computational-performance, hall-thruster, benchmark, verification, software, instability]
 timestamp: 2026-10-14T00:00:00Z
 ---
 

@@ -4,7 +4,7 @@ title: "WarpX"
 description: "Open-source GPU-native particle-in-cell code from the US DOE Exascale Computing Project, applied with Python callbacks to the axial–azimuthal Hall-thruster benchmark, where one H100 completes the 20 µs case in 1.81 days and its multigrid electrostatic solver limits multi-GPU scaling."
 status: established
 aliases: [WarpX PIC code]
-tags: [software, pic, gpu, hall-thruster, performance, benchmark]
+tags: [software, pic, gpu, hall-thruster, computational-performance, benchmark]
 timestamp: 2026-10-14T00:00:00Z
 ---
 
