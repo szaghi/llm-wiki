@@ -1,5 +1,14 @@
 # Directory Update Log
 
+## 2026-10-15
+
+* **Human ruling (2026-10-15):** the cited work Voland, Huebner & McClinton,
+  *X-43A hypersonic vehicle technology development*, Acta Astronaut. 59:181, is
+  re-keyed `voland-2005` → `voland-2006`: Crossref
+  (doi:10.1016/j.actaastro.2006.02.021) gives print July 2006; citing works that
+  print 2005 give the year of the IAC-05 conference version, a distinct work.
+  No concept page cited the key.
+
 ## 2026-10-14
 
 * **Scaffolding and founding ingestion** (D23): the bundle's papers, filed in the

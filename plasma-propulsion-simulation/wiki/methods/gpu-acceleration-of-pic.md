@@ -127,8 +127,8 @@ cover the ~10 kHz [breathing mode](/definitions/breathing-mode.md), about
 
 ## Contradictions
 
-* **First GPU PIC simulation of a plasma thruster.** *Open*;
-  recommended for closure by the human.
+* **First GPU PIC simulation of a plasma thruster.** *Closed by human
+  fiat (2026-10-15); the closure is hypothesis-grade.*
   [Gallo et al. (2021)](/sources/gallo-2021.md), §2.6, state, citing a
   single review (Kahnfeld et al. 2019), that their approach "is the very
   first one to exploit GPU computing for a PIC application in plasma
@@ -146,8 +146,13 @@ cover the ~10 kHz [breathing mode](/definitions/breathing-mode.md), about
   for thruster plumes, is cited by Taccogna et al. (2023, ref. 290) and by Marks &
   Gorodetsky (2025, ref. 13); it predates the 2021 claim. On this evidence
   the priority claim does not hold as stated; the sources do not print the
-  dates of the GPU runs themselves, so the entry stays Open until the human
-  closes it (or Charoy et al. 2019 is ingested).
+  dates of the GPU runs themselves.
+  *Ruling (human fiat, 2026-10-15):* closed against the priority claim. GPU
+  particle simulation of plasma-thruster problems predates Gallo et al.
+  (2021): CHAOS (2018) for plumes, and the GPU code of the 2019
+  axial–azimuthal benchmark. The dates of the individual GPU runs remain
+  unverified; ingesting Charoy et al. (2019) or Jambunathan & Levin (2018)
+  could reopen the entry.
 
 # Citations
 

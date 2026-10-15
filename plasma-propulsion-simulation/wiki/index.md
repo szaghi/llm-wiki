@@ -94,9 +94,6 @@ listed in the [sources catalog](/sources/index.md) with the tag `context`. The
 
 * The form of the Jorns (2018) data-driven anomalous collision frequency, as two
   reviews print it ([anomalous transport](/definitions/anomalous-electron-transport.md)).
-* The priority claim for the first GPU PIC simulation of a plasma thruster
-  ([GPU acceleration](/methods/gpu-acceleration-of-pic.md)), recommended for
-  closure by the human.
 * Numerical noise or physics as the cause of the ion-acoustic character of
   azimuthal PIC below about 1000 particles per cell
   ([electron drift instability](/definitions/electron-drift-instability.md)).

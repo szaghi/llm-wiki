@@ -6,6 +6,20 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Human rulings (2026-10-15)
+
+1. **`voland-2005` → `voland-2006`**, in this bundle and in the two bundles
+   that share the key (Crossref doi:10.1016/j.actaastro.2006.02.021, print
+   July 2006).
+2. **Preprints are kept** as distinct bibliography entries, not folded into
+   the published version ("they are what I studied"). This undoes the
+   chunk-4 and chunk-5 folds: `hippke-2017-f`, `learned-2008` and
+   `lubin-2016-b` are separate entries. It is the rule for future
+   ingestions.
+3. **The GPU-priority contradiction is closed by fiat** against Gallo et
+   al.'s claim (hypothesis-grade closure). Two contradictions stay Open.
+4. **Orphan warnings:** details requested; the decision is pending.
+
 ## Chunk 6 — the last 7 Source-only pages, closing sweeps, deep lint #2 (2026-10-15)
 
 Sources: yamaguchi-2018, yang-2018-b, yu-2018, yuan-2018, zhang-2018-b,

@@ -151,7 +151,8 @@ No concept page cites this source. It is outside the plasma-propulsion domain (b
      Hippke 2018 files in archive-filename order, hence the suffix `-b`.
      The arXiv preprint "Interstellar Communication. VII. Benchmarking
      Inscribed Matter Probes" (Hippke, Leyland & Learned, December 2017)
-     carries the same title and authors.
+     carries the same title and authors; the bibliography keeps it as the
+     distinct entry `hippke-2017-f`, which hippke-2018 cites.
    * **How it was read.** Full text layer; Eqs. 1–5 checked on the
      rendered pages 34–35. Nothing illegible.
    * **Recorded as printed.**

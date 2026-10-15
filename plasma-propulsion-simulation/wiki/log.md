@@ -2,6 +2,22 @@
 
 ## 2026-10-15
 
+* **Human rulings (2026-10-15)** on decisions recorded in `INGESTION-ISSUES.md`:
+  * `voland-2005` → `voland-2006` (Crossref doi:10.1016/j.actaastro.2006.02.021,
+    print July 2006), also in the two bundles that share the key.
+  * Preprints are kept as distinct bibliography entries, not folded into
+    their published versions: `hippke-2017-f` (the arXiv form of
+    [hippke-2018-b](/sources/hippke-2018-b.md), cited by hippke-2018),
+    `learned-2008` (arXiv form of `learned-2012`) and `lubin-2016-b` (the
+    JBIS version cited by semyonov-2018; `lubin-2016` stays the arXiv
+    preprint). The bibliography entry `hippke-2018-b`, which existed only
+    through the fold, is gone (nothing cites the published paper).
+    4084 → 4086 entries.
+  * The contradiction "first GPU PIC simulation of a plasma thruster"
+    ([GPU acceleration](/methods/gpu-acceleration-of-pic.md)) is closed by
+    human fiat against Gallo et al.'s priority claim; the closure is
+    hypothesis-grade. Two contradictions remain Open.
+
 * **Deep lint #2** (all 43 concept pages, the notation registry and the root
   index; 2026-10-15), applied with chunk 6:
   * **Error fixed:** [cross-field mobility](/definitions/electron-mobility-and-hall-parameter.md)
