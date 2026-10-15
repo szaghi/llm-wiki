@@ -2,6 +2,19 @@
 
 ## 2026-10-14
 
+* **Chunk 2: 21 Source-only pages** (D23): knight-2018, liu-2018-c, liu-2018-d,
+  meng-2018, moradi-2018, wang-2018-d, zhao-2018, zuo-2018, fedele-2018,
+  cheng-2018 (high-speed aerothermodynamics) and armbruster-2018, bai-2018,
+  peng-2018, zhou-2018, song-2018, wang-2018-c, yan-2018, ye-2018, veale-2018,
+  li-2018, greer-2018 (chemical and air-breathing propulsion), all outside this
+  bundle's domain: each has a Source page tagged `context` and its reference
+  list. No concept page created or changed (scope rule).
+  * **Bibliography:** 21 reference lists merged with `tools/bib_merge.py`
+    (FLAGS 0, `--dupes` clean), 1437 → 2130 entries. Cited works whose natural
+    key equals a slug reserved for another Acta vol. 151 file were re-keyed past
+    it (e.g. `zhang-2018-d`…`-i`, `li-2018-d`…`-f`); zhao-2018's citation of
+    "Mosavat 2018" is the ingested moradi-2018 (Crossref).
+
 * **Scaffolding and chunk 1 (the core, 20 sources)** (D22). Read by 20 reader
   agents into scratch notes (each paper read fully; equations checked on rendered
   pages where the text layer failed), drafted by six drafters from the notes only,

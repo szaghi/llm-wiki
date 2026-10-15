@@ -52,8 +52,23 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
   form chunk 1. That file is **not** Bird et al. (2009): page 1 is
   Mungiguerra et al., Acta Astronaut. 151:456 (2018), ingested as
   `mungiguerra-2018`; Bird et al. (2009, doi:10.1063/1.3067865) is not in
-  the archive. The other 88 Acta files follow in chunks 2–6
-  (20, 20, 20, 20, 8) in archive-filename order.
+  the archive.
+- The other 88 Acta files (D23): chunk 2 is the 21 papers copied to the
+  new bundles `high-speed-aerothermodynamics` (10) and
+  `chemical-airbreathing-propulsion` (11), ingested in full there and as
+  Source-only pages here; chunks 3–6 (20, 20, 20, 7) are the rest, the
+  five plasma-related papers first (gomez-2018, alpatov-2018,
+  shuvalov-2018, garciagarrido-2018, yang-2018, ingested in full here),
+  then the others as Source-only pages, in archive-filename order.
+- **Source-only page:** verified metadata, summary, key claims, notation
+  map, an audit list stating that no concept page cites it and why (the
+  scope rule; other bundles are never named in wiki content, D12, even
+  for the D23 copies compiled in full elsewhere), and the reference list
+  merged into the
+  bibliography. It is an ingestion in the protocol's sense. Source-only
+  pages carry the tag `context` and have no incoming links from concept
+  pages, so the lint reports each as an orphan warning; these warnings
+  are expected and are the only accepted ones in this bundle.
 
 ## Bundle specifics
 
@@ -88,8 +103,13 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D22).
 
 ## Status
 
-**Chunk 1 staged 2026-10-14:** the 20 core papers; 20 of 108 ingested,
+**Chunk 2 staged 2026-10-14:** 21 *Acta Astronautica* papers as Source-only
+pages (their full compilation is in high-speed-aerothermodynamics and
+chemical-airbreathing-propulsion, D23); 41 of 108 ingested, 2130
+bibliography entries; no concept page changed. Next: chunk 3, the five
+plasma-related Acta papers in full plus 15 Source-only pages.
+
+**Chunk 1 committed 2026-10-14 (37602e6):** the 20 core papers; 20 of 108 ingested,
 1437 bibliography entries, 42 concept pages after merges. Three Open
 contradictions (see `INGESTION-ISSUES.md`). Deep lint: the chunk was audited
-before staging (counts as deep lint #1); the next is due after 10 more
-ingestions. Next: chunk 2 (Acta files 1–20 in filename order).
+before staging (counts as deep lint #1).

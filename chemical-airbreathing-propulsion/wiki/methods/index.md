@@ -1,0 +1,9 @@
+# Methods
+
+Algorithms and schemes.
+
+* [Boundary-layer combustion for skin-friction reduction](/methods/boundary-layer-combustion.md) — Injecting and burning hydrogen inside the wall boundary layer of a supersonic combustor to lower near-wall density and Reynolds stress, which cut the mean wall shear stress of a step duct at Mach-6 combustor conditions by 57.5% in RANS at the cost of a local wall heat-flux peak.
+* [Global kinetic mechanisms for kerosene](/methods/global-kerosene-mechanisms.md) — Reduced finite-rate mechanisms of a few irreversible Arrhenius steps on a single-component kerosene surrogate (C12H23, C10H16 or C10H20), used without turbulence–chemistry interaction in the RANS of scramjet and RBCC combustors.
+* [Lithium-combustion power systems](/methods/metal-combustion-power-system.md) — Stored-chemical-energy power source in which a molten lithium bath burns a gaseous oxidizer (in-situ CO2 on Venus, stored SF6 on Europa) and a sodium thermosiphon carries the heat to a Stirling engine or thermoelectric array, sized with a lumped energy balance and thermal-resistance network.
+* [Thermo-oxidative aging model of HTPB coatings](/methods/aging-constitutive-model-htpb.md) — Phenomenological constitutive model of an aged HTPB solid-motor coating that takes the NMR crosslink density as the aging variable, advances it with a power law in time whose rate follows a modified Arrhenius law, and multiplies an equilibrium polynomial hyperelastic stress by an aging function of strain and crosslink density.
+* [Variable-geometry combustor](/methods/variable-geometry-combustor.md) — A ramjet combustor whose expansion angle and geometric-throat area are actuated to suit the inflow, sized by isobaric constant-velocity heating relations, which in an RBCC engine replaces the thermal throat by a geometric one and raised combustion efficiency, total-pressure recovery and specific impulse at Mach 3 and 6.

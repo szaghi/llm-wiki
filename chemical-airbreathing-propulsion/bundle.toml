@@ -1,0 +1,24 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Chemical and air-breathing propulsion"
+summary = "Chemical rocket and air-breathing propulsion as physical and numerical problems: combustion instability and injector dynamics in liquid rocket engines, rotating and continuous detonation, scramjet and rocket-based combined-cycle combustors, flame holding and blowoff, hybrid and solid propellants, and combustion power systems."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/chemical-airbreathing-propulsion"
+keywords = [
+  "combustion instability",
+  "thermoacoustics",
+  "liquid rocket engine",
+  "swirl coaxial injector",
+  "self-pulsation",
+  "rotating detonation engine",
+  "continuous detonation",
+  "scramjet",
+  "cavity flameholder",
+  "lean blowoff",
+  "rocket-based combined cycle",
+  "RBCC",
+  "hybrid rocket",
+  "paraffin fuel",
+  "HTPB",
+  "solid propellant aging",
+]

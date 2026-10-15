@@ -1,0 +1,9 @@
+# Definitions
+
+Precise domain terms.
+
+* [Inlet start, unstart and hysteresis](/definitions/inlet-start-and-unstart.md) — A supersonic or hypersonic inlet is started when its internal shock system is swallowed and the captured flow passes the throat, and unstarted when a large separation and its shock stand at the entrance; the switch depends on freestream Mach number and back pressure and shows hysteresis, and is judged through total-pressure recovery, mass capture, back-pressure ratio and contraction ratio.
+* [Isolator and shock train](/definitions/isolator-shock-train.md) — The duct between a scramjet or ramjet inlet throat and the combustor that holds the back-pressure-driven shock train so that combustor pressure does not unstart the inlet; its margin is measured by how far upstream the shock-train leading edge stands at a given back pressure.
+* [Shock-wave/boundary-layer interaction](/definitions/shock-wave-boundary-layer-interaction.md) — Interaction of an incident, ramp-, jet- or duct-generated shock with a wall boundary layer, classed as laminar steady, laminar unsteady, transitional or turbulent by steadiness, dimensionality and spectrum, with the separation and peak-heating correlations used to size it.
+* [Transverse jet in supersonic crossflow](/definitions/jet-in-supersonic-crossflow.md) — A jet injected normal to a wall into a supersonic stream, the canonical fuel-injection flow of scramjets, whose structure (bow shock, barrel shock and Mach disk, upstream and leeward separation, near-wall wake) is organized by the jet-to-crossflow momentum flux ratio J.
+* [Waverider](/definitions/waverider.md) — A hypersonic lifting body whose leading edge lies on a known shock surface, so that at its design condition the shock stays attached along the leading edge and the high-pressure gas is contained below the lower surface; its design inputs are capture curves in the base plane.

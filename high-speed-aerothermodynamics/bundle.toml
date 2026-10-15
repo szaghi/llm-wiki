@@ -1,0 +1,22 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "High-speed aerothermodynamics"
+summary = "Hypersonic and supersonic flow around and inside vehicles: inlets, isolators and bleed, waverider design, shock-wave/boundary-layer interaction, jets in supersonic crossflow, aerodynamic heating and its reduction, suborbital flight aerodynamics, and the uncertainty quantification of high-speed flow predictions."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/high-speed-aerothermodynamics"
+keywords = [
+  "hypersonic flow",
+  "supersonic flow",
+  "shock-wave/boundary-layer interaction",
+  "hypersonic inlet",
+  "isolator",
+  "inlet unstart",
+  "bleed control",
+  "waverider",
+  "osculating cone",
+  "aerodynamic heating",
+  "spike and counterflow jet",
+  "jet in supersonic crossflow",
+  "thermal protection",
+  "uncertainty quantification",
+]

@@ -6,6 +6,34 @@ named page), printed inconsistencies, identity and metadata problems,
 scope decisions, and questions left to the human. Not part of the OKF
 wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — 21 Source-only pages (2026-10-14)
+
+Sources: knight-2018, liu-2018-c, liu-2018-d, meng-2018, moradi-2018,
+wang-2018-d, zhao-2018, zuo-2018, fedele-2018, cheng-2018, armbruster-2018,
+bai-2018, peng-2018, zhou-2018, song-2018, wang-2018-c, yan-2018, ye-2018,
+veale-2018, li-2018, greer-2018 — high-speed aerothermodynamics and chemical
+propulsion, outside this bundle's domain (D23). No concept page changed, no
+contradiction possible under the scope rule. Their printed inconsistencies are
+recorded on each Source page and digested in the issues files of the two
+bundles that compile them in full (D23; named here only because this file is
+outside the wiki).
+
+* **Bibliography:** 1437 → 2130 entries. Cited works whose natural key was a
+  slug reserved for another Acta vol. 151 file were re-keyed past it
+  (`zhang-2018-d`…`-i`, `li-2018-d/e/f`, `zhao-2018-c`, `yan-2018-b`,
+  `huang-2018-d`, `guo-2018-b`). zhao-2018 cites "Mosavat 2018", which is the
+  ingested moradi-2018 (Crossref).
+* **Lint:** each Source-only page has no incoming link from a concept page, so
+  the lint warns "orphan" for each (21 now, 67 when all chunks are in). The
+  bundle law records them as expected. **Decision for you:** keep the
+  warnings, or let `tools/lint_okf.py` exempt pages tagged `context` (a tool
+  change I have not made).
+* **Wording ruling applied:** the Source-only pages do not name the bundles
+  that compile the papers in full (D12: no claim about other bundles in
+  bundle content); the bundle law now says so.
+* Version read: every paper is the publisher's typeset version; page 1
+  matched the filename for all 21.
+
 ## Chunk 1 — the core (2026-10-14)
 
 Sources: boyd-2005, mungiguerra-2018, adamovich-2017, cai-2018, sun-2018,

@@ -377,3 +377,33 @@ what the human means to do with the volume. The cost is a bibliography in
 which much of the citation graph lies outside the domain; the ingestion
 frontier derived from it must be read with that in mind, and the scope
 rule keeps the concept layer from diluting.
+
+## D23 — Two bundles split from the plasma-propulsion archive (2026-10-14)
+
+**Decision (user):** of the 88 *Acta Astronautica* vol. 151 files left
+after the plasma-propulsion core (D22), the papers whose link to plasma
+propulsion is marginal were classified by topic, and two clusters became
+bundles: `high-speed-aerothermodynamics` (10 papers: inlets, isolators,
+waveriders, shock/boundary-layer interaction, aeroheating) and
+`chemical-airbreathing-propulsion` (11 papers: combustion instability,
+injectors, rotating detonation, scramjet and RBCC combustors, hybrid and
+solid propellants). Three further clusters offered (spacecraft GNC,
+space structures and materials, mission and trajectory design) were not
+taken.
+
+**How it relates to D12, D17 and D22:** the 21 PDFs are copied into the
+new bundles' archives and fully ingested there; the plasma-propulsion
+archive is Layer 1 and keeps them, so they also get Source-only pages in
+`plasma-propulsion-simulation` (user's choice), keeping its worklist
+complete. Every other Acta file (the GNC, structures and mission papers,
+policy, history, communications, dosimetry, astronomy, and the issue's
+front matter) is ingested in `plasma-propulsion-simulation` as a
+Source-only page with its reference list; the five that touch plasma or
+electric propulsion (electrospray constellation, ion-beam shepherd,
+ionospheric drag control, plasma wind tunnel, electrodynamic tether) are
+ingested there in full. One paper keeps one slug in every bundle.
+
+**Why:** the user wants every file ingested, and the two clusters are
+coherent technical fields with their own vocabulary that the user's CFD
+work touches; folding them into plasma propulsion would have diluted its
+registry, and a catch-all bundle would have had none.

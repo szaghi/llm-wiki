@@ -13,7 +13,7 @@ quantification and calibration; GPU particle codes.
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 20 of the archive's 108 files ingested (chunk 1, the core):
+**Corpus:** 41 of the archive's 108 files ingested. Chunk 1, the core (20):
 three reviews of plasma-propulsion modelling
 ([Boyd 2005](/sources/boyd-2005.md), [Taccogna & Garrigues 2019](/sources/taccogna-2019.md),
 [Taccogna et al. 2023](/sources/taccogna-2023.md)), a review of helicon thrusters and
@@ -21,8 +21,11 @@ magnetic nozzles ([Takahashi 2019](/sources/takahashi-2019.md)), a review of ele
 fluid models ([Ahedo 2023](/sources/ahedo-2023.md)), the 2017 Plasma Roadmap
 ([Adamovich et al. 2017](/sources/adamovich-2017.md)), and fourteen research papers.
 The other 88 files are the rest of *Acta Astronautica* vol. 151 (2018), compiled
-as context in later chunks (bundle law, D22). The
-[bibliography](/bibliography.md) lists the 1437 works the 20 sources cite.
+as context (bundle law, D22, D23): chunk 2 added 21 of them as Source-only
+pages (high-speed aerothermodynamics and chemical propulsion papers,
+outside this bundle's domain); they are listed in the
+[sources catalog](/sources/index.md) with the tag `context`. The
+[bibliography](/bibliography.md) lists the 2130 works the 41 sources cite.
 
 ## Reading guide
 
