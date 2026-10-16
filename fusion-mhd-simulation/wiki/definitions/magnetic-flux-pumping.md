@@ -4,8 +4,8 @@ title: "Magnetic flux pumping"
 description: "A saturated (1,1) helical core mode whose dynamo redistributes current so as to clamp the central safety factor at about 1, replacing the sawtooth cycle; found in JOREK for sufficiently peaked pressure (1/1 quasi-interchange), quantified for the ASDEX Upgrade hybrid scenario at a slow negative dynamo of a few mV/m, and seen in M3D-C1 simulations of W7-X after an ECCD-driven crash."
 status: established
 aliases: [flux pumping, saturated (1,1) core, sawtooth-free helical core, hybrid scenario]
-tags: [kink, mhd, full-mhd, tokamak, stellarator]
-timestamp: 2026-10-16T18:00:00Z
+tags: [kink, full-mhd, tokamak, stellarator]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Magnetic flux pumping

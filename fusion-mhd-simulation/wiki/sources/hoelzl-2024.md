@@ -8,8 +8,8 @@ authors: [Hoelzl M., Huijsmans G.T.A., Artola F.J., Nardon E., Becoulet M., Schw
 year: 2024
 venue: "Nucl. Fusion 64:112016"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Hoelzl_Non-linear_MHD_modelling_of_transients_in_tokamaks_a_review.pdf"
-tags: [review, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, stellarator, disruption, vde, runaway-electrons, impurities, neutrals, wall, free-boundary, elm, pedestal, energetic-particles, hybrid-kinetic, finite-elements, gpu, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [review, reduced-mhd, full-mhd, extended-mhd, tokamak, stellarator, disruption, vde, runaway-electrons, impurities, neutrals, wall, free-boundary, elm, pedestal, energetic-particles, hybrid-kinetic, finite-elements, gpu]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

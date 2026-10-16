@@ -4,8 +4,8 @@ title: "Resonant magnetic perturbations and plasma response"
 description: "Small non-axisymmetric fields applied by external or in-vessel coils whose harmonics resonate with edge rational surfaces q = m/n; the plasma response (screening, kink-peeling amplification, island penetration) decides whether they mitigate or suppress ELMs, and nonlinear MHD codes model them through a ramped vacuum boundary field or self-consistent coils."
 status: established
 aliases: [RMP, RMPs, magnetic perturbation, MP, plasma response, RMP ELM suppression, ELM mitigation by RMP, density pump-out]
-tags: [elm, pedestal, edge, tokamak, mhd, extended-mhd, free-boundary, wall, tearing]
-timestamp: 2026-10-16T20:00:00Z
+tags: [elm, pedestal, edge, tokamak, extended-mhd, free-boundary, wall, tearing]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Resonant magnetic perturbations and plasma response

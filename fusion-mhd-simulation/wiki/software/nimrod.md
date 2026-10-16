@@ -4,8 +4,8 @@ title: "NIMROD"
 description: "Initial-value extended-MHD code with high-order C0 nodal spectral elements in the poloidal plane and a toroidal Fourier series, a mixed implicit/semi-implicit leapfrog time advance, diffusive divergence cleaning and a thin resistive wall with a meshed vacuum; benchmarked on NSTX VDEs and impurity gas injection, extended with a plasma–neutral model whose atomic sources are coupled by Crank–Nicolson/JFNK or Strang splitting, and applied with heuristic neoclassical closures to NTM seeding, with KPRAD to radiation-triggered tearing, to nonlinear peeling–ballooning ELMs, to SPARC gas injection with a runaway-mitigation coil, and as the data source of neural-operator surrogates."
 status: established
 aliases: [NIMROD code]
-tags: [code, mhd, full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # NIMROD

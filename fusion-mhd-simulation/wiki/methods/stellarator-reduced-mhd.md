@@ -4,8 +4,8 @@ title: "Reduced MHD for stellarators"
 description: "Generalization of tokamak reduced MHD in which the fixed toroidal field is replaced by the curl-free coil field ∇χ: the field is ∇χ plus field-line bending ∇ψχ×∇χ and the flow is ∇u×∇χ/|∇χ|² plus, since 2024, a parallel flow along B; a full-MHD stellarator equilibrium leaves a residual force of fourth order in the ordering parameter; implemented in JOREK3D, verified on Wendelstein 7-A and W7-AS against CASTOR3D, and applied to the W7-AS soft β limit."
 status: established
 aliases: [stellarator RMHD, Nikulsin reduced MHD, JOREK3D reduced MHD]
-tags: [mhd, reduced-mhd, stellarator, code, verification]
-timestamp: 2026-10-16T20:00:00Z
+tags: [reduced-mhd, stellarator, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Reduced MHD for stellarators

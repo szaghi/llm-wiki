@@ -8,8 +8,8 @@ authors: [Isernia N., Schwarz N., Artola F.J., Ventre S., Hoelzl M., Rubinacci G
 year: 2023
 venue: "Phys. Plasmas 30:113901"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350167271titleSelf-consistent.pdf"
-tags: [reduced-mhd, wall, free-boundary, vde, tearing, tokamak, finite-elements, verification, code]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, wall, free-boundary, vde, tearing, tokamak, finite-elements, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

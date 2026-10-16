@@ -4,8 +4,8 @@ title: "HINT"
 description: "Three-dimensional MHD equilibrium code that does not assume nested flux surfaces, so it represents islands and stochastic regions; it supplies the high-beta LHD equilibria, with a stochastic layer outside the last closed surface, from which MIPS and MEGA start, VMEC being re-solved inside its last closed surface for Boozer coordinates and Mercier analysis."
 status: established
 aliases: [HINT2, HINT code]
-tags: [code, equilibrium, stellarator]
-timestamp: 2026-10-16T18:00:00Z
+tags: [equilibrium, stellarator]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # HINT

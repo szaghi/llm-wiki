@@ -4,8 +4,8 @@ title: "GMEC"
 description: "Zhejiang University gyrokinetic-MHD energetic-particle code: linearized reduced MHD (models A–C) in global field-aligned coordinates with fourth-order finite differences, RK4, shifted-metric stabilization and C++20 compile-time symbolic equation generation, plus gyrokinetic δf energetic particles coupled by pressure; benchmarked against MAS on ballooning and tearing modes and against M3D-K and multi-code results on TAEs and RSAEs."
 status: established
 aliases: [GMEC_I, Gyro-kinetic MHD Energetic-particle Code]
-tags: [code, reduced-mhd, hybrid-kinetic, energetic-particles, alfven-eigenmode, finite-differences, ballooning, tearing, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, hybrid-kinetic, energetic-particles, alfven-eigenmode, finite-differences, ballooning, tearing, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # GMEC

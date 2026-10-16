@@ -8,8 +8,8 @@ authors: [Cathey A., Hoelzl M., Meier L., Dunne M.G., Huijsmans G.T.A., Gil L., 
 year: 2024
 venue: "Nucl. Fusion 64:096003"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Cathey_Non-linear_MHD_investigations_of_high-confinement_regimes_wi.pdf"
-tags: [mhd, reduced-mhd, extended-mhd, elm, pedestal, ballooning, kink, edge, tokamak, review]
-timestamp: 2026-10-16T20:00:00Z
+tags: [reduced-mhd, extended-mhd, elm, pedestal, ballooning, kink, edge, tokamak, review]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

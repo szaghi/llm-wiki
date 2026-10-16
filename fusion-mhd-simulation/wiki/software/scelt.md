@@ -4,8 +4,8 @@ title: "SCELT"
 description: "Symbolic computation aided eigenvalue and linear code for tokamaks: a C++/MATLAB linear eigenvalue code for compressible resistive MHD in axisymmetric flux coordinates whose equations are derived and discretized automatically (poloidal Fourier, radial cubic finite elements), verified on the resistive internal kink (η^0.3766), ideal-kink β_p threshold and 2/1 tearing (η^0.5590) scalings."
 status: established
 aliases: [symbolic computation aided eigenvalue and linear code for tokamaks]
-tags: [code, mhd, full-mhd, tokamak, spectral, finite-elements, tearing, kink, verification]
-timestamp: 2026-10-16T00:00:00Z
+tags: [full-mhd, tokamak, spectral, finite-elements, tearing, kink, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # SCELT

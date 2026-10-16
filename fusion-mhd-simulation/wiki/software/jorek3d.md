@@ -4,8 +4,8 @@ title: "JOREK3D"
 description: "Stellarator extension of JOREK: a reduced MHD model built on the vacuum-field potential (Dommaschk or, since 2024, finite-element), parallel flow, and flux-surface-aligned Bézier grids whose geometry varies toroidally, initialized from GVEC or VMEC and benchmarked against CASTOR3D on Wendelstein 7-A tearing and ballooning modes (within 6.4–26.2 %) and on W7-AS tearing (about 3 %) and interchange modes (within 10 %), then applied to the W7-AS soft β limit."
 status: established
 aliases: [JOREK stellarator extension]
-tags: [code, stellarator, reduced-mhd, finite-elements, spectral, equilibrium, tearing, ballooning, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [stellarator, reduced-mhd, finite-elements, spectral, equilibrium, tearing, ballooning, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # JOREK3D

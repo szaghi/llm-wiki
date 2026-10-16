@@ -8,8 +8,8 @@ authors: [Saxena S., Ferraro N.M., Martin M.F., Wright A.]
 year: 2025
 venue: "J. Plasma Phys. 91:E141"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Journal_of_Plasma_Physics_Saxena_Bootstrap_current_modeling_in_M3D-C1.pdf"
-tags: [bootstrap-current, stellarator, tokamak, extended-mhd, full-mhd, equilibrium, finite-elements, verification, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [bootstrap-current, stellarator, tokamak, extended-mhd, full-mhd, equilibrium, finite-elements, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

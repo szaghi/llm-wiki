@@ -4,8 +4,8 @@ title: "Coronal-equilibrium impurity model"
 description: "Impurity model for MHD codes in which one advected impurity density carries all charge states, whose distribution is set instantaneously to the local ionization–recombination balance at the electron temperature; it supplies radiation, ionization energy, effective charge and electron density to the fluid equations."
 status: established
 aliases: [coronal equilibrium, CE impurity model, coronal impurity fluid]
-tags: [impurities, disruption, mhd, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [impurities, disruption, mhd]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Coronal-equilibrium impurity model

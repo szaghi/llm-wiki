@@ -4,8 +4,8 @@ title: "MEGA"
 description: "Hybrid code coupling nonlinear visco-resistive full MHD to drift-kinetic δf energetic particles or kinetic thermal ions through the kinetic current, on a cylindrical finite-difference grid with explicit RK4; a reference code of the ITPA TAE, AUG-NLED and DIII-D RSAE benchmarks, used for chirping-TAE, infernal-mode and high-beta LHD studies, it saturates about 15× lower and redistributes energetic particles much less than HYMAGYC in the nonlinear NLED-AUG benchmark."
 status: established
 aliases: [MEGA code]
-tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, verification, stellarator]
-timestamp: 2026-10-16T23:30:00Z
+tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, verification, stellarator]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # MEGA

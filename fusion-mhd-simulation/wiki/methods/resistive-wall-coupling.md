@@ -4,8 +4,8 @@ title: "Free-boundary and resistive-wall coupling"
 description: "Methods that close a nonlinear MHD model with the vacuum field and the eddy currents of resistive conductors: a meshed vacuum and wall inside the computational domain (M3D-C1, NIMROD), or an un-meshed exterior handled by Green's functions and a natural boundary condition on the tangential field, with thin walls (JOREK-STARWALL) or 3D volumetric conductors through a virtual-casing equivalent current (JOREK-CARIDDI)."
 status: established
 aliases: [free-boundary MHD, resistive wall, JOREK-STARWALL, JOREK-CARIDDI, vacuum response, virtual casing]
-tags: [free-boundary, wall, vde, numerics, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [free-boundary, wall, vde, numerics]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Free-boundary and resistive-wall coupling

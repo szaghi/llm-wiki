@@ -4,8 +4,8 @@ title: "Implicit time integration and preconditioned Krylov solvers for nonlinea
 description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicolson, BDF2, implicit Euler) solved each step by restarted GMRES with a block-Jacobi preconditioner over toroidal harmonics whose blocks are LU-factorized and reused, set against the split-implicit, leapfrog, backward-Euler, Newton–Krylov, BDF (CVODE) and explicit Runge–Kutta advances of the other codes; includes the variable-step order condition and the BDF2-versus-BDF5 printed slip (closed by fiat)."
 status: established
 aliases: [theta-xi scheme, Gear scheme, BDF2, Crank–Nicolson, linearized implicit scheme, block-Jacobi preconditioner, toroidal-harmonic preconditioner, mode groups]
-tags: [time-integration, linear-solver, numerics, code]
-timestamp: 2026-10-16T21:00:00Z
+tags: [time-integration, linear-solver, numerics]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Implicit time integration and preconditioned Krylov solvers for nonlinear MHD

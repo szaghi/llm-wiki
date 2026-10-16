@@ -4,8 +4,8 @@ title: "VMEC"
 description: "Variational moments equilibrium code: 3D ideal-MHD inverse equilibria with nested surfaces, Fourier series in the angles and radial finite differences, found by minimizing the MHD energy with a second-order Richardson iteration and multigrid radial continuation; first-order accurate in radius and inaccurate near the axis, it is the standard equilibrium source of the stellarator and EP codes in the cited sources."
 status: established
 aliases: [variational moments equilibrium code, NEMEC]
-tags: [code, equilibrium, stellarator, spectral, finite-differences]
-timestamp: 2026-10-16T18:00:00Z
+tags: [equilibrium, stellarator, spectral, finite-differences]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # VMEC

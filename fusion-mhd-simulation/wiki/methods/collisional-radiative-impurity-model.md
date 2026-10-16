@@ -4,8 +4,8 @@ title: "Collisional-radiative (non-equilibrium) impurity model"
 description: "Impurity model that evolves the charge-state distribution in time with collisional-radiative ionization and recombination rates instead of assuming coronal equilibrium; in JOREK it is carried by fluid-advected super-particles whose radiation, ionization power, effective charge, mean charge and density are projected onto the finite-element fields, and in NIMROD by one fluid density per charge state with KPRAD rates."
 status: established
 aliases: [non-equilibrium impurity model, CR impurity model, charge-state-resolved impurity model]
-tags: [impurities, particles, disruption, mhd, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [impurities, particles, disruption, mhd]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Collisional-radiative (non-equilibrium) impurity model

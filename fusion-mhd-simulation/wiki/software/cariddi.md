@@ -4,8 +4,8 @@ title: "CARIDDI"
 description: "3D magneto-quasi-static integral eddy-current code that discretizes only the conductors with edge-element current bases; coupled two-way and fully implicitly to reduced-MHD JOREK through a virtual-casing equivalent surface current, it adds 3D volumetric walls with ports to nonlinear MHD and agrees with JOREK–STARWALL within 2 % (VDE) and 1 % (tearing)."
 status: established
 aliases: [JOREK-CARIDDI]
-tags: [code, wall, free-boundary, vde, tearing, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [wall, free-boundary, vde, tearing, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # CARIDDI

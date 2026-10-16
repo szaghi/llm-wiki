@@ -4,8 +4,8 @@ title: "HYMAGYC"
 description: "Hybrid code coupling linear resistive full MHD (an initial-value derivative of the MARS eigenvalue solver, backward Euler, Fourier × finite elements) to gyrokinetic δf energetic-particle PIC through pressure coupling, with an optional Cartesian (R, Z) stress-tensor grid that filters numerical noise; a reference code of the NLED-AUG benchmarks."
 status: established
 aliases: [HYMAGYC code]
-tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # HYMAGYC

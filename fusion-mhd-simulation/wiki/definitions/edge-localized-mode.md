@@ -4,8 +4,8 @@ title: "Edge-localized mode (ELM) and ELM-free regimes"
 description: "Repetitive edge MHD instability of the H-mode pedestal, set off by coupled peeling-ballooning modes, that expels pedestal energy and particles in filaments; with the naturally ELM-free or small-ELM regimes (QH-mode, EDA H-mode, QCE) and the active control methods (RMPs, pellets, vertical kicks) as reproduced by nonlinear MHD codes, including ITER RMP suppression, current-sheet reconnection in peeling-ballooning ELMs and the two-stage crash of resistive drift-ballooning ELMs."
 status: established
 aliases: [ELM, type-I ELM, ELM crash, pedestal collapse, QH-mode, EDA H-mode, QCE, ELM suppression, quasi-coherent mode, QCM]
-tags: [elm, pedestal, edge, ballooning, mhd, extended-mhd, tokamak]
-timestamp: 2026-10-16T18:00:00Z
+tags: [elm, pedestal, edge, ballooning, extended-mhd, tokamak]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Edge-localized mode (ELM) and ELM-free regimes

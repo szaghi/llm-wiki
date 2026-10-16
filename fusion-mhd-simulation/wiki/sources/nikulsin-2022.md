@@ -8,8 +8,8 @@ authors: [Nikulsin N., Ramasamy R., Hoelzl M., Hindenlang F., Strumberger E., La
 year: 2022
 venue: "Phys. Plasmas 29:063901"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Nikulsin_JOREK3D_An_extension_of_the_JOREK_nonlinear_MHD_code_to_stel.pdf"
-tags: [reduced-mhd, stellarator, finite-elements, spectral, equilibrium, tearing, ballooning, verification, code]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, stellarator, finite-elements, spectral, equilibrium, tearing, ballooning, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

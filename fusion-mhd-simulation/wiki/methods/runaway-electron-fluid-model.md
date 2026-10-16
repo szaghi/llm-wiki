@@ -4,8 +4,8 @@ title: "Runaway-electron fluid model coupled to MHD"
 description: "Fluid model in which runaway electrons are a separate species described only by their number density, streaming along the field, drifting with the E×B flow and carrying a current that is removed from the resistive Ohm's law; JOREK embeds it in reduced MHD with a diffusive parallel surrogate and explicit avalanche, Compton and tritium sources, M3D-C1 in full MHD with a reduced convection speed and advection by characteristics."
 status: established
 aliases: [RE fluid model, JOREK runaway electron fluid]
-tags: [runaway-electrons, disruption, reduced-mhd, impurities, neutrals, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [runaway-electrons, disruption, reduced-mhd, impurities, neutrals]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Runaway-electron fluid model coupled to MHD

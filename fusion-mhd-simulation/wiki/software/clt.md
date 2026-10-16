@@ -4,8 +4,8 @@ title: "CLT"
 description: "Zhejiang University explicit 3D toroidal MHD code: fourth-order finite differences on a uniform cylindrical (R, φ, Z) grid, fourth-order Runge–Kutta, a cut-cell embedded boundary and an OpenACC GPU port; benchmarked against M3D-C1 on the 2/1 resistive tearing mode and the 1/1 resistive kink."
 status: established
 aliases: [CLT code]
-tags: [code, mhd, full-mhd, finite-differences, gpu, tearing, kink, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [full-mhd, finite-differences, gpu, tearing, kink, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # CLT

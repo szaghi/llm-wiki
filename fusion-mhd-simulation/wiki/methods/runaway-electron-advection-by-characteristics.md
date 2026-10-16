@@ -4,8 +4,8 @@ title: "Runaway-electron advection by the method of characteristics"
 description: "Semi-Lagrangian solution of the runaway-electron continuity equation in M3D-C1: the convective part is rewritten exactly as advection of the runaway density divided by the field strength, massless pseudo-particles at every quadrature point are traced backwards along the parallel-streaming plus E×B velocity by a massless-limit Boris integrator, and the pulled-back values are L2-projected onto the finite-element basis, removing the CFL and matrix-conditioning limits of an implicit Galerkin solve."
 status: established
 aliases: [method of characteristics for runaway electrons, semi-Lagrangian RE advection, pseudo-particle RE advection, modified Boris algorithm]
-tags: [runaway-electrons, numerics, time-integration, particles, finite-elements, gpu, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [runaway-electrons, numerics, time-integration, particles, finite-elements, gpu]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Runaway-electron advection by the method of characteristics

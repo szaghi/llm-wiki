@@ -4,8 +4,8 @@ title: "Reduced MHD for tokamaks"
 description: "MHD models that restrict the magnetic field to a poloidal flux function plus a fixed toroidal field and the perpendicular flow to an E×B stream function, removing the fast magnetosonic wave; derived either by an aspect-ratio or flute ordering or, as in JOREK, by a Galerkin ansatz without geometric approximation; energy-conserving, not locally momentum-conserving, and inaccurate for pressure-driven internal kinks at finite β."
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, ansatz-based reduced MHD, Strauss reduced MHD]
-tags: [mhd, reduced-mhd, tokamak, kink, code]
-timestamp: 2026-10-16T21:00:00Z
+tags: [reduced-mhd, tokamak, kink]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Reduced MHD for tokamaks

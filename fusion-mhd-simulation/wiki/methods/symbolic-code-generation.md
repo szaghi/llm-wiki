@@ -4,8 +4,8 @@ title: "Symbolic derivation and automatic discretization of MHD operators"
 description: "Construction of MHD solvers by symbolic computation: the vector equations are expanded, linearized and written in curvilinear (flux or field-aligned) coordinates by a symbolic engine, and every generated scalar term is discretized automatically; realized at run-time-independent level in SCELT (C++ polynomial algebra, Fourier times cubic elements) and at compile time in GMEC's C++20 metaprogramming solver (finite differences, merged coefficients)."
 status: established
 aliases: [symbolic computation, automatic discretization, code generation, Compile-time Symbolic Solver, CSS, symbolic vector analysis]
-tags: [numerics, code, finite-elements, finite-differences, spectral]
-timestamp: 2026-10-16T20:00:00Z
+tags: [numerics, finite-elements, finite-differences, spectral]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Symbolic derivation and automatic discretization of MHD operators

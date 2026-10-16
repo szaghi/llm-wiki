@@ -8,8 +8,8 @@ authors: [Cathey A., Hoelzl M., Gil L., Dunne M.G., Harrer G.F., Huijsmans G.T.A
 year: 2023
 venue: "Nucl. Fusion 63:062001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Nuclear_Fusion_Cathey_Probing_non-linear_MHD_stability_of_the_EDA_H-mode_in_ASDEX.pdf"
-tags: [mhd, reduced-mhd, extended-mhd, elm, pedestal, ballooning, edge, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+tags: [reduced-mhd, extended-mhd, elm, pedestal, ballooning, edge, tokamak]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

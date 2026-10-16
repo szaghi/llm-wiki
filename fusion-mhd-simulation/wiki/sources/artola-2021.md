@@ -8,8 +8,8 @@ authors: [Artola F.J., Sovinec C.R., Jardin S.C., Hoelzl M., Krebs I., Clauser C
 year: 2021
 venue: "Phys. Plasmas 28:052511"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Physics_of_Plasmas_Artola_3D_simulations_of_vertical_displacement_events_in_tokamaks_A.pdf"
-tags: [mhd, reduced-mhd, full-mhd, tokamak, disruption, vde, wall, free-boundary, finite-elements, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, full-mhd, tokamak, disruption, vde, wall, free-boundary, finite-elements, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

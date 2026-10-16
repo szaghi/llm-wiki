@@ -4,8 +4,8 @@ title: "Single-fluid visco-resistive MHD model"
 description: "The full (non-reduced) single-fluid resistive MHD system, with one or two temperatures, viscosity, anisotropic heat conduction and particle diffusion, that the nonlinear tokamak and stellarator codes solve; its variants differ in the evolved field (B or A), the viscous and heat-flux closures, the source current in Ohm's law and the normalization, and its regime is set by the Lundquist, magnetic Prandtl and Hartmann numbers."
 status: established
 aliases: [full MHD, visco-resistive full MHD, single-fluid resistive MHD, viscoresistive MHD]
-tags: [mhd, full-mhd, tokamak, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [full-mhd, tokamak]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Single-fluid visco-resistive MHD model

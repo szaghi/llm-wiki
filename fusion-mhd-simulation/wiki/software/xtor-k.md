@@ -4,8 +4,8 @@ title: "XTOR-K"
 description: "Global hybrid code coupling two-fluid MHD to full-f, full-orbit (Boris–Buneman) kinetic ions through a kinetic pressure term, with the implicit Newton–Krylov fluid step and the particle push nested in a Picard iteration; in the NLED-AUG benchmark it reproduces the near-axis EPM at 166 kHz and the counter-rotating TAE at −196 kHz, but its growth rates are buried in full-f noise."
 status: established
 aliases: [XTOR-K code]
-tags: [code, hybrid-kinetic, extended-mhd, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [hybrid-kinetic, extended-mhd, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # XTOR-K

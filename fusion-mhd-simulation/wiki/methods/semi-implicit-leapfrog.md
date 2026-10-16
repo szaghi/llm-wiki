@@ -4,8 +4,8 @@ title: "Semi-implicit leapfrog"
 description: "NIMROD's time advance: velocity staggered half a step from density, temperature and magnetic field, the fields solved one after another in dependency order, a semi-implicit operator built on the linearized ideal-MHD force stabilizing the waves of the velocity advance, and time-centred implicit advection in the other equations."
 status: established
 aliases: [implicit leapfrog, mixed implicit/semi-implicit leapfrog, staggered semi-implicit advance, NIMROD time advance]
-tags: [time-integration, numerics, full-mhd, code]
-timestamp: 2026-10-16T18:00:00Z
+tags: [time-integration, numerics, full-mhd]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Semi-implicit leapfrog

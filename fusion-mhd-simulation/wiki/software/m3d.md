@@ -4,8 +4,8 @@ title: "M3D"
 description: "M3D is a nonlinear 3D MHD code, distinct from its finite-element successor M3D-C1, with an axisymmetric thin resistive wall; in this bundle it supplies the nonlinear resistive-wall tearing-mode simulations of locked-mode thermal quenches and appears in surveys of 3D VDE and stellarator codes."
 status: established
 aliases: [M3D code, Multilevel 3D]
-tags: [code, mhd, wall, disruption, tearing]
-timestamp: 2026-10-16T12:00:00Z
+tags: [mhd, wall, disruption, tearing]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # M3D

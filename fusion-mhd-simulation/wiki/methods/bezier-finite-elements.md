@@ -4,8 +4,8 @@ title: "Bézier–Hermite finite elements with toroidal Fourier harmonics"
 description: "JOREK's spatial discretization: isoparametric bicubic Bézier patches in the poloidal plane, written in nodal cubic-Hermite form with four degrees of freedom per node and element-dependent scale factors, combined with a real toroidal Fourier series; flux-aligned grids, convergence orders, the toroidally varying JOREK3D geometry, and the G1-versus-C1 labelling, closed by fiat as a difference of terminology."
 status: established
 aliases: [Hermite-Bézier elements, bicubic Bézier elements, Czarny–Huysmans elements, JOREK finite elements, G1 Bézier elements]
-tags: [finite-elements, spectral, numerics, code]
-timestamp: 2026-10-16T22:00:00Z
+tags: [finite-elements, spectral, numerics]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Bézier–Hermite finite elements with toroidal Fourier harmonics

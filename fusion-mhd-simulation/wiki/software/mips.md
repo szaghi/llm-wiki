@@ -4,8 +4,8 @@ title: "MIPS"
 description: "Nonlinear full-MHD initial-value code on a cylindrical (R, φ, Z) finite-difference grid with third-order upwind convection, fourth-order central differences and explicit RK4, whose numerics are shared by the fluid part of MEGA; benchmarked against the ideal stability code MINERVA on an n = 3 infernal mode and extended to stellarators, where it predicts the core collapse of high-beta LHD plasmas."
 status: established
 aliases: [MIPS code]
-tags: [code, mhd, full-mhd, finite-differences, tokamak, stellarator, verification]
-timestamp: 2026-10-16T18:00:00Z
+tags: [full-mhd, finite-differences, tokamak, stellarator, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # MIPS

@@ -4,8 +4,8 @@ title: "BOUT++"
 description: "Finite-difference plasma-fluid framework for 3D initial-value problems in field-aligned coordinates with quasi-ballooning derivatives and CVODE BDF time integration; a hybrid 2D/1D field solver removes the flute ordering for n = 0 and low-n modes, enabling full-annulus edge simulations that resolve a two-stage resistive drift-ballooning ELM crash, and its ideal-ballooning growth rates agree with ELITE and JOREK within 2–4 %."
 status: established
 aliases: [BOUT, BOUT++ framework]
-tags: [code, reduced-mhd, edge, pedestal, elm, ballooning, finite-differences, time-integration, linear-solver, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, edge, pedestal, elm, ballooning, finite-differences, time-integration, linear-solver, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # BOUT++

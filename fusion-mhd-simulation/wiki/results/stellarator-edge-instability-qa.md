@@ -4,8 +4,8 @@ title: "Edge instabilities of an optimized quasi-axisymmetric reactor stellarato
 description: "First nonlinear M3D-C1 simulations of a reactor-scale two-field-period quasi-axisymmetric stellarator optimized at β = 2.5 % without a stability target: edge pressure-driven high-n modes destroy the flux surfaces within about 1500 Alfvén times for every resistivity model, only even toroidal harmonics are destabilized, temperature gradients survive in the chaotic field, and Spitzer resistivity gives a secondary nonlinear growth acceleration; the authors conclude that MHD stability must enter stellarator optimization."
 status: established
 aliases: [QA reactor stellarator nonlinear MHD, Wright–Ferraro QA instability, optimized QA edge instability]
-tags: [stellarator, mhd, full-mhd, equilibrium, bootstrap-current]
-timestamp: 2026-10-16T18:00:00Z
+tags: [stellarator, full-mhd, equilibrium, bootstrap-current]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Edge instabilities of an optimized quasi-axisymmetric reactor stellarator

@@ -4,8 +4,8 @@ title: "MARS-F"
 description: "Linear resistive MHD plasma-response and stability code used as the linear reference of nonlinear codes: it optimizes RMP coil phasing by the X-point displacement criterion, matches JOREK's early-phase displacement in ITER, and supplies the linear (2,1) resistive-kink structure against which M3D-C1 runaway-electron runs are checked; it handles 3D active coils but only thin, axisymmetric passive conductors."
 status: established
 aliases: [MARS F, MARS-F code]
-tags: [code, mhd, tokamak, verification, elm, free-boundary, wall, kink]
-timestamp: 2026-10-16T12:00:00Z
+tags: [mhd, tokamak, verification, elm, free-boundary, wall, kink]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # MARS-F

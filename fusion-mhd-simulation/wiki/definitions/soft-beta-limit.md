@@ -4,8 +4,8 @@ title: "Soft β limit of stellarators"
 description: "A β limit set not by disruptive MHD but by enhanced transport from mild, saturated pressure-driven activity, typical of net-current-free stellarators; JOREK3D simulations of W7-AS attribute it to visco-resistive activity that leaves field lines ergodically confined in radially separated sub-volumes, but reach no β flat top, whereas in high-beta LHD conventional MHD collapses the core and only kinetic thermal ions keep the activity peripheral."
 status: established
 aliases: [soft beta limit, soft β-limit, W7-AS beta limit]
-tags: [stellarator, mhd, reduced-mhd, ballooning, verification, hybrid-kinetic]
-timestamp: 2026-10-16T18:00:00Z
+tags: [stellarator, reduced-mhd, ballooning, verification, hybrid-kinetic]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Soft β limit of stellarators

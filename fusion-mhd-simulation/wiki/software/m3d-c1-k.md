@@ -4,8 +4,8 @@ title: "M3D-C1-K"
 description: "Kinetic-MHD hybrid built on M3D-C1: δf energetic-particle markers, and optionally kinetic thermal ions, pushed by RK4 guiding-centre integration or a GPU-accelerated slow-manifold Boris algorithm, coupled to the implicit finite-element MHD by pressure or current coupling, which the authors derive to be equivalent; benchmarked on the linear n=1 fishbone, the ITPA n=6 TAE and the DIII-D RSAE cases, and applied to non-resonant fishbones with thermal-ion Landau damping."
 status: established
 aliases: [M3D-C^1-K]
-tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, gpu, finite-elements, verification]
-timestamp: 2026-10-16T23:30:00Z
+tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, gpu, finite-elements, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # M3D-C1-K

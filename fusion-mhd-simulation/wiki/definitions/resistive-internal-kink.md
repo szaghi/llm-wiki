@@ -4,8 +4,8 @@ title: "Resistive internal kink (m/n = 1/1)"
 description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical shift of the core inside q = 1 that resistivity turns into a reconnecting mode with gamma ~ eta^(1/3); its ideal, pressure-driven limit has a poloidal-beta threshold, reduced MHD models fail to reproduce that limit at finite beta, and the mode triggers the thermal quench when SPI fragments reach q = 1."
 status: established
 aliases: [resistive kink, internal kink, m=n=1 mode, 1/1 kink, Coppi scaling]
-tags: [kink, tearing, mhd, reduced-mhd, full-mhd, verification, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+tags: [kink, tearing, reduced-mhd, full-mhd, verification, tokamak]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Resistive internal kink (m/n = 1/1)

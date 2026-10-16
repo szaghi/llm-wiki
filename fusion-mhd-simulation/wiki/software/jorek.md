@@ -4,8 +4,8 @@ title: "JOREK"
 description: "Fully implicit nonlinear extended-MHD code for tokamak X-point plasmas: ansatz-based reduced and full visco-resistive MHD on G1 Bézier finite elements times a toroidal Fourier series, linearized Crank–Nicolson/BDF2 steps solved by GMRES with a per-harmonic block preconditioner, free boundary through STARWALL or CARIDDI, and fluid, kinetic and particle extensions for impurities, neutrals, pellets, runaway and energetic particles."
 status: established
 aliases: [JOREK 2]
-tags: [code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T22:00:00Z
+tags: [reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # JOREK

@@ -4,8 +4,8 @@ title: "Modified Rutherford equation"
 description: "The evolution equation for the width of a thin, single-helicity magnetic island in the nonlinear (Rutherford) regime, in which the island grows on the resistive time at a rate set by the tearing index plus bootstrap, curvature (D_R) and other corrections; used in the sources as a fit to simulated island growth, as an NTM growth check and through its time-rescaling invariance."
 status: established
 aliases: [MRE, Rutherford equation, Rutherford regime, island width equation]
-tags: [tearing, mhd, extended-mhd, bootstrap-current]
-timestamp: 2026-10-16T20:00:00Z
+tags: [tearing, extended-mhd, bootstrap-current]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Modified Rutherford equation

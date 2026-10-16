@@ -4,8 +4,8 @@ title: "Fluid neutral models and plasma–neutral atomic sources"
 description: "Fluid treatments of atomic neutrals in MHD codes, from a single diffusive neutral density to a full neutral continuity–momentum–energy system, and the ionization, recombination, charge-exchange and radiation source terms that couple them to the plasma conservatively."
 status: established
 aliases: [diffusive neutral model, plasma-neutral model, Meier–Shumlak model, neutral fluid]
-tags: [neutrals, edge, divertor, mhd, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [neutrals, edge, divertor, mhd]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Fluid neutral models and plasma–neutral atomic sources

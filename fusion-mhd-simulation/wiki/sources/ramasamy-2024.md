@@ -8,8 +8,8 @@ authors: [Ramasamy R., Aleynikova K., Nikulsin N., Hindenlang F., Holod I., Stru
 year: 2024
 venue: "Nucl. Fusion 64:086030"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Ramasamy_Nonlinear_MHD_modeling_of_soft_β_limits_in_W7-AS.pdf"
-tags: [mhd, reduced-mhd, stellarator, tearing, ballooning, equilibrium, finite-elements, spectral, time-integration, linear-solver, verification, code]
-timestamp: 2026-10-16T23:30:00Z
+tags: [reduced-mhd, stellarator, tearing, ballooning, equilibrium, finite-elements, spectral, time-integration, linear-solver, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

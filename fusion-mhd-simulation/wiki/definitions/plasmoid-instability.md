@@ -4,8 +4,8 @@ title: "Plasmoid instability and plasmoid-mediated reconnection"
 description: "Break-up of a thin current sheet at high Lundquist number into chains of plasmoids that make resistive reconnection fast; in nonlinear NIMROD simulations of peeling-ballooning ELMs, axisymmetric counter-current sheets and finger-like edge current sheets form and the latter break into current blobs read as 3D plasmoid-mediated reconnection."
 status: established
 aliases: [plasmoid-mediated reconnection, current-sheet break-up, reconnection burst, plasmoid chain]
-tags: [elm, edge, pedestal, mhd, extended-mhd, tearing]
-timestamp: 2026-10-16T20:00:00Z
+tags: [elm, edge, pedestal, extended-mhd, tearing]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Plasmoid instability and plasmoid-mediated reconnection

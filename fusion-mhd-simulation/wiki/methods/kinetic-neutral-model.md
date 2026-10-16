@@ -4,8 +4,8 @@ title: "Kinetic (Monte Carlo) neutral model coupled to MHD"
 description: "JOREK model in which atomic neutrals are Monte Carlo superparticles that undergo ionization, charge exchange, line radiation and recombination, recycle and sputter at the wall, and return their moments to the implicit fluid as explicit sources once per fluid step through a regularized finite-element projection."
 status: established
 aliases: [kinetic neutrals, Monte Carlo neutrals, JOREK kinetic neutral model]
-tags: [neutrals, particles, edge, divertor, code]
-timestamp: 2026-10-16T00:00:00Z
+tags: [neutrals, particles, edge, divertor]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Kinetic (Monte Carlo) neutral model coupled to MHD

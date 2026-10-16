@@ -4,8 +4,8 @@ title: "DESC"
 description: "Pseudospectral 3D ideal-MHD inverse equilibrium code in Python/JAX that expands the flux-surface geometry and stream function in a global Fourier–Zernike basis and drives the force residual to zero at collocation nodes with a Newton-type solver; against VMEC it converges exponentially in radial resolution, stays accurate at the axis and reaches about tenfold lower force error at equal runtime."
 status: established
 aliases: [DESC stellarator code suite]
-tags: [code, equilibrium, stellarator, spectral, verification]
-timestamp: 2026-10-16T00:00:00Z
+tags: [equilibrium, stellarator, spectral, verification]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # DESC

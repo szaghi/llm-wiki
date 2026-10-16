@@ -8,8 +8,8 @@ authors: [Ebrahimi F., Bhattacharjee A.]
 year: 2023
 venue: "Nucl. Fusion 63:126042"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Nuclear_Fusion_Ebrahimi_Plasmoid-mediated_reconnection_during_nonlinear_peelingballo.pdf"
-tags: [mhd, full-mhd, extended-mhd, tokamak, elm, pedestal, ballooning, edge, finite-elements, spectral]
-timestamp: 2026-10-16T20:00:00Z
+tags: [full-mhd, extended-mhd, tokamak, elm, pedestal, ballooning, edge, finite-elements, spectral]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary

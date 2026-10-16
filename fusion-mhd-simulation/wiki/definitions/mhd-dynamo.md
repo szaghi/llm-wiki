@@ -4,8 +4,8 @@ title: "MHD dynamo effect"
 description: "The axisymmetric electromotive force produced by correlated non-axisymmetric velocity and field fluctuations, which redistributes the mean current; in nonlinear tokamak simulations a slow negative dynamo of a few mV/m clamps q0 in flux pumping and a fluctuation-induced emf builds counter-current sheets in peeling-ballooning ELMs."
 status: established
 aliases: [dynamo, fluctuation-induced emf, mean-field dynamo, negative dynamo, fast dynamo, slow dynamo, parallel dynamo emf]
-tags: [mhd, full-mhd, kink, elm, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+tags: [full-mhd, kink, elm, tokamak]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # MHD dynamo effect

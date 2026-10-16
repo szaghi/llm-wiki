@@ -8,8 +8,8 @@ authors: [Wright A.M., Ferraro N.M.]
 year: 2024
 venue: "Phys. Plasmas 31:082509"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Wright_Investigating_nonlinear_magnetohydrodynamics_in_an_optimized.pdf"
-tags: [mhd, full-mhd, stellarator, equilibrium, finite-elements]
-timestamp: 2026-10-16T20:00:00Z
+tags: [full-mhd, stellarator, equilibrium, finite-elements]
+timestamp: 2026-10-16T23:45:00Z
 ---
 
 # Summary
