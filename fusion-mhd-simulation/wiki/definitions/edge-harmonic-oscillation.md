@@ -5,7 +5,7 @@ description: "The quiescent H-mode is an ELM-free H-mode in which a saturated lo
 status: established
 aliases: [EHO, edge harmonic oscillation, QH-mode, quiescent H-mode, saturated kink-peeling mode]
 tags: [elm, pedestal, edge, kink, reduced-mhd, extended-mhd, tokamak]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T23:55:00Z
 ---
 
 # Edge harmonic oscillation and QH-mode
@@ -131,10 +131,7 @@ noise. The grid has 11 136 $G^1$ Bézier elements (§II–IV A; grid §III, Fig.
 * **Single temperature, no torque.** Both JOREK cases use $T_e=T_i$ and no
   torque source, which affects $E_r$ and the mode frequency (Cathey et al.
   2024, §2.3, §3.2; Liang et al. 2025, §III).
-
-## Contradictions
-
-* **What sets the simulated EHO frequency — qualification.**
+* **What sets the simulated EHO frequency** (qualification, downgraded from Contradictions by human decision, 2026-10-16).
   [Cathey et al. (2024)](/sources/cathey-2024.md) (§3.2) attribute the AUG
   mismatch, about 27 kHz simulated against about 10 kHz measured, to the
   missing NBI torque and the single-temperature model ("likely explains").

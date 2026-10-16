@@ -5,7 +5,7 @@ description: "Electrons accelerated to relativistic energies when the parallel e
 status: established
 aliases: [RE, runaway electron beam, RE beam]
 tags: [runaway-electrons, disruption]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:55:00Z
 ---
 
 # Runaway electrons and their generation mechanisms
@@ -223,10 +223,10 @@ Eq. 1).
   Boris pusher of [M3D-C1-K](/software/m3d-c1-k.md) as a good candidate for
   REs (see [particle pushers](/methods/particle-pushers.md)).
 
-## Contradictions
+## Qualifications
 
-**Complete loss versus trapped survivors in beam termination** — Open
-(qualification). [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§6.4.2)
+**Complete loss versus trapped survivors in beam termination**
+(qualification, downgraded from Contradictions by human decision, 2026-10-16). [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§6.4.2)
 report that in the JET benign-termination simulation "the REs are lost" in
 $\le100\,\mu$s, and [Liu et al. (2021)](/sources/liu-2021.md) (§5.3) find
 more than 95% loss in DIII-D. [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md)

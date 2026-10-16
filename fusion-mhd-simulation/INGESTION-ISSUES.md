@@ -38,7 +38,9 @@ ingested.
      data. Supersede, or keep Open. *Kept Open by human decision
      (2026-10-16).*
 3. **Reclassification candidates** (contradiction → qualification or
-   compatible; the pages already say so): EHO frequency
+   compatible; the pages already say so). *All five downgraded to
+   qualifications by human decision (2026-10-16); moved to the pages'
+   `## Qualifications` sections.* EHO frequency
    ([EHO](wiki/definitions/edge-harmonic-oscillation.md)); the
    phase-space invariant $C$ vs $P_2$ during chirping
    ([EPM](wiki/definitions/energetic-particle-mode.md),

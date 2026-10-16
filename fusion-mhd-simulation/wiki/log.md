@@ -2,6 +2,7 @@
 
 ## 2026-10-16
 
+* **Five contradiction entries downgraded to qualifications (human decision)**, each moved from `## Contradictions` to `## Qualifications` on its page: what sets the simulated EHO frequency ([EHO](/definitions/edge-harmonic-oscillation.md)); the phase-space invariant $C$ vs $P_2$ during chirping ([EPM](/definitions/energetic-particle-mode.md), [chirping diagnostic](/methods/chirping-phase-space-diagnostic.md)); complete loss vs trapped survivors at beam termination ([runaway electrons](/definitions/runaway-electrons.md)); the trigger surface of impurity SPI and the duration of the ITER thermal quench ([thermal quench](/definitions/thermal-quench.md)).
 * **Tag rules (human decision):** `code` dropped from all 57 pages, since `type: Software` already says it. `mhd` removed from the 33 pages that also carry `full-mhd`, `reduced-mhd` or `extended-mhd`, and kept on the 36 pages without one. Both rules are recorded in the bundle law.
 * **Tag rule (human decision):** `benchmark` is kept only on the 8 Benchmark pages. On the other 31 pages (1 definition, 1 method, 14 software, 15 sources) it was replaced by `verification`, deduplicated where both were present. The rule is recorded in the bundle law.
 * **Human decision: the cause of the JOREK3D–CASTOR3D tearing gap stays Open** ([CASTOR3D](/software/castor3d.md), [JOREK3D](/software/jorek3d.md), [tearing mode](/definitions/tearing-mode.md)). Ramasamy et al. (2024) re-attribute the gap to CASTOR3D resolution without showing a re-run, so their statement does not supersede Nikulsin et al. (2022).

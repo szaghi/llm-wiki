@@ -5,7 +5,7 @@ description: "Alfvénic mode whose existence and frequency are set by the energe
 status: established
 aliases: [EPM, energetic-particle mode, frequency chirping, chirping mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:55:00Z
 ---
 
 # Energetic particle mode (EPM) and frequency chirping
@@ -103,6 +103,20 @@ $\delta\omega/\gamma_l=\tfrac{16\sqrt2}{3\sqrt3\pi^2}(\gamma_dt)^{1/2}\approx0.4
 simulation, and propose raised dissipation as "a useful probing tool" that
 "can also save computational resources" (§4.1).
 
+## Qualifications
+
+**Phase-space invariant during chirping** (qualification, downgraded from Contradictions by human decision, 2026-10-16).
+Attributed.
+[Hezaveh et al. (2022)](/sources/hezaveh-2022.md) (§4.4, Fig. 10) show for a
+tracked particle that $C=\omega P_\phi-n\mathcal E$ at the fixed linear
+frequency, the invariant used by White et al. (2020) (not ingested; as
+cited) to slice phase space, drifts by $\Delta C/\omega\approx+0.8$ once the
+frequency chirps, while their wave-frame momentum $P_2$ stays constant.
+$C$ is exact only for a fixed-frequency wave, so the claims do not conflict
+within their assumptions; the disagreement is about which slice suits
+long-range chirping. Details on the
+[diagnostic page](/methods/chirping-phase-space-diagnostic.md).
+
 ## Contradictions
 
 **EPM vs TAE labelling of the AUG-NLED $n=1$ mode.** Open.
@@ -133,17 +147,6 @@ it.
 on the [NLED-AUG benchmark](/benchmarks/nled-aug-benchmark.md)). Down in
 HYMAGYC and MEGA, up in ORB5, all within
 [Vlad et al. (2025)](/sources/vlad-2025.md) (§§3–5).
-
-**Phase-space invariant during chirping.** Recorded, attributed.
-[Hezaveh et al. (2022)](/sources/hezaveh-2022.md) (§4.4, Fig. 10) show for a
-tracked particle that $C=\omega P_\phi-n\mathcal E$ at the fixed linear
-frequency, the invariant used by White et al. (2020) (not ingested; as
-cited) to slice phase space, drifts by $\Delta C/\omega\approx+0.8$ once the
-frequency chirps, while their wave-frame momentum $P_2$ stays constant.
-$C$ is exact only for a fixed-frequency wave, so the claims do not conflict
-within their assumptions; the disagreement is about which slice suits
-long-range chirping. Details on the
-[diagnostic page](/methods/chirping-phase-space-diagnostic.md).
 
 # Citations
 

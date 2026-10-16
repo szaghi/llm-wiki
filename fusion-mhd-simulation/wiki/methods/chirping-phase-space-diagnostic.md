@@ -5,7 +5,7 @@ description: "Phase-space diagnostic for frequency-chirping Alfvén modes that w
 status: established
 aliases: [action-angle chirping diagnostic, P2 slicing, wave-frame canonical transformation, phase-space bucket diagnostic]
 tags: [energetic-particles, alfven-eigenmode, hybrid-kinetic, particles, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:55:00Z
 ---
 
 # Wave-frame action-angle diagnostic of chirping modes
@@ -131,9 +131,10 @@ the run with raised dissipation (inferred on the Source page).
   slice. The difference is one of slicing variables; the paper does not
   frame it as a contradiction.
 
-## Contradictions
+## Qualifications
 
-**Choice of phase-space invariant during chirping.** Recorded, attributed.
+**Choice of phase-space invariant during chirping** (qualification,
+downgraded from Contradictions by human decision, 2026-10-16). Attributed.
 [Hezaveh et al. (2022)](/sources/hezaveh-2022.md) (§4.4, Fig. 10) show
 that $C=\omega P_\phi-n\mathcal E$, used by White et al. (2020) (not
 ingested; as cited), is not conserved once the frequency chirps, while

@@ -5,7 +5,7 @@ description: "The thermal quench is the disruption phase in which the plasma los
 status: established
 aliases: [TQ, radiative collapse, thermal collapse]
 tags: [disruption, impurities, mhd, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:55:00Z
 ---
 
 # Thermal quench
@@ -279,9 +279,9 @@ the current spike; all parameters are then restored.
   ([Bhole et al. (2023)](/sources/bhole-2023.md), §4.3, Figs. 11, 19); see
   [shock-capturing artificial viscosity](/methods/shock-capturing-artificial-viscosity.md).
 
-## Contradictions
+## Qualifications
 
-**Trigger surface of impurity SPI — qualification.** The SPI-regimes
+**Trigger surface of impurity SPI** (qualification, downgraded from Contradictions by human decision, 2026-10-16). The SPI-regimes
 paragraph above, after [Hoelzl et al. (2021)](/sources/hoelzl-2021.md)
 (§6.2.1), states that for slow shards the TQ "is usually triggered when
 shards reach $q=2$ (ASDEX Upgrade deuterium SPI, and any impurity SPI)".
@@ -301,7 +301,8 @@ AUG-like profiles. The AUG neon–deuterium runs of
 2/1 at $q=2$ triggering the global stochastization, which supports the
 reading.
 
-**Duration of the ITER thermal quench — attributed contrast.**
+**Duration of the ITER thermal quench** (attributed contrast; qualification,
+downgraded from Contradictions by human decision, 2026-10-16).
 [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.1) report JOREK
 predictions of ≈20 ms for the TQ of unmitigated ITER VDEs;
 [Strauss et al. (2022)](/sources/strauss-2022.md) (§V) project 75–125 ms
