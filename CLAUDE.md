@@ -233,6 +233,17 @@ For each source, in order:
    message `docs(<bundle>): ingest <source-slug>` to the human. **The compiler
    never commits** — commits are reserved to the human (GPG-signed).
 
+**Chunked ingestion (D26).** A bundle whose law declares it ingests its
+archive in chunks: steps 1–8 hold for every source of the chunk (reference
+lists of a chunk may be merged together with `tools/bib_merge.py`), and
+step 9 is done once per chunk: one staged unit, one message
+`docs(<bundle>): ingest chunk N: <slugs>`, and the human reviews and
+commits it before the next chunk starts. Each chunk adds a section to
+`INGESTION-ISSUES.md` at the bundle root (outside `wiki/`), the reviewer's
+digest of the contradictions it opened, printed slips, identity problems,
+bundle-fit candidates and decisions left to the human; the `##
+Contradictions` sections of the pages stay the normative record.
+
 "Is it ingested?" has exactly one answer: a Source page exists. There is no
 inbox, no queue file — the worklist is derived (`tools/worklist.sh`).
 
@@ -266,7 +277,11 @@ contradiction lives.
 - **Deep lint** (LLM audit) every 10 ingestions and before any human-declared
   milestone: re-read a folder against `notation.md` and related pages; flag
   notation drift, stale contradictions, tag synonyms; record findings in `log.md`;
-  fix with human visibility.
+  fix with human visibility. In chunked ingestion (D26) the deep lint runs
+  with every chunk, before it is staged, over at least the pages the chunk
+  created or updated; a whole-bundle deep lint runs with the chunk that
+  completes the archive and whenever 50 ingestions have passed since the
+  last whole-bundle one.
 
 ## Query
 
@@ -279,6 +294,7 @@ external search dependency. Revisit only if the bundle outgrows navigation
 
 - Conventional Commits. **Never** add `Co-authored-by` lines.
 - **The compiler stages; the human commits.** One staged unit + prepared
-  message per ingested source (`docs(<bundle>): ingest <source-slug>`); the
+  message per ingested source (`docs(<bundle>): ingest <source-slug>`), or per
+  chunk in chunked ingestion (`docs(<bundle>): ingest chunk N: <slugs>`, D26); the
   human commits with their GPG key. The compiler never runs `git commit` and
   never touches `commit.gpgsign`. (Rule corrected 2026-07-08 — see D14.)

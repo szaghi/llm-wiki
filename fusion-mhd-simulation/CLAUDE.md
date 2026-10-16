@@ -101,8 +101,9 @@ ingestions) applied; committed (123a28a). Fiat closures (2026-10-16):
 JOREK resistive sign and Gear order, both printed slips; Bézier element
 $G^1$ vs $C^1$, a difference of terminology (committed 074156b for the first two). Next: the
 remaining human decisions listed in
-`INGESTION-ISSUES.md` (closures, tag vocabulary, bundle-fit); the next
-deep lint is due after 50 further ingestions.
+`INGESTION-ISSUES.md` (closures, tag vocabulary, bundle-fit); deep lint
+cadence per the constitution (D26): with every future chunk over its pages,
+and a whole-bundle one every 50 ingestions.
 
 **Chunk 2 committed 2026-10-16 (0b8f975):** the 20 application papers;
 40 of 50 ingested, 100 concept pages, 1312 bibliography entries.

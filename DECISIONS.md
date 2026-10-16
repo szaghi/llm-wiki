@@ -460,3 +460,27 @@ bundles (stabilized finite elements, shock capturing, time integration,
 field-aligned metrics) is real but secondary: these papers are about MHD
 codes and the plasma physics they resolve, and splitting them across
 bundles would dilute both.
+
+## D26 — Chunked ingestion and its deep-lint cadence in the constitution (2026-10-16)
+
+**Context:** two bundles (`plasma-propulsion-simulation`, D22; `fusion-mhd-simulation`,
+D25) ingested archives of 108 and 50 sources in chunks of 20: parallel reader
+subagents, one compile by the main session, one staged unit and one commit message
+per chunk, a per-chunk digest in `INGESTION-ISSUES.md`. The rule lived only in bundle
+law and contradicted the constitution's "one staged unit per ingested source". The
+deep-lint cadence drifted with it: `fusion-mhd-simulation` ran its first deep lint
+after 50 ingestions, against the constitution's "every 10", and wrote a 50-ingestion
+cadence into its own law.
+
+**Decision (user):** amend the constitution. Chunked ingestion is a declared mode: the
+per-source protocol (steps 1–8) is unchanged, staging is per chunk, and the issues
+digest is mandatory. The deep lint runs with every chunk, before staging, over at
+least the pages the chunk created or updated, and over the whole bundle with the
+chunk that completes the archive and every 50 ingestions.
+
+**Why:** a 20-source chunk is reviewed as one unit, so it must be audited as one
+unit; scoping the per-chunk audit to the pages the chunk touched keeps the original
+intent of "every 10" (drift is caught while it is small) without re-reading the whole
+bundle at every chunk. The fusion-mhd chunks 1 and 2 were staged without a deep lint;
+the whole-bundle deep lint #1 that ran with chunk 3 covered their pages.
+

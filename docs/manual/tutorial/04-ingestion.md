@@ -42,12 +42,14 @@ Continue ingesting the `<bundle>` sources, foundations first. Stage after each s
 ### Large archives: chunks
 
 For an archive of fifty or a hundred PDFs, one review per source is slow. The bundles compiled from such archives
-(`plasma-propulsion-simulation`, `fusion-mhd-simulation`, D22 and D25) ingest in **chunks** instead, a rule written in
-their bundle law, not in the constitution:
+(`plasma-propulsion-simulation`, `fusion-mhd-simulation`, D22 and D25) ingest in **chunks** instead, a mode the
+constitution defines (D26) and each such bundle declares in its law:
 
 - a chunk is 20 sources, read by parallel subagents into scratch notes and compiled by the main session;
 - the chunk is staged as one unit with one message, `docs(<bundle>): ingest chunk N: <slugs>`, and you review and
   commit it before the next chunk starts;
+- a deep lint runs with every chunk, before it is staged, over the pages the chunk created or updated, and over the
+  whole bundle with the final chunk and every 50 ingestions ([chapter 6](/manual/tutorial/06-quality));
 - the reference lists are merged with the batched merger, `tools/bib_merge.py`
   ([chapter 5](/manual/tutorial/05-citations)), and the `--dupes` sweep and a fuzzy-title sweep close the archive
   after the final chunk;

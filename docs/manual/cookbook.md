@@ -346,7 +346,7 @@ A lint error blocks the commit. Orphan pages and unmerged reference lists are wa
 ### Run a deep lint
 
 The deterministic lint cannot judge notation drift, stale contradictions or tag synonyms. A deep lint is an LLM audit,
-due every 10 ingestions:
+due every 10 ingestions, or with every chunk in chunked ingestion (whole-bundle every 50):
 
 ::: tip Prompt
 Run a deep lint on &lt;bundle&gt;.

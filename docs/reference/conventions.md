@@ -90,7 +90,7 @@ A contradiction closes only in two ways:
 ## Git
 
 * Conventional Commits. An ingestion is one staged unit with the message `docs(<bundle>): ingest <source-slug>`. A
-  bundle whose law ingests in chunks stages one unit per chunk, `docs(<bundle>): ingest chunk N: <slugs>`.
+  bundle in chunked ingestion (D26) stages one unit per chunk, `docs(<bundle>): ingest chunk N: <slugs>`.
 * **The compiler stages; the human commits** (D14). Claude runs `git add -A` and prints the message; you commit, with
   your GPG key if you sign. The compiler never runs `git commit` and never touches `commit.gpgsign`.
 * Never add `Co-authored-by` lines.

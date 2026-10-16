@@ -33,9 +33,9 @@ uses that tag for sources it ingests but, by its own scope rule, never cites fro
 off-domain journal papers of `plasma-propulsion-simulation`. The tag hides the warning, so it never goes on an
 in-scope page. An ingestion is not staged until the lint passes.
 
-## Deep lint, every ten ingestions
+## Deep lint, every ten ingestions or every chunk
 
-The linter checks form; it cannot read. Every ten ingestions, and before any milestone you declare, Claude runs a
+The linter checks form; it cannot read. Every ten ingestions (in chunked ingestion, with every chunk), and before any milestone you declare, Claude runs a
 **deep lint**: it re-reads pages against the notation registry and against each other, and looks for:
 
 - **notation drift**: a symbol used with two meanings, or two symbols for one thing;
