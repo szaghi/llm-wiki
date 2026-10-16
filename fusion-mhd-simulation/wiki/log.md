@@ -2,6 +2,7 @@
 
 ## 2026-10-16
 
+* **Contradiction closed by human fiat** (`status: hypothesis` attribution): continuity class of the JOREK Bézier element ([Bézier–Hermite finite elements](/methods/bezier-finite-elements.md), [JOREK](/software/jorek.md), [Bhole et al. (2023)](/sources/bhole-2023.md)). $G^1$ (physical-space gradient continuous, reference-coordinate derivatives not) and Bhole et al.'s $C^1$ (shared arc-length degrees of freedom) describe the same property on regular nodes, so the difference is terminology. The canonical label is $G^1$. The caveat that it is not strictly enforced at the axis and near X-points stands.
 * **Two contradictions closed by human fiat as printed slips** (`status: hypothesis` attribution; a later source can reopen them):
   * Sign of the resistive term in the JOREK flux equation ([reduced MHD](/methods/reduced-mhd.md)): the diffusive form $+(\eta/\mu_0)(j-j_x)$ with $j=\Delta^*\psi$ holds; the opposite sign printed by Hoelzl et al. (2021), Nikulsin et al. (2022) and Liang et al. (2025) is a slip (record 8 against 3). The orientation-dependent bracket and $F_0\partial_\phi u$ signs are not part of the closure.
   * Order of JOREK's Gear scheme ([implicit time integration](/methods/implicit-time-integration.md), [JOREK](/software/jorek.md), [Artola et al. (2021)](/sources/artola-2021.md)): BDF2; the "BDF5" of Artola et al. (2021, arXiv v1) is a slip. The published version was not checked.

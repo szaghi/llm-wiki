@@ -5,7 +5,7 @@ description: "Fully implicit nonlinear extended-MHD code for tokamak X-point pla
 status: established
 aliases: [JOREK 2]
 tags: [code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T21:00:00Z
+timestamp: 2026-10-16T22:00:00Z
 ---
 
 # JOREK
@@ -116,7 +116,8 @@ mixed derivative) with element-specific scale factors (Hoelzl et al. 2021,
 §3.1, Eqs. 51–54; Bhole et al. 2023, §3.3.2); see
 [Bézier–Hermite finite elements](/methods/bezier-finite-elements.md). Hoelzl et
 al. (2021) call them $G^1$, not enforced at the axis and near X-points; Bhole
-et al. (2023) call them $C^1$ (see Contradictions). Grids are flux-surface
+et al. (2023) call them $C^1$; closed by fiat as a difference of terminology
+(see Contradictions). Grids are flux-surface
 aligned per topological domain and can extend to the first wall; polar or
 rectangular grids serve as initial grids and for VDEs (§3.1.2). Toroidally, a
 real Fourier series with optional periodicity; with $N_{\mathrm{tor}}$
@@ -300,11 +301,12 @@ results.
 
 ## Contradictions
 
-* **Continuity of the Bézier element.** *Open.* Hoelzl et al. (2021, §3.1) and
+* **Continuity of the Bézier element.** *Closed by human fiat (2026-10-16):
+  a difference of terminology; $G^1$ in physical space, not strictly enforced
+  at the axis and near X-points.* Hoelzl et al. (2021, §3.1) and
   Artola et al. (2021, Table 1, footnote G = geometric, C = parametric) say
   $G^1$, as do Zhang et al. (2025, §2.4) and Liang et al. (2025, §III); Bhole et al. (2023, §3.3.2) say $C^1$, the arc-length derivatives
-  being shared. A statement of which derivatives are continuous across edges
-  in physical space would settle it; recorded in full on
+  being shared. Recorded in full on
   [Bézier–Hermite finite elements](/methods/bezier-finite-elements.md).
 * **Order of the Gear scheme.** *Closed by human fiat (2026-10-16): BDF2;
   "BDF5" is a printed slip.* Artola et al. (2021, arXiv v1, §2,

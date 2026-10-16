@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Bézier–Hermite finite elements with toroidal Fourier harmonics"
-description: "JOREK's spatial discretization: isoparametric bicubic Bézier patches in the poloidal plane, written in nodal cubic-Hermite form with four degrees of freedom per node and element-dependent scale factors, combined with a real toroidal Fourier series; flux-aligned grids, convergence orders, the toroidally varying JOREK3D geometry, and the open dispute over whether the elements are G1 or C1."
+description: "JOREK's spatial discretization: isoparametric bicubic Bézier patches in the poloidal plane, written in nodal cubic-Hermite form with four degrees of freedom per node and element-dependent scale factors, combined with a real toroidal Fourier series; flux-aligned grids, convergence orders, the toroidally varying JOREK3D geometry, and the G1-versus-C1 labelling, closed by fiat as a difference of terminology."
 status: established
 aliases: [Hermite-Bézier elements, bicubic Bézier elements, Czarny–Huysmans elements, JOREK finite elements, G1 Bézier elements]
 tags: [finite-elements, spectral, numerics, code]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T22:00:00Z
 ---
 
 # Bézier–Hermite finite elements with toroidal Fourier harmonics
@@ -225,7 +225,8 @@ cubic radial elements times a poloidal Fourier series
 
 ## Contradictions
 
-**Continuity class of the JOREK element — Open.**
+**Continuity class of the JOREK element — Closed by human fiat
+(2026-10-16) as a difference of terminology.**
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§3.1) call the elements
 $G^1$: value and *real-space* gradient are continuous, while the
 element-specific scale factors make the derivatives with respect to the
@@ -248,6 +249,19 @@ differ in which coordinates the label refers to; they disagree on the
 singular nodes, which Bhole et al. do not discuss except for the polar axis.
 A source that states the continuity class of the field as a function of
 $(R,Z)$ at every node type, including X-point nodes, would settle it.
+
+* **Closed by human fiat (2026-10-16): a difference of terminology, not of
+  substance.** The canonical label is $G^1$ in the sense of Artola et al.
+  (2021): the field and its gradient are continuous in physical $(R,Z)$
+  space, while the derivatives with respect to the element's reference
+  coordinates are not. Bhole et al. (2023) say $C^1$ for the same element
+  because the arc-length derivatives are shared degrees of freedom; on
+  regular nodes this is the same property. On the magnetic axis and
+  near X-points $G^1$ is not strictly enforced (Hoelzl et al. 2021, §3.1),
+  and this caveat stands.
+  *Fiat closure — `status: hypothesis` attribution: the closure is the
+  human's judgment, not a source superseding a source; a later source can
+  reopen it.*
 
 # Citations
 

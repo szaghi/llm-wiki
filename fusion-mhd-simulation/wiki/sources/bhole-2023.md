@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Math. Appl. 142:225-256"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Computers_amp_Mathematics_with_Applications_Bhole_Stabilized_bi-cubic_Hermite_Bézier_finite_element_method_wit.pdf"
 tags: [full-mhd, reduced-mhd, finite-elements, stabilization, time-integration, disruption, impurities, tokamak, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T22:00:00Z
 ---
 
 # Summary
@@ -100,7 +100,8 @@ are hand-tuned, and the effect of VMS alone is never isolated.
 18. **Element continuity.** The bi-cubic Hermite–Bézier element is called
     $C^1$ because the arc-length derivatives at a vertex are shared,
     element-independent unknowns (§3.3.2). Stated. Other JOREK sources call
-    the same element $G^1$; see
+    the same element $G^1$; closed by human fiat (2026-10-16) as a
+    difference of terminology, see
     [Bézier–Hermite finite elements](/methods/bezier-finite-elements.md).
 
 # Models and numerics

@@ -31,7 +31,8 @@ ingested.
    - Bézier element continuity ([Bézier elements](wiki/methods/bezier-finite-elements.md)):
      four sources say $G^1$ (hoelzl-2021, artola-2021, zhang-2025,
      liang-2025) against one $C^1$ (bhole-2023). Most likely a difference of
-     terminology.
+     terminology. *Closed by human fiat (2026-10-16) as a difference of
+     terminology; canonical label $G^1$.*
    - JOREK3D–CASTOR3D tearing gap: ramasamy-2024 re-attributes it to
      CASTOR3D resolution, with authors shared with the 2022 paper but no
      data. Supersede, or keep Open.
