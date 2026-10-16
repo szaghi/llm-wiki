@@ -16,7 +16,9 @@ ingested.
 
 ### Decisions for the human
 
-1. **Closures recommended as printed slips** (all still Open):
+1. **Closures recommended as printed slips.** *Both closed by human fiat
+   (2026-10-16) as printed slips, with `status: hypothesis` attribution on
+   the pages.*
    - Resistive-term sign in the JOREK flux equation
      ([reduced MHD](wiki/methods/reduced-mhd.md)): now 8 sources print the
      diffusive sign against 3 (hoelzl-2021, nikulsin-2022, and liang-2025, which

@@ -5,7 +5,7 @@ description: "Fully implicit nonlinear extended-MHD code for tokamak X-point pla
 status: established
 aliases: [JOREK 2]
 tags: [code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T21:00:00Z
 ---
 
 # JOREK
@@ -306,10 +306,11 @@ results.
   being shared. A statement of which derivatives are continuous across edges
   in physical space would settle it; recorded in full on
   [Bézier–Hermite finite elements](/methods/bezier-finite-elements.md).
-* **Order of the Gear scheme.** *Open.* Artola et al. (2021, arXiv v1, §2,
+* **Order of the Gear scheme.** *Closed by human fiat (2026-10-16): BDF2;
+  "BDF5" is a printed slip.* Artola et al. (2021, arXiv v1, §2,
   Table 1) print "BDF5 Gears"; Hoelzl et al. (2021, App. C), Bhole et al.
   (2023, Eq. 40) and Korving et al. (2023, §II C) describe BDF2. The published
-  version of Artola et al. would settle it; recorded in full on
+  version of Artola et al. was not checked; recorded in full on
   [implicit time integration](/methods/implicit-time-integration.md).
 
 # Citations

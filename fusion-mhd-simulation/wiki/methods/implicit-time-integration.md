@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Implicit time integration and preconditioned Krylov solvers for nonlinear MHD"
-description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicolson, BDF2, implicit Euler) solved each step by restarted GMRES with a block-Jacobi preconditioner over toroidal harmonics whose blocks are LU-factorized and reused, set against the split-implicit, leapfrog, backward-Euler, Newton–Krylov, BDF (CVODE) and explicit Runge–Kutta advances of the other codes; includes the variable-step order condition and the open BDF2-versus-BDF5 slip."
+description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicolson, BDF2, implicit Euler) solved each step by restarted GMRES with a block-Jacobi preconditioner over toroidal harmonics whose blocks are LU-factorized and reused, set against the split-implicit, leapfrog, backward-Euler, Newton–Krylov, BDF (CVODE) and explicit Runge–Kutta advances of the other codes; includes the variable-step order condition and the BDF2-versus-BDF5 printed slip (closed by fiat)."
 status: established
 aliases: [theta-xi scheme, Gear scheme, BDF2, Crank–Nicolson, linearized implicit scheme, block-Jacobi preconditioner, toroidal-harmonic preconditioner, mode groups]
 tags: [time-integration, linear-solver, numerics, code]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T21:00:00Z
 ---
 
 # Implicit time integration and preconditioned Krylov solvers for nonlinear MHD
@@ -196,8 +196,8 @@ time unit would not make faster physics valid.
 
 ## Contradictions
 
-**Order of JOREK's Gear scheme — Open (recommended for human closure as a
-printed slip).** [Artola et al. (2021)](/sources/artola-2021.md) (arXiv v1,
+**Order of JOREK's Gear scheme — Closed by human fiat (2026-10-16) as a
+printed slip.** [Artola et al. (2021)](/sources/artola-2021.md) (arXiv v1,
 §2 and Table 1) state that JOREK uses "typically the Crank-Nicolson or the
 BDF5 Gears scheme". [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§3.2,
 App. C), [Bhole et al. (2023)](/sources/bhole-2023.md) (Eq. 40, Gear = BDF2
@@ -208,6 +208,13 @@ Artola et al. (Phys. Plasmas 28:052511), or a fiat closure by the human, would
 settle it. [Zhang et al. (2025)](/sources/zhang-2025.md) (§2.4) call the
 JOREK advance an "implicit Gear scheme" without giving its order, so it does
 not bear on the slip.
+
+* **Closed by human fiat (2026-10-16): JOREK's Gear scheme is BDF2.** The
+  "BDF5" of Artola et al. (2021, arXiv v1) is a printed slip; the published
+  version was not checked.
+  *Fiat closure — `status: hypothesis` attribution: the closure is the
+  human's judgment, not a source superseding a source; a later source can
+  reopen it.*
 
 # Citations
 

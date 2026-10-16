@@ -5,7 +5,7 @@ description: "MHD models that restrict the magnetic field to a poloidal flux fun
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, ansatz-based reduced MHD, Strauss reduced MHD]
 tags: [mhd, reduced-mhd, tokamak, kink, code]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T21:00:00Z
 ---
 
 # Reduced MHD for tokamaks
@@ -328,8 +328,8 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
 
 ## Contradictions
 
-* **Sign of the resistive term in the JOREK flux equation.** *Open;
-  recommended for human closure as a printed slip.*
+* **Sign of the resistive term in the JOREK flux equation.** *Closed by
+  human fiat (2026-10-16) as a printed slip.*
   [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), Eq. 28 (p. 15), prints
   the flux equation with $-\frac{\eta}{R^2}(j-j_x)$ and
   $+\frac{F_0}{R^2}\partial_\phi u$ on the right-hand side, with
@@ -372,6 +372,16 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
   diffusive resistive sign against three printing the other, one of them
   internally mixed. Liang et al. share authors with Hoelzl et al. (2021) and
   with the Hu papers and do not comment.
+  * **Closed by human fiat (2026-10-16): the resistive term is diffusive**,
+    $+(\eta/\mu_0)(j-j_x)$ with $j=\Delta^*\psi$, as in the flux equation of
+    this page;
+    the opposite sign printed by Hoelzl et al. (2021), Eq. 28, Nikulsin et
+    al. (2022), Eq. 3d, and Liang et al. (2025), Eq. 7, is a printed slip.
+    The sign of the $F_0\partial_\phi u$ and bracket terms, which depends
+    on orientation conventions, is not part of the closure.
+    *Fiat closure — `status: hypothesis` attribution: the closure is the
+    human's judgment, not a source superseding a source; a later source can
+    reopen it.*
 * **Viscous term of the vorticity equation.** *Open.*
   [Hu et al. (2021b)](/sources/hu-2021-b.md), Eq. 12, and
   [Hu et al. (2021)](/sources/hu-2021.md), Eq. 7, print

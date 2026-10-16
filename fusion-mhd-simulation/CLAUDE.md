@@ -81,10 +81,12 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D25).
 
 ## Status
 
-**Chunk 3 staged 2026-10-16:** the last 10 papers; corpus complete
+**Chunk 3 committed 2026-10-16:** the last 10 papers; corpus complete
 (50 of 50 ingested), 110 concept pages, 1552 bibliography entries.
 Closing `--dupes` and fuzzy-title sweeps done; deep lint #1 (50
-ingestions) applied. Next: the human decisions listed in
+ingestions) applied; committed (123a28a). Fiat closures (2026-10-16):
+JOREK resistive sign and Gear order, both printed slips. Next: the
+remaining human decisions listed in
 `INGESTION-ISSUES.md` (closures, tag vocabulary, bundle-fit); the next
 deep lint is due after 50 further ingestions.
 
