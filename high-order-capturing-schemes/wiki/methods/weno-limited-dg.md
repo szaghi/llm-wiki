@@ -5,7 +5,7 @@ description: "Limiting RKDG by first flagging troubled cells (TVB minmod) and th
 status: established
 aliases: [WENO limiter, RKDG with WENO limiters, troubled-cell indicator, TVB limiter, Hermite WENO limiter]
 tags: [weno, dg, limiter, finite-volume]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin schemes
@@ -76,7 +76,7 @@ through. For systems $M$ is hard to estimate
 
 **Limitations seen later.** In a review of a priori DG limiters,
 [Dumbser et al. (2014)](/sources/dumbser-2014.md) (§3.1) group them
-into three families: artificial viscosity, slope or moment limiters
+into three families: [artificial viscosity](/methods/artificial-viscosity.md), slope or moment limiters
 (TVB, moment-based, hierarchical vertex-based), and (H)WENO limiters
 of this kind. Two drawbacks of WENO limiting are noted.
 * Moments rebuilt from main-grid averages lose part of DG's subcell

@@ -5,7 +5,7 @@ description: "The two natural, generally non-unit and non-orthogonal bases of a 
 status: established
 aliases: [tangent basis, normal basis, reciprocal basis, covariant base vectors, contravariant base vectors, contravariant components, covariant components, physical components]
 tags: [curvilinear-coordinates, tensor-calculus, metric]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Covariant and contravariant bases
@@ -85,6 +85,30 @@ at p. 225: the covariant components "are coefficients of the possibly
 nonunit" contravariant base vectors "and are therefore not components" of
 the vector "in the orthonormal basis"; and $\hat v_k=h_kv^k$ (no sum)).
 
+## Change of basis under a coordinate shift
+
+When one coordinate is shifted by a function of the others, both bases
+change in the reciprocal pattern. For
+[field-aligned coordinates](/definitions/field-aligned-coordinates.md)
+$\xi^3=\varphi-\chi(\Psi,\vartheta)$ built on
+[flux coordinates](/definitions/magnetic-flux-coordinates.md), the
+contravariant vector $\mathbf a^3=\nabla\varphi-I\nabla\Psi-q_{\mathrm{loc}}\nabla\vartheta$
+gains terms while $\mathbf a^1,\mathbf a^2$ do not, and the covariant vectors
+$\mathbf a_1=\mathbf a_\Psi+I\mathbf a_\varphi$, $\mathbf a_2=\mathbf a_\vartheta+q_{\mathrm{loc}}\mathbf a_\varphi$
+gain terms while $\mathbf a_3$ does not
+([Jiang et al. (2024)](/sources/jiang-2024.md), eqs. (16)–(22), p. 3;
+[Seto et al. (2023)](/sources/seto-2023.md), eq. (7), p. 3). Seto et al.'s
+quasi-ballooning representation mixes the two systems, taking
+$(\mathbf a_\Psi,\mathbf a_2,\mathbf a_3)$ as covariant and
+$(\nabla\Psi,\nabla\vartheta,\nabla\varphi-q_{\mathrm{loc}}\nabla\vartheta)$
+as contravariant basis, which are again reciprocal (eqs. (12)–(13), p. 3;
+[shifted metric](/methods/shifted-metric.md)). The angle between two
+contravariant vectors follows from the metric,
+$\cos\alpha_{12}=g^{12}/\sqrt{g^{11}g^{22}}$, which
+[Liu et al. (2024)](/sources/liu-2024.md) use to place gyro-average points
+in the non-orthogonal grid (eq. (14), p. 4; $\alpha_{12}$ local to this
+sentence).
+
 The derivatives of the base vectors along the coordinates define the
 [Christoffel symbols](/definitions/christoffel-symbols.md).
 
@@ -92,3 +116,6 @@ The derivatives of the base vectors along the coordinates define the
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §10.10, pp. 364–367; §§26.14–26.15, pp. 955–960; §26.20, p. 972.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), Example 3.2.1, pp. 129–130; §3.10, pp. 183–184; §4.1, pp. 206–207; §4.3, pp. 218–220, 225; exercises 4.3.1–4.3.3, p. 226.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §III A, p. 3.
+* [Liu et al. (2024)](/sources/liu-2024.md), §II C, p. 4.
+* [Seto et al. (2023)](/sources/seto-2023.md), §2, p. 3.

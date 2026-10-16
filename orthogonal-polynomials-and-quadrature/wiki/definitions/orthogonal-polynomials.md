@@ -5,7 +5,7 @@ description: "A sequence of polynomials p_n of exact degree n with zero weighted
 status: established
 aliases: [orthogonal polynomial sequence, weight function, orthogonal expansion, generalized Fourier series]
 tags: [orthogonality, weight-function, expansion, sturm-liouville]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Orthogonal polynomials with respect to a weight function
@@ -74,6 +74,11 @@ factor $P_\ell^m/(1-x^2)^{m/2}$ is orthogonal with weight $(1-x^2)^m$
 [associated Legendre functions](/definitions/associated-legendre-functions.md).
 Bessel functions are orthogonal in the scale of their argument, not in their
 order: see [Fourier–Bessel series](/results/fourier-bessel-series.md).
+On the unit disc, the radial Zernike polynomials are $r^m$ times a polynomial
+in $r^2$; Panici et al. call them shifted Jacobi polynomials and use them, with
+$\cos m\phi$ and $\sin m\phi$, as a spectral basis that is regular at the
+origin ([Panici et al. (2023)](/sources/panici-2023.md), §3.2, eqs. 3.18–3.21,
+p. 7). See [Zernike polynomials](/definitions/zernike-polynomials.md).
 
 ## Orthogonal expansion
 
@@ -88,10 +93,16 @@ p. 583, and the expansions in §§18.4.1, 18.7.1, 18.8.1, 18.9.1). Arfken et
 al. add that orthogonality makes the expansion unique, so that a truncated
 Legendre series rearranged in powers of $x$ is a unique polynomial
 ([Arfken et al. (2013)](/sources/arfken-2013.md), §15.2, eqs. 15.39–15.40,
-p. 726). Neither source states a convergence rate for any orthogonal
-expansion; Arfken et al.'s only accuracy statement is the qualitative
-minimax remark for Chebyshev series (see
-[Chebyshev polynomials](/definitions/chebyshev-polynomials.md)).
+p. 726). Neither founding source states a convergence rate for any
+orthogonal expansion; Arfken et al.'s only accuracy statement is the
+qualitative minimax remark for Chebyshev series (see
+[Chebyshev polynomials](/definitions/chebyshev-polynomials.md)). Panici et
+al. state, citing Boyd (2001) and without proof, that a spectral
+representation of a smooth solution converges exponentially in its
+resolution, and measure exponential convergence in the radial degree of a
+Zernike basis
+([Panici et al. (2023)](/sources/panici-2023.md), §5.2, Table 1, Fig. 8,
+pp. 12–14; see [Zernike polynomials](/definitions/zernike-polynomials.md)).
 
 **Gram–Schmidt.** Arfken et al. set as an exercise that Gram–Schmidt
 orthogonalization of $1,x,x^2,\dots$ with unit weight on $[-1,1]$ gives
@@ -112,3 +123,4 @@ reality and location of the zeros are used only for Gaussian quadrature
 
 1. [Riley et al. (2006)](/sources/riley-2006.md), §27.4.3, p. 1005; §18.1.2, eqs. 18.12–18.14, pp. 583–584; §§18.4.1, 18.7.1, 18.8.1, 18.9.1.
 2. [Arfken et al. (2013)](/sources/arfken-2013.md), §12.1, eqs. 12.1–12.8, pp. 551–552; §15.2, eqs. 15.31–15.40, pp. 724–726; eq. 15.106, p. 748; §§18.1, 18.3, 18.4.
+3. [Panici et al. (2023)](/sources/panici-2023.md), §3.2, eqs. 3.18–3.21, p. 7; §5.2, Table 1, Fig. 8, pp. 12–14.

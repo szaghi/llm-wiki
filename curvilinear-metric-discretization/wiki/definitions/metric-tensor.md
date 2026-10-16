@@ -6,7 +6,7 @@ status: established
 aliases: [metric, fundamental tensor, covariant metric tensor, contravariant metric tensor, metric coefficients g_ij]
 symbol: "$g_{ij}$"
 tags: [metric, tensor-calculus, curvilinear-coordinates]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Metric tensor
@@ -74,6 +74,35 @@ $[g^{ij}]=\operatorname{diag}(1,r^{-2},(r\sin\theta)^{-2})$ from the
 explicit $\mathbf a_i$ and $\mathbf a^i$ (Example 4.3.1, pp. 220–221);
 cylindrical is their exercise 4.3.5.
 
+## Inverse by cofactors
+
+In a code that stores one metric and needs the other, the inverse is
+computed from cofactors. [Liu et al. (2024)](/sources/liu-2024.md)
+(eq. (27), p. 5) obtain the covariant field-aligned metric from the
+contravariant one this way, with $J^2=g=1/\det[g^{ij}]$. With unrestricted
+sums over the indices the formula reads
+
+$$g_{il}=\tfrac12\,J^2\,\varepsilon_{ijk}\,\varepsilon_{lmn}\,g^{jm}g^{kn},$$
+
+the adjugate of $[g^{ij}]$ divided by its determinant (compiler's statement
+of the normalisation, hypothesis-grade). Liu et al. print
+$J^2\sum\varepsilon_{ijk}\varepsilon_{lmn}(g^{jm}g^{kn}-g^{jn}g^{km})$, which
+equals this only if the sums run over $j<k$ and $m<n$; with unrestricted sums
+it is four times larger (see the [Source page](/sources/liu-2024.md)).
+
+## Non-orthogonal example: field-aligned coordinates
+
+In [field-aligned coordinates](/definitions/field-aligned-coordinates.md)
+the metric is non-orthogonal even when the parent
+[flux coordinates](/definitions/magnetic-flux-coordinates.md) are
+orthogonal: $g^{13}=\nabla\Psi\cdot\nabla\varphi-I\lvert\nabla\Psi\rvert^2-q_{\mathrm{loc}}\nabla\Psi\cdot\nabla\vartheta$
+([Jiang et al. (2024)](/sources/jiang-2024.md), eq. (27), p. 3), and the
+components carrying the integrated shear $I$ grow along the field and jump
+across the twist-shift boundary, which the [shifted metric](/methods/shifted-metric.md)
+is designed to remove. The orthogonal flux-surface metric of
+[Seto et al. (2023)](/sources/seto-2023.md) (eqs. (1)–(3), p. 2) is
+diagonal, $g_{\Psi\Psi}=1/g^{\Psi\Psi}$ and so on, the case of property 7.
+
 ## Qualification: sign of the diagonal elements
 
 Arfken et al. write that $g_{ij}$, "though manifestly symmetric, is not
@@ -90,3 +119,6 @@ definition). A difference of scope, not a contradiction.
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §26.15, pp. 957–960; §26.16, p. 963; §26.17, p. 964; exercises 26.25, 26.26, 26.29, pp. 981–982.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.10, p. 184; §4.3, pp. 218–221, 224; exercises 4.1.10, 4.3.2, 4.3.5, 4.3.10, pp. 215, 226.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §III A–B, p. 3.
+* [Liu et al. (2024)](/sources/liu-2024.md), §II C–D, pp. 3, 5.
+* [Seto et al. (2023)](/sources/seto-2023.md), §2, p. 2.

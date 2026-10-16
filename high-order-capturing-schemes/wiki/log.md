@@ -1,5 +1,45 @@
 # Directory Update Log
 
+## 2026-10-16
+
+* **Ingested [Bhole et al. (2023)](/sources/bhole-2023.md)** (HAL preprint
+  hal-03811224v1 of the Comput. Math. Appl. 142:225–256 article), copied
+  into this bundle's archive and read for this bundle's subject (D17): the
+  stabilization of $C^1$ bi-cubic Hermite–Bézier continuous Galerkin
+  elements for an advection-dominated, shock-forming MHD system.
+  * Created [VMS stabilization](/methods/variational-multiscale-stabilization.md)
+    and [artificial viscosity](/methods/artificial-viscosity.md). The
+    second also gathers the artificial-viscosity claims already on the
+    Source pages of Sod (1978), Woodward & Colella (1984), Balsara (1998)
+    and Dumbser et al. (2014).
+  * Linked [WENO limiters for DG](/methods/weno-limited-dg.md),
+    [RKDG](/methods/rkdg.md) and
+    [fourth-order finite volume](/methods/fourth-order-finite-volume.md) to
+    the new artificial-viscosity page.
+  * Updated the root [index](/index.md) (reading-guide item 10, corpus
+    count 144), [methods](/methods/index.md) and [sources](/sources/index.md)
+    indexes.
+  * **Notation extension:** a "Stabilized continuous Galerkin" section in
+    the [registry](/notation.md), with $\Omega$, $\Omega_{\mathrm e}$;
+    $\mathcal V_h$, $\mathcal V'$; $u_h$, $u'$, $w_h$; $\mathscr R$,
+    $\mathscr J$, $\mathscr A$, $\mathscr A_{\mathrm d}$;
+    $\tau_{\mathrm{VMS}}$, $C^{\mathrm{VMS}}_\ell$; $h_{\mathrm e}$,
+    $\lambda_{\max,\mathrm e}$; $\mu_{\mathrm{sc}}$, $\mathbb D_{\mathrm{sc}}$,
+    $\hat{\mathbf b}$, $\mathbb I$, $C_\parallel$, $C_\perp$, $C_{\mathrm{sc}}$;
+    $\chi_{\mathrm p}$, $\dot p_{\mathrm{op}}$, $\dot p_{\mathrm{src}}$;
+    $\zeta_{\mathrm{BDF}}$, $\theta_{\mathrm{BDF}}$.
+  * No contradiction opened. Sod's explicit-step objection to high-order
+    artificial viscosity and Bhole et al.'s implicit-step gain are recorded
+    as claims about different time integrators.
+  * **Bibliography:** 66 references merged, 3380 → 3441 entries (60 new
+    plus the source's own entry). Human decisions (2026-10-16):
+    `hughes-1982` renamed `brooks-1982` (Brooks & Hughes 1982, also cited by
+    cockburn-1989); Johnson, Szepessy & Hansbo (1990) is `johnson-1990`,
+    distinct from the undated preprint `johnson-1989` of cockburn-1989; the
+    French Godunov et al. (1979) is `godunov-1979`, distinct from
+    `godunov-1976`. Same-work merges: Balsara et al. (2016) onto `balsara-2016-d`, and Balsara & Nkonga (2017)
+    onto `balsara-2017-b`. The undated ADAS URL is `adas-2023`.
+
 ## 2026-10-13
 
 * **Human ruling (2026-10-13).** The parallel-force sign entry of

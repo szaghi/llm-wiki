@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Notation registry
@@ -384,3 +384,23 @@ Added 2026-10-08 (batch 2, with the modified-wavenumber definition; dated from t
 | $a_i$, $b_i$ | coefficients of a fixed-step $m$-step method, $u^{n+1} = \sum_{i=1}^{m}\left(a_i u^{n+1-i} + \Delta t\, b_i\,\mathcal L(u^{n+1-i})\right)$; the fixed-step case of $a_{i,n}$, $b_{i,n}$ (one index, so distinct from the Shu–Osher $a_{ik}$, $b_{ik}$) (added 2026-10-13, deep lint) |
 | $\mathbf k$, $k_d$ | wavevector and its components ($k_x$, $k_y$, $k_z$; bold, so distinct from the stencil index $k$); in 1D its magnitude gives the scaled wavenumber $\xi = kh$ (added 2026-10-13, deep lint) |
 | $K_{\mathrm d}$ | data (evolved) degree of a PNPM scheme, $0 \le K_{\mathrm d} \le K$: $K_{\mathrm d} = 0$ is ADER-FV, $K_{\mathrm d} = K$ is ADER-DG (subscripted, so distinct from $K_{\mathrm L}$ and $K_{\mathrm{NR}}$) (added 2026-10-13, deep lint) |
+
+## Stabilized continuous Galerkin (bhole-2023, 2026-10-16)
+
+| Symbol | Meaning |
+|---|---|
+| $\Omega$, $\Omega_{\mathrm e}$ | computational domain and one finite element of its mesh |
+| $\mathcal V_h$, $\mathcal V'$ | finite-element (resolved-scale) space and its fine-scale complement, $\mathcal V = \mathcal V_h \oplus \mathcal V'$ (distinct from the weighted volume $\widehat{\mathcal V}_i$) |
+| $u_h$, $u'$ | resolved (finite-element) part and unresolved (fine-scale) part of the state, $u = u_h + u'$ (the prime is not a derivative here) |
+| $w_h$ | test function in $\mathcal V_h$ |
+| $\mathscr R(u)$ | strong residual of the balance law, $\mathscr R(u) = \partial_t u + \nabla\cdot\mathbf f(u) - \nabla\cdot\mathbf f^{\mathrm v} - \mathbf s(u)$ (script, so distinct from the subcell reconstruction $\mathcal R$) |
+| $\mathscr J$, $\mathscr J^{*}$ | linearization $\partial\mathscr R/\partial u$ at $u_h$, and its formal adjoint (script, so distinct from the mapped-grid Jacobian $\mathcal J$) |
+| $\mathscr A$, $\mathscr A_{\mathrm d}$ | first-order (advective) part of $\mathscr J$, without time derivative, second-order terms and sources, and its block-diagonal part (each variable advected by $\mathbf v\cdot\nabla$) |
+| $\tau_{\mathrm{VMS}}$, $C^{\mathrm{VMS}}_\ell$ | stabilization (intrinsic time-scale) matrix, the model $u' \approx -\tau_{\mathrm{VMS}}\,\mathscr R(u_h)$, and its per-equation coefficients (subscripted, so distinct from the WENO-Z $\tau$ and the viscous stress $\boldsymbol\tau$) |
+| $h_{\mathrm e}$, $\lambda_{\max,\mathrm e}$ | element size and the largest wave speed over an element |
+| $\mu_{\mathrm{sc}}$, $\mathbb D_{\mathrm{sc}}$ | scalar coefficient (a diffusivity) of a shock-capturing artificial viscosity and its tensor; the added term is $\nabla w_h : (\mathbb D_{\mathrm{sc}}\nabla u_h)$ (subscripted, so distinct from $\mu$, $\mu_{\mathrm{IP}}$, $\mu_{\mathrm{pc}}$) |
+| $\hat{\mathbf b}$, $\mathbb I$ | unit vector along the magnetic field, $\hat{\mathbf b} = \mathbf B/\vert\mathbf B\vert$, and the identity tensor (hatted, so distinct from $\mathbf b_{\mathrm{IB}}$) |
+| $C_\parallel$, $C_\perp$, $C_{\mathrm{sc}}$ | user factors of an anisotropic artificial viscosity along and across $\hat{\mathbf b}$, $\mathbb D_{\mathrm{sc}} = \mu_{\mathrm{sc}}\left[C_\parallel\,\hat{\mathbf b}\otimes\hat{\mathbf b} + C_\perp(\mathbb I - \hat{\mathbf b}\otimes\hat{\mathbf b})\right]$, and their common value in the isotropic case $C_\parallel = C_\perp = C_{\mathrm{sc}}$ |
+| $\chi_{\mathrm p}$ | dimensionless pressure-gradient shock sensor $h_{\mathrm e}\vert\nabla p\vert/p$ (subscripted, so distinct from the dense-output fraction $\chi$ and the TENO measure $\chi_k$) |
+| $\dot p_{\mathrm{op}}$, $\dot p_{\mathrm{src}}$ | magnitudes of the rate of change of the pressure produced by the differential operator and by the source terms, through the chain rule on the evolved variables |
+| $\zeta_{\mathrm{BDF}}$, $\theta_{\mathrm{BDF}}$ | parameters of the implicit three-level family $\zeta_{\mathrm{BDF}} = 0$, $\theta_{\mathrm{BDF}} = \tfrac12$ (Crank–Nicolson), $\zeta_{\mathrm{BDF}} = \tfrac12$, $\theta_{\mathrm{BDF}} = 1$ (BDF2), $\zeta_{\mathrm{BDF}} = 0$, $\theta_{\mathrm{BDF}} = 1$ (backward Euler) (subscripted, so distinct from the cell coordinate $\zeta$ and the limiter $\theta$) |

@@ -9,13 +9,15 @@ Orthogonal polynomials and the special functions built on them, as the bases and
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 2 sources, both textbooks read in scope —
+**Corpus:** 3 sources. Two textbooks read in scope:
 [Riley et al. (2006)](/sources/riley-2006.md), Ch. 18 and §27.4, and
 [Arfken et al. (2013)](/sources/arfken-2013.md), §12.1, Chs. 14–15 and
-§§18.1, 18.3, 18.4. Gauss–Radau, Gauss–Lobatto, Jacobi polynomials,
+§§18.1, 18.3, 18.4. One paper, [Panici et al. (2023)](/sources/panici-2023.md),
+read for its Zernike (Fourier–Zernike) spectral basis and its radial
+convergence. Gauss–Radau, Gauss–Lobatto, Jacobi polynomials,
 Lebesgue constants and nodal bases are in scope but not yet covered by any
 source; their symbols are reserved in the registry. The
-[bibliography](/bibliography.md) lists the 33 works the two books cite.
+[bibliography](/bibliography.md) lists the 86 works the three sources cite.
 
 ## Reading guide
 
@@ -54,6 +56,10 @@ source; their symbols are reserved in the registry. The
    (series, recurrences, zeros, asymptotics),
    [Fourier–Bessel series](/results/fourier-bessel-series.md), and
    [spherical Bessel functions](/definitions/spherical-bessel-functions.md).
+8. **The unit disc.** [Zernike polynomials and the Fourier–Zernike basis](/definitions/zernike-polynomials.md)
+   (radial polynomials, regularity at the origin, a measured exponential
+   radial convergence; rests on one paper, with compiler-supplied
+   hypothesis-grade Jacobi and orthogonality relations).
 
 ## Conventions to watch
 
@@ -62,6 +68,8 @@ source; their symbols are reserved in the registry. The
 * $H_n$ is the physicists' Hermite polynomial in both books.
 * The two books print different, equally valid generating functions for
   $T_n$.
+* Panici et al.'s printed formula for the radial Zernike polynomial (their
+  eq. 3.19) has a sign slip; use the formula on the Zernike page.
 
 ## Folders
 

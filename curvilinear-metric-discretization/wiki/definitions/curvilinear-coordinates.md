@@ -5,7 +5,7 @@ description: "Three functions ξ^i of position that label points of space one-to
 status: established
 aliases: [curvilinear coordinate system, general coordinates, body-fitted coordinates, computational coordinates]
 tags: [curvilinear-coordinates, coordinate-transformation]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # General curvilinear coordinates
@@ -69,6 +69,25 @@ and remark that, of "at least 11 coordinate systems" useful in physics, the
 the need for most, so they treat only Cartesian, cylindrical and spherical
 coordinates in the text (p. 187).
 
+## Coordinates adapted to a vector field
+
+Three application papers of the bundle compute in coordinates adapted to a
+magnetic field: [magnetic flux coordinates](/definitions/magnetic-flux-coordinates.md)
+$(\Psi,\vartheta,\varphi)$, whose first coordinate labels the surfaces the
+field lines lie on, and [field-aligned coordinates](/definitions/field-aligned-coordinates.md),
+obtained from them by shifting the toroidal angle along the field lines so
+that one coordinate curve is a field line
+([Jiang et al. (2024)](/sources/jiang-2024.md), §III, pp. 3–4;
+[Liu et al. (2024)](/sources/liu-2024.md), §II B, p. 3;
+[Seto et al. (2023)](/sources/seto-2023.md), §2, pp. 2–4). The second
+system is non-orthogonal by construction, a case against the book's
+advice above: the codes accept the non-orthogonality to put the parallel
+derivative on one coordinate, and they need the general tensor forms of the
+operators. Both have singular or periodic structure that ordinary
+body-fitted grids lack: a coordinate singularity on the magnetic axis
+(excluded from the domain) and a twist-shift periodicity in place of plain
+periodicity in $\vartheta$.
+
 ## Standard orthogonal examples
 
 | System | Mapping | Scale factors |
@@ -88,3 +107,6 @@ coordinates (Arfken, exercises 3.10.1–3.10.2, p. 196).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §§10.9–10.10, pp. 357–369; §26.14, p. 955.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.10, pp. 182–191; §4.3, pp. 218–225; exercises 3.10.1–3.10.2, p. 196.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §III, pp. 3–4.
+* [Liu et al. (2024)](/sources/liu-2024.md), §II B, p. 3.
+* [Seto et al. (2023)](/sources/seto-2023.md), §2, pp. 2–4.

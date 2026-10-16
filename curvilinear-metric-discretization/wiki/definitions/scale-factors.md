@@ -5,7 +5,7 @@ description: "The lengths h_i = |∂x/∂ξ^i| of the covariant base vectors, wh
 status: established
 aliases: [Lamé coefficients, metric scale factors]
 tags: [curvilinear-coordinates, metric]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Scale factors
@@ -54,10 +54,16 @@ $v^i=\hat v_i/h_i$ (no sum) (§26.20, p. 972).
 |---|---|---|---|
 | cylindrical $(R,\varphi,z)$ | $1$ | $R$ | $1$ |
 | spherical $(r,\theta,\varphi)$ | $1$ | $r$ | $r\sin\theta$ |
+| orthogonal flux $(\Psi,\vartheta,\varphi)$ | $1/(RB_{\mathrm p})$ | $\sqrt{(\partial_\vartheta R)^2+(\partial_\vartheta z)^2}$ | $R$ |
 
-(§10.10, p. 365; Arfken et al., eqs. (3.145), (3.153), pp. 188, 191.)
+(§10.10, p. 365; Arfken et al., eqs. (3.145), (3.153), pp. 188, 191; the
+last row from [Seto et al. (2023)](/sources/seto-2023.md), eqs. (1)–(3),
+p. 2, with $\Psi$ the poloidal flux per radian, so that $h_\Psi=1/\lvert\nabla\Psi\rvert$
+and $h_1h_2h_3=h_\vartheta/B_{\mathrm p}$ is their Jacobian $\sqrt g$, p. 9;
+see [magnetic flux coordinates](/definitions/magnetic-flux-coordinates.md).)
 
 # Citations
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §§10.9–10.10, pp. 358–369; §26.15, p. 957; §26.20, p. 972.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.10, pp. 184–191; §4.3, p. 225; exercises 4.3.2, 4.4.2, pp. 226, 231.
+* [Seto et al. (2023)](/sources/seto-2023.md), §2, p. 2; §5.1, p. 9.

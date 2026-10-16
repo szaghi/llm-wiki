@@ -5,7 +5,7 @@ description: "The scalar field ∇·v, the net outflux per unit volume: ∂v^k/�
 status: established
 aliases: [div, Voss-Weyl formula, conservative form of the divergence, solenoidal]
 tags: [vector-calculus, operators, curvilinear-coordinates, conservation-form]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Divergence
@@ -65,7 +65,13 @@ it against the orthogonal form with $g=(h_1h_2h_3)^2$ and $\hat v_k=h_kv^k$
 (p. 225). The left form ($\partial_iv^i+\Gamma^i_{ki}v^k$) and the right form
 ($\sqrt g$ inside the derivative) are equal in the continuum; the second is
 the "conservative" arrangement, in which the divergence is a derivative of a
-flux-like quantity $\sqrt g\,v^j$.
+flux-like quantity $\sqrt g\,v^j$. [Seto et al. (2023)](/sources/seto-2023.md)
+use the conservative form, $\nabla\cdot\mathbf v=\sum_i(1/\sqrt g)\,\partial_i(\sqrt g\,v^i)$,
+to derive the perpendicular Laplacian in field-aligned coordinates
+(App. A.1, p. 14); [Jiang et al. (2024)](/sources/jiang-2024.md) use it with
+$\sqrt g\to J$ for $\nabla\cdot(\phi\nabla_\perp\psi)$ (eq. (41), p. 4),
+both then expanding the derivative before discretization (see
+[Laplacian](/definitions/laplacian.md)).
 
 *Compiler's derivation (hypothesis-grade; not in the source).* With
 $v^j=\mathbf v\cdot\mathbf a^j$ and $\sqrt g=\lvert J\rvert$, the general
@@ -75,7 +81,9 @@ $\partial_j(\sqrt g\,\mathbf a^j)=\mathbf 0$ identically — the continuum
 identity on which the conservative form rests; the same follows from
 $\sqrt g\,\mathbf a^1=\pm\mathbf a_2\times\mathbf a_3$ by symmetry of second
 derivatives. No source of the bundle yet states it or discusses its
-discrete counterpart.
+discrete counterpart; the three plasma-code sources ingested on 2026-10-16
+evaluate the metric from the equilibrium rather than from discrete grid
+coordinates and do not address it either.
 
 **As a form** (Arfken et al., eqs. (4.89)–(4.90), p. 240): the
 [exterior derivative](/definitions/exterior-derivative.md) of the 2-form
@@ -89,3 +97,5 @@ Integrated form: the [divergence theorem](/results/divergence-theorem.md).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §10.7.2, p. 352; §10.9, p. 360; §10.10, pp. 367–369; §11.7, pp. 398–399; §26.4, p. 935; §§26.19–26.20, pp. 969–973.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.5, pp. 146–149; §3.10, pp. 185–186, 189, 192; §4.3, pp. 224–225; §4.6, p. 240; exercise 4.3.11, p. 226.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §IV A, p. 4.
+* [Seto et al. (2023)](/sources/seto-2023.md), App. A.1, p. 14.

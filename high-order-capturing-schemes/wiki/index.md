@@ -12,7 +12,7 @@ positivity-preserving limiters, SSP time discretization, numerical
 boundary treatment (inverse Lax–Wendroff, weighted extrapolation,
 immersed boundaries, cut cells),
 high-order AMR, and their extension to MHD.
-**Corpus: 143 sources compiled (the whole archive, plus one frozen code record)**: 141 published works,
+**Corpus: 144 sources compiled (the whole archive, plus one frozen code record)**: 142 published works,
 many of them read in a report, preprint or author-manuscript version (each
 Source page records which), and one unpublished preprint (see the
 [update log](/log.md)). Two
@@ -156,7 +156,13 @@ for every page.
    neighbouring averages. A posteriori:
    [subcell limiting](/methods/a-posteriori-subcell-limiting.md) (MOOD)
    recomputes cells that fail positivity or a relaxed maximum principle,
-   using ADER-WENO on $2K+1$ subcells.
+   using ADER-WENO on $2K+1$ subcells. High-order *continuous* Galerkin
+   elements, which have no numerical flux to upwind, are stabilized by
+   [VMS](/methods/variational-multiscale-stabilization.md) for smooth
+   solutions plus a sensor-based
+   [artificial viscosity](/methods/artificial-viscosity.md) at shocks, the
+   oldest capturing device, whose finite-volume forms that page also
+   collects.
 11. **Boundaries and adaptive meshes.** Ghost values on Cartesian grids cut
    by the boundary come from [inverse Lax–Wendroff](/methods/inverse-lax-wendroff.md)
    expansions (stable for any cut-cell distance, shown for 1D linear

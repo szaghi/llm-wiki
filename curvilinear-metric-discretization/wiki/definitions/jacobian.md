@@ -6,7 +6,7 @@ status: established
 aliases: [Jacobian, Jacobian determinant, sqrt g, cell volume factor, inverse Jacobian]
 symbol: "$J$"
 tags: [metric, jacobian, curvilinear-coordinates]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Jacobian of the coordinate mapping
@@ -89,6 +89,18 @@ above):
   works with $\lvert J\rvert$ only and does not discuss orientation; Arfken
   et al. tie the sign to handedness (above).
 
+**In the plasma-code sources.** [Jiang et al. (2024)](/sources/jiang-2024.md)
+(Table I, p. 16) and [Liu et al. (2024)](/sources/liu-2024.md) (p. 3, who
+write "Jacobi") define the Jacobian of field-aligned coordinates as
+$J=(\nabla\xi^1\times\nabla\xi^2\cdot\nabla\xi^3)^{-1}$, the reciprocal of
+the triple product of the contravariant base vectors: the registry's $J$, by
+$J\,\mathbf a^1=\mathbf a_2\times\mathbf a_3$ above. It is also the factor in
+$\mathbf B=\mathbf a_2/J$ ([field-aligned coordinates](/definitions/field-aligned-coordinates.md)).
+[Seto et al. (2023)](/sources/seto-2023.md) call $\sqrt g=\mathbf a_\Psi\times\mathbf a_\vartheta\cdot\mathbf a_\varphi=\mathbf a_1\times\mathbf a_2\cdot\mathbf a_3=h_\vartheta/B_{\mathrm p}$
+"the Jacobian" (p. 9): shifting the toroidal angle along the field leaves it
+unchanged. Liu et al. weight random particle positions by $J$ to load
+markers uniformly in physical space (p. 4).
+
 **Naming hazard.** Both $\det[\partial x/\partial\xi]$ and its reciprocal
 $\det[\partial\xi/\partial x]$ are called "the Jacobian" in the literature —
 the source itself flags the ambiguity for general transformations (p. 964).
@@ -108,3 +120,6 @@ usage (p. 229).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §10.10, pp. 365–367; §26.15, pp. 957–959; §26.17, p. 964; exercise 26.25, p. 981, hint p. 983.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §4.3, p. 225; §4.4, pp. 227–231; §4.7, pp. 244–245; exercise 4.4.2, p. 231.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §IV A, p. 4; Table I, p. 16.
+* [Liu et al. (2024)](/sources/liu-2024.md), §II C, pp. 3–4.
+* [Seto et al. (2023)](/sources/seto-2023.md), §5.1, p. 9.

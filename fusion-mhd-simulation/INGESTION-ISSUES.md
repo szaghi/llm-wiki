@@ -137,7 +137,8 @@ viscous term 5 $R$ against 2 $R^3$.
 - Earlier suggestions stand:
   - D17 copies: bhole-2023 → high-order-capturing-schemes; jiang-2024,
     seto-2023 and liu-2024 → curvilinear-metric-discretization;
-    panici-2023 → orthogonal-polynomials-and-quadrature.
+    panici-2023 → orthogonal-polynomials-and-quadrature. *Done 2026-10-16:
+    PDFs copied into each archive and ingested separately in each bundle.*
   - Possible new bundle `stiff-time-integration`.
   - Not recommended: splitting off the energetic-particle or stellarator
     clusters.

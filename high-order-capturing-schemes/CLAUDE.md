@@ -113,6 +113,10 @@ to another bundle.
     - `2022-JCP-Natarajan-…` is arXiv:2108.00126v1;
     - `2020-CompFluids-Seshadri-…` is the author manuscript;
     - `2024-CompFluids-Baskaya-…` is arXiv:2309.09657v1.
+  - `2023_Crossref_Computers_amp_Mathematics_with_Applications_Bhole_…`
+    (Bhole et al. 2023, CAMWA 142:225, copied from a sibling archive, D17)
+    is the HAL preprint hal-03811224v1 (submitted version) and does not
+    follow the filename convention; its slug is `bhole-2023`.
   - Not this bundle's: Zaghi, Salvadore & Di Mascio (2023,
     doi:10.1016/j.compfluid.2023.106040) was assigned with the ADAM
     AMR-framework class to div-free-amr (2026-10-12) and ingested there.
@@ -170,6 +174,17 @@ to another bundle.
 - Commits: `docs(high-order-capturing-schemes): ingest <source-slug>`.
 
 ## Status
+
+**Single source staged 2026-10-16:** bhole-2023 (stabilized $C^1$
+Hermite–Bézier continuous Galerkin for MHD: VMS plus a sensor-based
+artificial viscosity), a bundle-fit copy (D17); 144 sources. New pages
+methods/variational-multiscale-stabilization and methods/artificial-viscosity;
+notation section "Stabilized continuous Galerkin". No contradiction opened.
+Bibliography 3441 entries. Human decisions (2026-10-16): `hughes-1982`
+renamed `brooks-1982`; the 1990 Math. Comp. paper is `johnson-1990`,
+distinct from the preprint `johnson-1989`; the French Godunov et al. (1979)
+is `godunov-1979`, distinct from `godunov-1976`. Deep lint: 1 ingestion since
+the batch-18 lint.
 
 **Batch 18 (frontier 4b) staged 2026-10-13:** balsara-1998-b, balsara-2012,
 devore-1991, powell-1994, orszag-1979, cockburn-1989, einfeldt-1988,

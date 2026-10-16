@@ -5,7 +5,7 @@ description: "The vector field ∇×v, the circulation per unit area about the n
 status: established
 aliases: [rot, rotation, vorticity operator, irrotational]
 tags: [vector-calculus, operators, curvilinear-coordinates]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Curl
@@ -60,6 +60,15 @@ the symmetric Christoffel terms (eq. (4.71), p. 225) and the warning that
 the $v_i$ are not components on an orthonormal basis; they do not write the
 contravariant vector with $\varepsilon^{ijk}/\sqrt g$.
 
+The contravariant form is the one used in field-aligned plasma codes:
+[Jiang et al. (2024)](/sources/jiang-2024.md) evaluate
+$\nabla\times(\phi\hat{\mathbf b})\cdot\nabla\psi=J^{-1}\varepsilon^{ijk}\partial_i\psi\,\partial_j(\phi g_{2k}/JB)$
+(eq. (44), p. 4), and [Liu et al. (2024)](/sources/liu-2024.md) the
+components of $\nabla\times\hat{\mathbf b}$ in the same way (p. 4), both
+with $J$ in place of $\sqrt g$ ($J>0$) and with the covariant components
+$\hat{\mathbf b}\cdot\mathbf a_k=g_{2k}/(JB)$ of
+[field-aligned coordinates](/definitions/field-aligned-coordinates.md).
+
 **As a form** (Arfken et al., eqs. (4.87)–(4.88), p. 240): the exterior
 derivative of the 1-form $v_k\,dx^k$ is the 2-form with coefficients
 $(\nabla\times\mathbf v)_k$ on $dx^2\wedge dx^3$, $dx^3\wedge dx^1$,
@@ -75,3 +84,5 @@ Integrated form: [Stokes' theorem](/results/stokes-theorem.md).
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §10.7.3, p. 353; §10.10, pp. 368–369; §11.7, pp. 398–400; §26.8, p. 943; §26.20, p. 974.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.5, pp. 149–152; §3.10, pp. 186–189, 192; §4.3, p. 225; §4.6, p. 240; exercise 3.10.4, p. 197.
+* [Jiang et al. (2024)](/sources/jiang-2024.md), §IV A, p. 4.
+* [Liu et al. (2024)](/sources/liu-2024.md), §II C, p. 4.

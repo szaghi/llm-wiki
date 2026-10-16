@@ -5,7 +5,7 @@ description: "Cockburn and Shu's method of lines for conservation laws: a discon
 status: established
 aliases: [RKDG, Runge-Kutta discontinuous Galerkin, Runge–Kutta DG, Cockburn–Shu DG, TVB slope limiter for DG]
 tags: [dg, rkdg, limiter, tvb, unstructured, method-of-lines]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Runge–Kutta discontinuous Galerkin method (RKDG)
@@ -136,7 +136,7 @@ alternative, conservative, provably admissible and accuracy-preserving.
 * *Robustness.* DG is "less robust in dealing with solutions with strong
   shocks" than WENO because its limiters lag behind
   ([Shu (2009)](/sources/shu-2009.md), §5.1). A priori DG limiters fall
-  into artificial viscosity, slope or moment limiters (TVB among them)
+  into [artificial viscosity](/methods/artificial-viscosity.md), slope or moment limiters (TVB among them)
   and (H)WENO limiters; the a posteriori alternative recomputes troubled
   cells on a subgrid ([Dumbser et al. (2014)](/sources/dumbser-2014.md), §3.1;
   [a posteriori subcell limiting](/methods/a-posteriori-subcell-limiting.md)).

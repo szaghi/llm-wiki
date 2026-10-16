@@ -5,7 +5,7 @@ description: "The vector field ∇φ of a scalar field, with dφ = ∇φ·dx: �
 status: established
 aliases: [grad, del, directional derivative, normal derivative]
 tags: [vector-calculus, operators, curvilinear-coordinates]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Gradient
@@ -57,6 +57,13 @@ the covariant/contravariant distinction starts (§4.1, eq. (4.3), p. 206).
   same from the Cartesian components $(\nabla\phi)_j=(\partial\phi/\partial\xi^i)(\partial\xi^i/\partial x^j)$
   (eqs. (4.49)–(4.50), (4.64), pp. 221, 224), "showing that the covariant
   representation of $\nabla\psi$ is the set of derivatives".
+  [Seto et al. (2023)](/sources/seto-2023.md) write the gradient on the
+  covariant basis of field-aligned coordinates,
+  $\nabla\phi=g^{ij}\partial_j\phi\,\mathbf a_i$ (eq. (A.2), p. 14), as the
+  first step of the perpendicular Laplacian, and the perpendicular gradient
+  as $\nabla_\perp\phi=\nabla\phi-g_{22}^{-1}\partial_2\phi\,g_{2i}\mathbf a^i$
+  (eq. (A.13), p. 15), since $\hat{\mathbf b}=\mathbf a_2/\sqrt{g_{22}}$
+  there ([field-aligned coordinates](/definitions/field-aligned-coordinates.md)).
 
 ## Integral (coordinate-free) form
 
@@ -81,3 +88,4 @@ general-coordinate form is the [covariant derivative](/definitions/covariant-der
 
 * [Riley et al. (2006)](/sources/riley-2006.md), §10.7.1, pp. 348–352; §§10.9–10.10, pp. 360–367; §11.7, p. 398; §26.19, p. 968; §26.20, p. 972.
 * [Arfken et al. (2013)](/sources/arfken-2013.md), §3.5, pp. 143–146; §3.10, pp. 185, 189, 192; §4.1, p. 206; §4.3, pp. 221, 224; §4.6, p. 240; §4.7, p. 244.
+* [Seto et al. (2023)](/sources/seto-2023.md), App. A.1, pp. 14–15.

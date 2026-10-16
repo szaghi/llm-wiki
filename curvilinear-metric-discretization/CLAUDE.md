@@ -40,6 +40,11 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
   An ebook conversion: the PDF-to-printed page offset drifts, so cite
   printed page numbers. Its chapter-end "Additional Readings" are its
   reference list.
+- Application papers (2026-10-16, D17 bundle-fit copies): Jiang et al.
+  (2024) and Liu et al. (2024), the two GMEC papers in *Phys. Plasmas* 31,
+  and Seto et al. (2023), *Comput. Phys. Commun.* 283; slugs `jiang-2024`,
+  `liu-2024`, `seto-2023`. Read only for coordinates, metrics, Jacobians,
+  operators and their discretization; each Source page states its scope.
 - Further sources: see `~/papers/mosaic/llm-wiki-planned-ingestions.md`
   (a plan outside the repository; ingested-ness is derived from Source
   pages).
@@ -64,6 +69,16 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D20).
 - Commits: `docs(curvilinear-metric-discretization): ingest <source-slug>`.
 
 ## Status
+
+**jiang-2024, liu-2024, seto-2023 ingested 2026-10-16** (D17 bundle-fit
+copies of three magnetic-confinement code papers; scoped reads of their
+coordinates, metrics, operators and discretization; PDFs copied into this
+bundle's archive): 5 new pages (field-aligned coordinates, magnetic flux
+coordinates, shifted metric, GMEC, BOUT++); a magnetic-geometry section in
+the registry (field-aligned coordinates written $\xi^i$); **one
+contradiction open** (sign of the twist-shift condition, Liu et al. against
+Jiang et al. and Seto et al.; the compiler's check supports the latter, the
+human closes it or not); bibliography 142 entries (preprints kept distinct, as in the other bundles).
 
 **arfken-2013 staged 2026-10-14** (D21, scoped read): 6 new pages (differential forms, wedge product, Hodge star, exterior derivative, generalized Stokes theorem, Helmholtz theorem); no contradiction; bibliography 29 entries.
 

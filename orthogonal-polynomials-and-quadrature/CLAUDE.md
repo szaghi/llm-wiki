@@ -71,3 +71,10 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D21).
 
 **Scaffolded 2026-10-14** with the founding sources `riley-2006` and
 `arfken-2013` (scoped reads above).
+
+**2026-10-16:** `panici-2023` ingested (bundle-fit copy, D17; read in
+full, extracted for the Zernike basis, axis regularity and radial
+convergence). 3 sources, 24 OKF pages (20 concept pages, the registry, 3 Source pages), 89 bibliography entries.
+Registry section 8 added (unit disc, Fourier–Zernike bases). Open: no
+source yet defines Jacobi polynomials, Gauss–Jacobi rules, collocation
+grids on the disc, or the ANSI/Fringe Zernike indexing schemes.

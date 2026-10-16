@@ -5,7 +5,7 @@ description: "The Colella-group fourth-order finite-volume scheme: cell averages
 status: established
 aliases: [fourth-order FV, Colella–McCorquodale scheme, Chombo fourth-order method, average-to-point conversion]
 tags: [finite-volume, fourth-order, multidimensional, ppm, amr, mapped-grid]
-timestamp: 2026-10-13T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Fourth-order finite-volume method with average–point conversions
@@ -66,7 +66,7 @@ PPM limiter, applied componentwise to primitives.
   Colella–Sekora's square-root formula (eqs. 33–34).
 
 For strong shocks the extrapolants are flattened (Colella 1990) and a
-fourth-order artificial viscosity is added. It is $O(h^4)$ in smooth
+fourth-order [artificial viscosity](/methods/artificial-viscosity.md) is added. It is $O(h^4)$ in smooth
 flow and reduces to PPM's at strong compressions; its two coefficients
 are both 0.3 in all runs (§2.5).
 

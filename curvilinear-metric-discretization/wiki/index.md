@@ -9,15 +9,23 @@ Vector and tensor calculus in general coordinates and its discretization: integr
 **Start here:** the [Notation registry](/notation.md), which is normative
 for every page, and the [update log](/log.md).
 
-**Corpus:** 2 sources, both scoped reads of textbooks —
+**Corpus:** 5 sources. Two are scoped reads of textbooks —
 [Riley et al. (2006)](/sources/riley-2006.md), Chs. 10, 11 and 26, and
 [Arfken et al. (2013)](/sources/arfken-2013.md), Chs. 3 and 4 (continuum
 vector and tensor calculus; Arfken adds Jacobians and differential forms).
-Shared claims carry both citations; where the books differ in hypothesis or
-naming the pages record a qualification (no contradiction is open). No
-source on metric discretization, the geometric conservation law or
-free-stream preservation is ingested yet; those topics have no pages.
-Citation record: [bibliography](/bibliography.md).
+Three are scoped reads of magnetic-confinement code papers that compute in
+non-orthogonal, field-aligned coordinates —
+[Jiang et al. (2024)](/sources/jiang-2024.md) and
+[Liu et al. (2024)](/sources/liu-2024.md) (the GMEC code) and
+[Seto et al. (2023)](/sources/seto-2023.md) (BOUT++) — read for their
+coordinates, metrics, operators and finite-difference treatment only.
+Shared claims carry every citation; one contradiction is open (the sign of
+the twist-shift condition, on
+[field-aligned coordinates](/definitions/field-aligned-coordinates.md)).
+No source on the geometric conservation law or free-stream preservation is
+ingested yet; the plasma codes evaluate their metrics from the equilibrium
+and do not address discrete metric identities. Citation record:
+[bibliography](/bibliography.md).
 
 ## Reading guide
 
@@ -57,6 +65,15 @@ the continuum layer onto which discrete exterior calculus maps.
 * [Hodge star operator](/definitions/hodge-star.md) — $\star$, where the metric enters.
 * [Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md) — $\int_\Omega d\alpha=\int_{\partial\Omega}\alpha$, uniting Green, Stokes and the divergence theorem.
 
+**6. Coordinates adapted to a magnetic field.** Non-orthogonal coordinates
+in use, with their metric, operators and discretization.
+
+* [Magnetic flux coordinates](/definitions/magnetic-flux-coordinates.md) — $(\Psi,\vartheta,\varphi)$: orthogonal, PEST and Boozer variants; metric from the poloidal-plane mapping.
+* [Field-aligned coordinates](/definitions/field-aligned-coordinates.md) — $\xi^3=\varphi-\chi$, $\mathbf B=\mathbf a_2/J$, sheared metric, twist-shift condition (open contradiction), flute-ordering error.
+* [Shifted metric](/methods/shifted-metric.md) — Scott's, the simple and the quasi-ballooning variants; the boundary instability they remove.
+* [GMEC](/software/gmec.md) and [BOUT++](/software/bout-plus-plus.md) — how two codes store metrics and difference the expanded operators.
+
 Folder catalogs: [definitions](/definitions/index.md),
-[operators](/operators/index.md), [results](/results/index.md),
+[methods](/methods/index.md), [operators](/operators/index.md),
+[results](/results/index.md), [software](/software/index.md),
 [sources](/sources/index.md).

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Notation registry
@@ -23,7 +23,15 @@ uses them yet. On 2026-10-14 the registry was extended from
 differential forms, chosen so that the discrete-exterior-calculus literature
 (cochains, discrete exterior derivative, discrete Hodge star) can map its
 continuum symbols onto it one to one, and with two auxiliary symbols; every
-addition is marked "(added 2026-10-14, arfken-2013)".
+addition is marked "(added 2026-10-14, arfken-2013)". On 2026-10-16 the
+registry was extended for the magnetic-confinement application papers
+[Jiang et al. (2024)](/sources/jiang-2024.md) and
+[Seto et al. (2023)](/sources/seto-2023.md) with a section on magnetic
+geometry (flux coordinates, field-aligned coordinates, the shifted metric,
+finite-difference stencils); each entry is marked with its date and the
+source that first needed it. Field-aligned coordinates, which those papers
+write $(x,y,z)$, are *computational* coordinates and are written $\xi^i$:
+the letters $x,y,z$ stay Cartesian.
 
 ## Index and summation conventions
 
@@ -164,3 +172,32 @@ is a 0-form); the operators are prefix operators.
 | $\star$ | Hodge star operator, $\Lambda^p\to\Lambda^{D-p}$; requires a metric and an orientation | [Hodge star](/definitions/hodge-star.md); Arfken's prefix asterisk $*$ |
 | $\Omega$, $\partial\Omega$ | an oriented $p$-dimensional region over which a $p$-form is integrated, and its oriented boundary | [Stokes' theorem for differential forms](/results/generalized-stokes-theorem.md). The prefix $\partial$ on a region always means its boundary: $\partial V=S$, $\partial S=C$ |
 | $\int_\Omega\alpha$ | integral of a $p$-form over an oriented $p$-dimensional region | the sign depends on the orientation |
+
+## Magnetic geometry: flux and field-aligned coordinates
+
+Added 2026-10-16. Symbols are chosen so that the generic scalar fields
+$\phi,\psi$, the computational coordinates $\xi^i$ and the form symbols
+$\alpha,\beta,\gamma$ keep their meanings: the sources' flux label $\psi$,
+toroidal angles $\xi,\zeta$, shift $\alpha$ and pitch $\nu$ are all renamed.
+
+| Symbol | Meaning | Notes |
+|---|---|---|
+| $\mathbf B$, $B$, $\hat{\mathbf b}$ | magnetic field (the equilibrium field unless a page says otherwise), its magnitude $B=\lvert\mathbf B\rvert$, its unit direction $\hat{\mathbf b}=\mathbf B/B$ | (added 2026-10-16, jiang-2024) |
+| $\nabla_\parallel\phi$, $\nabla_\perp\phi$ | parallel derivative $\hat{\mathbf b}\cdot\nabla\phi$; perpendicular gradient $\nabla\phi-\hat{\mathbf b}\,(\hat{\mathbf b}\cdot\nabla\phi)$ | (added 2026-10-16, jiang-2024) |
+| $\nabla_\parallel^2\phi$, $\nabla_\perp^2\phi$ | parallel Laplacian $\nabla\cdot(\hat{\mathbf b}\,\hat{\mathbf b}\cdot\nabla\phi)$; perpendicular Laplacian $\nabla^2\phi-\nabla_\parallel^2\phi$ | (added 2026-10-16, seto-2023); definition of Seto et al., eq. (A.1); see [Laplacian](/definitions/laplacian.md) |
+| $k_\parallel$, $k_\perp$ | wavenumbers along and across $\mathbf B$ | (added 2026-10-16, jiang-2024) |
+| $(\Psi,\vartheta,\varphi)$ | magnetic flux coordinates: flux-surface label $\Psi$ ($\mathbf B\cdot\nabla\Psi=0$; poloidal flux per radian, or a normalisation of it, as the page states), poloidal angle $\vartheta$, toroidal angle $\varphi$ | (added 2026-10-16, jiang-2024); $\varphi$ is the cylindrical azimuth of $(R,\varphi,z)$ in orthogonal flux and PEST coordinates; the Boozer toroidal angle is written $\varphi_{\mathrm B}$. $\vartheta$ is not the spherical polar angle $\theta$. See [magnetic flux coordinates](/definitions/magnetic-flux-coordinates.md) |
+| $\mathbf a_\Psi,\mathbf a_\vartheta,\mathbf a_\varphi$ | covariant base vectors of the flux system, $\mathbf a_\Psi=\partial\mathbf x/\partial\Psi$ at fixed $\vartheta,\varphi$, and so on; the contravariant ones are written $\nabla\Psi,\nabla\vartheta,\nabla\varphi$ | (added 2026-10-16, jiang-2024); subscripts are coordinate names, not indices |
+| $h_\Psi,h_\vartheta,h_\varphi$ | scale factors of orthogonal flux coordinates | (added 2026-10-16, seto-2023) |
+| $B_{\mathrm p}$, $B_{\mathrm t}$ | magnitudes of the poloidal and toroidal components of $\mathbf B$ | (added 2026-10-16, seto-2023) |
+| $q(\Psi)$, $q'$ | safety factor; $q'=dq/d\Psi$ | (added 2026-10-16, jiang-2024) |
+| $q_{\mathrm{loc}}(\Psi,\vartheta)$ | local field-line pitch, $q_{\mathrm{loc}}=\mathbf B\cdot\nabla\varphi/\mathbf B\cdot\nabla\vartheta$, with $\oint q_{\mathrm{loc}}\,d\vartheta=2\pi q$ | (added 2026-10-16, jiang-2024); the sources' $\nu$; $q_{\mathrm{loc}}=q$ in straight-field-line coordinates |
+| $\chi(\Psi,\vartheta)$ | toroidal shift of a field line, $\chi=\int_{\vartheta_0}^{\vartheta}q_{\mathrm{loc}}\,d\vartheta'$ | (added 2026-10-16, jiang-2024); Jiang's $z_0$, Seto's $\alpha$ |
+| $\Psi_0$, $\vartheta_0$ | reference flux surface and reference poloidal angle (offsets) | (added 2026-10-16, jiang-2024) |
+| $I(\Psi,\vartheta)$ | integrated local magnetic shear, $I=\partial\chi/\partial\Psi$ | (added 2026-10-16, jiang-2024) |
+| $\sigma_{[k]}(\xi^1)$ | shift function of the shifted metric on the grid plane $\xi^2=\xi^2_{[k]}$ | (added 2026-10-16, jiang-2024); Jiang's $\alpha(x)$; see [shifted metric](/methods/shifted-metric.md) |
+| $(\cdot)_{[k]}$ | a subscript in square brackets is a grid index (the $k$-th grid point, line or plane), never a tensor index | (added 2026-10-16, jiang-2024) |
+| $\mathcal C_\ell$, $\mathcal C_{\ell\ell'}$; $\ell,\ell'$ | finite-difference stencil coefficients at integer offsets $\ell$ (and $\ell'$ in a second direction) | (added 2026-10-16, jiang-2024); $\partial_i\phi\approx(\Delta\xi^i)^{-1}\sum_\ell\mathcal C_\ell\,\phi(\xi^i+\ell\Delta\xi^i)$ (no sum on $i$); Jiang's $C_p$, $C_{p,q}$ |
+| $n_\varphi$, $m_\vartheta$ | toroidal and poloidal mode numbers | (added 2026-10-16, jiang-2024); $n,m$ stay coordinate indices |
+| $\mathrm i$ | imaginary unit | (added 2026-10-16, seto-2023); upright, distinct from the index $i$ |
+

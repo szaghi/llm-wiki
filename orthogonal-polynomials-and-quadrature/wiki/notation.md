@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-14T00:00:00Z
+timestamp: 2026-10-16T00:00:00Z
 ---
 
 # Notation registry
@@ -57,7 +57,7 @@ lacks.
 |---|---|---|
 | $P_n(x)$ | Legendre polynomial | $P_n(1)=1$; $\omega=1$ on $[-1,1]$ |
 | $Q_n(x)$ | Legendre function of the second kind | scale fixed so that $Q_n$ obeys the $P_n$ recurrences; $Q_0=\tfrac12\ln\frac{1+x}{1-x}$ |
-| $P_n^{(\alpha,\beta)}(x)$ | Jacobi polynomial, $\omega=(1-x)^\alpha(1+x)^\beta$ | reserved: neither founding source treats it |
+| $P_n^{(\alpha,\beta)}(x)$ | Jacobi polynomial, $\omega=(1-x)^\alpha(1+x)^\beta$ | no ingested source defines it; used only in the compiler-supplied Zernike–Jacobi relation of section 8 |
 | $C_n^{(\lambda)}(x)$ | Gegenbauer (ultraspherical) polynomial, $(1-2xt+t^2)^{-\lambda}=\sum_n C_n^{(\lambda)}t^n$ | $\lambda=\tfrac12$ gives $P_n$ |
 | $T_n(x)$ | Chebyshev polynomial of the first kind, $T_n(\cos\theta)=\cos n\theta$ | $\omega=(1-x^2)^{-1/2}$ |
 | $U_n(x)$ | Chebyshev polynomial of the second kind, $U_n(\cos\theta)=\sin(n+1)\theta/\sin\theta$ | $\omega=(1-x^2)^{1/2}$ |
@@ -119,6 +119,21 @@ lacks.
 | $q_i$, $a_i$ | point charges and their positions on the polar axis | examples only |
 | $\psi$, $\varepsilon_0$ | electrostatic potential, vacuum permittivity | examples only |
 
+## 8. Functions on the unit disc and Fourier–Zernike bases
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $r$, $\phi$ | polar coordinates on the unit disc, $0\le r\le1$, $0\le\phi<2\pi$ | the section 1 symbols with their section 1 meanings (radial distance, azimuthal angle); never $\rho$, $\theta$ |
+| $R_n^m(r)$ | radial Zernike polynomial, integers $0\le m\le n$ with $n-m$ even; degree $n$, $R_n^m(1)=1$ | $m$ written as $\lvert m\rvert$ when the azimuthal index is signed |
+| $Z_n^m(r,\phi)$ | real Zernike function, signed $m$, $\lvert m\rvert\le n$, $n-\lvert m\rvert$ even: $R_n^{\lvert m\rvert}(r)\cos(m\phi)$ for $m\ge0$, $R_n^{\lvert m\rvert}(r)\sin(\lvert m\rvert\phi)$ for $m<0$ | |
+| $f_m(r)$ | $m$-th azimuthal Fourier coefficient of a function on the disc | |
+| $b_{m,j}$ | coefficient of $r^{\lvert m\rvert+j}$ in the expansion of $f_m(r)$ about $r=0$ | only even $j$ occur for an analytic function |
+| $\zeta$ | periodic coordinate of a disc-times-circle (toroidal) domain, period $2\pi$ unless stated | |
+| $\mathcal F_k(\zeta)$ | real Fourier function of signed index $k$: $\cos(k\zeta)$ for $k\ge0$, $\sin(\lvert k\rvert\zeta)$ for $k<0$ | a field-period factor, when a source has one, is stated in words |
+| $c_{nm}$, $c_{nmk}$ | coefficients of a Zernike and of a Fourier–Zernike expansion | extend $c_n$ of section 2 |
+| $L$, $M$, $K$ | truncation of a Fourier–Zernike expansion: maximum radial degree $n$, maximum $\lvert m\rvert$, maximum $\lvert k\rvert$ | |
+
 ## Log of extensions
 
 * 2026-10-14 — registry seeded at bundle scaffolding (sections 1–6).
+* 2026-10-16 — section 8 added for `panici-2023` (Zernike polynomials and the Fourier–Zernike basis): $R_n^m$, $Z_n^m$, $f_m$, $b_{m,j}$, $\zeta$, $\mathcal F_k$, $c_{nm}$, $c_{nmk}$, $L$, $M$, $K$; disc coordinates fixed as $(r,\phi)$. The note on $P_n^{(\alpha,\beta)}$ updated: still defined by no ingested source.

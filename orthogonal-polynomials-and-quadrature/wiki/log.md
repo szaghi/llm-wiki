@@ -1,5 +1,32 @@
 # Directory Update Log
 
+## 2026-10-16
+
+* **Ingestion: [Panici et al. (2023)](/sources/panici-2023.md)**, *J. Plasma Phys.*
+  89:955890303 (bundle-fit copy, D17: the PDF copied into this bundle's archive and
+  read for this bundle's subject only). Read in full; extracted: the Zernike basis
+  (§3.2, eqs. 3.17–3.21), the regularity diagnostic (§5.1, Fig. 4), indexing and
+  truncation (Table 2, App. C) and the expected and measured radial convergence
+  (§5.2, Table 1, Figs. 7–8). The equilibrium physics is out of scope. The paper
+  describes no collocation node set and no quadrature rule, so no quadrature page
+  cites it. Printed slip recorded: eq. 3.19 has $+s$ where the radial Zernike
+  polynomial has $-s$. No `Contradictions` entry opened: no existing page makes a
+  claim about the same objects.
+  * **Notation registry extended** ([notation](/notation.md), section 8): $R_n^m$,
+    $Z_n^m$, $f_m$, $b_{m,j}$, $\zeta$, $\mathcal F_k$, $c_{nm}$, $c_{nmk}$, $L$, $M$, $K$;
+    disc coordinates $(r,\phi)$; the $P_n^{(\alpha,\beta)}$ note updated.
+  * **Definitions (1 created):** [Zernike polynomials and the Fourier–Zernike basis](/definitions/zernike-polynomials.md)
+    (granularity rule 1: the basis whose axis regularity and radial convergence the
+    paper tests). Its Jacobi relation and orthogonality are compiler-supplied,
+    hypothesis-grade, checked symbolically for $n\le8$.
+  * **Definitions (1 updated):** [orthogonal polynomials](/definitions/orthogonal-polynomials.md)
+    (pointer to the Zernike polynomials; the first stated convergence rate of an
+    orthogonal expansion).
+  * **Bibliography:** 35 → 89 entries: the ingested paper and its 53 references,
+    none shared with the two founding books; four DOIs verified on Crossref
+    (Genberg 2002, Lewis & Bellan 1990, Sakai & Redekopp 2009, Zernike & Stratton
+    1934). `bib_merge.py --dupes`: 0 groups.
+
 ## 2026-10-14
 
 * **Scaffolding and founding ingestion: [Riley et al. (2006)](/sources/riley-2006.md)
