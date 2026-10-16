@@ -78,7 +78,8 @@ List the ten most cited works in the `<bundle>` frontier and tell me which of th
 For one new source, Claude edits the `.bib` directly. If you adopt the citation record on a bundle that already has
 many sources, merging their reference lists one by one is where duplicates multiply: the same paper is cited with
 different author spellings, misprinted years, or no title at all (common in ApJ-style lists). For that case there is
-a batched merger, `tools/bib_merge.py`:
+a batched merger, `tools/bib_merge.py`. Bundles ingested in chunks ([chapter 4](/manual/tutorial/04-ingestion)) use
+it for every chunk:
 
 ```bash
 python3 tools/bib_merge.py <bundle>/wiki --frags <dir> --resolutions r.py --report   # repeat until FLAGS: 0

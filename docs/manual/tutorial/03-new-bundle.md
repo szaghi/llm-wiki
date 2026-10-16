@@ -42,7 +42,7 @@ make check   # lints every bundle and checks the bundle registry
 | `DECISIONS.md` | the rationale of every rule (D1, D2, ...) | yes; add your own decisions after ours |
 | `tools/` | linter, bibliography tools, registry, site generator | yes |
 | `docs/`, `skills/` | this site and the consultation skill | yes |
-| `div-free-amr/`, `high-order-capturing-schemes/`, `astrophysical-simulation-codes/` | our three bundles | your choice |
+| `<bundle>/` (every top-level directory with a `bundle.toml`) | our bundles; `python3 tools/bundles.py` lists them | your choice |
 
 The bundles are independent of each other and of the tools: you can keep them (to consult them next to yours) or
 delete their directories. After deleting, run `make registry` so the README and the skill stop listing them.

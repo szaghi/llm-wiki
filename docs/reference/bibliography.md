@@ -83,7 +83,14 @@ citation graph. Two quantities are derived from it:
 
 Reference lists are merged complete and unfiltered: filtering by relevance is a judgement call that destroys data, and
 deduplication plus the `citedby` counts do the ranking. For scoped reads (books, long reviews), the extraction may be
-limited to the chapters read, and the Source page records the scope.
+limited to the chapters read, and the Source page records the scope. A textbook that prints no reference list
+contributes the works it cites in its text (D20).
+
+Preprints are a bundle-level rule, not repository law. In the bundles that record it (for example
+`plasma-propulsion-simulation` and `fusion-mhd-simulation`, by human rulings of 2026-10-15 and 2026-10-16), a work
+cited in pre-publication form (submitted, accepted, in preparation, an arXiv id) is its own entry, keyed by the year of
+that form, and is never folded into the published entry: the preprint is what the citing source read. The `--dupes`
+sweep then lists these preprint and published pairs, and they are intended.
 
 ## The generated view
 
@@ -105,9 +112,9 @@ python3 tools/bib_to_md.py <bundle>/wiki
 
 ## The batched merger
 
-`tools/bib_merge.py` exists for one situation: merging the reference lists of many sources at once, as when a whole
-corpus predates its citation record (D16). Its machinery earns its cost at around ten fragments per run, not for a
-single source.
+`tools/bib_merge.py` exists for merging the reference lists of many sources at once: when a whole corpus predates its
+citation record (D16), and, in bundles whose law ingests in chunks, for each chunk's reference lists. Its machinery
+earns its cost at around ten fragments per run, not for a single source.
 
 ### Workflow
 

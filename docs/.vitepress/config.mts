@@ -130,5 +130,14 @@ export default withMermaid({
       target: 'es2022',
       chunkSizeWarningLimit: 4000,
     },
+    // build.target covers `vitepress build` only; the dependency pre-bundling of `vitepress dev`
+    // has its own es2020 default, so it needs the same target here
+    optimizeDeps: {
+      esbuildOptions: { target: 'es2022' },
+      // vitepress-plugin-mermaid pre-bundles a fixed list of mermaid's CommonJS deps; mermaid
+      // >= 11.17 adds fastdom, which served raw breaks the dev page (white screen, "does not
+      // provide an export named 'default'"). Pre-bundling mermaid itself folds in every dep.
+      include: ['mermaid'],
+    },
   },
 })

@@ -39,6 +39,32 @@ Then continue in bulk:
 Continue ingesting the `<bundle>` sources, foundations first. Stage after each source.
 :::
 
+### Large archives: chunks
+
+For an archive of fifty or a hundred PDFs, one review per source is slow. The bundles compiled from such archives
+(`plasma-propulsion-simulation`, `fusion-mhd-simulation`, D22 and D25) ingest in **chunks** instead, a rule written in
+their bundle law, not in the constitution:
+
+- a chunk is 20 sources, read by parallel subagents into scratch notes and compiled by the main session;
+- the chunk is staged as one unit with one message, `docs(<bundle>): ingest chunk N: <slugs>`, and you review and
+  commit it before the next chunk starts;
+- the reference lists are merged with the batched merger, `tools/bib_merge.py`
+  ([chapter 5](/manual/tutorial/05-citations)), and the `--dupes` sweep and a fuzzy-title sweep close the archive
+  after the final chunk;
+- each chunk adds a section to `INGESTION-ISSUES.md` at the bundle root, outside `wiki/`: the contradictions it opened,
+  printed inconsistencies, identity and metadata problems, and every decision left to you. The `## Contradictions`
+  sections of the concept pages stay the normative record; the file is your review digest. Your rulings on it are
+  recorded there, in the bundle's `log.md`, and, when they set a rule, in its `CLAUDE.md`.
+
+The first chunk holds the core of the domain (in `fusion-mhd-simulation`, the code, method, benchmark and review
+papers), so that the notation registry and the reading guide are built from it before the application papers arrive.
+To adopt chunks for your bundle, state it in its `CLAUDE.md` when you scaffold it:
+
+::: tip Prompt
+Ingest the `<bundle>` archive in chunks of 20, foundations first. Keep a per-chunk digest in `INGESTION-ISSUES.md`
+and stop after each chunk for my review.
+:::
+
 ## The protocol, step by step
 
 Every ingestion follows the same atomic protocol, one source at a time. *Atomic* means a source is either fully

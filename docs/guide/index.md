@@ -62,9 +62,10 @@ Stock OKF is a container. A scientific knowledge base needs more, and this repos
 
 ## Who it is for
 
-- **Readers** of the existing bundles: researchers and students in numerical methods for fluid dynamics, MHD and
-  astrophysics who want a cited, cross-linked map of a literature, with its notation unified and its open questions
-  marked.
+- **Readers** of the existing bundles: researchers and students in numerical methods for fluid dynamics and plasmas
+  (shock capturing, MHD, fusion and plasma-propulsion simulation, astrophysical and aerospace flows) and in the
+  mathematical methods beneath them, who want a cited, cross-linked map of a literature, with its notation unified and
+  its open questions marked.
 - **Claude Code users** who want answers grounded in those bundles, with the pages they rest on cited.
 - **Builders** who want to compile their own literature the same way.
 

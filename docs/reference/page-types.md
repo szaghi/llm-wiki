@@ -88,6 +88,11 @@ timestamp: 2026-07-08T00:00:00Z
 | `title`, `description` | yes | as on concept pages |
 | `timestamp` | yes | ISO 8601 |
 
+`tags` follow the concept-page rule, with one reserved tag: `context` marks a Source page that the bundle ingests
+but, by its scope rule, never cites from a concept page (the off-domain journal papers of
+`plasma-propulsion-simulation`, D22 and D23). The lint does not report such a page as an orphan (D24), so the tag must
+never go on an in-scope page.
+
 Source pages carry no `status`. Sources are trusted from the start, because the human reviewed each one before
 ingestion (D2). The metadata comes from the source's page 1, never from file names or embedded PDF metadata. A DOI is
 never invented: when no permanent identifier can be recovered, `resource` holds the best stable URL, and the body

@@ -71,7 +71,7 @@ Graph check:
 
 | Check | Severity |
 | --- | --- |
-| orphan concept page: no incoming link from another page (the notation registry is exempt) | warning |
+| orphan page: no incoming link from another concept or Source page (links in `index.md`, `log.md` and `bibliography.md` do not count); the notation registry and Source pages tagged `context` (D24) are exempt | warning |
 
 ## bib_to_md.py
 

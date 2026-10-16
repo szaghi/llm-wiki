@@ -109,6 +109,7 @@ llm-wiki/
 └── <bundle>/
     ├── bundle.toml             # title, summary, keywords: the bundle's card
     ├── CLAUDE.md               # bundle law: corpus location, domain notes
+    ├── INGESTION-ISSUES.md     # per-chunk review digest, in bundles ingested in chunks
     ├── raw/                    # captures of sources without a durable home
     └── wiki/                   # the OKF bundle: index, log, notation, bibliography,
                                 # definitions/ methods/ operators/ results/ properties/
@@ -121,7 +122,9 @@ llm-wiki/
 make dev        # Python virtual environment with the tools' dependencies
 make check      # OKF lint of every bundle, bundle registry in sync
 make test       # tool tests
+make registry   # regenerate the bundle tables of this README and of the skill
 make docs-dev   # documentation site with live reload (Node 20+)
+make docs       # static build of the site into docs/.vitepress/dist
 ```
 
 ## Authors

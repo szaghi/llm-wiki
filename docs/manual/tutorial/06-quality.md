@@ -27,7 +27,11 @@ The linter enforces the format and the repository law. It fails on:
 - math written as `\(...\)` or `\[...\]`, or unbalanced `$`;
 - a `bibliography.bib` that does not parse or validate, or a `bibliography.md` out of sync with it.
 
-Orphan pages (no incoming link) are reported as warnings. An ingestion is not staged until the lint passes.
+Orphan pages (no incoming link from a concept or Source page; links from `index.md`, `log.md` and
+`bibliography.md` do not count) are reported as warnings. A Source page tagged `context` is exempt (D24): a bundle
+uses that tag for sources it ingests but, by its own scope rule, never cites from a concept page, such as the
+off-domain journal papers of `plasma-propulsion-simulation`. The tag hides the warning, so it never goes on an
+in-scope page. An ingestion is not staged until the lint passes.
 
 ## Deep lint, every ten ingestions
 

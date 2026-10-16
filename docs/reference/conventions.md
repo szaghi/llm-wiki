@@ -5,7 +5,7 @@ title: Writing rules
 # Writing rules
 
 These rules apply to every page the compiler writes. They come from the constitution
-([`CLAUDE.md`](/reference/constitution)); the decision numbers (D1–D18) point into the
+([`CLAUDE.md`](/reference/constitution)); the decision numbers (D1, D2, ...) point into the
 [decision record](/reference/decisions), where each rule's rationale is kept. Where `tools/lint_okf.py` enforces a
 rule, the rule says so.
 
@@ -89,7 +89,8 @@ A contradiction closes only in two ways:
 
 ## Git
 
-* Conventional Commits. An ingestion is one staged unit with the message `docs(<bundle>): ingest <source-slug>`.
+* Conventional Commits. An ingestion is one staged unit with the message `docs(<bundle>): ingest <source-slug>`. A
+  bundle whose law ingests in chunks stages one unit per chunk, `docs(<bundle>): ingest chunk N: <slugs>`.
 * **The compiler stages; the human commits** (D14). Claude runs `git add -A` and prints the message; you commit, with
   your GPG key if you sign. The compiler never runs `git commit` and never touches `commit.gpgsign`.
 * Never add `Co-authored-by` lines.

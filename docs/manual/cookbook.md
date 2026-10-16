@@ -340,7 +340,8 @@ python3 tools/lint_okf.py <bundle>/wiki
 make check        # every bundle, plus the bundle registry
 ```
 
-A lint error blocks the commit. Orphan pages and unmerged reference lists are warnings.
+A lint error blocks the commit. Orphan pages and unmerged reference lists are warnings; Source pages tagged
+`context` (out of the bundle's scope, D24) raise no orphan warning.
 
 ### Run a deep lint
 
@@ -383,8 +384,8 @@ The script lists the PDFs of the bundle's archive that no Source page names. The
 make docs-dev
 ```
 
-The target regenerates the bundle pages (`tools/site_sync.py`) and starts the VitePress dev server. Node 20 or newer
-is required. The first time, run `npm install` in `docs/`.
+The target runs `npm install` in `docs/`, regenerates the bundle pages (`tools/site_sync.py`) and starts the
+VitePress dev server. Node 20 or newer is required.
 
 ### Build the site
 
