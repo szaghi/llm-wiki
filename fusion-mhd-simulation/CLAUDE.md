@@ -81,10 +81,15 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D25).
 
 ## Status
 
-**Chunk 2 staged 2026-10-16:** the 20 application papers; 40 of 50
-ingested, 100 concept pages, 1312 bibliography entries. Next: chunk 3,
-the last 10 papers, then the whole-corpus `--dupes` and fuzzy-title
-sweeps and a deep lint (40 ingestions since founding: due).
+**Chunk 3 staged 2026-10-16:** the last 10 papers; corpus complete
+(50 of 50 ingested), 110 concept pages, 1552 bibliography entries.
+Closing `--dupes` and fuzzy-title sweeps done; deep lint #1 (50
+ingestions) applied. Next: the human decisions listed in
+`INGESTION-ISSUES.md` (closures, tag vocabulary, bundle-fit); the next
+deep lint is due after 50 further ingestions.
+
+**Chunk 2 committed 2026-10-16 (0b8f975):** the 20 application papers;
+40 of 50 ingested, 100 concept pages, 1312 bibliography entries.
 
 **Chunk 1 committed 2026-10-16 (e579f32):** scaffold (D25) and the 20 code, method,
 benchmark and review papers; 20 of 50 ingested. Next: chunk 2, 20

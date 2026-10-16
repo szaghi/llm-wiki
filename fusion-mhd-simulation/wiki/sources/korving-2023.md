@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Plasmas 30:042509"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350135318title.pdf"
 tags: [neutrals, particles, edge, divertor, reduced-mhd, full-mhd, tokamak, benchmark, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -147,11 +147,12 @@ with drifts.
   form here):
   $$\begin{aligned}
   \partial_t\mathbf A&=-\mathbf E-\nabla\Phi,\qquad \mathbf B=F\nabla\phi+\nabla\times\mathbf A,\qquad \mu_0\mathbf J=\nabla\times\mathbf B,\\
-  \rho\,\partial_t\mathbf v&=-\rho\mathbf v\cdot\nabla\mathbf v-\nabla p+\mathbf J\times\mathbf B+\nabla\cdot(\text{viscous stress})+\mathbf S_{\mathbf v},\\
+  \rho\,\partial_t\mathbf v&=-\rho\mathbf v\cdot\nabla\mathbf v-\nabla p+\mathbf J\times\mathbf B-\nabla\cdot\mathsf\Pi+\mathbf S_{\mathbf v},\\
   \partial_t\rho&=-\nabla\cdot(\rho\mathbf v)+\nabla\cdot(D_\perp\nabla_\perp\rho+D_\parallel\nabla_\parallel\rho)+S_\rho,\\
   \partial_tp&=-\mathbf v\cdot\nabla p-\Gamma p\nabla\cdot\mathbf v+\nabla\cdot(\kappa_\perp\nabla_\perp T+\kappa_\parallel\nabla_\parallel T)+(\Gamma-1)\big[\text{viscous heating}+(\mathbf E+\mathbf v\times\mathbf B)\cdot\mathbf J\big]+S_p,\\
   \mathbf E&=-\mathbf v\times\mathbf B+\eta(\mathbf J-\mathbf J_x)+(\text{diamagnetic term, off in this paper}).
   \end{aligned}$$
+  with $\mathsf\Pi$ the viscous stress tensor (printed $-\underline{\boldsymbol\tau}$).
 * **Reduced MHD** (§II B, the ansatz of [Hoelzl et al. (2021)](/sources/hoelzl-2021.md)):
   $\mathbf B=F_0\nabla\phi+\nabla\psi\times\nabla\phi$,
   $\mathbf v=-R\nabla u\times\mathbf e_\phi+v_\parallel\mathbf b$, with
@@ -215,7 +216,7 @@ with drifts.
   to 150 ms.
 * **Boundary conditions** (§V E). Dirichlet $\psi$ from the equilibrium;
   $u=\varpi=0$ (grounded wall); Neumann for $\rho$; magnetized Bohm sheath
-  conditions, $v_\parallel=c_s$ and a sheath heat-transmission factor on
+  conditions, $v_\parallel=c_s$ and a sheath heat-transmission factor $\delta_{\mathrm{sh}}$ on
   the parallel heat flux.
 * **Transport.** $D_\perp=0.3$ m² s⁻¹, perpendicular ion and electron
   heat diffusivities 1.0 m² s⁻¹, Braginskii parallel conduction.
@@ -264,18 +265,18 @@ with drifts.
 | $\psi$ ($\mathbf B=\frac{F_0}{R}\mathbf e_\phi+\frac1R\nabla\psi\times\mathbf e_\phi$) | $\psi$ | per radian, no $2\pi$ |
 | $u=\Phi/F_0$ | $u$ | |
 | $j$, $w$ | $j$, $\varpi$ | **collision risk:** native $w$ (vorticity) vs registry $w_p$ (marker weight) |
-| $v_\parallel$ ($\mathbf v_\parallel=v_\parallel\mathbf B$) | $v_\parallel/B$ | **collision:** native $v_\parallel$ is per unit $B$; registry $v_\parallel=\mathbf v\cdot\mathbf b$ |
+| $v_\parallel$ ($\mathbf v_\parallel=v_\parallel\mathbf B$) | $\hat v_\parallel=v_\parallel/B$ | **collision:** native $v_\parallel$ is per unit $B$; registry $v_\parallel=\mathbf v\cdot\mathbf b$ |
 | $\rho$, $p$, $T$ | $\rho$, $p$, $T=T_e+T_i$ | one-temperature model |
 | $\gamma$ | $\Gamma$ | **collision:** registry $\gamma$ is a growth rate |
-| $\underline{\boldsymbol\tau}$, $\underline{\mathbf D}$, $\underline{\boldsymbol\kappa}$ | words (viscous stress); $D_\perp,D_\parallel$; $\kappa_\perp,\kappa_\parallel$ | registry lacks a viscous-stress symbol |
+| $\underline{\boldsymbol\tau}$, $\underline{\mathbf D}$, $\underline{\boldsymbol\kappa}$ | $-\mathsf\Pi$ (viscous stress); $D_\perp,D_\parallel$; $\kappa_\perp,\kappa_\parallel$ | sign: native $+\nabla\cdot\underline{\boldsymbol\tau}$ |
 | $\mathbf J_*$ | $\mathbf J_x$ | source current in Ohm's law |
 | $\delta^*$ | words (diamagnetic coefficient) | unused here |
 | $\tilde S_\rho$, $\tilde{\mathbf S}_v$, $\tilde S_p$; $S_\rho$, $\mathbf S_v$, $S_E$ | $S_\rho$, $\mathbf S_{\mathbf v}$, $S_p$; words for the energy source | JOREK-form vs conservative-form sources |
-| $n_n$, $m_n$, $\mathbf v_n$, $\rho_n$ | $n_{\mathrm N}$, $m_i$, words, $m_in_{\mathrm N}$ | species velocities have no registry symbol |
-| $\Gamma^{ion}_\alpha$, $\Gamma^{rec}_\alpha$ | $n_{\mathrm N}n_e\langle\sigma v\rangle_{\mathrm{ion}}$, $n_en_i\langle\sigma v\rangle_{\mathrm{rec}}$ | **collision:** registry $\Gamma$ is the ratio of specific heats |
-| $S_{ion}$, $S_{rec}$, $S_{CX}$, $S_{PLT}$ | $\langle\sigma v\rangle_{\mathrm{ion}}$, $\langle\sigma v\rangle_{\mathrm{rec}}$, $\langle\sigma v\rangle_{\mathrm{CX}}$, words | **collision:** registry $S$ is the Lundquist number and $S_\rho$ etc. are sources; $\langle\sigma v\rangle$ is not yet in the registry |
-| $L_{PRB}$, $P_{PRB}$, $P_{rad}$ | words; $P_{\mathrm{rad}}$ | ADAS recombination + bremsstrahlung power |
-| $\phi_{ion}$ | words (ionization potential) | **collision:** registry $\phi$ is the toroidal angle |
+| $n_n$, $m_n$, $\mathbf v_n$, $\rho_n$ | $n_{\mathrm N}$, $m_i$, $\mathbf v_{\mathrm N}$, $\rho_{\mathrm N}=m_in_{\mathrm N}$ | ion and electron velocities $\mathbf v_i$, $\mathbf v_e$ written by species subscript |
+| $\Gamma^{ion}_\alpha$, $\Gamma^{rec}_\alpha$ | $\mathcal R_{\mathrm{ion}}=n_{\mathrm N}n_e\langle\sigma v\rangle_{\mathrm{ion}}$, $\mathcal R_{\mathrm{rec}}=n_en_i\langle\sigma v\rangle_{\mathrm{rec}}$ | **collision:** registry $\Gamma$ is the ratio of specific heats |
+| $S_{ion}$, $S_{rec}$, $S_{CX}$, $S_{PLT}$ | $\langle\sigma v\rangle_{\mathrm{ion}}$, $\langle\sigma v\rangle_{\mathrm{rec}}$, $\langle\sigma v\rangle_{\mathrm{cx}}$, words | **collision:** registry $S$ is the Lundquist number and $S_\rho$ etc. are sources |
+| $L_{PRB}$, $P_{PRB}$, $P_{rad}$ | $L_{\mathrm{rad}}$ (recombination + bremsstrahlung part); words; $P_{\mathrm{rad}}$ | ADAS recombination + bremsstrahlung power |
+| $\phi_{ion}$ | $\varepsilon_{\mathrm{ion}}$ (ionization potential) | **collision:** registry $\phi$ is the toroidal angle |
 | $E_\alpha$ | words (species total energy density) | **collision** with $\mathbf E$ |
 | $w_n$ | $w_p$ | superparticle weight (atoms) |
 | $\mathcal P_{ion}$, $\mathcal P_{CX}$ | words (reaction probabilities per kinetic step) | |
@@ -285,12 +286,12 @@ with drifts.
 | $\Delta t_{fluid}$, $\Delta t_{kinetic}$ | $\Delta t$, $\Delta t_{\mathrm{kin}}$ | |
 | $n_{upstream}$ | $n_{e,\mathrm{up}}$ | outer-midplane separatrix electron density |
 | $q_{pk,\perp}$ | words (peak target heat flux) | **collision** with safety factor $q$ |
-| $\gamma_{sheath}$ | words (sheath heat-transmission factor) | **collision** with growth rate $\gamma$ |
+| $\gamma_{sheath}$ | $\delta_{\mathrm{sh}}$ (sheath heat-transmission factor) | **collision** with growth rate $\gamma$ |
 | $E\times B_{factor}$ | words | ratio of $\mathbf E\times\mathbf B$ to remaining poloidal flow |
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Fluid neutral models and plasma–neutral atomic sources](/methods/fluid-neutral-models.md)

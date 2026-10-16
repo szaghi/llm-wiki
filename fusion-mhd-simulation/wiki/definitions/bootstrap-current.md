@@ -5,7 +5,7 @@ description: "The neoclassical parallel current driven by density and temperatur
 status: established
 aliases: [bootstrap current source, non-inductive current, Sauter bootstrap model, Redl bootstrap model]
 tags: [bootstrap-current, extended-mhd, tokamak, stellarator]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Bootstrap current and its MHD implementation
@@ -52,8 +52,10 @@ average comes from analytic fits to drift-kinetic results (App. A):
   fitted to CQL3D and CQLP. It is less accurate at effective electron
   collisionality above 1, which limits it near the edge.
 * **Redl et al. (2021):**
-  $\langle\mathbf J_x\cdot\mathbf B\rangle=-F\Big[p\,L_{31}\dfrac{\partial\ln n}{\partial\psi}+p_e(L_{31}+L_{32})\dfrac{\partial\ln T_e}{\partial\psi}+p_i(L_{31}+\alpha_{\rm S}L_{34})\dfrac{\partial\ln T_i}{\partial\psi}\Big]$,
-  a revised fit to NEO, accurate over a broader range of collisionality.
+  $\langle\mathbf J_x\cdot\mathbf B\rangle=-F\Big[p\,L_{31}\dfrac{\partial\ln n_e}{\partial\psi}+p_e(L_{31}+L_{32})\dfrac{\partial\ln T_e}{\partial\psi}+p_i(L_{31}+\alpha_{\rm S}L_{34})\dfrac{\partial\ln T_i}{\partial\psi}\Big]$,
+  a revised fit to NEO, accurate over a broader range of collisionality
+  (the source prints an unsubscripted density $n$, read here as the
+  quasineutral $n_e$).
 
 The coefficients $L_{31}$, $L_{32}$, $L_{34}$ and $\alpha_{\rm S}$
 (page-local names) depend on the trapped-particle fraction, the
@@ -96,7 +98,12 @@ times, the bootstrap model sustains the toroidal current against resistive
 decay and keeps the edge chaotic region "significantly smaller" at
 $t=250\,\tau_A$. Instability growth still increases with resistivity with
 and without bootstrap current, which supports the earlier conclusion of
-Wright & Ferraro (2024) (§3.3, Figs. 5–7).
+Wright & Ferraro (2024) (§3.3, Figs. 5–7). That earlier paper's own reading
+differs; see *Contradictions*. In
+[Wright & Ferraro (2024)](/sources/wright-2024.md) the bootstrap current is
+part of the equilibrium optimization (self-consistent bootstrap at
+$\beta=2.5\%$) but is not evolved in the nonlinear simulation, whose Ohm's
+law has no source current (§II, App. A).
 
 **Limits stated by the source.** The fits and the reference kinetic codes
 are time-independent, so they cannot represent a neoclassical response on
@@ -117,7 +124,7 @@ self-consistently; the nonlinear drop of $q_{95}$ through current
 redistribution, bootstrap current included, reduces growth rates and acts
 as a saturation mechanism ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 §2.1). In the reduced-MHD form the source enters as a relaxation term
-$\eta(j-j_{\rm src})$, so the current builds up on the resistive time; the
+$\eta(j-j_{\rm S})$ ($j$ the reduced-MHD current variable), so the current builds up on the resistive time; the
 source holds both the Sauter bootstrap and the Ohmic contribution, and the
 nonlinear evolution of $q_{95}$ contributes to the saturation of the QH-mode
 kink-peeling mode ([Cathey et al. (2024)](/sources/cathey-2024.md), §3.1–3.2).
@@ -127,6 +134,15 @@ with the presence of the radial-electric-field well $\propto\nabla p/n$ in
 the EDA H-mode simulations (the referent of their sentence is ambiguous,
 recorded on the Source page) ([Cathey et al. (2023)](/sources/cathey-2023.md),
 §2.2).
+In the predictive HL-3 QH-mode runs the source is again a constant Ohmic
+part plus an evolving Sauter part, and the bootstrap current raises the edge
+$j_\phi$ while the pedestal builds up
+([Liang et al. (2025)](/sources/liang-2025.md), §III, §IV A, Fig. 6b). In
+the full-MHD flux-pumping runs of ASDEX Upgrade the bootstrap current is
+instead a fixed part of a heavily smoothed non-inductive source (with NBI and
+ECCD), and its self-consistent evolution is named as future work
+([Zhang et al. (2025)](/sources/zhang-2025.md), §2.4, §6.2; see
+[magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
 Other MHD codes use a heuristic closure (NIMROD) or kinetic closures
 that are "extremely computationally expensive"
 ([Saxena et al. (2025)](/sources/saxena-2025.md), §1).
@@ -150,7 +166,7 @@ gives poloidal flow damping and the polarization-current enhancement.
 Subtracting $\mathbf J_0$ and $\mathbf v_0$ holds the equilibrium. The closure
 is valid to $O(m_e/m_i)$ for strong ion poloidal damping and assumes
 $Z_{\rm eff}=1$. The damping rates are uniform and enhanced together with
-$\eta$, keeping $\nu_{{\rm pol},e}/(\nu_{ei}+\nu_{{\rm pol},e})=0.55$ against the
+$\eta$, keeping $\nu_{{\rm pol},e}/(\nu_{ei}+\nu_{{\rm pol},e})=0.55$ ($\nu_{ei}$ the electron–ion collision frequency) against the
 experimental 0.43 in the DIII-D case (§III A, Table I). It is the closure
 behind NIMROD's [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md)
 simulations; XTOR, XTOR-2F, TM1 and JOREK's neoclassical ion friction use
@@ -183,10 +199,31 @@ this is recorded as an open contradiction on
 $+(G+NI)/(\iota-N)$. For $N=0$, $G=F$ and $\partial_{\psi_t}=\iota\,\partial_\psi$
 (Eq. B1), Eq. 2.3 has the opposite sign of the Redl form it is said to
 recover, and its density term splits by species where the Redl form uses
-$p\,\partial\ln n$; the two agree only for $n_e\propto n_i$ and with an
+a single density, $p\,\partial\ln n_e$; the two agree only for $n_e\propto n_i$ and with an
 unstated orientation convention for the fluxes (compiler's check). The
 coefficients in their App. A5 are printed as Coulomb logarithms
 $\Lambda$ where $\ln\Lambda$ is meant.
+
+## Contradictions
+
+* **Does instability growth in the optimized QA stellarator increase with
+  resistivity? — Open.** [Saxena et al. (2025)](/sources/saxena-2025.md)
+  (§3.3) state that instability growth "still increases with resistivity",
+  "supporting" Wright & Ferraro (2024a). [Wright & Ferraro (2024)](/sources/wright-2024.md)
+  conclude that the evolution is "qualitatively identical, regardless of
+  resistivity model", which they take as indicative of an ideally unstable
+  plasma (§III, §IV), and their maximum growth rates are not monotonic in
+  the resistivity multiplier: Spitzer resistivity lies above ten times
+  Spitzer for most $n$, a hundred times Spitzer is highest at high $n$, and
+  the constant-$\eta$ case is lowest at low $n$ (Fig. 3, figure reading);
+  higher multipliers peak earlier in the $n=30$ history (Fig. 5). The two
+  papers use apparently the same equilibrium family and code but different
+  resolutions and resistivity multipliers ($\{1,10,100\}$ against
+  $\{1,10,10^3,10^4\}$). Saxena et al.'s statement therefore rests on a
+  reading of Wright & Ferraro that the latter do not make; it may hold for
+  the larger multipliers of Saxena et al. alone. The same entry is recorded
+  on [quasi-symmetry](/definitions/quasi-symmetry.md). A growth-rate table of
+  both papers' runs against one resistivity axis would settle it.
 
 # Citations
 
@@ -198,3 +235,6 @@ $\Lambda$ where $\ln\Lambda$ is meant.
 * [Zhou et al. (2023)](/sources/zhou-2023.md) — ECCD as an Ohm's-law source current.
 * [Cathey et al. (2023)](/sources/cathey-2023.md) — evolving Sauter source and the E_r well.
 * [Sato et al. (2024)](/sources/sato-2024.md) — off-axis bootstrap current and infernal modes.
+* [Wright & Ferraro (2024)](/sources/wright-2024.md) — bootstrap in the equilibrium only; resistivity dependence of the QA instability.
+* [Liang et al. (2025)](/sources/liang-2025.md) — Sauter source in HL-3 QH-mode runs.
+* [Zhang et al. (2025)](/sources/zhang-2025.md) — fixed bootstrap part of the non-inductive source in flux-pumping runs.

@@ -5,7 +5,7 @@ description: "A vertical displacement event is the axisymmetric vertical instabi
 status: established
 aliases: [VDE, hot VDE, cold VDE, asymmetric VDE, vertical instability]
 tags: [disruption, vde, wall, free-boundary, kink, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Vertical displacement event (hot and cold VDE)
@@ -40,7 +40,12 @@ inertia, at high conductivity by the PSL resistance
 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §4.8, Fig. 30). The PSL
 eddy currents dominate the slowing of the motion relative to the no-wall
 limit in an AUG-like axisymmetric VDE, whose growth rate is ≈40 s$^{-1}$
-([Isernia et al. (2023)](/sources/isernia-2023.md), §IV, Fig. 4). Reducing
+([Isernia et al. (2023)](/sources/isernia-2023.md), §IV, Fig. 4). SPARC is
+expected to be passively vertically stable with a wall decay time of about
+50 ms, so little vertical motion is expected during the thermal quench; its
+MGI simulations use an ideal wall for $n=0$
+([Izzo et al. (2025)](/sources/izzo-2025.md), §II C, §III A, citing
+Battey et al. and Nelson et al.). Reducing
 the ITER vessel resistivity by a factor 10 or more removes the fast vertical
 motion of the cold VDE and makes halo currents negligible
 ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B, Fig. 9b). Wall
@@ -57,6 +62,11 @@ The two classes differ by the order of thermal quench and displacement.
   its volume has shrunk (to 26% of the initial volume at 1.16 ms after
   limitation in the JOREK run of the NSTX benchmark). Hot VDEs "feature the largest wall forces observed in
   experiments" ([Artola et al. (2021)](/sources/artola-2021.md), §4.1.1).
+  A *mitigated* hot VDE, in which neon is injected once the axis has moved
+  by about 0.7 m and an artificial thermal quench is imposed, is the
+  pessimistic EU-DEMO runaway scenario of
+  [Vannini et al. (2025)](/sources/vannini-2025.md) (§3–4); the VDE is
+  triggered by a current perturbation in the in-vessel coils.
 - **Cold VDE.** The vertical motion takes place after the thermal quench,
   during the current quench. In the ITER JOREK–DINA benchmark an upward cold
   VDE starts after an artificial TQ and continues into the runaway-electron
@@ -69,7 +79,7 @@ The two classes differ by the order of thermal quench and displacement.
   edge safety factor is therefore set by the competition of the vertical
   position and $I_p$ ([Artola et al. (2022)](/sources/artola-2022.md), §1,
   citing Kiramov & Breizman 2018). In 3D ITER mitigated CQs with
-  $\tau_{\mathrm{CQ}}\approx46$ ms against $\tau_w\approx500$ ms, $q_{95}$
+  $\tau_{\mathrm{CQ}}=45.5$ and 47 ms against $\tau_w\approx500$ ms, $q_{95}$
   stays at 3–4, no 1/1 mode appears and no sideways force develops; one
   case drifts up, the other down after a fast drop of $l_i(3)$, consistent
   with the large-$l_i$-drop downward displacements of earlier ITER studies
@@ -103,6 +113,22 @@ interchangeably as "edge safety factor" (Fig. 3 caption); the criterion is
 the cylindrical one. The kinks cause the stochastic TQ and the 3D
 [halo currents](/definitions/halo-current.md) that carry the sideways
 [wall force](/definitions/wall-forces.md).
+
+**With and without a runaway beam.** In the EU-DEMO mitigated VDE without
+runaways $q_{95}$ rises (above 8) because $I_p$ decays faster than $a^2$;
+with a runaway beam it falls, because the plasma shrinks faster than the
+current decays ([Vannini et al. (2025)](/sources/vannini-2025.md), §4,
+Fig. 3), which reverses the force mitigation
+([vertical-force mitigation](/results/vertical-force-mitigation.md)). 3D
+restarts of the beam are unstable at $q_{95}=2.7$, 2.29 and 2.05 alike,
+with $n=4$ fastest and edge $(8,4)$, $(9,4)$ modes followed by a dominant
+$(2,1)$; the authors, citing Bandaru et al. (2024b), state that the beam
+"can become unstable a long time before the value of $q_{95}=2.0$" (§5,
+Fig. 5a). This complements the $q_a\approx2$ onset of the NSTX hot VDE
+above rather than contradicting it: the NSTX case is a thermal plasma at
+onset, the DEMO case a runaway beam whose instability the authors relate
+to $q_{95}$ approaching 2 from above without evaluating the external-kink
+criterion.
 
 The edge current lost by scrape-off during a VDE is partly re-induced in
 the hot edge of the remaining plasma; analytical theory and JOREK agree on
@@ -148,3 +174,5 @@ changes the whole evolution ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §IV, §VI.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.
 - [Artola et al. (2022)](/sources/artola-2022.md), §1, §4.1–4.2, §5.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §3–5, Figs. 3, 5.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §II C, §III A.

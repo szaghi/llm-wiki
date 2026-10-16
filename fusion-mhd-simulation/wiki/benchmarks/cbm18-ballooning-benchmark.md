@@ -5,7 +5,7 @@ description: "Linear ideal-ballooning test on the cbm18 series of shifted-circul
 status: established
 aliases: [cbm18, cbm18_dens8, CBM18 benchmark, ideal ballooning benchmark]
 tags: [benchmark, verification, ballooning, pedestal, edge, finite-differences, finite-elements]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # cbm18 ideal-ballooning benchmark
@@ -22,7 +22,12 @@ series:
   pressure gradient. It is used for ideal-ballooning (IBM) verification.
 - **cbm18_dens4** is marginally IBM-unstable. It is used for the nonlinear
   pedestal-collapse study (see
-  [edge-localized modes](/definitions/edge-localized-mode.md)).
+  [edge-localized modes](/definitions/edge-localized-mode.md)). The
+  full-annulus run analysed by [Seto et al. (2024)](/sources/seto-2024.md)
+  is this case by the compiler's identification only (identical model,
+  coefficients, grid and linear spectrum; the 2024 paper does not name the
+  equilibrium); see
+  [two-stage crash of resistive drift-ballooning ELMs](/results/two-stage-elm-crash.md).
 
 ## Setup in Seto et al. (2023)
 
@@ -69,7 +74,10 @@ The percentages are computed from the printed values; the paper prints none.
   harmonics $m=33$–51 around $q=41/20$.
 
 **DWRBM spectrum on cbm18_dens4** (§5.1, Fig. 5b). With the two-fluid
-four-field model:
+four-field model, whose poloidal Alfvén units use a 3.5 m reference length
+(not the 3 m of the ideal-ballooning runs; no $\tau_A$ value is printed for
+it, Seto et al. 2023, Table 2; Seto et al. 2024, §II, use the same
+normalization):
 
 - the most unstable mode is $n=32$, at $\gamma\tau_A=7.86\times10^{-2}$;
 - the unstable range is $11\le n\le52$;
@@ -126,5 +134,6 @@ $n=20$ ballooning mode to measure the spatial convergence of
 
 # Citations
 
-- [Seto et al. (2023)](/sources/seto-2023.md) — §4, §5.1, §6, Eqs. 21–27, Figs. 2–5.
+- [Seto et al. (2023)](/sources/seto-2023.md) — §4, §5.1, §6, Eqs. 21–27, Table 2, Figs. 2–5.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §II (same cbm18_dens4 case, by identification).
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §4.1, Fig. 14.

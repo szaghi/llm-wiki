@@ -5,7 +5,7 @@ description: "A disruption is the rapid loss of thermal energy and then of plasm
 status: established
 aliases: [major disruption, current quench, CQ, plasma current spike, Ip spike, disruption mitigation]
 tags: [disruption, mhd, tokamak, runaway-electrons, wall, impurities]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Disruption: phases, current quench and current spike
@@ -38,7 +38,8 @@ definition.
    In ITER "major disruptions will unavoidably lead to the loss of plasma
    control" and therefore to a VDE ([Artola et al. (2021)](/sources/artola-2021.md), §1).
    In mitigated disruptions the trigger is the injected material itself
-   ([shattered pellet and massive material injection](/definitions/shattered-pellet-injection.md)).
+   ([shattered pellet and massive material injection](/definitions/shattered-pellet-injection.md),
+   [massive gas injection](/definitions/massive-gas-injection.md)).
    For locked-mode disruptions, [Strauss et al. (2022)](/sources/strauss-2022.md)
    (§I, §IV) argue that the locked mode is a precursor, not the instability
    that ends the discharge: the mode amplitude often does not grow before
@@ -65,7 +66,12 @@ definition.
    accelerates [runaway electrons](/definitions/runaway-electrons.md); in
    ITER the avalanche can convert most of the current into an RE plateau
    (≈10 MA of an initial 15 MA in the JOREK–DINA benchmark,
-   [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B).
+   [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B). In a
+   pessimistic EU-DEMO scenario, an upward hot VDE mitigated late by neon,
+   a beam of about 13 MA forms from a 19.7 MA plasma
+   ([Vannini et al. (2025)](/sources/vannini-2025.md), §4); its
+   termination deposits its energy on the wall
+   ([runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md)).
 
 ## Current quench
 
@@ -175,6 +181,24 @@ Further simulation evidence:
   compared to that in experiment", which the authors attribute to fast
   reconnection that a Lundquist number of ≈$10^3$ does not capture
   ([Liu et al. (2021)](/sources/liu-2021.md), §5.3, §6, Fig. 12).
+- Neon-doped deuterium SPI into an ASDEX Upgrade H-mode gives a spike
+  "comparable" with AUG #40673 in the slow-fragment case, more pronounced
+  when an edge cold front forms; the simulated $I_p$ dip comes about 0.7 ms
+  too early, which the authors attribute to an excessively sharp first-stage
+  energy loss and an unrealistically short pre-TQ
+  ([Tang et al. (2025)](/sources/tang-2025.md), §3.4, Fig. 20; the 0.7 ms
+  is read from the figure).
+- In NIMROD gas injection into SPARC a large $n=1$ mode peaks at the start
+  of the spike in three of four valve layouts, and confinement is
+  "particularly poor" during the spike, so the radiated fraction dips by a
+  few percent as heat is conducted to the boundary. The up-down symmetric
+  4-valve layout keeps even symmetry, suppresses the $n=1$ and has no spike
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II C, Fig. 4), consistent
+  with the parity rule of dual SPI ([Hu et al. (2021)](/sources/hu-2021.md),
+  §5; see [massive gas injection](/definitions/massive-gas-injection.md)).
+- Runaway-electron studies that impose the TQ also impose the spike: a large
+  hyper-resistivity flattens $j$ during the artificial TQ
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §4).
 
 **Mechanism.** By Boozer's theory the spike is a relaxation of the current
 profile at approximately conserved magnetic helicity, driven by field-line
@@ -207,6 +231,13 @@ model extensions of the MHD codes: impurity models
 [collisional-radiative](/methods/collisional-radiative-impurity-model.md)),
 the [runaway-electron fluid model](/methods/runaway-electron-fluid-model.md)
 and [resistive-wall coupling](/methods/resistive-wall-coupling.md).
+SPARC plans [massive gas injection](/definitions/massive-gas-injection.md)
+instead of SPI, combined with a passive
+[runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md)
+([Izzo et al. (2025)](/sources/izzo-2025.md), §I); EU-DEMO studies add
+sacrificial limiters against the loads of a beam that forms anyway
+([runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md);
+[Vannini et al. (2025)](/sources/vannini-2025.md)).
 
 [Strauss et al. (2022)](/sources/strauss-2022.md) (Abstract, §V) argue
 that, if locked-mode thermal quenches in ITER last about half a wall time
@@ -269,3 +300,6 @@ model behind 250 ms would settle it.
 - [Hu et al. (2021)](/sources/hu-2021.md), §3, Figs. 4–5.
 - [Nardon et al. (2023b)](/sources/nardon-2023-b.md), §III–V, App. A.
 - [Liu et al. (2021)](/sources/liu-2021.md), §5.3, §6.
+- [Tang et al. (2025)](/sources/tang-2025.md), §3.4, Fig. 20.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §I, §II C.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §4.

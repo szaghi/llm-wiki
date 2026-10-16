@@ -5,7 +5,7 @@ description: "Boundary conditions for MHD codes where field lines intersect a ma
 status: established
 aliases: [Bohm boundary condition, sheath BC, Bohm–Chodura condition, sheath heat transmission]
 tags: [edge, divertor, wall, mhd, numerics]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Sheath (Bohm) boundary conditions
@@ -43,7 +43,9 @@ poloidal flows it drives are established
 [Cathey et al. (2023)](/sources/cathey-2023.md), §2.2, where the parallel
 and poloidal flows saturate after about 1 ms). The ITER RMP runs apply the
 Bohm conditions on the velocity and on the normal heat flux at the targets
-([Becoulet et al. (2022)](/sources/becoulet-2022.md), §2).
+([Becoulet et al. (2022)](/sources/becoulet-2022.md), §2). The predictive
+HL-3 QH-mode runs likewise impose Mach-1 conditions at the targets with no
+momentum source ([Liang et al. (2025)](/sources/liang-2025.md), §III).
 
 The JOREK outlook lists outflows with Mach numbers larger than one as a
 planned refinement ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
@@ -146,3 +148,4 @@ affects the evolution ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 - [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2.
 - [Cathey et al. (2024)](/sources/cathey-2024.md) — §3.1, §4.
 - [Artola et al. (2022)](/sources/artola-2022.md) — §3, §4.4.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §III.

@@ -5,7 +5,7 @@ description: "A tearing mode with two resonant surfaces of the same helicity in 
 status: established
 aliases: [DTM, 4/1 double tearing mode, double tearing]
 tags: [tearing, reduced-mhd, runaway-electrons, disruption, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Double tearing mode
@@ -22,15 +22,15 @@ exclude stochasticity, which 3D studies show is essential
 
 The post-reconnection state is predicted, as for the
 [sawtooth crash](/definitions/sawtooth-crash.md), by matching surfaces of
-equal helical flux, here $\psi_{\rm h}=\int(1/q-n/m)\,d\psi_{t,N}$
-(page-local symbol). The reconnection region is where the radius becomes a
-multiple-valued function of the initial $\psi_{\rm h}$. For the case below it
+equal helical flux, here $\psi_h=\int(1/q-n/m)\,d\psi_{t,N}$ (the
+registry's Kadomtsev helical flux, taken with the normalized toroidal flux). The reconnection region is where the radius becomes a
+multiple-valued function of the initial $\psi_h$. For the case below it
 extends "from almost the very centre up to the edge", because the outer $q=4$
 surface lies close to the edge of a limiter plasma. In the earlier Tore Supra
 DTM studies (Maget et al. 2007, 2014) the predicted region did not reach the
 edge, and those simulations relaxed only partially (Nardon et al. 2023b, §I,
 §II, Fig. 2). In a divertor plasma $q\to\infty$ at the edge would sharpen
-$\psi_{\rm h}$ and could keep the region from the edge, although strong
+$\psi_h$ and could keep the region from the edge, although strong
 shear favours island overlap (§II).
 
 ## The JET-like 4/1 case

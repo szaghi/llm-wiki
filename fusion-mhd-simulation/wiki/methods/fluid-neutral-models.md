@@ -5,7 +5,7 @@ description: "Fluid treatments of atomic neutrals in MHD codes, from a single di
 status: established
 aliases: [diffusive neutral model, plasma-neutral model, Meier–Shumlak model, neutral fluid]
 tags: [neutrals, edge, divertor, mhd, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Fluid neutral models and plasma–neutral atomic sources
@@ -125,7 +125,7 @@ In the SPI studies with the CR impurity model, background-species
 
 [Taheri et al. (2022)](/sources/taheri-2022.md) (§2, Eqs. 1–15) evolve
 neutral density, velocity and temperature alongside resistive MHD:
-$$\partial_tn+\nabla\cdot(n\mathbf v)=\mathcal R_{\mathrm{ion}}-\mathcal R_{\mathrm{rec}},\qquad \partial_tn_{\mathrm N}+\nabla\cdot(n_{\mathrm N}\mathbf v_{\mathrm N})=\mathcal R_{\mathrm{rec}}-\mathcal R_{\mathrm{ion}}.$$
+$$\partial_tn_i+\nabla\cdot(n_i\mathbf v)=\mathcal R_{\mathrm{ion}}-\mathcal R_{\mathrm{rec}},\qquad \partial_tn_{\mathrm N}+\nabla\cdot(n_{\mathrm N}\mathbf v_{\mathrm N})=\mathcal R_{\mathrm{rec}}-\mathcal R_{\mathrm{ion}}.$$
 The momentum equations exchange $m_i(\mathcal R_{\mathrm{ion}}+\mathcal R_{\mathrm{cx}})(\mathbf v_{\mathrm N}-\mathbf v)$
 (plasma side) and $m_i(\mathcal R_{\mathrm{rec}}+\mathcal R_{\mathrm{cx}})(\mathbf v-\mathbf v_{\mathrm N})$
 (neutral side), plus charge-exchange friction forces; the temperature

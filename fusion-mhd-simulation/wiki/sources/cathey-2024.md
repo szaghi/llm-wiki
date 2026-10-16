@@ -9,7 +9,7 @@ year: 2024
 venue: "Nucl. Fusion 64:096003"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Cathey_Non-linear_MHD_investigations_of_high-confinement_regimes_wi.pdf"
 tags: [mhd, reduced-mhd, extended-mhd, elm, pedestal, ballooning, kink, edge, tokamak, review]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -207,14 +207,14 @@ modes. No equation is numbered; the model is only sketched.
 | $\hat{\boldsymbol\vartheta}$, $B_{\mathrm{pol}}$ | words; $\nabla\psi\times\nabla\phi$ | poloidal direction and field |
 | $F_0$, $\psi$, $\psi_{\mathrm{norm}}$ | $F_0$, $\psi$, $\psi_N$ | $\psi$ per radian |
 | $v_\parallel$, $v_{\mathrm{ExB}}$ | $v_\parallel$, $\mathbf v_E$ | |
-| $\mathbf v_{\mathrm{dia},i}$ | $\mathbf v_{\mathrm{dia},i}$ (page-local) | not registered |
+| $\mathbf v_{\mathrm{dia},i}$ | $\mathbf v_{\mathrm{dia},i}$ | |
 | $p_i$, $n_e$, $e$, $m_{\mathrm{ion}}$, $m_e$ | $p_i$, $n_e$, $e$, $m_i$, $m_e$ | |
 | $\delta^*$ | words (JOREK diamagnetic parameter) | undefined here; **collision** with $\delta(\cdot)$ |
 | $\eta$, $\eta_{\mathrm{realistic}}$ | $\eta$, words | |
 | $\chi_\parallel$ | $\kappa_\parallel$ | |
 | $j$, $j_{\mathrm{src}}$ | $J_\phi$, $\mathbf J_x$ | source holds bootstrap and Ohmic parts |
 | $T$ | $T$ | each species temperature, not the sum |
-| $E_r$ | $E_r$ (page-local) | |
+| $E_r$ | $E_r$ | |
 | $n$, $m$ | $n$, $m$ | |
 | $\gamma$, $\gamma_{k\pm m}$ | $\gamma$, $\gamma_{n_1\pm n_2}$ | **collision:** native $k$, $m$ are toroidal indices, not the poloidal $m$ |
 | $f$ | $\omega/2\pi$, words | registry: $f$ is never a frequency |
@@ -230,11 +230,12 @@ modes. No equation is numbered; the model is only sketched.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
+* [Edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [JOREK](/software/jorek.md)
 * [Reduced MHD for tokamaks](/methods/reduced-mhd.md)
@@ -275,7 +276,17 @@ Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on
        about 30 kHz, not compared.
      * The experimental QCM propagates in the electron diamagnetic
        direction (lab frame, §2.3), the simulated mode at about 1 km/s in
-       the ion diamagnetic direction (§3.4); frames are not stated.
+       the ion diamagnetic direction (§3.4); frames are not stated here.
+       The original EDA paper, [Cathey et al. (2023)](/sources/cathey-2023.md),
+       resolves it: about $+1$ km/s is the plasma-frame velocity at the mode
+       maximum, the lab-frame velocity is about $-15$ km/s (electron
+       diamagnetic), so the two directions are not in conflict.
+     * EDA numbers differ slightly from [Cathey et al. (2023)](/sources/cathey-2023.md):
+       linear-phase frequency "about 40" here vs about 35 kHz (30–45) there;
+       MISHKA-1 boundary $n\sim14$ here vs $n\approx15$ there; simulated $E_r$
+       well about $-25$ kV/m (Fig. 2) here vs $-29$ (linear) and about $-15$
+       kV/m (non-linear) there; measured QCM $k_\theta$ about 0.6 here vs
+       0.6–0.9 cm⁻¹ there.
      * Fig. 7 caption: the imported separatrix is "below" the JOREK one;
        §4: they "overlap".
      * Fig. 8 shows four resistivities (about 10, 8, 6, 1 × realistic)

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Ballooning mode"
-description: "Pressure-driven, high-n MHD instability localized on the outboard (bad-curvature) side of flux surfaces, whose ideal growth rate rises with n without bound in the absence of stabilizing flows, with its resistive and peeling-ballooning variants in tokamak pedestals; the standard linear verification case of edge and stellarator MHD codes."
+description: "Pressure-driven, high-n MHD instability localized on the outboard (bad-curvature) side of flux surfaces, whose ideal growth rate rises with n without bound in the absence of stabilizing flows, with its resistive and peeling-ballooning variants in tokamak pedestals and resistive ballooning in high-beta LHD plasmas; the standard linear verification case of edge and stellarator MHD codes."
 status: established
-aliases: [ideal ballooning mode, IBM, resistive ballooning mode, drift-ballooning mode, peeling-ballooning mode]
+aliases: [ideal ballooning mode, IBM, resistive ballooning mode, drift-ballooning mode, resistive drift-ballooning mode, RDBM, DWRBM, peeling-ballooning mode]
 tags: [ballooning, mhd, pedestal, edge, verification, stellarator, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Ballooning mode
@@ -38,7 +38,11 @@ usual cut-off.
 - In the four-field two-fluid drift-wave resistive ballooning model (DWRBM)
   of Seto et al. (2023, §5.1, Fig. 5b), the cbm18_dens4 spectrum peaks at
   $n=32$, with $\gamma\tau_A=7.86\times10^{-2}$. Modes with $n\le10$ and
-  $n\ge53$ are stable.
+  $n\ge53$ are stable. [Seto et al. (2024)](/sources/seto-2024.md) (§II,
+  Fig. 2) print the same spectrum for the same model, which they call the
+  resistive drift-ballooning mode (RDBM), and use it as the driver of a
+  two-stage pedestal crash
+  ([two-stage ELM crash](/results/two-stage-elm-crash.md)).
 
 **Second stability.** At fixed $n$, the ideal growth rate is non-monotonic in
 the pressure. In the Jiang et al. (2024, §IX A, Fig. 18) scan from 0.4% to 2%
@@ -117,6 +121,15 @@ poloidally well beyond its linear structure
 ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2, p. 4,
 Figs. 2a, 4).
 
+**Parity mixing in drift-ballooning turbulence.** In the BOUT++
+full-annulus RDBM crash, the ballooning-parity turbulence generates
+tearing-parity low-$n$ components through the Poisson-bracket
+nonlinearities ("nonlinear parity mixing", after Sato & Ishizawa 2017 as
+cited), and $2/1$ islands form at $q=2$ already at the first crash
+(Seto et al. 2024, §III, Figs. 8, 10). Both this and the NIMROD result above
+show low-$n$ components of non-ballooning parity arising nonlinearly from
+ballooning-parity modes.
+
 **Flow shear as a stabilizer.** NIMROD needs the reconstructed pedestal flow
 shear to keep peeling–ballooning modes stable in a DIII-D ITER-baseline
 equilibrium ([Howell et al. (2022)](/sources/howell-2022.md), §III A,
@@ -139,6 +152,36 @@ the JT-60SA scan above shows that pattern.
   resistivity confines the activity to the edge, and the dominant $(2,1)$
   mode seen in the experiment appears only at artificially high resistivity
   (Ramasamy et al. 2024, §4.2, §4.4; see [JOREK3D](/software/jorek3d.md)).
+
+## Resistive ballooning modes in high-beta LHD
+
+[Sato & Todo (2026)](/sources/sato-2026.md) review MIPS and MEGA simulations
+of inward-shifted LHD equilibria at central $\beta$ of 7.5% and 9.2%, whose
+outer region is Mercier-unstable (magnetic hill) (p. 3, Fig. 1).
+
+* **Most unstable mode.** For Lundquist numbers $10^4\le S\le10^6$ (with
+  $S$ built on $R_0$) resistive ballooning modes are the most unstable. They
+  are "2D-type", with weak toroidal coupling inside the $N_{\mathrm{fp}}=10$
+  mode families, so the toroidal mode number identifies an eigenmode; no
+  3D-type ballooning modes were seen (p. 4; see
+  [toroidal mode families](/definitions/toroidal-mode-family.md)). For
+  $S>10^6$ a resonant $(3,2)$ ideal interchange takes over (see
+  [interchange modes](/definitions/interchange-mode.md)).
+* **Scaling with $S$.** In MHD the growth rate falls from
+  $\gamma\tau_A\approx0.11$ at $S=10^4$ to about 0.015 at $S=10^6$, along a
+  guide line $\propto S^{-1/3}$; with drift-kinetic thermal ions it falls
+  along $\propto S^{-1}$, to about 0.004 at $S=10^6$ (Fig. 4, figure reading;
+  the guide lines are drawn, not fitted).
+* **Nonlinear MHD.** At $S=10^5$ the modes start in the periphery
+  (dominant $n=12$, 13 at $\beta=7.5\%$; $n=11$, 10 at 9.2%), nonlinearly
+  generate low-order modes such as $n=1$ that penetrate the core, and the
+  quadratic self-coupling of the $n=1$ velocity and pressure produces the
+  $(0,0)$ pressure drop of a core collapse (pp. 4–5, Figs. 2–3).
+* **Kinetic stabilization.** Helically trapped thermal ions precess
+  poloidally and average out the perturbation once their precession
+  frequency relative to the mode exceeds $\gamma$; at $S=10^5$ this lowers
+  the growth rate only slightly and does not prevent the central-pressure
+  degradation (pp. 6–8; see [kinetic thermal ions](/methods/kinetic-thermal-ions.md)).
 
 ## Verification results
 
@@ -209,7 +252,7 @@ against analytic linear theory.
   (2024) print no numbers and call the resistivities "nominal", "realistic"
   and "anticipated" interchangeably.
 - **Single temperature.** The AUG and JT-60SA pedestal runs use $T_e=T_i$
-  and no torque source, so the $E	imes B$ and diamagnetic flows that set the
+  and no torque source, so the $E\times B$ and diamagnetic flows that set the
   high-$n$ cut-off are approximate (Cathey et al. 2023, §2.2; 2024, §2.3).
 
 ## Contradictions
@@ -230,3 +273,5 @@ recorded on the [cbm18 benchmark page](/benchmarks/cbm18-ballooning-benchmark.md
 - [Howell et al. (2022)](/sources/howell-2022.md) — §III A.
 - [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §4.2, §4.4, §4.5.
 - [Sato et al. (2024)](/sources/sato-2024.md) — §3.2.2, Fig. 14b.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §II–III, Figs. 2, 8, 10.
+- [Sato & Todo (2026)](/sources/sato-2026.md) — pp. 3–8, Figs. 1–4.

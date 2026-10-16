@@ -5,7 +5,7 @@ description: "Alfvénic mode whose existence and frequency are set by the energe
 status: established
 aliases: [EPM, energetic-particle mode, frequency chirping, chirping mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Energetic particle mode (EPM) and frequency chirping
@@ -99,7 +99,7 @@ and the power dissipated". The evidence is a visual comparison of two
 spectrograms; no chirp rate and no post-change damping rate are measured
 (recorded on the Source page). They quote the BB early-sweep law
 $\delta\omega/\gamma_l=\tfrac{16\sqrt2}{3\sqrt3\pi^2}(\gamma_dt)^{1/2}\approx0.44(\gamma_dt)^{1/2}$
-(Eq. 24, Berk et al. 1997, as cited) without comparing it with the
+(Eq. 24, Berk et al. 1997, as cited; $\delta\omega$ the frequency shift, $\gamma_l$ the linear drive and $\gamma_d$ the background damping rate, page-local) without comparing it with the
 simulation, and propose raised dissipation as "a useful probing tool" that
 "can also save computational resources" (§4.1).
 

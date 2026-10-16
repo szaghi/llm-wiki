@@ -213,3 +213,20 @@ names of a particular code) are defined on their page and not registered.
 | $q_w$, $\Delta Q$ | heat flux on a wall surface; energy impact (heat-flux factor) $\tfrac12\int q_w/\sqrt{t-t'}\,dt'$ | units MJ s$^{-1/2}$ m$^{-2}$ |
 | $v_{\mathrm D}$ | drift velocity of an ablation plasmoid | |
 | $N_f$ | toroidal mode-family index ($n\equiv N_f \bmod N_{\mathrm{fp}}$) | |
+
+## 11. Extensions logged with chunk 3 (2026-10-16)
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $f^{(0)}$, $\tilde f$ | toroidally averaged ($n=0$) part of a field and its non-axisymmetric remainder $f-f^{(0)}$ | |
+| $E_{\mathrm{dyn},\parallel}$ | parallel dynamo electric field from the fluctuation-induced emf | V m$^{-1}$ |
+| $\nu_{\mathrm{kin}}$ | kinematic viscosity, where a page needs it distinct from a dynamic one | |
+| $\omega_{\mathrm d}$ | precession (drift) frequency of a trapped ion relative to the mode phase | |
+| $f_{\mathrm{rad}}$ | radiated fraction of the available energy, $W_{\mathrm{rad}}/(W_{\mathrm{th}}(0)+W_{\mathrm{ohm}})$ unless the page states otherwise | $W_{\mathrm{rad}}$, $W_{\mathrm{ohm}}$ cumulative radiated and Ohmic energies |
+| $Z_c$ | vertical position of the current centroid | |
+| $D_{\parallel,\mathrm{RE}}$, $D_{\perp,\mathrm{RE}}$ | parallel and perpendicular runaway-electron diffusivities of a fluid RE model | |
+| $W_{\mathrm{RE}}$, $N_{\mathrm{RE}}$ | energy channelled to runaway electrons; their total number | |
+
+Machine-learning surrogate symbols (network operators, latent widths, Fourier
+truncation) are defined on the surrogate page only and are not registered,
+because the natural ML symbols collide with this registry.

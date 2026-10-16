@@ -5,7 +5,7 @@ description: "A tearing mode that is classically stable but metastable: once a s
 status: established
 aliases: [NTM, 2/1 NTM, neoclassical tearing, metastable tearing mode]
 tags: [tearing, extended-mhd, bootstrap-current, tokamak, disruption]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Neoclassical tearing mode
@@ -34,7 +34,10 @@ channel, the $n$-th and $(n+1)$-th moderate-$n$ peeling–ballooning harmonics
 al. 2007, cited in §I). Removing the sawtooth removes one seed:
 [magnetic flux pumping](/definitions/magnetic-flux-pumping.md) by a $1/1$
 quasi-interchange keeps $q_0\ge1$ and thereby prevents sawteeth
-([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4). A different onset
+([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4); the primary
+JOREK study finds the clamped $q_0$ at about 0.99 rather than $\ge1$
+([Zhang et al. (2025)](/sources/zhang-2025.md), §3.4; open entry on the
+flux-pumping page), with the discharge still sawtooth-free. A different onset
 path, a reversal of the resistive-interchange parameter by a hollow pressure
 profile, is shown for classical tearing by
 [radiation-triggered tearing](/results/radiation-triggered-tearing.md) and
@@ -150,3 +153,4 @@ three; this is a printed inconsistency, recorded on the
 - [Howell et al. (2022)](/sources/howell-2022.md) — §I–V, Eqs. 1–16, Table I, Figs. 1–13, App. A.
 - [Zeng et al. (2023)](/sources/zeng-2023.md) — §1 (resistive-interchange reversal as possible NTM seed).
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §4.4 (flux pumping removes the sawtooth seed).
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §3.4 (clamped $q_0\approx0.99$).

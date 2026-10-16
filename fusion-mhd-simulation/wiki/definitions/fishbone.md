@@ -5,7 +5,7 @@ description: "Energetic-particle-modified n = 1 internal kink that acquires a fi
 status: established
 aliases: [fishbone, fishbone mode, energetic-particle-driven internal kink, non-resonant fishbone]
 tags: [energetic-particles, hybrid-kinetic, kink, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Fishbone instability
@@ -31,7 +31,7 @@ used by Kim et al. (2008) for NIMROD
   $\beta=8\%$.
 - **Safety factor.** $q_0=0.6$, so the $q=1$ surface lies inside the plasma.
 - **EPs.** The EP density has the same shape as $p$. The distribution is an
-  isotropic slowing-down $f_0\propto H(v_0-v)/(v^3+v_c^3)$ with
+  isotropic slowing-down $f_0\propto H(v_0-v)/(v^3+v_c^3)$ ($v$ the particle speed, $H$ the Heaviside step) with
   $v_0=3.9\times10^6$ m/s and $v_c=0.58v_0$. The EP mass is reduced to
   $0.11m_{\mathrm H}$ to match $\rho_L/a=0.0125$.
 - **Physics options.** No FLR. Markers are loaded on the local $\psi$, not
@@ -81,7 +81,7 @@ $\tau_A^{-1}$, which the paper does not define; values are figure readings.
   rates decrease (DIII-D $\gamma\tau_A\approx0.013$ at $q_{\min}=1.00$, about
   half the EP-only value), the mode is stable for $q_{\min}>1.06$ in DIII-D
   and $>1.22$ in NSTX, and the BAE-like branch is stabilized. The estimate
-  $\omega/k_\parallel\approx0.2$–$1.15\,v_{\mathrm{th},i}$ for
+  $\omega/k_\parallel\approx0.2$–$1.15\,v_{th,i}$ for
   $q_{\min}=1.04$–1.15, with $k_\parallel\approx(n-m/q_{\min})/R$, places
   both branches in the range of ion Landau damping (Eq. 4.2). The authors
   conclude that kinetic-MHD simulations of non-resonant fishbones without

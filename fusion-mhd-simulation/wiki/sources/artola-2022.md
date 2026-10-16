@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:056023"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Artola_Non-axisymmetric_MHD_simulations_of_the_current_quench_phase.pdf"
 tags: [disruption, vde, wall, free-boundary, reduced-mhd, tearing, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -131,11 +131,11 @@ near the ITER category-I range. See
 * **Model** (§2, Eqs. 2–5, single temperature, SI as printed):
   $$\begin{aligned}
   \partial_t\mathbf A&=\mathbf v\times\mathbf B-\eta\mathbf J-\nabla\Phi,\\
-  \rho\,\partial_t\mathbf v&=-\rho\mathbf v\cdot\nabla\mathbf v-\nabla p+\mathbf J\times\mathbf B+\nabla\cdot\boldsymbol\tau,\\
+  \rho\,\partial_t\mathbf v&=-\rho\mathbf v\cdot\nabla\mathbf v-\nabla p+\mathbf J\times\mathbf B+\nabla\cdot\mathsf\Pi,\\
   \partial_t\rho&=-\nabla\cdot(\rho\mathbf v)+\nabla\cdot(\mathsf D\nabla\rho),\\
   \partial_tp&=-\mathbf v\cdot\nabla p-\Gamma p\nabla\cdot\mathbf v+\nabla\cdot(\mathsf K\nabla T),
   \end{aligned}$$
-  with $\boldsymbol\tau$ the viscous stress tensor (no registry symbol),
+  with $\mathsf\Pi$ the viscous stress tensor (the paper's $\boldsymbol\tau$, sign as printed),
   $T=T_e+T_i$, $\mathsf K$ strongly anisotropic and $\mathsf D$ "normally
   isotropic". No Ohmic heating and no impurity radiation: the two are
   assumed to cancel (all magnetic energy radiated, justified by the >90%
@@ -228,7 +228,7 @@ No benchmark; two application cases.
   (Sugihara et al. 2007, Clauser et al. 2019).
 * Relation to the bundle: [Hoelzl et al. (2021)](/sources/hoelzl-2021.md)
   (§6.3) predict halo fractions of 10–20% for 50–150 ms CQs, agreeing
-  with 8.7–16.6% here, and a 3D ITER VDE TPF below about 1.15, against 1.7
+  with 8.7–16.6% here, and a TPF below about 1.15 in 3D ITER 15 MA fast-CQ runs, against 1.7
   here in a different scenario; it also states that CQs below 50 ms are
   not allowed in ITER, while these cases run at 45.5–47 ms.
   [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.3) summarize this
@@ -242,7 +242,7 @@ No benchmark; two application cases.
 | $\mathbf v_\parallel$ (vector, Eq. 7) | $v_\parallel\mathbf b$ | |
 | $\rho$ ("ion density") | $\rho$ | mass density |
 | $p$, $T$, $T_e$, $T_{e0}$, $n_e$ | same | $T=T_e+T_i$ |
-| $\underline{\boldsymbol\tau}$ | words (viscous stress tensor) | not registered |
+| $\underline{\boldsymbol\tau}$ | $\mathsf\Pi$ (viscous part) | enters as $+\nabla\cdot\underline{\boldsymbol\tau}$ |
 | $\mu_\parallel$, $\mu_\perp$ | $\nu$ (dynamic, parallel and perpendicular) | **collision:** registry $\mu$ is the magnetic moment |
 | $\underline{\boldsymbol\kappa}$, $\kappa_\parallel$, $\kappa_\perp$, $\kappa_0$ | $\mathsf K$, $\kappa_\parallel$, $\kappa_\perp$ | density-weighted units |
 | $\underline{\mathbf D}$, $D$ | $\mathsf D$, $D_\perp=D_\parallel$ | |
@@ -254,13 +254,13 @@ No benchmark; two application cases.
 | TPF | TPF | |
 | $\mathbf F$, $F_h$, $F_z$ | $\mathbf F_w$, $F_{w,h}$, $F_{w,z}$ | |
 | $\tau_w$, $\eta_w$, $d_w$ | same | |
-| $\tau_{CQ}$ | $\tau_{\mathrm{CQ}}$ (page-local) | not registered |
+| $\tau_{CQ}$ | $\tau_{\mathrm{CQ}}$ | defined as $(t_{20\%}-t_{80\%})/0.6$ |
 | $W_{mag}$ | $W_{\mathrm{mag}}^{(n)}$ | |
 | $Z_{axis}$ | words (vertical position of the axis) | |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)

@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Plasma Phys. 91:E141"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Journal_of_Plasma_Physics_Saxena_Bootstrap_current_modeling_in_M3D-C1.pdf"
 tags: [bootstrap-current, stellarator, tokamak, extended-mhd, full-mhd, equilibrium, finite-elements, verification, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -39,7 +39,7 @@ stellarators it closely matches SFINCS and the standalone Redl formula.
 Nonlinear QA runs at $\langle\beta\rangle=2.5\%$ show that the model
 sustains the toroidal current against resistive decay and slows the
 breakup of edge surfaces, while instability growth still increases with
-resistivity, supporting Wright & Ferraro (2024a). An M3D-C1 → SFINCS
+resistivity, supporting [Wright & Ferraro (2024a)](/sources/wright-2024.md). An M3D-C1 → SFINCS
 workflow to estimate the error away from quasi-symmetry is outlined, not
 demonstrated.
 
@@ -89,7 +89,13 @@ demonstrated.
     Kinetic energy grows faster with larger resistivity multiplier (1, 10,
     $10^3$, $10^4$) with bootstrap on or off, so the Wright & Ferraro
     (2024a) result is not an artefact of spurious resistive decay of the
-    bootstrap-driven current. Shown.
+    bootstrap-driven current. Shown. [Wright & Ferraro (2024)](/sources/wright-2024.md)
+    itself concludes that the evolution is "qualitatively identical,
+    regardless of resistivity model", and its Fig. 3 shows no monotonic
+    increase of the growth rate with resistivity, so the "supporting"
+    reading is Saxena et al.'s, not a result stated there (compiler's
+    comparison); the QA central temperature also differs (9.45 keV here
+    against a ≈22 keV peak there), unresolved.
 11. **Quasi-symmetry maintained** (§3.3, Fig. 8). The two-term
     quasi-symmetry error evaluated on isotherm surfaces "closely resembles"
     [VMEC](/software/vmec.md)'s and does not change significantly over
@@ -115,13 +121,13 @@ demonstrated.
   geometry (Zhou et al. 2021). SI units with $\mu_0$ explicit.
 * **Single-fluid equations** (App. C):
   $$\begin{aligned}
-  &\partial_tn+\nabla\cdot(n\mathbf v)=0,\qquad nm_i(\partial_t\mathbf v+\mathbf v\cdot\nabla\mathbf v)=\mathbf J\times\mathbf B-\nabla p-\nabla\cdot(\text{viscous stress})+(\text{external force}),\\
+  &\partial_tn_i+\nabla\cdot(n_i\mathbf v)=0,\qquad n_im_i(\partial_t\mathbf v+\mathbf v\cdot\nabla\mathbf v)=\mathbf J\times\mathbf B-\nabla p-\nabla\cdot\mathsf\Pi_i+(\text{external force}),\\
   &\partial_tp+\mathbf v\cdot\nabla p+\Gamma p\nabla\cdot\mathbf v=(\Gamma-1)\big[\eta\mathbf J\cdot(\mathbf J-\mathbf J_x)-\nabla\cdot(\text{heat flux})-(\text{viscous heating})+(\text{heat source})\big],\\
   &\partial_t\mathbf B=\nabla\times[\mathbf v\times\mathbf B-\eta(\mathbf J-\mathbf J_x)],\qquad \mu_0\mathbf J=\nabla\times\mathbf B,
   \end{aligned}$$
   with $\Gamma=5/3$, a heat flux of anisotropic conduction
   ($\kappa_\perp$, $\kappa_\parallel$; sign as printed, see below), and a
-  viscous stress of perpendicular, gyro- and parallel ion viscosity, the
+  viscous stress $\mathsf\Pi_i$ of perpendicular, gyro- and parallel ion viscosity, the
   electron viscosity implemented as hyper-resistivity. The bootstrap term
   also modifies the Ohmic heating to $\eta\mathbf J\cdot(\mathbf J-\mathbf J_x)$.
 * **Tokamak closures** (App. A). Sauter (Eq. A1) and Redl (Eq. A2) give
@@ -214,14 +220,14 @@ demonstrated.
 | $\eta$, $\eta_{norm}$, $\eta_0$ | $\eta$; words (2.74 Ω m; resistivity multiplier) | |
 | $\mathbf J_x$, $J_\parallel$ | $\mathbf J_x$; words | |
 | $\mathbf F^e_x$ | words (equivalent electron force) | **collision** with $F$ |
-| $\langle\cdot\rangle$ | surface average (words; not yet in registry) | on $T_e$ isotherms |
+| $\langle\cdot\rangle$ | $\langle\cdot\rangle$ (flux-surface average) | on $T_e$ isotherms |
 | $\psi$, $\psi_t$ ($\Psi_p=2\pi\psi$, $\Psi_t=2\pi\psi_t$) | $\psi$, $\psi_t$ | per radian |
 | $\psi_N$, $\psi_{t_N}$/$\Psi_{t_N}$ | $\psi_N$, $\psi_{t,N}$ | |
 | $\hat T_e=1-T_e/T_e^{max}$ | words (isotherm label) | |
 | $F(\psi)$ | $F$ | |
-| $G$, $I$, $\tilde G=G+NI$ | words (Boozer current functions) | **collision:** native $I$ vs $I_p$ |
+| $G$, $I$, $\tilde G=G+NI$ | $G$, $I$ (Boozer covariant components, §9); words | **collision:** native $I$ vs $I_p$ |
 | $\iota$, $q$ | $\iota$, $q$ | |
-| $N$, $M$ | words (toroidal and poloidal helicity of the symmetry) | **collision risk:** not $N_{\mathrm{fp}}$; registry $m$, $n$ are mode numbers |
+| $N$, $M$ | $N$, $M$ (helicity integers, §9) | **collision risk:** not $N_{\mathrm{fp}}$; registry $m$, $n$ are mode numbers |
 | $\theta$, $\zeta$ | $\theta$, $\zeta$ | Boozer angles |
 | $L_{31}$, $L_{32}$, $L_{34}$, $\alpha$ | words (Sauter/Redl coefficients) | |
 | $f_t$ | words (trapped fraction) | **collision risk** with $f_s$ |
@@ -231,8 +237,8 @@ demonstrated.
 | $\nu^*_e$, $\nu^*_i$ | words (collisionalities) | **collision:** registry $\nu$ is viscosity |
 | $\Lambda_e$, $\Lambda_{ii}$ | words (Coulomb logarithms) | printed without $\ln$ |
 | $Z$ | $Z$ (ion charge), $Z_{\mathrm{eff}}$ | |
-| $p,p_e,p_i$; $n,n_e,n_i$; $T_e,T_i$ | same | eV, m⁻³ |
-| $\boldsymbol\Pi$, $\mathbf F$, $Q$ | words (viscous stress, external force, heat source) | registry lacks a viscous-stress symbol |
+| $p,p_e,p_i$; $n,n_e,n_i$; $T_e,T_i$ | same ($n\to n_i$ in the single-fluid equations, $\rho=n_im_i$) | eV, m⁻³ |
+| $\boldsymbol\Pi$, $\mathbf F$, $Q$ | $\mathsf\Pi_i$ (viscous part, §10); words (external force, heat source) | |
 | $\mathbf q$ | words (heat flux) | **collision** with safety factor $q$ |
 | $\Gamma$ | $\Gamma$ | 5/3 |
 | $\kappa_\perp$, $\kappa_\parallel$ | same | density × diffusivity units |
@@ -244,9 +250,10 @@ demonstrated.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
+* [Edge instabilities of an optimized quasi-axisymmetric reactor stellarator](/results/stellarator-edge-instability-qa.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
 * [M3D-C1](/software/m3d-c1.md)

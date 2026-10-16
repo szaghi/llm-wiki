@@ -9,7 +9,7 @@ year: 2024
 venue: "Nucl. Fusion 64:086030"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Ramasamy_Nonlinear_MHD_modeling_of_soft_β_limits_in_W7-AS.pdf"
 tags: [mhd, reduced-mhd, stellarator, tearing, ballooning, equilibrium, finite-elements, spectral, time-integration, linear-solver, benchmark, verification, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -173,7 +173,7 @@ notation of the [stellarator reduced-MHD page](/methods/stellarator-reduced-mhd.
 
 $$\mathbf B=\nabla\chi+\nabla\psi_\chi\times\nabla\chi,\qquad \mathbf v=\frac{\nabla u\times\nabla\chi}{|\nabla\chi|^2}+\hat v_\parallel\mathbf B,$$
 
-with $\hat v_\parallel$ a velocity per unit field (page-local, $\hat v_\parallel B\approx v_\parallel$).
+with $\hat v_\parallel$ the parallel-flow coefficient per unit field (registry §10, $\hat v_\parallel B\approx v_\parallel$).
 Derivatives with superscripts are relative to $\nabla\chi$
 ($\partial^\parallel=|\nabla\chi|^{-1}\nabla\chi\cdot\nabla$,
 $\nabla^\perp=\nabla-|\nabla\chi|^{-1}\nabla\chi\,\partial^\parallel$,
@@ -293,7 +293,7 @@ experimental β limit 3.4%; low-$n$ activity at 1.5% < β < 2.5%.
 | $\chi$, $B_v=\lvert\nabla\chi\rvert$ | $\chi$, $\lvert\nabla\chi\rvert$ | finite-element Poisson solution here |
 | $\Psi$ | $\psi_\chi$ | a length; not a poloidal flux |
 | $\Phi$ | $u$ | **collision:** registry $\Phi$ is the electrostatic potential |
-| $v_\parallel$ (in $\mathbf v=\dots+v_\parallel\mathbf B$) | $\hat v_\parallel$ (page-local) | **collision:** not $\mathbf v\cdot\mathbf b$; velocity per unit field |
+| $v_\parallel$ (in $\mathbf v=\dots+v_\parallel\mathbf B$) | $\hat v_\parallel$ | **collision:** not $\mathbf v\cdot\mathbf b$; velocity per unit field |
 | $\omega=\Delta^\perp\Phi$ | $\varpi=\Delta^\perp u$ | **collision:** registry $\omega$ is a frequency |
 | $j=\Delta^*\Psi$, $j_{\rm source}$ | $\mu_0j=\Delta^*\psi_\chi$, $j_{\mathrm{src}}$ | JOREK units, $\mu_0=1$; stellarator $\Delta^*$ relative to $\nabla\chi$ |
 | "$\nabla^*$" (operator list) | $\Delta^*$ | printed label slip |
@@ -309,14 +309,14 @@ experimental β limit 3.4%; low-$n$ activity at 1.5% < β < 2.5%.
 | $\hat\psi_t$, $\psi_{t,0}$ | $\psi_{t,N}$, initial toroidal flux | radius $\sqrt{\psi_{t,N}}$ |
 | $s$, $t$, $\phi$, $J$ (Eqs. 10–11) | words (element coordinates, Jacobian) | **collision:** registry $s$ is a radial label |
 | $\hat E_{{\rm mag},n}$, $\hat E_{{\rm kin},n}$ | $W_{\mathrm{mag}}^{(n)}$, $W_{\mathrm{kin}}^{(n)}$ | normalized |
-| $N_f$ | words (toroidal mode family, $n \bmod N_{\mathrm{fp}}$) | not in the registry |
+| $N_f$ | $N_f$ | toroidal mode family, $n\equiv N_f \bmod N_{\mathrm{fp}}$ |
 | $n_{\rm tor}$ | words (highest toroidal mode number) | **collision:** registry $N_{\mathrm{tor}}$ counts harmonics |
 | $\xi_\perp=\mathbf v\cdot\nabla s$ | words (eigenfunction) | |
 | $l$, $k$ | words (coil multipolarity, coefficient scale factor) | |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
@@ -328,6 +328,7 @@ Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on
 * [Interchange modes and the Mercier criterion](/definitions/interchange-mode.md)
 * [JOREK](/software/jorek.md)
 * [JOREK3D](/software/jorek3d.md)
+* [Kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md)
 * [Linear MHD eigenvalue codes](/methods/linear-mhd-eigenvalue-codes.md)
 * [MIPS](/software/mips.md)
 * [Reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)

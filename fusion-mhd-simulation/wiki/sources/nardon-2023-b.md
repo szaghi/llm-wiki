@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Plasmas 30:092502"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Physics_of_Plasmas_Nardon_Non-linear_dynamics_of_the_double_tearing_mode.pdf"
 tags: [tearing, reduced-mhd, disruption, runaway-electrons, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -42,8 +42,8 @@ and high-Z injection into runaway beams.
 
 # Key claims
 
-Page-local symbols (not in the registry): $\mathcal H=\int\mathbf A\cdot\mathbf B\,dV$
-the magnetic helicity; $w$ an island width; $j_0$ the initial $j$.
+Registry symbols (§10): $\mathcal H=\int\mathbf A\cdot\mathbf B\,dV$ the magnetic
+helicity; $w$ an island width. Page-local: $j_0$ the initial $j$.
 
 1. **Qualitative $\eta$ dependence** (Abstract, §IV, §V). Attributed to "how
    fast secondary, non-linearly destabilized, tearing modes grow relative to the
@@ -128,7 +128,7 @@ the magnetic helicity; $w$ an island width; $j_0$ the initial $j$.
     finite-resistivity correction to $\eta^{3/5}$ is absent when runaways carry
     the current, which weakens claim 13. In DIII-D the relevant mode is the
     resistive external kink ($q_{\mathrm{edge}}\to2$), which also involves primary and
-    secondary islands (Liu et al. 2021, Fig. 10). Stated.
+    secondary islands ([Liu et al. (2021)](/sources/liu-2021.md), Fig. 10). Stated.
 
 # Models and numerics
 
@@ -196,7 +196,7 @@ No code-to-code benchmark; a physics parameter scan.
 | $R$, $Z$, $\phi$, $\mathbf e_\phi$ | same | right-handed $(R,Z,\phi)$ implied by Eq. A2; COCOS not stated |
 | $\psi$, $\psi_n$ | $\psi$ (per radian), $\psi_N$ | |
 | $\Psi_n$ | $\psi_{t,N}$ | |
-| $\psi_*=\int(1/q-1/4)\,d\Psi_n$ | words (helical flux) | not registered |
+| $\psi_*=\int(1/q-1/4)\,d\Psi_n$ | $\psi_h$ for $m/n=4/1$ | integrated over the normalized $\psi_{t,N}$, not $\psi_t$ |
 | $u$ | $u$ | called "electric potential", equal to the flow potential |
 | $\omega$ | $\varpi$ | **collision:** registry $\omega$ is a frequency |
 | $j_\phi\equiv\Delta^*\psi$ | $j$ | **collision:** named "toroidal current density"; registry $J_\phi$ is the physical component |
@@ -205,15 +205,16 @@ No code-to-code benchmark; a physics parameter scan.
 | $\nabla_{pol}$, $[A,B]$ | $\nabla_{\mathrm{pol}}$, $[f,g]$ | same definitions |
 | $\mu$ | $\nu$ | **collision:** registry $\mu$ is the magnetic moment |
 | $\eta$ | $\eta$ | JOREK units |
-| $H$ | $\mathcal H$ (page-local) | not registered |
+| $H$ | $\mathcal H$ | |
 | $l_{i3}$ | $l_i$ ($l_i(3)$ presumed) | definition not given |
 | $E_{mag,n}$ | $W_{\mathrm{mag}}^{(n)}$ | a.u. |
 | $m_D$ | $m_i$ (deuterium) | |
-| $w$, $\alpha$, $t'$, $t''$ | page-local | |
+| $w$ | $w$ | island width |
+| $\alpha$, $t'$, $t''$ | page-local | |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)

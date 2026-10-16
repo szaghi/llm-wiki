@@ -5,7 +5,7 @@ description: "Zhejiang University explicit 3D toroidal MHD code: fourth-order fi
 status: established
 aliases: [CLT code]
 tags: [code, mhd, full-mhd, finite-differences, gpu, tearing, kink, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # CLT
@@ -26,7 +26,7 @@ with $\mu_0\mathbf J=\nabla\times\mathbf B$ (Zhang et al. 2021, Eqs.
 equilibrium from diffusing. The benchmark equations advance $\mathbf B$ by
 Faraday's law, whereas M3D-C1 advances $\mathbf A$, whose curl is Eq. 1.4
 (§2).
-Quantities are normalized to $L_0=1$ m, $B=1$ T, $n=10^{20}$ m$^{-3}$ and the
+Quantities are normalized to $L_0=1$ m (page-local), $B=1$ T, a density of $10^{20}$ m$^{-3}$ and the
 Alfvén time $L_0/v_A$; $\eta$ is normalized by $\mu_0L_0^2/\tau_A$, i.e. it is an
 inverse Lundquist number referred to $L_0$ (§2). See the
 [single-fluid visco-resistive MHD model](/methods/visco-resistive-mhd-model.md).

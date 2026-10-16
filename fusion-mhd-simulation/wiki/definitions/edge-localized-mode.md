@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Edge-localized mode (ELM) and ELM-free regimes"
-description: "Repetitive edge MHD instability of the H-mode pedestal, set off by coupled peeling-ballooning modes, that expels pedestal energy and particles in filaments; with the naturally ELM-free or small-ELM regimes (QH-mode, EDA H-mode, QCE) and the active control methods (RMPs, pellets, vertical kicks) as reproduced by nonlinear MHD codes, including ITER RMP suppression and current-sheet reconnection in peeling-ballooning ELMs."
+description: "Repetitive edge MHD instability of the H-mode pedestal, set off by coupled peeling-ballooning modes, that expels pedestal energy and particles in filaments; with the naturally ELM-free or small-ELM regimes (QH-mode, EDA H-mode, QCE) and the active control methods (RMPs, pellets, vertical kicks) as reproduced by nonlinear MHD codes, including ITER RMP suppression, current-sheet reconnection in peeling-ballooning ELMs and the two-stage crash of resistive drift-ballooning ELMs."
 status: established
-aliases: [ELM, type-I ELM, ELM crash, pedestal collapse, QH-mode, EDA H-mode, QCE, ELM suppression, quasi-coherent mode, QCM, edge harmonic oscillation, EHO]
+aliases: [ELM, type-I ELM, ELM crash, pedestal collapse, QH-mode, EDA H-mode, QCE, ELM suppression, quasi-coherent mode, QCM]
 tags: [elm, pedestal, edge, ballooning, mhd, extended-mhd, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Edge-localized mode (ELM) and ELM-free regimes
@@ -67,7 +67,11 @@ statement specific.
   the EDA case of Cathey et al. (2023, Fig. 5) the linearly stable
   $n=1$–3, 12 and 13 grow early in the nonlinear phase at about
   $4$–$6\times10^4$ s$^{-1}$, against a linear peak of about
-  $2.7\times10^4$ s$^{-1}$ (figure readings), as the rule predicts.
+  $2.7\times10^4$ s$^{-1}$ (figure readings), as the rule predicts. In a
+  predictive HL-3 QH-mode run $n=1$ is excited at about 16 ms by $n=2$ and
+  $n=3$ with $\gamma_{n=1}\approx\gamma_{n=2}+\gamma_{n=3}$, and the growth
+  of $n=4$, 5, 10 and 11 changes through coupling
+  ([Liang et al. (2025)](/sources/liang-2025.md), §IV B 1, Fig. 7a).
 - **NIMROD.** In DIII-D peeling–ballooning ELMs, intermediate-$n$
   ballooning modes ($n=10$–14) grow linearly, and the low-$n$ peeling-parity
   modes ($n=1$–6), stated to be linearly stable, and $n\ge20$ grow by
@@ -136,18 +140,38 @@ on the marginally IBM-unstable cbm18_dens4 equilibrium.
   - Both domains reach a similar final energy loss, about 0.065–0.07 read
     from Fig. 7a, and nearly identical pressure profiles at $450\,\tau_A$.
   - The collapse paths differ. In the quarter torus, the linearly unstable
-    high-$n$ modes trigger the collapse directly, at about $231\,\tau_A$.
+    high-$n$ modes trigger the collapse directly, at about $231\,\tau_A$
+    (in the two-crash reading of Seto et al. (2024) the two crashes there
+    are only $3\,\tau_A$ apart).
   - In the full torus, these modes saturate at about $210\,\tau_A$. Low-$n$
     and zonal modes grow first and the spectrum peak shifts down. The
     collapse comes later, at about $313\,\tau_A$, and the down-shifted modes
-    trigger it.
+    trigger it. Seto et al. (2024) identify this collapse as the second of two
+    crashes and the saturation at about $210\,\tau_A$ as the first (bullet
+    "Two crashes, not one" below).
   - The authors conclude that a wedge domain "may be enough" for the final
     energy-loss level, but the full annulus is needed to simulate the loss
-    process self-consistently. This rests on one case.
+    process self-consistently. This rests on one case. Seto et al. (2024)
+    add a half-torus run that falls between the two and attribute the
+    difference to the finer $2N/N$ fundamental islands of a $2\pi/N$ wedge,
+    which stochastize sooner (§III, Figs. 13–15).
 - **Global $(2,1)$ structure.** After the full-torus collapse, a global
   $(m,n)=(2,1)$ structure with
   [tearing](/definitions/tearing-mode.md) parity coexists with the high-$n$
   filaments (§5.3, Figs. 9–10).
+- **Two crashes, not one** ([Seto et al. (2024)](/sources/seto-2024.md),
+  same authors; the same run by the compiler's identification). The energy-loss rate of the full-torus run has
+  two peaks: a small first crash when the linear modes saturate, with $2/1$
+  islands at $q=2$ and turbulence only near their X-points, and the main
+  second crash $103\,\tau_A$ later, when the island harmonics have
+  stochastized $q=2$ and down-shifted middle-$n$ turbulence covers the flux
+  surface. The interval is $64\,\tau_A$ for a half torus and $3\,\tau_A$ for
+  a quarter torus, and the final loss stays at about 6% of the pedestal
+  energy for all three. The 2023 saturation at about $210\,\tau_A$ and
+  collapse at about $313\,\tau_A$ are therefore the first and the second
+  crash (compiler's cross-check: the 2023 difference, $103\,\tau_A$, equals the
+  2024 crash interval). Full account on
+  [two-stage ELM crash](/results/two-stage-elm-crash.md).
 - **Cost.** The full-torus run cost $8.3\times10^5$ core-hours, about 40% of
   it in the field solver (§5.3).
 
@@ -266,6 +290,17 @@ $\psi_N=0.95$ (Cathey et al. 2024, Table 1):
   - In the ITER 10 MA scenario the saturated $n=3$ QH-like mode locks to a
     static $n=3$ RMP, with strong density transport and almost unchanged
     $T_e$ ([Becoulet et al. (2022)](/sources/becoulet-2022.md), §5).
+  - *Predictive HL-3 case* ([Liang et al. (2025)](/sources/liang-2025.md)).
+    JOREK reduced MHD with diamagnetic terms, no momentum source, reaches a
+    QH-mode at $q_{95}=2.5$ dominated by a saturated $n=2$ kink-peeling mode,
+    with only $n=2$ and 3 linearly unstable; the edge harmonic oscillation
+    has a 7.5 kHz fundamental and differs between the high- and low-field
+    sides. At $q_{95}=2.3$ the QH-mode is lost and an ELM-like burst removes
+    about 3% of the thermal energy in about 1 ms after an $n=8$ precursor
+    (§IV B–C, Figs. 7, 13–20). The access contrast with the higher-$q$ AUG
+    windows is drawn by the authors (§IV C).
+  - The saturated mode, its frequency and its structure across the three
+    devices are on [edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md).
 - **Spectra compared** (Cathey et al. 2024, §3.5, Fig. 6). In the small-ELM
   and EDA cases the linearly dominant modes are resistive, ballooning
   (low-field-side) modes at medium-to-high $n$, and the nonlinear spectra are
@@ -348,6 +383,12 @@ $\psi_N=0.95$ (Cathey et al. 2024, Table 1):
   diamagnetic direction" of Cathey et al. (2024, §3.4) is the plasma-frame
   value. C-Mod measures 7–15 km/s in the plasma frame, so the direction
   agrees and the magnitude does not.
+- **Resistivity in the HL-3 case.** The edge resistivity is about 4 times
+  Spitzer ($2.6\times10^{-6}$ Ω m at 500 eV against a neoclassically
+  corrected realistic value of $0.7\times10^{-6}$ Ω m), because realistic
+  values "would exceed the computational capability of present HPC
+  resources"; no convergence study is shown and the ELM-like burst is
+  stated to be under-resolved (Liang et al. 2025, §III, §IV C).
 - **Resistivity and time span in ITER.** The ITER RMP and natural-ELM runs
   use a resistivity about two orders above realistic and cover a few tens of
   ms (Becoulet et al. 2022, §2, §7); the published version of that paper was
@@ -383,3 +424,5 @@ explicit choice of one description, would settle it.
 - [Seto et al. (2023)](/sources/seto-2023.md) — §5, Eqs. 28–37, Figs. 5–10.
 - [Artola et al. (2021)](/sources/artola-2021.md) — §4.1.1.
 - [Saxena et al. (2025)](/sources/saxena-2025.md) — §1.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §§I–IV, Figs. 3, 10–15.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §§III–V, Figs. 7, 13–20.

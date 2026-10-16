@@ -9,7 +9,7 @@ year: 2021
 venue: "Nucl. Fusion 61:065001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Nuclear_Fusion_Hoelzl_The_JOREK_non-linear_extended_MHD_code_and_applications_to_l.pdf"
 tags: [review, code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, stabilization, free-boundary, wall, disruption, vde, runaway-electrons, impurities, neutrals, particles, elm, pedestal, edge, benchmark, verification]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -195,9 +195,9 @@ conduction tensors, $\mathsf K=\kappa_\parallel\mathbf b\mathbf b+\kappa_\perp(\
 **Reduced MHD** (§2.3.1, Eqs. 25–39, Table 1). Ansatz
 
 $$\mathbf A=\psi\nabla\phi,\qquad \mathbf B=F_0\nabla\phi+\nabla\psi\times\nabla\phi,\qquad
-\mathbf v=-R^2\nabla u\times\nabla\phi+(\text{ion diamagnetic velocity})+v_\parallel\mathbf b,$$
+\mathbf v=-R^2\nabla u\times\nabla\phi+\mathbf v_{\mathrm{dia},i}+v_\parallel\mathbf b,$$
 
-with $u=\Phi/F_0$; JOREK evolves the coefficient $v_\parallel/B$ of
+with $u=\Phi/F_0$ and $\mathbf v_{\mathrm{dia},i}$ the ion diamagnetic velocity; JOREK evolves the coefficient $\hat v_\parallel=v_\parallel/B$ of
 $\mathbf B$ rather than $v_\parallel$ itself (Notation map). Strong-form reading of the weak flux equation (Eq. 28):
 
 $$\partial_t\psi=-R\,[u,\psi]-\eta\,(j-j_x)+F_0\,\partial_\phi u-(\text{diamagnetic term}),\qquad [f,g]=\mathbf e_\phi\cdot\nabla f\times\nabla g ,$$
@@ -367,14 +367,14 @@ with virtual coil currents.
 | $\mathbf w=\nabla\times\mathbf v$ | words (vorticity vector) | |
 | $\rho=n_em_{ion}$ | $\rho$ | $\rho_{SI}=\rho\rho_0$ |
 | $T=T_e+T_i$, $p=\rho T$ | $T$, $p$ | $T_{SI}=T/(k_B\mu_0n_0)$, $p_{SI}=\rho T/\mu_0$ |
-| $v_\parallel$ ($\mathbf v_\parallel=v_\parallel\mathbf B$) | $v_\parallel/B$ | **collision:** registry $v_\parallel=\mathbf v\cdot\mathbf b$ is a speed; JOREK's $v_\parallel$ is that speed divided by $B$ |
-| $\mathbf v_E$, $\mathbf v_{dia,i}$ ($\mathbf v_i^*$) | $\mathbf v_E$; words | $-R^2\nabla u\times\nabla\phi$; ion diamagnetic velocity |
+| $v_\parallel$ ($\mathbf v_\parallel=v_\parallel\mathbf B$) | $\hat v_\parallel=v_\parallel/B$ | **collision:** registry $v_\parallel=\mathbf v\cdot\mathbf b$ is a speed; JOREK's $v_\parallel$ is the coefficient $\hat v_\parallel$ |
+| $\mathbf v_E$, $\mathbf v_{dia,i}$ ($\mathbf v_i^*$) | $\mathbf v_E$; $\mathbf v_{\mathrm{dia},i}$ | $-R^2\nabla u\times\nabla\phi$; ion diamagnetic velocity |
 | $\delta^*$ ($\delta_*$) | words (diamagnetic parameter $m_i/(eF_0\sqrt{\mu_0\rho_0})$) | |
 | $\mathbf J_\star$, $j_S$, $j_B$ | $\mathbf J_x$, $j_x$ | bootstrap form $j_0+j_B-j_{B,0}$ |
 | $\gamma$ | $\Gamma$ | **collision:** registry $\gamma$ is a growth rate |
-| $\underline{\boldsymbol\tau}$ ($\underline{\boldsymbol\tau}_f$, $\underline{\boldsymbol\tau}_{neo}$, $\underline{\boldsymbol\tau}_{gv}$) | words | viscous stress |
+| $\underline{\boldsymbol\tau}$ ($\underline{\boldsymbol\tau}_f$, $\underline{\boldsymbol\tau}_{neo}$, $\underline{\boldsymbol\tau}_{gv}$) | $\mathsf\Pi$ (viscous part; $\mathsf\Pi_{\mathrm{neo}}$, $\mathsf\Pi_{\mathrm{gv}}$ the neoclassical and gyroviscous parts) | viscous stress |
 | $\nu_\parallel,\nu_\perp,\nu_{neo}$ | $\nu$; words | dynamic; $\nu_{SI}=\nu\sqrt{\rho_0/\mu_0}$ |
-| $\underline{\boldsymbol\kappa}$, $\kappa_\parallel,\kappa_\perp$ | $\mathsf K$; $\kappa_\parallel$, $\kappa_\perp$ | $(\gamma-1)$ absorbed; $\kappa_{SI}=\kappa\sqrt{\rho_0/\mu_0}/(\gamma-1)$ |
+| $\underline{\boldsymbol\kappa}$, $\kappa_\parallel,\kappa_\perp$ | $\mathsf K$; $\kappa_\parallel$, $\kappa_\perp$ | $(\Gamma-1)$ absorbed; $\kappa_{SI}=\kappa\sqrt{\rho_0/\mu_0}/(\Gamma-1)$ |
 | $\underline{\mathbf D}$, $D_\perp$ | $\mathsf D$; $D_\perp$ | $D_{SI}=D/\sqrt{\mu_0\rho_0}$ |
 | $\eta$ | $\eta$ | $\eta_{SI}=\eta\sqrt{\mu_0/\rho_0}$ |
 | $t$ | $t$ | $t_{SI}=t\sqrt{\mu_0\rho_0}$, about $\tau_A/2.5$ for ITER |
@@ -396,7 +396,7 @@ with virtual coil currents.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
@@ -411,6 +411,7 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Double tearing mode](/definitions/double-tearing-mode.md)
+* [Edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [Electromagnetic wall forces (vertical and sideways)](/definitions/wall-forces.md)
 * [Fluid neutral models and plasma–neutral atomic sources](/methods/fluid-neutral-models.md)
@@ -427,6 +428,7 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
 * [Linear MHD eigenvalue codes](/methods/linear-mhd-eigenvalue-codes.md)
 * [M3D](/software/m3d.md)
 * [M3D-C1](/software/m3d-c1.md)
+* [Massive gas injection](/definitions/massive-gas-injection.md)
 * [NIMROD](/software/nimrod.md)
 * [NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)](/benchmarks/nstx-vde-benchmarks.md)
 * [ORB5](/software/orb5.md)

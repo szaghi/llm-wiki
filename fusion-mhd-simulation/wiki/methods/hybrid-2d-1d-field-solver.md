@@ -5,7 +5,7 @@ description: "BOUT++ extension that inverts the vorticity–potential Helmholtz 
 status: established
 aliases: [hybrid field solver, 2D/1D Laplacian inversion, flute ordering, flute-ordering approximation, low-n field solver]
 tags: [finite-differences, linear-solver, numerics, ballooning, elm, pedestal, edge]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Hybrid 2D/1D field solver and the flute-ordering error
@@ -30,7 +30,7 @@ $$\Big(a_2\nabla_\perp^2+\frac{1}{a_1}\nabla a_1\cdot\nabla_\perp+a_0\Big)f=h,\q
 Boussinesq-type linearization, perturbed over equilibrium density small), so
 each toroidal harmonic $n$ is inverted independently. In the
 peeling–ballooning model of §4 the equation is
-$[\nabla_\perp^2+B^2\nabla(B^{-2})\cdot\nabla_\perp]\phi_1=B^2\varpi_1$ with
+$[\nabla_\perp^2+B^2\nabla(B^{-2})\cdot\nabla_\perp]\delta\Phi=B^2\delta\varpi$ with
 constant density (Eq. 27), i.e. $a_2=1$, $a_1=B^{-2}$, $a_0=0$.
 
 ## Three discretizations
@@ -94,11 +94,20 @@ $m\sim nq$, which limits the 2D solver to low $n$ (§3.2).
 - **Full versus quarter torus** (pedestal collapse, $n_{2D}=4$,
   $n_{1D}=80$): the final energy loss is similar, but in the full torus the
   low-$n$ and zonal components grow first and the collapse comes at
-  $t\approx313\,t_A$ instead of $231\,t_A$, and a tearing-like $(m,n)=(2,1)$
+  $t\approx313\,\tau_A$ instead of $231\,\tau_A$, and a tearing-like $(m,n)=(2,1)$
   structure coexists with high-$n$ filaments (§5.3, Figs. 7–10; see
   [edge-localized mode](/definitions/edge-localized-mode.md)). The paper
   concludes that a wedge may suffice for the final energy loss but the full
-  annulus is required for the loss process.
+  annulus is required for the loss process. A later analysis by the same
+  authors of what is, by the compiler's identification (same model, grid and
+  linear spectrum; the equilibrium is not named there), the same cbm18_dens4
+  run resolves two crashes, the 2023 collapse being the second by the
+  compiler's timing cross-check, and adds a half torus with a crash interval
+  between the two
+  ([Seto et al. (2024)](/sources/seto-2024.md), §III, Figs. 3, 13; see
+  [two-stage ELM crash](/results/two-stage-elm-crash.md)). Those runs use
+  the same split, $0\le n\le4$ in the 2D solver and $4<n\le80$ in the 1D
+  solver, with $n\ge81$ filtered out (§II).
 - **Cost:** the full-torus production run took $8.3\times10^5$ core-hours
   (4096 cores for 8.5 days), about 40% of it in the field solver (§5.3).
 
@@ -121,3 +130,4 @@ $m\sim nq$, which limits the 2D solver to low $n$ (§3.2).
 # Citations
 
 - [Seto et al. (2023)](/sources/seto-2023.md) — §1–6, Eqs. 15–20, 27, App. A, Figs. 1–10.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §II–III, Figs. 3, 13.

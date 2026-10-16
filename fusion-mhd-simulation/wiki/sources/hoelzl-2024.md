@@ -9,7 +9,7 @@ year: 2024
 venue: "Nucl. Fusion 64:112016"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Nuclear_Fusion_Hoelzl_Non-linear_MHD_modelling_of_transients_in_tokamaks_a_review.pdf"
 tags: [review, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, stellarator, disruption, vde, runaway-electrons, impurities, neutrals, wall, free-boundary, elm, pedestal, energetic-particles, hybrid-kinetic, finite-elements, gpu, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -54,13 +54,15 @@ evidence; "Attributed" means the claim is asserted with a citation only.
    regime", with transitions to large ELMs at higher heating and at
    sufficiently low separatrix density. Attributed.
 2. **EDA H-mode** (§2.1, Fig. 1). Fluctuating MHD dominated by $n=1$–3 with
-   pedestal fluctuation frequencies in the experimental range. Shown.
+   pedestal fluctuation frequencies in the experimental range. Shown
+   (original: [Cathey et al. (2023)](/sources/cathey-2023.md)).
 3. **QH-mode** (§2.1, Fig. 2). Simulations recover the edge harmonic
    oscillation and the loss of the regime to large ELMs at higher pedestal
    density; "$q_{95}$ windows are found within which QH-mode can exist".
    A non-linear drop of $q_{95}$ (current redistribution including the
    self-consistent bootstrap current) reduces growth rates and acts as a
-   saturation mechanism. Shown (Fig. 2) / Attributed (mechanism).
+   saturation mechanism. Shown (Fig. 2) / Attributed (mechanism); the
+   $q_{95}$ windows are reviewed in [Cathey et al. (2024)](/sources/cathey-2024.md).
 4. **Free-boundary RMP response** (§2.2). The JOREK–STARWALL RMP model
    "was shown to recover experimental flux surface corrugation
    accurately". Attributed.
@@ -113,7 +115,8 @@ evidence; "Attributed" means the claim is asserted with a citation only.
     can reach the core before the edge radiative collapse, stochastic field
     lines outside $q=1$ form a transient transport barrier early in the
     thermal quench, and core density transport depends on the deposition
-    relative to $q=1$ and $q=2$. Shown.
+    relative to $q=1$ and $q=2$. Shown (ITER original:
+   [Hu et al. (2023)](/sources/hu-2023.md)).
 18. **Pre-existing islands** (§3.2). The response to massive D injection
     depends on the injection phase relative to the island. Attributed.
 19. **JET, ASDEX Upgrade, KSTAR SPI** (§3.2). JET D and mixed SPI
@@ -125,7 +128,8 @@ evidence; "Attributed" means the claim is asserted with a citation only.
 20. **ITER current quench** (§3.3, Fig. 9). At realistic post-quench
     parameters, mitigation reduces global wall forces; MHD activity
     persists through the current quench; runaway losses and trapping are
-    analysed. Shown (Fig. 9) / Attributed.
+    analysed. Shown (Fig. 9) / Attributed (original:
+   [Artola et al. (2022)](/sources/artola-2022.md)).
 21. **Vertical-force mitigation mechanism** (§3.3, Fig. 10). Massive
     impurity injection makes temperatures inside and outside the
     separatrix comparable, so substantial current flows in the
@@ -149,7 +153,9 @@ evidence; "Attributed" means the claim is asserted with a citation only.
 24. **Double tearing mode** (§3.5, Fig. 12). Lower resistivity gives faster
     growth of secondary modes and earlier stochasticity at the same
     main-mode amplitude ($\eta=10^{-5}$ vs $10^{-6}$ in JOREK units, main
-    mode $m/n=4/1$). Shown.
+    mode $m/n=4/1$). Shown (its ref. [58],
+   [Nardon et al. (2023b)](/sources/nardon-2023-b.md), whose scan covers
+   $\eta=10^{-7}$–$10^{-4}$).
 25. **Stellarators** (§4.1). A virtual-current model (axisymmetric geometry
     with an approximated external rotational transform); JOREK3D's
     stellarator reduced MHD benchmarked linearly for classical
@@ -271,7 +277,7 @@ figure captions.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
@@ -280,6 +286,7 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
 * [Double tearing mode](/definitions/double-tearing-mode.md)
+* [Edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [Electromagnetic wall forces (vertical and sideways)](/definitions/wall-forces.md)
 * [Electron temperature hole and the stochastic barrier at q = 1 after SPI](/results/electron-temperature-hole.md)
@@ -362,4 +369,6 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
      private communications of Wang L. (ref. [20]) and Wang C. (ref. [60])
      are `wang-2024-c` and `wang-2024-d`. Other ingested works it cites:
      `hoelzl-2021`, `isernia-2023`, `korving-2023`, `bhole-2023`,
-     `bogaarts-2022`, `nikulsin-2022`.
+     `bogaarts-2022`, `nikulsin-2022`, and (ingested since) `artola-2022`,
+     `becoulet-2022`, `cathey-2023`, `cathey-2024`, `hu-2023`, `hu-2024`,
+     `nardon-2023-b`, `ramasamy-2024`.

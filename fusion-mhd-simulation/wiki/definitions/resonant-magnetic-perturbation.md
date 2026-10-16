@@ -5,7 +5,7 @@ description: "Small non-axisymmetric fields applied by external or in-vessel coi
 status: established
 aliases: [RMP, RMPs, magnetic perturbation, MP, plasma response, RMP ELM suppression, ELM mitigation by RMP, density pump-out]
 tags: [elm, pedestal, edge, tokamak, mhd, extended-mhd, free-boundary, wall, tearing]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Resonant magnetic perturbations and plasma response
@@ -112,6 +112,18 @@ whose penetration is a disruption precursor
    hysteresis: penetration above about 2 kA, expulsion below 1.5 kA
    ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6).
 
+**A self-generated stochastic edge without coils.** The ergodic edge layer
+that a resonant field opens can also come from the plasma's own saturated
+mode. In predictive JOREK runs of an HL-3 QH-mode, with no RMP applied, the
+saturated $n=2$ kink-peeling mode makes the edge stochastic outside
+$\psi_N\approx0.93$, a layer that widens with time, while resilient surfaces
+persist near $q=2$ ($\psi_N\approx0.87$) "despite the fact that the KAM
+surfaces are not enforced in JOREK"; the $q$ profile barely changes
+([Liang et al. (2025)](/sources/liang-2025.md), §IV B 1, Figs. 9–10; see
+[edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md)).
+The authors attribute the transport-inhibiting role of such surviving
+surfaces to Volpe et al. (2012, as cited; stated).
+
 ## The X-point displacement criterion
 
 Becoulet et al. (2022, §1, §6) adopt, after Liu et al. (2016, as cited), the
@@ -200,3 +212,4 @@ None open.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §2.2, Fig. 3.
 - [Howell et al. (2022)](/sources/howell-2022.md) — §II B, §III B, §V, Eqs. 11–12.
 - [Zhang et al. (2021)](/sources/zhang-2021.md) — §2.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §IV B 1, Figs. 9–10.

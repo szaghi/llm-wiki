@@ -5,7 +5,7 @@ description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical 
 status: established
 aliases: [resistive kink, internal kink, m=n=1 mode, 1/1 kink, Coppi scaling]
 tags: [kink, tearing, mhd, reduced-mhd, full-mhd, verification, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Resistive internal kink (m/n = 1/1)
@@ -93,14 +93,14 @@ Hoelzl et al. (2021, §2.3.3) explain why the ansatz-based
 internal kink at finite $\beta$, following Graves et al. (their ref. [69]).
 The reduced ansatz keeps the perturbation of the parallel field near zero. Full
 MHD would instead have the field perturbation balance the pressure
-perturbation, $B\,\delta B_\parallel\approx-\delta p$, with $\mu_0=1$ as in
-JOREK units. The reduced energy principle therefore contains a spurious
-positive-definite term,
+perturbation, $B\,\delta B_\parallel/\mu_0\approx-\delta p$. The reduced
+energy principle therefore contains a spurious positive-definite term,
 
-$$\tfrac12\int\Big(\delta B_\parallel+\frac{\delta p}{B}\Big)^2\,dV,$$
+$$\frac{1}{2\mu_0}\int\Big(\delta B_\parallel+\frac{\mu_0\,\delta p}{B}\Big)^2\,dV,$$
 
-which stabilizes the mode. Here $\delta$ denotes the linear perturbation,
-$\mu_0=1$ (JOREK units), and $B$ is the equilibrium field. Edge ballooning
+which stabilizes the mode. Here $\delta$ denotes the linear perturbation
+and $B$ is the equilibrium field; the source writes both expressions in
+JOREK units ($\mu_0=1$). Edge ballooning
 modes are largely unaffected because $q\gg1$ there (see
 [ballooning mode](/definitions/ballooning-mode.md)).
 [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§VIII) repeat the
@@ -120,11 +120,25 @@ With a weakly reversed $q$ profile and $q_{\min}$ just above 1, a $(1,1)$
 M3D-C1-K runs find the $n=1$ kink unstable for $q_{\min}<1.06$, with
 $\gamma\tau_A\approx0.026$ at $q_{\min}=1.00$ falling to zero at 1.06 (figure
 readings). At fixed $q_{\min}=1.04$ its growth rate depends strongly on
-$\beta$, rising from 0 at $0.8\beta_0$ to $\gamma\tau_A\approx0.021$ at
-$1.2\beta_0$, "similar to pressure-driven modes"
+$\beta$, rising from 0 at $\beta/\beta_{\mathrm{exp}}=0.8$ to
+$\gamma\tau_A\approx0.021$ at 1.2 ($\beta_{\mathrm{exp}}$ the experimental
+value), "similar to pressure-driven modes"
 ([Liu et al. (2022b)](/sources/liu-2022-b.md), §4, Figs. 5, 10; $\tau_A$ not
 defined by the source). Kinetic thermal ions and energetic particles turn the
 mode into a non-resonant [fishbone](/definitions/fishbone.md) (same source).
+
+**In gas-injection thermal quenches.** In a SPARC target with
+$q_{\min}=1.05$ and no $q=1$ surface, a large 1/1 mode grows during the
+NIMROD gas-injection TQ. Its flows pull neon blobs from the edge into a
+single helical flux tube at $q\approx1.05$ at mid-radius, where the
+radiation flash peaks at the start of the mixing
+([Izzo et al. (2025)](/sources/izzo-2025.md), §II C–D, Fig. 7). The small
+$n=1$ field of a closed-circuit
+[runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md)
+makes the large unstable $n=1$ grow and saturate earlier (§III B), and a
+1000-fold mass density in the region between limiter and vessel forestalls
+it, letting higher-$n$ modes collapse the mid-radius temperature first
+(§III C, Fig. 9). No growth rates are given.
 
 ## Stellarators: two $\iota=1$ surfaces
 
@@ -147,7 +161,23 @@ saturated $(1,1)$ core follows ([magnetic flux pumping](/definitions/magnetic-fl
 - **Flux pumping.** A $1/1$ quasi-interchange mode can keep $q_0\ge1$ when
   the pressure is peaked enough, which prevents sawteeth
   ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4; see
-  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
+  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)). The
+  primary JOREK study of an ASDEX Upgrade hybrid discharge finds the
+  saturated 1/1 state holding the axisymmetric $q_0\approx0.99$ instead,
+  with two twisted 1/1 flux tubes in the core: the original one keeps a
+  local $q_0\approx1.04$ (ideal quasi-interchange, topology unchanged), and
+  a new island-like tube has a local $q_0\approx0.97$ (resistive tearing).
+  The flow concentrates at the X-point beneath the new tube, "suggesting an
+  incomplete magnetic reconnection", and the authors call the mode "a
+  combination of the 1/1 ideal quasi-interchange mode and the 1/1 resistive
+  tearing mode" ([Zhang et al. (2025)](/sources/zhang-2025.md), §3.4,
+  Fig. 12, §6.1; local $q$ from field-line tracing about the helical axis).
+  At lower Hartmann number (raised resistivity and viscosity) the state
+  turns into sawtooth-like oscillations and then into a quasi-stationary
+  1/1 resistive internal kink with $q_0\sim0.7$ (§6.2; stated, not shown).
+  The current redistribution is carried by an
+  [MHD dynamo](/definitions/mhd-dynamo.md) (same source, §4). See
+  Contradictions.
 - **Suppression by construction.** NIMROD NTM studies and linear M3D-C1
   resistive-wall studies raise $q_0$ above 1 to suppress the $(1,1)$ mode and
   sawteeth ([Howell et al. (2022)](/sources/howell-2022.md), §III A;
@@ -162,6 +192,13 @@ saturated $(1,1)$ core follows ([magnetic flux pumping](/definitions/magnetic-fl
     [shattered pellet injection](/definitions/shattered-pellet-injection.md)).
   - Core density transport depends on where material is deposited relative
     to $q=1$ (Hoelzl et al. 2024, §3.2).
+  - **Core collapse at the end of an SPI TQ.** In neon-doped deuterium SPI
+    into an ASDEX Upgrade H-mode, the TQ is triggered at $q=2$, and a 1/1
+    mode in its second, radiative stage leads to the core collapse: core
+    $T_e$ "suddenly drops to below 10 eV following the 1/1 MHD activity",
+    with a second magnetic-energy and radiation peak, earlier and stronger
+    at higher neon fraction; pure deuterium injection shows no such stage
+    ([Tang et al. (2025)](/sources/tang-2025.md), §3.2, Figs. 5e, 11–12).
   - **SPI trigger at $q=1$.** In ITER L-mode plasmas with a large
     $q\approx1$ region, the thermal quench after neon or neon–hydrogen SPI is
     triggered when the vanguard fragments enter $q=1$: helical cooling there
@@ -216,9 +253,19 @@ is a weak check, not a confirmation.
 
 ## Contradictions
 
-None open. Reduced and full MHD differ on the finite-$\beta$ internal kink, but
-this is a known model limitation that both citing sources state the same way,
-not a disagreement between sources.
+Reduced and full MHD differ on the finite-$\beta$ internal kink, but this is
+a known model limitation that both citing sources state the same way, not a
+disagreement between sources.
+
+**Value of $q_0$ held by the 1/1 mode in flux pumping — Open.**
+[Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§4.4) summarize flux
+pumping as keeping $q_0\ge1$; [Zhang et al. (2025)](/sources/zhang-2025.md)
+(§3.4, Figs. 9, 12), the primary JOREK study with an overlapping author
+list, find the axisymmetric $q_0\approx0.99$ and a local 0.97 in the
+reconnected tube, with only the original tube at 1.04. The entry is
+recorded in full on [magnetic flux pumping](/definitions/magnetic-flux-pumping.md);
+on this page it bears on whether the saturated state contains a resistive
+1/1 component inside a $q<1$ region.
 
 # Citations
 
@@ -236,3 +283,6 @@ not a disagreement between sources.
 - [Howell et al. (2022)](/sources/howell-2022.md) — §III A.
 - [Strauss et al. (2022)](/sources/strauss-2022.md) — §II.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §5.3.
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §3.4, §6.1–6.2, Fig. 12.
+- [Tang et al. (2025)](/sources/tang-2025.md) — §3.2, Figs. 11–12.
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §II C–D, §III B–C.

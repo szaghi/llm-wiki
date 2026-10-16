@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Toroidal radiation asymmetry and first-wall energy impact"
-description: "The toroidal asymmetry of the power radiated during a mitigated thermal quench, measured by the radiation toroidal peaking factor and converted into a first-wall energy impact; in JOREK simulations single-injector SPI gives peaking factors above 2 with a helical structure set by the triggering rational surface, and dual injection removes most of it even with a 1 ms delay."
+description: "The toroidal asymmetry of the power radiated during a mitigated thermal quench, measured by the radiation toroidal peaking factor and converted into a first-wall energy impact; in JOREK simulations single-injector SPI gives peaking factors above 2 with a helical structure set by the triggering rational surface and dual injection removes most of it even with a 1 ms delay, while NIMROD multi-valve gas injection in SPARC stays below 1.5 in the thermal quench."
 status: established
 aliases: [radiation peaking, toroidal peaking factor of radiation, TPF of radiated power, radiation asymmetry, energy impact, heat-flux factor]
 tags: [disruption, impurities, wall, mhd, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Toroidal radiation asymmetry and first-wall energy impact
@@ -19,8 +19,8 @@ local, time-integrated heat load that the asymmetry produces.
 
 ## Measures
 
-Page-local symbols, pending registry entries: $\mathrm{TPF}_{\mathrm{rad}}$
-the radiation toroidal peaking factor, $q_s$ the heat flux onto a wall
+Registry symbols ([notation](/notation.md), §10): $\mathrm{TPF}_{\mathrm{rad}}$
+the radiation toroidal peaking factor, $q_w$ the heat flux onto a wall
 surface, $\Delta Q$ the energy impact.
 
 - **Radiation toroidal peaking factor.** With
@@ -33,19 +33,34 @@ surface, $\Delta Q$ the energy impact.
   function of $\phi$). ITER's target for it is 2 (as recorded from Hoelzl
   et al. 2021 on the SPI page). It is distinct from the halo-current
   $\mathrm{TPF}$ of [halo current](/definitions/halo-current.md).
+- **Discrete-sector estimate.** An experiment sees $P_{\mathrm{rad}}^{\mathrm{tor}}$
+  only at a few bolometer sectors $\phi_i$; the synthetic diagnostic of
+  [Tang et al. (2025)](/sources/tang-2025.md) (Fig. 23 caption) replaces the
+  toroidal mean by the trapezoidal average over the five AUG foil-bolometer
+  sectors,
+  $$\mathrm{TPF}_{\mathrm{rad}}\approx\frac{\max_iP_{\mathrm{rad}}^{\mathrm{tor}}(\phi_i)}{\sum_i\frac12\big[P_{\mathrm{rad}}^{\mathrm{tor}}(\phi_i)+P_{\mathrm{rad}}^{\mathrm{tor}}(\phi_{i+1})\big]\frac{\phi_{i+1}-\phi_i}{2\pi}},$$
+  which approaches the continuous definition only when the sectors resolve
+  the toroidal structure.
+- **Phase-integrated and partial-volume factors.**
+  [Izzo et al. (2025)](/sources/izzo-2025.md) (§II C–D) tabulate the factor
+  of the radiated *energy* integrated over each phase (pre-TQ, TQ, CQ), and
+  an "upper TPF" from the radiation of the upper half volume only, which
+  separates the local radiation near a row of valves from global peaking.
 - **Energy impact.** For a semi-infinite wall under a constant surface flux
-  $q_s$ applied for $\Delta t$, the surface temperature rise is
-  $\frac{2}{\sqrt\pi\,b}\,q_s\sqrt{\Delta t}$, with $b$ the thermal
+  $q_w$ applied for $\Delta t$, the surface temperature rise is
+  $\frac{2}{\sqrt\pi\,b}\,q_w\sqrt{\Delta t}$, with $b$ the thermal
   effusivity of the material (square root of conductivity times density
-  times specific heat); the energy impact $\Delta Q=q_s\sqrt{\Delta t}$ is
+  times specific heat); the energy impact $\Delta Q=q_w\sqrt{\Delta t}$ is
   therefore the quantity compared with melt limits. For a time-varying
   flux the half-space heat kernel gives
-  $$\Delta Q(t)=\frac12\int_{t_0}^{t}\frac{q_s(t')}{\sqrt{t-t'}}\,dt',$$
-  which reduces to $q_s\sqrt{t-t_0}$ for constant flux
+  $$\Delta Q(t)=\frac12\int_{t_0}^{t}\frac{q_w(t')}{\sqrt{t-t'}}\,dt',$$
+  which reduces to $q_w\sqrt{t-t_0}$ for constant flux
   ([Hu et al. (2024)](/sources/hu-2024.md), §2.2, Eqs. 2–4; the compiler
   checked the constant-flux limit). Limits quoted: stainless steel 13,
   beryllium 28, tungsten 38 MJ s$^{-1/2}$ m$^{-2}$ (§1, §4–5, citing Pitts
-  et al. 2015 and Herrmann 2002).
+  et al. 2015 and Herrmann 2002). [Izzo et al. (2025)](/sources/izzo-2025.md)
+  (§II D) use the continuous form "from [Hu 2024]" and give 50 MJ
+  s$^{-1/2}$ m$^{-2}$ for melting of pure tungsten (see Contradictions).
 
 ## Single-injector SPI: peaking and helical structure
 
@@ -74,7 +89,10 @@ give the primary simulation evidence:
   attribute the difference to toroidally localized (SPI) against uniform
   (MGI) impurity density, with the MGI peak set by where the 1/1 X-point
   heat flux emerges (§6). This is a physical difference between injection
-  schemes, not a disagreement between codes; no MGI run is made.
+  schemes, not a disagreement between codes; no MGI run is made. The
+  NIMROD SPARC MGI runs below agree that the TQ peak is not at the
+  injector: it lies in a single helical flux tube at mid-radius
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II D, Fig. 7).
 
 ## Dual injection
 
@@ -94,6 +112,62 @@ give the primary simulation evidence:
   Figs. 17, 19, 20). The review states the same conclusion, single SPI above
   2 and dual SPI mitigating ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
   §6.2.4).
+
+## ASDEX Upgrade SPI: early peaking against experiment
+
+[Tang et al. (2025)](/sources/tang-2025.md) (§3.5, Figs. 23–24) compare
+JOREK neon–deuterium SPI with AUG bolometry. The simulated radiation shows
+two peaks in the $P_{\mathrm{rad}}$–$\mathrm{TPF}_{\mathrm{rad}}$ plane.
+The first, with $\mathrm{TPF}_{\mathrm{rad}}$ up to about 2.4–2.6, comes
+from the outward heat flux and the sharp ablation at fragment arrival; it is
+stronger for smaller fragments and "is overestimated in simulations and not
+observed in experiments". The factor at the TQ peak is small, as in
+experiment. Across the five sectors the measured radiation is more
+toroidally uniform than the simulated one (except one sector). The authors
+name optical opacity and the missing equilibrium toroidal flow as causes
+(stated). This is an *over*estimate of peaking with a toroidal source width
+of 0.8 rad, between the 1 rad of Hu et al. (2021) and the 0.3–0.5 rad of
+Hu et al. (2023, 2024), widths that those papers associate with artificial
+mitigation of peaking (see Numerical caveats).
+
+## Multi-valve gas injection in SPARC
+
+[Izzo et al. (2025)](/sources/izzo-2025.md) compare four NIMROD
+[massive gas injection](/definitions/massive-gas-injection.md) layouts with
+the same 90/10 D$_2$/neon inventory. The low-resolution runs ($n\le10$,
+toroidally broad source) give these factors of the phase-integrated
+radiated energy (Table II):
+
+| Layout | pre-TQ | TQ | CQ |
+|---|---|---|---|
+| 6 valves, non-resonant | 1.07 | 1.21 | 1.11 |
+| 6 valves, resonant | 1.09 | 1.26 | 1.41 |
+| 4 valves, non-resonant | 1.39 | 1.33 | 1.51 |
+| 4 valves, resonant | 1.28 | 1.33 | 1.47 |
+
+All four radiate more than 95% of the lost energy, and the 6-valve
+non-resonant layout is lowest in every phase; it was chosen for SPARC
+(§II C, §IV). The broad source underpredicts the factor, especially
+pre-TQ, so the table is a relative comparison (§II C). At high resolution
+($n\le21$, a source four times narrower toroidally, more deuterium in it):
+
+- The total-neon peaking mostly reflects the source, since most neon stays
+  neutral outside the separatrix: about 4.5 for the resonant (three
+  toroidal locations) and 2.3 for the non-resonant (six locations) layout.
+  The "upper TPF" is nearly identical for the two up to 0.25 ms, so fewer
+  locations do not mean more local radiation near each valve. Ionized neon
+  has a factor near 1 within 0.5 ms (§II D, Fig. 6).
+- The radiation factor falls from about 3–4 early to 1–1.5; it upticks at
+  the TQ but stays at or below 1.5. The resonant layout shows an $n=3$
+  pattern with an $n=1$ overlay at the TQ from the large 1/1 mode, the
+  non-resonant one a slight $n=6$ variation early and $n=1$ at the TQ
+  (§II D, Fig. 6).
+- Ray tracing with Cherab gives a peak first-wall flux $q_w$ above
+  1 GW/m² for about 100 µs near an upper injector, and $\Delta Q\approx20$
+  MJ s$^{-1/2}$ m$^{-2}$, "near-to but below the critical value" of the
+  tungsten heavy alloy of the SPARC limiters (value not printed); melting of
+  pure tungsten is "unlikely in any SPARC mitigated disruption" (§II D,
+  Fig. 8).
 
 ## First-wall energy impact in ITER H-mode dual SPI
 
@@ -126,7 +200,12 @@ the conclusion that it exceeds the tungsten limit stands either way (§5).
 - **Toroidal source width.** The density sources are toroidally elongated
   for resolution reasons (1 rad in Hu et al. 2021; 0.3 rad in Hu et al.
   2024). Hu et al. (2021, §2.2, §6) state that this "may result in
-  artificially mitigated toroidal peaking". Hu et al. (2023) find that
+  artificially mitigated toroidal peaking". Izzo et al. (2025, §II C)
+  agree for gas injection: their four-times-broader source underpredicts
+  $\mathrm{TPF}_{\mathrm{rad}}$. The AUG runs of Tang et al. (2025) at
+  0.8 rad nevertheless overestimate early peaking relative to experiment
+  (above), so a broad source is not a sufficient condition for an
+  underestimate when the peaking comes from the ablation burst itself. Hu et al. (2023) find that
   narrowing the width from 0.5 to 0.3 rad raises radiation less than
   proportionally and conclude that radiation from elongated sources "should
   be considered as a lower estimation" ([Hu et al. (2023)](/sources/hu-2023.md),
@@ -134,9 +213,34 @@ the conclusion that it exceeds the tungsten limit stands either way (§5).
   [shattered pellet injection](/definitions/shattered-pellet-injection.md).
 - **Opacity.** All runs assume an optically thin plasma; near the fragments
   this is questionable (Hu et al. 2021, §2.2), and neglected opacity
-  overestimates the peak radiation (Hu et al. 2024, §5).
-- **Resolution.** Neither study reports a convergence test of
-  $\mathrm{TPF}_{\mathrm{rad}}$ or $\Delta Q$.
+  overestimates the peak radiation (Hu et al. 2024, §5); Tang et al. (2025,
+  §3.5, §4) name it for their overestimated early peaking.
+- **Transport closures.** A constant $\kappa_\parallel$ tends to
+  underpredict $\mathrm{TPF}_{\mathrm{rad}}$, and the high viscosity needed
+  for stability likely makes radiation more peaked than a lower one would
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §IV, stated).
+- **Resolution.** None of the studies reports a convergence test of
+  $\mathrm{TPF}_{\mathrm{rad}}$ or $\Delta Q$; the low/high-resolution pair
+  of Izzo et al. (2025) changes source width and deuterium content together
+  with $N_{\mathrm{tor}}$.
+- **Line spectrum.** Post-processing the SPARC TQ peak with OPEN-ADAS
+  photon-emissivity coefficients gives 96 non-negligible neon lines summing
+  to 70.1 GW against NIMROD's 65 GW, with over 75% of the power between 16
+  and 35 eV (Izzo et al. 2025, Appendix, Table III).
+
+## Contradictions
+
+**Melt limit of tungsten in energy-impact units — Open.**
+[Hu et al. (2024)](/sources/hu-2024.md) (§1, §4–5) compare their energy
+impacts with 38 MJ s$^{-1/2}$ m$^{-2}$ for tungsten (citing Herrmann 2002).
+[Izzo et al. (2025)](/sources/izzo-2025.md) (§II D), who take their
+$\Delta Q$ formula from Hu et al. (2024), give 50 MJ s$^{-1/2}$ m$^{-2}$
+for melting of pure tungsten, without a reference for the number. Neither
+states the initial surface temperature or the damage criterion (melting
+from room temperature, from an operating temperature, or another
+threshold), which can account for a 30% difference. The basis of the 50
+value would settle it; the SPARC conclusion holds against either number
+($\Delta Q\approx20$).
 
 ## Citations
 
@@ -144,3 +248,5 @@ the conclusion that it exceeds the tungsten limit stands either way (§5).
 - [Hu et al. (2024)](/sources/hu-2024.md), §1–5, Eqs. 2–4, Table 2, Figs. 6, 12–15.
 - [Hu et al. (2023)](/sources/hu-2023.md), §4.2, §5.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.2.4.
+- [Tang et al. (2025)](/sources/tang-2025.md), §3.5, §4, Figs. 23–24.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §II C–D, §IV, Appendix, Figs. 6–8, Tables II–III.

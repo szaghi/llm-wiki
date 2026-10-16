@@ -5,7 +5,7 @@ description: "NIMROD's time advance: velocity staggered half a step from density
 status: established
 aliases: [implicit leapfrog, mixed implicit/semi-implicit leapfrog, staggered semi-implicit advance, NIMROD time advance]
 tags: [time-integration, numerics, full-mhd, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Semi-implicit leapfrog
@@ -45,6 +45,17 @@ For single-fluid MHD the neutral unknowns drop out. The velocity of the
 neutral species also needs a semi-implicit operator, for its sound waves
 (§3).
 
+The same dependency structure is the stated template of the equation-sparsified
+[Fourier neural operator](/methods/fourier-neural-operator-surrogates.md)
+(ST-FNO) of [Rahman et al. (2024)](/sources/rahman-2024.md), which "exploits
+the same structure of the MHD equations that is exploited by the semi-implicit
+leapfrog algorithm within NIMROD" by feeding each output field only from the
+fields its evolution equation depends on (§II B 2). The surrogate does not
+reproduce the staggering: all its inputs are taken at the same snapshot, and
+for the two-fluid model it emulates it drops dependencies by hand, e.g. the
+Hall and electron-pressure terms from the field advance (§II B 1–2;
+compiler's observation on the staggering).
+
 ## The semi-implicit velocity advance
 
 A semi-implicit operator in the velocity advance is "essential" to stabilize
@@ -81,6 +92,11 @@ $$\frac{\Delta n_i}{\Delta t}+\theta_{\mathrm t}\,\nabla\cdot\big(\mathbf v^{j+1
 $$\frac{\Delta\mathbf B}{\Delta t}-\theta_{\mathrm t}\,\nabla\times\big(\mathbf v^{j+1}\times\Delta\mathbf B\big)+\theta_{\mathrm t,\mathrm{visc}}\nabla\times\big(\eta\,\Delta\mathbf J\big)=\nabla\times\big(\mathbf v^{j+1}\times\mathbf B^{j+1/2}\big)-\nabla\times\big(\eta\,\mathbf J^{j+1/2}\big)$$
 (Eq. 43). Spatially NIMROD uses 2D $C^0$ spectral elements (biquintic in these
 tests) with a Fourier direction (§2), and the linear solves use GMRES (§3.2).
+In a two-fluid DIII-D QH-mode run the algebraic solves are preconditioned
+with the SuperLU_DIST direct solver, which per toroidal Fourier mode needs
+34 GB of memory, 9 s to factorize and 340 ms to apply on 64 Perlmutter CPU
+cores ([Rahman et al. (2024)](/sources/rahman-2024.md), §II B, §III A 1; see
+[implicit time integration](/methods/implicit-time-integration.md)).
 $\nabla\cdot\mathbf B$ is not identically zero in NIMROD and is controlled by a
 diffusive correction added to Faraday's law
 ([Artola et al. (2021)](/sources/artola-2021.md), §2; see
@@ -93,7 +109,13 @@ $\Delta t$ to the flow velocity; in the most dynamic part of the 3D NSTX VDE
 $\Delta t>0.015\,\tau_A$, "hundreds of times larger than an explicit
 stability limit", and more than ten times larger elsewhere
 ([Artola et al. (2021)](/sources/artola-2021.md), §3;
-[benchmark](/benchmarks/nstx-vde-benchmarks.md)). Taheri et al. attribute the
+[benchmark](/benchmarks/nstx-vde-benchmarks.md)). In a two-fluid
+extended-MHD DIII-D QH-mode edge run with carbon and deuterium ions,
+$\Delta t=5\times10^{-9}$ s gives a compressional-Alfvén CFL number of
+about 800 at a flow CFL number of about 2, on $96\times256$ bi-quartic
+elements with 22 toroidal Fourier modes, at about 7 s per step on 11
+Perlmutter CPU nodes ([Rahman et al. (2024)](/sources/rahman-2024.md),
+§III A). Taheri et al. attribute the
 common error of all their schemes at large $\Delta t$ in a 1D snowplow test
 "likely" to the Crank–Nicolson and leapfrog discretization itself (§5.2).
 Adding stiff atomic sources breaks the dependency structure the leapfrog
@@ -120,3 +142,4 @@ relies on; the resulting splitting schemes are described on
 
 - [Taheri et al. (2022)](/sources/taheri-2022.md) — §2, §3, §3.1, Eqs. 19, 37–38, 43–45, Fig. 1.
 - [Artola et al. (2021)](/sources/artola-2021.md) — §2–3, Table 1.
+- [Rahman et al. (2024)](/sources/rahman-2024.md) — §II B, §III A.

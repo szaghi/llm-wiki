@@ -5,7 +5,7 @@ description: "Code-to-code tests of the JOREK runaway-electron fluid model: RE b
 status: established
 aliases: [JOREK-GO benchmark, JOREK-DINA RE benchmark]
 tags: [benchmark, verification, runaway-electrons, disruption, vde]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # ITER runaway-electron benchmarks (JOREK–GO, JOREK–DINA)
@@ -24,7 +24,7 @@ JOREK papers.
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§4.7, Fig. 24) report the
 first JOREK–GO test, on a large-aspect-ratio circular plasma ($R=10$ m,
 $a=1$ m, $I_p=0.67$ MA, $B_\phi=1$ T on axis, $T=1.7$ keV and
-$n=10^{20}$ m$^{-3}$ at the centre, $\eta=1.1\times10^{-7}$ Ω m). A large
+$n_e=10^{20}$ m$^{-3}$ at the centre, $\eta=1.1\times10^{-7}$ Ω m). A large
 imposed $\kappa_\perp$ cools the core to about 25 eV in about 60 ms; Dreicer
 generation starts at $E_\parallel/E_D\ge0.01$ and avalanche at
 $E_\parallel/E_c\ge1.7$, and GO takes its temperature evolution from JOREK.
@@ -45,8 +45,9 @@ forced to relax exponentially from its initial profile toward 50 eV with a
 1 ms time constant, bringing the core to about 100 eV; afterwards it evolves self-consistently with
 radiation, Ohmic heating, ionization losses and
 $\chi_\perp=0.4$ m²/s. Sources: Compton, tritium and avalanche; no
-hot-tail, no Dreicer. JOREK freezes the flow ($u=0$, $v_\parallel=0$) and uses
-$f_{\mathrm{adv}}=10^{-3}$, $D_{\parallel,\mathrm{RE}}=1.54$ m²/s and all
+hot-tail, no Dreicer. JOREK freezes the flow ($u=0$, $v_\parallel=0$) and uses the
+advection fraction $f_{\mathrm{adv}}=10^{-3}$ of the fluid model (page-local, defined on
+[runaway-electron fluid model](/methods/runaway-electron-fluid-model.md)), $D_{\parallel,\mathrm{RE}}=1.54$ m²/s and all
 particle diffusivities 0.015 m²/s. GO was rerun with coronal equilibrium,
 a fixed boundary temperature and a conducting wall at the plasma boundary,
 to match JOREK's assumptions; the authors state that the differences from

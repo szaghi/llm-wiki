@@ -5,7 +5,7 @@ description: "Impurity model for MHD codes in which one advected impurity densit
 status: established
 aliases: [coronal equilibrium, CE impurity model, coronal impurity fluid]
 tags: [impurities, disruption, mhd, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Coronal-equilibrium impurity model
@@ -62,6 +62,17 @@ $\alpha_{\mathrm{imp}}=\frac{m_i}{m_{\mathrm{imp}}}\frac{\langle z\rangle+1}{Z+1
 (normalized units; $m_i$ shown here for clarity). For $Z=1$ and $T_e=T_i=T/2$
 both are the same particle count: electrons plus ions of the main species
 and of the impurity (compiler's check).
+The DEMO runaway-electron VDE runs in single-temperature JOREK reduced MHD
+print both factors together for a deuterium plasma
+([Vannini et al. (2025)](/sources/vannini-2025.md), App. A, Eq. 13):
+$\alpha_{\mathrm{imp}}=\frac{m_i}{2m_{\mathrm{imp}}}(\langle z\rangle+1)-1$,
+which is Bhole et al.'s form at $Z=1$, the same $\beta_{\mathrm{imp}}$ as
+Bandaru et al., and
+$\alpha_{\mathrm{imp},bis}=\alpha_{\mathrm{imp}}+T\,\mathrm d\alpha_{\mathrm{imp}}/\mathrm dT$
+for the temperature dependence of $\langle z\rangle$ in the pressure
+equation; the radiation sink is written with the electron density
+$\propto\rho+\beta_{\mathrm{imp}}\rho_{\mathrm{imp}}$ (Eq. 9). The
+$\alpha$ and $\beta$ coefficients are page-local symbols.
 
 **Energy.** The pressure equation loses the radiated power
 $P_{\mathrm{rad}}=n_en_{\mathrm{imp}}L_{\mathrm{rad}}(T_e)$, where
@@ -142,6 +153,9 @@ The floor $T_{\mathrm{thr}}$ is a page-local symbol.
   ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §II). In the DINA
   benchmark, DINA tracks charge states and a "DINA-C" run mimics coronal
   equilibrium ([ITER runaway-electron benchmarks](/benchmarks/iter-runaway-electron-benchmarks.md)).
+  The DEMO runaway-beam VDE runs use the same CE neon fluid with a uniform
+  source, although a marker-based charge-state model "exists in JOREK"
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §2, App. A).
 
 ## Accuracy and limits
 
@@ -219,3 +233,4 @@ NIMROD on the same case, would settle it. See the
 - [Hu et al. (2023)](/sources/hu-2023.md) — §3.1, §4.3, Eq. 12.
 - [Zeng et al. (2023)](/sources/zeng-2023.md) — App. 7, Eqs. 10–11.
 - [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — Eq. 3.
+- [Vannini et al. (2025)](/sources/vannini-2025.md) — §2, App. A, Eqs. 9, 13.

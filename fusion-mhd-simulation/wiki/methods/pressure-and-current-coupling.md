@@ -5,7 +5,7 @@ description: "The two ways a hybrid kinetic-MHD code closes the bulk momentum eq
 status: established
 aliases: [pressure-coupling scheme, current-coupling scheme, Park coupling, CGL pressure coupling]
 tags: [hybrid-kinetic, energetic-particles, particles, mhd, numerics]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Pressure coupling and current coupling
@@ -15,8 +15,9 @@ energetic particles (EPs) act on the bulk fluid through its momentum
 equation. Two closures are in use, both going back to Park et al. (1992), as
 cited by [Liu et al. (2022)](/sources/liu-2022.md) (§4),
 [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) (§II) and
-[Vlad et al. (2025)](/sources/vlad-2025.md) (§§1, 3). Both assume
-$n_h\ll n_i$. Equations are written here in SI. Liu et al. (2022) write
+[Vlad et al. (2025)](/sources/vlad-2025.md) (§§1, 3). For energetic
+particles both assume $n_h\ll n_i$; the kinetic-thermal-ion variants below
+do not. Equations are written here in SI. Liu et al. (2022) write
 $\mathbf J=\nabla\times\mathbf B$ with $\mu_0=1$.
 
 ## Pressure coupling
@@ -30,7 +31,7 @@ $\mathbf K_h$ the EP momentum density
 ([Liu et al. (2022)](/sources/liu-2022.md), Eq. 19). The pressure tensor is
 taken gyrotropic (CGL form),
 
-$$\mathsf P_h=p_{\parallel h}\,\mathbf b\mathbf b+p_{\perp h}\,(\mathsf I-\mathbf b\mathbf b),\qquad p_{\parallel h}=m_h\!\int v_\parallel^2f_h\,d^3v,\qquad p_{\perp h}=\frac{m_h}{2}\!\int|\mathbf v\times\mathbf b|^2f_h\,d^3v,$$
+$$\mathsf P_h=p_{\parallel h}\,\mathbf b\mathbf b+p_{\perp h}\,(\mathsf I-\mathbf b\mathbf b),\qquad p_{\parallel h}=m_h\!\int(\mathbf v\cdot\mathbf b)^2f_h\,d^3v,\qquad p_{\perp h}=\frac{m_h}{2}\!\int|\mathbf v\times\mathbf b|^2f_h\,d^3v,$$
 
 ([Bogaarts et al. (2022)](/sources/bogaarts-2022.md), §II;
 [Liu et al. (2022)](/sources/liu-2022.md), Eq. 19). With markers of weight
@@ -88,7 +89,7 @@ they drop $\partial_t\mathbf K_h$.
   Liu et al. (2022b) describe a thermal-ion version of Park et al. (1999) in
   which the fluid parallel-momentum equation carries
   $-\nabla_\parallel\cdot(\mathsf P_i+\mathsf P_h)-\nabla_\parallel p_e$
-  (their Eq. 2.23) and $n$, $v_\parallel$ stay fluid. They call it "in
+  (their Eq. 2.23) and $n_i$, $v_\parallel$ stay fluid. They call it "in
   principle" equivalent to their scheme, but in M3D-C1's sequential solve
   it lets the fluid and marker $\delta n$, $\delta v_\parallel$ drift apart
   and produces parasitic modes (§2). This description of Park et al. (1999)
@@ -129,7 +130,9 @@ perpendicular current through the marker pressures,
 $$\mathbf J_i=\frac1B\left(p_{\parallel i}\nabla\times\mathbf b-p_{\perp i}\nabla\ln B\times\mathbf b\right)-\nabla\times\left(\frac{p_{\perp i}}{B}\mathbf b\right),$$
 entering as $(\mathbf J-\mathbf J_i)\times\mathbf B$
 ([Sato et al. (2024)](/sources/sato-2024.md), Eqs. 20, 25), i.e. current
-coupling expressed in the two pressure moments. JOREK implemented it but
+coupling expressed in the two pressure moments; the LHD runs of
+[Sato & Todo (2026)](/sources/sato-2026.md) (pp. 2, 8) add energetic ions
+to the same kinetic-thermal-ion MEGA. JOREK implemented it but
 found it "too noisy to obtain useful results"
 ([Bogaarts et al. (2022)](/sources/bogaarts-2022.md), §II).
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§§2.10, 2.15) report both
@@ -232,3 +235,4 @@ marker number.
 - [Liu et al. (2022b)](/sources/liu-2022-b.md): pressure coupling of kinetic thermal and fast ions; the thermal-ion Park scheme and its failure under sequential splitting.
 - [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): MEGA's current coupling and deposited EP current with magnetization term.
 - [Sato et al. (2024)](/sources/sato-2024.md): MEGA's kinetic-thermal-ion current written through the pressure moments.
+- [Sato & Todo (2026)](/sources/sato-2026.md): kinetic thermal and energetic ions together in MEGA.

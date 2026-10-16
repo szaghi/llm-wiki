@@ -5,7 +5,7 @@ description: "Orbit integrators that advance the markers of the kinetic modules 
 status: established
 aliases: [Boris pusher, Boris–Buneman, slow manifold Boris, guiding-centre pusher, gyrocentre pusher, orbit integrator]
 tags: [particles, energetic-particles, hybrid-kinetic, numerics, time-integration, gpu]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Particle pushers: Boris, slow-manifold Boris, guiding-centre and gyrokinetic
@@ -136,9 +136,27 @@ Fig. 31). On the banana-orbit benchmark:
 
 JOREK also has a relativistic full-orbit and guiding-centre tracer for
 runaway electrons. It agrees with ASCOT5 on 5000 passing 1 MeV electrons in
-JET thermal-quench fields (ibid., §4.10, Fig. 32).
+JET thermal-quench fields (ibid., §4.10, Fig. 32). Its relativistic
+guiding-centre equations, integrated by RK4 in the stored time history of
+3D fields as test particles without back-reaction, serve as a wall-load
+post-processor for an EU-DEMO runaway beam: $10^6$ mono-energetic markers
+(17.6 MeV, pitch $-0.99$) seeded from the fluid runaway density, with the
+deposited-load curve converged between $10^5$ and $10^7$ markers
+([Vannini et al. (2025)](/sources/vannini-2025.md), §6, Fig. 13a; see
+[runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md)).
 [MEGA](/software/mega.md) is drift-kinetic, with FLR added as an ad-hoc
 $N$-point gyroaverage ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
+For its kinetic thermal ions MEGA writes the guiding-centre velocity as
+$\mathbf v_\parallel^*+\mathbf v_E+\mathbf v_B$ with
+$\mathbf v_E=\mathbf E^*\times\mathbf B/B^*_\parallel$, i.e. with the
+effective field $\mathbf E^*$ (§10 of the notation registry) in the drift and
+in the parallel acceleration, and neglects its $\nabla_\parallel p_e$ part in
+all results ([Sato et al. (2024)](/sources/sato-2024.md), Eqs. 6–14). In
+M3D-C1-K the printed guiding-centre equations contain $\mathbf E$ while
+$\mathbf E^*$ enters the weight equations, so whether its push uses
+$\mathbf E$ or $\mathbf E^*$ is ambiguous
+([Liu et al. (2022b)](/sources/liu-2022-b.md), Eqs. 2.7–2.8, 2.11, 2.14;
+see [kinetic thermal ions](/methods/kinetic-thermal-ions.md)).
 
 ## Gyrokinetic gyrocentre integration
 
@@ -210,3 +228,6 @@ non-structure-preserving integrator.
 - [Liu et al. (2024)](/sources/liu-2024.md): gyrokinetic RK4 push, 4-point gyroaverage in field-aligned coordinates, orbit verification.
 - [Liu et al. (2021)](/sources/liu-2021.md): the massless-limit Boris integrator for runaway characteristics and its conservation test (§4, Fig. 2).
 - [Vlad et al. (2025)](/sources/vlad-2025.md): the HYMAGYC, MEGA, ORB5 and XTOR-K pushers; the FLR effects in Table 2.
+- [Sato et al. (2024)](/sources/sato-2024.md): the MEGA guiding-centre equations of kinetic thermal ions with $\mathbf E^*$ (Eqs. 6–14).
+- [Liu et al. (2022b)](/sources/liu-2022-b.md): the $\mathbf E$-versus-$\mathbf E^*$ ambiguity of the M3D-C1-K kinetic-ion push.
+- [Vannini et al. (2025)](/sources/vannini-2025.md): the relativistic guiding-centre RK4 tracer as a wall-load tool and its marker-number convergence (§6, Fig. 13a).

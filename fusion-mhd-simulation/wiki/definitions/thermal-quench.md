@@ -5,7 +5,7 @@ description: "The thermal quench is the disruption phase in which the plasma los
 status: established
 aliases: [TQ, radiative collapse, thermal collapse]
 tags: [disruption, impurities, mhd, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Thermal quench
@@ -25,7 +25,8 @@ channels produce it, often together:
 A TQ is therefore classified by its trigger: an MHD-triggered TQ in an
 unmitigated disruption or a [hot VDE](/definitions/vertical-displacement-event.md),
 and an injection-triggered TQ in a mitigated disruption
-([shattered pellet and massive material injection](/definitions/shattered-pellet-injection.md)).
+([shattered pellet and massive material injection](/definitions/shattered-pellet-injection.md),
+[massive gas injection](/definitions/massive-gas-injection.md)).
 
 ## MHD-triggered TQ
 
@@ -102,6 +103,39 @@ with ergodization by 3/1 and 2/1 and later 1/1 structures as fragments
 cross $q=2$ ([Bhole et al. (2023)](/sources/bhole-2023.md), §4.3.1,
 Figs. 13–14).
 
+**Two-stage TQ in ASDEX Upgrade H-mode SPI.** In JOREK reduced-MHD
+neon-doped deuterium SPI into AUG discharge #40355
+([Tang et al. (2025)](/sources/tang-2025.md), §3.2, Figs. 5–12):
+
+- *First stage.* About half of $W_{\mathrm{th}}$ is lost within roughly
+  0.1–0.15 ms of fragment arrival, "mainly due to the convective and
+  conductive transport caused by the magnetic field line stochastization at
+  the edge". Vanguard fragments at $q=3$ induce 3/1 islands, the pedestal
+  degrades, an outward heat flux makes the following fragments ablate
+  suddenly, and a large 2/1 island at $q=2$ "triggers the global reconnection
+  event, resulting in full stochastisation". The stage is nearly independent
+  of the neon fraction and radiates little (≈0–27% radiation fraction at
+  1 ms for 0.12–10% Ne). Faster and smaller fragments radiate more in it
+  (§3.4–3.5), so the paper's §4 statement that the stage is "virtually
+  independent of injection parameters" overstates (recorded on the Source
+  page).
+- *Second stage.* Radiation dominates (80–97% of the energy lost in the
+  window), and a 1/1 mode ends it with a core collapse below 10 eV, aligned
+  with a second magnetic-energy and radiation peak; higher neon makes it
+  earlier and stronger. Pure deuterium injection has no second stage.
+- *Durations.* Pre-TQ plus TQ lasts about 1 ms at 10% Ne and 3–5 ms at 0.12%
+  Ne. AUG pre-TQ durations converge to 3–5 ms at ≥1% Ne and range from a few
+  to about 70 ms without neon (Fig. 26), so the simulated durations are short
+  at high neon against the converged value and, by the authors' reading
+  ("especially with a low neon fraction"), at low neon against the longer
+  low-neon experiments; the TQ ends,
+  by the paper's definition, at $W_{\mathrm{th}}\approx100$ kJ (§3.5,
+  Figs. 25–26).
+
+The $q=2$ trigger of the first stage agrees with the review's statement that
+slow shards in AUG deuterium SPI trigger the TQ when they reach $q=2$
+(Hoelzl et al. 2021, §6.2.1).
+
 **Strong-cooling limit: argon SPI at q = 2.** In reduced-MHD argon SPI into
 a JET-like L-mode (pulse 85943 template, $q_0=0.98$), the $n=0$ current
 contraction follows the cooling front and forms a current sheet on it; 3/1
@@ -153,6 +187,22 @@ fraction of 49.4% against 86–90% in the degraded H-mode with 5%-neon pellets
 radiation asymmetry of these quenches and its wall load are on
 [radiation asymmetry](/definitions/radiation-asymmetry.md).
 
+**Multi-valve gas injection in SPARC.** In NIMROD 90/10 D$_2$/neon MGI
+([massive gas injection](/definitions/massive-gas-injection.md)), a
+pre-TQ of about 2 ms (2.5 ms at high resolution) radiates 5–15 GW; the TQ
+flash peaks at 40–55 GW at low resolution and about 70 GW with a narrower,
+more deuterium-rich source, and the radiated energy fraction exceeds 95%
+([Izzo et al. (2025)](/sources/izzo-2025.md), §II C–D, §IV, Figs. 4–5).
+The equilibrium has $q_{\min}=1.05$ and no $q=1$ surface, yet a large 1/1
+mode develops during the TQ and pulls neon from the edge inward; the
+radiation peaks at the very start of that mixing (§II D, Fig. 7; see
+[resistive internal kink](/definitions/resistive-internal-kink.md)). A
+closed-circuit [runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md)
+seeds the $n=1$ and makes the TQ earlier (§III B). Raising the mass density
+of the region between limiter and vessel forestalls the 1/1 mode; higher-$n$
+modes then collapse the mid-radius temperature first and the TQ radiation
+shows two peaks (§III C, Fig. 9b–c).
+
 **Radiative collapse.** In axisymmetric JOREK argon and neon gas injection
 into DIII-D, the collapse proceeds from the inside out with a hollow $T_e$
 and a thin current and temperature halo, followed by re-concentration of
@@ -162,7 +212,12 @@ it: [Bandaru et al. (2024)](/sources/bandaru-2024.md) (§III.A) cool the
 plasma by a prescribed exponential with 1 ms time constant to ≈100 eV in
 the core before letting radiation, Ohmic heating and ionization take over;
 $T_e$ then settles at 6–9 eV and drops to ≈1 eV once runaway electrons carry
-the current (§III.B).
+the current (§III.B). The EU-DEMO runaway study of
+[Vannini et al. (2025)](/sources/vannini-2025.md) (§4) imposes an
+*artificial thermal quench* of about 4 ms: neon is ramped up uniformly, the
+thermal diffusivities are raised by hand and Ohmic heating is switched off
+until $T_e\approx10$ eV, and a large hyper-resistivity flattens $j$ to mimic
+the current spike; all parameters are then restored.
 
 ## Sensitivities
 
@@ -194,10 +249,26 @@ the current (§III.B).
   the MHD response; a constant $\kappa_\parallel$ (the 500 eV value)
   suppresses them, weakens the MHD and delays the rise of radiated power
   ([Hu et al. (2023)](/sources/hu-2023.md), §3.2, §4.4, Figs. 11, 21–22).
+  [Tang et al. (2025)](/sources/tang-2025.md) (§4) attribute their
+  too-short pre-TQ and too-abrupt first stage in AUG to "overestimation of
+  the parallel thermal conduction", through stronger cooling, higher $\eta$
+  and stronger resistive MHD, and through excessive losses in stochastic
+  regions (stated, not tested); their Spitzer–Härm $\chi_\parallel$ carries a
+  50 eV floor against temperature holes (§3.1). For NIMROD MGI,
+  [Izzo et al. (2025)](/sources/izzo-2025.md) (§IV) state that a constant
+  $\kappa_\parallel$ overestimates transport in cold regions against a
+  $T^{5/2}$ closure, which tends to underpredict radiation peaking and
+  overestimate the conducted wall energy.
 - **Viscosity.** Quoted from a NIMROD JET SPI study (McClenaghan et al.
   2023, not ingested): reducing the viscosity from 2000 to 500 m²/s shortens
   the TQ only from 2.9 to 2.6 ms ([Hu et al. (2024)](/sources/hu-2024.md),
   §5), used there to argue a weak viscosity sensitivity across codes.
+  [Izzo et al. (2025)](/sources/izzo-2025.md) (§IV) rank their high
+  viscosity, $\nu=500$ m²/s, among their most significant approximations,
+  because a lower one would likely mix impurities faster and give less
+  peaked radiation. The two statements concern different figures of merit
+  (TQ duration against impurity mixing and peaking), so they qualify each
+  other rather than conflict.
 - **Source width.** Toroidally elongated density sources reduce the
   radiation and its peaking; see
   [pellet ablation models](/methods/pellet-ablation-models.md).
@@ -225,7 +296,10 @@ JET-like argon case, where there is almost no $q=1$ surface, and Hu et al.
 impurity SPI" is best read as "any impurity SPI without a large $q<1$
 region". Recorded as a qualification of the review's generalization; it
 closes only if the review's statement is shown to be restricted to its
-AUG-like profiles.
+AUG-like profiles. The AUG neon–deuterium runs of
+[Tang et al. (2025)](/sources/tang-2025.md) (§3.2), in which a 1/1 mode acts only in the final core collapse, show the
+2/1 at $q=2$ triggering the global stochastization, which supports the
+reading.
 
 **Duration of the ITER thermal quench — attributed contrast.**
 [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.1) report JOREK
@@ -255,3 +329,6 @@ scaling.
 - [Hu et al. (2021)](/sources/hu-2021.md), §3, §4.1–4.2, §6.
 - [Hu et al. (2023)](/sources/hu-2023.md), §3.1–3.3, §4.4, §5.
 - [Hu et al. (2024)](/sources/hu-2024.md), §3, §5, Table 2.
+- [Tang et al. (2025)](/sources/tang-2025.md), §3.1–3.5, §4, Figs. 5–12, 25–26.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §II C–D, §III B–C, §IV.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §4.

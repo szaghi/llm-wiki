@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Rev. E 108:L043201"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Physical_Review_E_McDevitt_Runaway_electron_current_reconstitution_after_a_nonaxisymmet.pdf"
 tags: [runaway-electrons, disruption, impurities, particles, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -39,13 +39,13 @@ open longer (passive runaway coil).
 
 # Key claims
 
-Page-local symbols (not in the registry): $\xi=p_\parallel/p$ the pitch of an
-electron, $\xi_{\mathrm{tp}}$ its trapped–passing boundary; $\psi_{10}$ the
-poloidal flux needed for a tenfold avalanche gain; $D_{\mathrm{RE}}$ the
-stochastic radial diffusivity of REs and $\tau_{\mathrm{st}}=a^2/D_{\mathrm{RE}}$
-its transport time; $\Delta t_{\mathrm{open}}$ the duration of the MHD event;
-$f_{\mathrm{purge}}$ the fraction of neon removed; $N_{\mathrm{RE}}$ the number of
-REs; $I_{\mathrm{RE}}$ the RE current.
+Registry symbols (§§10–11): $\xi=p_\parallel/p$ the pitch of an electron,
+$\xi_{\mathrm{tp}}$ its trapped–passing boundary; $\psi_{10}$ the poloidal flux
+needed for a tenfold avalanche gain; $D_{\mathrm{RE}}$ the stochastic radial
+diffusivity of REs; $N_{\mathrm{RE}}$ the number of REs; $I_{\mathrm{RE}}$ the RE
+current. Page-local: $\tau_{\mathrm{st}}=a^2/D_{\mathrm{RE}}$ the stochastic
+transport time; $\Delta t_{\mathrm{open}}$ the duration of the MHD event;
+$f_{\mathrm{purge}}$ the fraction of neon removed.
 
 1. **Trapped electrons survive a globally stochastic field** (Fig. 1, p. 2).
    In an imposed fully stochastic field, passing electrons with
@@ -174,19 +174,19 @@ No benchmark or code-to-code comparison; parameter scans of the reduced model.
 | $\mathbf B_{eq}$, $\delta\mathbf B$, $\alpha$, $\alpha_{m,n}$ | $\mathbf B$, $\delta\mathbf B$, page-local | |
 | $B_{Max}$ | maximum of $B$ on the surface (words) | |
 | $\psi$ | $\psi$ | per radian inferred from Eq. 2, not stated |
-| $\psi_{10}$ | $\psi_{10}$ (page-local) | not registered |
+| $\psi_{10}$ | $\psi_{10}$ | |
 | $j_\parallel$, $j_{RE}$, $j_{RE}^{(seed)}$ | $j_\parallel$, $\mathbf J_{\mathrm{RE}}$, $J_{\mathrm{RE}}^{\mathrm{seed}}$ | |
-| $I_{RE}$, $I_{RE}^{(max)}$, $\Delta I_{RE}$ | $I_{\mathrm{RE}}$ (page-local) | |
+| $I_{RE}$, $I_{RE}^{(max)}$, $\Delta I_{RE}$ | $I_{\mathrm{RE}}$, $I_{\mathrm{RE}}^{\max}$, $\Delta I_{\mathrm{RE}}$ | |
 | $E_{AV}$ | words (avalanche threshold field), closest $E_c^{\mathrm{eff}}$ | not formally defined in the paper |
 | $\chi$ | $\chi_\perp$ | **collision:** registry $\chi$ is the vacuum scalar potential |
 | $S_{rad}$, $S_{RE}$ | $P_{\mathrm{rad}}$, $P_{\mathrm{RE}}$ (words) | **collision:** registry $S$ is the Lundquist number; $S_{\mathrm{av}}$ etc. are RE sources |
-| $\xi=p_\parallel/p$, $\xi_{trap}$ | $\xi$, $\xi_{\mathrm{tp}}$ (page-local) | **collision risk:** registry $\xi_{\mathrm t}$ is a time-scheme weight |
+| $\xi=p_\parallel/p$, $\xi_{trap}$ | $\xi$, $\xi_{\mathrm{tp}}$ | distinct from the time-scheme weight $\xi_{\mathrm t}$ |
 | $\gamma$ | words (Lorentz factor) | **collision:** registry $\gamma$ is a growth rate |
 | $v_\parallel$, $p_\parallel$, $p$ (momentum) | $v_{\parallel p}$; words | **collision:** $p$ is the pressure |
-| $D_{RE}^{kin}$, $D_{RE}$ | $D_{\mathrm{RE}}^{\mathrm{kin}}$, $D_{\mathrm{RE}}$ (page-local) | not the fluid $D_\perp$ |
+| $D_{RE}^{kin}$, $D_{RE}$ | $D_{\mathrm{RE}}^{\mathrm{kin}}$ (page-local), $D_{\mathrm{RE}}$ | not the fluid $D_\perp$ |
 | $N_t=N_{transit}$, $\tau_{transit}$ | $N_t$, words | |
 | $\tau_{trans}=a^2/D_{RE}$ | $\tau_{\mathrm{st}}$ (page-local) | |
-| $t_{open}$, $\Delta t_{open}$, $f_{purge}$, $N_{RE}$ | page-local | |
+| $t_{open}$, $\Delta t_{open}$, $f_{purge}$, $N_{RE}$ | page-local; $N_{\mathrm{RE}}$ | |
 | $T$, $T_e$ | $T$ | single temperature, stated |
 | $n_D$, $n_{Ne}$, $n_j$ | $n_{\mathrm D}$, $n_{\mathrm{Ne}}$ (page-local), $n_{\mathrm{imp}}$ | cm$^{-3}$ and m$^{-3}$ both used |
 
@@ -194,13 +194,15 @@ SI with explicit $\mu_0$; no normalized units.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
 * [ITER runaway-electron benchmarks (JOREK–GO, JOREK–DINA)](/benchmarks/iter-runaway-electron-benchmarks.md)
 * [Runaway current reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)
 * [Runaway electrons and their generation mechanisms](/definitions/runaway-electrons.md)
 * [Runaway-electron fluid model coupled to MHD](/methods/runaway-electron-fluid-model.md)
+* [Runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md)
+* [Runaway-electron wall loads and sacrificial limiters](/definitions/runaway-electron-wall-loads.md)
 
 # Citations
 

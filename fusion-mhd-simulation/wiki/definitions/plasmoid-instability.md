@@ -5,7 +5,7 @@ description: "Break-up of a thin current sheet at high Lundquist number into cha
 status: established
 aliases: [plasmoid-mediated reconnection, current-sheet break-up, reconnection burst, plasmoid chain]
 tags: [elm, edge, pedestal, mhd, extended-mhd, tearing]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Plasmoid instability and plasmoid-mediated reconnection
@@ -32,7 +32,8 @@ They separate two classes of reconnection (p. 1):
 The term is unrelated to the "plasmoid" of pellet physics, the ionized
 ablation cloud whose $E\times B$ drift toward the low-field side is studied
 in the shattered-pellet sources
-([shattered pellet injection](/definitions/shattered-pellet-injection.md)).
+([plasmoid drift](/definitions/plasmoid-drift.md);
+[shattered pellet injection](/definitions/shattered-pellet-injection.md)).
 
 ## Plasmoids in peeling–ballooning ELMs (NIMROD)
 
@@ -68,11 +69,13 @@ $S\sim10^5$ (p. 2, Figs. 1–6). The sequence is:
    burst follows at about 2.3–2.6 ms (Figs. 2b, 3b–c).
 
 The toroidally averaged fluctuation electromotive force, the toroidal
-component of $\langle\delta\mathbf v\times\delta\mathbf B\rangle$ over $\phi$
-evaluated from the Fourier amplitudes, has a bi-directional poloidal
+component of $(\tilde{\mathbf v}\times\tilde{\mathbf B})^{(0)}$ (toroidal average
+of the product of the non-axisymmetric parts, registry §11) evaluated from the
+Fourier amplitudes, has a bi-directional poloidal
 pattern consistent with the $n=0$ counter-current (case B, Fig. 6d; the
 average here is toroidal, not flux-surface). No quantitative balance between
-this term and the evolution of the $n=0$ current is given. A two-fluid run
+this term and the evolution of the $n=0$ current is given; the same quantity
+enters the axisymmetric balance on [MHD dynamo](/definitions/mhd-dynamo.md). A two-fluid run
 (Hall and electron-inertia terms in Ohm's law, $S\sim5\times10^4$, 86 modes)
 shows poloidal flow vortices at about the poloidal Alfvén speed, about
 14 km/s; whether they come from local reconnection or from Maxwell and

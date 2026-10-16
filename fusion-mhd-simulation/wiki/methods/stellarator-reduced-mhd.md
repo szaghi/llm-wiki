@@ -5,7 +5,7 @@ description: "Generalization of tokamak reduced MHD in which the fixed toroidal 
 status: established
 aliases: [stellarator RMHD, Nikulsin reduced MHD, JOREK3D reduced MHD]
 tags: [mhd, reduced-mhd, stellarator, code, verification]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Reduced MHD for stellarators
@@ -86,7 +86,7 @@ $$\begin{aligned}
 \mu_0\,j&=\Delta^*\psi_\chi,\qquad \varpi=\Delta^\perp u.
 \end{aligned}$$
 
-$\sigma_\rho$ is a page-local shorthand for the mass source, $\nu_\perp$ a
+$\sigma_\rho$ is a page-local shorthand for the particle-diffusion divergence plus the mass source $S_\rho$, $\nu_\perp$ a
 "viscosity-like" coefficient (not the physical dynamic viscosity), $\nu_h$
 a hyperviscosity, $\eta_h$ a hyper-resistivity, $\eta_{\rm Ohm}$ a separate
 resistivity for Ohmic heating (so that an artificially high $\eta$ need not
@@ -114,8 +114,9 @@ parallel flow and a parallel momentum equation,
 
 $$\mathbf v=\frac{\nabla u\times\nabla\chi}{|\nabla\chi|^2}+\hat v_\parallel\mathbf B,$$
 
-where $\hat v_\parallel$ (page-local) is a velocity per unit field strength,
-so that $\hat v_\parallel B$ approximates the registry $v_\parallel$; setting
+where $\hat v_\parallel$ is the parallel-flow coefficient per unit field
+strength of the registry (§10, JOREK convention), so that
+$\hat v_\parallel B$ approximates $v_\parallel$; setting
 $\hat v_\parallel=0$ recovers the system above (Eqs. 1–2, 5). In JOREK
 normalized form ($\mu_0=1$, $p=\rho T$ with $T$ the total temperature;
 the normalization is not stated in the source), the new or changed

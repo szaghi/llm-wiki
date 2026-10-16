@@ -5,7 +5,7 @@ description: "Linear full-MHD stability code for three-dimensional (stellarator 
 status: established
 aliases: [CASTOR-3D, CASTOR 3D]
 tags: [code, stellarator, tokamak, spectral, verification, benchmark, tearing, ballooning]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # CASTOR3D
@@ -47,6 +47,11 @@ the family of [linear MHD eigenvalue codes](/methods/linear-mhd-eigenvalue-codes
   ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §VIII;
   [Zhou et al. (2023)](/sources/zhou-2023.md), §I, both citing Strumberger
   et al. 2020).
+* **Planned tokamak use.** A CASTOR3D linear stability analysis of the
+  saturated, flux-pumped states of an ASDEX Upgrade hybrid scenario is
+  announced as future work, not performed
+  ([Zhang et al. (2025)](/sources/zhang-2025.md), §6.2; see
+  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
 
 ## Benchmarks
 
@@ -106,3 +111,4 @@ The stellarator cases are described on
 * [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — tokamak kink, tearing and VDE benchmarks.
 * [Isernia et al. (2023)](/sources/isernia-2023.md) — thin-conductor limitation.
 * [Zhou et al. (2023)](/sources/zhou-2023.md) — cited linear W7-X kink studies.
+* [Zhang et al. (2025)](/sources/zhang-2025.md) — planned stability analysis of flux-pumped states.

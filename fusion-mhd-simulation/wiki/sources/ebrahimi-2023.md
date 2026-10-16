@@ -9,7 +9,7 @@ year: 2023
 venue: "Nucl. Fusion 63:126042"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Nuclear_Fusion_Ebrahimi_Plasmoid-mediated_reconnection_during_nonlinear_peelingballo.pdf"
 tags: [mhd, full-mhd, extended-mhd, tokamak, elm, pedestal, ballooning, edge, finite-elements, spectral]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -124,13 +124,13 @@ registry (SI, $\eta$ the resistivity):
 $$\begin{aligned}
 \partial_t\mathbf B &= -\nabla\times\mathbf E + (\text{divergence-cleaning diffusion of }\nabla\cdot\mathbf B),\\
 \mathbf E &= -\mathbf v\times\mathbf B+\eta\mathbf J+\frac{1}{n_ee}\mathbf J\times\mathbf B+\frac{m_e}{n_ee^2}\partial_t\mathbf J,\qquad \mu_0\mathbf J=\nabla\times\mathbf B,\\
-\partial_tn+\nabla\cdot(n\mathbf v) &= \nabla\cdot(D\nabla n),\\
+\partial_tn_e+\nabla\cdot(n_e\mathbf v) &= \nabla\cdot(D\nabla n_e),\\
 \rho(\partial_t\mathbf v+\mathbf v\cdot\nabla\mathbf v) &= \mathbf J\times\mathbf B-\nabla p+\rho\nu\nabla^2\mathbf v\quad(\text{or the rate-of-strain form}),\\
 \frac{n_s}{\Gamma-1}(\partial_tT_s+\mathbf v_s\cdot\nabla T_s) &= -p_s\nabla\cdot\mathbf v_s+\nabla\cdot(n_s\mathsf K\cdot\nabla T_s)+Q_s,\qquad s=e,i,
 \end{aligned}$$
 
 with $\mathsf K=\chi_\parallel\mathbf b\mathbf b+\chi_\perp(\mathsf I-\mathbf b\mathbf b)$
-(thermal diffusivities), $p_s=n_sT_s$, $Q_s$ a heat source, and $\mathbf v_s$ the
+(thermal diffusivities), $n_e=n_i$ (quasi-neutral; the paper writes $n$), $p_s=n_sT_s$, $Q_s$ a heat source, and $\mathbf v_s$ the
 species velocity (not defined further; the registry has no species-velocity
 symbol). As printed, Ohm's law has Hall and electron-inertia terms but no
 electron-pressure term $-\nabla p_e/(n_ee)$. Case A is called "full MHD"; the
@@ -167,7 +167,7 @@ reader's colour-bar and axis readings).
 
 | Run | Model | $\eta$ | Harmonics | Main results |
 |---|---|---|---|---|
-| Case A | resistive MHD (two temperatures) | Spitzer, from $\langle T\rangle_\phi$ | 43 | linear phase to ≈1.5 ms; secondary burst peaking ≈1.6–1.7 ms ($n=1,12,11$ largest); relaxation ≈2 ms; second burst ≈2.3–2.6 ms |
+| Case A | resistive MHD (two temperatures) | Spitzer, from $T^{(0)}$ | 43 | linear phase to ≈1.5 ms; secondary burst peaking ≈1.6–1.7 ms ($n=1,12,11$ largest); relaxation ≈2 ms; second burst ≈2.3–2.6 ms |
 | Two-fluid | + Hall, electron inertia | uniform, $S\sim5\times10^4$ | 86 | vortices, $v_R$ to $\pm6\times10^3$ m/s, $v_Z$ to $\pm8\times10^3$ m/s |
 | Case B (DIII-D 145701) | resistive MHD | uniform, $S\sim10^5$ | not stated | time axis to $1.5\times10^{-4}$ s; $n=1$ saturates highest; $n=0$ counter-current |
 
@@ -197,25 +197,27 @@ reader's colour-bar and axis readings).
 | $\eta$ | $\eta/\mu_0$ | **collision:** native $\eta$ is a magnetic diffusivity (m²/s); registry $\eta=\mu_0\eta_{\mathrm{native}}$ |
 | $\kappa_{divb}$ | words (divergence-cleaning diffusivity) | NIMROD-specific |
 | $D$ | $D_\parallel=D_\perp=D$ | isotropic |
-| $\Pi$, $W$ | words (viscous stress, rate-of-strain tensor) | |
+| $\Pi$, $W$ | $\mathsf\Pi$ (viscous stress), words (rate-of-strain tensor) | |
 | $\nu$ | $\nu$ | kinematic |
 | $\hat{\mathbf b}$, $\mathsf I$ | $\mathbf b$, $\mathsf I$ | |
 | $\psi$ (Fig. 1) | $\psi_N$ | 0 to 1 |
 | $\langle\mathbf J\cdot\mathbf B\rangle/B^2$ | $\langle j_\parallel B\rangle/B^2$ | bracket not defined in the paper |
 | $r$, $z$ / $R$, $Z$; $B_r$, $B_z$ | $R$, $Z$; $B_R$, $B_Z$ | the paper mixes lower and upper case; **collision risk:** registry $r$ is the minor radius |
-| $\langle\cdot\rangle_{n=0}$, $\langle\cdot\rangle_\phi$ | words (toroidal average) | **collision risk:** registry $\langle\cdot\rangle$ is a flux-surface or gyroaverage |
-| $\tilde{\mathbf J}_{n\neq0}$, $\tilde V$, $\tilde B$ | words (non-axisymmetric part) | registry $\delta(\cdot)$ is a linear perturbation |
-| $\tfrac12\mathrm{Re}[\tilde V_r\tilde B_z^*-\tilde V_z\tilde B_r^*]$ | words (toroidal mean emf) | sign convention, see Citations |
+| $\langle\cdot\rangle_{n=0}$, $\langle\cdot\rangle_\phi$ | $f^{(0)}$ (toroidal average) | **collision risk:** registry $\langle\cdot\rangle$ is a flux-surface or gyroaverage |
+| $\tilde{\mathbf J}_{n\neq0}$, $\tilde V$, $\tilde B$ | $\tilde{\mathbf J}$, $\tilde{\mathbf v}$, $\tilde{\mathbf B}$ (non-axisymmetric part) | registry $\delta(\cdot)$ is a linear perturbation |
+| $\tfrac12\mathrm{Re}[\tilde V_r\tilde B_z^*-\tilde V_z\tilde B_r^*]$ | $(\tilde{\mathbf v}\times\tilde{\mathbf B})^{(0)}\cdot\mathbf e_\phi$ (toroidal mean emf) | toroidal, not the parallel $E_{\mathrm{dyn},\parallel}$; sign convention, see Citations |
 | $V_{A(pol)}$, $B_p$ | words ($v_A$ on the poloidal field) | |
 | $S=\tau_R/\tau_A$ | $S$ | lengths unstated |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
+* [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
+* [MHD dynamo effect](/definitions/mhd-dynamo.md)
 * [NIMROD](/software/nimrod.md)
 * [Plasmoid instability and plasmoid-mediated reconnection](/definitions/plasmoid-instability.md)
 * [Single-fluid visco-resistive MHD model](/methods/visco-resistive-mhd-model.md)

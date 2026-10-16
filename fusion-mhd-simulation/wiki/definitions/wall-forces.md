@@ -5,7 +5,7 @@ description: "The electromagnetic wall force is the integral of the Lorentz forc
 status: established
 aliases: [wall force, vertical force, sideways force, horizontal force, asymmetric VDE force]
 tags: [disruption, vde, wall, free-boundary]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Electromagnetic wall forces (vertical and sideways)
@@ -66,6 +66,17 @@ axis motion ([vertical-force mitigation](/results/vertical-force-mitigation.md);
 current-quench simulations at realistic post-TQ parameters show reduced
 global wall forces with mitigation (same section;
 [Artola et al. (2022)](/sources/artola-2022.md), the primary study, below).
+
+**Current-moment estimate.** The vertical force follows the vertical
+current moment, $F_{w,z}\propto I_p\,\Delta Z_{\mathrm c}$, with
+$Z_{\mathrm c}=\int j_\phi Z\,dR\,dZ/I_p$ the current centroid and
+$\Delta Z_{\mathrm c}$ its displacement ($Z_{\mathrm c}$ registry §11;
+[Vannini et al. (2025)](/sources/vannini-2025.md), §4, Eq. 2, after Gruber
+et al. 1993). In a 2D EU-DEMO VDE mitigated by neon the moment and the force
+saturate at about 13 MN without runaways; with a 13 MA runaway beam they keep
+growing, to about 43 MA m and 60 MN at 570 ms. In 3D the beam termination
+"slightly reduces" the force (§4–5, Figs. 3, 6; values read from the
+figures). See [vertical-force mitigation](/results/vertical-force-mitigation.md).
 
 ### Vertical force after the current quench (fast-CQ limit)
 
@@ -178,3 +189,4 @@ other's parameter regime, would settle it.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.9, §4.8, §6.3.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3, §3.3.
 - [Artola et al. (2022)](/sources/artola-2022.md), §1–2, §4.1–4.3, §5, Eq. 1, Figs. 4, 6, 9–10.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §4–5, Eq. 2, Figs. 3, 6.

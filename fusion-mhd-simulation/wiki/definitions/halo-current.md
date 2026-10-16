@@ -5,7 +5,7 @@ description: "The halo current is the current that flows partly in the scrape-of
 status: established
 aliases: [halo currents, halo fraction, toroidal peaking factor, TPF, SOL current]
 tags: [disruption, vde, wall, edge, free-boundary]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Halo current
@@ -114,6 +114,14 @@ though the SOL current is large, and the halo pattern broadens in both
 simulations and experiments ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 §3.3, Fig. 10; see
 [vertical-force mitigation](/results/vertical-force-mitigation.md)).
+In a JOREK hot VDE of EU-DEMO mitigated by neon, a large fraction of the
+current is likewise induced in the halo region outside the last closed flux
+surface, so the current centroid stagnates near the midplane and the
+vertical force saturates at $F_{w,z}\approx13$ MN; with runaway electrons
+the authors read $I_p-I_{\mathrm{RE}}$ as the *toroidal* halo current
+([Vannini et al. (2025)](/sources/vannini-2025.md), §4, Fig. 3, p. 7; an
+interpretation of the traces, stated). That quantity is the toroidal part,
+not the poloidal $I_{\mathrm{halo}}$ of the measures above.
 
 ## Modelling
 
@@ -151,6 +159,12 @@ conductor determines what "halo current" means numerically.
   finite, so current enters and leaves the plasma domain
   ([Artola et al. (2021)](/sources/artola-2021.md), §4.1.6); see
   [resistive-wall coupling](/methods/resistive-wall-coupling.md).
+- NIMROD runs of SPARC gas injection give the region between limiter and
+  vessel enhanced resistivity (and optionally mass density) through a tanh
+  transition, but keep plasma-like parameters in the divertor regions out
+  to the domain boundary, so open-field-line (halo) currents can reach the
+  boundary there ([Izzo et al. (2025)](/sources/izzo-2025.md), §III A, C;
+  passing remark, no halo-current values given).
 
 **Suppression in idealized runs.** In the ITER runaway-electron VDE
 benchmark, halo currents are deliberately suppressed during the artificial
@@ -171,3 +185,5 @@ source.
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §II, §VII.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.
 - [Artola et al. (2022)](/sources/artola-2022.md), §4.1–4.2, §4.4, Eq. 8.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §4, Fig. 3.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §III A, C.

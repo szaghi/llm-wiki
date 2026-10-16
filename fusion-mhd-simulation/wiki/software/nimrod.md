@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "NIMROD"
-description: "Initial-value extended-MHD code with high-order C0 nodal spectral elements in the poloidal plane and a toroidal Fourier series, a mixed implicit/semi-implicit leapfrog time advance, diffusive divergence cleaning and a thin resistive wall with a meshed vacuum; benchmarked on NSTX VDEs and impurity gas injection, extended with a plasma–neutral model whose atomic sources are coupled by Crank–Nicolson/JFNK or Strang splitting, and applied with heuristic neoclassical closures to NTM seeding, with KPRAD to radiation-triggered tearing and to nonlinear peeling–ballooning ELMs."
+description: "Initial-value extended-MHD code with high-order C0 nodal spectral elements in the poloidal plane and a toroidal Fourier series, a mixed implicit/semi-implicit leapfrog time advance, diffusive divergence cleaning and a thin resistive wall with a meshed vacuum; benchmarked on NSTX VDEs and impurity gas injection, extended with a plasma–neutral model whose atomic sources are coupled by Crank–Nicolson/JFNK or Strang splitting, and applied with heuristic neoclassical closures to NTM seeding, with KPRAD to radiation-triggered tearing, to nonlinear peeling–ballooning ELMs, to SPARC gas injection with a runaway-mitigation coil, and as the data source of neural-operator surrogates."
 status: established
 aliases: [NIMROD code]
 tags: [code, mhd, full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, benchmark]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # NIMROD
@@ -57,6 +57,26 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
   with anisotropic conduction, Spitzer $\eta$ from the toroidally averaged
   temperature ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md),
   Eqs. 1–6; no electron-pressure term as printed).
+* **Impurities and neutrals for gas injection**: one continuity equation per
+  neon charge state, advected with the single fluid velocity, with
+  radiation and ionization sinks and a local $Z_{\mathrm{eff}}$-dependent
+  resistivity; charge states are not assumed in equilibrium ("coronal
+  non-equilibrium"), and a newer, unpublished version uses ADAS
+  collisional-radiative rates. Impurity and deuterium neutrals are deposited
+  cold, only diffuse (10 m²/s) and ionize, and equilibrate instantly with the
+  background once ionized; a 4 eV floor temperature applies
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II A, Appendix; see
+  [massive gas injection](/definitions/massive-gas-injection.md)).
+* **Two-ion-species two-fluid model**: carbon and deuterium ions with
+  separate electron dynamics and first-order finite-orbit-radius effects;
+  the stress tensor holds perpendicular, parallel and gyroviscosity and a
+  neoclassical poloidal-flow damping, the generalized Ohm's law the Hall,
+  $\nabla p_e$ and electron-stress terms (neoclassical current drive), and
+  the continuity equations a toroidally directed hyperdiffusivity
+  ([Rahman et al. (2024)](/sources/rahman-2024.md), §II B 1, Eqs. 1–4, as
+  summarized there). The electron-pressure term absent from the printed
+  model of Ebrahimi & Bhattacharjee (2023) is present in this configuration;
+  the two papers use different model options, not conflicting ones.
 * **Runaway electrons**: an RE fluid–MHD model (Sainterme & Sovinec 2024,
   cited by [Bandaru et al. (2024)](/sources/bandaru-2024.md), §I, without
   comparison).
@@ -78,7 +98,13 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
   $40\times60$ fifth- or sixth-order elements extending into the scrape-off
   layer with 43 or 86 toroidal modes
   ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), §2). Howell et
-  al. (2022) give no resolution. See
+  al. (2022) give no resolution. Chunk-3 applications:
+  $56\times72$ elements of degree 4 with $n_{\max}=10$ or 21, and
+  $96\times128$ of degree 3 with $n_{\max}=21$, for SPARC gas injection
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), Table I); $96\times256$
+  bi-quartic elements, 22 toroidal Fourier modes and an unmeshed inner core
+  for a DIII-D QH-mode edge case
+  ([Rahman et al. (2024)](/sources/rahman-2024.md), §III A). See
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 * A stabilization method suppresses numerical interchange (Artola et al. 2021,
   §2).
@@ -86,7 +112,7 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
 ## Time integration and solvers
 
 * **Implicit leapfrog** ([semi-implicit leapfrog](/methods/semi-implicit-leapfrog.md)).
-  $\mathbf V$ is staggered against $(n,T,\mathbf B)$, which are solved one after
+  $\mathbf v$ is staggered against density, temperature and $\mathbf B$, which are solved one after
   another in dependency order: velocity, density, temperature, field. A
   semi-implicit operator, the ideal-MHD force operator plus a small isotropic
   Laplacian, stabilizes wave propagation in the velocity advance, and
@@ -99,7 +125,18 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
   stability limit" (Artola et al. 2021, §2, §3).
 * Linear systems are solved with GMRES; in 1D runs periodic matrix
   refactorization makes GMRES counts a poor cost proxy (Taheri et al. 2022,
-  §3.2, §5.1.1).
+  §3.2, §5.1.1). The algebraic systems of the DIII-D QH-mode run are
+  preconditioned with the SuperLU_DIST direct solver: per toroidal mode
+  34 GB of memory, 9 s factorization and 340 ms per application on 64
+  Perlmutter CPU cores ([Rahman et al. (2024)](/sources/rahman-2024.md),
+  §III A 1).
+* **Operating point.** That run takes $\Delta t=5\times10^{-9}$ s at a
+  compressional-Alfvén CFL number of about 800 and a flow CFL number of
+  about 2, about 7 s per step on 11 Perlmutter CPU nodes (Rahman et al.
+  2024, §III A), consistent with the flow-CFL-limited step above. The SPARC
+  gas-injection runs take about 24 h on 704 CPUs (low resolution) and 48 h
+  on 1408 CPUs (high resolution) and stop just after the TQ because of cost
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II D).
 * **Atomic sources in the leapfrog** (Taheri et al. 2022; see
   [operator splitting of atomic sources](/methods/operator-splitting-of-atomic-sources.md)):
   Crank–Nicolson centring of the linearized sources (CN-linear), plus an
@@ -114,6 +151,11 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
 
 A thin resistive wall interfaces with a meshed external vacuum that uses the
 same magnetic representation as the plasma (Artola et al. 2021, §2, Table 1).
+The wall can be resistive for some harmonics and ideal for others, external
+coils enter as time-dependent normal-field boundary conditions to which the
+wall is transparent, and the region between limiter and vessel is a
+background plasma with enhanced resistivity and/or mass density
+([Izzo et al. (2025)](/sources/izzo-2025.md), §II C, §III A).
 [Isernia et al. (2023)](/sources/isernia-2023.md) (§I) list NIMROD among the
 codes coupled only to axisymmetric thin walls. See
 [resistive-wall coupling](/methods/resistive-wall-coupling.md).
@@ -178,6 +220,20 @@ codes coupled only to axisymmetric thin walls. See
   with JOREK that mixed pellets give a milder radiation spike and that the
   radiation peaks near the injector ([Hu et al. (2021)](/sources/hu-2021.md),
   §4.1, §6).
+* **SPARC gas injection and runaway mitigation**: four valve layouts
+  compared by radiated fraction (>95%) and radiation peaking (≤1.5 in the
+  TQ), and the first combined runs of gas injection and a passive $n=1$
+  [runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md);
+  NIMROD and M3D-C1 SPARC runs, with different approximations, show "very
+  similar levels of peak radiated power in the TQ and comparably high
+  radiated energy fractions" for 6-valve cases, without printed M3D-C1
+  numbers ([Izzo et al. (2025)](/sources/izzo-2025.md), §II–IV; see
+  [radiation asymmetry](/definitions/radiation-asymmetry.md)).
+* **Training data for surrogates**: 257 poloidal-plane snapshots of the
+  DIII-D QH-mode run, resampled to a $64\times64$ grid, train sparsified
+  [Fourier neural operator surrogates](/methods/fourier-neural-operator-surrogates.md);
+  the surrogate is not coupled back into NIMROD
+  ([Rahman et al. (2024)](/sources/rahman-2024.md), §III A, §IV).
 * **Stellarators**: the NIMSTELL variant is named alongside JOREK3D and
   stellarator M3D-C1 as a transport-time-scale stellarator capability
   ([Zhou et al. (2023)](/sources/zhou-2023.md), §V).
@@ -224,3 +280,5 @@ codes coupled only to axisymmetric thin walls. See
 13. [Liu et al. (2022b)](/sources/liu-2022-b.md) — §4.
 14. [Hu et al. (2021)](/sources/hu-2021.md) — §4.1, §6.
 15. [Zhou et al. (2023)](/sources/zhou-2023.md) — §V.
+16. [Izzo et al. (2025)](/sources/izzo-2025.md) — §II–IV, Appendix, Table I.
+17. [Rahman et al. (2024)](/sources/rahman-2024.md) — §II B 1, §III A, §IV.

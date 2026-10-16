@@ -5,7 +5,7 @@ description: "Coordinates in which one coordinate follows the equilibrium field 
 status: established
 aliases: [field-aligned coordinates, twist-shift boundary condition, shifted metric, simple shifted metric, quasi-ballooning coordinates, flux-tube coordinates]
 tags: [finite-differences, numerics, code, ballooning]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Field-aligned coordinates, twist-shift condition and shifted metric
@@ -39,7 +39,9 @@ $$x=\psi-\psi_0,\qquad y=\theta,\qquad z=\varphi_{\mathrm c}-\alpha(\psi,\theta)
 ([Seto et al. (2023)](/sources/seto-2023.md), Eqs. 5–6;
 [Jiang et al. (2024)](/sources/jiang-2024.md), Eqs. 13–15; GMEC Part II
 normalizes $x=(\psi-\psi_1)/\Delta\psi$,
-[Liu et al. (2024)](/sources/liu-2024.md), Eq. 8). In straight-field-line
+[Liu et al. (2024)](/sources/liu-2024.md), Eq. 8; the later BOUT++ ELM runs
+take the reference angle $\theta_0=\pi$, the inboard midplane,
+[Seto et al. (2024)](/sources/seto-2024.md), §II). In straight-field-line
 coordinates $\hat q=q(\psi)$, $\alpha=q(\theta-\theta_0)$. Then
 $\mathbf B\propto\mathbf e_y$ and $\partial_y=\partial_\parallel$ up to a metric
 factor, $\mathbf b\cdot\nabla f=(\mathcal J_{xyz}B)^{-1}\partial_yf$ with
@@ -138,7 +140,7 @@ whose failure at low $n$ motivates the
 [Seto et al. (2023)](/sources/seto-2023.md). A grid in $(\psi,\theta)$, not
 field-aligned, must resolve the resonant poloidal harmonics $m\sim nq$; the
 FFT-and-phase-shift transform requires equal numbers of parallel and
-poloidal points (§3.2). GMEC Part II's explicit RK4 advance becomes unstable
+poloidal points (Seto et al. 2023, §3.2). GMEC Part II's explicit RK4 advance becomes unstable
 for $\Delta t/\tau_A\ge0.04$ ([Liu et al. (2024)](/sources/liu-2024.md),
 App. C). GMEC decomposes the domain in $y$ only, because the Poisson solve
 couples $x$ and $z$ ([Jiang et al. (2024)](/sources/jiang-2024.md), §IV E).
@@ -147,7 +149,8 @@ couples $x$ and $z$ ([Jiang et al. (2024)](/sources/jiang-2024.md), §IV E).
 
 - **Sign of the twist-shift condition in GMEC Part II.**
   [Liu et al. (2024)](/sources/liu-2024.md) (Eq. 9) print
-  $\delta\phi(x,y+2\pi,z)=\delta\phi(x,y,z-2\pi q)$ with
+  $\delta\Phi(x,y+2\pi,z)=\delta\Phi(x,y,z-2\pi q)$ (potential written
+  $\delta\phi$ there) with
   $z=\phi-\int_0^\theta\hat q\,\mathrm d\theta'$ (Eq. 8). Under that definition
   the condition follows with $z+2\pi q$, as in Part I (Eq. 26) and in Seto et
   al. (Eq. 9) (compiler's check on the rendered page 3; the paper may rely on an
@@ -175,3 +178,4 @@ couples $x$ and $z$ ([Jiang et al. (2024)](/sources/jiang-2024.md), §IV E).
 - [Seto et al. (2023)](/sources/seto-2023.md) — §2, §3.1–3.2, Eqs. 1–14, App. A.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §III–IV, §VIII, Eqs. 13–40, Figs. 10–12.
 - [Liu et al. (2024)](/sources/liu-2024.md) — §II A–B, Eqs. 8–9, App. C.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §II.

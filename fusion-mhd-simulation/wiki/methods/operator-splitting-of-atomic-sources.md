@@ -5,7 +5,7 @@ description: "Ways of adding stiff, temperature-dependent ionization, recombinat
 status: established
 aliases: [Strang splitting of atomic sources, SS-field, SS-leapfrog+DR, CN-JFNK, CN-linear, T-in-n error, ODE/PDE splitting]
 tags: [time-integration, neutrals, numerics, edge]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Operator splitting and Newton–Krylov treatment of atomic-physics sources
@@ -50,17 +50,19 @@ section may not be known a priori" (§3.1, Eq. 21).
    (Eq. 24), with a finite-difference Jacobian
    $\partial\mathbf g_{\mathrm{nl}}/\partial\Delta\mathbf u\approx[\mathbf g_{\mathrm{nl}}(\Delta\mathbf u)-\mathbf g_{\mathrm{nl}}((1-\epsilon)\Delta\mathbf u)]/(\epsilon\Delta\mathbf u)$
    (Eq. 25), a relative-residual stopping rule (Eq. 26), a dynamic floor that
-   keeps $n$ and $T$ positive, a relaxation factor and GMRES for the linear
+   keeps $n_i$ and $T$ positive, a relaxation factor and GMRES for the linear
    solves (§3.2). The inter-species parts of $\mathbf g'$ are moved into
    $\mathbf g_{\mathrm{nl}}$, so the two velocities are still solved
    separately while their coupling is centred through the iteration.
 3. **SS-field (per-field Strang splitting).** For each field
-   $q\in\{n,\mathbf v,T\}$: an ODE half-step of the local sources
+   $f\in\{n_i,\mathbf v,T\}$: an ODE half-step of the local sources
    ($\partial_tn_i=\mathcal R_{\mathrm{ion}}-\mathcal R_{\mathrm{rec}}$), the
    unchanged PDE advance of the transport terms
    ($\partial_tn_i+\nabla\cdot(n_i\mathbf v)=0$), then a second ODE half-step,
-   $$q\ \xrightarrow{\ \mathcal E_{\mathrm{ode}}(\Delta t/2)\ }\ \xrightarrow{\ \mathcal E_{\mathrm{pde}}(\Delta t)\ }\ \xrightarrow{\ \mathcal E_{\mathrm{ode}}(\Delta t/2)\ }\ q^{\mathrm{new}}$$
-   (§3.3, Eqs. 27–29, Fig. 2), the ODE solved by lsode with Adams methods.
+   $$f\ \xrightarrow{\ \mathcal P_{\mathrm{ode}}(\Delta t/2)\ }\ \xrightarrow{\ \mathcal P_{\mathrm{pde}}(\Delta t)\ }\ \xrightarrow{\ \mathcal P_{\mathrm{ode}}(\Delta t/2)\ }\ f^{\mathrm{new}}$$
+   (§3.3, Eqs. 27–29, Fig. 2), with $\mathcal P_{\mathrm{ode}}$, $\mathcal P_{\mathrm{pde}}$
+   (page-local) the propagators of the ODE and PDE sub-steps, the ODE solved
+   by lsode with Adams methods.
    The PDE solves of the two species become independent, giving smaller
    systems with less fill-in.
 4. **SS-leapfrog+DR (the paper's contribution).** The whole system is split as
@@ -68,7 +70,7 @@ section may not be known a priori" (§3.1, Eq. 21).
    $\mathcal A_{\mathrm{at}}$ the local non-linear atomic physics and
    $\mathcal A_{\mathrm{fl}}$ the linearized fluid system, and the ODE
    half-steps are interleaved into the leapfrog (§3.4, Eqs. 30–35, Fig. 3):
-   $$\mathbf u^{(j+\frac12,j)}=\mathcal E_{\mathrm{ode}}\big(\tfrac{\Delta t}2;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j,j)},\quad \mathbf u^{(j+\frac12,j+1)}=\mathcal E_{\mathrm{pde}}\big(\Delta t;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j+\frac12,j)},\quad \mathbf u^{(j+1,j+1)}=\mathcal E_{\mathrm{ode}}\big(\tfrac{\Delta t}2;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j+\frac12,j+1)},$$
+   $$\mathbf u^{(j+\frac12,j)}=\mathcal P_{\mathrm{ode}}\big(\tfrac{\Delta t}2;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j,j)},\quad \mathbf u^{(j+\frac12,j+1)}=\mathcal P_{\mathrm{pde}}\big(\Delta t;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j+\frac12,j)},\quad \mathbf u^{(j+1,j+1)}=\mathcal P_{\mathrm{ode}}\big(\tfrac{\Delta t}2;\mathbf s_{\mathrm{DR}}^{j}\big)\mathbf u^{(j+\frac12,j+1)},$$
    where the first superscript is the ODE time and the second the PDE time.
    The ODE step solves $\mathrm d\mathbf u/\mathrm dt=\mathcal A_{\mathrm{at}}+\mathbf s_{\mathrm{DR}}$
    with an adaptive multistep solver and the PDE step solves

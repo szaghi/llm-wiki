@@ -5,7 +5,7 @@ description: "Codes that compute 3D ideal-MHD equilibria with nested flux surfac
 status: established
 aliases: [inverse equilibrium, 3D equilibrium codes, VMEC-type solvers, fixed-boundary 3D equilibrium]
 tags: [equilibrium, stellarator, spectral, verification]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Three-dimensional inverse equilibrium solvers
@@ -35,7 +35,12 @@ the source's own symbols for them, and its $2\pi$ conventions, are
 translated on its Source page. The inputs of the fixed-boundary problem are
 $p$, either $\iota$ or the net toroidal current, and the boundary shape.
 These codes assume nested flux surfaces with $p$ constant on them and
-cannot represent magnetic islands (same source, §2).
+cannot represent magnetic islands (same source, §2). Codes without that
+assumption, such as [HINT](/software/hint.md), PIES, SIESTA and SPEC, can
+(same source, §2); when an equilibrium has a stochastic edge, an inverse
+solver can still be run inside the last closed surface, as VMEC is inside
+HINT's for high-beta LHD ([Sato & Todo (2026)](/sources/sato-2026.md),
+p. 3).
 
 ## The codes
 
@@ -145,6 +150,15 @@ calculations appear to have lower error" (§4).
   error at $t=0$ and $t=250\tau_A$
   "closely resembles" VMEC's ([Saxena et al. (2025)](/sources/saxena-2025.md),
   §3.2–3.3, Fig. 8).
+* **MIPS and MEGA, LHD.** HINT supplies the initial states, including the
+  stochastic region outside the last closed surface; VMEC, re-solved
+  inside that surface, agrees with HINT's $\iota$ and pressure and supplies
+  Boozer coordinates and the Mercier evaluation
+  ([Sato & Todo (2026)](/sources/sato-2026.md), p. 3, Fig. 1).
+* **M3D-C1, QA reactor.** The SIMSOPT-optimized quasi-axisymmetric
+  equilibrium of Landreman et al. (2022, as cited) is imported assuming
+  nested surfaces; the conducting wall of the run sits on its boundary
+  ([Wright & Ferraro (2024)](/sources/wright-2024.md), §II).
 * **JOREK** saturated external modes agree qualitatively with VMEC
   free-boundary equilibria with the same dominant $n$, with differences in
   energy spectrum and topology from coupling to internal modes and non-ideal
@@ -160,3 +174,5 @@ calculations appear to have lower error" (§4).
 * [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — VMEC–JOREK comparison of external modes.
 * [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — VMEC and GVEC equilibria imported into JOREK3D.
 * [Zhou et al. (2023)](/sources/zhou-2023.md) — self-consistent VMEC–M3D-C1 initialization for W7-X.
+* [Sato & Todo (2026)](/sources/sato-2026.md) — VMEC re-solved inside a HINT equilibrium with a stochastic edge.
+* [Wright & Ferraro (2024)](/sources/wright-2024.md) — optimized QA equilibrium as the initial state of nonlinear M3D-C1 runs.

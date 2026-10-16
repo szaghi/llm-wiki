@@ -5,7 +5,7 @@ description: "The source models that MHD codes use for shattered pellet injectio
 status: established
 aliases: [NGS ablation, neutral gas shielding, pellet ablation model, statistical fragmentation model, SPI source model, fragment ablation]
 tags: [disruption, impurities, numerics, mhd]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Pellet ablation and fragmentation models
@@ -41,7 +41,10 @@ resulting scalings are $\dot M\propto T_e^{5/3}r_{\mathrm f}^{4/3}n_e^{1/3}$.
   with the neon and D$_2$ molar rates in proportion $(1-X):X$ divided by the
   mean molar mass ([Hu et al. (2021)](/sources/hu-2021.md), §2.2,
   Eqs. 13–16, without $\zeta_B$; [Hu et al. (2023)](/sources/hu-2023.md),
-  §2.1, Eqs. 14–15, with it). Pure-impurity pellets use Sergeev's model in
+  §2.1, Eqs. 14–15, with it; [Tang et al. (2025)](/sources/tang-2025.md),
+  §2.2, Eq. 11, for neon-doped deuterium pellets in ASDEX Upgrade, without
+  $\zeta_B$ and with $X$ the molecular ratio $N_{\mathrm D_2}/(N_{\mathrm D_2}+N_{\mathrm{Ne}})$;
+  Tang et al. do not state whether the evaluation is local or flux-averaged). Pure-impurity pellets use Sergeev's model in
   Hu et al. (2021). Argon–D$_2$ pellets are assumed to separate into pure
   fragments because the triple points differ, with $\lambda_{\mathrm{Ar}}=36.63$
   and $\lambda_{\mathrm D_2}=39.00$ (Hu et al. 2021, Eq. 17).
@@ -74,10 +77,27 @@ number $N_{\mathrm f}$ follows from $N_{\mathrm f}\,n_{\mathrm{solid}}\,6\pi^2k_
 with $N_0$ the atoms in the pellet; [Bhole et al. (2023)](/sources/bhole-2023.md),
 §4.1). Fragments get a uniform speed spread and a 20° cone (Hu et al. 2021,
 2023; [Hu et al. (2024)](/sources/hu-2024.md), §2.1); there is no rocket
-effect, drag or size–velocity correlation (Hu et al. 2023, §2.3). Used
+effect, drag or size–velocity correlation (Hu et al. 2023, §2.3).
+[Tang et al. (2025)](/sources/tang-2025.md) (§2.2) sample the radii from
+Parks' fragmentation model by rejection sampling, stopped when the
+accumulated volume equals the pellet volume, and draw speeds from a
+**Gaussian** with mean $(v_{\mathrm{par}}+v_{\mathrm{pel}})/2$ and standard
+deviation 20% of the mean ($v_{\mathrm{pel}}$ the injection speed,
+$v_{\mathrm{par}}$ its component along the shatter plane; page-local), a
+spread taken from laboratory observation, instead of the uniform spread of
+Hu et al.; directions are uniform in a 20° cone and all fragments start at
+the midpoint between the bend and the exit of the shatter tube. The impact
+speed normal to the shatter plane sets the fragment size and the component
+along it sets the fragment velocities, so a slower pellet at a steeper
+shatter angle reproduces the same fragments (25° at 222 m/s for 12.5° at
+443 m/s, Table 1; the compiler checked $443\sin12.5°\approx96$ against
+$222\sin25°\approx94$ m/s). Shatter angles of 12.5°, 20° and 25° give 53,
+199 and 1105 fragments. No rocket effect is modelled, which the authors
+name as a candidate cause of their size-effect discrepancy (§3.3, §4).
+Used
 values: 100–1000 fragments; $k_{\mathrm f}^{-1}\simeq1.43$ mm for an ITER
 pellet of $5\times10^{22}$ Ne and $1.8\times10^{24}$ D in 300 fragments (Hu
-et al. 2023), a value the source note could not reproduce without an
+et al. 2023), a value the compiler could not reproduce without an
 unstated solid density.
 
 **Size effect.** Because $k_{\mathrm f}^{-1}$ scales with the pellet length,
@@ -88,24 +108,35 @@ plasma volume this is $\propto R^{5/3}B^{0.842}$
 current redistribution scaling as the square of the size and fragment
 flight time linearly, larger devices respond more slowly
 (same section; [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.2.1).
+In ASDEX Upgrade, more and smaller fragments of a 0.12%-neon pellet give
+a shorter TQ and a higher assimilation, because ablation ends when the
+fragments leave the plasma; experiments show the opposite trend
+([Tang et al. (2025)](/sources/tang-2025.md), §3.3, §3.5; see
+[shattered pellet injection](/definitions/shattered-pellet-injection.md)).
 
 ## 3. Deposition
 
-- **tanh profile.** $S_n\propto[0.5-0.5\tanh(\cdot)]$ in poloidal distance
+- **tanh profile.** $S_\rho\propto[0.5-0.5\tanh(\cdot)]$ in poloidal distance
   and in $\phi-\phi_{\mathrm f}$, with widths $\delta r_c$, $\delta\phi_c$
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.8, Eq. 44).
 - **Gaussian profile.**
-  $$S_n\propto\exp\Big(-\frac{(R-R_{\mathrm f})^2+(Z-Z_{\mathrm f})^2}{\Delta r^2}\Big)\exp\Big(-\frac{(\phi-\phi_{\mathrm f})^2}{\Delta\phi^2}\Big)$$
+  $$S_\rho\propto\exp\Big(-\frac{(R-R_{\mathrm f})^2+(Z-Z_{\mathrm f})^2}{\Delta r^2}\Big)\exp\Big(-\frac{(\phi-\phi_{\mathrm f})^2}{\Delta\phi^2}\Big)$$
   with $\Delta r=2$ cm, $\Delta\phi=1$ rad ([Hu et al. (2021)](/sources/hu-2021.md),
   Eq. 19), $\Delta r=0.08$ m and $\Delta\phi=0.3$ or 0.5 rad
   ([Hu et al. (2023)](/sources/hu-2023.md), Eq. 13;
-  [Hu et al. (2024)](/sources/hu-2024.md), Eq. 1), Gaussian in $(R,Z)$ and
-  $\phi$ in [Bhole et al. (2023)](/sources/bhole-2023.md) (Eq. 48).
+  [Hu et al. (2024)](/sources/hu-2024.md), Eq. 1), $\Delta r=0.03$ m and
+  $\Delta\phi=0.8$ rad for $n=0$–7 in ASDEX Upgrade, the poloidal width
+  being about the grid spacing ([Tang et al. (2025)](/sources/tang-2025.md),
+  Eq. 12, §3.1), Gaussian in $(R,Z)$ and $\phi$ in
+  [Bhole et al. (2023)](/sources/bhole-2023.md) (Eq. 48).
 - **The toroidal width is set by resolution.** All sources call the
   toroidal elongation artificial: it is what $n\le11$ toroidal harmonics can
   represent (Hu et al. 2023, §2.2, which keeps the source's Fourier content
-  to first order for 0.3 rad). The poloidal width is insensitive as long as
-  it stays below the plume width (Hu et al. 2023, 2024).
+  to first order for 0.3 rad). Tang et al. (2025, §3.1) set 0.8 rad by the
+  toroidal resolution of eight harmonics and 0.03 m by the poloidal grid
+  spacing, below which the source would be under-resolved. The poloidal
+  width is insensitive as long as it stays below the plume width (Hu et
+  al. 2023, 2024).
 
 ## Consequences of the toroidal width
 
@@ -118,14 +149,18 @@ The width is the most consequential free parameter of the model:
   proportionally, attributed to parallel relaxation and merging of plasmoids
   ([Hu et al. (2023)](/sources/hu-2023.md), §4.2, Fig. 19).
 - A wide source mitigates radiation peaking artificially
-  ([Hu et al. (2021)](/sources/hu-2021.md), §2.2) and under-predicts
+  ([Hu et al. (2021)](/sources/hu-2021.md), §2.2), although the AUG runs
+  at 0.8 rad *over*estimate the early peaking relative to experiment
+  ([Tang et al. (2025)](/sources/tang-2025.md), §3.5; see
+  [radiation asymmetry](/definitions/radiation-asymmetry.md)), and it
+  under-predicts
   [plasmoid drift](/definitions/plasmoid-drift.md)
   ([Kong et al. (2025)](/sources/kong-2025.md), §3.2, §5).
 
 The contradiction between the first two items is recorded on
 [shattered pellet injection](/definitions/shattered-pellet-injection.md).
 
-## Citations
+# Citations
 
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.8, §6.2.1, Eq. 44.
 - [Bhole et al. (2023)](/sources/bhole-2023.md), §4.1, Eqs. 47–48.
@@ -133,3 +168,4 @@ The contradiction between the first two items is recorded on
 - [Hu et al. (2023)](/sources/hu-2023.md), §2.1–2.4, §3.2, §4.1–4.2, Eqs. 13–19.
 - [Hu et al. (2024)](/sources/hu-2024.md), §2.1, Eq. 1.
 - [Kong et al. (2025)](/sources/kong-2025.md), §3.2, §5.
+- [Tang et al. (2025)](/sources/tang-2025.md), §2.2, §3.1, §3.3, §3.5, §4, Eqs. 11–12, Table 1.

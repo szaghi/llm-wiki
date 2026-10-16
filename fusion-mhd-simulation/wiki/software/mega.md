@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "MEGA"
-description: "Hybrid code coupling nonlinear visco-resistive full MHD to drift-kinetic δf energetic particles or kinetic thermal ions through the kinetic current, on a cylindrical finite-difference grid with explicit RK4; a reference code of the ITPA TAE, AUG-NLED and DIII-D RSAE benchmarks, used for chirping-TAE and infernal-mode studies, it saturates about 15× lower and redistributes energetic particles much less than HYMAGYC in the nonlinear NLED-AUG benchmark."
+description: "Hybrid code coupling nonlinear visco-resistive full MHD to drift-kinetic δf energetic particles or kinetic thermal ions through the kinetic current, on a cylindrical finite-difference grid with explicit RK4; a reference code of the ITPA TAE, AUG-NLED and DIII-D RSAE benchmarks, used for chirping-TAE, infernal-mode and high-beta LHD studies, it saturates about 15× lower and redistributes energetic particles much less than HYMAGYC in the nonlinear NLED-AUG benchmark."
 status: established
 aliases: [MEGA code]
-tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, benchmark]
-timestamp: 2026-10-16T12:00:00Z
+tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, benchmark, stellarator]
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # MEGA
@@ -18,7 +18,13 @@ It can also treat the bulk thermal ions as drift-kinetic markers
 ([kinetic thermal ions](/methods/kinetic-thermal-ions.md);
 [Sato et al. (2024)](/sources/sato-2024.md), §2, citing Todo et al. 2005,
 2021 as the model references). Its fluid part shares the numerics of the
-MHD code [MIPS](/software/mips.md) (ibid.).
+MHD code [MIPS](/software/mips.md) (ibid.); MIPS was "developed by
+extracting this pure MHD part of the original MEGA framework"
+([Sato & Todo (2026)](/sources/sato-2026.md), p. 2). In the
+kinetic-thermal-ion version, switching the kinetic ions off does not
+recover single-fluid MHD, because density and parallel velocity are ion
+moments, so MIPS serves as the MHD reference (ibid.). Kinetic thermal ions
+and kinetic energetic ions can be combined (ibid., p. 8).
 
 ## Model and numerics
 
@@ -69,6 +75,20 @@ MHD code [MIPS](/software/mips.md) (ibid.).
 * **Kinetic-thermal-ion runs.** $256\times48\times256$ grid on a $2\pi/3$
   toroidal wedge with about $10^8$ markers (32 per cell), on NEC SX-Aurora
   TSUBASA and Fugaku; again no GPU (Sato et al. 2024, §2).
+* **LHD runs** ([Sato & Todo (2026)](/sources/sato-2026.md), pp. 2–3):
+  $128\times640\times128$ points in $(R,\phi,Z)$ with about
+  $6.7\times10^8$ thermal-ion markers; the nonlinear run at $S=10^7$ took
+  2048 SX-Aurora vector engines for about 164.4 h wall clock; no GPU.
+  Dissipation $\nu=\kappa=10^{-7}v_AR_0$ (isotropic) in the earlier studies
+  and $\nu=\kappa_\perp=10^{-7}v_AR_0$, $\kappa_\parallel=10^{-3}v_AR_0$ in
+  the 2021 kinetic-thermal-ion study (normalized diffusivities); a realistic $\kappa_\parallel$ would impose
+  a severe CFL limit on the explicit scheme. FLR is available but switched
+  off, and there is no explicit ion diamagnetic term.
+* **Boundary conditions** (same source, pp. 2–3). The domain contains the
+  plasma and a surrounding vacuum region in which the velocity, pressure
+  and density perturbations vanish; the perturbed field is zero at the
+  domain edge. Thermal-ion markers are loaded in $R\in[2.55,4.75]$ m,
+  $Z\in[-1.1,1.1]$ m and removed when they leave into the vacuum region.
 
 ## Benchmarks
 
@@ -117,6 +137,13 @@ MHD code [MIPS](/software/mips.md) (ibid.).
   [infernal modes](/definitions/infernal-mode.md), compared with MIPS; the
   kinetic ions reduce slow growth rates and suppress the resistive beta
   collapse (§3).
+* **High-beta LHD** ([Sato & Todo (2026)](/sources/sato-2026.md)): with
+  kinetic thermal ions MEGA lowers the growth rates of resistive ballooning
+  and resonant $(3,2)$ interchange modes relative to MIPS and keeps the
+  nonlinear activity peripheral at $S=10^7$, where MIPS collapses the core;
+  adding 100 keV energetic ions up to $\beta_h=0.8\,\%$ lowers the linear
+  growth rate without changing saturation (pp. 6–9; see
+  [kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md)).
 
 ## Limitations and benchmark spread
 
@@ -147,3 +174,4 @@ MHD code [MIPS](/software/mips.md) (ibid.).
 4. [Liu et al. (2024)](/sources/liu-2024.md) — §III C–D, Figs. 14, 17.
 5. [Hezaveh et al. (2022)](/sources/hezaveh-2022.md) — §§1–2, 4, Eqs. 1–6: equations, test particles, chirping TAE.
 6. [Sato et al. (2024)](/sources/sato-2024.md) — §§2–3, Eqs. 6–25: kinetic thermal ions, numerics, hardware, infernal modes.
+7. [Sato & Todo (2026)](/sources/sato-2026.md) — pp. 2–9: MIPS as extracted MHD part, no MHD limit with kinetic ions, LHD resolution, cost, boundary conditions, kinetic thermal and energetic ions.

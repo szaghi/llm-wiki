@@ -9,7 +9,7 @@ year: 2023
 venue: "Nucl. Fusion 63:062001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Nuclear_Fusion_Cathey_Probing_non-linear_MHD_stability_of_the_EDA_H-mode_in_ASDEX.pdf"
 tags: [mhd, reduced-mhd, extended-mhd, elm, pedestal, ballooning, edge, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -93,8 +93,8 @@ paper states only that the simulated modes "could be related" to the QCM.
     $6.9\times10^{21}$ ions/s, continuous, "in opposition to" transient type-I
     ELM transport in JOREK (Cathey et al. 2020); the pedestal density drops
     more than $T_e$. Shown.
-12. **Fluctuation amplitude** (§4.3, Fig. 11). $\delta T_e/\langle T_e\rangle\sim50\%$,
-    $\delta n_e/\langle n_e\rangle\sim40\%$ at $\psi_N\approx0.98$
+12. **Fluctuation amplitude** (§4.3, Fig. 11). $\tilde T_e/T_e^{(0)}\sim50\%$,
+    $\tilde n_e/n_e^{(0)}\sim40\%$ at $\psi_N\approx0.98$
     (toroidal averages), consistent with C-Mod and AUG QCM observations.
     Shown; comparison Attributed.
 13. **Frequency chirp** (§3.2, §4.3, Fig. 11). About 35 kHz in the linear
@@ -194,7 +194,7 @@ paper states only that the simulated modes "could be related" to the QCM.
 | $n_e$ | $n_e$ | **collision:** the paper writes $\nabla p/n$ with $n$ a density |
 | $T=T_e=T_i$ | $T$ | each species temperature, not the sum |
 | $p_e$, $p_\alpha$ | $p_e$, $p_s$ | |
-| $E_r$ | $E_r$ (page-local radial component of $\mathbf E$) | |
+| $E_r$ | $E_r$ | |
 | $Z_\alpha$, $n_\alpha$, $\mathbf v_\alpha$ | $Z$, $n_{\mathrm{imp}}$, $\mathbf v_{\mathrm{imp}}$ (page-local) | N⁷⁺ |
 | $\mathbf B$, $B_t$ | $\mathbf B$, $B_\phi$ | sign convention not stated |
 | $j_\varphi$, $\varphi$ | $j_\phi$, $\phi$ | |
@@ -206,20 +206,20 @@ paper states only that the simulated modes "could be related" to the QCM.
 | $v_{\rm ExB}$ | $\mathbf v_E$ | |
 | $\mathbf v_\parallel$ | $v_\parallel\mathbf b$ | |
 | $\mathbf b_\theta$ | $\hat{\boldsymbol\theta}$ (page-local) | poloidal projection direction |
-| $v^*_{i,\theta}$ | words (poloidal ion diamagnetic velocity) | not registered |
+| $v^*_{i,\theta}$ | $\mathbf v_{\mathrm{dia},i}\cdot\hat{\boldsymbol\theta}$ | poloidal ion diamagnetic velocity |
 | $f_{\rm QCM}$, $f_n$ | $\omega/2\pi$, words | registry: $f$ is never a frequency |
 | $k_\theta$ | words (poloidal wavenumber) | not registered |
 | $\Phi$ | $\Phi$ | |
 | $\Omega_i=eB/m$ | $\Omega_i$ | |
 | $\sqrt{\mu_0\rho_0}$, $\delta t$ | JOREK time unit, $\Delta t$ | **collision:** native $\delta t$ vs registry $\delta(\cdot)$ |
-| $\delta T_e/\langle T_e\rangle$ | $\delta T_e/\langle T_e\rangle$ | $\langle\cdot\rangle$ is the **toroidal** average here |
+| $\delta T_e/\langle T_e\rangle$ | $\tilde T_e/T_e^{(0)}$ | native $\langle\cdot\rangle$ is the **toroidal** average; registry $\langle\cdot\rangle$ a flux-surface or gyroaverage |
 | $\langle n_e,T_e\rangle$ | words (cross-phase) | **collision:** registry $\langle\cdot\rangle$ is an average |
 | $\nabla_R$ | $\partial_R$ | outer midplane |
 | $\alpha_{\max}$, $\langle j_{\max}\rangle$ | $\alpha_{\mathrm b}$, words | MISHKA diagram axes, undefined in the paper |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)

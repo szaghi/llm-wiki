@@ -5,7 +5,7 @@ description: "JOREK's spatial discretization: isoparametric bicubic Bézier patc
 status: established
 aliases: [Hermite-Bézier elements, bicubic Bézier elements, Czarny–Huysmans elements, JOREK finite elements, G1 Bézier elements]
 tags: [finite-elements, spectral, numerics, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Bézier–Hermite finite elements with toroidal Fourier harmonics
@@ -148,6 +148,20 @@ Grid sizes in the chunk-2 JOREK applications:
   Grad–Shafranov equilibrium, with the core current smoothed at fixed
   4.6 MA ([Cathey et al. (2024)](/sources/cathey-2024.md), §4, Fig. 7).
 
+Grid sizes in the chunk-3 JOREK applications:
+- HL-3 lower single null: 11 136 elements, 71 radial × 121 poloidal points
+  inside the separatrix, 18 radial points in the scrape-off layer, 6 in the
+  private-flux region and 13 poloidal points along the divertor legs, refined
+  radially in the pedestal and accumulated poloidally at the X-point; the
+  confined radius at the outer midplane is 0.55 m and the scrape-off layer
+  extends 0.04 m ([Liang et al. (2025)](/sources/liang-2025.md), §III, Fig. 1).
+- AUG flux pumping: a polar grid of 100×100 elements up to the last closed
+  surface, $n\le4$ ([Zhang et al. (2025)](/sources/zhang-2025.md), §2.4).
+- AUG SPI: a 70×110 flux-aligned X-point grid, $n=0$–7
+  ([Tang et al. (2025)](/sources/tang-2025.md), §3.1).
+- 2D blob runs for surrogate training: 200×200 bicubic elements on a 1 m
+  square slab ([Gopakumar et al. (2024)](/sources/gopakumar-2024.md), §2.1).
+
 ## Convergence
 
 - **Growth rates.** The error of a linear growth rate falls as
@@ -164,6 +178,12 @@ Grid sizes in the chunk-2 JOREK applications:
   count; on an unaligned grid the error is $\propto N^{-2}$ and the limit is
   about $10^9$ ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §4.2, App. D,
   Fig. 16).
+
+- **Toroidal truncation.** For the $1/1$ core dynamics of flux pumping,
+  $n\le1$ "cannot correctly capture" the physics, while $n\le2$ and $n\le4$
+  differ by about 1% in the saturated $q_0$ and $j_\phi$; time-step and grid
+  scans converge the linear growth rate and the saturation amplitude
+  (Zhang et al. 2025, §2.4; not plotted).
 
 ## Higher order and comparison with other codes
 
@@ -184,7 +204,7 @@ Poisson problem in all runs (§2.2), against the continuity argument above
 |---|---|---|---|---|
 | [JOREK](/software/jorek.md) | isoparametric bicubic Bézier quadrilaterals | $G^1$ (Table 1); $C^1$ in Bhole et al. | real Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1 |
 | [M3D-C1](/software/m3d-c1.md) | reduced-quintic (Bell) triangles | $C^1$ | cubic Hermite elements | [Artola et al. (2021)](/sources/artola-2021.md), Table 1, §2; [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
-| [NIMROD](/software/nimrod.md) | spectral elements, Legendre-spaced nodes (bicubic; biquintic in Taheri et al.; fifth or sixth order on a 40×60 mesh in Ebrahimi & Bhattacharjee) | $C^0$ | Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1; [Taheri et al. (2022)](/sources/taheri-2022.md), §2; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2 |
+| [NIMROD](/software/nimrod.md) | spectral elements, Legendre-spaced nodes (bicubic; biquintic in Taheri et al.; fifth or sixth order on a 40×60 mesh in Ebrahimi & Bhattacharjee; degree 4 on 56×72 or degree 3 on 96×128 elements, $n\le10$ or 21, in Izzo et al.) | $C^0$ | Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1; [Taheri et al. (2022)](/sources/taheri-2022.md), §2; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2; [Izzo et al. (2025)](/sources/izzo-2025.md), Table I |
 
 M3D-C1 carries 12 degrees of freedom per scalar per vertex in 3D and 6 in 2D
 ([Artola et al. (2021)](/sources/artola-2021.md), §3); its runaway-electron
@@ -215,9 +235,11 @@ elements meet a node. [Artola et al. (2021)](/sources/artola-2021.md)
 (Table 1 and its footnote: G = geometric, C = parametric continuity) list
 JOREK as $G^1$ against $C^1$ for M3D-C1, and
 [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§II, §III),
-[Isernia et al. (2023)](/sources/isernia-2023.md) (§II A) and
+[Isernia et al. (2023)](/sources/isernia-2023.md) (§II A),
 [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.4, "typically
-$G^1$") also write $G^1$.
+$G^1$"), [Zhang et al. (2025)](/sources/zhang-2025.md) (§2.4) and
+[Liang et al. (2025)](/sources/liang-2025.md) (§III) also write $G^1$; the
+chunk-3 statements are labels, not derivations.
 [Bhole et al. (2023)](/sources/bhole-2023.md) (§3.3.2) call the same element
 $C^1$, because the arc-length derivatives are shared, element-independent
 degrees of freedom. On regular nodes the two descriptions agree in substance
@@ -237,4 +259,5 @@ $(R,Z)$ at every node type, including X-point nodes, would settle it.
 - [Isernia et al. (2023)](/sources/isernia-2023.md) — §II A; [Korving et al. (2023)](/sources/korving-2023.md) — §II C.
 - [Zhang et al. (2021)](/sources/zhang-2021.md) — §2; [Taheri et al. (2022)](/sources/taheri-2022.md) — §2; [Ma & Guo (2022)](/sources/ma-2022.md) — §3.1.3, App. A.
 - [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2; [Cathey et al. (2024)](/sources/cathey-2024.md) — §4; [Artola et al. (2022)](/sources/artola-2022.md) — §2; [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — §II; [Hu et al. (2023)](/sources/hu-2023.md) — §2.2; [Hu et al. (2024)](/sources/hu-2024.md) — §2.1.
-- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.2, §2.4; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — p. 2; [Liu et al. (2021)](/sources/liu-2021.md) — §2–3.
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §2.4; [Liang et al. (2025)](/sources/liang-2025.md) — §III, Fig. 1; [Tang et al. (2025)](/sources/tang-2025.md) — §3.1; [Gopakumar et al. (2024)](/sources/gopakumar-2024.md) — §2.1.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.2, §2.4; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — p. 2; [Liu et al. (2021)](/sources/liu-2021.md) — §2–3; [Izzo et al. (2025)](/sources/izzo-2025.md) — Table I.

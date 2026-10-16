@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Plasmas 28:052511"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Physics_of_Plasmas_Artola_3D_simulations_of_vertical_displacement_events_in_tokamaks_A.pdf"
 tags: [mhd, reduced-mhd, full-mhd, tokamak, disruption, vde, wall, free-boundary, finite-elements, benchmark, verification]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -294,7 +294,7 @@ $(1.07,-1.52\times10^{-2})$ m with $\psi=-4.73\times10^{-2}$ Wb/rad. The
 | $\Phi$ | $\Phi$; stream function $u=\Phi/F_0$ | Eq. 6 uses $\Phi$ directly in the velocity ansatz |
 | $\mathbf v_\parallel$ | $\mathbf v_\parallel=v_\parallel\mathbf b$ | |
 | $\gamma$ | $\Gamma$ | **collision:** registry $\gamma$ is a growth rate; value not stated |
-| $\underline{\boldsymbol\tau}$ | words (viscous stress) | registry has no stress-tensor symbol |
+| $\underline{\boldsymbol\tau}$ | $\mathsf\Pi$ (viscous part of the stress tensor) | |
 | $\underline{\boldsymbol\kappa}$; $\kappa_\parallel,\kappa_\perp$ | $\mathsf K$; $\kappa_\parallel$, $\kappa_\perp$ | printed in (m s)⁻¹, density-times-diffusivity form |
 | $\underline{\mathbf D}$; $D_\parallel,D_\perp$ | $\mathsf D$; $D_\parallel$, $D_\perp$ | |
 | $\nu_\parallel,\nu_\perp$ | $\nu$ | dynamic viscosity, kg m⁻¹ s⁻¹ |
@@ -319,7 +319,7 @@ $(1.07,-1.52\times10^{-2})$ m with $\psi=-4.73\times10^{-2}$ Wb/rad. The
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
@@ -361,7 +361,8 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
    * **Recorded as printed.**
      * §2 says JOREK uses "typically the Crank-Nicolson or the BDF5 Gears
        scheme" and Table 1 says "Implicit (Gears)"; other JOREK sources
-       describe the Gear scheme as BDF2. Recorded as printed (likely a
+       describe the Gear scheme as BDF2 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
+       [Bhole et al. (2023)](/sources/bhole-2023.md)). Recorded as printed (likely a
        slip).
      * Table 1 labels NIMROD's time advance "Split-implicit"; the text
        describes implicit leapfrog. Table 1 header: "Toroidal dicretization".

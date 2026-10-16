@@ -5,7 +5,7 @@ description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicol
 status: established
 aliases: [theta-xi scheme, Gear scheme, BDF2, Crank–Nicolson, linearized implicit scheme, block-Jacobi preconditioner, toroidal-harmonic preconditioner, mode groups]
 tags: [time-integration, linear-solver, numerics, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Implicit time integration and preconditioned Krylov solvers for nonlinear MHD
@@ -92,13 +92,33 @@ $\Delta t$ repeatedly between 0.1 and 5 normalized units (§4.3.1).
   preconditioner retains selected non-linear couplings between harmonics and
   speeds up convergence, and a spectral analysis of original and
   preconditioned systems was made
-  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5).
+  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5). For 3D JOREK–STARWALL runs of runaway-electron beam termination in DEMO,
+  [Vannini et al. (2025)](/sources/vannini-2025.md) (§5) state that without
+  the enhanced preconditioner of Holod et al. (2021, not ingested) "the
+  simulation results here presented would not have been possible"; they give
+  no time step, resolution or cost.
 - **Mode groups in stellarators.** In JOREK3D the mode-group preconditioner
   couples adjacent harmonics of the same toroidal mode family; it "has been
   important for making simulations computationally manageable", and in more
   optimized configurations the coupling stays strong into the second and
   third sidebands, so stellarator runs remain costlier than tokamak runs
   ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.4).
+- **NIMROD's direct-solver preconditioner.** In a two-fluid DIII-D QH-mode
+  run of [NIMROD](/software/nimrod.md) the algebraic systems of the
+  [semi-implicit leapfrog](/methods/semi-implicit-leapfrog.md) are
+  preconditioned with the SuperLU_DIST direct solver: per toroidal Fourier
+  mode (summed over the physical quantities) 34 GB of memory, 9 s of
+  factorization and 340 ms per application on 64 Perlmutter CPU cores, about
+  $340\ \mathrm{ms}\times22\approx7.5$ s of application per Krylov iteration
+  for 22 modes ([Rahman et al. (2024)](/sources/rahman-2024.md), §II B,
+  §III A 1). The same paper proposes, without testing, a
+  [Fourier-neural-operator surrogate](/methods/fourier-neural-operator-surrogates.md)
+  prediction (about 280 MB, about 1 s for the 44 planes of 22 modes) as an
+  inexpensive initial guess or preconditioner of the Krylov iteration, and
+  quotes "120× memory reduction" against SuperLU_DIST; the comparison sets an
+  approximate surrogate of $\sim10^{-2}$ relative error against an exact
+  factorization, and the surrogate is never placed in the solver (§III A 1,
+  §IV; reader's note).
 - **A failure mode of block-Jacobi.** In M3D-C1 the runaway-electron
   continuity equation, convected along $\mathbf b$ at a speed far above
   $v_A$, puts its toroidal derivative into off-diagonal blocks that "can
@@ -125,13 +145,16 @@ $\Delta t$ repeatedly between 0.1 and 5 normalized units (§4.3.1).
 | JOREK, divertor neutrals | BDF2 | $2.246\times10^{-6}$ s fluid; $2\times10^{-8}$ s kinetic neutrals | [Korving et al. (2023)](/sources/korving-2023.md), §II C, §V D, §V F |
 | JOREK3D, W7-A | implicit Euler to damp start-up transients, then Crank–Nicolson | e.g. $1.621\times10^{-2}$ ms (tearing) | [Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §V–VI |
 | [M3D-C1](/software/m3d-c1.md) | split-implicit: velocity, then field, then pressure(s), then density | 0.5 $\tau_A$, halved to 0.25 $\tau_A$ in the most dynamic interval | [Artola et al. (2021)](/sources/artola-2021.md), §2–3 |
-| M3D-C1 | $\theta$-implicit | 1.0 $t_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
+| M3D-C1 | $\theta$-implicit | 1.0 $\tau_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
 | M3D-C1 | split-implicit, steps beyond the Alfvénic scale for transport-time runs | — | [Saxena et al. (2025)](/sources/saxena-2025.md), code description |
 | [NIMROD](/software/nimrod.md) | [semi-implicit leapfrog](/methods/semi-implicit-leapfrog.md) | flow-CFL adapted | [Artola et al. (2021)](/sources/artola-2021.md), §2–3 |
+| NIMROD, DIII-D QH-mode, two-fluid with C and D ions | mixed implicit/semi-implicit leapfrog, SuperLU_DIST-preconditioned solves | $5\times10^{-9}$ s (compressional-Alfvén CFL ≈800, flow CFL ≈2), ≈7 s per step on 11 CPU nodes | [Rahman et al. (2024)](/sources/rahman-2024.md), §II B, §III A |
+| JOREK, AUG flux pumping | "implicit Gear scheme", order not stated | $2.30\times10^{-3}$ ms on a $100\times100$ polar grid | [Zhang et al. (2025)](/sources/zhang-2025.md), §2.4 |
+| JOREK, AUG SPI | JOREK's standard implicit scheme (by citation, not described) | 0.1 normalized units ($\approx6.1\times10^{-8}$ s), raised gradually to 1–2 units ($\approx0.61$ µs each) in the CQ | [Tang et al. (2025)](/sources/tang-2025.md), §3.1 |
 | JOREK, AUG EDA H-mode | implicit (scheme not restated) | one JOREK time unit, $\sqrt{\mu_0\rho_0}=0.6687\,\mu$s, halved at times in the nonlinear phase "to improve convergence of the iterative solver" | [Cathey et al. (2023)](/sources/cathey-2023.md), §2.2 |
 | M3D-C1 with runaway electrons | split $\theta$-implicit (momentum, then plasma and RE densities, then field and pressure), GMRES with block-Jacobi; RE density by characteristics with subcycles | 0.65 µs (benchmark) | [Liu et al. (2021)](/sources/liu-2021.md), §2–3 |
 | MIPS and MEGA (kinetic thermal ions) | explicit RK4 for fluid and particles, finite differences | not stated | [Sato et al. (2024)](/sources/sato-2024.md), §2 |
-| [CLT](/software/clt.md) | explicit RK4 | $\approx8.5\times10^{-3}\,t_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
+| [CLT](/software/clt.md) | explicit RK4 | $\approx8.5\times10^{-3}\,\tau_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
 | [GMEC](/software/gmec.md) | explicit RK4; resistive and numerical-diffusion terms implicit | 0.05–0.2 $R_0/v_A$ | [Jiang et al. (2024)](/sources/jiang-2024.md), §IV D, §IX |
 | [BOUT++](/software/bout-plus-plus.md) | BDF through CVODE (SUNDIALS) | — | [Seto et al. (2023)](/sources/seto-2023.md), §2 |
 | [HYMAGYC](/software/hymagyc.md) | fully implicit backward Euler (linear MHD) | — | [Vlad et al. (2025)](/sources/vlad-2025.md), §3 |
@@ -182,7 +205,9 @@ at $\xi_{\mathrm t}=\tfrac12$) and [Korving et al. (2023)](/sources/korving-2023
 (§II C, §V F) describe the Gear scheme as BDF2, and the three-level form of
 Eq. 62 cannot represent a five-step method. Checking the published version of
 Artola et al. (Phys. Plasmas 28:052511), or a fiat closure by the human, would
-settle it.
+settle it. [Zhang et al. (2025)](/sources/zhang-2025.md) (§2.4) call the
+JOREK advance an "implicit Gear scheme" without giving its order, so it does
+not bear on the slip.
 
 # Citations
 
@@ -204,3 +229,7 @@ settle it.
 - [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.4.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §2–3.
 - [Sato et al. (2024)](/sources/sato-2024.md) — §2.
+- [Rahman et al. (2024)](/sources/rahman-2024.md) — §II B, §III A 1, §IV.
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §2.4.
+- [Tang et al. (2025)](/sources/tang-2025.md) — §3.1.
+- [Vannini et al. (2025)](/sources/vannini-2025.md) — §5.

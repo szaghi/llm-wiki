@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Kinetic thermal ions in hybrid kinetic-MHD"
-description: "Extension of hybrid kinetic-MHD in which the bulk thermal ions, not only an energetic minority, are δf drift-kinetic markers while the electrons stay a fluid; the ion density and parallel flow are taken from the markers instead of the fluid equations, and the ion response adds Landau damping and a phase shift of the pressure perturbation that lower slow MHD growth rates."
+description: "Extension of hybrid kinetic-MHD in which the bulk thermal ions, not only an energetic minority, are δf drift-kinetic markers while the electrons stay a fluid; the ion density and parallel flow are taken from the markers instead of the fluid equations, and the ion response adds Landau damping, a phase shift of the pressure perturbation in tokamaks and, in helical plasmas, a precession averaging of the perpendicular ion pressure that lower slow MHD growth rates."
 status: established
 aliases: [KTI, kinetic thermal ions, thermal-ion kinetic-MHD, kinetic bulk ions, density and parallel-velocity synchronization]
-tags: [hybrid-kinetic, particles, mhd, energetic-particles, numerics, kink, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+tags: [hybrid-kinetic, particles, mhd, energetic-particles, numerics, kink, tokamak, stellarator, ballooning]
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Kinetic thermal ions in hybrid kinetic-MHD
@@ -20,7 +20,9 @@ supply. Two codes of this bundle do this:
 [M3D-C1-K](/software/m3d-c1-k.md), with thermal and fast deuterium both
 kinetic ([Liu et al. (2022b)](/sources/liu-2022-b.md), §2), and
 [MEGA](/software/mega.md), with only thermal ions and no EPs
-([Sato et al. (2024)](/sources/sato-2024.md), §2). Liu et al. state that
+([Sato et al. (2024)](/sources/sato-2024.md), §2). MEGA has since been run
+with kinetic thermal ions and kinetic energetic ions together, for LHD
+([Sato & Todo (2026)](/sources/sato-2026.md), p. 8). Liu et al. state that
 their model "is similar to" MEGA's earlier KTI model (Sato & Todo 2019,
 2020, as cited, §1). JOREK lists kinetic thermal ions as work in progress
 ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.2).
@@ -33,7 +35,10 @@ the cases they study: "false positive results" for non-resonant
 [fishbones](/definitions/fishbone.md)
 ([Liu et al. (2022b)](/sources/liu-2022-b.md), §4) and an underestimated
 beta limit for [infernal modes](/definitions/infernal-mode.md)
-([Sato et al. (2024)](/sources/sato-2024.md), §4).
+([Sato et al. (2024)](/sources/sato-2024.md), §4). For high-beta LHD the
+same group finds that MHD predicts a core collapse that kinetic thermal
+ions prevent ([Sato & Todo (2026)](/sources/sato-2026.md); see
+[kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md)).
 
 ## Why the fluid ion equations must go
 
@@ -43,7 +48,7 @@ equations and once as marker moments. Liu et al. (2022b, §1) state that
 "the error between the two approaches can lead to numerical issues or even
 parasitic modes". In M3D-C1 the fluid and kinetic equations are solved one
 after the other within a step. With the Park et al. (1999) scheme, as
-cited, where thermal-ion pressure enters the fluid but $n$ and
+cited, where thermal-ion pressure enters the fluid but $n_i$ and
 $v_\parallel$ come from the fluid equations, "the difference between
 $\delta n$ and $\delta v_\parallel$ from the fluid and kinetic equations
 can increase with time". This violates quasineutrality and produces
@@ -123,9 +128,25 @@ $$\mathbf J_i=\frac1B\left(p_{\parallel i}\nabla\times\mathbf b-p_{\perp i}\nabl
 current-coupling form of
 [pressure and current coupling](/methods/pressure-and-current-coupling.md)
 applied to the bulk ions. Ohm's law and $\mathbf E^*$ contain
-$-(m_i/q_i\rho)\nabla_\parallel p_e$ (Eqs. 13, 23), but that term is
+$-\nabla_\parallel p_e/(q_in_i)$, printed as $-(m_i/q_i\rho)\nabla_\parallel p_e$ (Eqs. 13, 23), but that term is
 **neglected in all results**, so the model has no electron diamagnetic
-effect (§2). Liu et al. (2022b, §2) state that their pressure coupling and
+effect (§2). The LHD runs of [Sato & Todo (2026)](/sources/sato-2026.md)
+(p. 2) likewise have no explicit ion diamagnetic term in the perpendicular
+momentum equation, the ion response to the equilibrium pressure gradient
+entering only through the markers, and keep FLR, available in MEGA,
+switched off "in order to isolate the dominant stabilization mechanism".
+
+**No MHD limit inside the KTI code.** Because density and parallel
+velocity are marker moments, switching off the kinetic ions in the KTI
+version of MEGA "does not strictly reduce the system to the conventional
+single-fluid MHD equations", unlike the original EP-only MEGA; the MHD
+reference is therefore a separate code, [MIPS](/software/mips.md), "developed
+by extracting this pure MHD part of the original MEGA framework"
+([Sato & Todo (2026)](/sources/sato-2026.md), p. 2). An MHD-versus-KTI
+comparison is thus a comparison between two codes with shared numerics,
+not a switch inside one code.
+
+Liu et al. (2022b, §2) state that their pressure coupling and
 MEGA's current coupling "are equivalent for calculating $v_\perp$", citing
 [Liu et al. (2022)](/sources/liu-2022.md).
 
@@ -133,13 +154,13 @@ MEGA's current coupling "are equivalent for calculating $v_\perp$", citing
 
 | | M3D-C1-K | MEGA |
 |---|---|---|
-| kinetic ions | thermal and fast D, $\delta f$, guiding centre | thermal H only, $\delta f$, drift-kinetic |
+| kinetic ions | thermal and fast D, $\delta f$, guiding centre | thermal H only, $\delta f$, drift-kinetic (Sato et al. 2024); thermal and 100 keV energetic ions (Sato & Todo 2026) |
 | fluid equations kept | $\mathbf v_\perp$, $\mathbf B$, $p_e$ or $T_e$ | $\mathbf v_\perp$, $\mathbf B$, $p_e$ |
 | from markers | $\delta n$, $\delta v_\parallel$, $\mathsf P_i$, $\mathsf P_h$ | $\rho$, $v_\parallel$, $p_{\parallel i}$, $p_{\perp i}$ |
 | coupling | pressure, $-\nabla_\perp\cdot\mathsf P_i$ | current, $-\mathbf J_i\times\mathbf B$ |
 | $\nabla_\parallel p_e$ in ion field | kept | neglected |
 | MHD discretization | finite elements, semi-implicit | finite differences, explicit RK4 |
-| source | [Liu et al. (2022b)](/sources/liu-2022-b.md), §2 | [Sato et al. (2024)](/sources/sato-2024.md), §2 |
+| source | [Liu et al. (2022b)](/sources/liu-2022-b.md), §2 | [Sato et al. (2024)](/sources/sato-2024.md), §2; [Sato & Todo (2026)](/sources/sato-2026.md), p. 2 |
 
 ## Verification: Landau damping of the ion acoustic wave
 
@@ -195,6 +216,42 @@ benchmarked against MINERVA (see [MIPS](/software/mips.md)).
   infernal modes the electron and ion pressure amplitudes are comparable and
   the difference is their phase. This is a stated difference of mechanism
   between geometries, not a contradiction between claims.
+  [Sato & Todo (2026)](/sources/sato-2026.md) (pp. 6–7, Figs. 5–6, from
+  Sato & Todo 2020) supply the helical numbers: for an $n=6$ resistive
+  ballooning mode in high-beta LHD, $\delta p_{\perp i}$ peaks at about 5 %
+  and $\delta p_{\parallel i}$ at about 15 % of the dominant harmonic of
+  $\delta p_e$, which agrees with the amplitude-reduction statement.
+- **Precession averaging in helical plasmas.** Ions deeply trapped in the
+  helical ripples precess poloidally as well as toroidally (only
+  toroidally in a tokamak); fast poloidal precession across perturbations
+  of short poloidal wavelength "effectively average[s] out the
+  perturbations" and suppresses the trapped-ion-dominated
+  $\delta p_{\perp i}$. With $\omega_{\mathrm d}$ the precession
+  frequency of a typical trapped ion relative to the mode phase, the
+  stabilization is weak while $\omega_{\mathrm d}<\gamma$ and strong once
+  $\gamma<\omega_{\mathrm d}$: in LHD the MHD and KTI growth rates coincide at
+  $S\sim10^4$ ($\gamma\tau_A\approx0.11$, $\omega_{\mathrm d}\tau_A\approx0.07$–0.09)
+  and separate as $S$ rises, the KTI rate falling roughly as $S^{-1}$
+  against $S^{-1/3}$ for MHD resistive ballooning, and the resonant
+  $(3,2)$ ideal interchange of $S>10^6$ ($\gamma<\omega_{\mathrm d}\approx0.03\tau_A^{-1}$)
+  is stabilized ([Sato & Todo (2026)](/sources/sato-2026.md), pp. 6–7,
+  Fig. 4). This is the helical counterpart of the "no effect when the mode
+  is fast" item above, with $\omega_{\mathrm d}$ in place of $\omega_r$.
+- **Nonlinear outcome in LHD.** At $S=10^7$ MHD collapses the core while
+  with KTIs the activity stays peripheral and the central pressure is
+  maintained; at $S=10^5$ both lose the central pressure (ibid., pp. 7–8,
+  Figs. 7–9).
+- **Energetic ions on top of kinetic thermal ions.** Maxwellian 100 keV
+  energetic ions up to $\beta_h=0.8\,\%$ lower the linear $n=2$ interchange
+  growth rate by reducing the bulk-pressure drive at fixed total pressure;
+  their own pressure response is negligible, attributed to their fast
+  precession, and the nonlinear saturation is unchanged (ibid., pp. 8–9,
+  Figs. 10–12).
+- **Stated generality.** The stabilization originates in the deviation of
+  orbits from field lines (finite orbit width), which the authors expect
+  to matter most near the beta limit, where modes grow slowly; for
+  beta-limit assessment "the conventional MHD model may be insufficient"
+  (ibid., Summary).
 
 ## Limitations stated by the sources
 
@@ -204,6 +261,12 @@ benchmarked against MINERVA (see [MIPS](/software/mips.md)).
   trapped thermal ions in both drive and damping is asserted without a
   power-transfer separation (Source page of
   [Liu et al. (2022b)](/sources/liu-2022-b.md)).
+- FLR is off in the LHD runs; it "may quantitatively modify growth rates
+  but [is] not expected to alter the primary stabilization mechanism"
+  (stated, not tested), and the kinetic stabilization is weaker for fast
+  modes with $\gamma>\omega_{\mathrm d}$, so the KTI result "does not rule out" the
+  core density collapse observed in LHD
+  ([Sato & Todo (2026)](/sources/sato-2026.md), pp. 2, 8).
 - Both papers call for revisiting results obtained without kinetic thermal
   ions: non-resonant fishbone studies
   ([Liu et al. (2022b)](/sources/liu-2022-b.md), §7) and MHD infernal
@@ -222,3 +285,4 @@ is a widening of scope, recorded on
 - [Sato et al. (2024)](/sources/sato-2024.md): MEGA with kinetic thermal ions, current coupling through $\mathbf J_i$, the infernal-mode phase-shift mechanism.
 - [Liu et al. (2022)](/sources/liu-2022.md): the equivalence of pressure and current coupling invoked for $\mathbf v_\perp$.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md): kinetic thermal ions in JOREK in progress.
+- [Sato & Todo (2026)](/sources/sato-2026.md): MEGA with kinetic thermal and energetic ions for high-beta LHD, precession averaging, the $\gamma$–$\omega_{\mathrm d}$ criterion, no MHD limit inside the KTI code.

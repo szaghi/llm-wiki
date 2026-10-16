@@ -5,7 +5,7 @@ description: "Variational moments equilibrium code: 3D ideal-MHD inverse equilib
 status: established
 aliases: [variational moments equilibrium code, NEMEC]
 tags: [code, equilibrium, stellarator, spectral, finite-differences]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # VMEC
@@ -90,6 +90,14 @@ output (§4, App. A):
   imported accurately, and a VMEC equilibrium extended into vacuum exposes
   an external $(7,5)$ mode
   ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.1).
+* **MIPS and MEGA, LHD.** VMEC re-solves the equilibrium inside the last
+  closed surface of a [HINT](/software/hint.md) equilibrium, which has a
+  stochastic region outside it that VMEC cannot represent; the $\iota$ and
+  pressure profiles agree with HINT's. The VMEC solution provides the
+  Boozer coordinates (via NEWBOZ) onto which the cylindrical simulation
+  data are interpolated for Fourier analysis, and the Mercier evaluation
+  ([Sato & Todo (2026)](/sources/sato-2026.md), p. 3, Fig. 1; see
+  [interchange modes](/definitions/interchange-mode.md)).
 * **JOREK3D** uses GVEC, described as VMEC-like energy minimization with a
   B-spline radial basis, for its grid and initial state (Nikulsin et al. 2022,
   §I, §IV).
@@ -112,3 +120,4 @@ accurate (§4).
 6. [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §4.1.
 7. [Zhou et al. (2023)](/sources/zhou-2023.md) — §III.
 8. [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §3.2, §4.1.
+9. [Sato & Todo (2026)](/sources/sato-2026.md) — p. 3, Fig. 1.

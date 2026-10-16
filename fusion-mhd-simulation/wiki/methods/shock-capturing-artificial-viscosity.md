@@ -5,7 +5,7 @@ description: "Solution-dependent, field-aligned artificial diffusion added to th
 status: established
 aliases: [shock capturing, discontinuity capturing, artificial viscosity, pressure-sensor shock capturing]
 tags: [stabilization, finite-elements, numerics, full-mhd, disruption, impurities]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Shock-capturing artificial viscosity for MHD finite elements
@@ -36,8 +36,8 @@ $C^{\mathrm{sc}}_\parallel,C^{\mathrm{sc}}_\perp\ge0$ user factors and
 $\mathbf w$ the test function. The scalar coefficient is
 $$\tau_{\mathrm{sc}}=h_e^2\,\frac{\dot p_{\mathrm{op}}+\dot p_{\mathrm{src}}}{p}\;h_e\frac{\|\nabla p\|}{p},$$
 $$\dot p_{\mathrm{op}}=\Big|\frac{\partial p}{\partial\rho}\mathcal T_{\mathrm{op}}(\rho)+\frac{\partial p}{\partial\rho_{\mathrm{imp}}}\mathcal T_{\mathrm{op}}(\rho_{\mathrm{imp}})+\frac{\partial p}{\partial T}\mathcal T_{\mathrm{op}}(T)\Big|,\qquad \dot p_{\mathrm{src}}=\Big|\frac{\partial p}{\partial\rho}\mathcal T_{\mathrm{src}}(\rho)+\frac{\partial p}{\partial\rho_{\mathrm{imp}}}\mathcal T_{\mathrm{src}}(\rho_{\mathrm{imp}})+\frac{\partial p}{\partial T}\mathcal T_{\mathrm{src}}(T)\Big|$$
-(Eqs. 32–33), where $\mathcal T_{\mathrm{op}}(q)$ and $\mathcal T_{\mathrm{src}}(q)$
-denote the rates of change of $q$ produced by the differential operator and by
+(Eqs. 32–33), where $\mathcal T_{\mathrm{op}}(f)$ and $\mathcal T_{\mathrm{src}}(f)$
+denote the rates of change of a field $f$ produced by the differential operator and by
 the sources of its equation, $p$ is the total pressure including the impurity
 contribution, $\rho_{\mathrm{imp}}=m_{\mathrm{imp}}n_{\mathrm{imp}}$ and $h_e$ is
 the element size of the VMS term. The factor $h_e\|\nabla p\|/p$ is a

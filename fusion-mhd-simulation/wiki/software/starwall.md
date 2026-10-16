@@ -5,7 +5,7 @@ description: "Green's-function thin-wall code that supplies JOREK's free-boundar
 status: established
 aliases: [JOREK-STARWALL]
 tags: [code, wall, free-boundary, vde, disruption, benchmark]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # STARWALL
@@ -87,6 +87,17 @@ peaks on the vessel L/R time (≈500 ms) after $I_p$ has vanished
 [wall forces](/definitions/wall-forces.md)). The passive-structure model
 had been benchmarked axisymmetrically against DINA (same source, §2).
 
+EU-DEMO runaway-electron beams: a 2D and 3D JOREK–STARWALL model of an
+upward mitigated hot VDE with the CS, PF and in-vessel vertical-stability
+coils, two thin vacuum-vessel layers ($\eta_w=0.76$ μΩ m, $d_w=3$ cm), the
+inboard one meshed with triangles and the outboard one with toroidal
+filaments, and the first wall, with the JOREK boundary hugging the first
+wall in the upper region; the 3D termination runs were feasible only with
+the enhanced JOREK preconditioner of Holod et al. 2021
+([Vannini et al. (2025)](/sources/vannini-2025.md), §2–3, §5, Fig. 1a; see
+[runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md)).
+No wall-element counts are given.
+
 Free-boundary RMP plasma response, which "was shown to recover experimental
 flux surface corrugation accurately", and VDEs including ASDEX Upgrade hot VDEs
 (Hoelzl et al. 2024, §2.2, §3.1); 3D NSTX VDEs (Artola et al. 2021); ITER
@@ -116,3 +127,4 @@ al. 2021, §6.3); runaway beams with cold VDEs (Bandaru et al. 2024). See
 4. [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §2.2, §3.1, §5.
 5. [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §IV.
 6. [Artola et al. (2022)](/sources/artola-2022.md) — §2, §4.3, §5.
+7. [Vannini et al. (2025)](/sources/vannini-2025.md) — §2–3, §5.

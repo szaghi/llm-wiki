@@ -5,7 +5,7 @@ description: "Phase-space diagnostic for frequency-chirping Alfvén modes that w
 status: established
 aliases: [action-angle chirping diagnostic, P2 slicing, wave-frame canonical transformation, phase-space bucket diagnostic]
 tags: [energetic-particles, alfven-eigenmode, hybrid-kinetic, particles, numerics]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Wave-frame action-angle diagnostic of chirping modes
@@ -110,7 +110,7 @@ $\ell_{\mathrm r}=-m=-6$ (§4.2, Fig. 6). Findings:
   on the up-chirping side of the flattened region and move in phase space.
   The colour labels show that "the BGK-type chirping wave carries the EPs in
   a moving phase-space bucket in a convective way" rather than perturbing
-  them locally and leaving them behind (§4.4, Fig. 9). By $t/t_A=2477.8$ the
+  them locally and leaving them behind (§4.4, Fig. 9). By $t\omega_A=2477.8$ the
   up and down branches have swept $+13.55\%$ and $-11.33\%$ in frequency.
 - **Survival in the continuum.** Holes and clumps formed in the gap "survive
   even in the shear Alfvén continuum" once the chirping frequencies leave

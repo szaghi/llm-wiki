@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Runaway electrons and their generation mechanisms"
-description: "Electrons accelerated to relativistic energies when the parallel electric field exceeds the critical field set by collisional drag; in disruptions they form after the thermal quench by primary (Dreicer, hot-tail, tritium decay, Compton) and secondary (avalanche) generation, can carry most of the plasma current as a beam, and are lost when MHD stochastizes the field, apart from a trapped remnant that can reseed the beam."
+description: "Electrons accelerated to relativistic energies when the parallel electric field exceeds the critical field set by collisional drag; in disruptions they form after the thermal quench by primary (Dreicer, hot-tail, tritium decay, Compton) and secondary (avalanche) generation, can carry most of the plasma current as a beam, and are lost when MHD stochastizes the field, apart from a trapped remnant or a confined core remnant that can reseed the beam."
 status: established
 aliases: [RE, runaway electron beam, RE beam]
 tags: [runaway-electrons, disruption]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Runaway electrons and their generation mechanisms
@@ -79,6 +79,11 @@ from external sources:
   hot-tail seed ([Hu et al. (2023)](/sources/hu-2023.md), §1, §5). After a
   flush the plasma is so cold ($T_e<20$ eV) that no Dreicer or hot-tail
   source is needed ([Liu et al. (2021)](/sources/liu-2021.md), §6).
+- *Nuclear seeds only.* In the EU-DEMO study of
+  [Vannini et al. (2025)](/sources/vannini-2025.md) (§4) the seed is tritium
+  decay plus Compton scattering, switched on at the end of an artificial
+  thermal quench, with no Dreicer or hot-tail source; the avalanche alone
+  builds a beam of about 13 MA.
 
 **Secondary (avalanche) generation** multiplies an existing RE population
 by close collisions that knock thermal electrons above the critical
@@ -92,7 +97,7 @@ Hesslow et al. 2017–2019). The formula is on the
 the Rosenbluth–Putvinski avalanche form, with $E_\parallel/E_c\approx10$ in
 the post-flush DIII-D plasma ([Liu et al. (2021)](/sources/liu-2021.md),
 §5.4). Because the gain is exponential in the available poloidal flux, a
-convenient figure of merit is the flux per decade of gain. Reconstitution
+convenient figure of merit is the flux per decade of gain, $\psi_{10}$. Reconstitution
 after a flush is bounded by the seed times $10$ raised to the available flux
 over that figure of merit ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md),
 Eq. 1).
@@ -103,7 +108,12 @@ Eq. 1).
   RE current is about 10 MA for seeds of 0.1–1 A and still about 9.5 MA for
   a seed of $10^{-4}$ A, so that moderate seed reduction is ineffective in
   "strong-avalanche-gain machines like ITER"
-  ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B). Vertical
+  ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B). In the
+  axisymmetric EU-DEMO VDE, raising the neon density from about
+  $1.3\times10^{18}$ to $2.4\times10^{19}$ m$^{-3}$ raises the peak runaway
+  current from about 9.8 to 13 MA and the beam growth rate from about 180 to
+  900 s$^{-1}$ ([Vannini et al. (2025)](/sources/vannini-2025.md), §4,
+  Fig. 4, four points read from the figure). Vertical
   plasma motion during the current quench reduces the avalanche gain
   substantially, "although the avalanche gain remains very large"
   ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.5).
@@ -119,7 +129,17 @@ Eq. 1).
   would otherwise have a dominant 2/1 mode, and an RE beam slows a
   [vertical displacement event](/definitions/vertical-displacement-event.md)
   when current decay influences the vertical instability
-  ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.4.2).
+  ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.4.2). In a 2D
+  EU-DEMO VDE the beam keeps the current inside the last closed surface, so
+  $q_{95}$ falls instead of rising and the vertical wall force keeps growing
+  (≈60 MN), which defeats the
+  [vertical-force mitigation](/results/vertical-force-mitigation.md) that
+  works without runaways ([Vannini et al. (2025)](/sources/vannini-2025.md),
+  §4, Fig. 3). The beam is MHD-unstable at every 3D restart, at
+  $q_{95}=2.7$, 2.29 and 2.05, with growth rates of about
+  $1$–$8\times10^4$ s$^{-1}$; the authors, citing Bandaru et al. (2024b),
+  state that the beam "can become unstable a long time before the value of
+  $q_{95}=2.0$" (§5, Fig. 5a).
 - **Beam termination.** In the simulated benign termination of a JET RE
   beam, an $n=1$ double tearing mode at two $q=4$ surfaces stochastizes the
   field and the REs are lost in $\le100\,\mu$s, in "very good agreement"
@@ -139,6 +159,25 @@ Eq. 1).
   reseed the beam, at the cost of a 2–3 MA current drop in an ITER-like case
   ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md); see
   [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+  In 3D JOREK runs of the EU-DEMO beam at $q_{95}\approx2.3$ with $n\le7$,
+  edge $(8,4)$ and $(9,4)$ modes dominate first, then a $(2,1)$ mode
+  saturates at $\sqrt{\psi_N}=0.6$; the stochastic region grows inward and
+  the runaway current falls from 12.3 to 2.8 MA in 1.12 ms. The remnant
+  stays in the core inside closed surfaces and re-avalanches to about 10 MA,
+  then partly decays again after a new MHD burst
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §5, Figs. 6–9). Two
+  harmonics ($n=0$ and one $n>0$) misplace or overestimate the growth
+  rates; all $n\le4$ are needed for the linear phase (§5, Fig. 5b). The
+  energy that the lost runaways deposit, and the effect of sacrificial
+  limiters, are on
+  [runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md).
+- **Deconfinement by a passive coil.** A passive $n=1$
+  [runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md),
+  driven by the current-quench loop voltage, keeps the post-TQ field
+  stochastic while $q_0<2$; for SPARC, 1.5 ms of such deconfinement at
+  1.75 MA/ms "could result in a $10^3$ reduction in the overall avalanche
+  gain" ([Izzo et al. (2025)](/sources/izzo-2025.md), §III C, §IV; estimate
+  without derivation).
 - **Kink with RE current.** The RE current gives the (2,1) resistive kink a
   real frequency. Growth rate and frequency both "follow the 3/5 power law" of
   the resistivity, and both are insensitive to the convection speed of the
@@ -173,7 +212,9 @@ Eq. 1).
   ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md)).
 - **Test particles**: relativistic full-orbit or guiding-centre tracers in
   the MHD fields, without back-reaction
-  ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.10, §6.4.1).
+  ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.10, §6.4.1), also
+  seeded from the fluid density to estimate wall loads
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §6).
 - **Kinetic with back-reaction**: full-$f$ particle-in-cell REs with
   two-way [pressure or current coupling](/methods/pressure-and-current-coupling.md)
   are in development, together with a synthetic synchrotron diagnostic
@@ -199,6 +240,16 @@ pitch-resolved (kinetic or particle) REs through a self-consistent 3D flush
 and its rehealing would settle whether the trapped remnant survives at the
 predicted level.
 
+A third 3D case qualifies the compiler's remark above that fluid runs give
+near-complete loss: in EU-DEMO the JOREK fluid model loses 77% of the
+runaway current (12.3 to 2.8 MA) and the core remnant, which never reached
+the stochastic region, reforms a beam of about 10 MA
+([Vannini et al. (2025)](/sources/vannini-2025.md), §5, Fig. 6a). Survival
+there is through closed surfaces that persist or reheal in the core, not
+through trapping, so complete loss is not a property of fluid models; it
+depends on whether the stochastic region reaches the core. The trapped
+channel remains untested in 3D.
+
 # Citations
 
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §I–IV, Eqs. 2.13–2.19.
@@ -211,3 +262,5 @@ predicted level.
 - [Artola et al. (2022)](/sources/artola-2022.md) — §4.1.
 - [Hu et al. (2021)](/sources/hu-2021.md) — §3, §6.
 - [Hu et al. (2023)](/sources/hu-2023.md) — §1, §5.
+- [Vannini et al. (2025)](/sources/vannini-2025.md) — §4–6, Figs. 3–9.
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §I, §III C, §IV.

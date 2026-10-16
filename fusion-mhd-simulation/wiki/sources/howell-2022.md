@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:022507"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Howell_Growing_neoclassical_tearing_modes_seeded_via_transient-indu.pdf"
 tags: [mhd, tearing, bootstrap-current, tokamak, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -179,7 +179,8 @@ simulations as a test of an equilibrium's resilience to NTMs.
   $(\kappa_\parallel/\kappa_\perp)^{1/4}=100$. Resistivity Spitzer-like,
   $\eta=\eta_0T_e^{-3/2}$; damping rates uniform; $\eta$ and the damping
   rates are "artificially enhanced for numerical convenience".
-  ($\mathsf\Pi_s$, $\mathbf q_s$, $D_B$ are page-local; see Notation map.)
+  ($\mathsf\Pi_s$ is the registry stress tensor; $\mathbf q_s$, $D_B$ are
+  page-local; see Notation map.)
 * **Heuristic neoclassical closures** (§II A, Eqs. 8–10, after Gianakon et
   al. 2002), with subscript 0 for the equilibrium, $\mathbf e_\theta$ a
   poloidal basis vector parallel to the equilibrium poloidal field and
@@ -287,7 +288,7 @@ simulations as a test of an equilibrium's resilience to NTMs.
 | $\vec B$, $\vec E$, $\vec J$, $\mu_0$ | $\mathbf B$, $\mathbf E$, $\mathbf J$, $\mu_0$ | SI |
 | $\eta$, $\eta_0$ | $\eta$, $\eta_0$ | Spitzer-like profile |
 | $\nu_{ei}=\eta ne^2/m_e$ | $\tau_{ei}^{-1}$ (page-local) | **collision:** registry $\nu$ is viscosity |
-| $\vec{\vec\pi}_i$, $\vec{\vec\pi}_e$, $\vec{\vec\Pi}$ | $\mathsf\Pi_i$, $\mathsf\Pi_e$ (page-local) | no registry stress-tensor symbol |
+| $\vec{\vec\pi}_i$, $\vec{\vec\pi}_e$, $\vec{\vec\Pi}$ | $\mathsf\Pi_i$, $\mathsf\Pi_e$ | registry $\mathsf\Pi_s$ |
 | $\mu_\alpha$ ($\mu_i$, $\mu_e$) | $\tau_{\mathrm{nc},s}^{-1}$ (page-local) | **collision:** registry $\mu$ is the magnetic moment |
 | $m_i$, $m_e$, $e$, $Z_{eff}$ | $m_i$, $m_e$, $e$, $Z_{\mathrm{eff}}$ | |
 | $\langle\ldots\rangle$ | $\langle\cdot\rangle$ | flux-surface average |
@@ -297,9 +298,9 @@ simulations as a test of an equilibrium's resilience to NTMs.
 | $\vec B_{mp}$, $\mathrm{Env}$, $E_0$, $\tau$, $t_w$, $t_o$ | $\mathbf B_{\mathrm{mp}}$, $\mathrm{env}$, $E_0$, $\tau$, $t_w$, $t_o$ (page-local) | **collision risk:** $E_0$ is an amplitude, not a field |
 | $\Omega$ (MP modulation) | $\omega_{\mathrm{mp}}$ | **collision:** registry $\Omega_s$ is a cyclotron frequency |
 | $K$, $\Omega_E$ | $K$, $\omega_E$ (page-local) | poloidal-flow coefficient; toroidal angular rotation |
-| $\psi_{m,n}$ | $\Psi_{m/n}$ (page-local) | **collision:** registry $\psi$ is poloidal flux per radian |
+| $\psi_{m,n}$ | $\Psi_{m/n}$ | **collision:** registry $\psi$ is poloidal flux per radian |
 | $\tilde B$, $\tilde f$, $\tilde J_0$ etc. | $\delta\mathbf B$, $\delta(\cdot)$ | |
-| $w$ | $w$ (page-local) | island width |
+| $w$ | $w$ | island width |
 | $q$, $q'$, $q_0$, $q_{95}$, $\Delta'$ | same | $2\pi$ convention of the flux in $q'$ not stated |
 | $\beta_n$ | $\beta_N$ | |
 | $E_{kin}$, $E_{mag}$, $E_{int}$, $E_n$ | $W_{\mathrm{kin}}^{(n)}$, $W_{\mathrm{mag}}^{(n)}$, $W_{\mathrm{th}}$ | **collision risk** with $\mathbf E$ |
@@ -312,10 +313,11 @@ stated; $e^{-in\phi}$ (A7–A9) vs $e^{i(n\phi-m\theta)}$ (Eq. 14).
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
+* [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [JOREK](/software/jorek.md)
 * [Modified Rutherford equation](/definitions/modified-rutherford-equation.md)

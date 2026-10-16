@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Phys. Commun. 274:108288"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Computer_Physics_Communications_Taheri_Time-discretization_of_a_plasma-neutral_MHD_model_with_a_sem.pdf"
 tags: [mhd, neutrals, time-integration, finite-elements, spectral, edge, verification, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -103,20 +103,20 @@ quasi-neutral ($n_e=n_i$), no displacement current, no electron–neutral or
 elastic neutral–ion scattering; NIMROD's extended Ohm's law is not used:
 
 $$\begin{aligned}
-&\partial_tn_i+\nabla\cdot(n_i\mathbf v)=\mathcal I-\mathcal C,\qquad \partial_tn_{\mathrm N}+\nabla\cdot(n_{\mathrm N}\mathbf v_{\mathrm N})=\mathcal C-\mathcal I,\\
-&m_in_i(\partial_t+\mathbf v\cdot\nabla)\mathbf v=\mathbf J\times\mathbf B-\nabla p-\nabla\cdot\mathsf\Pi+\mathbf f_{\mathrm{cx}}+m_i(\mathcal I+\mathcal X)(\mathbf v_{\mathrm N}-\mathbf v),\\
-&m_in_{\mathrm N}(\partial_t+\mathbf v_{\mathrm N}\cdot\nabla)\mathbf v_{\mathrm N}=-\nabla p_{\mathrm N}-\nabla\cdot\mathsf\Pi_{\mathrm N}-\mathbf f_{\mathrm{cx}}+m_i(\mathcal C+\mathcal X)(\mathbf v-\mathbf v_{\mathrm N}),\\
+&\partial_tn_i+\nabla\cdot(n_i\mathbf v)=\mathcal R_{\mathrm{ion}}-\mathcal R_{\mathrm{rec}},\qquad \partial_tn_{\mathrm N}+\nabla\cdot(n_{\mathrm N}\mathbf v_{\mathrm N})=\mathcal R_{\mathrm{rec}}-\mathcal R_{\mathrm{ion}},\\
+&m_in_i(\partial_t+\mathbf v\cdot\nabla)\mathbf v=\mathbf J\times\mathbf B-\nabla p-\nabla\cdot\mathsf\Pi+\mathbf f_{\mathrm{cx}}+m_i(\mathcal R_{\mathrm{ion}}+\mathcal R_{\mathrm{cx}})(\mathbf v_{\mathrm N}-\mathbf v),\\
+&m_in_{\mathrm N}(\partial_t+\mathbf v_{\mathrm N}\cdot\nabla)\mathbf v_{\mathrm N}=-\nabla p_{\mathrm N}-\nabla\cdot\mathsf\Pi_{\mathrm N}-\mathbf f_{\mathrm{cx}}+m_i(\mathcal R_{\mathrm{rec}}+\mathcal R_{\mathrm{cx}})(\mathbf v-\mathbf v_{\mathrm N}),\\
 &\partial_t\mathbf B=-\nabla\times(\eta\mathbf J-\mathbf v\times\mathbf B),\qquad\mu_0\mathbf J=\nabla\times\mathbf B,
 \end{aligned}$$
 
 with ionization, recombination and charge-exchange rate densities
-$\mathcal I=\langle\sigma_{\mathrm{ion}}v\rangle n_in_{\mathrm N}$, $\mathcal C=\langle\sigma_{\mathrm{rec}}v\rangle n_i^2$,
-$\mathcal X=\sigma_{\mathrm{cx}}n_in_{\mathrm N}\sqrt{\tfrac4\pi(v_{th,i}^2+v_{th,\mathrm N}^2)+|\mathbf v-\mathbf v_{\mathrm N}|^2}$, and
+$\mathcal R_{\mathrm{ion}}=\langle\sigma v\rangle_{\mathrm{ion}} n_in_{\mathrm N}$, $\mathcal R_{\mathrm{rec}}=\langle\sigma v\rangle_{\mathrm{rec}} n_i^2$,
+$\mathcal R_{\mathrm{cx}}=\sigma_{\mathrm{cx}}n_in_{\mathrm N}\sqrt{\tfrac4\pi(v_{th,i}^2+v_{th,\mathrm N}^2)+|\mathbf v-\mathbf v_{\mathrm N}|^2}$, and
 $\mathbf f_{\mathrm{cx}}$ the net charge-exchange friction (Eqs. 10–11, both
 $\propto\sigma_{\mathrm{cx}}n_in_{\mathrm N}(\mathbf v-\mathbf v_{\mathrm N})$). The plasma and neutral temperature
 equations (Eqs. 5–6) carry compression, conduction, atomic heat exchange
-($\tfrac32T_{\mathrm N}\mathcal I$, $\tfrac32T_i\mathcal C$, charge-exchange terms), the radiative loss
-(ionization energy times $\mathcal I$), particle-exchange terms and the frictional
+($\tfrac32T_{\mathrm N}\mathcal R_{\mathrm{ion}}$, $\tfrac32T_i\mathcal R_{\mathrm{rec}}$, charge-exchange terms), the radiative loss
+(ionization energy times $\mathcal R_{\mathrm{ion}}$), particle-exchange terms and the frictional
 heating $\tfrac{m_i}2(\cdot)|\mathbf v-\mathbf v_{\mathrm N}|^2$; prefactor $n/(\Gamma-1)$. Rate
 coefficients come from DEGAS2 tables (bi-cubic spline). Isotropic closures:
 $\mathsf\Pi=-m_in\nu[\nabla\mathbf v+\nabla\mathbf v^T-\tfrac23\mathsf I\nabla\cdot\mathbf v]$, $\mathbf q=-\kappa\nabla T$. See
@@ -220,11 +220,11 @@ schemes.
 | $m$ | $m_i$ | hydrogenic, $=$ neutral mass |
 | $p$, $p_n$ | $p$, $p_{\mathrm N}$ | relation to $nT$ not stated |
 | $\Gamma$ | $\Gamma$ | ratio of specific heats |
-| $\Gamma^{ion}$, $\Gamma^{rec}$, $\Gamma^{cx}$ | $\mathcal I$, $\mathcal C$, $\mathcal X$ (page-local) | **collision:** native rates share the symbol of the adiabatic index $\Gamma$ |
-| $\langle\sigma_{ion}v\rangle$, $\langle\sigma_{rec}v\rangle$, $\sigma_{cx}$ | same | $v$ inside the brackets is a particle speed |
+| $\Gamma^{ion}$, $\Gamma^{rec}$, $\Gamma^{cx}$ | $\mathcal R_{\mathrm{ion}}$, $\mathcal R_{\mathrm{rec}}$, $\mathcal R_{\mathrm{cx}}$ | **collision:** native rates share the symbol of the adiabatic index $\Gamma$ |
+| $\langle\sigma_{ion}v\rangle$, $\langle\sigma_{rec}v\rangle$, $\sigma_{cx}$ | $\langle\sigma v\rangle_{\mathrm{ion}}$, $\langle\sigma v\rangle_{\mathrm{rec}}$, $\sigma_{\mathrm{cx}}$ (cross-section, page-local) | $v$ inside the brackets is a particle speed |
 | $\mathbf R^{cx}_{in}$, $\mathbf R^{cx}_{ni}$ | $\mathbf f_{\mathrm{cx}}$ (net, page-local) | |
 | $Q^{ion}$, $Q^{rec}$, $Q^{cx}$, $\phi_{ion}$ | words | **collision:** $\phi_{ion}$ vs toroidal angle $\phi$ |
-| $v_{T*}^2=2T_*/m$ | $v_{th,*}^2$ (words) | |
+| $v_{T*}^2=2T_*/m$ | $v_{th,s}^2$ | convention here $v_{th,s}^2=2T_s/m_i$ (factor 2, unlike §10's default) |
 | $\underline\Pi_*$, $\chi_*$ | $\mathsf\Pi$, $\nu$ | **collision:** native $\chi$ is a viscous diffusivity; registry $\chi$ is the vacuum scalar potential |
 | $\mathbf q_*$, $\kappa_*$ | $\mathbf q$, $\kappa$ | isotropic |
 | $\mathbf B$, $\mathbf J$, $\eta$, $\mu_0$ | same | SI |
@@ -238,7 +238,7 @@ schemes.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)

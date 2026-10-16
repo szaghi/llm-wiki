@@ -5,7 +5,7 @@ description: "The constraint ∇·B = 0 and how the MHD codes of this bundle hol
 status: established
 aliases: [solenoidal magnetic field, div B = 0, magnetic divergence constraint]
 tags: [mhd, numerics, finite-elements, stellarator]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -83,7 +83,14 @@ through Faraday's law ([Taheri et al. (2022)](/sources/taheri-2022.md),
 Eq. 18); $\nabla\cdot\mathbf B$ "is not identically zero" and is
 controlled by a diffusive correction proportional to
 $\nabla(\nabla\cdot\mathbf B)$ added to Faraday's law
-([Artola et al. (2021)](/sources/artola-2021.md), §2). CLT advances
+([Artola et al. (2021)](/sources/artola-2021.md), §2). The NIMROD runs with
+neoclassical closures write that correction as $D_B\nabla\nabla\cdot\mathbf B$
+with a page-local cleaning diffusivity $D_B$
+([Howell et al. (2022)](/sources/howell-2022.md), Eqs. 1–10), and the
+two-fluid runs also apply divergence cleaning, with no value given
+([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2, Eqs. 1–6); see the
+variants table on
+[visco-resistive MHD](/methods/visco-resistive-mhd-model.md). CLT advances
 $\mathbf B$ with fourth-order finite differences
 ([Zhang et al. (2021)](/sources/zhang-2021.md), Eq. 1.4, §2); the source
 does not say how $\nabla\cdot\mathbf B$ is controlled there.
@@ -108,4 +115,5 @@ the MHD domain. Halo currents crossing the boundary are therefore excluded
 * [Bhole et al. (2023)](/sources/bhole-2023.md) — divergence-free field by construction in JOREK full MHD.
 * [Artola et al. (2021)](/sources/artola-2021.md) — field representations of JOREK, M3D-C1, NIMROD; NIMROD cleaning.
 * [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — field ansatz and weak $\nabla\cdot\mathbf J=0$ in reduced MHD.
+* [Howell et al. (2022)](/sources/howell-2022.md), [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — NIMROD divergence cleaning in Faraday's law.
 * [Zhang et al. (2021)](/sources/zhang-2021.md), [Isernia et al. (2023)](/sources/isernia-2023.md), [Jiang et al. (2024)](/sources/jiang-2024.md), [Panici et al. (2023)](/sources/panici-2023.md), [Ma & Guo (2022)](/sources/ma-2022.md), [Taheri et al. (2022)](/sources/taheri-2022.md) — further representations.

@@ -5,7 +5,7 @@ description: "Construction of MHD solvers by symbolic computation: the vector eq
 status: established
 aliases: [symbolic computation, automatic discretization, code generation, Compile-time Symbolic Solver, CSS, symbolic vector analysis]
 tags: [numerics, code, finite-elements, finite-differences, spectral]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Symbolic derivation and automatic discretization of MHD operators
@@ -37,16 +37,16 @@ C++ modules.
    $R^2\nabla\cdot(R^{-2}\nabla H)$ (Fig. 3).
 2. **Automatic discretization** (§3.1.3, App. A). Every generated term has the
    form
-   $$G(s,\phi,\theta)\,\partial_s^{\,a}\partial_\phi^{\,b}\partial_\theta^{\,c}H,\qquad a+c<3,$$
-   with $G$ an equilibrium or metric coefficient and $H$ an unknown (Eq. 9), so
+   $$\mathcal K(s,\phi,\theta)\,\partial_s^{\,a}\partial_\phi^{\,b}\partial_\theta^{\,c}H,\qquad a+c<3,$$
+   with $\mathcal K$ (page-local) an equilibrium or metric coefficient and $H$ an unknown (Eq. 9), so
    only $H$, $\partial_sH$, $\partial_\theta H$ and the three second derivatives
-   are ever needed. With $\partial_\phi G=0$ and $\partial_\phi\to-in$ the term
-   becomes $(-in)^bG\,\partial_s^a\partial_\theta^cH$. The unknown is expanded
-   as $H=\sum_{m,k}\hat H_{m,k}v_k(s)e^{im\theta}$, $k=1..N_v$,
-   $|m|\le m_0$, with radial cubic elements $v_k$, and the coefficient as
-   $G=\sum_{m_g}\hat G_{m_g}(s)e^{im_g\theta}$, which turns products into
-   convolutions $\hat G_{m-m_h}$; Galerkin projection on
-   $v_k(s)e^{-im\theta}$ gives the matrix entries term by term, and
+   are ever needed. With $\partial_\phi\mathcal K=0$ and $\partial_\phi\to-in$ the term
+   becomes $(-in)^b\mathcal K\,\partial_s^a\partial_\theta^cH$. The unknown is expanded
+   as $H=\sum_{m,k}\hat H_{m,k}\Lambda_k(s)e^{im\theta}$, $k=1..N_v$,
+   $|m|\le m_0$, with radial cubic elements $\Lambda_k$, and the coefficient as
+   $\mathcal K=\sum_{m_g}\hat{\mathcal K}_{m_g}(s)e^{im_g\theta}$, which turns products into
+   convolutions $\hat{\mathcal K}_{m-m_h}$; Galerkin projection on
+   $\Lambda_k(s)e^{-im\theta}$ gives the matrix entries term by term, and
    coefficients of the same unknown are summed. Finite differences are
    mentioned as an alternative.
 

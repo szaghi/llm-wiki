@@ -5,7 +5,7 @@ description: "Marker method that evolves only the deviation of a kinetic distrib
 status: established
 aliases: [delta-f, δf PIC, delta-f particle-in-cell, perturbative particle method]
 tags: [hybrid-kinetic, energetic-particles, particles, numerics]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # The δf particle method
@@ -70,8 +70,8 @@ $\partial f_0/\partial P_\phi\propto\partial f_0/\partial\psi$
 ([Liu et al. (2024)](/sources/liu-2024.md), Eq. 17).
 
 **Other parametrizations of $f_0$.** With kinetic thermal and fast ions,
-M3D-C1-K writes $f_0(\mathbf X,\mathcal E,\text{pitch})$, pitch
-$=v_{\parallel p}/v$, and drives the weights only by the perturbed parts of
+M3D-C1-K writes $f_0(\mathbf X,\mathcal E,\xi)$, with the pitch
+$\xi=v_{\parallel p}/|\mathbf v_p|$, and drives the weights only by the perturbed parts of
 the guiding-centre position, energy and pitch rates, with the effective
 field $\mathbf E^*=\mathbf E-\nabla_\parallel p_e/(n_ee)$ in the energy and
 parallel-velocity rates; the factor is $1$ in linear and $1-w_p$ in
@@ -86,7 +86,14 @@ marker, and
 $\mathrm dw_p/\mathrm dt=-\Delta V_p[(\mathbf v_E+v_{\parallel p}\delta\mathbf b)\cdot\nabla+\dot{\mathcal E}\,\partial_{\mathcal E}]f_0$
 with a Maxwellian $f_0(\psi,\mathcal E)$
 ([Sato et al. (2024)](/sources/sato-2024.md), Eq. 15). This is linear in
-the weight (no $1-w_p$ factor).
+the weight (no $1-w_p$ factor). The LHD runs of
+[Sato & Todo (2026)](/sources/sato-2026.md) (pp. 2, 8) use the same
+drift-kinetic $\delta f$ for the thermal ions and add Maxwellian 100 keV
+energetic ions as a second $\delta f$ species. The gyrokinetic-ion weight
+equation of GTC, as summarized by
+[Rahman et al. (2024)](/sources/rahman-2024.md) (§II C 1, Eq. 6), carries
+the nonlinear $(1-w_p)$ factor of the M3D-C1-K form above; that paper only
+summarizes GTC and is not its primary description.
 
 **Linear and nonlinear variants.** In linear M3D-C1-K runs the orbits use
 the equilibrium fields only and $(1-w_p)\to1$. In nonlinear runs the
@@ -146,8 +153,8 @@ velocity space as soon as it is evolved.
 - **The full-f codes cannot.** XTOR-K relaxes within about 0.05 ms toward an
   ORB5-like profile ([Vlad et al. (2025)](/sources/vlad-2025.md), §6). In
   JOREK's ITPA TAE run the midplane EP pressure peak drops from about 9.3 to
-  6.5 kPa, and the $v_\parallel$ distribution develops a dip near
-  $v_\parallel=0$
+  6.5 kPa, and the $v_{\parallel p}$ distribution develops a dip near
+  $v_{\parallel p}=0$
   ([Bogaarts et al. (2022)](/sources/bogaarts-2022.md), §IV.A, Fig. 4).
   Bogaarts et al. state that "one-to-one comparison" with codes that switch
   relaxation off is therefore difficult. A realistic NUBEAM distribution
@@ -187,3 +194,5 @@ code-to-code spread
 - [Liu et al. (2022b)](/sources/liu-2022-b.md): δf for kinetic thermal and fast ions, $f_0(\mathbf X,\mathcal E,\text{pitch})$, $\mathbf E^*$ in the weights, density and flow deposition.
 - [Sato et al. (2024)](/sources/sato-2024.md): MEGA's particle-number weights and kinetic-ion moments.
 - [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): passive test particles in MEGA.
+- [Sato & Todo (2026)](/sources/sato-2026.md): MEGA δf with kinetic thermal and energetic ions together.
+- [Rahman et al. (2024)](/sources/rahman-2024.md): the GTC weight equation with the $(1-w_p)$ factor, as summarized.

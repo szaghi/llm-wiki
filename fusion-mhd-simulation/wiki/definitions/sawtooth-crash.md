@@ -5,14 +5,14 @@ description: "The periodic collapse of the core temperature inside an inversion 
 status: established
 aliases: [sawtooth, sawteeth, sawtooth-like crash, Kadomtsev model, Kadomtsev reconnection, inversion radius]
 tags: [kink, tearing, mhd, tokamak, stellarator]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Sawtooth crash and Kadomtsev reconnection
 
 A sawtooth crash is a fast collapse of the core electron temperature that
-flattens the profile inside an **inversion radius** $r_{\rm inv}$ (page-local
-symbol): the temperature falls inside $r_{\rm inv}$ and rises outside it.
+flattens the profile inside an **inversion radius** $r_{\rm inv}$ (registry
+§10): the temperature falls inside $r_{\rm inv}$ and rises outside it.
 In the **Kadomtsev model** the crash is magnetic reconnection driven by the
 $m/n=1/1$ [internal kink](/definitions/resistive-internal-kink.md), present
 when $q<1$ somewhere ($\iota>1$ in stellarator notation). The $1/1$ island
@@ -22,7 +22,7 @@ it, leaving a flattened profile
 [Zhang et al. (2021)](/sources/zhang-2021.md), §1, which connects the
 resistive kink to sawteeth and Kadomtsev reconnection without calling its own
 nonlinear kink crash a sawtooth). The model predicts the reconnected state by
-pairing flux surfaces of equal helical flux; the same construction, applied to
+pairing flux surfaces of equal helical flux $\psi_h$ (registry §10); the same construction, applied to
 two resonant surfaces, predicts the relaxation region of the
 [double tearing mode](/definitions/double-tearing-mode.md)
 ([Nardon et al. (2023b)](/sources/nardon-2023-b.md), §II, attributing the
@@ -33,9 +33,19 @@ fast crashes observed; two-fluid or plasmoid-mediated reconnection (see
 [plasmoid instability](/definitions/plasmoid-instability.md)) may be needed
 (Zhou et al. 2023, §IV, citing tokamak sawtooth simulations). At high $\beta$
 the Kadomtsev picture "seem[s] elusive", and Wesson's quasi-interchange model
-"might be more applicable" (§I, citing Wesson and Jardin et al. 2020). After
-a crash, a saturated helical $(1,1)$ core can replace the cycle; that
-behaviour is [magnetic flux pumping](/definitions/magnetic-flux-pumping.md).
+"might be more applicable" (§I, citing Wesson and Jardin et al. 2020).
+[Zhang et al. (2025)](/sources/zhang-2025.md) (§1) list the same limitation
+of the single-fluid Kadomtsev model, whose Sweet–Parker reconnection is too
+slow for crashes of tens of µs. After a crash, a saturated helical $(1,1)$
+core can replace the cycle; that behaviour is
+[magnetic flux pumping](/definitions/magnetic-flux-pumping.md). In the JOREK
+study of the ASDEX Upgrade hybrid scenario flux pumping prevents the first
+crash altogether; lowering the Hartmann number there (raising $\eta$ and
+$\nu$) turns the clamped state into periodic sawtooth-like oscillations with
+$q_0$ between 0.95 and 1.0, and further into a saturated $1/1$ resistive
+internal kink with $q_0\sim0.7$ (Zhang et al. 2025, §6.2, stated, not shown).
+The transition between flux pumping and sawteeth is therefore set by the
+dissipation parameters in that model.
 
 ## Sawtooth-like crashes in W7-X (M3D-C1)
 
@@ -95,6 +105,10 @@ to low $n$, with different $\iota$ profiles and mid-radius ECCD (§I).
   $\sqrt{\psi_N}\approx0.4$ with sawtooth-like flattening
   ([Liu et al. (2021)](/sources/liu-2021.md), §5.3–5.4, Figs. 12, 16).
 
+* **As a seed, prevented.** Sawteeth seed NTMs, which is one motivation of
+  the sawtooth-free hybrid scenario (Zhang et al. 2025, §1; see
+  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
+
 ## Contradictions
 
 None open. The W7-X mechanism contrast with Suzuki et al. 2021 (not ingested)
@@ -108,3 +122,4 @@ is conditioned on different $\iota$ and ECCD profiles.
 - [Howell et al. (2022)](/sources/howell-2022.md) — §I, §III A.
 - [Strauss et al. (2022)](/sources/strauss-2022.md) — §II.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §5.3–5.4.
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §1, §6.2 (Kadomtsev limits; flux pumping to sawtooth-like transition).

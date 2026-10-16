@@ -5,7 +5,7 @@ description: "Fluid model in which runaway electrons are a separate species desc
 status: established
 aliases: [RE fluid model, JOREK runaway electron fluid]
 tags: [runaway-electrons, disruption, reduced-mhd, impurities, neutrals, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Runaway-electron fluid model coupled to MHD
@@ -61,7 +61,7 @@ printed form). Thus:
   $f_{\mathrm{adv}}=0$ and $D_{\parallel,\mathrm{RE}}=1.54\times10^8$ m²/s,
   a value said to be "justified through a sensitivity study that will be
   discussed later" that the paper does not present (§III.A, §IV.A).
-- **Perpendicular transport** is the $E\times B$ drift only.
+- **Perpendicular transport** is the $E\times B$ drift only in Eq. 2.12.
 - **Sources** are explicit in time, while the rest of JOREK is fully
   implicit ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §II.A).
 
@@ -103,6 +103,40 @@ scattering angles that give the electron more than $W_{\mathrm{crit}}$
 
 No Dreicer and no hot-tail source are included (§II.A).
 
+## The EU-DEMO application form (Vannini et al. 2025)
+
+[Vannini et al. (2025)](/sources/vannini-2025.md) (§2, App. A, Eqs. 4,
+11, Table 2) cite the same JOREK model (Bandaru et al. 2019 and 2024) and
+print a different transport equation,
+$$\partial_t n_{\mathrm{RE}}=S_{\mathrm T}+S_{\mathrm C}+S_{\mathrm{av}}-\nabla\cdot\big(n_{\mathrm{RE}}\mathbf v_E\big)+\nabla\cdot\big(D_{\parallel,\mathrm{RE}}\nabla_\parallel n_{\mathrm{RE}}+D_{\perp,\mathrm{RE}}\nabla_\perp n_{\mathrm{RE}}\big),$$
+written here in the canonical form of Eq. 2.12 above (the printed
+$2n_{\mathrm{RE}}\partial_Zu+R[n_{\mathrm{RE}},u]$ is the same $E\times B$
+term), with $D_{\perp,\mathrm{RE}}$ the perpendicular runaway diffusivity:
+
+- **No streaming term.** Parallel transport is pure diffusion "to reduce the
+  computational cost", equivalent to $f_{\mathrm{adv}}=0$, with
+  $D_{\parallel,\mathrm{RE}}=1.54\times10^9$ m²/s, ten times the DINA-benchmark
+  value.
+- **Perpendicular diffusion.** $D_{\perp,\mathrm{RE}}=1.54\times10^{-2}$ m²/s,
+  a term that Eq. 2.12 does not contain.
+- **Avalanche.** Rosenbluth–Putvinski "with corrections for partially
+  ionized impurities" (Hesslow et al. 2018, as cited), not the full
+  Hesslow form with $\hat p_\star$ described above.
+- **Seed.** Tritium decay plus Compton scattering only.
+- **Current coupling.** Ohm's law and the Ohmic heating subtract
+  $c\,F_0\,n_{\mathrm{RE}}/(BR)$ from $j$ as in Bandaru et al. (2024), while
+  §2 writes $j_{\mathrm{RE}}=-e\,c\,n_{\mathrm{RE}}$; the two signs are not
+  reconciled in the text (recorded on the Source page).
+
+With this form, 3D restarts of the EU-DEMO beam are MHD-unstable at all
+three $q_{95}$ values (growth rates about $1$–$8\times10^4$ s$^{-1}$), the
+field stochastizes from the edge inward, and the runaway current falls from
+12.3 to 2.8 MA in 1.12 ms before the core remnant re-avalanches (§5,
+Figs. 5–9; see [runaway electrons](/definitions/runaway-electrons.md)).
+Without a velocity distribution, the energy for the wall-load estimate is
+assigned to test markers from an energy balance
+([runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md)).
+
 ## M3D-C1 implementation (full MHD)
 
 [Liu et al. (2021)](/sources/liu-2021.md) (§2, Eqs. 1–9) couple an RE
@@ -122,8 +156,8 @@ density to single-temperature ($T_e=T_i$) full MHD in M3D-C1:
   curvature drifts are neglected.
 - **Transport.** The continuity equation
   $\partial_tn_{\mathrm{RE}}+\nabla\cdot[n_{\mathrm{RE}}(c_{\mathrm{RE}}\mathbf b+\mathbf v_E)]=S_{\mathrm{RE}}$
-  (Eq. 3) convects at a numerical speed $c_{\mathrm{RE}}\le c$
-  (page-local symbol), "usually set to be a smaller value for numerical
+  (Eq. 3) convects at a numerical speed $c_{\mathrm{RE}}\le c$,
+  "usually set to be a smaller value for numerical
   efficacy" (p. 5), while the current uses $c$. There is no
   parallel-diffusion surrogate.
 - **Sources.** None in the instability runs. The post-loss phase uses the
@@ -149,6 +183,9 @@ no pitch or energy variable. It cannot represent magnetically trapped
 runaways, which [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) find
 survive a stochastic flush as a reconstitution seed (compiler's remark; see
 [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+It can still reconstitute a beam from runaways that stay on closed core
+surfaces, as in EU-DEMO ([Vannini et al. (2025)](/sources/vannini-2025.md),
+§5).
 
 ## Coupling to impurities and neutrals
 
@@ -176,6 +213,10 @@ development" ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.11).
   ([ITER runaway-electron benchmarks](/benchmarks/iter-runaway-electron-benchmarks.md)).
 - Applications: VDEs with REs, RE-driven 1/1 kinks, JET benign beam
   termination ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.4.2);
+  beam formation in a 2D EU-DEMO VDE, its 3D termination and the
+  marker-based wall loads, the 3D runs feasible only with the enhanced
+  JOREK preconditioner of Holod et al. 2021
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §4–6);
   an equilibrium with an RE beam and kinetic coupling under development
   ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.5).
 - Extensions: the effect of REs on the radial force balance
@@ -200,9 +241,14 @@ with $D_{\parallel,\mathrm{RE}}=1.54\times10^8$ m²/s against DINA. They say
 the latter value is justified by a sensitivity study that the paper does not
 present. Neither paper tests the other's setting. Liu et al. demonstrate no
 diffusion-induced suppression, and the GO benchmark freezes the flow, so it
-cannot reveal one. A 3D tearing or kink case with REs, run once with
-conservative streaming and once with the diffusive surrogate at the
-benchmark values, would settle it.
+cannot reveal one. [Vannini et al. (2025)](/sources/vannini-2025.md) (§5)
+add a data point: with the pure diffusive surrogate at
+$D_{\parallel,\mathrm{RE}}=1.54\times10^9$ m²/s the 3D EU-DEMO beam modes
+grow at $1$–$8\times10^4$ s$^{-1}$ and stochastize the field, so the
+surrogate does not suppress them there; with no streaming control run, this
+does not show whether it reduces them. A 3D tearing or kink case with REs,
+run once with conservative streaming and once with the diffusive surrogate
+at the benchmark values, would settle it.
 
 **Dreicer source in the JOREK RE fluid model** — Open (model version).
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§4.7) describe the GO
@@ -216,6 +262,20 @@ says when or why the Dreicer term was removed. Ingesting Bandaru et al.
 (2019) and any later model description would settle whether this is a
 removal or a source-set replacement.
 
+**Transport terms and avalanche form of the JOREK RE fluid model** — Open
+(model version or description). [Bandaru et al. (2024)](/sources/bandaru-2024.md)
+(§II, Eq. 2.12) print a streaming term weighted by $f_{\mathrm{adv}}$, no
+perpendicular runaway diffusion, and the Hesslow avalanche with an
+effective critical momentum $\hat p_\star$ found by Newton–Raphson.
+[Vannini et al. (2025)](/sources/vannini-2025.md) (§2, App. A, Eq. 11),
+citing the same model (Bandaru et al. 2019, 2024), print no streaming term,
+a perpendicular diffusion $D_{\perp,\mathrm{RE}}$, and a Rosenbluth–Putvinski
+avalanche with partial-ionization corrections. Either the code offers both
+options and each paper describes the one it used, or one description is
+incomplete; neither paper says which. A model description that lists the
+options (the cited Bandaru et al. 2019, not ingested, or a code manual)
+would settle it.
+
 # Citations
 
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §II, Eqs. 2.1–2.19; §III.A; §IV.A; §V.
@@ -223,3 +283,4 @@ removal or a source-set replacement.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.5.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §2–3, §5.2–5.4, §6, Eqs. 1–9, Figs. 9, 14.
 - [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — pp. 1–4.
+- [Vannini et al. (2025)](/sources/vannini-2025.md) — §2, §4–6, App. A, Eqs. 4, 11, Table 2.

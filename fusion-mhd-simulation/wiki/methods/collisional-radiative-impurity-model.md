@@ -5,7 +5,7 @@ description: "Impurity model that evolves the charge-state distribution in time 
 status: established
 aliases: [non-equilibrium impurity model, CR impurity model, charge-state-resolved impurity model]
 tags: [impurities, particles, disruption, mhd, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Collisional-radiative (non-equilibrium) impurity model
@@ -149,6 +149,17 @@ NIMROD and M3D-C1 rates as KPRAD-fitted ADPAK coronal-model data. This
 difference in attribution can reflect different data versions. It is a
 qualification, not a contradiction of a printed equation.
 
+The SPARC mitigation runs of [Izzo et al. (2025)](/sources/izzo-2025.md)
+use the same NIMROD structure, one continuity equation per neon charge state,
+and call it "coronal non-equilibrium" (charge states not assumed in
+equilibrium; KPRAD is not named); a newer, unpublished NIMROD version uses
+ADAS collisional-radiative rates (App.). The model resolves radiation by
+charge state, not by line. As a post-processing check, Izzo et al. evaluate
+399 OPEN-ADAS photon-emissivity lines at the TQ radiation peak: 96 are
+non-negligible and sum to 70.1 GW against NIMROD's 65 GW, and over 75% of
+the power lies between 16 and 35 eV, near the coronal neon radiation peak
+(App., Table III, Fig. 14).
+
 ## Later use
 
 [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.2, Fig. 8) list the CR
@@ -187,6 +198,10 @@ marker model has run in 3D since 2023, as the next items show.
   to 89.8% (degraded H-mode, quarter pellet, synchronized injectors)
   (Table 2). The radiation density is ray-traced onto the ITER first wall.
   These SPI dynamics are on [shattered pellet injection](/definitions/shattered-pellet-injection.md).
+- [Tang et al. (2025)](/sources/tang-2025.md) (§2.1) use the same marker
+  model, with markers created from the impurity mass source and advected with
+  the fluid and OpenADAS coefficients, for neon-doped deuterium SPI into an
+  ASDEX Upgrade H-mode with $n=0$–7.
 
 # Citations
 
@@ -196,3 +211,5 @@ marker model has run in 3D since 2023, as the next items show.
 - [Hu et al. (2023)](/sources/hu-2023.md) — §2.1–2.2, §3.1, §4.1, Eq. 16.
 - [Hu et al. (2024)](/sources/hu-2024.md) — §2.1, Table 2.
 - [Zeng et al. (2023)](/sources/zeng-2023.md) — §2, Eq. 3, App. 7 (Eqs. 10–21).
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §II, App., Table III, Fig. 14.
+- [Tang et al. (2025)](/sources/tang-2025.md) — §2.1.

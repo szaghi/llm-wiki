@@ -5,7 +5,7 @@ description: "Residual-based stabilization of the Galerkin weak form in which th
 status: established
 aliases: [VMS, variational multiscale method, residual-based stabilization, streamline diffusion, Taylor–Galerkin stabilization, TG2]
 tags: [stabilization, finite-elements, numerics, full-mhd, reduced-mhd]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Variational multiscale (VMS) stabilization for MHD finite elements
@@ -89,9 +89,9 @@ $$\underline{\mathbf D}_{\mathrm{VMS}}=D_{\parallel,\mathrm{VMS}}\,\mathbf b\oti
 with $\tau_{\mathrm s}\sim h_e/c_{\max}$ ($c_{\max}$ the largest wave speed),
 so that the diffusion vanishes under refinement. Second-order Taylor–Galerkin
 (TG2) is the choice $\tau_{\mathrm s}=\Delta t/2$; with the reduced-MHD velocity
-$\mathbf v=-R^2\nabla u\times\nabla\phi+v_\parallel\mathbf B$ it adds
-$$\frac{\Delta t}{2}\nabla\cdot\big(v_\parallel^2\,\mathbf B\,\mathbf B\cdot\nabla\rho\big)+\frac{\Delta t}{2}\nabla\cdot\Big(R^4\,\nabla u\times\nabla\phi\,\big[(\nabla u\times\nabla\phi)\cdot\nabla\rho\big]\Big)$$
-to the density equation (§3.3; here $v_\parallel$ is the coefficient of
+$\mathbf v=-R^2\nabla u\times\nabla\phi+\hat v_\parallel\mathbf B$ it adds
+$$\frac{\Delta t}{2}\nabla\cdot\big(\hat v_\parallel^2\,\mathbf B\,\mathbf B\cdot\nabla\rho\big)+\frac{\Delta t}{2}\nabla\cdot\Big(R^4\,\nabla u\times\nabla\phi\,\big[(\nabla u\times\nabla\phi)\cdot\nabla\rho\big]\Big)$$
+to the density equation (§3.3; $\hat v_\parallel$ is the coefficient of
 $\mathbf B$, as in the [reduced-MHD](/methods/reduced-mhd.md) ansatz of the
 source). Taylor–Galerkin with optional fourth-order hyperdiffusion was the
 earlier JOREK stabilization for reduced MHD
@@ -100,6 +100,10 @@ global hyperbolic VMS formulation
 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §3.3). The review lists
 stabilized finite elements for reduced and full MHD among the 2021–2024
 numerical developments ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5).
+The predictive HL-3 QH-mode runs in reduced MHD apply Taylor–Galerkin
+stabilization to the $u$, $\rho$, $T$ and $\hat v_\parallel$ equations, stated to act
+"without affecting the physical solution"; no test of that statement is shown
+([Liang et al. (2025)](/sources/liang-2025.md), §III).
 
 ## Evidence
 
@@ -132,7 +136,7 @@ numerical developments ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5).
 - The symbol the paper uses for the Jacobian also denotes the ionization
   potential-energy term (Eq. 13) and the operator part of a tendency (Eq. 33)
   (reader's note).
-- Bhole et al. read the HAL submission (October 2022); the published version
+- The version of Bhole et al. read is the HAL submission (October 2022); the published version
   has more references and may differ ([Bhole et al. (2023)](/sources/bhole-2023.md),
   identity).
 
@@ -141,3 +145,4 @@ numerical developments ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5).
 - [Bhole et al. (2023)](/sources/bhole-2023.md) — §1, §3.1, Eqs. 20–30, 37, 40.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §3.3, §4.3.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §5.
+- [Liang et al. (2025)](/sources/liang-2025.md) — §III.

@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:082503"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Bandaru_Runaway_electron_fluid_model_extension_in_JOREK_and_ITER_rel.pdf"
 tags: [runaway-electrons, disruption, vde, impurities, neutrals, reduced-mhd, wall, free-boundary, tokamak, benchmark, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -140,7 +140,7 @@ internal inductance, and a vessel-resistivity scan.
   $(m_i/m_{\mathrm{imp}})\langle Z\rangle-1$ from impurity mass density to
   electron-density contribution.
 * **RE density** (Eq. 2.12):
-  $$\partial_tn_{\mathrm{RE}}=-\alpha_{\mathrm{adv}}\,\frac{c}{F_0R}\Big([Rn_{\mathrm{RE}},\psi]+F_0\partial_\phi n_{\mathrm{RE}}\Big)+(1-\alpha_{\mathrm{adv}})\nabla\cdot(D_\parallel\nabla_\parallel n_{\mathrm{RE}})+R[n_{\mathrm{RE}},u]+2n_{\mathrm{RE}}\partial_Zu+S_{\mathrm{Compton}}+S_{\mathrm{T}}+S_{\mathrm{av}},$$
+  $$\partial_tn_{\mathrm{RE}}=-\alpha_{\mathrm{adv}}\,\frac{c}{F_0R}\Big([Rn_{\mathrm{RE}},\psi]+F_0\partial_\phi n_{\mathrm{RE}}\Big)+(1-\alpha_{\mathrm{adv}})\nabla\cdot(D_{\parallel,\mathrm{RE}}\nabla_\parallel n_{\mathrm{RE}})+R[n_{\mathrm{RE}},u]+2n_{\mathrm{RE}}\partial_Zu+S_{\mathrm C}+S_{\mathrm{T}}+S_{\mathrm{av}},$$
   where $\alpha_{\mathrm{adv}}\in[0,1]$ (the RE advection factor; not in the registry)
   blends parallel advection at $c$ with a large parallel diffusivity;
   perpendicular RE transport is $\mathbf E\times\mathbf B$ only.
@@ -246,20 +246,20 @@ internal inductance, and a vessel-resistivity scan.
 | $\mu$, $\mu_\parallel$ | $\nu$, words | **collision:** registry $\mu$ is the magnetic moment |
 | $k_\perp$, $k_\parallel$ ($\kappa$ in text) | $\kappa_\perp$, $\kappa_\parallel$ | density × diffusivity units |
 | $\gamma$ | $\Gamma$ (Eq. 2.8); words (Lorentz factor); $\gamma$ (VDE growth rate) | **collision:** triply overloaded |
-| $D_{\parallel,D}$, $D_{\perp,D}$, $D_{\parallel,\rm imp}$, $D_{\perp,\rm imp}$, $D_{DN}$, $D_{\parallel,RE}$ | $D_\parallel$, $D_\perp$ with words | |
+| $D_{\parallel,D}$, $D_{\perp,D}$, $D_{\parallel,\rm imp}$, $D_{\perp,\rm imp}$, $D_{DN}$, $D_{\parallel,RE}$ | $D_\parallel$, $D_\perp$ with words; $D_{\mathrm N}$; $D_{\parallel,\mathrm{RE}}$ | |
 | $\beta_{\rm imp}$ | words | **collision:** registry $\beta$ is plasma beta |
-| $\langle\sigma v\rangle_{\rm ion,J}$, $\langle\sigma v\rangle_{\rm rec,J}$ | $\langle\sigma v\rangle_{\mathrm{ion}}$, $\langle\sigma v\rangle_{\mathrm{rec}}$ (not yet in registry) | JOREK-normalized |
+| $\langle\sigma v\rangle_{\rm ion,J}$, $\langle\sigma v\rangle_{\rm rec,J}$ | $\langle\sigma v\rangle_{\mathrm{ion}}$, $\langle\sigma v\rangle_{\mathrm{rec}}$ | JOREK-normalized |
 | $L_{\rm rad}$, $L_{\rm rad,Dcont}$, $L_{\rm rad,Drays}$ | words; feed $P_{\mathrm{rad}}$ | |
 | $n_r$, $n_{RE}$ | $n_{\mathrm{RE}}$ | |
 | $c\frac{F_0}{BR}n_r$ | toroidal part of $\mathbf J_{\mathrm{RE}}$ | $e=1$ in JOREK units |
 | $f$ (Eq. 2.12) | $\alpha_{\mathrm{adv}}$ above (not in registry) | **collision:** native $f$ is also the tritium fraction and the VDE stabilization parameter; registry $f_s$ is a distribution function |
-| $S_{\rm Compton}$, $S_{\rm Tritium}$, $S_{\rm Avalanche}$ | words; $S_{\mathrm{av}}=\Gamma_{\mathrm{av}}n_{\mathrm{RE}}$ | |
+| $S_{\rm Compton}$, $S_{\rm Tritium}$, $S_{\rm Avalanche}$ | $S_{\mathrm C}$, $S_{\mathrm T}$, $S_{\mathrm{av}}=\Gamma_{\mathrm{av}}n_{\mathrm{RE}}$ | |
 | $\Gamma$ (avalanche rate) | $\Gamma_{\mathrm{av}}$ | **collision:** registry $\Gamma$ is the ratio of specific heats |
 | $n_e$, $n_e^{\rm tot}$ | $n_e$, words | free vs free + bound |
 | $E_\parallel$, $E_c$, $E_c^{\rm eff}$ | $E_\parallel$, $E_c$, $E_c^{\mathrm{eff}}$ | |
 | $p$, $p_\star$ | words (normalized momentum, effective critical momentum) | **collision:** registry $p$ is pressure |
 | $\bar\nu_s$, $\bar\nu_D$ | words | **collision:** registry $\nu$ is viscosity |
-| $\ln\Lambda_c$, $\ln\Lambda_0$, $\ln\Lambda^{ee}$, $\ln\Lambda^{ei}$ | $\ln\Lambda_c$ (not yet in registry); words | |
+| $\ln\Lambda_c$, $\ln\Lambda_0$, $\ln\Lambda^{ee}$, $\ln\Lambda^{ei}$ | $\ln\Lambda$ with subscript $c$ (relativistic variant); words | |
 | $\beta=p^2/(1+p^2)$ | words | **collision** with plasma beta |
 | $\epsilon_0$ | $\varepsilon_0$ | |
 | $\tau_{A,pol}$, $\tau_{L/R}$ | words, $\tau_w$ | |
@@ -268,7 +268,7 @@ internal inductance, and a vessel-resistivity scan.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)

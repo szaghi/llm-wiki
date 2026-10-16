@@ -3,9 +3,9 @@ type: Definition
 title: "Shattered pellet injection and massive material injection"
 description: "Massive material injection (MMI) is the deliberate injection of large amounts of deuterium and/or impurities to trigger a controlled disruption; shattered pellet injection (SPI), the basis of the ITER disruption mitigation system, breaks a cryogenic pellet into fragments whose ablation is modelled in MHD codes by per-fragment ablation laws and localized density sources."
 status: established
-aliases: [SPI, MMI, MGI, massive gas injection, disruption mitigation system, DMS]
+aliases: [SPI, MMI, massive material injection, disruption mitigation system, DMS]
 tags: [disruption, impurities, runaway-electrons, mhd]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Shattered pellet injection and massive material injection
@@ -16,7 +16,8 @@ deuterium and/or impurities (neon, argon) into a tokamak plasma to make a
 energy uniformly, raise the density against
 [runaway electrons](/definitions/runaway-electrons.md), and set the
 current-quench rate. Its forms in the sources are **massive gas injection
-(MGI)**, **shattered pellet injection (SPI)** and dispersive shell pellet
+(MGI)**, which has its own page ([massive gas injection](/definitions/massive-gas-injection.md)),
+**shattered pellet injection (SPI)** and dispersive shell pellet
 injection ([Hu et al. (2021b)](/sources/hu-2021-b.md), §1). In SPI a
 cryogenic pellet is shattered into fragments before entering the plasma;
 SPI is the planned basis of the ITER disruption mitigation system (DMS)
@@ -44,7 +45,9 @@ The ablation laws (mixed-pellet coefficient, magnetic reduction factor,
 local or flux-averaged evaluation), the fragmentation model and the
 deposition widths used by the chunk-2 SPI studies
 ([Hu et al. (2021)](/sources/hu-2021.md), [Hu et al. (2023)](/sources/hu-2023.md),
-[Hu et al. (2024)](/sources/hu-2024.md)) are collected on
+[Hu et al. (2024)](/sources/hu-2024.md)) and by the ASDEX Upgrade study
+of [Tang et al. (2025)](/sources/tang-2025.md) (§2.2, Eqs. 11–12) are
+collected on
 [pellet ablation and fragmentation models](/methods/pellet-ablation-models.md).
 Narrowing the toroidal width from 0.5 to 0.3 rad raises the radiation of
 neon–deuterium SPI in ITER at equal assimilation, but less than
@@ -55,7 +58,10 @@ Contradictions), and a wide toroidal source under-predicts
 
 **Gas injection.** MGI is represented by a fixed density source of Gaussian
 shape: central argon or neon injection at ≈$4.37\times10^{23}$ atoms/s into
-DIII-D in [Hu et al. (2021b)](/sources/hu-2021-b.md) (§2.1, Eq. 18, §3).
+DIII-D in [Hu et al. (2021b)](/sources/hu-2021-b.md) (§2.1, Eq. 18, §3);
+NIMROD instead deposits cold neutrals per valve between separatrix and
+boundary ([Izzo et al. (2025)](/sources/izzo-2025.md), §II A). Both are on
+[massive gas injection](/definitions/massive-gas-injection.md).
 Idealized benchmarks replace the injection by an instantaneous uniform
 appearance of deuterium and neon inside the plasma
 ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §III.A, §IV.A).
@@ -68,7 +74,11 @@ Eqs. 11–13; [Bandaru et al. (2024)](/sources/bandaru-2024.md), §II) or a
 [collisional-radiative](/methods/collisional-radiative-impurity-model.md)
 treatment with charge-state-resolved super-particles
 ([Hu et al. (2021b)](/sources/hu-2021-b.md), §2;
-[Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.2). Coronal equilibrium
+[Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.2); the ASDEX Upgrade
+runs of [Tang et al. (2025)](/sources/tang-2025.md) (§2.1) create the
+markers from the impurity source, advect them with the fluid and use
+OpenADAS rates, replacing the coronal equilibrium of earlier JOREK SPI work.
+Coronal equilibrium
 underestimates the radiation of weakly ionized states early in the
 injection ([Hu et al. (2021b)](/sources/hu-2021-b.md), §1). Neutral
 deuterium is carried by a [fluid neutral model](/methods/fluid-neutral-models.md)
@@ -155,6 +165,44 @@ $t\approx1.5$ ms in a 3D neon case from 13.6 h to 5 h
   radiative cooling at equal penetration and a larger MHD amplitude at core
   relaxation, with comparable neon assimilation
   ([Hu et al. (2023)](/sources/hu-2023.md), §3.1–3.2, Figs. 4, 8–9).
+  In an ASDEX Upgrade H-mode the faster fragments (443 against 222 m/s)
+  give a steeper initial thermal-energy drop, higher early assimilation and
+  a shorter TQ, with a very similar final assimilation, while slower
+  fragments keep material at the edge and turn the cooling outside-in
+  ([Tang et al. (2025)](/sources/tang-2025.md), §3.4, Figs. 18–19); see
+  Qualifications.
+- **ASDEX Upgrade neon-fraction and fragment-size scans.**
+  [Tang et al. (2025)](/sources/tang-2025.md) inject neon-doped deuterium
+  pellets (0, 0.12, 1, 10% Ne; 53, 199 and 1105 fragments) into AUG
+  discharge #40355 with JOREK reduced MHD, $n=0$–7 and an ideal wall:
+  - The [thermal quench](/definitions/thermal-quench.md) has two stages: a
+    stochastic-transport loss of about half of $W_{\mathrm{th}}$ at fragment
+    arrival, nearly independent of the neon fraction, then a
+    radiation-dominated stage that ends in a 1/1-driven core collapse;
+    pure deuterium gives no second stage and a prolonged non-disruptive
+    phase (§3.2, Figs. 5–12).
+  - Assimilation regulates itself: 10% Ne assimilates the most neon but the
+    lowest fraction of the pellet (about 0.05, against 0.13 at 1% and 0.22
+    at 0.12%, read from Fig. 5d), because a high neon content ends ablation
+    at the early thermal collapse; at 0.12% ablation stops only when the
+    fragments leave the plasma, at about 20% of the pellet (§3.2). Total
+    assimilated atoms (Ne plus D) rise as the neon fraction falls (Fig. 28).
+  - More, smaller fragments give a shorter TQ and, at 0.12% Ne, a higher
+    assimilation; at 10% Ne the size makes little difference (§3.3,
+    Figs. 13–15). The low-neon trend is opposite to AUG experiments, in
+    which larger low-neon fragments assimilate better; the rocket effect
+    (not modelled) and under-resolved plasmoid drift are named as
+    candidates (§3.3, §4).
+  - Smaller or slower fragments create a cold front at the edge, turning
+    inside-out into outside-in cooling, and a cold front strengthens the
+    $I_p$ spike (§3.2–3.4, Figs. 12, 16–20).
+  - Against experiment the runs underestimate the pre-TQ duration,
+    "especially with a low neon fraction" (3–5 ms simulated at 0.12%, about
+    1 ms at 10%; AUG converges to 3–5 ms at ≥1% Ne and reaches tens of ms
+    without neon, Fig. 26), and the radiation fraction, and
+    overestimate the early radiation peaking; the authors blame an
+    exaggerated first-stage loss, which they attribute to overestimated
+    parallel heat conduction (§3.5, §4; attribution stated, not tested).
 - **Full MHD.** Neon SPI into a JET-like plasma (pulse 85943) gives a
   thermal quench 2–3 ms after injection with 3/1, 2/1 and later 1/1
   structures and an $I_p$ spike, qualitatively like the earlier reduced-MHD
@@ -165,7 +213,15 @@ $t\approx1.5$ ms in a 3D neon case from 13.6 h to 5 h
   radiation observations; ASDEX Upgrade SPI reproduces the double radiation
   peak qualitatively; KSTAR SPI gives good density agreement and
   qualitative bolometry agreement ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
-  §3.2). The DIII-D argon and neon gas-injection case is the axisymmetric
+  §3.2). The primary AUG study finds the two simulated peaks but states
+  that the first is not observed in experiment (see Contradictions). Its
+  radiation fraction, $f_{\mathrm{rad}}=W_{\mathrm{rad}}/(W_{\mathrm{th}}(0)+W_{\mathrm{ohm}})$
+  with $W_{\mathrm{rad}}$ and $W_{\mathrm{ohm}}$ the cumulative radiated and
+  Ohmic energies (registry §11), is about 0.40–0.75 at the end of the
+  runs against about 0.45–0.82 in the AUG database, and only the 10% Ne,
+  1105-fragment case matches; the simulated $I_p$ spike is comparable to
+  AUG #40673 but its dip comes about 0.7 ms early
+  ([Tang et al. (2025)](/sources/tang-2025.md), §3.4–3.5, Figs. 20, 22). The DIII-D argon and neon gas-injection case is the axisymmetric
   code-to-code reference ([DIII-D gas-injection impurity benchmark](/benchmarks/diii-d-mgi-impurity-benchmark.md)).
 - **Runaway electrons.** Coupling the runaway-electron fluid model with the
   SPI model in 3D is possible in principle, but the effect of runaways on
@@ -181,7 +237,25 @@ material and reduces assimilation ([Hu et al. (2024)](/sources/hu-2024.md),
 §3). Machine, pellet composition and target differ; a higher neon
 fraction or a degraded pedestal suppresses the drift (Hu et al. 2024).
 Context-dependent, not contradictory; conditions on
-[plasmoid drift](/definitions/plasmoid-drift.md).
+[plasmoid drift](/definitions/plasmoid-drift.md). In ASDEX Upgrade,
+[Tang et al. (2025)](/sources/tang-2025.md) (§3.3, §4) invoke plasmoid
+drift to explain why small low-neon fragments assimilate worse in
+experiment than in their runs, and its suppression at high neon to explain
+the weak size effect at 10% Ne, in line with Hu et al. (2024); this is
+stated, not simulated, since the drift is under-resolved at their toroidal
+resolution.
+
+**Injection speed and radiation.** [Hu et al. (2023)](/sources/hu-2023.md)
+(§3.1–3.2, ITER 15 MA L-mode) find that slower fragments (200 against
+500 m/s) radiate more strongly at equal penetration;
+[Tang et al. (2025)](/sources/tang-2025.md) (§3.4–3.5, Figs. 18, 21, AUG
+H-mode) find that faster fragments (443 against 222 m/s) give a higher
+early assimilation and a higher radiation fraction at $I_p=0.8\,I_p(0)$.
+Both find similar final assimilation. Targets, speed ranges and figures of
+merit differ (radiated power at a given penetration against a cumulative
+radiation fraction), so this is a dependence on the case, not a
+contradiction; a speed scan in one target reporting both quantities would
+show whether the two trends coexist.
 
 **Core before edge.** The statement that ITER neon–deuterium shards reach
 the core before the edge radiative collapse (Hoelzl et al. 2024, §3.2;
@@ -212,6 +286,22 @@ exponent, unless the review's proportionality is meant loosely or refers
 to a single isolated source. A width scan over more than two values in a
 single setup would settle it.
 
+**Double radiation peak in ASDEX Upgrade SPI — Open.**
+[Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.2) state that AUG SPI
+simulations reproduce "the double radiation peak qualitatively", the first
+from the injection location and the second from the core.
+[Tang et al. (2025)](/sources/tang-2025.md), the primary JOREK study of AUG
+SPI with an overlapping author list, find the two simulated peaks
+(§3.2, Fig. 5e: edge ablation, then the 1/1 core collapse) but state that
+the first, high-peaking one "is overestimated in simulations and not
+observed in experiments" (§3.5, Fig. 23); the sector-resolved comparison
+with AUG #40671 shows double peaks in the simulation against single peaks
+per bolometer sector in the experiment (Fig. 24). Whether the review refers
+to this comparison or to another AUG case is not stated (the review cites
+its ref. [49]). Identifying the experimental data behind the review's
+statement, or a comparison with total (not sector-resolved) radiated power,
+would settle it.
+
 ## Citations
 
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.8, §6, §6.2.1–6.2.4.
@@ -223,3 +313,5 @@ single setup would settle it.
 - [Hu et al. (2023)](/sources/hu-2023.md), §2–5.
 - [Hu et al. (2024)](/sources/hu-2024.md), §2–5.
 - [Kong et al. (2025)](/sources/kong-2025.md), §3.2, §5.
+- [Tang et al. (2025)](/sources/tang-2025.md), §2–4, Figs. 5–28.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §II A.

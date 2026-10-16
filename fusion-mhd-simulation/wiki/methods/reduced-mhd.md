@@ -5,7 +5,7 @@ description: "MHD models that restrict the magnetic field to a poloidal flux fun
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, ansatz-based reduced MHD, Strauss reduced MHD]
 tags: [mhd, reduced-mhd, tokamak, kink, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Reduced MHD for tokamaks
@@ -58,8 +58,8 @@ the field $F_0\nabla\phi$
 add the ion diamagnetic velocity
 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), Eq. 26;
 [Korving et al. (2023)](/sources/korving-2023.md), Eq. 7). JOREK evolves the
-coefficient of $\mathbf B$ in the parallel flow, i.e. $v_\parallel/B$ in the
-registry notation, not $v_\parallel$ itself
+coefficient of $\mathbf B$ in the parallel flow, $\hat v_\parallel=v_\parallel/B$
+(registry §10), not $v_\parallel$ itself
 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), Table 1). The toroidal
 field is fixed in time. Poloidal currents still exist and evolve, but their
 contribution to $B_\phi$ is dropped
@@ -162,6 +162,19 @@ and $v_\parallel$ is set only by Mach-1 conditions at the divertor targets,
 with no momentum source ([Cathey et al. (2024)](/sources/cathey-2024.md),
 §3.1, fn. 9; the printed diamagnetic velocity carries a spurious mass factor,
 recorded on the Source page). See [bootstrap current](/definitions/bootstrap-current.md).
+[Liang et al. (2025)](/sources/liang-2025.md) (§III, Eqs. 1–9) print the
+same model in full for HL-3 QH-mode runs: the velocity ansatz adds
+$-(\rho\,\Omega_iR_0)^{-1}R\nabla p_i\times\mathbf e_\phi$ (JOREK units) to the
+$\mathbf E\times\mathbf B$ and parallel flows (the diamagnetic parameter
+$1/(\Omega_iR_0)$ with $\Omega_i$ evaluated on the axis field, without the
+mass factor), the flux equation carries the electron-pressure terms
+$\propto[p_e,\psi]$ and $\propto\partial_\phi p_e$ with the same parameter,
+the source current holds a constant Ohmic part plus an evolving Sauter
+bootstrap part, $T$ is the common $T_e=T_i$ (not their sum) with $p=2\rho T$
+in JOREK units, Taylor–Galerkin stabilization acts on the $u$, $\rho$, $T$ and $\hat v_\parallel$
+equations, and full and reduced MHD are said to agree "excellently" for
+pedestal and ELM studies (citing Pamela et al. 2020). The resistive term of
+that flux equation is discussed under *Contradictions*.
 
 **Extensions used in the sources.** Two temperatures, coronal or
 collisional-radiative impurities, fluid or kinetic neutrals, a
@@ -170,7 +183,20 @@ this base ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §§2.5–2.11;
 [Hu et al. (2021b)](/sources/hu-2021-b.md), Eqs. 10–17;
 [Korving et al. (2023)](/sources/korving-2023.md), §II B, a visco-resistive
 one-temperature model with seven variables plus neutrals;
-[Bandaru et al. (2024)](/sources/bandaru-2024.md), §II).
+[Bandaru et al. (2024)](/sources/bandaru-2024.md), §II). The two-temperature
+impurity variant with collisional-radiative impurity markers is also used for
+ASDEX Upgrade SPI, with a constant viscosity ([Tang et al. (2025)](/sources/tang-2025.md),
+§2.1, Eqs. 1–7); a single-temperature variant with coronal neon and the
+runaway-electron fluid serves for EU-DEMO VDEs
+([Vannini et al. (2025)](/sources/vannini-2025.md)). At the
+other extreme, the model with all magnetic fields and currents set to zero,
+"similar to the Euler system", evolves only $\rho$, $u$ and $T$ with the
+ansatz $\mathbf v=R^2\nabla\phi\times\nabla u$; JOREK runs of it on a slab at
+$R=10$ m generate the training data of neural-operator surrogates
+([Gopakumar et al. (2024)](/sources/gopakumar-2024.md), §2.1, Eqs. 1–3; the
+reduced equations are not printed there). In its isothermal form every blob
+moves at the same speed whatever its density, because buoyancy and inertia
+both scale with $\rho$ (§2.1).
 
 ## Ordering-based linear models
 
@@ -331,6 +357,21 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
   printed record now stands at two sources against six. Ramasamy et al. share
   authors with Nikulsin et al. but do not comment on the sign change, so this
   is evidence for the slip reading, not an explicit supersession.
+  Chunk 3 adds three printed forms.
+  [Tang et al. (2025)](/sources/tang-2025.md), Eq. 1, prints
+  $+\eta\Delta^*\psi-R\{u,\psi\}-F_0\partial_\phi u$, the diffusive form.
+  [Vannini et al. (2025)](/sources/vannini-2025.md), App. A, Eq. 4, prints
+  $R^{-1}\partial_t\psi=R^{-1}\eta(j-\dots)+[\psi,u]-R^{-1}F_0\partial_\phi u$
+  with $j=\Delta^*\psi$ (Eq. 6), also the diffusive form.
+  [Liang et al. (2025)](/sources/liang-2025.md), Eq. 7, prints
+  $-R\eta(j-j_S)-R[u,\psi]-F_0\partial_\phi u$ with $j=\Delta^*\psi$ (Eq. 8):
+  the resistive term has the non-diffusive sign of Hoelzl et al. (2021),
+  with a factor $R$ in place of $1/R^2$, while the $F_0\partial_\phi u$ term
+  has the sign of the diffusive side, so this form matches neither printed
+  family as a whole. The record now stands at eight sources printing the
+  diffusive resistive sign against three printing the other, one of them
+  internally mixed. Liang et al. share authors with Hoelzl et al. (2021) and
+  with the Hu papers and do not comment.
 * **Viscous term of the vorticity equation.** *Open.*
   [Hu et al. (2021b)](/sources/hu-2021-b.md), Eq. 12, and
   [Hu et al. (2021)](/sources/hu-2021.md), Eq. 7, print
@@ -343,8 +384,15 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
   [Nardon et al. (2023b)](/sources/nardon-2023-b.md), Eq. 2, divided by $R$
   relative to this page, carries $\nu\Delta\varpi$, which corresponds to the
   $R$ form (compiler's check; the operator $\Delta$ is not defined there).
-  Either the JOREK implementation changed between papers or one form is a
-  misprint; none of the sources comments.
+  [Tang et al. (2025)](/sources/tang-2025.md), Eq. 2, which shares authors
+  with Hu et al. (2023, 2024), prints $R\,\nu\nabla^2_{\rm pol}\varpi$ with a
+  constant $\nu$, the $R$ form, and
+  [Vannini et al. (2025)](/sources/vannini-2025.md), App. A, Eq. 5, prints
+  $R\nabla\cdot(\nu\nabla_{\rm pol}\varpi)$, also with a single $R$;
+  Liang et al. (2025) print the viscous term only in the unprojected
+  momentum equation and add nothing. The printed record is now five forms
+  with $R$ (counting Nardon et al.) against two with $R^3$. Either the JOREK implementation changed between papers or one
+  form is a misprint; none of the sources comments.
 
 # Citations
 
@@ -367,3 +415,7 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
 * [Cathey et al. (2024)](/sources/cathey-2024.md) — diamagnetic and bootstrap extension.
 * [Kong et al. (2025)](/sources/kong-2025.md) — shear Alfvén propagation in reduced MHD.
 * [Artola et al. (2022)](/sources/artola-2022.md) — validity basis for wall forces.
+* [Tang et al. (2025)](/sources/tang-2025.md) — two-temperature SPI variant, resistive sign, viscous term.
+* [Liang et al. (2025)](/sources/liang-2025.md) — diamagnetic and bootstrap variant printed in full, resistive sign.
+* [Vannini et al. (2025)](/sources/vannini-2025.md) — variant with coronal impurities and runaway electrons, resistive sign, viscous term.
+* [Gopakumar et al. (2024)](/sources/gopakumar-2024.md) — field-free limit used for surrogate training data.

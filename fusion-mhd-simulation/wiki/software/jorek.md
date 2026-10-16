@@ -5,7 +5,7 @@ description: "Fully implicit nonlinear extended-MHD code for tokamak X-point pla
 status: established
 aliases: [JOREK 2]
 tags: [code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # JOREK
@@ -63,6 +63,10 @@ Variants of the reduced model used in the chunk-2 applications:
   §I, stated).
 * **Fluid neutrals** with a transient Gaussian D$_2$ source for plasmoid-drift
   studies ([Kong et al. (2025)](/sources/kong-2025.md), §2).
+* **Field-free fluid model** (all magnetic fields and currents set to zero,
+  $\rho$, $u$, $T$ only) on a 1 m slab at $R=10$ m, used to generate blob
+  data for neural-operator surrogates
+  ([Gopakumar et al. (2024)](/sources/gopakumar-2024.md), §2.1).
 * **Wall-force runs** with Ohmic heating and radiation assumed to cancel,
   no density or temperature sources, and an artificial axisymmetric thermal
   quench by raised $\kappa_\perp$ ([Artola et al. (2022)](/sources/artola-2022.md),
@@ -76,7 +80,10 @@ from the parallel projection (Hoelzl et al. 2021, §2.2, §2.12;
 [Bhole et al. (2023)](/sources/bhole-2023.md), §3.3.5). It carries
 diamagnetic terms, neoclassical friction, rotation and the bootstrap source,
 but in 2021 no neutral model (Hoelzl et al. 2021, §2.12); Bhole et al. (2023)
-(Eqs. 1–14) add a coronal-equilibrium impurity species.
+(Eqs. 1–14) add a coronal-equilibrium impurity species. A two-temperature
+version with resistivity acting only on the toroidal component of Ohm's law,
+"to improve the numerical stability", is used for flux pumping over the
+resistive time ([Zhang et al. (2025)](/sources/zhang-2025.md), §2.2, Eqs. 1–4).
 
 **Extensions** (Hoelzl et al. 2021, §§2.4–2.14, unless cited otherwise):
 drift-ordered diamagnetic Ohm's law, gyroviscous cancellation, neoclassical
@@ -150,6 +157,14 @@ rank 0 handles I/O and the $n=0$ block (Hoelzl et al. 2021, §3.6). A JT-60SA
 ELM case reaches about 50 % relative strong-scaling efficiency from 16 to 160
 nodes (§3.6, Fig. 9). The 2021 code was CPU only; particles were later ported
 to GPUs with OpenACC (Hoelzl et al. 2024, §5; Bogaarts et al. 2022, §II).
+A 3D flux-pumping case over 700 ms costs about 0.5 M core-hours on
+Marconi-Fusion; 3D runs over the resistive time of ITER or DEMO, where
+$\tau_R/\tau_A$ is more than 10 and 40 times that of AUG, are judged
+"impractical" (Zhang et al. 2025, §6.2). A 2D field-free blob run of 2000
+steps costs about 350 core-hours (16 or 48 cores per run); this cost, and
+2000 such runs as training data, motivate the
+[Fourier-neural-operator surrogates](/methods/fourier-neural-operator-surrogates.md)
+(Gopakumar et al. 2024, §2.1, §3.1.1).
 A 3D ITER current-quench run with STARWALL costs about 5 million
 core-hours, on the ITER cluster, Marconi-Fusion and Google Cloud
 (Artola et al. 2022, §5); low-resistivity double-tearing runs are "very
@@ -260,8 +275,26 @@ Chunk-2 applications, with the resolution each paper states:
 | JET-like double tearing mode | resistivity window of violent relaxation | 120×64 flux-aligned elements, $n=0$–15 | [Nardon et al. (2023b)](/sources/nardon-2023-b.md), §II |
 | W7-AS soft β limit (JOREK3D) | parallel flow and finite-element vacuum field | see [JOREK3D](/software/jorek3d.md) | [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) |
 
-None of these papers states the time step or solver settings except
-Cathey et al. (2023); the [resonant magnetic perturbation](/definitions/resonant-magnetic-perturbation.md)
+Chunk-3 applications:
+
+| Study | Application | Resolution and setup | Source |
+|---|---|---|---|
+| AUG hybrid #36663, full MHD | [flux pumping](/definitions/magnetic-flux-pumping.md) and the [MHD dynamo](/definitions/mhd-dynamo.md) over 700 ms (3D) and 1.8 s (2D) | polar grid of 100×100 elements, $n\le4$ ($n\le1$ insufficient, $n\le2$ and $n\le4$ within 1%), $\Delta t=2.30\,\mu$s, implicit Gear scheme (order not stated), fixed boundary at the LCFS; about 0.5 M core-hours per 3D case | [Zhang et al. (2025)](/sources/zhang-2025.md), §2.4, §6.2 |
+| HL-3 QH-mode, predictive | [edge harmonic oscillation](/definitions/edge-harmonic-oscillation.md), loss of QH-mode at lower $q_{95}$ | 11 136 $G^1$ Bézier elements in lower single null (71×121 inside the separatrix), $n=0$–12, ideal wall, Mach-1 sheath targets, Taylor–Galerkin stabilization; time step and solver not given | [Liang et al. (2025)](/sources/liang-2025.md), §III |
+| AUG H-mode Ne/D SPI | two-stage thermal quench, scans of neon fraction, fragment size and speed | 70×110 flux-aligned X-point grid, $n=0$–7, ideal wall, $\Delta t=0.1$–2 normalized units (about 0.61 µs each); HAWK (HLRS) CPUs, no cost given | [Tang et al. (2025)](/sources/tang-2025.md), §3.1 |
+| EU-DEMO upward hot VDE with runaway beam | 2D beam formation, 3D termination at $q_{95}\approx2.3$, wall loads | JOREK–STARWALL, polar grid (node counts not given), $n\le3$, 5 or 7; the 3D runs "would not have been possible" without the enhanced preconditioner of Holod et al. (2021, as cited); no time step or cost given | [Vannini et al. (2025)](/sources/vannini-2025.md), §5 |
+| 2D blob data for surrogates | field-free fluid model | 200×200 bicubic elements, $\Delta t=0.15\,\mu$s, 2000 steps (300 µs), about 350 core-hours per run | [Gopakumar et al. (2024)](/sources/gopakumar-2024.md), §2.1 |
+
+Liang et al. (2025, §III) state the orientation explicitly: JOREK's $\phi$
+runs clockwise seen from the top. Zhang et al. (2025, §2.4) describe the
+elements as "$G^1$-continuous … bi-cubic Bezier elements", a further
+statement on the $G^1$ side of the continuity question below.
+
+Of the chunk-2 papers only Cathey et al. (2023) state the time step; of
+the chunk-3 papers Zhang et al. (2025), Tang et al. (2025) and Gopakumar
+et al. (2024) state it, Vannini et al. (2025) name the preconditioner but
+give no step, and Liang et al. (2025) give neither. The
+[resonant magnetic perturbation](/definitions/resonant-magnetic-perturbation.md)
 and [ELM](/definitions/edge-localized-mode.md) pages carry the pedestal
 results.
 
@@ -269,7 +302,7 @@ results.
 
 * **Continuity of the Bézier element.** *Open.* Hoelzl et al. (2021, §3.1) and
   Artola et al. (2021, Table 1, footnote G = geometric, C = parametric) say
-  $G^1$; Bhole et al. (2023, §3.3.2) say $C^1$, the arc-length derivatives
+  $G^1$, as do Zhang et al. (2025, §2.4) and Liang et al. (2025, §III); Bhole et al. (2023, §3.3.2) say $C^1$, the arc-length derivatives
   being shared. A statement of which derivatives are continuous across edges
   in physical space would settle it; recorded in full on
   [Bézier–Hermite finite elements](/methods/bezier-finite-elements.md).
@@ -302,3 +335,8 @@ results.
 19. [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — §§II, IV.
 20. [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.
 21. [Howell et al. (2022)](/sources/howell-2022.md) — §I.
+22. [Zhang et al. (2025)](/sources/zhang-2025.md) — §2, §6.2.
+23. [Liang et al. (2025)](/sources/liang-2025.md) — §III.
+24. [Tang et al. (2025)](/sources/tang-2025.md) — §2.1, §3.1.
+25. [Vannini et al. (2025)](/sources/vannini-2025.md) — §2–3, §5: model, numerics, preconditioner.
+26. [Gopakumar et al. (2024)](/sources/gopakumar-2024.md) — §2.1, §3.1.1.

@@ -6,6 +6,131 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — the last 10 papers, closing sweeps and deep lint #1 (2026-10-16)
+
+Sources: gopakumar-2024, rahman-2024, seto-2024, wright-2024, tang-2025,
+vannini-2025, zhang-2025, izzo-2025, liang-2025, sato-2026 (no slug
+changes). 10 new concept pages (110 in all, 160 with the Source pages),
+about 40 pages extended, 1552 bibliography entries. 50 of 50 files
+ingested.
+
+### Decisions for the human
+
+1. **Closures recommended as printed slips** (all still Open):
+   - Resistive-term sign in the JOREK flux equation
+     ([reduced MHD](wiki/methods/reduced-mhd.md)): now 8 sources print the
+     diffusive sign against 3 (hoelzl-2021, nikulsin-2022, and liang-2025, which
+     is internally mixed). Recommended: close as a printed slip.
+   - Gear scheme order, "BDF5" in artola-2021 against BDF2 in four sources
+     ([implicit time integration](wiki/methods/implicit-time-integration.md)).
+     zhang-2025 gives no order and does not help. Recommended: close as a
+     printed slip, or check the published version first.
+2. **Fiat candidates raised by the deep lint:**
+   - Bézier element continuity ([Bézier elements](wiki/methods/bezier-finite-elements.md)):
+     four sources say $G^1$ (hoelzl-2021, artola-2021, zhang-2025,
+     liang-2025) against one $C^1$ (bhole-2023). Most likely a difference of
+     terminology.
+   - JOREK3D–CASTOR3D tearing gap: ramasamy-2024 re-attributes it to
+     CASTOR3D resolution, with authors shared with the 2022 paper but no
+     data. Supersede, or keep Open.
+3. **Reclassification candidates** (contradiction → qualification or
+   compatible; the pages already say so): EHO frequency
+   ([EHO](wiki/definitions/edge-harmonic-oscillation.md)); the
+   phase-space invariant $C$ vs $P_2$ during chirping
+   ([EPM](wiki/definitions/energetic-particle-mode.md),
+   [chirping diagnostic](wiki/methods/chirping-phase-space-diagnostic.md));
+   complete RE loss vs trapped survivors after vannini-2025
+   ([runaway electrons](wiki/definitions/runaway-electrons.md)); the SPI
+   trigger surface, where tang-2025 supports the restricted reading, and the
+   ITER TQ duration, an attributed contrast
+   ([thermal quench](wiki/definitions/thermal-quench.md)).
+4. **Tag vocabulary** (not changed, your call): `benchmark` (39) and
+   `verification` (38) overlap heavily. The auditors split between merging
+   them and keeping `benchmark` for Benchmark pages only. `code` (57)
+   duplicates `type: Software`. `mhd` (69) sits alongside
+   `full-mhd`/`reduced-mhd`. Applied: `surrogate` → `machine-learning`.
+5. **Version caveats:** gopakumar-2024 is arXiv v2; seto-2024, tang-2025,
+   vannini-2025 and zhang-2025 are preprints or accepted manuscripts. Claims
+   are those of the versions read.
+
+### Contradictions opened (all Open)
+
+| Name | Page(s) |
+|---|---|
+| Tungsten melt limit in energy-impact units: 50 vs 38 MJ m⁻² s⁻¹ᐟ² | definitions/radiation-asymmetry |
+| Double radiation peak in AUG SPI (tang-2025) | definitions/shattered-pellet-injection |
+| Terms of the JOREK RE fluid model: vannini-2025 vs bandaru-2024 | methods/runaway-electron-fluid-model |
+| Flux pumping with $q_0\approx0.99$ (zhang-2025) vs $q_0\ge1$ | definitions/magnetic-flux-pumping (pointers from interchange-mode, resistive-internal-kink, tearing-mode, neoclassical-tearing-mode) |
+| Resistivity model of the QA reactor stellarator: saxena-2025 vs wright-2024 | definitions/quasi-symmetry, definitions/bootstrap-current |
+| Interchange-like instability despite a magnetic well (wright-2024) | definitions/interchange-mode |
+
+Qualifications recorded: SPI fragment speed (hu-2023 vs tang-2025);
+vertical-force mitigation fails once a runaway beam carries the current
+(vannini-2025); the fluid RE beam re-forms after the flush; EHO frequency,
+liang-2025 vs cathey-2023/2024; the different context of sato-2026 and
+ramasamy-2024 for stellarator β limits. Updated tallies on
+[reduced MHD](wiki/methods/reduced-mhd.md): resistive sign 8 against 3,
+viscous term 5 $R$ against 2 $R^3$.
+
+### Printed inconsistencies and metadata
+
+- The slips each reader found are recorded under "Recorded as printed" on
+  the Source page.
+- izzo-2025 cites "[Hu 2024]", which is not in its printed reference list.
+  The link to hu-2024 is the compiler's inference.
+- hoelzl-2024 claims 8 (ITER RMP predictions, probably becoulet-2022) and 25
+  (VMEC–JOREK, probably ramasamy-2024) are left unlinked: the cited original
+  cannot be confirmed.
+- liu-2022-b: it remains open whether particles are pushed with $\mathbf E$
+  or $\mathbf E^*$.
+- nikulsin-2022 Fig. 3: the ι range is inconsistent with the (2,1) and
+  (3,2) surfaces named in the text. Recorded as printed.
+- tang-2025's 50 eV floor on $\chi_\parallel$ could be a temperature floor
+  or a diffusivity floor. Recorded as ambiguous.
+
+### Bibliography
+
+- 1312 → 1552 entries, FLAGS 0.
+- Aliases: `li-2020-c` (FNO), `li-2022-b` (PINO; rahman-2024 prints 2021),
+  `kirk-2006-b`, `siccinio-2022-b`, `shi-2015-b`.
+- `bergstroem-2023-b` is kept distinct from `bergstroem-2023`: different
+  printed titles at the same workshop, possibly the same contribution.
+- **Chunk-1 repair:** hoelzl-2021's citation of Zohm PPCF 38:1213, together
+  with its DOI, moved from `zohm-1996` (the 38:105 review) to
+  `zohm-1996-b`.
+- Closing sweeps:
+  - `--dupes` leaves only `kim-2023`/`kim-2023-b` (same printed title,
+    different author and article; kept distinct).
+  - The whole-corpus fuzzy-title sweep found every pair distinct.
+- Open rule question, carried over: "submitted" citations were folded into
+  the published entries, while the plasma-propulsion ruling keeps preprints
+  distinct.
+
+### Deep lint #1
+
+- Notation, consistency, stale-statement and link fixes on about 110 pages.
+  Summary in `wiki/log.md`.
+- Real errors found and fixed: tang-2025 refs [32]/[33] swapped;
+  artola-2022's TPF attribution (fast-CQ, not VDE); rahman-2024 on
+  gopakumar's loss; MEGA dissipation per run; cbm18 DWRBM reference length.
+- None closed: no contradiction was closed and no tag changed beyond
+  `surrogate`.
+
+### Bundle fit (final recommendation)
+
+- **New bundle `neural-operator-surrogates`** for gopakumar-2024 and
+  rahman-2024. They are ML-method papers whose MHD content is the training
+  data (JOREK and NIMROD/GTC runs). They stay here as the "data-driven
+  surrogates" entry of the reading guide. A dedicated bundle would hold
+  their FNO/PINO lineage (`li-2020-c`, `li-2022-b`) properly.
+- Earlier suggestions stand:
+  - D17 copies: bhole-2023 → high-order-capturing-schemes; jiang-2024,
+    seto-2023 and liu-2024 → curvilinear-metric-discretization;
+    panici-2023 → orthogonal-polynomials-and-quadrature.
+  - Possible new bundle `stiff-time-integration`.
+  - Not recommended: splitting off the energetic-particle or stellarator
+    clusters.
+
 ## Chunk 2 — the 20 application papers (2026-10-16)
 
 Sources: strauss-2022, hu-2021, liu-2021, liu-2022-b, artola-2022,

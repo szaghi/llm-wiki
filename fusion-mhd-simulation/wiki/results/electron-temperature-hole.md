@@ -5,7 +5,7 @@ description: "In JOREK simulations of neon-deuterium SPI into ITER L-mode, trans
 status: established
 aliases: [temperature hole, Te hole, cold spot along field lines, stochastic transport barrier, q=1 barrier, KAM barrier]
 tags: [disruption, impurities, mhd, kink, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Electron temperature hole and the stochastic barrier at q = 1 after SPI
@@ -99,7 +99,15 @@ a JET-like plasma found the related delay between core $T_e$ collapse and
 core impurity mixing: field lines from the edge needed more than 50
 toroidal turns to reach the core at TQ onset, and core mixing lagged the
 temperature collapse by more than 100 µs
-([Hu et al. (2021)](/sources/hu-2021.md), §3, Figs. 8, 10).
+([Hu et al. (2021)](/sources/hu-2021.md), §3, Figs. 8, 10). A later JOREK
+study of neon–deuterium SPI in ASDEX Upgrade applies a 50 eV floor to the
+Spitzer–Härm parallel diffusivity $\chi_\parallel$ "to help deal with low
+temperature regions such as temperature holes"; whether the floor acts on
+the temperature in the formula or on the diffusivity itself is ambiguous as
+printed ([Tang et al. (2025)](/sources/tang-2025.md), §3.1). The floor is a
+modelling response to the hole, not a further observation of it, and it
+makes the parallel conduction differ from the Braginskii closure of Hu et
+al. (2023) exactly where the hole forms.
 
 ## Significance
 
@@ -122,3 +130,4 @@ timescale of interest (§2.2).
 - [Hu et al. (2023)](/sources/hu-2023.md), §2.2, §3.1–3.3, §4.1, §4.4, §5, Eq. 20, Figs. 3–4, 11–15, 21–22.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.2, Fig. 8.
 - [Hu et al. (2021)](/sources/hu-2021.md), §3, Figs. 8, 10.
+- [Tang et al. (2025)](/sources/tang-2025.md), §3.1.

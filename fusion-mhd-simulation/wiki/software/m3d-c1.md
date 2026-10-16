@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "M3D-C1"
-description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) triangles in the poloidal plane and Hermite cubic elements toroidally, scalar-potential representations of the field and flow, split-implicit time stepping, a meshed vacuum and thick resistive conductors inside the domain, stellarator geometry, a bootstrap-current closure and a fluid runaway-electron model advanced by characteristics; benchmarked against CLT, JOREK and NIMROD and applied to W7-X sawtooth-like crashes and resistive-wall tearing."
+description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) triangles in the poloidal plane and Hermite cubic elements toroidally, scalar-potential representations of the field and flow, split-implicit time stepping, a meshed vacuum and thick resistive conductors inside the domain, stellarator geometry, a bootstrap-current closure and a fluid runaway-electron model advanced by characteristics; benchmarked against CLT, JOREK and NIMROD and applied to W7-X sawtooth-like crashes, resistive-wall tearing and the nonlinear edge instability of an optimized quasi-axisymmetric reactor stellarator."
 status: established
 aliases: [M3D-C^1]
 tags: [code, mhd, full-mhd, extended-mhd, reduced-mhd, tokamak, stellarator, finite-elements, time-integration, wall, bootstrap-current, benchmark]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # M3D-C1
@@ -63,6 +63,20 @@ built on it is [M3D-C1-K](/software/m3d-c1-k.md).
   conduction, a Gaussian heat source and a fixed ECCD source current; two-fluid
   and other effects "are not yet functional in stellarator geometry"
   ([Zhou et al. (2023)](/sources/zhou-2023.md), §II).
+  [Wright & Ferraro (2024)](/sources/wright-2024.md) (§II, App. A, Eqs.
+  A1–A5, 1–2) run the stellarator model **with** the continuity equation,
+  the density being held at its initial value at the wall (an implicit
+  source), with $\eta J^2$ heating and no source current, the
+  perpendicular heat flux written with the full temperature gradient as in
+  Zhou et al. (2023), $\kappa_\perp/\kappa_\parallel=10^{-6}$
+  ($\chi_\perp=2.18$ m²/s), dynamic viscosity
+  $3.65\times10^{-4}$ kg m⁻¹ s⁻¹ (about 100 times experimental values) and
+  no hyper-diffusion. Resistivity is
+  $\eta=\eta_{\rm u}[\eta_c+\eta_0T_e^{-3/2}]$ with $\eta_{\rm u}=2.74\ \Omega$ m
+  the code's resistivity unit (page-local symbols), constant
+  ($\eta_c=10^{-6}$) or Spitzer-like ($\eta_0=1$, 10, 100); Saxena et al.
+  (2025) use the same unit. "M3D-C1 itself is not a spectral code": a
+  toroidal Fourier decomposition is a post-processing diagnostic (§III).
 
 ## Discretization
 
@@ -92,6 +106,11 @@ built on it is [M3D-C1-K](/software/m3d-c1-k.md).
   strongly anisotropic heat transport ([Zhou et al. (2023)](/sources/zhou-2023.md),
   §II–IV). Boundary conditions: ideal for $\mathbf B$, no-slip for $\mathbf v$,
   fixed $p$.
+* The QA reactor runs of Wright & Ferraro (2024, §II) use the full torus
+  with no imposed symmetry, 72 toroidal planes and $8.64\times10^5$ 3D
+  elements, about $4\times10^5$ CPU-hours and 14 days per run, without
+  GPUs; the domain is the initial plasma boundary with a conducting wall,
+  no vacuum region, and $T$ and $J$ zero at the wall.
 * Runaway runs use 6454 elements per plane and 16 toroidal planes, packed near
   $q=2$; the runaway-loss fraction converges only with at least 16 planes
   ([Liu et al. (2021)](/sources/liu-2021.md), §3, §5.3, Fig. 14).
@@ -175,6 +194,12 @@ neoclassical references, VMEC and SIMSOPT supply stellarator equilibria
   §4.8).
 * **Impurities.** In the [DIII-D gas-injection benchmark](/benchmarks/diii-d-mgi-impurity-benchmark.md)
   M3D-C1 and NIMROD "follow each other rather well" (Hu et al. 2021b, §6.1).
+  For SPARC 6-valve gas injection, M3D-C1 and [NIMROD](/software/nimrod.md)
+  runs (Kleiner et al. 2025, as cited) with different approximations give "very similar levels of peak
+  radiated power in the TQ and comparably high radiated energy fractions";
+  no M3D-C1 numbers are printed, so the agreement is stated, not shown
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II C, §IV; see
+  [massive gas injection](/definitions/massive-gas-injection.md)).
 * **Resistive-wall tearing, linear.** On a DIII-D locked-mode reconstruction
   the $(2,1)$ mode is unstable with a resistive wall and stable with an ideal
   wall, with $\gamma\tau_A\propto(\tau_w/\tau_A)^{-2/3}$ at large wall time,
@@ -207,7 +232,14 @@ Figs. 5–7); the first nonlinear transport-time-scale simulations of
 ECCD-driven [sawtooth-like crashes](/definitions/sawtooth-crash.md) in full
 W7-X geometry, which match the measured crash amplitude and inversion radius
 but are about ten times too slow ([Zhou et al. (2023)](/sources/zhou-2023.md),
-§IV); and the termination of a DIII-D runaway plateau by a $(2,1)$ mode,
+§IV); the first nonlinear simulations of a reactor-scale two-period QA
+configuration optimized without a stability target, in which edge
+pressure-driven high-$n$ modes destroy the flux surfaces within about
+$1500\tau_A$ for every resistivity model and only even toroidal harmonics
+are destabilized ([Wright & Ferraro (2024)](/sources/wright-2024.md),
+§III; see
+[edge instabilities of an optimized QA reactor stellarator](/results/stellarator-edge-instability-qa.md));
+and the termination of a DIII-D runaway plateau by a $(2,1)$ mode,
 with more than 95% runaway loss in about 0.06 ms to the lower high-field-side
 wall ([Liu et al. (2021)](/sources/liu-2021.md), §5.3; see
 [runaway electrons](/definitions/runaway-electrons.md)).
@@ -234,6 +266,13 @@ wall ([Liu et al. (2021)](/sources/liu-2021.md), §5.3; see
   (2023, Eqs. 2–3) print $\eta J^2$ with $\eta(\mathbf J-\mathbf J_x)$ in Ohm's
   law for the same code. Recorded in full on
   [visco-resistive MHD model](/methods/visco-resistive-mhd-model.md).
+  Wright & Ferraro (2024, Eq. A3) also print $\eta J^2$, but without a
+  source current, so their form does not bear on the question.
+* **Resistivity dependence of the QA instability.** *Open.* Saxena et al.
+  (2025, §3.3) present their resistivity trend as "supporting Wright &
+  Ferraro (2024a)", whose runs are "qualitatively identical, regardless of
+  resistivity model" with growth rates not monotonic in the multiplier.
+  Recorded in full on [quasi-symmetry](/definitions/quasi-symmetry.md).
 
 # Citations
 
@@ -250,3 +289,5 @@ wall ([Liu et al. (2021)](/sources/liu-2021.md), §5.3; see
 11. [Zhou et al. (2023)](/sources/zhou-2023.md) — §§II–V.
 12. [Strauss et al. (2022)](/sources/strauss-2022.md) — §II, Fig. 2.
 13. [Liu et al. (2022b)](/sources/liu-2022-b.md) — §6.
+14. [Wright & Ferraro (2024)](/sources/wright-2024.md) — §§II–IV, App. A: stellarator model with continuity, resistivity models, QA reactor runs.
+15. [Izzo et al. (2025)](/sources/izzo-2025.md) — §II C, §IV: SPARC gas-injection agreement with NIMROD (stated).

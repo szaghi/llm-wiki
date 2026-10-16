@@ -5,7 +5,7 @@ description: "Models that advance the bulk plasma as an MHD fluid and a kinetic 
 status: established
 aliases: [kinetic-MHD hybrid, hybrid MHD-kinetic, hybrid MHD-gyrokinetic, MHD-kinetic hybrid model]
 tags: [hybrid-kinetic, energetic-particles, particles, mhd, alfven-eigenmode, numerics]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Hybrid kinetic-MHD models
@@ -37,8 +37,10 @@ the **bulk ions** are also $\delta f$ markers and the fluid keeps only the
 perpendicular momentum, the field and the electron pressure:
 [M3D-C1-K](/software/m3d-c1-k.md) with kinetic thermal and fast ions
 ([Liu et al. (2022b)](/sources/liu-2022-b.md), §2) and
-[MEGA](/software/mega.md) with kinetic thermal ions only
-([Sato et al. (2024)](/sources/sato-2024.md), §2). There the kinetic species
+[MEGA](/software/mega.md) with kinetic thermal ions alone
+([Sato et al. (2024)](/sources/sato-2024.md), §2) or together with a second
+kinetic species of Maxwellian 100 keV energetic ions
+([Sato & Todo (2026)](/sources/sato-2026.md), p. 8). There the kinetic species
 is not a minority, the ion density and parallel flow come from the markers,
 and the coupling moment is that of the bulk ions. The common structure is
 the split itself: some species as fluid, some as markers, joined through
@@ -95,7 +97,7 @@ Every hybrid code of this bundle makes four choices.
 | [M3D-C1-K](/software/m3d-c1-k.md) | M3D-C1 full MHD, implicit or semi-implicit | RK4 guiding centre or slow-manifold Boris; optionally kinetic thermal ions | $\delta f$ | pressure or current | [Liu et al. (2022)](/sources/liu-2022.md), §§2–4; [Liu et al. (2022b)](/sources/liu-2022-b.md), §2 |
 | [GMEC](/software/gmec.md) | linearized reduced MHD (model B), RK4 | gyrokinetic, RK4, 4-point gyroaverage | $\delta f$ | pressure, through the curvature term | [Liu et al. (2024)](/sources/liu-2024.md), §II |
 | [HYMAGYC](/software/hymagyc.md) | linear resistive full MHD, backward Euler | gyrokinetic (Brizard), $N=32$ gyroaverage | $\delta f$ | pressure, $\nabla\cdot\mathsf P_h$ | [Vlad et al. (2025)](/sources/vlad-2025.md), §3 |
-| [MEGA](/software/mega.md) | nonlinear visco-resistive full MHD, finite differences, explicit RK4 | drift-kinetic, ad-hoc gyroaverage | $\delta f$ | current | [Vlad et al. (2025)](/sources/vlad-2025.md), §4; [Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §2; [Sato et al. (2024)](/sources/sato-2024.md), §2 |
+| [MEGA](/software/mega.md) | nonlinear visco-resistive full MHD, finite differences, explicit RK4 | drift-kinetic, ad-hoc gyroaverage | $\delta f$ | current | [Vlad et al. (2025)](/sources/vlad-2025.md), §4; [Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §2; [Sato et al. (2024)](/sources/sato-2024.md), §2; [Sato & Todo (2026)](/sources/sato-2026.md), p. 2 |
 | [XTOR-K](/software/xtor-k.md) | two-fluid MHD, Newton–Krylov | full orbit (Boris–Buneman) | full-$f$ | perpendicular pressure, Picard-iterated | [Vlad et al. (2025)](/sources/vlad-2025.md), §6 |
 
 [ORB5](/software/orb5.md) is the fully gyrokinetic reference against which
@@ -157,7 +159,10 @@ which call it "a common strategy across different hybrid codes").
   ([Liu et al. (2022b)](/sources/liu-2022-b.md), §6).
 - **MEGA.** Runs on NEC SX-Aurora TSUBASA vector engines and Fugaku with
   about $10^8$ markers (32 per cell); no GPU use is reported
-  ([Sato et al. (2024)](/sources/sato-2024.md), §2).
+  ([Sato et al. (2024)](/sources/sato-2024.md), §2). The nonlinear LHD
+  kinetic-thermal-ion run at $S=10^7$ used about $6.7\times10^8$ thermal-ion
+  markers on a $128\times640\times128$ grid and took about 164.4 h on 2048
+  SX-Aurora vector engines ([Sato & Todo (2026)](/sources/sato-2026.md), p. 3).
 - **JOREK.** The JOREK particle framework duplicates the full plasma state
   on all MPI ranks, which avoids particle migration
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §3.6). Its kinetic and
@@ -206,6 +211,13 @@ Chunk 2 adds three nonlinear hybrid applications:
   [infernal modes](/definitions/infernal-mode.md) with no EPs at all
   ([Sato et al. (2024)](/sources/sato-2024.md), §3.2).
 
+Chunk 3 adds a fourth: nonlinear high-beta LHD interchange and ballooning
+modes in MEGA with kinetic thermal ions, and with energetic ions added
+($\beta_h\le0.8\,\%$), which lower the linear $n=2$ growth rate but leave
+the saturation level and the final pressure profile essentially unchanged
+([Sato & Todo (2026)](/sources/sato-2026.md), pp. 7–9; see
+[kinetic thermal ions](/methods/kinetic-thermal-ions.md)).
+
 The same kinetic infrastructure carries non-EP species in JOREK: impurities,
 neutrals, [runaway electrons](/definitions/runaway-electrons.md) and
 electrostatic ITG ions ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
@@ -236,3 +248,4 @@ and about benchmark outcomes (the benchmark pages).
 - [Liu et al. (2022b)](/sources/liu-2022-b.md): kinetic thermal ions in M3D-C1-K, sequential splitting, GPU matrix assembly, the nonlinear fishbone.
 - [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): MEGA equations and the nonlinear chirping TAE.
 - [Sato et al. (2024)](/sources/sato-2024.md): MEGA with kinetic thermal ions, its numerics and hardware.
+- [Sato & Todo (2026)](/sources/sato-2026.md): MEGA with kinetic thermal and energetic ions together, run size and cost.

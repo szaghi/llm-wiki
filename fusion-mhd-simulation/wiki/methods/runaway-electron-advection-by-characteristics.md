@@ -5,7 +5,7 @@ description: "Semi-Lagrangian solution of the runaway-electron continuity equati
 status: established
 aliases: [method of characteristics for runaway electrons, semi-Lagrangian RE advection, pseudo-particle RE advection, modified Boris algorithm]
 tags: [runaway-electrons, numerics, time-integration, particles, finite-elements, gpu, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Runaway-electron advection by the method of characteristics
@@ -24,8 +24,7 @@ projected back onto the finite-element space (§3, §4, App. A).
 The runaway continuity equation of the M3D-C1 model is
 $$\partial_tn_{\mathrm{RE}}+\nabla\cdot\big[n_{\mathrm{RE}}\big(c_{\mathrm{RE}}\mathbf b+\mathbf v_E\big)\big]=S_{\mathrm{RE}},\qquad \mathbf v_E=\frac{\mathbf E\times\mathbf B}{B^2},$$
 with $c_{\mathrm{RE}}\le c$ a numerical convection speed and $S_{\mathrm{RE}}$
-the runaway sources (Eq. 3; $c_{\mathrm{RE}}$ and $S_{\mathrm{RE}}$ are
-page-local symbols). Solved with GMRES and a block-Jacobi preconditioner whose
+the runaway sources (Eq. 3; $S_{\mathrm{RE}}$ is a page-local symbol). Solved with GMRES and a block-Jacobi preconditioner whose
 blocks are the toroidal planes, the system becomes ill-conditioned when
 $c_{\mathrm{RE}}\gg v_A$. The toroidal derivative $\partial_\phi n_{\mathrm{RE}}$
 then sits in off-diagonal blocks that "can dominate the matrix" at Alfvénic

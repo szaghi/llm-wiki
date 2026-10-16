@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:073904"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Jiang_Development_of_a_gyrokinetic-MHD_energetic_particle_simulati.pdf"
 tags: [reduced-mhd, hybrid-kinetic, energetic-particles, finite-differences, time-integration, ballooning, tearing, code, verification, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -217,8 +217,8 @@ $B^2/2\mu_0$.
 | $\xi$, $\phi$, $\phi_B$ (toroidal angle) | $\zeta$ | **collision:** printed $\phi$ is also the potential |
 | $\delta\phi$ | $\delta\Phi$ | |
 | $(x,y,z)$, $(x',y',z')$ | $x$, $y$, $z$ (primes for local shifted coordinates) | same roles as the registry |
-| $\nu$ (field-line pitch) | words | **collision:** registry $\nu$ is viscosity |
-| $z_0$, $I$ (integrated shear), $\alpha$, $M$ | words | **collision:** $I$ is also the Boozer covariant poloidal component (Eq. C9) |
+| $\nu$ (field-line pitch) | $\hat q$ | **collision:** registry $\nu$ is viscosity |
+| $z_0$, $I$ (integrated shear), $\alpha$, $M$ | words; $\mathcal I_s$ for $I$ | **collision:** $I$ is also the Boozer covariant poloidal component (Eq. C9) |
 | $g^{ij}$, $g_{ij}$, $J$ (Jacobian) | words | **collision:** $J$ vs current density $\mathbf J$ |
 | $\delta\omega$ | $\delta\varpi$ | **collision:** registry $\omega$ is a frequency |
 | $\delta A_\parallel$ | $\delta A_\parallel$ | |
@@ -239,7 +239,7 @@ $B^2/2\mu_0$.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [BOUT++](/software/bout-plus-plus.md)

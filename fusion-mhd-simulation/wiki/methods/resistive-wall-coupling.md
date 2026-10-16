@@ -5,7 +5,7 @@ description: "Methods that close a nonlinear MHD model with the vacuum field and
 status: established
 aliases: [free-boundary MHD, resistive wall, JOREK-STARWALL, JOREK-CARIDDI, vacuum response, virtual casing]
 tags: [free-boundary, wall, vde, numerics, code]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Free-boundary and resistive-wall coupling
@@ -33,7 +33,11 @@ the vacuum and the conductor are discretized with the plasma
   boundary, magnetic ones at the outermost boundary.
 - **[NIMROD](/software/nimrod.md):** an axisymmetric thin resistive wall
   interfaced with a meshed external vacuum that uses the same magnetic
-  representation as the plasma.
+  representation as the plasma. The wall can be resistive for some
+  toroidal harmonics and ideal for others: the SPARC gas-injection runs use
+  $\mu_0\eta_w/d_w=40$ m/s for $n=1$–6, an ideal wall for $n=0$, which
+  inhibits vertical motion, and for $n=7$–10 for numerical stability
+  ([Izzo et al. (2025)](/sources/izzo-2025.md), §II C).
 
 Because current can flow from plasma to wall through a resistive interface,
 these codes carry toroidally asymmetric plasma currents
@@ -42,12 +46,35 @@ these codes carry toroidally asymmetric plasma currents
 [M3D](/software/m3d.md) and NIMROD as coupled to axisymmetric thin walls
 only, and M3D-C1 as placing its conductors inside the computational domain.
 M3D-C1 with a resistive wall gives linear (2,1) growth rates over wall
-Lundquist numbers $\tau_w/\tau_A$ from ≈50 to $5\times10^4$ on a DIII-D
+Lundquist numbers $S_{\mathrm{wall}}=\tau_w/\tau_A$ from ≈50 to $5\times10^4$ on a DIII-D
 reconstruction that is stable with an ideal wall, and M3D with a thin
 resistive wall follows the resulting
 [resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md)
 nonlinearly to a thermal quench ([Strauss et al. (2022)](/sources/strauss-2022.md),
 §II–III).
+
+**External coils through the boundary.** NIMROD represents a passive
+[runaway-electron mitigation coil](/definitions/runaway-electron-mitigation-coil.md)
+by a time-dependent normal-field boundary condition that reproduces the
+coil's perturbation at the last closed surface; the resistive wall is made
+transparent to this external perturbation but resistive to the plasma
+response ([Izzo et al. (2025)](/sources/izzo-2025.md), §III A).
+
+**The region between limiter and vessel.** With a meshed exterior the
+question is what the "vacuum" between the limiter and the vessel is.
+Izzo et al. (2025, §III A, §III C) solve the same equations everywhere,
+with a finite background plasma whose resistivity is raised 1000-fold, or
+resistivity and mass density both 1000-fold (mass density inhibits flows),
+through a sharp tanh transition at the limiter; in the divertor regions the
+plasma-like parameters extend to the boundary, so open-field-line currents
+can reach it. They contrast this with Sovinec & Bunkers (2019, as cited),
+who solve separate equations in explicitly separate plasma and vacuum
+regions. The choice moves the time at which $q_0$ crosses 2 after the
+$I_p$ spike from about 1.5 ms (plasma-like, or both enhancements) to almost
+immediately (resistivity only), "perhaps surprisingly, close to the core",
+with a mechanism "not immediately clear" (§III C, Fig. 12). Momentum
+conservation can break where charged particles cross the interface, which
+is small in practice (§III A).
 
 **Analytic thin-wall condition.** The cylindrical limit of a thin wall at
 $r_w$, with a vacuum solution $\propto r^{-m}$ outside, is
@@ -176,10 +203,21 @@ The ITER current-quench study of [Artola et al. (2022)](/sources/artola-2022.md)
 axisymmetric currents only (justified because the CQ is much shorter than
 the inner-layer penetration time), the OTS and DIR passive structures as
 filaments for vertical stability, $\eta_w=0.8\times10^{-6}$ Ω m (printed
-without the metre) and $d_w=6$ cm, giving a vessel L/R time of ≈500 ms.
+without the metre) and $d_w=6$ cm, giving a vessel L/R time of ≈500 ms;
+[Strauss et al. (2022)](/sources/strauss-2022.md) (§V) quote an ITER wall
+time of 250 ms instead, an open entry on
+[disruption](/definitions/disruption.md).
 Blanket modules and ports are omitted. The runs are continued past the CQ
 to ≈1.5 s to capture wall-current diffusion, which sets the maximum vertical
 force ([wall forces](/definitions/wall-forces.md)).
+The EU-DEMO runaway-beam study of [Vannini et al. (2025)](/sources/vannini-2025.md)
+(§2–3, Fig. 1a) couples JOREK reduced MHD to STARWALL with the central
+solenoid, PF and in-vessel vertical-stability coils, an inboard
+vacuum-vessel layer meshed with linear triangles and an outboard one of
+toroidal filaments (each thin, $\eta_w=0.76$ μΩ m, $d_w=3$ cm), and the
+first wall; the JOREK boundary encloses the first wall and hugs it in the
+upper region where the limiters sit. Fixed boundary conditions hold for all
+variables except $\psi$ and $j$, which come from the implicit coupling.
 JOREK has no free-boundary capability for stellarators yet, which blocks
 benchmarks of external modes in stellarator geometry
 ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.5).
@@ -188,7 +226,7 @@ to CARIDDI, needed to predict horizontal forces linked to 1/1 kinks, and a
 compression of the wall-coupling matrices
 ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3, §5).
 
-## Citations
+# Citations
 
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.9, §4.8, §6.3.
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §I–VII, Eqs. 4–28, Table I.
@@ -198,3 +236,5 @@ compression of the wall-coupling matrices
 - [Strauss et al. (2022)](/sources/strauss-2022.md), §II–III, Eq. 1.
 - [Artola et al. (2022)](/sources/artola-2022.md), §2, Fig. 1.
 - [Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.5.
+- [Izzo et al. (2025)](/sources/izzo-2025.md), §II C, §III A, §III C.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §2–3, Fig. 1a.

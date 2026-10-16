@@ -5,7 +5,7 @@ description: "Discrete shear-Alfvén eigenmode in the toroidicity-induced gap be
 status: established
 aliases: [TAE, toroidicity-induced Alfvén eigenmode, gap mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Toroidal Alfvén eigenmode (TAE)
@@ -75,7 +75,9 @@ $\omega=k_\parallel v_{\parallel p}$, with the sideband form
 $\omega\approx(v_{\parallel p}/R)\,[n-(m+\ell)/q]$ for integer $\ell$
 ([Liu et al. (2024)](/sources/liu-2024.md), Eq. 35; $\ell$ is written $p$
 there). GMEC verifies the scaling of the resonant-island width with the
-square root of the wave amplitude. In action-angle form, the resonance is
+square root of the wave amplitude: the analytic slope is
+$1.2558\times10^{-3}$ and the fitted slope $1.1409\times10^{-3}$, a 9% gap
+the paper calls "consistent" (Liu et al. 2024, §III A, Fig. 7). In action-angle form, the resonance is
 $\omega=n\omega_{\tilde\zeta}+\ell_{\mathrm r}\omega_{\tilde\theta}$ with
 toroidal and poloidal transit frequencies and integer $\ell_{\mathrm r}$;
 for the $n=6$ MEGA case co-passing EPs resonate at $\ell_{\mathrm r}=-m$ and
@@ -84,9 +86,7 @@ counter-passing ones at $\ell_{\mathrm r}=-(m+1)$
 Todo & Sato 1998). For passing particles, with
 $\omega_{\tilde\theta}\approx v_{\parallel p}/(qR)$ and
 $\omega_{\tilde\zeta}\approx v_{\parallel p}/R$, this is the sideband form
-above with $\ell_{\mathrm r}=-(m+\ell)$ (compiler's reading). The analytic slope is
-$1.2558\times10^{-3}$ and the fitted slope $1.1409\times10^{-3}$, a 9% gap
-the paper calls "consistent" (§III A, Fig. 7). On the ITPA case JOREK
+above with $\ell_{\mathrm r}=-(m+\ell)$ (compiler's reading). On the ITPA case JOREK
 finds the dominant resonance at $v_{\parallel p}=v_A/3$, in agreement with
 Könies et al. (2018). At saturation the resonant-particle density flattens
 around the gap at $r=0.5a$

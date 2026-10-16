@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:122501"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Bogaarts_Development_and_application_of_a_hybrid_MHD-kinetic_model_in.pdf"
 tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, reduced-mhd, full-mhd, finite-elements, code, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -207,7 +207,10 @@ modifying the initial profile.
 | MEGA | ≈1.7–2.1 | ≈165 |
 | ORB5 | ≈3.5 | ≈127 |
 
-(Fig. 9 readings.)
+(Fig. 9 readings.) The non-JOREK values are close to the tabulated linear
+results of [Vlad et al. (2025)](/sources/vlad-2025.md) (Table 2: HYMAGYC
+$(s,\theta)$ 180.0 kHz, MEGA 171.4 kHz, ORB5 127.1 kHz without FLR), which
+also re-labels the mode an EPM.
 
 **AUG #31213** (§V, Table I). NUBEAM distribution, highly anisotropic and
 almost purely counter-passing, relaxing much less than the Maxwellian
@@ -240,7 +243,7 @@ modes, 50–70 kHz $n=1$ RSAE.
 | $g_i$, $\boldsymbol\xi$, $G$, $G_J$, $K_l$, $l$ | words | diagnostic quantities |
 | $\Delta E_i$, $E$ | $\Delta\mathcal E_p$, $\mathcal E$ | **collision:** $E$ vs electric field |
 | $\mu$, $P_\phi$ | $\mu$, $P_\phi$ | |
-| $\lambda=v_\parallel/v$ | words (pitch) | printed as "pitch angle" |
+| $\lambda=v_\parallel/v$ | $\xi$ (pitch) | printed as "pitch angle"; native $\boldsymbol\xi$ is a diagnostic coordinate |
 | $\psi$, $\psi_N$, $s=\sqrt{\psi_N}$ | $\psi$, $\psi_N$, $s$ | $2\pi$ convention not stated |
 | $FF'$ | $FF'$ | not defined in the paper |
 | $T_f$ | $T_h$ | |
@@ -254,7 +257,7 @@ modes, 50–70 kHz $n=1$ RSAE.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Energetic particle mode (EPM) and frequency chirping](/definitions/energetic-particle-mode.md)
 * [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md)

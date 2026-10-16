@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:066022"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Becoulet_Non-linear_MHD_modelling_of_edge_localized_modes_suppression.pdf"
 tags: [mhd, reduced-mhd, extended-mhd, elm, pedestal, tokamak, divertor, edge, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -221,7 +221,7 @@ manuscript, not the published article (see Citations).
 | $\nu_\perp$, $\nu_{\perp0}$ | $\nu$ (perpendicular) | |
 | $K_\parallel$, $K_{\parallel,0}$, $K_{\parallel,\max}$ | $\kappa_\parallel$, $\kappa_{\parallel,0}$, words (flux limit) | |
 | $\nu_\parallel$ | $D_\parallel$ | **collision:** native $\nu$ used for a particle diffusivity |
-| $\xi_\perp$ | $\xi_\perp$ (page-local) | perpendicular displacement; not registered |
+| $\xi_\perp$ | $\xi_\perp$ (page-local) | perpendicular displacement; **collision:** registry $\xi$ is the particle pitch |
 | $\delta T_e$ | $\delta T_e$ | |
 | $I_C$, $I_i$ | same (page-local) | coil currents, kAt |
 | $\varphi_i^{coil}$, $\Delta\varphi^{center,coil}_{shift}$ | $\phi_i$, $\phi_{\mathrm{shift}}$ | degrees |
@@ -235,9 +235,10 @@ starting-angle offset, hence the conversion formulas.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
+* [Edge harmonic oscillation and QH-mode](/definitions/edge-harmonic-oscillation.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
 * [JOREK](/software/jorek.md)

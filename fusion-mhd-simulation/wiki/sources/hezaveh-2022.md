@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:036025"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Hezaveh_Simulation_of_convective_transport_during_frequency_chirping.pdf"
 tags: [mhd, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, tokamak, finite-differences]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -211,7 +211,7 @@ One physics case; no code comparison.
 | $\nu_n$ | $D$ (isotropic) | |
 | $\gamma$ (Eq. 3) | $\Gamma$ | **collision:** registry $\gamma$ is the growth rate |
 | $\lambda$ (Eq. 3) | $\kappa$ (isotropic) | |
-| $\lambda$ (after Eq. 5) | words (pitch $v_{\parallel p}/v$) | **collision:** same letter as the conductivity |
+| $\lambda$ (after Eq. 5) | $\xi$ (pitch $v_{\parallel p}/\lvert\mathbf v_p\rvert$) | **collision:** same letter as the conductivity |
 | $\nu$, $\eta$ | $\nu$ (kinematic), $\eta$ | in units of $v_AR_0$: $\eta$ is a magnetic diffusivity |
 | $eZ_\alpha$, $m$ | $q_h$, $m_h$ | Eq. 7 says "electron charge" |
 | $w_i$, $\mathbf x_i$, $S$ | $w_p$, $\mathbf x_p$, $\mathcal S$ (page-local) | **collision:** registry $S$ is the Lundquist number |
@@ -241,7 +241,7 @@ One physics case; no code comparison.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Energetic particle mode (EPM) and frequency chirping](/definitions/energetic-particle-mode.md)
 * [Hybrid kinetic-MHD models](/methods/hybrid-kinetic-mhd.md)

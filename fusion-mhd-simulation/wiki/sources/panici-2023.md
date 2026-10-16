@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Plasma Phys. 89:955890303"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Journal_of_Plasma_Physics_Panici_The_DESC_stellarator_code_suite_Part_1_Quick_and_accurate_eq.pdf"
 tags: [equilibrium, stellarator, spectral, verification, benchmark, code, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -195,11 +195,11 @@ exponential for DESC and $O(N_{\mathrm{radial}}^{-1})$ for VMEC.
 | $\rho=\sqrt{\psi/\psi_a}$ (DESC) | $s=\sqrt{\psi_{t,N}}$ | **collision:** registry $\rho$ is mass density |
 | $u$, $\theta$ | $\theta$ (VMEC-like, not straight-field-line) | **collision:** registry $u$ is the stream function |
 | $v$, $\zeta$ $(=\phi)$ | $\phi$ | here the toroidal angle equals the geometric one |
-| $\theta^*$ | $\theta^*$ (words: straight-field-line angle) | |
+| $\theta^*$ | $\theta^*$ | straight-field-line angle (§9) |
 | $\lambda$ | $\lambda_{\mathrm s}$ (page-local) | **collision:** registry $\lambda_{\mathrm o}$ is an ordering parameter |
 | $\iota=\chi'/\psi'$ | $\iota=\mathrm d\psi/\mathrm d\psi_t$ | QH case $\iota<0$ |
 | $N_{FP}$ | $N_{\mathrm{fp}}$ | |
-| $M$, $N$, $L$; $ns$, $NS$ | words (poloidal, toroidal, radial resolution; surface count) | native $N$ also radial resolution (Figs. 7–8) and helicity (Eq. 5.10) |
+| $M$, $N$, $L$; $ns$, $NS$ | words (poloidal, toroidal, radial resolution; surface count) | native $N$ also radial resolution (Figs. 7–8) and helicity (Eq. 5.10, registry $N$ of §9) |
 | $X_{mn,c}$, $X_{mn,s}$, $R_{lmn}$, $Z_{lmn}$, $\lambda_{lmn}$ | words (spectral coefficients) | |
 | $\mathcal Z_l^m$, $\mathcal R_l^{\lvert m\rvert}$, $\mathcal F^n$ | words (Zernike polynomial, its radial part, toroidal Fourier function) | needed registry extension if concept pages write the basis |
 | $M(p,q)$ | words (spectral width) | |
@@ -207,15 +207,16 @@ exponential for DESC and $O(N_{\mathrm{radial}}^{-1})$ for VMEC.
 | $F_s$, $F_\rho$, $F_\beta$, $\boldsymbol\beta$ | $F_r$, $F_{\mathrm h}$, $\boldsymbol\beta_{\mathrm h}$ (page-local) | **collision:** native $\boldsymbol\beta$ is a direction, not plasma beta |
 | $\tau$, FTOL | words | |
 | $D_{\mathrm{Merc}}$ and its four terms | same names | |
-| $I(\psi)$, $G(\psi)$, $\vartheta$, $\varphi$ | words (Boozer profile functions and angles) | |
+| $I(\psi)$, $G(\psi)$, $\vartheta$, $\varphi$ | $I$, $G$ (Boozer covariant components, §9); words (Boozer angles) | |
 | $G_0$, $B_0$, $p_2$, $\iota_0$, $\bar\eta$, $\sigma$, $\kappa$ | words (near-axis expansion quantities) | **collision:** native $\bar\eta$ vs resistivity, $\kappa$ (axis curvature) vs conductivity |
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [DESC](/software/desc.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+* [HINT](/software/hint.md)
 * [Interchange modes and the Mercier criterion](/definitions/interchange-mode.md)
 * [Quasi-symmetry](/definitions/quasi-symmetry.md)
 * [Three-dimensional inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md)

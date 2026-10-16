@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Vertical-force mitigation by massive material injection"
-description: "Massive impurity injection during a VDE reduces the vertical wall force because the cooled plasma carries a large, predominantly toroidal current in a broad scrape-off layer, which decouples the current centroid from the magnetic-axis motion and reduces its vertical excursion; the poloidal halo current stays moderate."
+description: "Massive impurity injection during a VDE reduces the vertical wall force because the cooled plasma carries a large, predominantly toroidal current in a broad scrape-off layer, which decouples the current centroid from the magnetic-axis motion and reduces its vertical excursion; the poloidal halo current stays moderate, and the mechanism fails when a runaway beam keeps the current inside the last closed surface."
 status: established
 aliases: [force mitigation, vertical force reduction, current-centroid decoupling]
 tags: [disruption, vde, wall, impurities]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Vertical-force mitigation by massive material injection
@@ -67,6 +67,15 @@ cases, which is direct evidence of the broader SOL current distribution
   neon SPI) the vertical force peaks at 11–14 MN, a factor ≈6 below the
   ≈80 MN of earlier estimates, and the sideways force stays below 1 MN
   ([Artola et al. (2022)](/sources/artola-2022.md), §4.3, §5, Fig. 9).
+- **EU-DEMO without runaways.** In a 2D JOREK–STARWALL run of an upward
+  hot VDE of EU-DEMO mitigated by neon, $q_{95}$ rises above 8 because
+  $I_p$ decays faster than the square of the minor radius, a large fraction
+  of the current is induced in the halo region outside the last closed
+  surface, the current centroid stagnates near the midplane, and the
+  vertical current moment and the vertical force saturate at about 13 MN,
+  "in agreement with" Schwarz et al. (2023) and Miyamoto (2011), as cited
+  ([Vannini et al. (2025)](/sources/vannini-2025.md), §4, Fig. 3). This is
+  an independent instance of steps 2–4 above.
 - The injection itself is described on
   [shattered pellet injection and massive material injection](/definitions/shattered-pellet-injection.md).
 
@@ -89,13 +98,30 @@ other's mechanism. Together they say that a fast, strongly mitigated CQ
 moves the peak vertical load from the plasma to the vessel's own current
 redistribution.
 
+**Failure with a runaway beam — qualification.** The same EU-DEMO VDE
+with a runaway seed forms a beam of about 13 MA that slows the $I_p$ decay.
+The plasma then shrinks faster than its current falls, so $q_{95}$
+*decreases*; "a large portion of the current remains inside the LCMFS", the
+centroid follows the axis, and the vertical current moment and force keep
+growing, to about 43 MA m and 60 MN at 570 ms in 2D, with only a flattening
+that "could indicate" the maximum
+([Vannini et al. (2025)](/sources/vannini-2025.md), §4, Fig. 3; values read
+from the figure). Step 2 of the mechanism therefore fails when a runaway
+beam carries the current. The authors note that $q_{95}$ falls to
+unphysically low values because 2D allows no MHD; in 3D the beam
+termination raises $q_{95}$ from about 2.2 to 2.55, "slightly reduces" the
+force and makes it grow more slowly than in 2D (§5, Fig. 6). The 60 MN is
+therefore an axisymmetric upper estimate, not a 3D prediction.
+
 ## Limits of the evidence
 
 The review states the mechanism and reproduces one figure; force values,
 injection timings and the experimental comparison are in the cited
 original, which is not ingested in this bundle. The only ITER force values
 in the bundle are those of Artola et al. (2022), which concern the
-fast-CQ, post-CQ mechanism above rather than the centroid mechanism. The
+fast-CQ, post-CQ mechanism above rather than the centroid mechanism; the
+EU-DEMO values of Vannini et al. (2025) are the bundle's only force numbers
+for the centroid mechanism, and they are axisymmetric. The
 result concerns the vertical force; the sideways force of 3D kinks in
 mitigated disruptions is not addressed in this statement (Artola et al.
 2022 find it at noise level for their cases).
@@ -106,3 +132,4 @@ mitigated disruptions is not addressed in this statement (Artola et al.
 - [Artola et al. (2021)](/sources/artola-2021.md), §4.1.1, §4.3.1.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.3.
 - [Artola et al. (2022)](/sources/artola-2022.md), §4.3, §5, Fig. 9.
+- [Vannini et al. (2025)](/sources/vannini-2025.md), §4–5, Figs. 3, 6.

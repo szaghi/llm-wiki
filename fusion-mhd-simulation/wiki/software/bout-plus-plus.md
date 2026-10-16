@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "BOUT++"
-description: "Finite-difference plasma-fluid framework for 3D initial-value problems in field-aligned coordinates with quasi-ballooning derivatives and CVODE BDF time integration; a hybrid 2D/1D field solver removes the flute ordering for n = 0 and low-n modes, enabling full-annulus edge simulations, and its ideal-ballooning growth rates agree with ELITE and JOREK within 2–4 %."
+description: "Finite-difference plasma-fluid framework for 3D initial-value problems in field-aligned coordinates with quasi-ballooning derivatives and CVODE BDF time integration; a hybrid 2D/1D field solver removes the flute ordering for n = 0 and low-n modes, enabling full-annulus edge simulations that resolve a two-stage resistive drift-ballooning ELM crash, and its ideal-ballooning growth rates agree with ELITE and JOREK within 2–4 %."
 status: established
 aliases: [BOUT, BOUT++ framework]
 tags: [code, reduced-mhd, edge, pedestal, elm, ballooning, finite-differences, time-integration, linear-solver, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # BOUT++
@@ -82,7 +82,7 @@ implementation on a BOUT++ version.
   low-$n$ overestimate of BOUT++ relative to ELITE and GATO found in Dudson et
   al. (2011), without re-plotting those codes at low $n$ (§4, §6).
 * **JOREK**: linear ballooning growth rates in a circular case (aspect ratio
-  3.3, $q_{95}=3$, $n=10^{19}$ m$^{-3}$, $\eta=6.1\times10^{-6}\,\Omega$ m)
+  3.3, $q_{95}=3$, density $10^{19}$ m$^{-3}$, $\eta=6.1\times10^{-6}\,\Omega$ m)
   agree within 4 % with and without diamagnetic effects; there is no
   nonlinear comparison ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
   §4.5, Fig. 21).
@@ -109,6 +109,25 @@ cbm18_dens4 equilibrium ($\tau_A$ based on 3.5 m and 2 T) (Seto et al.
 * Cost: $8.3\times10^5$ core-hours for the full-torus run (4096 cores for
   8.5 days on JFRS-1), about 40 % in the field solver (§5.3).
 
+[Seto et al. (2024)](/sources/seto-2024.md) analyse the same full-torus run
+(compiler's identification by identical model, coefficients and spectrum)
+and add a half-torus run (see
+[two-stage ELM crash](/results/two-stage-elm-crash.md)):
+* the energy-loss rate has two peaks; the 2023 saturation at about
+  $210\,\tau_A$ is a first, small crash and the 2023 collapse at about
+  $313\,\tau_A$ the second, main crash, $103\,\tau_A$ later (compiler's
+  cross-check of the two papers);
+* the crash interval is $103$, $64$ and $3\,\tau_A$ for wedge numbers
+  $N=1$, 2 and 4, with the final loss at about 6% of the pedestal energy for
+  all three; the fundamental islands of a $2\pi/N$ wedge are $2N/N$ and
+  stochastize sooner (§III, Figs. 13–15);
+* setup: $N_z=256/N$ binormal points so the binormal spacing is the same
+  for every wedge, $n\ge81$ removed by a low-pass filter, initial
+  perturbations on all harmonics except $n=0$ (§II);
+* per-$n$ energy budgets with three-wave decompositions of the
+  $E\times B$ convection and Maxwell-stress transfer identify the trigger of
+  each crash (Eqs. 6–29).
+
 ## Limitations
 
 * Version 4.4.2 stores fields in flux-surface coordinates but still
@@ -116,6 +135,13 @@ cbm18_dens4 equilibrium ($\tau_A$ based on 3.5 m and 2 T) (Seto et al.
   therefore still an open issue" there (Seto et al. 2023, footnote 1).
 * The equilibria are shifted circles without an X-point, and the simulation
   domain lies inside the last closed surface (§5.1).
+* In the pedestal-crash model the parallel Laplacian is linearized (no
+  magnetic flutter), the hyper-resistivity is constant and there is no
+  neoclassical poloidal flow, so the stochastic electron heat transport and
+  stochastic hyper-resistivity are absent: "ELM energy loss in this work is
+  driven by E × B convection and numerical diffusion" (Seto et al. 2024,
+  §II).
+* No run cost is given for the 2024 runs (Seto et al. 2024, §II).
 
 ## Contradictions
 
@@ -133,3 +159,4 @@ cbm18_dens4 equilibrium ($\tau_A$ based on 3.5 m and 2 T) (Seto et al.
 2. [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §4.5, Fig. 21.
 3. [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §I, §III.
 4. [Jiang et al. (2024)](/sources/jiang-2024.md) — §I.
+5. [Seto et al. (2024)](/sources/seto-2024.md) — §§II–IV, Eqs. 1–34, Figs. 3–15.

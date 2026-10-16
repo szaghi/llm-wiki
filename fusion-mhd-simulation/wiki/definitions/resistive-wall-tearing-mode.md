@@ -5,7 +5,7 @@ description: "A resistive-wall tearing mode is a tearing mode that is stable wit
 status: established
 aliases: [RWTM, resistive wall tearing mode, wall-destabilized tearing mode]
 tags: [tearing, wall, disruption, mhd, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Resistive-wall tearing mode
@@ -30,11 +30,12 @@ JET (§I).
 
 ## Cylindrical thin-wall theory
 
-Page-local symbols: $r_s$ and $r_w$ are the radii of the resonant surface
-and of the thin wall, $x_s\equiv r_s/r_w$, $\delta\psi$ the helical flux
-perturbation $\propto\exp(\gamma t+im\theta+in\phi)$, and
-$S_{\mathrm{wall}}\equiv\tau_w/\tau_A$ the wall Lundquist number, with
-$\tau_A=R_0/v_A$ built on the major radius
+Symbols: $r_s$ the radius of the resonant surface and
+$S_{\mathrm{wall}}\equiv\tau_w/\tau_A$ the wall Lundquist number (registry
+§10); page-local $r_w$ the radius of the thin wall, $x_s\equiv r_s/r_w$, and
+$\delta\psi$ the helical flux perturbation
+$\propto\exp(\gamma t+im\theta+in\phi)$; and
+$\tau_A=R_0/v_A$ is built on the major radius
 ([Strauss et al. (2022)](/sources/strauss-2022.md), §II).
 
 **Wall condition.** Matching $\delta\psi$ continuously to a vacuum solution

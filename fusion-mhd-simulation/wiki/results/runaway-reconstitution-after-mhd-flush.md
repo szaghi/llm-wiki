@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Runaway current reconstitution after an MHD flush"
-description: "After a low-Z purge triggers large-scale MHD that stochastizes the field and expels a runaway beam (benign termination), magnetically trapped relativistic electrons survive as a seed of 0.1–1% of the beam and avalanche back once the flux surfaces reheal, so an ITER-like beam loses only about 2–3 MA before it reforms; 3D MHD simulations of the flush itself find more than 95% prompt loss and conversion of the current to Ohmic current."
+description: "After a low-Z purge triggers large-scale MHD that stochastizes the field and expels a runaway beam (benign termination), magnetically trapped relativistic electrons survive as a seed of 0.1–1% of the beam and avalanche back once the flux surfaces reheal, so an ITER-like beam loses only about 2–3 MA before it reforms; 3D MHD simulations of the flush itself find more than 95% prompt loss and conversion to Ohmic current in DIII-D, but in EU-DEMO a 77% loss followed by re-avalanche of a confined core remnant."
 status: established
 aliases: [benign termination, runaway beam flush, RE reconstitution, trapped runaway seed]
 tags: [runaway-electrons, disruption, tearing, kink]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Runaway current reconstitution after an MHD flush
@@ -34,7 +34,7 @@ page. The definitions are on
   energy they detrap slowly. In an imposed, fully stochastic field, passing
   electrons with $|\xi|\gtrsim0.5$ are lost in well under 1 ms. Trapped ones
   survive up to about 10 ms at 3 MeV (Fig. 1). Here $\xi=v_{\parallel p}/|\mathbf v_p|$
-  is the pitch, a page-local symbol.
+  is the pitch ([notation](/notation.md), §10).
 - The surviving remnant is "between a percent to a tenth of a percent of the
   original RE beam". That is orders of magnitude above the nuclear (tritium
   and Compton) seed of "a few ampere" that the paper cites (p. 4). Fig. 3(b)
@@ -46,7 +46,7 @@ page. The definitions are on
 **Headline.** "For most cases of interest $\psi_{10}/\mu_0R_0\lesssim1$ MA,
 so runaway reconstitution comes with a 2-3 MA plasma current drop"
 (Discussion). Here $\psi_{10}$ is the poloidal flux per decade of avalanche
-gain, a page-local symbol.
+gain ([notation](/notation.md), §10).
 
 ## Upper bound from the avalanche flux
 
@@ -54,8 +54,8 @@ If all available poloidal flux amplifies the seed, the reformed current is
 bounded by
 $$I_{\mathrm{RE}}^{\max}=2\pi\int_0^a J_{\mathrm{RE}}^{\mathrm{seed}}(r)\,10^{|\psi(r)/\psi_{10}(r)|}\,r\,dr$$
 (Eq. 1, given without derivation). Here $I_{\mathrm{RE}}$ is the runaway
-current and $J_{\mathrm{RE}}^{\mathrm{seed}}$ the seed current density, both
-page-local. The bound falls with a larger $\psi_{10}$ and a smaller seed. The
+current and $J_{\mathrm{RE}}^{\mathrm{seed}}$ the seed current density
+(page-local). The bound falls with a larger $\psi_{10}$ and a smaller seed. The
 purge raises $\psi_{10}$ and the low post-flush $T_e$ removes the Dreicer and
 hot-tail seeds. On paper the post-flush plasma therefore looks favourable,
 but trapped-electron seeding means this is "not fully borne out" (p. 2).
@@ -147,6 +147,25 @@ carry no trapped-electron population.
   6 eV), lets the main mode grow larger before stochasticity sets in. This
   would explain why D$_2$ injection terminates beams benignly while high-Z
   injection does not (§V). The authors flag it as a hypothesis.
+- **EU-DEMO beam in JOREK.** [Vannini et al. (2025)](/sources/vannini-2025.md)
+  (§5, Figs. 6–9) restart a 13 MA beam formed in a 2D mitigated VDE in 3D at
+  $q_{95}\approx2.3$ with $n\le7$:
+  - Edge $(8,4)$ and $(9,4)$ modes dominate first; a $(2,1)$ mode then
+    saturates highest at $\sqrt{\psi_N}=0.6$, and the stochastic region grows
+    from the edge inward.
+  - The runaway current falls from 12.3 to 2.8 MA in 1.12 ms; the drop
+    "slightly reduces" the vertical wall force.
+  - The remnant sits in the core, on surfaces that the stochastic region did
+    not reach. With the closed-surface region regrowing, it re-avalanches to
+    about 10 MA by 457.3 ms, about 4 ms after the loss window, while the
+    dominant mode moves out to $\sqrt{\psi_N}=0.85$; the beam then partly
+    decays again after a new MHD burst, "and so on" (qualitative; deferred to
+    future work).
+  - The model is the [fluid RE model](/methods/runaway-electron-fluid-model.md)
+    with a purely diffusive parallel transport. The energy of the lost part
+    is deposited by test markers
+    ([runaway-electron wall loads](/definitions/runaway-electron-wall-loads.md));
+    the reformed beam's energy is not included.
 
 ## Scope and limits
 
@@ -162,6 +181,20 @@ carry no trapped-electron population.
   weakens one step of their argument. They also note that in DIII-D the
   relevant mode is the resistive external kink (§V, citing Liu et al. 2021).
 
+## Qualifications
+
+**Two survival channels.** McDevitt & Tang's seed is the *trapped*
+population that a stochastic field cannot reach. The EU-DEMO remnant of
+[Vannini et al. (2025)](/sources/vannini-2025.md) survives because the
+stochastic region does not reach the core, in a model with no pitch
+variable. The M3D-C1 DIII-D case (>95% loss) and the EU-DEMO case (77%
+loss) differ in machine, current (0.75 against 12.3 MA) and in the VDE that
+shrinks the DEMO plasma, so the different loss fractions are not a
+contradiction; they show that the 3D loss fraction, and hence the seed for
+reconstitution, depends on how deep the stochastization reaches
+(compiler's reading). With a 23% remnant the DEMO case is far from the
+small-seed regime of McDevitt & Tang, so it does not test their bound.
+
 ## Contradictions
 
 None among the cited sources. The tension with the "all runaways lost"
@@ -174,3 +207,4 @@ reading of beam termination is recorded on
 - [Liu et al. (2021)](/sources/liu-2021.md): §5.3–5.4, §6, Figs. 10–16.
 - [Nardon et al. (2023b)](/sources/nardon-2023-b.md): §IV–V.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md): §6.4.2.
+- [Vannini et al. (2025)](/sources/vannini-2025.md): §5, Figs. 6–9.

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "MIPS"
-description: "Nonlinear full-MHD initial-value code on a cylindrical (R, φ, Z) finite-difference grid with third-order upwind convection, fourth-order central differences and explicit RK4, whose numerics are shared by the fluid part of MEGA; benchmarked against the ideal stability code MINERVA on an n = 3 infernal mode and extended to stellarators."
+description: "Nonlinear full-MHD initial-value code on a cylindrical (R, φ, Z) finite-difference grid with third-order upwind convection, fourth-order central differences and explicit RK4, whose numerics are shared by the fluid part of MEGA; benchmarked against the ideal stability code MINERVA on an n = 3 infernal mode and extended to stellarators, where it predicts the core collapse of high-beta LHD plasmas."
 status: established
 aliases: [MIPS code]
 tags: [code, mhd, full-mhd, finite-differences, tokamak, stellarator, verification]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # MIPS
@@ -15,7 +15,11 @@ by [Sato et al. (2024)](/sources/sato-2024.md), §2). In Sato et al. it is
 the MHD reference against which the
 [kinetic-thermal-ion](/methods/kinetic-thermal-ions.md) runs of
 [MEGA](/software/mega.md) are compared, and the fluid part of MEGA uses the
-same numerics (§2).
+same numerics (§2). [Sato & Todo (2026)](/sources/sato-2026.md) (p. 2)
+state the lineage in the other direction: MIPS "was developed by extracting
+this pure MHD part of the original MEGA framework", and it is needed as a
+separate MHD reference because MEGA with kinetic thermal ions does not
+reduce to MHD when the kinetic ions are switched off.
 
 ## Model
 
@@ -45,12 +49,24 @@ Ohmic-heating term appears (recorded on the Source page).
   fourth-order central differences
   ([Sato et al. (2024)](/sources/sato-2024.md), §2).
 - **Time integration.** Explicit fourth-order Runge–Kutta (§2).
+  [Sato & Todo (2026)](/sources/sato-2026.md) (p. 2) describe the numerics
+  as fourth-order central differences and fourth-order Runge–Kutta without
+  mentioning the upwind convection scheme: an omission, not a
+  contradiction.
 - **Toroidal wedge.** For the $n=3$ runs, $\phi\in[0,2\pi/3]$ with periodic
   boundaries, so only $n=3$ and its harmonics are kept; default grid
   $256\times48\times256$ in $(R,\phi,Z)$ (§2).
 - **Hardware.** NIFS Plasma Simulator (NEC SX-Aurora TSUBASA vector
   engines) and Fugaku; no GPU and no run times are reported (§2,
   Acknowledgements). Wall boundary conditions are not stated.
+- **Boundary conditions, LHD runs.** [Sato & Todo (2026)](/sources/sato-2026.md)
+  (pp. 2–3) state them: the domain contains the plasma and a surrounding
+  vacuum region, in which the velocity, pressure and density perturbations
+  vanish, and the perturbed magnetic field is zero at the domain edge.
+- **LHD resolution and dissipation.** $256\times640\times256$ points in
+  $(R,\phi,Z)$; $\nu=\kappa=10^{-7}v_AR_0$ (normalized diffusivities);
+  Lundquist number defined as $S=\mu_0R_0^2/(\eta\tau_A)$ with
+  $\tau_A=R_0/v_A$ (same source, p. 3).
 
 ## Verification: MIPS against MINERVA
 
@@ -74,9 +90,26 @@ MIPS has been extended to stellarators, as cited by
 [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§I) and by
 [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§1) among the
 nonlinear stellarator MHD codes; neither paper compares with it.
+[Wright & Ferraro (2024)](/sources/wright-2024.md) (§II, citing Futatani &
+Suzuki 2019) choose their M3D-C1 viscosity, $3.65\times10^{-4}$
+kg m⁻¹ s⁻¹, as "comparable to the values used in the MIPS code for
+nonlinear MHD simulations of stellarators".
+
+**High-beta LHD.** On [HINT](/software/hint.md) equilibria with
+$\beta_0=7.5\,\%$ and $9.2\,\%$, MIPS finds peripheral resistive
+[ballooning modes](/definitions/ballooning-mode.md) for
+$10^4\le S\le10^6$ whose nonlinear coupling generates an $n=1$ mode and a
+core collapse, and for $S>10^6$ a resonant $(3,2)$ ideal
+[interchange](/definitions/interchange-mode.md) that also collapses the
+core, still at $S=10^7$ (Sato et al. 2017, as reviewed by
+[Sato & Todo (2026)](/sources/sato-2026.md), pp. 4–5, Figs. 2–3, 7). These
+are the MHD predictions that MEGA with kinetic thermal ions overturns; see
+[kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md).
 
 # Citations
 
 - [Sato et al. (2024)](/sources/sato-2024.md): model (Eqs. 1–5), numerics, the MINERVA benchmark, infernal-mode runs.
 - [Nikulsin et al. (2022)](/sources/nikulsin-2022.md): MIPS as a cylindrical-grid stellarator MHD code.
 - [Ramasamy et al. (2024)](/sources/ramasamy-2024.md): MIPS cited among stellarator extensions.
+- [Sato & Todo (2026)](/sources/sato-2026.md): lineage from MEGA, LHD boundary conditions, resolution and dissipation, high-beta LHD MHD collapse.
+- [Wright & Ferraro (2024)](/sources/wright-2024.md): MIPS viscosity values as a reference for stellarator runs.

@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:112508"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350107048titleResistive.pdf"
 tags: [tearing, disruption, wall, mhd, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -199,20 +199,20 @@ more benign than previously predicted".
 | $\tau_{wall}$ | $\tau_w$ | $\mu_0r_wd_w/\eta_w$ |
 | $\tau_A=R/v_A$, $R$ | $\tau_A$ with length $R_0$, $R_0$ | |
 | $S$ | $S$ | |
-| $S_{wall}$, $S_w$ | $S_{\mathrm{wall}}$, $\hat S_{\mathrm{wall}}$ (page-local) | **collision risk:** native $S_w$ is the reduced quantity, not $\tau_w/\tau_A$ |
-| $\Delta_i$, $\Delta'_{ideal}$, $\Delta_x$, $x_s$ | page-local $\Delta_i$, $\Delta'$ (ideal wall), $\Delta_x$, $x_s$ | not registered |
+| $S_{wall}$, $S_w$ | $S_{\mathrm{wall}}$ (§10), $\hat S_{\mathrm{wall}}$ (page-local) | **collision risk:** native $S_w$ is the reduced quantity, not $\tau_w/\tau_A$ |
+| $\Delta_i$, $\Delta'_{ideal}$, $\Delta_x$, $x_s$ | page-local $\Delta_i$, $\Delta'$ (ideal wall), $\Delta_x$, $x_s$; $r_s$ (§10) | not registered (except $\Delta'$, $r_s$) |
 | $r_w$, $r_s$, $r_0$, $a$ | $r$ with subscripts, $a$ | |
 | $\chi_\parallel$, $\chi_\perp$ | $\chi_\parallel$, $\chi_\perp$ | called "conductivity" but in diffusivity units |
 | $\mu$ | $\nu$ | **collision:** registry $\mu$ is the magnetic moment |
 | $P$ | words (volume-integrated pressure) | **collision:** not the registry $p$ |
 | $b_n$, $b_l$, $b_w$ | words (normal and transverse wall field over $B$; measured value mapped to the wall) | page-local |
-| $\tau_\parallel$, $\tau_{TQ}$ | words (parallel transport time), $\tau_{\mathrm{TQ}}$ (page-local) | not registered |
+| $\tau_\parallel$, $\tau_{TQ}$ | words (parallel transport time), $\tau_{\mathrm{TQ}}$ (§10) | $\tau_{\mathrm{TQ}}$ here is the time to a complete TQ in the M3D runs |
 | $\rho_{q2}$ | $r_{q=2}/a$ | **collision:** registry $\rho$ is the mass density |
 | $q_0$, $T_e$, $I_p$, $B$ | same | |
 
 # Pages created or updated
 
-Chunk 2 (2026-10-16) created or updated the pages below. This source is cited on:
+Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. This source is cited on:
 
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
 * [Free-boundary and resistive-wall coupling](/methods/resistive-wall-coupling.md)

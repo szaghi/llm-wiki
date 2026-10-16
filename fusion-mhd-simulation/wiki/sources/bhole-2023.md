@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Math. Appl. 142:225-256"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Computers_amp_Mathematics_with_Applications_Bhole_Stabilized_bi-cubic_Hermite_Bézier_finite_element_method_wit.pdf"
 tags: [full-mhd, reduced-mhd, finite-elements, stabilization, time-integration, disruption, impurities, tokamak, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -84,7 +84,7 @@ are hand-tuned, and the effect of VMS alone is never isolated.
     core temperature drop between 2 and 3 ms, ergodization, growth of
     $m/n=3/1$, $2/1$ and later $1/1$ when fragments cross $q=2$, an $I_p$ spike at
     the end of the quench, qualitatively as in the reduced-MHD SPI results of
-    Hu et al. (2021) and Hoelzl et al. (2020). Shown.
+    [Hu et al. (2021)](/sources/hu-2021.md) and Hoelzl et al. (2020). Shown.
 14. **Sensor localization** (Fig. 13 i–l). The shock-capturing coefficient is
     large only at the initial pedestal jump and at moving shocks near impurity
     clouds. Shown.
@@ -118,7 +118,7 @@ $$\begin{aligned}
 
 * $\rho$ is the total mass density (plasma plus impurities), $T$ the total
   temperature with $T_e=T/2$, and $p=(\rho+\alpha\,m_{\mathrm{imp}}n_{\mathrm{imp}})T$ with the impurity
-  pressure factor $\alpha=\frac{m_i}{m_{\mathrm{imp}}}\frac{\bar z+1}{Z+1}-1$, $\bar z$ the mean
+  pressure factor $\alpha=\frac{m_i}{m_{\mathrm{imp}}}\frac{\langle z\rangle+1}{Z+1}-1$, $\langle z\rangle$ the mean
   impurity charge. Every diffusion tensor has the form
   $X_\parallel\mathbf b\mathbf b+X_\perp(\mathsf I-\mathbf b\mathbf b)$.
 * $A_R$, $A_Z$ and $\psi=RA_\phi$ are evolved; $F_0$ is the fixed equilibrium
@@ -234,13 +234,13 @@ run.
 | $\boldsymbol v$ | $\mathbf v$ | |
 | $\rho$ | $\rho$ | total mass density |
 | $\rho_f$, $n_f$, $m_f$ | $m_{\mathrm{imp}}n_{\mathrm{imp}}$, $n_{\mathrm{imp}}$, $m_{\mathrm{imp}}$ | |
-| $Z_f$, $Z_i$, $Z_z$, $z$ | $\bar z$ (words: mean impurity charge), $Z$, $z$ | |
+| $Z_f$, $Z_i$, $Z_z$, $z$ | $\langle z\rangle$ (mean impurity charge), $Z$, $z$ | |
 | $\alpha_f$ | $\alpha$ (page-local) | impurity pressure factor |
 | $T$, $T_e=T/2$ | $T$ (total), $T_e$ | single-temperature model |
 | $\kappa_f$, $\mathcal L(\partial,n_f,n_e,T_e)$ | $E_{\mathrm{ion}}$, $\mathcal Q_{\mathrm{ion}}$ (page-local) | **collision:** native $\kappa$ is an ionization energy, registry $\kappa$ a heat conductivity; native $\mathcal L$ also denotes the Jacobian |
 | $L_{\mathrm{rad}}$ | words; contributes to $P_{\mathrm{rad}}$ | |
 | $\gamma$ | $\Gamma$ | **collision:** registry $\gamma$ is a growth rate |
-| $\gamma_{sh}$ | words (sheath transmission factor) | |
+| $\gamma_{sh}$ | $\delta_{\mathrm{sh}}$ (sheath heat-transmission factor) | |
 | $\mu$, $\mu_0$ | $\nu$, $\nu_0$ | **collision:** native $\mu_0$ is the axis viscosity in §2 and vacuum permeability in App. A; registry $\mu$ is a magnetic moment |
 | $\mathbb D$, $\mathbb D_f$, $\mathbb K$, $\mathbb D_\kappa$ | $\mathsf D$ ($D_\parallel$, $D_\perp$), $\mathsf D_{\mathrm{imp}}$, $\mathsf K$ ($\kappa_\parallel$, $\kappa_\perp$), $\mathsf D_{\mathrm{ion}}$ | |
 | $\bar U$, $U'$, $\mathbf W$ | $\bar{\mathbf u}$, $\mathbf u'$, words | registry $\mathbf u$ = discrete state |
@@ -257,7 +257,7 @@ run.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
@@ -346,7 +346,7 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) exte
      with year 2020 and no venue, is `parks-2019` (the same note hoelzl-2021
      cites as a private communication of 2019). [60], printed with given and
      family names swapped, is `bhole-2022`. [36] (Hu et al. NF 2021, reduced-MHD
-     SPI) is `hu-2021`; [40] (collisional-radiative impurity paper) is the
+     SPI) is the ingested `hu-2021` ([Hu et al. (2021)](/sources/hu-2021.md)); [40] (collisional-radiative impurity paper) is the
      ingested `hu-2021-b`. [6] (Pamela et al., $G$-continuous Bézier elements)
      is `pamela-2022`. [62] Ferraro et al., printed "Nuclear Fusion 59:016001,
      nov 2018", is `ferraro-2018`. [24] Hughes, Scovazzi & Franca 2004

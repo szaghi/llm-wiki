@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:063901"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Nikulsin_JOREK3D_An_extension_of_the_JOREK_nonlinear_MHD_code_to_stel.pdf"
 tags: [reduced-mhd, stellarator, finite-elements, spectral, equilibrium, tearing, ballooning, verification, benchmark, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Summary
@@ -17,7 +17,7 @@ timestamp: 2026-10-16T00:00:00Z
 The paper implements in [JOREK](/software/jorek.md) — the result is
 [JOREK3D](/software/jorek3d.md) — the stellarator reduced MHD model derived
 by Nikulsin et al. (2019, 2021) and runs the first stellarator simulations
-with it. The field ansatz is $\mathbf B=\nabla\chi+\nabla\psi\times\nabla\chi$ with $\chi$ the
+with it. The field ansatz is $\mathbf B=\nabla\chi+\nabla\psi_\chi\times\nabla\chi$ with $\chi$ the
 vacuum (coil) scalar potential, represented analytically by Dommaschk
 harmonics, so that $\nabla^2\chi=0$ and $\nabla\cdot\mathbf B=0$ hold to machine precision;
 the velocity is $\mathbf v=\nabla u\times\nabla\chi/|\nabla\chi|^2$, and $v_\parallel$ is dropped in this
@@ -27,8 +27,8 @@ orders above the lowest-order terms. The workflow is GVEC (equilibrium) →
 EXTENDER_P (vacuum field) → Legendre/Fourier fit of the Dommaschk
 coefficients by triangular linear systems → flux-surface-aligned
 non-axisymmetric grid whose Bézier geometry carries its own toroidal Fourier
-expansion → initial current and $\psi$, with the non-homogeneous Dirichlet
-boundary value of $\psi$ obtained from $\mathbf n\cdot\mathbf B=0$ by a Fourier–Galerkin
+expansion → initial current and $\psi_\chi$, with the non-homogeneous Dirichlet
+boundary value of $\psi_\chi$ obtained from $\mathbf n\cdot\mathbf B=0$ by a Fourier–Galerkin
 solve. On Wendelstein 7-A, four stable equilibria ($\beta$ up to 0.022%) keep
 the magnetic axis and flux surfaces for about 7 ms and match GVEC. The
 (2,1) [tearing-mode](/definitions/tearing-mode.md) growth rates agree with
@@ -73,7 +73,9 @@ linearized ideal reduced operator is self-adjoint.
    highest $\eta$, "most likely due to the neglect of $v_\parallel$", which is large
    in a resistive layer that widens with $\eta$ (analogy with the
    $\sqrt{1+2q_s^2}$ quasi-interchange overestimate of Waelbroeck 1989). Shown
-   (deviation); Stated (attribution).
+   (deviation); Stated (attribution). [Ramasamy et al. (2024)](/sources/ramasamy-2024.md)
+   (§3.1, two shared authors) re-attributes the mismatch to insufficient
+   CASTOR3D poloidal resolution, without data for the re-run W7-A case.
 9. **Nonlinear tearing** (§VI, Figs. 9–10). $n=1$ drives the instability and
    its family ($n=4,6,9$) through toroidal linear coupling; from about 2 ms
    $n=1$ drives $n=2$ nonlinearly, which drives $n=3,7,8$; saturation at about
@@ -100,14 +102,14 @@ linearized ideal reduced operator is self-adjoint.
 # Models and numerics
 
 **Ansatz.** The exact (full-MHD) form is
-$\mathbf B=\nabla\chi+\nabla\psi\times\nabla\chi+(\text{compressional term})$ and
+$\mathbf B=\nabla\chi+\nabla\psi_\chi\times\nabla\chi+(\text{compressional term})$ and
 $\mathbf v=\nabla u\times\nabla\chi/|\nabla\chi|^2+v_\parallel\mathbf B+(\text{fast-wave term})$ (Eqs. 1–2), the
 three parts mapping approximately onto Alfvén, slow and fast waves. The
 reduction drops the compressional and fast-wave potentials and the current
 component perpendicular to $\nabla\chi$ in Ohm's law; this paper also sets
 $v_\parallel=0$ (Eq. 4).
 
-**Equations** (Eq. 3, read on the rendered page). Unknowns $u$, $\psi$, $\rho$, $p$
+**Equations** (Eq. 3, read on the rendered page). Unknowns $u$, $\psi_\chi$, $\rho$, $p$
 and two auxiliary unknowns, the current along $\nabla\chi$,
 $j=-\nabla\chi\cdot\mathbf J/|\nabla\chi|^2$, and the vorticity $\varpi=-\nabla\chi\cdot\nabla\times\mathbf v$ (opposite
 sign), kept as finite-element unknowns to avoid second derivatives in the
@@ -123,18 +125,18 @@ weak form ($G^1$ elements). In words, with derivatives "perpendicular" and
 * pressure: advection, compression $\Gamma p|\nabla\chi|[|\nabla\chi|^{-2},u]$, anisotropic
   conduction $(\Gamma-1)\nabla\cdot(\kappa_\perp\nabla_\perp T+\kappa_\parallel\nabla_\parallel T)$ plus diffusive
   terms, sources and Ohmic heating;
-* induction: $\partial_t\psi=(\partial^\parallel u-[\psi,u])/|\nabla\chi|-\eta(j-j_0)+\nabla\cdot(\eta_h\nabla^\perp j)$,
+* induction: $\partial_t\psi_\chi=(\partial^\parallel u-[\psi_\chi,u])/|\nabla\chi|-\eta(j-j_0)+\nabla\cdot(\eta_h\nabla^\perp j)$,
   where $\partial^\parallel=|\nabla\chi|^{-1}\nabla\chi\cdot\nabla$;
-* closures $j=\Delta^*\psi$ with the generalized operator
+* closures $j=\Delta^*\psi_\chi$ with the generalized operator
   $\Delta^*=|\nabla\chi|^{-2}\nabla\cdot(|\nabla\chi|^2\nabla^\perp\,\cdot)$, and $\varpi=\nabla\cdot\nabla^\perp u$.
 
 The bracket is $[f,g]=|\nabla\chi|^{-1}\nabla\chi\cdot(\nabla f\times\nabla g)$. $\nabla_\parallel$, $\nabla_\perp$
 (registry) are relative to $\mathbf B$.
 
-**Ordering** (§II). $|\partial^\parallel|\sim\lambda_{\mathrm o}|\nabla^\perp|$; $\psi$, $u$, $v_\parallel$ and
+**Ordering** (§II). $|\partial^\parallel|\sim\lambda_{\mathrm o}|\nabla^\perp|$; $\psi_\chi$, $u$, $v_\parallel$ and
 $\partial_t$ are $O(\lambda_{\mathrm o})$, $p=O(\lambda_{\mathrm o}^2)$, the compressional potential
 $O(\lambda_{\mathrm o}^2)$, $\tau_A=L_\parallel/v_A$. The reduced current is
-$\mu_0^{-1}\Delta^*\psi\,\nabla\chi$ plus an $O(\lambda_{\mathrm o}^2)$ perpendicular part.
+$\mu_0^{-1}\Delta^*\psi_\chi\,\nabla\chi$ plus an $O(\lambda_{\mathrm o}^2)$ perpendicular part.
 
 **Vacuum field** (§III, Eqs. 13–31). $\chi=F_0\phi+\sum_{n,m}\chi_{n,m}$, a sum of
 Dommaschk harmonics in $(R/R_0,Z/R_0,\phi)$ with $R_0$ the toroidally averaged
@@ -146,8 +148,8 @@ evaluates $\chi$ analytically at quadrature points. $F_0$ is the $\phi$-average 
 $R_0B_\phi$ on the axis circle.
 
 **Initial and boundary conditions** (§IV). $j_0=-\nabla\chi\cdot\nabla\times\mathbf B_{\mathrm{GVEC}}/|\nabla\chi|^2$
-(dropping an $O(\lambda_{\mathrm o}^3)$ term), then $\Delta^*\psi_0=j_0$. On the boundary,
-$\mathbf n\cdot(\nabla\psi\times\nabla\chi)=-\mathbf n\cdot\nabla\chi$ (Eqs. 33–34) is solved by Fourier–Galerkin
+(dropping an $O(\lambda_{\mathrm o}^3)$ term), then $\Delta^*\psi_{\chi,0}=j_0$. On the boundary,
+$\mathbf n\cdot(\nabla\psi_\chi\times\nabla\chi)=-\mathbf n\cdot\nabla\chi$ (Eqs. 33–34) is solved by Fourier–Galerkin
 with $m\ge1$ (excluding $m=0$ removes the kernel), projected on the boundary
 nodes; interior and increments get homogeneous Dirichlet conditions. Fixed
 boundary = perfectly conducting wall. $T_0=p_{\mathrm{GVEC}}/\rho_0$, $\rho_0=1$ (constant
@@ -206,12 +208,12 @@ modelled (authors' warning).
 |---|---|---|
 | $\chi$, $\tilde\chi=\chi/F_0$, $F_0$ | $\chi$, words, $F_0$ | |
 | $B_v=\lvert\nabla\chi\rvert$ | $\lvert\nabla\chi\rvert$ | |
-| $\Psi$ | $\psi$ | field-line-bending potential; not a flux function in a stellarator; tends to JOREK $\psi$ in the tokamak limit; $2\pi$ convention not stated |
+| $\Psi$ | $\psi_\chi$ | field-line-bending potential; not a flux function in a stellarator; the paper says it tends to JOREK $\psi$ in the tokamak limit (registry: $\psi_\chi\to\psi/F_0$, i.e. up to the factor $F_0$ of JOREK normalization); $2\pi$ convention not stated |
 | $\Omega$, $\zeta$ | words (compressional and fast-wave potentials) | zero here; **collision:** registry $\zeta$ is a toroidal angle |
 | $\psi_v$, $\beta_v$ | words (Clebsch potentials of $\nabla\chi$) | **collision:** $\beta_v$ vs plasma $\beta$ |
 | $\Phi$ | $u$ | $\mathbf v=\nabla u\times\nabla\chi/\lvert\nabla\chi\rvert^2$; **collision:** registry $\Phi$ is the electrostatic potential; tokamak limit $\Phi\to F_0u$ |
 | $\tilde j$, $\tilde\omega$, $\tilde j_0$ | $j$, $\varpi$, $j_0$ | opposite-sign conventions as defined above |
-| $\partial^\parallel$, $\nabla^\perp$, $\Delta^\perp$ | words / $\nabla^\perp$ (relative to $\nabla\chi$) | registry $\nabla_\parallel$, $\nabla_\perp$ are relative to $\mathbf B$, as the paper's subscripts |
+| $\partial^\parallel$, $\nabla^\perp$, $\Delta^\perp$ | $\partial^\parallel$, $\nabla^\perp$, $\Delta^\perp$ (§9, relative to $\nabla\chi$) | registry $\nabla_\parallel$, $\nabla_\perp$ are relative to $\mathbf B$, as the paper's subscripts |
 | $\Delta^*$ | $\Delta^*$ (generalized) | reduces to the registry Grad–Shafranov operator for $\chi=F_0\phi$ |
 | $[f,g]$, $(f,g)$ | $[f,g]$ as defined above, words | |
 | $\lambda$ | $\lambda_{\mathrm o}$ | ordering parameter |
@@ -230,7 +232,7 @@ modelled (authors' warning).
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-16) extended many. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [BOUT++](/software/bout-plus-plus.md)

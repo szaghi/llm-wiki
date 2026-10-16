@@ -5,7 +5,7 @@ description: "EUROfusion reference case built on ASDEX Upgrade discharge #31213 
 status: established
 aliases: [NLED-AUG, NLED AUG reference case, AUG-NLED, "AUG #31213 NLED case"]
 tags: [benchmark, verification, energetic-particles, hybrid-kinetic, alfven-eigenmode]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # NLED-AUG energetic-particle benchmark
@@ -63,7 +63,7 @@ the gyroaverage.
 
 | code | FOW $\gamma$ [s$^{-1}$] | FOW $\omega/2\pi$ [kHz] | FLR $\gamma$ [s$^{-1}$] | FLR $\omega/2\pi$ [kHz] |
 |---|---|---|---|---|
-| [HYMAGYC](/software/hymagyc.md), $(s,\chi)$ stress tensor | 174,606 | 180.02 | 199,841 | 171.51 |
+| [HYMAGYC](/software/hymagyc.md), $(s,\theta)$ stress tensor | 174,606 | 180.02 | 199,841 | 171.51 |
 | HYMAGYC, $(R,Z)$ stress tensor | 231,090 | 162.42 | 215,570 | 163.00 |
 | [MEGA](/software/mega.md) | 218,616 | 171.43 | 170,247 | 157.00 |
 | [ORB5](/software/orb5.md) | 348,489 | 127.09 | 286,400 | 145.24 |
@@ -71,7 +71,7 @@ the gyroaverage.
 Normalized by $\tau_A$, $\gamma\tau_A$ spans about 0.035–0.070 (reader's
 computation). ORB5 has the highest $\gamma$ and the lowest frequency in both
 models: its $\gamma$ is 1.59× (FOW) and 1.68× (FLR) MEGA's. FLR raises
-$\gamma$ in HYMAGYC $(s,\chi)$ and lowers it in the other three rows. FLR
+$\gamma$ in HYMAGYC $(s,\theta)$ and lowers it in the other three rows. FLR
 lowers the frequency in MEGA, leaves it unchanged in HYMAGYC $(R,Z)$ and
 raises it in ORB5 ([Vlad et al. (2025)](/sources/vlad-2025.md), §§4–5). The
 mode in all codes is $m=2$-dominated and peaks at $s\approx0.2$, where

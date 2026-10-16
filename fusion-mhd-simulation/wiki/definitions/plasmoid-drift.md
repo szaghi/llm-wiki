@@ -5,7 +5,7 @@ description: "Plasmoid drift is the major-radius-outward E×B motion of a dense,
 status: established
 aliases: [plasmoid drift, ablation cloud drift, pellet cloud drift, E×B drift of plasmoids, LFS drift]
 tags: [disruption, impurities, neutrals, mhd, tokamak]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Plasmoid drift of ablation clouds
@@ -140,7 +140,16 @@ against ITER), pellet compositions (deuterium or mixed against 1% neon),
 and targets (a JET plasma against a 370 MJ pedestal). The review gives no
 mechanism for "essential", and Hu et al. do not cite it; which conditions
 turn the drift from beneficial to harmful has not been isolated by a
-single scan in the sources.
+single scan in the sources. An ASDEX Upgrade instance points the same
+way as Hu et al.: in JOREK neon-doped deuterium SPI,
+[Tang et al. (2025)](/sources/tang-2025.md) (§3.3, §3.5, §4) find smaller
+fragments assimilating better at 0.12% neon, opposite to the experiment,
+and name plasmoid drift (under-resolved) and the rocket effect (not
+modelled) as "promising candidates"; at 10% neon the fragment-size ordering
+agrees with experiment, which they attribute to the suppression of the drift
+at high neon. Both attributions are stated, not simulated, and the authors
+cite Kong et al. (2025) for the difficulty of modelling the drift at limited
+toroidal resolution.
 
 **Resolution.** All drift results of this page use toroidally elongated
 sources (0.3 rad in Hu et al. 2024; 0.5–2 rad in Kong et al. 2025); by Kong
@@ -153,3 +162,4 @@ et al.'s analysis the simulated drift is a lower bound. Hu et al. (2024,
 - [Hu et al. (2024)](/sources/hu-2024.md), §3, §5, Eq. 5, Table 2, Figs. 3–9.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.2.
 - [Hu et al. (2023)](/sources/hu-2023.md), §5.
+- [Tang et al. (2025)](/sources/tang-2025.md), §3.3, §3.5, §4.

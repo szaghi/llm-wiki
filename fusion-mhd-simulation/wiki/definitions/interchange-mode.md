@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Interchange modes and the Mercier criterion"
-description: "Pressure-driven instabilities localized at rational surfaces where unfavourable average curvature beats magnetic shear; their ideal local limit is the Mercier criterion (shear, current, well and geodesic terms), their resistive counterpart the Glasser–Greene–Johnson parameter; in low-shear stellarators they are benchmarked between reduced and full MHD and need parallel flow to be captured at finite compressibility."
+description: "Pressure-driven instabilities localized at rational surfaces where unfavourable average curvature beats magnetic shear; their ideal local limit is the Mercier criterion (shear, current, well and geodesic terms), their resistive counterpart the Glasser–Greene–Johnson parameter; in low-shear stellarators they are benchmarked between reduced and full MHD and need parallel flow to be captured at finite compressibility, a resonant ideal interchange collapses the high-beta LHD core in MHD but is stabilized by kinetic thermal ions, and the 1/1 quasi-interchange drives flux pumping in tokamaks."
 status: established
 aliases: [interchange instability, Mercier criterion, Mercier stability, resistive interchange, quasi-interchange]
-tags: [mhd, stellarator, tokamak, equilibrium, verification, benchmark, reduced-mhd]
-timestamp: 2026-10-16T12:00:00Z
+tags: [mhd, stellarator, tokamak, equilibrium, verification, benchmark, reduced-mhd, hybrid-kinetic]
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Interchange modes and the Mercier criterion
@@ -19,7 +19,11 @@ field lines away from the rational surface. In stellarators without net
 current the drive is concentrated at low-order rational surfaces in
 low-shear regions; the stability limit, Mercier's criterion, "can be
 exceeded experimentally" in net-current-free stellarators
-([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §1, §3.2).
+([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §1, §3.2). LHD is a
+further case: inward-shifted discharges hold volume-averaged
+$\beta\approx5\,\%$ without significant MHD activity although
+fixed-boundary linear MHD predicts strong instability
+([Sato & Todo (2026)](/sources/sato-2026.md), Introduction).
 High-$n$ localized interchange and [ballooning modes](/definitions/ballooning-mode.md)
 are the two limits of pressure-driven instability; the ballooning mode
 localizes additionally along the field line on the bad-curvature side.
@@ -65,6 +69,13 @@ solver, not only of the plasma; see
 [three-dimensional inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md),
 [VMEC](/software/vmec.md) and [DESC](/software/desc.md).
 
+**A Mercier-unstable outer region.** The [HINT](/software/hint.md)
+equilibria of high-beta LHD ($\beta_0=7.5\,\%$, $9.2\,\%$), re-solved with
+VMEC inside the last closed surface, have a Mercier-stable core, where the
+large Shafranov shift creates a magnetic well, and a Mercier-unstable outer
+region with a magnetic hill ([Sato & Todo (2026)](/sources/sato-2026.md),
+p. 3, Fig. 1).
+
 **Tokamak edge form.** For edge ballooning in the large-$q$ limit,
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§2.3.3) quote a modified
 Mercier criterion $4\alpha_{\rm b}(1-q^2)>\hat s^2q^2+\alpha_{\rm b}^2$,
@@ -95,11 +106,52 @@ and trigger a $2/1$ tearing mode (§§1, 3; see
 destabilizing resistive interchange of negative-central-shear plasmas as
 the same sign reversal (§1, citing Chu et al. 1996).
 
+After kinetic thermal ions stabilize the ideal $(3,2)$ interchange in LHD
+(next section), "the resistive interchange mode remains the dominant
+unstable mode" ([Sato & Todo (2026)](/sources/sato-2026.md), p. 7); the
+Fig. 4 caption of the same paper labels the modes only as $(3,2)$
+interchange without the ideal/resistive distinction (recorded on the
+Source page).
+
 The W7-AS soft-β-limit activity at intermediate β is a low-$n$ resistive
 pressure-driven activity whose $(2,1)$ component is reproduced only at
 artificially high $\eta$
 ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §4, §4.4; see
 [soft β limit](/definitions/soft-beta-limit.md)).
+
+## Ideal interchange in high-beta LHD
+
+In MIPS simulations of the LHD equilibria above, resistive
+[ballooning modes](/definitions/ballooning-mode.md) dominate for
+$10^4\le S\le10^6$; for $S>10^6$ a **resonant** $(3,2)$ ideal interchange
+on the $\iota=2/3$ surface takes over, with $\gamma\tau_A\approx0.009$–0.01
+nearly independent of $S$ (Fig. 4, figure reading), extends toward the
+core and collapses it, by $t=3326\tau_A$ at $S=10^7$
+([Sato & Todo (2026)](/sources/sato-2026.md), p. 5, Figs. 4, 7). The
+authors contrast it with the non-resonant $m=n>1$ interchange behind a
+tokamak sawtooth-like crash (Jardin et al. 2020, as cited). With
+drift-kinetic thermal ions in MEGA, the precession of helically trapped
+ions is faster than the interchange growth and stabilizes it; the
+nonlinear activity then stays peripheral (p. 7–8). A $(1,1)$ interchange,
+weakly unstable linearly, grows after the $n=2$ interchange saturates and
+dominates the late nonlinear phase, with or without energetic ions (p. 9,
+Fig. 11). Details on
+[kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md).
+
+## Interchange-like edge modes despite a magnetic well
+
+In the two-period quasi-axisymmetric reactor equilibrium of
+[Wright & Ferraro (2024)](/sources/wright-2024.md), an a posteriori
+analysis finds a magnetic well on all surfaces (§II; no method or figure
+given), yet full-torus M3D-C1 runs show "interchange-like
+pressure-driven" instabilities at the edge that destroy the flux surfaces
+on Alfvénic time scales (Abstract, §III; see
+[edge instabilities of an optimized QA reactor stellarator](/results/stellarator-edge-instability-qa.md)).
+The paper defines the magnetic well loosely, as "the average curvature on
+a magnetic surface", and equates possessing one with linear stability to
+local pressure perturbations (§II); neither a Mercier nor a ballooning
+evaluation, nor a mode-structure analysis, is shown. The tension with the
+stability role of the well is recorded under *Contradictions*.
 
 ## Interchange modes as a reduced-MHD benchmark
 
@@ -151,6 +203,53 @@ $1/1$ quasi-interchange can hold $q_0\ge1$
 ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4; see
 [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
 
+[Zhang et al. (2025)](/sources/zhang-2025.md) characterize the mode in
+full visco-resistive JOREK MHD of the sawtooth-free ASDEX Upgrade hybrid
+discharge #36663 (§1, §2.2, §3.2, §3.4, Figs. 6, 12):
+
+* **Drive and structure.** An ideal, pressure-gradient-driven instability
+  of shear-free equilibria with $q_0\simeq1$ (Wesson 1986, as cited). Its
+  $n=1$ flow is a core-wide convection cell, "quite distinct" from the
+  internal kink, whose flow peaks at $q=1$.
+* **Growth.** $\gamma=19.46\ \mathrm{ms}^{-1}$ for an initial $q_0=1.04$;
+  the growth rate is "very sensitive to the initial value of $q_0$", the
+  saturated state is not. $n=2$–4 are driven only by coupling.
+* **Model requirement.** Full rather than reduced MHD is used because the
+  mode has $B\,\delta B_\parallel/\mu_0\sim-\delta p$ (citing Pamela et al.
+  2020).
+* **Saturated state.** The mode clamps the axisymmetric $q_0$ at about
+  0.99 over $s<0.3$ ($s=\sqrt{\psi_N}$) for hundreds of milliseconds,
+  through a slow negative dynamo of a few mV/m; the core holds two twisted
+  $1/1$ flux tubes, the original one with local $q_0\approx1.04$ (topology
+  unchanged, ideal) and a new island-like one with local $q_0\approx0.97$,
+  which the authors read as a combination of the $1/1$ ideal
+  quasi-interchange and the $1/1$ resistive tearing mode (see
+  [resistive internal kink](/definitions/resistive-internal-kink.md)).
+  The value of "$q_0$" in their time traces is taken at $s=0.1$, not on
+  axis (Fig. 9c).
+
+## Contradictions
+
+* **Does flux pumping hold $q_0\ge1$?** *Open.* Hoelzl et al. (2024, §4.4)
+  summarize flux pumping by the quasi-interchange as keeping $q_0\ge1$.
+  Zhang et al. (2025), the primary JOREK study of an experimental case,
+  with authors in common, find a clamped axisymmetric $q_0\approx0.99$ and
+  a local $q_0\approx0.97$ in the reconnected flux tube; only the original
+  tube keeps 1.04 (§3.4, Figs. 9, 12). The paper does not comment on the
+  review's wording. The normative entry is on
+  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md).
+* **Interchange-like instability with a magnetic well on every surface.**
+  *Open.* Wright & Ferraro (2024) report a well on all surfaces (§II) and
+  call the edge instability "interchange-like pressure-driven" (Abstract).
+  On this page the well is the stabilizing term a low-shear stellarator
+  relies on. The two are not logically incompatible (compiler's reading):
+  the well is one of four terms of $D_{\rm Merc}$, and in a configuration
+  with a finite bootstrap current the current and geodesic terms can make
+  $D_{\rm Merc}<0$ despite a well, while ballooning modes are not
+  controlled by the well at all. Without a Mercier or ballooning
+  evaluation of the equilibrium, the "interchange-like" classification is
+  unverified; the entry stays open until a source computes it.
+
 # Citations
 
 * [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — stellarator interchange benchmark, compressibility and parallel flow, Mercier limit exceeded experimentally.
@@ -160,3 +259,6 @@ $1/1$ quasi-interchange can hold $q_0\ge1$
 * [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — quasi-interchange overestimate without parallel velocity.
 * [Zhou et al. (2023)](/sources/zhou-2023.md) — quasi-interchange sawtooth model at high β.
 * [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — flux pumping by the quasi-interchange.
+* [Sato & Todo (2026)](/sources/sato-2026.md) — Mercier-unstable LHD edge, resonant $(3,2)$ ideal interchange, its kinetic-ion stabilization, the $(1,1)$ interchange.
+* [Wright & Ferraro (2024)](/sources/wright-2024.md) — interchange-like edge modes despite a magnetic well.
+* [Zhang et al. (2025)](/sources/zhang-2025.md) — quasi-interchange structure, growth rate and saturated $q_0$ in ASDEX Upgrade.

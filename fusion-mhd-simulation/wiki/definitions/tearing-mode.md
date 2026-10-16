@@ -5,7 +5,7 @@ description: "Current-driven resistive instability that reconnects the magnetic 
 status: established
 aliases: [tearing mode, 2/1 tearing mode, resistive tearing, FKR scaling]
 tags: [tearing, mhd, verification, tokamak, stellarator, wall]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Resistive tearing mode
@@ -46,6 +46,18 @@ exactly this signature, a jump in the radial gradient of the parallel vector
 potential $\mathbf A\cdot\mathbf b$ and an odd pressure perturbation about
 $q=2$, to identify a "tearing-like" global $(m,n)=(2,1)$ structure inside a
 nonlinear pedestal collapse; whether islands form there is left open.
+[Seto et al. (2024)](/sources/seto-2024.md), analysing the same full-torus
+run, answer it: Poincaré plots show $m/n=2/1$ islands at $q=2$ already at the
+first of two crashes, followed by their $4/2$, $6/3$ and $8/4$ harmonics
+(§III, Fig. 10; see
+[two-stage ELM crash](/results/two-stage-elm-crash.md)). The tearing parity
+comes from nonlinear parity mixing: the Poisson-bracket nonlinearities of
+ballooning-parity modes drive tearing-parity components of the $n=1$ pressure
+and potential, and the $n=1$ parallel vector potential then acquires tearing
+parity through the linear electrostatic-plus-Hall term of its energy budget,
+which "cannot contribute to the parity mixing directly" (§III, Fig. 8; the
+mechanism is attributed to Sato & Ishizawa 2017 and Ishizawa et al. 2019 as
+cited).
 
 ## The m/n = 2/1 verification case
 
@@ -178,7 +190,9 @@ density pump-out in KSTAR (Fig. 3; see
 [edge-localized modes](/definitions/edge-localized-mode.md)), and (§4.4) flux
 pumping by a $1/1$ quasi-interchange mode that keeps $q_0\ge1$, prevents
 sawteeth and thereby removes a seed of neoclassical tearing modes (see
-[magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
+[magnetic flux pumping](/definitions/magnetic-flux-pumping.md), where the
+"$q_0\ge1$" of the review is recorded as an open contradiction with the
+$q_0\approx0.99$ of the primary JOREK study).
 
 Chunk-2 sources add:
 
@@ -208,6 +222,30 @@ Chunk-2 sources add:
   as the cooling front crosses $q=3$ and $q=2$, and the $2/1$ couples to core
   modes before the thermal quench ([Hu et al. (2021)](/sources/hu-2021.md),
   §3; see [thermal quench](/definitions/thermal-quench.md)).
+
+Chunk-3 sources add:
+
+- **A $1/1$ tearing component in flux pumping.** In the full-MHD JOREK
+  simulation of the ASDEX Upgrade hybrid scenario the saturated core mode is
+  "a combination of the 1/1 ideal quasi-interchange mode and the 1/1
+  resistive tearing mode": besides the original axis (local $q_0\approx1.04$)
+  a new island-like flux tube with local $q_0\approx0.97$ forms, and the flow
+  concentrates at the X-point beneath it, "suggesting an incomplete magnetic
+  reconnection" ([Zhang et al. (2025)](/sources/zhang-2025.md), §3.4,
+  Fig. 12, §6.1; see [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
+- **Islands born in an ELM crash.** In BOUT++ full-annulus pedestal
+  collapses, $2/1$ islands at $q=2$ are generated nonlinearly by the
+  resistive drift-ballooning turbulence; their overlapping harmonics
+  stochastize $q=2$ before the main crash, and the islands are read as
+  delaying it ([Seto et al. (2024)](/sources/seto-2024.md), §III–IV; see
+  [two-stage ELM crash](/results/two-stage-elm-crash.md)).
+- **SPI in ASDEX Upgrade.** Vanguard fragments of deuterium SPI reach $q=3$
+  at about 0.48 ms and induce $3/1$ islands by helical cooling; at $q=2$
+  (about 0.57 ms) a large $2/1$ island "triggers the global reconnection
+  event, resulting in full stochastisation", the first stage of a two-stage
+  thermal quench ([Tang et al. (2025)](/sources/tang-2025.md), §3.2,
+  Figs. 7–10; the same $3/1	o2/1$ sequence as the JET-like argon case of Hu
+  et al. 2021 above; see [thermal quench](/definitions/thermal-quench.md)).
 
 ## Qualifications
 
@@ -285,3 +323,6 @@ theory, not in the theory.
 - [Liu et al. (2021)](/sources/liu-2021.md) — §5.2–5.3, Figs. 5–6.
 - [Artola et al. (2022)](/sources/artola-2022.md) — §4.1, Figs. 3–5.
 - [Hu et al. (2021)](/sources/hu-2021.md) — §3.
+- [Seto et al. (2024)](/sources/seto-2024.md) — §III–IV, Figs. 8, 10.
+- [Zhang et al. (2025)](/sources/zhang-2025.md) — §3.4, §6.1, Fig. 12.
+- [Tang et al. (2025)](/sources/tang-2025.md) — §3.2, Figs. 7–10.

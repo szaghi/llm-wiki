@@ -5,7 +5,7 @@ description: "The evolution equation for the width of a thin, single-helicity ma
 status: established
 aliases: [MRE, Rutherford equation, Rutherford regime, island width equation]
 tags: [tearing, mhd, extended-mhd, bootstrap-current]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T20:00:00Z
 ---
 
 # Modified Rutherford equation
@@ -21,7 +21,7 @@ plasmas: the bootstrap-current drive of
 Glasser–Greene–Johnson curvature term, polarization and saturation terms.
 Below, $w$ is the full island width, $r_s$ the radius of the resonant
 surface, $\tau_R=\mu_0r_s^2/\eta$ the local resistive time, and $D_R$ the
-resistive-interchange parameter (page-local symbols).
+resistive-interchange parameter (registry §10; $\tau_R$ here built on $r_s$).
 
 ## Forms printed in the sources
 
@@ -58,7 +58,8 @@ $w\,[\mathrm{cm}]=1.54\sqrt{|\Psi_{2/1}|\,[\mathrm{mWb}]}$
 helical flux scales as $w^2$, a constant $dw/dt$ (classical Rutherford) gives
 quadratic growth of the flux and an NTM gives linear growth (§III B).
 
-None of the chunk-2 sources prints the bootstrap term of the MRE; Howell et
+None of the ingested sources prints the bootstrap term of the MRE (none of
+the chunk-3 sources uses the MRE); Howell et
 al. use an MRE evaluated in a companion paper (their ref. [30], in
 preparation).
 

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Soft β limit of stellarators"
-description: "A β limit set not by disruptive MHD but by enhanced transport from mild, saturated pressure-driven activity, typical of net-current-free stellarators; JOREK3D simulations of W7-AS attribute it to visco-resistive activity that leaves field lines ergodically confined in radially separated sub-volumes, but reach no β flat top."
+description: "A β limit set not by disruptive MHD but by enhanced transport from mild, saturated pressure-driven activity, typical of net-current-free stellarators; JOREK3D simulations of W7-AS attribute it to visco-resistive activity that leaves field lines ergodically confined in radially separated sub-volumes, but reach no β flat top, whereas in high-beta LHD conventional MHD collapses the core and only kinetic thermal ions keep the activity peripheral."
 status: established
 aliases: [soft beta limit, soft β-limit, W7-AS beta limit]
-tags: [stellarator, mhd, reduced-mhd, ballooning, verification]
-timestamp: 2026-10-16T12:00:00Z
+tags: [stellarator, mhd, reduced-mhd, ballooning, verification, hybrid-kinetic]
+timestamp: 2026-10-16T18:00:00Z
 ---
 
 # Soft β limit of stellarators
@@ -93,6 +93,39 @@ imported accurately into the JOREK ansatz) and 3.2 MW of uniform heating
   radial electric field, impurities and radiation are further named
   limitations (§4.2, §4.5).
 
+## The LHD case: a kinetic explanation
+
+LHD inward-shifted discharges sustain volume-averaged $\beta\approx5\,\%$
+without significant MHD activity, beyond fixed-boundary linear MHD limits
+([Sato & Todo (2026)](/sources/sato-2026.md), Introduction), which is the
+experimental signature of a soft limit. In the simulations reviewed by Sato
+& Todo, conventional MHD (MIPS) does **not** reproduce it: peripheral
+resistive ballooning modes at $S=10^5$ and a resonant $(3,2)$ ideal
+interchange at $S=10^7$ both collapse the core pressure. With drift-kinetic
+thermal ions (MEGA) the activity at $S=10^7$ stays in the periphery and
+the central pressure survives, through the precession of helically trapped
+ions; energetic ions up to $\beta_h=0.8\,\%$ lower the linear growth rate
+without changing the saturated profile (pp. 5–9; see
+[kinetic thermal ions confine LHD pressure-driven activity to the periphery](/results/kinetic-ions-prevent-core-collapse-lhd.md)).
+The authors conclude that "the conventional MHD model may be insufficient"
+to assess beta limits near which instabilities grow slowly (Summary).
+They do not use the term "soft β limit".
+
+## A hard loss in an optimized quasi-axisymmetric configuration
+
+Not every stellarator shows a soft limit in simulation. A reactor-scale
+two-period quasi-axisymmetric equilibrium at $\beta=2.5\,\%$, optimized
+without a stability target and carrying a bootstrap current, loses its
+flux surfaces from the edge to the core within about $1500\tau_A$ in
+nonlinear M3D-C1 runs, for every resistivity model tried
+([Wright & Ferraro (2024)](/sources/wright-2024.md), §III). The authors set
+this against the view that stellarators are robust to MHD, citing LHD
+discharges that exceed linear thresholds without confinement loss
+(Sakakibara et al. 2010, as cited, §I). A tokamak-like, finite-current QA
+configuration therefore need not inherit the soft behaviour of
+net-current-free stellarators (compiler's reading; see
+[edge instabilities of an optimized QA reactor stellarator](/results/stellarator-edge-instability-qa.md)).
+
 ## Contrast with tokamak β limits
 
 In tokamaks a pressure-driven low-$n$ mode in a weak-shear core can flatten
@@ -103,7 +136,28 @@ MHD, and kinetic thermal ions suppress the collapse of the resistive one
 (§3.2). That limit is set by the nonlinear flattening of the profile, not
 by mild ergodic transport.
 
+## Contradictions
+
+* **Can MHD alone produce the soft limit?** *Context-dependent
+  (compiler's observation; neither source states it).* For W7-AS,
+  Ramasamy et al. (2024) obtain mild, edge-confined activity within
+  stellarator reduced MHD at near-experimental visco-resistive parameters
+  and call the activity "viscoresistive" (§4.5). For LHD, Sato & Todo (2026)
+  find that conventional full MHD at $S$ up to $10^7$ collapses the core
+  and that kinetic thermal ions are needed to keep the activity peripheral
+  (pp. 7–8). The two papers do not cite each other on this point, and they
+  differ in device (five-period W7-AS against ten-period inward-shifted
+  LHD), in model (reduced MHD with parallel flow against full MHD and
+  hybrid kinetic-MHD), in the instabilities involved (low-$n$ resistive
+  activity against resistive ballooning and a resonant ideal interchange)
+  and in dissipation. They are therefore not contradictory claims, but
+  together they show that whether MHD alone reproduces the soft limit
+  depends on the configuration; a kinetic run of W7-AS or a reduced-MHD run
+  of LHD would test it.
+
 # Citations
 
 * [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — definition, W7-AS experiment, JOREK3D simulations, sensitivities and caveats.
 * [Sato et al. (2024)](/sources/sato-2024.md) — tokamak beta collapse by infernal modes, for contrast.
+* [Sato & Todo (2026)](/sources/sato-2026.md) — LHD: MHD core collapse, kinetic-thermal-ion confinement of the activity to the periphery.
+* [Wright & Ferraro (2024)](/sources/wright-2024.md) — hard loss of confinement in an optimized quasi-axisymmetric configuration.
