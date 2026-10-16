@@ -319,7 +319,7 @@ $(1.07,-1.52\times10^{-2})$ m with $\psi=-4.73\times10^{-2}$ Wb/rad. The
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
@@ -331,6 +331,7 @@ Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
 * [Halo current](/definitions/halo-current.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
 * [JOREK](/software/jorek.md)
+* [M3D](/software/m3d.md)
 * [M3D-C1](/software/m3d-c1.md)
 * [NIMROD](/software/nimrod.md)
 * [NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)](/benchmarks/nstx-vde-benchmarks.md)

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "MEGA"
-description: "Hybrid code coupling nonlinear full MHD to drift-kinetic δf energetic particles (with an ad-hoc gyro-average for FLR) through the energetic-particle current on a cylindrical grid; a reference code of the ITPA TAE, AUG-NLED and DIII-D RSAE benchmarks, it saturates about 15× lower and redistributes energetic particles much less than HYMAGYC in the nonlinear NLED-AUG benchmark."
+description: "Hybrid code coupling nonlinear visco-resistive full MHD to drift-kinetic δf energetic particles or kinetic thermal ions through the kinetic current, on a cylindrical finite-difference grid with explicit RK4; a reference code of the ITPA TAE, AUG-NLED and DIII-D RSAE benchmarks, used for chirping-TAE and infernal-mode studies, it saturates about 15× lower and redistributes energetic particles much less than HYMAGYC in the nonlinear NLED-AUG benchmark."
 status: established
 aliases: [MEGA code]
 tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # MEGA
@@ -14,11 +14,29 @@ MEGA is a [hybrid kinetic-MHD](/methods/hybrid-kinetic-mhd.md) code (Todo
 2006): the bulk plasma follows nonlinear full MHD and the energetic particles
 (EPs) are drift-kinetic, with finite-Larmor-radius effects added by an ad-hoc
 $N$-point gyro-average ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
+It can also treat the bulk thermal ions as drift-kinetic markers
+([kinetic thermal ions](/methods/kinetic-thermal-ions.md);
+[Sato et al. (2024)](/sources/sato-2024.md), §2, citing Todo et al. 2005,
+2021 as the model references). Its fluid part shares the numerics of the
+MHD code [MIPS](/software/mips.md) (ibid.).
 
 ## Model and numerics
 
+* **MHD equations.** Visco-resistive full MHD with continuity, pressure and
+  momentum equations, Ohm's law $\mathbf E=-\mathbf v\times\mathbf B+\eta(\mathbf J-\mathbf J_0)$,
+  and source terms that hold the equilibrium against dissipation: mass and
+  pressure diffusion act on $\rho-\rho_0$, $p-p_0$, and Ohmic and viscous
+  heating enter the pressure equation as $\eta\mathbf J\cdot(\mathbf J-\mathbf J_0)$
+  plus viscous terms ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md),
+  Eqs. 1–4). The viscosity enters as $\nu\rho$, a kinematic viscosity.
+
 * **Coupling.** The EP current density enters the MHD momentum equation
-  (current coupling) (Vlad et al. 2025, §4). In the simplified form identified
+  (current coupling) (Vlad et al. 2025, §4) as $(\mathbf J-\mathbf J_h)\times\mathbf B$;
+  $\mathbf J_h$ is deposited from the parallel, curvature and $\nabla B$
+  drift currents of the markers plus a magnetization current, with no
+  $E\times B$ part "due to quasi-neutrality" (Hezaveh et al. 2022, Eqs. 1,
+  5–6). With kinetic thermal ions the ion current is written through the
+  marker pressures (Sato et al. 2024, Eq. 25). In the simplified form identified
   by [Liu et al. (2022)](/sources/liu-2022.md) (§4, Eq. 27), the equilibrium
   EP current term reduces to the equilibrium EP pressure gradient projected
   along the perturbed field, and the whole scheme is equivalent to the Park et
@@ -27,7 +45,12 @@ $N$-point gyro-average ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
   [pressure and current coupling](/methods/pressure-and-current-coupling.md).
 * **Particles.** Standard [δf](/methods/delta-f-method.md) markers (Vlad et
   al. 2025, §4; [Bogaarts et al. (2022)](/sources/bogaarts-2022.md), §IV B);
-  see [particle pushers](/methods/particle-pushers.md).
+  see [particle pushers](/methods/particle-pushers.md). Passive test
+  particles, which respond to the fields without contributing to
+  $\mathbf J_h$, can be added to raise phase-space resolution (Hezaveh et
+  al. 2022, §1). Kinetic thermal ions use particle-number weights
+  $\Delta V_p\,\delta f$ with a Maxwellian $f_0(\psi,\mathcal E)$ (Sato et
+  al. 2024, Eq. 15).
 * **Dissipation.** Resistivity, viscosity and diffusion, with inverse
   Lundquist number $S^{-1}=5\times10^{-7}$ and normalized viscosity
   $5\times10^{-7}$ in the NLED-AUG benchmark, $\Gamma=5/3$ (Vlad et al. 2025,
@@ -36,6 +59,16 @@ $N$-point gyro-average ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
   8 388 608 markers (16 per cell); output is analysed in flux coordinates with
   $n\in\{-1,0,1\}$ and $m=0\ldots64$. The time-stepping scheme is not stated
   (Vlad et al. 2025, §4). No GPU use is reported.
+* **Spatial and time discretization.** Finite differences on the
+  cylindrical grid ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §2):
+  the Kawamura–Kuwahara third-order upwind scheme for convection terms and
+  fourth-order central differences otherwise, with explicit fourth-order
+  Runge–Kutta for both particles and fluid
+  ([Sato et al. (2024)](/sources/sato-2024.md), §2). This fills the gap left
+  by Vlad et al. (2025).
+* **Kinetic-thermal-ion runs.** $256\times48\times256$ grid on a $2\pi/3$
+  toroidal wedge with about $10^8$ markers (32 per cell), on NEC SX-Aurora
+  TSUBASA and Fugaku; again no GPU (Sato et al. 2024, §2).
 
 ## Benchmarks
 
@@ -69,6 +102,22 @@ $N$-point gyro-average ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
 * **[DIII-D RSAE](/benchmarks/diii-d-rsae-benchmark.md)**: MEGA peaks at $n=5$,
   as GMEC does, with a higher growth rate (Liu et al. 2024, §III D, Fig. 17).
 
+## Physics applications
+
+* **Chirping $n=6$ TAE** ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md)):
+  a circular linear-$q$ case followed for about 3700 Alfvén times through
+  up- and down-chirping, analysed with the
+  [wave-frame action-angle diagnostic](/methods/chirping-phase-space-diagnostic.md).
+  Raising $\nu=\eta$ by 20× and 40× mid-run speeds up the chirp, which the
+  authors read as Berk–Breizman dissipation control and propose as a
+  probing tool (§4.1; see
+  [frequency chirping](/definitions/energetic-particle-mode.md)).
+* **Infernal modes with kinetic thermal ions**
+  ([Sato et al. (2024)](/sources/sato-2024.md)): $n=3$ ideal and resistive
+  [infernal modes](/definitions/infernal-mode.md), compared with MIPS; the
+  kinetic ions reduce slow growth rates and suppress the resistive beta
+  collapse (§3).
+
 ## Limitations and benchmark spread
 
 * The cause of MEGA's low saturation level and weak transport is not
@@ -96,3 +145,5 @@ $N$-point gyro-average ([Vlad et al. (2025)](/sources/vlad-2025.md), §4).
 2. [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — §IV, Figs. 3, 9–10.
 3. [Liu et al. (2022)](/sources/liu-2022.md) — §4, §6.2.
 4. [Liu et al. (2024)](/sources/liu-2024.md) — §III C–D, Figs. 14, 17.
+5. [Hezaveh et al. (2022)](/sources/hezaveh-2022.md) — §§1–2, 4, Eqs. 1–6: equations, test particles, chirping TAE.
+6. [Sato et al. (2024)](/sources/sato-2024.md) — §§2–3, Eqs. 6–25: kinetic thermal ions, numerics, hardware, infernal modes.

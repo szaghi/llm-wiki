@@ -5,7 +5,7 @@ description: "Green's-function thin-wall code that supplies JOREK's free-boundar
 status: established
 aliases: [JOREK-STARWALL]
 tags: [code, wall, free-boundary, vde, disruption, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # STARWALL
@@ -78,6 +78,15 @@ resistive conductors to the plasma boundary and is coupled to
 
 ## Applications in the cited sources
 
+ITER mitigated current quenches in 3D at realistic Lundquist number: a 3D
+inner vessel of 75 000 triangles, a filament outer vessel and the OTS/DIR
+structures, coupled implicitly to JOREK reduced MHD with $n=0$–10,
+continued to ≈1.5 s, about 5 million core-hours per run; the vertical force
+peaks on the vessel L/R time (≈500 ms) after $I_p$ has vanished
+([Artola et al. (2022)](/sources/artola-2022.md), §2, §4.3, §5; see
+[wall forces](/definitions/wall-forces.md)). The passive-structure model
+had been benchmarked axisymmetrically against DINA (same source, §2).
+
 Free-boundary RMP plasma response, which "was shown to recover experimental
 flux surface corrugation accurately", and VDEs including ASDEX Upgrade hot VDEs
 (Hoelzl et al. 2024, §2.2, §3.1); 3D NSTX VDEs (Artola et al. 2021); ITER
@@ -106,3 +115,4 @@ al. 2021, §6.3); runaway beams with cold VDEs (Bandaru et al. 2024). See
 3. [Isernia et al. (2023)](/sources/isernia-2023.md) — §I, §II D, §§IV–V.
 4. [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §2.2, §3.1, §5.
 5. [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §IV.
+6. [Artola et al. (2022)](/sources/artola-2022.md) — §2, §4.3, §5.

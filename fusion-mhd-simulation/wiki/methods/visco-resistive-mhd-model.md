@@ -5,7 +5,7 @@ description: "The full (non-reduced) single-fluid, single-temperature resistive 
 status: established
 aliases: [full MHD, visco-resistive full MHD, single-fluid resistive MHD, viscoresistive MHD]
 tags: [mhd, full-mhd, tokamak, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Single-fluid visco-resistive MHD model
@@ -71,6 +71,11 @@ numerical reasons"; $A_\phi$ therefore evolves even in a steady state
 | JOREK full MHD ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), Eqs. 1–24; [Bhole et al. (2023)](/sources/bhole-2023.md), Eqs. 1–10) | $\mathbf A$, Weyl gauge, frozen $F$ | stress tensor: parallel (Braginskii-type) part, perpendicular part with $\nu_\perp\propto T^{-3/2}$, neoclassical poloidal friction, gyroviscous cancellation; Bhole et al. use a scalar $\nu\propto T^{-3/2}$ in Laplacian form | anisotropic tensors $X_\parallel\mathbf b\otimes\mathbf b+X_\perp(\mathbf I-\mathbf b\otimes\mathbf b)$; $\kappa_\parallel\propto T^{5/2}$ (Spitzer–Härm), optional cap | $\eta\propto T^{-3/2}$; diamagnetic electron-pressure term; $\mathbf J_x$ a toroidal source current, optionally bootstrap-evolving | JOREK units, $\mu_0=1$, $(\Gamma-1)$ absorbed into $\kappa$ |
 | M3D-C1 single fluid ([Saxena et al. (2025)](/sources/saxena-2025.md), App. C; [Artola et al. (2021)](/sources/artola-2021.md), §2) | $\mathbf A$ through scalar potentials | full ion stress tensor (perpendicular, gyroviscous, parallel); electron viscosity as hyper-resistivity | $\kappa_\parallel$, $\kappa_\perp$ on $T_e$ | $\eta\,\mathbf J\cdot(\mathbf J-\mathbf J_x)$ heating, $\mathbf J_x$ the bootstrap current; $\eta=\eta_{\rm norm}\eta_0T_e^{-3/2}$ | SI, $\mu_0$ explicit |
 | NIMROD ([Artola et al. (2021)](/sources/artola-2021.md), §2; [Taheri et al. (2022)](/sources/taheri-2022.md), Eqs. 3, 5, 16–18) | $\mathbf B$ and $\mathbf v$ components | isotropic stress $-\rho\nu(\nabla\mathbf v+\nabla\mathbf v^{\mathsf T}-\tfrac23\mathbf I\nabla\cdot\mathbf v)$, $\nu$ kinematic | temperature equation instead of pressure equation; isotropic particle diffusivity | $\eta$ from the toroidally symmetric part of $T$ (Artola et al.) | SI |
+| NIMROD with neoclassical closures ([Howell et al. (2022)](/sources/howell-2022.md), Eqs. 1–10) | $\mathbf B$, with $\kappa_B\nabla\nabla\cdot\mathbf B$ cleaning in Faraday's law ($\kappa_B$ page-local) | classical plus heuristic neoclassical ion stress (poloidal flow damping) | species temperature equations, artificial particle diffusivity, anisotropic conduction | $\eta=\eta_0T_e^{-3/2}$ enhanced; neoclassical electron stress term in Ohm's law gives the bootstrap drive, no imposed $\mathbf J_x$ | SI |
+| NIMROD with KPRAD impurities ([Zeng et al. (2023)](/sources/zeng-2023.md), Eqs. 1–6) | $\mathbf B$ | $\nabla\cdot(\rho\nu\nabla\mathbf v)$, constant $\nu$ | single $T_e$ for all species; continuity per neon charge state; constant $\kappa_\parallel,\kappa_\perp,D$ (diffusivities) | Spitzer $\eta$, $\mathbf J_x=0$; radiation sink | SI |
+| NIMROD two-fluid ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), Eqs. 1–6) | $\mathbf B$, with divergence cleaning | unmagnetized stress only | two temperatures, anisotropic conduction | Hall and electron-inertia terms in the flow study, no $\nabla p_e$ term as printed; $\eta$ given as a magnetic diffusivity | SI |
+| M3D-C1 stellarator ([Zhou et al. (2023)](/sources/zhou-2023.md), Eqs. 1–3) | $\mathbf B$ (as printed) | $\Pi=-\nu(\nabla\mathbf v+\nabla\mathbf v^{\mathsf T})-2(\nu_c-\nu)(\nabla\cdot\mathbf v)\mathsf I$, dynamic, with a separate compressional viscosity $\nu_c$ | continuity not solved ($\rho$ constant); heat flux $-\kappa_\perp\nabla T-\kappa_\parallel\mathbf b\mathbf b\cdot\nabla T$; Gaussian heat source | $\mathbf J_x$ the ECCD current, toroidal; Ohmic heating printed as $\eta J^2$ (see *Contradictions*) | SI |
+| M3D-C1 with runaway electrons ([Liu et al. (2021)](/sources/liu-2021.md), Eqs. 1–9) | $\mathbf A$ | not specified | single temperature $T_e=T_i$ | $\mathbf E=-\mathbf v\times\mathbf B+\eta(\mathbf J-\mathbf J_{\rm RE})$, heating $\eta(\mathbf J-\mathbf J_{\rm RE})^2$, momentum force $en_{\rm RE}\mathbf E+(\mathbf J-\mathbf J_{\rm RE})\times\mathbf B$ | $\mu_0=1$ in Ampère's law as printed |
 
 The model of [Zhang et al. (2021)](/sources/zhang-2021.md), §2, is the
 same in both codes "with the same definitions and normalizations of these
@@ -98,6 +103,15 @@ Physics extensions sit on the same core:
 * **Bootstrap current.** [Saxena et al. (2025)](/sources/saxena-2025.md),
   Eq. 2.1, put the bootstrap current in $\mathbf J_x$; see
   [bootstrap current](/definitions/bootstrap-current.md).
+  [Howell et al. (2022)](/sources/howell-2022.md), Eqs. 8–10, obtain it
+  instead from a heuristic neoclassical electron stress in Ohm's law; see
+  [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md).
+* **Current drive.** [Zhou et al. (2023)](/sources/zhou-2023.md), Eq. 3, put a
+  fixed ECCD profile in the Ohm's-law source current.
+* **Runaway electrons.** [Liu et al. (2021)](/sources/liu-2021.md), Eqs. 1–5,
+  remove the runaway current from the resistive term and add the runaway
+  continuity equation; see
+  [runaway-electron fluid model](/methods/runaway-electron-fluid-model.md).
 
 ## Properties
 
@@ -158,6 +172,31 @@ These are recorded as printed and do not change the model above:
   flux with $+\kappa_\perp\nabla T_e$, against the Fourier sign.
 * [Ma & Guo (2022)](/sources/ma-2022.md), §2, print normalizations without
   the minor radius ($\eta/(\mu_0{}^2/\tau_A)$, $\tau_A=V_A$).
+* [Zeng et al. (2023)](/sources/zeng-2023.md), Eq. 4, print the compression
+  and conduction terms of the temperature equation with $+$ signs, which as
+  typeset makes conduction anti-diffusive.
+* [Liu et al. (2021)](/sources/liu-2021.md), Eq. 9, print the heat flux
+  without the minus sign, also anti-diffusive with $-\nabla\cdot\mathbf q$ in
+  their Eq. 8.
+* [Zhou et al. (2023)](/sources/zhou-2023.md) use the full gradient in the
+  perpendicular heat flux, so the effective parallel conductivity is
+  $\kappa_\parallel+\kappa_\perp$, negligible at their anisotropy; they call the
+  system "extended MHD" although no two-fluid term is active.
+* [Howell et al. (2022)](/sources/howell-2022.md), App. A, write the ion
+  viscous power with the opposite sign of their momentum equation.
+
+## Contradictions
+
+* **Ohmic heating with a source current in M3D-C1.** *Open.*
+  [Saxena et al. (2025)](/sources/saxena-2025.md), App. C, Eq. C3, print the
+  M3D-C1 single-fluid heating as $\eta\,\mathbf J\cdot(\mathbf J-\mathbf J_x)$,
+  the form that follows from $(\mathbf E+\mathbf v\times\mathbf B)\cdot\mathbf J$
+  (reference form above). [Zhou et al. (2023)](/sources/zhou-2023.md),
+  Eqs. 2–3, print for the same code $\eta J^2$ in the pressure equation
+  together with $\eta(\mathbf J-\mathbf J_x)$ in Ohm's law, with $\mathbf J_x$ the
+  ECCD current. Either the code uses $\eta J^2$ in that run, so that the
+  energy associated with the source current is not accounted for in the same
+  way, or the printed equation is simplified; neither source comments.
 
 # Citations
 
@@ -168,3 +207,8 @@ These are recorded as printed and do not change the model above:
 * [Ma & Guo (2022)](/sources/ma-2022.md) — compressible resistive MHD of the SCELT eigenvalue code.
 * [Saxena et al. (2025)](/sources/saxena-2025.md) — M3D-C1 single-fluid equations with a non-inductive current.
 * [Taheri et al. (2022)](/sources/taheri-2022.md) — NIMROD resistive MHD with a neutral fluid.
+* [Howell et al. (2022)](/sources/howell-2022.md) — NIMROD with heuristic neoclassical closures.
+* [Zeng et al. (2023)](/sources/zeng-2023.md) — NIMROD with charge-state-resolved impurities.
+* [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — NIMROD two-fluid Ohm's law.
+* [Zhou et al. (2023)](/sources/zhou-2023.md) — M3D-C1 stellarator model with ECCD source current.
+* [Liu et al. (2021)](/sources/liu-2021.md) — M3D-C1 model with a runaway-electron fluid.

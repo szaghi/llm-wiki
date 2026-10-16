@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "NIMROD"
-description: "Initial-value extended-MHD code with high-order C0 nodal spectral elements in the poloidal plane and a toroidal Fourier series, a mixed implicit/semi-implicit leapfrog time advance, diffusive divergence cleaning and a thin resistive wall with a meshed vacuum; benchmarked on NSTX VDEs and impurity gas injection, and extended with a plasma–neutral model whose atomic sources are coupled by Crank–Nicolson/JFNK or Strang splitting."
+description: "Initial-value extended-MHD code with high-order C0 nodal spectral elements in the poloidal plane and a toroidal Fourier series, a mixed implicit/semi-implicit leapfrog time advance, diffusive divergence cleaning and a thin resistive wall with a meshed vacuum; benchmarked on NSTX VDEs and impurity gas injection, extended with a plasma–neutral model whose atomic sources are coupled by Crank–Nicolson/JFNK or Strang splitting, and applied with heuristic neoclassical closures to NTM seeding, with KPRAD to radiation-triggered tearing and to nonlinear peeling–ballooning ELMs."
 status: established
 aliases: [NIMROD code]
 tags: [code, mhd, full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # NIMROD
@@ -36,7 +36,27 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
   ([Hu et al. (2021b)](/sources/hu-2021-b.md), §2.2, §6;
   [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.7).
 * **Neoclassical tearing**: a heuristic closure (Gianakon et al. 2002, cited
-  by [Saxena et al. (2025)](/sources/saxena-2025.md), §1).
+  by [Saxena et al. (2025)](/sources/saxena-2025.md), §1). Its equations are
+  printed by [Howell et al. (2022)](/sources/howell-2022.md) (§II A,
+  Eqs. 1–10): an ion stress that damps poloidal flow toward the equilibrium
+  in the momentum equation and an electron stress in Ohm's law that produces
+  the bootstrap drive; see [bootstrap current](/definitions/bootstrap-current.md)
+  and [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md).
+* **Transient boundary perturbations**: a time-dependent normal field with a
+  compact-support envelope and phase modulation imposed on the computational
+  boundary seeds islands by forced reconnection (Howell et al. 2022, §II B,
+  Eqs. 11–12).
+* **Impurities with KPRAD in resistive MHD**: one continuity equation per
+  neon charge state with KPRAD ionization and recombination rates, line,
+  bremsstrahlung, recombination and ionization losses, single temperature
+  ([Zeng et al. (2023)](/sources/zeng-2023.md), §2, App. 7, Eqs. 1–6, 10–21).
+  Zeng et al. state that KPRAD's atomic data come from ADAS, where the
+  gas-injection benchmark describes KPRAD-fitted ADPAK data; the data set may
+  differ between versions, so this is recorded as a difference of attribution.
+* **Two-fluid Ohm's law**: Hall and electron-inertia terms, two temperatures
+  with anisotropic conduction, Spitzer $\eta$ from the toroidally averaged
+  temperature ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md),
+  Eqs. 1–6; no electron-pressure term as printed).
 * **Runaway electrons**: an RE fluid–MHD model (Sainterme & Sovinec 2024,
   cited by [Bandaru et al. (2024)](/sources/bandaru-2024.md), §I, without
   comparison).
@@ -49,7 +69,16 @@ plasma–neutral study does not use (§2). It is one of the three codes of the
   al. 2021, Table 1; Taheri et al. 2022, §2).
 * $\nabla\cdot\mathbf B$ is not identically zero; it is controlled by a
   diffusive correction proportional to $\nabla(\nabla\cdot\mathbf B)$ added to
-  Faraday's law (Artola et al. 2021, §2). See
+  Faraday's law (Artola et al. 2021, §2), printed explicitly as
+  $\partial_t\mathbf B=-\nabla\times\mathbf E+\kappa_B\nabla\nabla\cdot\mathbf B$ with a
+  cleaning diffusivity $\kappa_B$ (page-local) by Howell et al. (2022, Eq. 4)
+  and Ebrahimi & Bhattacharjee (2023, Eq. 1).
+* Resolutions in chunk-2 applications: $70\times64$ third-order Lagrange
+  elements with $n=0,1$ ([Zeng et al. (2023)](/sources/zeng-2023.md), §2);
+  $40\times60$ fifth- or sixth-order elements extending into the scrape-off
+  layer with 43 or 86 toroidal modes
+  ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), §2). Howell et
+  al. (2022) give no resolution. See
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 * A stabilization method suppresses numerical interchange (Artola et al. 2021,
   §2).
@@ -114,6 +143,12 @@ codes coupled only to axisymmetric thin walls. See
 * **Linear $n=1$ fishbone**: M3D-C1-K agrees with NIMROD and M3D-K except for
   the real frequency at large energetic-particle fraction
   ([Liu et al. (2022)](/sources/liu-2022.md), §6.1).
+* **Fishbone and BAE-like branch**: M3D-C1-K frequencies and growth rates of
+  the DIII-D $n=1$ energetic-particle branch are close to the NIMROD results of
+  Brennan et al. 2012 except at large $q_{\min}$, where NIMROD's growth rate
+  stays nearly constant while M3D-C1-K's drops to zero
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §4; recorded on
+  [fishbone](/definitions/fishbone.md)).
 * **Plasma–neutral schemes** (Taheri et al. 2022, §4–5): on a 1D
   neutral-penetration case into a fixed pedestal (40×4 bi-quintic elements),
   SS-field shows a $\Delta t$-dependent steady state with errors near
@@ -122,6 +157,30 @@ codes coupled only to axisymmetric thin walls. See
   wall-clock time. On a 1D snowplow case all methods share a large-$\Delta t$
   error, and SS-field degrades at small $\Delta t$ (Figs. 7, 11). CN-linear is
   "not robust for all 1D test cases" (§5).
+
+## Applications in chunk-2 sources
+
+* **NTM seeding** in a DIII-D ITER-baseline equilibrium with reconstructed
+  flows: robust $2/1$ growth at 3.4 Wb/s against 3.3 Wb/s from a modified
+  Rutherford equation, after a sequence of core-mode three-wave couplings
+  ([Howell et al. (2022)](/sources/howell-2022.md); see
+  [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md)).
+* **Radiation-triggered tearing**: neon on $q=2$ of an EAST-like L-mode
+  triggers a $2/1$ mode above $2\times10^{19}$ m$^{-3}$; perfectly conducting
+  wall, no vacuum ([Zeng et al. (2023)](/sources/zeng-2023.md); see
+  [radiation-triggered tearing](/results/radiation-triggered-tearing.md)).
+* **Peeling–ballooning ELMs**: two DIII-D equilibria, axisymmetric
+  counter-current sheets and finger-like current sheets that break into
+  plasmoids ([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md); see
+  [edge-localized mode](/definitions/edge-localized-mode.md) and
+  [plasmoid instability](/definitions/plasmoid-instability.md)).
+* **SPI**: earlier NIMROD SPI results (Kim et al. 2019) agree qualitatively
+  with JOREK that mixed pellets give a milder radiation spike and that the
+  radiation peaks near the injector ([Hu et al. (2021)](/sources/hu-2021.md),
+  §4.1, §6).
+* **Stellarators**: the NIMSTELL variant is named alongside JOREK3D and
+  stellarator M3D-C1 as a transport-time-scale stellarator capability
+  ([Zhou et al. (2023)](/sources/zhou-2023.md), §V).
 
 ## Limitations
 
@@ -159,3 +218,9 @@ codes coupled only to axisymmetric thin walls. See
 7. [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §I.
 8. [Saxena et al. (2025)](/sources/saxena-2025.md) — §1.
 9. [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §I.
+10. [Howell et al. (2022)](/sources/howell-2022.md) — §II–V, Eqs. 1–16.
+11. [Zeng et al. (2023)](/sources/zeng-2023.md) — §2, App. 7.
+12. [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — Eqs. 1–6, §2.
+13. [Liu et al. (2022b)](/sources/liu-2022-b.md) — §4.
+14. [Hu et al. (2021)](/sources/hu-2021.md) — §4.1, §6.
+15. [Zhou et al. (2023)](/sources/zhou-2023.md) — §V.

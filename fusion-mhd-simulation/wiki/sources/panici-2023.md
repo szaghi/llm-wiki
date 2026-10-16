@@ -212,10 +212,11 @@ exponential for DESC and $O(N_{\mathrm{radial}}^{-1})$ for VMEC.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [DESC](/software/desc.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+* [Interchange modes and the Mercier criterion](/definitions/interchange-mode.md)
 * [Quasi-symmetry](/definitions/quasi-symmetry.md)
 * [Three-dimensional inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md)
 * [VMEC](/software/vmec.md)

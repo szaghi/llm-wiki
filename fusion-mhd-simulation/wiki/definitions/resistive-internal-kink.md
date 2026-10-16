@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Resistive internal kink (m/n = 1/1)"
-description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical shift of the core inside q = 1 that resistivity turns into a reconnecting mode with gamma ~ eta^(1/3); its ideal, pressure-driven limit has a poloidal-beta threshold, and reduced MHD models fail to reproduce that limit at finite beta."
+description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical shift of the core inside q = 1 that resistivity turns into a reconnecting mode with gamma ~ eta^(1/3); its ideal, pressure-driven limit has a poloidal-beta threshold, reduced MHD models fail to reproduce that limit at finite beta, and the mode triggers the thermal quench when SPI fragments reach q = 1."
 status: established
 aliases: [resistive kink, internal kink, m=n=1 mode, 1/1 kink, Coppi scaling]
 tags: [kink, tearing, mhd, reduced-mhd, full-mhd, verification, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Resistive internal kink (m/n = 1/1)
@@ -25,7 +25,8 @@ $$\gamma\propto\eta^{1/3},\qquad\text{equivalently}\qquad \gamma\tau_A\propto S^
 al. (§1, §3.2, ref. [6]) and Ma & Guo (2022) to Ara et al. 1978 (§4.1,
 ref. [22]). Zhang et al. (§1) connect the mode to the sawtooth and to
 Kadomtsev-type reconnection. They do not use the word "sawtooth" for the
-nonlinear crash they simulate.
+nonlinear crash they simulate; the crash itself is on
+[sawtooth crash and Kadomtsev reconnection](/definitions/sawtooth-crash.md).
 
 **Ideal limit.** Without resistivity, the $1/1$ mode is driven by pressure. It
 becomes unstable above a poloidal-beta threshold, which Bussac et al. (1975)
@@ -104,7 +105,38 @@ modes are largely unaffected because $q\gg1$ there (see
 [ballooning mode](/definitions/ballooning-mode.md)).
 [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§VIII) repeat the
 limitation for the JOREK model family, citing Hoelzl et al. (2021): it
-"cannot accurately reproduce kink modes at higher β". The two sources agree.
+"cannot accurately reproduce kink modes at higher β". The two sources agree,
+and so do two chunk-2 JOREK papers:
+[Hu et al. (2023)](/sources/hu-2023.md) (§2.2) state that reduced MHD "tends
+to underestimate" the $1/1$ resistive kink, and
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.3) that the finite-$\beta$
+$(1,1)$ internal kink is not captured by reduced models while most other
+instabilities are, both citing earlier JOREK work.
+
+## Non-resonant kink ($q_{\min}$ slightly above 1)
+
+With a weakly reversed $q$ profile and $q_{\min}$ just above 1, a $(1,1)$
+"non-resonant kink" remains unstable. In a DIII-D hybrid equilibrium, MHD-only
+M3D-C1-K runs find the $n=1$ kink unstable for $q_{\min}<1.06$, with
+$\gamma\tau_A\approx0.026$ at $q_{\min}=1.00$ falling to zero at 1.06 (figure
+readings). At fixed $q_{\min}=1.04$ its growth rate depends strongly on
+$\beta$, rising from 0 at $0.8\beta_0$ to $\gamma\tau_A\approx0.021$ at
+$1.2\beta_0$, "similar to pressure-driven modes"
+([Liu et al. (2022b)](/sources/liu-2022-b.md), §4, Figs. 5, 10; $\tau_A$ not
+defined by the source). Kinetic thermal ions and energetic particles turn the
+mode into a non-resonant [fishbone](/definitions/fishbone.md) (same source).
+
+## Stellarators: two $\iota=1$ surfaces
+
+In a stellarator the condition $q_0<1$ reads $\iota>1$ somewhere inside. In
+M3D-C1 simulations of W7-X, near-axis current drive raises $\iota$ above 1 in
+a hump, which creates two $\iota=1$ surfaces and two successive $(1,1)$
+internal kinks: the inner one moves the core in one direction and lowers the
+core $T_e$ only slightly, the outer one moves the new core the opposite way
+and flattens it, with a crash of about 50% and $r/a\approx0.4$ inversion
+radius ([Zhou et al. (2023)](/sources/zhou-2023.md), §IV, Figs. 3–6). No
+growth rates are given, so nothing can be checked against $\eta^{1/3}$. A
+saturated $(1,1)$ core follows ([magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
 
 ## The internal kink in applications
 
@@ -114,7 +146,12 @@ limitation for the JOREK model family, citing Hoelzl et al. (2021): it
   ([Liu et al. (2022)](/sources/liu-2022.md), §6.1, Fig. 3).
 - **Flux pumping.** A $1/1$ quasi-interchange mode can keep $q_0\ge1$ when
   the pressure is peaked enough, which prevents sawteeth
-  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4).
+  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4; see
+  [magnetic flux pumping](/definitions/magnetic-flux-pumping.md)).
+- **Suppression by construction.** NIMROD NTM studies and linear M3D-C1
+  resistive-wall studies raise $q_0$ above 1 to suppress the $(1,1)$ mode and
+  sawteeth ([Howell et al. (2022)](/sources/howell-2022.md), §III A;
+  [Strauss et al. (2022)](/sources/strauss-2022.md), §II).
 - **Disruptions.**
   - In ITER $\beta$-limit disruptions, a dominant $n=1$ internal kink grows
     into the disruptive state (Hoelzl et al. 2024, §3.1; the evidence is a
@@ -125,8 +162,33 @@ limitation for the JOREK model family, citing Hoelzl et al. (2021): it
     [shattered pellet injection](/definitions/shattered-pellet-injection.md)).
   - Core density transport depends on where material is deposited relative
     to $q=1$ (Hoelzl et al. 2024, §3.2).
+  - **SPI trigger at $q=1$.** In ITER L-mode plasmas with a large
+    $q\approx1$ region, the thermal quench after neon or neon–hydrogen SPI is
+    triggered when the vanguard fragments enter $q=1$: helical cooling there
+    destabilizes the $1/1$ kink, whose O-point coincides with the fragments
+    ([Hu et al. (2021)](/sources/hu-2021.md), §4.1, Figs. 13–14;
+    [Hu et al. (2023)](/sources/hu-2023.md), §3.1, Figs. 3–4). Without
+    injection the kink stays negligible on the simulated time scale, because
+    $\beta$ is low and the resistive kink is slow (Hu et al. 2021, §2.4;
+    Hu et al. 2023, §2.2). In a JET-like plasma with almost no $q<1$ region
+    the trigger is at $q=2$ instead (Hu et al. 2021, §3; see
+    [thermal quench](/definitions/thermal-quench.md)).
+  - **Kink convection of injected material.** Material deposited on or inside
+    $q=1$ is convected into the core by the kink displacement, so deeper
+    neon–hydrogen pellets give much better core neon penetration than pure
+    neon pellets (Hu et al. 2021, §4.1). Density cells move by $O(1\,\mathrm m)$
+    in 0.2 ms while the fragments move 0.1 m, accompanied by a "cold bubble";
+    an axisymmetric twin run stays hollow (Hu et al. 2023, §3.1, Figs. 6–7).
+    After core relaxation the current flattens inside $q=1$ with a negative
+    current sheet outside (Hu et al. 2023, Fig. 10).
+  - **Injection symmetry.** Symmetric dual SPI makes even-$n$ modes dominate
+    and removes the $1/1$ kink motion; a 1 ms injector delay restores $n=1$
+    dominance and a $1/1$ kink at the thermal quench (Hu et al. 2021, §5).
   - An off-axis runaway-electron current destabilizes the $1/1$ mode
     (Hoelzl et al. 2021, §6).
+  - After the runaway loss that terminates a DIII-D runaway plateau, $q_0$
+    drops from 1.10 to 1.0 and a $(1,1)$ kink flattens the residual runaway
+    core ([Liu et al. (2021)](/sources/liu-2021.md), §5.3, Fig. 12b).
 
 ## Qualifications
 
@@ -166,3 +228,11 @@ not a disagreement between sources.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.1, §3.2, §4.4.
 - [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §VIII.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §6.1, Fig. 3.
+- [Liu et al. (2022b)](/sources/liu-2022-b.md) — §4, Figs. 5, 10.
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §IV, Figs. 3–8.
+- [Hu et al. (2021)](/sources/hu-2021.md) — §2.4, §3–5.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §2.2, §3.1, Figs. 3–7, 10.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.3.
+- [Howell et al. (2022)](/sources/howell-2022.md) — §III A.
+- [Strauss et al. (2022)](/sources/strauss-2022.md) — §II.
+- [Liu et al. (2021)](/sources/liu-2021.md) — §5.3.

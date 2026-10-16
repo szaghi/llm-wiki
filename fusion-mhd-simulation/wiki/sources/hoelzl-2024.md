@@ -271,7 +271,7 @@ figure captions.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Bootstrap current and its MHD implementation](/definitions/bootstrap-current.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
@@ -279,22 +279,30 @@ Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
 * [Collisional-radiative (non-equilibrium) impurity model](/methods/collisional-radiative-impurity-model.md)
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
 * [Disruption: phases, current quench and current spike](/definitions/disruption.md)
+* [Double tearing mode](/definitions/double-tearing-mode.md)
 * [Edge-localized mode (ELM) and ELM-free regimes](/definitions/edge-localized-mode.md)
 * [Electromagnetic wall forces (vertical and sideways)](/definitions/wall-forces.md)
+* [Electron temperature hole and the stochastic barrier at q = 1 after SPI](/results/electron-temperature-hole.md)
 * [Fishbone instability](/definitions/fishbone.md)
 * [Free-boundary and resistive-wall coupling](/methods/resistive-wall-coupling.md)
 * [Halo current](/definitions/halo-current.md)
 * [High-field-side high-density region](/results/high-field-side-high-density-region.md)
 * [Hybrid kinetic-MHD models](/methods/hybrid-kinetic-mhd.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
+* [Interchange modes and the Mercier criterion](/definitions/interchange-mode.md)
 * [JOREK](/software/jorek.md)
 * [JOREK3D](/software/jorek3d.md)
 * [Kinetic (Monte Carlo) neutral model coupled to MHD](/methods/kinetic-neutral-model.md)
+* [Kinetic thermal ions in hybrid kinetic-MHD](/methods/kinetic-thermal-ions.md)
+* [Magnetic flux pumping](/definitions/magnetic-flux-pumping.md)
+* [Neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md)
 * [NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)](/benchmarks/nstx-vde-benchmarks.md)
+* [Plasmoid drift of ablation clouds](/definitions/plasmoid-drift.md)
 * [Reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)
 * [Reduced-MHD boundary condition suppresses the toroidal asymmetry of the plasma current](/results/reduced-mhd-current-asymmetry.md)
 * [Resistive internal kink (m/n = 1/1)](/definitions/resistive-internal-kink.md)
 * [Resistive tearing mode](/definitions/tearing-mode.md)
+* [Resonant magnetic perturbations and plasma response](/definitions/resonant-magnetic-perturbation.md)
 * [Runaway electrons and their generation mechanisms](/definitions/runaway-electrons.md)
 * [Runaway-electron fluid model coupled to MHD](/methods/runaway-electron-fluid-model.md)
 * [Shattered pellet injection and massive material injection](/definitions/shattered-pellet-injection.md)

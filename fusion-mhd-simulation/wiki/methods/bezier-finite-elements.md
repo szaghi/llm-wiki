@@ -5,7 +5,7 @@ description: "JOREK's spatial discretization: isoparametric bicubic Bézier patc
 status: established
 aliases: [Hermite-Bézier elements, bicubic Bézier elements, Czarny–Huysmans elements, JOREK finite elements, G1 Bézier elements]
 tags: [finite-elements, spectral, numerics, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Bézier–Hermite finite elements with toroidal Fourier harmonics
@@ -127,6 +127,27 @@ regularization (cited by [Bhole et al. (2023)](/sources/bhole-2023.md),
 needs about 1 mm resolution along the field near the strike points; Korving et
 al. used 0.74 mm along and 8.1 mm across it (§II C, Fig. 2).
 
+Grid sizes in the chunk-2 JOREK applications:
+- AUG EDA pedestal: 214 radial (axis to wall) × 354 poloidal elements,
+  packed so that one radial element spans 1.28 mm in the pedestal, with 64
+  toroidal planes for $n=0$–13; this resolves a realistic
+  $\kappa_\parallel/\kappa_\perp\sim10^9$
+  ([Cathey et al. (2023)](/sources/cathey-2023.md), §2.2). With
+  $N_{\mathrm{tor}}=27$ in this page's counting, 64 planes exceed the
+  de-aliasing minimum of 52 (compiler's check).
+- ITER current quench: a polar grid of 100×200 bicubic elements whose
+  boundary follows the first wall but not the divertor details
+  ([Artola et al. (2022)](/sources/artola-2022.md), §2, Fig. 1).
+- Double tearing mode: 120 radial × 64 poloidal flux-aligned cells, $n=0$–15
+  ([Nardon et al. (2023b)](/sources/nardon-2023-b.md), §II).
+- ITER SPI: an X-point grid whose ideal-wall boundary is the thin-wall
+  equivalent of the blanket modules, $n=0$–11
+  ([Hu et al. (2023)](/sources/hu-2023.md), §2.2;
+  [Hu et al. (2024)](/sources/hu-2024.md), §2.1).
+- JT-60SA: a double-X-point grid on which JOREK re-solves the imported
+  Grad–Shafranov equilibrium, with the core current smoothed at fixed
+  4.6 MA ([Cathey et al. (2024)](/sources/cathey-2024.md), §4, Fig. 7).
+
 ## Convergence
 
 - **Growth rates.** The error of a linear growth rate falls as
@@ -151,16 +172,24 @@ elements, reported as more efficient than the original element
 ([Bhole et al. (2023)](/sources/bhole-2023.md), §5, citing it;
 [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5: "speed-up or better
 stability depending on the application"); it was not yet ported to JOREK3D
-([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §II).
+([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §II). The W7-AS runs of
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.4) still use the
+"typically $G^1$" elements and note that the higher-continuity elements
+might later remove the auxiliary $j$ and $\varpi$ unknowns. They also
+replace the analytic vacuum potential by a finite-element solution of a
+Poisson problem in all runs (§2.2), against the continuity argument above
+(recorded on [Dommaschk potentials](/methods/dommaschk-potentials.md)).
 
 | Code | Poloidal elements | Continuity | Toroidal direction | Source |
 |---|---|---|---|---|
 | [JOREK](/software/jorek.md) | isoparametric bicubic Bézier quadrilaterals | $G^1$ (Table 1); $C^1$ in Bhole et al. | real Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1 |
 | [M3D-C1](/software/m3d-c1.md) | reduced-quintic (Bell) triangles | $C^1$ | cubic Hermite elements | [Artola et al. (2021)](/sources/artola-2021.md), Table 1, §2; [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
-| [NIMROD](/software/nimrod.md) | spectral elements, Legendre-spaced nodes (bicubic; biquintic in Taheri et al.) | $C^0$ | Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1; [Taheri et al. (2022)](/sources/taheri-2022.md), §2 |
+| [NIMROD](/software/nimrod.md) | spectral elements, Legendre-spaced nodes (bicubic; biquintic in Taheri et al.; fifth or sixth order on a 40×60 mesh in Ebrahimi & Bhattacharjee) | $C^0$ | Fourier series | [Artola et al. (2021)](/sources/artola-2021.md), Table 1; [Taheri et al. (2022)](/sources/taheri-2022.md), §2; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2 |
 
 M3D-C1 carries 12 degrees of freedom per scalar per vertex in 3D and 6 in 2D
-([Artola et al. (2021)](/sources/artola-2021.md), §3). The eigenvalue code
+([Artola et al. (2021)](/sources/artola-2021.md), §3); its runaway-electron
+runs use 6454 elements per plane and 16 planes, with cubic Hermite
+elements between planes ([Liu et al. (2021)](/sources/liu-2021.md), §2–3). The eigenvalue code
 [SCELT](/software/scelt.md) uses the same Hermite-cubic idea in one dimension:
 cubic radial elements times a poloidal Fourier series
 ([Ma & Guo (2022)](/sources/ma-2022.md), §3.1.3, App. A).
@@ -185,8 +214,10 @@ enforced* at the magnetic axis and near X-points, where more than four
 elements meet a node. [Artola et al. (2021)](/sources/artola-2021.md)
 (Table 1 and its footnote: G = geometric, C = parametric continuity) list
 JOREK as $G^1$ against $C^1$ for M3D-C1, and
-[Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§II, §III) and
-[Isernia et al. (2023)](/sources/isernia-2023.md) (§II A) also write $G^1$.
+[Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§II, §III),
+[Isernia et al. (2023)](/sources/isernia-2023.md) (§II A) and
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.4, "typically
+$G^1$") also write $G^1$.
 [Bhole et al. (2023)](/sources/bhole-2023.md) (§3.3.2) call the same element
 $C^1$, because the arc-length derivatives are shared, element-independent
 degrees of freedom. On regular nodes the two descriptions agree in substance
@@ -205,3 +236,5 @@ $(R,Z)$ at every node type, including X-point nodes, would settle it.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §5.
 - [Isernia et al. (2023)](/sources/isernia-2023.md) — §II A; [Korving et al. (2023)](/sources/korving-2023.md) — §II C.
 - [Zhang et al. (2021)](/sources/zhang-2021.md) — §2; [Taheri et al. (2022)](/sources/taheri-2022.md) — §2; [Ma & Guo (2022)](/sources/ma-2022.md) — §3.1.3, App. A.
+- [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2; [Cathey et al. (2024)](/sources/cathey-2024.md) — §4; [Artola et al. (2022)](/sources/artola-2022.md) — §2; [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — §II; [Hu et al. (2023)](/sources/hu-2023.md) — §2.2; [Hu et al. (2024)](/sources/hu-2024.md) — §2.1.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.2, §2.4; [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — p. 2; [Liu et al. (2021)](/sources/liu-2021.md) — §2–3.

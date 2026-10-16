@@ -5,7 +5,7 @@ description: "MHD models that restrict the magnetic field to a poloidal flux fun
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, ansatz-based reduced MHD, Strauss reduced MHD]
 tags: [mhd, reduced-mhd, tokamak, kink, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Reduced MHD for tokamaks
@@ -77,7 +77,19 @@ derivatives ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), Eqs. 38–39,
 Table 1; [Isernia et al. (2023)](/sources/isernia-2023.md), Eq. 2;
 [Hu et al. (2021b)](/sources/hu-2021-b.md), Eqs. 9, 13). A simplified
 variant drops the parallel velocity and with it the slow magnetosonic wave
-([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.3.4).
+([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.3.4). The simplest
+variant in the sources keeps only $\psi$ and $u$: pressureless, no parallel
+flow, flat constant density, constant $\eta$ and viscosity, the source term
+$\eta(j-j_0)$ that holds the initial current, and fixed-boundary conditions
+($\psi$ fixed, $u=\varpi=j=0$) ([Nardon et al. (2023b)](/sources/nardon-2023-b.md),
+§II, Eqs. 1–2). In that model the magnetic helicity
+$\int\mathbf A\cdot\mathbf B\,dV$, with $\mathbf A=\psi\nabla\phi-F_0(Z/R)\nabla R$,
+changes only through the resistive term,
+$\frac{d}{dt}\int\mathbf A\cdot\mathbf B\,dV=2F_0\int\eta(j-j_0)R^{-1}\,d\phi\,dS$
+in JOREK units, the classical result that helicity is dissipated only at the
+resistive rate (App. A, Eq. A4; the printed intermediate step A3 lacks a
+factor $R$, compiler's check recorded on the Source page). See
+[double tearing mode](/definitions/double-tearing-mode.md).
 
 **Equations.** With the bracket
 $[f,g]=\mathbf e_\phi\cdot(\nabla f\times\nabla g)$ and
@@ -93,7 +105,16 @@ R\nabla\cdot\big[R^2\partial_t(\rho\nabla_{\rm pol}u)\big]&=\tfrac12\big[R^2|\na
 where $j_x=-\mu_0RJ_{x,\phi}$ is the source current
 ([Hu et al. (2021b)](/sources/hu-2021-b.md), Eqs. 8, 12, written there
 with $\mu_0=1$; [Bandaru et al. (2024)](/sources/bandaru-2024.md),
-Eqs. 2.3–2.6, which add runaway-electron and hyper-resistive terms). The
+Eqs. 2.3–2.6, which add runaway-electron and hyper-resistive terms;
+[Hu et al. (2021)](/sources/hu-2021.md), Eqs. 3–9, and
+[Hu et al. (2023)](/sources/hu-2023.md), Eqs. 1–9, print the same flux and
+vorticity equations with $j_x=0$ and $\eta(T_e)$;
+[Nardon et al. (2023b)](/sources/nardon-2023-b.md), Eqs. 1–2, the
+pressureless form divided by $R$). The viscous term is printed in two forms;
+see *Contradictions*. The term $[p,R^2]$ is the $\nabla B$ drive that
+polarizes a high-pressure pellet plasmoid and makes it drift outward in
+major radius ([Hu et al. (2024)](/sources/hu-2024.md), §3, Eq. 5; see
+[plasmoid drift](/definitions/plasmoid-drift.md)). The
 vorticity equation is the toroidal component of the curl of $R^2$ times the
 momentum equation
 ([Hu et al. (2021b)](/sources/hu-2021-b.md), §2.4). The parallel momentum
@@ -119,6 +140,28 @@ $v_\parallel=0$ and zero toroidal vorticity on the wall
 ([Artola et al. (2021)](/sources/artola-2021.md), §2); the consequence for
 the toroidal asymmetry of $I_p$ is on
 [reduced-MHD current asymmetry](/results/reduced-mhd-current-asymmetry.md).
+
+**Two-temperature impurity variant.** For shattered-pellet studies JOREK
+evolves a total and an impurity mass density with their own sources, an ion
+and an electron pressure coupled by collisional exchange, Ohmic heating in the
+electron equation, frictional heating of newly ablated particles, and the
+ionization energy as potential energy; all species and charge states share one
+velocity, and $\nu_\perp\propto T_e^{-3/2}$ keeps the magnetic Prandtl number
+roughly fixed ([Hu et al. (2021)](/sources/hu-2021.md), Eqs. 5–12;
+[Hu et al. (2023)](/sources/hu-2023.md), Eqs. 6–11, with the
+collisional-radiative impurity model; [Hu et al. (2024)](/sources/hu-2024.md),
+§2.1, unchanged). The radiation term is printed inconsistently between the
+single- and two-temperature equations of Hu et al. (2021) (recorded on its
+Source page).
+
+**Diamagnetic and bootstrap extension for edge regimes.** The ion
+diamagnetic velocity is added to the $\mathbf E\times\mathbf B$ and parallel
+flows, the bootstrap current enters through a relaxation term
+$\eta(j-j_{\rm src})$ with a Sauter source that also carries the Ohmic part,
+and $v_\parallel$ is set only by Mach-1 conditions at the divertor targets,
+with no momentum source ([Cathey et al. (2024)](/sources/cathey-2024.md),
+§3.1, fn. 9; the printed diamagnetic velocity carries a spurious mass factor,
+recorded on the Source page). See [bootstrap current](/definitions/bootstrap-current.md).
 
 **Extensions used in the sources.** Two temperatures, coronal or
 collisional-radiative impurities, fluid or kinetic neutrals, a
@@ -187,7 +230,11 @@ diamagnetism, gyroviscous cancellation and hyper-resistivity
   (Alfvén) and field-aligned (slow) parts of a general flow and drops the
   perpendicular compression that carries the fast wave
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), p. 19;
-  [Nikulsin et al. (2022)](/sources/nikulsin-2022.md), Eq. 2).
+  [Nikulsin et al. (2022)](/sources/nikulsin-2022.md), Eq. 2). Shear Alfvén
+  propagation is retained quantitatively: in a JET plasmoid-drift run the
+  wave packets travel along the field at about $4.7\times10^6$ m/s against an
+  Alfvén speed of about $4.5\times10^6$ m/s
+  ([Kong et al. (2025)](/sources/kong-2025.md), §4.1, Fig. 13).
 * **Convergence to full MHD.** For a simplified reduced model, solutions
   of full MHD converge to those of the reduced model (Ref. 54 of
   [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.3.3).
@@ -211,12 +258,24 @@ pressure-driven modes. [Nikulsin et al. (2022)](/sources/nikulsin-2022.md),
 §VIII, state for the stellarator family that it "cannot accurately reproduce
 kink modes at higher β", citing Hoelzl et al. (2021). The two sources agree;
 see [resistive internal kink](/definitions/resistive-internal-kink.md).
+Two chunk-2 JOREK papers state the same limitation, citing earlier JOREK work
+([Hu et al. (2023)](/sources/hu-2023.md), §2.2;
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.3).
 
 **Parallel flow.** Dropping $v_\parallel$ "decreases the accuracy … and
 narrows the range of scenarios" ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md),
 §II, citing earlier work); the 26.2% tearing-rate gap of JOREK3D against
 CASTOR3D at the highest η is attributed to it
-([JOREK3D](/software/jorek3d.md)).
+([JOREK3D](/software/jorek3d.md)); Ramasamy et al. (2024, §3.1) attribute it
+instead to CASTOR3D resolution (open on that page). Adding $v_\parallel$ to
+the stellarator model separates the two compression effects that Graves et
+al. 2019 held responsible for artificial stabilization of compressible modes:
+without $v_\parallel$ the compressible interchange growth rates are too low and
+the error grows as $n$ falls, while with $v_\parallel$ all modes agree with full
+MHD within 10%, so the eliminated fast-wave (field-compression) terms do not
+matter in that low-shear case ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md),
+§3.2, Figs. 5, 7; see [reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)
+and [interchange modes](/definitions/interchange-mode.md)).
 
 **Benchmarks against full MHD.** Reduced and full JOREK agree within 5% on
 peeling–ballooning growth rates (JET-like X-point, with and without
@@ -226,7 +285,9 @@ within about 5% on the nonlinear $2/1$ tearing mode at $S=10^6$
 ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §4.4–4.5, Figs. 20–22).
 In the [NSTX VDE benchmarks](/benchmarks/nstx-vde-benchmarks.md) reduced
 JOREK matches the full-MHD codes except for the $I_p$ asymmetry
-([Artola et al. (2021)](/sources/artola-2021.md), §4.1.6). JOREK's
+([Artola et al. (2021)](/sources/artola-2021.md), §4.1.6); these VDE
+benchmarks are the stated basis for using reduced MHD to compute ITER wall
+forces ([Artola et al. (2022)](/sources/artola-2022.md), §2). JOREK's
 energetic-particle work on the AUG-NLED case uses reduced MHD "as results
 agree with full MHD while computational costs are lower", without showing
 the comparison ([Bogaarts et al. (2022)](/sources/bogaarts-2022.md),
@@ -257,7 +318,33 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
   The sign of the bracket term depends on orientation conventions (JOREK
   states COCOS 8; the other sources do not state theirs). A published
   correction, or the code's own documentation, would settle the
-  printed form.
+  printed form. Chunk 2 adds four sources on the diffusive side:
+  [Nardon et al. (2023b)](/sources/nardon-2023-b.md), Eq. 1, prints
+  $+\eta(j-j_0)$, $-F_0\partial_\phi u$ and $+R[\psi,u]$ with $j=\Delta^*\psi$;
+  [Hu et al. (2021)](/sources/hu-2021.md), Eq. 3, and
+  [Hu et al. (2023)](/sources/hu-2023.md), Eq. 5, print
+  $+\eta(T_e)\Delta^*\psi-F_0\partial_\phi u$; and the stellarator form of
+  [Ramasamy et al. (2024)](/sources/ramasamy-2024.md), Eq. 7, prints
+  $+\eta(j-j_{\rm source})$ with $j=\Delta^*\psi_\chi$ together with a
+  hyper-resistive term $-\nabla\cdot(\eta_h\nabla^\perp j)$, both of the
+  diffusive sign and both opposite to Nikulsin et al. (2022), Eq. 3d. The
+  printed record now stands at two sources against six. Ramasamy et al. share
+  authors with Nikulsin et al. but do not comment on the sign change, so this
+  is evidence for the slip reading, not an explicit supersession.
+* **Viscous term of the vorticity equation.** *Open.*
+  [Hu et al. (2021b)](/sources/hu-2021-b.md), Eq. 12, and
+  [Hu et al. (2021)](/sources/hu-2021.md), Eq. 7, print
+  $R\,\nu_\perp\nabla^2_{\rm pol}\varpi$ (as on this page);
+  [Hu et al. (2023)](/sources/hu-2023.md), Eq. 8, and
+  [Hu et al. (2024)](/sources/hu-2024.md), Eq. 5, print
+  $R^3\nu_\perp(T_e)\nabla^2_{\rm pol}\varpi$ in an otherwise identical
+  equation, and Hu et al. (2024) state that their equations are those of
+  Hu et al. (2023) "without modifications". The pressureless form of
+  [Nardon et al. (2023b)](/sources/nardon-2023-b.md), Eq. 2, divided by $R$
+  relative to this page, carries $\nu\Delta\varpi$, which corresponds to the
+  $R$ form (compiler's check; the operator $\Delta$ is not defined there).
+  Either the JOREK implementation changed between papers or one form is a
+  misprint; none of the sources comments.
 
 # Citations
 
@@ -272,3 +359,11 @@ exceeds the 2D solve by about 1% at $n=20$ and about 36% at $n=5$
 * [Bandaru et al. (2024)](/sources/bandaru-2024.md) — JOREK reduced equations with runaway electrons.
 * [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — use of reduced MHD for energetic-particle modes.
 * [Liu et al. (2024)](/sources/liu-2024.md) — GMEC reduced MHD coupled to energetic particles.
+* [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — pressureless two-field variant, helicity dissipation, resistive sign.
+* [Hu et al. (2021)](/sources/hu-2021.md) — two-temperature impurity variant, resistive sign, viscous term.
+* [Hu et al. (2023)](/sources/hu-2023.md) — two-temperature collisional-radiative variant, kink limitation, viscous term.
+* [Hu et al. (2024)](/sources/hu-2024.md) — vorticity equation and the $[p,R^2]$ plasmoid drive.
+* [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — resistive sign, $v_\parallel$ and compressional error, kink limitation.
+* [Cathey et al. (2024)](/sources/cathey-2024.md) — diamagnetic and bootstrap extension.
+* [Kong et al. (2025)](/sources/kong-2025.md) — shear Alfvén propagation in reduced MHD.
+* [Artola et al. (2022)](/sources/artola-2022.md) — validity basis for wall forces.

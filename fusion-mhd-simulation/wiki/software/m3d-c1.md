@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "M3D-C1"
-description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) triangles in the poloidal plane and Hermite cubic elements toroidally, scalar-potential representations of the field and flow, split-implicit time stepping, a meshed vacuum and thick resistive conductors inside the domain, stellarator geometry and a bootstrap-current closure; benchmarked against CLT, JOREK and NIMROD."
+description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) triangles in the poloidal plane and Hermite cubic elements toroidally, scalar-potential representations of the field and flow, split-implicit time stepping, a meshed vacuum and thick resistive conductors inside the domain, stellarator geometry, a bootstrap-current closure and a fluid runaway-electron model advanced by characteristics; benchmarked against CLT, JOREK and NIMROD and applied to W7-X sawtooth-like crashes and resistive-wall tearing."
 status: established
 aliases: [M3D-C^1]
 tags: [code, mhd, full-mhd, extended-mhd, reduced-mhd, tokamak, stellarator, finite-elements, time-integration, wall, bootstrap-current, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # M3D-C1
@@ -47,7 +47,22 @@ built on it is [M3D-C1-K](/software/m3d-c1-k.md).
   [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.7).
 * **Runaway electrons.** A fluid runaway model coupled to MHD exists (Liu et
   al. 2021, cited by [Bandaru et al. (2024)](/sources/bandaru-2024.md), §I;
-  no comparison shown there).
+  no comparison shown there). [Liu et al. (2021)](/sources/liu-2021.md)
+  (§2–3) describe it directly: the runaway density is convected at a numerical
+  speed $c_{\rm RE}$ along $\mathbf b$ plus the $\mathbf E\times\mathbf B$ drift,
+  the runaway current (at the speed of light) is removed from the resistive
+  term of Ohm's law and the Ohmic heating, and $en_{\rm RE}\mathbf E$ enters the
+  momentum equation. The continuity equation is advanced not by the
+  Galerkin $\theta$-implicit matrix but by a method of characteristics with
+  pseudo particles at the quadrature points, pushed by a massless-limit Boris
+  scheme; see
+  [runaway-electron advection by characteristics](/methods/runaway-electron-advection-by-characteristics.md)
+  and [runaway-electron fluid model](/methods/runaway-electron-fluid-model.md).
+* **Stellarator single-fluid model.** Visco-resistive MHD in SI with constant
+  density, a full viscous stress with compressional viscosity, anisotropic
+  conduction, a Gaussian heat source and a fixed ECCD source current; two-fluid
+  and other effects "are not yet functional in stellarator geometry"
+  ([Zhou et al. (2023)](/sources/zhou-2023.md), §II).
 
 ## Discretization
 
@@ -68,7 +83,18 @@ built on it is [M3D-C1-K](/software/m3d-c1-k.md).
 * Stellarator domains use non-axisymmetric domain geometry (Zhou et al.
   2021, cited by Saxena et al. 2025, §2); M3D-C1 is among the codes extended
   to stellarators with full MHD on flux-surface-aligned grids
-  ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §I).
+  ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §I). For W7-X, the
+  VMEC mapping $R(s,\theta,\phi)$, $Z(s,\theta,\phi)$ defines a fixed-boundary
+  domain bounded by the last closed surface and does not evolve; $C^1$
+  elements are used in all three dimensions, with 3807 reduced-quintic
+  elements in the poloidal plane and 16 Hermite cubic elements per field
+  period (80 for the full torus), the toroidal resolution being set by the
+  strongly anisotropic heat transport ([Zhou et al. (2023)](/sources/zhou-2023.md),
+  §II–IV). Boundary conditions: ideal for $\mathbf B$, no-slip for $\mathbf v$,
+  fixed $p$.
+* Runaway runs use 6454 elements per plane and 16 toroidal planes, packed near
+  $q=2$; the runaway-loss fraction converges only with at least 16 planes
+  ([Liu et al. (2021)](/sources/liu-2021.md), §3, §5.3, Fig. 14).
 
 ## Time integration and solvers
 
@@ -85,9 +111,27 @@ built on it is [M3D-C1-K](/software/m3d-c1-k.md).
 * A "2D-complex" version solves a single toroidal harmonic for linear runs;
   the 3D version runs nonlinearly (Zhang et al. 2021, §2).
 * Finite-element matrices are built and solved on CPUs with MPI domain
-  decomposition (Liu et al. 2022, §5). No linear-solver or preconditioner
-  details are given in the cited sources. See
+  decomposition (Liu et al. 2022, §5). The sparse Galerkin systems are
+  solved by GMRES with a block-Jacobi preconditioner; with strong toroidal
+  advection ($c_{\rm RE}\gg v_A$) the toroidal derivative couples the
+  per-plane blocks and "can dominate the matrix" at Alfvénic time steps,
+  which motivated the characteristics scheme
+  ([Liu et al. (2021)](/sources/liu-2021.md), §2–3). In the kinetic-ion
+  extension the GPUs compute the MHD matrix elements while the CPUs solve the
+  matrices with PETSc ([Liu et al. (2022b)](/sources/liu-2022-b.md), §6; see
+  [M3D-C1-K](/software/m3d-c1-k.md)). See
   [implicit time integration](/methods/implicit-time-integration.md).
+* The semi-implicit MHD advance is stated to help stabilize the numerical
+  instabilities that appear once kinetic ions are included, and to allow
+  large time steps (no evidence shown)
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §1, §7).
+* The W7-X runs use $\Delta t=0.573\,\mu$s; lower dissipation needs better
+  preconditioners ([Zhou et al. (2023)](/sources/zhou-2023.md), §III, §V).
+* **GPU.** The runaway pseudo-particle push runs on GPUs: one advance of the
+  runaway equation takes 126 s with the $\theta$-implicit solve and 39 s with
+  characteristics on 32 POWER9 CPUs, and 3.8 s with characteristics on 96 V100
+  GPUs (Summit), a comparison that is not like-for-like in hardware
+  ([Liu et al. (2021)](/sources/liu-2021.md), §3, Fig. 1).
 
 ## Walls and boundaries
 
@@ -131,6 +175,17 @@ neoclassical references, VMEC and SIMSOPT supply stellarator equilibria
   §4.8).
 * **Impurities.** In the [DIII-D gas-injection benchmark](/benchmarks/diii-d-mgi-impurity-benchmark.md)
   M3D-C1 and NIMROD "follow each other rather well" (Hu et al. 2021b, §6.1).
+* **Resistive-wall tearing, linear.** On a DIII-D locked-mode reconstruction
+  the $(2,1)$ mode is unstable with a resistive wall and stable with an ideal
+  wall, with $\gamma\tau_A\propto(\tau_w/\tau_A)^{-2/3}$ at large wall time,
+  fitted by a cylindrical dispersion relation
+  ([Strauss et al. (2022)](/sources/strauss-2022.md), §II, Fig. 2; see
+  [resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md)).
+* **Runaway-electron $(2,1)$ mode.** The mode structure agrees with MARS-F
+  (no curve overlaid); the linear growth rate is insensitive to $c_{\rm RE}$
+  above $4v_A$ (within about 11%), while the nonlinear saturation is not
+  ([Liu et al. (2021)](/sources/liu-2021.md), §5.2–5.3; see
+  [MARS-F](/software/mars-f.md)).
 * **Bootstrap.** On the CIRC1 tokamak case the M3D-C1 Sauter profile peak
   is within 2.18 % of NEO's Sauter model and within 0.04 % of XGCa; the
   M3D-C1 Redl peak is within 2.12 % of XGCa and 1.01 % of SFINCS (Saxena et
@@ -148,7 +203,14 @@ $\langle\beta\rangle=2.5\,\%$, where the bootstrap closure sustains the
 toroidal current against resistive decay and slows the breakup of edge
 surfaces, while kinetic-energy growth still rises with resistivity (36
 toroidal planes, $1.88\times10^5$ 3D elements) (Saxena et al. 2025, §3.3,
-Figs. 5–7).
+Figs. 5–7); the first nonlinear transport-time-scale simulations of
+ECCD-driven [sawtooth-like crashes](/definitions/sawtooth-crash.md) in full
+W7-X geometry, which match the measured crash amplitude and inversion radius
+but are about ten times too slow ([Zhou et al. (2023)](/sources/zhou-2023.md),
+§IV); and the termination of a DIII-D runaway plateau by a $(2,1)$ mode,
+with more than 95% runaway loss in about 0.06 ms to the lower high-field-side
+wall ([Liu et al. (2021)](/sources/liu-2021.md), §5.3; see
+[runaway electrons](/definitions/runaway-electrons.md)).
 
 ## Limitations
 
@@ -161,6 +223,17 @@ Figs. 5–7).
 * M3D-C1's 3D VDE growth and saturation lag JOREK and NIMROD by about
   0.1–0.2 ms in the figures, not discussed by the authors (Artola et al.
   2021, Figs. 3, 5, 8).
+* In stellarator geometry only the single-fluid model works, the coordinate
+  mapping is fixed in time, and the boundary is fixed
+  ([Zhou et al. (2023)](/sources/zhou-2023.md), §II–III, §V).
+
+## Contradictions
+
+* **Ohmic heating with a source current.** *Open.* Saxena et al. (2025,
+  App. C) print $\eta\,\mathbf J\cdot(\mathbf J-\mathbf J_x)$; Zhou et al.
+  (2023, Eqs. 2–3) print $\eta J^2$ with $\eta(\mathbf J-\mathbf J_x)$ in Ohm's
+  law for the same code. Recorded in full on
+  [visco-resistive MHD model](/methods/visco-resistive-mhd-model.md).
 
 # Citations
 
@@ -173,3 +246,7 @@ Figs. 5–7).
 7. [Isernia et al. (2023)](/sources/isernia-2023.md) — §I.
 8. [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §I.
 9. [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §I.
+10. [Liu et al. (2021)](/sources/liu-2021.md) — §§2–5, Figs. 1, 5–14.
+11. [Zhou et al. (2023)](/sources/zhou-2023.md) — §§II–V.
+12. [Strauss et al. (2022)](/sources/strauss-2022.md) — §II, Fig. 2.
+13. [Liu et al. (2022b)](/sources/liu-2022-b.md) — §6.

@@ -5,7 +5,7 @@ description: "Discrete shear-Alfvén eigenmode in the toroidicity-induced gap be
 status: established
 aliases: [TAE, toroidicity-induced Alfvén eigenmode, gap mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Toroidal Alfvén eigenmode (TAE)
@@ -44,6 +44,18 @@ footnote 1).
   $\tau_A=R_0/v_A$ on axis. $\gamma$ is linear in $\beta_h$, with threshold
   $\beta_{h}\approx0.0019$, in agreement with M3D-K
   ([Liu et al. (2024)](/sources/liu-2024.md), §III B, Figs. 8–11).
+- **$n=6$, MEGA chirping case.** A circular, uniform-density plasma with
+  linear $q$ from 1.0 to 1.3 and aspect ratio 3.2: the TAE is dominated by
+  $m=6,7$ near the first gap at $r/a\approx0.26$, where $q=(2m+1)/2n$, the
+  same condition as above. It sits above the lower tip of the gap with
+  $\omega/\omega_A=0.4553$ ($\omega_A=v_A/R_0$ on axis). The net growth rate
+  is linear in $\beta_h$; its extrapolation to $\beta_h=0$ gives the
+  background damping $\gamma_d/\omega_A=0.0053$, hence the drive
+  $\gamma_l/\omega_A=0.012$ and $\gamma_l/\omega=2.64\%$
+  ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §4.1, Figs. 1, 3).
+  Nonlinearly it chirps both up and down, and the chirping frequencies
+  leave the gap into the shear-Alfvén continuum (see
+  [frequency chirping](/definitions/energetic-particle-mode.md)).
 - **Late $m=2,3$ mode in the NLED-AUG case.** In the
   [NLED-AUG benchmark](/benchmarks/nled-aug-benchmark.md) a subdominant
   external TAE appears late, at $s\approx0.4$, dominated by $m=2,3$. It is
@@ -63,7 +75,16 @@ $\omega=k_\parallel v_{\parallel p}$, with the sideband form
 $\omega\approx(v_{\parallel p}/R)\,[n-(m+\ell)/q]$ for integer $\ell$
 ([Liu et al. (2024)](/sources/liu-2024.md), Eq. 35; $\ell$ is written $p$
 there). GMEC verifies the scaling of the resonant-island width with the
-square root of the wave amplitude. The analytic slope is
+square root of the wave amplitude. In action-angle form, the resonance is
+$\omega=n\omega_{\tilde\zeta}+\ell_{\mathrm r}\omega_{\tilde\theta}$ with
+toroidal and poloidal transit frequencies and integer $\ell_{\mathrm r}$;
+for the $n=6$ MEGA case co-passing EPs resonate at $\ell_{\mathrm r}=-m$ and
+counter-passing ones at $\ell_{\mathrm r}=-(m+1)$
+([Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §4.2, Eq. 25, citing
+Todo & Sato 1998). For passing particles, with
+$\omega_{\tilde\theta}\approx v_{\parallel p}/(qR)$ and
+$\omega_{\tilde\zeta}\approx v_{\parallel p}/R$, this is the sideband form
+above with $\ell_{\mathrm r}=-(m+\ell)$ (compiler's reading). The analytic slope is
 $1.2558\times10^{-3}$ and the fitted slope $1.1409\times10^{-3}$, a 9% gap
 the paper calls "consistent" (§III A, Fig. 7). On the ITPA case JOREK
 finds the dominant resonance at $v_{\parallel p}=v_A/3$, in agreement with
@@ -97,3 +118,4 @@ $t=0.7$ s are TAEs.
 - [Liu et al. (2024)](/sources/liu-2024.md): the $n=3$ and $n=6$ TAEs in GMEC, the resonance condition and island width.
 - [Vlad et al. (2025)](/sources/vlad-2025.md): the late external TAE in NLED-AUG and the two-harmonic criterion.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md): antenna-excited TAEs in JET X-point geometry.
+- [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): the chirping $n=6$ TAE in MEGA, damping by extrapolation to $\beta_h=0$, the action-angle resonance.

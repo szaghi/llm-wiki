@@ -5,7 +5,7 @@ description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicol
 status: established
 aliases: [theta-xi scheme, Gear scheme, BDF2, Crank–Nicolson, linearized implicit scheme, block-Jacobi preconditioner, toroidal-harmonic preconditioner, mode groups]
 tags: [time-integration, linear-solver, numerics, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Implicit time integration and preconditioned Krylov solvers for nonlinear MHD
@@ -93,6 +93,19 @@ $\Delta t$ repeatedly between 0.1 and 5 normalized units (§4.3.1).
   speeds up convergence, and a spectral analysis of original and
   preconditioned systems was made
   ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §5).
+- **Mode groups in stellarators.** In JOREK3D the mode-group preconditioner
+  couples adjacent harmonics of the same toroidal mode family; it "has been
+  important for making simulations computationally manageable", and in more
+  optimized configurations the coupling stays strong into the second and
+  third sidebands, so stellarator runs remain costlier than tokamak runs
+  ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.4).
+- **A failure mode of block-Jacobi.** In M3D-C1 the runaway-electron
+  continuity equation, convected along $\mathbf b$ at a speed far above
+  $v_A$, puts its toroidal derivative into off-diagonal blocks that "can
+  dominate the matrix" at Alfvénic steps, so GMRES with the per-plane
+  block-Jacobi preconditioner is ill-conditioned. Liu et al. replace that
+  equation by a method of characteristics outside the implicit system
+  ([Liu et al. (2021)](/sources/liu-2021.md), §3).
 - **Parallel layout.** The number of MPI tasks is a multiple of the number of
   harmonics; rank 0 carries I/O and the $n=0$ block; the ELM case of JT-60SA
   reaches about 50% strong-scaling efficiency from 16 to 160 nodes
@@ -115,6 +128,9 @@ $\Delta t$ repeatedly between 0.1 and 5 normalized units (§4.3.1).
 | M3D-C1 | $\theta$-implicit | 1.0 $t_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
 | M3D-C1 | split-implicit, steps beyond the Alfvénic scale for transport-time runs | — | [Saxena et al. (2025)](/sources/saxena-2025.md), code description |
 | [NIMROD](/software/nimrod.md) | [semi-implicit leapfrog](/methods/semi-implicit-leapfrog.md) | flow-CFL adapted | [Artola et al. (2021)](/sources/artola-2021.md), §2–3 |
+| JOREK, AUG EDA H-mode | implicit (scheme not restated) | one JOREK time unit, $\sqrt{\mu_0\rho_0}=0.6687\,\mu$s, halved at times in the nonlinear phase "to improve convergence of the iterative solver" | [Cathey et al. (2023)](/sources/cathey-2023.md), §2.2 |
+| M3D-C1 with runaway electrons | split $\theta$-implicit (momentum, then plasma and RE densities, then field and pressure), GMRES with block-Jacobi; RE density by characteristics with subcycles | 0.65 µs (benchmark) | [Liu et al. (2021)](/sources/liu-2021.md), §2–3 |
+| MIPS and MEGA (kinetic thermal ions) | explicit RK4 for fluid and particles, finite differences | not stated | [Sato et al. (2024)](/sources/sato-2024.md), §2 |
 | [CLT](/software/clt.md) | explicit RK4 | $\approx8.5\times10^{-3}\,t_A$ | [Zhang et al. (2021)](/sources/zhang-2021.md), §2 |
 | [GMEC](/software/gmec.md) | explicit RK4; resistive and numerical-diffusion terms implicit | 0.05–0.2 $R_0/v_A$ | [Jiang et al. (2024)](/sources/jiang-2024.md), §IV D, §IX |
 | [BOUT++](/software/bout-plus-plus.md) | BDF through CVODE (SUNDIALS) | — | [Seto et al. (2023)](/sources/seto-2023.md), §2 |
@@ -134,6 +150,15 @@ terms "to maintain the highest order accuracy"
 ([Korving et al. (2023)](/sources/korving-2023.md), §IV C). The
 [atomic-source splitting](/methods/operator-splitting-of-atomic-sources.md)
 page treats the alternative.
+
+Implicitness does not lift the cost of resolving the physics. In ITER
+pedestal runs the "small Alfven-like time steps needed … even with a fully
+implicit scheme" restrict the simulated time to a few tens of ms, against an
+energy confinement time above 3 s
+([Becoulet et al. (2022)](/sources/becoulet-2022.md), §7). Cathey et al.
+(2023, §2.2) add that the MHD model itself requires mode frequencies far
+below the ion cyclotron frequency, so a step much shorter than one JOREK
+time unit would not make faster physics valid.
 
 ## Qualifications
 
@@ -174,3 +199,8 @@ settle it.
 - [Vlad et al. (2025)](/sources/vlad-2025.md) — §3, §6.
 - [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — §II.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §II A.
+- [Becoulet et al. (2022)](/sources/becoulet-2022.md) — §7.
+- [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.4.
+- [Liu et al. (2021)](/sources/liu-2021.md) — §2–3.
+- [Sato et al. (2024)](/sources/sato-2024.md) — §2.

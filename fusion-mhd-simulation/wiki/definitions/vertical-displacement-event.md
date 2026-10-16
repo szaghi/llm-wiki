@@ -5,7 +5,7 @@ description: "A vertical displacement event is the axisymmetric vertical instabi
 status: established
 aliases: [VDE, hot VDE, cold VDE, asymmetric VDE, vertical instability]
 tags: [disruption, vde, wall, free-boundary, kink, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Vertical displacement event (hot and cold VDE)
@@ -63,6 +63,18 @@ The two classes differ by the order of thermal quench and displacement.
   plateau until full termination; a runaway beam slows the current decay
   and the VDE, which is faster without it
   ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.B).
+- **Fast-CQ limit.** When the current quench is much faster than the wall
+  time, $q_a\propto1/I_p$ rises because $I_p$ decays faster than the plasma
+  moves, although elongated plasmas still drift on the CQ time scale; the
+  edge safety factor is therefore set by the competition of the vertical
+  position and $I_p$ ([Artola et al. (2022)](/sources/artola-2022.md), §1,
+  citing Kiramov & Breizman 2018). In 3D ITER mitigated CQs with
+  $\tau_{\mathrm{CQ}}\approx46$ ms against $\tau_w\approx500$ ms, $q_{95}$
+  stays at 3–4, no 1/1 mode appears and no sideways force develops; one
+  case drifts up, the other down after a fast drop of $l_i(3)$, consistent
+  with the large-$l_i$-drop downward displacements of earlier ITER studies
+  (§4.1–4.2, §5). The vertical wall force of such events peaks on the wall
+  time after $I_p$ has vanished ([wall forces](/definitions/wall-forces.md)).
 
 ## Edge safety factor and the 3D phase of a hot VDE
 
@@ -135,3 +147,4 @@ changes the whole evolution ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.1.
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §IV, §VI.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.
+- [Artola et al. (2022)](/sources/artola-2022.md), §1, §4.1–4.2, §5.

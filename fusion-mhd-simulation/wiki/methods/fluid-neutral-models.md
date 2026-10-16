@@ -5,7 +5,7 @@ description: "Fluid treatments of atomic neutrals in MHD codes, from a single di
 status: established
 aliases: [diffusive neutral model, plasma-neutral model, Meier–Shumlak model, neutral fluid]
 tags: [neutrals, edge, divertor, mhd, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Fluid neutral models and plasma–neutral atomic sources
@@ -99,6 +99,28 @@ MHD model had no neutrals (§2.12).
   from the boundary and flattens $T_e$ step by step
   ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §III.B, Fig. 2b).
 
+**Neutral sources as ablation clouds.** [Kong et al. (2025)](/sources/kong-2025.md)
+(§2) use JOREK reduced MHD with parallel flow and the fluid-neutral
+extension as a stand-in for a pellet ablation cloud.
+
+- **Source.** A transient Gaussian D$_2$ neutral source of 0.05 μs sits on
+  the low-field-side midplane of a JET H-mode, with rates of
+  $2\times10^{26}$ to $10^{28}$ atoms/s, i.e. $10^{19}$ to $5\times10^{20}$
+  atoms. The default half-$e^{-1}$ widths are 0.5 rad toroidally and 4 cm
+  poloidally and radially.
+- **Assimilation.** The neutrals ionize within about 0.1–0.2 μs, and the
+  plasmoid $T_e$ re-equilibrates to about 3.3 keV for rates up to
+  $1.4\times10^{27}$ atoms/s. At $10^{28}$ atoms/s it drops to about 1 keV by
+  dilution cooling.
+- **Use.** The resulting high-pressure plasmoid is the object of the
+  [plasmoid-drift](/definitions/plasmoid-drift.md) study.
+- **Kinetic option.** Kinetic full-$f$ neutrals are available in JOREK but
+  were not used.
+
+In the SPI studies with the CR impurity model, background-species
+(hydrogenic) neutrals are ionized instantly, so no neutral field is evolved
+([Hu et al. (2023)](/sources/hu-2023.md), §2.1).
+
 ## Full neutral fluid (NIMROD, Meier–Shumlak model)
 
 [Taheri et al. (2022)](/sources/taheri-2022.md) (§2, Eqs. 1–15) evolve
@@ -128,3 +150,5 @@ variants) is on
 - [Taheri et al. (2022)](/sources/taheri-2022.md) — §2, Eqs. 1–17; §3.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §II, Eqs. 2.7–2.11; §III.B.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.6, §2.12, §4.6.
+- [Kong et al. (2025)](/sources/kong-2025.md) — §2, §3.1.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §2.1.

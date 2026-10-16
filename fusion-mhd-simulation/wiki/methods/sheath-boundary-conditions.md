@@ -5,7 +5,7 @@ description: "Boundary conditions for MHD codes where field lines intersect a ma
 status: established
 aliases: [Bohm boundary condition, sheath BC, Bohm–Chodura condition, sheath heat transmission]
 tags: [edge, divertor, wall, mhd, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Sheath (Bohm) boundary conditions
@@ -34,6 +34,16 @@ The plasma enters the sheath at (at least) the sound speed $c_s$:
   $\mathbf v\cdot\mathbf n=\pm\sqrt{\Gamma T}$ in normalized units with $T$ the
   total temperature ([Bhole et al. (2023)](/sources/bhole-2023.md), p. 9,
   "Mach-1").
+
+In the reduced-MHD pedestal runs without a parallel momentum source, the
+Mach-1 condition at the simplified divertor targets is the only source of
+$v_\parallel$, and the axisymmetric phase is run until the parallel and
+poloidal flows it drives are established
+([Cathey et al. (2024)](/sources/cathey-2024.md), §3.1 fn. 9, §4;
+[Cathey et al. (2023)](/sources/cathey-2023.md), §2.2, where the parallel
+and poloidal flows saturate after about 1 ms). The ITER RMP runs apply the
+Bohm conditions on the velocity and on the normal heat flux at the targets
+([Becoulet et al. (2022)](/sources/becoulet-2022.md), §2).
 
 The JOREK outlook lists outflows with Mach numbers larger than one as a
 planned refinement ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
@@ -93,6 +103,29 @@ al. read the ITER target profiles ([Korving et al. (2023)](/sources/korving-2023
   [fluid](/methods/fluid-neutral-models.md) and
   [kinetic](/methods/kinetic-neutral-model.md) neutral models.
 
+## Diagnostics are not the boundary condition
+
+For divertor footprints, Becoulet et al. (2022, §7) evaluate the normal heat
+flux as $T\,n_e\,\mathbf v\cdot\mathbf n$ with $T=T_e+T_i$, without a
+transmission factor, and rescale it to an assumed stationary 50 MW into the
+divertor. This is a post-processing estimate, not the sheath condition that
+the simulation imposes.
+
+## Where sheath conditions are not used
+
+The JOREK–STARWALL simulations of ITER current quenches impose Dirichlet
+conditions at the plasma–wall interface instead: $n_e=10^{20}$ m$^{-3}$,
+$T_e=1$ eV, $\mathbf v\cdot\mathbf n=0$ and $v_\parallel=0$. The condition
+$\mathbf v\cdot\mathbf n=0$ is equivalent to an ideal poloidal wall
+($\Phi=0$), so convection removes no energy or particles at the boundary and
+heat leaves only by conduction; the scrape-off layer still heats to
+10–15 eV. The authors name sheath conditions, with Ohmic heating,
+impurities, radiation and neutrals, among the scrape-off-layer physics needed
+to treat halo currents limited by a cold halo
+([Artola et al. (2022)](/sources/artola-2022.md), §3, §4.4). The AUG
+pedestal runs use simplified targets and call the resulting scrape-off-layer
+radial electric field "unrealistic" (Cathey et al. 2023, §2.2).
+
 ## Sensitivity
 
 In ASDEX Upgrade hot-VDE validation, the simulated $I_p$, halo current and
@@ -109,3 +142,7 @@ affects the evolution ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
 - [Bhole et al. (2023)](/sources/bhole-2023.md) — p. 9.
 - [Korving et al. (2023)](/sources/korving-2023.md) — §V E, §VI B–C.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.1, Figs. 5–6.
+- [Becoulet et al. (2022)](/sources/becoulet-2022.md) — §2, §7.
+- [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2.
+- [Cathey et al. (2024)](/sources/cathey-2024.md) — §3.1, §4.
+- [Artola et al. (2022)](/sources/artola-2022.md) — §3, §4.4.

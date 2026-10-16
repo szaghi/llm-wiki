@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Particle pushers: Boris, slow-manifold Boris, guiding-centre and gyrokinetic"
-description: "Orbit integrators that advance the markers of the kinetic modules attached to MHD codes: the full-orbit Boris scheme, its slow-manifold variant for Pauli particles with time steps above the gyro-period, RK4 and variational guiding-centre integrators, and gyrokinetic gyrocentre equations with N-point gyroaverages, with their conservation properties as measured in this bundle's sources."
+description: "Orbit integrators that advance the markers of the kinetic modules attached to MHD codes: the full-orbit Boris scheme, its slow-manifold variant for Pauli particles with time steps above the gyro-period, its massless limit for tracing runaway-electron characteristics, RK4 and variational guiding-centre integrators, and gyrokinetic gyrocentre equations with N-point gyroaverages, with their conservation properties as measured in this bundle's sources."
 status: established
 aliases: [Boris pusher, Boris–Buneman, slow manifold Boris, guiding-centre pusher, gyrocentre pusher, orbit integrator]
 tags: [particles, energetic-particles, hybrid-kinetic, numerics, time-integration, gpu]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Particle pushers: Boris, slow-manifold Boris, guiding-centre and gyrokinetic
@@ -95,6 +95,22 @@ form is written here.
 - **Proposed use.** Liu et al. propose the scheme for
   [runaway electrons](/definitions/runaway-electrons.md) (§7).
 
+### Massless limit for runaway-electron characteristics
+
+[Liu et al. (2021)](/sources/liu-2021.md) (§4, Eqs. 15–19) trace the
+characteristics of the M3D-C1 runaway-electron density with a "modified
+Boris algorithm". They subtract $\mathbf v_E$ before the rotation and add
+it back after. In the limit $m\to0$ the rotation becomes a reflection that
+keeps the velocity component along $\mathbf b$ and reverses the
+perpendicular one. The scheme uses the same RK4 bootstrap and runs at a 4×
+smaller step than RK4, as in the slow-manifold test above.
+
+In a static DIII-D field it keeps the total runaway current within about 1%
+over 0.2 ms, where RK4 drifts by about 20%. The flux error of a single tracer
+stays bounded, while RK4's grows secularly (Fig. 2, read off the plot). The
+equations and the root selection are on
+[advection by characteristics](/methods/runaway-electron-advection-by-characteristics.md).
+
 ## Guiding-centre (drift-kinetic) integration
 
 The drift-kinetic guiding-centre equations follow from Littlejohn's
@@ -177,12 +193,13 @@ growth rate in both M3D-C1-K and GMEC
 
 ## Contradictions
 
-None on the integrators themselves. The two characterisations of RK4 are
+None on the integrators themselves. The three characterisations of RK4 are
 consistent. Liu et al. (2022) report bounded slow-manifold Boris errors
-against secular RK4 errors over 2 s. Hoelzl et al. (2021) report the
-variational guiding-centre integrator beating RK4 only beyond about
-0.1 s. Both describe long-time secular drift of a non-structure-preserving
-integrator.
+against secular RK4 errors over 2 s. Liu et al. (2021) report the same
+contrast for massless runaway tracers over 0.2 ms at equal cost. Hoelzl et
+al. (2021) report the variational guiding-centre integrator beating RK4 only
+beyond about 0.1 s. All three describe long-time secular drift of a
+non-structure-preserving integrator.
 
 # Citations
 
@@ -191,4 +208,5 @@ integrator.
 - [Bogaarts et al. (2022)](/sources/bogaarts-2022.md): the full-orbit EP push and its time-step convergence.
 - [Korving et al. (2023)](/sources/korving-2023.md): the Boris pusher for kinetic neutrals.
 - [Liu et al. (2024)](/sources/liu-2024.md): gyrokinetic RK4 push, 4-point gyroaverage in field-aligned coordinates, orbit verification.
+- [Liu et al. (2021)](/sources/liu-2021.md): the massless-limit Boris integrator for runaway characteristics and its conservation test (§4, Fig. 2).
 - [Vlad et al. (2025)](/sources/vlad-2025.md): the HYMAGYC, MEGA, ORB5 and XTOR-K pushers; the FLR effects in Table 2.

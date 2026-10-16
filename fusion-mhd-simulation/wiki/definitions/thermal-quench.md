@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Thermal quench"
-description: "The thermal quench is the disruption phase in which the plasma loses most of its thermal energy, by parallel transport along stochastic field lines opened by MHD modes, by impurity radiation, or both; its duration (0.1 ms in NSTX to about 20 ms predicted for unmitigated ITER) is sensitive to parallel heat conduction, impurity atomic model, boundary conditions and numerical stabilization."
+description: "The thermal quench is the disruption phase in which the plasma loses most of its thermal energy, by parallel transport along stochastic field lines opened by MHD modes (external kinks, resistive-wall tearing modes, the 1/1 kink or tearing cascades after injection), by impurity radiation, or both; its duration (0.1 ms in NSTX, about 20 ms predicted for unmitigated ITER VDEs, 75–125 ms proposed for ITER locked-mode disruptions) is sensitive to parallel heat conduction, impurity atomic model, boundary conditions and numerical stabilization."
 status: established
 aliases: [TQ, radiative collapse, thermal collapse]
 tags: [disruption, impurities, mhd, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Thermal quench
@@ -47,6 +47,23 @@ $\kappa_\parallel$ by 10 shortens the JOREK TQ from 0.14 to 0.043 ms, a
 factor ≈3, while the peak wall forces stay similar
 ([Artola et al. (2021)](/sources/artola-2021.md), §4.3.2, Fig. 13).
 
+**Locked-mode TQ by a resistive-wall tearing mode.** In DIII-D shot 154576
+the TQ lasts ≈2.5 ms, about half the 5 ms wall time, and in JET pulse 81540
+≈1.5 ms, 0.3 of the wall time
+([Strauss et al. (2022)](/sources/strauss-2022.md), §I, Fig. 1). Strauss et
+al. attribute it to a (2,1)
+[resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md),
+stable with an ideal wall: nonlinear [M3D](/software/m3d.md) runs give a
+complete TQ by parallel transport along the stochastized field, with
+$\tau_{\mathrm{TQ}}\approx3.4/\gamma$, tracking the parallel transport time
+$a^2/(\kappa_\parallel b_n^2)$ ($b_n$ the normalized normal field
+perturbation at the wall), and $\tau_{\mathrm{TQ}}\approx\tau_w/2$ at the
+experimental wall Lundquist number (§III, Eq. 6, Fig. 4b). The TQ time is
+then set by the mode growth, hence by $\tau_w$, rather than by
+$\kappa_\parallel$ alone. A small drop of pressure from internal modes
+before the TQ resembles the minor precursor disruptions in JET and DIII-D
+(§III, interpretation).
+
 For ITER, unmitigated VDE simulations predict a significantly longer TQ, "in
 the range of 20 ms" ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.1).
 In dedicated ASDEX Upgrade VDE experiments, JOREK reproduces the onset point
@@ -85,6 +102,57 @@ with ergodization by 3/1 and 2/1 and later 1/1 structures as fragments
 cross $q=2$ ([Bhole et al. (2023)](/sources/bhole-2023.md), §4.3.1,
 Figs. 13–14).
 
+**Strong-cooling limit: argon SPI at q = 2.** In reduced-MHD argon SPI into
+a JET-like L-mode (pulse 85943 template, $q_0=0.98$), the $n=0$ current
+contraction follows the cooling front and forms a current sheet on it; 3/1
+and 2/1 modes grow as the front crosses $q=3$ and $q=2$ (2/1 from 1.72 ms),
+the 2/1 drives a 3/2 core mode nonlinearly (1.90 ms) and the field becomes
+globally stochastic, giving the TQ at ≈2.00 ms when the fragments reach
+$q=2$ ([Hu et al. (2021)](/sources/hu-2021.md), §3, Figs. 5–7), in
+qualitative agreement with JET SPI observations. The authors order two
+destabilization mechanisms by cooling strength: axisymmetric current
+contraction, on the time $\propto a^2/\eta$, dominates under strong
+cooling; helical cooling at each rational surface, on the time
+$\propto\delta l^2/\eta$ with $\delta l$ the cooled width, dominates under
+the mild dilution cooling of deuterium SPI (§3, §6, attributed reasoning).
+The core $T_e$ collapses more than 100 µs before the impurities mix into
+the core: at TQ onset edge field lines need more than 50 toroidal turns to
+connect to the core, and fast parallel conduction outruns parallel
+convection of the material (§3, Figs. 8, 10). The resulting hollow density
+is unfavourable for runaway-electron suppression (stated).
+
+**Large q < 1 region: TQ at q = 1.** In ITER L-mode targets with a broad
+$q\approx1$ core (7.5 MA, weakly reversed shear; and 15 MA with $q=1$ at
+normalized flux 0.3) the TQ, or core relaxation, is triggered when the
+vanguard fragments enter $q=1$ and destabilize the 1/1 kink, whose O-point
+coincides with the fragments ([Hu et al. (2021)](/sources/hu-2021.md),
+§4.1, Figs. 13–14; [Hu et al. (2023)](/sources/hu-2023.md), §3.1, Figs. 3–4).
+The 2/1 and 3/1 islands are too narrow to couple to core modes because of
+the strong edge shear (Hu et al. 2021, §4.1). The kink convects material
+deposited on or inside $q=1$ into the core, so mixed hydrogen–neon pellets,
+which penetrate deeper, give better core neon penetration than pure neon
+(same section). In the 15 MA case the axisymmetric current contraction
+plays a "minimal role", the region behind the front stays at $O(100)$ eV,
+and the fragments reach the core before the edge radiative collapse,
+especially at 500 m/s (Hu et al. 2023, §3.1–3.2); the TQ is gradual and
+multi-stage, with a stochastic transport barrier outside $q=1$ that breaks
+only when edge modes grow at ≈6 ms in the 200 m/s case (§3.3; see
+[electron temperature hole and the q = 1 barrier](/results/electron-temperature-hole.md)).
+Slower injection gives stronger radiative cooling and a larger MHD
+amplitude at the same penetration (§3.1–3.2). At ≈4.85 ms the thermal loss
+exceeds the radiated energy by 6 MJ, and by ≈6.4 ms 25 of 36 MJ are lost
+(§3.1, Fig. 5).
+
+**ITER H-mode dual SPI.** TQ times (90% → 20% of $W_{\mathrm{th}}$) of
+2.0 ms in a 370 MJ baseline H-mode and 4.2–4.4 ms in a 190 MJ degraded
+H-mode; in the baseline case with 1%-neon pellets
+[plasmoid drift](/definitions/plasmoid-drift.md) collapses the pedestal and
+loses more than 100 MJ before the fragments penetrate, with a radiated
+fraction of 49.4% against 86–90% in the degraded H-mode with 5%-neon pellets
+([Hu et al. (2024)](/sources/hu-2024.md), §3, Table 2, Fig. 7). The
+radiation asymmetry of these quenches and its wall load are on
+[radiation asymmetry](/definitions/radiation-asymmetry.md).
+
 **Radiative collapse.** In axisymmetric JOREK argon and neon gas injection
 into DIII-D, the collapse proceeds from the inside out with a hollow $T_e$
 and a thin current and temperature halo, followed by re-concentration of
@@ -115,13 +183,64 @@ the current (§III.B).
   impurity models.
 - **Temperature model.** A two-temperature model cools electrons faster
   than a single-temperature model, more markedly for neon
-  ([Hu et al. (2021b)](/sources/hu-2021-b.md), §5, Figs. 7–8).
+  ([Hu et al. (2021b)](/sources/hu-2021-b.md), §5, Figs. 7–8). In 3D ITER
+  SPI, $|T_e-T_i|$ reaches ≈2 keV in the core during the TQ: electrons are
+  flattened by parallel conduction while $T_i$ still shows the kink, so a
+  single-temperature model lets ions heat electrons artificially and
+  overestimates ablation ([Hu et al. (2021)](/sources/hu-2021.md), §4.2,
+  Fig. 15; the ablation consequence is stated, not tested).
+- **Parallel-conduction closure.** Braginskii $\kappa_\parallel\propto T_e^{5/2}$
+  lets electron temperature holes form in the fragment plume, which raise
+  the MHD response; a constant $\kappa_\parallel$ (the 500 eV value)
+  suppresses them, weakens the MHD and delays the rise of radiated power
+  ([Hu et al. (2023)](/sources/hu-2023.md), §3.2, §4.4, Figs. 11, 21–22).
+- **Viscosity.** Quoted from a NIMROD JET SPI study (McClenaghan et al.
+  2023, not ingested): reducing the viscosity from 2000 to 500 m²/s shortens
+  the TQ only from 2.9 to 2.6 ms ([Hu et al. (2024)](/sources/hu-2024.md),
+  §5), used there to argue a weak viscosity sensitivity across codes.
+- **Source width.** Toroidally elongated density sources reduce the
+  radiation and its peaking; see
+  [pellet ablation models](/methods/pellet-ablation-models.md).
 - **Numerical stabilization.** Shock capturing lets full-MHD SPI runs pass
   through the TQ with unchanged $W_{\mathrm{th}}$ and $I_p$ traces at moderate
   coefficients, but too strong a setting smears the dynamics, and the
   stronger sensor at low resistivity suppresses the TQ altogether
   ([Bhole et al. (2023)](/sources/bhole-2023.md), §4.3, Figs. 11, 19); see
   [shock-capturing artificial viscosity](/methods/shock-capturing-artificial-viscosity.md).
+
+## Contradictions
+
+**Trigger surface of impurity SPI — qualification.** The SPI-regimes
+paragraph above, after [Hoelzl et al. (2021)](/sources/hoelzl-2021.md)
+(§6.2.1), states that for slow shards the TQ "is usually triggered when
+shards reach $q=2$ (ASDEX Upgrade deuterium SPI, and any impurity SPI)".
+[Hu et al. (2021)](/sources/hu-2021.md) (§4.1, §6) and
+[Hu et al. (2023)](/sources/hu-2023.md) (§3.1, §5) find that neon or
+neon–hydrogen SPI into ITER L-mode triggers the TQ at $q=1$ through the 1/1
+kink, at 150 m/s as at 500 m/s, and attribute this to the large $q\approx1$
+region and the edge shear; Hu et al. (2021) find the $q=2$ trigger in their
+JET-like argon case, where there is almost no $q=1$ surface, and Hu et al.
+(2023, §5) state that without a large $q=1$ region the 2/1 or 3/2 modes
+"would dominate instead". The review cites Hu et al. (2021), so "any
+impurity SPI" is best read as "any impurity SPI without a large $q<1$
+region". Recorded as a qualification of the review's generalization; it
+closes only if the review's statement is shown to be restricted to its
+AUG-like profiles.
+
+**Duration of the ITER thermal quench — attributed contrast.**
+[Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.1) report JOREK
+predictions of ≈20 ms for the TQ of unmitigated ITER VDEs;
+[Strauss et al. (2022)](/sources/strauss-2022.md) (§V) project 75–125 ms
+(or 70 ms with an $S_{\mathrm{wall}}^{4/9}$ scaling) for ITER locked-mode
+disruptions driven by a resistive-wall tearing mode, from the ratio of TQ
+time to wall time in DIII-D and JET, and call ITER disruptions "more benign
+than previously predicted". The scenarios differ (VDE against locked mode)
+and so do the methods (ITER simulations against a two-machine scaling), so
+neither statement refutes the other; the projection also depends on an
+ITER wall time that is itself contested (see
+[disruption](/definitions/disruption.md), Contradictions). A JOREK or M3D
+run of an ITER locked-mode case with a resistive wall would test the
+scaling.
 
 ## Citations
 
@@ -132,3 +251,7 @@ the current (§III.B).
 - [Hu et al. (2021b)](/sources/hu-2021-b.md), §1, §4–6.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §III.
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §VI.
+- [Strauss et al. (2022)](/sources/strauss-2022.md), §I, §III, §V.
+- [Hu et al. (2021)](/sources/hu-2021.md), §3, §4.1–4.2, §6.
+- [Hu et al. (2023)](/sources/hu-2023.md), §3.1–3.3, §4.4, §5.
+- [Hu et al. (2024)](/sources/hu-2024.md), §3, §5, Table 2.

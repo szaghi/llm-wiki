@@ -5,7 +5,7 @@ description: "Code-to-code benchmark of a vertical displacement event of an NSTX
 status: established
 aliases: [NSTX VDE benchmark, 3D VDE benchmark, Krebs 2020 VDE benchmark]
 tags: [benchmark, verification, vde, disruption, wall, free-boundary]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)
@@ -108,6 +108,9 @@ the M3D-C1 growth and saturation of $n\ge1$ lag JOREK and NIMROD by
 (≈0.2 kJ JOREK, ≈0.37 kJ M3D-C1, ≈0.53 kJ NIMROD; Figs. 3, 5, 8).
 The benchmark is used in later JOREK work as the reference 3D VDE
 verification of JOREK–STARWALL ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.1).
+[Artola et al. (2022)](/sources/artola-2022.md) (§2) rest the validity of
+JOREK's reduced model for ITER current-quench wall forces on this
+benchmark and its axisymmetric parent.
 
 ## Contradictions
 
@@ -133,3 +136,4 @@ settling test on [reduced-MHD current asymmetry](/results/reduced-mhd-current-as
 - [Artola et al. (2021)](/sources/artola-2021.md), §1–5, Tables 1–2, Figs. 1–13.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §4.8, Figs. 26b, 28–29.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.1.
+- [Artola et al. (2022)](/sources/artola-2022.md), §2.

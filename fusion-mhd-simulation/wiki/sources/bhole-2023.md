@@ -257,7 +257,7 @@ run.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [Coronal-equilibrium impurity model](/methods/coronal-equilibrium-impurity-model.md)
@@ -266,6 +266,7 @@ Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
 * [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
 * [JOREK](/software/jorek.md)
+* [Pellet ablation and fragmentation models](/methods/pellet-ablation-models.md)
 * [Shattered pellet injection and massive material injection](/definitions/shattered-pellet-injection.md)
 * [Sheath (Bohm) boundary conditions](/methods/sheath-boundary-conditions.md)
 * [Shock-capturing artificial viscosity for MHD finite elements](/methods/shock-capturing-artificial-viscosity.md)

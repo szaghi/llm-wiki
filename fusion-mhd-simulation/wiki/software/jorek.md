@@ -5,7 +5,7 @@ description: "Fully implicit nonlinear extended-MHD code for tokamak X-point pla
 status: established
 aliases: [JOREK 2]
 tags: [code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # JOREK
@@ -36,6 +36,37 @@ fast magnetosonic waves, and fails for pressure-driven internal kinks at
 finite $\beta$ through a spurious stabilizing term (Hoelzl et al. 2021,
 §2.3.3, Figs. 18–19); [Nikulsin et al. (2022)](/sources/nikulsin-2022.md)
 (§VIII) repeat that it "cannot accurately reproduce kink modes at higher β".
+
+Variants of the reduced model used in the chunk-2 applications:
+* **Pressureless two-field model** ($\psi$, $u$ only, flat constant density,
+  no parallel flow, fixed boundary with $u=\varpi=j=0$) for double tearing
+  modes ([Nardon et al. (2023b)](/sources/nardon-2023-b.md), Eqs. 1–2).
+* **Two temperatures and an impurity density** with frictional heating of
+  ablated particles and the ionization energy carried as potential energy,
+  with coronal-equilibrium ([Hu et al. (2021)](/sources/hu-2021.md),
+  Eqs. 1–12) or collisional-radiative impurities
+  ([Hu et al. (2023)](/sources/hu-2023.md), Eqs. 1–17;
+  [Hu et al. (2024)](/sources/hu-2024.md), §2.1). All species share one
+  velocity; Spitzer resistivity with a Hirshman $Z_{\mathrm{eff}}$ factor and
+  a temperature floor (2 keV in Hu et al. 2021 to resolve the resistive skin
+  current, 1 eV in Hu et al. 2023).
+* **Diamagnetic and bootstrap extensions for pedestals**: the ion
+  diamagnetic velocity in the flow ansatz, a Sauter bootstrap current
+  entering Ohm's law through $\eta(j-j_{\mathrm{src}})$ so that the current
+  relaxes on the resistive time, and $v_\parallel$ set only by Mach-1
+  conditions at the targets ([Cathey et al. (2024)](/sources/cathey-2024.md),
+  §3.1; [Cathey et al. (2023)](/sources/cathey-2023.md), §2.2). The two-fluid
+  version with toroidal rotation and neoclassical poloidal friction, at
+  $T_i=T_e$, is used for ITER RMPs ([Becoulet et al. (2022)](/sources/becoulet-2022.md),
+  §2). JOREK's heuristic ion stress for neoclassical poloidal-flow damping
+  is "based off of" the Gianakon closure ([Howell et al. (2022)](/sources/howell-2022.md),
+  §I, stated).
+* **Fluid neutrals** with a transient Gaussian D$_2$ source for plasmoid-drift
+  studies ([Kong et al. (2025)](/sources/kong-2025.md), §2).
+* **Wall-force runs** with Ohmic heating and radiation assumed to cancel,
+  no density or temperature sources, and an artificial axisymmetric thermal
+  quench by raised $\kappa_\perp$ ([Artola et al. (2022)](/sources/artola-2022.md),
+  §2–3).
 
 **Full MHD.** A [visco-resistive full-MHD model](/methods/visco-resistive-mhd-model.md)
 evolves $\mathbf A$ in the Weyl gauge with $\mathbf B=F\nabla\phi+\nabla\times\mathbf A$,
@@ -119,6 +150,10 @@ rank 0 handles I/O and the $n=0$ block (Hoelzl et al. 2021, §3.6). A JT-60SA
 ELM case reaches about 50 % relative strong-scaling efficiency from 16 to 160
 nodes (§3.6, Fig. 9). The 2021 code was CPU only; particles were later ported
 to GPUs with OpenACC (Hoelzl et al. 2024, §5; Bogaarts et al. 2022, §II).
+A 3D ITER current-quench run with STARWALL costs about 5 million
+core-hours, on the ITER cluster, Marconi-Fusion and Google Cloud
+(Artola et al. 2022, §5); low-resistivity double-tearing runs are "very
+expensive" (Nardon et al. 2023b, §IV).
 Reported costs: 9000–10000 CPU-hours per steady state of ITER divertor runs
 on 4 nodes of 36 cores (Korving et al. 2023, §V D); about 30 s per fluid step
 of an axisymmetric impurity run on 4 nodes (Hu et al. 2021b, §2.2).
@@ -157,11 +192,28 @@ From Hoelzl et al. (2021) unless cited otherwise:
 * Kinetic neutrals against SOLPS-ITER: divertor power within 10 %, peak heat
   flux about 2× higher, detachment at about 10 % higher upstream density
   (Korving et al. 2023, §V C).
+* [MARS-F](/software/mars-f.md): early-phase X-point displacement of the
+  ITER 12.5 MA RMP case about 6–8 mm against about 7 mm linear; about 60 mm
+  later in the nonlinear phase (Becoulet et al. 2022, §6).
 * [ITPA TAE](/benchmarks/itpa-tae-benchmark.md) in "reasonable agreement" with
   the lowest frequencies of the set; [NLED-AUG](/benchmarks/nled-aug-benchmark.md)
   in good agreement in drive and structure (Bogaarts et al. 2022, §IV).
 
 ## Limitations
+
+* Even with the implicit scheme, Alfvénic time steps limit ITER pedestal
+  runs to a few tens of ms against a confinement time above 3 s, and the
+  resistivity is set about two orders above the realistic central value
+  (Becoulet et al. 2022, §2, §7). The ITER RMP model is fixed-boundary, with
+  the ERGOS vacuum field imposed at the wall.
+* The single-temperature model without a torque source over-deepens the
+  pedestal radial-electric-field well and misplaces mode frequencies
+  (Cathey et al. 2023, §2.2; Cathey et al. 2024, §3.2). MHD validity needs
+  mode frequencies well below the ion cyclotron frequency; a smaller time
+  step would not make faster physics valid (Cathey et al. 2023, §2.2).
+* Wall-force runs used Dirichlet conditions ($T_e=1$ eV,
+  $\mathbf v\cdot\mathbf n=0$, $v_\parallel=0$) instead of sheath conditions,
+  so heat leaves only by conduction (Artola et al. 2022, §3, §4.4).
 
 * Reduced MHD is wrong for finite-$\beta$ internal kinks (Hoelzl et al. 2021,
   §2.3.3), and its boundary (potential constant) acts as a poloidal ideal
@@ -193,6 +245,26 @@ beams (Hoelzl et al. 2021, §6; 2024, §3; Artola et al. 2021; Bhole et al.
 [high-field-side high-density region](/results/high-field-side-high-density-region.md)
 (Korving et al. 2023); Alfvén eigenmodes (Bogaarts et al. 2022).
 
+Chunk-2 applications, with the resolution each paper states:
+
+| Study | Application | Resolution and setup | Source |
+|---|---|---|---|
+| ITER mitigated current quench | 3D CQ, halo currents, wall forces after $I_p\to0$ | polar grid 100×200 bicubic Bézier elements, $n=0$–10; STARWALL with 75 000-triangle 3D inner vessel | [Artola et al. (2022)](/sources/artola-2022.md), §2 |
+| ITER RMP ELM suppression | natural ELMs and $n=2$–4 RMPs at 15, 12.5, 10 MA | $n=1$–9 seeded; domain to the ITER wall; Bohm sheath at targets; ERGOS boundary field | [Becoulet et al. (2022)](/sources/becoulet-2022.md), §2 |
+| AUG EDA H-mode | resistive peeling–ballooning modes and the QCM | 214×354 elements, 1.28 mm radial in the pedestal, 64 planes, $n=0$–13, ideal wall; $\Delta t$ one JOREK time unit (0.6687 µs), halved at times | [Cathey et al. (2023)](/sources/cathey-2023.md), §2.2 |
+| AUG regimes without type-I ELMs; JT-60SA | QH, small ELMs, EDA; linear pedestal scans | $n=0$–6 (QH), even $n\le12$ (small ELMs), $n=0$–13 (EDA); double-X-point grid with JOREK's own Grad–Shafranov solve (JT-60SA) | [Cathey et al. (2024)](/sources/cathey-2024.md), §3–4 |
+| JET Ar and ITER Ne/H SPI | TQ trigger at $q=2$ or $q=1$, radiation asymmetry, dual SPI | not stated ($n\ge6$ implied); MARCONI and Tianhe-3 | [Hu et al. (2021)](/sources/hu-2021.md), §2 |
+| ITER Ne–D SPI, collisional-radiative | assimilation, 1/1-kink TQ, temperature holes | $n=0$–11; ideal wall at the thin-wall equivalent of the blanket | [Hu et al. (2023)](/sources/hu-2023.md), §2.2 |
+| ITER H-mode dual SPI | plasmoid drift and first-wall energy impact | $n=0$–11; radiation ray-traced onto the ITER wall with Raysect/CHERAB in IMAS | [Hu et al. (2024)](/sources/hu-2024.md), §2 |
+| JET plasmoid drift | drift velocity against shear-Alfvén and Pégourié braking theory | $n\le10$, fixed boundary, fluid neutrals | [Kong et al. (2025)](/sources/kong-2025.md), §2 |
+| JET-like double tearing mode | resistivity window of violent relaxation | 120×64 flux-aligned elements, $n=0$–15 | [Nardon et al. (2023b)](/sources/nardon-2023-b.md), §II |
+| W7-AS soft β limit (JOREK3D) | parallel flow and finite-element vacuum field | see [JOREK3D](/software/jorek3d.md) | [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) |
+
+None of these papers states the time step or solver settings except
+Cathey et al. (2023); the [resonant magnetic perturbation](/definitions/resonant-magnetic-perturbation.md)
+and [ELM](/definitions/edge-localized-mode.md) pages carry the pedestal
+results.
+
 ## Contradictions
 
 * **Continuity of the Bézier element.** *Open.* Hoelzl et al. (2021, §3.1) and
@@ -219,3 +291,14 @@ beams (Hoelzl et al. 2021, §6; 2024, §3; Artola et al. 2021; Bhole et al.
 8. [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — §§II, IV, V.
 9. [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §§II–IV.
 10. [Hu et al. (2021b)](/sources/hu-2021-b.md) — §§2, 6.
+11. [Artola et al. (2022)](/sources/artola-2022.md) — §§2–5.
+12. [Becoulet et al. (2022)](/sources/becoulet-2022.md) — §§2, 6, 7.
+13. [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.2.
+14. [Cathey et al. (2024)](/sources/cathey-2024.md) — §§3–4.
+15. [Hu et al. (2021)](/sources/hu-2021.md) — §2.
+16. [Hu et al. (2023)](/sources/hu-2023.md) — §2.
+17. [Hu et al. (2024)](/sources/hu-2024.md) — §2.
+18. [Kong et al. (2025)](/sources/kong-2025.md) — §2.
+19. [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — §§II, IV.
+20. [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §2.
+21. [Howell et al. (2022)](/sources/howell-2022.md) — §I.

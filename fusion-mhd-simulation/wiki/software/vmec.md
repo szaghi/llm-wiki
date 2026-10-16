@@ -5,7 +5,7 @@ description: "Variational moments equilibrium code: 3D ideal-MHD inverse equilib
 status: established
 aliases: [variational moments equilibrium code, NEMEC]
 tags: [code, equilibrium, stellarator, spectral, finite-differences]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # VMEC
@@ -75,13 +75,21 @@ output (§4, App. A):
   "closely resembles" VMEC's, while SFINCS's is lower by a factor of about 2–3
   in the figure, not discussed in the text
   ([Saxena et al. (2025)](/sources/saxena-2025.md), §3.2–3.3, Fig. 8). See
-  [M3D-C1](/software/m3d-c1.md).
+  [M3D-C1](/software/m3d-c1.md). For W7-X, a fixed-boundary VMEC map defines
+  the M3D-C1 domain and initial state; VMEC is re-run on the profiles of a
+  saturated one-period M3D-C1 run to obtain an equilibrium the dissipative
+  model sustains ([Zhou et al. (2023)](/sources/zhou-2023.md), §III).
 * **JOREK**: comparisons of VMEC-based saturated external modes with nonlinear
   JOREK runs agree qualitatively when the dominant $n$ is the same, but the
   magnetic-energy spectrum and topology can differ through coupling to
   internal modes and non-ideal effects
   ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.1). See
-  [JOREK3D](/software/jorek3d.md).
+  [JOREK3D](/software/jorek3d.md). JOREK3D imports free-boundary VMEC
+  reconstructions of W7-AS as fixed-boundary initial states up to 10 kPa
+  central pressure; a 14 kPa case with strong Shafranov shift could not be
+  imported accurately, and a VMEC equilibrium extended into vacuum exposes
+  an external $(7,5)$ mode
+  ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.1).
 * **JOREK3D** uses GVEC, described as VMEC-like energy minimization with a
   B-spline radial basis, for its grid and initial state (Nikulsin et al. 2022,
   §I, §IV).
@@ -102,3 +110,5 @@ accurate (§4).
 4. [Saxena et al. (2025)](/sources/saxena-2025.md) — §3.2–3.3, Fig. 8.
 5. [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §I, §IV.
 6. [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §4.1.
+7. [Zhou et al. (2023)](/sources/zhou-2023.md) — §III.
+8. [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §3.2, §4.1.

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Energetic particle mode (EPM) and frequency chirping"
-description: "Alfvénic mode whose existence and frequency are set by the energetic particles themselves rather than by a gap eigenmode of the bulk plasma, typically sitting in the shear-Alfvén continuum and dominated by a single poloidal harmonic; nonlinearly its frequency sweeps (chirps), and the codes of the NLED-AUG benchmark disagree on the sweep direction."
+description: "Alfvénic mode whose existence and frequency are set by the energetic particles themselves rather than by a gap eigenmode of the bulk plasma, typically sitting in the shear-Alfvén continuum and dominated by a single poloidal harmonic; nonlinearly EPMs and TAEs sweep their frequency (chirp) through phase-space holes and clumps, the codes of the NLED-AUG benchmark disagree on the sweep direction, and the chirp rate grows with background dissipation as Berk–Breizman theory predicts."
 status: established
 aliases: [EPM, energetic-particle mode, frequency chirping, chirping mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Energetic particle mode (EPM) and frequency chirping
@@ -72,6 +72,37 @@ quantifying any of them: pressure versus current coupling, fast-ion inertia
 (present in the fully gyrokinetic ORB5, absent in the hybrids) and particle
 boundary conditions (§7).
 
+### Hole–clump chirping of a TAE
+
+[Hezaveh et al. (2022)](/sources/hezaveh-2022.md) follow an $n=6$
+[TAE](/definitions/toroidal-alfven-eigenmode.md) in MEGA through
+long-range chirping. After saturation, sidebands form in the gap and evolve
+into up- and down-chirping primary branches plus secondary branches (§4.1,
+Figs. 2, 4); both directions coexist, so this case says nothing about the
+NLED-AUG direction spread. Holes accompany the down-chirping branch and
+clumps the up-chirping one (§4.4, Fig. 9). Using the
+[wave-frame action-angle diagnostic](/methods/chirping-phase-space-diagnostic.md),
+the authors show that the same resonant particles stay in a moving
+"phase-space bucket", so the EP transport is convective. The chirping
+frequencies approach the gap tips, excite continuum waves and enter the
+shear-Alfvén continuum, where the frequency becomes radius-dependent,
+"consistent with" Wang, Berk, Breizman and Zheng (2018), as cited; holes and
+clumps survive there (§§4.1, 5, Fig. 5).
+
+**Dissipation sets the chirp rate.** Raising $\nu=\eta$ from
+$0.3\times10^{-7}$ to $6\times10^{-7}$ and then $1.2\times10^{-6}$ (units
+$v_AR_0$) mid-chirp makes the chirping faster and lowers the amplitude
+(§4.1, Figs. 2 vs 4). The authors read this as confirmation of
+Berk–Breizman (BB) dissipation-controlled chirping, a "self-sustained
+nonlinear balance between the power extracted from the energetic particles
+and the power dissipated". The evidence is a visual comparison of two
+spectrograms; no chirp rate and no post-change damping rate are measured
+(recorded on the Source page). They quote the BB early-sweep law
+$\delta\omega/\gamma_l=\tfrac{16\sqrt2}{3\sqrt3\pi^2}(\gamma_dt)^{1/2}\approx0.44(\gamma_dt)^{1/2}$
+(Eq. 24, Berk et al. 1997, as cited) without comparing it with the
+simulation, and propose raised dissipation as "a useful probing tool" that
+"can also save computational resources" (§4.1).
+
 ## Contradictions
 
 **EPM vs TAE labelling of the AUG-NLED $n=1$ mode.** Open.
@@ -103,7 +134,19 @@ on the [NLED-AUG benchmark](/benchmarks/nled-aug-benchmark.md)). Down in
 HYMAGYC and MEGA, up in ORB5, all within
 [Vlad et al. (2025)](/sources/vlad-2025.md) (§§3–5).
 
+**Phase-space invariant during chirping.** Recorded, attributed.
+[Hezaveh et al. (2022)](/sources/hezaveh-2022.md) (§4.4, Fig. 10) show for a
+tracked particle that $C=\omega P_\phi-n\mathcal E$ at the fixed linear
+frequency, the invariant used by White et al. (2020) (not ingested; as
+cited) to slice phase space, drifts by $\Delta C/\omega\approx+0.8$ once the
+frequency chirps, while their wave-frame momentum $P_2$ stays constant.
+$C$ is exact only for a fixed-frequency wave, so the claims do not conflict
+within their assumptions; the disagreement is about which slice suits
+long-range chirping. Details on the
+[diagnostic page](/methods/chirping-phase-space-diagnostic.md).
+
 # Citations
 
 - [Vlad et al. (2025)](/sources/vlad-2025.md): the NLED-AUG EPM, its saturation and chirping, and the reclassification.
 - [Bogaarts et al. (2022)](/sources/bogaarts-2022.md): EPM identification by continuum location in JOREK; the EPMs of AUG #31213; resonances.
+- [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): hole–clump chirping of a TAE in MEGA, dissipation-controlled chirp rate, the non-conservation of $C$.

@@ -5,7 +5,7 @@ description: "Massive impurity injection during a VDE reduces the vertical wall 
 status: established
 aliases: [force mitigation, vertical force reduction, current-centroid decoupling]
 tags: [disruption, vde, wall, impurities]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Vertical-force mitigation by massive material injection
@@ -61,20 +61,48 @@ cases, which is direct evidence of the broader SOL current distribution
   §6.3). See [disruption](/definitions/disruption.md).
 - Predictive ITER current-quench simulations at realistic post-TQ
   parameters show that mitigation reduces the global wall forces
-  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.3).
+  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.3). The primary
+  study gives numbers: in two 3D JOREK–STARWALL runs of ITER 15 MA
+  mitigated CQs ($\tau_{\mathrm{CQ}}\approx46$ ms, cold post-TQ states mimicking
+  neon SPI) the vertical force peaks at 11–14 MN, a factor ≈6 below the
+  ≈80 MN of earlier estimates, and the sideways force stays below 1 MN
+  ([Artola et al. (2022)](/sources/artola-2022.md), §4.3, §5, Fig. 9).
 - The injection itself is described on
   [shattered pellet injection and massive material injection](/definitions/shattered-pellet-injection.md).
+
+## Qualifications
+
+**A second mechanism in the fast-CQ limit — complementary.**
+[Artola et al. (2022)](/sources/artola-2022.md) (§4.3) attribute the
+residual vertical force of their mitigated ITER CQs not to the current
+centroid but to the diffusion of the net toroidal wall current along the
+up-down asymmetric vessel after $I_p$ has vanished; the force peaks on the
+wall time and does not depend on the direction of the displacement. The
+two explanations answer different questions. The centroid decoupling of
+[Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.3) explains why
+injection during a VDE lowers the force that the moving plasma current
+exerts; Artola et al. explain what force remains when the CQ is so fast
+that the plasma current is gone before the wall currents have redistributed.
+Artola et al. do not analyse the current centroid, and their injection is
+represented only by the cold initial state, so neither study tests the
+other's mechanism. Together they say that a fast, strongly mitigated CQ
+moves the peak vertical load from the plasma to the vessel's own current
+redistribution.
 
 ## Limits of the evidence
 
 The review states the mechanism and reproduces one figure; force values,
 injection timings and the experimental comparison are in the cited
-original, which is not ingested in this bundle. The result concerns the
-vertical force; the sideways force of 3D kinks in mitigated disruptions is
-not addressed in this statement.
+original, which is not ingested in this bundle. The only ITER force values
+in the bundle are those of Artola et al. (2022), which concern the
+fast-CQ, post-CQ mechanism above rather than the centroid mechanism. The
+result concerns the vertical force; the sideways force of 3D kinks in
+mitigated disruptions is not addressed in this statement (Artola et al.
+2022 find it at noise level for their cases).
 
 ## Citations
 
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), Abstract, §3.3, Fig. 10.
 - [Artola et al. (2021)](/sources/artola-2021.md), §4.1.1, §4.3.1.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §6.3.
+- [Artola et al. (2022)](/sources/artola-2022.md), §4.3, §5, Fig. 9.

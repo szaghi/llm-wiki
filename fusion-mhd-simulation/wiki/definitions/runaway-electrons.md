@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Runaway electrons and their generation mechanisms"
-description: "Electrons accelerated to relativistic energies when the parallel electric field exceeds the critical field set by collisional drag; in disruptions they form after the thermal quench by primary (Dreicer, hot-tail, tritium decay, Compton) and secondary (avalanche) generation and can carry most of the plasma current as a beam."
+description: "Electrons accelerated to relativistic energies when the parallel electric field exceeds the critical field set by collisional drag; in disruptions they form after the thermal quench by primary (Dreicer, hot-tail, tritium decay, Compton) and secondary (avalanche) generation, can carry most of the plasma current as a beam, and are lost when MHD stochastizes the field, apart from a trapped remnant that can reseed the beam."
 status: established
 aliases: [RE, runaway electron beam, RE beam]
 tags: [runaway-electrons, disruption]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Runaway electrons and their generation mechanisms
@@ -66,6 +66,19 @@ from external sources:
   power; applying the burning-plasma photon flux during the current quench
   "should be strictly viewed as a conservative or worst-case approach"
   ([Bandaru et al. (2024)](/sources/bandaru-2024.md), pp. 4–5).
+- *Trapped remnant after a flush*: magnetically trapped relativistic
+  electrons that survive a stochastic-field expulsion of the beam form a
+  seed of 0.1–1% of the beam, orders of magnitude above the nuclear seed of
+  "a few ampere" ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md), p. 4;
+  see [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+- *Seed conditions set by injection.* Full-impurity SPI collapses the core
+  $T_e$ more than 100 μs before the impurities and density reach the core.
+  The resulting hollow density is "unfavourable" for RE suppression
+  ([Hu et al. (2021)](/sources/hu-2021.md), §3; stated, not simulated with
+  runaways). Dilution cooling before the TQ is the motivation for reducing the
+  hot-tail seed ([Hu et al. (2023)](/sources/hu-2023.md), §1, §5). After a
+  flush the plasma is so cold ($T_e<20$ eV) that no Dreicer or hot-tail
+  source is needed ([Liu et al. (2021)](/sources/liu-2021.md), §6).
 
 **Secondary (avalanche) generation** multiplies an existing RE population
 by close collisions that knock thermal electrons above the critical
@@ -75,7 +88,14 @@ $E_\parallel-E_c^{\mathrm{eff}}$ and, with partial screening, to the total
 electrons available for knock-on dominate the impurity effect
 ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §II, Eq. 2.13, after
 Hesslow et al. 2017–2019). The formula is on the
-[fluid-model page](/methods/runaway-electron-fluid-model.md).
+[fluid-model page](/methods/runaway-electron-fluid-model.md). M3D-C1 uses
+the Rosenbluth–Putvinski avalanche form, with $E_\parallel/E_c\approx10$ in
+the post-flush DIII-D plasma ([Liu et al. (2021)](/sources/liu-2021.md),
+§5.4). Because the gain is exponential in the available poloidal flux, a
+convenient figure of merit is the flux per decade of gain. Reconstitution
+after a flush is bounded by the seed times $10$ raised to the available flux
+over that figure of merit ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md),
+Eq. 1).
 
 ## Consequences found in MHD simulations
 
@@ -104,7 +124,32 @@ Hesslow et al. 2017–2019). The formula is on the
   beam, an $n=1$ double tearing mode at two $q=4$ surfaces stochastizes the
   field and the REs are lost in $\le100\,\mu$s, in "very good agreement"
   with the experiment ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
-  §6.4.2).
+  §6.4.2). In M3D-C1 the final loss of a DIII-D plateau is a (2,1) resistive
+  kink at $q_a\to2$. With nonlinearly excited $n>1$ harmonics it stochastizes
+  the outer plasma, and more than 95% of the REs reach the lower
+  high-field-side wall within about 0.06 ms with an $n=1$ footprint. The
+  current converts to Ohmic current with a small spike, and a (1,1) kink
+  flattens the residual core. The loss fraction converges only with at least
+  16 toroidal planes ([Liu et al. (2021)](/sources/liu-2021.md), §5.3,
+  Figs. 12–14). [Nardon et al. (2023b)](/sources/nardon-2023-b.md) (§V)
+  hypothesize that D$_2$ injection terminates beams benignly because the
+  colder, more resistive background lets the
+  [double tearing mode](/definitions/double-tearing-mode.md) grow larger
+  before stochasticity sets in. A trapped remnant can survive the flush and
+  reseed the beam, at the cost of a 2–3 MA current drop in an ITER-like case
+  ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md); see
+  [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+- **Kink with RE current.** The RE current gives the (2,1) resistive kink a
+  real frequency. Growth rate and frequency both "follow the 3/5 power law" of
+  the resistivity, and both are insensitive to the convection speed of the
+  fluid model above $4v_A$ (about 11% change from 4 to $16v_A$)
+  ([Liu et al. (2021)](/sources/liu-2021.md), §5.2, Figs. 5, 9).
+- **Confinement in current-quench fields.** In 3D ITER current-quench
+  simulations the field is almost completely ergodic at 13 ms and core flux
+  surfaces re-form by 23 ms. A companion study cited by
+  [Artola et al. (2022)](/sources/artola-2022.md) (§4.1) finds that the REs
+  are quickly depleted at 13 ms and could re-appear inside the re-formed
+  surfaces.
 - **Electric-field fluctuations.** Test-electron studies in JOREK
   disruption fields find that parallel electric-field fluctuations of
   about 1 kV/m during the thermal quench broaden the electron energy
@@ -119,6 +164,13 @@ Hesslow et al. 2017–2019). The formula is on the
   fluid models exist in M3D-C1 and NIMROD and in Matsuyama et al. (2017),
   cited without comparison by [Bandaru et al. (2024)](/sources/bandaru-2024.md)
   (§I).
+- **Fluid in full MHD**: [M3D-C1](/software/m3d-c1.md) couples an RE
+  density to full MHD and solves its continuity equation by
+  [advection along characteristics](/methods/runaway-electron-advection-by-characteristics.md)
+  ([Liu et al. (2021)](/sources/liu-2021.md), §2–4).
+- **Reduced kinetic**: a drift-kinetic Monte Carlo RE solver in 1D flux
+  geometry with an imposed stochastic diffusivity stands in for the 3D MHD
+  ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md)).
 - **Test particles**: relativistic full-orbit or guiding-centre tracers in
   the MHD fields, without back-reaction
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.10, §6.4.1).
@@ -130,9 +182,32 @@ Hesslow et al. 2017–2019). The formula is on the
   Boris pusher of [M3D-C1-K](/software/m3d-c1-k.md) as a good candidate for
   REs (see [particle pushers](/methods/particle-pushers.md)).
 
+## Contradictions
+
+**Complete loss versus trapped survivors in beam termination** — Open
+(qualification). [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§6.4.2)
+report that in the JET benign-termination simulation "the REs are lost" in
+$\le100\,\mu$s, and [Liu et al. (2021)](/sources/liu-2021.md) (§5.3) find
+more than 95% loss in DIII-D. [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md)
+(pp. 1–4) state that the expulsion "is not complete": magnetically trapped
+relativistic electrons survive the stochastic field as a 0.1–1% seed that
+avalanches back. The statements need not conflict on the observed beam loss.
+The 3D simulations use fluid RE models with no pitch variable, which cannot
+represent a trapped population (compiler's remark). McDevitt & Tang impose
+the stochastic transport instead of computing it. A simulation that follows
+pitch-resolved (kinetic or particle) REs through a self-consistent 3D flush
+and its rehealing would settle whether the trapped remnant survives at the
+predicted level.
+
 # Citations
 
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §I–IV, Eqs. 2.13–2.19.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.10–2.11, §4.7, §6.4.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.5.
 - [Liu et al. (2022)](/sources/liu-2022.md) — §7.
+- [Liu et al. (2021)](/sources/liu-2021.md) — §2–6, Figs. 5, 9, 12–15.
+- [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — Eq. 1, Figs. 1–5, Discussion.
+- [Nardon et al. (2023b)](/sources/nardon-2023-b.md) — §V.
+- [Artola et al. (2022)](/sources/artola-2022.md) — §4.1.
+- [Hu et al. (2021)](/sources/hu-2021.md) — §3, §6.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §1, §5.

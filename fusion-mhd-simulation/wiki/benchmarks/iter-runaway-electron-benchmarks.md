@@ -5,7 +5,7 @@ description: "Code-to-code tests of the JOREK runaway-electron fluid model: RE b
 status: established
 aliases: [JOREK-GO benchmark, JOREK-DINA RE benchmark]
 tags: [benchmark, verification, runaway-electrons, disruption, vde]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # ITER runaway-electron benchmarks (JOREK–GO, JOREK–DINA)
@@ -114,7 +114,17 @@ $Z_{\mathrm{eff}}$) and neglects partial screening in the avalanche; a
   to 4.6 orders of magnitude smaller than DINA's (0.1–1 A against 3.8 kA;
   compiler's arithmetic). Bandaru et al. attribute it "largely" to DINA's
   neglect of partially ionized impurities in the avalanche, i.e. to a
-  difference of source model, not of numerics (§IV.B).
+  difference of source model, not of numerics (§IV.B). The weak seed
+  dependence of the plateau is what an exponential avalanche gain in the
+  available poloidal flux predicts. In a reduced kinetic model of beam
+  reconstitution a 16-fold change of the flush duration changes the reformed
+  current only about twofold, and the gain is written as the seed times $10$
+  raised to the flux over the flux per decade of gain
+  ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md), Eq. 1, Fig. 5; see
+  [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+  The nuclear (tritium and Compton) seed that McDevitt & Tang cite is "a few
+  ampere" (p. 4). That is the same order as the 0.1–1 A JOREK seeds and three
+  orders below DINA's 3.8 kA.
 - **Case B time shift** in $T_e$ against GO: unexplained (§III.B).
 - **Halo current.** §IV.B states that the halo current "can be seen to be
   negligible in all cases", while the vessel-resistivity discussion says
@@ -138,3 +148,4 @@ whether the source model accounts for the whole gap.
 
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §III–V, Table I, Figs. 1–9.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §4.7, Fig. 24.
+- [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — Eq. 1, p. 4, Fig. 5.

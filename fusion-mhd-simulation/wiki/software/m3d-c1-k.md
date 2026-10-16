@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "M3D-C1-K"
-description: "Kinetic-MHD hybrid built on M3D-C1: δf energetic-particle markers pushed by RK4 guiding-centre integration or a GPU-accelerated slow-manifold Boris algorithm, coupled to the implicit finite-element MHD by pressure or current coupling, which the authors derive to be equivalent; benchmarked on the linear n=1 fishbone, the ITPA n=6 TAE and the DIII-D RSAE cases."
+description: "Kinetic-MHD hybrid built on M3D-C1: δf energetic-particle markers, and optionally kinetic thermal ions, pushed by RK4 guiding-centre integration or a GPU-accelerated slow-manifold Boris algorithm, coupled to the implicit finite-element MHD by pressure or current coupling, which the authors derive to be equivalent; benchmarked on the linear n=1 fishbone, the ITPA n=6 TAE and the DIII-D RSAE cases, and applied to non-resonant fishbones with thermal-ion Landau damping."
 status: established
 aliases: [M3D-C^1-K]
 tags: [code, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, gpu, finite-elements, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # M3D-C1-K
@@ -46,6 +46,31 @@ advance.
   high-order polynomials this gives noisy, spiky pressures (§3, Eqs. 15–18).
   See [particle-to-mesh projection](/methods/particle-to-mesh-projection.md).
 
+## Kinetic thermal ions
+
+[Liu et al. (2022b)](/sources/liu-2022-b.md) (§2) extend the code so that
+all ions are kinetic: thermal and fast deuterium are both $\delta f$
+guiding-centre markers, electrons stay fluid (see
+[kinetic thermal ions](/methods/kinetic-thermal-ions.md)).
+
+* The MHD keeps the perpendicular momentum (with $-\nabla_\perp\cdot\mathsf P_i-\nabla_\perp\cdot\mathsf P_h$),
+  the fields and the electron pressure or temperature; the fluid
+  continuity and parallel-momentum equations are replaced by
+  synchronization of $\delta n$ and $\delta v_\parallel$ from marker
+  deposition (Eqs. 2.1–2.6, 2.17–2.20), because under sequential splitting
+  the duplicated estimates drift apart and produce parasitic modes.
+* The ions feel $\mathbf E^*=\mathbf E-\nabla_\parallel p_e/(n_ee)$
+  (Eq. 2.11). The weights use $f_0(\mathbf X,\mathcal E,\text{pitch})$, a
+  different parametrization from the $f_0(P_\phi,\mathcal E,\mu)$ above
+  (Eqs. 2.12–2.16). A NUBEAM $f_0$ is read in and smoothed by a Gaussian
+  operator (§5).
+* The semi-implicit MHD "is helpful for stabilizing numerical instabilities
+  after including ion kinetic terms" (§1, §7; no evidence shown).
+* Verified on ion-acoustic-wave Landau damping against Chen (2013) fits for
+  $T_i/T_e=0.1$–0.3 (§3), then applied to $n=1$ non-resonant
+  [fishbones](/definitions/fishbone.md) in DIII-D and NSTX, linearly and,
+  for NSTX, nonlinearly (§§4–6).
+
 ## Coupling to the MHD
 
 Two schemes are implemented (§4; see
@@ -85,6 +110,15 @@ particles, the caption 4 million (§5, Fig. 2). Further GPU optimization is
 judged not worthwhile because the push is already close to the CPU MHD time
 (§5).
 
+**Nonlinear kinetic-thermal-ion run** (Perlmutter, 8 nodes of 64 AMD cores
+and 4 A100 GPUs each): the GPUs compute the MHD matrix elements as well as
+the particle push; the CPUs solve the matrix (PETSc) and compute the
+particle moments. The mesh is the NSTX poloidal mesh (7199 elements) on 8
+toroidal planes with $16\times10^6$ markers; wall-clock costs are not given
+([Liu et al. (2022b)](/sources/liu-2022-b.md), §6, §7). This updates the
+CPU-only MHD of Liu et al. (2022): part of the MHD (matrix assembly) is now
+on GPUs, the solve is not.
+
 ## Verification and benchmarks
 
 All from Liu et al. (2022) unless cited otherwise.
@@ -123,7 +157,15 @@ All from Liu et al. (2022) unless cited otherwise.
 * $\delta$-function deposition gives noisy pressures with high-order
   polynomials (§3).
 * For short-time-scale problems (GAE, CAE) the CPU MHD dominates the cost;
-  MHD GPU porting is planned (§7).
+  MHD GPU porting is planned (§7). The later kinetic-thermal-ion runs move
+  the MHD matrix-element computation to GPUs, with the solve still on CPUs
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §6).
+* In the kinetic-thermal-ion model, whether the guiding-centre push uses
+  $\mathbf E$ or $\mathbf E^*$ is ambiguous as printed, and $\tau_A$ in the
+  DIII-D growth-rate axes is undefined (Source page of Liu et al. 2022b).
+* The BAE-like branch growth rate at $q_{\min}>1.1$ falls to zero in
+  M3D-C1-K but stays almost constant in NIMROD (Brennan et al. 2012, as
+  cited); recorded as Open on [fishbone](/definitions/fishbone.md).
 * Version caveat: arXiv v1 read; the published version may differ.
 
 # Citations
@@ -131,3 +173,4 @@ All from Liu et al. (2022) unless cited otherwise.
 1. [Liu et al. (2022)](/sources/liu-2022.md) — §§1–7, Figs. 1–8.
 2. [Liu et al. (2024)](/sources/liu-2024.md) — §III C, Fig. 14.
 3. [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — §I, §II.
+4. [Liu et al. (2022b)](/sources/liu-2022-b.md) — §§1–7: kinetic thermal ions, synchronization, IAW test, non-resonant fishbones, GPU matrix assembly.

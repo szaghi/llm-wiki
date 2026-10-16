@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hybrid kinetic-MHD models"
-description: "Models that advance the bulk plasma as an MHD fluid and a minority energetic-particle population as kinetic markers, closing the fluid momentum equation with a moment of the marker distribution; the codes of this bundle differ in the MHD model, the kinetic ordering, the representation of the distribution and the time coupling."
+description: "Models that advance the bulk plasma as an MHD fluid and a kinetic species (classically a minority energetic-particle population, in the kinetic-thermal-ion variant also the bulk ions) as markers, closing the fluid momentum equation with a moment of the marker distribution; the codes of this bundle differ in the MHD model, the kinetic ordering, the representation of the distribution and the time coupling."
 status: established
 aliases: [kinetic-MHD hybrid, hybrid MHD-kinetic, hybrid MHD-gyrokinetic, MHD-kinetic hybrid model]
 tags: [hybrid-kinetic, energetic-particles, particles, mhd, alfven-eigenmode, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Hybrid kinetic-MHD models
@@ -28,6 +28,21 @@ Alfvén eigenmodes. Bogaarts et al. (2022, §I) give this as the reason for
 the approach; Liu et al. (2024, §I) state that it is "more popular" than
 pure gyrokinetics for EP-driven Alfvén eigenmodes because it is cheaper
 ([Liu et al. (2024)](/sources/liu-2024.md)).
+
+**Scope beyond the minority.** The definition above, with its
+$n_h\ll n_i$ premise, is that of the chunk-1 sources and remains the
+classical form. It does not cover the
+[kinetic-thermal-ion](/methods/kinetic-thermal-ions.md) variant, in which
+the **bulk ions** are also $\delta f$ markers and the fluid keeps only the
+perpendicular momentum, the field and the electron pressure:
+[M3D-C1-K](/software/m3d-c1-k.md) with kinetic thermal and fast ions
+([Liu et al. (2022b)](/sources/liu-2022-b.md), §2) and
+[MEGA](/software/mega.md) with kinetic thermal ions only
+([Sato et al. (2024)](/sources/sato-2024.md), §2). There the kinetic species
+is not a minority, the ion density and parallel flow come from the markers,
+and the coupling moment is that of the bulk ions. The common structure is
+the split itself: some species as fluid, some as markers, joined through
+moments in the fluid momentum equation.
 
 The assumption $n_h\ll n_i$ is used explicitly to drop the EP momentum
 density from the bulk momentum balance in the perpendicular direction
@@ -77,10 +92,10 @@ Every hybrid code of this bundle makes four choices.
 | code | bulk model | EP model | $f_h$ | coupling | source |
 |---|---|---|---|---|---|
 | [JOREK](/software/jorek.md) | reduced or full MHD, nonlinear, implicit | full orbit (Boris) | full-$f$ | anisotropic pressure, explicit, step-averaged | [Bogaarts et al. (2022)](/sources/bogaarts-2022.md), §II |
-| [M3D-C1-K](/software/m3d-c1-k.md) | M3D-C1 full MHD, implicit or semi-implicit | RK4 guiding centre or slow-manifold Boris | $\delta f$ | pressure or current | [Liu et al. (2022)](/sources/liu-2022.md), §§2–4 |
+| [M3D-C1-K](/software/m3d-c1-k.md) | M3D-C1 full MHD, implicit or semi-implicit | RK4 guiding centre or slow-manifold Boris; optionally kinetic thermal ions | $\delta f$ | pressure or current | [Liu et al. (2022)](/sources/liu-2022.md), §§2–4; [Liu et al. (2022b)](/sources/liu-2022-b.md), §2 |
 | [GMEC](/software/gmec.md) | linearized reduced MHD (model B), RK4 | gyrokinetic, RK4, 4-point gyroaverage | $\delta f$ | pressure, through the curvature term | [Liu et al. (2024)](/sources/liu-2024.md), §II |
 | [HYMAGYC](/software/hymagyc.md) | linear resistive full MHD, backward Euler | gyrokinetic (Brizard), $N=32$ gyroaverage | $\delta f$ | pressure, $\nabla\cdot\mathsf P_h$ | [Vlad et al. (2025)](/sources/vlad-2025.md), §3 |
-| [MEGA](/software/mega.md) | nonlinear full MHD | drift-kinetic, ad-hoc gyroaverage | $\delta f$ | current | [Vlad et al. (2025)](/sources/vlad-2025.md), §4 |
+| [MEGA](/software/mega.md) | nonlinear visco-resistive full MHD, finite differences, explicit RK4 | drift-kinetic, ad-hoc gyroaverage | $\delta f$ | current | [Vlad et al. (2025)](/sources/vlad-2025.md), §4; [Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §2; [Sato et al. (2024)](/sources/sato-2024.md), §2 |
 | [XTOR-K](/software/xtor-k.md) | two-fluid MHD, Newton–Krylov | full orbit (Boris–Buneman) | full-$f$ | perpendicular pressure, Picard-iterated | [Vlad et al. (2025)](/sources/vlad-2025.md), §6 |
 
 [ORB5](/software/orb5.md) is the fully gyrokinetic reference against which
@@ -103,7 +118,16 @@ which call it "a common strategy across different hybrid codes").
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.10).
 - **M3D-C1-K.** Particles are subcycled between two MHD steps in fields
   frozen during the subcycles, and the fields are copied to the GPU once per
-  MHD step ([Liu et al. (2022)](/sources/liu-2022.md), §5).
+  MHD step ([Liu et al. (2022)](/sources/liu-2022.md), §5). The fluid and
+  kinetic equations are solved "subsequently in one timestep"; with kinetic
+  thermal ions this sequential splitting is what makes duplicated fluid and
+  marker estimates of $\delta n$ and $\delta v_\parallel$ drift apart,
+  hence the synchronization of
+  [kinetic thermal ions](/methods/kinetic-thermal-ions.md)
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §2).
+- **MEGA.** Particles and fluid are advanced together by explicit
+  fourth-order Runge–Kutta ([Sato et al. (2024)](/sources/sato-2024.md),
+  §2).
 - **GMEC.** The same explicit RK4 step, $\Delta t\approx0.01\tau_A$, is used
   for fluid and particles. RK4 is unstable for $\Delta t/\tau_A\ge0.04$
   ([Liu et al. (2024)](/sources/liu-2024.md), §II C, App. C).
@@ -126,7 +150,14 @@ which call it "a common strategy across different hybrid codes").
   RK4, and 10.32 s for GPU Boris at a 4× smaller step. The text says
   16 M particles for this measurement and the Fig. 2 caption says 4 M
   ([Liu et al. (2022)](/sources/liu-2022.md), §5, Fig. 2). Deposition and
-  the MHD solve stay on CPUs.
+  the MHD solve stay on CPUs. In the nonlinear kinetic-thermal-ion run on
+  Perlmutter (8 nodes, 4 A100 GPUs each) the GPUs compute the MHD matrix
+  elements as well as the push, while the CPUs solve the matrix (PETSc)
+  and compute the particle moments
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §6).
+- **MEGA.** Runs on NEC SX-Aurora TSUBASA vector engines and Fugaku with
+  about $10^8$ markers (32 per cell); no GPU use is reported
+  ([Sato et al. (2024)](/sources/sato-2024.md), §2).
 - **JOREK.** The JOREK particle framework duplicates the full plasma state
   on all MPI ranks, which avoids particle migration
   ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §3.6). Its kinetic and
@@ -145,7 +176,7 @@ which call it "a common strategy across different hybrid codes").
 
 ## Scope of present use
 
-The published hybrid results of this bundle are mostly linear.
+The published hybrid results of the chunk-1 sources are mostly linear.
 
 - **GMEC.** It filters a single toroidal harmonic and omits the nonlinear
   fluid terms ([Liu et al. (2024)](/sources/liu-2024.md), §II A).
@@ -160,6 +191,21 @@ The published hybrid results of this bundle are mostly linear.
   ([Vlad et al. (2025)](/sources/vlad-2025.md), §2). The four codes agree
   qualitatively and disagree quantitatively.
 
+Chunk 2 adds three nonlinear hybrid applications:
+
+- **Nonlinear fishbone (M3D-C1-K).** An NSTX non-resonant
+  [fishbone](/definitions/fishbone.md) with kinetic thermal and fast ions,
+  8 toroidal planes and $16\times10^6$ markers, saturating at about 0.5 ms
+  ([Liu et al. (2022b)](/sources/liu-2022-b.md), §6).
+- **Chirping TAE (MEGA).** An $n=6$
+  [TAE](/definitions/toroidal-alfven-eigenmode.md) followed through
+  long-range frequency chirping, analysed with the
+  [wave-frame action-angle diagnostic](/methods/chirping-phase-space-diagnostic.md)
+  ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §4).
+- **Infernal modes with kinetic thermal ions (MEGA).** Nonlinear $n=3$
+  [infernal modes](/definitions/infernal-mode.md) with no EPs at all
+  ([Sato et al. (2024)](/sources/sato-2024.md), §3.2).
+
 The same kinetic infrastructure carries non-EP species in JOREK: impurities,
 neutrals, [runaway electrons](/definitions/runaway-electrons.md) and
 electrostatic ITG ions ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md),
@@ -169,7 +215,10 @@ electrons is in development
 
 ## Contradictions
 
-None between sources on the model itself. The open disagreements are about
+None between sources on the model itself. The kinetic-thermal-ion codes
+widen the scope of the opening definition (the kinetic species need not be a
+minority); this is recorded above as a qualification of the definition, not
+as a contradiction. The open disagreements are about
 the coupling scheme
 ([pressure and current coupling](/methods/pressure-and-current-coupling.md))
 and about benchmark outcomes (the benchmark pages).
@@ -184,3 +233,6 @@ and about benchmark outcomes (the benchmark pages).
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md): the JOREK particle framework.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md): JOREK EP status and GPU port.
 - [Korving et al. (2023)](/sources/korving-2023.md): explicit coupling of particle moments to implicit MHD.
+- [Liu et al. (2022b)](/sources/liu-2022-b.md): kinetic thermal ions in M3D-C1-K, sequential splitting, GPU matrix assembly, the nonlinear fishbone.
+- [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): MEGA equations and the nonlinear chirping TAE.
+- [Sato et al. (2024)](/sources/sato-2024.md): MEGA with kinetic thermal ions, its numerics and hardware.

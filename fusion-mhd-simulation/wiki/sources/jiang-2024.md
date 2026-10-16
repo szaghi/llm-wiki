@@ -239,7 +239,7 @@ $B^2/2\mu_0$.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [BOUT++](/software/bout-plus-plus.md)

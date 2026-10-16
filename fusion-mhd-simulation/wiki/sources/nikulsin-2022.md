@@ -230,25 +230,30 @@ modelled (authors' warning).
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Ballooning mode](/definitions/ballooning-mode.md)
 * [BOUT++](/software/bout-plus-plus.md)
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
+* [CASTOR3D](/software/castor3d.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Dommaschk potentials for the vacuum field](/methods/dommaschk-potentials.md)
 * [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
+* [Interchange modes and the Mercier criterion](/definitions/interchange-mode.md)
 * [JOREK](/software/jorek.md)
 * [JOREK3D](/software/jorek3d.md)
 * [Linear MHD eigenvalue codes](/methods/linear-mhd-eigenvalue-codes.md)
+* [M3D](/software/m3d.md)
 * [M3D-C1](/software/m3d-c1.md)
+* [MIPS](/software/mips.md)
 * [NIMROD](/software/nimrod.md)
 * [Reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)
 * [Reduced MHD for tokamaks](/methods/reduced-mhd.md)
 * [Resistive internal kink (m/n = 1/1)](/definitions/resistive-internal-kink.md)
 * [Resistive tearing mode](/definitions/tearing-mode.md)
 * [Three-dimensional inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md)
+* [Toroidal mode families in stellarators](/definitions/toroidal-mode-family.md)
 * [VMEC](/software/vmec.md)
 
 # Citations

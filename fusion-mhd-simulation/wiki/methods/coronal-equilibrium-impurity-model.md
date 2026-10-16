@@ -5,7 +5,7 @@ description: "Impurity model for MHD codes in which one advected impurity densit
 status: established
 aliases: [coronal equilibrium, CE impurity model, coronal impurity fluid]
 tags: [impurities, disruption, mhd, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Coronal-equilibrium impurity model
@@ -88,9 +88,40 @@ Spitzer resistivity with the Hirshman $Z_{\mathrm{eff}}$ correction
 $$\eta=\eta_{\mathrm{Sp}}(T_e)\,Z_{\mathrm{eff}}\,\frac{1+1.198Z_{\mathrm{eff}}+0.222Z_{\mathrm{eff}}^2}{1+2.966Z_{\mathrm{eff}}+0.753Z_{\mathrm{eff}}^2},\qquad \eta_{\mathrm{Sp}}\propto T_e^{-3/2}.$$
 The JOREK–DINA runaway-electron benchmark uses the simpler
 $\eta=\eta_{\mathrm{Sp}}Z_{\mathrm{eff}}$
-([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.A).
+([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.A). Two variants
+appear in the SPI studies:
+- [Hu et al. (2021)](/sources/hu-2021.md) (§2.1) divide by a passing-electron
+  ratio of about $0.5$, sum $Z_{\mathrm{eff}}$ over every charge state, and
+  evaluate $\eta_{\mathrm{Sp}}$ at $\max(T_e,T_{\mathrm{thr}})$, with a floor
+  $T_{\mathrm{thr}}=2$ keV in ITER "to ensure resolution of the resistive
+  skin current". An impurity-to-background density ratio of order $10^{-2}$
+  already changes $\eta$ by order unity (Fig. 1).
+- [Hu et al. (2023)](/sources/hu-2023.md) (Eq. 12) use the same Hirshman
+  factor with a floor of 1 eV and no passing-fraction factor.
+
+The floor $T_{\mathrm{thr}}$ is a page-local symbol.
 
 ## Implementations in the sources
+
+- **JOREK 3D SPI studies.** [Hu et al. (2021)](/sources/hu-2021.md) (§2.1–2.3)
+  use the CE model, with one or two temperatures and open-ADAS data, in 3D
+  reduced-MHD simulations of argon SPI in a JET-like plasma and of
+  neon–hydrogen SPI in ITER L-mode. All charge states share the fluid
+  velocity. The ionization energy is again carried as potential energy, which
+  "ensures the energy conservation and prevents artificially large
+  recombination radiation". [Hu et al. (2023)](/sources/hu-2023.md) (§4.3)
+  keep CE only for background beryllium and tungsten. These radiate about
+  three orders of magnitude less than the injected neon, which is treated
+  collisional-radiatively.
+- **KPRAD background radiation.** In the NIMROD/KPRAD module the injected
+  neon is charge-state-resolved, while the background impurity (Be, B or C)
+  radiates through a coronal-equilibrium polynomial fit in
+  $\log_{10}T_e$, valid for $T_e=2$–$20$ keV
+  ([Zeng et al. (2023)](/sources/zeng-2023.md), App. 7, Eqs. 10–11).
+- **Steady-state charge states in reduced RE models.** The 1D runaway
+  reconstitution model takes charge states and radiation from FLYCHK "under
+  the assumption of steady state" ([McDevitt & Tang (2023)](/sources/mcdevitt-2023.md),
+  Eq. 3). That is an equilibrium closure in the same sense as CE.
 
 - **JOREK reduced MHD**: one extra variable, all charge states convected
   with the main plasma, used for MMI and radiative-collapse runs
@@ -132,6 +163,20 @@ $\eta=\eta_{\mathrm{Sp}}Z_{\mathrm{eff}}$
   validates the particle representation against the fluid one rather than
   the CE assumption itself ([Hu et al. (2021b)](/sources/hu-2021-b.md), §4,
   Fig. 6).
+- A 0D test drops $T_e$ exponentially from 5 keV to 10 eV in 20 μs at
+  constant impurity density. After a large initial discrepancy, CE and the
+  time-dependent charge-state evolution give acceptably close $P_{\mathrm{rad}}$
+  once $T_e\lesssim100$ eV, after about 80 μs. For neon and argon the two
+  settle at about $3\times10^8$ and $4\times10^9$ W/m³ (read from Fig. 2). If
+  dilution cools too slowly, "the CE assumption produces a milder radiation
+  collapse than that is actually the case"
+  ([Hu et al. (2021)](/sources/hu-2021.md), §2.3, Fig. 2). It agrees in sign
+  with [Hu et al. (2021b)](/sources/hu-2021-b.md) (§1) and with Hoelzl et
+  al. (2021) below.
+- In 3D ITER SPI the collisional-radiative model gives stronger radiative
+  cooling than CE, because neon keeps a larger fraction of low charge states
+  ([Hu et al. (2023)](/sources/hu-2023.md), §3.1). The comparison is with
+  earlier CE runs, not a side-by-side run.
 - Hoelzl et al. (2021, §2.7) state that the assumption "may lead, at least
   in certain cases, to an underestimation of energy dissipation by
   impurities".
@@ -170,3 +215,7 @@ NIMROD on the same case, would settle it. See the
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §II, Eqs. 2.1, 2.7–2.10; §III.A; §IV.A.
 - [Hu et al. (2021b)](/sources/hu-2021-b.md) — §1, §4, Figs. 2–3, 6; Eq. 7.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.2.
+- [Hu et al. (2021)](/sources/hu-2021.md) — §2.1–2.3, Figs. 1–2.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §3.1, §4.3, Eq. 12.
+- [Zeng et al. (2023)](/sources/zeng-2023.md) — App. 7, Eqs. 10–11.
+- [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — Eq. 3.

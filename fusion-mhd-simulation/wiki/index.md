@@ -16,14 +16,17 @@ for every page (SI with $\mu_0$ explicit; $\psi$ per radian; $\gamma$ a
 growth rate, $\Gamma$ the ratio of specific heats), and the
 [update log](/log.md).
 
-**Corpus:** 20 of the archive's 50 files ingested (chunk 1, the code,
-method, benchmark and review papers). Two reviews of the JOREK code
-([Hoelzl et al. 2021](/sources/hoelzl-2021.md), [Hoelzl et al. 2024](/sources/hoelzl-2024.md))
-and a review of nonlinear energetic-particle code benchmarking
-([Vlad et al. 2025](/sources/vlad-2025.md)) carry most of the cross-links;
-the other seventeen are code, method and benchmark papers. Many files
-are preprints; each Source page states the version read. The
-[bibliography](/bibliography.md) lists the 905 works the 20 sources cite.
+**Corpus:** 40 of the archive's 50 files ingested. Chunk 1 (20): the code,
+method, benchmark and review papers — two reviews of the JOREK code
+([Hoelzl et al. 2021](/sources/hoelzl-2021.md), [Hoelzl et al. 2024](/sources/hoelzl-2024.md)),
+a review of nonlinear energetic-particle code benchmarking
+([Vlad et al. 2025](/sources/vlad-2025.md)) and seventeen code, method and
+benchmark papers. Chunk 2 (20): application papers on disruptions and
+shattered pellet injection, runaway electrons, tearing, kink and sawtooth
+dynamics, ELM-free regimes and RMPs, energetic-particle modes and
+stellarator β limits. Many files are preprints; each Source page states the
+version read. The [bibliography](/bibliography.md) lists the 1312 works the
+40 sources cite.
 
 ## Reading guide
 
@@ -31,7 +34,10 @@ are preprints; each Source page states the version read. The
    and its reductions: [reduced MHD for tokamaks](/methods/reduced-mhd.md)
    (ordering-based vs ansatz-based, what it cannot represent) and
    [for stellarators](/methods/stellarator-reduced-mhd.md) with the
-   [Dommaschk vacuum field](/methods/dommaschk-potentials.md); the constraint
+   [Dommaschk vacuum field](/methods/dommaschk-potentials.md),
+   [toroidal mode families](/definitions/toroidal-mode-family.md),
+   [interchange modes and the Mercier criterion](/definitions/interchange-mode.md) and the
+   [soft β limit](/definitions/soft-beta-limit.md); the constraint
    [∇·B = 0](/properties/divergence-free-magnetic-field.md); initial states from the
    [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md) and
    [3D inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md)
@@ -53,7 +59,8 @@ are preprints; each Source page states the version read. The
    [sheath boundary conditions](/methods/sheath-boundary-conditions.md).
 4. **Codes.** [JOREK](/software/jorek.md) (and [JOREK3D](/software/jorek3d.md)),
    [M3D-C1](/software/m3d-c1.md), [NIMROD](/software/nimrod.md), [CLT](/software/clt.md),
-   [BOUT++](/software/bout-plus-plus.md), [SCELT](/software/scelt.md),
+   [BOUT++](/software/bout-plus-plus.md), [SCELT](/software/scelt.md), [M3D](/software/m3d.md),
+   [CASTOR3D](/software/castor3d.md),
    [GMEC](/software/gmec.md).
 5. **Disruptions.** [Disruption](/definitions/disruption.md) phases and the current spike;
    [thermal quench](/definitions/thermal-quench.md);
@@ -62,9 +69,16 @@ are preprints; each Source page states the version read. The
    [wall forces](/definitions/wall-forces.md), with the results on the
    [reduced-MHD current asymmetry](/results/reduced-mhd-current-asymmetry.md) and
    [vertical-force mitigation](/results/vertical-force-mitigation.md);
-   [shattered pellet injection](/definitions/shattered-pellet-injection.md);
+   [shattered pellet injection](/definitions/shattered-pellet-injection.md) with
+   [pellet ablation models](/methods/pellet-ablation-models.md),
+   [plasmoid drift](/definitions/plasmoid-drift.md),
+   [radiation asymmetry](/definitions/radiation-asymmetry.md) and the
+   [electron temperature hole](/results/electron-temperature-hole.md);
+   the [resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md) as a TQ trigger;
    [runaway electrons](/definitions/runaway-electrons.md) and their
-   [fluid model](/methods/runaway-electron-fluid-model.md).
+   [fluid model](/methods/runaway-electron-fluid-model.md), its
+   [advection by characteristics](/methods/runaway-electron-advection-by-characteristics.md),
+   and [runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md).
 6. **Physics modules.** Impurities in
    [coronal equilibrium](/methods/coronal-equilibrium-impurity-model.md) or
    [collisional-radiative](/methods/collisional-radiative-impurity-model.md) treatment;
@@ -74,17 +88,30 @@ are preprints; each Source page states the version read. The
    the [bootstrap current](/definitions/bootstrap-current.md) and
    [quasi-symmetry](/definitions/quasi-symmetry.md).
 7. **MHD instabilities.** [Tearing mode](/definitions/tearing-mode.md),
+   [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md) and the
+   [modified Rutherford equation](/definitions/modified-rutherford-equation.md),
+   [radiation-triggered tearing](/results/radiation-triggered-tearing.md),
+   [double tearing mode](/definitions/double-tearing-mode.md),
    [resistive internal kink](/definitions/resistive-internal-kink.md),
+   [sawtooth crash](/definitions/sawtooth-crash.md) and
+   [flux pumping](/definitions/magnetic-flux-pumping.md),
+   [infernal mode](/definitions/infernal-mode.md),
    [ballooning mode](/definitions/ballooning-mode.md),
-   [edge-localized modes and ELM-free regimes](/definitions/edge-localized-mode.md).
+   [edge-localized modes and ELM-free regimes](/definitions/edge-localized-mode.md),
+   [resonant magnetic perturbations](/definitions/resonant-magnetic-perturbation.md)
+   ([MARS-F](/software/mars-f.md)), the
+   [plasmoid instability](/definitions/plasmoid-instability.md).
 8. **Energetic particles.** [Hybrid kinetic-MHD models](/methods/hybrid-kinetic-mhd.md),
    [pressure and current coupling](/methods/pressure-and-current-coupling.md),
    the [δf method](/methods/delta-f-method.md),
-   [particle pushers](/methods/particle-pushers.md); the modes
+   [particle pushers](/methods/particle-pushers.md),
+   [kinetic thermal ions](/methods/kinetic-thermal-ions.md), the
+   [chirping phase-space diagnostic](/methods/chirping-phase-space-diagnostic.md); the modes
    [TAE](/definitions/toroidal-alfven-eigenmode.md), [RSAE](/definitions/reversed-shear-alfven-eigenmode.md),
    [EPM and chirping](/definitions/energetic-particle-mode.md), [fishbone](/definitions/fishbone.md);
    the codes [M3D-C1-K](/software/m3d-c1-k.md), [MEGA](/software/mega.md),
-   [ORB5](/software/orb5.md), [HYMAGYC](/software/hymagyc.md), [XTOR-K](/software/xtor-k.md).
+   [ORB5](/software/orb5.md), [HYMAGYC](/software/hymagyc.md), [XTOR-K](/software/xtor-k.md),
+   [MIPS](/software/mips.md).
 9. **Benchmarks.** [NSTX VDE benchmarks](/benchmarks/nstx-vde-benchmarks.md),
    [CLT–M3D-C1 tearing and kink](/benchmarks/clt-m3d-c1-benchmark.md),
    [cbm18 ballooning](/benchmarks/cbm18-ballooning-benchmark.md),

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Runaway-electron fluid model coupled to MHD"
-description: "JOREK model in which runaway electrons are a separate species described only by their number density, streaming along the field at the speed of light, drifting with the E×B flow and carrying a current that is removed from the resistive Ohm's law; sources are avalanche with partial screening plus Compton and tritium seeds, treated explicitly."
+description: "Fluid model in which runaway electrons are a separate species described only by their number density, streaming along the field, drifting with the E×B flow and carrying a current that is removed from the resistive Ohm's law; JOREK embeds it in reduced MHD with a diffusive parallel surrogate and explicit avalanche, Compton and tritium sources, M3D-C1 in full MHD with a reduced convection speed and advection by characteristics."
 status: established
 aliases: [RE fluid model, JOREK runaway electron fluid]
 tags: [runaway-electrons, disruption, reduced-mhd, impurities, neutrals, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Runaway-electron fluid model coupled to MHD
@@ -19,7 +19,9 @@ variable, the RE number density $n_{\mathrm{RE}}$, and couples it to the
 [Bandaru et al. (2024)](/sources/bandaru-2024.md), §II). It does not resolve
 the RE energy spectrum, but it captures the non-linear interaction of the
 REs with the MHD, which the passive test-particle tracer does not
-([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.11).
+([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.11). A second
+implementation, in the full MHD of [M3D-C1](/software/m3d-c1.md), is
+described below ([Liu et al. (2021)](/sources/liu-2021.md), §2–3).
 
 ## Current coupling
 
@@ -101,6 +103,53 @@ scattering angles that give the electron more than $W_{\mathrm{crit}}$
 
 No Dreicer and no hot-tail source are included (§II.A).
 
+## M3D-C1 implementation (full MHD)
+
+[Liu et al. (2021)](/sources/liu-2021.md) (§2, Eqs. 1–9) couple an RE
+density to single-temperature ($T_e=T_i$) full MHD in M3D-C1:
+
+- **RE current.** It includes the $E\times B$ drift,
+  $\mathbf J_{\mathrm{RE}}=-e\,n_{\mathrm{RE}}\,(c\,\mathbf b+\mathbf v_E)$
+  with $\mathbf v_E=\mathbf E\times\mathbf B/B^2$ (Eq. 4).
+- **Momentum.** The force is $e\,n_{\mathrm{RE}}\mathbf E+(\mathbf J-\mathbf J_{\mathrm{RE}})\times\mathbf B-\nabla p$
+  (Eq. 1). Substituting Eq. 4 cancels the perpendicular part, and the
+  remaining parallel term $e\,n_{\mathrm{RE}}E_\parallel$ "is not included in
+  the current implementation" (p. 5).
+- **Ohm's law and heating.** Ohm's law is
+  $\mathbf E+\mathbf v\times\mathbf B=\eta(\mathbf J-\mathbf J_{\mathrm{RE}})$,
+  and the Ohmic heating is $\eta(\mathbf J-\mathbf J_{\mathrm{RE}})^2$
+  (Eqs. 5, 8). There is no RE collisional friction, and gradient and
+  curvature drifts are neglected.
+- **Transport.** The continuity equation
+  $\partial_tn_{\mathrm{RE}}+\nabla\cdot[n_{\mathrm{RE}}(c_{\mathrm{RE}}\mathbf b+\mathbf v_E)]=S_{\mathrm{RE}}$
+  (Eq. 3) convects at a numerical speed $c_{\mathrm{RE}}\le c$
+  (page-local symbol), "usually set to be a smaller value for numerical
+  efficacy" (p. 5), while the current uses $c$. There is no
+  parallel-diffusion surrogate.
+- **Sources.** None in the instability runs. The post-loss phase uses the
+  Rosenbluth–Putvinski avalanche only, with no Dreicer, hot-tail, tritium or
+  Compton source (§5.4).
+- **Solver.** Eq. 3 was previously advanced by the θ-implicit Galerkin
+  scheme of the other fields. In 3D it is now solved by
+  [advection along characteristics](/methods/runaway-electron-advection-by-characteristics.md),
+  because the implicit solve becomes ill-conditioned when
+  $c_{\mathrm{RE}}\gg v_A$ (§3).
+
+**Sensitivity to $c_{\mathrm{RE}}$** (§5.2–5.3, Figs. 9, 14b). The linear
+(2,1) growth rate and frequency are "not sensitive" to $c_{\mathrm{RE}}/v_A$
+above 4. From the figure, $\gamma\tau_A$ still drops by about 11% from 4 to 16,
+and it is 0.073 at 2 against about 0.053 at 8. The nonlinear saturation is
+sensitive: at $c_{\mathrm{RE}}/v_A=2$ the peak $W_{\mathrm{mag}}^{(1)}$ is about
+3000 J, against 1400–1650 J at 8 and 32. The authors conclude that a large
+$c_{\mathrm{RE}}$ is necessary. They cite as consistent the JOREK finding that
+the linear growth depends only weakly on the convection speed (§6).
+
+**Limitation common to both implementations.** The model has one density and
+no pitch or energy variable. It cannot represent magnetically trapped
+runaways, which [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) find
+survive a stochastic flush as a reconstitution seed (compiler's remark; see
+[runaway reconstitution after an MHD flush](/results/runaway-reconstitution-after-mhd-flush.md)).
+
 ## Coupling to impurities and neutrals
 
 The 2024 extension embeds the RE fluid in a single-temperature reduced
@@ -138,6 +187,23 @@ development" ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.11).
 
 ## Contradictions
 
+**Artificial parallel diffusion as a surrogate for streaming** — Open
+(judgement disagreement). [Liu et al. (2021)](/sources/liu-2021.md) (§3,
+p. 7) state that reduced convection speeds and artificial diffusion, used in
+earlier fluid-RE codes including the 2019 JOREK model, "can possibly reduce
+the MHD mode growth or even suppress unstable modes". They also find that a
+small convection speed changes the nonlinear saturation (§5.3, Fig. 14b).
+[Bandaru et al. (2024)](/sources/bandaru-2024.md) (§III–IV) use exactly such
+a surrogate in their ITER benchmarks: $f_{\mathrm{adv}}=10^{-3}$ with
+$D_{\parallel,\mathrm{RE}}=1.54$ m²/s against GO, and $f_{\mathrm{adv}}=0$
+with $D_{\parallel,\mathrm{RE}}=1.54\times10^8$ m²/s against DINA. They say
+the latter value is justified by a sensitivity study that the paper does not
+present. Neither paper tests the other's setting. Liu et al. demonstrate no
+diffusion-induced suppression, and the GO benchmark freezes the flow, so it
+cannot reveal one. A 3D tearing or kink case with REs, run once with
+conservative streaming and once with the diffusive surrogate at the
+benchmark values, would settle it.
+
 **Dreicer source in the JOREK RE fluid model** — Open (model version).
 [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) (§4.7) describe the GO
 benchmark of the model of Bandaru et al. (2019) with Dreicer generation
@@ -155,3 +221,5 @@ removal or a source-set replacement.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md) — §II, Eqs. 2.1–2.19; §III.A; §IV.A; §V.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.11, §2.15, §4.7, §6.4.2.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.5.
+- [Liu et al. (2021)](/sources/liu-2021.md) — §2–3, §5.2–5.4, §6, Eqs. 1–9, Figs. 9, 14.
+- [McDevitt & Tang (2023)](/sources/mcdevitt-2023.md) — pp. 1–4.

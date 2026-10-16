@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Reduced MHD for stellarators"
-description: "Generalization of tokamak reduced MHD in which the fixed toroidal field is replaced by the curl-free coil field ∇χ: the field is ∇χ plus field-line bending ∇ψχ×∇χ and the flow is ∇u×∇χ/|∇χ|²; a full-MHD stellarator equilibrium leaves a residual force of fourth order in the ordering parameter; implemented in JOREK3D with v∥ = 0 and verified on Wendelstein 7-A."
+description: "Generalization of tokamak reduced MHD in which the fixed toroidal field is replaced by the curl-free coil field ∇χ: the field is ∇χ plus field-line bending ∇ψχ×∇χ and the flow is ∇u×∇χ/|∇χ|² plus, since 2024, a parallel flow along B; a full-MHD stellarator equilibrium leaves a residual force of fourth order in the ordering parameter; implemented in JOREK3D, verified on Wendelstein 7-A and W7-AS against CASTOR3D, and applied to the W7-AS soft β limit."
 status: established
 aliases: [stellarator RMHD, Nikulsin reduced MHD, JOREK3D reduced MHD]
-tags: [mhd, reduced-mhd, stellarator, code]
-timestamp: 2026-10-16T00:00:00Z
+tags: [mhd, reduced-mhd, stellarator, code, verification]
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Reduced MHD for stellarators
@@ -36,7 +36,9 @@ potential crossed with a Clebsch potential of $\nabla\chi$
 ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), Eqs. 1–2). The
 reduced model drops the compressional and fast-wave terms and the current
 component perpendicular to $\nabla\chi$ in Ohm's law; the JOREK3D paper
-further sets $v_\parallel=0$:
+further sets $v_\parallel=0$ (the parallel flow is restored by
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md); see *Parallel flow*
+below):
 
 $$\mathbf B=\nabla\chi+\nabla\psi_\chi\times\nabla\chi,\qquad \mathbf v=\frac{\nabla u\times\nabla\chi}{|\nabla\chi|^2}$$
 
@@ -105,6 +107,64 @@ second derivatives in the weak form on the $G^1$ elements, except in the
 hyperviscous term (same section; see
 [Bézier finite elements](/methods/bezier-finite-elements.md)).
 
+## Parallel flow
+
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.1–2.3) add the
+parallel flow and a parallel momentum equation,
+
+$$\mathbf v=\frac{\nabla u\times\nabla\chi}{|\nabla\chi|^2}+\hat v_\parallel\mathbf B,$$
+
+where $\hat v_\parallel$ (page-local) is a velocity per unit field strength,
+so that $\hat v_\parallel B$ approximates the registry $v_\parallel$; setting
+$\hat v_\parallel=0$ recovers the system above (Eqs. 1–2, 5). In JOREK
+normalized form ($\mu_0=1$, $p=\rho T$ with $T$ the total temperature;
+the normalization is not stated in the source), the new or changed
+equations read, as printed (Eqs. 3, 5, 6),
+
+$$\begin{aligned}
+\partial_t\rho&=-|\nabla\chi|\Big[\frac{\rho}{|\nabla\chi|^2},u\Big]-|\nabla\chi|\,\partial^\parallel(\rho\hat v_\parallel)-|\nabla\chi|\,[\rho\hat v_\parallel,\psi_\chi]+\sigma_\rho,\\
+\rho B^2\partial_t(\rho\hat v_\parallel)+\frac{\rho\hat v_\parallel}{2}\partial_tB^2&=-\frac{\rho|\nabla\chi|}{2}\big(\partial^\parallel v^2+[v^2,\psi_\chi]\big)-\hat v_\parallel B^2\nabla\cdot(\rho\mathbf v)-|\nabla\chi|\big(\partial^\parallel p+[p,\psi_\chi]\big)\\
+&\quad+\nabla\cdot\big(\nu_{\parallel\perp}\nabla_\perp\hat v_\parallel+\nu_{\parallel\parallel}\nabla_\parallel\hat v_\parallel\big),\\
+\partial_t(\rho T)&=-\frac{1}{|\nabla\chi|}[\rho T,u]-\hat v_\parallel|\nabla\chi|\big(\partial^\parallel p+[p,\psi_\chi]\big)-\Gamma\rho T|\nabla\chi|\Big[\frac1{|\nabla\chi|^2},u\Big]-\Gamma p|\nabla\chi|\big(\partial^\parallel\hat v_\parallel+[\hat v_\parallel,\psi_\chi]\big)\\
+&\quad+\nabla\cdot\big(\kappa_\perp\nabla_\perp T+\kappa_\parallel\nabla_\parallel T+TD_\perp\nabla_\perp\rho+TD_\parallel\nabla_\parallel\rho\big)+S_p+(\Gamma-1)\eta_{\rm Ohm}|\nabla\chi|^2j^2,
+\end{aligned}$$
+
+with $\nu_{\parallel\perp}$, $\nu_{\parallel\parallel}$ (page-local) the
+perpendicular and parallel viscosities of the parallel flow and
+$v^2=|\mathbf v|^2$. The leading factor $\rho$ of the first term of the
+parallel momentum equation makes it dimensionally inconsistent with the
+other terms; presumably $B^2\partial_t(\rho\hat v_\parallel)$ is meant
+(compiler's check, recorded on the Source page). In the vorticity equation
+the mass-source term becomes
+$-\nabla\cdot[\nabla^\perp u\,\nabla\cdot(\rho\mathbf v)/|\nabla\chi|^2]$,
+the conservative form that includes the parallel flow; the authors note
+that the 2022 code already implemented the conservative form although the
+2022 paper printed the other (§2.3). The artificial parallel diffusivity
+$D_\parallel$ is used only when the parallel flow is neglected (§2.3).
+
+The flux equation of the same paper prints the resistive term as
+$+\eta(j-j_{\rm eq})$ and the hyper-resistive term as
+$-\nabla\cdot(\eta_h\nabla^\perp j)$, with $j=\Delta^*\psi_\chi$ in
+normalized units: both are diffusive, and both have the opposite sign to
+Nikulsin et al. (2022) Eq. 3d reproduced above (Eq. 7). This is further
+printed evidence for the sign entry under *Contradictions* on
+[reduced MHD](/methods/reduced-mhd.md).
+
+**Compression.** Reduced models remove the fast magnetosonic wave (field
+compression); without the parallel flow they also constrain fluid
+compression. Graves et al. (2019) argue that reduced models artificially
+stabilize compressible modes in low-shear regions. In a low-shear $l=2$
+classical stellarator the model without parallel flow matches the
+full-MHD code [CASTOR3D](/software/castor3d.md) for incompressible
+interchange modes but is too stable at $\Gamma=5/3$, the error growing as
+$n$ decreases until the $n<7$ modes are missing; with parallel flow all
+modes $n=2$ to 15 agree within 10 %, and the error does not grow as $n$
+decreases. The authors conclude that fluid compression requires the
+parallel flow and that the eliminated field-compression terms "are not
+playing an important role in the given test case"
+([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.3, §3.2, Figs. 5,
+7; see [interchange modes](/definitions/interchange-mode.md)).
+
 ## Equilibrium compatibility: the residual force
 
 With the ordering $\lambda_{\rm o}=L_\perp/L_\parallel$,
@@ -138,7 +198,16 @@ $\mu_0j_{\rm eq}=\Delta^*\psi_\chi$, with a non-homogeneous Dirichlet
 condition obtained from $\mathbf n\cdot\mathbf B=0$ on the boundary,
 $\mathbf n\cdot(\nabla\psi_\chi\times\nabla\chi)=-\mathbf n\cdot\nabla\chi$,
 solved by a Fourier–Galerkin method that excludes the $m=0$ kernel
-(§IV, Eqs. 32–35). The grid is flux-surface aligned and its $(R,Z)$
+(§IV, Eqs. 32–35). [Ramasamy et al. (2024)](/sources/ramasamy-2024.md)
+(§2.2) instead obtain $\chi$ as a finite-element solution of a Poisson
+problem with $\mathbf n\cdot\nabla\chi=0$ on the plasma boundary; the
+ideal-wall correction is then contained in $\nabla\chi$ and
+$\mathbf n\cdot\mathbf B=0$ reduces to $\psi_\chi$ constant on the
+boundary, which bypasses the Fourier–Galerkin step. They report numerical
+difficulties of the Dommaschk representation for highly shaped devices and
+use the finite-element $\chi$ "in all simulations"; the conflict with the
+discontinuity argument above is recorded on
+[Dommaschk potentials](/methods/dommaschk-potentials.md). The grid is flux-surface aligned and its $(R,Z)$
 geometry has its own toroidal Fourier expansion (App. A); see
 [three-dimensional inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md)
 for GVEC.
@@ -157,14 +226,26 @@ for GVEC.
   for ballooning modes, JOREK3D being higher; the tearing gap is attributed
   to $v_\parallel=0$ and the ballooning gap mostly to spectral blocking
   (§VI–VII; numbers on [JOREK3D](/software/jorek3d.md)).
+  [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§3.1) attribute the
+  tearing gap instead to insufficient CASTOR3D poloidal resolution; the
+  conflict is open on [JOREK3D](/software/jorek3d.md). On a W7-AS
+  $(2,1)$ tearing mode, without parallel flow, the growth rates agree with
+  CASTOR3D within about 3 % (§3.1, Fig. 2).
 * In a five-period stellarator, toroidal harmonics couple linearly in
   families $n\pm5k$, e.g. $\{1,4,6,9\}$, $\{2,3,7,8\}$, $\{0,5,10\}$
-  (§V–VI).
+  (§V–VI; see [toroidal mode families](/definitions/toroidal-mode-family.md)).
 * The reduced family "cannot accurately reproduce kink modes at higher β",
   and whether it holds at β of 3–5% "remains to be seen" (§VIII); the
   tokamak counterpart of the kink limitation is derived in
   [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §2.3.3 (see
-  [reduced MHD](/methods/reduced-mhd.md)).
+  [reduced MHD](/methods/reduced-mhd.md)). Tokamak reduced MHD misses the
+  finite-β $(1,1)$ internal kink while capturing most other instabilities
+  of interest (Pamela et al. 2020, as cited by
+  [Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.3). The β
+  question is partly answered by nonlinear W7-AS runs at β of about 2.2 to
+  3.4 %, which reproduce mild, resistive pressure-driven activity, though
+  in fixed boundary and with converged results only at toroidal mode
+  numbers up to about 50 (§4; see [soft β limit](/definitions/soft-beta-limit.md)).
 * JOREK3D has since been benchmarked linearly for classical stellarators
   and in the tokamak limit; JOREK also has an axisymmetric "virtual
   current" model that approximates the external rotational transform, and
@@ -182,3 +263,4 @@ for GVEC.
 * [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — model, residual-force ordering, implementation and W7-A verification.
 * [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — later JOREK3D benchmarks, virtual-current model, VMEC comparisons.
 * [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — stellarator outlook and the kink limitation of the reduced family.
+* [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — parallel flow, finite-element vacuum potential, compression tests, W7-AS application.

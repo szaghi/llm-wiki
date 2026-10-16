@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Collisional-radiative (non-equilibrium) impurity model"
-description: "Impurity model that evolves the charge-state distribution in time with collisional-radiative ionization and recombination rates instead of assuming coronal equilibrium; in JOREK it is carried by fluid-advected super-particles whose radiation, ionization power, effective charge, mean charge and density are projected onto the finite-element fields."
+description: "Impurity model that evolves the charge-state distribution in time with collisional-radiative ionization and recombination rates instead of assuming coronal equilibrium; in JOREK it is carried by fluid-advected super-particles whose radiation, ionization power, effective charge, mean charge and density are projected onto the finite-element fields, and in NIMROD by one fluid density per charge state with KPRAD rates."
 status: established
 aliases: [non-equilibrium impurity model, CR impurity model, charge-state-resolved impurity model]
 tags: [impurities, particles, disruption, mhd, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Collisional-radiative (non-equilibrium) impurity model
@@ -35,7 +35,9 @@ recombination coefficient of $z\to z-1$
 multiplies the ionization part of the loss term by the state density
 twice, which would make it quadratic; the linear form above is the
 intended one (recorded on the Source page). Here $d/dt$ is the time
-derivative along the fluid motion.
+derivative along the fluid motion. [Hu et al. (2023)](/sources/hu-2023.md)
+(Eq. 16) repeat the equation in fractional abundances with the same doubled
+factor in print.
 
 ## Particle realization in JOREK
 
@@ -122,11 +124,37 @@ states that the model "is now ready for production" (§7). All its runs are
 axisymmetric; the final current filament survives only because of
 axisymmetry, and in 3D it would end by a kink (§6.2).
 
+## KPRAD in NIMROD
+
+The NIMROD runs of [Zeng et al. (2023)](/sources/zeng-2023.md) (§2, Eq. 3,
+App. 7) carry one continuity equation per neon charge state ($z=0$–$10$).
+Each has convection, a diffusion $\nabla\cdot(D\nabla n_{\mathrm{imp},z})$
+and ionization and recombination sources from the KPRAD rates, updated every
+time step. KPRAD writes its rates and powers as polynomial fits in
+$\log_{10}T_e$:
+
+- line radiation, proportional to $n_e\,n_{\mathrm{imp},z-1}$;
+- ionization rates;
+- radiative recombination with a Gaunt-like factor;
+- bremsstrahlung, proportional to $n_e^2\sqrt{T_e}\,Z_{\mathrm{eff}}$;
+- three-body recombination, significant only near $T_e\simeq1$ eV;
+- background-impurity radiation from a coronal fit.
+
+The formulas are printed in mixed cgs/eV units (Eqs. 10–21). One temperature
+is shared by all species.
+
+Zeng et al. say the KPRAD atomic data "originates from ADAS database"
+(App. 7), whereas [Hu et al. (2021b)](/sources/hu-2021-b.md) describe the
+NIMROD and M3D-C1 rates as KPRAD-fitted ADPAK coronal-model data. This
+difference in attribution can reflect different data versions. It is a
+qualification, not a contradiction of a printed equation.
+
 ## Later use
 
 [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (§3.2, Fig. 8) list the CR
 treatment, "replacing coronal equilibrium", among the JOREK disruption
-developments. Applied to ITER neon–deuterium SPI it shows shards reaching
+developments. The primary study behind the ITER statements below is
+[Hu et al. (2023)](/sources/hu-2023.md). Applied to ITER neon–deuterium SPI it shows shards reaching
 the core before the edge radiative collapse, a transient transport barrier
 of stochastic field lines outside $q=1$ in the early
 [thermal quench](/definitions/thermal-quench.md), and core density
@@ -134,9 +162,37 @@ transport that depends on where material is deposited relative to the
 $q=1$ and $q=2$ surfaces. Particle-in-cell treatment of injected
 impurities has been tested only axisymmetrically, and kinetic tungsten
 impurities are treated in a hybrid kinetic-fluid approach (§2.2, §3.2).
+The axisymmetric-only statement refers to "a further advanced model with a
+particle in cell (PiC) treatment of the injected impurities", cited to a
+2022 master thesis (Strien). It is not the fluid-advected CR marker model of
+this page (compiler's check of the printed review, §3.2, ref. 44). The CR
+marker model has run in 3D since 2023, as the next items show.
+
+**3D production use.**
+
+- [Hu et al. (2023)](/sources/hu-2023.md) run the CR model, with marker
+  moments projected onto the fields, in 3D two-temperature reduced MHD for
+  neon–deuterium SPI into ITER L-mode, with toroidal harmonics $n=0$–11
+  (§2.1–2.2).
+  - The fragments reach the core before the edge radiative collapse.
+  - Assimilation is self-regulated. Non-local ablation, or removing the
+    magnetic reduction factor, changes neon assimilation only mildly but
+    raises the radiated power strongly (§4.1, Figs. 16, 18).
+  - By the end of the 200 m/s run, 25 of 36 MJ are lost, with a radiated
+    fraction of "about 80%" (§3.1). The definitions of the energy fractions
+    are not stated (recorded on the Source page).
+- [Hu et al. (2024)](/sources/hu-2024.md) (§2.1) reuse the same equations
+  "without modifications" for dual SPI into ITER baseline and degraded
+  H-modes. The radiated fractions range from 49.4% (baseline, full pellet)
+  to 89.8% (degraded H-mode, quarter pellet, synchronized injectors)
+  (Table 2). The radiation density is ray-traced onto the ITER first wall.
+  These SPI dynamics are on [shattered pellet injection](/definitions/shattered-pellet-injection.md).
 
 # Citations
 
 - [Hu et al. (2021b)](/sources/hu-2021-b.md) — §1–7, Eqs. 4–7, 11, 15–17, Figs. 2–9, App. A.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.7, §2.15.
-- [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §2.2, §3.2, Fig. 8.
+- [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §2.2, §3.2, Fig. 8, ref. 44.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §2.1–2.2, §3.1, §4.1, Eq. 16.
+- [Hu et al. (2024)](/sources/hu-2024.md) — §2.1, Table 2.
+- [Zeng et al. (2023)](/sources/zeng-2023.md) — §2, Eq. 3, App. 7 (Eqs. 10–21).

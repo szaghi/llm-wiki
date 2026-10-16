@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Dommaschk potentials for the vacuum field"
-description: "Analytic toroidal-harmonic solutions of Laplace's equation in cylindrical coordinates used to represent the stellarator coil field as ∇χ; the coefficients are fitted to a computed vacuum field by Fourier and Legendre projections on a cylinder, giving triangular linear systems, so that ∇·B = 0 holds to machine precision in JOREK3D."
+description: "Analytic toroidal-harmonic solutions of Laplace's equation in cylindrical coordinates used to represent the stellarator coil field as ∇χ; the coefficients are fitted to a computed vacuum field by Fourier and Legendre projections on a cylinder, giving triangular linear systems, so that ∇·B = 0 holds to machine precision in JOREK3D; since 2024 JOREK3D replaces them by a finite-element vacuum potential, an open conflict over which representation is more robust."
 status: established
 aliases: [Dommaschk representation, Dommaschk harmonics]
 tags: [stellarator, reduced-mhd, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Dommaschk potentials for the vacuum field
@@ -78,6 +78,41 @@ The fitting procedure, not the potentials themselves, is the source's
 contribution; its Python implementation is based on a BOUT++ version of the
 potentials (§III).
 
+## The finite-element alternative
+
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.2) report that
+"numerical difficulties have been encountered when representing the vacuum
+field of highly shaped devices" with Dommaschk potentials. They compute
+$\chi$ instead as a finite-element solution of a Poisson problem for a
+divergence-free vacuum field with $\mathbf n\cdot\nabla\chi=0$ on the
+plasma boundary. The ideal-wall correction is then part of $\nabla\chi$,
+and $\mathbf n\cdot\mathbf B=0$ reduces to $\psi_\chi$ constant on the
+boundary, which removes the separate boundary solve of the Dommaschk
+workflow ([stellarator reduced MHD](/methods/stellarator-reduced-mhd.md)).
+This representation "is therefore used in all simulations" of that paper
+as "a more robust approach". No evidence for the difficulties is shown, the
+discontinuity of advective terms on $G^1$ elements is not discussed, and
+the paper does not state how accurately the discrete $\chi$ satisfies
+$\Delta\chi=0$; a Galerkin Poisson solution satisfies it weakly, not to
+machine precision (compiler's note; see
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+## Contradictions
+
+* **Analytic versus finite-element vacuum potential.** *Open.*
+  [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§II–III) choose
+  Dommaschk potentials because a finite-element $\chi$ on $G^1$ elements
+  would make the advective terms discontinuous, which in the authors'
+  experience reduces accuracy or causes numerical instabilities.
+  [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.2), with
+  overlapping authors, call the finite-element $\chi$ the more robust
+  approach because the Dommaschk fit fails for highly shaped devices, and
+  use it in all their runs. Neither paper shows a comparison of the two
+  representations on the same case. The two claims can both hold (the
+  Dommaschk fit failing for strong shaping, the finite-element $\chi$
+  being less smooth), but they disagree on which is the robust default.
+
 # Citations
 
 * [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — representation, fitting procedure, W7-A fit error, motivation.
+* [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — reported difficulties for highly shaped devices and the finite-element replacement.

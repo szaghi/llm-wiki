@@ -5,7 +5,7 @@ description: "Weak-form (L2) projection of marker-particle moments onto the fini
 status: established
 aliases: [moment projection, particle deposition, L2 projection of particle moments, PIC moment projection]
 tags: [particles, finite-elements, hybrid-kinetic, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Particle-to-finite-element moment projection
@@ -112,6 +112,18 @@ The projected sources are explicit in the implicit fluid step
   field interpolation (see [M3D-C1-K](/software/m3d-c1-k.md),
   [δf method](/methods/delta-f-method.md)).
 
+- **Runaway-electron advection (M3D-C1)**: the semi-Lagrangian scheme
+  places one massless pseudo-particle at every quadrature point (125 per
+  element) and projects the pulled-back $n_{\mathrm{RE}}/B$ by the same mass
+  matrix. The right-hand side is then an ordinary quadrature sum. The
+  projected quantity stays a field, with no marker sampling and no particle
+  noise, so no smoothing operator is used
+  ([Liu et al. (2021)](/sources/liu-2021.md), §3, Eq. 14; see
+  [advection by characteristics](/methods/runaway-electron-advection-by-characteristics.md)).
+- **CR impurities in 3D**: the marker moments $Z_{\mathrm{eff}}$, ionization
+  power and radiated power are projected in 3D ITER SPI runs with toroidal
+  harmonics up to $n=11$ ([Hu et al. (2023)](/sources/hu-2023.md), §2.1–2.2).
+
 Grid-based codes deposit differently: [GMEC](/software/gmec.md) scatters
 marker pressures trilinearly to the 8 neighbouring nodes and adds a smoothing
 diffusion of the deposited pressure with coefficient $10^{-6}$ (normalized),
@@ -142,3 +154,5 @@ values with their signs, would settle it.
 - [Liu et al. (2022)](/sources/liu-2022.md) — Eqs. 15–18.
 - [Liu et al. (2024)](/sources/liu-2024.md) — §II A, Eqs. 20–22.
 - [Vlad et al. (2025)](/sources/vlad-2025.md) — §3, Fig. 7.
+- [Liu et al. (2021)](/sources/liu-2021.md) — §3, Eq. 14.
+- [Hu et al. (2023)](/sources/hu-2023.md) — §2.1–2.2.

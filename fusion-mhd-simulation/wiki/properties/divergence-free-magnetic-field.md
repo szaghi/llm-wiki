@@ -5,7 +5,7 @@ description: "The constraint ∇·B = 0 and how the MHD codes of this bundle hol
 status: established
 aliases: [solenoidal magnetic field, div B = 0, magnetic divergence constraint]
 tags: [mhd, numerics, finite-elements, stellarator]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -66,6 +66,15 @@ precision". A finite-element $\chi$ on the $G^1$ elements would not be
 exactly harmonic and would make the advective terms discontinuous
 ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §II–III; see
 [reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)).
+[Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§2.2) replace the
+Dommaschk representation "in all simulations" by a finite-element $\chi$
+obtained from a Poisson problem with $\mathbf n\cdot\nabla\chi=0$ on the
+boundary, for robustness in highly shaped devices. For that $\chi$,
+$\nabla\cdot\mathbf B_{\rm vac}=\Delta\chi=0$ holds only in the weak
+(Galerkin) sense, not to machine precision; the source does not state the
+resulting error (compiler's observation). The disagreement with Nikulsin et
+al. over the finite-element $\chi$ is recorded on
+[Dommaschk potentials](/methods/dommaschk-potentials.md).
 
 ## 3. Evolving B with cleaning
 
@@ -94,6 +103,7 @@ the MHD domain. Halo currents crossing the boundary are therefore excluded
 
 # Citations
 
+* [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — finite-element Poisson vacuum potential.
 * [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — harmonic vacuum potential and machine-precision $\nabla\cdot\mathbf B$.
 * [Bhole et al. (2023)](/sources/bhole-2023.md) — divergence-free field by construction in JOREK full MHD.
 * [Artola et al. (2021)](/sources/artola-2021.md) — field representations of JOREK, M3D-C1, NIMROD; NIMROD cleaning.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Linear MHD eigenvalue codes"
-description: "Codes that linearize the MHD equations about an equilibrium and solve a generalized eigenproblem for complex frequencies and mode structures, typically with poloidal (and toroidal) Fourier harmonics times radial finite elements; their role as references for initial-value codes, the spurious-mode problem, axis regularity, and the benchmark agreements of SCELT, MAS and CASTOR3D."
+description: "Codes that linearize the MHD equations about an equilibrium and solve a generalized eigenproblem for complex frequencies and mode structures, typically with poloidal (and toroidal) Fourier harmonics times radial finite elements; their role as references for initial-value codes, the spurious-mode problem, axis regularity, and the benchmark agreements of SCELT, MAS, CASTOR3D and MINERVA."
 status: established
-aliases: [eigenvalue code, linear stability code, spectral MHD code, CASTOR3D, MAS, SCELT, MARS]
+aliases: [eigenvalue code, linear stability code, spectral MHD code, MAS, SCELT, MARS, MINERVA]
 tags: [spectral, finite-elements, verification, benchmark, numerics, tearing, kink, ballooning]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Linear MHD eigenvalue codes
@@ -72,8 +72,8 @@ cubic elements, with $\partial_\phi\to-in$ (§3.1.3, App. A).
   §IX, Figs. 18, 23, 28). The residual differences are attributed to MAS
   neglecting some equilibrium derivatives and to the different
   discretizations (§IX A).
-- **CASTOR3D against JOREK3D.** CASTOR3D, a linear full-MHD code for 3D
-  equilibria, is the reference for the stellarator benchmark of
+- **CASTOR3D against JOREK3D.** [CASTOR3D](/software/castor3d.md), a
+  linear full-MHD code for 3D equilibria, is the reference for the stellarator benchmark of
   [JOREK3D](/software/jorek3d.md): tearing growth rates agree within 13.2%
   ($\beta$ scan) and 26.2% ($\eta$ scan), ballooning within 6.4%, JOREK3D
   systematically higher ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md),
@@ -82,7 +82,23 @@ cubic elements, with $\partial_\phi\to-in$ (§3.1.3, App. A).
   blocking in the non-linear code "accounts for most of" the ballooning
   discrepancy (§VII). The linearized ideal operator of the stellarator reduced
   model is self-adjoint, so ideal perturbations have real $\omega^2$
-  (App. B, Eqs. B1–B5).
+  (App. B, Eqs. B1–B5). On W7-AS the $(2,1)$ tearing growth rates agree
+  within about 3 %, and interchange modes in a low-shear $l=2$
+  stellarator within 10 % once JOREK3D retains the parallel flow; CASTOR3D
+  also identifies an $n=5$ free-boundary external mode that the
+  fixed-boundary JOREK3D cannot benchmark
+  ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.1–3.2, Figs. 2,
+  5, 7).
+- **MINERVA against MIPS.** The ideal eigenvalue code MINERVA (Aiba et al.
+  2009) is the reference for the $n=3$ ideal
+  [infernal mode](/definitions/infernal-mode.md) of a circular JT-60U-like
+  equilibrium at central β 5.7 %: the initial-value growth rate of
+  [MIPS](/software/mips.md) at $\nu=\kappa=0$ falls with Lundquist number
+  and approaches MINERVA's (about $0.0057\tau_A^{-1}$, $\tau_A$ with
+  length $R_0$) at $S=10^8$, about 5 % above it on the finer meshes
+  (figure reading), with matching mode structure (dominant $m=4$); at 4.1 %
+  MINERVA finds the ideal mode stable ("not shown")
+  ([Sato et al. (2024)](/sources/sato-2024.md), §3.1, Figs. 2–3).
 - **CASTOR3D against JOREK (tokamak).** JOREK full MHD agrees with CASTOR3D on
   $1/1$ kink and $2/1$ tearing growth rates; JOREK reduced MHD deviates at low
   $\eta$ for the kink and "clearly fails" at finite $\beta$
@@ -117,6 +133,13 @@ cubic elements, with $\partial_\phi\to-in$ (§3.1.3, App. A).
   compare to the quasi-interchange overestimate by $\sqrt{1+2q_s^2}$
   ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §VI); a
   Publisher's Note to that paper exists with unknown content.
+  [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§3.1) attribute the
+  tearing gap instead to insufficient poloidal resolution in CASTOR3D, an
+  eigenvalue-code-side cause, without showing the re-run; the conflict is
+  open on [JOREK3D](/software/jorek3d.md) and
+  [CASTOR3D](/software/castor3d.md). If it holds, the reference code, not
+  only the initial-value code, needs a resolution study in such
+  benchmarks.
 
 # Citations
 
@@ -127,3 +150,5 @@ cubic elements, with $\partial_\phi\to-in$ (§3.1.3, App. A).
 - [Seto et al. (2023)](/sources/seto-2023.md) — §4.
 - [Vlad et al. (2025)](/sources/vlad-2025.md) — §3.
 - [Bogaarts et al. (2022)](/sources/bogaarts-2022.md) — equilibrium set-up.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §3.
+- [Sato et al. (2024)](/sources/sato-2024.md) — §3.1.

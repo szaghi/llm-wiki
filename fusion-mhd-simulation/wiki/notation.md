@@ -183,3 +183,33 @@ where it is used.
 
 Other page-local symbols (Dommaschk coefficients, Sauter coefficients, matrix
 names of a particular code) are defined on their page and not registered.
+
+## 10. Extensions logged with chunk 2 (2026-10-16)
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $w$ | magnetic island width | $w_{\mathrm{sat}}$ saturated width; $r_s$ the radius of the resonant surface |
+| $\Psi_{m/n}$ | resonant helical flux of harmonic $m/n$ | not the poloidal flux $\psi$ |
+| $\psi_h$ | Kadomtsev helical flux, $\int(1/q-n/m)\,d\psi_t$ | |
+| $r_{\mathrm{inv}}$ | inversion radius of a sawtooth crash | |
+| $D_R$, $L_p$, $L_q$, $\epsilon_s$ | Glasser–Greene–Johnson resistive-interchange parameter; signed gradient lengths $p/p'$, $q/q'$; inverse aspect ratio at the resonant surface | |
+| $D_{\mathrm{Merc}}$ | Mercier stability function (shear, current, well and geodesic terms) | stable for $D_{\mathrm{Merc}}>0$ |
+| $\mathcal H$ | magnetic helicity $\int\mathbf A\cdot\mathbf B\,dV$ (gauge stated per page) | |
+| $j_{\mathrm{PS}}$ | Pfirsch–Schlüter current density | |
+| $\mathsf\Pi_s$ | stress tensor of species $s$ (viscous, gyroviscous or neoclassical part stated per page) | |
+| $\mathbf v_{\mathrm{dia},s}$ | diamagnetic drift velocity of species $s$ | |
+| $E_r$ | radial electric field | |
+| $\hat v_\parallel$ | parallel-flow coefficient per unit field, $\mathbf v=\dots+\hat v_\parallel\mathbf B$ (JOREK convention) | not $v_\parallel=\mathbf v\cdot\mathbf b$ |
+| $\mathbf E^*$ | effective field in particle pushes of kinetic thermal ions, $\mathbf E-\nabla_\parallel p_e/(n_ee)$ | |
+| $p_{\parallel i}$, $p_{\perp i}$, $\mathsf P_i$, $\mathbf J_i$ | gyrotropic pressure components, pressure tensor and current of kinetic thermal ions | |
+| $v_{th,s}$, $k_\parallel$ | thermal speed $\sqrt{T_s/m_s}$ (convention stated per page); parallel wavenumber | |
+| $\xi$, $\xi_{\mathrm{tp}}$ | particle pitch $v_{\parallel p}/|\mathbf v_p|$; trapped–passing boundary | |
+| $I_{\mathrm{RE}}$, $c_{\mathrm{RE}}$ | runaway current; numerical runaway convection speed | |
+| $\psi_{10}$ | poloidal flux per decade (tenfold) of avalanche gain | |
+| $D_{\mathrm{RE}}$ | stochastic diffusivity of runaway electrons | |
+| $\tau_{\mathrm{TQ}}$, $\tau_{\mathrm{CQ}}$ | thermal- and current-quench times (definition stated per page) | |
+| $S_{\mathrm{wall}}$ | wall Lundquist number $\tau_w/\tau_A$ | |
+| $\mathrm{TPF}_{\mathrm{rad}}$ | toroidal peaking factor of the radiated power | §6's TPF is the halo-current one |
+| $q_w$, $\Delta Q$ | heat flux on a wall surface; energy impact (heat-flux factor) $\tfrac12\int q_w/\sqrt{t-t'}\,dt'$ | units MJ s$^{-1/2}$ m$^{-2}$ |
+| $v_{\mathrm D}$ | drift velocity of an ablation plasmoid | |
+| $N_f$ | toroidal mode-family index ($n\equiv N_f \bmod N_{\mathrm{fp}}$) | |

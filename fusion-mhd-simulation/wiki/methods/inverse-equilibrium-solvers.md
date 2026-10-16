@@ -5,7 +5,7 @@ description: "Codes that compute 3D ideal-MHD equilibria with nested flux surfac
 status: established
 aliases: [inverse equilibrium, 3D equilibrium codes, VMEC-type solvers, fixed-boundary 3D equilibrium]
 tags: [equilibrium, stellarator, spectral, verification]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Three-dimensional inverse equilibrium solvers
@@ -108,6 +108,28 @@ calculations appear to have lower error" (§4).
   it; the full-MHD equilibrium leaves a small residual force in the
   reduced model ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md),
   §I, §IV; see [reduced MHD for stellarators](/methods/stellarator-reduced-mhd.md)).
+* **JOREK3D, W7-AS.** Free-boundary VMEC reconstructions of W7-AS shot
+  #51751 (central pressures 1–14 kPa, pressure scaled linearly) serve as
+  fixed-boundary initial states; force balance is "not guaranteed" to
+  survive the change to the reduced ansatz, and the 14 kPa case, with a
+  strong Shafranov shift, could not be represented accurately and was
+  dropped. A GVEC equilibrium leaves a force imbalance that a
+  single-field-period run relaxes before the full-torus run. A VMEC
+  equilibrium extended into a vacuum region exposes an external $(7,5)$
+  mode that a boundary at the last closed surface suppresses
+  ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §2.2, §3.1–3.2,
+  §4.1; see [soft β limit](/definitions/soft-beta-limit.md)).
+* **M3D-C1, W7-X.** A fixed-boundary VMEC equilibrium supplies both the
+  non-axisymmetric domain, through the map $R(\psi_{t,N},\theta,\phi)$,
+  $Z(\psi_{t,N},\theta,\phi)$, which does not evolve, and the initial
+  $\mathbf B$ and $p$. Because an ideal equilibrium need not be sustained by
+  a dissipative, sourced model on transport time scales, the equilibrium
+  is made self-consistent in two passes: VMEC, a one-field-period M3D-C1
+  run to saturation, VMEC rebuilt from the saturated $\iota$ and $p$, and
+  a second M3D-C1 check in which $\iota$ and $T_e$ "barely evolve" and
+  only small island chains form
+  ([Zhou et al. (2023)](/sources/zhou-2023.md), §III, Fig. 2; see
+  [sawtooth crash](/definitions/sawtooth-crash.md)).
 * **GMEC** reads VMEC equilibria (transformed to Boozer coordinates
   following Hirshman) or DESC equilibria, the latter providing
   "high-precision derivatives". Its ideal-ballooning benchmark uses a VMEC
@@ -136,3 +158,5 @@ calculations appear to have lower error" (§4).
 * [Saxena et al. (2025)](/sources/saxena-2025.md) — VMEC equilibria for M3D-C1 stellarator runs.
 * [Liu et al. (2024)](/sources/liu-2024.md) — VMEC equilibrium for TAE benchmarks.
 * [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — VMEC–JOREK comparison of external modes.
+* [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — VMEC and GVEC equilibria imported into JOREK3D.
+* [Zhou et al. (2023)](/sources/zhou-2023.md) — self-consistent VMEC–M3D-C1 initialization for W7-X.

@@ -5,7 +5,7 @@ description: "Methods that close a nonlinear MHD model with the vacuum field and
 status: established
 aliases: [free-boundary MHD, resistive wall, JOREK-STARWALL, JOREK-CARIDDI, vacuum response, virtual casing]
 tags: [free-boundary, wall, vde, numerics, code]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Free-boundary and resistive-wall coupling
@@ -38,9 +38,24 @@ the vacuum and the conductor are discretized with the plasma
 Because current can flow from plasma to wall through a resistive interface,
 these codes carry toroidally asymmetric plasma currents
 ([reduced-MHD current asymmetry](/results/reduced-mhd-current-asymmetry.md)).
-[Isernia et al. (2023)](/sources/isernia-2023.md) (§I) classify M3D and
-NIMROD as coupled to axisymmetric thin walls only, and M3D-C1 as placing its
-conductors inside the computational domain.
+[Isernia et al. (2023)](/sources/isernia-2023.md) (§I) classify
+[M3D](/software/m3d.md) and NIMROD as coupled to axisymmetric thin walls
+only, and M3D-C1 as placing its conductors inside the computational domain.
+M3D-C1 with a resistive wall gives linear (2,1) growth rates over wall
+Lundquist numbers $\tau_w/\tau_A$ from ≈50 to $5\times10^4$ on a DIII-D
+reconstruction that is stable with an ideal wall, and M3D with a thin
+resistive wall follows the resulting
+[resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md)
+nonlinearly to a thermal quench ([Strauss et al. (2022)](/sources/strauss-2022.md),
+§II–III).
+
+**Analytic thin-wall condition.** The cylindrical limit of a thin wall at
+$r_w$, with a vacuum solution $\propto r^{-m}$ outside, is
+$(1+\gamma\tau_w/m)\,\delta\psi=-(r_w/m)\,\partial_r\delta\psi$ with
+$\tau_w=\mu_0r_wd_w/\eta_w$ ([Strauss et al. (2022)](/sources/strauss-2022.md),
+§II, Eq. 1); it interpolates between the ideal-wall
+($\delta\psi(r_w)=0$) and vacuum boundary conditions and is the basis of
+the dispersion relations used to check these codes.
 
 ## 2. Un-meshed exterior: Green's functions and a natural boundary condition
 
@@ -155,6 +170,19 @@ central-solenoid coils and passive structures; a vessel-resistivity scan
 shows that the nominal-resistivity case is not ideal-wall converged
 ([Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV, Fig. 9b; see
 [ITER runaway-electron benchmarks](/benchmarks/iter-runaway-electron-benchmarks.md)).
+The ITER current-quench study of [Artola et al. (2022)](/sources/artola-2022.md)
+(§2, Fig. 1) uses JOREK–STARWALL with a 3D inner vacuum-vessel layer of
+75 000 linear triangles, an outer layer of toroidal filaments carrying
+axisymmetric currents only (justified because the CQ is much shorter than
+the inner-layer penetration time), the OTS and DIR passive structures as
+filaments for vertical stability, $\eta_w=0.8\times10^{-6}$ Ω m (printed
+without the metre) and $d_w=6$ cm, giving a vessel L/R time of ≈500 ms.
+Blanket modules and ports are omitted. The runs are continued past the CQ
+to ≈1.5 s to capture wall-current diffusion, which sets the maximum vertical
+force ([wall forces](/definitions/wall-forces.md)).
+JOREK has no free-boundary capability for stellarators yet, which blocks
+benchmarks of external modes in stellarator geometry
+([Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.5).
 The 2024 JOREK review lists, as ongoing, halo-current and full-MHD coupling
 to CARIDDI, needed to predict horizontal forces linked to 1/1 kinks, and a
 compression of the wall-coupling matrices
@@ -167,3 +195,6 @@ compression of the wall-coupling matrices
 - [Artola et al. (2021)](/sources/artola-2021.md), §2, Table 1.
 - [Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3, §5.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.
+- [Strauss et al. (2022)](/sources/strauss-2022.md), §II–III, Eq. 1.
+- [Artola et al. (2022)](/sources/artola-2022.md), §2, Fig. 1.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md), §3.2, §4.5.

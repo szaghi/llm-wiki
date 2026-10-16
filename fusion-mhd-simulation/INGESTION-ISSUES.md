@@ -6,6 +6,111 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — the 20 application papers (2026-10-16)
+
+Sources: strauss-2022, hu-2021, liu-2021, liu-2022-b, artola-2022,
+becoulet-2022, hezaveh-2022, zeng-2023, howell-2022, cathey-2023,
+ebrahimi-2023, hu-2023, mcdevitt-2023, nardon-2023-b, zhou-2023,
+cathey-2024, hu-2024, kong-2025, ramasamy-2024, sato-2024.
+25 new concept pages (100 in all), about 50 chunk-1 pages extended,
+1312 bibliography entries. 40 of 50 files ingested.
+
+### Decisions for the human
+
+1. **Resistive-term sign in the JOREK flux equation** (open since chunk 1,
+   [reduced MHD](wiki/methods/reduced-mhd.md)): chunk 2 adds four sources
+   with the diffusive sign (nardon-2023-b Eq. 1, hu-2021 Eq. 3, hu-2023
+   Eq. 5, ramasamy-2024 Eq. 7, the last also for the hyper-resistive term);
+   the count is six against two. The closure as a printed slip is now
+   strongly supported.
+2. **Cause of the JOREK3D–CASTOR3D tearing gap**: ramasamy-2024 (same author
+   group) attributes nikulsin-2022's 13.2 %/26.2 % gap to insufficient
+   CASTOR3D poloidal resolution, without showing the re-run; nikulsin-2022
+   attributed it to $v_\parallel=0$. Rule whether the later statement
+   supersedes, or keep Open (current state).
+3. **Slug decisions from Crossref** (applied): zeng-2022 → `zeng-2023`
+   (NF 63:016026, January 2023 issue); the Kong plasmoid-drift paper →
+   `kong-2025` (NF 65:016042, January 2025; the JET SPI paper keeps
+   `kong-2024`); the double-tearing-mode paper is `nardon-2023-b`
+   (NF current-spike paper `nardon-2023` came first).
+4. **Version caveats**: becoulet-2022 is the IAEA FEC 2020 manuscript (15
+   references) rather than the NF article (57); ebrahimi-2023 is arXiv v1,
+   single-author, while the published paper adds Bhattacharjee; artola-2022
+   is arXiv v1 under its earlier title; zeng-2023, kong-2025, liu-2021,
+   liu-2022-b, hezaveh-2022, hu-2021, hu-2024, howell-2022, cathey-2023,
+   ramasamy-2024 and zhou-2023 are preprints or accepted manuscripts.
+
+### Contradictions opened (Open unless stated)
+
+| Name | Page(s) |
+|---|---|
+| ITER wall time: 250 ms (strauss-2022) vs 0.5 s / ≈500 ms (hoelzl-2021, artola-2022); definitions not stated | definitions/disruption |
+| ITER TQ duration: 75–125 ms for a locked-mode RWTM TQ (strauss-2022) vs ≈20 ms VDE TQ (hoelzl-2024) — attributed contrast | definitions/thermal-quench |
+| TQ trigger surface of impurity SPI: q=2 (hoelzl-2021) vs q=1 in ITER Ne/H SPI (hu-2021, hu-2023) — qualification | definitions/thermal-quench |
+| Fast-CQ sideways force: <1 MN (artola-2022) vs ≈4 MN (Strauss 2018 as cited by artola-2022) | definitions/wall-forces |
+| Radiation scaling with toroidal source width (hu-2023, kong-2025 vs hoelzl-2021 §2.8) | definitions/shattered-pellet-injection |
+| Plasmoid drift aids (hoelzl-2024, JET D) or hinders (hu-2024, ITER Ne H-mode) assimilation — context-dependent | definitions/plasmoid-drift, definitions/shattered-pellet-injection |
+| EDA H-mode dominant harmonics: n=1–3 (hoelzl-2024) vs n=6–9 linear, low n nonlinear (cathey-2023, cathey-2024) | definitions/edge-localized-mode |
+| Complete RE loss vs trapped survivors at beam termination (hoelzl-2021, liu-2021 vs mcdevitt-2023) | definitions/runaway-electrons |
+| Artificial parallel diffusion as a surrogate for RE streaming (bandaru-2024 vs liu-2021's judgement) | methods/runaway-electron-fluid-model |
+| Viscous term of the JOREK vorticity equation: $R$ (hu-2021-b, hu-2021) vs $R^3$ (hu-2023, hu-2024) | methods/reduced-mhd |
+| Ohmic heating with a source current in M3D-C1: $\eta J^2$ (zhou-2023) vs $\eta\mathbf J\cdot(\mathbf J-\mathbf J_x)$ (saxena-2025) | methods/visco-resistive-mhd-model, software/m3d-c1 |
+| Cause of the JOREK3D–CASTOR3D tearing gap (nikulsin-2022 vs ramasamy-2024) | software/jorek3d, software/castor3d, definitions/tearing-mode |
+| Analytic Dommaschk vs finite-element vacuum potential (nikulsin-2022 vs ramasamy-2024) | methods/dommaschk-potentials |
+| BAE-like $n=1$ growth at $q_{\min}>1.1$: zero in M3D-C1-K vs constant in NIMROD (liu-2022-b citing Brennan 2012) | definitions/fishbone |
+| Phase-space invariant during chirping: $C=\omega P_\phi-n\mathcal E$ (White 2020, not ingested) not conserved (hezaveh-2022) | definitions/energetic-particle-mode, methods/chirping-phase-space-diagnostic |
+
+Qualifications, not contradictions: "ELM cycles" in single-fluid NIMROD
+(ebrahimi-2023) vs the diamagnetic requirement for repetitive cycles; the
+hybrid kinetic-MHD definition widened from a minority population to bulk
+kinetic thermal ions (liu-2022-b, sato-2024); the "none computes $\Delta'$"
+sentence on the tearing page replaced (zeng-2023 measures it); the chunk-1
+"axisymmetric-only PiC impurities" claim of hoelzl-2024 refers to a
+different model than hu-2023's 3D CR markers (no conflict).
+
+### Printed inconsistencies (selection; full lists on the Source pages)
+
+* strauss-2022: the 75–125 ms ITER range combines two TQ/wall-time ratios.
+* artola-2022: Eq. 1 has $1/\mu_0$ on the wrong integral; "0.8 µΩ".
+* hu-2021: γ−1 factor only in Eq. 12; "100 ms" for ≈100 µs.
+* hu-2024: "10⁸ MJ s^-1/2 m^-2" for 10⁸ J.
+* liu-2021: pseudo-particle count off by 10; Eq. 9 anti-diffusive heat flux.
+* zeng-2023: Eq. 4 signs; "16^-32" for 10^-32.
+* hezaveh-2022: Eq. 16 sign of $P_2$ (confirmed wrong by the paper's numbers); "ε = 3.2".
+* howell-2022: Eq. A30 missing $d\rho$; viscous-term sign A23/A28 vs Eq. 2.
+* cathey-2023: Fig. 6 caption vs legend m/n; E_r minimum stated two ways.
+* cathey-2024: diamagnetic-velocity mass factor.
+* nardon-2023-b: Eq. A3 missing a factor $R$.
+* ramasamy-2024: Table 1 η 1.93e-6 vs text 1.93e-5; Eq. 5 extra ρ.
+* sato-2024: §1 vs §2 credit for the equilibrium; "Phys. Plasma B".
+* mcdevitt-2023: seed fraction text vs Fig. 3b; missing square root in $\xi_{\mathrm{trap}}$.
+* becoulet-2022: "~40 m" for 40 cm; displacement formula gives a flux.
+
+### Bibliography (905 → 1312 entries, FLAGS 0)
+
+* Same key, different work: `gerasimov-2020-b`, `xu-2019-b`, `hu-2018-c`,
+  `pazsoldan-2021-b`, `maget-2007-b`, `zhang-2020-c`, `matsuyama-2022-c`,
+  `matsuyama-2022-d`, `kim-2020-d` (missed by the merge, caught by the
+  Source writer of ebrahimi-2023 and fixed), `liu-2021-b`, `dimits-1993-b`.
+* Folded: `carl-2021` → `sovinec-2021` (NIMSTELL abstract, given names
+  printed as surnames in saxena-2025); White's book printed 2014 →
+  `white-2013`; Beidler PPCF 59 printed 2017 → `beidler-2016`.
+* Kept distinct with a note: `kim-2023` / `kim-2023-b` (same printed title,
+  different first author and article number).
+* `liu-2021` upgraded from the arXiv `@misc` to the PPCF article.
+
+### Bundle-fit suggestions (chunk 2)
+
+All 20 belong here. No new D17 candidates beyond chunk 1's list; the
+stellarator papers (ramasamy-2024, zhou-2023) and energetic-particle papers
+(liu-2022-b, hezaveh-2022, sato-2024) stay with their clusters as
+recommended before.
+
+### Chunk 3 (planned)
+
+gopakumar-2024, rahman-2024, seto-2024, wright-2024, tang-2025,
+vannini-2025, zhang-2025, izzo-2025, liang-2025, sato-2026 (10 files).
+
 ## Chunk 1 — scaffold (D25) and the 20 code, method, benchmark and review papers (2026-10-16)
 
 Sources: artola-2021, bandaru-2024, bhole-2023, bogaarts-2022,

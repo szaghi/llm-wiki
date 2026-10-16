@@ -222,7 +222,7 @@ are given.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [CLT](/software/clt.md)
@@ -231,8 +231,11 @@ Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
 * [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md)
 * [Implicit time integration and preconditioned Krylov solvers for nonlinear MHD](/methods/implicit-time-integration.md)
 * [M3D-C1](/software/m3d-c1.md)
+* [MARS-F](/software/mars-f.md)
 * [Resistive internal kink (m/n = 1/1)](/definitions/resistive-internal-kink.md)
 * [Resistive tearing mode](/definitions/tearing-mode.md)
+* [Resonant magnetic perturbations and plasma response](/definitions/resonant-magnetic-perturbation.md)
+* [Sawtooth crash and Kadomtsev reconnection](/definitions/sawtooth-crash.md)
 * [Single-fluid visco-resistive MHD model](/methods/visco-resistive-mhd-model.md)
 * [XTOR-K](/software/xtor-k.md)
 

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Ballooning mode"
-description: "Pressure-driven, high-n MHD instability localized on the outboard (bad-curvature) side of flux surfaces, whose ideal growth rate rises with n without bound in the absence of stabilizing flows; the standard linear verification case of edge and stellarator MHD codes."
+description: "Pressure-driven, high-n MHD instability localized on the outboard (bad-curvature) side of flux surfaces, whose ideal growth rate rises with n without bound in the absence of stabilizing flows, with its resistive and peeling-ballooning variants in tokamak pedestals; the standard linear verification case of edge and stellarator MHD codes."
 status: established
 aliases: [ideal ballooning mode, IBM, resistive ballooning mode, drift-ballooning mode, peeling-ballooning mode]
 tags: [ballooning, mhd, pedestal, edge, verification, stellarator, tokamak]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Ballooning mode
@@ -52,6 +52,93 @@ mode sets the onset of type-I
 three-field linear peeling–ballooning model of Seto et al. (2023, §4,
 Eqs. 21–27) is the minimal set. It contains vorticity, the parallel vector
 potential and pressure, with the curvature term as the drive.
+
+## Resistive and peeling–ballooning variants
+
+**Resistivity destabilizes ideally stable pedestals.** The ASDEX Upgrade EDA
+H-mode #36330 lies just inside the ideal $n\approx15$ ballooning boundary of
+MISHKA, yet at realistic resistivity [JOREK](/software/jorek.md) finds it
+unstable to resistive peeling–ballooning modes for $n=5$–11, most strongly
+$n=6$–9 ([Cathey et al. (2023)](/sources/cathey-2023.md), §2.1, §3.1, Figs. 2,
+5). The growth rate peaks at about $2.7\times10^4$ s$^{-1}$ for $n=7$–8
+(figure reading). The mode peaks at $\psi_N=0.983$, almost exactly at the
+maximum of $\partial T_e/\partial R$ ($\psi_N=0.980$), not at the maxima of
+$\nabla p_e$ (0.977) or $\nabla n_e$ (0.995); its dominant poloidal
+harmonics $m=35$–56 are resonant near $q=6$ (§3.2, Fig. 6). Earlier
+resistive studies, cited there, move the ballooning boundary to lower
+pressure gradients (stated).
+
+**Identification by rotation velocity.** Following Morales et al. (2016, as
+cited), the poloidal velocity of an ideal ballooning mode is the
+$E\times B$ velocity plus the poloidal projection of the parallel flow plus
+half the poloidal ion diamagnetic velocity, while a resistive ballooning
+mode moves without the diamagnetic term. The simulated EDA mode moves at
+about $-15$ km/s in the laboratory frame (electron diamagnetic direction)
+and matches the resistive expression best, which is the basis of the
+identification (Cathey et al. 2023, §3.2, Fig. 7). Becoulet et al. (2022,
+§3, attributed) name two-fluid diamagnetic effects and toroidal rotation as
+the most important factors in the observed rotation of ballooning modes
+before ELM crashes ([Becoulet et al. (2022)](/sources/becoulet-2022.md)).
+
+**Resistivity and flows in a JT-60SA pedestal.**
+[Cathey et al. (2024)](/sources/cathey-2024.md) (§4, Figs. 8–11) run single-$n$
+linear JOREK simulations of the 4.6 MA, 2.26 T scenario 4-1, on top of
+established diamagnetic and $E\times B$ flows and a Mach-1 parallel flow
+set at the targets. Growth rates in $10^3$ s$^{-1}$, read from the figures:
+
+| $n$ | 1 | 3 | 6 | 9 | 13 | 17 | 21 | 25 | 30 |
+|---|---|---|---|---|---|---|---|---|---|
+| about $10\eta_{\mathrm{real}}$, with flows | 4 | 13 | 18 | 22 | 25.5 | 26.5 | 20 | 11 | 4 |
+| $\eta_{\mathrm{real}}$, with flows | – | 3.3 | 8 | 8 | – | – | – | – | – |
+| $\eta_{\mathrm{real}}$, no flows | – | – | – | 8 | 12 | 14 | 16 | 17 | 17 |
+
+Here $\eta_{\mathrm{real}}$ is Spitzer resistivity with neoclassical
+corrections at $Z_{\mathrm{eff}}=2.5$. At realistic resistivity only $n=3$
+("mostly peeling"), 6 and 9 (coupled peeling–ballooning) are unstable. The
+flows stabilize the high-$n$ modes, whose zero-flow growth rate rises
+monotonically to $n=30$ (and is up to about four times larger at
+$10\eta_{\mathrm{real}}$), in agreement with the unbounded-growth statement
+above and with diamagnetic drifts as the cut-off. They also destabilize the
+low-$n$ modes: $n=3$ and 6 at realistic resistivity, and $n=1$ at high
+resistivity, are unstable only with flows, which the authors attribute to
+$E\times B$ shear, after Xu et al. and Chen et al. (2017, as cited).
+Without flows the $n=9$ structure is "much more ballooning", with the
+high-field side almost unperturbed (Fig. 11). JT-60SA is said to be harder
+than AUG because of its size and higher Lundquist number (§4.1, stated).
+In the AUG small-ELM and EDA cases, the ideal boundary from MISHKA
+overestimates the dominant $n$ because ideal analysis neglects this flow
+stabilization (Cathey et al. 2024, §2.3, §3.4, stated).
+
+**Parity in nonlinear peeling–ballooning ELMs.** In NIMROD runs of DIII-D
+ELMs, ballooning-parity modes $n=10$–14 localized on the low-field side grow
+linearly; the peeling-parity $n=1$ and 2 currents surround the device and
+dominate on the high-field side; and the nonlinear $n=12$ current spreads
+poloidally well beyond its linear structure
+([Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md), p. 2, p. 4,
+Figs. 2a, 4).
+
+**Flow shear as a stabilizer.** NIMROD needs the reconstructed pedestal flow
+shear to keep peeling–ballooning modes stable in a DIII-D ITER-baseline
+equilibrium ([Howell et al. (2022)](/sources/howell-2022.md), §III A,
+stated). Ramasamy et al. (2024, §4.5) list the neglected ambipolar
+$E\times B$ shear among the limits of their stellarator runs and expect it
+to stabilize high-$n$ and worsen low-$n$ modes, by analogy with edge
+harmonic oscillations ([Ramasamy et al. (2024)](/sources/ramasamy-2024.md));
+the JT-60SA scan above shows that pattern.
+
+**Ballooning modes beside other instabilities.**
+- In the circular, weak-shear tokamak equilibria used for $n=3$ infernal
+  modes, $n>3$ ballooning modes are also unstable. With drift-kinetic
+  thermal ions in MEGA, the $n=18$ ballooning growth rate rises while the
+  $n=3$ rate falls until the two are comparable, but $n=18$ saturates lower
+  and its effect on $n=3$ "appears to be small"; in MHD the $n=3$ mode
+  saturates first ([Sato et al. (2024)](/sources/sato-2024.md), §3.2.2,
+  Fig. 14b, qualitative).
+- In W7-AS, the low-$n$ MHD activity at intermediate $\beta$ is resistive in
+  the JOREK3D simulations: tenfold resistivity destroys confinement, lower
+  resistivity confines the activity to the edge, and the dominant $(2,1)$
+  mode seen in the experiment appears only at artificially high resistivity
+  (Ramasamy et al. 2024, §4.2, §4.4; see [JOREK3D](/software/jorek3d.md)).
 
 ## Verification results
 
@@ -115,7 +202,15 @@ against analytic linear theory.
   reader's computation from the printed values).
 - **Growth-rate units differ between sources.** Seto et al. normalize by a
   poloidal Alfvén time built on a 3 m reference length and a 2 T reference
-  field. Jiang et al. use $v_A/R_0$. Nikulsin et al. use SI ($\mathrm s^{-1}$).
+  field. Jiang et al. use $v_A/R_0$. Nikulsin et al. and Cathey et al. use
+  SI ($\mathrm s^{-1}$).
+- **Figure readings.** The JT-60SA and EDA growth rates above are read from
+  log or linear plots and carry roughly 10% reading error; Cathey et al.
+  (2024) print no numbers and call the resistivities "nominal", "realistic"
+  and "anticipated" interchangeably.
+- **Single temperature.** The AUG and JT-60SA pedestal runs use $T_e=T_i$
+  and no torque source, so the $E	imes B$ and diamagnetic flows that set the
+  high-$n$ cut-off are approximate (Cathey et al. 2023, §2.2; 2024, §2.3).
 
 ## Contradictions
 
@@ -128,3 +223,10 @@ recorded on the [cbm18 benchmark page](/benchmarks/cbm18-ballooning-benchmark.md
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §VIII, §IX A–B, Figs. 10–23.
 - [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §VII, Fig. 12.
 - [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.3.3, §4.1, §4.5, §5.1.
+- [Cathey et al. (2023)](/sources/cathey-2023.md) — §2.1, §3, Figs. 2, 5–7.
+- [Cathey et al. (2024)](/sources/cathey-2024.md) — §2.3, §3.4, §4, Figs. 8–11.
+- [Ebrahimi & Bhattacharjee (2023)](/sources/ebrahimi-2023.md) — pp. 2–4, Figs. 2a, 4.
+- [Becoulet et al. (2022)](/sources/becoulet-2022.md) — §3.
+- [Howell et al. (2022)](/sources/howell-2022.md) — §III A.
+- [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) — §4.2, §4.4, §4.5.
+- [Sato et al. (2024)](/sources/sato-2024.md) — §3.2.2, Fig. 14b.

@@ -5,7 +5,7 @@ description: "The halo current is the current that flows partly in the scrape-of
 status: established
 aliases: [halo currents, halo fraction, toroidal peaking factor, TPF, SOL current]
 tags: [disruption, vde, wall, edge, free-boundary]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Halo current
@@ -30,10 +30,21 @@ and loads it with $\mathbf J\times\mathbf B$ forces
   the wall surface twice (the compiler's reading; the source prints only the
   formula).
 - **Toroidal peaking factor $\mathrm{TPF}$.** The toroidal maximum of the
-  poloidal halo current over its toroidal mean. The sources of this bundle
-  use it without printing a definition for halo currents; Hoelzl et al.
+  poloidal halo current over its toroidal mean,
+  $$\mathrm{TPF}\equiv\frac{\max_\phi\Big(\frac12\oint_\phi|\mathbf J\cdot\mathbf n|\,R\,dl\Big)}{I_{\mathrm{halo}}/2\pi},$$
+  with $dl$ the poloidal length element of the wall contour at fixed $\phi$
+  ([Artola et al. (2022)](/sources/artola-2022.md), §4.1, Eq. 8). The
+  numerator is the halo current per radian crossing the wall at $\phi$, with
+  the same factor $\frac12$ as the halo-fraction formula above. Hoelzl et al.
   (2021, §6.2.4) give the same max-over-mean definition for the radiated
-  power.
+  power ([radiation asymmetry](/definitions/radiation-asymmetry.md)).
+- **Design metric.** The product of halo fraction
+  ($\mathrm{HF}=I_{\mathrm{halo}}/I_p(0)$) and $\mathrm{TPF}$ sets
+  the ITER electromagnetic-load category: category I requires
+  $\mathrm{HF}\times\mathrm{TPF}<0.15$, against an experimental maximum of
+  0.75 in the ITPA database (as cited by
+  [Artola et al. (2022)](/sources/artola-2022.md), §4.1, §4.4, from Lehnen
+  et al. 2015 and Eidietis et al. 2015).
 - **Toroidal halo current.** The toroidal current in the open-field-line
   region; in the 3D NSTX benchmark it reaches ≈0.4 MA (JOREK) and ≈0.35 MA
   (M3D-C1) late in the TQ, while NIMROD lacked the post-processing to
@@ -62,6 +73,30 @@ $I_p$, $I_{\mathrm{halo}}$ and $\mathrm{TPF}$ match the experiment "for
 appropriate values" of the SOL heat-transport parameter
 ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §3.1, Fig. 5): the match
 is conditional on a tuned boundary parameter.
+
+**Mitigated ITER current quenches in 3D.** JOREK–STARWALL runs of two ITER
+15 MA post-TQ states at realistic Lundquist number, with CQ times of 47 and
+45.5 ms ([Artola et al. (2022)](/sources/artola-2022.md), §4.1–4.2, §4.4):
+
+| | case 1 | case 2 |
+|---|---|---|
+| max poloidal halo fraction | 8.7% | 16.6% |
+| max $\mathrm{TPF}$ (halo fraction at that time) | 1.2 (2%) | 1.7 (5.7%) |
+| max $\mathrm{HF}\times\mathrm{TPF}$ | 0.09 | 0.17 |
+| max toroidal halo current | 4.1 MA | 8.4 MA |
+
+Case 2 lies "slightly above the level for category I". The halo fractions
+agree with the 10–20% that Hoelzl et al. (2021, §6.3) predict for 50–150 ms
+CQs. The $\mathrm{TPF}$ of 1.7 exceeds the ≲1.15 of the fast-CQ ITER VDE
+runs above; the scenarios differ (mitigated CQ from a tearing-unstable
+post-TQ state against a VDE with an $n=1$ kink), so the values are recorded
+side by side, not as a contradiction. The scrape-off-layer temperature rises
+to 10–15 eV from the 1 eV boundary value, "consistent with experimental
+temperature measurements" (§4.4, Fig. 8). The authors caution that if a
+cold halo limited the halo current, current would be re-induced in the
+core, slowing the $I_p$ decay against the vertical motion and lowering
+$q_{95}$, which could raise halo asymmetries; they call for SOL models with
+Ohmic heating, radiation, neutrals and sheath conditions (§4.4, stated).
 
 **3D structure.** In the NSTX 3D VDE, the wall normal current during the
 thermal quench shows filamentary structures with strong $n=3$ content,
@@ -135,3 +170,4 @@ source.
 - [Artola et al. (2021)](/sources/artola-2021.md), §4.1.1, §4.1.5–4.1.6, §4.3.1.
 - [Isernia et al. (2023)](/sources/isernia-2023.md), §II, §VII.
 - [Bandaru et al. (2024)](/sources/bandaru-2024.md), §IV.
+- [Artola et al. (2022)](/sources/artola-2022.md), §4.1–4.2, §4.4, Eq. 8.

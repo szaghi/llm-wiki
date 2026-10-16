@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Bootstrap current and its MHD implementation"
-description: "The neoclassical parallel current driven by density and temperature gradients in toroidal geometry, and its inclusion in MHD codes as a non-inductive current J_x in Ohm's law toward which the plasma current relaxes resistively; M3D-C1 uses Sauter or Redl fits (mapped to quasi-symmetric stellarators), JOREK a Sauter-evolved toroidal source current."
+description: "The neoclassical parallel current driven by density and temperature gradients in toroidal geometry, and its inclusion in MHD codes as a non-inductive current J_x in Ohm's law toward which the plasma current relaxes resistively; M3D-C1 uses Sauter or Redl fits (mapped to quasi-symmetric stellarators), JOREK a Sauter-evolved toroidal source current, and NIMROD a heuristic neoclassical electron stress that produces the drive without an imposed current."
 status: established
 aliases: [bootstrap current source, non-inductive current, Sauter bootstrap model, Redl bootstrap model]
 tags: [bootstrap-current, extended-mhd, tokamak, stellarator]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Bootstrap current and its MHD implementation
@@ -116,9 +116,65 @@ JOREK QH-mode simulations of ASDEX Upgrade the bootstrap current evolves
 self-consistently; the nonlinear drop of $q_{95}$ through current
 redistribution, bootstrap current included, reduces growth rates and acts
 as a saturation mechanism ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md),
-§2.1). Other MHD codes use a heuristic closure (NIMROD) or kinetic closures
+§2.1). In the reduced-MHD form the source enters as a relaxation term
+$\eta(j-j_{\rm src})$, so the current builds up on the resistive time; the
+source holds both the Sauter bootstrap and the Ohmic contribution, and the
+nonlinear evolution of $q_{95}$ contributes to the saturation of the QH-mode
+kink-peeling mode ([Cathey et al. (2024)](/sources/cathey-2024.md), §3.1–3.2).
+With stationary profiles the Sauter source is stationary; when the profiles
+change nonlinearly it follows them, and the authors associate this extension
+with the presence of the radial-electric-field well $\propto\nabla p/n$ in
+the EDA H-mode simulations (the referent of their sentence is ambiguous,
+recorded on the Source page) ([Cathey et al. (2023)](/sources/cathey-2023.md),
+§2.2).
+Other MHD codes use a heuristic closure (NIMROD) or kinetic closures
 that are "extremely computationally expensive"
 ([Saxena et al. (2025)](/sources/saxena-2025.md), §1).
+
+## Heuristic neoclassical closure (NIMROD)
+
+The heuristic closure of Gianakon et al. (2002) does not impose a current. It
+adds to Ohm's law an electron stress that damps the electron poloidal flow
+relative to its equilibrium value,
+
+$$\mathbf E=-\mathbf v\times\mathbf B+\eta\mathbf J-\frac{1}{n_ee}\nabla\cdot\mathsf\Pi_e,\qquad
+\nabla\cdot\mathsf\Pi_e=-\nu_{{\rm pol},e}\frac{m_e}{e}\langle B_0^2\rangle\frac{(\mathbf J-\mathbf J_0)\cdot\mathbf e_\Theta}{(\mathbf B_0\cdot\mathbf e_\Theta)^2}\,\mathbf e_\Theta,$$
+
+with $\nu_{{\rm pol},e}$ the electron poloidal damping rate, $\mathbf e_\Theta$
+along the equilibrium poloidal field and subscript $0$ the equilibrium
+(page-local symbols), plus an ion stress of the same form in the momentum
+equation ([Howell et al. (2022)](/sources/howell-2022.md), §II A, Eqs. 5,
+8–10). The electron force reproduces the bootstrap current as the result of
+collisional viscosity between passing and trapped electrons; the ion force
+gives poloidal flow damping and the polarization-current enhancement.
+Subtracting $\mathbf J_0$ and $\mathbf v_0$ holds the equilibrium. The closure
+is valid to $O(m_e/m_i)$ for strong ion poloidal damping and assumes
+$Z_{\rm eff}=1$. The damping rates are uniform and enhanced together with
+$\eta$, keeping $\nu_{{\rm pol},e}/(\nu_{ei}+\nu_{{\rm pol},e})=0.55$ against the
+experimental 0.43 in the DIII-D case (§III A, Table I). It is the closure
+behind NIMROD's [neoclassical tearing mode](/definitions/neoclassical-tearing-mode.md)
+simulations; XTOR, XTOR-2F, TM1 and JOREK's neoclassical ion friction use
+closures of the same family (§I). The three implementations therefore differ
+in kind: an imposed parallel $\mathbf J_x$ (M3D-C1), an imposed toroidal
+source current (JOREK) and an electron-force closure (NIMROD).
+
+## Consequence for stability: weak central shear
+
+An off-axis bootstrap current flattens the core $q$ profile, and the weak
+central shear it produces is the setting of
+[infernal modes](/definitions/infernal-mode.md)
+([Sato et al. (2024)](/sources/sato-2024.md), §1).
+
+## Other non-inductive source currents
+
+The same Ohm's-law slot carries driven currents. In M3D-C1 simulations of W7-X
+an ECCD profile from ray tracing enters as a fixed toroidal source current
+peaked at $r/a\approx0.15$; the bootstrap current is neglected as small in
+the crash region ([Zhou et al. (2023)](/sources/zhou-2023.md), §II–III, Fig. 1;
+see [sawtooth crash](/definitions/sawtooth-crash.md)). The heating term
+printed with it is $\eta J^2$, not $\eta\,\mathbf J\cdot(\mathbf J-\mathbf J_x)$;
+this is recorded as an open contradiction on
+[visco-resistive MHD model](/methods/visco-resistive-mhd-model.md).
 
 ## Printed variants
 
@@ -137,3 +193,8 @@ $\Lambda$ where $\ln\Lambda$ is meant.
 * [Saxena et al. (2025)](/sources/saxena-2025.md) — Ohm's-law implementation, Sauter, Redl and quasi-symmetric closures, verification, nonlinear QA runs.
 * [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — JOREK bootstrap-evolving source current.
 * [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — self-consistent bootstrap current in JOREK QH-mode simulations.
+* [Howell et al. (2022)](/sources/howell-2022.md) — NIMROD heuristic neoclassical closure.
+* [Cathey et al. (2024)](/sources/cathey-2024.md) — JOREK relaxation form of the Sauter source.
+* [Zhou et al. (2023)](/sources/zhou-2023.md) — ECCD as an Ohm's-law source current.
+* [Cathey et al. (2023)](/sources/cathey-2023.md) — evolving Sauter source and the E_r well.
+* [Sato et al. (2024)](/sources/sato-2024.md) — off-axis bootstrap current and infernal modes.

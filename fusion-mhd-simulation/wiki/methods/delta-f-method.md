@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "The δf particle method"
-description: "Marker method that evolves only the deviation of the energetic-particle distribution from a known equilibrium part, carrying it as a weight advanced along the characteristics; it lowers noise relative to full-f, and the hybrid codes of this bundle use it with or without suppressing the relaxation of a non-equilibrium initial distribution."
+description: "Marker method that evolves only the deviation of a kinetic distribution (energetic particles or kinetic thermal ions) from a known equilibrium part, carrying it as a weight advanced along the characteristics; it lowers noise relative to full-f, and the hybrid codes of this bundle use it with or without suppressing the relaxation of a non-equilibrium initial distribution."
 status: established
 aliases: [delta-f, δf PIC, delta-f particle-in-cell, perturbative particle method]
 tags: [hybrid-kinetic, energetic-particles, particles, numerics]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # The δf particle method
@@ -69,6 +69,25 @@ all its simulations, so that
 $\partial f_0/\partial P_\phi\propto\partial f_0/\partial\psi$
 ([Liu et al. (2024)](/sources/liu-2024.md), Eq. 17).
 
+**Other parametrizations of $f_0$.** With kinetic thermal and fast ions,
+M3D-C1-K writes $f_0(\mathbf X,\mathcal E,\text{pitch})$, pitch
+$=v_{\parallel p}/v$, and drives the weights only by the perturbed parts of
+the guiding-centre position, energy and pitch rates, with the effective
+field $\mathbf E^*=\mathbf E-\nabla_\parallel p_e/(n_ee)$ in the energy and
+parallel-velocity rates; the factor is $1$ in linear and $1-w_p$ in
+nonlinear runs, as above ([Liu et al. (2022b)](/sources/liu-2022-b.md),
+Eqs. 2.12–2.16). Such an $f_0$ is not a function of the constants of
+motion, so dropping the unperturbed drive is the suppressed-relaxation form
+of the next section (compiler's reading). A numerical NUBEAM $f_0$ is
+smoothed by a Gaussian operator so that its phase-space gradients exist
+(§5). MEGA, for kinetic thermal ions, carries particle-number weights
+$w_p=\Delta V_p\,\delta f$, with $\Delta V_p$ the phase-space volume of the
+marker, and
+$\mathrm dw_p/\mathrm dt=-\Delta V_p[(\mathbf v_E+v_{\parallel p}\delta\mathbf b)\cdot\nabla+\dot{\mathcal E}\,\partial_{\mathcal E}]f_0$
+with a Maxwellian $f_0(\psi,\mathcal E)$
+([Sato et al. (2024)](/sources/sato-2024.md), Eq. 15). This is linear in
+the weight (no $1-w_p$ factor).
+
 **Linear and nonlinear variants.** In linear M3D-C1-K runs the orbits use
 the equilibrium fields only and $(1-w_p)\to1$. In nonlinear runs the
 perturbed rates are taken as the difference between a Boris push in the full
@@ -100,6 +119,13 @@ heat capacity ratio $\Gamma=2$ in the perpendicular direction" (ibid.,
 functions and a mass-matrix solve follows (Eqs. 17–18; see
 [particle-to-mesh projection](/methods/particle-to-mesh-projection.md)).
 Eqs. 17–18 drop the $\delta B_\parallel/B_0$ term of Eq. 16 without comment.
+With kinetic thermal ions, M3D-C1-K deposits density, parallel flow and
+both pressures with the weight $w_p+\delta B_\parallel/B^*_\parallel$; its
+perpendicular pressure carries both $\delta B_\parallel/B^*_\parallel$ and
+$\delta B_\parallel/B$, printed without explanation
+([Liu et al. (2022b)](/sources/liu-2022-b.md), Eqs. 2.17–2.22). MEGA's
+kinetic-ion moments include $\rho$ and $v_\parallel$ besides the two
+pressures ([Sato et al. (2024)](/sources/sato-2024.md), Eqs. 16–19).
 GMEC scatters $m_hv_{\parallel p}^2w_p$ and $\tfrac12m_hv_\perp^2w_p$
 trilinearly to the 8 neighbouring nodes. With FLR, a pull-back averages the
 deposition over the $N=4$ gyro-points
@@ -126,6 +152,10 @@ velocity space as soon as it is evolved.
   Bogaarts et al. state that "one-to-one comparison" with codes that switch
   relaxation off is therefore difficult. A realistic NUBEAM distribution
   relaxes much less (§V, Fig. 13).
+- **Test particles.** MEGA can add passive test particles that respond to
+  the fields but do not contribute to the EP current, to raise phase-space
+  resolution for diagnostics
+  ([Hezaveh et al. (2022)](/sources/hezaveh-2022.md), §1).
 - **Losses are a separate effect.** In δf HYMAGYC about 15% of the EPs are
   first-orbit losses, because markers crossing the last closed flux surface
   are not re-injected. MEGA shows no initial relaxation
@@ -154,3 +184,6 @@ code-to-code spread
 - [Liu et al. (2024)](/sources/liu-2024.md): Eqs. 15–22, the general weight equation, uniform loading, the $P_\phi$ approximation, gyro-averaged deposition.
 - [Vlad et al. (2025)](/sources/vlad-2025.md): δf with the relaxation term suppressed (HYMAGYC, MEGA, ORB5) against full-$f$ (XTOR-K).
 - [Bogaarts et al. (2022)](/sources/bogaarts-2022.md): the full-$f$ alternative in JOREK and its initial relaxation.
+- [Liu et al. (2022b)](/sources/liu-2022-b.md): δf for kinetic thermal and fast ions, $f_0(\mathbf X,\mathcal E,\text{pitch})$, $\mathbf E^*$ in the weights, density and flow deposition.
+- [Sato et al. (2024)](/sources/sato-2024.md): MEGA's particle-number weights and kinetic-ion moments.
+- [Hezaveh et al. (2022)](/sources/hezaveh-2022.md): passive test particles in MEGA.

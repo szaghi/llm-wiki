@@ -263,21 +263,26 @@ hot VDE forward.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-16) created every page of the bundle. This source is cited on:
+Chunk 1 (2026-10-16) created every page of the bundle; chunk 2 (2026-10-16) extended many. This source is cited on:
 
 * [Bézier–Hermite finite elements with toroidal Fourier harmonics](/methods/bezier-finite-elements.md)
 * [CARIDDI](/software/cariddi.md)
+* [CASTOR3D](/software/castor3d.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Free-boundary and resistive-wall coupling](/methods/resistive-wall-coupling.md)
 * [Grad–Shafranov equation](/definitions/grad-shafranov-equation.md)
 * [Halo current](/definitions/halo-current.md)
 * [JOREK](/software/jorek.md)
+* [M3D](/software/m3d.md)
 * [M3D-C1](/software/m3d-c1.md)
+* [MARS-F](/software/mars-f.md)
 * [NIMROD](/software/nimrod.md)
 * [Reduced MHD for tokamaks](/methods/reduced-mhd.md)
 * [Resistive tearing mode](/definitions/tearing-mode.md)
+* [Resistive-wall tearing mode](/definitions/resistive-wall-tearing-mode.md)
 * [STARWALL](/software/starwall.md)
 * [Thermal quench](/definitions/thermal-quench.md)
+* [Toroidal mode families in stellarators](/definitions/toroidal-mode-family.md)
 * [Vertical displacement event (hot and cold VDE)](/definitions/vertical-displacement-event.md)
 
 # Citations

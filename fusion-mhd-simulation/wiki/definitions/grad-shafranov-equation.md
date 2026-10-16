@@ -5,7 +5,7 @@ description: "The axisymmetric ideal-MHD force balance J×B = ∇p written as an
 status: established
 aliases: [GS equation, Grad-Shafranov, Grad–Shafranov–Schlüter equation]
 tags: [equilibrium, tokamak, mhd]
-timestamp: 2026-10-16T00:00:00Z
+timestamp: 2026-10-16T12:00:00Z
 ---
 
 # Grad–Shafranov equation
@@ -81,6 +81,17 @@ force ([Nikulsin et al. (2022)](/sources/nikulsin-2022.md), §II; see
 The three-dimensional analogue is solved by
 [inverse equilibrium solvers](/methods/inverse-equilibrium-solvers.md).
 
+## Varying q at fixed pressure: Bateman scaling
+
+Adding a constant to $F^2$ while keeping $p(\psi)$ and the toroidal current
+fixed changes $q$ everywhere and keeps the Grad–Shafranov equation satisfied,
+because only $FF'$ enters it. It is used to scan $q_{\min}$ for $n=1$
+kink and fishbone studies of a DIII-D equilibrium. The scaling changes the
+toroidal field and hence $\beta$ together with $q_{\min}$, which matters for
+the strongly $\beta$-dependent $n=1$ mode; for NSTX the authors instead vary
+the plasma current at fixed toroidal field, which keeps $\beta$ nearly fixed
+([Liu et al. (2022b)](/sources/liu-2022-b.md), §4–5).
+
 ## Verification test: the Solov'ev solution
 
 With $\mu_0\,dp/d\psi=-c_1$ and $F\,dF/d\psi=-c_2R_0^2$ constant, the
@@ -123,6 +134,7 @@ No contradiction between sources is recorded.
 
 # Citations
 
+* [Liu et al. (2022b)](/sources/liu-2022-b.md) — Bateman scaling of $q$, §4–5.
 * [Bhole et al. (2023)](/sources/bhole-2023.md) — JOREK equilibrium step and its printed form.
 * [Ma & Guo (2022)](/sources/ma-2022.md) — normalized equation, inverse solver, Solov'ev convergence.
 * [Zhang et al. (2021)](/sources/zhang-2021.md) — re-solved versus interpolated equilibria in the CLT–M3D-C1 benchmark.
