@@ -5,7 +5,7 @@ description: "The electromagnetic wall force is the integral of the Lorentz forc
 status: established
 aliases: [wall force, vertical force, sideways force, horizontal force, asymmetric VDE force]
 tags: [disruption, vde, wall, free-boundary]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:59:30Z
 ---
 
 # Electromagnetic wall forces (vertical and sideways)
@@ -154,7 +154,8 @@ currents through the wall, both ongoing
 
 ## Contradictions
 
-**Sideways-force agreement in the 3D NSTX VDE benchmark — Open.**
+**Sideways-force agreement in the 3D NSTX VDE benchmark — Open; kept Open
+by human decision (2026-10-16).**
 [Artola et al. (2021)](/sources/artola-2021.md) (§4.1.4, §5) report that
 the horizontal force "shows a good agreement in magnitude" and give the
 predicted maxima as 2.5–3.5 kN; the peak values read from their Fig. 8 are

@@ -5,7 +5,7 @@ description: "Code-to-code benchmark of a vertical displacement event of an NSTX
 status: established
 aliases: [NSTX VDE benchmark, 3D VDE benchmark, Krebs 2020 VDE benchmark]
 tags: [benchmark, verification, vde, disruption, wall, free-boundary]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T23:59:30Z
 ---
 
 # NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)
@@ -114,7 +114,8 @@ benchmark and its axisymmetric parent.
 
 ## Contradictions
 
-**Sideways-force agreement — Open.** [Artola et al. (2021)](/sources/artola-2021.md)
+**Sideways-force agreement — Open; kept Open by human decision
+(2026-10-16).** [Artola et al. (2021)](/sources/artola-2021.md)
 (§4.1.4, §5) call the horizontal-force agreement "good … in magnitude" with
 maxima of 2.5–3.5 kN; [Hoelzl et al. (2021)](/sources/hoelzl-2021.md)
 (§4.8) describe the same benchmark as "reasonable quantitative agreement

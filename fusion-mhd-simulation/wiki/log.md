@@ -2,6 +2,7 @@
 
 ## 2026-10-16
 
+* **Human decision: the sideways-force agreement in the 3D NSTX VDE benchmark stays Open** ([wall forces](/definitions/wall-forces.md), [NSTX benchmarks](/benchmarks/nstx-vde-benchmarks.md), [NIMROD](/software/nimrod.md)). Artola et al. (2021) report "good agreement in magnitude", while Hoelzl et al. (2021) summarize the same benchmark as "factor 2 smaller in NIMROD". The figure readings give a NIMROD/JOREK ratio of about 0.74.
 * **Bibliography: preprints kept distinct (human decision, as in plasma-propulsion-simulation)**. A citation printed in pre-publication form (submitted, accepted, in preparation, under review, accepted-manuscript URL, arXiv) is now its own entry, keyed by the year of that form; one entry serves every such citation of the same manuscript. 23 entries split, 1552 → 1572:
   * Split from published entries: `artola-2020-c` (from `artola-2021`), `bergstrom-2024-b`, `cathey-2021-b`, `futatani-2020`, `hoelzl-2020-c` (from `hoelzl-2021`; artola-2022 cites both forms), `hoelzl-2024-b`, `holod-2021-b`, `hu-2024-b`, `korving-2023-b`, `liu-2021-d`, `mcclenaghan-2023-b`, `nardon-2021-b`, `nikulsin-2020`, `pamela-2020-b`, `pamela-2021` (from `pamela-2022`), `ramasamy-2021-b`, `reux-2021-b`, `sarkimaki-2022-b`, `xiao-2020`.
   * Rekeyed because no reference list cites the published paper (precedent: `hippke-2018-b` in plasma-propulsion): `jiang-2024` → `jiang-2024-c`, `kong-2025` → `kong-2024-b`, `bandaru-2024` → `bandaru-2024-d`. The Source pages are unaffected.

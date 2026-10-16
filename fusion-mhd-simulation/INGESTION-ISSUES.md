@@ -272,6 +272,7 @@ saxena-2025, seto-2023, taheri-2022, vlad-2025, zhang-2021.
      Fig. 8 readings give NIMROD ≈0.74 of JOREK); hoelzl-2021 §4.8 summarizes
      the same benchmark as "factor 2 smaller in NIMROD". hoelzl-2021 also
      writes the wall condition as $\Phi=0$ where artola-2021 has $\Phi=$ const.
+     *Kept Open by human decision (2026-10-16).*
    * *Continuity class of the JOREK element* ($G^1$ in hoelzl-2021,
      artola-2021, nikulsin-2022; $C^1$ in bhole-2023): on regular nodes the
      two describe the same continuity in different coordinates; the real

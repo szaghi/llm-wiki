@@ -5,7 +5,7 @@ description: "Initial-value extended-MHD code with high-order C0 nodal spectral 
 status: established
 aliases: [NIMROD code]
 tags: [full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T23:59:30Z
 ---
 
 # NIMROD
@@ -252,7 +252,8 @@ codes coupled only to axisymmetric thin walls. See
 
 ## Contradictions
 
-* **Sideways wall force in the 3D NSTX VDE benchmark.** *Open.*
+* **Sideways wall force in the 3D NSTX VDE benchmark.** *Open; kept Open by
+  human decision (2026-10-16).*
   Artola et al. (2021) (§4.1.4, §5, Fig. 8) report "good agreement in
   magnitude" with predicted peaks of 2.5–3.5 kN (figure readings: JOREK about
   3.4, M3D-C1 about 2.8, NIMROD about 2.5 kN); Hoelzl et al. (2021) (§4.8)
