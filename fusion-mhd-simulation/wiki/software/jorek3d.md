@@ -5,7 +5,7 @@ description: "Stellarator extension of JOREK: a reduced MHD model built on the v
 status: established
 aliases: [JOREK stellarator extension]
 tags: [code, stellarator, reduced-mhd, finite-elements, spectral, equilibrium, tearing, ballooning, benchmark]
-timestamp: 2026-10-16T12:00:00Z
+timestamp: 2026-10-16T23:00:00Z
 ---
 
 # JOREK3D
@@ -192,7 +192,7 @@ is the submitted arXiv v1.
 
 ## Contradictions
 
-* **JOREK3D versus CASTOR3D growth rates.** *Open (qualified).*
+* **JOREK3D versus CASTOR3D growth rates.** *Open (qualified); the cause of the gap was kept Open by human decision (2026-10-16).*
   Nikulsin et al. (2022) report JOREK3D growth rates systematically above
   CASTOR3D: up to 13.2 % in the $\beta$ scan and 26.2 % in the $\eta$ scan
   for the $(2,1)$ tearing mode (§VI, Fig. 8), and up to 6.4 % for ballooning

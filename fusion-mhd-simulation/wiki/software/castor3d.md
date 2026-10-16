@@ -5,7 +5,7 @@ description: "Linear full-MHD stability code for three-dimensional (stellarator 
 status: established
 aliases: [CASTOR-3D, CASTOR 3D]
 tags: [code, stellarator, tokamak, spectral, verification, benchmark, tearing, ballooning]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:00:00Z
 ---
 
 # CASTOR3D
@@ -92,7 +92,7 @@ The stellarator cases are described on
 
 ## Contradictions
 
-* **Cause of the 2022 JOREK3D–CASTOR3D tearing gap.** *Open.*
+* **Cause of the 2022 JOREK3D–CASTOR3D tearing gap.** *Open; kept Open by human decision (2026-10-16): the later attribution shows no re-run, so it does not supersede.*
   [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§VI) attribute the
   26.2 % deviation at high $\eta$ "most likely" to the neglect of
   $v_\parallel$ in JOREK3D.

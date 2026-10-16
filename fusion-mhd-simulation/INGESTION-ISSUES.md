@@ -35,7 +35,8 @@ ingested.
      terminology; canonical label $G^1$.*
    - JOREK3D–CASTOR3D tearing gap: ramasamy-2024 re-attributes it to
      CASTOR3D resolution, with authors shared with the 2022 paper but no
-     data. Supersede, or keep Open.
+     data. Supersede, or keep Open. *Kept Open by human decision
+     (2026-10-16).*
 3. **Reclassification candidates** (contradiction → qualification or
    compatible; the pages already say so): EHO frequency
    ([EHO](wiki/definitions/edge-harmonic-oscillation.md)); the

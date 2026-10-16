@@ -5,7 +5,7 @@ description: "Current-driven resistive instability that reconnects the magnetic 
 status: established
 aliases: [tearing mode, 2/1 tearing mode, resistive tearing, FKR scaling]
 tags: [tearing, mhd, verification, tokamak, stellarator, wall]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:00:00Z
 ---
 
 # Resistive tearing mode
@@ -294,7 +294,7 @@ rows of the table.
 
 ## Contradictions
 
-* **Cause of the 26.2% JOREK3D–CASTOR3D tearing gap in W7-A.** *Open.*
+* **Cause of the 26.2% JOREK3D–CASTOR3D tearing gap in W7-A.** *Open; kept Open by human decision (2026-10-16): the later attribution shows no re-run, so it does not supersede.*
   [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§VI) attribute it to
   the neglect of $v_\parallel$ in their reduced model;
   [Ramasamy et al. (2024)](/sources/ramasamy-2024.md) (§3.1), with two of the
