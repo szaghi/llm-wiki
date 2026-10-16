@@ -1,0 +1,7 @@
+# Results
+
+Theorems, proved properties and impossibility results.
+
+* [High-field-side high-density region](/results/high-field-side-high-density-region.md) — In JOREK simulations of the ITER PFPO-1 H-mode with kinetic neutrals, poloidal E×B drifts trap a dense, cold, low-pressure region in a dominant high-field-side E×B vortex near the X-point; it forms dynamically over 10–20 ms, only when drifts are included, with a phase-like transition of the upstream density and full inner-target detachment.
+* [Reduced-MHD boundary condition suppresses the toroidal asymmetry of the plasma current](/results/reduced-mhd-current-asymmetry.md) — In ansatz-based reduced MHD the poloidal electric field is a pure potential gradient and the boundary condition on the normal velocity makes the potential constant on the boundary, so the boundary acts as a poloidal ideal conductor, no current crosses it and the plasma current is the same in every poloidal plane; JOREK therefore shows below 0.01% toroidal asymmetry of $I_p$ in a 3D VDE where full-MHD codes find 1-4% and experiments 10-20%.
+* [Vertical-force mitigation by massive material injection](/results/vertical-force-mitigation.md) — Massive impurity injection during a VDE reduces the vertical wall force because the cooled plasma carries a large, predominantly toroidal current in a broad scrape-off layer, which decouples the current centroid from the magnetic-axis motion and reduces its vertical excursion; the poloidal halo current stays moderate.

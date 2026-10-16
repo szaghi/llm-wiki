@@ -1,0 +1,30 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "Fusion MHD simulation"
+summary = "Numerical simulation of magnetically confined fusion plasmas with MHD, extended-MHD and hybrid kinetic-MHD models: nonlinear codes (JOREK, M3D-C1, NIMROD, CLT, BOUT++, MEGA) and their discretizations, time integration and free-boundary/wall coupling; disruptions, vertical displacement events, runaway electrons, shattered pellet injection and impurity radiation; ELMs and ELM-free regimes; tearing, kink and infernal modes; energetic-particle-driven Alfvén modes; stellarator MHD and equilibria; code benchmarks and neural-operator surrogates."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/fusion-mhd-simulation"
+keywords = [
+  "magnetohydrodynamics",
+  "extended MHD",
+  "reduced MHD",
+  "tokamak",
+  "stellarator",
+  "JOREK",
+  "M3D-C1",
+  "NIMROD",
+  "disruption",
+  "vertical displacement event",
+  "runaway electrons",
+  "shattered pellet injection",
+  "edge localized mode",
+  "tearing mode",
+  "resistive wall",
+  "kinetic-MHD hybrid",
+  "energetic particles",
+  "Alfvén eigenmode",
+  "Bézier finite elements",
+  "semi-implicit time integration",
+  "code benchmark",
+  "Fourier neural operator",
+]

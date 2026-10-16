@@ -1,0 +1,168 @@
+---
+type: Definition
+title: "Resistive internal kink (m/n = 1/1)"
+description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical shift of the core inside q = 1 that resistivity turns into a reconnecting mode with gamma ~ eta^(1/3); its ideal, pressure-driven limit has a poloidal-beta threshold, and reduced MHD models fail to reproduce that limit at finite beta."
+status: established
+aliases: [resistive kink, internal kink, m=n=1 mode, 1/1 kink, Coppi scaling]
+tags: [kink, tearing, mhd, reduced-mhd, full-mhd, verification, tokamak]
+timestamp: 2026-10-16T00:00:00Z
+---
+
+# Resistive internal kink (m/n = 1/1)
+
+The internal kink has helicity $m/n=1/1$. It exists when the safety factor
+falls below unity on axis ($q_0<1$), so that a $q=1$ surface lies inside the
+plasma. The mode displaces the core inside $q=1$ rigidly and helically. In the
+eigenfunction of [Ma & Guo (2022)](/sources/ma-2022.md) (§4.1, Fig. 9) the
+displacement is a rigid $m=1$ shift inside $q=1$. Resistivity makes the layer a reconnection layer. The
+resistive internal kink is the "nonconstant-$\psi$" $m=n=1$ mode (Ma & Guo
+2022, §4.1), as opposed to the constant-$\psi$ regime of the
+[tearing mode](/definitions/tearing-mode.md). Its linear growth rate scales as
+
+$$\gamma\propto\eta^{1/3},\qquad\text{equivalently}\qquad \gamma\tau_A\propto S^{-1/3}.$$
+
+[Zhang et al. (2021)](/sources/zhang-2021.md) cite this scaling to Coppi et
+al. (§1, §3.2, ref. [6]) and Ma & Guo (2022) to Ara et al. 1978 (§4.1,
+ref. [22]). Zhang et al. (§1) connect the mode to the sawtooth and to
+Kadomtsev-type reconnection. They do not use the word "sawtooth" for the
+nonlinear crash they simulate.
+
+**Ideal limit.** Without resistivity, the $1/1$ mode is driven by pressure. It
+becomes unstable above a poloidal-beta threshold, which Bussac et al. (1975)
+give as about 0.3 in large-aspect-ratio theory. Ma & Guo (2022, §4.1, Fig. 10)
+find the ideal internal kink growth rate rising from about $0.5\times10^{-3}$
+to $4\times10^{-3}\,\tau_A^{-1}$ as the axis pressure is raised. They quote a
+threshold $\beta_p\approx0.375$ at $R_0/a=5$ and call it "consistent" with
+0.3. The figure plots $\gamma$ against axis pressure, without a $\beta_p$ axis
+and without the zero crossing. The 0.375 value therefore cannot be read off
+the figure.
+
+## Linear verification
+
+- **CLT vs M3D-C1** ([CLT](/software/clt.md), [M3D-C1](/software/m3d-c1.md)).
+  - *Equilibrium:* circular, $R_0/a=10$, $\beta\approx0$, with $q_0=0.7$ and
+    edge value $q(\psi_N=1)=3.6$. The axis and edge slopes of $q(\psi_N)$
+    are prescribed as 2.0 and 5.0; the paper leaves them undefined and the
+    reader infers them from its Eq. 1.8. The $q=1$ surface sits at
+    $r/a\approx0.43$.
+  - *Scan:* $\eta=10^{-7}$ to $10^{-5}$, an inverse Lundquist number built
+    on $a=1$ m, with all other diffusivities $10^{-8}$.
+  - *Growth rates:* run from $3.00\times10^{-3}$ to $1.11\times10^{-2}$
+    (CLT) and from $3.20\times10^{-3}$ to $1.15\times10^{-2}$ (M3D-C1), in
+    units of $\tau_A^{-1}$. The codes differ by 2.7–6.3%; the paper says
+    "about 5%".
+  - *Printed fits:* $\eta^{0.31}$ and $\eta^{0.30}$ (legend 0.312 and 0.301).
+
+  Source: Zhang et al. (2021), §3.2, Table 2, Fig. 12. The full case is on
+  [CLT–M3D-C1 tearing and resistive-kink benchmark](/benchmarks/clt-m3d-c1-benchmark.md).
+- **SCELT eigenvalue code** ([SCELT](/software/scelt.md)).
+  - *Equilibrium:* circular, $R_0=5$, $a=1$, $p=p_0(1-r^2)$ with
+    $p_0=5\times10^{-5}$ (normalized). $q$ runs from below 1 on axis to 1.98
+    at the edge, with $q=1$ at $r/a=0.48$.
+  - *Result:* $\gamma\propto\eta^{0.3766}$ over
+    $\log_{10}\eta\in[-8,-4.6]$, in normalized units.
+
+  Source: Ma & Guo (2022), §4, §4.1, Figs. 7–8.
+- **JOREK reduced and full MHD vs CASTOR3D.** Linear $1/1$ cases scanned in
+  $\eta$. Full MHD agrees with CASTOR3D. Reduced MHD deviates at low $\eta$
+  even at $\beta_N=0.4\%$, and in a $\beta$ scan it "clearly fails"
+  ([Hoelzl et al. (2021)](/sources/hoelzl-2021.md), §4.4, Figs. 18–19).
+  The mechanism is given below.
+- **With runaway electrons.** JOREK resistive-kink cases with a
+  runaway-electron fraction of the plasma current of 0, 0.5 and 1 ($B=1$ T,
+  $I_p=0.31$ MA, axis temperature 48 eV) follow the $S^{-1/3}$ scaling at
+  large $\eta$ (Hoelzl et al. 2021, §4.7, Fig. 25).
+
+## Nonlinear evolution
+
+In the CLT–M3D-C1 runs at $\eta=10^{-5}$, the linear-phase growth rate is
+about $0.011\,\tau_A^{-1}$, consistent with Table 2. The $n=0$ and $n=2$ beat
+harmonics grow at about twice that rate. The $n=1$ kinetic energy peaks at
+$4.4\times10^{-5}$ (CLT) and $4.2\times10^{-5}$ (M3D-C1), in normalized units,
+near $t\approx2400\,\tau_A$. The growth rate then "suddenly reduces to a
+negative value" (the crash), and the post-crash oscillations stay
+qualitatively the same in both codes (Zhang et al. 2021, §3.2, Figs. 14–16).
+The M3D-C1 curves are shifted by $270\,\tau_A$ for comparison, so the time to
+the crash is not compared.
+
+## Reduced MHD and the finite-$\beta$ internal kink
+
+Hoelzl et al. (2021, §2.3.3) explain why the ansatz-based
+[reduced MHD](/methods/reduced-mhd.md) of JOREK fails for the pressure-driven
+internal kink at finite $\beta$, following Graves et al. (their ref. [69]).
+The reduced ansatz keeps the perturbation of the parallel field near zero. Full
+MHD would instead have the field perturbation balance the pressure
+perturbation, $B\,\delta B_\parallel\approx-\delta p$, with $\mu_0=1$ as in
+JOREK units. The reduced energy principle therefore contains a spurious
+positive-definite term,
+
+$$\tfrac12\int\Big(\delta B_\parallel+\frac{\delta p}{B}\Big)^2\,dV,$$
+
+which stabilizes the mode. Here $\delta$ denotes the linear perturbation,
+$\mu_0=1$ (JOREK units), and $B$ is the equilibrium field. Edge ballooning
+modes are largely unaffected because $q\gg1$ there (see
+[ballooning mode](/definitions/ballooning-mode.md)).
+[Nikulsin et al. (2022)](/sources/nikulsin-2022.md) (§VIII) repeat the
+limitation for the JOREK model family, citing Hoelzl et al. (2021): it
+"cannot accurately reproduce kink modes at higher β". The two sources agree.
+
+## The internal kink in applications
+
+- **Fishbone.** With energetic particles, the $n=1$ ideal internal kink
+  turns into a [fishbone](/definitions/fishbone.md) with finite real
+  frequency as the energetic-particle share of $\beta$ rises from 0 to 0.75
+  ([Liu et al. (2022)](/sources/liu-2022.md), §6.1, Fig. 3).
+- **Flux pumping.** A $1/1$ quasi-interchange mode can keep $q_0\ge1$ when
+  the pressure is peaked enough, which prevents sawteeth
+  ([Hoelzl et al. (2024)](/sources/hoelzl-2024.md), §4.4).
+- **Disruptions.**
+  - In ITER $\beta$-limit disruptions, a dominant $n=1$ internal kink grows
+    into the disruptive state (Hoelzl et al. 2024, §3.1; the evidence is a
+    Master's thesis, their ref. [40]).
+  - In shattered-pellet simulations, core mixing is better than with
+    massive gas injection, and the $1/1$ kink matters for it (Hoelzl et al.
+    2021, §6; see
+    [shattered pellet injection](/definitions/shattered-pellet-injection.md)).
+  - Core density transport depends on where material is deposited relative
+    to $q=1$ (Hoelzl et al. 2024, §3.2).
+  - An off-axis runaway-electron current destabilizes the $1/1$ mode
+    (Hoelzl et al. 2021, §6).
+
+## Qualifications
+
+**Fitted kink exponents.** The printed exponents bracket the theoretical
+$1/3$ from both sides, and none of the sources states its fit range.
+
+- Zhang et al. (2021, Fig. 12) print 0.31 (CLT) and 0.30 (M3D-C1).
+- *Compiler's check, not a source claim:*
+  - Fitting all five points of their Table 2 in log–log gives 0.285 (CLT)
+    and 0.281 (M3D-C1).
+  - Fitting only the three lowest-$\eta$ points ($\eta\le10^{-6}$) gives
+    0.313 and 0.301. These reproduce the printed values, so the printed
+    exponents are presumably low-$\eta$ fits.
+  - The three highest-$\eta$ points give 0.25.
+  - The local exponent therefore rises toward $1/3$ as $\eta$ decreases.
+- Ma & Guo (2022) obtain 0.3766, about 13% above $1/3$. Their scan reaches
+  $10^{-8}$ in a different normalization ($R_0/a=5$, finite but small
+  pressure).
+
+Both results count as consistent with $1/3$ in the sense their authors claim,
+but at a precision of about 15%, not the two-digit agreement the printed
+exponents suggest. The ideal-limit threshold of Ma & Guo (0.375 against 0.3)
+is a 25% difference at $R_0/a=5$, compared with large-aspect-ratio theory. It
+is a weak check, not a confirmation.
+
+## Contradictions
+
+None open. Reduced and full MHD differ on the finite-$\beta$ internal kink, but
+this is a known model limitation that both citing sources state the same way,
+not a disagreement between sources.
+
+# Citations
+
+- [Zhang et al. (2021)](/sources/zhang-2021.md) — §1, §3.2, Table 2, Figs. 10–16.
+- [Ma & Guo (2022)](/sources/ma-2022.md) — §4.1, Figs. 7–10.
+- [Hoelzl et al. (2021)](/sources/hoelzl-2021.md) — §2.3.3, §4.4, §4.7, §6.
+- [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) — §3.1, §3.2, §4.4.
+- [Nikulsin et al. (2022)](/sources/nikulsin-2022.md) — §VIII.
+- [Liu et al. (2022)](/sources/liu-2022.md) — §6.1, Fig. 3.

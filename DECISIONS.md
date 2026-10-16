@@ -428,3 +428,35 @@ every context source (games the check, violates the no-stub rule).
 bundle that uses it declares the page out of scope; putting it on an
 in-scope page would hide a genuine orphan. Tests in
 `tests/test_lint_okf.py` cover the exemption and its limits.
+
+## D25 — Fusion MHD simulation bundle (2026-10-16)
+
+**Decision (user):** a bundle `fusion-mhd-simulation` for the numerical
+simulation of magnetically confined fusion plasmas with MHD,
+extended-MHD and hybrid kinetic-MHD models, compiled from the 50 PDFs of
+`~/papers/mosaic/fusion-mhd-simulation` (the user's research
+bibliography) in chunks of 20, each staged for the human's review and
+commit before the next starts, with a per-chunk digest in
+`fusion-mhd-simulation/INGESTION-ISSUES.md`. The user also asked to be
+told when a paper fits another bundle, existing or new, better.
+
+**The archive's composition, recorded because it shapes the bundle:**
+every file is a fusion MHD paper (no context material as in D22).
+About half are JOREK papers, so one code's conventions dominate. The
+rest cover M3D-C1, NIMROD, CLT, BOUT++, the hybrid energetic-particle
+codes and two 3D equilibrium codes. Many files are arXiv or HAL preprints;
+the bundle law makes the version read explicit on every Source page.
+
+**How the scope is kept:** chunk 1 holds the code, method, benchmark and
+review papers, so that the registry and the reading guide are built from
+them, and the application papers follow. Equations are compiled in SI with
+$\mu_0$ explicit: most sources compute in normalized units and the
+registry records how to quote their numbers. A paper that fits another
+bundle is ingested here in full and listed in the issues file as a
+candidate for a D17 copy. No copy is made without the human's decision.
+
+**Why:** the user's research subject. The overlap with the CFD-numerics
+bundles (stabilized finite elements, shock capturing, time integration,
+field-aligned metrics) is real but secondary: these papers are about MHD
+codes and the plasma physics they resolve, and splitting them across
+bundles would dilute both.
