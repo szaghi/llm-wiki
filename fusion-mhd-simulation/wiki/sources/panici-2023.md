@@ -8,8 +8,8 @@ authors: [Panici D., Conlin R., Dudt D.W., Unalmis K., Kolemen E.]
 year: 2023
 venue: "J. Plasma Phys. 89:955890303"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Journal_of_Plasma_Physics_Panici_The_DESC_stellarator_code_suite_Part_1_Quick_and_accurate_eq.pdf"
-tags: [equilibrium, stellarator, spectral, verification, benchmark, code, numerics]
-timestamp: 2026-10-16T20:00:00Z
+tags: [equilibrium, stellarator, spectral, verification, code, numerics]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Summary

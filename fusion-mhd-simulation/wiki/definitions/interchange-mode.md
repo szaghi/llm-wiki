@@ -4,8 +4,8 @@ title: "Interchange modes and the Mercier criterion"
 description: "Pressure-driven instabilities localized at rational surfaces where unfavourable average curvature beats magnetic shear; their ideal local limit is the Mercier criterion (shear, current, well and geodesic terms), their resistive counterpart the Glasser–Greene–Johnson parameter; in low-shear stellarators they are benchmarked between reduced and full MHD and need parallel flow to be captured at finite compressibility, a resonant ideal interchange collapses the high-beta LHD core in MHD but is stabilized by kinetic thermal ions, and the 1/1 quasi-interchange drives flux pumping in tokamaks."
 status: established
 aliases: [interchange instability, Mercier criterion, Mercier stability, resistive interchange, quasi-interchange]
-tags: [mhd, stellarator, tokamak, equilibrium, verification, benchmark, reduced-mhd, hybrid-kinetic]
-timestamp: 2026-10-16T20:00:00Z
+tags: [mhd, stellarator, tokamak, equilibrium, verification, reduced-mhd, hybrid-kinetic]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Interchange modes and the Mercier criterion

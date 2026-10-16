@@ -75,6 +75,9 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D25).
 - Bibliography: `wiki/bibliography.bib` plus the generated
   `wiki/bibliography.md` (D15); pending reference lists:
   `python3 tools/bib_to_md.py fusion-mhd-simulation/wiki --pending`.
+- Tags (human decision 2026-10-16): `benchmark` only on pages of
+  `type: Benchmark`; every other page, including the Source pages of
+  benchmark papers, uses `verification`.
 - Lint: `python3 tools/lint_okf.py fusion-mhd-simulation/wiki`.
   It must pass before commit.
 - Commits: `docs(fusion-mhd-simulation): ingest chunk N: <slugs>`.

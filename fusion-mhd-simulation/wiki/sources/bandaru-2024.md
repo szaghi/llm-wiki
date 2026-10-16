@@ -8,8 +8,8 @@ authors: [Bandaru V., Hoelzl M., Artola F.J., Vallhagen O., Lehnen M., JOREK Tea
 year: 2024
 venue: "Phys. Plasmas 31:082503"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Bandaru_Runaway_electron_fluid_model_extension_in_JOREK_and_ITER_rel.pdf"
-tags: [runaway-electrons, disruption, vde, impurities, neutrals, reduced-mhd, wall, free-boundary, tokamak, benchmark, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [runaway-electrons, disruption, vde, impurities, neutrals, reduced-mhd, wall, free-boundary, tokamak, verification, code]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Summary

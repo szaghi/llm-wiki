@@ -4,8 +4,8 @@ title: "STARWALL"
 description: "Green's-function thin-wall code that supplies JOREK's free-boundary and resistive-wall response: the vacuum is not meshed, 3D thin walls with holes are linear triangles, and the response matrices enter JOREK implicitly as a natural boundary condition with the wall currents eliminated; validated against CEDRES++, DINA, CASTOR3D, M3D-C1, NIMROD and JOREK–CARIDDI."
 status: established
 aliases: [JOREK-STARWALL]
-tags: [code, wall, free-boundary, vde, disruption, benchmark]
-timestamp: 2026-10-16T18:00:00Z
+tags: [code, wall, free-boundary, vde, disruption, verification]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # STARWALL

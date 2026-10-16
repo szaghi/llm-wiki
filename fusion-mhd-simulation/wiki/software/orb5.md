@@ -4,8 +4,8 @@ title: "ORB5"
 description: "Global nonlinear electromagnetic gyrokinetic particle-in-cell code with all species kinetic (bulk ions, electrons, energetic particles), δf markers pushed by RK4 and fields on cubic B-spline finite elements; in the NLED-AUG energetic-particle benchmark it gives growth rates 1.6–1.7× MEGA's, lower frequencies, upward chirping where the hybrid codes chirp down, and stronger edge transport."
 status: established
 aliases: [ORB5 code]
-tags: [code, energetic-particles, alfven-eigenmode, particles, finite-elements, benchmark]
-timestamp: 2026-10-16T00:00:00Z
+tags: [code, energetic-particles, alfven-eigenmode, particles, finite-elements, verification]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # ORB5

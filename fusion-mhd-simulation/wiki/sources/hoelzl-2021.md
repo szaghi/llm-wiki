@@ -8,8 +8,8 @@ authors: [Hoelzl M., Huijsmans G.T.A., Pamela S.J.P., Bécoulet M., Nardon E., A
 year: 2021
 venue: "Nucl. Fusion 61:065001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Nuclear_Fusion_Hoelzl_The_JOREK_non-linear_extended_MHD_code_and_applications_to_l.pdf"
-tags: [review, code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, stabilization, free-boundary, wall, disruption, vde, runaway-electrons, impurities, neutrals, particles, elm, pedestal, edge, benchmark, verification]
-timestamp: 2026-10-16T20:00:00Z
+tags: [review, code, mhd, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, stabilization, free-boundary, wall, disruption, vde, runaway-electrons, impurities, neutrals, particles, elm, pedestal, edge, verification]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Summary

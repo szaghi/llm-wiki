@@ -4,8 +4,8 @@ title: "Linear MHD eigenvalue codes"
 description: "Codes that linearize the MHD equations about an equilibrium and solve a generalized eigenproblem for complex frequencies and mode structures, typically with poloidal (and toroidal) Fourier harmonics times radial finite elements; their role as references for initial-value codes, the spurious-mode problem, axis regularity, and the benchmark agreements of SCELT, MAS, CASTOR3D and MINERVA."
 status: established
 aliases: [eigenvalue code, linear stability code, spectral MHD code, MAS, SCELT, MARS, MINERVA]
-tags: [spectral, finite-elements, verification, benchmark, numerics, tearing, kink, ballooning]
-timestamp: 2026-10-16T12:00:00Z
+tags: [spectral, finite-elements, verification, numerics, tearing, kink, ballooning]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Linear MHD eigenvalue codes

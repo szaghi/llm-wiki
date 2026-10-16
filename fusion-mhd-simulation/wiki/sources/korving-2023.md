@@ -8,8 +8,8 @@ authors: [Korving S.Q., Huijsmans G.T.A., Park J.-S., Loarte A., JOREK Team]
 year: 2023
 venue: "Phys. Plasmas 30:042509"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350135318title.pdf"
-tags: [neutrals, particles, edge, divertor, reduced-mhd, full-mhd, tokamak, benchmark, code]
-timestamp: 2026-10-16T20:00:00Z
+tags: [neutrals, particles, edge, divertor, reduced-mhd, full-mhd, tokamak, verification, code]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # Summary

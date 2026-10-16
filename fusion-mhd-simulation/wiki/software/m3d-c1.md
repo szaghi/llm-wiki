@@ -4,8 +4,8 @@ title: "M3D-C1"
 description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) triangles in the poloidal plane and Hermite cubic elements toroidally, scalar-potential representations of the field and flow, split-implicit time stepping, a meshed vacuum and thick resistive conductors inside the domain, stellarator geometry, a bootstrap-current closure and a fluid runaway-electron model advanced by characteristics; benchmarked against CLT, JOREK and NIMROD and applied to W7-X sawtooth-like crashes, resistive-wall tearing and the nonlinear edge instability of an optimized quasi-axisymmetric reactor stellarator."
 status: established
 aliases: [M3D-C^1]
-tags: [code, mhd, full-mhd, extended-mhd, reduced-mhd, tokamak, stellarator, finite-elements, time-integration, wall, bootstrap-current, benchmark]
-timestamp: 2026-10-16T20:00:00Z
+tags: [code, mhd, full-mhd, extended-mhd, reduced-mhd, tokamak, stellarator, finite-elements, time-integration, wall, bootstrap-current, verification]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # M3D-C1

@@ -53,6 +53,8 @@ ingested.
    them and keeping `benchmark` for Benchmark pages only. `code` (57)
    duplicates `type: Software`. `mhd` (69) sits alongside
    `full-mhd`/`reduced-mhd`. Applied: `surrogate` → `machine-learning`.
+   *Decided (2026-10-16): `benchmark` only on Benchmark pages; the other
+   31 pages carry `verification`. `code` and `mhd` still open.*
 5. **Version caveats:** gopakumar-2024 is arXiv v2; seto-2024, tang-2025,
    vannini-2025 and zhang-2025 are preprints or accepted manuscripts. Claims
    are those of the versions read.

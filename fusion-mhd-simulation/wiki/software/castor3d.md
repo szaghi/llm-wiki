@@ -4,8 +4,8 @@ title: "CASTOR3D"
 description: "Linear full-MHD stability code for three-dimensional (stellarator and tokamak) equilibria with visco-resistive and extended-MHD effects and thin conductors, used as the linear reference of JOREK and JOREK3D: tokamak kink, tearing and passive-coil VDE benchmarks, and stellarator tearing, ballooning and interchange benchmarks whose agreement ranges from about 3 % to 26 %."
 status: established
 aliases: [CASTOR-3D, CASTOR 3D]
-tags: [code, stellarator, tokamak, spectral, verification, benchmark, tearing, ballooning]
-timestamp: 2026-10-16T23:00:00Z
+tags: [code, stellarator, tokamak, spectral, verification, tearing, ballooning]
+timestamp: 2026-10-16T23:30:00Z
 ---
 
 # CASTOR3D
