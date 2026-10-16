@@ -9,7 +9,7 @@ year: 2021
 venue: "Nucl. Fusion 61:065001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Nuclear_Fusion_Hoelzl_The_JOREK_non-linear_extended_MHD_code_and_applications_to_l.pdf"
 tags: [review, reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, stabilization, free-boundary, wall, disruption, vde, runaway-electrons, impurities, neutrals, particles, elm, pedestal, edge, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -508,12 +508,18 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-1
      bibliography under `hoelzl-2021`. Three works are printed twice and
      dedup to one entry each: [33]=[46] (`sauter-1999`), [168]=[288]
      (`matsuyama-2017`), [248]=[273] (`lehnen-2015`), giving 300 entries.
-     The VDE benchmark printed "submitted" (2020), ref. [99], is the
-     ingested `artola-2021`; `artola-2020-b` is the COMPASS Varenna–Lausanne
-     2020 paper; the thesis printed "Francisco Javier Artola Such" (ref.
-     [93]) is `artola-2018-c`; works printed as "submitted" under
-     `nikulsin-2020` and `pamela-2021` are folded into `nikulsin-2021` and
-     `pamela-2022`. Wrong or malformed DOIs omitted: [158] (prints [157]'s
+     Since pre-publication citations are kept as distinct entries (human ruling 2026-10-16), the
+     VDE benchmark printed "Physics of Plasmas, submitted" (2020), ref.
+     [99], is `artola-2020-c`, the submitted form of the ingested
+     [Artola et al. (2021)](/sources/artola-2021.md) (`artola-2021`);
+     `artola-2020-b` is the COMPASS Varenna–Lausanne 2020 paper; the thesis
+     printed "Francisco Javier Artola Such" (ref. [93]) is `artola-2018-c`.
+     Other works printed as "submitted" or "accepted" keep their own keys:
+     Nikulsin JPP `nikulsin-2020` (published `nikulsin-2021`), Pamela JCP
+     `pamela-2021` (`pamela-2022`), Futatani NF `futatani-2020`
+     (`futatani-2021`), Cathey PPCF `cathey-2021-b` (`cathey-2021`), Holod
+     PPCF `holod-2021-b` (`holod-2021`), Nardon NF `nardon-2021-b`
+     (`nardon-2021`), Ramasamy NF `ramasamy-2021-b` (`ramasamy-2021`). Wrong or malformed DOIs omitted: [158] (prints [157]'s
      DOI), [119] (a PII), [104] (malformed). Garbled author strings
      resolved: [48] `chew-1956`, [174] `qin-2009`, [85] `parks-2020` (true
      first author likely Bosviel; year printed 2020 for EPS 2019); [140]

@@ -80,6 +80,14 @@ agnostic of every other repository (`DECISIONS.md` D12, D17, D25).
   benchmark papers, uses `verification`. No `code` tag (`type: Software`
   carries it); `mhd` only on pages without `full-mhd`, `reduced-mhd` or
   `extended-mhd`.
+- Bibliography preprints (human decision 2026-10-16, as in
+  plasma-propulsion-simulation): a citation printed in pre-publication form
+  (submitted, accepted, in preparation, under review, accepted-manuscript
+  URL, arXiv) is its own entry, keyed by the year of that form with the next
+  free suffix, and is never folded into the published entry. One entry
+  serves every pre-publication citation of the same manuscript. The
+  `--dupes` sweep then lists these preprint/published pairs; they are
+  intended.
 - Lint: `python3 tools/lint_okf.py fusion-mhd-simulation/wiki`.
   It must pass before commit.
 - Commits: `docs(fusion-mhd-simulation): ingest chunk N: <slugs>`.

@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Plasmas 28:052511"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Physics_of_Plasmas_Artola_3D_simulations_of_vertical_displacement_events_in_tokamaks_A.pdf"
 tags: [reduced-mhd, full-mhd, tokamak, disruption, vde, wall, free-boundary, finite-elements, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -393,7 +393,8 @@ Chunk 1 (2026-10-16) created every page of the bundle; chunks 2 and 3 (2026-10-1
      and `gerhardt-2013-b`; Artola's thesis, printed "F.J. Artola Such"
      [14], is `artola-2018-c`; the axisymmetric benchmark [17] is
      `krebs-2020`; Pamela et al. full MHD [20], printed "submitted" without
-     year, is `pamela-2020` (Phys. Plasmas 27:102510); ref. [6]
+     year, is `pamela-2020-b`, distinct from the published `pamela-2020`
+     (Phys. Plasmas 27:102510), since pre-publication citations are kept as distinct entries (human ruling 2026-10-16); ref. [6]
      (`jardin-1986`) prints an OSTI report DOI for a J. Comput. Phys.
      article and is kept with a note. Name variants Huysmans/Huijsmans and
      Hölzl/Hoelzl are the same persons. The ITPA disruption review [2] has

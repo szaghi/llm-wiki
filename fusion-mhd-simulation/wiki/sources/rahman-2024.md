@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:123902"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Rahman_Sparsified_time-dependent_Fourier_neural_operators_for_fusio.pdf"
 tags: [machine-learning, extended-mhd, hybrid-kinetic, particles, pedestal, kink, tokamak, linear-solver, gpu]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -325,6 +325,10 @@ Chunk 3 (2026-10-16) created or updated the pages below. This source is cited on
      (ref. 8, GTC tearing, "2020a") is `li-2020-b`; GPTune (ref. 14) is
      `liu-2021-c`; refs. 29 and 41 ("2023a/b") are `li-2023` (geo-FNO) and
      `li-2023-b` (SuperLU_DIST); ref. 24 is the ingested `gopakumar-2024`;
+     Rosofsky et al. (arXiv 2302.08332, "Magnetohydrodynamics
+     with physics informed neural operators") is `rosofsky-2023-b`, a
+     different work from `rosofsky-2023` (MLST 4:025022, cited by
+     `gopakumar-2024`), with which it had been wrongly merged; pre-publication citations are kept as distinct entries (human ruling 2026-10-16);
      reused keys include `sovinec-2004`, `sovinec-2010`, `king-2017`,
      `pankin-2020`, `lin-1998`, `hoelzl-2021` and `howell-2022`. Ref. 18 lacks
      an opening quotation mark; ref. 25 ends "and on behalf of JET

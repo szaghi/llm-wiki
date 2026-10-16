@@ -9,7 +9,7 @@ year: 2023
 venue: "Nucl. Fusion 63:062001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Nuclear_Fusion_Cathey_Probing_non-linear_MHD_stability_of_the_EDA_H-mode_in_ASDEX.pdf"
 tags: [reduced-mhd, extended-mhd, elm, pedestal, ballooning, edge, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -273,8 +273,9 @@ Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. 
    * **Reference list.** 39 printed entries, merged into the bibliography
      under `cathey-2023`, which also fills the stub of this paper cited by
      [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) (adding the DOI). Ref.
-     [37], "Physics of Plasmas (submitted), 2023", is the ingested
-     [Korving et al. (2023)](/sources/korving-2023.md); [24] is the ingested
+     [37], "Physics of Plasmas (submitted), 2023", is `korving-2023-b`, the
+     submitted form of the ingested
+     [Korving et al. (2023)](/sources/korving-2023.md) (pre-publication citations are kept as distinct entries (human ruling 2026-10-16)); [24] is the ingested
      [Hoelzl et al. (2021)](/sources/hoelzl-2021.md); `cathey-2021` is the
      published PPCF 63:075016 printed here. The Sauter erratum [33], page
      range printed "5140–2839" and only Sauter and Angioni as authors, is

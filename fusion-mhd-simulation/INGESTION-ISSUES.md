@@ -111,9 +111,11 @@ viscous term 5 $R$ against 2 $R^3$.
   - `--dupes` leaves only `kim-2023`/`kim-2023-b` (same printed title,
     different author and article; kept distinct).
   - The whole-corpus fuzzy-title sweep found every pair distinct.
-- Open rule question, carried over: "submitted" citations were folded into
-  the published entries, while the plasma-propulsion ruling keeps preprints
-  distinct.
+- Rule question, carried over: "submitted" citations had been folded into
+  the published entries. *Decided (2026-10-16): preprints are kept
+  distinct, as in plasma-propulsion. 23 entries split (1552 → 1572); the
+  repair also separated a wrong merge, `rosofsky-2023` vs
+  `rosofsky-2023-b`.*
 
 ### Deep lint #1
 

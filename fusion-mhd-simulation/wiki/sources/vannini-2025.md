@@ -9,7 +9,7 @@ year: 2025
 venue: "Nucl. Fusion 65:046006"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Nuclear_Fusion_Vannini_Runaway_electron_beam_formation_vertical_motion_termination.pdf"
 tags: [disruption, runaway-electrons, vde, wall, free-boundary, reduced-mhd, particles, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -321,12 +321,14 @@ Chunk 3 (2026-10-16) created or updated the pages below. This source is cited on
      * The time limits of the Eq. 3 integral are not stated.
    * **Reference list.** 37 printed entries; Hesslow et al. 2018 (PPCF 60:074010)
      is printed twice ([18] = [34]) and merged into one entry, `hesslow-2018`, so
-     36 bibliography entries, merged under `vannini-2025`. [19] is the ingested
-     [Bandaru et al. (2024)](/sources/bandaru-2024.md) (printed "Submitted to
-     Physics of Plasmas"), [13] the ingested
+     36 bibliography entries, merged under `vannini-2025`. [19] (printed "Submitted to Physics of
+     Plasmas") is `bandaru-2024-d`, the submitted form of the ingested
+     [Bandaru et al. (2024)](/sources/bandaru-2024.md) (no `bandaru-2024`
+     entry remains; pre-publication citations are kept as distinct entries (human ruling 2026-10-16)), [13] the ingested
      [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), [29] is `bandaru-2024-b`
      (no volume printed), [28] (arXiv 2406.09703) `bandaru-2024-c`, [30]
-     `holod-2021`, [32] `bergstrom-2024`. The TSDW 2023 poster [33] is kept as
+     `holod-2021`, [32] (printed "PPCF, manuscript under review")
+     `bergstrom-2024-b` (published `bergstrom-2024`). The TSDW 2023 poster [33] is kept as
      `bergstroem-2023-b`, distinct from `bergstroem-2023` (different printed
      titles at the same workshop; possibly the same contribution).
      `albanese-2015-b` (CREATE-NL+) is distinct from `albanese-2015`. [1] and [2]

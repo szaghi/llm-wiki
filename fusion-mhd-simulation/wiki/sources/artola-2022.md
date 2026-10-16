@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:056023"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Artola_Non-axisymmetric_MHD_simulations_of_the_current_quench_phase.pdf"
 tags: [disruption, vde, wall, free-boundary, reduced-mhd, tearing, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T23:59:00Z
 ---
 
 # Summary
@@ -318,15 +318,16 @@ Chunk 2 (2026-10-16) created or updated the pages below; chunk 3 extended some. 
      * Time step, solver settings and the initial "noise level" are not
        given.
    * **Reference list.** 31 printed entries, merged into the bibliography
-     under `artola-2022`. Refs. [11] and [12] (`hoelzl-2021`, printed once
-     as submitted and once as published) merge to the single entry of the
-     ingested [Hoelzl et al. (2021)](/sources/hoelzl-2021.md). Ref. [5] is
+     under `artola-2022`. Since pre-publication citations are kept as distinct entries (human ruling 2026-10-16), ref. [11],
+     printed as submitted, is `hoelzl-2020-c`, the submitted form of the
+     ingested [Hoelzl et al. (2021)](/sources/hoelzl-2021.md), and ref.
+     [12] is the published `hoelzl-2021`. Ref. [5] is
      the ingested [Artola et al. (2021)](/sources/artola-2021.md); the
      COMPASS PPCF paper is `artola-2021-b`; Kiramov & Breizman PoP
      25:092501 is `kiramov-2018` (distinct from `kiramov-2017`); the
      COMPASS-U force paper is `yanovskiy-2021` (distinct from
      `yanovskiy-2022`); [30], printed 2021 "in preparation", is
-     `sarkimaki-2022`; Pautasso et al. (printed "nov 2016", PPCF 59) is
+     `sarkimaki-2022-b` (published `sarkimaki-2022`); Pautasso et al. (printed "nov 2016", PPCF 59) is
      `pautasso-2016`. This source is itself cited as `artola-2022` by
      [Bandaru et al. (2024)](/sources/bandaru-2024.md),
      [Hoelzl et al. (2024)](/sources/hoelzl-2024.md) and
