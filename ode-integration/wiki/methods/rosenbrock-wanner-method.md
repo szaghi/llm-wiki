@@ -1,0 +1,169 @@
+---
+type: Method
+title: "Rosenbrock–Wanner (ROW) and W-methods"
+description: "Linearly implicit one-step methods that replace the nonlinear stage solves of implicit Runge–Kutta methods by s linear solves with the single matrix M - h gamma J: the scheme, its ODE, index-1 and index-2 DAE, W-method and Prothero–Robinson order conditions, stiff accuracy, order reduction, and the Rodas family."
+status: established
+aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
+tags: [stiff, implicit, dae, order-reduction, order-conditions]
+timestamp: 2026-10-19T00:00:00Z
+---
+
+# Rosenbrock–Wanner (ROW) and W-methods
+
+A **Rosenbrock–Wanner (ROW) method** is a linearly implicit one-step method for stiff ODEs and
+index-1 DAEs $My'=f(t,y)$. Each step solves $s$ *linear* systems, all with the same matrix
+$M-h\gamma J_n$, instead of the nonlinear stage equations of an implicit
+[Runge–Kutta method](/definitions/runge-kutta-method.md). A **W-method** is a ROW method whose
+order does not depend on $J_n$ being the exact Jacobian. The description follows
+[Steinebach (2023)](/sources/steinebach-2023.md), §1–2, who recalls the scheme from
+Hairer–Wanner and Lang.
+
+## The scheme
+
+With $J_n=\partial f/\partial y(t_n,y_n)$, $f_t=\partial f/\partial t(t_n,y_n)$ and
+$h$-scaled stage increments $U_i$ (page-local; the source's $k_i$), an $s$-stage ROW step is
+
+$$\begin{aligned}
+(M-h\gamma J_n)\,U_i&=hf\Bigl(t_n+\alpha_ih,\;y_n+\sum_{j=1}^{i-1}\alpha_{ij}U_j\Bigr)+hJ_n\sum_{j=1}^{i-1}\gamma_{ij}U_j+h^2\gamma_i f_t,\quad i=1,\dots,s,\\
+y_{n+1}&=y_n+\sum_{i=1}^s b_iU_i,
+\end{aligned}$$
+
+with $\alpha_i=\sum_{j<i}\alpha_{ij}$ and $\gamma_i=\gamma+\sum_{j<i}\gamma_{ij}$ (Eqs. (1.1)–(1.3)).
+All stages share one matrix, so one LU factorization per step suffices; index 1 guarantees that
+$M-h\gamma J_n$ is regular for small $h>0$. The price, compared with implicit Runge–Kutta
+methods, is an exact Jacobian at every step. Steinebach argues that automatic differentiation in
+[DifferentialEquations.jl](/software/differentialequations-jl.md) makes this requirement
+"more and more obsolete" (abstract, §1); for the Newton-based alternative see
+[implicit stage solvers](/methods/implicit-stage-solvers.md).
+
+## Order conditions
+
+Steinebach (2023) writes the conditions with $\tilde\beta_{ij}=\alpha_{ij}+\gamma_{ij}$,
+$\tilde\beta_{ii}=\gamma$, $\tilde\beta_i=\sum_{j\le i}\tilde\beta_{ij}$, the lower-triangular
+matrix $\tilde B=(\tilde\beta_{ij})$ and $W=\tilde B^{-1}=(w_{ij})$ (page-local symbols,
+distinct from the Shu–Osher $\beta_{ij}$; Eqs. (2.1)–(2.2)). They follow Roche and Hairer–Wanner
+and are indexed by rooted trees (black nodes for differential, white for algebraic components).
+
+**ODE conditions** (Table 2): 17 conditions up to order 5. The first four:
+
+$$\sum_ib_i=1,\qquad \sum_ib_i\tilde\beta_i=\tfrac12,\qquad \sum_ib_i\alpha_i^2=\tfrac13,\qquad \sum_{i,j}b_i\tilde\beta_{ij}\tilde\beta_j=\tfrac16.$$
+
+**Index-1 DAE conditions** (Table 3): 23 further conditions up to order 5, for 40 in total. The
+first is $\sum_{i,j}b_iw_{ij}\alpha_j^2=1$ (order 3).
+
+**Index-2 conditions** (Table 4, from Lubich–Roche), for $y'=f(y,w)$, $0=g(y)$ with $g_yf_w$
+nonsingular ($w$ the algebraic variable, page-local):
+
+- $\sum b_iw_{ij}w_{jk}\alpha_k^2=2$ gives order 2;
+- three more conditions give order 3 in $y$ and 2 in $w$.
+
+**W-method conditions** (Table 4, from Jax): with an inexact Jacobian, provided the derivative of
+the algebraic equation with respect to the algebraic variable is exact,
+
+$$\sum_{i,j}b_i\gamma_{ij}=0,\qquad\sum b_i\alpha_{ij}w_{jk}\alpha_k=\tfrac12,\qquad\sum b_iw_{ij}\alpha_j=1$$
+
+give at least order 2 for index-1 problems.
+
+**Prothero–Robinson conditions** (Scholz): two polynomial conditions $C_2(H)=C_3(H)=0$ in
+$H=z/(1-\gamma z)$, for orders 3 and 4 on the
+[Prothero–Robinson problem](/benchmarks/prothero-robinson-problem.md) (Table 4, Eqs. (2.5)–(2.13);
+$C_2,C_3,H$ page-local). Ostermann and Roche showed that the same conditions govern
+semi-discretized parabolic problems (§2). The letter "P" in Rodas4P, Rodas4P2 and Rodas5P stands
+for both "Prothero–Robinson" and "parabolic".
+
+**Stability function.** It is rational in $H$, with all poles at $z=1/\gamma$ (Eq. (2.14)).
+
+**B-series.** [BSeries.jl](/software/bseries-jl.md) lists B-series of ROW methods among its
+features ([Ketcheson & Ranocha 2023](/sources/ketcheson-2023.md), §1), although the paper gives
+no ROW example and its conclusion lists Rosenbrock methods as a future extension (§5).
+
+## Stiff accuracy and L-stability
+
+A ROW method is [stiffly accurate](/properties/stiff-accuracy.md) when $b_i=\tilde\beta_{si}$
+($i<s$), $b_s=\gamma$ and $\alpha_s=1$, so that $y_{n+1}$ equals the argument of the last
+stage. With A-stability this gives $R(\infty)=0$, i.e. L-stability (Steinebach 2023, §1, §3,
+Eqs. (3.1)–(3.3)). Rodas5P also makes its embedded solution stiffly accurate by the same device
+one stage earlier (§3).
+
+## Order reduction and the WSO connection
+
+A ROW method's classical order is reached on nonstiff ODEs, and the index-1 DAE conditions secure
+it on index-1 DAEs. On stiff and PDE problems the order can collapse, which is
+[order reduction](/definitions/order-reduction.md). Steinebach (2023, Table 1) measures the
+observed constant-step orders of the Rodas family (embedded order in brackets):
+
+| Method | $s$ | index-1 DAE | Prothero–Robinson | parabolic | index-2 DAE | inexact $J$ |
+|---|---|---|---|---|---|---|
+| ROS3P | 3 | 3(2) | 2(2) | 3(2) | 2(1) | 1(1) |
+| Ros3prl2 | 4 | 3(2) | 3(2) | 3(2) | 2(1) | 1(1) |
+| Rodas3 | 4 | 3(2) | 1(2) | 2(2) | 1(2) | 2(1) |
+| Rodas4 | 6 | 4(3) | 1(1) | 2(2) | 1(1) | 1(1) |
+| Rodas4PR2 | 6 | 4(3) | 4(3) | 4(3) | 2(2) | 1(1) |
+| Rodas4P2 | 6 | 4(3) | 3(3) | 4(3) | 2(2) | 2(1) |
+| Rodas5 | 8 | 5(4) | 1(1) | 2(2) | 1(1) | 1(1) |
+
+[Rodas5P](/methods/rodas5p.md) was built to remove the Rodas5 failures in this table.
+
+**Remedies.** Two routes appear in the sources:
+
+- **More order conditions.** Impose the Prothero–Robinson/parabolic, index-2 and W conditions,
+  as in Rodas4P, Rodas4P2 and Rodas5P (Steinebach 2023, §2–3).
+- **Modified boundary data.** Use adapted boundary conditions in each stage (Alonso-Mallo and
+  Cano). This works for any ROW method but needs problem information inside the stage
+  evaluation; Steinebach compares it numerically in Fig. 3 (see [Rodas5P](/methods/rodas5p.md)).
+
+**WSO lineage.** The Scholz and Ostermann–Roche conditions are the ROW origin of
+[weak stage order](/definitions/weak-stage-order.md):
+
+- [Biswas et al. (2024)](/sources/biswas-2024.md) trace the WSO conditions to the "parabolic
+  order conditions" that Ostermann and Roche derived for ROW methods, and to Scholz's conditions
+  for SDIRK and ROW methods (§1, Def. 1.1, §2.3);
+- [Biswas et al. (2025)](/sources/biswas-2025.md) list the same works, Rang's
+  "BPR-consistency" and Rosenbrock DAE methods of order 5 (their ref. [37]) among earlier
+  appearances of WSO-type conditions (§1.3).
+
+**Limits of the theory.** Scholz's error-constant estimate is not sharp: for L-stable methods
+the error constant behaves like $C_1/z$. At fixed large $|\lambda|$, methods satisfying both
+Scholz conditions (Rodas4P, Rodas4P2) therefore show only order $p-1=3$, while Rodas4PR2 reaches
+full order (Steinebach 2023, §2, p. 8, citing Steinebach and Rang). The parabolic orders of
+Ostermann–Roche assume linear problems with vanishing boundary data. They are not reached on
+Steinebach's nonlinear test with non-vanishing Dirichlet data, while a linear problem gives the
+full orders (§4 problem 3; the linear test is not shown).
+
+## W-methods
+
+W-methods are ROW methods that do not require the exact Jacobian (Steinebach 2023, citing
+Rang). Jax extended them to DAEs with "a huge amount of additional order conditions". Rodas4P2 and Rodas5P satisfy Jax's three conditions, so they keep order 2 for index-1
+problems with an inexact Jacobian. Rodas4 and Rodas5 drop to order 1 (Table 1; §4 problem 5).
+
+## The Rodas family (as characterized by Steinebach 2023)
+
+- **ROS3P** (Lang–Verwer): 3 stages, designed for parabolic problems.
+- **Ros3prl2** and **Rodas4PR2** (Rang): successors of ROS3PL and Rodas4P. Ros3prl2 is the only
+  method whose Prothero–Robinson convergence is independent of $\lambda\in[10^0,10^5]$.
+- **Rodas3** (Sandu et al.).
+- **Rodas4** (Hairer–Wanner), "the best known method".
+- **Rodas4P** and **Rodas4P2** (Steinebach): Rodas4P2 satisfies the W conditions to order 2
+  and the Prothero–Robinson conditions.
+- **Rodas5** (Di Marzo 1993): 8 stages, order 5(4), no dense output in the original literature.
+- **GRK4T** (Kaps–Rentrop): 4 stages, order 4 for ODEs with only three right-hand-side
+  evaluations; order 2 on semi-discretized parabolic problems unless the stage boundary data are
+  modified.
+
+## Qualifications
+
+- Steinebach (2023) uses "stiffly stable" for $R(\infty)=0$ (§1). That is not Gear's classical
+  definition of stiff stability, which is a region condition; the property he means is the one
+  this bundle calls L-stability together with A-stability (see [A-stability](/properties/a-stability.md)).
+- The Prothero–Robinson problem appears in two sign conventions in Steinebach (2023):
+  $y'=\lambda(y-g)+g'$ with $\operatorname{Re}\lambda\ll0$ (Eq. (1.4)) and $y'=-\lambda(y-g)+g'$ with
+  $\lambda=10^5$ (§4 problem 2); both describe the same stiff decay.
+- Table 1 orders are observed with constant steps on one problem per class; they are not
+  theorems.
+
+# Citations
+
+- [Steinebach (2023)](/sources/steinebach-2023.md) — §1 (Eqs. (1.1)–(1.4), Table 1, Fig. 1), §2 (Eqs. (2.1)–(2.14), Tables 2–4), §3 (Eqs. (3.1)–(3.3)), §4 (problems 2–5, Fig. 3).
+- [Biswas et al. (2024)](/sources/biswas-2024.md) — §1, Def. 1.1, §2.3 (origin of the WSO conditions in ROW theory).
+- [Biswas et al. (2025)](/sources/biswas-2025.md) — §1.3 (earlier names of WSO-type conditions, Rosenbrock DAE methods).
+- [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §1, §5 (ROW B-series in BSeries.jl).

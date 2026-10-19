@@ -1,0 +1,11 @@
+# Software
+
+Codes and libraries embodying methods.
+
+* [ARKODE](/software/arkode.md) — ARKODE, the SUNDIALS package for one-step methods: a shared time-loop infrastructure with ERKStep, ARKStep (IMEX additive Runge–Kutta) and MRIStep (multirate infinitesimal) steppers, its adaptivity, dense output and implicit predictors, and its measured performance on Brusselator and reacting-flow tests.
+* [BSeries.jl and RootedTrees.jl](/software/bseries-jl.md) — BSeries.jl and RootedTrees.jl, the Julia packages that compute truncated B-series of Runge–Kutta, additive Runge–Kutta and Rosenbrock methods, their composition and substitution, modified equations and modifying integrators, with their data structures and measured speed.
+* [CVODE](/software/cvode.md) — CVODE, the SUNDIALS variable-order variable-step multistep integrator (Adams–Moulton 1–12, BDF 1–5 in fixed-leading-coefficient form), with its DAE and sensitivity siblings IDA, CVODES and IDAS, the solver heuristics other SUNDIALS packages inherit, and its measured behaviour.
+* [DifferentialEquations.jl](/software/differentialequations-jl.md) — DifferentialEquations.jl (OrdinaryDiffEq.jl), the Julia/SciML integrator suite as it appears in the sources: host of the Rosenbrock Rodas family and Rodas5P, of optimized low-storage pairs with PID control, its benchmarking tools, and its reported scope limits.
+* [Irksome](/software/irksome.md) — Irksome, the Firedrake library that turns a UFL semidiscrete variational form and a Butcher tableau into the coupled Runge–Kutta stage equations, with arbitrary-order collocation tableaux, PETSc-composable stage solvers and the measured cost and conservation behaviour of fully implicit methods.
+* [PETSc TS](/software/petsc-ts.md) — PETSc's TS time-stepping component as the sources report it: explicit Runge–Kutta pairs with PID step-size control used for large-scale compressible-flow runs, a multirate partitioned method, the absence of multi-stage implicit Runge–Kutta in 2020, and PETSc solvers used by other integrators.
+* [SUNDIALS](/software/sundials.md) — The SUNDIALS suite (CVODE, CVODES, IDA, IDAS, ARKODE, KINSOL): its six packages, the object-oriented redesign into vector, matrix, linear-solver and nonlinear-solver classes, fused and many-vector operations, Fortran 2003 interfaces, and the measured cost of the redesign.

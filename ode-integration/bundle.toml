@@ -1,0 +1,37 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "ODE integration"
+summary = "Numerical time integration of ODEs and of method-of-lines semi-discretizations of PDEs: Runge–Kutta theory (order conditions, B-series, stage order and order reduction, stability polynomials, strong stability preservation), implicit, DIRK and Rosenbrock methods, BDF and linear multistep methods, IMEX, additive and multirate methods, local time stepping, exponential integrators, stabilized and paired-explicit Runge–Kutta, relaxation and structure-preserving time stepping (entropy, energy, positivity, invariant domains, Patankar), splitting, deferred correction, ADER and multiderivative methods, asymptotic-preserving schemes, parallel-in-time integration, step-size control, solvers for implicit stages, integrator software and learned integrators."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/ode-integration"
+keywords = [
+  "time integration",
+  "Runge-Kutta",
+  "B-series",
+  "order conditions",
+  "stage order",
+  "order reduction",
+  "strong stability preserving",
+  "DIRK",
+  "Rosenbrock",
+  "BDF",
+  "linear multistep",
+  "IMEX",
+  "additive Runge-Kutta",
+  "multirate",
+  "local time stepping",
+  "exponential integrator",
+  "stabilized Runge-Kutta",
+  "paired explicit Runge-Kutta",
+  "relaxation Runge-Kutta",
+  "positivity preserving",
+  "Patankar",
+  "splitting methods",
+  "deferred correction",
+  "ADER",
+  "asymptotic preserving",
+  "parallel-in-time",
+  "parareal",
+  "step size control",
+  "SUNDIALS",
+]

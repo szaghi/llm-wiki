@@ -1,0 +1,183 @@
+---
+type: Result
+title: "Runge–Kutta order conditions and simplifying assumptions"
+description: "A Runge–Kutta method has order p iff its elementary weights equal 1/γ(τ) for every rooted tree of at most p vertices; the page gives the conditions to order five in matrix form, the simplifying assumptions B and C, related condition families, stage-count barriers and the extensions to additive and multiderivative methods."
+status: established
+aliases: [order conditions, Butcher order conditions, rooted-tree order conditions, simplifying assumptions, B(ξ), C(η)]
+tags: [runge-kutta, order-conditions]
+timestamp: 2026-10-19T12:00:00Z
+---
+
+# Runge–Kutta order conditions and simplifying assumptions
+
+**Theorem (as recalled by Ketcheson & Ranocha (2023) from Hairer–Nørsett–Wanner,
+Thm. II.2.6).** A [Runge–Kutta method](/definitions/runge-kutta-method.md)
+$(A,b,c)$ with $c=A\mathbf 1$ has order $p$ if and only if
+
+$$\Phi(\tau)=\frac{1}{\gamma(\tau)}\qquad\text{for every rooted tree }\tau\text{ with }\lvert\tau\rvert\le p,$$
+
+where $\Phi(\tau)$ is the elementary weight of the method and $\gamma(\tau)$
+the tree density. The proof compares the [B-series](/definitions/b-series.md)
+of one step, $B(\Phi,y_n)$, with that of the exact flow, whose coefficients
+are $1/\gamma(\tau)$ ([Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md),
+§2.2, Eqs. (13)–(20)).
+
+## Trees, densities and elementary weights
+
+For $\tau=[\tau_1,\dots,\tau_m]$ (the root joined to the roots of the subtrees
+$\tau_k$): $\lvert\tau\rvert$ counts vertices;
+$\gamma(\bullet)=1$, $\gamma(\tau)=\lvert\tau\rvert\,\gamma(\tau_1)\cdots\gamma(\tau_m)$;
+$\sigma(\bullet)=1$, $\sigma(\tau)=\sigma(\tau_1)\cdots\sigma(\tau_m)\,\mu_1!\mu_2!\cdots$
+with $\mu_k$ the multiplicities of identical subtrees. The internal weights
+are $\Phi_j(\bullet)=1$, $\Phi_j(\tau)=\prod_{k=1}^m\sum_{l}a_{jl}\Phi_l(\tau_k)$,
+and $\Phi(\tau)=\sum_jb_j\Phi_j(\tau)$ (Ketcheson & Ranocha (2023), Eqs. (5),
+(14)–(16)). There are 1, 1, 2, 4 trees of orders 1–4 (Eqs. (1)–(4)), and 9 of
+order 5, so order 4 needs 8 conditions and order 5 needs 17
+([Biswas et al. (2023)](/sources/biswas-2023.md), Table 1). Writing
+$\operatorname{diag}(c)$ for the diagonal matrix of abscissae and powers of
+$c$ componentwise, the conditions read:
+
+| order | conditions |
+|---|---|
+| 1 | $b^\top\mathbf 1=1$ |
+| 2 | $b^\top c=\frac12$ |
+| 3 | $b^\top c^2=\frac13$, $b^\top Ac=\frac16$ |
+| 4 | $b^\top c^3=\frac14$, $b^\top\operatorname{diag}(c)Ac=\frac18$, $b^\top Ac^2=\frac1{12}$, $b^\top A^2c=\frac1{24}$ |
+| 5 | $b^\top c^4=\frac15$, $b^\top\operatorname{diag}(c)^2Ac=\frac1{10}$, $b^\top\operatorname{diag}(c)Ac^2=\frac1{15}$, $b^\top\operatorname{diag}(Ac)Ac=\frac1{20}$, $b^\top\operatorname{diag}(c)A^2c=\frac1{30}$, $b^\top Ac^3=\frac1{20}$, $b^\top A\operatorname{diag}(c)Ac=\frac1{40}$, $b^\top A^2c^2=\frac1{60}$, $b^\top A^3c=\frac1{120}$ |
+
+The table is Biswas et al. (2023, Table 1) rewritten with $A\mathbf 1=c$
+(they list $b^\top A^{k-1}\mathbf 1=1/k!$ for the tall trees). Ketcheson &
+Ranocha (2023, Table 1) give the same order-4 data tree by tree, with
+$\sigma$, $\gamma$, $F(\tau)$ and $\Phi(\tau)$ for each.
+[Fekete et al. (2022)](/sources/fekete-2022.md) (Eq. (8)) write the order-3
+and order-4 conditions in residual form, $b^\top(\tfrac12c^2-Ac)=0$,
+$b^\top A(\tfrac12c^2-Ac)=0$, $b^\top(\tfrac16c^3-\tfrac12Ac^2)=0$ and
+$b^\top\operatorname{diag}(c)(\tfrac12c^2-Ac)=0$: since
+$\tfrac12c^2-Ac=-\tau^{(2)}$ and $\tfrac16c^3-\tfrac12Ac^2=-\tfrac12\tau^{(3)}$
+*(compiler check, not in the sources)*, these are conditions on the
+[stage-order residuals](/definitions/stage-order.md).
+
+## Simplifying assumptions and related families
+
+* $B(\xi)$: $b^\top c^{k-1}=1/k$ for $k=1,\dots,\xi$ (quadrature or bushy-tree
+  conditions).
+* $C(\eta)$: $\tau^{(k)}=Ac^{k-1}-c^k/k=0$ for $k=1,\dots,\eta$.
+
+These are Butcher's assumptions as restated by Biswas et al. (2023, Eqs.
+(10)–(11)) and [Biswas et al. (2024)](/sources/biswas-2024.md) (Eqs.
+(6)–(7)); $C(\eta)$ together with $B$ defines [stage order](/definitions/stage-order.md).
+Biswas et al. (2023, Eqs. (12)–(13)) name two further families:
+
+* $T(\xi)$: $b^\top A^{k-1}\mathbf 1=1/k!$, $k=1,\dots,\xi$ — the tall-tree
+  conditions, which are exactly the order conditions for linear constant-
+  coefficient problems and fix the leading coefficients of the
+  [stability function](/definitions/stability-function.md);
+* an Albrecht-type family $b^\top A^j\tau^{(k)}=0$ for $k\ge1$, $j+k<\xi$.
+
+$B(p)$, $T(p)$ and the Albrecht family at $\xi=p$ are necessary but not
+sufficient for order $p$ (Biswas et al. (2023), §2). The quantities
+$b^\top A^j\tau^{(k)}$ are linear combinations of the order-condition
+residuals: with the page-local residual
+$\varrho_{i,k}=b^\top A^{i-k}c^k-k!/(i+1)!$,
+$b^\top A^j\tau^{(k)}=\varrho_{j+k,k-1}-\tfrac1k\varrho_{j+k,k}$ (Biswas et al. (2023),
+§3). Imposing [weak stage order](/definitions/weak-stage-order.md) $q_{\mathrm w}$
+therefore makes $(p-1)(p-2)/2$ order conditions redundant for
+$(p,q_{\mathrm w})\in\{(3,2),(3,3),(4,3),(4,4),(5,4),(5,5)\}$ (Table 2: 1 of 4,
+3 of 8, 6 of 17).
+
+[Biswas et al. (2025)](/sources/biswas-2025.md) (Eq. (3.2)) name the
+**palm-tree conditions** $b^\top A^kc^j=1/\big((k+j+1)\cdots(j+1)\big)$,
+$0\le j+k\le p-1$ (a bushy tree attached at the leaf of a tall tree), and
+state that weak stage order $q_{\mathrm w}\ge p-1$ together with $B(p)$ implies
+all of them; for $p\le3$ every order condition is a palm-tree condition, so
+only $b^\top\operatorname{diag}(c)Ac=\tfrac18$ remains at order 4 (§3.1,
+App. A.1). The implication is stated without proof.
+
+## Stage-count barriers recalled by the sources
+
+* Explicit methods reach $p=s$ only for $p\le4$
+  ([Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md), §2, citing
+  Butcher); the minimum explicit stage counts for orders 2–5 are 2, 3, 4, 6
+  (Biswas et al. (2025), Table 3.1, row $q_{\mathrm w}=1$).
+* No explicit method of order $\ge5$ has a positive SSP coefficient
+  (Fekete et al. (2022), §1.1); see
+  [SSP methods](/methods/strong-stability-preserving-runge-kutta.md).
+* A DIRK has $p\le s+1$ (Biswas et al. (2023), §4, citing Hairer–Wanner
+  Thm. IV.4.18; Biswas et al. (2024), Thm. 3.2 at $q_{\mathrm w}=0$).
+* A fully implicit method has $p\le2s$, attained by Gauss–Legendre methods
+  (Biswas et al. (2024), Example 7.4, Cor. 4.5).
+
+The weak-stage-order analogues of these barriers are on
+[weak-stage-order barriers](/results/weak-stage-order-barriers.md). Biswas et
+al. (2024, Remark 3.6) and Biswas et al. (2025, Remark 1) note that their
+barriers use only the order of the stability function, i.e. $T(p)$.
+
+## Error constants
+
+The leading local error is measured by the **principal error norm** (page-local
+$\mathcal E_{p+1}$)
+
+$$\mathcal E_{p+1}=\Big(\sum_{\lvert\tau\rvert=p+1}\Big(\frac{1}{\sigma(\tau)}\Big(\frac{1}{\gamma(\tau)}-\Phi(\tau)\Big)\Big)^2\Big)^{1/2},$$
+
+the primary objective of Biswas et al. (2025, Eq. (3.3)). Biswas et al. (2023,
+§5) minimize the squared norm of the order-$(p+1)$ residuals instead. Fekete
+et al. (2022, §2) use the Kennedy–Carpenter–Lewis measurements (2- and
+$\infty$-norms of the order-$(p+1)$ and order-$p$ error vectors of main and
+embedded method, and their ratios) to design
+[embedded pairs](/methods/embedded-runge-kutta-pair.md).
+
+## Composition and order
+
+Composing two steps of one method does not raise its order unless the
+coefficients are tuned: any composition of two second-order explicit
+two-stage methods has coefficient $\tfrac18$ on the tall tree of order 3
+instead of $\tfrac16$, so it has order exactly two (Ketcheson & Ranocha
+(2023), §2.3.1). Composition with suitable starting and finishing methods can
+raise the order: Butcher's 5-stage order-4 method has effective order 5 with
+order-3 starter and finisher (§2.3.2); see
+[processing and effective order](/methods/processing-and-effective-order.md).
+
+## Extensions
+
+* **Additive and partitioned methods.** Trees get colored vertices, one color
+  per partition; elementary differentials use $f^{[\nu]}$ and elementary
+  weights use the tableau of the vertex's color (Ketcheson & Ranocha (2023),
+  §3.1; N-trees and P-trees). See [IMEX and additive RK](/methods/imex-runge-kutta.md)
+  and [GARK](/methods/generalized-additive-runge-kutta.md).
+* **Two-derivative methods.** With weights $b$, $\dot b$ on $f$ and $\dot f$
+  and abscissae $c=A\mathbf 1$, $\dot c$ the row sums of $(\dot a_{ij})$, the
+  conditions to order 3 are $b^\top\mathbf 1=1$; $b^\top c+\dot b^\top\mathbf 1=\tfrac12$;
+  $b^\top c^2+2\dot b^\top c=\tfrac13$ and $b^\top Ac+b^\top\dot c+\dot b^\top c=\tfrac16$
+  ([Gottlieb et al. (2022)](/sources/gottlieb-2022.md), §2.1, recalling
+  their ref. [6], with four more at order 4). For the IMEX two-derivative class
+  with an additional explicit tableau the paper derives 22 conditions through
+  order 3, new in that paper (§3.2). See
+  [multiderivative RK](/methods/multiderivative-runge-kutta.md).
+* **Splitting and Rosenbrock methods** have their own order theories:
+  [splitting order conditions](/results/splitting-order-conditions.md) and
+  [ROW methods](/methods/rosenbrock-wanner-method.md).
+
+The conditions are generated automatically by RootedTrees.jl and
+BSeries.jl ([BSeries.jl](/software/bseries-jl.md); Ketcheson & Ranocha (2023),
+§1).
+
+## Qualifications
+
+* The symbol $S(\xi)$ is used for two different families: Biswas et al. (2023,
+  Eq. (12)) for the Albrecht-type family above ($j+k<\xi$), and Biswas et al.
+  (2024, Eq. (4)) for the weak-stage-order conditions
+  ($0\le j\le s-1$, $1\le k\le\xi$). This page uses neither symbol.
+* "Order" here is classical order on smooth non-stiff problems. On stiff
+  problems the observed order can drop to about the
+  [stage order](/definitions/stage-order.md); see
+  [order reduction](/definitions/order-reduction.md).
+
+# Citations
+
+- [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §2.2, Eqs. (1)–(5), (13)–(20), Table 1 (theorem as recalled, trees, weights); §2.3 (composition, effective order); §3.1 (colored trees).
+- [Biswas et al. (2023)](/sources/biswas-2023.md) — Eqs. (10)–(13), §3, Tables 1–2 (conditions to order 5; $B$, $C$, $T$, Albrecht family; redundancy under weak stage order); §4 (DIRK bound $p\le s+1$); §5 (objective).
+- [Biswas et al. (2024)](/sources/biswas-2024.md) — Eqs. (4), (6)–(7); Remark 3.6; Thm. 3.2; Example 7.4; Cor. 4.5.
+- [Biswas et al. (2025)](/sources/biswas-2025.md) — Eq. (3.2) (palm-tree conditions), Eq. (3.3) (principal error norm), Table 3.1, Remark 1.
+- [Fekete et al. (2022)](/sources/fekete-2022.md) — Eq. (8) (residual form to order 4); §1.1 (no explicit SSP method of order $\ge5$); §2 (error measurements).
+- [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §2.1 (two-derivative conditions), §3.2 (IMEX two-derivative conditions to order 3).
+- [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §2 ($p=s$ possible only to order 4).

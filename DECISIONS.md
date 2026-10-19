@@ -484,3 +484,47 @@ intent of "every 10" (drift is caught while it is small) without re-reading the 
 bundle at every chunk. The fusion-mhd chunks 1 and 2 were staged without a deep lint;
 the whole-bundle deep lint #1 that ran with chunk 3 covered their pages.
 
+
+## D27 — ODE integration bundle (2026-10-19)
+
+**Decision (user):** a bundle `ode-integration` for the numerical time
+integration of ODEs and of method-of-lines semi-discretizations of PDEs,
+compiled from the 117 PDFs of `~/papers/mosaic/ode-integration` (the
+user's personal bibliography on the subject, 2021–2026 papers) in chunks
+of 20 (D26), each staged for the human's review and commit before the next
+starts, with a per-chunk digest in `ode-integration/INGESTION-ISSUES.md`.
+
+**The archive's composition, recorded because it shapes the bundle:**
+every file was meant to be a time-integration paper of 2021–2026. The
+page-1 check found two files holding another paper than their name says
+(ingested under their true identity), five download errors (three copies
+of a journal issue's front matter, an off-topic working paper, a
+duplicate) and one supplement without its paper. The human chose to
+replace the five and add the missing main paper; those six files are
+ingested in the last chunk, so the worklist never shows a file that has
+no real source behind it.
+
+**How the scope is kept:** time integration is the subject. Papers whose
+main subject is a spatial scheme, a physical model or a learned model
+(asymptotic-preserving finite volumes, ADER-DG, Lax–Wendroff flux
+reconstruction, neural integrators) are ingested in full here for their
+time-integration content, and listed in the issues file as candidates for
+a D17 copy into another bundle; no copy is made without the human's
+decision. The chunk order puts the reviews, the software papers and the
+core Runge–Kutta theory first, so the registry and the reading guide are
+built from them.
+
+**Why:** the user's working subject. Time integration appears in several
+bundles as an ingredient (SSP stepping in `high-order-capturing-schemes`,
+semi-implicit stepping in `fusion-mhd-simulation`), but none compiles its
+theory; folding these papers into those bundles would scatter one
+literature across subjects that only use it.
+
+**Amendment (user, 2026-10-19, same day):** the human re-downloaded the
+missing papers and authorized the compiler to overwrite the four bad files
+of the archive with them (a one-off exception to Layer-1 immutability,
+limited to files whose content was not the work their name states) and to
+add three files: the Buvoli 2023 main paper and the two papers missing
+from the start (Vermeire 2021, Izgin 2022). Li et al. 2022 was dropped and
+its file is removed by the human. The archive then holds 119 files for 118
+sources (Buvoli 2023 is one source in two files).

@@ -1,0 +1,142 @@
+---
+type: Software
+title: "BSeries.jl and RootedTrees.jl"
+description: "BSeries.jl and RootedTrees.jl, the Julia packages that compute truncated B-series of Runge–Kutta, additive Runge–Kutta and Rosenbrock methods, their composition and substitution, modified equations and modifying integrators, with their data structures and measured speed."
+status: established
+aliases: [BSeries.jl, RootedTrees.jl]
+tags: [software, order-conditions, geometric-integration, runge-kutta]
+timestamp: 2026-10-19T00:00:00Z
+---
+
+# BSeries.jl and RootedTrees.jl
+
+BSeries.jl is a Julia package for computing with [B-series](/definitions/b-series.md)
+truncated at a fixed but arbitrary order, built on RootedTrees.jl, a
+package for (colored) rooted trees and Runge–Kutta order conditions
+([Ketcheson and Ranocha (2023)](/sources/ketcheson-2023.md), §1). Both are
+MIT-licensed; RootedTrees.jl belongs to the SciML organization. The
+authors report a test suite covering 99% of the code with continuous
+integration (§1). The original motivation was to automate
+[backward error analysis](/methods/backward-error-analysis.md) of
+integrators for nonlinear ODEs, which by hand is tedious beyond the first
+terms (§2.4).
+
+## What it provides
+
+Ketcheson and Ranocha (2023), §1–§3, list:
+
+- B-series of [Runge–Kutta methods](/definitions/runge-kutta-method.md)
+  (coefficients $\Phi(\tau)$), of additive Runge–Kutta methods via
+  colored trees, and of Rosenbrock–Wanner methods (listed as a feature,
+  with no example in the paper), for a generic $f$ or a specific ODE, with
+  symbolic coefficients;
+- order of accuracy (`order_of_accuracy`), i.e. the largest $p$ with
+  $\Phi(\tau)=1/\gamma(\tau)$ for all $\lvert\tau\rvert\le p$ (see
+  [order conditions](/results/runge-kutta-order-conditions.md));
+- the composition law (`compose`, with optional step normalization) and
+  the substitution law;
+- modified equations (`modified_equation`) and modifying integrators
+  (`modifying_integrator`), as truncated series or as explicit vector
+  fields for a given $f$;
+- text and graphical output of trees.
+
+The only comparable library the authors know that computes B-series
+themselves, rather than only order conditions, is the Python code pybs
+(§1).
+
+## Conventions
+
+The package uses $B(a,y)=a(\varnothing)y+\sum_{\tau}\frac{h^{\lvert\tau\rvert}}{\sigma(\tau)}a(\tau)F(\tau)(y)$,
+with $a(\varnothing)=1$ for a one-step map and $a(\varnothing)=0$ for a
+vector field (Ketcheson and Ranocha 2023, §2.1, Eqs. 9–10). In its
+composition law the first-applied series is written on the left:
+$B(u,B(v,y))=B(v\cdot u,y)$, computed as a sum over ordered subtrees
+(§2.3, Eqs. 21–23). Autonomous problems and $c=A\mathbf 1$ are assumed
+throughout (§2.2). The substitution law is a sum over edge partitions and
+their skeletons (§2.4, Eq. 26). The bundle's conventions for these laws
+are on [B-series](/definitions/b-series.md).
+
+## Worked results produced with it
+
+The paper demonstrates the package on computations that it carries out
+to high order (Ketcheson and Ranocha 2023, §2–§3):
+
+- the B-series and modified equation of the two-stage, second-order
+  explicit family with $b=(1-\alpha,\alpha)$, $c_2=a_{21}=1/(2\alpha)$
+  ($\alpha$ page-local) (Eqs. 17–18, 27);
+- composition of two such methods: the tall-tree coefficient is $1/8$,
+  independent of the parameters and different from the exact $1/6$, so
+  every such composition has order exactly two (§2.3.1);
+- Butcher's effective-order-5 method: a fourth-order main method with
+  third-order starting and finishing procedures whose composition has
+  order 5 (§2.3.2, Eqs. 24–25); see [processing and effective order](/methods/processing-and-effective-order.md);
+- modified equations of explicit Euler on Lotka–Volterra up to $O(h^5)$,
+  matching the published $O(h)$ result, and modifying integrators of
+  orders 1–3 for it (§2.4.2, §2.5, Figs. 1–2);
+- explicit midpoint on a nonlinear oscillator, which conserves energy
+  exactly at every step size, with its modified field computed to order
+  8 and a modifying integrator that stops being Hamiltonian at order
+  $h^5$ (§2.6, Eqs. 35–40, Fig. 3);
+- Störmer–Verlet as an additive Runge–Kutta method, whose modified
+  equation through $h^7$ has no odd powers of $h$, and the average vector
+  field method, whose modified equation to $h^4$ reproduces a published
+  formula (§3.1–3.2).
+
+Details of these results belong to [backward error analysis](/methods/backward-error-analysis.md)
+and [symplecticity](/properties/symplecticity.md).
+
+## Design decisions
+
+- **Trees as level sequences.** Each tree is stored as its canonical
+  (lexicographically largest) level sequence in an array: memory-compact,
+  cache-friendly, with identical subtrees adjacent so $\sigma(\tau)$ is
+  cheap; composition and substitution then need memory moves and
+  re-sorting, for which internal buffers avoid allocations (§4.1). Trees
+  of a given order are generated in constant time per tree
+  (Beyer–Hedetniemi) (§1).
+- **Colored trees.** Additive methods carry a color sequence alongside the
+  level sequence; canonical form compares level sequences first, then
+  colors (§3.1).
+- **Lazy iteration.** Ordered subtrees, partitions and skeletons are
+  produced by lazy iterators over binary edge sequences, with views
+  instead of copies; the partition-forest loop is skipped when a
+  skeleton coefficient is zero, which pays off for explicit methods
+  (§4.2, Algorithms 1–3).
+- **Symbolic back ends.** SymPy.jl (LaTeX output), Symbolics.jl (generation
+  of Julia functions) and SymEngine.jl (speed); elementary differentials
+  of a symbolic $f$ are built by dynamic programming from lower orders,
+  and the symmetry of mixed partial derivatives cuts differentiation
+  steps (§4.3).
+
+## Measured performance
+
+On an Intel Core i7-8700K, summing the modified-equation coefficients of
+the explicit midpoint method up to order 9 took about 53 ms with
+BSeries.jl and 3.7 s with pybs, about 70× faster; the modifying-integrator
+coefficients to order 9 took about 23 ms, less than the modified equation
+(about 52 ms), because many skeleton coefficients vanish (Ketcheson and
+Ranocha 2023, §4, §4.2). For the order-8 modifying integrator of explicit
+midpoint on the oscillator, the symbolic back ends took about 1.8 s
+(SymPy.jl), 0.71 s (Symbolics.jl) and 16 ms (SymEngine.jl) to build the
+series (Table 4).
+
+## Qualifications
+
+- The conclusion lists Rosenbrock and partitioned methods as future
+  extensions, while §1 lists Rosenbrock–Wanner B-series and additive
+  methods (which contain partitioned ones) as existing features; the
+  paper does not reconcile the two (Ketcheson and Ranocha 2023, §1, §5).
+- Ketcheson and Ranocha (2023) print the closed form of the oscillator's
+  modified-field factor (Eq. 38) as the derivative of an arccosine equal
+  to $2\arctan(z/2)$; neither matches their own series (Eq. 37), whose
+  constant term is 1. The function consistent with Eq. 37 is
+  $\frac2z\arctan\frac z2$ *(compiler check, not in the sources;
+  $z=h/\lVert y\rVert^2$ page-local)*.
+- Algorithm 1 loops over binary sequences of length $\lvert\tau\rvert$,
+  while a tree has $\lvert\tau\rvert-1$ edges and
+  $2^{\lvert\tau\rvert-1}$ partitions (Definition 2.2).
+- The pybs comparison is a single benchmark on one machine.
+
+# Citations
+
+- [Ketcheson and Ranocha (2023)](/sources/ketcheson-2023.md) — §1 (feature list), §2.1–§2.6, §3.1–§3.2, §4.1–§4.3 (Algorithms 1–3, Table 4), §5 (arXiv v2, 2022).
