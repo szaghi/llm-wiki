@@ -67,9 +67,11 @@ export default withMermaid({
     // KaTeX at build time: the wiki's math law is KaTeX syntax ($...$, $$...$$), so the site doubles as its check.
     // A formula KaTeX cannot parse renders in red (class katex-error) instead of failing the whole build.
     config: (md) => {
-      md.use(katex, { delimiters: 'dollars', throwOnError: false, logger: () => 'ignore' })
-      // KaTeX keeps the TeX source in a MathML annotation, and TeX braces ({{ ... }}) are Vue interpolation:
-      // v-pre keeps Vue's template compiler out of every formula
+      // output 'html' drops KaTeX's MathML copy of every formula: it roughly halves the rendered math, and
+      // with it the heap the build needs (the bundle of all wiki pages ran out of a 12 GB heap in CI)
+      md.use(katex, { delimiters: 'dollars', throwOnError: false, logger: () => 'ignore', output: 'html' })
+      // Vue's template compiler must stay out of the rendered math ({{ ... }} is Vue interpolation; error spans
+      // echo the TeX source): v-pre on every formula
       for (const rule of ['math_inline', 'math_block']) {
         const render = md.renderer.rules[rule]!
         md.renderer.rules[rule] = (...args) => {
@@ -105,9 +107,16 @@ export default withMermaid({
       provider: 'local',
       options: {
         // the generated bibliographies hold thousands of entries each: searching them drowns every query
+        // and the math is indexed as nothing: rendered KaTeX in the index is unsearchable markup, and it
+        // held most of the build's heap (the index renders every page a second time)
         _render(src, env, md) {
           if (env.relativePath.endsWith('/bibliography.md')) return ''
-          return md.render(src, env)
+          const front = src.match(/^---\n[\s\S]*?\n---\n/)?.[0] ?? ''
+          const prose = src
+            .slice(front.length)
+            .replace(/\$\$[\s\S]*?\$\$/g, ' ')
+            .replace(/\$[^$\n]+\$/g, ' ')
+          return md.render(front + prose, env)
         },
       },
     },
