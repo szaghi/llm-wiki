@@ -5,7 +5,7 @@ description: "Stage order q is the largest integer for which the quadrature cond
 status: established
 aliases: [classical stage order, stage-order residual, C(η) condition, stiff order]
 tags: [runge-kutta, order-reduction, stiff, order-conditions]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Stage order
@@ -54,6 +54,11 @@ $k=q$. The observed behaviour reported by the sources:
   [order reduction](/definitions/order-reduction.md);
 * index-2 DAEs: order formally limited to $q$ (Southworth et al. (2022), §2.1).
 
+* stiff relaxation (IMEX): on a linear hyperbolic relaxation system, the
+  intermediate regime $\varepsilon\sim h$ exposes the low stage order of IMEX pairs;
+  ARS(4,4,3), third order, is only uniformly second order
+  ([Hu & Shu (2025)](/sources/hu-2025.md), §6, Fig. 1); see the next section.
+
 Farrell et al. (2021, §4.1, Figs. 1–2) observe on a manufactured-solution heat
 equation that two-stage Gauss–Legendre degrades from order 4 to "stiff order"
 2 while three-stage Radau IIA keeps full accuracy in $L^2$ and $H^1$. The
@@ -61,6 +66,27 @@ mechanism and its PDE manifestation (numerical boundary layers) are on
 [order reduction](/definitions/order-reduction.md); the
 [Prothero–Robinson problem](/benchmarks/prothero-robinson-problem.md) is the
 model.
+
+## Stage order of IMEX pairs and uniform accuracy
+
+For an [IMEX pair](/methods/imex-runge-kutta.md) both tableaux carry stage residuals.
+Hu & Shu (2025, Remark 4.4) contrast IMEX-BDF, whose order equals its stage order, so that
+uniform accuracy in $\varepsilon$ follows from uniform stability, with IMEX Runge–Kutta
+pairs, where a second-order pair "may have intermediate stages of stage order 1". For
+second-order pairs with $c^{\mathrm E}=c^{\mathrm I}$ the stage truncation errors are
+$O(h^2)$ and the step error $O(h^3)$ uniformly in $\varepsilon$ (Lemma 4.5), and a refined
+energy argument still gives uniform second order (Thm. 4.3). Uniform third order needs more:
+stage order 2 for both tableaux on every stage except the second,
+
+$$\tfrac12c_i^2=\sum_{j<i}a^{\mathrm E}_{ij}c_j=\sum_{j\le i}a^{\mathrm I}_{ij}c_j,\qquad i=3,\dots,s,$$
+
+(i.e. $\tau^{(2)}_i=0$ for both tableaux, $i\ge3$; Eq. (5.1)), together with a *vanishing
+coefficient condition* $b^{\mathrm E}_2=0$, $a^{\mathrm I}_{i2}=0$ for $i\ge3$ (Eq. (5.2))
+that keeps the second stage out of every later stage and of the update (Lemma 5.3;
+Thm. 5.1). The second stage cannot meet the condition: its explicit quadrature is
+$a^{\mathrm E}_{21}c_1=0\ne\frac12c_2^2$ when $c_1=0$, as for type-CK pairs
+*(compiler remark)*. BHR(5,5,3)\* satisfies these conditions; ARS(4,4,3)
+does not. See [uniform accuracy of IMEX schemes](/results/uniform-accuracy-relaxation-systems.md).
 
 ## Bounds by method class
 
@@ -123,3 +149,4 @@ Thm. 3.1). See [weak stage order](/definitions/weak-stage-order.md) and
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §2.1 (observed accuracy $\min\{p,q+1\}$; DIRK and IRK stage orders; index-2 DAEs).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §1, §3.2, §4.1, Figs. 1–2 (stiff order of Gauss–Legendre and Radau IIA).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §7 (internally inconsistent multirate methods).
+- [Hu & Shu (2025)](/sources/hu-2025.md) — Remark 4.4, Lemma 4.5, Thm. 4.3, §5 (Eqs. (5.1)–(5.2), Lemma 5.3, Thm. 5.1), §6 (Fig. 1); arXiv v1.

@@ -17,7 +17,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–2 of 6 ingested (40 of the archive's 118 sources). Chunk 1: two *Acta
+**Corpus:** chunks 1–3 of 6 ingested (60 of the archive's 118 sources). Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -29,7 +29,11 @@ ADER. Chunk 2: relaxation and entropy-stable time stepping, paired-explicit
 and stabilized (Chebyshev, Legendre) methods, embedded pairs and step-size
 control for compressible flow, low-storage and high-order explicit methods,
 TASE operators and deferred correction. Most files are arXiv preprints; each
-Source page states the version read. The [bibliography](/bibliography.md) lists the works the sources cite.
+Source page states the version read. Chunk 3: linear multistep and BDF
+methods (energy and G-stability, variable steps), IMEX-BDF and IMEX-RK for
+relaxation and low-Mach problems, semi-implicit IMEX, fully implicit stage
+solvers at scale, Padé and Newmark schemes, boundary data for Runge–Kutta
+stages. The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -45,7 +49,8 @@ Source page states the version read. The [bibliography](/bibliography.md) lists 
    [B-convergence](/definitions/b-convergence.md).
 2. **Stiffness and order reduction.** [Stage order](/definitions/stage-order.md),
    [order reduction](/definitions/order-reduction.md) and its cure through
-   [weak stage order](/definitions/weak-stage-order.md), with its
+   [weak stage order](/definitions/weak-stage-order.md) and
+   [boundary conditions for the stages](/methods/runge-kutta-stage-boundary-treatment.md), with its
    [barriers](/results/weak-stage-order-barriers.md) and the schemes built on it
    ([DIRK](/methods/dirk-high-weak-stage-order.md),
    [explicit](/methods/explicit-runge-kutta-high-weak-stage-order.md)); the model problem is the
@@ -55,9 +60,11 @@ Source page states the version read. The [bibliography](/bibliography.md) lists 
    [fully implicit collocation methods](/methods/fully-implicit-runge-kutta.md),
    [Rosenbrock–Wanner and W-methods](/methods/rosenbrock-wanner-method.md) and
    [Rodas5P](/methods/rodas5p.md), [TASE operators](/methods/tase-operators.md),
+   [Padé-based schemes](/methods/pade-time-integration.md), the [Newmark method](/methods/newmark-method.md),
    [differential-algebraic equations](/definitions/differential-algebraic-equation.md),
    and [solving the stage equations](/methods/implicit-stage-solvers.md); stiff test problems:
-   [Van der Pol](/benchmarks/van-der-pol-oscillator.md), [Robertson](/benchmarks/robertson-problem.md).
+   [Van der Pol](/benchmarks/van-der-pol-oscillator.md), [Robertson](/benchmarks/robertson-problem.md),
+   [FitzHugh–Nagumo](/benchmarks/fitzhugh-nagumo-model.md), [flow past a cylinder](/benchmarks/flow-past-cylinder.md).
 4. **Nonlinear stability and structure.**
    [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
    versus [strong stability](/properties/strong-stability.md) for linear seminegative
@@ -86,6 +93,7 @@ Source page states the version read. The [bibliography](/bibliography.md) lists 
    [isentropic vortex](/benchmarks/isentropic-vortex.md).
 6. **Additive, partitioned and multirate methods.**
    [IMEX and additive Runge–Kutta](/methods/imex-runge-kutta.md),
+   [semi-implicit and linearly implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md),
    [GARK](/methods/generalized-additive-runge-kutta.md),
    [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md) and
    [IMEX-MRI-GARK](/methods/imex-mri-gark.md), [multirate GARK](/methods/multirate-gark.md),
@@ -99,12 +107,24 @@ Source page states the version read. The [bibliography](/bibliography.md) lists 
    [complex coefficients](/methods/complex-coefficient-splitting.md);
    [exponential integrators](/methods/exponential-integrators.md).
 8. **Multiscale problems.** [Asymptotic-preserving schemes](/definitions/asymptotic-preserving-scheme.md),
+   [uniform accuracy for relaxation systems](/results/uniform-accuracy-relaxation-systems.md),
    [BGK penalization](/methods/bgk-penalization.md),
-   [micro–macro decomposition](/methods/micro-macro-decomposition.md).
-9. **Iterative high-order time integrators.** [Deferred correction](/methods/deferred-correction.md),
+   [micro–macro decomposition](/methods/micro-macro-decomposition.md); test problems: the
+   [linear hyperbolic relaxation system](/benchmarks/hyperbolic-relaxation-system.md), the
+   [Broadwell model](/benchmarks/broadwell-model.md), the [Gresho vortex](/benchmarks/gresho-vortex.md).
+9. **Linear multistep methods.** [Linear multistep methods](/methods/linear-multistep-method.md),
+   [zero-stability](/definitions/zero-stability.md), the
+   [BDF methods](/methods/backward-differentiation-formula.md),
+   [G-stability](/properties/g-stability.md) and the
+   [multiplier energy technique](/methods/multiplier-energy-technique.md) with its results on
+   [BDF6](/results/bdf6-energy-stability.md) and
+   [variable-step BDF2](/results/variable-step-bdf2-stability.md);
+   [IMEX-BDF](/methods/imex-linear-multistep-methods.md) and
+   [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md).
+10. **Iterative high-order time integrators.** [Deferred correction](/methods/deferred-correction.md),
    [ADER](/methods/ader-time-integration.md) and their
    [equivalence](/results/dec-ader-equivalence.md).
-10. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
+11. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
     [CVODE](/software/cvode.md), [Irksome](/software/irksome.md),
     [BSeries.jl](/software/bseries-jl.md), [DifferentialEquations.jl](/software/differentialequations-jl.md),
     [PETSc TS](/software/petsc-ts.md).

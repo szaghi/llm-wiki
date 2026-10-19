@@ -5,7 +5,7 @@ description: "Irksome, the Firedrake library that turns a UFL semidiscrete varia
 status: established
 aliases: [irksome]
 tags: [software, implicit, runge-kutta, implicit-stage-solvers, structure-preserving]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Irksome
@@ -79,6 +79,24 @@ $(I\otimes M+hA\otimes K)\mathbf k=\mathbf f$ (§2.3, Eq. 31).
   exact block solves is block forward substitution, exact in one
   iteration (§2.3, Eq. 33, §4.3, Listing 3).
 
+- **Monolithic multigrid with stage-coupled patches.**
+  [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) use Irksome to generate the
+  coupled stage equations of Gauss, Radau IIA and Lobatto IIIC methods for
+  incompressible Stokes, Navier–Stokes and visco-resistive MHD, and solve them with
+  Newton (Eisenstat–Walker), FGMRES and a geometric multigrid V-cycle whose additive Vanka
+  relaxation, built with PETSc's PCPATCH, puts all stage copies of a vertex patch into one
+  small saddle-point solve; interpolation acts stage by stage, $I_s\otimes P$ (§4,
+  §4.3). The largest runs reach 46,566,816 unknowns on 640 cores (§5.2). Details on
+  [solving the stage equations](/methods/implicit-stage-solvers.md).
+- **DAE stage form.** For the index-2 Stokes system Abu-Labdeh et al. advance the
+  pressure, like the velocity, with stage derivatives and impose the incompressibility
+  constraint on every stage value (§3.1); see
+  [differential-algebraic equations](/definitions/differential-algebraic-equation.md).
+
+[Munch et al. (2024)](/sources/munch-2024.md) (§7) name Irksome as a possible code
+generator for the batched stage operations of their stage-parallel deal.II
+implementation; it is not used there.
+
 A different route to the same coupled system — real Schur decomposition
 of $A^{-1}$ with block-triangular preconditioning, implemented in MFEM
 (the IRKIntegration code) — is developed by [Southworth et al. (2022)](/sources/southworth-2022.md),
@@ -87,8 +105,9 @@ compared on [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
 ## Measured behaviour
 
-All numbers are from Farrell et al. (2021) (arXiv v1 numbering); no
-hardware is stated.
+Numbers are from Farrell et al. (2021) (arXiv v1 numbering; no hardware
+stated) unless attributed to Abu-Labdeh et al. (2023) (arXiv v2 numbering;
+Niagara cluster, Intel Skylake nodes).
 
 - **Order reduction.** On a manufactured heat solution (cubic
   serendipity elements, $N=8$–$128$, $h\in\{1/N,4/N,16/N\}$), two-stage
@@ -117,6 +136,16 @@ hardware is stated.
   $P^4/P^3_{\mathrm{disc}}$ (≈382k dofs) and two-stage Radau IIA at
   $h=0.00125$ matches reference drag and lift computed with ≈667k dofs and
   Crank–Nicolson at half the step (§4.4.1, Fig. 5).
+- **Same benchmark, monolithic multigrid** (Abu-Labdeh et al. 2023, §5.2, Tables 5–6):
+  Taylor–Hood elements, $h=1/400$, two- and three-stage Radau IIA and Lobatto IIIC give
+  maximum drag 2.95 and lift 0.48 at every refinement level, with 1.35–2.70 Newton and
+  1.61–8.19 linear iterations per step and 0.03–0.19 min per step on up to 640 cores;
+  three-stage Gauss gives "highly oscillatory" drag and lift. See
+  [flow past a cylinder](/benchmarks/flow-past-cylinder.md).
+- **Stokes, manufactured solution** (Abu-Labdeh et al. 2023, §5.1, Tables 1–4): linear
+  iterations per step stay between 8.70 and 25.97 from 1.1M to 19M unknowns per stage, and
+  two-stage Radau IIA reaches the accuracy of a three-stage L-stable DIRK in about 60 %
+  of the wall time on one eighth of the cores.
 
 ## Qualifications
 
@@ -132,8 +161,15 @@ hardware is stated.
   own Eqs. 3, 11 and 14 have the correct forms.
 - "Half as many degrees of freedom" in the cylinder test is 382k against
   667k, a factor of about 0.57.
+- Abu-Labdeh et al. (2023, §5) also state that Gauss, Radau IIA and Lobatto IIIC all have
+  stage order equal to the number of stages; for Lobatto IIIC the standard value is $s-1$
+  (see [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)).
+  Their solver tolerances and Chebyshev smoothing intervals are hand-tuned, and no
+  convergence theory for the stage-coupled smoother is given (§5).
 
 # Citations
 
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §1–§4; Eqs. 6–9, 18, 31–33; Listings 1–3; Figs. 1–3, 5; Tables 1–2 (arXiv v1).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §1.2 (IRKIntegration in MFEM), Remark 2 (Irksome as concurrent work).
+- [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §3.1, §4, §4.3 (Irksome with PETSc/PCPATCH monolithic multigrid); §5.1–5.2, Tables 1–6.
+- [Munch et al. (2024)](/sources/munch-2024.md) — §7 (Irksome as possible code generator for batched stage operations).

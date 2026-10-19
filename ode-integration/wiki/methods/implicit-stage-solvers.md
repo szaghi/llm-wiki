@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Solving the stage equations of implicit Runge–Kutta methods"
-description: "How the nonlinear and linear systems of implicit Runge–Kutta stages are solved: Newton and simplified Newton iterations, predictors, tolerances and Jacobian reuse, real-Schur block preconditioning of fully implicit methods, block preconditioners in finite-element codes, multirate Newton structure, and solver software."
+description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep steps) are solved: Newton, Picard and simplified Newton iterations, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning of fully implicit methods, monolithic multigrid, static condensation, multirate structure and solver software."
 status: established
-aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors]
+aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation]
 tags: [implicit, linear-algebra, stiff, runge-kutta, software]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods
@@ -46,6 +46,27 @@ methods are "rarely used" for large PDE problems (Southworth et al. §1;
   Jacobians and factorizations infrequently, amortizing their cost over steps (§5). Roberts et al.
   reuse the fast Jacobian per micro-step and the slow one per macro-step in multirate methods
   (§4).
+- **Inexact Newton.** [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) solve the coupled
+  stage system of fully implicit methods for Navier–Stokes and MHD by Newton with
+  Eisenstat–Walker forcing terms, i.e. the linear solve stops once the linearized residual is a
+  fraction of the nonlinear one (§3.2); 1.35–2.70 Newton iterations per step suffice on the
+  cylinder benchmark (§5.2, Table 6).
+- **Picard (fixed-point) iteration.** [Orlando et al. (2025)](/sources/orlando-2025-b.md) solve
+  the nonlinear Helmholtz-type pressure equation of each implicit stage of their IMEX scheme for
+  low-Mach Euler flow by a Picard iteration with the enthalpy lagged, because the fully implicit
+  enthalpy makes the system "strongly nonlinear and difficult to control" (§3.2). The iteration is
+  first-order convergent, with experimental order about 1 (1.07 at the first step, 0.84 at the
+  200th) and contraction rates 0.01–0.08 (Table 17). At Mach $10^{-1}$ it needs 1, 3 and 5
+  iterations for tolerances $10^{-4}$, $10^{-6}$, $10^{-10}$; at Mach $10^{-4}$ one iteration
+  suffices regardless of tolerance, so it costs about as much as a linearly implicit scheme there
+  (Table 16). The linear pressure systems are solved through a Schur complement with
+  Jacobi-preconditioned GMRES, and the symmetric positive definite blocks by CG with geometric
+  multigrid (§3.5). Their semi-implicit variant avoids the nonlinear equation: a linearization of
+  the internal-energy–pressure relation makes the pressure equation linear for general
+  equations of state, and on a cubic-EOS test it saved about 70 % CPU time against the
+  semi-implicit scheme that solves the nonlinear equation, with no visible difference
+  (§3.4, Fig. 13);
+  see [semi-implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md).
 - **Linearly implicit stages.** For a right-hand side linear in $y$, ARKODE performs one Newton
   iteration per stage (Reynolds et al. §2.2). [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)
   build this single linear solve into the method.
@@ -78,7 +99,8 @@ On an advection–diffusion–reaction [Brusselator](/benchmarks/brusselator.md)
 at least 32% against the trivial one for a DIRK and an IMEX splitting; with explicit reactions and
 one Newton iteration per stage, the cutoff predictor was best, by up to 20% (§5.1.2, Table 1).
 Roberts et al. (2021) take stage predictors for the fast micro-steps of compound-fast multirate
-methods from the dense output of the compound step (§4).
+methods from the dense output of the compound step (§4). Abu-Labdeh et al. (2023, §3.2) start
+Newton from the previous step's stage derivatives.
 
 ## Fully implicit methods: real Schur block preconditioning
 
@@ -138,6 +160,136 @@ to 21.6 s for 4th-order Gauss, 47.1 s to 25.4 s for 3rd-order Radau IIA (Fig. 2)
 $4\times4$ blocks; the theory covers index-1 problems through the reduced system (§6; see
 [differential-algebraic equations](/definitions/differential-algebraic-equation.md)).
 
+## Fully implicit methods: diagonalization and stage parallelism
+
+[Munch et al. (2024)](/sources/munch-2024.md) solve the Radau IIA stage system of the linear
+finite-element problem $M\dot u+Ku=g$ (page-local stiffness $K$, load $g$) in the form obtained by
+multiplying with $A^{-1}\otimes I$,
+
+$$\big(A^{-1}\otimes M+h\,I_s\otimes K\big)\mathbf k=\mathbf r$$
+
+(§2, Eq. (1)), by GMRES with one of two preconditioners whose blocks are independent:
+
+- **Exact complex diagonalization** (Butcher 1976, as recalled): $A^{-1}=S\Lambda S^{-1}$ turns the
+  system into blocks $\lambda_iM+hK$, $\lambda_i$ the eigenvalues of $A^{-1}$ (page-local $S$,
+  $\Lambda$), with $\lceil s/2\rceil$ independent blocks for Radau IIA because the complex ones come
+  in conjugate pairs (§2, Eq. (2)). Each complex block is written in real $2\times2$ form and
+  preconditioned by PRESB, whose factorization needs two V-cycles on $(\operatorname{Re}\lambda_i+\operatorname{Im}\lambda_i)M+hK$,
+  or by geometric multigrid on the $2\times2$ system, each block with its own GMRES (§6,
+  Eqs. (9)–(11)).
+- **Axelsson–Neytcheva preconditioner**: factor $A^{-1}=LU$ with $U$ unit upper triangular
+  (page-local $L$, $U$), so that all eigenvalues of $L^{-1}A^{-1}$ equal one, and use
+  $L\otimes M+hI_s\otimes K$; $L$ has a real eigendecomposition, giving $s$ real blocks
+  $\tilde\lambda_iM+hK$, each approximated by one matrix-free geometric multigrid V-cycle
+  (§2, Eq. (3)).
+
+The blocks are solved concurrently on $s$ process subgroups of a stage-by-partition process grid;
+the products $(D\otimes I)u$ with a $s\times s$ matrix $D$ (page-local), needed for basis changes,
+are done by a Cannon-like ring of `MPI_Sendrecv_replace` steps (§3, Eqs. (4)–(6)). A performance
+model gives $T_{\mathrm{serial}}=2T_S+\sum_iT_{B_i}$ against
+$T_{\mathrm{parallel}}=2T'_S+\max_iT_{B_i}(N/s)$ (page-local: $T_S$ basis-change and $T_{B_i}$
+block times, $N$ processes), so the speedup is at most $\sum_iT_{B_i}/\max_iT_{B_i}\le s$ and appears
+only at the strong-scaling limit, where times are proportional to iteration counts (§4,
+Eqs. (7)–(8)). Measured on SuperMUC-NG for a 3D heat equation up to 147,456 processes (§5):
+
+- GMRES iterations per step with the real preconditioner grow with $s$: 5.0, 7.0, 9.9, 11.9 for
+  $s=2,4,6,8$; the sequential V-cycle count falls from 103 to 12 for $s=8$ when the blocks run in
+  parallel (Table 2). With complex blocks the per-block iteration counts barely depend on $s$
+  (PRESB 5.0–6.2), but the complex variant's speedup is about half that of the real one, and both
+  stage-parallel variants reach similar minimal times (§6, Figs. 16–17).
+- Stage parallelism wins below about $10^4$ unknowns per process and loses about 20 % above
+  $10^5$; on average far from the scaling limit it has 13 % lower throughput (§5.3, §7, Fig. 13).
+- Running all stages as a multivector in one process group gave only 5–25 % speedup for $s=8$,
+  because the intergrid transfer of the library serializes per stage (§5.4).
+
+The authors contrast their stage-coupled preconditioner with Pazner and Persson's stage-uncoupled
+block Jacobi, at similar cost because basis changes are cheap, and call the real-Schur approach of
+Southworth et al. "inherently stage-serial" (§2, §6).
+
+## Fully implicit methods: monolithic multigrid with stage-coupled relaxation
+
+Abu-Labdeh et al. (2023) solve the stage systems of Gauss, Radau IIA and Lobatto IIIC methods for
+incompressible Stokes, Navier–Stokes and visco-resistive MHD, index-2 saddle-point
+[DAEs](/definitions/differential-algebraic-equation.md), monolithically (§4):
+
+- **Outer iteration.** Newton with Eisenstat–Walker forcing, FGMRES (preferred to right-preconditioned
+  GMRES because it saves a preconditioner application and allows GMRES inside the smoother), one
+  geometric multigrid V-cycle as preconditioner.
+- **Transfer and coarse levels.** Interpolation acts on each stage separately, $I_s\otimes P$ with the
+  finite-element interpolation $P$ (page-local), restriction is its transpose, coarse operators are
+  rediscretized, and the coarsest level is solved by MUMPS (§4.1).
+- **Relaxation.** Additive Vanka patches, one per vertex, containing all degrees of freedom in the
+  closure of the adjacent cells, only the pressure (and multiplier) degree of freedom at the vertex,
+  and **all stage copies** of these, so each patch problem is a small stage-coupled saddle-point
+  system (§4.2, Fig. 1). The patch smoother is accelerated by Chebyshev iteration with hand-tuned
+  intervals or by GMRES; GMRES is better at high Reynolds number, Chebyshev at Reynolds number 1,
+  where GMRES-accelerated relaxation sometimes failed (§5.4).
+- **Why monolithic.** Block preconditioners need a Schur complement of the stage-coupled system that
+  "may depend on properties of the specific IRK scheme"; the patch smoother avoids it (§4.2).
+
+Results (Firedrake, [Irksome](/software/irksome.md), PETSc/PCPATCH, Niagara cluster): on 2D Stokes,
+8.70–25.97 linear iterations per step from 1.1M to 19M unknowns per stage, with the stopping
+tolerance falling by a factor 8 per level; weak scaling in wall time is not ideal (about 3.5× per
+level against an ideal 2×), which the authors attribute to iteration growth, memory bandwidth and a
+communication-bound coarse solve (§5.1, Tables 1–2). On the cylinder benchmark at Re 100, 1.61–8.19
+linear iterations per step up to 46.6M unknowns on 640 cores (§5.2, Tables 5–6); on 2D MHD island
+coalescence with Lobatto IIIC(2) up to Reynolds number 20,000, under about 10 linear iterations per
+step, slightly more than the authors' earlier BDF2 solver (§5.3, Fig. 6).
+
+## Coupled multiphysics: all-stage Newton with static condensation
+
+For incompressible fluid–structure interaction, [Taddei et al. (2026)](/sources/taddei-2026.md)
+apply Radau IIA to the full system and solve all stages together, without stage decoupling (§3):
+
+1. The structural velocity stages are eliminated through the Butcher inverse,
+   $\mathbf U_s=h^{-1}(A^{-1}\otimes I)\mathbf D_s-h^{-1}\big((A^{-1}\mathbf 1)\otimes I\big)d_n$
+   (page-local stacked velocity and displacement stages $\mathbf U_s$, $\mathbf D_s$, start value
+   $d_n$), which requires invertible $A$ (Eq. (18)).
+2. The resulting system has the structure of the BDF–Newmark system with $s$ times more unknowns
+   (§3.1, Eq. (19)). Each Newton step expresses the fluid and solid interior updates through the
+   interface displacement increment and solves a Schur-complement (static-condensation) system for
+   it (§3.2, Eqs. (23)–(24)).
+3. This Newton step equals a sequential-quadratic-programming step for minimizing the interface
+   residual subject to the subdomain equations, a formulation that extends to non-conforming
+   interface grids (Eq. (25)).
+
+The authors note that the cost of the all-stage system, which has limited fully implicit methods
+in high-fidelity fluid–structure codes, matters much less in their reduced-order model, where
+port reduction permits direct solvers (§1.2). No timings are reported.
+
+## Factored rational solves for linear second-order systems
+
+For linear structural dynamics $M\ddot u+C\dot u+Ku=f$, [Song & Eisenträger (2022)](/sources/song-2022.md)
+apply a rational approximation $\hat D_m(\mathcal A)^{-1}\hat N_m(\mathcal A)$ of the exponential
+of the scaled state matrix $\mathcal A$ through its factored denominator $\prod_i(r_iI-\mathcal A)$
+(page-local symbols of [Padé time integration](/methods/pade-time-integration.md)). Each real root
+costs one solve with the sparse symmetric positive definite matrix $r^2M+rhC+h^2K$ of the original
+size; each conjugate pair costs one complex symmetric solve with the same matrix form, from which
+the real result is $-\operatorname{Im}\upsilon/\operatorname{Im}r$ ($\upsilon$ the complex solution);
+$\mathcal A$ is never formed and $M$ never inverted, and factorizations are reused across steps
+for linear problems (§2.3). For Gauss methods the roots $r_i$ are the eigenvalues of $A^{-1}$, so
+this is the complex diagonalization above specialized to a second-order system *(compiler remark,
+not in the sources)*.
+
+## Multistep methods: one solve per step
+
+- **Linearly implicit multistep methods.** [Glandon et al. (2022)](/sources/glandon-2022.md) add a
+  Jacobian term to a linear multistep method so that each step needs exactly one linear solve with
+  $I-h_n\kappa_kJ_n$ (page-local coefficient $\kappa_k$, the source's $\mu_{-1}$, playing the
+  role of the Rosenbrock $\gamma$), instead of the Newton iteration of BDF (§2, Def. 2.2). Their implementation is slightly
+  faster in CPU time than a BDF implementation in the same framework on 2D Gray–Scott (direct LU)
+  and a quasi-geostrophic model (GMRES with tolerance one tenth of the integrator's); with GMRES the
+  error–step curves are jagged at loose tolerances, which the authors attribute "possibly" to
+  inexact solves degrading stability or causing order reduction (§8.2–8.3). See
+  [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md).
+- **Factorization reuse by iterative refinement.** [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md)
+  solve the one linear saddle-point system per step of their IMEX and semi-implicit BDF2
+  Navier–Stokes schemes by iterative refinement with a factorization from an earlier step, starting
+  from an extrapolated guess, and refactor after five iterations without convergence (§4). The
+  number of LU factorizations is at most about 5 % of the steps on their manufactured test (§4.1,
+  Fig. 4), and 53–92 factorizations for 4,384 to 93,671 steps on the cylinder benchmark (§4.2). See
+  [backward differentiation formulas](/methods/backward-differentiation-formula.md).
+
 ## Block preconditioners in finite-element codes
 
 Farrell et al. (2021) generate the coupled stage system symbolically in
@@ -196,6 +348,18 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
   $2\times10^{-2}$ in the caption of Fig. 2.
 - Farrell et al.'s cost figures are for one mesh and one step size, with no hardware or time
   units stated (§4.2).
+- Munch et al. (2024, §6) write Southworth et al.'s conjugate-pair blocks as
+  $(\operatorname{Re}\lambda_iI-hM^{-1}K)^2+\operatorname{Im}\lambda_iI$, without the square on the
+  imaginary part that the quadratic form needs (reader's check on the source). They assert without
+  proof that the eigendecomposition of the triangular factor $L$ is real (§2), which holds when its
+  diagonal entries are real and distinct. Their stage-system right-hand side carries $+Ku_n$ where
+  $M\dot u+Ku=g$ needs $-Ku_n$ (Eq. (1) and before), and they print 786 for the 768 processes of 16
+  nodes (§5.1) (arXiv v1).
+- Abu-Labdeh et al. (2023) give no convergence theory for the stage-coupled smoother; Chebyshev
+  intervals and stopping tolerances are hand-tuned, and no rigorous tolerance guaranteeing
+  discretization-level accuracy is available (§5).
+- Song & Eisenträger (2022) and Taddei et al. (2026) report no solver statistics beyond costs
+  relative to Newmark (Song) or none at all (Taddei).
 - The heat-equation comparison of Gardner et al., CVODE BDF 8.8 s against ARKODE's default DIRK
   67.3 s, is problem-specific; the authors attribute it to BDF's single solve per step and order
   adaptivity (§5.1).
@@ -207,3 +371,10 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §4.1–4.4 (Eqs. (4.1)–(4.5)).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.2, §3.4 (Eqs. (18)–(21)), §5.1.2 (Table 1).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.5, §5 (Eqs. (2)–(3), Table 5), §6 (Table 6), §6.1 (Fig. 3).
+- [Munch et al. (2024)](/sources/munch-2024.md) — §1–7 (Eqs. (1)–(11), Table 2, Figs. 5–18).
+- [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §3.1–3.2, §4 (Fig. 1), §5.1–5.4 (Tables 1–7, Figs. 5–7).
+- [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.2, §3.1–3.2 (Eqs. (18)–(25)).
+- [Song & Eisenträger (2022)](/sources/song-2022.md) — §2.3 (Eqs. (37)–(54)).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §2 (Def. 2.2), §8.2–8.3.
+- [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §4, §4.1–4.2 (Fig. 4).
+- [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §3.2, §3.4–3.5, Tables 16–17, Fig. 13.

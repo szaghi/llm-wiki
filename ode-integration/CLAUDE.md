@@ -94,11 +94,14 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 2 staged 2026-10-19:** 20 sources on relaxation, stabilized and
-paired-explicit methods, step-size control, low-storage and high-order
-explicit methods; 40 of 118 ingested, 78 concept pages, 1622 bibliography
-entries, deep lint over the chunk's pages. Next: chunk 3 (implicit
-methods, BDF, IMEX and asymptotic-preserving schemes).
+**Chunk 3 staged 2026-10-19:** 20 sources on linear multistep and BDF
+methods, IMEX for relaxation and low-Mach problems, implicit stage
+solvers; 60 of 118 ingested, 97 concept pages, 2234 bibliography entries.
+Next: chunk 4 (IMEX and multirate continued, local time stepping,
+exponential integrators).
+
+**Chunk 2 committed 2026-10-19 (43bb24b):** relaxation, stabilized and
+paired-explicit methods, step-size control.
 
 **Chunk 1 committed 2026-10-19 (864b713):** scaffold (D27) and the 20
 reviews, software and Runge–Kutta theory papers.

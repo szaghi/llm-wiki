@@ -5,7 +5,7 @@ description: "Sun, Wei and Wu prove that every diagonal $(m,m)$ Padé approximat
 status: established
 aliases: [unified energy law for diagonal Padé approximations, energy law of Gauss methods on linear problems, Sun–Wei–Wu theorem]
 tags: [stability, strong-stability, implicit, structure-preserving, runge-kutta]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Unconditional strong stability of diagonal Padé schemes and its energy law
@@ -98,6 +98,27 @@ while Radau IIA and Lobatto IIIC damp it, at the largest steps to ratios as smal
 Qin–Zhang DIRK has the same conservative behaviour (Farrell et al. 2021, §4.3), as its
 own energy law predicts (Sun et al. 2022, Ex. 4.3).
 
+## Structural dynamics: diagonal Padé as a time integrator
+
+[Song & Eisenträger (2022)](/sources/song-2022.md) use the $(m,m)$ approximants directly
+as one-step maps for linear structural dynamics $M\ddot u+C\dot u+Ku=f$ (page-local $u$,
+$C$, $K$, $f$), in state-space form $x'=\mathcal Ax+F$ with $x=[h\dot u;u]$ (page-local);
+see [Padé time integration](/methods/pade-time-integration.md). They state, citing
+Gallopoulos and Saad and without proof, that the schemes are unconditionally stable
+"since the spectral radius of the rational approximation … is of unit value", with no
+amplitude decay and no numerical damping (§3.2.1, §4). The theorem above supplies the
+proof in energy form: in the inner product
+$\langle x,\tilde x\rangle_E=x_1^\top M\tilde x_1+h^2x_2^\top K\tilde x_2$ (page-local), with $M$,
+$K$ symmetric positive definite and $C$ symmetric positive semidefinite,
+$\langle\mathcal Ax,x\rangle_E=-h\,x_1^\top Cx_1\le0$, so $\mathcal A$ is seminegative, and
+skew for $C=0$; Theorem 5.2 then gives exact conservation of the discrete energy for
+undamped free vibration and monotone decay with damping *(compiler check, not in the
+sources)*. This matches the observed absence of amplitude decay. What remains is phase
+error: Song & Eisenträger's amplitude-error measure samples the solution at multiples of
+the period and mixes amplitude and phase (Eq. (100)), and their period elongation at a
+step of half a period is about 0 %, 0.5 %, 7.7 % and 56.5 % for the four orders they test
+(§3.2.3, Fig. 3).
+
 ## Qualifications
 
 - **What is new.** Unconditional strong stability of diagonal Padé schemes on linear
@@ -111,9 +132,17 @@ own energy law predicts (Sun et al. 2022, Ex. 4.3).
   matter (they preserve quadratic invariants; see
   [symplecticity](/properties/symplecticity.md)).
 - Sun et al. use $s$ for the Padé degree; $m$ is used here because $s$ denotes the
-  stage count in this bundle (the two coincide for Gauss methods).
+  stage count in this bundle (the two coincide for Gauss methods). Song & Eisenträger
+  write $M$ for it, which clashes with the mass matrix.
+- Song & Eisenträger attribute unconditional stability to "Padé-based" integrators in
+  general; it holds for the diagonal approximants of this page, not for every Padé
+  approximant, and their "unit spectral radius" holds on the undamped spectrum only
+  *(compiler check)*.
+- The energy law concerns the homogeneous problem; Song & Eisenträger's schemes also
+  carry a polynomial load, for which the law bounds only the propagator.
 
 # Citations
 
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1, Thm. 2.1, Ex. 4.2, Eq. (5.1), Thms. 5.1–5.2, Lemma 5.3, Thms. 5.4–5.5, Remarks 5.6–5.7, §5.3–5.5 and App. D, §6 (Exs. 6.1–6.3, Table 1, Fig. 1).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §4.3, Table 1 (energy conservation of Gauss–Legendre on a mixed wave equation).
+- [Song & Eisenträger (2022)](/sources/song-2022.md) — §2.2, App. B (diagonal Padé as integrator for structural dynamics); §3.2.1–3.2.3, Fig. 3, §4 (stated unconditional stability, no amplitude decay, period elongation).

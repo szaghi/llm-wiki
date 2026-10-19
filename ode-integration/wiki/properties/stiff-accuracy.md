@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Stiff accuracy"
-description: "A Runge–Kutta method is stiffly accurate when the last row of A equals b, so the step result is the last stage; with invertible A this gives R(∞) = 0 and turns A-stability into L-stability, tightens weak-stage-order barriers, and is imposed on DIRK, Rosenbrock, IMEX and multirate constructions, though it does not by itself prevent order reduction."
+description: "A Runge–Kutta method is stiffly accurate when the last row of A equals b, so the step result is the last stage; with invertible A this gives R(∞) = 0 and turns A-stability into L-stability, tightens weak-stage-order barriers, and is imposed on DIRK, Rosenbrock, IMEX, asymptotic-preserving and multirate constructions, though it does not by itself prevent order reduction."
 status: established
-aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate]
-tags: [stiff, runge-kutta, stability, dae]
-timestamp: 2026-10-19T12:00:00Z
+aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate, GSA, implicitly stiffly accurate, ISA]
+tags: [stiff, runge-kutta, stability, dae, asymptotic-preserving]
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Stiff accuracy
@@ -20,7 +20,10 @@ so that $y_{n+1}=Y_s$ and, with $c=A\mathbf 1$, $c_s=1$
 [Biswas et al. (2023)](/sources/biswas-2023.md), constraint (C.3)). The step
 result then satisfies the same stage equation as an internal stage; for a
 problem with an algebraic constraint, the result inherits whatever the stage
-equation enforces *(compiler remark, not stated in the sources)*.
+equation enforces *(compiler remark, not stated in the sources)*. Taddei et al. use it
+this way: Radau IIA is stiffly accurate with $c_s=1$, so for their fluid–structure DAE
+the step value is the last stage and the separate update (projection) step is dropped
+([Taddei et al. (2026)](/sources/taddei-2026.md), §1.1, §3.1 after Eq. (15)).
 
 ## Consequence for the stability function
 
@@ -40,6 +43,26 @@ $\lfloor(p+1+\delta_{\mathrm{SA}})/2\rfloor\le\dim\mathcal Y$ and, for DIRKs,
 $p\le\dim\mathcal Y+1-\delta_{\mathrm{SA}}$, with $\mathcal Y$ the smallest
 $A^\top$-invariant subspace containing $b$ (Biswas et al. (2024), Thm. 3.9;
 see [stability function](/definitions/stability-function.md)).
+
+## Singular $A$: type-II tableaux
+
+The implication fails when $A$ is singular, as for tableaux with an explicit first stage.
+Write $A=\begin{pmatrix}0&0\\ \hat a&\hat A\end{pmatrix}$ with $\hat A$ invertible
+("type II", or "type CK"; $\hat a$, $\hat A$ page-local). For a stiffly accurate
+tableau of this form
+$R(\infty)=-\hat e^\top\hat A^{-1}\hat a$, $\hat e$ the last unit vector of
+$\mathbb R^{s-1}$ *(compiler derivation from $R(z)=e_s^\top(I-zA)^{-1}\mathbf 1$, valid
+under stiff accuracy)*, so L-stability needs the extra condition
+$\hat e^\top\hat A^{-1}\hat a=0$; a stiffly accurate tableau of type ARS ($\hat a=0$) is
+L-stable ([Orlando & Bonaventura (2025)](/sources/orlando-2025.md), §3.1, Eq. (68);
+[Orlando et al. (2025b)](/sources/orlando-2025-b.md), §3.1, Eq. (32); both citing
+Boscarino–Russo). The Kennedy–Carpenter ESDIRK used by Orlando & Bonaventura satisfies it
+(§5; it holds only with the minus sign that their Table 1 omits, see
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md)). The same expression is the
+"condition (A)" of [Hu & Shu (2025)](/sources/hu-2025.md): the null vector of $A$ has zero
+last component, which they show equivalent to $\hat e^\top\hat A^{-1}\hat a=0$ (Remark 4.2)
+and which makes the last stage reach equilibrium as $\varepsilon\to0$ (App. 7.3); that it
+coincides with the L-stability condition is a *compiler observation, not in the sources*.
 
 ## Effect on weak-stage-order barriers
 
@@ -76,7 +99,8 @@ embedded solution and that of stage 7 equals the solution after stage 6
   require the base IMEX-ARK of an [IMEX-MRI-GARK method](/methods/imex-mri-gark.md)
   in this form, so that the step result is the last slow stage. The padded
   $A$ is singular, so padding does not give $R(\infty)=0$
-  *(compiler remark)*.
+  *(compiler remark)*. (Padding appends an explicit *last* stage; the type-II
+  condition above concerns an explicit *first* stage and does not apply.)
 * **Multirate GARK.** Requiring stiff accuracy in both partitions, together
   with internal consistency and the standard multirate form, determines the
   lightly coupled SDIRK2-based method uniquely; it is only L($69.2^\circ$)-stable
@@ -92,6 +116,36 @@ embedded solution and that of stage 7 equals the solution after stage 6
   SDIRK3 (App. A) and a new 5-stage stiffly accurate L-stable SDIRK4 with
   $\gamma=\tfrac14$, $c=(\tfrac14,1,\tfrac25,\tfrac7{11},1)$ (App. B, Eq. (B.1)).
   See [multirate GARK methods](/methods/multirate-gark.md).
+
+## Stiff accuracy in IMEX and asymptotic-preserving schemes
+
+For an IMEX pair $(A^{\mathrm E},b^{\mathrm E})$, $(A^{\mathrm I},b^{\mathrm I})$ the AP
+literature distinguishes **implicitly stiffly accurate** (ISA), $a^{\mathrm I}_{sj}=b^{\mathrm I}_j$,
+from **globally stiffly accurate** (GSA), which adds $a^{\mathrm E}_{sj}=b^{\mathrm E}_j$
+and gives $Y_s=y_{n+1}$ (Hu & Shu 2025, footnote 1). The sources use the two levels for
+different purposes:
+
+* **Stability.** In Hu & Shu's uniform-stability proof for hyperbolic relaxation, ISA
+  removes the stiff term from the passage between the last stage and $y_{n+1}$, so a
+  non-GSA pair needs only one extra nonstiff energy estimate (§3, Eq. (3.15)).
+* **AP limit.** For initial data in equilibrium to $O(\varepsilon)$, a type-CK ISA pair that
+  is GSA is AP with full order in the limit (recalled from Dimarco–Pareschi; ARS(2,2,2) and
+  ARS(4,4,3) qualify); without GSA, condition (A) plus order conditions on
+  $b^{\mathrm E}-A^{\mathrm E}_{s\cdot}$ suffice (Hu & Shu 2025, Thm. 7.4, formal).
+  BHR(5,5,3)\* is ISA, not GSA, and AP.
+* **Practice.** [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) (§3.4.1) and
+  [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) (§3.3) call a stiffly accurate
+  implicit part "crucial for assuring asymptotic consistency and accuracy"; the former use
+  their non-stiffly-accurate SSP3(4,3,3) pair only at high Mach number. With
+  $b^{\mathrm E}=b^{\mathrm I}$ and a stiffly accurate implicit part, the
+  [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) update is the last
+  implicit stage (Boscheri & Thomann 2024, §3.3). Boscheri & Thomann call their LSDIRK2
+  pair stiffly accurate, but its explicit last row differs from $b$, so it is ISA and not
+  GSA. Orlando et al. (2025b, Def. 3.2) define an IMEX pair as stiffly accurate when its
+  implicit part is, and use only such pairs.
+* **Accuracy.** Orlando & Bonaventura (2025, §3.1) link asymptotic accuracy to L-stability
+  and obtain L-stability through stiff accuracy (type I and ARS) or through the extra
+  condition above (type II).
 
 ## What stiff accuracy does not do
 
@@ -109,6 +163,16 @@ reduction (Biswas et al. (2023), §6, Fig. 2). The remedy is
 stiff accuracy in the DIRK-(7,4,4), DIRK-(12,5,4) and DIRK-(12,5,5) schemes
 (Biswas et al. (2023), App. A).
 
+Fully implicit Radau IIA methods, stiffly accurate and of formal order $2s-1$, give
+least-squares temporal rates of only about 2.1, 2.4 and 3.5 for $s=2,3,4$ on an
+incompressible fluid–structure DAE; the authors attribute the shortfall to the DAE
+structure and the interaction with the spatial discretization, mesh motion and interface
+coupling (Taddei et al. 2026, §5.1.1, Table 1). Hu & Shu (2025, §6) show the IMEX analogue:
+ARS(4,4,3), globally stiffly accurate, is only uniformly second order on a relaxation
+system, because it does not meet the conditions of their uniform-third-order theorem, which
+include [stage order](/definitions/stage-order.md) 2 on the stages after the second
+(Thm. 5.1).
+
 # Citations
 
 - [Biswas et al. (2024)](/sources/biswas-2024.md) — §2.1 (definition, $R(\infty)=0$), Thm. 3.2, Thm. 3.9.
@@ -116,3 +180,9 @@ stiff accuracy in the DIRK-(7,4,4), DIRK-(12,5,4) and DIRK-(12,5,5) schemes
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Eqs. (3.1)–(3.3), §3, Table 1, Tables 6–8.
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — Eq. (3.18), §3.4, Eqs. (5.4)–(5.5), §5.2–5.3, Apps. A–B.
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §2.1 (stiffly accurate padding of the base IMEX-ARK).
+- [Hu & Shu (2025)](/sources/hu-2025.md) — §2 footnote 1 (ISA, GSA), §3 (Eq. (3.15)), Remark 4.2 (condition (A)), Thm. 5.1, §6, App. 7.3 (Thm. 7.4); arXiv v1.
+- [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — §3.1 (Eq. (68)), §5 (Tables 1–2); HAL v2.
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §3.1 (Def. 3.2, Eq. (32)); arXiv v5.
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §3.4.1 (Eqs. (79)–(81)); arXiv v1.
+- [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §3.3 (Eq. (39)); arXiv v1.
+- [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §3.1 (Eq. (15)), §5.1.1 (Table 1); arXiv v1.

@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # B-series, composition and substitution laws
@@ -153,6 +153,31 @@ P-series of Hairer, as recalled by Ketcheson & Ranocha (2023), §3.1). Additive
 RK methods include partitioned RK methods, and Störmer–Verlet is an additive
 RK method with two parts (§3.1.2, Eq. (46)).
 
+**Linearly implicit multistep methods.** [Glandon et al. (2022)](/sources/glandon-2022.md)
+(§3.2) use B-series to derive the order conditions of
+[linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md), whose
+steps contain a Jacobian times a combination of past values. They extend the index set
+to $T\cup\{\varnothing\}\cup\{\tau_\circ\}$:
+
+- $F(\varnothing)(y)=y$, and $\tau_\circ$ (page-local) is a single "fat" node with
+  $F(\tau_\circ)(y)=Jy$. This term appears in the numerical solution but not in the exact one
+  (Eq. (3.9)).
+- **Exact solution.** At $t+ch$ the coefficients are $e_c(\varnothing)=1$,
+  $e_c(\tau_\circ)=0$ and $e_c(\tau)=c^{\lvert\tau\rvert}/\gamma(\tau)$. The derivative series
+  has $\lvert\tau\rvert c^{\lvert\tau\rvert-1}/\gamma(\tau)$ ($e_c$ page-local; Eqs. (3.11a)–(3.11b)).
+- **Multiplication by $J$** acts on coefficients as $(Ja)(\tau_\circ)=a(\varnothing)$ and
+  $(Ja)([u])=a(u)$ for a tree $u$, i.e. the root has exactly one subtree. All other values are
+  zero (Eq. (3.11c), after Butcher).
+
+Every past value and right-hand side of a multistep step is such a series about a common point,
+with the step fractions as the $c$'s. Matching the series gives the conditions (Eqs. (3.13)–(3.17)).
+Unlike Runge–Kutta conditions, they depend only on $\lvert\tau\rvert$ and on whether the root
+has one child or several (§3.2). The exact-Jacobian method therefore needs $2p$ conditions,
+against $2p+1$ for its W-variant, which they derive by Taylor expansion (Thm. 3.3, Thm. 3.7,
+Remark 3.8). Glandon et al. call B-series "the gold standard approach" to the order conditions of
+one-step methods such as Runge–Kutta, Rosenbrock and exponential schemes (§3.2); their
+construction carries it over to a multistep method.
+
 Splitting and composition methods built from exact sub-flows are analysed
 instead with Lie series: the Baker–Campbell–Hausdorff formula in a Lyndon
 basis of the free Lie algebra, words and the shuffle algebra of iterated
@@ -201,3 +226,4 @@ enumeration algorithm with "extremely similar performance" (Remark 5).
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.2–2.5 (Lie-series, word and tree descriptions for splitting and composition methods).
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1.2 (Eqs. (1)–(3), map and flow), §2 (Theorem 1, Eq. (5)), §2.1 (energy-preserving conjugate, Examples 1–3), §2.3 (Eq. (9)).
 - [Zhang (2024)](/sources/zhang-2024.md) — §2 (Proposition 1), §3.1–3.3 (Eqs. (5)–(6), Def. 5, Table 1, Algorithm 1, Remarks 4–5, Figs. 1–2).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §3.2 (Eqs. (3.9)–(3.17), fat-node tree, Jacobian-times-B-series rule), Thms. 3.3, 3.7, Remark 3.8.

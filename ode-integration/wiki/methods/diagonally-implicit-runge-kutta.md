@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with lower-triangular Butcher matrix, so eac
 status: established
 aliases: [DIRK, SDIRK, ESDIRK, EDIRK, GEDIRK, singly diagonally implicit Runge–Kutta]
 tags: [runge-kutta, implicit, stiff, stage-order, linear-algebra]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)
@@ -86,6 +86,11 @@ Table 24, A-stable, not stiffly accurate) as reference cases that lose order.
 | Qin–Zhang | $c=(\tfrac14,\tfrac34)$, $A=\begin{pmatrix}\tfrac14&0\\\tfrac12&\tfrac14\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$ | order 2, A-stable, symplectic | Farrell et al. 2021, Eq. (37); [Sun et al. 2022](/sources/sun-2022.md), Ex. 4.3 |
 | Kraaijevanger–Spijker | $c=(\tfrac12,\tfrac32)$, $A=\begin{pmatrix}\tfrac12&0\\-\tfrac12&2\end{pmatrix}$, $b=(-\tfrac12,\tfrac32)$ | $R(z)=\frac{1-\frac32z+\frac12z^2}{1-\frac52z+z^2}$; order 1, since $b^\top c=2\neq\tfrac12$ *(compiler check)* | Sun et al. 2022, Ex. 4.4 |
 | trapezoidal ESDIRK | $c=(0,1)$, $A=\begin{pmatrix}0&0\\\tfrac12&\tfrac12\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$ | order 2, stiffly accurate | [Gottlieb et al. 2022](/sources/gottlieb-2022.md), §2.4 (from Kennedy–Carpenter) |
+| two-stage SDIRK of H-LDIRK2 | $c=(\gamma,1-\gamma)$, $A=\begin{pmatrix}\gamma&0\\1-2\gamma&\gamma\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$, $\gamma=1-1/\sqrt2$ | order 2, L-stable; the Nørsett structure with a different $\gamma$ | [Southworth et al. 2024](/sources/southworth-2024.md), §5.1 |
+| DIRK of SA SSP(3,3,2) | $c=(\tfrac14,\tfrac14,1)$, rows $(\tfrac14)$, $(0,\tfrac14)$, $(\tfrac13,\tfrac13,\tfrac13)$ | order 2, stiffly accurate; diagonal $(\tfrac14,\tfrac14,\tfrac13)$, so not singly diagonal | [Boscheri & Pareschi 2021](/sources/boscheri-2021.md), Eq. (79); Southworth et al. 2024, §5.1 |
+| four-stage SDIRK of the type-I third-order IMEX pairs | $c=(\gamma,\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(0,\gamma)$, $(0,\tfrac{1-\gamma}2,\gamma)$, $(0,b_2,b_3,\gamma)$, $\gamma\approx0.4358665215$ (the SDIRK3 value) | order 3, stiffly accurate, invertible $A$ | Boscheri & Pareschi 2021, Eq. (80); [Orlando et al. 2025b](/sources/orlando-2025-b.md), Table 20; Southworth et al. 2024, §5.1 |
+| ESDIRK of ARK3(2)4L[2]SA (Kennedy–Carpenter) | $c=(0,2\gamma,\tfrac35,1)$, $\gamma=\tfrac{1767732205903}{4055673282236}\approx0.4358665215$ | order 3, stiffly accurate, $R(\infty)=0$ | [Orlando & Bonaventura 2025](/sources/orlando-2025.md), Table 1; Orlando et al. 2025b, Table 21 |
+| five-stage SDIRK4 with explicit first stage | $\gamma=\tfrac14$ on stages 2–6, $c=(0,\tfrac14,\tfrac34,\tfrac{11}{20},\tfrac12,1)$ | order 4, stiffly accurate, L-stable | Orlando & Bonaventura 2025, Table 2 (implicit part of the Calvo–de Frutos–Novo pair) |
 
 The Qin–Zhang tableau is two implicit-midpoint steps of size $h/2$
 *(compiler check, not in the sources)*. Its stability function is
@@ -108,6 +113,35 @@ pair ARS(3,4,3), an SDIRK with explicit first stage and $\gamma\approx0.4359$
 Conde et al. and Cash in multirate methods (Chinomona and Reynolds 2021, §5.2);
 and SDIRK bases of [multirate GARK methods](/methods/multirate-gark.md) (Roberts et
 al. 2021, §5).
+
+In the four-stage SDIRK row, $b_2\approx1.2084966492$ and $b_3\approx-0.6443631707$ are the
+weights of ARS(3,4,3); the last two rows are the implicit parts of IMEX pairs, with an
+explicit first stage padding the five-stage SDIRK4 in the last row (reader's identification
+as the Hairer–Wanner method, recorded on the Source pages). Boscheri & Pareschi (2021,
+Eq. (80)) print the four-stage SDIRK with a slip in $a_{44}$, and Orlando et al. (2025b,
+Table 20) pair it with an explicit companion that fails a third-order condition; see
+[semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+
+## DIRK parts of IMEX pairs
+
+In an [IMEX pair](/methods/imex-runge-kutta.md) the implicit tableau is a DIRK, and its
+structure decides the asymptotic behaviour on stiff relaxation:
+
+- **Explicit first stage or not.** An EDIRK/ESDIRK implicit part makes the pair "type II"
+  (type CK); with $a_{i1}=0$ and $b_1=0$ it is "type ARS", effectively an $(s-1)$-stage DIRK;
+  an implicit first stage makes it "type I" ([Orlando & Bonaventura 2025](/sources/orlando-2025.md),
+  Def. 3.1; [Hu & Shu 2025](/sources/hu-2025.md), Eq. (2.9)). For type II, stiff accuracy
+  plus A-stability does not give L-stability; the extra condition is on
+  [stiff accuracy](/properties/stiff-accuracy.md). Southworth et al. (2024, §5.1) choose only
+  pairs whose DIRK has no explicit stage, for asymptotic-preservation reasons whose stated
+  form is disputed on [asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md).
+- **Positive diagonal.** The uniform-accuracy proof of Hu & Shu (2025, Lemma 4.6) bounds
+  $(I+\frac h\varepsilon A^{\mathrm I})^{-1}$ through the diagonal $1+\frac h\varepsilon a_{ii}$,
+  which needs $a_{ii}>0$ on the implicit stages (a hypothesis left implicit there).
+- **Linear stages.** In semi-implicit low-Mach and MHD schemes each DIRK stage is a linear
+  elliptic solve, e.g. one pressure equation or two decoupled systems per stage
+  ([Boscheri & Thomann 2024](/sources/boscheri-2024.md), §3.3–3.5, with the two-stage SDIRK2,
+  $\gamma=1-1/\sqrt2$, of the first table row as implicit part).
 
 ## Solving the stage systems
 
@@ -171,3 +205,9 @@ per micro- and macro-step in multirate settings.
 - [Sun et al. (2022)](/sources/sun-2022.md) — Exs. 4.3–4.4.
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §4.1; §5.2.
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.1.
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §3.4.1 (Eqs. (79)–(80)); arXiv v1.
+- [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §3.3–3.5 (Eq. (39)); arXiv v1.
+- [Hu & Shu (2025)](/sources/hu-2025.md) — Eq. (2.9), Lemma 4.6; arXiv v1.
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §5.1.
+- [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — Def. 3.1, Tables 1–2; HAL v2.
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — Tables 20–21; arXiv v5.

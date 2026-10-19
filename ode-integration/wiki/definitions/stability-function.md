@@ -5,7 +5,7 @@ description: "The stability function R(z) is the factor by which a one-step meth
 status: established
 aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -58,6 +58,20 @@ the disk $\lvert z+r\rvert\le r$ in $\mathcal S$) and the radius of absolute
 monotonicity (largest $r$ such that $R$ and all its derivatives are
 nonnegative on $(-r,0]$). The last one is the linear counterpart of the SSP
 coefficient; see [SSP methods](/methods/strong-stability-preserving-runge-kutta.md).
+
+**Imaginary-axis inclusion decides for nearly central spectra.**
+[Kemm (2024)](/sources/kemm-2024.md) (§3.3, Figs. 1–2) studies low-Mach finite-volume
+schemes whose acoustic viscosity scales with the flow speed: the eigenvalues of the
+discretized advection operator lie on ellipses between the upwind circle and a segment of
+the imaginary axis, and the integrator must be stable on the convex hull of these
+ellipses, which forward Euler is not. Among explicit Runge–Kutta methods with the minimal
+number of stages (2, 3, 4 and 6 stages for orders 2–5) only RK3 and RK4 have regions
+covering it; RK2 and the six-stage fifth-order method do not. Among Adams–Bashforth
+methods, whose root-locus curves he plots, order at least 3 is needed, at a Courant
+number that shrinks with the order (see
+[linear multistep methods](/methods/linear-multistep-method.md)). For orders 2–4 the
+minimal-stage methods share their stability polynomial, the degree-$s$ Taylor polynomial
+of $e^z$, so the choice of tableau does not change linear stability (§4).
 
 **Real stability interval as a design indicator.** The real-axis inclusion (page-local
 $\ell$: the largest $\ell$ with $\lvert R\rvert\le1$ on $[-\ell,0]$) is the usual
@@ -152,6 +166,20 @@ $R$, it applies to any linear one-step method with rational $R$, without a
 tableau (§3); the unconditional energy law of diagonal Padé schemes is on
 [diagonal Padé strong stability](/results/diagonal-pade-strong-stability.md).
 
+A rational approximation of $e^z$ can also be used directly as a time integrator,
+without a Runge–Kutta tableau. [Song & Eisenträger (2022)](/sources/song-2022.md)
+(§2.2, App. B) replace the matrix exponential of the exact one-step map of linear
+structural dynamics by the $(m,m)$ diagonal Padé approximant, written unnormalized
+($\hat N_m(z)=\sum_{j=0}^m\frac{(2m-j)!}{j!(m-j)!}z^j$, $\hat D_m(z)=\hat N_m(-z)$,
+page-local), and factor $\hat D_m(z)=\prod_i(r_i-z)$ into real roots and
+complex-conjugate pairs, each costing one linear solve. They state that Padé-based
+integrators are unconditionally stable with spectral radius one; that holds for the
+diagonal approximants on the undamped spectrum, where $\lvert R\rvert=1$ on the imaginary
+axis and at infinity, so these schemes are A-stable and not L-stable *(compiler check, not
+in the source)*. On linear problems their propagator is the stability function of the
+$m$-stage Gauss method *(compiler remark, not in the source)*. See
+[Padé time integration](/methods/pade-time-integration.md).
+
 ## Stability functions of other method families
 
 * **Rosenbrock–Wanner methods.** [Steinebach (2023)](/sources/steinebach-2023.md)
@@ -177,8 +205,17 @@ tableau (§3); the unconditional energy law of diagonal Padé schemes is on
   bound on the imaginary axis, checked numerically
   ([Bassenne et al. 2021](/sources/bassenne-2021.md), §3.2, Eqs. (24)–(27), Fig. 4).
   Equivalently $R$ is the explicit method's polynomial composed with the TASE map of
-  $z$ (reader's remark on that source). See [TASE operators](/methods/tase-operators.md)
-  and [A-stability](/properties/a-stability.md).
+  $z$ (reader's remark on that source). When the TASE operator is built on a matrix
+  $\tilde J\ne J$ (page-local), [Conte et al. (2024)](/sources/conte-2024.md) (§3,
+  Eq. (3.4), Lemma 3.4) test on $y'=(\lambda+\lambda_E)y$ with $\lambda$ an eigenvalue of
+  $\tilde J$ and $\lambda_E$ one of $J-\tilde J$, and obtain a **two-parameter stability
+  function** $P\big(\hat{\mathcal P}_p(h\lambda)(1+\mu)\big)$, $\mu=\lambda_E/\lambda$,
+  with $P$ the explicit stability polynomial and $\hat{\mathcal P}_p$ the scalar TASE map
+  (page-local). Its stability set in the $\mu$-plane is the explicit region
+  $\mathcal S$, rotated by $180^\circ$, scaled and shifted by $-1$; these "stability
+  diagrams" shrink monotonically with $h$ to an unconditional diagram. See
+  [TASE operators](/methods/tase-operators.md) and
+  [A-stability](/properties/a-stability.md).
 * **Partitioned methods.** A partitioned Runge–Kutta method has a matrix-valued
   stability function, and absolute stability of each member for its own eigenvalues
   does not imply stability of the coupled method; for paired explicit families it is
@@ -202,7 +239,16 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
   polynomial degree rather than the stage count; Dawes (2021) $E_s$ ("the
   exponential"), Bassenne et al. (2021) $\sigma(z)$, Croci & Rosilho de Souza (2022)
   $R_s(z)$, Faleichik & Moisa (2026) $R_s(x)$ on the real axis, Belardo et al. (2026)
-  $\rho$ for the real stability interval.
+  $\rho$ for the real stability interval, Conte et al. (2024) $R_{T_p}$ and
+  $\tilde R_{T_p}(y,\mu)$, Abu-Labdeh et al. (2023) $r(z)$, Song & Eisenträger (2022)
+  $e^x_M=P_M/Q_M$.
+* [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) (§2) define the stability
+  domain with the strict inequality $\lvert r(z)\rvert<1$ and L-stability by the limit
+  along the negative real axis; most sources use $\le1$. The difference matters only on
+  the boundary.
+* Kemm (2024) reads stability from plotted regions only; his thesis that the first
+  explicit-Euler stage spoils explicit Runge–Kutta methods on nonlinear problems is about
+  stage values, not about $R$; see [internal stability](/definitions/internal-stability.md).
 * Belardo et al. (2026, §4) state that the maximal real stability interval of the
   first-order embedding of the explicit midpoint rule is "7", reached at their
   parameter value 1; the reader of that source computes $\ell=6.83$ there and a
@@ -238,3 +284,7 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §2.2 (Eqs. 2.10–2.11).
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.2 (Eq. 2.12), §5.1.
 - [Vermeire (2023)](/sources/vermeire-2023.md) — Eqs. (9)–(10) (main and embedded polynomials).
+- [Conte et al. (2024)](/sources/conte-2024.md) — §3, Eq. (3.4), Lemma 3.4, Thm. 3.6 (two-parameter stability function, stability diagrams).
+- [Song & Eisenträger (2022)](/sources/song-2022.md) — §2.2, §3.2.1, App. B Eqs. (B.2)–(B.4) (diagonal Padé as integrator, factored denominator).
+- [Kemm (2024)](/sources/kemm-2024.md) — §3.3, §4, Figs. 1–2 (regions of minimal-stage RK and Adams–Bashforth for nearly central spectra).
+- [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §2 (strict-inequality stability domain).

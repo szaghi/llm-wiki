@@ -5,7 +5,7 @@ description: "A fully discrete scheme is entropy stable when a convex entropy of
 status: established
 aliases: [entropy conservation, entropy dissipation, fully discrete entropy stability, energy stability, invariant preservation, entropy-stable time integration]
 tags: [structure-preserving, stability, runge-kutta, geometric-integration, entropy-stability, relaxation]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Entropy stability and conservation of the fully discrete scheme
@@ -84,6 +84,7 @@ are on that page and on
 | Superviscosity filter | $\lVert y_{n+1}\rVert\le\lVert y_n\rVert$ (square entropy) | Sun & Shu (2021), §5 |
 | Symplectic Runge–Kutta methods (necessarily implicit) | exact quadratic invariants | Biswas & Ketcheson (2023), §1 |
 | [Pseudo-energy preservation](/methods/pseudo-energy-preserving-runge-kutta.md) | energy error $O(h^{q+1})$ per step with $q>p$ | de León et al. (2025) |
+| Consistent fluxes in a [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) partition | exact discrete conservation of a linear invariant (total energy) shared by explicit and implicit terms | [Southworth et al. (2024)](/sources/southworth-2024.md) |
 
 **SSP route.** Gottlieb et al. (2022, Remark 3, Eqs. (53)–(56)) take the
 discrete kinetic entropy $\sum_k\Delta x\int f_k\log f_k\,\mathrm dv$ as the
@@ -103,6 +104,18 @@ $\alpha\int\nabla\psi\,A_0\nabla v_h$ so that each cell's central-flux entropy
 production equals the numerical entropy flux, which splits the update into an
 entropy-conservative part and an entropy-dissipative upwind part; relaxation
 in time then matches the total entropy to that budget.
+
+**Linear invariants across IMEX partitions.** All Runge–Kutta methods preserve linear
+invariants, but Southworth et al. (2024, §4.3) point out that this is "much more
+challenging" for IMEX integration when an invariant is shared by terms that the two
+partitions evaluate at different stage vectors. In radiation hydrodynamics the total energy
+$\rho e_t+E_r$ (page-local) is exchanged between an explicitly and an implicitly treated
+equation. For their LIMEX-Euler step with finite volumes they prove local conservation if the
+numerical fluxes satisfy $\hat F_E=\hat F_{\rho e_t}+\hat F_{E_r}$ (local Lax–Friedrichs with
+one common viscosity coefficient does) and the diffusion and radiation-pressure work terms are
+discretized identically in both equations, and global conservation up to boundary fluxes
+(§4.1–4.2, Eqs. (31)–(37)). Each stage of a LIMEX-RK method is a scaled LIMEX-Euler step,
+so the result extends to every such method (§4.3).
 
 ## Scope and limits of the guarantee
 
@@ -158,3 +171,4 @@ phases for pseudo-energy-preserving methods.
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — Remark 3 (Eqs. (53)–(56)).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1, §5.
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1, §4.
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §4.1–4.3 (Eqs. (31)–(37)).

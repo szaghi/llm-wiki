@@ -6,6 +6,92 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — multistep and BDF methods, IMEX for relaxation and low-Mach problems, implicit stage solvers (2026-10-19)
+
+Sources (20): boscheri-2021, akrivis-2021, song-2022, garciaarchilla-2023,
+glandon-2022, abulabdeh-2023, munch-2024, akrivis-2024, kemm-2024,
+southworth-2024, birke-2024, boscheri-2024, hu-2025, conte-2024,
+gonzaleztabernero-2024, orlando-2025-b, orlando-2025, ma-2026, taddei-2026,
+toh-2026. 19 new concept pages (97 in all, 158 with the Source pages and
+the registry), 28 extended, 2234 bibliography entries. Deep lint (D26) over
+the chunk's pages before staging.
+
+### Decisions for the human
+
+1. **Contradiction opened (Open): explicit stages in the implicit tableau of
+   an AP IMEX pair** ([asymptotic-preserving scheme](wiki/definitions/asymptotic-preserving-scheme.md)).
+   Southworth et al. (2024, §5.1, attributing to Pareschi & Russo 2005) say
+   an AP IMEX scheme must not have one; Hu & Shu (2025, App. 7.3) state that
+   ARS(2,2,2) and ARS(4,4,3), which have one, are GSA and hence AP on the
+   same problem class. The deep lint confirmed it as a genuine conflict.
+   Deciding it needs the Pareschi–Russo proof (not ingested): keep Open, or
+   close by fiat as an over-broad paraphrase by Southworth et al.
+2. **Lobatto IIIC stage order** stays a qualification: Abu-Labdeh et al.
+   (2023) and Farrell et al. (2021) both print $s$; the standard $s-1$ is
+   supported on the pages only by a compiler check of the two-stage tableau.
+   Promote to a contradiction, or keep?
+3. **Bibliography calls to confirm:** glandon-2022 ref [36] ("in print",
+   arXiv 1910.14079, 2020) merged onto the existing preprint `roberts-2019-b`
+   (same arXiv id) rather than a separate 2020 pre-publication entry;
+   Karniadakis–Sherwin printed as 2005 folded onto `karniadakis-2013` (same
+   2nd-edition DOI); `gresho-2021` (Part 2, no venue or year printed) keeps
+   the citing year although the work is from 1990.
+4. **Docs build headroom:** with chunk 3 the full site build peaks at
+   13.5 GB RSS (12.6 GB with chunk 2), under the 14 GB heap cap of the
+   pending `fix(docs)` commit but growing about 0.9 GB per chunk; chunk 4
+   will likely exceed it. A structural fix is needed before chunk 4 is
+   pushed (static bibliography pages, or a per-bundle build).
+5. **Bundle-fit candidates for a D17 copy** (none made): birke-2024,
+   boscheri-2024, toh-2026 (MHD finite volumes, all-Mach and
+   asymptotic-preserving) for `fusion-mhd-simulation` or
+   `high-order-capturing-schemes`; boscheri-2021, orlando-2025,
+   orlando-2025-b (all-Mach compressible solvers) for
+   `high-order-capturing-schemes`; taddei-2026 (model reduction for FSI) has
+   no fitting bundle; song-2022 (structural dynamics) neither.
+
+### Identity and version problems
+
+- 14 of 20 files are preprints: arXiv (akrivis-2021 v1 is 15 pages against
+  24 published; abulabdeh-2023, birke-2024, boscheri-2021, boscheri-2024,
+  conte-2024, garciaarchilla-2023, hu-2025, ma-2026, munch-2024,
+  orlando-2025-b, song-2022, taddei-2026), HAL (orlando-2025, v2 of a v5
+  record) or a review manuscript (glandon-2022, supplement missing, "??"
+  references). Versions of record: akrivis-2024, gonzaleztabernero-2024,
+  kemm-2024, southworth-2024, toh-2026.
+
+### Printed slips (recorded on the Source pages)
+
+- boscheri-2021 Eq. (80) SA DIRK(3,4,3): $a_{44}$ and the explicit row sums
+  are wrong as printed (the type-I first row is not a slip).
+- orlando-2025 Table 1: missing minus sign on $\tilde a_{32}$ (restored, row
+  sums and $R(\infty)=0$ hold); orlando-2025-b Table 20: the explicit
+  tableau fails $b^\top A^{\mathrm E}c^{\mathrm E}=1/6$ (0.19885; compiler check).
+- akrivis-2021: Eq. (3.11) missing $\tau$; the constant of Eq. (2.2) does not
+  match the stated angle; a step of the proof of Prop. 2.3 does not follow as
+  printed. akrivis-2024: $p(y^\star)$ evaluated at the rounded ratio.
+- ma-2026 Table 4.2: exponents e-05 for e-04; conte-2024: $\mu_4^*$ fourth
+  digit; hu-2025: §5.2 cross-reference; glandon-2022: index slips in (3.6),
+  (3.7), (3.14), (3.17b).
+- munch-2024: sign of the stage-system right-hand side, index slips, "786"
+  for 768 processes; abulabdeh-2023: Reynolds number list, table rates.
+- toh-2026: the model scheme analysed is not Heun's method, so the "first
+  order in time" verdict follows from the model, not necessarily from the
+  algorithm.
+
+### Contradictions opened
+
+| Name | Page | Status |
+|---|---|---|
+| Explicit stage in the implicit tableau of an AP IMEX pair | definitions/asymptotic-preserving-scheme | Open |
+
+Qualifications recorded: Ma et al.'s "many IMEX-RK degrade" vs Hu & Shu's
+uniform accuracy (different classes and regimes); Southworth et al.'s
+"hard limit of second order" for splitting (real nonnegative coefficients
+only); Kemm's "unstable first stage" thesis (a hypothesis of the source);
+Glandon et al. calling damping at infinity L-stability; the step-ratio bounds
+of variable-step BDF2 bound different estimates; the CFL-type conditions
+$h\le c/N^2$ of the uniform-accuracy proofs are sufficient conditions.
+
 ## Chunk 2 — relaxation, stabilized and paired-explicit methods, step-size control (2026-10-19)
 
 Sources (20): koyaguerebo-2022, dawes-2021, bassenne-2021, aljahdali-2022,

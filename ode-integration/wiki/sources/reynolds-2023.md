@@ -140,9 +140,10 @@ No unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [ARKODE](/software/arkode.md)
+* [Backward differentiation formulas (BDF)](/methods/backward-differentiation-formula.md)
 * [Brusselator](/benchmarks/brusselator.md)
 * [CVODE](/software/cvode.md)
 * [Dense output](/methods/dense-output.md)
@@ -151,6 +152,7 @@ Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [IMEX multirate infinitesimal GARK methods](/methods/imex-mri-gark.md)
+* [Linear multistep methods](/methods/linear-multistep-method.md)
 * [Multirate infinitesimal methods (MIS, MRI-GARK)](/methods/multirate-infinitesimal-methods.md)
 * [Negative-coefficient barrier for splitting methods](/results/negative-coefficient-barrier.md)
 * [Operator splitting: Lie–Trotter, Strang and dimensional splitting](/methods/operator-splitting.md)

@@ -109,7 +109,7 @@ Notation: $y'=f(y)$ with $f=-F$ of the source; $h$ step; subnodes $t_{n,m}$, $m=
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [ADER as a time integrator](/methods/ader-time-integration.md)

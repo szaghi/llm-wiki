@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation"
-description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen into a shock, and viscous Burgers with a manufactured solution; semidiscretized by entropy-conservative or entropy-stable DG they test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, and order reduction."
+description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen into a shock, and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, and TASE stability with inexact Jacobians."
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
-tags: [structure-preserving, order-reduction, verification]
-timestamp: 2026-10-19T20:00:00Z
+tags: [structure-preserving, order-reduction, verification, stiff]
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Burgers equation
@@ -57,6 +57,16 @@ Courant number).
   §7.2, Eq. (31)): $u_t+uu_x=\kappa u_{xx}+g$ with $\kappa=0.1$, exact solution
   $u=\cos t$ (page-local forcing $g$), Dirichlet data, sixth-order finite
   differences on $10^3$ cells, $T=1$.
+* **Viscous, manufactured with reaction and time-dependent Dirichlet data**
+  ([González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md), §5.2):
+  $u_t+(u^2/2)_x=2u_{xx}+(1+e^{-t}\cos x)\,u$ on $[-1,1]$ with exact solution
+  $u=e^{-t}\sin x$ as Dirichlet data, local discontinuous Galerkin in space, a
+  third-order IMEX Runge–Kutta method with convection and reaction explicit and
+  diffusion implicit, CFL 0.4, $T=5$, 5 to 640 cells.
+* **Viscous, periodic** ([Conte et al. (2024)](/sources/conte-2024.md), §7.1,
+  Eqs. (7.1)–(7.3), from Calvo et al.): $u_t=\kappa u_{xx}-\tfrac12(u^2)_x$ on
+  $[0,2\pi]$, periodic, $u_0=(1-\cos x)/2$, $t\in[0,4]$, fourth-order finite differences
+  with 1024 points, $\kappa=10^{-1}$ and $10^{-2}$.
 
 ## What it shows
 
@@ -83,6 +93,23 @@ Courant number).
   stage order 1 but below their classical order 4–5 (Biswas et al. (2023),
   §7.2, Fig. 11); see [weak stage order](/definitions/weak-stage-order.md) and
   [order reduction](/definitions/order-reduction.md).
+* **Boundary-induced order reduction and its cure.** On the reaction-forced problem with
+  time-dependent Dirichlet data, imposing the data naively at the IMEX stage times gives
+  observed rates 2.65, 2.26, 1.98 in $L^1$, $L^2$, $L^\infty$ for the third-order
+  scheme; computing the stage boundary values from the stage equations and the PDE
+  restores 3.01, 3.00, 3.00, "even in this nonlinear problem with huge temporal
+  variations at the boundaries" (González-Tabernero et al. (2024), §5.2, Table 2). See
+  [boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
+* **TASE stability with an inexact Jacobian.** With the TASE operator built on the
+  constant matrix $\kappa_{\mathrm s}(\kappa L_\Delta-2I)$ (page-local: $L_\Delta$ the
+  discrete second derivative, $\kappa_{\mathrm s}$ a scaling), all TASE–Runge–Kutta
+  methods of orders 2–4 are unconditionally stable for $\kappa=10^{-1}$,
+  $\kappa_{\mathrm s}=1$; for $\kappa=10^{-2}$ generalized eigenvalues
+  $-0.4875\pm3.4130\,\mathrm i$ leave the unconditional stability diagram, the
+  second-order method is unstable at step 0.5, and $\kappa_{\mathrm s}=3$ restores
+  unconditional stability. With the constant matrix the methods beat Rosenbrock methods
+  of the same order with the exact Jacobian in error against CPU time at $\kappa=10^{-1}$
+  (Conte et al. (2024), §7.1, Figs. 7–8). See [TASE operators](/methods/tase-operators.md).
 * **ADER.** With spectral-difference space discretizations, ADER reaches
   design orders 3–9 on Burgers, and a final flux-integral update was "more
   stable" there than the predictor end value
@@ -105,3 +132,5 @@ Courant number).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §6.3 (Eqs. (6.11)–(6.12), Table 6.7, Figs. 6.8–6.10).
 - [Biswas et al. (2023)](/sources/biswas-2023.md) — §7.2 (Eq. (31), Fig. 11).
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.3.1.
+- [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md) — §5.2, Table 2.
+- [Conte et al. (2024)](/sources/conte-2024.md) — §7.1, Eqs. (7.1)–(7.3), Figs. 7–8.

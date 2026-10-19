@@ -268,7 +268,7 @@ MathOverflow post (version of 2017-04-13); all are their own entries. Ref.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [B-convergence](/definitions/b-convergence.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)

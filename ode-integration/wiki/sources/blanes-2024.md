@@ -123,7 +123,7 @@ Notation: $f=f^{[1]}+f^{[2]}$; $\varphi^{[i]}_h$ sub-flows; $F^{[i]}$ the Lie op
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [B-series, composition and substitution laws](/definitions/b-series.md)
 * [Backward error analysis, modified equations and modifying integrators](/methods/backward-error-analysis.md)

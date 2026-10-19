@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "A-, L-, A(α)- and algebraic stability"
-description: "Linear stability classes of one-step methods: A-stability (the stability region contains the left half-plane), L-stability (A-stability plus damping at infinity), A(α)- and L(α)-stability on a sector, and the nonlinear notions of B- and algebraic stability; with the facts the sources state about collocation, DIRK, Rosenbrock and multirate methods."
+description: "Linear stability classes of one-step and linear multistep methods: A-stability (the stability region contains the left half-plane), L- and strong A-stability (damping at infinity), A(α)- and L(α)-stability on a sector, and the nonlinear notions of B-, algebraic and G-stability; with the facts the sources state about collocation, DIRK, Rosenbrock, TASE, IMEX, multirate, BDF and linearly implicit multistep methods."
 status: established
-aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability]
+aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, strong A-stability, strongly A-stable, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability, stability angle]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability
@@ -22,6 +22,9 @@ a one-step method and $\mathcal S=\{z:\lvert R(z)\rvert\le1\}$.
 * **L-stability:** A-stability and $R(\infty)=0$
   (Farrell et al. (2021), §2.1; [Steinebach (2023)](/sources/steinebach-2023.md),
   §2: $\lvert R(z)\rvert<1$ for $\operatorname{Re}z<0$ and $R(\infty)=0$).
+* **Strong A-stability:** A-stability and $\lvert R(\infty)\rvert<1$, with $R(\infty)$ the limit
+  along the negative real axis ([Conte et al. (2024)](/sources/conte-2024.md), §2). It sits
+  between A- and L-stability.
 * **A($\alpha$)-stability:** $\mathcal S\supseteq W(\alpha)=\{z\neq0:\lvert\arg(-z)\rvert<\alpha\}$;
   **L($\alpha$)-stability** adds $R(\infty)=0$
   ([Roberts et al. (2021)](/sources/roberts-2021.md), Def. 3.2, there for the
@@ -89,7 +92,8 @@ sampling only (Fig. 4).
 * **Multistep methods:** A-stable linear multistep methods have order at most
   2 (Dahlquist's second barrier), whereas A-stable RK methods exist of every
   order (Farrell et al. (2021), §2.1; [Southworth et al. (2022)](/sources/southworth-2022.md),
-  §2.1).
+  §2.1; [Taddei et al. (2026)](/sources/taddei-2026.md), §1.1). The multistep classes are in the
+  section *Linear multistep methods* below.
 * **Collocation families** (Farrell et al. (2021), §3.2, as recalled):
   Gauss–Legendre is A- and B-stable but not L-stable; Radau IIA is L-stable;
   Lobatto IIIC is A-, L- and B-stable. Its two-stage tableau is
@@ -104,6 +108,17 @@ sampling only (Fig. 4).
   L-stability (Biswas et al. (2023), §5; Steinebach (2023), §3). The
   weak-stage-order DIRKs of Biswas et al. (2023) and Rodas5P are L-stable by
   this route.
+  The route needs $A$ invertible. For a stiffly accurate implicit tableau of
+  type II, whose first stage is explicit and whose $A$ is therefore singular,
+  A-stability and stiff accuracy do not give L-stability.
+  [Orlando et al. (2025)](/sources/orlando-2025-b.md) (§3.1, Eq. (32)) recall the
+  supplementary condition $\mathbf e_s^\top\hat A^{-1}a=0$, with $\hat A$ the
+  invertible lower block of the tableau and $a$ its first column below the
+  diagonal (page-local). They state that all implicit tableaux of their
+  [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) schemes are L-stable.
+  [Taddei et al. (2026)](/sources/taddei-2026.md) (§1.1, §3.1) use Radau IIA
+  as A-stable, L-stable and stiffly accurate, so that the step value is the
+  last stage.
 * **Padé approximations:** diagonal and first two subdiagonal approximations
   are A-stable; the $(0,3)$ approximation is A($\alpha$)-stable with
   $\alpha\approx88.23^\circ$ ([Sun et al. (2022)](/sources/sun-2022.md), §1,
@@ -126,6 +141,21 @@ sampling only (Fig. 4).
   the statement above that explicit methods are never A-stable: the preconditioned
   scheme solves linear systems at every stage and is linearly implicit, with a
   rational $R$ *(compiler check, not in the sources)*.
+* **TASE–Runge–Kutta with the Calvo–Montijano–Rández operators:** TRK2 is strongly
+  A-stable with $R(\infty)=0.5$, TRK3 is L($\alpha$)-stable with $\alpha=89.02^\circ$, and
+  TRK4 is strongly A($\alpha$)-stable with $\alpha=87.34^\circ$ and $R(\infty)=0.27$, all with
+  the exact Jacobian (Conte et al. (2024), §2, Table 1, as recalled from Calvo et al.).
+  When the operator uses a matrix $W\ne J$ (page-local), stability is no longer a property of
+  $R$ alone. Write $J=W+(J-W)$ and let $\lambda$ and $\lambda'$ be paired eigenvalues of $W$
+  and of $J-W$ ($\lambda'$ page-local). The scalar test becomes two-parametric, with
+  $R=P\big(\hat T(h\lambda)(1+\lambda'/\lambda)\big)$ for $P$ the explicit stability
+  polynomial and $\hat T$ the scalar TASE map. "Unconditional stability" for every $h>0$ then
+  holds iff all generalized eigenvalues of $(W,J-W)$ lie in a limiting diagram, when $W$ and
+  $J-W$ are simultaneously diagonalizable. With real ratios $\lambda'/\lambda$ the method is
+  unconditionally stable if every ratio is at most 1, 0.5743 or 0.7445 for $p=2,3,4$ (§3, Lemma 3.4, Thms. 3.6, 4.5, Remark 4.2;
+  0.7445 as printed, the reader of the source recomputes 0.7451). In
+  general only a weighted field-of-values condition is sufficient (Thms. 5.5–5.6). See
+  [TASE operators](/methods/tase-operators.md).
 * **Rosenbrock methods:** Rodas5P and its embedded method are A-stable; the
   embedded method of Rodas5 is not (Steinebach (2023), Figs. 1–2).
 * **Multirate methods:** a scalar test with one eigenvalue per partition
@@ -141,6 +171,49 @@ sampling only (Fig. 4).
   independent of $m$ (Table 5.1). See
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md)
   and [multirate A-stability barriers](/results/multirate-a-stability-barriers.md).
+
+## Linear multistep methods
+
+For a [linear multistep method](/methods/linear-multistep-method.md) there is no single stability
+function. The stability region is the set of $z=h\lambda$ for which all roots of
+$\varrho(\zeta)-z\sigma(\zeta)=0$ satisfy $\lvert\zeta\rvert\le1$, with multiple roots strictly
+inside ([Glandon et al. (2022)](/sources/glandon-2022.md), §4, Eq. (4.3), as recalled from
+Hairer–Wanner §V). Its boundary is traced by $z=\varrho(e^{i\phi})/\sigma(e^{i\phi})$ ($\phi$
+page-local; Eq. (4.4)). A-, A($\alpha$)- and L-type notions are then defined with this region in
+place of $\mathcal S$. At $z=0$ the root condition is
+[zero-stability](/definitions/zero-stability.md).
+
+**Stability angles.** [BDF](/methods/backward-differentiation-formula.md) is A-stable for $k=1,2$
+and A($\alpha$)-stable for $3\le k\le6$:
+
+| $k$ | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|
+| $\alpha$ | $86.03^\circ$ | $73.35^\circ$ | $51.84^\circ$ | $17.84^\circ$ |
+
+([Akrivis et al. (2021)](/sources/akrivis-2021.md), arXiv v1, §1, for $k\le6$; Glandon et al. (2022),
+Table 6.1, for $k\le5$, in agreement.) The optimized
+[linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md) of Glandon
+et al. reach $87.78^\circ$, $78.07^\circ$ and $73.00^\circ$ (Limm) and $87.39^\circ$,
+$77.91^\circ$ and $70.32^\circ$ (Limm-W) at orders 3–5, and are A-stable at orders 1–2 (Table
+6.1, Fig. 6.1).
+
+**Damping at infinity.** The analogue of $R(\infty)=0$ is that all roots $\zeta(z)\to0$ as
+$z\to-\infty$. For BDF, $\sigma(\zeta)=\zeta^k$ gives it. For the Limm methods Glandon et al.
+impose that $\sigma(0)$ vanishes (in their notation; §6). They call this "a condition for
+L-stability". Their orders 3–5 are only A($\alpha$)-stable, so the property is damping at
+infinity, not L-stability. Their convergence theorem assumes the stability matrix to be strictly
+stable at $0$ and at $\infty$ (Assumption 5.2).
+
+**A-stability and G-stability.** A-stability of a multistep method is equivalent to
+[G-stability](/properties/g-stability.md) of its one-leg twin (Dahlquist; recalled by Akrivis et
+al. (2021), Lemma 2.1, and [Ma et al. (2026)](/sources/ma-2026.md), §2.2). Energy proofs for BDF
+rest on this equivalence. For BDF3–BDF6, which are not A-stable, the auxiliary pair of the
+[multiplier technique](/methods/multiplier-energy-technique.md) must be A-stable in place of the
+method itself.
+
+**Why the barrier matters in practice.** [Taddei et al. (2026)](/sources/taddei-2026.md) (§1.1)
+cite Dahlquist's second barrier as the reason that higher-order BDF cannot be A- and L-stable.
+They use Radau IIA instead for high-order fluid–structure interaction.
 
 ## B- and algebraic stability
 
@@ -201,3 +274,9 @@ the notion without restating it)*. The sources use it as follows:
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.1 (terminology of the ADER/DeC stability study).
 - [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §1; Remark 2.3; Def. 5.1, Lemma 5.2, Thm. 5.1 (asymptotic A-stability of DC$2j$).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — Def. 3.1, Lemma 3.3, Thm. 3.2, Cor. 3.4.1, §2.6, §3.2, Figs. 1–4 (A-stability of explicit methods with TASE preconditioning).
+- [Akrivis et al. (2021)](/sources/akrivis-2021.md) — arXiv v1: §1 (BDF stability angles), Lemma 2.1 (A- and G-stability).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §4 (Eqs. (4.3)–(4.4)), Assumption 5.2, §6, Table 6.1, Fig. 6.1 (multistep stability region, BDF and Limm angles, damping at infinity).
+- [Conte et al. (2024)](/sources/conte-2024.md) — §2 (Table 1, strong A-stability), §3 (Lemma 3.4, Thm. 3.6), Thm. 4.5, Remark 4.2, Thms. 5.5–5.6.
+- [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §3.1 (Eq. (32), L-stability of stiffly accurate type II tableaux).
+- [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §3.1 (Dahlquist barrier, Radau IIA properties).
+- [Ma et al. (2026)](/sources/ma-2026.md) — §2.2 (A- and G-stability).

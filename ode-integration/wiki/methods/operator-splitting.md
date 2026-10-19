@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting: Lie–Trotter, Strang and dimensional splitting"
-description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing the flows of the parts: Lie–Trotter is first order, Strang second order and symmetric; the page covers their error constants, conjugacy, linear stability, PDE (ADI, LOD, Peaceman–Rachford) forms, boundary order reduction and multirate and asymptotic-preserving uses."
+description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing the flows of the parts: Lie–Trotter is first order, Strang second order and symmetric; the page covers their error constants, conjugacy, linear stability, PDE (ADI, LOD, Peaceman–Rachford) forms, boundary order reduction, multiphysics comparisons with IMEX, and multirate and asymptotic-preserving uses."
 status: established
 aliases: [splitting method, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting
@@ -159,6 +159,33 @@ higher-order variants that "introduce complex arithmetic or backward integration
 [IMEX additive Runge–Kutta](/methods/imex-runge-kutta.md) methods in
 [ARKODE](/software/arkode.md).
 
+## Operator splitting against IMEX in multiphysics codes
+
+The production standard for radiation hydrodynamics is a first-order Lie–Trotter split:
+an explicit hydrodynamics step, a radiation material-motion correction, an implicit
+radiation–temperature solve with coefficients frozen after the hydrodynamics step, and an
+energy deposition ([Southworth et al. (2024)](/sources/southworth-2024.md), §3.1, Eqs.
+(18)–(19)). Southworth et al. sum the sub-steps into one discrete scheme and compare it with
+[semi-implicit (LIMEX) IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md):
+
+- **Not quite a Runge–Kutta method.** A three-tableau LIMEX method with first-order tableaux
+  reproduces the split exactly once the temperature after the hydrodynamics step, which the
+  split takes from the equation of state, is replaced by a first-order Runge–Kutta
+  approximation (§3.3.2, Eqs. (29)–(30)). The split "cannot be exactly posed as a standard ODE
+  integrator due to inconsistent evaluation of temperature in the hydrodynamics vs. radiation
+  equations" (§1). Both forms are formally first order. They also note that a GARK
+  formulation of Strang splitting (González-Pinto et al., Sandu & Günther) does not
+  accommodate the non-additive partition of their system (footnote 2).
+- **Accuracy and cost.** On 1D radiative shocks at Mach 1.2, 3 and 45, Lie–Trotter and
+  LIMEX-Euler give nearly identical errors, while second- and third-order LIMEX methods are
+  3–5 orders of magnitude more accurate at the hydrodynamic CFL step, also against a split
+  using third-order TVD Runge–Kutta for the hydrodynamics, for 2–4 times the cost (Abstract,
+  §5.2, Figs. 7–10).
+- **Order limits.** Southworth et al. motivate the IMEX route by the first-order limit of
+  Lie–Trotter, the order reduction of Strang splitting on stiff problems, and "a hard limit of
+  2nd-order accuracy" for any operator splitting (§1, §2); see the Qualifications for the
+  scope of the last claim.
+
 ## Splitting in multirate integration
 
 Before IMEX multirate infinitesimal methods, the only multirate schemes treating the slow
@@ -209,6 +236,25 @@ and an explicit transport step underlie several kinetic AP schemes (§5.4.1, §6
 [micro–macro decomposition](/methods/micro-macro-decomposition.md) and
 [BGK penalization](/methods/bgk-penalization.md)).
 
+**Relaxation splitting inside Runge–Kutta stages.** [Toh et al. (2026)](/sources/toh-2026.md)
+(§3, Eqs. (39)–(42)) write extended MHD as an ideal-MHD part $U$ and stiff non-ideal
+variables $\hat U$ relaxing as $\frac1\varepsilon\hat{\mathcal R}(U,\hat U)$ (page-local), and
+apply at every sub-stage of an explicit SSP-RK2 (Heun) step a Jin–Xin-type splitting with
+the steps reversed: an explicit convection step for both, then an implicit relaxation step
+$\hat U^{n+1}=\hat U^{n+1/2}+\frac h\varepsilon\hat{\mathcal R}(U^{n+1},\hat U^{n+1})$ with
+$U^{n+1}=U^{n+1/2}$ frozen, which is linear (a $3\times3$ system per mesh edge) and needs no
+Newton iteration. The reversal is justified by starting on the equilibrium manifold. The
+scheme is AP in the ideal-MHD limit (§3.1; see
+[asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md)). For the
+relaxation part alone, steps $h\ll\varepsilon$ give backward Euler on the relaxation ODE and
+$h\gg\varepsilon$ the equilibrium, with deviations of order $\varepsilon/h$ (§3.4, Eqs.
+(67)–(72)). Their order analysis, after Caflisch, Jin & Russo, writes a parameterized split
+sub-stage scheme for the linear test $y'+L_{\mathrm I}y+L_{\mathrm E}y=0$ (page-local, the
+first part implicit) and derives seven conditions in eight coefficients for second order
+(Eqs. (75)–(86)); the implemented coefficients satisfy only the first-order set, so "the
+overall temporal accuracy remains first order" (§3.5), and raising it is left to IMEX or
+further analysis (§5).
+
 ## Qualifications
 
 - "Order" of a splitting for PDEs means consistency on a fixed spatial grid; for unbounded
@@ -226,6 +272,24 @@ and an explicit transport step underlie several kinetic AP schemes (§5.4.1, §6
   integration) omits the third route recorded by Blanes et al.: commutator (modified
   potential) flows, which give fourth order with positive coefficients (see
   [composition methods](/methods/composition-methods.md)).
+- **"A hard limit of 2nd-order accuracy."** Southworth et al. (2024, §2) state the limit for
+  every operator splitting. It holds for splittings with real nonnegative coefficients, the
+  only ones usable when a sub-flow (diffusion, stiff radiation absorption) cannot be run
+  backward in time: real splittings of order $\ge3$ need a negative coefficient
+  ([negative-coefficient barrier](/results/negative-coefficient-barrier.md)). Splittings with
+  negative real coefficients, [complex coefficients](/methods/complex-coefficient-splitting.md)
+  or commutator flows reach higher orders (Blanes et al. 2024, §6.4); the claim is therefore a
+  qualified statement about forward-in-time real splittings, consistent with Reynolds et al.'s
+  remark above, not a contradiction of the barrier pages.
+- **Toh et al.'s model scheme.** The parameterized scheme of Toh et al. (2026, Eq. (79))
+  evaluates the explicit operator at the averaged state $\frac12y_n+\frac12U_3$. With the
+  stiff part removed and the printed coefficients it gives
+  $y_{n+1}=(I-\frac h2L_{\mathrm E})^2y_n=y_n-hL_{\mathrm E}y_n+\frac{h^2}4L_{\mathrm E}^2y_n$,
+  first order, whereas Heun gives $\frac{h^2}2L_{\mathrm E}^2$ *(compiler check, confirming
+  the reader's)*. The model thus does not represent the Heun step they implement, which they
+  say is second order for the explicit updates; their first-order conclusion follows from the
+  model and may hold for the implemented scheme for other reasons, but it is not shown by this
+  analysis.
 
 # Citations
 
@@ -235,3 +299,5 @@ and an explicit transport step underlie several kinetic AP schemes (§5.4.1, §6
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §5.1 (decoupled multirate backward Euler as subcycled Strang splitting).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §1 (operator splitting as precursor of IMEX methods).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §3.1.2, Eqs. 45–46 (Störmer–Verlet as an additive Runge–Kutta method).
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §1, §2 (order limits of splitting), §2.3, §3.1 (Eqs. (18)–(19)), §3.3.2 (Eqs. (29)–(30)), footnote 2, §5.2 (Figs. 7–10).
+- [Toh et al. (2026)](/sources/toh-2026.md) — §3 (Eqs. (39)–(42)), §3.1, §3.4 (Eqs. (67)–(72)), §3.5 (Eqs. (75)–(86)), §5.

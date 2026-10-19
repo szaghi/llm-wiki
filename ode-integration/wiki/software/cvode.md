@@ -5,7 +5,7 @@ description: "CVODE, the SUNDIALS variable-order variable-step multistep integra
 status: established
 aliases: [CVODES, IDA, IDAS]
 tags: [software, stiff, dae, step-size-control, implicit-stage-solvers]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # CVODE
@@ -15,7 +15,9 @@ initial-value problems $y'=f(t,y)$, $y(t_0)=y_0$, based on implicit
 linear multistep methods with variable step size and variable order:
 Adams–Moulton of orders 1 to 12 for nonstiff problems and backward
 differentiation formulas (BDF) of orders 1 to 5 for stiff problems
-([Gardner et al. (2022)](/sources/gardner-2022.md), §2.1). It also
+([Gardner et al. (2022)](/sources/gardner-2022.md), §2.1); see
+[linear multistep methods](/methods/linear-multistep-method.md) and
+[BDF](/methods/backward-differentiation-formula.md). It also
 supports projection methods for ODEs whose solution must satisfy
 constraints $g(t,y)=0$ (§2.1; no detail given). Its solver heuristics are
 the template for the rest of the suite, in particular for
@@ -60,6 +62,21 @@ nonlinear convergence test is tied to the local error test via an
 estimated convergence rate (§6). See [step-size control](/methods/step-size-control.md)
 and [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
+[Glandon et al. (2022)](/sources/glandon-2022.md) describe the
+multistep-specific heuristics of a variable-step, variable-order code,
+in their own MATLAB implementation of linearly implicit multistep methods
+and of a BDF baseline (§7). They do not discuss CVODE itself:
+
+- **History.** Past data are kept as divided differences updated
+  recursively, much like the Nordsieck-vector updates of VODE and
+  LSODE, which they cite as multistep codes of this kind.
+- **Step growth.** Steps grow only after $k$ successful steps at the
+  current size, which they call best practice for variable-step multistep
+  codes (Remark 7.3).
+- **Order selection.** Orders $k-1$, $k$ and $k+1$ are compared (Eq. (7.1)).
+
+See [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md).
+
 ## Measured behaviour
 
 **Diffusion: CVODE vs ARKODE.** On the SUNDIALS 2D heat demo
@@ -94,12 +111,17 @@ from $10^4$ to 10 (§5.1.3).
   with $+h\sum\beta_{n,i}f$ (§2.1) but the per-step nonlinear system with
   $-h\beta_{n,0}f$ (§2.5); the sign convention of $\beta_{n,i}$ is not
   reconciled in the paper.
-- **No dedicated BDF page yet.** Linear multistep and BDF theory
-  (order, A($\alpha$)-stability, Dahlquist's barrier) is not yet covered
-  by a page of this bundle; see [A-stability](/properties/a-stability.md)
-  for the stability notions.
+- **Method theory lives elsewhere.** Order, A($\alpha$)-stability angles
+  of BDF1–BDF5, Dahlquist's barrier and the stability of variable-step
+  BDF are on [BDF](/methods/backward-differentiation-formula.md),
+  [linear multistep methods](/methods/linear-multistep-method.md),
+  [zero-stability](/definitions/zero-stability.md) and
+  [variable-step BDF2 stability](/results/variable-step-bdf2-stability.md).
+  None of the ingested sources analyses CVODE's own variable-coefficient
+  formulas.
 
 # Citations
 
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.1–§2.2, §2.5, §5.1 (Table 5), §6.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §3.1–§3.5, §5.1.3 (Table 2).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §7 (Eqs. (7.1), (7.6)–(7.8), Remark 7.3; VODE/LSODE as Nordsieck-type codes).

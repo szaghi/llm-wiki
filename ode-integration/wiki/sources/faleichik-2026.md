@@ -198,6 +198,7 @@ doubled "doi:" prefix. No printed duplicates.
 Chunk 2 (2026-10-19). This source is cited on:
 
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
+* [FitzHugh–Nagumo model](/benchmarks/fitzhugh-nagumo-model.md)
 * [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)

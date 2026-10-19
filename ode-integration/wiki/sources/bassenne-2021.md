@@ -262,6 +262,7 @@ are no printed duplicates.
 Chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
+* [Boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Rosenbrock–Wanner (ROW) and W-methods](/methods/rosenbrock-wanner-method.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)

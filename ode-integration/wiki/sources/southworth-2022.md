@@ -144,7 +144,7 @@ technical report with no institution; [2] (MFEM) has no volume or pages.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
@@ -152,6 +152,7 @@ Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 * [Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)](/methods/fully-implicit-runge-kutta.md)
 * [Irksome](/software/irksome.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Linear multistep methods](/methods/linear-multistep-method.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Runge–Kutta method](/definitions/runge-kutta-method.md)
 * [Solving the stage equations of implicit Runge–Kutta methods](/methods/implicit-stage-solvers.md)

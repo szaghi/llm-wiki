@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Three-dimensional periodic vortex flow used to test time integrators on compressible-flow semidiscretizations: inviscid at low Mach number as a stability-limited test for explicit pairs and step-size controllers, and viscous at Re 1600 for optimized many-stage Runge–Kutta methods."
+description: "Periodic vortex flow used to test time integrators on compressible-flow semidiscretizations: inviscid 3D at low Mach number as a stability-limited test for explicit pairs and step-size controllers, viscous 3D for optimized many-stage and semi-implicit methods, and 2D steady at Mach numbers down to 10^-4 for the Mach scaling of IMEX schemes."
 status: established
-aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600]
-tags: [explicit, step-size-control, runge-kutta, stability]
-timestamp: 2026-10-19T18:00:00Z
+aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, two-dimensional Taylor–Green vortex]
+tags: [explicit, step-size-control, runge-kutta, stability, imex]
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -57,8 +57,21 @@ degree 3 with an entropy-conservative volume flux, $t\in[0,10]$, on a Cartesian 
 heavily curved one. The fluctuation is the same as in Ranocha et al. (2022); only the mean
 pressure is normalized differently *(compiler check)*.
 
+**Viscous, low Mach, semi-implicit** ([Boscheri & Pareschi 2021](/sources/boscheri-2021.md),
+§4.5). The velocity of Ranocha et al. (2022) on $[-\pi,\pi]^3$, $\rho_0=1$,
+$\mathcal P=\mathcal P_0+\frac{\rho_0}{16}(\cos2x_1+\cos2x_2)(\cos2x_3+2)$ with
+$\mathcal P_0=10^3$ (a low Mach number), $\mathrm{Re}=100$ and $200$, $120^3$ cells, Courant
+number 0.5 on the flow speed, final time 10.
+
+**Two-dimensional, steady** ([Orlando et al. 2025b](/sources/orlando-2025-b.md), §4.1,
+Eq. (75)). $\rho=1$, $v=(\sin x\cos y,-\cos x\sin y)$,
+$\mathcal P=1+\frac{\mathrm{Ma}^2}4(\cos2x+\cos2y)$ on $(0,2\pi)^2$, periodic: a steady
+incompressible Euler solution whose pressure fluctuation is scaled with the Mach number,
+$\mathrm{Ma}=10^{-1},\dots,10^{-4}$, DG of degree 2 on $60^2$ elements, advective Courant
+number about 0.095 (acoustic about $0.11/\mathrm{Ma}$); the final time is not printed.
+
 The set-ups share the velocity and pressure fields up to scaling; they differ in viscosity,
-normalization and element types.
+normalization, dimension and element types.
 
 ## What it tests and results
 
@@ -104,11 +117,35 @@ stage-normalized step sizes; no wall-clock time or hardware is reported.
 gave results similar to their double shear layer for implicit Runge–Kutta solvers, without
 showing them (§7.2).
 
+**Semi-implicit all-Mach scheme** (Boscheri & Pareschi 2021, §4.5, Fig. 13). With the
+[semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) third-order finite-volume
+scheme, the kinetic-energy dissipation rate $-\mathrm dK/\mathrm dt$ fits the Brachet et al.
+DNS at $\mathrm{Re}=100$ and $200$ on a mesh the authors call coarser than second-order
+solvers need; no error figures are given.
+
+**Mach scaling of IMEX schemes** (Orlando et al. 2025b, §4.1, Tables 1–4, Fig. 2). The steady
+2D vortex should keep density and pressure fluctuations of size $O(\mathrm{Ma}^2)$:
+
+- Picard-iterated IMEX with the type-II third-order Kennedy–Carpenter pair: $\delta\mathcal P$
+  scales as $O(\mathrm{Ma}^2)$ down to $10^{-4}$ ($L^2$ errors $1.57\times10^{-2}$,
+  $1.57\times10^{-4}$, $1.57\times10^{-6}$, $1.62\times10^{-8}$), $\delta\rho$ down to $10^{-3}$
+  with rate 1.1 at $10^{-4}$; $\nabla\cdot v$ stagnates at $1.82\times10^{-3}$, the
+  interpolation error of the initial datum in the nodal DG space;
+- semi-implicit IMEX with the same type-II pair is stable only down to $\mathrm{Ma}=10^{-3}$
+  (density rate 0.6 there); with the type-I third-order pair it is stable at $10^{-4}$, but
+  $\delta\rho$ stagnates at $1.68\times10^{-6}$, while IMEX with the type-I pair reaches
+  $4.66\times10^{-9}$ (rate 1.5).
+
+They conclude that low-Mach accuracy depends on the time-discretization strategy and on the
+pair, with type-I pairs more stable; see
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
+
 ## Qualifications
 
-- All uses measure cost at the linear stability limit of explicit methods on dissipative
-  DG-type discretizations; the TGV is not used for accuracy-limited or implicit comparisons in
-  these sources.
+- The explicit-method uses measure cost at the linear stability limit on dissipative
+  DG-type discretizations. The IMEX and semi-implicit uses run far beyond the acoustic limit
+  and measure the Mach scaling of the fluctuations (Orlando et al. 2025b) or agreement with a
+  DNS (Boscheri & Pareschi 2021); neither is an accuracy-limited step-size study.
 - Hedayati Nasab et al. write the snapshot time as "$t_c=15$"; $t=15t_c$ is meant (§7.2).
 
 # Citations
@@ -117,3 +154,5 @@ showing them (§7.2).
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §7.2 (Eq. (29), Figs. 8–10).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §7.2 (results mentioned, not shown).
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §3 (Eqs. (3.1)–(3.4), Fig. 2).
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §4.5 (Fig. 13); arXiv v1.
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.1 (Eq. (75), Tables 1–4, Fig. 2); arXiv v5.

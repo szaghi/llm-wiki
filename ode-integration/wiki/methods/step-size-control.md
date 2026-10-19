@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Step-size control: error-based controllers, PID filters and CFL control"
-description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance, and an I, PI, PID or Gustafsson controller sets the next step; step-size-control stability, controller tuning per pair, error-based versus CFL-based control for stability-limited CFD, and control combined with relaxation and stabilized methods."
+description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance, and an I, PI, PID or Gustafsson controller sets the next step; step-size-control stability, controller tuning per pair, error-based versus CFL-based control for stability-limited CFD, control combined with relaxation and stabilized methods, and variable-step variable-order control of multistep methods under step-ratio constraints."
 status: established
 aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -347,6 +347,71 @@ changes; they use instead the Taylor-type estimate
 $\mathrm{err}=\tfrac1{10}\bigl(y_n-y_{n+1}+hf(t_{n+1},y_{n+1})\bigr)$ for a leading local error
 $\tfrac1{10}h^2y''$ (§4, Eqs. (22)–(23); see Qualifications).
 
+## Multistep methods
+
+For [linear multistep methods](/methods/linear-multistep-method.md) the controller also chooses
+the order. Every change of step changes the coefficients, and stability constrains the sequence
+of step ratios $r_n=h_n/h_{n-1}$, not only each step.
+
+**Error estimate from divided differences.** Here $p$ is the current order; for BDF and for the
+methods of Glandon et al. it equals the step number $k$ of the
+[registry](/notation.md). Both multistep sources estimate the local error of
+the order-$p$ method from the divided difference of order $p+1$ through the new and $p+1$ past
+values, scaled by an error constant.
+
+- [Glandon et al. (2022)](/sources/glandon-2022.md) (Def. 7.1) multiply that divided difference by
+  $(p+1)!\,C\,h_n^{p+1}$, with $C$ (page-local) the method's error constant on the current grid.
+  The estimate may slightly overestimate the local error.
+- [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) (§4) take the BDF estimate of
+  Hairer–Wanner §III.5, the divided difference scaled by the products of the step lengths.
+
+**Controller and order.**
+
+- García-Archilla & Novo use a mixed tolerance $\mathrm{TOL}_n=\mathrm{TOL}_r\big(\max\{\lVert y_{n+1}\rVert,\lVert y_n\rVert\}+0.001\big)$,
+  reject when the estimate exceeds it, and set $h_{\mathrm{new}}=0.9\,h_n(\mathrm{TOL}_n/\mathrm{EST}_n)^{1/(p+1)}$,
+  with $\mathrm{EST}_n$ the estimate and $p$ the current BDF order (Eq. (110); $\mathrm{TOL}_r$,
+  $\mathrm{EST}_n$ page-local). This is the I controller above with a safety factor and no printed
+  ratio limiter. They start with BDF1 at $h_0=h_1=\sqrt{\mathrm{TOL}_r}/100$ and switch to BDF2
+  once its estimates are smaller than BDF1's; in practice at most eight to ten BDF1 steps were
+  taken.
+- Glandon et al. compute $h_{\mathrm{opt}}=h_n\lVert e\rVert^{-1/(p+1)}$ for orders $p-1$, $p$
+  and $p+1$ and select among them, after Hairer–Nørsett–Wanner (Eq. (7.1); $e$ page-local). They
+  let the step grow only after $p$ successful steps at the current size, because explicit
+  step-ratio bounds are not available for general multistep methods (Remark 7.3).
+
+**Restarts.** A multistep integrator restarts at first order and loses its error history after
+every reset. Inside a multirate method this forced Reynolds et al. to cap CVODE's step growth
+after the first internal step at 10 instead of $10^4$ (Reynolds et al. 2023, §5.1.3; see
+[CVODE](/software/cvode.md)).
+
+**Step-ratio constraints from stability theory.** For variable-step BDF2 the parabolic energy
+estimate of [Akrivis et al. (2024)](/sources/akrivis-2024.md) is proved for every ratio at most
+$r^\star\approx1.9398$, and its constant grows with the accumulated decreases of the ratio
+sequence (Thm. 1.1, §1.1). A controller that caps growth at about 1.94 and avoids oscillating
+ratios therefore stays within the theorem; the bound is sufficient, not shown necessary
+*(compiler inference; the source gives no controller advice)*.
+Graded meshes $t_i=(i/N)^a$ with $a>1$ (page-local) satisfy the cap except at finitely many
+steps. Zero-stability alone allows ratios up to $1+\sqrt2$. García-Archilla & Novo's
+Navier–Stokes theory needs a ratio cap and bounded total variation of the ratios (Thms. 3–4).
+Their own controller enforces neither, and no check is reported, so the theory does not formally
+cover their runs (§4, Fig. 8). See
+[variable-step BDF2 stability](/results/variable-step-bdf2-stability.md) and
+[zero-stability](/definitions/zero-stability.md).
+
+**Estimator reuse and stability limits.** García-Archilla & Novo use the estimator of the fully
+implicit BDF also for BDF2 with explicit or linearized convection. They state this without
+justification ("nevertheless, it was used"; §4). On the
+[flow past a cylinder](/benchmarks/flow-past-cylinder.md), the IMEX steps at two tolerances
+coincide on $t\in[1.7,3.7]$: the CFL-type condition of explicit convection, not accuracy, limits
+them (Fig. 8). This is the multistep counterpart of the stability-limited regime discussed
+above; see [IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md).
+
+**Linear solves.** Each BDF step of García-Archilla & Novo solves one linear system by iterative
+refinement with a factorization from an earlier step, refactorizing after five iterations without
+convergence. Factorizations numbered at most about 5% of the steps on the manufactured test, and 53–92
+for 4,384–93,671 steps on the cylinder (§4.1–§4.2; see
+[implicit stage solvers](/methods/implicit-stage-solvers.md)).
+
 ## Related practice
 
 - **Multirate.** ARKODE's multirate module adapts only the fast time scale; multirate temporal
@@ -417,3 +482,6 @@ $\tfrac1{10}h^2y''$ (§4, Eqs. (22)–(23); see Qualifications).
 - [Belardo et al. (2026)](/sources/belardo-2026.md) — §4 (Eq. (3), controller, Tables 2–3).
 - [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1 (naive relaxation with FSAL and PID control), §2.1–2.2 (FSAL-R, R-FSAL, Theorems 1–2), §3 (Fig. 1), §4.
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §4 (Eqs. (21)–(23)).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §7 (Eqs. (7.1)–(7.5), Def. 7.1, Remarks 7.2–7.3).
+- [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §4 (Eqs. (110)–(112), Figs. 3–5, 8), Thms. 3–4.
+- [Akrivis et al. (2024)](/sources/akrivis-2024.md) — §1.1, §1.3, Thm. 1.1.

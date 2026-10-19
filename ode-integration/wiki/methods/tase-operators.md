@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "TASE operators: time-accurate and highly stable explicit operators"
-description: "TASE operators precondition the stiff linear(ized) part of a semi-discrete system with a rational operator built by Richardson extrapolation of the implicit-Euler resolvent, so that an unchanged explicit Runge–Kutta method becomes A-stable or nearly so while keeping its order, at the cost of p linear solves per stage."
+description: "TASE operators precondition the stiff linear(ized) part of a semi-discrete system with a rational operator, a weighted sum of shifted implicit-Euler resolvents, so that an unchanged explicit Runge–Kutta method becomes A-stable or nearly so while keeping its order; with an inexact Jacobian its linear stability is decided by stability diagrams and generalized eigenvalues."
 status: established
-aliases: [TASE, TASE preconditioner, time-accurate and highly-stable explicit operators, RK+TASE]
+aliases: [TASE, TASE preconditioner, time-accurate and highly-stable explicit operators, RK+TASE, TASE-RK, TRK]
 tags: [stiff, explicit, stability, linear-algebra, runge-kutta]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # TASE operators: time-accurate and highly stable explicit operators
@@ -196,6 +196,109 @@ stage against one for SDIRK. On nonlinear diffusion ($\beta=4$), RK with TASE co
 0.6–1.5 ms. See [DIRK methods](/methods/diagonally-implicit-runge-kutta.md) and
 [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
+## Other operator families and inexact Jacobians
+
+**The Calvo–Montijano–Rández family.** [Conte et al. (2024)](/sources/conte-2024.md)
+use the TASE operators of Calvo, Montijano and Rández,
+
+$$\mathcal P_p(\boldsymbol\vartheta,hL)=\sum_{j=1}^p\varpi_j\,(I-\vartheta_jhL)^{-1},\qquad
+\varpi_j=\frac{\vartheta_j^{-(p-1)}}{\prod_{l\ne j}\big(\vartheta_j^{-1}-\vartheta_l^{-1}\big)},$$
+
+with free shifts $\vartheta_j>0$ and weights $\varpi_j$ fixed by
+$\mathcal P_p=I+\mathcal O(h^p)$ (page-local $\vartheta_j$, $\varpi_j$; the source's
+$\omega_j$, $\beta_j$; §2, Eqs. (2.1)–(2.2)). Bassenne et al.'s operator above is the
+special case $\vartheta_j=\vartheta/2^{j-1}$, $\varpi_j=\omega_{p,j-1}/2^{j-1}$ (reader's
+check on Conte et al., verified for $p=2$, where $(\vartheta,\vartheta/2)$ gives
+$\varpi=(-1,2)$). The shifts used (Table 1, from Calvo et al.) are $(3,\,1.5)$ for $p=2$,
+$(2.3147,\,1.8796,\,1.5822)$ for $p=3$ and $(3.9396,\,2.4506,\,2.2271,\,2.0612)$ for
+$p=4$. The $p=2$ choice is Bassenne's family with $\vartheta=3$, twice the
+$\vartheta_{\min}=1.5$ of RK2 in the table above *(compiler check, not in the
+sources)*. With these shifts and the exact Jacobian, the $p$-stage, order-$p$ methods
+TRK$p$ are, as recalled by Conte et al. from Calvo et al.: TRK2 strongly A-stable with
+$R(\infty)=0.5$; TRK3 L($\theta$)-stable with $\theta=89.02^\circ$; TRK4 strongly
+A($\theta$)-stable with $\theta=87.34^\circ$ and $R(\infty)=0.27$ (§2, Table 1). The
+value $R(\infty)=0.5$ for TRK2 agrees with the large-step limit
+$h\,\mathcal P_2\lambda\to-1$ and $P(-1)=\tfrac12$ *(compiler check)*.
+
+**TASE–Runge–Kutta with an arbitrary matrix.** In practice the Jacobian $J$ inside
+$\mathcal P_p$ is replaced by a cheap matrix $\tilde J$ (page-local; constant, symmetric
+negative definite, factorized once). Conte et al. write the method as
+
+$$Y_i=y_n+h\sum_{j<i}a_{ij}\,\mathcal P_p(h\tilde J)\,f(t_n+c_jh,Y_j),\qquad
+y_{n+1}=y_n+h\sum_ib_i\,\mathcal P_p(h\tilde J)\,f(t_n+c_ih,Y_i)$$
+
+(Eq. (2.3); the source calls the Butcher matrix $\alpha$ because $A$ is its inexact
+Jacobian). The order $p$ is kept for any $\tilde J$, because
+$\mathcal P_p=I+\mathcal O(h^p)$ holds for any matrix (§1, Remark 2.1). Stability is
+another matter: every earlier analysis assumed $\tilde J=J$, and an arbitrary $\tilde J$
+carries "a concrete risk of running into instability issues" (§1).
+
+**Splitting test equation and stability diagrams** (§3). Write $J=\tilde J+E$
+(page-local remainder $E$; the source's $B$) and test on $y'=(\lambda+\lambda_E)y$ with
+$\lambda<0$ an eigenvalue of $\tilde J$ and $\lambda_E$ one of $E$. With $\mu=\lambda_E/\lambda$,
+$x=h\lambda<0$ and the scalar map $\hat{\mathcal P}_p(x)=x\,\mathcal P_p(x)$ (page-local
+symbols), the stability function of TRK$p$, $p\le4$, is
+
+$$\tilde R(x,\mu)=P\big(\hat{\mathcal P}_p(x)\,(1+\mu)\big),\qquad P(z)=\sum_{j=0}^p\frac{z^j}{j!}$$
+
+(Eq. (3.4)). $\hat{\mathcal P}_p$ increases on $x<0$ from its limit
+$\hat{\mathcal P}_p^*$ to 0, with $\hat{\mathcal P}_2^*\approx-1$ and
+$\hat{\mathcal P}_3^*\approx\hat{\mathcal P}_4^*\approx-1.5961$ (Fig. 1). The
+**stability diagram** $\mathcal D_{x,p}=\{\mu\in\mathbb C:\lvert\tilde R(x,\mu)\rvert\le1,\ \operatorname{Re}\mu\ge-1\}$
+(page-local; Def. 3.2) satisfies
+
+$$\mathcal D_{x,p}=-1+\hat{\mathcal P}_p(x)^{-1}\,\mathcal S_p$$
+
+(Lemma 3.4), with $\mathcal S_p$ the explicit method's
+[stability region](/definitions/stability-function.md) restricted to
+$\operatorname{Re}z\le0$: a homothety by a negative factor, hence a rotation by
+$180^\circ$, followed by a shift. The diagrams are nested,
+$\mathcal D_{x_1,p}\subseteq\mathcal D_{x_2,p}$ for $x_1<x_2<0$, so the limit
+$\mathcal D_{\infty,p}$ is the smallest one, the **unconditional diagram** (Thm. 3.6,
+Rem. 3.7; proof by star-shapedness of $\mathcal S_p$).
+
+**Conditions for stability** (§4–5). Let $\mu(\tilde J,E)$ denote the generalized
+eigenvalues, the spectrum of $\tilde J^{-1}E$ (page-local), and $\lambda_1$ the most
+negative eigenvalue of $\tilde J$.
+
+- *$\tilde J$, $E$ simultaneously diagonalizable.* Stable at step $h$ iff each paired
+  ratio $\mu_i\in\mathcal D_{h\lambda_i,p}$ (Prop. 4.1); sufficient, without pairing:
+  $\mu(\tilde J,E)\subseteq\mathcal D_{h\lambda_1,p}$ (Thm. 4.3); unconditionally stable iff
+  $\mu(\tilde J,E)\subseteq\mathcal D_{\infty,p}$ (Thm. 4.5). On the real axis the
+  thresholds are $\mu\le1$ for $p=2$ (with a closed-form step bound beyond it),
+  $\mu\le0.5743$ for $p=3$ and $\mu\le0.7445$ for $p=4$ (Rem. 4.2).
+- *General case, $\tilde J$ symmetric negative definite.* Stable iff the spectrum of
+  $h\,\mathcal P_p(h\tilde J)(\tilde J+E)$ lies in $\mathcal S_p$ (Thm. 5.3). Sufficient:
+  some weighted field of values
+  $\mathcal W_r(-\tilde J,E)=\{\langle v,(-\tilde J)^{r-1}Ev\rangle:\langle v,(-\tilde J)^rv\rangle=1\}$,
+  $r\in\mathbb R$ (page-local; the technique of Rosales, Seibold, Shirokoff and Zhou for
+  IMEX multistep methods), lies in $-\mathcal D_{h\lambda_1,p}$ (Thm. 5.5), or in
+  $-\mathcal D_{\infty,p}$ for unconditional stability; conversely, unconditional
+  stability requires $\mu(\tilde J,E)\subseteq\mathcal D_{\infty,p}$, so one generalized
+  eigenvalue outside the unconditional diagram rules it out (Thm. 5.6).
+- *Scaling.* Replacing $\tilde J$ by $\kappa\tilde J$ (page-local $\kappa>0$) maps
+  $\mu(\kappa\tilde J,J-\kappa\tilde J)=-1+\kappa^{-1}\mu(\tilde J,J)$, so a suitable
+  $\kappa$ can restore unconditional stability (Rem. 5.7, after Seibold et al.).
+
+**Evidence** (Matlab, §4–7). On a $3\times3$ commuting test with
+$\operatorname{spec}\tilde J=\{-100,-10,-1\}$ and $\mu=(\tfrac12,\tfrac65,\tfrac32)$ the
+sharp step bounds are $0.78390$ (TRK2) and $0.28428$ (TRK3), set by the eigenvalue
+$-10$ rather than the most negative one; above them the errors blow up (TRK3:
+$1.39\times10^{16}$ at $h=0.46875$), while with the exact Jacobian both methods are
+stable at every step tried (Table 2, Fig. 4). Theorem 4.3 alone would force a step ten
+times smaller (Rem. 4.4). On viscous [Burgers](/benchmarks/burgers-equation.md) with
+$\tilde J=\kappa(\epsilon L_\Delta-2I)$ (page-local $\epsilon$ viscosity, $L_\Delta$ the
+discrete second derivative): for $\epsilon=0.1$, $\kappa=1$ all TRK$p$ are unconditionally
+stable; for $\epsilon=0.01$, $\kappa=1$ the generalized eigenvalues
+$-0.4875\pm3.4130\,\mathrm i$ fall outside $\mathcal D_{\infty,p}$ and TRK2 is unstable at
+$h=0.5$, while $\kappa=3$ restores unconditional stability (§7.1, Figs. 7–8). On the
+[FitzHugh–Nagumo model](/benchmarks/fitzhugh-nagumo-model.md) with $\kappa=1.2$ all
+TRK$p$ are unconditionally stable (§7.2, Fig. 9). In error against CPU time, TASE–RK with
+a constant matrix is "much more efficient" than Rosenbrock ROS2–ROS4 of the same order
+with the exact Jacobian on both PDEs. For nonlinear reactions a mean-value linearization
+gives only a heuristic criterion; for a Fisher–Kolmogorov equation the weighted field of
+values is bounded explicitly and all TRK$p$ are unconditionally stable (§6, Prop. 6.1).
+
 ## Relation to other methods
 
 RK with TASE on a linear or linearized problem is a linearly implicit one-step
@@ -205,7 +308,11 @@ same family as [Rosenbrock–Wanner and W-methods](/methods/rosenbrock-wanner-me
 with $p$ distinct matrices $2^kI-\vartheta hL$, i.e. diagonal coefficients
 $\vartheta/2^k$, instead of one diagonal coefficient $\gamma$. Since $\mathcal P_p=I+\mathcal O(h^p)$ for any bounded $L$, its
 nonstiff order does not depend on $L$ being the exact Jacobian, as for a
-W-method *(compiler remark; Bassenne et al. make neither connection)*.
+W-method *(compiler remark; Bassenne et al. make neither connection)*. Conte et al.
+(2024) state the connection, citing González-Pinto et al. (2023): TASE–RK methods are a
+subclass of W-methods, whose order holds for any matrix in place of the Jacobian (§1,
+Remark 2.1). They claim theirs is the first in-depth stability study of a subclass of
+W-methods with an inexact Jacobian "using the techniques that we employ" (§1.1).
 
 ## Qualifications
 
@@ -230,10 +337,24 @@ W-method *(compiler remark; Bassenne et al. make neither connection)*.
   printed $\vartheta_{\min}$ for $p=3,4$ (2.51, 5.38) lie slightly below the exact
   thresholds 2.513 and 5.385 *(compiler check, not in the sources)*. Whether this contributes to the
   $\max\lvert R(iy)\rvert\approx1.02$ reported for RK4 with $p=3,4$ is not known.
+- **Spectral radius as stability criterion** (Conte et al. 2024). Their Definition 3.1
+  asks for $\lVert y_n\rVert$ bounded independently of $h$ and $n$, while Theorem 5.3
+  equates it with a spectral-radius condition; for non-normal amplification matrices
+  $\rho\le1$ does not bound the powers uniformly (reader's check on the source; Remark 6.2
+  of the source concedes a norm-dependent statement).
+- **W-method literature** (Conte et al. 2024, §7): the statement that inexact-Jacobian
+  Rosenbrock methods have "no study on the related stability properties" is unqualified;
+  their own reference list includes W-method and approximate-factorization papers that
+  analyse stability with approximate Jacobians (reader's note on the source).
+- **Printed values** (Conte et al. 2024, arXiv v1): the reader of the source computes
+  $\mu^*_4=0.7451$ from the printed formula against the printed $0.7445$ ($\mu^*_3=0.5743$
+  reproduces); Eq. (5.3) raises the amplification matrix to the power $n+1$ and applies it
+  to $y_n$ instead of $y_0$. The analysis covers only $s=p\le4$ and the tabulated shifts.
 - **Printed slips** (arXiv v2): the proof of Thm. 3.2 cites a nonexistent
   "lemma 3.2" for Lemma 3.3; §4.5 names RK4 as the baseline while the caption of
   Fig. 12 says RK2; §4.4.3 calls the scalar ODE a PDE.
 
 # Citations
 
+- [Conte et al. (2024)](/sources/conte-2024.md) — §1–1.1, §2 (Eqs. (2.1)–(2.4), Table 1, Remark 2.1), §3 (Def. 3.2, Eq. (3.4), Lemma 3.4, Thm. 3.6, Fig. 1), §4 (Prop. 4.1, Rem. 4.2, Thms. 4.3, 4.5, Table 2, Fig. 4), §5 (Thms. 5.3, 5.5, 5.6, Rem. 5.7), §6 (Prop. 6.1, Remark 6.2), §7 (Figs. 7–9).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §1; §2.1–2.6 (Eqs. (4)–(15), Thm. 2.1, Tables 1–3, Figs. 1–3); §3 (Def. 3.1, Lemmas 3.3–3.4, Thm. 3.2, Eqs. (16)–(27), Fig. 4); §4.1–4.5 (Figs. 5–12, Tables 4–5); §5.

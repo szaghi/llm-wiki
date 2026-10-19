@@ -172,7 +172,7 @@ No DOIs are printed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)

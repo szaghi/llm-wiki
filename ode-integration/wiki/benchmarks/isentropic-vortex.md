@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Isentropic vortex"
-description: "Exact smooth solution of the compressible Euler equations, a vortex advected by a uniform stream, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit Runge–Kutta methods, paired and many-stage stabilized explicit methods, and relaxation ADER-DG."
+description: "Exact smooth solution of the compressible Euler equations, a vortex advected by a uniform stream or at rest, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit Runge–Kutta methods, paired and many-stage stabilized explicit methods, relaxation ADER-DG, and low-Mach IMEX and semi-implicit schemes."
 status: established
-aliases: [isentropic Euler vortex, convecting vortex, Shu vortex]
-tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving]
-timestamp: 2026-10-19T20:00:00Z
+aliases: [isentropic Euler vortex, convecting vortex, Shu vortex, travelling vortex, low-Mach isentropic vortex]
+tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving, imex]
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Isentropic vortex
@@ -68,6 +68,27 @@ one traversal) and, "as in Vermeire", by [Doehring et al. (2025)](/sources/doehr
 DGSEM of degree 3 or 6, final time 20). [Gaburro et al. (2023)](/sources/gaburro-2023.md) use
 Shu's vortex centred at $(5,5)$, periodic, final time 1, on unstructured triangles, without
 restating the parameters (§5.3.1).
+
+**Low-Mach variants.** For [asymptotic-preserving](/definitions/asymptotic-preserving-scheme.md)
+schemes the perturbations are scaled with the reference Mach number $\mathrm{Ma}$ so that
+the pressure fluctuation is $O(\mathrm{Ma}^2)$ against an $O(1)$ background:
+
+- [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) (§5.1, Eqs. (96)–(97)): steady
+  vortex, no free stream, tangential velocity of size $\mathrm{Ma}\frac{\Gamma}{2\pi}e^{(1-r^2)/2}$
+  (printed as a scalar; Orlando et al. (2025b) multiply the same factor by the rotated
+  position vector),
+  $\Theta=1-\mathrm{Ma}^2\frac{\kappa-1}{\kappa}\frac{\Gamma^2}{8\pi^2}e^{1-r^2}$,
+  $\rho=\Theta^{1/(\kappa-1)}$, $\mathcal P=\mathrm{Ma}^2\rho^\kappa$; $\Gamma=5$, domain
+  $(-10,10)^2$ periodic, final time 10, DG of degree 2 or 3;
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) (§4.2, Eqs. (76)–(78)): "travelling
+  vortex" with free stream $(1,1)$, $\Gamma=10$, $\mathcal P=1+\mathrm{Ma}^2\Theta^{\kappa/(\kappa-1)}$,
+  domain $(-10,10)^2$ periodic, final time 3, $\mathrm{Ma}\in[10^{-4},10^{-1}]$, DG of degree
+  1–3;
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) (§4.1, Eqs. (107)–(108)): a
+  stationary "modified isentropic vortex" on $[0,10]^2\times[0,1]$, periodic, final time 1,
+  meshes $16^2$–$128^2$, Courant number 0.9 on the material speed, with the stiffness
+  parameter $\varepsilon\propto\mathrm{Ma}^2$ swept from 1 to $10^{-6}$; the vortex strength
+  is not printed.
 
 The sources normalize the vortex differently (temperature versus free-stream pressure
 scaling, unit versus explicit core radius), so the strengths of Ranocha et al. (2022) and
@@ -148,8 +169,40 @@ loss proportional to the accuracy without relaxation, and relaxation parameters 
 most about 1.02. See [ADER](/methods/ader-time-integration.md) and
 [entropy stability](/properties/entropy-stability.md).
 
+**Low-Mach IMEX and semi-implicit schemes.** The low-Mach variants test whether the order
+survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow speed:
+
+- **Semi-implicit finite volumes.** Boscheri & Pareschi (2021, Tables 1–2) obtain
+  $L^1$ orders 2.72, 2.95, 3.11 for density at $\varepsilon=1$ with the third-order scheme
+  and the SA DIRK(3,4,3) pair (errors $7.68\times10^{-5}$ to $1.74\times10^{-7}$), and
+  finest-level momentum orders 2.87–2.99 for $\varepsilon=10^{-1},\dots,10^{-6}$ with errors
+  independent of $\varepsilon$ below $10^{-4}$; the second-order scheme gives 2.01–2.22. See
+  [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+- **IMEX-DG.** At $\mathrm{Ma}=10^{-3}$ and acoustic Courant number about 3.5, the
+  third-order Kennedy–Carpenter pair with degree 2 gives $L^2$ rates 3.2, 3.0, 3.0 and the
+  fourth-order Calvo–de Frutos–Novo pair with degree 3 gives 3.9, 3.9, 3.5 (Orlando &
+  Bonaventura 2025, §5.1, Table 3). With the third-order pair, $\lVert\nabla\rho\rVert$ scales
+  as $O(\mathrm{Ma}^2)$ down to $\mathrm{Ma}=10^{-5}$ and degrades at $10^{-6}$, and
+  $\lVert\nabla\cdot u\rVert$ as $O(\mathrm{Ma})$; with the fourth-order pair the density
+  scaling drops to $O(\mathrm{Ma})$ from $10^{-4}$, which the authors attribute partly to
+  [order reduction](/definitions/order-reduction.md) (Tables 4–5).
+- **IMEX against semi-implicit IMEX.** On the travelling vortex Orlando et al. (2025b, §4.2,
+  Tables 5–15, Fig. 6) find the Picard-iterated IMEX and the semi-implicit methods equally
+  accurate at second order (rate 1.2 at $\mathrm{Ma}=10^{-2}$ with degree 1, restored to 2.4
+  with degree 2 for velocity), third order up to $\mathrm{Ma}=10^{-3}$ for all combinations
+  except the semi-implicit method with the type-II pair, and saturation at
+  $\mathrm{Ma}=10^{-4}$ for all; at fourth order the semi-implicit method with the type-II
+  Kennedy–Carpenter pair has "severe issues" from $\mathrm{Ma}=10^{-3}$. The semi-implicit
+  method is generally cheaper in wall-clock time, by about 5% at $\mathrm{Ma}=10^{-3}$.
+
 ## Qualifications
 
+- Boscheri & Pareschi (2021, Eq. (107)) print the initial state with velocity $(1,1,0)$ and
+  no vortex velocity perturbation, while calling the flow stationary with the initial state as
+  exact solution; the standard vortex with zero background velocity is presumably meant.
+  Their text promises $L^1$, $L^2$ and $L^\infty$ errors, but Table 1 reports $L^1$ only.
+- Orlando et al. (2025b, Fig. 3 caption) plot $\mathcal P-(1-\mathrm{Ma}^2)$ where the
+  background of Eq. (77) is $1+\mathrm{Ma}^2$ (Fig. 4 has the right sign).
 - Southworth et al. call the rates of Table 2 "the expected rates", but Lobatto IIIC of orders 2
   and 4 fall visibly short at coarse steps (first rate 1.13 for order 2; 3.53 and 3.67 for order
   4), and Radau IIA 7 ends at 6.28.
@@ -172,3 +225,6 @@ most about 1.02. See [ADER](/methods/ader-time-integration.md) and
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §8, §10.2.2 (Eqs. (10.12)–(10.16), Table 6).
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §4.3, §5.2–5.4 (Tables 2–4), §6.3 (Table 6).
 - [Gaburro et al. (2023)](/sources/gaburro-2023.md) — §5.3.1 (Table 4, Figs. 9–10); arXiv v1.
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §4.1 (Eqs. (107)–(108), Tables 1–2); arXiv v1.
+- [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — §5.1 (Eqs. (96)–(97), Tables 3–5); HAL v2.
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.2 (Eqs. (76)–(78), Tables 5–15, Fig. 6); arXiv v5.

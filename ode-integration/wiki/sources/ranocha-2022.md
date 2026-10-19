@@ -133,7 +133,7 @@ are printed incomplete, and [38] prints year 2013 with a DOI containing
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)

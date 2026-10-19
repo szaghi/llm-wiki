@@ -5,7 +5,7 @@ description: "Linearly implicit one-step methods that replace the nonlinear stag
 status: established
 aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
 tags: [stiff, implicit, dae, order-reduction, order-conditions]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Rosenbrock–Wanner (ROW) and W-methods
@@ -136,6 +136,38 @@ W-methods are ROW methods that do not require the exact Jacobian (Steinebach 202
 Rang). Jax extended them to DAEs with "a huge amount of additional order conditions". Rodas4P2 and Rodas5P satisfy Jax's three conditions, so they keep order 2 for index-1
 problems with an inexact Jacobian. Rodas4 and Rodas5 drop to order 1 (Table 1; §4 problem 5).
 
+[Conte et al. (2024)](/sources/conte-2024.md) (§7) state that Rosenbrock methods used with an
+inexact Jacobian become W-methods, "for which the order of convergence is generally lower, and
+furthermore there is no study on the related stability properties". They present their analysis
+of TASE–Runge–Kutta methods with an arbitrary matrix in place of $J$ as the first in-depth
+stability study of a subclass of W-methods with an inexact Jacobian "using the techniques that we
+employ" (§1.1). The technique splits $J=W+(J-W)$, with $W$ the matrix used in the linear solves
+(page-local), and works with the generalized eigenvalues and weighted fields of values of the
+pair. It is borrowed from unconditional-stability analyses of IMEX multistep methods; see
+[TASE operators](/methods/tase-operators.md).
+
+## Multistep analogue: Limm and Limm-W
+
+[Glandon et al. (2022)](/sources/glandon-2022.md) build
+[linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md) from linear
+multistep methods in the way Rosenbrock methods are built from implicit Runge–Kutta methods
+(§1–2). The correspondence is close:
+
+- **One linear solve per step.** Each step solves one linear system with $I-h\kappa J$, and the
+  diagonal coefficient $\kappa$ (page-local there) plays the role of $\gamma$ (§2).
+- **Limm-W mirrors W-methods.** It allows an arbitrary matrix in place of $J$, with order
+  conditions independent of it.
+- **The exact Jacobian saves conditions.** The exact-Jacobian Limm has one order condition
+  fewer than Limm-W, exactly as Rosenbrock methods need fewer conditions than W-methods (Thms.
+  3.3, 3.7, Remark 3.8).
+- **Stiff order loss.** With a generic matrix and $hJ$ not small, the local error of Limm-W
+  drops one order unless the Jacobian-related conditions are imposed one order higher (Remark
+  3.4). This is the multistep analogue of the Prothero–Robinson-type conditions above.
+
+RODAS4 is one of their baselines. On a 2D Gray–Scott problem with direct solves RODAS4 needed
+fewer steps than the multistep methods. On a quasi-geostrophic model with GMRES, the Limm
+implementation matched or beat RODAS4 and SDIRK4a at similar errors (§8.2–8.3, Figs. 8.2–8.3).
+
 ## Related linearly implicit schemes: TASE
 
 [TASE operators](/methods/tase-operators.md) ([Bassenne et al. (2021)](/sources/bassenne-2021.md))
@@ -147,9 +179,10 @@ Jacobians and no nonlinear system, which places the resulting scheme in the line
 implicit family of this page, with $p$ distinct matrices $2^kI-\vartheta hJ$ per stage, i.e.
 diagonal coefficients $\vartheta/2^k$, instead of the single matrix $M-h\gamma J_n$. Because the preconditioner equals
 $I+\mathcal O(h^p)$ for any bounded $J$, its nonstiff order does not require the exact
-Jacobian, as for a W-method *(compiler remark: Bassenne et al. do not make the
-connection, and cite Rosenbrock–Krylov methods only as solvers for split reaction
-steps, §1)*. Its stiff order conditions, in the sense of the Prothero–Robinson and
+Jacobian, as for a W-method. Bassenne et al. do not make this connection, and cite Rosenbrock–Krylov
+methods only as solvers for split reaction steps (§1). Conte et al. (2024, §1–2, Remark 2.1) do:
+citing González-Pinto et al. (2023), they state that TASE–Runge–Kutta methods are a subclass of
+W-methods whose order $p$ is kept for any matrix in place of $J$. Its stiff order conditions, in the sense of the Prothero–Robinson and
 parabolic conditions above, have not been studied in the sources.
 
 ## The Rodas family (as characterized by Steinebach 2023)
@@ -176,6 +209,15 @@ parabolic conditions above, have not been studied in the sources.
   $\lambda=10^5$ (§4 problem 2); both describe the same stiff decay.
 - Table 1 orders are observed with constant steps on one problem per class; they are not
   theorems.
+- **Comparisons with Rosenbrock methods are not like-for-like.** Conte et al. (2024, §7.1–7.2,
+  Figs. 7, 9) find TASE–Runge–Kutta methods with a constant, cheap matrix "much more efficient"
+  in error against CPU time than the A-stable Rosenbrock methods ROS2, ROS3 and ROS4 of the same
+  order with the exact Jacobian, on viscous Burgers and FitzHugh–Nagumo in MATLAB on a laptop.
+  The Rosenbrock methods could also freeze their matrix as W-methods, which was not tested.
+- **Conte et al.'s claim about W-method stability is not settled here.** The reader of Conte et
+  al. (2024) flags it as likely overstated: the classical W-method literature, which Conte et al.
+  themselves cite (Steihaug–Wolfbrandt, Hairer–Wanner §IV.7 and two AMF-W papers), contains
+  stability analyses with approximate Jacobians. No ingested source settles the question.
 
 # Citations
 
@@ -184,3 +226,5 @@ parabolic conditions above, have not been studied in the sources.
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §1.3 (earlier names of WSO-type conditions, Rosenbrock DAE methods).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §1, §5 (ROW B-series in BSeries.jl).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §1; §2.5; §4.4.1 (Eqs. (42)–(43); TASE as a linearly implicit scheme).
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — §1–2, Thms. 3.3, 3.7, Remarks 3.4, 3.8, §8.2–8.3 (Limm as the multistep analogue; RODAS4 baseline).
+- [Conte et al. (2024)](/sources/conte-2024.md) — §1, §1.1, §2 (Remark 2.1), §7 (W-methods, ROS2/3/4 comparisons, Figs. 7, 9).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Energy method for Runge–Kutta stability"
-description: "The energy method writes $\\lVert y_{n+1}\\rVert^2-\\lVert y_n\\rVert^2$ for a Runge–Kutta method on a linear seminegative problem as a diagonal sum plus a quadratic form in a dissipation semi-inner product, by discrete integration by parts, and reads strong, weak or unconditional stability from the signs; it works for non-normal operators."
+description: "The energy method writes $\\lVert y_{n+1}\\rVert^2-\\lVert y_n\\rVert^2$ for a Runge–Kutta method on a linear seminegative problem as a diagonal sum plus a quadratic form in a dissipation semi-inner product, by discrete integration by parts, and reads strong, weak or unconditional stability from the signs; it works for non-normal operators, and a multiplier-matrix version gives stiffness-independent stability of IMEX pairs."
 status: established
 aliases: [energy analysis of Runge–Kutta methods, discrete energy law, discrete energy identity, discrete integration by parts]
-tags: [stability, runge-kutta, structure-preserving, implicit, explicit]
-timestamp: 2026-10-19T12:00:00Z
+tags: [stability, runge-kutta, structure-preserving, implicit, explicit, imex]
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Energy method for Runge–Kutta stability
@@ -132,6 +132,43 @@ Qin–Zhang DIRK give $E(10)/E(0)=1$, while Radau IIA and Lobatto IIIC damp
   $h\le C\Delta x$, weak($\kappa$) under $h\le C\Delta x^{1+1/(\kappa-1)}$ (Sun et al.
   2022, Remark 3.8).
 
+## Multiplier matrices for IMEX stages
+
+[Hu & Shu (2025)](/sources/hu-2025.md) (§3) carry the energy method to an
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md) pair applied to a linear hyperbolic
+relaxation system, where the relaxation term $-\frac1\varepsilon w$ is implicit and the
+convection explicit, and where the constants must not depend on $\varepsilon$. The stage
+equations for the relaxing variable are multiplied by $W^\top\Pi$, with $W$ the vector of
+stage values and $\Pi$ an $s\times s$ **multiplier matrix** with zero first column
+(page-local symbols). This turns the step into the identity
+
+$$\lVert W_s\rVert^2=\lVert W_0\rVert^2-W^\top\Pi_*W-\frac h\varepsilon W^\top\Pi A^{\mathrm I}W-h\,W^\top\Pi A^{\mathrm E}(\text{convection terms}),$$
+
+($W_0$ the step's initial value, $\Pi_*$ a fixed shift of $\Pi$, Eq. (3.3); notation
+condensed from Eq. (3.2)). Two algebraic conditions make the stiff and the stage-difference
+terms good:
+
+- **(M1)** $\Pi A^{\mathrm I}+(\Pi A^{\mathrm I})^\top$ is positive semidefinite of rank $s-1$;
+- **(M2)** $\Pi_*+\Pi_*^\top$ is positive semidefinite of rank $s-1$.
+
+A positive semidefinite matrix of rank $s-1$ that vanishes on a vector $u$ is positive
+definite on $u^\perp$ (Lemma 3.1), so (M2) bounds
+$W^\top\Pi_*W\ge c\sum_{i<j}\lvert W_i-W_j\rvert^2$ (Lemma 3.2), and (M1) with their condition
+(A) bounds $W^\top\Pi A^{\mathrm I}W\ge c\lvert W_s\rvert^2$ (Lemma 4.1). The cross terms from
+the explicit convection are absorbed with Young's inequality and an inverse inequality,
+which needs $h\le c_{\mathrm{CFL}}/N^2$ for $N$ Fourier modes, and Gronwall gives uniform
+stability (Thm. 3.4). Neither matrix can be strictly positive definite; each condition forces
+one zero eigenvalue and fixes one row combination of $\Pi$, so a candidate can be built with
+those constraints and checked by computing eigenvalues (Prop. 7.1). Exact multipliers exist
+for ARS(2,2,2) and ARS(4,4,3); for BHR(5,5,3)\* a numerical $\Pi$ has second-smallest
+eigenvalues above 0.01, and for the original BHR(5,5,3) none was found (App. 7.2, Remark
+7.2). The construction is inspired by Fu & Shu and recovers their energy estimates for
+ARS-type pairs (Remark 3.3). The same energy argument, applied to the error equation, gives
+the uniform-accuracy theorems on
+[uniform accuracy of IMEX schemes](/results/uniform-accuracy-relaxation-systems.md). The
+multistep analogue, testing with Nevanlinna–Odeh multipliers, is on
+[multiplier energy technique](/methods/multiplier-energy-technique.md).
+
 ## Qualifications
 
 - The method covers autonomous linear problems with bounded $L$; nonlinear problems
@@ -149,3 +186,4 @@ Qin–Zhang DIRK give $E(10)/E(0)=1$, while Radau IIA and Lobatto IIIC damp
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1, Thm. 2.1, Lemmas 2.2–2.3, §3 (Lemmas 3.2–3.3, Thm. 3.4, Lemma 3.6, Thms. 3.5, 3.7, Remark 3.8), §4 Exs. 4.1–4.6.
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §2 (Eqs. 2.3–2.6, Def. 2.1, Props. 2.1–2.2), Thms. 3.1–3.2, §5.
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §4.3, Table 1 (energy behaviour of Gauss–Legendre, Radau IIA, Lobatto IIIC and the Qin–Zhang DIRK).
+- [Hu & Shu (2025)](/sources/hu-2025.md) — §3 (Eqs. (3.2)–(3.3), Lemmas 3.1–3.2, Thm. 3.4, Remark 3.3), Lemma 4.1, §7.1–7.2 (Prop. 7.1, Remark 7.2); arXiv v1.

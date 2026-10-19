@@ -129,7 +129,7 @@ Matlab 2016a software and [20] is the CVX software. All items parsed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)

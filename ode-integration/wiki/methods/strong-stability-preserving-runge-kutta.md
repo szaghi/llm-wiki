@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -196,6 +196,44 @@ tolerances than the others (Ranocha et al. 2025, §3, §4.2, §6, §8, Tables 1,
   of the same paper are SSP for $h\le rh_{\mathrm{FE}}$ with $r$ the SSP coefficient of
   the explicit part alone (Thm. 2).
 
+## SSP explicit parts in IMEX and low-Mach practice
+
+- **Explicit parts of IMEX pairs.** Several IMEX pairs pair an SSP explicit method with an
+  L-stable or stiffly accurate implicit one: SSP-LDIRK2(3,3,2) (SSP second-order explicit
+  part), SSP-LDIRK3(3,3,2) and SSP3(4,3,3) (SSPRK(3,3) explicit part), used for radiation
+  hydrodynamics and for high-Mach flows
+  ([Southworth et al. 2024](/sources/southworth-2024.md), §5.1;
+  [Boscheri & Pareschi 2021](/sources/boscheri-2021.md), §3.4.1, Eqs. (79), (81)); the
+  tableaux are on [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+  No SSP coefficient of a pair is stated in these sources, and the step restriction of the
+  stiff part is not lifted (see *Beyond Runge–Kutta* above). Southworth et al. also compare
+  with an operator split whose hydrodynamics uses third-order TVD Runge–Kutta (§5).
+- **Implicit high order is not $L^\infty$-stable.** Boscheri & Pareschi (2021, §3.6) state
+  that high-order implicit schemes "are not $L^\infty$ stable but only $L^2$ stable", so
+  their semi-implicit scheme can produce bounded over- and undershoots at strong shocks when
+  the explicit CFL condition is violated, which they control with an a-priori flattener that
+  blends a first-order and the high-order solution. [Orlando & Bonaventura (2025)](/sources/orlando-2025.md)
+  (§3) recall that implicit methods of order above one cannot be unconditionally TVD and that
+  this holds for IMEX methods too. Both are consequences of the unconditional-SSP barrier
+  above.
+- **Explicit relaxation splitting.** [Toh et al. (2026)](/sources/toh-2026.md) (§3) use
+  SSP-RK2 (Heun) for the explicit fluxes of extended MHD with an implicit relaxation step at
+  every sub-stage, and suggest the Shu–Osher SSPRK(3,3) as a replacement; the coupling to the
+  split relaxation step limits the scheme to first order in time in the stiff regime (§3.5;
+  see [operator splitting](/methods/operator-splitting.md)).
+- **When forward Euler is unstable.** [Kemm (2024)](/sources/kemm-2024.md) (§3.1–3.2) argues
+  that SSP theory, for Runge–Kutta and for multistep methods, "hinges on the stability of the
+  explicit Euler scheme" and is therefore "not applicable" to low-Mach finite-volume
+  solvers whose acoustic dissipation scales with the flow speed: their semi-discrete spectra
+  approach the imaginary axis, where forward Euler is unstable. Among explicit methods with
+  the minimal number of stages only the third- and fourth-order ones have stability regions
+  containing the required hull (§3.3, Fig. 2); in his tests with a nonlinear limiter
+  third-order Adams–Bashforth outperforms a three-stage third-order Runge–Kutta method, which
+  he attributes to the forward Euler first stage of every explicit Runge–Kutta step. See
+  [linear multistep methods](/methods/linear-multistep-method.md).
+- **Reference solutions.** SSPRK(3,3) provides the explicit reference runs of Orlando &
+  Bonaventura (2025, §5.2–5.3) and Orlando et al. (2025b, §4.3) for low-Mach IMEX tests.
+
 ## SSP as a proof device beyond Runge–Kutta
 
 The Shu–Osher convex-combination argument transfers any property of a single forward
@@ -259,6 +297,18 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   partial disagreement, not a contradiction.
 - The SSP coefficients and error measures of the new pairs of Fekete et al. are not
   printed in the version read (arXiv v1); they are deferred to a repository.
+- **"Only $L^2$ stable."** Boscheri & Pareschi's (2021, §3.6) statement, attributed to
+  Gottlieb, Shu & Tadmor, is sweeping as printed; the SSP theory above gives $L^\infty$ and
+  TVD bounds for implicit methods under a step restriction, so it should read "not
+  unconditionally". Their explicit-Euler-stage pair SP(1,1,1) is called "stiffly accurate
+  and stability preserving" without an SSP coefficient.
+- **Kemm's "unstable first stage" thesis.** Kemm's explanation of the Runge–Kutta failures
+  is heuristic: the linear stability of a Runge–Kutta step depends only on its stability
+  polynomial, his first-order-in-space tests behave as linear theory predicts, and the
+  amplification of internal stage perturbations is measured by
+  [internal stability](/definitions/internal-stability.md), not by the stability of the
+  first stage alone *(reader's remark on that source)*. His claim that SSP theory does not
+  apply is correct as a statement about its hypothesis, not a counterexample to it.
 
 # Citations
 
@@ -274,3 +324,9 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §3, §4.1 (Fig. 3), §4.2 (Table 1), §6 (Tables 4–5), §8.
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §3.1 (Lemmas 3.3–3.4, Thm. 3.2).
 - [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.3 (Table 1; MRK2 base method).
+- [Kemm (2024)](/sources/kemm-2024.md) — §1, §3.1–3.3 (Figs. 1–2).
+- [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §3.4.1 (Eqs. (78)–(81)), §3.6 (Eqs. (104)–(105)); arXiv v1.
+- [Toh et al. (2026)](/sources/toh-2026.md) — §3, §3.5.
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §5, §5.1.
+- [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — §3, §5.2–5.3; HAL v2.
+- [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.3; arXiv v5.

@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Order reduction
@@ -56,6 +56,16 @@ $u_x$), $\mathcal O(h^{1/4})$ for $u_t=-u_{xxxx}$. [Biswas et al. (2025)](/sourc
 initial-boundary-value problems to the same $\mathcal O(h)$ layers: weak stage
 order shrinks their amplitude but does not remove them.
 
+**Stage boundary values (IMEX).** [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md)
+(§1, §5) observe the layer directly for IMEX Runge–Kutta methods with explicit convection
+and implicit diffusion: imposing time-dependent Dirichlet data at the stage times,
+$Y_i|_\Gamma=g(t_n+c_ih)$, gives errors concentrated at the boundaries (Figs. 1, 4) and
+observed rates of about 2.5, 2.25 and 2.0 in $L^1$, $L^2$ and $L^\infty$ for a third-order
+scheme and for the fourth-order ARK4(3)6L[2]SA alike, on linear and nonlinear
+convection–diffusion problems in one and two dimensions (Tables 1–4). They recall that the
+same reduction occurs for non-IMEX Runge–Kutta methods (§1). See
+[boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
+
 **Rosenbrock methods.** [Steinebach (2023)](/sources/steinebach-2023.md), Table 1,
 measures with constant steps the orders of the Rodas family on five problem classes
 (stages; order of main(embedded) method):
@@ -76,15 +86,24 @@ Jacobian in a [Rosenbrock–Wanner method](/methods/rosenbrock-wanner-method.md)
 parabolic problem and 2 on index 2 (Steinebach 2023, Tables 6–8).
 
 **DAEs.** For index-2 DAEs the order of a Runge–Kutta method is formally limited
-to its stage order (Southworth et al. 2022, §2.1); see
+to its stage order (Southworth et al. 2022, §2.1; [Abu-Labdeh et al. 2023](/sources/abulabdeh-2023.md),
+§2, §3.1); see
 [differential-algebraic equations](/definitions/differential-algebraic-equation.md).
+On an incompressible fluid–structure DAE, [Taddei et al. (2026)](/sources/taddei-2026.md)
+(§5.1.1, Table 1) observe fitted rates of about 2.1, 2.4 and 3.5 for Radau IIA with
+$s=2,3,4$, against the formal $3,5,7$, and attribute them to "the differential algebraic
+structure" together with the spatial discretization, the ALE mesh motion and the
+iterative interface coupling; their rates are measured against an $s=4$,
+$h=0.001$ reference, and the three-stage errors are not monotone in $h$.
 
 **Splitting with boundary conditions.** In an [operator splitting](/methods/operator-splitting.md)
 the boundary conditions hold for $f$ but not for the sub-operators; for
 reaction–diffusion with Dirichlet or Neumann data this reduces the order, by one
 in the maximum norm for Strang splitting, as recalled by
 [Blanes et al. (2024)](/sources/blanes-2024.md), §6.1, from Hansen–Ostermann and
-Hundsdorfer–Verwer.
+Hundsdorfer–Verwer. [Southworth et al. (2024)](/sources/southworth-2024.md) (§1–2) cite
+the order reduction of Strang splitting on stiff problems as one reason to replace the
+Lie–Trotter split of radiation hydrodynamics by IMEX Runge–Kutta methods.
 
 **Intermediate stiffness in multiscale problems.** For asymptotic-preserving IMEX
 schemes on $u'=T(u)+\varepsilon^{-1}Q(u)$, [Gottlieb et al. (2022)](/sources/gottlieb-2022.md),
@@ -92,6 +111,33 @@ Remark 4 and §3.5, observe design order for $\varepsilon=\mathcal O(1)$ and for
 $\varepsilon\ll1$ and reduced order in between; their errors plateau at
 $\mathcal O(\varepsilon)$ rather than converging at $\mathcal O(h)$, which they
 distinguish from the usual asymptotic-preserving order reduction.
+[Hu & Shu (2025)](/sources/hu-2025.md) prove where the intermediate regime bites and how
+to avoid it for the linear hyperbolic relaxation system with Fourier–Galerkin
+discretization: ARS(4,4,3), third order by design, is third order for
+$\varepsilon=\mathcal O(1)$ and for $\varepsilon\to0$ but only second order uniformly in
+$\varepsilon$, with an error peak near $\varepsilon\approx10^{-4}$–$10^{-3}$ (§1, §6,
+Fig. 1). The cause is the low stage order of the intermediate stages: a second-order IMEX
+scheme can have intermediate stages of stage order 1, which their uniform second-order
+theorem must accommodate (Remark 4.4, Lemma 4.5), while uniform third order needs, in
+addition, stage-order conditions $\tfrac12c_i^2=\sum_ja^{\mathrm E}_{ij}c_j=\sum_ja^{\mathrm I}_{ij}c_j$
+for $i\ge3$ and a vanishing-coefficient condition, which only their modified BHR(5,5,3)*
+satisfies (Thm. 5.1). See
+[uniform accuracy of IMEX schemes for relaxation systems](/results/uniform-accuracy-relaxation-systems.md).
+[Orlando et al. (2025)](/sources/orlando-2025-b.md) (§4.2) name stiff order reduction,
+after DG low-Mach inaccuracy and round-off, as a possible cause of the error saturation of
+their IMEX schemes for the Euler equations at Mach $10^{-4}$; their fourth-order IMEX
+scheme drops to rate 1.0 at Mach $10^{-2}$ (Table 12).
+
+**Inexact Jacobians in linearly implicit methods.** For the linearly implicit multistep
+W-methods of [Glandon et al. (2022)](/sources/glandon-2022.md) (Remark 3.4), the local
+error splits into a part annihilated by the classical order conditions and a part
+multiplied by the step's Jacobian approximation; when $\lVert hA_n\rVert\not\to0$ (page-local
+$A_n$ the approximate Jacobian) the second part, only $\mathcal O(h^p)$, dominates, and the
+Jacobian-related order conditions must be imposed one order higher. They suggest that
+inexact GMRES solves "possibly" caused the jagged error curves of their variable-order
+runs on a quasi-geostrophic model, by degrading stability or by order reduction
+(§8.3). See [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md);
+the Rosenbrock analogue is the "inexact Jacobian" column of the table above.
 
 **Spatial refinement.** Refining the grid makes a semi-discretization stiffer and
 can expose order reduction at fixed temporal method:
@@ -123,6 +169,9 @@ DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
 | collocation methods reduce to their stage order, $s$ for $s$-stage Gauss | stiff problems | Farrell et al. 2021, §4.1 |
 | $p-1$ for L-stable Rosenbrock methods satisfying Scholz's conditions at fixed large $\lvert\lambda\rvert$ | Prothero–Robinson | Steinebach 2023, §2 |
 | design order $2j$ observed only for $h\Lambda<2$; order 0 for DC2 and DC4 on Van der Pol at practical steps | stiff nonlinear ODEs | Koyaguerebo-Imé & Bourgault 2022, §6 |
+| observed $\approx2.5$, $2.25$, $2.0$ in $L^1$, $L^2$, $L^\infty$ for 3rd- and 4th-order IMEX with stage-time Dirichlet data | convection–diffusion(–reaction), time-dependent Dirichlet data | González-Tabernero et al. 2024, Tables 1–4 |
+| uniform order 2 for ARS(4,4,3) (design 3); uniform design order under stage-order and vanishing-coefficient conditions | linear hyperbolic relaxation, all $\varepsilon$ | Hu & Shu 2025, Thms. 4.3, 5.1, §6 |
+| observed $\approx2.1$, $2.4$, $3.5$ for Radau IIA $s=2,3,4$ | incompressible fluid–structure DAE | Taddei et al. 2026, Table 1 |
 
 In the Ostermann–Roche row $r$ is the number of satisfied conditions and $\bar\nu$ a
 problem-dependent number (both page-local). [Farrell et al. (2021)](/sources/farrell-2021.md),
@@ -152,7 +201,17 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
    introduce parameters, are intrusive and have been studied only in one dimension.
    For splittings, boundary correction functions (Einkemmer–Ostermann) play this
    role (Blanes et al. 2024, §6.1).
-5. **Positive coefficients for parabolic splittings.** A splitting of order $r$
+5. **Stage boundary values from the PDE.** Computing the boundary values of the internal
+   IMEX stages from the stage equations, the PDE (to replace the implicit diffusive term by
+   $\partial_tg$ minus the explicit terms) and boundary derivatives of the numerical solution
+   restores observed orders 3 and 4 at negligible cost (González-Tabernero et al. 2024,
+   §3–5, Tables 1–4); Irksome instead imposes $\partial_tg$ on the stage derivatives
+   ([Farrell et al. 2021](/sources/farrell-2021.md), Eq. (18)). See
+   [boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
+6. **Uniform-accuracy conditions for IMEX schemes.** For relaxation systems, extra
+   stage-order and vanishing-coefficient conditions on the IMEX tableaux give design order
+   uniformly in $\varepsilon$ (Hu & Shu 2025, Thm. 5.1).
+7. **Positive coefficients for parabolic splittings.** A splitting of order $r$
    with all coefficients non-negative keeps order $r$ for $u'=(A+B)u$ with $A$, $B$
    generating $C_0$-semigroups (Blanes et al. 2024, §6.4, recalling
    Hansen–Ostermann); see [negative-coefficient barrier](/results/negative-coefficient-barrier.md).
@@ -171,6 +230,13 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
   $\mathcal P_p=I+\mathcal O(h^p)$ of the TASE preconditioner $\mathcal P_p$ (defined there); [Bassenne et al. (2021)](/sources/bassenne-2021.md)
   (§2.1, §2.3) do not analyse the stiff regime $\lVert hL\rVert\gg1$ in which the
   method is used, so its order there is open *(compiler check, not in the sources)*.
+- Not every observed shortfall is order reduction of the method.
+  [Southworth et al. (2024)](/sources/southworth-2024.md) (§5.2) observe reduced orders of
+  IMEX schemes on Mach-3 and Mach-45 radiation-hydrodynamics shocks and attribute them to
+  the implicit-solve tolerance and to the 10-digit coefficients of the published I-IMEX(3,4,3)
+  tableau, not to the methods. Abu-Labdeh et al. (2023, §5.1) refine space and time together
+  on Stokes, so their rates mix both errors. The attributions of Taddei et al. (2026) and
+  Orlando et al. (2025) above are likewise stated, not demonstrated.
 - Weak stage order is a remedy for linear problems; on nonlinear problems it gives
   partial improvement (Burgers: order 3) or none (Van der Pol), as detailed on
   [weak stage order](/definitions/weak-stage-order.md).
@@ -205,3 +271,10 @@ problem-dependent), would decide it.
 - [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — Cor. 4.1; §6.1, §6.5–6.7 (Tables 6.1, 6.5, 6.6).
 - [Croci & Rosilho de Souza (2022)](/sources/croci-2022.md) — §3 (terminology only).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §2.1, §2.3 (nonstiff order claim).
+- [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md) — §1; §3–4; §5 Tables 1–4, Figs. 1, 4.
+- [Hu & Shu (2025)](/sources/hu-2025.md) — §1; Remark 4.4, Lemma 4.5; Thms. 4.3, 5.1; §6 Fig. 1.
+- [Taddei et al. (2026)](/sources/taddei-2026.md) — §5.1.1, Table 1.
+- [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §2, §3.1; §5.1 Tables 1–2.
+- [Glandon et al. (2022)](/sources/glandon-2022.md) — Remark 3.4; §8.3.
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §1–2 (Strang splitting); §5.2 (observed reductions attributed to tolerances and coefficients).
+- [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §4.2, Table 12.

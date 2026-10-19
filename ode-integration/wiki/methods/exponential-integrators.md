@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Exponential integrators and φ-functions"
-description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, the exponential structure of multirate infinitesimal methods with an exact fast solve, the exponential reformulation of stiff kinetic relaxation, and Magnus and commutator-free quasi-Magnus methods for linear non-autonomous problems."
+description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, the exponential structure of multirate infinitesimal methods with an exact fast solve, the exponential reformulation of stiff kinetic relaxation, the exact exponential map of linear structural dynamics, and Magnus and commutator-free quasi-Magnus methods."
 status: established
-aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential Rosenbrock, EPIRK, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule]
+aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential Rosenbrock, EPIRK, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
 tags: [exponential, stiff, kinetic, asymptotic-preserving, multirate]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Exponential integrators and φ-functions
@@ -26,7 +26,7 @@ Runge–Kutta, exponential Rosenbrock and EPIRK methods are named by Chinomona &
 alongside IMEX additive Runge–Kutta methods and general linear methods, as the main
 families for problems that couple stiff and non-stiff processes
 ([Chinomona & Reynolds 2021](/sources/chinomona-2021.md), §1). The ingested sources
-develop three uses of the idea, below; none of them develops exponential Runge–Kutta
+develop several uses of the idea, below; none of them develops exponential Runge–Kutta
 order theory itself.
 
 ## Convention for φ-functions
@@ -125,6 +125,32 @@ and rotation–kick splittings integrate the quadratic part of a Hamiltonian exa
 the time-splitting spectral method stay asymptotic-preserving in time for semiclassical
 observables.
 
+## Exact exponential map of linear structural dynamics
+
+For linear second-order systems $M\ddot u+C\dot u+Ku=f(t)$ (page-local $u$, $C$, $K$,
+$f$), [Song & Eisenträger (2022)](/sources/song-2022.md) (§2.1, Eqs. (12)–(21)) write the
+state-space form $x'=\mathcal Ax+F$ in step-local time, with $x=[h\dot u;u]$ and
+$\mathcal A$ containing the step (page-local; see
+[Padé time integration](/methods/pade-time-integration.md)). If the load is a polynomial
+of degree $p_{\mathrm f}$ in each step, expanded about the midpoint with coefficients
+$\mathcal F_k$, the one-step map is exact:
+
+$$x_{n+1}=e^{\mathcal A}x_n+\sum_{k=0}^{p_{\mathrm f}}\mathcal B_k\mathcal F_k,\qquad
+\mathcal B_k=\int_0^1(\theta-\tfrac12)^ke^{(1-\theta)\mathcal A}\,d\theta,$$
+
+with $\mathcal B_0=\mathcal A^{-1}(e^{\mathcal A}-I)$ and
+$\mathcal B_k=\mathcal A^{-1}\big(k\mathcal B_{k-1}+(-\tfrac12)^k(e^{\mathcal A}-(-1)^kI)\big)$
+(page-local $\mathcal B_k$, $\mathcal F_k$, $p_{\mathrm f}$). In registry normalisation
+$\mathcal B_0=\phi_1(\mathcal A)$, and each $\mathcal B_k$ is a combination of
+$\phi_1,\dots,\phi_{k+1}$ because the midpoint-centred monomials are combinations of
+$\theta^j$ *(compiler check, not in the source)*. The authors trace the approach to the
+precise integration method of Zhong and Williams and its successors (Fung, Wang and Au)
+and to an exponential Runge–Kutta method of Luan (§2.1), as recalled. They do not
+evaluate the exponential: with a consistent mass matrix $M^{-1}K$ and $e^{\mathcal A}$
+are full, so they replace $e^{\mathcal A}$ by its diagonal Padé approximant, an implicit
+rational scheme, rather than by a Taylor polynomial, which would give an explicit,
+conditionally stable scheme (§2.1–2.2).
+
 ## Qualifications
 
 - Jin's claim that explicit Runge–Kutta methods on the exponential reformulation are "of
@@ -138,3 +164,4 @@ observables.
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §1 (ExpRK, ExpRB, EPIRK as method families), §3, Eqs. 3.1–3.3 (exact fast solve, φ-functions, stability function; unnormalised convention).
 - [Jin (2022)](/sources/jin-2022.md) — §5.2, Eqs. 5.6–5.10 (exponential reformulation of kinetic relaxation, Dimarco & Pareschi 2011, Li & Pareschi 2014), §6.1 (Hu & Shu 2019), §3.1–3.3 (exact sub-flows in time splitting).
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §6.3, Eqs. 6.32–6.35 (Magnus and CFQM integrators), §1.6, §4.2, §5 (exact linear flows in splittings).
+- [Song & Eisenträger (2022)](/sources/song-2022.md) — §2.1, Eqs. (12)–(21) (exact exponential map of linear structural dynamics with polynomial load; precise integration method as recalled), §2.2 (rational instead of polynomial approximation).

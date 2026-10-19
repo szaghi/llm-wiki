@@ -5,7 +5,7 @@ description: "Internal stability is the stability of perturbations introduced at
 status: established
 aliases: [internal stability polynomials, internal amplification factor, maximum internal amplification factor, round-off propagation within a step, stage-wise stability]
 tags: [stability, explicit, runge-kutta, round-off]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T23:00:00Z
 ---
 
 # Internal stability of explicit Runge–Kutta methods
@@ -126,6 +126,29 @@ constant $1+Cs^2u$ independent of $h$, against $1+Cs^2uh$ for their order-preser
 scheme (§3.6). See
 [mixed-precision Runge–Kutta methods](/methods/mixed-precision-runge-kutta.md).
 
+## Stage values on low-dissipation semi-discretizations
+
+[Kemm (2024)](/sources/kemm-2024.md) raises a different, informal stage-stability
+argument. For low-Mach finite-volume schemes the semi-discrete spectrum reaches the
+imaginary axis and forward Euler is unstable. Every explicit Runge–Kutta step begins with
+a forward-Euler substep (the second stage, $Y_2=y_n+ha_{21}f(y_n)$, in this bundle's
+indexing), and Kemm argues that this "unstable first stage value" spoils the step on
+nonlinear (limited) problems even when the stability polynomial covers the spectrum,
+whereas Adams–Bashforth methods, which have no internal stages, are not affected (§1,
+§3.1, §5). His evidence is numerical: on a perturbed uniform flow at Mach $1/20$ with a
+second-order limited scheme, Heun's RK3 shows no improvement over RK2 while AB3 keeps the
+perturbation from growing (Fig. 4); with first order in space, i.e. without the limiter,
+RK3 behaves as linear theory predicts (Fig. 5); on Richtmyer–Meshkov flow RK3 shows
+instabilities in the extremely-low-Mach region where AB3 does not (Fig. 12). He proposes
+that future general linear and predictor–corrector methods be designed with stable stage
+values (§5).
+
+The argument is not the internal-stability measure of this page: no internal stability
+polynomials or amplification factors are computed, and the sources above find internal
+amplification negligible for methods with few stages, so the mechanism Kemm proposes for
+three-stage methods remains a hypothesis of that source *(compiler remark)*. See also
+[linear multistep methods](/methods/linear-multistep-method.md).
+
 ## Qualifications
 
 - **Definitions differ.** Doehring et al. (2024) take the maximum of
@@ -155,3 +178,4 @@ scheme (§3.6). See
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §2 (Eq. 13, internal stability by construction).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §3.4 (stage-value internal stability function, contrast).
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — internal stability not analysed for 16-stage methods.
+- [Kemm (2024)](/sources/kemm-2024.md) — §1, §3.1, §4.1, §4.4, §5, Figs. 4–5, 12 ("unstable first stage value" thesis).

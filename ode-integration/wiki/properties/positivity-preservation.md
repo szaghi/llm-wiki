@@ -5,7 +5,7 @@ description: "A time integrator is positivity preserving if nonnegative data giv
 status: established
 aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Positivity preservation in time integration
@@ -145,6 +145,25 @@ of Hu, Shu & Zhang having stopped at order 2 (§3.4). Hu & Shu (2019) give a
 second-order AP and positivity-preserving exponential Runge–Kutta method, as recalled
 by Jin (2022, §6.1).
 
+## Positivity failures of IMEX schemes in applications
+
+Outside the structural setting above, the sources report positivity as the practical limit
+of higher-order IMEX schemes:
+
+- In gray radiation hydrodynamics, most third-order IMEX pairs that
+  [Southworth et al. (2024)](/sources/southworth-2024.md) tried were unstable at the
+  hydrodynamic CFL step; they attribute this to higher-order methods producing nonphysical
+  negative temperatures at shocks, which their code clips, and report only the one robust
+  third-order pair, I-IMEX(3,4,3) (§5.1). They conjecture that pairs without explicit
+  evaluations of the implicit operator are less prone to such negativities, and choose all
+  their pairs that way.
+- [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) state that their second-order
+  semi-implicit MHD scheme "is not naturally positivity preserving" (§4.1), although it
+  performs well at small densities on their accuracy test.
+
+See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md) and
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
+
 ## Qualifications
 
 - The multiderivative route needs $\dot f=f'f$ and a structural condition on it; the
@@ -184,3 +203,5 @@ by Jin (2022, §6.1).
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.6, §6.4, §9.2.1 (Bolley–Crouzeix barrier, doubled-system splitting, Eqs. 9.14–9.15).
 - [Jin (2022)](/sources/jin-2022.md) — §5.2 (Eqs. 5.7–5.8, exponential reformulation and positivity), §6.1 (Hu & Shu 2019).
 - [Dawes (2021)](/sources/dawes-2021.md) — §5 (Eqs. 13–17), §6.1–6.3 (Eqs. 18–30, Table 3, Figs. 1–24), §7 (Fig. 25), App. D.
+- [Southworth et al. (2024)](/sources/southworth-2024.md) — §5.1 (negative temperatures, choice of pairs).
+- [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §4.1 (no positivity guarantee); arXiv v1.

@@ -128,14 +128,16 @@ pre-publication entry. [47] prints the volume "PP" (early access) and [51] print
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [ARKODE](/software/arkode.md)
+* [Backward differentiation formulas (BDF)](/methods/backward-differentiation-formula.md)
 * [Brusselator](/benchmarks/brusselator.md)
 * [CVODE](/software/cvode.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Differential-algebraic equations and their Runge–Kutta treatment](/definitions/differential-algebraic-equation.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
+* [Linear multistep methods](/methods/linear-multistep-method.md)
 * [Multirate infinitesimal methods (MIS, MRI-GARK)](/methods/multirate-infinitesimal-methods.md)
 * [PETSc TS](/software/petsc-ts.md)
 * [Solving the stage equations of implicit Runge–Kutta methods](/methods/implicit-stage-solvers.md)

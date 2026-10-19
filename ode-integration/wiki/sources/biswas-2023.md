@@ -248,7 +248,7 @@ ref. [10] is printed as "Wiley Online Library". No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [Burgers equation](/benchmarks/burgers-equation.md)

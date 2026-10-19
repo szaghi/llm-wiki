@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with a full Butcher matrix built on Gauss, R
 status: established
 aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods]
 tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T01:00:00Z
 ---
 
 # Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)
@@ -21,8 +21,12 @@ a different $A$ and is "not quite standard collocation" (Farrell et al. 2021, §
 Their appeal is order up to $2s$ together with stage order $s$, which avoids the
 [order reduction](/definitions/order-reduction.md) of low-stage-order methods, and
 A-stability at every order, which linear multistep methods cannot reach beyond 2
-([Southworth et al. 2022](/sources/southworth-2022.md), §2.1). Their obstacle is
-the coupled stage system.
+([Southworth et al. 2022](/sources/southworth-2022.md), §2.1). The same two
+arguments, the stage-order limit on index-2 [DAEs](/definitions/differential-algebraic-equation.md)
+and the second Dahlquist barrier for multistep methods, motivate their use for
+incompressible flow and MHD ([Abu-Labdeh et al. 2023](/sources/abulabdeh-2023.md), §2,
+§3.3) and for fluid–structure interaction ([Taddei et al. 2026](/sources/taddei-2026.md),
+§1.1). Their obstacle is the coupled stage system.
 
 ## Family properties
 
@@ -68,6 +72,21 @@ Further properties recalled by the sources:
 - Gauss methods attain the [weak-stage-order barrier](/results/weak-stage-order-barriers.md)
   for general Runge–Kutta methods sharply, with weak stage order $s$
   ([Biswas et al. 2024](/sources/biswas-2024.md), Ex. 7.4).
+- For Radau IIA, $A^{-1}$ has $\lfloor s/2\rfloor$ complex-conjugate eigenvalue pairs
+  plus one real eigenvalue for odd $s$, so a diagonalization of $A^{-1}$ leaves
+  $\lceil s/2\rceil$ independent blocks ([Munch et al. 2024](/sources/munch-2024.md),
+  §2, recalling Butcher).
+- *(Compiler remark, not in the sources.)* For Gauss methods the eigenvalues of $A^{-1}$
+  are the roots of the Padé denominator, $3\pm\sqrt3\,\mathrm i$ for $s=2$ and the values
+  tabulated for $s\le4$ by [Song & Eisenträger (2022)](/sources/song-2022.md) (Eqs. (71),
+  (76), (82)), who factor the $(m,m)$ Padé approximant in their
+  [Padé time integration](/methods/pade-time-integration.md) of linear structural dynamics
+  without mentioning Gauss methods; on linear constant-coefficient problems that scheme's
+  homogeneous propagator is that of $m$-stage Gauss.
+- Radau IIA is [stiffly accurate](/properties/stiff-accuracy.md), $a_{sj}=b_j$ and
+  $c_s=1$, so $y_{n+1}=Y_s$ and the update step can be dropped; with invertible $A$ the
+  stage derivatives of a kinematic variable can be eliminated through $A^{-1}\otimes I$
+  (Taddei et al. 2026, §3.1, Eqs. (15), (18)).
 - Degree-$p$ discontinuous Galerkin in time with $(p+1)$-point Radau quadrature is
   equivalent to Radau IIA collocation, so solvers for these methods also solve DG in
   time on fixed slabs (Southworth et al. 2022, Remark 1).
@@ -102,6 +121,28 @@ Two strategies appear:
   linearizations satisfy $\langle hM^{-1}L_1w,\,hM^{-1}L_2w\rangle\ge0$ for all $w$
   (Thm. 2). The tight bounds range from
   1.00 to 3.44 for Gauss, Radau IIA and Lobatto IIIC with 2–5 stages (Table 1).
+
+For saddle-point DAEs the system keeps its block structure: Abu-Labdeh et al. (2023,
+§3.1, Eq. (3)) write the Taylor–Hood Stokes stage system as
+$I_s\otimes\begin{bmatrix}M&0\\0&0\end{bmatrix}+h\,A\otimes\begin{bmatrix}K&B\\B^\top&0\end{bmatrix}$
+(page-local stiffness $K$ and discrete gradient $B$), and Munch et al. (2024, §2, Eq. (1))
+multiply the heat-equation system by $A^{-1}\otimes I$ to get
+$A^{-1}\otimes M+h\,I_s\otimes K$. Three further strategies appear:
+
+- **Monolithic multigrid with stage-coupled Vanka patches** (Abu-Labdeh et al. 2023,
+  §4): one geometric V-cycle on the whole stage system, interpolating each stage
+  separately ($I_s\otimes P$, page-local $P$) and relaxing on vertex patches that contain
+  all stage copies, so that no Schur complement, which "may depend on properties of the
+  specific IRK scheme", has to be approximated.
+- **Stage-parallel diagonalization** (Munch et al. 2024, §2–6): either Butcher's exact
+  complex diagonalization of $A^{-1}$ with $\lceil s/2\rceil$ complex blocks, or the
+  Axelsson–Neytcheva preconditioner that replaces $A^{-1}$ by the lower-triangular factor
+  of its LU decomposition, whose real eigendecomposition gives $s$ real blocks
+  $\tilde\lambda_iM+hK$ ($\tilde\lambda_i$ page-local); the blocks are solved concurrently on
+  process subgroups.
+- **All-stage Newton with static condensation** (Taddei et al. 2026, §3.2): the coupled
+  nonlinear stage system of a fluid–structure problem is condensed onto the interface
+  unknowns, with no stage decoupling.
 
 Details, including the Newton-like approximations of the stage Jacobian, are on
 [solving the stage equations](/methods/implicit-stage-solvers.md).
@@ -142,7 +183,32 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
 - **Navier–Stokes cylinder benchmark** (Re 100): two-stage Radau IIA with
   Scott–Vogelius elements matches reference drag and lift with about 0.57 of the
   degrees of freedom and twice the step of a Crank–Nicolson reference (Farrell et
-  al. 2021, §4.4.1).
+  al. 2021, §4.4.1). With Taylor–Hood elements and $h=1/400$, two- and three-stage
+  Radau IIA and Lobatto IIIC give maximum drag 2.95 and lift 0.48 at every refinement
+  level (up to 46.6M unknowns on 640 cores), while three-stage Gauss gives "highly
+  oscillatory" drag and lift even with a tighter tolerance; Abu-Labdeh et al. (2023,
+  §5.2, Table 6, Fig. 4) hypothesize that the lack of L-stability leaves stiff modes
+  with $R(z)\approx-1$ undamped. See [flow past a cylinder](/benchmarks/flow-past-cylinder.md).
+- **Stokes, Gauss against Radau and Lobatto** (Abu-Labdeh et al. 2023, §5.1,
+  Tables 1–2; time step halved with each mesh refinement): two-stage velocity errors
+  at the finest level $5.6\times10^{-4}$ (Gauss), $5.0\times10^{-8}$ (Radau IIA),
+  $6.3\times10^{-5}$ (Lobatto IIIC); velocity rates 2.5, 3.0–3.1, 2.0; Gauss pressure
+  rates near 1 or negative. The authors do not explain the Gauss errors.
+- **Against L-stable DIRKs** (Abu-Labdeh et al. 2023, §5.1, Table 4): the two-stage
+  Pareschi–Russo and three-stage Alexander SDIRKs "outperform" their stage-order-1
+  guarantees, but three-stage Alexander needs a finer level to match two-stage Radau IIA,
+  which gets there in about 60 % of the wall time on one eighth of the cores.
+- **Fluid–structure interaction** (Taddei et al. 2026, §5): Radau IIA with $s=2,3,4$
+  shows fitted rates 2.1, 2.4 and 3.5 against the formal 3, 5, 7, which the authors
+  attribute to the DAE structure and to the spatial, ALE and interface-coupling errors
+  (§5.1.1, Table 1); on the Turek–Hron FSI3 benchmark two-stage Radau IIA keeps a bounded
+  total energy over long times where BDF2 with undamped [Newmark](/methods/newmark-method.md)
+  is unstable, and drag and lift statistics agree across $s=2,3,4$ and $h=0.01,0.02$
+  (§5.2.1, Table 2). No timings are reported.
+- **Stage parallelism** (Munch et al. 2024, §4–7): on a 3D heat equation, solving the
+  decoupled blocks concurrently pays off only near the strong-scaling limit, below
+  about $10^4$ unknowns per process, with speedup bounded by $s$; far from it the
+  stage-parallel variant loses about 13–20 %.
 
 ## Qualifications
 
@@ -156,6 +222,19 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
   classification, which their own two-stage tableau illustrates (compiler check
   above), so the observed order 3 is not its stage order. The same paragraph says
   "Gauss-Lobatto" for the Gauss–Legendre method of its Fig. 2a.
+- Abu-Labdeh et al. (2023, §2, §5) state that Gauss, Radau IIA and Lobatto IIIC are all
+  "fully implicit schemes, with stage order equal to the number of stages", and that
+  fully implicit stage order "can be as large as the number of stages". For Lobatto IIIC
+  this is the same printed claim as Farrell et al.'s, against the standard value $s-1$,
+  which the two-stage tableau above settles (compiler check). Both sources print the
+  higher value; no ingested source states $s-1$, which rests on the compiler check. They
+  also define stage order as $\min\{q,p\}$ for a stage error $\mathcal O(h^{q+1})$, a
+  variant of the usual definition through $C(q)$ (§2).
+- Abu-Labdeh et al. (2023) print Table 2 rates that differ slightly from their Table 1
+  data for three-stage Gauss (velocity 2.4 against a recomputed 2.31; reader's check on the
+  source). Taddei et al. (2026) print $h=0.20,0.10,0.05$ in the caption of Table 1, whose
+  header and text use $0.025,0.05,0.10$; at $h=0.10$ their four-stage error exceeds the
+  three-stage one, against their text.
 - Southworth et al. (2022) state in the abstract that fourth-order Gauss needs
   "roughly half" the preconditioner applications of SDIRK; the ratios are 0.42–0.61,
   and they compare equal order at equal step, not equal accuracy. Their Table 2
@@ -171,3 +250,7 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §2.1–2.2, Assumptions 1–2, Remark 1; §3–5 Cor. 1, Thm. 2, Table 1; §7 Tables 2–8.
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1; Thms. 5.1–5.2, Remark 5.6.
 - [Biswas et al. (2024)](/sources/biswas-2024.md) — Ex. 7.4.
+- [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §2; §3.1 Eq. (3), §3.3; §4; §5.1–5.2 Tables 1–6, Fig. 4.
+- [Munch et al. (2024)](/sources/munch-2024.md) — §2 Eqs. (1)–(3); §4–7.
+- [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1; §3.1 Eqs. (14)–(18); §3.2; §5.1.1 Table 1; §5.2.1 Table 2, Figs. 9–11.
+- [Song & Eisenträger (2022)](/sources/song-2022.md) — Eqs. (71), (76), (82) (roots of the Padé denominators).

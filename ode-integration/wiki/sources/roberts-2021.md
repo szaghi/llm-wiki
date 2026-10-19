@@ -105,7 +105,7 @@ No numerical inconsistency was found between Table 5.1, Table 6.1 and the text.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [A-stability barriers for decoupled and internally consistent multirate methods](/results/multirate-a-stability-barriers.md)

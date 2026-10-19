@@ -24,7 +24,9 @@ page that needs both meanings renames one locally and says so: $\gamma$
 (tree density; Rosenbrock diagonal coefficient; composition weights
 $\gamma_j$; relaxation parameter $\gamma_n$), $\alpha$ (Shu–Osher coefficients; Rosenbrock coefficients;
 the angle of A($\alpha$)-stability), $\eta$ (the entropy or invariant
-$\eta(y)$; the integer argument of the simplifying assumption $C(\eta)$). $M$ is reserved for the mass matrix,
+$\eta(y)$; the integer argument of the simplifying assumption $C(\eta)$), $k$ (number of steps of a multistep method; the exponent order
+$\min(p,\hat p)+1$ of a PID controller), $\beta$ (PID exponents $\beta_1,\beta_2,\beta_3$;
+multistep coefficients $\beta_j$; Shu–Osher $\beta_{ij}$). $M$ is reserved for the mass matrix,
 never a node count or a multirate ratio.
 
 ## 1. Problem and time grid
@@ -134,3 +136,14 @@ never a node count or a multirate ratio.
 | $\eta(y)$ | a convex entropy, energy or other invariant functional of the solution | $\eta'(y)$ its gradient; the page states which |
 | $\gamma_n$ | relaxation parameter of step $n$ | relaxed solution $y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$ at time $t_n+\gamma_nh$ (incremental-direction technique: at $t_n+h$); distinct from the Rosenbrock $\gamma$ |
 
+
+## 9. Linear multistep methods
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $k$ | number of steps of a linear multistep method | the BDF$k$ method has order $k$; distinct from the iteration count $K$ |
+| $\alpha_j$, $\beta_j$ | coefficients, $\sum_{j=0}^k\alpha_jy_{n+j}=h\sum_{j=0}^k\beta_jf(t_{n+j},y_{n+j})$ | single-index family, distinct from the Shu–Osher $\alpha_{ij}$, $\beta_{ij}$ |
+| $\varrho(\zeta)$, $\sigma(\zeta)$ | first and second generating polynomials, $\varrho(\zeta)=\sum_j\alpha_j\zeta^j$, $\sigma(\zeta)=\sum_j\beta_j\zeta^j$ | $\sigma(\zeta)$ takes a complex argument, distinct from the tree symmetry $\sigma(\tau)$ |
+| $r_n=h_n/h_{n-1}$ | step-size ratio of a variable-step method | |
+| $G$ | symmetric positive definite matrix of a G-norm, $\lVert Y\rVert_G^2=\sum_{i,j}g_{ij}\langle y_i,y_j\rangle$ | G-stability |
+| $\mu_1,\dots,\mu_k$ | Nevanlinna–Odeh multipliers: the scheme is tested with $y_{n+k}-\sum_j\mu_jy_{n+k-j}$ | sources' $\eta_j$ are translated ($\eta$ is the registry entropy) |

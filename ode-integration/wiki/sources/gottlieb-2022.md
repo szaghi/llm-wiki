@@ -134,12 +134,14 @@ printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [Asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md)
+* [Broadwell model](/benchmarks/broadwell-model.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Entropy stability and conservation of the fully discrete scheme](/properties/entropy-stability.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
+* [Linear hyperbolic relaxation system](/benchmarks/hyperbolic-relaxation-system.md)
 * [Multiderivative Runge–Kutta methods and the backward derivative condition](/methods/multiderivative-runge-kutta.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)
