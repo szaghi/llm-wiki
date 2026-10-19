@@ -66,6 +66,12 @@ generated files that are git-ignored:
 Everything else under `docs/` is written by hand and committed: the guide, this tutorial, the cookbook, the
 reference, and `docs/bundles/index.md` (the bundle cards and the bundle map).
 
+`make docs` builds the site in parts (`docs/scripts/build.mjs`): one part for the documentation and the bundle list,
+then one part per bundle, each a separate VitePress build with the same base, merged into `docs/.vitepress/dist`. One
+build of every page needs memory in proportion to the whole corpus, which outgrew the 16 GB of a CI runner; a part
+needs memory in proportion to one bundle. A link that leaves a part loads its target in full, and the site search of a
+bundle's pages covers that bundle. `make docs-dev` still serves the whole site as one.
+
 The math is rendered with KaTeX at build time. The wiki's math law is KaTeX syntax, so the build doubles as a check:
 a formula KaTeX cannot parse is shown in red on its page. VitePress also fails the build on a dead link.
 

@@ -528,3 +528,28 @@ add three files: the Buvoli 2023 main paper and the two papers missing
 from the start (Vermeire 2021, Izgin 2022). Li et al. 2022 was dropped and
 its file is removed by the human. The archive then holds 119 files for 118
 sources (Buvoli 2023 is one source in two files).
+
+## D28 — The documentation site is built in parts (2026-10-20)
+
+**Context:** the VitePress build of the whole site, one Vite bundle of every
+page, ran out of memory on the 16 GB GitHub runner once `ode-integration`
+landed (peak 16.1 GB). Rendering KaTeX as HTML only, keeping math out of the
+search index and a 14 GB heap cap bought three chunks; the peak still grew by
+about 0.9 GB per 20 ingested sources (14.2 GB with chunk 4).
+
+**Decision (user, option b of three):** build the site in parts:
+- one VitePress build for the documentation and the bundle list;
+- one build per bundle, with the same base;
+- the parts merged into one output (`docs/scripts/build.mjs`; the scope is the
+  `DOCS_SCOPE` variable read by `docs/.vitepress/config.mts`).
+
+The theme loads a page in full when a link leaves its part, because each
+part's client router knows only its own pages. The rejected options were
+serving the bibliographies as static HTML (a partial relief) and a paid larger
+runner.
+
+**Consequences:** peak memory follows the largest bundle (4.1 GB in all,
+October 2026), not the corpus, and the build takes about two and a half
+minutes. Site search is per part: a bundle's search covers that bundle, and
+the documentation's search no longer finds wiki pages. The dev server still
+builds the whole site as one.

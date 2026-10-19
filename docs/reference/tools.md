@@ -201,7 +201,7 @@ All of these are git-ignored. Overlaps are matched as follows:
 | `make fmt` | `ruff check --fix` and `ruff format` (rewrites files) |
 | `make check` | `lint_okf.py` on every bundle, plus `bundles.py --check` |
 | `make registry` | `bundles.py --write` |
-| `make docs` | `site_sync.py`, then the VitePress build |
+| `make docs` | `site_sync.py`, then `docs/scripts/build.mjs`: one VitePress build for the documentation and one per bundle, merged into `docs/.vitepress/dist` |
 | `make docs-dev` | `site_sync.py`, then the VitePress dev server |
 | `make clean` | removes build artefacts and caches |
 

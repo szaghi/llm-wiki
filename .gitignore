@@ -17,6 +17,7 @@ coverage.xml
 docs/node_modules/
 docs/.vitepress/cache/
 docs/.vitepress/dist/
+docs/.vitepress/parts/
 docs/.vitepress/generated/
 docs/public/data/
 docs/public/bundles/

@@ -55,13 +55,31 @@ const bundles = [
   },
 ]
 
+// Build scope (scripts/build.mjs). Bundling every page in one Vite build needs a heap that grows with the
+// whole corpus, so the production site is built in parts that share the base and are merged afterwards:
+// DOCS_SCOPE=main builds the documentation and the bundle list, DOCS_SCOPE=<slug> builds one bundle.
+// Unset, the whole site is one build (docs:dev, or a small corpus).
+const scope = process.env.DOCS_SCOPE
+const slugs: string[] = generated.nav.map((n: { link: string }) => n.link.split('/')[2])
+const scopeOf = (path: string) => path.match(/^\/?bundles\/([^/]+)\//)?.[1] ?? 'main'
+const srcExclude =
+  scope === undefined
+    ? []
+    : scope === 'main'
+      ? ['bundles/*/**']
+      : ['index.md', 'guide/**', 'manual/**', 'reference/**', 'project/**', 'bundles/index.md',
+         ...slugs.filter((s) => s !== scope).map((s) => `bundles/${s}/**`)]
+
 export default withMermaid({
   title: 'llm-wiki',
   description: 'LLM-compiled scientific knowledge bundles in the Open Knowledge Format',
   base: '/llm-wiki/',
   cleanUrls: true,
-  // the citation records are published as files (public/bundles/<slug>/bibliography.bib), which the checker does not see
-  ignoreDeadLinks: [/\.bib$/],
+  srcExclude,
+  outDir: process.env.DOCS_OUT || '.vitepress/dist',
+  // the citation records are published as files (public/bundles/<slug>/bibliography.bib), which the checker does
+  // not see; in a scoped build, the pages of the other parts are not in the build either
+  ignoreDeadLinks: [/\.bib$/, ...(scope === undefined ? [] : [(url: string) => scopeOf(url) !== scope])],
   lastUpdated: true,
   markdown: {
     // KaTeX at build time: the wiki's math law is KaTeX syntax ($...$, $$...$$), so the site doubles as its check.
@@ -82,6 +100,8 @@ export default withMermaid({
     },
   },
   themeConfig: {
+    // read by the theme: links that leave the part being shown load the target page in full
+    buildScope: scope ?? 'all',
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Start here', link: '/guide/', activeMatch: '^/guide/' },
@@ -134,6 +154,8 @@ export default withMermaid({
   },
   mermaid: {},
   vite: {
+    // the main part copies public/ (graph data, bibliographies); the bundle parts do not repeat it
+    ...(scope !== undefined && scope !== 'main' ? { publicDir: false } : {}),
     // es2022 needs no syntax lowering of what mermaid emits (see FLAP's docs config)
     build: {
       target: 'es2022',
