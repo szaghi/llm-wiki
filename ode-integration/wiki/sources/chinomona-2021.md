@@ -134,7 +134,7 @@ has an EuDML URL and no DOI. No printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [A-stability barriers for decoupled and internally consistent multirate methods](/results/multirate-a-stability-barriers.md)
 * [ARKODE](/software/arkode.md)

@@ -3,9 +3,9 @@ type: Definition
 title: "Stability function, stability polynomial and stability region"
 description: "The stability function R(z) is the factor by which a one-step method multiplies the solution of y' = λy per step; it is rational for implicit methods and a polynomial P(z) for explicit ones, its order and degree structure constrain the method, and its region of absolute stability decides the linearly stable step sizes for method-of-lines systems."
 status: established
-aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region]
+aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -17,7 +17,11 @@ $y_{n+1}=R(z)\,y_n$, $z=h\lambda$, with **stability function**
 $$R(z)=1+z\,b^\top(I-zA)^{-1}\mathbf 1=\frac{\det(I-zA+z\mathbf 1b^\top)}{\det(I-zA)}$$
 
 ([Biswas et al. (2023)](/sources/biswas-2023.md), Eq. (9);
-[Biswas et al. (2024)](/sources/biswas-2024.md), Eq. (5)). For an explicit
+[Biswas et al. (2024)](/sources/biswas-2024.md), Eq. (5);
+[Vermeire 2023](/sources/vermeire-2023.md), Eqs. (9)–(10)). For an explicit method the
+denominator is 1 and $R(z)=\det(I-zA+z\mathbf 1b^\top)$, the form
+[Belardo et al. (2026)](/sources/belardo-2026.md) use to scan families of embedded
+weights (§3). For an explicit
 method $A$ is nilpotent and $R$ is the **stability polynomial**
 
 $$P(z)=1+\sum_{j=1}^{s}\theta_jz^j,\qquad \theta_j=b^\top A^{j-1}\mathbf 1,$$
@@ -54,6 +58,55 @@ the disk $\lvert z+r\rvert\le r$ in $\mathcal S$) and the radius of absolute
 monotonicity (largest $r$ such that $R$ and all its derivatives are
 nonnegative on $(-r,0]$). The last one is the linear counterpart of the SSP
 coefficient; see [SSP methods](/methods/strong-stability-preserving-runge-kutta.md).
+
+**Real stability interval as a design indicator.** The real-axis inclusion (page-local
+$\ell$: the largest $\ell$ with $\lvert R\rvert\le1$ on $[-\ell,0]$) is the usual
+one-number summary for explicit methods. Its values for the classical $s$-stage
+methods of order $s$ are 2, 2, 2.5127 and 2.7853 for $s=1,\dots,4$
+([Bassenne et al. 2021](/sources/bassenne-2021.md), Table 1, which prints the rounded
+values 2.00, 2.00, 2.50, 2.79; the four-digit values are the reader's computation of that
+source). Belardo et al. (2026, §3–4) use it to choose among embedded weight
+vectors that share $(A,c)$ with a main method: the order-4 embedding of
+Dormand–Prince 5(4) is one member of a one-parameter family, and another member has
+$\ell\approx5.8$ against 4.4 for the standard one (reader's computation from the
+printed weights). They warn that $\ell$ alone does not decide the choice: for
+Bogacki–Shampine 3(2) on a stiff scalar problem the embedding that minimizes the
+number of accepted steps has a *smaller* $\ell$ (2.41) than the standard one (3.15)
+(Tables 2–3); see [embedded pairs](/methods/embedded-runge-kutta-pair.md).
+[Faleichik & Moisa (2026)](/sources/faleichik-2026.md) (§1, §3) replace the stability
+interval by the **monotonicity interval**, the longest $(-\varrho,0]$ on which $P>0$
+and $P'\ge0$ (page-local $\varrho$), as for the exponential, and measure accuracy by
+the error constant $(1-P'''(0))/6$ of a second-order polynomial.
+
+## Stability polynomials of stabilized methods
+
+For many-stage explicit methods the polynomial is chosen from an orthogonal family
+whose real stability interval grows like $s^2$ (see
+[stabilized explicit Runge–Kutta methods](/methods/stabilized-explicit-runge-kutta.md)).
+Runge–Kutta–Chebyshev methods have
+
+$$P(z)=\mathsf a_s+\mathsf b_sT_s(\omega_0+\omega_1z),\qquad \ell=\frac{2\omega_0}{\omega_1},$$
+
+with $T_s$ the Chebyshev polynomial of the first kind, $\omega_0=1+\varepsilon_{\mathrm d}/s^2$ a
+shift with damping parameter $\varepsilon_{\mathrm d}$, and $\mathsf a_s$, $\mathsf b_s$, $\omega_1$
+fixed by the order (page-local symbols); $\ell\ge(2-\frac43\varepsilon_{\mathrm d})s^2$ at
+first order and $\ell\ge\frac23(1-\frac2{15}\varepsilon_{\mathrm d})(s^2-1)$ at second
+([Croci & Rosilho de Souza 2022](/sources/croci-2022.md), §2.2, Eqs. (11)–(12)).
+Runge–Kutta–Legendre methods replace $T_s$ by the Legendre polynomial with
+$\omega_0=1$ and no damping ([Dawes 2021](/sources/dawes-2021.md), §3, Eq. (7)).
+The stage polynomials of the recurrence are the internal stability polynomials
+(Croci & Rosilho de Souza 2022, Lemma 3.1), which govern the propagation of stage
+perturbations; see [internal stability](/definitions/internal-stability.md). For a
+linear system $y'=Ly$ one step is the matrix $P(hL)$, and Dawes (2021, §5–7) reads
+monotonicity and positivity off the signs of its entries, which depend on the
+boundary closure in $L$ and not only on $P$; see
+[positivity preservation](/properties/positivity-preservation.md).
+
+Polynomials of degree above 100 for hyperbolic spectra are parametrized by the roots
+$\tilde r_j$ of $(P-1)/z$, $P(z)=1+z\prod_j(1-z/\tilde r_j)$; since $P(\tilde r_j)=1$,
+these roots lie on the boundary of $\mathcal S$
+([Doehring et al. 2024](/sources/doehring-2024.md), §2.2, Eqs. (2.10)–(2.11));
+see [optimal stability polynomials](/methods/optimal-stability-polynomial.md).
 
 ## Structure of rational stability functions
 
@@ -115,6 +168,23 @@ tableau (§3); the unconditional energy law of diagonal Padé schemes is on
   polynomial inequalities of degree $p(p+1)$. See
   [deferred correction](/methods/deferred-correction.md) and
   [ADER](/methods/ader-time-integration.md).
+* **TASE operators.** Preconditioning the right-hand side of an explicit
+  Runge–Kutta method by a time-accurate stabilizing operator makes the stability
+  function rational, $R(z)=N(z)/D(z)$ with
+  $D(z)=\prod_{i=0}^{p_{\mathrm T}-1}(2^i-\alpha z)^s$ for a TASE operator of order
+  $p_{\mathrm T}$ with parameter $\alpha>0$ (page-local); the poles $2^i/\alpha$ are
+  positive, so $R$ is analytic in the left half-plane, and A-stability reduces to a
+  bound on the imaginary axis, checked numerically
+  ([Bassenne et al. 2021](/sources/bassenne-2021.md), §3.2, Eqs. (24)–(27), Fig. 4).
+  Equivalently $R$ is the explicit method's polynomial composed with the TASE map of
+  $z$ (reader's remark on that source). See [TASE operators](/methods/tase-operators.md)
+  and [A-stability](/properties/a-stability.md).
+* **Partitioned methods.** A partitioned Runge–Kutta method has a matrix-valued
+  stability function, and absolute stability of each member for its own eigenvalues
+  does not imply stability of the coupled method; for paired explicit families it is
+  observed to suffice, and checked by the spectral radius of the fully discrete
+  matrix ([Doehring et al. 2025](/sources/doehring-2025.md), §2.2, Eq. (2.12), §5.1;
+  [paired explicit Runge–Kutta methods](/methods/paired-explicit-runge-kutta.md)).
 * **Multirate, IMEX and splitting methods** need several scaled eigenvalues or
   a matrix test problem; see
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
@@ -129,7 +199,15 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 * Notation varies: Fekete et al. (2022) write $\psi(z)$, Hedayati Nasab et al.
   (2021) $P_{s,q}(z)$ with coefficients $\gamma_j$ and order $q$, Han Veiga et
   al. (2021) $\phi(z)$, Sun et al. (2022) $Q(Z)^{-1}P(Z)$ with $s$ the
-  polynomial degree rather than the stage count.
+  polynomial degree rather than the stage count; Dawes (2021) $E_s$ ("the
+  exponential"), Bassenne et al. (2021) $\sigma(z)$, Croci & Rosilho de Souza (2022)
+  $R_s(z)$, Faleichik & Moisa (2026) $R_s(x)$ on the real axis, Belardo et al. (2026)
+  $\rho$ for the real stability interval.
+* Belardo et al. (2026, §4) state that the maximal real stability interval of the
+  first-order embedding of the explicit midpoint rule is "7", reached at their
+  parameter value 1; the reader of that source computes $\ell=6.83$ there and a
+  supremum $\ell=8$ at a slightly larger parameter, so the printed values are plot
+  readings.
 * Fekete et al. (2022, Def. 1) print the real-axis inclusion with a symmetric
   segment $[-\beta,\beta]$; for an explicit method this gives zero, and the
   intended segment is $[-\beta,0]$.
@@ -152,3 +230,11 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Eq. (2.14), Figs. 1–2.
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.1, Fig. 2.
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §3.4 (internal stability function).
+- [Belardo et al. (2026)](/sources/belardo-2026.md) — §3–4, Tables 2–3 (determinant form; real stability interval of embedded formulas).
+- [Bassenne et al. (2021)](/sources/bassenne-2021.md) — Table 1 (real-axis intercepts), §3.2 (Eqs. 24–27, Fig. 4; rational stability function of TASE).
+- [Croci & Rosilho de Souza (2022)](/sources/croci-2022.md) — §2.2 (Eqs. 11–12), Lemma 3.1.
+- [Dawes (2021)](/sources/dawes-2021.md) — §3 (Eq. 7), §5–7.
+- [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1, §3 (monotonicity interval, error constant).
+- [Doehring et al. (2024)](/sources/doehring-2024.md) — §2.2 (Eqs. 2.10–2.11).
+- [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.2 (Eq. 2.12), §5.1.
+- [Vermeire (2023)](/sources/vermeire-2023.md) — Eqs. (9)–(10) (main and embedded polynomials).

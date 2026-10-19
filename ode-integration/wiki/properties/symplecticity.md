@@ -5,7 +5,7 @@ description: "A method is symplectic when its one-step map is a symplectic trans
 status: established
 aliases: [symplectic integrator, symplectic method, quadratic invariants, linear invariants, geometric integration]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Symplecticity and quadratic-invariant preservation
@@ -50,6 +50,13 @@ exponentially long times ([Blanes et al. (2024)](/sources/blanes-2024.md),
 Symmetry is related but distinct: a method is time-symmetric when
 $\psi_h=\psi_h^*=\psi_{-h}^{-1}$; symmetric methods have even order and
 modified equations in even powers of $h$ (Blanes et al. (2024), §2.1.1).
+The "adjoint" and "time symmetry" of discrete adjoint computations are
+different notions: there the adjoint is the transpose of the linearized time
+stepping, and time symmetry means that the backward adjoint recurrence retraces
+the forward solution, which relaxation methods achieve exactly on
+skew-symmetric linear problems ([Bencomo & Chan (2023)](/sources/bencomo-2023.md),
+§2.2.2, who flag the distinction; see
+[discrete adjoints](/methods/discrete-adjoint-runge-kutta.md)).
 Störmer–Verlet is both; its modified equation, computed through $h^7$ as an
 additive RK method, has no odd powers of $h$
 ([Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), §3.1.2).
@@ -76,9 +83,40 @@ additive RK method, has no odd powers of $h$
   partitioned RK method (Roberts et al. (2021), App. C, Eq. (C.3); page-local
   vector $\zeta$).
 
+* **Which Runge–Kutta methods.** Only symplectic Runge–Kutta methods preserve
+  all quadratic invariants, and such methods "must be fully implicit" (but see
+  Qualifications); no Runge–Kutta method
+  preserves all polynomial invariants of degree $\ge3$
+  ([Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md), §1, as recalled from
+  Hairer–Lubich–Wanner). For Runge–Kutta methods symplecticity is equivalent to
+  the preservation of quadratic invariants
+  ([de León et al. (2025)](/sources/deleon-2025.md), §1.1). Explicit
+  methods can be made to conserve one or several chosen invariants by
+  [relaxation](/methods/relaxation-runge-kutta.md); see
+  [entropy stability](/properties/entropy-stability.md).
+
+## Pseudo-symplectic methods
+
+A **pseudo-symplectic** method of order $(p,q)$, after Aubry & Chartier
+(1998), is an explicit method of classical order $p$ that satisfies the
+symplecticity conditions up to order $q>p$, so that its symplecticity (and
+quadratic-invariant) defect is $O(h^{q+1})$ per step (de León et al.
+(2025), §1.1). The cumulative numbers of pseudo-symplecticity conditions
+through orders 1–6 are 1, 2, 3, 6, 12, 28 (Table 4). de León et al.
+define the energy analogue,
+[pseudo-energy-preserving methods](/methods/pseudo-energy-preserving-runge-kutta.md),
+which need fewer conditions from order 5 on (10 and 21), and compare the two:
+they behave alike on most tests, while the PEP methods conserve energy markedly
+better on Hénon–Heiles (§4.1.3, Fig. 2). Their Remark 1 notes that the usual
+necessity argument for symplecticity conditions relies on the independence of
+elementary differentials, which is questionable on Hamiltonian systems
+(as recalled).
+
 ## Energy preservation without symplecticity
 
-Energy-preserving methods are a different class. The average vector field
+Energy-preserving methods are a different class. No Runge–Kutta method is
+energy preserving for every Hamiltonian system (Celledoni et al. 2009, as
+recalled by de León et al. (2025), §1). The average vector field
 method is a B-series method that preserves energy for Hamiltonian systems with
 constant structure matrix; its modified equation to $h^4$ shows the
 preservation term by term (Ketcheson & Ranocha (2023), §3.2). Explicit
@@ -127,6 +165,12 @@ energy (Farrell et al. (2021), §2.1, §4.3).
   order-4 statement presumably carries extra conditions such as positive
   diagonal entries. Not recorded as a contradiction because neither source
   states the opposite claim.
+* Biswas & Ketcheson (2023, §1) write that symplectic Runge–Kutta methods
+  "must be fully implicit". The symplectic DIRKs above (Farrell et al. (2021),
+  Eq. (37); Southworth et al. (2022), §2.1) are diagonally implicit, so the
+  defensible statement is "implicit", not "fully implicit". Loose wording in
+  an introduction recalling Hairer–Lubich–Wanner, not a contested result, so
+  not a contradiction.
 * The long-time results assume a constant step and a compact level set; they
   are statements about the method on Hamiltonian ODEs, not about
   semi-discretized PDEs in general.
@@ -138,3 +182,6 @@ energy (Farrell et al. (2021), §2.1, §4.3).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §2.1 (symplectic DIRK and LMM limits).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §2.6.2, §3.1.2, §3.2 (Störmer–Verlet modified equation, AVF, explicit midpoint).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §5.2 (multirate implicit midpoint), App. C (linear invariants).
+- [de León et al. (2025)](/sources/deleon-2025.md) — §1, §1.1 (pseudo-symplectic methods), Remark 1, Table 4, §4.1.3 (Fig. 2).
+- [Bencomo & Chan (2023)](/sources/bencomo-2023.md) — §2.2.2 (discrete-adjoint time symmetry versus geometric adjoints).
+- [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §1 (quadratic and polynomial invariants of RK methods).

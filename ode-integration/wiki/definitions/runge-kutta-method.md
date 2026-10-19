@@ -5,7 +5,7 @@ description: "The s-stage one-step method defined by a Butcher tableau (A, b, c)
 status: established
 aliases: [RK method, Butcher tableau, implicit Runge–Kutta, IRK, explicit Runge–Kutta, ERK]
 tags: [runge-kutta, explicit, implicit, order-conditions]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T18:00:00Z
 ---
 
 # Runge–Kutta method
@@ -36,7 +36,10 @@ Biswas et al. (2024, §1.1) and [Biswas et al. (2025)](/sources/biswas-2025.md)
 (§1.3, "stage consistency") assume it throughout, and then the method is
 specified by $(A,b)$ alone. Under it the first stage-order residual
 $\tau^{(1)}=A\mathbf 1-c$ vanishes (see [stage order](/definitions/stage-order.md)).
-Fekete et al. (2022, §1) also assume it. Reynolds et al. (2023) and
+Fekete et al. (2022, §1) also assume it, and so do
+[Zhang (2024)](/sources/zhang-2024.md) ("without loss of generality", §2) and
+[Bazavov (2026)](/sources/bazavov-2026.md) (Eq. (6)). An explicit method then has
+$s(s-1)/2+s=s(s+1)/2$ free coefficients, 136 for $s=16$ (Zhang 2024, §2). Reynolds et al. (2023) and
 [Farrell et al. (2021)](/sources/farrell-2021.md) do not state it; additive
 methods may deliberately have different abscissae per partition (Reynolds et
 al. (2023), §2.2: $c^{\mathrm E}\neq c^{\mathrm I}$ is allowed, as needed by
@@ -53,6 +56,13 @@ the stages as $\partial_tg(t_n+c_ih)$ (their Eq. (18)).
 [Southworth et al. (2022)](/sources/southworth-2022.md) (Eqs. (1)–(4)) also use
 stage derivatives, for $My'=\mathcal N(y,t)$. The two forms differ only in
 which unknowns the nonlinear solver iterates on.
+
+For explicit methods Bazavov (2026, §3, Eqs. (23)–(29)) adds a third, bijective form in
+which each stage is an increment of the previous one,
+$Y_i=Y_{i-1}+h\sum_{j<i}(a_{ij}-a_{i-1,j})f(t_n+c_jh,Y_j)$, with the weights treated as an
+extra row $a_{s+1,j}=b_j$, $c_{s+1}=1$. It resembles the Shu–Osher form but is not a
+convex-combination form (Remark 1), and it exposes the structure of
+[2N-storage methods](/methods/low-storage-runge-kutta.md).
 
 ## Classes by the structure of $A$
 
@@ -167,6 +177,10 @@ Prince–Dormand method.
 * Farrell et al. (2021) print the stage index range as $1\le i\le n$ in their
   Eq. (4), and their Eq. (15) omits the factor $\Delta t$ in the update; their
   Eq. (3) has the correct form.
+* Zhang (2024) writes $\tau$ for the one-vertex tree, not a generic tree, and
+  Bazavov (2026) writes $A_i$, $B_i$ for scalar 2N-storage coefficients and $\alpha_{ij}$ for
+  the increment form above, which clash with the registry's Butcher matrix and Shu–Osher
+  coefficients; their Source pages translate them.
 
 # Citations
 
@@ -179,3 +193,5 @@ Prince–Dormand method.
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — Eqs. (2)–(4) (explicit RK and embedded pair).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — Eqs. (1), (4)–(7) (ERK, ARK, mass matrix).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — Eqs. (1)–(4), §2.1 (stage-derivative form; DIRK versus fully implicit orders).
+- [Zhang (2024)](/sources/zhang-2024.md) — §2 (row-sum convention, parameter count).
+- [Bazavov (2026)](/sources/bazavov-2026.md) — Eq. (6); §3 (Eqs. (23)–(29), Remark 1).

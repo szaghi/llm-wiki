@@ -3,9 +3,9 @@ type: Property
 title: "A-, L-, A(α)- and algebraic stability"
 description: "Linear stability classes of one-step methods: A-stability (the stability region contains the left half-plane), L-stability (A-stability plus damping at infinity), A(α)- and L(α)-stability on a sector, and the nonlinear notions of B- and algebraic stability; with the facts the sources state about collocation, DIRK, Rosenbrock and multirate methods."
 status: established
-aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, B-stability, algebraic stability, unconditional linear stability]
+aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability
@@ -17,6 +17,8 @@ a one-step method and $\mathcal S=\{z:\lvert R(z)\rvert\le1\}$.
   The numerical solution of $y'=\lambda y$, $\operatorname{Re}\lambda<0$, then
   decays for every $h>0$, which is how
   [Farrell et al. (2021)](/sources/farrell-2021.md) (§2.1) state it.
+  [Bassenne et al. (2021)](/sources/bassenne-2021.md) (Def. 3.1) use the same
+  region definition and call such methods "unconditionally stable".
 * **L-stability:** A-stability and $R(\infty)=0$
   (Farrell et al. (2021), §2.1; [Steinebach (2023)](/sources/steinebach-2023.md),
   §2: $\lvert R(z)\rvert<1$ for $\operatorname{Re}z<0$ and $R(\infty)=0$).
@@ -32,6 +34,36 @@ allows $h=O(\Delta x)$; DAEs are "infinitely stiff", so A- and L-stability are
 needed there; and for the wave equation the damping of L-stable methods is a
 weakness (Farrell et al. (2021), §2.1, §4.3).
 
+## An asymptotic definition, for methods without a stability function
+
+[Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) (Def. 5.1,
+after Dahlquist and Quarteroni et al.) define stability through the limit of the
+sequence, not through $R$: a method is *absolutely stable* at $z=h\lambda$ if its
+solution of $y'=\lambda y$, $y(0)=1$, satisfies $\lim_{n\to\infty}\lvert y_n\rvert=0$
+for that fixed $h$; it is A-stable if this holds for every $z$ with
+$\operatorname{Re}z<0$ (open half-plane). The convention differs from the one above:
+
+- For a one-step method with stability function $R$, $y_n=R(z)^n$, so the
+  asymptotic definition asks $\lvert R(z)\rvert<1$ on the open half-plane, which for a
+  non-constant rational $R$ is equivalent to $\mathcal S\supseteq\mathbb C^-$ by the
+  maximum principle and continuity *(compiler check, not in the sources)*.
+- It also applies to methods that have no one-step recurrence. The authors need it
+  for their [deferred-correction](/methods/deferred-correction.md) schemes DC$2j$,
+  for which $y_n=\big(\tfrac{2+z}{2-z}\big)^{n-j}P_j(n)$ with a polynomial $P_j$ of
+  degree $j$ in $n$ (Lemma 5.2), and which they prove A-stable for every order
+  $2j$ (Thm. 5.1).
+- It is weaker: it allows transient growth $\lvert y_n\rvert>\lvert y_0\rvert$ before
+  the decay, through $P_j(n)$, and no bound uniform in $n$ and $z$ is given. The
+  region definition guarantees $\lvert y_{n+1}\rvert\le\lvert y_n\rvert$ at every
+  step. The DC$2j$ factor $(2+z)/(2-z)\to-1$ as $\lvert z\rvert\to\infty$, so there
+  is no damping at infinity *(compiler check, not in the sources)*.
+
+"A-stable at every order" in this sense does not conflict with the order barriers
+for A-stable methods below, since DC$2j$ ($j\ge1$) is neither a Runge–Kutta method
+(Remark 2.3) nor a linear multistep method *(compiler check, not in the sources)*. Farrell et al.'s phrase
+"decays for every $h>0$" is the asymptotic form of the definition, which is
+equivalent to the region form for one-step methods as just shown.
+
 ## Checking A-stability
 
 By the maximum principle, a rational $R$ is A-stable iff it has no poles in
@@ -45,7 +77,12 @@ $E(y)=\lvert D(iy)\rvert^2-\lvert N(iy)\rvert^2\ge0$ for all real $y$
 $1/a_{ii}$ in the right half-plane, and $\lvert R(iy)\rvert\le1$ on a finite
 sample of the imaginary axis during optimization, then verify A-stability a
 posteriori (Fig. 1). Remark 3.1 of Roberts et al. (2021) reduces an
-A($\alpha$) check to the boundary of the sector.
+A($\alpha$) check to the boundary of the sector. Bassenne et al. (2021, §3.2,
+Cor. 3.4.1, citing Zlatev et al.) use the same two-part test for explicit
+Runge–Kutta methods preconditioned by [TASE operators](/methods/tase-operators.md):
+analyticity in $\mathbb C^-$ is proved, since all poles lie at $z=2^i/\vartheta>0$
+($\vartheta$ the TASE parameter), while $\lvert R(iy)\rvert\le1$ is checked by dense
+sampling only (Fig. 4).
 
 ## Facts stated by the sources
 
@@ -77,6 +114,18 @@ A($\alpha$) check to the boundary of the sector.
   even for non-normal $L$. Southworth et al. (2022, §2.2) use the related
   fact that $\lVert e^{tL}\rVert\le1$ for all $t\ge0$ iff the field of values
   of $L$ lies in $\mathbb C^-$. See [strong stability](/properties/strong-stability.md).
+* **$\theta$-method:** $R(z)=\big(1+(1-\theta)z\big)/(1-\theta z)$ is A-stable iff
+  $\theta\ge\tfrac12$; Bassenne et al. (2021, Lemma 3.3) obtain it as explicit Euler
+  applied to the first-order TASE system.
+* **Explicit methods made A-stable by preconditioning:** explicit Runge–Kutta
+  methods of $s\le4$ stages and order $s$, applied to a system preconditioned by a
+  TASE operator of order $p\le\min(2,s)$, are A-stable (proved for $p=1$ under a
+  sufficient condition on the parameter, numerical for $p=2$); for $p>2$ they are
+  "nearly unconditionally stable", with $\max\lvert R(iy)\rvert\approx1.02$
+  (Bassenne et al. (2021), Thm. 3.2, §2.6, §3.2, Figs. 1–4). This does not contradict
+  the statement above that explicit methods are never A-stable: the preconditioned
+  scheme solves linear systems at every stage and is linearly implicit, with a
+  rational $R$ *(compiler check, not in the sources)*.
 * **Rosenbrock methods:** Rodas5P and its embedded method are A-stable; the
   embedded method of Rodas5 is not (Steinebach (2023), Figs. 1–2).
 * **Multirate methods:** a scalar test with one eigenvalue per partition
@@ -131,6 +180,12 @@ the notion without restating it)*. The sources use it as follows:
   ($\operatorname{Re}\lambda<0$, decay for every $h>0$), which is equivalent
   to the closed-half-plane form for rational $R$ by continuity
   *(compiler check, not in the sources)*.
+* "Nearly unconditionally stable" (Bassenne et al. (2021), §2.6) is not a stability
+  class: it names a method whose region misses small parts of $\mathbb C^-$ near the
+  imaginary axis.
+* Koyaguerebo-Imé & Bourgault (2022, §1) announce B-stability of their
+  deferred-correction schemes but prove only [B-convergence](/definitions/b-convergence.md)
+  (Cor. 4.1); the page records no B-stability result for them.
 * Multirate stability depends on the basis in which the partitions are
   written, so a single scalar test equation does not settle it (Roberts et al.
   (2021), §3, after Gear).
@@ -144,3 +199,5 @@ the notion without restating it)*. The sources use it as follows:
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §2.1 (Dahlquist barrier), §2.2 (eigenvalues of $A$, field of values).
 - [Biswas et al. (2023)](/sources/biswas-2023.md) — §5 (constraints (C.5)–(C.6), A- and L-stability of the new DIRKs), Fig. 1.
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.1 (terminology of the ADER/DeC stability study).
+- [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §1; Remark 2.3; Def. 5.1, Lemma 5.2, Thm. 5.1 (asymptotic A-stability of DC$2j$).
+- [Bassenne et al. (2021)](/sources/bassenne-2021.md) — Def. 3.1, Lemma 3.3, Thm. 3.2, Cor. 3.4.1, §2.6, §3.2, Figs. 1–4 (A-stability of explicit methods with TASE preconditioning).

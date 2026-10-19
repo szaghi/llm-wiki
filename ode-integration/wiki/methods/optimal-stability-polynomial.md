@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Optimal stability polynomials for explicit Runge–Kutta methods"
-description: "Choosing the free coefficients of an explicit method's stability polynomial to maximize the stable step for the spectrum of a given semi-discretization (Ketcheson–Ahmadia bisection over a convex problem), then realizing it by a tableau; gains grow with stage count and are measured per right-hand-side evaluation."
+description: "Choosing the free coefficients of an explicit method's stability polynomial to maximize the stable step for the spectrum of a given semi-discretization (Ketcheson–Ahmadia bisection over a convex problem, or a root parametrization for more than 100 stages), then realizing it by a tableau; gains grow with stage count and are measured per right-hand-side evaluation."
 status: established
-aliases: [stability-optimized Runge–Kutta, optimized explicit Runge–Kutta, Ketcheson–Ahmadia optimization, maximal stable step size optimization]
+aliases: [stability-optimized Runge–Kutta, optimized explicit Runge–Kutta, Ketcheson–Ahmadia optimization, maximal stable step size optimization, pseudo-extrema, OSPREI]
 tags: [stability, explicit, runge-kutta, step-size-control]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Optimal stability polynomials for explicit Runge–Kutta methods
@@ -32,16 +32,27 @@ Let $\mathcal E$ be the set of semi-discrete eigenvalues (page-local). The probl
 $$\max_{\theta_{p+1},\dots,\theta_s}\ h\quad\text{subject to}\quad \lvert P(h\lambda)\rvert-1\le0\ \ \forall\lambda\in\mathcal E$$
 
 is nonconvex for $s>2$ with sub-optimal local optima (Hedayati Nasab et al. 2021,
-§3.1, Eq. (6)). Ketcheson & Ahmadia's reformulation, as recalled by Hedayati Nasab et
+§3.1, Eq. (6); [Hedayati Nasab & Vermeire 2022](/sources/hedayatinasab-2022.md),
+§3.3). Ketcheson & Ahmadia's reformulation, as recalled by Hedayati Nasab et
 al. (§3.1, Alg. 1, Eqs. (7)–(8)), fixes $h$ and solves the **convex** inner problem
 
 $$r(h)=\min_{\theta_{p+1},\dots,\theta_s}\ \max_{\lambda\in\mathcal E}\bigl(\lvert P(h\lambda)\rvert-1\bigr),$$
 
 convex because $P(h\lambda)$ is affine in the $\theta_j$ and the modulus is convex;
 the outer problem $\max\{h: r(h)\le0\}$ is a one-dimensional bisection. Hedayati Nasab
-et al. converge the bisection to $10^{-12}$ with CVX in MATLAB. A tableau realizing the
-polynomial is then built, e.g. by Ketcheson–Ahmadia's "least truncation" method
-(§7.1), whose full Butcher arrays are given only in the supplementary material.
+et al. converge the bisection to $10^{-12}$ with CVX in MATLAB; the same formulation
+drives the P-ERK constructions of Hedayati Nasab & Vermeire (2022, §3.3, Alg. 1) and
+[Vermeire (2023)](/sources/vermeire-2023.md) (§4), and, written as a second-order cone
+program, those of [Doehring et al. (2025)](/sources/doehring-2025.md) (App. C), who
+solve it in extended and arbitrary precision with their own solver built on EiCOS. A
+tableau realizing the polynomial is then built, e.g. by Ketcheson–Ahmadia's "least
+truncation" method (§7.1), whose full Butcher arrays are given only in the
+supplementary material.
+
+**Conditioning limit.** The monomial coefficients decay like $1/j!$, and
+[Doehring et al. (2024)](/sources/doehring-2024.md) (§1, §2.1.1) state that in double
+precision the monomial convex formulation is limited to about 16–20 stages for general
+spectra; earlier monomial-based optimizations reached degrees 14, 7 and 8.
 
 ## Results on DG/flux-reconstruction spectra
 
@@ -75,6 +86,79 @@ spatial degree up to 6, $p=1,\dots,4$, $s\le16$ (§5–6). Findings:
 
 The speedup is a ratio of stable steps per right-hand-side evaluation; no wall-clock
 times are reported, and memory for 16 stages is not discussed.
+
+The members of [paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md)
+families are optimized the same way on one-dimensional flux-reconstruction DG spectra.
+For third order, spatial degrees 0–8 and $e=3,\dots,16$ evaluations (page-local $e$: the
+number of active stages of a member, equal to the degree of its polynomial), the optimal step
+grows about linearly with $e$ and the step per evaluation increases monotonically up
+to $e=16$ for every degree, e.g. 0.418806 at $e=3$ and 0.853547 at $e=16$ for degree 0,
+0.029895 and 0.046618 for degree 4 (Hedayati Nasab & Vermeire 2022, §4.2, Table 1,
+Fig. 2). For second-order members and their first-order embedded polynomials
+Vermeire (2023, §4, Table 1, Fig. 1) tabulates the maximal stable CFL numbers for
+degrees 1–8, e.g. 0.59 at $e=3$ and 3.43 at $e=16$ for degree 1, 0.04 and 0.30 for
+degree 8; there the embedded polynomial is optimized to have a slightly *smaller*
+region than the main one, so that the pair detects the stability limit.
+
+## Root parametrization for many stages
+
+Doehring et al. (2024, §2.2, Eqs. (2.10)–(2.11)) write every polynomial of linear
+order at least one as
+
+$$P(z)=1+z\prod_{j=1}^{s-1}\Bigl(1-\frac z{\tilde r_j}\Bigr)$$
+
+and optimize the roots $\tilde r_j$ of $(P-1)/z$, which they call **pseudo-extrema**
+(page-local symbol; the set is closed under conjugation). Since
+$P(\tilde r_j)=1$, all pseudo-extrema lie on the boundary of $\mathcal S$. The order
+conditions become Vieta relations, e.g. $\frac12=-\sum_j1/\tilde r_j$ for order two
+(§4.4, Eq. (4.3)). For the optimal disk polynomials (first order
+$(1+z/s)^s$, second order $\frac{s-1}s(1+\frac z{s-1})^s+\frac1s$) they prove that the
+pseudo-extrema are the positive Chebyshev extreme points projected onto the circle,
+hence equally spaced in arc length (Thms. 1–2); for even $s$ one pseudo-extremum is
+real.
+
+From this they **assume** that for strictly convex spectra the optimal pseudo-extrema
+lie at roughly equal arc length on the convex hull of the scaled spectrum, supported
+by 16-stage optima for DG spectra of Burgers, shallow water, ideal MHD and 2D Euler
+(§3.2, Fig. 2). Algorithm 1 (§5): compute the 16-stage optimum with the monomial
+method; scale the step linearly in $s$ (Eq. (4.1)); place the pseudo-extrema on a
+piecewise-linear interpolant of the hull at equal arc length, reusing for even $s$ the
+solution at $s/2$ as every second root; solve the feasibility problem in the real
+parts, then a second pass with imaginary corrections bounded by 2% of
+the spectrum height (Ipopt, exact derivatives by algorithmic differentiation;
+finite-difference derivatives failed). Polynomials of degree 26–128 and orders 1–3
+are obtained in seconds to minutes: degree 128 for the Burgers spectrum in about 9 s,
+against 15.5 s for degree 16 with the monomial method (§6, Table 1). Nonconvex
+spectra are treated with their convex hull; the isentropic-vortex spectrum reaches
+97.9% of the linearly scaled step at $s=28$ and 100% at $s=56,112$ (§8). Applied
+through many-stage methods, these polynomials raise the characteristic speeds that
+can be run at a fixed step by a factor of four against 16-stage monomial-based
+methods (64 against 16 stages, §11), but on nonlinear problems the zero SSP
+coefficient of the realization cuts the usable step to 28–79% of the linear limit; see
+[stabilized explicit Runge–Kutta methods](/methods/stabilized-explicit-runge-kutta.md).
+
+## Polynomials constrained by the tableau
+
+When the tableau structure fixes part of the polynomial, the free tableau entries,
+not the monomial coefficients, are the natural unknowns. For fourth-order P-ERK only
+$e-5$ coefficients are free, and Doehring et al. (2025, §4.2, Eqs. (4.7)–(4.8))
+make the polynomial affine in products of subdiagonal tableau entries, which keeps
+the second-order cone formulation; fitting tableau entries to optimized monomial
+coefficients by least squares gave "significantly inferior results". The constrained
+optimum reaches 85% of the unconstrained fourth-order one at $e=6$ and 96.5% at
+$e=16$ (§4.3, Figs. 1–2). At second order Vermeire (2023, §3) recovers the tableau
+from the polynomial sequentially, without a nonlinear solver.
+
+## Other design targets
+
+Maximal stable step is one objective among several; Doehring et al. (2024, §2.1)
+exclude dispersion–dissipation and SSP objectives explicitly.
+[Faleichik & Moisa (2026)](/sources/faleichik-2026.md) (§1–3) maximize instead the
+interval on which $P$ is positive and nondecreasing, giving up most of the real
+stability interval of Runge–Kutta–Chebyshev methods for more convex regions and a
+smaller error constant; the shifted Chebyshev and Legendre polynomials of stabilized
+methods are fixed, not optimized, choices for the negative real axis. Both are on
+[stabilized explicit Runge–Kutta methods](/methods/stabilized-explicit-runge-kutta.md).
 
 ## Optimized polynomials inside adaptive pairs
 
@@ -119,8 +203,12 @@ pay off without a hand-tuned CFL number; see also
   are not SSP (Hedayati Nasab et al. 2021, as noted in the reading of that source).
   The [SSP](/methods/strong-stability-preserving-runge-kutta.md) analogue optimizes the
   radius of absolute monotonicity or the nonlinear SSP coefficient instead.
-- **Internal stability** of many-stage methods (round-off amplification) is cited but
-  not analysed by Hedayati Nasab et al.
+- **Internal stability.** A polynomial with many stages must be realized so that
+  stage perturbations are not amplified; Hedayati Nasab et al. (2021) cite but do not
+  analyse it, while Doehring et al. (2024, §9) find it "the major difficulty in
+  realizing the maximum timestep" and reduce it by ordering and grouping the factors,
+  and Doehring et al. (2025, §4.4) by the choice of free abscissae. See
+  [internal stability](/definitions/internal-stability.md).
 
 ## Qualifications
 
@@ -134,11 +222,26 @@ pay off without a hand-tuned CFL number; see also
   in places and "convex" in others (§6.2–6.3). Their speedup tables 6 and 8 carry the
   per-stage formula of Tables 7 and 9 in the caption, while reporting plain step
   ratios (e.g. 8.31 against RK3 at $s=16$).
-- The source writes the polynomial coefficients as $\gamma_j$ and the order as $q$;
-  here $\theta_j$ and $p$.
+- **Optimality of many-stage polynomials.** The monomial formulation solves a convex
+  problem for each fixed step and so finds the global optimum of the bisection. The
+  root parametrization of Doehring et al. (2024) is nonconvex, starts from an unproved
+  equal-arc-length assumption, and in its fast feasibility mode only certifies the
+  linearly scaled 16-stage step; its polynomials of more than 16 stages are feasible
+  at that step, not proven maxima. The authors also note that the linear scaling
+  brings no further gain per stage once reached (§4.3).
+- Hedayati Nasab & Vermeire (2022, Eq. (40)) start the free-coefficient sum at
+  $j=3$ although the free coefficients start at $j=4$.
+- The sources write the polynomial coefficients as $\gamma_j$ or $\alpha_j$, the order
+  as $q$ or $p$, the stage count as $s$, $S$, $e$ or $E$; here $\theta_j$, $p$, $s$
+  and, for P-ERK members, $e$.
 
 # Citations
 
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §2 (Eqs. 1–5), §3.1 (Eqs. 6–8, Alg. 1), §5, §6.1–6.5 (Figs. 4–6, Tables 1–9), §7.1–7.2 (Figs. 7–10).
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) — §3, §5.5.4, §6.2–6.3 (Fig. 7), §7.1, App. B, Suppl. Table 1.
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — Lemma 2.1, Thm. 2.6, §7 (weak stage order constrains the polynomial).
+- [Hedayati Nasab & Vermeire (2022)](/sources/hedayatinasab-2022.md) — §3.3 (Problems 1–3, Alg. 1, Eq. 40), §4.2 (Table 1, Fig. 2).
+- [Vermeire (2023)](/sources/vermeire-2023.md) — §3, §4 (Eqs. 24–28, Table 1, Figs. 1–2).
+- [Doehring et al. (2024)](/sources/doehring-2024.md) — §1, §2.1–2.2 (Eqs. 2.7–2.11), §3 (Thms. 1–2), §4.3–4.4, §5 (Alg. 1), §6 (Table 1), §8, §9, §11.
+- [Doehring et al. (2025)](/sources/doehring-2025.md) — §4.2–4.4 (Eqs. 4.7–4.8, Figs. 1–2), App. C.
+- [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1–3 (monotonicity interval as objective).

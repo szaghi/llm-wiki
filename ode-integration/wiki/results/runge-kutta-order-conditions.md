@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Runge–Kutta order conditions and simplifying assumptions"
-description: "A Runge–Kutta method has order p iff its elementary weights equal 1/γ(τ) for every rooted tree of at most p vertices; the page gives the conditions to order five in matrix form, the simplifying assumptions B and C, related condition families, stage-count barriers and the extensions to additive and multiderivative methods."
+description: "A Runge–Kutta method has order p iff its elementary weights equal 1/γ(τ) for every rooted tree of at most p vertices; the page gives the conditions to order five in matrix form, their growth with p, simplifying assumptions B and C, related condition families, numerical constructions, stage-count barriers and records, and the extensions to partitioned, additive and multiderivative methods."
 status: established
 aliases: [order conditions, Butcher order conditions, rooted-tree order conditions, simplifying assumptions, B(ξ), C(η)]
 tags: [runge-kutta, order-conditions]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Runge–Kutta order conditions and simplifying assumptions
@@ -56,6 +56,19 @@ $b^\top\operatorname{diag}(c)(\tfrac12c^2-Ac)=0$: since
 $\tfrac12c^2-Ac=-\tau^{(2)}$ and $\tfrac16c^3-\tfrac12Ac^2=-\tfrac12\tau^{(3)}$
 *(compiler check, not in the sources)*, these are conditions on the
 [stage-order residuals](/definitions/stage-order.md).
+[Belardo et al. (2026)](/sources/belardo-2026.md) (Table 1) and
+[Bazavov (2026)](/sources/bazavov-2026.md) (App. B) print the same conditions to orders 4 and 3.
+
+**Growth with $p$.** [Zhang (2024)](/sources/zhang-2024.md) writes the theorem in
+weight-vector form, $b^\top\Phi_\cdot(\tau)=1/\gamma(\tau)$ for all trees with at most $p$
+vertices, where the vector of internal weights obeys $\Phi_\cdot([\tau])=A\,\Phi_\cdot(\tau)$ when
+$\tau$ is attached to a new root and is the componentwise product of the vectors of the subtrees
+when roots are merged (Proposition 1, Eqs. (5)–(6), attributed to Butcher). The number of trees
+with exactly $k$ vertices is 1, 1, 2, 4, 9, 20, 48, 115, 286, 719 for $k=1,\dots,10$, so order 10
+imposes 1205 conditions (§2). An explicit 16-stage method has $s(s+1)/2=136$ free coefficients,
+so the order-10 system is heavily overdetermined. For fixed $A$ and $c$ the conditions are linear
+in $b$ (Belardo et al. 2026, §2, Eq. (1)), which is the basis of the null-rule description of
+[embedded pairs](/methods/embedded-runge-kutta-pair.md).
 
 ## Simplifying assumptions and related families
 
@@ -71,7 +84,9 @@ Biswas et al. (2023, Eqs. (12)–(13)) name two further families:
 * $T(\xi)$: $b^\top A^{k-1}\mathbf 1=1/k!$, $k=1,\dots,\xi$ — the tall-tree
   conditions, which are exactly the order conditions for linear constant-
   coefficient problems and fix the leading coefficients of the
-  [stability function](/definitions/stability-function.md);
+  [stability function](/definitions/stability-function.md); Bazavov (2026, §7, Eq. (102))
+  imposes $b^\top A^2c=\tfrac1{24}$ on third-order four-stage methods, Carpenter and Kennedy's
+  "nearly optimal" condition as he recalls it, which makes them fourth order on linear problems;
 * an Albrecht-type family $b^\top A^j\tau^{(k)}=0$ for $k\ge1$, $j+k<\xi$.
 
 $B(p)$, $T(p)$ and the Albrecht family at $\xi=p$ are necessary but not
@@ -106,6 +121,19 @@ App. A.1). The implication is stated without proof.
   Thm. IV.4.18; Biswas et al. (2024), Thm. 3.2 at $q_{\mathrm w}=0$).
 * A fully implicit method has $p\le2s$, attained by Gauss–Legendre methods
   (Biswas et al. (2024), Example 7.4, Cor. 4.5).
+* **Explicit order 10 with 16 stages (numerical record, not a barrier).** The
+  minimum stage count of an explicit method of order $p>8$ is unknown; orders
+  1–5 are "straightforward" and 6–8 "difficult, though tractable" (Zhang (2024),
+  §1). The best published explicit order-10 methods, Hairer's (1978) and
+  Feagin's, have 17 stages, and Khashin (2009) found a 13-stage order-9 method by
+  numerical search, as recalled by Zhang (§1, §6). Zhang (2024) reports a
+  16-stage explicit method whose 136 coefficients, given to 3000+ digits, make the
+  sum of squared order-10 residuals smaller than $10^{-6000}$; it is printed to 120
+  digits (§5, Table 2). *Hypothesis-grade:* that an exact order-10 method with 16
+  stages exists near these coefficients is not proved (no exact form; Gröbner/CAD
+  certification is out of reach and Smale's α-theory does not apply to this
+  overdetermined system, §5.1, §6), and whether 16 stages is minimal for order 10
+  is open.
 
 The weak-stage-order analogues of these barriers are on
 [weak-stage-order barriers](/results/weak-stage-order-barriers.md). Biswas et
@@ -124,7 +152,35 @@ the primary objective of Biswas et al. (2025, Eq. (3.3)). Biswas et al. (2023,
 et al. (2022, §2) use the Kennedy–Carpenter–Lewis measurements (2- and
 $\infty$-norms of the order-$(p+1)$ and order-$p$ error vectors of main and
 embedded method, and their ratios) to design
-[embedded pairs](/methods/embedded-runge-kutta-pair.md).
+[embedded pairs](/methods/embedded-runge-kutta-pair.md). Zhang (2024, Remark 2)
+considers the analogous sum $\sum_{\lvert\tau\rvert\le p}\sigma(\tau)^{-2}(\Phi(\tau)-1/\gamma(\tau))^2$
+over the order conditions themselves as a search objective and finds no difference in
+difficulty from the unweighted sum.
+
+## Solving the conditions
+
+* **Numerical search without simplifying assumptions.** Zhang (2024, §2–5)
+  minimizes the unweighted sum of squared residuals
+  $\sum_{\lvert\tau\rvert\le p}(\Phi(\tau)-1/\gamma(\tau))^2$ over all entries of a strictly
+  lower-triangular $A$ and $b$, by BFGS with a "Hessian reset" heuristic (reset to the identity
+  when the plain gradient step does better), reverse-mode differentiation through a shared-subtree
+  evaluation of all internal weights, and adaptive 128–256-bit arithmetic, since in double
+  precision the gradient loses almost all correct bits along the descent (§3–4, Figs. 4–5).
+  Several weeks of random starts gave 8000 candidates, of which one was refined to the
+  order-10 method above (§5). No structure was imposed, yet the printed coefficients have
+  $b_2=b_4=b_5=0$, five equal abscissae and $c_{16}=1$, the structure of classical
+  high-order constructions; the paper does not comment *(reader's check of Table 2, recorded on
+  the Source page)*. Zhang states that the solutions lie on a positive-dimensional set, on
+  preliminary evidence (Remark 6).
+* **Butcher variables for constrained classes.** For
+  [2N-storage methods](/methods/low-storage-runge-kutta.md), Bazavov (2026) turns the storage
+  restriction into $(s-1)(s-2)/2$ quadratic constraints on $(A,b)$ and recommends solving them
+  together with the order conditions in the Butcher variables, where the systems have low
+  degree; all four- and five-stage third-order 2N methods then follow from one quadratic
+  equation (§4, §7–8, §10).
+* **Weights for fixed stages.** Because the conditions are linear in $b$ for fixed $(A,c)$, all
+  weight vectors of a given order sharing the stages form an affine set (Belardo et al. 2026,
+  §2–3).
 
 ## Composition and order
 
@@ -144,6 +200,18 @@ order-3 starter and finisher (§2.3.2); see
   weights use the tableau of the vertex's color (Ketcheson & Ranocha (2023),
   §3.1; N-trees and P-trees). See [IMEX and additive RK](/methods/imex-runge-kutta.md)
   and [GARK](/methods/generalized-additive-runge-kutta.md).
+* **Partitioned methods with shared weights and abscissae.** When every
+  partition $r$ uses its own matrix $A^{\{r\}}$ but all share $b$ and $c$, the
+  conditions up to order 3 reduce to the classical ones, with
+  $b^\top A^{\{r\}}c=\tfrac16$ for every $r$
+  ([Hedayati Nasab & Vermeire (2022)](/sources/hedayatinasab-2022.md), §3.2,
+  Eqs. (31)–(39); [Doehring et al. (2025)](/sources/doehring-2025.md), §2.1,
+  Eq. (2.3)). At order 4 the per-partition conditions $b^\top c^3=\tfrac14$,
+  $b^\top\operatorname{diag}(c)A^{\{r\}}c=\tfrac18$, $b^\top A^{\{r\}}c^2=\tfrac1{12}$
+  are joined by the coupling conditions $b^\top A^{\{r_1\}}A^{\{r_2\}}c=\tfrac1{24}$
+  for all pairs $r_1,r_2$ (Doehring et al. 2025, Eq. (2.4)), which the fourth-order
+  [paired explicit methods](/methods/paired-explicit-runge-kutta.md) satisfy by
+  sharing the last three subdiagonal entries (§3.2).
 * **Two-derivative methods.** With weights $b$, $\dot b$ on $f$ and $\dot f$
   and abscissae $c=A\mathbf 1$, $\dot c$ the row sums of $(\dot a_{ij})$, the
   conditions to order 3 are $b^\top\mathbf 1=1$; $b^\top c+\dot b^\top\mathbf 1=\tfrac12$;
@@ -171,6 +239,18 @@ BSeries.jl ([BSeries.jl](/software/bseries-jl.md); Ketcheson & Ranocha (2023),
   problems the observed order can drop to about the
   [stage order](/definitions/stage-order.md); see
   [order reduction](/definitions/order-reduction.md).
+* Hedayati Nasab & Vermeire (2022, §2.1) state that order $p$ requires $2^{p-1}$
+  conditions; this matches the counts 1, 2, 4, 8 only up to $p=4$, while order 5
+  needs 17 (Biswas et al. 2023, Table 1; Zhang 2024, §2). It is a misstatement,
+  not a disagreement about the conditions, which they apply only to order 3.
+* Zhang (2024, Remark 2) calls the $\sigma^{-2}$-weighted sum over all trees with
+  at most $p$ vertices the norm of the "principal error coefficients"; elsewhere
+  on this page that name is reserved for the trees with $p+1$ vertices.
+* Related condition families with their own pages:
+  [pseudo-energy-preserving order](/methods/pseudo-energy-preserving-runge-kutta.md),
+  whose order 2 coincides with classical order 2 and whose order 3 needs only
+  $b^\top c^2=\tfrac13$ beyond it ([de León et al. (2025)](/sources/deleon-2025.md),
+  §2.2, Eq. (14)).
 
 # Citations
 
@@ -181,3 +261,9 @@ BSeries.jl ([BSeries.jl](/software/bseries-jl.md); Ketcheson & Ranocha (2023),
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — Eq. (8) (residual form to order 4); §1.1 (no explicit SSP method of order $\ge5$); §2 (error measurements).
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §2.1 (two-derivative conditions), §3.2 (IMEX two-derivative conditions to order 3).
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §2 ($p=s$ possible only to order 4).
+- [Zhang (2024)](/sources/zhang-2024.md) — §1 (records for orders 9–10, minimum unknown for $p>8$), §2 (Proposition 1, Eqs. (2)–(6), condition count), §3–4 (search machinery, Figs. 4–5), §5 (Table 2, residual), §5.1, §6 (certification), Remarks 2 and 6.
+- [Bazavov (2026)](/sources/bazavov-2026.md) — App. B (conditions to order 3), §4, §7 (Eq. (102)), §8, §10.
+- [Belardo et al. (2026)](/sources/belardo-2026.md) — §2 (Table 1, Eq. (1)), §3.
+- [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.1 (Eqs. (2.3)–(2.4)), §3.2.
+- [Hedayati Nasab & Vermeire (2022)](/sources/hedayatinasab-2022.md) — §2.1, §3.2 (Eqs. (31)–(39)).
+- [de León et al. (2025)](/sources/deleon-2025.md) — §2.2 (Eq. (14)).

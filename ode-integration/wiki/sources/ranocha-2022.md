@@ -133,7 +133,7 @@ are printed incomplete, and [38] prints year 2013 with a DOI containing
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
@@ -141,6 +141,7 @@ Chunk 1 (2026-10-19). This source is cited on:
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [PETSc TS](/software/petsc-ts.md)
+* [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
 * [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)

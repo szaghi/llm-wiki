@@ -105,13 +105,14 @@ No numerical inconsistency was found between Table 5.1, Table 6.1 and the text.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
 * [A-stability barriers for decoupled and internally consistent multirate methods](/results/multirate-a-stability-barriers.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Generalized additive Runge–Kutta (GARK) methods and internal consistency](/methods/generalized-additive-runge-kutta.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
+* [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
 * [Linear stability of multirate methods and joint stability regions](/definitions/multirate-linear-stability.md)
 * [Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)](/methods/multirate-gark.md)
 * [Multirate infinitesimal methods (MIS, MRI-GARK)](/methods/multirate-infinitesimal-methods.md)

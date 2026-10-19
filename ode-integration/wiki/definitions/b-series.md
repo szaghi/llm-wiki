@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # B-series, composition and substitution laws
@@ -50,7 +50,35 @@ constant time per tree by the Beyer–Hedetniemi algorithm (Def. 1.1, §4.1).
   $\Phi(\tau)$ the elementary weight $\sum_jb_j\Phi_j(\tau)$ (Eqs. (13)–(16)).
 
 Equating the two to $\lvert\tau\rvert\le p$ gives the
-[order conditions](/results/runge-kutta-order-conditions.md). Methods whose
+[order conditions](/results/runge-kutta-order-conditions.md).
+
+**Internal weights as vectors.** [Zhang (2024)](/sources/zhang-2024.md) (§2,
+§3.2, Eqs. (5)–(6)) writes the order conditions as
+$b^\top\Phi_\cdot(\tau)=1/\gamma(\tau)$, with the vector
+$\Phi_\cdot(\tau)=(\Phi_j(\tau))_{j=1}^s$ of Butcher's derivative weights
+(assuming $c=A\mathbf 1$). Every tree is generated from $\bullet$ by
+*extension* $[\tau]$ (graft onto a new root) and the *rooted sum*
+$\tau_1\#\tau_2$ (merge the roots), and the weight vectors follow the same
+recursion:
+
+$$\Phi_\cdot(\bullet)=\mathbf 1,\qquad\Phi_\cdot([\tau])=A\,\Phi_\cdot(\tau),\qquad\Phi_\cdot(\tau_1\#\tau_2)=\Phi_\cdot(\tau_1)\odot\Phi_\cdot(\tau_2),$$
+
+with $\odot$ the componentwise product (page-local). An *instruction table*
+lists, for each tree of a set, either $\bullet$, an extension of an earlier
+tree, or a rooted sum of two earlier trees; it needs exactly one row per tree
+and lets all weight vectors of the trees with at most $p$ vertices be computed
+in one linear pass that reuses shared subtrees (Def. 5, Table 1, Algorithm 1).
+There are $\lvert T_{10}\rvert=1205$ trees with at most 10 vertices
+(1, 1, 2, 4, 9, 20, 48, 115, 286, 719 by order). RungeKuttaToolKit orders trees
+in reverse lexicographic order of canonical level sequences, which puts bushy
+trees last where Butcher's ordering puts them first (Remark 4).
+
+**Map and flow coefficients.** [de León et al. (2025)](/sources/deleon-2025.md)
+(§1.2, Eqs. (1)–(3)) distinguish the *map* coefficients $u(\tau)$, the
+elementary weights of $y_{n+1}=B(u,y_n)$, from the *flow* coefficients
+$v(\tau)$ of the modified vector field $h^{-1}B(v,\cdot)$ that the method
+integrates exactly (page-local names); the substitution law below relates
+them order by order (Eq. (9), computed with BSeries.jl and SymPy). Methods whose
 step is a B-series are **B-series methods**; besides RK methods the sources
 treat the average vector field (AVF) method
 $y_{n+1}=y_n+h\int_0^1f(\xi y_{n+1}+(1-\xi)y_n)\,d\xi$, whose coefficients
@@ -99,6 +127,22 @@ form $b\star e=a$ or $b\star a=e$ are solved tree by tree; this is how
 [backward error analysis](/methods/backward-error-analysis.md) computes
 modified equations and modifying integrators.
 
+## Energy-preserving B-series
+
+For a Hamiltonian system $y'=\mathcal J\nabla H(y)$ with constant
+skew-symmetric $\mathcal J$ (page-local), a B-series vector field preserves $H$
+to order $q$ iff it is a combination, over trees $\lvert\tau\rvert\le q$ and
+leaves $\ell$ of $\tau$, of $F(\tau)+(-1)^mF(\tau^*(\ell))$, with $m$ the
+root-to-leaf distance and $\tau^*(\ell)$ the *energy-preserving conjugate*:
+the parent of $\ell$ becomes the root and $\ell$ is reattached to the old root
+(page-local $m$, $\ell$;
+Celledoni, McLachlan, Owren & Quispel 2010, Thms. 2–3, as quoted by
+de León et al. (2025), Theorem 1, Eq. (5), §2.1). Bushy trees and tall
+trees with an even number of vertices cannot appear; conjugacy partitions the
+trees of each order into classes, one condition per class (Examples 1–3). This
+characterization yields the
+[pseudo-energy-preserving methods](/methods/pseudo-energy-preserving-runge-kutta.md).
+
 ## Generalizations
 
 Additive and partitioned methods for $y'=\sum_\nu f^{[\nu]}$ are expanded over
@@ -129,6 +173,15 @@ package pybs on one Intel Core i7-8700K, a factor of about 70 (Ketcheson &
 Ranocha (2023), §4). The same Hopf-algebra structure underlies
 renormalization in quantum field theory (§5).
 
+Zhang (2024, §3) evaluates and differentiates the sum of squared order-condition
+residuals with instruction tables and bespoke reverse-mode automatic
+differentiation in RungeKuttaToolKit. On one thread of an Intel i9-11900KF,
+tree enumeration by the Beyer–Hedetniemi successor is 16.3–170.4 times faster
+than Mathematica and NodePy for $p=1,\dots,15$, and residual evaluation for
+$s=16$, $p\le12$ is on average 47.7 times faster than NodePy and 4.5 times
+faster than compiled Mathematica (Figs. 1–2). RootedTrees.jl uses the same
+enumeration algorithm with "extremely similar performance" (Remark 5).
+
 ## Qualifications
 
 * The order of the factors in the composition product is not uniform in the
@@ -146,3 +199,5 @@ renormalization in quantum field theory (§5).
 
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §2.1–2.4, Eqs. (5), (9)–(26), Defs. 1.1, 2.1, 2.2, Tables 1–3 (trees, B-series, composition and substitution); §3.1–3.2 (colored trees, AVF); §4 (implementation, timings).
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.2–2.5 (Lie-series, word and tree descriptions for splitting and composition methods).
+- [de León et al. (2025)](/sources/deleon-2025.md) — §1.2 (Eqs. (1)–(3), map and flow), §2 (Theorem 1, Eq. (5)), §2.1 (energy-preserving conjugate, Examples 1–3), §2.3 (Eq. (9)).
+- [Zhang (2024)](/sources/zhang-2024.md) — §2 (Proposition 1), §3.1–3.3 (Eqs. (5)–(6), Def. 5, Table 1, Algorithm 1, Remarks 4–5, Figs. 1–2).

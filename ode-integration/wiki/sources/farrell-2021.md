@@ -247,9 +247,10 @@ needed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
+* [Benjamin–Bona–Mahony equation](/benchmarks/benjamin-bona-mahony-equation.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Differential-algebraic equations and their Runge–Kutta treatment](/definitions/differential-algebraic-equation.md)
 * [Energy method for Runge–Kutta stability](/methods/runge-kutta-energy-method.md)

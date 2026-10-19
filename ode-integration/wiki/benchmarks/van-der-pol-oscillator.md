@@ -1,0 +1,92 @@
+---
+type: Benchmark
+title: "Van der Pol oscillator"
+description: "The nonlinear relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, whose parameter mu tunes it from non-stiff to very stiff; the sources use it to test step-size controllers and to show that weak stage order and deferred correction do not keep their design orders on a stiff nonlinear problem."
+status: established
+aliases: [Van der Pol equation, van der Pol problem, VDPOL]
+tags: [stiff, verification, order-reduction, step-size-control]
+timestamp: 2026-10-19T20:00:00Z
+---
+
+# Van der Pol oscillator
+
+The **Van der Pol oscillator** is the two-component system
+
+$$y_1'=y_2,\qquad y_2'=\mu\,(1-y_1^2)\,y_2-y_1,$$
+
+with the parameter $\mu>0$ (page-local). The nonlinear damping
+$-\mu(y_1^2-1)y_2$ is negative for $\lvert y_1\rvert<1$ and positive outside, so
+every solution approaches a limit cycle. For large $\mu$ the cycle alternates slow
+phases, where the problem is stiff, with fast transitions, so a single run mixes
+regimes where accuracy and stability limit the step. It is a standard stiff nonlinear
+test that lies outside the linear theory behind most remedies for
+[order reduction](/definitions/order-reduction.md).
+
+## Parameter sets in the sources
+
+| source | $\mu$ | $y(0)$ | $t$ | use |
+|---|---|---|---|---|
+| [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md), §6.6, Eq. (6.6) | 1000 | $(2,0)$ | $[0,3000]$ | fixed-step convergence of deferred correction against BDF and Scilab solvers |
+| [Biswas et al. (2023)](/sources/biswas-2023.md), §7.3 | 500 | $(2,0)$ | $[0,10]$ | fixed-step convergence of DIRK methods with high weak stage order |
+| [Fekete et al. (2022)](/sources/fekete-2022.md), §3.1.1, Eq. (24) | 10 | $(2,-0.6654321)$ | $[0,2]$ | adaptive step-size controllers with explicit SSP pairs |
+
+Fekete et al. write the second equation as $y_2'=\varepsilon^{-1}(1-y_1^2)y_2-y_1$
+with $\varepsilon=0.1$, i.e. $\mu=1/\varepsilon=10$, after Iserles. Koyaguerebo-Imé &
+Bourgault note that the problem was proposed with $\mu=5$ on $[0,1]$ by
+Enright–Hull–Lindberg and that their stiff version follows a suggestion of
+Shampine; along their solution $y_1\in[-2,2.000073]$, $y_2\in[-1323.04,1231.35]$, and
+the Jacobian eigenvalues lie in $[-3000.29,1123.17]\times[-1158.48,1158.48]$ of the
+complex plane (§6.6).
+
+## Results
+
+**Weak stage order does not help.** Biswas et al. (2023, §7.3, Fig. 12) apply their
+L-stable DIRK-(7,4,4) and DIRK-(12,5,5), with weak stage order 4 and 5, and
+reference schemes with weak stage order 1, at steps from $0.5$ to about
+$2.44\times10^{-4}$, solving the stages by Newton to machine precision against an RK4
+reference with $h=10^{-6}$. High weak stage order "does not suffice to remove order
+reduction" in the stiff regime $10^{-2}<h<10^{-1}$. They present the problem as the
+counterexample that limits their remedy to linear problems; see
+[DIRK methods with high weak stage order](/methods/dirk-high-weak-stage-order.md) and
+[weak stage order](/definitions/weak-stage-order.md).
+
+**Deferred correction: low levels fail, high levels recover.** Koyaguerebo-Imé &
+Bourgault (2022, Table 6.6) run their [deferred-correction](/methods/deferred-correction.md)
+schemes DC2–DC10 with steps $3.75\times10^{-5}$ to $1.875\times10^{-6}$ against a DC8
+reference at $h=1.875\times10^{-6}$:
+
+- DC2 and DC4 show order 0 (errors of order 1 in $y_1$ and $10^3$ in $y_2$) down to
+  $h=7.5\times10^{-6}$ and remain inaccurate at $1.875\times10^{-6}$;
+- DC6 and DC8 reach orders of about 6 to 7.6 (DC6 at $h=1.875\times10^{-6}$:
+  $2.5\times10^{-7}$ in $y_1$);
+- DC10 is accurate (about $3\times10^{-7}$ in $y_1$ at the finest step) but its
+  order "is not observed".
+
+Scilab's adaptive BDF solver reaches $2.16\times10^{-6}$ in $y_1$; its adaptive RKF45
+$3.54\times10^{-2}$. The authors read the table as evidence that the correction
+strategy works even though DC2 and DC4 "would require much smaller time steps".
+
+**Step-size control.** Fekete et al. (2022, §3.1.1, Fig. 9) compare I, PI, PID and
+Gustafsson controllers on the mildly stiff case with an SSP(2,2) pair at tolerance
+$10^{-4}$: the PID controller takes 753 steps with 17 rejections against 1982 steps
+with 495 rejections for the I controller. The table is on
+[step-size control](/methods/step-size-control.md).
+
+## Qualifications
+
+- The two fixed-step studies disagree in emphasis, not in fact: both find that
+  remedies proved for linear problems or for one-sided Lipschitz problems do not
+  deliver their design order at practical steps on this problem. One reason is
+  visible in the eigenvalue range reported by Koyaguerebo-Imé & Bourgault: Jacobian
+  eigenvalues with real part up to $1123$ mean a large positive one-sided Lipschitz
+  constant during the fast transitions, where the stiffness-independent bounds of
+  [B-convergence](/definitions/b-convergence.md) give no useful step range
+  *(compiler check, not in the sources)*.
+- Biswas et al. (2023) state the stiff regime from Fig. 12 only; no error table is
+  given.
+
+# Citations
+
+- [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §6.6 (Eq. (6.6), Table 6.6); §6.7.
+- [Biswas et al. (2023)](/sources/biswas-2023.md) — §7.3 (Fig. 12); §8.
+- [Fekete et al. (2022)](/sources/fekete-2022.md) — §3.1.1 (Eq. (24), Fig. 9).

@@ -112,12 +112,13 @@ Notation: $B(a,y)=a(\varnothing)y+\sum_\tau\frac{h^{\lvert\tau\rvert}}{\sigma(\t
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [B-series, composition and substitution laws](/definitions/b-series.md)
 * [Backward error analysis, modified equations and modifying integrators](/methods/backward-error-analysis.md)
 * [BSeries.jl and RootedTrees.jl](/software/bseries-jl.md)
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)
+* [Kepler problem](/benchmarks/kepler-problem.md)
 * [Operator splitting: Lie–Trotter, Strang and dimensional splitting](/methods/operator-splitting.md)
 * [Processing and effective order](/methods/processing-and-effective-order.md)
 * [Rosenbrock–Wanner (ROW) and W-methods](/methods/rosenbrock-wanner-method.md)

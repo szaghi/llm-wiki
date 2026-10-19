@@ -227,9 +227,10 @@ its own entry. No printed duplicates, and no same-key suffixes needed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
+* [B-convergence](/definitions/b-convergence.md)
 * [Dense output](/methods/dense-output.md)
 * [Differential-algebraic equations and their Runge–Kutta treatment](/definitions/differential-algebraic-equation.md)
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)

@@ -3,9 +3,9 @@ type: Definition
 title: "Order reduction"
 description: "Order reduction is the drop of the observed convergence rate of a time integrator below its classical order $p$ on stiff problems, method-of-lines PDEs with boundary data, DAEs or split operators; this page collects its mechanisms, the reduced rates the sources predict and observe, and the remedies."
 status: established
-aliases: [stiff order reduction, B-convergence order, stiff order]
+aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Order reduction
@@ -22,7 +22,17 @@ below $p$, often to roughly the [stage order](/definitions/stage-order.md) $q$
 [Southworth et al. 2022](/sources/southworth-2022.md), §2.1). It is a property of
 the method–problem pair, not of the method alone: the same scheme converges at
 order $p$ once $h$ is small enough to resolve the stiffness (Biswas et al. 2023,
-§6.1, Fig. 2).
+§6.1, Fig. 2). The order a method keeps uniformly in the stiffness, for problems
+with a one-sided Lipschitz bound, is its [B-convergence](/definitions/b-convergence.md)
+order.
+
+**Not the same as precision-induced loss of order.**
+[Croci & Rosilho de Souza (2022)](/sources/croci-2022.md), §3, call the stagnation or
+loss of convergence order of a Runge–Kutta method evaluated partly in low-precision
+arithmetic "an order-reduction phenomenon". That effect comes from rounding errors of
+size proportional to the unit roundoff, not from stiffness or boundary data, and is
+treated at [mixed-precision Runge–Kutta methods](/methods/mixed-precision-runge-kutta.md);
+this page does not cover it.
 
 ## Mechanisms
 
@@ -89,6 +99,17 @@ can expose order reduction at fixed temporal method:
 stiff [brusselator](/benchmarks/brusselator.md) rates 2.86–3.12 on 201 points and
 2.41–3.02 on 801 points for third- and fourth-order multirate methods.
 
+**Pre-asymptotic regime of a B-convergent method.** The deferred-correction schemes
+DC$2j$ of [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) are proved
+to have order $2j$ with stiffness-independent constants (Cor. 4.1), yet they observe the
+design order only when the step resolves the Jacobian, $h\Lambda<2$ with $\Lambda$ the
+largest Jacobian norm along the solution (page-local), while larger steps are accurate
+but converge slowly (§6.7). On the Bernoulli equation DC4 shows orders 3.33–3.79; on the
+[Robertson problem](/benchmarks/robertson-problem.md) convergence is slow for $h>1/300$;
+on the [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md) ($\mu=1000$) DC2 and
+DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
+[Deferred correction](/methods/deferred-correction.md) gives the scheme.
+
 ## Reduced rates stated in the sources
 
 | statement | problem class | source |
@@ -101,6 +122,7 @@ stiff [brusselator](/benchmarks/brusselator.md) rates 2.86–3.12 on 201 points 
 | $\min\{p,r+2+\bar\nu\}$ under the Ostermann–Roche conditions | linear parabolic PDEs | Biswas et al. 2024, §2.3 |
 | collocation methods reduce to their stage order, $s$ for $s$-stage Gauss | stiff problems | Farrell et al. 2021, §4.1 |
 | $p-1$ for L-stable Rosenbrock methods satisfying Scholz's conditions at fixed large $\lvert\lambda\rvert$ | Prothero–Robinson | Steinebach 2023, §2 |
+| design order $2j$ observed only for $h\Lambda<2$; order 0 for DC2 and DC4 on Van der Pol at practical steps | stiff nonlinear ODEs | Koyaguerebo-Imé & Bourgault 2022, §6 |
 
 In the Ostermann–Roche row $r$ is the number of satisfied conditions and $\bar\nu$ a
 problem-dependent number (both page-local). [Farrell et al. (2021)](/sources/farrell-2021.md),
@@ -144,6 +166,11 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
   theoretical "parabolic" order on his nonlinear problem with non-vanishing
   Dirichlet data, because the theory assumes linear problems with vanishing boundary
   conditions; a linear test (not shown) gave full orders.
+- [TASE operators](/methods/tase-operators.md) claim to keep the order of the explicit
+  method they precondition, on the basis of the nonstiff expansion
+  $\mathcal P_p=I+\mathcal O(h^p)$ of the TASE preconditioner $\mathcal P_p$ (defined there); [Bassenne et al. (2021)](/sources/bassenne-2021.md)
+  (§2.1, §2.3) do not analyse the stiff regime $\lVert hL\rVert\gg1$ in which the
+  method is used, so its order there is open *(compiler check, not in the sources)*.
 - Weak stage order is a remedy for linear problems; on nonlinear problems it gives
   partial improvement (Burgers: order 3) or none (Van der Pol), as detailed on
   [weak stage order](/definitions/weak-stage-order.md).
@@ -175,3 +202,6 @@ problem-dependent), would decide it.
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.2 Fig. 3.
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §6.1; §6.4.
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — Remark 4; §3.5.1–3.5.3.
+- [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — Cor. 4.1; §6.1, §6.5–6.7 (Tables 6.1, 6.5, 6.6).
+- [Croci & Rosilho de Souza (2022)](/sources/croci-2022.md) — §3 (terminology only).
+- [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §2.1, §2.3 (nonstiff order claim).

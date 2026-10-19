@@ -5,7 +5,7 @@ description: "Multirate GARK methods advance a slow partition with one macro ste
 status: established
 aliases: [MrGARK, multirate generalized additive Runge–Kutta, compound-fast MrGARK, multirate backward Euler, multirate implicit midpoint, implicit multirate GARK]
 tags: [multirate, runge-kutta, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)
@@ -190,6 +190,50 @@ $I-H\gamma J$ when $m$ matches the stiffness ratio
   at orders 2–4), while IMEX has an explicit-like limit ($3.2$–$5.2\times10^{-3}$)
   (Table 6.1).
 
+## Explicit multirate partitioned RK with buffer zones (MRK2)
+
+A simpler, explicit multirate family is the second-order multirate
+partitioned Runge–Kutta method MRK2 of Constantinescu and Sandu, used by
+[Kang & Constantinescu (2022)](/sources/kang-2022.md) (§2.3, Table 1, Eq. (16))
+for geometric stiffness on locally refined meshes. The domain is split into a
+fast zone (fine elements), a fast buffer, a slow buffer and a slow zone, each
+integrated with its own explicit tableau on four shared global stages:
+
+* fast zone and fast buffer: two half-steps of Heun's method,
+  $c=(0,\tfrac12,\tfrac12,1)$, $b=(\tfrac14,\tfrac14,\tfrac14,\tfrac14)$;
+* slow buffer: $c=(0,1,0,1)$, $a_{21}=1$, $a_{43}=1$, $b=(\tfrac14,\tfrac14,\tfrac14,\tfrac14)$;
+* slow zone: one Heun step, $a_{21}=1$, $a_{41}=1$, $b=(\tfrac12,0,0,\tfrac12)$.
+
+The base method is the two-stage SSP method of Shu and Osher (see
+[SSP RK](/methods/strong-stability-preserving-runge-kutta.md)). Written this
+way (one global step $H$, stages shared by all zones) it is a component-partitioned Runge–Kutta method, and hence a
+[GARK method](/methods/generalized-additive-runge-kutta.md) with one partition
+per zone *(compiler observation, not in the source)*. Kang & Constantinescu
+generalize it to any number of 2:1 refinement levels: elements are grouped
+into level blocks of fast zone, fast buffer and slow buffer; a block of level
+$k\ge1$ (page-local) takes $2^{k-1}$ substeps of length $2^{1-k}H$, with $H$
+the global step; an activation table over $2^{k_{\max}+1}$ global stages, with
+$k_{\max}$ the finest level (page-local), says which blocks are active at each stage; and a balancing
+algorithm keeps neighbouring level jumps at most one (Eqs. (20)–(21),
+Algorithms 1–2, Fig. 2).
+
+**Relaxation.** One global relaxation parameter, shared by all zones and
+levels, makes the method entropy conservative or stable at the synchronization
+time (Props. 2.2–2.3, Eq. (22)); inside stages and substeps entropy is not
+controlled, which is why entropy-stable fluxes are recommended for deep
+nesting (§3.3, §4). On [Burgers](/benchmarks/burgers-equation.md) with five
+refinement levels, plain MRK2 drifts in energy to $O(10^{-1})$ while the
+relaxed method holds $O(10^{-13})$ (Fig. 11), and the relaxed method with an
+entropy-stable flux runs stably on ten levels (Fig. 16). See
+[relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md). Multirate methods
+need no linear or nonlinear solves, which the authors find attractive for
+parallel computing when no good preconditioner is available (§4).
+
+Printed slips (arXiv v4 read; source's reader checks): Eq. (17) omits the zone
+superscript on $b_i$; Algorithm 2 sets its loop flag unconditionally in one
+branch and indexes past the end of an array; the level-0 bookkeeping of the
+worked example (step $2H$ under the same step label) is unclear.
+
 ## Qualifications
 
 - The orders of all methods are classical orders on smooth problems; the
@@ -213,3 +257,4 @@ $I-H\gamma J$ when $m$ matches the stiffness ratio
 # Citations
 
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §2 (eqs. 2.4–2.7, Thm. 2.1), §3.4 (eqs. 3.16–3.18), §4, §5 (eqs. 5.2–5.11, Table 5.1), §6 (Figs. 6.1–6.2, Table 6.1), §7, Apps. A–B.
+- [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.3 (Table 1, Eqs. (16)–(22), Props. 2.2–2.3, Algorithms 1–2, Fig. 2), §3.3 (Figs. 11, 16), §4.

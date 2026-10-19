@@ -3,9 +3,9 @@ type: Property
 title: "Positivity preservation in time integration"
 description: "A time integrator is positivity preserving if nonnegative data give nonnegative numerical solutions; within SSP theory it holds under $h\\le\\mathcal C h_{\\mathrm{FE}}$, unconditional positivity is limited to first order for Runge–Kutta and multistep methods, and multiderivative, splitting and exponential reformulations obtain higher order, including uniformly in a stiffness parameter."
 status: established
-aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity]
+aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Positivity preservation in time integration
@@ -74,6 +74,49 @@ Every route changes the class of methods or adds hypotheses on $f$:
   coefficients*, a precondition for well-posed sub-steps, not positivity of the
   solution; see the [negative-coefficient barrier](/results/negative-coefficient-barrier.md).
 
+## Linear positivity of many-stage explicit methods: the role of boundaries
+
+For a linear semi-discretization $y'=Ly$ a one-step method gives
+$y_{n+1}=P(hL)y_n$, and the step preserves nonnegativity of all data iff every entry
+of the matrix $P(hL)$ is nonnegative; [Dawes (2021)](/sources/dawes-2021.md) (§5–6,
+Eqs. (13)–(17), after Hirsch) calls such a scheme monotone and uses the two words
+interchangeably for linear schemes. He computes the entries in closed form for
+Runge–Kutta–Legendre (RKL) super-time-stepping with up to four stages (App. D) and
+numerically beyond, for the 1D cell-centred heat equation written as
+$X=I+d_{\mathrm e}\mathbb M$, where $d_{\mathrm e}$ is the mesh
+Fourier number of one forward Euler sub-step and $\mathbb M$ the scaled Laplacian with
+its boundary closure (page-local symbols); see
+[stabilized explicit Runge–Kutta methods](/methods/stabilized-explicit-runge-kutta.md).
+
+- **Neumann and periodic boundaries:** all entries are nonnegative whenever forward
+  Euler is, $d_{\mathrm e}\le\frac12$, for first- and second-order RKL with any
+  stage count (§6.2–6.3, §7.2, Figs. 13–24). This extends the monotonicity of RKL
+  for $s<64$ shown by Meyer et al. through the convex monotone property, an analysis
+  that "did not include boundary conditions" (§5).
+- **Dirichlet boundaries** (ghost value zero at the ghost-cell centre): every scheme
+  except one-stage RKL1 (forward Euler) and two-stage RKL2 has negative entries next
+  to the boundary, in up to $s-1$ cells per boundary (§7.1, Fig. 25). The largest safe
+  Fourier number falls quickly with $s$: $\frac1{15}(6-\sqrt6)\approx0.24$,
+  $\frac1{35}(10-\sqrt{30})\approx0.13$ and $\approx0.08$ for RKL1 with 2, 3, 4 stages,
+  $\frac1{35}(15-\sqrt{15})\approx0.32$ and $\frac1{21}(7-\sqrt7)\approx0.21$ (printed
+  "$\sim0.18$", a slip; see Qualifications) for RKL2
+  with 3 and 4 stages, against $\frac12$ for forward Euler (§6.1.2–6.1.3). With some
+  negative entries, nonnegativity of the update depends on the data, through
+  $\sum_ja^+_{ij}y_{n,j}\ge\sum_ja^-_{ij}y_{n,j}$ for the positive and negative parts of
+  the entries (page-local; Eq. (23)).
+- **Remedies on a fixed mesh:** refining near the boundary (positivity then holds
+  independently of the mesh width only below the critical Fourier number, §6.1.5), or
+  coarsening the boundary cells by grouping $g$ cells (page-local), with $g$ = 4, 5,
+  7, 12, 17, 26, 50, 85, 205 for RKL1 and 1, 5, 7, 9, 17, 26, 35, 85, 196 for RKL2 with
+  $s=2,\dots,10$, at a visible loss of accuracy (§6.1.6, Table 3, Fig. 12). Skaras et
+  al.'s Gegenbauer super-time-stepping is named as a possible alternative (§6.1.4).
+
+The threshold depends on the closure: the face-based Dirichlet closure needs
+$d_{\mathrm e}\le\frac13$ already for forward Euler, the ghost-centre closure
+adopted by Dawes $\frac12$ (§6.1, Eqs. (18)–(19)). Positivity here is a property of
+the method together with the discrete operator and its boundary rows, not of the
+stability polynomial alone.
+
 ## Positivity uniformly in a stiffness parameter
 
 For the stiff relaxation form $y'=T(y)+\frac1\varepsilon Q(y)$ (page-local: $T$
@@ -114,9 +157,30 @@ by Jin (2022, §6.1).
   (limiters, as in the WENO positivity limiter used in Gottlieb et al. 2022, §3.5.3).
 - Patankar-type methods, also aimed at unconditional positivity, are not covered by
   the sources of this page.
+- **Dawes's notion and the SSP notion differ.** Dawes's "monotone" is nonnegativity of
+  the entries of the one-step matrix for a specific operator; no SSP coefficient is
+  computed. The reader of that source notes that the two-stage RKL1 polynomial
+  $1+z+z^2/6$ is absolutely monotonic only on about $[-1.27,0]$, against a real
+  stability interval of length 6, so the interior monotonicity at
+  $d_{\mathrm e}\le\frac12$ comes from the structure of the Laplacian, not from an
+  SSP property. The ghost-centre closure places the boundary value half a cell
+  outside the domain, so the thresholds are closure-specific. All results are for 1D
+  constant-coefficient diffusion.
+- **Printed slips in Dawes (2021).** Dawes prints the four-stage RKL2 Dirichlet
+  threshold as "$\frac1{21}(7-\sqrt7)\sim0.18$" (§6.1.3). The closed form equals
+  0.2073; the reader of that source found it to be the smallest root of the
+  boundary entry $2-18d_{\mathrm e}+49d_{\mathrm e}^2-42d_{\mathrm e}^3$ (roots 0.2073, 0.4594, 0.5) and confirmed it by a
+  numerical scan, so the printed decimal is a slip of the source, not a disagreement,
+  and the closed form is used above *(reader's recomputation, recorded on the Source
+  page)*. The qualitative statement that the threshold is lower than the three-stage
+  one (0.32) holds either way. Several closed-form
+  entries in App. D carry coefficient slips (D.8, D.18, D.20) and the analytic heat
+  solutions (35)–(36) are printed with the exponential multiplying the constant;
+  none changes a sign or a threshold.
 
 # Citations
 
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §1, Thm. 1, §2.3–2.4 (Fig. 1), §3.4 (Properties 1–5, Prop. 1, Eq. 51, Remark 1), §3.5.3 (Fig. 8), App. A.
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.6, §6.4, §9.2.1 (Bolley–Crouzeix barrier, doubled-system splitting, Eqs. 9.14–9.15).
 - [Jin (2022)](/sources/jin-2022.md) — §5.2 (Eqs. 5.7–5.8, exponential reformulation and positivity), §6.1 (Hu & Shu 2019).
+- [Dawes (2021)](/sources/dawes-2021.md) — §5 (Eqs. 13–17), §6.1–6.3 (Eqs. 18–30, Table 3, Figs. 1–24), §7 (Fig. 25), App. D.

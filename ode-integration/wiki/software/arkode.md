@@ -5,7 +5,7 @@ description: "ARKODE, the SUNDIALS package for one-step methods: a shared time-l
 status: established
 aliases: [ARKode, ERKStep, ARKStep, MRIStep]
 tags: [software, imex, multirate, step-size-control, runge-kutta]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # ARKODE
@@ -35,6 +35,11 @@ Heun–Euler (order 2), Bogacki–Shampine (3), Zonneveld (4) and Cash–Karp
 (5) (§5.1.1). ERKStep duplicates a subset of ARKStep and is kept because
 its simpler structure allows a leaner, more memory-friendly implementation
 (§2.2). See [embedded Runge–Kutta pairs](/methods/embedded-runge-kutta-pair.md).
+
+Recent ARKODE versions also provide [relaxation](/methods/relaxation-runge-kutta.md)
+for one-step methods, applied after the step is accepted, as stated by
+[Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) (§1, footnote 1); Reynolds et al. (2023),
+which describes version 5.5.0, does not list it.
 
 **ARKStep** — two-partition [additive (IMEX) Runge–Kutta](/methods/imex-runge-kutta.md)
 methods for $M(t)y'=f^{\mathrm E}(t,y)+f^{\mathrm I}(t,y)$, written with
@@ -190,3 +195,4 @@ LLNL Quartz node with Intel Xeon E5-2695 v4 CPUs) unless stated
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §1–§6; Eqs. 1, 5–7, 11–22; Fig. 1–3; Tables 1–2 (arXiv v2 numbering).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.3, §2.5, §5.1 (Table 5), §6.1 (Fig. 3).
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.2 (ARKODE-based Brusselator experiments).
+- [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1, footnote 1 (relaxation in recent ARKODE versions).

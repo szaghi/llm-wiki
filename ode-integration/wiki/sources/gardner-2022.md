@@ -128,7 +128,7 @@ pre-publication entry. [47] prints the volume "PP" (early access) and [51] print
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [ARKODE](/software/arkode.md)
 * [Brusselator](/benchmarks/brusselator.md)

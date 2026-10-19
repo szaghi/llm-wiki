@@ -248,9 +248,10 @@ ref. [10] is printed as "Wiley Online Library". No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [A-, L-, A(α)- and algebraic stability](/properties/a-stability.md)
+* [Burgers equation](/benchmarks/burgers-equation.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [DIRK schemes with high weak stage order](/methods/dirk-high-weak-stage-order.md)
 * [Explicit Runge–Kutta methods with high weak stage order](/methods/explicit-runge-kutta-high-weak-stage-order.md)
@@ -261,5 +262,6 @@ Chunk 1 (2026-10-19). This source is cited on:
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Stage order](/definitions/stage-order.md)
 * [Stiff accuracy](/properties/stiff-accuracy.md)
+* [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md)
 * [Weak stage order](/definitions/weak-stage-order.md)
 * [Weak-stage-order barriers](/results/weak-stage-order-barriers.md)

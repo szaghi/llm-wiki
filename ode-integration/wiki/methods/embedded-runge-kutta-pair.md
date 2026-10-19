@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Embedded Runge–Kutta pairs and the FSAL property"
-description: "An embedded pair adds a second weight vector to a Runge–Kutta tableau so that the difference of two solutions of orders p and p-hat estimates the local error at no extra stage cost; FSAL, design criteria, SSP and low-storage pairs, Rosenbrock pairs."
+description: "An embedded pair adds a second weight vector to a Runge–Kutta tableau so that the difference of two solutions of orders p and p-hat estimates the local error at no extra stage cost; FSAL and its interaction with relaxation, the affine family of all embeddings (null rules), design criteria, SSP, low-storage and paired pairs, Rosenbrock pairs."
 status: established
-aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation]
+aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation, null rule, nested Runge–Kutta methods]
 tags: [runge-kutta, step-size-control, explicit, ssp, embedded-pair]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Embedded Runge–Kutta pairs and the FSAL property
@@ -23,8 +23,8 @@ The main method has order $p$, the embedded method order $\hat p$, usually $\hat
 the pair is written $p(\hat p)$. The difference $y_{n+1}-\hat y_{n+1}$ estimates the local
 error and drives [step-size control](/methods/step-size-control.md); because $A$ is shared,
 the estimate costs no additional stage (Fekete et al. 2022, §1–2; Ranocha et al. 2022, §2,
-Eqs. (2.2)–(2.4); Reynolds et al. 2023, §2.1, Eq. (4)). The bracketed term is present only in a
-**FSAL** pair (below).
+Eqs. (2.2)–(2.4); Reynolds et al. 2023, §2.1, Eq. (4); Ranocha et al. 2025, §2, Eq. (2.2);
+Vermeire 2023, §2.1). The bracketed term is present only in a **FSAL** pair (below).
 
 ## Local extrapolation
 
@@ -58,7 +58,92 @@ baseline in their comparisons.
 
 Ranocha et al. find FSAL pairs "often more efficient" than non-FSAL ones, especially at loose
 tolerances, and recommend their new FSAL low-storage pairs for stability-limited hyperbolic
-problems (§6.2).
+problems (§6.2). [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) attribute the FSAL
+technique to Dormand and Prince (§1).
+
+### FSAL and relaxation
+
+A [relaxation Runge–Kutta method](/methods/relaxation-runge-kutta.md) continues from
+$y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$, so the first stage of the next step is
+$f(y^{\gamma}_{n+1})$, not the FSAL value $f(y_{n+1})$. Relaxing accepted steps on top of an
+unchanged FSAL pair, as in OrdinaryDiffEq.jl and SUNDIALS, therefore costs one extra evaluation
+per step, an efficiency loss reported earlier by Al Jahdali et al. and Rogowski et al. (as
+recalled by Bleecke & Ranocha 2026, §1). Bleecke & Ranocha (2026, §2) remove it by the linear
+structure of the relaxation update. Let $p$ be the order of the main method and $g$ any $C^2$
+function.
+
+- **FSAL-R** (relax after the accept/reject decision). The next first stage is approximated by
+  $f(y_n)+\gamma_n\bigl(f(y_{n+1})-f(y_n)\bigr)$, a combination of values already computed
+  ($y_n$ the current, already relaxed, solution). Lemma 1:
+  $g(y^{\gamma}_{n+1})=g(y_n)+\gamma_n\bigl(g(y_{n+1})-g(y_n)\bigr)+O(h^{p+1})$, which follows
+  from $\gamma_n=1+O(h^{p-1})$. Theorem 1: the local errors of main and embedded solution stay
+  $O(h^{p+1})$ and $O(h^{p})$, because the first-stage error enters multiplied by $h$.
+- **R-FSAL** (relax before the error estimate). One evaluation $f(y^{\gamma}_{n+1})$ is made and
+  serves as the next first stage; the FSAL value needed by $\hat y_{n+1}$ is approximated by
+  $f(y_n)+\gamma_n^{-1}\bigl(f(y^{\gamma}_{n+1})-f(y_n)\bigr)$ (Lemma 2, error $O(h^{p+1})$). The
+  estimate compares $y^{\gamma}_{n+1}$ with a relaxed embedded solution
+  $\hat y^{\gamma}_{n+1}=y_n+\gamma_nh\bigl(\sum_i\hat b_if(t_n+c_ih,Y_i)+\hat b_{s+1}\,[\text{approximated FSAL value}]\bigr)$,
+  both read at $t_n+\gamma_nh$; Theorem 2 gives a local error $O(h^{p})$ for it.
+
+On the [BBM equation](/benchmarks/benjamin-bona-mahony-equation.md) with BS3(2) and the
+Dormand–Prince 5(4) pair, both variants match the accuracy of the naive combination at
+essentially the evaluation count of the unrelaxed method, "roughly 25%" more accurate than
+the baseline at equal work (§3, Fig. 1). The authors see no clear winner for conservative
+problems, recommend FSAL-R for general-purpose libraries and R-FSAL for dissipative problems,
+whose entropy estimates FSAL-R cannot use directly (§4).
+
+## The family of all embeddings: null rules
+
+For fixed $(A,c)$ the order conditions are linear in the weights: collecting the conditions up
+to order $p$ gives a matrix $G_p(A,c)$ with one row per tree and one column per stage,
+and $G_p\,b=r_p$ with $r_p$ the vector of $1/\gamma(\tau)$ ($G_p$,
+$r_p$ page-local). [Belardo et al. (2026)](/sources/belardo-2026.md) draw the consequence
+(§2–3, Eqs. (1)–(2)):
+
+- the difference $b-\hat b$ of two nested weight vectors lies in $\kerG_p$ for the
+  lower of the two orders; borrowing Lyness's quadrature term, they call a nonzero element of
+  $\kerG_p$ a **null rule of order $p$**;
+- *every* weight vector of order $\ge p$ that reuses the stages of $(A,b,c)$ is $b+Z_pk$, with $Z_p$
+  an orthonormal basis of $\kerG_p$ and $k$ free ($Z_p$, $k$ page-local; Belardo et al. write $\boldsymbol\Phi_p$ for $G_p$); an embedding of
+  order $p$ exists iff $G_p$ lacks full column rank.
+
+Their examples (§3–4):
+
+| Main method | kernel dimensions found | consequence |
+|---|---|---|
+| explicit midpoint ($s=2$) | $\dim\kerG_1=1$; $G_2$ full rank | only first-order embeddings |
+| classical RK4 | $G_4$, $G_3$ full rank; $\dim\kerG_2=2$ | no embedding of order 3 or 4 |
+| Dormand–Prince 5(4) ($s=7$) | $\dim\kerG_4=1$, $\dim\kerG_3=3$ | the standard $\hat b$ is one member of a one-parameter order-4 family |
+| (5,3,3) method of Biswas et al. (2025) | $\dim\kerG_3=1$, $\dim\kerG_2=3$ | one order-3 family, three order-2 directions |
+| Bogacki–Shampine 3(2) | $\dim\kerG_2=2$ | two-parameter family of estimators |
+
+The RK4 row restates, as full rank of $G_3$, the classical result that a four-stage
+fourth-order explicit method cannot be nested with an order-3 embedding, which they cite from
+Hairer–Nørsett–Wanner; the rank is asserted, not proved (§3). Along the Dormand–Prince family
+they print a new order-4 embedding with a wider real stability interval than the standard one
+(Fig. 3), positive-weight order-2 embeddings for RK4 and for the (5,3,3) method of
+[Biswas et al. (2025)](/sources/biswas-2025.md) (Figs. 2, 5; see
+[explicit methods of high weak stage order](/methods/explicit-runge-kutta-high-weak-stage-order.md)),
+and first-order embeddings of the midpoint rule. They also propose such lower-order formulas
+with larger stability intervals for stiffness detection, without demonstrating it (§1). The free
+parameter is chosen by the real stability interval of the embedded formula, with the caveat that
+this alone does not decide the quality of the estimator (§3 Remarks; see the next section).
+
+## Stage values as embedded solutions
+
+An internal stage value can itself serve as the embedded solution when its abscissa is 1 and
+it is accurate enough.
+
+- In the 2N-storage (5,3) method (5,3)$_4$ of [Bazavov (2026)](/sources/bazavov-2026.md),
+  stage 5 has $c_5=1$ and satisfies $\sum_ja_{5j}=1$, $\sum_ja_{5j}c_j=\tfrac12$, so it is a
+  second-order solution, and the method carries a 3(2) pair with no extra evaluation (§9,
+  Table 10; see [low-storage methods](/methods/low-storage-runge-kutta.md)).
+- In the monotonic Runge–Kutta–Chebyshev methods of [Faleichik & Moisa (2026)](/sources/faleichik-2026.md),
+  the stability function of stage $Y_{s-1}$ equals $R_s'$ and $c_{s-1}=1$, so $Y_{s-1}$ is a
+  stable first-order approximation at $t_n+h$. Its error constant depends on $s$, so it would
+  need a normalization to avoid rejections when the stage count changes, and the authors use a
+  Taylor-type estimate instead (§2, Eq. (19); §4; see
+  [step-size control](/methods/step-size-control.md)).
 
 ## Design criteria for the embedded weights
 
@@ -77,6 +162,20 @@ The sources agree that a usable embedding needs more than order $\hat p$:
   places (§5.5.4, Fig. 5). Fekete et al. likewise favour embeddings with large stability regions
   (e.g. $\hat b=\tfrac14\mathbf 1$ for SSPRK(4,3), "significantly larger stability region",
   §2.2).
+- **Stability interval of the estimator is not efficiency.** Belardo et al. (2026) select
+  embeddings by the real stability interval of the embedded formula, but their own test on the
+  Bogacki–Shampine family shows the limit of that criterion: on a stiff scalar problem the
+  estimator with the fewest accepted steps (804 against 906 for the standard one at stiffness
+  50) has a *smaller* real stability interval (2.41 against 3.15), and the one with the largest
+  interval (3.18) needs 1488 steps (§4, Tables 2–3; see
+  [step-size control](/methods/step-size-control.md)). The paper itself warns that the interval
+  alone cannot decide the choice (§3).
+- **An estimator that fails first, by design.** Vermeire (2023) takes the opposite choice to
+  Ranocha et al.: in the embedded [paired explicit methods](/methods/paired-explicit-runge-kutta.md)
+  the embedded stability region is optimized to be *slightly smaller* than the main one, so
+  that the estimate grows just before the main method becomes unstable and the controller
+  tracks the stability limit (§3–4). The two choices serve different goals (a reliable accuracy
+  estimate versus a stability-limit detector) and are not incompatible claims.
 - **Step-size-control stability.** The pair and its controller form a dynamical system; Ranocha
   et al. impose step-size-control stability along the boundary of the main method's stability
   region as an a priori design constraint (§4, §6; see
@@ -113,6 +212,12 @@ Table 1) and is about 50% cheaper than BS3(2)3F at loose and medium tolerances o
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (3438 versus 5256 right-hand-side
 evaluations), but its cost grows sharply at tight tolerances, and its estimator "does not seem
 to be reliable enough" to make tolerance choice robust (§5.5.2, Table 4).
+[Ranocha et al. (2025)](/sources/ranocha-2025.md) confirm the pattern on further
+compressible-flow problems: the pair is usually the most efficient for lower-Mach flows,
+positivity-critical problems and strong shock capturing, its stability region loses only about
+5% to shock-capturing spectra against more than 20% for BS3(2)3F and RDPK3(2)5F, and it enters
+the accuracy-limited regime at looser tolerances because it is optimized for the SSP coefficient,
+not for the principal truncation error (§3, §4.1, §8).
 
 ## Optimized low-storage pairs
 
@@ -126,6 +231,32 @@ in line with their larger real stability interval per stage (0.99 versus 0.84); 
 fifth-order ones beat the corresponding Kennedy–Carpenter–Lewis pairs by up to 25% and 35%
 (§6.2). Among general-purpose pairs, BS3(2)3F is about 50% more efficient than the fifth-order
 BS5(4)7F and DP5(4)6F when the step is stability-limited (§5.5.1, Table 3).
+
+Ranocha et al. (2025) call the third- and fourth-order FSAL pairs RDPK3(2)5F[3S\*$_+$] and
+RDPK4(3)9F[3S\*$_+$] (§2.5). On compressible-flow problems RDPK3(2)5F is the more robust and
+RDPK4(3)9F the more efficient at strict tolerances; the nine-stage pair crashed at tolerance
+$10^{-4}$ on a Kelvin–Helmholtz instability and needed $10^{-5}$ or $10^{-6}$, which the
+authors attribute to its larger stage count, "making it more difficult to adapt quickly to
+changing conditions" (§6, §8; interpretation, not tested). [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md)
+use BS3(2), SSP3(2)4[3S\*$_+$], RK3(2)5F[3S\*$_+$], the Bogacki–Shampine 5(4) pair and a
+sixth-order Verner pair as the error-controlled schemes of their relaxation study (§2.1).
+
+## Embedded paired explicit pairs
+
+[Vermeire (2023)](/sources/vermeire-2023.md) adds embedded estimators to the second-order
+[paired explicit Runge–Kutta (P-ERK)](/methods/paired-explicit-runge-kutta.md) families, in which
+all members share $s$, $c$ with $c_i=\frac{i-1}{2(s-1)}$ and $b=(0,\dots,0,1)$ but evaluate only
+$e$ stages ("active stages"; page-local $e$) (§3, Eqs. (15)–(20)). A member with $e$ active stages gets a
+first-order embedding with $e-1$ active stages: $\hat b_s=0$, $\hat b_i=0$ on the inactive
+stages, $\hat b_1=1-\sum_{i=2}^{s-1}\hat b_i$. Both the $e-2$ free subdiagonal entries of $A$ and
+the $e-2$ free entries of $\hat b$ follow from prescribed optimized
+[stability polynomials](/methods/optimal-stability-polynomial.md) sequentially, with no
+nonlinear solve. For flux-reconstruction DG of degrees 1–8 and $e=3,\dots,16$, the ratio of the
+embedded to the main maximal stable Courant number rises from about 60% at few stages to about
+93% at $e=16$ (§4, Table 1, Fig. 2). Because $\hat b$ differs between members, the embedded
+solution of a mixed family is not conservative, which the author accepts since it never
+advances the solution (§3). Embedded pairs for the third-order P-ERK are left open, because base
+and embedded methods must then satisfy more order conditions (§7).
 
 ## Pairs in software
 
@@ -176,6 +307,30 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
   Jacobian along the stability boundary for each recommended embedding with Fekete et al.'s
   PID gains. *(Recorded as an Open contradiction by the drafter; reclassified by the chunk-1
   deep lint after checking Ranocha et al. §5 on the PDF.)*
+- **The new Dormand–Prince embedding is not a more stable integrator.** Under local
+  extrapolation the Dormand–Prince pair advances the fifth-order solution, so the wider real
+  stability interval of the order-4 embedding printed by Belardo et al. (2026, Fig. 3) changes
+  the estimator, not the stability of the integration. The paper does not say which solution is
+  propagated for that pair, nor compare error constants, on which Dormand and Prince chose
+  their embedding *(compiler note, not in the sources)*.
+- Belardo et al. (2026) print several values that their own formulas do not reproduce, as
+  checked on the Source page: the midpoint embedding's maximal real stability interval is
+  given as "7" at $k=1$, while the one-parameter family gives $1/\alpha$ with
+  $\alpha=\tfrac12(1-k/\sqrt2)$, i.e. 6.83 at $k=1$ and a supremum of 8 at $k\approx1.061$;
+  the visible weights of the second RK4 embedding (Fig. 2b, partly hidden by Fig. 2c) violate
+  the order-2 conditions; and the positive-weight (5,3,3) embedding said to sit where the
+  interval is maximal has an interval of about 2.28, below the base method's 2.51 (§4;
+  reader's checks). Their basis $Z_p$ is not unique for kernel dimension $\ge2$, so "null rule
+  #$j$" and the scale of $k$ depend on the basis computed.
+- The Bogacki–Shampine estimator comparison of Belardo et al. (2026) selects the best
+  estimator a posteriori on the problem it is evaluated on, with the exact solution, and the
+  selected estimator differs between the two stiffness values (Tables 2–3).
+- Vermeire (2023, Table 1) prints equal main and embedded stable Courant numbers for degree 1
+  at $e=15$ (3.22) and $e=16$ (3.43), against the text's statement that the embedded value is
+  always slightly smaller; the degree-1 pattern $\hat\nu_{\max}(e)=\nu_{\max}(e-1)$ stated in §4 would
+  give 3.00 and 3.22 ($\nu_{\max}$, $\hat\nu_{\max}$ the main and embedded maximal stable
+  Courant numbers). In the example
+  tableau (Eq. (21)) the printed $\hat b_1$ omits $\hat b_6$.
 
 # Citations
 
@@ -183,3 +338,10 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) — §2 (Eqs. (2.2)–(2.4), Remark 2.1), Remark 3.1, §4, §5.5.1–5.5.4 (Tables 3–4, Fig. 5), §6, Appendix A–B, Suppl. Table 1.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.1–2.2 (ERKStep and ARKStep tables).
 - [Steinebach (2023)](/sources/steinebach-2023.md) — §1 (Rodas5 estimator failures, Fig. 1), §3 (Rodas5P embedded method, Fig. 2).
+- [Belardo et al. (2026)](/sources/belardo-2026.md) — §1–3 (null rules, Eqs. (1)–(2), Table 1, Remarks), §4 (Figs. 1–5, Tables 2–3).
+- [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1 (Eqs. (4)–(7), naive FSAL with relaxation), §2.1 (Lemma 1, Theorem 1), §2.2 (Lemma 2, Eq. (17), Theorem 2), §3 (Fig. 1), §4.
+- [Vermeire (2023)](/sources/vermeire-2023.md) — §2.1–2.2, §3 (Eqs. (15)–(21)), §4 (Table 1, Figs. 1–2), §7.
+- [Bazavov (2026)](/sources/bazavov-2026.md) — §9, Table 10 (free embedded 3(2) pair).
+- [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §2 (Eq. (19)), §4.
+- [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2 (Eq. (2.2)), §2.5, §3, §4.1, §6, §8.
+- [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md) — §2.1 (error-controlled pairs).

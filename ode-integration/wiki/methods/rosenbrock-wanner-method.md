@@ -5,7 +5,7 @@ description: "Linearly implicit one-step methods that replace the nonlinear stag
 status: established
 aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
 tags: [stiff, implicit, dae, order-reduction, order-conditions]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Rosenbrock–Wanner (ROW) and W-methods
@@ -136,6 +136,22 @@ W-methods are ROW methods that do not require the exact Jacobian (Steinebach 202
 Rang). Jax extended them to DAEs with "a huge amount of additional order conditions". Rodas4P2 and Rodas5P satisfy Jax's three conditions, so they keep order 2 for index-1
 problems with an inexact Jacobian. Rodas4 and Rodas5 drop to order 1 (Table 1; §4 problem 5).
 
+## Related linearly implicit schemes: TASE
+
+[TASE operators](/methods/tase-operators.md) ([Bassenne et al. (2021)](/sources/bassenne-2021.md))
+make an explicit Runge–Kutta method stable on stiff problems by preconditioning the
+right-hand side with $\sum_{k=0}^{p-1}\omega_{p,k}(2^kI-\vartheta hJ)^{-1}$ (coefficients
+$\omega_{p,k}$ and parameter $\vartheta$ page-local, defined there), with $J$ the Jacobian at the current
+state (§4.4.1, Eqs. (42)–(43)). Each stage then solves linear systems with shifted
+Jacobians and no nonlinear system, which places the resulting scheme in the linearly
+implicit family of this page, with $p$ distinct matrices $2^kI-\vartheta hJ$ per stage, i.e.
+diagonal coefficients $\vartheta/2^k$, instead of the single matrix $M-h\gamma J_n$. Because the preconditioner equals
+$I+\mathcal O(h^p)$ for any bounded $J$, its nonstiff order does not require the exact
+Jacobian, as for a W-method *(compiler remark: Bassenne et al. do not make the
+connection, and cite Rosenbrock–Krylov methods only as solvers for split reaction
+steps, §1)*. Its stiff order conditions, in the sense of the Prothero–Robinson and
+parabolic conditions above, have not been studied in the sources.
+
 ## The Rodas family (as characterized by Steinebach 2023)
 
 - **ROS3P** (Lang–Verwer): 3 stages, designed for parabolic problems.
@@ -167,3 +183,4 @@ problems with an inexact Jacobian. Rodas4 and Rodas5 drop to order 1 (Table 1; �
 - [Biswas et al. (2024)](/sources/biswas-2024.md) — §1, Def. 1.1, §2.3 (origin of the WSO conditions in ROW theory).
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §1.3 (earlier names of WSO-type conditions, Rosenbrock DAE methods).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §1, §5 (ROW B-series in BSeries.jl).
+- [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §1; §2.5; §4.4.1 (Eqs. (42)–(43); TASE as a linearly implicit scheme).

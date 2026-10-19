@@ -5,7 +5,7 @@ description: "Backward error analysis represents a one-step method as the exact 
 status: established
 aliases: [BEA, modified equation, modified vector field, modified Hamiltonian, modifying integrator]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T18:00:00Z
 ---
 
 # Backward error analysis, modified equations and modifying integrators
@@ -96,6 +96,28 @@ frequency is fixed by the half-trace of the one-step matrix (Blanes et al.
   At order $h^5$, 16 of the 20 B-series coefficients are nonzero yet their
   elementary differentials sum to zero on this problem (§2.6.1).
 
+## Imposing structure on the modified equation
+
+The modified equation can also be used to *design* methods. [de León et al. (2025)](/sources/deleon-2025.md)
+(§2) require the
+modified field of an explicit Runge–Kutta method to be energy preserving to
+order $q$ on canonical Hamiltonian systems: the energy-preserving B-series
+characterization of Celledoni et al. (Theorem 1, as quoted) gives linear
+conditions on the modified-field coefficients, one per conjugacy class of
+trees (§2.2), and the substitution law, solved with BSeries.jl and SymPy,
+translates them into conditions on the elementary weights and the tableau
+(Eqs. (9)–(16)). The result is the family of
+[pseudo-energy-preserving methods](/methods/pseudo-energy-preserving-runge-kutta.md),
+whose energy error per step is $O(h^{q+1})$ with $q$ above the classical order.
+Their argument for long-time behaviour is the backward-error one: when the
+dominant error terms of the modified equation do not change the energy, the
+global error is expected to grow linearly for moderately long times, which
+they observe but do not prove (§4). Two constants of their printed map–flow
+relations (Eq. (9)) are inconsistent with the exact flow
+($\tfrac7{12}$ and $\tfrac16$ where $\tfrac1{12}$ and $\tfrac18$ are required),
+while the conditions they derive from it are correct *(source's reader
+check)*.
+
 ## Modifying integrators
 
 The inverse problem: find a field $\bar f$ (page-local) such that the method
@@ -155,4 +177,5 @@ spikes (§5.7, Figs. 5.1–5.2).
 # Citations
 
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §2.4 (modified equation via substitution, Eqs. (26)–(27)), §2.4.2 (Lotka–Volterra), §2.5 (modifying integrators), §2.6 (explicit midpoint on the nonlinear oscillator, Eqs. (35)–(40), Fig. 3), §3.1.2 (Störmer–Verlet, Eq. (47)), §3.2 (AVF).
+- [de León et al. (2025)](/sources/deleon-2025.md) — §2 (Theorem 1), §2.2–2.4 (Eqs. (9)–(16)), §4.
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.1.1 (symmetric methods), §4.3 (linear modified Hamiltonian), §4.4 (BCH modified equation, Eqs. (4.14), (4.16), long-time results), §4.5 (processing), §5 (oscillatory problems, Eqs. (5.31), (5.47)), §9.10 (variable steps).

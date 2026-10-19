@@ -5,7 +5,7 @@ description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predicto
 status: established
 aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, IMADER, implicit ADER]
 tags: [ader, deferred-correction, explicit, implicit, stiff]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # ADER as a time integrator
@@ -91,6 +91,45 @@ problem both implicit variants track the reference while explicit ADER fails. IM
 visibly more accurate (Figs. 9–10, qualitative). Han Veiga et al. judge IMADER "closer to a
 pure implicit scheme than IMDeC" (§4.4).
 
+## ADER-DG as predictor and corrector
+
+In the DG setting used by [Gaburro et al. (2023)](/sources/gaburro-2023.md)
+(§3, Eqs. (6)–(14)) the modern scheme has two phases per step:
+
+* a **local predictor** in each space–time cell, a Galerkin problem in a
+  modal space–time Taylor basis obtained by integrating by parts in time on the
+  cell interior, solved by discrete Picard iteration (Eq. (12); the number of
+  iterations is not stated);
+* a **global corrector** that updates the DG coefficients with the time
+  integrals of the numerical flux and of the volume flux, evaluated on the
+  predictor by a time quadrature with nodes $s=0,\dots,S$ and weights
+  $\beta_s$ (page-local, summing to one).
+
+Cells exchange data only in the corrector. Gaburro et al. state that ADER-DG
+is therefore "not a method-of-lines scheme" and, citing Balsara et al., that
+the single communication per step makes it more efficient than RK-DG; the
+efficiency is not measured there (§3.1).
+
+**Entropy-preserving ADER-DG.** Gaburro et al. (2023, §4) obtain a provably
+entropy-conservative or entropy-dissipative fully discrete ADER-DG scheme,
+which they call the first. At each quadrature node they add Abgrall's cell-wise
+correction, chosen so that the central part of the flux plus the correction
+reproduces the numerical entropy flux of the cell (Eqs. (15)–(22)), and then
+apply [relaxation](/methods/relaxation-runge-kutta.md) to the whole step: the
+increment is scaled by $\gamma_n$, time advances by $\gamma_nh$, and $\gamma_n$
+matches the total entropy to the quadrature of the spatial entropy balance
+(Eqs. (29)–(37)); for a quadratic entropy it is explicit (Eq. (42)). Dropping
+the upwind terms from the target conserves entropy exactly. On advection,
+shallow water and Euler tests with degrees 1–3 the relaxed scheme keeps the
+total entropy to $10^{-12}$–$10^{-16}$, while plain ADER-DG dissipates it
+(e.g. errors of $10^{-4}$ at degree 1 to $10^{-6}$ at degree 3 on the
+travelling bump, Fig. 1), with design orders and, on smooth tests, $\gamma_n$
+close to one (up to about 1.2 and 1.35 with a contact discontinuity and the
+"123" problem) (Tables 1–4, Figs. 1–17; the Shu vortex is on
+[isentropic vortex](/benchmarks/isentropic-vortex.md)). No limiter is used, so
+strong shocks are out of scope (§6). See
+[entropy stability](/properties/entropy-stability.md).
+
 ## Stability and accuracy
 
 - **Linear stability.** Han Veiga et al. present the first numerical study of ADER stability
@@ -123,6 +162,24 @@ pure implicit scheme than IMDeC" (§4.4).
   converged collocation problem is of higher order (see
   [deferred correction](/methods/deferred-correction.md), Qualifications) *(compiler note, not in
   the sources)*.
+- **Time integrator or not.** Han Veiga et al. read the predictor as a
+  one-step method for the semi-discrete system, while Gaburro et al. (2023,
+  §3.1) stress that ADER-DG is not a method-of-lines scheme because the
+  predictor is element-local and neighbours couple only in the corrector. The
+  two are compatible: Han Veiga et al. themselves note the element-local
+  predictor (Remark 4.7), and their equivalence results concern the
+  predictor iteration, not the inter-element coupling. This is a difference of
+  viewpoint, not of claims.
+- **Order of relaxed ADER.** Gaburro et al. take existence of $\gamma_n$,
+  $\gamma_n=1+O(h^{p-1})$ and order $p$ from Runge–Kutta relaxation theory
+  without checking its hypotheses for a predictor–corrector step; for ADER the
+  statement is unproved, though the tests show the design orders (e.g. 1.78–1.84
+  at second order on one advection test, Table 1).
+- **Printed slips in Gaburro et al.** (arXiv v1 read; source's reader checks):
+  Table 2 prints $\Delta x=3.43\times10^{-3}$ for $3.43\times10^{-2}$ and an
+  error $8.09\times10^{-5}$ where the printed order implies $8.09\times10^{-6}$;
+  Eq. (36) omits the factor $\gamma_nh$; the symbol $\gamma$ also denotes the
+  adiabatic exponent.
 - **Scaling convention.** In the ADER spectral-difference variant (eq. (65)) the iteration
   matrix carries an $h$ that the unit-interval form above does not. The time basis is
   defined there on the physical interval. This is a change of convention between §2 and
@@ -131,3 +188,4 @@ pure implicit scheme than IMDeC" (§4.4).
 # Citations
 
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §2 (eqs. (2)–(13), Example 2.1); §2.1 (historical ADER, eqs. (15)–(17)); §4.1 and §4.3 (Thm. 4.5, Remark 4.6); §4.4 (eqs. (43)–(47)); §4.5.2 (Remarks 4.7–4.8); §4.5.3; §5.1–5.3 (Figs. 2–14); §6.
+- [Gaburro et al. (2023)](/sources/gaburro-2023.md) — §3 (Eqs. (6)–(14), Remark 3.1), §4.1 (Eqs. (15)–(22)), §4.2 (Eqs. (29)–(37), Example 4.5), §5 (Tables 1–4, Figs. 1–17), §6.

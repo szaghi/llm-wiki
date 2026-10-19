@@ -5,7 +5,7 @@ description: "Three-dimensional periodic vortex flow used to test time integrato
 status: established
 aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600]
 tags: [explicit, step-size-control, runge-kutta, stability]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T18:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -49,8 +49,16 @@ v_1&=U_0\sin\tfrac xL\cos\tfrac yL\cos\tfrac zL,\qquad v_2=-U_0\cos\tfrac xL\sin
   points;
 - checked against a reference spectral DNS (van Rees et al.).
 
-The two set-ups share the velocity and pressure fields up to scaling; they differ in viscosity
-and element types.
+**Inviscid, Cartesian and curved meshes** ([Ranocha et al. 2025](/sources/ranocha-2025.md),
+§3, Eqs. (3.1)–(3.4)). The velocity field of Ranocha et al. (2022), $\rho=1$ and
+$\mathcal P=1/(\kappa\mathrm{Ma}^2)+\tfrac1{16}(\cos2x_1\cos2x_3+2\cos2x_2+2\cos2x_1+\cos2x_2\cos2x_3)$
+($\kappa=1.4$ the ratio of specific heats, page-local), $\mathrm{Ma}=0.1$, $8^3$ elements of
+degree 3 with an entropy-conservative volume flux, $t\in[0,10]$, on a Cartesian mesh and on a
+heavily curved one. The fluctuation is the same as in Ranocha et al. (2022); only the mean
+pressure is normalized differently *(compiler check)*.
+
+The set-ups share the velocity and pressure fields up to scaling; they differ in viscosity,
+normalization and element types.
 
 ## What it tests and results
 
@@ -69,6 +77,15 @@ more of it do better (§5.5.4). Right-hand-side evaluations at tolerance $10^{-5
   KCL5(4)9[2R$_+$]S with its prescribed controller;
 - **controller tuning**: the TGV is one of the three problems in the brute-force PID search
   (§5.4; see [step-size control](/methods/step-size-control.md)).
+
+**Error-based versus CFL control under a mesh change** (Ranocha et al. 2025, §3, Fig. 2). For
+BS3(2)3F, RDPK3(2)5F[3S\*$_+$] and SSP3(2)4[3S\*$_+$], a range of tolerances spanning up to five
+orders of magnitude gives the evaluation count of the best hand-tuned CFL factor; looser
+tolerances can crash in the first steps (positivity), stricter ones enter the accuracy-limited
+regime, earliest for the SSP pair. The optimal CFL factor is 55–74% larger on the curved mesh
+(curved against Cartesian: 1.35 against 0.87 for BS3(2)3F, 2.67 against 1.71 for RDPK3(2)5F,
+2.77 against 1.59 for the SSP pair), while the good tolerance range barely moves: the cost depends linearly on the CFL factor
+and only roughly logarithmically on the tolerance.
 
 **Optimized many-stage methods at Re 1600** (Hedayati Nasab et al. 2021, §7.2). A fourth-order,
 16-stage method with an [optimal stability polynomial](/methods/optimal-stability-polynomial.md)
@@ -89,7 +106,7 @@ showing them (§7.2).
 
 ## Qualifications
 
-- Both uses measure cost at the linear stability limit of explicit methods on dissipative
+- All uses measure cost at the linear stability limit of explicit methods on dissipative
   DG-type discretizations; the TGV is not used for accuracy-limited or implicit comparisons in
   these sources.
 - Hedayati Nasab et al. write the snapshot time as "$t_c=15$"; $t=15t_c$ is meant (§7.2).
@@ -99,3 +116,4 @@ showing them (§7.2).
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) — §5.1 (Eq. (5.3)), §5.4, §5.5.1–5.5.4 (Tables 3–4), §6.2.
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §7.2 (Eq. (29), Figs. 8–10).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §7.2 (results mentioned, not shown).
+- [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §3 (Eqs. (3.1)–(3.4), Fig. 2).

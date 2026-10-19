@@ -172,7 +172,7 @@ No DOIs are printed.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-19). This source is cited on:
+Chunk 1 (2026-10-19); updated in chunk 2 (2026-10-19). This source is cited on:
 
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
@@ -181,3 +181,4 @@ Chunk 1 (2026-10-19). This source is cited on:
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+* [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md)

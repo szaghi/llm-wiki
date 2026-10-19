@@ -5,7 +5,7 @@ description: "Additive Runge–Kutta methods integrate y' = fE + fI with an expl
 status: established
 aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta]
 tags: [imex, runge-kutta, stiff, implicit, explicit, asymptotic-preserving]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # IMEX and additive Runge–Kutta methods
@@ -122,6 +122,48 @@ structural property $\dot Q=-C\,Q$ they prove positivity for $h\le\mathcal C h_{
 uniformly in $\varepsilon$ (Prop. 1); see
 [positivity preservation](/properties/positivity-preservation.md).
 
+## Relaxation and entropy stability
+
+[Relaxation](/methods/relaxation-runge-kutta.md) extends to IMEX methods by
+scaling the combined update,
+$y^{\gamma}_{n+1}=y_n+\gamma_nh\sum_i\big(b^{\mathrm E}_if^{\mathrm E}(Y_i)+b^{\mathrm I}_if^{\mathrm I}(Y_i)\big)$,
+with $\gamma_n$ the root of the scalar entropy equation built from the same
+weighted sum ([Kang & Constantinescu (2022)](/sources/kang-2022.md), §2.2,
+Eqs. (12)–(14)). **Prop. 2.1:** if the explicit and implicit parts are each
+entropy conservative or stable, the relaxed IMEX method is entropy conservative
+or stable (the argument also uses nonnegative weights and $\gamma_n>0$, which
+the proposition leaves implicit); for $\eta=\tfrac12\lVert y\rVert^2$,
+$\gamma_n=2h\sum_i\big\langle b^{\mathrm E}_if^{\mathrm E}(Y_i)+b^{\mathrm I}_if^{\mathrm I}(Y_i),\,Y_i-y_n\big\rangle/\lVert y_{n+1}-y_n\rVert^2$.
+When $b^{\mathrm E}=b^{\mathrm I}$, only the sum $f^{\mathrm E}+f^{\mathrm I}$ has to
+be entropy stable (Cor. 2.1.1). See
+[entropy stability](/properties/entropy-stability.md).
+
+* **Linearized-flux splitting.** Kang & Constantinescu take
+  $f^{\mathrm I}(y)=J(\tilde y)\,y$ with $J(\tilde y)$ the Jacobian of the full
+  right-hand side at a reference state $\tilde y$ ($y_n$ or the stage value;
+  for Burgers the element mean at $t_n$)
+  and $f^{\mathrm E}=f-f^{\mathrm I}$, so each stage needs one linear solve
+  (Remark 3, Eq. (11); page-local $\tilde y$). Note their convention: $f$
+  explicit, $g$ implicit, tilde on the implicit tableau.
+* **Evidence** on [Burgers](/benchmarks/burgers-equation.md) with
+  Kennedy–Carpenter ARK methods: relaxed ARK2/ARK3 keep orders 2.00 and
+  2.98–3.00 with errors "slightly lower" than plain ARK, while IDT drops one
+  order (Tables 2–3). With an entropy-conservative flux, plain ARK loses
+  energy slightly, which the authors attribute to IMEX acting as a
+  high-frequency filter, while explicit RK2 gains energy; ARK2 also removes
+  Gibbs oscillations "dramatically" compared with RK2, the relaxed variants
+  less so (Figs. 5–6). Mass is conserved to $O(10^{-14})$ by all IMEX variants
+  (Fig. 9).
+* **Stiff dispersive problems.** [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md)
+  (§6) relax ARK3(2)4L[2]SA and ARK4(3)6L[2]SA for the energy of a Fourier
+  split-form KdV semi-discretization, with the stiff third-derivative term
+  implicit. On one soliton the maximum energy change falls from
+  $5.38\times10^{-2}$ and $1.05\times10^{-2}$ to about $1.4\times10^{-15}$,
+  and the error grows linearly instead of quadratically (Table 1, Fig. 11).
+  They present this as the first combination of relaxation with IMEX methods;
+  Kang & Constantinescu's earlier work above does not bear the claim out (see
+  the Qualifications of the relaxation page).
+
 ## Asymptotic-preserving IMEX schemes
 
 For $y'=T(y)+\frac1\varepsilon Q(y)$ with relaxation term $Q$ ($T$, $Q$ page-local),
@@ -196,3 +238,5 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §3 (Thm. 2, order conditions p. 11, §3.3 methods, Prop. 1, Remarks 2 and 4).
 - [Jin (2022)](/sources/jin-2022.md) — §5.1 (eq. 5.2), p. 457 (eqs. 5.37–5.38), §6.1, §6.5.
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §6.1 (eqs. 6.14–6.21), §6.2, §6.4.
+- [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.2 (Eqs. (10)–(14), Prop. 2.1, Cor. 2.1.1), Remark 3 (Eq. (11)), §3.2 (Tables 2–3, Figs. 5–9).
+- [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §6 (Eq. (34), Table 1, Fig. 11), §7.

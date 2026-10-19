@@ -17,7 +17,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** chunk 1 of 6 ingested (20 of the archive's sources): two *Acta
+**Corpus:** chunks 1–2 of 6 ingested (40 of the archive's 118 sources). Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -25,8 +25,11 @@ software papers (SUNDIALS, ARKODE, Irksome) and fourteen papers on Runge–Kutta
 theory and practice: weak stage order, SSP pairs and multiderivative SSP,
 strong stability, stability polynomials, step-size control, Rodas5P,
 fully implicit stage solvers, multirate GARK and IMEX-MRI-GARK, DeC and
-ADER. Most files are arXiv preprints; each Source page states the version
-read. The [bibliography](/bibliography.md) lists the works the sources cite.
+ADER. Chunk 2: relaxation and entropy-stable time stepping, paired-explicit
+and stabilized (Chebyshev, Legendre) methods, embedded pairs and step-size
+control for compressible flow, low-storage and high-order explicit methods,
+TASE operators and deferred correction. Most files are arXiv preprints; each
+Source page states the version read. The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -38,7 +41,8 @@ read. The [bibliography](/bibliography.md) lists the works the sources cite.
    Linear stability: the [stability function](/definitions/stability-function.md),
    [A-, L- and algebraic stability](/properties/a-stability.md),
    [stiff accuracy](/properties/stiff-accuracy.md),
-   [symplecticity](/properties/symplecticity.md).
+   [symplecticity](/properties/symplecticity.md),
+   [B-convergence](/definitions/b-convergence.md).
 2. **Stiffness and order reduction.** [Stage order](/definitions/stage-order.md),
    [order reduction](/definitions/order-reduction.md) and its cure through
    [weak stage order](/definitions/weak-stage-order.md), with its
@@ -50,8 +54,10 @@ read. The [bibliography](/bibliography.md) lists the works the sources cite.
    [DIRK/SDIRK/ESDIRK](/methods/diagonally-implicit-runge-kutta.md),
    [fully implicit collocation methods](/methods/fully-implicit-runge-kutta.md),
    [Rosenbrock–Wanner and W-methods](/methods/rosenbrock-wanner-method.md) and
-   [Rodas5P](/methods/rodas5p.md), [differential-algebraic equations](/definitions/differential-algebraic-equation.md),
-   and [solving the stage equations](/methods/implicit-stage-solvers.md).
+   [Rodas5P](/methods/rodas5p.md), [TASE operators](/methods/tase-operators.md),
+   [differential-algebraic equations](/definitions/differential-algebraic-equation.md),
+   and [solving the stage equations](/methods/implicit-stage-solvers.md); stiff test problems:
+   [Van der Pol](/benchmarks/van-der-pol-oscillator.md), [Robertson](/benchmarks/robertson-problem.md).
 4. **Nonlinear stability and structure.**
    [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
    versus [strong stability](/properties/strong-stability.md) for linear seminegative
@@ -59,8 +65,19 @@ read. The [bibliography](/bibliography.md) lists the works the sources cite.
    ([diagonal Padé schemes](/results/diagonal-pade-strong-stability.md),
    [superviscosity stabilization](/methods/superviscosity-stabilized-runge-kutta.md));
    [positivity preservation](/properties/positivity-preservation.md);
-   [multiderivative methods and the backward derivative condition](/methods/multiderivative-runge-kutta.md).
+   [multiderivative methods and the backward derivative condition](/methods/multiderivative-runge-kutta.md);
+   [relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md) and
+   [entropy stability](/properties/entropy-stability.md) of the fully discrete scheme,
+   [pseudo-energy-preserving methods](/methods/pseudo-energy-preserving-runge-kutta.md),
+   [discrete adjoints](/methods/discrete-adjoint-runge-kutta.md); test problems: the
+   [Kepler problem](/benchmarks/kepler-problem.md), the
+   [BBM equation](/benchmarks/benjamin-bona-mahony-equation.md), the
+   [Burgers equation](/benchmarks/burgers-equation.md).
 5. **Explicit methods in practice.** [Optimal stability polynomials](/methods/optimal-stability-polynomial.md),
+   [stabilized Chebyshev and Legendre methods](/methods/stabilized-explicit-runge-kutta.md),
+   [paired explicit (P-ERK) methods](/methods/paired-explicit-runge-kutta.md),
+   [internal stability](/definitions/internal-stability.md),
+   [mixed precision](/methods/mixed-precision-runge-kutta.md),
    [embedded pairs](/methods/embedded-runge-kutta-pair.md),
    [step-size control](/methods/step-size-control.md),
    [low-storage schemes](/methods/low-storage-runge-kutta.md),

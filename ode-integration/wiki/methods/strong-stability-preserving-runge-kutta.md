@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -69,6 +69,26 @@ positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
   A, restating Gottlieb–Shu–Tadmor). The same barrier for positivity is the
   Bolley–Crouzeix result recalled on
   [positivity preservation](/properties/positivity-preservation.md).
+- **Many stages do not bring SSP for free.** Stability polynomials optimized for
+  hyperbolic spectra and realized as products of forward Euler steps and two-stage
+  submethods have $\mathcal C=\min\alpha_{ij}/\beta_{ij}=0$, because the final row has
+  $\alpha_{s+1,s}=0$, $\beta_{s+1,s}=1$; negative $\beta$, used to reduce
+  [internal error amplification](/definitions/internal-stability.md), would need
+  downwind treatment ([Doehring et al. 2024](/sources/doehring-2024.md), §9.4, Eq.
+  (9.14)). On Burgers with a source and on the isentropic vortex their 28–120-stage
+  methods need 28–79% of the linearly stable step and increase the total variation,
+  while Ketcheson's third-order SSP method with $s=225=n^2$ stages, of similar internal
+  amplification, keeps it constant; the authors attribute the reductions to the
+  missing SSP property, and leave many-stage SSP methods of this kind open (§10.2,
+  Tables 5–6). The optimal second-order disk polynomial
+  $\frac{s-1}s(1+\frac z{s-1})^s+\frac1s$ is, by contrast, a composition of forward
+  Euler steps and SSP with optimal coefficient, as recalled there (§3.1.2).
+- **Partitioned methods.** A partitioned Runge–Kutta method is SSP only if every
+  member is, with $h\le\min_q\mathcal C^{\{q\}}h_{\mathrm{FE}}$ over the members'
+  coefficients (page-local $\mathcal C^{\{q\}}$), which makes SSP partitioned methods
+  "in many cases ineffective" ([Doehring et al. 2025](/sources/doehring-2025.md),
+  §2.5, Eq. (2.15)); see
+  [paired explicit Runge–Kutta methods](/methods/paired-explicit-runge-kutta.md).
 - **Weak stage order.** An explicit method with $A\ge0$, $b\ge0$ has either
   [weak stage order](/definitions/weak-stage-order.md) $q_{\mathrm w}=1$, or $p\le1$
   and $q_{\mathrm w}=\infty$; hence every explicit method with $p\ge2$ and
@@ -105,7 +125,14 @@ four-stage third-order method has real stability interval 5.15, i.e. 1.29 per
 right-hand-side evaluation, the largest scaled value of all pairs they compare, against
 0.84 for SSPRK(3,3) and for Bogacki–Shampine 3(2) (Ranocha et al. 2022, Suppl. Table 1).
 It can be implemented in three registers (Ranocha et al. 2022, App. A, Eq. (A.2)); see
-[low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md).
+[low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md). On linear
+spectra of DG with subcell shock capturing, its stability region loses about 5% of
+the admissible CFL number relative to plain DG, against more than 20% for
+Bogacki–Shampine 3(2) and the five-stage pair of Ranocha et al.
+([Ranocha et al. 2025](/sources/ranocha-2025.md), §4.1, Fig. 3). The second-order
+two-stage SSP method of Shu and Osher is the base of the second-order multirate scheme
+MRK2 of Constantinescu and Sandu, which [Kang & Constantinescu (2022)](/sources/kang-2022.md)
+use and extend to several levels (§2.3, Table 1).
 
 ## Embedded pairs and adaptive steps
 
@@ -138,7 +165,15 @@ SSPRK(3,3) or Bogacki–Shampine 3(2) at loose and medium tolerances on the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), nearly 50% faster than
 Bogacki–Shampine 3(2) on the NASA juncture flow and the most efficient method on the
 Imperial Front Wing at spatial degree 2 (§7.2–7.3, Tables 8–9), but its cost grows
-sharply at tight tolerances. Step-size control is on [step-size control](/methods/step-size-control.md).
+sharply at tight tolerances. In a later study of error-based control for
+compressible DG, the same pair with the Conde–Fekete–Shadid embedding is usually the
+most efficient of four pairs for low-Mach, positivity-critical and strongly
+shock-captured problems: 16% fewer right-hand-side evaluations than the five-stage
+pair of Ranocha et al. on the Orszag–Tang vortex, and the fewest on both
+Kelvin–Helmholtz tests (5478 and 6618 evaluations), one of which cannot be run with
+CFL-based control at all; because its coefficients are optimized for $\mathcal C$
+and not for the truncation error, it enters the accuracy-limited regime at looser
+tolerances than the others (Ranocha et al. 2025, §3, §4.2, §6, §8, Tables 1, 4–5). Step-size control is on [step-size control](/methods/step-size-control.md).
 
 ## Beyond Runge–Kutta: downwind, multiderivative, IMEX
 
@@ -160,6 +195,21 @@ sharply at tight tolerances. Step-size control is on [step-size control](/method
   al. 2022, §3, recalling Higueras and Conde et al.); the multiderivative IMEX methods
   of the same paper are SSP for $h\le rh_{\mathrm{FE}}$ with $r$ the SSP coefficient of
   the explicit part alone (Thm. 2).
+
+## SSP as a proof device beyond Runge–Kutta
+
+The Shu–Osher convex-combination argument transfers any property of a single forward
+Euler step to the whole method. [Bassenne et al. (2021)](/sources/bassenne-2021.md)
+(§3.1, Lemmas 3.3–3.4, Thm. 3.2) use it for explicit Runge–Kutta methods applied to a
+first-order TASE-preconditioned linear problem: one forward Euler step of the
+preconditioned problem is the $\theta$-method with $\theta$ equal to the TASE
+parameter $\alpha$, unconditionally stable iff $\alpha\ge\frac12$, and a method with
+nonnegative Shu–Osher coefficients is then unconditionally stable if
+$\alpha\ge\frac12\max\beta_{ij}/\alpha_{ij}$; for linear SSP methods up to order four
+this gives $\alpha\ge\frac12$. For four-stage fourth-order methods this uses a linear
+SSP realization of the same polynomial, valid for linear constant-coefficient problems
+only, since no such method has a nonnegative nonlinear Shu–Osher form (reader's
+remark on that source). See [TASE operators](/methods/tase-operators.md).
 
 ## Relation to strong stability
 
@@ -219,3 +269,8 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1 (coercive operators, contractivity).
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1 (SSP versus noncoercive problems; Taylor polynomials in SSP form).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §3.2 (SSP tableau in Irksome).
+- [Doehring et al. (2024)](/sources/doehring-2024.md) — §3.1.2, §9.4 (Eq. 9.14), §10.2 (Tables 5–6).
+- [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.5 (Eq. 2.15).
+- [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §3, §4.1 (Fig. 3), §4.2 (Table 1), §6 (Tables 4–5), §8.
+- [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §3.1 (Lemmas 3.3–3.4, Thm. 3.2).
+- [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.3 (Table 1; MRK2 base method).

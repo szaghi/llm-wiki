@@ -6,6 +6,105 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — relaxation, stabilized and paired-explicit methods, step-size control (2026-10-19)
+
+Sources (20): koyaguerebo-2022, dawes-2021, bassenne-2021, aljahdali-2022,
+belardo-2026, croci-2022, hedayatinasab-2022, kang-2022, gaburro-2023,
+ranocha-2025, vermeire-2023, bencomo-2023, biswas-2023-b, doehring-2024,
+zhang-2024, doehring-2025, deleon-2025, bleecke-2026, bazavov-2026,
+faleichik-2026. 15 new concept pages (78 in all, 119 with the Source pages
+and the registry), 22 pages extended, 1622 bibliography entries. Deep lint
+(D26) run over the chunk's pages before staging.
+
+### Decisions for the human
+
+1. **Reclassification applied by the deep lint (veto possible):** the
+   drafter opened "who first combined relaxation with IMEX methods" on
+   [relaxation Runge–Kutta](wiki/methods/relaxation-runge-kutta.md):
+   Biswas & Ketcheson (2023, §7) claim to be first; Kang & Constantinescu
+   (arXiv 2021, J. Sci. Comput. 2022) did it before and are not cited by
+   them. Moved to `## Qualifications` as a priority claim settled by the
+   publication record, not a conflict of technical results.
+2. **Slug convention for double surnames:** deleon-2025 follows Crossref's
+   family name "de León"; page 1 prints "Gabriel A. Barrios de León", which
+   under the bundle rule (particles joined) would give `barriosdeleon-2025`.
+   Pages cite "de León et al. (2025)". Keep, or re-slug?
+3. **Bibliography rules to confirm:**
+   - book printings with different years stay separate entries, as in
+     chunk 1 (Butcher 2002/2003, Lambert 1991/1992);
+   - `fernandez-2020` (chunk 1) does not join the surname particles of Del
+     Rey Fernández while the new entry is `delreyfernandez-2020`: re-key the
+     old one (I can do it on your word);
+   - applied without asking, as plain identity fixes: `vermeire-2020` →
+     `vermeire-2021` (the future Source slug, printed with its online year),
+     `dematte-2019` → `dematte-2020`, `wanner-1991` → `hairer-1991`,
+     `kennedy-1994` → `carpenter-1994` (NASA TM-109112 is by Carpenter and
+     Kennedy), and `fekete-2022` restored to the published author order
+     after a citing list had overwritten it with the preprint order.
+4. **Registry choices you may want to veto:** §8 $\eta(y)$ (entropy or
+   invariant) and $\gamma_n$ (relaxation parameter, joining the $\gamma$
+   family); the P-ERK active-stage count stays page-local as $e$ (the
+   sources write $E$).
+5. **Bundle-fit candidates for a D17 copy** (none made): gaburro-2023
+   (entropy-stable ADER-DG) and kang-2022 (entropy-stable DG time
+   stepping) for `high-order-capturing-schemes`; doehring-2024,
+   doehring-2025 and hedayatinasab-2022 (P-ERK on DG/FR with Trixi.jl)
+   likewise; croci-2022 (mixed precision) has no bundle elsewhere.
+6. **Unverified items left as stated by the readers:** the E5 system printed
+   by Koyaguerebo-Imé & Bourgault (§6.4) seems to differ from the standard
+   E5 (comparison from memory, not in the wiki); doehring-2025's file is
+   probably arXiv 2408.05470v1 (not printed in the file).
+
+### Identity and version problems
+
+- aljahdali-2022 and belardo-2026 sit under wrong filenames (Vermeire 2021
+  and Izgin 2022); both are versions of record.
+- 14 of 20 files are preprints (arXiv, or the authors' preprint for
+  doehring-2025); versions of record: aljahdali-2022, belardo-2026,
+  bleecke-2026, dawes-2021, hedayatinasab-2022, vermeire-2023, zhang-2024.
+- gaburro-2023: the preprint's title is "…ADER scheme", the published one
+  "…ADER-DG schemes".
+
+### Printed slips (recorded on the Source pages)
+
+- bazavov-2026: Eq. (95) sign of the linear coefficient ($z_2+z_1$), Table 8
+  $a_{51}=2053/11172$, Table 9 $A_5=-261/625$ (checked in exact
+  arithmetic); the paper itself corrects Williamson (1980)'s conversion
+  formula for $b_i=0$, recorded as Bazavov's correction on
+  [low-storage methods](wiki/methods/low-storage-runge-kutta.md).
+- belardo-2026: Fig. 2b embedded weights violate order 2; midpoint
+  $\rho_{\max}$ is 8 at $k=3\sqrt2/4$, not 7 at $k=1$.
+- dawes-2021: four-step RKL2 threshold printed "∼0.18" (closed form 0.2073);
+  four formula slips in Appendix D; Eqs. (35)–(36).
+- deleon-2025: abscissae $c_3$, $c_4$ of PEP(4,2,5) swapped; constants in
+  Eq. (9); sign in Eq. (21).
+- faleichik-2026: Eq. (23) error estimate lacks $h$ and has constant 1/20
+  rather than 1/10.
+- hedayatinasab-2022: Eq. 40 sum start, Eq. 33, Table 2 exponents; the
+  claim "$2^{p-1}$ order conditions" (wrong for $p\ge5$); consistent and
+  conservative swapped against Doehring et al. (2025).
+- vermeire-2023: Eq. (21) missing $\hat b_6$; Table 1 entries contradict
+  "always slightly smaller"; speedup "in excess of 7".
+- doehring-2024: Table 5 $\Delta t$ at $S=112$; doehring-2025: (A.1d)
+  abscissae, (4.6b) $c_4$ for $c_5$.
+- aljahdali-2022: evaluation counts inconsistent with 600 steps; identical
+  counts for five schemes in Table 4.
+- zhang-2024: none in the coefficients (all 1205 order conditions recomputed
+  to $10^{-118}$); garbled DOIs in the reference list.
+- koyaguerebo-2022: B-stability announced, only B-convergence proved;
+  Corollary 4.1 drops $\mu h\ge-2$; Remark 3.1 transform.
+- kang-2022, gaburro-2023, bencomo-2023, croci-2022, bassenne-2021,
+  biswas-2023-b, bleecke-2026, ranocha-2025: index, caption and typo slips
+  listed on their pages.
+
+### Contradictions opened
+
+None. Qualifications recorded: the IMEX-relaxation priority claim; opposite
+design goals for embedded stability regions (Vermeire 2023 smaller vs
+Ranocha et al. 2022 containing); the stored-register count of third-order
+P-ERK (three stage derivatives vs two registers); Farrell et al.'s cubic
+BBM invariant (compiler inference: not conserved independently).
+
 ## Chunk 1 — founding chunk: reviews, software and Runge–Kutta theory (2026-10-19)
 
 Sources (20): farrell-2021, ranocha-2022, sun-2021, hanveiga-2021,

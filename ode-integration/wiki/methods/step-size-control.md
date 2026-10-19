@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Step-size control: error-based controllers, PID filters and CFL control"
-description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance, and an I, PI, PID or Gustafsson controller sets the next step; step-size-control stability, controller tuning per pair, and error-based versus CFL-based control for stability-limited CFD."
+description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance, and an I, PI, PID or Gustafsson controller sets the next step; step-size-control stability, controller tuning per pair, error-based versus CFL-based control for stability-limited CFD, and control combined with relaxation and stabilized methods."
 status: established
-aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability]
+aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T20:00:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -16,7 +16,12 @@ $y_{n+1}-\hat y_{n+1}$), accepts the step iff $\mathrm{err}_n\le1$, and chooses 
 $h_{n+1}$ from the current and past estimates with a **controller**. **CFL-based control**
 instead sets $h_n$ from a Courant number $\nu$ and the current wave speeds. The sources agree
 that a time integrator is the triple *(main method, error estimator, controller)*, not the main
-method alone (Ranocha et al. 2022, §8; Fekete et al. 2022, §3).
+method alone (Ranocha et al. 2022, §8; Fekete et al. 2022, §3); pair and controller must be
+designed together for stability-limited semidiscretizations
+([Ranocha et al. 2025](/sources/ranocha-2025.md), §2.4), and with the main method fixed the
+choice of the estimator alone changes the number of accepted steps by up to a factor of about
+1.85 ([Belardo et al. 2026](/sources/belardo-2026.md), Tables 2–3; section *Choice of the error
+estimator* below).
 
 ## Error norm and acceptance
 
@@ -42,6 +47,16 @@ in the scale:
 - [Gardner et al. (2022)](/sources/gardner-2022.md) give the SUNDIALS WRMS norm and its
   many-vector form, which needs one global reduction instead of one per subvector (§4.2,
   Algorithm 1).
+- Ranocha et al. (2025) document two implementations of the same WRMS norm over all degrees
+  of freedom (§2.3, Eq. (2.7)). The scale is $\mathrm{atol}+\mathrm{rtol}\max\{|y_{n+1,i}|,|\tilde y_i|\}$
+  with $\tilde y=y_n$ in OrdinaryDiffEq.jl and $\tilde y=\hat y_{n+1}$ in PETSc ($\tilde y$
+  page-local), and the norm is floored at about $2.2\times10^{-16}$ (OrdinaryDiffEq.jl) or
+  $10^{-10}$ (PETSc). The PETSc variant is the scale written by Ranocha et al. (2022). See
+  [DifferentialEquations.jl](/software/differentialequations-jl.md) and
+  [PETSc TS](/software/petsc-ts.md).
+- [Vermeire (2023)](/sources/vermeire-2023.md) uses the max norm with the scale of Fekete et
+  al., $\mathrm{atol}+\mathrm{rtol}\max(|y_n|,|y_{n+1}|)$ (§5, Eqs. (29)–(31), (34)), and
+  Belardo et al. (2026) the same scale for a scalar problem (§4).
 
 ## Controllers
 
@@ -62,6 +77,8 @@ sources, translated to this sign convention:
 | PID | $(0.58,-0.21,0.10)$ | Fekete et al. (2022), Eq. (22) |
 | PI42 / PI33 / PI34 | $(0.60,-0.20,0)$ / $(0.66,-0.33,0)$ / $(0.70,-0.40,0)$ | Ranocha et al. (2022), Table 1 |
 | PID of Kennedy–Carpenter | $(0.49,-0.34,0.10)$ | Ranocha et al. (2022), §2.2 |
+| PID of Fekete et al., reused | $(0.58,-0.21,0.10)$ | Vermeire (2023), Eq. (33) |
+| per-pair controllers of Ranocha et al. (2022), reused | Table 11 below | Ranocha et al. (2025), Tables 1–6 |
 
 Fekete et al. also use Gustafsson's explicit (predictive) controller with gains 0.367 and 0.268,
 an I step on the first step and an error floor $\mathrm{err}>10^{-10}$ (Eq. (23)).
@@ -72,9 +89,16 @@ problems, including most of the Bari "Test Set for IVP Solvers", but the control
 and values are not printed (Reynolds et al. 2023, §3.2).
 
 **Exponent denominator.** Ranocha et al. use $k=\min(p,\hat p)+1$, usually $k=p$ under local
-extrapolation (§2.2); Fekete et al. print $p$ without saying whether the main or the embedded
-order is meant (§3.1); ARKODE uses the embedding order by default and the main order on request
-(Reynolds et al. §3.2).
+extrapolation (§2.2), and Ranocha et al. (2025) keep this choice, which equals the main order
+for their pairs (§2.3); Fekete et al. print $p$ without saying whether the main or the embedded
+order is meant (§3.1), and so does Vermeire (2023, Eq. (33)), where the main order is 2 and the
+embedded order 1, a factor of two in the exponents; ARKODE uses the embedding order by default
+and the main order on request (Reynolds et al. §3.2).
+
+**Elementary controller.** Belardo et al. (2026, §4) use "the controller of the ode23tx
+textbook code", printed as $h_{n+1}=h_n\min\bigl(5,\,0.8(\mathrm{rtol}/\mathrm{err}_n)^{1/3}\bigr)$
+with acceptance iff $\mathrm{err}_n\le1$, for the third-order Bogacki–Shampine pair (see
+Qualifications).
 
 **Limiters and rejections.** All three implementations bound the step ratio, with different
 rules:
@@ -84,13 +108,22 @@ rules:
 - Ranocha et al. mention the smooth limiter $1+\arctan(x-1)$ of Söderlind and Wang. They accept a
   step iff the controller's factor is at least $0.9^2=0.81$, and retry otherwise with the PID
   step. A step whose solution leaves physical bounds (negative density or pressure) is rejected
-  and retried with $h$ divided by 4 (§2.2).
+  and retried with $h$ divided by 4 (§2.2). Ranocha et al. (2025) make the arctan limiter the
+  default and state the acceptance rule as a test on the *limited* factor, not on the current
+  estimate alone, which Söderlind argues avoids unnecessary rejections; they start the
+  recursion with unit past estimates and clip the last step to the final time, snapping a time
+  within 100 units in the last place onto it in OrdinaryDiffEq.jl (§2.3, Eqs. (2.6)–(2.7),
+  Algorithm 2).
+- Vermeire (2023) bounds the step ratio to $[0.1,1.2]$ with safety factor 0.9 (Eq. (32)); the
+  small growth bound serves the stability-limit tracking described below.
 - ARKODE inherits the CVODE heuristics: growth and decay bounds, a reduction after repeated
   error failures or after a failed implicit solve, and $h_{\min}\le h\le h_{\max}$ (Reynolds et
   al. §3.2).
 
 **Initial step.** Fekete et al. and Ranocha et al. both use the Hairer–Nørsett–Wanner starting
 procedure; for PDEs Fekete et al. take the minimum of that step and the CFL step (§3.1; §2).
+Ranocha et al. (2025) keep it, but for a Mach 2000 astrophysical jet the automatic guess was
+insufficient and they set $h_0\approx10^{-12}$ by hand (§2.3, §5.2).
 
 ## Step-size-control stability
 
@@ -193,6 +226,127 @@ the two:
   always stability-limited. Error-based control moves the choice of critical parameters from
   the spatial-discretization developer to the time-integrator developer.
 
+[Al Jahdali et al. (2022)](/sources/aljahdali-2022.md), from the same group, set the CFL step
+as $h_{n+1}=0.95\,\nu_{\max}\min_i\Delta x_i/v_{\max,i}$ with $\nu_{\max}$ the largest stable
+Courant number of each method (4.1471, 8.3132, 4.8111 and 2.7852 for their ERK(4,2), ERK(8,2),
+ERK(5,3) and the classical RK4) and compare it with PID control at
+$\mathrm{rtol}=\mathrm{atol}=10^{-6}$ over 600 steps of two industrial flows (§2.1, Eqs. (2)–(3),
+Tables 1, 4). At third order, error control costs 4250 right-hand-side evaluations on the
+Imperial Front Wing against 7135 for CFL-controlled ERK(5,3) (1.41e3 s against 2.30e3 s), and
+the fifth- and sixth-order error-controlled pairs BSRK(8,5) and VRK(9,6) run faster than the
+second-order CFL-controlled schemes (1.41e3 s against 2.13e3 s) (§3, Table 4).
+
+[Ranocha et al. (2025)](/sources/ranocha-2025.md) extend the comparison to six situations
+in which CFL control needs hand tuning, with the pairs and controllers of Ranocha et al. (2022)
+in two code bases (Trixi.jl with OrdinaryDiffEq.jl, and SSDC on PETSc TS):
+
+- **Mesh change** (§3, Fig. 2; [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)). The
+  CFL factor affects cost linearly, the tolerance only roughly logarithmically; a range of
+  tolerances spanning up to five orders of magnitude reaches the cost of the best hand-tuned
+  CFL factor. The optimal factor grows by 55% (BS3(2)3F) to 74% (SSP3(2)4[3S\*$_+$]) from a
+  Cartesian to a curved mesh, while the good tolerance range is unchanged.
+- **Shock capturing** (§4, Table 1). DG/finite-volume subcell blending moves eigenvalues near
+  the negative real axis outside the stability region, which lowers the linearly stable CFL
+  number by more than 20% for BS3(2)3F and RDPK3(2)5F but by about 5% for SSP3(2)4[3S\*$_+$].
+  On the Orszag–Tang vortex error control saves 13%, 11% and 6% of the evaluations of tuned
+  CFL control for these three pairs.
+- **Cold starts** (§5, Tables 2–3). Error control produces an initial transient of about 100
+  small steps automatically. CFL control crashes in the first steps of a double Mach reflection
+  even at $\nu=0.01$, would need $\nu\approx10^{-9}$ at the start of a Mach 2000 jet, and needs
+  initial factors 9–32% below the asymptotic ones on a delta wing and on the NASA Common Research
+  Model. On a second Common Research Model mesh, the CFL target of the first mesh fails for all
+  three pairs, because the asymptotic CFL number of the new mesh is about three times smaller;
+  error control runs all three to the end.
+- **Change of variables** (§6, Tables 4–5). For entropy-projected Gauss DG on a
+  Kelvin–Helmholtz instability, error control is "usually around 5%" cheaper than tuned CFL
+  control at Atwood number 3/7. At 0.7 the evolved variables lose positivity around $t\approx3$
+  even with $\nu=0.05$ for SSP3(2)4[3S\*$_+$], so CFL control is not possible, while error
+  control works directly.
+- **New equations** (§7). For shallow water–Exner sediment transport, whose wave speeds are
+  roots of a cubic, error control needs no eigenvalue estimate; a loose bound would add
+  excessive diffusion.
+
+Their pair recommendation: SSP3(2)4[3S\*$_+$] for lower-Mach flows and for problems with
+positivity issues or strong shock capturing, otherwise RDPK3(2)5F (more robust) or RDPK4(3)9F
+(more efficient at strict tolerances), with BS3(2)3F a good general-purpose choice (§8).
+
+## Error control as a stability-limit detector
+
+Vermeire (2023) uses an embedded pair not to estimate accuracy but to find the stability limit
+of [paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md) methods. The embedded
+first-order method has a region of absolute stability slightly smaller than the second-order
+main method, so its solution diverges from the main one just before the main method becomes
+unstable (§3–4; see [embedded pairs](/methods/embedded-runge-kutta-pair.md)). With the PID
+gains of Fekete et al., tolerances $10^{-4}$, step ratio bounds $[0.1,1.2]$ and safety 0.9, the
+controller drives the step towards, without exceeding, the stability limit; P, PI and explicit
+Gustafsson controllers were also tried and gave more rejected steps (no counts printed). The
+Bogacki–Shampine pair with Fekete et al.'s coefficients and tolerances $10^{-3}$ also ran
+close to its stability limit (§5). The justification is that, for high-order spatial
+discretizations of advection–diffusion, the maximal stable step "often introduces little
+temporal error relative to the error introduced by the spatial discretization" (§2.2, cited,
+not shown). Against the Bogacki–Shampine pair the adaptive paired methods are 4.95–7.11 times
+cheaper on compressible Navier–Stokes flows (§6, Tables 2–4).
+
+## Choice of the error estimator
+
+Belardo et al. (2026, §4) fix the third-order Bogacki–Shampine method and vary only its
+second-order estimator within the two-parameter family of embeddings that share its stages
+(see [embedded pairs](/methods/embedded-runge-kutta-pair.md)), keeping the distance of
+$\hat b$ from $b$ equal to that of the standard embedding. On the stiff scalar problem
+$y'=-a(y-\cos t)$, $y(0)=a^2/(a^2+1)$, $t\in[0,10]$, a
+[Prothero–Robinson-type](/benchmarks/prothero-robinson-problem.md) test, with
+$\mathrm{rtol}=10^{-6}$, $\mathrm{atol}=10^{-9}$ (Tables 2–3):
+
+| Estimator | accepted steps, $a=50$ | final error, $a=50$ | accepted steps, $a=200$ | final error, $a=200$ |
+|---|---|---|---|---|
+| standard | 906 | $3.31\times10^{-6}$ | 1874 | $1.30\times10^{-6}$ |
+| best tested | 804 | $3.21\times10^{-6}$ | 1709 | $1.29\times10^{-6}$ |
+| other directions | 977–1488 | $5.5\times10^{-7}$–$2.3\times10^{-6}$ | 1302–2492 | $4.6\times10^{-7}$–$3.1\times10^{-6}$ |
+
+The best estimator cuts accepted steps by 11% and 9% at no loss of final accuracy, but it is a
+different member of the family at each stiffness, and it was selected on the same problem on
+which it is evaluated. The estimator with the largest real stability interval does not minimize
+the step count. Rejected steps and function evaluations are not reported.
+
+## Step-size control with relaxation
+
+[Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md) replace $y_{n+1}$ by
+$y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$ at time $t_n+\gamma_nh$, which interacts with the
+controller in two ways.
+
+- **Cost.** With error control, relaxation raised the number of evaluations on the Imperial
+  Front Wing from 4250 to 5648 (global) or 5652 (local relaxation), about 33%; with CFL control
+  it was almost unchanged (e.g. 6624, 6636, 6628 for ERK(4,2)). Al Jahdali et al. (2022, §3,
+  Table 4) read this as a sign that the CFL step is already close to the entropy-stable step
+  ($\gamma_n\approx1$), without reporting $\gamma_n$.
+- **FSAL pairs.** Relaxing after acceptance, as OrdinaryDiffEq.jl and SUNDIALS do, makes the
+  first stage of the next step $f(y^{\gamma}_{n+1})$ instead of the FSAL value, one extra
+  evaluation per step. [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) remove it in two
+  ways (§2): **FSAL-R** keeps error control on the unrelaxed pair and relaxes accepted steps
+  only, approximating the next first stage by linear interpolation along the relaxation
+  secant; **R-FSAL** relaxes *before* the error estimate and compares the relaxed main solution
+  with a relaxed embedded solution, both read at $t_n+\gamma_nh$. Both keep the local orders of
+  main and embedded method (Theorems 1–2) and, on the
+  [BBM equation](/benchmarks/benjamin-bona-mahony-equation.md), reach the accuracy of the naive
+  combination at the cost of the unrelaxed method (§3, Fig. 1). FSAL-R preserves the structure
+  of existing libraries; R-FSAL is preferred for dissipative problems (§4). Step-size-control
+  stability with relaxation is deferred to a companion report (§3). Details are on the
+  [embedded-pair page](/methods/embedded-runge-kutta-pair.md).
+
+## Stabilized methods
+
+For Runge–Kutta–Chebyshev-type [stabilized methods](/methods/stabilized-explicit-runge-kutta.md)
+the controller also chooses the stage count. [Faleichik & Moisa (2026)](/sources/faleichik-2026.md)
+take the step-size selection of the RKC code of Sommeijer, Shampine and Verwer and pick the
+number of stages $s$ from an estimate of the spectral radius by a fitted formula,
+$s\approx-0.831+1.855\,\rho^{0.534}$ with $\rho$ the spectral-radius estimate (page-local; the
+source does not say whether it includes the factor $h$;
+§4, Eq. (21)). The stage $Y_{s-1}$ of their method is a first-order solution at $t_n+h$, but its
+error constant depends on $s$ and would need normalization to avoid rejections when $s$
+changes; they use instead the Taylor-type estimate
+$\mathrm{err}=\tfrac1{10}\bigl(y_n-y_{n+1}+hf(t_{n+1},y_{n+1})\bigr)$ for a leading local error
+$\tfrac1{10}h^2y''$ (§4, Eqs. (22)–(23); see Qualifications).
+
 ## Related practice
 
 - **Multirate.** ARKODE's multirate module adapts only the fast time scale; multirate temporal
@@ -206,7 +360,8 @@ the two:
 
 ## Qualifications
 
-- **Rankings of controllers differ between sources.** Fekete et al. find PID best, Reynolds et
+- **Rankings of controllers differ between sources.** Fekete et al. find PID best (as does
+  Vermeire (2023, §5) for stability-limit tracking, by rejected steps, without numbers), Reynolds et
   al. find PI and Gustafsson best with PID in between, and Ranocha et al. find the best
   parameters pair- and problem-dependent. The claims rest on different test sets, pairs and gain
   values, so they are not incompatible; Ranocha et al.'s step-size-control-stability analysis is
@@ -223,7 +378,31 @@ the two:
 - The superiority of error-based control is shown for dissipative (upwind) DG semidiscretizations
   at Mach 0.036–2.5; Ranocha et al. note that low Mach numbers stress the negative real axis and
   that other spectra behave differently (§5.5.4, §8). Robustness for "cold startup" is stated,
-  not demonstrated (§8).
+  not demonstrated, by Ranocha et al. (2022, §8); Ranocha et al. (2025, §5) demonstrate it on
+  four cold-start problems.
+- **Limits of error-based control.** Ranocha et al. (2025, §8) concede that it carries no hard
+  guarantee: it cannot in general be proven to respect the CFL bounds under which
+  invariant-domain-preserving methods are robust, and adaptive mesh refinement or positivity
+  limiters applied as callbacks after a step are not seen by the error estimator. Their
+  evidence, like that of Al Jahdali et al. (2022) and Vermeire (2023), is numerical.
+- Al Jahdali et al. (2022, Table 4) report *identical* evaluation counts on the Imperial Front
+  Wing (4250 without, 5648 and 5652 with relaxation) for five error-controlled pairs with 4 to
+  9 stages and different controllers, which the paper does not comment on; their claim that
+  the high-order error-controlled pairs beat the low-order CFL-controlled schemes fails for some
+  relaxed runs on the Common Research Model (e.g. VRK(9,6) 141.7 s against ERK(4,2) 140.8 s).
+- Vermeire (2023) leaves the exponent normalizer of Eq. (33) undefined, and its claimed
+  speedups "in excess of 7 … for all considered test cases" exceed its own tables (largest
+  values 7.00, 7.11 and 6.23 on the three flows).
+- Belardo et al. (2026) print the ode23tx controller with $\mathrm{rtol}/\mathrm{err}_n$
+  although their $\mathrm{err}_n$ is already divided by the tolerance; in Moler's code the error
+  is relative and not divided by rtol. As printed, the controller aims at
+  $\mathrm{err}_n\approx0.8^3\,\mathrm{rtol}$, far below the acceptance threshold. This alters
+  the absolute step counts of their tables but not the comparison between estimators
+  *(reader's check, recorded on the Source page)*.
+- Faleichik & Moisa (2026) print the error estimate as $\tfrac1{10}(y_n-y_{n+1}+f(t_{n+1},y_{n+1}))$,
+  without the factor $h$ on $f$; with $h$ restored, $y_n-y_{n+1}+hf(t_{n+1},y_{n+1})=\tfrac12h^2y''+O(h^3)$,
+  so the printed constant gives $\tfrac1{20}h^2y''$ rather than the $\tfrac1{10}h^2y''$ of their
+  Eq. (22) *(reader's check on the arXiv v1 read)*.
 
 # Citations
 
@@ -232,3 +411,9 @@ the two:
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.3, §3.1–3.2 (Eqs. (12)–(17)), §5.1.1 (Fig. 2).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.1, §4.2 (Algorithm 1), §6.
 - [Steinebach (2023)](/sources/steinebach-2023.md) — §1 (Rodas5 estimator failure on $y'=\cos t$).
+- [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2.3 (Eqs. (2.6)–(2.7), Algorithm 2, limiter, acceptance rule, OrdinaryDiffEq.jl and PETSc variants), §2.4, §3 (Fig. 2), §4 (Fig. 3, Table 1), §5 (Tables 2–3), §6 (Tables 4–5), §7, §8.
+- [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md) — §2.1 (Eqs. (2)–(3), Table 1), §3 (Table 4).
+- [Vermeire (2023)](/sources/vermeire-2023.md) — §2.2, §3–4, §5 (Eqs. (29)–(34)), §6 (Tables 2–4).
+- [Belardo et al. (2026)](/sources/belardo-2026.md) — §4 (Eq. (3), controller, Tables 2–3).
+- [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1 (naive relaxation with FSAL and PID control), §2.1–2.2 (FSAL-R, R-FSAL, Theorems 1–2), §3 (Fig. 1), §4.
+- [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §4 (Eqs. (21)–(23)).

@@ -22,8 +22,9 @@ lacks.
 well-separated families; the family is always clear from the page, and a
 page that needs both meanings renames one locally and says so: $\gamma$
 (tree density; Rosenbrock diagonal coefficient; composition weights
-$\gamma_j$), $\alpha$ (Shu–Osher coefficients; Rosenbrock coefficients;
-the angle of A($\alpha$)-stability). $M$ is reserved for the mass matrix,
+$\gamma_j$; relaxation parameter $\gamma_n$), $\alpha$ (Shu–Osher coefficients; Rosenbrock coefficients;
+the angle of A($\alpha$)-stability), $\eta$ (the entropy or invariant
+$\eta(y)$; the integer argument of the simplifying assumption $C(\eta)$). $M$ is reserved for the mass matrix,
 never a node count or a multirate ratio.
 
 ## 1. Problem and time grid
@@ -125,3 +126,11 @@ never a node count or a multirate ratio.
 | $\lVert\cdot\rVert_{\mathrm{WRMS}}$ | weighted root-mean-square norm of step-size control | |
 | $\mathrm{err}_n$ | scaled local error estimate of step $n$ | accept iff $\mathrm{err}_n\le1$ |
 | $\beta_1,\beta_2,\beta_3$ | PID controller exponents, $h_{n+1}=h_n\,\mathrm{err}_n^{-\beta_1/k}\mathrm{err}_{n-1}^{-\beta_2/k}\mathrm{err}_{n-2}^{-\beta_3/k}$ | $k=\min(p,\hat p)+1$; sources' other parameterizations are translated |
+
+## 8. Structure preservation
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $\eta(y)$ | a convex entropy, energy or other invariant functional of the solution | $\eta'(y)$ its gradient; the page states which |
+| $\gamma_n$ | relaxation parameter of step $n$ | relaxed solution $y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$ at time $t_n+\gamma_nh$ (incremental-direction technique: at $t_n+h$); distinct from the Rosenbrock $\gamma$ |
+

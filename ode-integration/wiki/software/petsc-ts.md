@@ -5,7 +5,7 @@ description: "PETSc's TS time-stepping component as the sources report it: expli
 status: established
 aliases: [PETSc/TS, TS]
 tags: [software, step-size-control, multirate, parallel]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-19T18:00:00Z
 ---
 
 # PETSc TS
@@ -70,6 +70,24 @@ semidiscretizations ([Ranocha et al. (2022)](/sources/ranocha-2022.md), §7):
   cheaper (1,304 evaluations, 321.54 s) than error control (1,352,
   331.97 s), which needed no tuning (§7.3, Tables 9–10).
 
+## Measured performance (Ranocha et al. 2025)
+
+[Ranocha et al. (2025)](/sources/ranocha-2025.md) run the same pairs in SSDC on PETSc TS
+(BS3(2)3F as `3bs`) for compressible Navier–Stokes flows at tolerance $10^{-8}$ (§5.3–5.4,
+Tables 2–3):
+
+- **65° delta wing** ($\approx1.435\times10^7$ degrees of freedom): 17,641, 14,963 and
+  13,392 evaluations for BS3(2)3F, RDPK3(2)5F[3S\*$_+$] and SSP3(2)4[3S\*$_+$] up to
+  $t=0.015$, with 3–4 rejected steps;
+- **NASA Common Research Model** ($12.8\times10^6$ hexahedra of degree 3,
+  $\approx7.68\times10^8$ degrees of freedom): 5,874, 4,610 and 5,920 evaluations up to
+  $t=0.004$, with no rejected step; on a second mesh, CFL control with the first mesh's target
+  failed for all three pairs while error control completed.
+
+The PETSc implementation scales the error norm with $\hat y_{n+1}$ and floors it at
+$10^{-10}$, where OrdinaryDiffEq.jl uses $y_n$ and about $2.2\times10^{-16}$ (§2.3). See
+[step-size control](/methods/step-size-control.md).
+
 These results measure the time-integration strategy, not TS against
 another library.
 
@@ -77,7 +95,7 @@ another library.
 
 - Every capability statement on this page is a statement *about* PETSc
   made by a source at its date (Farrell et al.: 2020 preprint; Ranocha et
-  al.: 2021 preprint; Reynolds et al.: 2022 preprint). The sources do not
+  al.: 2021 preprint; Reynolds et al.: 2022 preprint; Ranocha et al. (2025): 2023 preprint). The sources do not
   conflict: Farrell et al. speak of implicit Runge–Kutta methods,
   Reynolds et al. of multirate ones.
 - The bundle holds no source describing TS's own design, its implicit or
@@ -89,3 +107,4 @@ another library.
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) — §2.2 (PID controllers in PETSc), §7.2–§7.3, Tables 8–10.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §1 (multirate support among libraries).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §6 (SNES wrapper).
+- [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2.3 (PETSc error-norm variant), §5.3–5.4 (Tables 2–3).

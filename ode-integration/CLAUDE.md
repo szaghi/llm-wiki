@@ -94,8 +94,11 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 1 staged 2026-10-19:** scaffold (D27) and the 20 reviews,
-software and Runge–Kutta theory papers; 63 concept pages, 1084
-bibliography entries, deep lint run over the whole bundle. Next: chunk 2
-(Runge–Kutta theory continued, relaxation methods, stabilized and
-paired-explicit methods).
+**Chunk 2 staged 2026-10-19:** 20 sources on relaxation, stabilized and
+paired-explicit methods, step-size control, low-storage and high-order
+explicit methods; 40 of 118 ingested, 78 concept pages, 1622 bibliography
+entries, deep lint over the chunk's pages. Next: chunk 3 (implicit
+methods, BDF, IMEX and asymptotic-preserving schemes).
+
+**Chunk 1 committed 2026-10-19 (864b713):** scaffold (D27) and the 20
+reviews, software and Runge–Kutta theory papers.
