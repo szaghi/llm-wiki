@@ -5,7 +5,7 @@ description: "A time integrator is positivity preserving if nonnegative data giv
 status: established
 aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Positivity preservation in time integration
@@ -73,6 +73,36 @@ Every route changes the class of methods or adds hypotheses on $f$:
   used (Blanes et al. 2024, §2.6, §6.4). This is positivity of the *method
   coefficients*, a precondition for well-posed sub-steps, not positivity of the
   solution; see the [negative-coefficient barrier](/results/negative-coefficient-barrier.md).
+
+- **First-order linearly implicit diffusion with an inverse-positive matrix.**
+  [Liu & Zhang (2023)](/sources/liu-2023.md) keep density and internal energy positive
+  in compressible Navier–Stokes under a hyperbolic step $h=O(\Delta x)$, instead of the
+  $h=O(\mathrm{Re}\,\Delta x^2)$ of fully explicit positivity-preserving schemes (§1.2),
+  with a Strang splitting: the Euler half-steps use SSPRK(3,3) with a positivity limiter
+  (the SSP route above), and the viscous step is linearly implicit, Crank–Nicolson for
+  the velocity and backward Euler in the internal energy with the viscous heating frozen
+  at the midpoint velocity (§2.1, Eqs. (6a)–(6b)). Positivity of that step rests on a
+  matrix property rather than on the time integrator: if $(M_{\mathrm d}+hL_{\mathrm d})x=r$
+  with $M_{\mathrm d}$ diagonal positive, $L_{\mathrm d}\mathbf 1=0$ and
+  $M_{\mathrm d}+hL_{\mathrm d}$ monotone (entrywise nonnegative inverse), then
+  $M_{\mathrm d}^{-1}r\ge\epsilon$ implies $x\ge\epsilon$, because the rows of the inverse
+  of $I+hM_{\mathrm d}^{-1}L_{\mathrm d}$ are convex weights (§3.3; page-local
+  $M_{\mathrm d}$, $L_{\mathrm d}$, $r$, $\epsilon$). Backward Euler on the three-point
+  heat stencil gives an M-matrix for every $h$, whereas forward Euler is monotone only
+  for $h/\Delta x^2\le\tfrac12$ (§1.3). The authors prove the M-matrix property for every
+  $h$ for $Q^1$ interior-penalty DG in two dimensions, given a penalty above
+  $\sqrt2/2$ (App. A). For $Q^2$ and $Q^3$ spectral elements the matrix is a product of
+  M-matrices, monotone only under a **lower** bound $h\gtrsim C\,\mathrm{Re}\,\Delta x^2$
+  ($Q^2$ from Li & Zhang, $Q^3$ "in principle"; Eqs. (16a)–(16b)). The adaptive step
+  therefore halves the explicit step when a cell average leaves the admissible set and
+  *doubles* the implicit step when a negative internal energy appears (§3.4,
+  Algorithms H and CNS); the doubling was triggered only in the first steps of the
+  $Q^2$/$Q^3$ Sedov runs (Remark 2). The construction is consistent with the barrier: the
+  implicit step is first order, the scheme is at most first order in time, and no
+  temporal convergence is reported (§1.4); a lower step bound of this kind is a
+  property of the spatial matrix, not of an ODE method. See
+  [step-size control](/methods/step-size-control.md) and
+  [operator splitting](/methods/operator-splitting.md).
 
 ## Linear positivity of many-stage explicit methods: the role of boundaries
 
@@ -166,6 +196,15 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
 
 ## Qualifications
 
+- **Liu & Zhang (2023), App. A.** Their Lemma 4 states that a matrix with positive
+  diagonal, nonpositive off-diagonal entries, nonnegative row sums and at least one
+  positive row sum is a nonsingular M-matrix; without irreducibility this is false (a
+  reducible block with zero row sums is singular), but in their application every row sum
+  is strictly positive, so the conclusion stands *(reader's observation, recorded on the
+  Source page)*. They also attribute the penalty condition to the positivity of the
+  diagonal entries, which are positive for every penalty; the condition makes the
+  off-diagonal entries nonpositive.
+
 - The multiderivative route needs $\dot f=f'f$ and a structural condition on it; the
   condition $Q'Q=-CQ$ is special to relaxation-type operators (Gottlieb et al. 2022,
   §3.4.1, "non-generic").
@@ -205,3 +244,4 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
 - [Dawes (2021)](/sources/dawes-2021.md) — §5 (Eqs. 13–17), §6.1–6.3 (Eqs. 18–30, Table 3, Figs. 1–24), §7 (Fig. 25), App. D.
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §5.1 (negative temperatures, choice of pairs).
 - [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §4.1 (no positivity guarantee); arXiv v1.
+- [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.2–1.4, §2.1 (Eqs. (6a)–(6b)), §3.3 (Eqs. (13)–(16)), §3.4 (Algorithms H, CNS, Remark 2), App. A.

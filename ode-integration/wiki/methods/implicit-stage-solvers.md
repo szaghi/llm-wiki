@@ -3,9 +3,9 @@ type: Method
 title: "Solving the stage equations of implicit Runge–Kutta methods"
 description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep steps) are solved: Newton, Picard and simplified Newton iterations, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning of fully implicit methods, monolithic multigrid, static condensation, multirate structure and solver software."
 status: established
-aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation]
+aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution]
 tags: [implicit, linear-algebra, stiff, runge-kutta, software]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods
@@ -101,6 +101,33 @@ one Newton iteration per stage, the cutoff predictor was best, by up to 20% (§5
 Roberts et al. (2021) take stage predictors for the fast micro-steps of compound-fast multirate
 methods from the dense output of the compound step (§4). Abu-Labdeh et al. (2023, §3.2) start
 Newton from the previous step's stage derivatives.
+
+**Predictors that freeze the nonlinear coefficients.** A predictor can do more than
+supply the initial guess. In the implicit finite-volume scheme
+[Quinpi](/methods/quinpi.md) of [Puppo et al. (2024)](/sources/puppo-2024.md) the stage
+equations of a third-order SDIRK carry two nonlinearities, the physical flux and the
+solution-dependent CWENO reconstruction weights, so the Newton Jacobian is
+block-pentadiagonal with entries built from complicated weight expressions, and even a
+linear PDE needs a nonlinear solve (§2.2, Eq. (16)). A first-order implicit predictor,
+composite backward Euler at the DIRK abscissae with sub-steps $c_k-c_{k-1}$ and a
+piecewise-constant reconstruction, is computed stage by stage before the corrector; its
+only nonlinearity is the flux and its Jacobian is block-tridiagonal (§3.1, Eqs.
+(19)–(24)). Its stage values serve three purposes (§3, Fig. 1):
+
+- the reconstruction weights of corrector stage $k$ are computed from the predictor and
+  frozen, so the boundary-extrapolated data are linear in the unknown cell averages and
+  the corrector is nonlinear only through the flux, with a Jacobian of the same bandwidth
+  whose entries "can now be computed explicitly" (Eqs. (17)–(18), (25)–(27));
+- they are the Newton initial guess of the corrector;
+- their first-order fluxes are the fallback of the a-posteriori time limiter.
+
+Third-order accuracy survives the freezing if the weights differ from the optimal ones by
+$O(\Delta x)$, which the predictor-based weights satisfy asymptotically (§3.2.1, Table 1).
+The linear systems are solved by GMRES with ILU(0) inside Newton, with the Rusanov flux
+Jacobian approximated by neglecting the derivative of its viscosity coefficient (§4). Puppo
+et al. contrast this with the explicit first-order predictor of Gottlieb, Mullen & Ruuth,
+which confines the method to small Courant numbers (§1, §3), and outline (not test) the
+same freezing for characteristic-variable reconstructions (Remark 2).
 
 ## Fully implicit methods: real Schur block preconditioning
 
@@ -257,6 +284,36 @@ The authors note that the cost of the all-stage system, which has limited fully 
 in high-fidelity fluid–structure codes, matters much less in their reduced-order model, where
 port reduction permits direct solvers (§1.2). No timings are reported.
 
+## Structured direct solves for local space–time predictors
+
+The element-local space–time predictor of ADER-DG for a linear system with a stiff
+source is a linear system of $Q\,B\,(N+1)$ unknowns per element and step, with $Q$ fields,
+$B=\binom{N+3}{3}$ spatial basis functions of degree $\le N$ and $N+1$ temporal ones
+(page-local; [Wolf et al. (2022)](/sources/wolf-2022.md), §4.3, Eqs. (6)–(8); see
+[ADER](/methods/ader-time-integration.md)). For poroelasticity ($Q=13$) this is 390
+unknowns at $N=2$ and 7,644 at $N=6$ (Table 2 prints $7.64\cdot10^3$), and stored LU factors take 1.16 to 446 MB per
+element for $N=2,\dots,6$. Wolf et al. replace the factorization by a block back
+substitution built on two structural facts:
+
+1. **Lemma 1 (proved).** For an orthogonal spatial basis ordered by non-decreasing degree,
+   the stiffness matrices $\int\phi_k\partial_\alpha\phi_l$ are block upper triangular by
+   degree, because $\partial_\alpha\phi_l$ has lower degree than $\phi_l$ and is orthogonal to
+   every basis function of degree at least that of $\phi_l$ (§5.1). The predictor system is
+   then block upper triangular in the spatial modes (Fig. 2).
+2. The source matrix $E$ of the physics is upper triangular (§3.2, Fig. 1).
+
+Back substitution over the spatial modes (Algorithm 1) and then over the fields, after
+splitting $hE$ into diagonal and strictly upper parts (Algorithm 2), leaves $BQ$ solves of
+size $(N+1)\times(N+1)$ with 13 precomputed inverses, chained by small matrix products;
+Algorithm 3 fuses all modes of one degree into code-generated small GEMMs (§5.2). Against
+forward and back substitution with stored LU factors, the flop count falls by 5.08, 9.52,
+14.5, 19.7 and 24.8 times for $N=2,\dots,6$, and storage by $2.42\times10^2$ to
+$5.08\times10^4$ times (Table 2). On SuperMUC-NG the kernels run at about 40 % of the
+roofline, up to 1,406.7 GFLOP/s per node at $N=6$, which the authors estimate as about 10
+times faster than an ideally performing LU solve (§7.2). The method applies to any linear
+hyperbolic system whose stiff source matrix is upper triangular, such as viscoelastic
+attenuation or damped Maxwell equations (§8.4, stated).
+
 ## Factored rational solves for linear second-order systems
 
 For linear structural dynamics $M\ddot u+C\dot u+Ku=f$, [Song & Eisenträger (2022)](/sources/song-2022.md)
@@ -378,3 +435,5 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §2 (Def. 2.2), §8.2–8.3.
 - [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §4, §4.1–4.2 (Fig. 4).
 - [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §3.2, §3.4–3.5, Tables 16–17, Fig. 13.
+- [Puppo et al. (2024)](/sources/puppo-2024.md) — §1, §2.2 (Eq. (16)), §3 (Eqs. (17)–(27), Fig. 1, Remark 2), §3.2.1 (Table 1), §4.
+- [Wolf et al. (2022)](/sources/wolf-2022.md) — §3.2 (Fig. 1), §4.3 (Eqs. (6)–(8)), §5.1 (Lemma 1, Fig. 2), §5.2 (Algorithms 1–3, Table 2), §7.2, §8.4.

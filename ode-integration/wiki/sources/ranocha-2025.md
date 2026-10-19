@@ -145,9 +145,12 @@ year; [20] is a NASA technical memorandum. All items parsed.
 Chunk 2 (2026-10-19). This source is cited on:
 
 * [DifferentialEquations.jl](/software/differentialequations-jl.md)
+* [Double Mach reflection](/benchmarks/double-mach-reflection.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
+* [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
 * [PETSc TS](/software/petsc-ts.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
 * [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+* [Trixi.jl](/software/trixi-jl.md)

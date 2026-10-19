@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is stiffly accurate when the last row of A 
 status: established
 aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate, GSA, implicitly stiffly accurate, ISA]
 tags: [stiff, runge-kutta, stability, dae, asymptotic-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Stiff accuracy
@@ -147,6 +147,20 @@ different purposes:
   and obtain L-stability through stiff accuracy (type I and ARS) or through the extra
   condition above (type II).
 
+## Homonym: "stiffly accurate" exponential integrators
+
+In the exponential-integrator literature "stiffly accurate" names a different property.
+[Luan (2021)](/sources/luan-2021.md) (§1, §2.1) and
+[Dallerit & Tokman (2025)](/sources/dallerit-2025.md) (§1, §7) call an exponential
+Runge–Kutta or Rosenbrock method stiffly accurate when it satisfies the **stiff order
+conditions** of Hochbruck and Ostermann. Those conditions give error bounds independent of
+the norm of the stiff operator; see
+[stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
+Neither source uses the tableau property $a_{sj}=b_j$ of this page, and the coefficients of an
+exponential method are matrix functions, for which that property is not defined in these
+sources. The two meanings are unrelated, not two views of one property, and the sources are
+cited here only for the name.
+
 ## What stiff accuracy does not do
 
 Stiff accuracy is not sufficient to avoid [order reduction](/definitions/order-reduction.md).
@@ -186,3 +200,5 @@ include [stage order](/definitions/stage-order.md) 2 on the stages after the sec
 - [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §3.4.1 (Eqs. (79)–(81)); arXiv v1.
 - [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §3.3 (Eq. (39)); arXiv v1.
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §3.1 (Eq. (15)), §5.1.1 (Table 1); arXiv v1.
+- [Luan (2021)](/sources/luan-2021.md) — §1, §2.1 (homonym: "stiffly accurate" for exponential methods satisfying the stiff order conditions); arXiv v1.
+- [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §7 (the same homonym).

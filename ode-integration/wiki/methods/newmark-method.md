@@ -5,7 +5,7 @@ description: "The Newmark family integrates second-order structural dynamics wit
 status: established
 aliases: [Newmark-β, Newmark scheme, constant average acceleration method, average acceleration method, trapezoidal rule (structural dynamics)]
 tags: [implicit, stability, verification]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Newmark method
@@ -15,7 +15,7 @@ dynamics $M\ddot u+C\dot u+Ku=f(t)$ (page-local: $u$ displacement, $C$ damping, 
 stiffness, $f$ load; $M$ the registry's mass matrix) with displacement, velocity and
 acceleration as unknowns and two parameters $\beta_{\mathrm N}$, $\gamma_{\mathrm N}$
 (page-local, renamed because $\beta_j$ and $\gamma$ carry registry meanings). In its
-standard form, which neither source prints,
+standard form, which only Pulicani et al. print, in predictor–corrector form (see below),
 
 $$\begin{aligned}
 u_{n+1}&=u_n+h\dot u_n+h^2\big[(\tfrac12-\beta_{\mathrm N})\ddot u_n+\beta_{\mathrm N}\ddot u_{n+1}\big],\\
@@ -23,7 +23,7 @@ u_{n+1}&=u_n+h\dot u_n+h^2\big[(\tfrac12-\beta_{\mathrm N})\ddot u_n+\beta_{\mat
 \end{aligned}$$
 
 with the equation of motion imposed at $t_{n+1}$ *(compiler statement of the standard
-form; the sources print only the member below)*. The member
+form; the other sources print only the member below)*. The member
 $\beta_{\mathrm N}=\tfrac14$, $\gamma_{\mathrm N}=\tfrac12$, the **constant average
 acceleration** method, is called the "trapezoidal rule" by
 [Song & Eisenträger (2022)](/sources/song-2022.md) (§2.4.1), who write it in step-local
@@ -89,6 +89,23 @@ while the same model advanced with Radau IIA stays stable (§5.2.2, Fig. 17). Se
 [backward differentiation formulas](/methods/backward-differentiation-formula.md) and
 [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md).
 
+## In multi-time-step coupling
+
+[Pulicani et al. (2026)](/sources/pulicani-2026.md) (§3.4, Eqs. 22–26) write the undamped
+member in predictor–corrector form for $M\ddot u+Ku=f$: predictors
+$u^{\mathrm p}_{n+1}=u_n+h\dot u_n+(\tfrac12-\beta_{\mathrm N})h^2\ddot u_n$,
+$\dot u^{\mathrm p}_{n+1}=\dot u_n+(1-\gamma_{\mathrm N})h\ddot u_n$, the acceleration from
+$(M+\beta_{\mathrm N}h^2K)\ddot u_{n+1}=f_{n+1}-Ku^{\mathrm p}_{n+1}$, and correctors with weights
+$\beta_{\mathrm N}h^2$ and $\gamma_{\mathrm N}h$ (page-local superscript p). The effective mass
+$M+\beta_{\mathrm N}h^2K$ is constant, so they factor it once. They call the member
+"unconditionally stable, second-order accurate, and without numerical dissipation". In their
+fluid–structure scheme the structure takes one Newmark step per $m$ explicit fluid steps and a
+Lagrange multiplier on the interface velocity couples the two; they recall that energy-method
+results of structural dynamics guarantee stability of such multi-time-step schemes, for any
+Newmark schemes with their own steps, only when velocity, not displacement, continuity is
+imposed (§1). The structure converges at order 2.001 in the coupled piston–rod test (§5.3); see
+[local time stepping](/methods/local-time-stepping.md).
+
 ## Qualifications
 
 - Taddei et al. print no Newmark or BDF2 formulas; their stability claims rest on two
@@ -103,3 +120,4 @@ while the same model advanced with Radau IIA stays stable (§5.2.2, Fig. 17). Se
 
 - [Song & Eisenträger (2022)](/sources/song-2022.md) — §1; §2.4.1 Eqs. (58)–(69); §3.1–3.5 Figs. 2–3, 7, 14, 19.
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1; §5.2.1 Figs. 9–11; §5.2.2 Fig. 17.
+- [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §1, §3.4 (Eqs. 22–26), §4.4, §5.3 (Fig. 12).

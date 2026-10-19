@@ -17,7 +17,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–3 of 6 ingested (60 of the archive's 118 sources). Chunk 1: two *Acta
+**Corpus:** chunks 1–4 of 6 ingested (80 of the archive's 118 sources). Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -33,7 +33,10 @@ Source page states the version read. Chunk 3: linear multistep and BDF
 methods (energy and G-stability, variable steps), IMEX-BDF and IMEX-RK for
 relaxation and low-Mach problems, semi-implicit IMEX, fully implicit stage
 solvers at scale, Padé and Newmark schemes, boundary data for Runge–Kutta
-stages. The [bibliography](/bibliography.md) lists the works the sources cite.
+stages. Chunk 4: local time stepping, adaptive and IMEX multirate
+infinitesimal methods, multirate exponential methods, nonlinearly
+partitioned Runge–Kutta, exponential integrators (stiff order conditions,
+Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -95,8 +98,12 @@ stages. The [bibliography](/bibliography.md) lists the works the sources cite.
    [IMEX and additive Runge–Kutta](/methods/imex-runge-kutta.md),
    [semi-implicit and linearly implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md),
    [GARK](/methods/generalized-additive-runge-kutta.md),
-   [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md) and
-   [IMEX-MRI-GARK](/methods/imex-mri-gark.md), [multirate GARK](/methods/multirate-gark.md),
+   [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md),
+   [IMEX-MRI-GARK](/methods/imex-mri-gark.md), [IMEX-MRI-SR](/methods/imex-mri-sr.md),
+   [multirate exponential methods](/methods/multirate-exponential-methods.md),
+   [local time stepping](/methods/local-time-stepping.md),
+   [nonlinearly partitioned Runge–Kutta](/methods/nonlinearly-partitioned-runge-kutta.md),
+   [explicit–implicit–null time marching](/methods/explicit-implicit-null-method.md), [multirate GARK](/methods/multirate-gark.md),
    [multirate linear stability](/definitions/multirate-linear-stability.md) and its
    [A-stability barriers](/results/multirate-a-stability-barriers.md); test problem: the
    [Brusselator](/benchmarks/brusselator.md).
@@ -105,13 +112,22 @@ stages. The [bibliography](/bibliography.md) lists the works the sources cite.
    [order conditions](/results/splitting-order-conditions.md), the
    [negative-coefficient barrier](/results/negative-coefficient-barrier.md) and its escape through
    [complex coefficients](/methods/complex-coefficient-splitting.md);
-   [exponential integrators](/methods/exponential-integrators.md).
+   [exponential integrators](/methods/exponential-integrators.md) with their
+   [stiff order conditions](/results/exponential-runge-kutta-stiff-order-conditions.md),
+   [Lawson methods](/methods/lawson-methods.md) and
+   [φ-function evaluation](/methods/phi-function-evaluation.md); test problem: the
+   [Gray–Scott model](/benchmarks/gray-scott-model.md).
 8. **Multiscale problems.** [Asymptotic-preserving schemes](/definitions/asymptotic-preserving-scheme.md),
    [uniform accuracy for relaxation systems](/results/uniform-accuracy-relaxation-systems.md),
    [BGK penalization](/methods/bgk-penalization.md),
-   [micro–macro decomposition](/methods/micro-macro-decomposition.md); test problems: the
+   [micro–macro decomposition](/methods/micro-macro-decomposition.md),
+   [Quinpi](/methods/quinpi.md); test problems: the
    [linear hyperbolic relaxation system](/benchmarks/hyperbolic-relaxation-system.md), the
-   [Broadwell model](/benchmarks/broadwell-model.md), the [Gresho vortex](/benchmarks/gresho-vortex.md).
+   [Broadwell model](/benchmarks/broadwell-model.md), the [Gresho vortex](/benchmarks/gresho-vortex.md),
+   [colliding acoustic pulses](/benchmarks/colliding-acoustic-pulses.md); compressible-flow tests: the
+   [Sod shock tube](/benchmarks/sod-shock-tube.md), [double Mach reflection](/benchmarks/double-mach-reflection.md),
+   the [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md), the
+   [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md).
 9. **Linear multistep methods.** [Linear multistep methods](/methods/linear-multistep-method.md),
    [zero-stability](/definitions/zero-stability.md), the
    [BDF methods](/methods/backward-differentiation-formula.md),
@@ -127,6 +143,7 @@ stages. The [bibliography](/bibliography.md) lists the works the sources cite.
 11. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
     [CVODE](/software/cvode.md), [Irksome](/software/irksome.md),
     [BSeries.jl](/software/bseries-jl.md), [DifferentialEquations.jl](/software/differentialequations-jl.md),
+    [Trixi.jl](/software/trixi-jl.md),
     [PETSc TS](/software/petsc-ts.md).
 
 ## Catalog

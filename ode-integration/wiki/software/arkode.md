@@ -5,7 +5,7 @@ description: "ARKODE, the SUNDIALS package for one-step methods: a shared time-l
 status: established
 aliases: [ARKode, ERKStep, ARKStep, MRIStep]
 tags: [software, imex, multirate, step-size-control, runge-kutta]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # ARKODE
@@ -81,7 +81,17 @@ user-supplied or an ARKStep "inner stepper"; temporal adaptivity is
 available only at the fast scale, multirate adaptivity being called an
 open research question (§2.3). The fast integrator can be any object
 implementing `MRIStepInnerStepper` (Evolve, FullRHS, Reset), e.g. a
-wrapped [CVODE](/software/cvode.md) (§5.1.3).
+wrapped [CVODE](/software/cvode.md) (§5.1.3). Multirate controllers that adapt the macro step
+and the multirate ratio together were published by
+[Fish & Reynolds (2023)](/sources/fish-2023.md) with a separate code
+(github.com/fishac/AdaptiveHMControllerPaper); that paper does not say they are part of
+ARKODE ([step-size control](/methods/step-size-control.md)).
+[Loffeld et al. (2024)](/sources/loffeld-2024.md) (§4) describe MRIStep in the same terms
+(explicit MIS, explicit and solve-decoupled implicit MRI-GARK, IMEX-MRI-GARK; ARKStep or a
+user-supplied fast integrator; user coupling and Butcher tables) and couple it to
+block-structured AMR codes through custom `N_Vector` implementations wrapping BoxLib (Fortran)
+and AMReX single- and multi-level data, with SUNDIALS Newton and matrix-free GMRES for implicit
+slow stages and AMReX geometric multigrid as preconditioner.
 
 ## Shared infrastructure
 
@@ -162,6 +172,17 @@ LLNL Quartz node with Intel Xeon E5-2695 v4 CPUs) unless stated
   steps and 8–9 s ([Gardner et al. (2022)](/sources/gardner-2022.md),
   §5.1, Table 5); a task-local Newton solver gave 4.2×–7.9× speedups in
   ARKODE IMEX runs (§6.1) — both on [SUNDIALS](/software/sundials.md).
+- **Reacting flow on block-structured grids** ([Loffeld et al. 2024](/sources/loffeld-2024.md),
+  §5–6, LLNL Quartz, pure MPI). On a 3D methane flame ($32^3$ cells, 8 ranks) explicit
+  MRIStep MIS runs at constant steps needed fewer slow and fast evaluations than spectral
+  deferred-correction baselines and took 173–274 s against 376–833 s at
+  $H=6.25\times10^{-8}$ s (Table 2). On a stiff-diffusion mass-fraction model ($128^3$ cells,
+  512 ranks) IMEX-MRI-GARK3b and IMEX-MRI-GARK4 with ten fast steps per slow step beat
+  a single-rate fourth-order ARK-IMEX method of Kennedy & Carpenter (Fig. 5); multigrid preconditioning of the GMRES
+  solves pays off from $128^3$ cells (Tables 5–8), and two-level AMR plus multirate is about 18×
+  faster than single-rate single-level ARK-IMEX (Table 9). Details on
+  [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md) and
+  [IMEX-MRI-GARK](/methods/imex-mri-gark.md).
 - **Research use.** Chinomona and Reynolds run their IMEX-MRI-GARK
   Brusselator experiments in C on the ARKODE infrastructure (201 and 801
   points), with ARKODE's default fifth-order DIRK at $H=10^{-7}$ as the
@@ -196,3 +217,5 @@ LLNL Quartz node with Intel Xeon E5-2695 v4 CPUs) unless stated
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.3, §2.5, §5.1 (Table 5), §6.1 (Fig. 3).
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.2 (ARKODE-based Brusselator experiments).
 - [Bleecke & Ranocha (2026)](/sources/bleecke-2026.md) — §1, footnote 1 (relaxation in recent ARKODE versions).
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §4 (MRIStep, N_Vector wrappers, solvers), §5–6 (Tables 2–9, Fig. 5).
+- [Fish & Reynolds (2023)](/sources/fish-2023.md) — §1, §5 (multirate controllers, separate code).

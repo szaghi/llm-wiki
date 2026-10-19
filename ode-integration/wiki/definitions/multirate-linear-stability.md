@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Linear stability of multirate methods and joint stability regions"
-description: "Defines the scalar and 2D (Gear) test problems for multirate and GARK methods, their stability functions and scalar, real-2D and complex-2D A-, L-, A(α)- and L(α)-stability, the implication hierarchy between them, and the joint stability region used for IMEX multirate methods."
+description: "Defines the scalar and 2D (Gear) test problems for multirate and GARK methods, their stability functions and scalar, real-2D and complex-2D A-, L-, A(α)- and L(α)-stability, the implication hierarchy between them, the joint stability regions used for IMEX multirate methods with their reduced variants, and the partitioned Dahlquist test of nonlinearly partitioned multirate methods."
 status: established
-aliases: [scalar A-stability, 2D A-stability, Gear test problem, joint stability region, multirate stability function]
+aliases: [scalar A-stability, 2D A-stability, Gear test problem, joint stability region, multirate stability function, partitioned Dahlquist equation, L-stability in the stiff limit]
 tags: [multirate, stability, imex, stiff]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Linear stability of multirate methods and joint stability regions
@@ -130,6 +130,46 @@ sector of half-angle $\beta$ ($\alpha$, $\beta$ page-local). The authors call it
 infinitely stiffer than $f^{\mathrm E}$. They use it to optimize IMEX-MRI-GARK3b
 and to reject IMEX-MRI-GARK4, whose joint region is empty.
 
+**Truncated and reduced regions.** [Fish et al. (2024)](/sources/fish-2024.md) (§3, eqs.
+3.5–3.7) apply the same construction to the stage-restart
+[IMEX-MRI-SR](/methods/imex-mri-sr.md) methods, with sectors truncated at radii $\rho$ (fast)
+and $\xi$ (implicit), $\mathcal J_{\alpha,\rho,\beta,\xi}$ (page-local $\rho$, $\xi$), and add two
+reduced regions: the **implicit-only** region of $z^{\mathrm I}$ with $z^{\mathrm E}=0$ for all
+fast $z^{\{\mathrm f\}}$ in $S_{\alpha,\rho}$, and the **explicit-only** region of $z^{\mathrm E}$ with
+$z^{\mathrm I}=0$. Like Chinomona & Reynolds, who call it "artificially restrictive", they find that the full region
+"may be overly-restrictive", for a different stated reason: it demands stability of the implicit
+part over a sector and of the fast part over another sector at once (§3). They go further: the explicit-only regions of the
+MERK4 and MERK5 methods are empty, which they take as "a deficiency in these definitions of
+joint stability" rather than in those methods, which converge at design order (§5.3–5.4). For
+IMEX-MRI-SR4(3) the full region was empty for every choice of the free parameters, so they
+optimized the explicit-only region instead (§4.3).
+
+## Partitioned Dahlquist test (nonlinear partitions)
+
+For a nonlinearly partitioned problem $y'=F(y,y)$
+([NPRK](/methods/nonlinearly-partitioned-runge-kutta.md)) the test is
+$F(u,v)=\lambda_1u+\lambda_2v$ with $z_r=h\lambda_r$; the method then reduces to its underlying
+ARK method, whose two-variable stability function $R(z_1,z_2)$ is the ratio of
+$\det(I-z_1A^{\{1\}}-z_2A^{\{2\}}+\mathbf 1(z_1b^{\{1\}}+z_2b^{\{2\}})^\top)$ and
+$\det(I-z_1A^{\{1\}}-z_2A^{\{2\}})$ ([Buvoli et al. 2026](/sources/buvoli-2026.md), §2.3, eqs.
+2.5–2.7). Unlike the scalar multirate test above, both arguments are scaled by the same step $h$,
+and the number of stages per argument, not a ratio $m$, carries the multirate structure.
+Conjugate symmetry of real spectra makes the region
+$\{\max(|R(z_1,z_2)|,|R(\bar z_1,z_2)|)\le1\}$ the relevant one, plotted in slices for fixed $z_1$.
+
+- No IMEX method of this kind is A-stable, because $R(0,z_2)$ is an explicit stability
+  polynomial (§3.1); the scalar notions above are therefore replaced by limits.
+- **L-stable in the stiff $z_1$ limit** (Def. 3.1): $\lim_{|z_1|\to\infty}R(z_1,z_2)=0$ for every
+  $z_2$. Buvoli et al. prove sufficient conditions for multirate NPRK methods (Thm. 3.2:
+  decoupled or $1\to2$ coupling, stiff accuracy, DIRK reduced implicit method). They also show
+  that its practical value shrinks as the explicit stage count $s^{\{2\}}$ grows: damping
+  happens only for $|z_1|\gg|z_2|^{s^{\{2\}}/s^{\{1\}}}$, while the step must stay in an explicit
+  region that grows only linearly in $s^{\{2\}}$ (§3.1.1, Fig. 2).
+- Buvoli & Southworth's single-rate notions (IMEX A-/L-stability in a stiff limit, stability in
+  the coupled stiff $z_2$ limit) are stated on the NPRK page. These are not the scalar
+  L-stability of Roberts et al., which requires the limit in each variable together with
+  A-stability, and not a joint region.
+
 ## Qualifications
 
 - Both sources assume simultaneously diagonalizable (scalar) or $2\times2$ model
@@ -144,9 +184,19 @@ and to reject IMEX-MRI-GARK4, whose joint region is empty.
   their §4.1 usage ($\alpha$ fast, $\beta$ implicit); the definition is the one
   given here.
 - Chinomona & Reynolds print the $\phi$-functions without the $1/(k-1)!$ factor;
-  their $\varphi_{k+1}$ equals $k!\,\phi_{k+1}$ in the registry convention.
+  their $\varphi_{k+1}$ equals $k!\,\phi_{k+1}$ in the registry convention; Fish et al. (2024)
+  use the same unnormalized convention.
+- Fish et al. (2024) print several figure captions with $\alpha$ in the $\beta$ slot and a radius
+  1 where the subcaptions show $10^2$ (§4.1, §4.3); the definitions above are those of eqs.
+  3.5–3.7.
+- Buvoli et al. (2026, §2.3.3) write that real spectra are symmetric "about the imaginary axis";
+  the region they use, with $\bar z_1$, encodes symmetry about the real axis.
+- The partitioned Dahlquist test assumes simultaneously diagonalizable partial Jacobians (Buvoli
+  et al. 2026, §2.3.1), the same caveat as the scalar multirate test.
 
 # Citations
 
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §3 (eqs. 3.3–3.13, Defs. 3.1–3.4, Thms. 3.1–3.3, Remarks 3.1–3.2, Fig. 3.1).
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §3 (eqs. 3.1–3.3, joint stability region), §4.1, Fig. 1.
+- [Fish et al. (2024)](/sources/fish-2024.md) — §3 (eqs. 3.4–3.7), §4.3, §5.3–5.4.
+- [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §2.3 (eqs. 2.5–2.10), §3.1 (Def. 3.1, Thm. 3.2, Fig. 2), App. A.

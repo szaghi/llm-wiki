@@ -146,5 +146,6 @@ Chunk 2 (2026-10-19). This source is cited on:
 * [Entropy stability and conservation of the fully discrete scheme](/properties/entropy-stability.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Kepler problem](/benchmarks/kepler-problem.md)
+* [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md)
 * [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)
 * [Symplecticity and quadratic-invariant preservation](/properties/symplecticity.md)

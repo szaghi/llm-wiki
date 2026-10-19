@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Order reduction
@@ -139,6 +139,32 @@ runs on a quasi-geostrophic model, by degrading stability or by order reduction
 (§8.3). See [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md);
 the Rosenbrock analogue is the "inexact Jacobian" column of the table above.
 
+**Unbounded operators in exponential integrators.** An exponential method derived from
+classical order conditions, with all φ-functions Taylor-expanded, keeps terms
+$J^kF(\tau)$ in its leading error. These suffer order reduction when the Jacobian is
+unbounded (recalled from Hochbruck & Ostermann by
+[Dallerit & Tokman 2025](/sources/dallerit-2025.md), §1, §3). The stiff order conditions
+avoid it under analytic-semigroup assumptions, and methods of φ-order $p$ remove every
+term $J^kF(\tau)$ with $\lvert\tau\rvert\le p$ from the local error (Thm. 7). That is an
+exact statement tree by tree; no error bound uniform in an unbounded $J$ is proved. See
+[stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
+In their tests, two semilinear parabolic problems of Hochbruck–Ostermann (designed to
+expose order reduction) and a 2D advection–diffusion–reaction problem with Neumann data,
+the φ-order methods of orders 3–6 show no order reduction. The stiffly accurate (in the
+exponential sense) Rosenbrock method EXPRB_5s4 shows "a slight order reduction" on the
+advection–diffusion problem (§7, Fig. 4e).
+
+**Partitioning of stiff nonlinear coupling.** [Buvoli & Southworth (2025)](/sources/buvoli-2025.md)
+(§7.2, Fig. 7.3) integrate gray thermal radiation transport (a thick Marshak wave) with
+second- and third-order schemes in two formulations. On a coarse 128-cell mesh the
+implicit–explicit partitioning shows complete order reduction to first order for every
+higher-order scheme. The semi-implicit nonlinear partition, with lagged opacities and the
+rest implicit, keeps higher order: their IMEX-NPRK2[43]-SiSa converges at second order even
+at the largest steps. On the fine 1000-cell mesh second order is reached at reasonable
+steps. The authors attribute it to the partitioning ("order reduction due to stiff nonlinear
+behavior, … due to partitionings"), not to the methods themselves. See
+[nonlinearly partitioned Runge–Kutta methods](/methods/nonlinearly-partitioned-runge-kutta.md).
+
 **Spatial refinement.** Refining the grid makes a semi-discretization stiffer and
 can expose order reduction at fixed temporal method:
 [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md), §5.2, measure on the
@@ -172,6 +198,8 @@ DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
 | observed $\approx2.5$, $2.25$, $2.0$ in $L^1$, $L^2$, $L^\infty$ for 3rd- and 4th-order IMEX with stage-time Dirichlet data | convection–diffusion(–reaction), time-dependent Dirichlet data | González-Tabernero et al. 2024, Tables 1–4 |
 | uniform order 2 for ARS(4,4,3) (design 3); uniform design order under stage-order and vanishing-coefficient conditions | linear hyperbolic relaxation, all $\varepsilon$ | Hu & Shu 2025, Thms. 4.3, 5.1, §6 |
 | observed $\approx2.1$, $2.4$, $3.5$ for Radau IIA $s=2,3,4$ | incompressible fluid–structure DAE | Taddei et al. 2026, Table 1 |
+| no order reduction observed for φ-order 3–6 exponential methods; slight reduction for EXPRB_5s4 | semilinear parabolic and advection–diffusion–reaction | Dallerit & Tokman 2025, §7, Figs. 1–4 |
+| first order for all higher-order schemes with the implicit–explicit partition; second order with the nonlinear partition | gray radiation transport, coarse mesh | Buvoli & Southworth 2025, §7.2, Fig. 7.3b |
 
 In the Ostermann–Roche row $r$ is the number of satisfied conditions and $\bar\nu$ a
 problem-dependent number (both page-local). [Farrell et al. (2021)](/sources/farrell-2021.md),
@@ -215,6 +243,14 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
    with all coefficients non-negative keeps order $r$ for $u'=(A+B)u$ with $A$, $B$
    generating $C_0$-semigroups (Blanes et al. 2024, §6.4, recalling
    Hansen–Ostermann); see [negative-coefficient barrier](/results/negative-coefficient-barrier.md).
+
+8. **Stiff or φ-order conditions for exponential integrators.** Conditions holding for
+   arbitrary matrices give stiffness-independent error constants; φ-order conditions remove the
+   $J^kF(\tau)$ terms (Dallerit & Tokman 2025, Thm. 7; see the result page above).
+9. **A nonlinear partition of the stiff coupling.** Treating the stiff variables implicitly
+   inside the nonlinear terms, rather than splitting the terms additively, keeps second
+   order where the implicit–explicit partition reduces to first (Buvoli & Southworth 2025,
+   §7.2).
 
 ## Qualifications
 
@@ -278,3 +314,5 @@ problem-dependent), would decide it.
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — Remark 3.4; §8.3.
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §1–2 (Strang splitting); §5.2 (observed reductions attributed to tolerances and coefficients).
 - [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §4.2, Table 12.
+- [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §3 (classical vs stiff order conditions), Thm. 7, §7 Figs. 1–4.
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §7.2, Fig. 7.3 (order reduction of the implicit–explicit partition on the coarse mesh); arXiv v2.

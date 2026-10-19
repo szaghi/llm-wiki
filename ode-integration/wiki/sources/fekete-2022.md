@@ -178,6 +178,7 @@ Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
 * [Runge–Kutta method](/definitions/runge-kutta-method.md)
 * [Runge–Kutta order conditions and simplifying assumptions](/results/runge-kutta-order-conditions.md)
+* [Sod shock tube](/benchmarks/sod-shock-tube.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)

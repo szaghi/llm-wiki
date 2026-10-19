@@ -5,7 +5,7 @@ description: "Stabilized explicit Runge–Kutta methods fix a low order and use 
 status: established
 aliases: [explicit stabilized Runge–Kutta, ESRK, Runge–Kutta–Chebyshev, RKC, RKC1, RKC2, Runge–Kutta–Legendre, RKL, RKL1, RKL2, super-time-stepping, STS, monotonic RKC, MONO, Chebyshev methods]
 tags: [runge-kutta, explicit, stabilized, stability, stiff, positivity]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Stabilized explicit Runge–Kutta methods: Chebyshev, Legendre and super-time-stepping
@@ -195,6 +195,26 @@ internal amplification by thirteen orders of magnitude (§9.3, Table 2); see
 [internal stability](/definitions/internal-stability.md). The polynomial construction is
 on [optimal stability polynomials](/methods/optimal-stability-polynomial.md).
 
+## Damped Chebyshev polynomials for second-order problems
+
+The damping device of RKC carries over to leapfrog for $\ddot u=-Lu$, whose stability interval
+for $h^2\lambda$ is $(0,4)$ ($u$ page-local). [Grote et al. (2021)](/sources/grote-2021.md) (§2.4, eqs.
+2.18–2.19) build the inner loop of a leapfrog-based
+[local time-stepping](/methods/local-time-stepping.md) method from the shifted, rescaled
+polynomial $P(x)=2\big(1-T_m(\delta-x/\omega)/T_m(\delta)\big)$ with
+$\delta=1+\varepsilon_{\mathrm d}/m^2$ and $\omega=2T_m'(\delta)/T_m(\delta)$, $m$ the number of
+local steps and $\varepsilon_{\mathrm d}\in[0,\tfrac12]$ the damping parameter ($\delta$, $\omega$, $x$
+page-local; the source writes $\nu$ for $\varepsilon_{\mathrm d}$ and $p$ for $m$); $\delta$ has the form of RKC's $\omega_0=1+\varepsilon_{\mathrm d}/s^2$ *(compiler
+comparison, not in the source)*, and Grote et al. call the idea "well-known in the parabolic
+context". Without damping, $P(m^2x)$ touches the bounds 0 and 4 at $m-1$ points on $[0,4]$,
+which produces isolated unstable step sizes; with damping it stays strictly inside, bounded by
+$2\varepsilon_{\mathrm d}/(1+\varepsilon_{\mathrm d})$ and $4-2\varepsilon_{\mathrm d}/(1+\varepsilon_{\mathrm d})$
+(Lemma A.4, Fig. 2). The cost is a slightly shorter interval: the largest stable step is 99.7 %
+of the optimal leapfrog step at $\varepsilon_{\mathrm d}=0.01$ and 87.6 % at $0.5$ (Table 1). The
+polynomial is evaluated by the three-term Chebyshev recurrence, as in RKC. The same
+stabilization was used for leapfrog–Chebyshev methods by Carle, Hochbruck & Sturm, as recalled
+there (§1).
+
 ## Reduced precision
 
 Because most stages of a stabilized method buy stability, not accuracy, Croci &
@@ -239,3 +259,4 @@ evaluations per step in high precision; see
 - [Dawes (2021)](/sources/dawes-2021.md) — §1, §3 (Eqs. 7–11), §4–5 (Eq. 12, simplified algorithm), §6–7, §8.1–8.3 (Figs. 26–44), §9, App. A.
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1–2 (Eqs. 2–20), §3 (Table 1, Figs. 1–3), §4 (Eqs. 21–23), §5 (Table 2).
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §3.1 (Eqs. 3.2–3.11), §4.3–4.4, §9 (Eqs. 9.1–9.14, Table 2), §10.2, App. A.
+- [Grote et al. (2021)](/sources/grote-2021.md) — §1, §2.4 (eqs. 2.18–2.19, Lemma B.1), Table 1, App. A (Lemma A.4).

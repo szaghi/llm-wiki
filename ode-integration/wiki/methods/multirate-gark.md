@@ -5,7 +5,7 @@ description: "Multirate GARK methods advance a slow partition with one macro ste
 status: established
 aliases: [MrGARK, multirate generalized additive Runge–Kutta, compound-fast MrGARK, multirate backward Euler, multirate implicit midpoint, implicit multirate GARK]
 tags: [multirate, runge-kutta, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)
@@ -234,6 +234,26 @@ superscript on $b_i$; Algorithm 2 sets its loop flag unconditionally in one
 branch and indexes past the end of an array; the level-0 bookkeeping of the
 worked example (step $2H$ under the same step label) is unclear.
 
+## Subcycling outside the GARK framework
+
+Two sources subcycle an explicit scheme at a fixed ratio without a coupled tableau, which
+places them next to MrGARK rather than inside it; both are on
+[local time stepping](/methods/local-time-stepping.md).
+
+- **Overlapping subdomains.** LESAULTS of [Sreejith et al. (2022)](/sources/sreejith-2022.md)
+  (§2–4) takes $m$ steps of an unchanged Lax–Wendroff or Taylor–Galerkin scheme in a refined
+  subdomain, freezes interface values at $t_n$, and merges overlapping solutions once per macro
+  step. Unlike MrGARK there are no coupling coefficients and no interpolation of slow
+  tendencies, and the method is not strictly conservative (§5.5). Its introduction lists
+  Sandu's MRI-GARK as a fourth-order extension of multirate local time stepping (§1).
+- **Partitioned multiphysics.** [Pulicani et al. (2026)](/sources/pulicani-2026.md) subcycle an
+  explicit finite-volume fluid $m$ times per implicit Newmark structure step and enforce
+  interface velocity continuity by a Lagrange multiplier at each fine step (Gravouil–Combescure
+  method). It is an explicit–implicit multirate scheme in the domain-decomposition sense,
+  different subdomains with different integrators, not an additive split of one right-hand side
+  (§1, §4.4). It stays stable to $m=300$ on a piston–rod problem, where a conventional staggered
+  scheme fails beyond $m=5$ (§5.3).
+
 ## Qualifications
 
 - The orders of all methods are classical orders on smooth problems; the
@@ -258,3 +278,5 @@ worked example (step $2H$ under the same step label) is unclear.
 
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §2 (eqs. 2.4–2.7, Thm. 2.1), §3.4 (eqs. 3.16–3.18), §4, §5 (eqs. 5.2–5.11, Table 5.1), §6 (Figs. 6.1–6.2, Table 6.1), §7, Apps. A–B.
 - [Kang & Constantinescu (2022)](/sources/kang-2022.md) — §2.3 (Table 1, Eqs. (16)–(22), Props. 2.2–2.3, Algorithms 1–2, Fig. 2), §3.3 (Figs. 11, 16), §4.
+- [Sreejith et al. (2022)](/sources/sreejith-2022.md) — §1, §2–4, §5.5.
+- [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §1, §4.4, §5.3.

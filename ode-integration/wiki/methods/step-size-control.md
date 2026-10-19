@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Step-size control: error-based controllers, PID filters and CFL control"
-description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance, and an I, PI, PID or Gustafsson controller sets the next step; step-size-control stability, controller tuning per pair, error-based versus CFL-based control for stability-limited CFD, control combined with relaxation and stabilized methods, and variable-step variable-order control of multistep methods under step-ratio constraints."
+description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance and an I, PI, PID or Gustafsson controller sets the next step; the page covers controller stability and tuning, error- versus CFL-based control for stability-limited CFD, control with relaxation and stabilized methods, multirate H-M controllers, cost-based control and variable-step variable-order multistep control."
 status: established
-aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection]
+aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -412,10 +412,80 @@ convergence. Factorizations numbered at most about 5% of the steps on the manufa
 for 4,384–93,671 steps on the cylinder (§4.1–§4.2; see
 [implicit stage solvers](/methods/implicit-stage-solvers.md)).
 
+## Multirate step-size control
+
+A [multirate infinitesimal](/methods/multirate-infinitesimal-methods.md) method has two step
+parameters, the macro step $H_n$ and the integer multirate ratio $m_n$ (micro step
+$H_n/m_n$). [Fish & Reynolds (2023)](/sources/fish-2023.md) control both at once ("H-M
+controllers"), arguing that adapting only $H$ at fixed $m$, or only the micro step at fixed $H$,
+wastes work or loses accuracy (§1). They bound the total error by a slow error (method error with
+exactly solved stages) plus a fast error (inner-solver error),
+$e_n\le e^{\{\mathrm s\}}_n+e^{\{\mathrm f\}}_n$ (page-local unscaled error norms), and model
+
+$$e^{\{\mathrm s\}}_{n+1}=\varphi^{\{\mathrm s\}}_nH_n^{p^{\{\mathrm s\}}},\qquad e^{\{\mathrm f\}}_{n+1}=\varphi^{\{\mathrm f\}}_n\Big(\frac{H_n}{m_n}\Big)^{p^{\{\mathrm f\}}}H_n$$
+
+(§2, eq. 2.1), with $p^{\{\mathrm s\}}$, $p^{\{\mathrm f\}}$ the global orders of the slow and fast
+**embeddings** and $\varphi^{\{\cdot\}}_n$ unknown principal error functions (page-local symbols,
+not the exponential $\phi_k$). The tolerance is split, $\mathrm{tol}=\mathrm{tol}^{\{\mathrm s\}}+\mathrm{tol}^{\{\mathrm f\}}$
+(equal halves in all their runs). Approximating $\log\varphi$ by a piecewise-constant or
+piecewise-linear model with an observer, after Gustafsson, gives two derived controllers; with
+$q^{\{\cdot\}}_n=\mathrm{tol}^{\{\cdot\}}/e^{\{\cdot\}}_n$ the "oversolve" factors and observer gains
+$\kappa_1,\kappa_2$ (page-local), the **Constant-Constant** controller is
+
+$$H_{n+1}=H_n\big(q^{\{\mathrm s\}}_{n+1}\big)^{\kappa_1/p^{\{\mathrm s\}}},\qquad m_{n+1}=m_n\big(q^{\{\mathrm s\}}_{n+1}\big)^{\frac{(p^{\{\mathrm f\}}+1)\kappa_1}{p^{\{\mathrm s\}}p^{\{\mathrm f\}}}}\big(q^{\{\mathrm f\}}_{n+1}\big)^{-\kappa_2/p^{\{\mathrm f\}}}$$
+
+(§2.2.1, eq. 2.9), whose $H$ part is an I controller with gain $\kappa_1/p^{\{\mathrm s\}}$; $m$ is
+treated as real in the derivation and rounded up. The **Linear-Linear** controller uses two past
+steps and errors (eqs. 2.10–2.11); **PIMR** and **PIDMR** are heuristic multirate analogues of
+the PI and PID controllers (eqs. 2.13, 2.15). Quadratic and higher models were "bimodal" and
+omitted (§2.3).
+
+**Fast-error estimates** (§3), all with an embedded inner pair: Full-Step runs the whole step a
+second time with the embedded inner method (doubling slow evaluations); Stage-Aggregate solves
+each stage with both inner methods; Local-Accumulation-Stage-Aggregate (LASA) sums the inner
+embedded local-error estimates along each stage and aggregates over stages by mean or max, with no
+extra evaluations. The slow error comes from the standard MRI-GARK embedding.
+
+**Results** (seven ODE problems, four MRI-GARK methods, three tolerances; costs relative to a
+brute-force step-local optimum, §4): LASA-mean is the cheapest strategy with mean error deviation
+$\log_{10}(e/\mathrm{tol})=-0.08$ and is recommended; tuned gains for Constant-Constant are
+$\kappa_1=0.42$, $\kappa_2=0.44$ (eq. 4.5). The four multirate controllers differ by at most 20 %
+(slow) and 16 % (fast) in cost, and all beat single-rate I, PI, PID and Gustafsson controllers run
+at fixed $m=10$: mean fast cost deviation 5.7–6.6 against 10.4 for PID and 123.9 for I (Fig. 7).
+Constant-Constant is recommended for simple problems. On a 1D stiff reaction–diffusion
+[Brusselator](/benchmarks/brusselator.md) not used in tuning, the controllers keep $m=1$ until
+reaction stiffness appears at $t\approx0.9$ and then raise it (Fig. 8). [Fish et al.
+(2024)](/sources/fish-2024.md) (§6.2.2) use Constant-Constant with LASA-mean to run their
+[IMEX-MRI-SR](/methods/imex-mri-sr.md) methods adaptively; some runs fail by oscillating between
+accepted and rejected steps.
+
+## Cost-based control for iterative integrators
+
+Error-based controllers pick the largest step meeting the tolerance, assuming the cost of a step
+does not depend on its size. [Deka & Einkemmer (2022)](/sources/deka-2022.md) (§1, §2.4) point out
+that this fails for implicit and exponential integrators with iterative inner solvers, whose cost
+per step grows nonlinearly with $h$ (Krylov bases, Leja interpolation degree). The controller of
+Einkemmer (2018), as recalled there, minimizes the cost per unit time $c_n=\tau_n/h_n$ ($\tau_n$
+the runtime of step $n$; page-local) by gradient descent in logarithmic variables:
+
+$$\Delta_n=\frac{\ln c_n-\ln c_{n-1}}{\ln h_n-\ln h_{n-1}},\qquad \sigma_n=\exp\big(-\alpha_{\mathrm c}\tanh(\beta_{\mathrm c}\Delta_n)\big),\qquad h_{n+1}=h_n\times\begin{cases}\lambda_{\mathrm c},&1\le\sigma_n<\lambda_{\mathrm c},\\ \delta_{\mathrm c},&\delta_{\mathrm c}\le\sigma_n<1,\\ \sigma_n,&\text{otherwise,}\end{cases}$$
+
+with $\alpha_{\mathrm c}=0.65241444$, $\beta_{\mathrm c}=0.26862269$, $\lambda_{\mathrm c}=1.37412002$,
+$\delta_{\mathrm c}=0.64446017$ (page-local names), and the step taken is the minimum of this proposal
+and the traditional I-controller step $h_n(\mathrm{tol}/e_n)^{1/(p+1)}$. With Leja-based
+[exponential Rosenbrock](/methods/exponential-integrators.md) EXPRB43 on resistive MHD it is cheaper
+than the traditional controller in most configurations, gives a roughly linear relation between
+cost and tolerance, and rescues Krylov runs that fail to finish at lenient tolerances with the
+traditional controller (§4.2, §5.2; [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)).
+It is not designed for explicit methods, whose cost per step is independent of $h$ (§4.3).
+
 ## Related practice
 
 - **Multirate.** ARKODE's multirate module adapts only the fast time scale; multirate temporal
-  adaptivity is called an open research question (Reynolds et al. 2023, §2.3).
+  adaptivity is called an open research question (Reynolds et al. 2023, §2.3). Fish & Reynolds
+  (2023), published the same year, give multirate controllers for $H$ and
+  $m$; see *Multirate step-size control* above. Loffeld et al. (2024, §7), running ARKODE's
+  multirate methods at fixed steps, list adaptivity as work in progress.
 - **Coupling to nonlinear solves.** SUNDIALS ties the default nonlinear stopping test to the
   subsequent local error test, so that nonlinear iteration errors do not interfere with error
   control (Gardner et al. 2022, §6); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
@@ -469,6 +539,15 @@ for 4,384–93,671 steps on the cylinder (§4.1–§4.2; see
   so the printed constant gives $\tfrac1{20}h^2y''$ rather than the $\tfrac1{10}h^2y''$ of their
   Eq. (22) *(reader's check on the arXiv v1 read)*.
 
+- Fish & Reynolds (2023, §4.7) compare their multirate controllers with single-rate ones run at
+  fixed $m=10$ and with the slow error only, whose parameters are not printed, so the cost gap
+  partly measures the missing adaptivity of $m$; their "optimal" baseline is a step-local greedy
+  search (App. A). Their conclusions call the advantage over PID "slight", while the fast cost of
+  PID is 58 % above the worst multirate controller (§4.7). On the 1D Brusselator all controllers
+  over-solve by two to four orders of magnitude (Fig. 9).
+- Deka & Einkemmer (2022) give no hardware for their timings, and Krylov runs that do not finish
+  "within a reasonable amount of time" are excluded from their speedup factors.
+
 # Citations
 
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §3.1 (Eqs. (17)–(23), starting step, work measure), §3.1.1 (Figs. 9–10), §3.2.2.
@@ -485,3 +564,7 @@ for 4,384–93,671 steps on the cylinder (§4.1–§4.2; see
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §7 (Eqs. (7.1)–(7.5), Def. 7.1, Remarks 7.2–7.3).
 - [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §4 (Eqs. (110)–(112), Figs. 3–5, 8), Thms. 3–4.
 - [Akrivis et al. (2024)](/sources/akrivis-2024.md) — §1.1, §1.3, Thm. 1.1.
+- [Fish & Reynolds (2023)](/sources/fish-2023.md) — §1, §2 (eqs. 2.1–2.15), §3, §4 (eqs. 4.1–4.8, Figs. 4–9), §5.
+- [Fish et al. (2024)](/sources/fish-2024.md) — §6.2.2 (Fig. 7).
+- [Deka & Einkemmer (2022)](/sources/deka-2022.md) — §1, §2.4, §4.2–4.3, §5.2.
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §7.

@@ -94,11 +94,14 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 3 staged 2026-10-19:** 20 sources on linear multistep and BDF
-methods, IMEX for relaxation and low-Mach problems, implicit stage
-solvers; 60 of 118 ingested, 97 concept pages, 2234 bibliography entries.
-Next: chunk 4 (IMEX and multirate continued, local time stepping,
-exponential integrators).
+**Chunk 4 staged 2026-10-20:** 20 sources on local time stepping,
+multirate and exponential methods, NPRK, EIN and Quinpi; 80 of 118
+ingested, 113 concept pages, 2766 bibliography entries. Next: chunk 5
+(exponential and parallel-in-time, DeC/ADER/multiderivative, positivity
+and Patankar).
+
+**Chunk 3 committed 2026-10-19 (47079a7):** multistep and BDF methods,
+IMEX for relaxation and low-Mach problems, implicit stage solvers.
 
 **Chunk 2 committed 2026-10-19 (43bb24b):** relaxation, stabilized and
 paired-explicit methods, step-size control.

@@ -5,7 +5,7 @@ description: "The scalar stiff test problem $y'=\\lambda(y-g(t))+g'(t)$, whose s
 status: established
 aliases: [Prothero–Robinson test equation, PR problem, Kværnø–Prothero–Robinson problem, KPR problem]
 tags: [stiff, order-reduction, verification, runge-kutta]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Prothero–Robinson problem
@@ -86,6 +86,8 @@ which satisfy both conditions, show order 3, while Rodas4PR2 reaches 4 (§2, Tab
 | Steinebach 2023, §4 problem 2 | $y'=-\lambda(y-g)+g'$ | $\lambda=10^5$, $g(t)=10-(10+t)e^{-t}$, $t\in[0,2]$, $h=0.25,\dots,0.03125$; also a scan $\lambda\in[1,10^5]$ | order of the Rodas family |
 | Biswas et al. 2024, §2.2 | $y'=\lambda(y-g)+g'$ | analytic only | motivation of weak stage order |
 | [Chinomona and Reynolds 2021](/sources/chinomona-2021.md), §5.1 | two-component multirate Kværnø–Prothero–Robinson problem | see below | convergence of multirate methods |
+| [Fish & Reynolds 2023](/sources/fish-2023.md), §4.1.4 | same KPR problem and partition | as Chinomona and Reynolds | one of seven tuning problems for multirate step-size controllers |
+| [Fish et al. 2024](/sources/fish-2024.md), §6.1 | same KPR problem, IMEX three-way partition | as Chinomona and Reynolds, fast step $H/10$ | convergence of IMEX-MRI-SR and MERK methods, nonlinear fast part |
 
 Steinebach's §4 writes $-\lambda$ with $\lambda>0$, his Eq. (1.4) $+\lambda$ with
 $\operatorname{Re}\lambda\ll0$; the problems coincide after $\lambda\mapsto-\lambda$.
@@ -119,11 +121,26 @@ Strang–Marchuk 1.98, IMEX-MRI-GARK3a 3.10, IMEX-MRI-GARK3b 3.14, MRI-GARK-ESDI
 3.06, IMEX-MRI-GARK4 4.15, MRI-GARK-ESDIRK46a 3.93 (Fig. 2); see
 [IMEX multirate infinitesimal GARK methods](/methods/imex-mri-gark.md).
 
+Fish et al. (2024, §6.1, eqs. 6.1–6.3, Fig. 5) reuse the problem and the partition (implicit
+slow part the second row of $\Lambda$ times the nonlinear vector, fast part the first row, the
+forcing explicit) with $H=\pi/2^k$ and fast step $H/10$. The fast partition is nonlinear in
+$u$, which makes the problem a test of order for nonlinear fast parts. Rates: IMEX-MRI-SR2(1)
+2.01, SR3(2) 3.11, SR4(3) 3.85; MERK2–5 2.06, 3.17, 4.25, 5.32; IMEX-MRI-GARK3a/3b/4 3.05, 3.09,
+4.11; Lie–Trotter 1.01, Strang–Marchuk 1.98 ([IMEX-MRI-SR](/methods/imex-mri-sr.md),
+[multirate exponential methods](/methods/multirate-exponential-methods.md)). Fish & Reynolds
+(2023, §4.1.4) use the same problem, with the component partition of Chinomona and Reynolds and
+Sandu, to tune their multirate controllers ([step-size control](/methods/step-size-control.md)).
+
 ## Qualifications
 
 - Chinomona and Reynolds print the explicit slow part of their splitting as
   $(0,\ +\sin t/(2v))$; the problem statement and $v'=-\sin t/(2v)$ require a minus
-  sign (slip in the arXiv version read).
+  sign (slip in the arXiv version read). Fish et al. (2024, eq. 6.3), who copy the partition,
+  print the same plus sign; in addition the $-20\sin(20t)/(2u)$ forcing appears in none of
+  their three parts, and both (6.1) and (6.3) print the second numerator as $-2+u^2-\cos t$
+  where the exact solution requires $-2+v^2-\cos t$ (checked visually by the reader). Their
+  measured design orders indicate that the code uses the correct problem *(compiler
+  inference)*.
 - The Prothero–Robinson analysis is linear in $y$; the guarantees it yields for weak
   stage order or Scholz's conditions do not extend to nonlinear stiff problems such
   as Van der Pol, where Biswas et al. (2023, §7.3) still observe order reduction.
@@ -134,3 +151,5 @@ Strang–Marchuk 1.98, IMEX-MRI-GARK3a 3.10, IMEX-MRI-GARK3b 3.14, MRI-GARK-ESDI
 - [Biswas et al. (2024)](/sources/biswas-2024.md) — §2.2 Eqs. (8)–(9); §2.3.
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Eq. (1.4); §2 Eqs. (2.5)–(2.14); §4 problem 2, Table 6.
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.1, Fig. 2.
+- [Fish & Reynolds (2023)](/sources/fish-2023.md) — §4.1.4.
+- [Fish et al. (2024)](/sources/fish-2024.md) — §6.1 (eqs. 6.1–6.3, Fig. 5).

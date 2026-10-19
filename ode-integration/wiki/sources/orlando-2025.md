@@ -107,6 +107,7 @@ Notation: $h$ is the step and $\varepsilon$ the reference Mach number (source $M
 Chunk 3 (2026-10-19). This source is cited on:
 
 * [Asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md)
+* [Colliding acoustic pulses](/benchmarks/colliding-acoustic-pulses.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Gresho vortex](/benchmarks/gresho-vortex.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)

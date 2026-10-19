@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -234,6 +234,50 @@ tolerances than the others (Ranocha et al. 2025, §3, §4.2, §6, §8, Tables 1,
 - **Reference solutions.** SSPRK(3,3) provides the explicit reference runs of Orlando &
   Bonaventura (2025, §5.2–5.3) and Orlando et al. (2025b, §4.3) for low-Mach IMEX tests.
 
+## SSPRK(3,3) as a building block of coupled and asynchronous schemes
+
+The tableau of SSPRK(3,3) is $c=(0,1,\tfrac12)$, $a_{21}=1$,
+$a_{31}=a_{32}=\tfrac14$, $b=(\tfrac16,\tfrac16,\tfrac23)$
+([Unfer (2021)](/sources/unfer-2021.md), Eq. (106)). Three sources use it
+inside a larger time-stepping construction; in none of them is the SSP property of the
+whole scheme proved.
+
+- **Positivity inside a splitting.** [Liu & Zhang (2023)](/sources/liu-2023.md) (§2.1,
+  §3.1, Eq. (5)) advance the Euler half-steps of a Strang splitting of compressible
+  Navier–Stokes with SSPRK(3,3) in Shu–Osher form and a Zhang–Shu positivity limiter at
+  every stage: positivity of density and internal energy follows from the convex
+  combination of forward Euler steps, each positive under the Gauss–Lobatto CFL bound
+  $\frac{h}{\Delta x}\max\lvert\text{wave speed}\rvert\le\frac12\hat\omega$ with
+  page-local Gauss–Lobatto weight factor $\hat\omega$ (Eq. (17), cited). This is the
+  forward-Euler argument of this page applied to the positivity functional; the viscous
+  half of the splitting is implicit and first order, so the full scheme is at most first
+  order in time (§1.4) and no temporal convergence is reported. See
+  [positivity preservation](/properties/positivity-preservation.md) and
+  [operator splitting](/methods/operator-splitting.md).
+- **Asynchronous local time stepping.** Unfer (2021, §3.5) builds a third-order
+  *asynchronous* Runge–Kutta method ARK3 (the acronym does not mean additive RK here) in
+  which every finite-volume cell has its own step. The stage states become parabolic
+  extrapolations in time and the conservative states cubic polynomials whose derivatives
+  are assembled from face fluxes at three face times; with a global step the scheme
+  reverts to SSPRK(3,3) (§3.5.2; with one step size the flux polynomial integrates to the
+  weights $\tfrac16,\tfrac16,\tfrac23$, a reader's check recorded on the Source page). A
+  formal truncation analysis gives $O(\Delta x^3)$ in smooth regions (§3.5.3). The author
+  states: "There is no claim at this point that the SSP property holds for the ARK3
+  method"; strong shocks need a fallback to first-order states and per-stage recall of
+  cells whose local step dropped (§3.5.2, App. B). On a Mach 10 double Mach reflection
+  ARK3 runs 1.98 times faster than synchronous SSPRK(3,3) and shows more slip-line
+  roll-ups (§4.5); see [local time stepping](/methods/local-time-stepping.md) and
+  [double Mach reflection](/benchmarks/double-mach-reflection.md).
+- **Stagewise interface coupling.** [Pulicani et al. (2026)](/sources/pulicani-2026.md)
+  (§4.3, Eqs. (54)–(55)) advance an ALE finite-volume fluid with SSPRK(3,3), which they
+  state "exhibits a greater stability" than forward Euler with MUSCL, and couple it to an
+  implicit [Newmark](/methods/newmark-method.md) structure by solving a Lagrange-multiplier
+  interface problem at each of the three stages, with the mid-stage structure velocity
+  interpolated linearly. The coupled scheme converges at about second order at fixed CFL
+  ($2.087$ in time, $2.064$ in space on a smooth piston problem; $1.41$ for the fluid in a
+  coupled piston–rod test), so the third order of the Runge–Kutta method is not observed
+  (§5.2–5.3).
+
 ## SSP as a proof device beyond Runge–Kutta
 
 The Shu–Osher convex-combination argument transfers any property of a single forward
@@ -330,3 +374,6 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §5, §5.1.
 - [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — §3, §5.2–5.3; HAL v2.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.3; arXiv v5.
+- [Unfer (2021)](/sources/unfer-2021.md) — §3.5 (Eq. (106)), §3.5.2–3.5.3, App. B, §4.5.
+- [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1, §3.1 (Eqs. (5), (17)).
+- [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §4.3 (Eqs. (54)–(55)), §5.2–5.3.

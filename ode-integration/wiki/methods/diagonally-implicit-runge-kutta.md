@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with lower-triangular Butcher matrix, so eac
 status: established
 aliases: [DIRK, SDIRK, ESDIRK, EDIRK, GEDIRK, singly diagonally implicit Runge–Kutta]
 tags: [runge-kutta, implicit, stiff, stage-order, linear-algebra]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)
@@ -81,7 +81,7 @@ Table 24, A-stable, not stiffly accurate) as reference cases that lose order.
 |---|---|---|---|
 | SDIRK2 (Alexander) | $c=(\gamma,1)$, $A=\begin{pmatrix}\gamma&0\\1-\gamma&\gamma\end{pmatrix}$, $b=(1-\gamma,\gamma)$, $\hat b=(\tfrac35,\tfrac25)$, $\gamma=1-1/\sqrt2$ | order 2, L-stable, stiffly accurate | [Roberts et al. 2021](/sources/roberts-2021.md), Eq. (5.4) |
 | two-stage order-3 SDIRK (Nørsett) | $c=(\gamma,1-\gamma)$, $A=\begin{pmatrix}\gamma&0\\1-2\gamma&\gamma\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$, $\gamma=(3+\sqrt3)/6$ | order 3, algebraically stable | Roberts et al. 2021, Eq. (5.8) |
-| SDIRK3 (Alexander) | $c=(\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(\tfrac{1-\gamma}2,\gamma)$, $(-\tfrac{3\gamma^2}2+4\gamma-\tfrac14,\ \tfrac{3\gamma^2}2-5\gamma+\tfrac54,\ \gamma)$; $\gamma\approx0.436$, middle root of $6\gamma^3-18\gamma^2+9\gamma-1=0$ | order 3, stiffly accurate | Roberts et al. 2021, App. A |
+| SDIRK3 (Alexander) | $c=(\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(\tfrac{1-\gamma}2,\gamma)$, $(-\tfrac{3\gamma^2}2+4\gamma-\tfrac14,\ \tfrac{3\gamma^2}2-5\gamma+\tfrac54,\ \gamma)$; $\gamma\approx0.436$, middle root of $6\gamma^3-18\gamma^2+9\gamma-1=0$ | order 3, stiffly accurate; A-stable, hence L-stable | Roberts et al. 2021, App. A; [Puppo et al. 2024](/sources/puppo-2024.md), §4 ($\gamma=0.4358665215$) |
 | five-stage SDIRK4 (new) | $\gamma=\tfrac14$, $c=(\tfrac14,1,\tfrac25,\tfrac7{11},1)$, $b$ = last row $(\tfrac{400}{459},-\tfrac{35}{216},-\tfrac{250}{351},\tfrac{1331}{1768},\tfrac14)$ | order 4, L-stable, stiffly accurate, embedded pair | Roberts et al. 2021, App. B |
 | Qin–Zhang | $c=(\tfrac14,\tfrac34)$, $A=\begin{pmatrix}\tfrac14&0\\\tfrac12&\tfrac14\end{pmatrix}$, $b=(\tfrac12,\tfrac12)$ | order 2, A-stable, symplectic | Farrell et al. 2021, Eq. (37); [Sun et al. 2022](/sources/sun-2022.md), Ex. 4.3 |
 | Kraaijevanger–Spijker | $c=(\tfrac12,\tfrac32)$, $A=\begin{pmatrix}\tfrac12&0\\-\tfrac12&2\end{pmatrix}$, $b=(-\tfrac12,\tfrac32)$ | $R(z)=\frac{1-\frac32z+\frac12z^2}{1-\frac52z+z^2}$; order 1, since $b^\top c=2\neq\tfrac12$ *(compiler check)* | Sun et al. 2022, Ex. 4.4 |
@@ -121,6 +121,10 @@ as the Hairer–Wanner method, recorded on the Source pages). Boscheri & Paresch
 Eq. (80)) print the four-stage SDIRK with a slip in $a_{44}$, and Orlando et al. (2025b,
 Table 20) pair it with an explicit companion that fails a third-order condition; see
 [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+Puppo et al. (2024, Eq. (26)) print the corrector stage of Quinpi as
+$U^{(k)}+\frac{a_{kk}h}{\Delta x}\Delta\hat F^{(k)}-U^{(k-1)}=0$, the composite backward Euler
+form; consistency with their DIRK (15a) requires $-y_n$ plus the earlier stage fluxes in place
+of $-U^{(k-1)}$ (reader's check, recorded on the Source page).
 
 ## DIRK parts of IMEX pairs
 
@@ -142,6 +146,26 @@ structure decides the asymptotic behaviour on stiff relaxation:
   elliptic solve, e.g. one pressure equation or two decoupled systems per stage
   ([Boscheri & Thomann 2024](/sources/boscheri-2024.md), §3.3–3.5, with the two-stage SDIRK2,
   $\gamma=1-1/\sqrt2$, of the first table row as implicit part).
+
+## Composite backward Euler as a DIRK; DIRKs in flux form
+
+A sequence of backward Euler sub-steps through the abscissae of a DIRK is itself a DIRK.
+With sub-steps $\theta_k=c_k-c_{k-1}$ ($c_0=0$, abscissae increasing; page-local
+$\theta_k$), the composite backward Euler method has the same $c$, row $k$ of $A$ equal to
+$(\theta_1,\dots,\theta_k,0,\dots,0)$ and $b=(\theta_1,\dots,\theta_s)$
+([Puppo et al. 2024](/sources/puppo-2024.md), §3.1, Eqs. (19), (22)). For Alexander's
+SDIRK3 this gives $\theta=(\gamma,\tfrac{1-\gamma}2,\tfrac{1-\gamma}2)$ (§4). The tableau is
+first order and stiffly accurate by construction, since $b$ is its last row (reader's
+remark, recorded on the Source page). Puppo et al. run it as a first-order predictor
+alongside SDIRK3 so that both share stage times; its stage values fix the nonlinear
+reconstruction weights of the third-order stages (see
+[Quinpi](/methods/quinpi.md) and [implicit stage solvers](/methods/implicit-stage-solvers.md)).
+On a finite-volume semi-discretization they write the DIRK in flux form, each stage value
+being $y_n$ minus $h/\Delta x$ times the $a_{ki}$-weighted sum of earlier and current
+interface-flux differences (Eqs. (15a)–(15b)). Equal diagonal entries simplify the
+Jacobian (§2.2), and the step is set by accuracy on the slow wave of a stiff hyperbolic
+system, at Courant numbers of about 7 to 670 in their tests (§4). They note that strictly
+increasing abscissae are "not necessary for our construction" (§4).
 
 ## Solving the stage systems
 
@@ -211,3 +235,4 @@ per micro- and macro-step in multirate settings.
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §5.1.
 - [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — Def. 3.1, Tables 1–2; HAL v2.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — Tables 20–21; arXiv v5.
+- [Puppo et al. (2024)](/sources/puppo-2024.md) — §2.2 (Eqs. (14)–(16)), §3.1 (Eqs. (19)–(24)), Eq. (26), §4 (Alexander SDIRK3).

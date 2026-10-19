@@ -5,7 +5,7 @@ description: "Choosing the free coefficients of an explicit method's stability p
 status: established
 aliases: [stability-optimized Runge–Kutta, optimized explicit Runge–Kutta, Ketcheson–Ahmadia optimization, maximal stable step size optimization, pseudo-extrema, OSPREI]
 tags: [stability, explicit, runge-kutta, step-size-control]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Optimal stability polynomials for explicit Runge–Kutta methods
@@ -53,6 +53,28 @@ supplementary material.
 [Doehring et al. (2024)](/sources/doehring-2024.md) (§1, §2.1.1) state that in double
 precision the monomial convex formulation is limited to about 16–20 stages for general
 spectra; earlier monomial-based optimizations reached degrees 14, 7 and 8.
+[Doehring et al. (2024b)](/sources/doehring-2024-b.md) (§4.2) put the reliable range of
+the Ketcheson–Ahmadia optimizer at degree about 16 in the monomial basis and report that up
+to about 2000 eigenvalue constraints are optimized in under a minute.
+
+## Estimating the spectrum
+
+The constraint set $\mathcal E$ must cover the spectrum of the full-resolution
+semi-discretization, whose dense eigendecomposition is expensive. Doehring et al. (2024b,
+§4.1) estimate its **boundary** in five steps: (1) compute the full spectrum of a
+reduced-resolution semi-discretization, of size $\mathcal O(10^3)$; (2) take its convex hull,
+densified so that consecutive points are closer than the mean hull spacing, in one quadrant
+by symmetry, assuming no eigenvalue with positive real part; (3) build the sparse Jacobian at
+the target resolution by algorithmic differentiation; (4) scale the hull points by the ratio of
+the minimal mesh widths and run shifted Arnoldi (ARPACK) around each scaled point in parallel,
+about $1000/K$ eigenvalues for each of the $K$ shifts (page-local), with a loose tolerance
+because the spectrum drifts during the run; (5) take the union. For a Kelvin–Helmholtz DGSEM
+case of degree 3 the reduced $1024\times1024$ eigendecomposition takes 0.4 s, the full
+$16384\times16384$ one more than 11 minutes, and twenty shifted Arnoldi runs about 30 s in total,
+giving 930 eigenvalues that capture the shape (Fig. 5). The method serves the Orszag–Tang,
+Kelvin–Helmholtz and Rayleigh–Taylor families of their
+[paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md) study; see
+[Trixi.jl](/software/trixi-jl.md).
 
 ## Results on DG/flux-reconstruction spectra
 
@@ -147,7 +169,10 @@ the second-order cone formulation; fitting tableau entries to optimized monomial
 coefficients by least squares gave "significantly inferior results". The constrained
 optimum reaches 85% of the unconstrained fourth-order one at $e=6$ and 96.5% at
 $e=16$ (§4.3, Figs. 1–2). At second order Vermeire (2023, §3) recovers the tableau
-from the polynomial sequentially, without a nonlinear solver.
+from the polynomial sequentially, without a nonlinear solver, a recovery restated by
+Doehring et al. (2024b, §4.3, Eq. (4.5)). At third order Doehring et al. (2024b, Eqs.
+(4.6)–(4.7)) fix the abscissae in advance and solve for the tableau with a trust-region
+method from random starts, requiring positive entries.
 
 ## Other design targets
 
@@ -244,4 +269,5 @@ pay off without a hand-tuned CFL number; see also
 - [Vermeire (2023)](/sources/vermeire-2023.md) — §3, §4 (Eqs. 24–28, Table 1, Figs. 1–2).
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §1, §2.1–2.2 (Eqs. 2.7–2.11), §3 (Thms. 1–2), §4.3–4.4, §5 (Alg. 1), §6 (Table 1), §8, §9, §11.
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §4.2–4.4 (Eqs. 4.7–4.8, Figs. 1–2), App. C.
+- [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §4.1 (Fig. 5), §4.2, §4.3 (Eqs. 4.4–4.7).
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1–3 (monotonicity interval as objective).

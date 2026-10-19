@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Paired explicit Runge–Kutta (P-ERK) methods"
-description: "P-ERK families are explicit Runge–Kutta tableaux with a common stage count, abscissae and weights but different numbers of active stages, assigned per mesh region by local stiffness; one global step gives a multirate effect at second, third and fourth order, with optimized stability polynomials and an embedded stability-limit detector."
+description: "P-ERK families are explicit Runge–Kutta tableaux with a common stage count, abscissae and weights but different numbers of active stages, assigned per mesh region by local stiffness, also dynamically under AMR; one global step gives a multirate effect at second, third and fourth order, with optimized stability polynomials, an embedded stability-limit detector, and a loss of monotonicity at member interfaces."
 status: established
-aliases: [P-ERK, PERK, paired-explicit Runge–Kutta, embedded P-ERK, multirate P-ERK, P-ERK2, P-ERK3, P-ERK4]
+aliases: [P-ERK, PERK, paired-explicit Runge–Kutta, embedded P-ERK, multirate P-ERK, P-ERK2, P-ERK3, P-ERK4, dynamically partitioned P-ERK]
 tags: [runge-kutta, explicit, multirate, stability, order-conditions, step-size-control]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Paired explicit Runge–Kutta (P-ERK) methods
@@ -23,10 +23,12 @@ advance with the same global step $h$, so the family acts as a
 with partition-wise tableaux $A^{\{q\}}$ and common $b$, $c$
 ([Hedayati Nasab & Vermeire 2022](/sources/hedayatinasab-2022.md), §1, §3;
 [Vermeire 2023](/sources/vermeire-2023.md), §1, §3;
-[Doehring et al. 2025](/sources/doehring-2025.md), §1–3). The second-order family is
-due to Vermeire (2019), as recalled by all three; third order is constructed by
-Hedayati Nasab & Vermeire (2022), embedded pairs by Vermeire (2023), and fourth
-order by Doehring et al. (2025).
+[Doehring et al. 2025](/sources/doehring-2025.md), §1–3;
+[Doehring et al. 2024b](/sources/doehring-2024-b.md), §2). The second-order family is
+due to Vermeire (2019), as recalled by all four; third order is constructed by
+Hedayati Nasab & Vermeire (2022), embedded pairs by Vermeire (2023), fourth
+order by Doehring et al. (2025), and dynamic partitioning by adaptive mesh refinement,
+with a nonlinear-stability analysis, by Doehring et al. (2024b).
 
 ## Butcher structure
 
@@ -57,6 +59,15 @@ Listings 1–2). Members are assigned by minimum element edge length (Hedayati N
 Vermeire 2022, §5.3–5.4; Vermeire 2023, §6) or by local wave speed (Doehring et al.
 2025, §2); the load imbalance of unequal stage counts is handled by multi-constraint
 METIS partitioning (Vermeire 2023, §3).
+
+**Dynamic partitioning under AMR.** Doehring et al. (2024b, §6.1–6.2) assign each cell of a
+quad/octree AMR mesh to a member by its level (tree mesh) or shortest edge (p4est mesh) and
+recompute the assignment at every mesh change; mortars go to the member of the fine neighbour,
+levels beyond the number of members fall to the cheapest member. The overhead is 0.3–4.4 % of
+runtime and the memory overhead 7–34 % over a standalone scheme, and no extra MPI
+communication is needed (§6.3, §7). Under 2:1 refinement the active-stage counts would have to
+double per level, $e_q=e_1\cdot\{1,2,4,\dots\}$, which conflicts with the nonlinear-stability
+limit below, so families of few members are used (§4.2); see [Trixi.jl](/software/trixi-jl.md).
 
 ## Coefficients by order
 
@@ -135,7 +146,25 @@ recovered from the polynomial. At second order the coefficient of $z^j$ is a cha
 subdiagonal entries times one abscissa, so the entries follow sequentially from the
 top degree down without a nonlinear solver (Vermeire 2023, §3, Eq. (22)); at third
 order the optimal polynomial and the condition on $c_{s-2}$ form a nonlinear system
-per member (Hedayati Nasab & Vermeire 2022, §4.2). At fourth order only $e-5=e-p-1$
+per member (Hedayati Nasab & Vermeire 2022, §4.2).
+
+**Shu–Osher base at third order.** Doehring et al. (2024b, §3.3, Eqs. (3.15)–(3.17), (4.6)–(4.7))
+replace the three-stage base of Hedayati Nasab & Vermeire, $c=(0,\tfrac13,1)$,
+$a_{3,1}=-1$, $a_{3,2}=2$, $b=(0,\tfrac34,\tfrac14)$, whose negative entry downwinds the fluxes of
+the first stage derivative, by the Shu–Osher [SSPRK(3,3)](/methods/strong-stability-preserving-runge-kutta.md)
+tableau, $c=(0,1,\tfrac12)$, $b=(\tfrac16,\tfrac16,\tfrac23)$, as the last two stages. The other
+abscissae are fixed in advance, $c_i=(i-1)/(s-3)$ for $i\le s-2$, and the coefficients follow from
+a trust-region solve with random starts under $a_{i,i-1}>0$ and $a_{i,1}=c_i-a_{i,i-1}>0$, plus
+the third-order constraint $\tfrac16=b_sa_{s,s-1}+b_{s-1}a_{s-1,s-2}$. Fixing $c$ before the
+optimization keeps the abscissae equal across members by construction; positive coefficients were
+obtained for all polynomials of the paper, not guaranteed in general. Using the first stage
+derivative in the update costs no extra storage.
+
+**Stage-evaluation patterns.** The same polynomial admits other placements of the active stages:
+"alternating" and "early shared" tableaux built from one degree-4 polynomial give different
+one-step results at interfaces, alternating with the strongest oscillations (Doehring et al.
+2024b, §3.2.4, Eqs. (3.12)–(3.13), Fig. 4). This agrees in direction with the finding of
+Doehring et al. (2025, App. B) that sharing final stages reduces interface oscillations. At fourth order only $e-5=e-p-1$
 coefficients are free, because the shared entries fix the $z^5$ coefficient through
 the others. Doehring et al. (2025, §4.2, Eqs. (4.7)–(4.8), App. C) make the
 polynomial affine in the products $\prod_{i=1}^ja_{e-3-i+1}$ ($j=1,\dots,e-5$; page-local
@@ -167,7 +196,8 @@ absolute stability is only "observed" to suffice (McLachlan, Sun & Tse, as recal
 Doehring et al. 2025, §2.2, Eq. (2.12)). Doehring et al. check one case directly: a
 two-level fourth-order family with 10 and 16 active stages on 1D advection with 2:1
 refinement has a fully discrete matrix of spectral radius 1 to machine precision and
-runs stably for 7672 steps (§5.1, Fig. 4). See
+runs stably for 7672 steps (§5.1, Fig. 4). Doehring et al. (2024b, §2.2) repeat the
+observation that member-wise stability suffices in practice. See
 [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
 
 **Nonlinear stability** is weak. A partitioned SSP method needs every member to be
@@ -179,6 +209,22 @@ stages of the members reduces interface oscillations: a second-order family with
 and 16 active stages whose last 6 stages are shared shows much smaller oscillations
 on 1D upwind advection, at the price of an optimal step about 64.3% of the
 unconstrained one (App. B, Fig. B.13).
+
+**Never SSP, and not monotone at interfaces** (Doehring et al. 2024b, §3.2). Zero entries of
+the shared weights violate $b>0$, so no P-ERK family is SSP, the only possible exception being a
+base method whose evaluated stages coincide with its nonzero weights. On first-order upwind
+finite volumes for $u_t+u_x=0$ with a second-order family of 16 and 8 active stages on a
+**uniform** mesh, the fully discrete one-step matrix has spectral radius below one (linearly
+stable, conservative, second-order convergent) but negative entries behind the upwind interface,
+so Harten's monotonicity criterion fails and one step produces oscillations (Figs. 2–3). The
+relative total-variation increase after one step grows with the refinement ratio (from $-0.03$ at
+ratio 1.125 to 26.0 at ratio 2), with the step size (from $-0.01$ at 40 % of the maximal step to
+26.0 at 100 %), with coarseness (26.0 at 64 cells, 0.01 at 4096) and with the difference of active
+stages (Tables 1–4). Because the cell averages themselves are corrupted, MUSCL-type or positivity
+limiters cannot repair it; flux or stage limiting would be needed (§3.2.5). The authors explain
+the oscillation-free earlier results by smooth meshes (mean neighbour ratio about 1.15), active-stage
+differences of at most 4, viscous equations and, in the random-mix convergence test, the step
+reduction imposed by the smallest member (§3.2.6).
 
 ## Embedded P-ERK and stability-limited step control
 
@@ -215,6 +261,8 @@ the stable step introduces little temporal error relative to the spatial error
 |---|---|---|---|---|
 | third order, $s=16$, members $e\in\{3,4,8,12,16\}$ | classical three-stage RK3 | wall-clock speedup; step ratio | 4.06–4.51; 7.28–8.21 | Hedayati Nasab & Vermeire 2022, Tables 3–5 |
 | second order embedded, $s=16$, $e\in\{3,8,16\}$ | Bogacki–Shampine 3(2) | speedup | 4.95–7.11 | Vermeire 2023, Tables 2–4 |
+| third order, AMR families of 3 members | standalone P-ERK, SSPRK(3,3), four optimized third-order methods | runtime ratio against the family | 1.068–2.356 (viscous), 1.097–1.866 (inviscid) | Doehring et al. 2024b, Tables 7–12 |
+| second order, smoothly refined structured mesh | SSPRK(3,3) | speedup | 1.26–2.45 for top members $e=4$–16 | Doehring et al. 2024b, App. A, Table A.13 |
 | fourth order, multirate | optimized standalone methods (P-ERK, Niegemann–Diehl–Busch, Toulorge–Desmet, Ranocha et al., Kennedy–Carpenter–Lewis, others) and RK4 | runtime ratio; RHS-evaluation ratio | 1.20–4.77; 1.38–4.52 | Doehring et al. 2025, Tables 5–9 |
 
 The test cases are compressible Navier–Stokes and Euler computations with
@@ -230,10 +278,23 @@ partitioning loses data locality (§6.2), and they ask that the earlier speedups
 measured against three-stage third-order baselines, be compared with theirs against
 RK4 rather than against optimized methods.
 
+On AMR meshes (Doehring et al. 2024b, §7) the six test cases are a periodic shear layer,
+visco-resistive Orszag–Tang, 3D [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
+[Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md), Rayleigh–Taylor
+instability and the MHD rotor. Hyperbolic–parabolic problems run at the CFL number of the
+standalone optimized member; inviscid ones need a reduction (70 % for Kelvin–Helmholtz, 96 % for
+Rayleigh–Taylor), the price of the interface monotonicity loss. Three-member families are the most
+efficient; more members need further CFL reduction. A standalone P-ERK with 76.2 % more
+right-hand-side evaluations than the family is only 46.8 % slower on the shear layer, because the
+code is memory-bound. A cost model compares each family with a hypothetical family with one
+member per level (optimality 58.2 % on Orszag–Tang, 96.8 % on Taylor–Green; §6.4).
+
 ## Relation to multirate methods
 
 P-ERK obtains a multirate effect with one global step and partition-dependent stage
-counts, without interpolating or extrapolating interface values. Hedayati Nasab &
+counts, without interpolating or extrapolating interface values; Doehring et al. (2024b, §1)
+call it "conceptually similar to local time-stepping" without its interpolation, intermediate
+storage or flux exchange ([local time stepping](/methods/local-time-stepping.md)). Hedayati Nasab &
 Vermeire (2022, §1) and Doehring et al. (2025, §1) contrast it with
 [multirate GARK](/methods/multirate-gark.md) and local time stepping. Doehring et al.
 (2024, §1) state that consistency and conservation "are not trivially satisfied by
@@ -248,7 +309,8 @@ need implicit solves (Hedayati Nasab & Vermeire 2022, §1; Vermeire 2023, §1).
   $a_{s,s-1}$ and $a_{s-1,s-2}$, which come from its optimized polynomial;
   Hedayati Nasab & Vermeire (2022) do not say how $c_{s-2}$, $c_{s-3},\dots$ are kept
   equal, and print no coefficients (supplementary material). The observed third order
-  of the random mix is the evidence. For $e=3$ the subdiagonal entry $a_{s-1,s-2}$
+  of the random mix is the evidence. Doehring et al. (2024b) avoid the issue by fixing the
+  abscissae first (see *Coefficients by order*). For $e=3$ the subdiagonal entry $a_{s-1,s-2}$
   is zero and the $c_{s-2}$ formula divides by zero; that member must instead have
   $a_{s,s-1}=2$, not discussed in the paper (reader's observations).
 - **Which property comes from which equality.** Hedayati Nasab & Vermeire (2022,
@@ -273,6 +335,11 @@ need implicit solves (Hedayati Nasab & Vermeire 2022, §1; Vermeire 2023, §1).
   $e=15$ and $e=16$ (Table 1), against his statement that the embedded value is always
   smaller; the pattern $\hat\nu_{\max}(e)=\nu_{\max}(e-1)$ he states would give 3.00 and 3.22
   ($\nu_{\max}$, $\hat\nu_{\max}$ the main and embedded maximal stable Courant numbers).
+- Doehring et al. (2024b) summarize their speedups as "up to 2.4 … and 1.8 for inviscid"
+  problems; their Table 10 reaches 1.866. Their member-interface analysis uses first-order upwind
+  finite volumes, not the DGSEM of their applications, and they print the second-order
+  polynomial (4.4) with a power $z^{s-e+2}$ where $z^e$ is meant, and the third-order one (4.6)
+  with the summation index outside its sum.
 - The P-ERK sources write $\Delta t$ for the step, $e$ (Hedayati Nasab & Vermeire, Vermeire)
   or $E$ (Doehring et al.) for active stages, $S$ or $s$ for stages, and $\gamma_j$ or
   $\alpha_j$ for polynomial coefficients; here $h$, $e$ (page-local),
@@ -284,4 +351,5 @@ need implicit solves (Hedayati Nasab & Vermeire 2022, §1; Vermeire 2023, §1).
 - [Vermeire (2023)](/sources/vermeire-2023.md) — §1, §2.2, §3 (Eqs. 15–23), §4 (Table 1, Figs. 1–2), §5 (Eqs. 29–34), §6 (Tables 2–4).
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.1–2.5 (Eqs. 2.3–2.15), §3.1–3.3 (Eqs. 3.2–3.10), §4.2–4.4, §5.1–5.4, §6.1–6.5 (Tables 5–9), App. A–C.
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §1, §11 (many-stage polynomials for P-ERK; multirate comparison).
+- [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §1, §2.2, §3.2 (Eqs. 3.11–3.14, Tables 1–4, Figs. 2–4), §3.3 (Eqs. 3.15–3.17), §4.2–4.3 (Eqs. 4.4–4.7), §6 (Eqs. 6.1–6.9), §7 (Tables 7–12), App. A.
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §1 (P-ERK as consumer of optimized polynomials, previously from 1D spectra only).

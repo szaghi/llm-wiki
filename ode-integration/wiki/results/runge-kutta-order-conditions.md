@@ -5,7 +5,7 @@ description: "A Runge–Kutta method has order p iff its elementary weights equa
 status: established
 aliases: [order conditions, Butcher order conditions, rooted-tree order conditions, simplifying assumptions, B(ξ), C(η)]
 tags: [runge-kutta, order-conditions]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Runge–Kutta order conditions and simplifying assumptions
@@ -212,6 +212,35 @@ order-3 starter and finisher (§2.3.2); see
   for all pairs $r_1,r_2$ (Doehring et al. 2025, Eq. (2.4)), which the fourth-order
   [paired explicit methods](/methods/paired-explicit-runge-kutta.md) satisfy by
   sharing the last three subdiagonal entries (§3.2).
+* **Nonlinearly partitioned methods.** For $y'=F(y,y)$ with a two-argument
+  partition, an [NPRK method](/methods/nonlinearly-partitioned-runge-kutta.md)
+  with coefficient tensor $a_{ijk}$ and weight matrix $b_{ij}$ (page-local,
+  defined on that page) has two underlying Runge–Kutta methods,
+  $a^{\{1\}}_{ij}=\sum_ka_{ijk}$, $b^{\{1\}}_i=\sum_jb_{ij}$ and
+  $a^{\{2\}}_{ik}=\sum_ja_{ijk}$, $b^{\{2\}}_j=\sum_ib_{ij}$, with equal abscissae. On an
+  additive $F(u,v)=f^{\{1\}}(u)+f^{\{2\}}(v)$ the method is the additive method
+  built from them, so order $p$ requires the additive (colored-tree) conditions to
+  order $p$; the shared abscissae remove none of the NPRK conditions, which must hold
+  for nonlinear partitions ([Buvoli & Southworth (2025)](/sources/buvoli-2025.md),
+  §4.1, Def. 4.1, Eqs. (4.3)–(4.5)). For a diagonally implicit subclass Buvoli &
+  Southworth avoid a new tree theory: every such method equals a larger
+  *sequentially coupled* method, which is an $(s-1)$-stage partitioned method
+  with equal weights $b=\hat b$ applied to $z'=F(z,w)$, $w'=F(z,w)$ (Props. 4.3–4.4,
+  proved in App. A), so the partitioned conditions apply. With the page-local
+  tableaux $(A,c)$, $(\hat A,\hat c)$ of that partitioned method, order 2 needs only
+  $b^\top\mathbf 1=1$ and $b^\top c=b^\top\hat c=\tfrac12$, and order 3 adds
+  $b^\top c^2=b^\top\operatorname{diag}(c)\hat c=b^\top\hat c^2=\tfrac13$,
+  $b^\top Ac=b^\top A\hat c=b^\top\hat Ac=b^\top\hat A\hat c=\tfrac16$: per tableau the
+  classical conditions, plus three coupling conditions (Table 4.3, Eqs. (4.13)–(4.15)).
+  The general conditions use edge-colored rooted trees, from a companion paper
+  that the bundle has not ingested, as recalled by
+  [Buvoli et al. (2026)](/sources/buvoli-2026.md) (§2.2, Table 2, App. B): up to
+  order 3 they are the additive conditions plus a single *nonlinear coupling
+  condition* $\sum b_{ij}a_{ikl}a_{juv}=\tfrac13$ on the tree whose root carries the
+  mixed derivative $\partial_u\partial_vF$, a condition that cannot be written in
+  terms of the underlying methods; second order holds iff both underlying methods
+  are second order (SM C.1, recalled). Sparsity patterns of multirate NPRK methods
+  restrict the summation sets of these conditions without changing them (Table 2).
 * **Two-derivative methods.** With weights $b$, $\dot b$ on $f$ and $\dot f$
   and abscissae $c=A\mathbf 1$, $\dot c$ the row sums of $(\dot a_{ij})$, the
   conditions to order 3 are $b^\top\mathbf 1=1$; $b^\top c+\dot b^\top\mathbf 1=\tfrac12$;
@@ -267,3 +296,5 @@ BSeries.jl ([BSeries.jl](/software/bseries-jl.md); Ketcheson & Ranocha (2023),
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §2.1 (Eqs. (2.3)–(2.4)), §3.2.
 - [Hedayati Nasab & Vermeire (2022)](/sources/hedayatinasab-2022.md) — §2.1, §3.2 (Eqs. (31)–(39)).
 - [de León et al. (2025)](/sources/deleon-2025.md) — §2.2 (Eq. (14)).
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §4.1 (Def. 4.1, Eqs. (4.3)–(4.5)), Props. 4.3–4.4 and App. A, Table 4.3, Eqs. (4.13)–(4.15).
+- [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §2.2, Table 2, App. B, SM C.1.

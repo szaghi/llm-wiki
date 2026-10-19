@@ -114,6 +114,7 @@ never a node count or a multirate ratio.
 | $H$, $h$, $m$ | macro step, micro step, multirate ratio $m=H/h$ | multirate pages only; elsewhere $h$ is the step; sources' $M$ is translated |
 | $\ell$ | micro-step index, $\ell=0,\dots,m-1$ | sources' $\lambda$ clashes with the eigenvalue |
 | $\Gamma^{(k)}$, $\Omega^{(k)}$ | coupling coefficient matrices of MRI-GARK and IMEX-MRI-GARK methods (implicit and explicit slow parts) | $\gamma_{ij}(\theta)=\sum_k\gamma^{(k)}_{ij}\theta^k$ |
+| $F(u,v)$ | nonlinear partition of the right-hand side, $f(y)=F(y,y)$; IMEX-NPRK methods are implicit in the first argument $u$ and explicit in the second $v$ | nonlinearly partitioned Runge–Kutta (NPRK) pages |
 | $\phi_k(z)$ | $\phi_0(z)=e^z$, $\phi_k(z)=\int_0^1e^{(1-\theta)z}\frac{\theta^{k-1}}{(k-1)!}\,d\theta$ | sources without the $1/(k-1)!$ factor are translated |
 
 ## 7. Other method families

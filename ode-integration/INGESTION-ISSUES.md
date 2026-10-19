@@ -6,6 +6,94 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — local time stepping, multirate, exponential integrators, EIN (2026-10-20)
+
+Sources (20): luan-2021, unfer-2021, grote-2021, sreejith-2022, tan-2022,
+wolf-2022, luan-2022, deka-2022, liu-2023, fish-2023, puppo-2024, fish-2024,
+doehring-2024-b, caliari-2024, loffeld-2024, dallerit-2025, tan-2025,
+buvoli-2025, pulicani-2026, buvoli-2026. 16 new concept pages (113 in all,
+194 with the Source pages and the registry), 32 extended, 2766
+bibliography entries. Deep lint (D26) over the chunk's pages before staging.
+
+### Decisions for the human
+
+1. **Docs build at the limit (decide before chunk 5).** With chunk 4 the
+   full site build peaks at 14.2 GB RSS locally (13.5 GB with chunk 3),
+   against the 14 GB heap cap and the 16 GB runner. Chunk 4 may still pass
+   in CI; chunk 5 will not. Options, in order of effort:
+   (a) serve each bundle's `bibliography.md` as static HTML outside the
+   Vue build (the seven bibliography pages are the largest page modules);
+   (b) build each bundle as its own VitePress site under `dist/bundles/`,
+   with the landing site and the bundle map built separately (memory
+   then scales with the largest bundle, not the sum);
+   (c) a larger paid runner. (b) is the durable fix.
+2. **Reclassification applied by the deep lint (veto possible):** "maximum
+   order of multirate infinitesimal methods". Loffeld et al. (2024, §2.1)
+   write that the coupling strategy "currently limits MRI approaches to
+   at-best fourth order", meaning the MIS, MRI-GARK and IMEX-MRI-GARK
+   methods they use; Luan et al. (2022) build sixth-order multirate
+   exponential Rosenbrock methods. Recorded as a qualification on
+   [multirate infinitesimal methods](wiki/methods/multirate-infinitesimal-methods.md).
+3. **Bibliography calls to confirm:** `jameson-2024` carries the citing
+   paper's year as a placeholder although the work is Jameson & Turkel (AIAA
+   J., 1981) — re-key to `jameson-1981`? Roe 1981 cited with the volume and
+   pages of its 1997 JCP reprint was folded onto `roe-1981` with a note
+   rather than a separate reprint entry. Luan et al. (2022) ref [7], printed
+   "D. E. K. et al.", is keyed `keyes-2013`.
+4. **Bundle-fit candidates for a D17 copy** (none made): wolf-2022 (ADER-DG
+   seismic waves), puppo-2024 (implicit CWENO finite volumes),
+   doehring-2024-b (P-ERK on AMR) for `high-order-capturing-schemes`;
+   deka-2022 (exponential integrators for resistive MHD) for
+   `astrophysical-simulation-codes` or `fusion-mhd-simulation`.
+5. **Unverified items:** sreejith-2022 printed slips 6–7 (theoretical
+   speedups in Tables 4 and 7) are the reader's recomputations; fish-2023's
+   Fig. 5 vs Fig. 7 cost discrepancy is unexplained in the paper.
+
+### Identity and version problems
+
+- 13 of 20 files are preprints (arXiv; HAL for pulicani-2026; an AASTeX
+  author draft for deka-2022; the loffeld-2024 preprint prints a placeholder
+  DOI). Versions of record: dallerit-2025, sreejith-2022, tan-2022, tan-2025,
+  unfer-2021 and, as posted after publication, wolf-2022 (arXiv v3).
+- sreejith-2022: Crossref records the family name "N.A."; the bundle keys
+  the source `sreejith`, the name printed in the paper's own references.
+- unfer-2021 uses "ARK" for asynchronous Runge–Kutta, not additive.
+
+### Printed slips (recorded on the Source pages)
+
+- luan-2021: expRK4s5 "5d5" for 4; a factor 2 missing on the $\phi_3$
+  vector of expRK4s6; sign of $\beta_5$ in expRK5s10; expRK5s8 prefactors.
+- luan-2022: exprb42 weight $\frac{16}9\phi_3$ for $\frac{32}9\phi_3$;
+  $b_3$ of the fifth-order base scheme; sign of $F_s$; "36" conditions for 37
+  trees up to order 6.
+- dallerit-2025: $w_j([[\bullet],\bullet])=c_j/2$ for $c_j^3/2$; product
+  indices in Eqs. 19, 33, 36.
+- fish-2024: Brusselator $(w-1)u$ for $(w+1)u$; KPR $u^2$ for $v^2$ and the
+  partition's sign; fish-2023: Brusselator slow part sign.
+- buvoli-2025: (2.4) $Y_j$ for $W_j$; Algorithm 6.1 line 17; §3 step limit
+  inverted; buvoli-2026: final time 5 vs 6, the $\gamma$ formula sign.
+- unfer-2021: $S_R$ with min for max; an ARK3 error exponent; Eq. (105).
+- deka-2022: the nonlinear remainder $F(u)=f(u)-J(u)$; the φ recursion
+  start; reference venue/DOI mismatch (Einkemmer et al. 2017).
+- liu-2023: the penalty condition in Appendix A; Lemma 4 needs
+  irreducibility.
+- grote-2021: the eigenvalue interval of §4.2; wolf-2022: Eq. (5) Taylor
+  sum start; puppo-2024: Eq. (26) and figure equation numbers;
+  pulicani-2026: Eq. 52, Eq. 4, Eq. 21, ref [59] attribution; doehring-2024-b:
+  Eqs. (3.4), (4.4), (4.6); tan-2022/tan-2025: domain and index slips;
+  caliari-2024: a figure legend; loffeld-2024: two convergence rates in
+  Table 1; sreejith-2022: Table 4 node counts copied from Case 1.
+
+### Contradictions opened
+
+None. Qualifications recorded: the MRI maximum-order statement (above);
+Wolf et al.'s "splitting is not high order" (true of the splitting they
+cite); Caliari et al. vs Tan et al. on whether the smallest stable EIN
+ratio is best; Fish et al. (2024) vs Chinomona & Reynolds on Brusselator
+convergence rates of IMEX-MRI-GARK3a (different fast steps); Tan et al.'s
+0.54 threshold is the coupled-stiff-limit threshold of ARS(4,4,3) (compiler
+computation, 0.5361).
+
 ## Chunk 3 — multistep and BDF methods, IMEX for relaxation and low-Mach problems, implicit stage solvers (2026-10-19)
 
 Sources (20): boscheri-2021, akrivis-2021, song-2022, garciaarchilla-2023,

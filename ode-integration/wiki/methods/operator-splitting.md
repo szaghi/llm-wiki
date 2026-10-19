@@ -5,7 +5,7 @@ description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing 
 status: established
 aliases: [splitting method, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting
@@ -209,6 +209,44 @@ $(\varphi^{\{\mathrm f\}}_h)^{m/2}\circ\varphi^{\{\mathrm s\}}_H\circ(\varphi^{\
 in which each flow is replaced by one backward Euler step
 ([Roberts et al. 2021](/sources/roberts-2021.md), §5.1).
 
+[Loffeld et al. (2024)](/sources/loffeld-2024.md) (§2, §2.1) recall the same two
+splittings as the classical multirate route: with subcycling they are limited to
+$O(H)$ and $O(H^2)$ and "can lack stability and accuracy", and higher-order
+splittings typically need backward-in-time sub-steps (citing Goldman & Kaper and
+Cervi & Spiteri). They describe Lie–Trotter and Strang–Marchuk as infinitesimal methods
+whose forcing vanishes; for Strang, with its symmetric half-steps, this is a loose
+identification. Their production runs use
+[multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md) instead.
+
+## Splitting in stiff-source and viscous PDE solvers
+
+Two sources meet splitting in compressible-flow and wave solvers and judge
+it by its order:
+
+- **Strang splitting of Navier–Stokes for positivity.** [Liu & Zhang (2023)](/sources/liu-2023.md)
+  (§2.1, Eq. (4), after Guermond et al.) advance one step as
+  $\mathcal H(h/2)\circ\mathcal P(h)\circ\mathcal H(h/2)$ (page-local), with $\mathcal H$
+  the compressible Euler system advanced by SSPRK(3,3) and $\mathcal P$ the viscous and
+  heat-conduction subproblem at frozen density, advanced linearly implicitly. The
+  splitting is nominally second order, but the energy part of $\mathcal P$ is a
+  first-order step, so the scheme is at most first order in time; no temporal
+  convergence study is reported (§1.4). The splitting serves positivity under a
+  hyperbolic step and exact total-energy conservation (Thm. 1), not accuracy in time;
+  see [positivity preservation](/properties/positivity-preservation.md). The authors call
+  the scheme "implicit-explicit", but it is a splitting, not an additive
+  [IMEX Runge–Kutta method](/methods/imex-runge-kutta.md).
+- **Splitting rejected for a stiff relaxation source.** For Biot poroelasticity with a
+  stiff Darcy friction source, [Wolf et al. (2022)](/sources/wolf-2022.md) (§4.3) reject
+  the splitting studied by de la Puente et al. for ADER-DG because it "does not achieve
+  high-order convergence", and use a locally implicit space–time predictor instead (see
+  [ADER](/methods/ader-time-integration.md)). The statement concerns that splitting,
+  and the paper gives no analysis of it. It is not a property of splitting in general:
+  Strang splitting is second order, and higher orders exist. For a dissipative stiff
+  source, though, real splittings above order 2 need a backward sub-step of the
+  dissipative flow ([negative-coefficient barrier](/results/negative-coefficient-barrier.md)),
+  so forward-in-time real splittings do stop at order 2, the limit recorded under
+  *Qualifications* for Southworth et al.
+
 ## Splitting and asymptotic preservation
 
 When every sub-flow is integrated exactly, a splitting can inherit the
@@ -301,3 +339,6 @@ further analysis (§5).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §3.1.2, Eqs. 45–46 (Störmer–Verlet as an additive Runge–Kutta method).
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §1, §2 (order limits of splitting), §2.3, §3.1 (Eqs. (18)–(19)), §3.3.2 (Eqs. (29)–(30)), footnote 2, §5.2 (Figs. 7–10).
 - [Toh et al. (2026)](/sources/toh-2026.md) — §3 (Eqs. (39)–(42)), §3.1, §3.4 (Eqs. (67)–(72)), §3.5 (Eqs. (75)–(86)), §5.
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §2, §2.1 (classical splittings as the multirate baseline).
+- [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1 (Eq. (4)), §2.3 (Thm. 1).
+- [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.3 (splitting rejected for the stiff source).

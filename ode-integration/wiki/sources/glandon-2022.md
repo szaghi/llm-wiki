@@ -191,6 +191,7 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Backward differentiation formulas (BDF)](/methods/backward-differentiation-formula.md)
 * [CVODE](/software/cvode.md)
 * [Differential-algebraic equations and their Runge–Kutta treatment](/definitions/differential-algebraic-equation.md)
+* [Gray–Scott model](/benchmarks/gray-scott-model.md)
 * [IMEX linear multistep and IMEX-BDF methods](/methods/imex-linear-multistep-methods.md)
 * [Linear multistep methods](/methods/linear-multistep-method.md)
 * [Linearly implicit multistep methods (Limm, Limm-W)](/methods/linearly-implicit-multistep-method.md)

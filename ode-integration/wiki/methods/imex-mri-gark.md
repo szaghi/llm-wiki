@@ -5,7 +5,7 @@ description: "IMEX-MRI-GARK methods split the slow scale of a three-way additive
 status: established
 aliases: [IMEX-MRI-GARK, ImEx-MRI-GARK, implicit-explicit multirate infinitesimal GARK, IMEX-MRI-GARK3a, IMEX-MRI-GARK3b, IMEX-MRI-GARK4]
 tags: [multirate, imex, runge-kutta, order-conditions, stability]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # IMEX multirate infinitesimal GARK methods
@@ -170,9 +170,41 @@ this function is defined on
 - In ARKODE, IMEX-MRI-GARK3a serves as slow method for the inner-solver comparison
   of Reynolds et al. (2023, §5.1.3, Table 2); see
   [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md).
+- **Re-measured by [Fish et al. (2024)](/sources/fish-2024.md)** (§6, fast step $H/10$,
+  least-squares rates): on KPR 3.05 (3a), 3.09 (3b), 4.11 (4); on the stiff Brusselator
+  3.36/2.71, 3.25/2.69 and 3.41/2.42 on 201/801 points. They reproduce the instability of
+  IMEX-MRI-GARK4 for $H>1/80$ and $H>1/160$. The third-order methods are close to the
+  stage-restart [IMEX-MRI-SR3(2)](/methods/imex-mri-sr.md), which is the most efficient method on
+  801 points between errors of about $10^{-7}$ and $10^{-11}$, and IMEX-MRI-SR4(3) has a slight
+  consistent edge over IMEX-MRI-GARK4 (Fig. 6). The rates differ from Chinomona & Reynolds'
+  (e.g. 2.86 against 3.36 for 3a on 201 points); the two papers use different fast steps
+  ($H/5$ and $H/10$), and Fish et al. print a Brusselator variant with $-(w-1)u$ in the
+  reaction term ([Brusselator](/benchmarks/brusselator.md)), so the runs need not be identical.
+- **Reacting flow at scale** ([Loffeld et al. 2024](/sources/loffeld-2024.md), §6): on a
+  mass-fraction advection–diffusion–reaction model with GRI-Mech 3.0 chemistry fast, advection
+  slow explicit and diffusion (coefficients multiplied by 1000 to make it stiff) slow implicit,
+  $128^3$ cells on 512 MPI ranks, IMEX-MRI-GARK3b and IMEX-MRI-GARK4 with ten fast steps per slow
+  step (Kutta's third-order method and RK4 as fast solvers) have a "significant performance
+  advantage" over a single-rate fourth-order ARK-IMEX of Kennedy & Carpenter (Fig. 5). Per slow
+  step 3b costs four $f^{\mathrm E}$ evaluations, three implicit solves and three fast problems,
+  IMEX-MRI-GARK4 six, five and five; the single-rate ARK-IMEX costs six explicit evaluations and
+  five implicit solves per step (§3.2). The multirate methods needed tighter
+  algebraic-solver tolerances than the single-rate method at the same coarse step, which the
+  authors attribute to their higher accuracy there (Tables 3–4). Implicit stages use Newton with
+  matrix-free GMRES; geometric multigrid preconditioning pays off from $128^3$ cells upward and
+  becomes critical at $256^3$ with stiffer diffusion (Tables 5–8;
+  [implicit stage solvers](/methods/implicit-stage-solvers.md)). With two-level AMR the
+  multirate and multilevel gains compound: 478 against 8582 (time units not printed) for
+  single-rate single-level ARK-IMEX, about 18× (Table 9).
 
 ## Qualifications
 
+- **Sorted abscissae and embeddings.** Fish et al. (2024, §1.1) note that IMEX-MRI-GARK
+  needs non-decreasing abscissae, which forces padding stages chosen by trial and error, and
+  that "no authors have successfully created IMEX-MRI-GARK methods with embeddings"; their
+  stage-restart variant removes the restriction ([IMEX-MRI-SR](/methods/imex-mri-sr.md)). This
+  answers the open item on embeddings of §6 below by a different method class, not within
+  IMEX-MRI-GARK.
 - Order holds under an exact or sufficiently accurate fast solve. The authors
   expect, without showing it, that 3a/3b would be "significantly more efficient"
   than implicit MRI-GARK on reacting flow with nonlinear shock-capturing advection
@@ -191,3 +223,5 @@ this function is defined on
 
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §1 (eqs. 1.3–1.4), §2 (Def. 2.1, eqs. 2.3–2.49, Thms. 2.2–2.4, Remark 2.5), §3 (eqs. 3.1–3.3), §4 (Remark 4.1, Apps. A–C, Fig. 1), §5 (Figs. 2–3), §6.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §2.3 (MRIStep implements the methods), §5.1.3 (Table 2).
+- [Fish et al. (2024)](/sources/fish-2024.md) — §1.1, §6.1–6.2 (Figs. 5–6).
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §3.2, §6 (Fig. 5, Tables 3–9).

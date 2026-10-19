@@ -168,3 +168,4 @@ Chunk 2 (2026-10-19). This source is cited on:
 * [Runge–Kutta order conditions and simplifying assumptions](/results/runge-kutta-order-conditions.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+* [Trixi.jl](/software/trixi-jl.md)

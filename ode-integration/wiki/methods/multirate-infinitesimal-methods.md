@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multirate infinitesimal methods (MIS, MRI-GARK)"
-description: "Multirate infinitesimal methods advance the slow partition with a Runge–Kutta skeleton and reach each slow stage by solving a modified fast ODE forced by a polynomial in time built from slow tendencies; the page covers MIS and MRI-GARK, their stage structure, order statements and implementation in ARKODE."
+description: "Multirate infinitesimal methods advance the slow partition with a Runge–Kutta skeleton and reach each slow stage by solving a modified fast ODE forced by a polynomial in time built from slow tendencies; the page covers MIS, MRI-GARK and the stage-restart and exponential members, their order statements, embeddings and multirate step-size adaptivity, and their implementation and performance in ARKODE."
 status: established
-aliases: [MRI, MRI-GARK, MIS, multirate infinitesimal step method, multirate infinitesimal GARK, infinitesimal multirate]
+aliases: [MRI, MRI-GARK, MIS, multirate infinitesimal step method, multirate infinitesimal GARK, infinitesimal multirate, MRIStep]
 tags: [multirate, runge-kutta, imex, software]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Multirate infinitesimal methods (MIS, MRI-GARK)
@@ -22,8 +22,23 @@ MRI-GARK methods of Sandu, as recalled by
 [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) (§2),
 [Reynolds et al. (2023)](/sources/reynolds-2023.md) (§2.3),
 [Gardner et al. (2022)](/sources/gardner-2022.md) (§2.3) and
-[Roberts et al. (2021)](/sources/roberts-2021.md) (§1, in passing). Its IMEX
-extension is [IMEX-MRI-GARK](/methods/imex-mri-gark.md).
+[Roberts et al. (2021)](/sources/roberts-2021.md) (§1, in passing),
+[Fish & Reynolds (2023)](/sources/fish-2023.md) (§1) and
+[Loffeld et al. (2024)](/sources/loffeld-2024.md) (§2.1). Its IMEX
+extensions are [IMEX-MRI-GARK](/methods/imex-mri-gark.md) and the stage-restart
+[IMEX-MRI-SR](/methods/imex-mri-sr.md) methods; the
+[multirate exponential](/methods/multirate-exponential-methods.md) MERK and MERB
+methods are further members.
+
+**Generic step.** Fish & Reynolds (2023, §1) write every member in one template:
+$Y_1=y_n$; for $i=2,\dots,s$ solve $v_i'(\theta)=C_if^{\{\mathrm f\}}(\theta,v_i)+r_i(\theta)$ on
+a stage interval from an initial value $v_{0,i}$ and set $Y_i$ to its end value; $y_{n+1}=Y_s$.
+The method is fixed by the constants $C_i$, the intervals, the initial values and the forcings
+$r_i$, linear combinations of the slow tendencies $f^{\{\mathrm s\}}(\cdot,Y_j)$ ($C_i$, $r_i$
+page-local). MRI-GARK chains the intervals ($v_{0,i}=Y_{i-1}$ on $[c_{i-1}H,c_iH]$); IMEX-MRI-SR
+and MERB restart every stage from $y_n$ on $[0,c_iH]$. The inner problems are solved by
+subcycling a one-step method with micro step $H/m$. Multirate GARK methods are explicitly not
+infinitesimal.
 
 ## Stage structure (MRI-GARK)
 
@@ -94,6 +109,21 @@ with $e_k$ the $k$-th unit vector (page-local). Chinomona & Reynolds (2021,
 Remark 4.1) state that, for solve-decoupled tables with $k_{\max}=0$, each of
 their third-order coupling conditions is equivalent to this MIS condition.
 
+## Stage-restart and exponential members
+
+- **Stage restart.** Fish et al. (2024) start every fast problem at $y_n$ and follow it by a
+  diagonally implicit slow correction; this removes the sorted-abscissae requirement and the
+  padding stages, simplifies the order conditions to conditions on the slow coefficients alone
+  and allows embeddings without extra implicit solves
+  ([IMEX-MRI-SR](/methods/imex-mri-sr.md); [Fish et al. 2024](/sources/fish-2024.md), §1.1, §2).
+- **Exponential members.** Exponential Runge–Kutta and Rosenbrock stages whose weights are
+  combinations of $\phi$-functions are exact solutions of linear fast ODEs with polynomial
+  forcing; solving those ODEs by subcycling gives MERK (fixed linear fast operator) and MERB
+  (per-step Jacobian as fast operator), of orders up to 5 and 6
+  ([multirate exponential methods](/methods/multirate-exponential-methods.md);
+  [Luan et al. 2022](/sources/luan-2022.md), Lemma 2.2). Fish et al. (2024, §5) show that MERK
+  methods are explicit IMEX-MRI-SR methods.
+
 ## Order and accuracy
 
 The order of an MRI method is that of its GARK representation under an exact (or
@@ -111,6 +141,30 @@ show [order reduction](/definitions/order-reduction.md) under spatial refinement
 MRI-GARK-ESDIRK46a is unstable for $H>1/40$ (201 points) and $H>1/80$ (801
 points), and is the most efficient method below errors of $10^{-8}$ (§5.2).
 
+**Inner-solver order.** Luan et al. (2022, Thm. 2.12, Remark 2.13) prove for MERB the bound
+$CH^p+CHh^q+Ch^r$ with $q$ the order of the stage solves and $r$ that of the final solve, so
+$q\ge p-1$, $r\ge p$ suffice, and state that MRI-GARK requires $q,r\ge p$. Fish & Reynolds (2023,
+§2) model the fast error as the global error of the inner method over one macro step,
+$\propto(H/m)^{p^{\{\mathrm f\}}}H$ ($p^{\{\mathrm f\}}$ the inner order, page-local).
+
+**Highest order.** MRI-GARK and IMEX-MRI-GARK reach order 4; MERK reaches 5 and MERB 6, which
+Luan et al. (2022, §1, §2.4.5) call "the first-ever sixth-order infinitesimal multirate method",
+noting that no partitioned-RK-based infinitesimal method exceeded order four because the number
+of conditions grows quickly. See *Qualifications* for a statement of a fourth-order ceiling.
+
+**Measured behaviour at scale** ([Loffeld et al. 2024](/sources/loffeld-2024.md), §5–6). On a 3D
+methane flame (GRI-Mech 3.0, 53 species, reactions fast, transport slow; $32^3$ cells, constant
+steps) the explicit third-order MIS method of Knoth & Wolke with fast explicit Runge–Kutta
+methods of orders 2–5 reaches its asymptotic regime at larger steps than multirate spectral
+deferred correction (MRSDC), whose convergence is "highly non-monotonic"; at $H=6.25\times10^{-8}$ s
+the MRI runs take 173–274 s against 376 s and 833 s for two MRSDC variants, because they need
+fewer slow and fast evaluations (Table 2; see [deferred correction](/methods/deferred-correction.md)).
+MRI-4 and MRI-5 are asymptotically third order, limited by the slow method, yet show slopes above
+four where reactions dominate the error (§5.2). On a stiff-diffusion advection–diffusion–reaction
+problem ($128^3$ cells, 512 ranks) IMEX-MRI-GARK3b and IMEX-MRI-GARK4 with ten fast steps per
+slow step beat single-rate fourth-order ARK-IMEX, and two-level AMR compounds the gain to about
+18× (§6; [IMEX-MRI-GARK](/methods/imex-mri-gark.md)).
+
 ## Implementation in ARKODE (MRIStep)
 
 [ARKODE](/software/arkode.md)'s MRIStep implements the third-order MIS method,
@@ -119,7 +173,10 @@ methods of Chinomona & Reynolds (Reynolds et al. 2023, §2.3). The fast scale is
 advanced by an "inner stepper" (ARKStep or user-supplied, e.g. CVODE wrapped
 through the Evolve/FullRHS/Reset interface), and each inner problem restarts it
 through a "reset". Temporal adaptivity exists only at the fast scale; multirate
-step-size adaptivity is called an open research question (§2.3).
+step-size adaptivity is called an open research question (§2.3). Loffeld et al. (2024, §4)
+describe MRIStep the same way (explicit MIS, explicit and solve-decoupled implicit MRI-GARK,
+IMEX-MRI-GARK, ARKStep or a user integrator for the fast scale) and wrap BoxLib and AMReX data in
+custom vectors for block-structured AMR.
 
 - **Inner-solver choice** (Brusselator, IMEX-MRI-GARK3a slow step $H=0.1$, 100 slow
   steps; Table 2): a DIRK inner solver gives the lowest error ($0.01\times10^{-4}$)
@@ -140,6 +197,23 @@ Among PETSc TS, Trilinos Tempus and DifferentialEquations.jl, Reynolds et al.
 (2023, §1) state that only [PETSc TS](/software/petsc-ts.md) supported multirate
 methods (a second-order multirate partitioned Runge–Kutta method), as of 2022.
 
+## Embeddings and multirate adaptivity
+
+The MRI-GARK embedding re-solves only the last stage with an alternate forcing, so its cost is
+one extra fast solve; Fish & Reynolds (2023, §4.2, §5) know of no other infinitesimal family
+with embeddings (as of their writing) and use a post-publication correction of the
+MRI-GARK-ERK45a embedding row taken from the arXiv version of Sandu's paper. Fish et al. (2024)
+add embedded IMEX-MRI-SR methods.
+
+Against the open question recorded by Reynolds et al. (2023, §2.3), Fish & Reynolds (2023)
+adapt the macro step $H$ and the multirate ratio $m$ together, from an error split into slow
+and fast parts, with controllers derived from Gustafsson's observer framework and fast-error
+estimates accumulated from the inner embedded pair (LASA); on seven test problems their
+controllers beat single-rate controllers run at fixed $m$ (details on
+[step-size control](/methods/step-size-control.md)). The two statements are not in conflict: the
+ARKODE paper describes the software as of 2022, and the controllers are not reported as part of
+it.
+
 ## Relation to other multirate methods
 
 - [Multirate GARK](/methods/multirate-gark.md) methods fix the fast base method and
@@ -147,7 +221,14 @@ methods (a second-order multirate partitioned Runge–Kutta method), as of 2022.
   fast problem as exactly solvable.
 - Lie–Trotter and Strang–Marchuk [splittings](/methods/operator-splitting.md) with
   an exactly solved fast sub-flow are the first- and second-order members of the
-  infinitesimal idea; Chinomona & Reynolds (2021, §1) use them as baselines.
+  infinitesimal idea; Chinomona & Reynolds (2021, §1) use them as baselines. Loffeld et al.
+  (2024, §2.1) write them as infinitesimal methods with zero forcing, of orders 1 and 2, and
+  Fish et al. (2024, §1.1) attribute the order limit to their "initial condition" coupling.
+- [Nonlinearly partitioned](/methods/nonlinearly-partitioned-runge-kutta.md) multirate
+  methods (MR-NPRK) of Buvoli et al. (2026) are not infinitesimal but leave the fast explicit
+  method free, as MRI methods do.
+- [Local time stepping](/methods/local-time-stepping.md) splits the unknowns by mesh region
+  instead of splitting the right-hand side.
 
 ## Qualifications
 
@@ -159,6 +240,21 @@ methods (a second-order multirate partitioned Runge–Kutta method), as of 2022.
   the coefficient $\sum_k\gamma^{(k)}_{ij}/(k+1)$ given above.
 - Gardner et al. (2022, §2.3) write the stage time as $t_n+c_iH_n$ while their step
   starts at $t_{n-1}$; the index is inconsistent as printed.
+- Luan et al. (2022) bound the inner-solver errors with a bounded fast Jacobian, so their
+  constants are not uniform in the fast stiffness (reader's observation on the Source page).
+- Loffeld et al. (2024) compare at constant steps on one problem per study and report times
+  without units in their AMR table (§6.3); their Table 1 prints two convergence rates that the
+  printed errors do not reproduce (reader's check on the Source page).
+- Loffeld et al. (2024, §2.2, arXiv v1 of 2022) write that the coupling strategy "currently limits
+  MRI approaches to at-best fourth order in time", in contrast to SDC. The "MRI approaches" of
+  their paper are MIS, MRI-GARK and IMEX-MRI-GARK (§2.1), all of order at most four, so the
+  sentence describes the methods available to them, time-stamped "currently", not a barrier;
+  it does not hold for the exponential members: MERK5 of Luan, Chinomona & Reynolds (2020),
+  which Loffeld et al. cite among multirate methods but not as an infinitesimal one and which
+  Fish et al. (2024, §5) place in an infinitesimal class, and MERB5–6 of Luan et al. (2022),
+  which those authors call infinitesimal. Recorded as a
+  qualification, not a contradiction: no source asserts an order barrier for infinitesimal
+  methods.
 
 # Citations
 
@@ -166,3 +262,7 @@ methods (a second-order multirate partitioned Runge–Kutta method), as of 2022.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §1, §2.3 (algorithm, eq. 11, MIS order conditions), §5.1.3 (Table 2), §5.2 (Fig. 3).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.3 (auxiliary fast problem).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §1 (MRI-GARK and MIS order conditions cited in passing).
+- [Fish & Reynolds (2023)](/sources/fish-2023.md) — §1 (generic step), §2 (error models), §4.2 (embeddings, ERK45a correction), §4.7, §5.
+- [Fish et al. (2024)](/sources/fish-2024.md) — §1.1, §2, §5.
+- [Luan et al. (2022)](/sources/luan-2022.md) — §1, Lemma 2.2, Thm. 2.12, Remark 2.13, §2.4.5.
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §2.1–2.2, §4, §5 (Tables 1–2, Figs. 3–4), §6 (Fig. 5, Table 9), §7.

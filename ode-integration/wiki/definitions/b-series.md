@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # B-series, composition and substitution laws
@@ -178,6 +178,32 @@ Remark 3.8). Glandon et al. call B-series "the gold standard approach" to the or
 one-step methods such as Runge–Kutta, Rosenbrock and exponential schemes (§3.2); their
 construction carries it over to a multistep method.
 
+**Exponential integrators: the φ-series.** [Dallerit & Tokman (2025)](/sources/dallerit-2025.md)
+(§2–3) expand exponential methods for $y'=f(y)$ in B-series with the normalisation above,
+with $J_n=f'(y_n)$ and the remainder $r_n(y)=f(y)-f(y_n)-J_n(y-y_n)$ (page-local). Their tools
+are the following:
+
+- **Tree partition.** $T_S$ holds the trees with exactly one branch at the root, and
+  $T_M=T\setminus T_S$ holds $\bullet$ and the trees with at least two (page-local). Every tree
+  of $T_S$ is uniquely $[\tau]_k$, the $k$-fold rooting of some $\tau\in T_M$, and
+  $F([\tau]_k)(y_n)=J_n^kF(\tau)(y_n)$ (Lemma 1). The trees of $T_S$ are exactly the
+  elementary differentials that a stiff Jacobian amplifies.
+- **B-series of the remainder** (Thm. 4). For a point $Y=B(z,y_n)$ with $z(\varnothing)=1$
+  (page-local $z$), $h\,r_n(Y)$ is a B-series whose coefficients vanish on $\varnothing$,
+  $\bullet$ and $T_S$, and equal $\prod_iz(\tau_i)$ on $\tau=[\tau_1,\dots,\tau_m]\in T_M\setminus\{\bullet\}$.
+  Subtracting $hJ_n(Y-y_n)$ removes exactly the $T_S$ coefficients.
+- **φ-series of the exact flow** (Thm. 5). Inserting the remainder series into the
+  variation-of-constants formula gives
+  $y(t_n+h)=y_n+h\phi_1(hJ_n)f(y_n)+\sum_{k\ge3}\phi_k(hJ_n)G_k$. Here $G_k$ (page-local) is
+  the B-series supported on the trees of $T_M$ with $k$ vertices, with coefficient
+  $k!/\gamma(\tau)$.
+
+Matching these series defines the φ-order conditions of
+[stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
+There, φ-order $p$ is shown equivalent to matching the exact B-series on all trees up to
+order $p$ and on all $[\tau]_k$ with $\lvert\tau\rvert\le p$ (Thm. 7). The $J$-multiplication
+rule is the same one Glandon et al. use for the fat node above *(compiler remark)*.
+
 Splitting and composition methods built from exact sub-flows are analysed
 instead with Lie series: the Baker–Campbell–Hausdorff formula in a Lyndon
 basis of the free Lie algebra, words and the shuffle algebra of iterated
@@ -227,3 +253,4 @@ enumeration algorithm with "extremely similar performance" (Remark 5).
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1.2 (Eqs. (1)–(3), map and flow), §2 (Theorem 1, Eq. (5)), §2.1 (energy-preserving conjugate, Examples 1–3), §2.3 (Eq. (9)).
 - [Zhang (2024)](/sources/zhang-2024.md) — §2 (Proposition 1), §3.1–3.3 (Eqs. (5)–(6), Def. 5, Table 1, Algorithm 1, Remarks 4–5, Figs. 1–2).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — §3.2 (Eqs. (3.9)–(3.17), fat-node tree, Jacobian-times-B-series rule), Thms. 3.3, 3.7, Remark 3.8.
+- [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §2 (Lemma 1, Defs. 1–3, Thms. 2–3), §3 (Thms. 4–5, $T_S$/$T_M$ partition, φ-series), §5.1 (Thm. 7).

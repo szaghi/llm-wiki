@@ -5,7 +5,7 @@ description: "The stability function R(z) is the factor by which a one-step meth
 status: established
 aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -222,6 +222,59 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   observed to suffice, and checked by the spectral radius of the fully discrete
   matrix ([Doehring et al. 2025](/sources/doehring-2025.md), §2.2, Eq. (2.12), §5.1;
   [paired explicit Runge–Kutta methods](/methods/paired-explicit-runge-kutta.md)).
+* **Exponential integrators with a partial linear part.** When only a fraction
+  $\vartheta\in[0,1]$ (page-local) of a diffusion operator is put in the linear part
+  that an [exponential integrator](/methods/exponential-integrators.md) treats exactly,
+  the heat equation written as $\vartheta\Delta+(1-\vartheta)\Delta$ gives, per Fourier
+  mode with $z=-hk^2\le0$ the symbol of the whole operator, a **two-parameter stability
+  function** $\Phi(z,\vartheta)$ (page-local), and the scheme is called unconditionally
+  stable if $\lvert\Phi\rvert\le1$ on the whole negative real axis
+  ([Caliari et al. (2024)](/sources/caliari-2024.md), §2, Eq. (1)). The paper proves
+  closed forms and thresholds: exponential Euler, $\Phi=1+z\phi_1(\vartheta z)$, needs
+  $\vartheta\ge\tfrac12$ (Thm. 2.1); Lawson–Euler, $\Phi=e^{\vartheta z}(1+(1-\vartheta)z)$,
+  needs $\vartheta\ge0.218$ (Thm. 2.2); the new stabilized Lawson–Euler,
+  $\Phi=1+ze^{\vartheta z}$, needs $\vartheta\ge1/(2e)\approx0.184$ (Thm. 2.3); the
+  second-order exponential Runge–Kutta methods need $\vartheta\ge1/(1+c_2)$ with
+  $\phi_2$ and $\vartheta\ge1/(1+2c_2)$ with $\phi_1$ only (Thms. 2.4–2.5); the
+  Lawson2 schemes $\vartheta\ge0.301$ and the new stabilized Lawson2 $\vartheta\ge0.183$
+  (Thms. 2.6–2.7, thresholds computed numerically); and two IMEX schemes, as quoted
+  from Wang et al., $\vartheta\ge\tfrac12$ (Remark 2.1, Table 1). The stabilized schemes
+  are not A-stable; their regions merely contain the negative real axis (Remark 2.2,
+  Fig. 1). The Lawson functions have the form $e^{\vartheta z}P((1-\vartheta)z)$, with
+  $P$ the polynomial of the underlying explicit method, so Lawson2a and Lawson2b share
+  one function and their common threshold is no coincidence *(reader's check of
+  the source, recorded on its Source page)*. The same split test on an IMEX pair is the
+  stability analysis of the
+  [explicit–implicit–null method](/methods/explicit-implicit-null-method.md); see
+  also [Lawson methods](/methods/lawson-methods.md).
+* **Nonlinearly partitioned and additive methods.** On the partitioned Dahlquist
+  problem $y'=F(y,y)$, $F(u,v)=\lambda_1u+\lambda_2v$, an
+  [NPRK method](/methods/nonlinearly-partitioned-runge-kutta.md) multiplies the
+  solution by the additive Runge–Kutta stability function of its underlying tableaux
+  $(A^{\{1\}},b^{\{1\}})$, $(A^{\{2\}},b^{\{2\}})$,
+
+  $$R(z_1,z_2)=\frac{\det\big(I-z_1A^{\{1\}}-z_2A^{\{2\}}+\mathbf 1(z_1b^{\{1\}}+z_2b^{\{2\}})^\top\big)}{\det\big(I-z_1A^{\{1\}}-z_2A^{\{2\}}\big)},\qquad z_j=h\lambda_j$$
+
+  ([Buvoli & Southworth (2025)](/sources/buvoli-2025.md), §4.5, Eq. (4.18);
+  [Buvoli et al. (2026)](/sources/buvoli-2026.md), §2.3.2, Eq. (2.7)). For IMEX-NPRK methods the first argument $u$, hence $z_1$, is the implicitly treated one, as on the NPRK page. The test is
+  representative of a nonlinear system only if the two partial Jacobians are
+  simultaneously diagonalizable (Buvoli & Southworth (2025), SM2). A method implicit in
+  one argument only cannot be A-stable, because $R(0,z_2)$ is an explicit stability
+  polynomial (§4.5.2). Buvoli & Southworth add **stability in the coupled stiff
+  limit**: with $z_2=\kappa z_1$ (page-local ratio $\kappa$, as on the NPRK page), require
+  $\lim_{\lvert z_1\rvert\to\infty}\lvert R(z_1,\kappa z_1)\rvert\le1$ for all
+  $\lvert\kappa\rvert\le1$, i.e. stability when the explicitly treated argument is as stiff
+  as a fraction of the implicit one (Eqs. (4.24)–(4.26)). For a diagonally implicit
+  method with nonzero diagonal the limit is a polynomial in $\kappa$, so by the maximum
+  modulus principle the condition reduces to a cosine series in the angle
+  $\omega$ of $\kappa=e^{\mathrm i\omega}$ staying $\le1$ on $[0,2\pi)$ (Props. SM3.1–SM3.2,
+  Remark 2, Eq. (4.27)). The nonlinearly partitioned Euler step
+  $y_{n+1}=y_n+hF(y_{n+1},y_n)$ has $R=(1+z_2)/(1-z_1)$ and passes (Eq. (5.2)).
+  Buvoli et al. (2026, Thm. 3.2) prove when a different limit, taken at fixed $z_2$,
+  $\lim_{\lvert z_1\rvert\to\infty}R(z_1,z_2)=0$ holds for multirate members (L-stability in the stiff $z_1$ limit; it neither implies nor follows from the coupled condition, *compiler remark*).
+  Both papers plot conjugate-symmetric slices of the two-variable region in $z_2$
+  for fixed $z_1$. These notions are separate from the multirate tests on
+  [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
 * **Multirate, IMEX and splitting methods** need several scaled eigenvalues or
   a matrix test problem; see
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
@@ -241,7 +294,16 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
   $R_s(z)$, Faleichik & Moisa (2026) $R_s(x)$ on the real axis, Belardo et al. (2026)
   $\rho$ for the real stability interval, Conte et al. (2024) $R_{T_p}$ and
   $\tilde R_{T_p}(y,\mu)$, Abu-Labdeh et al. (2023) $r(z)$, Song & Eisenträger (2022)
-  $e^x_M=P_M/Q_M$.
+  $e^x_M=P_M/Q_M$, Caliari et al. (2024) $\Phi(z,\lambda)$ with $\lambda$ the diffusion
+  fraction (here $\vartheta$), Buvoli & Southworth (2025) $\epsilon$ for the stiffness
+  ratio (here $\kappa$) and $\gamma(\theta)$ for the cosine series.
+* Buvoli & Southworth (2025) define the coupled stiff limit with a modulus (Eq. (4.25))
+  but treat it as a polynomial without one in Remark 2 and the supplement, and print the
+  limit of the Euler step as $\epsilon$, while $(1+\kappa z_1)/(1-z_1)\to-\kappa$; only the modulus
+  matters for the condition.
+* Caliari et al. (2024) call their stability regions "A-stability regions" (Fig. 1)
+  and use "unconditionally stable" for stability on the negative real axis only, which
+  is weaker than [A-stability](/properties/a-stability.md).
 * [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) (§2) define the stability
   domain with the strict inequality $\lvert r(z)\rvert<1$ and L-stability by the limit
   along the negative real axis; most sources use $\le1$. The difference matters only on
@@ -288,3 +350,6 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Song & Eisenträger (2022)](/sources/song-2022.md) — §2.2, §3.2.1, App. B Eqs. (B.2)–(B.4) (diagonal Padé as integrator, factored denominator).
 - [Kemm (2024)](/sources/kemm-2024.md) — §3.3, §4, Figs. 1–2 (regions of minimal-stage RK and Adams–Bashforth for nearly central spectra).
 - [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §2 (strict-inequality stability domain).
+- [Caliari et al. (2024)](/sources/caliari-2024.md) — §2 (Eq. (1), Thms. 2.1–2.7, Remarks 2.1–2.2, Table 1, Fig. 1).
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §4.5 (Eqs. (4.16)–(4.27)), §4.5.2, Eq. (5.2), SM2, SM3.
+- [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §2.3 (Eqs. (2.5)–(2.10)), Thm. 3.2.

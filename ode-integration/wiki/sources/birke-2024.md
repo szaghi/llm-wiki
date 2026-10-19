@@ -99,3 +99,4 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Asymptotic-preserving scheme](/definitions/asymptotic-preserving-scheme.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Semi-implicit and linearly implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md)
+* [Sod shock tube](/benchmarks/sod-shock-tube.md)

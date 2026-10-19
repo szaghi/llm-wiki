@@ -111,6 +111,7 @@ Chunk 3 (2026-10-19). This source is cited on:
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Semi-implicit and linearly implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md)
+* [Sod shock tube](/benchmarks/sod-shock-tube.md)
 * [Solving the stage equations of implicit Runge–Kutta methods](/methods/implicit-stage-solvers.md)
 * [Stiff accuracy](/properties/stiff-accuracy.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)

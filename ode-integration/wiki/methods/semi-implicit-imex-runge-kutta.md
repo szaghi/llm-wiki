@@ -5,7 +5,7 @@ description: "Semi-implicit IMEX Runge–Kutta methods write y' = H(y, y) with a
 status: established
 aliases: [SI-IMEX, SI-IMEX-RK, LIMEX-RK, linearly implicit IMEX Runge–Kutta, semi-implicit IMEX Runge–Kutta, partitioned-argument IMEX, Boscarino–Filbet–Russo semi-implicit Runge–Kutta, ALIMEX-RK]
 tags: [imex, runge-kutta, stiff, linear-algebra, asymptotic-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Semi-implicit and linearly implicit IMEX Runge–Kutta methods
@@ -226,6 +226,58 @@ operator split at the hydrodynamic CFL step, for 2–4 times its cost; LIMEX-Eul
 Lie–Trotter are equally accurate (Abstract, §5.2, Figs. 7–10). See
 [operator splitting](/methods/operator-splitting.md).
 
+## Semi-implicit methods as nonlinearly partitioned Runge–Kutta methods
+
+[Buvoli & Southworth (2025)](/sources/buvoli-2025.md) call the semi-implicit class
+"to our knowledge the only general class of methods in the literature" that applies
+directly to a right-hand side with two arguments (§2.2), and embed it in the
+[nonlinearly partitioned Runge–Kutta (NPRK)](/methods/nonlinearly-partitioned-runge-kutta.md)
+methods, which evaluate $F(Y_j,Y_k)$ at any pair of stages. Their convention puts the
+implicit argument first, so $F(u,v)=\mathcal H(v,u)$ in this page's notation. With
+that convention, an $s$-stage semi-implicit method is a $2s$-stage NPRK method whose odd
+stages are the explicit copies $Y^{\mathrm E}_i$ and whose even stages are the implicit
+copies $Y^{\mathrm I}_i$: the NPRK coefficients are $a_{2i-1,2j,2j-1}=a^{\mathrm E}_{ij}$,
+$a_{2i,2j,2j-1}=a^{\mathrm I}_{ij}$ and output weights $b_{2i,2i-1}=b_i$, all others zero
+(§4.2, Eq. (4.6); the identification of the odd and even stages with the two copies is
+the compiler's reading of that equation). NPRK methods need no alternation of explicit and
+implicit stages and reach a given order with fewer stages; the paper's IMEX-NPRK methods
+of orders 1–3 use 2–5 stages and 1–4 implicit solves (§4.2, §5.1).
+
+The first-order members coincide: the nonlinearly partitioned Euler step
+$y_{n+1}=y_n+hF(y_{n+1},y_n)$ is the first-order member above and the standard
+lagged-opacity step of thermal radiation transport (§3, §7.2). On viscous Burgers it
+matches implicit and Rosenbrock Euler in accuracy and stability with one linear solve and
+no exact Jacobian, while additive IMEX Euler degrades to explicit Euler as the viscosity
+goes to zero (§3, Fig. 3.1). They contrast this with
+[Rosenbrock methods](/methods/rosenbrock-wanner-method.md), which impose one linearly
+implicit treatment on the whole problem (§2.3).
+
+**Comparison on radiation transport.** On a gray thermal-radiation Marshak wave (1000
+cells, S8 quadrature), H-LDIRK2(2,2,2) and SSP-LDIRK2(3,3,2) in this page's duplicated
+form are stable only at smaller steps, while every second-order NPRK method tested is
+stable at much larger steps with comparable accuracy at small steps, and the NPRK methods
+with three implicit stages store less than SSP-LDIRK2(3,3,2) (§7.2, Fig. 7.3a). On a
+128-cell mesh the implicit–explicit partition reduces every higher-order scheme to first
+order, so higher order needs the semi-implicit partition; NPRK2[43]-SiSa converges at
+second order even at the largest steps (Fig. 7.3b). No third-order scheme they tried
+from the IMEX literature was stable on these problems, and their own third-order
+NPRK3[54]-Si mostly fails through negative temperatures (§7.2). Buvoli et al. (2026)
+build multirate methods on the same framework, freezing a nonlinear diffusion
+coefficient at the explicit argument exactly as here
+([Buvoli et al. (2026)](/sources/buvoli-2026.md), §4.1).
+
+## Other routes to linear stage solves
+
+The [explicit–implicit–null method](/methods/explicit-implicit-null-method.md) reaches
+linear implicit stages differently: it adds and subtracts a linear constant-coefficient
+operator, treats the added copy implicitly and the full nonlinear stiff term explicitly
+([Tan et al. (2025)](/sources/tan-2025.md), §1, citing the semi-implicit methods as "the
+other" strategy). The implicit matrix then has constant coefficients and can be factored
+once, whereas a semi-implicit stage freezes the state-dependent coefficients and changes
+its matrix at every stage; in return the null method needs a stabilization coefficient above
+a threshold and pays an error that grows with it *(compiler comparison, not in the
+sources)*.
+
 ## Discrete conservation
 
 Southworth et al. (2024, §4, Eqs. (31)–(37)) prove that LIMEX-Euler with a finite-volume
@@ -282,3 +334,6 @@ to every LIMEX-RK method (§4.3). See
 - [Birke et al. (2024)](/sources/birke-2024.md) — §3.1 (Eqs. (22)–(26)), §3.3.1 (Eqs. (32)–(35), Table 1), Thm. 1, §4.2–4.7 (Tables 3–5, Figs. 4–5); arXiv v1.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §3.3 (Eqs. (37)–(50)), §3.4 (Eqs. (51)–(54)), §4.1–4.5 (Tables 2–4, 8–16, Figs. 6, 13), §5, App. A (Table 20); arXiv v5.
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §2–2.3 (Eqs. (4)–(17)), §3.2–3.3 (Eqs. (20)–(30)), §4 (Eqs. (31)–(37)), §5.1–5.3 (Figs. 7–11).
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §2.2, §2.3, §3 (Fig. 3.1), §4.2 (Eq. (4.6)), §5.1, §7.2 (Fig. 7.3).
+- [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §4.1 (frozen-coefficient partition).
+- [Tan et al. (2025)](/sources/tan-2025.md) — §1 (semi-implicit methods as the alternative to EIN).

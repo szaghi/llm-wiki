@@ -164,3 +164,4 @@ Chunk 2 (2026-10-19). This source is cited on:
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Stabilized explicit Runge–Kutta methods: Chebyshev, Legendre and super-time-stepping](/methods/stabilized-explicit-runge-kutta.md)
 * [Strong-stability-preserving (SSP) Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
+* [Trixi.jl](/software/trixi-jl.md)

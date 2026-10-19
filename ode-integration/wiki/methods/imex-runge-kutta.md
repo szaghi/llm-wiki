@@ -5,7 +5,7 @@ description: "Additive Runge–Kutta methods integrate y' = fE + fI with an expl
 status: established
 aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta, type I IMEX, type II IMEX, type CK, type ARS, globally stiffly accurate IMEX]
 tags: [imex, runge-kutta, stiff, implicit, explicit, asymptotic-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # IMEX and additive Runge–Kutta methods
@@ -133,6 +133,21 @@ formulation, but only type II stable on a test with time-dependent boundary data
   coefficients at the explicit copy makes every stage linear. The additive method is the
   case $\mathcal H(u,v)=f^{\mathrm E}(u)+f^{\mathrm I}(v)$. See
   [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+- **As an NPRK method.** A
+  [nonlinearly partitioned Runge–Kutta method](/methods/nonlinearly-partitioned-runge-kutta.md)
+  applied to an additive partition $F(u,v)=f^{\mathrm I}(u)+f^{\mathrm E}(v)$ is the
+  additive method built from its two underlying tableaux, with shared abscissae
+  ([Buvoli & Southworth (2025)](/sources/buvoli-2025.md), §4.1, Eq. (4.5)). Their IMEX
+  members are diagonally implicit in the first argument and explicit in the second
+  (Table 4.1). On the partitioned Dahlquist problem an NPRK method has the additive
+  two-variable stability function $R(z_1,z_2)$; Buvoli & Southworth call an IMEX method
+  A-stable (L-stable) "in the stiff $z_1$ limit" when
+  $\lim_{\lvert z_1\rvert\to\infty}\lvert R(z_1,z_2)\rvert\le1$ ($=0$), and add stability
+  in the coupled stiff limit, where the explicit argument is a bounded fraction as stiff as
+  the implicit one (§4.5, Eqs. (4.18), (4.22)–(4.27)); details on
+  [stability function](/definitions/stability-function.md). In their Burgers tests
+  with a conservative partition, which puts stiffness in the explicit argument, only the
+  methods stable in the coupled stiff limit survive large steps (§7.1, Fig. 7.1).
 - **Stability with a split operator.** For $y'=(L_{\mathrm I}+L_{\mathrm E})y$ (page-local
   matrices) the standard IMEX linear-stability analysis assumes the two parts
   simultaneously diagonalizable, as recalled by
@@ -175,6 +190,19 @@ formulation, but only type II stable on a test with time-dependent boundary data
   $b^{\mathrm E}=(\frac14,\frac74,\frac34,-\frac74,0)$, $b^{\mathrm I}=(0,\frac32,-\frac32,\frac12,\frac12)$;
   GSA, third order but only uniformly second order on relaxation systems (Hu & Shu 2025,
   App. 7.2, §6).
+  The full tableau, printed by [Tan et al. (2022)](/sources/tan-2022.md) (Eq. (2.17)) and
+  [Tan et al. (2025)](/sources/tan-2025.md) (Eq. (3.5)): explicit rows $(\frac12)$,
+  $(\frac{11}{18},\frac1{18})$, $(\frac56,-\frac56,\frac12)$, $(\frac14,\frac74,\frac34,-\frac74)$;
+  implicit rows $(0)$, $(0,\frac12)$, $(0,\frac16,\frac12)$, $(0,-\frac12,\frac12,\frac12)$,
+  $(0,\frac32,-\frac32,\frac12,\frac12)$; both weight vectors equal the last rows, so
+  $y_{n+1}$ is the last stage, and with a constant linear implicit operator all four implicit
+  stages solve with the same matrix $I-\frac h2L$. Neither paper names the pair:
+  Tan et al. (2022) take it from Wang, Zhang, Wang & Shu (2020) and Tan et al. (2025) call it
+  "a third order IMEX Runge-Kutta method introduced in" Ascher, Ruuth & Spiteri; its
+  identification as ARS(4,4,3) is the reader's, entry by entry, against the data above
+  *(compiler check)*. Both use it as the integrator of the
+  [explicit–implicit–null method](/methods/explicit-implicit-null-method.md), with an
+  order asserted, not verified, in time.
 - **BHR(5,5,3)\***: the Boscarino–Russo pair BHR(5,5,3) with $c_4=1.5$ instead of
   $\approx2.3402$; type CK, ISA, not GSA, $\gamma\approx0.435866521508460$,
   $c=(0,2\gamma,2\gamma,1.5,1)$, $b^{\mathrm E}=b^{\mathrm I}$; the only pair proved
@@ -193,6 +221,21 @@ formulation, but only type II stable on a test with time-dependent boundary data
 - **Pairs used in semi-implicit form** (LSDIRK2(2,2,2), H-LDIRK2(2,2,2), SA SSP(3,3,2) =
   SSP-LDIRK2(3,3,2), SSP-LDIRK3(3,3,2), SSP3(4,3,3), the type-I third-order pairs) are
   tabulated on [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+
+## Add-and-subtract (explicit–implicit–null) use
+
+When the stiff term is nonlinear, an IMEX pair can be applied to a reformulated equation:
+add a linear constant-coefficient operator with the same wave-number scaling, treat the
+added copy implicitly, and treat the subtracted copy with all nonlinear terms explicitly.
+Every implicit stage is then a linear constant-coefficient solve
+([Tan et al. (2022)](/sources/tan-2022.md), §1, Eq. (1.4); Tan et al. (2025), §1, §3.4).
+For ARS(4,4,3) the stability of this use depends on the size of the added operator
+relative to the physical one: Tan et al. (2022, Props. 3.1–3.2) find, by a sampled
+Fourier search, unconditional stability for a ratio of at least 0.54 on diffusive,
+dispersive and biharmonic models, and Tan et al. (2025, Prop. 3.1) the same 0.54 plus a
+convective Courant limit of 1.2 for linearized compressible Navier–Stokes. These are
+numerical, hypothesis-grade thresholds, specific to this pair (Remark 3.4 of the 2022
+paper). See [explicit–implicit–null method](/methods/explicit-implicit-null-method.md).
 
 ## Strong stability and positivity
 
@@ -422,3 +465,6 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 - [Birke et al. (2024)](/sources/birke-2024.md) — §3.3.1 (Table 1); arXiv v1.
 - [Conte et al. (2024)](/sources/conte-2024.md) — §1, §4 (split test equation, simultaneous diagonalizability); arXiv v1.
 - [Toh et al. (2026)](/sources/toh-2026.md) — §3, §3.5, §5.
+- [Tan et al. (2022)](/sources/tan-2022.md) — §1 (Eq. (1.4)), §2.4 (Eqs. (2.16)–(2.17)), §3 (Props. 3.1–3.2, Remark 3.4).
+- [Tan et al. (2025)](/sources/tan-2025.md) — §1, §3.4 (Eqs. (3.2)–(3.5)), §3.5 (Prop. 3.1).
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §4.1 (Eq. (4.5)), Table 4.1, §4.5 (Eqs. (4.18), (4.22)–(4.27)), §7.1 (Fig. 7.1).

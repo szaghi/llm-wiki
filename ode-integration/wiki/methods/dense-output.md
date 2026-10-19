@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Dense output"
-description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, and weight polynomials of Rosenbrock methods, with the order-4 dense output of Rodas5 and Rodas5P."
+description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, weight polynomials of Rosenbrock methods with the order-4 dense output of Rodas5 and Rodas5P, the full-order dense output of φ-order exponential methods, and the time-continuous cell states of asynchronous time stepping."
 status: established
 aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula]
-tags: [runge-kutta, stiff, software, step-size-control]
-timestamp: 2026-10-19T12:00:00Z
+tags: [runge-kutta, stiff, software, step-size-control, exponential]
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Dense output
@@ -78,6 +78,58 @@ followed by interpolation (Steinebach 2023, §4 problem 6, Table 9):
 In work–precision diagrams with errors measured at 100 interpolated points, the new Rodas5 dense
 output is visibly better than Rodas4's on a hyperbolic problem (§4, Fig. 4).
 
+## Dense output of exponential integrators
+
+The φ-series of [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) (Thm. 10, Eq. 38)
+extends to any point of the step. With $J_n=f'(y_n)$, the exact solution satisfies
+$y(t_n+\vartheta h)=y_n+\sum_{k\ge1}\vartheta^k\phi_k(\vartheta hJ_n)G_k$, where
+$G_1=hf(y_n)$, $G_2=0$ and $G_k$, $k\ge3$, are the φ-series vectors of
+[stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md)
+(page-local $G_k$). A method of φ-order $p$ with update vectors $v_k$ therefore has the dense output
+
+$$y_n+\vartheta h\,\phi_1(\vartheta hJ_n)f(y_n)+\sum_{k=3}^p\vartheta^k\phi_k(\vartheta hJ_n)\,v_k,$$
+
+which keeps the full φ-order $p$ at every $\vartheta\in[0,1]$ (§5.5). The interpolant uses no
+extra right-hand-side evaluations. Adaptive Krylov codes return several values of
+$\vartheta$ from one projection at little extra cost (§5.5; see
+[evaluating φ-functions](/methods/phi-function-evaluation.md)). The authors use this dense
+output inside their methods in two ways:
+
+- **as stages of higher-order methods.** For $p>4$ the stages are computed by the dense
+  output of a φ-order-$(p-2)$ method. Their order-6 method takes four stages at
+  $\vartheta=\tfrac14,\tfrac12,\tfrac34,1$ from the dense output of the φ-order-4 method
+  (§6.1, Eq. 41);
+- **as past values of multivalue methods,** taken from the previous step's dense output at
+  nodes inside that step (§6.3).
+
+See [exponential integrators](/methods/exponential-integrators.md).
+
+## Time-continuous states in asynchronous time stepping
+
+In the asynchronous (cell-wise [local time stepping](/methods/local-time-stepping.md))
+finite-volume scheme of [Unfer (2021)](/sources/unfer-2021.md) (§3.2, §3.5), each cell keeps
+a polynomial in time rather than a value. A neighbour can then evaluate it at any face
+refresh time between the cell's own steps. Each cell $i$ carries two time-continuous
+representations, with $u_i$ page-local:
+
+- an *extrapolated* state, updated only at the cell's own refresh and used to compute fluxes
+  and sources. It is linear in time in the first-order scheme and parabolic in the
+  third-order "ARK3";
+- a *conservative* state, integrated whenever the cell or a neighbour is refreshed. In ARK3
+  it is the cubic Taylor polynomial
+  $u_i(t)=u_i(t_q)+\partial_tu_i\,(t-t_q)+\tfrac12\partial_t^2u_i\,(t-t_q)^2+\tfrac16\partial_t^3u_i\,(t-t_q)^3$
+  between its integration times $t_q$ (Eq. 111).
+
+The ARK3 derivatives are assembled from fluxes evaluated at three face times (start, end and
+midpoint of a face's refresh interval), following the SSPRK(3,3) tableau with abscissae
+$(0,1,\tfrac12)$ (Eqs. 103–110). Under a global step the scheme reverts to that
+[SSP Runge–Kutta method](/methods/strong-stability-preserving-runge-kutta.md) (§3.5). The
+quadratic flux polynomial implied by Eqs. 108–110 integrates over a step to the SSPRK3
+weights $(\tfrac16,\tfrac16,\tfrac23)$ *(compiler check, not in the source)*. These
+polynomials are a dense-output device in the sense of this page. They are not an
+interpolant of computed values: they are Taylor extrapolations whose coefficients come from
+the stage fluxes.
+
 ## Dense output inside an integrator
 
 - **Output modes.** ARKODE's NORMAL mode steps past the output time and interpolates; the
@@ -101,7 +153,16 @@ output is visibly better than Rodas4's on a hyperbolic problem (§4, Fig. 4).
 - Steinebach (2023) refers to replacing "equation (1.3)" by the dense formula; the weight
   formula is his Eq. (1.2) (printed slip).
 
+- In Unfer (2021, §3.5) the text says that the third extrapolated stage evolves linearly
+  from the first with slope $\partial_tu_i+\partial_t^2u_i(\Delta_3-\Delta_1)$. His Eq. (105)
+  corresponds to the slope $\partial_tu_i+\partial_t^2u_i\Delta_3$, the true slope at the
+  midpoint ($\Delta_1$, $\Delta_3$ page-local: the offsets of the first and third stage times
+  from the cell's last refresh). The two agree under a global step, where $\Delta_1=0$
+  *(compiler check)*.
+
 # Citations
 
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §3.3.1 (Hermite), §3.3.2 (Lagrange), §3.4.2 (predictors), §4 (usage modes).
 - [Steinebach (2023)](/sources/steinebach-2023.md) — §1 (Hermite interpolation for Rodas5 in Julia), §3 (Eqs. (3.4)–(3.6)), §4 problem 6 (Table 9), Fig. 4.
+- [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — Thm. 10, Eq. 38, §5.5 (φ-order dense output), §6.1 Eq. 41, §6.3 (use for stages and multivalue nodes).
+- [Unfer (2021)](/sources/unfer-2021.md) — §3.2 Eqs. 54–56, §3.5 Eqs. 103–111 (time-continuous extrapolated and conservative states, reduction to SSPRK3).

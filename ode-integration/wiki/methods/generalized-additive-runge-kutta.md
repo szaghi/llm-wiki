@@ -5,7 +5,7 @@ description: "GARK methods give each additive partition of the right-hand side i
 status: established
 aliases: [GARK, generalized-structure additive Runge–Kutta, generalized additively partitioned Runge–Kutta, internal consistency]
 tags: [runge-kutta, imex, multirate, order-conditions, stability, gark]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Generalized additive Runge–Kutta (GARK) methods and internal consistency
@@ -46,7 +46,12 @@ Multirate GARK (MrGARK) methods are GARK methods whose fast block repeats a base
 method over $m$ micro-steps ([Multirate GARK](/methods/multirate-gark.md)), and
 Chinomona & Reynolds (2021, §2.1, eqs. 2.5–2.26) prove that every IMEX-MRI-GARK
 method is a GARK method with explicitly given tables
-([IMEX-MRI-GARK](/methods/imex-mri-gark.md)). A partitioned Runge–Kutta method is
+([IMEX-MRI-GARK](/methods/imex-mri-gark.md)). [Fish et al. (2024)](/sources/fish-2024.md)
+(§2, eqs. 2.5–2.8) do the same for the stage-restart
+[IMEX-MRI-SR](/methods/imex-mri-sr.md) methods with Kronecker-product tables,
+$A^{\{\mathrm f,\mathrm f\}}=\operatorname{diag}(c)\otimes A^{\{\mathrm f\}}$ and
+$A^{\{\mathrm f,\mathrm E\}}=A^{\{\mathrm f,\mathrm I\}}=\sum_k\Omega^{(k)}\otimes A^{\{\mathrm f\}}(c^{\{\mathrm f\}})^k$;
+the restart makes the fast block block-diagonal. A partitioned Runge–Kutta method is
 recovered when $A^{\{\mathrm f,\mathrm f\}}=A^{\{\mathrm s,\mathrm f\}}$,
 $A^{\{\mathrm f,\mathrm s\}}=A^{\{\mathrm s,\mathrm s\}}$ and
 $b^{\{\mathrm f\}}=b^{\{\mathrm s\}}$ (Roberts et al. 2021, App. C, eq. C.3).
@@ -79,7 +84,9 @@ evaluated at consistent times. The sources draw three consequences.
 
 For IMEX-MRI-GARK methods internal consistency is an explicit row-sum condition
 on the coupling matrices (Chinomona & Reynolds 2021, Thm. 2.2;
-[IMEX-MRI-GARK](/methods/imex-mri-gark.md)).
+[IMEX-MRI-GARK](/methods/imex-mri-gark.md)); for IMEX-MRI-SR it reads
+$\Omega^{(0)}\mathbf 1=c$, $\Omega^{(k)}\mathbf 1=0$ ($k\ge1$), $\Gamma\mathbf 1=0$ (Fish et al.
+2024, Thm. 2.3), with $c$ where IMEX-MRI-GARK has $\Delta c$.
 
 ## Order conditions
 
@@ -94,7 +101,11 @@ Thm. 2.1), who show that for compound-fast methods conditions 3b, 4b, 4d and
 4h–4j reduce to base-method conditions and 4g coincides with 4f. Chinomona &
 Reynolds (2021, Thm. 2.4) count 26 fourth-order coupling conditions for their
 three-partition structure, of which 10 hold automatically by structure (2.48) and
-16 reduce to (2.41).
+16 reduce to (2.41). For IMEX-MRI-SR, whose two slow partitions share the fast coupling
+($A^{\{\mathrm f,\mathrm E\}}=A^{\{\mathrm f,\mathrm I\}}$), the 26 conditions shrink to 21, four
+hold automatically and the rest reduce to six conditions on the slow coefficients; at third
+order two of the four coupling conditions are automatic and two coincide (Fish et al. 2024,
+Thms. 2.5–2.6).
 
 ## Linear stability
 
@@ -152,6 +163,17 @@ $y_{n+1}=R(hL)y_n+h(b^\top\otimes I)(I-A\otimes hL)^{-1}g(t_n+ch)$. Stage-optima
 have $\dim\mathcal Y=p$, so in $L$-evaluations they cost as much as a $p$-stage
 method even though $s=p+q_{\mathrm w}-1$.
 
+## Limits: nonlinear partitions
+
+GARK, like every additive method, needs $f$ written as a sum. [Buvoli & Southworth
+(2025)](/sources/buvoli-2025.md) (§2.1.4) note that it "does not address" a **nonlinear**
+partition $f(y)=F(y,y)$, in which one argument of $F$ is treated implicitly and the other
+explicitly inside the same term; their
+[NPRK methods](/methods/nonlinearly-partitioned-runge-kutta.md) cover that case and reduce to
+ARK methods (a GARK special case) when $F$ is additive. They also recall that additive and
+component partitions are interchangeable, component to additive by zero-padding and additive to
+component by doubling the unknowns with a non-unique initial split (§2.1.3).
+
 ## Qualifications
 
 - The order of every GARK-based multirate-infinitesimal method assumes the inner
@@ -169,3 +191,5 @@ method even though $s=p+q_{\mathrm w}-1$.
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §2 (eqs. 2.1–2.3, Thm. 2.1), §3 (eq. 3.4, Thms. 3.1–3.4), §4 (eqs. 4.1–4.5), §5.2, §7, App. C.
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §2.1 (eqs. 2.5–2.26), Thms. 2.2–2.4, eqs. 2.41, 2.48–2.49.
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §4, Thm. 4.1, eq. 4.2.
+- [Fish et al. (2024)](/sources/fish-2024.md) — §2 (eqs. 2.5–2.8, Thms. 2.3, 2.5–2.6).
+- [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §2.1.3–2.1.4.

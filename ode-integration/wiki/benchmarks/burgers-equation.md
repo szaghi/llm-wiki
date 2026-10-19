@@ -5,7 +5,7 @@ description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen in
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
 tags: [structure-preserving, order-reduction, verification, stiff]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # Burgers equation
@@ -40,6 +40,16 @@ Courant number).
   explicit remainder $u^2/2-\tilde uu$, so each IMEX stage needs one linear
   solve (Kang & Constantinescu (2022), Remark 3, Eq. (11); see
   [IMEX Runge–Kutta](/methods/imex-runge-kutta.md)).
+* **Nonlinear partition with frozen diffusion coefficient.** For Burgers with
+  nonlinear diffusion, $u_t=\kappa(x)(\lvert u\rvert^{1/2}u_x)_x+w(x)(u^2)_x$
+  (the viscosity $\kappa$ now a function of $x$; page-local advection coefficient $w(x)$), the partition
+  $F(u,v)=\kappa(x)(\lvert v\rvert^{1/2}u_x)_x+w(x)(v^2)_x$ is linear in its
+  implicit argument $u$: advection (fifth-order WENO) is explicit, the diffusion
+  is semi-implicit with its coefficient frozen at $v$, and every implicit stage is
+  a linear solve, whereas an additive partition would need nonlinear solves and a
+  component partition an implicit WENO
+  ([Buvoli et al. (2026)](/sources/buvoli-2026.md), §4.1, Eqs. (4.1)–(4.4); see
+  [nonlinearly partitioned Runge–Kutta](/methods/nonlinearly-partitioned-runge-kutta.md)).
 
 ## Test configurations
 
@@ -67,6 +77,13 @@ Courant number).
   Eqs. (7.1)–(7.3), from Calvo et al.): $u_t=\kappa u_{xx}-\tfrac12(u^2)_x$ on
   $[0,2\pi]$, periodic, $u_0=(1-\cos x)/2$, $t\in[0,4]$, fourth-order finite differences
   with 1024 points, $\kappa=10^{-1}$ and $10^{-2}$.
+* **Nonlinear diffusion with spatially varying coefficients** (Buvoli et al.
+  (2026), §4, Eqs. (4.1), (4.6)–(4.7)): $\kappa(x)=\tfrac12+2e^{-(x-1)^2/25}$,
+  $w(x)=e^{-(x+1)^2/25}$ on $[-2,2]$, periodic, 300 points, final time $t=5$
+  (§4.4 prints $t=6$, while §4 and Fig. 4 give 5). Two initial data:
+  $u_0=\tfrac1{100}+e^{-60(x+3/2)^2}+e^{-60x^2}$, and the same plus a third
+  pulse $e^{-60(x-3/2)^2}$ placed in the diffusive region. The pulses advect
+  leftward, steepen into shocks and cross the diffusive right half.
 
 ## What it shows
 
@@ -110,6 +127,18 @@ Courant number).
   unconditional stability. With the constant matrix the methods beat Rosenbrock methods
   of the same order with the exact Jacobian in error against CPU time at $\kappa=10^{-1}$
   (Conte et al. (2024), §7.1, Figs. 7–8). See [TASE operators](/methods/tase-operators.md).
+* **Multirate gains depend on where the stiffness sits.** Implicitly wrapped
+  multirate NPRK methods of orders 2 and 3 (one or two implicit stages around an
+  SSP2 or SSP3 explicit method composed $m$ times) converge at their design orders,
+  are more accurate than single-rate IMEX-NPRK at a fixed step, stay stable at
+  larger steps than explicit SSP methods (which the diffusion makes unstable at
+  coarse steps), and reach moderate precision about four times faster than
+  single-rate NPRK, with an implicit solve priced at four function evaluations.
+  With two pulses they reach nearly the accuracy of the underlying explicit
+  integrator; with the third pulse inside the diffusive region the gain is much
+  smaller, because the diffusion is still stepped with the macro step (Buvoli et
+  al. (2026), §4.4, Fig. 4). See
+  [nonlinearly partitioned Runge–Kutta](/methods/nonlinearly-partitioned-runge-kutta.md).
 * **ADER.** With spectral-difference space discretizations, ADER reaches
   design orders 3–9 on Burgers, and a final flux-integral update was "more
   stable" there than the predictor end value
@@ -134,3 +163,4 @@ Courant number).
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.3.1.
 - [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md) — §5.2, Table 2.
 - [Conte et al. (2024)](/sources/conte-2024.md) — §7.1, Eqs. (7.1)–(7.3), Figs. 7–8.
+- [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §4.1–4.4, Eqs. (4.1)–(4.7), Figs. 3–4.

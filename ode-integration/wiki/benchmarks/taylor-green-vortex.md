@@ -5,7 +5,7 @@ description: "Periodic vortex flow used to test time integrators on compressible
 status: established
 aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, two-dimensional Taylor–Green vortex]
 tags: [explicit, step-size-control, runge-kutta, stability, imex]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -73,6 +73,11 @@ number about 0.095 (acoustic about $0.11/\mathrm{Ma}$); the final time is not pr
 The set-ups share the velocity and pressure fields up to scaling; they differ in viscosity,
 normalization, dimension and element types.
 
+**Three-dimensional, viscous, with AMR** ([Doehring et al. 2024b](/sources/doehring-2024-b.md),
+§7.1.3). Compressible Navier–Stokes at $M=0.1$, $\mathrm{Re}=1600$, $\mathrm{Pr}=0.72$ on
+$[0,2\pi]^3$, periodic, final time 20; DGSEM of degree 2 with HLLE and an entropy-conservative
+volume flux, $16^3$ base cells and two refinement levels driven by an enstrophy indicator.
+
 ## What it tests and results
 
 **Stability-limited explicit pairs and controllers** (Ranocha et al. 2022). The step is mostly
@@ -112,6 +117,12 @@ Against the classical four-stage RK4 at the same fraction, the per-stage step ra
 The kinetic-energy dissipation rate and enstrophy histories are visually indistinguishable,
 and so are the Q-criterion isosurfaces at $t=15t_c$ (Figs. 8–10). The speedup is a ratio of
 stage-normalized step sizes; no wall-clock time or hardware is reported.
+
+**Dynamically partitioned P-ERK** (Doehring et al. 2024b, §7.1.3, Table 9). The three-member
+third-order family P-ERK$_{3;\{3,4,6\}}$ is the fastest scheme, but the standalone P-ERK$_{3;6}$
+is only 1.068 times slower, because most cells are refined during the run; the family is within
+1.034 of a hypothetical optimal family. Partitioning costs 0.3 % of runtime and 7 % of memory
+(§7). See [paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md).
 
 [Southworth et al. (2022)](/sources/southworth-2022.md) mention that the Taylor–Green vortex
 gave results similar to their double shear layer for implicit Runge–Kutta solvers, without
@@ -156,3 +167,4 @@ pair, with type-I pairs more stable; see
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §3 (Eqs. (3.1)–(3.4), Fig. 2).
 - [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §4.5 (Fig. 13); arXiv v1.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.1 (Eq. (75), Tables 1–4, Fig. 2); arXiv v5.
+- [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §7, §7.1.3 (Table 9).

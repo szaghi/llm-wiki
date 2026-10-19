@@ -3,9 +3,9 @@ type: Method
 title: "ADER as a time integrator"
 description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predictor on one step, a fixed-point problem with a time iteration matrix, solved by K Picard iterations of order min(M+1, K); it differs from historical Taylor–Cauchy–Kovalevskaya ADER and has a Newton-type implicit variant for stiff sources."
 status: established
-aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, IMADER, implicit ADER]
+aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, space–time DG predictor, IMADER, implicit ADER, locally implicit ADER-DG]
 tags: [ader, deferred-correction, explicit, implicit, stiff]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T05:00:00Z
 ---
 
 # ADER as a time integrator
@@ -130,6 +130,42 @@ close to one (up to about 1.2 and 1.35 with a contact discontinuity and the
 strong shocks are out of scope (§6). See
 [entropy stability](/properties/entropy-stability.md).
 
+## Locally implicit predictor for a stiff linear source
+
+For a linear hyperbolic system with a stiff linear source,
+$\partial_tq+\sum_j\mathcal A^j\partial_jq=Eq$ (page-local; Biot poroelasticity, where
+$E$ is the Darcy friction), [Wolf et al. (2022)](/sources/wolf-2022.md) (§4.3) use the
+space–time DG predictor in place of the Cauchy–Kovalevskaya Taylor predictor, which,
+they state citing earlier work, "becomes unstable" with a stiff source. The predictor
+is the same upwind-in-time Galerkin problem as above, with a Jacobi time basis of the
+spatial degree $N$ (page-local) and the source integrated in the space–time weak form
+(Eqs. (6)–(8)). Because the source is linear, the predictor is one *linear* system
+per element and step, solved directly rather than by Picard iteration. Wolf et al.
+call the resulting ADER-DG "locally implicit": the stiff source is integrated
+"without a strict time step restriction", while the scheme stays explicit globally,
+with no global system, and the step is set by the per-element hyperbolic CFL bound
+$h\le\frac{1}{2(2N+1)}\frac{d}{v}$ ($d$ the insphere diameter, $v$ the fastest wave
+speed; §4.2, citing earlier work). The stability claim is asserted, not analysed.
+The convergence order $N+1$ in space and time is shown for orders 3 to 7 on a 3D
+plane wave (§6.1, Fig. 3).
+
+Each element solves a system with $Q\binom{N+3}{3}(N+1)$ unknowns ($Q=13$ fields;
+390 at $N=2$, 7,644 at $N=6$, printed $7.64\cdot10^3$). Storing LU factors per element, as in the earlier
+approach of de la Puente et al., would take 146 MB per element at $N=5$; the paper's
+block back substitution exploits the hierarchical orthogonal basis and the upper
+triangular $E$ and cuts the flops by 5.08 to 24.8 times (Table 2). The details are on
+[implicit stage solvers](/methods/implicit-stage-solvers.md). Wolf et al. reject the
+operator-splitting alternative for this source as not high order; see
+[operator splitting](/methods/operator-splitting.md) for the scope of that remark.
+The predictor and the clustered
+[local time stepping](/methods/local-time-stepping.md) inherited from earlier SeisSol
+work together cut the time to solution 6 to 10 times against global time stepping
+(§7.3); the LTS algorithm itself is not developed in the paper.
+
+This predictor treats the stiff linear term inside the Galerkin solve, as IMADER does
+through its Newton linearization; for a linear source the two coincide in structure,
+one linear space–time system per element *(compiler remark, not in the sources)*.
+
 ## Stability and accuracy
 
 - **Linear stability.** Han Veiga et al. present the first numerical study of ADER stability
@@ -180,6 +216,8 @@ strong shocks are out of scope (§6). See
   error $8.09\times10^{-5}$ where the printed order implies $8.09\times10^{-6}$;
   Eq. (36) omits the factor $\gamma_nh$; the symbol $\gamma$ also denotes the
   adiabatic exponent.
+- **Printed slip in Wolf et al. (2022).** The Taylor predictor (Eq. (5)) is printed with
+  the sum starting at $j=1$, which drops the zeroth-order term $q(t_i)$.
 - **Scaling convention.** In the ADER spectral-difference variant (eq. (65)) the iteration
   matrix carries an $h$ that the unit-interval form above does not. The time basis is
   defined there on the physical interval. This is a change of convention between §2 and
@@ -189,3 +227,4 @@ strong shocks are out of scope (§6). See
 
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §2 (eqs. (2)–(13), Example 2.1); §2.1 (historical ADER, eqs. (15)–(17)); §4.1 and §4.3 (Thm. 4.5, Remark 4.6); §4.4 (eqs. (43)–(47)); §4.5.2 (Remarks 4.7–4.8); §4.5.3; §5.1–5.3 (Figs. 2–14); §6.
 - [Gaburro et al. (2023)](/sources/gaburro-2023.md) — §3 (Eqs. (6)–(14), Remark 3.1), §4.1 (Eqs. (15)–(22)), §4.2 (Eqs. (29)–(37), Example 4.5), §5 (Tables 1–4, Figs. 1–17), §6.
+- [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.2 (CFL), §4.3 (Eqs. (5)–(8)), §5.2 (Table 2), §6.1 (Fig. 3), §7.3.

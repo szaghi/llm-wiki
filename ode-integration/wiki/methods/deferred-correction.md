@@ -3,9 +3,9 @@ type: Method
 title: "Deferred correction (DeC)"
 description: "Arbitrarily high-order integrators that correct a cheap low-order solution by high-order defect estimates: Abgrall's subnode form iterates a low-order operator against a collocation operator (order min(M+1, K)); the implicit-midpoint hierarchy DC2j corrects across grid points and is A-stable and B-convergent at every order."
 status: established
-aliases: [DeC, deferred correction method, Abgrall's DeC, explicit DeC, IMDeC, implicit deferred correction, DC2j, deferred correction for the implicit midpoint rule, difference correction]
+aliases: [DeC, deferred correction method, Abgrall's DeC, explicit DeC, IMDeC, implicit deferred correction, DC2j, deferred correction for the implicit midpoint rule, difference correction, spectral deferred correction, SDC, multirate SDC, MRSDC]
 tags: [deferred-correction, explicit, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Deferred correction (DeC)
@@ -265,6 +265,55 @@ and drops to order 2 for very stiff ones; the iterated deferred correction of
 Daniel–Pereyra–Schumaker is inaccurate at large steps and gains nothing asymptotically
 from high correction levels.
 
+## Spectral and multirate spectral deferred correction (SDC, MRSDC)
+
+Spectral deferred correction, as recalled by
+[Loffeld et al. (2024)](/sources/loffeld-2024.md) (§2.2, after Dutt, Greengard &
+Rokhlin), writes the step as a Picard integral over quadrature nodes (Gauss–Lobatto,
+Gauss–Radau, Gauss–Legendre or Clenshaw–Curtis) and corrects the node values in sweeps
+of forward or backward Euler; each sweep raises the order by one up to the order of the
+quadrature, the same principle as the subnode form above. Semi-implicit variants
+correct the stiff part implicitly and the nonstiff part explicitly, and multi-implicit
+multirate SDC gives each process its own node set (§2.2, as recalled).
+
+In the explicit multirate variant MRSDC used by Loffeld et al., the slow part
+$f^{\{\mathrm s\}}$ (transport) lives on coarse Gauss–Lobatto nodes and the fast part
+$f^{\{\mathrm f\}}$ (chemistry) on nested fine nodes, every coarse node being a fine node.
+"MRSDC-XYZ" has $X$ coarse nodes and a $Y$-node quadrature applied $Z$ times in each
+coarse subinterval, hence $X+(X-1)(Z-1)+(X-1)(Y-2)Z$ fine nodes. One forward-Euler
+correction sweep from fine node $q$ to $q+1$ reads, with page-local symbols
+($t_q$ fine nodes, $t_p$ the coarse node at or left of $t_q$, $h_q=t_{q+1}-t_q$,
+superscript $(k)$ the sweep, $\mathcal I^{\mathrm f}_q$, $\mathcal I^{\mathrm s}_q$ the
+quadratures of $f^{\{\mathrm f\}}$ and $f^{\{\mathrm s\}}$ over $[t_q,t_{q+1}]$ from the
+previous sweep),
+
+$$Y_{q+1}^{(k+1)}=Y_q^{(k+1)}+h_q\big(f^{\{\mathrm s\}}(Y_p^{(k+1)})-f^{\{\mathrm s\}}(Y_p^{(k)})\big)+h_q\big(f^{\{\mathrm f\}}(Y_q^{(k+1)})-f^{\{\mathrm f\}}(Y_q^{(k)})\big)+\mathcal I^{\mathrm f}_q+\mathcal I^{\mathrm s}_q$$
+
+(Loffeld et al. (2024), §2.2, Eq. (4), time arguments dropped); evaluating the fast
+difference at $t_{q+1}$ instead gives a backward-Euler correction. The study compares
+fourth-order single-rate SDC (3 nodes, 4 sweeps), MRSDC-338 and MRSDC-352 (4 sweeps
+each) with [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md)
+on a 3D methane flame with 53 species (§3.2, §5):
+
+* **Non-monotonic convergence.** Despite their theoretical fourth order, MRSDC-338
+  shows rates 2.72, 3.28, 2.51, 2.07, 1.69, 0.77, 0.08 and stagnates near
+  $2\times10^{-6}$; MRSDC-352 shows 7.17, 4.02, 8.98, 1.24. The authors suggest that
+  smaller steps or more sweeps could cure it (§5.2, Table 1, Fig. 3).
+* **Stable steps.** Single-rate SDC is stable only for $H\le6.25\times10^{-8}$ s, set
+  by the chemistry eigenvalues; MRSDC-338 at $2.0\times10^{-6}$ s and MRSDC-352 at
+  $2.5\times10^{-7}$ s (Table 1).
+* **Cost.** MRSDC beats single-rate SDC, confirming the earlier SMC results that the
+  paper recalls (Fig. 4). The multirate infinitesimal methods are cheaper than MRSDC at
+  most accuracies, because SDC sweeps several times over the step while a
+  multirate infinitesimal step passes once: at $H=6.25\times10^{-8}$ s MRSDC-338 needs
+  129 slow and 7,169 fast evaluations and 833 s, MRSDC-352 257, 2,049 and 376 s, the
+  infinitesimal methods 97 slow evaluations and 173–274 s. At the smallest steps
+  MRSDC-352 is comparable (§2.2, §5.2, Table 2, Fig. 4).
+
+The authors contrast SDC's "ostensibly no upper bound" on order with the at most fourth
+order of the multirate infinitesimal methods available to them (§2.2). The comparison
+is one problem with constant steps and fixed sweep counts.
+
 ## Qualifications
 
 - **Order of the collocation operator.** Han Veiga et al. state that $\mathcal L^2=0$ is of
@@ -294,8 +343,13 @@ from high correction levels.
   Condition "equivalent" to Eqs. (3.2)–(3.3), but only one direction is argued, and its
   transform is printed without the index shifts that make it an identity; Remark 4.2
   prints the constant as $c_{2j+1}$ and refers to it as $c_{2j+3}$ in the next sentence.
+- **MRSDC: printed slips** (arXiv v1 of Loffeld et al. 2024). Eq. (4) prints periods
+  for commas in the arguments, and the text names the slow quadrature $S_C$ where the
+  equation has $S_S$; Fig. 4 also plots an MRSDC-352 run with two sweeps that the text
+  does not describe.
 
 # Citations
 
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §1; §3 (eqs. (18)–(23), Prop. 3.1, Remark 3.2); §4.3 (Thm. 4.5); §4.4 (eqs. (37)–(47)); §4.5.1 (DeC–residual distribution); §5.1 (Fig. 2); §5.2–5.3 (Figs. 3–14).
 - [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §1; §2 (Eqs. (2.4)–(2.14), Remarks 2.1–2.3, Table 2.1); §3 (Def. 3.1, Thm. 3.1, Remarks 3.1–3.2); §4 (Lemma 4.1, Thm. 4.1, Cor. 4.1, Remarks 4.1–4.2); §5 (Def. 5.1, Lemma 5.2, Thm. 5.1); §6 (Tables 6.1–6.6, §6.7).
+- [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §2.2 (Eq. (4), node count), §3.2, §5.2 (Tables 1–2, Figs. 3–4).

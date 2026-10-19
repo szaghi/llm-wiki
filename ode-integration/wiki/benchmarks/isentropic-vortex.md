@@ -5,7 +5,7 @@ description: "Exact smooth solution of the compressible Euler equations, a vorte
 status: established
 aliases: [isentropic Euler vortex, convecting vortex, Shu vortex, travelling vortex, low-Mach isentropic vortex]
 tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving, imex]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T03:00:00Z
 ---
 
 # Isentropic vortex
@@ -67,7 +67,16 @@ one traversal) and, "as in Vermeire", by [Doehring et al. (2025)](/sources/doehr
 (§5.2: domain $[0,10]^2$, base $64^2$ elements with two or three levels of adaptive refinement,
 DGSEM of degree 3 or 6, final time 20). [Gaburro et al. (2023)](/sources/gaburro-2023.md) use
 Shu's vortex centred at $(5,5)$, periodic, final time 1, on unstructured triangles, without
-restating the parameters (§5.3.1).
+restating the parameters (§5.3.1). [Doehring et al. (2024b)](/sources/doehring-2024-b.md) (§5)
+take the parameters of the P-ERK papers on $[0,10]^2$ with $64^2$ base elements and two extra
+AMR levels (finest cell $10/256$), DGSEM with HLLC flux, final time 20.
+
+**Convected vortex for local time stepping.** [Sreejith et al. (2022)](/sources/sreejith-2022.md)
+(§6.1) use a 2D convected vortex (called "isentropic, Rankine vortex"; strength 0.01556, radius
+0.1 m, free stream 100 m/s, domain about $1.4\times0.6224$ m, periodic top and bottom,
+characteristic inlet and outlet) on quadrilateral or triangular, uniform or stretched meshes, and
+measure the pressure deviation of their LTS run from the single-rate run, not from an exact
+solution.
 
 **Low-Mach variants.** For [asymptotic-preserving](/definitions/asymptotic-preserving-scheme.md)
 schemes the perturbations are scaled with the reference Mach number $\mathrm{Ma}$ so that
@@ -154,6 +163,24 @@ family, Doehring et al. (2025) use the vortex four ways (§4.3–5.3, §6.3):
 - on a four-level adaptive mesh with $e=\{5,7,11,19\}$, competing optimized fourth-order
   methods need 1.20–1.79 times the runtime and 1.38–2.08 times the evaluations (Table 6).
 
+**Dynamically partitioned P-ERK.** On the AMR mesh Doehring et al. (2024b, §5, Tables 5–6,
+Fig. 6) run the families P-ERK$_{2;\{3,6,12\}}$ (degree 2) and P-ERK$_{3;\{4,8,16\}}$ (degree 3),
+with the partition reassigned at every mesh change. The families' density errors are those of
+their standalone members ($L^1/|\Omega|$: $2.09\times10^{-5}$ against
+$1.74$–$1.77\times10^{-5}$ at second order; $3.73\times10^{-7}$ against $4.05\times10^{-7}$ at
+third order), orders 2 and 3 appear at degree 6 until the spatial error dominates, so no
+interface order reduction is seen, and conservation errors are on par with SSPRK(3,3) (mass
+$3.94\times10^{-13}$ against $7.82\times10^{-13}$). The same authors explain the absence of
+interface oscillations in the random-mix test of Hedayati Nasab & Vermeire by the step
+reduction the smallest member imposes, the third-order member with 3 active stages having a
+stable step about 8 times smaller than the one with 16 (§3.2.6).
+
+**Local time stepping** (Sreejith et al. 2022, §6.1, Fig. 18, Table 4). With the Lax–Wendroff
+or TTGC scheme and step ratios 2, 5 and 10, the deviation from the single-rate solution is
+similar on uniform and stretched meshes, lower on quadrilaterals than triangles and for TTGC than
+Lax–Wendroff, and grows with the ratio; at ratio 10 the measured speedups are 1.92–2.21, 90–98 %
+of the theoretical ones ([local time stepping](/methods/local-time-stepping.md)).
+
 **Many-stage stabilized methods.** Doehring et al. (2024, §10.2.2, Table 6) run second-order
 methods with 30, 60 and 120 stages and need Courant fractions 0.79, 0.65 and 0.40 of the
 linearly predicted step, a reduction they attribute to the missing SSP property; the density
@@ -213,6 +240,10 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
 - Hedayati Nasab & Vermeire (2022) centre the vortex at the origin in Eq. (55) while the
   domain is $[0,20]^2$, and their Table 2 prints some step sizes as $5.000\times10^{-2}$ where
   the halving sequence and the observed orders require $5.000\times10^{-3}$.
+- Sreejith et al. (2022) call their vortex an "isentropic, Rankine vortex"; a Rankine vortex
+  is not the smooth isentropic vortex of the other sources, and their reference is the
+  single-rate solver, so their figures measure the LTS coupling error only. Their Table 4 case 4
+  prints node counts identical to case 1 with a different theoretical speedup (reader's check).
 - The degree-2 ADER orders of Gaburro et al. (2023) stay near 2.7 rather than 3, and their
   order claim for relaxed ADER is inherited from a theory proved for Runge–Kutta and multistep
   methods (see the relaxation page).
@@ -228,3 +259,5 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
 - [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §4.1 (Eqs. (107)–(108), Tables 1–2); arXiv v1.
 - [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — §5.1 (Eqs. (96)–(97), Tables 3–5); HAL v2.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.2 (Eqs. (76)–(78), Tables 5–15, Fig. 6); arXiv v5.
+- [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §3.2.6, §5 (Tables 5–6, Fig. 6).
+- [Sreejith et al. (2022)](/sources/sreejith-2022.md) — §6.1 (Tables 3–4, Fig. 18).
