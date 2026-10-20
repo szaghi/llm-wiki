@@ -5,7 +5,7 @@ description: "Sun, Wei and Wu prove that every diagonal $(m,m)$ Padé approximat
 status: established
 aliases: [unified energy law for diagonal Padé approximations, energy law of Gauss methods on linear problems, Sun–Wei–Wu theorem]
 tags: [stability, strong-stability, implicit, structure-preserving, runge-kutta]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Unconditional strong stability of diagonal Padé schemes and its energy law
@@ -90,7 +90,7 @@ Fig. 1a). The $(2,2)$ scheme runs at $h=0.1$ for P1-DG advection and P0-LDG disp
 $h\le C\Delta x^3$ in the dispersive case (Exs. 6.2–6.3, Fig. 1b–c).
 
 For skew $L$ ($L^\top=-L$) the right-hand side vanishes and the norm is conserved
-exactly *(compiler check: immediate from Thm. 5.2)*. This is what Farrell, Kirby &
+exactly *(compiler check, not in the sources: immediate from Thm. 5.2)*. This is what Farrell, Kirby &
 Marchena-Menéndez observe for Gauss–Legendre with one and two stages on an
 energy-conserving mixed wave semi-discretization, $E(10)/E(0)=1$ at $h=0.1,0.5,1.0$,
 while Radau IIA and Lobatto IIIC damp it, at the largest steps to ratios as small as $10^{-20}$
@@ -102,7 +102,8 @@ own energy law predicts (Sun et al. 2022, Ex. 4.3).
 
 [Song & Eisenträger (2022)](/sources/song-2022.md) use the $(m,m)$ approximants directly
 as one-step maps for linear structural dynamics $M\ddot u+C\dot u+Ku=f$ (page-local $u$,
-$C$, $K$, $f$), in state-space form $x'=\mathcal Ax+F$ with $x=[h\dot u;u]$ (page-local);
+$C$, $K$, $f$), in state-space form $x'=\mathcal Ax+F$ with $x=[h\dot u;u]$ and the derivative taken in the
+step-scaled time $(t-t_{n-1})/h$, so that one step is the map over unit time (page-local);
 see [Padé time integration](/methods/pade-time-integration.md). They state, citing
 Gallopoulos and Saad and without proof, that the schemes are unconditionally stable
 "since the spectral radius of the rational approximation … is of unit value", with no
@@ -137,7 +138,7 @@ step of half a period is about 0 %, 0.5 %, 7.7 % and 56.5 % for the four orders 
 - Song & Eisenträger attribute unconditional stability to "Padé-based" integrators in
   general; it holds for the diagonal approximants of this page, not for every Padé
   approximant, and their "unit spectral radius" holds on the undamped spectrum only
-  *(compiler check)*.
+  *(compiler check, not in the sources)*.
 - The energy law concerns the homogeneous problem; Song & Eisenträger's schemes also
   carry a polynomial load, for which the law bounds only the propagator.
 

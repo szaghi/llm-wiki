@@ -6,6 +6,128 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — final chunk: invariant domains, Patankar stability, FIMEX, mRKC, splitting, learned integrators (2026-10-20)
+
+Sources (18): pan-2022, quezadadeluna-2022, ern-2022, zhu-2024, muller-2023,
+ern-2023, kirby-2025, akrivis-2025, sayyari-2026, nath-2026, spiteri-2026,
+abdulle-2022, wei-2026, goswami-2023, maurya-2021, buvoli-2023,
+vermeire-2021, izgin-2022. The archive is complete: 118 of 118 sources,
+139 concept pages (257 with the Source pages, plus the registry), 3771
+bibliography entries. Closing sweeps and the whole-bundle deep lint done
+(log, 2026-10-20).
+
+### Decisions for the human
+
+1. **Pending rulings from chunk 5** (still open): `shtilman-1958` vs
+   `shtilman-1991`; moving `veiga-2020`/`veiga-2021` to the `hanveiga-`
+   spelling. (`kennedy-2021` is now folded into `kennedy-2016`.)
+2. **Same-DOI book printings kept apart by printed year** (existing hairer
+   policy): axelsson, hairer, hundsdorfer, toro, karniadakis,
+   leveque-2002/2004. Merge them instead?
+3. **Two preprint forms of one unpublished paper:** `schutz-2021-b` (arXiv)
+   and `schutz-2021-c` (Hasselt report) kept distinct. Fold?
+4. **Merger's call to confirm:** izgin-2022 ref [29] (Nüßlein et al. 2021,
+   printed without venue) is keyed as the published CAMCoS paper
+   (`nusslein-2021`), because the printed year 2021 is the publication
+   year (the arXiv preprint is 2020); the reader had taken it as the
+   preprint.
+5. **`sexton-2018`** (arXiv:1808.03718) also absorbs a citation printed
+   with year 2019 and the later arXiv title: same arXiv id, so the same
+   preprint; confirm.
+6. **Bundle-fit candidates for a D17 copy** (none made): muller-2023 and
+   nath-2026 (learned surrogates; time integration peripheral),
+   quezadadeluna-2022, ern-2022, ern-2023, zhu-2024, sayyari-2026, wei-2026
+   (spatial bound-preserving and entropy-stable discretizations) for
+   `high-order-capturing-schemes`; maurya-2021 (dispersion-relation
+   preserving schemes) for `fourier-analysis-of-schemes`.
+7. **Tag synonyms reported, not renamed:** `ssp`/`strong-stability`,
+   `dispersion-analysis`/`dispersion-relation-preserving`/`von-neumann-analysis`,
+   `wave-equation`/`wave-propagation`, `diagonally-implicit`/`fully-implicit`
+   vs `implicit`, `implicit-stage-solvers`/`linear-algebra`/`preconditioning`,
+   `bdf`/`linear-multistep`, single-use `lawson`, `leja`, `paradiag`,
+   `parareal`, `infinitesimal`, `locally-stiff`.
+8. **Unverified items left on the pages, labelled:** four Bencomo & Chan
+   slips (appendix transpose, "IDT" wording, Fig. 4(b) legend, the "block
+   matrix" part of the ξ slip) and Gaburro et al.'s Eq. (36) "missing
+   $\gamma_nh$"; whether Buvoli & Southworth integrate $\delta u_{xxx}$ or
+   $\delta^2u_{xxx}$ in KdV (the paper prints δ = 0.022 and calls the run
+   identical to two cited experiments); Ern & Guermond's Burgers initial
+   square (printed $|x-\tfrac12|\le1$; their Fig. 3 plateau sits near
+   $[0.5,1.5]^2$, matching neither reading).
+
+### Identity and version problems
+
+- Re-downloaded files confirmed on page 1 against Crossref: abdulle-2022
+  (arXiv v6), wei-2026 (author manuscript; Math. Comp. prints no volume or
+  pages yet — the Source page says they must be added), goswami-2023 and
+  maurya-2021 (versions of record), buvoli-2023 (arXiv v2 main paper plus
+  the SIAM supplement as a second file), vermeire-2021 and izgin-2022 (the
+  full-title files; the short-named files hold aljahdali-2022 and
+  belardo-2026).
+- Versions of record: pan-2022, kirby-2025, spiteri-2026, goswami-2023,
+  maurya-2021, vermeire-2021. Preprints or manuscripts: the rest (ern-2022
+  and ern-2023 as HAL drafts, the latter pre-review).
+- The Crossref row prepared for ern-2022 carried Part II's title; the Source
+  page uses Part I (SIAM J. Sci. Comput. 44:A3366-A3392).
+- Display names follow the author count: Quezada de Luna & Ketcheson
+  (2022), Spiteri & Wei (2026), Sayyari & Yamaleev (2026).
+- The Li 2022 front-matter file is still in the archive; the user deletes
+  it (Li 2022 dropped from the corpus).
+
+### Printed slips (recorded on the Source pages)
+
+- ern-2023: three literature efficiency values (0.24, 0.26, 0.08) equal
+  $\Delta c_{\max}/s$ instead of the paper's own $1/(s\Delta c_{\max})$
+  (0.471, 0.423, 1/3; compiler check); Eq. (62) interval; ern-2022: Eq.
+  (12) definition of $l'(l)$; table labels.
+- izzo-2025 (chunk 5) reprints Zhu, Huang & Yang's $k=3$ scheme with
+  $\beta=(0,\tfrac32,0)$; Zhu et al. print $\tfrac32hf(y_n)$ (checked in
+  both PDFs): the slip is Izzo et al.'s.
+- spiteri-2026: OS22μ coefficient $1/(2\mu-2)$ for $1/(2-2\mu)$; Remark 3.6
+  minimiser sign ($\mu=1-1/\sqrt2\approx0.293$; the printed −0.293 is
+  worse than Strang; compiler check from exact BCH coefficients); Remark
+  3.1 index swap; Lemma 3.1 product order.
+- maurya-2021: Eq. (10) as printed makes the velocity update forward Euler;
+  Table 4 rows for weight 1.01; the method is sequential and explicit
+  (OPIRK1 with weight 1 is the forward–backward scheme; compiler
+  identification).
+- pan-2022: Table 1 ratios inconsistent with their own columns.
+- goswami-2023: Eq. (35) column entry ($\tilde k+2$ for $\tilde k+3$);
+  algorithms omit the step factor.
+- kirby-2025: Eq. (2.8) step factor; (A.5) coefficient; mesh size in Fig. 5.
+- izgin-2022: Remark 3.2 sign, Eq. (47), Lemma 3.10 limit.
+- wei-2026: relaxation RK miscited as [4]; Lemma 2 proof point (corrected
+  point reproduces the printed constant; compiler check).
+- akrivis-2025: Eq. (118) index and sign; Theorem 7 reference.
+- abdulle-2022: App. A $z_2$ missing square; Thm 2.4 proof; Robertson
+  initial data non-standard.
+- buvoli-2023: arXiv Fig. 4 labels (corrected in the SIAM supplement);
+  $B\{2\}$ for $B\{1\}$; Eq. (5.17).
+- quezadadeluna-2022: initial datum $\sin^4(2\pi x)$ for $\sin^4x$;
+  measured rates about 4 with fifth-order space and time unexplained.
+- sayyari-2026: index slips in Theorem 1's proof; the BDF2 pseudo-step bound
+  beats forward Euler only if $4\rho_n>\rho_{n-1}$ (compiler check).
+- zhu-2024: Example 2 rates, Example 5 state; positivity proof omitted;
+  "large time steps" not supported by reported steps.
+- muller-2023, nath-2026: notation and table-label slips; Nath et al.'s
+  inverse simplex map (App. B) right-hand side.
+
+### Contradictions opened
+
+None. Qualifications recorded: Ern & Guermond's "implicit SSP methods are
+at most first order" (holds for unconditional SSP; finite-coefficient
+implicit SSP methods exist up to order 6 per Kuzmin et al., Ciallella et
+al., Quezada de Luna & Ketcheson); their efficiency ratio is not the SSP
+effective coefficient; Izgin et al.'s "unconditionally stable" is Lyapunov
+stability of steady states, consistent with Torlo et al. (2022); Zhu et
+al.'s MP multistep methods precede Izzo et al.'s analysis; Wei & Shu's RK3
+family includes Kutta's method and excludes SSP-RK3; Sayyari & Yamaleev
+prove positivity per pseudotime iterate, not for the converged BDF
+solution; Müller's conservation is exact for the learned equations, not
+for the RK4 steps; Nath et al. report no inference timings; Irksome's
+boundary default change (Farrell et al. 2021 → Kirby & MacLachlan 2025)
+is a documented change of default by the software's authors.
+
 ## Chunk 5 — Patankar and positivity, parallel-in-time, deferred correction and ADER (2026-10-20)
 
 Sources (20): nusslein-2021, torlo-2022, ciallella-2022, babbar-2022,

@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Order reduction
@@ -165,6 +165,23 @@ steps. The authors attribute it to the partitioning ("order reduction due to sti
 behavior, … due to partitionings"), not to the methods themselves. See
 [nonlinearly partitioned Runge–Kutta methods](/methods/nonlinearly-partitioned-runge-kutta.md).
 
+**Splitting choice in additive methods on a singularly perturbed ODE.**
+[Buvoli & Southworth (2023)](/sources/buvoli-2023.md) (§6.2, Fig. 6, Figs. SM2–SM4) study the
+[Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md) with stiffness parameter from
+1 to $10^{-8}$ and steps $h\in[10^{-4},0.25]$ under two splittings: semi-implicit (first
+component explicit, second implicit) and linearly implicit ($f^{\mathrm I}=J_ny$ with the exact
+Jacobian). For their [FIMEX-Radau methods](/methods/polynomial-time-integrators.md) with $K$
+iterator sweeps, each sweep raises the observed order by about one at small stiffness
+parameter; with the semi-implicit splitting the $K=2$ methods show markedly reduced rates for
+parameters in $[10^{-4},10^{-2}]$, though they stay the most accurate. Fitted rates fall below
+nominal because of mild reduction at $h\ge0.1$, fewer than five steps; one method with the
+linearly implicit splitting stays stable but does not converge at large steps until one sweep
+is added. On DG advection–diffusion with time-dependent boundary data all methods, IMEX
+Runge–Kutta pairs and FIMEX alike, show some order reduction, strongest at diffusion
+coefficient 10, FIMEX with much smaller error constants (§6.3.1, Fig. 8); on the
+advection–diffusion–reaction test IMEX-RK and DIRK do not quite reach third order, which the
+authors relate "possibly" to the time-dependent boundary conditions (§6.3.2, Fig. 9).
+
 **Vanishing initial constituents in Patankar schemes.** For the
 [modified Patankar methods](/methods/modified-patankar-methods.md) that keep
 production–destruction systems positive, [Torlo et al. (2022)](/sources/torlo-2022.md)
@@ -222,6 +239,7 @@ DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
 | proven $\min(p,q+1)$ (2 for SDIRK); observed near nominal 3, 4 | Patankar predictor–corrector on SDIRK | Nurkhametova et al. 2026, Prop. 3.23, Tables 4–5 |
 | no order reduction observed for φ-order 3–6 exponential methods; slight reduction for EXPRB_5s4 | semilinear parabolic and advection–diffusion–reaction | Dallerit & Tokman 2025, §7, Figs. 1–4 |
 | first order for all higher-order schemes with the implicit–explicit partition; second order with the nonlinear partition | gray radiation transport, coarse mesh | Buvoli & Southworth 2025, §7.2, Fig. 7.3b |
+| about one order gained per iterator sweep at small stiffness parameter; reduced rates for parameters in $[10^{-4},10^{-2}]$ with the semi-implicit splitting | Van der Pol, FIMEX-Radau with $K$ sweeps | Buvoli & Southworth 2023, §6.2, Fig. 6 |
 
 In the Ostermann–Roche row $r$ is the number of satisfied conditions and $\bar\nu$ a
 problem-dependent number (both page-local). [Farrell et al. (2021)](/sources/farrell-2021.md),
@@ -315,6 +333,12 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
   tableau, not to the methods. Abu-Labdeh et al. (2023, §5.1) refine space and time together
   on Stokes, so their rates mix both errors. The attributions of Taddei et al. (2026) and
   Orlando et al. (2025) above are likewise stated, not demonstrated.
+- **"High stage order prevents order reduction."** Buvoli & Southworth (2023, §1, §7) argue
+  that high-degree ODE polynomials give high stage order "that prevents order reduction on
+  stiff problems", yet report reduced rates for their own methods on Van der Pol with the
+  semi-implicit splitting and on the DG tests (§6.2–6.3); the statement is a design argument,
+  not a demonstrated property. In an additive method the stage order of the implicit part
+  alone does not settle the coupling errors *(compiler remark, not in the sources)*.
 - Weak stage order is a remedy for linear problems; on nonlinear problems it gives
   partial improvement (Burgers: order 3) or none (Van der Pol), as detailed on
   [weak stage order](/definitions/weak-stage-order.md).
@@ -365,3 +389,4 @@ problem-dependent), would decide it.
 - [Popov (2024)](/sources/popov-2024.md) — §2.2, Table 7; arXiv v1.
 - [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §4.3, Figs. 14–15; arXiv v2.
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.1–2.2; arXiv v2.
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §1, §6.2 (Fig. 6), §6.3.1 (Fig. 8), §6.3.2 (Fig. 9), §7; supplement Figs. SM2–SM4.

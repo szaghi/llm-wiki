@@ -5,7 +5,7 @@ description: "Klein's low-Mach test of two acoustic pulses that collide on a per
 status: established
 aliases: [Klein's colliding pulses, two colliding acoustic pulses, Klein test I]
 tags: [verification, imex, implicit, asymptotic-preserving, stiff]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Colliding acoustic pulses
@@ -65,8 +65,8 @@ pulses at such steps.
   shows stability and qualitative agreement only (§4.2).
 * **Printed step sizes.** The Fig. 7 caption of Puppo et al. (2024) gives implicit and
   explicit steps (4.23 and 0.624 for $\varepsilon=1/11$) that do not match the stated
-  $h/\Delta x=0.423$ with $\Delta x=0.1$ (which gives $0.0423$); a step of 4.23 would
-  exceed the final time (reader's check, recorded on the Source page).
+  $h/\Delta x=0.423$ with $\Delta x=2L/440=0.1$ (which gives $0.0423$); a step of 4.23 would
+  exceed both output times *(compiler check, not in the source)*.
 * Orlando & Bonaventura's third-order pair is of type II and, by their own §3.1, only
   weakly asymptotic preserving with ill-prepared pressure data such as these; the paper
   does not comment (see [IMEX Runge–Kutta](/methods/imex-runge-kutta.md), Qualifications).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Periodic vortex flow used to test time integrators on compressible-flow semidiscretizations: inviscid 3D at low Mach number as a stability-limited test for explicit pairs and step-size controllers, viscous 3D for optimized many-stage, semi-implicit and implicit two-derivative methods at large steps, and 2D steady at Mach numbers down to 10^-4 for the Mach scaling of IMEX schemes."
+description: "Periodic vortex flow testing time integrators on compressible-flow semidiscretizations: inviscid 3D at low Mach number as a stability-limited test for explicit pairs and step-size controllers, viscous 3D for optimized many-stage, semi-implicit, implicit two-derivative, adaptive ESDIRK and supersonic BDF methods at large steps, and 2D steady at Mach numbers down to 10^-4 for the Mach scaling of IMEX schemes."
 status: established
 aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, two-dimensional Taylor–Green vortex]
 tags: [explicit, step-size-control, runge-kutta, stability, imex]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -55,7 +55,7 @@ $\mathcal P=1/(\kappa\mathrm{Ma}^2)+\tfrac1{16}(\cos2x_1\cos2x_3+2\cos2x_2+2\cos
 ($\kappa=1.4$ the ratio of specific heats, page-local), $\mathrm{Ma}=0.1$, $8^3$ elements of
 degree 3 with an entropy-conservative volume flux, $t\in[0,10]$, on a Cartesian mesh and on a
 heavily curved one. The fluctuation is the same as in Ranocha et al. (2022); only the mean
-pressure is normalized differently *(compiler check)*.
+pressure is normalized differently *(compiler check, not in the sources)*.
 
 **Viscous, low Mach, semi-implicit** ([Boscheri & Pareschi 2021](/sources/boscheri-2021.md),
 §4.5). The velocity of Ranocha et al. (2022) on $[-\pi,\pi]^3$, $\rho_0=1$,
@@ -74,7 +74,7 @@ The set-ups share the velocity and pressure fields up to scaling; they differ in
 normalization, dimension and element types.
 
 **Three-dimensional, viscous, with AMR** ([Doehring et al. 2024b](/sources/doehring-2024-b.md),
-§7.1.3). Compressible Navier–Stokes at $M=0.1$, $\mathrm{Re}=1600$, $\mathrm{Pr}=0.72$ on
+§7.1.3). Compressible Navier–Stokes at $\mathrm{Ma}=0.1$, $\mathrm{Re}=1600$, $\mathrm{Pr}=0.72$ on
 $[0,2\pi]^3$, periodic, final time 20; DGSEM of degree 2 with HLLE and an entropy-conservative
 volume flux, $16^3$ base cells and two refinement levels driven by an enstrophy indicator.
 
@@ -85,6 +85,25 @@ ratio of specific heats, $\varepsilon$ their reference Mach number, whose value 
 not stated), $\mathrm{Re}=800$ (viscosity $1.25\times10^{-3}$), DG spectral elements of degree 3
 on $32^3$ elements; the velocity is printed with a nonstandard first component (see
 Qualifications).
+
+**Three-dimensional, viscous, implicit with adaptive steps** ([Pan et al. 2022](/sources/pan-2022.md),
+§3.3). Compressible Navier–Stokes at $\mathrm{Ma}=0.1$, $\mathrm{Re}=1600$, periodic, $32^3$
+uniform elements of a DG (spectral/hp) discretization of degree 4, fourth-order ESDIRK with an
+embedded fifth-order estimate, Jacobian-free Newton–Krylov stage solves, $t\in[0,\approx18]$;
+the dissipation rate is compared with a DNS.
+
+**Three-dimensional, viscous, supersonic** ([Sayyari & Yamaleev 2026](/sources/sayyari-2026.md),
+§8.4). The velocity of Ranocha et al. (2022) on $[-\pi,\pi]^3$ with
+$\mathcal P=1+\frac{\kappa\mathrm{Ma}^2}{C_{\mathrm M}}(\cos2x_1+\cos2x_2)(\cos2x_3+2)$,
+$\Theta=1$, $\rho=\mathcal P/\Theta$ ($\kappa$ the ratio of specific heats, $C_{\mathrm M}$ a
+constant, $89.6$ at $\mathrm{Ma}=2$, both page-local), $\mathrm{Re}=400$, $\mathrm{Ma}=2$ and
+$10$; positivity-preserving entropy-stable spectral collocation of degree 4–6 on $16^3$ to
+$64^3$ elements, implicit [BDF1/BDF2](/methods/backward-differentiation-formula.md) in physical
+time with explicit dual (pseudo-)time stepping; $t\in[0,10]$ at $\mathrm{Ma}=2$ against a
+$512^3$ WENO reference, $t\in[0,2.5]$ at $\mathrm{Ma}=10$ against SSPRK(3,3). At
+$\mathrm{Ma}=2$ the pressure fluctuation amplitude $\kappa\mathrm{Ma}^2/C_{\mathrm M}$ equals
+$1/16$, that of the low-Mach set-ups, for $\kappa=1.4$ *(compiler check, not in the source)*.
+Shocklets form, so the test checks positivity as well as accuracy.
 
 ## What it tests and results
 
@@ -146,6 +165,27 @@ et al.; the peak near $t\approx9$ is slightly underestimated, which the authors 
 the coarse spatial resolution. No timings are reported for this run. See
 [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
+**Error-balanced adaptive implicit steps** (Pan et al. 2022, §3.3, Figs. 11–12, Table 4).
+Their controller sets the step so that the local temporal error is $\beta$ times the spatial
+truncation error of the step (page-local $\beta$; see
+[step-size control](/methods/step-size-control.md)). With $\beta=0.1$ the dissipation-rate
+error is slightly larger than with $\beta=0.01$ or with fixed steps $h=0.1$ or $0.2$; $\beta=0.01$
+almost coincides with $h=0.1$ and costs 1.27 times the CPU time of the hand-tuned fixed step
+(about CFL 29), the largest such ratio over their four tests. The authors keep $\beta$ as a
+regime-dependent parameter (0.1 in general, 0.01 for implicit LES).
+
+**Implicit BDF with positivity in pseudotime** (Sayyari & Yamaleev 2026, §8.4, Table 3,
+Figs. 7–9). At $\mathrm{Ma}=2$ with BDF2 and $h=10^{-3}$, the kinetic energy follows the
+reference, and the time-averaged dissipation is $0.0067$ ($32^3$) and $0.0069$ ($64^3$) against
+$0.0054$, $0.0060$, $0.0063$ for the reference at $128^3$, $256^3$, $512^3$. At
+$\mathrm{Ma}=10$, with degree 6 on $64^3$ elements, BDF2 and SSPRK(3,3) give nearly identical
+kinetic energy and dilatational dissipation; BDF2 is slightly more dissipative in pressure and
+velocity profiles, which the authors attribute to its physical step being on average 20 times
+that of SSPRK(3,3), and it is nearly 30 % faster in wall-clock time (hardware not stated). The
+positivity guarantee holds at every pseudotime iteration, not for the converged BDF solution
+as such (see Qualifications and
+[positivity preservation](/properties/positivity-preservation.md)).
+
 **Semi-implicit all-Mach scheme** (Boscheri & Pareschi 2021, §4.5, Fig. 13). With the
 [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) third-order finite-volume
 scheme, the kinetic-energy dissipation rate $-\mathrm dK/\mathrm dt$ fits the Brachet et al.
@@ -181,6 +221,14 @@ pair, with type-I pairs more stable; see
   dissipation rate as $\partial E_{\mathrm{kin}}/\partial t=\frac{2\mu}{\rho\lvert\Omega\rvert}\int\nabla v:\nabla v$
   without the minus sign that their positive plotted $-\partial E_{\mathrm{kin}}/\partial t$
   requires (page-local $E_{\mathrm{kin}}$, viscosity $\mu$, domain $\Omega$). Both are printed slips.
+- Sayyari & Yamaleev (2026) prove positivity of each explicit pseudotime iterate under a
+  pseudotime step bound; the physical step is unconstrained only for the converged BDF solution,
+  whose strict positivity the per-iteration proof does not by itself give (the limit of positive
+  iterates is only nonnegative), and the BDF2 density bound improves on forward Euler only if
+  density does not drop by more than a factor 4 over one step *(compiler remarks on their
+  §5–7, not in the source)*. They were read as arXiv v3.
+- Pan et al. (2022) report no step rejections: their controller is an elementary (I-type)
+  controller without rejection.
 - Hedayati Nasab et al. write the snapshot time as "$t_c=15$"; $t=15t_c$ is meant (§7.2).
 
 # Citations
@@ -193,3 +241,5 @@ pair, with type-I pairs more stable; see
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.1 (Eq. (75), Tables 1–4, Fig. 2); arXiv v5.
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §7, §7.1.3 (Table 9).
 - [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) — §5.3.3 (Fig. 12); arXiv v1.
+- [Pan et al. (2022)](/sources/pan-2022.md) — §2.4, §3.3 (Figs. 11–12), Table 4.
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — §8.4.1–8.4.2 (Table 3, Figs. 7–9); arXiv v3.

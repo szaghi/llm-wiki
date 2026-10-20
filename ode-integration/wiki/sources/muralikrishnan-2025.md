@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. S311-S336"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Muralikrishnan_Error_Analysis_and_Parallel_Scaling_Study_of_a_Parareal_Para.pdf"
 tags: [parallel, parareal, kinetic, hpc, order-reduction]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -222,7 +222,7 @@ serial code.
   "multiples it with"; §6.3 "it need to converge"; ref. [1]
   "Univerisität".
 
-The reader adds that the step from (5.9) to (5.10) treats $\lVert F-G\rVert$
+*(Compiler checks, not in the sources.)* The step from (5.9) to (5.10) treats $\lVert F-G\rVert$
 as the right-hand-side difference without a Grönwall factor over $\Delta T$,
 and that the unnormalized $P$ has an operator norm that grows with the
 particle and mode counts unless a normalization is implied.

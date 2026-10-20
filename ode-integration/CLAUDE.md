@@ -94,13 +94,17 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 5 staged 2026-10-20:** 20 sources on modified Patankar and
-positivity-preserving schemes, parallel-in-time integration (Parareal,
-ParaDiag, parallel SDC), deferred correction, ADER and Lax–Wendroff flux
-reconstruction, exponential time differencing; 100 of 118 ingested, 131
-concept pages, 3374 bibliography entries. Next: chunk 6 (the last 18
-sources, including the six re-downloaded files), then the closing sweeps
-(whole-bundle deep lint, `bib_merge.py --dupes`, cross-year fuzzy sweep).
+**Chunk 6 staged 2026-10-20 — archive complete:** 18 sources (invariant-domain
+preserving time stepping, Patankar multistep and Lyapunov stability, cell
+entropy inequalities, FIMEX, Irksome extensions, mRKC, N-split splitting,
+learned integrators); 118 of 118 ingested, 139 concept pages, 3771
+bibliography entries. Closing sweeps done (`--dupes`, venue collisions,
+fuzzy titles across years) and the whole-bundle deep lint. Further sources
+enter one at a time (ordinary ingestion protocol) or as a new chunk.
+
+**Chunk 5 committed 2026-10-20 (bd2a3ab):** Patankar and positivity,
+parallel-in-time, deferred correction, ADER and Lax–Wendroff flux
+reconstruction, exponential time differencing.
 
 **Chunk 4 committed 2026-10-20 (e2cab3d):** local time stepping, multirate
 and exponential methods, NPRK, EIN and Quinpi.

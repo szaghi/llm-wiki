@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Sci. Eng. 2:1"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Computational_Science_and_Engineering_Doehring_Fourth-order_paired-explicit_Runge-Kutta_methods.pdf"
 tags: [runge-kutta, explicit, multirate, order-conditions, stability, method-of-lines]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ The file is an authors' preprint dated 10 August 2024 (page-1 footer
 all read; it is neither the version of record nor the Research Square
 posting (doi:10.21203/rs.3.rs-5259801/v1, which the archive's Crossref
 lookup returned and which carries a Research Square header and a later
-date). No arXiv identifier is printed; the reader's identification with
+date). No arXiv identifier is printed; the compiler's identification with
 arXiv:2408.05470v1 is unverified. The Code Availability section promises a
 reproducibility repository "in a later version of this article". Title and
 authors match the version of record (Comput. Sci. Eng. 2:1, 2025); its
@@ -74,7 +74,7 @@ numbers cited here are those of the preprint.
 6. An SSP partitioned method needs every member to be SSP, and its nonlinearly stable step is $h=\min_r\mathcal C_r\,h_{\mathrm{FE}}$ (Eq. 2.15), which makes SSP-capable partitioned methods "in many cases ineffective" (§2.5). **Stated**
 7. The maximum stable step of optimized explicit methods grows asymptotically linearly in $e$ for hyperbolic spectra, so a $2e$-evaluation method on cells of size $\Delta x/2$ allows the same $h$ as an $e$-evaluation method on cells of size $\Delta x$; this is what makes P-ERK effective, and it fails for diffusion-dominated spectra, where RKC-type methods are needed (§3.1, Eqs. 3.2–3.4). **Stated**
 8. Second- and third-order P-ERK are low-storage (two stages stored), have constant per-stage cost and sparse $A$, $b$ that simplify computing $a_{ij}$ from an optimized polynomial (§3.1). **Stated**
-9. With $b=(0,\dots,0,b_{s-1},b_s)$ and the P-ERK sparsity (3.7), the coupling condition reduces to Eq. 3.8; sharing $a_{s-2,s-3}$, $a_{s-1,s-2}$, $a_{s,s-1}$ across members satisfies it by construction, leaving nine unknowns for eight conditions (A.1), a one-parameter family given to double precision in Eq. 3.9 with $c_{s-3}$ free (§3.2). **Derived** (the reader verified that Eq. 3.9 satisfies (A.1a–c, e–h) and the corrected (A.1d))
+9. With $b=(0,\dots,0,b_{s-1},b_s)$ and the P-ERK sparsity (3.7), the coupling condition reduces to Eq. 3.8; sharing $a_{s-2,s-3}$, $a_{s-1,s-2}$, $a_{s,s-1}$ across members satisfies it by construction, leaving nine unknowns for eight conditions (A.1), a one-parameter family given to double precision in Eq. 3.9 with $c_{s-3}$ free (§3.2). **Derived** (compiler check, not in the sources: Eq. 3.9 satisfies (A.1a–c, e–h) and the corrected (A.1d))
 10. A fourth-order P-ERK of this form needs at least 5 stages: $c_{s-3}\ne0$ is required for $a_{s-2,s-3}$ to be finite, and for $s=4$, $c_{s-3}=c_1=0$. Second- and third-order P-ERK can be built with 2 and 3 stages (§3.2). **Derived**
 11. The stability polynomial does not depend on $c_{s-3}$, because $a_{i,1}=c_i-a_{i,i-1}$; $c_{s-3}$ is chosen to minimize internal error amplification, and the optimum on $[0,1]$ is $c_{s-3}=1$ (§3.2). **Shown** (not tabulated)
 12. A fourth-order P-ERK family is a "classic–partitioned–classic" method: stages 1–2 are shared (internal consistency), stages $3,\dots,s-4$ are partitioned, and stages $s-3,\dots,s$ are shared (§3.3, Eq. 3.10). **Derived**

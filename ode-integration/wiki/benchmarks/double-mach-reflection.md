@@ -5,7 +5,7 @@ description: "Woodward and Colella's Mach 10 shock reflecting off a 30-degree we
 status: established
 aliases: [DMR, double Mach reflection problem, Woodward–Colella double Mach reflection]
 tags: [verification, step-size-control, ssp, multirate]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Double Mach reflection
@@ -50,7 +50,7 @@ computation with a strongly non-uniform admissible step.
   time-averaged asynchronous speed-up number, the operation saving a perfectly efficient
   cell-wise scheme would achieve, is 4.6 without and 144 with AMR. The measured gain is
   thus about 0.43 of the theoretical one without AMR and about a quarter with it
-  *(compiler ratios)*; Unfer attributes the shortfall to random memory access (§3.1), and
+  *(compiler check, not in the source)*; Unfer attributes the shortfall to random memory access (§3.1), and
   he uses the AMR ratio $144/36.51\approx4$ to project the gain of a reacting run (§4.7). ARK3 also shows more slip-line roll-ups than SSPRK(3,3) at equal mesh, which he
   reads as lower numerical dissipation (§4.5, Conclusion). See
   [local time stepping](/methods/local-time-stepping.md).

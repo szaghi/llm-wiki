@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Sci. Comput. 90:96"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Scientific_Computing_Chouchoulis_Jacobian-Free_Explicit_Multiderivative_RungeKutta_Methods_fo.pdf"
 tags: [multiderivative, lax-wendroff, explicit, stability, hyperbolic-conservation-laws]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -159,8 +159,8 @@ the amplification factors $g$.
 27. A new four-derivative, two-stage, sixth-order MDRK, 4DRK6-2, is
     constructed (App. A, Table 8). Its stability function is
     $\sum_{k=0}^6z^k/k!+z^7/6480+z^8/77760$ (Fig. 1). **Derived** (no order
-    verification printed; the reader recomputed the stability function from
-    the tableau and it agrees)
+    verification printed; the stability function recomputed from the tableau
+    agrees, *(compiler check, not in the sources)*)
 28. Odd-derivative MDRK schemes "seem less adequate in conjunction with the
     CAT algorithm", because the underlying Lax–Wendroff scheme uses centred
     differences only (§7). **Stated** (interpretation of Table 2)

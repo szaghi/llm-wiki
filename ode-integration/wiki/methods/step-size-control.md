@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Step-size control: error-based controllers, PID filters and CFL control"
-description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance and an I, PI, PID or Gustafsson controller sets the next step; the page covers controller stability and tuning, error- versus CFL-based control for stability-limited CFD, control with relaxation, stabilized, single-stage Taylor, positivity-adapted and SDC methods, multirate H-M controllers, cost-based control and variable-step multistep control."
+description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance and an I, PI, PID or Gustafsson controller sets the next step; the page covers controller stability and tuning, error- versus CFL-based control, temporal-spatial error balancing, control with relaxation, stabilized, Taylor, positivity-adapted and SDC methods, multirate, cost-based and multistep control."
 status: established
-aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA, adaptive SDC, Delta t-adaptivity, Delta t-k-adaptivity, p-adaptive deferred correction, order adaptivity]
+aliases: [adaptive time stepping, balanced adaptive time stepping, space–time error balancing, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA, adaptive SDC, Delta t-adaptivity, Delta t-k-adaptivity, p-adaptive deferred correction, order adaptivity]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -293,6 +293,76 @@ failure, at $\mathrm{atol}=\mathrm{rtol}=10^{-6}$ or $5\times10^{-6}$ (Table 1):
 On a cold-started Mach 2000 jet the controller used an effective Courant number of about
 $10^{-3}$ at start-up that rose to about $10^{-1}$, a ramp that CFL control would have to be
 programmed by hand (§6.1.1, Fig. 5b).
+
+## Balancing the temporal against the spatial error
+
+[Pan et al. (2022)](/sources/pan-2022.md) drop the user's temporal tolerance altogether. For
+an implicit ESDIRK step of a high-order DG discretization of compressible Navier–Stokes they
+write the one-step error, to leading order, as three terms (§2.1.5, Eqs. (24)–(28)):
+
+$$\text{local error}\approx E_t+h\,\bar E_s+h\,\bar E_{\mathrm{it}},$$
+
+the local temporal error $E_t$, $h$ times the $b$-weighted stage average $\bar E_s$ of the
+spatial truncation error, and $h$ times the $b$-weighted average $\bar E_{\mathrm{it}}$ of the
+Newton iteration error (page-local symbols). Since the largest term dominates, shrinking
+another far below it buys nothing. The step is the largest one with
+
+$$\lVert E_t\rVert=\beta_{\mathrm s}\,h\,\lVert\bar E_s\rVert,\qquad \beta_{\mathrm s}<1$$
+
+(Eq. (29); page-local $\beta_{\mathrm s}$, the source's $\beta$, distinct from the PID
+exponents), so the total error stays dominated by the spatial one. The three ingredients:
+
+- **Temporal estimate**: an embedded ESDIRK solution one order *higher* than the advanced
+  one, from Kværnø's stiffly accurate pairs 2(3), 3(4), 4(5), with no local extrapolation
+  (Eq. (15)); the authors claim it is more accurate than the usual lower-order estimate and
+  needs no problem-dependent calibration (§2.4). See
+  [embedded pairs](/methods/embedded-runge-kutta-pair.md).
+- **Spatial estimate**: the DG operator at polynomial degree $P+1$ minus that at degree $P$,
+  applied to the end-of-step solution (Eq. (30); page-local $P$), about 1.5 operator
+  evaluations, against more than 10 for one implicit stage (§2.4).
+- **Iteration error**: the Newton tolerance is $0.1$ times the temporal estimate (Eq. (37));
+  see [implicit stage solvers](/methods/implicit-stage-solvers.md).
+
+Because the target itself scales with $h$, the elementary controller has exponent $1/p$, not
+$1/(p+1)$, for main order $p$: $h_{n+1}=h_n\bigl(\beta_{\mathrm s}h_n\lVert\bar E_s\rVert/\lVert E_t\rVert\bigr)^{1/p}$
+(Eqs. (31)–(32)). It is applied per element and per conserved variable, with a floor
+$10^{-12}$ times the root-mean-square of each variable added to numerator and denominator
+(the numerator carries an extra factor $1.5^p$ so that quiescent elements let the step
+grow), aggregated over elements by a temporal-error-weighted mean and over variables by
+the minimum (Eqs. (33)–(36)). A global $L^2$ norm, they argue, can be dominated by one
+variable or by large structures and give a step too large for the small ones (§2.2). No
+accept/reject test is described.
+
+Results (§3; Nektar++):
+
+- **Isentropic vortex**, degree 6, ESDIRK3: the adaptive step keeps the temporal error below
+  the spatial one on every mesh, so the total error converges at the spatial rate, whereas
+  Courant number 10 is temporal-error dominated, 0.2 wastes work and 1.0 switches from
+  spatial to temporal dominance under refinement (Figs. 3–4); the adaptive run is near the
+  most efficient fixed-Courant run at every error level and up to ten times cheaper than a
+  naive choice (Fig. 5); ESDIRK2, 3 and 4 give almost the same total error (Fig. 6). With a
+  tolerance-based controller the temporal error would be independent of the mesh, the
+  authors note (§3.1.2).
+- **Steady flat-plate boundary layer**: unchanged parameters converge almost as fast as a
+  Courant ramp growing by 2 per step and faster than one growing by 1.5 (§3.2, Figs. 9–10);
+  dedicated steady-state accelerators remain faster.
+- **Taylor–Green vortex** at $\mathrm{Re}=1600$: $\beta_{\mathrm s}=0.01$ matches $h=0.1$ for
+  1.27 times its CPU time; they use $0.01$ for implicit LES, where the spatial truncation error
+  acts as the subgrid model, and $0.1$ otherwise (§3.3, Table 3).
+- **Cylinder at $\mathrm{Re}=3900$**: averaged adaptive steps 0.027, 0.043, 0.127 for ESDIRK2,
+  3, 4 against a fixed DIRK2 step 0.010 (Courant about 40), with CPU-time ratios 1.09, 1.36,
+  1.53: higher order takes larger steps but costs more (§3.4, Table 2).
+- Across all tests the CPU time is 0.96–1.27 times that of hand-tuned fixed or ramped Courant
+  settings, with no per-case tuning (Table 4).
+
+The authors concede that per-step balancing does not guarantee a spatially dominated global
+error and that the accuracy-based step does not guarantee stability (§4). Compared with the
+tolerance-based controllers on this page, the free parameter moves from $\mathrm{tol}$ to
+$\beta_{\mathrm s}$, which they still set per regime (0.1 or 0.01) *(compiler remark, not in the
+source)*. Vermeire
+(2023) rests stability-limited stepping on the related claim that the maximal stable step
+"often introduces little temporal error relative to the error introduced by the spatial
+discretization" (next section).
 
 ## Error control as a stability-limit detector
 
@@ -590,6 +660,14 @@ for the modification:
   below a tolerance (Eq. (60)). With tolerance $10^{-8}$ the error stays roughly constant in $h$ and
   the mean number of iterations falls as $h$ decreases, from about 13 to about 5 (§8, Figs. 6,
   8–9). It adapts the order, not the step; see [deferred correction](/methods/deferred-correction.md).
+- **Implicit Runge–Kutta for DAEs.** [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§5)
+  list adaptive time stepping for implicit Runge–Kutta DAEs as future work for
+  [Irksome](/software/irksome.md).
+- **Pseudo-time steps from positivity.** In the dual time stepping of
+  [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) the pseudo-step is set by density
+  and internal-energy positivity bounds and a CFL condition, enforced only when a
+  pseudo-iterate falls below user thresholds, while the physical step of the steady runs is
+  set by hand, fixed or ramped down (§8, §8.2, Table 2); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
 - **Estimator failure.** A degenerate estimator defeats any controller: for $y'=\cos t$ the
   Rodas5 main and embedded errors coincide (Steinebach 2023, §1;
   [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)).
@@ -629,12 +707,12 @@ for the modification:
 - Vermeire (2023) leaves the exponent normalizer of Eq. (33) undefined, and its claimed
   speedups "in excess of 7 … for all considered test cases" exceed its own tables (largest
   values 7.00, 7.11 and 6.23 on the three flows).
-- Belardo et al. (2026) print the ode23tx controller with $\mathrm{rtol}/\mathrm{err}_n$
-  although their $\mathrm{err}_n$ is already divided by the tolerance; in Moler's code the error
-  is relative and not divided by rtol. As printed, the controller aims at
-  $\mathrm{err}_n\approx0.8^3\,\mathrm{rtol}$, far below the acceptance threshold. This alters
-  the absolute step counts of their tables but not the comparison between estimators
-  *(reader's check, recorded on the Source page)*.
+- Belardo et al. (2026) print the ode23tx-type controller with $\mathrm{rtol}/\mathrm{err}_n$
+  although their $\mathrm{err}_n$ is already divided by the tolerance. As printed, the step
+  stays constant when $\mathrm{err}_n=0.8^3\,\mathrm{rtol}$, far below the acceptance threshold
+  $\mathrm{err}_n\le1$, so the formula is either misprinted or very conservative; either way it
+  shifts the absolute step counts of their tables, not the comparison between estimators run
+  with the same controller *(compiler check, not in the sources)*.
 - Faleichik & Moisa (2026) print the error estimate as $\tfrac1{10}(y_n-y_{n+1}+f(t_{n+1},y_{n+1}))$,
   without the factor $h$ on $f$; with $h$ restored, $y_n-y_{n+1}+hf(t_{n+1},y_{n+1})=\tfrac12h^2y''+O(h^3)$,
   so the printed constant gives $\tfrac1{20}h^2y''$ rather than the $\tfrac1{10}h^2y''$ of their
@@ -665,6 +743,14 @@ for the modification:
   truncated Taylor flux, not a proved local-error order.
 - Nüßlein et al. (2021) find adaptation less efficient than a smaller step for cheap explicit
   problems, with an unoptimized implementation and no timings (§5.1).
+- Pan et al. (2022) justify the floor term $1.5^p$ times the floor by guaranteed growth "by
+  at least 1.5 times"; the ratio inside the root of Eq. (33) is at least $1.5^p$ only when
+  $\beta_{\mathrm s}h\lVert\bar E_s\rVert\ge1.5^p\lVert E_t\rVert$, and tends to $1.5^p$ where
+  both estimates are far below the floor, so growth by 1.5 is approached in quiescent elements
+  but not guaranteed *(compiler check of Eq. (33), not in the source)*. They
+  give two different motivations for the floor (rounding error in §2.2, truncation error in
+  §3.5). The elementwise steps are aggregated into one global step, which is not
+  [local time stepping](/methods/local-time-stepping.md).
 - Deka & Einkemmer (2022) give no hardware for their timings, and Krylov runs that do not finish
   "within a reasonable amount of time" are excluded from their speedup factors.
 
@@ -694,3 +780,6 @@ for the modification:
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — CSL-TR-26-1: Remarks 3.20–3.21, Fig. 8.
 - [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — arXiv v4: §8 (Eq. (60), Figs. 6, 8–9).
 - [Čaklović et al. (2025)](/sources/caklovic-2025.md) — arXiv v2: §4.
+- [Pan et al. (2022)](/sources/pan-2022.md) — §2.1.2 (Eq. (15)), §2.1.5 (Eqs. (24)–(28)), §2.2 (Eqs. (29)–(36)), §2.3 (Eq. (37)), §2.4, §3.1–3.4 (Figs. 3–16, Tables 2–4), §4.
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §5 (future work).
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — arXiv v3: §8, §8.2 (Table 2).

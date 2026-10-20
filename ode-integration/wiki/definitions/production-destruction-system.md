@@ -5,7 +5,7 @@ description: "A production–destruction system writes each component's right-ha
 status: established
 aliases: [PDS, production–destruction–rest system, PDRS, conservative production–destruction system, fully conservative PDS, graph Laplacian system]
 tags: [positivity, structure-preserving, stiff, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Production–destruction systems
@@ -22,7 +22,9 @@ Deleersnijder and Meister (2003), as recalled by
 [Ciallella et al. (2022)](/sources/ciallella-2022.md) (§4.2, Eq. (26)),
 [Izzo et al. (2025)](/sources/izzo-2025.md) (Eqs. (1.1)–(1.3), matrix form
 $y'=(P(y)-D(y))\mathbf 1$ with page-local matrices $P=(p_{ij})$, $D=(d_{ij})$) and
-[Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) (§2.1, Eq. (1)). Torlo et al.
+[Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) (§2.1, Eq. (1)), and is
+restated by [Zhu et al. (2024)](/sources/zhu-2024.md) (Eqs. (1.4), (2.1)) and
+[Izgin et al. (2022)](/sources/izgin-2022.md) (§1). Torlo et al.
 also allow a **rest term** $\rho_i(y)\ge0$ (page-local), $y_i'=\rho_i+\sum_j(p_{ij}-d_{ij})$,
 a production–destruction–rest system (PDRS) whose source can break conservation (Eq. (3)).
 The splitting into $p$ and $d$ is a modelling choice, not a property of $f$: the same
@@ -47,6 +49,18 @@ $f$ admits several splittings, and the Patankar schemes built on them differ.
   Lipschitz continuity, bounds $d_{ij}/y_i$ without making it continuous at $y_i=0$
   (Eqs. (4)–(5)). Izzo et al. (2025, §1) state the condition as a unique solution together
   with $D(y)\to0$ as $y\to0$.
+- **Linear PDS.** The matrix $L$ of a positive and conservative linear system $y'=Ly$
+  must have nonpositive diagonal, nonnegative off-diagonal entries and zero column sums;
+  for $d=2$ every such system except $L=0$ is
+  $y_1'=-ay_1+by_2$, $y_2'=ay_1-by_2$, $a,b\ge0$, $a+b>0$ (page-local), with
+  $p_{12}=d_{21}=by_2$ and $p_{21}=d_{12}=ay_1$ (Izgin et al. 2022, §1, Eqs. (3)–(4)). Its
+  eigenvalues are $0$ and $-(a+b)$ and its steady states form the ray $\theta(b,a)^\top$,
+  each Lyapunov stable but not asymptotically stable (§2). Izgin et al. use it in place
+  of the Dahlquist equation, which has no production–destruction form for complex
+  $\lambda$ (§1); see
+  [Lyapunov stability of positive, conservative schemes](/results/lyapunov-stability-positive-conservative-schemes.md).
+  On the degenerate case $b=0$ the modified Patankar–Euler scheme coincides with backward
+  Euler (§1), as Torlo et al. note for linear conservative PDS in general.
 - **A general sufficient condition.** For an arbitrary ODE, $y_i=0\Rightarrow f_i(t,y)\ge0$
   for all $y\ge0$ makes the nonnegative orthant invariant; under it backward Euler
   preserves nonnegativity for every $h$ and forward Euler for $h$ small enough
@@ -117,6 +131,13 @@ invariants is a left null vector (§4.1.2–4.1.3).
   original six-species [Brusselator](/benchmarks/brusselator.md) (Izzo et al. 2025, Eq.
   (4.25)), the three-species algal-bloom test (Izzo et al. 2025, Eq. (4.24)) and the
   four-species Kopecz–Meister system (Nüßlein et al. 2021, Eq. (2.14)).
+- **Reacting flows.** The reaction source of the multispecies reacting Euler equations,
+  written for the partial densities $\rho z_i$ (page-local mass fractions $z_i$), is a
+  conservative PDS; Zhu et al. (2024, §1, §4.2–4.3) split a reversible reaction rate
+  into its nonnegative forward and backward parts to obtain $p_{ij}$ and $d_{ij}$, and
+  conservation of $\sum_i\rho z_i=\rho$ is what keeps every $z_i\le1$. Their accuracy tests
+  are a linear two-species exchange ($y_1'=y_2-2.7y_1$) and the three-species nonlinear
+  system of Huang and Shu with added non-conservative terms (§4.1).
 - **Epidemiology.** The eight-compartment SACEIRQD COVID-19 model (Izzo et al. 2025,
   Eq. (4.26)).
 - **Finite-volume updates.** A conservative finite-volume semi-discretization of a scalar
@@ -151,3 +172,5 @@ invariants is a left null vector (§4.1.2–4.1.3).
 - [Izzo et al. (2025)](/sources/izzo-2025.md) — §1 (Eqs. (1.1)–(1.6)), §3, §4 (Eqs. (4.22)–(4.26)), Thm. 4.1 (Eq. (4.38)); arXiv v1.
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §2.1 (Eq. (1)), §3.1–3.2 (Assumptions 3.1–3.4, Remarks 3.5–3.12, Eqs. (2)–(16)), §4.1.
 - [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §1 (Eq. (1.4)), §2 (Eqs. (2.8), (2.14)), §5.3 (Eq. (5.5)); arXiv v2.
+- [Zhu et al. (2024)](/sources/zhu-2024.md) — §1 (Eqs. (1.3)–(1.4)), §2 (Eq. (2.1)), §4.1–4.3; arXiv v1.
+- [Izgin et al. (2022)](/sources/izgin-2022.md) — §1 (Eqs. (3)–(4)), §2; arXiv v1.

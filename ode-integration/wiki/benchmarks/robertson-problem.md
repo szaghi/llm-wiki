@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Robertson problem"
-description: "Robertson's three-species chemical kinetics system, with rate constants spanning nine orders of magnitude and solutions integrated to t = 1e5 or 1e11; a stiff test with real negative Jacobian eigenvalues on which explicit methods fail, implicit deferred-correction and ADER variants are compared, and positivity-preserving schemes are tested with near-zero initial data."
+description: "Robertson's three-species chemical kinetics system, with rate constants spanning nine orders of magnitude and solutions integrated to t = 1e5 or 1e11; a stiff test with real negative Jacobian eigenvalues on which explicit methods fail, implicit deferred-correction and ADER variants are compared, multirate Runge–Kutta–Chebyshev is run from shifted initial data, and positivity-preserving schemes are tested with near-zero initial data."
 status: established
 aliases: [Robertson chemical kinetics, ROBER, Robertson (1966) problem]
 tags: [stiff, verification, implicit, deferred-correction, positivity]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Robertson problem
@@ -18,9 +18,11 @@ y_2'&=\phantom{-}0.04\,y_1-10^4\,y_2y_3-3\cdot10^7\,y_2^2,\\
 y_3'&=3\cdot10^7\,y_2^2,
 \end{aligned}\qquad y(0)=(1,0,0)^\top .$$
 
-Both sources print this system
+Two sources print exactly this system
 ([Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md), Eq. (6.5);
-[Han Veiga et al. (2021)](/sources/hanveiga-2021.md), Eq. (75)). The rate constants
+[Han Veiga et al. (2021)](/sources/hanveiga-2021.md), Eq. (75));
+[Abdulle et al. (2022)](/sources/abdulle-2022.md) (Eq. (5.1)) print the same right-hand
+side with different initial data. The rate constants
 span nine orders of magnitude, $y_2$ stays tiny (below $3.6\times10^{-5}$ in
 Table 6.5 of Koyaguerebo-Imé & Bourgault), and the sources integrate over very
 long intervals ($10^5$ and $10^{11}$). The right-hand sides sum to zero, so
@@ -87,6 +89,20 @@ the correction cuts the run time on $[0,10^4]$ from 0.485 s to 0.090 s ($-81.4\%
 authors attribute to avoiding stiff dynamics in non-physical negative states (Table 6,
 Remark 3.22).
 
+**Abdulle et al. (2022), §5.1, Figs. 10–11.** The
+[multirate Runge–Kutta–Chebyshev method](/methods/multirate-runge-kutta-chebyshev.md) (mRKC)
+splits the right-hand side into a severely stiff but cheap part, the single term
+$-10^4y_2y_3$ of the second equation, and the rest, on $t\in[0,100]$ with the
+non-standard initial data $y(0)=(1,\ 2\cdot10^{-5},\ 10^{-1})^\top$ (see Qualifications);
+with these data, the authors state, that term is the only source of severe stiffness.
+Steps $h=2^{-k}$, $k=0,\dots,7$, against an RK4 reference with $h=10^{-4}$, $\ell^\infty$
+error: the standard [Runge–Kutta–Chebyshev method](/methods/stabilized-explicit-runge-kutta.md)
+(RKC) and mRKC both converge at first order, with hardly distinguishable errors, and
+mRKC's mean inner averaging interval stays much smaller than $h$ (Fig. 10). At $h=1$ the
+spectral radius of the slow part decreases in time, so mRKC's outer stage number
+decreases, while RKC's stage number grows with the full spectral radius, which the stiff
+term drives (Fig. 11).
+
 **Izzo et al. (2025), §5.** The multistep Patankar methods of their Table 1 "exhibit reduced
 efficiency" on Robertson; no data are shown ([Izzo et al. 2025](/sources/izzo-2025.md)).
 
@@ -99,8 +115,13 @@ efficiency" on Robertson; no data are shown ([Izzo et al. 2025](/sources/izzo-20
   "$A\to B$, $B+B\to B+C\to A+C$", conflating $B+B\to B+C$ and $B+C\to A+C$ *(compiler check of
   the printed scheme, §5.1)*.
 
-- The two studies share the system but not the protocol: Koyaguerebo-Imé & Bourgault
-  measure fixed-step errors to $T=10^5$ against a high-order reference; Han Veiga et al.
+- **Initial data of Abdulle et al. (2022).** Their Eq. (5.1) starts from
+  $y(0)=(1,\ 2\cdot10^{-5},\ 10^{-1})^\top$, not from the standard $(1,0,0)^\top$, and the
+  paper does not say why. The components then sum to $1.10002$, the invariant value of
+  $y_1+y_2+y_3$ for that run *(compiler check, not in the source)*. Their results are not
+  comparable with runs from $(1,0,0)^\top$.
+- Koyaguerebo-Imé & Bourgault and Han Veiga et al. share the system but not the protocol: the former
+  measure fixed-step errors to $T=10^5$ against a high-order reference, the latter
   compare trajectories to $10^{11}$ with 30 geometrically growing steps.
 - The orders printed in Table 6.5 at $h=1/600$ (up to 27.7) are computed from errors at
   round-off level ($10^{-16}$) and are not convergence orders *(compiler check, not in the sources)*.
@@ -112,3 +133,4 @@ efficiency" on Robertson; no data are shown ([Izzo et al. 2025](/sources/izzo-20
 - [Torlo et al. (2022)](/sources/torlo-2022.md) — §7.1 (Eq. (69), Fig. 7); arXiv v5.
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §4.1.1 (Eqs. (35)–(37)), §5.1.1, §5.2.1, §5.3 (Tables 4–5), §5.4 (Table 6), Figs. 2–4, 11–13.
 - [Izzo et al. (2025)](/sources/izzo-2025.md) — §5; arXiv v1.
+- [Abdulle et al. (2022)](/sources/abdulle-2022.md) — §5.1 (Eq. (5.1), Figs. 10–11); arXiv v6.

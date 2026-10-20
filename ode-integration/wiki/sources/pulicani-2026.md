@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Methods Appl. Mech. Engrg. 452:118717"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Pulicani_A_new_hybrid_strongly_coupled_multi-time_step_approach_with.pdf"
 tags: [local-time-stepping, multirate, partitioned, fluid-structure-interaction, ssp]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -95,7 +95,7 @@ $H^{\mathrm f}$, $H^{\mathrm s}$ the condensed interface operators.
 23. Constant average acceleration "has the advantage of being unconditionally stable, second-order accurate, and without numerical dissipation" (§3.4). **Stated**
 24. SSPRK(3,3) "exhibits a greater stability than the previous RK1 scheme when combined with the MUSCL strategy" (§4.3). **Stated**
 
-*(Reader caveats, not in the source.)* The observed order about 2 with a
+*(Compiler caveats, not in the sources.)* The observed order about 2 with a
 third-order Runge–Kutta method is a combined space–time error at fixed
 CFL, and the fluid reaches only 1.41 in the coupled case; the stage-wise
 multipliers (link weights 1, 1/2, 1 against the flux weights of

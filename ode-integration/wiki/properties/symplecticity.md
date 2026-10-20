@@ -5,15 +5,15 @@ description: "A method is symplectic when its one-step map is a symplectic trans
 status: established
 aliases: [symplectic integrator, symplectic method, quadratic invariants, linear invariants, geometric integration]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Symplecticity and quadratic-invariant preservation
 
 The exact flow $\varphi_h$ of a Hamiltonian system is a symplectic map. A
 one-step method $\psi_h$ is **symplectic** when $\psi_h$ is a symplectic map
-for every Hamiltonian system and every $h$ *(standard definition, which the
-sources use without restating)*. The property matters through
+for every Hamiltonian system and every $h$ *(definition supplied by the compiler;
+the sources use the term without stating it)*. The property matters through
 [backward error analysis](/methods/backward-error-analysis.md): the modified
 vector field of a symplectic method is Hamiltonian, so the method has a
 **modified Hamiltonian** $\tilde H$ and conserves $H$ up to $O(h^p)$ over
@@ -36,7 +36,7 @@ exponentially long times ([Blanes et al. (2024)](/sources/blanes-2024.md),
   $c=(\tfrac14,\tfrac34)$, $A=\begin{pmatrix}1/4&0\\1/2&1/4\end{pmatrix}$,
   $b=(\tfrac12,\tfrac12)$ (attributed to Qin and Zhang), second order,
   A-stable and symplectic. It is two implicit-midpoint half-steps in
-  succession *(compiler observation, not in the source)*.
+  succession, with step $h/2$ each *(compiler check, not in the source)*.
   [Southworth et al. (2022)](/sources/southworth-2022.md) (§2.1) state that
   symplectic DIRKs are limited to order 4 and that the known ones above order
   2 have negative diagonal entries, and that neither linear multistep methods
@@ -155,6 +155,24 @@ energy (Farrell et al. (2021), §2.1, §4.3).
   to a finite order ($4k-1$, $4k+3$ or $4k+1$ depending on the class, §7.3).
   See [complex-coefficient splitting](/methods/complex-coefficient-splitting.md).
 
+## Invariants built into a learned model
+
+[Müller (2023)](/sources/muller-2023.md) builds conservation into the model instead of the
+integrator: a neural-network Lagrangian made exactly invariant under rotations and translations
+has, by Noether's theorem, exactly conserved momenta, and the learned equations are then advanced
+by non-symplectic RK4 (§2, §3; see [learned time integrators](/methods/learned-time-integrators.md)).
+The conservation is exact for the continuous learned dynamics only; the author writes that the
+drift of the learned momenta "would be zero in exact arithmetic and for an exact time integrator"
+and attributes the measured drift, about $10^{-5}$, to single-precision rounding without a
+step-size study (§3.1.2). Since the learned momenta are nonlinear functions of the state, RK4
+does not preserve them in general *(compiler remark, not in the source)*. Müller compares the
+exactly conserved learned momentum, and the resulting near-conservation of the true momentum,
+to the modified Hamiltonian of a symplectic method (§2.3.1, §3.1.1). The comparison is an
+analogy only: the modified Hamiltonian is an invariant of the modified equation of the discrete
+map, the learned momentum an invariant of a different continuous model. He also recalls that
+Hamiltonian neural networks were first integrated with non-symplectic RK4 and that later
+symplectic recurrent networks with Störmer–Verlet were argued to perform better (§1.1.1).
+
 ## Parallel-in-time iterations
 
 A [Parareal](/methods/parareal.md) iterate
@@ -217,3 +235,4 @@ so that energy and charge errors match those of serial stepping (App. A.2–A.3)
 - [Bencomo & Chan (2023)](/sources/bencomo-2023.md) — §2.2.2 (discrete-adjoint time symmetry versus geometric adjoints).
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §1 (quadratic and polynomial invariants of RK methods).
 - [Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) — arXiv v2: Remark 5.4, App. A, A.2–A.3 (Figs. 8–9).
+- [Müller (2023)](/sources/muller-2023.md) — §1.1.1, §2.1–2.3 (Noether invariants of learned Lagrangians), §3.1.1–3.1.2.

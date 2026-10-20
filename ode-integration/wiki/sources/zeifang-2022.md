@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 464:111353"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Zeifang_Implicit_two-derivative_deferred_correction_time_discretizat.pdf"
 tags: [multiderivative, deferred-correction, implicit-stage-solvers, preconditioning, cfd]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -147,7 +147,7 @@ $(a_{lj},\dot a_{lj},c_l)$ the two-derivative tableau, $\Delta c_l=c_l-c_{l-1}$.
 27. With another quadrature rule and enough corrections, any order is attainable "in
     principle". (§4.3.1) **Stated**
 
-*(Reader checks, not in the source.)* The name HBPC is kept although the predictor differs
+*(Compiler checks, not in the sources.)* The name HBPC is kept although the predictor differs
 from the IMEX predictor of the original HBPC paper; the two variants must not be conflated.
 The finding that standard block Jacobi is worse than no preconditioning (claim 15) concerns
 the doubled system and runs against common experience with implicit DG.

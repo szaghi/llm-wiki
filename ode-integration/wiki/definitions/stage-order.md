@@ -5,7 +5,7 @@ description: "Stage order q is the largest integer for which the quadrature cond
 status: established
 aliases: [classical stage order, stage-order residual, C(η) condition, stiff order]
 tags: [runge-kutta, order-reduction, stiff, order-conditions]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Stage order
@@ -52,7 +52,19 @@ $k=q$. The observed behaviour reported by the sources:
   ([Farrell et al. (2021)](/sources/farrell-2021.md), §4.1); for Gauss methods the
   two statements disagree, an open contradiction recorded on
   [order reduction](/definitions/order-reduction.md);
-* index-2 DAEs: order formally limited to $q$ (Southworth et al. (2022), §2.1).
+* index-2 DAEs: order formally limited to $q$ (Southworth et al. (2022), §2.1); for the
+  semi-discrete incompressible Navier–Stokes equations
+  [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§2, §4.2) state that "it is the
+  so-called stage order of the scheme that matters, and not the global order", yet observe
+  drag and lift converging beyond the stage-order bound, at the formal order (see
+  Qualifications);
+* heat equation with Dirichlet data imposed on the stage values (Kirby & MacLachlan 2025,
+  §4.1, Figs. 3–4): backward Euler and Alexander's three-stage DIRK (stage order 1) lose
+  $L^2$ accuracy (Alexander's at the largest steps with quadratic elements), with cubic elements also two-stage Radau IIA (order 3, stage order 2) at
+  large steps, while three- and four-stage Radau IIA and WSODIRK433 (weak stage order 3)
+  keep the spatial accuracy. Imposing the data on stage values "retains (at least) the
+  stage order" of the scheme (§2.1); see
+  [boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
 
 * stiff relaxation (IMEX): on a linear hyperbolic relaxation system, the
   intermediate regime $\varepsilon\sim h$ exposes the low stage order of IMEX pairs;
@@ -85,7 +97,7 @@ coefficient condition* $b^{\mathrm E}_2=0$, $a^{\mathrm I}_{i2}=0$ for $i\ge3$ (
 that keeps the second stage out of every later stage and of the update (Lemma 5.3;
 Thm. 5.1). The second stage cannot meet the condition: its explicit quadrature is
 $a^{\mathrm E}_{21}c_1=0\ne\frac12c_2^2$ when $c_1=0$, as for type-CK pairs
-*(compiler remark)*. BHR(5,5,3)\* satisfies these conditions; ARS(4,4,3)
+*(compiler check, not in the source)*. BHR(5,5,3)\* satisfies these conditions; ARS(4,4,3)
 does not. See [uniform accuracy of IMEX schemes](/results/uniform-accuracy-relaxation-systems.md).
 
 ## Bounds by method class
@@ -96,7 +108,8 @@ does not. See [uniform accuracy of IMEX schemes](/results/uniform-accuracy-relax
 | DIRK, irreducible | $\le2$ | Biswas et al. (2023), Thm. 2.2 (proof in its ref. [20]) |
 | DIRK with nonsingular $A$ | $\le1$ | Biswas et al. (2023), Thm. 2.2 |
 | ESDIRK (one explicit stage) | $\le2$ | Southworth et al. (2022), §2.1; Biswas et al. (2024), Example 7.3 |
-| Gauss–Legendre, Radau IIA ($s$ stages) | $s$ | Southworth et al. (2022), §2.1; Farrell et al. (2021), §3.2 |
+| Gauss–Legendre, Radau IIA ($s$ stages) | $s$ | Southworth et al. (2022), §2.1; Farrell et al. (2021), §3.2; Kirby & MacLachlan (2025), §4.1 (Radau IIA) |
+| collocation methods on $s$ nodes (Gauss, Radau IIA, Lobatto IIIA) | $s$ | [Akrivis et al. (2025)](/sources/akrivis-2025.md), §2.4.1, §4.4 (recalled) |
 
 Biswas et al. (2024, Example 7.3) recover the DIRK and EDIRK bounds from
 their weak-stage-order theory: stage order $q$ means $\mathcal K_q=\{0\}$, the Krylov space of
@@ -122,7 +135,16 @@ Thm. 3.1). See [weak stage order](/definitions/weak-stage-order.md) and
 
 * Statements that DIRKs are "limited to stage order 1 or 2" (Southworth et
   al. (2022), §2.1) concern classical stage order only; weak stage order up to
-  5 is attained by DIRKs (Biswas et al. (2023), App. A).
+  5 is attained by DIRKs (Biswas et al. (2023), App. A). Kirby & MacLachlan (2025,
+  §4.2) phrase the same bound as DIRKs being "only guaranteed to have stage order one or
+  two": the values are upper bounds from the table above, 1 with invertible $A$ and 2 with
+  an explicit first stage, not guarantees, and the WSODIRK433 they test reaches weak stage
+  order 3 and matches three-stage Radau IIA on their heat problem (§4.1).
+* Kirby & MacLachlan (2025) assert both that stage order, not global order, governs
+  accuracy on index-2 DAEs (§2, p. 17:5) and that their Navier–Stokes runs "generally
+  exceed the stage-order bound", reaching the formal order for drag and lift (§4.2,
+  p. 17:19); they acknowledge the tension without resolving it. They also call the index-2
+  system "degree-2" in one place.
 * The observed-rate rules ($q$, $\min\{p,q+1\}$, $\min\{p,q\}$) mostly refer
   to different problem classes (stiff ODEs, PDEs with boundary data, the "ODE
   problems" of Biswas et al. (2025), §3) and to different norms, and none of the
@@ -136,8 +158,8 @@ Thm. 3.1). See [weak stage order](/definitions/weak-stage-order.md) and
 * Farrell et al. (2021, §4.1) state that the $H^1$ error of three-stage Lobatto
   IIIC "stays at order three (which is both the stage order and the spatial
   order in this norm)". The standard classification gives $s$-stage Lobatto
-  IIIC only $C(s-1)$, i.e. stage order 2 for $s=3$ *(compiler check, not in the
-  sources; the reader of the paper flags the statement as a likely error)*.
+  IIIC only $C(s-1)$, i.e. stage order 2 for $s=3$: the three-stage tableau has
+  $\tau^{(2)}=0$ but $\tau^{(3)}_1=\tfrac1{12}\ne0$ *(compiler check, not in the sources)*.
 * Multirate methods that drop internal consistency have stage order zero
   ([Roberts et al. (2021)](/sources/roberts-2021.md), §7).
 
@@ -150,3 +172,5 @@ Thm. 3.1). See [weak stage order](/definitions/weak-stage-order.md) and
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §1, §3.2, §4.1, Figs. 1–2 (stiff order of Gauss–Legendre and Radau IIA).
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §7 (internally inconsistent multirate methods).
 - [Hu & Shu (2025)](/sources/hu-2025.md) — Remark 4.4, Lemma 4.5, Thm. 4.3, §5 (Eqs. (5.1)–(5.2), Lemma 5.3, Thm. 5.1), §6 (Fig. 1); arXiv v1.
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2 (p. 17:5), §2.1, §4.1 (Figs. 3–4), §4.2 (p. 17:19).
+- [Akrivis et al. (2025)](/sources/akrivis-2025.md) — arXiv v2: §2.4.1, §4.4 (collocation stage order).

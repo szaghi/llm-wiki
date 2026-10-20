@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 518:113339"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Computational_Physics_Southworth_Implicit-explicit_Runge-Kutta_for_radiation_hydrodynamics_I.pdf"
 tags: [imex, runge-kutta, splitting, asymptotic-preserving, structure-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -60,7 +60,7 @@ Notation: $h$ the step and $\Delta x$ the mesh width (the source's $\Delta t$ an
 25. Schemes absent from a convergence plot were unstable at the initial (hydro-CFL) step (§5). **Shown**
 26. Even with nonlinear shocks, robust second-order convergence in time to the semi-discrete solution is achievable (§5). **Shown**
 
-*(Compiler checks by the reader, not in the source.)* The "hard limit of 2nd-order accuracy" in claim 1 holds for splittings with real positive coefficients, the case that matters here because stiff diffusion cannot be integrated backward in time. For an additive IMEX pair with $b^{\mathrm I}=b^{\mathrm E}$, linear invariants of each part are kept; the difficulty in claim 15 is specific to an invariant shared by terms evaluated at different stage vectors. The implicit part of I-IMEX(3,4,3) is stiffly accurate, which the paper does not state.
+*(Compiler checks, not in the sources.)* The "hard limit of 2nd-order accuracy" in claim 1 holds for splittings with real positive coefficients, the case that matters here because stiff diffusion cannot be integrated backward in time. For an additive IMEX pair with $b^{\mathrm I}=b^{\mathrm E}$, linear invariants of each part are kept; the difficulty in claim 15 is specific to an invariant shared by terms evaluated at different stage vectors. The implicit part of I-IMEX(3,4,3) is stiffly accurate, which the paper does not state.
 
 # Printed slips
 
@@ -96,7 +96,7 @@ Notation: $h$ the step and $\Delta x$ the mesh width (the source's $\Delta t$ an
 | $\rho$, $\mathbf u$, $e_t$, $e_i$, $p$, $p_r$, $E_r$, $T$ | kept | hydro and radiation variables |
 | $\sigma_E$, $\sigma_p$, $\sigma_a$, $\sigma_s$, $D$, $a$, $c$, $c_v$ | kept | opacities, diffusion coefficient, radiation constant, speed of light, specific heat; $c$ is not an abscissa |
 | $\mathcal L_T$, $f_T$, $f_p$ | kept | hydro temperature source, equations of state |
-| $\hat F$, $K$, $\lvert K\rvert$ | kept | numerical flux, finite-volume cell |
+| $\hat F$, $K$, $\lvert K\rvert$ | kept (page-local) | numerical flux, finite-volume cell; **$K$ collides** with the registry iteration count |
 | (s, σ, p) names, e.g. SSP-LDIRK3(3,3,2) | kept | Pareschi–Russo naming: implicit stages, explicit stages, order |
 
 # Reference list

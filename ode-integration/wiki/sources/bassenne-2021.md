@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 424:109847"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Bassenne_Time-Accurate_and_highly-Stable_Explicit_operators_for_stiff.pdf"
 tags: [stiff, explicit, runge-kutta, stability, preconditioning, method-of-lines]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -27,9 +27,9 @@ shifted linear solves per right-hand-side evaluation. The free parameter
 is fixed by the necessary condition $\alpha\ge(2^p-1)/C$, where $C$ is the
 negative-real-axis extent of the explicit scheme's stability region. On a
 linear(ized) problem the combination is a linearly implicit method; the
-reader notes its kinship with
-[W-methods](/methods/rosenbrock-wanner-method.md), which the paper does not
-draw.
+kinship with
+[W-methods](/methods/rosenbrock-wanner-method.md) is a compiler observation
+that the paper does not draw.
 
 For first-order TASE a sufficient condition $\alpha\ge\frac12\max
 \beta_{ij}/\alpha_{ij}$ is proved through the
@@ -100,7 +100,7 @@ $C$ the negative-real-axis stability limit of the explicit scheme.
    and $T^{(p)}_LL=\frac1{\alpha h}[-(2^p-1)I+\sum_{k=0}^{p-1}2^k\omega_{p,k}(2^kI-\alpha hL)^{-1}]$,
    with $\omega_{p,k}$: $p=1$: 1; $p=2$: $-1,4$; $p=3$: $\frac13,-4,\frac{32}3$;
    $p=4$: $-\frac1{21},\frac43,-\frac{32}3,\frac{512}{21}$ (§2.5,
-   Eqs. (14)–(15), Tables 2–3). **Stated** (reader check:
+   Eqs. (14)–(15), Tables 2–3). **Stated** (compiler check, not in the sources:
    $\sum_k\omega_{p,k}=2^p-1$, $\sum_k2^{-k}\omega_{p,k}=1$)
 9. TASE needs $p$ linear solves per right-hand-side evaluation, so the
    per-step cost is "at least comparable" to implicit schemes; the gain
@@ -182,7 +182,7 @@ $C$ the negative-real-axis stability limit of the explicit scheme.
     preconditioned explicit methods, and the cost of $p$ inversions per
     stage may outweigh the benefit for very high orders (§5). **Stated**
 
-Reader remarks recorded with the notes: Theorem 3.2 for $s=4$ relies on a
+*(Compiler remarks, not in the sources.)* Theorem 3.2 for $s=4$ relies on a
 linear-SSP Shu–Osher realization of $\sum_{k\le4}z^k/k!$, legitimate only
 for linear constant-coefficient problems, since no 4-stage fourth-order
 nonlinear SSP method exists; the A-stability analysis assumes
@@ -198,7 +198,7 @@ sources may contradict "preserved order" in the stiff regime.
 - §3.1 end: "provided in provided in Section 2.3"; the necessary condition
   is derived in §2.4.
 - Table 1 rounds $C$: the true intercepts are $C\approx2.5127$ (RK3) and
-  $C\approx2.7853$ (RK4) (reader's computation). The RK4 value is rounded
+  $C\approx2.7853$ (RK4) *(compiler check, not in the sources)*. The RK4 value is rounded
   up, so the printed $\alpha_{\min}$ 2.51 ($p=3$) and 5.38 ($p=4$) lie
   slightly below the exact thresholds 2.513 and 5.385; this may contribute
   to the $\max\lvert R\rvert\approx1.02$ (not verified).
@@ -248,9 +248,10 @@ sources may contradict "preserved order" in the stiff regime.
 
 The paper prints 62 references in numbered style, in order of first
 citation. All are merged complete into the [bibliography](/bibliography.md)
-with `citedby` bassenne-2021. Refs. [52] (Eberly, Geometric Tools) and [62]
-(Kennedy & Carpenter DIRK review, NASA) are undated and keyed by the citing
-year; ref. [1] prints a mis-parsed second author "G. Mathématicien";
+with `citedby` bassenne-2021. Ref. [52] (Eberly, Geometric Tools) is
+undated and keyed by the citing year; ref. [62] (Kennedy & Carpenter DIRK
+review, NASA, undated) is merged into the 2016 NASA report entry
+`kennedy-2016`; ref. [1] prints a mis-parsed second author "G. Mathématicien";
 ref. [37] prints the authors as "G. Wanner, E. Hairer" and is merged into
 the Hairer–Wanner II entry `hairer-1996`;
 ref. [57] has a garbled author list; ref. [59] is a volume of collected

@@ -5,7 +5,7 @@ description: "Fourier analysis of a fully discrete space–time scheme for a lin
 status: established
 aliases: [von Neumann analysis, Fourier stability analysis, Fourier analysis, amplification factor, amplification matrix, von Neumann criterion, critical CFL number, Fourier CFL number]
 tags: [stability, explicit, lax-wendroff, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Von Neumann (Fourier) stability analysis of fully discrete schemes
@@ -53,6 +53,29 @@ scheme ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md), §5, Prop. 1;
   [Caliari et al. (2024)](/sources/caliari-2024.md) (§2) do the same per Fourier mode of
   the heat equation, where the factor is a closed-form two-parameter
   [stability function](/definitions/stability-function.md).
+
+- **Amplification matrices of partitioned updates, with dispersion targets.**
+  [Maurya et al. (2021)](/sources/maurya-2021.md) analyse sequential explicit updates of wave
+  systems (linearized Euler, linearized rotating shallow water) in which later equations use
+  the already-updated earlier unknowns. The amplification matrix per wavenumber, e.g.
+  $\begin{pmatrix}1&-\mathrm ia_1hk_{\mathrm{eq}}\\-\mathrm ia_2hk_{\mathrm{eq}}&1-\vartheta a_1a_2(hk_{\mathrm{eq}})^2\end{pmatrix}$
+  for the one-stage scheme (page-local: physical coefficients $a_1,a_2$, equivalent
+  wavenumber $k_{\mathrm{eq}}$ of the spatial scheme, free weight $\vartheta$), gives the
+  modulus, the numerical phase speed and the numerical group velocity of each eigenvalue
+  (§2.1, Eqs. (7)–(9)); contour maps over wavenumber and Courant number, and over the two
+  wavenumbers in 2D, display them (Figs. 1–9). The free weights are then fixed by minimizing
+  the integrated deviation from the exact factor under constraints on modulus, phase and
+  group-velocity errors (§3, Eqs. (12)–(13)), a dispersion-relation-preserving design. The
+  scheme and its stability are on
+  [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md). For the
+  two-component systems the determinant of the matrix, $1+(1-\vartheta)a^2$ with
+  $a^2=a_1a_2(hk_{\mathrm{eq}})^2$, equals $\lvert g\rvert^2$ whenever the eigenvalues are complex
+  conjugate *(compiler check, not in the source)*.
+- **Spectra as an optimization target.** [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md)
+  (§4.1–4.2, Eqs. (52)–(60)) compute the Bloch-wave eigenvalues of upwind flux-reconstruction
+  DG for linear advection, degrees 1–8, as the target set of the explicit stability polynomial
+  of their accelerated IMEX schemes; see
+  [optimal stability polynomials](/methods/optimal-stability-polynomial.md).
 
 The numbers are sharp where tested: linear advection with LWFR blows up for steps slightly
 above the computed limit (Babbar et al. 2022, §6), and the EIN threshold 0.54 separates
@@ -106,10 +129,27 @@ discretizations to future work, because CFL bounds depend on the spatial discret
   (0.2300), and both schemes converge; the paper does not comment, and only 3DRKCAT7-3
   diverges, on a nonlinear Euler case at coarse meshes (§6.3). Their $\nu$ in §6 is based
   on the maximal eigenvalue of the flux Jacobian, not on a constant advection speed.
+- **Claims beyond the analysis.** Maurya et al. (2021, §12.1, Fig. 23) report that classical
+  RK4 with the compact scheme OUCS3 becomes unstable on a 1D linearized shallow-water
+  Gaussian at Courant number about $1.6\times10^{-3}$. The periodic OUCS3 symbol peaks at
+  about 2.209 and RK4 is stable on the imaginary axis up to $2\sqrt2$, so the von Neumann
+  limit is a Courant number of about 1.28 *(compiler check, not in the source)*; the reported
+  growth cannot be the linear instability of the periodic interior scheme, and boundary
+  closures are not analysed there.
 - **Boundaries.** A global spectral analysis that includes interface or boundary
   pollution, as for the overlapping-subdomain scheme on
   [local time stepping](/methods/local-time-stepping.md), is a different, non-periodic
   analysis.
+- **Printed values.** In Maurya et al. (2021, Table 4) the minimum moduli for weight 1.01,
+  0.99600 and 0.99000 for the two spatial schemes at Courant number 0.2, disagree with
+  $\lvert g\rvert^2=1+(1-\vartheta)(a^2+b^2)$, which gives about 0.99960 and 0.99805 and reproduces
+  the neighbouring rows (0.99800 and 0.99019 for weight 1.05, printed 0.99799 and 0.99012)
+  ($a$ and $b$ the scaled modified wavenumbers in $x$ and $y$, page-local;
+  *compiler check, not in the source*).
+  Vermeire & Hedayati Nasab (2021) write the plane wave as $e^{\mathrm i(\theta x-\omega t)}$ but
+  insert $\omega$ into the stability polynomial without the factor $-\mathrm i$ that turns a
+  frequency into a semi-discrete eigenvalue (Eqs. (53), (37)); the rotation is presumably done
+  in their computation.
 - **Name clash.** "Von Neumann's lemma" on [A-stability](/properties/a-stability.md)
   and [strong stability](/properties/strong-stability.md) (A-stability implies
   $\lVert R(hL)\rVert\le1$ for seminegative $L$) is a different result, unrelated to
@@ -124,3 +164,5 @@ discretizations to future work, because CFL bounds depend on the spatial discret
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §2 (Fourier analysis of exponential schemes with a partial linear part).
 - [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md) — §4–5 (multidimensional von Neumann spectra for stability polynomials).
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.1 (von Neumann analysis left open).
+- [Maurya et al. (2021)](/sources/maurya-2021.md) — §2.1–2.2 (Eqs. (5)–(11)), §3 (Eqs. (12)–(13), Tables 1–2), §4.1 (Eqs. (21)–(26), Table 4), §9 (Fig. 17), §12.1 (Fig. 23).
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §4.1–4.2 (Eqs. (52)–(60)), §3.2 (Eq. (37)).

@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. 47:A2609-A2635"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Buvoli_A_New_Class_of_RungeKutta_Methods_for_Nonlinearly_Partitione.pdf"
 tags: [runge-kutta, imex, order-conditions, stability, stiff]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ Notation: $f(y)=F(y,y)$ (source $G$). The additive pieces are $f^{\{1\}}$, $f^{\
 27. The standard first-order time-lagging of opacities in radiation transport (Larsen [30]) is exactly a nonlinear partition with the NPRK Euler step (3.1); NPRK extends it to higher order. (§7.2) **Stated**
 28. Rosenbrock methods impose the same linearly implicit treatment on the whole problem and do not allow mixed explicit, implicit and linearly implicit treatment of variables inside nonlinear terms. (§2.3) **Stated**
 
-*(Reader checks, not in the source.)* For Euler the limit of $R(z_1,\kappa z_1)=(1+\kappa z_1)/(1-z_1)$ is $-\kappa$, not $\kappa$ (claim 12); the modulus is unaffected. Recomputing from SM4.17–SM4.19 gives $\Upsilon(0;1-1/\sqrt2)=57-40\sqrt2\approx0.431$ and $\Upsilon(0;1+1/\sqrt2)=57+40\sqrt2\approx113.6$, confirming claim 14 against the swapped Fig. SM4.1 caption. In (5.18) the implicit-midpoint stability function is $(2+z)/(2-z)=-(z+2)/(z-2)$; the sign cancels in the product, so claim 20 stands.
+*(Compiler checks, not in the sources.)* For Euler the limit of $R(z_1,\kappa z_1)=(1+\kappa z_1)/(1-z_1)$ is $-\kappa$, not $\kappa$ (claim 12); the modulus is unaffected. Recomputing from SM4.17–SM4.19 gives $\Upsilon(0;1-1/\sqrt2)=57-40\sqrt2\approx0.431$ and $\Upsilon(0;1+1/\sqrt2)=57+40\sqrt2\approx113.6$, confirming claim 14 against the swapped Fig. SM4.1 caption. In (5.18) the implicit-midpoint stability function is $(2+z)/(2-z)=-(z+2)/(z-2)$; the sign cancels in the product, so claim 20 stands.
 
 # Printed slips
 

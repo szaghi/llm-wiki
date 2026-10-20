@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is stiffly accurate when the last row of A 
 status: established
 aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate, GSA, implicitly stiffly accurate, ISA]
 tags: [stiff, runge-kutta, stability, dae, asymptotic-preserving]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Stiff accuracy
@@ -24,6 +24,11 @@ equation enforces *(compiler remark, not stated in the sources)*. Taddei et al. 
 this way: Radau IIA is stiffly accurate with $c_s=1$, so for their fluid–structure DAE
 the step value is the last stage and the separate update (projection) step is dropped
 ([Taddei et al. (2026)](/sources/taddei-2026.md), §1.1, §3.1 after Eq. (15)).
+[Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§2.1–2.2) use it twice in Irksome: with
+Dirichlet data imposed on the stage values, a stiffly accurate method (Radau IIA, Lobatto
+IIIC) returns a step value that matches the data at $t_{n+1}$, which other methods do not
+guarantee, and the stage-value formulation then skips the final mass-matrix solve; see
+[boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
 
 ## Consequence for the stability function
 
@@ -98,8 +103,8 @@ embedded solution and that of stage 7 equals the solution after stage 6
   ([Chinomona & Reynolds (2021)](/sources/chinomona-2021.md), §2.1). They
   require the base IMEX-ARK of an [IMEX-MRI-GARK method](/methods/imex-mri-gark.md)
   in this form, so that the step result is the last slow stage. The padded
-  $A$ is singular, so padding does not give $R(\infty)=0$
-  *(compiler remark)*. (Padding appends an explicit *last* stage; the type-II
+  $A$ is singular, so padding does not give $R(\infty)=0$; the padded method is the
+  original one, with the same $R$ *(compiler check, not in the source)*. (Padding appends an explicit *last* stage; the type-II
   condition above concerns an explicit *first* stage and does not apply.)
 * **Multirate GARK.** Requiring stiff accuracy in both partitions, together
   with internal consistency and the standard multirate form, determines the
@@ -202,3 +207,4 @@ include [stage order](/definitions/stage-order.md) 2 on the stages after the sec
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §3.1 (Eq. (15)), §5.1.1 (Table 1); arXiv v1.
 - [Luan (2021)](/sources/luan-2021.md) — §1, §2.1 (homonym: "stiffly accurate" for exponential methods satisfying the stiff order conditions); arXiv v1.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §7 (the same homonym).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.1–2.2 (step value matches stage-value boundary data; mass-matrix solve skipped).

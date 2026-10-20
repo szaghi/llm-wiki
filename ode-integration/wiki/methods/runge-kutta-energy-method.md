@@ -5,7 +5,7 @@ description: "The energy method writes $\\lVert y_{n+1}\\rVert^2-\\lVert y_n\\rV
 status: established
 aliases: [energy analysis of Runge–Kutta methods, discrete energy law, discrete energy identity, discrete integration by parts]
 tags: [stability, runge-kutta, structure-preserving, implicit, explicit, imex]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Energy method for Runge–Kutta stability
@@ -132,6 +132,66 @@ Qin–Zhang DIRK give $E(10)/E(0)=1$, while Radau IIA and Lobatto IIIC damp
   $h\le C\Delta x$, weak($\kappa$) under $h\le C\Delta x^{1+1/(\kappa-1)}$ (Sun et al.
   2022, Remark 3.8).
 
+## Nonlinear right-hand sides: the stage-value energy identity
+
+For any Runge–Kutta method and any $f$, with stage values $Y_i$,
+
+$$\lVert y_{n+1}\rVert^2-\lVert y_n\rVert^2=2h\sum_ib_i\langle Y_i,f(Y_i)\rangle+h^2\sum_{i,l}b_i(b_l-2a_{il})\langle f(Y_i),f(Y_l)\rangle,$$
+
+the identity [Wei & Shu (2026)](/sources/wei-2026.md) use cell by cell for DG (Eq. (13),
+from Ketcheson). The first sum inherits the sign of the semi-discrete energy law; the
+second is a quadratic form whose matrix $b_i(b_l-2a_{il})$ is the negative of the
+algebraic-stability matrix $m_{il}=b_ia_{il}+b_la_{li}-b_ib_l$ after symmetrization
+*(compiler remark, not in the sources)*; for an explicit method its diagonal entries
+$b_i^2$ are nonnegative and not all zero, so it is never negative semidefinite. Wei and
+Shu's **splitting** (Thm. 1, Eq. (22)): for the explicit three-stage third-order methods
+with $c_3=1$, parameterized by $c_2$,
+
+$$\sum_{i,l}b_i(b_l-2a_{il})\langle f_i,f_l\rangle=-\tfrac{1-c_2}{12c_2^2}\lVert f_1-f_2\rVert^2-\tfrac{c_2}{12(1-c_2)^2}\lVert f_2-f_3\rVert^2+\tfrac{4-9c_2+9c_2^2}{36(1-c_2)^2}\bigl\lVert(\tfrac1{c_2}-1)f_1-\tfrac1{c_2}f_2+f_3\bigr\rVert^2$$
+
+with $f_i=f(Y_i)$ (page-local): two negative squares of first temporal differences, of size
+$O(h)$ relative to $f$, and one positive square of a second difference, of size $O(h^2)$. It
+depends only on the coefficients and holds for nonlinear $f$; the authors call it the
+nonlinear analogue of the temporal-difference splitting of Xu, Zhang, Shu and Wang for
+linear problems (Remark 1). Dominating the positive term near the origin then gives the
+cell square-entropy inequality for Burgers' equation under $h\sim\Delta x$; see
+[fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md).
+The identity is checked symbolically *(compiler check, not in the sources)*.
+
+## Algebraic stability as an energy estimate: discrete maximal regularity
+
+[Akrivis et al. (2025)](/sources/akrivis-2025.md) (§4) use energy arguments for the linear
+parabolic problem $y'+\mathcal Ay=g(t)$ in a Hilbert space, $\mathcal A$ self-adjoint and
+coercive (page-local $\mathcal A$, $g$; they write $A$ and $f$). Squaring the equation and
+using $2\langle y',\mathcal Ay\rangle=\frac d{dt}\lVert\mathcal A^{1/2}y\rVert^2$ gives the
+continuous maximal-regularity identity
+$\lVert\mathcal A^{1/2}y(t)\rVert^2+\lVert y'\rVert^2_{L^2(0,t)}+\lVert\mathcal Ay\rVert^2_{L^2(0,t)}=\lVert\mathcal A^{1/2}y_0\rVert^2+\lVert g\rVert^2_{L^2(0,t)}$
+(Eq. (65)). For a collocation or Galerkin time discretization written pointwise,
+$\hat y'+\Pi\mathcal A\hat y=\tilde\Pi g$ with projections $\Pi$, $\tilde\Pi$ (page-local),
+the same squaring gives the discrete analogue whenever
+$\int_{t_n}^{t_{n+1}}\langle\hat y',\Pi\mathcal A\hat y\rangle\,dt\ge\tfrac12\bigl(\lVert\mathcal A^{1/2}\hat y(t_{n+1})\rVert^2-\lVert\mathcal A^{1/2}\hat y(t_n)\rVert^2\bigr)$
+(Thm. 8, Eq. (67)); this holds with equality for continuous Galerkin and Gauss
+collocation and as an inequality for discontinuous Galerkin, Radau IIA and Lobatto IIIA
+(Props. 9–13). For **every algebraically stable** Runge–Kutta method they apply
+$\mathcal A^{1/2}$ to the step, square, and use the stage equations, which gives
+
+$$\lVert\mathcal A^{1/2}y_{n+1}\rVert^2=\lVert\mathcal A^{1/2}y_n\rVert^2-\sum_{i,j}m_{ij}\langle\mathcal A^{1/2}\varphi_i,\mathcal A^{1/2}\varphi_j\rangle+2\sum_ib_i\langle\varphi_i,\mathcal AY_i\rangle,\qquad m_{ij}=b_ia_{ij}+b_ja_{ji}-b_ib_j,$$
+
+with $\varphi_i=-h(\mathcal AY_i-g(t_n+c_ih))$ (page-local; Eqs. (105)–(107)). Positive
+semidefiniteness of $(m_{ij})$ removes the middle term, and a binomial identity turns the
+last into the discrete estimate
+
+$$\lVert\mathcal A^{1/2}y_m\rVert^2+\sum_nh_n\sum_ib_i\bigl\lVert\mathcal AY_{n,i}-g(t_{n,i})\bigr\rVert^2+\sum_nh_n\sum_ib_i\lVert\mathcal AY_{n,i}\rVert^2\le\lVert\mathcal A^{1/2}y_0\rVert^2+\sum_nh_n\sum_ib_i\lVert g(t_{n,i})\rVert^2$$
+
+for **arbitrary variable steps** (Eqs. (108)–(111); $Y_{n,i}$, $t_{n,i}$ the stages of step
+$n$). It is the classical algebraic-stability computation in the
+$\mathcal A^{1/2}$-norm. The authors present the variable-step Hilbert-space results as new
+energy proofs of results of Kovács, Li and Lubich, who needed constant steps but covered
+$L^p$ and UMD Banach spaces, and the Lobatto IIIA estimates, for a family that is A-stable
+but not B-stable, as the first ones (§1, Remarks 14–15). The estimates are on
+[discrete maximal regularity](/results/discrete-maximal-regularity.md); they carry the
+stability theory of [Runge–Kutta physics-informed neural networks](/methods/learned-time-integrators.md).
+
 ## Multiplier matrices for IMEX stages
 
 [Hu & Shu (2025)](/sources/hu-2025.md) (§3) carry the energy method to an
@@ -171,8 +231,18 @@ multistep analogue, testing with Nevanlinna–Odeh multipliers, is on
 
 ## Qualifications
 
-- The method covers autonomous linear problems with bounded $L$; nonlinear problems
-  are reached only through devices such as the adaptive filter of Sun & Shu (2021, §5).
+- The rational-function method of Sun et al. covers autonomous linear problems with
+  bounded $L$; nonlinear problems are reached through devices such as the adaptive filter
+  of Sun & Shu (2021, §5), or through the stage-value identity with a coefficient splitting,
+  which Wei & Shu (2026) carry out for one family of third-order methods and one nonlinear
+  setting (Burgers DG).
+- **B-stability and algebraic stability in Akrivis et al. (2025).** Their §4.4.3 assumes
+  B-stability and states that, the nodes being pairwise distinct, "it is well known that
+  the B-stability is equivalent to the algebraic stability"; the computation behind their
+  estimate (111) uses algebraic stability, which is how it is stated above. Their proof writes the stage
+  derivatives as $\hat y'(t_{n,i})$, a collocation reading; for a non-collocation method
+  the same computation goes through with $-(\mathcal AY_{n,i}-g(t_{n,i}))$ in its place,
+  which is how it is written above.
 - Sun et al. (2022) present the closed forms of Lemma 3.3 without proof. The
   semi-inner product is normalized with $L$ in Sun et al. (2022) and with $hL$ in Sun
   & Shu (2021, footnote 3); results are equivalent up to the factor $h$.
@@ -187,3 +257,5 @@ multistep analogue, testing with Nevanlinna–Odeh multipliers, is on
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §2 (Eqs. 2.3–2.6, Def. 2.1, Props. 2.1–2.2), Thms. 3.1–3.2, §5.
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §4.3, Table 1 (energy behaviour of Gauss–Legendre, Radau IIA, Lobatto IIIC and the Qin–Zhang DIRK).
 - [Hu & Shu (2025)](/sources/hu-2025.md) — §3 (Eqs. (3.2)–(3.3), Lemmas 3.1–3.2, Thm. 3.4, Remark 3.3), Lemma 4.1, §7.1–7.2 (Prop. 7.1, Remark 7.2); arXiv v1.
+- [Wei & Shu (2026)](/sources/wei-2026.md) — §2 (Eqs. (12)–(13)), §3 (Thm. 1, Eq. (22), Remark 1); author manuscript.
+- [Akrivis et al. (2025)](/sources/akrivis-2025.md) — §1, §4.1–4.4 (Eqs. (64)–(67), Thm. 8, Props. 9–13, Eqs. (105)–(111), Remarks 14–15); arXiv v2.

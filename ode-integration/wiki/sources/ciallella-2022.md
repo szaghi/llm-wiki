@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Fluids 247:105630"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Computers_amp_Fluids_Ciallella_An_arbitrary_high_order_and_positivity_preserving_method_for.pdf"
 tags: [positivity, structure-preserving, method-of-lines, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -54,7 +54,7 @@ Notation: $h$ is the step (source $\Delta t$); the water height, the source's $h
 24. WENO5 with four-point Gauss quadrature on the faces has "not been fully described in literature"; its coefficients are given in App. B. (§3.1.1; App. B, Eqs. (53)–(62)) **Derived**
 25. The overdetermined system (52) for the WENO linear weights (5 equations, 3 unknowns) has an exact solution. (App. A) **Derived**
 
-*(Reader checks, not in the source.)* The mPDeC matrix (30) has diagonal $\ge1$ and nonpositive off-diagonal entries, which is why Jacobi from a positive start stays positive. "Unconditionally positive" covers the height only and inherits from [46]; the limiter is still applied and the scheme is still CFL-limited. The regularized division (32) used near dry states changes the scheme, and the positivity and conservation proofs of [46] assume exact division. The claim that high-order DeC is not a convex combination of Euler steps is not reconciled with Liu, Shu & Zhang [36], cited in §4.1, on SSP deferred correction. Patankar-type stability issues are acknowledged only through refs [32, 61].
+*(Compiler checks, not in the sources.)* The mPDeC matrix (30) has diagonal $\ge1$ and nonpositive off-diagonal entries, which is why Jacobi from a positive start stays positive. "Unconditionally positive" covers the height only and inherits from [46]; the limiter is still applied and the scheme is still CFL-limited. The regularized division (32) used near dry states changes the scheme, and the positivity and conservation proofs of [46] assume exact division. The claim that high-order DeC is not a convex combination of Euler steps is not reconciled with Liu, Shu & Zhang [36], cited in §4.1, on SSP deferred correction. Patankar-type stability issues are acknowledged only through refs [32, 61].
 
 # Printed slips
 
@@ -103,6 +103,7 @@ Notation: $h$ is the step (source $\Delta t$); the water height, the source's $h
 Chunk 5 (2026-10-20). This source is cited on:
 
 * [Deferred correction (DeC)](/methods/deferred-correction.md)
+* [Invariant-domain preserving high-order time stepping (explicit and IMEX)](/methods/invariant-domain-preserving-time-stepping.md)
 * [Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)](/methods/modified-patankar-methods.md)
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)
 * [Production–destruction systems](/definitions/production-destruction-system.md)

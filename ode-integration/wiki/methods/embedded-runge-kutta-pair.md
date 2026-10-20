@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Embedded Runge–Kutta pairs and the FSAL property"
-description: "An embedded pair adds a second weight vector to a Runge–Kutta tableau so that the difference of two solutions of orders p and p-hat estimates the local error at no extra stage cost; FSAL and its interaction with relaxation, the affine family of all embeddings (null rules), design criteria, SSP, low-storage and paired pairs, Rosenbrock pairs."
+description: "An embedded pair adds a second weight vector to a Runge–Kutta tableau so that the difference of two solutions of orders p and p-hat estimates the local error at no extra stage cost; local extrapolation and higher-order embeddings, FSAL and relaxation, the affine family of all embeddings (null rules), design criteria, SSP, low-storage, paired and Rosenbrock pairs."
 status: established
 aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation, null rule, nested Runge–Kutta methods]
 tags: [runge-kutta, step-size-control, explicit, ssp, embedded-pair]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Embedded Runge–Kutta pairs and the FSAL property
@@ -41,6 +41,19 @@ Fehlberg45 (fourth order advanced, fifth-order estimator) among their baselines 
 The estimate is the local error of the embedded method, not of the advanced solution:
 $y_{n+1}-\hat y_{n+1}=O(h^{\hat p+1})$, which is why controller exponents use
 $\hat p+1$ (or $\min(p,\hat p)+1$; see [step-size control](/methods/step-size-control.md)).
+
+**Higher-order embedding in implicit pairs.** [Pan et al. (2022)](/sources/pan-2022.md)
+(§2.1.2, Eqs. (10)–(15), App. A) advance the lower order on purpose: Kværnø's ESDIRK pairs
+2(3), 3(4) and 4(5) are one tableau with $S+1$ stages whose row $S$ is the main method and
+row $S+1$ the embedded one, $b_i=a_{Si}$, $\hat b_i=a_{S+1,i}$, both
+[stiffly accurate](/properties/stiff-accuracy.md), so $y_{n+1}=Y_S$ and $\hat y_{n+1}=Y_{S+1}$.
+The difference then estimates the local error of the advanced solution, $O(h^{p+1})$. The
+price is one extra implicit stage, about $1/(S-1)$ of the step's implicit work ($S=3,4,6$),
+which the authors judge worthwhile because the estimate is more accurate than a
+lower-order one and needs no problem-dependent calibration (§2.4); the claim is not tested
+against a lower-order embedding. The estimate drives their balance of temporal against
+spatial error on [step-size control](/methods/step-size-control.md). The tableaux are on
+[DIRK methods](/methods/diagonally-implicit-runge-kutta.md).
 
 ## FSAL (first same as last)
 
@@ -100,22 +113,22 @@ and $G_p\,b=r_p$ with $r_p$ the vector of $1/\gamma(\tau)$ ($G_p$,
 $r_p$ page-local). [Belardo et al. (2026)](/sources/belardo-2026.md) draw the consequence
 (§2–3, Eqs. (1)–(2)):
 
-- the difference $b-\hat b$ of two nested weight vectors lies in $\kerG_p$ for the
+- the difference $b-\hat b$ of two nested weight vectors lies in $\ker G_p$ for the
   lower of the two orders; borrowing Lyness's quadrature term, they call a nonzero element of
-  $\kerG_p$ a **null rule of order $p$**;
+  $\ker G_p$ a **null rule of order $p$**;
 - *every* weight vector of order $\ge p$ that reuses the stages of $(A,b,c)$ is $b+Z_pk$, with $Z_p$
-  an orthonormal basis of $\kerG_p$ and $k$ free ($Z_p$, $k$ page-local; Belardo et al. write $\boldsymbol\Phi_p$ for $G_p$); an embedding of
+  an orthonormal basis of $\ker G_p$ and $k$ free ($Z_p$, $k$ page-local; Belardo et al. write $\boldsymbol\Phi_p$ for $G_p$); an embedding of
   order $p$ exists iff $G_p$ lacks full column rank.
 
 Their examples (§3–4):
 
 | Main method | kernel dimensions found | consequence |
 |---|---|---|
-| explicit midpoint ($s=2$) | $\dim\kerG_1=1$; $G_2$ full rank | only first-order embeddings |
-| classical RK4 | $G_4$, $G_3$ full rank; $\dim\kerG_2=2$ | no embedding of order 3 or 4 |
-| Dormand–Prince 5(4) ($s=7$) | $\dim\kerG_4=1$, $\dim\kerG_3=3$ | the standard $\hat b$ is one member of a one-parameter order-4 family |
-| (5,3,3) method of Biswas et al. (2025) | $\dim\kerG_3=1$, $\dim\kerG_2=3$ | one order-3 family, three order-2 directions |
-| Bogacki–Shampine 3(2) | $\dim\kerG_2=2$ | two-parameter family of estimators |
+| explicit midpoint ($s=2$) | $\dim\ker G_1=1$; $G_2$ full rank | only first-order embeddings |
+| classical RK4 | $G_4$, $G_3$ full rank; $\dim\ker G_2=2$ | no embedding of order 3 or 4 |
+| Dormand–Prince 5(4) ($s=7$) | $\dim\ker G_4=1$, $\dim\ker G_3=3$ | the standard $\hat b$ is one member of a one-parameter order-4 family |
+| (5,3,3) method of Biswas et al. (2025) | $\dim\ker G_3=1$, $\dim\ker G_2=3$ | one order-3 family, three order-2 directions |
+| Bogacki–Shampine 3(2) | $\dim\ker G_2=2$ | two-parameter family of estimators |
 
 The RK4 row restates, as full rank of $G_3$, the classical result that a four-stage
 fourth-order explicit method cannot be nested with an order-3 embedding, which they cite from
@@ -288,7 +301,7 @@ Runge–Kutta tableaux.
   The estimate feeds the PID controller and weighted RMS norm of Ranocha et al. with the
   parameters tuned for BS3(2)3F and costs about 4%; that the difference is a local error
   estimate of the stated order is asserted, not proved
-  *(compiler remark, §5.2)*. See
+  *(compiler remark on §5.2, not in the source)*. See
   [step-size control](/methods/step-size-control.md).
 - **Spectral deferred correction.** [Saupe et al. (2025)](/sources/saupe-2025.md) (§2.2,
   Algorithm 1) use the last two sweeps of SDC, of orders $k_{\max}$ and $k_{\max}-1$, as an
@@ -336,7 +349,7 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
   not in the sources)*.
 - Fekete et al. print the Dormand–Prince pair as using "six function evaluations" (§3.1) and as
   "seven-stage" (§3.2.2); both are consistent with a seven-stage FSAL pair counted with and
-  without the reused stage *(compiler check)*.
+  without the reused stage *(compiler check, not in the source)*.
 - **Suitability of the SSP embeddings for adaptive control: a qualification, not a
   contradiction.** Fekete et al. (2022) recommend their SSPRK(10,4) and SSPRK(4,3) pairs
   for adaptive control with a PID controller, on the evidence of work–precision tests at
@@ -399,3 +412,4 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
 - [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.1–5.2 (Eqs. (61)–(65), Algorithms 1, 3), §6.3; arXiv v4.
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.2 (Eqs. (14)–(15), Algorithm 1), §4.2 (Fig. 10); arXiv v2.
 - [Popov (2024)](/sources/popov-2024.md) — §2.3 (reference solvers); arXiv v1.
+- [Pan et al. (2022)](/sources/pan-2022.md) — §2.1.2 (Eqs. (10)–(15)), §2.4, App. A (Tables A1–A4).

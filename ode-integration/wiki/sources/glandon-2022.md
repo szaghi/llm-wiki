@@ -9,7 +9,7 @@ year: 2022
 venue: "SIAM J. Sci. Comput. 44:A3437-A3462"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_SIAM_Journal_on_Scientific_Computing_Glandon_Linearly_Implicit_Multistep_Methods_for_Time_Integration.pdf"
 tags: [linear-multistep, implicit, stiff, order-conditions, b-series, step-size-control]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -104,7 +104,7 @@ with that page's $\theta_j$.
 25. Runs use MATLAB 2019a, tolerances $10^{-2}$ to $10^{-10}$ with $\mathrm{rtol}=\mathrm{atol}$, and reference solutions from ode15s or RODAS4 (§8). **Stated**
 26. "Our variable stepsize Limm implementation outperforms a comparable BDF implementation for nonlinear problems" (§9). **Shown** (two problems, same framework)
 
-*(Compiler checks by the reader, not in the source.)* Table 6.1 lists BDF error constants as $1/(k+1)$,
+*(Compiler checks, not in the sources.)* Table 6.1 lists BDF error constants as $1/(k+1)$,
 a normalization the caption does not state, while the Limm constants are
 not divided by $\sigma(1)$, so the rows may mix normalizations. The
 abstract's "error constants comparable to BDF" holds for Limm, not for

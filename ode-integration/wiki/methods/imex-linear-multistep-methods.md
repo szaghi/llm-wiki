@@ -5,7 +5,7 @@ description: "IMEX multistep methods treat a stiff part implicitly with BDF and 
 status: established
 aliases: [IMEX-BDF, SBDF, semi-implicit BDF, implicit-explicit multistep method, IMEX LMM, extrapolated BDF, linearly implicit BDF]
 tags: [linear-multistep, imex, implicit, stiff, asymptotic-preserving, stability]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # IMEX linear multistep and IMEX-BDF methods
@@ -34,7 +34,7 @@ Ma et al. (2026, §2.2) print $k=1,2,3$ with $\alpha_k=1$:
 | 3 | $(-\tfrac2{11},\tfrac9{11},-\tfrac{18}{11},1)$ | $(\tfrac6{11},-\tfrac{18}{11},\tfrac{18}{11})$ | $\tfrac6{11}$ |
 
 For $k=2$ and $k=3$ the explicit weights are $\beta_k$ times the extrapolation weights $(-1,2)$
-and $(1,-3,3)$ (reader's check). $k=1$ is IMEX Euler. Ma et al. use $k=4$ but do not print its
+and $(1,-3,3)$ *(compiler check)*. $k=1$ is IMEX Euler. Ma et al. use $k=4$ but do not print its
 coefficients.
 
 ## Explicit or linearly implicit nonlinear term
@@ -123,8 +123,8 @@ for the explicit extrapolation, and the authors do not justify the reuse; see
 - **CFL-type conditions are sufficient conditions from energy proofs.** Both analyses obtain a
   parabolic-type scaling, $h\lesssim\Delta x^2$ (García-Archilla & Novo) or $h\lesssim N^{-2}$
   (Ma et al.), for an explicitly treated transport term. Ma et al.'s tests run with $hN^2$ up to
-  about 50, outside any modest constant, so their condition is not observed to be sharp
-  (reader's check on the arXiv v1). García-Archilla & Novo's step counts grow by about 2 and 3
+  about 50 (Broadwell model, $N=100$, $h=5\times10^{-3}$), outside any modest constant, so
+  their condition is not observed to be sharp *(compiler check on the arXiv v1)*. García-Archilla & Novo's step counts grow by about 2 and 3
   per mesh halving, and the authors read this as "approaching the factor 4" (Fig. 5). The
   settings differ (Fourier spectral relaxation systems, finite-element Navier–Stokes), so the two
   findings are not in conflict.

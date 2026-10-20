@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -59,6 +59,11 @@ bound for $h\le rh_{\mathrm{FE}}$, but the update need not. Euler-based
 [extrapolation methods](/methods/extrapolation-methods.md) are internal SSP at any order,
 which is why their final update is limited separately (§3.1.2; see
 [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)).
+[Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) (§7, Eq. (32)) use
+the same stage conditions for implicit methods ("methods with SSP stages"): the stages are
+bound preserving for $h\le rh_{\mathrm{FE}}$, conditions "more relaxed than those required
+for the full method to be SSP"; backward Euler extrapolation satisfies them for every
+$r$, so its stages are unconditionally bound preserving (§7.1).
 
 **Linear SSP coefficient.** On linear problems only the
 [stability polynomial](/definitions/stability-function.md) matters, and the relevant
@@ -77,6 +82,9 @@ positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
   order-6 barrier for implicit SSP Runge–Kutta methods, and Kuzmin et al. that backward
   Euler is the only method SSP for arbitrarily large steps. The five-stage "fifth-order"
   SSPRK55 that Babbar et al. use is fifth order only on linear autonomous problems (§8).
+  [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) (§1) recall the
+  orders 4 and 6 and add that existing high-order implicit SSP methods "are not
+  A-stable", which imposes severe step restrictions on stiff diffusion.
 - **Implicit methods have bounded $\mathcal C$.** Implicit Runge–Kutta, multistep and
   general linear methods have finite SSP coefficients, "usually bounded by twice the
   number of stages for a Runge–Kutta method"; implicit methods that preserve the
@@ -330,9 +338,12 @@ only, since no four-stage fourth-order explicit method has a positive SSP coeffi
   The SSP-MPRK family of Huang and coauthors is cited by [Izzo et al. (2025)](/sources/izzo-2025.md)
   (§1); the second- and third-order multistep Patankar schemes they reproduce come from
   explicit SSP multistep methods (§2): $y_n=\tfrac34y_{n-1}+\tfrac14y_{n-3}+\tfrac32hf(y_{n-1})$
-  (with the corrected $\bar\beta$) and $y_n=\tfrac{16}{27}y_{n-1}+\tfrac{11}{27}y_{n-4}+\tfrac{16}9hf(y_{n-1})+\tfrac49hf(y_{n-4})$
-  *(compiler identification, not in the sources)*. See
-  [modified Patankar methods](/methods/modified-patankar-methods.md).
+  (Izzo et al. print the coefficient $\tfrac32$ on $f(y_{n-2})$, a slip; see the Patankar page) and $y_n=\tfrac{16}{27}y_{n-1}+\tfrac{11}{27}y_{n-4}+\tfrac{16}9hf(y_{n-1})+\tfrac49hf(y_{n-4})$.
+  [Zhu et al. (2024)](/sources/zhu-2024.md) print exactly these two Gottlieb–Shu–Tadmor
+  methods as convex combinations of forward Euler steps (Eqs. (2.5)–(2.6)) and obtain
+  positivity of their Patankar versions with explicit convection under
+  $h\le\tfrac12h_{\mathrm{FE}}$ and $\tfrac13h_{\mathrm{FE}}$, the SSP coefficients of the
+  bases (§3.3). See [modified Patankar methods](/methods/modified-patankar-methods.md).
 - **Deferred correction.** Ciallella et al. (2022, §6.6) state that arbitrary-order
   [deferred correction](/methods/deferred-correction.md) cannot be written as a convex
   combination of explicit Euler steps, so explicit DeC with a positivity limiter has no
@@ -349,6 +360,31 @@ only, since no four-stage fourth-order explicit method has a positive SSP coeffi
   fourth-order Spiteri–Ruuth method for DG references in multiderivative tests
   ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md), §6.3), where SSP multiderivative
   methods are named as future work.
+
+## Limits of the SSP route: limiting and entropy
+
+- **Limiting instead of convex decomposition.**
+  [Ern & Guermond (2022)](/sources/ern-2022.md) obtain invariant-domain preservation for
+  any explicit method by limiting each stage against a low-order Euler step from the
+  previous stage; the step bound depends on the abscissae only, so methods with
+  $\mathcal C=0$, such as the explicit midpoint rule, become admissible at the full
+  per-stage step, and fifth order is reachable (§2.4, §4.5; see
+  [invariant-domain preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md)).
+  Their **efficiency ratio** (largest admissible step over $s\,h_{\mathrm{FE}}$, bounded
+  below by $1/(s\Delta c_{\max})$ with page-local $\Delta c_{\max}$ the largest gap between
+  an abscissa and the closest earlier one not above it) coincides with $\mathcal C_{\mathrm{eff}}$ for SSPRK(2,2) and
+  SSPRK(3,3) but not in general: they give about 0.51 for Kraaijevanger's SSPRK(5,4),
+  whose $\mathcal C\approx1.508$ gives $\mathcal C_{\mathrm{eff}}\approx0.30$ *(compiler check, not in the sources)*. The two numbers measure different constructions and must not be compared. The
+  IMEX version (Part II, [Ern & Guermond 2023](/sources/ern-2023.md)) needs no positivity
+  of the Butcher coefficients either.
+- **SSP-RK3 and entropy stability of RKDG.** [Wei & Shu (2026)](/sources/wei-2026.md)
+  prove a fully discrete cell square-entropy inequality for explicit third-order RKDG on
+  Burgers' equation for the three-stage family with $c_3=1$ and positive weights, which
+  contains Kutta's method and **excludes SSP-RK3** ($c_3=\tfrac12$); they recall from their
+  companion paper that RKDG with $P^2$ elements and a class of third-order methods
+  including SSP-RK3 is not $L^2$ stable on Burgers under $h\sim\Delta x$ (§1). Here the
+  SSP property is not the one that decides; see
+  [fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md).
 
 ## Relation to strong stability
 
@@ -382,6 +418,13 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   implicit methods preserving the forward Euler condition for every $h$ "cannot
   exist"; their own Appendix A makes clear that the barrier is for order greater than
   one.
+- **"Implicit SSP methods are at most first order."** Ern & Guermond (2022, §1.2, §2.4)
+  write this, citing Gottlieb–Shu–Tadmor (Prop. 6.2 of their review, not ingested). As
+  worded it matches only the unconditional-SSP barrier recalled by Gottlieb et al. (2022,
+  §1, App. A); Kuzmin et al. (2022, §1) and Ciallella et al. (2022, Remark 3.1) recall that
+  implicit SSP methods with a finite coefficient exist up to order 6, and Quezada de Luna
+  & Ketcheson (2022, §1) put the implicit barrier at order 6, so the statement overstates
+  the barrier *(compiler reading of the cited result, which is not ingested)*.
 - **Embedded SSP coefficient.** Fekete et al. impose SSP conditions on the embedded
   weights, but with local extrapolation the advanced solution is the main method's,
   so the embedded coefficient does not affect the strong stability of $y_{n+1}$; the
@@ -449,3 +492,8 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 - [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §6.3; arXiv v1.
 - [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — §1, §3.1; arXiv v4.
 - [Izzo et al. (2025)](/sources/izzo-2025.md) — §1, §2; arXiv v1.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §1.2, §2.4, §4.1, §4.5; HAL v2.
+- [Ern & Guermond (2023)](/sources/ern-2023.md) — §3.3 (Eq. (63)); HAL v1.
+- [Wei & Shu (2026)](/sources/wei-2026.md) — §1, §2 (Eq. (12)); author manuscript.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) — §1, §7 (Eq. (32)), §7.1, §9; arXiv v1.
+- [Zhu et al. (2024)](/sources/zhu-2024.md) — §2.2 (Eqs. (2.5)–(2.6)), §3.3; arXiv v1.

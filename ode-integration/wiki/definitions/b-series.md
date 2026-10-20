@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # B-series, composition and substitution laws
@@ -100,7 +100,7 @@ form and $\tau\setminus s$ the forest left after removing them, on which $a$
 acts as the product over its trees (Ketcheson & Ranocha (2023), Eqs.
 (21)–(23), Def. 2.1, in the formulation of Chartier–Hairer–Vilmart; a tree
 with 5 vertices in their Table 3 has 11 ordered subtrees). Rescaling the step to
-$\mu h$ replaces $a(\tau)$ by $\mu^{\lvert\tau\rvert}a(\tau)$. Under this product the RK
+$\mu h$ (page-local scalar $\mu$) replaces $a(\tau)$ by $\mu^{\lvert\tau\rvert}a(\tau)$. Under this product the RK
 methods form a group, the Butcher group (§2.3).
 
 The composition law decides whether a sequence of steps raises the order: two
@@ -202,7 +202,8 @@ Matching these series defines the φ-order conditions of
 [stiff order conditions of exponential Runge–Kutta methods](/results/exponential-runge-kutta-stiff-order-conditions.md).
 There, φ-order $p$ is shown equivalent to matching the exact B-series on all trees up to
 order $p$ and on all $[\tau]_k$ with $\lvert\tau\rvert\le p$ (Thm. 7). The $J$-multiplication
-rule is the same one Glandon et al. use for the fat node above *(compiler remark)*.
+rule is the same one Glandon et al. use for the fat node above *(compiler remark, not in the
+sources)*.
 
 Splitting and composition methods built from exact sub-flows are analysed
 instead with Lie series: the Baker–Campbell–Hausdorff formula in a Lyndon

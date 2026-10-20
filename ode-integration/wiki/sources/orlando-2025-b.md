@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Methods Appl. Mech. Engrg. 442:118037"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Orlando_A_quantitative_comparison_of_high-order_asymptotic-preservin.pdf"
 tags: [imex, asymptotic-preserving, implicit-stage-solvers, stiff, order-reduction, cfd]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -57,7 +57,7 @@ Notation: $h$ is the step and $\varepsilon$ the reference Mach number (source $M
 24. A Schur-complement (velocity elimination) formulation avoids discretizing a second-order elliptic operator with DG penalty terms (SIPG), at the cost of a non-symmetric system $\mathbf C\mathbf A^{-1}\mathbf B$, solved by Jacobi-preconditioned GMRES. The SPD systems are solved by CG with geometric multigrid. (§3.5) **Stated**
 25. Conclusion: both methods are AP and AA "in the range of low Mach accuracy established by the spatial discretization"; SI-IMEX gives a sizeable CPU saving at the same accuracy, particularly at moderate Mach; and type I schemes give superior stability at low Mach. (§5) **Shown**
 
-*(Compiler checks by the reader, not in the source.)* As printed, the explicit companion of the type-I third-order pair of Table 20 fails the third-order condition $b^{\mathrm E\top}A^{\mathrm E}c^{\mathrm E}=\tfrac16$: the left side is $0.19885$, while every other condition of order $\le3$, coupling conditions included, holds; its fourth explicit row differs from the one printed by [Southworth et al. (2024)](/sources/southworth-2024.md) for I-IMEX(3,4,3), with which the pair is third order (see the [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) page). The paper nevertheless observes third order with this pair (Tables 8–11). Claim 25's ranking of type I over type II is test-dependent: in the open tube (claim 18) only type II works for SI-IMEX. The $(s,\sigma,p)$ names do not count evaluations as defined. IMEX-RK(3,3,3) has four explicit stages with $b^{\mathrm E}_4\ne0$, and IMEX-RK(6,6,4) has seven stages. Table 21 is Kennedy & Carpenter's ARK3(2)4L[2]SA, and Table 23 is presumably their ARK4(3)7L[2]SA. The implicit part of ARS(5,5,4) is the Hairer–Wanner L-stable SDIRK4 ($\gamma=\tfrac14$) padded with an explicit first stage. Table 19's explicit row 3 ($a^{\mathrm E}_{31}=a^{\mathrm E}_{32}=\tfrac12$) may be a variant of the cited Giraldo–Kelly–Constantinescu tableau; this is unverified. AA is shown only up to $\varepsilon=10^{-3}$.
+*(Compiler checks, not in the sources.)* As printed, the explicit companion of the type-I third-order pair of Table 20 fails the third-order condition $b^{\mathrm E\top}A^{\mathrm E}c^{\mathrm E}=\tfrac16$: the left side is $0.19885$, while every other condition of order $\le3$, coupling conditions included, holds; its fourth explicit row differs from the one printed by [Southworth et al. (2024)](/sources/southworth-2024.md) for I-IMEX(3,4,3), with which the pair is third order (see the [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) page). The paper nevertheless observes third order with this pair (Tables 8–11). Claim 25's ranking of type I over type II is test-dependent: in the open tube (claim 18) only type II works for SI-IMEX. The $(s,\sigma,p)$ names do not count evaluations as defined. IMEX-RK(3,3,3) has four explicit stages with $b^{\mathrm E}_4\ne0$, and IMEX-RK(6,6,4) has seven stages. Table 21 has the same diagonal $\gamma=\frac{1767732205903}{4055673282236}$ as the third-order Kennedy–Carpenter scheme of [Orlando et al. (2025)](/sources/orlando-2025.md). The implicit part of ARS(5,5,4) is a five-stage, stiffly accurate SDIRK of order 4 with $\gamma=\tfrac14$ and $R(\infty)=0$, padded with an explicit first stage. AA is shown only up to $\varepsilon=10^{-3}$.
 
 # Printed slips
 
@@ -87,7 +87,7 @@ Notation: $h$ is the step and $\varepsilon$ the reference Mach number (source $M
 | $\mathbf v^{(l)}$, $\mathbf U^{(l)}$ | $Y_i$ | stage values |
 | $\mathbf H(\mathbf U_E,\mathbf U_I)$ | $\mathcal H(y_{\mathrm E},y_{\mathrm I})$ | SI-IMEX partitioned right-hand side (page-local subscripts) |
 | $R(z)$ | $R(z)$ | stability function of the implicit part; $R(\infty)=0$ for L-stability |
-| $(s,\sigma,p)$ | kept | implicit evaluations, explicit evaluations, order (see the reader checks) |
+| $(s,\sigma,p)$ | kept | implicit evaluations, explicit evaluations, order (see the compiler checks) |
 | $\xi^{(\tilde k)}$, $\tilde k$, $\eta$, $L$ | kept | Picard pressure iterate, iteration index, tolerance, maximum iterations; **$\eta$ is not the registry entropy**, and $L$ is also the tube length |
 | $\gamma$ | kept (ratio of specific heats) | **also the diagonal $247/2000$ of Table 23** |
 | $c$ | kept (sound speed) | **collides with the abscissae** |

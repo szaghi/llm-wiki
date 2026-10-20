@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Order conditions of splitting and composition methods"
-description: "The order conditions of splitting and composition methods, in four equivalent forms (BCH in a Lyndon basis, words and shuffles, Lyndon multi-indices in $b_j$ and cumulative times, odd-index multi-indices for compositions), with the numbers of independent conditions per order for general, RKN and symmetric-composition methods."
+description: "The order conditions of splitting and composition methods, in four equivalent forms (BCH in a Lyndon basis, words and shuffles, Lyndon multi-indices in $b_j$ and cumulative times, odd-index multi-indices for compositions), with the numbers of independent conditions per order for general, RKN and symmetric-composition methods, and the explicit conditions through order 2 for splittings into N parts."
 status: established
-aliases: [BCH order conditions, Lyndon multi-index conditions, splitting order conditions, composition order conditions]
+aliases: [BCH order conditions, Lyndon multi-index conditions, splitting order conditions, composition order conditions, N-term BCH formula, N-split order conditions]
 tags: [splitting, order-conditions, geometric-integration]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Order conditions of splitting and composition methods
@@ -145,6 +145,41 @@ multi-indices with $1<$ weight $\le p$:
 The simplest case: order $\ge3$ iff $\sum\gamma_j=1$ and $\sum\gamma_j^3=0$, solved by
 the triple jump (§2.1.1, Eqs. 2.1–2.3).
 
+## $N$ parts: first and second order
+
+For $f=\sum_{\ell=1}^Nf^{[\ell]}$ (page-local $N$, Lie operators $L_\ell$) and the $s$-stage
+$N$-split method with fractions $a^{[\ell]}_k$ of part $\ell$ in stage $k$ (see
+[operator splitting](/methods/operator-splitting.md)),
+[Spiteri & Wei (2026)](/sources/spiteri-2026.md) give the conditions through order 2 explicitly.
+
+**$N$-term BCH formula** (Prop. 3.1, Eq. (8), proved by induction on $N$ from the two-term
+formula and the Jacobi identity): $e^{tL_1}e^{tL_2}\cdots e^{tL_N}=e^{Z(t)}$ with
+$Z(t)=tZ_1+t^2Z_2+t^3Z_3+\dots$ (page-local $Z$),
+
+$$\begin{aligned}
+Z_1&=\textstyle\sum_{i}L_i,\qquad Z_2=\tfrac12\sum_{i<j}[L_i,L_j],\\
+Z_3&=\tfrac1{12}\textstyle\sum_{i\ne j}[L_i,[L_i,L_j]]+\tfrac16\sum_{i<j<k}\bigl([L_i,[L_j,L_k]]+[[L_i,L_j],L_k]\bigr).
+\end{aligned}$$
+
+**Stage recursion** (Lemma 3.1, Eqs. (13)–(15)). After $k$ stages the exponent is
+$h\sum_\ell\kappa^{[\ell]}_kL_\ell+h^2\sum_{\ell_1<\ell_2}\varsigma^{[\ell_1\ell_2]}_k[L_{\ell_1},L_{\ell_2}]+O(h^3)$
+(page-local $\kappa$, $\varsigma$; the source writes $c^1$, $c^2$), with
+$\kappa^{[\ell]}_k=\kappa^{[\ell]}_{k-1}+a^{[\ell]}_k$ and
+$\varsigma^{[\ell_1\ell_2]}_k=\varsigma^{[\ell_1\ell_2]}_{k-1}+\tfrac12a^{[\ell_1]}_ka^{[\ell_2]}_k-\tfrac12a^{[\ell_1]}_k\kappa^{[\ell_2]}_{k-1}+\tfrac12\kappa^{[\ell_1]}_{k-1}a^{[\ell_2]}_k$.
+
+**Conditions** (Remark 3.1, Eq. (16)). The method has order 2 iff
+
+$$\sum_{k=1}^sa^{[\ell]}_k=1\quad(\ell=1,\dots,N),\qquad\sum_{k=2}^sa^{[\ell_1]}_k\sum_{j=1}^{k-1}a^{[\ell_2]}_j=\frac12\quad(1\le\ell_1<\ell_2\le N),$$
+
+$N+N(N-1)/2=N(N+1)/2$ conditions in all. The second set says that the total weight of the
+pairs in which part $\ell_2$ is applied in an earlier stage than part $\ell_1$ is one half. For
+$N=2$ it is the single second-order condition, the counterpart of $w_{12}=0$ in Form I. Spiteri & Wei relate it to Theorem 5.6 of
+Hairer–Lubich–Wanner, as recalled. For orders $p\ge3$ the number of conditions grows
+"dramatically" with $N$ and they recommend computer algebra; the Maple program of Auzinger et
+al., as recalled, covers $s$-stage 3-split methods to order six but needs the Lyndon words
+entered by hand (Remark 3.2). The minimal sub-integration counts and the resulting
+enumeration of second-order methods are on [operator splitting](/methods/operator-splitting.md).
+
 ## Near-integrable problems
 
 For $y'=f^{[1]}+\varepsilon f^{[2]}$ the conditions are graded by powers of $\varepsilon$:
@@ -159,10 +194,25 @@ generalized order $(r_1,r_2,\dots)$ (§3.3, Table 3.1; see
   (1,1,2,3) twice and omits (1,1,2,1,2); the ten Lyndon multi-indices of weight 7 with
   entries $\le3$ are (1,1,1,1,1,2), (1,1,1,1,3), (1,1,1,2,2), (1,1,2,1,2), (1,1,2,3),
   (1,1,3,2), (1,2,1,3), (1,2,2,2), (1,3,3), (2,2,3), consistent with $d_7=10$ in Table 2.1
-  (reader's enumeration, recorded in the notes).
+  *(compiler check, not in the source: enumeration of the Lyndon words of weight 7 over
+  $\{1,2,3\}$)*.
+- **Spiteri & Wei (2026), Remark 3.1 and Lemma 3.1.** The closed form printed for the
+  second-order coefficient after $s$ stages,
+  $\tfrac12\sum_k\bigl[a^{[\ell_1]}_k\sum_{j\le k}a^{[\ell_2]}_j-a^{[\ell_2]}_k\sum_{j\le k-1}a^{[\ell_1]}_j\bigr]$,
+  has $\ell_1$ and $\ell_2$ swapped: summing their own recursion (15) gives
+  $\tfrac12\sum_k\bigl[a^{[\ell_2]}_k\sum_{j\le k}a^{[\ell_1]}_j-a^{[\ell_1]}_k\sum_{j\le k-1}a^{[\ell_2]}_j\bigr]$.
+  On two-part Strang written as stages $(\tfrac12,1)$, $(\tfrac12,0)$ the recursion gives 0 and the
+  printed form $\tfrac12$. With the first-order conditions, the two sums inside the corrected form
+  add to one, so its vanishing is exactly the printed condition (16b), which is correct
+  *(compiler check, not in the source)*. In the proof of Lemma 3.1 the product is written
+  $e^{A}e^{B}$ with $A$ the exponent of stage $k$ and $B$ that of the previous stages; by
+  Gröbner's lemma, which they state (Lemma 2.1, the first-applied flow is the left factor), it is
+  $e^{B}e^{A}$, and the signs of recursion (15) are those of $\tfrac12[B,A]$
+  *(compiler check, not in the source)*. The result is unaffected.
 - The coefficient formulas of Form I depend on the ordering convention of the product;
   they are quoted for the linear product as printed in Eq. (2.19).
 
 # Citations
 
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §2.1.1 (symmetric methods, triple-jump conditions), §2.2 (BCH, Lyndon basis, Eq. 2.21), §2.3 (words, shuffle relations, Eqs. 2.25–2.32), §2.4 (Lyndon multi-indices, Eq. 2.38, Table 2.3), §2.5 (compositions, Eqs. 2.45–2.55), §3.1–3.3 (RKN, commutator flows, near-integrable), Table 2.1, §8.1.
+- [Spiteri & Wei (2026)](/sources/spiteri-2026.md) — Lemma 2.1, Prop. 3.1 (Eq. (8)), Lemma 3.1 (Eqs. (13)–(15)), Remarks 3.1–3.2 (Eq. (16)).

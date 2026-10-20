@@ -146,6 +146,7 @@ printed duplicates; all items parsed.
 Chunk 3 (2026-10-19). This source is cited on:
 
 * [Backward differentiation formulas (BDF)](/methods/backward-differentiation-formula.md)
+* [Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md)
 * [Flow past a cylinder (Schäfer–Turek)](/benchmarks/flow-past-cylinder.md)
 * [G-stability](/properties/g-stability.md)
 * [IMEX linear multistep and IMEX-BDF methods](/methods/imex-linear-multistep-methods.md)

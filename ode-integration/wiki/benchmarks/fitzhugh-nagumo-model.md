@@ -5,7 +5,7 @@ description: "The FitzHugh–Nagumo reaction–diffusion system of nerve conduct
 status: established
 aliases: [FitzHugh–Nagumo equation, FHN model, FINAG, nerve conduction equation]
 tags: [stiff, verification, stability]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # FitzHugh–Nagumo model
@@ -81,7 +81,7 @@ of Table 2)*. See
   (Table 2). No hardware is stated.
 - Conte et al. compare a constant, once-factorized matrix with Rosenbrock methods that
   use the exact Jacobian; Rosenbrock methods could also freeze the matrix as W-methods,
-  so the comparison is not of like linear-algebra cost (reader's remark on the source).
+  so the comparison is not of like linear-algebra cost *(compiler remark, not in the source)*.
 - The two sources use different parameter sets: Conte et al. print theirs, Faleichik &
   Moisa defer to Abdulle.
 

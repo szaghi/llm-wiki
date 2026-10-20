@@ -5,7 +5,7 @@ description: "A periodic shear layer whose perturbation rolls up into vortices; 
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [verification, multirate, step-size-control, exponential, positivity]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -32,7 +32,7 @@ $v_2=\tfrac1{10}\sin(2\pi x)$:
 with $\mathcal A$ the Atwood parameter (page-local), $\mathcal A=3/7$ or $0.7$, and DG
 degree $k$ (page-local). Doehring et al. take their setup from an earlier Trixi.jl
 study; Ranocha et al. from a study of entropy-stable Gauss DG. Babbar & Chandrashekar's data are
-those of Doehring et al. *(compiler comparison of the printed formulas)*. As printed, $B(0)=2\tanh7.5\approx2$, so $B$
+those of Doehring et al. *(compiler check of the printed formulas, not in the sources)*. As printed, $B(0)=2\tanh7.5\approx2$, so $B$
 ranges over $[0,2]$: Doehring et al.'s density runs from $\tfrac12$ to 2 and Ranocha et al.'s at
 $\mathcal A=3/7$ from 1 to 4, exactly twice as large, so both have density ratio 4 and the
 nominal $\rho_2/\rho_1=2.5$ of Ranocha et al. is exceeded in the layer; the velocity profiles

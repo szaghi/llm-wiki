@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 98:34"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Birke_A_Well-Balanced_Semi-implicit_IMEX_Finite_Volume_Scheme_for.pdf"
 tags: [imex, asymptotic-preserving, implicit-stage-solvers, structure-preserving, cfd]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -50,7 +50,7 @@ Notation: $h$ is the step and $\varepsilon=\lvert\mathbf v\rvert/c$ is the Mach 
 20. The time-stepping algorithm is "asymptotic preserving (AP)". (Abstract, keywords) **Stated** (no low-Mach asymptotic analysis and no proof that the $\varepsilon\to0$ limit is a consistent incompressible discretization; the only evidence is claim 19)
 21. All tests use the CFL condition (Eq. 11) with CFL $=0.9$. (§4) **Stated**
 
-*(Compiler checks by the reader, not in the source.)* LSDIRK2(2,2,2) has $b^{\mathrm E}=b^{\mathrm I}=(1-\gamma,\gamma)$ and satisfies the order-2 conditions, including the coupling conditions $b^{\mathrm E\top}c^{\mathrm I}=b^{\mathrm I\top}c^{\mathrm E}=\tfrac12$. Its implicit part is the L-stable, [stiffly accurate](/properties/stiff-accuracy.md) two-stage [SDIRK](/methods/diagonally-implicit-runge-kutta.md) with invertible $A^{\mathrm I}$. The explicit part is not stiffly accurate, since its last row $(c^{\mathrm E}_2,0)\ne b^{\mathrm E}$, so the pair is not globally stiffly accurate. The paper states none of these properties beyond order 2. Theorem 1 is proved for the first-order step; its extension to the two-stage method rests on each stage having the same structure. The nonsingularity of the non-symmetric pressure matrix (Eq. 49) is assumed.
+*(Compiler checks, not in the sources.)* LSDIRK2(2,2,2) has $b^{\mathrm E}=b^{\mathrm I}=(1-\gamma,\gamma)$ and satisfies the order-2 conditions, including the coupling conditions $b^{\mathrm E\top}c^{\mathrm I}=b^{\mathrm I\top}c^{\mathrm E}=\tfrac12$. Its implicit part is the L-stable, [stiffly accurate](/properties/stiff-accuracy.md) two-stage [SDIRK](/methods/diagonally-implicit-runge-kutta.md) with invertible $A^{\mathrm I}$. The explicit part is not stiffly accurate, since its last row $(c^{\mathrm E}_2,0)\ne b^{\mathrm E}$, so the pair is not globally stiffly accurate. The paper states none of these properties beyond order 2. Theorem 1 is proved for the first-order step; its extension to the two-stage method rests on each stage having the same structure. The nonsingularity of the non-symmetric pressure matrix (Eq. 49) is assumed.
 
 # Printed slips
 

@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Appl. Math. Comput. 6:1629-1664"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Communications_on_Applied_Mathematics_and_Computation_Micalizzi_A_New_Efficient_Explicit_Deferred_Correction_Framework_Analy.pdf"
 tags: [deferred-correction, explicit, runge-kutta, stability, method-of-lines]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -161,7 +161,7 @@ Runge–Kutta form.
 24. The speed-ups of the Fortran code (Bernstein elements) are much higher than those of the
     Python code (cubature elements). (§9.2.2) **Stated**
 
-*(Reader checks, not in the source.)* The paper calls iterate $k$ "$O(\Delta t^{k+1})$
+*(Compiler checks, not in the sources.)* The paper calls iterate $k$ "$O(\Delta t^{k+1})$
 accurate", meaning its local error, so iteration $k$ is order $k$; with the bundle's
 convention the final order is $\min(K,\mathsf M+1)$ on equispaced subnodes. The measured
 speed-up exceeds the stage-count prediction (about 2 against $65/37\approx1.757$ for

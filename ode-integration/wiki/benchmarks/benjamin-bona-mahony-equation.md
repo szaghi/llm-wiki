@@ -5,7 +5,7 @@ description: "The BBM equation u_t + u_x + u u_x − u_txx = 0 with periodic sol
 status: established
 aliases: [BBM equation, BBM solitary wave, regularized long-wave equation]
 tags: [structure-preserving, geometric-integration, verification]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Benjamin–Bona–Mahony equation
@@ -78,7 +78,8 @@ Semidiscretizations are chosen to keep some of them:
   $c_\star=1.2$, for which $1/K_\star\approx4.9$ exceeds the period: the
   solitary wave would not be near-periodic there. de León et al. (2025)
   use the same wave on $[-90,90]$. The printed domain is probably a slip
-  *(source's reader; not verifiable from the paper)*. Bleecke & Ranocha print
+  *(compiler check, not in the sources; the domain actually run is not recoverable from
+  the paper)*. Bleecke & Ranocha print
   no mode count, final time or tolerances.
 * Farrell et al. (2021, Eq. (28)) print the cubic invariant as
   $\int((\partial_xu)^2+\tfrac13u^3)$. This equals

@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "Irksome"
-description: "Irksome, the Firedrake library that turns a UFL semidiscrete variational form and a Butcher tableau into the coupled Runge–Kutta stage equations, with arbitrary-order collocation tableaux, PETSc-composable stage solvers and the measured cost and conservation behaviour of fully implicit methods."
+description: "Irksome, the Firedrake library that turns a UFL semidiscrete variational form and a Butcher tableau into the coupled Runge–Kutta stage equations, with collocation and DIRK tableaux, stage-derivative, stage-value and transformed formulations, ODE- and DAE-type stage boundary conditions, PETSc-composable and Rana-type stage solvers, and the measured cost of fully implicit methods."
 status: established
-aliases: [irksome]
+aliases: [irksome, Irksome TimeStepper, bc_method, stage_type]
 tags: [software, implicit, runge-kutta, implicit-stage-solvers, structure-preserving]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Irksome
@@ -21,14 +21,19 @@ stage boundary conditions, which Firedrake assembles and PETSc solves
 it provides methods without prescribing which to use (§1). The aim is to
 make [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)
 practical in finite-element codes, where they had been avoided as laborious
-to code and too expensive to solve (§1).
+to code and too expensive to solve (§1). [Kirby & MacLachlan (2025)](/sources/kirby-2025.md)
+describe four later extensions: DAE-type stage boundary conditions, alternative stage
+formulations, a dedicated DIRK path, and generic Rana-type stage preconditioners (§1).
 
 ## What it provides
 
 **Interfaces.** `getForm` takes the UFL form, a tableau, time and
 time-step constants and the solution coefficient, and returns the stage
 form and stage boundary conditions; `TimeStepper` wraps it into a time
-loop (Farrell et al. 2021, §3). Example: the heat equation is
+loop (Farrell et al. 2021, §3). In the later version `TimeStepper` is a
+factory function configured by keywords, e.g.
+`TimeStepper(F, RadauIIA(2), t, dt, up, bcs=bcs)` with options `stage_type`,
+`splitting` and `bc_method` (Kirby & MacLachlan 2025, §2, Fig. 1). Example: the heat equation is
 `inner(Dt(u), v)*dx + inner(grad(u), grad(v))*dx` (§3.1).
 
 **Stage form by substitution.** Irksome works with stage derivatives
@@ -42,17 +47,48 @@ Sobolev-type equations (§2.1, Eqs. 6–9). For the backward-Euler tableau
 the stage form coincides with the usual backward-Euler variational form
 (§2.2.1).
 
-**Stage boundary conditions.** Strong Dirichlet data $u=g(t,\cdot)$ on
-the boundary become $k_i=\partial_tg(t_n+c_ih,\cdot)$, since $k_i$
-approximates $u_t$; weakly imposed data need only evaluation at stage
-times (§2.2.1, Eq. 18).
+**Stage formulations** (Kirby & MacLachlan 2025, §2.2–2.3). Besides the stage
+derivatives (`stage_type='deriv'`, the default), Irksome offers stage values
+$Y_i$ (`stage_type='value'`), whose update needs one mass-matrix solve, skipped
+automatically for stiffly accurate tableaux, and a DIRK path (`stage_type='dirk'`)
+that builds one single-stage problem and reuses it for every stage. The keyword
+`splitting` chooses the unknowns of the stage-derivative form: `AI` (the default,
+$k$ itself) or `IA`, Butcher's transformed variables $w=(A\otimes I)k$, which make the
+nonlinear part of the Jacobian block diagonal; `IA` checks that $A$ is invertible.
+Details on [solving the stage equations](/methods/implicit-stage-solvers.md).
+
+**Stage boundary conditions.** Two treatments of strong Dirichlet data
+$u=g(t,\cdot)$ have been Irksome's default in turn; the authors replaced the first
+by the second, so this is a documented change of default, not a disagreement:
+
+- **ODE-type** (Farrell et al. 2021, §2.2.1, Eq. 18): the stage derivatives take
+  the time derivative of the data, $k_i=\partial_tg(t_n+c_ih,\cdot)$, since $k_i$
+  approximates $u_t$.
+- **DAE-type** (Kirby & MacLachlan 2025, §2.1, Eqs. (2.15)–(2.17)): the data are
+  imposed on the stage values, $Y_i=g(t_n+c_ih,\cdot)$ on the boundary, i.e.
+  $\sum_ja_{ij}k_j=(g(t_n+c_ih,\cdot)-u_n)/h$, solvable for the boundary values of the
+  $k_i$ when $A$ is invertible. It is now the default (`bc_method='DAE'`); the old
+  treatment remains as `bc_method='ODE'`.
+
+Kirby & MacLachlan state that the ODE-type heuristic "has proven to have some inherent
+weaknesses", that "many practical cases show little difference", and that the DAE type
+is "more robust and supported by standard RK convergence theory" (§2, §2.1). Their
+example has incompatible data: the 1D heat equation with $u(0,x)=0$ and boundary values
+1, P1 elements on 10 intervals, three-stage Lobatto IIIC, $h=0.05$; the ODE type sees a
+zero boundary derivative and stays at zero, the DAE type approaches $u\equiv1$ (Fig. 2).
+Weakly imposed data need only evaluation at stage times in either version. The
+comparison is on [boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
 
 **Tableaux.** Gauss–Legendre (implicit midpoint included), Lobatto IIIA
 (Crank–Nicolson included) and Radau IIA (backward Euler included) of
 arbitrary order, with nodes from FIAT quadrature and $A$, $b$ by
 numerical integration; Lobatto IIIC of general order; forward Euler, an
 SSP method, explicit midpoint and trapezoid, classical RK4, and Alexander's
-L-stable DIRKs (§3.2). The stability properties recalled for these
+L-stable DIRKs (§3.2). Kirby & MacLachlan (2025, §2.3, App. A) add DIRKs of high
+[weak stage order](/definitions/weak-stage-order.md), WSODIRK433 and WSODIRK744
+($s$ stages, order $p$, weak stage order $q_{\mathrm w}$ in the name WSODIRK$spq_{\mathrm w}$),
+and print the tableaux of Radau IIA with 1–3 stages, Alexander's three-stage DIRK and
+WSODIRK433; see [DIRK methods](/methods/diagonally-implicit-runge-kutta.md). The stability properties recalled for these
 families are on [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)
 and [A-stability](/properties/a-stability.md).
 
@@ -92,6 +128,17 @@ $(I\otimes M+hA\otimes K)\mathbf k=\mathbf f$ (§2.3, Eq. 31).
   pressure, like the velocity, with stage derivatives and impose the incompressibility
   constraint on every stage value (§3.1); see
   [differential-algebraic equations](/definitions/differential-algebraic-equation.md).
+
+- **Rana-type and block preconditioners.** Kirby & MacLachlan (2025, §3) add block
+  Jacobi and block Gauss–Seidel from the additive split of $A$, and a preconditioner
+  that replaces $A$ by the lower-triangular product $\tilde L\tilde D$ of its $LDU$
+  factorization; the latter is implemented as a `firedrake.AuxiliaryOperatorPC` that
+  rebuilds the stage form with the modified matrix, so it applies to nonlinear problems
+  (PETSc option `'pc_python_type': 'irksome.RanaLD'`). Its GMRES counts stay nearly
+  independent of $s$, while block Jacobi and Gauss–Seidel counts grow (§4.1, Fig. 5). The
+  eigenvalue-based preconditioners of Southworth et al. and the SVD-based ones of Leveque
+  et al. are not supported (§3.1). Numbers are on
+  [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
 [Munch et al. (2024)](/sources/munch-2024.md) (§7) name Irksome as a possible code
 generator for the batched stage operations of their stage-parallel deal.II
@@ -147,6 +194,30 @@ Niagara cluster, Intel Skylake nodes).
   two-stage Radau IIA reaches the accuracy of a three-stage L-stable DIRK in about 60 %
   of the wall time on one eighth of the cores.
 
+- **Order reduction, later version** (Kirby & MacLachlan 2025, §4.1, Figs. 3–4; 2D heat
+  equation with serendipity elements, $h=M/N$, $M=1,4,8$): backward Euler is suboptimal in
+  $L^2$ for every $M$, Alexander's DIRK at $M=8$, and with cubics two-stage Radau IIA (order
+  3, stage order 2) loses $L^2$ accuracy at large steps, while three- and four-stage Radau
+  IIA and WSODIRK433 stay spatial-error dominated. See
+  [order reduction](/definitions/order-reduction.md).
+- **Navier–Stokes as an index-2 DAE** (Kirby & MacLachlan 2025, §2, §4.2, Figs. 9–11):
+  velocity and pressure both carry stage derivatives, incompressibility is imposed on every
+  stage, and an initial pressure is required (Eqs. (2.11)–(2.14)). On flow past a cylinder
+  with Mardal–Tai–Winther elements over $t\in[0,8]$, the reference is five-stage Radau IIA
+  at the finest step on the same fixed mesh (maximum drag about 2.89, lift about 0.47);
+  three- and four-stage Radau IIA give the best accuracy per run time, WSODIRK744 is
+  accurate but "far more expensive", and one-stage Radau IIA (backward Euler) barely
+  converges. See [flow past a cylinder](/benchmarks/flow-past-cylinder.md) and
+  [differential-algebraic equations](/definitions/differential-algebraic-equation.md).
+- **Cahn–Hilliard** (Kirby & MacLachlan 2025, §4.3, Figs. 12–15; $C^1$ Bell elements): the
+  free energy decreases monotonically for every method; three- and four-stage Radau IIA have
+  the lowest final-energy error, and Radau IIA costs slightly more than a DIRK with the same
+  stage count. See [Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md).
+- **Overall.** Kirby & MacLachlan conclude that fully implicit methods with Rana-type or
+  monolithic multigrid preconditioning are competitive with DIRKs in run time and more
+  accurate (§1, §5). Adaptive time stepping for implicit Runge–Kutta DAEs and IMEX support
+  are named as future work (§5).
+
 ## Qualifications
 
 - The cost ratios (3×, 5×) are from one mesh and one step size, without
@@ -167,9 +238,25 @@ Niagara cluster, Intel Skylake nodes).
   Their solver tolerances and Chebyshev smoothing intervals are hand-tuned, and no
   convergence theory for the stage-coupled smoother is given (§5).
 
+- Kirby & MacLachlan (2025, §4.2, p. 17:19) write that DIRKs "are only guaranteed to have
+  stage order one or two". As a statement about classical stage order this is an upper
+  bound, not a guarantee: at most 1 with invertible $A$ and at most 2 with an explicit first
+  stage; their own WSODIRK433 reaches weak stage order 3 and matched three-stage Radau IIA on
+  the heat equation (see [stage order](/definitions/stage-order.md)). The same paper states
+  that for index-2 DAEs the stage order, not the global order, governs accuracy (§2), yet
+  observes that the schemes "generally exceed the stage-order bound" on drag and lift,
+  reaching their formal order (§4.2).
+- Kirby & MacLachlan (2025) print the variational update without the factor $h$
+  (Eq. (2.8)), the summation index of the stage value as $i$ instead of $j$ below
+  Eq. (2.15), and the last coefficient of Alexander's DIRK garbled (App. A); the intended
+  $\tfrac32\gamma^2-5\gamma+\tfrac54$ is the one tabulated on
+  [DIRK methods](/methods/diagonally-implicit-runge-kutta.md). Their reference drag and
+  lift come from a fixed coarse mesh and are not benchmark reference values.
+
 # Citations
 
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §1–§4; Eqs. 6–9, 18, 31–33; Listings 1–3; Figs. 1–3, 5; Tables 1–2 (arXiv v1).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §1.2 (IRKIntegration in MFEM), Remark 2 (Irksome as concurrent work).
 - [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §3.1, §4, §4.3 (Irksome with PETSc/PCPATCH monolithic multigrid); §5.1–5.2, Tables 1–6.
 - [Munch et al. (2024)](/sources/munch-2024.md) — §7 (Irksome as possible code generator for batched stage operations).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §1; §2 (Eqs. (2.1)–(2.14), Fig. 1); §2.1 (Eqs. (2.15)–(2.17), Fig. 2); §2.2–2.3 (Eqs. (2.18)–(2.21)); §3.1–3.2 (Eqs. (3.3)–(3.8)); §4.1–4.3 (Figs. 3–15); §5; App. A.

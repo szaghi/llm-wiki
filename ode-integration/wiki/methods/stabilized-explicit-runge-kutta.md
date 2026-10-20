@@ -5,7 +5,7 @@ description: "Stabilized explicit Runge–Kutta methods fix a low order and use 
 status: established
 aliases: [explicit stabilized Runge–Kutta, ESRK, Runge–Kutta–Chebyshev, RKC, RKC1, RKC2, Runge–Kutta–Legendre, RKL, RKL1, RKL2, super-time-stepping, STS, monotonic RKC, MONO, Chebyshev methods]
 tags: [runge-kutta, explicit, stabilized, stability, stiff, positivity]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Stabilized explicit Runge–Kutta methods: Chebyshev, Legendre and super-time-stepping
@@ -82,15 +82,25 @@ $P_j(z)=\mathsf a_j+\mathsf b_jT_j(\omega_0+\omega_1z)$ are the internal stabili
 polynomials (Lemma 3.1). ROCK2, ROCK4 and the stochastic SK-ROCK belong to the same
 recurrence-based class (Remarks 3.4–3.6).
 
-**Multirate RKC.** For $f=f^{\{\mathrm f\}}+f^{\{\mathrm s\}}$ with a cheap stiff part,
-the multirate RKC of Abdulle, Grote & Rosilho de Souza, as recalled by Croci & Rosilho
-de Souza (2022, §4.1, Eqs. (87)–(97)), applies RKC1 to a modified equation
-$y'=f_\eta(y)$ whose averaged force $f_\eta$ is evaluated by an inner $m$-stage RKC1
-run of length $\eta$ on $u'=f^{\{\mathrm f\}}(u)+f^{\{\mathrm s\}}(y)$; for linear
+**Multirate RKC.** For $f=f^{\{\mathrm f\}}+f^{\{\mathrm s\}}$ with a cheap, severely stiff
+part acting on few degrees of freedom (local mesh refinement), the
+[multirate RKC method (mRKC)](/methods/multirate-runge-kutta-chebyshev.md) of
+[Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) (§2–4), also recalled
+by Croci & Rosilho de Souza (2022, §4.1, Eqs. (87)–(97)), applies first-order RKC to a
+modified equation $y'=f_\eta(y)$ whose averaged force $f_\eta$ is evaluated by one inner
+$m$-stage RKC step of length $\eta$ on $u'=f^{\{\mathrm f\}}(u)+f^{\{\mathrm s\}}(y)$
+($\eta$, $m$, $u$ page-local; $\eta$ is not the registry entropy); for linear
 $f^{\{\mathrm f\}}=A^{\{\mathrm f\}}y$ (page-local) it equals
 $\phi_1(\eta A^{\{\mathrm f\}})f(y)$. The outer stage count is then set by the slow
-spectral radius only. See [multirate GARK](/methods/multirate-gark.md) for the
-coupled-tableau approach.
+spectral radius only: $h\rho_{\mathrm s}\le\beta s^2$, $\eta\rho_{\mathrm f}\le\beta m^2$,
+$\eta=6hm^2/(\beta s^2(m^2-1))$ with $\beta=2-\frac43\varepsilon_{\mathrm d}$ (Eq. (3.4);
+$\rho_{\mathrm f}$, $\rho_{\mathrm s}$ page-local spectral radii), and the scheme is stable on
+the scalar multirate test equation (Thm. 4.5) and first order (Thm. 4.6). Abdulle et al.
+recall the RKC1 recurrence in stage-value rather than delta form, with $\ell_s=2\omega_0/\omega_1$,
+$\beta s^2\le\ell_s$ and $\varepsilon_{\mathrm d}=0.05$ (§3.1, Eqs. (3.1)–(3.3)), and
+report speedups up to about 40 over RKC and 10 to 70 over RKC2 on diffusion through a
+narrow channel. See [multirate GARK](/methods/multirate-gark.md) for the coupled-tableau
+approach.
 
 ## Runge–Kutta–Legendre super-time-stepping (RKL)
 
@@ -241,7 +251,9 @@ evaluations per step in high precision; see
 - **Printed slips.** Faleichik & Moisa (2026) print the integrand of $P$ as
   $T_{s-1}(\xi)$ (Eq. (8)) where $T_{s-1}(w_0+w_1\xi)$ is meant, and their error
   estimate (Eq. (23)) lacks the factor $h$ on $f$; with $h$ restored it estimates
-  $\frac1{20}h^2y''$, not the $\frac1{10}h^2y''$ of Eq. (22) (reader's expansion).
+  $\frac1{20}h^2y''$, not the $\frac1{10}h^2y''$ of Eq. (22), since
+  $y_n-y_{n+1}+hf(t_{n+1},y_{n+1})=\tfrac12h^2y''+O(h^3)$ when $y_{n+1}$ has local error
+  $O(h^3)$, as the second-order MONO solution does *(compiler check, not in the sources)*.
   Croci & Rosilho de Souza (2022) print the inner RKC coefficient as
   $T_m(\upsilon_0)/T_m'(\upsilon_1)$ (Eq. (96)), where the argument of $T_m'$ is
   $\upsilon_0$. Doehring et al. (2024) label the outer roots of App. A in swapped
@@ -259,4 +271,5 @@ evaluations per step in high precision; see
 - [Dawes (2021)](/sources/dawes-2021.md) — §1, §3 (Eqs. 7–11), §4–5 (Eq. 12, simplified algorithm), §6–7, §8.1–8.3 (Figs. 26–44), §9, App. A.
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1–2 (Eqs. 2–20), §3 (Table 1, Figs. 1–3), §4 (Eqs. 21–23), §5 (Table 2).
 - [Doehring et al. (2024)](/sources/doehring-2024.md) — §3.1 (Eqs. 3.2–3.11), §4.3–4.4, §9 (Eqs. 9.1–9.14, Table 2), §10.2, App. A.
+- [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) — §1, §3.1 (Eqs. 3.1–3.3), §3.2 (Eqs. 3.4–3.9), Thms. 4.5–4.6, §5.3 (Figs. 15–16).
 - [Grote et al. (2021)](/sources/grote-2021.md) — §1, §2.4 (eqs. 2.18–2.19, Lemma B.1), Table 1, App. A (Lemma A.4).

@@ -5,7 +5,7 @@ description: "Arbitrarily high-order integrators that correct a cheap low-order 
 status: established
 aliases: [DeC, deferred correction method, Abgrall's DeC, explicit DeC, IMDeC, implicit deferred correction, DC2j, deferred correction for the implicit midpoint rule, difference correction, spectral deferred correction, SDC, multirate SDC, MRSDC, bDeC, sDeC, alpha-DeC, αDeC, bDeCu, bDeCdu, sDeCu, sDeCdu, efficient DeC, p-adaptive DeC, mPDeC, MPDeC, modified Patankar deferred correction, HBPC, Hermite–Birkhoff predictor–corrector, two-derivative deferred correction, Picard SDC, adaptive SDC]
 tags: [deferred-correction, explicit, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Deferred correction (DeC)
@@ -260,7 +260,7 @@ with $y_{n+1}=Y^{(K)}_s$. The order is $\min(4+K,p)$, one per correction from th
 fourth-order predictor (Remark 2, quoted from Schütz, Seal & Zeifang and confirmed up to
 order 8, Figs. 7–9); corrections beyond saturation can still lower the error. The scheme,
 HBPC($p$, $K$), is a DeC whose low-order operator is the implicit two-derivative Taylor
-step, as IMDeC's is a linearized implicit Euler step *(compiler remark)*. Every predictor
+step, as IMDeC's is a linearized implicit Euler step *(compiler remark, not in the sources)*. Every predictor
 and corrector stage is one nonlinear system
 $Y-\alpha_1hf(Y)+\frac{\alpha_2h^2}2\dot f(Y)=\text{known}$ ($\alpha_1$, $\alpha_2$
 page-local: $\frac{\Delta c_l}2,\frac{\Delta c_l^2}6$ in the predictor, $1,1$ in the
@@ -291,7 +291,7 @@ different: its regions depend on the subnodes and differ from bDeC's, and sDeCu 
 share theirs by Thm. 6.2 (Fig. 3, orders 3–13, computed). The Picard form of SDC with $K$
 sweeps reproduces the contour of the $K$-stage order-$K$ explicit method
 (Čaklović et al. 2025, §3.2, Fig. 5), as expected if Picard SDC is read as the bDeC
-iteration (see below) *(compiler remark)*.
+iteration (see below) *(compiler remark, not in the sources)*.
 
 ## Accuracy observations
 
@@ -460,7 +460,7 @@ $$\mathbf Y^{(k+1)}-hQ_\Delta f\big(\mathbf Y^{(k+1)}\big)=y_n\mathbf 1+h\big(Q-
 
 - $Q_\Delta=0$ is plain Picard iteration, which converges only for small steps or
   non-stiff problems (Saupe et al., §2.1). It is the bDeC update of this page, with the
-  integration weights $\omega_{mr}$ in the role of $Q$ *(compiler remark)*.
+  integration weights $\omega_{mr}$ in the role of $Q$ *(compiler remark, not in the sources)*.
 - Lower-triangular $Q_\Delta$ from explicit or implicit Euler between nodes is classical
   SDC; the explicit-Euler version is sDeC (Micalizzi & Torlo 2024, App. A.1). The LU
   choice $Q_\Delta=U^\top$ with $LU=Q^\top$ (Weiser, as recalled by Saupe et al.) converges

@@ -5,7 +5,7 @@ description: "Mixed-precision explicit Runge–Kutta methods evaluate most right
 status: established
 aliases: [order-preserving mixed precision, q-order-preserving scheme, mixed-precision RKC, mixed-precision Runge–Kutta–Chebyshev, low-precision time integration, bfloat16 time stepping]
 tags: [explicit, runge-kutta, stabilized, stability, stiff, round-off, mixed-precision]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Mixed-precision explicit Runge–Kutta methods
@@ -97,7 +97,8 @@ The construction mirrors the linearized RKC of Verwer, $f(y_n+d_j)\approx f(y_n)
 approximating the Jacobian action is "crucial to maintain stability" (§3.2).
 
 **Multirate RKC** (§4.2, Eqs. (98)–(103), Thm. 4.3). The same replacement in the outer
-and inner recurrences of the multirate RKC of Abdulle, Grote & Rosilho de Souza gives
+and inner recurrences of the [multirate RKC](/methods/multirate-runge-kutta-chebyshev.md) of
+Abdulle, Grote & Rosilho de Souza gives
 a 1-order-preserving mixed-precision multirate method with one high-precision
 evaluation of the fast and of the slow part per step.
 

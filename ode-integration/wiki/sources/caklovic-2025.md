@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. 47:A430-A453"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Čaklović_Improving_Efficiency_of_Parallel_Across_the_Method_Spectral.pdf"
 tags: [deferred-correction, parallel, stiff, stability, implicit-stage-solvers]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -169,7 +169,7 @@ keep it apart from the sweep count). $Q_{\Delta,j}=\mathrm{diag}(c_1/j,\dots,c_{
     **Stated**, and qualified by claims 27 and 28, where RK4 and LU-SDC win in parts of
     the accuracy range.
 
-*(Reader checks, not in the source.)* The definition of A-stability in §3.2 is misprinted
+*(Compiler checks, not in the sources.)* The definition of A-stability in §3.2 is misprinted
 (see slips). The efficiency conclusions rest on an assumed parallel efficiency, with
 wall-clock timings only for Allen–Cahn, and on a Newton cost of about one right-hand side
 per iteration, which favours implicit methods relative to large-scale settings.

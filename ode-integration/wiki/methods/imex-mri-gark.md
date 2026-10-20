@@ -5,7 +5,7 @@ description: "IMEX-MRI-GARK methods split the slow scale of a three-way additive
 status: established
 aliases: [IMEX-MRI-GARK, ImEx-MRI-GARK, implicit-explicit multirate infinitesimal GARK, IMEX-MRI-GARK3a, IMEX-MRI-GARK3b, IMEX-MRI-GARK4]
 tags: [multirate, imex, runge-kutta, order-conditions, stability]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # IMEX multirate infinitesimal GARK methods
@@ -111,13 +111,14 @@ On $y'=(\lambda^{\{\mathrm f\}}+\lambda^{\mathrm E}+\lambda^{\mathrm I})y$ with
 $z^{\{\cdot\}}=H\lambda^{\{\cdot\}}$ and an exact fast solve, variation of constants
 gives (§3, eqs. 3.1–3.3)
 
-$$Y_i=e^{\Delta c_iz^{\{\mathrm f\}}}Y_{i-1}+z^{\mathrm E}\sum_{j<i}\eta_{ij}Y_j+z^{\mathrm I}\sum_{j\le i}\mu_{ij}Y_j,\quad
-\eta_{ij}=\sum_kk!\,\omega^{(k)}_{ij}\phi_{k+1}\big(\Delta c_iz^{\{\mathrm f\}}\big),\quad
-\mu_{ij}=\sum_kk!\,\gamma^{(k)}_{ij}\phi_{k+1}\big(\Delta c_iz^{\{\mathrm f\}}\big),$$
+$$Y_i=e^{\Delta c_iz^{\{\mathrm f\}}}Y_{i-1}+z^{\mathrm E}\sum_{j<i}\tilde\omega_{ij}Y_j+z^{\mathrm I}\sum_{j\le i}\tilde\gamma_{ij}Y_j,\quad
+\tilde\omega_{ij}=\sum_kk!\,\omega^{(k)}_{ij}\phi_{k+1}\big(\Delta c_iz^{\{\mathrm f\}}\big),\quad
+\tilde\gamma_{ij}=\sum_kk!\,\gamma^{(k)}_{ij}\phi_{k+1}\big(\Delta c_iz^{\{\mathrm f\}}\big),$$
 
 so that
-$R_{\mathrm{mr}}(z^{\{\mathrm f\}},z^{\mathrm E},z^{\mathrm I})=e_s^\top\big(I-\operatorname{diag}(e^{\Delta c\,z^{\{\mathrm f\}}})\mathsf N-z^{\mathrm E}\eta-z^{\mathrm I}\mu\big)^{-1}e_1$
-($e_j$ unit vectors, page-local). The factor $k!$ is the translation of the
+$R_{\mathrm{mr}}(z^{\{\mathrm f\}},z^{\mathrm E},z^{\mathrm I})=e_s^\top\big(I-\operatorname{diag}(e^{\Delta c\,z^{\{\mathrm f\}}})\mathsf N-z^{\mathrm E}\tilde\Omega-z^{\mathrm I}\tilde\Gamma\big)^{-1}e_1$
+($e_j$ unit vectors and the matrices $\tilde\Omega=(\tilde\omega_{ij})$, $\tilde\Gamma=(\tilde\gamma_{ij})$
+page-local; the source writes $\eta$, $\mu$, and $\eta$ is the registry entropy). The factor $k!$ is the translation of the
 source's unnormalized $\varphi_{k+1}$ into the registry's
 [$\phi$-functions](/methods/exponential-integrators.md) *(compiler translation, not
 in the source)*. The **joint stability region** $\mathcal J_{\alpha,\beta}$ built on
@@ -137,7 +138,7 @@ this function is defined on
   $c_6=c_7=c_8=1$, with implicit diagonal entries
   $\gamma^{(0)}_{33}=\gamma^{(0)}_{55}=\gamma^{(0)}_{77}=\gamma_{\mathrm{ARS}}$ (page-local
   name for the diagonal coefficient of ARS(3,4,3); the source's $\eta$, renamed because
-  $\eta_{ij}$ is used above). Coefficients are printed to 36 digits and in
+  $\eta$ is the registry entropy). Coefficients are printed to 36 digits and in
   the authors' repository. 3b's joint region is "significantly larger" than 3a's:
   it covers most of the base IMEX-ARK region for $\alpha=10^\circ,45^\circ$ and
   $\beta\le60^\circ$, while 3a's shrinks considerably as $\beta$ grows from $10^\circ$

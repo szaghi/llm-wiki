@@ -5,7 +5,7 @@ description: "Multirate infinitesimal methods advance the slow partition with a 
 status: established
 aliases: [MRI, MRI-GARK, MIS, multirate infinitesimal step method, multirate infinitesimal GARK, infinitesimal multirate, MRIStep]
 tags: [multirate, runge-kutta, imex, software]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Multirate infinitesimal methods (MIS, MRI-GARK)
@@ -142,8 +142,10 @@ MRI-GARK-ESDIRK46a is unstable for $H>1/40$ (201 points) and $H>1/80$ (801
 points), and is the most efficient method below errors of $10^{-8}$ (§5.2).
 
 **Inner-solver order.** Luan et al. (2022, Thm. 2.12, Remark 2.13) prove for MERB the bound
-$CH^p+CHh^q+Ch^r$ with $q$ the order of the stage solves and $r$ that of the final solve, so
-$q\ge p-1$, $r\ge p$ suffice, and state that MRI-GARK requires $q,r\ge p$. Fish & Reynolds (2023,
+$CH^p+CHh^{r_{\mathrm s}}+Ch^{r_{\mathrm f}}$ with $r_{\mathrm s}$ the order of the stage solves and
+$r_{\mathrm f}$ that of the final solve (page-local; the source's $q$, $r$, renamed because $q$ is
+the registry stage order), so $r_{\mathrm s}\ge p-1$, $r_{\mathrm f}\ge p$ suffice, and state that
+MRI-GARK requires $r_{\mathrm s},r_{\mathrm f}\ge p$. Fish & Reynolds (2023,
 §2) model the fast error as the global error of the inner method over one macro step,
 $\propto(H/m)^{p^{\{\mathrm f\}}}H$ ($p^{\{\mathrm f\}}$ the inner order, page-local).
 
@@ -229,6 +231,11 @@ it.
   method free, as MRI methods do.
 - [Local time stepping](/methods/local-time-stepping.md) splits the unknowns by mesh region
   instead of splitting the right-hand side.
+- The [multirate Runge–Kutta–Chebyshev method](/methods/multirate-runge-kutta-chebyshev.md) of
+  [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) also solves an auxiliary
+  fast problem with the slow force frozen, but discretizes it with a few explicit stabilized
+  stages instead of assuming an exact fast solve, and analyses the fully discrete scheme
+  (§2.1).
 
 ## Qualifications
 
@@ -240,11 +247,13 @@ it.
   the coefficient $\sum_k\gamma^{(k)}_{ij}/(k+1)$ given above.
 - Gardner et al. (2022, §2.3) write the stage time as $t_n+c_iH_n$ while their step
   starts at $t_{n-1}$; the index is inconsistent as printed.
-- Luan et al. (2022) bound the inner-solver errors with a bounded fast Jacobian, so their
-  constants are not uniform in the fast stiffness (reader's observation on the Source page).
+- Luan et al. (2022) bound the inner-solver errors with a bounded fast Jacobian, which they
+  derive from their smoothness assumption, so their constants are not uniform in the fast
+  stiffness *(compiler remark, not in the source)*.
 - Loffeld et al. (2024) compare at constant steps on one problem per study and report times
   without units in their AMR table (§6.3); their Table 1 prints two convergence rates that the
-  printed errors do not reproduce (reader's check on the Source page).
+  printed errors do not reproduce, e.g. 4.48 for MRI-3(4) where
+  $\log_2(5.50\times10^{-3}/2.17\times10^{-4})=4.66$ *(compiler check, not in the source)*.
 - Loffeld et al. (2024, §2.2, arXiv v1 of 2022) write that the coupling strategy "currently limits
   MRI approaches to at-best fourth order in time", in contrast to SDC. The "MRI approaches" of
   their paper are MIS, MRI-GARK and IMEX-MRI-GARK (§2.1), all of order at most four, so the
@@ -266,3 +275,4 @@ it.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §1.1, §2, §5.
 - [Luan et al. (2022)](/sources/luan-2022.md) — §1, Lemma 2.2, Thm. 2.12, Remark 2.13, §2.4.5.
 - [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §2.1–2.2, §4, §5 (Tables 1–2, Figs. 3–4), §6 (Fig. 5, Table 9), §7.
+- [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) — §2.1 (comparison with MIS and MRI-GARK).

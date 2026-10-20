@@ -5,7 +5,7 @@ description: "Linearly implicit one-step methods that replace the nonlinear stag
 status: established
 aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
 tags: [stiff, implicit, dae, order-reduction, order-conditions]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Rosenbrock–Wanner (ROW) and W-methods
@@ -214,10 +214,10 @@ parabolic conditions above, have not been studied in the sources.
   in error against CPU time than the A-stable Rosenbrock methods ROS2, ROS3 and ROS4 of the same
   order with the exact Jacobian, on viscous Burgers and FitzHugh–Nagumo in MATLAB on a laptop.
   The Rosenbrock methods could also freeze their matrix as W-methods, which was not tested.
-- **Conte et al.'s claim about W-method stability is not settled here.** The reader of Conte et
-  al. (2024) flags it as likely overstated: the classical W-method literature, which Conte et al.
-  themselves cite (Steihaug–Wolfbrandt, Hairer–Wanner §IV.7 and two AMF-W papers), contains
-  stability analyses with approximate Jacobians. No ingested source settles the question.
+- **Conte et al.'s claim about W-method stability is not settled here.** It is likely
+  overstated: the classical W-method literature, which Conte et al. themselves cite
+  (Steihaug–Wolfbrandt, Hairer–Wanner §IV.7 and two AMF-W papers), contains stability analyses
+  with approximate Jacobians *(compiler remark, not in the ingested sources)*. No ingested source settles the question.
 
 # Citations
 

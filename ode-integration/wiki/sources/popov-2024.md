@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 100:22"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Popov_Arbitrary_High_Order_ADER-DG_Method_with_Local_DG_Predictor.pdf"
 tags: [ader, implicit, stability, stiff, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -152,11 +152,13 @@ piecewise-polynomial solution.
     the original ADER, which modern ADER replaced by a local DG predictor; extrapolation
     methods "usually" give the solution only at the nodes. (Introduction) **Stated**
 
-*(Reader checks, not in the source.)* For $f=\lambda y$ the nodal representation of $f$ is
+*(Compiler checks, not in the sources.)* For $f=\lambda y$ the nodal representation of $f$ is
 exact, so the predictor is the classical upwind DG-in-time discretization of degree $\mathsf M$,
 whose stability function is the $(\mathsf M,\mathsf M+1)$ subdiagonal Padé approximant of $e^z$, the
 Radau IIA one. That gives A- and L-stability for every $\mathsf M$ and nodal order $2\mathsf M+1=2s-1$,
-with no need for plots or rank checks; the paper does not make this identification, and its
+with no need for plots or rank checks; the paper does not make this identification (it is consistent with the
+DG-in-time–Radau IIA equivalence recorded on the
+[fully implicit Runge–Kutta](/methods/fully-implicit-runge-kutta.md) page), and its
 evidence is computational, not a proof. "L1-stable" is a nonstandard label for
 $R(z)=O(\lvert z\rvert^{-1})$. The cost count of claim 23 looks wrong by a factor $\mathsf M+1$: one
 Picard sweep of the predictor evaluates $f$ at $\mathsf M+1$ nodes and one Newton step needs $\mathsf M+1$

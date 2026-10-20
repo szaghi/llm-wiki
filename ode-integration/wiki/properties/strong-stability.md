@@ -5,7 +5,7 @@ description: "A one-step method is strongly stable on $y'=Ly$ with $\\langle Lv,
 status: established
 aliases: [monotonicity, monotonicity-preserving, monotonicity stability, contractivity in an inner-product norm, L2 stability, weak(kappa) stability]
 tags: [stability, strong-stability, runge-kutta, structure-preserving, explicit, implicit]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Strong stability (monotonicity) of Runge–Kutta methods for linear seminegative problems
@@ -94,10 +94,12 @@ strongly stable if $p\equiv3\pmod4$**, as recalled by both Sun & Shu (2021, §1)
 et al. (2022, §1). For odd $p$ the leading index is $\zeta=(p+1)/2$ and the leading
 $\zeta\times\zeta$ block of $\Upsilon$ is negative definite; for even $p$,
 $\zeta=p/2+1$ and the block of order $p/2$ is negative definite (Sun & Shu 2021, Prop.
-2.2). The leading coefficients, consistent with Sun & Shu's Table 6.1 (and
-recomputed from $\lvert R(iy)\rvert^2-1$ during ingestion), are $\eta_\zeta=1,\frac14,
--\frac1{12},-\frac1{72},\frac1{360},\frac1{2880}$ for $p=1,\dots,6$ (see
-*Qualifications*). Hence forward Euler ($p=1$), $p=2$, $p=5$ and $p=6$ fail by part 4.
+2.2). The leading coefficients are $\eta_\zeta=1,\frac14,
+-\frac1{12},-\frac1{72},\frac1{360},\frac1{2880}$ for $p=1,\dots,6$: they equal
+$-2\mu_2^0$ for the critical diffusive coefficients $\mu_2^0$ of Sun & Shu's Table 6.1
+(page-local, as on [superviscosity](/methods/superviscosity-stabilized-runge-kutta.md)), and the lowest
+coefficient of $\lvert R(\mathrm iy)\rvert^2-1$ *(compiler check, not in the sources;
+see Qualifications)*. Hence forward Euler ($p=1$), $p=2$, $p=5$ and $p=6$ fail by part 4.
 Classical RK4 ($p=4$) has $\eta_\zeta<0$ but still fails on the non-normal test matrix
 (Sun & Shu 2021, Table 6.3): its failure comes from the quadratic form, which is why
 the remedy of Sun & Shu needs a positive dispersive correction for even $p$ (critical
@@ -132,6 +134,26 @@ update to enforce the energy law and is cited by both sources as the alternative
 (Sun & Shu 2021, §1, §5; Sun et al. 2022, §1). Sun & Shu's adaptive filter of §5 is
 modelled on the relaxation procedure.
 
+## Nonlinear problems: third-order RKDG on Burgers
+
+The theory above is linear. [Wei & Shu (2026)](/sources/wei-2026.md) obtain
+$\lVert u^{n+1}\rVert\le\lVert u^n\rVert$ for a **nonlinear** problem, explicit
+discontinuous Galerkin for Burgers' equation, as the sum of a cell-by-cell square-entropy
+inequality, under $h\le C\Delta x$ and for periodic or compactly supported data (§1, §3).
+It holds for $P^2$ and $P^3$ elements and the explicit three-stage third-order methods with
+$c_3=a_{31}+a_{32}=1$ and positive weights, Kutta's method among them, and for $P^1$ and any
+strictly convex flux extending to an entire function (Thms. 3, 5, A.2). The proof starts
+from the same Runge–Kutta energy identity as the [energy method](/methods/runge-kutta-energy-method.md),
+$\lVert u^{n+1}\rVert^2-\lVert u^n\rVert^2=2h\sum_ib_i\langle Y_i,f(Y_i)\rangle+h^2\sum_{i,l}b_i(b_l-2a_{il})\langle f(Y_i),f(Y_l)\rangle$,
+and splits the quadratic form exactly into two negative squares of first temporal
+differences and a positive square of a second difference (Thm. 1). On linear problems all
+three-stage third-order methods coincide and give the inequality for every $P^k$
+(Remark 1), in line with the strong stability of the third-order Taylor polynomial
+recalled above. The class excludes SSP-RK3, and the authors' companion counterexample shows
+that RKDG with $P^2$ and a class of third-order methods including SSP-RK3 is not $L^2$ stable
+on Burgers under $h\sim\Delta x$ (§1). See
+[fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md).
+
 ## Relation to SSP
 
 The two notions share the words "strong stability" and are distinct.
@@ -156,8 +178,9 @@ property, which in the implicit setting connects to B- and
   $\eta_\zeta=(-1)^{(p+1)/2}/(p+1)!$ for odd $p$ and
   $(-1)^{p/2+1}/(p!(p+2))$ for even $p$. These disagree with the paper's own Table 6.1
   and with the critical diffusive coefficient $-\eta_\zeta/2$ of Thm. 3.1; the values consistent with Table 6.1
-  are $2(-1)^{(p-1)/2}/(p+1)!$ (odd $p$) and $2(-1)^{p/2+1}/(p!(p+2))$ (even $p$), as
-  the reader of that source verified symbolically. A printed slip, not a disagreement.
+  are $2(-1)^{(p-1)/2}/(p+1)!$ (odd $p$) and $2(-1)^{p/2+1}/(p!(p+2))$ (even $p$)
+  *(compiler check, not in the sources: symbolic expansion of
+  $\lvert R(\mathrm iy)\rvert^2-1$ for $p\le6$)*. A printed slip, not a disagreement.
 - The criteria of Sun et al. (2022) are sufficient conditions stated through the
   coefficients of $R$; they cover autonomous linear problems with bounded $L$ only.
 - Sun et al. (2022, §1) recall the explicit-method result as "strongly stable if
@@ -169,3 +192,4 @@ property, which in the implicit setting connects to B- and
 
 - [Sun et al. (2022)](/sources/sun-2022.md) — §1 (definitions, von Neumann lemma, A-stability, SSP contrast), Lemma 3.6, Thms. 3.5, 3.7, Remark 3.8, §4 Exs. 4.1–4.6, Thms. 5.1–5.2, Ex. 6.1.
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1 (Eq. 1.3, weak stability, recalled explicit results, coercive case), Def. 2.1, Props. 2.1–2.2, Thms. 3.1–3.2, §5, §6.1.1 (Tables 6.1, 6.3).
+- [Wei & Shu (2026)](/sources/wei-2026.md) — §1, §2 (Eq. (13)), §3 (Thm. 1, Remark 1, Thms. 3, 5), App. A (Thm. A.2); author manuscript.

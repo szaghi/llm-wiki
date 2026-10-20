@@ -5,7 +5,7 @@ description: "Multirate GARK methods advance a slow partition with one macro ste
 status: established
 aliases: [MrGARK, multirate generalized additive Runge–Kutta, compound-fast MrGARK, multirate backward Euler, multirate implicit midpoint, implicit multirate GARK]
 tags: [multirate, runge-kutta, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)
@@ -229,7 +229,7 @@ entropy-stable flux runs stably on ten levels (Fig. 16). See
 need no linear or nonlinear solves, which the authors find attractive for
 parallel computing when no good preconditioner is available (§4).
 
-Printed slips (arXiv v4 read; source's reader checks): Eq. (17) omits the zone
+Printed slips (arXiv v4 read; recorded on the [Source page](/sources/kang-2022.md)): Eq. (17) omits the zone
 superscript on $b_i$; Algorithm 2 sets its loop flag unconditionally in one
 branch and indexes past the end of an array; the level-0 bookkeeping of the
 worked example (step $2H$ under the same step label) is unclear.

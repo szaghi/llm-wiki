@@ -5,20 +5,20 @@ description: "For linear hyperbolic relaxation systems with Fourier–Galerkin s
 status: established
 aliases: [uniform accuracy in ε, uniformly accurate IMEX, uniform-in-ε convergence, no order reduction in the intermediate regime, uniform stability of IMEX-BDF, uniform accuracy of IMEX-RK]
 tags: [asymptotic-preserving, imex, order-reduction, stability, stiff]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Uniform accuracy of IMEX schemes for hyperbolic relaxation systems
 
 A scheme for a problem with relaxation time $\varepsilon$ is **uniformly accurate of
-order $q$** if its global error obeys $\lVert e_n\rVert\le C\,h^q$ for $nh\le T$ with $C$
+order $p$** if its global error obeys $\lVert e_n\rVert\le C\,h^p$ for $nh\le T$ with $C$
 independent of $\varepsilon$ (and of the spatial resolution): the order holds in the
 kinetic regime $\varepsilon=O(1)$, in the limit $\varepsilon\to0$, and in the
 intermediate regime between them. This is stronger than the
 [asymptotic-preserving](/definitions/asymptotic-preserving-scheme.md) property, which
 concerns only the two ends: the triangle-inequality argument recalled by
 [Jin (2022)](/sources/jin-2022.md) (§1, eqs. (1.1)–(1.6)) turns AP into uniform
-convergence at a reduced rate $O(h^{r/(\kappa+1)})$, not at the order $r$ of the scheme.
+convergence at a reduced rate (stated on the AP page), not at the order of the scheme.
 [Hu & Shu (2025)](/sources/hu-2025.md) (IMEX Runge–Kutta) and
 [Ma et al. (2026)](/sources/ma-2026.md) (IMEX-BDF) prove uniform accuracy at full order
 for linear hyperbolic relaxation systems; Jin (2022, §6.1) cites the earlier IMEX-BDF
@@ -36,9 +36,9 @@ $N$), and share four hypotheses:
    inequality $\lVert\partial_x\phi\rVert\le N\lVert\phi\rVert$ used to absorb the
    explicit convection term in the energy estimate (Hu & Shu 2025, Thm. 3.4, Eq. (2.16);
    Ma et al. 2026, Thm. 3.1, ineq. (3.2)).
-2. **Prepared data.** Hu & Shu call data "consistent up to order $q$" when they lie in
-   $H^q$ and the scheme starts after the initial layer, of length
-   $q\,\varepsilon\log(1/\varepsilon)$ (§4 before Thm. 4.3). Ma et al. admit either
+2. **Prepared data.** Hu & Shu call data "consistent up to order $q$" (page-local $q$, a
+   data index, not the stage order) when they lie in $H^q$ and the scheme starts after the
+   initial layer, of length $q\,\varepsilon\log(1/\varepsilon)$ (§4 before Thm. 4.3). Ma et al. admit either
    well-prepared data (time derivatives bounded uniformly in $\varepsilon$, "Type 1") or a
    start after a layer of length $O(\varepsilon\log(1/\varepsilon))$ ("Type 2") (§3.2).
 3. **Uniform regularity of the exact solution** after the layer: time and space
@@ -133,7 +133,7 @@ $\varepsilon\approx10^{-4}$–$10^{-3}$ and is third order at both ends; see
 **AP without GSA.** Appendix 7.3 (Def. 7.3, Thm. 7.4) shows formally, for the nonlinear
 system with equilibrium flux $F(u)$ (page-local; Hu & Shu write $f$) and initial data in
 equilibrium to $O(\varepsilon)$, that a type-CK ISA pair is AP in the strong sense
-(the limit scheme keeps order $q$; "asymptotically accurate") if it is GSA (recalled from
+(the limit scheme keeps order $p$; "asymptotically accurate") if it is GSA (recalled from
 Dimarco–Pareschi; ARS(2,2,2) and ARS(4,4,3) qualify), or, new, if it satisfies (A) together with
 $\sum_j(b^{\mathrm E}_j-a^{\mathrm E}_{sj})=0$ (order 2) and
 $\sum_j(b^{\mathrm E}_j-a^{\mathrm E}_{sj})c^{\mathrm E}_j=0$ (order 3). BHR(5,5,3)* is in

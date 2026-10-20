@@ -3,9 +3,9 @@ type: Method
 title: "Semi-implicit and linearly implicit IMEX Runge–Kutta methods"
 description: "Semi-implicit IMEX Runge–Kutta methods write y' = H(y, y) with an explicit and an implicit argument, duplicate the state and apply an IMEX tableau pair to the two copies, so that freezing coefficients at the explicit copy makes every stage solve linear; the page gives the scheme, its tableaux, its all-Mach, MHD and radiation-hydrodynamics uses and its limits."
 status: established
-aliases: [SI-IMEX, SI-IMEX-RK, LIMEX-RK, linearly implicit IMEX Runge–Kutta, semi-implicit IMEX Runge–Kutta, partitioned-argument IMEX, Boscarino–Filbet–Russo semi-implicit Runge–Kutta, ALIMEX-RK]
+aliases: [SI-IMEX, SI-IMEX-RK, LIMEX-RK, linearly implicit IMEX Runge–Kutta, semi-implicit IMEX Runge–Kutta, partitioned-argument IMEX, Boscarino–Filbet–Russo semi-implicit Runge–Kutta, ALIMEX-RK, OPIRK, optimized partially implicit–explicit Runge–Kutta]
 tags: [imex, runge-kutta, stiff, linear-algebra, asymptotic-preserving]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Semi-implicit and linearly implicit IMEX Runge–Kutta methods
@@ -278,6 +278,80 @@ its matrix at every stage; in return the null method needs a stabilization coeff
 a threshold and pays an error that grows with it *(compiler comparison, not in the
 sources)*.
 
+## Sequential partitioned updates: the OPIRK schemes
+
+"Implicit" in the semi-implicit literature means a linear solve with frozen coefficients.
+[Maurya et al. (2021)](/sources/maurya-2021.md) use the word for something weaker. Their
+"optimized partially implicit–explicit Runge–Kutta" (OPIRK) schemes treat linear wave
+systems partitioned **by unknown**, such as the 1D linearized Euler equations
+$u'=L_1\mathsf p$, $\mathsf p'=L_2u$ (page-local: velocity $u$, pressure $\mathsf p$,
+sans-serif to avoid the order $p$, and linear spatial operators $L_1$, $L_2$). The
+one-stage scheme OPIRK1 is (§2.1, Eq. (6))
+
+$$u_{n+1}=u_n+hL_1\mathsf p_n,\qquad \mathsf p_{n+1}=\mathsf p_n+h\bigl[(1-\vartheta)L_2u_n+\vartheta L_2u_{n+1}\bigr],$$
+
+with a free weight $\vartheta$ (page-local; the source's $c_1$, not an abscissa). The
+"implicit" evaluation $L_2u_{n+1}$ uses a value already computed, so no system is solved:
+the scheme is an explicit sequential update in Gauss–Seidel order across the equations,
+at the cost of an explicit method. With $\vartheta=1$ it is the forward–backward
+(symplectic Euler) step of the partitioned system, $u$ advanced with the old pressure and
+$\mathsf p$ with the new velocity *(compiler identification from Eq. (6), not in the
+source; see [symplecticity](/properties/symplecticity.md))*. The two-stage OPIRK2 adds a
+second sweep with weights $(\vartheta_2,\vartheta_3)$ (page-local) and is called second order
+(Eq. (10)); 2D linearized Euler and linearized rotating shallow-water versions advance the
+unknowns in a fixed order in the same way (Eqs. (22), (37), (42)).
+
+**Fourier analysis.** With $a=\nu\,\zeta(\kappa\Delta x)$, $\nu$ the Courant number and
+$\zeta$ the modified wavenumber of the spatial scheme (page-local), the amplification
+factors of OPIRK1 are $1-\frac{\vartheta a^2}2\mp\frac a2\sqrt{\vartheta^2a^2-4}$, and
+stability in the wave regime $\vartheta^2a^2<4$ needs $\vartheta\ge1$ (Eq. (8)). The
+determinant of the amplification matrix is $1+(1-\vartheta)a^2$, so in that regime
+$\lvert g\rvert^2=1+(1-\vartheta)a^2$: neutral for $\vartheta=1$, damped for $\vartheta>1$,
+growing for $\vartheta<1$; the formula reproduces the extreme moduli of their Table 1
+*(compiler check, not in the source)*. For $\vartheta=1$ the critical Courant number is 2.0
+with second-order central differences and 0.91 with the optimized compact scheme OUCS3
+(Table 1), i.e. $2/\max\zeta$. OPIRK2 is neutral for $(\vartheta_2,\vartheta_3)=(0.75,1.5)$ and
+$(0.5,0.5)$, with critical Courant numbers 1.48/0.68 and 2.00/0.91 for the two spatial
+schemes (Table 2). The free weights are fixed by a dispersion-relation-preserving
+optimization of the fully discrete scheme, an integral of
+$\lvert g-e^{\mathrm i\nu\kappa\Delta x}\rvert^2$ (the source's sign convention) over wavenumbers under integral constraints on
+$\lvert g\rvert-1$ and on phase- and group-velocity errors, by grid search at fixed Courant
+number (§3, Eqs. (12)–(13); tolerances not printed). See
+[von Neumann analysis](/definitions/von-neumann-stability-analysis.md).
+
+**Evidence** (§3–12): at equal $h$ the OPIRK1 errors are below those of classical RK4 on a
+1D acoustic pulse ($1.39\times10^{-4}$ against $1.83\times10^{-3}$ at the first output time,
+Table 3) and on the CAA cylinder-scattering benchmark ($1.35\times10^{-5}$ against
+$2.13\times10^{-5}$, Table 5); wall-clock times are about 13, 32, 95 and 53 s against 32, 91,
+250 and 126 s for RK4 on four problems (Table 6). In a Fourier analysis of the linearized
+rotating shallow-water equations OPIRK1 is neutral where the semi-implicit atmospheric pair
+SIRK3 is slightly unstable (§9, App. A, Fig. 17; see
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md)).
+
+**Qualifications.**
+
+- The orders 1 and 2 are asserted by name; no order conditions are written and no
+  convergence study is shown. As printed, the third line of Eq. (10),
+  $u_{n+1}=\frac12[u_n+u^{(1)}+hL_1\mathsf p_n]$, collapses to $u_{n+1}=u_n+hL_1\mathsf p_n$
+  (first order in $u$); the printed amplification matrix and the 2D analogue (42) need the
+  stage pressure $\mathsf p^{(1)}$ there (page-local stage values $u^{(1)}$, $\mathsf p^{(1)}$).
+- The speedups of Table 6 compare a one-stage first-order scheme with four-stage RK4 at
+  apparently equal steps, with no error-against-cost curves and no hardware stated; the
+  ratios 2.4–2.8 reflect the stage counts. §13 calls the cost "comparable with explicit
+  Runge–Kutta methods of same order".
+- On a 1D linearized shallow-water Gaussian (§12.1, Fig. 23) the paper reports that RK4 with
+  OUCS3 develops Gibbs oscillations "which result in instability", unlike OPIRK1. The run
+  has $h=0.05$ s, $\Delta x=1000$ m and wave speed $\sqrt{gH}\approx31.3$ m/s, i.e.
+  $\nu\approx1.6\times10^{-3}$. RK4 is stable on the imaginary axis up to $2\sqrt2$, and the
+  periodic OUCS3 symbol peaks at $\zeta\approx2.209$ (at $\kappa\Delta x\approx2.393$, the
+  paper's own q-wave limit), so a von Neumann analysis predicts a stable, slightly
+  dissipative RK4 up to $\nu\approx1.28$ *(compiler check, not in the source)*. The reported
+  growth is therefore not the linear instability of RK4 on the periodic scheme; boundary
+  closures, which the paper does not analyse, remain a possible cause.
+- The neutral stability of the forward–backward step for $a<2$ follows from the determinant
+  above *(compiler check, not in the source)*; the paper presents OPIRK as "a new class"
+  without relating it to that step.
+
 ## Discrete conservation
 
 Southworth et al. (2024, §4, Eqs. (31)–(37)) prove that LIMEX-Euler with a finite-volume
@@ -304,9 +378,8 @@ to every LIMEX-RK method (§4.3). See
   $a^{\mathrm I}_{44}=0.416993$ where stiff accuracy and the row sum require
   $\gamma=0.435866$, and the printed explicit rows 3–4 do not sum to their abscissae
   (2.1576 and 1.8340 against 0.7179 and 1). The implicit first row
-  ($c^{\mathrm I}_1=a^{\mathrm I}_{11}=\gamma$), which the reader's notes list as a slip
-  because the name promises three implicit stages and ARS(3,4,3) has $a^{\mathrm I}_{11}=0$,
-  is not one: Orlando et al. (2025b, Table 20) and Southworth et al. (2024, I-IMEX(3,4,3))
+  ($c^{\mathrm I}_1=a^{\mathrm I}_{11}=\gamma$) looks like a slip, because the name
+  promises three implicit stages and ARS(3,4,3) has $a^{\mathrm I}_{11}=0$, but is not one: Orlando et al. (2025b, Table 20) and Southworth et al. (2024, I-IMEX(3,4,3))
   print the same type-I first row, and since $b_1=0$ and $a^{\mathrm I}_{i1}=0$ for $i\ge2$ it
   changes only the stage value passed to the explicit part. The "(3,4,3)" in the names is
   inherited from ARS(3,4,3) and no longer counts the implicit stages. Neither source's
@@ -337,3 +410,4 @@ to every LIMEX-RK method (§4.3). See
 - [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §2.2, §2.3, §3 (Fig. 3.1), §4.2 (Eq. (4.6)), §5.1, §7.2 (Fig. 7.3).
 - [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §4.1 (frozen-coefficient partition).
 - [Tan et al. (2025)](/sources/tan-2025.md) — §1 (semi-implicit methods as the alternative to EIN).
+- [Maurya et al. (2021)](/sources/maurya-2021.md) — §2.1–2.2 (Eqs. (5)–(11)), §3 (Eqs. (12)–(13), Tables 1–3), §4.1–4.2 (Eqs. (21)–(26), Table 5), §9–10 (Eqs. (36)–(42)), §12.1 (Fig. 23), §13, Table 6, App. A (Fig. 17).

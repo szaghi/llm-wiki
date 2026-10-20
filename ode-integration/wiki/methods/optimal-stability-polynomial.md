@@ -5,7 +5,7 @@ description: "Choosing the free coefficients of an explicit method's stability p
 status: established
 aliases: [stability-optimized Runge–Kutta, optimized explicit Runge–Kutta, Ketcheson–Ahmadia optimization, maximal stable step size optimization, pseudo-extrema, OSPREI]
 tags: [stability, explicit, runge-kutta, step-size-control]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Optimal stability polynomials for explicit Runge–Kutta methods
@@ -122,6 +122,19 @@ degrees 1–8, e.g. 0.59 at $e=3$ and 3.43 at $e=16$ for degree 1, 0.04 and 0.30
 degree 8; there the embedded polynomial is optimized to have a slightly *smaller*
 region than the main one, so that the pair detects the stability limit.
 
+**Explicit part of an IMEX pair.** [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md)
+(§3.2, §4) apply the same bisection, with CVX in MATLAB to $10^{-12}$, to the explicit part
+of their accelerated IMEX schemes AIMEX$s$,2, whose implicit part is fixed (the two-stage
+SDIRK of ARS(2,3,2)). With $p=2$ and $s$ stages, $\theta_3,\dots,\theta_s$ are free; for the
+von Neumann spectra of flux-reconstruction DG (degrees 1–8, linear advection, unit element
+width) the four-stage optima are, e.g., $\theta_3=0.121250558305$, $\theta_4=0.012327225153$
+with $h_{\mathrm{opt}}=0.8256$ at degree 1, and $\theta_3\approx0.1422$, $\theta_4\approx0.0168$ with
+$h_{\mathrm{opt}}=0.0614$ at degree 8, i.e. 2.01 and 1.84 times the stable step of the
+ARS(2,3,2) explicit part (Table 1). The optimal step grows about linearly with $s$ and
+exceeds 5 times the baseline at $s=10$, more so for high degree (Fig. 1). The gain is per
+step; it pays because the implicit stages, fixed at two, dominate the cost. Details on
+[IMEX Runge–Kutta methods](/methods/imex-runge-kutta.md).
+
 ## Root parametrization for many stages
 
 Doehring et al. (2024, §2.2, Eqs. (2.10)–(2.11)) write every polynomial of linear
@@ -170,7 +183,9 @@ coefficients by least squares gave "significantly inferior results". The constra
 optimum reaches 85% of the unconstrained fourth-order one at $e=6$ and 96.5% at
 $e=16$ (§4.3, Figs. 1–2). At second order Vermeire (2023, §3) recovers the tableau
 from the polynomial sequentially, without a nonlinear solver, a recovery restated by
-Doehring et al. (2024b, §4.3, Eq. (4.5)). At third order Doehring et al. (2024b, Eqs.
+Doehring et al. (2024b, §4.3, Eq. (4.5)). Vermeire & Hedayati Nasab (2021, §3.1, Eqs.
+(32)–(36), App. 1) do the same for the explicit part of their IMEX pairs, whose rows carry
+only $a_{i1}$ and $a_{i,i-1}$: $\theta_3$ fixes $a_{s,s-1}$, $\theta_4$ then $a_{s-1,s-2}$, and so on. At third order Doehring et al. (2024b, Eqs.
 (4.6)–(4.7)) fix the abscissae in advance and solve for the tableau with a trust-region
 method from random starts, requiring positive entries.
 
@@ -224,8 +239,9 @@ pay off without a hand-tuned CFL number; see also
   the polynomial and raising
   [weak stage order](/definitions/weak-stage-order.md) compete for the same freedom.
 - **Nonlinear stability.** The optimization targets linear stability of linear
-  advection only; SSP or positivity is not imposed, and the least-truncation tableaus
-  are not SSP (Hedayati Nasab et al. 2021, as noted in the reading of that source).
+  advection only; SSP or positivity is not imposed, and Hedayati Nasab et al. (2021)
+  claim no SSP property for their least-truncation tableaus, citing optimal SSP methods
+  for DG (Kubatko et al.) only as earlier work (§1).
   The [SSP](/methods/strong-stability-preserving-runge-kutta.md) analogue optimizes the
   radius of absolute monotonicity or the nonlinear SSP coefficient instead.
 - **Internal stability.** A polynomial with many stages must be realized so that
@@ -271,3 +287,4 @@ pay off without a hand-tuned CFL number; see also
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §4.2–4.4 (Eqs. 4.7–4.8, Figs. 1–2), App. C.
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §4.1 (Fig. 5), §4.2, §4.3 (Eqs. 4.4–4.7).
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §1–3 (monotonicity interval as objective).
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §3.1 (Eqs. (32)–(36), App. 1), §3.2 (Eqs. (37)–(39), Alg. 1), §4.3 (Table 1, Fig. 1).

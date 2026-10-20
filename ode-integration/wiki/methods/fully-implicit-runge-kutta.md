@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with a full Butcher matrix built on Gauss, R
 status: established
 aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods, Radau-Right, ADER-DG ODE solver]
 tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration, parallel]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)
@@ -34,13 +34,17 @@ incompressible flow and MHD ([Abu-Labdeh et al. 2023](/sources/abulabdeh-2023.md
 |---|---|---|---|---|
 | Gauss | $2s$ | $s$ | A- and B-stable, not L-stable | symplectic; stability function the $(s,s)$ Padé approximant |
 | Radau IIA | $2s-1$ | $s$ | L-stable | $c_s=1$; the one-stage member is backward Euler |
-| Lobatto IIIA | — | — | A-stable | collocation; includes Crank–Nicolson |
+| Lobatto IIIA | $2s-2$ | $s$ | A-stable, not B-stable | collocation; includes Crank–Nicolson; first row of $A$ zero, so $A$ singular |
 | Lobatto IIIC | $2s-2$ | $s-1$ (see below) | A-, L- and B-stable | not collocation |
 
 Orders and stage orders are from Southworth et al. (2022, §2.1 and the order labels
 of §7) and Farrell et al. (2021, §3.2); [Čaklović et al. (2025)](/sources/caklovic-2025.md)
 (§2.1) give the same orders $2\mathsf M-1$ for Radau IIA ("Radau-Right") and $2\mathsf M-2$ for
-Lobatto collocation on $\mathsf M$ nodes; stability classes from Farrell et al. (2021,
+Lobatto collocation on $\mathsf M$ nodes, the Lobatto IIIA row; [Akrivis et al. (2025)](/sources/akrivis-2025.md)
+(§2.4.1, §4.4) recall that a collocation method with $a_{ij}=\int_0^{c_i}\ell_j$,
+$b_i=\int_0^1\ell_i$ ($\ell_j$ the Lagrange basis on the nodes, page-local) has stage order
+equal to its number of nodes, and that Lobatto IIIA is A-stable but not B-stable, with a
+singular $A$ (§1, §4.4.2); stability classes from Farrell et al. (2021,
 §3.2), who also note that every listed collocation family is A-stable; the Padé
 statement from [Sun et al. (2022)](/sources/sun-2022.md), §1, after Hairer–Wanner
 Table IV.5.13. The two-stage Lobatto IIIC tableau is
@@ -117,6 +121,31 @@ Further properties recalled by the sources:
   degree $\mathsf M$, whose stability function is the $(\mathsf M,\mathsf M+1)$ Padé
   approximant, that of $(\mathsf M+1)$-stage Radau IIA, consistent with the DG–Radau
   equivalence above; the ADER page records a numerical check of this for $\mathsf M\le12$.)
+- **Radau IIA as the L-stable optimum.** [Kirby & MacLachlan (2025)](/sources/kirby-2025.md)
+  (§4.1, App. A) take the abscissae as the roots of
+  $\frac{d^{s-1}}{dx^{s-1}}\bigl(x^{s-1}(x-1)^s\bigr)$, print the one- to three-stage
+  tableaux (two stages: $c=(\frac13,1)$, rows $(\frac5{12},-\frac1{12})$, $(\frac34,\frac14)$),
+  and call Radau IIA the "theoretically optimal suite of fully implicit methods" for their
+  heat problem "in terms of accuracy per stage subject to L-stability".
+- **Pointwise (interpolatory) form.** The collocation polynomial $\hat U$ of degree $s$
+  satisfies $\hat U'+I_{s-1}L\hat U=I_{s-1}g$ on each step for $y'+Ly=g$ ($I_{s-1}$ the
+  interpolant at the collocation nodes, $L$ here with the sign of a positive operator, $g$
+  page-local), which unifies collocation methods with continuous and discontinuous Galerkin
+  time stepping (Akrivis et al. 2025, §2.4, §4, Eqs. (24), (66), (87)). Akrivis et al. use it
+  to prove **discrete maximal $L^2$ regularity** for variable steps: with equality for
+  Gauss methods, with inequality for Radau IIA, for Lobatto IIIA through a new equivalence
+  of its interpolant with a modified continuous Galerkin method of one degree less
+  (Eq. (95), presented as the first such estimate for this non-B-stable family), and for
+  every algebraically stable method (Eq. (111)); see
+  [discrete maximal regularity](/results/discrete-maximal-regularity.md). The same form
+  defines the loss of their Runge–Kutta physics-informed neural networks (Eqs. (24)–(27));
+  see [learned time integrators](/methods/learned-time-integrators.md).
+- **Radau IIA as a polynomial block method.** [Buvoli & Southworth (2023)](/sources/buvoli-2023.md)
+  (§3.1) write $s$-stage Radau IIA as a multivalued block method on $s+1$ nodes, the stages
+  becoming block outputs, and build on it fully implicit–explicit methods whose implicit
+  part is exactly Radau IIA and whose stage systems are solved with the usual fully implicit
+  preconditioners; iterator sweeps converge to the Radau IIA stages (§5.1). See
+  [polynomial time integrators](/methods/polynomial-time-integrators.md).
 - **Dense output.** Inside the step the collocation polynomial is accurate to order $\mathsf M$
   only, against up to $2\mathsf M$ at the step end ([Saupe et al. (2025)](/sources/saupe-2025.md),
   §2.1, after Hairer–Nørsett–Wanner); see [dense output](/methods/dense-output.md).
@@ -173,6 +202,13 @@ $A^{-1}\otimes M+h\,I_s\otimes K$. Three further strategies appear:
 - **All-stage Newton with static condensation** (Taddei et al. 2026, §3.2): the coupled
   nonlinear stage system of a fluid–structure problem is condensed onto the interface
   unknowns, with no stage decoupling.
+
+- **Transformed variables and Rana-type preconditioning** (Kirby & MacLachlan 2025, §2.2,
+  §3.1): with Butcher's variables $w=(A\otimes I)k$ the nonlinear part of the stage
+  Jacobian is block diagonal; replacing $A$ in the preconditioner by the lower-triangular
+  product $\tilde L\tilde D$ of its $LDU$ factorization (page-local) leaves only
+  diagonal-block solves and gives GMRES counts nearly independent of $s$ on the heat
+  equation, against growing counts for block Jacobi and block Gauss–Seidel.
 
 Details, including the Newton-like approximations of the stage Jacobian, are on
 [solving the stage equations](/methods/implicit-stage-solvers.md).
@@ -247,6 +283,29 @@ BDF.
   Pareschi–Russo and three-stage Alexander SDIRKs "outperform" their stage-order-1
   guarantees, but three-stage Alexander needs a finer level to match two-stage Radau IIA,
   which gets there in about 60 % of the wall time on one eighth of the cores.
+- **Against DIRKs in Irksome** (Kirby & MacLachlan 2025, §4): on the heat equation with
+  Rana-type preconditioning, run times close to those of a DIRK with the same stage count
+  (about 43 s against 40 s at $s=4$, read from Fig. 5); on flow past a cylinder (index-2
+  DAE, Mardal–Tai–Winther elements) four-stage Radau IIA costs slightly less than four times
+  one stage, DIRKs with $s$ stages run in about the time of $s$-stage Radau IIA, and three- and
+  four-stage Radau IIA give the best accuracy per run time for drag and lift (Figs. 9–11); on
+  Cahn–Hilliard Radau IIA costs slightly more than a DIRK of equal stage count, and three-
+  and four-stage Radau IIA have the lowest final-energy errors, two-stage Radau IIA beating
+  Alexander's DIRK and WSODIRK433 at much lower cost (Figs. 14–15).
+- **Order reduction with stage-value boundary data** (Kirby & MacLachlan 2025, §4.1,
+  Figs. 3–4): with cubic serendipity elements two-stage Radau IIA (stage order 2) loses
+  $L^2$ but not $H^1$ accuracy at large steps, three- and four-stage Radau IIA stay
+  spatial-error dominated.
+- **Fully implicit–explicit methods** (Buvoli & Southworth 2023, §6): with an explicit part
+  integrated from previous-step derivatives, Radau IIA implicit parts beat IMEX Runge–Kutta
+  pairs and DIRKs in error per wall-clock time on DG advection–diffusion(–reaction), e.g.
+  $2.9\times10^{-8}$ in 184 s against $7.4\times10^{-5}$ in 165 s for IMEX(4,4,3) (Table 1).
+- **Smoothing of nonsmooth data** (Akrivis et al. 2025, §5.4.2, Fig. 5): in their
+  network-based solvers, three-stage Gauss and Lobatto IIIA show oscillations near $t=0$ for
+  discontinuous heat data while Radau IIA smooths, "as expected" from the known smoothing
+  behaviour of the underlying schemes ($\lvert R(\infty)\rvert=1$ against $R(\infty)=0$,
+  *compiler gloss*); on a wave equation Gauss and Lobatto IIIA conserve energy best
+  (Fig. 7).
 - **Fluid–structure interaction** (Taddei et al. 2026, §5): Radau IIA with $s=2,3,4$
   shows fitted rates 2.1, 2.4 and 3.5 against the formal 3, 5, 7, which the authors
   attribute to the DAE structure and to the spatial, ALE and interface-coupling errors
@@ -336,3 +395,6 @@ BDF.
 - [Jin et al. (2025)](/sources/jin-2025.md) — arXiv v2: §2.1, Remark 3.1, §3.3 (Remark 3.7), Table 4.1.
 - [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §7.
 - [Popov (2024)](/sources/popov-2024.md) — arXiv v1: §1.1–1.2 (Eqs. (11)–(15)), §2.1–2.3 (Table 7, Figs. 11–12).
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §1, §3.1 (Eqs. (3.11)–(3.13)), §5, §5.1, §6 (Table 1).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.2, §3.1, §4.1–4.3 (Figs. 3–5, 9–11, 14–15), App. A (Eqs. (A.1)–(A.4)).
+- [Akrivis et al. (2025)](/sources/akrivis-2025.md) — arXiv v2: §1, §2.4 (Eqs. (22)–(27)), §4.2–4.4 (Thm. 8, Props. 11–13, Eqs. (66), (87)–(111)), §5.4 (Figs. 5, 7).

@@ -5,7 +5,7 @@ description: "Sun and Shu enforce strong stability of an explicit Runge–Kutta 
 status: established
 aliases: [superviscosity filtering, hyperviscosity stabilization, modified method, filtering method, adaptive filtering method, anti-superviscosity]
 tags: [stability, runge-kutta, explicit, structure-preserving]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Superviscosity-stabilized explicit Runge–Kutta methods
@@ -37,7 +37,7 @@ $$\tilde L=L+\mu_1h^{2\zeta-2}(L^\top)^{\zeta-1}L^{\zeta}+\mu_2h^{2\zeta-1}(L^\t
 (Sun & Shu 2021, §3.1, Eqs. (3.1)–(3.3)). Then
 $\langle\tilde Lv,v\rangle\le-\frac{\mu_1}{2}h^{2\zeta-2}\lvert L^{\zeta-1}v\rvert_L^2+\mu_2h^{2\zeta-1}\lVert L^\zeta v\rVert^2$,
 with $\lvert\cdot\rvert_L$ the dissipation semi-norm of
-[strong stability](/properties/strong-stability.md) *(compiler check: Sun & Shu state
+[strong stability](/properties/strong-stability.md) *(compiler check, not in the sources: Sun & Shu state
 the inequality for the $Z$-scaled quantities, i.e. multiplied by $h$)*, so for $\mu_1>0$, $\mu_2<0$ the modified operator is "weakly coercive"
 (Remark 3.1, Eq. (3.4)).
 

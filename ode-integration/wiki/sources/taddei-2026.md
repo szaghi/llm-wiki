@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 567:115326"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_Physics_Taddei_High-order_implicit_RungeKutta_time_integrators_for_componen.pdf"
 tags: [runge-kutta, implicit, dae, order-reduction, implicit-stage-solvers]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -82,7 +82,7 @@ this page are those of arXiv v1.
 23. With the same POD basis, the ROM advanced by Radau IIA ($s=2$) is stable and follows the full model, while the ROM advanced by BDF2–Newmark is unstable "irrespective of numerical (Newmark) damping" (§5.2.2, Fig. 17). **Shown**
 24. Parametric Turek ROMs in viscosity and mass ratio are stable and accurate, but parametric dependence greatly increases the number of POD modes (§5.2.2, Figs. 19–22). **Shown**
 25. High-order Radau IIA with displacement-based interface coupling "significantly improves the numerical stability of the reduced-order model" (§6). **Shown** (two test cases)
-26. No timings, speed-ups or CPU costs are reported (whole paper). **Stated** (observation of the reader)
+26. No timings, speed-ups or CPU costs are reported (whole paper). (observation of the compiler, not a claim of the paper)
 
 # Printed slips
 

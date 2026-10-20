@@ -5,7 +5,7 @@ description: "Local time stepping lets regions, cells or subdomains of a locally
 status: established
 aliases: [LTS, local time-stepping, LF-LTS, stabilized LF-LTS, leapfrog local time stepping, asynchronous time integration, asynchronous Runge–Kutta, LESAULTS, clustered local time stepping, multi-time step, subcycling, Gravouil–Combescure method]
 tags: [multirate, local-time-stepping, explicit, stability, parallel, structure-preserving]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Local time stepping
@@ -174,6 +174,26 @@ structural dynamics, as recalled (§1), guarantee multi-time-step stability for 
 Newmark schemes when velocity (not displacement) continuity is imposed; for this
 fluid–structure coupling stability is shown only numerically.
 
+## Stabilized multirate for parabolic problems on refined meshes
+
+For diffusion-dominated problems the explicit step is limited quadratically by the smallest
+cell, and [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) attack the
+same locally-refined-mesh setting without separate local steps. Their
+[multirate RKC method](/methods/multirate-runge-kutta-chebyshev.md) splits the
+semi-discrete right-hand side by a 0/1 selector of the degrees of freedom on and next to the
+refined elements into a cheap stiff part $f^{\{\mathrm f\}}$ and an expensive mildly stiff
+part $f^{\{\mathrm s\}}$; one global step of an outer
+[RKC](/methods/stabilized-explicit-runge-kutta.md) scheme, with stages set by the coarse-mesh
+spectral radius, sees the fast part only through an averaged force computed by a short inner
+RKC run (§1, §3, §5.2). There is no interface treatment: the slow force is frozen at the
+outer stage value, and no time interpolation or extrapolation of stage values is done, which
+the authors contrast with interpolation-based multirate RKC on adaptive meshes, reported in
+their own earlier work, as recalled there, to "cause numerical instabilities" (§1). The
+method is first order with a proved stability condition on the scalar multirate test
+equation (Thm. 4.5). On a heat problem through a narrow channel the speedup over RKC grows
+as the channel narrows, up to about 40, and the solution differs from RKC's by at most
+$3\cdot10^{-4}$ in relative $L^2$/$H^1$ norm (§5.3, Fig. 15).
+
 ## Interface treatment compared
 
 | Approach | Interface coupling | Conservation | Order across the interface | Stability evidence |
@@ -182,9 +202,15 @@ fluid–structure coupling stability is shown only numerically.
 | Asynchronous ARK3 (Unfer 2021) | face fluxes at face-event times from extrapolated states | by construction | 3, formal truncation analysis | local CFL + recall; first-order proofs only |
 | LESAULTS (Sreejith et al. 2022) | interface frozen at $t_n$, overlap, Heaviside merge | not strict | not established in time | spectral analysis, LES runs |
 | GC multi-time-step (Pulicani et al. 2026) | Lagrange multiplier on velocity at each fine step | controlled interface dissipation | observed ≈2 (fluid 1.41 in the coupled case) | numerical; stable to $m=300$ |
+| mRKC (Abdulle et al. 2022) | none: right-hand-side split, slow force frozen per outer stage | not addressed | 1, proved (Thm. 4.6) | proved on the scalar test equation; coupled case numerical |
 | P-ERK families (Doehring et al. 2024b) | shared stages, one global step | linear invariants, shared $b$ | design order observed | linear only; monotonicity lost |
 
-The last row is not LTS in the strict sense: [paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md)
+The last two rows are not LTS in the strict sense. mRKC takes one global step and
+differs from the fast-partition Runge–Kutta of
+[multirate GARK](/methods/multirate-gark.md) in that the fast part is reached by an inner
+stabilized run of length $\eta$ (page-local, not the registry entropy), not by micro steps
+$H/m$. The
+[paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md)
 families take one global step and give each partition a different number of stage
 evaluations, which the authors call "conceptually similar to local time-stepping" without
 its interpolation, intermediate storage or flux exchange (Doehring et al. 2024b, §1). The
@@ -202,6 +228,7 @@ on [multirate GARK](/methods/multirate-gark.md).
 | Sreejith et al. 2022 | cylinder LES, $Re=3900$, 720 cores, $m=5$ | — | 2.37 ($S_{\mathrm{th}}=2.57$) |
 | Sreejith et al. 2022 | Sandia flame D LES, 360 cores, $m=4$ | — | 2.05 ($S_{\mathrm{th}}=2.28$) |
 | Wolf et al. 2022 | poroelastic ADER-DG, SuperMUC-NG | — | 6–10 vs global stepping |
+| Abdulle et al. 2022 | heat equation through a narrow channel, width $1/2^k$, $k\le15$ | — | up to ≈40 vs RKC (CPU time); 10–70 vs RKC2 at width $1/2^{12}$ |
 | Pulicani et al. 2026 | piston–rod FSI | $m$ up to 300 | stability, not speed, reported |
 
 In the multi-thread case Unfer's 1D speedup collapses (0.98 at $N=800$ on 8 threads)
@@ -227,6 +254,9 @@ because many time-step classes are sparsely populated (§4.1).
   quad/octree meshes. Sreejith et al. also cite Knoth & Wolke and Sandu's MRI-GARK as
   "third-" and "fourth-order" LTS extensions, a loose attribution for methods that split
   the right-hand side rather than the mesh.
+- **"Asynchronous" in other sources.** In [Goswami, Matthew & Aditya (2023)](/sources/goswami-2023.md)
+  (§1, §4) "asynchronous" means halo data delayed between processes at a common step, not
+  cell-wise local steps; see [low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md).
 - Grote et al.'s §4.2 states the stability interval for $(H^2/4)L$ as $(0,4)$; with the
   scaling of §4.1 and Fig. 6 it is $(0,1)$ for $(H^2/4)L$, i.e. $(0,4)$ for $H^2L$.
 - Unfer prints the ARK3 stage-3 extrapolation (Eq. 105) and the sentence describing it
@@ -243,4 +273,6 @@ because many time-step classes are sparsely populated (§4.1).
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.2, §7.3 (Fig. 15).
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §1, §7.1.1.
 - [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §1, §4.4 (Eqs. 56–60, Algorithm 3), §5.3–5.5 (Figs. 9–27), §6.
+- [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) — §1, §3, §5.2–5.3 (Figs. 12–16), Thms. 4.5–4.6.
 - [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5–6 (global error-controlled step on adaptive meshes, element counts, Table 1).
+- [Goswami, Matthew & Aditya (2023)](/sources/goswami-2023.md) — §1, §4 (meaning of "asynchronous").

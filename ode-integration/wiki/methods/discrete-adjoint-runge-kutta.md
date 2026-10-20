@@ -5,7 +5,7 @@ description: "The discrete tangent and adjoint of a Runge–Kutta time stepping 
 status: established
 aliases: [discrete adjoint, tangent linear model, discrete sensitivity, discretize-then-optimize, adjoint relaxation Runge–Kutta, linearized RRK, adjoint IDT]
 tags: [runge-kutta, structure-preserving, verification, relaxation, adjoint]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Discrete adjoints of Runge–Kutta and relaxation Runge–Kutta methods
@@ -145,7 +145,7 @@ third-order DIRK with $a_{ii}=0.435866521508459$ (§3.2).
   inconsistent, and that for relaxation "the opposite is true" (§1, §3.4).
   Their evidence is numerical, on one ODE (Fig. 4), and their end-of-interval
   treatment is "similar to" those works.
-* **Printed slips** (arXiv v1 read; source's reader checks): the appendix
+* **Printed slips** (arXiv v1 read; compiler checks of the PDF): the appendix
   version of the RRK adjoint update has $+\xi_*$ where Lemma 4 and the
   appendix's own block matrix give $-\xi_*$; the appendix $\xi_*$ lacks a
   transpose; pp. 15–16 call "IDT" matrix systems that contain the $h^*$ terms

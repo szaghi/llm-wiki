@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 99:28"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Doehring_Many-Stage_Optimal_Stabilized_RungeKutta_Methods_for_Hyperbo.pdf"
 tags: [runge-kutta, explicit, stability, low-storage, ssp, method-of-lines]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -124,7 +124,7 @@ v4. Code: OSPREI (Zenodo 10.5281/zenodo.8009493); spectra from Trixi.jl.
 | $\alpha_j$ | $\theta_j$ | monomial coefficients; **collision** with the Shu–Osher $\alpha_{k,l}$ in the source |
 | $\mathcal S$, $\partial\mathcal S$ | $\mathcal S$, $\partial\mathcal S$ | agree |
 | $\tilde r_j$, $\tilde P_{S-1}$ | — | pseudo-extrema and the factor $(P-1)/z$; page-local |
-| $T_S$ | $T_s$ | Chebyshev polynomial of the first kind; page-local |
+| $T_S$ | $T_s$ | Chebyshev polynomial of the first kind; page-local; **collides** with the tree set $T$ and the time slices $T_j$ |
 | $\Delta t_{S,p}$, $\Delta t^\star_{S,p}$, $S_{\mathrm{Ref}}$ | $h_{s,p}$, $h^\star_{s,p}$, $s_{\mathrm{Ref}}$ | linearly scaled and optimal steps; $s_{\mathrm{Ref}}=16$ |
 | $\widetilde M$ | — | number of stability constraints; **collision** with the registry mass matrix $M$ |
 | $\varepsilon$ | — | imaginary-correction bound (0.02); **collision** with the registry stiffness parameter $\varepsilon$ |

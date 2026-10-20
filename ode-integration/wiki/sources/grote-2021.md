@@ -9,7 +9,7 @@ year: 2021
 venue: "Math. Comp. 90:2603-2643"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Mathematics_of_Computation_Grote_Stabilized_leapfrog_based_local_time-stepping_method_for_the.pdf"
 tags: [local-time-stepping, multirate, explicit, stability, wave-equation]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -93,7 +93,7 @@ source's $A^{S,p,\nu}$); $r$ the finite-element degree (the source's $m$).
 26. The stabilized LF-LTS algorithm extends to general nonzero forcing (citing Grote, Michel and Sauter, in preparation) (§5). **Stated**
 27. Replacing Chebyshev polynomials by damped ones is well known in the parabolic context (RKC) and was also used for leapfrog–Chebyshev methods and for a Lagrange-multiplier LTS approach (§1). **Stated**
 
-*(Caveats recorded by the reader, not in the source.)* "Energy conserving"
+*(Compiler caveats, not in the sources.)* "Energy conserving"
 refers to the modified energy (3.28), built with the stabilized form, not
 to the physical energy. The claim that (3.8) is irrelevant in practice rests
 on 1D numerics. The unstabilized instability is a linear growth that matters

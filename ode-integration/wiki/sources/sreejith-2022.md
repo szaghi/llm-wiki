@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 470:111580"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_NA_Analysis_and_design_of_a_local_time_stepping_scheme_for_LES.pdf"
 tags: [local-time-stepping, multirate, explicit, cfd, dispersion-analysis]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -95,7 +95,7 @@ one-step scheme, $\kappa$ the wavenumber (the source's $k$).
 25. Implicit schemes rarely achieve their theoretical unconditional stability in LES (Choi and Moin: cell Courant number limited to 2–3), have poorer resolution than explicit ones, and IMEX interfaces can act as sources of spurious wave packets (§1). **Stated** (cited)
 26. Multirate and AMR schemes are "often limited to structured block grids", whereas domain-decomposition local time stepping applies to unstructured grids (§1, p. 3). **Stated**
 
-*(Reader caveats, not in the source.)* Freezing interface values at $t_n$
+*(Compiler caveats, not in the sources.)* Freezing interface values at $t_n$
 over all sub-steps is a zeroth-order-in-time coupling; the order test of
 claim 17 holds $h\propto\Delta x$ with an overlap that grows with $m$, so it
 shows spatial order at fixed Courant number only. Claim 26 overlooks
@@ -118,8 +118,8 @@ extensions of multirate local time stepping is loose.
 10. §6.2: "transitionally periodic" for translationally periodic.
 11. Refs. [41] and [57] carry garbled French ("dirigae", "thee de doctorat dirigage", "eschelles", "prolongee"); ref. [33] mixes a Fifth MIT Conference paper with "Comput. Struct. 87 (2009)".
 
-The reader verified Eq. (A.15) by differentiating (A.14), and Eq. (A.21)
-by substituting (A.17)–(A.20).
+Eq. (A.15) follows by differentiating (A.14), and Eq. (A.21) by
+substituting (A.17)–(A.20) *(compiler checks, not in the sources)*.
 
 # Notation map
 
@@ -131,7 +131,7 @@ by substituting (A.17)–(A.20).
 | **$h$** | $\Delta x$ | grid spacing; **collides** with the registry step |
 | $N_c=c\Delta t/h$ | $\nu$ | Courant number |
 | **$k$**, $kh$ | $\kappa$, $\kappa\Delta x$ | wavenumber; **$k$ collides** with the multistep step count |
-| $G_{int}$, $G_{int}^{R_{\delta t}}$, ${}_2G_i^{R}$ | $G$, $G^m$, kept | amplification factor of a fully discrete one-step scheme, the space–time analogue of the [stability function](/definitions/stability-function.md) |
+| $G_{int}$, $G_{int}^{R_{\delta t}}$, ${}_2G_i^{R}$ | $G$, $G^m$ (page-local), kept | amplification factor of a fully discrete one-step scheme, the space–time analogue of the [stability function](/definitions/stability-function.md); **collision** with the G-norm matrix $G$ |
 | $\epsilon_G$, $\epsilon_{CN}$, $\epsilon_{Vgn}$ | kept | dissipation, phase-speed and group-velocity errors relative to the conventional solver |
 | $\epsilon_{bnd,i}$ | kept | frozen-boundary error at node $i$ |
 | $H(x-x_H)$ | $\mathrm H(x-x_H)$ | Heaviside-like switch; roman to avoid the macro step $H$ |

@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 440:110434"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Unfer_Third_order_asynchronous_time_integration_for_gas_dynamics.pdf"
 tags: [local-time-stepping, multirate, explicit, ssp, cfd, finite-volume]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -94,7 +94,7 @@ tree).
 25. Extension to higher order is "relatively straight forward" through higher-degree time polynomials (Conclusion). **Stated**
 26. The algorithm runs on shared memory with per-thread discrete time scheduling and three barrier-separated loops; it is compatible with MPI through buffered cell-level ghost-state and ghost-flux messages, not used here (App. A, App. C). **Stated**
 
-*(Reader caveats, not in the source.)* Speed-ups are measured against the
+*(Compiler caveats, not in the sources.)* Speed-ups are measured against the
 same code run synchronously with asynchronous data structures, not an
 optimized synchronous code. The lower dissipation of claim 21 is not
 analysed; fewer dissipative updates per cell under larger local steps is a
@@ -107,12 +107,12 @@ plausible cause.
 3. §4.1, uniform-mesh table: ARK3 $L^2$ error at $N=400$ printed "5.749e-6"; the neighbours (4.601e-6 at $N=200$, 7.187e-8 at $N=800$), the printed ratio 8.00 and the SSPRK3 value 5.754e-7 show it should be 5.749e-7.
 4. §4.1, weak-scaling table: SSPRK3 printed 6.09/8, while $253/333\times8=6.08$ (rounding).
 5. Eq. (106): the SSPRK(3,3) tableau is printed without its zero first row.
-6. Eq. (105) against its describing sentence (p. 16): the text gives the stage-3 slope as $\partial_t\widetilde{\mathbf U}_i(t^i_p)+\partial_t^2\widetilde{\mathbf U}_i(t^i_p)(\Delta t_3-\Delta t_1)$, which yields the bracket $\frac12\Delta t_1^2+(\Delta t_3-\Delta t_1)^2$, but Eq. (105) prints $\frac12\Delta t_1^2+\Delta t_3^2-\Delta t_3\Delta t_1$, which corresponds to the slope with $\Delta t_3$. The two agree only for $\Delta t_1=0$ (global step); the paper does not say which the code uses (reader's derivation).
+6. Eq. (105) against its describing sentence (p. 16): the text gives the stage-3 slope as $\partial_t\widetilde{\mathbf U}_i(t^i_p)+\partial_t^2\widetilde{\mathbf U}_i(t^i_p)(\Delta t_3-\Delta t_1)$, which yields the bracket $\frac12\Delta t_1^2+(\Delta t_3-\Delta t_1)^2$, but Eq. (105) prints $\frac12\Delta t_1^2+\Delta t_3^2-\Delta t_3\Delta t_1$, which corresponds to the slope with $\Delta t_3$. The two agree only for $\Delta t_1=0$ (global step); the paper does not say which the code uses *(compiler check, not in the sources)*.
 7. The truncation-error index moves from $\tau_p^i$ (Eqs. (85)–(92)) to $\tau_i^p$ (Eqs. (112), (118)).
 8. Ref. [3] prints pages "624–625" for a J. Sci. Comput. article, implausibly short; recorded as printed.
 9. Wording: "minimum time step reaches its anticlimax", "Double Mach Reflexion", "law amplitude wiggles", "theses".
 
-The reader verified that the ARK3 face-flux polynomial (Eqs. (108)–(110))
+*(Compiler check, not in the sources.)* The ARK3 face-flux polynomial (Eqs. (108)–(110))
 integrates under a global step to $h(\frac16F_0+\frac16F_1+\frac23F_{1/2})$,
 the SSPRK(3,3) weights, consistent with claim 13.
 

@@ -5,7 +5,7 @@ description: "A differential-algebraic equation couples differential equations w
 status: established
 aliases: [DAE, index-1 DAE, index-2 DAE, semi-explicit DAE, implicit ODE, singular mass matrix]
 tags: [dae, stiff, implicit, order-reduction, software]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Differential-algebraic equations and their Runge–Kutta treatment
@@ -20,8 +20,9 @@ $$y'=f(t,y,w),\qquad 0=g(t,y,w).$$
 
 For the sources, the **index** classifies DAEs by how the constraint determines $w$:
 
-- **index 1**: the constraint can be solved for $w$, i.e. $\partial g/\partial w$ is nonsingular
-  *(standard characterization, not stated explicitly in the sources)*;
+- **index 1**: the constraint can be solved for $w$, i.e. $\partial g/\partial w$ is nonsingular,
+  the hypothesis under which [Glandon et al. (2022)](/sources/glandon-2022.md) (Remark 5.10)
+  treat semi-explicit index-1 DAEs;
 - **index 2**: $0=g(y)$ does not contain $w$ and $g_yf_w$ is nonsingular near the solution
   ([Steinebach 2023](/sources/steinebach-2023.md), §2, Table 4).
 
@@ -50,15 +51,18 @@ $$Y_i=y_n+h\sum_j a_{ij}f(t_n+c_jh,Y_j,W_j),\qquad 0=g(t_n+c_ih,Y_i,W_i),$$
 
 with stage values $W_i$ of the algebraic variable (page-local). Southworth et al. (2022, §6,
 Eq. (30)) write the same scheme in stage-derivative variables for both $y$ and $w$, with update
-$w_{n+1}=w_n+h\sum_ib_i\kappa_i$, $\kappa_i$ the stage derivatives of $w$ (page-local); the two forms coincide when $A$ is invertible *(compiler note)*.
+$w_{n+1}=w_n+h\sum_ib_i\kappa_i$, $\kappa_i$ the stage derivatives of $w$ (page-local); the two forms coincide when $A$ is invertible *(compiler check, not in the sources)*.
 
 **Order.** Index-2 problems formally limit the order to the
 [stage order](/definitions/stage-order.md) (Southworth et al. 2022, §2.1, citing Hairer–Wanner;
 Abu-Labdeh et al. 2023, §2, §3.1, citing Hairer–Wanner §VII.4).
 That is one reason both groups prefer fully implicit methods, whose stage order is $s$ for Gauss
 and Radau IIA, over DIRK methods, whose stage order is "typically limited to 1" (2 for ESDIRK)
-(Abu-Labdeh et al. 2023, §2). Observed rates fall short of the classical order in both
-applications ingested so far:
+(Abu-Labdeh et al. 2023, §2). [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§2,
+§4.2) repeat the argument for the semi-discrete Navier–Stokes equations, an index-2 DAE: "it
+is the so-called stage order of the scheme that matters, and not the global order", DIRKs
+being limited to stage order one or two and Radau IIA having stage order $s$. Observed rates
+fall short of the classical order in two applications and reach it in a third:
 
 - *Incompressible Stokes* (Abu-Labdeh et al. 2023, §5.1, Tables 1–2), time step halved with
   each mesh refinement: velocity rates 2.5 (two-stage Gauss), 3.0–3.1 (two-stage Radau IIA),
@@ -73,8 +77,23 @@ applications ingested so far:
   the ALE mesh motion and the iterative interface coupling; they do not analyse the index or
   the stage order.
 
+- *Flow past a cylinder* (Kirby & MacLachlan 2025, §4.2, Figs. 9–10; Mardal–Tai–Winther
+  elements, Radau IIA with 1–4 stages, Alexander's DIRK, WSODIRK433 and WSODIRK744, reference
+  five-stage Radau IIA on the same mesh): for the final and maximal drag and lift the schemes
+  "generally exceed the stage-order bound" and reach their formal order; Alexander's DIRK
+  under-achieves on maximal drag and one-stage Radau IIA barely converges. The quantities are
+  functionals at fixed mesh, not the full space–time error.
+
+**Boundary data as constraints.** Kirby & MacLachlan (2025, §2.1) treat strong Dirichlet
+conditions as algebraic equations on the boundary degrees of freedom and impose them on every
+stage value, $Y_i=g(t_n+c_ih)$ on the boundary, now the default of
+[Irksome](/software/irksome.md); with a stiffly accurate method the step-end value then
+satisfies the data at $t_{n+1}$. The earlier default differentiated the condition and imposed
+it on the stage derivatives. See
+[boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md).
+
 **Stiff accuracy.** With $b^\top$ equal to the last row of $A$, the update equals the last stage,
-which satisfies $g=0$, so the update lies on the constraint manifold *(compiler note)*.
+which satisfies $g=0$, so the update lies on the constraint manifold *(compiler check, not in the sources)*.
 Steinebach's Rodas5P makes both its main and its embedded method stiffly accurate (§3); see
 [stiff accuracy](/properties/stiff-accuracy.md).
 
@@ -117,7 +136,16 @@ every stage (§3.1, Eqs. (14)–(17)). Radau IIA is
 [stiffly accurate](/properties/stiff-accuracy.md), so $y_{n+1}=Y_s$ satisfies the
 constraints and the update step is omitted (§3.1). Taddei et al. do not state the index of the
 fluid–structure system; incompressible flow with the pressure as algebraic variable is
-index 2 in the classification of Abu-Labdeh et al. *(compiler remark)*.
+index 2 in the classification of Abu-Labdeh et al. *(compiler check, not in the sources)*.
+
+Kirby & MacLachlan (2025, §2, Eqs. (2.11)–(2.14)) write the Irksome form of incompressible
+Navier–Stokes the same way: velocity and pressure stage derivatives, the stage values
+$u_n+h\sum_ja_{ij}k^u_j$ and $p_n+h\sum_ja_{ij}k^p_j$, and incompressibility imposed in variational form on every
+stage velocity ($k^u_j$, $k^p_j$, $p_n$ page-local); this needs an initial pressure. For the
+Navier–Stokes runs they use Butcher's transformed variables with stage values, which needed
+fewer iterations, and monolithic multigrid or Rana-type preconditioners with Vanka patches
+containing one pressure and all velocity degrees of freedom of an element for every stage
+(§4.2); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
 
 **Mixed finite elements.** Farrell et al. (2021) apply Runge–Kutta methods directly to
 semi-explicit DAEs in [Irksome](/software/irksome.md); the heat equation in mixed
@@ -173,10 +201,11 @@ linear solve per step replaces the nonlinear solve of BDF.
 ## Qualifications
 
 - "Index" is used in the sources without a formal definition; the characterizations above are
-  those the sources state (index 2, and the differentiation count of Abu-Labdeh et al.) or use
-  implicitly (index 1).
-- The index-2 order limit to stage order is stated by Southworth et al. and by Abu-Labdeh et al.
-  as a citation, not proved there.
+  those the sources state (index 2, and the differentiation count of Abu-Labdeh et al.) or
+  assume as a hypothesis (index 1, Glandon et al.).
+- The index-2 order limit to stage order is stated by Southworth et al., by Abu-Labdeh et al.
+  and by Kirby & MacLachlan as a citation, not proved there; Kirby & MacLachlan's own cylinder
+  results exceed it for drag and lift, a tension the paper acknowledges (§4.2).
 - Abu-Labdeh et al. (2023, §5) state that Gauss, Radau IIA and Lobatto IIIC all have stage order
   equal to the number of stages; Lobatto IIIC has $s-1$ in the standard classification (see
   [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)). They do not
@@ -193,3 +222,4 @@ linear solve per step replaces the nonlinear solve of BDF.
 - [Abu-Labdeh et al. (2023)](/sources/abulabdeh-2023.md) — §2 (stage-order limits), §3.1–3.3 (index-2 argument, Eq. (3)), §5.1–5.2 (Tables 1–2).
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §2.3 (Eq. (11)), §3.1 (Eqs. (14)–(17)), §5.1.1 (Table 1).
 - [Glandon et al. (2022)](/sources/glandon-2022.md) — Remark 5.10, Eqs. (5.8)–(5.9).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2 (Eqs. (2.11)–(2.14), p. 17:5), §2.1 (Eqs. (2.15)–(2.17)), §4.2 (Figs. 7, 9–10, p. 17:19).

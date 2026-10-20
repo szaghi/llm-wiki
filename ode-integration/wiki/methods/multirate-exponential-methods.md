@@ -5,7 +5,7 @@ description: "MERK and MERB methods turn the φ-function weights of an exponenti
 status: established
 aliases: [MERK, MERB, multirate exponential Runge–Kutta, multirate exponential Rosenbrock, MERB2, MERB3, MERB4, MERB5, MERB6]
 tags: [multirate, exponential, runge-kutta, order-conditions]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Multirate exponential Runge–Kutta and Rosenbrock methods (MERK, MERB)
@@ -101,7 +101,7 @@ $$\lVert y_n-y(t_n)\rVert\le CH^p+CHh^{r_{\mathrm s}}+Ch^{r_{\mathrm f}}=CH^p+\f
 so $r_{\mathrm s}\ge p-1$ and $r_{\mathrm f}\ge p$ suffice; Luan et al. state that MRI-GARK needs $r_{\mathrm s},r_{\mathrm f}\ge p$
 (Remark 2.13). The proof bounds the inner-solver errors with a bounded Jacobian,
 $\lVert J_n\rVert\le L_J$ (page-local), through $\phi_1(L_JH)$, so the constants are not
-uniform in the fast stiffness (reader's observation recorded on the Source page).
+uniform in the fast stiffness *(compiler remark, not in the source)*.
 
 ## MERK for nonlinear fast partitions
 
@@ -137,8 +137,10 @@ solution, MATLAB, optimal $m$ found by scanning.
 
 - Luan et al. (2022) print two coefficient slips that their own forcings correct: the
   MERB4 base weight is printed $\frac{16}9\phi_3$ where the order condition and the forcing
-  give $\frac{32}9\phi_3$, and the MERB5 base weight $b_3$ lacks a factor 2 on $c_4\phi_3$
-  (reader's derivation on the Source page). The fixed-splitting slow part of the coupling
+  give $\frac{32}9\phi_3$ ($b_2c_2^2=2\phi_3$ with $c_2=\tfrac34$), and the MERB5 base weight $b_3$
+  lacks a factor 2 on $c_4\phi_3$ (the conditions $b_3c_3^2+b_4c_4^2=2\phi_3$,
+  $b_3c_3^3+b_4c_4^3=6\phi_4$ give $b_3=(2c_4\phi_3-6\phi_4)/(c_3^2(c_4-c_3))$)
+  *(compiler check, not in the source)*. The fixed-splitting slow part of the coupling
   problem prints $w-\beta t$ where $w+\beta t$ is meant.
 - "The only existing fifth-order multirate method, MERK5" (Luan et al. 2022, §2.4.4) holds
   only for infinitesimal methods; non-infinitesimal multirate and

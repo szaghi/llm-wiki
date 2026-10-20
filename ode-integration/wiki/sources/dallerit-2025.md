@@ -9,7 +9,7 @@ year: 2025
 venue: "BIT Numer. Math. 65:23"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_BIT_Numerical_Mathematics_Dallerit_Stiffness_resilient_exponential_integrators_and_varphi_-orde.pdf"
 tags: [exponential, stiff, order-conditions, b-series, order-reduction]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -100,8 +100,8 @@ polynomials (source $e_k$).
    φ-order $p$ iff each $Y_j$ is a classical order-$(p-2)$ approximation of
    $y(t_n+c_jh)$ and
    $\kappa_{k,j}=(-1)^{p-k}(k-1)!\,E_{p-k}(\{c_1,\dots,c_{p-2}\}\setminus\{c_j\})\big/\big(c_j^2\prod_{l\ne j}(c_j-c_l)\big)$
-   (Eq. 19; proof pp. 13–17). **Proved**. The reader checked Eq. 19
-   numerically against Eqs. 40–41 and Tables 1–3.
+   (Eq. 19; proof pp. 13–17). **Proved**. Eq. 19 agrees numerically with Eqs. 40–41 and Tables 1–3
+   *(compiler check, not in the sources)*.
 7. **Theorem 7.** A method of form (17) has φ-order $p$ iff
    $a(\tau)=e_1(\tau)$ and $a([\tau]_k)=e_1([\tau]_k)$ for all $k>1$ and all
    $\lvert\tau\rvert\le p$. It matches the exact B-series on every tree of
@@ -211,7 +211,7 @@ polynomials (source $e_k$).
 | $y'=f(y)$, $h$, $t_n$, $y_n$ | $y'=f(y)$, $h$, $t_n$, $y_n$ | agree; autonomous only |
 | $J$ | $J_n$ | full Jacobian at $y_n$, recomputed each step |
 | $\varphi_k$ | $\phi_k$ | same normalisation |
-| $r(y)$ | $r_n(y)$ | page-local remainder about $y_n$ |
+| $r(y)$ | $r_n(y)$ | page-local remainder about $y_n$; **not the step-size ratio $r_n=h_n/h_{n-1}$** |
 | $R(\theta)$ | — | $hr_n(y(t_n+\theta h))$; **collides with the stability function $R(z)$** |
 | $T$, $T^\#$, $t$, $\emptyset$ | $T$, $T\cup\{\varnothing\}$, $\tau$, $\varnothing$ | trees |
 | $T_S$, $T_M$, $[\tau]_k$ | $T_S$, $T_M$, $[\tau]_k$ | the paper's tree partition and repeated rooting; $F([\tau]_k)=J_n^kF(\tau)$ (Lemma 1) |

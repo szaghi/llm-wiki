@@ -5,7 +5,7 @@ description: "Stationary incompressible vortex with piecewise-linear velocity, r
 status: established
 aliases: [Gresho–Chan vortex, triangular vortex, low-Mach Gresho vortex]
 tags: [imex, asymptotic-preserving, verification, stiff]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Gresho vortex
@@ -31,7 +31,7 @@ p=\begin{cases}p_0+\frac{25}2r^2, & r<0.2,\\ p_0+\frac{25}2r^2+4\big(1-5r-\ln0.2
 
 with $p_0=\rho/(\kappa\mathrm{Ma}^2)$, so the peak velocity is 1 and the pressure
 fluctuation is $O(1)$ against a background $O(\mathrm{Ma}^{-2})$. The pressure is
-continuous at $r=0.2$ and $r=0.4$ *(compiler check)*.
+continuous at $r=0.2$ and $r=0.4$ *(compiler check, not in the sources)*.
 
 - **Boscheri & Pareschi (2021):** 3D domain $[-0.5,0.5]^3$ with Dirichlet boundaries,
   $80\times80\times4$ cells (also $h_x=1/40$), $\mathrm{Ma}=10^{-1},10^{-2},10^{-3}$, final

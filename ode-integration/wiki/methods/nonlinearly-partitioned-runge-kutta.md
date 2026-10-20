@@ -5,7 +5,7 @@ description: "NPRK methods integrate y' = F(y,y) for any two-argument splitting 
 status: established
 aliases: [NPRK, IMEX-NPRK, IMIM-NPRK, MR-NPRK, multirate NPRK, nonlinearly partitioned IMEX, sequentially coupled NPRK, implicitly wrapped MR-NPRK]
 tags: [runge-kutta, imex, multirate, order-conditions, stability, stiff]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Nonlinearly partitioned Runge–Kutta (NPRK) methods
@@ -100,7 +100,7 @@ $\mathcal P=\{(z_1,z_2):\max(|R(z_1,z_2)|,|R(\bar z_1,z_2)|)\le1\}$ in slices
 $\mathcal P(z_1)$; $\arg z_1=\pi/2$ models skew-symmetric advection, $\arg z_1=\pi$
 symmetric positive definite diffusion. Notions (page-local names):
 
-- **IMIM A-stable**: $\mathcal S\supseteq\mathbb C^-\times\mathbb C^-$; L-stable if also
+- **IMIM A-stable**: $\{(z_1,z_2):\lvert R(z_1,z_2)\rvert\le1\}\supseteq\mathbb C^-\times\mathbb C^-$; L-stable if also
   $R\to0$ as $|z_1|\to\infty$ and as $|z_2|\to\infty$ (2025, eqs. 4.20–4.21). An NPRK
   method implicit in only one argument cannot be A-stable, since $R(0,z_2)$ is an
   explicit Runge–Kutta stability polynomial (2025, §4.5.2; 2026, §3.1).

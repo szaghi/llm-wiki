@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Linear advection equation"
-description: "The constant- or variable-coefficient advection equation with its exact translated solution; the sources use it to verify temporal order, to compute von Neumann CFL limits of single-step and multiderivative schemes, to test bound-preserving limiting with non-SSP Runge–Kutta methods, boundary-induced order reduction, step-size control and implicit-stage solvers."
+description: "The constant- or variable-coefficient advection equation with its exact translated solution; the sources use it to verify temporal order, to compute von Neumann CFL limits of single-step and multiderivative schemes, to test bound-preserving and invariant-domain-preserving limiting with non-SSP Runge–Kutta methods, boundary-induced order reduction, mesh-induced stiffness, asynchronous halo exchange, step-size control and implicit-stage solvers."
 status: established
 aliases: [linear advection, advection equation, scalar advection equation, transport equation, linear transport equation, travelling bump]
 tags: [verification, stability, positivity, order-reduction, ssp]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Linear advection equation
@@ -48,6 +48,23 @@ first.
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) (§5.3.1): spectral-difference
   semi-discretizations, $h=\frac{0.5}{\mathsf M+1}\frac{\Delta x}{\lvert v_{\max}\rvert}$, ADER
   and DeC of orders 3 to 9.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) (§4.3.1): $a=1$ on $(0,1)$, the compactly
+  supported bump $u_0=\bigl(4\frac{(x-x_0)(x_1-x)}{x_1-x_0}\bigr)^6$ on $(x_0,x_1)=(0.1,0.4)$,
+  $T=1$, fourth-order finite differences on 50 to 3200 points, relative $L^\infty$ error;
+  explicit Runge–Kutta methods of orders 2 to 5 made
+  [invariant-domain preserving](/methods/invariant-domain-preserving-time-stepping.md) by
+  limiting, against SSP methods at equal cost.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) (§8.1, Eq. (35), with
+  $\epsilon=0$): $a=1$ on $[0,2\pi]$ with $u_0=\sin^4x$ (see Qualifications), $t=2\pi$, WENO5
+  finite volumes with a five-stage fifth-order SDIRK, $h=0.5\Delta x$, global bounds $[0,1]$;
+  [space–time flux limiting](/methods/bound-preserving-flux-limiting.md) around a backward
+  Euler low-order scheme.
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) (§5.1, Eq. (61)): $a=1$, the
+  Gaussian $u_0=e^{-2x^2/5}$ on a periodic domain of length 20 to $t=20$ (one period), flux
+  reconstruction (nodal DG) of degree 8 with upwind fluxes on 80 elements refined towards the
+  centre so that the largest element is about $2.5\times10^5$ times the smallest; the refined
+  middle half is integrated implicitly by element-wise
+  [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
 
 **One-dimensional, variable coefficient or with boundaries.** Babbar et al. (2022, §8.2,
 from Öffner and Ranocha) take $f=a(x)u$ with $a=x$, $u_0=\sin(12(x-0.1))$ on $[0.1,2\pi]$, and
@@ -66,10 +83,35 @@ volumes with exact boundary cell averages, forcing) impose time-dependent inflow
   $\mathbf a=(0.3,0.3)$ on $[-1,1]^2$ with exact solution $\sin(\pi(x-\mathbf at))$, DG spectral
   elements of degree 5 ($16^2$ elements, solver study) or 7 ($32^2$ elements, $T=0.8$,
   convergence study).
+- Ern & Guermond (2022, §4.3.2): $\mathbf a=(0.9,1)$, not aligned with mesh edges, on
+  $(0,1)^2$, product of two compactly supported bumps, $T=0.5$, continuous $\mathbb P_1$
+  finite elements on uniform triangle meshes (superconvergent to third order at the nodes);
+  and (§4.4.1, Eq. (44)) the rotation $\mathbf a=2\pi(-x_2,x_1)$ of a slotted cylinder, a cone
+  and a smooth hump on the unit disk for one revolution on unstructured Delaunay meshes of
+  1605 to 389,860 nodes, CFL 0.25.
+- Quezada de Luna & Ketcheson (2022, §8.5–8.6, Eqs. (40)–(42)): LeVeque's solid-body rotation
+  of a hump, a cone and a slotted disk on the periodic unit square, one revolution on
+  $128^2$ cells, and LeVeque's periodic swirling flow
+  $\mathbf a=\bigl(\sin^2(\pi x)\sin(2\pi y),-\sin^2(\pi y)\sin(2\pi x)\bigr)\cos(\pi t/T)$ with
+  the same data, $T=1.5$.
 - [Ranocha et al. (2022)](/sources/ranocha-2022.md) (§3), DG of degree 4 on uniform and
   curvilinear grids; [Gaburro et al. (2023)](/sources/gaburro-2023.md), a travelling bump on
   unstructured triangles to $t_f=3$ and $15$; [Hedayati Nasab et al. (2021)](/sources/hedayatinasab-2021.md)
   (§7.1), manufactured solutions on five element types.
+
+**Advection–diffusion variants.** Two sources add a diffusion term
+$\epsilon\,\partial_x^2u$ ($\epsilon$ page-local) and keep an exact solution:
+
+- Quezada de Luna & Ketcheson (2022, §8.1, Eq. (35)) take $\epsilon=10^{-3}$ with
+  $u_0=\sin^4x$, whose exact solution
+  $\tfrac38-\tfrac12e^{-4\epsilon t}\cos2(x-t)+\tfrac18e^{-16\epsilon t}\cos4(x-t)$ they print,
+  and (§8.7, Eq. (43)) the 2D analogue $u_t+u_x+u_y=\epsilon\Delta u$ on $[0,2\pi]^2$ with
+  $u_0=\sin^4(x+y)$, $t=0.5$.
+- [Goswami et al. (2023)](/sources/goswami-2023.md) (§3.5, Eq. (44)) take a periodic domain of
+  length $2\pi$ and a sum of sines with random phases, whose modes decay like
+  $e^{-\epsilon\kappa^2t}$ and travel with the advection speed ($\kappa$ the wavenumber,
+  page-local); the values of the speed, $\epsilon$ and the final time are not printed. The
+  processing elements exchange halo data with random delays.
 
 ## What it shows
 
@@ -95,6 +137,41 @@ volumes with exact boundary cell averages, forcing) impose time-dependent inflow
   $L^2$ orders 1.78–1.84, 2.77–2.94 and 3.47–3.97 on the travelling bump, below the design
   orders 2–4 that the text claims (Gaburro et al. 2023, Table 1); manufactured solutions confirm the design orders of
   many-stage methods with optimal stability polynomials (Hedayati Nasab et al. 2021, §7.1).
+
+**Robustness of order to the step size.** Ern & Guermond (2022) choose
+$h=\mathrm{CFL}\times s\times h^*$, $h^*$ the largest step for which a forward Euler step of the
+low-order scheme stays in the invariant domain, so all methods use the same number of flux
+evaluations. In 1D, at CFL 0.25, SSPRK(2,2) leaves the asymptotic regime on the finest mesh
+(rate $-0.50$ at 3200 points) while the midpoint rule RK(2,2;1) keeps rate 1.99 (Table 1); at
+third order SSPRK(3,3) degrades (rates 1.35–1.81) more than Heun's third-order RK(3,3;1),
+while RK(4,3;1), fourth order on linear problems, reaches 3.94 (Table 2); at fourth order and
+CFL 0.2 only RK(5,4;1) stays optimal on fine meshes ($5.38\times10^{-9}$ against
+$9.29\times10^{-8}$ for SSPRK(5,4)) (Table 3); the new seven-stage fifth-order RK(7,5;1)
+reaches its asymptotic range at CFL 0.02–0.025 (Table 4). In 2D all methods give optimal
+$L^1$ rates for CFL between 0.4 and 0.7; in $L^\infty$ at CFL 0.2 RK(4,3;1) is fourth order and
+best overall and SSPRK(3,3) behaves poorly (Tables 5–6). See
+[SSP methods](/methods/strong-stability-preserving-runge-kutta.md).
+
+**Order under mesh-induced stiffness.** With the element-size ratio of about
+$2.5\times10^5$, the accelerated IMEX schemes AIMEX$s$,2, $s=4,\dots,10$, converge at second
+order (observed 1.96–2.00) with errors nearly independent of $s$, at
+$h=10^{-3},\dots,1.25\times10^{-4}$; the Ascher–Ruuth–Spiteri pair IMEX3,2 they extend shows
+observed orders 3.55, 2.47, 2.19 and smaller errors at small steps ($2.80\times10^{-8}$
+against $1.03\times10^{-7}$ for AIMEX4,2 at $h=1.25\times10^{-4}$), which the paper does not
+explain (Vermeire & Hedayati Nasab 2021, §5.1, Table 2). Their AIMEX stability polynomials are
+optimized on von Neumann spectra of flux reconstruction for this equation: the optimal
+four-stage polynomials allow 1.79–2.01 times the explicit step of IMEX3,2 for degrees 1–8
+(Table 1), and the gain grows about linearly with $s$ (see
+[optimal stability polynomials](/methods/optimal-stability-polynomial.md)).
+
+**Asynchronous halo exchange.** In the advection–diffusion runs of Goswami et al. (2023,
+§3.5, Figs. 4–6), at constant CFL, coupling low-storage Runge–Kutta stages naively with
+delayed halo data caps the spatial convergence at slope $-3$ (after an initial slope $-4$ or
+$-6$), while updating the halo points through the Runge–Kutta recurrence with temporal
+asynchrony-tolerant stencils keeps slopes $-4$ (LSERK2 with fourth-order differences) and $-6$
+(LSERK3a with sixth-order differences), close to the synchronous errors; at fixed resolution
+the error grows linearly with the number of processing elements, as their error model
+predicts. See [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md).
 
 **Fully discrete linear stability (von Neumann CFL limits).** For single-step schemes that
 are not of method-of-lines type, the admissible Courant number $\nu$ comes from the Fourier
@@ -141,7 +218,28 @@ every limited scheme, while $\kappa=0$ drops them to about 2.7, except when only
 stage of the sixth-order method is limited (EOC 5.00) (Table 3). See
 [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md),
 [extrapolation methods](/methods/extrapolation-methods.md) and
-[positivity preservation](/properties/positivity-preservation.md). In the other direction,
+[positivity preservation](/properties/positivity-preservation.md).
+
+Beyond the SSP paradigm, two sources keep the bounds with methods that are not SSP. With
+invariant-domain-preserving limiting after each incremental stage, the midpoint rule, "often
+shun in the literature for its lack of stability", performs very well on the three-solids
+rotation at CFL 0.25, and RK(2,2;1) and RK(4,3;1) converge at $L^1$ rates of about 0.8 (Ern &
+Guermond 2022, §4.4.1, Fig. 2, Table 7). With space–time flux limiting of a fifth-order SDIRK,
+the unlimited WENO–SDIRK solution of the solid-body rotation ranges over
+$[-7.80\times10^{-4},1.0023]$ at the final time, with $L^1$ error $2.09\times10^{-2}$; the FCT
+and global-monolithic-convex limited versions stay within $[0,1]$ with errors
+$2.22\times10^{-2}$ and $2.10\times10^{-2}$, and the backward Euler low-order scheme has error
+$1.32\times10^{-1}$ (Quezada de Luna & Ketcheson 2022, §8.5, Fig. 6); on the swirling flow the
+unlimited range is $[-7.01\times10^{-3},1.0366]$ and the limited errors equal the unlimited
+one to two digits (§8.6, Fig. 7). On the smooth $\sin^4$ data with $\epsilon=0$ and
+$h=0.5\Delta x$, the unlimited scheme reaches $L^1$ error $1.25\times10^{-4}$ at $\Delta x=1/200$
+(rate 4.15) with a bound violation of $2.08\times10^{-5}$; FCT needs two limiter iterations, and
+the convex limiter a relaxation parameter of at least 2, to match it while keeping the bounds
+to round-off; one FCT iteration gives rate 3.65 (Table 1). With $\epsilon=10^{-3}$ physical
+diffusion reduces limiter action and one iteration suffices (rates 4.52–4.55, Table 2); with
+$\epsilon$ alone ($a=0$) the limiters do not activate (§8.1); in 2D full accuracy needs two FCT
+iterations or relaxation parameter at least 1 (rates 4.52–4.70, Table 5). The observed rates
+mix temporal and spatial error, since $h$ and $\Delta x$ are refined together. In the other direction,
 paired explicit Runge–Kutta families on first-order upwind finite volumes are linearly stable
 but violate Harten's monotonicity criterion at the interface between members
 ([Doehring et al. 2024b](/sources/doehring-2024-b.md), §3.2; see
@@ -183,6 +281,24 @@ both the slope and the count "drastically" (Zeifang & Schütz 2022, §4.1.1, Fig
   above the critical linear Courant numbers of 3DRKCAT5-2 and 3DRKCAT7-3, and those schemes
   still converge there; the paper does not comment, so Table 2 is not a sharp practical limit
   (§6).
+- **Initial datum of Quezada de Luna & Ketcheson (2022).** Eq. (35) prints
+  $u(x,0)=\sin^4(2\pi x)$ on $[0,2\pi]$, but their printed exact solution equals
+  $\sin^4(x-t)$ at $\epsilon=0$, and the 2D analogue (43) prints $\sin^4(x+y)$; the datum run is
+  $\sin^4x$ ($\sin^4x=\frac38-\frac12\cos2x+\frac18\cos4x$; compiler check, not in the source).
+  Their tables list $\Delta x=1/25,\dots,1/200$ on a domain of length $2\pi$, which is
+  ambiguous as printed. They call the baseline integrator a fifth-order SDIRK, but every
+  measured rate is about 4 and temporal and spatial errors are not separated.
+- Ern & Guermond (2022) measure "efficiency" as $1/(s\,\Delta c_{\max})$ of the incremental
+  stages, a quantity different from the SSP effective coefficient $\mathcal C_{\mathrm{eff}}$
+  except for SSPRK(2,2) and SSPRK(3,3); the two are not comparable (see
+  [invariant-domain-preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md)).
+- Vermeire & Hedayati Nasab (2021) analyse only the explicit stability polynomial on the
+  explicit-region spectrum; the coupled stability at the implicit–explicit interface is
+  checked only visually.
+- Goswami et al. (2023) refine at constant CFL and report convergence against the number of
+  grid points; their slopes are spatial orders of the coupled scheme.
+- Ern & Guermond (2022) were read as the HAL manuscript, Quezada de Luna & Ketcheson (2022)
+  as arXiv v1.
 - Micalizzi & Torlo's measured speedups differ from their stage-count predictions in both
   directions (e.g. about 2 measured against 1.757 predicted for an ODE test, §9.1.1); stage
   counts are not cost (Remark 5.1).
@@ -203,3 +319,7 @@ both the slope and the count "drastically" (Zeifang & Schütz 2022, §4.1.1, Fig
 - [Gaburro et al. (2023)](/sources/gaburro-2023.md) — Table 1 (travelling bump).
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §3.2 (Figs. 2–3).
 - [Sun & Shu (2021)](/sources/sun-2021.md) — numerical tests on upwind and central DG for linear advection.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §4.2 (Eq. (42)), §4.3.1–4.3.2 (Tables 1–6), §4.4.1 (Eq. (44), Fig. 2, Table 7); HAL v2.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) — §8.1 (Eq. (35), Tables 1–3), §8.5–8.7 (Eqs. (40)–(43), Figs. 6–7, Table 5); arXiv v1.
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §4.3 (Table 1), §5.1 (Eq. (61), Table 2).
+- [Goswami et al. (2023)](/sources/goswami-2023.md) — §3.5 (Eq. (44), Figs. 4–6).

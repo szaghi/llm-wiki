@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 520:113493"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Computational_Physics_Permyakova_High-order_schemes_of_exponential_time_differencing_for_stif.pdf"
 tags: [exponential, stiff, linear-algebra, explicit]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -88,15 +88,15 @@ $\mathsf m$ (source $M$), both page-local as on
    **Derived**
 5. The recurrence $\mathbf M_{n+1}=L^{-1}(-h^nI+n\mathbf M_n)$ gives the
    closed forms (9a)–(9c), i.e. $h\phi_1(hL)$, $h^2\phi_2(hL)$ and
-   $2h^3\phi_3(hL)$ (§2). **Derived** (checked by integration by parts in
-   the reader notes)
+   $2h^3\phi_3(hL)$ (§2). **Derived** (checked by integration by parts *(compiler
+   check, not in the sources)*)
 6. In this form ETD2RK (10) needs $\phi_0,\phi_1,\phi_2$ at $hL$; ETD3RK (11)
    and ETD4RK (12) need in addition $\phi_0$ and $\phi_1$ at $\frac h2L$ and
    $\phi_3(hL)$. The final weights are $h(\phi_1-3\phi_2+4\phi_3)$ on the
    first stage, $h(4\phi_2-8\phi_3)$ on the midpoint stage of ETD3RK (split
    as $h(2\phi_2-4\phi_3)$ on each of the two midpoint stages of ETD4RK),
-   and $h(4\phi_3-\phi_2)$ on the last stage (§2). **Derived** (the reader
-   checked that (11c) and (12d) reproduce (3c) and (4d))
+   and $h(4\phi_3-\phi_2)$ on the last stage (§2). **Derived** ((11c) and (12d) reproduce
+   (3c) and (4d) *(compiler check, not in the sources)*)
 7. The literature computes these matrices by Taylor or Krylov projection
    [38, 39] or contour integrals [40]. Closed forms suffer cancellation for
    small eigenvalues of $hL$, worse as $n$ grows; the auxiliary-problem
@@ -163,7 +163,7 @@ $\mathsf m$ (source $M$), both page-local as on
 22. Extension to several dimensions is "straightforward" [46] but memory
     demanding: $d=N_xN_y$ gives $d\times d$ matrices; with sparsity one
     stores $d\times N_{\mathrm{spr}}$ (formula in §4). **Stated** (formula
-    without derivation, dimensionally doubtful per the reader)
+    without derivation, dimensionally doubtful *(compiler check, not in the sources)*)
 23. The bulk of the work is large matrix–vector products, "naturally
     suitable for parallel- and super-computing" (§4). **Stated**
 24. The Horner-type recursion $Q_{m-1}=I+\frac hm LQ_m$ (page-local $Q_m$),
@@ -250,6 +250,7 @@ NTNU technical report with URL; refs. [3], [57] and [60] are books; ref.
 
 Chunk 5 (2026-10-20). This source is cited on:
 
+* [Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md)
 * [Evaluating φ-functions: Leja interpolation, Krylov and related methods](/methods/phi-function-evaluation.md)
 * [Exponential integrators and φ-functions](/methods/exponential-integrators.md)
 * [Stiff order conditions of exponential Runge–Kutta methods and φ-order conditions](/results/exponential-runge-kutta-stiff-order-conditions.md)

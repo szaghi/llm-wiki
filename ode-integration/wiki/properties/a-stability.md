@@ -5,7 +5,7 @@ description: "Linear stability classes of one-step and linear multistep methods:
 status: established
 aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, strong A-stability, strongly A-stable, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability, stability angle]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability
@@ -153,7 +153,7 @@ sampling only (Fig. 4).
   holds iff all generalized eigenvalues of $(W,J-W)$ lie in a limiting diagram, when $W$ and
   $J-W$ are simultaneously diagonalizable. With real ratios $\lambda'/\lambda$ the method is
   unconditionally stable if every ratio is at most 1, 0.5743 or 0.7445 for $p=2,3,4$ (§3, Lemma 3.4, Thms. 3.6, 4.5, Remark 4.2;
-  0.7445 as printed, the reader of the source recomputes 0.7451). In
+  0.7445 as printed). In
   general only a weighted field-of-values condition is sufficient (Thms. 5.5–5.6). See
   [TASE operators](/methods/tase-operators.md).
 * **Implicit ADER-DG:** [Popov (2024)](/sources/popov-2024.md) (§1.2, Figs. 1–2)
@@ -251,8 +251,8 @@ for $t_1\le t_2$, two numerical solutions do not separate either (Farrell et
 al. (2021), §2.1). **Algebraic stability** is the algebraic condition on the
 tableau under which this holds; its standard form is $b_i\ge0$ and
 $\operatorname{diag}(b)A+A^\top\operatorname{diag}(b)-bb^\top$ positive
-semidefinite *(standard definition supplied by the compiler; the sources use
-the notion without restating it)*. The sources use it as follows:
+semidefinite, as Akrivis, Makridakis & Smaragdakis (2025, Eq. (105)) state it
+with the matrix $(b_ia_{ij}+b_ja_{ji}-b_ib_j)$. The sources use it as follows:
 
 * Gauss–Legendre and Lobatto IIIC are B-stable (Farrell et al. (2021), §3.2);
   algebraic stability of collocation methods gives $L^2$-stability of the
@@ -263,6 +263,19 @@ the notion without restating it)*. The sources use it as follows:
   $1\,|\,0$; $1\,|\,1$, $b=(1\,|\,1)$ has spectral radius
   $(\sqrt5+3)/4>1$ on $H\Lambda=\begin{pmatrix}-1&1\\-10&-1\end{pmatrix}$
   (Roberts et al. (2021), §3.3).
+* **Discrete maximal regularity.** Every algebraically stable Runge–Kutta method
+  satisfies a discrete maximal $L^2$ regularity estimate for linear parabolic problems with
+  arbitrary step sequences; the proof is the classical expansion that shows algebraic
+  stability implies B-stability, applied in the norm of the square root of the operator
+  ([Akrivis, Makridakis & Smaragdakis (2025)](/sources/akrivis-2025.md), §4.4.3, Eqs.
+  (105)–(111)). Lobatto IIIA, A-stable but not B-stable and with a singular coefficient
+  matrix, is covered separately through an equivalent modified continuous Galerkin method
+  (§4.4.2). See [discrete maximal regularity](/results/discrete-maximal-regularity.md).
+* **Damping at infinity and nonsmooth data.** In Akrivis et al.'s Runge–Kutta-based
+  training losses, Gauss and Lobatto IIIA ($\lvert R(\infty)\rvert=1$) oscillate near $t=0$ for
+  discontinuous initial data of the heat equation, while Radau IIA ($R(\infty)=0$) smooths, as
+  the stability functions predict (§5.4.2, Fig. 5; see
+  [learned time integrators](/methods/learned-time-integrators.md)).
 * The new coupled and decoupled multirate backward Euler methods are scalar
   L-stable and algebraically stable for all $m$; the multirate implicit
   midpoint methods keep the algebraic stability, symmetry and symplecticity of
@@ -291,6 +304,9 @@ the notion without restating it)*. The sources use it as follows:
   Han Veiga et al. (2021) establish their stability claims by plotting regions; none
   proves A-stability. Popov's sampled degrees ($\le60$) and Čaklović et al.'s node sets
   are the scope of the claims.
+* Akrivis et al. (2025, §4.4.3) state that B-stability and algebraic stability are
+  equivalent "since the collocation nodes are pairwise distinct". Their estimate (111) uses
+  only the computation by which algebraic stability implies B-stability.
 * Multirate stability depends on the basis in which the partitions are
   written, so a single scalar test equation does not settle it (Roberts et al.
   (2021), §3, after Gear).
@@ -315,3 +331,4 @@ the notion without restating it)*. The sources use it as follows:
 - [Popov (2024)](/sources/popov-2024.md) — §1.2 (Eq. (15), Figs. 1–2; A- and "L1"-stability from plots and rank checks).
 - [Čaklović et al. (2025)](/sources/caklovic-2025.md) — Remark 2.1; §3.2 (Figs. 5–9); §5.
 - [Jin et al. (2025)](/sources/jin-2025.md) — §2.1 (properties (P1)–(P3)), Remark 2.3, Prop. 3.3, Remark 3.1, Table 4.1.
+- [Akrivis, Makridakis & Smaragdakis (2025)](/sources/akrivis-2025.md) — §1, §4.4.2 (Lobatto IIIA), §4.4.3 (Eqs. 105–111, algebraic stability), §5.4.2 (Fig. 5).

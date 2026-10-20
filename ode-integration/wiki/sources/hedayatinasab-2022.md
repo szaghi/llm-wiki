@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 468:111470"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Hedayati_Third-order_Paired_Explicit_Runge-Kutta_schemes_for_stiff_sy.pdf"
 tags: [runge-kutta, explicit, stability, multirate, method-of-lines, low-storage]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -121,7 +121,7 @@ coefficients are not printed.
 | $\Delta t_{\text{opt}}$, $P_{\text{opt}}$ | $h_{\mathrm{opt}}$, optimal $P$ | |
 | $\boldsymbol\omega$ | eigenvalue set of $L$ | |
 | $r_{e,p}(\Delta t,\boldsymbol\omega)$ | — | optimal value of Problem 2; page-local |
-| $k$ | $k$ | flux-reconstruction solution degree; page-local (registry $k$ is the PID exponent denominator) |
+| $k$ | $k$ | flux-reconstruction solution degree; page-local (**collides** with the registry $k$: multistep step count, PID exponent denominator) |
 | $\epsilon$ | — | bisection tolerance |
 | RK3,3 | — | classical three-stage third-order method; tableau not stated |
 

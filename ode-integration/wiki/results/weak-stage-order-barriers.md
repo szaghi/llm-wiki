@@ -5,7 +5,7 @@ description: "Order barriers relating stages $s$, order $p$, weak stage order $q
 status: established
 aliases: [WSO order barriers, stage bound for weak stage order]
 tags: [runge-kutta, order-conditions, order-reduction, stability]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Weak-stage-order barriers
@@ -115,10 +115,10 @@ $q_{\mathrm w}>3$ and $\deg\mu_{\mathcal K}=2$, $\mu_{\mathcal K}(x)=(x-a_{11})(
   has $p=4$ or $q_{\mathrm w}=4$ (Ex. 7.2).
 - **Stiffly accurate $(4,3,3)$ DIRKs** of Ketcheson et al. (2020) attain the bound
   (Ex. 7.3): $\lfloor3/2\rfloor+3=4=s+1-\delta_{\mathrm{SA}}$ in the DIRK theorem
-  *(compiler check)*.
+  *(compiler check, not in the sources)*.
 - **Gauss methods** attain the general theorem sharply (Ex. 7.4): with $p=2s$ and
   $n_c=s$, part 3 reads $q_{\mathrm w}+s\le2s$, so $q_{\mathrm w}=s$ *(compiler
-  check)*, consistent with their stage order $s$.
+  check, not in the sources)*, consistent with their stage order $s$.
 
 ## Explicit methods
 
@@ -153,7 +153,7 @@ For explicit methods nilpotency of $A$ sharpens the bounds
 For comparison, the DIRK theorem applied to an explicit method
 ($\delta_{\mathrm{GE}}=1$, $\delta_{\mathrm{SA}}=0$) gives
 $\lfloor(q_{\mathrm w}+1)/2\rfloor+p\le s+2$, which is weaker than $p+q_{\mathrm w}\le s+1$
-for $q_{\mathrm w}\ge2$ *(compiler check)*.
+for $q_{\mathrm w}\ge2$ *(compiler check, not in the sources)*.
 
 ## Qualifications
 
@@ -170,7 +170,7 @@ for $q_{\mathrm w}\ge2$ *(compiler check)*.
   as "a 4th order DIRK with WSO 4 requires at least five stages" and "5th order with
   WSO 4 or 5 at least six"; those counts use $\delta_{\mathrm{SA}}=0$. With the
   stiff accuracy those authors impose, the same inequality gives 6 and 7 stages
-  *(compiler check)*. Their searches found schemes with 7, 12 and 12 stages and
+  *(compiler check, not in the sources)*. Their searches found schemes with 7, 12 and 12 stages and
   failed to find fewer under their constraints; the bounds "may not be sharp".
 - Biswas et al. (2024, §1.2) assert that the eigenvector criterion limits
   invertible-$A$ DIRK schemes to $q_{\mathrm w}\le3$ "as shown below"; the

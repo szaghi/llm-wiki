@@ -9,7 +9,7 @@ year: 2024
 venue: "BIT Numer. Math. 64:14"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_BIT_Numerical_Mathematics_Akrivis_The_variable_two-step_BDF_method_for_parabolic_equations.pdf"
 tags: [linear-multistep, bdf, energy-method, stability, step-size-control, parabolic]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -68,16 +68,16 @@ the claims below keep that indexing.
 5. Earlier parabolic stability bounds: Grigorieff $(1+\sqrt3)/2\approx1.366$, independent of $\Gamma_n$; Becker $(2+\sqrt{13})/3\approx1.8685$; Emmrich $1.9104$ for semilinear problems (§1.3, Abstract). **Stated**
 6. Liao and Zhang (2021) and the works cited there prove estimates of a different kind, with $(y_1-y_0)/k_1$ on the right-hand side, for ratio bounds well above $1+\sqrt2$ (§1.3). **Stated**
 7. The BDF2 difference quotient can be written $D_2v^n=\frac1{\omega_nk_n}(\Delta_1v^n-\psi_n\Delta_2v^n)$ with $\Delta_jv^n=v^n-v^{n-j}$, $\omega_n=1/(1+r_n)$ and $\psi_n=(r_n/(1+r_n))^2$ (Eq. 1.6). **Derived**
-8. Lemma 2.1: for $\mu_2\le0$, $(\mathbb L(r_2,\dots,r_n)x,x)\ge c\lVert x\rVert_2^2$ for all matrices of the form (2.1) with $0<r_i\le r$ and all $n\ge4$ if and only if $\varpi(x)=\frac1{1+r}\big[1+\mu_2r-\mu_1\sqrt r\,x-2\mu_2rx^2\big]\ge c$ for all $x\in[-1,1]$ (Lemma 2.1, Eqs. 2.1–2.3). **Proved**
-9. Necessity follows from the Grenander–Szegő theorem at constant ratio: the symmetric part of $\mathbb L(r,\dots,r)$ is a pentadiagonal Toeplitz matrix with symbol $\frac1{1+r}(1-\mu_1\sqrt r\cos x-\mu_2r\cos2x)$, whose minimum equals $\min_{[-1,1]}\varpi$ (§2, Thm. 2.1). **Proved**
+8. Lemma 2.1: for $\mu_2\le0$, $(\mathbb L(r_2,\dots,r_n)x,x)\ge c\lVert x\rVert_2^2$ for all matrices of the form (2.1) with $0<r_i\le r$ and all $n\ge4$ if and only if $\mathfrak p(x)=\frac1{1+r}\big[1+\mu_2r-\mu_1\sqrt r\,x-2\mu_2rx^2\big]\ge c$ for all $x\in[-1,1]$ (Lemma 2.1, Eqs. 2.1–2.3). **Proved**
+9. Necessity follows from the Grenander–Szegő theorem at constant ratio: the symmetric part of $\mathbb L(r,\dots,r)$ is a pentadiagonal Toeplitz matrix with symbol $\frac1{1+r}(1-\mu_1\sqrt r\cos x-\mu_2r\cos2x)$, whose minimum equals $\min_{[-1,1]}\mathfrak p$ (§2, Thm. 2.1). **Proved**
 10. Lemma 3.2: if $0<\mu_1<1$, $-1<\mu_2<0$, $2-\mu_1+2\mu_2\ge0$, $1+\mu_1+3\mu_2\ge0$ and $r_j\le r\le r^\star(\mu_1,\mu_2):=\frac{\sqrt{1+\mu_1+3\mu_2}}{2\sqrt{1+\mu_2}-\sqrt{1+\mu_1+3\mu_2}}$, the telescoped lower bound (3.2) on the summed difference-quotient terms holds (Lemma 3.2, Eqs. 3.1–3.2). **Proved**
 11. $\sup r^\star(\mu_1,\mu_2)=r^\star(1,0)=1+\sqrt2$, the optimal zero-stability bound (footnote 1, p. 9). **Derived**
 12. Lemma 3.3: with $\mu_1=0.9672$, $\mu_2=-0.1793$ and $r_j\le r^\star(0.9672,-0.1793)\approx1.9398$, half the summed elliptic terms is at least $c_1\sum_jk_j\lVert y_j\rVert_L^2$ minus three starting-value terms, with $c_1=10^{-6}$ (Lemma 3.3, Eq. 3.9). **Proved**
-13. At these multipliers the minimum of $\varpi$ on $[-1,1]$ is attained at $x^\star=-\mu_1/(4\mu_2\sqrt{r^\star})\in(0,1)$, and the paper prints $\varpi(x^\star)\approx7.3592\cdot10^{-6}>c_1$ (proof of Lemma 3.3, p. 12). **Proved** (see Printed slips)
+13. At these multipliers the minimum of $\mathfrak p$ on $[-1,1]$ is attained at $x^\star=-\mu_1/(4\mu_2\sqrt{r^\star})\in(0,1)$, and the paper prints $\mathfrak p(x^\star)\approx7.3592\cdot10^{-6}>c_1$ (proof of Lemma 3.3, p. 12). **Proved** (see Printed slips)
 14. Remark 3.1: within this positive-definiteness framework, Emmrich's bound $1.9104$ is optimal for a single multiplier, attained at $\mu_1=0.72349$, $\mu_2=0$. **Derived**
-15. On the domain $0<\mu_1<2$, $-1<\mu_2<0$, $1+\mu_1+3\mu_2\ge0$, positivity of $\varpi$ holds iff $r<\bar r(\mu_1,\mu_2)$, with $\bar r=-\frac1{\mu_2}-\frac{\mu_1^2}{8\mu_2^2}$ where $\frac3{16}\mu_1^2\le-\mu_2$ and $\bar r=\big(2/(\mu_1+\sqrt{\mu_1^2+4\mu_2})\big)^2$ otherwise (§4, Eq. 4.3). **Proved**
+15. On the domain $0<\mu_1<2$, $-1<\mu_2<0$, $1+\mu_1+3\mu_2\ge0$, positivity of $\mathfrak p$ holds iff $r<\bar r(\mu_1,\mu_2)$, with $\bar r=-\frac1{\mu_2}-\frac{\mu_1^2}{8\mu_2^2}$ where $\frac3{16}\mu_1^2\le-\mu_2$ and $\bar r=\big(2/(\mu_1+\sqrt{\mu_1^2+4\mu_2})\big)^2$ otherwise (§4, Eq. 4.3). **Proved**
 16. The optimal ratio bound is $\max_{\vartheta\ge1/3}\min\{H(\vartheta),\tilde G(\vartheta)\}$ along the segments $\mu_2=\vartheta(2-\mu_1)-1$, with $H(\vartheta)=\frac{\sqrt{3\vartheta-1}}{2\sqrt\vartheta-\sqrt{3\vartheta-1}}$ increasing and $\tilde G(\vartheta)=\frac1{1-2\vartheta}$ on $[1/3,1/2)$, $\frac12+\frac1{2(2\vartheta-1)^2}$ on $(1/2,\infty)$ (Eqs. 4.7–4.9, 4.16, Fig. 2). **Proved**
-17. The crossing $H=\tilde G$ reduces to $23\vartheta^5-55\vartheta^4+55\vartheta^3-29\vartheta^2+8\vartheta-1=0$, whose only real root $\vartheta\approx0.794645365827$ gives $\mu_1^\star\approx0.967237837020572$, $\mu_2^\star\approx-0.179320334471962$ and $r^\star\approx1.9398285699451$ (Eq. 4.17). **Derived** (the reader reproduced the root and the three values)
+17. The crossing $H=\tilde G$ reduces to $23\vartheta^5-55\vartheta^4+55\vartheta^3-29\vartheta^2+8\vartheta-1=0$, whose only real root $\vartheta\approx0.794645365827$ gives $\mu_1^\star\approx0.967237837020572$, $\mu_2^\star\approx-0.179320334471962$ and $r^\star\approx1.9398285699451$ (Eq. 4.17). **Derived** (the compiler reproduced the root and the three values (not in the sources))
 18. The optimal multipliers satisfy all hypotheses of the analysis, in particular $2-\mu_1^\star+2\mu_2^\star\ge0$, which the optimization domain does not build in (§4). **Stated**
 19. Within the two-multiplier, summed-elliptic-term approach, $\approx1.9398$ is the best obtainable ratio bound (§4). **Derived**
 20. Arbitrary starting values $y_0,y_1$ in the energy space are allowed; the estimate needs $\lVert y_0\rVert^2+\lVert y_1\rVert^2+k_2\lVert y_0\rVert_L^2+k_2\lVert y_1\rVert_L^2$ on the right-hand side (Thm. 1.1). **Proved**
@@ -89,7 +89,7 @@ values of one quantity.
 
 # Printed slips
 
-- Proof of Lemma 3.3 (p. 12): "$p(y^\star)\approx7.3592\cdot10^{-6}>c_1$" is the value at the rounded $r=1.9398$; at the hypothesis bound $r=r^\star(0.9672,-0.1793)=1.939804\ldots$ it is about $7.107\cdot10^{-6}$ (reader recomputation). Harmless, since both exceed $c_1=10^{-6}$.
+- Proof of Lemma 3.3 (p. 12): "$p(y^\star)\approx7.3592\cdot10^{-6}>c_1$" is the value at the rounded $r=1.9398$; at the hypothesis bound $r=r^\star(0.9672,-0.1793)=1.939804\ldots$ it is about $7.107\cdot10^{-6}$ *(compiler check, not in the sources)*. Harmless, since both exceed $c_1=10^{-6}$.
 - Lemma 3.2 requires $-1<\eta<0$ strictly, yet Remark 3.1 applies "the proof" with $\eta=0$.
 - §4 defines the domain with $0<\delta<2$, while Lemma 3.2 assumes $0<\delta<1$; the a-posteriori admissibility check names only $2-\delta^\star+2\eta^\star\ge0$, although $\delta^\star<1$ is also needed (it holds).
 - p. 13: "we are lead to the inequality" (for "led").
@@ -113,7 +113,7 @@ values of one quantity.
 | $\Gamma_n$ | $\Gamma_n$ | ratio-variation quantity; distinct from the MRI coupling matrices $\Gamma^{(k)}$ |
 | $\mathscr D_n$, $\mathscr A_n$, $\mathscr F_n$ | — | difference-quotient, elliptic and forcing terms of the tested equation |
 | $\mathbb L(r_2,\dots,r_n)$, $L$ | — | scaled and unscaled lower-triangular banded matrices; the source's $L$ is a **collision** with the registry linear operator |
-| $p(y)$, $P(y)=(1+r)p(y)$ | $\varpi(x)$, $(1+r)\varpi(x)$ | quadratic positivity polynomial; **collision**: $p$ is the order, $y$ the solution |
+| $p(y)$, $P(y)=(1+r)p(y)$ | $\mathfrak p(x)$, $(1+r)\mathfrak p(x)$ (page-local) | quadratic positivity polynomial; **collision**: $p$ is the order, $y$ the solution; not the registry Patankar weight $\varpi_i$ |
 | $g(x)$ | — | Toeplitz symbol |
 | $J,G,K,P,Z,Z_s,M$ | — | auxiliary matrices of the proof of Lemma 2.1; $G$ and $M$ **collide** with the G-norm matrix and the mass matrix |
 | $c_1$ | $c_1$ | coercivity constant $10^{-6}$, not an abscissa |

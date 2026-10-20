@@ -5,7 +5,7 @@ description: "P-ERK families are explicit Runge–Kutta tableaux with a common s
 status: established
 aliases: [P-ERK, PERK, paired-explicit Runge–Kutta, embedded P-ERK, multirate P-ERK, P-ERK2, P-ERK3, P-ERK4, dynamically partitioned P-ERK]
 tags: [runge-kutta, explicit, multirate, stability, order-conditions, step-size-control]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Paired explicit Runge–Kutta (P-ERK) methods
@@ -311,8 +311,9 @@ need implicit solves (Hedayati Nasab & Vermeire 2022, §1; Vermeire 2023, §1).
   equal, and print no coefficients (supplementary material). The observed third order
   of the random mix is the evidence. Doehring et al. (2024b) avoid the issue by fixing the
   abscissae first (see *Coefficients by order*). For $e=3$ the subdiagonal entry $a_{s-1,s-2}$
-  is zero and the $c_{s-2}$ formula divides by zero; that member must instead have
-  $a_{s,s-1}=2$, not discussed in the paper (reader's observations).
+  is zero and the $c_{s-2}$ formula divides by zero; the third-order condition
+  $\tfrac1{12}a_{s,s-1}+\tfrac34a_{s-1,s-2}c_{s-2}=\tfrac16$ then forces $a_{s,s-1}=2$, a case
+  the paper does not discuss *(compiler check, not in the source)*.
 - **Which property comes from which equality.** Hedayati Nasab & Vermeire (2022,
   §3.2) state that equal $b$ and equal $c$ make the schemes "consistent and
   conservative, respectively", which reads as equal weights giving consistency;

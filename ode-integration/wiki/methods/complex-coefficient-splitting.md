@@ -3,9 +3,9 @@ type: Method
 title: "Splitting and composition with complex coefficients"
 description: "Splitting and composition methods with complex coefficients of positive real part escape the negative-coefficient barrier and keep their classical order on parabolic problems generating analytic semigroups, up to order barriers of their own; symmetric-conjugate methods nearly preserve unitarity, and projection onto the real part raises odd orders by one."
 status: established
-aliases: [complex splitting, complex composition, symmetric-conjugate splitting, complex triple jump]
+aliases: [complex splitting, complex composition, symmetric-conjugate splitting, complex triple jump, complex Lie–Trotter, CLT, Strang-CLT]
 tags: [splitting, order-conditions, stability, geometric-integration]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Splitting and composition with complex coefficients
@@ -50,7 +50,8 @@ $\operatorname{Re}>0$ (§7.1, as recalled from Blanes et al. 2013 and Hansen & O
 With $\chi_h$ Lie–Trotter (first order) or a symmetric second-order map (Strang), Blanes et
 al. record (§7.1, §6.4):
 
-- **order 2 from Lie–Trotter:** two steps with $\gamma=\tfrac12\pm\tfrac i2$;
+- **order 2 from Lie–Trotter:** two steps with $\gamma=\tfrac12\pm\tfrac i2$ (see the
+  $N$-part section below for its uniqueness);
 - **order 3 from Strang** (Eq. 7.4): $\gamma_1=\tfrac12\pm i\tfrac{\sqrt3}6$, $\gamma_2=\bar\gamma_1$;
 - **smallest-phase recursion** (Eq. 7.6): two-stage recursive compositions whose level-$p$ weight is $\gamma_{p,1}=\tfrac12\pm\tfrac i2\tan\frac{\pi}{2(p+1)}$ (Blanes et al.'s index $r$);
 - **complex triple jump** (Eq. 7.8): $\gamma_1=\gamma_3=1/(2-2^{1/3}e^{\pm2i\pi/3})$, $\gamma_2=1-2\gamma_1$ (the sign selects one of the two complex cube roots of 2; the source writes $e^{2i\ell\pi/3}$);
@@ -59,6 +60,34 @@ al. record (§7.1, §6.4):
 Their splitting forms are Eqs. (7.10)–(7.12). For the fourth-order compositions (7.8) and
 (7.9), the leading error coefficient $\lvert\sum_j\gamma_j^5\rvert$ is about **200 times
 smaller** than that of the real triple jump (§7.1, as recalled from Blanes et al. 2022).
+
+## Complex Lie–Trotter for $N$ parts
+
+For $f=\sum_{\ell=1}^Nf^{[\ell]}$ with $N\ge3$ parts (page-local $N$),
+[Spiteri & Wei (2026)](/sources/spiteri-2026.md) (§3.3, Case 2, Eqs. (23)–(26), Table 4) show
+that the only second-order method with $2N$ non-trivial sub-integrations whose second sweep
+again covers all parts is the **complex Lie–Trotter (CLT)** method
+$\psi_h=\chi_{\gamma_2h}\circ\chi_{\gamma_1h}$, with $\chi_h$ the $N$-split Lie–Trotter map and
+
+$$\gamma_1+\gamma_2=1,\qquad\gamma_1\gamma_2=\tfrac12,\qquad\gamma_{1,2}=\tfrac12\pm\tfrac i2,$$
+
+together with its conjugate. This is the order-2 composition of Lie–Trotter listed above, here
+derived from the $N$-split order conditions and shown to be unique within its class; the
+$N=3$ case appeared in Auzinger, Koch & Thalhammer, as recalled (Remark 3.3). For $N\ge4$ the
+hybrids **Strang-CLT$_{\ell^*}$** run Strang half steps on parts $1,\dots,\ell^*-1$ around a
+CLT step of the remaining parts ($1<\ell^*<N-1$; Eq. (27), Table 7). Every complex fraction has
+real part $\tfrac12$, which the authors call "favorable stability properties" (abstract); the
+experiments do not test stability. The full enumeration is on
+[operator splitting](/methods/operator-splitting.md).
+
+**Cost of complex arithmetic.** With Heun's method for every sub-flow, CLT and Strang-CLT reach
+order 2 on all test problems, but on the two real problems (a 5-split rotation–diffusion problem
+and a 4-split advection–diffusion–reaction problem) they are the least efficient in wall-clock
+time because complex arithmetic costs more than real (§4.1–4.2, Figs. 2–5, §5). Their errors
+are about two thirds of Strang's on the first problem and about twice Strang's on the second
+(Figs. 2 and 4, read from the plots). For a genuinely complex nonlinear PDE, solving in complex
+arithmetic was cheaper than solving the real system of twice the size, for every method
+(§4.3, Fig. 7). The hardware is not stated, and the conclusion is tied to Heun sub-integrators.
 
 ## Symmetric-conjugate methods
 
@@ -96,3 +125,4 @@ Blanes et al. 2022 and Chambers 2003).
 # Citations
 
 - [Blanes et al. (2024)](/sources/blanes-2024.md) — §6.4 (Eqs. 6.44–6.47, imaginary-time propagation, Fig. 6.1), §7.1 (barriers, Eqs. 7.4–7.12, error-coefficient comparison), §7.2 (symmetric-conjugate methods, Eqs. 7.14–7.15, Fig. 7.1), §7.3 (projection on the real axis).
+- [Spiteri & Wei (2026)](/sources/spiteri-2026.md) — abstract, §3.3 (Case 2, Eqs. (23)–(27), Tables 4 and 7, Remark 3.3), §4.1–4.3 (Figs. 2–7), §5.

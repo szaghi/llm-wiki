@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 434:110206"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Boscheri_High_order_pressure-based_semi-implicit_IMEX_schemes_for_the.pdf"
 tags: [imex, asymptotic-preserving, stiff, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -54,7 +54,7 @@ Notation: $h$ is the step and $\varepsilon=\rho_0u_0^2/p_0\propto$ Mach$^2$. The
 22. All simulations use the advective CFL condition (106) with viscous eigenvalues $\lambda_v=\max(\tfrac43\frac\mu\rho,\frac{\gamma\mu}{Pr\,\rho})$ (Eq. 21) and no $c/\sqrt\varepsilon$ dependence. (§4, Eq. 106) **Stated**
 23. The design avoids an implicit equation for the total energy, which "would become fully nonlinear"; the pressure-based system stays mildly nonlinear for nonlinear equations of state. (§5) **Stated**
 
-*(Compiler checks by the reader, not in the source.)* As printed, the SA DIRK(3,4,3) tableau (Eq. 80) is not usable; see the printed slips. The implicit first row $c^{\mathrm I}_1=a^{\mathrm I}_{11}=0.435866$ is not a slip: it is the type-I structure also printed by [Orlando et al. (2025b)](/sources/orlando-2025-b.md) (Table 20) and [Southworth et al. (2024)](/sources/southworth-2024.md) (I-IMEX(3,4,3)), and since $b^{\mathrm I}_1=0$ and $a^{\mathrm I}_{i1}=0$ for $i\ge2$ it changes only the stage value passed to the explicit part. The "(3,4,3)" label is inherited from ARS(3,4,3) and no longer counts the implicit stages (see the [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) page). SSP3(4,3,3) is not stiffly accurate (last implicit row $\ne b^{\mathrm I}$), and its explicit part is SSPRK(3,3) padded with a zero first stage. The blanket statement of claim 16 holds only in the sense "not unconditionally", since SSP theory gives conditional $L^\infty$ bounds for some implicit methods. Claim 4 covers only the first-order scheme; high-order AP rests on the cited stiff-accuracy requirement and on Table 2.
+*(Compiler checks, not in the sources.)* As printed, the SA DIRK(3,4,3) tableau (Eq. 80) is not usable; see the printed slips. The implicit first row $c^{\mathrm I}_1=a^{\mathrm I}_{11}=0.435866$ is not a slip: it is the type-I structure also printed by [Orlando et al. (2025b)](/sources/orlando-2025-b.md) (Table 20) and [Southworth et al. (2024)](/sources/southworth-2024.md) (I-IMEX(3,4,3)), and since $b^{\mathrm I}_1=0$ and $a^{\mathrm I}_{i1}=0$ for $i\ge2$ it changes only the stage value passed to the explicit part. The "(3,4,3)" label is inherited from ARS(3,4,3) and no longer counts the implicit stages (see the [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) page). SSP3(4,3,3) is not stiffly accurate (last implicit row $\ne b^{\mathrm I}$), and its explicit part is SSPRK(3,3) padded with a zero first stage. The blanket statement of claim 16 holds only in the sense "not unconditionally", since SSP theory gives conditional $L^\infty$ bounds for some implicit methods. Claim 4 covers only the first-order scheme; high-order AP rests on the cited stiff-accuracy requirement and on Table 2.
 
 # Printed slips
 

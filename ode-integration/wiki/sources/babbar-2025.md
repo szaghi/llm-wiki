@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 522:113622"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Computational_Physics_Babbar_Lax-Wendroff_flux_reconstruction_on_adaptive_curvilinear_mes.pdf"
 tags: [lax-wendroff, step-size-control, positivity, hyperbolic-conservation-laws, software]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -190,7 +190,7 @@ metric terms $J$, $Ja^i$ are page-local (see Notation map).
 - Eqs. (66)–(67): $\Delta t_n=\frac2{N+1}C_{\mathrm{CFL}}\min_{e,p}\big(\frac1{|J_{e,p}|}\sum_i\tilde\lambda^i_{e,p}\big)$
   is proportional to a minimum wave speed per length, a rate, not a time.
   The intended formula is presumably the inverse of the maximum (compare
-  (60)). Reader's inference.
+  (60)) *(compiler inference, not in the sources)*.
 - p. 18: "$\{Ja^i\}$ are the contravariant vectors (2)"; Eq. (2) is the
   equation of state, (9)/(10) are meant.
 - §6.1.1: "the standard wave speed estimate for time step approximation
@@ -213,8 +213,9 @@ metric terms $J$, $Ja^i$ are page-local (see Notation map).
   $\frac12\cdot10^{-1125}$.
 - §6.2.2, p. 24: the Couette velocity $(-\sin\theta,\cos\theta)$ has unit
   magnitude, inconsistent with Fig. 10a and with the printed pressure,
-  which balances a swirl $v_\theta=\frac1{75}(r-\frac{16}r)$ (reader's
-  inference).
+  which balances a swirl $v_\theta=\frac1{75}(r-\frac{16}r)$ *(compiler check, not in
+  the sources: integrating $dp/dr=\rho v_\theta^2/r$ with this $v_\theta$
+  reproduces the printed pressure)*.
 - §6.2.1 mesh map: the $x$ component contains "$\cos(2\pi\frac{2y-3}3)$"
   with $y$ where $\eta$ is expected.
 - §6.1.1: "$u_b=u_a$ if $y\in[-0.05,0.05]$, $u_j$ otherwise"; the jet

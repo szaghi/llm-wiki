@@ -5,7 +5,7 @@ description: "The scalar stiff test problem $y'=\\lambda(y-g(t))+g'(t)$, whose s
 status: established
 aliases: [Prothero–Robinson test equation, PR problem, Kværnø–Prothero–Robinson problem, KPR problem]
 tags: [stiff, order-reduction, verification, runge-kutta, parallel]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Prothero–Robinson problem
@@ -60,7 +60,8 @@ Two consequences:
   $b^\top A^{-1}c^j=1$, $0\le j\le r$, for order-$r$ convergence. Under the
   quadrature conditions $b^\top c^{k-1}=1/k$ one has
   $b^\top A^{-1}\tau^{(k)}=\frac1k\big(1-b^\top A^{-1}c^k\big)$, so Montijano's condition
-  for $j=k\ge1$ is the vanishing of the stiff limits of $W_k$ *(compiler check)*.
+  for $j=k\ge1$ is the vanishing of the stiff limits of $W_k$ *(compiler check, not in the
+  sources)*.
 
 ## Rosenbrock error analysis
 
@@ -120,8 +121,8 @@ with $u$, $v$ and the $2\times2$ coupling matrix $\Lambda$ page-local, $u(0)=2$,
 $v=\sqrt{2+\cos t}$; $u$ is fast, $v$ slow. The coupling matrix has diagonal
 $(-10,-1)$ and off-diagonal entries $(1-\epsilon_{\mathrm c})(-10+1)$ and
 $-\epsilon_{\mathrm c}(-10+1)$ with $\epsilon_{\mathrm c}=0.1$ (page-local), i.e.
-$\Lambda=\begin{pmatrix}-10&-8.1\\0.9&-1\end{pmatrix}$ *(compiler arithmetic from the
-printed parameters)*. The problem is nonlinear and non-autonomous, with a known
+$\Lambda=\begin{pmatrix}-10&-8.1\\0.9&-1\end{pmatrix}$ *(compiler check of the printed
+parameters, not in the source)*. The problem is nonlinear and non-autonomous, with a known
 solution, and does not by itself require an implicit slow scale. With macro step
 $H=\pi/2^k$ and fast step $H/20$, least-squares rates are: Lie–Trotter 0.99,
 Strang–Marchuk 1.98, IMEX-MRI-GARK3a 3.10, IMEX-MRI-GARK3b 3.14, MRI-GARK-ESDIRK34a
@@ -145,9 +146,9 @@ Sandu, to tune their multirate controllers ([step-size control](/methods/step-si
   sign (slip in the arXiv version read). Fish et al. (2024, eq. 6.3), who copy the partition,
   print the same plus sign; in addition the $-20\sin(20t)/(2u)$ forcing appears in none of
   their three parts, and both (6.1) and (6.3) print the second numerator as $-2+u^2-\cos t$
-  where the exact solution requires $-2+v^2-\cos t$ (checked visually by the reader). Their
-  measured design orders indicate that the code uses the correct problem *(compiler
-  inference)*.
+  where the exact solution requires $-2+v^2-\cos t$ *(compiler check of p. 20 of the
+  journal version, not in the source)*. Their measured design orders indicate that the code
+  uses the correct problem *(compiler inference, not in the source)*.
 - The Prothero–Robinson analysis is linear in $y$; the guarantees it yields for weak
   stage order or Scholz's conditions do not extend to nonlinear stiff problems such
   as Van der Pol, where Biswas et al. (2023, §7.3) still observe order reduction.

@@ -5,7 +5,7 @@ description: "The k-step BDF method differentiates the interpolant through the n
 status: established
 aliases: [BDF, BDFk, backward difference formula, Gear's method, BDF2, variable-step BDF2, variable-coefficient BDF]
 tags: [linear-multistep, implicit, stiff, stability, step-size-control, dae, parallel]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Backward differentiation formulas (BDF)
@@ -129,6 +129,37 @@ of IMEX-BDF for hyperbolic relaxation systems.
   stable but more dissipative than Radau IIA when damped (Taddei et al. 2026, §1.1, §5.2.1,
   Figs. 10–11).
 
+## Positivity-preserving solution by dual time stepping
+
+[Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) use BDF1 and constant-step BDF2 in
+physical time for a positivity-preserving entropy-stable spectral-collocation discretization
+of compressible Navier–Stokes, and solve each step by dual time stepping: a pseudotime
+iteration whose update is a forward-Euler step scaled by $C_1=h/(h+\delta)$ (BDF1) or
+$C_2=2h/(2h+3\delta)$ (BDF2), $\delta$ the pseudo-step, applied to a combination of the
+current iterate and the past solutions (§4, §7, Eqs. (9)–(13), (23)–(24); scheme on
+[implicit stage solvers](/methods/implicit-stage-solvers.md)). Their results and limits:
+
+- **Positivity per pseudo-iteration.** Density positivity holds for pseudo-steps below a
+  bound that exceeds the forward-Euler one by the BDF term (Thm. 1, Eq. (16); BDF2 analogue in
+  §7.1, where the excess is guaranteed only if the density does not drop by more than a factor
+  4 in one step, see the Qualifications of [implicit stage solvers](/methods/implicit-stage-solvers.md)), and internal-energy positivity holds for some positive pseudo-step (Eqs. (18)–(19),
+  (26)). The property concerns every iterate; the converged BDF solution, as their limit, is
+  only guaranteed nonnegative, and convergence of the iteration is not proved *(compiler
+  remark)*. "No constraint on the physical time step" therefore holds for the BDF solution
+  only, with an explicit bound remaining on the pseudo-step (§9).
+- **Entropy stability.** BDF1 is unconditionally entropy stable (Tadmor, as recalled), so the
+  converged BDF1 scheme with entropy-dissipative spatial terms is entropy stable, provided the
+  pseudo-residual is driven below the BDF1 entropy dissipation (§5); nothing is claimed for
+  BDF2.
+- **Why not higher order.** BDF3 and higher are excluded because they are not A-stable
+  (Remark 3), the A($\vartheta$) angles of the table above.
+- **Evidence.** BDF2 converges at about second order on a 3D viscous shock on perturbed grids
+  (rates 2.10 in $L^1$ and 2.19 in $L^2$ at the finest level, Table 1), and on a Mach 10
+  Taylor–Green vortex takes physical steps on average 20 times those of SSPRK3, about 30%
+  faster in wall-clock time at degree 6 on $64^3$ elements, slightly more dissipative in line
+  profiles (§8.1, §8.4.2). See [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and
+  [positivity preservation](/properties/positivity-preservation.md).
+
 ## Parallel in time
 
 With constant steps, the BDF$k$ equations of all $N$ steps of a linear problem $y'=Ly+g$ form one
@@ -153,8 +184,8 @@ experiment uses $k>1$; the tests are backward Euler only (§6).
   differ.
 - Gander & Palitta (2024) do not discuss that BDF$k$ is not A-stable for $k\ge3$; their
   conditioning theorem covers backward Euler with symmetric positive definite $-L$ only.
-- **Version read.** Akrivis et al. (2021), García-Archilla & Novo (2023), Ma et al. (2026) and
-  Taddei et al. (2026) were read as arXiv preprints. Their claims here are those of the
+- **Version read.** Akrivis et al. (2021), García-Archilla & Novo (2023), Ma et al. (2026),
+  Taddei et al. (2026) and Sayyari & Yamaleev (2026) were read as arXiv preprints. Their claims here are those of the
   preprints.
 - **The FSI evidence is numerical.** The BDF2–Newmark instability is shown on one benchmark.
   The plot that shows it covers a time window in which no energy growth is visible (Taddei et al.
@@ -171,3 +202,4 @@ experiment uses $k>1$; the tests are backward Euler only (§6).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.1–2.2, §5.1 (Table 5).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §5.1.3.
 - [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §5 (Eqs. (5.1)–(5.6), Table 5.1, Prop. 5.1), §6.
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — arXiv v3: §4–5 (Eqs. (9)–(19), Thm. 1, Remark 1), §7 (Eqs. (23)–(26), Remark 3), §8.1 (Table 1), §8.4.2, §9.

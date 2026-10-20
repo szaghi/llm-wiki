@@ -141,6 +141,7 @@ Chunk 2 (2026-10-19). This source is cited on:
 
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Entropy stability and conservation of the fully discrete scheme](/properties/entropy-stability.md)
+* [Fully discrete cell entropy inequality of third-order Runge–Kutta DG](/results/fully-discrete-cell-entropy-inequality.md)
 * [Low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md)
 * [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)
 * [Step-size control: error-based controllers, PID filters and CFL control](/methods/step-size-control.md)

@@ -5,7 +5,7 @@ description: "An exponential integrator spends its time on actions of φ-functio
 status: established
 aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, μ-mode integrator, auxiliary-problem integration, precomputed ETD matrices, Horner Taylor recursion]
 tags: [exponential, linear-algebra, stiff, software]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Evaluating φ-functions: Leja interpolation, Krylov and related methods
@@ -28,11 +28,11 @@ evaluations, or sequential evaluations, of such combinations rather than by stag
 ## Krylov projection
 
 **One call per combination.** The routine `phipm_simul_iom` of Luan, Pudykiewicz &
-Reynolds (2019) takes scalings $\rho_1<\dots<\rho_r\le1$, a matrix $M$ and vectors
+Reynolds (2019) takes scalings $\rho_1<\dots<\rho_r\le1$, a matrix $B$ and vectors
 $v_0,\dots,v_q$. It returns all $r$ combinations
-$\sum_k\phi_k(\rho_iM)\rho_i^kv_k$ in one call, combining Krylov projection, incomplete
+$\sum_k\phi_k(\rho_iB)\rho_i^kv_k$ in one call, combining Krylov projection, incomplete
 orthogonalization and adaptive substepping, after Niesen–Wright's `phipm`
-(Luan 2021, §2.1, §5, Eq. 5.2; page-local $M$, $r$). Two kinds of stages can share a call:
+(Luan 2021, §2.1, §5, Eq. 5.2; page-local $B$, $r$; $M$ is kept for the mass matrix). Two kinds of stages can share a call:
 those that use the same vectors $v_k$ and differ only in their node, and those that are
 mutually independent. Luan builds exponential Runge–Kutta methods on this structure. His
 expRK4s6 and expRK5s10 cost 4 and 5 calls per step, against 6 and 11 for the older
@@ -136,7 +136,8 @@ remainder into the explicit part (see [Lawson methods](/methods/lawson-methods.m
 - **Kronecker sums.** If $L=L_d\oplus\dots\oplus L_1$ (finite differences on a box), then
   $e^{L}v=\mathrm{vec}\big(V\times_1e^{L_1}\times_2\cdots\times_de^{L_d}\big)$ with
   $v=\mathrm{vec}(V)$. This needs only small one-dimensional exponentials and $d$ level-3
-  BLAS calls ($\times_\mu$ the μ-mode tensor–matrix product, page-local; §5.2, after the
+  BLAS calls ($\times_\mu$ the μ-mode tensor–matrix product and $d$ the number of space
+  dimensions, page-local; §5.2, after the
   authors' earlier μ-mode integrator). It applies to the exponential, which is why it
   pairs with Lawson schemes. The authors note that Kronecker structure is easier to exploit
   for exponentials than for linear solves, and that a good preconditioner gives a fast linear
@@ -176,7 +177,7 @@ e^{hL}=Q_0,\qquad \phi_k(hL)=\frac{Q_k}{k!}$$
 
 (App. A, Eqs. A.5–A.6; page-local $Q_m$ and truncation length $\mathsf m$; the source writes
 $\mathbf M_n=\frac{\tau^n}{n}\mathbf Q_n$, translated with the convention above *(compiler
-check)*). The truncation must exceed $e\lvert\lambda_{\mathrm{fast}}\rvert h$ (from Stirling's
+check, not in the source)*). The truncation must exceed $e\lvert\lambda_{\mathrm{fast}}\rvert h$ (from Stirling's
 formula; $\lambda_{\mathrm{fast}}$ the fastest eigenvalue of $L$) so that the fastest mode does
 not explode, and $1.2$ times that length is used (Eq. A.7). Against these, the
 time-integrated matrices are accurate only to about $10^{-6}$ ("strong" accuracy), yet the

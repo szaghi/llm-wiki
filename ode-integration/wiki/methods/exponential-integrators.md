@@ -5,7 +5,7 @@ description: "Exponential integrators treat a stiff linear part exactly through 
 status: established
 aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential time differencing, ETD, ETD2RK, ETD3RK, ETD4RK, ETDRK4, Cox–Matthews scheme, Krogstad scheme, repartitioned exponential integrator, exponential Rosenbrock, ExpRB, EXPRB, EPIRK, exponential Euler, exponential Rosenbrock–Euler, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
 tags: [exponential, stiff, kinetic, asymptotic-preserving, multirate, order-conditions]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Exponential integrators and φ-functions
@@ -42,8 +42,8 @@ exponential method lies in the actions of φ-functions on vectors, treated at
 Chinomona & Reynolds (2021, §3) define $\varphi_k(z)=\int_0^1e^{z(1-t)}t^{k-1}\,dt$ without
 the factor $1/(k-1)!$, with the recursion $\varphi_{k+1}(z)=(k\varphi_k(z)-1)/z$. Their
 functions are $(k-1)!\,\phi_k$ in the registry normalisation above; the two recursions are
-equivalent. This is a convention difference, not a disagreement. The chunk-4 sources all use
-the registry normalisation:
+equivalent. This is a convention difference, not a disagreement. These sources use the
+registry normalisation:
 
 - Luan (2021, Eq. 1.4);
 - Luan et al. (2022, Eq. 2.4), in an $h$-scaled integral form;
@@ -144,7 +144,7 @@ $Y_i=e^{c_ihL}y_n+h\sum_{j<i}a_{ij}(hL)N(t_n+c_jh,Y_j)$ and
 $y_{n+1}=e^{hL}y_n+h\sum_ib_i(hL)N(t_n+c_ih,Y_i)$, with $\phi_k=\phi_k(hL)$ and
 $\phi_{k,j}=\phi_k(c_jhL)$ (Buvoli & Minion 2024, Eqs. 10–12, App. A). For $i\ge2$ the weights
 $b_i$ are those of the difference format above, and $b_1=\phi_1-\sum_{i\ge2}b_i$ *(compiler
-check)*. The named schemes are:
+check, not in the sources)*. The named schemes are:
 
 | scheme | $c$ | nonzero $a_{ij}$ | $b$ |
 |---|---|---|---|
@@ -202,7 +202,7 @@ $\sum_ib_ic_i^3=6\phi_4$: exprb32 meets the first; pexprb54s4 meets both for eve
 exprb42 meets the first, and the second only at $Z=0$ ($b_2(0)c_2^3=\tfrac14=6\phi_4(0)$),
 which is what fixes $c_2=\tfrac34$, a weakened condition in the sense of the
 [result page](/results/exponential-runge-kutta-stiff-order-conditions.md)
-*(compiler check)*. Luan et al. turn these schemes into multirate methods MERB2–MERB6.
+*(compiler check, not in the sources)*. Luan et al. turn these schemes into multirate methods MERB2–MERB6.
 Their Lemma 2.2 shows that a stage whose coefficients are combinations of
 $\phi_k(c_ihJ_n)$ is the exact solution at $c_ih$ of a linear ODE with polynomial forcing;
 see [multirate exponential methods](/methods/multirate-exponential-methods.md).
@@ -380,7 +380,7 @@ eigenvalue of the exponentiated operator is rotated by $\rho$ into the left half
 gives a large stability region for a continuous range of small $\rho$. Other damping
 operators, such as low-order even spatial derivatives, are possible; for the Fourier-discretized
 [nonlinear Schrödinger equation](/benchmarks/nonlinear-schrodinger-equation.md) they take
-$\operatorname{diag}(-\kappa^2)$ ($\kappa$ the wavenumbers, page-local) and $\rho=\pi/128$
+$\operatorname{diag}(-\xi^2)$ ($\xi$ the wavenumbers, page-local) and $\rho=\pi/128$
 (Eq. 18). On the partitioned Dahlquist equation $y'=\lambda_1y+\lambda_2y$ ($\lambda_1$
 exponentiated, $\lambda_2$ explicit, both imaginary; page-local) repartitioning replaces
 $\lambda_1$ by $\lambda_1-\tan\rho\,\lvert\lambda_1\rvert$ and $\lambda_2$ by
@@ -388,7 +388,7 @@ $\lambda_2+\tan\rho\,\lvert\lambda_1\rvert$ (§5.1). With $\rho=0$ the exponenti
 is exact for $\lambda_2=0$; any repartitioning destroys this exactness, and larger $\rho$ costs
 accuracy, so the authors advise the smallest $\rho$ that ensures stability (§5.6, Fig. 10).
 Repartitioning is the mirror image of the partial linear operators above, which move part of
-the stiff operator out of $L$ *(compiler remark)*.
+the stiff operator out of $L$ *(compiler remark, not in the sources)*.
 
 ## Exponential integrators as Parareal propagators
 

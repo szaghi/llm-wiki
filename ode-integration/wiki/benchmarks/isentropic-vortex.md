@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Isentropic vortex"
-description: "Exact smooth solution of the compressible Euler equations, a vortex advected by a uniform stream or at rest, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit Runge–Kutta methods, paired and many-stage stabilized explicit methods, single-stage Lax–Wendroff schemes, relaxation ADER-DG, and low-Mach IMEX and semi-implicit schemes."
+description: "Exact smooth compressible Euler solution, a vortex advected by a uniform stream or at rest, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit and adaptive ESDIRK methods, element-wise IMEX, paired and many-stage stabilized explicit methods, single-stage Lax–Wendroff schemes, relaxation ADER-DG, and low-Mach IMEX and semi-implicit schemes."
 status: established
 aliases: [isentropic Euler vortex, convecting vortex, Shu vortex, travelling vortex, low-Mach isentropic vortex]
 tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving, imex]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Isentropic vortex
@@ -70,6 +70,19 @@ Shu's vortex centred at $(5,5)$, periodic, final time 1, on unstructured triangl
 restating the parameters (§5.3.1). [Doehring et al. (2024b)](/sources/doehring-2024-b.md) (§5)
 take the parameters of the P-ERK papers on $[0,10]^2$ with $64^2$ base elements and two extra
 AMR levels (finest cell $10/256$), DGSEM with HLLC flux, final time 20.
+[Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) (§5.2, Eq. (63)) print the
+formula of Eq. (55) above with the same parameters, free stream along $y$, on a periodic
+$20\times20$ domain with flux reconstruction of degree 6 and Rusanov flux; elements of nominal
+size 0.5 are refined along a vertical strip through the middle (edge-length ratio about 240),
+and the strip is integrated implicitly, the rest explicitly, to $t=20$.
+
+**Implicit adaptive runs.** [Pan et al. (2022)](/sources/pan-2022.md) (§3.1, Eq. (47)) take
+$$\rho=\Bigl(1-\frac{\Gamma^2(\kappa-1)}{16\kappa\pi^2}e^{2(1-r^2)}\Bigr)^{\frac1{\kappa-1}},\qquad\mathcal P=\rho^\kappa,$$
+velocity perturbations $\frac{\Gamma}{2\pi}e^{1-r^2}$ times the rotated distance from the moving
+centre, $\Gamma=0.5$, free stream $(1,0)$, on the periodic domain $[0,10]\times[-5,5]$ with
+uniform meshes, DG of degree 2 ($\Delta x=1/3$) or 6 ($\Delta x=0.2$ to $0.05$), and stiffly
+accurate ESDIRK methods of orders 2–4 with Jacobian-free Newton–Krylov stage solves; the final
+time is not printed.
 
 **Single-stage Lax–Wendroff runs.** [Babbar et al. (2022)](/sources/babbar-2022.md) (§12.1,
 after Yee et al. and Spiegel et al.) take vortex strength 5, $\mathrm{Ma}_\infty=0.5$, a free
@@ -113,7 +126,7 @@ The sources normalize the vortex differently (temperature versus free-stream pre
 scaling, unit versus explicit core radius), so the strengths of Ranocha et al. (2022) and
 Southworth et al. (2022) are not comparable as numbers with each other or with the
 $\Gamma=13.5$ group. All are the same benchmark family; the exponent $e^{2\phi}$ of Hedayati
-Nasab & Vermeire equals Southworth et al.'s $e^{\phi_{\mathrm v}}$ *(compiler check)*.
+Nasab & Vermeire equals Southworth et al.'s $e^{\phi_{\mathrm v}}$ *(compiler check, not in the sources)*.
 
 ## What it tests and results
 
@@ -195,6 +208,28 @@ LW-D2 for $N=1,2,3$ and about 1.2 at $N=4$; no hardware is reported. On curvilin
 Babbar & Chandrashekar (2025, §6.2.3, Fig. 11) obtain the optimal order 4 for all conserved
 variables with degree 3, using CFL-based steps in this convergence test.
 
+**Element-wise IMEX under mesh-induced stiffness** (Vermeire & Hedayati Nasab 2021, §5.2,
+Table 3). The accelerated IMEX scheme AIMEX10,2, whose ten-stage explicit polynomial is
+optimized for degree 6, converges at second order for this nonlinear problem with the stiff
+strip implicit: normalized $L_2$ density errors on $[-2,2]^2$ of $1.86\times10^{-6}$,
+$4.73\times10^{-7}$, $1.19\times10^{-7}$ and $3.02\times10^{-8}$ for
+$h=\tfrac1{100},\dots,\tfrac1{800}$, orders 1.97, 1.99, 1.98. See
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
+
+**Newton tolerance and error-balanced steps** (Pan et al. 2022, §3.1, Figs. 2–6, Tables 1, 4).
+With ESDIRK3, degree 2 and $h=0.05,0.1,0.2$, fixed Newton tolerances relative to the initial
+update or residual ($10^{-6}$ and $10^{-3}$) degrade the temporal order, tight ones
+($10^{-10}$ and $10^{-7}$) recover it, and a tolerance tied to the embedded temporal error
+estimate (factor 0.1) gives observed order 3.27 (Fig. 2; see
+[implicit stage solvers](/methods/implicit-stage-solvers.md)). With degree 6, their controller,
+which sets the local temporal error to a fraction of the spatial truncation error of the step,
+keeps the temporal error below the spatial error on every mesh, so the total error converges at
+the spatial rate; a fixed CFL 10 is temporal-error dominated and converges at order 3, CFL 0.2
+wastes cost, and CFL 1 is spatially dominated on the coarsest mesh and temporally on the finest
+(Figs. 3–4). ESDIRK2, 3 and 4 under the controller give almost coinciding total errors (Fig. 6),
+at CPU times 0.96 and 1.01 times those of the best hand-tuned CFL runs (Table 4). See
+[step-size control](/methods/step-size-control.md).
+
 **Local time stepping** (Sreejith et al. 2022, §6.1, Fig. 18, Table 4). With the Lax–Wendroff
 or TTGC scheme and step ratios 2, 5 and 10, the deviation from the single-rate solution is
 similar on uniform and stretched meshes, lower on quadrilaterals than triangles and for TTGC than
@@ -268,6 +303,11 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
   check of Table 4)*.
 - Babbar et al. (2022) print Fig. 38 as a duplicate of Fig. 37 (same caption, apparently the
   same plots), and their wall-clock ratios come without hardware or threading information.
+- Pan et al. (2022, Table 1) print ratios of the adaptive Newton tolerance to the fixed one
+  (0.14 and 0.31 at $h=0.1$ and $0.2$) that do not equal the quotients of their own printed
+  columns (1.375 and 3.15); a factor 10 is lost in one column, and their conclusion that the
+  ratios are of order 0.1 requires the printed ratios *(compiler check, not in the source)*.
+- Vermeire & Hedayati Nasab (2021) measure the error on $[-2,2]^2$ only, around the vortex.
 - The degree-2 ADER orders of Gaburro et al. (2023) stay near 2.7 rather than 3, and their
   order claim for relaxed ADER is inherited from a theory proved for Runge–Kutta and multistep
   methods (see the relaxation page).
@@ -287,3 +327,5 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
 - [Sreejith et al. (2022)](/sources/sreejith-2022.md) — §6.1 (Tables 3–4, Fig. 18).
 - [Babbar et al. (2022)](/sources/babbar-2022.md) — §12.1 (Figs. 37–40); arXiv v1.
 - [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §6.2.3 (Fig. 11); arXiv v4.
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §5.2 (Eqs. (63)–(64), Table 3).
+- [Pan et al. (2022)](/sources/pan-2022.md) — §3.1.1–3.1.2 (Eq. (47), Figs. 2–6, Table 1), Table 4.

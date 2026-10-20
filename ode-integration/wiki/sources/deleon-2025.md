@@ -9,7 +9,7 @@ year: 2025
 venue: "ESAIM Math. Model. Numer. Anal. 59:729-748"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_de_Pseudo-energy-preserving_explicit_RungeKutta_methods.pdf"
 tags: [runge-kutta, explicit, structure-preserving, order-conditions, b-series, hamiltonian]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -166,7 +166,7 @@ $\tilde f$ (the source's $v(\tau)$).
     energy conservation "is effectively a matter of making the energy error
     small in any case" (§1, §1.1). **Stated**
 
-*(Compiler check by the reader, not in the source.)* With $c=A\mathbf 1$,
+*(Compiler check, not in the sources.)* With $c=A\mathbf 1$,
 PEP(4,2,5) satisfies $b^\top\mathbf 1=1$, $b^\top c=1/2$, $b^\top c^2=1/3$,
 $b^\top Ac\ne1/6$ (so $p=2$) and all of (15)–(16) in exact arithmetic;
 PEP(5,2,6), PEP(6,3,6), PEP(7,4,6) and PEP(7,5,6) satisfy their stated

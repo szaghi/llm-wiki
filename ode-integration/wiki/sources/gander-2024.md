@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A697-A718"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Gander_A_New_ParaDiag_Time-Parallel_Time_Integration_Method.pdf"
 tags: [parallel, paradiag, linear-algebra, implicit-stage-solvers, bdf, parabolic]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -97,7 +97,7 @@ $\alpha$, and the right-hand side $R=[y_0+hg(t_1),\dots,hg(t_N)]$.
 8. Theorem 3.1: if $-L$ is symmetric positive definite, $S_N$ is
    Hermitian positive definite for every $N\ge1$ and
    $\operatorname{cond}(S_N)\le1+1/(h\lambda_{\min}(-L))$ (Eq. (3.6), proof in the
-   appendix). **Proved** (the reader finds rigor gaps in the proof; the
+   appendix). **Proved** (compiler observation, not in the sources: the proof has rigor gaps; the
    statement is plausible and checkable eigenvalue by eigenvalue)
 9. For symmetric positive definite $-L$ the FOM-like iterate minimizes the
    $S_N$-energy error over the Krylov space, and the method is the
@@ -199,7 +199,7 @@ The proof of Theorem 3.1 treats $\mathrm{Re}(g_iw)$ as
 $\mathrm{Re}(g_i)\mathrm{Re}(w)$ for complex $w$, writes a minimum of a sum as
 a sum of minima with an equality sign, and evaluates (7.1) with
 $h\lambda_{\max}(-L)$ for every $i$ regardless of the sign of
-$\mathrm{Re}(\omega_i)$ (reader's finding, not a typo).
+$\mathrm{Re}(\omega_i)$ *(compiler check, not in the sources; not a typo)*.
 
 # Notation map
 

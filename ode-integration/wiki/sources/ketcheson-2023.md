@@ -9,7 +9,7 @@ year: 2023
 venue: "ACM Trans. Math. Softw. 49:1-23"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_ACM_Transactions_on_Mathematical_Software_Ketcheson_Computing_with_B-series.pdf"
 tags: [order-conditions, geometric-integration, runge-kutta, software, structure-preserving]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -40,7 +40,7 @@ Notation: $B(a,y)=a(\varnothing)y+\sum_\tau\frac{h^{\lvert\tau\rvert}}{\sigma(\t
 1. BSeries.jl computes B-series of Runge–Kutta, additive Runge–Kutta and Rosenbrock–Wanner methods, composition and substitution laws, modified equations and modifying integrators, for generic $f$ or a specific ODE, with symbolic coefficients, on series truncated at a fixed but arbitrary order. (§1) **Stated**
 2. The only similar library known to the authors (computing B-series themselves, not only Runge–Kutta order conditions) is the Python code pybs; other tools use B-series only implicitly for order conditions. (§1) **Stated**
 3. The test suite covers 99% of the code, with continuous integration, under the MIT license. (§1) **Stated**
-4. For the explicit two-stage second-order family (17), $c=(0,\tfrac1{2\alpha})$, $a_{21}=\tfrac1{2\alpha}$, $b=(1-\alpha,\alpha)$, the solution map is $y_{n+1}=y_n+hF([1])+\tfrac12h^2F([1,2])+\tfrac1{8\alpha}h^3F([1,2,2])+\tfrac1{48\alpha^2}h^4F([1,2,2,2])+\tfrac1{384\alpha^3}h^5F([1,2,2,2,2])+O(h^6)$. (Eq. 18) **Derived** (computed by the package; the $\alpha$ coefficients were checked by hand by the reader)
+4. For the explicit two-stage second-order family (17), $c=(0,\tfrac1{2\alpha})$, $a_{21}=\tfrac1{2\alpha}$, $b=(1-\alpha,\alpha)$, the solution map is $y_{n+1}=y_n+hF([1])+\tfrac12h^2F([1,2])+\tfrac1{8\alpha}h^3F([1,2,2])+\tfrac1{48\alpha^2}h^4F([1,2,2,2])+\tfrac1{384\alpha^3}h^5F([1,2,2,2,2])+O(h^6)$. (Eq. 18) **Derived** (computed by the package; the $\alpha$ coefficients were checked by hand by the compiler, not in the sources)
 5. Order $p$ iff $\Phi(\tau)=e(\tau)=1/\gamma(\tau)$ for all $\lvert\tau\rvert\le p$. (§2.2, Eq. 20) **Stated**
 6. Composing two methods of form (17) (same step, normalized) gives a series whose coefficient of the tall tree $[1,2,3]$ is $1/8$, independent of $\alpha_1,\alpha_2$ and different from the exact $1/6$; any such composition has order exactly two. (§2.3.1) **Derived** (computed)
 7. Butcher's effective-order-5 method: the main five-stage method (24) has order 4, the starting and finishing methods (25) have order 3, and their composition has order 5. (§2.3.2, Eqs. 24–25) **Shown** (computed)
@@ -68,7 +68,7 @@ Notation: $B(a,y)=a(\varnothing)y+\sum_\tau\frac{h^{\lvert\tau\rvert}}{\sigma(\t
 
 # Printed slips
 
-- Eq. (38) against (37): printed "$g(z)=\frac{d}{dz}\arccos\left(\frac{1-z^2/4}{1+z^2/4}\right)=2\arctan(z/2)$". But $\arccos\frac{1-z^2/4}{1+z^2/4}=\theta(z)=2\arctan(z/2)$ itself, which tends to 0 as $z\to0$, whereas (37) has $g(0)=1$. The function matching (37) term by term is $g(z)=\theta(z)/z=\frac2z\arctan(z/2)$ (reader's check); $\theta'(z)=1/(1+z^2/4)$ does not match either. The derivation before (38) differentiates in $h$, which gives $\theta'$, while the modified flow over time $h$ must rotate by $\theta$. The package output (37) appears correct.
+- Eq. (38) against (37): printed "$g(z)=\frac{d}{dz}\arccos\left(\frac{1-z^2/4}{1+z^2/4}\right)=2\arctan(z/2)$". But $\arccos\frac{1-z^2/4}{1+z^2/4}=\theta(z)=2\arctan(z/2)$ itself, which tends to 0 as $z\to0$, whereas (37) has $g(0)=1$. The function matching (37) term by term is $g(z)=\theta(z)/z=\frac2z\arctan(z/2)$ *(compiler check)*; $\theta'(z)=1/(1+z^2/4)$ does not match either. The derivation before (38) differentiates in $h$, which gives $\theta'$, while the modified flow over time $h$ must rotate by $\theta$. The package output (37) appears correct.
 - Eq. (29): explicit Euler printed "$y_{n+1}=y_n+f(y)$", missing $h$ and with argument $y$ for $y_n$.
 - Algorithm 1: loops over "all binary sequences of length $m$" with $m\leftarrow\lvert\tau\rvert$, but a tree has $\lvert\tau\rvert-1$ edges (Def. 2.2 counts $2^{\lvert\tau\rvert-1}$ partitions); it also initializes `partitions ← []` but appends to `skeletons`.
 - Def. 2.1: "used in the definition of the composition law (22)" — the subtree sum is (23).

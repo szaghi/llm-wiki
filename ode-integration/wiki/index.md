@@ -9,8 +9,8 @@ method-of-lines semi-discretizations of PDEs: Runge–Kutta theory, implicit,
 Rosenbrock, IMEX, additive and multirate methods, splitting, stability
 notions and structure preservation, asymptotic-preserving schemes, deferred
 correction and ADER, positivity-preserving (Patankar) schemes,
-parallel-in-time methods, step-size control, stage solvers and integrator
-software.
+parallel-in-time methods, step-size control, stage solvers, integrator
+software and learned integrators.
 
 **Start here:** the [Notation registry](/notation.md), which is normative for
 every page ($h$ the step, $Y_i$ stage values, $q$ stage order and
@@ -18,7 +18,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–5 of 6 ingested (100 of the archive's 118 sources). Chunk 1: two *Acta
+**Corpus:** complete — all 118 sources of the archive ingested in six chunks. Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -42,7 +42,11 @@ Chunk 5: modified Patankar and other positivity-preserving schemes,
 bound-preserving flux limiting, parallel-in-time integration (Parareal,
 ParaDiag, parallel SDC), efficient and two-derivative deferred correction,
 ADER-DG for ODEs, Lax–Wendroff flux reconstruction, exponential time
-differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) lists the works the sources cite.
+differencing for nondiagonal linear parts. Chunk 6: invariant-domain
+preserving explicit and IMEX time stepping, Lyapunov stability of Patankar
+schemes, fully discrete entropy inequalities, additive polynomial (FIMEX)
+integrators, multirate Runge–Kutta–Chebyshev, N-split operator splitting,
+Irksome extensions, dual time stepping, and learned integrators. The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -55,7 +59,8 @@ differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) 
    [A-, L- and algebraic stability](/properties/a-stability.md),
    [stiff accuracy](/properties/stiff-accuracy.md),
    [symplecticity](/properties/symplecticity.md),
-   [B-convergence](/definitions/b-convergence.md).
+   [B-convergence](/definitions/b-convergence.md),
+   [discrete maximal regularity](/results/discrete-maximal-regularity.md).
 2. **Stiffness and order reduction.** [Stage order](/definitions/stage-order.md),
    [order reduction](/definitions/order-reduction.md) and its cure through
    [weak stage order](/definitions/weak-stage-order.md) and
@@ -69,11 +74,13 @@ differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) 
    [fully implicit collocation methods](/methods/fully-implicit-runge-kutta.md),
    [Rosenbrock–Wanner and W-methods](/methods/rosenbrock-wanner-method.md) and
    [Rodas5P](/methods/rodas5p.md), [TASE operators](/methods/tase-operators.md),
-   [Padé-based schemes](/methods/pade-time-integration.md), the [Newmark method](/methods/newmark-method.md),
+   [Padé-based schemes](/methods/pade-time-integration.md),
+   [additive polynomial (FIMEX) integrators](/methods/polynomial-time-integrators.md), the [Newmark method](/methods/newmark-method.md),
    [differential-algebraic equations](/definitions/differential-algebraic-equation.md),
    and [solving the stage equations](/methods/implicit-stage-solvers.md); stiff test problems:
    [Van der Pol](/benchmarks/van-der-pol-oscillator.md), [Robertson](/benchmarks/robertson-problem.md),
-   [FitzHugh–Nagumo](/benchmarks/fitzhugh-nagumo-model.md), [flow past a cylinder](/benchmarks/flow-past-cylinder.md).
+   [FitzHugh–Nagumo](/benchmarks/fitzhugh-nagumo-model.md), [flow past a cylinder](/benchmarks/flow-past-cylinder.md),
+   the [Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md).
 4. **Nonlinear stability and structure.**
    [SSP Runge–Kutta methods](/methods/strong-stability-preserving-runge-kutta.md)
    versus [strong stability](/properties/strong-stability.md) for linear seminegative
@@ -85,10 +92,13 @@ differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) 
    [modified Patankar methods](/methods/modified-patankar-methods.md) and
    [adaptive-weight Runge–Kutta methods](/methods/adaptive-weight-runge-kutta.md), and of
    hyperbolic schemes by [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)
+   and [invariant-domain preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md),
+   with the [Lyapunov stability of positive, conservative schemes](/results/lyapunov-stability-positive-conservative-schemes.md)
    (test problem: the [stratospheric reaction problem](/benchmarks/stratospheric-reaction-problem.md));
    [multiderivative methods and the backward derivative condition](/methods/multiderivative-runge-kutta.md);
    [relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md) and
-   [entropy stability](/properties/entropy-stability.md) of the fully discrete scheme,
+   [entropy stability](/properties/entropy-stability.md) of the fully discrete scheme
+   (the [fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md)),
    [pseudo-energy-preserving methods](/methods/pseudo-energy-preserving-runge-kutta.md),
    [discrete adjoints](/methods/discrete-adjoint-runge-kutta.md); test problems: the
    [Kepler problem](/benchmarks/kepler-problem.md), the
@@ -115,6 +125,7 @@ differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) 
    [multirate infinitesimal methods](/methods/multirate-infinitesimal-methods.md),
    [IMEX-MRI-GARK](/methods/imex-mri-gark.md), [IMEX-MRI-SR](/methods/imex-mri-sr.md),
    [multirate exponential methods](/methods/multirate-exponential-methods.md),
+   [multirate Runge–Kutta–Chebyshev](/methods/multirate-runge-kutta-chebyshev.md),
    [local time stepping](/methods/local-time-stepping.md),
    [nonlinearly partitioned Runge–Kutta](/methods/nonlinearly-partitioned-runge-kutta.md),
    [explicit–implicit–null time marching](/methods/explicit-implicit-null-method.md), [multirate GARK](/methods/multirate-gark.md),
@@ -163,7 +174,10 @@ differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) 
     [heat equation](/benchmarks/heat-equation.md), the
     [Allen–Cahn equation](/benchmarks/allen-cahn-equation.md), the
     [Vlasov–Poisson equation](/benchmarks/vlasov-poisson-equation.md).
-12. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
+12. **Learned integrators.** [Learned time integrators](/methods/learned-time-integrators.md):
+    neural surrogates with exact conservation laws, operator networks for stiff
+    kinetics, and Runge–Kutta physics-informed networks.
+13. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
     [CVODE](/software/cvode.md), [Irksome](/software/irksome.md),
     [BSeries.jl](/software/bseries-jl.md), [DifferentialEquations.jl](/software/differentialequations-jl.md),
     [Trixi.jl](/software/trixi-jl.md),

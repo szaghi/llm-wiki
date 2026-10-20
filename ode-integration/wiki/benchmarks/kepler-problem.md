@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kepler problem"
-description: "The planar two-body problem with three invariants (energy, angular momentum, Laplace–Runge–Lenz vector), and its perturbed variant with a precessing orbit, used to test invariant-preserving relaxation methods and the modified equation of Störmer–Verlet."
+description: "The planar two-body problem with three invariants (energy, angular momentum, Laplace–Runge–Lenz vector), its perturbed variant with a precessing orbit and a three-dimensional variant, used to test invariant-preserving relaxation methods, the modified equation of Störmer–Verlet and symmetry-constrained learned dynamics."
 status: established
 aliases: [two-body problem, Kepler two-body problem, perturbed Kepler problem]
 tags: [geometric-integration, structure-preserving, verification]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Kepler problem
@@ -56,9 +56,24 @@ $\mathrm{rtol}=\mathrm{atol}=10^{-16}$.
   as a two-part additive Runge–Kutta method and compute its modified equation
   through $h^7$: it has no odd powers of $h$, as symmetry predicts. Its order-4
   modifying integrator puts $q$ in the right-hand side of $q'$ and is no longer
-  explicit (Eq. (47)). See
+  explicit (Eq. (47)). This is a symbolic use of the problem: the paper runs no numerical
+  solution of it. See
   [backward error analysis](/methods/backward-error-analysis.md) and
   [symplecticity](/properties/symplecticity.md).
+
+## Three-dimensional variant for learned dynamics
+
+[Müller (2023)](/sources/muller-2023.md) (§2.3.1, §3.1.1, Eq. (13)) uses the Kepler problem in
+three dimensions, written through its Lagrangian $\tfrac12\lVert q'\rVert^2+1/\lVert q\rVert$
+(unit mass and coupling; $q\in\mathbb R^3$ page-local as above), with eccentricity $e=0.8$,
+motion in the $x$–$y$ plane and angular momentum $L_z=1$. Its rotational symmetry gives the
+three components of the angular momentum as invariants. A neural-network Lagrangian is trained
+on noisy samples of the exact orbit and the learned equations are advanced by RK4 at $h=10^{-2}$
+to $T=128$. Without symmetry constraints the true angular momentum error reaches about 1 by
+$t\approx50$ and the orbit then diverges. With an input layer of rotation invariants the learned
+angular momentum is an exact invariant of the learned ODE, the true one stays within $10^{-3}$,
+and trajectories from initial data perturbed by $10^{-3}$ separate by less than 0.1 over the run
+(Figs. 3–5). See [learned time integrators](/methods/learned-time-integrators.md).
 
 ## Qualifications
 
@@ -71,3 +86,4 @@ $\mathrm{rtol}=\mathrm{atol}=10^{-16}$.
 
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §5.3.1 (Eqs. (27)–(29), Figs. 6–7), §5.3.2 (Eqs. (30)–(31), Figs. 8–10).
 - [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md) — §3.1.2 (Eqs. (43)–(47)).
+- [Müller (2023)](/sources/muller-2023.md) — §2.3.1 (Eq. (13)), §3.1.1 (Figs. 3–5).

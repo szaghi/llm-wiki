@@ -5,7 +5,7 @@ description: "Modern ADER is a deferred-correction scheme with low-order operato
 status: established
 aliases: [ADER is DeC, DeC–ADER equivalence, ADER–DeC convergence theorem]
 tags: [deferred-correction, ader, order-conditions]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Equivalence of DeC and ADER
@@ -98,7 +98,7 @@ count as DeC.
   every bDeC method of order $K$, and its interpolating variants, has
   $R(z)=\sum_{j\le K}z^j/j!$ for any subnodes ([Micalizzi & Torlo 2024](/sources/micalizzi-2024.md),
   Thm. 6.1). The DeC of Han Veiga et al., with forward Euler from $t_n$ in $\mathcal L^1$, is
-  the bDeC member of the family of Micalizzi & Torlo *(compiler remark)*.
+  the bDeC member of the family of Micalizzi & Torlo *(compiler remark, not in the sources)*.
 - The equivalence carries over to the stiff variants. Implicit ADER is DeC with a
   Newton-type $\mathcal L^1$ that couples $\mathcal D$ and the source Jacobian. IMDeC is DeC
   with a node-wise linearized $\mathcal L^1$ (§4.4).

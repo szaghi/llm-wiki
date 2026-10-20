@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "IMEX and additive Runge–Kutta methods"
-description: "Additive Runge–Kutta methods integrate y' = fE + fI with an explicit tableau for the nonstiff part and a diagonally implicit tableau for the stiff part on shared stages; the page gives the scheme, the type I/II/ARS classification, named pairs, GARK and splitting views, SSP, asymptotic-preserving and uniformly accurate variants, solver costs and software practice."
+description: "Additive Runge–Kutta methods integrate y' = fE + fI with an explicit tableau for the nonstiff part and a diagonally implicit one for the stiff part on shared stages: the scheme, type I/II/ARS classes, order conditions, named, optimal-efficiency and accelerated pairs, GARK views, SSP, invariant-domain-preserving and asymptotic-preserving variants, and solver practice."
 status: established
-aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta, type I IMEX, type II IMEX, type CK, type ARS, globally stiffly accurate IMEX]
+aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta, type I IMEX, type II IMEX, type CK, type ARS, globally stiffly accurate IMEX, AIMEX, accelerated IMEX, IMEX3,2]
 tags: [imex, runge-kutta, stiff, implicit, explicit, asymptotic-preserving]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # IMEX and additive Runge–Kutta methods
@@ -31,7 +31,12 @@ and radiation hydrodynamics ([Orlando & Bonaventura 2025](/sources/orlando-2025.
 [Boscheri & Pareschi 2021](/sources/boscheri-2021.md);
 [Birke et al. 2024](/sources/birke-2024.md);
 [Boscheri & Thomann 2024](/sources/boscheri-2024.md);
-[Southworth et al. 2024](/sources/southworth-2024.md)).
+[Southworth et al. 2024](/sources/southworth-2024.md)). Further uses: many-stage pairs that
+accelerate locally stiff, mesh-induced problems
+([Vermeire & Hedayati Nasab 2021](/sources/vermeire-2021.md)), the high-order update of an
+invariant-domain-preserving limiter ([Ern & Guermond 2023](/sources/ern-2023.md)), and
+baselines for fully implicit–explicit polynomial methods
+([Buvoli & Southworth 2023](/sources/buvoli-2023.md)).
 
 ## The scheme
 
@@ -56,10 +61,14 @@ of $y$ (Reynolds et al. 2023, eqs. 5–6).
 **Conventions differ in the sources.** Hu & Shu (2025), Boscheri & Pareschi (2021),
 Southworth et al. (2024) and Orlando et al. (2025b) put the tilde on the explicit tableau;
 Orlando & Bonaventura (2025) put it on the implicit one; Birke et al. (2024) hat the
-explicit one. This page writes superscripts E and I throughout. Names of the form
+explicit one; Vermeire & Hedayati Nasab (2021) hat the implicit one, and Ern & Guermond
+(2023) write superscripts e and i. This page writes superscripts E and I throughout. Names of the form
 $(s,\sigma,p)$ give implicit stages, explicit stages and order in the Pareschi–Russo
 convention; Ascher–Ruuth–Spiteri names count the implicit stages without the explicit
-first one.
+first one. Two further labels occur: IMEX$s,p$ (explicit stages, order) in Vermeire &
+Hedayati Nasab (2021, §2.1), and IMEX$(s,p;c_{\mathrm{eff}})$ with an efficiency ratio as
+third entry in Ern & Guermond (2023, §4), which clashes with the Ascher–Ruuth–Spiteri
+triple.
 
 **Shared or distinct abscissae.** ARKODE requires the two tables to share $s$ but
 allows $c^{\mathrm E}\ne c^{\mathrm I}$, which some SSP IMEX methods need
@@ -148,6 +157,13 @@ formulation, but only type II stable on a test with time-dependent boundary data
   [stability function](/definitions/stability-function.md). In their Burgers tests
   with a conservative partition, which puts stiffness in the explicit argument, only the
   methods stable in the coupled stiff limit survive large steps (§7.1, Fig. 7.1).
+- **No fully implicit implicit part.** Buvoli & Southworth (2023, §1) state that IMEX
+  Runge–Kutta methods cannot be built on fully implicit implicit tableaux, "since the
+  explicit stages would be nonlinearly coupled to the fully implicit stages". Their
+  [FIMEX polynomial methods](/methods/polynomial-time-integrators.md) obtain a Radau IIA
+  implicit part by integrating, for the explicit part, an interpolant of the previous
+  step's derivatives instead of explicit stages; written as an additive general linear
+  method they have $3(s+1)$ inputs and $s+1$ stages (supplement SM4).
 - **Stability with a split operator.** For $y'=(L_{\mathrm I}+L_{\mathrm E})y$ (page-local
   matrices) the standard IMEX linear-stability analysis assumes the two parts
   simultaneously diagonalizable, as recalled by
@@ -155,6 +171,26 @@ formulation, but only type II stable on a test with time-dependent boundary data
   generalized-eigenvalue and field-of-values technique of Rosales et al. for unconditional
   stability of IMEX multistep methods over to [TASE](/methods/tase-operators.md)
   Runge–Kutta methods with an inexact Jacobian.
+
+## Order conditions with shared weights and abscissae
+
+When $b^{\mathrm E}=b^{\mathrm I}=b$ and $c^{\mathrm E}=c^{\mathrm I}=c$ with
+$A^{\mathrm E}\mathbf 1=A^{\mathrm I}\mathbf 1=c$, the additive order conditions shrink.
+Ern & Guermond (2023, §4.1, Eqs. (64)–(70)), after Pareschi–Russo and Kennedy–Carpenter,
+list them up to order 4 (products of vectors componentwise):
+
+- order 2: $b^\top\mathbf 1=1$, $b^\top c=\tfrac12$;
+- order 3: $b^\top c^2=\tfrac13$, $b^\top A^{\mathrm E}c=b^\top A^{\mathrm I}c=\tfrac16$;
+- order 4: $b^\top c^3=\tfrac14$, $b^\top A^{\mathrm X}c^2=\tfrac1{12}$,
+  $b^\top(A^{\mathrm X})^2c=\tfrac1{24}$, $b^\top\bigl(c\,A^{\mathrm X}c\bigr)=\tfrac18$ for
+  $\mathrm X\in\{\mathrm E,\mathrm I\}$, and the two coupling conditions
+  $b^\top A^{\mathrm E}A^{\mathrm I}c=b^\top A^{\mathrm I}A^{\mathrm E}c=\tfrac1{24}$.
+
+With shared $b$ and $c$ every tree of order at most 4 contributes one of these conditions,
+so the list is complete; only the chain tree $b^\top A^{\mathrm X}A^{\mathrm Y}c$ couples
+the two tableaux *(compiler check, not in the sources)*. In particular a pair with shared
+$b$, $c$ and $b^\top c=\frac12$ is second order with no coupling condition, which covers the
+accelerated pairs below.
 
 ## Named methods in the sources
 
@@ -165,7 +201,9 @@ formulation, but only type II stable on a test with time-dependent boundary data
   solutions. ARK3(2)4L[2]SA, with diagonal $\gamma=\frac{1767732205903}{4055673282236}\approx0.4358665215$
   and $c^{\mathrm I}_2=2\gamma$, is type II, stiffly accurate and has $R_\infty=0$; it is the
   third-order scheme of Orlando & Bonaventura (2025, Table 1) and the IMEX-RK(3,3,3) of
-  Orlando et al. (2025b, Table 21). Orlando et al. also use a seven-stage type-II
+  Orlando et al. (2025b, Table 21), which both attribute to Kennedy and Carpenter (the match
+  with ARK3(2)4L[2]SA by its diagonal and abscissae is a *compiler identification, not in
+  the sources*). Orlando et al. also use a seven-stage type-II
   fourth-order Kennedy–Carpenter (2019) pair with $\gamma=\frac{247}{2000}$, their
   IMEX-RK(6,6,4) (Table 23).
 - **ARS(3,4,3)** of Ascher, Ruuth & Spiteri, printed to 40 digits by Chinomona &
@@ -182,6 +220,14 @@ formulation, but only type II stable on a test with time-dependent boundary data
   they are tabulated on [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
 - **ARS(2,3,2), ARS(3,4,3), ARK4(3)6L[2]SA** are the IMEX baselines of Roberts et
   al. (2021, §6.2).
+- **ARS(2,3,2)**, the "IMEX3,2" of Vermeire & Hedayati Nasab (2021, Eqs. (19)–(22)):
+  implicit part as in ARS(2,2,2) below (the L-stable, stiffly accurate two-stage SDIRK with
+  $\gamma=1-\frac1{\sqrt2}$, padded with an explicit first stage), explicit rows $(\gamma)$,
+  $(1-a^{\mathrm E}_{32},a^{\mathrm E}_{32})$ and $b^{\mathrm E}=b^{\mathrm I}=(0,1-\gamma,\gamma)$.
+  The commonly used $a^{\mathrm E}_{32}=1+\frac{2\sqrt2}3$ (after Persson) is Ern & Guermond's
+  $\delta=-\frac23\sqrt2$ in the rows $(\gamma)$, $(\delta,1-\delta)$ (2023, Eq. (78)); the
+  explicit stability polynomial is $1+z+\frac{z^2}2+a^{\mathrm E}_{32}\gamma^2z^3$ *(compiler
+  checks, not in the sources)*.
 - **ARS(2,2,2)**: $c=(0,\gamma,1)$, explicit rows $(\gamma)$, $(\delta,1-\delta)$,
   $b^{\mathrm E}=(\delta,1-\delta,0)$; implicit rows $(0)$, $(0,\gamma)$,
   $(0,1-\gamma,\gamma)$, $b^{\mathrm I}=(0,1-\gamma,\gamma)$; $\gamma=1-\frac{\sqrt2}2$,
@@ -199,8 +245,8 @@ formulation, but only type II stable on a test with time-dependent boundary data
   stages solve with the same matrix $I-\frac h2L$. Neither paper names the pair:
   Tan et al. (2022) take it from Wang, Zhang, Wang & Shu (2020) and Tan et al. (2025) call it
   "a third order IMEX Runge-Kutta method introduced in" Ascher, Ruuth & Spiteri; its
-  identification as ARS(4,4,3) is the reader's, entry by entry, against the data above
-  *(compiler check)*. Both use it as the integrator of the
+  identification as ARS(4,4,3) rests on an entry-by-entry comparison with Hu & Shu's
+  ARS(4,4,3) data in the previous item *(compiler check)*. Both use it as the integrator of the
   [explicit–implicit–null method](/methods/explicit-implicit-null-method.md), with an
   order asserted, not verified, in time.
 - **BHR(5,5,3)\***: the Boscarino–Russo pair BHR(5,5,3) with $c_4=1.5$ instead of
@@ -211,16 +257,101 @@ formulation, but only type II stable on a test with time-dependent boundary data
   $c=(0,\frac14,\frac34,\frac{11}{20},\frac12,1)$, type ARS with an implicit SDIRK of
   diagonal $\frac14$ on stages 2–6, stiffly accurate, hence L-stable (Orlando & Bonaventura
   2025, Table 2; Orlando et al. 2025b, Table 22, "IMEX-RK(5,5,4)"). Its implicit part is the
-  five-stage L-stable SDIRK4 of Hairer–Wanner padded with an explicit first stage
-  *(reader's identification, recorded on the Source pages)*.
+  five-stage L-stable SDIRK4 of Hairer–Wanner padded with an explicit first stage, as
+  [Ern & Guermond (2023)](/sources/ern-2023.md) (§4.4.2) state.
 - **IMEX-RK(2,2,2) of Giraldo, Kelly & Constantinescu** as printed by Orlando et al.
   (2025b, Table 19): $c=(0,2-\sqrt2,1)$ for both tables, explicit rows $(2-\sqrt2)$,
   $(\frac12,\frac12)$; implicit rows $(0)$, $(1-\frac{\sqrt2}2,1-\frac{\sqrt2}2)$,
   $(\frac{\sqrt2}4,\frac{\sqrt2}4,1-\frac{\sqrt2}2)$; $b^{\mathrm E}=b^{\mathrm I}$ equal to
   the last implicit row; type II, stiffly accurate.
+- **Optimal-efficiency pairs of Ern & Guermond (2023, §4.3–4.4)**, with equidistributed
+  abscissae $c_l=(l-1)/s$, singly diagonal EDIRK implicit parts and the order conditions
+  above, solved in Julia to tolerances $10^{-15}$–$4\times10^{-16}$:
+  - IMEX(3,3;1): Heun's third-order explicit method, $c=(0,\frac13,\frac23)$,
+    $b=(\frac14,0,\frac34)$, with a new EDIRK of diagonal $\gamma=\frac12+\frac1{2\sqrt3}\approx0.78867$;
+    the second L-stability condition has no solution, so the implicit part is only
+    A-stable, with $R(-\infty)=1-\sqrt3$ (Eq. (81));
+  - IMEX(4,3;1): $b=(0,\frac23,-\frac13,\frac23)$, L-stable ESDIRK with diagonal
+    $0.4358665215084591$; the explicit part is called the only four-stage third-order
+    method with equidistributed abscissae that is fourth order on linear problems
+    (Eq. (82), asserted);
+  - IMEX(5,4;1): L-stable ESDIRK with diagonal $0.57281606248213512$ (Eq. (83));
+  - IMEX(6,4;1): L-stable ESDIRK with diagonal $0.2780538411364528$, fifth-order linear
+    conditions imposed and $b_4=0.47$ fixed so that the explicit part is dissipative near
+    the origin (Eq. (84)).
+
+  Several weights and Butcher entries are negative, which their limiting allows. The
+  pairs are designed for [invariant-domain-preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md),
+  where the admissible step grows with the efficiency ratio
+  $c_{\mathrm{eff}}=1/(s\,\Delta c^{\max})$, $\Delta c^{\max}$ the largest gap between an
+  abscissa and its nearest smaller one, $c_{s+1}=1$ included; $c_{\mathrm{eff}}=1$ exactly
+  for equidistributed abscissae (§3.3, Eq. (63)). Ern & Guermond also write Strang
+  splitting with explicit and implicit midpoint steps as a five-stage IMEX scheme with one
+  implicit substep (Remark 4.1), and review Heun with Crank–Nicolson, explicit with
+  implicit midpoint, ARS(2,3,2), the Crouzeix–Nørsett two-stage ESDIRK with an ARS explicit
+  part, and the Calvo–de Frutos–Novo pair (§4.2–4.4).
 - **Pairs used in semi-implicit form** (LSDIRK2(2,2,2), H-LDIRK2(2,2,2), SA SSP(3,3,2) =
   SSP-LDIRK2(3,3,2), SSP-LDIRK3(3,3,2), SSP3(4,3,3), the type-I third-order pairs) are
   tabulated on [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
+
+## Accelerated IMEX schemes for locally stiff meshes
+
+[Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) split by **element**, not by
+operator: the few elements whose small size makes the semi-discretization stiff
+(refinement, boundary layers) are integrated implicitly, the rest explicitly (§1). Their
+cost model (§2.2, Eqs. (16)–(18)) counts per step $e$ explicit and $\hat e$ implicit stage
+evaluations on $n$ explicit and $\hat n$ implicit elements (page-local), with wall times
+$\mathsf c\ll\hat{\mathsf c}$ per element and evaluation (page-local sans-serif, distinct from
+the abscissae). With implicit fraction $\eta_{\mathrm{imp}}=\hat n/(n+\hat n)$ (page-local,
+not the entropy) the cost per unit time and element is
+$[(1-\eta_{\mathrm{imp}})e\,\mathsf c+\eta_{\mathrm{imp}}\hat e\,\hat{\mathsf c}]/h\approx\eta_{\mathrm{imp}}\hat e\,\hat{\mathsf c}/h$:
+the implicit solves dominate the cost while the explicit stability limit sets $h$. More
+explicit stages that enlarge the stability region, at fixed $\hat e$, therefore pay off as
+long as the implicit solver cost does not grow faster than $h$, which they note it tends to
+do.
+
+**AIMEX$s$,2** (§3.1, Eqs. (23)–(29)) starts from ARS(2,3,2) and inserts $s-3$ stages
+between the second and the last:
+
+- **implicit tableau**: the inserted rows have only $a^{\mathrm I}_{i2}=c_i$, i.e. they
+  extrapolate with the stage-2 derivative and need no solve; the last row is
+  $(0,1-\gamma,0,\dots,0,\gamma)=b^{\mathrm I}$. Only stages 2 and $s$ are implicit, for any
+  $s$, and the implicit part reproduces the original two-stage SDIRK exactly;
+- **explicit tableau**: row $i\ge4$ has only $a^{\mathrm E}_{i1}=c_i-a^{\mathrm E}_{i,i-1}$ and
+  $a^{\mathrm E}_{i,i-1}$, so three stage derivatives are stored whatever $s$ (low storage),
+  and $b^{\mathrm E}=b^{\mathrm I}$, $c^{\mathrm E}=c^{\mathrm I}$, with inserted abscissae
+  equidistant between $\gamma$ and 1 (Eq. (26));
+- the $s-2$ free entries $a^{\mathrm E}_{32},a^{\mathrm E}_{43},\dots,a^{\mathrm E}_{s,s-1}$ match
+  the $s-2$ free coefficients $\theta_3,\dots,\theta_s$ of a second-order explicit
+  stability polynomial and follow from it sequentially. For $s=4$ (Eqs. (32)–(34)),
+  $$P(z)=1+z+\tfrac12z^2+\tfrac{\gamma+\gamma^2}2a^{\mathrm E}_{43}z^3+\gamma^2a^{\mathrm E}_{32}a^{\mathrm E}_{43}z^4,$$
+  so $a^{\mathrm E}_{43}=2\theta_3/(\gamma+\gamma^2)$ and $a^{\mathrm E}_{32}=\theta_4/(\gamma^2a^{\mathrm E}_{43})$;
+  the $z^2$ coefficient $2\gamma-\gamma^2$ equals $\frac12$ for $\gamma=1-\frac1{\sqrt2}$
+  (App. 1). The polynomial was re-derived from the tableau *(compiler check)*.
+
+The polynomials are [optimal stability polynomials](/methods/optimal-stability-polynomial.md)
+for the von Neumann spectra of flux-reconstruction DG on linear advection, degrees 1–8,
+found by Ketcheson–Ahmadia bisection with CVX (§3.2, §4). With four stages the optimal
+explicit step is 2.01, 1.79, 1.80, … , 1.84 times that of ARS(2,3,2) for degrees 1–8
+(Table 1); the gain grows about linearly with $s$ and exceeds 5 at $s=10$ (Fig. 1).
+Evidence (§5):
+
+- second order on 1D advection with element-size ratio about $2.5\times10^5$, observed
+  1.96–2.00 for $s=4,\dots,10$, errors nearly independent of $s$ (Table 2);
+- second order on an [isentropic vortex](/benchmarks/isentropic-vortex.md) with an implicit
+  refined strip, AIMEX10,2 (Table 3);
+- laminar SD7003 airfoil ($\mathrm{Re}=10^4$, Mach 0.2, 6,926 elements): AIMEX10,2 up to
+  23 times faster than explicit RK3,3 and at least twice as fast as ARS(2,3,2) for degrees
+  1–4, with lift and drag identical to 3–4 digits; beyond an implicit fraction of about 0.2
+  the implicit cost grows faster than the step gain (Fig. 6, Table 4);
+- an implicit LES of a stalled NACA 0020 with 2.5% implicit elements agrees reasonably with
+  DNS (Table 5).
+
+The implicit stages are solved by quasi-Newton with the Jacobian recomputed every 10 or 500
+steps and GMRES with additive-Schwarz ILU(0), tolerance $10^{-6}$ (§5.3–5.4). The
+construction shares the sparsity "two nonzeros per row, one free entry per stage fixed by
+an optimized polynomial" of [paired explicit Runge–Kutta](/methods/paired-explicit-runge-kutta.md)
+members, a relation the paper does not draw *(compiler remark)*.
 
 ## Add-and-subtract (explicit–implicit–null) use
 
@@ -272,6 +403,40 @@ Bonaventura (2025, §3) recall that this holds for IMEX methods too; their low-M
 are therefore not claimed to be $L^\infty$-stable. In radiation hydrodynamics most
 third-order IMEX pairs tested by Southworth et al. (2024, §5.1) were unstable, which they
 attribute to negative temperatures produced at shocks; only I-IMEX(3,4,3) was robust.
+
+**Invariant-domain preservation by limiting.** Ern & Guermond (2023, §3, Thm. 3.3) make
+*every* pair of an explicit method and an EDIRK with shared abscissae, $c_1=0$, $c_j\ge0$,
+invariant-domain preserving and conservative. Each stage is computed from its predecessor
+stage in incremental form, as a hyperbolic prediction and a parabolic update, each limited
+against a low-order forward- or backward-Euler step of size $(c_l-c_{l'})h$; the result
+holds for $h\le h^*/\Delta c^{\max}$, $h^*$ the low-order hyperbolic step bound, with no sign
+condition on the Butcher coefficients and $2s-1$ quasi-linear solves per step (Remark 3.2).
+See [invariant-domain-preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md).
+
+## Linear stability in applications
+
+The sources report pair-dependent stability failures that the scalar
+[stability function](/definitions/stability-function.md) of each tableau does not reveal:
+
+- **Upwind DG advection, SIPG diffusion.** With advection explicit and diffusion implicit,
+  only the Ascher–Ruuth–Spiteri pairs whose two parts are both stiffly accurate,
+  IMEX(1,1,1), (2,2,2) and (4,4,3), were reasonably stable; IMEX(1,2,1) is "very unstable"
+  at the forward-Euler advective limit, shown by the eigenvalues of the step matrix
+  (Buvoli & Southworth 2023, §6.3.1, Fig. 7). At diffusion coefficient 0.01 and $h=0.01$
+  only IMEX(1,1,1) and IMEX(4,4,3) did not diverge (Table 1).
+- **Linearly implicit splitting.** On the stiff [Van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md)
+  with $f^{\mathrm I}=J_ny$, $f^{\mathrm E}=f-J_ny$ (exact Jacobian), every IMEX-RK pair tested
+  needed much smaller steps to be stable than the FIMEX methods (Buvoli & Southworth 2023,
+  §6.2, Fig. SM4).
+- **Rotating shallow water.** In a fully discrete Fourier analysis with central differences
+  at Courant number 0.2, Coriolis term explicit and gravity waves implicit,
+  [Maurya et al. (2021)](/sources/maurya-2021.md) find the atmospheric-modelling pair SIRK3
+  (Kar) slightly unstable, and SIL3 (Whitaker–Kar) and the second-order pair of
+  Ascher–Ruuth–Spiteri §2.5–2.6 stable (§9, App. A, Fig. 17); see [von Neumann analysis](/definitions/von-neumann-stability-analysis.md).
+- **Element-wise splitting.** Vermeire & Hedayati Nasab (2021) design only the explicit
+  polynomial on the explicit-region spectrum and do not analyse the coupled scheme at the
+  implicit–explicit interface; they see no degradation there in their flow fields (§5.3,
+  Fig. 5).
 
 ## Relaxation and entropy stability
 
@@ -373,6 +538,11 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
   for IMEX-BDF (Hu & Shu) (§6.1), and to an all-speed low-Mach splitting with the
   stiff pressure gradient implicit (§6.5).
 - Order reduction in the intermediate regime $\varepsilon\sim h$ is observed by
+  Ern & Guermond (2023, §5.1, Figs. 2–3), on a stiff $2\times2$ system whose limit is an
+  index-1 DAE: at $\varepsilon=10^{-6}$ all their third- and fourth-order pairs reduce the
+  error of the first component to second order, while the fourth-order ones keep fourth
+  order in the second; they place it in the pre-asymptotic range $\varepsilon<h$, after
+  Boscarino–Pareschi. It is also observed by
   Gottlieb et al. (2022, Remark 4, §3.5) and, for ARS(4,4,3), by Hu & Shu (2025, §6,
   Fig. 1); Orlando & Bonaventura (2025, §5.1, Table 5) attribute part of a loss of the
   $O(\mathrm{Ma}^2)$ density scaling of their fourth-order pair below $\mathrm{Ma}=10^{-4}$
@@ -431,8 +601,8 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 - **Printed tableau of Orlando & Bonaventura (2025), Table 1.** The implicit entry
   $a^{\mathrm I}_{32}$ is printed as $+\frac{640167445237}{6845629431997}$; the row then
   sums to 0.787 instead of $c_3=\frac35$ and $R_\infty\approx0.957$ instead of the stated
-  $0$. With a minus sign the row sum is $\frac35$ and $R_\infty\approx0$ *(reader's and
-  compiler's check)*, as in the same tableau printed by Orlando et al. (2025b, Table 21).
+  $0$. With a minus sign the row sum is $\frac35$ and $R_\infty\approx0$ *(compiler
+  check)*, as in the same tableau printed by Orlando et al. (2025b, Table 21).
 - **Type II with ill-prepared data.** Orlando & Bonaventura's Table 1 pair is type II
   non-ARS, hence by their own §3.1 only weakly AP, yet their colliding-pulse and
   density-layering tests start from pressure data that are not well prepared; the paper
@@ -440,6 +610,28 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 - **Naming.** Orlando et al. (2025b, §3.1) define $(s,\sigma,p)$ as the numbers of
   implicit and explicit function evaluations, but their IMEX-RK(3,3,3) has four explicit
   stages and IMEX-RK(6,6,4) seven stages; the names follow neither count consistently.
+- **Accelerated pairs: what is and is not shown.** Vermeire & Hedayati Nasab (2021) give no
+  stability analysis of the coupled element-wise scheme (above). On their 1D advection test
+  the baseline ARS(2,3,2) is *more* accurate at small steps, e.g. $2.80\times10^{-8}$ against
+  $1.03\times10^{-7}$ for AIMEX4,2 at $h=1.25\times10^{-4}$, with unexplained observed orders
+  3.55, 2.47, 2.19 (Table 2). Speedups are given only as ratios, without hardware or wall
+  times, and as "over 20" or "up to 23" in different places (abstract, §5.3, §6). The
+  linear growth of the stable step with $s$ is a gain per step; per explicit evaluation it
+  is roughly the step ratio times $3/s$, which matters little only because implicit work
+  dominates (Eq. (18)) *(compiler remark)*. Their von Neumann eigenvalues are written for
+  $e^{\mathrm i(\theta x-\omega t)}$ but inserted into $P$ without the factor $-\mathrm i$
+  (Eqs. (53), (37)); the rotation is presumably done in the computation.
+- **Efficiency ratios of the reviewed pairs.** Ern & Guermond (2023) name the reviewed
+  pairs IMEX(3,2;0.24), IMEX(3,3;0.26) and IMEX(6,4;0.08). Their own definition
+  $c_{\mathrm{eff}}=1/(s\Delta c^{\max})$ gives $1/(3(1-\gamma))\approx0.47$ for ARS(2,3,2)
+  ($\Delta c^{\max}=1-\gamma$) and $1/(3\gamma)\approx0.42$ for the Crouzeix–Nørsett pair
+  ($\gamma\approx0.78867$); the printed values equal $\Delta c^{\max}/s$ instead *(compiler
+  check of Eqs. (63), (78)–(79), HAL draft read)*. The conclusion that the new pairs reach
+  $c_{\mathrm{eff}}=1$ and the reviewed ones do not is unaffected.
+- **A misnamed "IMEX" class.** The "optimized partially implicit–explicit Runge–Kutta"
+  (OPIRK) schemes of Maurya et al. (2021) solve no implicit system; they are sequential
+  explicit updates of a partitioned system and are described on
+  [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
 - **"L-stability is necessary."** Orlando & Bonaventura's statement (§3.1) is attributed to
   Pareschi–Russo without proof; Hu & Shu's uniform-accuracy hypotheses (ISA plus condition
   (A)) imply the same $R_\infty=0$ condition for their pairs, so the two sources agree on
@@ -468,3 +660,7 @@ $\varepsilon\to0$ limit at fixed $h$ is a consistent scheme for the limit system
 - [Tan et al. (2022)](/sources/tan-2022.md) — §1 (Eq. (1.4)), §2.4 (Eqs. (2.16)–(2.17)), §3 (Props. 3.1–3.2, Remark 3.4).
 - [Tan et al. (2025)](/sources/tan-2025.md) — §1, §3.4 (Eqs. (3.2)–(3.5)), §3.5 (Prop. 3.1).
 - [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §4.1 (Eq. (4.5)), Table 4.1, §4.5 (Eqs. (4.18), (4.22)–(4.27)), §7.1 (Fig. 7.1).
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §1, §2.1–2.2 (Eqs. (9)–(18)), §3.1 (Eqs. (19)–(34)), §3.2, §4 (Table 1, Fig. 1), §5.1–5.4 (Tables 2–5, Figs. 5–6), §6.
+- [Ern & Guermond (2023)](/sources/ern-2023.md) — HAL draft: §3.3 (Thm. 3.3, Eq. (63), Remark 3.2), §4.1 (Eqs. (64)–(75)), §4.2–4.4 (Eqs. (76)–(84), Remarks 4.1–4.2), §5.1 (Figs. 1–3).
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §1, §6.2 (Fig. SM4), §6.3.1 (Fig. 7, Table 1); supplement SM4.
+- [Maurya et al. (2021)](/sources/maurya-2021.md) — §9, App. A (Eqs. (50)–(51), Fig. 17).

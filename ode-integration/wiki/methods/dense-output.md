@@ -5,7 +5,7 @@ description: "Continuous extensions of a one-step method that give the solution 
 status: established
 aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula, collocation polynomial, local DG solution, subgrid resolution]
 tags: [runge-kutta, stiff, software, step-size-control, exponential]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Dense output
@@ -193,7 +193,7 @@ the stage fluxes.
   corresponds to the slope $\partial_tu_i+\partial_t^2u_i\Delta_3$, the true slope at the
   midpoint ($\Delta_1$, $\Delta_3$ page-local: the offsets of the first and third stage times
   from the cell's last refresh). The two agree under a global step, where $\Delta_1=0$
-  *(compiler check)*.
+  *(compiler check, not in the source)*.
 
 # Citations
 

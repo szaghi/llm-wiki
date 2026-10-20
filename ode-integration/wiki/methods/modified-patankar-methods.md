@@ -3,9 +3,9 @@ type: Method
 title: "Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)"
 description: "Patankar-type schemes weight each production and destruction term by a ratio of new to old values, making every stage a linear M-matrix system; they are positive and conservative for every step size on production–destruction systems, up to arbitrary order, but can oscillate around steady states and lose order for vanishing constituents."
 status: established
-aliases: [Patankar-type methods, Patankar trick, modified Patankar schemes, modified Patankar–Runge–Kutta, MPRK, MPRK22, MPRK43, MPRKSO, SSPMPRK, MPE, modified Patankar–Euler, Patankar–Euler, modified Patankar deferred correction, mPDeC, MPDeC, modified Patankar linear multistep, MPLM, Patankar predictor–corrector, Patankar weight denominator]
+aliases: [Patankar-type methods, Patankar trick, modified Patankar schemes, modified Patankar–Runge–Kutta, MPRK, MPRK22, MPRK22ncs, MPRK43, MPRKSO, SSPMPRK, MPE, modified Patankar–Euler, Patankar–Euler, modified Patankar deferred correction, mPDeC, MPDeC, modified Patankar linear multistep, MPLM, modified Patankar multistep, MPMS2, MPMS3, Patankar predictor–corrector, Patankar weight denominator]
 tags: [positivity, structure-preserving, stiff, implicit, deferred-correction, linear-multistep]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)
@@ -24,10 +24,11 @@ component $i$ of stage $Y_k$ (page-local). The trick originates with Patankar (1
 its conservative form with Burchard, Deleersnijder and Meister (2003), as recalled by
 [Torlo et al. (2022)](/sources/torlo-2022.md) (§2.1),
 [Ciallella et al. (2022)](/sources/ciallella-2022.md) (§4.2),
-[Izzo et al. (2025)](/sources/izzo-2025.md) (§1) and
-[Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) (§2.1). Base schemes in the
+[Izzo et al. (2025)](/sources/izzo-2025.md) (§1),
+[Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) (§2.1) and
+[Zhu et al. (2024)](/sources/zhu-2024.md) (§1, Eq. (1.5)). Base schemes in the
 sources: Euler, explicit Runge–Kutta (MPRK, MPRKSO), deferred correction (mPDeC), explicit
-linear multistep methods (MPLM), and a post-processing of SDIRK steps (Patankar
+linear multistep methods (MPMS, MPLM), and a post-processing of SDIRK steps (Patankar
 predictor–corrector).
 
 ## The Patankar trick and why it gives unconditional positivity
@@ -89,7 +90,12 @@ y^{n+1}_i&=y^n_i+h\sum_j\Bigl(\bigl[(1-\tfrac1{2c_2})p_{ij}(Y_1)+\tfrac1{2c_2}p_
 \end{aligned}$$
 
 with $\varpi_i=Y_{2,i}^{1/c_2}Y_{1,i}^{1-1/c_2}$. For $c_2=1$ it is the modified Heun method
-(SSPRK(2,2)) and coincides with mPDeC2.
+(SSPRK(2,2)) and coincides with mPDeC2. [Izgin et al. (2022)](/sources/izgin-2022.md)
+(Eq. (6)) write the Kopecz–Meister family with a switch on the stage: MPRK22(α) is the
+scheme above, with $\alpha=c_2$, whose stage is itself conservative, and **MPRK22ncs(α)**
+("non-conservative stages") leaves the production term of the stage unweighted,
+$Y_{2,i}=y^n_i+\alpha h\sum_j\bigl(p_{ij}(Y_1)-d_{ij}(Y_1)Y_{2,i}/Y_{1,i}\bigr)$, with the
+same update. Their stability is analysed below.
 
 **Higher order.** MPRK(4,3,α,β) (MPRK43 in Kopecz–Meister's notation) is a four-stage
 third-order family built on three-stage third-order Runge–Kutta tableaux with
@@ -109,7 +115,9 @@ $\gamma=0.5$ as "MPRK3".
 weight exponent $\frac{1-\alpha\beta+\alpha\beta^2}{\beta(1-\alpha\beta)}$ (Shu–Osher
 parameters $\alpha\in[0,1]$, $\beta>0$, $\alpha\beta+\frac1{2\beta}\le1$), and a
 four-stage third-order MPRKSO(4,3) with optimized SSP coefficients (Torlo et al. 2022,
-Eq. (9), App. A). SSP-MPRK schemes are positive and conservative under the convective CFL
+Eq. (9), App. A). Zhu et al. (2024, §2.1, Eqs. (2.2)–(2.3)) recall the same second-order
+parameters and the third-order MPRKSO of Huang, Zhao and Shu, whose coefficients they do
+not reprint. SSP-MPRK schemes are positive and conservative under the convective CFL
 condition independently of the stiffness of the sources (Nurkhametova et al. 2026, §2.1,
 recalled).
 
@@ -178,9 +186,47 @@ lake at rest where SSPRK(6,4) with a positivity limiter plateaus near $10^{-6}$
 note that earlier Patankar methods in fluid codes were Runge–Kutta-based and at most third
 order (§1).
 
-## Modified Patankar linear multistep methods (MPLM)
+## Modified Patankar linear multistep methods (MPMS, MPLM)
 
-Izzo et al. (2025) apply the trick to explicit $k$-step
+**MPMS2 and MPMS3** (Zhu et al. 2024, §2.2). The first modified Patankar multistep
+schemes in the sources, presented as the first in the literature (§5), weight the explicit
+[SSP](/methods/strong-stability-preserving-runge-kutta.md) multistep methods of
+Gottlieb–Shu–Tadmor, $y_{n+1}=\tfrac14y_{n-2}+\tfrac34y_n+\tfrac32hf(y_n)$ (order 2) and
+$y_{n+1}=\tfrac{11}{27}y_{n-3}+\tfrac49hf(y_{n-3})+\tfrac{16}{27}y_n+\tfrac{16}9hf(y_n)$
+(order 3), whose SSP coefficients are $\tfrac12$ and $\tfrac13$ (Eqs. (2.5)–(2.6), §3.3):
+
+$$\begin{aligned}
+\text{MPMS2:}\quad y^{n+1}_i&=\tfrac14y^{n-2}_i+\tfrac34y^n_i+\tfrac32h\sum_j\Bigl(p_{ij}(y_n)\frac{y^{n+1}_j}{\varpi_j}-d_{ij}(y_n)\frac{y^{n+1}_i}{\varpi_i}\Bigr),\\
+\text{MPMS3:}\quad y^{n+1}_i&=\tfrac{11}{27}y^{n-3}_i+\tfrac{16}{27}y^n_i+h\sum_j\Bigl(\bigl[\tfrac49p_{ij}(y_{n-3})+\tfrac{16}9p_{ij}(y_n)\bigr]\frac{y^{n+1}_j}{\varpi_j}-\bigl[\tfrac49d_{ij}(y_{n-3})+\tfrac{16}9d_{ij}(y_n)\bigr]\frac{y^{n+1}_i}{\varpi_i}\Bigr)
+\end{aligned}$$
+
+(Eqs. (2.8), (2.15)). The denominators are **weighted geometric means of past values**,
+$\varpi_i=\prod_{r\ge0}(y^{n-r}_i)^{e_r}$ with exponents $e_r$, $\sum_re_r=1$ (page-local),
+over three past levels for MPMS2 and four for MPMS3 (Eqs. (2.10), (2.17)). The sufficient
+order condition is $\varpi_i=y_i(t_{n+1})+O(h^p)$, since the weights are then
+$1+O(h^p)$ and the scheme differs from its base by $O(h^{p+1})$ (Eqs. (2.9), (2.16)). A
+Taylor expansion gives one-parameter families: in Zhu et al.'s exponent names $(s,r)$ for
+$y^n$, $y^{n-1}$ (and $p$ for $y^{n-2}$), the conditions are $r+2s-3=0$ for MPMS2 and
+$r=-3s+6$, $p=3s-8$ for MPMS3 (Eqs. (2.14), (2.21)). Equivalently
+$\sum_r(r+1)e_r=0$ for MPMS2 and additionally $\sum_r(r+1)^2e_r=0$ for MPMS3: $\log\varpi_i$
+is the polynomial extrapolation of $\log y_i$ to $t_{n+1}$, exact for linear (MPMS2) or
+quadratic (MPMS3) functions, with one redundant node, and some exponents are negative;
+for example $\varpi_i=(y^n_i)^2/y^{n-1}_i$ for MPMS2 *(compiler restatement of Eqs. (2.14)
+and (2.21), not in the source)*. The schemes are conservative (Lemma 2.1) and stated to
+be unconditionally positive, with the proof skipped as "similar to Lemma 2.7" of
+Kopecz–Meister (Lemma 2.2, Thms. 2.3–2.4). On a linear two-species exchange and a
+three-species nonlinear test they show orders 1.98–2.07 and 2.96–3.32 (Tables 1–2). The
+error at fixed $h$ depends on the free exponent and has a minimum, left to future work
+(Remark 4.1, Fig. 1). With explicit DG convection the fully discrete schemes are positive
+under $h\le\tfrac12h_{\mathrm{FE}}$ and $h\le\tfrac13h_{\mathrm{FE}}$ (§3.3, Eqs.
+(3.8)–(3.9)), implemented as an explicit convective step, a positivity limiter at Gauss
+points, the Patankar source step and a second limiter at the interface points, because
+the Patankar step keeps positivity only at the points it acts on (§3.5, Remark 3.1); they
+are applied to multispecies reacting Euler flows with detonations (§4.2–4.3). Zhu et al.
+state, without cost data, that multistep schemes "work better" than Runge–Kutta ones
+unless characteristic speeds change wildly (§5).
+
+**General MPLM.** Izzo et al. (2025) apply the trick to explicit $k$-step
 [linear multistep methods](/methods/linear-multistep-method.md) with nonnegative
 coefficients. Write the base method in the backward form
 $y_n=\sum_{r=1}^k\bar\alpha_ry_{n-r}+h\sum_{r=1}^k\bar\beta_rf(y_{n-r})$ ($\bar\alpha_r$,
@@ -218,7 +264,15 @@ independent of $y_n$; one linear system of size $d$ per level.
   these base methods are only weakly stable; MPLM-4(3) has the root 1 and roots of modulus
   $\sqrt3/2$ and 0, so it is strongly stable *(compiler check of Table 1)*. For $k=4$,
   $\bar\alpha=(\tfrac{16}{27},0,0,\tfrac{11}{27})$, $\bar\beta=(\tfrac{16}9,0,0,\tfrac49)$
-  reproduces a third-order modified Patankar multistep scheme of Zhu, Huang and Yang (§2).
+  reproduces a third-order modified Patankar multistep scheme of Zhu, Huang and Yang (§2),
+  the MPMS3 base above.
+- **Relation to MPMS.** Zhu et al. (2024) introduced MPMS2 and MPMS3 with a sufficient
+  order condition, a formal Taylor argument and no convergence proof or starting
+  procedure; Izzo et al. (2025) prove the condition necessary and sufficient for their
+  class, prove convergence and give the $\varpi$-embedding. The two agree; Izzo et al.
+  extend Zhu et al. in rigour and in order. Zhu et al.'s geometric means of past values and
+  Izzo et al.'s embedded lower-order MPLM steps are two different choices of $\varpi$
+  satisfying the same condition.
 - **Numerics** (§4): observed orders 1–6 on a linear exchange, the algal bloom, the
   original six-species [Brusselator](/benchmarks/brusselator.md), a SACEIRQD COVID-19 model
   and a finite-volume heterogeneous diffusion (Tables 2–6); for instance 1.00–6.26 on the
@@ -330,6 +384,25 @@ second-order schemes (Suppl. §4.1). Torlo et al. present the Lyapunov stability
 for all $h>0$ shown by Izgin, Kopecz and Meister as a different notion (stability of the
 fixed point, not monotone approach), not as a conflict (Remark 1.4).
 
+**Lyapunov stability of steady states.** Since a Patankar scheme cannot be applied to
+$y'=\lambda y$, Izgin et al. (2022) test on the general positive conservative linear
+$2\times2$ system $y_1'=-ay_1+by_2$, $y_2'=ay_1-by_2$, whose steady states form a line
+(page-local $a,b\ge0$). Their centre-manifold theorem for positive conservative maps makes
+a steady state Lyapunov stable when the non-unit Jacobian eigenvalue $R$ of the map has
+$\lvert R\rvert<1$ (Thm. 2.9). For MPRK22(α), $R_1(z)=\frac{2-2\alpha z-z^2}{2(1-z)(1-\alpha z)}$
+with $z=-h(a+b)$, and $\lvert R_1\rvert<1$ for every $z<0$ and $\alpha\ge\tfrac12$: the
+scheme is **unconditionally stable** in this sense (Lemma 3.8, Cor. 3.9). MPRK22ncs(α) has
+a two-variable $R_0(-ha,-hb)$; it is unconditionally stable for $\alpha\ge1$ and stable
+only below a critical step for $\tfrac12\le\alpha<1$, e.g. $h^*\approx0.14$ for
+$\alpha=0.5$ and $h^*\approx0.38$ for $\alpha=0.8$ when $a=b=25$ (Lemma 3.10, Cor. 3.11,
+§4). On the degenerate system $b=0$ both families contract monotonically, so that test
+cannot separate them (§3.1). Details on
+[Lyapunov stability of positive, conservative schemes](/results/lyapunov-stability-positive-conservative-schemes.md).
+"Unconditionally stable" here is Lyapunov stability of the fixed point at every $h$, not
+freedom from oscillations: MPRK22(1) oscillates at $h=4$ in their Fig. 4, and Torlo et
+al. bound its oscillation-free step by 2. The two results are consistent, as Torlo et al.
+(Remark 1.4) already say.
+
 **Order reduction for vanishing initial data.** The classical order proofs fix
 $\varepsilon>0$. In the coupled limit $h\to0$ with $\varepsilon/h\to0$, which models a
 constituent absent at $t=0$, denominators of size $\mathcal O(\varepsilon)$ or
@@ -418,8 +491,23 @@ nonnegative states that satisfy the linear invariants. The overview is on
   and Yang is printed as $\bar\alpha=(\tfrac34,0,\tfrac14)$, $\bar\beta=(0,\tfrac32,0)$ and
   called second order; these coefficients satisfy (2.7) only for $q=1$, while
   $\bar\beta=(\tfrac32,0,0)$ gives second order, the classical three-step SSP multistep scheme.
+  Zhu et al. (2024) themselves print the latter, $\tfrac32hf(y_n)$ with $y_n$ the most
+  recent level (Eqs. (2.5), (2.7)–(2.8)), so the slip is Izzo et al.'s *(compiler check of
+  Zhu et al., arXiv v1, p. 6)*.
   In Table 4 the MPE error at the finest step is printed $2.21\cdot10^{-4}$ with observed
   order 1.00 after $4.42\cdot10^{-2}$; order 1 needs $2.21\cdot10^{-2}$.
+- **Scope of Zhu et al.'s claims (2024).** Unconditional positivity of MPMS2 and MPMS3 is
+  stated with the proof omitted (Lemma 2.2), and Thms. 2.3–2.4 state it for nonnegative
+  data, where a geometric mean with negative exponents is undefined at a zero past value,
+  while Lemma 2.2 assumes strictly positive data. "Order" is formal consistency by Taylor
+  expansion; the starting procedure for the multistep levels is not stated. The abstract's
+  claim that the schemes handle stiff sources "with relatively large time steps" has no
+  supporting step sizes, and the conclusions say "we take appropriately small time step"
+  (§5). The second accuracy test prints "$p_{ij}=d_{ij}=1$ for other sets of $i,j$", which
+  does not reproduce the stated ODE; 0 is meant (Example 2).
+- **Scope of Izgin et al. (2022).** The stability result is local, for $2\times2$ linear
+  test systems with positive steady states; higher dimensions, nonlinear systems and
+  global stability are open (§5).
 - **Printed slips in Nurkhametova et al. (2026)** *(compiler checks of the PDF, pp. 19, 28,
   and §5.3)*. The embedded weights of
   SDIRK32 sum to about 0.379, so the printed $\hat b$ is not consistent; the main weights are
@@ -435,3 +523,5 @@ nonnegative states that satisfy the linear invariants. The overview is on
 - [Izzo et al. (2025)](/sources/izzo-2025.md) — §1, §2 (Def. 2.1, Eqs. (2.7)–(2.10), Lemmas 2.2–2.3), §3 (Thms. 3.1–3.6, Eqs. (3.12), (3.19)–(3.20), Lemma 3.4), §4 (Tables 1–6, Figs. 4–20), §5, App. A; arXiv v1.
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §1, §2.1, §3.3–3.4 (Defs. 3.13, 3.15, Lemma 3.14, Remarks 3.17–3.22, Eqs. (24)–(27), Prop. 3.23), §4.2 (tableaux), §5 (Figs. 2–8, Tables 4–6), §6.
 - [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §1 (Bolley–Crouzeix barrier, MPRK and DSRK); arXiv v2.
+- [Zhu et al. (2024)](/sources/zhu-2024.md) — §1 (Eq. (1.5)), §2.1 (Eqs. (2.2)–(2.3)), §2.2 (Eqs. (2.5)–(2.21), Lemmas 2.1–2.2, Thms. 2.3–2.4), §3.3–3.5 (Eqs. (3.8)–(3.9), Remark 3.1, Thm. 3.3), §4.1 (Tables 1–2, Fig. 1, Remark 4.1), §4.2–4.3, §5; arXiv v1.
+- [Izgin et al. (2022)](/sources/izgin-2022.md) — §1, Eq. (6), Thm. 2.9, §3 (Lemmas 3.6, 3.8, 3.10, Cors. 3.9, 3.11), §3.1, §4 (Fig. 4), §5; arXiv v1.

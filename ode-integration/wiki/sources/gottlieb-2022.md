@@ -9,7 +9,7 @@ year: 2022
 venue: "SIAM J. Numer. Anal. 60:423-449"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_SIAM_Journal_on_Numerical_Analysis_Gottlieb_High_Order_Strong_Stability_Preserving_MultiDerivative_Impli.pdf"
 tags: [ssp, multiderivative, imex, positivity, asymptotic-preserving]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -62,8 +62,8 @@ arXiv v3.
 2. Form (11), with only implicit (diagonal) evaluations of $f$ and $\dot f$, is necessary but not sufficient for having no SSP step restriction (§2.2, citing [10]). **Stated**
 3. Every method of form (11) has a Butcher form (9) with $A=\mathbf R^{-1}\mathbf D$, $\dot A=\mathbf R^{-1}\dot{\mathbf D}$; the converse with diagonal $\mathbf D$, $\dot{\mathbf D}$ is not always possible (§2.2). **Stated**
 4. The one-stage implicit Taylor method $y_{n+1}=y_n+hf(y_{n+1})-\tfrac12h^2\dot f(y_{n+1})$ is second order and unconditionally SSP (§2.3). **Proved** (via Thm. 1)
-5. A two-stage third-order unconditionally SSP implicit two-derivative method exists, with $A=\begin{bmatrix}0&0\\0&1\end{bmatrix}$, $\dot A=\begin{bmatrix}-\tfrac16&0\\-\tfrac16&-\tfrac13\end{bmatrix}$ (§2.3). **Proved** (coefficients satisfy Thm. 1 and the order conditions; the reader checked them numerically)
-6. A five-stage fourth-order unconditionally SSP implicit two-derivative method exists, with 15-digit coefficients (§2.3). **Shown** (optimization output; the reader checked that the Shu–Osher coefficients satisfy all eight order conditions to about $10^{-15}$)
+5. A two-stage third-order unconditionally SSP implicit two-derivative method exists, with $A=\begin{bmatrix}0&0\\0&1\end{bmatrix}$, $\dot A=\begin{bmatrix}-\tfrac16&0\\-\tfrac16&-\tfrac13\end{bmatrix}$ (§2.3). **Proved** (coefficients satisfy Thm. 1 and the order conditions; checked numerically: *(compiler check, not in the sources)*; on $y'=\lambda y$ the error is $-z^4/72+O(z^5)$)
+6. A five-stage fourth-order unconditionally SSP implicit two-derivative method exists, with 15-digit coefficients (§2.3). **Shown** (optimization output; *(compiler check, not in the sources)*: the Shu–Osher coefficients satisfy all eight order conditions to about $10^{-15}$)
 7. The authors "were unable to find any fifth order methods that satisfy the conditions in Theorem 1" (§2.3). **Stated** (a failed search, not a proved barrier)
 8. Under the earlier conditions (forward Euler plus the second-derivative condition (4), or plus the Taylor-series condition (5)), which need $\dot d_{ii}\ge0$, a method of form (10) cannot be second order, so no unconditionally SSP implicit two-derivative method exists in those senses (App. A, Eq. (62), adapting [11]). **Proved**
 9. For $y'=-10y^2$, $y(0)=10$: forward Euler positivity needs $h\le0.1/y_n$ and the backward derivative step needs $h^2\le0.005/y_n^2$; the new methods stay positive for every $h$ tested, while the second-order DIRK loses positivity for $h>1/50$ and the third-order DIRK for $h>1/75$ (§2.4, Fig. 1). **Shown**
@@ -71,7 +71,7 @@ arXiv v3.
 11. The multiderivative IMEX method (14) with $r>0$ and $r_i,p_{ij},w_{ij},d_{ii}\ge0$, $\dot d_{ii}\le0$ is strongly stable for $h\le r\,h_{\mathrm{FE}}$, with no restriction from $f^{\mathrm I}$ or $\dot f^{\mathrm I}$, under Conditions 1–3 (§3.1, Thm. 2, Eq. (15)). **Proved**
 12. The order conditions of the IMEX multiderivative class (16) up to order 3 (22 conditions, table on p. 11) "have not appeared previously" (Abstract, §3.2). **Derived**
 13. A three-stage second-order SSP IMEX multiderivative method has $r=1$, against $r=0.8125$ for the method of [16] §2.6.2, a 23% larger allowable step; both need three implicit stage solves (§3.3.1, §3.4). **Proved** (coefficients) / ratio **Stated** ($1/0.8125=1.2308$, consistent)
-14. A six-stage third-order SSP IMEX multiderivative method has $r=0.904402174130635$; "To achieve a third order method we required six stages" (§3.3.2). **Shown** (optimization output; the reader checked all 22 order conditions and the Butcher conversion numerically)
+14. A six-stage third-order SSP IMEX multiderivative method has $r=0.904402174130635$; "To achieve a third order method we required six stages" (§3.3.2). **Shown** (optimization output; *(compiler check, not in the sources)*: all 22 order conditions and the Butcher conversion hold numerically)
 15. Positivity- and AP-preserving IMEX schemes beyond first order generally violate positivity unless $h$ is restricted by $\varepsilon$ [13, 14]; earlier second-order schemes with both properties [17, 16] used a derivative correction at the final stage and did not reach order 3 (§3.4). **Stated**
 16. Under Properties 1–5, scheme (13) with (49) preserves positivity for $h\le r\,h_{\mathrm{FE}}$ for every $\varepsilon$. If also $d_{ii}+\lvert\dot d_{ii}\rvert>0$ for all $i$ (50), it is AP: as $\varepsilon\to0$ with $h$ fixed it reduces to the explicit part of (13) applied to the limiting system (21), "with the same order as the original scheme" (§3.4.2, Prop. 1). **Proved**
 17. The new IMEX schemes are type A and globally stiffly accurate in the classification of Boscarino–Pareschi–Russo [2], and any initial condition is allowed for AP (Remark 2). **Stated** (here $A^{\mathrm I}$ alone is singular for both new methods; "type A" is meant in the combined sense $d_{ii}+\lvert\dot d_{ii}\rvert>0$, an extension of [2]'s invertibility criterion)

@@ -5,7 +5,7 @@ description: "Quinpi integrates stiff hyperbolic systems with a third-order SDIR
 status: established
 aliases: [implicit CWENO, Quinpi scheme, Q3, Q3I3, predictor-linearized implicit WENO]
 tags: [implicit, runge-kutta, stiff, linear-algebra, structure-preserving]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Quinpi: implicit high-order finite-volume time stepping with a-posteriori time limiting
@@ -132,7 +132,8 @@ convexly where this one replaces them totally (§3.3.2, as recalled).
   show stability and accuracy only (§4.2). The material-speed Rusanov viscosity would not
   be an upwind-stable choice for the acoustics of an explicit scheme *(compiler remark,
   not in the source)*.
-* **Printed slips** (arXiv v4, reader's checks recorded on the Source page). Eq. (26)
+* **Printed slips** (arXiv v4; *compiler check against the paper, not in the source*; details
+  on the Source page). Eq. (26)
   prints the corrector residual with $-U^{(k-1)}$, the composite backward Euler form; the
   DIRK (15a) requires $-U^n$ plus the earlier stage fluxes. Fig. 1 cites equation numbers
   that do not exist in the paper. The Fig. 7 caption steps do not match the stated

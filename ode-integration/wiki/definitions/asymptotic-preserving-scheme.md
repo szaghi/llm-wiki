@@ -5,7 +5,7 @@ description: "A discretization of a problem with small scale parameter ε is asy
 status: established
 aliases: [AP scheme, AP property, asymptotic preserving, AP in time, stochastic asymptotic-preserving, sAP, asymptotically accurate, AA scheme, strongly AP, weakly AP]
 tags: [asymptotic-preserving, stiff, imex, kinetic, splitting]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Asymptotic-preserving scheme
@@ -116,7 +116,8 @@ by [Ma et al. (2026)](/sources/ma-2026.md) (Thm. 3.3, Cor. 3.1) for IMEX-BDF of 
 on every system satisfying Yong's structural stability condition. Both need data without an
 initial layer: Hu & Shu start after the layer, Ma et al. admit either a start after the layer
 or data prepared to the order of the scheme. Both also need a step restriction
-$h\le c/N^2$ coming from the proof. Hu & Shu stress that AP, which concerns the two ends
+$h\le c/N^2$ coming from the proof ($N$ the Fourier cutoff of the space discretization,
+$c$ a constant; page-local). Hu & Shu stress that AP, which concerns the two ends
 $\varepsilon=O(1)$ and $\varepsilon\to0$, "does not settle" the accuracy in the
 intermediate regime (§1, App. 7.3). See
 [uniform accuracy of IMEX schemes](/results/uniform-accuracy-relaxation-systems.md).
@@ -313,7 +314,7 @@ The low-Mach rows use $u$ for the flow velocity and $c$ for the sound speed (pag
   fixed $\varepsilon$ plus the AP limit. It does not claim high order uniformly in
   $\varepsilon$.
 - **Type A, extended.** Gottlieb et al. call their schemes "type A". In Boscarino–Pareschi–Russo's
-  classification that means an invertible implicit matrix, but their implicit matrix $A$ is
+  classification that means an invertible implicit matrix, but their implicit matrix $A^{\mathrm I}$ is
   singular ($d_{ii}=0$ on some stages). The extension rests on the joint condition
   $d_{ii}+\lvert\dot d_{ii}\rvert>0$.
 - **Formal proofs.** The low-Mach AP theorems of Orlando & Bonaventura (2025) rest on
@@ -342,9 +343,11 @@ and uniform third order for BHR(5,5,3)\* (Thms. 4.3, 5.1). ARS pairs have an exp
 in the implicit method, so they fall under Southworth et al.'s "must not". The conflict is with the sentence as printed, not a
 convention difference: both sides speak of AP for hyperbolic relaxation, and Hu & Shu's AP
 (order kept in the limit) is stronger than the classical AP property. The data hypothesis does
-not reconcile them for ARS pairs: in Hu & Shu's limit identity (7.3) the stiff residual of
-stages $2,\dots,s$ is $-\hat A^{-1}\hat a$ times that of the initial value, and $\hat a=0$ for
-type ARS, so these stages, and with GSA the step result, reach equilibrium for any data after
+not reconcile them for ARS pairs: write the type-CK implicit tableau as
+$A^{\mathrm I}=\begin{pmatrix}0&0\\ \hat a&\hat A\end{pmatrix}$ (page-local $\hat a$, $\hat A$, as on
+[uniform accuracy](/results/uniform-accuracy-relaxation-systems.md)); in Hu & Shu's limit
+identity (7.3) the stiff residual of stages $2,\dots,s$ is $-\hat A^{-1}\hat a$ times that of
+the initial value, and $\hat a=0$ for type ARS, so these stages, and with GSA the step result, reach equilibrium for any data after
 one step *(compiler check on Eq. (7.3), not in the source)*. It may reconcile them for
 type-CK non-ARS pairs, which Orlando & Bonaventura (2025, Thm. 3.4, §3.1) find only weakly AP (well-prepared data) in the low-Mach limit, a different
 limit in which they find type-ARS pairs strongly AP. What would decide it: the Pareschi–Russo

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Low-storage Runge–Kutta methods"
-description: "Explicit Runge–Kutta methods whose coefficients are restricted so that a step needs only two or three solution-sized registers; the 2N, 2R, 3S* and 3S*+ classes, the explicit Butcher-form characterization of Williamson 2N methods and its consequences, three registers as the minimum with an error estimate and step rejection, and SSP, optimized, many-stage and paired low-storage methods."
+description: "Explicit Runge–Kutta methods whose coefficients let a step run in two or three solution-sized registers: the 2N, 2R, 3S* and 3S*+ classes, the Butcher-form characterization of Williamson 2N methods, three registers as the minimum with error estimate and step rejection, SSP, optimized, many-stage and paired variants, and stage coupling in asynchronous distributed solvers."
 status: established
-aliases: [low-storage RK, 2N methods, 2N-storage methods, 2R methods, 3S* methods, 3S*+ methods, Williamson methods, register-efficient Runge–Kutta]
+aliases: [low-storage RK, LSERK, LSERK-AT, 2N methods, 2N-storage methods, 2R methods, 3S* methods, 3S*+ methods, Williamson methods, register-efficient Runge–Kutta]
 tags: [runge-kutta, explicit, low-storage, step-size-control, ssp, order-conditions]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Low-storage Runge–Kutta methods
@@ -46,7 +46,7 @@ $A^{\mathrm W}_i=0$, such as some of Ruuth's, fall outside his theory (§2, Rema
 $A^{\mathrm W}_i$, $B^{\mathrm W}_i$ page-local, unrelated to the Butcher matrix $A$ and to $b$)
 keeps the solution in $S_1$ and an accumulated increment in $S_2$:
 
-$$S_1\leftarrow y_n;\qquad\text{for }i=1,\dots,s:\quad S_2\leftarrowA^{\mathrm W}_iS_2+hf(t_n+c_ih,S_1),\quad S_1\leftarrow S_1+B^{\mathrm W}_iS_2;\qquad y_{n+1}\leftarrow S_1,$$
+$$S_1\leftarrow y_n;\qquad\text{for }i=1,\dots,s:\quad S_2\leftarrow A^{\mathrm W}_iS_2+hf(t_n+c_ih,S_1),\quad S_1\leftarrow S_1+B^{\mathrm W}_iS_2;\qquad y_{n+1}\leftarrow S_1,$$
 
 with $A^{\mathrm W}_1=0$. At the start of iteration $i$, $S_1$ holds the stage value $Y_i$. The
 Butcher coefficients follow recursively: $a_{i,i-1}=B^{\mathrm W}_{i-1}$,
@@ -218,6 +218,66 @@ Methods designed for large stability regions are built with low storage in mind.
   third- and fourth-order members need two stored stages and a constant cost per stage (§3.1,
   §3.2).
 
+## Stage communication in asynchronous distributed solvers
+
+In a domain-decomposed solver every stage of an explicit method needs current halo (ghost)
+values from neighbouring processes, so a standard implementation of an $s$-stage Williamson
+method performs $s$ halo exchanges with synchronization per step; over-decomposition, a halo
+wide enough for all stages, avoids them at the price of larger messages and redundant work
+([Goswami, Matthew & Aditya 2023](/sources/goswami-2023.md), §2.3, Fig. 2). Goswami et al.
+couple Williamson 2N methods with **asynchrony-tolerant** finite differences, stencils that
+use halo values delayed by a random number of time levels, so that the step needs no
+communication between stages and, optionally, none at every step. In registry-compatible
+notation the 2N recurrence above applies at every point; the methods are (Table 2):
+
+| Method | $c_{i+1}$ (the source's $\delta_i$) | $A^{\mathrm W}_i$ | $B^{\mathrm W}_i$ |
+|---|---|---|---|
+| LSERK2 | $\tfrac12,1$ | $0,-\tfrac12$ | $\tfrac12,1$ |
+| LSERK3a | $\tfrac14,\tfrac23,1$ | $0,-\tfrac{17}{32},-\tfrac{32}{27}$ | $\tfrac14,\tfrac89,\tfrac34$ |
+| LSERK3b | $1,\tfrac13,1$ | $0,-4,\tfrac1{27}$ | $1,\tfrac29,\tfrac34$ |
+
+*(Compiler check, not in the source: with the recursion above, LSERK2 is the explicit midpoint
+rule; LSERK3a has $c=(0,\tfrac14,\tfrac23)$, $b=(\tfrac14,0,\tfrac34)$, $a_{31}=-\tfrac29$,
+$a_{32}=\tfrac89$, and LSERK3b has $c=(0,1,\tfrac13)$, $b=(0,\tfrac14,\tfrac34)$,
+$a_{31}=\tfrac19$, $a_{32}=\tfrac29$; both satisfy the four third-order conditions.)* The paper
+does not name the origin of the two third-order methods.
+
+**Naive coupling loses order.** Applying the delay-tolerant stencils at every stage while the
+halo values stay at their delayed level degrades the result: at process-boundary points the
+local truncation error of the second-order method with fourth-order differences has a leading
+term $\tfrac5{32}\kappa h^3\Delta x^{-2}\,\partial_t^2u$ (Eq. (18); $\kappa$ the diffusivity and $u$
+the PDE solution, page-local; the source writes $\nu$, the registry Courant number), which in a synchronous run would cancel between the stage
+values on the two sides. The domain-averaged error then scales like $P\,\Delta x^3$ under strong
+scaling with $P$ processes, and like $\Delta x^2$ under weak scaling, whatever the orders of the
+spatial and temporal schemes (Eqs. (19)–(24)). The cause is that halo values are not advanced
+between stages (§3.2). This is the communication analogue of the inconsistent intermediate
+stage data treated on [Runge–Kutta stage boundary treatment](/methods/runge-kutta-stage-boundary-treatment.md).
+
+**Accurate coupling.** The halo points are advanced by the same 2N recurrence, with
+$hf$ at a halo point replaced by $h\,\partial_tu$ approximated by a one-sided **temporal**
+stencil on the delayed history (Eqs. (25)–(27)). The stencil weights are not chosen to
+approximate $\partial_tu$ at the stage, but to reproduce the low-order Taylor terms the stages
+accumulate: the stage derivative is expanded as
+$\partial_tu^{(e)}=\sum_{j=0}^e\gamma^e_jh^j\partial_t^{j+1}u$ with $\gamma^e_j$ built from the 2N
+coefficients ($\gamma^e_0=1$, $\gamma^e_e=B^{\mathrm W}_1\cdots B^{\mathrm W}_e$; page-local
+$\gamma^e_j$), and the weights solve a small linear system (Eqs. (28)–(32)). For LSERK2 and a
+delay of $\tilde k$ levels (page-local $\tilde k$)
+
+$$\partial_tu^{(0)}\approx\frac{2\tilde k+3}{2h}u^{n-\tilde k}-\frac{2(\tilde k+1)}{h}u^{n-\tilde k-1}+\frac{2\tilde k+1}{2h}u^{n-\tilde k-2}$$
+
+(Eq. (34)), the BDF2 derivative formula when $\tilde k=0$; four-point formulas for LSERK3a and
+LSERK3b are Eqs. (36)–(37). Only levels $0,\dots,s-2$ are needed, and the halo value at the start of the
+step comes from an $\mathcal O(h^2)$ polynomial extrapolation (§3.3). The predicted orders, fourth with fourth-order
+differences and sixth with sixth-order ones under $h\sim\Delta x^2$, are observed on 1D linear
+advection–diffusion (slopes $-4$ and $-6$, against $-3$ asymptotically for the naive coupling),
+with an asynchrony error growing linearly in $P$ (Eq. (43), Figs. 5–6). On 3D Burgers turbulence
+the communication-avoiding variant is up to 4.81 (second-order method) and 6.68 times
+(third-order method) faster than the synchronous code on 27,000 cores, and about 2 times in
+weak scaling (Figs. 8, 10). The larger gain of the three-stage method is attributed to the
+inter-stage communications it avoids (§5.2). Earlier asynchronous solvers of the same group used
+Adams–Bashforth schemes, which the authors say have "poor stability, resulting in a strict CFL
+condition" (§1); no stability comparison is shown.
+
 ## Performance of low-storage classes
 
 On compressible-flow tests Ranocha et al. (2022) find:
@@ -249,9 +309,22 @@ low-storage form there, is "disproportionally slow" in their memory-bound code.
 - Ranocha et al. print the embedded-solution line of their Algorithm 1 (3S\*) as
   $(S_2+\delta_sS_1+\delta_{s+1}S_3)/\sum_{i=1}^{s+1}\delta_i$. Every coefficient table lists only
   $\delta_1,\dots,\delta_s$, with $\delta_s=0$, and the loop already adds $\delta_sS_1$. The
-  indices look shifted by one relative to Ketcheson (2010), whose formula uses $\delta_{s+1}$,
-  $\delta_{s+2}$ (reader's note, not verified against Ketcheson 2010). The new methods use
-  Algorithm 2, which is unaffected.
+  printed line is therefore inconsistent with the tables. The new methods use Algorithm 2,
+  which is unaffected.
+- **Goswami et al. (2023), scope of the buffer derivation.** The expansion of stage
+  derivatives in pure time derivatives $\partial_t^{j+1}u$ is exact for linear autonomous
+  problems, the setting of their analysis. For nonlinear $f$ the stage derivative
+  $f(u^{(1)})=f+B^{\mathrm W}_1hf'f+\tfrac12(B^{\mathrm W}_1h)^2f''(f,f)+\dots$ carries elementary
+  differentials that the expansion does not contain *(compiler check, not in the source)*; the
+  Burgers experiments check agreement with the synchronous solution, not the order.
+- **Printed slips in Goswami et al. (2023).** The matrix of Eq. (35) prints the fourth column
+  with $\tilde k+2$, which duplicates the third column and makes the system singular; with
+  $\tilde k+3$ its solutions are exactly the printed Eqs. (36)–(37) *(compiler check, not in the
+  source)*. Algorithms 1–3 omit the factor $h$ in the stage and halo updates that Eqs. (9),
+  (25)–(26) contain.
+- **"Asynchronous"** in Goswami et al. means delayed halo data between processes at a common
+  step, not the cell-wise local steps of asynchronous
+  [local time stepping](/methods/local-time-stepping.md).
 - The tag F (FSAL) and the stage count in method names follow the effective-evaluation convention
   described on the [embedded-pair page](/methods/embedded-runge-kutta-pair.md).
 - **Terminology.** "2N" in the Ketcheson classes of Ranocha et al. (2022) is a register-update
@@ -263,8 +336,8 @@ low-storage form there, is "disproportionally slow" in their memory-bound code.
   (Eq. (95)) has the wrong sign (with the printed sign the four printed (4,3) schemes leave
   nonzero residuals, with the corrected one zero); Table 8 prints $a_{51}=\tfrac{12053}{11172}$ for $\tfrac{2053}{11172}$;
   Table 9 prints $A^{\mathrm W}_5=-\tfrac8{25}$ for $-\tfrac{261}{625}$; Eq. (46) has an index $j$ that
-  must be $i-1$ *(reader's checks)*. The theorems and the printed tableaux of Tables 5–7 and 10
-  are unaffected.
+  must be $i-1$ (as recorded on the Source page). The theorems and the printed tableaux of
+  Tables 5–7 and 10 are unaffected.
 - Doehring et al. (2024) do not detail the register count of their two-stage submethods beyond
   the "2N storage" of the abstract, and print the first submethod stage without the factor $h$
   (Eq. (9.6a)).
@@ -279,3 +352,4 @@ low-storage form there, is "disproportionally slow" in their memory-bound code.
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §3.1–3.2, §6 (comparison methods).
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2.5, §8.
 - [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md) — §2.1, §3 (Table 4).
+- [Goswami, Matthew & Aditya (2023)](/sources/goswami-2023.md) — §1, §2.3 (Eqs. (8)–(10), Table 2, Fig. 2), §3.1 (Eqs. (11)–(24)), §3.2–3.4 (Eqs. (25)–(43), Table 3), §4 (Algorithms 1–3), §5 (Figs. 5–11).

@@ -5,7 +5,7 @@ description: "G-stability of a multistep (one-leg) method: a positive definite m
 status: established
 aliases: [G-norm, G-stable, Dahlquist's equivalence theorem, one-leg method, G-stability identity]
 tags: [linear-multistep, stability, stiff, structure-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # G-stability
@@ -62,8 +62,8 @@ $\alpha=(\tfrac13,-\tfrac43,1)$,
 $$\Big(v_2-\tfrac43v_1+\tfrac13v_0\Big)v_2=G(v_1,v_2)-G(v_0,v_1)+\tfrac16\big(v_2-2v_1+v_0\big)^2,\qquad G(v_1,v_2)=\tfrac16v_1^2-\tfrac23v_1v_2+\tfrac56v_2^2$$
 
 (their IMEX form, with the extrapolation $2v_1-v_0$ written out). The form $G$ is positive
-definite with determinant $1/36$, and $6G(v_1,v_2)=v_2^2+(2v_2-v_1)^2$ *(compiler check; the
-reader of Ma et al. verified the identity by expansion)*. The remainder is the squared
+definite with determinant $1/36$, and $6G(v_1,v_2)=v_2^2+(2v_2-v_1)^2$ *(compiler check by
+expansion, not in the source)*. The remainder is the squared
 difference between the new value and its linear extrapolation. That is why the same identity
 serves IMEX-BDF2, whose explicit part is evaluated at that extrapolation; see
 [IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md).
@@ -81,8 +81,8 @@ $K_0\le75/14$ and $r_{\min}$, $r_{\max}$ (page-local) the lower and upper ratio 
 (Eqs. (69)–(82)). The coercivity bound $G_n\ge\frac{0.07}{1+r_{\max}}r_{n-1}(\lVert e_{n-1}\rVert^2+\lVert e_n\rVert^2)$
 comes from an eigenvalue bound checked graphically (Eq. (81), Fig. 1). The error therefore grows
 with the total variation of the step ratios, and their theorems assume this variation is bounded
-(Eq. (85)). The authors do not call $G_n$ a G-norm; it reduces to the constant-step BDF2 form
-at $r_n=1$ *(compiler check)*.
+(Eq. (85)). The authors do not call $G_n$ a G-norm; at $r_n=1$ it is $\tfrac32$ times the
+constant-step BDF2 form $G(e_{n-1},e_n)$ above *(compiler check, not in the sources)*.
 
 ## Where the sources use it
 

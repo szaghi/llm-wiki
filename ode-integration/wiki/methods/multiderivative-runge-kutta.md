@@ -5,7 +5,7 @@ description: "Runge–Kutta methods that also use higher time derivatives of the
 status: established
 aliases: [two-derivative Runge–Kutta, MDRK, SSP-iMDRK, implicit Taylor method, SSP IMEX multiderivative Runge–Kutta, explicit multiderivative Runge–Kutta, rDRKq-s, MDRKCAT, Jacobian-free multiderivative Runge–Kutta, compact approximate Taylor method, CAT, Taylor method, two-derivative Hermite–Birkhoff Runge–Kutta, HBRK, two-point Hermite rule, Obreshkov rule]
 tags: [multiderivative, ssp, implicit, imex, asymptotic-preserving, order-conditions, lax-wendroff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Multiderivative Runge–Kutta methods and the backward derivative condition
@@ -297,7 +297,7 @@ Babbar et al. (2022) do not use the multiderivative framing, but their single-st
 Lax–Wendroff time discretization is the Taylor method of order $N+1$ (the $s=1$ case
 above) with the flux derivatives approximated Jacobian-free and evaluated element-locally;
 see [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)
-*(compiler remark)*. They motivate it by the Runge–Kutta stage barriers, which a one-stage
+*(compiler remark, not in the sources)*. They motivate it by the Runge–Kutta stage barriers, which a one-stage
 method avoids (§1).
 
 ## Qualifications

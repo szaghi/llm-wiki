@@ -9,7 +9,7 @@ year: 2023
 venue: "Commun. Appl. Math. Comput. Sci. 18:1-28"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Communications_in_Applied_Mathematics_and_Computational_Scie_Biswas_Design_of_DIRK_schemes_with_high_weak_stage_order.pdf"
 tags: [runge-kutta, implicit, order-reduction, order-conditions, stiff]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -174,7 +174,7 @@ $(s,p,q_{\mathrm w})$ give the stages, classical order and weak stage order.
     EDIRK/SDIRK/explicit methods with high weak stage order remain open
     (§8). **Stated**
 
-*(Compiler check, not in the sources.)* The reader checked Table 3
+*(Compiler check, not in the sources.)* Table 3 was checked
 independently. It satisfies $c=A\mathbf 1$, $a_{sj}=b_j$, the order conditions to order 4
 (resp. 5) and $b^\top A^j\tau^{(k)}=0$ for $k\le q_{\mathrm w}$, all to
 about $10^{-15}$. DIRK-(7,4,4) has order exactly 4. The two 12-stage

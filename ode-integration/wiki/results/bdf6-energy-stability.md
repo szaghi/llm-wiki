@@ -5,7 +5,7 @@ description: "Akrivis, Chen, Yu and Zhou prove by the energy technique that six-
 status: established
 aliases: [BDF6 stability, six-step BDF energy estimate, BDF6 multiplier]
 tags: [linear-multistep, stability, stiff, implicit]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Energy stability of the six-step BDF method
@@ -55,8 +55,9 @@ with $\mu(\zeta)$ the multiplier polynomial (page-local), satisfies both conditi
   $\cos x=(25-\sqrt{145})/24$.
 
 The polynomials $\varrho$ and $\mu$ are coprime, since $\varrho(1/2)=-37/3840$ and
-$\varrho(4/9)\ne0$. The reader re-derived the printed algebra symbolically and found it in
-agreement. Table 2.1 lists seven further multipliers, with up to six nonzero components, without
+$\varrho(4/9)\ne0$; the multiplier polynomial factors as
+$\tfrac1{36}(2\zeta-1)^2(9\zeta-4)$, and the printed values $\varrho(\tfrac12)$ and the margin
+0.0093 (minimum $0.00932$) reproduce *(compiler check, symbolic)*. Table 2.1 lists seven further multipliers, with up to six nonzero components, without
 proofs (Remark 2.1).
 
 **Proof structure** (§3). The steps:

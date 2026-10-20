@@ -9,7 +9,7 @@ year: 2024
 venue: "Numer. Algorithms 96:1243-1267"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Numerical_Algorithms_Zhang_An_explicit_16-stage_RungeKutta_method_of_order_10_discovere.pdf"
 tags: [runge-kutta, explicit, order-conditions, b-series, software]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -81,7 +81,7 @@ $\Phi(\tau)=b^\top\Phi_\tau(A)$, and $R_{p,s}$ the residual objective.
    tractable" (§1). **Stated**
 4. For $s=16$ there are $s(s+1)/2=136$ free parameters, and order 10
    imposes $\lvert T_{\le10}\rvert=1205$ polynomial equations, a heavily
-   overdetermined system (§2). **Stated** (reader-checked:
+   overdetermined system (§2). **Stated** (compiler check, not in the sources:
    $1205=1+1+2+4+9+20+48+115+286+719$)
 5. Order $p$ holds iff $b^\top\Phi_\tau(A)=1/\gamma(\tau)$ for all
    $\tau\in T_{\le p}$, with $c=A\mathbf 1$ assumed "without loss of
@@ -159,7 +159,7 @@ $\Phi(\tau)=b^\top\Phi_\tau(A)$, and $R_{p,s}$ the residual objective.
     $R_{p,s}$ makes no significant difference, and $R_{p,s}$ is marginally
     cheaper (Remark 2). **Stated** (experiments not shown)
 
-*(Compiler check by the reader, not in the source.)* Parsing the 136
+*(Compiler check, not in the sources.)* Parsing the 136
 printed coefficients at 130 digits and enumerating the 1205 trees gives
 $R_{10,16}\approx3.6\times10^{-236}$ and a maximum residual
 $\approx6.9\times10^{-119}$, consistent with 120-digit truncation. The

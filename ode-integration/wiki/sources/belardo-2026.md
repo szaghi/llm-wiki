@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 563:115061"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_Izgin_On_Lyapunov_stability_of_positive_and_conservative_time_inte.pdf"
 tags: [runge-kutta, explicit, embedded-pair, step-size-control, order-conditions]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -131,8 +131,7 @@ interval $[-\rho,0]\subset\mathcal S$ of the embedded formula.
     between $a=50$ and $a=200$ (Tables 2–3). **Shown**
 19. The largest $\rho$ on the fixed-distance circle (3.1833) does not
     minimize the step count, and the step-minimizing estimator has smaller
-    $\rho$ than the standard one (Tables 2–3). **Shown** (the reader's
-    inference from the tables; the paper states the general caveat of
+    $\rho$ than the standard one (Tables 2–3). **Shown** (compiler inference from the tables, not in the sources; the paper states the general caveat of
     claim 5)
 20. Null-rule embeddings can serve stiffness detection, giving a
     lower-order formula with a possibly much larger real stability interval
@@ -147,7 +146,7 @@ in-sample (minimum steps on the same problem, using the exact solution),
 and DOPRI5(4) propagates the order-5 solution, so the stability of the
 embedded order-4 formula does not govern the stability of the integration;
 $b^\star$ is a different error estimator, not a more stable integrator.
-Reader checks: $b^\star$ satisfies order 4 to $10^{-6}$ with
+*(Compiler checks, not in the sources.)* $b^\star$ satisfies order 4 to $10^{-6}$ with
 $\rho\approx5.80$, against 4.385 for the standard embedding and 3.307 for
 the order-5 weights; the standard Bogacki–Shampine estimator has
 $\rho=3.1524$ and lies at distance 0.199343 from $b$, as the tables use.

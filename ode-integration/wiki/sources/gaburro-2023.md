@@ -9,7 +9,7 @@ year: 2023
 venue: "Appl. Math. Comput. 440:127644"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Applied_Mathematics_and_Computation_Gaburro_High_order_entropy_preserving_ADER-DG_schemes.pdf"
 tags: [ader, relaxation, entropy-stability, structure-preserving, hyperbolic-conservation-laws]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -202,7 +202,7 @@ machine-precision match to the exact entropy implies the conservative one.
 | **$\gamma$ (§5.3)** | — | **collision with $\gamma_n$**: adiabatic exponent |
 | $\eta$, $v=\partial_u\eta$ | $\eta$, $\eta'$ | entropy and entropy variables (agrees) |
 | $\mathcal E(u)=\int_\Omega\eta(u)\,dx$ | — | total entropy, page-local |
-| $G$, $\mathcal G$ | — | entropy flux and numerical entropy flux |
+| $G$, $\mathcal G$ | — | entropy flux and numerical entropy flux; **not the G-norm matrix $G$ nor the coarse propagator $\mathcal G$** |
 | $A_0=\partial_vu$ | — | inverse entropy Hessian at the cell average |
 | **$\psi$** | — | **collision inside the source**: test function (§4.1) and entropy potential (Remark 4.2); unrelated to the registry one-step map $\psi_h$ |
 | **$R(\gamma)$** | — | **collision with the stability function $R(z)$**: relaxation residual |

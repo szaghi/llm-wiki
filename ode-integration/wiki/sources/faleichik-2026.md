@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Appl. Math. 476:117061"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_and_Applied_Mathematics_Faleichik_Explicit_RungeKuttaChebyshev_methods_of_second_order_with_mo.pdf"
 tags: [stabilized, runge-kutta, explicit, stability, step-size-control]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -139,7 +139,7 @@ constant.
 21. Source code and examples are public at
     github.com/MoisaAndrew/StabilizedMethods (§5). **Stated**
 
-The reader notes that on CUSP, BURGERS and COMB, RKC uses fewer
+*(Compiler observation, not in the sources.)* On CUSP, BURGERS and COMB, RKC uses fewer
 $f$-evaluations and less time than MONO at every tolerance; the paper's
 "competitive" conclusion rests on the error-to-tolerance match, without a
 work–precision plot.
@@ -152,8 +152,8 @@ work–precision plot.
 - Eq. (23): "$err=\frac1{10}(y_0-y_1+f(x_0+h,y_1))$" lacks a factor $h$ on
   $f$. With $h$ restored the expression equals $\frac1{20}h^2y''+O(h^3)$,
   not the $\frac1{10}h^2y''$ of (22); the asymptotically correct factor
-  would be $\frac15$ (reader's expansion; to check against the version of
-  record and the code).
+  would be $\frac15$ *(compiler expansion, not in the sources; to check against the version of
+  record and the code)*.
 - Table 2: RKC has no FINAG row at tolerance $10^{-3}$, unexplained.
 - Abstract "monotonically increasing" against the non-strict condition
   $R_s'\ge0$ of (2).
@@ -179,7 +179,7 @@ work–precision plot.
 | $\mu_j,\nu_j,\tilde\mu_j$ | — | recurrence coefficients (16); **$\nu_j$ collides with the Courant number** |
 | $Y_j$, $F_j=f(x_0+c_jh,Y_j)$ | $Y_j$, $f(t_n+c_jh,Y_j)$ | stage values; agrees |
 | $c_j$ | $c_j$ | abscissae, $c_{s-1}=1$ |
-| $\rho_s$ | $\varrho_s$ (page-local) | monotonicity-interval length; as on the [stabilized methods](/methods/stabilized-explicit-runge-kutta.md) page |
+| $\rho_s$ | $\varrho_s$ (page-local) | monotonicity-interval length; as on the [stabilized methods](/methods/stabilized-explicit-runge-kutta.md) page; **not the multistep generating polynomial $\varrho(\zeta)$** |
 | $\rho$ | — | spectral-radius estimate used to choose $s$ |
 | $C_s$ | — | error constant $(1-P_s'''(0))/6$; not the SSP $\mathcal C$ |
 | $le$, $err$ | $\mathrm{err}_n$ (unscaled) | local error and its estimate |

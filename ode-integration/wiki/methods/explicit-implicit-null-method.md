@@ -5,7 +5,7 @@ description: "The explicit–implicit–null method adds and subtracts a linear 
 status: established
 aliases: [EIN, explicit-implicit-null, EIN-FD, EIN-LDG, add-and-subtract stabilization, explicit–implicit–null IMEX]
 tags: [imex, stiff, stability, linear-algebra, exponential]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Explicit–implicit–null (EIN) time marching
@@ -200,8 +200,8 @@ at every step.
 * **Printed slips.** Tan et al. (2022) introduce their von Neumann lemmas as necessary and
   sufficient but state them as sufficient, and print the domain of their Zakharov–Kuznetsov
   test as $(\pi,\pi)^2$; Tan et al. (2025) switch the viscous-flux subscript from $\mu$ to
-  $\nu$, a letter they also use for $h/\Delta x^2$ (reader's checks, recorded on the Source
-  pages).
+  $\nu$, a letter they also use for $h/\Delta x^2$ *(compiler checks against the PDFs,
+  recorded on the Source pages)*.
 
 # Citations
 

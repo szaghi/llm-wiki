@@ -5,7 +5,7 @@ description: "The stability function R(z) is the factor by which a one-step meth
 status: established
 aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -78,12 +78,12 @@ $\ell$: the largest $\ell$ with $\lvert R\rvert\le1$ on $[-\ell,0]$) is the usua
 one-number summary for explicit methods. Its values for the classical $s$-stage
 methods of order $s$ are 2, 2, 2.5127 and 2.7853 for $s=1,\dots,4$
 ([Bassenne et al. 2021](/sources/bassenne-2021.md), Table 1, which prints the rounded
-values 2.00, 2.00, 2.50, 2.79; the four-digit values are the reader's computation of that
-source). Belardo et al. (2026, §3–4) use it to choose among embedded weight
+values 2.00, 2.00, 2.50, 2.79; the four-digit values are a *compiler check, not in the
+source*). Belardo et al. (2026, §3–4) use it to choose among embedded weight
 vectors that share $(A,c)$ with a main method: the order-4 embedding of
 Dormand–Prince 5(4) is one member of a one-parameter family, and another member has
-$\ell\approx5.8$ against 4.4 for the standard one (reader's computation from the
-printed weights). They warn that $\ell$ alone does not decide the choice: for
+$\ell\approx5.8$ against 4.4 for the standard one *(compiler check from the printed
+weights, not in the source)*. They warn that $\ell$ alone does not decide the choice: for
 Bogacki–Shampine 3(2) on a stiff scalar problem the embedding that minimizes the
 number of accepted steps has a *smaller* $\ell$ (2.41) than the standard one (3.15)
 (Tables 2–3); see [embedded pairs](/methods/embedded-runge-kutta-pair.md).
@@ -255,7 +255,7 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   bound on the imaginary axis, checked numerically
   ([Bassenne et al. 2021](/sources/bassenne-2021.md), §3.2, Eqs. (24)–(27), Fig. 4).
   Equivalently $R$ is the explicit method's polynomial composed with the TASE map of
-  $z$ (reader's remark on that source). When the TASE operator is built on a matrix
+  $z$ *(compiler check, not in the source)*. When the TASE operator is built on a matrix
   $\tilde J\ne J$ (page-local), [Conte et al. (2024)](/sources/conte-2024.md) (§3,
   Eq. (3.4), Lemma 3.4) test on $y'=(\lambda+\lambda_E)y$ with $\lambda$ an eigenvalue of
   $\tilde J$ and $\lambda_E$ one of $J-\tilde J$, and obtain a **two-parameter stability
@@ -292,8 +292,9 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   are not A-stable; their regions merely contain the negative real axis (Remark 2.2,
   Fig. 1). The Lawson functions have the form $e^{\vartheta z}P((1-\vartheta)z)$, with
   $P$ the polynomial of the underlying explicit method, so Lawson2a and Lawson2b share
-  one function and their common threshold is no coincidence *(reader's check of
-  the source, recorded on its Source page)*. The same split test on an IMEX pair is the
+  one function and their common threshold is no coincidence *(compiler check, not in
+  the source: on a scalar linear problem the Lawson transform turns the step into the
+  explicit method applied to $y'=(1-\vartheta)\lambda y$)*. The same split test on an IMEX pair is the
   stability analysis of the
   [explicit–implicit–null method](/methods/explicit-implicit-null-method.md); see
   also [Lawson methods](/methods/lawson-methods.md).
@@ -325,6 +326,66 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   Both papers plot conjugate-symmetric slices of the two-variable region in $z_2$
   for fixed $z_1$. These notions are separate from the multirate tests on
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
+* **Positive, conservative (Patankar) schemes.** Modified Patankar schemes cannot be
+  applied to $y'=\lambda y$ and are nonlinear on linear problems.
+  [Izgin et al. (2022)](/sources/izgin-2022.md) test them on the positive conservative
+  system $y_1'=-ay_1+by_2$, $y_2'=ay_1-by_2$ (page-local $a,b\ge0$), whose steady states
+  form a line. The Jacobian of the scheme's map at a steady state has eigenvalues $1$ and
+  $R$, and they call $R$, as a function of $z_a=-ha$ and $z_b=-hb$, the **stability
+  function** of the scheme: for a Runge–Kutta method it is the ordinary $R(z_a+z_b)$, for
+  MPRK22(α) a function of $z_a+z_b$ only, $R_1(z)=\frac{2-2\alpha z-z^2}{2(1-z)(1-\alpha z)}$,
+  and for the variant with non-conservative stages a genuinely two-variable function
+  (Lemma 3.6, Remark 3.7). $\lvert R\rvert<1$ then gives Lyapunov stability of the steady
+  state (Thm. 2.9); see
+  [Lyapunov stability of positive, conservative schemes](/results/lyapunov-stability-positive-conservative-schemes.md).
+  On the one-directional test $b=0$ both MPRK22 families have an amplification factor in
+  $(0,1)$, which is why that test cannot tell them apart (§3.1).
+* **Imaginary-axis expansion and L-stability conditions in tableau design.**
+  [Ern & Guermond (2022)](/sources/ern-2022.md) design their seven-stage fifth-order
+  method with one extra condition
+  $\lvert R(\mathrm i\epsilon)\rvert=1+\rho_6\epsilon^6+O(\epsilon^8)$, $\rho_6=-0.009$
+  (page-local $\epsilon$, $\rho_6$), negative so that the method is dissipative near the
+  origin; $\lvert R(\mathrm iy)\rvert\le1$ for $y\in[-1.562,1.562]$ (§4.1, Fig. 1; printed
+  with $\Re$ for $R$). [Ern & Guermond (2023)](/sources/ern-2023.md) (§4.1) give $\rho_6$ in
+  terms of $b^\top A^kc$: $-2b^\top A^4c+2b^\top A^3c-b^\top A^2c+\tfrac1{36}$ for a third-order
+  method, $-2b^\top A^4c+2b^\top A^3c-\tfrac1{72}$ at fourth order and
+  $-2b^\top A^4c+\tfrac1{360}$ when the fifth-order linear conditions hold. For an EDIRK with
+  $A^{\mathrm I}=\begin{pmatrix}0&0\\\tilde a&\tilde A\end{pmatrix}$ and weights
+  $(b_1,\tilde b^\top)$ (page-local blocks),
+  $R(z)=1+zb_1+z\tilde b^\top(I-z\tilde A)^{-1}(\mathbf 1+z\tilde a)$, and, given A-stability
+  and invertible $\tilde A$, L-stability holds iff $b_1=\tilde b^\top\tilde A^{-1}\tilde a$
+  and $\tilde b^\top\tilde A^{-1}\mathbf 1+\tilde b^\top\tilde A^{-2}\tilde a=1$ (Eqs.
+  (73)–(75); they are the vanishing of the $z$ and constant terms of the expansion of $R$
+  at infinity, *compiler check, not in the source*). For their three-stage third-order design the second
+  condition has no solution, and minimizing $R(-\infty)$ gives an A-stable method with
+  $R(-\infty)=1-\sqrt3$ (Eq. (81)). See
+  [invariant-domain preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md).
+* **Stability polynomial as the design variable of an IMEX family.**
+  [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) (§3.1, Eqs. (32)–(34),
+  App. 1) build accelerated IMEX schemes AIMEX$s$,2 whose implicit part is a fixed
+  two-implicit-stage SDIRK and whose explicit part has one free coefficient per added
+  stage; the $s-2$ free coefficients $\theta_3,\dots,\theta_s$ of the second-order explicit
+  stability polynomial determine these coefficients uniquely and sequentially, so a
+  polynomial optimized for the spectrum of the explicitly treated elements fixes the
+  tableau. Optimal four-stage polynomials allow 1.79–2.01 times the step of the
+  three-stage IMEX3,2 for flux-reconstruction DG of degrees 1–8, and the gain grows
+  about linearly with $s$, above 5 at $s=10$ (Table 1, Fig. 1); see
+  [optimal stability polynomials](/methods/optimal-stability-polynomial.md).
+* **Fully discrete amplification matrices of sequential partitioned updates.**
+  [Maurya et al. (2021)](/sources/maurya-2021.md) advance the linearized Euler equations
+  $u_t=L_1(p)$, $p_t=L_2(u)$ by forward Euler in $u$ followed by
+  $p^{n+1}=p^n+h[(1-\vartheta)L_2(u^n)+\vartheta L_2(u^{n+1})]$ with weight $\vartheta$ (page-local),
+  which uses only already updated values and needs no solve. A Fourier mode then has a
+  $2\times2$ amplification matrix with eigenvalues
+  $G_{1,2}=1-\frac{\vartheta a^2}2\mp\frac a2\sqrt{\vartheta^2a^2-4}$, $a$ the Courant number
+  times the modified wavenumber of the spatial scheme (page-local; §2.1, Eq. (8)); the
+  scheme is stable in the wave regime only for $\vartheta\ge1$ and neutrally stable,
+  $\lvert G\rvert=1$, at $\vartheta=1$, up to a critical Courant number of 2 with second-order
+  central differences and 0.91 with a compact scheme (Table 1). In the wave regime the
+  eigenvalues are conjugate, so $\lvert G\rvert^2=\det=1+(1-\vartheta)a^2$ *(compiler check,
+  not in the source)*. These amplification factors belong to the space–time scheme, not to
+  a stability function of an ODE method; see
+  [von Neumann analysis](/definitions/von-neumann-stability-analysis.md).
 * **Multirate, IMEX and splitting methods** need several scaled eigenvalues or
   a matrix test problem; see
   [linear stability of multirate methods](/definitions/multirate-linear-stability.md).
@@ -372,9 +433,10 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
   stage values, not about $R$; see [internal stability](/definitions/internal-stability.md).
 * Belardo et al. (2026, §4) state that the maximal real stability interval of the
   first-order embedding of the explicit midpoint rule is "7", reached at their
-  parameter value 1; the reader of that source computes $\ell=6.83$ there and a
-  supremum $\ell=8$ at a slightly larger parameter, so the printed values are plot
-  readings.
+  parameter value 1; with $\hat b=(1/\sqrt2,1-1/\sqrt2)$ the embedding has
+  $R(z)=1+z+\alpha z^2$, $\alpha=\tfrac12(1-1/\sqrt2)$, so $\ell=1/\alpha\approx6.83$
+  there and the supremum $\ell=8$ is reached at $\alpha=1/8$, a slightly larger parameter;
+  the printed values are plot readings *(compiler check, not in the source)*.
 * Fekete et al. (2022, Def. 1) print the real-axis inclusion with a symmetric
   segment $[-\beta,\beta]$; for an explicit method this gives zero, and the
   intended segment is $[-\beta,0]$.
@@ -418,3 +480,8 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §2.2 (Eqs. (2.12)–(2.13)), §3.2 (Fig. 5).
 - [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §5 (Eqs. (30)–(40)).
 - [Jin et al. (2025)](/sources/jin-2025.md) — §3.1–3.2 (Eqs. (3.1)–(3.7), Prop. 3.3, Remark 3.4), Table 4.1.
+- [Izgin et al. (2022)](/sources/izgin-2022.md) — Thm. 2.9, Lemma 3.6, Remark 3.7, §3.1 (Eqs. (43a)–(43b), (47)–(48)); arXiv v1.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §4.1 (Eq. (40), Fig. 1); HAL v2.
+- [Ern & Guermond (2023)](/sources/ern-2023.md) — §4.1 (Eqs. (72)–(75)), §4.3 (Eq. (81)); HAL v1.
+- [Vermeire & Hedayati Nasab (2021)](/sources/vermeire-2021.md) — §3.1 (Eqs. (32)–(34)), App. 1, Table 1, Fig. 1.
+- [Maurya et al. (2021)](/sources/maurya-2021.md) — §2.1 (Eq. (8)), Table 1.

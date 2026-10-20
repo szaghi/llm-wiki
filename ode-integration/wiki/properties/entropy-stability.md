@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Entropy stability and conservation of the fully discrete scheme"
-description: "A fully discrete scheme is entropy stable when a convex entropy of the solution does not increase from step to step, and entropy conservative when it stays constant; semi-discrete entropy laws are generally lost by the time integrator, and relaxation, SSP and strong-stability arguments, or symplectic methods for quadratic invariants, restore them."
+description: "A fully discrete scheme is entropy stable when a convex entropy of the solution does not increase from step to step, and entropy conservative when it stays constant; semi-discrete entropy laws are generally lost by the time integrator, and relaxation, SSP and strong-stability arguments, energy identities giving cell entropy inequalities, or symplectic methods for quadratic invariants, restore them."
 status: established
-aliases: [entropy conservation, entropy dissipation, fully discrete entropy stability, energy stability, invariant preservation, entropy-stable time integration]
+aliases: [entropy conservation, entropy dissipation, fully discrete entropy stability, energy stability, invariant preservation, entropy-stable time integration, cell entropy inequality, local entropy inequality]
 tags: [structure-preserving, stability, runge-kutta, geometric-integration, entropy-stability, relaxation]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Entropy stability and conservation of the fully discrete scheme
@@ -32,7 +32,7 @@ For a system of several invariants the requirement applies to each.
 ## Origin in conservation laws
 
 For a hyperbolic system $\partial_tu+\operatorname{div}F(u)=0$ with convex
-entropy $\eta$ and entropy flux $G$ (page-local), smooth solutions satisfy
+entropy $\eta$, flux $F$ and entropy flux $G$ (page-local $u$, $F$, $G$), smooth solutions satisfy
 $\partial_t\eta+\operatorname{div}G=0$ and admissible weak solutions
 $\partial_t\eta+\operatorname{div}G\le0$; the total entropy
 $\int_\Omega\eta\,\mathrm dx$ then changes only through the boundary flux
@@ -85,6 +85,8 @@ are on that page and on
 | Symplectic Runge–Kutta methods (necessarily implicit) | exact quadratic invariants | Biswas & Ketcheson (2023), §1 |
 | [Pseudo-energy preservation](/methods/pseudo-energy-preserving-runge-kutta.md) | energy error $O(h^{q+1})$ per step with $q>p$ | de León et al. (2025) |
 | Consistent fluxes in a [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) partition | exact discrete conservation of a linear invariant (total energy) shared by explicit and implicit terms | [Southworth et al. (2024)](/sources/southworth-2024.md) |
+| Energy identity with a splitting of the Runge–Kutta quadratic form | **cell-by-cell** square-entropy inequality for explicit third-order RKDG with $c_3=1$, $b>0$, under $h\le C\Delta x$ | [Wei & Shu (2026)](/sources/wei-2026.md) |
+| Backward Euler (BDF1) with entropy-dissipative spatial terms, solved by dual time stepping | entropy inequality at the converged pseudotime solution, if the pseudotime residual is below the BDF1 entropy dissipation | [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) |
 
 **SSP route.** Gottlieb et al. (2022, Remark 3, Eqs. (53)–(56)) take the
 discrete kinetic entropy $\sum_k\Delta x\int f_k\log f_k\,\mathrm dv$ as the
@@ -104,6 +106,37 @@ $\alpha\int\nabla\psi\,A_0\nabla v_h$ so that each cell's central-flux entropy
 production equals the numerical entropy flux, which splits the update into an
 entropy-conservative part and an entropy-dissipative upwind part; relaxation
 in time then matches the total entropy to that budget.
+
+**Local cell entropy inequalities.** A global entropy bound can hold while no cell-wise
+inequality with a local numerical entropy flux does. Wei & Shu (2026, §1, Eqs. (4)–(5))
+prove the local form, the **fully discrete cell square-entropy inequality**, for explicit
+three-stage third-order RKDG on Burgers' equation with $P^2$ and $P^3$ elements and on
+strictly convex scalar laws with $P^1$, under $h\sim\Delta x$, for the family with
+$a_{31}+a_{32}=1$ and positive weights (Kutta's method included, SSP-RK3 excluded). The
+key is an exact splitting of the quadratic part of the Runge–Kutta energy identity into two
+negative squares of first temporal differences and one positive square of a second
+difference, valid for any nonlinear right-hand side (Thm. 1). They recall that Jiang and
+Shu's semi-discrete cell entropy inequality, for DG of any degree, carries over to implicit
+algebraically stable Runge–Kutta methods, and that relaxation methods "do not provide any
+kind of local entropy inequality since the relaxation constant is defined globally" (§1).
+See [fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md).
+
+**Entropy through an implicit solver.** Sayyari & Yamaleev (2026, end of §5, §6) argue
+fully discrete entropy stability of a positivity-preserving entropy-stable spectral
+collocation scheme with BDF1 in physical time from two facts: BDF1 is unconditionally
+entropy stable (recalled from Tadmor) and the spatial terms are entropy dissipative. Each
+BDF1 step is solved by an explicit pseudotime iteration, so the argument holds at the
+converged pseudo-state and is conditional on the pseudotime residual being driven below a
+suitable norm of the entropy dissipation of BDF1; the flux-limited scheme is entropy stable
+as a convex combination of two entropy-stable residuals (Eq. (22)). No entropy statement is
+made for their BDF2 runs (§7).
+
+**Entropy bounds as invariant domains.** For the Euler equations a minimum principle on
+the specific entropy is part of the invariant domain, together with positive density and
+internal energy ([Ern & Guermond 2022](/sources/ern-2022.md), §1.1); time stepping that
+preserves invariant domains then preserves this entropy bound pointwise, a different
+property from the integral inequalities above (see
+[invariant-domain preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md)).
 
 **Linear invariants across IMEX partitions.** All Runge–Kutta methods preserve linear
 invariants, but Southworth et al. (2024, §4.3) point out that this is "much more
@@ -127,6 +160,11 @@ so the result extends to every such method (§4.3).
   §3.3, §4). They state, without evidence, that relaxed IMEX methods can damp
   stage instability "because of the implicit correction step at each stage"
   (§4).
+* **Local versus global relaxation.** Wei & Shu's statement concerns cell inequalities.
+  The "local relaxation" of Al Jahdali et al. (2022, §2) solves one entropy equation per
+  cell but applies the minimum of the cell roots as one scalar; no ingested source claims a
+  cell entropy inequality for it, so the two do not conflict *(compiler remark, not in the
+  sources)*.
 * **Partition-wise hypotheses (IMEX).** For an IMEX method with different
   explicit and implicit weights, the proof needs each part entropy stable
   separately; with equal weights only the sum (Kang & Constantinescu (2022),
@@ -172,3 +210,6 @@ phases for pseudo-energy-preserving methods.
 - [Sun & Shu (2021)](/sources/sun-2021.md) — §1, §5.
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1, §4.
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §4.1–4.3 (Eqs. (31)–(37)).
+- [Wei & Shu (2026)](/sources/wei-2026.md) — §1, §2 (Eqs. (4)–(5), (12)–(13)), §3 (Thm. 1, Thms. 3, 5), App. A (Thm. A.2); author manuscript.
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — §2 (Eq. (5)), §5 (end), §6.1–6.2 (Eqs. (21)–(22)), §7; arXiv v3.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §1.1; HAL v2.

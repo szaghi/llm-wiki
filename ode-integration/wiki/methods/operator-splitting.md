@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting: Lie–Trotter, Strang and dimensional splitting"
-description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing the flows of the parts: Lie–Trotter is first order, Strang second order and symmetric; the page covers their error constants, conjugacy, linear stability, PDE (ADI, LOD, Peaceman–Rachford) forms, boundary order reduction, multiphysics comparisons with IMEX, and multirate and asymptotic-preserving uses."
+description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing the flows of the parts: Lie–Trotter is first order, Strang second order and symmetric; the page covers their error constants, conjugacy, linear stability, the second-order methods for N parts, PDE (ADI, LOD, Peaceman–Rachford) forms, boundary order reduction, multiphysics comparisons with IMEX, and multirate and asymptotic-preserving uses."
 status: established
-aliases: [splitting method, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method, projector-splitting integrator]
+aliases: [splitting method, N-split splitting, OS22mu, Strang-OS22mu, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method, projector-splitting integrator]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting
@@ -54,7 +54,7 @@ $\log(e^{hL_1/2}e^{hL_2}e^{hL_1/2})=h(L_1+L_2)-\tfrac{h^3}{24}[L_1,[L_1,L_2]]-\t
 (Blanes et al. 2024, §1.1, Eqs. 1.8–1.9; §2.1.1). For nonlinear flows the same
 expansions hold with Lie derivatives in place of $L_i$, but the exponentials of Lie
 operators appear in the **reverse order** relative to the composition of maps (Eq. 1.15).
-For $m>2$ parts the symmetric form nests: $\varphi^{[1]}_{h/2}\circ\varphi^{[2]}_{h/2}\circ\dots\circ\varphi^{[m]}_h\circ\dots\circ\varphi^{[2]}_{h/2}\circ\varphi^{[1]}_{h/2}$.
+For $N>2$ parts (page-local $N$, as in the $N$-split section below) the symmetric form nests: $\varphi^{[1]}_{h/2}\circ\varphi^{[2]}_{h/2}\circ\dots\circ\varphi^{[N]}_h\circ\dots\circ\varphi^{[2]}_{h/2}\circ\varphi^{[1]}_{h/2}$.
 
 **Conjugacy.** Strang is conjugate to Lie–Trotter:
 $S_h=\varphi^{[1]}_{-h/2}\circ\chi^*_h\circ\varphi^{[1]}_{h/2}$, so $n$ Strang steps equal $n$ Lie–Trotter steps plus an
@@ -73,6 +73,58 @@ $A^{\{2\}}=\begin{pmatrix}1/2&0\\1/2&0\end{pmatrix}$, $b^{\{1\}}=b^{\{2\}}=(\tfr
 explicit despite the implicit-looking coefficients because each part acts on the other
 variable only, and find no odd powers of $h$ in its modified equation through $h^7$
 ([Ketcheson & Ranocha 2023](/sources/ketcheson-2023.md), §3.1.2, Eqs. 45–46).
+
+## Many parts: second-order $N$-split methods
+
+For $f=\sum_{\ell=1}^Nf^{[\ell]}$ with $N\ge2$ parts (page-local $N$), the standard general-$N$
+methods are $N$-split Lie–Trotter, $\varphi^{[N]}_h\circ\dots\circ\varphi^{[1]}_h$, and the nested
+Strang method above
+([Spiteri & Wei 2026](/sources/spiteri-2026.md), Eqs. (2)–(3)). Spiteri & Wei write an $s$-stage
+$N$-split method as $s$ full sweeps through the parts $1\to N$,
+$\psi_h=\bigcirc_{k=s}^{1}\bigl(\varphi^{[N]}_{a^{[N]}_kh}\circ\dots\circ\varphi^{[1]}_{a^{[1]}_kh}\bigr)$,
+with real or complex fractions $a^{[\ell]}_k$ (Def. 2.1, Eq. (4); page-local extension of the
+registry $a_j$, $b_j$; zero fractions encode other orderings). A **non-trivial sub-integration**
+is a sub-flow with nonzero fraction after adjacent sub-flows of the same part are merged; its
+count is their cost measure. With the order conditions of
+[splitting order conditions](/results/splitting-order-conditions.md) they prove (§3.3):
+
+- order 1 needs at least $N$ non-trivial sub-integrations, and only Lie–Trotter has exactly $N$
+  (stated as straightforward);
+- order 2 needs at least $2N-1$, and the only method with $2N-1$ is $N$-split Strang
+  (Lemma 3.2);
+- with exactly $2N$, every part is integrated exactly twice (Lemma 3.3), and after relabeling
+  the method has a **pivot** form: a forward sweep $1,\dots,N$, then the parts
+  $\ell^*,\dots,N$ again, then $\ell^*-1,\dots,1$ in reverse (Eq. (22)).
+
+Solving the order conditions for each pivot gives a complete list of the second-order
+$N$-split methods with at most $2N$ non-trivial sub-integrations (Tables 3–7):
+
+| Pivot | Method | Fractions |
+|---|---|---|
+| $N=2$ | OS22$\mu$, the one-parameter two-stage family (from earlier work, Table 3) | part 1: $a_1=\frac{2\mu-1}{2\mu-2}$, $a_2=\frac1{2-2\mu}$; part 2: $1-\mu$, $\mu$ |
+| $\ell^*=1$, $N\ge3$ | complex Lie–Trotter (CLT) and its conjugate | $a^{[\ell]}_1=\tfrac12\pm\tfrac i2$, $a^{[\ell]}_2=\tfrac12\mp\tfrac i2$ for all $\ell$ |
+| $\ell^*=N$ | $N$-split Strang (the two sub-flows of part $N$ merge) | $\tfrac12,\tfrac12$ for $\ell<N$; $1$ for part $N$ |
+| $\ell^*=N-1$, $N\ge3$ | Strang-OS22$\mu$: Strang half steps of parts $1,\dots,N-2$ around an OS22$\mu$ step of parts $N-1,N$ | $\tfrac12,\tfrac12$ for $\ell\le N-2$; OS22$\mu$ on the last two |
+| $1<\ell^*<N-1$, $N\ge4$ | Strang-CLT$_{\ell^*}$: Strang shell on parts $1,\dots,\ell^*-1$ around a CLT step of parts $\ell^*,\dots,N$ | $\tfrac12,\tfrac12$ for $\ell<\ell^*$; $\tfrac12\pm\tfrac i2$, $\tfrac12\mp\tfrac i2$ for $\ell\ge\ell^*$ |
+
+($\mu$ page-local.) For $N\ge3$ the only real-valued families are thus Strang and Strang-OS22$\mu$. In
+Strang-OS22$\mu$, $\mu=0$ is Strang, $\mu=\tfrac12$ is Strang with the last two parts swapped, and
+$\mu\in[0,\tfrac12]$ gives nonnegative fractions (Remark 3.4). CLT is
+[complex-coefficient splitting](/methods/complex-coefficient-splitting.md). All these methods
+can serve as base methods of higher-order [compositions](/methods/composition-methods.md)
+(Remark 3.5). Spiteri & Wei state that the forms "do not appear to have been previously
+published in full generality" (§3); the $N=3$ CLT appeared in earlier work of Auzinger, Koch &
+Thalhammer, as recalled (Remark 3.3).
+
+**Experiments** (§4, Heun's method for every sub-flow, central differences): all methods
+converge at order 2 on a 5-split diffusive Molenkamp–Crowley rotation problem, a 4-split 2D
+advection–diffusion–reaction problem and a 3-split nonlinear complex-valued PDE. Strang-OS22$\mu$
+with a grid-searched $\mu$ ($0.3$, $0.1$, $0.3$) has about half of Strang's error on the first
+problem and about 2.5 times less on the third, and is the most efficient there; on the second,
+Strang and Strang-OS22$_{0.1}$ perform alike. The complex methods CLT and Strang-CLT are the
+least efficient in wall-clock time on the real problems (Figs. 2–7). Remark 4.1 notes that
+central-difference $\partial_{xx}$ and $\partial_{yy}$ on a tensor grid commute, so exact sub-flows
+of the two would add no splitting error between them, but Heun sub-flows do not keep this.
 
 ## Geometric properties
 
@@ -329,12 +381,27 @@ further analysis (§5).
   or commutator flows reach higher orders (Blanes et al. 2024, §6.4); the claim is therefore a
   qualified statement about forward-in-time real splittings, consistent with Reynolds et al.'s
   remark above, not a contradiction of the barrier pages.
+- **Spiteri & Wei's OS22$\mu$ coefficients.** Tables 3 and 6 and the Case 4 text print the second
+  fraction of the first part (part $N-1$ in Table 6) as $\frac1{2\mu-2}$. With the first fraction
+  $\frac{2\mu-1}{2\mu-2}$, consistency requires $1-\frac{2\mu-1}{2\mu-2}=\frac1{2-2\mu}$, and the
+  second-order condition with the other part's first fraction $1-\mu$ gives the same value; only
+  $\frac1{2-2\mu}$ makes $\mu=0$ Strang, as their Remark 3.4 states *(compiler check, not in the
+  source)*. The table above uses the corrected value.
+- **The error-minimizing $\mu$.** Spiteri & Wei's Remark 3.6 says $\mu$ can be chosen to minimize
+  the leading error term and prints $\mu=\frac{1-\sqrt2}{\sqrt2}\approx-0.293$; their experiments
+  use the grid-searched $\mu=0.3$. With the corrected fractions, the third-order local error of
+  OS22$\mu$ on $y'=(L_1+L_2)y$ is $c_1(\mu)[L_1,[L_1,L_2]]+c_2(\mu)[L_2,[L_2,L_1]]$ with
+  $c_1=-\frac{4\mu-1}{24(\mu-1)}$, $c_2=-\frac{3\mu-1}{12}$; $c_1^2+c_2^2$ is minimized at
+  $\mu=1-\frac1{\sqrt2}\approx0.293$, while the printed negative value gives a larger value than
+  Strang's $\mu=0$ ($2.9\cdot10^{-2}$ against $8.7\cdot10^{-3}$; $2.0\cdot10^{-4}$ at the minimizer)
+  *(compiler check, not in the source; the measure of the leading term is the compiler's
+  choice, since the paper does not state one)*. The printed value is a sign slip.
 - **Toh et al.'s model scheme.** The parameterized scheme of Toh et al. (2026, Eq. (79))
   evaluates the explicit operator at the averaged state $\frac12y_n+\frac12U_3$. With the
   stiff part removed and the printed coefficients it gives
   $y_{n+1}=(I-\frac h2L_{\mathrm E})^2y_n=y_n-hL_{\mathrm E}y_n+\frac{h^2}4L_{\mathrm E}^2y_n$,
-  first order, whereas Heun gives $\frac{h^2}2L_{\mathrm E}^2$ *(compiler check, confirming
-  the reader's)*. The model thus does not represent the Heun step they implement, which they
+  first order, whereas Heun gives $\frac{h^2}2L_{\mathrm E}^2$ *(compiler check, not in
+  the source)*. The model thus does not represent the Heun step they implement, which they
   say is second order for the explicit updates; their first-order conclusion follows from the
   model and may hold for the implemented scheme for other reasons, but it is not shown by this
   analysis.
@@ -353,3 +420,4 @@ further analysis (§5).
 - [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1 (Eq. (4)), §2.3 (Thm. 1).
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.3 (splitting rejected for the stiff source).
 - [Carrel et al. (2023)](/sources/carrel-2023.md) — arXiv v2: §2.2, §4.
+- [Spiteri & Wei (2026)](/sources/spiteri-2026.md) — Eqs. (2)–(4), Def. 2.1, §3.3 (Lemmas 3.2–3.3, Eq. (22), Tables 3–7, Remarks 3.3–3.6), §4 (Remark 4.1, Figs. 2–7).

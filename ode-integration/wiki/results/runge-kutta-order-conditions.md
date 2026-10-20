@@ -5,7 +5,7 @@ description: "A Runge–Kutta method has order p iff its elementary weights equa
 status: established
 aliases: [order conditions, Butcher order conditions, rooted-tree order conditions, simplifying assumptions, B(ξ), C(η)]
 tags: [runge-kutta, order-conditions]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Runge–Kutta order conditions and simplifying assumptions
@@ -168,9 +168,9 @@ difficulty from the unweighted sum.
   precision the gradient loses almost all correct bits along the descent (§3–4, Figs. 4–5).
   Several weeks of random starts gave 8000 candidates, of which one was refined to the
   order-10 method above (§5). No structure was imposed, yet the printed coefficients have
-  $b_2=b_4=b_5=0$, five equal abscissae and $c_{16}=1$, the structure of classical
-  high-order constructions; the paper does not comment *(reader's check of Table 2, recorded on
-  the Source page)*. Zhang states that the solutions lie on a positive-dimensional set, on
+  $b_2=b_4=b_5=0$, and $c=A\mathbf 1$ gives five stages with the same abscissa
+  $0.41558\ldots$, $c_2=c_4$ and $c_{16}=1$, the structure of classical high-order
+  constructions; the paper does not comment *(compiler check of Table 2, not in the source)*. Zhang states that the solutions lie on a positive-dimensional set, on
   preliminary evidence (Remark 6).
 * **Butcher variables for constrained classes.** For
   [2N-storage methods](/methods/low-storage-runge-kutta.md), Bazavov (2026) turns the storage

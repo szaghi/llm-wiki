@@ -5,7 +5,7 @@ description: "The one-dimensional Euler Riemann problem of Sod, whose solution h
 status: established
 aliases: [Sod problem, Sod's shock tube, Sod Riemann problem]
 tags: [verification, ssp, imex, step-size-control]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Sod shock tube
@@ -75,7 +75,7 @@ number of about 0.47.
 
 * No source reports a temporal convergence rate on this problem. The shock limits the
   observed order to one in $L^1$, so the test checks robustness, not order *(compiler
-  remark)*.
+  remark, not in the sources)*.
 * Fekete et al. (2022) do not state the grid resolution, and Unfer (2021) does not
   state the domain; the Mach number of the Orlando et al. (2025b) run is not printed.
 

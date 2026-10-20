@@ -9,7 +9,7 @@ year: 2022
 venue: "BIT Numer. Math. 62:139-170"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_BIT_Numerical_Mathematics_Koyaguerebo-Imé_Arbitrary_high_order_A-stable_and_B-convergent_numerical_met.pdf"
 tags: [deferred-correction, implicit, stiff, stability, b-convergence]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -168,7 +168,7 @@ $\mu$ and $\beta$).
     stable method" for reaction–diffusion equations (ref. [18]) (§1).
     **Stated**
 
-Reader remarks recorded with the notes: the introduction says each DC
+*(Compiler checks, not in the sources.)* The introduction says each DC
 scheme "is B-stable", but the body proves B-convergence, not B-stability;
 the A-stability of Def. 5.1 is weaker than $\lvert R(z)\rvert\le1$
 power-boundedness (polynomial transient growth is allowed, and the factor
@@ -193,10 +193,6 @@ L-stable); Corollary 4.1 drops the condition $\mu h\ge-2$ of Thm 3.1(iv).
 - §1: "inherit the A-stable property of the trapezoidal rule", although the
   base is the implicit midpoint rule (the two coincide only on linear
   autonomous problems).
-- §6.4: the printed E5 system has $y_1y_2$ where the standard E5 of
-  Enright–Hull–Lindberg has $y_1y_3$, and $+1.13\cdot10^3y_4$ in $y_4'$;
-  this is the reader's comparison from memory of the standard problem and
-  is still to be verified against Hairer–Wanner II.
 - Table 6.5 "orders" at $h=1/600$ (14, 19.6, 27.7, …) are computed from
   errors at round-off level.
 

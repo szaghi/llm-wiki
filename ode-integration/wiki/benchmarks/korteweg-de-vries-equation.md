@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Korteweg–de Vries equation"
-description: "The dispersive KdV equation u_t + 6uu_x + u_xxx = 0, its generalized and linear variants and its 2D relative, the Kadomtsev–Petviashvili equation; the third derivative makes explicit steps scale like Δx³, so the sources test explicit–implicit–null stabilization, energy-relaxed IMEX, positivity-corrected SDIRK and exponential Parareal on them."
+description: "The dispersive KdV equation u_t + 6uu_x + u_xxx = 0, its generalized and linear variants and its 2D relative, the Kadomtsev–Petviashvili equation; the third derivative makes explicit steps scale like Δx³, so the sources test explicit–implicit–null stabilization, energy-relaxed IMEX, additive polynomial methods, positivity-corrected SDIRK and exponential Parareal on them."
 status: established
 aliases: [KdV equation, KdV, generalized KdV equation, Korteweg–de Vries, Kadomtsev–Petviashvili equation, KP equation, KP-I]
 tags: [verification, imex, structure-preserving, stiff, positivity, parallel]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Korteweg–de Vries equation
@@ -61,6 +61,14 @@ implicitly (§6) or through an implicitly treated linear surrogate
   replaced by $-i/\kappa_x$ (zero at $\kappa_x=0$), $u_0=2\operatorname{sech}^2\big((x+4\pi)+\tfrac15\cos(y/4)\big)$,
   final time 4, fine step $2^{-16}$; it forms a 2D soliton.
 
+* **Cosine data, Fourier space** ([Buvoli & Southworth (2023)](/sources/buvoli-2023.md),
+  §6.1): $u_t=-\big(\delta\,u_{xxx}+\tfrac12(u^2)_x\big)$ with $\delta=0.022$ as printed
+  (page-local $\delta$), $u_0=\cos\pi x$ on $[0,2]$, periodic, final time
+  $3.6/\pi$; 512 Fourier modes with 3/2 dealiasing, integrated in Fourier space as
+  $y'=Ly+N(t,y)$ with diagonal $L$, the dispersive part implicit and the nonlinear part
+  explicit; reference by a 32nd-order exponential spectral deferred correction method; relative
+  maximum-norm error.
+
 Tan et al. use fourth-order central finite differences and $P^2$ local DG, periodic
 data and $h=\Delta x$ throughout (§2.2, §4.2).
 
@@ -110,7 +118,24 @@ data and $h=\Delta x$ throughout (§2.2, §4.2).
   (Buvoli & Minion 2024, §6.2, Table 4a, Fig. 14; see
   [exponential integrators](/methods/exponential-integrators.md)).
 
+* **Additive polynomial methods with parallel stages.** On the cosine data the
+  seventh-order FIMEX-Radau*(5,2) (Radau IIA implicit part, explicit part extrapolated from the
+  previous step, two order-raising iterations) is the most efficient serial method for
+  relative errors below $10^{-2}$; computing its five independent explicit evaluations on five
+  OpenMP threads makes it the most efficient at every accuracy, about 2 times faster than any
+  Runge–Kutta method at error $10^{-2}$ and about 30 times faster than their fourth-order
+  IMEX Runge–Kutta comparator below $10^{-4}$ (14-core Intel Xeon E5-2683 v3; FFTs single-threaded).
+  The fourth-order FIMEX-Radau*(3,2) converges at order 4 over most of the step range, beats
+  that comparator, and stores three solution vectors instead of five (Buvoli & Southworth 2023,
+  §6.1.2, Fig. 5). See [polynomial time integrators](/methods/polynomial-time-integrators.md)
+  and [parallel-in-time integration](/methods/parallel-in-time-integration.md).
+
 ## Qualifications
+
+* Buvoli & Southworth (2023) print the dispersive term as $\delta\,u_{xxx}$ with
+  $\delta=0.022$ and describe the experiment as identical to one in two works they cite,
+  without naming the problem further (§6.1). Their §6.1.2 text discusses FIMEX-Radau*(2,1) while Fig. 5 shows
+  FIMEX-Radau*$(q,2)$. They were read as arXiv v2.
 
 * Nurkhametova et al. (2026) give neither the coefficients, the mesh nor the positivity shift of
   their KdV run, and the all-stage failure is asserted without figures. Their SDIRK32 and
@@ -136,3 +161,4 @@ data and $h=\Delta x$ throughout (§2.2, §4.2).
 - [Tan et al. (2022)](/sources/tan-2022.md) — §1, §2.2, §4.2.1 (Eqs. (4.8)–(4.9), Tables 4.11–4.14), §4.2.2 (Eqs. (4.10)–(4.11), Tables 4.15–4.18).
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §4.1.4 (Eq. 43), §5.1.4, §5.2.4, §5.3 (Tables 4, 6, Figs. 9–10, 23–24); CSL technical report version.
 - [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §6.1–6.2 (Eqs. 52–55, 58, Table 4a, Figs. 13–14); arXiv v2.
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — §6.1, §6.1.2 (Fig. 5); arXiv v2.

@@ -9,7 +9,7 @@ year: 2021
 venue: "Commun. Appl. Math. Comput. Sci. 16:155-179"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Communications_in_Applied_Mathematics_and_Computational_Scie_Nüßlein_Positivity-preserving_adaptive_RungeKutta_methods.pdf"
 tags: [positivity, structure-preserving, runge-kutta, embedded-pair, step-size-control]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -57,11 +57,11 @@ Notation: the solution is $y$ with $y_n$ at step $n$ (source $u$, $u^n$) and dim
 27. Conclusion: the method is mainly of interest for diagonally implicit methods, where the step is not stability-limited and the linear program is cheap; with explicit methods it helps only on a small interval of steps. (§6) **Stated**
 28. As $h\to0$ with a positive exact solution, eventually no modification is needed and the unmodified convergence is observed; expected and seen in the examples, not proved. (§4.2) **Shown**
 
-*(Reader checks, not in the source.)* With an explicit baseline the right-hand side must be evaluated at possibly negative stage values (the authors suggest $\sqrt{\max(y,0)}$-type guards), which Patankar-type schemes avoid. "Unconditional positivity" here is problem- and data-dependent, since the method changes every step; it is not the fixed-scheme sense of the Patankar literature. No convergence or stability theory covers the sequence of varying methods (admitted in §4.2).
+*(Compiler checks, not in the sources.)* With an explicit baseline the right-hand side must be evaluated at possibly negative stage values (the authors suggest $\sqrt{\max(y,0)}$-type guards), which Patankar-type schemes avoid. "Unconditional positivity" here is problem- and data-dependent, since the method changes every step; it is not the fixed-scheme sense of the Patankar literature. No convergence or stability theory covers the sequence of varying methods (admitted in §4.2).
 
 # Printed slips
 
-- **Eq. (2.13) drops the factor $\Delta t$:** printed "$u^1=u^0+\Delta t(f_1,f_2,f_3)\tilde b=\binom{-1/9}{10/9}+\alpha\binom{5}{-5}$". With $h=1/3$ the increment is $\frac{5\alpha}3\binom{1}{-1}$; the printed interval $\alpha\in[1/45,2/9]$ follows the printed formula, while the corrected one gives $[1/15,2/3]$ (reader recomputation; checked visually, p. 4).
+- **Eq. (2.13) drops the factor $\Delta t$:** printed "$u^1=u^0+\Delta t(f_1,f_2,f_3)\tilde b=\binom{-1/9}{10/9}+\alpha\binom{5}{-5}$". With $h=1/3$ the increment is $\frac{5\alpha}3\binom{1}{-1}$; the printed interval $\alpha\in[1/45,2/9]$ follows the printed formula, while the corrected one gives $[1/15,2/3]$ *(compiler check, not in the sources; checked visually, p. 4)*.
 - Eq. (3.3) prints "$u_i^n+\Delta t\sum_{j=0}^{s}F_{i,j}b_j\ge0$": the sum starts at $j=1$ and the weights are $\tilde b_j$.
 - Eq. (2.14d) prints "$u_4'=0.05u_2+0.02u_3+0.003u_4$" while (5.5d) prints "$-0.003u_4$"; mass conservation ($u_1'$ contains $+0.003u_4$) requires the minus sign.
 - §3.1: "we must take $\tilde p\le s$", where the argument gives $\tilde p<s$ (as §4.1 and §6 state).

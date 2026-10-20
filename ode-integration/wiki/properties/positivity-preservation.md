@@ -5,7 +5,7 @@ description: "A time integrator is positivity preserving if nonnegative data giv
 status: established
 aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme, bound preservation, invariant domain preservation, admissibility preservation]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Positivity preservation in time integration
@@ -60,7 +60,7 @@ Every route changes the class of methods or adds hypotheses on $f$:
   with frozen matrix, solved exactly; the Strang composition yields second-order
   approximations that preserve positivity and mass for every $h>0$, and fail for
   $h<0$ (Blanes et al. 2024, §9.2.1, Eqs. (9.14)–(9.15)). The structural hypothesis on
-  $A$ that makes the frozen flows positive is not recorded in the reading notes. See
+  $A$ that makes the frozen flows positive is not stated with the recalled result. See
   [operator splitting](/methods/operator-splitting.md).
 - **Exponential reformulation of stiff relaxation.** For a kinetic equation
   $\partial_tF=\frac1\varepsilon\mathcal Q(F)$ penalized by a BGK operator
@@ -133,6 +133,20 @@ different meaning of "unconditional".
   (Thm. 5.4, Table 2). [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) apply a
   Patankar-type correction after an SDIRK step, proving positivity for every $h$ when the
   weights are nonnegative and order $\min(p,q+1)$ (Prop. 3.23).
+  [Zhu et al. (2024)](/sources/zhu-2024.md) build second- and third-order modified
+  Patankar multistep schemes on explicit SSP multistep methods, state their unconditional
+  positivity with the proof omitted (Lemma 2.2, Thms. 2.3–2.4), and couple them with
+  explicit DG convection: the fully discrete scheme is then positive only under the
+  convective step $h\le\tfrac12h_{\mathrm{FE}}$ or $\tfrac13h_{\mathrm{FE}}$, the SSP
+  coefficients of the multistep bases (§3.3). In a multispecies reacting flow, positivity
+  of every partial density together with a conservative integrator and consistent fluxes
+  also gives the **upper** bound $z_i\le1$ of the mass fractions, since
+  $\sum_i\rho z_i=\rho$ is preserved (§1, Thm. 3.3; page-local $\rho$, $z_i$).
+  [Izgin et al. (2022)](/sources/izgin-2022.md) give these schemes a stability notion:
+  steady states of the positive and conservative $2\times2$ linear test are Lyapunov stable
+  for MPRK22(α) at every $h$, and for MPRK22ncs(α) at every $h$ only if $\alpha\ge1$ (Cor.
+  3.9, Cor. 3.11); see
+  [Lyapunov stability of positive, conservative schemes](/results/lyapunov-stability-positive-conservative-schemes.md).
 - **Adaptive Runge–Kutta weights.** Nüßlein et al. (2021) re-choose the weights of each step
   by a linear program that keeps the update nonnegative and the order conditions up to a
   possibly reduced order; every linear invariant is kept because each step is a Runge–Kutta
@@ -148,6 +162,53 @@ different meaning of "unconditional".
   its solution in the box. Bound preservation, invariant-domain preservation and positivity
   preservation are the same notion for different admissible sets (Def. 2). See
   [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md).
+  [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) take the
+  low-order scheme implicit (backward Euler) and the high-order one a DIRK method; the
+  limited update keeps global bounds for **every** $h$ (Thm. 1), at arbitrary order in
+  space and time. Their §1 recalls the Bolley–Crouzeix and Spijker barrier for general
+  linear methods; the limited scheme is nonlinear, so the barrier does not bind it.
+- **Invariant-domain preserving time stepping.** For systems the admissible set is a
+  convex **invariant domain** $\mathcal A$ (page-local): positive density and internal
+  energy and a minimum principle on the specific entropy for the Euler equations with a
+  co-volume equation of state, positive water height for shallow water
+  ([Ern & Guermond 2022](/sources/ern-2022.md), §1.1). Ern and Guermond make any explicit
+  method (Part I) or IMEX pair (Part II, [Ern & Guermond 2023](/sources/ern-2023.md))
+  invariant-domain preserving and conservative by limiting every stage against a low-order
+  Euler step from the closest earlier stage, under $h\le h_{\mathrm{FE}}/\Delta c_{\max}$
+  with $\Delta c_{\max}$ the largest gap between an abscissa and the closest earlier abscissa
+  not above it (page-local; Part I,
+  Lemma 2.2; Part II, Thm. 3.3); the parabolic low-order step is backward Euler and is
+  often unconditionally admissible (Part II, Remark 2.3). See
+  [invariant-domain preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md).
+
+**Positivity at every iteration of an implicit solver.** An implicit scheme can be positive
+at its solution while the iterates of the nonlinear solver are not; standard nonlinear
+solvers "do not inherently preserve positivity at each nonlinear iteration"
+([Sayyari & Yamaleev 2026](/sources/sayyari-2026.md), §1). Sayyari and Yamaleev solve each
+BDF1 or BDF2 step of a compressible Navier–Stokes discretization by **dual time
+stepping**, an explicit pseudotime iteration in which the new-level BDF term is taken at
+the new pseudotime level and the spatial residual $R$ at the old one. For BDF1 with
+pseudotime step $\Delta\tau$ (page-local; $k$ the pseudotime index) this gives
+
+$$Y^{(k+1)}=\frac{h}{h+\Delta\tau}\Bigl(Y^{(k)}+\frac{\Delta\tau}{h}y_n+\Delta\tau\,R(Y^{(k)})\Bigr),$$
+
+a forward Euler step scaled by a factor in $(0,1)$ applied to a positive combination of
+admissible states, so the explicit positivity proofs carry over (§4, Eqs. (10)–(13);
+page-local $Y^{(k)}$). Theorem 1 keeps the density positive if
+
+$$\Delta\tau<\Bigl(\tfrac2J\textstyle\sum_d\frac{\mathscr D^+_d+\mathscr D^-_d}{\Delta\bar\xi_d}-\frac1h\frac{\rho_n}{\rho^{(k)}}\Bigr)^{-1}$$
+
+pointwise (no constraint when the bracket is $\le0$; page-local metric $J$, dissipation
+coefficients $\mathscr D^\pm_d$, flux-point spacings $\Delta\bar\xi_d$, density $\rho$),
+which exceeds the forward Euler bound because of the subtracted term (Eq. (16));
+internal-energy positivity reduces to a quadratic in $\Delta\tau$ with positive constant
+term, so an admissible $\Delta\tau$ always exists (§5.2). For BDF2 the subtracted term is
+$\frac1h\bigl(2\rho_n-\tfrac12\rho_{n-1}\bigr)/\rho^{(k)}$ (§7.1). The physical step $h$ is
+unrestricted; the pseudotime step is not (§9). Positivity is proved for every pseudotime
+iterate, not for the converged BDF solution, whose positivity would follow only in the
+limit (nonnegativity) and only if the iteration converges, which is not analysed. See
+[implicit stage solvers](/methods/implicit-stage-solvers.md) and
+[BDF methods](/methods/backward-differentiation-formula.md).
 
 **Positivity limiters and the CFL price.** With a Zhang–Shu positivity limiter on a WENO5
 reconstruction, forward Euler is positive for CFL numbers up to the first Gauss–Lobatto
@@ -294,6 +355,26 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
   second-order base *(compiler check of the printed tableaux; see the method page)*.
 - Deferred-correction variants with Patankar weights and relaxation are cited, not
   analysed, by [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) (§1).
+- **Dual time stepping, BDF2.** Sayyari & Yamaleev (2026, §1, §9) state that the
+  pseudotime density bound exceeds that of explicit forward Euler. For BDF1 this follows
+  from Eq. (16). For BDF2 the subtracted term
+  $\frac1h(2\rho_n-\tfrac12\rho_{n-1})/\rho^{(k)}$ is positive only if
+  $4\rho_n>\rho_{n-1}$, i.e. unless the density drops by more than a factor 4 in one
+  physical step, so the comparison is not guaranteed for BDF2 in general *(compiler check,
+  not in the sources)*. Their BDF2 modified state also carries the negative coefficient
+  $-\frac{\Delta\tau}{2h}$ on $y_{n-1}$ (§7).
+- **Positivity of Patankar multistep schemes with convection.** Zhu et al. (2024) argue
+  the fully discrete positivity "since they are convex combinations of Euler forward"
+  steps (§3.3, proof of Thm. 3.3), while the Patankar part is not a forward Euler step; the
+  argument rests on the unconditional positivity of the source step, whose proof is
+  omitted, and on the limiter applied to the intermediate state in their algorithm (§3.5).
+  Their abstract's claim that the schemes handle stiff sources "with relatively large time
+  steps" is not supported by reported step sizes; the conclusions say they "take
+  appropriately small time step" (§5).
+- **Implicit SSP barrier in Ern & Guermond (2022).** Part I writes that implicit SSP
+  Runge–Kutta methods are at most first order (§1.2); that is the barrier for
+  unconditional SSP stated above, and implicit SSP methods with a finite coefficient reach
+  order 6 (Kuzmin et al. 2022, §1; Quezada de Luna & Ketcheson 2022, §1).
 - **Dawes's notion and the SSP notion differ.** Dawes's "monotone" is nonnegativity of
   the entries of the one-step matrix for a specific operator; no SSP coefficient is
   computed. The two-stage RKL1 polynomial
@@ -332,3 +413,9 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §3.3, Prop. 3.23, Fig. 8.
 - [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.2 (Algorithm 3), App. A (Defs. 4–5, Thm. 1); arXiv v4.
 - [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — §1 (structure-preserving DeC variants cited); arXiv v4.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §1.1–1.2, Lemma 2.2; HAL v2.
+- [Ern & Guermond (2023)](/sources/ern-2023.md) — Remark 2.3, Thm. 3.3; HAL v1.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) — §1, Thm. 1; arXiv v1.
+- [Zhu et al. (2024)](/sources/zhu-2024.md) — §1, Lemma 2.2, Thms. 2.3–2.4, §3.3, §3.5 (Thm. 3.3), §5; arXiv v1.
+- [Izgin et al. (2022)](/sources/izgin-2022.md) — Cors. 3.9, 3.11; arXiv v1.
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — §1, §4 (Eqs. (10)–(13)), §5.1 (Thm. 1, Eq. (16)), §5.2, §7–7.2, §9; arXiv v3.

@@ -5,7 +5,7 @@ description: "The cubic nonlinear Schrödinger equation on periodic domains, Fou
 status: established
 aliases: [NLS, NLS equation, cubic nonlinear Schrödinger equation, focusing nonlinear Schrödinger equation]
 tags: [verification, exponential, parallel, stiff, step-size-control]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Nonlinear Schrödinger equation
@@ -35,7 +35,7 @@ the test then probes what the non-dissipative spectrum does to stability and to 
 
 In the form above Luan's problem has $g=\lambda=1>0$ (defocusing, with a potential), while
 Buvoli & Minion and Saupe et al. solve the focusing equation with $g=-2$ and $V=0$ *(compiler
-translation of the printed forms)*; this is a difference of test problems, not of
+check of the printed forms, not in the sources)*; this is a difference of test problems, not of
 conventions. Luan calls his system "mildly stiff".
 
 **Buvoli & Minion's three initial data** (Eqs. 19–21) differ in how much high-frequency
@@ -105,9 +105,9 @@ tolerance:
   parallel SDC variant is faster, except at low accuracy, where ARK5(4) wins; this is the
   only one of their four problems on which a Runge–Kutta method wins anywhere (§4.2, Fig. 10).
 
-## Linear Schrödinger tests elsewhere in the bundle
+## Linear Schrödinger uses elsewhere in the bundle
 
-Several pages use the **linear** Schrödinger equation, which shares the purely imaginary
+Several pages use the **linear** Schrödinger equation, in runs or in recalled theory, which shares the purely imaginary
 spectrum but not the cubic term:
 
 - weak-stage-order DIRK methods recover full order on a linear Schrödinger problem with
@@ -115,8 +115,8 @@ spectrum but not the cubic term:
   differences ([Biswas et al. 2023](/sources/biswas-2023.md), §6.3, Fig. 4; see
   [DIRK methods of high weak stage order](/methods/dirk-high-weak-stage-order.md));
 - Strang splitting of the pseudo-spectral equation with a smooth periodic potential has a
-  global error $\le Ch^2\lVert u_0\rVert_{H^2}$ independent of the grid
-  ([Blanes et al. 2024](/sources/blanes-2024.md), §6.3; see
+  global error $\le Ch^2\lVert u_0\rVert_{H^2}$ independent of the grid, a result the survey
+  recalls from Jahnke and Lubich without a run ([Blanes et al. 2024](/sources/blanes-2024.md), §6.3; see
   [operator splitting](/methods/operator-splitting.md)), and processed, complex-coefficient
   and Magnus-type methods for Schrödinger equations are on
   [processing and effective order](/methods/processing-and-effective-order.md),

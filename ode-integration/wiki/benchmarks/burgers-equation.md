@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation"
-description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen into a shock, and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, TASE stability, bound-preserving limiting of high-order Runge–Kutta, single-stage Lax–Wendroff and multiderivative schemes, and Parareal coarse propagators."
+description: "Inviscid Burgers u_t + (u²/2)_x = 0 and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, TASE stability, bound-preserving and invariant-domain-preserving limiting, single-stage Lax–Wendroff and multiderivative schemes, asynchronous low-storage Runge–Kutta and Parareal; one source proves a cell entropy inequality on it."
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
 tags: [structure-preserving, order-reduction, verification, stiff]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Burgers equation
@@ -105,6 +105,37 @@ Courant number).
   Example 4.3): $u_t+uu_x=\kappa u_{xx}$ on $(0,1)$, $u=0$ at both ends, $u_0$ the indicator of
   $(0,\tfrac12)$, $T=1$, $\kappa=1$ and $0.02$; fine step $1/2000$ or $10^{-4}$, ratios of
   fine to coarse steps 10 to 100; the spatial discretization is not stated.
+* **Viscous, square pulse, periodic** ([Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md),
+  §8.2, Eq. (36)): $\kappa=0.01$ on $[-1,1]$, $u_0=2$ for $\lvert x\rvert<\tfrac12$ and 0
+  otherwise, $t=0.25$, 200 and 400 cells, global bounds $[0,2]$; WENO5 finite volumes with a
+  five-stage fifth-order SDIRK, limited in space and time around a backward Euler low-order
+  scheme.
+* **2D inviscid, square data** ([Ern & Guermond (2022)](/sources/ern-2022.md), §4.4.2,
+  Eqs. (45)–(46), from Guermond and Popov, as recalled):
+  $\partial_tu+\nabla\cdot\big(\tfrac12(u^2,u^2)\big)=0$ on $(-0.25,1.75)^2$, $u_0=1$ on a square
+  and $-a$ elsewhere (page-local $a>0$; see Qualifications), invariant domain $[-a,1]$, exact
+  solution available; "many sonic points", which defeat schemes with too little low-order or
+  too little high-order viscosity; $T=0.65$, continuous $\mathbb P_1$ finite elements on
+  uniform meshes.
+* **3D viscous vector Burgers turbulence** ([Goswami et al. (2023)](/sources/goswami-2023.md),
+  §5.1): $\partial_tu_i+u_j\partial_ju_i=\kappa\,\partial_j\partial_ju_i$ in a periodic box from
+  random-phase sinusoidal modes, fourth- and sixth-order finite differences with low-storage
+  Runge–Kutta, an MPI solver on up to 27,000 cores; $\kappa$ and the box size are not printed.
+
+## Analysis on Burgers without experiments
+
+[Wei & Shu (2026)](/sources/wei-2026.md) use inviscid Burgers as the model problem of a
+proof, with no numerical experiments. For DG of degree 2 and 3 with the global
+Lax–Friedrichs flux on arbitrary non-uniform meshes, and for every explicit three-stage
+third-order Runge–Kutta method with $c_3=a_{31}+a_{32}=1$ and positive weights (the
+one-parameter family $a_{21}\in(\tfrac13,\tfrac23)$, which contains Kutta's method at
+$a_{21}=\tfrac12$ but not SSPRK(3,3)), they prove a fully discrete *cell* square-entropy
+inequality under a CFL condition $h\le C\Delta x/\max\lvert u\rvert$, with $C$ depending only
+on $a_{21}$ and not computed explicitly (Thms. 3 and 5); summed over cells it gives $L^2$
+stability. Their companion paper, as they recall it, shows by counterexample that SSPRK(3,3)
+with degree-2 DG is not $L^2$ stable on Burgers under $h\sim\Delta x$ (§1). See
+[fully discrete cell entropy inequality](/results/fully-discrete-cell-entropy-inequality.md)
+and [entropy stability](/properties/entropy-stability.md).
 
 ## What it shows
 
@@ -188,6 +219,31 @@ Courant number).
   Taylor schemes of order $2p$ with $p=4,5,6$ diverge rapidly at $\nu=0.5$ well before the
   shock forms (§6.1, Figs. 2–3). See
   [multiderivative Runge–Kutta](/methods/multiderivative-runge-kutta.md).
+* **Bounds with implicit time stepping at any step.** On the viscous square pulse the
+  unlimited WENO–SDIRK solution undershoots the lower bound by $2.67\times10^{-9}$ on 200 cells
+  and $2.41\times10^{-5}$ on 400 cells, while the FCT and global-monolithic-convex limited
+  schemes and the backward Euler low-order scheme stay within the bounds to round-off
+  ($10^{-14}$–$10^{-15}$) (Quezada de Luna & Ketcheson 2022, §8.2, Fig. 2). See
+  [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md).
+* **Invariant-domain preservation and the CFL number.** With invariant-domain-preserving
+  limiting after each incremental stage, all explicit methods converge at $L^1$ rates
+  0.60–1.05 at CFL 0.25 (the text says "close to 0.9"), as well as SSP methods (Ern & Guermond
+  2022, Table 8). Sweeping CFL over $[0.05,1]$ on a $401^2$ grid, SSPRK(2,2) starts to lose
+  accuracy at CFL $\gtrsim\tfrac12$ and stability at CFL $\gtrsim0.9$, SSPRK(3,3) at
+  $\gtrsim\tfrac13$ and $\gtrsim0.6$, while the midpoint rule RK(2,2;1), Heun's third-order
+  RK(3,3;1) and RK(4,3;1) behave properly over the whole range, and the optimally efficient
+  fourth-order methods are slightly more accurate than SSPRK(5,4) (§4.4.2, Fig. 4). Their CFL
+  is scaled by the number of stages, so equal CFL means equal cost. See
+  [invariant-domain-preserving time stepping](/methods/invariant-domain-preserving-time-stepping.md).
+* **Communication-avoiding Runge–Kutta at scale.** On the 3D turbulence problem at $512^3$
+  on 4096 cores, the communication- and synchronization-avoiding variants with delayed halo
+  data reproduce the decay of kinetic energy and dissipation of the synchronous solver and its
+  velocity-gradient moments to about four digits (Goswami et al. 2023, §5.2, Fig. 7, Table 4);
+  in strong scaling of a $240^3$ grid on 27,000 cores the communication-avoiding variant is
+  4.81 times (fourth order, two-stage LSERK2) and 6.68 times (sixth order, three-stage LSERK3a)
+  faster than the synchronous one, and about 2 times faster in weak scaling (Figs. 8, 10). The
+  temporal order on this nonlinear problem is not measured. See
+  [low-storage Runge–Kutta](/methods/low-storage-runge-kutta.md).
 * **Parareal coarse propagators.** Optimized coarse propagators contract the Parareal error by
   about 0.04 per iteration for $\kappa=1$, and by about 0.06 against 0.21 for backward Euler at
   $\kappa=0.02$ with step ratio 10; at ratio 100 both converge slowly, the optimized one "still
@@ -206,6 +262,15 @@ Courant number).
   linear Courant numbers 0.4275 and 0.2300, and those schemes still converge on Burgers; the
   paper does not comment (§6.1; see
   [linear advection equation](/benchmarks/linear-advection-equation.md)).
+* **Initial datum of Ern & Guermond (2022).** Eq. (46) prints $u_0=1$ where
+  $\lvert x_1-\tfrac12\rvert\le1$ and $\lvert x_2-\tfrac12\rvert\le1$, a square
+  $[-\tfrac12,\tfrac32]^2$ that extends beyond the domain $(-0.25,1.75)^2$ on two sides, and
+  gives no value of $a$ *(compiler check, not in the source)*. The datum actually run is not
+  fully specified by the paper; the colour bar of their Fig. 3 spans $[-0.75,1]$.
+* Quezada de Luna & Ketcheson (2022) print Eq. (36a) without the $x$-derivative on the flux,
+  and use undefined hatted face states in the wave-speed estimate of §8.2.
+* Goswami et al. (2023) analyse their asynchronous stages on the linear diffusion equation
+  only; on vector Burgers they verify agreement with the synchronous solver, not the order.
 * Jin et al. (2025) state that a ratio "$\Delta T/\nu$ is unchanged" between their viscous and
   linear runs; no pair of their printed settings matches (§4.2, as printed).
 
@@ -230,3 +295,7 @@ Courant number).
 - [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §6.1 (Eq. 23, Figs. 2–3), Table 2.
 - [Jin et al. (2025)](/sources/jin-2025.md) — §4.2, Example 4.3 (Figs. 4.6–4.7); arXiv v2.
 - [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §4.1–4.4, Eqs. (4.1)–(4.7), Figs. 3–4.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) — §8.2 (Eq. (36), Fig. 2); arXiv v1.
+- [Ern & Guermond (2022)](/sources/ern-2022.md) — §4.2 (Eq. (42)), §4.4.2 (Eqs. (45)–(46), Fig. 3–4, Table 8); HAL v2.
+- [Goswami et al. (2023)](/sources/goswami-2023.md) — §5.1–5.2 (Figs. 7–10, Table 4).
+- [Wei & Shu (2026)](/sources/wei-2026.md) — §1, §3 (Thms. 3 and 5); author manuscript, analysis only.

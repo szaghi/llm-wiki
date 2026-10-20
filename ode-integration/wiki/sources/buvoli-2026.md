@@ -9,7 +9,7 @@ year: 2026
 venue: "SIAM J. Sci. Comput. 48:A2884-A2909"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_SIAM_Journal_on_Scientific_Computing_Buvoli_Multirate_RungeKutta_for_Nonlinearly_Partitioned_Systems.pdf"
 tags: [multirate, imex, runge-kutta, order-conditions, stability]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -62,7 +62,7 @@ Notation: $f(y)=F(y,y)$ (source $G$). The first argument of $F$ is implicit and 
 28. With two Gaussian pulses all implicitly wrapped MR-NPRK methods reach almost exactly the accuracy of the underlying explicit integrator; with three, one inside the diffusive region, multirating improves the error much less, because diffusion is still stepped with the full step. (§4.4) **Shown**
 29. At moderate precision MR-NPRK3-1[ssp3-8x] and MR-NPRK2m[ssp2-16x] obtain a stable solution about four times faster than single-rate NPRK. (§4.4) **Shown**
 
-*(Reader checks, not in the source.)* L-stability in the stiff $z_1$ limit is weaker than [L-stability](/properties/a-stability.md): it requires no A-stability, only the limit at fixed $z_2$. §3.1.1 says the numerator has degree "at least" $s^{\{2\}}$ in $z_2$ "(See Proposition A.4)", but Prop. A.4 gives only upper bounds. (C.15) calls (3.8) "The only L-stable, three-stage, stiffly-accurate SDIRK method", which holds only once order 3 is imposed. The partitioned test problem represents a nonlinear system only when the two partial Jacobians are simultaneously diagonalizable, a strong assumption that the paper states.
+*(Compiler checks, not in the sources.)* L-stability in the stiff $z_1$ limit is weaker than [L-stability](/properties/a-stability.md): it requires no A-stability, only the limit at fixed $z_2$. §3.1.1 says the numerator has degree "at least" $s^{\{2\}}$ in $z_2$ "(See Proposition A.4)", but Prop. A.4 gives only upper bounds. (C.15) calls (3.8) "The only L-stable, three-stage, stiffly-accurate SDIRK method", which holds only once order 3 is imposed. The partitioned test problem represents a nonlinear system only when the two partial Jacobians are simultaneously diagonalizable, a strong assumption that the paper states.
 
 # Printed slips
 

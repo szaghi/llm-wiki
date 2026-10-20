@@ -9,7 +9,7 @@ year: 2025
 venue: "Numer. Algorithms 100:369-393"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Numerical_Algorithms_Saupe_Adaptive_time_step_selection_for_spectral_deferred_correctio.pdf"
 tags: [deferred-correction, step-size-control, error-estimation, parallel, stiff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -165,7 +165,7 @@ registry's scaled estimate is $\mathrm{err}_n=\epsilon/\epsilon_{\rm TOL}$.
     occur, and has beaten DIRK-based IMEX Runge–Kutta in wall time for incompressible flow.
     (§2.1) **Stated**
 
-*(Reader checks, not in the source.)* Claim 1 is imprecise: only Gauss–Legendre nodes reach
+*(Compiler checks, not in the sources.)* Claim 1 is imprecise: only Gauss–Legendre nodes reach
 order $2\mathsf M$; Radau gives $2\mathsf M-1$ and Lobatto $2\mathsf M-2$, and Gauss–Legendre
 nodes exclude the endpoint. The exponent $5/4$ of claim 17 needs $\mathsf M=4$ with order 5,
 while the diagonal-SDC runs use 3 processes, one per node, and $2\mathsf M-1=5$ fits

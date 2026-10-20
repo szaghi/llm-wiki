@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 214:104762"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Computers_amp_Fluids_Dawes_Some_properties_of_the_Runge-Kutta-Legendre_super-time-stepp.pdf"
 tags: [stabilized, runge-kutta, explicit, positivity, method-of-lines, stability]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -169,8 +169,8 @@ constants (not Butcher coefficients).
 
 - §6.1.3, 4-stage RKL2 Dirichlet: "$\beta_e^*\le\frac1{21}(7-\sqrt7)\sim0.18$".
   $(7-\sqrt7)/21=0.2073$, the correct smallest root of
-  $a_{1,2}\propto2-18d+49d^2-42d^3$ (reader's symbolic and numerical
-  check); the decimal is wrong, the closed form right.
+  $a_{1,2}\propto2-18d+49d^2-42d^3$ *(compiler symbolic and numerical
+  check, not in the sources)*; the decimal is wrong, the closed form right.
 - (D.8), 3-stage RKL1 Dirichlet: "$a_{i,i+1}=6\beta_e(1-5\beta_e+\frac{35\beta_e^2}{36})$"
   should have $\frac{35\beta_e^2}{6}$; and "$a_{i,i+2}=\frac{5\beta_e^2}{4}(1-2\beta_e)$"
   should be $\frac{15\beta_e^2}{2}(1-2\beta_e)$, as printed correctly in
@@ -190,7 +190,7 @@ constants (not Butcher coefficients).
   back" for "fed back", "Table's 1 and 2", "forth row", "Gegenbauger";
   refs. [11], [12] print the first author "Meyer DM", ref. [14] "Meyer CD".
 
-All reader verifications are against the printed matrices (symbolic
+*(Compiler checks, not in the sources.)* All verifications are against the printed matrices (symbolic
 recomputation of $P(hL)$); the appendix (E) asymmetric entries were not
 re-verified.
 

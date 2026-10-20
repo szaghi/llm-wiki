@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A906-A928"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Caliari_Accelerating_Exponential_Integrators_to_Efficiently_Solve_Se.pdf"
 tags: [exponential, lawson, stability, explicit-implicit-null, advection-diffusion-reaction]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -88,12 +88,12 @@ imex2, erbe.
    $\delta\ge1/(1+2c_2)$; $1/3$ at $c_2=1$ (Thm 2.5). **Proved**
 6. Lawson2a (l2a) and Lawson2b (l2b) are unconditionally stable for
    $\delta\ge0.301$ (Thm 2.6, "a numerical calculation"). **Proved** (numerical
-   bound). The reader notes that both have
+   bound). Both have
    $R=e^{\delta z}(1+w+w^2/2)$ with $w=(1-\delta)z$, so the equal bounds are
-   automatic.
+   automatic *(compiler check, not in the sources)*.
 7. The new stabilized Lawson2 (sl2) with $c_2=0.327$, chosen to minimize the
    bound, is unconditionally stable for $\delta\ge0.183$ (Thm 2.7). **Proved**
-   (numerical bound; the reader's check gives about 0.1823)
+   (numerical bound; a compiler check, not in the sources, gives about 0.1823)
 8. IMEX backward–forward Euler (bfe) and the second-order imex2 of Wang et
    al. (2020) need $\delta\ge1/2$ (Remark 2.1, quoted). **Stated**
 9. Ranking (Table 1): stabilized Lawson < Lawson < ExpRK and exponential
@@ -163,8 +163,8 @@ imex2, erbe.
 
 - Fig. 4 (right panel), p. 13: the legend reads "ERK1P1" for the
   second-order erk2p1.
-- Thm 2.7: the bound 0.183 at $c_2=0.327$ is rounded up; the reader's
-  computation gives about 0.1823.
+- Thm 2.7: the bound 0.183 at $c_2=0.327$ is rounded up; a compiler
+  computation, not in the sources, gives about 0.1823.
 
 # Notation map
 
@@ -173,7 +173,7 @@ imex2, erbe.
 | $u$, $u^n$ | $y$, $y_n$ | |
 | **$\tau$** | $h$ | **collision with the tree $\tau$** |
 | **$A$** | $L$ | **collision with the Butcher matrix**; constant-coefficient linear part |
-| $g$, $F$ | $N$, $f$ | $N$ page-local remainder, including the variable-coefficient terms |
+| $g$, $F$ | $N$, $f$ | $N$ page-local remainder, including the variable-coefficient terms; **collides** with the registry slice count $N$, always written with arguments |
 | $U$ | $Y_2$ | stage value |
 | $\varphi_1=(e^z-1)/z$, $\varphi_2=(\varphi_1-1)/z$ | $\phi_1$, $\phi_2$ | same normalisation |
 | **$\lambda\in[0,1]$** | $\delta$ | **collision with the eigenvalue**; fraction of maximal diffusion in $L$, the EIN coefficient |

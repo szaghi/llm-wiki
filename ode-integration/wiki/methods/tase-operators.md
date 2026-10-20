@@ -5,7 +5,7 @@ description: "TASE operators precondition the stiff linear(ized) part of a semi-
 status: established
 aliases: [TASE, TASE preconditioner, time-accurate and highly-stable explicit operators, RK+TASE, TASE-RK, TRK]
 tags: [stiff, explicit, stability, linear-algebra, runge-kutta]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # TASE operators: time-accurate and highly stable explicit operators
@@ -201,15 +201,15 @@ stage against one for SDIRK. On nonlinear diffusion ($\beta=4$), RK with TASE co
 **The Calvo–Montijano–Rández family.** [Conte et al. (2024)](/sources/conte-2024.md)
 use the TASE operators of Calvo, Montijano and Rández,
 
-$$\mathcal P_p(\boldsymbol\vartheta,hL)=\sum_{j=1}^p\varpi_j\,(I-\vartheta_jhL)^{-1},\qquad
-\varpi_j=\frac{\vartheta_j^{-(p-1)}}{\prod_{l\ne j}\big(\vartheta_j^{-1}-\vartheta_l^{-1}\big)},$$
+$$\mathcal P_p(\boldsymbol\vartheta,hL)=\sum_{j=1}^p\mathsf w_j\,(I-\vartheta_jhL)^{-1},\qquad
+\mathsf w_j=\frac{\vartheta_j^{-(p-1)}}{\prod_{l\ne j}\big(\vartheta_j^{-1}-\vartheta_l^{-1}\big)},$$
 
-with free shifts $\vartheta_j>0$ and weights $\varpi_j$ fixed by
-$\mathcal P_p=I+\mathcal O(h^p)$ (page-local $\vartheta_j$, $\varpi_j$; the source's
+with free shifts $\vartheta_j>0$ and weights $\mathsf w_j$ fixed by
+$\mathcal P_p=I+\mathcal O(h^p)$ (page-local $\vartheta_j$, $\mathsf w_j$; the source's
 $\omega_j$, $\beta_j$; §2, Eqs. (2.1)–(2.2)). Bassenne et al.'s operator above is the
-special case $\vartheta_j=\vartheta/2^{j-1}$, $\varpi_j=\omega_{p,j-1}/2^{j-1}$ (reader's
-check on Conte et al., verified for $p=2$, where $(\vartheta,\vartheta/2)$ gives
-$\varpi=(-1,2)$). The shifts used (Table 1, from Calvo et al.) are $(3,\,1.5)$ for $p=2$,
+special case $\vartheta_j=\vartheta/2^{j-1}$, $\mathsf w_j=\omega_{p,j-1}/2^{j-1}$ *(compiler
+check: $(2^kI-\vartheta hL)^{-1}=2^{-k}(I-2^{-k}\vartheta hL)^{-1}$, and the weights are unique
+for given shifts; for $p=2$, $(\vartheta,\vartheta/2)$ gives $\mathsf w=(-1,2)$)*. The shifts used (Table 1, from Calvo et al.) are $(3,\,1.5)$ for $p=2$,
 $(2.3147,\,1.8796,\,1.5822)$ for $p=3$ and $(3.9396,\,2.4506,\,2.2271,\,2.0612)$ for
 $p=4$. The $p=2$ choice is Bassenne's family with $\vartheta=3$, twice the
 $\vartheta_{\min}=1.5$ of RK2 in the table above *(compiler check, not in the
@@ -340,15 +340,16 @@ W-methods with an inexact Jacobian "using the techniques that we employ" (§1.1)
 - **Spectral radius as stability criterion** (Conte et al. 2024). Their Definition 3.1
   asks for $\lVert y_n\rVert$ bounded independently of $h$ and $n$, while Theorem 5.3
   equates it with a spectral-radius condition; for non-normal amplification matrices
-  $\rho\le1$ does not bound the powers uniformly (reader's check on the source; Remark 6.2
-  of the source concedes a norm-dependent statement).
+  $\rho\le1$ does not bound the powers uniformly *(compiler remark, not in the source)*;
+  Remark 6.2 of the source concedes a norm-dependent statement.
 - **W-method literature** (Conte et al. 2024, §7): the statement that inexact-Jacobian
   Rosenbrock methods have "no study on the related stability properties" is unqualified;
   their own reference list includes W-method and approximate-factorization papers that
-  analyse stability with approximate Jacobians (reader's note on the source).
-- **Printed values** (Conte et al. 2024, arXiv v1): the reader of the source computes
-  $\mu^*_4=0.7451$ from the printed formula against the printed $0.7445$ ($\mu^*_3=0.5743$
-  reproduces); Eq. (5.3) raises the amplification matrix to the power $n+1$ and applies it
+  analyse stability with approximate Jacobians *(compiler remark from the cited titles,
+  not in the ingested sources)*.
+- **Printed values** (Conte et al. 2024, arXiv v1): the printed formula with the tabulated
+  shifts gives $\mu^*_4=0.7451$ against the printed $0.7445$, while $\mu^*_3=0.5743$
+  reproduces *(compiler check)*; Eq. (5.3) raises the amplification matrix to the power $n+1$ and applies it
   to $y_n$ instead of $y_0$. The analysis covers only $s=p\le4$ and the tabulated shifts.
 - **Printed slips** (arXiv v2): the proof of Thm. 3.2 cites a nonexistent
   "lemma 3.2" for Lemma 3.3; §4.5 names RK4 as the baseline while the caption of

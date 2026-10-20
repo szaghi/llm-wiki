@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 100:67"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Boscheri_A_Structure-Preserving_Semi-implicit_IMEX_Finite_Volume_Sche.pdf"
 tags: [imex, asymptotic-preserving, stiff, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -52,7 +52,7 @@ Notation: $h$ is the step. $\varepsilon_{\mathrm c}=\lVert\mathbf v\rVert/c$ and
 22. 3D cloud–shock interaction ($180^3$ cells): the second-order scheme "greatly improves" on first order and shows "genuinely 3D magnetized flows at reasonable compute times due to the linear implicit structure". No timings are given. (§4.8, Fig. 13) **Shown** (qualitative; no cost data)
 23. The only earlier semi-implicit scheme for the low-Alfvén regime is [36] (Fambri 2021): first order in time, staggered, with a nonlinearly coupled implicit sub-system that needs a fixed-point method nested with Newton [24]. (§1, §3) **Stated**
 
-*(Compiler checks by the reader, not in the source.)* LSDIRK2 satisfies the order-2 conditions, including the coupling conditions $b^{\mathrm E\top}c^{\mathrm I}=b^{\mathrm I\top}c^{\mathrm E}=\tfrac12$. Its explicit part is not stiffly accurate: the last row $(c^{\mathrm E}_2,0)\ne b^{\mathrm E}$, with $c^{\mathrm E}_2\approx1.707>1$. The pair is therefore not globally stiffly accurate, and claim 11 concerns only the implicit part plus $b^{\mathrm E}=b^{\mathrm I}$. Claim 9 holds only for the two-tableau class cited: [additive and GARK methods](/methods/generalized-additive-runge-kutta.md) allow more than two partitions. Claim 15 is loose, since Table 2 shows EOCs from 0.91 to 3.36 at $\rho_0\le10^{-3}$, and 1.67–1.69 for $u$ at $256^2$ for $\rho_0=1$ and $10^{-1}$.
+*(Compiler checks, not in the sources.)* LSDIRK2 satisfies the order-2 conditions, including the coupling conditions $b^{\mathrm E\top}c^{\mathrm I}=b^{\mathrm I\top}c^{\mathrm E}=\tfrac12$. Its explicit part is not stiffly accurate: the last row $(c^{\mathrm E}_2,0)\ne b^{\mathrm E}$, with $c^{\mathrm E}_2\approx1.707>1$. The pair is therefore not globally stiffly accurate, and claim 11 concerns only the implicit part plus $b^{\mathrm E}=b^{\mathrm I}$. Claim 9 holds only for the two-tableau class cited: [additive and GARK methods](/methods/generalized-additive-runge-kutta.md) allow more than two partitions. Claim 15 is loose, since Table 2 shows EOCs from 0.91 to 3.36 at $\rho_0\le10^{-3}$, and 1.67–1.69 for $u$ at $256^2$ for $\rho_0=1$ and $10^{-1}$.
 
 # Printed slips
 

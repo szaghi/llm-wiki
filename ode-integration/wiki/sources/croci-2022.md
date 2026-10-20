@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 464:111349"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Croci_Mixed-precision_explicit_stabilized_RungeKutta_methods_for_s.pdf"
 tags: [mixed-precision, stabilized, runge-kutta, explicit, multirate, stiff]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -205,7 +205,7 @@ ratio.
 | $A$ (in $f=Ay+g$) | $L$ | **collides with the Butcher matrix $A$** |
 | $R_s(z)$, $R_k$ | $P_s(z)$, internal $P_k$ | stability polynomial of an explicit method; $z=h\lambda$ agrees |
 | $\ell_s^\varepsilon=2\omega_0/\omega_1$, $\beta^p(s,\varepsilon)$ | — | real stability boundary and its lower bound |
-| $T_j$, $U_j$ | — | Chebyshev polynomials of the first and second kind; **$T$ collides with the tree set** |
+| $T_j$, $U_j$ | — | Chebyshev polynomials of the first and second kind; **$T$ collides with the tree set and the time slices $T_j$, $U_j$ with the Parareal iterate $U^{(k)}_j$** |
 | $\mu_j,\nu_j,\kappa_j,\gamma_j$, $\omega_0,\omega_1$, $a_j$, $b_j$ | — | RKC recurrence coefficients; **$\nu_j$, $\gamma_j$, $a_j$, $b_j$ collide with the Courant number, Rosenbrock $\gamma$ and Butcher coefficients** |
 | $c_j$ | $c_j$ | internal abscissae, $c_s=1$; agrees |
 | **$\varepsilon$** | $\varepsilon_{\mathrm d}$ | **RKC damping; collides with the stiffness parameter $\varepsilon$** |
@@ -234,6 +234,7 @@ Chunk 2 (2026-10-19). This source is cited on:
 
 * [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
 * [Mixed-precision explicit Runge–Kutta methods](/methods/mixed-precision-runge-kutta.md)
+* [Multirate Runge–Kutta–Chebyshev (mRKC) methods and the averaged-force modified equation](/methods/multirate-runge-kutta-chebyshev.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Stabilized explicit Runge–Kutta methods: Chebyshev, Legendre and super-time-stepping](/methods/stabilized-explicit-runge-kutta.md)

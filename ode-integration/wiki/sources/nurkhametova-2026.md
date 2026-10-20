@@ -9,7 +9,7 @@ year: 2026
 venue: "Appl. Numer. Math. 230:503-535"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Applied_Numerical_Mathematics_Nurkhametova_A_Patankar_predictor-corrector_approach_for_positivity-prese.pdf"
 tags: [positivity, structure-preserving, stiff, implicit, step-size-control]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -34,7 +34,7 @@ Notation: $y\in\mathbb R^d$ (the source writes $d$ and $N$ interchangeably); sta
 4. A conservative PDS with $d_{ij}=\ell_{ij}(y)y_i$, $\ell_{ij}\ge0$, can be written $y'=\mathbb G(y)y$ with $\mathbb G=\mathcal L^\top-\operatorname{diag}(\mathcal L\mathbf 1)$, $\mathcal L=(\ell_{ij})$, which has the graph-Laplacian sign structure and zero column sums. (§3.2, Eqs. (11)–(14)) **Derived**
 5. Not every linear invariant of $y'=\mathbb G(t,y)y$ is a left null vector of $\mathbb G$; invariants that are not may be lost by the methods of the paper. (Remark 3.11) **Stated**
 6. Lemma 3.14: in any monotone norm, clipping the negative entries of SDIRK stages and solution does not increase their local errors, which are $\mathcal O(h^{q+1})$ ($q=1$) and $\mathcal O(h^{p+1})$. (Eq. (19), Fig. 1) **Proved**
-7. The corrector (24) gives $y_n\ge0\Rightarrow y_{n+1}\ge0$ and $y_n>0\Rightarrow y_{n+1}>0$, and preserves every linear invariant $w_j$ with $w_j^\top \mathbb G\equiv0$, for any step. (Eqs. (24d)–(24e)) **Proved** (M-matrix argument; see the reader checks)
+7. The corrector (24) gives $y_n\ge0\Rightarrow y_{n+1}\ge0$ and $y_n>0\Rightarrow y_{n+1}>0$, and preserves every linear invariant $w_j$ with $w_j^\top \mathbb G\equiv0$, for any step. (Eqs. (24d)–(24e)) **Proved** (M-matrix argument; see the compiler checks)
 8. Under the strong sign Assumption 3.3 (sign structure for all $y\in\mathbb R^d$) the stages need not be clipped: $\bar{\mathbb G}=\sum_jb_j\mathbb G(Y_j)\Sigma_{Y_j/y^{\mathrm p}_{n+1}}$. (Remark 3.18, Eq. (25)) **Stated**
 9. For adaptive stepping the embedded estimate uses the uncorrected predictor, $y^{\mathrm p}_{n+1}-\hat y_{n+1}$, so the controller is unaffected by the correction; a more conservative estimate adds $\lVert y_{n+1}-y^{\mathrm p}_{n+1}\rVert$. (Remarks 3.20–3.21) **Stated**
 10. The stage-corrected DIRK (Eq. (27)) makes every stage nonnegative and conservative; it requires a stiffly accurate method with $a_{ij}\ge0$ and $b_i\ge0$. (§3.4) **Derived**
@@ -56,14 +56,14 @@ Notation: $y\in\mathbb R^d$ (the source writes $d$ and $N$ interchangeably); sta
 26. The overhead could be reduced by reusing $\bar{\mathbb G}$ as an approximate Jacobian for the next step's nonlinear solve. (§6, future work) **Stated**
 27. The framework "generalizes to SSP SDIRK methods and higher-order schemes [19]". (§4.2.4) **Stated**
 
-*(Reader checks, not in the source.)* SDIRK32 has $b_3=-723/9272<0$ and SDIRK43 has $b_2=-400/819<0$ and $b_4=-575/252<0$, with negative $a_{ij}$ as well. Both therefore violate the $b_i\ge0$ hypothesis of §3.3 and the $a_{ij}\ge0$ hypothesis of §3.4, so the unconditional positivity guarantee does not cover two of the three tested methods. The positivity figures use SDIRK21, whose coefficients are nonnegative. The corrector argument invokes Assumption 3.1 for $\bar{\mathbb G}$, but Remark 3.9 transfers only the sign structure and left kernel. The M-matrix property follows for zero-column-sum $\mathbb G$; it is not established for MAPK, whose $\mathbb G$ "does not always have column sums equal to zero". Prop. 3.23 proves order 2 for SDIRK; the higher observed slopes do not contradict this upper bound, but rest on four problems with $\epsilon_{\mathrm c}$ unstated. The Robertson SDIRK21 slope of 1.51 and the KdV slope of 1.72 fall short of the text's "no order degradation". The MAPK sentence "for $\alpha\in(0,1)$ … two independent linear conservation laws given by the left kernel vectors" is wrong as printed. From the printed $\mathbb G$, $w_1$ is a left null vector only for $\alpha=0$ and $w_2$ only for $\alpha=1$, although both are invariants of the ODE for every $\alpha$; the paper's own bullets and tables agree with this. The overhead is called "only modest" against Table 6's +266 % and +94.5 %.
+*(Compiler checks, not in the sources.)* SDIRK32 has $b_3=-723/9272<0$ and SDIRK43 has $b_2=-400/819<0$ and $b_4=-575/252<0$, with negative $a_{ij}$ as well. Both therefore violate the $b_i\ge0$ hypothesis of §3.3 and the $a_{ij}\ge0$ hypothesis of §3.4, so the unconditional positivity guarantee does not cover two of the three tested methods. The positivity figures use SDIRK21, whose coefficients are nonnegative. The corrector argument invokes Assumption 3.1 for $\bar{\mathbb G}$, but Remark 3.9 transfers only the sign structure and left kernel. The M-matrix property follows for zero-column-sum $\mathbb G$; it is not established for MAPK, whose $\mathbb G$ "does not always have column sums equal to zero". Prop. 3.23 proves order 2 for SDIRK; the higher observed slopes do not contradict this upper bound, but rest on four problems with $\epsilon_{\mathrm c}$ unstated. The Robertson SDIRK21 slope of 1.51 and the KdV slope of 1.72 fall short of the text's "no order degradation". The MAPK sentence "for $\alpha\in(0,1)$ … two independent linear conservation laws given by the left kernel vectors" is wrong as printed. From the printed $\mathbb G$, $w_1$ is a left null vector only for $\alpha=0$ and $w_2$ only for $\alpha=1$, although both are invariants of the ODE for every $\alpha$; the paper's own bullets and tables agree with this. The overhead is called "only modest" against Table 6's +266 % and +94.5 %.
 
 # Printed slips
 
 - §3.4 and Eq. (27): "$Y_i=y_n+h\big(\sum_{j=1}^{i-1}a_{i,j}G(Y_j)\Sigma_{Y_j/Y^{\{p\}}_i}+h\,a_{i,i}G(\breve Y^{\{p\}}_i)\big)Y_i$"; the inner $h$ is spurious (Example (30) has none).
 - Remark 3.17 cites "Corollary 3.9", which is a Remark; Prop. 3.23 cites "(3.15)" for Definition 3.15; Remark 3.20 cites Lemma 3.14 (clipping) for the size of the full correction.
 - §4.2: "we carry out experiments with fixed step sizes", while §5.3 uses the adaptive mode for the ODE tests and §5.4 tolerances $10^{-7}$.
-- SDIRK32 embedded weights (p. 28): the printed $\hat b=(20/51,-410011317313/22571052756900,-2075562131/281561189810,29595333/2429345900)$ sums to $0.3788$, so it is not a consistent method as printed (reader check); the main weights are correct to order 3.
+- SDIRK32 embedded weights (p. 28): the printed $\hat b=(20/51,-410011317313/22571052756900,-2075562131/281561189810,29595333/2429345900)$ sums to $0.3788$, so it is not a consistent method as printed *(compiler check)*; the main weights are correct to order 3.
 - §4.2.4 describes the corrections in two-stage language ("correct only $y_{n+1}=Y_2$ … both $Y_1$ and $y_{n+1}=Y_2$") for all three methods.
 - §5.1.3 says "one-day simulation", the axes of Figs. 5–7 run 15–35 h, and §4.1.3 says typically three days.
 - p. 22: the Robertson reaction scheme "$A\to B$, $B+B\to B+C\to A+C$" conflates $B+B\to C+B$ and $B+C\to A+C$.
@@ -108,6 +108,7 @@ Chunk 5 (2026-10-20). This source is cited on:
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md)
+* [Lyapunov stability of steady states of positive, conservative time integrators](/results/lyapunov-stability-positive-conservative-schemes.md)
 * [Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)](/methods/modified-patankar-methods.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)

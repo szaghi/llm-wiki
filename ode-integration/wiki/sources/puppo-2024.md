@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Comput. Phys. 36:30-70"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Communications_in_Computational_Physics_Puppo_Quinpi_Integrating_Stiff_Hyperbolic_Systems_with_Implicit_Hi.pdf"
 tags: [implicit, stiff, implicit-stage-solvers, hyperbolic-conservation-laws, method-of-lines]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -55,7 +55,7 @@ Notation: $h$ is the step and $\Delta x$ the mesh width (source $\Delta t$ and $
 23. An explicit first-order predictor (Gottlieb, Mullen & Ruuth [31]) restricts the method to small Courant numbers; an implicit predictor costs more but is stable and non-oscillatory at high Courant numbers. (§1, §3) **Stated**
 24. Future work: other integrators ("hybrid BDF schemes"), higher order, analysis, dedicated linear solvers and preconditioners, a cheaper time limiter. (§5) **Stated**
 
-*(Reader checks, not in the source.)* The predictor tableau (22) is [stiffly accurate](/properties/stiff-accuracy.md) by construction (its last row equals $b=\theta$); for Alexander's SDIRK $\theta=(\gamma,\tfrac{1-\gamma}2,\tfrac{1-\gamma}2)$. Newton is solved with GMRES and an ILU(0) preconditioner, and the Rusanov flux Jacobian drops the derivative of the viscosity coefficient. For the Euler tests the Rusanov viscosity is the material speed only, a deliberate under-dissipation of the acoustic waves. Third order is verified only on smooth data where the limiter is inactive; no convergence study runs with an active limiter, and no CPU-time comparison between the implicit and explicit schemes is given. The explicit integrator of CWZb3 is not stated.
+The predictor tableau (22) is [stiffly accurate](/properties/stiff-accuracy.md) by construction (its last row equals $b=\theta$) *(compiler check, not in the sources)*; for Alexander's SDIRK the paper gives $\theta=(\gamma,\tfrac{1-\gamma}2,\tfrac{1-\gamma}2)$ (p. 20). In the paper, Newton is solved with GMRES and an ILU(0) preconditioner, and the Rusanov flux Jacobian drops the derivative of the viscosity coefficient. For the Euler tests the Rusanov viscosity is the material speed only, a deliberate under-dissipation of the acoustic waves. *(Compiler caveats, not in the sources:)* third order is verified only on smooth data where the limiter is inactive; no convergence study runs with an active limiter, and no CPU-time comparison between the implicit and explicit schemes is given. The explicit integrator of CWZb3 is not stated.
 
 # Printed slips
 

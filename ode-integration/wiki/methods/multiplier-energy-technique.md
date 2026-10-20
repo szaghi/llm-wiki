@@ -5,7 +5,7 @@ description: "Energy proofs for BDF and IMEX-BDF on parabolic and relaxation pro
 status: established
 aliases: [multiplier technique, Nevanlinna–Odeh multiplier, energy technique for BDF, multiplier method, two-multiplier technique, Grenander–Szegő argument]
 tags: [linear-multistep, stability, stiff, implicit, structure-preserving]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Multiplier energy technique for multistep methods
@@ -155,8 +155,8 @@ They test with the error itself and control the step-ratio perturbation of the G
     Source page.
   - Akrivis et al. (2024, p. 12) evaluate $\min p\approx7.3592\cdot10^{-6}$ at the rounded
     $r=1.9398$; at the exact bound the value is about $7.107\cdot10^{-6}$. Both exceed the
-    constant $10^{-6}$ that is used, so the result is unaffected *(reader's check, recorded on
-    the Source page)*.
+    constant $10^{-6}$ that is used, so the result is unaffected *(compiler check,
+    recorded on the Source page)*.
 - **Version read.** Akrivis et al. (2021) and Ma et al. (2026) were read as arXiv v1 preprints;
   the published Akrivis et al. (2021) is substantially longer.
 

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Linear stability of multirate methods and joint stability regions"
-description: "Defines the scalar and 2D (Gear) test problems for multirate and GARK methods, their stability functions and scalar, real-2D and complex-2D A-, L-, A(α)- and L(α)-stability, the implication hierarchy between them, the joint stability regions used for IMEX multirate methods with their reduced variants, and the partitioned Dahlquist test of nonlinearly partitioned multirate methods."
+description: "Defines the scalar and 2D (Gear) test problems for multirate and GARK methods, scalar, real-2D and complex-2D A-, L-, A(α)- and L(α)-stability and their hierarchy, the joint stability regions of IMEX multirate methods, the partitioned Dahlquist test of nonlinearly partitioned methods, and the real scalar test of averaged-force mRKC methods."
 status: established
 aliases: [scalar A-stability, 2D A-stability, Gear test problem, joint stability region, multirate stability function, partitioned Dahlquist equation, L-stability in the stiff limit]
 tags: [multirate, stability, imex, stiff]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Linear stability of multirate methods and joint stability regions
@@ -170,10 +170,40 @@ $\{\max(|R(z_1,z_2)|,|R(\bar z_1,z_2)|)\le1\}$ the relevant one, plotted in slic
   L-stability of Roberts et al., which requires the limit in each variable together with
   A-stability, and not a joint region.
 
+## Real scalar test of averaged-force methods (mRKC)
+
+[Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) (§2.3, §4) analyse the
+[multirate Runge–Kutta–Chebyshev method](/methods/multirate-runge-kutta-chebyshev.md) on
+the scalar test problem above restricted to **real** eigenvalues,
+$\lambda^{\{\mathrm f\}},\lambda^{\{\mathrm s\}}\le0$ (Eq. (2.10)), because its stabilized
+Chebyshev polynomials target the negative real axis. Both arguments are scaled by the one
+step $h$; the fast part is reached through an inner run of length $\eta$ (page-local, not
+the registry entropy and distinct from the Gear coupling entries $\eta^{\{\cdot\}}$), so the
+stability function depends on $(h\lambda^{\{\mathrm s\}},\eta\lambda^{\{\mathrm f\}},\eta/h)$
+rather than on a step ratio $m$:
+
+$$R_{s,m}=P_s\bigl(h\,\Phi_m(\eta\lambda^{\{\mathrm f\}})(\lambda^{\{\mathrm f\}}+\lambda^{\{\mathrm s\}})\bigr),\qquad \Phi_m(z)=\frac{P_m(z)-1}z$$
+
+(Def. 4.2; $P_s$, $P_m$ the outer and inner RKC polynomials, $\Phi_m$ page-local). The
+stability theorem (Thm. 4.5) is the condition $\lvert R_{s,m}\rvert\le1$ for **all**
+$\lambda^{\{\mathrm f\}}$ in the inner stability interval once $\eta$ is large enough
+relative to $h$; it is the discrete analogue of the exact statement that
+$\phi_1(\eta\lambda^{\{\mathrm f\}})(\lambda^{\{\mathrm f\}}+\lambda^{\{\mathrm s\}})\in[\lambda^{\{\mathrm s\}},0]$
+for every $\lambda^{\{\mathrm f\}}\le0$ iff $\eta\ge2/\lvert\lambda^{\{\mathrm s\}}\rvert$ (Thm. 2.7).
+For coupling they use a real symmetric instance of the 2D test,
+$\begin{bmatrix}\lambda^{\{\mathrm s\}}&\sigma\\ \sigma&\lambda^{\{\mathrm f\}}\end{bmatrix}$ with
+$\sigma^2\le\lambda^{\{\mathrm f\}}\lambda^{\{\mathrm s\}}$ ($\sigma$ page-local; the real 2D
+admissibility condition above with both coupling entries equal to $\sigma$), split by a 0/1
+selector of the fast row so that the two parts are not simultaneously triangularizable
+unless $\sigma=0$ or $\sigma^2=\lambda^{\{\mathrm f\}}\lambda^{\{\mathrm s\}}$ (Eqs. (4.6)–(4.8)).
+Spectral-radius plots, not a power-boundedness proof, show that the scalar condition stays
+necessary under weak coupling (§4.1, Fig. 9). The test is single-step and real; no complex
+or A-stability notion of the kind defined above is claimed for mRKC.
+
 ## Qualifications
 
-- Both sources assume simultaneously diagonalizable (scalar) or $2\times2$ model
-  coupling; Roberts et al. mention a block generalization (eq. 3.11) and Skelboe's
+- The scalar test assumes simultaneously diagonalizable partitions and the 2D test a
+  $2\times2$ model coupling; Roberts et al. mention a block generalization (eq. 3.11) and Skelboe's
   more general one without pursuing them.
 - Roberts et al. use the macro step for both scaled eigenvalues; Chinomona &
   Reynolds do the same for all three. Single-rate pages scale by the step $h$.
@@ -191,6 +221,9 @@ $\{\max(|R(z_1,z_2)|,|R(\bar z_1,z_2)|)\le1\}$ the relevant one, plotted in slic
   3.5–3.7.
 - Buvoli et al. (2026, §2.3.3) write that real spectra are symmetric "about the imaginary axis";
   the region they use, with $\bar z_1$, encodes symmetry about the real axis.
+- Abdulle et al. (2022) call the real scalar equation the "multirate test equation" and write
+  $\lambda$, $\zeta$ for the fast and slow eigenvalues; their stability statements are for
+  real nonpositive spectra only.
 - The partitioned Dahlquist test assumes simultaneously diagonalizable partial Jacobians (Buvoli
   et al. 2026, §2.3.1), the same caveat as the scalar multirate test.
 
@@ -199,4 +232,5 @@ $\{\max(|R(z_1,z_2)|,|R(\bar z_1,z_2)|)\le1\}$ the relevant one, plotted in slic
 - [Roberts et al. (2021)](/sources/roberts-2021.md) — §3 (eqs. 3.3–3.13, Defs. 3.1–3.4, Thms. 3.1–3.3, Remarks 3.1–3.2, Fig. 3.1).
 - [Chinomona & Reynolds (2021)](/sources/chinomona-2021.md) — §3 (eqs. 3.1–3.3, joint stability region), §4.1, Fig. 1.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §3 (eqs. 3.4–3.7), §4.3, §5.3–5.4.
+- [Abdulle, Grote & Rosilho de Souza (2022)](/sources/abdulle-2022.md) — §2.3 (Eqs. 2.10–2.12, Lemma 2.6, Thm. 2.7), §4 (Lemma 4.1, Def. 4.2, Thm. 4.5), §4.1 (Eqs. 4.6–4.8, Fig. 9).
 - [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §2.3 (eqs. 2.5–2.10), §3.1 (Def. 3.1, Thm. 3.2, Fig. 2), App. A.

@@ -5,7 +5,7 @@ description: "The Allen–Cahn reaction–diffusion equation, a stiff semilinear
 status: established
 aliases: [Allen-Cahn equation, phase-field equation, forced Allen–Cahn equation]
 tags: [stiff, parallel, imex, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Allen–Cahn equation
@@ -46,8 +46,8 @@ being faster only for errors above $10^{-1}$. LU-SDC would catch up only if the 
 efficiency fell below 40 %; the measured efficiency was 74–93 % (Čaklović et al. 2025,
 §4.4, Figs. 16–17). This is the only problem of that paper with wall-clock timings.
 
-**Adaptive SDC.** The IMEX scheme becomes unstable at large steps: $\Delta t$-$k$-adaptive SDC
-needed "around 100 restarts" at loose tolerances; limiting the step size helped (not shown),
+**Adaptive SDC.** The IMEX scheme becomes unstable at large steps: SDC adapting both the step and
+the number of sweeps needed "around 100 restarts" at loose tolerances; limiting the step size helped (not shown),
 and the solutions stayed physical at every tolerance (Saupe et al. 2025, §4.1). In measured wall time, four-process
 pipelined GSSDC sped the run up, diagonal SDC with three processes was among the most
 efficient variants, and combining both gave very large errors or crashes (§4.1, Fig. 9). At

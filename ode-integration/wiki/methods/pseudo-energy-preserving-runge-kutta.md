@@ -5,7 +5,7 @@ description: "A Runge–Kutta method of classical order p is pseudo-energy-prese
 status: established
 aliases: [PEP method, PEP order, pseudo-energy-preserving method, PEP(s,p,q)]
 tags: [runge-kutta, explicit, structure-preserving, geometric-integration, order-conditions, hamiltonian]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Pseudo-energy-preserving explicit Runge–Kutta methods
@@ -98,7 +98,7 @@ surface.
 * **PEP(3,2,4)**, the unique three-stage second-order method with $q=4$:
   $c=(0,\tfrac13,\tfrac56)$, $a_{21}=\tfrac13$, $a_{31}=-\tfrac5{48}$,
   $a_{32}=\tfrac{15}{16}$, $b=(\tfrac1{10},\tfrac12,\tfrac25)$ (§3). It has
-  $b^\top Ac=\tfrac18\ne\tfrac16$, so $p=2$ *(source's reader check)*.
+  $b^\top Ac=\tfrac18\ne\tfrac16$, so $p=2$ *(compiler check, not in the sources)*.
 * **PEP(4,2,5)** with rational coefficients (Eq. (31)); **PEP(5,2,6)**,
   **PEP(6,3,6)**, **PEP(7,4,6)** and **PEP(7,5,6)** in floating point
   (Tables 9–12). Several have negative weights; PEP(6,3,6) has
@@ -158,7 +158,8 @@ time. See [entropy stability](/properties/entropy-stability.md).
 * Linear error growth for PEP methods is motivated by results for exactly
   conservative methods (cited) and observed over moderately long times, not
   proved; growth becomes superlinear later (Fig. 4a).
-* **Printed slips** (arXiv v2 read; source's reader checks): in Eq. (31) the
+* **Printed slips** (arXiv v2 read; compiler checks of the PDF, the first in exact
+  arithmetic, the second against $u(\tau)=1/\gamma(\tau)$ of the exact flow): in Eq. (31) the
   abscissae $c_3$ and $c_4$ of PEP(4,2,5) are swapped (row sums give
   $c_3=\tfrac{37}{63}$, $c_4=\tfrac{19}{20}$; with $c=A\mathbf 1$ the method
   satisfies all conditions to order 5 in exact arithmetic); two constants of

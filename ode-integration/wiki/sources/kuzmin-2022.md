@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Sci. Comput. 91:21"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Scientific_Computing_Kuzmin_Bound-preserving_Flux_Limiting_for_High-Order_Explicit_Runge.pdf"
 tags: [positivity, ssp, structure-preserving, explicit, hyperbolic-conservation-laws]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -134,7 +134,7 @@ $\bar u_i$, the relaxation parameter $\kappa$ (source $\gamma$) and the bounds $
     (§5.2). **Shown**
 16. The SSP54 baseline EOC at $N_h=1600$ is 4.29, against 5.00 for ExE-RK5
     and RK76 (Table 3). **Shown** (that the fourth-order integrator limits
-    the rate is the reader's reading, not the paper's)
+    the rate is a compiler reading, not the paper's)
 17. Linear advection with discontinuous and peaked data (59), $N_h=200$,
     $\kappa=1$: baseline $\delta=-4.97\times10^{-6}$ at $t=1$ and
     $-1.32\times10^{-2}$ at $t=100$; GMC $\delta$ of order $-10^{-15}$. GMC
@@ -179,8 +179,8 @@ $\bar u_i$, the relaxation parameter $\kappa$ (source $\gamma$) and the bounds $
 - Eq. (B.9) against Eq. (28): (B.9) prints
   $\Delta t\le\mu(1+\gamma)\Delta x/(\lambda_{i+1/2}+\lambda_{i-1/2})$, but
   (28) requires the factor $(1+\gamma)$ in the denominator, as in the
-  default $\Delta t=0.4\Delta x/(1+\gamma)$ of §5 (reader's inference,
-  checked visually, p. 32).
+  default $\Delta t=0.4\Delta x/(1+\gamma)$ of §5 *(compiler check, not in the
+  sources; checked visually, p. 32)*.
 - Algorithm 1 (p. 10): the outer loop "for $s=1\to S$" with
   $y^{(m)}:=u^n+\frac{\Delta t}{s}F(u^n)$ creates for $s=1$ an extra stage
   that appears neither in Table 1 (order 2 has the weights $[0,1]$) nor in
@@ -250,6 +250,7 @@ Chunk 5 (2026-10-20). This source is cited on:
 * [Bound-preserving flux limiting of Runge–Kutta stages and updates](/methods/bound-preserving-flux-limiting.md)
 * [Burgers equation](/benchmarks/burgers-equation.md)
 * [Extrapolation methods (Richardson extrapolation of a base integrator)](/methods/extrapolation-methods.md)
+* [Invariant-domain preserving high-order time stepping (explicit and IMEX)](/methods/invariant-domain-preserving-time-stepping.md)
 * [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)

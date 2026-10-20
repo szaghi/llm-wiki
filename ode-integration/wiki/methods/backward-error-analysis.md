@@ -5,7 +5,7 @@ description: "Backward error analysis represents a one-step method as the exact 
 status: established
 aliases: [BEA, modified equation, modified vector field, modified Hamiltonian, modifying integrator]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-19T18:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Backward error analysis, modified equations and modifying integrators
@@ -115,8 +115,9 @@ global error is expected to grow linearly for moderately long times, which
 they observe but do not prove (§4). Two constants of their printed map–flow
 relations (Eq. (9)) are inconsistent with the exact flow
 ($\tfrac7{12}$ and $\tfrac16$ where $\tfrac1{12}$ and $\tfrac18$ are required),
-while the conditions they derive from it are correct *(source's reader
-check)*.
+while the conditions they derive from it are correct *(compiler check, not in the
+source: with the coefficients of all trees of two or more vertices set to zero the
+relation must return $1/\gamma(\tau)$, i.e. $\tfrac1{12}$ and $\tfrac18$ for these two trees)*.
 
 ## Modifying integrators
 
@@ -165,8 +166,8 @@ spikes (§5.7, Figs. 5.1–5.2).
   is inconsistent with their own series (37) ($\varrho(0)=1$). The function
   matching (37) term by term is $\varrho(z)=\frac{2}{z}\arctan\frac z2$: the
   modified flow over time $h$ must rotate by the angle
-  $2\arctan(z/2)$ per step *(check by the source's reader, confirmed here by
-  series expansion; not printed in the source)*.
+  $2\arctan(z/2)$ per step, since $\cos(2\arctan(z/2))=\frac{1-z^2/4}{1+z^2/4}$
+  *(compiler check by series expansion, not in the source)*.
 * Their claim that this exact energy conservation is "unique among explicit
   discretizations of initial value ODEs" is stated "as far as we are aware"
   and is not proved.

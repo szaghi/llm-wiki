@@ -3,9 +3,9 @@ type: Method
 title: "Extrapolation methods (Richardson extrapolation of a base integrator)"
 description: "An extrapolation method combines several solutions of a low-order base method over one step, computed with different substep counts, so that their leading errors cancel; written as a Runge–Kutta method it has stages that are base-method steps and non-convex final weights, which the sources exploit for positivity and bound preservation."
 status: established
-aliases: [Richardson extrapolation, Aitken–Neville extrapolation, Euler extrapolation, extrapolated Euler, backward Euler extrapolation, ExE-RK5, BE extrapolation]
+aliases: [Richardson extrapolation, Aitken–Neville extrapolation, Euler extrapolation, extrapolated Euler, backward Euler extrapolation, ExE-RK5, BE extrapolation, IEX4, implicit Euler extrapolation]
 tags: [runge-kutta, explicit, implicit, positivity, ssp]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Extrapolation methods (Richardson extrapolation of a base integrator)
@@ -14,11 +14,12 @@ An **extrapolation method** advances one step $h$ by computing $S$ approximation
 $y(t_n+h)$ with a first-order base method using $1,2,\dots,S$ equal substeps (the
 *harmonic sequence*), and combines them with the Aitken–Neville weights that eliminate the
 leading error terms, giving order $S$. With forward Euler as the base, every substep is an
-explicit Euler step; with backward Euler, a linearly or fully implicit one. Both sources
+explicit Euler step; with backward Euler, a linearly or fully implicit one. The sources
 recall the construction from Hairer–Nørsett–Wanner (§II.9 and §IV.9) and write the
 result as a [Runge–Kutta method](/definitions/runge-kutta-method.md) whose stages are the
 substep values ([Kuzmin et al. 2022](/sources/kuzmin-2022.md), §3.1.2;
-[Nüßlein et al. 2021](/sources/nusslein-2021.md), §4.1).
+[Nüßlein et al. 2021](/sources/nusslein-2021.md), §4.1;
+[Quezada de Luna & Ketcheson 2022](/sources/quezadadeluna-2022.md), §7.1).
 
 ## Explicit Euler extrapolation as a Runge–Kutta method
 
@@ -74,6 +75,28 @@ The structure splits the method into a positive part and a non-convex combinatio
   integrate a heat equation, an advection–diffusion–production–destruction problem and the
   [stratospheric reaction problem](/benchmarks/stratospheric-reaction-problem.md) with the
   third-order variant (§5.2–5.4).
+- **Backward Euler extrapolation with bound-preserving limiting.** Quezada de Luna &
+  Ketcheson (2022, §7.1, Algorithm 1) write IEX$p$ explicitly: for $k=1,\dots,p$, $k$
+  backward Euler substeps $Y_{k,j}=Y_{k,j-1}+\frac hkf(Y_{k,j})$ from $Y_{k,0}=y_n$ give
+  $T_{k,1}=Y_{k,k}$, and the Aitken–Neville recursion
+  $T_{j,k}=T_{j,k-1}+(T_{j,k-1}-T_{j-1,k-1})/\bigl(\frac j{j-k+1}-1\bigr)$ gives
+  $y_{n+1}=T_{p,p}$ (page-local $Y_{k,j}$, $T_{j,k}$). As a Runge–Kutta method IEX4 has 10
+  stages in four uncoupled lower-triangular blocks, with abscissae $1$; $\tfrac12,1$;
+  $\tfrac13,\tfrac23,1$; $\tfrac14,\tfrac12,\tfrac34,1$, all entries of block $k$ equal to
+  $\frac1k$, and weights
+  $b=(-\tfrac16;\,2,2;\,-\tfrac92,-\tfrac92,-\tfrac92;\,\tfrac83,\tfrac83,\tfrac83,\tfrac83)$
+  (Eq. (33)). These are the Aitken–Neville coefficients $(-\tfrac16,4,-\tfrac{27}2,\tfrac{32}3)$
+  divided by the substep counts, the same as for explicit Euler extrapolation of order 4
+  except that no first evaluation is shared *(compiler check, not in the sources: the explicit weights above
+  are these with the four first-substep contributions summed, $-\tfrac16+2-\tfrac92+\tfrac83=0$)*.
+  Every stage is a backward Euler substep, so the method satisfies the stage conditions
+  $AX(r)\ge0$, $AX(r)\mathbf 1\le\mathbf 1$ for **every** $r>0$: its stages are
+  unconditionally bound preserving when backward Euler is (Eq. (32), §7). The methods are
+  A($\alpha$)-stable with $\alpha$ close to $90^\circ$, can have any order and parallelize
+  well across the blocks, as recalled from Hairer–Wanner (§7.1). With GMC limiting of the
+  final update, IEX4 keeps the global bounds on a linear advection–diffusion test with
+  measured rates 3.63, 3.89 and 4.61 (Table 3, §8.1.1); see
+  [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md).
 
 ## Qualifications
 
@@ -92,3 +115,4 @@ The structure splits the method into a positive part and a non-convex combinatio
 
 - [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §3.1.2 (Algorithm 1, Table 1, Eqs. (36)–(37)), §4, §5.2–5.3 (Tables 3–4), App. A.2 (Eq. (A.2)); arXiv v2.
 - [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §4.1 (Table 2), §5.2–5.4; arXiv v2.
+- [Quezada de Luna & Ketcheson (2022)](/sources/quezadadeluna-2022.md) — §7 (Eq. (32)), §7.1 (Algorithm 1, Eq. (33)), §8.1.1 (Table 3); arXiv v1.

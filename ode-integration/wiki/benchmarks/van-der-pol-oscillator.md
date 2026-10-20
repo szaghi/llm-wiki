@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Van der Pol oscillator"
-description: "The nonlinear relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, whose parameter mu tunes it from non-stiff to very stiff; the sources use it to test step-size controllers, including adaptive SDC, and to show that weak stage order and deferred correction do not keep their design orders on a stiff nonlinear problem."
+description: "The relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, from non-stiff to very stiff as mu grows; the sources use it to test step-size controllers, including adaptive SDC, to compare additive polynomial and IMEX methods across stiffness, and to show that weak stage order and deferred correction lose their design orders on it."
 status: established
 aliases: [Van der Pol equation, van der Pol problem, VDPOL]
 tags: [stiff, verification, order-reduction, step-size-control]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Van der Pol oscillator
@@ -30,7 +30,14 @@ test that lies outside the linear theory behind most remedies for
 | [Biswas et al. (2023)](/sources/biswas-2023.md), §7.3 | 500 | $(2,0)$ | $[0,10]$ | fixed-step convergence of DIRK methods with high weak stage order |
 | [Fekete et al. (2022)](/sources/fekete-2022.md), §3.1.1, Eq. (24) | 10 | $(2,-0.6654321)$ | $[0,2]$ | adaptive step-size controllers with explicit SSP pairs |
 | [Saupe et al. (2025)](/sources/saupe-2025.md), §3.1, Eqs. (19)–(20) | 1000 | $(1.1,0)$ | $[0,20]$ (one fast transition) | adaptive and parallel SDC against fixed steps and ESDIRK5(3) |
+| [Buvoli & Southworth (2023)](/sources/buvoli-2023.md), §6.2, Eq. (6.1) | $\varepsilon\in[10^{-8},1]$ (singularly perturbed form, below) | $y_1(0)=2$, $y_2(0)$ on the slow manifold | $[0,0.5]$ | order and stability of additive polynomial (FIMEX) methods against IMEX Runge–Kutta |
 
+Buvoli & Southworth (2023) take the singularly perturbed form
+$y_2'=\big((1-y_1^2)y_2-y_1\big)/\varepsilon$, citing Hairer and Wanner, with
+$y_2(0)=-\tfrac23+\tfrac{10}{81}\varepsilon-\tfrac{292}{2187}\varepsilon^2-\tfrac{1814}{19683}\varepsilon^3$,
+which starts the solution near the slow manifold. It is the form above with
+$\varepsilon=1/\mu^2$ after the change of variables $t\mapsto t/\mu$, $y_2\mapsto\mu y_2$
+*(compiler check, not in the source)*.
 Fekete et al. write the second equation as $y_2'=\varepsilon^{-1}(1-y_1^2)y_2-y_1$
 with $\varepsilon=0.1$, i.e. $\mu=1/\varepsilon=10$, after Iserles. Koyaguerebo-Imé &
 Bourgault note that the problem was proposed with $\mu=5$ on $[0,1]$ by
@@ -83,6 +90,24 @@ printed, and at least one parallel adaptive SDC
 variant beat the embedded pair ESDIRK5(3) in wall time (§4.1–4.2, Figs. 9–10). See
 [step-size control](/methods/step-size-control.md) and [diagonal SDC](/methods/parallel-sdc.md).
 
+**Additive polynomial methods across the stiffness range.** Buvoli & Southworth (2023, §6.2,
+Figs. 6, SM2–SM4) split the problem in two ways: semi-implicit (first component explicit,
+second implicit) and linearly implicit ($J_ny$ implicit, $f(y)-J_ny$ explicit, with the exact
+Jacobian). With 30 logarithmically spaced steps $h\in[10^{-4},0.25]$, Newton to $10^{-12}$ and
+an ode15s reference, their FIMEX-Radau and FIMEX-Radau* methods (Radau IIA implicit part,
+explicit part extrapolated from the previous step; $q=3,4,5$ nodes and $\kappa=0,1,2$
+order-raising iterations) are stable over the whole step range with both splittings, while
+every IMEX Runge–Kutta method they tested needed substantially smaller steps to be stable with
+the linearly implicit splitting. For small $\varepsilon$ each iteration raises the observed
+order by about one; with the semi-implicit splitting the $\kappa=2$ methods show markedly
+reduced rates for $\varepsilon\in[10^{-4},10^{-2}]$ while staying the most accurate, and the
+fitted rates fall below nominal because of mild order reduction at $h\ge0.1$, where fewer than
+five steps are taken. FIMEX-Radau*(5,0) with the linearly implicit splitting is stable but does
+not converge at large steps; one iteration fixes it. See
+[polynomial time integrators](/methods/polynomial-time-integrators.md),
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md) and
+[order reduction](/definitions/order-reduction.md).
+
 ## Qualifications
 
 - The two fixed-step studies disagree in emphasis, not in fact: both find that
@@ -93,6 +118,11 @@ variant beat the embedded pair ESDIRK5(3) in wall time (§4.1–4.2, Figs. 9–1
   constant during the fast transitions, where the stiffness-independent bounds of
   [B-convergence](/definitions/b-convergence.md) give no useful step range
   *(compiler check, not in the sources)*.
+- Buvoli & Southworth (2023) conclude that high-degree polynomials "trivially" give high stage
+  order and prevent order reduction on stiff problems (§7); their own Van der Pol rates are
+  reduced for intermediate $\varepsilon$ with the semi-implicit splitting, so the observation
+  joins the two fixed-step studies above rather than contradicting them. They were read as
+  arXiv v2 with the SIAM supplement.
 - Biswas et al. (2023) state the stiff regime from Fig. 12 only; no error table is
   given.
 - Saupe et al. (2025) give mutually inconsistent time references: the Fig. 2 caption says only
@@ -106,3 +136,4 @@ variant beat the embedded pair ESDIRK5(3) in wall time (§4.1–4.2, Figs. 9–1
 - [Biswas et al. (2023)](/sources/biswas-2023.md) — §7.3 (Fig. 12); §8.
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §3.1.1 (Eq. (24), Fig. 9).
 - [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §3.1 (Eqs. (19)–(20), Fig. 2), §4.1 (Figs. 6, 9), §4.2 (Fig. 10).
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — §6.2 (Eq. (6.1), Fig. 6), §7; Supplement Figs. SM2–SM4.

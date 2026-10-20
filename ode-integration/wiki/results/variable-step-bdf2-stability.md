@@ -5,7 +5,7 @@ description: "Variable-step BDF2 is proved stable under bounds on the step ratio
 status: established
 aliases: [variable-step BDF2 stability, BDF2 step-ratio bound, BDF2 ratio restriction, 1.9398 bound]
 tags: [linear-multistep, stability, step-size-control, implicit, stiff]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Stability of variable-step BDF2 under step-ratio bounds
@@ -114,7 +114,7 @@ variable-step BDF2 for Navier–Stokes (§1, §5).
   as the version of record.
 - **Printed value.** $\min p\approx7.3592\cdot10^{-6}$ (Akrivis et al. 2024, p. 12) is evaluated
   at the rounded ratio 1.9398. At the exact bound it is about $7.107\cdot10^{-6}$; both exceed the
-  constant $10^{-6}$ that is used, so the result is unaffected *(reader's check)*.
+  constant $10^{-6}$ that is used, so the result is unaffected *(compiler check)*.
 
 # Citations
 

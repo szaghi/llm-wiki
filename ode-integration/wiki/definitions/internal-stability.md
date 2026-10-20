@@ -5,7 +5,7 @@ description: "Internal stability is the stability of perturbations introduced at
 status: established
 aliases: [internal stability polynomials, internal amplification factor, maximum internal amplification factor, round-off propagation within a step, stage-wise stability]
 tags: [stability, explicit, runge-kutta, round-off]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Internal stability of explicit Runge–Kutta methods
@@ -146,7 +146,7 @@ values (§5).
 The argument is not the internal-stability measure of this page: no internal stability
 polynomials or amplification factors are computed, and the sources above find internal
 amplification negligible for methods with few stages, so the mechanism Kemm proposes for
-three-stage methods remains a hypothesis of that source *(compiler remark)*. See also
+three-stage methods remains a hypothesis of that source *(compiler remark, not in the sources)*. See also
 [linear multistep methods](/methods/linear-multistep-method.md).
 
 ## Qualifications

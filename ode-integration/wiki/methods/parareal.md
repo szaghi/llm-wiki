@@ -5,7 +5,7 @@ description: "Parareal iterates a cheap serial coarse propagator and an accurate
 status: established
 aliases: [parareal algorithm, Lions–Maday–Turinici algorithm, low-rank Parareal, exponential Parareal, ERK Parareal, optimized coarse propagator, OCP, multi-block parareal, windowed parareal]
 tags: [parallel, stiff, exponential, stability, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Parareal
@@ -109,9 +109,9 @@ apply Parareal to $y'=\lambda_1y+\lambda_2y$ with $\lambda_1,\lambda_2$ imaginar
 first exponentiated and the second treated explicitly. Both propagators reduce to scalar
 slice factors $R_{\mathcal G}$, $R_{\mathcal F}$; the iterates obey
 $\mathbf e^{(k)}=E\,\mathbf e^{(k-1)}$ with the nilpotent matrix
-$E=I-M_{\mathcal G}^{-1}M_{\mathcal F}$, where $M_{\mathcal G}$, $M_{\mathcal F}$ are lower
+$E=I-\mathcal M_{\mathcal G}^{-1}\mathcal M_{\mathcal F}$, where $\mathcal M_{\mathcal G}$, $\mathcal M_{\mathcal F}$ are lower
 bidiagonal with $1$ on the diagonal and $-R_{\mathcal G}$, $-R_{\mathcal F}$ below it
-(Eqs. (30)–(34); page-local symbols). Because $E$ is nilpotent its spectrum says
+(Eqs. (30)–(34); page-local symbols, calligraphic because $M$ is the mass matrix). Because $E$ is nilpotent its spectrum says
 nothing about the rate; instead $\lVert E\rVert<1$ guarantees monotone convergence, with
 the closed form
 

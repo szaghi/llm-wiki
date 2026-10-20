@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Appl. Math. 412:114325"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_and_Applied_Mathematics_Fekete_Embedded_pairs_for_optimal_explicit_strong_stability_preserv.pdf"
 tags: [ssp, embedded-pair, step-size-control, runge-kutta, explicit, error-estimation]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -87,7 +87,7 @@ this page is a claim of arXiv v1, with arXiv v1 numbering.
 10. SSPERK($n^2$,3) with $n\ge2$ has $\mathcal C=n^2-n=s-\sqrt s$. Its Butcher form is given in (15)–(16) (§2.2, citing Ketcheson). **Stated**
 11. For SSPERK(4,3), the known embedding $\hat b_1=[\frac13,\frac13,\frac13,0]$ is an exceptional case. The proposed $\hat b_2=\frac14\mathbf 1$ has a significantly larger stability region (§2.2, Fig. 3). **Shown**
 12. For SSPERK($n^2$,3) with $n\ge3$, the searches found no embedding with $\hat{\mathcal C}=n^2-n$. The proposed non-defective second-order embedding is $\hat b=\frac1{n^2}\mathbf 1$, which has $\hat{\mathcal C}>0$ (§2.2, Fig. 5). **Shown**
-13. For SSPERK(10,4) (Ketcheson, $\mathcal C=6$, low-storage), no non-defective embedding exists: the order condition $b^\top(\frac{c^3}{3!}-\frac{Ac^2}{2!})=0$ (8g) holds for every $\hat b$. The searches found no embedding with $\hat{\mathcal C}=6$ (§2.3). **Shown** (the reader confirmed (8g) for all eight listed $\hat b$)
+13. For SSPERK(10,4) (Ketcheson, $\mathcal C=6$, low-storage), no non-defective embedding exists: the order condition $b^\top(\frac{c^3}{3!}-\frac{Ac^2}{2!})=0$ (8g) holds for every $\hat b$. The searches found no embedding with $\hat{\mathcal C}=6$ (§2.3). **Shown** (compiler check, not in the sources: (8g) holds for all eight listed $\hat b$)
 14. Eight rational third-order embeddings $\hat b_1,\dots,\hat b_8$ for SSPERK(10,4) are printed. They are "good candidates … but not an outstanding one", and $\hat b_3$ is suggested (§2.3, Fig. 6). **Shown**
 15. Step-size control (§3.1, eqs. 17–19). The error is $\mathrm{err}_n=\lVert(y_{n+1}-\hat y_{n+1})/sc\rVert_\infty$, with componentwise scale $sc=\mathrm{atol}+\max(\lvert y_n\rvert,\lvert y_{n+1}\rvert)\,\mathrm{rtol}$. The step factor is limited by safety $0.9$, minimum $0.1$ and maximum $5$, and the maximum drops to $0.9$ right after a rejection to avoid an observed infinite loop. Local extrapolation is used: the solution advances with order $p$. **Stated**
 16. Controller gains, in registry form $h_{n+1}=h_n\,\mathrm{err}_n^{-\beta_1/k}\mathrm{err}_{n-1}^{-\beta_2/k}\mathrm{err}_{n-2}^{-\beta_3/k}$ (§3.1, eqs. 20–23):

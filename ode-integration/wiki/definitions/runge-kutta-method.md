@@ -5,7 +5,7 @@ description: "The s-stage one-step method defined by a Butcher tableau (A, b, c)
 status: established
 aliases: [RK method, Butcher tableau, implicit Runge–Kutta, IRK, explicit Runge–Kutta, ERK]
 tags: [runge-kutta, explicit, implicit, order-conditions]
-timestamp: 2026-10-19T18:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Runge–Kutta method
@@ -56,6 +56,13 @@ the stages as $\partial_tg(t_n+c_ih)$ (their Eq. (18)).
 [Southworth et al. (2022)](/sources/southworth-2022.md) (Eqs. (1)–(4)) also use
 stage derivatives, for $My'=\mathcal N(y,t)$. The two forms differ only in
 which unknowns the nonlinear solver iterates on.
+[Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§2.2, Eqs. (2.18)–(2.21)) offer both
+in Irksome, together with Butcher's transformed unknowns $(A\otimes I)\mathbf k$
+($\mathbf k$ the stacked stage derivatives, page-local), which move the stage coupling outside
+the nonlinearity so that its Jacobian contribution is block diagonal; the stage-value form
+skips the final mass-matrix solve for stiffly accurate tableaux. Irksome now imposes
+Dirichlet data on the stage values by default instead of Farrell et al.'s derivative form
+(§2.1; see [boundary conditions for Runge–Kutta stages](/methods/runge-kutta-stage-boundary-treatment.md)).
 
 For explicit methods Bazavov (2026, §3, Eqs. (23)–(29)) adds a third, bijective form in
 which each stage is an increment of the previous one,
@@ -195,3 +202,4 @@ Prince–Dormand method.
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — Eqs. (1)–(4), §2.1 (stage-derivative form; DIRK versus fully implicit orders).
 - [Zhang (2024)](/sources/zhang-2024.md) — §2 (row-sum convention, parameter count).
 - [Bazavov (2026)](/sources/bazavov-2026.md) — Eq. (6); §3 (Eqs. (23)–(29), Remark 1).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.1 (stage-value boundary data), §2.2 (Eqs. (2.18)–(2.21), stage formulations).

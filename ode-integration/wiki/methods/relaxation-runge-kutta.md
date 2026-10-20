@@ -5,7 +5,7 @@ description: "Relaxation rescales each Runge–Kutta update by a scalar root γn
 status: established
 aliases: [RRK, relaxation RK, relaxation method, incremental direction technique, IDT, multiple-relaxation Runge–Kutta, MRRK, FSAL-R, R-FSAL, global relaxation, local relaxation]
 tags: [runge-kutta, structure-preserving, explicit, imex, multirate, step-size-control, relaxation, entropy-stability]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Relaxation Runge–Kutta methods
@@ -186,7 +186,8 @@ $$y^{\gamma}_{n+1}=y_{n+1}+\sum_{k=1}^{\kappa}\gamma_{n,k}\,d^{(k)}_n\quad\text{
 with $y_{n+1}$ the solution of the first method and the $\gamma_{n,k}$ solving
 the $\kappa\times\kappa$ system $\eta_k(y^{\gamma}_{n+1})=\eta_k(y_n)$. The
 parameters are near zero, not near one: for $\kappa=1$, $\gamma_{n,1}$
-corresponds to $\gamma_n-1$ *(source's reader, confirmed here)*. No extra
+corresponds to $\gamma_n-1$ *(compiler check, not in the sources:
+$y_n+\gamma_n(y_{n+1}-y_n)=y_{n+1}+(\gamma_n-1)d^{(1)}_n$)*. No extra
 right-hand-side evaluation is needed.
 
 * **Lemma 4.1.** If $(A,b^{(1)})$ has order $p\ge2$, $y_n=y(t_n)$, and the
@@ -231,8 +232,8 @@ structure of the update:
   $f(y_n)+\gamma_n^{-1}\big(f(y^{\gamma}_{n+1})-f(y_n)\big)$ in place of
   $f(y_{n+1})$ in the embedded solution, relax the embedded solution with the
   same $\gamma_n$ and compare both at the relaxed time (Lemma 2, Eq. (17),
-  Theorem 2). Rejected steps then also pay the root solve *(source's reader,
-  not discussed in the source)*.
+  Theorem 2). Rejected steps then also pay the root solve, since relaxation precedes the
+  estimate *(compiler remark, not in the sources)*.
 
 On the [BBM equation](/benchmarks/benjamin-bona-mahony-equation.md) with BS3
 and DP5, both reach the accuracy of the naive scheme at the baseline's

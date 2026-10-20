@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sci. Comput. 94:59"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Scientific_Computing_Bencomo_Discrete_Adjoint_Computations_for_Relaxation_RungeKutta_Meth.pdf"
 tags: [relaxation, adjoint, structure-preserving, runge-kutta, entropy-stability]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -117,7 +117,7 @@ $r_n(\gamma)$ the relaxation root function.
 | $J_{k,i}$ | $J_{n,i}$ | Jacobian at stage $i$ (agrees) |
 | $\gamma_k$ | $\gamma_n$ | relaxation parameter; **collision** in §3.1 with the ratio of specific heats $\gamma=1.4$ |
 | $\eta$, $\nabla\eta$, $\nabla^2\eta$ | $\eta$, $\eta'(y)$, $\eta''(y)$ | convex entropy |
-| $r_k(\gamma;\bar y)$ | $r_n(\gamma)$ | root function (page-local) |
+| $r_k(\gamma;\bar y)$ | $r_n(\gamma)$ | root function (page-local); **not the step-size ratio $r_n=h_n/h_{n-1}$** of the registry |
 | $d_k$, $e_k$ | same (page-local) | search direction, entropy production |
 | $\delta_k$, $\Delta_{k,i}$ | $\delta_n$, $\Delta_{n,i}$ | tangent solution and stages (page-local); $\Delta_{n,i}$ is not a mesh width |
 | $\lambda_k$, $\Lambda_{k,i}$ | $\lambda_n$, $\Lambda_{n,i}$ | adjoint solution and stages; **collision**: the registry's $\lambda$ is an eigenvalue |

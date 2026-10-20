@@ -9,7 +9,7 @@ year: 2023
 venue: "BIT Numer. Math. 63:13"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_BIT_Numerical_Mathematics_Carrel_Low-rank_Parareal_a_low-rank_parallel-in-time_integrator.pdf"
 tags: [parallel, parareal, low-rank, parabolic, stiff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -186,7 +186,7 @@ Notation map lists the collisions.
 - Kieri, Lubich & Walach (2016) in the references prints "SIAM J. Numer.
   Anal.,," (double comma).
 
-The reader also notes that Fig. 8a shows the $q=4$ Riccati error stalling
+*(Compiler observation, not in the sources.)* Fig. 8a shows the $q=4$ Riccati error stalling
 near $10^{-2}$ and dropping only near the final iteration, which
 "slower (but still superlinear)" describes generously.
 

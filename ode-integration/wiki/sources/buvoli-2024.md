@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 497:112623"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Computational_Physics_Buvoli_Exponential_Runge-Kutta_Parareal_for_non-diffusive_equations.pdf"
 tags: [parallel, parareal, exponential, stability, hpc]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -80,8 +80,8 @@ $\mathcal E=I-\mathcal M_{\mathcal G}^{-1}\mathcal M_{\mathcal F}$.
    (§1, §4). **Stated**
 2. Parareal speedup without communication is
    $S=N/\bigl(N\alpha+K(1+\alpha)\bigr)$ with $\alpha=C_{\mathcal G}/C_{\mathcal F}$ (Eq. (5), from
-   ref [7]). **Stated** (the reader's check reproduces the printed 38.5 and
-   10.16)
+   ref [7]). **Stated** (a compiler check, not in the sources, reproduces the printed
+   38.5 and 10.16)
 3. Exponential integrators on operators with purely imaginary eigenvalues
    have stability regions of similar size to explicit integrators, but the
    instability is so weak that solutions stay usable over moderate step

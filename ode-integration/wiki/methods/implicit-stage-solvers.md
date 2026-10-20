@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Solving the stage equations of implicit Runge–Kutta methods"
-description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep, two-derivative and Patankar steps) are solved: Newton, Picard, simplified and matrix-free Newton, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning, extended block-Jacobi, parallel-in-time solves, positivity-preserving linear solves and solver software."
+description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep, two-derivative and Patankar steps) are solved: Newton, Picard, simplified and matrix-free Newton, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning, extended block-Jacobi, stage formulations and Rana-type preconditioners, dual time stepping, parallel-in-time solves, positivity-preserving linear solves and solver software."
 status: established
-aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution, extended block-Jacobi preconditioner, BJext, Jacobian-free Newton–Krylov, JFNK, matrix-free Newton–Krylov, inexact SDC, Jacobi iteration for Patankar systems]
+aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution, extended block-Jacobi preconditioner, BJext, Jacobian-free Newton–Krylov, JFNK, matrix-free Newton–Krylov, inexact SDC, Jacobi iteration for Patankar systems, dual time stepping, pseudo-time stepping, pseudo-transient iteration, Rana preconditioner, IA splitting, Butcher transformed stage variables, stage-value formulation]
 tags: [implicit, linear-algebra, stiff, runge-kutta, software, parallel]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods
@@ -80,6 +80,25 @@ methods are "rarely used" for large PDE problems (Southworth et al. §1;
   operator evaluations per GMRES iteration, and with right preconditioning it needs nearly the
   same GMRES iterations as the matrix-based solve (Fig. 6). ILU(0) is incompatible with it,
   since it needs the whole matrix.
+- **Jacobian-free Newton–Krylov with a tolerance tied to the time error.**
+  [Pan et al. (2022)](/sources/pan-2022.md) solve each ESDIRK stage of a high-order DG
+  compressible-flow solver in modal coefficient space by Newton from the explicit part of the
+  stage, with preconditioned GMRES on finite-difference Jacobian–vector products, a
+  low-memory block relaxed Jacobi preconditioner and a GMRES tolerance of $0.05$ times the
+  Newton residual, which "has no influence on the temporal accuracy" (§2.1.4, Eqs.
+  (19)–(22)). Newton stops when the stage residual falls below $\eta_{\mathrm N}$ times the
+  norm of the embedded temporal-error estimate, $\eta_{\mathrm N}=0.1$ (page-local; Eq. (37),
+  taken from Birken et al. and Noventa et al.). Linearizing the stage residual, they derive
+  the sufficient condition
+  $\lVert J(I/h-a_{ii}J)^{-1}r\rVert\le\eta_{\mathrm N}\lVert e\rVert$ for the iteration
+  error to stay below the temporal error ($r$ the residual, $e$ the error estimate,
+  page-local), which tends to $\lVert r\rVert\le\eta_{\mathrm N}a_{ii}\lVert e\rVert$ as
+  $h\to\infty$, with $0.25<a_{ii}<0.45$ in their schemes (§2.3, Eqs. (38)–(45)). On an
+  [isentropic vortex](/benchmarks/isentropic-vortex.md) with ESDIRK3, fixed relative
+  tolerances $10^{-6}\lVert v_0\rVert$ or $10^{-3}\lVert r_0\rVert$ degrade the temporal order,
+  $10^{-10}$ or $10^{-7}$ recover it, and the adaptive tolerance gives observed order 3.27
+  (§3.1.1, Fig. 2). The tolerance is the iterative leg of their balanced
+  [step-size control](/methods/step-size-control.md).
 - **Linearly implicit stages.** For a right-hand side linear in $y$, ARKODE performs one Newton
   iteration per stage (Reynolds et al. §2.2). [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)
   build this single linear solve into the method.
@@ -141,6 +160,31 @@ Jacobian approximated by neglecting the derivative of its viscosity coefficient 
 et al. contrast this with the explicit first-order predictor of Gottlieb, Mullen & Ruuth,
 which confines the method to small Courant numbers (§1, §3), and outline (not test) the
 same freezing for characteristic-variable reconstructions (Remark 2).
+
+## Stage formulations
+
+The same Runge–Kutta step can be posed in different unknowns, which changes the structure
+of the Newton system. [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) (§2.2–2.3) offer
+three in [Irksome](/software/irksome.md):
+
+- **Stage derivatives** $k_i$, the original Irksome form: every block of the Jacobian couples
+  the nonlinearity of one stage to all stages, $s^2$ nonlinear blocks to assemble.
+- **Butcher's transformed variables** $w=(A\otimes I)k$ (Butcher 1976, as recalled), for
+  invertible $A$: the stage equations become
+  $\sum_j(A^{-1})_{ij}w_j-f(t_n+c_ih,y_n+hw_i)=0$, so the coupling sits in the linear term and
+  the nonlinear contribution to the Jacobian is block diagonal, $s$ blocks instead of $s^2$
+  (Eqs. (2.18)–(2.19)). Any factorization $A=A_1A_2$ with $A_2$ invertible allows $w=A_2k$;
+  the authors know no other useful one. For the linear heat equation the system becomes
+  $(A^{-1}\otimes M)\mathbf w+h(I\otimes K)\mathbf w=\mathbf f$, the form also used by Munch et
+  al. below (Eqs. (3.1)–(3.2); page-local stiffness $K$).
+- **Stage values** $Y_i$ (Eqs. (2.20)–(2.21)), with an update that needs one mass-matrix
+  solve in finite elements, skipped automatically for
+  [stiffly accurate](/properties/stiff-accuracy.md) tableaux, where $y_{n+1}=Y_s$.
+
+For the heat equation the differences are small, with a slight preference for the
+transformed variables with stage derivatives; for Navier–Stokes the transformed variables
+with stage values needed fewer iterations and were used (§4.1–4.2). A dedicated DIRK path
+builds one single-stage problem and reuses it for all stages (§2.3).
 
 ## Fully implicit methods: real Schur block preconditioning
 
@@ -480,6 +524,96 @@ $(I_s\otimes M+hA\otimes K)$ (§2.3, Eq. (31)). Their solver choices (§2.3, §4
   system is block forward substitution, exact in one iteration (§2.3, §4.3).
 - **Explicit methods** need one mass-matrix solve per stage (Eq. (34)).
 
+Kirby & MacLachlan (2025, §3) extend the menu, in the transformed form
+$(A^{-1}\otimes M)+h(I\otimes K)$:
+
+- **Block Jacobi and block Gauss–Seidel** (Staff, Mardal, Nilssen): from the additive split
+  $A=L_A+D_A+U_A$ (strictly lower, diagonal, strictly upper; page-local),
+  $P_D=(D_A^{-1}\otimes M)+h(I\otimes K)$ and $P_L=((L_A+D_A)^{-1}\otimes M)+h(I\otimes K)$,
+  with diagonal blocks $a_{jj}^{-1}M+hK$ approximated by one BoomerAMG cycle (Eqs.
+  (3.3)–(3.4)). Outer iteration counts grow with $s$ even with exact block solves.
+- **Rana-type preconditioner**: from the multiplicative factorization $A=\tilde L\tilde D\tilde U$
+  (unit lower, diagonal, unit upper; page-local), replace $A$ by the lower-triangular
+  $\tilde L\tilde D$, $\tilde P_{LD}=((\tilde L\tilde D)^{-1}\otimes M)+h(I\otimes K)$, which needs
+  only diagonal-block solves (Eq. (3.5); after Rana et al. and Clines et al.). Irksome
+  implements it generically, through `firedrake.AuxiliaryOperatorPC`, by rebuilding the
+  stage form with $\tilde L\tilde D$ in place of $A$, so it applies to nonlinear problems too.
+- **Monolithic multigrid** with additive Schwarz relaxation on patches that contain all
+  stage copies of a vertex patch, $\mathbf V_i=V_i\times\dots\times V_i$ (Eq. (3.8)), as in
+  Abu-Labdeh et al. above. Kirby (2024), as recalled, proves that if single-stage multigrid
+  with this relaxation converges, possibly with a complex step, the stage-coupled one
+  converges with a spectral radius not depending explicitly on $s$ (§3.2).
+- **Not supported**: the eigendecomposition-based preconditioners of Southworth et al., whose
+  nonlinear form does not map onto PETSc's nonlinear solvers, and the SVD-based ones of
+  Leveque et al., which are problem-specific and linear only (§3.1).
+
+Measured on the heat equation (Fig. 5, 8 cores; values read from the plot): GMRES
+iterations per step at $s=4$ about 47 ($P_D$), 22 ($P_L$), 10 ($\tilde P_{LD}$) and 7 for a
+DIRK with the same stage count, and run times about 180, 95, 43 and 40 s, all about 5 s at
+$s=1$; the Rana iteration counts are "empirically independent of the number of RK stages"
+(§4.1). On flow past a cylinder (Mardal–Tai–Winther elements, Newton–Krylov with
+Eisenstat–Walker forcing, FGMRES with geometric multigrid V(3,3) cycles and Vanka
+relaxation) Newton and Krylov counts are stable in $s$; Rana is faster for two- and
+three-stage Radau IIA, monolithic multigrid for four stages, attributed to fewer hierarchy
+traversals and higher arithmetic intensity; four-stage Radau IIA costs slightly less than
+four times one stage, and DIRKs with $s$ stages run in about the time of $s$-stage Radau IIA
+(§4.2, Figs. 8–9). On Cahn–Hilliard, monolithic multigrid is faster at small steps and Rana
+at large ones (§4.3). See [flow past a cylinder](/benchmarks/flow-past-cylinder.md) and
+[Cahn–Hilliard equation](/benchmarks/cahn-hilliard-equation.md).
+
+## Stage systems of fully implicit–explicit polynomial methods
+
+The implicit equations of the [FIMEX-Radau methods](/methods/polynomial-time-integrators.md)
+are those of Radau IIA with a modified right-hand side, so fully implicit solvers apply
+unchanged ([Buvoli & Southworth 2023](/sources/buvoli-2023.md), §5). On DG
+advection–diffusion they wrap hypre's BoomerAMG in the block preconditioning of Southworth
+et al. (§6.3); on Fourier-spectral KdV the linear implicit part is diagonal, so the
+$s\times s$ inverses per mode are precomputed (§6.1.1). The iterator sweeps that follow the
+propagator solve a system of the same structure, typically much faster because the
+propagator supplies a very good initial guess (§5.2). Their DIRK comparators use simplified
+Newton with 4–10 iterations per stage (§6.3.2).
+
+## Dual time stepping
+
+**Dual (pseudo-)time stepping** solves the nonlinear system of an implicit physical step by
+marching a pseudotime derivative to steady state. [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md)
+use it for BDF1 and BDF2 in a positivity-preserving entropy-stable spectral-collocation
+solver for compressible Navier–Stokes (§4, §7). With pseudo-step $\delta$ and iterate
+$y^{(m)}$ (page-local), the BDF1 equation $y_{n+1}=y_n+hf(y_{n+1})$ is iterated as
+
+$$y^{(m+1)}=y^{(m)}+\delta\Big(-\frac{y^{(m+1)}-y_n}{h}+f(y^{(m)})\Big)
+\quad\Longleftrightarrow\quad
+y^{(m+1)}=C_1\Big(y^{(m)}+\frac{\delta}{h}y_n+\delta f(y^{(m)})\Big),\qquad C_1=\frac{h}{h+\delta},$$
+
+i.e. the mass term is point-implicit and the residual explicit (Eqs. (9)–(13)); a fixed
+point is the BDF1 solution. For BDF2,
+$y^{(m+1)}=C_2\bigl(y^{(m)}+\frac{2\delta}hy_n-\frac\delta{2h}y_{n-1}+\delta f(y^{(m)})\bigr)$ with
+$C_2=\frac{2h}{2h+3\delta}$ (Eqs. (23)–(24)). Since $0<C_1,C_2<1$, every iteration is a
+scaled forward-Euler step from a combination of admissible states, so explicit positivity
+proofs carry over:
+
+- **Theorem 1** (density): with the first-order positivity-preserving density flux, $\rho^{(m+1)}>0$
+  whenever $\delta$ is below the inverse of the forward-Euler bound term minus
+  $\rho_n/(h\rho^{(m)})$, and without restriction when that difference is not positive
+  (Eq. (16)); the pseudo-step bound therefore exceeds the forward-Euler one.
+- **Internal energy**: positivity reduces to a quadratic in $\delta$ with positive constant
+  term, so an admissible $\delta>0$ exists (Eqs. (18)–(19), (26); proof referred to earlier
+  work).
+- The variant with the BDF unknown at the old pseudo level has a *stricter* density bound
+  than explicit Euler and is discarded (Remark 1, no derivation shown).
+- High-order accuracy comes from element-wise convex flux limiting inside the same update
+  (Eq. (22)); see [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)
+  and [positivity preservation](/properties/positivity-preservation.md).
+
+The authors contrast this with standard nonlinear solvers, which do not keep positivity at
+each iteration (§1). Results: on a Mach 2.15 shock/boundary-layer interaction, steady-state
+convergence nearly twice as fast as explicit forward Euler with $\delta$ three times the
+forward-Euler step; at Mach 6.85 no gain, because the temperature constraint, which "is sharp and cannot be
+relaxed", bounds $\delta$; on a Mach 10 Taylor–Green vortex BDF2 runs physical steps on
+average 20 times those of SSPRK3 and saves about 30% wall-clock time at degree 6 on $64^3$
+elements (§8.2–8.4; no hardware stated). See
+[backward differentiation formulas](/methods/backward-differentiation-formula.md).
+
 ## Multirate and IMEX structure
 
 - **Multirate GARK.** Roberts et al. (2021) cost decoupled DIRK-based multirate methods at
@@ -545,6 +679,28 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
   about one right-hand side) favours implicit methods relative to large-scale settings.
 - Ciallella et al. (2022) state no hardware and call their code unoptimized; their cost ratios
   are relative.
+- **Pan et al. (2022), Table 1.** The ratios of the adaptive Newton tolerance to the largest
+  admissible one are printed as 0.57, 0.14 and 0.31, but the printed columns give 0.57, 1.375
+  and 3.15 for the second and third steps. Either the tolerance column is ten times too
+  large in those rows, which the text's conclusion ("of the same order of 0.1") requires, or
+  the adaptive tolerance exceeds the admissible one there *(compiler check of the printed
+  quotients)*.
+- **Kirby & MacLachlan (2025)** give the heat-equation solver mesh as $256\times256$ in the
+  text and $64\times64$ in the caption of Fig. 5; their iteration and time values are read
+  from plots. The Staff et al. ranking of block preconditioners that they recall
+  (lower-triangular before block-diagonal before upper-triangular, right preconditioning
+  better than left) comes from one model problem (§3.1).
+- **Dual time stepping: what the proofs cover.** Sayyari & Yamaleev (2026) prove positivity
+  of every pseudo-iterate, not of the converged BDF solution, of which a limit of positive
+  iterates guarantees only nonnegativity, and they do not prove convergence of the
+  iteration; the pseudo-step keeps an explicit CFL-type bound, so "no constraint on the
+  physical time step" holds for the converged solution only (§9 concedes the pseudo-time
+  limit). For BDF2 the subtracted term is $(2\rho_n-\frac12\rho_{n-1})/(h\rho^{(m)})$, positive
+  only when $4\rho_n>\rho_{n-1}$, so the claim that the bound exceeds the forward-Euler one
+  is not guaranteed for BDF2 when the density drops by more than a factor 4 in one step
+  *(compiler check of §7.1)*. Their fully discrete entropy stability is argued for BDF1 only
+  and assumes the pseudo-residual below the BDF1 entropy dissipation (§5). The file read is
+  arXiv v3.
 - The heat-equation comparison of Gardner et al., CVODE BDF 8.8 s against ARKODE's default DIRK
   67.3 s, is problem-specific; the authors attribute it to BDF's single solve per step and order
   adaptivity (§5.1).
@@ -572,3 +728,7 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
 - [Jin et al. (2025)](/sources/jin-2025.md) — arXiv v2: §4.2 (Eq. (4.3)).
 - [Ciallella et al. (2022)](/sources/ciallella-2022.md) — arXiv v3: §5.1 (Remark 5.1), §6.1, §6.6 (Figs. 6, 15).
 - [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — CSL-TR-26-1: Remark 3.22, §6.
+- [Pan et al. (2022)](/sources/pan-2022.md) — §2.1.4 (Eqs. (19)–(23)), §2.3 (Eqs. (37)–(46)), §3.1.1 (Fig. 2, Table 1).
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2.2–2.3 (Eqs. (2.18)–(2.21)), §3.1–3.2 (Eqs. (3.1)–(3.8)), §4.1–4.3 (Figs. 5, 8–9).
+- [Buvoli & Southworth (2023)](/sources/buvoli-2023.md) — arXiv v2: §5, §5.2, §6.1.1, §6.3.
+- [Sayyari & Yamaleev (2026)](/sources/sayyari-2026.md) — arXiv v3: §1, §4 (Eqs. (9)–(13), Remark 1), §5.1–5.2 (Thm. 1, Eqs. (16)–(19)), §6.2 (Eq. (22)), §7 (Eqs. (23)–(26)), §8.2–8.4, §9.

@@ -8,8 +8,8 @@ authors: [Hedayati Nasab S., Pereira C.A., Vermeire B.C.]
 year: 2021
 venue: "J. Sci. Comput. 89:11"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Scientific_Computing_Hedayati_Optimal_Runge-Kutta_Stability_Polynomials_for_Multidimension.pdf"
-tags: [runge-kutta, explicit, stability, method-of-lines, high-order-methods]
-timestamp: 2026-10-19T12:00:00Z
+tags: [runge-kutta, explicit, stability, method-of-lines]
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -110,7 +110,7 @@ file.
 | $P_{s,q}(z)$ | $P(z)$ | stability polynomial with $s$ stages and order $p$ |
 | $\gamma_j$ | $\theta_j$ | monomial coefficients; **collision**: registry $\gamma$ is tree density |
 | $q$ | $p$ | **collision**: the source's $q$ is the temporal order, registry $q$ is stage order |
-| $p$ | $k$ (spatial degree) | **collision**: the source's $p$ is the FR/DG solution degree, registry $p$ is the order; $k$ is page-local (not in the registry) |
+| $p$ | $k$ (spatial degree) | **collision**: the source's $p$ is the FR/DG solution degree, registry $p$ is the order; $k$ is page-local here and **collides** with the registry $k$ (multistep step count, PID exponent denominator) |
 | $s$ | $s$ | stages (agrees) |
 | $S$ | $\mathcal S$ | region of absolute stability |
 | $\Delta t_{max}$, $\Delta t_{opt}$, $P_{opt}$ | $h_{\max}$, $h_{\mathrm{opt}}$, optimal $P$ | $\Delta t_{max}$ is also the bisection upper bound (overloaded) |

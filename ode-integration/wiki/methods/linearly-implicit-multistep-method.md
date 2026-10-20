@@ -5,7 +5,7 @@ description: "Glandon, Narayanamurthi and Sandu's linearly implicit multistep me
 status: established
 aliases: [Limm, Limm-W, Limm-w, linearly implicit multistep method, Rosenbrock multistep method, multistep W-method]
 tags: [linear-multistep, implicit, stiff, order-conditions, stability, step-size-control]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Linearly implicit multistep methods (Limm, Limm-W)
@@ -133,7 +133,7 @@ Orders 1 and 2 are A-stable; orders 3–5 are A($\alpha$)-stable (Fig. 6.1, Tabl
 The two-step Limm-W method, with all fractions over $D=133414177$ (page-local), has
 $\alpha=(13204873,\,-146619050,\,D)/D$, $\beta=(-73309525,\,193518829)/D$ and
 $\kappa=73309525\,(1,-2,1)/D$, listed for $j=0,1,2$ (Table 6.2b, in registry order). It
-satisfies the order-2 conditions and $\beta_0+\kappa_0=0$ (reader's check). The exact-Jacobian
+satisfies the order-2 conditions and $\beta_0+\kappa_0=0$ *(compiler check, exact rational arithmetic)*. The exact-Jacobian
 Limm coefficients are only in the supplement, which the ingested file does not contain.
 
 ## Variable-step variable-order implementation

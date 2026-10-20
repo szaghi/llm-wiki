@@ -9,7 +9,7 @@ year: 2022
 venue: "Appl. Numer. Math. 182:117-147"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Applied_Numerical_Mathematics_Torlo_Issues_with_positivity-preserving_Patankar-type_schemes.pdf"
 tags: [positivity, structure-preserving, stiff, order-reduction, stability]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -57,12 +57,12 @@ Notation: the solution is $y$, components $y_i$, step $n$ written $y^n_i$ as in 
 25. Diagonally split RK methods can be unconditionally positive but are less accurate than implicit Euler at large steps; general linear methods of order $\ge2$ are only conditionally positive [6]. (§1) **Stated**
 26. Higher-order MPRK schemes need more stages than classical Runge–Kutta methods of the same order, consistent with Kopecz–Meister [27] on three-stage third-order MPRK. (Remark 2.1) **Stated**
 
-*(Reader checks, not in the source.)* The paper qualifies rather than contradicts the classical order proofs of [26, 28, 19, 20, 37], which fix $\varepsilon>0$ (supplement Remark 2.4). Its oscillation bounds concern monotone approach to the steady state, a different notion from the Lyapunov stability of Izgin, Kopecz & Meister [22], by which MPRK22($\alpha$) is stable for all $h>0$ (Remark 1.4). MPRK(3,2) is second order by a heuristic argument and symbolic expansions on one linear problem; no general order proof is given. The word "order" is used both for local first-step order and for global order (see Printed slips).
+*(Compiler checks, not in the sources.)* The paper qualifies rather than contradicts the classical order proofs of [26, 28, 19, 20, 37], which fix $\varepsilon>0$ (supplement Remark 2.4). Its oscillation bounds concern monotone approach to the steady state, a different notion from the Lyapunov stability of Izgin, Kopecz & Meister [22], by which MPRK22($\alpha$) is stable for all $h>0$ (Remark 1.4). MPRK(3,2) is second order by a heuristic argument and symbolic expansions on one linear problem; no general order proof is given. The word "order" is used both for local first-step order and for global order (see Printed slips).
 
 # Printed slips
 
 - Eq. (6) prints the initial condition "$u(0)=u_0=(0.1,0)^T$", while the Fig. 1 caption says "$u_0=(1,10^{-250})^T$" and the plotted $u_2$ reaches about 0.5, which fits unit mass.
-- §5, p. 22: "MPRK(3,4,2,0.5)" is MPRK(4,3,2,0.5), the scheme of Fig. 2; the same sentence's "$p=3$" recomputes from the printed formulas to $p\approx2.67$ (reader check; the conclusion $p,q>1$ is unaffected).
+- §5, p. 22: "MPRK(3,4,2,0.5)" is MPRK(4,3,2,0.5), the scheme of Fig. 2; the same sentence's "$p=3$" recomputes from the printed formulas to $p\approx2.67$ (compiler check; the conclusion $p,q>1$ is unaffected).
 - Same paragraph: "$\Delta t\lesssim\varepsilon^{1/3}\approx10^{-3.3}$" requires $\varepsilon=10^{-10}$, while Fig. 2 uses $\varepsilon\in\{10^{-2},10^{-16},10^{-250}\}$.
 - MPRKSO(4,3) coefficients (App. A and supplement): "$\eta_3$" is printed twice, $0.1868649805549811$ and $2.224876040351123$; the second is evidently $\eta_4$. The supplement's final update prints $b_{32}p_{ij}(y^2)$ where App. A has $y^3$.
 - MPRK(4,3) nonnegativity region: App. A prints "$1/2\le\alpha<2/3$" for the first branch, the supplement "$1/3\le\alpha<2/3$".
@@ -109,6 +109,7 @@ Notation: the solution is $y$, components $y_i$, step $n$ written $y^n_i$ as in 
 Chunk 5 (2026-10-20). This source is cited on:
 
 * [Deferred correction (DeC)](/methods/deferred-correction.md)
+* [Lyapunov stability of steady states of positive, conservative time integrators](/results/lyapunov-stability-positive-conservative-schemes.md)
 * [Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)](/methods/modified-patankar-methods.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Positivity preservation in time integration](/properties/positivity-preservation.md)

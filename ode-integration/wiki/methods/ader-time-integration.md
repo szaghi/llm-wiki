@@ -5,7 +5,7 @@ description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predicto
 status: established
 aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, space–time DG predictor, IMADER, implicit ADER, locally implicit ADER-DG, ADER-DG with local DG predictor, ADER-DG ODE solver]
 tags: [ader, deferred-correction, explicit, implicit, stiff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # ADER as a time integrator
@@ -104,10 +104,10 @@ $K$ for $\mathcal D$ and $M$ for the mass matrix). It is solved to convergence b
 or Newton iteration, and the step ends with the Gauss quadrature
 $y_{n+1}=y_n+h\sum_mw_mf(t_{n,m},Y_m)$ (Eq. (13)). This is the Galerkin system of Han
 Veiga et al. with quadrature on the interpolation nodes, multiplied by $\mathcal D^{-1}$
-*(compiler check)*. At the converged predictor Popov's quadrature update and the
+*(compiler check, not in the sources)*. At the converged predictor Popov's quadrature update and the
 extrapolation $\sum_m\ell_m(1)Y_m$ of Han Veiga et al. give the same $y_{n+1}$: summing
 the rows of $\mathcal D\mathbf Y=\mathbf r(\mathbf Y)$ and using $\sum_m\ell_m\equiv1$ gives
-$\sum_l\ell_l(1)Y_l=y_n+h\sum_lw_lf(Y_l)$ *(compiler check)*; after finitely many Picard
+$\sum_l\ell_l(1)Y_l=y_n+h\sum_lw_lf(Y_l)$ *(compiler check, not in the sources)*; after finitely many Picard
 iterations the two differ.
 
 The scheme is therefore an $(\mathsf M+1)$-stage
@@ -291,7 +291,7 @@ one linear space–time system per element *(compiler remark, not in the sources
   without checking its hypotheses for a predictor–corrector step; for ADER the
   statement is unproved, though the tests show the design orders (e.g. 1.78–1.84
   at second order on one advection test, Table 1).
-- **Printed slips in Gaburro et al.** (arXiv v1 read; source's reader checks):
+- **Printed slips in Gaburro et al.** (arXiv v1 read; compiler checks of the PDF):
   Table 2 prints $\Delta x=3.43\times10^{-3}$ for $3.43\times10^{-2}$ and an
   error $8.09\times10^{-5}$ where the printed order implies $8.09\times10^{-6}$;
   Eq. (36) omits the factor $\gamma_nh$; the symbol $\gamma$ also denotes the
@@ -306,13 +306,13 @@ one linear space–time system per element *(compiler remark, not in the sources
   $\mathsf M+1$ Jacobians, the implicit Runge–Kutta count with $s=\mathsf M+1$
   *(compiler check of Eq. (11), not in the source)*. The count appears off by a factor
   $\mathsf M+1$, and the scheme is itself an implicit Runge–Kutta method; the defensible cost
-  differences are the full stage coupling and iteration to convergence *(compiler remark)*.
+  differences are the full stage coupling and iteration to convergence *(compiler remark, not in the sources)*.
 - **Popov's labels and fits.** "L1-stable" is not a standard class; read it as L-stable
   with $R(z)=\mathcal O(\lvert z\rvert^{-1})$ (see [A-stability](/properties/a-stability.md)).
   Fitted nodal orders above $2\mathsf M+1$ by up to 3–4 for $\mathsf M\ge25$ on two
   nonlinear problems, which Popov calls "unexpected", come from six-grid fits at errors of
   $10^{-100}$–$10^{-280}$ and are not evidence of superconvergence beyond $2\mathsf M+1$
-  *(compiler remark)*. On the flame problem the orders saturate at a common value for all
+  *(compiler remark, not in the sources)*. On the flame problem the orders saturate at a common value for all
   degrees, which points to a measurement dominated by the resolution of the layer *(compiler
   remark)*; Popov's statement of agreement "up
   to $N\le3$" does not hold at $N=2$ (7.99 against an expected 5). The abstract's "uniform

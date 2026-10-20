@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Boundary conditions for Runge–Kutta stages"
-description: "How time-dependent Dirichlet data are imposed on the internal stages of Runge–Kutta and IMEX methods in a method-of-lines setting: naive stage-time values create numerical boundary layers and order reduction, Irksome imposes the data's time derivative on stage derivatives, and a PDE-based boundary treatment recovers design order 3 and 4."
+description: "How time-dependent Dirichlet data are imposed on the internal stages of Runge–Kutta and IMEX methods in a method-of-lines setting: stage-time values limit accuracy to the stage order, Irksome moved from derivative-of-data to stage-value (DAE-type) conditions, a PDE-based treatment recovers design order 3 and 4, and halo stages need the same care."
 status: established
-aliases: [stage boundary conditions, boundary treatment of stage values, boundary treatment for IMEX Runge–Kutta, stage Dirichlet data]
+aliases: [stage boundary conditions, boundary treatment of stage values, boundary treatment for IMEX Runge–Kutta, stage Dirichlet data, DAE-type boundary conditions, ODE-type boundary conditions]
 tags: [order-reduction, imex, runge-kutta, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T14:00:00Z
 ---
 
 # Boundary conditions for Runge–Kutta stages
@@ -20,12 +20,16 @@ $Y_i|_\Gamma=g(\cdot,t_n+c_ih)$ makes the boundary values inconsistent with the
 interior stages. The result is a **numerical boundary layer** and
 [order reduction](/definitions/order-reduction.md)
 ([González-Tabernero et al. 2024](/sources/gonzaleztabernero-2024.md), §1, Fig. 1,
-citing Lubich–Ostermann). The sources treat the problem in two ways: by imposing the
+citing Lubich–Ostermann). The sources treat the problem in three ways: by imposing the
 time derivative of the data on stage derivatives
-([Farrell et al. 2021](/sources/farrell-2021.md)), and by computing stage boundary
-values from the stage equations and the PDE itself (González-Tabernero et al. 2024).
+([Farrell et al. 2021](/sources/farrell-2021.md)), by imposing the data on the stage
+values and accepting the stage-order limit
+([Kirby & MacLachlan 2025](/sources/kirby-2025.md)), and by computing stage boundary
+values from the stage equations and the PDE itself (González-Tabernero et al. 2024). The
+same consistency question arises at the internal boundaries of a domain decomposition
+([Goswami et al. 2023](/sources/goswami-2023.md)).
 
-## Derivative-of-data stage conditions (Irksome)
+## Derivative-of-data and stage-value conditions (Irksome)
 
 [Irksome](/software/irksome.md) works with stage derivatives $k_i\approx u_t(t_n+c_ih)$.
 Strongly imposed Dirichlet data $u|_\Gamma=g$ become
@@ -39,6 +43,34 @@ Runge–Kutta method applied to the boundary ODE $u'=\partial_tg$, not the data 
 time *(compiler translation, not in the source)*. Farrell et al. observe order reduction
 of two-stage Gauss–Legendre on a manufactured heat solution with Dirichlet data
 (§4.1, Figs. 1–2) and do not discuss the role of the stage condition in it.
+
+**Change of default to stage values.** Kirby & MacLachlan (2025, §2–2.1), the first a
+co-author of the earlier paper, replace this "ODE-type" treatment as Irksome's default by a
+"DAE-type" one that treats the Dirichlet condition as an algebraic constraint on the stage
+values:
+
+$$Y_i|_\Gamma=g(\cdot,t_n+c_ih)\quad\Longleftrightarrow\quad\sum_ja_{ij}k_j|_\Gamma=\frac{g(\cdot,t_n+c_ih)-u_n|_\Gamma}{h},\qquad i=1,\dots,s$$
+
+(Eqs. (2.15)–(2.17)), solvable for the boundary values of the $k_i$ when $A$ is invertible,
+up to the $L^2$ projection error of $g$. They state that it retains (at least) the stage
+order of the scheme, matching the convergence theory of stiff ODEs and DAEs, and that for
+[stiffly accurate](/properties/stiff-accuracy.md) methods (Lobatto IIIC, Radau IIA)
+$u_{n+1}=Y_s$ matches the data at $t_{n+1}$, which other methods do not guarantee. The ODE
+type "has proven to have some inherent weaknesses": with incompatible data (1D heat
+equation, zero initial value, boundary values 1, three-stage Lobatto IIIC, $h=0.05$) it
+sees a zero boundary derivative and stays at the zero solution, while the DAE type captures
+the approach to $u\equiv1$ (Fig. 2). "Many practical cases show little difference". Both
+treatments remain available (`bc_method='DAE'`, the default, or `'ODE'`). The two papers
+thus record a change of default by the software's authors, not a disagreement; see
+[Irksome](/software/irksome.md).
+
+The DAE type is the stage-time imposition that the lead of this page describes, with the
+error that the stage order governs; Kirby & MacLachlan accept that limit, while
+González-Tabernero et al. below aim beyond it *(compiler remark, not in the sources)*. On
+their heat-equation tests with DAE-type data, three- and four-stage Radau IIA (stage order
+$s$) and the DIRK WSODIRK433 (weak stage order 3) keep optimal accuracy, while backward
+Euler, Alexander's DIRK (stage order 1) and, with cubic elements, two-stage Radau IIA
+(stage order 2) lose $L^2$ accuracy at large steps (§4.1, Figs. 3–4).
 
 ## Boundary treatment from the stage equations (IMEX)
 
@@ -96,6 +128,32 @@ order and several dimensions; they cite Wang–Zhang–Shu and Zhao–Huang (fin
 differences with inverse Lax–Wendroff ghost points) as the only prior IMEX boundary
 treatments (§1). They state that the procedure applies to explicit Runge–Kutta methods
 as a special case and to implicit stiff sources, without testing either (§1, §6).
+
+## Stage values at subdomain interfaces
+
+In a distributed explicit solver every Runge–Kutta stage needs halo data from neighbouring
+processes, so an $s$-stage low-storage method costs $s$ halo exchanges per step
+([Goswami et al. 2023](/sources/goswami-2023.md), §2.3). Goswami et al. avoid the
+inter-stage exchanges with asynchrony-tolerant finite differences on delayed halo values
+and meet the boundary-stage problem at the processor boundaries:
+
+- **Frozen buffer values.** Holding the halo values fixed across the stages breaks the
+  cancellation of stage error terms between neighbouring points; their truncation-error
+  analysis limits the solution at processor boundaries to second order and the
+  domain-averaged error to third order under strong scaling, whatever the orders of the
+  spatial and temporal schemes (§3.1–3.2, Eqs. (16)–(24)).
+- **Buffer values advanced by the stage recurrence.** The halo points are advanced through
+  the same low-storage recurrence, with the unavailable right-hand side replaced by a
+  one-sided temporal stencil on the delayed history whose coefficients reproduce the Taylor
+  terms that the stages accumulate, not $\partial_tu$ alone (§3.2.1, Eqs. (26)–(37)). This
+  restores fourth order with a two-stage method and sixth order with three-stage methods in
+  1D advection–diffusion tests, with an asynchrony error that grows linearly with the
+  number of processes (§3.4, §4, Figs. 5–6).
+
+The remedy has the shape of the boundary treatment above: stage boundary data computed
+consistently with the stage equations instead of frozen or naive values *(compiler
+analogy, not drawn by the source)*. The method is on
+[low-storage Runge–Kutta methods](/methods/low-storage-runge-kutta.md).
 
 ## Numerical evidence
 
@@ -162,6 +220,8 @@ at the boundaries.
 
 - [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md) — §1; §2.2 Eq. (2.16), p. A3290 (third-order tableau); §3 Prop. 3.1, Eqs. (3.3)–(3.12), Remarks 3.3–3.6, Thm. 3.5; §4 Algorithms 4.1–4.3; §5 Tables 1–4, Figs. 1, 4–6; §6.
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §2.2.1 Eq. (18); §4.1 Figs. 1–2.
+- [Kirby & MacLachlan (2025)](/sources/kirby-2025.md) — §2, §2.1 (Eqs. (2.15)–(2.17), Fig. 2); §4.1 (Figs. 3–4).
+- [Goswami et al. (2023)](/sources/goswami-2023.md) — §2.3; §3.1–3.4 (Eqs. (16)–(43)); §4 (Figs. 5–6).
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §1 (drawbacks of boundary modifications).
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Fig. 3 (modified boundary data, as listed on the order-reduction page).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §4.2 (boundary sources under TASE preconditioning).

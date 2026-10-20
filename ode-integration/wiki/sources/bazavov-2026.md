@@ -9,7 +9,7 @@ year: 2026
 venue: "BIT Numer. Math. 66:38"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_BIT_Numerical_Mathematics_Bazavov_2N-storage_Runge-Kutta_methods_Order_conditions_general_prop.pdf"
 tags: [runge-kutta, explicit, low-storage, order-conditions, embedded-pair]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T16:00:00Z
 ---
 
 # Summary
@@ -117,7 +117,7 @@ source assumes $A^{\mathrm W}_i\ne0$ for $i\ge2$ throughout.
     Williamson's (12) gives $A^{\mathrm W}_3=38/243$ instead of $130/81$,
     resp. $A^{\mathrm W}_4=-862/729$ instead of $-452/729$, and the
     reconstructed tableaux (Tables 3–4) are no longer third order.
-    **Shown** (exact arithmetic; reader re-verified, also on a third
+    **Shown** (exact arithmetic; compiler re-verified, not in the sources, also on a third
     (5,3) scheme with $b_3=0$ from App. E)
 13. Theorem 4: in the general case
     $a_{ij}=\frac{b_j}{\sum_{k=1}^{j}b_k-c_j}\big[c_i-c_j-\sum_{k=j+1}^{i-1}a_{ik}\big]$
@@ -140,7 +140,7 @@ source assumes $A^{\mathrm W}_i\ne0$ for $i\ge2$ throughout.
 17. General (5,3) solution: with free $c_2,\dots,c_5,b_5$ a chain of
     intermediates (Eqs. 103–114) gives a cubic in $b_2$ whose leading
     coefficient vanishes identically, so again a quadratic, then
-    $b_1,b_3,b_4$ (Eqs. 115–118) (§8). **Derived** (reader verified exactly
+    $b_1,b_3,b_4$ (Eqs. 115–118) (§8). **Derived** (compiler check, not in the sources: verified exactly
     on Tables 7, 9, 10 and the corrected Table 8)
 18. Conjecture: for any $s$, third-order 2N methods lead to a final
     equation of degree at most 3 for $b_2$, since $2s-1$ parameters face
@@ -151,7 +151,7 @@ source assumes $A^{\mathrm W}_i\ne0$ for $i\ge2$ throughout.
     equation, so rational solutions of (95) are searched and filtered (§7).
     **Stated** / **Shown** (Tables 5–6)
 20. Four new rational (4,3) schemes satisfy (102), with increasing $c$ and
-    $b_i\ge-3/8$ (Tables 5–6). **Shown** (reader verified exactly)
+    $b_i\ge-3/8$ (Tables 5–6). **Shown** (compiler check, not in the sources: verified exactly)
 21. "A simple grid search relatively quickly revealed over two million of
     (5,3) methods with rational coefficients" (§9). **Stated**
 22. New (5,3) schemes: the lowest error over the tests (Table 7); one of
@@ -171,7 +171,7 @@ source assumes $A^{\mathrm W}_i\ne0$ for $i\ge2$ throughout.
     fourth-order conditions, the 2N constraints and the two extra
     constraints of the original, with $B^{\mathrm W}_6=0.27$ fixed, in
     1000-bit MPFR; residual $10^{-300}$ in four iterations (§10, App. D).
-    **Shown** (reader checked the order conditions to $10^{-16}$)
+    **Shown** (compiler check, not in the sources: order conditions hold to $10^{-16}$)
 26. To design 2N methods of order $\ge4$, solve the standard order
     conditions plus (45)–(46) or (47) numerically in $(A,b)$, not in
     $(A^{\mathrm W},B^{\mathrm W})$ (§§9–10). **Stated**
@@ -188,7 +188,7 @@ source assumes $A^{\mathrm W}_i\ne0$ for $i\ge2$ throughout.
   $\tfrac16(z_2-z_1)(c_3-c_2)$; it must be $\tfrac16(z_2+z_1)(c_3-c_2)$.
   With the printed sign the four schemes of Tables 5–6 leave residuals
   $1/25920$, $-8/28125$, $4/84375$, $169/268912$; with $+$ all vanish
-  (reader's symbolic and exact check).
+  (compiler symbolic and exact check, not in the sources).
 - **Table 8, $a_{51}$:** printed $\tfrac{12053}{11172}$; it must be
   $\tfrac{2053}{11172}$, which makes the row sum $c_5=\tfrac{13}{14}$ (the
   printed node) and satisfies the third-order conditions; the
