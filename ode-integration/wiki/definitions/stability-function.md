@@ -5,7 +5,7 @@ description: "The stability function R(z) is the factor by which a one-step meth
 status: established
 aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Stability function, stability polynomial and stability region
@@ -193,9 +193,59 @@ $m$-stage Gauss method *(compiler remark, not in the source)*. See
   numerically on a grid of $z$: they coincide for orders 2–5, do not depend on
   the node family (equispaced, Gauss–Legendre, Gauss–Lobatto) and grow with
   order. An analytic treatment "is not feasible" because it leads to
-  polynomial inequalities of degree $p(p+1)$. See
-  [deferred correction](/methods/deferred-correction.md) and
-  [ADER](/methods/ader-time-integration.md).
+  polynomial inequalities of degree $p(p+1)$. The coincidence has since been proved for
+  the DeC side: [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) (Thm. 6.1) show
+  that every bDeC method of order $K$, and its variants that add subnodes between
+  iterations, has $R(z)=\sum_{j=0}^Kz^j/j!$ for any distribution of subnodes, because the
+  Butcher matrix is block-nilpotent with $A^K=0$; the sDeC branch has node-dependent regions
+  (Fig. 3). They define the region with the strict inequality $\lvert R\rvert<1$ (Eq.
+  (40)). The implicit Gauss–Legendre ADER-DG solver iterated to convergence has
+  $R(z)=\det(I-zB+z\mathbf 1w^\top)/\det(I-zB)$, numerator of degree $\mathsf M$ and
+  denominator of degree $\mathsf M+1$ by a rank computation for $\mathsf M\le80$
+  ([Popov 2024](/sources/popov-2024.md), §1.2, Eq. (15)); a compiler check matches it to
+  the $(\mathsf M,\mathsf M+1)$ Padé approximant for $\mathsf M\le12$ (details on
+  [ADER](/methods/ader-time-integration.md)). See
+  [deferred correction](/methods/deferred-correction.md).
+* **Spectral deferred correction with a fixed number of sweeps.** On $y'=\lambda y$ the
+  sweep error obeys $\mathbf e^{(k+1)}=\mathcal K(z)\mathbf e^{(k)}$ with
+  $\mathcal K(z)=z(I-zQ_\Delta)^{-1}(Q-Q_\Delta)$ (page-local $\mathcal K$), whose limits
+  $Q-Q_\Delta$ ($z\to0$) and $I-Q_\Delta^{-1}Q$ ($\lvert z\rvert\to\infty$) govern
+  non-stiff and stiff convergence ([Čaklović et al. 2025](/sources/caklovic-2025.md), §2.2,
+  Eqs. (2.12)–(2.13)). With $Q_\Delta=0$ (Picard) and $K$ sweeps the stability region is
+  that of the $K$-stage explicit method of order $K$, never A-stable (§3.2, Fig. 5); the
+  diagonal preconditioners and their plotted regions are on
+  [parallel SDC](/methods/parallel-sdc.md).
+* **Multiderivative methods.** An explicit method that uses $f$, $\dot f$ and higher
+  derivatives has a polynomial $R$ whose degree can exceed the order: e.g.
+  $R(z)=\sum_{k\le5}z^k/k!+z^6/600$ for the two-derivative three-stage fifth-order method of
+  Chan & Tsai, and degree 9 for a three-derivative seventh-order method
+  ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md), Fig. 1, App. A; table on
+  [multiderivative Runge–Kutta](/methods/multiderivative-runge-kutta.md)). For
+  Lax–Wendroff-type discretizations of PDEs these regions do not predict the fully discrete
+  Courant limit, because the discrete space operators that replace the time derivatives do
+  not multiply like powers of one symbol; the limit comes from a
+  [von Neumann analysis](/definitions/von-neumann-stability-analysis.md) (§5).
+* **Parareal.** Applied to a (partitioned) Dahlquist problem, a whole Parareal run with
+  coarse and fine propagators $\mathcal G$, $\mathcal F$ is a linear map with a stability
+  function built from the error-propagation matrix $\mathbf E=I-\mathbf M_{\mathcal G}^{-1}\mathbf M_{\mathcal F}$
+  ($\mathbf M_{\mathcal G}$, $\mathbf M_{\mathcal F}$ page-local all-slice matrices): after
+  $k$ iterations $R=\mathbf c_2^\top\big(\sum_{j=0}^k\mathbf E^j\big)\mathbf M_{\mathcal G}^{-1}\mathbf c_1$
+  ($\mathbf c_1$, $\mathbf c_2$ page-local selection vectors;
+  [Buvoli & Minion 2024](/sources/buvoli-2024.md), Eqs. (30)–(37), after Ruprecht). The
+  two-parameter function $R(z_1,z_2)$ of each exponential propagator enters through
+  $\mathbf M_{\mathcal G}$, $\mathbf M_{\mathcal F}$ (§5). $\mathbf E$ is nilpotent,
+  so its spectrum does not give the convergence rate; $\lVert\mathbf E\rVert_\infty<1$ gives
+  monotone convergence (Eqs. (39)–(40)). For parabolic problems
+  [Jin et al. (2025)](/sources/jin-2025.md) (§3) go further and **design** the coarse
+  propagator's stability function: for $y'=-\mu y$, $\mu>0$ (page-local), with
+  $s=\Delta T\mu$ and $J$ fine steps per slice (page-local), the error factor of each mode
+  is $\big(R_{\mathcal F}(-s/J)^J-R_{\mathcal G}(-s)\big)/\big(1-\lvert R_{\mathcal G}(-s)\rvert\big)$
+  ($R_{\mathcal G}$, $R_{\mathcal F}$ the coarse and fine stability functions, page-local),
+  and they minimize its supremum over a rational $R_{\mathcal G}$ of degree $(2,2)$ under
+  linear order constraints and $\lvert R_{\mathcal G}\rvert<1$ on the negative real axis,
+  enforced at the critical points of $R_{\mathcal G}$ (Eqs. (3.1)–(3.7), Prop. 3.3). The
+  optimized factor is about 0.013–0.014 against 0.298 for backward Euler with Lobatto IIIC
+  fine propagators (Table 4.1). See [Parareal](/methods/parareal.md).
 * **TASE operators.** Preconditioning the right-hand side of an explicit
   Runge–Kutta method by a time-accurate stabilizing operator makes the stability
   function rational, $R(z)=N(z)/D(z)$ with
@@ -296,7 +346,11 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
   $\tilde R_{T_p}(y,\mu)$, Abu-Labdeh et al. (2023) $r(z)$, Song & Eisenträger (2022)
   $e^x_M=P_M/Q_M$, Caliari et al. (2024) $\Phi(z,\lambda)$ with $\lambda$ the diffusion
   fraction (here $\vartheta$), Buvoli & Southworth (2025) $\epsilon$ for the stiffness
-  ratio (here $\kappa$) and $\gamma(\theta)$ for the cosine series.
+  ratio (here $\kappa$) and $\gamma(\theta)$ for the cosine series; Popov (2024) $E$ for the identity, $B$ and $w$ for the
+  Butcher matrix and weights, and "L1-stable" for $R=\mathcal O(\lvert z\rvert^{-1})$;
+  Micalizzi & Torlo (2024) $P$ for the order; Jin et al. (2025) $R(\lambda,\theta)$ and
+  $r(\lambda)$ as functions of $\lambda=-z>0$ with parameters $\theta$; Chouchoulis et al.
+  (2022) $\mathcal R$ for the region, without printing the test equation.
 * Buvoli & Southworth (2025) define the coupled stiff limit with a modulus (Eq. (4.25))
   but treat it as a polynomial without one in Remark 2 and the supplement, and print the
   limit of the Euler step as $\epsilon$, while $(1+\kappa z_1)/(1-z_1)\to-\kappa$; only the modulus
@@ -308,6 +362,11 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
   domain with the strict inequality $\lvert r(z)\rvert<1$ and L-stability by the limit
   along the negative real axis; most sources use $\le1$. The difference matters only on
   the boundary.
+* Popov (2024, Eq. (15)) prints $R(z)=1+w^\top(I-zB)^{-1}\mathbf 1$ without the factor
+  $z$; the determinant form he gives beside it is the correct one.
+* Jin et al. (2025, Remark 3.4) note that the textbook form of a degree-$(2,2)$ rational
+  $R$ loses accuracy to round-off through the squared operator in the numerator and
+  rewrite it as a constant plus a proper fraction; no numbers are shown.
 * Kemm (2024) reads stability from plotted regions only; his thesis that the first
   explicit-Euler stage spoils explicit Runge–Kutta methods on nonlinear problems is about
   stage values, not about $R$; see [internal stability](/definitions/internal-stability.md).
@@ -353,3 +412,9 @@ Classes of $\mathcal S$ — A-, L-, A($\alpha$)-stability — are on
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §2 (Eq. (1), Thms. 2.1–2.7, Remarks 2.1–2.2, Table 1, Fig. 1).
 - [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §4.5 (Eqs. (4.16)–(4.27)), §4.5.2, Eq. (5.2), SM2, SM3.
 - [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §2.3 (Eqs. (2.5)–(2.10)), Thm. 3.2.
+- [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — Eqs. (40)–(42), Thms. 6.1–6.2, Fig. 3 (stability function of DeC variants).
+- [Popov (2024)](/sources/popov-2024.md) — §1.2 (Eqs. (14)–(15), Figs. 1–2).
+- [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §5, Fig. 1, App. A (stability functions of explicit multiderivative methods; MOL remark).
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §2.2 (Eqs. (2.12)–(2.13)), §3.2 (Fig. 5).
+- [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §5 (Eqs. (30)–(40)).
+- [Jin et al. (2025)](/sources/jin-2025.md) — §3.1–3.2 (Eqs. (3.1)–(3.7), Prop. 3.3, Remark 3.4), Table 4.1.

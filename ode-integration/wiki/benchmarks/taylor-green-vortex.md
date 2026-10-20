@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Periodic vortex flow used to test time integrators on compressible-flow semidiscretizations: inviscid 3D at low Mach number as a stability-limited test for explicit pairs and step-size controllers, viscous 3D for optimized many-stage and semi-implicit methods, and 2D steady at Mach numbers down to 10^-4 for the Mach scaling of IMEX schemes."
+description: "Periodic vortex flow used to test time integrators on compressible-flow semidiscretizations: inviscid 3D at low Mach number as a stability-limited test for explicit pairs and step-size controllers, viscous 3D for optimized many-stage, semi-implicit and implicit two-derivative methods at large steps, and 2D steady at Mach numbers down to 10^-4 for the Mach scaling of IMEX schemes."
 status: established
 aliases: [TGV, Taylor-Green vortex, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, two-dimensional Taylor–Green vortex]
 tags: [explicit, step-size-control, runge-kutta, stability, imex]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -78,6 +78,14 @@ normalization, dimension and element types.
 $[0,2\pi]^3$, periodic, final time 20; DGSEM of degree 2 with HLLE and an entropy-conservative
 volume flux, $16^3$ base cells and two refinement levels driven by an enstrophy indicator.
 
+**Three-dimensional, viscous, implicit two-derivative** ([Zeifang & Schütz 2022](/sources/zeifang-2022.md),
+§5.3.3). Compressible Navier–Stokes on the periodic cube $[0,2\pi]^3$, $\rho=1$,
+$\mathcal P=\frac\rho{\kappa}+\frac{\rho\varepsilon^2}{16}(\cos2x+\cos2y)(\cos2z+2)$ ($\kappa$ the
+ratio of specific heats, $\varepsilon$ their reference Mach number, whose value for this run is
+not stated), $\mathrm{Re}=800$ (viscosity $1.25\times10^{-3}$), DG spectral elements of degree 3
+on $32^3$ elements; the velocity is printed with a nonstandard first component (see
+Qualifications).
+
 ## What it tests and results
 
 **Stability-limited explicit pairs and controllers** (Ranocha et al. 2022). The step is mostly
@@ -128,6 +136,16 @@ is only 1.068 times slower, because most cells are refined during the run; the f
 gave results similar to their double shear layer for implicit Runge–Kutta solvers, without
 showing them (§7.2).
 
+**Implicit steps 200 times the explicit limit** (Zeifang & Schütz 2022, §5.3.3, Fig. 12). The
+fully implicit two-derivative Hermite–Birkhoff predictor–corrector HBPC(4,0) (fourth order,
+no corrections; see [multiderivative Runge–Kutta](/methods/multiderivative-runge-kutta.md)),
+solved by Newton–GMRES with their extended block-Jacobi preconditioner, runs at $h=0.25$
+against $h\approx1.25\times10^{-3}$ for an explicit fourth-order low-storage method, about 200
+times larger. The kinetic-energy dissipation rate matches the explicit run and the DNS of Brachet
+et al.; the peak near $t\approx9$ is slightly underestimated, which the authors attribute to
+the coarse spatial resolution. No timings are reported for this run. See
+[implicit stage solvers](/methods/implicit-stage-solvers.md).
+
 **Semi-implicit all-Mach scheme** (Boscheri & Pareschi 2021, §4.5, Fig. 13). With the
 [semi-implicit IMEX](/methods/semi-implicit-imex-runge-kutta.md) third-order finite-volume
 scheme, the kinetic-energy dissipation rate $-\mathrm dK/\mathrm dt$ fits the Brachet et al.
@@ -157,6 +175,12 @@ pair, with type-I pairs more stable; see
   DG-type discretizations. The IMEX and semi-implicit uses run far beyond the acoustic limit
   and measure the Mach scaling of the fluctuations (Orlando et al. 2025b) or agreement with a
   DNS (Boscheri & Pareschi 2021); neither is an accuracy-limited step-size study.
+- Zeifang & Schütz (2022, §5.3.3; *compiler check of the PDF*) print the initial velocity
+  as $(\cos x\cos y\cos z,\,-\cos x\sin y\cos z,\,0)$, which is not divergence-free; the
+  standard first component, used by the other sources, is $\sin x\cos y\cos z$. They print the
+  dissipation rate as $\partial E_{\mathrm{kin}}/\partial t=\frac{2\mu}{\rho\lvert\Omega\rvert}\int\nabla v:\nabla v$
+  without the minus sign that their positive plotted $-\partial E_{\mathrm{kin}}/\partial t$
+  requires (page-local $E_{\mathrm{kin}}$, viscosity $\mu$, domain $\Omega$). Both are printed slips.
 - Hedayati Nasab et al. write the snapshot time as "$t_c=15$"; $t=15t_c$ is meant (§7.2).
 
 # Citations
@@ -168,3 +192,4 @@ pair, with type-I pairs more stable; see
 - [Boscheri & Pareschi (2021)](/sources/boscheri-2021.md) — §4.5 (Fig. 13); arXiv v1.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.1 (Eq. (75), Tables 1–4, Fig. 2); arXiv v5.
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §7, §7.1.3 (Table 9).
+- [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) — §5.3.3 (Fig. 12); arXiv v1.

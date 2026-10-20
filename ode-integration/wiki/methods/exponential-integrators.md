@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Exponential integrators and φ-functions"
-description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, the exponential Runge–Kutta, Rosenbrock, EPIRK and stiffness-resilient families with their named schemes and costs, partial linear operators, the exponential structure of multirate infinitesimal methods, stiff kinetic relaxation, linear structural dynamics, and Magnus methods."
+description: "Exponential integrators treat a stiff linear part exactly through its exponential and the φ-functions; the page records the φ-function conventions, the exponential Runge–Kutta (Cox–Matthews, Krogstad, stiffly accurate), Rosenbrock, EPIRK and stiffness-resilient families, nondiagonal and partial linear operators, repartitioning for purely imaginary spectra and Parareal, multirate infinitesimal structure, stiff kinetic relaxation, structural dynamics and Magnus methods."
 status: established
-aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential Rosenbrock, ExpRB, EXPRB, EPIRK, exponential Euler, exponential Rosenbrock–Euler, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
+aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential time differencing, ETD, ETD2RK, ETD3RK, ETD4RK, ETDRK4, Cox–Matthews scheme, Krogstad scheme, repartitioned exponential integrator, exponential Rosenbrock, ExpRB, EXPRB, EPIRK, exponential Euler, exponential Rosenbrock–Euler, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
 tags: [exponential, stiff, kinetic, asymptotic-preserving, multirate, order-conditions]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Exponential integrators and φ-functions
@@ -52,6 +52,15 @@ the registry normalisation:
 - [Caliari et al. (2024)](/sources/caliari-2024.md), with $\phi_1(z)=(e^z-1)/z$ and
   $\phi_2(z)=(\phi_1(z)-1)/z$;
 - Dallerit & Tokman (2025, Eqs. 3–4), with $\phi_k(z)=\sum_{m\ge0}z^m/(m+k)!$.
+
+Of the remaining sources, [Buvoli & Minion (2024)](/sources/buvoli-2024.md) print
+$\varphi_j(hL)=\int_0^1e^{(1-s)hL}s^j\,ds$ (Eq. 9), which is neither convention. Their
+tableaux (App. A), however, need the registry normalisation $\phi_k(0)=1/k!$, so the printed
+definition is a slip (see Qualifications). [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md)
+(§2, Eqs. 5–9) work with the unnormalised matrices
+$\int_0^he^{(h-s)L}s^{k-1}\,ds=(k-1)!\,h^k\phi_k(hL)$ and with $e^{hL}=\phi_0(hL)$
+*(compiler translation, by the substitution $s=h\theta$; it agrees with their recurrence (9)
+and the leading series term $h^k/k$ of their Eq. A.2)*.
 
 ## Exponential Runge–Kutta methods
 
@@ -128,6 +137,34 @@ methods reach orders 4 and 5. At equal step counts they are as accurate as or mo
 than expRK4s5 and expRK5s8, and they are faster in CPU time. expRK4s6 is the most efficient
 at loose tolerances (errors above about $10^{-6}$ on the parabolic problem) and expRK5s10
 at tight ones (Figs. 6.1–6.4).
+
+**Cox–Matthews and Krogstad schemes (value format).** Many applications write the stages
+with values of $N$ rather than differences:
+$Y_i=e^{c_ihL}y_n+h\sum_{j<i}a_{ij}(hL)N(t_n+c_jh,Y_j)$ and
+$y_{n+1}=e^{hL}y_n+h\sum_ib_i(hL)N(t_n+c_ih,Y_i)$, with $\phi_k=\phi_k(hL)$ and
+$\phi_{k,j}=\phi_k(c_jhL)$ (Buvoli & Minion 2024, Eqs. 10–12, App. A). For $i\ge2$ the weights
+$b_i$ are those of the difference format above, and $b_1=\phi_1-\sum_{i\ge2}b_i$ *(compiler
+check)*. The named schemes are:
+
+| scheme | $c$ | nonzero $a_{ij}$ | $b$ |
+|---|---|---|---|
+| exponential Euler (ERK1) | $0$ | — | $\phi_1$ |
+| Cox–Matthews ETD2RK (ERK2) | $(0,1)$ | $a_{21}=\phi_1$ | $(\phi_1-\phi_2,\ \phi_2)$ |
+| Cox–Matthews ETD3RK (ERK3) | $(0,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}$; $a_{31}=-\phi_1$, $a_{32}=2\phi_1$ | $(\phi_1-3\phi_2+4\phi_3,\ 4\phi_2-8\phi_3,\ 4\phi_3-\phi_2)$ |
+| Cox–Matthews ETD4RK (ETDRK4) | $(0,\tfrac12,\tfrac12,1)$ | $a_{21}=a_{32}=\tfrac12\phi_{1,2}$; $a_{41}=\tfrac12\phi_{1,2}(\phi_{0,2}-I)$, $a_{43}=\phi_{1,2}$ | $(\phi_1-3\phi_2+4\phi_3,\ 2\phi_2-4\phi_3,\ 2\phi_2-4\phi_3,\ 4\phi_3-\phi_2)$ |
+| Krogstad (ERK4) | $(0,\tfrac12,\tfrac12,1)$ | $a_{21}=\tfrac12\phi_{1,2}$; $a_{31}=\tfrac12\phi_{1,2}-\phi_{2,2}$, $a_{32}=\phi_{2,2}$; $a_{41}=\phi_1-2\phi_2$, $a_{43}=2\phi_2$ | as ETD4RK |
+
+The ERK1–ERK3 and Krogstad rows are Buvoli & Minion's tableaux (App. A). The ETD4RK row is
+Permyakova & Goldobin's Eq. (4), the original Cox–Matthews scheme, translated: its last stage
+is built from the first internal stage, $Y_4=e^{hL/2}Y_2+\tfrac h2\phi_1(\tfrac12hL)\big(2N(Y_3)-N(y_n)\big)$,
+which gives the $a_{41}$ above *(compiler translation)*. Their ETD3RK (Eq. 3) coincides with
+Buvoli & Minion's ERK3. ETD4RK and Krogstad's method share their weights and differ in the
+third and fourth stages. Permyakova & Goldobin quote the one-step errors
+$-h^3\ddot N/12$ for ETD2RK (from Cox and Matthews) and terms proportional to
+$h^4\,d^3N/dt^3$ and $h^5\,d^4N/dt^4$ for ETD3RK and ETD4RK, and recall that an ETD scheme of
+order $n$ is exact when $N$ is a polynomial of degree $n-1$ in time over the step (§1–2).
+These are classical-order statements; how ETD4RK fares against the stiff conditions is on the
+[result page](/results/exponential-runge-kutta-stiff-order-conditions.md).
 
 ## Exponential Rosenbrock methods
 
@@ -282,6 +319,108 @@ reformulated schemes beat the same integrators applied to the full operator with
 and up to a factor of roughly 15 in 3D (§5–6). The exponential Rosenbrock–Euler method
 applied to the original formulation is cheaper than Lawson2a and erk2p1 there, but the
 reformulation is still superior overall (§5.1).
+
+## Nondiagonal linear parts with precomputed matrix functions
+
+Caliari et al. choose $L$ so that its matrix functions are cheap. Permyakova & Goldobin (2025)
+take the opposite route for problems whose constant $L$ is **nondiagonal** and has no cheap
+structure: finite differences with variable coefficients, spatially heterogeneous ("frozen
+disorder") parameters, or a non-Fourier basis. All "dominating sources of numerical
+instability" go into $L$ (§2). Before the run they compute, once, the dense matrices
+$e^{hL}$, $e^{hL/2}$, $\tfrac h2\phi_1(\tfrac12hL)$ and $(k-1)!\,h^k\phi_k(hL)$ for $k=1,2,3$, by
+integrating auxiliary linear problems (see
+[evaluating φ-functions](/methods/phi-function-evaluation.md)). Each step of ETD2RK, ETD3RK or
+ETD4RK above is then a few dense matrix–vector products (Eqs. 10–12): ETD2RK needs
+$e^{hL}$, $\phi_1(hL)$ and $\phi_2(hL)$, ETD3RK and ETD4RK also $e^{hL/2}$, $\phi_1(\tfrac12hL)$
+and $\phi_3(hL)$. Zero eigenvalues of $L$ (conservation laws) are harmless, because the
+expressions with $L^{-k}$ are shorthands for power series (§2, App. A).
+
+Their tests (Fortran on an Intel i7-4790K; §3, Figs. 3–8, Table 1) compare against Heun's
+predictor–corrector and the Runge–Kutta–Merson method at their explicit stability limits:
+
+- **1D convective Cahn–Hilliard equation** (fourth derivative; 200 points,
+  $\Delta x=0.05$, $t\in[0,50]$): an error rate of $10^{-6}$ is reached with $h\approx0.005$
+  (ETD2RK), $0.02$ (ETD3RK) and $0.04$ (ETD4RK); the gain in CPU time exceeds a factor 100 for
+  all three, largest for ETD4RK, and grows when the grid is refined;
+- **1D Matthews–Cox equation** (sixth derivative): a gain of about three orders of
+  magnitude;
+- **Fokker–Planck chain of a noisy network of quadratic integrate-and-fire neurons**
+  (complex, non-banded $L$ that cannot practically be diagonalized; 200–400 modes): gains of
+  3–10 for short runs ($h=5\times10^{-4}$) and up to about 100 for long runs
+  ($h=5\times10^{-3}$); for example ETD4RK at $h=5\times10^{-3}$ needs 12.5 s of preparation and
+  0.397 s of integration for a relative error $4.2\times10^{-10}$, against 13.8 s for the
+  predictor–corrector at its maximal stable step $1.2\times10^{-6}$ (Table 1).
+
+The preparation cost grows linearly with $h$, so for short runs the best $h$ balances
+preparation and integration and ETD2RK is somewhat more efficient, while for long runs
+(spatiotemporal chaos, frozen disorder) the preparation is negligible and ETD4RK gives the
+largest gain (§3.1.2, §4). They state, from a scaling argument, that the gain over explicit
+schemes grows like $\Delta x^{m-2}$ for a highest spatial derivative of order $m$ (§3.2.2, §4).
+The extension to several dimensions is called straightforward but memory-demanding, since
+the matrices are $N\times N$ with $N$ the total number of unknowns; their entries decay
+rapidly off the diagonal, and zeroing those below about $10^{-16}$ gives a further, smaller
+speedup (§3.2.2, §4; page-local $N$).
+
+## Purely imaginary spectra: repartitioning
+
+For non-diffusive problems (dispersive or hyperbolic, with $L$ of purely imaginary spectrum)
+exponential integrators have stability regions of a size similar to explicit methods, but the
+growth rate of the instability is very small, so their solutions stay usable as long as the
+number of steps is not too large (Buvoli & Minion 2024, §3.2, as recalled from Buvoli &
+Minion 2022). **Repartitioning** moves a damping term between the two parts. With
+$L=U\Lambda U^{-1}$ and an angle $0<\rho<\pi/2$ (page-local $U$, $\Lambda$, $\rho$), the
+integrator exponentiates
+
+$$\hat L=L-\tan\rho\;U\lvert\Lambda\rvert U^{-1}\qquad\text{and treats}\qquad
+\hat N(t,y)=N(t,y)+\tan\rho\;U\lvert\Lambda\rvert U^{-1}y$$
+
+explicitly (Eqs. 13–15; the source writes $\hat L=L+\epsilon D$ with
+$D=-U\lvert\Lambda\rvert U^{-1}$ and $\epsilon=\tan\rho$). The ODE is unchanged, but every
+eigenvalue of the exponentiated operator is rotated by $\rho$ into the left half-plane, which
+gives a large stability region for a continuous range of small $\rho$. Other damping
+operators, such as low-order even spatial derivatives, are possible; for the Fourier-discretized
+[nonlinear Schrödinger equation](/benchmarks/nonlinear-schrodinger-equation.md) they take
+$\operatorname{diag}(-\kappa^2)$ ($\kappa$ the wavenumbers, page-local) and $\rho=\pi/128$
+(Eq. 18). On the partitioned Dahlquist equation $y'=\lambda_1y+\lambda_2y$ ($\lambda_1$
+exponentiated, $\lambda_2$ explicit, both imaginary; page-local) repartitioning replaces
+$\lambda_1$ by $\lambda_1-\tan\rho\,\lvert\lambda_1\rvert$ and $\lambda_2$ by
+$\lambda_2+\tan\rho\,\lvert\lambda_1\rvert$ (§5.1). With $\rho=0$ the exponential integrator
+is exact for $\lambda_2=0$; any repartitioning destroys this exactness, and larger $\rho$ costs
+accuracy, so the authors advise the smallest $\rho$ that ensures stability (§5.6, Fig. 10).
+Repartitioning is the mirror image of the partial linear operators above, which move part of
+the stiff operator out of $L$ *(compiler remark)*.
+
+## Exponential integrators as Parareal propagators
+
+Buvoli & Minion (2024) use exponential Runge–Kutta methods as both the coarse and the fine
+propagator of [Parareal](/methods/parareal.md), because they resolve fast linear waves exactly
+at coarse steps, and claim to be the first to put ETD Runge–Kutta methods inside Parareal (§7).
+Fine propagator: Krogstad's fourth-order method; coarse: ETD3RK. Their findings (§4–6):
+
+- **Parareal magnifies the mild instability.** Serial ERK4 is stable over the whole range of
+  their parameter rectangle with growth rates below 1.01, yet Parareal with classical
+  exponential integrators diverges on the nonlinear Schrödinger equation, and its linear
+  stability region shrinks as the iteration count grows; repartitioned propagators are stable,
+  so repartitioning is essential for Parareal even on time scales where serial integration does
+  not need it (§4, §5.3, Fig. 5).
+- **Stiffness must sit in $L$.** Even with repartitioning the iteration is stable only when the
+  linear part carries most of the stiffness ($\lvert h\lambda_2\rvert\ll\lvert h\lambda_1\rvert$)
+  (§5.3).
+- **Only low-frequency modes converge.** A convergence bound on the partitioned Dahlquist
+  equation predicts monotone convergence exactly for modes with $\lvert h\lambda\rvert$ below a
+  computable width, and higher-order coarse propagators or more coarse steps widen it (§5.4–5.6,
+  Remark 1).
+- **Speedups.** Against serial ERK4 with the fine step: 10.4 measured (38.5 theoretical) on
+  1D NLS with 2048 cores; 9.09, 10.15 and 11.71 times on the 2D Kadomtsev–Petviashvili equation
+  (errors $2.7\times10^{-7}$, $1.3\times10^{-8}$, $1.8\times10^{-9}$, partly extrapolated from a
+  shortened run); 24 times on the Vlasov–Poisson bump-on-tail problem (error
+  $6.6\times10^{-8}$, three coarse steps per slice) (§4, §6.2–6.3; see
+  [Korteweg–de Vries equation](/benchmarks/korteweg-de-vries-equation.md) and
+  [Vlasov–Poisson equation](/benchmarks/vlasov-poisson-equation.md)).
+
+All their experiments use diagonal $L$, where the φ-functions are elementwise; nondiagonal $L$
+is left to future work (§7). The Parareal iteration, its speedup model and its convergence
+analysis are on the [Parareal](/methods/parareal.md) page.
 
 ## Multirate infinitesimal methods as exponential integrators
 
@@ -473,6 +612,28 @@ significantly larger than even fully implicit methods)" (§1).
   of order 4 and 5 of other types exist: the Rosenbrock and EPIRK schemes on this page.
 - Dallerit & Tokman's claim that their multistep methods coincide with Hochbruck–Ostermann's
   exponential Adams methods is asserted, not shown (§6.2).
+- Permyakova & Goldobin (2025) state only classical error terms for ETD2RK–ETD4RK and do not
+  discuss stiff order; against the stiff conditions, ETD4RK satisfies the order-2 hypotheses of
+  Luan's theorem but not those of order 3 *(compiler check on the
+  [result page](/results/exponential-runge-kutta-stiff-order-conditions.md))*. Their error
+  curves carry no slopes, so they neither confirm nor refute order 4. This is a qualification,
+  not a contradiction: they make no stiff-order claim.
+- Permyakova & Goldobin's gains are measured against explicit schemes at their stability
+  limits, not against implicit, IMEX or Krylov-based exponential integrators; storing dense
+  $N\times N$ matrices costs $O(N^2)$ memory, and the advantage over Krylov and contour-integral
+  evaluation is argued, not measured (§2, §4).
+- **Printed slips in Buvoli & Minion (2024), arXiv v2.** Eq. (9) defines the φ-functions
+  without the factor $1/(j-1)!$ and with $s^j$ for $s^{j-1}$, so that as printed
+  $\varphi_1(0)=\tfrac12$, which contradicts their exponential Euler (Eq. 10) and their own
+  tableaux; the tableaux are the consistent statement. Eq. (11) writes $e^{c_jhL}$ for
+  $e^{c_ihL}$, and Eqs. (11)–(12) omit the factor $h$ and write $N(c_j,Y_j)$ for
+  $N(t_n+c_jh,Y_j)$. Eq. (13) drops the $y$ in $\hat N=N-\epsilon Dy$, and Eq. (25) writes the
+  repartitioned stability function with signs opposite to those of their §5.1 table, whose
+  signs are the ones above. Table 4a swaps the fine (ERK4) and coarse (ERK3) integrators of the
+  KP runs.
+- Buvoli & Minion's speedups are against serial ERK4 with the fine step, not against the best
+  serial method at equal error, and the KP speedups are extrapolated from a shortened parallel
+  run (§6.1–6.2).
 
 # Citations
 
@@ -485,3 +646,5 @@ significantly larger than even fully implicit methods)" (§1).
 - [Deka & Einkemmer (2022)](/sources/deka-2022.md) — §1, §2–2.2 Eqs. 3–8, Table 1 (exponential Euler, Rosenbrock–Euler, EXPRB43, EXPRB54s4, EPIRK5P1), §3.1 Eq. 11, Fig. 12 (linear invariants), §4.3 Figs. 7–8, §5.2–5.3 Fig. 13 (performance, evaluation counts); author manuscript.
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §2 Thms. 2.1, 2.4, 2.5, Table 1, §3 Eq. 11 (partial linear operator), §5–6, Appendix (schemes); arXiv v2.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §3 (order notions), §5.3 (single projection), §6.1–6.3 Eqs. 40–41, Tables 1–3 (SREXP_RK, MS, MV), §7 Figs. 1–4.
+- [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §3.1–3.2 Eqs. 7–15, App. A (ERK1–ERK4 tableaux, φ convention, repartitioning), §4 (NLS), §5.1–5.7 (partitioned Dahlquist analysis, Fig. 5, Fig. 10), §6.2–6.3 (KP, Vlasov–Poisson), §7; arXiv v2.
+- [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) — §1–2 Eqs. 1–12 (ETD2RK–ETD4RK, matrix form), §3.1–3.3 (Figs. 3–8, Table 1), §4, App. A; arXiv v2.

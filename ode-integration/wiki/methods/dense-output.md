@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Dense output"
-description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, weight polynomials of Rosenbrock methods with the order-4 dense output of Rodas5 and Rodas5P, the full-order dense output of φ-order exponential methods, and the time-continuous cell states of asynchronous time stepping."
+description: "Continuous extensions of a one-step method that give the solution between grid points: Hermite interpolants for nonstiff problems, Lagrange interpolation of stored steps for stiff ones, Rosenbrock weight polynomials (Rodas5, Rodas5P), full-order φ-method dense output, collocation and DG-in-time polynomials, and the time-continuous cell states of asynchronous time stepping."
 status: established
-aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula]
+aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula, collocation polynomial, local DG solution, subgrid resolution]
 tags: [runge-kutta, stiff, software, step-size-control, exponential]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Dense output
@@ -104,6 +104,34 @@ output inside their methods in two ways:
 
 See [exponential integrators](/methods/exponential-integrators.md).
 
+## Collocation and DG-in-time polynomials
+
+Methods that compute a polynomial in time on each step carry their dense output with them.
+
+- **Collocation and SDC.** The collocation solution of a
+  [fully implicit Runge–Kutta](/methods/fully-implicit-runge-kutta.md) or spectral deferred
+  correction step on $\mathsf M$ nodes is the polynomial of degree $\mathsf M$ through $y_n$ and the
+  node values. Evaluated inside the step it is accurate to order $\mathsf M$, against a higher
+  order at the step end ([Saupe et al. (2025)](/sources/saupe-2025.md), §2.1, after
+  Hairer–Nørsett–Wanner). Saupe et al. use it twice in their adaptive SDC: the error estimate
+  of their $\Delta t$-$k$-adaptivity compares the value at node $\mathsf M-1$ with the
+  degree-$(\mathsf M-1)$ interpolant through the other nodes, an order-$(\mathsf M-1)$ value
+  (Eqs. (16)–(18)), and a rejected step's polynomial, evaluated at the nodes of the shorter
+  retry, gives its initial guess (§2.2, §4.1). See
+  [step-size control](/methods/step-size-control.md).
+- **Local DG solution.** The ADER solver with a local discontinuous Galerkin predictor of
+  [Popov (2024)](/sources/popov-2024.md) stores on each step a polynomial of degree $\mathsf M$
+  (the source's $N$) on the $\mathsf M+1$ Gauss–Legendre nodes, which he presents as "precisely
+  the representation of the solution in the form of a finite element", not a reconstruction
+  (§1.3, Eq. (16)). It is discontinuous at the grid points and observed to have order
+  $\mathsf M+1$ inside the step against $2\mathsf M+1$ at the grid points, up to $\mathsf M=60$
+  in 500-digit arithmetic (§2.1, Tables 1–6). Evaluating it at many sub-points is one matrix
+  product of precomputed basis values with the coefficients (§1.3). On a harmonic oscillator
+  with $h=100\pi/96$, more than half a period, in double precision, $\mathsf M=8$ brings the
+  grid values to round-off with a very accurate in-step polynomial, and $\mathsf M=16$ brings
+  both to round-off; Popov calls this "subgrid resolution" (§1.3, Fig. 3). See
+  [ADER time integration](/methods/ader-time-integration.md).
+
 ## Time-continuous states in asynchronous time stepping
 
 In the asynchronous (cell-wise [local time stepping](/methods/local-time-stepping.md))
@@ -152,6 +180,13 @@ the stage fluxes.
   not demonstrated, in Reynolds et al. (2023).
 - Steinebach (2023) refers to replacing "equation (1.3)" by the dense formula; the weight
   formula is his Eq. (1.2) (printed slip).
+- Saupe et al. (2025, §2.1) give the step-end order of the collocation solution as "up to
+  $2\mathsf M$" for Gauss–Legendre, Lobatto and Radau nodes alike; only Gauss nodes reach $2\mathsf M$,
+  Radau IIA $2\mathsf M-1$ and Lobatto $2\mathsf M-2$ (see
+  [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)). The in-step
+  order $\mathsf M$ is not affected.
+- Popov's (2024) in-step and grid-point orders are observed, not proved for his nodal variant;
+  he expects them from Baccouch's proofs for modal DG (Introduction).
 
 - In Unfer (2021, §3.5) the text says that the third extrapolated stage evolves linearly
   from the first with slope $\partial_tu_i+\partial_t^2u_i(\Delta_3-\Delta_1)$. His Eq. (105)
@@ -166,3 +201,5 @@ the stage fluxes.
 - [Steinebach (2023)](/sources/steinebach-2023.md) — §1 (Hermite interpolation for Rodas5 in Julia), §3 (Eqs. (3.4)–(3.6)), §4 problem 6 (Table 9), Fig. 4.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — Thm. 10, Eq. 38, §5.5 (φ-order dense output), §6.1 Eq. 41, §6.3 (use for stages and multivalue nodes).
 - [Unfer (2021)](/sources/unfer-2021.md) — §3.2 Eqs. 54–56, §3.5 Eqs. 103–111 (time-continuous extrapolated and conservative states, reduction to SSPRK3).
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §2.1 (dense output of the collocation solution), §2.2 (Eqs. (16)–(18), restarts), §4.1.
+- [Popov (2024)](/sources/popov-2024.md) — arXiv v1: Introduction, §1.3 (Eq. (16), Fig. 3), §2.1 (Tables 1–6).

@@ -4,8 +4,8 @@ title: "Backward differentiation formulas (BDF)"
 description: "The k-step BDF method differentiates the interpolant through the new and k past values: order k, A-stable for k = 1, 2 and A(alpha)-stable up to k = 6, one nonlinear solve per step; fixed- and variable-step forms, energy stability by G-norms and multipliers, step-ratio bounds, software and use in flow problems."
 status: established
 aliases: [BDF, BDFk, backward difference formula, Gear's method, BDF2, variable-step BDF2, variable-coefficient BDF]
-tags: [linear-multistep, implicit, stiff, stability, step-size-control, dae]
-timestamp: 2026-10-20T01:00:00Z
+tags: [linear-multistep, implicit, stiff, stability, step-size-control, dae, parallel]
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Backward differentiation formulas (BDF)
@@ -129,12 +129,30 @@ of IMEX-BDF for hyperbolic relaxation systems.
   stable but more dissipative than Radau IIA when damped (Taddei et al. 2026, §1.1, §5.2.1,
   Figs. 10–11).
 
+## Parallel in time
+
+With constant steps, the BDF$k$ equations of all $N$ steps of a linear problem $y'=Ly+g$ form one
+space-time system whose time matrix is banded lower-triangular Toeplitz, with the BDF
+coefficients on the first $k$ subdiagonals. [Gander & Palitta (2024)](/sources/gander-2024.md)
+write it as a circulant matrix minus a rank-$k$ correction built from the BDF coefficients, so
+that their [ParaDiag](/methods/paradiag.md) solver applies: after an FFT in time, $N$ independent
+shifted solves with $hL$ scaled by $\beta_k$, plus a $kd\times kd$ capacitance system solved by a
+block Galerkin method (§5, Eqs. (5.1)–(5.6), Prop. 5.1). They recall that BDF of order above 6 is
+unstable (§5, citing Hairer–Wanner), i.e. not [zero-stable](/definitions/zero-stability.md). No
+experiment uses $k>1$; the tests are backward Euler only (§6).
+
 ## Qualifications
 
 - **Normalizations.** Akrivis et al. (2021) normalize $\sigma(\zeta)=\zeta^k$
   ($\alpha_6=147/60$), Ma et al. (2026) normalize $\alpha_k=1$, and Gardner et al. (2022) print
-  CVODE's form with $+h\sum\beta$. The methods are the same; only the coefficients' scale and
-  sign differ.
+  CVODE's form with $+h\sum\beta$. Gander & Palitta (2024, Table 5.1) normalize $\alpha_k=1$ and
+  move the past values to the right-hand side, $y_{n+k}=\sum_{j}\tilde\alpha_jy_{n+k-j}+h\beta_kf_{n+k}$
+  with $\tilde\alpha_j$ (page-local) the negated coefficients, e.g. $\tfrac43,-\tfrac13$ and
+  $\beta_2=\tfrac23$ for BDF2 and $\beta_6=\tfrac{60}{147}$ for BDF6; they state the sign flip
+  relative to Hairer–Wanner. The methods are the same; only the coefficients' scale and sign
+  differ.
+- Gander & Palitta (2024) do not discuss that BDF$k$ is not A-stable for $k\ge3$; their
+  conditioning theorem covers backward Euler with symmetric positive definite $-L$ only.
 - **Version read.** Akrivis et al. (2021), García-Archilla & Novo (2023), Ma et al. (2026) and
   Taddei et al. (2026) were read as arXiv preprints. Their claims here are those of the
   preprints.
@@ -152,3 +170,4 @@ of IMEX-BDF for hyperbolic relaxation systems.
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §5.2.1 (Figs. 10–11).
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §2.1–2.2, §5.1 (Table 5).
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §5.1.3.
+- [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §5 (Eqs. (5.1)–(5.6), Table 5.1, Prop. 5.1), §6.

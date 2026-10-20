@@ -5,7 +5,7 @@ description: "A method is symplectic when its one-step map is a symplectic trans
 status: established
 aliases: [symplectic integrator, symplectic method, quadratic invariants, linear invariants, geometric integration]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Symplecticity and quadratic-invariant preservation
@@ -155,6 +155,33 @@ energy (Farrell et al. (2021), §2.1, §4.3).
   to a finite order ($4k-1$, $4k+3$ or $4k+1$ depending on the class, §7.3).
   See [complex-coefficient splitting](/methods/complex-coefficient-splitting.md).
 
+## Parallel-in-time iterations
+
+A [Parareal](/methods/parareal.md) iterate
+$U^{(k+1)}_{j+1}=\mathcal G(U^{(k+1)}_j)+\mathcal F(U^{(k)}_j)-\mathcal G(U^{(k)}_j)$ is a linear
+combination of propagator values, not a composition of maps, so it does not inherit the
+symplecticity of its propagators; only the converged solution, the serial fine solution, does
+*(compiler remark, not in the source)*.
+[Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) (Remark 5.4) state the
+consequence for their particle-in-Fourier Vlasov–Poisson scheme, which conserves charge,
+momentum and (before time discretization) energy: the converged Parareal solution keeps these
+properties only if the Parareal tolerance is near machine precision, and a lenient tolerance
+loses them; symmetric Parareal variants are left to future work. Their measurements agree
+(App. A.2, Figs. 8–9):
+
+* the energy error of Parareal iterates with a particle-in-cell coarse propagator is orders of
+  magnitude above that of serial stepping and grows in early iterations, matching serial
+  stepping only near convergence;
+* the momentum error stays near machine precision in every iteration, independently of the
+  nonuniform-FFT tolerance;
+* charge conservation depends on the fine propagator's FFT tolerance.
+
+The momentum result fits a general fact: if both propagators preserve a linear invariant
+$w^\top y$, so does every Parareal iterate, because the coefficients $1,1,-1$ of the update sum to
+one, so $w^\top U^{(k+1)}_{j+1}=w^\top U^{(k+1)}_j$ *(compiler check, not in the source)*. Quadratic
+invariants and energy have no such property. The authors therefore choose the Parareal tolerance
+so that energy and charge errors match those of serial stepping (App. A.2–A.3).
+
 ## Qualifications
 
 * Southworth et al. (2022, §2.1) cite the order-4 limit for symplectic DIRKs
@@ -174,6 +201,10 @@ energy (Farrell et al. (2021), §2.1, §4.3).
 * The long-time results assume a constant step and a compact level set; they
   are statements about the method on Hamiltonian ODEs, not about
   semi-discretized PDEs in general.
+* Muralikrishnan & Speck (2025, Remark 5.4) call particle-in-Fourier "structure preserving" in
+  the sense of semi-discrete conservation of charge, momentum and energy; their velocity Verlet
+  time integrator does not conserve energy exactly, its energy error decreasing like $O(h^2)$
+  (App. A).
 
 # Citations
 
@@ -185,3 +216,4 @@ energy (Farrell et al. (2021), §2.1, §4.3).
 - [de León et al. (2025)](/sources/deleon-2025.md) — §1, §1.1 (pseudo-symplectic methods), Remark 1, Table 4, §4.1.3 (Fig. 2).
 - [Bencomo & Chan (2023)](/sources/bencomo-2023.md) — §2.2.2 (discrete-adjoint time symmetry versus geometric adjoints).
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §1 (quadratic and polynomial invariants of RK methods).
+- [Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) — arXiv v2: Remark 5.4, App. A, A.2–A.3 (Figs. 8–9).

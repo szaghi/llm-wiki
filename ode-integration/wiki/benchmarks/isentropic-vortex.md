@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Isentropic vortex"
-description: "Exact smooth solution of the compressible Euler equations, a vortex advected by a uniform stream or at rest, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit Runge–Kutta methods, paired and many-stage stabilized explicit methods, relaxation ADER-DG, and low-Mach IMEX and semi-implicit schemes."
+description: "Exact smooth solution of the compressible Euler equations, a vortex advected by a uniform stream or at rest, used to measure temporal convergence order, conservation and cost of time integrators: explicit pairs with PID control, fully implicit Runge–Kutta methods, paired and many-stage stabilized explicit methods, single-stage Lax–Wendroff schemes, relaxation ADER-DG, and low-Mach IMEX and semi-implicit schemes."
 status: established
 aliases: [isentropic Euler vortex, convecting vortex, Shu vortex, travelling vortex, low-Mach isentropic vortex]
 tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving, imex]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Isentropic vortex
@@ -70,6 +70,16 @@ Shu's vortex centred at $(5,5)$, periodic, final time 1, on unstructured triangl
 restating the parameters (§5.3.1). [Doehring et al. (2024b)](/sources/doehring-2024-b.md) (§5)
 take the parameters of the P-ERK papers on $[0,10]^2$ with $64^2$ base elements and two extra
 AMR levels (finest cell $10/256$), DGSEM with HLLC flux, final time 20.
+
+**Single-stage Lax–Wendroff runs.** [Babbar et al. (2022)](/sources/babbar-2022.md) (§12.1,
+after Yee et al. and Spiegel et al.) take vortex strength 5, $\mathrm{Ma}_\infty=0.5$, a free
+stream at $45^\circ$, the periodic square $[-10,10]^2$ and final time $20\sqrt2/\mathrm{Ma}_\infty$,
+on $16^2$ to $128^2$ elements of degree 1 to 4. [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md)
+(§6.2.3) run a dimensional vortex (core radius 0.005, $\mathrm{Ma}_\infty=0.5$, free-stream
+temperature 300 and pressure $10^5$, gas constant 287.15, strength parameter 0.2) for one period
+on the periodic square of side 0.1, mapped to a sine-distorted curvilinear mesh
+$x=\xi L_x-A_xL_y\sin2\pi\eta$, $y=\eta L_y+A_yL_x\sin2\pi\xi$ with $L_x=L_y=0.1$,
+$A_x=A_y=0.1$ (page-local mapping symbols).
 
 **Convected vortex for local time stepping.** [Sreejith et al. (2022)](/sources/sreejith-2022.md)
 (§6.1) use a 2D convected vortex (called "isentropic, Rankine vortex"; strength 0.01556, radius
@@ -175,6 +185,16 @@ interface oscillations in the random-mix test of Hedayati Nasab & Vermeire by th
 reduction the smallest member imposes, the third-order member with 3 active stages having a
 stable step about 8 times smaller than the one with 16 (§3.2.6).
 
+**Single-stage against multistage time stepping** (Babbar et al. 2022, §12.1, Figs. 37–40).
+With [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md) the
+wall-clock time grows like (number of cells)$^{1.5}$. Evaluating the numerical-flux dissipation
+with the time-averaged solution (D2) instead of the solution at $t_n$ (D1) cuts it by a factor
+1.4–1.5 for degree $N>1$, consistent with the ratio of their Fourier CFL limits. Runge–Kutta flux
+reconstruction at its own optimal CFL numbers needs about 1.1, 1.4 and 1.7 times the time of
+LW-D2 for $N=1,2,3$ and about 1.2 at $N=4$; no hardware is reported. On curvilinear meshes
+Babbar & Chandrashekar (2025, §6.2.3, Fig. 11) obtain the optimal order 4 for all conserved
+variables with degree 3, using CFL-based steps in this convergence test.
+
 **Local time stepping** (Sreejith et al. 2022, §6.1, Fig. 18, Table 4). With the Lax–Wendroff
 or TTGC scheme and step ratios 2, 5 and 10, the deviation from the single-rate solution is
 similar on uniform and stretched meshes, lower on quadrilaterals than triangles and for TTGC than
@@ -235,7 +255,8 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
   4), and Radau IIA 7 ends at 6.28.
 - Southworth et al. print the $v$ perturbation with $-(x-x_0-\bar ut)$; for a rotating vortex
   whose $u$ perturbation carries $-(y-y_0-\bar vt)$, the $v$ perturbation needs
-  $+(x-x_0-\bar ut)$ (reader's check; likely a printed sign slip, p. 17). The final time of their
+  $+(x-x_0-\bar ut)$; with both signs negative the perturbation is a strain, not a
+  rotation *(compiler check of p. 17; printed sign slip)*. The final time of their
   convergence runs is not printed.
 - Hedayati Nasab & Vermeire (2022) centre the vortex at the origin in Eq. (55) while the
   domain is $[0,20]^2$, and their Table 2 prints some step sizes as $5.000\times10^{-2}$ where
@@ -243,7 +264,10 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
 - Sreejith et al. (2022) call their vortex an "isentropic, Rankine vortex"; a Rankine vortex
   is not the smooth isentropic vortex of the other sources, and their reference is the
   single-rate solver, so their figures measure the LTS coupling error only. Their Table 4 case 4
-  prints node counts identical to case 1 with a different theoretical speedup (reader's check).
+  prints node counts identical to case 1 with a different theoretical speedup *(compiler
+  check of Table 4)*.
+- Babbar et al. (2022) print Fig. 38 as a duplicate of Fig. 37 (same caption, apparently the
+  same plots), and their wall-clock ratios come without hardware or threading information.
 - The degree-2 ADER orders of Gaburro et al. (2023) stay near 2.7 rather than 3, and their
   order claim for relaxed ADER is inherited from a theory proved for Runge–Kutta and multistep
   methods (see the relaxation page).
@@ -261,3 +285,5 @@ survives as $\mathrm{Ma}\to0$ (asymptotic accuracy) with a step set by the flow 
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — §4.2 (Eqs. (76)–(78), Tables 5–15, Fig. 6); arXiv v5.
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §3.2.6, §5 (Tables 5–6, Fig. 6).
 - [Sreejith et al. (2022)](/sources/sreejith-2022.md) — §6.1 (Tables 3–4, Fig. 18).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §12.1 (Figs. 37–40); arXiv v1.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §6.2.3 (Fig. 11); arXiv v4.

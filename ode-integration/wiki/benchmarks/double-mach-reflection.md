@@ -1,16 +1,16 @@
 ---
 type: Benchmark
 title: "Double Mach reflection"
-description: "Woodward and Colella's Mach 10 shock reflecting off a 30-degree wedge, run to t = 0.2; the sources use it to measure the cost of asynchronous local time stepping against a global step and the start-up transient that error-based step-size control handles while CFL-based control crashes."
+description: "Woodward and Colella's Mach 10 shock reflecting off a 30-degree wedge, run to t = 0.2; the sources use it to measure the cost of asynchronous local time stepping against a global step, the start-up transient that error-based step-size control handles while CFL-based control crashes, and single-stage Lax–Wendroff against Runge–Kutta flux reconstruction."
 status: established
 aliases: [DMR, double Mach reflection problem, Woodward–Colella double Mach reflection]
 tags: [verification, step-size-control, ssp, multirate]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Double Mach reflection
 
-The double Mach reflection problem of Woodward and Colella, as both sources set it up,
+The double Mach reflection problem of Woodward and Colella, as the sources set it up,
 sends a Mach 10 shock in an ideal gas ($\gamma=1.4$, page-local) along a wall inclined
 at 30° to it. In the usual rotated form the domain is $[0,4]\times[0,1]$, the wall starts
 at $x=\tfrac16$ on the bottom boundary, and the data are, in page-local density,
@@ -34,6 +34,15 @@ computation with a strongly non-uniform admissible step.
   uniform elements refined by p4est AMR every two steps, the Zhang–Shu positivity limiter
   after every stage, and the embedded pair SSP3(2)4[3S*$_+$].
 
+* **Single-stage Lax–Wendroff against Runge–Kutta flux reconstruction**
+  ([Babbar et al. (2022)](/sources/babbar-2022.md), §12, Figs. 41–43): degree 2 on
+  $960\times240$ cells with a TVB limiter (parameter 100), the same post- and pre-shock
+  states.
+* **Lax–Wendroff with AMR and error-based steps** ([Babbar & Chandrashekar (2025)](/sources/babbar-2025.md),
+  §6.1.3): degree 4, a $16\times5$ base mesh refined by a Löhner indicator up to six levels
+  (80 to 2411 to 7793 elements, against 327,680 for the uniform finest mesh), error-based
+  step-size control with the PID controller of Ranocha et al. at tolerances $10^{-6}$.
+
 ## What it shows
 
 * **Cost of a global step.** Synchronous SSPRK(3,3) takes 169,499 s, asynchronous ARK3
@@ -50,7 +59,22 @@ computation with a strongly non-uniform admissible step.
   control "crashes in the first few steps even with $\nu=0.01$" (Ranocha et al. 2025,
   §5.1, Fig. 7). See [step-size control](/methods/step-size-control.md).
 
+* **One step versus many stages.** Lax–Wendroff flux reconstruction with time-averaged
+  dissipation and face-extrapolated fluxes resolves the flow like Runge–Kutta flux
+  reconstruction, and Runge–Kutta needs between about 1.1 and 1.6 times its wall-clock time,
+  depending on the degree and grid (Babbar et al. 2022, Figs. 41–43); the limiter runs once per
+  step instead of once per stage (§7). See
+  [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md).
+* **Error-based control of a single-stage method.** Babbar & Chandrashekar (2025) build the
+  embedded solution of their one-stage scheme by truncating the time-averaged flux one order
+  lower and dropping the interface terms; on this problem the method runs with the default
+  tolerance, and the AMR keeps the element count below 2.4 % of the uniform mesh (§5.2, §6.1.3;
+  see [step-size control](/methods/step-size-control.md)).
+
 ## Qualifications
+
+* Babbar et al. (2022) and Babbar & Chandrashekar (2025) report no hardware for their timings
+  and element counts.
 
 * Unfer's baseline is his own code in synchronous mode, with the asynchronous data
   structures and their overhead (§4.1); the speed-ups are against that, not against an
@@ -64,3 +88,5 @@ computation with a strongly non-uniform admissible step.
 
 - [Unfer (2021)](/sources/unfer-2021.md) — §3.1 (asynchronous speed-up number), §4.1, §4.5 (Figs. 10–11), §4.7, Conclusion.
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §5.1, Fig. 7; Algs. 1–2, §8 (callbacks unseen by the estimator).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §7, §12 (Figs. 41–43); arXiv v1.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.2, §6.1.3; arXiv v4.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Van der Pol oscillator"
-description: "The nonlinear relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, whose parameter mu tunes it from non-stiff to very stiff; the sources use it to test step-size controllers and to show that weak stage order and deferred correction do not keep their design orders on a stiff nonlinear problem."
+description: "The nonlinear relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, whose parameter mu tunes it from non-stiff to very stiff; the sources use it to test step-size controllers, including adaptive SDC, and to show that weak stage order and deferred correction do not keep their design orders on a stiff nonlinear problem."
 status: established
 aliases: [Van der Pol equation, van der Pol problem, VDPOL]
 tags: [stiff, verification, order-reduction, step-size-control]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Van der Pol oscillator
@@ -29,6 +29,7 @@ test that lies outside the linear theory behind most remedies for
 | [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md), §6.6, Eq. (6.6) | 1000 | $(2,0)$ | $[0,3000]$ | fixed-step convergence of deferred correction against BDF and Scilab solvers |
 | [Biswas et al. (2023)](/sources/biswas-2023.md), §7.3 | 500 | $(2,0)$ | $[0,10]$ | fixed-step convergence of DIRK methods with high weak stage order |
 | [Fekete et al. (2022)](/sources/fekete-2022.md), §3.1.1, Eq. (24) | 10 | $(2,-0.6654321)$ | $[0,2]$ | adaptive step-size controllers with explicit SSP pairs |
+| [Saupe et al. (2025)](/sources/saupe-2025.md), §3.1, Eqs. (19)–(20) | 1000 | $(1.1,0)$ | $[0,20]$ (one fast transition) | adaptive and parallel SDC against fixed steps and ESDIRK5(3) |
 
 Fekete et al. write the second equation as $y_2'=\varepsilon^{-1}(1-y_1^2)y_2-y_1$
 with $\varepsilon=0.1$, i.e. $\mu=1/\varepsilon=10$, after Iserles. Koyaguerebo-Imé &
@@ -72,6 +73,16 @@ $10^{-4}$: the PID controller takes 753 steps with 17 rejections against 1982 st
 with 495 rejections for the I controller. The table is on
 [step-size control](/methods/step-size-control.md).
 
+**Adaptive SDC.** Saupe et al. (2025) solve one fast transition with spectral deferred correction,
+Newton for the implicit sweeps and a reference from scipy's Dormand–Prince 5(4) at tolerances
+near machine precision. With a maximal local error of about $10^{-5}$ during the transition, fixed
+step sizes need about 70 times the Newton iterations of their two step-size-adaptive strategies
+(§4.1, Fig. 6); smaller $\mu$ gave similar but weaker trends (not shown). Pipelined block
+Gauss–Seidel SDC on four processes gave a "good speedup" in measured wall time, with no number
+printed, and at least one parallel adaptive SDC
+variant beat the embedded pair ESDIRK5(3) in wall time (§4.1–4.2, Figs. 9–10). See
+[step-size control](/methods/step-size-control.md) and [diagonal SDC](/methods/parallel-sdc.md).
+
 ## Qualifications
 
 - The two fixed-step studies disagree in emphasis, not in fact: both find that
@@ -84,9 +95,14 @@ with 495 rejections for the I controller. The table is on
   *(compiler check, not in the sources)*.
 - Biswas et al. (2023) state the stiff regime from Fig. 12 only; no error table is
   given.
+- Saupe et al. (2025) give mutually inconsistent time references: the Fig. 2 caption says only
+  the shaded transition "at $t\approx800$" is solved, while §3.1 and Fig. 6 solve $t\in[0,20]$ from
+  $y_1(0)=1.1$, and the Fig. 6 caption puts the next transition "at around $t=600$", where Fig. 2
+  shows transitions near 800 and 1600 (recorded on the Source page).
 
 # Citations
 
 - [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §6.6 (Eq. (6.6), Table 6.6); §6.7.
 - [Biswas et al. (2023)](/sources/biswas-2023.md) — §7.3 (Fig. 12); §8.
 - [Fekete et al. (2022)](/sources/fekete-2022.md) — §3.1.1 (Eq. (24), Fig. 9).
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §3.1 (Eqs. (19)–(20), Fig. 2), §4.1 (Figs. 6, 9), §4.2 (Fig. 10).

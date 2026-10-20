@@ -138,5 +138,6 @@ printed duplicates.
 Chunk 3 (2026-10-19). This source is cited on:
 
 * [Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)](/methods/fully-implicit-runge-kutta.md)
+* [Heat equation](/benchmarks/heat-equation.md)
 * [Irksome](/software/irksome.md)
 * [Solving the stage equations of implicit Runge–Kutta methods](/methods/implicit-stage-solvers.md)

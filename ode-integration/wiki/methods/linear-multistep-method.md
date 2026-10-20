@@ -5,7 +5,7 @@ description: "A k-step linear multistep method combines k past values and right-
 status: established
 aliases: [LMM, linear k-step method, multistep method, Adams methods, Adams–Bashforth, Adams–Moulton, variable-coefficient multistep method]
 tags: [linear-multistep, stability, stiff, implicit, explicit, step-size-control]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Linear multistep methods
@@ -90,6 +90,22 @@ of its one-leg twin (Akrivis et al. 2021, Lemma 2.1, as recalled from Dahlquist)
 - **IMEX multistep methods** treat a stiff part with an implicit method (usually BDF) and the
   rest by explicit extrapolation (Ma et al. 2026; [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md));
   see [IMEX linear multistep methods](/methods/imex-linear-multistep-methods.md).
+- **Modified Patankar multistep methods (MPLM).** [Izzo et al. (2025)](/sources/izzo-2025.md)
+  take explicit methods whose coefficients of the past values and right-hand sides are all
+  nonnegative (in the registry form with $\alpha_k=1$: $-\alpha_j\ge0$ and $\beta_j\ge0$ for
+  $j<k$) and weight each production and destruction term of a
+  [production–destruction system](/definitions/production-destruction-system.md) by a ratio
+  of the new value to a positive denominator. Each step is one linear M-matrix system, so the
+  scheme is positive and conservative for every $h$, and it has order $p$ iff the
+  denominators approximate $y(t_n)$ to $\mathcal O(h^p)$ (Def. 2.1, Lemmas 2.2–2.3, Thms.
+  3.1–3.6). Their base methods of orders 2–6 (Table 1) include leapfrog,
+  $y_{n+2}=y_n+2hf(y_{n+1})$, and methods $y_{n+k}=y_n+h\sum_j\beta_jf(t_{n+j},y_{n+j})$
+  for $k=5,7,10$; all roots of $\varrho$ lie on the unit circle, so they are zero-stable but
+  only weakly stable, and every one has some $\beta_j>0$ with $\alpha_j=0$, so its SSP
+  coefficient as a classical method is 0 *(compiler check of their Table 1)*. The
+  convergence proof is a discrete Gronwall argument that uses the nonnegativity of the
+  $\alpha$-coefficients rather than the root condition (Thm. 3.5). See
+  [modified Patankar methods](/methods/modified-patankar-methods.md).
 
 ## Explicit multistep methods for low-dissipation semidiscretizations
 
@@ -155,6 +171,14 @@ Ma et al. (2026) prove uniform accuracy of IMEX-BDF.
 
 ## Qualifications
 
+- **Backward-indexed coefficients.** Izzo et al. (2025, Eq. (2.7)) write the method as
+  $y_n=\sum_{r=1}^k\bar\alpha_ry_{n-r}+h\sum_{r=1}^k\bar\beta_rf(y_{n-r})$ (page-local bars;
+  $\bar\alpha_r=-\alpha_{k-r}$, $\bar\beta_r=\beta_{k-r}$ with $\alpha_k=1$) with order
+  conditions $\sum_r\bar\alpha_r=1$, $\sum_r(r^q\bar\alpha_r-qr^{q-1}\bar\beta_r)=0$. They print
+  the three-step second-order SSP scheme with $\bar\beta=(0,\tfrac32,0)$, which is only first
+  order; $\bar\beta=(\tfrac32,0,0)$, i.e. $y_n=\tfrac34y_{n-1}+\tfrac14y_{n-3}+\tfrac32hf(y_{n-1})$,
+  is second order *(compiler check of p. 4 against (2.7))*.
+
 - **Error-constant normalization.** Glandon et al. (2022, Table 6.1) list BDF error constants as
   $1/(k+1)$, which is the constant divided by $\sigma(1)$. Their Limm constants come from
   Eq. (7.3) with $\alpha_k=1$ and are not divided by $\sigma(1)$. The caption does not state the
@@ -179,3 +203,4 @@ Ma et al. (2026) prove uniform accuracy of IMEX-BDF.
 - [Reynolds et al. (2023)](/sources/reynolds-2023.md) — §5.1.3 (restart at first order).
 - [Farrell et al. (2021)](/sources/farrell-2021.md) — §2.1 (Dahlquist barrier).
 - [Southworth et al. (2022)](/sources/southworth-2022.md) — §2.1 (Dahlquist barrier).
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §2 (Def. 2.1, Eq. (2.7)), §3 (Thms. 3.1–3.6), Table 1, §5; arXiv v1.

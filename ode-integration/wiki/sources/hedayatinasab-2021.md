@@ -132,8 +132,10 @@ Matlab 2016a software and [20] is the CVX software. All items parsed.
 Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 
 * [Internal stability of explicit Runge–Kutta methods](/definitions/internal-stability.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [Paired explicit Runge–Kutta (P-ERK) methods](/methods/paired-explicit-runge-kutta.md)
 * [Runge–Kutta order conditions and simplifying assumptions](/results/runge-kutta-order-conditions.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
 * [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+* [Von Neumann (Fourier) stability analysis of fully discrete schemes](/definitions/von-neumann-stability-analysis.md)

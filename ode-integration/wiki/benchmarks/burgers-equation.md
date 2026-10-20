@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation"
-description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen into a shock, and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, and TASE stability with inexact Jacobians."
+description: "Inviscid Burgers u_t + (u²/2)_x = 0, whose smooth data steepen into a shock, and viscous Burgers with manufactured or periodic solutions; the sources use it to test relaxation, superviscosity filtering, IMEX and multirate entropy behaviour, order reduction from boundary data, TASE stability, bound-preserving limiting of high-order Runge–Kutta, single-stage Lax–Wendroff and multiderivative schemes, and Parareal coarse propagators."
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
 tags: [structure-preserving, order-reduction, verification, stiff]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Burgers equation
@@ -85,6 +85,27 @@ Courant number).
   pulse $e^{-60(x-3/2)^2}$ placed in the diffusive region. The pulses advect
   leftward, steepen into shocks and cross the diffusive right half.
 
+* **Pre- and post-shock periodic data** ([Kuzmin et al. (2022)](/sources/kuzmin-2022.md),
+  §5.3): $u_0=\tfrac12+\sin x$ on $(0,2\pi)$, periodic, shock at $t=1$; convergence at
+  $t=0.5$ on 25 to 800 cells (Table 4) and shock capturing at $t=2$ on 100 cells (Fig. 3);
+  fifth-order WENO finite volumes, $h=0.4\Delta x/(1+\gamma)$ ($\gamma$ the limiter's
+  relaxation parameter, page-local).
+* **Small-amplitude sine** ([Babbar et al. (2022)](/sources/babbar-2022.md), §8.3, Figs.
+  18–20): $u_0=0.2\sin x$ on $[0,2\pi]$, periodic, shock at $x=\pi$ at $t=5$; errors at $t=2$,
+  solutions at $t=2$, 4.5 and 8 with degree 3 on 100 cells and a TVB limiter; flux
+  reconstruction with Lax–Wendroff or Runge–Kutta time stepping. A 2D version
+  $u_t+(u^2/2)_x+(u^2/2)_y=0$ with $u_0=\tfrac14+\tfrac12\sin(2\pi(x+y))$, errors at $t=0.1$
+  and the shock at $t=0.2$ (§11, Figs. 35–36).
+* **Cosine and exponential data** ([Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md),
+  §6.1, Eq. 23, Figs. 2–3): $u_0=\tfrac14\cos\pi x$ on $[0,2]$, periodic, breaking time
+  $4/\pi$, $T=0.8$; and $u_0=\tfrac14e^{\cos\pi x+\sin\pi x}$, breaking time $4/(\pi e)$,
+  $T=0.3$; Courant number $\nu=0.5$, exact solutions by characteristics, meshes from 8 cells
+  doubling.
+* **Viscous, discontinuous data, Dirichlet** ([Jin et al. (2025)](/sources/jin-2025.md),
+  Example 4.3): $u_t+uu_x=\kappa u_{xx}$ on $(0,1)$, $u=0$ at both ends, $u_0$ the indicator of
+  $(0,\tfrac12)$, $T=1$, $\kappa=1$ and $0.02$; fine step $1/2000$ or $10^{-4}$, ratios of
+  fine to coarse steps 10 to 100; the spatial discretization is not stated.
+
 ## What it shows
 
 * **Relaxation keeps the order, IDT loses one.** With IMEX ARK2/ARK3,
@@ -145,7 +166,48 @@ Courant number).
   ([Han Veiga et al. (2021)](/sources/hanveiga-2021.md), §5.3.1; see
   [ADER](/methods/ader-time-integration.md)).
 
+* **Bound preservation with non-SSP Runge–Kutta.** With the global monolithic convex limiter of
+  Kuzmin et al. (2022, §5.3, Table 4, Fig. 3), no limited scheme converges at the optimal rate
+  for $\gamma=0$; $\gamma=1$ restores full accuracy for SSP54, Butcher's sixth-order method
+  limited at the final stage, and its stagewise-limited variant, while the fifth-order
+  extrapolated Euler method needs $\gamma\ge2$ (order 2.70 at 800 cells with $\gamma=1$).
+  After the shock the limited SSP54 and sixth-order solutions coincide with the baselines, which
+  already respect the global bounds ($\delta=1.64\times10^{-4}$). See
+  [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md) and
+  [extrapolation methods](/methods/extrapolation-methods.md).
+* **Face fluxes of a single-stage Lax–Wendroff scheme.** Extrapolating the interior
+  time-averaged flux to the faces (AE) converges like $O(h^{N+1/2})$ at odd degree $N$, with
+  errors concentrated near sonic points $f'(u)=0$, while applying the approximate Lax–Wendroff
+  procedure at the faces (EA) gives $O(h^{N+1})$ at every $N$; with AE only the global
+  Lax–Friedrichs flux gives optimal rates, and "the reason for this behaviour is not known at
+  present" (Babbar et al. 2022, §8.3, Figs. 19–20). See
+  [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md).
+* **Multiderivative schemes with approximate Taylor derivatives.** The predicted order
+  $\min(2p,q)$ of Chouchoulis et al.'s MDRKCAT schemes (stencil half-width $p$, time order
+  $q$, page-local) is observed on both data sets, while the underlying compact approximate
+  Taylor schemes of order $2p$ with $p=4,5,6$ diverge rapidly at $\nu=0.5$ well before the
+  shock forms (§6.1, Figs. 2–3). See
+  [multiderivative Runge–Kutta](/methods/multiderivative-runge-kutta.md).
+* **Parareal coarse propagators.** Optimized coarse propagators contract the Parareal error by
+  about 0.04 per iteration for $\kappa=1$, and by about 0.06 against 0.21 for backward Euler at
+  $\kappa=0.02$ with step ratio 10; at ratio 100 both converge slowly, the optimized one "still
+  competitive" (Jin et al. 2025, §4.2, Figs. 4.6–4.7). Their optimization is linear, so the
+  gain shrinks for small viscosity. See [Parareal](/methods/parareal.md).
+
 ## Qualifications
+
+* Kuzmin et al. (2022, §5.1, §5.3) print the wave-speed bound as
+  $\max\{u_i,u_{i+1},\dots\}$ without absolute values, although $u_0=\tfrac12+\sin x$ takes
+  negative values; their Table 4a prints order "0.00" in the first row where the other tables
+  print a dash.
+* Babbar et al. (2022) swap the panel descriptions (b) and (c) of Fig. 19 between caption and
+  text.
+* Chouchoulis et al. (2022) run 3DRKCAT5-2 and 3DRKCAT7-3 at $\nu=0.5$, above their critical
+  linear Courant numbers 0.4275 and 0.2300, and those schemes still converge on Burgers; the
+  paper does not comment (§6.1; see
+  [linear advection equation](/benchmarks/linear-advection-equation.md)).
+* Jin et al. (2025) state that a ratio "$\Delta T/\nu$ is unchanged" between their viscous and
+  linear runs; no pair of their printed settings matches (§4.2, as printed).
 
 * Biswas et al. (2023) contrast their order-3 result with Ketcheson et al.
   (2020), who reported clean full order on the same problem for weak stage
@@ -163,4 +225,8 @@ Courant number).
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.3.1.
 - [González-Tabernero et al. (2024)](/sources/gonzaleztabernero-2024.md) — §5.2, Table 2.
 - [Conte et al. (2024)](/sources/conte-2024.md) — §7.1, Eqs. (7.1)–(7.3), Figs. 7–8.
+- [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §5.1, §5.3 (Table 4, Fig. 3); arXiv v2.
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §8.3 (Figs. 18–20), §11 (Figs. 35–36); arXiv v1.
+- [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §6.1 (Eq. 23, Figs. 2–3), Table 2.
+- [Jin et al. (2025)](/sources/jin-2025.md) — §4.2, Example 4.3 (Figs. 4.6–4.7); arXiv v2.
 - [Buvoli et al. (2026)](/sources/buvoli-2026.md) — §4.1–4.4, Eqs. (4.1)–(4.7), Figs. 3–4.

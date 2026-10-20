@@ -4,8 +4,8 @@ title: "Prothero–Robinson problem"
 description: "The scalar stiff test problem $y'=\\lambda(y-g(t))+g'(t)$, whose smooth exact solution $g$ is independent of the stiffness $\\lambda$; it isolates the stiff-regime error of a one-step method, exposes order reduction through the stage-order residuals, and grounds weak stage order and Scholz's Rosenbrock conditions. Includes the multirate Kværnø–Prothero–Robinson variant."
 status: established
 aliases: [Prothero–Robinson test equation, PR problem, Kværnø–Prothero–Robinson problem, KPR problem]
-tags: [stiff, order-reduction, verification, runge-kutta]
-timestamp: 2026-10-20T03:00:00Z
+tags: [stiff, order-reduction, verification, runge-kutta, parallel]
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Prothero–Robinson problem
@@ -88,6 +88,7 @@ which satisfy both conditions, show order 3, while Rodas4PR2 reaches 4 (§2, Tab
 | [Chinomona and Reynolds 2021](/sources/chinomona-2021.md), §5.1 | two-component multirate Kværnø–Prothero–Robinson problem | see below | convergence of multirate methods |
 | [Fish & Reynolds 2023](/sources/fish-2023.md), §4.1.4 | same KPR problem and partition | as Chinomona and Reynolds | one of seven tuning problems for multirate step-size controllers |
 | [Fish et al. 2024](/sources/fish-2024.md), §6.1 | same KPR problem, IMEX three-way partition | as Chinomona and Reynolds, fast step $H/10$ | convergence of IMEX-MRI-SR and MERK methods, nonlinear fast part |
+| [Čaklović et al. 2025](/sources/caklovic-2025.md), §4.3, Eq. (4.3) | $y'=(y-g)/\varepsilon+g'$ | $\varepsilon=10^{-3}$ ($\lambda=-10^3$), $g(t)=\cos t$, final time not printed; Newton tolerance $10^{-12}$ | efficiency of diagonal (parallel) SDC against serial SDC |
 
 Steinebach's §4 writes $-\lambda$ with $\lambda>0$, his Eq. (1.4) $+\lambda$ with
 $\operatorname{Re}\lambda\ll0$; the problems coincide after $\lambda\mapsto-\lambda$.
@@ -102,6 +103,12 @@ $\operatorname{Re}\lambda\ll0$; the problems coincide after $\lambda\mapsto-\lam
   3.1/3.0/3.0 (embedded the same), Rodas5 1.3/1.2/1.1, Rodas4 $-3.4$/0.5/0.8,
   Rodas4PR2 about 4, Rodas4P2 about 3. In the $\lambda$ scan only Ros3prl2 converges
   independently of $\lambda$; Rodas4PR2 drops to order 3 in mildly stiff regimes.
+- Čaklović et al. (2025, §4.3, Figs. 14–15), with 4 Radau IIA nodes and $K=4$ sweeps: every
+  [diagonal SDC](/methods/parallel-sdc.md) variant shows an error plateau over a range of step
+  sizes, which the authors attribute to order reduction, citing Weiser. Under their cost model
+  (parallel cost divided by $4\times0.8$), MIN-SR-S is more efficient than serial LU-SDC down to an
+  error of about $10^{-6}$ and LU-SDC below; with $K=6$ sweeps the crossover moves to about
+  $10^{-8}$, so more sweeps lower the plateau. The comparison is modelled, not timed.
 
 ## Multirate variant (Kværnø–Prothero–Robinson)
 
@@ -153,3 +160,4 @@ Sandu, to tune their multirate controllers ([step-size control](/methods/step-si
 - [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md) — §5.1, Fig. 2.
 - [Fish & Reynolds (2023)](/sources/fish-2023.md) — §4.1.4.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §6.1 (eqs. 6.1–6.3, Fig. 5).
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — arXiv v2: §4.1, §4.3 (Eq. (4.3), Figs. 14–15).

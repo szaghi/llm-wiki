@@ -3,9 +3,9 @@ type: Method
 title: "Operator splitting: Lie–Trotter, Strang and dimensional splitting"
 description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing the flows of the parts: Lie–Trotter is first order, Strang second order and symmetric; the page covers their error constants, conjugacy, linear stability, PDE (ADI, LOD, Peaceman–Rachford) forms, boundary order reduction, multiphysics comparisons with IMEX, and multirate and asymptotic-preserving uses."
 status: established
-aliases: [splitting method, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method]
+aliases: [splitting method, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method, projector-splitting integrator]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting
@@ -247,6 +247,16 @@ it by its order:
   so forward-in-time real splittings do stop at order 2, the limit recorded under
   *Qualifications* for Southworth et al.
 
+## Splitting inside parallel-in-time integrators
+
+[Carrel et al. (2023)](/sources/carrel-2023.md) compute every rank-$r$ flow of their low-rank
+[Parareal](/methods/parareal.md) with the second-order projector-splitting integrator of Lubich
+and Oseledets for dynamical low-rank approximation, with enough substeps that the coarse and fine
+flows can be treated as exact (§4). The paper does not describe the integrator; it splits the
+projection onto the tangent space of the fixed-rank manifold into simpler projections *(compiler
+remark, not in the source)*. Their theory assumes exact flows, so the splitting error does not
+enter their bounds.
+
 ## Splitting and asymptotic preservation
 
 When every sub-flow is integrated exactly, a splitting can inherit the
@@ -342,3 +352,4 @@ further analysis (§5).
 - [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §2, §2.1 (classical splittings as the multirate baseline).
 - [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1 (Eq. (4)), §2.3 (Thm. 1).
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.3 (splitting rejected for the stiff source).
+- [Carrel et al. (2023)](/sources/carrel-2023.md) — arXiv v2: §2.2, §4.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Solving the stage equations of implicit Runge–Kutta methods"
-description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep steps) are solved: Newton, Picard and simplified Newton iterations, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning of fully implicit methods, monolithic multigrid, static condensation, multirate structure and solver software."
+description: "How the nonlinear and linear systems of implicit Runge–Kutta stages (and of implicit multistep, two-derivative and Patankar steps) are solved: Newton, Picard, simplified and matrix-free Newton, predictors, tolerances and Jacobian reuse, real-Schur, diagonalization-based and stage-parallel preconditioning, extended block-Jacobi, parallel-in-time solves, positivity-preserving linear solves and solver software."
 status: established
-aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution]
-tags: [implicit, linear-algebra, stiff, runge-kutta, software]
-timestamp: 2026-10-20T05:00:00Z
+aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution, extended block-Jacobi preconditioner, BJext, Jacobian-free Newton–Krylov, JFNK, matrix-free Newton–Krylov, inexact SDC, Jacobi iteration for Patankar systems]
+tags: [implicit, linear-algebra, stiff, runge-kutta, software, parallel]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods
@@ -67,6 +67,19 @@ methods are "rarely used" for large PDE problems (Southworth et al. §1;
   semi-implicit scheme that solves the nonlinear equation, with no visible difference
   (§3.4, Fig. 13);
   see [semi-implicit IMEX Runge–Kutta methods](/methods/semi-implicit-imex-runge-kutta.md).
+- **Newton even for linear stages.** [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) use
+  Newton's method on linear problems too, citing Higham for its beneficial effect on the
+  achieved accuracy (§3.2.1, not shown). Their corrector stages start so close to the solution
+  that round-off prevents meeting a relative Newton tolerance, so an absolute tolerance
+  $\lVert\Delta W\rVert_2\le10^{-12}$ is added ($\Delta W$ the Newton increment, page-local; §5.2).
+- **Matrix-free Newton–Krylov.** Zeifang & Schütz (2022, §4.2, Eqs. (23)–(24)) replace the
+  assembled Jacobian by finite-difference Jacobian–vector products with perturbation
+  $\sqrt{\varepsilon_{\mathrm{mach}}}/(\varepsilon\lVert\Delta W\rVert_2)$, scaled by the reference Mach
+  number $\varepsilon$ (page-local $\varepsilon$ and $\varepsilon_{\mathrm{mach}}$, machine epsilon), after Knoll–Keyes.
+  For their two-derivative stages this costs two (linear flux) or three (nonlinear flux)
+  operator evaluations per GMRES iteration, and with right preconditioning it needs nearly the
+  same GMRES iterations as the matrix-based solve (Fig. 6). ILU(0) is incompatible with it,
+  since it needs the whole matrix.
 - **Linearly implicit stages.** For a right-hand side linear in $y$, ARKODE performs one Newton
   iteration per stage (Reynolds et al. §2.2). [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)
   build this single linear solve into the method.
@@ -328,6 +341,111 @@ for linear problems (§2.3). For Gauss methods the roots $r_i$ are the eigenvalu
 this is the complex diagonalization above specialized to a second-order system *(compiler remark,
 not in the sources)*.
 
+## Two-derivative stages: extended systems and element-wise preconditioning
+
+Implicit [multiderivative methods](/methods/multiderivative-runge-kutta.md) use $\dot f$ as well
+as $f$. In the two-derivative deferred-correction scheme of Zeifang & Schütz (2022), every
+predictor and corrector stage has the form
+
+$$W-a_1h\,f(W)+\frac{a_2h^2}{2}\,\dot f(W)=b,$$
+
+with $a_1=\Delta c/2$, $a_2=\Delta c^2/6$ in the predictor ($\Delta c$ the abscissa increment) and
+$a_1=a_2=1$ in the corrector ($a_1,a_2,W,b$ page-local; §2.2, Eqs. (7)–(9)). To avoid the step
+restriction that a direct spatial discretization of the second derivative caused in earlier work,
+an auxiliary variable $V:=f(W)$ (page-local) is carried, $\dot f$ is discretized as a function of
+$(W,V)$, and Newton acts on the doubled state $(W,V)$ (§3.2.1, Eqs. (17)–(18)). With $J=\partial f/\partial W$,
+the extended Jacobian is
+
+$$\begin{pmatrix}I-a_1hJ+\frac{a_2h^2}{2}\,\partial_W\dot f & \frac{a_2h^2}{2}\,J\\ -J & I\end{pmatrix},$$
+
+because the discrete derivative of $\dot f$ with respect to $V$ equals $J$; the "Hessian" term
+$\partial_W\dot f$ vanishes for linear fluxes and is assembled from flux Hessians otherwise
+(§3.2.1–3.2.2). Two solver strategies are compared on a discontinuous Galerkin spectral element
+discretization (FLEXI, PETSc GMRES):
+
+- **Schur complement.** Eliminating $V$ halves the size but gives
+  $I-a_1hJ+\frac{a_2h^2}{2}\partial_W\dot f+\frac{a_2h^2}{2}J^2$, with the square of the
+  discretization Jacobian. It helps only at small steps; at large steps the GMRES iteration count
+  "suddenly increases very rapidly and leads to non-convergence", with ILU(0) or block-Jacobi
+  preconditioning alike (§3.2.4, §4.1, Figs. 2–3).
+- **Extended block-Jacobi (BJext).** Element-local $2\times2$ blocks of the extended Jacobian,
+  neighbour coupling dropped, with a closed-form inverse that needs one LU factorization per
+  element of $I-a_1hJ_i+\frac{a_2h^2}{2}J_i^2$ ($J_i$ the element block). Dropping the Hessian
+  term from the preconditioner (but keeping it in the system matrix) makes the blocks commute,
+  needs only the backward-Euler-type element Jacobian, and costs almost no extra iterations
+  (§3.2.3, Fig. 1).
+
+On linear advection and on the Euler equations at reference Mach numbers $1$, $10^{-1}$, $10^{-2}$
+($16^2$ elements, degree 5), GMRES iteration counts rank BJext $\approx$ BJext with Hessian $<$
+ILU(0) $<$ no preconditioner, while standard element-wise block-Jacobi was *worse* than no
+preconditioner; counts grow with stiffness. In wall-clock time BJext is the most efficient at
+large steps, no preconditioner at small steps, and ILU(0) gains from larger steps "in only a few
+cases" (§4.1, Figs. 4–5). BJext needs no inter-process communication in its application (§4.2).
+Keeping the Hessian in the system matrix is needed for iteration counts linear in the step at
+very large steps (Fig. 3). With BJext and matrix-free products the scheme ran a 3D Taylor–Green
+vortex at about 200 times the explicit step (§5.3.3).
+
+## Parallel-in-time solves of implicit steps
+
+Two families of [parallel-in-time integration](/methods/parallel-in-time-integration.md) are,
+at heart, solvers for implicit time-stepping systems:
+
+- **All steps at once (ParaDiag).** For backward Euler or BDF on $y'=Ly+g$ with constant step,
+  [ParaDiag](/methods/paradiag.md) writes all $N$ steps as one space-time system, and
+  [Gander & Palitta (2024)](/sources/gander-2024.md) reduce it by an FFT in time and the
+  Sherman–Morrison–Woodbury formula to $N$ independent **complex shifted** solves
+  $((1-\omega_i)I-hL)x_i=r_i$, with $\omega_i$ the roots of unity (page-local), plus one
+  $d\times d$ capacitance system solved by a Galerkin method on the Krylov space of $L$ whose
+  reduced systems serve all shifts at once (§2–3, Algs. 2.1, 3.1). For symmetric positive
+  definite $-L$ the capacitance matrix has condition number at most $1+1/(h\lambda_{\min}(-L))$
+  (Thm. 3.1; on gaps in the printed proof see [ParaDiag](/methods/paradiag.md)). Shifted Krylov solvers for the inner solves are mentioned but not used (§3).
+  This is the time-direction analogue of the complex diagonalization of the stage system
+  above *(compiler remark)*.
+- **Iterated collocation with a diagonal preconditioner (diagonal SDC).** Instead of the coupled
+  $\mathsf Md$-dimensional collocation system, an SDC sweep solves $\mathsf M$ systems of size $d$
+  ([Saupe et al. (2025)](/sources/saupe-2025.md), §2.1); with a diagonal $Q_\Delta$ they are
+  independent and run in parallel ([diagonal SDC](/methods/parallel-sdc.md);
+  [Čaklović et al. (2025)](/sources/caklovic-2025.md), §2.1). The sweep is a preconditioned
+  fixed-point iteration for the [fully implicit](/methods/fully-implicit-runge-kutta.md)
+  collocation step, so the number of sweeps $K$ plays the role of an outer iteration count.
+  Čaklović et al. solve each node system by exact Newton up to the problem tolerance or 300
+  iterations, and model one Newton iteration as costing about one right-hand side because their
+  Jacobians are inverted analytically (§4.1). Saupe et al. use **inexact SDC**: the Newton
+  tolerance is a fixed fraction of the current SDC residual ($10^{-5}$ for van der Pol, $10^{-1}$ for
+  a quench problem) or the inner iterations are capped (9 and 5), which only their residual-driven
+  adaptivity allows, since the increment-based variant needs the exact order of every sweep
+  (§2.1).
+
+In Parareal, the implicit solves sit inside the propagators: [Jin et al. (2025)](/sources/jin-2025.md)
+solve the fully implicit Lobatto IIIC or Radau IIA stages of their fine propagator by Newton and
+use a semi-implicit coarse propagator that needs one linear solve per step, with the nonlinear
+reaction explicit (§4.2, Eq. (4.3)).
+
+## Linear solves that must keep positivity
+
+Patankar-type schemes ([modified Patankar methods](/methods/modified-patankar-methods.md)) are
+linearly implicit, and their positivity rests on the solution of the linear system, so the
+linear solver must not destroy it:
+
+- **Jacobi iteration.** In the modified Patankar deferred-correction scheme for the water height
+  of the shallow water equations, [Ciallella et al. (2022)](/sources/ciallella-2022.md) solve one
+  sparse system per correction and subnode, with at most five nonzeros per row, by Jacobi
+  iteration started from the right-hand side. Jacobi converges on this matrix and keeps every
+  iterate positive, while Krylov methods "in general do not preserve positivity" (§5.1,
+  Remark 5.1). It needs "usually 10–20 iterations", 40 in the worst cases, nearly independent of
+  the mesh and growing with the CFL number, and takes about 10 % of the run time, with an
+  overall overhead of about 18 % over explicit deferred correction at equal CFL (§5.1, §6.1,
+  §6.6, Figs. 6, 15). The diagonal of the matrix is at least one and the off-diagonals are
+  nonpositive (Eq. (30)), which is why Jacobi from a positive start stays positive *(compiler
+  check, not in the source)*.
+- **One extra factorization per step.** The Patankar predictor–corrector of
+  [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) post-processes an SDIRK step with
+  one linear solve with $I-h\bar G$, an M-matrix built from the stages (page-local $\bar G$), so
+  it costs one LU factorization per step in addition to the nonlinear stage solves, which the
+  authors count as an extra MPRK-type stage; MPRK methods need one LU per stage (Remark 3.22).
+  They propose, as future work, reusing $\bar G$ as the approximate Jacobian of the next step's
+  nonlinear solve (§6).
+
 ## Multistep methods: one solve per step
 
 - **Linearly implicit multistep methods.** [Glandon et al. (2022)](/sources/glandon-2022.md) add a
@@ -407,7 +525,7 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
   units stated (§4.2).
 - Munch et al. (2024, §6) write Southworth et al.'s conjugate-pair blocks as
   $(\operatorname{Re}\lambda_iI-hM^{-1}K)^2+\operatorname{Im}\lambda_iI$, without the square on the
-  imaginary part that the quadratic form needs (reader's check on the source). They assert without
+  imaginary part that the quadratic form needs *(compiler check, not in the sources)*. They assert without
   proof that the eigendecomposition of the triangular factor $L$ is real (§2), which holds when its
   diagonal entries are real and distinct. Their stage-system right-hand side carries $+Ku_n$ where
   $M\dot u+Ku=g$ needs $-Ku_n$ (Eq. (1) and before), and they print 786 for the 768 processes of 16
@@ -417,6 +535,16 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
   discretization-level accuracy is available (§5).
 - Song & Eisenträger (2022) and Taddei et al. (2026) report no solver statistics beyond costs
   relative to Newmark (Song) or none at all (Taddei).
+- Zeifang & Schütz (2022) were read as arXiv v1 (title without "Implicit"); their Eq. (9) omits
+  the quadrature term $+I_l$ of the corrector right-hand side that Eq. (6) contains (recorded on
+  the Source page). Their finding that standard block-Jacobi is worse than no preconditioner
+  concerns the doubled two-derivative system, not ordinary implicit DG stages. Parallel
+  performance of BJext is left to future work (§4.2).
+- Gander & Palitta (2024) count parallel-in-time loops on a laptop with sequential block solves;
+  no wall time is measured (§6). Čaklović et al.'s Newton cost assumption (one Newton iteration
+  about one right-hand side) favours implicit methods relative to large-scale settings.
+- Ciallella et al. (2022) state no hardware and call their code unoptimized; their cost ratios
+  are relative.
 - The heat-equation comparison of Gardner et al., CVODE BDF 8.8 s against ARKODE's default DIRK
   67.3 s, is problem-specific; the authors attribute it to BDF's single solve per step and order
   adaptivity (§5.1).
@@ -437,3 +565,10 @@ form $M-ha_{ii}J$ (Reynolds et al. §3.4.3).
 - [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §3.2, §3.4–3.5, Tables 16–17, Fig. 13.
 - [Puppo et al. (2024)](/sources/puppo-2024.md) — §1, §2.2 (Eq. (16)), §3 (Eqs. (17)–(27), Fig. 1, Remark 2), §3.2.1 (Table 1), §4.
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §3.2 (Fig. 1), §4.3 (Eqs. (6)–(8)), §5.1 (Lemma 1, Fig. 2), §5.2 (Algorithms 1–3, Table 2), §7.2, §8.4.
+- [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) — arXiv v1: §2.2 (Eqs. (7)–(9)), §3.2.1–3.2.4 (Eqs. (17)–(19), Fig. 1), §4.1–4.2 (Eqs. (23)–(24), Figs. 2–6), §5.2, §5.3.3.
+- [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §2–3 (Algs. 2.1, 3.1, Thm. 3.1), §6.
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — arXiv v2: §2.1, §4.1.
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §2.1 (inexact SDC).
+- [Jin et al. (2025)](/sources/jin-2025.md) — arXiv v2: §4.2 (Eq. (4.3)).
+- [Ciallella et al. (2022)](/sources/ciallella-2022.md) — arXiv v3: §5.1 (Remark 5.1), §6.1, §6.6 (Figs. 6, 15).
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — CSL-TR-26-1: Remark 3.22, §6.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "ADER as a time integrator"
-description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predictor on one step, a fixed-point problem with a time iteration matrix, solved by K Picard iterations of order min(M+1, K); it differs from historical Taylor–Cauchy–Kovalevskaya ADER and has a Newton-type implicit variant for stiff sources."
+description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predictor on one step, a fixed-point problem with a time iteration matrix, solved by K Picard iterations of order min(M+1, K) or to convergence, when the Gauss–Legendre variant is a fully implicit Runge–Kutta method of nodal order 2M+1; it differs from historical Taylor–Cauchy–Kovalevskaya ADER."
 status: established
-aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, space–time DG predictor, IMADER, implicit ADER, locally implicit ADER-DG]
+aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, space–time DG predictor, IMADER, implicit ADER, locally implicit ADER-DG, ADER-DG with local DG predictor, ADER-DG ODE solver]
 tags: [ader, deferred-correction, explicit, implicit, stiff]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # ADER as a time integrator
@@ -20,6 +20,13 @@ modern one as a time integrator for the semi-discrete system $y'=f(y)$:
   (Cauchy–Kovalevskaya). It obtains the space derivatives from linearized generalized
   Riemann problems, then integrates the flux in time by Gauss quadrature (eqs. (15)–(17)).
   This is a space-time-coupled flux construction, not a separable time integrator.
+  [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md) keeps
+  this Taylor route for flux reconstruction and replaces the exact flux derivatives by
+  Jacobian-free finite differences in time; [Babbar et al. (2022)](/sources/babbar-2022.md)
+  (§1) and [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) (§1) cite ADER as the
+  other route to single-stage high-order schemes, and
+  [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) (§1) as the main family of
+  high-order Lax–Wendroff-type methods.
 - **Modern ADER** (Dumbser et al.; Zanotti et al.) computes a local, element-wise
   "predictor": a polynomial-in-time solution on $[t_n,t_{n+1}]$ from a Galerkin weak form in
   time, solved by fixed-point iteration. After the method-of-lines reduction this is a
@@ -31,7 +38,10 @@ The bundle treats modern ADER here. Han Veiga et al. justify reading it as a tim
 integrator by the structure of ADER space–time DG. The space–time matrix factorizes into
 a spatial mass matrix and a temporal part, so changing the spatial discretization changes
 only the spatial factor: "That is why we can consider ADER to be a time integration method"
-(Remark 4.8).
+(Remark 4.8). Popov (2024) takes the reading literally and runs implicit ADER-DG on ODEs
+(below). [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) (Conclusions) plan to carry
+the subnode interpolation of their efficient [DeC](/methods/deferred-correction.md) over to
+ADER, which the equivalence makes natural.
 
 **Page-local notation.** Nodes $c_0,\dots,c_{\mathsf M}$ in $[0,1]$ (equispaced,
 Gauss–Lobatto or Gauss–Legendre), subnodes $t_{n,m}=t_n+c_mh$, and Lagrange polynomials
@@ -75,7 +85,54 @@ interpolation nodes):
 
 $$\mathcal D=\begin{pmatrix}1&\frac{\sqrt3-1}{2}\\-\frac{\sqrt3+1}{2}&1\end{pmatrix},\qquad \mathbf r(\mathbf Y)_m=\ell_m(0)\,y_n+h\,w_m\,f(Y_m).$$
 
-The entries check by hand *(reader and compiler check)*.
+The entries check by hand *(compiler check, not in the source)*.
+
+## Implicit ADER-DG as a stand-alone ODE solver
+
+[Popov (2024)](/sources/popov-2024.md) (§1.1, Eqs. (1)–(13)) takes the ADER-DG scheme with
+a local DG predictor out of its PDE setting and uses it as a one-step solver for
+$y'=f(t,y)$. The predictor is the upwind-in-time Galerkin problem above, with the degree-$\mathsf M$
+nodal Lagrange basis on the $\mathsf M+1$ Gauss–Legendre nodes $c_m$ of $[0,1]$ (the
+source's degree $N$ is $\mathsf M$) and a nodal (collocated) representation of $f$, which
+makes the time mass matrix diagonal with the Gauss weights $w_m$ and removes all
+integrals of $f$. The predictor becomes
+
+$$Y_m-h\sum_{r=0}^{\mathsf M}B_{mr}\,f(t_{n,r},Y_r)=y_n,\qquad B=\mathcal D^{-1}\operatorname{diag}(w),\qquad m=0,\dots,\mathsf M,$$
+
+using $\mathcal D^{-1}\big(\ell_m(0)\big)_m=\mathbf 1$ (Eqs. (9)–(12); the source writes
+$K$ for $\mathcal D$ and $M$ for the mass matrix). It is solved to convergence by Picard
+or Newton iteration, and the step ends with the Gauss quadrature
+$y_{n+1}=y_n+h\sum_mw_mf(t_{n,m},Y_m)$ (Eq. (13)). This is the Galerkin system of Han
+Veiga et al. with quadrature on the interpolation nodes, multiplied by $\mathcal D^{-1}$
+*(compiler check)*. At the converged predictor Popov's quadrature update and the
+extrapolation $\sum_m\ell_m(1)Y_m$ of Han Veiga et al. give the same $y_{n+1}$: summing
+the rows of $\mathcal D\mathbf Y=\mathbf r(\mathbf Y)$ and using $\sum_m\ell_m\equiv1$ gives
+$\sum_l\ell_l(1)Y_l=y_n+h\sum_lw_lf(Y_l)$ *(compiler check)*; after finitely many Picard
+iterations the two differ.
+
+The scheme is therefore an $(\mathsf M+1)$-stage
+[fully implicit Runge–Kutta method](/methods/fully-implicit-runge-kutta.md) with $A=B$,
+$b=w$ and Gauss–Legendre abscissae, a reading Popov uses for the stability function (§1.2,
+Eq. (15)). Its row sums satisfy $B\mathbf 1=c$ *(compiler check, numerical, for
+$1\le\mathsf M\le12$)*. Further properties (Popov 2024):
+
+- **Two outputs.** The nodal values $y_n$ and a piecewise polynomial "local solution",
+  discontinuous at the nodes, which Popov presents as a finite-element representation, not
+  a reconstruction (§1.3, Eq. (16)); see [dense output](/methods/dense-output.md). On the
+  harmonic oscillator with 96 steps over $[0,100\pi]$ (more than half a period per step)
+  in double precision, degree 8 already reaches round-off at the nodes (Fig. 3).
+- **Orders.** Expected orders $2\mathsf M+1$ at the nodes and $\mathsf M+1$ for the local
+  solution, by analogy with Baccouch's proofs for modal DG (Eq. (20), stated). On six
+  non-stiff problems in 500-digit arithmetic the fitted orders match up to $\mathsf M=60$
+  (121.01 at the nodes, 61.00 locally, on the oscillator; Tables 1–6), with excursions
+  above and below on nonlinear problems.
+- **Stiffness.** On the flame problem $y'=y^2-y^3$, $y(0)=\delta$, Newton iteration is
+  needed because Picard diverges at large steps; the front is resolved at $\delta=10^{-4}$,
+  degree 1 misplaces it at $\delta=10^{-5}$, and the fitted orders saturate near 8
+  ($\delta=10^{-4}$) and 4 ($\delta=10^{-5}$) for every degree $\ge3$ (§2.2, Table 7).
+- **Cost.** In mpmath Python the solver is slower than scipy's RK23, RK45, DOP853 and
+  Radau IIA at comparable order, but from degree 30–35 on it reaches errors that the
+  classical methods do not reach on coarse grids (§2.3, Fig. 12; no hardware stated).
 
 ## Implicit ADER for stiff sources (IMADER)
 
@@ -175,6 +232,29 @@ one linear space–time system per element *(compiler remark, not in the sources
   degree-$K$ Taylor polynomial of $e^z$ *(compiler check; see
   [deferred correction](/methods/deferred-correction.md))*. CFL bounds for PDEs depend on the
   spatial discretization and are not derived (§5.1).
+- **Implicit ADER-DG: A- and L-stability.** For the converged Gauss–Legendre predictor,
+  Popov (2024, §1.2, Eq. (15), Figs. 1–2) writes
+  $R(z)=\det(I-zB+z\mathbf 1w^\top)/\det(I-zB)$ and concludes A-stability from plotted
+  regions of absolute stability for $1\le\mathsf M\le60$, whose complements are bounded
+  islands in $\operatorname{Re}z>0$. He concludes L-stability ("more precisely
+  L1-stable", meaning $\lvert R(z)\rvert\sim\lvert z\rvert^{-1}$) from a rank computation
+  for $\mathsf M\le80$: $\operatorname{rank}(B-\mathbf 1w^\top)=\mathsf M$ and
+  $\operatorname{rank}B=\mathsf M+1$, so the numerator has degree $\mathsf M$ and the
+  denominator $\mathsf M+1$. Both properties are inferred from plots and rank checks for
+  finitely many degrees, not proved. *Compiler check (not in the source):* evaluating this
+  $R$ at complex test points in 60-digit arithmetic for $0\le\mathsf M\le12$ reproduces the
+  $(\mathsf M,\mathsf M+1)$ subdiagonal Padé approximant of $e^z$ to round-off; that
+  approximant is the stability function of the $(\mathsf M+1)$-stage Radau IIA method, as
+  [Jin et al. (2025)](/sources/jin-2025.md) (Table 4.1) classify the three-stage case. The first-subdiagonal Padé
+  approximants are A-stable, as recalled by [Sun et al. (2022)](/sources/sun-2022.md)
+  (§1), and the degree gap gives $R(\infty)=0$, so the identification, if it holds for all
+  $\mathsf M$, would make the scheme A- and L-stable at every degree and account for the
+  nodal order $2\mathsf M+1$ (the Padé order). The check is numerical and finite; it is
+  not a proof.
+- **Mild instability at high degree.** Babbar et al. (2022, §8.1.1) observe a mild linear
+  instability of Lax–Wendroff and SSP Runge–Kutta flux reconstruction at degree 4 with
+  periodic data and state that it "seems to be present" in ADER-DG too; this is not shown.
+  Their Radau-corrected LWFR has the same Fourier CFL numbers as ADER-DG (§6, stated).
 - **High-order anomalies.** With equispaced nodes ADER loses its design order at the highest
   orders, presumably because the conditioning of $\mathcal D$ worsens. With Gauss–Legendre
   nodes it shows "strange behavior at high orders and high resolutions", attributed to the
@@ -218,6 +298,31 @@ one linear space–time system per element *(compiler remark, not in the sources
   adiabatic exponent.
 - **Printed slip in Wolf et al. (2022).** The Taylor predictor (Eq. (5)) is printed with
   the sum starting at $j=1$, which drops the zeroth-order term $q(t_i)$.
+- **Popov's cost count.** Popov (2024, §2.3) counts "at least $(\mathsf M+1)^2$" evaluations
+  of $f$ per Picard iteration and $(\mathsf M+1)^2$ Jacobians per Newton iteration, against
+  $s$ for an $s$-stage implicit Runge–Kutta method, and concludes that ADER-DG costs more
+  than implicit Runge–Kutta methods. The printed predictor system evaluates $f$ only at the
+  $\mathsf M+1$ nodes, so one sweep needs $\mathsf M+1$ evaluations and one Newton step
+  $\mathsf M+1$ Jacobians, the implicit Runge–Kutta count with $s=\mathsf M+1$
+  *(compiler check of Eq. (11), not in the source)*. The count appears off by a factor
+  $\mathsf M+1$, and the scheme is itself an implicit Runge–Kutta method; the defensible cost
+  differences are the full stage coupling and iteration to convergence *(compiler remark)*.
+- **Popov's labels and fits.** "L1-stable" is not a standard class; read it as L-stable
+  with $R(z)=\mathcal O(\lvert z\rvert^{-1})$ (see [A-stability](/properties/a-stability.md)).
+  Fitted nodal orders above $2\mathsf M+1$ by up to 3–4 for $\mathsf M\ge25$ on two
+  nonlinear problems, which Popov calls "unexpected", come from six-grid fits at errors of
+  $10^{-100}$–$10^{-280}$ and are not evidence of superconvergence beyond $2\mathsf M+1$
+  *(compiler remark)*. On the flame problem the orders saturate at a common value for all
+  degrees, which points to a measurement dominated by the resolution of the layer *(compiler
+  remark)*; Popov's statement of agreement "up
+  to $N\le3$" does not hold at $N=2$ (7.99 against an expected 5). The abstract's "uniform
+  steps" means one formula per step: variable steps are allowed and graded grids are used,
+  but there is no step-size control.
+- **Printed slips in Popov (2024)** (arXiv v1). Eq. (15) prints
+  $R(z)=1+w^\top(I-zB)^{-1}\mathbf 1$ without the factor $z$ in front of $w^\top$; the
+  determinant form beside it is correct. Further slips in test-problem data (initial values
+  at $t=0$ for a problem on $[1,2]$, a step formula copied from the $2\pi$-periodic cases,
+  $(1-t^2)$ for $(1-t)$ in one exact derivative) are recorded on the Source page.
 - **Scaling convention.** In the ADER spectral-difference variant (eq. (65)) the iteration
   matrix carries an $h$ that the unit-interval form above does not. The time basis is
   defined there on the physical interval. This is a change of convention between §2 and
@@ -228,3 +333,10 @@ one linear space–time system per element *(compiler remark, not in the sources
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §2 (eqs. (2)–(13), Example 2.1); §2.1 (historical ADER, eqs. (15)–(17)); §4.1 and §4.3 (Thm. 4.5, Remark 4.6); §4.4 (eqs. (43)–(47)); §4.5.2 (Remarks 4.7–4.8); §4.5.3; §5.1–5.3 (Figs. 2–14); §6.
 - [Gaburro et al. (2023)](/sources/gaburro-2023.md) — §3 (Eqs. (6)–(14), Remark 3.1), §4.1 (Eqs. (15)–(22)), §4.2 (Eqs. (29)–(37), Example 4.5), §5 (Tables 1–4, Figs. 1–17), §6.
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.2 (CFL), §4.3 (Eqs. (5)–(8)), §5.2 (Table 2), §6.1 (Fig. 3), §7.3.
+- [Popov (2024)](/sources/popov-2024.md) — Introduction; §1.1 (Eqs. (1)–(13)); §1.2 (Eqs. (14)–(15), Figs. 1–2); §1.3 (Eq. (16), Fig. 3); §2.1 (Eq. (20), Tables 1–6); §2.2 (Table 7, Figs. 10–11); §2.3 (Fig. 12).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §1; §6 (CFL agreement with ADER-DG); §8.1.1 (mild instability).
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §1 (ADER as single-stage route).
+- [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §1 (ADER among Lax–Wendroff-type methods).
+- [Sun et al. (2022)](/sources/sun-2022.md) — §1 (A-stability of subdiagonal Padé approximants, as recalled).
+- [Jin et al. (2025)](/sources/jin-2025.md) — Table 4.1 (Padé classification of Radau IIA).
+- [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — Conclusions (interpolation for ADER, planned).

@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Positivity preservation in time integration"
-description: "A time integrator is positivity preserving if nonnegative data give nonnegative numerical solutions; within SSP theory it holds under $h\\le\\mathcal C h_{\\mathrm{FE}}$, unconditional positivity is limited to first order for Runge–Kutta and multistep methods, and multiderivative, splitting and exponential reformulations obtain higher order, including uniformly in a stiffness parameter."
+description: "A time integrator is positivity preserving if nonnegative data give nonnegative numerical solutions; within SSP theory it holds under $h\\le\\mathcal C h_{\\mathrm{FE}}$, unconditional positivity is limited to first order for linear methods, and nonlinear routes (Patankar-type schemes, adaptive weights, flux limiting, multiderivative, splitting and exponential reformulations) obtain higher order."
 status: established
-aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme]
+aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme, bound preservation, invariant domain preservation, admissibility preservation]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Positivity preservation in time integration
@@ -25,7 +25,15 @@ h_{\mathrm{FE}}$ ([Gottlieb et al. 2022](/sources/gottlieb-2022.md), §1, §3.4)
 
 Runge–Kutta and linear multistep methods that preserve positivity **unconditionally**
 are at most first order (Bolley & Crouzeix 1978), as recalled by
-[Blanes et al. (2024)](/sources/blanes-2024.md) (§9.2.1). The SSP form of the same
+[Blanes et al. (2024)](/sources/blanes-2024.md) (§9.2.1); the same holds for every general
+linear method that is unconditionally positive on all positive ODEs
+([Nüßlein et al. 2021](/sources/nusslein-2021.md), §1;
+[Torlo et al. 2022](/sources/torlo-2022.md), §1, "general linear methods of order $\ge2$ are
+only conditionally positive"). The barrier concerns positivity *in all stages* for all
+positive problems: Torlo et al. recall that only first-order linear schemes have
+$(I+hA)^{-1}\ge0$ for every $h$ (positive stages on linear problems), while the fifth-order
+Radau IIA method is unconditionally positive in its final update on linear problems
+(Remark 4.5). The SSP form of the same
 fact: implicit methods preserving the forward Euler condition for every $h$ cannot
 exceed order 1, backward Euler being the first-order example, as recalled by Gottlieb
 et al. (2022, §1, App. A, restating Gottlieb–Shu–Tadmor). For stiff problems this is
@@ -103,6 +111,69 @@ Every route changes the class of methods or adds hypotheses on $f$:
   property of the spatial matrix, not of an ODE method. See
   [step-size control](/methods/step-size-control.md) and
   [operator splitting](/methods/operator-splitting.md).
+
+## Patankar-type schemes, adaptive weights and flux limiting
+
+Three further routes escape the barrier by giving up linearity of the method, each with a
+different meaning of "unconditional".
+
+- **Patankar-type schemes** for [production–destruction systems](/definitions/production-destruction-system.md).
+  Multiplying each production term $p_{ij}$ by $y^{n+1}_j/\varpi_j$ and each destruction
+  term $d_{ij}$ by $y^{n+1}_i/\varpi_i$, with positive denominators $\varpi$ computed from
+  known values, turns every stage into a linear system with an M-matrix, so the scheme is
+  positive and conservative for every $h$ ([modified Patankar methods](/methods/modified-patankar-methods.md)).
+  The schemes are nonlinear in the data, so the first-order barrier for linear methods does
+  not bind them: [Izzo et al. (2025)](/sources/izzo-2025.md) prove unconditional positivity
+  and conservation for multistep schemes of orders up to 6 (Lemmas 2.2–2.3, Table 1), and
+  modified Patankar deferred correction reaches arbitrary order
+  ([Ciallella et al. 2022](/sources/ciallella-2022.md), §4.3, recalled). Positivity for
+  every $h$ is not freedom from step restrictions: Torlo et al. (2022) show that these
+  schemes oscillate around steady states above step bounds of order one (for instance $h\le2$
+  for MPRK(2,2,1), Thm. 4.7) and fall to order 1 or 2 when a constituent vanishes initially
+  (Thm. 5.4, Table 2). [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) apply a
+  Patankar-type correction after an SDIRK step, proving positivity for every $h$ when the
+  weights are nonnegative and order $\min(p,q+1)$ (Prop. 3.23).
+- **Adaptive Runge–Kutta weights.** Nüßlein et al. (2021) re-choose the weights of each step
+  by a linear program that keeps the update nonnegative and the order conditions up to a
+  possibly reduced order; every linear invariant is kept because each step is a Runge–Kutta
+  step. Positivity is obtained per problem and per step, so it is "unconditional" in a
+  data-dependent sense only, and the authors keep the two senses distinct (§1); see
+  [adaptive-weight Runge–Kutta methods](/methods/adaptive-weight-runge-kutta.md).
+- **Flux limiting of the Runge–Kutta update.** For finite-volume schemes,
+  [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) limit antidiffusive fluxes of the final
+  update (and, where needed, of the stages) against step-independent bounds; explicit methods
+  of any order then preserve bounds, positivity included, under a forward-Euler-type step
+  restriction (§3, Eq. (28)). Their Theorem 1 gives a semi-discrete maximum principle: an
+  ODE $y_i'=a_i(y)(g_i(y)-y_i)$ with $g$ mapping a box into itself and $0\le a_i\le C$ keeps
+  its solution in the box. Bound preservation, invariant-domain preservation and positivity
+  preservation are the same notion for different admissible sets (Def. 2). See
+  [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md).
+
+**Positivity limiters and the CFL price.** With a Zhang–Shu positivity limiter on a WENO5
+reconstruction, forward Euler is positive for CFL numbers up to the first Gauss–Lobatto
+weight, $\tfrac1{12}$, and SSPRK(5,4) up to about $1.508\cdot\tfrac1{12}$; explicit SSP methods
+stop at order 4, and high-order deferred correction cannot be written as a convex
+combination of Euler steps, so it has no positivity proof under that bound
+(Ciallella et al. 2022, Remark 3.1, Remark 5.4, §6.6). Replacing the time integrator of the
+water height by modified Patankar deferred correction removes the positivity restriction:
+a dry dam break runs positively at CFL 1.5, at about 18% extra cost (§6.6).
+[Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) keep a Lax–Wendroff flux
+reconstruction scheme admissible (positive density and pressure) by blending a high-order
+and a first-order subcell flux and a Zhang–Shu scaling, which relies on a CFL restriction
+of the first-order scheme (Defs. 4–5, Thm. 1, App. A); their error-based step-size
+controller also rejects and repeats any step that produces an inadmissible state (§5.2,
+Algorithm 3). Rejecting steps is not a general remedy: enforcing positivity of SDIRK steps by
+rejection and halving drives the step to its floor on a stiff chemistry problem
+(Nurkhametova et al. 2026, Fig. 8).
+
+**Monotone approach versus positivity.** On the linear two-species exchange
+$y_1'=-\theta y_1+(1-\theta)y_2$, $y_2'=\theta y_1-(1-\theta)y_2$ (page-local $\theta$), a
+Runge–Kutta method neither overshoots the steady state nor moves away from it iff
+$0<R(-h)<1$, i.e. iff the Dahlquist mode stays positive (Torlo et al. 2022, Props.
+4.3–4.6). A-stable methods always move in the right direction; whether they overshoot
+depends on the sign of $R(-h)$, positive for every $h$ for Radau IIA5, Gauss–Legendre 4 or
+implicit Euler, and only for $h<2$ for implicit midpoint and trapezoid (Table 1; see
+[stability function](/definitions/stability-function.md)).
 
 ## Linear positivity of many-stage explicit methods: the role of boundaries
 
@@ -200,8 +271,8 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
   diagonal, nonpositive off-diagonal entries, nonnegative row sums and at least one
   positive row sum is a nonsingular M-matrix; without irreducibility this is false (a
   reducible block with zero row sums is singular), but in their application every row sum
-  is strictly positive, so the conclusion stands *(reader's observation, recorded on the
-  Source page)*. They also attribute the penalty condition to the positivity of the
+  is strictly positive, so the conclusion stands *(compiler remark, not in the
+  sources)*. They also attribute the penalty condition to the positivity of the
   diagonal entries, which are positive for every penalty; the condition makes the
   off-diagonal entries nonpositive.
 
@@ -209,28 +280,36 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
   condition $Q'Q=-CQ$ is special to relaxation-type operators (Gottlieb et al. 2022,
   §3.4.1, "non-generic").
 - The exponential-RK claims are recalled by Jin without proof; whether high order
-  holds *uniformly* in $\varepsilon$ is not claimed there, and the reader of that
-  source flags reported order reduction in intermediate regimes.
+  holds *uniformly* in $\varepsilon$ is not claimed there.
 - Positivity of a fully discrete scheme also depends on the spatial discretization
   (limiters, as in the WENO positivity limiter used in Gottlieb et al. 2022, §3.5.3).
-- Patankar-type methods, also aimed at unconditional positivity, are not covered by
-  the sources of this page.
+- **Patankar-type methods** are positive for every $h$ on production–destruction systems
+  at any order, because they are nonlinear schemes; the price is a linear solve per stage,
+  oscillation-free step bounds of order one and order loss for vanishing constituents (Torlo
+  et al. 2022; summary above, details on
+  [modified Patankar methods](/methods/modified-patankar-methods.md)).
+- **Hypotheses of the Patankar predictor–corrector.** Nurkhametova et al. (2026, §3.3)
+  require nonnegative weights for their positivity proof, while two of the three SDIRK
+  methods they test have negative weights, so their positivity guarantee covers only the
+  second-order base *(compiler check of the printed tableaux; see the method page)*.
+- Deferred-correction variants with Patankar weights and relaxation are cited, not
+  analysed, by [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) (§1).
 - **Dawes's notion and the SSP notion differ.** Dawes's "monotone" is nonnegativity of
   the entries of the one-step matrix for a specific operator; no SSP coefficient is
-  computed. The reader of that source notes that the two-stage RKL1 polynomial
+  computed. The two-stage RKL1 polynomial
   $1+z+z^2/6$ is absolutely monotonic only on about $[-1.27,0]$, against a real
   stability interval of length 6, so the interior monotonicity at
   $d_{\mathrm e}\le\frac12$ comes from the structure of the Laplacian, not from an
-  SSP property. The ghost-centre closure places the boundary value half a cell
+  SSP property *(compiler check, not in the sources: $1+z+z^2/6$ and its
+  first derivative are nonnegative on $[-(3-\sqrt3),0]$)*. The ghost-centre closure places the boundary value half a cell
   outside the domain, so the thresholds are closure-specific. All results are for 1D
   constant-coefficient diffusion.
 - **Printed slips in Dawes (2021).** Dawes prints the four-stage RKL2 Dirichlet
   threshold as "$\frac1{21}(7-\sqrt7)\sim0.18$" (§6.1.3). The closed form equals
-  0.2073; the reader of that source found it to be the smallest root of the
-  boundary entry $2-18d_{\mathrm e}+49d_{\mathrm e}^2-42d_{\mathrm e}^3$ (roots 0.2073, 0.4594, 0.5) and confirmed it by a
-  numerical scan, so the printed decimal is a slip of the source, not a disagreement,
-  and the closed form is used above *(reader's recomputation, recorded on the Source
-  page)*. The qualitative statement that the threshold is lower than the three-stage
+  0.2073, the smallest root of the
+  boundary entry $2-18d_{\mathrm e}+49d_{\mathrm e}^2-42d_{\mathrm e}^3$ (roots 0.2073, 0.4594, 0.5) so the printed decimal is a slip of the source, not a disagreement,
+  and the closed form is used above *(compiler check, not in the
+  sources)*. The qualitative statement that the threshold is lower than the three-stage
   one (0.32) holds either way. Several closed-form
   entries in App. D carry coefficient slips (D.8, D.18, D.20) and the analytic heat
   solutions (35)–(36) are printed with the exponential multiplying the constant;
@@ -245,3 +324,11 @@ See [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.m
 - [Southworth et al. (2024)](/sources/southworth-2024.md) — §5.1 (negative temperatures, choice of pairs).
 - [Boscheri & Thomann (2024)](/sources/boscheri-2024.md) — §4.1 (no positivity guarantee); arXiv v1.
 - [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.2–1.4, §2.1 (Eqs. (6a)–(6b)), §3.3 (Eqs. (13)–(16)), §3.4 (Algorithms H, CNS, Remark 2), App. A.
+- [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §1 (barrier for general linear methods, senses of unconditional positivity); arXiv v2.
+- [Torlo et al. (2022)](/sources/torlo-2022.md) — §1, Remark 4.5, Props. 4.3–4.6, Table 1, Thm. 4.7, Thm. 5.4 (Table 2); arXiv v5.
+- [Ciallella et al. (2022)](/sources/ciallella-2022.md) — Remark 3.1, §4.3, Remark 5.4, §6.6; arXiv v3.
+- [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — Def. 2, Thm. 1, §3 (Eq. (28)); arXiv v2.
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — Lemmas 2.2–2.3, Table 1; arXiv v1.
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §3.3, Prop. 3.23, Fig. 8.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.2 (Algorithm 3), App. A (Defs. 4–5, Thm. 1); arXiv v4.
+- [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — §1 (structure-preserving DeC variants cited); arXiv v4.

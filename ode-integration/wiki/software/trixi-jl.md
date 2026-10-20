@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "Trixi.jl"
-description: "Trixi.jl is a Julia DGSEM framework for hyperbolic and hyperbolic–parabolic conservation laws whose semi-discretizations the sources integrate with OrdinaryDiffEq.jl; it supplies Jacobian spectra for stability-polynomial optimization, hosts the paired explicit Runge–Kutta implementations with AMR partitioning, and is the Julia test bed for error-based step-size control."
+description: "Trixi.jl is a Julia DGSEM framework for hyperbolic and hyperbolic–parabolic conservation laws whose semi-discretizations the sources integrate with OrdinaryDiffEq.jl; it supplies Jacobian spectra for stability-polynomial optimization, hosts paired explicit Runge–Kutta with AMR partitioning, is a test bed for error-based step-size control, and is the library under TrixiLW.jl."
 status: established
 aliases: [Trixi, Trixi.jl DGSEM]
 tags: [software, multirate, step-size-control, verification]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Trixi.jl
@@ -17,7 +17,8 @@ others), on tree meshes with adaptive refinement, p4est meshes and curved struct
 meshes. It is a spatial code: in the sources it generates the semi-discrete system
 $y'=f(t,y)$, and the time integration is done by
 [OrdinaryDiffEq.jl](/software/differentialequations-jl.md) or by integrators implemented
-alongside it. Four ingested sources use it, all from the group that develops it.
+alongside it. Four ingested sources from the group that develops it use it, and a fifth,
+from another group, builds a single-stage scheme on it as a library.
 
 ## Role in the sources
 
@@ -51,6 +52,17 @@ alongside it. Four ingested sources use it, all from the group that develops it.
   control are callbacks after accepted steps and positivity limiters act after every stage,
   so the error estimator never sees them (§2.3–2.5, §8).
 
+- **A single-stage scheme on top of Trixi.jl.** [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md)
+  (§1, §6) implement [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)
+  in TrixiLW.jl, which loads Trixi.jl through Julia's package manager and extends it by
+  multiple dispatch rather than forking it. It reuses Trixi.jl's curved meshes (from
+  HOHQMesh.jl), its three-level AMR controller and its postprocessing, replaces the
+  method-of-lines time loop by the single-stage update, and adds an error-based step-size
+  controller of the Ranocha et al. type, with the per-element error accumulated inside the
+  residual loop. The design of the authors' earlier 1-D/2-D code was "inspired by Trixi.jl"
+  ([Babbar et al. 2022](/sources/babbar-2022.md)), which takes its fifth-order reference
+  Runge–Kutta method in the 2-D tests from [DifferentialEquations.jl](/software/differentialequations-jl.md).
+
 ## Test cases run in Trixi.jl in the bundle
 
 [Isentropic vortex](/benchmarks/isentropic-vortex.md) with AMR,
@@ -59,11 +71,14 @@ alongside it. Four ingested sources use it, all from the group that develops it.
 periodic shear layer, visco-resistive Orszag–Tang vortex, Rayleigh–Taylor instability and
 the MHD rotor (Doehring et al. 2024b, §5, §7); laminar SD7003 airfoil and a coupled
 Euler/acoustic-perturbation vortex pair (Doehring et al. 2025, §6); double Mach reflection,
-astrophysical jet and Kelvin–Helmholtz cases (Ranocha et al. 2025, §4–6).
+astrophysical jet and Kelvin–Helmholtz cases (Ranocha et al. 2025, §4–6); through TrixiLW.jl,
+a Mach 2000 jet, Kelvin–Helmholtz, double Mach reflection, forward-facing step, rotating
+Couette flow, curvilinear isentropic vortex, Mach 3 cylinder, Mach 4 blunt body and transonic
+NACA0012 (Babbar & Chandrashekar 2025, §6).
 
 ## Qualifications
 
-- The four sources share authors with the Trixi.jl developers; their speedups are
+- The four Trixi.jl-group sources share authors with the Trixi.jl developers; their speedups are
   measured in one code base, and Doehring et al. (2025) state no hardware for some runs.
 - Trixi.jl is cited in printed reference lists under its JuliaCon 2022 proceedings paper,
   whose key collides with an ingested source; the bibliography keeps them apart (noted on
@@ -75,3 +90,5 @@ astrophysical jet and Kelvin–Helmholtz cases (Ranocha et al. 2025, §4–6).
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §4.1, §5, §6.1–6.3 (Listings 1–2), §7 (Tables 7–12).
 - [Doehring et al. (2025)](/sources/doehring-2025.md) — §6 (DGSEM validation and applications, §6.2).
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2.3–2.5 (Algorithm 2), §4–6, §8.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §1, §5.2 (Algorithms 1, 3), §6 (TrixiLW.jl on Trixi.jl).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — code design inspired by Trixi.jl; RK65 from DifferentialEquations.jl in the 2-D tests.

@@ -8,7 +8,8 @@ Numerical time integration of ordinary differential equations and of
 method-of-lines semi-discretizations of PDEs: Runge–Kutta theory, implicit,
 Rosenbrock, IMEX, additive and multirate methods, splitting, stability
 notions and structure preservation, asymptotic-preserving schemes, deferred
-correction and ADER, step-size control, stage solvers and integrator
+correction and ADER, positivity-preserving (Patankar) schemes,
+parallel-in-time methods, step-size control, stage solvers and integrator
 software.
 
 **Start here:** the [Notation registry](/notation.md), which is normative for
@@ -17,7 +18,7 @@ $q_{\mathrm w}$ weak stage order, $R(z)$ the stability function, $\mathcal C$
 the SSP coefficient, $\phi_k$ with the factorial normalization), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–4 of 6 ingested (80 of the archive's 118 sources). Chunk 1: two *Acta
+**Corpus:** chunks 1–5 of 6 ingested (100 of the archive's 118 sources). Chunk 1: two *Acta
 Numerica* reviews ([Blanes et al. 2024](/sources/blanes-2024.md) on splitting,
 [Jin 2022](/sources/jin-2022.md) on asymptotic-preserving schemes), the
 B-series paper of [Ketcheson & Ranocha (2023)](/sources/ketcheson-2023.md), three
@@ -36,7 +37,12 @@ solvers at scale, Padé and Newmark schemes, boundary data for Runge–Kutta
 stages. Chunk 4: local time stepping, adaptive and IMEX multirate
 infinitesimal methods, multirate exponential methods, nonlinearly
 partitioned Runge–Kutta, exponential integrators (stiff order conditions,
-Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. The [bibliography](/bibliography.md) lists the works the sources cite.
+Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes.
+Chunk 5: modified Patankar and other positivity-preserving schemes,
+bound-preserving flux limiting, parallel-in-time integration (Parareal,
+ParaDiag, parallel SDC), efficient and two-derivative deferred correction,
+ADER-DG for ODEs, Lax–Wendroff flux reconstruction, exponential time
+differencing for nondiagonal linear parts. The [bibliography](/bibliography.md) lists the works the sources cite.
 
 ## Reading guide
 
@@ -74,7 +80,12 @@ Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. 
    problems, proved with the [energy method](/methods/runge-kutta-energy-method.md)
    ([diagonal Padé schemes](/results/diagonal-pade-strong-stability.md),
    [superviscosity stabilization](/methods/superviscosity-stabilized-runge-kutta.md));
-   [positivity preservation](/properties/positivity-preservation.md);
+   [positivity preservation](/properties/positivity-preservation.md) of
+   [production–destruction systems](/definitions/production-destruction-system.md) by
+   [modified Patankar methods](/methods/modified-patankar-methods.md) and
+   [adaptive-weight Runge–Kutta methods](/methods/adaptive-weight-runge-kutta.md), and of
+   hyperbolic schemes by [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)
+   (test problem: the [stratospheric reaction problem](/benchmarks/stratospheric-reaction-problem.md));
    [multiderivative methods and the backward derivative condition](/methods/multiderivative-runge-kutta.md);
    [relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md) and
    [entropy stability](/properties/entropy-stability.md) of the fully discrete scheme,
@@ -91,7 +102,10 @@ Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. 
    [embedded pairs](/methods/embedded-runge-kutta-pair.md),
    [step-size control](/methods/step-size-control.md),
    [low-storage schemes](/methods/low-storage-runge-kutta.md),
-   [dense output](/methods/dense-output.md); benchmarks: the
+   [dense output](/methods/dense-output.md),
+   [extrapolation methods](/methods/extrapolation-methods.md),
+   [von Neumann stability analysis](/definitions/von-neumann-stability-analysis.md); benchmarks: the
+   [linear advection equation](/benchmarks/linear-advection-equation.md), the
    [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and the
    [isentropic vortex](/benchmarks/isentropic-vortex.md).
 6. **Additive, partitioned and multirate methods.**
@@ -115,8 +129,9 @@ Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. 
    [exponential integrators](/methods/exponential-integrators.md) with their
    [stiff order conditions](/results/exponential-runge-kutta-stiff-order-conditions.md),
    [Lawson methods](/methods/lawson-methods.md) and
-   [φ-function evaluation](/methods/phi-function-evaluation.md); test problem: the
-   [Gray–Scott model](/benchmarks/gray-scott-model.md).
+   [φ-function evaluation](/methods/phi-function-evaluation.md); test problems: the
+   [Gray–Scott model](/benchmarks/gray-scott-model.md), the
+   [nonlinear Schrödinger equation](/benchmarks/nonlinear-schrodinger-equation.md).
 8. **Multiscale problems.** [Asymptotic-preserving schemes](/definitions/asymptotic-preserving-scheme.md),
    [uniform accuracy for relaxation systems](/results/uniform-accuracy-relaxation-systems.md),
    [BGK penalization](/methods/bgk-penalization.md),
@@ -139,12 +154,20 @@ Lawson, φ-function evaluation), explicit–implicit–null and Quinpi schemes. 
    [linearly implicit multistep methods](/methods/linearly-implicit-multistep-method.md).
 10. **Iterative high-order time integrators.** [Deferred correction](/methods/deferred-correction.md),
    [ADER](/methods/ader-time-integration.md) and their
-   [equivalence](/results/dec-ader-equivalence.md).
-11. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
+   [equivalence](/results/dec-ader-equivalence.md);
+   [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md), a
+   single-stage Taylor scheme.
+11. **Parallel-in-time integration.** [Overview](/methods/parallel-in-time-integration.md),
+    [Parareal](/methods/parareal.md), [ParaDiag](/methods/paradiag.md),
+    [parallel-across-the-method SDC](/methods/parallel-sdc.md); test problems: the
+    [heat equation](/benchmarks/heat-equation.md), the
+    [Allen–Cahn equation](/benchmarks/allen-cahn-equation.md), the
+    [Vlasov–Poisson equation](/benchmarks/vlasov-poisson-equation.md).
+12. **Software.** [SUNDIALS](/software/sundials.md) with [ARKODE](/software/arkode.md) and
     [CVODE](/software/cvode.md), [Irksome](/software/irksome.md),
     [BSeries.jl](/software/bseries-jl.md), [DifferentialEquations.jl](/software/differentialequations-jl.md),
     [Trixi.jl](/software/trixi-jl.md),
-    [PETSc TS](/software/petsc-ts.md).
+    [PETSc TS](/software/petsc-ts.md), [pySDC](/software/pysdc.md).
 
 ## Catalog
 

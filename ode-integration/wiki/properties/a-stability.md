@@ -5,7 +5,7 @@ description: "Linear stability classes of one-step and linear multistep methods:
 status: established
 aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, strong A-stability, strongly A-stable, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability, stability angle]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability
@@ -156,6 +156,34 @@ sampling only (Fig. 4).
   0.7445 as printed, the reader of the source recomputes 0.7451). In
   general only a weighted field-of-values condition is sufficient (Thms. 5.5–5.6). See
   [TASE operators](/methods/tase-operators.md).
+* **Implicit ADER-DG:** [Popov (2024)](/sources/popov-2024.md) (§1.2, Figs. 1–2)
+  concludes that the Gauss–Legendre ADER-DG solver iterated to convergence is A-stable
+  from plotted stability regions for degrees $1\le\mathsf M\le60$, and "L-stable; more
+  precisely — L1-stable" from a rank computation for $\mathsf M\le80$ showing that $R$ has
+  numerator degree $\mathsf M$ and denominator degree $\mathsf M+1$, so
+  $\lvert R(z)\rvert\sim\lvert z\rvert^{-1}$. Both are inferred for finitely many degrees,
+  not proved; "L1-stable" is not a separate class here but L-stability with
+  $R=\mathcal O(\lvert z\rvert^{-1})$. *(Compiler check, not in the sources:* numerically
+  this $R$ equals the $(\mathsf M,\mathsf M+1)$ subdiagonal Padé approximant for
+  $\mathsf M\le12$; if that holds at every degree, the Padé fact above gives both properties
+  at every degree; details on [ADER](/methods/ader-time-integration.md).)
+* **Spectral deferred correction with $K$ sweeps:** Picard SDC is never A-stable, and the
+  diagonal (parallel) preconditioner MIN-SR-NS is not A-stable for any $K$. For four
+  Radau-right nodes, MIN-SR-S "appears" A-stable for $K\ge3$ and MIN-SR-FLEX "seems"
+  A-stable for every $K$, with regions close to those of serial LU-SDC; MIN-SR-FLEX with five
+  Lobatto nodes and $K=4$ is not (not shown). All of this is read from plots
+  ([Čaklović et al. 2025](/sources/caklovic-2025.md), §3.2, Figs. 5–9, §5). They also
+  report that the collocation update can remove the apparent A-stability of some
+  preconditioners (Remark 2.1). See [parallel SDC](/methods/parallel-sdc.md).
+* **Parareal propagators:** [Jin et al. (2025)](/sources/jin-2025.md) (§2.1, Remark 2.3)
+  require of the fine propagator $\lvert R\rvert<1$ on the negative real axis and strong
+  stability $\lvert R(\infty)\rvert<1$; fine propagators with $\lvert R(\infty)\rvert=1$,
+  such as Crank–Nicolson and the Gauss methods, make Parareal converge only for a bounded
+  spectrum and enough fine steps per slice, and are "seldom used". Their optimized coarse
+  propagators are consistent and strongly stable by construction (Prop. 3.3). The two-,
+  three- and four-stage Lobatto IIIC methods have the $(0,2)$, $(1,3)$ and $(2,4)$ Padé
+  approximants and three-stage Radau IIA the $(2,3)$ one (Table 4.1). See
+  [Parareal](/methods/parareal.md).
 * **Rosenbrock methods:** Rodas5P and its embedded method are A-stable; the
   embedded method of Rodas5 is not (Steinebach (2023), Figs. 1–2).
 * **Multirate methods:** a scalar test with one eigenvalue per partition
@@ -259,6 +287,10 @@ the notion without restating it)*. The sources use it as follows:
 * Koyaguerebo-Imé & Bourgault (2022, §1) announce B-stability of their
   deferred-correction schemes but prove only [B-convergence](/definitions/b-convergence.md)
   (Cor. 4.1); the page records no B-stability result for them.
+* Popov (2024), Čaklović et al. (2025) and, for the ODE regions of explicit ADER and DeC,
+  Han Veiga et al. (2021) establish their stability claims by plotting regions; none
+  proves A-stability. Popov's sampled degrees ($\le60$) and Čaklović et al.'s node sets
+  are the scope of the claims.
 * Multirate stability depends on the basis in which the partitions are
   written, so a single scalar test equation does not settle it (Roberts et al.
   (2021), §3, after Gear).
@@ -280,3 +312,6 @@ the notion without restating it)*. The sources use it as follows:
 - [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §3.1 (Eq. (32), L-stability of stiffly accurate type II tableaux).
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1, §3.1 (Dahlquist barrier, Radau IIA properties).
 - [Ma et al. (2026)](/sources/ma-2026.md) — §2.2 (A- and G-stability).
+- [Popov (2024)](/sources/popov-2024.md) — §1.2 (Eq. (15), Figs. 1–2; A- and "L1"-stability from plots and rank checks).
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — Remark 2.1; §3.2 (Figs. 5–9); §5.
+- [Jin et al. (2025)](/sources/jin-2025.md) — §2.1 (properties (P1)–(P3)), Remark 2.3, Prop. 3.3, Remark 3.1, Table 4.1.

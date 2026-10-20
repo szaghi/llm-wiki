@@ -5,7 +5,7 @@ description: "Stiff order conditions make an exponential Runge–Kutta or Rosenb
 status: established
 aliases: [stiff order conditions, Hochbruck–Ostermann order conditions, φ-order conditions, phi-order conditions, ϕ-order, stiffness resilience, stiffly accurate exponential integrator]
 tags: [exponential, order-conditions, stiff, order-reduction]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Stiff order conditions of exponential Runge–Kutta methods and φ-order conditions
@@ -141,6 +141,31 @@ path and are not proved as general lower bounds:
 The families and their coefficients are on [exponential integrators](/methods/exponential-integrators.md).
 Dallerit & Tokman (2025, §1, §3) recall that exponential Runge–Kutta methods satisfying the
 stiff conditions are known only up to order 5. That is consistent with Luan (2021).
+
+## A classical-order scheme measured against the stiff conditions: Cox–Matthews ETD4RK
+
+The ETD Runge–Kutta schemes of Cox and Matthews were derived from classical, Taylor-expanded
+conditions. [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) use ETD2RK, ETD3RK and
+ETD4RK with classical error terms only ($\propto h^5\,d^4N/dt^4$ for ETD4RK, §2) and make no
+stiff-order claim; their tests (fourth- and sixth-order parabolic-type problems and a
+Fokker–Planck chain) report error rates without convergence slopes. Written in Luan's
+difference format, ETD4RK (tableau on
+[exponential integrators](/methods/exponential-integrators.md)) has $c=(0,\tfrac12,\tfrac12,1)$,
+$a_{32}=\tfrac12\phi_1(\tfrac12Z)$, $a_{42}=0$, $a_{43}=\phi_1(\tfrac12Z)$,
+$b_2=b_3=2\phi_2-4\phi_3$, $b_4=4\phi_3-\phi_2$, and the table above gives *(compiler check,
+not in the sources)*:
+
+- conditions 1 and 2 hold in strong form ($\sum_ib_ic_i=\phi_2$,
+  $\sum_ib_ic_i^2/2=\phi_3$);
+- condition 4 holds only in weakened form: $\sum_ib_ic_i^3/3!=\tfrac12\phi_3-\tfrac1{12}\phi_2$,
+  which equals $\phi_4$ at $Z=0$ but differs from it at first order in $Z$;
+- condition 3 holds in neither form: with $b_i(0)$,
+  $\sum_ib_i(0)\psi_{2,i}(Z)=\tfrac16\big(\phi_1(\tfrac12Z)-\phi_2(\tfrac12Z)-\phi_2(Z)\big)$,
+  which vanishes at $Z=0$ and to first order but has the $Z^2$ coefficient $-\tfrac1{576}$;
+  with $b_i(Z)$ (strong form, scalar case) the $Z^2$ coefficient is $+\tfrac1{576}$.
+
+Luan's theorem therefore guarantees stiff order 2 for ETD4RK and no more. Whether its order
+actually drops on a given stiff problem is not tested by any ingested source.
 
 ## Exponential Rosenbrock methods: a shorter set
 
@@ -279,6 +304,9 @@ advection–diffusion problem (§7, Figs. 1–4).
   test has Neumann boundary conditions and a strong advection term, and these may violate the
   semigroup and regularity hypotheses of the stiff theory *(compiler remark)*. The observation
   therefore does not contradict that theory.
+- Permyakova & Goldobin (2025) call ETD4RK fourth order on the strength of its classical error
+  term; by the check above the stiff theory recorded here covers only order 2. This is a
+  scope qualification, not a contradiction, since they claim no stiff order.
 - Printed slips in Dallerit & Tokman (2025): the product in Eq. (19) runs over $l\ne i$ for
   $l\ne j$. The worked $p=4$ example prints the stage coefficient (their $w_j$) of
 $[[\bullet],\bullet]$ as $c_j/2$ for $c_j^3/2$;
@@ -289,4 +317,5 @@ $[[\bullet],\bullet]$ as $c_j/2$ for $c_j^3/2$;
 
 - [Luan (2021)](/sources/luan-2021.md) — §1–2 (format, classical vs stiff, Remarks 2.1–2.2), §3.1 Table 3.1, Eqs. 3.1–3.3 (defects, conditions to order 5), §3.2 Thm. 3.1, Eqs. 3.4–3.8 (convergence), §4.1–4.2 (stage-count findings, Eq. 4.29, Remark 4.2), §6 (tests); arXiv v1.
 - [Luan et al. (2022)](/sources/luan-2022.md) — §2.1 Eqs. 2.1–2.7, Remark 2.1, Table 1 (exponential Rosenbrock conditions to order 6), §2.3 (semigroup assumptions, Thm. 2.12); arXiv v2.
+- [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) — §2 Eqs. 2–4, 10–12 (Cox–Matthews ETD schemes, classical error terms), §3 (tests without convergence slopes); arXiv v2.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1–3 (classical vs stiff, Lemma 1, Thms. 4–5, Def. 4, Eqs. 10–17), Thm. 6 Eq. 19 and pp. 11–17, Thm. 7 (§5.1), Thms. 8–10, §7 Figs. 1–4.

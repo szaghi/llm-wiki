@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Step-size control: error-based controllers, PID filters and CFL control"
-description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance and an I, PI, PID or Gustafsson controller sets the next step; the page covers controller stability and tuning, error- versus CFL-based control for stability-limited CFD, control with relaxation and stabilized methods, multirate H-M controllers, cost-based control and variable-step variable-order multistep control."
+description: "Adaptive time stepping: a scaled norm of the embedded local-error estimate decides acceptance and an I, PI, PID or Gustafsson controller sets the next step; the page covers controller stability and tuning, error- versus CFL-based control for stability-limited CFD, control with relaxation, stabilized, single-stage Taylor, positivity-adapted and SDC methods, multirate H-M controllers, cost-based control and variable-step multistep control."
 status: established
-aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA]
+aliases: [adaptive time stepping, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA, adaptive SDC, Delta t-adaptivity, Delta t-k-adaptivity, p-adaptive deferred correction, order adaptivity]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control
@@ -78,6 +78,7 @@ sources, translated to this sign convention:
 | PI42 / PI33 / PI34 | $(0.60,-0.20,0)$ / $(0.66,-0.33,0)$ / $(0.70,-0.40,0)$ | Ranocha et al. (2022), Table 1 |
 | PID of Kennedy–Carpenter | $(0.49,-0.34,0.10)$ | Ranocha et al. (2022), §2.2 |
 | PID of Fekete et al., reused | $(0.58,-0.21,0.10)$ | Vermeire (2023), Eq. (33) |
+| PI42 of Ranocha et al., reused | $(0.6,-0.2,0)$ | [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md), §5.2 |
 | per-pair controllers of Ranocha et al. (2022), reused | Table 11 below | Ranocha et al. (2025), Tables 1–6 |
 
 Fekete et al. also use Gustafsson's explicit (predictive) controller with gains 0.367 and 0.268,
@@ -269,6 +270,29 @@ in two code bases (Trixi.jl with OrdinaryDiffEq.jl, and SSDC on PETSc TS):
 Their pair recommendation: SSP3(2)4[3S\*$_+$] for lower-Mach flows and for problems with
 positivity issues or strong shock capturing, otherwise RDPK3(2)5F (more robust) or RDPK4(3)9F
 (more efficient at strict tolerances), with BS3(2)3F a good general-purpose choice (§8).
+
+**A single-stage method.** [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) bring the
+same controller to Lax–Wendroff flux reconstruction, a one-step Taylor-type scheme with no
+Runge–Kutta stages (see [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)).
+The embedded solution drops the highest Taylor term of the time-averaged flux, "one order of
+accuracy lower", and both solutions are element-local updates without the interface terms, so
+the estimate needs no extra communication and adds about 4 % to the cost (§5.2, Eqs. (63)–(65),
+Algorithm 1; §6.3). They use the WRMS norm with the PETSc scale, the PI42 parameters, the arctan
+limiter and the $0.81$ acceptance rule, and redo a step when the solution leaves the admissible
+set (§5.1–5.2, Algorithm 3); they claim the first error-based stepping for a single-stage
+evolution method (§7). Against the best constant CFL factor that ran without admissibility
+failure, at $\mathrm{atol}=\mathrm{rtol}=10^{-6}$ or $5\times10^{-6}$ (Table 1):
+
+| problem | CFL steps | error-controlled steps |
+|---|---|---|
+| forward-facing step | 5,679,021 | 7,633,954 ($10^{-6}$); 5,598,338 ($5\times10^{-6}$) |
+| Mach 3 flow past a cylinder | 1,601,725 | 1,057,844; 768,835 |
+| NACA0012 | 7,530,003 | 4,842,326 ($10^{-6}$) |
+| blunt body | no constant CFL ran to $t=10$ | 30,527 (761 rejected) |
+
+On a cold-started Mach 2000 jet the controller used an effective Courant number of about
+$10^{-3}$ at start-up that rose to about $10^{-1}$, a ramp that CFL control would have to be
+programmed by hand (§6.1.1, Fig. 5b).
 
 ## Error control as a stability-limit detector
 
@@ -479,6 +503,77 @@ cost and tolerance, and rescues Krylov runs that fail to finish at lenient toler
 traditional controller (§4.2, §5.2; [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)).
 It is not designed for explicit methods, whose cost per step is independent of $h$ (§4.3).
 
+## Adaptive spectral deferred correction
+
+[Saupe et al. (2025)](/sources/saupe-2025.md) transfer embedded-pair control to spectral deferred
+correction (SDC), whose sweeps raise the order by one each up to the collocation order (see
+[deferred correction](/methods/deferred-correction.md)). Earlier adaptive SDC either doubled and
+halved the step (Dutt, Greengard and Rokhlin) or used problem-specific quantities (§1). Both new
+estimates feed the elementary controller $h_{n+1}=0.9\,h_n\,\mathrm{err}_n^{-1/k}$, with
+$\mathrm{err}_n$ the estimate divided by the tolerance, local extrapolation and
+reject-and-recompute when $\mathrm{err}_n>1$ (§2.2, Eqs. (14)–(15)):
+
+- **$\Delta t$-adaptivity** (Algorithm 1). A fixed number $K$ of sweeps; the increment between
+  sweeps $K$ and $K-1$ estimates the local error of the order-$(K-1)$ iterate, so $k=K$. It needs a
+  sweep that gains exactly one order (implicit Euler) and exact inner solves.
+- **$\Delta t$-$k$-adaptivity** (Algorithm 2). Sweep until the collocation residual falls below a
+  tolerance set a few orders below the error tolerance; then compare the value at node
+  $\mathsf M-1$ with the degree-$(\mathsf M-1)$ interpolant through the other nodes and $t_n$, an order
+  $\mathsf M-1$ approximation built from the collocation polynomial (see
+  [dense output](/methods/dense-output.md)), so $k=\mathsf M$ (Eqs. (16)–(18)). The step may grow by
+  at most a factor 4; divergence (residual above $10^9$, growing, or 16 sweeps) divides the step
+  by 4. This chooses both the step and the number of sweeps, and allows inexact inner solves.
+- **Restarts** reuse the rejected step's collocation polynomial, evaluated at the new nodes, as
+  initial guess; it cut iterations but changed total cost little, because restarts were rare
+  (§2.2, §4.1).
+- **$k$-adaptivity**, fixed step and sweeping to a residual tolerance, is inferior: the
+  iteration count is a coarse integer control, and the residual measures the distance to the
+  collocation solution, not the truncation error (§2.2).
+
+On the stiff [van der Pol oscillator](/benchmarks/van-der-pol-oscillator.md) ($\mu=1000$) fixed
+steps need about 70 times the Newton iterations of the adaptive strategies (§4.1, Fig. 6), and
+adaptivity helps on all four problems tested. The global error follows tolerance
+proportionality $e\propto\mathrm{tol}^{\,q/(p+1)}$, with $q$ the order advanced and $p$ the
+order estimated: $\mathrm{tol}^1$ for $\Delta t$-adaptivity and $\mathrm{tol}^{5/4}$ for
+$\Delta t$-$k$-adaptivity, except for $\Delta t$-adaptivity on the quench problem, whose error
+depends on how the runaway transition is resolved (§4.1, Fig. 8).
+
+**Parallel-in-time variants.** In pipelined block Gauss–Seidel SDC one step size serves a whole
+block; the increment then estimates the error accumulated in the block, which the controller
+treats as a local error, and a rejected block restarts from its first failing step, a heuristic
+that "performed consistently better" than restarting the block (§2.3). Christlieb et al. found
+the increment a poor estimate for RIDC because local errors of different steps accumulate;
+Saupe et al. argue that fixed-size blocks with one step size avoid this (§5). Diagonal SDC is
+run with $\Delta t$-$k$-adaptivity; see [diagonal SDC](/methods/parallel-sdc.md) and
+[parallel-in-time integration](/methods/parallel-in-time-integration.md). At least one parallel
+adaptive SDC variant beat the embedded order-5 pairs ESDIRK5(3) and ARK5(4) in wall time on every
+problem (§4.2, Fig. 10). [Čaklović et al. (2025)](/sources/caklovic-2025.md) (§4) compare their
+diagonal SDC variants at fixed steps only.
+
+## Positivity and the error estimate
+
+When a step is modified after the fact to restore positivity, the error estimate must account
+for the modification:
+
+- **Adapted weights.** [Nüßlein et al. (2021)](/sources/nusslein-2021.md) replace the weights $b$
+  of a step whose solution has negative entries by the nearest $\tilde b$, in the $\ell^1$ sense,
+  that gives a nonnegative solution and satisfies the order conditions to a reduced order, found
+  by a linear program (§3; see [positivity preservation](/properties/positivity-preservation.md)).
+  The error estimate becomes $\mathrm{err}\approx\mathrm{err}_T+\delta$, with $\mathrm{err}_T$ the
+  standard embedded estimate and $\delta=\lVert hF(\tilde b-b)\rVert$ the change caused by the
+  adaptation ($F$ the matrix of stage derivatives, page-local); a step is rejected when $\delta$
+  exceeds its own tolerance or the linear program is infeasible down to the lowest allowed order
+  (§4.2, Eqs. (4.1)–(4.2), Algorithm 1). With a PI controller at tolerance $0.01$ on an
+  advection–diffusion–production–destruction problem, 72 of 264 steps were adapted, $\delta$ was
+  of the size of $\mathrm{err}_T$, and mass was conserved to round-off; on the
+  [stratospheric reaction problem](/benchmarks/stratospheric-reaction-problem.md), 249 steps with 2
+  rejections (§5.3–5.4).
+- **Post-processing correctors.** [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md)
+  estimate the error from the uncorrected SDIRK predictor, so the controller does not see their
+  Patankar correction, or more conservatively add the size of the correction (Remarks 3.20–3.21).
+  Enforcing positivity by rejecting steps with negative components and halving $h$ instead made the
+  step size collapse to the minimum in stiff regimes (Fig. 8).
+
 ## Related practice
 
 - **Multirate.** ARKODE's multirate module adapts only the fast time scale; multirate temporal
@@ -489,6 +584,12 @@ It is not designed for explicit methods, whose cost per step is independent of $
 - **Coupling to nonlinear solves.** SUNDIALS ties the default nonlinear stopping test to the
   subsequent local error test, so that nonlinear iteration errors do not interfere with error
   control (Gardner et al. 2022, §6); see [implicit stage solvers](/methods/implicit-stage-solvers.md).
+- **Order instead of step.** The p-adaptive deferred correction of
+  [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) keeps the step fixed and adds subnodes and
+  iterations until the relative change of the step-end value between successive iterations falls
+  below a tolerance (Eq. (60)). With tolerance $10^{-8}$ the error stays roughly constant in $h$ and
+  the mean number of iterations falls as $h$ decreases, from about 13 to about 5 (§8, Figs. 6,
+  8–9). It adapts the order, not the step; see [deferred correction](/methods/deferred-correction.md).
 - **Estimator failure.** A degenerate estimator defeats any controller: for $y'=\cos t$ the
   Rodas5 main and embedded errors coincide (Steinebach 2023, §1;
   [Rosenbrock–Wanner methods](/methods/rosenbrock-wanner-method.md)).
@@ -537,7 +638,7 @@ It is not designed for explicit methods, whose cost per step is independent of $
 - Faleichik & Moisa (2026) print the error estimate as $\tfrac1{10}(y_n-y_{n+1}+f(t_{n+1},y_{n+1}))$,
   without the factor $h$ on $f$; with $h$ restored, $y_n-y_{n+1}+hf(t_{n+1},y_{n+1})=\tfrac12h^2y''+O(h^3)$,
   so the printed constant gives $\tfrac1{20}h^2y''$ rather than the $\tfrac1{10}h^2y''$ of their
-  Eq. (22) *(reader's check on the arXiv v1 read)*.
+  Eq. (22) *(compiler check, not in the sources; arXiv v1 read)*.
 
 - Fish & Reynolds (2023, §4.7) compare their multirate controllers with single-rate ones run at
   fixed $m=10$ and with the slow error only, whose parameters are not printed, so the cost gap
@@ -545,6 +646,25 @@ It is not designed for explicit methods, whose cost per step is independent of $
   search (App. A). Their conclusions call the advantage over PID "slight", while the fast cost of
   PID is 58 % above the worst multirate controller (§4.7). On the 1D Brusselator all controllers
   over-solve by two to four orders of magnitude (Fig. 9).
+- **Tolerance exponent $5/4$ and the node count.** Saupe et al. (2025, §4.1, Fig. 8) obtain the
+  $\Delta t$-$k$ exponent $q/(p+1)=5/4$ from order $q=5$ and $p+1=\mathsf M$, which requires
+  $\mathsf M=4$. The paper never states $\mathsf M$ or the node type of its runs; its diagonal-SDC runs
+  use three processes, one per node, which suggests $\mathsf M=3$, and Radau IIA with $\mathsf M=3$ has
+  order $2\mathsf M-1=5$, which would give $5/3$ *(compiler remark, not in the source)*. The same paper
+  writes that Gauss–Legendre, Lobatto and Radau nodes reach "up to order $2\mathsf M$"; only Gauss
+  nodes do, Radau IIA reaching $2\mathsf M-1$ and Lobatto $2\mathsf M-2$ (see
+  [fully implicit Runge–Kutta methods](/methods/fully-implicit-runge-kutta.md)).
+- **Printed controller of Saupe et al.** Algorithm 2 prints the update as
+  $\max\bigl(4,\,0.9\,\mathrm{err}_n^{-1/\mathsf M}\bigr)h_n$, which would grow the step by at least a
+  factor 4 every time; the text describes 4 as a cap on growth, which needs $\min$ (recorded on the
+  Source page).
+- Babbar & Chandrashekar (2025) state that the other controller parameter sets of Ranocha et
+  al. were "either superior or only slightly different" without a table, give no hardware, and
+  report step counts, not times; at the stricter tolerance error control took more steps than the
+  best CFL factor on the forward-facing step (Table 1). The embedded order is that of the
+  truncated Taylor flux, not a proved local-error order.
+- Nüßlein et al. (2021) find adaptation less efficient than a smaller step for cheap explicit
+  problems, with an unoptimized implementation and no timings (§5.1).
 - Deka & Einkemmer (2022) give no hardware for their timings, and Krylov runs that do not finish
   "within a reasonable amount of time" are excluded from their speedup factors.
 
@@ -568,3 +688,9 @@ It is not designed for explicit methods, whose cost per step is independent of $
 - [Fish et al. (2024)](/sources/fish-2024.md) — §6.2.2 (Fig. 7).
 - [Deka & Einkemmer (2022)](/sources/deka-2022.md) — §1, §2.4, §4.2–4.3, §5.2.
 - [Loffeld et al. (2024)](/sources/loffeld-2024.md) — §7.
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §1, §2.2 (Eqs. (14)–(18), Algorithms 1–2), §2.3, §4.1 (Figs. 6, 8), §4.2 (Fig. 10), §5.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — arXiv v4: §5.1–5.2 (Eqs. (61)–(65), Algorithms 1, 3), §6.1.1 (Fig. 5b), §6.3 (Table 1), §7.
+- [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — arXiv v2: §3, §4.2 (Eqs. (4.1)–(4.2), Algorithm 1), §5.1, §5.3–5.4.
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — CSL-TR-26-1: Remarks 3.20–3.21, Fig. 8.
+- [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — arXiv v4: §8 (Eq. (60), Figs. 6, 8–9).
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — arXiv v2: §4.

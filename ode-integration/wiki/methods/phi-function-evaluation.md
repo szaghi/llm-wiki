@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Evaluating φ-functions: Leja interpolation, Krylov and related methods"
-description: "An exponential integrator spends its time on actions of φ-functions on vectors; the page compares Krylov projection (phipm, KIOPS, EPIC), polynomial interpolation at Leja points and structure-exploiting evaluation (FFT, μ-mode), with the cost models, tolerances and measured speed-ups the sources report."
+description: "An exponential integrator spends its time on actions of φ-functions on vectors; the page compares Krylov projection (phipm, KIOPS, EPIC), polynomial interpolation at Leja points, structure-exploiting evaluation (FFT, μ-mode, diagonal operators) and dense precomputation by auxiliary time integration, with the cost models, tolerances and measured speed-ups the sources report."
 status: established
-aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, μ-mode integrator]
+aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, μ-mode integrator, auxiliary-problem integration, precomputed ETD matrices, Horner Taylor recursion]
 tags: [exponential, linear-algebra, stiff, software]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Evaluating φ-functions: Leja interpolation, Krylov and related methods
@@ -17,7 +17,7 @@ $$\sum_{k=0}^{q}\phi_k(\rho\,hL)\,\rho^k v_k$$
 
 of [φ-functions](/methods/exponential-integrators.md) of a large sparse matrix $hL$ (or
 $hJ_n$) applied to vectors $v_k$, often for several scalings $0<\rho\le1$ ($q$, $\rho$,
-$v_k$ page-local). The matrix functions are never formed. Their action is approximated by
+$v_k$ page-local). For large problems the matrix functions are never formed. Their action is approximated by
 projection onto a Krylov space, by polynomial interpolation, or, for structured $L$,
 exactly in a transformed basis. The cost of these actions dominates the cost of the
 integrator. The sources therefore measure the cost of a method by the number of
@@ -142,6 +142,51 @@ remainder into the explicit part (see [Lawson methods](/methods/lawson-methods.m
   for exponentials than for linear solves, and that a good preconditioner gives a fast linear
   solver but not fast matrix functions (§1).
 
+**Diagonal operators.** When $L$ is diagonal, as in Fourier-space semi-discretizations of
+periodic problems, the φ-functions act elementwise and their evaluation is trivial;
+[Buvoli & Minion (2024)](/sources/buvoli-2024.md) use only such operators and cite scaling and
+squaring, contour integrals, Krylov methods and parallel rational approximations for the general
+case without using them (§3.1, §7).
+
+## Precomputing dense matrix functions by auxiliary time integration
+
+For a constant **nondiagonal** $L$ of moderate size, [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md)
+(§2, Eqs. 5–8, contribution, extending their 2020 paper) form the matrices themselves, once,
+before the run. Column $j$ of $e^{hL}$ is the solution at time $h$ of $y'=Ly$, $y(0)=e_j$;
+column $j$ of $(k-1)!\,h^k\phi_k(hL)=\int_0^he^{(h-s)L}s^{k-1}\,ds$ is the solution at time
+$h$ of $y'=Ly+e_j\,s^{k-1}$, $y(0)=0$ ($e_j$ the unit vector, $s$ the time, page-local). These
+auxiliary problems are integrated over one step with an explicit low-order scheme at a tiny step
+$h_{\mathrm{aux}}$ (page-local) below its stability limit: Heun's predictor–corrector with
+$h_{\mathrm{aux}}=0.1\Delta x^4$ for a fourth-order and $0.02\Delta x^6$ for a sixth-order
+spatial operator, whose explicit limits are $\Delta x^4/8$ and $\Delta x^6/32$ (§3.1.1, §3.2.1);
+"Runge–Kutta–Merson or simplest predictor-corrector" for their Fokker–Planck chain. The
+half-step matrices come from the same integration at $t=h/2$. The integration evolves the
+whole $N\times N$ matrix, needs only matrix–vector products, and costs a time proportional to
+$h/h_{\mathrm{aux}}$, i.e. linear in $h$ (page-local $N$, the number of unknowns). It avoids the
+cancellation of the closed forms such as $(e^{hL}-I)(hL)^{-1}$ for small eigenvalues, which
+grows with $k$ (§2). The authors contrast the route with Taylor and Krylov projection
+(Hochbruck–Lubich–Selhofer, Tokman's EPI) and with contour integrals (Kassam–Trefethen), as
+recalled, but give no head-to-head comparison.
+
+**Strong and soft accuracy.** To check the matrices they compute "exact" ones in
+high-precision arithmetic (Maple, up to 384 digits) by the Horner-type recursion
+
+$$Q_{\mathsf m}=I,\qquad Q_{m-1}=I+\frac hm\,L\,Q_m\quad(m=\mathsf m,\dots,1),\qquad
+e^{hL}=Q_0,\qquad \phi_k(hL)=\frac{Q_k}{k!}$$
+
+(App. A, Eqs. A.5–A.6; page-local $Q_m$ and truncation length $\mathsf m$; the source writes
+$\mathbf M_n=\frac{\tau^n}{n}\mathbf Q_n$, translated with the convention above *(compiler
+check)*). The truncation must exceed $e\lvert\lambda_{\mathrm{fast}}\rvert h$ (from Stirling's
+formula; $\lambda_{\mathrm{fast}}$ the fastest eigenvalue of $L$) so that the fastest mode does
+not explode, and $1.2$ times that length is used (Eq. A.7). Against these, the
+time-integrated matrices are accurate only to about $10^{-6}$ ("strong" accuracy), yet the
+solutions are far more accurate ("soft" accuracy), because the inaccurate entries belong to fast,
+strongly damped modes whose influence on the solution is exponentially suppressed (§3.1.2,
+App. A, Figs. 10–11). The matrices are dense in principle, but their entries decay rapidly away
+from the diagonal; entries below about $10^{-16}$ can be dropped for a further, unquantified,
+speedup (§3.2.2, Figs. 2, 5). The application results are on
+[exponential integrators](/methods/exponential-integrators.md).
+
 Other routes cited without use are the Taylor method of Al-Mohy–Higham and its
 augmented-matrix evaluation of linear combinations. Deka & Einkemmer propose the latter as
 future work (§5.3); Caliari et al. (2024, §1) list rational Krylov and others.
@@ -155,6 +200,17 @@ future work (§5.3); Caliari et al. (2024, §1) list rational Krylov and others.
   runs are reported.
 - Deka & Einkemmer's Krylov comparisons exclude runs that "fail to converge within a
   reasonable amount of time" (§4.2).
+- Permyakova & Goldobin's preparation is affordable only while dense $N\times N$ matrices fit
+  in memory; they call the multidimensional extension memory-demanding and give a
+  sparsified storage estimate without derivation (§4). Their speedups are against explicit
+  schemes at the stability limit, not against Krylov or Leja evaluation.
+- Printed slips in Permyakova & Goldobin (2025), arXiv v2: the auxiliary problem (Eq. 7) is
+  printed with forcing $g\,t^n$ where the definition and Eq. 8 use $t^{n-1}$; the general term
+  of the series (Eq. A.2) carries $L^{n+m}$ for $L^m$; the Fig. 6 caption gives
+  $h_{\mathrm{aux}}=0.02\Delta x^6=1.6\times10^{-7}$ at $\Delta x=0.2$, where the product is
+  $1.28\times10^{-6}$; and the auxiliary step $1.25\times10^{-6}$ of the Fokker–Planck runs
+  exceeds the maximal stable predictor–corrector step $1.2\times10^{-6}$ of their Table 1, while
+  the text does not say which of the two integrators was used.
 - Printed slips: Luan (2021, §5) lists the scalings of one expRK5s10 call as
   $[c_9,c_{10},c_8]$, which is not increasing as the routine requires. Deka & Einkemmer
   (2022) use $\alpha$ both for the eigenvalue estimate (§2.3) and for a controller
@@ -165,4 +221,6 @@ future work (§5.3); Caliari et al. (2024, §1) list rational Krylov and others.
 - [Deka & Einkemmer (2022)](/sources/deka-2022.md) — §1, §2.3 (Leja points, Newton form, shift and scale, convergence caveat), §3.1 (matrix-free Jacobian), §4.2 (Krylov cost, Leja vs Krylov on KHI), §4.2.1 Table 3, §5.2–5.3 (reconnection, EPIRK Krylov-friendliness, augmented matrices), §6; author manuscript.
 - [Luan (2021)](/sources/luan-2021.md) — §1, §2.1, §5 Eqs. 5.1–5.3 (`phipm_simul_iom`, evaluation counts), §6 (settings); arXiv v1.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §5.3–5.5, §6.3 (single KIOPS projection, embedded estimate with two calls, Krylov dense output).
+- [Permyakova & Goldobin (2025)](/sources/permyakova-2025.md) — §2 Eqs. 5–9 (auxiliary problems, cancellation), §3.1–3.3 (auxiliary steps, sparsity, Figs. 2, 5), §4, App. A Eqs. A.1–A.7 (Horner recursion, truncation, strong vs soft accuracy, Figs. 10–11); arXiv v2.
+- [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §3.1, §7 (diagonal operators, methods cited); arXiv v2.
 - [Caliari et al. (2024)](/sources/caliari-2024.md) — §1, §3, §5.1–5.2 (FFT, μ-mode/Kronecker sums, kiops tolerance, Figs. 6, 8–9); arXiv v2.

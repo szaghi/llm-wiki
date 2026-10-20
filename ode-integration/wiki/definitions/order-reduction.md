@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Order reduction
@@ -165,6 +165,26 @@ steps. The authors attribute it to the partitioning ("order reduction due to sti
 behavior, … due to partitionings"), not to the methods themselves. See
 [nonlinearly partitioned Runge–Kutta methods](/methods/nonlinearly-partitioned-runge-kutta.md).
 
+**Vanishing initial constituents in Patankar schemes.** For the
+[modified Patankar methods](/methods/modified-patankar-methods.md) that keep
+production–destruction systems positive, [Torlo et al. (2022)](/sources/torlo-2022.md)
+identify a two-parameter limit analogous to stiff order reduction: a constituent of size
+$\varepsilon$ at $t=0$ with $h\to0$ and $\varepsilon/h\to0$ (§5, Eq. (40)). Patankar weight
+denominators of size $\mathcal O(\varepsilon)$ or $1/\mathcal O(\varepsilon)$ then spoil the
+stages (Lemmas 5.2–5.3), and the classical order proofs, which fix $\varepsilon>0$, do not
+apply, since "the limits $\Delta t\to0$ and $\varepsilon\to0$ are not interchangeable"
+(Suppl. Remark 2.4). Every third- and higher-order scheme analysed drops to global order 2
+or 1, and MPRK(2,2,α) with $\alpha>1$ to order 1 with the initial state acting as a spurious
+steady state (Thm. 5.4, Table 2; Thm. 5.5 for deferred correction with negative final
+weights). On Robertson and HIRES the order-1 schemes miss whole species (§7).
+
+**Post-processing corrections.** For the Patankar predictor–corrector applied to SDIRK steps,
+[Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) prove only the worst-case order
+$\min(p,q+1)$, i.e. 2 for SDIRK bases with stage order 1, once the threshold of the
+correction is $\mathcal O(h^{\min(q+2,p+1)})$ (Prop. 3.23), while observing slopes near the
+nominal 3 and 4 on four problems (Tables 4–5). They also report that the same correction
+applied to explicit Runge–Kutta bases reduced convergence to first order (§1; no data).
+
 **Spatial refinement.** Refining the grid makes a semi-discretization stiffer and
 can expose order reduction at fixed temporal method:
 [Chinomona and Reynolds (2021)](/sources/chinomona-2021.md), §5.2, measure on the
@@ -198,6 +218,8 @@ DC4 show order 0 down to $h=7.5\times10^{-6}$ (Tables 6.1, 6.5, 6.6).
 | observed $\approx2.5$, $2.25$, $2.0$ in $L^1$, $L^2$, $L^\infty$ for 3rd- and 4th-order IMEX with stage-time Dirichlet data | convection–diffusion(–reaction), time-dependent Dirichlet data | González-Tabernero et al. 2024, Tables 1–4 |
 | uniform order 2 for ARS(4,4,3) (design 3); uniform design order under stage-order and vanishing-coefficient conditions | linear hyperbolic relaxation, all $\varepsilon$ | Hu & Shu 2025, Thms. 4.3, 5.1, §6 |
 | observed $\approx2.1$, $2.4$, $3.5$ for Radau IIA $s=2,3,4$ | incompressible fluid–structure DAE | Taddei et al. 2026, Table 1 |
+| global order 1 or 2 for third- and higher-order Patankar schemes (order 1 for MPRK(2,2,α), $\alpha>1$) | production–destruction systems with a vanishing initial constituent, $\varepsilon/h\to0$ | Torlo et al. 2022, Thm. 5.4, Table 2 |
+| proven $\min(p,q+1)$ (2 for SDIRK); observed near nominal 3, 4 | Patankar predictor–corrector on SDIRK | Nurkhametova et al. 2026, Prop. 3.23, Tables 4–5 |
 | no order reduction observed for φ-order 3–6 exponential methods; slight reduction for EXPRB_5s4 | semilinear parabolic and advection–diffusion–reaction | Dallerit & Tokman 2025, §7, Figs. 1–4 |
 | first order for all higher-order schemes with the implicit–explicit partition; second order with the nonlinear partition | gray radiation transport, coarse mesh | Buvoli & Southworth 2025, §7.2, Fig. 7.3b |
 
@@ -253,6 +275,26 @@ in $L^2$ only, and three-stage Radau IIA keeps full accuracy in both $L^2$ and $
    §7.2).
 
 ## Qualifications
+
+- **Losses of order that are not stiff order reduction.** Several sources report reduced
+  rates from other causes. A bound-preserving flux limiter without relaxation lowers the
+  rates of fifth- and sixth-order Runge–Kutta methods with WENO5 to about 2.7 on smooth
+  advection ([Kuzmin et al. 2022](/sources/kuzmin-2022.md), Table 3; see
+  [bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)).
+  [Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) call the observed
+  $\mathcal O(\Delta T^{k})$ instead of $\mathcal O(\Delta T^{2k})$ convergence of Parareal
+  iterates on a Penning trap "order reduction"; it concerns the iteration, not a
+  time integrator, and its cause is unknown (§6.2.3, Fig. 3; see [Parareal](/methods/parareal.md)).
+  [Popov (2024)](/sources/popov-2024.md) observes orders saturating near 8 and 4, independent
+  of the polynomial degree, on the stiff flame problem $y'=y^2-y^3$ and attributes them to the
+  sharp front, without using the term (§2.2, Table 7).
+- **Parallel and adaptive SDC.** [Čaklović et al. (2025)](/sources/caklovic-2025.md) observe
+  an error plateau of parallel SDC variants on the
+  [Prothero–Robinson problem](/benchmarks/prothero-robinson-problem.md) with
+  $\varepsilon=10^{-3}$, which they relate to known order reduction and which more sweeps
+  lower (§4.3, Figs. 14–15). [Saupe et al. (2025)](/sources/saupe-2025.md) recall that order
+  reduction can affect their increment-based SDC error estimate on very stiff problems and
+  that IMEX-SDC can lose order (§2.1–2.2).
 
 - The reduced rates are problem-, norm- and regime-dependent. Biswas et al. (2023,
   §6.5) observe order 3 instead of the expected 2 for their $q_{\mathrm w}=1$
@@ -316,3 +358,10 @@ problem-dependent), would decide it.
 - [Orlando et al. (2025)](/sources/orlando-2025-b.md) — §4.2, Table 12.
 - [Dallerit & Tokman (2025)](/sources/dallerit-2025.md) — §1, §3 (classical vs stiff order conditions), Thm. 7, §7 Figs. 1–4.
 - [Buvoli & Southworth (2025)](/sources/buvoli-2025.md) — §7.2, Fig. 7.3 (order reduction of the implicit–explicit partition on the coarse mesh); arXiv v2.
+- [Torlo et al. (2022)](/sources/torlo-2022.md) — §5 (Eq. (40), Lemmas 5.2–5.3, Thms. 5.4–5.5, Table 2), §7, Suppl. Remark 2.4; arXiv v5.
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §1, Prop. 3.23, Tables 4–5.
+- [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §5.2, Table 3; arXiv v2.
+- [Muralikrishnan & Speck (2025)](/sources/muralikrishnan-2025.md) — §6.2.3, Fig. 3 (Penning trap); arXiv v2.
+- [Popov (2024)](/sources/popov-2024.md) — §2.2, Table 7; arXiv v1.
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §4.3, Figs. 14–15; arXiv v2.
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.1–2.2; arXiv v2.

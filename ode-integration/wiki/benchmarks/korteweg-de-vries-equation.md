@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Korteweg–de Vries equation"
-description: "The dispersive KdV equation u_t + 6uu_x + u_xxx = 0 and its generalized and linear variants; its third-derivative term makes explicit steps scale like Δx³, so the sources use it to test explicit–implicit–null stabilization and energy-relaxed IMEX methods on soliton and travelling-wave data."
+description: "The dispersive KdV equation u_t + 6uu_x + u_xxx = 0, its generalized and linear variants and its 2D relative, the Kadomtsev–Petviashvili equation; the third derivative makes explicit steps scale like Δx³, so the sources test explicit–implicit–null stabilization, energy-relaxed IMEX, positivity-corrected SDIRK and exponential Parareal on them."
 status: established
-aliases: [KdV equation, KdV, generalized KdV equation, Korteweg–de Vries]
-tags: [verification, imex, structure-preserving, stiff]
-timestamp: 2026-10-20T05:00:00Z
+aliases: [KdV equation, KdV, generalized KdV equation, Korteweg–de Vries, Kadomtsev–Petviashvili equation, KP equation, KP-I]
+tags: [verification, imex, structure-preserving, stiff, positivity, parallel]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Korteweg–de Vries equation
@@ -45,6 +45,22 @@ implicitly (§6) or through an implicitly treated linear surrogate
 * **Zakharov–Kuznetsov**, a 2D relative with $u_{xxx}+u_{xyy}$ and a manufactured source
   (Tan et al. 2022, §4.2.2, Eq. (4.10), Tables 4.15–4.16).
 
+* **Advection–dispersion form with positivity shift** ([Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md),
+  §4.1.4, Eq. 43): $u_t+\alpha uu_x+\varrho u_x+\nu_{\mathrm d}u_{xxx}=0$ (page-local
+  coefficients $\alpha$, $\varrho$, $\nu_{\mathrm d}$, whose values are not printed), periodic
+  finite volumes recast as a
+  [production–destruction system](/definitions/production-destruction-system.md) with an
+  interface-flux destruction matrix, the solution shifted to be positive, $u_0=6\operatorname{sech}^2x$
+  on what the figures show as $[-10,10]$; runs to $t=0.35$ (snapshots), $[0,2]$ (mass) and
+  $[0,1.7]$ (timing, about one soliton crossing).
+* **Kadomtsev–Petviashvili equation**, the 2D relative
+  $(u_t+6uu_x+u_{xxx})_x+3\sigma_{\mathrm{KP}}^2u_{yy}=0$, with $\sigma_{\mathrm{KP}}^2=-1$ (KP-I,
+  unstable line soliton) or $+1$ (KP-II) (page-local) ([Buvoli & Minion (2024)](/sources/buvoli-2024.md),
+  §6.1–6.2, Eqs. 52–55): KP-I in evolution form on $[-8\pi,8\pi]\times[0,8\pi]$, periodic,
+  $972\times750$ Fourier points with 3/2 dealiasing, the antiderivative $\partial_x^{-1}$
+  replaced by $-i/\kappa_x$ (zero at $\kappa_x=0$), $u_0=2\operatorname{sech}^2\big((x+4\pi)+\tfrac15\cos(y/4)\big)$,
+  final time 4, fine step $2^{-16}$; it forms a 2D soliton.
+
 Tan et al. use fourth-order central finite differences and $P^2$ local DG, periodic
 data and $h=\Delta x$ throughout (§2.2, §4.2).
 
@@ -74,7 +90,39 @@ data and $h=\Delta x$ throughout (§2.2, §4.2).
   §7, Figs. 12–13). See [relaxation Runge–Kutta](/methods/relaxation-runge-kutta.md)
   and [IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
 
+* **Positivity correction of SDIRK on a dispersive problem.** Nurkhametova et al. (2026,
+  §5.1.4, §5.2.4, §5.3, Tables 4, 6, Figs. 9–10, 23–24) post-process SDIRK21, SDIRK32 and
+  SDIRK43 with their Patankar predictor–corrector (see
+  [modified Patankar methods](/methods/modified-patankar-methods.md)). Correcting the final
+  stage removes undershoots of about $10^{-4}$ at $t=0.35$ without visible distortion and keeps
+  mass to round-off ($7.40\times10^{-16}$ against $8.88\times10^{-16}$ uncorrected); correcting
+  every stage "exhibited severely distorted dynamics" (not shown), so only the final-stage
+  correction is recommended here. Fixed-step slopes are 1.72, 3.37 and 3.85 for the three
+  methods, and the correction costs 94.5 % more runtime with SDIRK43 (MATLAB on a laptop).
+* **Exponential Parareal on a dispersive 2D problem.** With exponential Runge–Kutta
+  propagators and repartitioning, [Parareal](/methods/parareal.md) on 8192 slices does not
+  converge monotonically on KP-I: the error drops fast, then plateaus. With three coarse steps
+  per slice it reaches the accuracy of the serial fine integrator; after 28 iterations, errors
+  $2.7\times10^{-7}$, $1.3\times10^{-8}$ and $1.8\times10^{-9}$ (one, two, three coarse steps) are
+  reached 9.09, 10.15 and 11.71 times faster than serial fine integration. Because one step of
+  the 2D problem is expensive relative to communication, the theoretical and achieved speedups
+  agree here, unlike on the 1D [nonlinear Schrödinger equation](/benchmarks/nonlinear-schrodinger-equation.md)
+  (Buvoli & Minion 2024, §6.2, Table 4a, Fig. 14; see
+  [exponential integrators](/methods/exponential-integrators.md)).
+
 ## Qualifications
+
+* Nurkhametova et al. (2026) give neither the coefficients, the mesh nor the positivity shift of
+  their KdV run, and the all-stage failure is asserted without figures. Their SDIRK32 and
+  SDIRK43 have negative weights, which the positivity guarantee of the corrector excludes, so the
+  guarantee does not cover two of the three methods on this problem *(compiler check of the
+  printed tableaux)*; see [modified Patankar methods](/methods/modified-patankar-methods.md)).
+* Buvoli & Minion's full KP run needed 256 nodes, so the convergence curves were computed
+  serially and the achieved speedups extrapolated from a parallel run on $t\in[0,1]$ (§6.1–6.2).
+  Printed slips: Table 4a lists the fine and coarse integrators swapped (ERK3 fine, ERK4 coarse,
+  against the text), Fig. 13(b) shows the solution "at $t=8$" beyond the final time 4, §6 writes
+  the line soliton as $2p^2\operatorname{sech}(\cdot)$ for $\operatorname{sech}^2$, and "256
+  nodes (8096 compute cores)" should read 8192.
 
 * Biswas & Ketcheson (2023) leave open why the two-soliton case does not show the
   three-soliton effect (§6.1.3).
@@ -86,3 +134,5 @@ data and $h=\Delta x$ throughout (§2.2, §4.2).
 
 - [Biswas & Ketcheson (2023)](/sources/biswas-2023-b.md) — §6 (Eqs. (32)–(39)), App. B, §6.1.1–6.1.3 (Table 1, Figs. 11–13), §7.
 - [Tan et al. (2022)](/sources/tan-2022.md) — §1, §2.2, §4.2.1 (Eqs. (4.8)–(4.9), Tables 4.11–4.14), §4.2.2 (Eqs. (4.10)–(4.11), Tables 4.15–4.18).
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §4.1.4 (Eq. 43), §5.1.4, §5.2.4, §5.3 (Tables 4, 6, Figs. 9–10, 23–24); CSL technical report version.
+- [Buvoli & Minion (2024)](/sources/buvoli-2024.md) — §6.1–6.2 (Eqs. 52–55, 58, Table 4a, Figs. 13–14); arXiv v2.

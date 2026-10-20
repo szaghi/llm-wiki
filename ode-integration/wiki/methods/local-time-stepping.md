@@ -5,7 +5,7 @@ description: "Local time stepping lets regions, cells or subdomains of a locally
 status: established
 aliases: [LTS, local time-stepping, LF-LTS, stabilized LF-LTS, leapfrog local time stepping, asynchronous time integration, asynchronous Runge–Kutta, LESAULTS, clustered local time stepping, multi-time step, subcycling, Gravouil–Combescure method]
 tags: [multirate, local-time-stepping, explicit, stability, parallel, structure-preserving]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Local time stepping
@@ -146,6 +146,18 @@ algorithm or stability statement; it reports that LTS cuts time to solution by 6
 against global stepping on SuperMUC-NG, with parallel efficiency about 72.5 % from 25 to
 400 nodes at order 7 and worse scaling than global stepping (§7.3).
 
+**Global stepping on adaptive meshes, for contrast.**
+[Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) run single-stage
+[Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md) on
+dynamically refined curvilinear meshes with one global step for all elements, chosen by
+error-based [step-size control](/methods/step-size-control.md) instead of a CFL formula
+(§5–6). Their savings come from refinement, not from local steps: peak element counts of
+13,957 against 262,144 for the equivalent uniform mesh on Kelvin–Helmholtz, 7,793 against
+327,680 on the double Mach reflection, about 85,000 against 574,464 on a Mach 3 cylinder;
+and from the controller, which needs 1.51–2.08 times fewer global steps than the best
+hand-tuned CFL number on curved meshes (§6, Table 1). The step remains set by the most
+restrictive element, which is the cost LTS removes; the paper does not compare with LTS.
+
 ## Multi-time-step partitioned coupling
 
 [Pulicani et al. (2026)](/sources/pulicani-2026.md) subcycle across a fluid–structure
@@ -206,7 +218,9 @@ because many time-step classes are sparsely populated (§4.1).
 - **Baselines.** Unfer's speedups are against the same code run synchronously with
   asynchronous data structures, not an optimized synchronous code; Sreejith et al.'s
   Table 4 case 4 and Table 7 print theoretical speedups that their own formula does not
-  reproduce from the printed node counts (reader's checks on the Source page).
+  reproduce from the printed node counts (2.25 rather than 2.31 for case 4, whose counts
+  repeat case 1, and 2.48 rather than 2.28 for Table 7) *(compiler check of their Eq. (1),
+  not in the source)*.
 - **Generalizations in the introductions.** Sreejith et al. state that multirate and AMR
   schemes are "often limited to structured block grids" (§1); the asynchronous and
   AMR-partitioned methods of Unfer and Doehring et al. run on unstructured and
@@ -216,7 +230,10 @@ because many time-step classes are sparsely populated (§4.1).
 - Grote et al.'s §4.2 states the stability interval for $(H^2/4)L$ as $(0,4)$; with the
   scaling of §4.1 and Fig. 6 it is $(0,1)$ for $(H^2/4)L$, i.e. $(0,4)$ for $H^2L$.
 - Unfer prints the ARK3 stage-3 extrapolation (Eq. 105) and the sentence describing it
-  with different slopes; they agree only under a global step (reader's derivation).
+  with different slopes (in the second-derivative term, $\tfrac12\Delta t_1^2+\Delta t_3^2-\Delta t_3\Delta t_1$
+  printed against $\tfrac12\Delta t_1^2+(\Delta t_3-\Delta t_1)^2$ described, with the source's
+  stage offsets $\Delta t_1$, $\Delta t_3$); they agree only when $\Delta t_1=0$, i.e. under a
+  global step *(compiler check, not in the source)*.
 
 # Citations
 
@@ -226,3 +243,4 @@ because many time-step classes are sparsely populated (§4.1).
 - [Wolf et al. (2022)](/sources/wolf-2022.md) — §4.2, §7.3 (Fig. 15).
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §1, §7.1.1.
 - [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §1, §4.4 (Eqs. 56–60, Algorithm 3), §5.3–5.5 (Figs. 9–27), §6.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5–6 (global error-controlled step on adaptive meshes, element counts, Table 1).

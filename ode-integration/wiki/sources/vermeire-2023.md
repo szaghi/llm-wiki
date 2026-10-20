@@ -135,6 +135,7 @@ same-year pairs are Vermeire 2019 ([14], [23]) and Pereira 2020 ([18],
 Chunk 2 (2026-10-19). This source is cited on:
 
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [Paired explicit Runge–Kutta (P-ERK) methods](/methods/paired-explicit-runge-kutta.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multiderivative Runge–Kutta methods and the backward derivative condition"
-description: "Two-derivative Runge–Kutta methods use $f$ and $\\dot f=f'f$; under the forward Euler and backward derivative conditions, implicit ones with nonpositive $\\dot f$ coefficients are SSP for every step size at orders 2–4, and their IMEX extension is SSP, positivity preserving and asymptotic preserving uniformly in a stiffness parameter."
+description: "Runge–Kutta methods that also use higher time derivatives of the solution ($\\dot f=f'f$ and beyond): implicit two-derivative ones with nonpositive $\\dot f$ coefficients are SSP for every step at orders 2–4, explicit $r$-derivative ones are made Jacobian-free for conservation laws by approximate Taylor fluxes, and implicit Hermite–Birkhoff ones are discretized with an auxiliary variable."
 status: established
-aliases: [two-derivative Runge–Kutta, MDRK, SSP-iMDRK, implicit Taylor method, SSP IMEX multiderivative Runge–Kutta]
-tags: [ssp, implicit, imex, asymptotic-preserving, order-conditions]
-timestamp: 2026-10-19T12:00:00Z
+aliases: [two-derivative Runge–Kutta, MDRK, SSP-iMDRK, implicit Taylor method, SSP IMEX multiderivative Runge–Kutta, explicit multiderivative Runge–Kutta, rDRKq-s, MDRKCAT, Jacobian-free multiderivative Runge–Kutta, compact approximate Taylor method, CAT, Taylor method, two-derivative Hermite–Birkhoff Runge–Kutta, HBRK, two-point Hermite rule, Obreshkov rule]
+tags: [multiderivative, ssp, implicit, imex, asymptotic-preserving, order-conditions, lax-wendroff]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Multiderivative Runge–Kutta methods and the backward derivative condition
@@ -23,6 +23,16 @@ Shu use the lower-triangular (diagonally implicit) case. The page records their
 contribution: strong stability preservation without a step restriction from the
 implicit operator, which no implicit [Runge–Kutta method](/definitions/runge-kutta-method.md)
 achieves beyond first order.
+
+Three further strands use the class. Explicit methods with up to four derivatives are made
+practical for conservation laws by replacing exact flux derivatives with finite
+differences in time ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md)); implicit
+two-derivative Hermite–Birkhoff methods, reached by
+[deferred correction](/methods/deferred-correction.md), are coupled to DG with an auxiliary
+variable for $\dot f$ ([Zeifang & Schütz 2022](/sources/zeifang-2022.md)); and the
+one-stage Taylor member is the time discretization of
+[Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)
+([Babbar et al. 2022](/sources/babbar-2022.md)). The sections below take them in turn.
 
 ## Order conditions
 
@@ -167,6 +177,129 @@ on [positivity preservation](/properties/positivity-preservation.md). On a stiff
 model, Broadwell and BGK, design orders appear in the kinetic and fluid limits with
 [order reduction](/definitions/order-reduction.md) in between (Remark 4, §3.5).
 
+## Explicit methods with $r$ derivatives
+
+**Page-local notation.** $f^{[k]}(y)=\frac{d^{k-1}}{dt^{k-1}}f(y(t))$ is the $(k-1)$-th total
+time derivative of the right-hand side along the solution, computed recursively by the
+chain rule, so $f^{[1]}=f$ and $f^{[2]}=\dot f$. The coefficients of derivative $k$ are
+$a^{(k)}_{lj}$, $b^{(k)}_l$, with $a^{(1)}=A$, $a^{(2)}=\dot A$ in registry terms.
+
+An explicit $r$-derivative, $s$-stage method of order $p$, written $r$DRK$p$-$s$, is
+(Chouchoulis et al. 2022, Def. 1, after Seal, Güçlü & Christlieb)
+
+$$Y_l=y_n+\sum_{k=1}^{r}h^k\sum_{j=1}^{l-1}a^{(k)}_{lj}\,f^{[k]}(Y_j),\qquad y_{n+1}=y_n+\sum_{k=1}^{r}h^k\sum_{l=1}^{s}b^{(k)}_l\,f^{[k]}(Y_l),$$
+
+with strictly lower-triangular blocks. The coefficient of $h^2\dot f$ is $a^{(2)}$ itself,
+with no factor $\frac12$. The **Taylor method** of order $r$ is the case $s=1$,
+$b^{(k)}_1=1/k!$ (Remark 2). The schemes Chouchoulis et al. use all have the
+"Taylor-plus-last-derivative" form: every stage is the Taylor polynomial of degree $r-1$
+about $y_n$ plus one correction in the highest derivative evaluated at earlier stages,
+$Y_l=y_n+\sum_{k<r}\frac{(c_lh)^k}{k!}f^{[k]}(y_n)+h^r\sum_{j<l}a^{(r)}_{lj}f^{[r]}(Y_j)$
+(App. A). For example, the two-derivative fourth-order method of Chan & Tsai is
+
+$$Y_2=y_n+\tfrac h2f(y_n)+\tfrac{h^2}8\dot f(y_n),\qquad y_{n+1}=y_n+hf(y_n)+h^2\Big(\tfrac16\dot f(y_n)+\tfrac13\dot f(Y_2)\Big).$$
+
+Their six schemes and stability functions (Fig. 1, App. A; from Chan & Tsai and from
+Ökten Turacı & Öziş, except the new 4DRK6-2):
+
+| scheme | $c$ | $R(z)-\sum_{k\le p}z^k/k!$ |
+|---|---|---|
+| 2DRK3-2 | $(0,1)$ | 0 |
+| 2DRK4-2 | $(0,\frac12)$ | 0 |
+| 2DRK5-3 | $(0,\frac25,1)$ | $z^6/600$ |
+| 3DRK5-2 | $(0,\frac25)$ | $z^6/900$ |
+| 3DRK7-3 | $(0,\frac{3-\sqrt2}7,\frac{3+\sqrt2}7)$ | $c_8z^8+c_9z^9$, $c_8=\frac1{23520}-\frac{\sqrt2}{70560}$, $c_9=\frac{11}{1481760}-\frac{\sqrt2}{246960}$ |
+| 4DRK6-2 (new) | $(0,\frac13)$ | $z^7/6480+z^8/77760$ |
+
+The new four-derivative, two-stage, sixth-order 4DRK6-2 has
+$a^{(k)}_{21}=\frac{(1/3)^k}{k!}$ for $k=1,\dots,4$, $b^{(k)}=(1/k!,0)$ for $k\le3$ and
+$b^{(4)}=(\frac1{60},\frac1{40})$ (Table 8); no derivation or order verification is
+printed. Its printed stability function follows from the tableau *(compiler check,
+symbolic, not in the source)*. Except 3DRK5-2 and 4DRK6-2, all six regions contain part of the imaginary axis
+(Remark 3). Multiderivative methods have two free parameters, derivatives and stages,
+against one for Taylor methods, and both move stability (§5).
+
+## Jacobian-free coupling to conservation laws (MDRKCAT)
+
+For a conservation law $u_t+g(u)_x=0$ ($g$ the physical flux, page-local) the derivatives
+$f^{[k]}$ become nested space derivatives involving $g'$, $g''$, …; already
+$u_{tt}=(g'(u)g(u)_x)_x$ is "very tedious" for systems, which Chouchoulis et al. (2022, §1)
+give as the likely reason multiderivative schemes were "rarely used in practice". They
+convert only one time derivative into a space derivative and approximate the remaining
+$\partial_t^{k-1}g(u)$ by the **compact approximate Taylor (CAT)** procedure of Carrillo &
+Parés, built on the approximate Lax–Wendroff procedure of Zorío, Baeza & Mulet: at each
+interface, finite differences in time of $g$ evaluated at Taylor-predicted states on the centred
+stencil of cells $i-\mathsf p,\dots,i+\mathsf p$ ($\mathsf p$ the stencil half-width,
+page-local), using
+only flux evaluations (§3, Alg. 1). Inserting these into the stage and update fluxes gives
+the conservative family $r$DRKCAT$p$-$s$ (Eqs. (17)–(18), Def. 4). The same device drives
+the single-stage [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md).
+
+- **Consistency (Thm. 1).** Under smoothness and $h=\mathcal O(\Delta x)$ the consistency
+  order is $\min(2\mathsf p,p)$, so $\mathsf p=\lceil p/2\rceil$ is the efficient choice
+  (Remark 6). Proved through lemmas on the CAT recursion.
+- **Not multistep.** The CAT recursion has "a multistep flavour" but is local to one step,
+  so variable steps are admissible; the tests use $h^n=\nu\Delta x/\max\lvert\lambda^n\rvert$
+  (Remark 1, §6).
+- **Fully discrete stability (§5, Table 2).** For linear advection MDRKCAT reduces to an
+  MDRK–Lax–Wendroff scheme with centred derivative stencils (Thm. 2, proof omitted as
+  "similar" to Carrillo & Parés). A [von Neumann analysis](/definitions/von-neumann-stability-analysis.md)
+  gives the critical Courant numbers
+
+  | 2DRKCAT3-2 | 2DRKCAT4-2 | 2DRKCAT5-3 | 3DRKCAT5-2 | 3DRKCAT7-3 | 4DRKCAT6-2 |
+  |---|---|---|---|---|---|
+  | 1.2954 | 1.4718 | 1.0619 | 0.4275 | 0.2300 | 0.8563 |
+
+  against 1 for the original CAT method. Two-derivative schemes improve on CAT, three- and
+  four-derivative ones lose; even numbers of derivatives are better, as observed for CAT.
+  The ODE stability regions predict this ranking wrongly ("a method of lines (MOL)
+  viewpoint is inadequate"): 3DRK7-3 has the largest region in Fig. 1 and the smallest
+  critical number.
+- **Numerics (§6).** Smooth [Burgers](/benchmarks/burgers-equation.md) data, a
+  Buckley–Leverett problem, 1-D Euler density advection and a smooth nonlinear Euler case
+  reach the design orders. CAT-$\mathsf p$ with $\mathsf p=4,5,6$ diverges on Burgers at
+  $\nu=0.5$ before shocks form, and the MDRKCAT schemes do not. Accuracy per cell is
+  comparable to DG-$P^3$/$P^4$ with four-stage SSP Runge–Kutta, which reaches design order
+  on coarser meshes because it uses exact fluxes at interfaces and several quadrature points
+  per cell. No timings are given.
+
+## Implicit two-derivative Hermite–Birkhoff methods for DG
+
+Zeifang & Schütz (2022, §2, App. A) use implicit two-derivative Hermite–Birkhoff
+Runge–Kutta (HBRK) methods of order $p=4,6,8$ on $s=2,3,4$ equispaced nodes in $[0,1]$
+with an explicit first stage. The $p=4$ member is the two-point Hermite (Obreshkov) rule
+
+$$y_{n+1}=y_n+\frac h2\big(f(y_n)+f(y_{n+1})\big)+\frac{h^2}{12}\big(\dot f(y_n)-\dot f(y_{n+1})\big);$$
+
+the $p=6$ and $p=8$ tableaux are printed in App. A (their rows of $A$ sum to $c$;
+*compiler check, not in the source*). They do not solve the HBRK system directly but approximate it by a
+predictor–corrector with $K$ corrections of order $\min(4+K,p)$, described on
+[deferred correction](/methods/deferred-correction.md). Two-derivative methods reach high
+order "with fewer temporal quadrature nodes" than one-derivative ones (§1).
+
+The PDE coupling decides stability. A direct discretization of $\dot f$ (an implicit
+Lax–Wendroff approach) gave "a severe timestep restriction" despite the A-stability of the
+ODE method, as Zeifang & Schütz recall from Jaust, Schütz & Seal (§1). Following Schütz,
+Seal & Jaust they introduce the auxiliary variable $\sigma=f_h(y)$ and discretize the time
+derivative of the weak form, so that $\dot f_h(y,\sigma)$ is a DG operator with a
+differentiated Lax–Friedrichs flux; for a linear PDE this preserves the stability of the
+ODE solver (§3.2). Each stage becomes a Newton problem for $(Y,\sigma)$, twice the size of
+an implicit-Euler step, with $\partial\dot f_h/\partial\sigma=\partial f_h/\partial y$ and
+no Hessian term for linear fluxes; the solver and its closed-form element-block
+preconditioner are on [implicit stage solvers](/methods/implicit-stage-solvers.md). With
+steps 200–500 times the explicit limit the scheme reproduces the cylinder Strouhal number
+and the 3D [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) dissipation rate
+(§5.3).
+
+## The one-stage limit
+
+Babbar et al. (2022) do not use the multiderivative framing, but their single-step
+Lax–Wendroff time discretization is the Taylor method of order $N+1$ (the $s=1$ case
+above) with the flux derivatives approximated Jacobian-free and evaluated element-locally;
+see [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)
+*(compiler remark)*. They motivate it by the Runge–Kutta stage barriers, which a one-stage
+method avoids (§1).
+
 ## Qualifications
 
 - **"Type A".** Gottlieb et al. (Remark 2) call the IMEX schemes type A and globally
@@ -181,7 +314,31 @@ model, Broadwell and BGK, design orders appear in the kinetic and fluid limits w
 - Each implicit stage needs $\dot f$ and its Jacobian; the cost of evaluating and
   solving with $\dot f$ is not discussed in the source.
 - Order conditions are classical; stiff order is addressed only numerically.
+- **3DRK7-3, row 3 of the third-derivative block.** Chouchoulis et al. (2022, Table 7)
+  print the entry $a^{(3)}_{31}=c_2^3/6-a^{(3)}_{32}$. The Taylor-plus-last-derivative
+  form requires the row sum $c_3^3/6$. With $c_3^3/6-a^{(3)}_{32}$ the printed tableau
+  reproduces the paper's own stability function (Fig. 1) exactly; with the printed
+  $c_2^3/6$ the $z^6$ coefficient of $R$ differs from $1/720$, so even linear sixth order
+  fails (the $z^6$ coefficient becomes $\frac1{343}-\frac{29\sqrt2}{15435}$) *(compiler check,
+  symbolic, not in the sources)*. The printed entry is therefore a slip against the paper's
+  own Fig. 1; whether the original tableau of Ökten Turacı & Öziş carries $c_3^3/6$ has not
+  been verified, since that paper is not ingested.
+- **Tests above the linear limit.** Chouchoulis et al. run all smooth tests except the
+  nonlinear Euler convergence study at $\nu=0.5$, above their own critical numbers for
+  3DRKCAT5-2 (0.4275) and 3DRKCAT7-3 (0.2300), and both converge; the paper does not
+  comment. Only 3DRKCAT7-3 with $\mathsf p=4$ diverges, on the nonlinear Euler case at
+  $\nu=0.5$ on the coarse meshes (§6.3). Their $\nu$ in §6 uses the maximal eigenvalue of
+  the flux Jacobian, not a constant advection speed, so Table 2 is not a sharp practical
+  limit.
+- The verdict that odd-derivative schemes "seem less adequate" with CAT (§7) rests on two
+  three-derivative schemes, both of Taylor-plus-last-derivative form. The comparison with
+  DG is accuracy per cell, with different degrees of freedom and no cost measure.
+- Zeifang & Schütz (2022) prove no stability or convergence theorem; the order
+  $\min(4+K,p)$ is quoted from Schütz, Seal & Zeifang and confirmed numerically up to 8.
 
 # Citations
 
 - [Gottlieb et al. (2022)](/sources/gottlieb-2022.md) — §1 (Eqs. 2–6), §2.1 (Eqs. 8–9, order conditions), §2.2 (Eqs. 10–12, Thm. 1), §2.3–2.4 (methods, Fig. 1), §3 (Eqs. 13–18), §3.1 (Thm. 2), §3.2 (order conditions), §3.3 (methods), §3.4 (Prop. 1, Remark 2), §3.5, §4, App. A (Eq. 62).
+- [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §1 (Eq. (4)); §2 (Def. 1, Remarks 1–2); §3 (Eqs. (6)–(18), Alg. 1, Def. 4); §4 (Thm. 1, Remark 6); §5 (Thm. 2, Prop. 1, Table 2, Fig. 1, Remark 3); §6.1–6.3 (Figs. 2–7); §7; App. A (Tables 3–8).
+- [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) — §1; §2 (Eqs. (4)–(6), Remark 2); §3.2 (Eqs. (14)–(18)); §5.3; App. A (Eqs. (A.1)–(A.3)).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §1, §4 (single-step Taylor time discretization).

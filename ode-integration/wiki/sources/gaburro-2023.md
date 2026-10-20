@@ -236,4 +236,6 @@ Chunk 2 (2026-10-19). This source is cited on:
 * [ADER as a time integrator](/methods/ader-time-integration.md)
 * [Entropy stability and conservation of the fully discrete scheme](/properties/entropy-stability.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Lax–Wendroff flux reconstruction (single-stage Taylor time stepping)](/methods/lax-wendroff-flux-reconstruction.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Relaxation Runge–Kutta methods](/methods/relaxation-runge-kutta.md)

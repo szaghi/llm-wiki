@@ -5,7 +5,7 @@ description: "The Schäfer–Turek two-dimensional time-dependent flow past a cy
 status: established
 aliases: [Schäfer–Turek benchmark, DFG cylinder benchmark, flow around a cylinder, 2D-3 benchmark, cylinder benchmark]
 tags: [verification, implicit, stiff, dae]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Flow past a cylinder (Schäfer–Turek)
@@ -86,6 +86,26 @@ authors claim, but the setups are not identical.
   explicit integrators for low-Mach Euler solvers on an annulus around a cylinder. It is a steady
   inviscid problem, unrelated to the Schäfer–Turek benchmark.
 
+- **Compressible vortex shedding at $\mathrm{Re}_D=200$.** [Zeifang & Schütz (2022)](/sources/zeifang-2022.md)
+  (§5.3.2, Fig. 11) run compressible Navier–Stokes past a cylinder of diameter 1 at
+  $\mathrm{Re}_D=200$ (viscosity $5\times10^{-3}$, reference Mach number 0.1, free stream
+  $\rho=1$, $v=(1,0)$, $\mathcal P=1/\kappa$ with $\kappa$ the ratio of specific heats;
+  page-local) on 1000 DG elements of degree 5, with the implicit two-derivative
+  predictor–corrector HBPC(6,2) at $h=0.1$ and $h=0.25$, about 200 and 500 times the step of
+  an explicit fourth-order low-storage method. Strouhal numbers 0.1971 and 0.1968 against
+  reference values 0.1957 and 0.196, and a lift history matching the explicit run, show that
+  the large implicit steps keep the shedding (see
+  [multiderivative Runge–Kutta](/methods/multiderivative-runge-kutta.md)). It is a different
+  problem from the Schäfer–Turek benchmark: compressible, a free stream instead of a channel,
+  and a periodic regime measured by the Strouhal number instead of drag and lift maxima.
+- **Supersonic flow over a cylinder.** [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md)
+  (§6.2.4, Table 1) run inviscid Mach 3 flow over a cylinder to $t=10$ with a single-stage
+  Lax–Wendroff scheme of degree 4 on an adaptive mesh (561 to a peak of about 85,000
+  elements). Error-based step-size control needs 1.51 times fewer steps than the best
+  hand-tuned constant CFL number at tolerance $10^{-6}$ and 2.08 times fewer at
+  $5\times10^{-6}$ (see [step-size control](/methods/step-size-control.md)). This is a shock
+  problem with no relation to the Schäfer–Turek quantities.
+
 ## Qualifications
 
 - **Versions read.** Farrell et al. (2021), Abu-Labdeh et al. (2023) and García-Archilla & Novo
@@ -102,3 +122,5 @@ authors claim, but the setups are not identical.
 - [García-Archilla & Novo (2023)](/sources/garciaarchilla-2023.md) — §4.2 (Figs. 6–9).
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §5.2, §5.2.1 (Turek–Hron FSI3, as a related benchmark).
 - [Kemm (2024)](/sources/kemm-2024.md) — §4.2 (compressible cylinder, as a distinct problem).
+- [Zeifang & Schütz (2022)](/sources/zeifang-2022.md) — §5.3.2 (Fig. 11; compressible cylinder at Re 200, as a related problem); arXiv v1.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §6.2.4, Table 1 (Mach 3 cylinder, as a related problem); arXiv v4.

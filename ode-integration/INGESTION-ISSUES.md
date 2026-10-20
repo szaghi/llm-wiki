@@ -6,6 +6,132 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — Patankar and positivity, parallel-in-time, deferred correction and ADER (2026-10-20)
+
+Sources (20): nusslein-2021, torlo-2022, ciallella-2022, babbar-2022,
+zeifang-2022, chouchoulis-2022, kuzmin-2022, carrel-2023, micalizzi-2024,
+buvoli-2024, popov-2024, saupe-2025, gander-2024, babbar-2025,
+permyakova-2025, izzo-2025, caklovic-2025, jin-2025, muralikrishnan-2025,
+nurkhametova-2026. 18 new concept pages (131 in all, 232 with the Source
+pages and the registry), 37 extended, 3374 bibliography entries. Deep lint
+(D26) over the chunk's pages before staging.
+
+### Decisions for the human
+
+1. **Bibliography calls to confirm:** `shtilman-1958` keeps the year
+   printed by permyakova-2025 although Crossref dates the paper 1991
+   (Physica D 52:477) — re-key to `shtilman-1991`? `veiga-2020` and
+   `veiga-2021` are works of M. Han Veiga, whose ingested paper is
+   `hanveiga-2021` — move both to the `hanveiga-` spelling? `kennedy-2021`
+   (pre-existing) duplicates `kennedy-2016`, the NASA DIRK review, with a
+   placeholder year — fold it?
+2. **"Reader's check" attributions on older pages.** The chunk-5 deep lint
+   replaced every "reader's check" on the chunk's pages by a verified
+   *(compiler check)* or removed it. 17 pages from chunks 1–4 still carry
+   the phrase (e.g. stability-function, step-size-control,
+   imex-linear-multistep-methods, tase-operators, quinpi, ketcheson-2023).
+   Planned for the whole-bundle deep lint of chunk 6.
+3. **Bundle-fit candidates for a D17 copy** (none made): ciallella-2022
+   (WENO and well-balancing for shallow water), babbar-2022 and babbar-2025
+   (flux reconstruction, AMR on curvilinear meshes), kuzmin-2022 (flux
+   limiting) for `high-order-capturing-schemes`; muralikrishnan-2025
+   (particle-in-Fourier, Vlasov–Poisson) for `fusion-mhd-simulation` or
+   `plasma-propulsion-simulation`.
+4. **Tag synonyms reported by the auditors:** `ssp`/`strong-stability`,
+   `embedded-pair`/`error-estimation`, `cfd`/`hyperbolic-conservation-laws`,
+   `parallel-stages`/`parallel`, `bdf`/`linear-multistep`; single-use
+   `paradiag`, `parareal`, `high-order-methods`. For the chunk-6 sweep.
+5. **Unverified or unresolved items:**
+   - Chouchoulis et al.'s Table 7 entry $c_2^3/6$: $c_3^3/6$ reproduces their
+     own Fig. 1 (compiler check), not checked against the original
+     Ökten Turacı & Öziş tableau.
+   - Saupe et al.'s $\varepsilon_{\mathrm{TOL}}^{5/4}$ scaling fits four
+     nodes; their runs point to three (5/3); the paper never states the
+     node count.
+   - Nurkhametova et al.'s stratospheric problem differs from Nüßlein et
+     al.'s ($r_{11}$ and the factor $\mathcal M$ absent, $k_4$ printed
+     differently): deliberate change or transcription slip, neither paper
+     says.
+   - Jin et al.'s four optimized coarse propagators agree to about two
+     digits whichever fine propagator they were optimized for (compiler
+     check of Appendix B); recorded neutrally.
+6. **Docs build (chunk-4 item 1) resolved** by the split build (D28,
+   566339f): peak 4.1 GB, CI green.
+
+### Identity and version problems
+
+- No file is a version of record: 19 are arXiv versions, nurkhametova-2026
+  is the Virginia Tech report CSL-TR-26-1 (accepted text). Archive
+  filenames say "Crossref_<journal>" for all of them.
+- buvoli-2024: the file has 33 pages, the footers count 34; the text and
+  the 79 references run complete.
+- muralikrishnan-2025: Crossref records no volume and the arXiv file prints
+  none; the venue is written without one (not guessed).
+- zeifang-2022: the arXiv title lacks the published leading "Implicit".
+- micalizzi-2024 and saupe-2025 take the issue year (online one year
+  earlier); jin-2025 (Bangti Jin et al.) is unrelated to jin-2022.
+- The bibliography key `izgin-2022` is reserved for the chunk-6 Source
+  (ESAIM: M2AN); other works printed under it were re-keyed.
+
+### Printed slips (recorded on the Source pages)
+
+- nurkhametova-2026: SDIRK32 embedded weights sum to 0.3788; the positivity
+  proof assumes $b\ge0$ (and $a_{ij}\ge0$), which SDIRK32 and SDIRK43
+  violate (compiler check, pp. 28–29); MAPK null-vector claim; Eq. (27).
+- izzo-2025: the $k=3$ scheme of Zhu, Huang & Yang printed with
+  $\beta=(0,3/2,0)$ (first order; $(3/2,0,0)$ is second order); Table 4
+  last row; Test 5 data.
+- torlo-2022: Eq. (6) vs Fig. 1 initial data; "MPRK(3,4,2,0.5)" for
+  MPRK(4,3,2,0.5); η3 printed twice; Eq. (69) Robertson rate $k_2y_2$ for
+  $k_2y_2^2$.
+- nusslein-2021: Eq. (2.13) drops the step factor (interval [1/45, 2/9] for
+  [1/15, 2/3]); Eq. (3.3) weights; sign in (2.14d).
+- ciallella-2022: Eq. (44) $(x-0.5)^2$ for $(y-0.5)^2$; overhead 18% vs 10%.
+- kuzmin-2022: (B.7b) missing $d_i$; (B.9) $(1+\gamma)$ in the numerator;
+  Algorithm 1 loop start.
+- gander-2024: τ dropped in Eq. (2.2) and the shifted Arnoldi relation;
+  Algorithm 3.1 lines 12–13; GMRES preconditioner sign; Theorem 3.1's proof
+  has gaps.
+- buvoli-2024: Eq. 9 φ without the factorial factor; Eq. 32 error matrix;
+  Eq. 17 $|u|u$; Remark 1 growth claim; Table 4a f/g swapped; "8096 cores".
+- carrel-2023: Eq. (34) indices; "Algorithm 3.1" for Definition 3.1; Thm 3.5
+  for $n\le k$.
+- jin-2025: Appendix B θ-scheme forcing weight; Eq. (3.8) sign; Corollary
+  3.6 bound vs value.
+- muralikrishnan-2025: Thm 5.3 proof $\Delta T t_g^p$; Eq. (5.3) omits
+  $E_{\mathrm{ext}}$.
+- caklovic-2025: Table 1 caption; Theorem 2.8 and 2.12 proofs; §3.2
+  A-stability definition; the conclusion over-claims against §4.2–§4.3.
+- saupe-2025: Algorithm 2 max for min; Eq. 31; Eq. (13) $Q_\Delta$ first
+  column; "up to order 2M" for all node families (Gauss only).
+- micalizzi-2024: Theorem 2.1 needs $\alpha_1>0$; speed-up ratio inverted
+  in §9.1.1; supplement root formula.
+- zeifang-2022: Eq. (9) missing $+I_l$; Taylor–Green initial velocity cos for
+  sin and the dissipation-rate sign; Algorithm 1 range.
+- popov-2024: Eq. (15) missing factor $z$; Eqs. (26)–(27), (31)–(32); the
+  "(N+1)²" evaluation count is off by a factor $N+1$ (compiler check of
+  Eq. (11)).
+- chouchoulis-2022: Table 7 (above); tests at σ=0.5 above their own linear
+  limits for two schemes.
+- babbar-2022: §5.2 Taylor term; figure captions; Lax problem 100 vs 200
+  cells; babbar-2025: §5.2 inverted acceptance rule; smoothness threshold
+  exponent; Couette velocity; Mach 2000 jet boundary states.
+- permyakova-2025: Eq. (7) $t^n$ for $t^{n-1}$; Eq. (A.2); Eq. (16c); Fig. 6
+  caption arithmetic; refs [14], [62].
+
+### Contradictions opened
+
+None. Qualifications recorded: Izzo et al.'s order-6 unconditionally
+positive MP linear multistep methods are nonlinear, so the order barrier
+for unconditionally positive linear methods does not apply; Nurkhametova
+et al. prove order $\min(p,q+1)$ while observing the nominal orders;
+Popov's A- and L-stability rest on plots and rank checks, not proof;
+Permyakova & Goldobin claim classical order 4 for ETD4RK without a
+stiff-order statement (compiler check: Luan's conditions guarantee stiff
+order 2); the SSP status of deferred correction beyond the explicit order
+barrier is not decided by any ingested source; Babbar & Chandrashekar's
+"first error-based stepping for a single-stage method" stays their claim.
+
 ## Chunk 4 — local time stepping, multirate, exponential integrators, EIN (2026-10-20)
 
 Sources (20): luan-2021, unfer-2021, grote-2021, sreejith-2022, tan-2022,

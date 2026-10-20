@@ -205,5 +205,7 @@ Chunk 4 (2026-10-20). This source is cited on:
 * [Evaluating φ-functions: Leja interpolation, Krylov and related methods](/methods/phi-function-evaluation.md)
 * [Explicit–implicit–null (EIN) time marching](/methods/explicit-implicit-null-method.md)
 * [Exponential integrators and φ-functions](/methods/exponential-integrators.md)
+* [Heat equation](/benchmarks/heat-equation.md)
 * [Lawson (integrating-factor) methods](/methods/lawson-methods.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
+* [Von Neumann (Fourier) stability analysis of fully discrete schemes](/definitions/von-neumann-stability-analysis.md)

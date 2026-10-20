@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods
@@ -50,6 +50,16 @@ $A\ge0$ and $b\ge0$ (Fekete et al. 2022, Thm. 2); for an irreducible method Bisw
 al. recall the sharper requirement $A\ge0$, $b>0$ (Kraaijevanger, Thm. 4.2;
 [Biswas et al. 2025](/sources/biswas-2025.md), proof of Cor. 2.8).
 
+**Stage and weight halves.** In the resolvent form used by Kuzmin et al. (2022, §3.1.1,
+Eqs. (36)–(37)), with $X=(I+rA)^{-1}$, an explicit method is SSP with coefficient $r$ when
+the stage conditions $AX\ge0$, $AX\mathbf 1\le\mathbf 1$ and the weight conditions
+$b^\top X\ge0$, $b^\top X\mathbf 1\le1$ hold entrywise. Kuzmin et al. call a method
+**internal SSP** when only the stage half holds: all stages then preserve the forward Euler
+bound for $h\le rh_{\mathrm{FE}}$, but the update need not. Euler-based
+[extrapolation methods](/methods/extrapolation-methods.md) are internal SSP at any order,
+which is why their final update is limited separately (§3.1.2; see
+[bound-preserving flux limiting](/methods/bound-preserving-flux-limiting.md)).
+
 **Linear SSP coefficient.** On linear problems only the
 [stability polynomial](/definitions/stability-function.md) matters, and the relevant
 quantity is the *radius of absolute monotonicity* (threshold factor) of $R$: the
@@ -60,7 +70,13 @@ positive when $\mathcal C=0$ (Biswas et al. 2025, after Cor. 2.8).
 ## Barriers
 
 - **Explicit order barrier.** No explicit Runge–Kutta method of order $p\ge5$ has
-  $\mathcal C>0$, as recalled by Fekete et al. (2022, §1.1).
+  $\mathcal C>0$, as recalled by Fekete et al. (2022, §1.1),
+  [Babbar et al. (2022)](/sources/babbar-2022.md) (§1, Ruuth–Spiteri),
+  [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) (§1, §3.1.1) and
+  [Ciallella et al. (2022)](/sources/ciallella-2022.md) (Remark 3.1); the last two add the
+  order-6 barrier for implicit SSP Runge–Kutta methods, and Kuzmin et al. that backward
+  Euler is the only method SSP for arbitrarily large steps. The five-stage "fifth-order"
+  SSPRK55 that Babbar et al. use is fifth order only on linear autonomous problems (§8).
 - **Implicit methods have bounded $\mathcal C$.** Implicit Runge–Kutta, multistep and
   general linear methods have finite SSP coefficients, "usually bounded by twice the
   number of stages for a Runge–Kutta method"; implicit methods that preserve the
@@ -259,8 +275,7 @@ whole scheme proved.
   which every finite-volume cell has its own step. The stage states become parabolic
   extrapolations in time and the conservative states cubic polynomials whose derivatives
   are assembled from face fluxes at three face times; with a global step the scheme
-  reverts to SSPRK(3,3) (§3.5.2; with one step size the flux polynomial integrates to the
-  weights $\tfrac16,\tfrac16,\tfrac23$, a reader's check recorded on the Source page). A
+  reverts to SSPRK(3,3) (§3.5.2). A
   formal truncation analysis gives $O(\Delta x^3)$ in smooth regions (§3.5.3). The author
   states: "There is no claim at this point that the SSP property holds for the ARK3
   method"; strong shocks need a fallback to first-order states and per-stage recall of
@@ -290,8 +305,50 @@ nonnegative Shu–Osher coefficients is then unconditionally stable if
 $\alpha\ge\frac12\max\beta_{ij}/\alpha_{ij}$; for linear SSP methods up to order four
 this gives $\alpha\ge\frac12$. For four-stage fourth-order methods this uses a linear
 SSP realization of the same polynomial, valid for linear constant-coefficient problems
-only, since no such method has a nonnegative nonlinear Shu–Osher form (reader's
-remark on that source). See [TASE operators](/methods/tase-operators.md).
+only, since no four-stage fourth-order explicit method has a positive SSP coefficient
+*(compiler remark, the classical barrier recalled above)*. See [TASE operators](/methods/tase-operators.md).
+
+## SSP methods as bases of positivity-preserving schemes
+
+- **Positivity under $h\le\mathcal Ch_{\mathrm{FE}}$.** If forward Euler keeps a problem
+  nonnegative for $h\le h_{\mathrm{FE}}$, every SSP method does for $h\le\mathcal Ch_{\mathrm{FE}}$
+  ([Nüßlein et al. 2021](/sources/nusslein-2021.md), §1). Beyond that bound SSPRK(3,3) can
+  produce negative values even on a linear two-species exchange (their Example I, §2.1), and
+  the [adaptive-weight](/methods/adaptive-weight-runge-kutta.md) remedy has room at full
+  order only in many-stage methods: SSPRK(10,4) keeps four free weight directions at order 4,
+  classical RK4 none (Table 1).
+- **Positivity limiters.** With a Zhang–Shu limiter on a WENO5 reconstruction forward Euler
+  is positive for CFL numbers up to $\tfrac1{12}$, and SSPRK(5,4) up to about
+  $1.508\cdot\tfrac1{12}$ (Ciallella et al. 2022, Remark 3.1). Kuzmin et al. (2022) combine
+  their GMC flux limiter with SSP54 (Kraaijevanger; Spiteri–Ruuth), whose Shu–Osher
+  coefficients they print (App. A.1), as the SSP reference against non-SSP methods of order
+  5 and 6 (§5).
+- **Patankar schemes on SSP bases.** MPRK(2,2,1) modifies SSPRK(2,2) (Heun), the new
+  MPRK(3,2) uses the SSPRK(3,3) abscissae and weights, the semi-implicit SI-RK2 and SI-RK3 put
+  Patankar weights into the Shu–Osher forms of SSPRK(2,2) and SSPRK(3,3), and MPRKSO(4,3)
+  uses optimal SSP coefficients ([Torlo et al. 2022](/sources/torlo-2022.md), §2, App. A).
+  The SSP-MPRK family of Huang and coauthors is cited by [Izzo et al. (2025)](/sources/izzo-2025.md)
+  (§1); the second- and third-order multistep Patankar schemes they reproduce come from
+  explicit SSP multistep methods (§2): $y_n=\tfrac34y_{n-1}+\tfrac14y_{n-3}+\tfrac32hf(y_{n-1})$
+  (with the corrected $\bar\beta$) and $y_n=\tfrac{16}{27}y_{n-1}+\tfrac{11}{27}y_{n-4}+\tfrac{16}9hf(y_{n-1})+\tfrac49hf(y_{n-4})$
+  *(compiler identification, not in the sources)*. See
+  [modified Patankar methods](/methods/modified-patankar-methods.md).
+- **Deferred correction.** Ciallella et al. (2022, §6.6) state that arbitrary-order
+  [deferred correction](/methods/deferred-correction.md) cannot be written as a convex
+  combination of explicit Euler steps, so explicit DeC with a positivity limiter has no
+  positivity proof even under the limiter CFL bound (§6.6, no proof given and no order named).
+  The same paper recalls that explicit SSP Runge–Kutta methods are at most fourth order
+  (Remark 3.1). Since explicit DeC methods are explicit Runge–Kutta methods, those of order $\ge5$
+  cannot have a positive SSP coefficient *(compiler remark, not in the sources)*; for orders
+  up to 4 no ingested source settles the question. [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md)
+  (§1, §3.1) cite Liu, Shu and Zhang's study of the SSP property of deferred correction only as
+  the origin of bDeC and of the α-family, without reporting its SSP findings.
+- **Reference integrators.** SSP methods remain the default explicit baseline:
+  SSPRK$(N+1,N+1)$ for $N=1,2$ and SSPRK54 in Lax–Wendroff flux reconstruction comparisons
+  (Babbar et al. 2022, §8), and the third-order Shu–Osher method and the four-stage
+  fourth-order Spiteri–Ruuth method for DG references in multiderivative tests
+  ([Chouchoulis et al. 2022](/sources/chouchoulis-2022.md), §6.3), where SSP multiderivative
+  methods are named as future work.
 
 ## Relation to strong stability
 
@@ -319,8 +376,8 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   underestimate $\mathcal C$.
 - **The $2s$ bound.** Gottlieb et al. (2022, §1) attribute the "twice the number of
   stages" bound for implicit SSP Runge–Kutta methods to Ketcheson's downwind paper;
-  the reader of that source flags the attribution as unverified, so the bound is
-  recorded here as recalled, not as the result of that reference.
+  the cited paper is not ingested, so the bound is recorded here as recalled, not as
+  the result of that reference.
 - **Unconditional SSP.** Gottlieb et al. (2022, §1) state without qualifier that
   implicit methods preserving the forward Euler condition for every $h$ "cannot
   exist"; their own Appendix A makes clear that the barrier is for order greater than
@@ -346,12 +403,19 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
   TVD bounds for implicit methods under a step restriction, so it should read "not
   unconditionally". Their explicit-Euler-stage pair SP(1,1,1) is called "stiffly accurate
   and stability preserving" without an SSP coefficient.
+- **Deferred correction and SSP.** Ciallella et al.'s (2022, §6.6) statement that
+  arbitrary-order DeC is not a convex combination of Euler steps sits beside the
+  Liu–Shu–Zhang study of SSP deferred correction that both they and Micalizzi & Torlo
+  (2024) cite, but no ingested source reports what that study finds, so there is no
+  contradiction; by the explicit SSP order barrier the statement certainly holds from order 5
+  *(compiler remark, see above)*. Babbar et al. (2022, §9) write that "there is no four stage SSPRK method",
+  meaning that no four-stage fourth-order explicit method has a positive SSP coefficient.
 - **Kemm's "unstable first stage" thesis.** Kemm's explanation of the Runge–Kutta failures
   is heuristic: the linear stability of a Runge–Kutta step depends only on its stability
   polynomial, his first-order-in-space tests behave as linear theory predicts, and the
   amplification of internal stage perturbations is measured by
   [internal stability](/definitions/internal-stability.md), not by the stability of the
-  first stage alone *(reader's remark on that source)*. His claim that SSP theory does not
+  first stage alone *(compiler remark, not in the sources)*. His claim that SSP theory does not
   apply is correct as a statement about its hypothesis, not a counterexample to it.
 
 # Citations
@@ -377,3 +441,11 @@ by the [energy method](/methods/runge-kutta-energy-method.md).
 - [Unfer (2021)](/sources/unfer-2021.md) — §3.5 (Eq. (106)), §3.5.2–3.5.3, App. B, §4.5.
 - [Liu & Zhang (2023)](/sources/liu-2023.md) — §1.4, §2.1, §3.1 (Eqs. (5), (17)).
 - [Pulicani et al. (2026)](/sources/pulicani-2026.md) — §4.3 (Eqs. (54)–(55)), §5.2–5.3.
+- [Kuzmin et al. (2022)](/sources/kuzmin-2022.md) — §1, §3.1.1–3.1.2 (Eqs. (35)–(37)), §5, App. A.1; arXiv v2.
+- [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §1, §2.1, §4.1 (Table 1); arXiv v2.
+- [Torlo et al. (2022)](/sources/torlo-2022.md) — §2, App. A; arXiv v5.
+- [Ciallella et al. (2022)](/sources/ciallella-2022.md) — Remark 3.1, §6.6; arXiv v3.
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §1, §8, §9; arXiv v1.
+- [Chouchoulis et al. (2022)](/sources/chouchoulis-2022.md) — §6.3; arXiv v1.
+- [Micalizzi & Torlo (2024)](/sources/micalizzi-2024.md) — §1, §3.1; arXiv v4.
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §1, §2; arXiv v1.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Brusselator"
-description: "The one-dimensional advection–diffusion–reaction Brusselator, a three-species stiff reaction system with a fast relaxation term, is the shared test of IMEX, multirate and nonlinear-solver studies; the page gives the variants, parameters and splittings used and what each test showed."
+description: "The one-dimensional advection–diffusion–reaction Brusselator, a three-species stiff reaction system with a fast relaxation term, is the shared test of IMEX, multirate and nonlinear-solver studies; the original six-species reaction ODE serves as a production–destruction test; the page gives the variants, parameters and splittings used and what each test showed."
 status: established
-aliases: [advection–diffusion–reaction Brusselator, stiff Brusselator, 1D Brusselator]
-tags: [stiff, imex, multirate, software, verification]
-timestamp: 2026-10-20T03:00:00Z
+aliases: [advection–diffusion–reaction Brusselator, stiff Brusselator, 1D Brusselator, original Brusselator, six-species Brusselator]
+tags: [stiff, imex, multirate, software, verification, positivity]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Brusselator
@@ -108,13 +108,37 @@ mild stiffness.
   Newton–GMRES solve, weak scaling from 40 to 10,240 tasks (CPU only, averages of
   20 runs); C and Fortran 2003 versions give identical statistics.
 
+## The original six-species Brusselator
+
+[Izzo et al. (2025)](/sources/izzo-2025.md) (Test 3, Eq. (4.25)) use a different system,
+the original Brusselator reaction ODE (Lefever–Nicolis) with six species and rate constants
+$k_1,\dots,k_4$ (page-local):
+
+$$\begin{aligned}
+y_1'&=-k_1y_1, & y_2'&=-k_2y_2y_5, & y_3'&=k_2y_2y_5,\\
+y_4'&=k_4y_5, & y_5'&=k_1y_1-k_2y_2y_5+k_3y_5^2y_6-k_4y_5, & y_6'&=k_2y_2y_5-k_3y_5^2y_6,
+\end{aligned}$$
+
+with all $k_l=1$, $t\in[0,10]$ and $y(0)=(10,10,0,0,0.1,0.1)$. It is a fully conservative
+[production–destruction system](/definitions/production-destruction-system.md) with
+$p_{32}=d_{23}=k_2y_2y_5$, $p_{45}=d_{54}=k_4y_5$, $p_{51}=d_{15}=k_1y_1$,
+$p_{56}=d_{65}=k_3y_5^2y_6$, $p_{65}=d_{56}=k_2y_2y_5$, so $\sum_iy_i$ is invariant. The two
+zero initial components are replaced by the smallest normalized double, about
+$2.2\times10^{-308}$, because the Patankar weights divide by them. The modified Patankar
+multistep methods of orders 1–6 show observed orders 1.00, 1.98, 2.95, 3.90, 4.80 and 5.68
+at the finest step (Table 4), and for $p\ge3$ they are more efficient than the third-order
+MPRK of Kopecz–Meister and than modified Patankar deferred correction of the same order
+(Figs. 13–14); see [modified Patankar methods](/methods/modified-patankar-methods.md). This
+ODE has no transport and no fast relaxation parameter and is unrelated to the PDE variants
+above except by name and reaction mechanism.
+
 ## Qualifications
 
 - Reynolds et al. print the diffusion term of all three equations as
-  $\mathsf d\,u_{xx}$ (eq. 22, checked visually by the reader); the intended terms
+  $\mathsf d\,u_{xx}$ (eq. 22; *compiler check of the PDF*); the intended terms
   are $\mathsf d\,v_{xx}$ and $\mathsf d\,w_{xx}$, as written above.
 - **Printed slips in the reaction term of $u$.** Fish et al. (2024, p. 21 of the arXiv
-  version, checked visually by the reader) print $\mathsf a-(w-1)u+u^2v$ in the PDE and in the
+  version; *compiler check of the PDF*) print $\mathsf a-(w-1)u+u^2v$ in the PDE and in the
   fast partition, while stating they use the formulation of Chinomona & Reynolds, which has
   $\mathsf a-(w+1)u+u^2v$; Fish & Reynolds (2023, §4.1.2) print the right-hand side with
   $-(w+1)u$ but its slow part with $+(w+1)u$, so that the parts do not add up to the
@@ -130,3 +154,4 @@ mild stiffness.
 - [Gardner et al. (2022)](/sources/gardner-2022.md) — §6.1 (Fig. 3), §7.1.
 - [Fish et al. (2024)](/sources/fish-2024.md) — §6.2 (Figs. 6–7).
 - [Fish & Reynolds (2023)](/sources/fish-2023.md) — §4.1.2, §4.8 (Figs. 8–9).
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §4.3 (Eq. (4.25), Table 4, Figs. 10, 13–14); arXiv v1.

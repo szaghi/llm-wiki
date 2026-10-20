@@ -159,6 +159,7 @@ Chunk 4 (2026-10-20). This source is cited on:
 
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Local time stepping](/methods/local-time-stepping.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [Paired explicit Runge–Kutta (P-ERK) methods](/methods/paired-explicit-runge-kutta.md)

@@ -5,7 +5,7 @@ description: "How time-dependent Dirichlet data are imposed on the internal stag
 status: established
 aliases: [stage boundary conditions, boundary treatment of stage values, boundary treatment for IMEX Runge–Kutta, stage Dirichlet data]
 tags: [order-reduction, imex, runge-kutta, verification]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Boundary conditions for Runge–Kutta stages
@@ -128,7 +128,16 @@ explicit methods: they need derivatives of the boundary data, introduce paramete
 intrusive, and had been studied only in one dimension. The treatment of
 González-Tabernero et al. needs $\partial_tg$ at stage times (or a Cauchy–Kovalevskaya
 reconstruction, or interpolation of the data, Remark 3.3), is intrusive in the same sense,
-and works in two dimensions on Cartesian meshes. For
+and works in two dimensions on Cartesian meshes. A single-stage scheme avoids stage boundary values altogether.
+[Babbar et al. (2022)](/sources/babbar-2022.md) (§8.1.1, Remark 4, Fig. 6b) impose inflow
+data in [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md)
+as the time-averaged boundary flux $\frac1h\int_{t_n}^{t_{n+1}}g(u_b(t))\,dt$ by
+$(N+1)$-point Gauss quadrature in time ($g$ the physical flux, $u_b$ the inflow data and $N$
+the polynomial degree, page-local). On linear
+advection with Dirichlet inflow, SSP Runge–Kutta flux reconstruction at its own CFL number
+shows slightly larger errors than the Lax–Wendroff scheme at degrees 3 and 4, which the
+authors attribute, citing Carpenter et al., to the treatment of Dirichlet data inside the
+Runge–Kutta stages; they do not test a stage boundary correction. For
 [TASE operators](/methods/tase-operators.md), Bassenne et al. (2021) find that boundary
 source terms must be preconditioned together with the operator to avoid errors that start
 at the boundaries.
@@ -156,3 +165,4 @@ at the boundaries.
 - [Biswas et al. (2025)](/sources/biswas-2025.md) — §1 (drawbacks of boundary modifications).
 - [Steinebach (2023)](/sources/steinebach-2023.md) — Fig. 3 (modified boundary data, as listed on the order-reduction page).
 - [Bassenne et al. (2021)](/sources/bassenne-2021.md) — §4.2 (boundary sources under TASE preconditioning).
+- [Babbar et al. (2022)](/sources/babbar-2022.md) — §8.1.1 (Fig. 6b), Remark 4 (time-averaged inflow flux; Runge–Kutta stage data).

@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with lower-triangular Butcher matrix, so eac
 status: established
 aliases: [DIRK, SDIRK, ESDIRK, EDIRK, GEDIRK, singly diagonally implicit Runge–Kutta]
 tags: [runge-kutta, implicit, stiff, stage-order, linear-algebra]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)
@@ -90,6 +90,9 @@ Table 24, A-stable, not stiffly accurate) as reference cases that lose order.
 | DIRK of SA SSP(3,3,2) | $c=(\tfrac14,\tfrac14,1)$, rows $(\tfrac14)$, $(0,\tfrac14)$, $(\tfrac13,\tfrac13,\tfrac13)$ | order 2, stiffly accurate; diagonal $(\tfrac14,\tfrac14,\tfrac13)$, so not singly diagonal | [Boscheri & Pareschi 2021](/sources/boscheri-2021.md), Eq. (79); Southworth et al. 2024, §5.1 |
 | four-stage SDIRK of the type-I third-order IMEX pairs | $c=(\gamma,\gamma,\tfrac{1+\gamma}2,1)$, rows $(\gamma)$, $(0,\gamma)$, $(0,\tfrac{1-\gamma}2,\gamma)$, $(0,b_2,b_3,\gamma)$, $\gamma\approx0.4358665215$ (the SDIRK3 value) | order 3, stiffly accurate, invertible $A$ | Boscheri & Pareschi 2021, Eq. (80); [Orlando et al. 2025b](/sources/orlando-2025-b.md), Table 20; Southworth et al. 2024, §5.1 |
 | ESDIRK of ARK3(2)4L[2]SA (Kennedy–Carpenter) | $c=(0,2\gamma,\tfrac35,1)$, $\gamma=\tfrac{1767732205903}{4055673282236}\approx0.4358665215$ | order 3, stiffly accurate, $R(\infty)=0$ | [Orlando & Bonaventura 2025](/sources/orlando-2025.md), Table 1; Orlando et al. 2025b, Table 21 |
+| SDIRK21 (Kennedy–Carpenter) | $\gamma=1-\tfrac1{\sqrt2}$, $c=(\gamma,1)$, $A=\begin{pmatrix}\gamma&0\\\tfrac1{\sqrt2}&\gamma\end{pmatrix}$, $b=(\tfrac1{\sqrt2},\gamma)$, $\hat b=(\tfrac23,\tfrac13)$ | order 2(1), L-stable, stiffly accurate; all coefficients nonnegative | [Nurkhametova et al. 2026](/sources/nurkhametova-2026.md), §4.2.1 |
+| SDIRK32 (Kennedy–Carpenter) | $\gamma=\tfrac9{40}$, $c=(\tfrac9{40},\tfrac7{13},\tfrac{11}{15},1)$, $b$ = last row $(\tfrac{4032}{9943},\tfrac{6929}{15485},-\tfrac{723}{9272},\tfrac9{40})$, $a_{31}<0$ | order 3(2), L-stable, stiffly accurate | Nurkhametova et al. 2026, §4.2.2 |
+| SDIRK43 (Kennedy–Carpenter) | $\gamma=\tfrac14$, $c=(\tfrac14,\tfrac9{10},\tfrac23,\tfrac35,1)$, $b$ = last row $(\tfrac{944}{1365},-\tfrac{400}{819},\tfrac{99}{35},-\tfrac{575}{252},\tfrac14)$ | order 4(3), L-stable, stiffly accurate | Nurkhametova et al. 2026, §4.2.3 |
 | five-stage SDIRK4 with explicit first stage | $\gamma=\tfrac14$ on stages 2–6, $c=(0,\tfrac14,\tfrac34,\tfrac{11}{20},\tfrac12,1)$ | order 4, stiffly accurate, L-stable | Orlando & Bonaventura 2025, Table 2 (implicit part of the Calvo–de Frutos–Novo pair) |
 
 The Qin–Zhang tableau is two implicit-midpoint steps of size $h/2$
@@ -116,15 +119,16 @@ al. 2021, §5).
 
 In the four-stage SDIRK row, $b_2\approx1.2084966492$ and $b_3\approx-0.6443631707$ are the
 weights of ARS(3,4,3); the last two rows are the implicit parts of IMEX pairs, with an
-explicit first stage padding the five-stage SDIRK4 in the last row (reader's identification
-as the Hairer–Wanner method, recorded on the Source pages). Boscheri & Pareschi (2021,
+explicit first stage padding the five-stage SDIRK4 in the last row, whose implicit rows
+coincide with the five-stage L-stable SDIRK4 of Hairer and Wanner *(compiler
+identification, not in the sources)*. Boscheri & Pareschi (2021,
 Eq. (80)) print the four-stage SDIRK with a slip in $a_{44}$, and Orlando et al. (2025b,
 Table 20) pair it with an explicit companion that fails a third-order condition; see
 [semi-implicit IMEX Runge–Kutta](/methods/semi-implicit-imex-runge-kutta.md).
 Puppo et al. (2024, Eq. (26)) print the corrector stage of Quinpi as
 $U^{(k)}+\frac{a_{kk}h}{\Delta x}\Delta\hat F^{(k)}-U^{(k-1)}=0$, the composite backward Euler
 form; consistency with their DIRK (15a) requires $-y_n$ plus the earlier stage fluxes in place
-of $-U^{(k-1)}$ (reader's check, recorded on the Source page).
+of $-U^{(k-1)}$ *(compiler check of Eqs. (15a) and (26))*.
 
 ## DIRK parts of IMEX pairs
 
@@ -147,6 +151,24 @@ structure decides the asymptotic behaviour on stiff relaxation:
   ([Boscheri & Thomann 2024](/sources/boscheri-2024.md), §3.3–3.5, with the two-stage SDIRK2,
   $\gamma=1-1/\sqrt2$, of the first table row as implicit part).
 
+## DIRKs as bases of structure-preserving and parallel schemes
+
+- **Positivity post-processing.** The Patankar predictor–corrector of Nurkhametova et al.
+  (2026, §3.3–3.4) takes a stiffly accurate SDIRK step as predictor and replaces the result by
+  one linear M-matrix solve built from the clipped stages; its positivity proof needs $b\ge0$,
+  and the stage variant also $a_{ij}\ge0$. In the tableaux above only SDIRK21 meets these
+  conditions: SDIRK32 has a negative weight and SDIRK43 two *(compiler check of the printed
+  tableaux; not discussed in the source)*. Because DIRKs have stage order $q=1$, the proven
+  order of the corrected method is $\min(p,q+1)=2$ (Prop. 3.23), although slopes near 3 and 4
+  are observed (Tables 4–5). See [modified Patankar methods](/methods/modified-patankar-methods.md).
+- **SDC sweeps as DIRKs.** One sweep of spectral deferred correction with a lower-triangular
+  preconditioner $Q_\Delta$ costs as much as a DIRK with $s=\mathsf M$ stages, and setting
+  $Q_\Delta=Q=A$ for a DIRK Butcher matrix makes the sweep reproduce that DIRK, so a generic SDC
+  code runs any DIRK ([Čaklović et al. 2025](/sources/caklovic-2025.md), §2, Remark 2.2). Their
+  parallel SDC variants beat ESDIRK4(3)6L[2]SA of Kennedy–Carpenter on the Lorenz system and
+  on Allen–Cahn under their cost model (§4.2, §4.4); see
+  [deferred correction](/methods/deferred-correction.md).
+
 ## Composite backward Euler as a DIRK; DIRKs in flux form
 
 A sequence of backward Euler sub-steps through the abscissae of a DIRK is itself a DIRK.
@@ -155,8 +177,8 @@ $\theta_k$), the composite backward Euler method has the same $c$, row $k$ of $A
 $(\theta_1,\dots,\theta_k,0,\dots,0)$ and $b=(\theta_1,\dots,\theta_s)$
 ([Puppo et al. 2024](/sources/puppo-2024.md), §3.1, Eqs. (19), (22)). For Alexander's
 SDIRK3 this gives $\theta=(\gamma,\tfrac{1-\gamma}2,\tfrac{1-\gamma}2)$ (§4). The tableau is
-first order and stiffly accurate by construction, since $b$ is its last row (reader's
-remark, recorded on the Source page). Puppo et al. run it as a first-order predictor
+first order and stiffly accurate by construction, since $b$ is its last row *(compiler
+remark, not in the sources)*. Puppo et al. run it as a first-order predictor
 alongside SDIRK3 so that both share stage times; its stage values fix the nonlinear
 reconstruction weights of the third-order stages (see
 [Quinpi](/methods/quinpi.md) and [implicit stage solvers](/methods/implicit-stage-solvers.md)).
@@ -214,6 +236,10 @@ per micro- and macro-step in multirate settings.
   which implicit midpoint is one. Such compositions have negative step fractions
   for order $\ge3$, consistent with the negative diagonal entries Southworth et al.
   mention; see [composition methods](/methods/composition-methods.md).
+- **Printed slip in Nurkhametova et al. (2026).** The printed embedded weights of SDIRK32,
+  $\hat b=(\tfrac{20}{51},-\tfrac{410011317313}{22571052756900},-\tfrac{2075562131}{281561189810},\tfrac{29595333}{2429345900})$,
+  sum to about 0.379, so they are mistranscribed; the main weights satisfy the order-3
+  conditions *(compiler check of the printed tableau, PDF p. 28)*.
 - "Maximum order $s$ or $s+1$ with reasonable stability" (Southworth et al. 2022)
   is a qualified practical statement, not a theorem; the theorem is $p\le s+1$.
 
@@ -236,3 +262,5 @@ per micro- and macro-step in multirate settings.
 - [Orlando & Bonaventura (2025)](/sources/orlando-2025.md) — Def. 3.1, Tables 1–2; HAL v2.
 - [Orlando et al. (2025b)](/sources/orlando-2025-b.md) — Tables 20–21; arXiv v5.
 - [Puppo et al. (2024)](/sources/puppo-2024.md) — §2.2 (Eqs. (14)–(16)), §3.1 (Eqs. (19)–(24)), Eq. (26), §4 (Alexander SDIRK3).
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §3.3–3.4, Prop. 3.23, §4.2 (SDIRK21, SDIRK32, SDIRK43 tableaux), Tables 4–5.
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — §2 (Remark 2.2), §3, §4.2, §4.4; arXiv v2.

@@ -117,5 +117,8 @@ Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 * [Burgers equation](/benchmarks/burgers-equation.md)
 * [Deferred correction (DeC)](/methods/deferred-correction.md)
 * [Equivalence of DeC and ADER](/results/dec-ader-equivalence.md)
+* [Lax–Wendroff flux reconstruction (single-stage Taylor time stepping)](/methods/lax-wendroff-flux-reconstruction.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Robertson problem](/benchmarks/robertson-problem.md)
 * [Stability function, stability polynomial and stability region](/definitions/stability-function.md)
+* [Von Neumann (Fourier) stability analysis of fully discrete schemes](/definitions/von-neumann-stability-analysis.md)

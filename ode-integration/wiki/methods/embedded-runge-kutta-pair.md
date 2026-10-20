@@ -5,7 +5,7 @@ description: "An embedded pair adds a second weight vector to a Runge–Kutta ta
 status: established
 aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation, null rule, nested Runge–Kutta methods]
 tags: [runge-kutta, step-size-control, explicit, ssp, embedded-pair]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Embedded Runge–Kutta pairs and the FSAL property
@@ -258,6 +258,50 @@ solution of a mixed family is not conservative, which the author accepts since i
 advances the solution (§3). Embedded pairs for the third-order P-ERK are left open, because base
 and embedded methods must then satisfy more order conditions (§7).
 
+## Embedded weights in positivity-preserving steps
+
+- **Candidates for weight adaptation.** In the
+  [adaptive-weight Runge–Kutta methods](/methods/adaptive-weight-runge-kutta.md) of
+  [Nüßlein et al. (2021)](/sources/nusslein-2021.md) the embedded weights play two roles:
+  their difference to $b$ gives the truncation estimate, and they are candidate vectors whose
+  convex combinations with $b$ keep the update nonnegative (convex adaptation, §3.2). The
+  local error of an adapted step is estimated by the embedded estimate plus the weight
+  perturbation $\lVert h\sum_i(\tilde b_i-b_i)f(t_n+c_ih,Y_i)\rVert$ (page-local adapted
+  weights $\tilde b$; §4.2, Eqs. (4.1)–(4.2)). Their count of free weight directions agrees
+  with the null-rule analysis above: classical RK4 has none at order 3 (Table 1).
+- **Estimates around a corrector.** For the Patankar predictor–corrector of
+  [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) the embedded estimate is formed
+  from the uncorrected SDIRK predictor, so the controller is unaffected by the correction;
+  a more conservative variant adds the size of the correction (Remarks 3.20–3.21). The
+  embedded method "only provides truncation error estimates and does not need to be
+  positive" (§4.2). See [modified Patankar methods](/methods/modified-patankar-methods.md).
+
+## Embedded estimates without a second weight vector
+
+The embedded idea, two solutions of consecutive orders from shared work, is used outside
+Runge–Kutta tableaux.
+
+- **Single-stage Taylor methods.** [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md)
+  (§5.2, Eqs. (63)–(65), Algorithms 1, 3) obtain an embedded solution for Lax–Wendroff flux
+  reconstruction by truncating the Taylor series of the time-averaged flux one term earlier
+  and dropping the interface terms in both updates, so no extra communication is needed.
+  The estimate feeds the PID controller and weighted RMS norm of Ranocha et al. with the
+  parameters tuned for BS3(2)3F and costs about 4%; that the difference is a local error
+  estimate of the stated order is asserted, not proved
+  *(compiler remark, §5.2)*. See
+  [step-size control](/methods/step-size-control.md).
+- **Spectral deferred correction.** [Saupe et al. (2025)](/sources/saupe-2025.md) (§2.2,
+  Algorithm 1) use the last two sweeps of SDC, of orders $k_{\max}$ and $k_{\max}-1$, as an
+  embedded pair with an elementary controller and local extrapolation; with this and a
+  residual-based variant, at least one adaptive parallel SDC variant is faster than the
+  embedded pairs ESDIRK5(3) and ARK5(4) of Kennedy and Carpenter on each of their test
+  problems, the pairs winning only on Schrödinger at low accuracy (§4.2, Fig. 10). See
+  [deferred correction](/methods/deferred-correction.md).
+
+Standard pairs also serve as reference solvers: SciPy's RK23 (Bogacki–Shampine), RK45
+(Dormand–Prince) and DOP853 in [Popov (2024)](/sources/popov-2024.md) (§2.3), and the
+Dormand–Prince 5(4) pair in Saupe et al. (2025, §4).
+
 ## Pairs in software
 
 [ARKODE](/software/arkode.md) ships explicit pairs of orders 2, 3, 4, 5, 6 and 8 (defaults
@@ -278,6 +322,11 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
 
 ## Qualifications
 
+- **Printed slip in Nurkhametova et al. (2026).** The embedded weights printed for the
+  SDIRK32 pair of Kennedy and Carpenter sum to about 0.379, so the printed $\hat b$ is not
+  even consistent; the main weights satisfy the order-3 conditions *(compiler check of the
+  printed tableau, §4.2.2, PDF p. 28)*. The SDIRK43 embedding satisfies the quadrature conditions to
+  order 3 only, as an order-3 embedding should.
 - Fekete et al. print the SSP coefficients and error measures of their new pairs nowhere in
   the paper; they defer them to a GitHub draft (their ref. [3]), and the coefficients of their
   numerically optimized embeddings are not printed (§2).
@@ -320,7 +369,7 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
   the visible weights of the second RK4 embedding (Fig. 2b, partly hidden by Fig. 2c) violate
   the order-2 conditions; and the positive-weight (5,3,3) embedding said to sit where the
   interval is maximal has an interval of about 2.28, below the base method's 2.51 (§4;
-  reader's checks). Their basis $Z_p$ is not unique for kernel dimension $\ge2$, so "null rule
+  *compiler checks of Figs. 1, 2b and 5a*). Their basis $Z_p$ is not unique for kernel dimension $\ge2$, so "null rule
   #$j$" and the scale of $k$ depend on the basis computed.
 - The Bogacki–Shampine estimator comparison of Belardo et al. (2026) selects the best
   estimator a posteriori on the problem it is evaluated on, with the exact solution, and the
@@ -345,3 +394,8 @@ uses a stiffly accurate, A-stable 7-stage embedded method of order 4 (§3, Fig. 
 - [Faleichik & Moisa (2026)](/sources/faleichik-2026.md) — §2 (Eq. (19)), §4.
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §2 (Eq. (2.2)), §2.5, §3, §4.1, §6, §8.
 - [Al Jahdali et al. (2022)](/sources/aljahdali-2022.md) — §2.1 (error-controlled pairs).
+- [Nüßlein et al. (2021)](/sources/nusslein-2021.md) — §3.2, §4.1 (Table 1), §4.2 (Eqs. (4.1)–(4.2)); arXiv v2.
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — Remarks 3.20–3.21, §4.2.
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.1–5.2 (Eqs. (61)–(65), Algorithms 1, 3), §6.3; arXiv v4.
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — §2.2 (Eqs. (14)–(15), Algorithm 1), §4.2 (Fig. 10); arXiv v2.
+- [Popov (2024)](/sources/popov-2024.md) — §2.3 (reference solvers); arXiv v1.

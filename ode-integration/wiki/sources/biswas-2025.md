@@ -237,6 +237,7 @@ Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 * [Embedded Runge–Kutta pairs and the FSAL property](/methods/embedded-runge-kutta-pair.md)
 * [Explicit Runge–Kutta methods with high weak stage order](/methods/explicit-runge-kutta-high-weak-stage-order.md)
 * [Generalized additive Runge–Kutta (GARK) methods and internal consistency](/methods/generalized-additive-runge-kutta.md)
+* [Linear advection equation](/benchmarks/linear-advection-equation.md)
 * [Optimal stability polynomials for explicit Runge–Kutta methods](/methods/optimal-stability-polynomial.md)
 * [Order reduction](/definitions/order-reduction.md)
 * [Rodas5P](/methods/rodas5p.md)

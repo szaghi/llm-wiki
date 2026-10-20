@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "A periodic shear layer whose perturbation rolls up into vortices; the sources use an inviscid Euler version to test multirate P-ERK families and error-based step-size control under shock capturing and positivity limits, and a resistive-MHD version to compare exponential integrators, Leja and Krylov evaluation, step-size controllers and implicit BDF."
+description: "A periodic shear layer whose perturbation rolls up into vortices; the sources use an inviscid Euler version to test multirate P-ERK families, error-based step-size control of Runge–Kutta and single-stage Lax–Wendroff schemes under shock capturing, AMR and positivity limits, and a resistive-MHD version to compare exponential integrators, Leja and Krylov evaluation, controllers and implicit BDF."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [verification, multirate, step-size-control, exponential, positivity]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -15,11 +15,11 @@ streams; the perturbation grows and rolls up into vortices whose fine structure
 depends on numerical dissipation. For time integration it is a stress test of
 **nonlinear** stability: the semi-discretization is a convection-dominated DG or
 finite-difference system whose spectrum, shock-capturing activity and positivity
-margins change during the run. Three sources use it, in two physical settings.
+margins change during the run. Four sources use it, in two physical settings.
 
 ## Euler setting
 
-Both Euler setups are periodic on $[-1,1]^2$ with ratio of specific heats 1.4, the switch function
+The Euler setups are periodic on $[-1,1]^2$ with ratio of specific heats 1.4, the switch function
 $B(y)=\tanh(15y+7.5)-\tanh(15y-7.5)$ (page-local), pressure 1 and
 $v_2=\tfrac1{10}\sin(2\pi x)$:
 
@@ -27,10 +27,12 @@ $v_2=\tfrac1{10}\sin(2\pi x)$:
 |---|---|---|---|---|
 | [Doehring et al. (2024b)](/sources/doehring-2024-b.md), §7.2.1 | $\rho=\tfrac12+\tfrac34B$ | $\tfrac12(B-1)$ | $t=3$ | DGSEM $k=3$, HLLE, entropy-conservative volume flux, subcell shock capturing; $2^4\times2^4$ base cells with five AMR levels (finest $\Delta x=2^{-8}$) |
 | [Ranocha et al. (2025)](/sources/ranocha-2025.md), §6, eqs. 6.1–6.2 | $\rho=\rho_1+B(\rho_2-\rho_1)$, $\rho_1=1$, $\rho_2=\rho_1\frac{1+\mathcal A}{1-\mathcal A}$ | $B-\tfrac12$ | $t=5$ | entropy-stable Gauss DG with entropy projection, $32^2$ elements, degree 3 |
+| [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md), §6.1.2 | $\rho=\tfrac12+\tfrac34B$ | $\tfrac12(B-1)$ | $t=3$ | Lax–Wendroff flux reconstruction, degree 4, subcell blending limiter (maximal blending 0.002), AMR from 1024 to 13,957 elements (262,144 uniform) |
 
 with $\mathcal A$ the Atwood parameter (page-local), $\mathcal A=3/7$ or $0.7$, and DG
 degree $k$ (page-local). Doehring et al. take their setup from an earlier Trixi.jl
-study; Ranocha et al. from a study of entropy-stable Gauss DG. As printed, $B(0)=2\tanh7.5\approx2$, so $B$
+study; Ranocha et al. from a study of entropy-stable Gauss DG. Babbar & Chandrashekar's data are
+those of Doehring et al. *(compiler comparison of the printed formulas)*. As printed, $B(0)=2\tanh7.5\approx2$, so $B$
 ranges over $[0,2]$: Doehring et al.'s density runs from $\tfrac12$ to 2 and Ranocha et al.'s at
 $\mathcal A=3/7$ from 1 to 4, exactly twice as large, so both have density ratio 4 and the
 nominal $\rho_2/\rho_1=2.5$ of Ranocha et al. is exceeded in the layer; the velocity profiles
@@ -59,6 +61,14 @@ printed formulas, verified on both PDFs' printed equations, not in the sources)*
   the evolved variables lose [positivity](/properties/positivity-preservation.md) near
   $t\approx3$ even at Courant number 0.05 for SSP3(2)4, so **CFL-based control is not
   possible**, while error-based control runs directly (SSP3(2)4: 6618 evaluations).
+
+- **Error-based control of a single-stage scheme.** Babbar & Chandrashekar (2025, §5.2,
+  §6.1.2) run the shear layer with their single-stage
+  [Lax–Wendroff flux reconstruction](/methods/lax-wendroff-flux-reconstruction.md), whose
+  embedded solution comes from truncating the time-averaged flux one order lower, under the
+  PID controller and tolerance $10^{-6}$ of the error-based stepping above, with AMR at every
+  step; the case demonstrates the AMR and step control together and reports no step-count
+  comparison with CFL control.
 
 ## Resistive-MHD setting
 
@@ -99,6 +109,9 @@ $(10^{-4},10^{-4},10^{-4})$. Errors are $\ell^2$ against a run at $\mathrm{tol}=
 - Deka & Einkemmer's Fig. 1 shows case-IV snapshots at $t=2$ and $t=2.75$, beyond case IV's
   stated final time $t=1$; their abstract's "up to a factor of three" Leja gain is smaller
   than the factors 6–8 reported in §4.2.
+- Babbar & Chandrashekar (2025) give the AMR levels as (base, middle, maximum) $=(4,0,8)$, a
+  middle level below the base level; it is taken from a Trixi.jl example where a zero middle
+  level disables it, so it is unusual rather than wrong.
 - Doehring et al. (2024b) print the optimality of the KHI family as $\kappa=92.4\,\%$ (Table
   10) but call it "1.035 of the optimal" in the text, where $1/0.924\approx1.082$.
 
@@ -107,3 +120,4 @@ $(10^{-4},10^{-4},10^{-4})$. Errors are $\ell^2$ against a run at $\mathrm{tol}=
 - [Doehring et al. (2024b)](/sources/doehring-2024-b.md) — §4.1 (Fig. 5), §7.2.1 (Table 10).
 - [Ranocha et al. (2025)](/sources/ranocha-2025.md) — §6 (eqs. 6.1–6.2, Tables 4–5).
 - [Deka & Einkemmer (2022)](/sources/deka-2022.md) — §4.1 (Table 2, Eqs. 12–13), §4.2 (Figs. 2–6, Table 3), §4.3 (Figs. 7–8).
+- [Babbar & Chandrashekar (2025)](/sources/babbar-2025.md) — §5.2, §6.1.2; arXiv v4.

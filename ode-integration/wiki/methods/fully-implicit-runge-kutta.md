@@ -3,9 +3,9 @@ type: Method
 title: "Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)"
 description: "Runge–Kutta methods with a full Butcher matrix built on Gauss, Radau or Lobatto nodes: Gauss of order $2s$, Radau IIA of order $2s-1$ and Lobatto IIIC of order $2s-2$, with high stage order, A-, L-, B-stability and symplecticity as the family allows; the coupled $sd$-dimensional stage system and its preconditioning decide their cost."
 status: established
-aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods]
-tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration]
-timestamp: 2026-10-20T01:00:00Z
+aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods, Radau-Right, ADER-DG ODE solver]
+tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration, parallel]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)
@@ -38,7 +38,9 @@ incompressible flow and MHD ([Abu-Labdeh et al. 2023](/sources/abulabdeh-2023.md
 | Lobatto IIIC | $2s-2$ | $s-1$ (see below) | A-, L- and B-stable | not collocation |
 
 Orders and stage orders are from Southworth et al. (2022, §2.1 and the order labels
-of §7) and Farrell et al. (2021, §3.2); stability classes from Farrell et al. (2021,
+of §7) and Farrell et al. (2021, §3.2); [Čaklović et al. (2025)](/sources/caklovic-2025.md)
+(§2.1) give the same orders $2\mathsf M-1$ for Radau IIA ("Radau-Right") and $2\mathsf M-2$ for
+Lobatto collocation on $\mathsf M$ nodes; stability classes from Farrell et al. (2021,
 §3.2), who also note that every listed collocation family is A-stable; the Padé
 statement from [Sun et al. (2022)](/sources/sun-2022.md), §1, after Hairer–Wanner
 Table IV.5.13. The two-stage Lobatto IIIC tableau is
@@ -83,6 +85,15 @@ Further properties recalled by the sources:
   [Padé time integration](/methods/pade-time-integration.md) of linear structural dynamics
   without mentioning Gauss methods; on linear constant-coefficient problems that scheme's
   homogeneous propagator is that of $m$-stage Gauss.
+- **Stability functions as Padé approximants.** [Jin et al. (2025)](/sources/jin-2025.md)
+  (Table 4.1) classify the stability functions of 2-, 3- and 4-stage Lobatto IIIC (orders 2, 4,
+  6) as the $(0,2)$, $(1,3)$, $(2,4)$ Padé approximants and that of 3-stage Radau IIA (order 5) as
+  the $(2,3)$ one, all L-stable. Two-stage Lobatto IIIC has $R(z)=2/(z^2-2z+2)$, translated
+  from their variable $-z$ (§3.3). The 3-stage Lobatto IIIC function changes sign on the
+  negative real axis, which excludes it from their Parareal robustness theorem (Remark 3.7).
+  These methods are their fine [Parareal](/methods/parareal.md) propagators, because a fine
+  method with $\lvert R(-\infty)\rvert=1$ (Crank–Nicolson, Gauss) needs a bounded spectrum and
+  many fine steps per slice (§2.1, Remark 3.1).
 - Radau IIA is [stiffly accurate](/properties/stiff-accuracy.md), $a_{sj}=b_j$ and
   $c_s=1$, so $y_{n+1}=Y_s$ and the update step can be dropped; with invertible $A$ the
   stage derivatives of a kinematic variable can be eliminated through $A^{-1}\otimes I$
@@ -90,6 +101,25 @@ Further properties recalled by the sources:
 - Degree-$p$ discontinuous Galerkin in time with $(p+1)$-point Radau quadrature is
   equivalent to Radau IIA collocation, so solvers for these methods also solve DG in
   time on fixed slabs (Southworth et al. 2022, Remark 1).
+- **ADER-DG as an implicit Runge–Kutta method.** The ODE solver of
+  [Popov (2024)](/sources/popov-2024.md), an ADER scheme with a local DG predictor of degree
+  $\mathsf M$ (the source's $N$) on the $\mathsf M+1$ Gauss–Legendre nodes, is an
+  $(\mathsf M+1)$-stage implicit Runge–Kutta method with $A=B$, the predictor matrix of
+  [ADER time integration](/methods/ader-time-integration.md) (DG stiffness matrix inverse times
+  the diagonal mass matrix), Gauss weights $b$ and Gauss nodes $c$; Popov uses this form for
+  the stability function (§1.1–1.2, Eqs. (11)–(15)). He shows numerically that it is
+  A-stable for $\mathsf M\le60$ (plotted stability regions) and that $R$ has numerator degree
+  $\mathsf M$ over denominator degree $\mathsf M+1$ for $\mathsf M\le80$ (rank computation),
+  whence his "L1-stable"; he observes order $2\mathsf M+1$ at the nodes (§1.2, §2.1). Both are
+  numerical evidence for finitely many degrees, not proofs, and the paper does not relate the
+  scheme to known methods. *(Compiler remark, not in the source:* for linear autonomous
+  problems the nodal quadrature of $f$ is exact, so the scheme is then upwind DG in time of
+  degree $\mathsf M$, whose stability function is the $(\mathsf M,\mathsf M+1)$ Padé
+  approximant, that of $(\mathsf M+1)$-stage Radau IIA, consistent with the DG–Radau
+  equivalence above; the ADER page records a numerical check of this for $\mathsf M\le12$.)
+- **Dense output.** Inside the step the collocation polynomial is accurate to order $\mathsf M$
+  only, against up to $2\mathsf M$ at the step end ([Saupe et al. (2025)](/sources/saupe-2025.md),
+  §2.1, after Hairer–Nørsett–Wanner); see [dense output](/methods/dense-output.md).
 
 ## The stage system
 
@@ -146,6 +176,25 @@ $A^{-1}\otimes M+h\,I_s\otimes K$. Three further strategies appear:
 
 Details, including the Newton-like approximations of the stage Jacobian, are on
 [solving the stage equations](/methods/implicit-stage-solvers.md).
+
+## Iterative and parallel-in-time solution of the collocation step
+
+The collocation step $Y=y_n\mathbf 1+hQf(Y)$, $Q=A$, can also be solved by a preconditioned
+fixed-point iteration instead of Newton on the coupled system. Spectral deferred correction
+(SDC) sweeps $Y^{(k+1)}-hQ_\Delta f(Y^{(k+1)})=y_n\mathbf 1+h(Q-Q_\Delta)f(Y^{(k)})$ with a cheap
+$Q_\Delta$, so that $K$ sweeps solve $K\mathsf M$ systems of size $d$ instead of one system of size
+$\mathsf Md$ (Saupe et al. 2025, §2.1, Eq. (12); Čaklović et al. 2025, §2.1). Classical SDC with
+lower-triangular $Q_\Delta$ is an iterated implicit Runge–Kutta method of van der Houwen &
+Sommeijer, and a diagonal $Q_\Delta$ makes the node solves of each sweep parallel; after $K$ sweeps
+the order is $\min(K,p)$, as recalled by Čaklović et al. (§1, §3.1). See
+[diagonal SDC](/methods/parallel-sdc.md) and [deferred correction](/methods/deferred-correction.md).
+Čaklović et al. (2025, §1.1) recall that stage-parallel diagonalization and GMRES-preconditioned
+approaches "struggle to outperform sequential time-stepping" for large problems, in line with
+Munch et al.'s finding that stage parallelism pays off only near the strong-scaling limit
+(below). [Gander & Palitta (2024)](/sources/gander-2024.md) (§7) state, citing Kressner–Massei–Zhu,
+that all-at-once Runge–Kutta discretizations have a circulant-plus-low-rank structure to which
+their [ParaDiag](/methods/paradiag.md) solver applies; they show it only for backward Euler and
+BDF.
 
 ## Cost and accuracy in the sources
 
@@ -209,6 +258,22 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
   decoupled blocks concurrently pays off only near the strong-scaling limit, below
   about $10^4$ unknowns per process, with speedup bounded by $s$; far from it the
   stage-parallel variant loses about 13–20 %.
+- **Against parallel SDC.** Under a cost model, diagonal SDC on 4 Radau IIA nodes beats the
+  L-stable ESDIRK4(3)6L[2]SA on the Lorenz system and on Allen–Cahn, and on Allen–Cahn also in
+  measured MPI wall time (Čaklović et al. 2025, §4.2, §4.4). On each of four stiff problems at least
+  one adaptive parallel SDC variant beat the order-5 embedded pair used there (ESDIRK5(3) on van
+  der Pol and the quench problem, ARK5(4) on Schrödinger and Allen–Cahn) in measured wall time;
+  ARK5(4) was faster on Schrödinger at low accuracy (Saupe et al. 2025, §4.2, Fig. 10).
+- **Very high order: ADER-DG.** In 500-digit arithmetic Popov (2024, §2.1) observes nodal
+  orders $2\mathsf M+1$ up to $\mathsf M=60$ (121.01) and order $\mathsf M+1$ for the in-step
+  polynomial on non-stiff problems. On the stiff flame problem $y'=y^2-y^3$, $y(0)=\delta$
+  (page-local), the fitted nodal orders saturate near 8 for $\delta=10^{-4}$ and near 4 for
+  $\delta=10^{-5}$, where degree 1 places the front too late; the same artefact is stated, not
+  shown, for scipy's Radau IIA (§2.2, Table 7, Fig. 11). Per Newton iteration the scheme
+  assembles an $(\mathsf M+1)d$-dimensional Jacobian system, like an $s$-stage method's $sd$
+  system; Picard iteration diverges on the stiff problem at large steps (§2.2–2.3). In CPU time
+  its mpmath implementation is slower than scipy's explicit pairs and Radau IIA(5) at comparable
+  order but reaches errors they cannot (§2.3, Fig. 12; hardware not stated).
 
 ## Qualifications
 
@@ -231,8 +296,8 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
   also define stage order as $\min\{q,p\}$ for a stage error $\mathcal O(h^{q+1})$, a
   variant of the usual definition through $C(q)$ (§2).
 - Abu-Labdeh et al. (2023) print Table 2 rates that differ slightly from their Table 1
-  data for three-stage Gauss (velocity 2.4 against a recomputed 2.31; reader's check on the
-  source). Taddei et al. (2026) print $h=0.20,0.10,0.05$ in the caption of Table 1, whose
+  data for three-stage Gauss (velocity 2.4 against 2.31 recomputed from Table 1 *(compiler check, not in the
+  sources)*). Taddei et al. (2026) print $h=0.20,0.10,0.05$ in the caption of Table 1, whose
   header and text use $0.025,0.05,0.10$; at $h=0.10$ their four-stage error exceeds the
   three-stage one, against their text.
 - Southworth et al. (2022) state in the abstract that fourth-order Gauss needs
@@ -243,6 +308,18 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
 - The real Schur and condition-number results assume the field of values of the
   linearization lies in the closed left half-plane (Southworth et al. 2022,
   Assumption 2), stronger than eigenvalue stability for non-normal operators.
+- **"Up to order $2\mathsf M$".** Saupe et al. (2025, §2.1) write that Gauss–Legendre,
+  Gauss–Lobatto and Gauss–Radau nodes give superconvergence "up to order $2\mathsf M$" at the step
+  end, citing Hairer–Wanner. Only Gauss nodes reach $2\mathsf M$; Radau IIA reaches $2\mathsf M-1$ and
+  Lobatto $2\mathsf M-2$, as the family table and Čaklović et al. (2025, §2.1) state. Gauss nodes
+  also exclude the step end, which then needs the update $y_n+hb^\top f(Y)$.
+- Popov's (2024) A- and L-stability claims rest on plots for $\mathsf M\le60$ and on rank
+  computations for $\mathsf M\le80$; no proof is given. His §2.3 count of "at least
+  $(N+1)^2$" right-hand-side evaluations per Picard iteration (and as many Jacobians per Newton
+  iteration) is inconsistent with his own predictor system, Eq. (11), which evaluates $f$ only
+  at the $\mathsf M+1$ nodes, the $s$-stage count with $s=\mathsf M+1$ *(compiler check of
+  Eq. (11), not in the sources)*. This weakens his conclusion that the scheme costs more than
+  implicit Runge–Kutta methods.
 
 # Citations
 
@@ -254,3 +331,8 @@ Details, including the Newton-like approximations of the stage Jacobian, are on
 - [Munch et al. (2024)](/sources/munch-2024.md) — §2 Eqs. (1)–(3); §4–7.
 - [Taddei et al. (2026)](/sources/taddei-2026.md) — §1.1; §3.1 Eqs. (14)–(18); §3.2; §5.1.1 Table 1; §5.2.1 Table 2, Figs. 9–11.
 - [Song & Eisenträger (2022)](/sources/song-2022.md) — Eqs. (71), (76), (82) (roots of the Padé denominators).
+- [Čaklović et al. (2025)](/sources/caklovic-2025.md) — arXiv v2: §1, §1.1, §2.1, §3.1, §4.2, §4.4.
+- [Saupe et al. (2025)](/sources/saupe-2025.md) — arXiv v2: §2.1 (Eq. (12), dense output), §4.2 (Fig. 10).
+- [Jin et al. (2025)](/sources/jin-2025.md) — arXiv v2: §2.1, Remark 3.1, §3.3 (Remark 3.7), Table 4.1.
+- [Gander & Palitta (2024)](/sources/gander-2024.md) — arXiv v2: §7.
+- [Popov (2024)](/sources/popov-2024.md) — arXiv v1: §1.1–1.2 (Eqs. (11)–(15)), §2.1–2.3 (Table 7, Figs. 11–12).

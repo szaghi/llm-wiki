@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-19T00:00:00Z
+timestamp: 2026-10-20T08:00:00Z
 ---
 
 # Notation registry
@@ -25,7 +25,7 @@ page that needs both meanings renames one locally and says so: $\gamma$
 $\gamma_j$; relaxation parameter $\gamma_n$), $\alpha$ (Shu–Osher coefficients; Rosenbrock coefficients;
 the angle of A($\alpha$)-stability), $\eta$ (the entropy or invariant
 $\eta(y)$; the integer argument of the simplifying assumption $C(\eta)$), $k$ (number of steps of a multistep method; the exponent order
-$\min(p,\hat p)+1$ of a PID controller), $\beta$ (PID exponents $\beta_1,\beta_2,\beta_3$;
+$\min(p,\hat p)+1$ of a PID controller; the Parareal iteration index), $\beta$ (PID exponents $\beta_1,\beta_2,\beta_3$;
 multistep coefficients $\beta_j$; Shu–Osher $\beta_{ij}$). $M$ is reserved for the mass matrix,
 never a node count or a multirate ratio.
 
@@ -136,6 +136,8 @@ never a node count or a multirate ratio.
 |---|---|---|
 | $\eta(y)$ | a convex entropy, energy or other invariant functional of the solution | $\eta'(y)$ its gradient; the page states which |
 | $\gamma_n$ | relaxation parameter of step $n$ | relaxed solution $y^{\gamma}_{n+1}=y_n+\gamma_n(y_{n+1}-y_n)$ at time $t_n+\gamma_nh$ (incremental-direction technique: at $t_n+h$); distinct from the Rosenbrock $\gamma$ |
+| $y_i'=\sum_{j}\bigl(p_{ij}(y)-d_{ij}(y)\bigr)$ | production–destruction system: $p_{ij}\ge0$ is the rate from constituent $j$ to $i$, $d_{ij}\ge0$ the rate from $i$ to $j$ | conservative when $p_{ij}=d_{ji}$ (then $\mathbf 1^\top y$ is invariant); $d_{ii}=p_{ii}=0$ |
+| $\varpi_i$ | Patankar weight denominator: a modified Patankar scheme multiplies a production term $p_{ij}$ by $y^{n+1}_j/\varpi_j$ and a destruction term $d_{ij}$ by $y^{n+1}_i/\varpi_i$ | sources write $\sigma_i$ or $\pi_i$ (both registry symbols) |
 
 
 ## 9. Linear multistep methods
@@ -148,3 +150,13 @@ never a node count or a multirate ratio.
 | $r_n=h_n/h_{n-1}$ | step-size ratio of a variable-step method | |
 | $G$ | symmetric positive definite matrix of a G-norm, $\lVert Y\rVert_G^2=\sum_{i,j}g_{ij}\langle y_i,y_j\rangle$ | G-stability |
 | $\mu_1,\dots,\mu_k$ | Nevanlinna–Odeh multipliers: the scheme is tested with $y_{n+k}-\sum_j\mu_jy_{n+k-j}$ | sources' $\eta_j$ are translated ($\eta$ is the registry entropy) |
+
+## 10. Parallel-in-time methods and spectral deferred correction
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $T_0<T_1<\dots<T_N$, $\Delta T$ | time slices of a parallel-in-time partition and the slice length | $N$ slices, usually one per process; $h$ stays the step inside a slice |
+| $\mathcal F$, $\mathcal G$ | fine and coarse propagators: one-slice solution maps of an accurate and a cheap method | calligraphic, distinct from the elementary differential $F(\tau)$ and the NPRK $F(u,v)$ |
+| $U_j^{(k)}$ | Parareal iterate at $T_j$ after $k$ iterations, $U^{(k+1)}_{j+1}=\mathcal G(U^{(k+1)}_j)+\mathcal F(U^{(k)}_j)-\mathcal G(U^{(k)}_j)$ | $k$ is the iteration index here; the clash with the multistep $k$ is kept on purpose |
+| $Q$ | collocation (integration) matrix of a spectral deferred correction step on $\mathsf M$ nodes | the Butcher matrix $A$ of the underlying collocation method |
+| $Q_\Delta$ | approximation of $Q$ that preconditions an SDC sweep (lower-triangular, or diagonal for parallel-across-the-method SDC) | sources' $Q_\Delta$ |

@@ -136,6 +136,7 @@ Chunk 1 (2026-10-19); updated in later chunks. This source is cited on:
 * [CVODE](/software/cvode.md)
 * [Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)](/methods/diagonally-implicit-runge-kutta.md)
 * [Differential-algebraic equations and their Runge–Kutta treatment](/definitions/differential-algebraic-equation.md)
+* [Heat equation](/benchmarks/heat-equation.md)
 * [IMEX and additive Runge–Kutta methods](/methods/imex-runge-kutta.md)
 * [Linear multistep methods](/methods/linear-multistep-method.md)
 * [Multirate infinitesimal methods (MIS, MRI-GARK)](/methods/multirate-infinitesimal-methods.md)

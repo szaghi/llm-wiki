@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Robertson problem"
-description: "Robertson's three-species chemical kinetics system, with rate constants spanning nine orders of magnitude and solutions integrated to t = 1e5 or 1e11; a stiff test with real negative Jacobian eigenvalues on which explicit methods fail and implicit deferred-correction and ADER variants are compared."
+description: "Robertson's three-species chemical kinetics system, with rate constants spanning nine orders of magnitude and solutions integrated to t = 1e5 or 1e11; a stiff test with real negative Jacobian eigenvalues on which explicit methods fail, implicit deferred-correction and ADER variants are compared, and positivity-preserving schemes are tested with near-zero initial data."
 status: established
 aliases: [Robertson chemical kinetics, ROBER, Robertson (1966) problem]
-tags: [stiff, verification, implicit, deferred-correction]
-timestamp: 2026-10-19T20:00:00Z
+tags: [stiff, verification, implicit, deferred-correction, positivity]
+timestamp: 2026-10-20T10:00:00Z
 ---
 
 # Robertson problem
@@ -26,6 +26,17 @@ Table 6.5 of Koyaguerebo-Imé & Bourgault), and the sources integrate over very
 long intervals ($10^5$ and $10^{11}$). The right-hand sides sum to zero, so
 $y_1+y_2+y_3=1$ for all $t$; every Runge–Kutta or linear multistep method keeps this
 linear invariant *(compiler check, not in the sources)*.
+
+As a conservative [production–destruction system](/definitions/production-destruction-system.md)
+the nonzero rates are $p_{12}=d_{21}=10^4y_2y_3$, $p_{21}=d_{12}=0.04y_1$ and
+$p_{32}=d_{23}=3\cdot10^7y_2^2$ ([Torlo et al. 2022](/sources/torlo-2022.md), Eq. (69);
+see Qualifications). [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) (Eq. (36))
+write it in graph Laplacian form $y'=\mathbb G(y)y$ (page-local $\mathbb G$) with
+
+$$\mathbb G(y)=\begin{pmatrix}-0.04&10^4y_3&0\\0.04&-3\cdot10^7y_2-10^4y_3&0\\0&3\cdot10^7y_2&0\end{pmatrix},$$
+
+which has the required sign structure for $y\ge0$ only and $\mathbf 1$ as left null
+vector.
 
 ## Setups and results
 
@@ -57,7 +68,36 @@ multiplied by $10^4$. Only the implicit variants follow the reference: implicit
 linearly implicit IMDeC, and the explicit ADER and DeC fail early with wide
 oscillations. No error table is given.
 
+**Torlo et al. (2022), §7.1, Fig. 7.** [Patankar-type schemes](/methods/modified-patankar-methods.md)
+need positive data, so the zero initial components are replaced by $10^{-180}$; 20
+exponentially growing steps cover $t\in[10^{-10},10^{10}]$. The schemes that fall to first
+order for vanishing initial data, MPRK(2,2,α) with $\alpha>1$, MPRK(4,3,10,0.5),
+MPRKSO(2,2,0.001,10) and equispaced mPDeC11, miss the evolution of $y_2$ and sometimes of
+$y_3$; the non-conservative SI-RK2 and SI-RK3 "go to infinity". The steady state $(0,0,1)$
+cannot be overshot by positive conservative schemes, so oscillations are not the issue here.
+
+**Nurkhametova et al. (2026), §5.** Uncorrected SDIRK21 produces negative $y_2$, at
+magnitudes $10^{-10}$–$10^{-15}$, on runs to $t\approx10^{12}$; the Patankar
+predictor–corrector removes them (Figs. 2–4). Invariant error on $[0,10^4]$:
+$2.44\times10^{-15}$ (baseline), $2.22\times10^{-15}$ (final-stage correction),
+$3.99\times10^{-15}$ (all stages) (§5.2.1). Observed orders on $[0,5000]$ with tolerances
+$10^{-5}$–$10^{-8}$: 1.51, 3.47, 5.47 for SDIRK21, 32, 43 with the final-stage correction and
+1.95, 2.84, 3.76 with all stages corrected (Tables 4–5). With SDIRK43 at tolerance $10^{-7}$
+the correction cuts the run time on $[0,10^4]$ from 0.485 s to 0.090 s ($-81.4\%$), which the
+authors attribute to avoiding stiff dynamics in non-physical negative states (Table 6,
+Remark 3.22).
+
+**Izzo et al. (2025), §5.** The multistep Patankar methods of their Table 1 "exhibit reduced
+efficiency" on Robertson; no data are shown ([Izzo et al. 2025](/sources/izzo-2025.md)).
+
 ## Qualifications
+
+- **Printed slip in Torlo et al. (2022).** Eq. (69) prints $p_{32}=d_{23}=k_2y_2$ with
+  $k_2=3\cdot10^7$; the Robertson rate is $k_2y_2^2$, as in the ODE above and in the
+  graph Laplacian form of Nurkhametova et al. *(compiler check of p. 28 of the arXiv v5, not
+  in the sources)*. Nurkhametova et al. print the reaction scheme as
+  "$A\to B$, $B+B\to B+C\to A+C$", conflating $B+B\to B+C$ and $B+C\to A+C$ *(compiler check of
+  the printed scheme, §5.1)*.
 
 - The two studies share the system but not the protocol: Koyaguerebo-Imé & Bourgault
   measure fixed-step errors to $T=10^5$ against a high-order reference; Han Veiga et al.
@@ -69,3 +109,6 @@ oscillations. No error table is given.
 
 - [Koyaguerebo-Imé & Bourgault (2022)](/sources/koyaguerebo-2022.md) — §6.5 (Eq. (6.5), Table 6.5).
 - [Han Veiga et al. (2021)](/sources/hanveiga-2021.md) — §5.3 (Eq. (75), Fig. 10).
+- [Torlo et al. (2022)](/sources/torlo-2022.md) — §7.1 (Eq. (69), Fig. 7); arXiv v5.
+- [Nurkhametova et al. (2026)](/sources/nurkhametova-2026.md) — §4.1.1 (Eqs. (35)–(37)), §5.1.1, §5.2.1, §5.3 (Tables 4–5), §5.4 (Table 6), Figs. 2–4, 11–13.
+- [Izzo et al. (2025)](/sources/izzo-2025.md) — §5; arXiv v1.

@@ -94,11 +94,16 @@ independent of every other bundle and agnostic of every other repository
 
 ## Status
 
-**Chunk 4 staged 2026-10-20:** 20 sources on local time stepping,
-multirate and exponential methods, NPRK, EIN and Quinpi; 80 of 118
-ingested, 113 concept pages, 2766 bibliography entries. Next: chunk 5
-(exponential and parallel-in-time, DeC/ADER/multiderivative, positivity
-and Patankar).
+**Chunk 5 staged 2026-10-20:** 20 sources on modified Patankar and
+positivity-preserving schemes, parallel-in-time integration (Parareal,
+ParaDiag, parallel SDC), deferred correction, ADER and Lax–Wendroff flux
+reconstruction, exponential time differencing; 100 of 118 ingested, 131
+concept pages, 3374 bibliography entries. Next: chunk 6 (the last 18
+sources, including the six re-downloaded files), then the closing sweeps
+(whole-bundle deep lint, `bib_merge.py --dupes`, cross-year fuzzy sweep).
+
+**Chunk 4 committed 2026-10-20 (e2cab3d):** local time stepping, multirate
+and exponential methods, NPRK, EIN and Quinpi.
 
 **Chunk 3 committed 2026-10-19 (47079a7):** multistep and BDF methods,
 IMEX for relaxation and low-Mach problems, implicit stage solvers.
