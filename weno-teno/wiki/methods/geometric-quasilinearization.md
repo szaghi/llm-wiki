@@ -1,0 +1,174 @@
+---
+type: Method
+title: "Geometric quasilinearization (GQL)"
+description: "Geometric quasilinearization rewrites every nonlinear constraint of a convex admissible set as a family of constraints affine in the conservative variables, indexed by free auxiliary variables; the page gives the representation theorems, the three construction methods, the explicit representations and the bound-preservation proofs built on them."
+status: established
+aliases: [GQL, geometric quasi-linearization, GQL representation]
+tags: [bound-preserving, positivity, mhd, relativistic]
+timestamp: 2026-10-21T12:00:00Z
+---
+
+# Geometric quasilinearization (GQL)
+
+Geometric quasilinearization, introduced by
+[Wu & Shu (2023)](/sources/wu-2023-b.md), is an analysis and design tool
+for [bound-preserving](/properties/bound-preservation.md) schemes when the
+admissible set $G$ is cut out by **nonlinear** constraints $g_i(u)\succ0$
+(here and below $\succ$ means $>$ for strict constraints and $\ge$ for
+non-strict ones, as in the source, Eq. (3.1)). Its observation is
+geometric: a convex set is the intersection of its supporting halfspaces.
+Introducing auxiliary variables that are independent of $u$ and
+parametrize the boundary points of $G$, every nonlinear constraint becomes
+a family of constraints **affine in $u$**. Affine constraints commute with
+convex combinations and with the flux-difference structure of a
+conservative update, which is what bound-preservation proofs need.
+
+## Definitions
+
+Let $\zeta_{i*}\in\Theta_i$ denote the free auxiliary variables of
+constraint $i$ and their range (page-local symbols; the source writes
+$\boldsymbol\theta_{i*}$). Let $\varphi_i(u;\zeta_{i*})$ denote a function
+affine in $u$ (page-local). Following
+[Wu & Shu (2023)](/sources/wu-2023-b.md), Def. 3.1, the set
+$$G_*=\{u:\ \varphi_i(u;\zeta_{i*})\succ0\ \ \forall\zeta_{i*}\in\Theta_i,\ 1\le i\le I\}$$
+is a **GQL representation** of $G$ if $G_*=G$. Constraints already linear in
+$u$ (such as $\rho>0$) are kept as they are (Rem. 3.3). "Linear" means
+affine throughout (footnote 2). Let $G_L$ denote the set cut out by the
+linear constraints alone ($G_L=\mathbb R^m$ if there are none).
+
+## Representation theorems
+
+- **Constructive criterion** (Thm 3.2). If each $\varphi_i$ is affine in
+  $u$ and $\min_{\zeta_{i*}\in\Theta_i}\varphi_i(u;\zeta_{i*})=\lambda_i(u)\,g_i(u)$
+  with a scalar $\lambda_i(u)>0$ on $G_L$ (page-local), then $G_*=G$. The
+  source states it follows immediately from the definition; no separate
+  proof is printed.
+- **Necessity of convexity** (§3, Assumption 3.4). An intersection of
+  halfspaces is convex, so a GQL representation exists only for convex $G$.
+  The minimal hypothesis is "$G$ convex, $\mathrm{int}(G)\neq\emptyset$".
+  The $g_i$ themselves need not be concave.
+- **Smooth case** (Thm 3.9, proof in App. A). If $G$ is convex, open or
+  closed, with differentiable boundary, then
+  $$G=\{u:\ (u-u_*)\cdot n_*\succ0\ \ \forall u_*\in\partial G\},$$
+  with $n_*$ the inward normal at $u_*$, ">" for open and "≥" for closed $G$.
+- **General case** (Thm 3.10). Let $G$ satisfy Assumption 3.4, with
+  boundary pieces $\mathcal S_i=\partial G\cap\partial\{g_i\succ0\}$ on
+  which $g_i$ is $C^1$ (page-local $\mathcal S_i$), and, when strict
+  constraints exist, condition (3.7) (implied by convexity of the open
+  region of the strict constraints). Then
+  $$G=\{u:\ (u-u_*)\cdot n_{i*}\succ0\ \ \forall u_*\in\mathcal S_i,\ 1\le i\le I\}.$$
+  $G$ need not be open or closed. The proof projects an exterior point
+  onto $\mathrm{cl}(G)$ and uses the Karush–Kuhn–Tucker conditions, with
+  Slater's condition guaranteed by $\mathrm{int}(G)\ne\emptyset$ (Eqs.
+  (3.12)–(3.15)). At a non-smooth junction at most $m$ supporting
+  halfspaces are needed, instead of all of them (Rem. 3.12).
+
+## Construction methods
+
+1. **Gradient method** (Thm 4.1). If $\nabla g_i(u_*)\neq0$ on $\mathcal S_i$,
+   then $\varphi_i(u;u_*)=(u-u_*)\cdot\nabla g_i(u_*)$, the auxiliary
+   variable being the boundary point itself.
+2. **Cross-product method** (Thm 4.2). Parametrize $\mathcal S_i$ by
+   $u_*=U_i(\zeta_{i*})$, $\zeta_{i*}\in\mathbb R^{m-1}$; the normal is
+   a nonzero multiple of the $(m-1)$-ary cross product of the tangents
+   $\partial U_i/\partial\zeta^{(k)}_{i*}$ (Eq. (4.6)). This handles
+   constraints that are only implicit in $u$, such as $p(u)$ in
+   relativistic hydrodynamics. A physics-based parametrization in
+   primitive variables reduces the number of auxiliary variables
+   (Rems. 4.3, 4.5).
+3. **Constructive method** (§4.1.3). Propose $\varphi_i$ by method 1 or 2,
+   then verify the criterion of Thm 3.2, which bypasses the hypotheses of
+   Thms 4.1–4.2.
+
+## Explicit representations
+
+Wu & Shu derive (§4.2):
+
+- **Euler / Navier–Stokes**, $G=\{\rho>0,\ \rho e>0\}$ (Thm 4.4): $\rho>0$ and
+  $$\varphi(u;v_*)=E-\rho v\,v_*+\tfrac12\rho v_*^2>0\quad\forall v_*\in\mathbb R .$$
+  Its physical reading is $\varphi=\tfrac12\rho(v-v_*)^2+\rho e$, the total
+  energy seen from a frame moving at velocity $v_*$ (Rem. 4.6). Minimizing
+  over $v_*$ (at $v_*=v$) returns $\rho e$, so the constructive criterion
+  holds with $\lambda=1$ *(compiler check, not in the sources: expand
+  $E=\rho e+\tfrac12\rho v^2$)*. All three construction methods give this
+  representation.
+- **Euler with Tadmor's minimum entropy principle** (Thm 4.7): two
+  auxiliary variables $(\rho_*,v_*)$, a non-strict family affine in $u$
+  plus a term in $\rho_*^\gamma$.
+- **M1 radiative transfer** (Thm 4.8): radiation energy minus the radiation
+  flux projected on any unit vector is non-negative.
+- **Special relativistic hydrodynamics** (Thm 4.9): with $D>0$,
+  $E-m\,v_*-D\sqrt{1-v_*^2}>0$ for all $v_*\in(-1,1)$ in 1D ($m$ the
+  momentum, $D$ the relativistic mass density); with the entropy principle
+  a single family also implies the energy constraint (Thm 4.10).
+- **Ten-moment Gaussian closure** (Thm 4.11): positive definiteness of the
+  pressure tensor becomes $z^\top(\mathcal E-m\otimes v_*+\tfrac12\rho\,v_*\otimes v_*)z>0$
+  for all $v_*\in\mathbb R^2$, $z\ne0$, with $\mathcal E$ the energy tensor
+  (page-local).
+- **Ideal MHD** (Thm 4.12): $\rho>0$ and
+  $u\cdot n_*+\tfrac12\lvert B_*\rvert^2>0$ for all $v_*,B_*\in\mathbb R^3$,
+  with $n_*=(\tfrac12\lvert v_*\rvert^2,-v_*,-B_*,1)^\top$ in the ordering
+  $u=(\rho,\rho v,B,E)$. The gradient method recovers a representation
+  first found algebraically by Wu in 2018.
+- **Relativistic MHD** (Thm 4.13): an explicit family linear in $u$ and
+  indexed by $(v_*,B_*)$, although $p(u)$ and $v(u)$ are implicit.
+- **Multicomponent MHD** (Eqs. (6.4)–(6.5)): the ideal-MHD family plus
+  linear constraints on the partial densities.
+
+## Bound-preservation proofs built on GQL
+
+Because $\varphi(\cdot\,;\zeta_*)$ is affine, it suffices to bound
+$\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
+
+- **First-order Lax–Friedrichs for Euler.** With $f(u)=v\,u+p\,(0,1,v)^\top$,
+  $\pm f(u)\cdot n_*\le\big(\lvert v\rvert+p/(\rho\sqrt{2e})\big)\,u\cdot n_*<(\lvert v\rvert+c)\,u\cdot n_*$,
+  hence the scheme is BP under $\nu\le1$ with the global wave speed $a$
+  ([Wu & Shu (2023)](/sources/wu-2023-b.md), §5.1, Ex. 1.1; flux on
+  [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+- **Gas-kinetic (kinetic flux-vector splitting) scheme.** BP under the same
+  condition. The proof is much shorter than the classical one, because
+  $v_*$ commutes with the velocity integrals (§5.1, Ex. 1.2, Rem. 5.2).
+- **Navier–Stokes with central diffusion.** BP under
+  $a\frac{\Delta t}{\Delta x}+\frac{\Delta t}{\Delta x^2}\frac{2}{\bar\rho_i\mathrm{Re}}\max\{\eta_v,\gamma/\mathrm{Pr}\}\le1$,
+  $\eta_v$ the viscosity constant (page-local), with no convex
+  decomposition of convection and diffusion. The authors say the
+  decomposition approach gives stricter time-step limits (§5.2, Eq. (5.11),
+  Rem. 5.3), an assertion they do not quantify.
+- **Ten-moment Lax–Friedrichs in 2D.** BP under
+  $\frac{\Delta t}{\Delta x}a^{(1)}+\frac{\Delta t}{\Delta y}a^{(2)}<1$, via an
+  AM–GM bound on the GQL form (§5.3, Eqs. (5.16)–(5.18)).
+- **Multicomponent MHD.** The first-order update satisfies the GQL
+  constraint only up to a term $-\Delta t\,(v_*\cdot B_*)\,\mathrm{div}_{ij}\bar B$,
+  which ties bound preservation to a discrete divergence-free condition
+  (Thms 6.1–6.4); see
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
+## Relation to cell-average decompositions
+
+[Cui, Ding & Wu (2024)](/sources/cui-2024.md) relate the tangent lines of
+the critical polynomials of their optimal-decomposition problem, which
+touch the boundary of the feasible boundary-weight set, to geometric
+quasilinearization (§3.7, Fig. 4); see
+[optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md).
+
+## Qualifications
+
+- Wu & Shu (2023) was read in its 28-page arXiv v1; the SIAM Review version
+  of record is 43 pages, and its numbering may differ.
+- The extension of bound preservation to SSP time stepping is stated
+  without a stage-wise argument: the point-value hypothesis (6.12) and the
+  locally divergence-free property must hold at every stage (§6.2).
+- The arXiv v1 prints the bound of Eq. (6.21) as $\le\lvert b\rvert\rho^{1/2}\varphi$
+  and the jump coefficient of Thm 6.4 with $(\rho^{\pm})^{1/2}$; text layer
+  and page image agree. The bound that holds has the exponent $-1/2$:
+  with $\varphi=\rho e+\tfrac12\rho\lvert v-v_*\rvert^2+\tfrac12\lvert B-B_*\rvert^2$
+  (Thm 4.12's $n_*$ expanded),
+  $(v-v_*)\cdot(B-B_*)\le\rho^{-1/2}\varphi$, while the printed bound fails
+  for $\rho<1$ when $\lvert B-B_*\rvert=\rho^{1/2}\lvert v-v_*\rvert$ and
+  $\rho e$ is small *(compiler check, not in the sources: Cauchy–Schwarz and
+  AM–GM)*. Whether the version of record corrects it is not known.
+
+# Citations
+
+- [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Def. 3.1; Thm 3.2; Assumption 3.4; Thms 3.9, 3.10 (App. A, Eqs. (3.12)–(3.15)); Rems. 3.3, 3.12; Thms 4.1, 4.2 (Eq. (4.6)); §4.1.3; Thms 4.4, 4.7–4.13 and Rem. 4.6; §5 (Eqs. (5.11), (5.16)–(5.18)); §6 (Thms 6.1–6.4).
+- [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §3.7, Fig. 4 (link to GQL).

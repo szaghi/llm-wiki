@@ -553,3 +553,40 @@ October 2026), not the corpus, and the build takes about two and a half
 minutes. Site search is per part: a bundle's search covers that bundle, and
 the documentation's search no longer finds wiki pages. The dev server still
 builds the whole site as one.
+
+## D29 — WENO/TENO bundle (2026-10-21)
+
+**Decision (user):** a new bundle `weno-teno` for high-order discretizations
+of hyperbolic conservation laws and compressible flows, compiled from the
+207 PDFs of `~/papers/mosaic/weno-teno` (the user's research bibliography,
+2021–2026 papers) in chunks of 20 (D26), each staged for the human's review
+and commit before the next starts, with a per-chunk digest in
+`weno-teno/INGESTION-ISSUES.md`.
+
+**Overlap with `high-order-capturing-schemes`.** The subjects overlap (WENO,
+TENO, CWENO, positivity limiters), the sources hardly do: three of the 207
+works are also Source pages there (and three in `div-free-amr`, three in
+`astrophysical-simulation-codes`). The user chose a new bundle; D12 and D17
+hold as for every bundle: a shared work is read again here, in this
+bundle's notation, the bundle never links to another bundle, and it builds
+its own registry. The archive also covers what the older bundle does not
+(entropy-stable and kinetic-energy-preserving DG and split forms, subcell
+and convex limiting, OEDG, geometric quasilinearization, Active Flux,
+multiphase interface capturing, GPU solvers).
+
+**The archive's composition, recorded because it shapes the bundle:** the
+page-1 and checksum check found 205 distinct works in 207 files. Two files
+are byte copies of other files of the archive (the "Wang 2023" C&F file
+holds Li et al. 2022, the "Li 2024" JCP file holds Liang et al. 2022) and
+one file holds another paper than its name says (the "Feng 2026" file holds
+Wang, Don & Wang 2023, which is ingested from it). Two works are missing
+(Feng et al. 2026, Li et al. 2024); the human decides on their re-download.
+Those sources are ingested in the last chunk, so the worklist never shows a
+file that has no real source behind it.
+
+**How the scope is kept:** papers whose main subject is a physical model, a
+turbulence study, a time integrator or a solver are ingested in full for
+their discretization content and listed in the issues file as candidates
+for a D17 copy into another bundle; no copy is made without the human's
+decision. Chunk 1 holds the reviews and the papers that fix the vocabulary,
+so the registry and the reading guide are built from them.

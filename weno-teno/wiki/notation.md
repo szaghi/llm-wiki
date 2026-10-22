@@ -1,0 +1,190 @@
+---
+type: Definition
+title: "Notation registry"
+description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
+status: established
+tags: [notation, meta]
+timestamp: 2026-10-21T14:00:00Z
+---
+
+# Notation registry
+
+Every concept page of this bundle writes mathematics in the symbols below.
+A source's own symbols are translated on its Source page (`# Notation map`).
+The registry was seeded on 2026-10-21 from the first chunk: the TENO review,
+the WENO-Z, Z+, ZN, affine-invariant and alternative-WENO papers, the
+compact-stencil (ROUND) papers, central-upwind schemes, entropy-stable DG
+and subcell limiting, geometric quasilinearization and cell-average
+decomposition, OEDG and Active Flux. It follows the Jiang–Shu and
+Shu–Osher conventions for reconstruction and the summation-by-parts
+conventions for DG, because most sources do. Extend this registry, and
+log the extension, before writing a symbol it lacks.
+
+**Clashes kept on purpose.** A few letters carry two meanings in
+well-separated families; the family is always clear from the subscript or
+the page, and a page that needs both meanings renames one locally and says
+so: $\alpha$ (unnormalized weights $\alpha_k$ carry a stencil subscript;
+the DG–FV blending coefficient $\alpha$ of subcell limiting has none),
+$\gamma$ (ratio of specific heats; the TENO scale-separated measure
+$\gamma_k$ always carries a stencil subscript), $q$ (the exponent of
+nonlinear weights; never the entropy flux, which is $F_\eta$), $r$ (the
+number of points of a classical WENO candidate stencil; the slope ratio
+$r_i$ of TVD limiters carries a cell subscript), $N$ (the DG polynomial
+degree; grid sizes are written $N_x$, $N_x\times N_y$). $L$ is the
+left-eigenvector matrix $R^{-1}$, never the semi-discrete operator, which
+is $\mathcal L$.
+
+## 1. Conservation law
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $\partial_tu+\partial_xf(u)=0$ | one-dimensional conservation law | $u\in\mathbb R^m$ for a system of $m$ equations; vectors are not bold |
+| $\partial_tu+\sum_d\partial_{x_d}f^{(d)}(u)=0$ | multi-dimensional law, flux $f^{(d)}$ in direction $d$ | in 2D also $f^{(1)}=f$, $f^{(2)}=g$ when a page says so |
+| $A(u)=\partial f/\partial u$ | flux Jacobian | $A^{(d)}$ in direction $d$ |
+| $\lambda_l(u)$, $l=1,\dots,m$ | eigenvalues of $A$, ordered $\lambda_1\le\dots\le\lambda_m$ | |
+| $R$, $L=R^{-1}$ | right- and left-eigenvector matrices | evaluated at an interface average, $R_{i+1/2}$ (Roe or arithmetic, stated per page) |
+| $a$ | maximum wave speed, $a=\max_l\lvert\lambda_l\rvert$ | local (per interface, $a_{i+1/2}$) or global; sources' $\alpha$, $\lambda_{\max}$ |
+| $G$ | admissible set (invariant region) of states | e.g. $\{\rho>0,\ p>0\}$; convex unless a page says otherwise |
+| $S(u)$ | source term of a balance law $\partial_tu+\partial_xf(u)=S(u)$ | |
+
+## 2. Grid, time step and semi-discretization
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $x_i$, $\Delta x$ | grid points (finite difference) or cell centres (finite volume), uniform spacing | $x_{i+1/2}=x_i+\Delta x/2$ the interfaces; 2D indices $(i,j)$ with $\Delta y$ |
+| $I_i=[x_{i-1/2},x_{i+1/2}]$ | cell $i$ | element of a DG mesh also $K$ |
+| $u_i$ | point value $u(x_i)$ | finite-difference unknown |
+| $\bar u_i=\frac1{\Delta x}\int_{I_i}u\,dx$ | cell average | finite-volume and DG unknown |
+| $u^-_{i+1/2}$, $u^+_{i+1/2}$ | left state (from cell $i$) and right state (from cell $i+1$) at $x_{i+1/2}$ | sources' $u^L$, $u^R$; Wu–Shu-type traces $u^\pm$ inside a cell are translated to this convention |
+| $\hat f_{i+1/2}$ | numerical flux at $x_{i+1/2}$ | |
+| $\frac{d}{dt}u_i=-\frac1{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big)$ | conservative semi-discrete scheme | $\bar u_i$ in place of $u_i$ for finite volumes |
+| $\mathcal L$ | semi-discrete spatial operator, $\frac{d}{dt}u=\mathcal L(u)$ | |
+| $t^n$, $\Delta t$, $u^n$ | time levels and step | |
+| $\nu$ | CFL number, $\nu=a\Delta t/\Delta x$ in 1D | multi-D definitions stated per page |
+| $[\![a]\!]=a^+-a^-$ | jump across an interface | |
+| $\{\!\{a\}\!\}=\tfrac12(a^-+a^+)$, $\{\!\{a\}\!\}_{\log}=\dfrac{a^+-a^-}{\ln a^+-\ln a^-}$ | arithmetic and logarithmic means | |
+| $\mathbb P^N$ | polynomials of degree at most $N$ | $\mathbb Q^N$ tensor-product degree $N$ |
+
+## 3. Fluxes, splitting and Riemann solvers
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $h(u^-,u^+)$ | two-point numerical (surface) flux | monotone in the scalar case; LF, HLL, HLLC, Roe named per page |
+| $h^{\mathrm{LF}}=\tfrac12\big(f(u^-)+f(u^+)\big)-\tfrac a2(u^+-u^-)$ | (local) Lax–Friedrichs / Rusanov flux | global LF when $a$ is a domain maximum |
+| $f^\pm(u)=\tfrac12\big(f(u)\pm au\big)$ | Lax–Friedrichs flux splitting, $\pm\partial f^\pm/\partial u\ge0$ | finite-difference flux reconstruction acts on $f^+$ and (mirrored) $f^-$ |
+| $a^+_{i+1/2}\ge0\ge a^-_{i+1/2}$ | one-sided local speeds of central-upwind schemes | |
+| $s^-$, $s^+$ | HLL-type wave-speed estimates | sources' $S_L$, $S_R$ |
+| $f^{\mathrm{vol}}(u_j,u_l)$ | symmetric two-point volume flux of flux differencing | |
+| $f^{\mathrm{ec}}(u^-,u^+)$ | entropy-conservative two-point flux | |
+
+## 4. Nonlinear reconstruction: ENO, WENO, TENO
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $r$ | number of points of each candidate stencil of classical WENO; design order $2r-1$ | $r=3$ is WENO5 |
+| $K$ | number of points of the full (TENO) stencil | design order stated per scheme; $K$-point TENO is not always $K$th order |
+| $S_k$ | candidate stencil $k$, $k=0,1,\dots$, $S_0$ the most upwind | widths $r_k$ for TENO's incremental stencils; a page whose source numbers stencils differently says so |
+| $\hat f^{(k)}_{i+1/2}$ | candidate flux (or value) reconstructed on $S_k$ | $u^{(k)}$ for value reconstruction |
+| $d_k$ | linear (ideal, optimal) weights, $\sum_kd_k=1$ | sources' $\gamma_k$, $C_k$, $c_k$ |
+| $\beta_k$ | smoothness indicator of $S_k$ | Jiang–Shu form unless a page says otherwise; sources' $IS_k$ |
+| $\epsilon$ | regularization of the weights | values per page; never a vortex strength (renamed locally) |
+| $q$ | exponent of the nonlinear weights | Jiang–Shu $q=2$; WENO-Z $q=1$ or $2$; TENO $q=6$ |
+| $\alpha_k$, $\omega_k$ | unnormalized and normalized nonlinear weights, $\omega_k=\alpha_k/\sum_l\alpha_l$ | TENO's final weights also $\omega_k$ |
+| $\tau$ | global smoothness indicator of WENO-Z-type weights | subscript = number of points of the global stencil, $\tau_5=\lvert\beta_0-\beta_2\rvert$; it is not the power of $\Delta x$ it carries ($\tau_7=O(\Delta x^6)$, Li et al. 2022) |
+| $\gamma_k$ | TENO scale-separated smoothness measure, $\gamma_k=\big(C+\tau/(\beta_k+\epsilon)\big)^q$ | $C$ the TENO constant |
+| $\chi_k=\gamma_k/\sum_l\gamma_l$ | normalized measure | |
+| $\delta_k\in\{0,1\}$ | TENO cut-off flag (1 = stencil kept) | |
+| $C_T$ | TENO cut-off threshold | |
+| $g(\omega)$ | mapping function of mapped WENO | |
+| $u^{\mathrm T}(x)$, $\beta_{\mathrm T}$ | THINC hyperbolic-tangent profile and its steepness | $\beta_{\mathrm T}$ never written $\beta$, to keep $\beta_k$ |
+| $\tilde u_i$, $\tilde u_{i+1/2}$ | normalized cell average and normalized face value of the normalised-variable diagram | $\tilde u_i=(\bar u_i-\bar u_{i-1})/(\bar u_{i+1}-\bar u_{i-1})$ for a left-biased face |
+| $r_i$, $\psi(r_i)$ | slope (gradient) ratio and TVD limiter | |
+
+## 5. Gas dynamics and MHD
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $\rho$, $v$, $p$ | density, velocity (vector in multi-D, components $v_1,v_2,v_3$), pressure | sources' $u$ for velocity is translated |
+| $E=\frac{p}{\gamma-1}+\tfrac12\rho\lvert v\rvert^2$ | total energy per unit volume | ideal gas |
+| $e$, $H$, $c$ | specific internal energy, specific total enthalpy, sound speed $c=\sqrt{\gamma p/\rho}$ | |
+| $\gamma$ | ratio of specific heats | sources' $\Gamma$ |
+| $u=(\rho,\rho v,E)$ | conserved variables of the Euler equations | |
+| $s=\ln(p\rho^{-\gamma})$ | physical specific entropy | |
+| $B$, $\psi_{\mathrm{GLM}}$ | magnetic field; divergence-cleaning field of GLM-MHD | |
+| $W=(1-\lvert v\rvert^2)^{-1/2}$ | Lorentz factor (relativistic flows, $c=1$) | sources' $\gamma$ |
+| $M$, $\mathrm{Re}$, $\mathrm{Pr}$ | Mach, Reynolds and Prandtl numbers | $M$ never a matrix on gas-dynamics pages |
+
+## 6. Entropy and kinetic energy
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $\eta(u)$, $F_\eta(u)$ | convex (mathematical) entropy and its entropy flux, $F_\eta'=\eta'f'$ | sources' $(U,F)$, $(\eta,q)$; for Euler $\eta=-\rho s/(\gamma-1)$ unless a page says otherwise |
+| $w=\eta'(u)$ | entropy variables | |
+| $\psi=w\cdot f(u)-F_\eta(u)$ | entropy flux potential | |
+| $[\![w]\!]\cdot f^{\mathrm{ec}}=[\![\psi]\!]$ | Tadmor's entropy-conservation condition | |
+| $\kappa=\tfrac12\rho\lvert v\rvert^2$ | kinetic energy per unit volume | |
+
+## 7. Discontinuous Galerkin and summation-by-parts operators
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $N$ | DG polynomial degree; design order $N+1$ | sources' $k$, $p$, $K$ |
+| $u_h$ | DG solution, $u_h\vert_K\in\mathbb P^N$ | |
+| $\xi_j$, $\mathsf w_j$, $j=0,\dots,N$ | reference nodes and quadrature weights (Legendre–Gauss–Lobatto unless a page says Gauss) | sources' $\omega_j$; $\mathsf w$ keeps $\omega_k$ for WENO weights |
+| $M=\mathrm{diag}(\mathsf w_j)$, $D$ | mass (norm) matrix and nodal differentiation matrix | |
+| $Q=MD$, $B=\mathrm{diag}(-1,0,\dots,0,1)$ | SBP stiffness and boundary matrices | |
+| $Q+Q^\top=B$ | summation-by-parts property | |
+| $J$, $Ja^{(d)}$ | Jacobian of the element map and contravariant metric terms | |
+| $\alpha$ | DG–finite-volume blending coefficient of subcell limiting, $0$ = pure DG, $1$ = pure FV | |
+| $\theta$ | scaling factor of a Zhang–Shu-type limiter, $\tilde u_h=\theta(u_h-\bar u)+\bar u$ | $0\le\theta\le1$ |
+
+## 8. Bound preservation
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $G$ | admissible set (§1) | |
+| $g_i(u)$ | constraint functions, $G=\{u:g_i(u)>0\}$ | |
+| $u_*$, $n_*$ | free auxiliary state and normal of the geometric quasilinearization | |
+| $\varpi$ | boundary weight of a cell-average decomposition | the bound-preserving CFL condition is proportional to it |
+| $\nu_{\mathrm{BP}}$ | bound-preserving CFL number | definition stated per page |
+
+## 9. Spectral analysis
+
+| Symbol | Meaning | Note |
+|---|---|---|
+| $\vartheta=k_w\Delta x$ | reduced wavenumber, $k_w$ the wavenumber | sources' $\xi$, $w$, $\varphi$ |
+| $\tilde\vartheta(\vartheta)=\tilde\vartheta_r+\mathrm i\,\tilde\vartheta_i$ | modified wavenumber; dispersion (real part) and dissipation (imaginary part) | sign of $\tilde\vartheta_i$ stated per page (dissipative for $\tilde\vartheta_i\le0$ in the convention of Fu 2023) |
+
+## 10. Shared page-local symbols
+
+Symbols of a single method family, used on more than one page with the same
+meaning. They are page-local in the sense of §§1–9 (each page still defines
+them where it uses them), and listed here so that every page of the family
+uses the same letter.
+
+| Symbol | Meaning | Pages |
+|---|---|---|
+| $\sigma$, $\mu$ | scaling and translation of an affine map $u\mapsto\sigma u+\mu$ | affine-invariant WENO, scale invariance, ENO property |
+| $\mathsf m$ | descaler of affine-invariant weights | affine-invariant WENO, WENO-JS, scale invariance |
+| $\langle f\rangle$ | stencil mean | affine-invariant WENO |
+| $\Delta^mf_i$ | $m$-th undivided difference centred at $x_i$ | WENO-ZN, troubled-cell indicators |
+| $\Theta$, $C_\Theta$ | WENO-ZN adaptive term and its constant | WENO-ZN (the adaptive-diffusion central-upwind flux uses its own page-local $\Theta$) |
+| $z_k$, $\zeta$, $\mu$ | WENO-Z+ ratio terms and the WENO-Z+M coefficient | WENO-Z+ |
+| $\mu_d$, $\sigma_i$, $b$, $b_1$, $b_2$, $\xi_{\mathrm A}$ | TENO-A discontinuity measure, its mapping and constants | adaptive TENO, troubled-cell indicators |
+| $x^c_i$, $\varsigma$, $\mathcal T$, $\mathcal A$ | THINC jump centre, jump sign and profile parameters | THINC, TENO-THINC, symmetry preservation |
+| $\mathcal R$, $\mu_0$, $\mu_1$ | normalised reconstruction operator, intercept and slope of a linear one | normalised-variable diagram, ROUND, numerical dissipation |
+| $u^{\mathrm{HLL}}$ | HLL intermediate state | HLL solvers, central-upwind, fluctuation-form FD-WENO |
+| $\mathcal C(u)$ | matrix of the non-conservative product $\mathcal C(u)\partial_xu$ | fluctuation-form FD-WENO, HLL solvers |
+| $\zeta$, $\bar\zeta_k$ | local characteristic variables $L_{i+1/2}u$ | characteristic decomposition, LCD central-upwind |
+| $\mathcal P$, $\mathcal M$, $\mathcal Q$ | diagonal weights of the central-upwind numerical diffusion | central-upwind, LCD central-upwind |
+| $\varsigma_e$, $\mathsf q$, $\mu_e$ | Kuzmin–Vedral blending factor, sensor exponent, element viscosity | WENO-stabilized continuous finite elements, artificial viscosity, troubled-cell indicators |
+| $\varkappa$ | directional anisotropy of a cell-average decomposition, $\in[-1,1]$ | optimal cell-average decomposition, Zhang–Shu limiter |
+| $c_0$ | CFL constant of the first-order bound-preserving scheme | optimal cell-average decomposition, bound preservation |
+| $\zeta_{i*}$, $\varphi_i$ | GQL auxiliary variables and affine constraint function | geometric quasilinearization, divergence-free magnetic field |
+| $\sigma^m_i$ | OEDG damping coefficient of mode $m$ in cell $i$ | OEDG, artificial viscosity |
+| $\mathcal T$, $V$, $\mathcal C$, $\mu_\bullet$ | periodic shift, control volumes, convective matrix and split weights of Coppola & Veldman | split convective forms, kinetic energy preservation, local conservation |
+| $\mathcal E$ | vortex strength | isentropic vortex, shock–vortex interaction |
+
+$\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
+(THINC/shift, non-conservative/convective matrix, Z+/characteristic
+variables, Z+M coefficient/affine translation); no page uses both families.

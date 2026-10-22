@@ -1,0 +1,86 @@
+---
+type: Result
+title: "Lax–Wendroff theorem"
+description: "The Lax–Wendroff theorem makes conservation, in flux form with consistent numerical fluxes, the condition for a convergent scheme to converge to a weak solution; the bundle's sources invoke it to justify local conservation, Active Flux and the subcell flux form of DGSEM."
+status: established
+aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
+tags: [finite-volume, finite-difference, dg]
+timestamp: 2026-10-21T12:00:00Z
+---
+
+# Lax–Wendroff theorem
+
+Solutions of nonlinear conservation laws develop discontinuities in finite time even from
+smooth data, so the natural setting is weak solutions; "for convergence to the weak
+solution …, a numerical method needs to be conservative (Lax–Wendroff theorem)"
+([Abgrall & Barsukow (2023)](/sources/abgrall-2023.md), §1). The theorem (Lax & Wendroff
+1960, cited by the sources, not ingested here) has two hypotheses the sources make explicit:
+the scheme is written in **conservation (flux) form**,
+
+$$\frac{d}{dt}\bar u_i=-\frac1{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big),$$
+
+and the numerical flux is **consistent** with the physical one. The sources use it in one
+direction only: conservation (with consistent fluxes) is what a scheme needs for
+convergence to a weak solution (Abgrall & Barsukow, §1). No source
+of this bundle restates the convergence hypotheses or the proof; the bundle records the
+theorem through what they derive from it.
+
+## The consistency condition
+
+[Coppola & Veldman (2023)](/sources/coppola-2023.md) (§2.4, Eq. (22)) write the semi-discrete
+scheme as $H\,\frac{d\phi}{dt}+(I-E^{-1})F\phi=0$, with $H$ a diagonal control-volume matrix,
+$E$ the circulant shift and $F\phi$ the vector of interface fluxes (page-local symbols of the
+source's matrix framework), and state the "classical" Lax–Wendroff condition as
+
+$$F\phi_a\,\mathbf 1=F(\phi_a)\qquad\text{for every constant }\phi_a,$$
+
+which "basically says that conservation and consistency imply that the numerical fluxes are
+a fair interpolation between the adjacent nodal values". They assume it at the generality of
+their framework and state that they "can not (yet) prove this" (§2.4).
+
+## Which schemes satisfy the flux-form hypothesis
+
+- **Every globally conservative scheme.** Coppola & Veldman prove that a discrete operator
+  with local support is locally conservative, i.e. of the form $(I-E^{-1})F$, if and only if
+  all its column sums vanish, which is global conservation (Lemma A.1, Observation 1): for
+  volume-consistent discretizations global and local conservation coincide, so every
+  globally conservative finite-difference scheme is a cell-centred finite-volume scheme with
+  an explicit numerical flux ([local conservation is equivalent to a flux
+  form](/results/local-conservation-flux-form.md)). They cite Perot: "any method that is
+  globally conservative, and that has weight functions with local support, must also be
+  locally conservative" (Remark 1).
+- **Active Flux.** The averages are updated by the exact finite-volume balance with the
+  interface point values as flux arguments, hence conservatively, while the point values are
+  free of the conservation constraint; Abgrall & Barsukow report that an analogue of the
+  Lax–Wendroff theorem for [Active Flux](/methods/active-flux.md) has been shown by
+  Abgrall (2020) (§1).
+- **DGSEM on Gauss–Lobatto nodes.** [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md)
+  (§2.1, Eq. (8)) rewrite the standard and split-form [DGSEM](/methods/dgsem.md) exactly in a
+  subcell flux-differencing form with high-order inter-node fluxes and state that this
+  "implies local subelement-wise conservation due to the well-known theorem of Lax and
+  Wendroff"; it is what allows a compatible subcell finite-volume scheme to be blended in
+  ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
+  [flux differencing](/methods/flux-differencing.md)).
+
+## Qualifications
+
+- What the sources cite is the conservation-and-consistency requirement; none of them
+  proves a convergence statement for its own scheme from it. Conservation does not select
+  the physically relevant weak solution: on the KPP rotating-wave problem the (conservative)
+  standard DGSEM with shock capturing gives clean but **nonentropic** solutions, while the
+  entropy-stable split-form DGSEM converges to the entropy solution
+  ([Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md), §5.1, Figs. 2–3;
+  [KPP rotating wave](/benchmarks/kpp-rotating-wave.md),
+  [entropy stability](/properties/entropy-stability.md)).
+- Rueda-Ramírez et al. attribute "local subelement-wise conservation" to the theorem; the
+  conservation itself follows from the flux form (8), while the theorem is what gives it
+  meaning for shock capturing.
+- Coppola & Veldman's dual-sided first-order scheme conserves mass, momentum and total
+  energy and gives a shock profile between the oscillating central and the smeared upwind
+  scheme in a 1D Euler test without added dissipation (§8.2); they make no entropy claim.
+
+# Citations
+
+- [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §1 (author preprint).
+- [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4 (Eqs. (18)–(22), Observation 1, Remark 1), App. A.1 (Lemma A.1), §8.2 (arXiv v1).
+- [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §2.1 (Eq. (8)), §5.1 (Figs. 2–3) (arXiv v2).

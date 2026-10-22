@@ -1,0 +1,152 @@
+---
+type: Definition
+title: "Approximate dispersion relation"
+description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio, and what the chunk-1 sources read off it for WENO, TENO, THINC and ROUND schemes."
+status: established
+aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
+tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
+timestamp: 2026-10-21T00:00:00Z
+---
+
+# Approximate dispersion relation
+
+The **approximate dispersion relation** (ADR) of a spatial discretization of
+$\partial_tu+\partial_xu=0$ is the map from the reduced wavenumber
+$\vartheta=k_w\Delta x\in[0,\pi]$ to the modified wavenumber
+$\tilde\vartheta(\vartheta)=\tilde\vartheta_r+\mathrm i\,\tilde\vartheta_i$ that
+the scheme effectively applies to a Fourier mode: $\tilde\vartheta_r$ measures
+dispersion (phase error, ideal $\tilde\vartheta_r=\vartheta$) and
+$\tilde\vartheta_i$ dissipation (ideal $0$). For a linear scheme the map is
+exact and analytic; for a nonlinear scheme (WENO, TENO, ROUND, THINC) it is
+*approximate*, evaluated numerically by the procedure of Pirozzoli (2006), which
+the sources use but do not restate ([Luo & Wu (2021)](/sources/luo-2021-b.md),
+§3; [Li et al. (2022)](/sources/li-2022-b.md), §3.3(3);
+[Deng (2023)](/sources/deng-2023.md), Figs. 18, 28;
+[Huang et al. (2026)](/sources/huang-2026.md), §5.2).
+
+## Linear schemes and the sign convention
+
+For a linear first-derivative approximation written as
+$(\partial_xu)_j\approx\frac1{\Delta x}\sum_lc_lu_{j+l}$ (page-local $c_l$, the
+operator coefficients), [Fu (2023)](/sources/fu-2023.md) (§2.5, Eqs. (15)–(16))
+gives
+
+$$\tilde\vartheta_r=\sum_lc_l\sin(l\vartheta),\qquad
+\tilde\vartheta_i=-\sum_lc_l\cos(l\vartheta),$$
+
+and calls $\tilde\vartheta_i\le0$ dissipative. *(Compiler check, not in the
+sources: inserting $u_j=\hat u\,e^{\mathrm ij\vartheta}$ gives
+$\frac{d\hat u}{dt}=\frac{1}{\Delta x}(-\mathrm i\tilde\vartheta_r+\tilde\vartheta_i)\hat u$,
+so the mode decays exactly when $\tilde\vartheta_i<0$ and grows, i.e. is
+anti-dissipated, when $\tilde\vartheta_i>0$.)* The same convention is used by
+[Luo & Wu (2021)](/sources/luo-2021-b.md) (§3: positive imaginary part
+= negative dissipation, "anti-diffusion") and by
+[Takagi et al. (2022)](/sources/takagi-2022.md) (§2.3, for THINC). All
+chunk-1 sources agree on this sign; none uses the opposite one.
+
+## Dispersion–dissipation splitting and optimization
+
+Fu's group designs the linear background schemes of TENO in spectral space
+([Fu (2021)](/sources/fu-2021.md), §4.1, Eqs. (20)–(24);
+[Fu (2023)](/sources/fu-2023.md), §2.5, Eqs. (12)–(16)). The operator is split
+into an antisymmetric (dispersive) and a symmetric (dissipative) part,
+
+$$\begin{aligned}
+D_{\mathrm{disp}}f(x)&=\frac1{\Delta x}\sum_{j=1}^na_j\big(f(x+j\Delta x)-f(x-j\Delta x)\big),\\
+D_{\mathrm{diss}}f(x)&=\frac1{\Delta x}\Big(b_0f(x)+\sum_{j=1}^nb_j\big(f(x+j\Delta x)+f(x-j\Delta x)\big)\Big),
+\end{aligned}$$
+
+($a_j$, $b_j$ page-local). The $a_j$ follow from an order constraint plus the
+minimization of the weighted error integral of Weirs and Candler (as recalled by
+Fu 2023)
+
+$$E=\int_0^\pi e^{\sigma(\pi-\vartheta)}\big(\tilde\vartheta_r-\vartheta\big)^2\,d\vartheta ,$$
+
+with a page-local weight $\sigma>0$ that trades low against high wavenumbers
+(Fu 2021 does not print the value used). The $b_j$ follow from an order
+constraint plus the dispersion-to-dissipation condition attributed to Hu et al.,
+which both Fu papers call "the approximate dispersion relation":
+
+$$\zeta=\frac{\big\lvert d\tilde\vartheta_r/d\vartheta-1\big\rvert}{-\tilde\vartheta_i}\approx O(10)$$
+
+($\zeta$ page-local; Fu 2021 prints the numerator without the absolute value,
+Fu 2023 with it, and plots the regularized form
+$(\lvert d\tilde\vartheta_r/d\vartheta-1\rvert+10^{-3})/(-\tilde\vartheta_i+10^{-3})$,
+Fig. 3). The design idea is that dissipation should be just large enough to damp
+the modes whose phase is already wrong. [Fu (2021)](/sources/fu-2021.md)
+(§3.1) argues that upwind-biased large stencils "typically do not satisfy the
+approximate dispersion-relation even with sophisticated optimization methods",
+whereas symmetric stencils let dispersion and dissipation be optimized
+separately once the order constraint is relaxed; this is why its TENO8-AA and
+TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
+[adaptive TENO](/methods/adaptive-teno.md)).
+
+**Two meanings of the name.** In the Fu papers "approximate dispersion relation"
+names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
+Li et al., Deng and Huang et al., it names the numerically evaluated
+$\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
+condition is imposed on the curve) but a page citing "the ADR" must say which
+is meant.
+
+## What the sources read off the ADR
+
+- **TENO restores the linear scheme up to a cut-off wavenumber.** Five-point
+  TENO keeps the exact dispersion and dissipation of its background linear scheme
+  up to intermediate wavenumbers, and the cut-off $C_T$ fixes where it departs
+  from it; WENO-JS and WENO-Z depart earlier
+  ([Fu (2023)](/sources/fu-2023.md), §2.5, Fig. 2, $C_T\in\{10^{-5},10^{-6},10^{-7}\}$;
+  Fig. 3 for TENO8 and the spectrally optimized TENO8-opt). The same property
+  is stated without a new ADR computation by
+  [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.2). See
+  [targeted ENO](/methods/targeted-eno.md).
+- **Negative dissipation in WENO-Z+.** The ADR of WENO-Z+ with large
+  coefficient $\lambda$ has $\tilde\vartheta_i>0$ in a narrow band around
+  $\vartheta\approx1.1834$, and decreasing $\lambda$ removes it only slowly
+  there; taking the square root of the extra term removes it, and the resulting
+  WENO-Z+M has a better ADR than WENO-Z, WENO-Z+ and, over a broad band, than
+  the linear fifth-order upwind scheme UD5 itself
+  ([Luo & Wu (2021)](/sources/luo-2021-b.md), §§3–4, Figs. 1–4). See
+  [WENO-Z+](/methods/weno-z-plus.md).
+- **WENO-ZN.** Lower dissipation and dispersion error over a large range of
+  medium wavenumbers than WENO-JS and WENO-Z at fifth and seventh order, with
+  UW5 and UW7 as references ([Li et al. (2022)](/sources/li-2022-b.md),
+  §3.3(3), Fig. 2). See [WENO-ZN](/methods/weno-zn.md).
+- **THINC is anti-diffusive at $\beta_{\mathrm T}=1.6$.** Its modified wavenumber
+  has a positive imaginary part in some ranges, like the TVD Superbee limiter,
+  which is why it is confined to discontinuities
+  ([Takagi et al. (2022)](/sources/takagi-2022.md), §2.3, citing Deng et al.
+  2018). See [THINC](/methods/thinc-reconstruction.md).
+- **Compact ROUND schemes.** The dissipative ROUND formulations improve
+  dispersion over second-order shock-capturing schemes, and the low-dissipative
+  ones are "close to the linear third-order scheme"
+  ([Deng (2023)](/sources/deng-2023.md), Figs. 18, 28); the Part-2 ROUND and
+  LD-ROUND have lower dispersion error at high wavenumbers than WENO5-JS and
+  WENO3-NN, and ROUND markedly lower dissipation there
+  ([Huang et al. (2026)](/sources/huang-2026.md), §5.2, Fig. 5). See
+  [ROUND schemes](/methods/round-scheme.md).
+
+## Qualifications
+
+- The ADR of a nonlinear scheme depends on the test signal (a single Fourier
+  mode at given amplitude); none of the chunk-1 sources reports how its curves
+  change with amplitude or with the regularization $\epsilon$.
+- ADR conclusions are linear-advection conclusions. They predict resolution of
+  smooth broadband content but say nothing about robustness at shocks; Luo & Wu
+  choose their $\lambda=579$ not from the ADR but as the largest value for which
+  the Woodward–Colella blast wave still runs ($\lambda=580$ fails), and their
+  Fig. 2 shows the ADR for $\lambda=600$, a value they report as unusable.
+- [Luo & Wu (2021)](/sources/luo-2021-b.md) (§6) present "beating the
+  underlying linear scheme" as contrary to the view, attributed to Pirozzoli,
+  that nonlinear shock-capturing mechanisms always degrade spectral
+  properties; the mechanism is negative nonlinear dissipation (see
+  [numerical dissipation](/definitions/numerical-dissipation.md)).
+
+# Citations
+
+- [Fu (2021)](/sources/fu-2021.md) — §3.1, §4.1, Eqs. (20)–(24): splitting, error integral, $\zeta\approx O(10)$.
+- [Fu (2023)](/sources/fu-2023.md) — §2.5, Eqs. (12)–(16), Figs. 2–3: sign convention, TENO spectra.
+- [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4, Figs. 1–4: Pirozzoli ADR, negative dissipation of WENO-Z+.
+- [Li et al. (2022)](/sources/li-2022-b.md) — §3.3(3), Fig. 2: WENO-ZN spectra.
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, §2.3: TENO and THINC spectral statements.
+- [Deng (2023)](/sources/deng-2023.md) — Figs. 18, 28: ROUND spectra.
+- [Huang et al. (2026)](/sources/huang-2026.md) — §5.2, Fig. 5: ROUND, LD-ROUND, WENO3-NN spectra.

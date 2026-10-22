@@ -1,0 +1,36 @@
+# Bundle card: the human-written part of the bundle registry (tools/bundles.py).
+# Counts and dates are derived from the wiki, never written here.
+title = "WENO, TENO and high-order compressible-flow schemes"
+summary = "High-order discretizations of hyperbolic conservation laws and compressible flows, 2021–2026: nonlinear reconstruction (WENO-JS, Z, Z+, ZN, affine-invariant, alternative and multi-resolution WENO, Hermite WENO, WCNS, TENO, CWENO, THINC hybrids, gradient-based and learned reconstruction), central-upwind schemes and characteristic decomposition, discontinuous Galerkin and flux reconstruction (entropy-stable and kinetic-energy-preserving split forms, subcell and convex limiting, OEDG, filtering), bound preservation (geometric quasilinearization, optimal cell-average decomposition), well-balanced and asymptotic-preserving schemes, Active Flux, shock tracking and moving meshes, immersed boundaries, multiphase flows and the GPU and AMR solvers that implement them."
+# Layer-1 archive of the bundle's PDFs (read-only), used by tools/worklist.sh
+corpus = "~/papers/mosaic/weno-teno"
+keywords = [
+  "WENO",
+  "WENO-Z",
+  "affine-invariant WENO",
+  "A-WENO",
+  "multi-resolution WENO",
+  "Hermite WENO",
+  "WCNS",
+  "TENO",
+  "CWENO",
+  "THINC",
+  "central-upwind",
+  "characteristic decomposition",
+  "discontinuous Galerkin",
+  "DGSEM",
+  "flux reconstruction",
+  "entropy stable",
+  "kinetic energy preserving",
+  "subcell limiting",
+  "OEDG",
+  "bound preserving",
+  "geometric quasilinearization",
+  "well-balanced",
+  "asymptotic preserving",
+  "Active Flux",
+  "shock tracking",
+  "immersed boundary",
+  "compressible multiphase",
+  "GPU solver",
+]

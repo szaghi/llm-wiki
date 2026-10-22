@@ -1,0 +1,107 @@
+---
+type: Property
+title: "Symmetry preservation"
+description: "Symmetry preservation has two meanings in the chunk-1 sources: keeping the mirror symmetry of a symmetric flow (Rayleigh–Taylor, 2D Riemann problems) in the presence of round-off, which low-dissipation schemes lose unless implemented consistently, and preserving the skew-symmetry of the continuous convective operator, which yields discrete conservation of kinetic energy; this page states both and the evidence on each."
+status: established
+aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
+tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
+timestamp: 2026-10-21T12:00:00Z
+---
+
+# Symmetry preservation
+
+The term covers two distinct properties, which a page or claim must keep apart.
+
+1. **Solution (mirror) symmetry.** A problem whose data are symmetric under a
+   reflection, such as the single-mode Rayleigh–Taylor instability or the 2D
+   Riemann problem configuration 3, has a symmetric exact solution; a scheme
+   preserves symmetry if its discrete solution stays symmetric to round-off.
+2. **Operator (skew-)symmetry.** A *symmetry-preserving discretization* in the
+   sense of Verstappen and Veldman (as recalled by
+   [Coppola & Veldman (2023)](/sources/coppola-2023.md)) keeps the algebraic
+   symmetry of the continuous convective operator: discrete convection is
+   skew-symmetric, which makes quadratic invariants such as kinetic energy
+   discretely conserved.
+
+## 1. Mirror symmetry of the solution
+
+**The observation.** Low-dissipation schemes break the symmetry of the
+Rayleigh–Taylor solution where more dissipative ones keep it. TENO-AA loses it
+at $64\times256$, $t=1.95$ ([Fu (2021)](/sources/fu-2021.md), §5.5.2, Fig. 9),
+and Fu cites similar asymmetries for WENO-SYMBO, WENO-CU6 and WENO9. As recalled
+by [Fu (2023)](/sources/fu-2023.md) (§3.8), WENO9-JS breaks it at $\Delta x=1/1920$ while
+WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
+
+**The explanations recorded.**
+
+- *Round-off unmasked by low dissipation*: [Fu (2021)](/sources/fu-2021.md)
+  (§5.5.2) attributes the asymmetry to machine round-off that low dissipation no
+  longer hides, and cites Fleischmann et al. for a cure by careful floating-point
+  implementation.
+- *Unstable forms of the smoothness indicators*: Don et al. attribute it to
+  round-off in unstable forms of the low-order smoothness indicators and propose
+  a compact form (as recalled by Fu 2023, §3.8; see
+  [smoothness indicators](/definitions/smoothness-indicator.md)).
+- *Floating-point inconsistency, not dissipation*: Fleischmann et al. find "no
+  causality" between low dissipation and symmetry breaking; removing
+  floating-point inconsistencies of the implementation (for example a
+  directional dependence), which grow exponentially,
+  keeps the TENO5 solution symmetric to machine precision; the same was done for
+  BVD schemes (as recalled by Fu 2023, §3.8). The review sides with this view.
+
+**The remedy in practice.** [Takagi et al. (2022)](/sources/takagi-2022.md)
+(§4) use the Fleischmann et al. technique in all runs and report preserved
+symmetry for TENO-THINC on Rayleigh–Taylor
+($64\times256$, $128\times512$) and on Riemann configurations 3 and 12
+($1024^2$); they also write the THINC flux with $\mathrm{sgn}(\varsigma)$ and
+$\lvert\varsigma\rvert$ rather than in the form of Deng et al. (2019), a
+difference they relate to symmetry breaking from floating-point errors (§2.3;
+see [THINC](/methods/thinc-reconstruction.md)). Symmetry is also reported kept
+by ROUND and LD-ROUND on Riemann configuration 3 at $600\times600$
+([Huang et al. (2026)](/sources/huang-2026.md), §6.6) and, as "more symmetric"
+than WENO-IS-I and WENO-Z9, by WENO-Z+M on the same configuration at $401^2$
+([Luo & Wu (2021)](/sources/luo-2021-b.md), §5.3.2).
+
+## 2. Skew-symmetry of the discrete convective operator
+
+For the transport model $\partial_t\rho+\nabla\cdot(\rho v)=0$,
+$\partial_t(\rho\phi)+\nabla\cdot(\rho v\phi)=0$ (with $\phi=v$ for momentum),
+[Coppola & Veldman (2023)](/sources/coppola-2023.md) (§5.1, Eqs. (59)–(60)) prove
+that the discrete scheme conserves the quadratic invariant
+$\tfrac12\rho\phi^2$ globally iff the discrete operator
+$A_{\mathrm{kin}}=C_{\mathrm{mom}}-\tfrac12\mathrm{diag}(d_{\mathrm{mass}})$ is
+skew-symmetric (page-local matrix names: $C_{\mathrm{mom}}$ the discrete momentum
+convection, $d_{\mathrm{mass}}$ the discrete mass transport), and that
+skew-symmetry also yields local conservation with an explicit flux
+(Corollary A.4). Skew-symmetry is the operator symmetry of the continuous
+kinetic-energy operator; split convective forms achieve it through duality
+relations between their derivative operators, such as $D^\rho=-(D^v)^\top$, plus
+weight conditions, without requiring each derivative operator to be
+skew-symmetric (§3.3, Eq. (43); §5.3, Eqs. (58), (72)), and a fourth-order flux obtained by Richardson
+extrapolation generalizes the Verstappen–Veldman construction from incompressible
+to compressible flow (§6). These results are developed on
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md) and
+[split convective forms](/methods/split-convective-forms.md).
+
+## Qualifications
+
+- The two meanings are independent: a skew-symmetric (kinetic-energy-preserving)
+  central scheme can still break mirror symmetry by round-off, and a
+  mirror-symmetric shock-capturing scheme is in general not skew-symmetric.
+- On mirror symmetry the chunk-1 evidence is the authors' visual inspection of
+  contour plots; none quantifies the asymmetry.
+- [Fu (2021)](/sources/fu-2021.md) (§5.5.2) and the view Fu (2023) adopts are
+  compatible on the cause (round-off) and differ on the role of dissipation: in
+  the first, low dissipation fails to damp the round-off asymmetry; in the second,
+  consistent arithmetic removes it whatever the dissipation. Neither source runs
+  TENO-AA with the consistent implementation, which is the test that would show
+  whether its asymmetry disappears.
+
+# Citations
+
+- [Fu (2021)](/sources/fu-2021.md) — §5.5.2, Fig. 9: TENO-AA Rayleigh–Taylor asymmetry and its stated cause.
+- [Fu (2023)](/sources/fu-2023.md) — §3.8: WENO9-JS, TENO5 asymmetries; Don et al.; Fleischmann et al.; BVD.
+- [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.3, §4, §§4.7–4.8: consistent implementation, symmetric results.
+- [Huang et al. (2026)](/sources/huang-2026.md) — §6.6: symmetric ROUND and LD-ROUND results.
+- [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.2: WENO-Z+M symmetry on Riemann configuration 3.
+- [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §3.3, §5.1, §5.3, §6, Corollary A.4: skew-symmetry and kinetic-energy conservation.
