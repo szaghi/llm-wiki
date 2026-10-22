@@ -6,6 +6,131 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 5 — gradient-based schemes, wall-modelled LES, structure-preserving MHD, GPU codes (2026-10-23)
+
+Sources (20): bernardini-2023, bezgin-2023, devanna-2023-b,
+lopezmiralles-2023, bielawski-2023, chamarthi-2023, chandravamsi-2023,
+devanna-2023, demichele-2023, devanna-2023-c, dzanic-2023, funada-2023,
+qin-2023, wei-2023, weng-2023, zaghi-2023, zhou-2023, bhoriya-2023,
+chamarthi-2023-b, chen-2023-b. 100 of 207 ingested, 167 concept pages
+plus the registry, 3291 bibliography entries.
+
+### Decisions for the human
+
+1. **Still open from chunks 1–4:** the archive re-download and overwrite
+   (Feng 2026, Li 2024); the open contradictions (TENO $\tau_K$,
+   conservation of WCNS — Qin et al. 2023 add a globally conservative
+   staggered explicit WCNS, which settles nothing for the compact form);
+   book printings; kanbar-2022 ref [4]; abgrall-2017-b; Bai & Li's DG
+   remark; Boscarino et al.'s SI-IMEX(4,4,3); jin-2010 → jin-2012 and the
+   other chunk-4 merger calls.
+2. **Bhoriya et al. (2023), ARK3 Table 5:** the printed stiff weights
+   $b^{[S]}$ give $\sum_lb_lc_l^2=0.345754\ne1/3$ (the explicit weights
+   give 1/3): as printed the implicit part is second order. Recorded as a
+   compiler check on the IMEX and Source pages; nothing is said about what
+   the code used. The version read is arXiv v2; the version of record
+   could settle it.
+3. **Bibliography keys with a year that disagrees with the venue**
+   (set in earlier chunks, not renamed): `boscarino-2008` (SIAM J. Numer.
+   Anal. 45, 2007), `gande-2020` (Numer. Algorithms 88, 2021),
+   `ranocha-2021-b`/`-c` (volume 4, 2022). Renaming changes keys that
+   other entries' `citedby` and Source pages use; your call.
+4. **Merger calls to confirm:** chandravamsi-2023's openacc.org citation
+   folded onto `openacc-2022` (same page); `jiang-1995` → `jiang-1996`
+   and `tsoutsanis-2023-b` → `tsoutsanis-2021` aliased as misprinted
+   years (venue and pages match); `poinsot-1992` keeps the DOI that
+   Crossref places at JCP 101:104 (devanna-2023 and devanna-2023-c print
+   a DOI resolving to JCP 99:352); bezgin-2023's ref [80] (printed Vinet
+   & Zhedanov 2011, used for Pope's book) kept as printed with a note.
+5. **Citation labels:** same-author-year works are cited in prose as
+   Chamarthi (2023a/b) and De Vanna et al. (2023a/b/c), letters in slug
+   order; the Source-page titles keep the bare year (the paper title
+   disambiguates). Confirm the convention.
+6. **Bundle fit (no D17 copy made):** lopezmiralles-2023 (relativistic
+   radiation MHD, a PVM Riemann solver) also fits
+   astrophysical-simulation-codes; weng-2023 (OpenFOAM real-gas
+   detonation, second-order numerics) and bielawski-2023 (GPU OpenFOAM
+   reacting flows, chemistry integration) are weak fits; bernardini-2023,
+   zaghi-2023, devanna-2023-b and bezgin-2023 are mainly software papers,
+   devanna-2023 and devanna-2023-c mainly turbulence modelling, wei-2023 a
+   second-order unstructured boundary treatment.
+7. **Pronouns:** the compiler replaced gendered pronouns for single
+   authors on concept and Source pages (chunks 1–5) by names or "the
+   author"; authors' pronouns are not stated in the sources.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  bezgin-2023 (v1, filename says CPC), lopezmiralles-2023 (v1),
+  chamarthi-2023 (v2), chandravamsi-2023 (v1), demichele-2023 (v1),
+  dzanic-2023 (v2), bhoriya-2023 (v2), chamarthi-2023-b (v1),
+  chen-2023-b (v1); accepted manuscript bielawski-2023.
+- bernardini-2023 is a two-page program summary (STREAmS-2.0): every
+  claim on its page is Stated.
+- Key traps resolved: devanna-2023-c's refs [46]/[68] printed with
+  swapped suffixes; dzanic-2023's Dao & Nazarov CMAME, chen-2023-b's
+  Huang, Xing & Xiong, zhou-2023's Tsoutsanis & Dumbser, chandravamsi's
+  own Phys. Fluids paper and Chamarthi's C&F paper re-keyed away from
+  planned slugs; zaghi-2023's Berger & Colella / Berger & LeVeque pair
+  remapped; qin-2023's Fernández (DCDR) and bezgin-2023's Fleischmann
+  2020 suffixed; bielawski-2023's printed duplicates [26]/[43] and
+  [27]/[36] folded.
+
+### Printed slips (the Source pages list them in full)
+
+- zaghi-2023: the printed post-shock state is the Rankine–Hugoniot state
+  of a Mach 2.81 shock, not the stated 2.89; grind-time units; "8
+  billions" cells; vortex appendix exponent and coordinate slips.
+- chamarthi-2023: Table 2 MIG4 orders do not follow from its errors
+  (3.93/3.98/3.88); Woodward–Colella right break at 0.8 (others 0.9,
+  also chamarthi-2023-b); shock–mixing layer at Re 1000 (others 500).
+- chamarthi-2023-b: WCNS sub-stencil Eq. (42) sums to 18/16; the mapping
+  denominator of Eq. (48) has a sign slip; "at least 40% cheaper" not
+  supported by Table 2 (28–49%).
+- demichele-2023: §3.1 lists the $\xi$ values in reverse.
+- dzanic-2023: vortex data as printed give a minimum pressure of about
+  −1.72; plasma beta $2.5\cdot10^{-6}$, not $10^{-4}$; Orszag–Tang $B_1$
+  sign opposite to the other sources (misprint or convention cannot be
+  decided from the paper).
+- qin-2023: Eq. (40) states list momenta, not velocities; the Eq. (41)
+  shock–bubble inflow is not a Rankine–Hugoniot state; Buckley–Leverett
+  shock position at $t=0.31$ not reproduced (left off the pages).
+- devanna-2023: Mach 5.86 $\Delta x^+=90$ needs $N_x=1200$ (1400
+  printed, giving 77.1); devanna-2023-b: abstract's 1024-GPU ~80%
+  efficiency against weak scaling shown up to 256.
+- bezgin-2023 (JAX-Fluids): 2D implosion with density and pressure
+  swapped relative to the bundle's Liska–Wendroff records; "~400 M DOFs"
+  not supported.
+- bhoriya-2023: ARK3 (item 2); GEM initial data ($\tan$ for $\tanh$,
+  negative pressure); 2D time-step formula.
+- lopezmiralles-2023, chandravamsi-2023, funada-2023, wei-2023,
+  weng-2023, chen-2023-b, zhou-2023: minor slips listed on their pages.
+
+### Deep-lint repairs by the compiler
+
+- An auditor's script turned 13 `\rho` on `properties/bound-preservation.md`
+  into line breaks; repaired, and the 2023 entropy margin's sign
+  corrected (Dzanic & Witherden 2023 print
+  $\Gamma_3=\sigma-\sigma_{\min}-\epsilon>0$: a margin to exceed, not a
+  relaxation).
+- One unlabelled judgement on the KNP viscous terms (Bielawski et al.)
+  removed; the printed sentence stays attributed.
+
+### Candidates for later pages
+
+- Compact (Lele-family) first-derivative schemes: chamarthi-2023,
+  chamarthi-2023-b, chandravamsi-2023 — qualifies now.
+- MHD shock–cloud interaction (dzanic-2023, duan-2022); global
+  conservation property (qin-2023); slowly moving shocks
+  (qin-2023); Barth eigenvector scaling (bhoriya-2023 and earlier); WENO
+  for Hamilton–Jacobi equations (chen-2023-b, bezgin-2023); the M1
+  radiation closure; the double-flux method; a split of
+  `gas-liquid-riemann-problems` into gas–gas and gas–liquid problems.
+- Tag near-synonyms reported by the auditors and left for a whole-bundle
+  pass: compact-scheme/compact-stencil, positivity/bound-preserving,
+  entropy-filtering/solution-filtering, multicomponent/multiphase,
+  cut-cell/ghost-cell/immersed-boundary, sharp-interface/level-set.
+
 ## Chunk 4 — TENO variants, positivity for Navier–Stokes, shock tracking, all-Mach IMEX, codes (2026-10-23)
 
 Sources (20): fan-2022, huang-2022, hu-2022, jain-2022, jeong-2022,

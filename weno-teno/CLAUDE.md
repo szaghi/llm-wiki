@@ -98,10 +98,13 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 4 staged 2026-10-23:** TENO variants, positivity for Navier–Stokes,
-shock tracking, all-Mach IMEX, codes; 80 of 207 ingested, 149 concept
-pages plus the registry, 2688 bibliography entries, deep lint done, two
-contradictions open (TENO $\tau_K$; conservation of WCNS). Next: chunk 5.
+**Chunk 5 staged 2026-10-23:** gradient-based schemes, wall-modelled LES,
+structure-preserving MHD, GPU codes; 100 of 207 ingested, 167 concept
+pages plus the registry, 3291 bibliography entries, deep lint done, two
+contradictions open (TENO $\tau_K$; conservation of WCNS). Next: chunk 6.
+
+**Chunk 4 committed 2026-10-23 (9324881):** TENO variants, positivity for
+Navier–Stokes, shock tracking, all-Mach IMEX, codes.
 
 **Chunk 3 committed 2026-10-23 (0a9f822):** flux reconstruction, entropy
 correction, DG limiters, multiphase and relativistic flows.

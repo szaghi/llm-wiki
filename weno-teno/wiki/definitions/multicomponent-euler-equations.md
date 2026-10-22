@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Multicomponent Euler equations
@@ -32,7 +32,12 @@ $\rho Y_k=\phi_k\rho_k$, Eqs. 2a–2e) and
 [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §2.1 (Eq. 1);
 [Du & Yang (2022)](/sources/du-2022-b.md) §2 carry $\rho$ and all
 $n_{\mathrm c}$ partial densities, one more unknown than needed
-(Eq. 2.1). Unlike the
+(Eq. 2.1), and so do
+[Bielawski et al. (2023)](/sources/bielawski-2023.md) for their reacting
+Navier–Stokes system (§2, Eqs. 1–6, accepted manuscript);
+[Zhou et al. (2023)](/sources/zhou-2023.md) write the two-species
+system with $\rho$ and the single partial density $\rho Y_1$
+(Eqs. 1–2). Unlike the
 [five-equation model](/definitions/five-equation-model.md), the system
 is a system of conservation laws with no volume-fraction equation: the
 volume fractions follow from the closure.
@@ -64,7 +69,15 @@ temperature form of the [stiffened-gas law](/definitions/stiffened-gas-equation-
 $\rho_ke_k=C_{v,k}\rho_kT+p_{\infty,k}$, again in thermal equilibrium,
 which gives $p=\sum_k\big(\rho Y_kR_kT-p_{\infty,k}\big)$ and a mixture
 $\gamma=\sum_k\gamma_kC_{v,k}\rho Y_k/\sum_kC_{v,k}\rho Y_k$ (Eq. 1.2).
-With $p_{\infty,k}=0$ it reduces to Renac's closure. They name water at
+With $p_{\infty,k}=0$ it reduces to Renac's closure.
+
+**Mixture ratio of specific heats with molar masses.** Zhou et al. give
+the two-species mixture of ideal gases by
+$$\gamma=\frac{\sum_kY_k\gamma_k/\big(W_k(\gamma_k-1)\big)}{\sum_kY_k/\big(W_k(\gamma_k-1)\big)}$$
+with molar masses $W_k$ (page-local; the source's $M_i$) (§2). This is
+Renac's $\gamma(Y)=C_p(Y)/C_v(Y)$, since $C_{v,k}=R_u/\big(W_k(\gamma_k-1)\big)$
+and $C_{p,k}=\gamma_kC_{v,k}$ with $R_u$ the universal gas constant
+*(compiler check, not in the sources)*. They name water at
 very high pressure (underwater explosions, shock lithotripsy) as the
 application.
 
@@ -100,6 +113,17 @@ corrected so that $\sum_kY_kV_k=0$, Wilke viscosity and Mathur
 conductivity (§2.2). Peng et al. solve the reactive Euler equations,
 planar or axisymmetric, with Strang splitting and a semi-implicit
 fourth-order generalized Runge–Kutta integrator (GRK4A) for the chemistry (§2.1).
+Bielawski et al. solve the reacting Navier–Stokes equations with NASA
+polynomials for the heat capacity, enthalpy and $\gamma$, held constant
+below the polynomials' lower bound (typically 300 K), species
+viscosities and conductivities fitted with Cantera, a single mixture
+diffusivity for all species, a total energy that includes the
+formation enthalpies, and finite-rate chemistry split from the flow
+by Strang splitting, the stiff reactor problem being integrated cell by
+cell on the GPU (§2, Eqs. 4–7; §5; see
+[operator splitting](/methods/operator-splitting.md)). The temperature
+is recovered from the internal energy by a Newton iteration (§2,
+Alg. 2).
 
 ## Admissible set and waves
 
@@ -108,7 +132,7 @@ $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ (Eq. 9). In direction $n$ the
 eigenvalues are $v\cdot n\mp c$ (genuinely nonlinear) and $v\cdot n$
 with multiplicity $n_{\mathrm c}+d-1$ (linearly degenerate), with
 $c^2=\gamma(Y)\big(\gamma(Y)-1\big)e$ and $\gamma(Y)\le\max_k\gamma_k$
-(Eqs. 10–11). Renac notes that, to his knowledge, fast upper bounds of
+(Eqs. 10–11). Renac notes that, to the author's knowledge, fast upper bounds of
 the maximum wave speed (two-rarefaction or Guermond–Popov type), which
 simple-wave solvers such as HLL, Rusanov or relaxation need, do not
 exist for this model (§1.3). Li et al. give the entropy-scaled right-eigenvector
@@ -149,7 +173,7 @@ symmetric flux is [entropy conservative](/methods/entropy-conservative-flux.md)
 for the mixture (Lemma 3.1, Eq. 24). It needs only three
 [logarithmic means](/operators/logarithmic-mean.md), of the density of
 the last component, of $\rho$ and of $1/T$, against $n_{\mathrm c}+1$
-for the flux of Gouasmi, Duraisamy & Murman type that he re-derives in
+for the flux of Gouasmi, Duraisamy & Murman type that Renac re-derives in
 Appendix B (Eq. B.1). It is therefore cheaper for $n_{\mathrm c}>2$ and
 less exposed to floating-point exceptions, since every logarithmic mean
 needs positive arguments (Remark 3.1); it is also formally
@@ -246,11 +270,22 @@ damping and halved $\Delta t$ when a cell average leaves $G$ (§6,
 Eq. 6.1): admissibility in the runs rests on this restart, which
 Theorem 4.3 guarantees to terminate.
 
+**Species sum under limited interpolation.** Bielawski et al. state,
+citing earlier work, that interpolating conserved variables to the faces
+with a limiter can make the face mass fractions sum to a value other
+than one, because the limiter acts differently on the mass-weighted
+scalars and on the face density; each scalar then moves with its own
+effective contact speed, and the error "can grow and become
+significant over a simulation" (§3, not demonstrated in the paper).
+They note that species are limited in mixing and burning regions as
+well as at shocks. Du & Yang's consistency condition $\hat f\cdot\mathsf v=0$
+(next section) is the property such a scheme loses.
+
 ## Material interfaces
 
 Because the system is conservative, its schemes meet the
 pressure-equilibrium problem of moving interfaces directly. Renac
-proves that his DGSEM resolves stationary material interfaces (different
+proves that the proposed DGSEM resolves stationary material interfaces (different
 composition and density, $v=0$, equal $p$) exactly at the nodes: both
 fluxes reduce to $(0,0,pn,0)$ there, and an interface on a mesh
 interface is resolved exactly (Theorem 6.1; RP4, Fig. 4; see
@@ -265,6 +300,25 @@ multidimensional also oscillate on interfaces not aligned with the mesh
 [five-equation model](/definitions/five-equation-model.md) resolves the
 other way, and sharp-interface [level-set methods](/methods/level-set-method.md)
 avoid by keeping two fluids apart.
+
+Zhou et al. (2023) §4.3 attribute the spurious pressure oscillations of
+shock-capturing schemes at material interfaces to the jump of fluid
+properties, list as remedies the primitive algorithm, the
+quasi-conservative method, total-energy correction and the double-flux
+algorithm, and take the last, after Abgrall & Karni, into their
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md):
+while updating node $i$ from $t^n$ to $t^{n+1}$ the node sees a single
+fluid with $\gamma=\gamma_i^n$, so each interface flux is computed twice
+from the same reconstructed states, $h(u^-_{i+1/2},u^+_{i+1/2};\gamma_i^n)$
+for node $i$ and $h(u^-_{i+1/2},u^+_{i+1/2};\gamma_{i+1}^n)$ for node
+$i+1$, and $\gamma$ is updated, and the total energy recomputed, only at
+the last Runge–Kutta stage (Eq. 33). On the two-species Sod tube the
+expansion, shock and material interface are "accurately captured" and
+their scheme gives the thinnest interface of the three schemes compared
+(§5.4, Figs. 13–14). The two fluxes of one interface differ wherever
+$\gamma_i^n\ne\gamma_{i+1}^n$, so the double-flux update is not
+discretely conservative there *(compiler check, not in the sources)*;
+the paper does not discuss it.
 
 Nguyen et al. report the opposite outcome for a moving interface: a
 water–air interface advected at 150 m/s at uniform $p$, $v$ and $T$
@@ -313,6 +367,18 @@ the isentropic vortex in 2D and 3D, a quasi-2D stiffened shock tube, two
 2D Riemann problems, a 3D spherical shock tube, a two-material tri-point
 problem and the shock–bubble interactions with ideal and stiffened
 gases.
+
+Zhou et al.: the two-species Sod tube, $(\rho,v,p,\gamma)=(1,0,1,1.4)$
+against $(0.125,0,0.1,1.6)$ on 200 cells to $t=0.2$ at CFL 0.2
+([Sod tube](/benchmarks/sod-and-lax-shock-tubes.md)), and the Mach 1.22
+[shock–helium bubble](/benchmarks/shock-bubble-interaction.md) on
+$D/150$ (§5.4, §5.8). Bielawski et al.: one-dimensional H$_2$/air,
+CH$_4$/O$_2$ and RP2/O$_2$ detonations, a CH$_4$–O$_2$ rotating
+detonation rocket engine (312 million cells on 1176 GPUs in Table 2; the
+text of §6.1 says 118 million cells) and an
+ethylene-fuelled scramjet (41 million cells, 300 GPUs)
+([shock-induced combustion and detonation](/benchmarks/shock-induced-combustion.md);
+§5–6).
 
 ## Qualifications
 
@@ -363,6 +429,14 @@ gases.
   whether their activation energies carry the sign. Peng et al. print the
   axisymmetric source $p$ in the axial momentum row, where the
   axisymmetric form puts it in the radial one, and a "mass" production rate without the molar-mass factor.
+- Bielawski et al. print the reactor temperature equation as
+  $dT/dt=-\sum_kY_k/c_{v,k}\,\sum_k(\epsilon_k/W_k)\Omega_k$ (Eq. 12;
+  $\epsilon_k$, $\Omega_k$ page-local: molar internal energy and mass
+  production rate). It lacks a factor $1/\rho$ and has
+  $\sum_kY_k/c_{v,k}$ where the constant-volume energy balance gives
+  $1/\sum_kY_kc_{v,k}$ *(compiler check, not in the sources)*; they
+  state that a Newton solve at constant internal energy replaces it in
+  practice (§5).
 - Du & Yang put the H$_2$/O$_2$/Ar diaphragm at $x=0.5$ cm in a 10 cm
   domain, Peng et al. at 50 mm in a 100 mm domain, with the same states
   and final time; as printed the two runs differ.
@@ -375,3 +449,5 @@ gases.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §2, Eqs. (2.1)–(2.8); §3, Thms. 3.1–3.2; §4, Lemma 4.1, Thms. 4.1–4.3; §5; §6, Eq. (6.1), Tables 6.1–6.3, Figs. 6.1–6.3.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §2.1, Eqs. (1)–(8); §3.2–3.3, Figs. 6–8 (accepted manuscript).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1–2 (sharp-interface contrast only).
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §2, Eqs. (1)–(7), Alg. 2; §3; §5, Eqs. (11)–(12); §6 (accepted manuscript).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §2, Eqs. (1)–(2); §4.3, Eq. (33); §5.4, Figs. 13–14; §5.8.

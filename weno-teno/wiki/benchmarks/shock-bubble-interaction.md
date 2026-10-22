@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Shock–bubble interaction
@@ -66,7 +66,7 @@ the three agree up to slight differences, which the authors attribute
 to the piecewise-constant structure of the solution (Figs. 10–13).
 
 **Mach 1.22 air–helium (Haas & Sturtevant).** A Mach 1.22 shock in air
-hits a helium bubble of diameter 5 cm. Seven sources run it, in three
+hits a helium bubble of diameter 5 cm. Ten sources run it, in four
 models:
 
 | Source | Model and scheme | Setup as printed | Grid |
@@ -77,6 +77,9 @@ models:
 | [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.8, 5.10 | multicomponent Euler, entropy-stable FD on an [adaptive moving mesh](/methods/adaptive-moving-mesh.md) | $[0,445]\times[-44.5,44.5]$, bubble radius 25 at $(225,0)$, shock at $x=275$ moving left (speed $-415.16$); helium with 28 % air; air $(1.225,0,0,101325)$, post-shock $(1.6861,-113.5243,0,159060)$; $\gamma=1.4$, $1.647$ | 2D: $800\times160$ moving vs $2400\times480$ uniform; 3D: $400\times80\times80$ moving vs $800\times160\times160$ uniform |
 | [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) Ex. 10 | sharp interface: level set, conservative A-WENO | non-dimensional; pre-shock air $(\rho,v_1,v_2,p)=(1,0,0,1)$, post-shock $(1.3764,0.394,0,1.5698)$ for $x<-1.2$, helium $\rho=0.138$, $\gamma=5/3$ inside the unit circle | $280\times240$ |
 | [Bai & Li (2022)](/sources/bai-2022.md) §3.4 | sharp interface: level set, ghost fluid and cut cells, DG of degree 2 with HLLC–HLL flux, adaptive quadtree | diameter 5 cm, upper half domain (symmetry); air $\rho=1.225$ kg/m³, $p=1.01325$ bar, $\gamma=1.4$; helium $\rho=0.2228$ kg/m³, $\gamma=1.648$ | background $720\times40$, two to four levels (AMR1–AMR4); to $983\,\mu$s |
+| [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) §5.2.5 | sharp interface: level set of Hu et al. in the finite-volume [JAX-Fluids](/software/jax-fluids.md); scheme settings not restated for this case | helium bubble of diameter 50 mm at the origin, shock 5 mm to its left, moving right; domain $[-90,266]\times[-44.5,44.5]$ mm; gas states not printed | not printed (arXiv v1) |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.16 | [five-equation model](/definitions/five-equation-model.md), finite-difference [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) (MEG6, MIG4) and TENO5, HLLC | $(\rho,v_1,v_2,p,\gamma)$: post-shock air $(1.3764,-0.3336,0,1.5698/1.4,1.4)$, helium $(0.1819,0,0,1/1.4,1.648)$, pre-shock air $(1,0,0,1/1.4,1.4)$; $[0,6.5]\times[0,1.78]$ in diameters, bubble at $(3.5,0.89)$, shock at $x=4.5$ moving left; slip walls top and bottom; CFL 0.1 | $1300\times356$, $2600\times712$ (arXiv v2) |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.8 | two-species Euler with the double-flux method, six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) (WCNS-SA, WCNS-LD, ONL6) + HLLC | the same three states and geometry as Chamarthi, after Shankar et al.; zeroth-order extrapolation left and right, slip walls top and bottom, an artificial diffusion layer at the interface; CFL 0.5 | $\Delta x=D/150$ |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.4 | multicomponent Euler in $p$–$T$ equilibrium, MUSCL with overbee limiter on volume fractions, HLLC | $325\times89$ mm; shock 25 mm from the bubble, moving right to left; pre-shock air $(\rho,p)=(1.4,10^5)$, post-shock $(1.92691,\ v_1=-114.42,\ 156{,}980)$; helium $\rho=0.25463$, $\gamma=1.648$ (SI values of their Table 3, whose column headers are misaligned with the rows) | $325\times90$, $650\times180$, $1300\times360$ (about 50, 100, 200 cells per diameter) |
 
 The post-shock pressure ratio $1.5698$ of Zheng et al. is that of a
@@ -121,6 +124,17 @@ of diameter 5.6 centred at $(4,0)$ in $[0,22.5]\times[0,7.5]$ (unit
 $C_v=0.523$; 74,504 unstructured elements, $t$ up to $13.6\,\mu$s. The
 results "compare well" with three earlier computations, and the case is
 offered as evidence of robustness on unstructured meshes (Fig. 8).
+
+**A strong shock on a light bubble across block interfaces.**
+[Qin et al. (2023)](/sources/qin-2023.md) (§3.5.2, Eq. (41), Fig. 11) run a rightward strong shock with $(\rho,v_1,v_2,p)=(3.81,2.85,0,10)$ in $[-0.1,0]\times[-0.5,0.5]$. It
+hits a light bubble $(0.1,0,0,1)$ of radius $0.2$ centred at $(0.3,0)$ in a gas $(1,0,0,1)$. The
+domain is $[-0.1,1.6]\times[-0.5,0.5]$, with reflective walls top and bottom, a Dirichlet inlet and
+supersonic outflow. It is split into four blocks of $270\times150$, $320\times150$, $270\times200$
+and $320\times200$ points, with interfaces at $y=0$ and $x=0.8$. The test exercises their
+[shock-capturing boundary closures](/methods/shock-capturing-boundary-closure.md) for a
+multi-resolution WCNS. Contacts and small scales are "well resolved" at $t=0.2$ and $0.4$ across the
+interfaces. The contours are not completely symmetric, because the grid spacing differs between
+blocks.
 
 ## Gas bubbles in liquids and stiffened gases
 
@@ -247,6 +261,24 @@ they pick overbee over superbee on interface thickness and smoothness
 differently relative to their own; neither measures against the
 experimental velocities.
 
+[Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) (§5.2.5, Figs. 17–18) find their
+upstream, jet and downstream interface points "in very good quantitative agreement" with the same
+Terashima & Tryggvason computation. Their schlieren images agree qualitatively with the
+Haas–Sturtevant images and with a computation by the ALPACA code.
+Three sources thus compare with Terashima & Tryggvason: Nguyen et al. and Bezgin et al. agree with it,
+and Bai & Li find it delayed.
+
+**Interface thickness at fixed grid.** Two chunk-5 sources run the same non-dimensional setup and
+compare schemes on one grid. Chamarthi (Ex. 4.16, Figs. 20–21) finds no noticeable spurious
+oscillations with the author's gradient-based schemes, and a material interface thinner with MIG4 than with
+MEG6 and TENO5. On $2600\times712$, more secondary instabilities appear at late times. Chamarthi states that
+TENO "for the 5-equation model, is not presented in the open literature"
+([targeted ENO](/methods/targeted-eno.md)). Zhou et al. (§5.8, Figs. 19–20) find that WCNS-SA and
+WCNS-LD capture more small-scale structures along the bubble than ONL6. *(Compiler check, not in the
+sources: in both, the post-shock to pre-shock pressure ratio is $1.5698$ and the density ratio
+$1.3764$, the Mach 1.22 values noted above; the helium density $0.1819$ differs from Zheng et al.'s
+$0.138$.)*
+
 Renac compares the space–time trajectories of three interface points
 with the high-order computation of Kawai & Terashima, not with the
 experiment, and finds "close agreement", without significant spurious
@@ -301,6 +333,11 @@ qualitative claim with no reference comparison (Figs. 13–15).
   states of both layers.
 - Tsoutsanis et al.'s quoted Coralic & Colonius velocities come from a
   different code and are reproduced here as quoted, not as read.
+- Qin et al.'s inflow state is not a Rankine–Hugoniot post-shock state of a $\gamma=1.4$ gas
+  moving into $(1,0,0,1)$ *(compiler check, not in the sources: the mass and momentum jumps give
+  shock speeds $3.86$ and $3.68$, and with the printed $\rho$ and $p$ a single shock would carry
+  $v_1\approx2.58$, with $\gamma=1.4$, the value the paper fixes for its Euler tests in §3.4)*.
+  The paper does not comment on the inflow state.
 - Apart from the interface velocities of Tsoutsanis et al. and the
   feature velocities of Bryngelson et al., the evidence is from contour
   plots; no source reports an error norm.
@@ -318,3 +355,7 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.5.3, Fig. 6; §3.1.3–3.1.4, Figs. 10–13; §3.4, Table 4, Figs. 20–30; §3.5, Figs. 31–33.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.4, Table 3, Figs. 16–20.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §6, Ex. 6.9, Table 6.2 (arXiv v1).
+- [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §5.2.5, Figs. 17–18 (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.16, Figs. 20–21 (arXiv v2).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.8, Eq. (43), Figs. 19–20.
+- [Qin et al. (2023)](/sources/qin-2023.md) — §3.5.2, Eq. (41), Fig. 11.

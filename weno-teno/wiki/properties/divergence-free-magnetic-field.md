@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -22,7 +22,9 @@ generalized-Lagrange-multiplier (GLM) divergence cleaning
 ([Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md);
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md));
 through constrained transport in an unstaggered central scheme
-([Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md)) and in
+([Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md)), through a
+vector potential in a semi-implicit all-Mach finite-difference WENO scheme
+([Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)) and in
 finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)), and on
 face-centred staggered fields in a GPU Godunov code
 ([Lesur et al. (2023)](/sources/lesur-2023.md)); by projection or GLM
@@ -31,8 +33,9 @@ cleaning in continuous finite elements
 prolongation onto refined meshes must keep
 ([Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md)); and,
 without cleaning or transport, through a Powell-type source alone, in
-flux reconstruction ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md))
-and in entropy-stable relativistic MHD
+flux reconstruction ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md);
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md)) and in entropy-stable
+relativistic MHD
 ([Duan & Tang (2022)](/sources/duan-2022.md)).
 
 ## The Powell source term
@@ -62,6 +65,30 @@ centred common interface values, and run the MHD rotor and the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) with their
 time-reversibility [artificial viscosity](/methods/artificial-viscosity.md);
 no further divergence control is used.
+
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) use the same
+eight-wave source with nodal DG and flux reconstruction stabilized by
+[entropy filtering](/methods/entropy-filtering.md) (§2.3, Eq. (17)). They
+distinguish a *local* discrete divergence, the collocated derivative of the
+element's nodal $B$ (Eq. (18)), from a *global* one that adds the
+interface correction built from the centred common value of $B$
+(Eq. (19)), and use the global one, which they call "correct" because its
+space is consistent with the solution space, the local one being "usually
+sufficient in practice". They state, after Wu & Shu, that only the
+Powell-modified system is symmetrizable and Galilean invariant for a $B$
+that is not exactly solenoidal and that the source suppresses
+$\nabla\cdot B$ to the order of the approximation error, and, after Tóth,
+that the non-conservative form can be inaccurate near discontinuities
+(§2.3); the last point is not tested. The filter interacts with the
+constraint: only the linear kernel, which recovers the
+[Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md), is
+guaranteed not to increase the divergence; the nonlinear exponential
+filter may add small divergence errors, which the source treats at the
+next update and whose effect was "found to be negligible" (§3.2). On the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+$\lvert\nabla\cdot B\rvert$ concentrates at strong gradients and decreases
+with resolution from $64^2$ to $256^2$ elements at degree 3 (§5.3,
+Fig. 4).
 
 **Relativistic MHD.** For special relativistic MHD
 ([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md))
@@ -135,6 +162,15 @@ $B=(0,\sqrt{4000},0)$ (Fig. 6). On the jet the run "fails quickly" without
 any one of the three ingredients — scaling limiter, locally divergence-free
 basis, source term — even with the WENO limiter; this is stated, no failure
 figure is shown.
+
+For nodal DG with a Powell source, Dzanic & Witherden (2023) state the
+gap from the other side: Wu & Shu's positivity of the element mean needs
+a locally divergence-free $B$, which their scheme does not have, so
+positivity of the mean "remains to be proven" and their positivity is
+observed; they split the source from the flux update so that the
+entropy filter acts on the source-free part
+([bound preservation](/properties/bound-preservation.md), Route 5;
+§3.2, Eqs. (29)–(33)).
 
 ## Locally divergence-free reconstruction (finite volumes)
 
@@ -229,6 +265,33 @@ large-scale constant electric field (§2.4). On the
 $\lvert\nabla\cdot B\rvert\ll10^{-12}$ in all runs (§4.2, Fig. 11). For
 the Hall effect the edge field is the arithmetic average, because a
 Hall-modified $\mathcal E^c$ "led to numerical instabilities" (§2.5).
+
+**Vector potential in a semi-implicit finite-difference WENO scheme.**
+[Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) (§2.4, Eqs.
+(2.15)–(2.17), after Christlieb, Rossmanith & Tang) write
+$B=\nabla\times A$ with a page-local vector potential $A$ in the Weyl
+gauge, evolve $\partial_tA+(\nabla\times A)\times v=0$ in place of the
+induction equation, and recover $B$ from $A$ at every stage, so that the
+continuous $\nabla\cdot B$ vanishes identically. In 2D only $A_3$ is
+evolved, by the Hamilton–Jacobi equation
+$\partial_tA_3+v_1\partial_xA_3+v_2\partial_yA_3=0$, discretized by the
+fifth-order WENO scheme for Hamilton–Jacobi equations of Jiang & Peng with
+a Lax–Friedrichs Hamiltonian, and $B_1=\partial_yA_3$, $B_2=-\partial_xA_3$
+are computed by fourth-order central differences (§3.3–3.4, Eq. (3.14)).
+The explicit part of their
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
+carries the transport step, and their asymptotic-accuracy theorem includes
+$\nabla\cdot B=0$ in the low sonic Mach limit (Thm 4.2;
+[asymptotic preservation](/properties/asymptotic-preservation.md)). In 1D
+the divergence vanishes automatically and the conservative $B$ equation is
+used instead (§3.1). Numerically, the maximum discrete divergence on the
+[MHD blast wave](/benchmarks/mhd-blast-wave.md) ($200^2$, sonic Mach
+number $M=0.9$) is $2.87\times10^{-11}$, against $2.77\times10^{-11}$ for
+an explicit WENO scheme with the same transport (§5.2); the other 2D runs
+keep it "up to machine round off errors", unquantified. The price is
+accuracy in $B$: on the rotated Alfvén wave the momentum converges at
+fifth order and $B_1$ at about fourth ($L^1$ order 4.13 at $128^2$), which
+they attribute to the central-difference curl (Table 5.3).
 
 **Prolongation onto refined meshes.** On a block-structured
 [adaptive mesh](/methods/adaptive-mesh-refinement.md) the face-collocated
@@ -346,6 +409,10 @@ to $t=1$ in 2D and the 3D extension use projection.
   data; the evolution between regrids relies on the face-centred update
   and on defect correction, whose effect is shown on one 2D linear
   electrodynamics test (§9).
+- Chen et al. quantify the divergence on one test only and do not state
+  which discrete divergence they measure (§5.2).
+- Dzanic & Witherden (2023) do not quantify the divergence added by the
+  nonlinear filter; "negligible" is stated (§3.2).
 - Kanbar et al.'s CTM preserves the centred discrete divergence at the
   nodes, not a face-centred divergence *(compiler check, not in the
   sources: the divergence of Eqs. (20)–(21) is the centred nodal one)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
@@ -363,3 +430,5 @@ to $t=1$ in 2D and the 3D extension use projection.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — arXiv v1: §2.4, Eqs. (6)–(8); §2.5; §2.8; §4.2, Fig. 11.
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §3.2, Eqs. (3.6)–(3.7); §5.3, Fig. 5; §5.4.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §2–§5; §7; Tables 2–11.
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — arXiv v1: §2.4, Eqs. (2.15)–(2.17); §3.1; §3.3–3.4, Eq. (3.14); Thm 4.2; §5.1, Table 5.3; §5.2.
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.3, Eqs. (17)–(19); §3.2, Eqs. (29)–(33); §5.3, Fig. 4.

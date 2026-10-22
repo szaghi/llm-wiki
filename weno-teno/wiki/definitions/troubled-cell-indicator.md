@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -384,6 +384,50 @@ it is smaller at the discontinuity than at some critical points
 scaled wavenumber exactly on sinusoids and is large at discontinuities
 ([adaptive TENO](/methods/adaptive-teno.md)).
 
+**Density-based ratio detector for a flux/state switch.**
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) (§2.4, Eqs. (35)–(37),
+arXiv v1) adapts a detector of the same ratio type, attributed to Li et
+al., to choose per interface between two ways of forming the interface
+flux of a [gradient-based](/methods/gradient-based-reconstruction.md)
+finite-difference scheme. With first and second undivided differences of
+the density,
+$$\mathsf a_i=\lvert\rho_i-\rho_{i-1}\rvert+\lvert\rho_i-2\rho_{i-1}+\rho_{i-2}\rvert,\qquad
+\mathsf b_i=\lvert\rho_i-\rho_{i+1}\rvert+\lvert\rho_i-2\rho_{i+1}+\rho_{i+2}\rvert,$$
+$$\mathfrak s_i=\frac{2}{\mathsf a_i/\mathsf b_i+\mathsf b_i/\mathsf a_i},\qquad
+\mathfrak s_{i+1/2}=\min(\mathfrak s_{i-2},\dots,\mathfrak s_{i+3}),\qquad
+\delta^{\mathrm H}_{i+1/2}=\begin{cases}0,&\mathfrak s_{i+1/2}<\mathfrak s_c,\\1,&\text{otherwise},\end{cases}$$
+with $\mathfrak s_c=0.5$ and a regularization $\frac{0.9\mathfrak s_c}{1-0.9\mathfrak s_c}\xi_{\mathrm A}^2$,
+$\xi_{\mathrm A}=10^{-3}$, of the same form as Fu's $\epsilon_\sigma$ above
+($\mathsf a_i$, $\mathsf b_i$, $\mathfrak s_i$, $\mathfrak s_c$, $\delta^{\mathrm H}$ page-local,
+the letters of [hybrid schemes](/methods/hybrid-weno.md); the source
+writes $a$, $b$, $\psi$, $\psi_c$, $\sigma$; $\mathfrak s_i$ carries a point
+index, the sharpness $\mathfrak s$ of the first section none;
+$\delta^{\mathrm H}=1$ means smooth). Since
+$2/(\mathsf a/\mathsf b+\mathsf b/\mathsf a)=2\mathsf a\mathsf b/(\mathsf a^2+\mathsf b^2)$,
+$\mathfrak s_i$ is the ratio of the undivided-difference sensor $\sigma_i$
+above with one-sided first-plus-second differences in place of first
+differences *(compiler check, not in the sources)*; the printed
+$\mathfrak s_i$ does not show where the regularization enters. Where
+$\delta^{\mathrm H}_{i+1/2}=1$ the left and right fluxes of the HLLC flux
+are reconstructed from point fluxes at seventh order, elsewhere they are
+the fluxes of the
+[monotonicity-preserving](/methods/monotonicity-preserving-limiter.md)
+limited states, $f^-_{i+1/2}=\delta^{\mathrm H}_{i+1/2}f^{\mathrm{flux}}_{i+1/2}+(1-\delta^{\mathrm H}_{i+1/2})f(u^-_{i+1/2})$
+and likewise on the right, the limited states always entering the
+dissipative term (Eqs. (31)–(32), page-local superscript; see
+[conservative finite-difference schemes](/definitions/conservative-finite-difference-scheme.md)
+and [hybrid schemes](/methods/hybrid-weno.md)). Chamarthi departs from
+the original in two ways: the detector reads only density, because
+density sees shocks and contacts while pressure and velocity see only
+shocks, and it selects flux versus state reconstruction instead of a
+central/WENO hybrid; flagged interfaces get a buffer of three points on
+each side. Chamarthi states that raising $\mathfrak s_c$ above 0.5 reduces
+accuracy and lowering it produces oscillations, without data, and that
+the switch suits explicit gradients better than compact ones, whose
+global solve makes the hybrid expensive (§2.4). Chamarthi's evidence that the
+switch keeps high order in smooth flow is the isentropic-vortex
+convergence, rates 6.0–6.7 on the finest grids (Table 1).
+
 **TENO-flag indicators.** The binary cut-off flags
 $\delta_k$ of [TENO](/methods/targeted-eno.md) already say which candidate
 stencils are crossed by a discontinuity, and two sources build indicators
@@ -576,6 +620,10 @@ Several sources use an indicator without defining or analysing it:
   the first-order flux) also covers every non-monotone triple for which
   they prescribe the central flux ([TENO-THINC](/methods/teno-thinc.md)).
 
+- Chamarthi (2023b) attributes the "original" detector once to Li &
+  Jaberi (2012) and once to Li, Chen & Ren (2022) (§2.4, refs. [52] and
+  [53]).
+
 # Citations
 
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §5 (Eqs. (82)–(88)).
@@ -607,3 +655,4 @@ Several sources use an indicator without defining or analysing it:
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Algorithm 1; Tables 4.1, 4.3.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — arXiv v1: §3.1, Eqs. (18)–(20), Fig. 2.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §3.1, Eqs. (17)–(18), (22)–(24), (32)–(33), Tables 1–3, Figs. 2–5.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4, Eqs. (31)–(37); Table 1 (arXiv v1).

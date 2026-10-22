@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "PyFR"
-description: "PyFR is an unstructured high-order flux-reconstruction solver for CPUs and GPUs; two Dzanic et al. papers implement in it a time-reversibility artificial viscosity and a positivity- and entropy-bounded adaptive modal filter, run nodal DG through FR from degree 2 to 14 on mixed meshes, and report a filter overhead of 1–2 % on a V100 GPU."
+description: "PyFR is an unstructured high-order flux-reconstruction solver for CPUs and GPUs; three Dzanic et al. papers implement in it a time-reversibility artificial viscosity and a positivity- and entropy-bounded adaptive modal filter, later extended to ideal MHD, run nodal DG through FR from degree 2 to 14 on mixed meshes, and report filter costs on V100 GPUs."
 status: established
 aliases: [PyFR solver, Py-FR]
 tags: [software, flux-reconstruction, dg, gpu]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # PyFR
@@ -64,6 +64,26 @@ flux, so the sensor reuses the solver's own residual evaluation (§4.2).
   label is inexact; as a bracket end it is harmless *(compiler check, not
   in the sources)*. The sources do not state which precision the runs use.
 
+- **Ideal MHD and a faster filter.** [Dzanic & Witherden (2023)](/sources/dzanic-2023.md)
+  extend the entropy filter in PyFR to ideal MHD with Powell's source term,
+  using FR with DG correction functions, Gauss–Lobatto nodes on tensor
+  elements and $\alpha$-optimized nodes on simplices, HLLC with Davis wave
+  speeds (HLL for an extreme blast wave) and SSP-RK3 (§4). Their nodewise
+  Illinois solve for the filter strength cuts a weakly magnetized 3D
+  Rayleigh–Taylor run on 16 NVIDIA V100 GPUs from 61.4 to 25.3 GPU hours at
+  $\mathbb P^3$ and from 257 to 39.8 at $\mathbb P^4$, with an example
+  implementation in their supplementary material (§4.1, §5.6, Fig. 17;
+  [entropy filtering](/methods/entropy-filtering.md)).
+- **As seen from other GPU codes.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
+  cite PyFR as a GPU-accelerated unstructured high-order FR solver whose
+  dominant cost is sparse and dense matrix multiplication handled by BLAS
+  libraries, in contrast with the low arithmetic intensity of their
+  second-order finite-volume fluxes (§1).
+  [Zaghi et al. (2023)](/sources/zaghi-2023.md) group it with STREAmS and
+  nek5000 as GPU-performant codes with limited algorithmic flexibility
+  (§2.1), and [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) list
+  it among the existing GPU solvers they position URANOS against (§1).
+
 The benchmark results are on the pages of the two methods and on
 [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md),
 [isentropic vortex](/benchmarks/isentropic-vortex.md),
@@ -74,7 +94,7 @@ The benchmark results are on the pages of the two methods and on
 
 ## Qualifications
 
-- Everything on this page is the configuration of two papers by the same
+- Everything on this page is the configuration of three papers by the same
   group, not a description of the code's full capabilities; the PyFR
   paper itself is cited by them, not ingested.
 
@@ -82,3 +102,7 @@ The benchmark results are on the pages of the two methods and on
 
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §4.1 Eqs. (31)–(38), §4.2, §5 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §4.2 Eqs. (25)–(26), §5.1.3, §5.2.3, Alg. 2 (arXiv v3).
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §4, §4.1, §5.6 Fig. 17 (arXiv v2).
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §1 (accepted manuscript).
+- [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §2.1.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §1.

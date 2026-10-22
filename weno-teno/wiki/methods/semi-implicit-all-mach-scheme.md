@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Semi-implicit all-Mach schemes"
-description: "Semi-implicit all-Mach schemes split the scaled Euler equations into explicit material waves and implicit acoustic waves, so the time step no longer shrinks with the Mach number; with a linearized equation of state each implicit stage is one linear elliptic equation for the pressure, and the scheme is asymptotic preserving in the incompressible limit."
+description: "Semi-implicit all-Mach schemes split the scaled Euler or ideal MHD equations into explicit material (and magnetic) waves and implicit acoustic waves, so the time step no longer shrinks with the Mach number; with a linearized equation of state each implicit stage is one linear elliptic equation for the pressure, and the scheme is asymptotic preserving in the incompressible limit."
 status: established
-aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3]
-tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation]
-timestamp: 2026-10-23T10:00:00Z
+aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT]
+tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation, mhd]
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Semi-implicit all-Mach schemes
@@ -153,6 +153,62 @@ All tests with $\gamma=1.4$ (§5):
   $\varepsilon=10^{-6}$: the $L^\infty$ divergence error grows in time and jumps when fine
   structures are no longer resolved (Ex. 5.6, Fig. 5.7).
 
+## Extension to ideal MHD
+
+[Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) carry the scheme over to the ideal MHD
+equations at all sonic Mach numbers $\varepsilon\in[0,O(1)]$, with the Alfvén Mach number set
+to one (§2.2): the momentum flux carries $(p/\varepsilon^2+\tfrac12\lvert B\rvert^2)\mathbb I-B\otimes B$
+and the energy is $E=\frac{p}{\gamma-1}+\frac{\varepsilon^2}2\big(\rho\lvert v\rvert^2+\lvert B\rvert^2\big)$.
+They combine it with constrained transport through a vector potential (Weyl gauge, after
+Christlieb, Rossmanith and Tang): the induction equation is replaced by
+$\partial_t\mathcal A+(\nabla\times\mathcal A)\times v=0$ for the page-local potential $\mathcal A$,
+and $B=\nabla\times\mathcal A$, so $\nabla\cdot B=0$ holds identically (§2.4,
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+**Splitting** (§3.2). The right-hand side is partitioned into four parts: an explicit
+convective–magnetic flux (mass and momentum, with the pressure $p$ itself, not
+$p/\varepsilon^2$), the explicit constrained-transport term, an explicit energy flux carrying the
+$\varepsilon^2$ magnetic contributions, and the implicit acoustic flux, which carries
+$(1-\varepsilon^2)p_2$ in the momentum and the linearized enthalpy flux
+$\frac{E_E+p_E}{\rho_I}(\rho v)_I$ in the energy, with $p_2=(p_I-\bar p_E)/\varepsilon^2$ as above.
+With the kinetic and magnetic energy evaluated explicitly, each implicit stage again reduces
+to one linear elliptic equation,
+$$\frac{\varepsilon^2}{\gamma-1}p_2-(1-\varepsilon^2)\Delta t^2\mathsf a_{ii}^2\,\nabla\cdot\big(\bar H\nabla p_2\big)=E^{\circ\circ}$$
+(Eq. (3.18); $E^{\circ\circ}$ explicit). The switch $\alpha_{\mathrm s}=1$ for $\varepsilon<1$,
+$1/\varepsilon^2$ for $\varepsilon\ge1$ is that of Boscarino et al. (§3.1). The time stepper is the
+third-order stiffly accurate SI-IMEX Runge–Kutta of Boscarino et al. and Huang, Xing and
+Xiong (tableau not reprinted).
+
+**Space** (§3.3). Fifth-order finite-difference WENO, characteristic-wise on the explicit
+convective–magnetic flux and component-wise on the other two fluxes; the
+vector-potential equation is a Hamilton–Jacobi equation discretized with Jiang–Peng WENO and
+a Lax–Friedrichs Hamiltonian; $B=\nabla\times\mathcal A$ and the elliptic operator use
+fourth-order central differences. The [characteristic decomposition](/methods/characteristic-decomposition.md)
+uses the MHD eigenvectors **at $\varepsilon=1$**, because for small $\varepsilon$ the true ones "will make
+such a spectral characteristic decomposition to be unstable" (stated, no analysis).
+
+**Capped viscosity.** The global [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) speed and
+the time step use the fast magnetosonic speed built from the capped sound speed
+$\hat c=\min(1/\varepsilon,1)\sqrt{\gamma p/\rho}$ (Eq. (3.12)), so both are independent of
+$\varepsilon$ for $\varepsilon<1$. The explicit reference schemes of the paper (WENO with SSP-RK3,
+with and without constrained transport) use the same cap, which the authors say "leads to
+much better results" (§5).
+
+**Evidence** (§5, CFL 0.25). Fifth order on the 1D and 2D circularly polarized
+[Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) at $\varepsilon=1$, with $B$ only
+fourth order in 2D because of the central-difference curl (Tables 5.1, 5.3); order loss at
+$\varepsilon=10^{-2}$ ([asymptotic preservation](/properties/asymptotic-preservation.md)); the
+[Brio–Wu-type shock tube](/benchmarks/brio-wu-shock-tube.md), the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) and the
+[MHD blast wave](/benchmarks/mhd-blast-wave.md) (maximum discrete divergence
+$2.87\times10^{-11}$ at $\varepsilon=0.9$); field-loop advection on $256\times128$ with CPU times
+(s) for the semi-implicit and the explicit constrained-transport scheme of 7634.880 vs
+4736.466 at $\varepsilon=0.5$, 5687.467 vs 19719.964 at $\varepsilon=0.1$ and 8015.959 vs 38666.192
+at $\varepsilon=0.05$ (Table 5.5; hardware and linear solver not stated). The explicit scheme is
+cheaper at $\varepsilon=0.5$; the semi-implicit one is about 3.5 and 4.8 times faster at the two
+smaller Mach numbers *(compiler check, not in the sources: ratios of the printed times)*, and its own cost is not monotone in $\varepsilon$, which the paper does
+not explain.
+
 ## Qualifications
 
 - The scheme is not uniformly accurate in $\varepsilon$: asymptotic accuracy covers only
@@ -179,4 +235,5 @@ All tests with $\gamma=1.4$ (§5):
 
 # Citations
 
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §2.2–2.4, §3.1–3.4 (Eqs. (3.1)–(3.18)), §4, §5 (Tables 5.1–5.5) (arXiv v1).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §§1–2 (Eqs. (2.1)–(2.9)), §3.1 (Eqs. (3.10)–(3.19), Remark 3.1), §3.2 (Eqs. (3.25)–(3.40), Remark 3.2), §3.3 (Eq. (3.32)), §4 (Thm. 4.1, Remark 4.2, Def. 4.3, Prop. 4.4), §5 (Tables 5.1–5.2, Figs. 5.1–5.7) (arXiv v2).

@@ -198,7 +198,7 @@ near shocks more likely (§2.4).
   Eq. (3.21)) assembles its interface value "as in" WENO-ZQ, i.e. by this CWENO combination, with
   any positive linear weights.
 - **Third order.** Deng (2023, §1) recalls third-order compact CWENO schemes and judges that their
-  performance "is usually dependent on parameters in an ad hoc way"; his answer is the
+  performance "is usually dependent on parameters in an ad hoc way"; Deng's answer is the
   [ROUND](/methods/round-scheme.md) family.
 - **Unstructured meshes.** Balsara et al. (2024, §I) recall extensions by Friedrichs, Käser & Iske and
   Dumbser & Käser; Tsoutsanis et al. (2021) is such an extension in the bundle.
@@ -211,7 +211,7 @@ work" on uniform and non-uniform Cartesian meshes because each stencil contains 
 whereas negative or non-existent linear weights appear on unstructured meshes (Fu 2023, §2.5;
 [targeted ENO](/methods/targeted-eno.md)). The CWENO subtraction avoids the existence question
 altogether, since the linear weights are free. Fu (2021, §1) cites CWENO, WENO-AO and WENO-ZQ as the
-cognate unequal-stencil approaches when he introduces TENO-AA
+cognate unequal-stencil approaches when introducing TENO-AA
 ([adaptive TENO](/methods/adaptive-teno.md)).
 
 ## Qualifications

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Split convective forms"
-description: "Split forms write the convective terms of the mass and momentum equations as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and its conservation conditions, the rotational-form Div-rot and Div-str splittings of Edoh with square-root-density variables, the Burgers split of DG and FR, and the face fluxes and two-point fluxes they correspond to."
+description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and its conservation conditions, Edoh's rotational-form splittings, De Michele and Coppola's flux form and energy-equation splittings, the Burgers split of DG and FR, and the corresponding face and two-point fluxes."
 status: established
-aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split]
+aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Split convective forms
@@ -264,6 +264,87 @@ Remark 4).
   product-form momentum term, but cleaner vortical structures (Figs. 3–4;
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
 
+## Flux form with a pointwise weight, and the generalized kinetic-energy flux
+
+[De Michele & Coppola (2023)](/sources/demichele-2023.md) use the same
+family, their $\xi$ being the $\zeta$ of the table above, Feiereisen at
+$\zeta=1$ (Eqs. (15)–(16), §4.2.5, Table 2). They write its second-order
+member as a finite-volume flux difference with the face mass flux
+$m_{i+1/2}=\zeta\,\overline{\rho v}+(1-\zeta)\tfrac12(\rho_iv_{i+1}+\rho_{i+1}v_i)$,
+$\overline a=\tfrac12(a_i+a_{i+1})$, mass flux $m$ and momentum flux
+$\overline\phi\,m$ (Eqs. (23)–(25)), and derive the local flux of the induced
+quadratic,
+$$\phi_i\,[\![\overline\phi\,m]\!]-\tfrac{\phi_i^2}2[\![m]\!]=\Big[\!\Big[\tfrac12\phi_i\phi_{i+1}m_{i+1/2}\Big]\!\Big],$$
+with $[\![\cdot]\!]$ here the flux difference divided by $\Delta x$ (Eqs.
+(26)–(27); a high-order version is their Eq. (A.6)). Two consequences:
+
+- **Pointwise weight.** In this form the weight may vary from face to face,
+  $\zeta_i$ inside $m_{i+1/2}$, and the scheme still conserves mass,
+  momentum and kinetic energy locally; the global finite-difference proof,
+  which uses Eqs. (17)–(19), does not allow a variable weight (§3.2, §3.4).
+- **Design rule.** To make $\phi\propto\sqrt\psi$ evolve conservatively,
+  discretize the convective term of $\psi$ with this splitting (§3.4). With
+  $\phi=\sqrt{2e}$ in the internal-energy equation it preserves
+  $\rho\sqrt e$, proportional to $\rho c$ (§4.2.4).
+
+## Energy-equation splittings
+
+With KEP mass and momentum, De Michele & Coppola compare fifteen
+discretizations of the energy equation, written in total energy $\rho E$,
+internal energy $\rho e$, pressure, total enthalpy $\rho H$, sound speed
+$\rho c$ or entropy $\rho s$ (§4; page-local $\rho$-weighted variables). Their
+general formula for the discrete equation induced on any $G(\rho,v,\phi)$
+uses only the chain rule in time, so it holds discretely for exact time
+integration (Eq. (30)). From it (§4.2, Tables 1–2):
+
+- a locally conservative discretization of $\rho e$, $p$, $\rho H$ or $\rho c$
+  induces a locally conservative $\rho E$, and conversely $\rho E$ induces a
+  locally conservative $\rho e$; for exact time integration it does not
+  matter which equation is discretized, only the discrete convective and
+  pressure terms do (Eqs. (35)–(41), §4.2.1);
+- for the induced pressure work to be locally conservative, the
+  derivative matrices of pressure and velocity must satisfy $D_p=-D_v^\top$
+  (page-local; their Eq. (42), Veldman's Requirement 3.2), of the same form
+  as the duality relations above *(compiler check, not in the sources)*;
+- the KEEP scheme of Kuya et al. is, for exact time integration, the
+  Kennedy–Gruber–Pirozzoli discretization of the internal-energy equation;
+- no $\rho E$, $\rho e$, $p$, $\rho H$ or $\rho c$ scheme conserves entropy exactly;
+  a direct entropy discretization (Honein–Moin) conserves $\rho s$ but loses
+  $\rho E$ (Eqs. (73)–(77));
+- only three are [pressure-equilibrium preserving](/properties/pressure-equilibrium-preservation.md);
+- the Jameson–Pirozzoli form writes the pressure work as $\rho v\,(p/\rho)$
+  with the same triple-product split as $\rho E$ (§4.2).
+
+Their tests are an isentropic vortex ($40^2$ eighth-order and $30^2$
+fourth-order central derivatives, RK4, to $t=50$) and an inviscid
+$32^3$ Taylor–Green vortex (§5). The internal-energy and entropy
+formulations with the Kennedy–Gruber–Pirozzoli split are the most robust:
+$(\rho e)$, $(\rho e)_{\mathrm{PEP}}$, the KGP sound-speed and the KGP entropy
+schemes never blow up by $t=50$ at CFL 0.01, 0.1 and 0.5, while every
+total-energy and total-enthalpy form does except two at CFL 0.5 (Table 3).
+The KGP sound-speed scheme never diverges and Kok's Feiereisen version does
+(at $t\approx46$ in the Taylor–Green vortex; §5.2). They conclude that a
+KEP treatment of the energy variable itself, the customary choice that
+also preserves $\rho E^2$, $\rho e^2$ or $\rho s^2$, is "not necessarily the
+best option" (§6).
+
+**As a non-dissipative reference.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
+use a skew-symmetric central scheme, after Honein–Moin and Pirozzoli's
+generalized split forms, as the non-dissipative baseline against HLLC and
+AUSMDV in decaying compressible isotropic turbulence. At $M_{t,0}=0.3$ on
+a structured $64^3$ mesh it tracks the spectral reference; at
+$M_{t,0}=0.6$, with eddy shocklets, both upwind schemes are much more
+dissipative than it in enstrophy and dilatation (App. A, Figs. A.13–A.16;
+[decaying compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)).
+They print no formula for it. [De Vanna et al. (2023a)](/sources/devanna-2023.md)
+use the sixth-order fully split energy-preserving scheme of Pirozzoli in
+[URANOS](/software/uranos.md), with no formula printed either, as the
+zero-dissipation baseline of their
+[wall-modelled LES](/methods/wall-modeled-les.md) study: it matches the DNS
+of shock-free Mach 2 boundary layers best of the six schemes compared, and
+diverges at Mach 5.86 because of shocklets unless hybridized with WENO or
+TENO (§3.1, §4.3.1, §4.4).
+
 ## Split forms in DG and flux reconstruction
 
 For Burgers, $\partial_tu+\partial_x(u^2/2)=0$, the split form is
@@ -345,6 +426,13 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
   Eq. (10) still conserve mass and momentum but lose kinetic energy at
   $O(10^{-3})$–$O(10^{-4})$. The variant $\mu_\rho=1$ ("$\delta=1$" in the
   source's letters) "turned out not always to be stable" (Fig. 2).
+- De Michele & Coppola (arXiv v1, §3.1) print "the cases $\xi=0$ and
+  $\xi=1$ give the classical Feiereisen form and the newly derived form",
+  the reverse of their own Eqs. (15)–(16), §4.2.5 and Table 2, which give
+  $\xi=1$ Feiereisen. Their conditions assume exact time integration and
+  periodic uniform meshes; their remark that finer and higher-order runs
+  blow up earlier compares runs that differ in mesh and order at once
+  (§5.1).
 
 # Citations
 
@@ -354,3 +442,6 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3, §3.1 Eqs. (20)–(28), §3.1.2 Eq. (46) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2 Fig. 8 (arXiv v4).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3.1 Eqs. (38)–(42), §3.5 Eqs. (58)–(62), §4.1.2, App. C Table 2 Fig. 13 (arXiv v1).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §3.1–3.4 Eqs. (12)–(28), §4.1 Eq. (30), §4.2 Eqs. (32)–(77), Tables 1–3, §5, §6, App. A Eq. (A.6) (arXiv v1).
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A Figs. A.13–A.16 (accepted manuscript).
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1, §4.3.1, §4.4.

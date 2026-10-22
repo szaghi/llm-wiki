@@ -5,7 +5,7 @@ description: "Adaptive TENO varies the TENO cut-off locally through a discontinu
 status: established
 aliases: [TENO-A, TENO-AA, TENO5-A, TENO8-AA, TENO10-AA, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -92,7 +92,7 @@ $10^{-7}$ and $10^{-14}$ (Fu 2021, §3.4); TENO5-A uses $b_1=10$, $b_2=5$, so
 $C_T$ moves between $10^{-5}$ and $10^{-10}$ (Huang et al. 2023, Eq. (20));
 Fu (2023) calls $b_1$, $b_2$ case-independent but does not print them. Variants
 recalled by Fu (2023, §4.1): TCNS with adaptive dissipation, TENO6-A with a
-modified Ducros sensor in place of $\mu_d$, and a cheaper adaptive control of
+[modified Ducros sensor](/definitions/ducros-shock-sensor.md) in place of $\mu_d$, and a cheaper adaptive control of
 Peng et al.; the family runs from TENO5-A to TENO8-A, plus TENO10-A with a
 positivity-preserving limiter.
 
@@ -231,14 +231,77 @@ high-wavenumber resolution on Shu–Osher and a better blast-wave peak near
 $x=0.78$, but long-time oscillations and post-shock noise that their
 scale-sensor variant removes (previous section).
 
+## TENO-A5 and TENO-A7 in a hybrid wall-turbulence solver
+
+The URANOS finite-difference solver ([URANOS](/software/uranos.md)) carries
+TENO-A5 next to TENO5 and WENO-Z of orders 3, 5 and 7. It uses them pure or
+switched against a sixth-order kinetic-energy-preserving central scheme by a
+[modified Ducros sensor](/definitions/ducros-shock-sensor.md).
+
+**Parameters.** [De Vanna et al. (2023a)](/sources/devanna-2023.md) (§3.1)
+and [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) (§3.1) set them
+"according to" Fu et al. (2018). $C_T$ "ranges between $10^{-7}$ and
+$10^{-10}$ given $\alpha_1=10.5$, $\alpha_2=3.5$, $C_r=0.25$ and
+$\xi=10^{-3}$", against the fixed $C_T=10^{-7}$ of their TENO5. No formula is
+printed. *(Compiler check, not in the sources: read as $b_1=10.5$ and
+$b_2=3.5$ in the cut-off $C_T=10^{-\lfloor b\rfloor}$ above, $b$ runs over
+$[7,10.5]$ and $C_T$ over $10^{-10},\dots,10^{-7}$, the printed range, and
+$\xi$ is then $\xi_{\mathrm A}$. The identification of the symbols is
+inferred, not stated.)* The constant $C_r=0.25$ is a third value next to Fu
+(2021)'s $0.265$ and Huang et al.'s $0.24$. De Vanna et al. (2023a, §3.1)
+credit the shock-sensor adaptation of $C_T$ to two later works (Hamzehloo et
+al.; Peng et al.) and only the parameters to Fu et al. (2018). In the
+immersed-boundary work,
+[De Vanna et al. (2023c)](/sources/devanna-2023-c.md) (§3.1) use TENO-A7 on a
+flat plate and TENO-A5 on a compression ramp, hybridized at the Ducros
+threshold $\Psi^*=0.1$, with parameters "suggested by Fu et al." that are not
+printed (§§4.3–4.4).
+
+**Evidence on canonical tests** (De Vanna et al. 2023b, App. A):
+
+- *Convergence.* On an advected density wave, all six convective schemes,
+  TENO-A5 included, are "scaling with their theoretical order of accuracy"
+  in $L_1$, $L_2$ and $L_\infty$ (App. A.1, Fig. 11). The TENO-A5 panel is
+  drawn against a fifth-order guide line. The linear weights are not printed
+  (see Qualifications).
+- *Shocks.* On Sod and Shu–Osher with 200 points, all shock-capturing schemes
+  "accurately represent the system dynamics", with "a marked dependence on
+  the order of accuracy as well as moving from WENO to TENO" (App. A.2,
+  Fig. 12). On a four-quadrant 2D Riemann problem on $1600^2$, the higher
+  WENO orders and the TENO schemes resolve more shear-layer instabilities
+  (App. A.3, Fig. 13).
+
+**Evidence on wall-resolved and wall-modelled LES** of spatially developing boundary layers
+(De Vanna et al. 2023a, §§4.2–4.4;
+[supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md)):
+
+- In wall-resolved LES at Mach 2, agreement with DNS friction improves as the
+  WENO order rises and from WENO to TENO. The central scheme fits DNS best
+  (§4.2, Figs. 1–2).
+- In wall-modelled LES, no WENO or TENO scheme collapses onto the central
+  solution (§4.3.1). With hybridization at $\Psi^*=0.1$, TENO-A5 and the central
+  scheme give the best mean-velocity and fluctuation profiles on the coarse
+  grid (§4.3.2, Fig. 6). On the fine grid, TENO5 and TENO-A5 recover DNS
+  "almost as the EP scheme, at the evident penalty of a roughly doubled
+  computing cost"; the cost figure is cited from other works.
+- At Mach 5.86 with the threshold at $\Psi^*=0.2$, all TENO schemes capture the mean
+  velocity "precisely" (§4.4.1, Fig. 9). The URANOS validation case at this
+  Mach number, run with TENO-A5, agrees "excellently" with DNS in mean
+  velocity and temperature and deviates in the inner-layer turbulent kinetic
+  energy (De Vanna et al. 2023b, §5.2, Fig. 10).
+- **Cost.** In wall-clock time per iteration normalized by the central
+  scheme, pure TENO-A5 is the most expensive variant, at 1.32 on the fine
+  grid. The hybrids run at 0.90–1.00 (De Vanna et al. 2023a, §4.3.1, Table 2;
+  13 Intel KNL 7250 nodes).
+
 ## Motivation from fixed-cut-off schemes
 
-Hiejima (2022, §§3.2–3.3, §4) gives a case from outside the TENO papers for adapting the cut-off. His
+Hiejima (2022, §§3.2–3.3, §4) gives a case from outside the TENO papers for adapting the cut-off. Hiejima's
 TENO-weighted [WCNS](/methods/weighted-compact-nonlinear-scheme.md) interpolation (WCNS-T) uses the
 simplified measure $\gamma_k=1/(\beta_k+\epsilon)^q$ with $q=6$, $\epsilon=10^{-40}$ and a fixed
 $C_T=10^{-5}$ on all candidate stencils. At this value Sod shows slight under- and overshoots that
 grow with the order, while $C_T=10^{-7}$ makes the Lax plateau between shock and contact oscillate
-(stated, not shown); at 11th order the Shu–Osher result does not improve on the 9th. He proposes
+(stated, not shown); at 11th order the Shu–Osher result does not improve on the 9th. Hiejima proposes
 to optimize $q$ and $C_T$ "following" adaptive TENO, citing the 10-point eighth-order TENO10-A,
 but does not do it. [Liang et al. (2022)](/sources/liang-2022.md) (§1) mention TENO-A among the
 low-dissipation TENO developments but build their own low-dissipation scheme on fixed-cut-off
@@ -252,6 +315,21 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
   TENO-AA reproduces the target exactly only for polynomials up to degree 2,
   by exact evaluation of $\sum_kd_k\hat f^{(k)}_{i+1/2}$ on $x^n$, $n\le5$.)*
   Fu (2021) calls it "the five-point reconstruction" without stating its order.
+- The order of TENO-A5 is reported two ways. Huang et al. (2023, Table 2)
+  measure third order for TENO5-A with the Arshed–Hoffmann linear weights.
+  De Vanna et al. (2023b, App. A.1, Fig. 11) state that their TENO-A5
+  converges at its "theoretical order" and plot it against a fifth-order
+  guide line. De Vanna et al. print neither the linear weights nor the
+  global indicator, so the two papers may run different linear backgrounds
+  under one name *(compiler check, not in the sources: with the TENO5
+  weights $6/10$, $3/10$, $1/10$ of [targeted ENO](/methods/targeted-eno.md)
+  the background is the fifth-order upwind scheme)*. The page does not record this as a
+  contradiction, because the two statements need not concern the same
+  scheme. Printing the URANOS weights would decide it.
+- Three values of $C_r$ are recorded for nominally the same TENO-A recipe:
+  $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023) and $0.25$ (De Vanna et al.
+  2023a, 2023b, both attributing the value to Fu et al. 2018). No source
+  discusses the difference.
 - The design orders of TENO8-AA and TENO10-AA (6 and 8) are below their point
   counts by construction; Fu (2023) writes "10-point 8th-order".
 - The Rayleigh–Taylor solution of TENO-AA loses mirror symmetry; Fu (2021,
@@ -281,3 +359,6 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1: TENO-A recalled.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.5.2, Eqs. (16)–(18); §§3.1–3.3; §4: fixed-cut-off WCNS-T and the proposal to adapt it.
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §§4.2–4.4, Table 2, Figs. 1–9: TENO-A5 parameters, wall-modelled LES evidence, cost.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.1; §5.2, Fig. 10; App. A.1–A.3, Figs. 11–13: TENO-A5 in URANOS, convergence, shock tests.
+- [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §3.1; §§4.3–4.4: hybrid TENO-A7 and TENO-A5 with immersed boundaries.

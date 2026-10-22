@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -94,6 +94,17 @@ with $a=\max\rho(\partial f/\partial u)$ in the A-WENO of [Li et al. (2023)](/so
   $c/\varepsilon$ is excluded for $\varepsilon<1$; the implicit acoustic flux is reconstructed
   componentwise with zero numerical diffusion (§1;
   [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+  [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) (§3.3, Eqs. (3.11)–(3.12)) use the same
+  device for ideal MHD at sonic Mach number $\varepsilon$: the global speed is
+  $\max_k\big(\lvert v_k\rvert+\hat c_{\mathrm f}^{(k)}\big)$, the fast magnetosonic speed built
+  from the capped sound speed $\min(1/\varepsilon,1)\sqrt{\gamma p_k/\rho_k}$ (page-local
+  $\hat c_{\mathrm f}$), so that dissipation coefficient and time step are independent of
+  $\varepsilon$ for $\varepsilon<1$; they apply the cap also to their explicit reference schemes,
+  where it "leads to much better results" at low Mach number (§5). Their vector-potential
+  equation, a Hamilton–Jacobi equation, uses the Lax–Friedrichs numerical Hamiltonian
+  $H(\tfrac12(\partial^-+\partial^+))-\beta_{\mathrm{HJ}}\tfrac12(\partial^+-\partial^-)$ on WENO
+  approximations $\partial^\pm$ of the derivative, with $\beta_{\mathrm{HJ}}$ the maximal
+  $\lvert\partial H/\partial(\cdot)\rvert$ between them (Eq. (3.14); page-local symbols).
 
 [Balsara et al. (2024)](/sources/balsara-2024.md) (§II, Eq. (2.2)) write the same splitting
 at matrix level, $A^\pm=\tfrac12(A\pm aI)$, $a$ the largest eigenvalue of $\lvert A\rvert$,
@@ -135,6 +146,14 @@ one in fluctuation form (§VI).
   the four run-time options of IDEFIX, second order with linear reconstruction on linear MHD
   waves ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.3, §4.2, Fig. 7;
   [Roe solver](/methods/roe-riemann-solver.md)).
+- In [JAX-Fluids](/software/jax-fluids.md) ([Bezgin et al. (2023)](/sources/bezgin-2023.md),
+  §3.3, Table 2) Lax–Friedrichs and Rusanov are among the selectable Riemann solvers, and
+  componentwise local Lax–Friedrichs is one of the splittings of its characteristic
+  flux-splitting route.
+- In the two-fluid relativistic plasma scheme of [Bhoriya et al. (2023)](/sources/bhoriya-2023.md)
+  (§4.2) the Maxwell block, whose eigenvalues are bounded by the speed of light and by the
+  cleaning speeds, all set to 1, uses the Rusanov flux with $a=1$ on minmod- or
+  WENO-reconstructed face values.
 - **As a first-order limit.** The first-order version of the
   [discrete kinetic relaxation scheme](/methods/discrete-kinetic-relaxation-scheme.md) of
   [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) "amounts to global
@@ -146,11 +165,27 @@ one in fluctuation form (§VI).
 - [Arun et al. (2022)](/sources/arun-2022.md) (§5) use "a Rusanov-type approximate Riemann
   solver" on hydrostatically reconstructed interface states (no formula printed; see
   [well-balancing](/properties/well-balancing.md)).
-- In [A-WENO](/methods/alternative-weno.md) the Rusanov flux was the usual finite-volume
-  building block before adaptive-diffusion variants
-  ([Wang et al. (2023)](/sources/wang-2023-b.md), §1, App. A); their "OLD" flux is LF with a
+- In [A-WENO](/methods/alternative-weno.md), as [Wang et al. (2023)](/sources/wang-2023-b.md)
+  recall (§1, App. A), the Rusanov flux was the finite-volume building block before
+  adaptive-diffusion variants; their "OLD" flux is LF with a
   single adaptively reduced coefficient
   ([adaptive-diffusion central-upwind flux](/methods/adaptive-diffusion-central-upwind-flux.md)).
+
+## A learned dissipation coefficient
+
+[Bezgin et al. (2023)](/sources/bezgin-2023.md) (§7.4, Eqs. (48)–(50)) replace the Rusanov
+coefficient $a=\max\{\lvert v^-\pm c^-\rvert,\lvert v^+\pm c^+\rvert\}$ by the output of a
+multilayer perceptron (three layers of 32 nodes, ReLU, exponential output so that the
+coefficient is non-negative) with inputs $\lvert v^+-v^-\rvert$, $\tfrac12(v^-+v^+)$,
+$\tfrac12(c^-+c^+)$ and the entropy jump $\lvert s^+-s^-\rvert$. The flux keeps the
+Lax–Friedrichs form, so consistency and conservation are untouched. The network is trained
+end to end through the differentiable solver on 15-step unrolls of the first 1000 steps of a
+2D implosion trajectory coarse-grained from $128^2$ to $32^2$ (Adam, learning rate
+$5\times10^{-4}$, batch 20, 200 epochs). The learned flux is less dissipative than Rusanov,
+stays stable over the full 2501-step trajectory and gives lower relative $L_1$ errors in
+density and pressure throughout, including beyond the training horizon (Figs. 20–21). It is
+one trained network on one problem; no generalization test to other flows is shown. See
+[learned WENO weights](/methods/learned-weno-weights.md).
 
 ## Bound preservation and invariant domains
 
@@ -178,7 +213,7 @@ one in fluctuation form (§VI).
   [convex limiting](/methods/convex-limiting.md),
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
 - **The original sparse IDP DG.** [Pazner (2021)](/sources/pazner-2021.md) chooses the
-  LLF interface flux of his DGSEM because it is compatible with graph viscosity: its jump
+  LLF interface flux of the author's DGSEM because it is compatible with graph viscosity: its jump
   term merges with the in-element graph viscosity
   $d_{ij}=\max\{a(u_i,u_j)\lVert c_{ij}\rVert,\ a(u_j,u_i)\lVert c_{ji}\rVert\}$ into a single
   graph form (§2, Eq. (6); §3.1, Eqs. (30)–(35); page-local $c_{ij}$, $d_{ij}$ the graph
@@ -297,7 +332,11 @@ with $\lvert\Lambda\rvert$ diagonal with every nonzero entry equal to the larges
 eigenvalue and $\mathcal Z$ the diagonal Barth scaling, $\frac{\partial u}{\partial w}=R\mathcal ZR^\top$
 (page-local $\Lambda$, $\mathcal Z$); the entropy production is
 $-\tfrac12[\![w]\!]^\top R\lvert\Lambda\rvert\mathcal ZR^\top[\![w]\!]\le0$ (Eqs. (57)–(60)). It is
-their default wherever dissipation is needed (§6). See
+their default wherever dissipation is needed (§6). [Bhoriya et al. (2023)](/sources/bhoriya-2023.md)
+(§4.1.2, Eq. (21), App. B) use the same Rusanov-type magnitude, the largest eigenvalue
+modulus times the identity, with Barth-scaled eigenvectors in their entropy-stable flux for
+two-fluid relativistic plasma, and call it "similar to the Roe diffusion operator"
+([TeCNO schemes](/methods/tecno-scheme.md)). See
 [entropy-conservative fluxes](/methods/entropy-conservative-flux.md) and
 [entropy stability](/properties/entropy-stability.md).
 
@@ -355,3 +394,6 @@ their default wherever dissipation is needed (§6). See
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Fig. 7).
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.2.
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — §4.2.
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.3 (Eqs. (3.11)–(3.14)), §5 (arXiv v1).
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, Table 2, §7.4 (Eqs. (48)–(50), Figs. 20–21) (arXiv v1).
+- [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1.2 (Eq. (21)), §4.2, App. B (arXiv v2).

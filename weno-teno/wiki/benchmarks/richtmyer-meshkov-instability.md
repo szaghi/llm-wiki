@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Richtmyer–Meshkov instability"
-description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, and a single-gas density interface used to rank Riemann solvers; it tests interface sharpness, growth rates and mixing-zone resolution."
+description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas density interface used to rank Riemann solvers and low-dissipation reconstructions, and a viscous air–SF6 two-material version of it; it tests interface sharpness, growth rates and mixing-zone resolution."
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -27,7 +27,7 @@ the Atwood number $A=(\rho_{\mathrm h}-\rho_{\mathrm l})/(\rho_{\mathrm h}+\rho_
 
 ## Setups in the sources
 
-All four setups are two-dimensional and single-mode.
+All five setups are two-dimensional and single-mode.
 
 **Air–SF$_6$, Mach 1.2.** [Bai & Li (2022)](/sources/bai-2022.md)
 §3.3.1, Table 2: domain $[-28,32]\times[-1.875,1.875]$ cm, symmetry
@@ -82,6 +82,27 @@ denser gas: there is one $\gamma$, $A=(5.04-1)/(5.04+1)\approx0.67$
 air–SF$_6$. Periodic in $y$, non-reflecting left and right,
 $640\times160$ cells, CFL 0.5, $t=9$, second-order MUSCL with
 second-order TVD Runge–Kutta.
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.8 (arXiv v2) and
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.6 (arXiv v1)
+print the same states and interface, with $\gamma=1.4$ "for both
+fluids", on $320\times80$ points to $t=9$, left and right boundaries
+fixed to the initial values, periodic top and bottom, CFL 0.2.
+
+**Viscous air–SF$_6$, two materials.** Chamarthi (2023a) Ex. 4.18 solves
+the five-equation model with viscosity $\mu=10^{-4}$ on
+$[0,16\lambda]\times[0,\lambda]$, $\lambda=1$, interface
+$x/\lambda=0.4-0.1\sin(2\pi(y/\lambda+0.25))$, states
+$(\rho,v_1,v_2,p,\gamma)$: pre-shock air $(1,1.24,0,1/1.4,1.4)$,
+post-shock air $(1.4112,0.8787,0,1.6272/1.4,1.4)$ and SF$_6$
+$(5.04,1.24,0,1/1.4,1.093)$; the interface is smoothed with an error
+function (parameter 5); $4096\times256$ points, CFL 0.1, snapshots at
+$t=5.5$, $8.25$ and $11$. The air states are the single-gas data above
+in units of the pre-shock sound speed, $v\to v/\sqrt{1.4}$,
+$p\to p/1.4$, and in a frame moving at $1.24$:
+$1.24-\tfrac{665}{1556}/\sqrt{1.4}=0.8788$ and $1.628/1.4=1.1629$
+against the printed $0.8787$ and $1.6272/1.4=1.1623$
+*(compiler check, not in the sources)*, but the heavy gas now has
+$\gamma=1.093$.
 
 ## Findings
 
@@ -107,6 +128,19 @@ evidence is contour plots; no growth rate or mixing width is measured.
 and their RHLLEM-LD) in one second-order scheme and find the sharpest
 interfaces with RHLLEM-LD; the evidence is contour plots.
 
+**Roll-up as a dissipation gauge.** On the single-gas case Chamarthi
+(2023a) finds that TENO5 produces "no roll-up vortices at all", MEG6
+some and MIG4 the most ([gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
+with an [MP limiter](/methods/monotonicity-preserving-limiter.md);
+Fig. 11). Chamarthi (2023b) finds MEG7 with conservative variables
+giving a thinner interface than the seventh-order mapped WCNS7M, and
+MEG7 with primitive variables lower dissipation still, with small-scale
+roll-ups (Fig. 9); the wall-clock times are 224 s (MEG7-prim), 205 s
+(MEG7-cons) and 345 s (WCNS7M), hardware not stated (Table 2). In the
+viscous two-material run of Chamarthi (2023a) the interface stays free of
+oscillations and is thinnest with MIG4 (Ex. 4.18; see
+[five-equation model](/definitions/five-equation-model.md)).
+
 **Also in the bundle.** [Huang et al. (2026)](/sources/huang-2026.md)
 §6.9 run a Richtmyer–Meshkov problem at $\Delta x=1/200$ to $t=2$ and
 find [ROUND](/methods/round-scheme.md) comparable to a learned
@@ -115,11 +149,15 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 
 ## Qualifications
 
-- The four setups share only the geometry: the Atwood numbers
-  (about 0.67, 0.61, a metal–gas contrast, and 0.67 for one gas), the
+- The setups share only the geometry: the Atwood numbers
+  (about 0.67, 0.61, a metal–gas contrast, and 0.67 for one gas and for
+  the viscous air–SF$_6$ case), the
   shock strengths (Mach 1.2, 1.21, 2.5, about 1.24), the direction
   (light to heavy, heavy to light) and the presence of re-shock all
   differ, and only Bai & Li measure a growth rate.
+- Chamarthi's finding that TENO5 shows no roll-up rests on one grid
+  ($320\times80$) and the author's TENO5 implementation; no
+  other source runs TENO on this case.
 - Hu et al.'s post-shock state is consistent with the Rankine–Hugoniot
   conditions into $(1,0,0,1)$ only to about $10^{-3}$: $p=1.628$ gives
   $M=1.24028$, $\rho=1.41164$, $\lvert v_1\rvert=0.42793$, whereas
@@ -134,7 +172,7 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
   although the gas has $\gamma=1.67$.
 - Renac defines the Atwood number with "$\rho_2=\gamma_2$ taken as the
   pre-shock density of the mixture", but component 1 is the mixture:
-  with his non-dimensionalization the mixture density is
+  with Renac's non-dimensionalization the mixture density is
   $\gamma_1=1.24815$, and $A=0.6053$ then gives an SF$_6$ density of
   about 5.08 *(compiler check, not in the sources)*.
 - Renac's figure labels the snapshots in microseconds for a
@@ -146,3 +184,5 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 - [Renac (2021)](/sources/renac-2021.md) — §7.4, Fig. 7 (arXiv v3).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.9, Fig. 14.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.5, Eqs. (5.6)–(5.7).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Exs. 4.8, 4.18, Fig. 11 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.6, Fig. 9, Table 2 (arXiv v1).

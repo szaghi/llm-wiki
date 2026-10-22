@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Orszag–Tang vortex"
-description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vortical velocity and magnetic fields steepen into interacting shocks and current sheets; used for high-order MHD shock capturing, density-bound limiting, entropy stability and divergence control, in two normalizations that differ by a rescaling."
+description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vortical velocity and magnetic fields steepen into interacting shocks and current sheets; used for high-order MHD shock capturing, density-bound limiting, entropy stability and divergence control, in two normalizations that differ by a rescaling, and in a relativistic two-fluid version."
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
-tags: [benchmark, mhd, dg, teno, limiting]
-timestamp: 2026-10-23T08:00:00Z
+tags: [benchmark, mhd, dg, teno, limiting, relativistic]
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Orszag–Tang vortex
@@ -44,6 +44,10 @@ $\mu_0=1$ (magnetic permeability, page-local) and a unit sound speed.
 §4.2 print, on periodic $[0,2\pi]^2$ with $\gamma=5/3$,
 $\rho=\gamma^2$, $p=\gamma$, $v=(-\sin y,\ \sin x,\ 0)$,
 $B=(-\sin y,\ \sin2x,\ 0)$, to $t=3$.
+[Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.6 (arXiv v1)
+print the same data, with vector potential $\mathsf A_3=0.5\cos2x+\cos y$
+(page-local; $B_1=\partial_y\mathsf A_3$, $B_2=-\partial_x\mathsf A_3$ give the printed
+field), on $192^2$ points to $T=4$.
 
 The two are one problem up to a rescaling *(compiler check, not in the
 sources)*. Multiplying $\rho$, $p$ and $|B|^2$ of the unit-square data
@@ -99,6 +103,24 @@ check, not in the sources)*; the $B_2$ wavenumber cannot be checked
 from the paper. Their $t=0.48$ is the unit-square counterpart of Liu et
 al.'s $t=3$ to two digits.
 
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3, Eq. (43)
+(arXiv v2) print the unit-square data with $\gamma=5/3$,
+$\rho=25/(36\pi)$, $p=5/(12\pi)$ and $B_2=-\sin(4\pi x)/\sqrt{4\pi}$, as
+Rueda-Ramírez et al., but $B_1=+\sin(2\pi y)/\sqrt{4\pi}$, the opposite
+sign of $B_1$ to every other source; their pressure slice agrees with
+Jiang & Wu's, and whether the sign is a slip cannot be decided from the
+paper *(compiler check, not in the sources)*. They show density at
+$t=0.5$ and the slice at $y=0.3125$, $t=0.48$.
+
+**Relativistic two-fluid version.** [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md)
+§6.2.1 (arXiv v2) run the unit-square vortex for two relativistic
+fluids (ions and electrons) coupled to Maxwell's equations: each
+species with density $25/(72\pi)$, pressure $5/(24\pi)$ and velocity
+$\big(-\tfrac12\sin2\pi y,\ \tfrac12\sin2\pi x\big)$, $B=(-\sin2\pi y,\ \sin4\pi x)$,
+electric field $-v\times B$ of the ions, charge-to-mass ratios
+$\pm10^3/\sqrt{4\pi}$ (skin depth about $3.0\times10^{-3}$),
+$\gamma=5/3$, $200^2$ cells, CFL 0.45, to $t=1$ (divergence to $t=2$).
+
 [Fu (2023)](/sources/fu-2023.md) §5.3 reproduces Orszag–Tang results
 from the TENO-MHD paper it reviews, on $200\times200$, with a
 WENO5-JS reference on $512\times512$ and 30 density contours from 1.1
@@ -116,6 +138,9 @@ constraint.
 | [Liu et al. (2021)](/sources/liu-2021.md) §4.2 | finite-volume [WLS-ENO](/methods/wls-eno.md), locally divergence-free, second and third order, HLL flux, positivity-preserving framework | $200^2$ (both orders), $600^2$ (second order) | locally divergence-free reconstruction plus Godunov–Powell source term |
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2 | flux reconstruction, $\mathbb P_7$, vector-valued residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=3$ | $32^2$, $64^2$ elements | none stated |
 | [Dao & Nazarov (2022)](/sources/dao-2022.md) §§5.3–5.4 | continuous Galerkin $\mathbb P_1$, $\mathbb P_3$ with residual-based [artificial viscosity](/methods/artificial-viscosity.md), RK4, CFL 0.3 | $450\times450$ nodes (2D), $120^3$ nodes ($\mathbb P_3$, 3D) | projection cleaning; pseudo-time and hyperbolic (GLM) cleaning compared |
+| [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.6 | semi-implicit IMEX fifth-order finite-difference WENO, all-Mach formulation at $\varepsilon=1$ | $192^2$ | constrained transport through $\mathsf A_3$ |
+| [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3 | nodal DG / flux reconstruction, $\mathbb P_3$, positivity-preserving [entropy filtering](/methods/entropy-filtering.md) | $64^2$, $128^2$, $256^2$ elements, $\Delta t=4,2,1\times10^{-4}$ | Powell source term |
+| [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) §6.2.1 | [entropy-stable](/properties/entropy-stability.md) finite differences, orders 3 and 4, IMEX | $200^2$ | hyperbolic (perfectly hyperbolic Maxwell) cleaning |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
@@ -193,6 +218,26 @@ node, 25.0 on a dual Intel Cascade Lake node, 484 on four V100 GPUs and
 sources)*), with weak-scaling efficiency above 80 % on V100 and AMD
 Rome and above 95 % on MI250X (Table 4, Fig. 18).
 
+**Positivity filtering in DG.** Dzanic & Witherden find minor density
+oscillations on the coarse meshes that vanish with refinement,
+virtually none on $256^2$; $\lvert\nabla\cdot B\rvert$ concentrates at
+strong gradients and decreases with resolution; the filter acts mostly
+at discontinuities, with spurious activation in smooth regions
+decreasing with refinement; the pressure slice agrees with Jiang & Wu's
+WENO result (Figs. 3–6).
+
+**IMEX all-Mach scheme in the compressible regime.** Chen, Wu & Xiong
+show density at $T=0.5,2,3,4$ and a pressure cut along $y=0.625\pi$ at
+$T=3$, in agreement with the explicit constrained-transport results
+they cite (Figs. 5.2–5.3).
+
+**Entropy and divergence in the two-fluid version.** Bhoriya et al.
+find results comparable to Balsara et al.'s two-fluid computations;
+the entropy decays sharply from about $t\approx0.4$, when
+discontinuities form, the third-order scheme dissipating slightly more
+than the fourth; the divergence error concentrates at discontinuities
+with similar $L^1$ norms for both orders up to $t=2$ (Figs. 4–7).
+
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
 adaptive TENO family carries over to MHD with constrained transport
@@ -200,7 +245,7 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All seven sources compare contour plots or slices; none reports an
+- All ten sources compare contour plots or slices; none reports an
   error norm. Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
 - Lesur et al.'s text gives the 2D resolution as "$128^3$, plus a
@@ -231,3 +276,6 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.2, Figs. 12–14 (arXiv v2).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — §§5.3–5.4, Figs. 3–6 (arXiv v1).
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.2, §5, Table 4, Figs. 10–11, 18 (arXiv v1).
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.6, Figs. 5.2–5.3 (arXiv v1).
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.3, Eq. (43), Figs. 3–6 (arXiv v2).
+- [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.1, Figs. 4–7 (arXiv v2).

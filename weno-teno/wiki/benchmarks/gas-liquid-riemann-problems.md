@@ -5,7 +5,7 @@ description: "One-dimensional Riemann problems between an ideal gas and a stiffe
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -99,6 +99,26 @@ air–helium tube with a hot driver, air
 $(\rho,p,T)=(1.2036\ \mathrm{kg/m^3},\ 10.1\ \mathrm{bar},\ 2931.5\ \mathrm K)$
 against helium $(0.167\ \mathrm{kg/m^3},\ 1.01\ \mathrm{bar},\ 293.15\ \mathrm K)$,
 $\gamma=1.4$ and $1.63$, both at rest, on $[-5,5]$ m to $t=1.7817$ ms.
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) runs two gas–gas problems on the
+[five-equation model](/definitions/five-equation-model.md), with states in
+$(\phi_1\rho_1,\phi_2\rho_2,v,p,\phi_1,\gamma)$ and CFL 0.1 (arXiv v2):
+
+- the Abgrall–Karni two-fluid tube, $(1,0,0,1,1,1.4)$ for $x<0$ against
+  $(0,0.125,0,0.1,0,1.6)$, on $[-0.5,0.5]$ with 200 cells to $t=0.2$
+  (Ex. 4.14) *(compiler check, not in the sources: the states of Nguyen
+  et al.'s two-fluid Sod above, with $\gamma=1.6$ instead of $1.667$ on the
+  right)*;
+- Abgrall's shock–curtain problem, $(1.3765,0,0.3948,1.57,1,1.4)$ on
+  $[0,0.25)$, $(1,0,0,1,1,1.4)$ on $[0.25,0.4)\cup[0.6,1)$ and a curtain
+  $(0,0.138,0,1,0,1.67)$ on $[0.4,0.6)$, with 200 cells to $t=0.3$
+  (Ex. 4.15).
+
+[Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) (§5.2.1, Fig. 13;
+arXiv v1) run an air–helium tube ($\gamma=1.4$ against $1.667$) on $[0,1]$
+with 200 cells to $t=0.15$. They use the sharp-interface
+[level-set method](/methods/level-set-method.md) of
+[JAX-Fluids](/software/jax-fluids.md) and HLLC, and do not print the
+initial states.
 
 ## Findings across sources
 
@@ -110,6 +130,18 @@ weak temperature oscillations, which weaken on the four-level grid
 exact solution and keep the density jump sharp (Fig. 8). Nguyen et al.
 report "very good agreement" with the reference on their
 $10^9$ Pa problem (Fig. 10).
+
+**Gas–gas interfaces, diffuse and sharp.** On two gas–gas problems,
+Chamarthi finds no oscillations at the material interface. The author's
+[gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
+MIG4 gives the thinnest interface. The volume-fraction equation is written
+in the non-conservative form of Johnsen & Colonius, and its source term uses
+an HLLC-consistent interface velocity (Eq. (13); Ex. 4.14–4.15; Appendix A,
+Eqs. (93)–(95)). Bezgin et
+al.'s sharp-interface run places the interface and the shock correctly and
+shows slight density oscillations at the interface. They call these
+consistent with the original method of Hu et al., since no isobaric fix is
+applied (§5.2.1).
 
 **Interface location.** Zheng et al.'s conservative sharp-interface
 scheme ([level-set methods](/methods/level-set-method.md)) gets the
@@ -175,3 +207,5 @@ cost in conservation is discussed under
 - [Renac (2021)](/sources/renac-2021.md) — §7.2 (gas–gas problems only; arXiv v3).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.2, Figs. 6–10.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.1.1–3.1.2, Eqs. (31)–(32), Figs. 8–9.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.14–4.15; Appendix A, Eqs. (93)–(95): gas–gas two-fluid tube and shock–curtain on the five-equation model (arXiv v2).
+- [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §5.2.1, Fig. 13: sharp-interface air–helium tube (arXiv v1; gas–gas only).

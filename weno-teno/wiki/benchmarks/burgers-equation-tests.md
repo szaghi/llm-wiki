@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation tests"
-description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock forms and shock capturing after, energy and entropy tests of split forms, discontinuous data, a two-dimensional four-quadrant Riemann problem, and special Euler data with gamma = 3 whose solution is a Burgers solution; records setups, breaking times and reported orders."
+description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock forms and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, a two-dimensional Riemann problem, and special Euler data with gamma = 3 whose solution is a Burgers solution; records setups, breaking times and reported orders."
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Burgers equation tests
@@ -18,7 +18,7 @@ $t_{\mathrm b}=-1/\min_xu_0'(x)$ (page-local symbol), so a single
 initial profile serves two tests: an accuracy test at $t<t_{\mathrm b}$,
 where the exact solution follows from characteristics, and a
 shock-capturing test at $t>t_{\mathrm b}$. The sources also use
-discontinuous data, a two-dimensional Riemann problem, and Euler data
+discontinuous data, a slow shock across a block interface, a two-dimensional Riemann problem, and Euler data
 that reduce exactly to Burgers.
 
 ## Sine data: accuracy and shock formation
@@ -33,6 +33,7 @@ that reduce exactly to Burgers.
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P_4$ on 15 and $\mathbb P_{14}$ on 5 elements |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.2 | $u_0=\sin(2\pi x)$, flux printed $u^2$ | $[0,1]$ | — | $0.3$, 80 elements |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
+| [Qin et al. (2023)](/sources/qin-2023.md) §3.2 | $u_0=0.25+0.5\sin(\pi x)$ | $[-1,1]$, periodic, boundary closures kept active | $0.3$, 40–640 points | $4$, $7.9$, $8.1$, 200 points |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$; along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
@@ -41,7 +42,7 @@ $u_0=0.5-0.25\sin(\pi x)$, $t_{\mathrm b}=4/\pi\approx1.27$ *(compiler
 check, not in the sources)*. The accuracy times thus lie before and
 the shock times after breaking. Likewise $t_{\mathrm b}=1/\pi$ for
 Cicchino et al., $1/(2\pi)\approx0.16$ for Dzanic et al., $2/\pi\approx0.64$
-for Sousa & Scalo, and, with Yu & Hesthaven's flux $u^2$ (characteristic
+for Sousa & Scalo and for Qin et al. (who print $t=2/\pi$ themselves), and, with Yu & Hesthaven's flux $u^2$ (characteristic
 speed $2u$), $1/(4\pi)\approx0.08$ *(compiler check, not in the
 sources)*: all four run past breaking.
 
@@ -75,6 +76,22 @@ implicit Euler is first order and the unlimited DIRK–CWENO scheme D3P1
 third order on the same data (Fig. 1). After the shock forms, Q3P1 is
 slightly more diffusive than D3P1 but much less than implicit Euler,
 and at $\Delta t=5h$ it reduces D3P1's oscillations (Figs. 4–5).
+
+**Boundary closures.** Qin et al. run the sine with their fifth-order
+multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
+and one-sided nonlinear [boundary closures](/methods/shock-capturing-boundary-closure.md)
+used at the ends of a periodic domain, with global Lax–Friedrichs
+splitting. At $t=0.3$ the $L_2$ order is 5.16 and the $L_\infty$ order
+4.97 at 640 points; their scaled smoothness indicators (scaling
+parameter $\lambda=2$, page-local)
+give larger errors than $\lambda=1$ on coarse grids ($L_2$
+$6.92\times10^{-5}$ against $4.37\times10^{-5}$ at 40 points) and the
+same from 160 points (Table 11). After breaking, the shock reaches $x=0$
+at $t=4$ and crosses the periodic boundary between $t=7.9$ and $8.1$
+with correct profile and location (Fig. 3); the shock moves at speed
+$0.25$, and its positions $0$, $\approx0.975$ and $\approx-0.975$ at the
+three times follow from the characteristic through $x=1$ *(compiler
+check, not in the sources)*.
 
 **Shock capturing in element methods.** Dzanic, Trojak & Witherden
 use the shocked sine to show that their residual-based
@@ -201,6 +218,16 @@ $[-1,1]$:
   interact) and $1$ (after): Q3P1 is non-oscillatory and sharper than
   implicit Euler (Fig. 9).
 
+**Slow shock across a block interface.** [Qin et al.](/sources/qin-2023.md)
+§3.2 start from $u_0=1.02$ for $x<0.1$ and $u_0=-1$ otherwise, a shock
+of speed $0.01$, on $[0,1]$ split at $x=0.5$ into two blocks of 160 and
+80 points (a 2:1 jump of grid spacing). The shock crosses the interface
+"with invisible oscillation and phase lag" at $t=40$ and $80$ (Fig. 4);
+they cite Pärt-Enander & Sjögreen and Sebastian & Shu for the
+stagnation and oscillation of slow shocks at non-conservative
+interfaces. A two-dimensional Euler version (shock speed $0.015$) is
+recorded on [shock-capturing boundary closures](/methods/shock-capturing-boundary-closure.md).
+
 ## Two-dimensional Riemann problem
 
 [Pazner (2021)](/sources/pazner-2021.md) §5.5 solves
@@ -209,7 +236,7 @@ values $-1$ ($x>0.5$, $y>0.5$), $-0.2$ ($x\le0.5$, $y>0.5$), $0.5$
 ($x\le0.5$, $y\le0.5$) and $0.8$ ($x>0.5$, $y\le0.5$), the exact solution
 imposed on the boundary, to $t=0.5$. With $120^2$ degrees of freedom as
 $N=2$, $5$, $11$ on $40^2$, $20^2$, $10^2$ elements, and a reference with
-$N=1$ on $512^2$ elements, his subcell
+$N=1$ on $512^2$ elements, Pazner's subcell
 [convex-limited](/methods/convex-limiting.md) DG resolves the solution
 well even on the coarsest mesh and captures discontinuities that are
 not aligned with element boundaries (Fig. 11). The same quadrant values
@@ -293,3 +320,4 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.2, Figs. 5–6.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §2.3, Fig. 1 (arXiv v2).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — Example 2.12; §4.1, Eq. (44) (arXiv v4).
+- [Qin et al. (2023)](/sources/qin-2023.md) — §3.2, Table 11, Figs. 3–4.

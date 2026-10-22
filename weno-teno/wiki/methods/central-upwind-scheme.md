@@ -5,7 +5,7 @@ description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/
 status: established
 aliases: [CU scheme, Kurganov–Noelle–Petrova flux, semi-discrete central-upwind scheme, Riemann-solver-free scheme]
 tags: [central-scheme, numerical-flux, finite-volume, characteristic, low-dissipation]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Central-upwind schemes
@@ -123,6 +123,17 @@ absolute timings or hardware printed). In 1D the fifth-order scheme resolves the
 state of an interface Riemann problem "much better" than the second-order scheme on the same
 meshes, $\Delta x=1/200$ and $1/400$ (Ex. 3, Fig. 7.4).
 
+## In finite-volume codes
+
+Two OpenFOAM-based solvers of the bundle name the Kurganov-type central fluxes.
+[Weng & Mével (2023)](/sources/weng-2023.md) (§3.1) list "Kurganov" and "Tadmor" fluxes among
+the options of blastFoam, next to HLL-type and AUSM+ fluxes, but run their validation with
+HLLC ([HLL-family solvers](/methods/hll-riemann-solvers.md)).
+[Bielawski et al. (2023)](/sources/bielawski-2023.md) (§3) write that the viscous terms of their
+GPU-ported OpenFOAM solver "utilize a KNP formulation", citing the OpenFOAM implementation of
+Greenshields et al. ("semi-discrete, non-staggered central schemes ... for high-speed viscous
+flows"), while the inviscid fluxes use HLLC; no formula for the viscous terms is printed.
+
 ## Qualifications
 
 - No positivity, entropy or linear-stability analysis is given for the dissipation-reduced
@@ -140,3 +151,5 @@ meshes, $\Delta x=1/200$ and $1/400$ (Ex. 3, Fig. 7.4).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, §3 (Eqs. (5)–(9)), §4.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — Eq. (3.6), the HLL flux used for the comparison.
 - [Chu et al. (2022)](/sources/chu-2022.md) — §2 (Eqs. (2.1)–(2.9)), §4 (Eq. (4.1)), Remark 6.2, §7 (Exs. 3, 6).
+- [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1.
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3 (accepted manuscript).

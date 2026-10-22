@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,7 +17,7 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Twenty-one sources of the
+resolution against a fine-grid reference. Twenty-four sources of the
 bundle run it.
 
 ## Setup
@@ -25,8 +25,9 @@ bundle run it.
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
 et al. (2023), Chertock et al., Deng, Huang et al., Li, Shu & Qiu,
 Wang et al. (2021), Bezgin et al., Fan et al., Hong, Ye & Ye, Hu,
-Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren and Liang et al. (Li et
-al. differ in one value, see Qualifications),
+Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al. and Zhou et
+al. (Li et al. differ in one value and the two Chamarthi papers in the position of
+the right break, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
 $$
@@ -62,6 +63,9 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.4 | 400, CFL 0.35 | WENO5-JS, 2000 | Roe flux with entropy fix; five-point TENO with a new [scale sensor](/definitions/scale-sensor.md) vs [TENO5-A](/methods/adaptive-teno.md), TENO5, WENO5-Z |
 | [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 400, CFL 0.6 | WENO-Z, 2000 | MDAD-HY ([MDCD](/methods/mdcd-scheme.md)-type hybrid) with switch threshold $\psi_c=0.5$; TENO-HY with $C_T=10^{-5}$ |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.3 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5 ($C_T=10^{-4}$), WENO5-Z |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.3, Eq. (38) | 400, CFL 0.4 | fifth-order WENO, 4000 | HLLC, TVD-RK3; six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6 |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.13, Eq. (80) | 600, CFL 0.2 | exact | right region printed from $x=0.8$, see Qualifications; [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MEG6 vs TENO5 (arXiv v2) |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.4, Eq. (55) | 600, CFL 0.2 | exact | right region printed from $x=0.8$; MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 
 ## Findings across sources
 
@@ -96,6 +100,17 @@ a second-order MUSCL reconstruction, Hu, Yuan & Zhao find their
 RHLLEM-LD Riemann solver giving "obviously higher resolution for all
 waves" than HLLE and HLLEM (§5.2, Fig. 5.2): the problem also ranks
 Riemann solvers, not only reconstructions.
+
+Chamarthi (2023a) finds MIG4 and MEG6 predicting the density extrema
+"virtually identical[ly]" and better than TENO5, and MIG4 capturing the
+velocity discontinuity at $x\approx0.87$ within one cell, where TENO5
+and MEG6 need more (Fig. 17). Chamarthi (2023b) finds all schemes free
+of oscillations, the density extrema best predicted by MEG7 with
+primitive variables, and the same discontinuity captured with fewer
+cells by MEG7 than by WCNS7M (Fig. 6).
+Zhou et al. obtain stable solutions with all three of their six-point
+WCNS, ONL6 and WCNS-SA giving a slightly better density than WCNS-LD at
+the valley and the second peak (§5.3, Fig. 12).
 
 **Robustness and the stability margin of very-high-order schemes.**
 Luo & Wu use the problem to choose the largest admissible constant of
@@ -153,6 +168,15 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 ## Qualifications
 
+- Chamarthi (2023a) and (2023b) both print the low-pressure region as
+  $0.1\le x<0.8$ and the right high-pressure region as $0.8\le x\le1.0$
+  (Eqs. (80) and (55)), against $0.1\le x<0.9$ and $0.9\le x\le1$ in all
+  other sources, while citing Woodward & Colella; with the printed data
+  the right reservoir holds twice the energy of the common setup
+  *(compiler check, not in the sources)*. The papers compare with an
+  exact solution without saying for which data, so whether $0.8$ is a
+  printed slip or the data run cannot be decided from them.
+
 - Li et al. print the middle pressure as $0.001$ (Eq. (41)) where Fu
   (2021), Takagi et al., Ye et al., Wang et al. (2023), Chertock et
   al., Deng, Huang et al., Li, Shu & Qiu, Wang et al. (2021) and
@@ -196,3 +220,6 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.4, Fig. 7 (arXiv v1).
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.2, Fig. 17.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.3, Fig. 9.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.13, Eq. (80), Fig. 17 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.4, Eq. (55), Fig. 6 (arXiv v1).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.3, Eq. (38), Fig. 12.

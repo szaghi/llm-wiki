@@ -5,7 +5,7 @@ description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested 
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -45,6 +45,17 @@ for several GPUs, rebuilt at every remeshing (§3.5, §4).
 PARAMESH (blocks of $40\times40$ cells in 2D and $50\times14\times12$ in
 3D, up to nine levels). Bai & Li describe their mesh as a quadtree-like
 multi-level Cartesian mesh (§2.2).
+[Zaghi et al. (2023)](/sources/zaghi-2023.md) build the same kind of
+octree in [ADAM](/software/adam.md): identical blocks of $8^3$ to $32^3$
+cells with 26 ghost regions each, 2:1 balance, the tree stored in a hash
+map keyed by a 64-bit integer that linearizes level and block
+coordinates, and Morton-curve load balancing across MPI processes
+(§2.2). Matsushita & Aoki and Zaghi et al. agree on the split of labour:
+the field lives and is advanced on the GPU, the tree is managed serially
+on the CPU. In ADAM the GPU field array is transposed so that the block
+index is contiguous, for coalesced access, and is copied to the CPU only
+at input/output and AMR updates, refinement and coarsening themselves
+being done on the CPU (§2.2, Fig. 3).
 
 ## Refinement criteria
 
@@ -63,6 +74,11 @@ multi-level Cartesian mesh (§2.2).
   exceeds a threshold, and then all four fine cells under it (Eqs. 26–27;
   page-local symbols). They apply it to species mass fractions, with a
   scale of 1 % of the maximal Chapman–Jouguet mass fraction.
+- **Gradients with hysteresis.** Zaghi et al. mark blocks (not cells)
+  by the density-gradient modulus in shock problems and by the enthalpy
+  gradient in a vortex test, with a split threshold above the
+  recomposition threshold to avoid flip-flop; eight siblings recompose
+  only if all exist and all are marked (§2.2).
 - **Interface distance.** Matsushita & Aoki refine a leaf when the
   smallest level-set value in it is below $\sqrt3$ times the block length
   of its children, $\min\lvert\Phi\rvert<\sqrt3\,dh_{n+1}b$ (Eq. 47;
@@ -109,6 +125,9 @@ refinement steps in about 130,000 time steps (§5).
   better than copying (Fig. 22). Bai & Li synchronize levels by $L^2$
   projections of the DG polynomials, a transfer they call conservative
 (§2.2).
+  Zaghi et al. fill ghost cells between blocks of different levels by
+  second-order interpolation (§2.2); refinement and coarsening of the
+  field are interpolations whose order is not stated.
 - **Flux consistency.** Matsushita & Aoki average fine fluxes on coarse
   faces at level gaps, which keeps the phase field conserved (§4); their
   mass error stays at $10^{-16}$ on uniform and adaptive grids (§5.1).
@@ -162,6 +181,7 @@ Figs. 13–15).
 |---|---|---|
 | Peng et al. §4.1, Table 3 | blunt-body combustion, Mach 4.18, to 0.2 ms | 308.6 against 240.0 CPU h at 7 µm (two levels), 1193.5 against 1286.7 at 3.5 µm (three), 5521.6 against 9590.6 at 1.75 µm (four), a factor 1.74 |
 | Browne et al. §5, Table 6 | hypersonic flat-plate wavepacket | about 55 million against 91.7 million points (linear), 66 million against 715 million (strongly nonlinear): 60 % and 9 % |
+| Zaghi et al. §3.2, Table 1 | 3D shock diffraction by a sphere, finest spacing 0.015625 | 350.3 million cells in 684,258 blocks; the authors' uniform-grid figure is "8 billions", a $1280^3$ grid has $2.1\times10^9$ *(compiler check, not in the sources)* |
 | Matsushita & Aoki §6.3 | liquid-jet breakup | 11 h on one GPU against an estimated 501,840 core-hours of an incompressible uniform-mesh reference, explicitly not a fair comparison |
 
 Peng et al. find that refinement pays off only at high resolution,
@@ -173,7 +193,16 @@ takes 70 % of the adaptation time but that the adaptation is not
 dominant, about 90 % of the run being GPU computation, and a weak
 scaling efficiency of 81 % overall and 95 % for the fluid part on 128
 V100 GPUs, the tree not yet being parallel (§4.2–4.3, Figs. 13–17).
-Browne et al. compare finite-difference adaptive points with a DNS that
+Zaghi et al. do not report the share of the run spent in adaptation;
+their AMR update is the cost that grows with the block count: halving
+the finest spacing at fixed coarsest spacing multiplies the cells by
+about 4–5 instead of 8 and the grind time by less than 3 overall
+(ratios 2 to 32), but the serial AMR update grows from 0.74 s (1562
+blocks, 1 GPU) to 527.97 s (684,258 blocks, 256 GPUs), which they call
+acceptable for statistically stationary flows and problematic for
+transient ones; in strong scaling on 3.6 million cells the AMR update
+only falls from 4.25 s to 1.84 s between 1 and 32 GPUs (§3.2, Table 1,
+Figs. 5, 7). Browne et al. compare finite-difference adaptive points with a DNS that
 is Fourier-spectral in the spanwise direction, a caveat they state
 (§5).
 
@@ -206,8 +235,11 @@ is Fourier-spectral in the spanwise direction, a caveat they state
   with static refinement only.
 - The bundle's sources use refinement with second-order finite volumes
   (Peng et al., Matsushita & Aoki), fifth-order finite differences
-  (Browne et al.) and discontinuous Galerkin (Bai & Li); none analyses
-  the accuracy of the coarse–fine interface for its high-order scheme.
+  (Browne et al.), finite-difference WENO of unstated order (Zaghi et
+  al.; WENO3 in their appendix) and discontinuous Galerkin (Bai & Li);
+  none analyses the accuracy of the coarse–fine interface for its
+  high-order scheme. Zaghi et al. state only that level jumps "seem to
+  not pollute the solution" of a WENO3 vortex (Appendix).
 
 # Citations
 
@@ -219,3 +251,4 @@ is Fourier-spectral in the spanwise direction, a caveat they state
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §7, Eqs. (43)–(52), Figs. 8–10; §8.7, Table 12; §9, Tables 13–15, Figs. 12–15.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §3.4; §6 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §4 (no mesh adaptation).
+- [Zaghi, Salvadore, Di Mascio & Rossi (2023)](/sources/zaghi-2023.md) — §2.2, Figs. 2–3; §3.2, Table 1, Figs. 5–7; Appendix.

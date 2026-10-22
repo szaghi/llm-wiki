@@ -164,7 +164,7 @@ The following special cases appear in the sources:
    Ranocha et al. (2023) state the same consequence, for diagonal $M$ and
    diagonal boundary operators, after their Eq. (2.5). Pazner (2021) uses
    (P1) and the Kronecker structure in the same way for the antidiffusive
-   corrections of his limiter: their nodal residuals sum to zero along
+   corrections of Pazner's limiter: their nodal residuals sum to zero along
    every line of nodes, so they can be rewritten as differences of
    subcell-face fluxes and limited face by face (Props. 8–9,
    Eqs. (53)–(54)).
@@ -185,11 +185,11 @@ The following special cases appear in the sources:
    entropy-conservative; a dissipative volume flux gives an
    "unpredictable" entropy balance (§3.3.2).
    [Renac (2021)](/sources/renac-2021.md) uses the same diagonal-norm SBP
-   framework for his entropy-stable DGSEM on unstructured quadrilaterals
+   framework for the author's entropy-stable DGSEM on unstructured quadrilaterals
    (§1.2, §5).
 6. **Boundary weight and positivity.** The first and last LGL weights on
    $[-1,1]$ are $\mathsf w_0=\mathsf w_N=2/(N(N+1))$. Renac (2021) shows that
-   this weight fixes the CFL factor $1/(2N(N+1))$ of his
+   this weight fixes the CFL factor $1/(2N(N+1))$ of Renac's
    positivity-preserving DGSEM (Remark 6.1, Theorem 6.1;
    [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
 

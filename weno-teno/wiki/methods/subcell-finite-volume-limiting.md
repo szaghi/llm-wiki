@@ -125,7 +125,7 @@ connectivity of the DGSEM only, so it replaces the volume integral
 With first-order reconstruction and the Rusanov flux the subcell scheme
 **is** Pazner's low-order sparse invariant-domain-preserving scheme
 (Rueda-Ramírez et al. 2022, Prop. 1; see
-[convex limiting](/methods/convex-limiting.md)). Pazner himself reads the
+[convex limiting](/methods/convex-limiting.md)). Pazner reads the
 nodes as "subcell-centred values" and limits fluxes through subcell faces
 (§4.1.3, Fig. 2), but does not state the equivalence.
 

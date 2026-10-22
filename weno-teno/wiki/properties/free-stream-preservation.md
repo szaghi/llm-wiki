@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Free-stream preservation"
-description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers the DGSEM identity, corrected and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes with the Duan–Tang proof, and an untested TENO claim."
+description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers the DGSEM identity, corrected and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes with the Duan–Tang proof, the linear-interpolation metric recipe for gradient-based finite differences, and an untested TENO claim."
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization]
-tags: [dg, finite-difference, limiting, entropy-stable]
-timestamp: 2026-10-23T08:00:00Z
+tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Free-stream preservation
@@ -36,8 +36,8 @@ literature for it rather than proving it (§2.3).
 
 [Pazner (2021)](/sources/pazner-2021.md) states the condition and proves
 its effect. With $G$ the diagonal matrix of nodal Jacobians and $GJ^{-1}$
-the nodal metric terms (his notation, page-local), the discrete metric
-identity of Kopriva, as he recalls it, is
+the nodal metric terms (Pazner's notation, page-local), the discrete metric
+identity of Kopriva, as the author recalls it, is
 $\sum_iD_{i}\,(GJ^{-1})_{ij}=0$ for every $j$, with $D_i$ the
 tensor-product weighted derivative in direction $i$ (Eq. (22)).
 
@@ -45,7 +45,7 @@ tensor-product weighted derivative in direction $i$ (Eq. (22)).
   $\frac{d}{dt}u=0$ for every spatially constant flux (Prop. 3).
 - **Weak form.** The weak form is in general not free-stream preserving,
   for example on curved meshes. Pazner therefore takes the strong form as
-  the high-order target of his limiter (§2.4.2).
+  the high-order target of Pazner's limiter (§2.4.2).
 
 [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) show where the
 identity enters the entropy analysis on 3D curvilinear hexahedra. The
@@ -91,11 +91,11 @@ to $f(u)$ dotted into the left-hand side of the identity. The residual
 therefore vanishes exactly when the identity holds *(compiler check, not in
 the sources)*.
 
-**Pazner's corrected metrics.** Pazner (2021) builds his low-order
+**Pazner's corrected metrics.** Pazner (2021) builds a low-order
 scheme from the sparse first-order operator $\widehat Q$
 ([summation-by-parts operator](/operators/summation-by-parts-operator.md)).
 That operator cannot differentiate the metric terms exactly, so the metric
-identities fail for it, and with them free-stream preservation (§3). He
+identities fail for it, and with them free-stream preservation (§3). Pazner
 perturbs the metric terms, $\widehat{GJ^{-1}}=GJ^{-1}+C$ with page-local
 correction $C$, so that the sparse weak form reproduces the boundary normals
 for a constant state (Eq. (25)). This is an underdetermined linear system,
@@ -228,6 +228,74 @@ moving-mesh scheme (Duan & Tang, Remark 2.1, Thm. 3.2;
 prints a free-stream test; the property is proved, and the accuracy tests
 on moving meshes reach the design orders (Duan & Tang, Exs. 6.1, 6.7).
 
+## Gradient-based finite differences on curvilinear and deforming grids
+
+[Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) give a recipe
+for the gradient-based reconstruction schemes MEG6 and MIG4
+([gradient-based reconstruction](/methods/gradient-based-reconstruction.md))
+on 3D multi-block, static and deforming curvilinear grids, a
+cell-centred conservative finite-difference setting in which interface
+states are reconstructed in characteristic variables, limited and fed to
+HLLC (§3, §5.1). Page-local: $\xi,\eta,\zeta$ the computational
+coordinates with unit spacing, $\hat\xi_x=\xi_x/J$ etc. the
+Jacobian-scaled metrics (their $J$ is the inverse of the registry's $J$:
+$1/J$ is the cell-volume measure), $x'_i$, $x''_i$ the first and second
+derivatives of the scheme's gradient operator (explicit sixth-order for
+MEG6, fourth-order compact for MIG4). The recipe (§7, Eqs. (36)–(38)):
+
+1. use the conservative metrics of Thomas & Lombard,
+   $\hat\xi_x=(y_\eta z)_\zeta-(y_\zeta z)_\eta$ and cyclic forms (Eq. (10));
+2. compute every metric derivative with the scheme's own interface
+   interpolation in its *linear* form, no limiter and the average of the
+   left and right states, e.g.
+   $x_{i+1/2}=\tfrac12\big[x_i+\tfrac12x'_i+\tfrac1{12}x''_i+x_{i+1}-\tfrac12x'_{i+1}+\tfrac1{12}x''_{i+1}\big]$
+   and $(x_\xi)_i=x_{i+1/2}-x_{i-1/2}$;
+3. interpolate the metrics to the interfaces with the same averaged
+   formula, treating $\xi_x/J$ as a single quantity.
+
+The three discrete metric identities
+$\partial_\xi\hat\xi_x+\partial_\eta\hat\eta_x+\partial_\zeta\hat\zeta_x=0$ (and
+in $y$, $z$; Eq. (39)) then hold. For MEG6 the derivative of $y_\xi z$ is an
+11-point central stencil,
+$\frac1{2880}\big[2282(y_{i+1}-y_{i-1})-546(y_{i+2}-y_{i-2})+89(y_{i+3}-y_{i-3})-3(y_{i+4}-y_{i-4})-(y_{i+5}-y_{i-5})\big]z_i$
+(Eq. (41)), and the cancellation of the full sum (Eq. (43)) is carried out
+in a supplementary Mathematica notebook; the paper prints the proof for
+MEG6 and states that MIG4 follows the same steps. The authors add that
+any other metric interpolation fails the identities for this scheme
+(§7). The construction builds on Nonomura et al., who showed, as recalled,
+that the Visbal–Gaitonde procedure does not preserve free streams for
+WENO because of the nonlinear reconstruction (§1, §7). The 11-point
+stencil coefficients follow from the sixth-order explicit gradient, the
+second-derivative formula and the averaged interface value
+*(compiler check, not in the sources)*.
+
+**Moving grids.** With analytic grid velocities, temporal metrics from
+the chain rule, $\xi_t=-(x_t\xi_x+y_t\xi_y+z_t\xi_z)$, and the
+geometric-conservation form $(1/J)_t=-\big[(\xi_t)_\xi+(\eta_t)_\eta+(\zeta_t)_\zeta\big]$,
+recomputed every step, the schemes are free-stream preserving on deforming
+grids (§4.2, Eqs. (11)–(14)). The last relation plays the role of the volume
+conservation law of the moving-mesh section below *(compiler check, not in
+the sources)*.
+
+**Evidence** (§8; non-FP = non-conservative metrics with fourth-order
+central derivatives, App. D):
+
+| test | grid | FP metrics | non-FP metrics |
+|---|---|---|---|
+| uniform flow, $M=0.5$, $t=10$ | $20^3$, sinusoidal | $L_2(v_2,v_3)$ from $3.1\times10^{-16}$ to $1.3\times10^{-14}$ | $8.2$–$8.6\times10^{-3}$ |
+| same | $20^3$, randomized by 20 % | same range | 0.121–0.386 |
+| uniform flow on a deforming sinusoidal grid | $32^3$ | $2.3$–$3.2\times10^{-15}$ | $2.88$–$2.93\times10^{-3}$ |
+| [isentropic vortex](/benchmarks/isentropic-vortex.md), one period | $64^2$, centre randomized, included angle up to about 160° | vortex and swirl profile kept | unphysical after one period |
+| [double Mach reflection](/benchmarks/double-mach-reflection.md) | $768\times256$, centre randomized by up to 50 %, angle about 200° | unaffected by the distortion | rough patches, smaller for MIG4 |
+
+(Table 2, Figs. 8–10.) Conservative metrics computed with the fourth-order
+central scheme instead of the scheme's own interpolation also fail
+(§8.1.1). A stationary vortex on a deforming $32^3$ grid stays intact over
+eight deformation cycles, and a viscous double shear layer on a deforming
+$360^2$ grid matches a stationary run in kinetic energy and enstrophy
+(§8.2.2–8.2.3, Figs. 11–12). The metric arrays are 71 of the 117 arrays the
+GPU version stores, about 60 % of its memory (§9.4).
+
 ## Finite-difference reconstruction schemes
 
 [Ye et al. (2022)](/sources/ye-2022.md) argue that [AFTENO](/methods/afteno.md)
@@ -243,13 +311,21 @@ the source.
 - **Who proves what.** Ranocha et al. (2023) and Rueda-Ramírez et al.
   (2022) cite free-stream preservation from the literature for the DGSEM
   and the subcell normals. Ye et al. (2022) assert it without a test.
-  Pazner (2021) proves it for the strong-form DGSEM and for his corrected
+  Pazner (2021) proves it for the strong-form DGSEM and for the author's corrected
   low-order scheme (Props. 3–4), and Rueda-Ramírez et al. (2021) prove
   that the curvilinear entropy-balance residuals vanish under the metric
   identities and show free-stream preservation numerically. Li, Duan &
   Tang (2022) cite the proof for moving meshes; Duan & Tang (2022) give it
   (Prop. 3.2), and Mossier et al. (2022) show it numerically for
   mixed-degree DG with finite-volume subcells, without a proof.
+- **Chandravamsi et al.'s proof.** The metric-identity cancellation is
+  shown symbolically, partly in a supplementary notebook, for MEG6 only;
+  for MIG4 it is asserted (§7). The first lines of their Eqs. (41)–(42)
+  print the two interface values summed where Eq. (37) and the final
+  lines of the same equations take their difference; Eqs. (17)–(18) of
+  the gradient operators likewise print sums inside the brackets where
+  differences are meant, as the exactness of the printed coefficients on
+  linear data shows *(compiler check, not in the sources)*.
 - **Strong and weak forms.** Pazner's statement that the weak form (14)
   "will not in general" preserve constants ("e.g. curved meshes", §2.4.2)
   is not a conflict with the strong–weak equivalence of Ranocha et al.
@@ -264,7 +340,7 @@ the source.
   terms at the boundary nodes and differ when the normals are computed
   otherwise.)*
 - **Numbering.** Rueda-Ramírez et al. (2022) cite Pazner's sparsified
-  matrix as his Eq. (34) and the conservation condition as Eq. (35). In the
+  matrix as Pazner's Eq. (34) and the conservation condition as Eq. (35). In the
   arXiv v1 of Pazner (2021) read here they are Eq. (23) and the first item
   of Prop. 5. The difference is one of versions.
 
@@ -278,3 +354,4 @@ the source.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2 Eq. (2.3), §3.2 Eqs. (3.9)–(3.10), Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.1 Eqs. (19)–(21), §8.1 Eq. (39), Table 1.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eq. (2.9), Remark 2.1, §3.3 Eqs. (3.5), (3.8), (3.15)–(3.18), Prop. 3.2, Thm. 3.2, Remark 4.1, App. A–B, Exs. 6.1, 6.7 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §1, §3, §4.2 Eqs. (10)–(14), §5.1, §7 Eqs. (36)–(44), §8.1–8.2 Table 2 Figs. 8–12, §9.4, App. D (arXiv v1).

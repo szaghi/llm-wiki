@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -27,6 +27,12 @@ positivity-preserving [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
 kinetic-energy- and entropy-preserving central scheme
 ([Jain & Moin (2022)](/sources/jain-2022.md)); in all four each phase is
 closed by the [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md).
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) uses the model, with
+ideal-gas phases, as the two-species setting of a
+[gradient-based](/methods/gradient-based-reconstruction.md)
+finite-difference scheme with a
+[monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)
+and HLLC fluxes, viscous terms included after Coralic & Colonius.
 
 Page-local symbols: $\phi_k$, $\rho_k$, $e_k$, $c_k$ (volume fraction,
 density, specific internal energy and sound speed of phase $k$),
@@ -37,8 +43,9 @@ $j_k$ the volumetric interface-regularization flux of phase $k$
 
 ## The five-equation model
 
-The form used by Tsoutsanis et al. (§2) and Wong et al. (§2,
-Eqs. 1–5), after Allaire, Clerc & Kokh, is
+The form used by Tsoutsanis et al. (§2), Wong et al. (§2,
+Eqs. 1–5) and Chamarthi (2023a, §2, Eqs. 7–12), after Allaire, Clerc &
+Kokh, is
 
 $$
 \begin{aligned}
@@ -56,7 +63,10 @@ volume-fraction equation is not, which is why the system is called
 quasi-conservative. With stiffened-gas phases the mixture is again a
 stiffened gas whose constants depend on $\phi_1$ alone, and the mixture
 sound speed is $\rho c^2=\gamma(p+p_\infty)$ with the mixture constants
-(Wong et al. Eqs. 7–11).
+(Wong et al. Eqs. 7–11). For ideal-gas phases Chamarthi closes the
+mixture by $\frac1{\gamma-1}=\sum_k\frac{\phi_k}{\gamma_k-1}$, with
+$\gamma_k$ (page-local) the ratio of specific heats of phase $k$
+(Eqs. 10–12).
 
 **Kapila form.** Bryngelson et al. write the model as
 $\partial_tq+\nabla\cdot F(q)+h(q)\nabla\cdot v=s(q)$ with
@@ -138,7 +148,10 @@ not the registry's mathematical entropy $\eta$.
 Johnsen & Colonius, write the advection equation as
 $\partial_t\phi_1+\nabla\cdot(\phi_1v)=\phi_1\nabla\cdot v$ (Eq. 12),
 and Wong et al. append $\phi_1v$ to the flux and $\phi_1\nabla\cdot v$
-to a source term in the same way (Eqs. 28–31). Both forms turn the
+to a source term in the same way (Eqs. 28–31); Chamarthi (2023a) uses
+the same rewriting, after Johnsen & Colonius, "for an oscillation-free
+interface", with the source $\phi_1\nabla\cdot v$ as the last component
+of the source vector (Eq. 13). These forms turn the
 non-conservative part into a source proportional to $\nabla\cdot v$,
 which the scheme must discretize consistently with the flux (next
 section).
@@ -177,6 +190,15 @@ as the fluxes; the sources do it in three ways.
   source with the same compact differencing as the flux (§3.2,
   Eqs. 40–45; §4.1, Eqs. 81–82); with this choice the first-order
   update of $\phi_1$ is exactly upwind.
+- **HLLC-consistent face velocities in finite differences.** Chamarthi
+  (2023a) evaluates the source at each grid point as
+  $\phi_{1,i,j}\big[(v_{1,i+1/2}-v_{1,i-1/2})/\Delta x+(v_{2,j+1/2}-v_{2,j-1/2})/\Delta y\big]$
+  (Eq. 95), with face velocities from the HLLC states,
+  $$v_{1,i+1/2}=\tfrac12\big(1+\mathrm{sgn}(s_*)\big)\Big[v_1^-+\min(0,s^-)\Big(\frac{s^--v_1^-}{s^--s_*}-1\Big)\Big]+\tfrac12\big(1-\mathrm{sgn}(s_*)\big)\Big[v_1^++\max(0,s^+)\Big(\frac{s^+-v_1^+}{s^+-s_*}-1\Big)\Big]$$
+  (Eqs. 93–94; $s_*$ the contact speed, $s^\pm$ the Einfeldt wave
+  speeds, $v_1^\pm$ the face states), the volume fraction joining the
+  HLLC star state of the two partial densities (Eq. 91;
+  [HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - **Midpoint divergence.** Bryngelson et al. evaluate
   $(\nabla\cdot v)$ in each cell by a midpoint rule from face-averaged
   velocities computed like the fluxes (§4.1, Eq. 31).
@@ -214,6 +236,18 @@ agree on the remedy, reconstruction of primitive variables:
   $1000/1.204$, $\phi_1=1-10^{-8}$ in the water) the relative velocity
   and pressure errors stay at $O(10^{-12})$ and $O(10^{-10})$ (§6.2,
   Figs. 5–6).
+- Chamarthi (2023a) reconstructs the primitive vector
+  $(\phi_1\rho_1,\phi_2\rho_2,v_1,v_2,p,\phi_1)$, optionally projected
+  on characteristic fields at each face with the gradients projected by
+  the same frozen left eigenvectors (§3.2–3.3, Eqs. 44–45, 62–64); which of
+  the two each test uses is stated only for one figure ("using primitive
+  variables"). Chamarthi reports no oscillations at the material interfaces of
+  the two-fluid shock tube, the shock–curtain, the
+  [shock–helium-cylinder](/benchmarks/shock-bubble-interaction.md), the
+  multi-material [triple point](/benchmarks/triple-point-problem.md) and
+  a viscous air–SF$_6$ [Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md)
+  problem, with the interface thinnest for the author's compact-gradient MIG4
+  scheme, compared with MEG6 and TENO5 (§4, Exs. 4.14–4.18).
 
 Jain & Moin (2022) meet the same requirement in a non-dissipative
 second-order central scheme without any reconstruction, by choosing the
@@ -362,12 +396,20 @@ fluid and ghost-fluid states in cut cells
   two-point arithmetic averages, i.e. a second-order central
   finite-difference-like scheme, although they call it finite-volume.
 
+- Chamarthi (2023a) states that TENO "for the multi-component flows,
+  specifically for the 5-equation model, is not presented in the open
+  literature" (Ex. 4.16, arXiv v2); no other source of the bundle applies
+  TENO to the five-equation model, so the bundle neither confirms nor
+  contradicts the priority claim. Chamarthi's interface-thickness ranking is
+  shown by plotted profiles and fields (Exs. 4.14–4.18).
+
 # Citations
 
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §3.1–3.2, Eqs. (1)–(14); §4.1–4.2, Eqs. (31)–(34); §4.6; §5.5 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §2, Eqs. (1)–(12); §3.1, Eqs. (13)–(16); §3.3; §4.2, Figs. 3–4.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §2, Eqs. (1)–(14); §3.2–3.3, Eqs. (19)–(70); §4.1–4.2; §5; §6.2, §6.6; Appendix A (arXiv v1).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §2, Eqs. (1)–(10), (16)–(21); §3.3, Lemma 3.1; §3.5, Eqs. (58)–(62); §4.1–4.2, Figs. 2–8; Appendices A–B (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §2, Eqs. (7)–(13); §3.2–3.3, Eqs. (44)–(45), (62)–(64); Appendix A, Eqs. (91)–(95); §4, Exs. 4.14–4.18 (arXiv v2).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §7.2 (comparison only; arXiv v3).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §3.5, Figs. 21–22 (objections and comparison only).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (contrast only).

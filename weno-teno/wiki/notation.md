@@ -204,6 +204,11 @@ uses the same letter.
 | $\ell_j$ | Lagrange basis polynomial of node $\xi_j$ | DGSEM, subcell limiting |
 | $\beta_{\mathrm p}$ | plasma beta $2p/\lvert B\rvert^2$ | MHD blast wave, high-Mach jets |
 | $r_{\mathrm{RK}}$ | order of a Runge–Kutta method | discontinuous Galerkin, OEDG |
+| $\Phi_{\mathrm D}$, $\Psi_{\mathrm D}$, $\Psi^*$, $\epsilon_{\mathrm D}$ | classical Ducros ratio, modified (compression-only, non-squared) Ducros sensor, its switching threshold, regularization | Ducros shock sensor, hybrid WENO, wall-modelled LES, URANOS |
+| $\alpha_{\mathrm D}$, $\beta_{\mathrm D}$ | α-damping coefficient and curvature coefficient of the interface velocity states in the viscous flux of gradient-based schemes | α-damping viscous flux, gradient-based reconstruction |
+| $\lambda_{\mathrm s}$ | scaling $\lambda_{\mathrm s}^{n-1}$ of the $n$-th derivative in Qin et al.'s smoothness indicators | smoothness indicators, multi-resolution WENO, shock-capturing boundary closure |
+| $\eta_{\mathrm Z}$, $\xi_{\mathrm Z}$ | dispersion and dissipation parameters of Zhou et al.'s optimized WCNS interpolation ($c_{\mathrm{disp}}=\tfrac{64}{45}\eta_{\mathrm Z}$, $c_{\mathrm{diss}}=\tfrac{64}{45}\xi_{\mathrm Z}$) | weighted compact nonlinear schemes, MDCD schemes, approximate dispersion relation, numerical dissipation |
+| $W_k$, $\epsilon_k$, $\Omega_k$ | molar mass, molar internal energy and mass production rate of species $k$ | multicomponent Euler equations, operator splitting |
 
 $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic

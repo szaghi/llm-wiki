@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -125,6 +125,21 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   so the operator is formally second order for point values whatever the interpolation order, the
   limit Wang et al. (2023) state for an uncorrected two-point flux; Hiejima shows no convergence
   test.)*
+- **Interpolated states with a Riemann flux, and its order.** The
+  [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) of Chamarthi (2023a, §2–3,
+  Eqs. (14)–(15), (42)–(45)) interpolates primitive point values to $x_{i\pm1/2}$ from the cell-centre value and
+  its first and second derivatives and evaluates an HLLC flux of the two states, without derivative corrections.
+  The linear flux difference is fourth order, which the author attributes to the point-value interpretation
+  (§3.2), but on the nonlinear isentropic vortex every scheme of the paper, TENO5 included, converges at
+  second order (Table 3). Chamarthi (2023b, §2.4, Eqs. (28)–(30)), citing van Leer & Nishikawa, states the
+  mechanism: with $\hat f_{i+1/2}=\tfrac12\big(f^{\mathrm c,-}+f^{\mathrm c,+}\big)-\tfrac12|A_{i+1/2}|(u^+_{i+1/2}-u^-_{i+1/2})$
+  (page-local $f^{\mathrm c,\mp}$), taking $f^{\mathrm c,\mp}=f(u^\mp_{i+1/2})$ is only second order for nonlinear
+  problems, whereas interpolating the point fluxes $f_j$ with the same high-order formula restores the design
+  order; the interface fluxes and the states "must be computed independently" (§2.4). Chamarthi's seventh-order scheme switches between the
+  two per interface with a density-based detector and converges at observed rates 6.0–6.7 on the vortex
+  (Table 1; [hybrid schemes](/methods/hybrid-weno.md)). This is the same limit that Wang et al. (2023) state for
+  an uncorrected two-point flux (Qualifications), reached by flux interpolation instead of derivative
+  corrections.
 - **Central flux plus high-order dissipation.** Sciacovelli, Passiatore, Cinnella & Pascazio (2021,
   §3, Eqs. (20)–(35)), after Lerat & Corre, write the flux as a central part corrected by recursive
   truncation-error terms plus a dissipation of matching odd order: on $2(P+2)+1$ points,
@@ -250,6 +265,8 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
   stencil $i-2,\dots,i+3$ printed in Eqs. (3.29)–(3.30) each exceed the five-point WENO stencil, and
   composed they reach $i-5,\dots,i+6$.)*
 
+- Chamarthi (2023a, Eqs. (14)–(15)) writes the scheme on "cells" $I_{i,j,k}$ but evolves "point values at cell
+  centers (not cell averages)"; the paper's §2.1 calls the system two-dimensional while Eq. (1) carries $z$ fluxes.
 - Hong et al. (2022, Eq. (2)) print $\partial_tu_i=\partial_xf|_{x_i}$ without the minus sign that their
   Eqs. (1) and (3) require; Li, Chen & Ren (2022, Eqs. (7), (34)) print the numerical flux with an
   extra factor $1/\Delta x$ ([MDCD schemes](/methods/mdcd-scheme.md)).
@@ -290,3 +307,5 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §1; §3.3.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.1.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Eqs. (31)–(42).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §2, Eqs. (14)–(15); §3.2, Eqs. (42)–(45); §4, Table 3; §5.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2, Eqs. (5)–(7); §2.4, Eqs. (28)–(32); §3, Table 1.

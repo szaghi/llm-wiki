@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hybrid central-WENO schemes"
-description: "Hybrid schemes use a cheap linear (central or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, sometimes with a smooth transition band; they cut dissipation and cost or help steady convergence, but their quality hinges on the shock sensor, whose misjudgments the sources measure."
+description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost or restore order, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid]
+aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -87,6 +87,55 @@ better" than in Fu's own paper), detection on density and entropy once per step,
 points, and a second detection on each split characteristic flux at flagged interfaces (§3.4, §4.3.1).
 Thresholds still vary by case: 0.5 for the blast waves, 0.8 for Sedov (§4.2).
 
+## Energy-preserving central / WENO-TENO hybrids in LES
+
+De Vanna, Baldan, Picano & Benini (2023a) make the hybridization level the parameter of a study of
+wall-resolved and wall-modelled LES of supersonic boundary layers in the URANOS code
+([URANOS](/software/uranos.md), [wall-modelled LES](/methods/wall-modeled-les.md)). The linear member is a
+sixth-order fully split energy-preserving central scheme (Pirozzoli; [split convective forms](/methods/split-convective-forms.md),
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)), the nonlinear one
+[WENO-Z](/methods/weno-z.md) of order 3, 5 or 7, [TENO5](/methods/targeted-eno.md) or
+[TENO-A5](/methods/adaptive-teno.md). The switch is a modified [Ducros sensor](/definitions/ducros-shock-sensor.md),
+$\Psi_{\mathrm D}=\max\big(-\nabla\cdot v/\sqrt{(\nabla\cdot v)^2+|\nabla\times v|^2+\epsilon_{\mathrm D}},0\big)$ with
+$\epsilon_{\mathrm D}=(v_\infty/\delta_0)^2$ (Eq. (9)), evaluated at interfaces against a threshold
+$\Psi^*$; a flagged interface switches the flagged cell and two, three or four neighbours, depending on the
+WENO/TENO order, to the nonlinear scheme (§3.2). $\Psi^*=0$ is the pure shock-capturing scheme.
+
+- **Wall-modelled LES at Mach 2.** Pure WENO/TENO damp or destroy wall turbulence, most of all WENO-Z3, which
+  mispredicts the wall flow regardless of grid resolution; $\Psi^*=0.1$ restores a realistic friction curve and
+  brings the medium and fine grids close to DNS; at $\Psi^*=0.4$ all WENO and TENO variants give identical
+  curves, since the central scheme covers most of the flow; no pure WENO/TENO collapses on the central solution
+  (§4.3, Figs. 5, 7–8).
+- **Mach 5.86.** The pure central scheme diverges because of shocklets, and $\Psi^*=0.2$ is "the highest limit
+  that ensures the current arrangement's numerical stability"; the authors recommend $\Psi^*\simeq0.2$ (§4.4, §6).
+- **Mechanism.** In low-resolution settings the sensor reads numerical noise and turbulent fluctuations as
+  shocklets, so the nonlinear scheme acts in nominally smooth regions (§3.2, §4.3.3).
+- **Cost.** Wall time per iteration relative to the pure central scheme is 0.90–1.00 for the hybrids and
+  0.95–1.32 for the pure schemes (TENO-A5 on the fine grid the highest; 13 Intel KNL nodes; Table 2).
+
+The URANOS paper adds that hybrid schemes have discontinuous error scaling because of the switch, so its
+convergence tests use the schemes "in pure state", and that $\Psi^*$ is strongly flow-dependent (De Vanna et
+al. 2023b, §3.2). Bielawski, Barwey, Prakash & Raman (2023, App. A.2) find a skew-symmetric central scheme far
+less dissipative than HLLC and AUSMDV in enstrophy and dilatation on decaying isotropic turbulence with
+eddy shocklets, and postulate, without testing it, that a hybrid central/HLLC scheme would be beneficial
+([compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)).
+
+## A flux/state hybrid for nonlinear order
+
+Chamarthi (2023b, §2.4, Eqs. (31)–(37)) switches not between a linear and a nonlinear scheme but between two ways
+of forming the fluxes of a [gradient-based reconstruction](/methods/gradient-based-reconstruction.md): where the
+switch is 1, the seventh-order interpolation of the point fluxes, which keeps the design order on nonlinear
+problems; where it is 0, the flux of the MP-limited states ([MP limiter](/methods/monotonicity-preserving-limiter.md)).
+The limited states always enter the dissipative part of the HLLC flux. The detector is Ren's form with the second
+differences of Li, Chen & Ren's new detector above, computed on density only, because density "sees" both shocks
+and contacts: $\mathfrak s_i=2/(\mathsf a/\mathsf b+\mathsf b/\mathsf a)$ with
+$\mathsf a=|\rho_i-\rho_{i-1}|+|\rho_i-2\rho_{i-1}+\rho_{i-2}|$, $\mathsf b=|\rho_i-\rho_{i+1}|+|\rho_i-2\rho_{i+1}+\rho_{i+2}|$,
+the interface value the minimum over $\mathfrak s_{i-2},\dots,\mathfrak s_{i+3}$, $\xi=10^{-3}$, threshold
+$\mathfrak s_c=0.5$ (Li, Chen & Ren use $\xi=10^{-2}$, 0.4). A higher threshold "reduces accuracy", a lower one
+produces oscillations (stated, no data), and the approach is said to suit explicit better than compact
+gradients, which are global (§2.4). With it the isentropic vortex converges at rates 6.0–6.7 instead of the
+second order of the pure state reconstruction (Table 1).
+
 ## A three-region hybrid for steady states: WENO-H
 
 Wan & Xia (2022, §3) argue that hybrid schemes are rarely used for steady problems "since the gap between
@@ -166,6 +215,11 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
   universal" than physical sensors; Li, Chen & Ren (2022, Figs. 9–12) measure it correct only below
   $\vartheta=0.64$ on sine waves, with detector inputs normalized by $\max(|f_{\max}|,1)$, a step to which
   they attribute TENO-HY's better detection than in Fu's own paper (§4.3.1).
+- Chamarthi (2023b) prints the regularization $\varepsilon=\tfrac{0.9\mathfrak s_c}{1-0.9\mathfrak s_c}\xi^2$ (Eq. (37)) but
+  not in the detector (Eq. (35)), which is then undefined on constant density; Chamarthi attributes the detector once to
+  Li & Jaberi and once, as "the original paper", to Li, Chen & Ren.
+- De Vanna et al. (2023a)'s thresholds belong to their non-squared, compression-only sensor with
+  $\epsilon_{\mathrm D}=(v_\infty/\delta_0)^2$; they are not transferable to the classical squared Ducros ratio.
 - Wan & Xia (2022, Example 4.3) state fifth order for all schemes on the isentropic vortex while their
   WENO-H orders are 2.42 ($L^\infty$) at $80^2$ and 8.19 at $160^2$, with an $L^1$ error at $80^2$ about 3.5
   times that of the linear UW5 (Table 4.2); their bound on the blended indicator is misstated (see
@@ -188,3 +242,7 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1; §3.1–3.2.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1–3.2, Eq. (9); §4.3–4.4, Table 2, Figs. 5–9; §6.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.2.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4, Eqs. (31)–(37); §3, Table 1.
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A.2, Figs. A.15–A.16.

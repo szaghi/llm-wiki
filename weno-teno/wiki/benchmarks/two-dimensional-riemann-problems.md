@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -52,6 +52,16 @@ The sources use three placements and several final times:
 | [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(a) ("modified" configuration 3) | $[-1,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.25 | 0.8 | [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S4T3 at $\varepsilon=1$, reconstruction approaches A1–A3, S2T2 |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.7 ("four-shock configuration") | $[0,1]^2$, $(0.5,0.5)$ | $512\times512$, van Leer flux | 0.3 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO, WENO; timing |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.6 | $[0,1]^2$, split not recorded | $512^2$, $1024^2$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5, WENO5-Z |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.7 | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $400\times400$, CFL 0.2 | 0.8 | [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MIG4-base, MEG6 vs TENO5, primitive variables (arXiv v2) |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.9 | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.2 | 0.8 | MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.6, Eq. (41) | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $\Delta x=\Delta y=1/400$, CFL 0.5, HLLC with pressure control | 0.8 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6 |
+| [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.3 | box $L_0\times L_0$, quadrants split at $x=y=0$, extrapolation | $1600\times1600$ | $t/t_0=0.3$ | [WENO-Z](/methods/weno-z.md)5, WENO-Z7, TENO5, [TENO-A5](/methods/adaptive-teno.md) in [URANOS](/software/uranos.md) |
+
+The two Chamarthi papers print the states as fractions,
+$(33/62,\,4/\sqrt{11},\,0,\,0.3)$, $(77/558,\,4/\sqrt{11},\,4/\sqrt{11},\,9/310)$;
+$33/62=0.53226$, $4/\sqrt{11}=1.20605$, $77/558=0.13799$ and
+$9/310=0.029032$ round to the decimals of the table *(compiler check,
+not in the sources)*.
 
 Contours: Deng 40 from 0.14 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
 Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023) 35 from 0.1 to 1.8.
@@ -95,7 +105,7 @@ exact form: $\rho=4/5$, $v=0$, $p=1$ on $(0,\tfrac12)^2$; $\rho=1$ with
 $v=(3/\sqrt{17},0)$ and $v=(0,3/\sqrt{17})$, $p=1$, in the upper-left
 and lower-right quadrants; $\rho=17/32$, $v=0$, $p=2/5$ on
 $(\tfrac12,1)^2$ ($3/\sqrt{17}=0.72761$, $17/32=0.53125$)
-*(compiler check, not in the sources)*. He makes the problem periodic on $[0,2]^2$ by reflection about
+*(compiler check, not in the sources)*. Pazner makes the problem periodic on $[0,2]^2$ by reflection about
 $(1,1)$ and runs it to $t=0.25$.
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.3, their "2D
 Riemann problem I", print the decimal states of the table above,
@@ -178,6 +188,23 @@ than the WENO schemes (§5.7, Fig. 15); per 1000 steps TENO-M6 takes
 1632.51 s against 2034.43 s for TENO6, 1432.34 s for WENO-JS and
 1746.42 s for WENO-CU6, and TENO-M8 1838.13 s against 2626.74 s for
 TENO8 (Table 4, Intel i9-10980XE).
+
+Chamarthi (2023a) ranks MIG4 above MEG6 above TENO5 in the vortical
+structures, and MIG4 above MIG4-base, which isolates the effect of
+reusing the high-order second derivative as the curvature of the
+[MP limiter](/methods/monotonicity-preserving-limiter.md) (Fig. 10).
+Chamarthi (2023b) finds MEG7 with conservative variables resolving the
+slip-line structures better than WCNS7M, with a minor difference
+between conservative and primitive variables (Fig. 12); the wall-clock
+times are 1025 s (MEG7-prim), 1031 s (MEG7-cons) and 1502 s (WCNS7M),
+hardware not stated (Table 2).
+
+Zhou et al. find WCNS-LD and WCNS-SA resolving more vortices than ONL6
+but with more post-shock noise (§5.6, Fig. 16). De Vanna et al. (2023b)
+print the same four states and find that a higher WENO order and TENO
+resolve additional shear-layer instabilities and more detail of the
+central plume, compared qualitatively with Guo & Shi (App. A.3,
+Fig. 13).
 
 **Characteristic reconstruction in a semi-implicit scheme.** Boscarino
 et al. use both of their problems at $\varepsilon=1$ to choose where
@@ -302,9 +329,9 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
   improved third-order WENO-Z scheme.
 - The configuration-3 runs differ in split, domain and final time
   ($t=0.3$ to $1$), so the jet is at different stages of development in
-  different papers; only the four runs with split $(0.8,0.8)$ and
-  $t=0.8$ (Deng, Huang et al., Wang et al. 2023, Wang et al. 2021) are
-  directly comparable.
+  different papers; only the runs with split $(0.8,0.8)$ on $[0,1]^2$
+  and $t=0.8$ (Deng, Huang et al., Wang et al. 2023, Wang et al. 2021,
+  the two Chamarthi papers, Zhou et al.) are directly comparable.
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
   non-default weights $(0.95,0.045,0.005)$ are set in Ex. 5.3.
@@ -341,3 +368,7 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §5, Ex. 5.4, Eq. (5.6), Figs. 5.4–5.5 (arXiv v2).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.7, Fig. 15; §6, Table 4.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.6, Figs. 16–18.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.7, Fig. 10 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.9, Fig. 12, Table 2 (arXiv v1).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.6, Eq. (41), Fig. 16.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — App. A.3, Fig. 13.

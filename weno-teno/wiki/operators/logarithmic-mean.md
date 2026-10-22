@@ -60,7 +60,7 @@ properties are wanted (§3.1).
 - **Multicomponent Euler.** Renac's flux needs three logarithmic means, of
   the density of the last component, of the mixture density and of
   $1/T$, whatever the number $n_c$ (page-local) of components. The
-  Gouasmi-type flux he re-derives needs $n_c+1$ (Remark 3.1, Eq. (24),
+  Gouasmi-type flux Renac re-derives needs $n_c+1$ (Remark 3.1, Eq. (24),
   App. B). Renac counts this as a cost saving for $n_c>2$, and as a
   robustness gain because the logarithmic mean "requires positive
   arguments to avoid floating point exceptions": fewer means, fewer
@@ -124,7 +124,7 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
 ## Qualifications
 
 - The argument must be positive. A scheme whose states can lose positivity
-  of density or temperature cannot evaluate these fluxes; Renac pairs his
+  of density or temperature cannot evaluate these fluxes; Renac pairs the
   flux with a positivity-preserving scheme and limiter for that reason
   ([bound preservation](/properties/bound-preservation.md)).
 - The series branch of Algorithms 1–3 is given without an error bound in

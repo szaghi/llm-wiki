@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Minimized-dispersion and controllable-dissipation (MDCD) schemes"
-description: "MDCD schemes are six-point fourth-order finite-difference fluxes whose dispersion and dissipation are set by two independent parameters; Li, Chen and Ren make the dissipation parameter a function of a local scale sensor (MDAD), write it as a WENO-CU6-type weighted flux (MDAD-WENO) and hybridize both with a new shock detector (MDAD-HY)."
+description: "MDCD schemes are six-point fourth-order finite-difference fluxes whose dispersion and dissipation are set by two independent parameters; Li, Chen and Ren make the dissipation follow a scale sensor (MDAD), weight it like WENO-CU6 and hybridize it, and Zhou et al. carry the same two parameters into a WCNS interpolation optimized with its nonlinear weights."
 status: established
-aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme]
+aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt]
 tags: [finite-difference, low-dissipation, weno, turbulence]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Minimized-dispersion and controllable-dissipation (MDCD) schemes
@@ -105,6 +105,35 @@ terms use fourth-order central differences, curvilinear grids fourth-order centr
 stepping is a low-storage fourth-order Runge–Kutta scheme at CFL 0.6. For smooth curvilinear grids the
 1-D modified wavenumber carries over to the transformed flux (Remark, Eqs. (62)–(69)).
 
+## The same two parameters in a WCNS interpolation
+
+Zhou, Ding, Huang & Luo (2023, §3–4) free the first and last coefficients of the six-point central
+*interpolation* of a [WCNS](/methods/weighted-compact-nonlinear-scheme.md), which gives a dispersion parameter
+$\eta_{\mathrm Z}$ and a dissipation parameter $\xi_{\mathrm Z}$ (page-local, as on the WCNS page), and
+difference the interface fluxes with Deng et al.'s sixth-order explicit midpoint-and-node scheme. Their modified
+wavenumber (Eq. (24)) separates like Eq. (11) above. *(Compiler check, not in the sources: it is Eq. (11) with
+$c_{\mathrm{disp}}=\tfrac{64}{45}\eta_{\mathrm Z}$, $c_{\mathrm{diss}}=\tfrac{64}{45}\xi_{\mathrm Z}$, the dissipative
+part being $\tfrac{64}{45}\xi_{\mathrm Z}\cdot4(\cos\vartheta-1)^3$; the linear optimum for the weight
+$e^{-8\vartheta}$, $\eta_{\mathrm Z}=0.0326$ (Table 1), corresponds to $c_{\mathrm{disp}}=0.0464$, the value 0.0463783 that Li, Chen & Ren quote from Sun et al.)*
+Zhou et al. frame the work explicitly on Sun et al.'s criterion and extend it in two directions:
+
+- **Dispersion optimized with the nonlinear weights.** The integrated error is evaluated with the
+  [approximate dispersion relation](/definitions/approximate-dispersion-relation.md) of the full nonlinear scheme,
+  and the optimal $\eta_{\mathrm Z}$ then depends on the weight constant $C$ and on $\xi_{\mathrm Z}$ (Table 2),
+  becoming independent of $\xi_{\mathrm Z}$ near $C=10^9$; relaying Sun et al., they state that for the nonlinear
+  scheme dispersion "mainly relies on" the dispersion parameter, while in Table 2 the optimum still depends on
+  $\xi_{\mathrm Z}$ for $C\le10^5$ (0.0675 for $\xi_{\mathrm Z}=0$ against 0.0539 for $\tfrac3{128}$ at $C=10$; 0.0394 against 0.0373 at $C=10^5$).
+- **Sensor-driven dissipation.** Like MDAD, the dissipation parameter follows a sensor, here Li et al.'s
+  second-derivative ratio, together with $C$ ([scale sensor](/definitions/scale-sensor.md)); unlike MDAD the
+  maximum $\xi_{\mathrm Z}=0.028$, i.e. $c_{\mathrm{diss}}=0.0398$, exceeds the dissipation of the fifth-order upwind
+  scheme ($\xi_{\mathrm Z}=\tfrac3{128}$) *(compiler check, not in the sources: $\tfrac{64}{45}\cdot0.028=0.0398$)*.
+  The authors also argue that Hu et al.'s dispersion–dissipation condition, the criterion behind MDCD(0.012),
+  gives insufficient high-wavenumber dissipation (§4.2, Fig. 7b, a spectral comparison only).
+
+The four-candidate weights of their WCNS-SA, $d_0=\tfrac43(\xi_{\mathrm Z}+\eta_{\mathrm Z})$, …,
+$d_3=\tfrac43(\eta_{\mathrm Z}-\xi_{\mathrm Z})$ (Eq. (27)), are the interpolation counterpart of the MDAD-WENO
+weights above; results are on the WCNS page.
+
 ## Results (Li, Chen & Ren 2022, §4)
 
 Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
@@ -152,3 +181,4 @@ Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
 
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1; §2.1, Eqs. (6)–(17), Figs. 1–3; §2.3, Eqs. (34)–(38), Figs. 6–7; §3.1–3.4, Eqs. (39)–(69), Table 1, Figs. 8–12; §4, Tables 2–5, Figs. 14–30.
 - [Ye et al. (2022)](/sources/ye-2022.md) — Eq. (29) ($\beta_6$ coefficient).
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1; §3, Eqs. (19)–(26), Table 1; §4, Eqs. (27)–(32), Tables 2–3, Fig. 7.

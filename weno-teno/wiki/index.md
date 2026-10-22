@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–4 of 11 ingested (80 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–5 of 11 ingested (100 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -48,7 +48,12 @@ positivity-preserving finite-difference WENO for Navier–Stokes, a shock-stable
 HLLEM, HOIST shock tracking, immersed boundaries for flux reconstruction,
 p-adaptive DG, residual viscosity for MHD, semi-implicit all-Mach IMEX schemes, an
 asymptotic-preserving kinetic scheme, divergence-preserving AMR prolongation, and
-the IDEFIX code. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+the IDEFIX code. Chunk 5 (2023 papers): gradient-based reconstruction and
+α-damping viscous fluxes, wall-modelled LES with hybrid TENO, pressure-equilibrium-preserving
+split forms, entropy filtering for MHD, entropy-stable two-fluid relativistic plasma
+schemes, shock-capturing multi-block boundary closures, optimized WCNS, all-Mach MHD,
+a polynomial-viscosity-matrix solver for radiation MHD, high-order immersed boundaries and
+boundary gradients, and the GPU solvers ADAM, URANOS, STREAmS-2.0 and JAX-Fluids. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -77,6 +82,12 @@ weight families follow: [WENO-Z](/methods/weno-z.md),
 reconstructs on Lagrangian cells, and
 [gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)
 builds second-order finite volumes.
+[Gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
+reuses compact-scheme gradients for the interface states, with the
+[monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)
+at discontinuities, and the
+[shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)
+keeps multi-block finite differences globally conservative.
 The [alternative WENO](/methods/alternative-weno.md) formulation interpolates
 values instead of reconstructing fluxes, as do the
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
@@ -96,6 +107,8 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [Lax–Friedrichs flux and flux splitting](/methods/lax-friedrichs-flux.md), the
 [HLL-family Riemann solvers](/methods/hll-riemann-solvers.md), the
 [Roe solver](/methods/roe-riemann-solver.md), the
+[polynomial viscosity matrix solvers](/methods/polynomial-viscosity-matrix-solver.md), the
+[α-damping viscous flux](/methods/alpha-damping-viscous-flux.md), the
 [Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md) and the
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md);
 [characteristic decomposition](/methods/characteristic-decomposition.md);
@@ -114,7 +127,9 @@ non-conservative systems, with
 **4. Dissipation, dispersion and symmetry.** The
 [approximate dispersion relation](/definitions/approximate-dispersion-relation.md),
 [numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
-and [symmetry preservation](/properties/symmetry-preservation.md).
+and [symmetry preservation](/properties/symmetry-preservation.md); the
+[Ducros shock sensor](/definitions/ducros-shock-sensor.md) switches hybrid schemes,
+as in [wall-modelled large-eddy simulation](/methods/wall-modeled-les.md).
 
 **5. Discontinuous Galerkin and structure preservation.** The
 [discontinuous Galerkin method](/methods/discontinuous-galerkin.md) and
@@ -129,7 +144,8 @@ and [flux reconstruction](/methods/flux-reconstruction.md) with its code
 [entropy correction terms](/methods/entropy-correction-term.md) restore it a
 posteriori; on the
 finite-difference side, [split convective forms](/methods/split-convective-forms.md)
-give [kinetic energy preservation](/properties/kinetic-energy-preservation.md),
+give [kinetic energy preservation](/properties/kinetic-energy-preservation.md)
+and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
 and [local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md).
 [Free-stream preservation](/properties/free-stream-preservation.md) on curved
 meshes; [adaptive moving meshes](/methods/adaptive-moving-mesh.md),
@@ -167,7 +183,10 @@ add the recovery of primitive variables.
 [immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md);
 [block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md);
 the solvers [MFC](/software/mfc.md), [AMROC](/software/amroc.md),
-[UCNS3D](/software/ucns3d.md) and [IDEFIX](/software/idefix.md); verification
+[UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md),
+[ADAM](/software/adam.md), [URANOS](/software/uranos.md),
+[STREAmS](/software/streams.md) and [JAX-Fluids](/software/jax-fluids.md);
+[operator splitting](/methods/operator-splitting.md) of stiff chemistry; verification
 by the [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md).
 
 **8. Beyond method-of-lines reconstruction.** [Active Flux](/methods/active-flux.md),
@@ -187,7 +206,8 @@ the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md) and
 [double rarefaction problem](/benchmarks/double-rarefaction-problem.md),
 the [Shu–Osher problem](/benchmarks/shu-osher-problem.md), the
 [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md) and the
-[Sedov blast wave](/benchmarks/sedov-blast-wave.md).
+[Sedov blast wave](/benchmarks/sedov-blast-wave.md); viscous: the
+[viscous shock tube](/benchmarks/viscous-shock-tube.md).
 Smooth: the [isentropic vortex](/benchmarks/isentropic-vortex.md), the
 [Gresho vortex](/benchmarks/gresho-vortex.md), the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), the
@@ -214,7 +234,11 @@ Instabilities: [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md)
 and MHD: the [KPP rotating wave](/benchmarks/kpp-rotating-wave.md), the
 [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) and the
-[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md).
+[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md) and the
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md).
+Turbulence: [decaying compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md),
+[turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and the
+[supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md).
 
 ## Catalog
 

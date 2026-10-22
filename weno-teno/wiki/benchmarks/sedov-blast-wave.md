@@ -155,7 +155,7 @@ Zhang & Qiu (2021) state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows
 both Sedov problems from loss of positivity (no figure shown); their
 scaling limiter is triggered in 3.00 % of the cells in 1D and 1.09 % in
 2D, identically for the hybrid and non-hybrid positivity-preserving
-schemes (Table 4.2). Fu computes the corner blast, like all his
+schemes (Table 4.2). Fu computes the corner blast, like all the author's
 extreme cases, with the positivity-preserving flux limiter and reports
 it stable (§5.7). Wang et al. use no
 positivity limiter: the ratio of the linear weights "used in this

@@ -129,7 +129,7 @@ a note on the swap (see Printed slips). No item is unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–4 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–5 (2026-10-22/23). This source is cited on:
 
 * [Alternative WENO (A-WENO)](/methods/alternative-weno.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)

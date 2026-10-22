@@ -134,7 +134,7 @@ same-year pairs take suffixes in printed order (Kurganov 2021 [17]/[18], Schulz-
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–5 (2026-10-22/23). This source is cited on:
 
 * [Adaptive-diffusion central-upwind Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md)
 * [Alternative WENO (A-WENO)](/methods/alternative-weno.md)

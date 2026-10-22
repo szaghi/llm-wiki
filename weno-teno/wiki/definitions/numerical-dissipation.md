@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -102,6 +102,21 @@ jumps.
   bound (§4.1, Eqs. (4.1)–(4.6)). They also write the flux as central part plus a dissipation
   term and lower that term further by a minimal-jump choice of the density in it
   ([BVD](/definitions/boundary-variation-diminishing.md); [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+- **Solver against mesh on turbulence.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
+  (App. A, Figs. A.13–A.16; accepted manuscript) compare three convective fluxes in a
+  second-order unstructured finite-volume code: a non-dissipative skew-symmetric central scheme,
+  HLLC and AUSMDV. The test is decaying compressible isotropic turbulence
+  ([compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)) on a
+  structured $64^3$ mesh and a skewed tetrahedral mesh.
+  - At initial turbulent Mach number $0.3$, the central scheme on the structured mesh tracks the
+    spectral reference, HLLC is closer to it than AUSMDV, and AUSMDV "adds additional numerical
+    dissipation even at the turbulent Mach number of 0.3". The unstructured meshes deviate more and
+    show a small-scale energy pile-up.
+  - At $0.6$, with eddy shocklets, both upwind fluxes are much more dissipative than the central
+    scheme in enstrophy and dilatation, the HLLC–AUSMDV gap narrows, and mesh skewness has minimal
+    influence compared with the scheme's own dissipation.
+
+  The authors postulate that a hybrid central/HLLC scheme would be beneficial but do not run one.
 - **A ranking of solvers.** [Lesur et al. (2023)](/sources/lesur-2023.md) (§2.3) order the
   Riemann solvers of IDEFIX "from most to least diffusive": Rusanov, HLL, HLLC (HLLD in MHD),
   Roe; on linear MHD waves with linear reconstruction all four are second order and within
@@ -270,6 +285,27 @@ of the local resolution.
   (§1, §3.2) aim at low dissipation at low wavenumbers, comparatively high dissipation at high
   wavenumbers and enough at discontinuities by driving the TENO cut-off with an estimated
   wavenumber ([adaptive TENO](/methods/adaptive-teno.md)).
+- **Linear and nonlinear dissipation switched together.** In the six-point
+  [WCNS](/methods/weighted-compact-nonlinear-scheme.md) of
+  [Zhou et al. (2023)](/sources/zhou-2023.md) (§§3–4) dissipation has two sources. The
+  first is linear, a parameter $\xi_{\mathrm Z}$ (page-local, as on the WCNS and MDCD pages) of the interpolation that
+  enters only the imaginary part of the modified wavenumber. The second is nonlinear, the
+  additive constant $C$ of Wong–Lele-type weights, where a larger $C$ is closer to linear. A
+  larger $\xi_{\mathrm Z}$ raises dissipation everywhere. A larger $C$ lowers it over the
+  whole range and shifts it to higher wavenumbers. At fixed $C$ the dissipation grows
+  non-monotonically with the wavenumber, which they attribute to the first-derivative term of
+  the smoothness indicators (§4.2, Figs. 3, 6). Since a fixed $C$ or $\xi_{\mathrm Z}$ "(even though it
+  takes an optimized value) cannot produce satisfactory dissipation property at the whole
+  wavenumber range", WCNS-SA switches both by Li et al.'s second-derivative
+  [scale sensor](/definitions/scale-sensor.md). It uses $C=2\times10^{10}$ and
+  $\xi_{\mathrm Z}=0.0002$ in smooth, low-wavenumber regions, and $C=2\times10^8$ with
+  $\xi_{\mathrm Z}$ rising to $0.028$ at high sensor values (§4.3, Eqs. (31)–(32), Table 3).
+  *(Compiler check, not in the sources: $0.028$ exceeds the $3/128\approx0.0234$ of the
+  fifth-order upwind interpolation, so at the highest sensor values the linear part is more
+  dissipative than upwind-5.)* On the viscous Taylor–Green vortex only WCNS-SA matches
+  Brachet's dissipation rate at $\mathrm{Re}=100$ on $32^3$ and at $200$ and $400$ on $64^3$.
+  Inviscid on $64^3$, it preserves the kinetic energy better than ONL6 and WCNS-LD on $128^3$
+  (§5.9, Figs. 21–24). Its extra cost is 3% over ONL6 (Table 4, 32 cores).
 - **Dissipation at a jump.** [Liang et al. (2022)](/sources/liang-2022.md) (§1, §3.2, Fig. 6)
   attribute residual dissipation of THINC at discontinuities to its cell-average constraint and
   replace it by point interpolation with two steepness levels in cells a TENO-flag detector marks
@@ -325,7 +361,7 @@ amount and spectral distribution are design choices
   dissipation operator $\bar{\mathcal D}\le0$ (page-local) and shows in the semi-discrete limit
   that filtering the total energy decreases the global entropy, filtering the momentum increases
   it and filtering the mass is indefinite; momentum-only filtering gives strict kinetic-energy
-  decay and entropy increase for all his splittings and avoids vortex-core deepening on a long
+  decay and entropy increase for all the author's splittings and avoids vortex-core deepening on a long
   isentropic-vortex run (Figs. B.5–B.6; see
   [kinetic energy preservation](/properties/kinetic-energy-preservation.md),
   [entropy stability](/properties/entropy-stability.md)).
@@ -353,10 +389,40 @@ The numerical dissipation rate in such runs is measured, after Schranner et al.,
 kinetic-energy decay not accounted for by the resolved viscous work,
 $\epsilon_{\mathrm{num}}=\big\langle-\partial_te_{\mathrm{ke}}-v_i\,\delta_j\tau_{ij}\big\rangle_\Omega$ (volume average,
 $e_{\mathrm{ke}}=\tfrac12v_iv_i$, $\delta_j$ the discrete derivative and $\tau_{ij}$ the viscous stress, all page-local), by [Edoh (2022)](/sources/edoh-2022.md) (§4.2,
-Eq. (33)); on the Taylor–Green vortex at Re 1600 on $64^3$ his rotational-form splitting shows
+Eq. (33)); on the Taylor–Green vortex at Re 1600 on $64^3$ Edoh's rotational-form splitting shows
 the larger $\epsilon_{\mathrm{num}}$ and density variability than the Kennedy–Gruber splitting,
 attributed to aliasing, and the kinetic-energy-preserving splittings agree as the grid is refined
 (Fig. 3).
+
+**Upwind dissipation in LES of wall turbulence.**
+[De Vanna et al. (2023a)](/sources/devanna-2023.md) vary only the convective scheme in 69 LES
+of spatially developing boundary layers at Mach 2 and 5.86, all in one finite-difference
+solver ([supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md)).
+The schemes are WENO-Z 3/5/7, TENO5, TENO-A5 and a sixth-order kinetic-energy-preserving central
+scheme, run pure or hybridized by a [Ducros sensor](/definitions/ducros-shock-sensor.md).
+
+- **Wall-resolved, implicit LES** (§4.2, Figs. 1–2). The upwind schemes underestimate the wall
+  friction, overestimate the log-layer velocity and give an augmented peak of turbulent kinetic
+  energy. The errors shrink as the WENO order rises and from WENO to TENO, and the central scheme
+  fits DNS. Adding the WALE model changes the friction only marginally.
+- **Wall-modelled LES** (§4.3). The effect is stronger.
+  - Pure upwind schemes damp or destroy wall turbulence. On the coarse grid the $Re_\tau$ range
+    stays very narrow, and WENO-Z3 mispredicts the wall flow at every resolution.
+  - On the fine grid the pure schemes overestimate the friction "dramatically".
+  - Hybridization with the central scheme at Ducros threshold $\Psi^*=0.1$ brings the statistics near
+    DNS. No pure WENO or TENO run collapses onto the central solution (§4.3.1, Figs. 4–8).
+- **Proposed mechanisms** (§5). In wall-resolved LES, numerical viscosity damps the small scales
+  and "freezes the Reynolds stress", and momentum balance then changes the mean wall velocity
+  gradient. The authors compare this with polymer drag reduction. In wall-modelled LES the
+  Reynolds stresses reach the wall shear stress only through the wall model
+  ([wall-modelled LES](/methods/wall-modeled-les.md)), which sees the instantaneous velocity and
+  temperature at the matching point and no fluctuation correlations. With predominant shock
+  capturing or poor resolution, wall turbulence "can be wholly destroyed".
+- **Subgrid model** (Appendix, Fig. 10). Smagorinsky deviates because its eddy viscosity does not
+  vanish at the wall; WALE, Sigma and the mixed time-scale model give similar results.
+
+In the same vein, Bielawski et al. (above) find that the dissipation of the upwind flux, not the
+mesh skewness, dominates at shocklet-bearing turbulent Mach numbers.
 
 In the opposite direction, [Wang et al. (2021)](/sources/wang-2021.md) motivate
 their multi-resolution WENO by the observation, recalled from Johnsen et al.,
@@ -405,6 +471,21 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
   Eqs. (23)–(35)). The page uses the explicit members. Their conclusion on
   dissipation order versus convective order is an ILES conclusion on one
   turbulence test; it is not stated for shocked flows.
+- De Vanna et al. (2023a, §5, §6) word their mechanism in two directions. They
+  say that numerical viscosity makes "the average wall velocity gradient ...
+  increase with a consequent effect in terms of an effective drag reduction",
+  while their §4.2 reports friction underestimated by the upwind schemes.
+  *(Compiler check, not in the sources: a larger mean wall velocity gradient is
+  a larger wall shear stress, so the printed sign of the explanation is
+  opposite to the measured friction trend.)* The page records the measured
+  trends. Their argument is qualitative and is not tested separately from the
+  runs.
+- Bielawski et al.'s ranking comes from a second-order unstructured solver with
+  limited reconstruction. Their §3 describes approximate Riemann solvers as
+  giving "near minimal possible dissipation across discontinuities while
+  maintaining a monotonicity preserving solution"; their own Appendix A finds
+  both upwind fluxes much more dissipative than the central scheme at turbulent
+  Mach number $0.6$.
 
 # Citations
 
@@ -439,3 +520,6 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1, §3.2, Fig. 6: dissipation of THINC's cell-average constraint.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Theorems 3.1–3.2, Lemma 3.1; §4, App. C–D: non-dissipative consistent two-phase scheme (arXiv v1).
 - [Fan et al. (2023)](/sources/fan-2023.md) — Ex. 3.13, Fig. 3.17: Rayleigh–Taylor resolution as a dissipation proxy.
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3; App. A.1–A.2, Figs. A.13–A.16: central, HLLC and AUSMDV dissipation on isotropic turbulence, mesh skewness (accepted manuscript).
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §§4.2–4.4, §5, §6, Appendix; Tables 1–4, Figs. 1–10: upwind dissipation in wall-resolved and wall-modelled LES.
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §§3–4, Eqs. (31)–(32), Table 3, Figs. 3, 6–7; §5.9, Figs. 21–24, Table 4: linear and nonlinear dissipation switched by a sensor.

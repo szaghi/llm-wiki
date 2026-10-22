@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Scale sensors and the effective scaled wavenumber"
-description: "A scale sensor estimates the local reduced wavenumber of the data from ratios of Taylor-term magnitudes, exactly for a sinusoid at every phase, so that numerical dissipation or the TENO cut-off can follow the resolved length scale; the page gives the six-point MDAD sensor of Li, Chen and Ren and the five-point TENO5-A sensor of Huang, Liang and Fu."
+description: "A scale sensor estimates the local reduced wavenumber of the data, exactly for a sinusoid, so that numerical dissipation or the TENO cut-off can follow the resolved length scale; the page gives the six-point MDAD and five-point TENO5-A effective scaled wavenumbers and the bounded second-derivative sensor that drives the WCNS-SA dissipation."
 status: established
-aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor]
+aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor]
 tags: [low-dissipation, teno, finite-difference, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Scale sensors and the effective scaled wavenumber
@@ -102,7 +102,28 @@ $C_T=10^{-\lfloor10-5\tanh(1.01\vartheta_{\mathrm{ESW}})\rfloor}$ from low waven
 (Eq. (33); [adaptive TENO](/methods/adaptive-teno.md)). *(Compiler check, not in the sources: since
 $\tanh\in[0,1)$, the exponent's argument lies in $(5,10]$, so $C_T\in\{10^{-10},\dots,10^{-5}\}$.)*
 
-## How the two sources relate
+## A bounded second-derivative sensor (Zhou et al. 2023)
+
+Zhou, Ding, Huang & Luo (2023, §4.3, Eqs. (29)–(30)) adapt the dissipation of their WCNS with a sensor that they cite from Li et
+al. and that compares two second differences of different width,
+
+$$\theta^{\mathrm L}_i=\frac{|S_1-S_2|}{|S_1+S_2|+\epsilon},\qquad S_1=|u_{i+1}-2u_i+u_{i-1}|,\quad S_2=\tfrac14|u_{i+2}-2u_i+u_{i-2}|,\qquad \theta^{\mathrm L}_{i+1/2}=\max\big(\theta^{\mathrm L}_i,\theta^{\mathrm L}_{i+1}\big)$$
+
+(page-local $\theta^{\mathrm L}$, $S_1$, $S_2$). It lies in $[0,1]$; the authors state that it rises monotonically
+from 0 to 1 with wavenumber and is independent of phase for a single sinusoid. *(Compiler check, not in the
+sources: for $u=A\cos(k_wx+\phi_0)$ and $\epsilon=0$, $S_1=4\sin^2(\vartheta/2)|u_i|$ and $S_2=\sin^2\vartheta\,|u_i|$,
+so $\theta^{\mathrm L}_i=\sin^2(\vartheta/2)/\big(1+\cos^2(\vartheta/2)\big)$, monotone on $[0,\pi]$ and phase-independent
+wherever $u_i\ne0$; at a node with $u_i=0$ both differences vanish and $\theta^{\mathrm L}_i=0$, which the maximum
+over two nodes masks at the interface. The thresholds 0.5 and 0.71 used below correspond to
+$\vartheta=1.911$ and $\vartheta=2.29$.)* Unlike $\vartheta_{\mathrm{ESW}}$ it is bounded and returns a monotone
+function of $\vartheta$, not $\vartheta$ itself. In WCNS-SA it switches the weight constant from
+$2\times10^{10}$ to $2\times10^8$ at 0.5 and raises the linear dissipation parameter from 0.0075 above 0.71 as
+$\big((\theta^{\mathrm L}-0.71)/0.29\big)^{1.5}$ towards its maximum (Eqs. (31)–(32), Table 3;
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md), [MDCD schemes](/methods/mdcd-scheme.md)). Which variable
+feeds the sensor in the Euler system is not stated. The authors compare it with energy-ratio automatic
+dissipation control, which also relies on a sensor (§4.3).
+
+## How the sources relate
 
 The five-point sensor is the six-point one of Li, Chen & Ren, which Huang et al. cite (with Sun et al.
 and Su et al.) as its origin, moved from the interface to the node and with plain instead of optimized
@@ -127,3 +148,4 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1; §2.2, Eqs. (18)–(33), Figs. 4–5; §2.3; §3.4; §4.4.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §1; §3.1, Eqs. (21)–(31), Fig. 2; §3.2, Eq. (33).
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §4.3, Eqs. (29)–(32), Table 3.

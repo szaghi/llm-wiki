@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Special relativistic hydrodynamics and MHD"
-description: "The special relativistic (magneto)hydrodynamics equations in lab-frame conservation form, whose primitive variables and fluxes are implicit functions of the conserved ones; the page fixes the variables, the implicit pressure equation and its provably convergent solvers, the convex admissible set and its linear GQL form, homogeneity, wave speeds and the entropy pair."
+description: "The special relativistic (magneto)hydrodynamics equations in lab-frame conservation form, whose primitive variables and fluxes are implicit functions of the conserved ones; the page fixes the variables, the implicit pressure equation and its provably convergent solvers, the convex admissible set and its linear GQL form, homogeneity, wave speeds, the entropy pair, and the two-fluid plasma and radiation-moment extensions."
 status: established
-aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP]
+aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD
@@ -167,9 +167,72 @@ meshes ([entropy-conservative flux](/methods/entropy-conservative-flux.md),
 [TeCNO schemes](/methods/tecno-scheme.md),
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 
+## Two-fluid relativistic plasma
+
+[Bhoriya et al. (2023)](/sources/bhoriya-2023.md) (§2, Eqs. (1)–(3)) treat ions and electrons
+as two relativistic fluids, each with a 3D velocity and its own RHD block (page-local species
+index $\mathsf s\in\{\mathrm i,\mathrm e\}$, with $D_{\mathsf s}$, $m_{\mathsf s}$, $E_{\mathsf s}$ as
+above), coupled to Maxwell's equations in the perfectly hyperbolic divergence-cleaning form of
+Munz et al. The 18 conserved variables are the two fluid blocks plus the magnetic field $B$,
+the electric field $\mathfrak E$ and two cleaning potentials (page-local $\mathfrak E$,
+$\phi_{\mathrm{GLM}}$ for the electric constraint; $\psi_{\mathrm{GLM}}$ of registry §5 for the
+magnetic one; cleaning speeds set to 1). With charge-to-mass ratios $\mathsf r_{\mathsf s}$
+(page-local), the fluids are coupled only through the Lorentz-force sources
+$\big(0,\ \mathsf r_{\mathsf s}D_{\mathsf s}(\mathfrak E+v_{\mathsf s}\times B),\ \mathsf r_{\mathsf s}D_{\mathsf s}\,v_{\mathsf s}\cdot\mathfrak E\big)$,
+and Maxwell's equations receive the current and charge densities of both species. The flux
+therefore splits into three independent blocks (ion, electron, linear Maxwell), coupled only
+by sources; a resistive extension after Amano adds further implicit source terms
+(Eqs. (27)–(28)). The ratios $\mathsf r_{\mathsf s}$ set the skin depth and the stiffness of the
+sources, which is why the paper integrates them with [IMEX Runge–Kutta](/methods/imex-runge-kutta.md)
+schemes.
+
+- **Hyperbolicity** (Lemma 3.1, App. B.1). On
+  $\{\rho_{\mathsf s}>0,\ p_{\mathsf s}>0,\ \lvert v_{\mathsf s}\rvert<1\}$ the system has real
+  eigenvalues and a complete set of eigenvectors, and $\gamma\in(1,2]$ gives $c<1$; the
+  Maxwell eigenvalues are $\pm1$ and the cleaning speeds. *(compiler check, not in the
+  sources: the printed fluid eigenvalues in $x$ are the wave-speed formula above with
+  $v_n=v_1$.)*
+- **Entropy** (Prop. 3.1, App. A; the contraction below in the proof of Thm. 4.2). Smooth solutions satisfy
+  $\partial_ts_{\mathsf s}+v_{1,\mathsf s}\partial_xs_{\mathsf s}=0$ for each species, *with* the Lorentz
+  sources present, because their contraction with the entropy variables vanishes,
+  $w_{\mathsf s}^\top S_{\mathsf s}=0$ (it reduces to
+  $v_{\mathsf s}\cdot\big(\mathsf r_{\mathsf s}D_{\mathsf s}(\mathfrak E+v_{\mathsf s}\times B)\big)-\mathsf r_{\mathsf s}D_{\mathsf s}v_{\mathsf s}\cdot\mathfrak E=0$).
+  Each fluid carries the entropy pair of the previous section, and entropy stability of the
+  whole scheme reduces to that of the two fluid blocks, for any discretization of the Maxwell
+  block (Remark 4.3; [entropy stability](/properties/entropy-stability.md)).
+- **Entropy variables and scaling.** The entropy variables of each fluid are those of the
+  previous section without the magnetic part, with $\rho/p$ as inverse temperature; App. B.2
+  gives Barth's eigenvector scaling for the 3D-velocity RHD block in closed form, with a coupled
+  $2\times2$ block in the transverse velocities. On this basis the paper builds closed-form
+  two-point [entropy-conservative fluxes](/methods/entropy-conservative-flux.md) and
+  [TeCNO-type](/methods/tecno-scheme.md) entropy-stable finite-difference schemes of orders 2–4.
+- **Tests.** A forced smooth solution, a relativistic two-fluid
+  [Brio–Wu tube](/benchmarks/brio-wu-shock-tube.md) with finite skin depth (dispersive two-fluid
+  waves appear at 1600 and 6400 cells; at charge-to-mass ratio $10^5/\sqrt{4\pi}$ the solution is
+  close to the single-fluid RMHD one), a resistive self-similar current sheet, the relativistic
+  [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), a two-fluid
+  [blast wave](/benchmarks/mhd-blast-wave.md) and relativistic magnetic reconnection (§6).
+  The magnetic divergence is cleaned hyperbolically and monitored, not kept zero
+  ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+## Radiation moments (M1 closure)
+
+[López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) (§2, Eqs. (1)–(17)) extend
+relativistic MHD with the grey two-moment radiation transport: the radiation energy density
+and flux are added as conserved variables, the radiation pressure tensor is closed by the M1
+Eddington tensor, which tends to the Eddington approximation for vanishing reduced flux and to
+free streaming as it tends to one, and radiation and matter exchange energy and momentum only
+through the radiation four-force (absorption and scattering), a stiff source in optically thick
+media. The radiation Jacobian depends only on the radiation variables, so its eigenvalues are
+available in closed form and independent of the fluid block (§3.2.1). The paper integrates the
+sources with an IMEX Runge–Kutta step and compares radiative
+[HLL](/methods/hll-riemann-solvers.md) with a [PVM flux](/methods/polynomial-viscosity-matrix-solver.md);
+it bounds the reduced flux by one after reconstruction and falls back to first order when a
+reconstructed velocity is superluminal (§3.2).
+
 ## Test problems in the sources
 
-Relativistic variants of the standard benchmarks:
+Relativistic variants of the bundle's benchmarks:
 [isentropic vortex](/benchmarks/isentropic-vortex.md) (RHD, Chen & Wu Ex.
 4.1, down to minimum pressure $1.78\times10^{-20}$; RMHD in 2D and 3D, Duan &
 Tang Exs. 6.1, 6.7),
@@ -221,3 +284,5 @@ most of these (Exs. 4.3, 4.6, 4.7, 4.9, 4.10, 4.12).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — arXiv v1: §1 (Eqs. (1.1)–(1.10)); §2 (Eqs. (2.3)–(2.6)); §6 (Exs. 6.1–6.10).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thms 4.9, 4.10, 4.13 (Eq. (4.22)).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §8, Exs. 4–5 (relativistic Riemann problem and jet).
+- [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — arXiv v2: §2 (Eqs. (1)–(3), (27)–(29)); §3 (Lemma 3.1, Prop. 3.1); §4.1 (Remark 4.3); §6; Apps. A, B.
+- [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — arXiv v1: §2 (Eqs. (1)–(17)); §3.2 (Eqs. (23)–(31)).

@@ -54,7 +54,7 @@ numerics.
 Version of record (Springer typeset, open access), pp. 428–484, 57 pages, all
 read; equations the text layer garbled were read from the page images. Page 1
 matches Crossref (title, three authors, venue, DOI). The filename names the first
-author by his given name ("Dinshaw") and carries the online year 2022; the
+author by the given name ("Dinshaw") and carries the online year 2022; the
 published issue is 2023. Supplements A (finite-volume WENO with perfect-square
 indicators) and B (the coefficient stack of the fourth-order exact reconstruction,
 Eqs. B.1–B.24) are online-only and were not read; claims resting on them are
@@ -146,7 +146,7 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-23). This source is cited on:
+Chunk 4 (2026-10-23), cited further in chunk 5 (2026-10-23). This source is cited on:
 
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Central WENO (CWENO)](/methods/cweno.md)

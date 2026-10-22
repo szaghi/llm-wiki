@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -49,6 +49,12 @@ the right half.
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.4 | 10 elements, static $N=5$ or $p$-adaptive $N\in[2,5]$ | 0.2 | Dirichlet; Roe with entropy fix; [$p$-adaptive DG](/methods/hp-adaptation.md) with [FV subcells](/methods/subcell-finite-volume-limiting.md), $N_{\mathrm{FV}}=6$ or 11 |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.2 | 200 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5]$; scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) |
 | [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.1 | 108 space–time triangles, 84 after element removal | 0.2 | [implicit shock tracking](/methods/implicit-shock-tracking.md) HOIST, $p=2$ (arXiv v2) |
+| [Bezgin et al. (2023)](/sources/bezgin-2023.md) §5.1.2, App. A | 100 | 0.2 | zero-gradient boundaries; [JAX-Fluids](/software/jax-fluids.md) with HLLC (primitive WENO5-JS) and Roe-type characteristic flux splitting (arXiv v1) |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.9 | 200 | 0.2 | [gradient-based](/methods/gradient-based-reconstruction.md) MEG6, MIG4 vs TENO5 (arXiv v2) |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | 200 | 0.2 | MEG7 vs WCNS7M; exact Riemann reference (arXiv v1) |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (34) | 100 | 0.2 | on $[-0.5,0.5]$; six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD, ONL6; HLLC, TVD-RK3, CFL 0.4; reference fifth-order WENO on 4000 cells |
+| [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.2 | 200 | $t/t_0=2$ | data "provided by Jiang and Shu", plotted on $x/L_0\in[-5,5]$; extrapolation boundaries; [WENO-Z](/methods/weno-z.md)3/5/7, TENO5, TENO-A5 in [URANOS](/software/uranos.md); 2000-point reference |
+| [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | two blocks: 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.1, 0.2 | multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with [boundary closures](/methods/shock-capturing-boundary-closure.md) at the interface |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -97,6 +103,11 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.2 | $[0,1]$ | 100 | 0.14 | right pressure printed $0.5710$ |
 | [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.4 ("ST02") | $[0,1]$ strip | $h=1/100$; 1967 triangles | 0.14 | column shift in Table 6 |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §2.5, §3.2 | $[-5,5]$ | 200 | 1.3 | also scaled by $\lambda\in\{1,10^{-7}\}$ |
+| [Bezgin et al. (2023)](/sources/bezgin-2023.md) §5.1.2 | not printed | 100 | 0.14 | data "in references" |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.9 | not printed | 200 | 0.14 | |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | not printed | 200 | 0.14 | text prints "$t=01.4$", Fig. 3 caption $0.14$ |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (36) | $[-0.5,0.5]$ | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | $[0,1]$, jump at $0.5$ | single domain; two blocks 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.14; two blocks also 0.06 | |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -149,7 +160,37 @@ preservation](/properties/symmetry-preservation.md). Boscarino et al.'s
 semi-implicit schemes capture both tubes at $\varepsilon=1$ on 50 cells
 "without any observable numerical oscillations" (Ex. 5.2, Fig. 5.2).
 Lesur et al. use Sod only to validate the Roe solver of a second-order
-finite-volume code against the exact solution (§4.1, Fig. 2).
+finite-volume code against the exact solution (§4.1, Fig. 2). Bezgin et
+al. (2023) find their HLLC and Roe setups agreeing "very well" with the
+exact solution on both tubes on 100 cells, the HLLC runs with
+primitive-variable WENO5-JS slightly oscillatory, which they attribute
+to component-wise reconstruction (§5.1.2, Figs. 9–10; see
+[characteristic decomposition](/methods/characteristic-decomposition.md)).
+Chamarthi (2023a) finds MIG4 capturing the discontinuities in fewer
+cells, and Chamarthi (2023b) all schemes capturing rarefaction, contact
+and shock without obvious oscillations (Figs. 2–3). Zhou et al. measure
+the discontinuity thickness $\Delta\rho/\max_j\lvert\rho_{j+1}-\rho_j\rvert$
+(Eq. 35, $\Delta\rho$ the density jump): on Sod WCNS-SA gives the
+sharpest shock and contact of their three six-point WCNS, without
+oscillations; on Lax WCNS-LD overshoots at the contact and WCNS-SA has
+the sharpest contact but a slightly thicker shock (Figs. 8–10).
+De Vanna et al. (2023b) find all five shock-capturing schemes of their
+code accurate on Sod, improving with the order and from WENO to TENO
+(App. A.2, Fig. 12).
+
+**Interfaces of multi-block grids.** Qin et al. use both tubes to pass
+a shock through a block interface at $x=0.75$, the spacing jumping
+from $0.75/160$ to $0.25/40$ (ratio $4:3$) *(compiler check, not in
+the sources)*: the shock locations agree with the exact solution at both
+times, the Lax shock sitting at the interface at $t=0.06$ (Figs. 7–8).
+On a single domain their scaled smoothness indicators ($\lambda=2$ in
+their notation) suppress the oscillations that the unscaled ones
+($\lambda=1$) produce on Lax, where WENO-JS and multi-resolution WENO
+are also less oscillatory than the unscaled WCNS; they attribute this
+to the wide explicit difference stencil of WCNS (Fig. 6). The interface
+coupling costs nothing measurable: at 10000 points 283.38 s (one zone)
+against 284.55 s (two) on Lax and 189.09 s against 191.42 s on Sod,
+serial (Table 13).
 
 **Three-point and very-high-order reconstructions.** Bezgin et al.'s
 learned three-point WENO3-NN has a lower $L_1$ error than fifth-order
@@ -158,7 +199,7 @@ $1.035\times10^{-2}$ (WENO3-NN2) against $1.106\times10^{-2}$ (WENO5-JS)
 and $1.636\times10^{-2}$ (WENO3-JS), on Lax $2.416\times10^{-2}$ against
 $2.590\times10^{-2}$ and $3.949\times10^{-2}$; WENO5-Z is best on both
 (App. A.6, Table 4). On Lax WENO3-NN2 shows a slight velocity overshoot,
-as WENO5-JS does (§4.2, Fig. 9). Hiejima finds that his WCNS with
+as WENO5-JS does (§4.2, Fig. 9). Hiejima finds that the author's WCNS with
 Jiang–Shu weights suppresses oscillations at the Sod shock "even for
 the eleventh-order accuracy", whereas the TENO-type weights give a
 slight undershoot at the shock and a slight overshoot at the contact
@@ -361,6 +402,23 @@ single-gas Euler equations.
   air–helium and water–air tubes with a sharp-interface DG method. They
   belong with the [gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md).
 
+- **Real gas.** [Weng & Mével (2023)](/sources/weng-2023.md) §4.1
+  validate their OpenFOAM real-gas solver on a Sod-type tube with
+  driver-to-driven pressure ratio 20, equal temperatures, $\gamma=1.4$
+  for the ideal gas and the Redlich–Kwong equation of state with
+  non-dimensional attraction and co-volume parameters $A=B=0.1$; 1 mm
+  cells, CFL 0.1, output at $t=0.05$ s, domain length not given;
+  second-order MUSCL with HLLC. The numerical solution agrees with the
+  exact real-gas solution; the real gas gives a much smaller density
+  ratio across the tube, a wider expansion fan and a slower contact, and
+  a shock Mach number of 1.76 against 1.83 for the ideal gas (Fig. 5).
+  Sweeping $B$ from $6\times10^{-4}$ to $0.3$ at $A/B\in\{0.5,1,2\}$, the
+  real-gas shock is slower than the ideal-gas one for small $A$, $B$ and
+  faster for large ones (Fig. 6, Table 1). They call the shock-speed
+  difference 2.1 %, while the two Mach numbers differ by 3.8 %
+  *(compiler check, not in the sources)*; which region carries
+  $A=B=0.1$ is printed ambiguously.
+
 ## Qualifications
 
 - Lesur et al. print the Sod states as $\rho_{\mathrm L}=1$,
@@ -455,3 +513,10 @@ single-gas Euler equations.
 - [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.5, Fig. 4; §3.2, Fig. 5; §5.1, Fig. 9.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.2, Figs. 7–8.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.4, Figs. 8–9.
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §5.1.2, App. A, Figs. 9–10 (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.9 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.2, Figs. 2–3 (arXiv v1).
+- [Qin et al. (2023)](/sources/qin-2023.md) — §3.4.2, §3.4.4, Table 13, Figs. 6–8.
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.1, Eqs. (34)–(36), Figs. 8–10.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — App. A.2, Fig. 12.
+- [Weng & Mével (2023)](/sources/weng-2023.md) — §4.1, Table 1, Figs. 5–6.

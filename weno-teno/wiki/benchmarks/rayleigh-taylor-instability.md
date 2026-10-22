@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Rayleigh–Taylor instability"
-description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes."
+description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes; a three-dimensional magnetized variant tests positivity-preserving DG for ideal MHD."
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,8 +19,9 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Fourteen
-sources of the bundle discuss it; Fu (2021), Takagi et al., Ye et al.,
+[symmetry preservation](/properties/symmetry-preservation.md). Sixteen
+sources of the bundle discuss it (one of them only in a
+three-dimensional magnetized variant); Fu (2021), Takagi et al., Ye et al.,
 Huang et al. (2026), Huang, Liang & Fu (2023) and Li, Chen & Ren (2022)
 cite Xu & Shu for it, Li et al. (2022, WENO-ZN) cite Shi, Zhang & Shu
 and Young et al.
@@ -37,8 +38,9 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.5,
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.7,
 [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.2,
-[Liang et al. (2022)](/sources/liang-2022.md) §4.10 and
-[Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13, with
+[Liang et al. (2022)](/sources/liang-2022.md) §4.10,
+[Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 and
+[Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42), with
 $c=\sqrt{\gamma p/\rho}$:
 
 $$
@@ -63,7 +65,8 @@ Chertock et al. describe the instability as "a layer of heavier fluid
 ... placed on top of a layer of lighter fluid". [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 and
 [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.5 likewise add $\rho$
 and $\rho v_2$ to the $y$-momentum and energy equations as source
-terms (Hong et al.: "added to the third and fourth Euler equations").
+terms (Hong et al.: "added to the third and fourth Euler equations"),
+and so do Zhou et al. ("added to the right-hand sides").
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
 same convention. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
@@ -96,6 +99,7 @@ equilibrium.
 | [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.2 | hybrid MDAD-HY vs MDCD-HY, TENO-HY ([MDCD family](/methods/mdcd-scheme.md)) | $128\times512$ | 1.95 |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.10 | TENO5 with THINC jump reconstruction ([TENO-THINC](/methods/teno-thinc.md)) vs WENO5-Z, TENO5, TENO5-THINC, TENO6; Rusanov | $64\times256$, $128\times512$ | 1.95 |
 | [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 | finite-difference [Hermite WENO](/methods/hermite-weno.md) HWENO-R vs WENO-ZQ | $120\times480$, $240\times960$ | 1.95 |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.7 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6; HLLC, TVD-RK3, CFL 0.5 | $60\times240$, $120\times480$ | 1.95 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
 ## Findings across sources
@@ -129,6 +133,10 @@ interfacial and small-scale structure with their TENO-THINC variant
 HWENO-R on $120\times480$ is comparable to WENO-ZQ on $240\times960$,
 which they attribute to the lower dissipation of compact Hermite
 stencils (Fig. 3.17).
+Zhou et al. find bubble, spike and the small vortices on the spike
+neck reproduced by all three of their six-point WCNS, and more
+small-scale structure with the adaptive-dissipation WCNS-SA on both
+grids (Figs. 17–18).
 
 **Symmetry.** The data are symmetric about $x=1/8$ ($\cos 8\pi x$ is
 invariant under $x\mapsto\tfrac14-x$) *(compiler check, not in the
@@ -167,6 +175,35 @@ present schemes", Fu (2023), reporting Fleischmann et al., that there
 is no causal link between symmetry breaking and low dissipation. Fu (2023) frames its account as countering the earlier TENO5
 observation, not Fu (2021).
 
+## Three-dimensional magnetized variant
+
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.6, Eqs.
+(47)–(52) (arXiv v2) scale the ideal-MHD setup of Stone & Gardiner to
+$[-L/2,L/2]^2\times[-L,L]$, $L=1$: light fluid $\rho=1$ for $z\le0$,
+heavy fluid $\rho=3$ above (Atwood number $1/2$), $\gamma=5/3$,
+hydrostatic pressure $p(z)=p_0-\rho gz$ with $p_0=10/\gamma$ and $g=1$,
+gravity as a source term added to the Powell term, uniform field
+$B=(B_0,0,0)$, and a single deterministic mode
+$v_3=A\cos(\pi z/(2L))\sin(4\pi x/L)\sin(4\pi y/L)$, $A=0.05$, in place
+of random noise; periodic in $x$ and $y$, reflecting top and bottom.
+With the critical field $B_{\mathrm c}=\sqrt{(\rho_{\mathrm h}-\rho_{\mathrm l})gL}=\sqrt2$
+they run $B_0=0$, $0.1B_{\mathrm c}$ and $0.5B_{\mathrm c}$ ($A$,
+$B_{\mathrm c}$, $\rho_{\mathrm h}$, $\rho_{\mathrm l}$ page-local), at
+$\mathbb P_3$ on $64\times64\times128$ hexahedra, $\Delta t=2\times10^{-5}$,
+snapshots at $t=2,3,4,5$.
+
+With positivity-preserving [entropy filtering](/methods/entropy-filtering.md)
+the runs are well behaved in the hydrodynamic, weakly and strongly
+magnetized regimes; the field makes the mixing anisotropic and slows the
+growth (Figs. 14–16). The case is also their cost test: to $t=1$ at
+$B_0=0.1B_{\mathrm c}$ on 16 V100 GPUs, the new node-wise filter
+optimization takes 25.3 GPU hours against 61.4 with the earlier
+matrix–vector approach at $\mathbb P_3$ (a factor 2.43), and 39.8
+against 257 at $\mathbb P_4$ on $51\times51\times102$ elements (6.46),
+at about the same number of degrees of freedom (Fig. 17). The speedup
+factors are recomputed from the printed hours *(compiler check, not in
+the sources)*.
+
 ## Qualifications
 
 - Huang et al. (Eq. (6.10) and the text after it) print the heavy gas
@@ -204,3 +241,5 @@ observation, not Fu (2021).
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.3.2, Figs. 21–22.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4, §4.10, Figs. 22–23.
 - [Fan et al. (2023)](/sources/fan-2023.md) — Ex. 3.13, Fig. 3.17.
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.6, Eqs. (47)–(52), Figs. 14–17 (arXiv v2).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.7, Eq. (42), Figs. 17–18.

@@ -54,7 +54,7 @@ The three data sets fall in the three regimes of the vacuum criterion
   vacuum".
 - $(1,\mp2,0.1)$: $c=0.374$, $2(c_{\mathrm L}+c_{\mathrm R})/(\gamma-1)=3.74<4$,
   a vacuum interval opens between the rarefactions. Fu prints no
-  $\gamma$ for this problem; with $\gamma=5/3$, the value of his Le Blanc
+  $\gamma$ for this problem; with $\gamma=5/3$, the value of Fu's Le Blanc
   problem, $c=0.408$ and the criterion gives $2.45<4$, the same regime.
 
 Luo et al. call their problem the "receding flow" or 123 problem and
@@ -85,7 +85,7 @@ with LLF splitting and the
 with no positivity limiter, is run with the linear weights of the
 original scheme, because the ratio of the weights "used in this paper"
 is too large for the extreme problems (Example 5.5, Fig. 5.10). Renac's DGSEM with a [Zhang–Shu-type limiter](/methods/zhang-shu-scaling-limiter.md)
-keeps positivity on RP3 (§7.2, Figs. 3–4); his Theorem 6.1 proves
+keeps positivity on RP3 (§7.2, Figs. 3–4); Renac's Theorem 6.1 proves
 positive cell averages under a CFL condition with factor
 $1/(2N(N+1))$, while the runs use a practical time-step bound of 0.4
 (§6.2, §7).

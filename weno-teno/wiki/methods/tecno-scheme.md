@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "TeCNO schemes — entropy-stable reconstruction with the sign property"
-description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipation acting on jumps of reconstructed scaled entropy variables; it is entropy stable whenever the reconstruction has the sign property, which minmod has by construction and WENO reconstructions get from a componentwise sign switch."
+description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipation acting on jumps of reconstructed scaled entropy variables; it is entropy stable whenever the reconstruction has the sign property, which minmod and ENO have by construction and WENO reconstructions get from a componentwise sign switch."
 status: established
 aliases: [TeCNO, TVD-ES, sign property, entropy-stable reconstruction, ENO-based entropy-stable scheme, Fjordholm–Mishra–Tadmor scheme]
 tags: [entropy-stable, reconstruction, numerical-flux, weno, dg, relativistic]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # TeCNO schemes — entropy-stable reconstruction with the sign property
@@ -25,7 +25,9 @@ Fjordholm, Mishra & Tadmor (2012), as recalled by
 As recalled by Duan & Tang, Bhoriya & Kumar extended TeCNO schemes to
 relativistic hydrodynamics with ENO-based dissipation, and their own
 earlier uniform-mesh scheme already combined fifth-order WENO with the
-Biswas–Dubey switch (§1, §4).
+Biswas–Dubey switch (§1, §4). [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) carry the
+ENO-based construction to the two-fluid relativistic plasma equations with 3D velocities
+(§4.1).
 
 ## The flux and the entropy condition
 
@@ -71,6 +73,16 @@ the cell jump *(compiler check, not in the sources)*. They state, citing Fjordho
 symmetric TVD limiter with the sign property (§4;
 [total variation diminishing](/definitions/total-variation-diminishing.md)).
 
+**ENO on the variables $\tilde w$.** [Bhoriya et al. (2023)](/sources/bhoriya-2023.md)
+(§4.1.2, Eq. (22), Thm. 4.3) reconstruct $\tilde w$ with ENO, which has the sign property
+(Fjordholm, Mishra & Tadmor, as they recall it), so no switch is needed: minmod at second
+order, ENO-3 and ENO-4 at third and fourth order. The scaled variables are formed per
+interface, $\tilde R^\top_{i\pm1/2}w_m$ for the stencil cells $m$, reconstructed, and mapped back
+with $(\tilde R^\top)^{-1}$ before the jump is taken. Entropy stability is proved for each fluid
+block of their two-fluid system, and holds whatever the discretization of the Maxwell block,
+because the Lorentz sources produce no entropy
+([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)).
+
 **WENO with a sign switch.** Duan & Tang (2022) reconstruct $\tilde w$
 with fifth-order [WENO-JS](/methods/weno-js-reconstruction.md), and Li,
 Duan & Tang (2022) with fifth-order
@@ -100,17 +112,19 @@ streams of its entropy-conservative part (Remark 4.1;
 
 The sources differ in the dissipation matrix:
 
-| | Rueda-Ramírez et al. (2021) | Duan & Tang (2022) | Li, Duan & Tang (2022) |
-|---|---|---|---|
-| $\lvert\Lambda\rvert$ | eigenvalue matrix; in the tests every entry set to the largest advective eigenvalue (ES Rusanov) | a scalar times the identity: $\hat a=\max_l\lvert J\partial_t\xi_k+L_k\lambda_l\rvert$, page-local $L_k$ the length of the metric vector (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ along the computational direction, scaled by the metric terms and shifted by the mesh velocity (Rusanov-type) |
-| reconstruction | minmod, second order | WENO-JS, fifth order | multi-resolution WENO, fifth order |
-| sign property | by construction | by the switch $\mathcal Y$ | by the switch $\mathcal Y$ |
-| setting | LGL subcells of a DGSEM element, irregular grid | finite differences on a moving curvilinear mesh, relativistic HD and MHD | finite differences on a moving curvilinear mesh, stiffened gas |
+| | Rueda-Ramírez et al. (2021) | Duan & Tang (2022) | Li, Duan & Tang (2022) | Bhoriya et al. (2023) |
+|---|---|---|---|---|
+| $\lvert\Lambda\rvert$ | eigenvalue matrix; in the tests every entry set to the largest advective eigenvalue (ES Rusanov) | a scalar times the identity: $\hat a=\max_l\lvert J\partial_t\xi_k+L_k\lambda_l\rvert$, page-local $L_k$ the length of the metric vector (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ along the computational direction, scaled by the metric terms and shifted by the mesh velocity (Rusanov-type) | a scalar times the identity: the largest $\lvert\lambda_l\rvert$ of the fluid block (Rusanov-type, Eq. (21)) |
+| reconstruction | minmod, second order | WENO-JS, fifth order | multi-resolution WENO, fifth order | minmod, ENO-3, ENO-4 |
+| sign property | by construction | by the switch $\mathcal Y$ | by the switch $\mathcal Y$ | by construction (ENO) |
+| setting | LGL subcells of a DGSEM element, irregular grid | finite differences on a moving curvilinear mesh, relativistic HD and MHD | finite differences on a moving curvilinear mesh, stiffened gas | finite differences on a uniform Cartesian grid, two-fluid relativistic plasma with stiff sources |
 
-The Rusanov-type magnitude of the two finite-difference schemes is not
+The Rusanov-type magnitude of the three finite-difference schemes is not
 the Roe-type $\tilde R\lvert\Lambda\rvert\tilde R^\top$ of Fjordholm–Mishra–Tadmor's
 general form: the eigenvector matrix enters only through the scaling
-(Duan & Tang, §4).
+(Duan & Tang, §4). Bhoriya et al. call their form "similar to the Roe diffusion operator",
+since $\tilde R\Lambda\tilde R^{-1}[\![u]\!]\approx\tilde R\Lambda\tilde R^\top[\![w]\!]$ (§4.1.2); with a
+scalar $\Lambda$ its magnitude is still Rusanov-type.
 
 ## High order
 
@@ -139,6 +153,14 @@ entropy-conservative part (Duan & Tang, §4; Li, Duan & Tang, Exs. 5.1, 5.5).
   [flux differencing](/methods/flux-differencing.md)). The source-term
   flux and the volume conservation law keep the order of the
   entropy-conservative part, with no dissipation (§4).
+- Bhoriya et al. (2023) (§4.1.1–4.1.2, Remarks 4.1–4.2) use the second-order closed-form
+  entropy-conservative flux or its fourth-order LeFloch–Mercier–Rohde combination
+  ($c_1=\tfrac43$, $c_2=-\tfrac16$ above). Only even orders are available, so a scheme of odd
+  order $q$ takes the flux of order $q+1$: their third-order scheme is the fourth-order
+  entropy-conservative flux with ENO-3 dissipation, and the fourth-order one the same flux with
+  ENO-4, so the entropy-stable flux has the order of its reconstruction, equal to or one below
+  that of the conservative part *(compiler check, not in the sources)*. With SSP Runge–Kutta of matching order the observed orders on a
+  forced smooth solution are 1.94, 3.21 and 3.81 at 3200 cells (Table 2).
 - Rueda-Ramírez et al. (2021) make no order claim. They cite Winters &
   Gassner that the entropy-conservative flux is second order only on
   regular meshes, and the LGL subcell grid is irregular (§4). Their
@@ -192,6 +214,15 @@ communication" (§4).
   On the second 2D Riemann problem the moving-mesh runs take 2 min 50 s and 2 min 38 s on 4 cores
   (Ex. 5.4, Table 5.1; Remark 3.2). See
   [adaptive moving mesh](/methods/adaptive-moving-mesh.md).
+- **Entropy decay with order, two-fluid plasma.** On the relativistic two-fluid
+  [Brio–Wu tube](/benchmarks/brio-wu-shock-tube.md), Bhoriya et al. (2023) find almost the same
+  entropy decay for explicit and IMEX schemes of the same order, and less entropy dissipated at
+  third than at second order and at fourth than at third (Fig. 1); the third- and fourth-order
+  schemes capture the dispersive two-fluid waves already at 400 cells. At the stiffest
+  charge-to-mass ratios on 400 cells the small-scale oscillations are unresolved but the run is
+  stable, which the authors credit to "the built in entropy stability" (Fig. 2). The 2D
+  relativistic Orszag–Tang, blast and reconnection runs are stable at 200×200 and 512×256
+  (§6.2).
 - **TVD-ES against first-order subcells.** On Orszag–Tang, TVD-ES has
   higher resolution and fewer artefacts than first-order finite volumes.
   On the GEM reconnection challenge and the Io–plasma-torus problem the
@@ -220,9 +251,14 @@ communication" (§4).
   element where symmetry with $\Theta_0$ calls for node $N$. The option
   in (79) is also one-sided despite its name. This is a slip in the
   arXiv v1 text and does not affect the option they finally use.
+- Bhoriya et al. (2023) prove entropy stability of the semi-discrete scheme; neither the SSP
+  nor the IMEX time integration is claimed entropy stable; the Maxwell block, reconstructed
+  with third- or fifth-order WENO, needs no entropy property, since the argument holds for any
+  Maxwell discretization (Remark 4.3).
 
 # Citations
 
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §4 Eqs. (72)–(81), §6.2 Fig. 6, §6.3–6.4 (arXiv v1).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.1 Eq. (3.6), §3.4 Eqs. (3.21)–(3.22), Remark 3.2, App. A, Ex. 5.1, 5.4, 5.5 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §1, §4 Eqs. (4.1)–(4.4), Thm. 4.1, Remark 4.1, §6 Exs. 6.1–6.10, Figs. 6.4, 6.14 (arXiv v1).
+- [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1 (Eqs. (18)–(22), Thms. 4.2–4.3, Remarks 4.1–4.3), §4.2, §6 (Table 2, Figs. 1–2), App. B (arXiv v2).

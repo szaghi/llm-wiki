@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Characteristic decomposition
@@ -131,6 +131,37 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   (material-wave) flux is reconstructed characteristic-wise, with the local eigenvectors of the
   full Euler system **at Mach number one**, not of the split flux; the implicit acoustic flux is
   reconstructed componentwise ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+- **Eigenvectors at Mach number one, MHD.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)
+  (§3.3) do the same for ideal MHD at sonic Mach number $\varepsilon$: the explicit
+  convective–magnetic flux is reconstructed characteristic-wise at the arithmetic-mean state
+  $\tfrac12(u_i+u_{i+1})$, with global Lax–Friedrichs splitting of each field, and the
+  eigenvectors are those of the MHD system with $\varepsilon=1$, because for small $\varepsilon$ the
+  true ones "will make such a spectral characteristic decomposition to be unstable"; the
+  authors give no analysis and state that this "works well from our numerical results". The
+  other two flux parts are reconstructed componentwise
+  ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+- **Values and gradients together.** In the gradient-based finite-difference schemes the
+  interface state is built from point values and cell-centre derivatives, and both are
+  projected with the same frozen matrix, which the linearity of the projection allows.
+  [Chamarthi (2023a)](/sources/chamarthi-2023.md) (§3.3, Eqs. (62)–(64)) project the primitive
+  values and gradients on $i-2,\dots,i+3$ with $L_{i+1/2}$ from arithmetic or Roe averages,
+  apply the [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) and the
+  [MP limiter](/methods/monotonicity-preserving-limiter.md) in characteristic space and project
+  back; characteristic projection is recommended "for cleanest results", but the paper does not
+  say per test which variables were used, except for one 2D Riemann problem run "using
+  primitive variables" (Fig. 10). [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) (§2.3)
+  call shock capturing in characteristic variables "essential" and project the variables of
+  choice (conservative or primitive) together with their gradients. [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md)
+  (§5.1 Step 2, App. A) project the primitive variables $(\rho,v,p)$ and their first and
+  second derivatives with the eigenvectors of the quasilinear primitive-variable matrix in the
+  direction of the interface metrics, on generalized curvilinear meshes.
+- **Characteristic flux splitting in a finite-volume code.** [JAX-Fluids](/software/jax-fluids.md)
+  ([Bezgin et al. (2023)](/sources/bezgin-2023.md), §3.3) offers two routes: reconstruction of
+  primitive or conservative cell averages, optionally in characteristic space, followed by an
+  approximate Riemann solver; or the finite-difference recipe above applied to cell averages
+  with one-point face quadrature, with a Roe or arithmetic face state, componentwise local
+  Lax–Friedrichs or Roe splitting of the characteristic fluxes, WENO on the split fluxes and
+  back-projection.
 - **Main fluxes only.** The finite-difference Hermite WENO of [Fan et al. (2023)](/sources/fan-2023.md)
   (§2, Remark 2.2) reconstructs the fluxes of the conservation law in local characteristic
   directions and the fluxes of its derivative equations componentwise
@@ -230,6 +261,15 @@ and characteristic decomposition, whose cost is the same for every reconstructio
 of TENO-M over TENO in the reconstruction alone is "much higher" than the totals show (not
 measured).
 
+The cost is measured on a GPU by [Bezgin et al. (2023)](/sources/bezgin-2023.md) (§6, Table 3):
+on a Taylor–Green vortex on one RTX A6000, characteristic Roe flux splitting with WENO5
+("ROE") costs about 300 ns per cell and time step in single precision against about 25 ns for
+primitive-variable WENO5 with HLLC, "roughly an order of magnitude" more, which they attribute
+to the eigenvector and eigenvalue computation. They also attribute, after Qiu and Shu, the
+slight oscillations of the primitive-variable HLLC setup on the Sod and Lax tubes to
+reconstruction in physical space (§3.3, §5.1.2, Figs. 9–10); no characteristic-space run of the
+same Godunov setup is shown.
+
 **The field speeds matter beyond oscillations.** For steady Euler problems
 [Wan & Xia (2022)](/sources/wan-2022.md) (Ex. 4.4, Figs. 4.4–4.6) find that on the shock
 reflection ($120\times30$) only their WENO-H residue falls to about $10^{-12}$ with the global speed
@@ -318,3 +358,8 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Li et al. (2022)](/sources/li-2022.md) — §3.4, §4.4.
 - [Li et al. (2023)](/sources/li-2023.md) — Eqs. (30)–(33), §4.2 (Thm. 5).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2 (Eqs. (2.7)–(2.9)), Ex. 4.4.
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.3 (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §3.3 (Eqs. (62)–(64)), Fig. 10 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.3 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1, App. A (arXiv v1).
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, §5.1.2, §6 (Table 3) (arXiv v1).

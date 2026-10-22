@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Weighted compact nonlinear schemes (WCNS)"
-description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, a two-point flux at the interfaces, and high-order interface-to-node flux differencing; the page records the explicit WCNS-IS with its eighth-order hybrid differencing and positivity limiters, TENO-weighted members including the 5th- to 11th-order WCNS-T without compact step, the relation to A-WENO, and an open disagreement on conservation."
+description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, an interface flux, and high-order interface-to-node differencing; the page records explicit, TENO-weighted, spectrally optimized adaptive-dissipation, multi-resolution and mapped members, and an open disagreement on conservation."
 status: established
-aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS]
+aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)
@@ -143,6 +143,99 @@ author reads as an open question of the weight formulation. The conclusion: high
 premise that a suitable grid resolution is being satisfied", and $q$ and $C_T$ need tuning, as in
 [adaptive TENO](/methods/adaptive-teno.md) (§4).
 
+## Optimized dispersion and adaptive dissipation (WCNS-SA)
+
+Zhou, Ding, Huang & Luo (2023) build an explicit six-point WCNS for single- and two-species Euler
+flows whose spectral properties are optimized with the nonlinear weights included.
+
+**Differencing.** Deng et al.'s sixth-order explicit midpoint-and-node-to-node (MND) scheme (§2.2,
+Eq. (5)),
+
+$$\partial_xf\big|_i\approx\frac{64}{45\Delta x}\big(\tilde f_{i+1/2}-\tilde f_{i-1/2}\big)-\frac2{9\Delta x}\big(f_{i+1}-f_{i-1}\big)+\frac1{180\Delta x}\big(f_{i+2}-f_{i-2}\big),$$
+
+with HLLC midpoint fluxes $\tilde f_{i\pm1/2}$ and nodal fluxes $f_j$. *(Compiler check, not in the
+sources: this is the HCS of the WCNS-IS section with $\Psi=\tfrac{64}{45}$, for which the
+$f_{i\pm3}$ coefficient vanishes.)* Citing Deng et al. and Nonomura & Fujii, the authors state that for
+fifth- or higher-order differencing its type has weak influence on resolution, and that the spectral
+properties of a WCNS are "mainly determined by the interpolation scheme" (§2.2), so only the
+interpolation is optimized.
+
+**Interpolation.** Freeing the first and last coefficients of the sixth-order central interpolant on
+$\{i-2,\dots,i+3\}$ gives a fourth-order interpolation with a dispersion parameter $\eta_{\mathrm Z}$ and
+a dissipation parameter $\xi_{\mathrm Z}$ (page-local; the source's $\eta$, $\xi$; Eq. (20)):
+
+$$u_{i+1/2}=\tfrac{\eta_{\mathrm Z}+\xi_{\mathrm Z}}2u_{i-2}-\big(\tfrac32\eta_{\mathrm Z}+\tfrac52\xi_{\mathrm Z}+\tfrac1{16}\big)u_{i-1}+\big(\eta_{\mathrm Z}+5\xi_{\mathrm Z}+\tfrac9{16}\big)u_i+\big(\eta_{\mathrm Z}-5\xi_{\mathrm Z}+\tfrac9{16}\big)u_{i+1}-\big(\tfrac32\eta_{\mathrm Z}-\tfrac52\xi_{\mathrm Z}+\tfrac1{16}\big)u_{i+2}+\tfrac{\eta_{\mathrm Z}-\xi_{\mathrm Z}}2u_{i+3},$$
+
+sixth-order central for $(\eta_{\mathrm Z},\xi_{\mathrm Z})=(\tfrac3{128},0)$ and fifth-order upwind for
+$\eta_{\mathrm Z}=\xi_{\mathrm Z}=\tfrac3{128}$. With MND differencing the dispersion depends on
+$\eta_{\mathrm Z}$ only and the dissipation on $\xi_{\mathrm Z}$ only (Eq. (24)). *(Compiler check, not
+in the sources: the printed modified wavenumber is exactly that of the
+[MDCD scheme](/methods/mdcd-scheme.md) with $c_{\mathrm{disp}}=\tfrac{64}{45}\eta_{\mathrm Z}$,
+$c_{\mathrm{diss}}=\tfrac{64}{45}\xi_{\mathrm Z}$.)* The interpolation is split into the three-point
+candidates on $\{i-2,i-1,i\}$, $\{i-1,i,i+1\}$, $\{i,i+1,i+2\}$ and the downwind $\{i+1,i+2,i+3\}$ with
+parameter-dependent linear weights (Eq. (27))
+
+$$d_0=\tfrac43(\xi_{\mathrm Z}+\eta_{\mathrm Z}),\quad d_1=\tfrac{20}3\xi_{\mathrm Z}-\tfrac43\eta_{\mathrm Z}+\tfrac12,\quad d_2=-\tfrac{20}3\xi_{\mathrm Z}-\tfrac43\eta_{\mathrm Z}+\tfrac12,\quad d_3=\tfrac43(\eta_{\mathrm Z}-\xi_{\mathrm Z}),$$
+
+and Wong & Lele's localized-dissipation weights $\alpha_k=d_k\big(C+(\tau_6/(\beta_k+\epsilon))^q\big)$,
+$\epsilon=10^{-40}$, Jiang–Shu indicators of the interpolation polynomials, the six-point
+[WENO-CU6](/methods/weno-cu6.md) indicator for the downwind candidate and
+$\tau_6=|\beta_3-\tfrac18(\beta_0+6\beta_1+\beta_2)|$ (§2.3, Eqs. (12)–(18);
+[smoothness indicators](/definitions/smoothness-indicator.md)). Characteristic-wise primitive variables
+are interpolated, with a first-order fallback where an interpolated density or pressure could be
+negative (§2.2–2.3).
+
+**Two-step optimization** (§4):
+
+1. $\eta_{\mathrm Z}$ minimizes Sun et al.'s weighted dispersion error
+   $\int_0^\pi e^{-\nu_{\mathrm w}\vartheta}(\tilde\vartheta_r-\vartheta)^2d\vartheta$ (page-local weight
+   exponent $\nu_{\mathrm w}$), evaluated not by linear Fourier analysis but by the
+   [approximate dispersion relation](/definitions/approximate-dispersion-relation.md) of the full
+   nonlinear scheme. The optimum depends on $(C,\xi_{\mathrm Z})$ for small $C$ (0.0675 and 0.0539 at
+   $C=10$ for $\xi_{\mathrm Z}=0$ and $\tfrac3{128}$) and becomes independent of $\xi_{\mathrm Z}$ near
+   $C=10^9$, where $\eta_{\mathrm Z}=0.0385$ (Table 2). The resulting WCNS-opt keeps the linear
+   dispersion up to $\vartheta\approx1.6$, against about 1.25 for WCNS-LD (Wong & Lele) and ONL6 (Jin et
+   al.), which the authors read as "completely" remedying the dispersion loss of the nonlinear mechanism
+   (§4.1, Figs. 4–5). For the linear scheme the optimal values for $\nu_{\mathrm w}=4,\dots,8$ are
+   $0.0502$, $0.0432$, $0.0384$, $0.0350$, $0.0326$ (Table 1). *(Compiler check, not in the sources:
+   $\nu_{\mathrm w}=8$ gives $c_{\mathrm{disp}}=\tfrac{64}{45}\cdot0.0326=0.0464$, the MDCD value 0.0463783
+   of Sun et al.)*
+2. $C$ and $\xi_{\mathrm Z}$ follow Li et al.'s second-derivative [scale sensor](/definitions/scale-sensor.md):
+   $C=2\times10^{10}$ and $\xi_{\mathrm Z}=0.0002$ where the sensor is below 0.5; $C=2\times10^8$ and
+   $\xi_{\mathrm Z}$ from 0.0075 rising to 0.028 above it (Eqs. (31)–(32), Table 3). The design target is
+   an "idealized" dissipation curve, zero below the critical wavenumber and rising steeply beyond it; the
+   authors argue that Hu et al.'s dispersion–dissipation condition gives "insufficient dissipation at the
+   high-wavenumber region" (§4.2–4.3, Fig. 7; [numerical dissipation](/definitions/numerical-dissipation.md)).
+
+For two species the scheme is combined with Abgrall & Karni's double-flux algorithm, each interface flux
+computed twice with the frozen $\gamma$ of the two neighbouring cells (Eq. (33);
+[multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+
+**Evidence** (all numerical and comparative, no convergence-order test; §5): on Sod, two-species Sod,
+Lax and [Shu–Osher](/benchmarks/shu-osher-problem.md), WCNS-SA gives the thinnest discontinuities
+(measured by $\Delta\rho/\max_j|\rho_{j+1}-\rho_j|$), with WCNS-LD overshooting at the Lax contact and
+near Shu–Osher shocklets and ONL6 damping the post-shock waves; on the
+[2-D Riemann problem](/benchmarks/two-dimensional-riemann-problems.md) WCNS-LD and WCNS-SA give more
+vortices but more post-shock noise than ONL6; on [double Mach reflection](/benchmarks/double-mach-reflection.md)
+($960\times240$), [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) and
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md) WCNS-SA resolves more small
+structure. In the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) WCNS-SA on $64^3$ preserves
+kinetic energy better than ONL6 and WCNS-LD on $128^3$, is "nearly identical" to TENO8 at $128^3$, and
+alone matches Brachet's dissipation rate at $\mathrm{Re}=100$–400. One thousand steps of the supersonic
+Taylor–Green vortex on 32 MPI cores (Xeon Gold 6154) cost 4592 s, 4630 s and 4713 s for ONL6, WCNS-LD and
+WCNS-SA (Table 4).
+
+## Staggered multi-resolution WCNS with conservative closures (WCNS-MR)
+
+Qin, Chen, Lin & Deng (2023) use a fifth-order WCNS whose interior interpolation is multi-resolution
+(nested 1-, 3- and 5-point stencils, Z-type weights, scaled derivative-sum indicators) and whose
+differencing uses only interface fluxes, six-point sixth order inside and five-point fourth order at the
+first and last two solution points, on a grid with moved "conservative solution points"; one-sided
+nested stencils close the interpolation at block boundaries. They choose WCNS for its free-stream
+preservation and its freedom in the flux function (§1). The construction and its tests are on
+[shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md) and
+[multi-resolution WENO](/methods/multi-resolution-weno.md).
+
 ## Members recalled in the sources
 
 - **WCNS-JS and WCNS-Z**: interpolation weighted with Jiang–Shu or WENO-Z weights; WCNS-Z beats
@@ -158,8 +251,22 @@ premise that a suitable grid resolution is being satisfied", and $q$ and $C_T$ n
   formulation with ninth-order interpolation, Yan et al.'s seventh-order scheme with Y-type weights
   on the fifth-order stencil, the compact high-resolution interpolation of Subramaniam, Wong & Lele
   (lower dispersion error), and the TCNS of Zhang, Zhang & Xu, TENO stencil selection in fifth-order
-  WCNS for optimal linear interpolation in smooth regions; and his own earlier interpolation on
+  WCNS for optimal linear interpolation in smooth regions; and Hiejima's own earlier interpolation on
   uniform substencils, which "requires strong suppression of numerical oscillations".
+- **WCNS-LD and ONL6**: Wong & Lele's localized-dissipation WCNS and Jin et al.'s optimized nonlinear
+  six-point WCNS, the comparators of WCNS-SA on the same six-point stencil; Zhou et al. (2023, §1, §4)
+  fault ONL6 for a linear optimization that ignores the nonlinear weights, and WCNS-LD for a
+  dissipation that "decreases evidently when $\vartheta>2.4$" (Fig. 7b).
+- **WCNS7M**: the seventh-order explicit WCNS of Chamarthi (2023b, §3, Eqs. (42)–(49)), the comparator
+  of [gradient-based reconstruction](/methods/gradient-based-reconstruction.md): four four-point
+  candidates with linear weights $(\tfrac1{64},\tfrac{21}{64},\tfrac{35}{64},\tfrac7{64})$, Jiang–Shu-type
+  weights with exponent 2 passed through the Henrick mapping ([mapped WENO](/methods/mapped-weno.md)),
+  conservative-variable interpolation, HLLC, and eighth-order midpoint-to-node differencing
+  $\frac1{\Delta x}\big[\tfrac{1225}{1024}(\tilde f_{i+1/2}-\tilde f_{i-1/2})-\tfrac{245}{3072}(\tilde f_{i+3/2}-\tilde f_{i-3/2})+\tfrac{49}{5120}(\tilde f_{i+5/2}-\tilde f_{i-5/2})-\tfrac5{7168}(\tilde f_{i+7/2}-\tilde f_{i-7/2})\big]$.
+  It fails on the 1-D [Sedov](/benchmarks/sedov-blast-wave.md) problem and costs 1.38–1.97 times
+  MEG7-prim (Ex. 3.3, Table 2). *(Compiler check, not in the sources: the four candidates with these
+  weights give the seven-point interpolant $\tfrac1{1024}(-5,42,-175,700,525,-70,7)$ once the third
+  candidate is corrected as in the Qualifications.)*
 - **Learned variants**: WCNS3-NN and WCNS3-MR-NN, to which Huang et al. (2026, §7) claim their
   diagram-fitting method applies ([learned WENO weights](/methods/learned-weno-weights.md)).
 - **Earlier multiphase use**: Wong & Lele applied WCNS to the five-equation model for mixtures of ideal
@@ -183,6 +290,17 @@ premise that a suitable grid resolution is being satisfied", and $q$ and $C_T$ n
   finite-volume WENO, because they avoid multi-dimensional reconstruction; the factor is relayed, and
   the paper prints no timing for it.
 
+- Zhou et al. (2023, §1–§2.2) state that interpolation-based schemes such as WCNS can use both flux-vector
+  and flux-difference splitting "while reconstruction-based schemes can only take the flux vector
+  splitting technique", that flux-vector splitting in curvilinear coordinates "contains grid metrics and
+  cannot be split into two upwind parts, violating the geometric conservation law", that traditional WCNS
+  "may yield negative density or pressure during the nonlinear interpolation process, and thus shows less
+  robustness than WENO", and that WCNS is "still too dissipative to resolve full-scale turbulence";
+  Chamarthi (2023b, §3) that WCNS, "unlike the WENO schemes", admits any approximate Riemann solver; Qin
+  et al. (2023, §1) that it is free-stream preserving. These agree with Wong et al. and Hiejima above on the
+  freedom of the flux; the alternative formulation is interpolation-based in Zhou's sense
+  ([alternative WENO](/methods/alternative-weno.md)).
+
 ## Qualifications
 
 - The equivalence of AFWENO and HWCNS is relayed from a cited conference paper, not derived in an
@@ -198,6 +316,17 @@ premise that a suitable grid resolution is being satisfied", and $q$ and $C_T$ n
   two-point flux in finite differences; see
   [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md).)*
   The paper shows no convergence test that could confirm or refute the higher order.
+- Chamarthi (2023b, Eq. (42)) prints the third WCNS7M candidate as
+  $-\tfrac1{16}u_{i-1}+\tfrac9{16}u_i+\tfrac9{16}u_{i+1}+\tfrac1{16}u_{i+2}$, whose coefficients sum to
+  $\tfrac{18}{16}$; the four-point Lagrange interpolant has $-\tfrac1{16}$ on $u_{i+2}$ *(compiler check, not in
+  the sources)*. The other three candidates are printed correctly. Chamarthi's $IS_k$ (Eq. (46)) lacks the square of
+  the inner sum, and its coefficients are not given; the mapping slip is recorded on
+  [mapped WENO](/methods/mapped-weno.md).
+- Zhou et al. (2023) never print the exponent $q$ of their weights, nor the weight exponent of the
+  optimization behind Table 2 and WCNS-opt (the large-$C$ value 0.0384 matches the linear optimum at
+  exponent 6), nor the variable fed to the sensor; they reuse $r$ for the stencil half-width and the
+  parameter of Hu et al.'s condition. Optimizing $\eta_{\mathrm Z}\ne\tfrac3{128}$ makes the interpolation
+  fourth order; the scheme is a six-point, not a sixth-order, WCNS.
 - Hiejima (2022) prints "$c^{(k)}_{2,i+54}$" for $c^{(k)}_{2,i+5}$ in a header of Table 5, and the
   index ranges of Eqs. (11)–(12) and (24) hold only for the widest substencils or for $K=7$. In the
   double Mach reflection the text calls the at-rest state $(1.4,0,0,0,1)$ "post-shock" and imposes it
@@ -218,7 +347,12 @@ variable interpolation and the high-order compact scheme for interface-to-node d
 Zhang 2000), and Wong et al.'s sentence covers "any central explicit or compact" scheme. The conflict is
 therefore genuine and is not a difference between an explicit and a compact WCNS. Fu gives no
 mechanism and cites no specific scheme in that sentence; Wong et al. derive the implied flux only for
-their explicit HCS and relay the compact case from the uningested Subramaniam et al. What would
+their explicit HCS and relay the compact case from the uningested Subramaniam et al. [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) (§1–§2, Eqs. (3)–(5), §4) add a third
+statement: their staggered fifth-order WCNS, with explicit interface-to-node differencing on interface
+fluxes only and moved "conservative solution points", "is globally conservative" and satisfies a discrete
+identity whose quadrature weights differ from 1 at the first and last two points, as proved by Deng & Chen
+(2018, not ingested). The statement concerns explicit differencing and a weighted rather than plain sum; Qin et al.
+say nothing about compact differencing or about Fu's claim. What would
 decide it: a derivation, for the original compact (implicit) interface-to-node differencing with its
 boundary closures, of whether a local telescoping interface flux exists, or the identification of the
 WCNS variants Fu's statement refers to. *(Compiler check, not in the sources, and not a resolution: Coppola & Veldman 2023,
@@ -233,4 +367,7 @@ et al. for periodic grids only.)*
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1, §5: AFWENO similar to WCNS, equivalent to HWCNS; WCNS-T cited.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §7: WCNS3-NN, WCNS3-MR-NN.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — App. A.1, Lemma A.1 (compiler check only).
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1; §2.2–2.3, Eqs. (5)–(18); §3, Eqs. (19)–(26), Table 1; §4, Eqs. (27)–(33), Tables 2–3, Figs. 4–7; §5, Table 4.
+- [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §1; §2, Eqs. (3)–(5); §4: staggered WCNS-MR, global conservation.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Eqs. (42)–(49), Table 2; Ex. 3.3: WCNS7M.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.2, Eq. (5); §§2.3–2.6, Eqs. (6)–(25), Tables 1–6, Fig. 1; §3, Figs. 2–9; §4; App., Fig. A.1: WCNS-T and WCNS-JS at orders 5–11.

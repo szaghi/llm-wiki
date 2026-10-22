@@ -4,8 +4,8 @@ title: "Flux reconstruction and energy-stable FR"
 description: "Flux reconstruction corrects the discontinuous interpolated flux of each element with correction functions that carry the interface flux jumps, recovering nodal DG for one choice; energy-stable FR is a DG scheme filtered by a one-parameter correction operator, and Cicchino et al. make its split form nonlinearly stable by filtering the volume terms too."
 status: established
 aliases: [FR, CPR, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
-tags: [flux-reconstruction, dg, entropy-stable, software]
-timestamp: 2026-10-23T08:00:00Z
+tags: [flux-reconstruction, dg, entropy-stable, software, immersed-boundary]
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Flux reconstruction and energy-stable FR
@@ -63,6 +63,58 @@ finds an admissible filter strength (§2.2, Eq. (10)). Dzanic et al. build
 a reverse-time (downwind) divergence for their
 [artificial viscosity](/methods/artificial-viscosity.md) simply by
 flipping the sign of the dissipative part of the Rusanov flux (§4.2).
+
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) use the same
+formulation for ideal MHD and write the interface part through an
+interface basis $\ell^{\mathrm I}_k=n_k\cdot\mathbf g_k-\ell_k$ (page-local) on
+the interface nodes, which are a subset of the solution nodes, with the
+mean-value property stated for nodal DG with suitable quadrature and FR
+with DG correction functions (§2.2, Eqs. (6)–(16)). They compute the
+discrete divergence of $B$ for the Powell source from the same two parts,
+interior and interface, the latter with the centred interface value
+(Eqs. (18)–(19); [entropy filtering](/methods/entropy-filtering.md)).
+
+## Huynh's correction function on Gauss points, with immersed walls
+
+[Funada & Imamura (2023)](/sources/funada-2023.md) use Huynh's FR for the
+Euler equations on hierarchical Cartesian grids, with $N+1$ solution points
+at the Gauss points of each direction (the source counts points, $k=N+1$,
+and calls the scheme $k$th order) (§2.1, Eqs. (1)–(12)). In 1D, on the
+reference cell $\xi\in[-1,1]$ with $\ell_j$ the Lagrange basis,
+
+$$f^c(\xi)=\sum_jf_j\ell_j(\xi)+\big[h_{i-1/2}-f(-1)\big]g_{\mathrm L}(\xi)+\big[h_{i+1/2}-f(1)\big]g_{\mathrm R}(\xi),$$
+
+with $g_{\mathrm L}(-1)=1$, $g_{\mathrm L}(1)=0$, $g_{\mathrm R}(\xi)=g_{\mathrm L}(-\xi)$,
+both of degree $N+1$ (Eqs. (7)–(9)). They take Huynh's function, chosen
+for "a large upper bound on the Courant number",
+
+$$g_{\mathrm L}=\frac{(-1)^{N+1}}{2}\Big[\frac{N\,P_{N+1}+(N+1)P_{N-1}}{2N+1}-P_N\Big]$$
+
+with $P_n$ the Legendre polynomial of degree $n$ (page-local; Eq. (10),
+written in their $k$). It satisfies $g_{\mathrm L}(-1)=1$, $g_{\mathrm L}(1)=0$
+*(compiler check, not in the sources: use $P_n(\pm1)=(\pm1)^n$)*.
+Multi-D is the tensor product of the 1D operator. Their other ingredients:
+
+- the common flux is SLAU (Shima & Kitamura), an AUSM-family flux, at
+  interior faces and at immersed-wall flux points (§2.1, §2.3);
+- coarse–fine faces of the hierarchical grid, where flux points do not
+  coincide, are handled by the mortar element method of Kopriva & Kolias:
+  project the coarse-side states onto mortar points, compute common
+  fluxes, project them back (§2.2, Fig. 3;
+  [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md));
+- steady states are reached with the implicit matrix-free Gauss–Seidel
+  method, whose dense FR Jacobian is replaced by a first-order
+  finite-volume left-hand side on one sub-cell per solution point (defect
+  correction on sub-cells, DECS) (§2.4).
+
+The feature their immersed-boundary method exploits is that the FR
+polynomial can be evaluated at any point of a cell, so wall data along a
+wall-normal line can be interpolated to high order from fluid cells; with
+it the observed order is the design order $N+1$ up to the wall, for
+$N=1,2,3$, on a bump channel, a cylinder and a sphere
+([immersed-boundary methods](/methods/immersed-boundary-method.md)). A
+wall-free vortex advection on uniform grids confirms order $N+1$ in
+$L_\infty$ of the transverse velocity (§3.1, Fig. 10).
 
 ## FR on Gauss points with LDG viscous terms
 
@@ -261,3 +313,5 @@ Dzanic & Witherden, §5); see [PyFR](/software/pyfr.md).
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §4.1 Eqs. (31)–(38), §4.2, §5 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.2 Eqs. (5)–(10), §4.2 Eqs. (25)–(26), §5 (arXiv v3).
 - [Kou et al. (2022)](/sources/kou-2022.md) — §3 Eqs. (7)–(22), §4.6, §5.1 Figs. 9–10, §5.2.
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.2 Eqs. (6)–(16), §2.3 Eqs. (18)–(19) (arXiv v2).
+- [Funada & Imamura (2023)](/sources/funada-2023.md) — §2.1 Eqs. (1)–(12), §2.2 Fig. 3, §2.3, §2.4, §3.1 Fig. 10.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "IMEX Runge–Kutta schemes"
-description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau for the non-stiff terms with a diagonally implicit one for the stiff terms; the page records the type A/CK/ARS classification, stiff accuracy, the partitioned semi-implicit form used for all-Mach Euler, the SI-IMEX(4,4,3) and (3,3,2) tableaux and their order check."
+description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau for the non-stiff terms with a diagonally implicit one for the stiff terms; the page records the type A/CK/ARS classification, stiff accuracy, the partitioned semi-implicit form used for all-Mach Euler and MHD, the SI-IMEX(4,4,3) and (3,3,2) tableaux and their order check, and additive schemes with stiff local sources solved cell by cell."
 status: established
-aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta]
-tags: [asymptotic-preserving, imex, semi-implicit, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, ARK-IMEX, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta, IMEX TVD Runge–Kutta]
+tags: [asymptotic-preserving, imex, semi-implicit, finite-difference, relativistic, mhd]
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # IMEX Runge–Kutta schemes
@@ -134,6 +134,54 @@ misprinted or the scheme is third order only on the terms the conditions above c
 exactly.)* The paper does not test temporal order in isolation: its 1D and 2D convergence
 tables are dominated by the spatial error (orders 4–5; Tables 5.1–5.2).
 
+## Additive schemes with stiff local sources
+
+When the stiff term is a source that couples the variables of one cell only, the implicit
+stages are local nonlinear systems and need no global solver.
+
+**Two-fluid relativistic plasma** ([Bhoriya et al. (2023)](/sources/bhoriya-2023.md), §5.2).
+The flux divergence $F_{\mathrm{NS}}$ is explicit and the Lorentz-force and (resistive)
+current sources $F_{\mathrm S}$ are implicit, in the additive form
+$$u^{(m)}=u^n+\Delta t\sum_{l<m}\tilde{\mathsf a}_{ml}F_{\mathrm{NS}}(u^{(l)})+\Delta t\sum_{l\le m}\mathsf a_{ml}F_{\mathrm S}(u^{(l)}),\qquad
+u^{n+1}=u^n+\Delta t\sum_l\tilde{\mathsf b}_lF_{\mathrm{NS}}(u^{(l)})+\Delta t\sum_l\mathsf b_lF_{\mathrm S}(u^{(l)}).$$
+The second-order scheme is the L-stable one of Pareschi and Russo with two implicit stages,
+$\mathsf a_{11}=\mathsf a_{22}=\gamma_{\mathrm D}=1-1/\sqrt2$, $\mathsf a_{21}=1-2\gamma_{\mathrm D}$,
+$\tilde{\mathsf a}_{21}=1$ and $\mathsf b=\tilde{\mathsf b}=(\tfrac12,\tfrac12)$; the third- and
+fourth-order schemes are the ARK3 and ARK4 schemes of Kennedy and Carpenter (ARK3 printed in
+App. C, Table 5; ARK4 taken from the original). *(compiler check, not in the sources: for the
+second-order implicit tableau $\mathsf b^\top\mathsf A^{-1}\mathbf 1=(4\gamma_{\mathrm D}-1)/(2\gamma_{\mathrm D}^2)=1$,
+so $R(\infty)=0$, consistent with the stated L-stability, and all second-order and coupling
+conditions hold.)* Each implicit stage is an $18\times18$ nonlinear system per cell, solved
+by Newton's method with backtracking line search. The schemes reach orders 1.94, 3.21 and
+3.92 on a forced smooth solution at 3200 cells, with errors comparable to the explicit SSP
+schemes of the same order (Table 3).
+
+Their timings (Table 4, "MPI-parallelized code on a CPU with 10 cores") show where the
+implicit treatment pays: for the stiffest charge-to-mass ratio, $10^5/\sqrt{4\pi}$, at 800
+cells the IMEX schemes take 12.11 s (second order) and 47.00 s (fourth order) against 413.55 s
+and 374.54 s for the explicit ones; for $10^4/\sqrt{4\pi}$ at 800 cells the explicit third- and
+fourth-order schemes are faster (13.04 s vs 22.14 s, 37.98 s vs 44.90 s), while the
+second-order IMEX scheme is still faster (14.28 s vs 17.90 s). The authors read this as the
+source setting the explicit time step on the coarser grids and the CFL limit on the finer
+one.
+
+**Radiation–matter coupling** ([López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md),
+§3.1, §3.3, Eq. (21)). An IMEX version of the Shu–Osher third-order
+[SSP Runge–Kutta](/methods/ssp-runge-kutta.md): each explicit stage
+$u^*=\sum(\cdot)+\theta_{\mathrm s}\Delta t\,\mathcal L(u^{(\cdot)})$ is followed by an implicit
+source step $u^{(\cdot)}=u^*+\theta_{\mathrm s}\Delta t\,S$ with the same stage weight
+$\theta_{\mathrm s}=1,\tfrac14,\tfrac23$ (page-local). Only the radiation energy and flux are
+updated implicitly, by an iterated linearized $4\times4$ solve per cell (LU), and the fluid
+energy and momentum follow from conservation of the totals, so total energy and momentum are
+conserved by the implicit step. The paper calls the scheme "IMEX third-order TVD Runge-Kutta"
+but does not analyse its order or stiff accuracy.
+
+**Partitioned form for MHD.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) (§3.2) use the
+partitioned semi-implicit form above for the low-Mach ideal MHD equations with constrained
+transport, with the third-order stiffly accurate scheme of Boscarino et al. (2022) and of
+Huang, Xing and Xiong (tableau not reprinted); stiff accuracy is the hypothesis of their
+asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+
 ## IMEX schemes in the sources
 
 | Source | Scheme | Stiff term | Order |
@@ -141,6 +189,9 @@ tables are dominated by the spatial error (orders 4–5; Tables 5.1–5.2).
 | [Boscarino et al. (2022)](/sources/boscarino-2022.md) | SI-IMEX(4,4,3), (3,3,2), first-order type A I | acoustic pressure $\varepsilon^{-2}\nabla p$ and energy flux of full Euler at Mach number $\varepsilon$ | 3, 2, 1 |
 | [Arun et al. (2022)](/sources/arun-2022.md) | first-order semi-implicit step after Boscarino–Pareschi–Russo | friction and momentum in the mass flux | 1 |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) | IMEX-SSP3(4,3,3) of Pareschi & Russo | stiff relaxation sources | 3; reduces to Shu–Osher [SSP-RK3](/methods/ssp-runge-kutta.md) when the source vanishes (§X) |
+| [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) | third-order SA SI-IMEX-RK of Boscarino et al. | acoustic pressure and enthalpy flux of ideal MHD at sonic Mach number $\varepsilon$ | 3 (first-order scheme analysed) |
+| [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) | Pareschi–Russo L-stable ARK2; Kennedy–Carpenter ARK3, ARK4 | Lorentz-force and resistive sources of two-fluid relativistic plasma | 2, 3, 4 |
+| [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) | IMEX extension of Shu–Osher SSP-RK3 | radiation four-force (absorption, scattering) | not analysed |
 
 ## Qualifications
 
@@ -156,6 +207,15 @@ tables are dominated by the spatial error (orders 4–5; Tables 5.1–5.2).
   refinement; Fig. 5.3). Arun et al. attribute oscillations of their non-well-balanced variant
   at intermediate $\varepsilon$ to the same IMEX loss of accuracy (§5.2.1, Figs. 6–7, citing
   earlier work).
+- **Order reduction at intermediate stiffness.** Chen, Wu & Xiong (Tables 5.2, 5.4) see the
+  same loss as Boscarino et al. for MHD: at $\varepsilon=10^{-2}$ the 1D orders are 2.78, 1.11,
+  1.72, 1.60 and the 2D errors do not decrease between $N=16$ and $N=64$, while the scheme is
+  about fifth order at $\varepsilon=1$, $10^{-6}$ and $0$.
+- **Printed ARK3 weights.** In Bhoriya et al.'s Table 5 the stiff weights $\mathsf b$
+  (row $b^{[S]}$) differ from the non-stiff weights $\tilde{\mathsf b}$, which equal the last
+  implicit row. *(compiler check, not in the sources: with the printed $\mathsf c=(0,\ 1767732205903/2027836641118,\ \tfrac35,\ 1)$,
+  the printed $\mathsf b$ gives $\sum_l\mathsf b_l=1$ and $\sum_l\mathsf b_l\mathsf c_l=\tfrac12$ but
+  $\sum_l\mathsf b_l\mathsf c_l^2=0.345754\ne\tfrac13$, while $\tilde{\mathsf b}$ gives $\tfrac13$.)*
 - The explicit tableau of Eq. (3.30) carries a meaningless $0$ in the $\tilde{\mathsf c}$ column
   of its $\tilde{\mathsf b}$ row, and the order symbol $p$ of the label clashes with pressure; both
   are typographical.
@@ -166,3 +226,6 @@ tables are dominated by the spatial error (orders 4–5; Tables 5.1–5.2).
 - [Arun et al. (2022)](/sources/arun-2022.md) — Abstract, §1, §3 (Eqs. (3.1)–(3.4)), §5.2.1 (arXiv v1).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §X (Eqs. (10.1)–(10.7)).
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §1.
+- [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §5.1–5.2, §6.1 (Tables 2–4), App. C (Table 5) (arXiv v2).
+- [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1 (Eqs. (18)–(22)), §3.3 (Eqs. (39)–(43)) (arXiv v1).
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.2 (Eqs. (3.7)–(3.10)), Thm. 4.2, Tables 5.2, 5.4 (arXiv v1).

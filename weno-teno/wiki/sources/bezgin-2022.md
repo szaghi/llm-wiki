@@ -153,7 +153,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunk 4 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–5 (2026-10-23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
@@ -162,6 +162,7 @@ Chunk 3 (2026-10-22), cited further in chunk 4 (2026-10-23). This source is cite
 * [Double rarefaction (123) problem](/benchmarks/double-rarefaction-problem.md)
 * [ENO property](/definitions/eno-property.md)
 * [Gresho vortex](/benchmarks/gresho-vortex.md)
+* [JAX-Fluids](/software/jax-fluids.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Learned WENO weights](/methods/learned-weno-weights.md)
 * [Normalised-variable diagram](/definitions/normalised-variable-diagram.md)

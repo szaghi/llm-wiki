@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient reconstruction on unstructured meshes"
-description: "Cell-centred finite volumes on unstructured meshes reconstruct a cell gradient, or a higher-degree polynomial, from neighbouring averages; this page records the Green–Gauss and least-squares gradient families, the vertex-based averaged gradient (VWLSQ) with iterative boundary treatment, face-gradient decoupling, a WENO-type weighting replacing the limiter, and the constrained least-squares polynomials of high-order WENO and TENO."
+description: "Cell-centred finite volumes on unstructured meshes reconstruct a cell gradient, or a higher-degree polynomial, from neighbouring averages; this page records Green–Gauss and least-squares gradients, the vertex-based VWLSQ, boundary treatments up to the ghost-cell-constrained WLSQ-GCC, face-gradient decoupling, a WENO-type weighting replacing the limiter, GPU face loops, and the constrained least-squares polynomials of high-order WENO and TENO."
 status: established
-aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW]
+aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW, WLSQ-GCC, ghost-cell constraint, WLSQ-EC, WLSQ-EA, WLSQ-WA, curvature-corrected symmetry technique, Gauss gradient]
 tags: [finite-volume, reconstruction, limiting, weno]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Gradient reconstruction on unstructured meshes
@@ -61,6 +61,52 @@ exactness, and VWLSQ-ITER keeps it (Figs. 8–10); on aspect-ratio-1000 perturbe
 manufactured boundary-layer profile (from Sun, Darmofal & Haimes; only the gradient is evaluated, no
 equation is solved) VWLSQ-ITER has the lowest wall-normal gradient errors (§6.2, Figs. 11–12;
 [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md)).
+
+## Boundary cells: the ghost-cell constraint (WLSQ-GCC)
+
+Wei, Zhang, Liu, Su & Xu (2023) study the boundary cells of the same second-order scheme, with
+inverse-distance WLSQ on face-neighbour stencils, face states from the linear extrapolation above, HLLC, and a
+Barth–Jespersen or Venkatakrishnan limiter (§2, Eqs. (4)–(12)). A boundary cell has too few neighbours, and the
+boundary-face value fed to the flux in the "weak-prescribed" imposition, typically a zeroth-order extrapolation
+modified by the boundary condition, is not linearly exact (§1). They compare, as background:
+
+- **WLSQ-EC**: the vertex-neighbour stencil in boundary cells (Chen et al. 2020 as cited by Wei et al.; the WLSQ variants of Chen et al. (2022)
+  above use the same vertex stencil in boundary cells); linearly exact gradients, but no boundary constraint on the face state;
+- **WLSQ-GC**: a ghost cell mirrored across the boundary face, filled by the symmetry technique or by the
+  curvature-corrected symmetry technique, $\partial p/\partial n=-\rho|v|^2/R$ with the wall curvature radius $R$
+  (page-local) and isentropic density (Dadone & Grossman; Wang & Sun; Eqs. (13)–(19));
+- **WLSQ-EA, WLSQ-WA**: Haselbacher's constrained least squares with the boundary-face point in the stencil, by
+  elimination (a fit about the face point; one constraint only, inapplicable to corner cells) or by extra weights
+  on the constraint rows (bounded by 2 to avoid ill-conditioning; Eqs. (20)–(22)).
+
+**WLSQ-GCC** (§5, Eqs. (23)–(33)). The boundary cell $C_0$ and its mirrored ghost $C_G$ (page-local) both get
+WLSQ gradients from stencils that include each other; the face state is extrapolated from both sides,
+$u^{\mathrm{in}}_B=u_0+\nabla u_0\cdot\Delta r_{0B}$ and $u^{\mathrm{gh}}_B=u_G+\nabla u_G\cdot\Delta r_{GB}$ (page-local);
+and the boundary condition is imposed as relations between the two, for a slip wall equal density, pressure
+and tangential velocities and opposite normal velocity (Eq. (27)), in a local frame of normal, streamline and
+binormal directions (Eq. (28)). Since both gradients depend on the unknown ghost values, the residuals
+$u^{\mathrm{in}}_B-u^{\mathrm{gh}}_B$ (sum for the normal velocity) are driven to zero by a secant iteration started
+from the mirrored state, at most 10 passes, tolerance $10^{-10}$ (Eqs. (29)–(31), Fig. 5); cells with several
+boundary faces get one ghost per face and a coupled system (Eqs. (32)–(33)). The method is said to apply to the
+weak-Riemann imposition as well, to combine with slope limiters and to extend to viscous conditions by changing
+the constraints (§5, §8; no shocked or viscous test shown).
+
+**Evidence** (Wei et al. 2023, §6–7):
+
+- On $30x+100y+15$ only WLSQ-EC and WLSQ-GCC give machine-zero boundary gradient errors on quadrilateral,
+  regular and perturbed triangular grids; WLSQ-GC reaches an $L_\infty$ relative error of 1.483 on regular
+  triangles, and WLSQ-WA errors grow with the weight exponent (Tables 1–3). On $x^2e^y$ only GCC and EC keep the
+  design convergence of boundary gradients, GCC with smaller errors (Figs. 8–10).
+- Supersonic vortex between concentric arcs: only GCC is second order near the boundary; the others drop to
+  first order, with an error maximum in the corner cell joining an inlet or outlet to a wall (§7.1, Figs. 13–15).
+- Subsonic cylinder ($M=0.38$): GCC and curvature-corrected GC give symmetric Mach contours, GCC the smallest
+  spurious entropy and a maximum fore–aft pressure asymmetry of 0.0041 ([flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md),
+  [symmetry preservation](/properties/symmetry-preservation.md)); WLSQ-WA with exponent 4 crashes from
+  ill-conditioning (§7.2). Entropy-error orders on a Mach 0.5 bump channel are 2.117 and 2.035 for GCC against
+  about 1.4 for EC, EA and WA (Table 6); on a 3-D ellipsoid the stagnation-pressure orders are 1.817 and 2.151
+  for GCC against 0.77–1.10 (Table 7).
+- Cost: at most two secant iterations per boundary cell were observed; total CPU time 1.068 and 1.044 times
+  WLSQ-EC on the vortex and the cylinder (Tables 4–5).
 
 ## Face gradients and decoupling
 
@@ -132,6 +178,19 @@ new for second-order finite-volume shock capturing.
   the correction, which however misses the velocity profile and skin friction); cylinder wake length
   2.14 (2.095 with the correction) against 2.13, drag 1.588 (1.591) against 1.48 (§§6.6–6.7, Table 3).
 
+## Green–Gauss gradients on GPUs
+
+Bielawski, Barwey, Prakash & Raman (2023, §3–4, Alg. 1, App. B) port an OpenFOAM cell-centred solver for reacting
+flows to GPUs without changing its data structures. Its gradient is the Gauss (Green–Gauss) gradient: linear,
+unlimited interpolation to the faces, multiplication by the face normal times area, summation per cell and
+division by the cell volume; face states use limited interpolation and HLLC, each component "nominally
+second-order accurate" (§3). The GPU kernels loop over faces, not cells, which on hexahedral meshes exposes about
+three times more parallelism and coalesced face data, and accumulate face contributions into the two adjacent
+cells with a compare-and-swap atomic add to avoid the race (§4); boundary faces sit in separate arrays, so only
+data scaling as $O(N^{2/3})$ in the cell count is copied for the halo exchange. The flux kernels are memory-bound,
+with arithmetic intensity below 1 (Fig. 9). The authors note that the line between two cell centres need not
+cross the face centre, a source of error on skewed cells (§3).
+
 ## Beyond second order: constrained least-squares polynomials
 
 The high-order unstructured reconstructions of the bundle generalize the least-squares gradient to a
@@ -185,6 +244,13 @@ been discussed in a few test cases" (§6.4).
   experimental result"; the drag reference is Visbal's paper, whose title evaluates an implicit
   Navier–Stokes solver, and 1.588 differs from 1.48 by 7 % *(compiler check, not in the sources:
   $1.588/1.48=1.073$)*.
+- Wei et al. (2023) write the inverse-distance weight once in the least-squares rows (Eq. (7)), which squares it
+  in the functional, and once in the functional itself (Eqs. (9), (12)); their cost model (Eq. (41)) gives
+  $-2T^*$ for a cell with no iteration where the text says zero; and the medium-to-fine grid ratio of the
+  ellipsoid is 1.25, not the printed 1.4, as the cell counts and the orders of Table 7 show *(compiler check,
+  not in the sources: $(120000/61440)^{1/3}=1.25$)*. They read lower spurious entropy as "lower overall numerical
+  dissipation" (§7.2). On the vortex WLSQ-GC is run with the
+  weak-Riemann imposition and the others with the weak-prescribed one (§7.1).
 - Ji et al. (2022, Eq. (6)) give $N_k=\frac1{n_d!}\prod_{m=1}^{n_d}(\mathsf r+m)$ coefficients ($n_d$ the dimension,
   page-local), which counts the constant term, while their expansion (Eq. (7)) writes the cell average
   plus $N_k$ non-constant terms; the two differ by one. *(Compiler check, not in the sources: for
@@ -194,3 +260,5 @@ been discussed in a few test cases" (§6.4).
 
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §1; §2, Eqs. (1)–(9); §3, Eqs. (10)–(17); §4, Eqs. (18)–(23); §5, Eqs. (24)–(27); §6, Tables 1–3, Figs. 3–27; §7; App. B, Algorithm 1; App. C, Eqs. (C.1)–(C.8).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.2, Eqs. (4)–(14); §3.1; §5.1, Tables 1–4.
+- [Wei, Zhang, Liu, Su & Xu (2023)](/sources/wei-2023.md) — §1; §2, Eqs. (4)–(12); §4, Eqs. (13)–(22); §5, Eqs. (23)–(33), Fig. 5; §6, Tables 1–3, Figs. 8–10; §7, Tables 4–7, Figs. 13–22; §8.
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3; §4, Alg. 1; §6.3, Fig. 9; App. B.

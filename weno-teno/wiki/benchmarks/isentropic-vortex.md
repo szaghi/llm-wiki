@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Isentropic vortex
@@ -31,7 +31,10 @@ With a near-vacuum core it becomes a positivity test
 ([Fan et al. (2023)](/sources/fan-2023.md)). Run for a hundred vortex
 widths on a coarse grid, it is also a long-time robustness test of
 kinetic-energy-preserving central schemes
-([Edoh (2022)](/sources/edoh-2022.md)).
+([Edoh (2022)](/sources/edoh-2022.md)) and of the choice of energy
+equation ([De Michele & Coppola (2023)](/sources/demichele-2023.md)),
+and on a randomly distorted grid a test of free-stream-preserving
+metrics ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md)).
 
 ## Setup
 
@@ -72,6 +75,12 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.4 | $[0,10]^2$, centre $(5,5)$, exact boundary values | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; $160^2$ to $640^2$ |
 | [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=0.2$, $\Delta t\approx\Delta x^{5/3}$; $L^1$, $L^\infty$ errors, $10^2$ to $320^2$ |
 | [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) §5.2.1 | $[-10,10]^2$, periodic | 2.5 (printed strength 5 in their normalization) | $\rho_0=p_0=1$, stream $(1,\sqrt2/2)$ or $(1,\sqrt3/2)$, see Qualifications | $t=5$ convergence, CFL 1; $t=200$ on $200^2$ |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$, stream $(1,1)$ | $T=10$; errors on $25^2$ to $200^2$ (printed "252–2002"); time-step law not stated |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.1 | $[-5,5]^2$, centre at the origin, periodic | 5 | $T_0=1$, stream $(1,1)$ | $t=10$; $L_2$ density error, $25^2$ to $200^2$, CFL 0.2 |
+| [De Michele & Coppola (2023)](/sources/demichele-2023.md) §5.1, Eqs. (79)–(81) | unit square, centre $(0.5,0.5)$, periodic | vortex Mach number $M_{\mathrm v}=0.5$, radius $r_{\mathrm v}=1/15$ | $\rho_\infty=1$, $u_\infty=1$, $M_\infty=0.5$ | robustness: $40^2$ to $t=5$, and $30^2$ to $T=50$ at CFL 0.01, 0.1, 0.5 |
+| [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §8.1.2, Eq. (47) | $[0,16]^2$, centre $(8,8)$, periodic; grid randomized by 20 % in the central region | $C/(U_\infty R)=0.02$ | $\rho=1$, $M=0.1$, advection speed 1 | one period, $t=16$; $64\times64$ |
+| [Funada & Imamura (2023)](/sources/funada-2023.md) §3.1 | $[-6,18]\times[-12,12]$, centre at the origin, periodic in $x$, Riemann boundaries in $y$ | $\kappa_{\mathrm v}=0.02$ (page-local) | $\rho=1$, $M_\infty=0.1$, stream along $x$ | $L_\infty$ error of $v_2$ when the vortex reaches $x=8$; $\Delta x=0.375$, $0.1875$, $0.09375$; RK4 |
+| [Zaghi et al. (2023)](/sources/zaghi-2023.md) Appendix, Eqs. (A.1)–(A.6) | periodic cube of side 10 m, centre $(2,5,5)$ m, 3D | vortex Mach number $M_{\mathrm v}=0.1$, radius 0.5 m | $\rho_0=1.226$ kg m$^{-3}$, $p_0=101325$ Pa, free-stream Mach 0.1 along $x$ | period 0.29 s; AMR performance test, WENO3, 4768 blocks, about 2.4M cells |
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
@@ -108,6 +117,32 @@ table's form with $\mathcal E=\beta_{\mathrm v}/2=2.5$ and $T_0=1$
 $\mathcal E=5$ of most rows of the table. They choose the stream so that the vortex centre never
 crosses grid points.
 
+Chamarthi (2023a) prints
+$\rho=\big[1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e^{1-r^2}\big]^{1/(\gamma-1)}$,
+$p=\rho^\gamma$ and the table's velocity with $\mathcal E=5$; Chamarthi
+(2023b) the table's temperature and velocity. De Michele & Coppola write
+$v_1/u_\infty=1-\frac{M_{\mathrm v}}{M_\infty}\frac{\bar y}{r_{\mathrm v}}e^{(1-\hat r^2)/2}$,
+$v_2/u_\infty=\frac{M_{\mathrm v}}{M_\infty}\frac{\bar x}{r_{\mathrm v}}e^{(1-\hat r^2)/2}$,
+$T/T_\infty=(p/p_\infty)^{(\gamma-1)/\gamma}=(\rho/\rho_\infty)^{\gamma-1}=1-\frac{\gamma-1}2M_{\mathrm v}^2e^{1-\hat r^2}$,
+$\hat r=r/r_{\mathrm v}$, $p=\rho^\gamma/(\gamma M_\infty^2)$
+($M_{\mathrm v}$, $r_{\mathrm v}$, $\hat r$ page-local): the table's form in
+units of the vortex radius, with stream $(1,0)$. Chandravamsi et al.
+use a different profile with uniform density, hence not isentropic
+*(compiler check, not in the sources)*,
+$v_1=1-\frac{C\bar y}{U_\infty R}e^{-r^2/2}$,
+$p=1-\gamma M^2\frac{C^2}{U_\infty^2R^2}e^{-r^2}$ ($C$, $R$, $U_\infty$
+page-local), and print $v_2=\frac{C\bar x}{U_\infty R^2}e^{-r^2/2}$ with
+$R^2$ in place of the $R$ of $v_1$.
+Funada & Imamura (after Kawai & Lele) also keep the density uniform:
+$v_1=M_\infty\big(1-\kappa_{\mathrm v}\bar y\,e^{-r^2/2}\big)$,
+$v_2=M_\infty\kappa_{\mathrm v}\bar x\,e^{-r^2/2}$,
+$p=\frac1\gamma-\frac12\kappa_{\mathrm v}^2M_\infty^2\rho\,e^{-r^2}$.
+Zaghi et al. print a dimensional three-dimensional vortex after Poinsot
+& Lele with $p=p_0(\rho/\rho_0)^\gamma$; their printed $v_2$ carries
+$\bar y$ like $v_1$, and their density exponent does not give radial
+equilibrium with the printed velocity (see the
+[Source page](/sources/zaghi-2023.md), Printed slips).
+
 **Near-vacuum strength.** With $\mathcal E=10.0828$ and unit
 background the centre temperature is
 $1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e=2.28\times10^{-6}$,
@@ -134,10 +169,10 @@ $\mathcal E=4$, $\phi_{\mathrm v}=1$, isentropic pressure
 ($R_{\mathrm g}$ the gas constant and $\phi_{\mathrm v}$ the exponent
 factor, page-local symbols); with $\phi_{\mathrm v}=\tfrac12$ it is the table's
 form scaled by $\sqrt{R_{\mathrm g}T_\infty}$, so $\phi_{\mathrm v}=1$
-is a narrower vortex. He does not print $\gamma$; with $\gamma=1.4$ his
+is a narrower vortex. Edoh does not print $\gamma$; with $\gamma=1.4$ the
 background is $p_\infty=114285.7$ Pa, $c_\infty=400$ m s$^{-1}$, Mach 0.5,
 the centre temperature drops by $21.4\,\%$ and the minimum density is
-$0.5479$ kg m$^{-3}$, the value he prints *(compiler check, not in the
+$0.5479$ kg m$^{-3}$, the value Edoh prints *(compiler check, not in the
 sources)*, which supports $\gamma=1.4$.
 
 ### MHD version
@@ -161,6 +196,30 @@ reaches about fourth order in $L^1$ (rates 3.81, 3.96, 3.71 for the
 velocity), $\mathbb P_2$ only second, which they call a known
 suboptimality of continuous Galerkin (Table 1, Fig. 1). Their rates are
 computed from the degrees of freedom, not from a mesh halving.
+
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.1, Eqs.
+(38)–(41) (arXiv v2) run what they cite as the near-vacuum magnetized
+vortex of Christlieb et al., with the same constant
+$\mu_{\mathrm v}=5.38948938512$: on $[-10,10]^2$, periodic, $\gamma=5/3$,
+$\rho=1$, $v=(1,1)+\delta v_{\mathrm v}(-y,x)$, $B=\delta B_{\mathrm v}(-y,x)$,
+$p=1+\delta p$, with printed
+$\delta v_{\mathrm v}=\frac{\mu_{\mathrm v}}{\sqrt{2\pi}}\varphi$,
+$\delta B_{\mathrm v}=\frac{\mu_{\mathrm v}}{2\pi}\varphi$,
+$\delta p=-\frac{\mu_{\mathrm v}^2(1+r^2)}{8\pi^2}\varphi^2$,
+$\varphi=e^{1-r^2}$ (page-local), to $t=0.05$ with $\Delta t=10^{-4}$,
+error of $B$ in $L^1$ against the translated solution. They state a
+minimum pressure of about $2\times10^{-8}$; with the printed $\varphi^2$
+the centre pressure is $1-\mu_{\mathrm v}^2e^2/(8\pi^2)\approx-1.72$,
+and the stated minimum follows with $\varphi$ in place of $\varphi^2$
+($1-\mu_{\mathrm v}^2e/(8\pi^2)=2.0\times10^{-8}$) *(compiler check, not
+in the sources)*, so one exponent is misprinted. On $20^2$ to $67^2$
+quadrilaterals their positivity-preserving
+[entropy filter](/methods/entropy-filtering.md) in nodal DG gives rates
+2.89, 3.80, 4.62, 5.23 for $\mathbb P_2$–$\mathbb P_5$ ($\mathbb P_2$:
+$2.29\times10^{-4}$ to $6.92\times10^{-6}$; $\mathbb P_5$:
+$4.04\times10^{-7}$ to $6.51\times10^{-10}$), with the filter strength
+$1-f$ at most $1.08\times10^{-4}$, i.e. negligible activity (Tables
+1–2).
 
 ### Relativistic versions
 
@@ -323,7 +382,7 @@ $P^2$ about 2.1–2.2 (Table 3); neither paper comments on it.
 runs a sixth-order compact central scheme (CD06) on 60 points per
 direction, about six across the vortex, with RK4 at
 $\Delta t=1.74\times10^{-4}$ s for 100 vortex widths. Without filtering
-the divergence form is unstable within five widths and his rotational
+the divergence form is unstable within five widths and Edoh's rotational
 form within fifteen, while the Feiereisen and Kennedy–Gruber splittings
 survive 100 widths with noise; with solution filtering all are stable
 and the rotational form has the lowest density error. After 100 widths
@@ -349,6 +408,65 @@ a prescribed moving mesh and fifth order with the entropy-stable one on
 an adaptive mesh, for the relativistic-MHD vortex in two and three
 dimensions, the entropy flat in the former and decaying in the latter
 (Exs. 6.1, 6.7, Figs. 6.3–6.4, 6.13).
+
+**Primitive-variable state reconstruction caps the order at two.**
+Chamarthi (2023a) finds every scheme the author runs, the fourth-order
+[gradient-based](/methods/gradient-based-reconstruction.md) MEG6 and
+MIG4 and TENO5 alike, only second order on the vortex, with nearly
+equal errors on $200^2$ ($4.10\times10^{-5}$ for all), although on
+linear advection MIG4 and MEG6 are fourth and TENO5 fifth order (Tables
+2–3). Chamarthi attributes this to reconstructing primitive variables and
+evaluating the flux of the reconstructed states, after Zhang, Zhang &
+Shu, and states that other published schemes (BVD, P4T2, Fu's
+finite-volume TENO) share it without having computed their order.
+Chamarthi (2023b) removes the limitation by blending, interface by
+interface, a reconstruction of the point fluxes with the flux of the
+limited state through a density-based detector; the seventh-order MEG7
+then reaches $L_2$ rates 5.25, 6.03, 6.59 (conservative variables) and
+5.13, 6.00, 6.68 (primitive) on $50^2$, $100^2$, $200^2$, against 4.71,
+6.35, 6.24 for the seventh-order mapped WCNS7M, with errors about
+$1.0\times10^{-8}$–$1.5\times10^{-8}$ on $200^2$ (Table 1). Chamarthi calls this
+seventh-order accuracy; the observed rates stay below seven on these
+grids.
+
+**Energy equation and long-time robustness.** De Michele & Coppola run
+central, non-dissipative schemes with kinetic-energy-preserving mass and
+momentum fluxes and fifteen discretizations of an energy-like equation
+(total energy, internal energy, pressure, total enthalpy, sound speed,
+entropy). On $40^2$ with eighth-order central derivatives, RK4 at CFL
+0.01, the linear invariants are preserved to round-off and the entropy,
+internal and kinetic energy drift differently by formulation (Figs.
+1–5). On $30^2$ with fourth-order derivatives to $T=50$, the
+internal-energy forms $(\rho e)$ and $(\rho e)_{\mathrm{PEP}}$ and the
+KGP-split sound-speed and entropy forms never blow up at CFL 0.01, 0.1
+or 0.5, while the total-energy and total-enthalpy forms blow up between
+$t=21$ and $47$ except $(\rho E)_{\mathrm{PEP}}$ and $(\rho H)_{H+\hat p}$
+at CFL 0.5 (Table 3). See [kinetic energy preservation](/properties/kinetic-energy-preservation.md),
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)
+and [split convective forms](/methods/split-convective-forms.md).
+
+**Free-stream preservation on distorted grids.** Chandravamsi et al.
+advect the vortex for one period through a $64\times64$ grid whose
+central region is randomized by 20 % (maximum included angle about
+$160^\circ$): with their [free-stream-preserving](/properties/free-stream-preservation.md)
+metrics the MEG6 and MIG4 schemes keep the vortex and its swirl-velocity
+profile, while non-preserving metrics give an unphysical solution at
+$t=16$ (§8.1.2, Fig. 8).
+
+**Order of a flux-reconstruction solver without walls.** Funada &
+Imamura use their weak vortex to show that their
+[flux reconstruction](/methods/flux-reconstruction.md) on hierarchical
+Cartesian grids reaches order $k$ for $k=2,3,4$ in the $L_\infty$
+error of $v_2$ before they test immersed walls (§3.1, Fig. 10; see
+[flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)).
+
+**Adaptive mesh refinement.** Zaghi et al. advect their vortex through
+the block-octree [adaptive mesh](/methods/adaptive-mesh-refinement.md)
+of [ADAM](/software/adam.md) (maximum level 5, finest spacing 0.0625,
+refinement on the enthalpy gradient). The smearing they observe comes
+from the dissipation of WENO3, the level jumps "seem to not pollute the
+solution", and the strong scaling up to 16 GPUs is comparable with that
+of their shock-diffraction runs (Appendix, Figs. A.17–A.18).
 
 **Multidimensional finite-volume quadrature.** Bryngelson et al. use
 the steady vortex to verify the finite-volume WENO5 scheme of
@@ -425,12 +543,22 @@ logarithmic mean (§7.2, Fig. 6).
   consistent with it would be $(\gamma M^2p)^{1/\gamma}$ *(compiler check,
   not in the sources)*.
 - Edoh calls the vortex diameter "approximately 2.1 [m]", identified by
-  $\delta T/T_\infty=0.001$. With $\gamma=1.4$ his printed temperature
+  $\delta T/T_\infty=0.001$. With $\gamma=1.4$ the printed temperature
   perturbation is $0.02895\,e^{2(1-r^2)}T_\infty$, which equals
   $0.001\,T_\infty$ at $r=1.64$, a diameter of about 3.3 m; 2.1 m
   corresponds to a threshold of about 0.024, both computed with the
   unprinted $\gamma=1.4$ *(compiler check, not in the sources)*. The threshold or the
   diameter is misprinted, or the diameter is defined otherwise.
+- De Michele & Coppola print $\Delta t=1.8\times10^{-4}$ at CFL 0.01 on
+  $h=1/40$ without a CFL definition; neither $\mathrm{CFL}\,h/(\lvert u\rvert+c)$
+  ($8.3\times10^{-5}$) nor $\mathrm{CFL}\,h/u_\infty$ ($2.5\times10^{-4}$)
+  reproduces it *(compiler check, not in the sources)*. They also print
+  $T_\infty=720M_{\mathrm v}r_{\mathrm v}$, a value used nowhere else.
+  Their remark that higher resolution can lower the blow-up time
+  compares runs that differ in both grid and order ($40^2$ eighth order,
+  $30^2$ fourth order).
+- Chamarthi (2023a) and (2023b) are read as arXiv preprints, Chandravamsi
+  et al. and De Michele & Coppola as arXiv v1.
 - Yu & Hesthaven's DG solution and Du et al.'s unlimited DG are the
   baselines of their tests; the sub-design orders above are those of
   the baselines, not of the shock-capturing devices.
@@ -457,3 +585,10 @@ logarithmic mean (§7.2, Fig. 6).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.2, Fig. 2 (preprint).
 - [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.4, Table 2.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.3, Table 4.2.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.3, Tables 2–3 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.1, Table 1 (arXiv v1).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §5.1, Eqs. (79)–(81), Table 3, Figs. 1–5 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §8.1.2, Eq. (47), Fig. 8 (arXiv v1).
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.1, Eqs. (38)–(41), Tables 1–2 (arXiv v2).
+- [Funada & Imamura (2023)](/sources/funada-2023.md) — §3.1, Fig. 10.
+- [Zaghi et al. (2023)](/sources/zaghi-2023.md) — Appendix, Eqs. (A.1)–(A.6), Figs. A.16–A.18.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD blast wave and rotor"
-description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave at plasma beta about 2.5×10^-4, its relativistic counterpart, and the first and second rotor problems, which probe positivity of pressure and the effect of divergence errors, plus a weak, smooth magnetic blast used in three dimensions to verify entropy conservation and stability of DG schemes."
+description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, relativistic, two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # MHD blast wave and rotor
@@ -38,6 +38,38 @@ Godunov–Powell source term and a Zhang–Shu-type
 pressure, produces no negative pressure, and its density is
 "significantly smoother" than earlier published results (Fig. 13).
 
+**All-Mach IMEX with constrained transport.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)
+Ex. 5.7 (arXiv v1) run a blast on $[-0.5,0.5]^2$ with periodic
+boundaries: $\rho=1$, $v=0$, $B=(10\sin\theta,10\cos\theta,0)$ with
+$\theta=\pi/4$, $p=100$ for $r\le0.125$ and $p=10$ otherwise, vector
+potential $\mathsf A_3=5\sqrt2(-x+y)$ (page-local) extrapolated at first order outside;
+$200^2$ points, sonic Mach parameter $\varepsilon=0.9$, $T=0.02$, in
+their non-dimensional MHD scaling with $\gamma=5/3$. Their semi-implicit
+IMEX WENO scheme with constrained transport keeps the maximum discrete
+divergence at $2.87\times10^{-11}$, against $2.77\times10^{-11}$ for the
+explicit WENO reference with constrained transport (Figs. 5.4–5.5; see
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+**Extreme variant.** [Dzanic & Witherden (2023)](/sources/dzanic-2023.md)
+§5.5 (arXiv v2) raise the Balsara–Spicer field and inner pressure
+tenfold, after Wu & Shu's extreme version: on $[-0.5,0.5]^2$, periodic,
+$\gamma=5/3$, $\rho=1$, $v=0$, $B=(1000/\sqrt{4\pi},0)$, $p=10^4$ for
+$r\le0.1$ and $p=0.1$ otherwise, a pressure ratio of $10^5$; $t=0.001$.
+Their nodal DG with positivity-preserving
+[entropy filtering](/methods/entropy-filtering.md) runs at
+$\mathbb P_4$ on unstructured triangles of $h=1/200$ (about
+$1.2\times10^5$ elements, $\Delta t=2\times10^{-7}$) and $h=1/400$ (about
+$5\times10^5$, $\Delta t=10^{-7}$) with the HLL flux: the solution is
+well behaved, discontinuities are resolved across one or two solution
+nodes with thickness decreasing in proportion to $h$, and minor density
+oscillations (mesh imprinting) appear on the coarse mesh (Figs. 10–13).
+Without the positivity-preserving modifications the scheme "would
+diverge almost instantly", as stated; HLL was "much better behaved"
+than HLLC here. They print the plasma beta as $2.5\times10^{-4}$; with
+$B_1=1000/\sqrt{4\pi}$ and $p=0.1$, $2p/\lvert B\rvert^2=2.51\times10^{-6}$,
+and $2.5\times10^{-4}$ is the value of the original data
+*(compiler check, not in the sources)*.
+
 ### Relativistic MHD blast
 
 [Duan & Tang (2022)](/sources/duan-2022.md) Ex. 6.5 (arXiv v1) run the
@@ -53,6 +85,37 @@ above. Their fifth-order entropy-stable scheme on an
 $150^2$ cells (2 min 3 s on 4 cores) is much better than the uniform
 $150^2$ mesh (30 s) and comparable to the uniform $600^2$ mesh
 (28 min 14 s), i.e. at 7.26 % of its CPU time (Table 6.1, Fig. 6.9).
+
+**Two-fluid relativistic plasma.** [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md)
+§6.2.2 (arXiv v2) split the same data between ion and electron fluids:
+on $[-6,6]^2$ with Neumann boundaries, each species carries half of
+$\rho=10^{-2}$, $p=1$ for $r<0.8$ and half of $\rho=10^{-4}$,
+$p=5\times10^{-4}$ for $r>1$, with a linear ramp in between;
+$B_1=B_0\in\{0.1,1.0\}$, charge-to-mass ratios $\pm10^3$,
+$\gamma=4/3$, $200^2$ cells, $t=4$. Their third- and fourth-order
+[entropy-stable](/properties/entropy-stability.md) finite-difference
+schemes with IMEX time stepping are stable and comparable to Amano
+(2016) and Balsara et al. (2016) at both field strengths; the fourth-order
+scheme decays less entropy, and its $\nabla\cdot B$ error is less spread
+out and, at $B_0=1$, lower in $L^1$ than the third-order one (Figs.
+8–13). Divergence is only cleaned hyperbolically and monitored.
+
+**Radiation RMHD.** [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md)
+§4.2.1 (arXiv v1) add grey M1 radiation to a magnetized blast after
+Melon Fuksman & Mignone: on $[-6,6]^2$, $360^2$ cells, ambient
+$\rho=10^{-4}$, $p=3.49\times10^{-5}$, inside the unit radius
+$\rho=10^{-2}$, $p=1.31\times10^{-2}$, $\gamma=4/3$, $B=(0.1,0,0)$, $v=0$,
+radiation in thermal equilibrium with zero flux, absorption
+coefficient 1 (optically thin, optical depth $2\rho\kappa_{\mathrm a}=0.02$
+across the inner disc, $\kappa_{\mathrm a}$ the absorption coefficient,
+page-local) or 1000 (thick, 20); $t=4$. In the thin case the maximum Lorentz factor is
+about 1.7, as in the cited work, and the radiation stays cylindrically
+symmetric; in the thick case an oblate ring forms with maximum Lorentz
+factor about 2.72, and the run needs the radiative HLL solver, MinMod
+reconstruction and CFL 0.01 to avoid unphysical states, not their new
+[polynomial viscosity matrix](/methods/polynomial-viscosity-matrix-solver.md)
+solver (Figs. 8–9). A three-dimensional spherical version on $256^3$
+is also run (Fig. 10).
 
 ## Rotor
 
@@ -154,6 +217,9 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 
 - Liu et al. give no CFL number or time-step rule for any test; they
   print periodic boundaries for the rotor without comment.
+- Dzanic & Witherden define the magnetic pressure as
+  $\tfrac12(\gamma-1)\lvert B\rvert^2$ (§2.1), not the $\tfrac12\lvert B\rvert^2$
+  of their own flux (Eq. 2) and plasma beta $2p/\lvert B\rvert^2$.
 - The blast-wave comparison with earlier results is visual, against
   figures of other papers; so are the rotor runs of Dao & Nazarov and
   Lesur et al.
@@ -170,3 +236,7 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.1, Figs. 10–11 (arXiv v2).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — §5.5, Fig. 7 (arXiv v1).
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.2, Fig. 9 (arXiv v1).
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.7, Figs. 5.4–5.5 (arXiv v1).
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.5, Eq. (46), Figs. 10–13 (arXiv v2).
+- [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.2, Figs. 8–13 (arXiv v2).
+- [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.2.1, Figs. 8–10 (arXiv v1).

@@ -3,9 +3,9 @@ type: Method
 title: "WENO-Z weights"
 description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+ε))^q], with a global smoothness indicator τ built from the local β_k; the weights approach the linear ones faster in smooth regions, and the less-smooth stencil keeps more weight than in WENO-JS."
 status: established
-aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, Borges WENO]
+aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # WENO-Z weights
@@ -56,11 +56,15 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
 - **Regularization.** Deng (2023, §4.3) recalls that Borges et al. suggest $\epsilon=10^{-40}$, so
   that $\epsilon$ only excludes vanishing denominators; Luo & Wu (2021) use $10^{-40}$; Wang & Don
   (2022) test $10^{-12}$ and $10^{-40}$.
+  De Vanna et al. (2023a, §3.1) and De Vanna et al. (2023b, §3.1), in the arbitrary-order WENO-Z of
+  Castro et al. at orders 3, 5 and 7, set $\epsilon=10^{-12}$ to limit the dissipation ("to reduce the dissipation", 2023a).
 - **Third order.** In the compact three-cell stencil, $\tau_Z=|\beta_0-\beta_1|$ with exponent 1
   (Deng 2023, Eqs. (4.24)–(4.25); Huang et al. 2026, Eqs. (3.6)–(3.7)).
 - **Common template.** Ye et al. (2022, §2.2) write WENO-Z, WENO-CU6 and TENO as instances of
   $\big(C+\tau/(\beta_k+\epsilon)\big)^q$, with $C=1$ for WENO-Z, $C=20$ for
-  [WENO-CU6](/methods/weno-cu6.md) and $q=6$ for [TENO](/methods/targeted-eno.md).
+  [WENO-CU6](/methods/weno-cu6.md) and $q=6$ for [TENO](/methods/targeted-eno.md). Zhou et al. (2023,
+  Eq. (14)) use the same template with a free, adapted $C$ (between $2\times10^8$ and $2\times10^{10}$) and
+  the six-point $\tau_6$ in a WCNS after Wong & Lele ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
 
 ## Properties
 
@@ -98,6 +102,7 @@ each time with a global indicator built against the largest candidate:
 | Zhu–Qiu WENO on triangles ([CWENO](/methods/cweno.md)), quadratic and four linear | $\tau^2$ with $\tau=\tfrac14\sum_{\ell\le4}\lvert\beta_0-\beta_\ell\rvert$ (Zhu & Qiu's $\tau$) | $\tau^2/(\beta_\ell+\epsilon)$ (Zhu & Qiu); $\tau^2/(\beta_\ell+\epsilon)^2$, $\epsilon=\lvert K_0\rvert\max\bar u^2$ (Chen & Wu) | Chen & Wu 2022, Eqs. (32)–(34) |
 | incremental-stencil interpolation of WCNS-IS | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
 | WENO-AO($\mathcal R$,3) | $\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ | $\tau^2$, $\tau^3$, $\tau^4$ over $(\beta+\epsilon)^2$ for $\mathcal R=5,7,9$ | Balsara et al. 2024, App. D ([WENO-AO](/methods/weno-ao.md)) |
+| WCNS-MR interpolation of Qin et al. ([shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)), indicators with scaled derivative sums | as in the first row | $\tau/(\beta_m+\epsilon)$, $\epsilon=10^{-10}$ | Qin, Chen, Lin & Deng 2023, Eqs. (11)–(14) |
 | MR-AWENO interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-6}$ | Li, Li, Don & Wang 2023, Eqs. (23)–(24), recalling Wang, Zhu, Yang & Zhao |
 | MR-AWENO-Si | squared fifth undivided difference $\tau^*$ on six points | $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, descaler $\mathsf m$ | Li, Li, Don & Wang 2023, Eqs. (42)–(44) |
 | WENO-G ([RBF-based WENO](/methods/rbf-weno.md)) | $\lvert\nabla^4f\rvert^2$, an exponential-moment fourth difference | $(\tau/(\beta_k+\epsilon))^q$, $q=1$ (2 on blast waves), RBF ideal weights | Jeong, Yang & Yoon 2022, Eqs. (37)–(39) |
@@ -159,6 +164,24 @@ Mach reflection; Jeong et al. (2022, Table 1) measure the same $L^\infty$ error 
 advection at $N_x=640$ ($1.96\times10^{-8}$). Liang et al. (2022, §2.2) note that WENO-Z "typically" uses $q=1$ and $C=1$ in the template
 above.
 
+**In LES of wall turbulence and in GPU codes.** De Vanna et al. (2023a) compare WENO-Z3, Z5 and Z7 with
+TENO5, TENO-A5 and a sixth-order energy-preserving central scheme in wall-resolved and wall-modelled LES of
+supersonic boundary layers ([supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md),
+[wall-modelled LES](/methods/wall-modeled-les.md)). In wall-resolved LES the friction is underestimated and the
+log-layer and turbulent-kinetic-energy peak overshoot, less with higher order (§4.2, Figs. 1–2). Used everywhere
+in wall-modelled LES, WENO-Z3 mispredicts the wall flow regardless of grid resolution (§6), the higher orders damp the turbulence, and no
+WENO-Z order collapses on the central solution (§4.3.1, Figs. 4–5); a hybrid switched by the modified [Ducros sensor](/definitions/ducros-shock-sensor.md) restores it, and at its
+threshold $\Psi^*=0.4$ all WENO and TENO variants give identical profiles ([hybrid schemes](/methods/hybrid-weno.md)).
+In the solver URANOS the same three WENO-Z orders reach their design order on an advected density wave and
+WENO-Z7 is sharper than WENO-Z5 on 1-D and 2-D Riemann problems (De Vanna et al. 2023b, App. A, Figs. 11–13;
+[URANOS](/software/uranos.md)). Chandravamsi et al. (2023) use WENO-Z as the comparator of the
+[gradient-based schemes](/methods/gradient-based-reconstruction.md): on a uniform-grid double Mach reflection it
+resolves the shear layer less well (Fig. 9f); in an implicit LES of a Mach 1.35 jet on 13 M cells it predicts a
+screech Strouhal number of 0.432 against 0.306 measured and an axisymmetric instead of a flapping mode, which
+the authors attribute to its "relatively poor spectral properties" without a controlled test (§8.3.2–8.3.3,
+Table 3); on GPUs it is the fastest scheme on the inviscid double Mach reflection, because it needs no
+gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7, maximum speedup 209.8×).
+
 ## Qualifications
 
 - Ye et al. (2022, §1) attribute the redesign of the smoothness indicator for WENO-M to Borges et
@@ -166,7 +189,7 @@ above.
 - Huang et al. (2026, Eq. (3.6)) and Deng (2023, Eq. (4.24)) print the index $k$ inside $\alpha_j$;
   the index is $j$.
 - Hiejima (2022, §1) recalls WENO-Z only in passing, as "more accurate than the nonlinear weights
-  of JS as a high-order global smoothness indicator"; the WCNS-JS weighting he uses is the Jiang–Shu
+  of JS as a high-order global smoothness indicator"; the WCNS-JS weighting Hiejima uses is the Jiang–Shu
   one ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
 - Jeong, Yang & Yoon (2022, Eq. (10)) recall WENO-Z with $\tau_5=|\beta_2-\beta_0|^2$, squared, and $q=1$
   recommended; Luo & Wu (2021) and Wang & Don (2022) write $|\beta_0-\beta_2|$. The recall is not used in their own
@@ -204,3 +227,8 @@ above.
 - [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.1.1, Eqs. (23)–(24); §2.3, Eqs. (42)–(44), Theorems 3–4.
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.2, Eq. (10); §4.3, Eqs. (37)–(39); §5, Table 1.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.3, Eq. (2.28); §3, Eqs. (3.1)–(3.4).
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §4.2–4.3, Figs. 1–5, 7.
+- [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.1; App. A, Figs. 11–13.
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §8.1.3, Fig. 9f; §8.3.2–8.3.3, Table 3; §9.1, Tables 5–7.
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §2.3, Eq. (14).
+- [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §2.1, Eqs. (11)–(14).

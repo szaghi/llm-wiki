@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem with a pressure ratio of 10^
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Leblanc shock tube
@@ -25,9 +25,11 @@ by the name.
 |---|---|---|---|---|
 | [Fu (2021)](/sources/fu-2021.md) §5.7.1 | $(\rho,v,p)=(1,\ 0,\ \tfrac23\times10^{-1})$ | $(10^{-3},\ 0,\ \tfrac23\times10^{-10})$ | 800 points; reference WENO5-JS, 4000 | 6 |
 | [Deng (2023)](/sources/deng-2023.md) App. A.8 | $(\rho,v,e)=(1,\ 0,\ 0.1)$ | $(0.001,\ 0,\ 10^{-7})$ | 200 cells | 6 |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.10 | $(\rho,v,p)=(1,\ 0,\ \tfrac23\times10^{-1})$ on $0<x<3$ | $(10^{-3},\ 0,\ \tfrac23\times10^{-10})$ on $3<x<9$ | 900 points; exact Riemann solver | 6 |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.3 | same | same | 900 points; exact | 6 |
 
 Deng prints the specific internal energy $e$. With
-$p=(\gamma-1)\rho e$ and $\gamma=5/3$, his states are
+$p=(\gamma-1)\rho e$ and $\gamma=5/3$, Deng's states are
 $p=\tfrac23\times0.1$ and $p=\tfrac23\times0.001\times10^{-7}=\tfrac23\times10^{-10}$,
 Fu's states exactly *(compiler check, not in the sources)*. The
 pressure ratio is $10^9$ and the density ratio $10^3$.
@@ -52,10 +54,10 @@ $O(10^9)$.
 
 ## Findings across sources
 
-**Robustness needs a positivity safeguard.** Fu runs his very-high-order
+**Robustness needs a positivity safeguard.** Fu runs the very-high-order
 [TENO-AA](/methods/adaptive-teno.md) on this problem with LLF splitting
 and the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md),
-like all his extreme cases, and reports it stable (§5.7). Fan, Zhang &
+like all the paper's extreme cases, and reports it stable (§5.7). Fan, Zhang &
 Qiu's (2021) positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) triggers
 its scaling limiter in only 0.25 % of the cells and flags 0.97 %
 ($\mathrm{Re}=1000$) and 1.35 % ($\mathrm{Re}=\infty$) as troubled; they
@@ -85,6 +87,20 @@ simulate the problem directly, which is shown only for HWENO-L.
 [ROUND](/methods/round-scheme.md) "much less dissipative and less
 oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
 
+**Discontinuity position at $x=8$.** The two Chamarthi papers use the
+problem to compare gradient-based reconstructions with other
+low-dissipation schemes. In Chamarthi (2023a) TENO5 oscillates in density
+with larger amplitude, which Chamarthi matches with Fig. 19 of Li, Fu & Adams,
+where an MP filter is applied to TENO8-A; MIG4
+([gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
+with an [MP limiter](/methods/monotonicity-preserving-limiter.md))
+captures the velocity discontinuity at $x=8$ within one cell (Fig. 14).
+In Chamarthi (2023b) the seventh-order mapped WCNS7M is slightly more
+dissipative and MEG7 places the discontinuity at $x=8$ closer to the
+exact solution (Fig. 4). In the same example of Chamarthi (2023b), MEG7
+with conservative variables needs the Zhang–Shu positivity step on the
+1D Sedov problem (Fig. 5).
+
 **Cost of hybridization.** Fan, Zhang & Qiu (2021) record their largest
 CPU saving
 here: the hybrid scheme saves 88.59 % ($\mathrm{Re}=\infty$) and
@@ -105,6 +121,8 @@ almost no cells are troubled (Table 4.2).
   sources)*; the printed time is either a slip or a run in which the
   rarefaction leaves through the boundary.
 - Deng states neither the CFL number nor the Runge–Kutta variant.
+- Chamarthi (2023a) and (2023b) are read as arXiv preprints; both run at
+  CFL 0.2.
 
 # Citations
 
@@ -114,3 +132,5 @@ almost no cells are troubled (Table 4.2).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5c, Fig. 5.11.
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Example 5.4, Fig. 5.3.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1, Ex. 3.7.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.10, Fig. 14 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.3, Fig. 4 (arXiv v1).

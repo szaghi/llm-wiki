@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mapped WENO"
-description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu nonlinear weights through a mapping function, restoring the fifth-order condition at first-order critical points at a higher cost than WENO-JS; the bundle's sources recall it, without printing the mapping, as the first remedy for critical-point order loss."
+description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu nonlinear weights through a mapping function that fixes the linear weights, restoring the fifth-order condition at first-order critical points at a higher cost than WENO-JS; one source prints the mapping, inside a seventh-order WCNS."
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Mapped WENO
@@ -13,8 +13,22 @@ timestamp: 2026-10-23T08:00:00Z
 Mapped WENO (WENO-M) of Henrick, Aslam & Powers corrects the [WENO-JS](/methods/weno-js-reconstruction.md)
 weights $\omega_k$ through a mapping function $g(\omega)$ (Luo & Wu 2021, §1: "a mapping function to
 correct the WENO-JS weights"; Deng 2023, §1: "modifies the non-linear weights through a mapping
-function"; Takagi et al. 2022, §1: "remapping the WENO5-JS nonlinear weights"). None of the ingested
-sources prints the mapping function itself, so its form is not recorded here.
+function"; Takagi et al. 2022, §1: "remapping the WENO5-JS nonlinear weights").
+
+## The mapping
+
+Chamarthi (2023b, §3, Eqs. (47)–(48)) is the only ingested source that prints the mapping, applied to the
+weights of the seventh-order WCNS7M comparator ([WCNS](/methods/weighted-compact-nonlinear-scheme.md);
+citing Henrick et al. and Jin et al.). In registry notation, with $d_k$ the linear weights,
+
+$$g_k(\omega)=\frac{\omega\big(d_k+d_k^2-3d_k\omega+\omega^2\big)}{d_k^2+(1-2d_k)\omega},$$
+
+and the mapped weights are used in place of $\omega_k$; the author states that the mapping "efficiently
+recovers the formal order of accuracy of the scheme". Chamarthi prints the denominator with a minus,
+$d_k^2-(1-2d_k)\omega$. *(Compiler check, not in the sources: with the plus sign
+$g_k(0)=0$, $g_k(d_k)=d_k$ and $g_k(1)=1$; with the printed minus $g_k(d_k)=d_k(1-d_k)/(3d_k-1)$, e.g.
+$-\tfrac{63}{3904}$ for $d_k=\tfrac1{64}$, so the printed map would not fix the linear weights on which the
+recovery of order rests.)*
 
 ## What the sources record
 
@@ -48,7 +62,8 @@ sources prints the mapping function itself, so its form is not recorded here.
   $1.62\times10^{-7}$ for WENO-JS (Table 1), and WENO-M costs 42.28 s against 40.30 s for WENO-JS and
   40.51 s for WENO-Z in MATLAB (Table 3) ([RBF-based WENO](/methods/rbf-weno.md)).
 - **Recalled in passing** by Hong, Ye & Ye (2022, §1), Li, Chen & Ren (2022, §1) and Liang et al.
-  (2022, §1) as the first remedy for the critical-point defect.
+  (2022, §1) as the first remedy for the critical-point defect, and by Zhou et al. (2023, §1) for its lower
+  dissipation at critical points.
 
 - **In codes.** Bryngelson et al. (2021, §4.1) cite Henrick, Aslam & Powers among the WENO
   references of the MFC solver, but do not state whether MFC uses mapped weights
@@ -64,8 +79,9 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 
 ## Qualifications
 
-- The page records only what the ingested sources state about WENO-M; the mapping function, its
-  parameters and the proofs belong to Henrick et al., which is not ingested.
+- The page records only what the ingested sources state about WENO-M; the proofs and the analysis of the
+  mapping belong to Henrick et al., which is not ingested. The mapping is printed once, in a comparator
+  scheme and with a sign slip; it is recorded above with the sign that fixes $d_k$.
 
 # Citations
 
@@ -84,3 +100,5 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Eqs. (43)–(48): the printed mapping in WCNS7M.
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1.

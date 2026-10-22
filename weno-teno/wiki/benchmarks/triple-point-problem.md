@@ -5,7 +5,7 @@ description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in whi
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Triple-point problem
@@ -17,7 +17,7 @@ separated by a horizontal interface at $y=1.5$: one dense, one light.
 The shock moves at different speeds in the two regions, so the interface
 is sheared and rolls up into a vortex at the point where the three
 regions meet, with [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md)
-roll-up along it. Both sources compare the amount of roll-up resolved
+roll-up along it. The sources compare the amount of roll-up resolved
 on a given grid, and the two-material version also tests a
 multicomponent discretization.
 
@@ -38,6 +38,17 @@ run a **single-material** version; Li, Duan & Tang run the
 right region filled by a second ideal gas. They write the state as the
 two partial densities, each region holding a partial density $10^{-5}$
 of the other component to avoid exact zeros, and $c_v=1$.
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.17 (arXiv v2) runs
+the two-material version after Pan et al. with the
+[five-equation model](/definitions/five-equation-model.md): states
+$(\rho,v_1,v_2,p,\gamma)=(1,0,0,1,1.5)$ on $[0,1]\times[0,3]$,
+$(1,0,0,0.1,1.4)$ in the lower right and $(0.125,0,0,0.1,1.5)$ on
+$[1,7]\times[1.5,3]$, the ratios of specific heats of Li, Duan & Tang;
+domain $[0,7]\times[0,3]$, reflective boundaries, $1792\times768$
+points, $t=5$. Chamarthi prints the lower-right region as
+"$[1,1]\times[0,1.5]$", which is degenerate; the domain and the other
+two regions fix it as $[1,7]\times[0,1.5]$ *(compiler check, not in the
+sources)*.
 
 ## Findings
 
@@ -62,10 +73,20 @@ and $201/1087$ is 18.5 % *(compiler check, not in the sources)*. See
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 and [entropy stability](/properties/entropy-stability.md).
 
+**Gradient-based reconstruction for two materials.** Chamarthi uses
+HLLC with interface velocities consistent with it in the
+volume-fraction equation, and finds no oscillations at the material
+interface and the thinnest interface with MIG4
+([gradient-based reconstruction](/methods/gradient-based-reconstruction.md)
+with an [MP limiter](/methods/monotonicity-preserving-limiter.md)); its
+vorticity on $1792\times768$ is comparable to, and in places "much more
+enhanced than", that of Pan et al. on $3584\times1536$ (Fig. 23). Chamarthi labels the waves C1–C3, S1,
+S2, TS1, TS2 and RS1.
+
 ## Qualifications
 
-- Both sources judge by density or schlieren-type contours; no error
-  measure is given.
+- All three sources judge by density, vorticity or schlieren-type
+  contours; no error measure is given.
 - Liang et al. do not state $\gamma$; Li, Duan & Tang are read as arXiv
   v1, not the version of record.
 - The single- and two-material versions are different problems: the
@@ -76,3 +97,4 @@ and [entropy stability](/properties/entropy-stability.md).
 
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.8, Fig. 20.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7, Table 5.2 (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.17, Eq. (84), Fig. 23 (arXiv v2).

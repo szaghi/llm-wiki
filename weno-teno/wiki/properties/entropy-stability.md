@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Entropy stability
@@ -29,9 +29,9 @@ $[\![w]\!]\cdot h-[\![\psi]\!]\le0$ (ED)
 directional two-point flux $h(u^-,u^+,n)$: symmetry and consistency of the
 entropy-conservative flux, the inequality $[\![w]\!]\cdot h\le[\![\psi\cdot n]\!]$
 for the entropy-stable one, conservation $h(u^-,u^+,n)=-h(u^+,u^-,-n)$, and
-Lipschitz continuity (§3.1, Eqs. (19)–(23)). He does not prove the flux
-inequality directly for his relaxation flux. It follows from an entropy
-inequality of the whole three-point scheme by a lemma of Bouchut, as he
+Lipschitz continuity (§3.1, Eqs. (19)–(23)). Renac does not prove the flux
+inequality directly for the proposed relaxation flux. It follows from an entropy
+inequality of the whole three-point scheme by a lemma of Bouchut, as the author
 recalls it (§3.2, §4.3.2).
 
 **Non-conservative systems.** For GLM-MHD with the Powell and GLM
@@ -62,6 +62,30 @@ sign switch satisfies the semi-discrete entropy inequality (Thm. 4.1;
 the same properties for the stiffened gas with reference to Duan & Tang
 (Prop. 3.1).
 
+**Balance laws with entropy-neutral sources.** For the two-fluid
+relativistic plasma equations,
+[Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) prove
+that smooth solutions satisfy $\partial_ts+v_1\partial_xs=0$ for each species
+despite the Lorentz-force sources, so every species entropy
+$\eta=-\rho Ws/(\gamma-1)$ satisfies an entropy equality (Prop. 3.1, App. A).
+Discretely the source does not enter the entropy balance because it is
+orthogonal to the entropy variables, $w\cdot S(u)=0$, which rests on
+$v\cdot S_{\rho v}=S_E$ for the momentum and energy rows of the source
+(proof of Thm. 4.2). The flux has three independent blocks (ions,
+electrons, Maxwell), so entropy stability reduces to that of the two fluid
+blocks: with an EC flux plus a dissipation on ENO-reconstructed scaled
+entropy variables the semi-discrete scheme satisfies the entropy
+inequality for **any** discretization of the Maxwell block (Thm. 4.3,
+Remark 4.3; [entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md),
+[TeCNO schemes](/methods/tecno-scheme.md)). The time integrators, explicit
+SSP Runge–Kutta and ARK-IMEX with the stiff source implicit, are not
+claimed to keep the property; at equal order the explicit and IMEX runs
+show almost the same entropy decay on the two-fluid Brio–Wu problem, and
+third and fourth order dissipate less entropy than second (§6.1.2, Fig. 1).
+The authors recall that entropy solutions of multi-dimensional systems can
+be non-unique and still call entropy stability "one of the few nonlinear
+stability estimates" (§1).
+
 **Semi-discrete and fully discrete.** All the conditions above are
 semi-discrete. [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
 separate semi-discretely entropy-conservative or dissipative schemes from
@@ -84,7 +108,7 @@ the resulting scheme "satisfies a discrete entropy inequality" (§5.1).
 
 Two sources apply the construction to new systems:
 
-- **Multicomponent Euler.** Renac (2021) combines his EC flux in the
+- **Multicomponent Euler.** Renac (2021) combines the author's EC flux in the
   volume with an entropy-stable relaxation flux at the interfaces on
   straight-sided unstructured quadrilaterals. The scheme satisfies a cell
   entropy inequality, as an instance of the Fisher–Carpenter framework
@@ -194,12 +218,12 @@ conserved variables, which is what gives the production a provable sign.
   property ([TeCNO schemes](/methods/tecno-scheme.md);
   [Li, Duan & Tang (2022)](/sources/li-2022-c.md), Eq. (3.21)).
 - **Robustness of "EC plus dissipation".** Renac (2021) proves that a
-  Roe-type flux, his EC flux minus a scalar dissipation on the entropy
-  variables, is ES (App. D.1, Eq. (D.1)). He argues that such fluxes are
+  Roe-type flux, the author's EC flux minus a scalar dissipation on the entropy
+  variables, is ES (App. D.1, Eq. (D.1)). Renac argues that such fluxes are
   not Lipschitz continuous, which blocks the positivity proofs, and they
-  are expensive because of the logarithmic means (§1.2). In his tests the
+  are expensive because of the logarithmic means (§1.2). In Renac's tests the
   Roe-type flux needs CFL 0.2 instead of 0.4 and the 2D runs stop on
-  negative states (App. D, Figs. D.9–D.10). His alternative is a
+  negative states (App. D, Figs. D.9–D.10). Renac's alternative is a
   relaxation solver, Bouchut's pressure relaxation composed with a
   Coquel–Perthame energy relaxation. It is ES and positive under
   $\frac{\Delta t}{\Delta x}\max(\lvert v\cdot n\rvert+a_{\mathrm L}/\rho)<\tfrac12$, with page-local Lagrangian
@@ -216,9 +240,9 @@ Shock-capturing steps outside the flux also move the entropy:
   filtering the total energy tends to decrease the global entropy, an
   unphysical effect, filtering the momentum tends to increase it, and
   filtering the mass is indefinite (App. B, Eqs. (B.2)–(B.5); periodic
-  domain, unit norm). His "entropy-stability-promoting" filter acts on the
+  domain, unit norm). Edoh's "entropy-stability-promoting" filter acts on the
   momentum only; on the isentropic vortex it gives strict kinetic-energy
-  decay and entropy increase for all his kinetic-energy-preserving
+  decay and entropy increase for all the author's kinetic-energy-preserving
   splittings, while the Kennedy–Gruber split with all variables filtered
   keeps kinetic energy but decreases entropy (Figs. 1, B.5).
 - **Entropy-bounded filtering.** [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md)
@@ -374,6 +398,11 @@ of influence (§3.2,
 Eqs. (20)–(21)). For Euler they take $\sigma=\rho\ln(p\rho^{-\gamma})$,
 with a tolerance $10^{-4}$ on the bound (§4.1, §4.3,
 [entropy filtering](/methods/entropy-filtering.md)).
+For ideal MHD, [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) bound
+instead the specific quantity $p\rho^{-\gamma}$, implemented as
+$p\rho^{-\gamma}-(p\rho^{-\gamma})^K_{\min}-10^{-8}>0$, and cite Dao & Nazarov for a minimum entropy principle of MHD
+entropy solutions in the vanishing-viscosity sense, identical to the
+gas-dynamics one (§2.1 Eq. (5), §3.1 Eq. (22), §4).
 
 Wu & Shu represent it, by
 [geometric quasilinearization](/methods/geometric-quasilinearization.md), as
@@ -424,10 +453,26 @@ a discrete, local relative of the same principle.
   (§3.2), and do not test the choice. Their set
   $\{\rho s\ge\sigma_{\min}\}$ is convex, as the superlevel set of a
   concave function, but the sources give no argument that a local minimum
-  of $\rho s$ is non-decreasing for entropy solutions.
+  of $\rho s$ is non-decreasing for entropy solutions. Their MHD paper,
+  Dzanic & Witherden (2023), bounds the specific $p\rho^{-\gamma}=e^s$ and
+  describes the method as that of the 2022 paper without commenting on the
+  change (§3.1, §4). The 2022 entropy tolerance $10^{-4}$ lets $\rho s$ fall
+  below its local minimum, whereas the 2023 constant $10^{-8}$, the same
+  number as the 2022 positivity floors $\rho_{\min}=p_{\min}$, is printed
+  as an offset that $p\rho^{-\gamma}$ must exceed; both are absolute and
+  depend on the scale of the data *(compiler check, not in the sources;
+  details on [entropy filtering](/methods/entropy-filtering.md))*.
+- **Energy-equation splittings do not conserve entropy.**
+  [De Michele & Coppola (2023)](/sources/demichele-2023.md) show for
+  central split forms that none of their total-energy, internal-energy,
+  pressure, total-enthalpy or sound-speed discretizations conserves
+  entropy exactly: the induced entropy terms are not flux differences in
+  general (Eqs. (73)–(74)); a direct entropy discretization conserves
+  $\rho s$ but loses total energy (§4.2.5, Table 2;
+  [split convective forms](/methods/split-convective-forms.md)).
 - **Printed slip.** Renac's cell entropy inequality (64) prints the
   surface sum without the quadrature weight, while the analogous sum in
-  the proof of his Theorem 6.1 carries it. The weight is missing in (64).
+  the proof of Renac's Theorem 6.1 carries it. The weight is missing in (64).
 
 # Citations
 
@@ -445,3 +490,6 @@ a discrete, local relative of the same principle.
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §2 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.1 Eqs. (2)–(4), §3.2 Eqs. (20)–(21), §4.1, §4.3 (arXiv v3).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §2.2 Eqs. (19)–(21), §4.1–4.2, App. A Fig. 12 (arXiv v1).
+- [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §1, Prop. 3.1, App. A, Thms. 4.2–4.3, Remark 4.3, §6.1.2 Fig. 1 (arXiv v2).
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.1 Eq. (5), §3.1 Eq. (22), §4 (arXiv v2).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §4.2.5 Eqs. (72)–(77), Table 2 (arXiv v1).

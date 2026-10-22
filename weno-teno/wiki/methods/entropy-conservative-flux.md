@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Entropy-conservative and kinetic-energy-preserving two-point fluxes"
-description: "Two-point fluxes that satisfy Tadmor's jump condition conserve entropy, and entropy-dissipative fluxes satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form, gives the Ranocha, Shima, multicomponent, stiffened-gas, GLM-MHD and KPP fluxes, the dissipation that makes them entropy stable, the relativistic-MHD case, the Burgers flux and the logarithmic mean."
+description: "Two-point fluxes that satisfy Tadmor's jump condition conserve entropy, and entropy-dissipative fluxes satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form, gives the Ranocha, Shima, multicomponent, stiffened-gas, GLM-MHD and KPP fluxes, the dissipation that makes them entropy stable, the relativistic-MHD and three-velocity relativistic-hydrodynamics cases, the Burgers flux and the logarithmic mean."
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -133,12 +133,12 @@ correction terms (§4.2.2, App. A.3;
 **Square-root-density kinetic-energy fluxes.** Written as two-point
 fluxes, the split forms of finite differences imply kinetic-energy fluxes
 in the product mean $(\!(a;b)\!)$ of this page
-([Edoh (2022)](/sources/edoh-2022.md), Eqs. (3)–(6); his $\tilde F(a,b)$).
-Edoh states that every kinetic-energy-preserving split form he knows
+([Edoh (2022)](/sources/edoh-2022.md), Eqs. (3)–(6); Edoh's $\tilde F(a,b)$).
+Edoh states that every kinetic-energy-preserving split form the author knows
 implies a kinetic-energy flux built on $(\!(v_m;v_m)\!)=v_m^-v_m^+$, a
-geometric-type average of the velocities on the two sides, while his
+geometric-type average of the velocities on the two sides, while Edoh's
 Div-rot splitting squares one variable: its kinetic-energy flux is
-$\tfrac12(\!(\sqrt\rho\,v_j;\sqrt\rho\,\lvert v\rvert^2)\!)$ in direction $j$; he argues this promotes
+$\tfrac12(\!(\sqrt\rho\,v_j;\sqrt\rho\,\lvert v\rvert^2)\!)$ in direction $j$; Edoh argues this promotes
 realizability when the interface velocities change sign, and that it lets
 the total-energy flux be exactly the internal-energy flux plus the
 kinetic-energy flux (Remark 4, Table 4). The realizability argument is
@@ -271,6 +271,61 @@ $2n_{\mathrm o}$ for $n_{\mathrm o}$ two-point terms, page-local;
 [flux differencing](/methods/flux-differencing.md),
 [TeCNO schemes](/methods/tecno-scheme.md)).
 
+## Relativistic hydrodynamics with three velocity components
+
+[Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) build
+entropy-stable finite differences for the two-fluid relativistic plasma
+equations, two special-relativistic fluids (ions and electrons) coupled to
+Maxwell's equations through Lorentz-force sources
+([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)).
+Each fluid block gets the EC flux of the authors' earlier one-dimensional
+construction, extended to three velocity components (§4.1.1, Eqs. (18)–(19)).
+Page-local symbols, per species: $W$ the Lorentz factor (registry §5),
+$\mathsf u_d=Wv_d$ the spatial four-velocity, so $W^2=1+\sum_d\mathsf u_d^2$,
+and $b=\rho/p$. The entropy pair is $\eta=-\rho Ws/(\gamma-1)$,
+$F^{(d)}_\eta=\eta v_d$, with entropy variables
+$w=\big(\tfrac{\gamma-s}{\gamma-1}+b,\ \mathsf u_1b,\ \mathsf u_2b,\ \mathsf u_3b,\ -Wb\big)$
+and potentials $\psi^{(d)}=\rho\mathsf u_d$ (Eqs. (13)–(14), from the earlier
+work). Using the logarithmic mean, the product rule
+$[\![ab]\!]=\{\!\{a\}\!\}[\![b]\!]+\{\!\{b\}\!\}[\![a]\!]$ and
+$[\![W]\!]=\sum_d\{\!\{\mathsf u_d\}\!\}[\![\mathsf u_d]\!]/\{\!\{W\}\!\}$, they
+write $[\![w]\!]$ in the jumps of $(\rho,b,\mathsf u_1,\mathsf u_2,\mathsf u_3)$
+and match coefficients in Tadmor's condition, following Chandrashekar. The
+flux in the first direction, components (mass, three momenta, energy), is
+
+$$\begin{aligned}
+f_D&=\{\!\{\rho\}\!\}_{\log}\{\!\{\mathsf u_1\}\!\},\qquad
+f_E=\frac{-\{\!\{W\}\!\}\Big(k\,\{\!\{\rho\}\!\}_{\log}\{\!\{\mathsf u_1\}\!\}+\{\!\{\mathsf u_1\}\!\}\dfrac{\{\!\{\rho\}\!\}}{\{\!\{b\}\!\}}\Big)}{\sum_d\{\!\{\mathsf u_d\}\!\}^2-\{\!\{W\}\!\}^2},\\
+f_{M_1}&=\frac{\{\!\{\mathsf u_1\}\!\}}{\{\!\{W\}\!\}}f_E+\frac{\{\!\{\rho\}\!\}}{\{\!\{b\}\!\}},\qquad
+f_{M_d}=\frac{\{\!\{\mathsf u_d\}\!\}}{\{\!\{W\}\!\}}f_E\ \ (d=2,3),\qquad
+k=\frac{1}{(\gamma-1)\{\!\{b\}\!\}_{\log}}+1 .
+\end{aligned}$$
+
+*(Compiler check, not in the sources: the momentum and energy components
+follow from the printed coefficient matching on p. 9 of the arXiv v2; the
+first momentum component is printed as $\frac1{\{\!\{b\}\!\}}\big(\frac{\{\!\{b\}\!\}\{\!\{\mathsf u_1\}\!\}}{\{\!\{W\}\!\}}f_E+\{\!\{\rho\}\!\}\big)$,
+which is the form above. The term $\{\!\{\rho\}\!\}/\{\!\{b\}\!\}$ in $f_{M_1}$
+stands where the Chandrashekar flux has its pressure mean.)* The scheme with
+this flux is second-order and entropy conservative (Thm. 4.2). Fourth order
+uses the LeFloch–Mercier–Rohde combination
+$\tfrac43f^{\mathrm{ec}}(u_i,u_{i+1})-\tfrac16\big[f^{\mathrm{ec}}(u_{i-1},u_{i+1})+f^{\mathrm{ec}}(u_i,u_{i+2})\big]$;
+only even orders exist, so an odd target order $q$ takes the order-$(q+1)$
+flux (Remarks 4.1–4.2).
+
+The entropy-stable flux subtracts
+$\tfrac12\tilde R\Lambda\tilde R^\top[\![\tilde w]\!]$, with $\tilde R$ the
+right eigenvectors scaled after Barth so that
+$\partial u/\partial w=\tilde R\tilde R^\top$, given in closed form for the
+3D relativistic block (App. B.2), $\Lambda$ the largest wave speed times the
+identity (a Rusanov-type choice), and $[\![\tilde w]\!]$ the jump of the
+entropy variables recovered from an ENO reconstruction of the scaled
+variables $\tilde R^\top w$ (Eq. (22),
+[TeCNO schemes](/methods/tecno-scheme.md)). The paper calls the operator
+"similar to the Roe diffusion operator" (§4.1.2). The Maxwell block, which
+is linear, uses a plain Rusanov flux with minmod or WENO reconstruction
+(§4.2); its discretization does not enter the fluid entropy estimate
+([entropy stability](/properties/entropy-stability.md)).
+
 ## GLM-MHD with non-conservative terms
 
 [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) use the EC flux
@@ -295,11 +350,11 @@ is subtracted.
   negative quadratic form in $[\![w]\!]$ (Eqs. (57)–(60)). Plain
   $\tfrac12a[\![u]\!]$ is not entropy stable for MHD, as they recall from
   Derigs et al. (Eq. (52)).
-- **Roe-type scalar dissipation.** Renac (2021) uses his EC flux minus a
+- **Roe-type scalar dissipation.** Renac (2021) uses the author's EC flux minus a
   scalar multiple of the largest wave speed times a matrix applied to
   $[\![w]\!]$, with no dissipation on the mass fractions (App. D, Eq. (D.1)),
-  and proves it entropy stable (App. D.1). He finds it less robust than
-  his relaxation flux.
+  and proves it entropy stable (App. D.1). Renac finds it less robust than
+  the relaxation flux of the paper.
 - **Reconstructed dissipation.** Applying the dissipation to reconstructed
   jumps with the sign property gives high-order entropy-stable fluxes
   ([TeCNO schemes](/methods/tecno-scheme.md)). Duan & Tang (2022) use a
@@ -391,6 +446,13 @@ Table 2).
   Renac's mixture of polytropic gases and Li, Duan & Tang's stiffened gas
   both have constant heat capacities *(compiler check, not in the
   sources)*.
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) deliberately
+  leave Tadmor-type EC fluxes out of their split-form study: they need the
+  logarithmic mean, are hard to recast as classical finite-difference
+  split forms, need protection against division by zero and cost more
+  (§1, citing Tamaki et al.). They state that their induced-equation
+  entropy analysis is "basically equivalent" to Tadmor's theory with
+  $\eta=-\rho s$, without proving it (§4.2.5).
 
 # Citations
 
@@ -405,3 +467,5 @@ Table 2).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1.2 Eqs. (46)–(50) (arXiv v1).
 - [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (3)–(6), §3.2 Remark 4, Table 4.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, §3.5 Eqs. (58)–(62), Table 1, §4.1 (arXiv v1).
+- [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §4.1.1 Eqs. (13)–(19), Thm. 4.2, Remarks 4.1–4.2, §4.1.2 Eqs. (20)–(22), §4.2, App. B.2 (arXiv v2).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §1, §4.2.5 (arXiv v1).

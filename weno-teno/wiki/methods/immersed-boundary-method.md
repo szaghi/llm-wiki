@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed-boundary and cut-cell methods"
-description: "Treatments of walls and material interfaces that do not follow the mesh: sharp-interface ghost-cell immersed boundaries filling solid cells from mirror or image points, the bilinearly complete hybrid reconstruction of Wang et al., cut cells with the small-cell problem, cell merging and real–ghost mixing, and the diffuse-interface volume penalization that Kou et al. couple with high-order flux reconstruction."
+description: "Treatments of walls and interfaces that do not follow the mesh: ghost-cell immersed boundaries filled from image points, the bilinearly complete reconstruction of Wang et al., cut cells and the small-cell problem, volume penalization with flux reconstruction, image lines keeping FR at design order, ghost points with a wall model, and signed-distance extrapolation on adaptive meshes."
 status: established
-aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP]
+aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -226,8 +226,130 @@ result with 28 % of the degrees of freedom (Fig. 14;
 with a Gaussian reduces near-wall pressure oscillations but adds
 friction error at the leading edge and is not used (App. B).
 
+## High-order image lines for flux reconstruction
+
+[Funada & Imamura (2023)](/sources/funada-2023.md) build sharp-interface,
+discrete-forcing wall conditions for Huynh's
+[flux reconstruction](/methods/flux-reconstruction.md) on hierarchical
+Cartesian grids, for inviscid flow, and aim at keeping the design order
+$N+1$ up to the wall; they recall that earlier immersed-boundary methods
+are second order or lower, and Kou et al.'s volume penalization first
+order near the wall (§1). Cells are fluid, wall (cut by the body) or body
+cells. At every flux point on a fluid/wall-cell face a wall-side state is
+built and the common flux (SLAU) is computed from it and the fluid-side
+trace (§2.3, Figs. 4–5). The wall conditions are those of an adiabatic slip
+wall with curvature, written as $v_n=0$, $\partial_nH=0$,
+$\partial_n(p\rho^{-\gamma})=0$ and $\partial_nv_t=v_t/R_{\mathrm c}$
+(page-local normal and tangential velocity $v_n$, $v_t$, wall curvature
+radius $R_{\mathrm c}$; Eq. (15)); the paper calls them equivalent to the
+set in $\rho$, $p$, $v_t$ of Eq. (14). Four constructions:
+
+- **LO.** One image point on the wall normal at $3\Delta x$; density,
+  pressure and tangential velocity copied, normal velocity scaled
+  linearly with distance. First order (§2.3.1, Eqs. (16)–(17)).
+- **HO-i/c.** An *image line* of length $d_{\mathrm{IL}}$ along the normal,
+  with $N+1$ image points at the Gauss points of the line. The states at
+  points $2,\dots,N+1$ come from the FR polynomials of their fluid cells;
+  the first point is eliminated by imposing the four conditions on the
+  Lagrange interpolant at the wall end, e.g.
+  $v_{n,1}=-\sum_{i\ge2}\ell_i(-1)v_{n,i}/\ell_1(-1)$ for $v_n=0$ and the
+  analogous derivative conditions for $H$ and $p\rho^{-\gamma}$; the
+  degree-$N$ line polynomials are then evaluated at the flux point (§2.3.2,
+  Eqs. (18)–(19)).
+- **HO-i/f.** The same with $R_{\mathrm c}\to\infty$, i.e.
+  $\partial_nv_t=0$ (Eq. (20)).
+- **HO-e.** As HO-i/c for $v_n$, $H$, $p\rho^{-\gamma}$, but $v_t$ is
+  extrapolated to the flux point from a second set of image points lying
+  wholly in the fluid; no curvature is needed (Eq. (21), Fig. 8).
+
+The second image point must lie in a fluid cell,
+$d_{\mathrm{IL}}(1+\xi_2)/2\ge\sqrt{d}\,\Delta x$ with $\xi_2$ its Gauss
+coordinate and $d$ the space dimension (Eq. (22)); the bounds are
+$1.79$, $2.83$, $4.29\,\Delta x$ for $N=1,2,3$ in 2D and $2.20$, $3.46$,
+$5.25\,\Delta x$ in 3D, and the lengths used are $3,3,5\,\Delta x$ (2D) and
+$3,5,7\,\Delta x$ (3D). In 3D the line polynomials are built in the plane of
+the normal and the tangential velocity direction at the second image
+point (Eq. (23)). Where an image line would enter a cell containing
+another body, the wall is treated as a step-wise face (§2.3.2).
+
+**Evidence** (steady inviscid flows, $L_2$ error of $p\rho^{-\gamma}$ against
+its free-stream value, $N=1,2,3$; §3):
+
+| test | LO | HO-i/f | HO-i/c | HO-e |
+|---|---|---|---|---|
+| bump channel, $M=0.5$: order | below $N+1$ | below $N+1$ | $N+1$ | $N+1$ |
+| bump, $N=2$, $\Delta x_{\min}=0.01$: $C_d$ (ideal 0) | $2.7\times10^{-5}$ | $3.6\times10^{-5}$ | $7.8\times10^{-7}$ | $1.0\times10^{-7}$ |
+| [cylinder](/benchmarks/flow-past-circular-cylinder.md), $M=0.3$, $N=2$: $C_d$ | $5.0\times10^{-2}$ | $1.2\times10^{-2}$ | $9.1\times10^{-5}$ | $4.5\times10^{-4}$ |
+| sphere, $M=0.2$, $N=2$: $C_d$ | $1.5\times10^{-2}$ | $1.4\times10^{-2}$ | $7.0\times10^{-4}$ | $9.0\times10^{-4}$ |
+
+(Figs. 12, 17–19, 23; Tables 1–3.) HO-i/c and HO-e reach order $N+1$ on all
+three, with errors one to three orders of magnitude below LO and HO-i/f on
+the bump; ignoring the wall curvature (HO-i/f) loses the order. The
+authors recommend HO-e for complex geometries because it needs no wall
+curvature (§3.4, §4); on the cylinder and the sphere HO-i/c has the smaller
+drag error (Tables 2–3). On the non-uniform cylinder and sphere grids the
+order is read against $1/\Delta x_{\min}$, because against the square root
+of the number of degrees of freedom the slopes are "much steeper" than the
+design order (§3.3).
+
+## Ghost points with a wall model
+
+[De Vanna et al. (2023c)](/sources/devanna-2023-c.md)
+use a sharp-interface ghost-point method in the finite-difference solver
+[URANOS](/software/uranos.md), after the group's earlier work: bodies are
+closed polygons, grid points are flagged solid or fluid by ray tracing,
+and the ghost set is the solid points within $n_g$ points of a fluid point,
+$n_g$ the stencil half-width (page-local; §2.3, Eq. (9)). Each ghost point
+has a wall-normal probe and an image point in the fluid, with bilinear
+(2D) or trilinear (3D) interpolation there. Dirichlet values are imposed
+as $\mathsf q_g=2\mathsf q_b-\mathsf q_{\mathrm{ip}}$ and Neumann values as
+$\mathsf q_g=\mathsf q_{\mathrm{ip}}$ on the primitive variables ($\mathsf q$ as
+above), e.g.
+$v_g=-v_{\mathrm{ip}}$ for no-slip and $p_g=p_{\mathrm{ip}}$ (Eqs. (15)–(18);
+page-local $b$ boundary point, ip image point). The authors call this
+near-wall treatment second order and note its limitation at high Reynolds
+number: the image point lies far from the wall in viscous units, so
+friction and heat flux are underestimated. Their remedy is a
+[wall model](/methods/wall-modeled-les.md) imposed through the ghost-point
+viscosity, $\mu_g=2\mu_{\mathrm{eff}}-\mu_{\mathrm{ip}}$, switched on point by
+point where the local inner-scaled spacing is too coarse (§3.5,
+Eqs. (21)–(25)). Walls in their channel, pipe, boundary-layer and
+compression-ramp tests are all immersed blocks (§4).
+
+## Signed-distance extrapolation on adaptive meshes
+
+[Zaghi et al. (2023)](/sources/zaghi-2023.md) couple the immersed-boundary
+method of Di Mascio & Zaghi with block-structured
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md) in
+[ADAM](/software/adam.md). The body is the zero level of a signed distance
+$\phi_{\mathrm d}$ (page-local; positive inside the body), with normal
+$n=\nabla\phi_{\mathrm d}/\lvert\nabla\phi_{\mathrm d}\rvert$
+([level-set methods](/methods/level-set-method.md)). The solution is
+extrapolated into the body by marching
+$\partial_\tau\mathsf q+n\cdot\nabla\mathsf q=0$ in a pseudo-time $\tau$
+(page-local) towards steady state; one propagation step at a CFL number
+close to 1 per Runge–Kutta stage suffices, as they recall from the earlier
+paper (§3.1.1, Eq. (10)). The wall conditions are then imposed through the
+fluxes of the cells cut by the zero level. The coupling fixes an order per
+time step: adapt the grid if needed and recompute $\phi_{\mathrm d}$; then, in
+each Runge–Kutta stage, update the ghost cells, run the extrapolation steps
+with their own ghost updates, impose the immersed-boundary conditions and
+compute the residual (§3.1.1). The test is the 3D diffraction of a strong
+shock by a sphere on up to 350 million cells and 256 GPUs
+([shock diffraction](/benchmarks/shock-diffraction.md)); the immersed
+boundary is not assessed separately from the AMR (§3).
+
 ## Qualifications
 
+- Funada & Imamura assert, without derivation, that their two wall
+  condition sets (14) and (15) are equivalent for smooth 2D inviscid flow.
+  $\partial_nH=0$ and $\partial_n(p\rho^{-\gamma})=0$ at the wall hold when
+  $H$ and the entropy are uniform in the field, as in all their tests
+  *(compiler check, not in the sources)*. Their Eq. (28) prints the
+  entropy error with the density ratio inverted, $\frac p{p_\infty}\big(\frac\rho{\rho_\infty}\big)^\gamma-1$,
+  which does not vanish for isentropic changes; the entropy function is
+  $p\rho^{-\gamma}$ (their Eq. (15c)) *(compiler check, not in the
+  sources)*. The value of $\gamma$ is not printed.
 - Wang et al. call their method "second-order accurate", with the
   little-o remainder of a quadratic expansion; the observed global order
   near the wall in their Euler tests is 1.33–1.37, and the local orders
@@ -275,3 +397,6 @@ friction error at the leading edge and is not used (App. B).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
 - [Deng (2023)](/sources/deng-2023.md) — §8, Fig. 38.
 - [Kou et al. (2022)](/sources/kou-2022.md) — §1, §4.1 Eqs. (23)–(35), §4.2–4.4 Eqs. (36)–(43), §4.6 Eqs. (44)–(46), §5.1–5.5 Table 1, Figs. 8–21, Apps. B–D.
+- [Funada & Imamura (2023)](/sources/funada-2023.md) — §1, §2.3 Eqs. (14)–(23), Figs. 4–9, §3.2–3.4 Tables 1–3 Figs. 12–25, §4.
+- [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §2.3 Eqs. (9), (15)–(18), §3.5 Eqs. (21)–(25), §4.
+- [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.1.1 Eq. (10).

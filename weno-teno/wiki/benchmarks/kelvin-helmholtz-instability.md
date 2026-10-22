@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; a smooth guiding-center Vlasov variant serves as a convergence test."
+description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; low-Mach Euler and MHD variants check all-Mach schemes; a smooth guiding-center Vlasov variant serves as a convergence test."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -96,6 +96,19 @@ $256^2$, where the layer thickness $\delta_s$ (printed $\rho$) and the
 amplitude $\delta$ are not given (page-local symbols). Both are smooth
 shear flows; no density contrast is involved.
 
+**Magnetized low-Mach variant.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)
+Ex. 5.9 (arXiv v1) extend the same semi-implicit all-Mach framework to
+ideal MHD with constrained transport and run a magnetized
+Kelvin–Helmholtz instability at $\varepsilon=10^{-6}$ on
+$[0,2]\times[-0.5,0.5]$, $256\times128$ points, $\gamma=1.4$, $T=0.8$:
+$(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(\gamma,\,1-2\eta(y),\,0.1\sin2\pi x,\,0,\,0.1,\,0,\,0,\,1)$,
+vector potential $\mathsf A_3=0.1y$ (page-local, as on the Source page), with the layer profile $\eta=1$ on
+$[-7/32,7/32]$, $\eta=\tfrac12(1+\sin(16\pi(y+1/4)))$ on
+$[-9/32,-7/32]$, $\eta=\tfrac12(1-\sin(16\pi(y-1/4)))$ on $[7/32,9/32]$
+and $0$ otherwise (page-local $\eta$); periodic for the conserved
+variables, first-order extrapolation for $\mathsf A_3$. They print the velocity
+as $1-2\eta(x)$ while $\eta$ is defined as a function of $y$.
+
 **Guiding-center Vlasov variant.**
 [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
 the guiding-center model, a scalar density $\rho$ transported by the
@@ -185,7 +198,13 @@ linear reconstruction "would perform better than WENO reconstructions in
 preserving the divergence and in resolving solution structures"; the
 divergence comparison is shown, the resolution claim is not shown
 separately. See [asymptotic preservation](/properties/asymptotic-preservation.md)
-for the scheme's low-Mach limit.
+for the scheme's low-Mach limit. Chen, Wu & Xiong compare the
+vorticity and the ratio of local to sonic Mach number of the
+magnetized run qualitatively with the hydrodynamic results of Boscarino
+et al. and with Leidi et al., "comparable", and present this as the
+numerical check of the asymptotic-preserving property of their MHD
+scheme (Fig. 5.7); the vorticity is computed with fourth-order central
+differences.
 
 **Convergence and operator splitting on the guiding-center variant.**
 Zheng et al. compare their non-split
@@ -211,7 +230,7 @@ convergent flow, and the benchmark measures an error.
   $m$ is meant, and refer to "the adaptive scheme" in the Ex. 8 text,
   a leftover: the paper has no adaptive scheme.
 - None of the sources reports an error measure for the compressible
-  Euler variants; the only error measurements are for the
+  Euler or MHD variants; the only error measurements are for the
   guiding-center variant, whose model, data and convergence behaviour
   differ entirely from the Euler ones.
 - Zheng et al. state CFL $=10.2$ for Table 5 in the text and CFL $=1$
@@ -261,3 +280,4 @@ convergent flow, and the benchmark measures an error.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Fig. 3 (slip-line roll-up of the double Mach reflection only; arXiv v1).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4, Figs. 7–9 (slip-line roll-up of the double Mach reflection only).
 - [Wang et al. (2022)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.9, Fig. 5.7 (arXiv v1).

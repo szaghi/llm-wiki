@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth of shock-capturing schemes, viscous at Re=1600 or 5000 and Mach up to 1.2 to compare dissipation rates with DNS, in 2D a robustness test of entropy- and kinetic-energy-preserving DG, with a density slab a test of two-phase schemes."
+description: "Periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth, viscous at Re 1600 or 5000 and Mach up to 1.2 to compare dissipation rates with DNS, in 2D a robustness test of structure-preserving DG, with a density slab a two-phase test, and a GPU performance case."
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -49,6 +49,27 @@ less dissipative here; diagnostics are the kinetic energy, the spectrum
 at $t=10$ and $Q=3$ iso-surfaces.
 Li et al. write the pressure as $100+([\cos(2z)+2][\cos(2x)+\cos(2y)]-2)/16$,
 the same expression.
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.5 and
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) §3.2 print the same
+data on $64^3$ to $t=10$ ($\gamma=5/3$ printed in Chamarthi 2023a);
+Chamarthi (2023a) runs only linear schemes, because the high mean
+pressure makes the flow nearly incompressible.
+[De Michele & Coppola (2023)](/sources/demichele-2023.md) §5.2, Eqs.
+(82)–(86) (arXiv v1) run it on $32^3$ nodes with fourth-order explicit
+central differences, RK4 at CFL 0.1, to $t=100$, all fifteen of their
+energy-equation formulations emulated through the total-energy
+equation (equivalent under exact time integration), and an additional
+run at $M\approx0.3$ described in the text only.
+[Zhou et al. (2023)](/sources/zhou-2023.md) §5.9, Eq. (44) write the
+field with $L=V_0=\rho_0=1$ on periodic $[0,2\pi L]^3$ and
+$p_0=\rho_0V_0^2/(\gamma M^2)$, $M=0.1$, and run it inviscid on $64^3$
+and $128^3$ (kinetic energy and enstrophy against Brachet et al.'s
+semi-analytic solution for $t\le4$, spectra to $t=10$), viscous with
+$\mathrm{Pr}=0.71$ at $\mathrm{Re}=100$, 200, 400 ($32^3$, $64^3$) and 1600
+against Brachet et al.'s DNS, and in the supersonic variant of Lusher
+& Sandham ($M=1.25$, $\mathrm{Re}=1600$, density set for a constant
+initial temperature, Eq. 47) on $128^3$ against TENO6 on $512^3$; HLLC,
+TVD-RK3.
 
 **Viscous, $\mathrm{Re}=1600$.** [Ye et al. (2022)](/sources/ye-2022.md)
 §4.9, Eqs. (49)–(52): a cube of side $2\pi L$, reference Mach number
@@ -149,6 +170,14 @@ deferred to an earlier MFC paper (Reynolds number, Mach number and grid
 are not printed), and compare the kinetic-energy dissipation rate over
 $t\in[0,10]$ with Brachet et al.'s spectral solution.
 
+**Performance case.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
+§6 (arXiv v1) time a TGV at Mach 0.1 on $32^3$ to $384^3$ cells in
+[JAX-Fluids](/software/jax-fluids.md), and
+[Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §9 (arXiv
+v1) a viscous TGV (setup deferred to their companion paper) on $256^3$
+and up to 27 M cells; neither reports flow results. Their figures are
+under Findings.
+
 **Reviewed results.** [Fu (2023)](/sources/fu-2023.md) reproduces an
 inviscid TGV at $t=10$ (iso-surface $Q=3$, resolution not printed;
 WENO-CU6, TENO6, TENO8, TENO8-opt, Fig. 4) and an incompressible viscous
@@ -167,6 +196,28 @@ find that [TENO-THINC](/methods/teno-thinc.md) preserves kinetic energy
 better and gives larger enstrophy growth than WENO5-Z and TENO5 on
 $64^3$ (Fig. 21). Fu (2023) shows TENO6 and TENO8 less dissipative than
 WENO-CU6.
+
+Chamarthi (2023a) finds the linear fourth-order
+[gradient-based reconstructions](/methods/gradient-based-reconstruction.md)
+IG4H and EG6 preserving kinetic energy better than the fifth-order
+upwind U5, with IG4H giving the highest enstrophy, which needs only the
+velocity gradients the scheme already has (Fig. 8). Chamarthi (2023b)
+finds the seventh-order gradient-based scheme preserving kinetic
+energy better and giving higher enstrophy than the fourth-order one
+(Fig. 16).
+
+Zhou et al. find their adaptive-dissipation six-point
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA on $64^3$
+preserving kinetic energy better than WCNS-LD and ONL6 on $128^3$, and on
+$128^3$ "nearly identical" to TENO8 of Fu et al. on the same mesh, with
+the closest match to the $-5/3$ spectrum at $t=8$ and 10 (Figs. 21–23).
+In the viscous runs only WCNS-SA matches the DNS dissipation rate at
+$\mathrm{Re}=100$ on $32^3$ and at 200 and 400 on $64^3$, and at 1600 it
+follows the DNS before $t=8$ (Fig. 24); in the supersonic variant all
+three schemes underestimate the total viscous dissipation, WCNS-SA and
+WCNS-LD less than ONL6 (Fig. 25). Per 1000 steps of the supersonic case
+on 32 Xeon Gold 6154 cores they take 4592 s (ONL6), 4630 s (WCNS-LD)
+and 4713 s (WCNS-SA), 3 % more for the adaptive scheme (Table 4).
 
 **TENO beats WENO on the viscous dissipation rate.** Ye et al. find
 the kinetic energy nearly scheme-independent at $256^3$, but the
@@ -218,6 +269,21 @@ with their conditions, make the two-phase run diverge (App. C, D). The
 evidence is stability and conservation, not agreement with a reference;
 the flow has no shocks and $M\le0.4$.
 
+**Choice of energy equation in a non-dissipative scheme.** De Michele
+& Coppola find the linear invariants preserved to round-off (Fig. 6);
+the normalized total-energy error at $t=100$ is about $10^{-10}$ for the
+entropy formulation with KGP splitting, $5\times10^{-8}$ with Feiereisen
+splitting and $3\times10^{-4}$ with C splitting, and the two sound-speed forms
+without KGP splitting diverge at $t\approx45$ and $46$. Temperature and
+density fluctuations grow for every total-energy and total-enthalpy
+formulation and level off for the internal-energy forms, the KGP
+sound-speed form and the Feiereisen and KGP entropy forms (Figs. 7–10).
+At $M\approx0.3$ the results follow the $M\approx0.1$ ones up to
+$t\approx70$, after which almost all runs show a growth of fluctuations
+that they connect, after Honein & Moin, with eventual shocks. See
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)
+and [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+
 **Shock-capturing devices must stay off.** Dzanic & Witherden find
 their [entropy filter](/methods/entropy-filtering.md) predominantly
 inactive: all their runs agree with the DNS and are nearly identical to
@@ -246,9 +312,9 @@ dissipation peak, while the quasi-spectral viscosity stays closest to
 its own $384^3$ reference (§7.1, Figs. 16–19).
 
 **Split forms in under-resolved runs.** Edoh finds the divergence
-form of the convective terms unstable on his coarse grids (stable only
+form of the convective terms unstable on the author's coarse grids (stable only
 on $512^3$, footnote 5), while the kinetic-energy-preserving
-Kennedy–Gruber splitting and his compressible rotational form are
+Kennedy–Gruber splitting and Edoh's compressible rotational form are
 robust even severely under-resolved; at $64^3$ the rotational form shows
 larger density fluctuations and numerical dissipation, attributed to
 aliasing, yet cleaner vortical structures, and the two agree as the grid
@@ -302,6 +368,20 @@ order complements Ye et al.'s finding that, at fixed spatial order, the
 choice of weights and flux (TENO against WENO, HLLC against
 Steger–Warming) separates the dissipation rates.
 
+**GPU throughput.** Bezgin et al. measure about 25 ns per cell and time
+step for HLLC in single precision on one RTX A6000 (24.39–28.36 ns from
+$64^3$ to $384^3$), a Roe-type characteristic flux splitting about ten
+times slower, single precision 2.5–3 times faster than double, and
+$384^3$ the largest grid that fits in memory (Tables 3–4). Chandravamsi
+et al.'s OpenACC port of the MEG6 scheme runs the 27 M-cell case 92.8,
+131.3 and 185.2 times faster on one A6000, V100 and A100 than on one
+Xeon Gold 5115 core (Table 5); reconstruction takes more than half the
+time on CPU and GPU; the A100 speedup rises almost linearly to about
+2–2.5 M cells and then plateaus; single precision gains only 1.3–1.4
+times, which they attribute to memory bandwidth; their memory model of
+117 arrays of $(N+8)^3$ doubles puts the A100 (40 GB) limit near 34 M
+cells (§9, Figs. 21–24).
+
 ## Qualifications
 
 - Takagi et al. head §4.10 "incompressible" Taylor–Green vortex, but
@@ -328,6 +408,15 @@ Steger–Warming) separates the dissipation rates.
   sources)*. They define the kinetic-energy dissipation rate as
   $\mathrm dK/\mathrm dt$ but plot it positive for a decaying flow, so a
   minus sign is missing.
+- De Michele & Coppola print the pressure as
+  $100+\frac1{16}\big[(\cos2x+\cos2y)(\cos2x+2)-2\big]$, with $\cos2x$ in
+  the second factor where the other sources have $\cos2z$; the velocity
+  field induces a pressure depending on $z$, so the printed form is a
+  slip unless a different field was run *(compiler check, not in the
+  sources)*.
+- Bezgin et al.'s text gives "around 25 μs per time step" for what their
+  Table 3 shows as about $25\times10^{-9}$ s per cell and step, and lists
+  four grids while the tables include $32^3$.
 - Abgrall, Öffner & Ranocha's Fig. 7 caption is truncated ("with a
   Taylor-Green").
 - Li, Chen & Ren's §4.4.2 refers to "Fig. 3(b)" for the enstrophy
@@ -355,3 +444,9 @@ Steger–Warming) separates the dissipation rates.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2, Figs. 7–8; App. A.3, Fig. 11 (arXiv v4).
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.4.1–4.4.2, Figs. 27–30, Tables 4–5.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §4.1, Eq. (66), Figs. 2–7; App. C–D (arXiv v1).
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.5, Fig. 8 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3.2, Fig. 16 (arXiv v1).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §5.2, Eqs. (82)–(86), Figs. 6–10 (arXiv v1).
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §6, Tables 3–4 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §9, Tables 5–7, Figs. 21–24 (arXiv v1).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.9, Eqs. (44)–(49), Table 4, Figs. 21–25.

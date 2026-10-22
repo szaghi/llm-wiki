@@ -154,7 +154,7 @@ al."; [29] without pages). No printed duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–4 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–5 (2026-10-22/23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bound preservation](/properties/bound-preservation.md)

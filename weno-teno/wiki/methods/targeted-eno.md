@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -131,6 +131,7 @@ Values used:
 | $5\times10^{-4}$ | TENO-based discontinuity indicator | Fu 2023, §3.4 |
 | $<10^{-3}$ | two-phase cavitation onset | Fu 2023, §5.1 |
 | $10^{-5}$ | shock train under back-pressure (results insensitive) | Fu 2023, §5.4 |
+| $10^{-7}$ | TENO5 in pure and Ducros-switched hybrid wall-modelled LES (after Fu et al. 2017) | [De Vanna et al. (2023a)](/sources/devanna-2023.md), §3.1 |
 
 An adaptive, locally varying $C_T$ is the subject of
 [adaptive TENO](/methods/adaptive-teno.md).
@@ -316,8 +317,97 @@ Two further schemes take only the cut-off or the stencils:
   (Bezgin, Schmidt & Adams 2022, §3.2, Eq. (16)); there is no scale-separated measure in between
   ([learned WENO weights](/methods/learned-weno-weights.md)).
 
+## TENO5 as a reference scheme in other groups' studies
+
+Two chunk-5 groups run TENO5 as a comparison scheme. Neither prints its
+parameters beyond $C_T$, and they report opposite tendencies.
+
+**Wall-modelled LES with a central baseline.**
+[De Vanna et al. (2023a)](/sources/devanna-2023.md) compare TENO5 and TENO-A5
+with WENO-Z of orders 3, 5 and 7 and with a sixth-order
+kinetic-energy-preserving central scheme. The tests are spatially developing
+boundary layers at Mach 2 and 5.86, run either pure or switched by a
+[modified Ducros sensor](/definitions/ducros-shock-sensor.md).
+
+- In wall-resolved LES, agreement with DNS improves "as the WENO order
+  increases as well as when going to a TENO reconstruction" (§4.2.1).
+- With pure schemes on the medium wall-modelled grid, the low-dissipation
+  property of TENO is "particularly evident": TENO5 approximates the
+  reference "quite accurately", where WENO-Z5 and WENO-Z7 give a bulge-like
+  log region (§4.3.3, Fig. 7).
+- No WENO or TENO scheme collapses onto the central solution, which remains
+  the best approximation of DNS (§4.3.1).
+- On the fine wall-modelled grid, pure WENO and TENO overestimate the wall
+  friction (§4.3.1, Fig. 5(e)).
+
+De Vanna et al. (2023c, §3.1) describe TENO in one sentence, as a discrete
+cut-off that "removes non-smooth candidate stencils in the flux
+reconstruction". See [adaptive TENO](/methods/adaptive-teno.md) for the
+TENO-A results and the cost table.
+
+**Gradient-based reconstruction against TENO5.**
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) uses TENO5 (Fu, Hu & Adams
+2016; $C_T$ not printed) as the reference for the author's MP-limited
+[gradient-based reconstructions](/methods/gradient-based-reconstruction.md).
+They run in a point-value finite-difference framework that reconstructs
+primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
+
+- **Order.** Fifth order on linear advection. The absolute errors on the
+  finest grid are close to those of the author's fourth-order schemes:
+  $2.21\times10^{-7}$ against $3.37\times10^{-7}$ (MIG4) and
+  $2.35\times10^{-7}$ (MEG6) at $N=802$ (Ex. 4.3, Table 2).
+- **Nonlinear order.** Only second order on the nonlinear isentropic vortex,
+  like the author's own schemes, with equal errors at $N=2002$ (Table 3). Chamarthi
+  attributes this to state reconstruction of primitive variables, after
+  Zhang, Zhang & Shu. The companion paper restores the design order by
+  reconstructing point fluxes in smooth regions
+  ([Chamarthi (2023b)](/sources/chamarthi-2023-b.md), §2.4;
+  [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)).
+  Chamarthi also states that the conservative-variable finite-volume TENO of Fu et
+  al. (2019) is likewise only second order for nonlinear problems and that
+  its authors "did not formally compute the order of accuracy" (§4,
+  Ex. 4.3; §5). The cited work is not ingested.
+- **Oscillations and resolution.**
+  - TENO5 oscillates near the Mach stem of the
+    [double Mach reflection](/benchmarks/double-mach-reflection.md) at
+    $768\times256$ (Ex. 4.4, Fig. 7).
+  - It oscillates on the 2D shock–entropy wave, which "may indicate
+    insufficient dissipation" (Ex. 4.6, Fig. 9).
+  - It oscillates with larger amplitude on the
+    [LeBlanc tube](/benchmarks/leblanc-shock-tube.md) at $N=900$. Chamarthi
+    finds this consistent with a figure of Li, Fu & Adams, who filter the
+    non-smooth TENO8-A stencils by an MP limiter (Ex. 4.10, Fig. 14). That
+    filtering is the "TENO with additional limiters" variant above.
+  - It "severely under-resolves" the Titarev–Toro waves (Ex. 4.12, Fig. 16).
+  - It shows "no roll-up vortices at all" in a single-gas
+    [Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md) case on
+    $320\times80$ (Ex. 4.8, Fig. 11).
+- **Spectral rating.** Chamarthi's Table 5 rates the dissipation error of TENO5 "Low"
+  and its dispersion error "High"
+  ([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+- **Cost.** On the viscous shock tube, TENO5 with explicit-gradient viscous
+  fluxes takes 50880 s and with compact-gradient viscous fluxes 58680 s,
+  against 51146 s for MIG4 (Table 1; hardware not stated).
+- **Multicomponent flows.** Chamarthi states that "the implementation of the TENO
+  scheme for the multi-component flows, specifically for the 5-equation
+  model, is not presented in the open literature" and runs TENO5 on the
+  [five-equation model](/definitions/five-equation-model.md) for the
+  [shock–helium-bubble](/benchmarks/shock-bubble-interaction.md) case
+  (Ex. 4.16). [Fu (2023)](/sources/fu-2023.md) (§5.1) records finite-volume
+  TENO with primitive-variable reconstruction for two-phase cavitation
+  without naming the model, so the bundle neither confirms nor refutes the
+  statement.
+
 ## Qualifications
 
+- The two groups above report opposite tendencies for TENO5: low
+  dissipation in under-resolved wall turbulence (De Vanna et al.), and
+  oscillations from insufficient dissipation at shocks and Mach stems
+  together with under-resolution of small structures (Chamarthi). The
+  page does not record a contradiction. The flows differ, and Chamarthi
+  prints neither $C_T$ nor the variables of the TENO5 reconstruction, so the
+  results are not known to concern the same scheme instance as each other
+  or as Fu's (2023) reports.
 - "$K$-point TENO is $K$th order" (Fu 2023, §2) holds when the $d_k$ are chosen
   for maximum order; the spectrally optimized TENO8-AA and TENO10-AA of
   [Fu (2021)](/sources/fu-2021.md) are of order 6 and 8, and Fu (2023, §3.1)
@@ -385,3 +475,7 @@ distinguish the two conditions.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (6)–(16), Table 1; Table 3: general recipe, formal-order linear weights, cost (arXiv v1).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §2.2, Eqs. (6)–(15); §4.1, Table 4; §4.3: TENO5 recipe, linear recovery, $C_T$ for the blast wave.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.2, Eqs. (55)–(57), Fig. 9; §4.2–4.3.1: TENO-based detector and TENO-HY assessed.
+- [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §§4.2–4.3, Figs. 1, 5, 7: TENO5 with $C_T=10^{-7}$ in wall-resolved and wall-modelled LES.
+- [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §3.1: TENO described as a discrete cut-off.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.1–4.16, Tables 1–3, 5, Figs. 7, 9, 11, 14, 16: TENO5 as reference scheme, nonlinear order, oscillations, cost (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4: order loss of state reconstruction for nonlinear problems (arXiv v1).

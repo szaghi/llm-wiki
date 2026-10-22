@@ -72,7 +72,7 @@ no error norms (Figs. 3–4).
 **Bounds versus $L^1$ error.** In both papers the scheme with the
 smallest $L^1$ error is not the best one. Pazner's unlimited DG has the
 smallest error, $1.0\times10^{-2}$, but leaves $[0,1]$ by $-0.21$ and
-$+0.16$; his subcell limited scheme keeps the range exactly $[0,1]$ at
+$+0.16$; Pazner's subcell limited scheme keeps the range exactly $[0,1]$ at
 almost the same error, $1.1\times10^{-2}$, against $8.5\times10^{-2}$ for the
 low-order scheme on which the limiting is built (Fig. 10). Kuzmin &
 Vedral call WENO-stabilized CG "superior" for all degrees although its
@@ -88,7 +88,7 @@ table.
 
 **Subcell versus element-wise limiting.** On a coarse $25\times25$
 mesh with $N=3$, Pazner's subcell limiting is less diffusive than
-element-wise limiting (Fig. 4), and his modal smoothness indicator,
+element-wise limiting (Fig. 4), and Pazner's modal smoothness indicator,
 which relaxes local bounds to global ones in smooth cells, lowers the
 $L^1$ error by "about 25%", from $2.6\times10^{-2}$ to $1.9\times10^{-2}$, and
 widens the computed range from $[0,0.95]$ to $[0,1]$, i.e. it reduces

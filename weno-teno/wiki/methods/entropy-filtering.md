@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Entropy filtering for DG and FR"
-description: "Entropy filtering applies, after every Runge–Kutta stage, an elementwise exponential modal filter whose single strength is the smallest value making the nodal values positive and above a local minimum of the entropy, under the assumption that the element mean already is; the page gives the filter, the constraints, the algorithm and the Navier–Stokes split."
+description: "Entropy filtering applies, after every Runge–Kutta stage, an elementwise exponential modal filter whose strength is the smallest making the nodal values positive and above a local entropy minimum, assuming the element mean already is; the page gives the filter, constraints, floors and tolerances, algorithm, Navier–Stokes split, ideal-MHD operator split and faster strength solve."
 status: established
 aliases: [adaptive filtering, entropy-based adaptive filtering, positivity-preserving entropy filtering, constraint-driven modal filtering]
-tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, bound-preserving]
-timestamp: 2026-10-22T20:00:00Z
+tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, mhd]
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Entropy filtering for DG and FR
@@ -119,6 +119,84 @@ replaced by slip walls for the hyperbolic step. A parabolic discretization
 that kept the minimum entropy principle on the mean would make the split
 unnecessary (Remark, §4.1).
 
+## Ideal MHD: operator-split filtering
+
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) extend the method to
+ideal MHD on the same nodal DG/FR discretizations. The solenoidal
+constraint is handled by Powell's eight-wave non-conservative source
+$S_B(u)=-(0,\,B,\,v,\,v\cdot B)^\top\nabla\cdot B$, with the *global* discrete
+divergence, interior plus interface-jump terms, rather than the interior
+one, which they call usually sufficient in practice (§2.3, Eqs. (17)–(19);
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+The constraints are positivity of $\rho$ and $p$ and the local minimum
+principle on the specific quantity $p\rho^{-\gamma}$, each required to be
+strictly positive at the solution nodes (§3.1 Eqs. (20)–(22)). In the
+implementation one constant $\epsilon=10^{-8}$ (page-local) is subtracted
+from all three, $\rho-\epsilon$, $p-\epsilon$ and
+$p\rho^{-\gamma}-(p\rho^{-\gamma})^K_{\min}-\epsilon$, "to avoid a vacuum
+state for the Riemann solver and apply a numerical tolerance to the entropy
+condition" (§4). As printed, the third constraint asks $p\rho^{-\gamma}$ to
+exceed its local minimum by $\epsilon$, a margin, whereas the 2022 entropy
+tolerance lets $\rho s$ fall below its minimum by $\epsilon_\sigma$ *(compiler
+check, not in the sources: compare §4 with Alg. 2 of the 2022 paper)*.
+
+**Why a split.** With the source term the mean-value argument no longer
+gives an admissible element mean. Positivity of the mean is known when
+$B$ is locally divergence-free (Wu & Shu), and the source-free update
+$u^*=u^n+\Delta t\,\mathcal L_1(u^n)$, $\mathcal L_1=-\nabla\cdot f$, has an
+admissible mean by the Bouchut–Klingenberg–Waagan solver and the
+Zhang–Shu mean/Godunov equivalence, as they recall (§3.2, Eqs.
+(29)–(31)). They therefore filter in two steps (Eqs. (32)–(33)):
+
+$$\tilde u^*=H_{\mathrm e}\big[u^n+\Delta t\,\mathcal L_1(u^n)\big],\qquad
+\tilde u^{n+1}=H_{\mathrm p}\big[\tilde u^*+\Delta t\,S_B(u^n)\big],$$
+
+with $H_{\mathrm e}$ the filter with positivity and entropy constraints and
+$H_{\mathrm p}$ (page-local) the filter with positivity only; each
+SSP-RK3 stage is wrapped the same way, the entropy bounds taken from the
+previous stage (Eq. (34)). The source is added with the old state, not in
+a Strang-type split, to keep the temporal accuracy (§3.2). This is the
+structure of the Navier–Stokes split above with the viscous increment
+replaced by the Powell source *(compiler check, not in the sources)*.
+The authors state that positivity of the DG element mean for a magnetic
+field that is not exactly divergence-free "remains to be proven", so the
+existence of an admissible filter strength is not guaranteed; in practice
+the second filter is "very rarely" needed (§3.2). Unless the linear kernel
+of the Zhang–Shu limiter is used, the nonlinear filter can raise the
+divergence error slightly, which the source term then corrects; the effect
+was "found to be negligible" (§3.2).
+
+## Faster filter-strength solve
+
+The 2022 algorithm evaluates the filtered solution with a full
+matrix–vector product at every bisection step; Dzanic & Witherden (2023)
+call this "quite computationally expensive" and replace it (§4.1, Eqs.
+(35)–(37)):
+
+1. solve for $\mathsf f=e^{-\zeta_{\mathrm F}}\in[0,1]$ (page-local), so that
+   mode damping is the integer power $\mathsf f^{n_j^2}$;
+2. precompute the degree-$k$ components $u^{(k)}=\mathbf V\,I^{(k)}\mathbf V^{-1}u$,
+   $I^{(k)}$ the diagonal selector of modes of degree $k$, so that the
+   filtered solution is $\tilde u=\sum_{k=0}^N\mathsf f^{k^2}u^{(k)}$ with no
+   matrix product inside the iteration;
+3. solve node by node with the Illinois (modified regula falsi) method,
+   tolerance $10^{-8}$, at most 20 iterations, using each node's value as
+   the upper bracket for the next and skipping nodes already admissible;
+   the element value is $\mathsf f=\min_j\mathsf f_j$.
+
+They state that the filter then costs "typically less than" the flux
+divergence. On 16 NVIDIA V100 GPUs, for the weakly magnetized 3D
+Rayleigh–Taylor run to $t=1$, the run time falls from 61.4 to 25.3 GPU
+hours at $N=3$ ($64\times64\times128$ elements) and from 257 to 39.8 GPU
+hours at $N=4$ ($51\times51\times102$, about the same number of degrees of
+freedom), speed-ups of about 2.4 and 6.5 that grow with the order (§5.6,
+Fig. 17).
+
+The 2022 overhead of 1–2 % of the time to solution was measured on a
+smooth isentropic vortex; the 2023 figures are whole-run times of a 3D
+magnetized Rayleigh–Taylor instability. The two statements
+concern different problems *(compiler check, not in the sources)*.
+
 ## Relation to other limiters
 
 - **Scaling limiter.** With the degenerate "filter" $H_j(\hat u_j)=\hat u_j$
@@ -169,6 +247,18 @@ elements and $\alpha$-optimized nodes on simplices (§4.2, §5).
 | Daru–Tenaud viscous shock tube | $N=4$, $800\times400$, viscosity $10^{-3}$–$10^{-4}$, $t=1$ | agrees with Guermond et al.; about 16 elements need the positivity re-filter after the viscous step, with strength about $10^{-4}$ (Figs. 8–9) |
 | VFE-2 delta wing LES | $N=3$, 4.1 M mixed elements, 104 M degrees of freedom per component, Re $3\cdot10^6$, $M=0.8$ | surface pressure agrees with PSP data at three of four stations (Figs. 10–11) |
 
+Ideal MHD (Dzanic & Witherden (2023), §5; HLLC with Davis wave speeds
+except HLL for the blast, SSP-RK3, fixed $\Delta t$):
+
+| Test | Setup | Finding |
+|---|---|---|
+| near-vacuum magnetized vortex (Christlieb et al.) | $N=2$–5, $20^2$–$67^2$, $t=0.05$ | $L^1$ rates of the magnetic-field error 2.89, 3.80, 4.62, 5.23; largest $1-\mathsf f$ from about $10^{-4}$ down to $3.3\times10^{-8}$ in Table 2, while the text says $10^{-7}$ (Tables 1–2, §5.1) |
+| [Brio–Wu](/benchmarks/brio-wu-shock-tube.md) | $N=3$, 200 and 400 elements, $t=0.1$ | sub-element shocks and rarefactions, minor density oscillations between the compound wave and the contact (Fig. 2) |
+| [Orszag–Tang](/benchmarks/orszag-tang-vortex.md) | $N=3$, $64^2$–$256^2$ | oscillations vanish with refinement; $\lvert\nabla\cdot B\rvert$ concentrated at strong gradients and decreasing with resolution; pressure cut agrees with a WENO reference (Figs. 3–6) |
+| shock–cloud interaction | $N=2$, $400^2$, $t=0.06$ | comparable with Wu & Shu's DG with WENO limiter, "marginally better" on small scales; diverges with negative pressure without the positivity filter (Figs. 7–9) |
+| [magnetized blast](/benchmarks/mhd-blast-wave.md), pressure ratio $10^5$, $B_0=1000/\sqrt{4\pi}$ | $N=4$ on triangles, $h=1/200$ and $1/400$ | discontinuities resolved over one to two nodes; without positivity treatment "would diverge almost instantly" (Figs. 10–13) |
+| 3D magnetized [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) | $N=3$, $64\times64\times128$, $B_0=0$, $0.1B_c$, $0.5B_c$, cutoff field $B_c=\sqrt2$ (page-local) | well behaved in all three regimes; the field slows the growth (Figs. 14–16) |
+
 ## Qualifications
 
 - **Guarantee.** Positivity and the entropy bound hold at the solution nodes
@@ -191,6 +281,36 @@ elements and $\alpha$-optimized nodes on simplices (§4.2, §5).
   sources: $\eta=-\rho s/(\gamma-1)$ is the convex entropy of registry
   §6)*. The paper also calls $\rho s$ "some convex entropy functional"
   (§3) while adopting the physical sign, under which it is concave.
+  The MHD paper, Dzanic & Witherden (2023), bounds the specific quantity
+  $p\rho^{-\gamma}=e^s$ instead, and presents the method as the 2022 one
+  without remarking on the change of functional (§3.1, §4).
+- **Floors and tolerances are different quantities.** In the 2022 paper
+  $10^{-8}$ is the positivity floor, $\rho_{\min}=p_{\min}=10^{-8}$, and
+  $10^{-4}$ is the separate absolute tolerance $\epsilon_\sigma$ by which
+  $\rho s$ may fall below its local minimum (§4.3, Alg. 2). In the 2023
+  paper a single $\epsilon=10^{-8}$ is both the positivity floor and the
+  entropy offset, applied with the opposite sign (§4; see above). Both are
+  absolute, so their effect depends on the scale of the data *(compiler
+  check, not in the sources)*.
+- **MHD guarantee gap.** The title's positivity preservation rests, for
+  the source-term step, on an unproven property of the element mean
+  (Dzanic & Witherden (2023), §3.2); the evidence is the tests. The
+  Powell form is non-conservative, which the authors note can cause
+  inaccurate predictions near discontinuities, after Tóth (§2.3).
+- **Printed slips (Dzanic & Witherden (2023), arXiv v2).** With the
+  printed vortex data $\delta p=-\mu_{\mathrm v}^2(1+r^2)\phi(r)^2/(8\pi^2)$,
+  $\phi=\exp(1-r^2)$ (page-local $\phi$, $\mu_{\mathrm v}=5.38948938512$, $r$ the radius;
+  Eqs. (39)–(40)), the minimum pressure is
+  $1-\mu_{\mathrm v}^2e^2/(8\pi^2)\approx-1.72$, not the stated
+  $\approx2\times10^{-8}$; the stated value is $1-\mu_{\mathrm v}^2e/(8\pi^2)$,
+  obtained with $\phi$ unsquared or with $\phi=\exp((1-r^2)/2)$, so one
+  exponent is misprinted *(compiler check, not in the sources)*. The
+  plasma beta of the extreme blast is printed as $\approx2.5\times10^{-4}$;
+  with their $\beta_{\mathrm p}=2p/\lvert B\rvert^2$, $p=0.1$ and
+  $B_0=1000/\sqrt{4\pi}$ it is $2.5\times10^{-6}$, the printed value
+  belonging to the original $B_0=100/\sqrt{4\pi}$ *(compiler check, not in
+  the sources)*. Eq. (36) prints the sum over degrees with a mismatched
+  index; Eqs. (35) and (37) fix it as written above.
 - **Printed slips (arXiv v3).** Alg. 3 prints the second and third SSP-RK3
   stages as $\tfrac34u^n+\tfrac14u^{(1)}+\Delta t\,\mathcal L(u^{(1)})$ and
   $\tfrac13u^n+\tfrac23u^{(2)}+\Delta t\,\mathcal L(u^{(2)})$; on
@@ -208,3 +328,4 @@ elements and $\alpha$-optimized nodes on simplices (§4.2, §5).
 
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §1; §2.2–§2.3 (Eqs. (10)–(15)); §3.1 (Eqs. (16)–(19), Remark (Limiting)); §3.2 (Eqs. (20)–(21)); §4.1 (Eqs. (22)–(24), Remarks); §4.2; §4.3 (Eq. (27)); §5 (Tables 1–5, Figs. 2–11); §6; App. A (Algs. 1–4).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1.2; §2.2 (exponential damping of modes, for comparison); Rem. 2.3.
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.1 Eq. (5); §2.3 Eqs. (17)–(19); §3.1 Eqs. (21)–(22); §3.2 Eqs. (29)–(34); §4, §4.1 Eqs. (35)–(37); §5 Tables 1–2, Figs. 2–17.

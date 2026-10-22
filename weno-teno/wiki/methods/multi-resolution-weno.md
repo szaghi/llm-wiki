@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multi-resolution WENO"
-description: "Multi-resolution WENO combines polynomials on nested central stencils of increasing size, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy, the fifth-order finite-difference variant of Wang et al., the scale-invariant MR-AWENO interpolation, its Hermite, entropy-stable and steady-state uses, costs, and the third-order fix of Balsara et al."
+description: "Multi-resolution WENO combines polynomials on nested central stencils of increasing size, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy, the fifth-order finite-difference variant of Wang et al., the scale-invariant MR-AWENO interpolation, a WCNS version with one-sided boundary hierarchies, Hermite, entropy-stable and steady-state uses, and costs."
 status: established
-aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si]
+aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Multi-resolution WENO
@@ -119,7 +119,7 @@ with the descaler $\mathsf m=\tfrac15\sum_{T_3}|f_j|+10^{-100}$ of [affine-invar
 at round-off for $\sigma\in[10^{-19},10^{19}]$ on sine, ReLU and Heaviside data, while MR-AWENO's vanishes
 only at $\sigma=1$ (§2.4, Fig. 3). The two parts act differently: on the scaled Lax problem $\tau^*$ alone
 removes the oscillations at $\sigma=1$ but not at $10^{-7}$ (§2.5, Fig. 4,
-[ENO property](/definitions/eno-property.md)), so the improvement at standard scaling, where MR-AWENO
+[ENO property](/definitions/eno-property.md)), so the improvement at $\sigma=1$, where MR-AWENO
 already oscillates on the Einfeldt, Sod and Lax problems at $N_x=200$ (§3.2, Fig. 5), comes from $\tau^*$.
 Both schemes are fifth order on a 1-D density wave ($L^1$ $6.44\times10^{-11}$ at 320 points, Table 1) and
 the [isentropic vortex](/benchmarks/isentropic-vortex.md) (Table 2); MR-AWENO-Si is sharper on
@@ -128,6 +128,34 @@ positivity-preserving limiter on [Sedov](/benchmarks/sedov-blast-wave.md) and th
 [jet](/benchmarks/high-mach-astrophysical-jet.md) (§3). Scale invariance is what makes the
 characteristic-wise scheme well-balanced for the Euler equations with gravity (§4;
 [well-balancing](/properties/well-balancing.md)).
+
+## Multi-resolution interpolation in a WCNS, up to the boundary
+
+Qin, Chen, Lin & Deng (2023, §2.1–2.2) use the hierarchy as the interpolation of a fifth-order staggered
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md) ("WCNS-MR", after Zhang, Wang & Zhang and Zhu & Shu). The
+three point-value candidates at $x_{i+1/2}$ are those of MR-AWENO above, the linear weights
+$(1,10,100)/111$, the global indicator that of Step 4 with $\epsilon=10^{-10}$, and the interface value the
+simplified combination of Wang et al. (2021), Step 5, which they call more efficient than Zhang et al.'s
+(Eqs. (6)–(12)). Two changes are new:
+
+- **Scaled indicators.** $\beta_2$, $\beta_3$ are sums of squared derivatives of $P_2$, $P_3$ at the solution
+  point, the $n$th derivative weighted by $\lambda_{\mathrm s}^{n-1}$ (page-local; $\lambda_{\mathrm s}=2$ adopted),
+  and $\beta_1$ is the minimum of the squared one-sided divided differences times $\Delta x$
+  (Eqs. (13)–(22); [smoothness indicators](/definitions/smoothness-indicator.md)).
+- **One-sided hierarchies at the boundary.** At the first and last two flux points the nested stencils become
+  one-sided, $T_2$ and $T_3$ including the boundary value $u_{1/2}$ on the left and extrapolating to
+  $x_{N+1/2}$ on the right, on the non-uniform "conservative solution points" that make the scheme globally
+  conservative; the coefficients are tabulated to 17 digits (Tables 2–9;
+  [shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)). The authors take the idea from
+  a nonlinear spectral difference scheme of Lin, Chen & Deng (§1).
+
+The hierarchy accommodates the truncated stencils because its linear weights need not reproduce a target linear
+scheme: the same weights $(1,10,100)/111$ are kept at every point, while only the interpolation coefficients
+change. The scheme is fifth order with the closures active (linear advection order 5.01 at $N=320$, Burgers
+5.16, 1-D Euler 5.01; Tables 10–12). On the single-domain Lax problem with $\lambda_{\mathrm s}=1$ it is more
+oscillatory than characteristic-wise WENO-JS and Zhu & Shu's WENO-MR with the simplified $\beta_1$ of Wang
+et al. (2021), which the authors attribute to the wide difference stencil of WCNS; $\lambda_{\mathrm s}=2$
+removes the oscillations (§3.4.2, Fig. 6).
 
 ## Hermite and moment-based hierarchy
 
@@ -278,3 +306,4 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §1; §2.4, Eqs. (2.31)–(2.45); §4, Examples 4.5, 4.7–4.8, 4.15.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.8.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.
+- [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §1; §2.1, Eqs. (6)–(22); §2.2, Tables 2–9; §3, Tables 10–12, Fig. 6.

@@ -5,7 +5,7 @@ description: "Viscous two-dimensional (and three-dimensional) benchmark after Ye
 status: established
 aliases: [shock/mixing-layer interaction, shock–shear layer interaction, Yee–Sandham–Djomehri mixing layer, viscous shock–mixing layer]
 tags: [benchmark, low-dissipation, turbulence, weno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Shock–mixing-layer interaction
@@ -39,6 +39,15 @@ $\mathrm{Pr}=0.72$, $t=120$;
 - inflow on the left, slip wall at the bottom, outflow on the right
   (zero gradient in Li et al.).
 
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.2 and
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.11 print the
+same domain, inlet profile, forcing ($a_k$, $\varphi_k$, $b$,
+$\lambda_{\mathrm f}$, $u_c$), $\mathrm{Pr}=0.72$, a $12^\circ$ oblique
+shock, convective Mach number 0.6 and $t=120$, slip wall at the bottom
+and supersonic outlet, without reprinting the stream states;
+Chamarthi (2023b) states $\mathrm{Re}=500$ and Chamarthi (2023a)
+$\mathrm{Re}=1000$.
+
 The data are consistent *(compiler check, not in the sources)*: with
 $\gamma=1.4$ the two streams have sound speeds $0.5334$ and $1.1334$,
 the convective velocity $(3c_{\mathrm{low}}+2c_{\mathrm{up}})/(c_{\mathrm{up}}+c_{\mathrm{low}})$
@@ -60,12 +69,20 @@ $L_z=40$, on $600\times120\times120$ points to $t=120$.
 | Source | Scheme | Grid | Reference |
 |---|---|---|---|
 | Li et al. (2022) | MDAD-HY: [minimized-dispersion, adaptive-dissipation](/methods/mdcd-scheme.md) linear scheme hybridized with WENO by their shock detector | $1600\times320$, non-uniform, refined near $y=0$ | none |
+| Chamarthi (2023a) | [gradient-based](/methods/gradient-based-reconstruction.md) MEG6, MIG4 vs TENO5, all with [α-damping](/methods/alpha-damping-viscous-flux.md) compact viscous gradients | $320\times80$ | none |
+| Chamarthi (2023b) | seventh-order MEG7 vs seventh-order mapped [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS7M | $320\times80$ | none |
 | Wang et al. (2021) | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) against WENO-JS5, [WENO-AO](/methods/weno-ao.md)5, WENO-ZS5; sixth-order central viscous fluxes | $500\times100$ | seventh-order WENO-JS on $2000\times400$ |
 
 **Detector behaviour.** Li et al. use the case as the robustness test
 of their [hybrid](/methods/hybrid-weno.md) detector: it flags the
 oblique shock and the vortex-induced shocklets and does not flag the
 acoustic waves (Fig. 26).
+
+**Shear-layer thickness in gradient-based schemes.** Chamarthi (2023a)
+finds MIG4 giving the thinnest shear layer of MEG6, MIG4 and TENO5
+(Ex. 4.2). In Chamarthi (2023b) all schemes capture the oblique shock
+without oscillation and MEG7 resolves the shear-layer vortices better
+than WCNS7M (Fig. 14).
 
 **Resolution and cost.** Wang et al. compare the schemes on density
 contours and a cut at $y=0$ against the fine reference (Figs. 5.16–5.17);
@@ -78,7 +95,12 @@ is shown in Figs. 5.20–5.21.
 ## Qualifications
 
 - No source gives an error norm; the comparisons are visual (Wang et al.
-  against a finer computation, Li et al. without reference).
+  against a finer computation, Li et al. and the Chamarthi papers
+  without reference).
+- Chamarthi (2023a) prints $\mathrm{Re}=1000$ for a setup the other three
+  sources, Chamarthi's companion paper included, run at $\mathrm{Re}=500$; the
+  paper does not say whether the value is deliberate. Both are read as
+  arXiv preprints.
 - The two runs differ by a factor of about 3 in grid spacing
   ($1600\times320$ against $500\times100$) *(compiler check, not in the sources)* and in grid
   type (uniform against refined near the layer), so their figures
@@ -90,3 +112,5 @@ is shown in Figs. 5.20–5.21.
 
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.3.4, Fig. 26.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Exs. 5.10, 5.12, Table 5.8, Figs. 5.16–5.17, 5.20–5.21.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.2 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.11, Fig. 14 (arXiv v1).

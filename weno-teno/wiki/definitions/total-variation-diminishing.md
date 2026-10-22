@@ -273,7 +273,7 @@ with minmod "the most compressive out of dissipative limiters".
 
 [Pazner (2021)](/sources/pazner-2021.md) (§4.4) recalls that TVD schemes are
 provably at most first-order accurate at smooth extrema, and observes the
-analogous loss for the local maximum principle of his flux-corrected DG: with
+analogous loss for the local maximum principle of Pazner's flux-corrected DG: with
 strictly enforced local bounds the $L^1$ convergence rates on $\sin(2\pi x)$
 advection are about one (1.00, 1.04, 1.29 for $p=3,4,5$), while relaxing the
 bounds to global ones in cells flagged smooth by a modal indicator restores

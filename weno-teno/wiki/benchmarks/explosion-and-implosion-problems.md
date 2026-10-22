@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -86,6 +86,25 @@ technique taken from earlier work, since such schemes "may cause the
 so-called symmetry breaking issue … due to machine round-off errors"
 (Fig. 21).
 
+**A training variant.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
+(§7.4, Eq. 49, arXiv v1) use a corner implosion on $[0,1]^2$ as the
+training and test problem of a learned flux in
+[JAX-Fluids](/software/jax-fluids.md): $(\rho,v_1,v_2,p)=(0.14,0,0,0.125)$
+for $x+y\le0.15$ and $(1,0,0,1)$ otherwise, walls at the lower left and
+an "open domain" for the rarefaction (the boundaries are not fully
+specified). Density and pressure of the inner state are swapped against
+the Liska–Wendroff data above, and the domain is larger than the
+quadrant $[0,0.3]^2$, so it is a different problem. The reference is WENO3-JS with second-order Runge–Kutta
+and HLLC on $128\times128$, $\Delta t=2.5\times10^{-4}$, sampled every
+$10^{-3}$ for 2501 steps and coarse-grained to $32\times32$. A Rusanov
+flux whose dissipation coefficient is a small neural network
+(Rusanov-NN; see [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)
+and [learned WENO weights](/methods/learned-weno-weights.md)), trained
+end-to-end through the differentiable solver on the first 1000 coarse
+steps, is less dissipative than the classical Rusanov flux, stays
+stable over all 2501 steps and has lower relative $L_1$ errors of
+density and pressure, also beyond the training horizon (Figs. 20–21).
+
 ## Short-time radial and spherical explosions
 
 **Unstructured triangles.** [Ji, Liang & Fu (2022)](/sources/ji-2022.md)
@@ -144,3 +163,4 @@ one on an adaptive moving mesh are recorded on
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4, §4.9, Fig. 21.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.6, §5.9, Figs. 12–17, 26 (preprint).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.9, Table 6.
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §7.4, Eq. 49, Figs. 20–21 (arXiv v1).

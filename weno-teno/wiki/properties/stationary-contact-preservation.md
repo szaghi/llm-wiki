@@ -53,11 +53,11 @@ works they cite also stress ([well-balancing](/properties/well-balancing.md)).
   fixed in the linear case.)*
 - **Entropy-stable DGSEM with contact-resolving fluxes: yes, for material interfaces.**
   [Renac (2021)](/sources/renac-2021.md) proves exact preservation of stationary material
-  interfaces in his [DGSEM](/methods/dgsem.md) for the
+  interfaces in the author's [DGSEM](/methods/dgsem.md) for the
   [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
   (Theorem 6.1, proof p. 16). Take nodal states that differ in mass fractions and density,
-  with $v=0$ and the same pressure $p$ everywhere. Both his entropy-conservative volume flux
-  and his relaxation surface flux then reduce to $(0,0,p\,n,0)$, the pure pressure flux,
+  with $v=0$ and the same pressure $p$ everywhere. Both Renac's entropy-conservative volume flux
+  and relaxation surface flux then reduce to $(0,0,p\,n,0)$, the pure pressure flux,
   so the nodal residuals vanish and the data stay fixed at the interpolation points. If the
   interface lies on a mesh interface, the relaxation solver returns the exact solution.
   The relaxation solver is an HLLC-like three-wave solver with a contact wave

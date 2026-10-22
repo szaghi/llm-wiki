@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Bound preservation
@@ -48,10 +48,12 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 | special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
 | ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
+| ideal MHD with a local minimum of $p\rho^{-\gamma}$ at the solution nodes | $\{\rho>\epsilon_{\mathrm f},\ p>\epsilon_{\mathrm f},\ p\rho^{-\gamma}>(p\rho^{-\gamma})^K_{\min}+\epsilon_{\mathrm f}\}$, tolerance $\epsilon_{\mathrm f}=10^{-8}$ (page-local), bound over the element and its face neighbours from the previous stage | Dzanic & Witherden (2023), Eqs. (21)–(22), §4 |
 | multicomponent MHD | $0\le Y_k\le1$, $\rho>0$, $p>0$ | Wu & Shu (2023), Eq. (6.4) |
 
 Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md),
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md),
 [Du & Yang (2022)](/sources/du-2022-b.md),
 [Chen & Wu (2022)](/sources/chen-2022-b.md),
 [Renac (2021)](/sources/renac-2021.md),
@@ -345,6 +347,26 @@ nodal value into $G$, including a local minimum of $\rho s$
 nodal: between nodes the filtered polynomial may leave $G$. The linear
 scaling limiter is the special case of a degenerate filter (§3.1).
 
+[Dzanic & Witherden (2023)](/sources/dzanic-2023.md) extend the filter
+to ideal MHD with Powell's non-conservative source term, for which the
+standard argument no longer covers the element mean. They split each
+forward-Euler step (and each SSP-RK3 stage, Eq. (34)): the conservative
+update $u^n+\Delta t\,\mathcal L_1(u^n)$ is filtered by a filter $H_e$
+that enforces positivity and the local entropy minimum, the explicit
+source contribution $\Delta t\,\mathcal L_2(u^n)$ is then added, and a
+second filter $H_p$ re-enforces positivity only (§3.2, Eqs. (32)–(33);
+$\mathcal L_1$, $\mathcal L_2$, $H_e$, $H_p$ page-local: flux and source
+parts of $\mathcal L$, and the two filters). The justification is that the
+source-free mean update lies in $G$ (after Bouchut et al. and the
+Zhang–Shu equivalence) and that Wu & Shu proved positivity of the mean
+for a locally divergence-free $B$; for a $B$ that is not exactly
+divergence-free, positivity of the element mean of nodal DG "remains to
+be proven", so the existence of a positivity-preserving filter strength
+is not guaranteed (§3.2). $H_p$ is "very rarely" needed, they state.
+Without the filter their shock–cloud run diverges with negative
+pressure, and the extreme [MHD blast wave](/benchmarks/mhd-blast-wave.md)
+(pressure ratio $10^5$) "would diverge almost instantly" (§5.4–5.5).
+
 ## Bound preservation and the divergence of the magnetic field
 
 For ideal and multicomponent MHD the BP property of the cell-average
@@ -357,6 +379,10 @@ positivity-preserving finite-volume framework of Wu & Shu (2019, as
 recalled: HLL flux, upwind Godunov–Powell source, scaling limiter) and keep
 $\rho$ and $p$ positive down to plasma $\beta=10^{-4}$ on the
 [MHD blast wave](/benchmarks/mhd-blast-wave.md) and a Mach 800 jet (§4.4–§4.5).
+Dzanic & Witherden (2023) state the converse gap for nodal DG with a
+Powell source: the BP argument for the element mean needs a divergence-free
+field, which their discretization does not have, and their positivity is
+therefore observed, not proved (§3.2; Route 5).
 The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
@@ -368,11 +394,11 @@ The details are on
   a second-order barrier, whereas global bounds (as in the Zhang–Shu
   framework) impose none (§1, §3, citing Zhang and Shu). The claim is
   stated, not proved there. [Pazner (2021)](/sources/pazner-2021.md)
-  measures the cost: with strictly enforced local bar-state bounds his
+  measures the cost: with strictly enforced local bar-state bounds Pazner's
   subcell IDP DGSEM converges at first order on smooth advection (rates
   1.00, 1.04, 1.29 for $N=3,4,5$), and recovers $N+1$ for $N\ge3$ only when
   a modal indicator relaxes the bounds to global ones in smooth cells
-  (§4.4, §5.1, Table 1); he calls the first-order behaviour consistent with
+  (§4.4, §5.1, Table 1); Pazner calls the first-order behaviour consistent with
   the literature. The invariant-domain bounds of Rueda-Ramírez et al. are
   local as well; that paper reports no convergence-order study.
 - **Guarantees that are not guarantees.** When Rueda-Ramírez et al. use
@@ -430,7 +456,7 @@ The details are on
   in their hydrostatic reconstructions and prove no positivity theorem for
   the update (§4.1, Eqs. (4.13)–(4.14)). [Hiejima (2022)](/sources/hiejima-2022.md)
   falls back to first-order interpolation wherever an interpolated density
-  or pressure of his WCNS is negative, on the double Mach reflection only,
+  or pressure of Hiejima's WCNS is negative, on the double Mach reflection only,
   after Kamiya et al.; the paper does not say on which side or for which
   variables (§3.4), and its 11th-order slip line loses its wavy structure,
   "probably caused by" this fallback.
@@ -442,6 +468,27 @@ The details are on
   bound unchanged, and Fan et al.'s condition is sufficient but not
   required *(compiler check, not in the sources)*; see
   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md).
+- **Entropy functional and tolerance of entropy filtering.** Dzanic &
+  Witherden bound different functionals with different tolerances in
+  their two papers, and the two numbers $10^{-8}$ and $10^{-4}$ are not
+  the same quantity. In the Euler paper (2022, §4.3, Alg. 2;
+  [entropy filtering](/methods/entropy-filtering.md)) $10^{-8}$ is the
+  positivity floor, $\rho\ge\rho_{\min}$, $p\ge p_{\min}$ with
+  $\rho_{\min}=p_{\min}=10^{-8}$, and $10^{-4}$ is a separate absolute
+  tolerance on the entropy constraint, a local minimum of
+  $\rho s=\rho\ln(p\rho^{-\gamma})$. In the MHD paper (2023, Eqs.
+  (21)–(22), §4) one margin $\epsilon_{\mathrm f}=10^{-8}$ is
+  subtracted in all three constraints, on $\rho$, $p$ and
+  $p\rho^{-\gamma}-(p\rho^{-\gamma})^K_{\min}$ (the entropy constraint is
+  printed $\Gamma_3=\sigma-\sigma_{\min}-\epsilon>0$), so the entropy
+  bound must be exceeded by $10^{-8}$, where the 2022 tolerance let $\rho s$
+  fall $10^{-4}$ below its minimum, and it acts on $p\rho^{-\gamma}$
+  instead of $\rho s$. The 2023 paper presents the method as the 2022 one
+  without flagging either change, and calls its minimum principle on
+  $p\rho^{-\gamma}$ identical to Tadmor's (§2.1, Eq. (5)). These are two
+  papers' design choices, not incompatible claims; an absolute tolerance
+  on $p\rho^{-\gamma}$ depends on the scaling of the variables *(compiler
+  check, not in the sources)*.
 - **Strict-interior floors.** Limiters enforce $g(u)\ge\epsilon$ with
   floors such as $10^{-13}$ (Fan et al., Liu et al.) or $10^{-10}$ (Renac,
   who also lets mass fractions go slightly negative, down to a bound set by
@@ -482,6 +529,7 @@ The details are on
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §1; §2 (Lemmas 2.1–2.2); §3 (Thm 3.1); §3.4 (Rem. 3.6); §3.5; §4.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §2.4 (Def. 2.1); §3 (Def. 3.1, Thms 3.1–3.2, Eq. (3.5)); §4 (Eq. (4.1), Lemma 4.1, Thms 4.1–4.3); §5 (Thms 5.4–5.6); §6 (Eqs. (6.1)–(6.2), Tables 6.1–6.2, Figs. 6.2–6.3, §6.6).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §2.2; §3.1–§3.2; §4.1.
+- [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.1, Eq. (5); §3.1–3.2, Eqs. (21)–(22), (29)–(34); §4; §5.4–5.5.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: Fig. 5 (MOOD); §4.2.2; §6.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.2; §5.2.2–5.2.3, Figs. 9–10.
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §5.5; §6.

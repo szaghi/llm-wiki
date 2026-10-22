@@ -313,7 +313,7 @@ interfaces.
   (Remark 5, §5.2.3).
 
 [Pazner (2021)](/sources/pazner-2021.md) gives the
-invariant-domain-preserving variant of the blending remedy. His low-order
+invariant-domain-preserving variant of the blending remedy. Pazner's low-order
 scheme is a graph-viscosity method built on a sparsified, $O(1)$-stencil
 derivative operator, and the high-order nodal DG update is limited
 subcell by subcell (§3–4). Applying graph viscosity to the full DG operator

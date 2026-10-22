@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Smoothness indicators
@@ -53,7 +53,7 @@ $\mathsf D^n_k$ is the difference approximation of $\Delta x^n\partial_x^nu$ at 
 (page-local, as on the source page; $u$ one primitive variable, interpolated componentwise). On
 $\{i-1,i,i+1\}$ it is $\big[\tfrac12(u_{i+1}-u_{i-1})\big]^2+(u_{i-1}-2u_i+u_{i+1})^2$. *(Compiler check, not in the
 sources: the Jiang–Shu $\beta_1$ above is the same expression with the second-difference square weighted
-by $\tfrac{13}{12}$ instead of 1.)* Hiejima applies it to substencils of 3 to $(K+3)/2$ points, $K$ the size of his full stencil.
+by $\tfrac{13}{12}$ instead of 1.)* Hiejima applies it to substencils of 3 to $(K+3)/2$ points, $K$ the size of the full stencil.
 
 **Wider stencils.** Ye et al. (2022, Eq. (5)) give the four-point indicators of TENO7, e.g. for
 $\{i,\dots,i+3\}$
@@ -109,6 +109,33 @@ perfect squares in a Legendre basis, which "has never been documented in the lit
 **Other forms recalled.** Li et al. (2022, Eq. (6)) recall the earlier Liu–Osher–Chan indicator, a
 sum of squared undivided differences of all orders below $r$. Fu (2023, §2.2) notes that improved
 indicators developed for WENO can be used in TENO unchanged.
+
+**Interpolation polynomials.** For the point-value interpolation of a WCNS, Zhou, Ding, Huang & Luo (2023,
+Eqs. (15)–(17)) integrate the derivatives of the interpolation polynomials over $[x_{i-1/2},x_{i+1/2}]$, which
+gives the classical fifth-order $\beta_0,\beta_1,\beta_2$ unchanged, and the six-point indicator of the
+downwind candidate, after Hu et al. and Liu et al., printed in full with denominator 232243200 (Eq. (17));
+$\tau_6=|\beta_3-\tfrac18(\beta_0+6\beta_1+\beta_2)|$ (Eq. (18), their $\beta_3$ the six-point indicator). They
+attribute the non-monotone growth of the nonlinear dissipation with wavenumber to "the first derivative term in
+the smoothness indicator", citing earlier work (§4.2).
+
+**Scaled derivative sums at the solution point.** Qin, Chen, Lin & Deng (2023, Eqs. (13)–(20)) evaluate the
+derivatives of the nested interpolants $P_2$ (three points) and $P_3$ (five points) of a multi-resolution WCNS
+at the solution point $x_i$ instead of integrating over a cell, and weight them by a free factor
+$\lambda_{\mathrm s}>0$ (page-local):
+
+$$\beta_2=\sum_{n=1}^2\big(\lambda_{\mathrm s}^{n-1}\Delta x^n\partial_x^nP_2(x_i)\big)^2,\qquad
+\beta_3=\sum_{n=1}^4\big(\lambda_{\mathrm s}^{n-1}\Delta x^n\partial_x^nP_3(x_i)\big)^2,$$
+
+with $\Delta x^n\partial_x^nP_3(x_i)$ the five-point central differences
+$\tfrac1{12}u_{i-2}-\tfrac23u_{i-1}+\tfrac23u_{i+1}-\tfrac1{12}u_{i+2}$, $-\tfrac1{12}u_{i-2}+\tfrac43u_{i-1}-\tfrac52u_i+\tfrac43u_{i+1}-\tfrac1{12}u_{i+2}$,
+$-\tfrac12u_{i-2}+u_{i-1}-u_{i+1}+\tfrac12u_{i+2}$ and $u_{i-2}-4u_{i-1}+6u_i-4u_{i+1}+u_{i+2}$ on a uniform grid, the
+$\mathsf D_1,\dots,\mathsf D_4$ of the five-point [scale sensor](/definitions/scale-sensor.md) of Huang, Liang & Fu. $\lambda_{\mathrm s}=2$
+multiplies the squared $n$th-derivative terms by $1,4,16,64$. The authors state that it suppresses the
+oscillations of $\lambda_{\mathrm s}=1$ on the Lax problem and lets slow shocks cross block interfaces; their
+convergence tables give equal or nearly equal fine-grid errors for both values, larger coarse-grid errors with
+$\lambda_{\mathrm s}=2$, and no analysis of the choice (Tables 10–12;
+[shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)). Near boundaries the same
+formulas are applied with coefficients for the non-uniform points (Tables 4–5, 8–9).
 
 ## Indicators of one- and two-point candidates
 
@@ -343,12 +370,17 @@ Several sources use "smoothness indicator" for quantities of a different kind:
   derivative and the integrand not squared; their own two-point values (Eq. (10)) are those of the
   squared first derivative, the Jiang–Shu form above. Chu et al. (2022, Eq. (3.6)) print both limits
   of the integral as $x_{j+1/2}$; their explicit forms (3.7) are the Jiang–Shu ones.
-- Hiejima (2022, Eq. (14)) writes the sum over $n=1,\dots,(K-1)/2$ (his $r-1$) for every substencil, though the
-  difference operators exist only up to one less than the substencil size (blank in his Tables 1, 3,
+- Hiejima (2022, Eq. (14)) writes the sum over $n=1,\dots,(K-1)/2$ (Hiejima's $r-1$) for every substencil, though the
+  difference operators exist only up to one less than the substencil size (blank in the paper's Tables 1, 3,
   5); the sum runs over the available orders.
 - Hong et al. (2022, Eq. (19)) print the last coefficient of the first square of the five-point
   indicator as "$-3f$" without subscript; it multiplies $f_{i+4}$. They print $\tau_8$ (Eq. (20))
   without the absolute value of their definition (Eq. (10)).
+- Qin et al. (2023) take $\beta_1=\min(\delta_0^2,\delta_1^2)$ with the one-sided divided differences times $\Delta x$
+  (Eq. (22)), the form of Wang et al. (2021) extended to non-uniform points; they print the first member of
+  Eq. (22) without the factor $\Delta x$ that the last member carries.
+- Chamarthi (2023b, Eq. (46)) prints the WCNS7M indicator as $\sum_n\big(\sum_lc_{n,k,l}u_{i+k+l-5}\big)$ without the
+  square of the inner sum and without its coefficients.
 - Li, Chen & Ren (2022, Eq. (44)) print the $f_{i-2}^2$ coefficient of $\beta_6$ as 271799 against
   271779 in Ye et al. (2022); see [MDCD schemes](/methods/mdcd-scheme.md).
 - Fan et al. (2023, §2.2) print the indicator of the point-value Hermite quartic of their derivative
@@ -400,6 +432,9 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.1, Eqs. (43)–(45).
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §3, Eqs. (14)–(30); §6.3; §10.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.3, Eq. (17); §3.2, Eq. (23).
+- [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §2.1, Eqs. (13)–(22); §3, Tables 10–12, Fig. 6.
+- [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §2.3, Eqs. (15)–(18); §4.2.
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Eq. (46).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §2.1, Step II, Eq. (2.4); §2.2.
 - [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.1.1, Eqs. (17)–(23); §2.3, Eq. (42).
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (10), (16); §3.2, Eq. (32).

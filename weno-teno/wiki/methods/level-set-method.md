@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Level-set and ghost-fluid interface methods"
-description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization and topology changes, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, and level-set–phase-field coupling."
+description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization and topology changes, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, a conservative cut-cell finite-volume method with apertures and conservative mixing, and level-set–phase-field coupling."
 status: established
 aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
 tags: [interface-capturing, multiphase, finite-difference, weno, dg, immersed-boundary]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Level-set and ghost-fluid interface methods
@@ -16,10 +16,13 @@ distance from the interface ($\lvert\nabla\Phi\rvert=1$), negative in
 one fluid and positive in the other. The function is transported with
 the interface and periodically reinitialized to a distance function;
 it supplies the interface position, its normal $\nabla\Phi/\lvert\nabla\Phi\rvert$
-and its curvature. In this bundle it appears in four roles: as the
+and its curvature. In this bundle it appears in five roles: as the
 interface tracker of a sharp-interface, two-fluid, conservative
 finite-difference scheme for compressible gas–gas and gas–water flows
-([Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md)); as the tracker of
+([Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md)); as the cut-cell
+geometry of a conservative sharp-interface finite-volume method for
+fluid–fluid and fluid–solid interfaces in [JAX-Fluids](/software/jax-fluids.md)
+([Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md)); as the tracker of
 a sharp-interface discontinuous Galerkin scheme with ghost fluids in
 cut cells ([Bai & Li (2022)](/sources/bai-2022.md)); as the
 geometric companion of a mass-conserving phase field in a weakly
@@ -50,7 +53,14 @@ problem, extended off the interface by
 $\partial_\tau v_\Phi+n\cdot\nabla v_\Phi=0$ with
 $n=\nabla\Phi/\lvert\nabla\Phi\rvert$; both equations use the
 third-order HOUC scheme in space and Runge–Kutta in time, with $\Phi$
-stored at cell vertices (§2.5.1, Eqs. 21–22).
+stored at cell vertices (§2.5.1, Eqs. 21–22). Bezgin et al. advect
+$\Phi$ with the interface velocity, $\partial_t\Phi+v_{\mathrm I}\cdot\nabla\Phi=0$
+($v_{\mathrm I}$ page-local, the interface velocity times the normal),
+by HOUC stencils of order 3, 5 or 7 and the Runge–Kutta method of the
+flow, in a narrow band only, the upwinding being done by masks (§3.6,
+Eq. 25, Fig. 6); corner values of $\Phi$ are obtained by trilinear
+interpolation (below), and the interface velocity is extended into the
+band like the ghost states.
 
 **Reinitialization.** Both sources restore the distance property by
 solving to pseudo-steady state
@@ -67,7 +77,11 @@ iterations every several dozen steps (Matsushita & Aoki §2.2, Eq. 15);
 or, in Bai & Li, the same smoothed sign multiplied by
 $\lvert2H(\Phi_0)-1\rvert$, with $H$ a smoothed Heaviside function of
 half-width $\epsilon_H$ (page-local), $H=\tfrac12\big[1+\Phi_0/\epsilon_H+\tfrac1\pi\sin(\pi\Phi_0/\epsilon_H)\big]$
-for $\lvert\Phi_0\rvert\le\epsilon_H$ (Eqs. 23–25).
+for $\lvert\Phi_0\rvert\le\epsilon_H$ (Eqs. 23–25). Bezgin et al.
+solve the same equation with $S=\mathrm{sign}(\Phi_0)$ at every physical
+step, for a fixed number of fictitious steps, with the first-order
+scheme of Russo & Smereka or a Hamilton–Jacobi WENO scheme (§3.6,
+Eq. 27).
 
 **Topology changes.** A fixed reinitialization interval suits an
 interface of small curvature, not one that breaks up or merges. Bai &
@@ -93,6 +107,15 @@ curvature is replaced by that of the face neighbour with smallest $Q$
 mesh refinement: a tree leaf is refined when its smallest
 $\lvert\Phi\rvert$ is below the diagonal length of its children
 (§3.5, Eq. 47).
+
+**Cut-cell geometry from corner values.** Bezgin et al. approximate the
+interface by a plane in each cut cell: corner values of $\Phi$ by
+trilinear interpolation, the $2^4$ sign combinations of the four corners
+of a face giving the aperture (the fraction of the face covered by
+fluid) as a sum of triangle and trapezoid areas, the volume fraction of
+a phase from seven pyramids whose bases are the wetted faces and the
+interface segment (Eq. 24), and the interface segment from the
+differences of opposite apertures (§3.6, Eq. 23).
 
 ## Ghost-fluid methods and conservation
 
@@ -183,6 +206,59 @@ jump at the interface where the new scheme does not (see
 Stages of the third-order SSP Runge–Kutta method are assembled from
 $t^n$ with accumulated fluxes, so that the final update is a single
 conservative flux difference (§2.2.5–2.2.6).
+
+## A conservative cut-cell finite-volume scheme with mixing
+
+Bezgin et al. (2023) §3.6 implement in [JAX-Fluids](/software/jax-fluids.md)
+the conservative sharp-interface method of Hu, Khoo, Adams & Huang
+(2006), as recalled, which conserves at the interface where the
+ghost-fluid methods above do not. Each phase is integrated separately
+on the whole Cartesian grid: the update of its volume-weighted cell
+average, $\frac{d}{dt}(\phi_k\bar u_k)_{i}$ with $\phi_k$ its volume
+fraction (registry §10) and $\bar u_k$ its cell average (page-local), collects the face fluxes weighted by the apertures, the
+volume-weighted source, and an interface flux of pressure (and, for
+viscous flows, stress and heat flux) acting on the projected interface
+segment (Eqs. 16–19). Because the two phases see opposite interface
+normals, their interface fluxes are equal and opposite, and the total is
+conserved.
+
+- **Fluid–fluid interfaces.** The interface velocity and the two phasic
+  interface pressures come from a linearized two-material Riemann
+  problem with surface tension, in terms of the acoustic impedances
+  $\rho_kc_k$; with surface tension and curvature the interface pressure
+  jumps (Eq. 22). Interface viscosity and conductivity are
+  volume-fraction-weighted harmonic means (Eqs. 20–21).
+- **Fluid–solid interfaces.** The interface velocity is prescribed and
+  the interface pressure is the cell pressure (§3.6); the bow shocks in
+  front of a cylinder at Mach 3 and 20 are computed this way
+  ([immersed boundaries](/methods/immersed-boundary-method.md),
+  [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)).
+- **Ghost states.** The real states of each phase are extended across
+  the interface by $\partial_\tau q\pm n\cdot\nabla q=0$ to steady state
+  in pseudo-time, with first-order upwind differences and forward Euler
+  (Eq. 26; $q$ page-local), an extension equation of the form Zheng et
+  al. use for the normal speed.
+- **Conservative mixing.** Cells whose volume fraction vanished during a
+  step, and cells with $\phi_k<0.6$ after it (small and newly created
+  cells), exchange conserved quantities with up to seven target cells in
+  3D chosen from the interface normal, with weights from the normal
+  components and the targets' volume fractions; the mixing fluxes are
+  added to the cell and subtracted from the targets, so mixing conserves
+  by construction (Eqs. 28–31). Bezgin et al. state that the method is
+  "not consistent" when the interface crosses a face within one step and
+  that mixing restores conservation.
+
+Evidence (Bezgin et al. §5.2): on a two-phase air–helium shock tube the
+interface position and the shock speed and strength are correct, with
+slight density oscillations at the interface "since no isobaric fix is
+used"; an oscillating drop has period 1.16336 against Rayleigh's
+1.16943; shear drop deformation follows Taylor's small-deformation law;
+on the Mach 1.22 [shock–helium-bubble interaction](/benchmarks/shock-bubble-interaction.md)
+the upstream, jet and downstream interface points agree "very
+well" with Terashima & Tryggvason (Fig. 18). The gradient of the
+integral entropy with respect to the shock Mach number, computed by
+automatic differentiation through the whole level-set pipeline, matches
+finite differences (§7.3).
 
 ## A DG cut-cell scheme with real–ghost mixing
 
@@ -313,6 +389,12 @@ which motivates their body-fitted mapped meshes.
   steps of their solver that do not conserve are the ghost-fluid mixing
   in cut cells and the deletion of isolated structures *(compiler check,
   not in the sources)*.
+- Bezgin et al. (2023, arXiv v1) print the interface segment of Eq. (23)
+  as the square root of a sum of squared aperture differences times face
+  areas, which has the dimension of a length, while in 3D Eq. (24) needs
+  an area (the square root of the sum of squared differences times face
+  areas squared) *(compiler check, not in the sources: by dimensional
+  analysis)*.
 - Bai & Li print the HLLC star density of both sides with the left mass
   flux $\rho^-(s^--v_1^-)$ in the numerator (Eq. 11), where the mass
   jump condition gives the mass flux of the side considered, and cite
@@ -326,3 +408,4 @@ which motivates their body-fitted mapped meshes.
 - [Wang et al. (2022)](/sources/wang-2022.md) — §2.2, Eqs. (12)–(15).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1 (statement on ghost-fluid methods only).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
+- [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §3.6, Eqs. (16)–(31), Fig. 6; §5.2, Figs. 13–18; §7.3 (arXiv v1).

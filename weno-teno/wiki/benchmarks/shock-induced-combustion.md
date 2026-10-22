@@ -1,22 +1,24 @@
 ---
 type: Benchmark
 title: "Shock-induced combustion and detonation"
-description: "Reacting-flow validation cases with detailed hydrogen chemistry: Lehr's ballistic blunt-body experiments, where the oscillation frequency of the shock-induced combustion front is measured; a one-dimensional reflected-shock detonation; and two-dimensional cellular H2–O2–Ar detonations judged by front speed and cell size."
+description: "Reacting-flow cases: Lehr's blunt-body experiments with a measured combustion-front oscillation frequency, one-dimensional reflected-shock and Chapman–Jouguet detonations, ZND structure and two-dimensional cellular detonations with ideal and real-gas equations of state judged by front speed and cell size, and detonations used as GPU chemistry performance tests."
 status: established
-aliases: [shock-induced combustion, Lehr blunt-body experiment, blunt-body shock-induced combustion, cellular detonation, H2–O2–Ar detonation, reflected-shock detonation]
+aliases: [shock-induced combustion, Lehr blunt-body experiment, blunt-body shock-induced combustion, cellular detonation, H2–O2–Ar detonation, reflected-shock detonation, Chapman–Jouguet detonation, ZND detonation, real-gas detonation]
 tags: [benchmark, reacting-flows, bound-preserving, immersed-boundary]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Shock-induced combustion and detonation
 
 These cases solve the reacting
 [multicomponent Euler or Navier–Stokes equations](/definitions/multicomponent-euler-equations.md)
-for hydrogen mixtures with detailed finite-rate chemistry. Unlike most
-benchmarks of the bundle, two of them have experimental data behind
-them: the oscillation frequency of the combustion front ahead of a blunt
-projectile (Lehr's ballistic-range experiments) and the cell size of a
-gaseous detonation. They test the coupling of a shock-capturing scheme
+for hydrogen and hydrocarbon mixtures, with detailed finite-rate
+chemistry or one-step model reactions. Unlike most benchmarks of the
+bundle, three of them have experimental data behind them: the
+oscillation frequency of the combustion front ahead of a blunt
+projectile (Lehr's ballistic-range experiments), the cell size of a
+gaseous detonation, and Chapman–Jouguet speeds at high pressure
+(Bauer's experiments). They test the coupling of a shock-capturing scheme
 with stiff chemistry, the preservation of positive densities, pressures
 and mass fractions, and, for geometry, the treatment of a curved wall
 on a Cartesian or a body-fitted mesh.
@@ -96,6 +98,60 @@ bound-preserving limiter is applied (Figs. 6.4–6.5).
   gap they attribute, after others, to wall heat losses in the
   experiments (Fig. 11).
 
+**Detonations with real-gas thermodynamics.** [Weng & Mével (2023)](/sources/weng-2023.md)
+validate RSDFoam, an OpenFOAM 9 solver built from blastFoam and Cantera, on detonations at high
+pressure with ideal-gas and real-gas equations of state. Their real gases are Redlich–Kwong, and
+Noble–Abel with the attraction term dropped. The real-gas strength is measured by the
+non-dimensional attraction and covolume parameters, here called $A_{\mathrm{RK}}$ and
+$B_{\mathrm{RK}}$ (page-local). The scheme is quadratic MUSCL with the van Leer limiter, HLLC and
+second-order SSP Runge–Kutta, with [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
+The chemistry is advanced by [operator splitting](/methods/operator-splitting.md) through a Cantera
+constant-volume reactor (§3.1). Page-local $\ell_{1/2}$ denotes the half-reaction length.
+
+- *Chapman–Jouguet speed* (§4.4, Fig. 11). Stoichiometric H$_2$–air at 300 K and 0.1–10 MPa,
+  one-dimensional, with a base cell equal to the induction length and three refinement levels.
+  The simulated speed deviates from the Chapman–Jouguet value by less than 0.1% with the ideal
+  gas and by at most 0.5% with Redlich–Kwong. The Redlich–Kwong Chapman–Jouguet speed exceeds
+  the ideal-gas one from about 1 MPa, increasingly with pressure, and agrees better with Bauer's
+  experiments. At 7 MPa the transient Redlich–Kwong speed has a standard deviation of 41.0 m/s.
+- *ZND structure* (§4.5, Figs. 12–14). A one-step reaction is used, because detailed H$_2$–air
+  chemistry makes one-dimensional detonations at $\ge1$ MPa highly unstable. Its parameters are an
+  activation energy of $10R_uT_1$, heat release $50R_uT_1$ ($R_u$ the universal gas constant,
+  $T_1$ the fresh-gas temperature), a pre-exponential factor $3.6413$ that makes the ideal-gas
+  $\ell_{1/2}=1$, $\gamma=1.4$ and $A_{\mathrm{RK}}=B_{\mathrm{RK}}=0.1$. The domain is
+  $1000\,\ell_{1/2}$ with $\Delta x=\ell_{1/2}/8$ and CFL 0.2. The real gas has a higher
+  post-shock pressure, a much lower post-shock density and an $\ell_{1/2}$ 45% shorter. The
+  density peak is under-resolved at $\ell_{1/2}/8$. It is resolved at an effective $\ell_{1/2}/32$,
+  either uniformly or by $\ell_{1/2}/4$ plus three refinement levels, and the refined route is at
+  least ten times faster.
+- *Two-dimensional cellular detonation* (§4.6, Figs. 15–16), after Taileb et al. (2021). The
+  mixture is at 300 K and 5 MPa, with $\gamma=1.2$ and a Noble–Abel covolume of
+  $9.38\times10^{-4}$ m³/kg ($B_{\mathrm{RK}}=0.023$). The one-step reaction has activation energy
+  $20R_uT_1$ and heat release $50R_uT_1$. The domain is $150\,\ell_{1/2}$ wide and
+  $1500\,\ell_{1/2}$ long, on a base grid of $\ell_{1/2}$ with four refinement levels. The
+  Noble–Abel cells are "quite regular", the ideal-gas cells significantly more irregular. Widths
+  measured on about 180 cells range over 6–32 $\ell_{1/2}$ (ideal gas) and 10–27 (Noble–Abel),
+  against 9–37 and 7–35 in Taileb et al. The means, 18.3 and 20.2 $\ell_{1/2}$, confirm
+  Taileb et al.'s value of about 20 for both equations of state. The authors attribute the
+  differences in range to the scheme order (Taileb et al.'s ninth-order monotonicity-preserving
+  reconstruction of characteristic variables against second-order MUSCL) and to the refined
+  against uniform mesh.
+
+**Detonations as a GPU performance test.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
+(§6.4, Table 3, Figs. 10–12; accepted manuscript) use one-dimensional detonations only to time
+their GPU chemistry integrators, not to validate. Their solver is a second-order unstructured
+finite-volume code with HLLC and Strang splitting of the chemistry. The cells are fixed at
+$\Delta x=50\,\mu$m, with a 3 mm driver and 6000, 60,000 or 600,000 cells over 0.3, 3 or 30 m.
+The fresh gas is at equivalence ratio 1, 300 K and 1 atm. Three mechanisms are run: H$_2$–air (9
+species, 21 reactions; nitrogen driver at 100 atm and 2500 K), CH$_4$–O$_2$ (12 species, 38
+reactions) and RP2–O$_2$ (38 species, 192 reactions), the last two with Chapman–Jouguet-state
+drivers. At CFL 0.2 the time step is about 6 ns for all three. The ratio of the flow step to the
+chemical time scale is of order $10^2$ for H$_2$–air and CH$_4$–O$_2$ and about $10^4$ for RP2.
+The speedup of their adaptive-cell algorithm over the static one grows with the cells per GPU and
+with the stiffness. They also show a CH$_4$–O$_2$ rotating detonation rocket engine, in which two
+co-rotating waves travel at 1357 m/s (1176 GPUs), and an ethylene-fuelled scramjet (300 GPUs), as
+qualitative demonstrations (§6.1–6.2, Table 2).
+
 **Reconstruction on detonations.** As reproduced in
 [Fu (2023)](/sources/fu-2023.md) §5.2 (Fig. 18), fifth-order
 [TENO](/methods/targeted-eno.md) captures the cellular structure of a
@@ -127,9 +183,18 @@ incorrect cellular structures.
   average leaves the admissible set (see
   [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
 
+- Weng & Mével's finest cell in the cellular case is $\ell_{1/2}/16$ *(compiler check, not in the
+  sources: four levels of halving from $\ell_{1/2}$)*. As they report it, Taileb et al. used a
+  uniform $\ell_{1/2}/20$ on a $150\times300\,\ell_{1/2}$ window with mesh recycling, against
+  their full $1500\,\ell_{1/2}$ length. The agreement they report with Taileb et al. is in the
+  mean cell width; the ranges of the widths differ (above).
+- Bielawski et al. print the RDRE mesh as 118 million cells in §6.1 and as 312 million in Table 2.
+
 # Citations
 
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.4, Table 1, Figs. 9–11; §4, Tables 2–5, Figs. 12–21 (accepted manuscript).
 - [Wang et al. (2022)](/sources/wang-2022.md) — §3.6, Fig. 19.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §6, Ex. 6.4, 6.6, Figs. 6.4–6.7.
 - [Fu (2023)](/sources/fu-2023.md) — §5.2, Fig. 18 (reproduced result).
+- [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1; §§4.4–4.6, Figs. 11–16: real-gas Chapman–Jouguet, ZND and cellular detonations.
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §§6.1–6.2, §6.4, Tables 2–3, Figs. 3–12: detonations as GPU performance tests and demonstrations (accepted manuscript).

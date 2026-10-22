@@ -167,7 +167,7 @@ $\mu_D,\mu_\phi,\mu_v,\mu_\rho,\mu_L$ the momentum split weights.
 22. Richardson extrapolation $(2^3\cdot\text{fine}-\text{coarse})/6$ of the second-order scheme
     gives a fourth-order finite-volume scheme. Its effective volume is
     $V^{\mathrm{4th}}=(8V^{\mathrm{fine}}-V^{\mathrm{coarse}})/6$, and its flux equals
-    Pirozzoli's flux with his stencil coefficients $L=2$, $a_1=2/3$, $a_2=-1/12$. (§6.2,
+    Pirozzoli's flux with stencil coefficients $L=2$, $a_1=2/3$, $a_2=-1/12$. (§6.2,
     eqs. (75)–(78)) **Derived**
 23. Mass-flux splitting (Feiereisen, KGP, Coppola $\zeta=0$) does not matter for discrete energy
     preservation if it is applied consistently in mass and momentum. It may affect accuracy.
@@ -276,7 +276,7 @@ No item is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–5 (2026-10-22/23). This source is cited on:
 
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)

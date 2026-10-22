@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Approximate dispersion relation"
-description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio and its pointwise use for adaptive dissipation, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, hybrid and multi-resolution WENO schemes and for central schemes with high-order artificial dissipation."
+description: "The modified-wavenumber characterization of a possibly nonlinear spatial scheme: its sign convention for dissipation, the Hu-type dispersion-to-dissipation ratio and its critique, optimization on the nonlinear ADR, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, WCNS, gradient-based, hybrid and multi-resolution schemes and central schemes with artificial dissipation."
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Approximate dispersion relation
@@ -70,6 +70,62 @@ $0.976$ for both the sixth-order central (C6) and fifth-order upwind (UW5) schem
 have "exactly the same dispersion" (Figs. 1–2). *(Compiler check, not in the sources: the
 trigonometric identity for $\tilde\vartheta_i$ follows from $\cos3\vartheta=4\cos^3\vartheta-3\cos\vartheta$
 and $\cos2\vartheta=2\cos^2\vartheta-1$.)*
+
+The same two-parameter symbol appears in a different scheme family.
+[Zhou et al. (2023)](/sources/zhou-2023.md) (§3, Eqs. (19)–(24)) free the first
+and last coefficients of the six-point central midpoint interpolation of a
+[weighted compact nonlinear scheme](/methods/weighted-compact-nonlinear-scheme.md)
+(page-local $\eta_{\mathrm Z}$ for their sum, $\xi_{\mathrm Z}$ for their difference, as on the WCNS and MDCD pages; the source's $\eta$, $\xi$). The
+interpolation is differenced by a sixth-order explicit midpoint-and-node-to-node
+formula, and they derive the modified wavenumber of the resulting linear
+scheme. Dispersion depends only on $\eta_{\mathrm Z}$ and dissipation only on
+$\xi_{\mathrm Z}$, so "the dispersion and dissipation properties of a linear
+scheme can be optimized independently" (§3). The special cases are
+$\eta_{\mathrm Z}=3/128$, $\xi_{\mathrm Z}=0$, the sixth-order central scheme, and
+$\eta_{\mathrm Z}=\xi_{\mathrm Z}=3/128$, the fifth-order upwind scheme. They write the
+derivative of a mode as $\mathrm i\Phi/\Delta x$ with $\Im\Phi<0$ dissipative.
+*(Compiler check, not in the sources: their $\Re\Phi$ and $\Im\Phi$ are the MDCD
+expressions above with $c_{\mathrm{disp}}=\tfrac{64}{45}\eta_{\mathrm Z}$ and
+$c_{\mathrm{diss}}=\tfrac{64}{45}\xi_{\mathrm Z}$, term by term. Their
+convention is the registry's, with $\tilde\vartheta_r=\Re\Phi$ and
+$\tilde\vartheta_i=\Im\Phi$. The linear part of their WCNS is therefore
+spectrally the MDCD scheme.)*
+
+**Gradient-based reconstructions.** [Chamarthi (2023a)](/sources/chamarthi-2023.md)
+(§3.2, Eqs. (46)–(52)) gives the modified wavenumbers of the author's fourth-order
+[gradient-based reconstructions](/methods/gradient-based-reconstruction.md)
+as series. They use explicit sixth-order gradients (EG6) or compact
+fourth-order gradients (IG4H), and Chamarthi compares them with the fifth-order
+upwind U5. Chamarthi writes the symbol $k'$ as an approximation of $\mathrm ik$.
+*(Compiler check, not in the sources: in the registry's convention
+$\tilde\vartheta_r=\Im k'$ and $\tilde\vartheta_i=-\Re k'$.)* Translated, the
+printed series are:
+
+$$\begin{aligned}
+\text{U5:}\quad&\tilde\vartheta_r=\vartheta-\tfrac{\vartheta^7}{140}+\dots,&\tilde\vartheta_i&=-\tfrac{\vartheta^6}{60}+\tfrac{\vartheta^8}{240}+\dots,\\
+\text{EG6:}\quad&\tilde\vartheta_r=\vartheta+\tfrac{\vartheta^5}{720}+\tfrac{\vartheta^7}{30240}+\dots,&\tilde\vartheta_i&=-\tfrac{\vartheta^6}{1440}-\tfrac{7\vartheta^8}{1920}+\dots,\\
+\text{IG4H:}\quad&\tilde\vartheta_r=\vartheta+\tfrac{\vartheta^5}{720}+\tfrac{\vartheta^7}{2016}+\dots,&\tilde\vartheta_i&=-\tfrac{\vartheta^8}{2304}+\dots
+\end{aligned}$$
+
+These are fourth order in dispersion and dissipative, which the author calls
+"contrary to expectations that the κ-scheme can be only at most third
+accurate" and attributes to the point-value setting (§3.2). IG4H has the
+better dispersion and both gradient-based schemes "superior dissipation"
+to U5 (Fig. 2). In the companion paper,
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) (§2.2, Eq. (22),
+Appendix A) uses the same analysis as a design tool. Two free parameters of
+the second-derivative estimate are fixed by Fourier analysis at $38/7$ and
+$3/190$ for a seventh-order upwind scheme on the same nine-point flux
+stencil. Chamarthi finds the seventh-order scheme less dissipative and the
+fourth-order one slightly better in dispersion (§3.2, Fig. 15). *(Compiler
+check, not in the sources: the symbols of the printed flux forms, Eq. (33)
+for seventh and Eq. (64) for fourth order, are
+$\tilde\vartheta_r=\vartheta-\vartheta^9/360$,
+$\tilde\vartheta_i=-\vartheta^8/280+\vartheta^{10}/560$ and
+$\tilde\vartheta_r=\vartheta+\vartheta^5/720+\vartheta^7/30240+O(\vartheta^9)$,
+$\tilde\vartheta_i=-\vartheta^6/1440+O(\vartheta^8)$. The second is the EG6
+series above, so the fourth-order scheme of the companion paper is EG6, as
+its Remark 2.2 states.)*
 
 **Central schemes with high-order dissipation.**
 [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§3, Fig. 1) give the
@@ -148,6 +204,51 @@ scheme, not a linear symbol (the paper calls MDAD "linear" for convenience, §3)
 curvilinear grids, applied to the transformed flux, the one-dimensional stencil keeps the
 same modified wavenumber under the stated assumptions (smooth grids, periodicity, a
 Fourier component of the transformed flux; §3.4 Remark, Eqs. (62)–(69)).
+
+**Optimizing the nonlinear scheme, not its linear part.**
+[Zhou et al. (2023)](/sources/zhou-2023.md) (§§3–4) minimize the same kind of
+weighted dispersion error,
+$E=\int_0^\pi e^{-\sigma\vartheta}(\tilde\vartheta_r-\vartheta)^2d\vartheta$, with
+their weight exponent written as the page's $\sigma$. *(Compiler check, not in
+the sources: up to the constant factor $e^{\sigma\pi}$ this is the Weirs–Candler
+integral above.)* For the linear scheme, $\sigma=4,\dots,8$ gives
+$\eta_{\mathrm Z}=0.0502$, $0.0432$, $0.0384$, $0.0350$, $0.0326$. The peak dispersion
+errors are $3.72\%$ to $0.34\%$, and the resolved fraction of $[0,\pi]$ runs
+from $60.86\%$ to $41.03\%$ (Table 1). *(Compiler check, not in the sources:
+$\sigma=8$, $\eta_{\mathrm Z}=0.0326$ gives $c_{\mathrm{disp}}=\tfrac{64}{45}\cdot0.0326=0.04636$.
+This is the $0.0463783$ that Li, Chen & Ren obtain with the weight
+$e^{-8\vartheta}$, to the printed digits.)* Zhou et al. then evaluate $E$ on the
+numerically computed ADR of the full nonlinear scheme, whose weights carry an
+additive constant $C$ of Wong–Lele type. The optimal $\eta_{\mathrm Z}$ then depends on
+$C$ and $\xi_{\mathrm Z}$: $0.0675$ and $0.0539$ at $C=10$ for
+$\xi_{\mathrm Z}=0$ and $3/128$, down to $0.0385$ for both at $C=10^9$
+(Table 2). The nonlinear scheme optimized at $C=10^9$ resolves up to
+$\vartheta\approx1.6$, "nearly identical" to its linear scheme, against about
+$1.25$ for the linearly optimized ONL6 and the localized-dissipation WCNS-LD on
+the same stencil (§4.1, Figs. 4–5). The authors conclude that the optimization
+"can completely remedy the dispersion property deterioration caused by
+nonlinear mechanism". Their dissipation design is an "idealized" curve: zero
+below the critical wavenumber, a quick rise there, and enough dissipation
+beyond it. No fixed $C$ or $\xi_{\mathrm Z}$ produces such a curve, so both
+are switched by a sensor (WCNS-SA; §4.2–4.3, Figs. 6–7). WCNS-SA's dissipation
+increases nearly monotonically for $\vartheta>1.9$, while WCNS-LD's "decreases
+evidently when $\vartheta>2.4$". On this ground the authors credit WCNS-SA with
+stronger shock-capturing robustness (§4.3, Fig. 7(b);
+[scale sensors](/definitions/scale-sensor.md)).
+
+**A critique of the dispersion–dissipation condition.** Zhou et al. (§4.2–4.3,
+Eq. (28), Fig. 7(b)) plot a scheme whose dissipation is the minimum the Hu-type
+condition allows at ratio 10, i.e. $\zeta=10$ above. It "has insufficient
+dissipation at the high-wavenumber region and thus exhibits weak
+shock-capturing robustness". They conclude that the condition "needs to be
+improved for actual simulation, although it is physically reasonable". The
+evidence is the spectral curve; no simulation with that scheme is reported.
+Fu's group uses the condition for the linear backgrounds of TENO, whose shock
+capturing comes from the cut-off. Li, Chen & Ren impose it at
+$\vartheta=\pi$, and their hybrid hands the highest wavenumbers to WENO.
+*(Compiler check, not in the sources: neither use asks the condition alone to
+supply the dissipation at shocks, so the critique and those uses concern
+different roles of the same condition.)*
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
@@ -241,8 +342,17 @@ is meant.
   under-resolved wave packets kept "without interacting with resolved scales", "akin to soliton
   solutions". Huang et al. (above) find their ROUND schemes markedly less dissipative than
   WENO3-NN at high wavenumbers. See [learned WENO weights](/methods/learned-weno-weights.md).
+- **MP-limited gradient-based reconstruction against TENO5.** With the ADR procedure of
+  Zhao et al., [Chamarthi (2023a)](/sources/chamarthi-2023.md) (§3.3, Fig. 3) finds
+  that MIG4, the author's compact-gradient scheme with the monotonicity-preserving limiter, has better
+  dispersion and dissipation than MEG6 and [TENO5](/methods/targeted-eno.md). Reusing the
+  high-order second derivative as the limiter curvature improves the dispersion of MIG4
+  over its base version, "marginal[ly]" for MEG6
+  ([monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)). Chamarthi's
+  summary Table 5 rates the dissipation error "Medium" for MIG4 and MEG6 and "Low" for
+  TENO5, and the dispersion error Low, Medium and High (see Qualifications).
 - **High-order WCNS whose curves do not separate.** [Hiejima (2022)](/sources/hiejima-2022.md)
-  (Appendix, Fig. A.1; $n_x=100$, first-order upwind as reference) computes the ADR of his
+  (Appendix, Fig. A.1; $n_x=100$, first-order upwind as reference) computes the ADR of the author's
   [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md) with
   Jiang–Shu (WCNS-JS) and TENO-type (WCNS-T) weights at interpolation orders 5, 7, 9 and 11:
   WCNS-T is better than WCNS-JS, "however, both cases are not so different in accuracy", and the
@@ -268,6 +378,16 @@ is meant.
   choose their $\lambda=579$ not from the ADR but as the largest value for which
   the Woodward–Colella blast wave still runs ($\lambda=580$ fails), and their
   Fig. 2 shows the ADR for $\lambda=600$, a value they report as unusable.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) is not self-consistent on TENO5. The text
+  near Fig. 3 says that MIG4 has "superior dispersion and dissipation properties than the MEG6
+  and TENO5 scheme", while Table 5 rates TENO5's dissipation error "Low" and MIG4's
+  "Medium". Chamarthi also says Fig. 2 shows the "imaginary and real parts" of the modified wavenumber as
+  dispersion and dissipation, but labels the panels "Real" and "Imag" in the other order. The page
+  uses the printed series, not the panel labels.
+- Zhou et al. (2023) do not print the weight exponent $\sigma$ used for their nonlinear optimization
+  (Table 2). The large-$C$ limit $0.0384$ equals the linear optimum at $\sigma=6$ of their Table 1.
+  They also never print the exponent of their nonlinear weights, although they attribute post-shock
+  noise to its value (§5.6).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) (§6) present "beating the
   underlying linear scheme" as contrary to the view, attributed to Pirozzoli,
   that nonlinear shock-capturing mechanisms always degrade spectral
@@ -290,4 +410,7 @@ is meant.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.1–2.3, Eqs. (6)–(38), Figs. 1–7; §3.2–3.4, Figs. 9, 11–12, Eqs. (62)–(69): MDCD symbol, pointwise dispersion–dissipation ratio, MDAD-HY and detector spectra.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.2, Fig. 3: spectra of the scale-sensor TENO5-A (arXiv v1).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §4.3, Figs. 6–7: TENO-M spectra against $C_s$.
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §§3–4, Eqs. (19)–(28), Tables 1–2, Figs. 3–7: two-parameter WCNS symbol, ADR-based optimization, idealized dissipation, critique of the dispersion–dissipation condition.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §3.2, Eqs. (46)–(52), Fig. 2; §3.3, Fig. 3, Table 5: gradient-based reconstruction spectra, MIG4 and MEG6 against TENO5 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.2, Eq. (22), Appendix A; §3.2, Fig. 15: Fourier design of the seventh-order gradient-based reconstruction (arXiv v1).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Fig. 3.2: WENO-H, WENO-ZQ, MRWENO, WENO-JS spectra.

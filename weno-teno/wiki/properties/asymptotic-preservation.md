@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Asymptotic preservation"
-description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; the bundle has three cases: relaxation limits of Euler with gravity and friction, the incompressible limit of full Euler, and the hydrodynamic limit of discrete kinetic schemes."
+description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; the bundle has four cases: relaxation limits of Euler with gravity and friction, the incompressible limits of full Euler and of ideal MHD, and the hydrodynamic limit of discrete kinetic schemes."
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
-tags: [asymptotic-preserving, well-balanced, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+tags: [asymptotic-preserving, well-balanced, finite-volume, mhd]
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Asymptotic preservation
@@ -120,6 +120,38 @@ it is about 4 at $\varepsilon=1$ and 5 at $\varepsilon=10^{-6}$ (Table 5.2, Fig.
 kinetic energy are kept over two periods with a time step independent of the acoustic speed
 (Ex. 5.5).
 
+## The low sonic-Mach limit of ideal MHD
+
+[Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) extend the same construction to the ideal
+MHD equations scaled with Alfvén Mach number one and sonic Mach number $\varepsilon$: the
+pressure enters the momentum flux as $p/\varepsilon^2$, the fast magnetosonic speed scales as
+$\varepsilon^{-1}$, and an explicit scheme needs $\Delta t=O(\varepsilon\Delta x)$ (§2.2). For
+well-prepared data ($p=p_0+\varepsilon^2p_2(x)+\dots$ with $p_0$ constant, divergence-free
+leading velocity and magnetic field) the formal limit is incompressible MHD with
+$p_2$ as the incompressible pressure (§2.3, Eqs. (2.8)–(2.14), recalled from earlier work).
+Their [semi-implicit scheme](/methods/semi-implicit-all-mach-scheme.md) keeps
+$\nabla\cdot B=0$ by evolving a vector potential.
+
+- **AP** (Thm. 4.1). The first-order time-semi-discrete scheme with well-prepared data at
+  $t^n$ gives $\nabla p_0^{n+1}=0$ at $O(\varepsilon^{-2})$ and, at $O(1)$,
+  $\frac{p_0^{n+1}-p_0^n}{\Delta t}+\gamma p_0^n\nabla\cdot v_0^{n+1}=0$; integration over the
+  domain (periodic or no-slip) gives a constant pressure and $\nabla\cdot v_0^{n+1}=0$, a
+  consistent scheme for incompressible MHD. This is the argument of Boscarino et al. above,
+  with the magnetic terms carried along.
+- **Asymptotic accuracy** (Thm. 4.2). An order-$r_{\mathrm{RK}}$ semi-implicit IMEX Runge–Kutta
+  scheme with stiffly accurate implicit part keeps, for $\varepsilon\to0$, a constant pressure,
+  $\nabla\cdot v\to0$, $\nabla\cdot B=0$ and the incompressible solution up to
+  $O(\Delta t^{r_{\mathrm{RK}}+1})$ after one step; proof by induction over the stages.
+
+Both are formal and space-continuous; no stability proof is given, and the
+$\varepsilon$-independent time step is shown numerically. The accuracy tests (third-order scheme)
+give about fifth order in space at $\varepsilon=1$, $10^{-6}$ and $0$, and lose order at
+$\varepsilon=10^{-2}$: 1D orders 2.78, 1.11, 1.72, 1.60 (Table 5.2), and in 2D errors that do not
+decrease between $N=16$ and $N=64$ (Table 5.4). The authors call this "typical behavior of
+high-order IMEX schemes for these multi-scale problems". A magnetized
+[Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md) run at $\varepsilon=10^{-6}$ is
+compared qualitatively with earlier results (Ex. 5.9).
+
 ## Hydrodynamic limit of discrete kinetic schemes
 
 For a discrete BGK (Jin–Xin) relaxation system with relaxation time $\varepsilon$, the limit is
@@ -155,15 +187,28 @@ same step returns NaN on $N=10,20$ and runs with $\tfrac25\Delta t$ (Table 6.2).
 equation and no $c$-uniform stability statement are given, and the paper does not use the term
 asymptotic preserving.
 
+In relativistic radiation MHD, [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md)
+meet the optically thick (diffusion) regime of the radiation moments: on a diffusing
+radiation pulse with cell optical depths 5, 100 and 1000, first-order reconstruction, an
+unscaled flux or radiative HLL without speed limiting give "catastrophic diffusive solutions", especially above optical
+depth 100 (described, not plotted). Their radiative HLL limits the radiation
+wave speeds by the optical depth, and their
+[PVM flux](/methods/polynomial-viscosity-matrix-solver.md) scales its viscosity by the inverse
+optical depth (§3.2, §4.1.4), a choice they call "somehow arbitrary"; the paper states no limit scheme and
+does not use the term asymptotic preserving. Their stiff radiation–matter coupling is
+integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order Runge–Kutta
+(§3.1, §3.3).
+
 ## Qualifications
 
 - The AP property is shown by limit arguments on the scheme's formulas and by figures; the
   $\varepsilon$-independent stability is asserted with reference to earlier work, not
   proved or measured.
-- Across the three cases the evidence is of the same kind: formal limits of the
+- Across the four cases the evidence is of the same kind: formal limits of the
   time-semi-discrete or fully discrete formulas (Arun et al., Thm. 3.2 and 4.3; Boscarino et
-  al., Thm. 4.1 and Prop. 4.4; Abgrall & Nassajian Mojarrad, Prop. 2), with tests at one or a
-  few fixed values of the small parameter; none measures stability uniformly in it.
+  al., Thm. 4.1 and Prop. 4.4; Chen, Wu & Xiong, Thms. 4.1–4.2; Abgrall & Nassajian Mojarrad,
+  Prop. 2), with tests at one or a few fixed values of the small parameter; none measures
+  stability uniformly in it.
 - The time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
   "uniform in $\varepsilon$" does not mean hyperbolic-CFL.
 - The printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
@@ -177,3 +222,5 @@ asymptotic preserving.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §3.2 (Eqs. (3.6)–(3.10)), §4.2 (Eqs. (4.3)–(4.6), Thms. 4.2–4.3), §6.1 (Eq. (6.1), Table 6.2).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §2 (Eqs. (2.1)–(2.9)), §3.2.2, §4 (Thm. 4.1, Remark 4.2, Def. 4.3, Prop. 4.4), §5 (Table 5.2, Fig. 5.3, Ex. 5.5) (arXiv v2).
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §1, §2.2 (Props. 1–2), §5.
+- [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §2.2–2.3 (Eqs. (2.6)–(2.14)), §4 (Thms. 4.1–4.2), §5 (Tables 5.2, 5.4, Ex. 5.9) (arXiv v1).
+- [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1–3.3, §4.1.4, §5 (arXiv v1).

@@ -5,7 +5,7 @@ description: "A semi-discretization is kinetic-energy-preserving when its convec
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Kinetic energy preservation
@@ -154,6 +154,40 @@ smooth tests, the KEP central members with $\zeta\in\{0,\tfrac12,1\}$ conserve
 mass, momentum and energy to $O(10^{-15})$–$O(10^{-16})$, and members that
 violate the weights lose energy at $O(10^{-3})$–$O(10^{-4})$ (§7.3, Fig. 2).
 
+## Induced equations and the energy variable
+
+[De Michele & Coppola (2023)](/sources/demichele-2023.md) define the
+property through the induced equation: with
+$\partial_t(\rho\phi)=-C_{\rho\phi}-P_{\rho\phi}$ and $\mathcal M=C_\rho$
+(page-local convective and pressure terms), a scheme is KEP when
+$C_{\rho\phi^2/2}=\phi\,C_{\rho\phi}-\tfrac12\phi^2\mathcal M$ is in conservation
+form; the definition constrains only $C_{\rho\phi}$ and $\mathcal M$, the
+pressure term being a central gradient (§3.1, Eqs. (10)–(11)). Their results
+agree with the Coppola–Veldman criterion above and add three points:
+
+- **Proof tools.** Central derivatives on periodic uniform meshes satisfy
+  summation by parts but not the discrete product rule; global
+  conservation for the $\zeta$ family follows from SBP and the
+  skew-symmetry of the derivative matrix, which they identify with
+  Veldman's Requirement 3.1 (§2.2, §3.2, Eqs. (17)–(19)).
+- **Local flux.** In second-order flux form the induced kinetic-energy
+  flux is $\tfrac12\phi_i\phi_{i+1}m_{i+1/2}$, the flux of Observation 7 above,
+  and the weight of the family may vary from face to face without losing
+  local conservation (§3.3–3.4, Eqs. (26)–(28);
+  [split convective forms](/methods/split-convective-forms.md)). Applied to
+  $G=\tfrac12\rho v_\alpha^2$, their induced-equation formula shows that each
+  velocity component's kinetic energy is preserved separately (Eq. (31)).
+- **KEP of the energy variable.** Using the KEP splitting also for the
+  energy equation, so that $\rho E^2$, $\rho e^2$ or $\rho s^2$ are
+  conserved, is the customary choice for total energy; they call it
+  "exotic" and "not necessarily the best option". Preserving the square
+  root instead, $\rho\sqrt e\propto\rho c$, gives similar robustness, and the
+  internal-energy and entropy forms with the Kennedy–Gruber–Pirozzoli split
+  are the most robust in their isentropic-vortex and Taylor–Green tests
+  (§4.2, §5, §6, Table 3). A KEP internal-energy splitting cannot be
+  [pressure-equilibrium preserving](/properties/pressure-equilibrium-preservation.md)
+  (§4.2.2).
+
 ## Summation-by-parts proofs and the rotational form
 
 [Edoh (2022)](/sources/edoh-2022.md) proves kinetic-energy preservation of
@@ -162,9 +196,9 @@ split forms with diagonal-norm finite-difference
 the convective contribution to the discrete kinetic-energy balance
 collapses to a boundary flux by $Q+Q^\top=B$ and the commutation of the
 diagonal norm with diagonal data matrices (Eqs. (11)–(12), (22)–(24)).
-His results (§3, Tables 1–3):
+Edoh's results (§3, Tables 1–3):
 
-- **Incompressible.** The Morinishi (skew-symmetric) splitting, his
+- **Incompressible.** The Morinishi (skew-symmetric) splitting, the author's
   rotational-form splitting Div-rot and the derived Div-str are
   kinetic-energy preserving when the discrete velocity is solenoidal,
   $D_jv_j=0$. For Div-rot the proof relabels indices under the double sum
@@ -193,7 +227,7 @@ His results (§3, Tables 1–3):
   symplectic or relaxation-type integrators; Edoh presumes the temporal
   error negligible at small $\Delta t$ and does not study it (§4.1.1).
 
-His tests show the practical side. Without filtering, Div-rot is more
+Edoh's tests show the practical side. Without filtering, Div-rot is more
 robust than the divergence form but more prone to aliasing than the
 Feiereisen and Kennedy–Gruber splittings on the isentropic vortex; on the
 Taylor–Green vortex at $\mathrm{Re}=1600$ both Kennedy–Gruber and Div-rot
@@ -275,11 +309,11 @@ volume flux ([Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-202
 
 Renac's momentum flux is the mixture mass flux times $\{\!\{v\}\!\}$ plus the
 pressure mean $\{\!\{p/T\}\!\}/\{\!\{1/T\}\!\}$ times $n$, which has the structure of
-the Coppola–Veldman face-flux condition above, and for one component his
+the Coppola–Veldman face-flux condition above, and for one component Renac's
 flux reduces to the Chandrashekar flux *(compiler check, not in the
 sources: compare with Observation 7; set the number of components $n_c$
-(page-local) to 1 in his Eq. (24), with
-$p/T=\rho r_{\mathrm g}$, page-local gas constant $r_{\mathrm g}$)*. He does not say under which
+(page-local) to 1 in Renac's Eq. (24), with
+$p/T=\rho r_{\mathrm g}$, page-local gas constant $r_{\mathrm g}$)*. Renac does not say under which
 discrete conditions the property fails.
 
 Their formulas and a structural comparison with the Coppola–Veldman
@@ -318,3 +352,4 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.1 Eqs. (11)–(18), Remark 3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Table 3, §4, §4.1.1, Figs. 1, 3.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §3.3 Eqs. (38)–(42), Prop. 3.5, Remarks 3.4, 3.6, §4.2.2, App. A.3 (arXiv v4).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §3.2 Thms. 3.1–3.2 Eqs. (43)–(52), §3.3 Lemma 3.1, §3.5 Eq. (58), §4.1–4.2 Figs. 2–8, §5, §6, App. D Fig. 14 (arXiv v1).
+- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §2.2, §3.1–3.4 Eqs. (10)–(28), §4.1 Eq. (31), §4.2, §4.2.2, §5, §6, Table 3 (arXiv v1).

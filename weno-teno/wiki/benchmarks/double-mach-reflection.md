@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Double Mach reflection
@@ -21,8 +21,9 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Thirty sources of the bundle run it,
-twenty-seven in the Woodward–Colella form and three in a variant (a
+source that runs it. Thirty-four sources of the bundle run it,
+thirty-one in the Woodward–Colella form (one of them on a randomly
+distorted curvilinear grid) and three in a variant (a
 wedge on an unstructured mesh, a relativistic version, a dimensional
 ramp with an immersed boundary); most cite Woodward & Colella (1984)
 for it, while Peng, Sun & Wu cite no source for the setup. A Mach 10
@@ -61,9 +62,17 @@ $[0,1/6]$ of the bottom, slip wall on $[1/6,4]$, exact shock motion on
 the top, outflow on the right, pre-shock $\rho=1.4$, $p=1$.
 
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.17 and
-[Wang et al. (2023)](/sources/wang-2023-b.md) Example 4 write the same
+[Wang et al. (2023)](/sources/wang-2023-b.md) Example 4 and
+[Zhou et al. (2023)](/sources/zhou-2023.md) §5.5, Eq. (40) write the same
 geometry as $x<\tfrac16+y/\sqrt3$ with post-shock state
-$(8,\ 8.25\cos\tfrac\pi6,\ -8.25\sin\tfrac\pi6,\ 116.5)$. The same
+$(8,\ 8.25\cos\tfrac\pi6,\ -8.25\sin\tfrac\pi6,\ 116.5)$, and
+[Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.4,
+[Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.8 and
+[Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §8.1.3
+print the same state for $x<1/6+y/\tan60^\circ$, pre-shock $(1.4,0,0,1)$;
+Chandravamsi et al. state the boundaries as post-shock on the left,
+zero gradient on the right, post-shock on $[0,1/6]$ and reflecting wall
+on $[1/6,3]$ of the bottom, time-dependent top. The same
 post-shock pressure $116.5$ is printed by
 [Bezgin et al. (2022)](/sources/bezgin-2022.md) Eq. (37), as
 $(8,7.145,-4.125,116.5)$ above $y=1.732(x-0.1667)$;
@@ -201,6 +210,10 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.8 | finite-difference [Hermite WENO](/methods/hermite-weno.md) HWENO-R vs HWENO-L, WENO-ZQ | $1600\times400$ | 30 contours 1.5–22.7 |
 | [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.8 | unstructured finite-volume TENO3–6 vs WENO5/6 and [CWENO](/methods/cweno.md)5/6, HLL | 151,850, 369,794 ($h\approx1/200$), 752,708 ($h\approx1/280$) triangles | 43 contours 1.887–20.9; cost table (preprint) |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 | [IDEFIX](/software/idefix.md), second-order Godunov: RK2 + linear + HLL or HLLC; RK3 + LimO3 + HLLC; RK3 + PPM + Roe | $1920\times480$ | data not printed (arXiv v1) |
+| [Zhou et al. (2023)](/sources/zhou-2023.md) §5.5 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6; HLLC with Xie et al.'s pressure control against shock instability, TVD-RK3, CFL 0.5 | $[0,4]\times[0,1]$, $960\times240$ | post-shock bottom for $x<1/6$, reflective beyond, time-dependent top; $t=0.2$ |
+| [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.4 | [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) with [MP limiter](/methods/monotonicity-preserving-limiter.md) (MEG6, MIG4) vs TENO5; HLLC, CFL 0.2 | $[0,3]\times[0,1]$, $768\times256$ | arXiv v2 |
+| [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.8 | seventh-order gradient-based MEG7 (conservative and primitive variables) vs seventh-order mapped explicit [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS7M; shock-stable HLLC | $[0,4]\times[0,1]$, $1024\times256$ | reference HOUCS6 on about $4096\times1024$; cost table (arXiv v1) |
+| [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §8.1.3 | MEG6, MIG4 on generalized curvilinear grids with [free-stream-preserving](/properties/free-stream-preservation.md) metrics vs non-preserving metrics; WENO-Z on a uniform grid | $[0,3]\times[0,1]$, $768\times256$, interior nodes displaced randomly by up to 50 % of the spacing | OpenACC GPU timing case, 3 M cells (arXiv v1) |
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.6 | [$p$-adaptive DG](/methods/hp-adaptation.md) $N\in[2,5]$ with [FV subcells](/methods/subcell-finite-volume-limiting.md) ($N_{\mathrm{FV}}=6$ or 11) vs static $N=5$; HLLE; [FLEXI](/software/flexi.md) | $240\times60\times1$ elements ($h=1/60$), periodic in $z$ | $t=0.28$; pressure indicator |
 
 ## What the benchmark measures
@@ -226,7 +239,7 @@ structures than WENO3-JS, WENO3-Z and WENO3-N and close to WENO5-JS
 $h=1/300$, "comparable and even better" than WENO-JS5 on a coarser mesh
 (Figs. 25, 36). Balsara et al. resolve Mach-stem instabilities at seventh
 order on $1920\times480$ (Fig. 18). Pazner reads the Kelvin–Helmholtz
-roll-ups near the triple point of his $N=3$ DG run as a sign of low
+roll-ups near the triple point of the author's $N=3$ DG run as a sign of low
 dissipation (Fig. 13); Dzanic & Witherden find sub-element shock
 resolution with the roll-up kept, the filter acting mainly at the shock
 fronts (Fig. 4). Wang et al. (2021) find both multi-resolution
@@ -261,6 +274,19 @@ Lesur et al. use the problem to show the sensitivity of the wall jet to
 the dissipation of a second-order code: LimO3 and PPM, its least
 diffusive options, give a more vigorous jet with the beginning of
 Kelvin–Helmholtz rolls (§4.1, Fig. 3).
+
+The gradient-based schemes of the Chamarthi papers are ranked the same
+way. Chamarthi (2023a) finds MIG4 resolving the slip-line roll-ups
+better than MEG6 and TENO5, and TENO5 oscillating near the Mach stem
+(Fig. 7). In Chamarthi (2023b) MEG7 with conservative variables
+resolves the slip-line vortices better than WCNS7M, while MEG7 with
+primitive variables shows no slip-line vortices but a better-resolved
+wall jet, primitive reconstruction being "slightly more dissipative"
+here (Fig. 11). Chandravamsi et al. find WENO-Z resolving the shear
+layer less well than MEG6 and MIG4 on the uniform grid (Fig. 9f).
+Zhou et al. find WCNS-SA giving clearer vortex cores along the slip
+line than WCNS-LD and ONL6, similar to the hybrid weighted compact
+scheme CCSSR-HW6 of their ref. [40] on $1920\times480$ (§5.5, Fig. 15).
 
 **Order does not buy roll-up by itself.** Hiejima's WCNS-JS shows no
 Kelvin–Helmholtz roll-up along the slip line at fifth order, and its
@@ -318,6 +344,13 @@ resolutions (§5.8, Figs. 24–25); they also state that CWENO with a large
 central linear weight "typically fails" here, which fixes their choice
 of that weight (§2.4).
 
+**Distorted curvilinear grids.** Chandravamsi et al. run the problem
+on a $768\times256$ grid whose interior nodes are displaced randomly by
+up to 50 % of the spacing (maximum included angle close to $200^\circ$).
+With free-stream-preserving metrics the solution is unaffected by the
+distortion; with non-preserving metrics rough patches appear, smaller
+for MIG4 than for MEG6 (§8.1.3, Fig. 9).
+
 **Limiters on unstructured meshes.** Du et al. find the improved
 simple WENO limiter as good as the original at $P^1$ and better at
 $P^2$, with "better control" of oscillations and a better-resolved
@@ -361,6 +394,13 @@ $2.24\times10^{-6}$ s (TENO6) on 369,794 triangles, "roughly 65%", with
 TENO5 and CWENO5 at $1.96$ and $1.98\times10^{-6}$ s (Intel Xeon
 E5-2690, 8 MPI ranks × 7 OpenMP threads; §5.10, Table 7).
 
+Chamarthi (2023b, Table 2) times the $1024\times256$ run at 1806 s
+(MEG7-prim), 1946 s (MEG7-cons) and 2493 s (WCNS7M), hardware not
+stated. Chandravamsi et al. time it on one GPU against one Xeon Gold
+5115 core: MEG6 speedups of 57.5, 100.4 and 153.14 on an A6000, a V100
+and an A100 (Table 5); on this inviscid case WENO-Z is the fastest of
+their three schemes because it needs no gradients (§9.1).
+
 **Unstructured meshes.** Fu (2023) reproduces finite-volume TENO6 on
 triangular meshes of 151,850 to 752,708 cells (Fig. 11). Chen et al.
 (2022), Chen & Wu (2022), Du et al. and Yu & Hesthaven also compute on
@@ -392,10 +432,18 @@ grid, not an exact solution.
   their §4.5 text says $t=0.2$, the same caption slip as Fu (2023) and
   Takagi et al.; Ji, Liang & Fu time their run "at $t=2$" (§5.10)
   against the $t=0.2$ of their §5.8.
+- Chamarthi (2023a) applies the reflecting wall on
+  "$0.1667<x\le4.0$" of a domain $[0,3]\times[0,1]$ (arXiv v2).
+- Chamarthi (2023a) finds TENO5 oscillating near the Mach stem, as the author's
+  text says WENO figures of the literature do; the TENO sources above
+  report no such oscillation for their TENO5 runs. The runs differ in
+  reconstructed variables (primitive in Chamarthi), flux and grid, and
+  no source compares them, so this is recorded as a difference of
+  findings, not as a contradiction.
 - Mossier, Beck & Munz stop at $t=0.28$, like Pazner a later stage of
   the roll-up.
-- Deng and Wang et al. (2021) compute on $[0,3]\times[0,1]$, the
-  others on $[0,4]\times[0,1]$ (Balsara et al. compute on $[0,4]$ and
+- Deng; Wang et al. (2021); Chamarthi (2023a) and Chandravamsi et al.
+  compute on $[0,3]\times[0,1]$, the others on $[0,4]\times[0,1]$ (Balsara et al. compute on $[0,4]$ and
   plot $[0,3]$).
 - Pazner's Fig. 13 caption gives $t=0.275$, later than the $t=0.2$ of
   the other sources; the run is therefore at a later stage of the
@@ -469,3 +517,7 @@ grid, not an exact solution.
 - [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.5, Fig. 7.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.5, Figs. 11–15.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.6, Table 3.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.4, Fig. 7 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.8, Fig. 11, Table 2 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §8.1.3, Fig. 9; §9.1, Table 5 (arXiv v1).
+- [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.5, Eq. (40), Fig. 15.

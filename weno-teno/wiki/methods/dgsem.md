@@ -104,7 +104,7 @@ sparsity on curved meshes (Eq. (2.19)).
 [Pazner (2021)](/sources/pazner-2021.md) proves that the strong form with
 the discrete metric identity preserves constants, while the weak form in
 general does not on curved meshes, and takes the strong form as the
-high-order target of his limiter (Prop. 3, §2.4.2). The two forms are
+high-order target of Pazner's limiter (Prop. 3, §2.4.2). The two forms are
 algebraically identical when the face normals are the volume metric terms
 at the boundary nodes, so the difference lies in how the normals are
 computed *(compiler check, not in the sources; see the qualification on
@@ -138,7 +138,7 @@ split-form DGSEM (§2–3, after Bohm et al.):
 
 [Renac (2021)](/sources/renac-2021.md) proves a Zhang–Shu-type result for
 an entropy-stable DGSEM on *unstructured* straight-sided quadrilaterals
-(Theorem 6.1). The scheme uses his multicomponent EC volume flux and an
+(Theorem 6.1). The scheme uses Renac's multicomponent EC volume flux and an
 entropy-stable, positive relaxation flux at the interfaces. If every nodal
 value is admissible, the forward-Euler cell averages stay admissible under
 
@@ -291,7 +291,7 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   DGSEM of degree $N$. Their §5 reports no convergence study.
 - Ranocha et al., Pazner and Renac write the degree $p$; Rueda-Ramírez et
   al. write $N$. Pazner's reference element is $[0,1]^d$, the others' is
-  $[-1,1]^d$. Renac prints the sums of his cell average (59)–(60) from
+  $[-1,1]^d$. Renac prints the sums of the cell average (59)–(60) from
   $1$ instead of $0$; the nodes run from $0$ to $N$.
   Abgrall et al. and Cicchino et al. also write the degree $p$.
   Rueda-Ramírez et al. write the quadrature weights $\omega$, which this

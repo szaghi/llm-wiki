@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock diffraction"
-description: "Two-dimensional Euler benchmarks of a shock diffracting around a backward-facing corner into gas at rest: the Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 reflection-and-diffraction variant over a step; the expansion behind the corner drives density and pressure towards zero, so the sources use them as robustness tests of positivity-preserving and limited high-order schemes."
+description: "Benchmarks of a shock diffracting into gas at rest: the two-dimensional Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 variant over a step, robustness tests of positivity-preserving and limited high-order schemes in the near-vacuum expansion behind the corner, and the three-dimensional diffraction of a strong shock by a sphere, an adaptive-mesh GPU scaling test."
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
-tags: [benchmark, positivity, bound-preserving, dg, relativistic]
-timestamp: 2026-10-23T10:00:00Z
+tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # Shock diffraction
@@ -22,7 +22,8 @@ contours of density and pressure at $t=2.3$ are compared visually.
 Five sources of the bundle run it, four in the Euler form (one on a
 rescaled geometry) and one in a relativistic form; two more run a
 Mach 10 variant in which the double-Mach-reflection shock meets a
-backward step.
+backward step, and one runs the three-dimensional diffraction of a
+strong shock by a sphere.
 
 ## Setup
 
@@ -120,6 +121,26 @@ union; the boundary data and the plotted axes of Fan et al. (2023)
 ($x\in[0,3]$, $y\in[-1,1]$) fit $[0,1]\times[0,1]\cup[1,3]\times[-1,1]$,
 i.e. the intervals of the second block are swapped in print.
 
+### Three-dimensional diffraction by a sphere
+
+[Zaghi et al. (2023)](/sources/zaghi-2023.md) §3, after the experiment
+of Bryson & Gross (1961), diffract a planar shock by a sphere centred
+at $(10,10,10)$ in a cube of side 20 (non-dimensional; the radius is
+not stated in the text), with the compressible Navier–Stokes equations
+for air: pre-shock $(\rho,p)=(1.4,1)$ at rest, post-shock
+$\rho=5.1432014$, $p=9.0454500$, $v=(2.0451168,0,0)$, imposed as
+supersonic inflow on the left, extrapolation elsewhere; fluid
+properties $c_p=1005.2$, $c_v=718.0$, $\mu=0.0013485123$ (Fig. 4b); the
+initial shock position is not stated; measurements at $t=5$,
+figures at $t=4$ and $6$; refinement on the modulus of the density
+gradient, between levels 3 and 8. The text states a shock Mach number
+of 2.89; with $\gamma=1.4$ and pre-shock sound speed 1, the
+Rankine–Hugoniot state at Mach 2.89 is $\rho=5.2544$, $p=9.5775$,
+$v_1=2.1200$, whereas the printed state is reproduced to all printed
+digits at Mach 2.81 ($\rho=5.1432014$, $p=9.04545$, $v_1=2.045107$)
+*(compiler check, not in the sources)*: the computed shock is about
+Mach 2.81.
+
 ## Runs in the sources
 
 | Source | Scheme | Mesh | Notes |
@@ -129,6 +150,7 @@ i.e. the intervals of the second block are swapped in print.
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.10 | as above, DG on polygonal cells from random point clouds | 219,200 ($P^1$) and 493,200 ($P^2$) points | positivity-preserving limiter for $P^2$; 20 density contours 0.066227–7.1 |
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.6 | finite-difference WENO-JS5, JS7, ZQ5 with the [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md); Euler and $\mathrm{Re}=1000$ | $\Delta x=\Delta y=1/64$ | $T=2.3$ |
 | [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.12 | second-order MUSCL, TVD RK2; HLLC, HLLEM and the shock-stable RHLLEM-LD | $400\times400$ on the rescaled corner | CFL 0.5, $t=0.15$ |
+| [Zaghi et al. (2023)](/sources/zaghi-2023.md) §3 | conservative finite differences with WENO reconstruction, Rusanov flux-vector splitting, SSP-RK3, [immersed boundary](/methods/immersed-boundary-method.md) by pseudo-time normal extrapolation, block-octree [AMR](/methods/adaptive-mesh-refinement.md) in [ADAM](/software/adam.md) on V100 GPUs | 3.6 M cells (strong scaling) to 350.3 M cells (684,258 blocks) | WENO order not stated for this case; 3D Navier–Stokes |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.11 | third-order finite-volume WENO on triangles with a physical-constraint-preserving limiter and HLL flux, vs first-order HLL | $h=1/40$; first order also $h=1/160$ | relativistic; CFL 0.5 |
 
 ## Findings across sources
@@ -178,10 +200,35 @@ compare their third-order scheme at $h=1/40$ with the first-order HLL
 scheme at $h=1/40$ and $h=1/160$ (Fig. 17); the figure is the evidence,
 and no error norm is given.
 
+**Adaptive refinement and GPU scaling on the sphere.** Zaghi et al.
+use the sphere case to measure their AMR library on Marconi100 (Table 1,
+13 runs): with $8^3$-cell blocks on 3.6 M cells the strong scaling is
+superlinear up to 8 GPUs (speedup 8.94), about 90 % efficient at 16
+(14.23) and below 60 % at 32 (18.84), so each V100 needs more than about
+250 K cells; larger blocks ($16^3$, $32^3$) lower the grind time, until
+inter-node ghost exchange matters at $32^3$. Raising the fine-to-coarse
+resolution ratio from 2 to 32 on 1 to 256 GPUs grows the grid by a
+factor 4–5 per halving of the finest spacing instead of 8, up to
+350.3 M cells, while the grind time rises less than threefold; the
+serial octree update grows to 527.97 s on 684,258 blocks, which they
+call acceptable for statistically steady but problematic for transient
+runs. The flow field (incident, reflected, diffracted and transmitted
+shocks, triple point) agrees qualitatively with a digitized schlieren
+photograph of Bryson & Gross, the curved reflected shock being slightly
+ahead in the experiment (Fig. 11); they claim the finest resolution
+published for this case.
+
 ## Qualifications
 
 - Evidence is visual throughout; no source reports a reference
   solution or an error norm.
+- Zaghi et al.'s Table 1 labels the grind time "[s]" while the printed
+  values (0.28 for $1.019$ s per step on $3.6\times10^6$ cells and one GPU)
+  are in microseconds per cell update; their "8 billions" cells for
+  uniform refinement of the cube at the finest spacing $0.015625$ is
+  $1280^3\approx2.1\times10^9$ *(compiler check, not in the sources)*.
+  The sphere problem is three-dimensional and viscous, unlike the 2D
+  Euler corner problems above.
 - Hu, Yuan & Zhao's corner ($[0,1]^2$, corner at $(0.05,0.6)$, $t=0.15$)
   is a different geometry from the $[0,13]\times[0,11]$ problem; their
   contours are not comparable with the others'.
@@ -201,3 +248,4 @@ and no error norm is given.
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Examples 5.6 and 5.8, Figs. 5.5, 5.7.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.12, Remark 3.2.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.12.
+- [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.2–3.3, Table 1, Figs. 4–15.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "HLL-family approximate Riemann solvers"
-description: "HLL, HLLE, HLLC, HLLEM/HLLI and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates, positivity proofs for gas and gas–liquid mixtures, the entropy-stable relaxation solver, carbuncle behaviour, and the switching of low- and high-dissipation solvers in high-order schemes."
+description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates for single- and multi-component and curvilinear flows, positivity proofs, the entropy-stable relaxation solver, radiative HLL, carbuncle behaviour, dissipation on turbulence, and solver switching."
 status: established
-aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver]
+aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T16:00:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -168,6 +168,38 @@ symmetry with $s^-$ requires $v_R+c_R$ (Eq. (23)). On 1D water–air interface a
 the interface sharper than the Rusanov flux over Mach 0.001–1, within three to five cells
 depending on the limiter (§3.1, Figs. 3–4).
 
+**Five-equation model with gradient-based reconstruction** ([Chamarthi (2023a)](/sources/chamarthi-2023.md),
+App. A, Eqs. (88)–(95)). The same construction: Einfeldt speeds from Roe averages, Batten
+contact speed, the single-species star state, and for two species the star state extended by
+$\phi_1\rho_1$, $\phi_2\rho_2$ and $\phi_1$. The source $\phi_1\nabla\cdot v$ of the
+[five-equation model](/definitions/five-equation-model.md) is discretized with the
+HLLC-consistent interface velocity
+
+$$v_{i+1/2}=\frac{1+\mathrm{sgn}(s^*)}2\Big[v^-+s^-_0\Big(\frac{s^--v^-}{s^--s^*}-1\Big)\Big]+\frac{1-\mathrm{sgn}(s^*)}2\Big[v^++s^+_0\Big(\frac{s^+-v^+}{s^+-s^*}-1\Big)\Big],$$
+
+$s^-_0=\min(0,s^-)$, $s^+_0=\max(0,s^+)$ (page-local), and
+$(\phi_1\nabla\cdot v)_i=(\phi_1)_i\,(v_{i+1/2}-v_{i-1/2})/\Delta x$ per direction, in the manner of
+Johnsen and Colonius; no oscillations appear at the material interfaces of the 1D two-fluid
+tube, the shock–curtain, the [shock–helium-cylinder](/benchmarks/shock-bubble-interaction.md),
+the [triple point](/benchmarks/triple-point-problem.md) and a viscous
+[Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md) case (Exs. 4.14–4.18). The
+companion seventh-order scheme of [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) uses HLLC
+throughout and, for the 2D shock–entropy wave and the
+[double Mach reflection](/benchmarks/double-mach-reflection.md), the shock-stable HLLC of
+Fleischmann et al. to avoid the carbuncle that appeared in the earlier paper (§3, Exs. 3.7–3.8;
+[carbuncle](/definitions/carbuncle-phenomenon.md)).
+
+**Moving curvilinear meshes** ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md),
+§5.1.1, Eqs. (26)–(28)). In contravariant form the speeds are
+$\hat s^-=\min(\hat V^--c^-\lvert\nabla\xi\rvert,\ \hat V^+-c^+\lvert\nabla\xi\rvert)$,
+$\hat s^+=\max(\hat V^-+c^-\lvert\nabla\xi\rvert,\ \hat V^++c^+\lvert\nabla\xi\rvert)$, and the
+contact speed is the Batten form with the pressure jump multiplied by $\lvert\nabla\xi\rvert^2$
+(page-local: $\hat V$ the contravariant velocity including the grid velocity, $\nabla\xi$ the
+Jacobian-scaled metric vector of the face); the star states carry the metric terms and the
+temporal metric. The interface metrics are those of the scheme's free-stream-preserving
+interpolation. The authors state that HLLC is less dissipative than HLL and Rusanov (not
+tested in the paper).
+
 **Pressure-based speeds** ([Li, Shu & Qiu (2022)](/sources/li-2022-d.md), §2.1,
 Eqs. (2.5)–(2.7)), for the Euler equations: a primitive-variable estimate
 
@@ -203,6 +235,31 @@ negative solutions (Figs. D.9–D.10). Renac also states that fast upper bounds 
 maximum wave speed, which HLL, Roe and Rusanov need, are not known for this
 multicomponent model (§1.3). See [entropy stability](/properties/entropy-stability.md)
 and [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md).
+
+## Radiative HLL and relativistic MHD
+
+In relativistic radiation MHD with the M1 closure, [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md)
+(§3.2.1, Eqs. (24)–(31)) use HLL with **separate** speed pairs for the magnetofluid block
+(roots of the quartic characteristic equation) and for the radiation block, whose Jacobian
+depends only on the radiation energy and flux and whose eigenvalues are closed-form functions
+of the reduced flux and its angle to the face normal; common speeds for both blocks cause
+excessive diffusion. In optically thick cells the radiation speeds are limited to
+$\pm\tfrac4{3\tau_{\mathrm{opt}}}$ (page-local cell optical depth $\tau_{\mathrm{opt}}$, after Sądowski
+et al.). The radiative HLLC of Melon Fuksman and Mignone must fall back to HLL when the speeds
+are limited, so it improves on HLL only in optically thin media, and HLLD has not been adapted
+to radiation (stated). Their alternative is the
+[PVM solver](/methods/polynomial-viscosity-matrix-solver.md), which needs no speed estimates
+per block.
+
+On the large-amplitude [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
+of relativistic MHD (no radiation; Tables 1–3): first-order (Godunov) HLL converges at order
+0.92 between 256 and 512 cells; piecewise-linear reconstruction gives second order; HLLC gives
+the results of Martí (2015), and HLLD performs like HLLC on this smooth solution; MP3 with
+third-order Runge–Kutta gives order 2.998 with HLLD; MP5 with third-order Runge–Kutta stays
+third order but with errors almost two orders of magnitude below MP3 ($4.284\times10^{-9}$ vs
+$3.224\times10^{-7}$ at 512 cells); MP5 with a five-stage fourth-order SSP Runge–Kutta reaches
+orders 4.83–5.05 with HLLD (error $9.006\times10^{-12}$ at 512 cells). The paper does not discuss
+why the fourth-order time integrator does not limit the observed order at CFL 0.3.
 
 ## Positivity and the bound-preserving CFL
 
@@ -280,6 +337,20 @@ where any monotone two-point flux can be used, HLLC gives the best dissipation-r
 on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and beats Steger–Warming
 splitting in both alternative-formulation schemes (§4.9, Figs. 10–12).
 
+**Dissipation on compressible turbulence.** In the GPU port of an unstructured OpenFOAM
+finite-volume solver, [Bielawski et al. (2023)](/sources/bielawski-2023.md) (App. A) compare a
+skew-symmetric central flux, HLLC and AUSMDV on decaying compressible isotropic turbulence
+against spectral data. At initial turbulent Mach number 0.3 the central flux tracks the
+reference, HLLC is closer to it than AUSMDV, which "adds additional numerical dissipation even
+at the turbulent Mach number of 0.3"; at 0.6, with eddy shocklets, both upwind fluxes are much
+more dissipative than the central one in enstrophy and dilatation, the HLLC–AUSMDV gap narrows,
+and mesh skewness matters little next to the flux's own dissipation (Figs. A.13–A.16). The
+authors postulate that a hybrid central/HLLC flux would help (see
+[hybrid central-WENO schemes](/methods/hybrid-weno.md)). Their text describes approximate
+Riemann solvers as giving "near minimal possible dissipation across discontinuities while
+maintaining a monotonicity preserving solution" (§3); the comparison of Appendix A concerns
+smooth turbulence and shocklets, not isolated discontinuities.
+
 ## Other fluxes in the same codes
 
 Several sources pair or compare HLL-type solvers with other interface fluxes:
@@ -325,6 +396,16 @@ Several sources pair or compare HLL-type solvers with other interface fluxes:
   [forward-facing step](/benchmarks/forward-facing-step.md), Roe with a Harten–Hyman entropy fix
   for the Sod, Shu–Osher and transonic-airfoil cases, local Lax–Friedrichs for the 3D explosion
   ([FLEXI](/software/flexi.md)).
+
+- **JAX-Fluids** ([Bezgin et al. (2023)](/sources/bezgin-2023.md), §3.3, Table 2): HLL, HLLC
+  and the low-Mach shock-stable HLLC-LM of Fleischmann et al., with arithmetic, Davis, Einfeldt
+  or Toro speed estimates, besides Lax–Friedrichs, Rusanov and AUSM+; the default setup is
+  primitive-variable WENO5-JS with HLLC and Einfeldt speeds ([JAX-Fluids](/software/jax-fluids.md)).
+- **blastFoam / RSDFoam** ([Weng & Mével (2023)](/sources/weng-2023.md), §3.1): HLL, HLLC,
+  HLLC-P, AUSM+, Tadmor and Kurganov fluxes with MUSCL reconstruction; the validation runs use
+  quadratic MUSCL with the van Leer limiter, HLLC and second-order SSP Runge–Kutta.
+- **OpenFOAM on GPUs** ([Bielawski et al. (2023)](/sources/bielawski-2023.md), §3): HLLC with
+  limited interpolation of the face states, chosen for its low cost and contact resolution.
 
 ## No Riemann solver: shock fitting
 
@@ -374,3 +455,10 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Ji et al. (2022)](/sources/ji-2022.md) — §4 (Eqs. (29)–(36)), §5.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3–2.5, §4.2 (Fig. 15).
 - [Mossier et al. (2022)](/sources/mossier-2022.md) — §8.4–8.9.
+- [Chamarthi (2023a)](/sources/chamarthi-2023.md) — App. A (Eqs. (88)–(95)), Exs. 4.14–4.18 (arXiv v2).
+- [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Exs. 3.7–3.8 (arXiv v1).
+- [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1.1 (Eqs. (26)–(28)) (arXiv v1).
+- [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.2.1 (Eqs. (24)–(31)), §4.1.1 (Tables 1–3) (arXiv v1).
+- [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3, App. A (Figs. A.13–A.16) (accepted manuscript).
+- [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, Table 2 (arXiv v1).
+- [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1.

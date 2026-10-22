@@ -76,7 +76,7 @@ page-local *splitting error operator*
 $\mathcal S_D(a,b)=AD\mathbf b+BD\mathbf a-DA\mathbf b=[D\circ((\!(a;b)\!)-(\!(1;ab)\!))]\mathbf 1$
 is telescoping, $\mathbf 1^\top M\mathcal S_D(a,b)=0$ in the periodic
 case, and locally of the order of the operator; it encodes the
-zero-consistent corrections of his kinetic-energy-preserving splittings
+zero-consistent corrections of Edoh's kinetic-energy-preserving splittings
 (Eq. (7); [split convective forms](/methods/split-convective-forms.md)).
 
 ## High-order finite-difference fluxes from two-point fluxes
@@ -124,7 +124,7 @@ two-point fluxes. Duan & Tang (sixth order, $n_{\mathrm o}=3$) and Li, Duan
   entropy balance; only an EC volume flux makes the volume part vanish
   (Lemma 2, Eq. (61), §3.3.2).
   [Renac (2021)](/sources/renac-2021.md) uses the construction on
-  straight-sided unstructured quadrilaterals, with his multicomponent EC
+  straight-sided unstructured quadrilaterals, with Renac's multicomponent EC
   flux in the volume and an entropy-stable relaxation flux at the
   interfaces. In 2D the volume term at node $(i,j)$ of element $K$ reads
   $$2\mathsf w_i\mathsf w_j\Big(\sum_kD_{ik}\,f^{\mathrm{ec}}\big(u^{ij},u^{kj},\{\!\{Ja^{(1)}\}\!\}_{(i,k)j}\big)+\sum_kD_{jk}\,f^{\mathrm{ec}}\big(u^{ij},u^{ik},\{\!\{Ja^{(2)}\}\!\}_{i(j,k)}\big)\Big),$$

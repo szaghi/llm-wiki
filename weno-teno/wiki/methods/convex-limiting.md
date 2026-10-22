@@ -41,8 +41,8 @@ antidiffusive flux (page-local; the source writes $\bar f$), $J_{ij}$ the
 element Jacobian and $\mathsf w_i$ the LGL weight. On this page the
 blending coefficient $\alpha$ is the weight of the **low-order** scheme
 ($\alpha=0$ pure high-order, $\alpha=1$ pure low-order), as in Rueda-Ramírez
-et al.; Pazner uses the FCT convention, in which his limiter value 1 means
-full antidiffusion, so his coefficient is $1-\alpha$. Pazner's high-order
+et al.; Pazner uses the FCT convention, in which Pazner's limiter value 1 means
+full antidiffusion, so Pazner's coefficient is $1-\alpha$. Pazner's high-order
 target is the strong form of the DGSEM, chosen because the weak form is not
 free-stream preserving on curved meshes (Prop. 3, §2.4.2).
 
@@ -170,10 +170,10 @@ calls consistent with the literature (§5.1, Table 1).
   line of nodes in each direction (Pazner, Prop. 9), so they are
   differences of subcell-face fluxes (Eqs. (53)–(54)); each face takes the
   more limiting of its two nodal coefficients (Pazner, Eq. (55), the
-  minimum in his FCT convention; Rueda-Ramírez et al. 2022,
+  minimum in Pazner's FCT convention; Rueda-Ramírez et al. 2022,
   $\alpha_{(i,m)j}=\max(\tilde\alpha_{ij},\tilde\alpha_{mj})$), and the
   update is conservative (Prop. 10). Pazner presents this
-  dimension-by-dimension procedure as his improvement over the
+  dimension-by-dimension procedure as the author's improvement over the
   multidimensional subcell limiter of Lohmann et al., which required a
   minimization problem (§4.1.3).
 
@@ -198,7 +198,7 @@ derivative matrix (their Eq. (34); Eq. (23) of Pazner's arXiv v1), and the
 subcell metrics of Hennemann et al. solve Pazner's conservation condition
 $\sum_j\hat c_{ij}=0$ (their Eq. (35); Prop. 5 of Pazner's arXiv v1)
 exactly and analytically, so the SVD-based minimisation of Pazner's
-construction is not needed (Prop. 2, Eqs. (35)–(36)). Pazner himself
+construction is not needed (Prop. 2, Eqs. (35)–(36)). Pazner
 describes the nodes as subcell-centred values but does not state the
 equivalence (§4.1.3). The equivalence is why the bar-state bounds can
 always be met for that low-order scheme: on the Mach 4 bow shock they hold
@@ -282,9 +282,9 @@ nodes (Pazner, §3.1).
   [dissipation-based WENO stabilization](/methods/weno-stabilized-continuous-galerkin.md)
   when strict bounds or entropy inequalities are required (§7.4).
   [Pazner (2021)](/sources/pazner-2021.md) measures first order: with strictly
-  local bar-state bounds his scheme is first order on smooth data, which he
+  local bar-state bounds Pazner's scheme is first order on smooth data, which the author
   calls "consistent with other results reported in the literature" (§5.1), and the design order returns only
-  where the bounds are relaxed to global ones (Table 1). He recalls that
+  where the bounds are relaxed to global ones (Table 1). Pazner recalls that
   TVD schemes are at most first order at smooth extrema (§4.4).
 - **Printed slips of Pazner (arXiv v1)** that touch this page: the CFL
   bound (40) is printed $\Delta t\le\min_i m_i/(2\hat d_{ii})$ with
@@ -296,7 +296,7 @@ nodes (Pazner, §3.1).
   against the diffusive sign of Eq. (36). Eq. (60) prints the index range
   "$1\le d\le k$" for $1\le k\le d$. The equation numbers that
   Rueda-Ramírez et al. (2022) attach to Pazner's matrix and conservation
-  condition do not match his arXiv v1 (above); this page cites the arXiv
+  condition do not match Pazner's arXiv v1 (above); this page cites the arXiv
   v1 numbering for Pazner.
 
 # Citations

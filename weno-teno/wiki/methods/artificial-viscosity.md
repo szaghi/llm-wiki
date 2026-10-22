@@ -354,7 +354,7 @@ $\mathcal D_{\mathrm f}\le0$ of even-order differences (page-local; periodic
 grid). Filtering the total energy then tends to decrease the global
 entropy, filtering the momentum to increase it, and filtering the mass is
 indefinite (derived under these assumptions). Momentum-only filtering, which
-he calls entropy-stability promoting, gives strict kinetic-energy decay and
+Edoh calls entropy-stability promoting, gives strict kinetic-energy decay and
 entropy growth for all splittings tested, and on the
 [isentropic vortex](/benchmarks/isentropic-vortex.md) after 100 vortex
 widths minimum densities 0.5677 (divergence form), 0.6663 (Feiereisen),
