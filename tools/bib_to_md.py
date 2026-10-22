@@ -144,6 +144,9 @@ def validate(entries: list[dict], wiki: Path) -> list[str]:
 def _format_work(entry: dict) -> str:
     f = entry["fields"]
     who = (f.get("author") or f.get("editor", "")).replace(" and ", "; ")
+    # corporate authors are stored in double braces ({{SUNDIALS}}): the braces protect the name in BibTeX, they are
+    # not part of it, and in the site's Markdown {{ ... }} is Vue interpolation
+    who = re.sub(r"\{\{(.*?)\}\}", r"\1", who)
     out = f"{who} ({f['year']}). *{f['title']}*." if who else f"({f['year']}). *{f['title']}*."
     venue = next((f[k] for k in VENUE_FIELDS if f.get(k)), "")
     if venue:
