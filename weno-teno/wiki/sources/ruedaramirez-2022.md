@@ -251,7 +251,7 @@ There are no printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Convex limiting and invariant-domain-preserving schemes](/methods/convex-limiting.md)

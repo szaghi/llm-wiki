@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "High-Mach astrophysical jets"
-description: "Mach 80 and Mach 2000 gas jets injected into a light ambient medium, and their relativistic and MHD relatives; near-vacuum, extreme-Mach-number robustness tests that most high-order schemes pass only with a positivity- or invariant-domain-preserving limiter."
+description: "Mach 80 and Mach 2000 gas jets injected into a light ambient medium, and their relativistic, MHD and gas–liquid relatives; near-vacuum, extreme-Mach-number robustness tests that most high-order schemes pass only with a positivity- or invariant-domain-preserving limiter."
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -91,7 +91,7 @@ and HLLE partners are not guaranteed to satisfy the bar-state bounds;
 the authors keep the bounds and the blending returns the solution
 closest to them (§5.2.3).
 
-## Relativistic and MHD variants
+## Relativistic, MHD and gas–liquid variants
 
 - **Axisymmetric relativistic jet.** [Cui, Ding & Wu (2024)](/sources/cui-2024.md)
   Example 5: special-relativistic hydrodynamics in cylindrical $(r,z)$
@@ -118,6 +118,43 @@ closest to them (§5.2.3).
   analysis shows is needed for provable bound preservation, even with a
   WENO limiter; this failure is stated in text, without a
   figure.
+- **Mach 800 dense MHD jet.** [Liu et al. (2021)](/sources/liu-2021.md)
+  §4.5, after Wu & Shu's earlier papers: ideal MHD, $\gamma=1.4$, ambient
+  $(\rho,v,B,p)=(0.1\gamma,\ 0,\ (0,\sqrt{20000},0),\ 1)$, jet
+  $(\rho,v,p)=(\gamma,\ (0,800,0),\ 1)$ through $-0.05<x<0.05$ at $y=0$,
+  outflow elsewhere, $200\times300$ cells, snapshots at $t=0.001$,
+  $0.0015$, $0.002$; the plasma beta, page-local
+  $\beta_{\mathrm p}=2p/|B|^2$, is $10^{-4}$. The jet sound speed is
+  $\sqrt{1.4\cdot1/1.4}=1$, so the jet Mach number is 800 *(compiler
+  check, not in the sources)*. Densities and pressures of their
+  locally divergence-free [WLS-ENO](/methods/wls-eno.md) scheme stay
+  positive at second and third order, but the third-order run produces
+  a negative pressure at $t=4.45\times10^{-4}$ when the truncated SVD of
+  its least-squares fits keeps singular values down to
+  $10^{-10}\sigma_1$, and succeeds with the threshold $10^{-6}\sigma_1$
+  ($\sigma_1$ the largest singular value, page-local); the authors
+  attribute the failure to ill-conditioning (Figs. 14–17). The
+  densities $0.14$ and $1.4$ and the injection speed equal those of the
+  two-component jet of Wu & Shu (2023) above, whose field
+  $\sqrt{4000}$ gives $|B|^2$ five times smaller, i.e.
+  $\beta_{\mathrm p}=5\times10^{-4}$ *(compiler check, not in the
+  sources)*.
+- **Mach 100 water jet.** [Wong et al. (2021)](/sources/wong-2021.md)
+  §6.7, a multiphase version of the Mach 2000 jet in the
+  [five-equation model](/definitions/five-equation-model.md) with
+  [stiffened-gas](/definitions/stiffened-gas-equation-of-state.md) water
+  ($\gamma=6.12$, stiffening pressure $3.43\times10^8$ Pa) and air:
+  domain $[0,L]\times[-0.25L,0.25L]$, $L=1$ m; ambient air with partial
+  density 1 kg m$^{-3}$, $p=10^5$ Pa and water volume fraction
+  $10^{-8}$; water injected through $|y|\le0.05L$ with partial density
+  1000 kg m$^{-3}$, $v_1=1.5\times10^5$ m/s, $p=10^5$ Pa;
+  $1024\times512$ mesh, output at 1, 2, 4 and 6 µs. The water sound
+  speed $\sqrt{6.12\,(10^5+3.43\times10^8)/1000}\approx1449$ m/s makes
+  the injection Mach number about 104 with respect to the water
+  *(compiler check, not in the sources)*. Neither their
+  positivity-preserving [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
+  nor first-order HLLC fails; HLLC smears the interface at the jet
+  front and shows artifacts at the bow shock (Figs. 17–19).
 
 ## Qualifications
 
@@ -126,6 +163,12 @@ closest to them (§5.2.3).
   $t=10^{-3}$ for Mach 2000.
 - Resolution claims are visual comparisons, partly against figures
   from other papers.
+- Liu et al. print the domain of the MHD jet as $[0,0.5]\times[0,1.5]$,
+  while the nozzle $-0.05<x<0.05$ lies at its edge; either the domain
+  is misprinted or a half domain with an unstated symmetry boundary is
+  used. Wu & Shu (2023) use $[-0.5,0.5]\times[0,1.5]$ with
+  $200\times600$ cells on the half domain. Liu et al. give no CFL
+  number.
 
 # Citations
 
@@ -137,3 +180,5 @@ closest to them (§5.2.3).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.18, Fig. 14 (arXiv v1).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Example 5, Table 10 (arXiv v1).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Ex. 7.2, Fig. 6 (arXiv v1).
+- [Liu et al. (2021)](/sources/liu-2021.md) — §4.5, Figs. 14–17.
+- [Wong et al. (2021)](/sources/wong-2021.md) — §6.7, Tables 10–11, Figs. 17–19 (arXiv v1).

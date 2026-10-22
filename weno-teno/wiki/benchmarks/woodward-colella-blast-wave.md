@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,15 +17,15 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Twelve sources of the
+resolution against a fine-grid reference. Fourteen sources of the
 bundle run it.
 
 ## Setup
 
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
-et al., Chertock et al., Deng and Huang et al. (Li et al. differ in one
-value, see Qualifications), in $(\rho,v,p)$ with
-$\gamma=1.4$:
+et al. (2023), Chertock et al., Deng, Huang et al., Li, Shu & Qiu and
+Wang et al. (2021) (Li et al. differ in one value, see Qualifications),
+in $(\rho,v,p)$ with $\gamma=1.4$:
 
 $$
 (\rho,v,p)(x,0)=\begin{cases}
@@ -51,6 +51,8 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.7 | 640 | LLF, 100,000 | [OEDG](/methods/oedg.md), with and without [characteristic decomposition](/methods/characteristic-decomposition.md) |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §VIII.d | 1000, on $[-0.5,0.5]$ | third order, 10,000 | HLL, CFL 0.8, orders 3, 5, 7 |
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.2–3.2.3 | 800 (scaled variant) | Ai-WENO-Z, 3200 | [affine-invariant weights](/methods/affine-invariant-weno.md) |
+| [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.7 | 800 cells, CFL 0.6 | FD WENO5, 16,000 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC; boundary conditions not printed |
+| [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4b | 400, CFL 0.6 | WENO-JS5, 20,000 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) vs original WENO5-MR, WENO-AO5, WENO-JS5 |
 
 ## Findings across sources
 
@@ -61,12 +63,17 @@ and velocity overshoot near $x\approx0.86$ (Fig. 6). Takagi et al.
 resolve the contact "significantly better" than WENO5-Z and TENO5
 (Fig. 8). Li et al. find WENO-ZN less dissipative than WENO-JS and
 WENO-Z (Fig. 6); Ye et al. find AFTENO closest to the reference in
-density and pressure (Fig. 6); Chertock et al. and Wang et al. report
+density and pressure (Fig. 6); Chertock et al. and Wang et al. (2023) report
 "slightly" better resolution of the second density spike with their
 new central-upwind fluxes (Figs. 5.4 and 1); Deng finds low-dissipation
 ROUND better than WENO-JS5 (Fig. 33). In one dimension Wang et al.
-expect no large gain, because their dissipation switch is inactive there
-(§4.1).
+(2023) expect no large gain, because their dissipation switch is
+inactive there (§4.1). Li, Shu & Qiu find the HWENO with modified first
+moments "much better" resolved and sharper than the unmodified one
+(Fig. 3.5, comment p. 31). Wang et al. (2021) find their New WENO5
+similar to WENO-AO5, both better than WENO-JS5 and the original
+multi-resolution WENO5, at about 0.67 of the latter's cost (0.76 s
+against 1.14 s; Fig. 5.8).
 
 **Robustness and the stability margin of very-high-order schemes.**
 Luo & Wu use the problem to choose the largest admissible constant of
@@ -100,15 +107,19 @@ with specifications deferred to an earlier paper (Fig. 7).
 ## Qualifications
 
 - Li et al. print the middle pressure as $0.001$ (Eq. (41)) where Fu
-  (2021), Takagi et al., Ye et al., Wang et al., Chertock et al., Deng
-  and Huang et al. print $0.01$; whether this is a misprint or the value
-  run cannot be decided from the paper.
+  (2021), Takagi et al., Ye et al., Wang et al. (2023), Chertock et
+  al., Deng, Huang et al., Li, Shu & Qiu and Wang et al. (2021) print
+  $0.01$; whether this is a misprint or the value run cannot be decided
+  from the paper.
 - Balsara et al. place the problem on $[-0.5,0.5]$; their initial
   states are not recorded on this page.
 - Ye et al. give 400 points in the text and $N=1500$ in the caption of
   Fig. 6.
-- Wang et al. compute their reference with the OLD scheme against
-  which the NEW one is compared.
+- Wang et al. (2023) compute their reference with the OLD scheme
+  against which the NEW one is compared.
+- Li, Shu & Qiu print the intervals as open, $(0,0.1)$, $(0.1,0.9)$,
+  $(0.9,1)$, and state no boundary conditions or $\gamma$ for this
+  problem.
 
 # Citations
 
@@ -124,3 +135,5 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.7, Fig. 4 (arXiv v1).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VIII.d, Fig. 10.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.2–3.2.3, Figs. 6–7.
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.7, Fig. 3.5; comment p. 31 (arXiv v1).
+- [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.4b, Fig. 5.8.

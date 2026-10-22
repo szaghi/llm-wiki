@@ -137,7 +137,7 @@ preprint, [24] a conference contribution and [63] a book. No item is unparseable
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Bound preservation](/properties/bound-preservation.md)
@@ -152,6 +152,7 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mapped WENO](/methods/mapped-weno.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
+* [Positivity-preserving flux limiter (Hu–Adams–Shu)](/methods/positivity-preserving-flux-limiter.md)
 * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)

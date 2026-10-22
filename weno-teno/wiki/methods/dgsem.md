@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin spectral element method (DGSEM)"
-description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gauss–Lobatto nodes with a diagonal mass matrix and an SBP derivative matrix; the page gives its strong, weak and split (flux-differencing) forms, the curvilinear metric treatment, the subcell flux form used for limiting, and the codes that implement it."
+description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gauss–Lobatto nodes with a diagonal mass matrix and an SBP derivative matrix; the page gives its strong, weak and split (flux-differencing) forms, the curvilinear metric treatment, non-conservative and viscous terms, the subcell flux form used for limiting, positivity of its cell averages, and the codes that implement it."
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -83,6 +83,66 @@ Rueda-Ramírez et al. carry the identities over to the subcell level
 directional-flux reordering of Ranocha et al. keeps the tensor-product
 sparsity on curved meshes (Eq. (2.19)).
 
+[Pazner (2021)](/sources/pazner-2021.md) proves that the strong form with
+the discrete metric identity preserves constants, while the weak form in
+general does not on curved meshes, and takes the strong form as the
+high-order target of his limiter (Prop. 3, §2.4.2). The two forms are
+algebraically identical when the face normals are the volume metric terms
+at the boundary nodes, so the difference lies in how the normals are
+computed *(compiler check, not in the sources; see the qualification on
+the free-stream page)*.
+[Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) show that on
+3D curvilinear hexahedra the entropy-balance residual of the split form
+vanishes under the same identities, e.g. for metrics computed as a
+discrete curl (App. C.1, Lemma 4).
+
+## Non-conservative and viscous terms
+
+Rueda-Ramírez et al. (2021) discretize the resistive GLM-MHD equations
+(nine variables: $\rho$, $\rho v$, $E$, $B$, $\psi_{\mathrm{GLM}}$) with the
+split-form DGSEM (§2–3, after Bohm et al.):
+
+- **Non-conservative terms.** The Powell term and the GLM
+  Galilean-invariance term enter through a surface two-point term and a
+  non-symmetric volume two-point term
+  ([flux differencing](/methods/flux-differencing.md), Eqs. (32)–(37)).
+- **Visco-resistive terms.** These use the standard DGSEM with BR1 lifting
+  applied to the *entropy variables*, $J\mathsf w_kg_k=\sum_nQ_{kn}w_n+$
+  boundary corrections, page-local $g$ the lifted gradient (Eqs. (38)–(39)).
+  With entropy-variable gradients BR1 keeps entropy stability, as they
+  recall from earlier work.
+- **Time step.** Five-stage fourth-order SSP-RK of Spiteri–Ruuth, with
+  $\Delta t$ the minimum of an advective bound $\propto\Delta x/(2N+1)$ and a
+  diffusive one $\propto\Delta x^2/(2N+1)^2$, with empirical factors and CFL
+  numbers 0.5 (Eq. (89)).
+
+## Positivity of the cell averages
+
+[Renac (2021)](/sources/renac-2021.md) proves a Zhang–Shu-type result for
+an entropy-stable DGSEM on *unstructured* straight-sided quadrilaterals
+(Theorem 6.1). The scheme uses his multicomponent EC volume flux and an
+entropy-stable, positive relaxation flux at the interfaces. If every nodal
+value is admissible, the forward-Euler cell averages stay admissible under
+
+$$\Delta t\,\max_{K}\max_{e}\frac{\lvert\partial K_e\rvert}{\lvert e\rvert}\max_{k}\frac{\lvert\partial K\rvert}{\tilde J^k_K}\,\big\lvert\lambda\big(u_h^\pm(x^k_e)\big)\big\rvert<\frac1{2N(N+1)},$$
+
+with element $K$, page-local faces $e$, sub-triangles $K_e$, wave speed
+$\lvert\lambda\rvert=\lvert v\cdot n\rvert+a_{\mathrm L}/\rho$ with the Lagrangian sound speed
+$a_{\mathrm L}$ of the relaxation solver, and
+$\tilde J^k_K=\min_{e\subset\partial K}J_K(x^k_e)$ the smallest element Jacobian
+at the $k$th node of the faces (Eq. (66)). The proof sums the nodal updates and writes the cell average
+as a convex combination of interior nodal values and of positive
+first-order finite-volume schemes on the boundary traces. It uses the LGL
+boundary weight $\mathsf w_0=\mathsf w_N=2/(N(N+1))$, which separates (66) from
+the first-order condition, and extends the Cartesian result of Zhang & Shu
+through a quadrilateral version of a Perthame–Shu lemma (Lemma 3.2, App. A;
+[optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+A sequential [scaling limiter](/methods/zhang-shu-scaling-limiter.md) on
+density, partial densities and internal energy then restores the nodal
+values after each Runge–Kutta stage (Eq. (67)). Renac states that (66) is
+not optimal (Remark 6.1). In practice a simpler bound of 0.4 on a
+mesh-based CFL number kept positivity in all runs, without a proof (§7).
+
 ## Subcell flux form and limiting
 
 Because the LGL mass matrix is diagonal, the whole DGSEM can be written as
@@ -97,6 +157,16 @@ from a modal-energy indicator or from a posteriori bounds
 ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
 [convex limiting](/methods/convex-limiting.md),
 [troubled-cell indicator](/definitions/troubled-cell-indicator.md)).
+
+[Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) extend the
+element-wise blend to systems with non-conservative terms. Only the
+advective and non-conservative terms are blended,
+$J\mathsf w_j\frac{d}{dt}u_j=(1-\alpha)F^{\mathrm{DG}}_j+\alpha F^{\mathrm{FV}}_j-F^{\nu,\mathrm{DG}}_j$,
+and the visco-resistive part $F^{\nu,\mathrm{DG}}$ (page-local) stays pure
+DGSEM (Eq. (28)). Their blending lemma keeps the scheme entropy stable for
+any element-wise $\alpha$, and their second-order subcell scheme reconstructs
+scaled entropy variables with minmod
+([TeCNO schemes](/methods/tecno-scheme.md)).
 
 Rueda-Ramírez et al. (2022) prove two results about this construction:
 
@@ -128,15 +198,41 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
     [astrophysical jet](/benchmarks/high-mach-astrophysical-jet.md) at $N=3$;
   - the GLM-MHD [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) at
     $N=3$, with the Chandrashekar–Klingenberg flux.
+- **Multicomponent flows.** Renac (2021) runs $N=3$ with SSP-RK(4,3) in the
+  ONERA code Aghora. Smooth convection reaches the design order $N+1$
+  ($L^1$ errors $9.28\times10^{-5}$, $3.05\times10^{-6}$, $3.03\times10^{-7}$ at
+  $h=1/16,1/32,1/64$, observed orders 4.96 and 3.33; Table 1). The
+  convergence is irregular on coarse meshes, but Renac states that the
+  order $N+1$ is recovered. Two-component Riemann problems, a
+  shock–helium bubble on 238 673 unstructured elements, a Richtmyer–Meshkov
+  instability with re-shock on $1601\times118$ elements and a Mach 2
+  shock–hydrogen bubble on 74 504 unstructured elements run with the
+  positivity limiter (§7;
+  [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
+- **Resistive MHD.** Rueda-Ramírez et al. (2021) run the blended scheme in
+  FLUXO on the [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+  ($N=3$ and $7$, up to $1024^2$ degrees of freedom, against Athena), the
+  GEM reconnection challenge, where the ES DGSEM alone crashes, and Io's
+  interaction with the Jovian plasma torus (165 888 curved hexahedra,
+  $N=4$, 20.7 M degrees of freedom) (§6.2–6.4).
+- **Invariant-domain limiting.** Pazner (2021) uses the strong-form DGSEM,
+  in MFEM, as the target of subcell convex limiting, up to a
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) on
+  $2400\times600$ elements at $N=3$; at fixed degrees of freedom the results
+  improve with $N$ (§5; [convex limiting](/methods/convex-limiting.md)).
 - **Codes.** The method is implemented in [Trixi.jl](/software/trixi-jl.md)
   (Julia) and [FLUXO](/software/fluxo.md) (Fortran). Their serial
-  performance is similar (Ranocha et al. (2023), §4, Fig. 1).
+  performance is similar (Ranocha et al. (2023), §4, Fig. 1). The
+  chunk-2 sources also use Aghora (Renac) and MFEM (Pazner).
 
 ## Qualifications
 
 - "High order" in Rueda-Ramírez et al. (2022) is the formal order of the
   DGSEM of degree $N$. Their §5 reports no convergence study.
-- Ranocha et al. write the degree $p$ and Rueda-Ramírez et al. write $N$.
+- Ranocha et al., Pazner and Renac write the degree $p$; Rueda-Ramírez et
+  al. write $N$. Pazner's reference element is $[0,1]^d$, the others' is
+  $[-1,1]^d$. Renac prints the sums of his cell average (59)–(60) from
+  $1$ instead of $0$; the nodes run from $0$ to $N$.
   Rueda-Ramírez et al. write the quadrature weights $\omega$, which this
   bundle writes $\mathsf w$ to keep $\omega_k$ for WENO weights; Ranocha et
   al. name no weight symbol and work with the mass matrix $M$.
@@ -145,3 +241,6 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
 
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Ex. 2.3, Eqs. (2.3), (2.5), (2.6), (2.12)–(2.19), (3.7), (3.10), §4 Fig. 1, §6 Fig. 4.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1 Eqs. (2)–(11), §2.2–2.4, §3 Props. 1–2, §5.
+- [Pazner (2021)](/sources/pazner-2021.md) — §2 Eqs. (3)–(15), Props. 1–3, §5 (arXiv v1).
+- [Renac (2021)](/sources/renac-2021.md) — §5 Eqs. (57)–(64), §6 Theorem 6.1 Eqs. (65)–(67), Remark 6.1, Lemma 3.2, App. A, §7 Table 1 (arXiv v3).
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §2–3 Eqs. (28), (31)–(39), §5 Eq. (89), §6, App. C.1 Lemma 4 (arXiv v1).

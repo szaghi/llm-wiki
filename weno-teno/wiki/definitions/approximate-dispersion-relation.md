@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Approximate dispersion relation"
-description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio, and what the chunk-1 sources read off it for WENO, TENO, THINC and ROUND schemes."
+description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio, and what the sources read off it for WENO, TENO, THINC, ROUND and multi-resolution WENO schemes and for central schemes with high-order artificial dissipation."
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Approximate dispersion relation
@@ -22,7 +22,8 @@ exact and analytic; for a nonlinear scheme (WENO, TENO, ROUND, THINC) it is
 the sources use but do not restate ([Luo & Wu (2021)](/sources/luo-2021-b.md),
 §3; [Li et al. (2022)](/sources/li-2022-b.md), §3.3(3);
 [Deng (2023)](/sources/deng-2023.md), Figs. 18, 28;
-[Huang et al. (2026)](/sources/huang-2026.md), §5.2).
+[Huang et al. (2026)](/sources/huang-2026.md), §5.2;
+[Wang et al. (2021)](/sources/wang-2021.md), §4).
 
 ## Linear schemes and the sign convention
 
@@ -43,6 +44,29 @@ anti-dissipated, when $\tilde\vartheta_i>0$.)* The same convention is used by
 = negative dissipation, "anti-diffusion") and by
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.3, for THINC). All
 chunk-1 sources agree on this sign; none uses the opposite one.
+
+**Central schemes with high-order dissipation.**
+[Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§3, Fig. 1) give the
+dispersion and dissipation errors, as functions of $\vartheta$, of the members
+of order 1 to 9 of the Lerat–Corre family of finite-difference schemes: a
+central approximation of order $2(P+2)$ of the flux derivative plus a
+dissipation term of order $2P+3$ on the same $2(P+2)+1$-point stencil ($P$ the
+page-local family index; the flux is written out on
+[numerical dissipation](/definitions/numerical-dissipation.md)). They read two
+facts off the curves:
+
+- the dispersion error of every member is exactly that of the standard central
+  scheme of order $2(P+2)$;
+- the dissipation of the ninth-order member ($P=3$) acts only on reduced
+  wavenumbers $\vartheta\gtrsim0.35\pi$, i.e. on waves resolved with fewer than
+  about six points, and leaves larger scales almost unaffected; the authors
+  present it on this ground as an implicit subgrid regularization for LES.
+
+*(Compiler check, not in the sources: the dissipation term of the flux is an
+odd-order difference centred at the interface, so its contribution to the flux
+derivative is an even-order symmetric difference; in the splitting of the next
+section it belongs to the symmetric part $D_{\mathrm{diss}}$ and contributes only
+to $\tilde\vartheta_i$, which is consistent with the first statement.)*
 
 ## Dispersion–dissipation splitting and optimization
 
@@ -83,7 +107,7 @@ TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
-Li et al., Deng and Huang et al., it names the numerically evaluated
+Li et al., Deng, Huang et al. and Wang et al. (2021), it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
 condition is imposed on the curve) but a page citing "the ADR" must say which
 is meant.
@@ -124,6 +148,14 @@ is meant.
   WENO3-NN, and ROUND markedly lower dissipation there
   ([Huang et al. (2026)](/sources/huang-2026.md), §5.2, Fig. 5). See
   [ROUND schemes](/methods/round-scheme.md).
+- **Multi-resolution WENO.** With the Pirozzoli procedure, the fifth-order
+  multi-resolution WENO of Zhu and Shu (WENOZS5), WENO-AO(5,3) and the modified
+  multi-resolution scheme of [Wang et al. (2021)](/sources/wang-2021.md) all have
+  better dispersion and dissipation than WENO-JS5, with the optimal linear
+  fifth-order upwind scheme as reference (§4, Fig. 4.1). The paper gives the
+  curves but no numerical cut-off wavenumbers. See
+  [multi-resolution WENO](/methods/multi-resolution-weno.md) and
+  [WENO-AO](/methods/weno-ao.md).
 
 ## Qualifications
 
@@ -150,3 +182,5 @@ is meant.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, §2.3: TENO and THINC spectral statements.
 - [Deng (2023)](/sources/deng-2023.md) — Figs. 18, 28: ROUND spectra.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §5.2, Fig. 5: ROUND, LD-ROUND, WENO3-NN spectra.
+- [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, Fig. 1: dispersion and dissipation of the Lerat–Corre family, $0.35\pi$ threshold (arXiv v1).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §4, Fig. 4.1: multi-resolution WENO spectra.

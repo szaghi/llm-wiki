@@ -276,7 +276,7 @@ No item is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
@@ -287,3 +287,4 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Split convective forms](/methods/split-convective-forms.md)
 * [Summation-by-parts operator](/operators/summation-by-parts-operator.md)
 * [Symmetry preservation](/properties/symmetry-preservation.md)
+* [Weighted compact nonlinear schemes (WCNS)](/methods/weighted-compact-nonlinear-scheme.md)

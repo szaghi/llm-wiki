@@ -151,7 +151,7 @@ of [50] is cut off but its DOI is complete, and the DOI of [17] is possibly trun
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
@@ -165,6 +165,7 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Kinetic energy preservation](/properties/kinetic-energy-preservation.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md)
+* [Logarithmic mean](/operators/logarithmic-mean.md)
 * [Split convective forms](/methods/split-convective-forms.md)
 * [Summation-by-parts operator](/operators/summation-by-parts-operator.md)
 * [Trixi.jl](/software/trixi-jl.md)

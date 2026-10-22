@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Accuracy at critical points
@@ -41,9 +41,27 @@ coefficients $A_k$ are not defined in the paper).
 | WENO-Z$\eta$ (Fan) | up to $(r-1)$th-order points, with an $O(\Delta x^{2r+2})$ global indicator | Li et al. 2022, §3.3 (derived) |
 | OWENO (Baeza et al.) | optimal order at critical points of any order | Li et al. 2022, §2 (recalled) |
 | [TENO](/methods/targeted-eno.md) | design order on a test function with a second-order critical point, no tuning of $\epsilon$ | Fu 2023, §3.1 (stated, numerics in cited work) |
+| fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md) | $\omega_m=d_m+O(\Delta x^4)$ also at first-order critical points, since $\tau$ and the indicators both drop by two orders there; no critical-point test | Wang et al. 2021, Eqs. (3.18)–(3.20) (derived) |
 
 Li et al. (2022, §4.1) also recall that the WENO-Z of Don & Borges with $\epsilon=\Delta x^m$ satisfies a
 sufficient condition for optimal order, and reject it for its dimensional inconsistency.
+
+## Accuracy analyses that assume $f'\ne0$
+
+Several order arguments in the bundle stop short of critical points:
+
+- Wong et al. (2021, App. B, Eqs. (B.20)–(B.21)) obtain $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)=O(\Delta x^4)$
+  for the incremental-stencil interpolation of WCNS-IS, and with it fifth order, explicitly "provided"
+  the point is not a critical point ([WCNS](/methods/weighted-compact-nonlinear-scheme.md));
+- Li, Shu & Qiu (2022, Remark 1, Eq. (2.29)) derive sixth order for their multi-resolution Hermite
+  WENO from $\beta_l=u'^2\Delta x^2+O(\Delta x^4)$, i.e. assuming $u'\ne0$, and do not discuss critical
+  points ([Hermite WENO](/methods/hermite-weno.md));
+- Wang et al. (2021) cover $f'\ne0$ and $f'=0,\ f''\ne0$ only (table above).
+
+*(Compiler check, not in the sources, for the multi-resolution case: at $f'=0$, $f''\ne0$ the
+indicators become $\tfrac14(f'')^2\Delta x^4$ for the one-point base and $\tfrac{13}{12}(f'')^2\Delta x^4$
+for the three- and five-point candidates, so $|\beta_3-\beta_1|=\tfrac56(f'')^2\Delta x^4+\dots$ and
+$\tau=O(\Delta x^8)$, $\tau/\beta_m=O(\Delta x^4)$, as Wang et al. state.)*
 
 ## Third-order compact schemes
 
@@ -90,3 +108,6 @@ resolution).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §3.4; §6.1, Table 3.
 - [Fu (2023)](/sources/fu-2023.md) — §2.3; §3.1.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — Cp-property named, not tested.
+- [Wang et al. (2021)](/sources/wang-2021.md) — §3.1.1, Eqs. (3.13)–(3.20).
+- [Wong et al. (2021)](/sources/wong-2021.md) — App. B, Eqs. (B.14)–(B.21).
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1, Remark 1, Eq. (2.29).

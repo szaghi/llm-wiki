@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Double Mach reflection
@@ -21,9 +21,9 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Ten sources of the bundle run it; nine cite
-Woodward & Colella (1984) for it, and Peng, Sun & Wu cite no source for
-the setup.
+source that runs it. Thirteen sources of the bundle run it; most cite
+Woodward & Colella (1984) for it, while Peng, Sun & Wu cite no source
+for the setup.
 
 ## Setup
 
@@ -48,7 +48,10 @@ follows the exact motion of the oblique shock (stated explicitly by
 [Wang et al. 2023](/sources/wang-2023-b.md), Example 4, and
 [Balsara et al. 2024](/sources/balsara-2024.md) §IX.h; Peng, Sun & Wu,
 Ex. 5.17, write it as post-shock data on $0\le x\le\tfrac16+(1+20t)/\sqrt3$
-of the upper boundary).
+of the upper boundary). [Pazner (2021)](/sources/pazner-2021.md) §5.7
+states the same boundary set: post-shock state on the left and on
+$[0,1/6]$ of the bottom, slip wall on $[1/6,4]$, exact shock motion on
+the top, outflow on the right, pre-shock $\rho=1.4$, $p=1$.
 
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.17 and
 [Wang et al. (2023)](/sources/wang-2023-b.md) Example 4 write the same
@@ -93,6 +96,9 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Wang et al. (2023)](/sources/wang-2023-b.md) Example 4 | [A-WENO](/methods/alternative-weno.md) with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) | $\Delta x=\Delta y=1/480$ | NEW vs OLD flux |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.17 | [OEDG](/methods/oedg.md), $\mathbb P^3$ | $h=1/240$ | no positivity limiter mentioned |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.h | [FD-WENO in fluctuation form](/methods/fluctuation-form-fd-weno.md), seventh order, HLL-based (Fig. 18 caption) | $[0,4]\times[0,1]$ (plotted $[0,3]\times[0,1]$), $1920\times480$ | CFL 0.4; fifth order "similar" |
+| [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.9 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), sixth order, HLLC, modified first moments (HWENO6-M5-I) | $[0,4]\times[0,1]$, $1600\times400$ | CFL 0.6; 30 contours 1.5–22.7 |
+| [Pazner (2021)](/sources/pazner-2021.md) §5.7 | sparse IDP DG, $N=3$, subcell [convex limiting](/methods/convex-limiting.md) | $[0,4]\times[0,1]$, $2400\times600$ elements | $t=0.275$ (caption); 30 equispaced contours |
+| [Wang et al. (2021)](/sources/wang-2021.md) Example 5.7 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR) vs WENO-JS5, WENO-AO5 | $[0,3]\times[0,1]$, $1200\times400$ | CFL 0.6 |
 
 ## What the benchmark measures
 
@@ -114,7 +120,10 @@ find WENO3-NN, WENO5-JS and ROUND comparable and LD-ROUND richer
 (Fig. 12); Deng reports that ROUND resolves the second contact on
 $h=1/300$, "comparable and even better" than WENO-JS5 on a coarser mesh
 (Figs. 25, 36). Balsara et al. resolve Mach-stem instabilities at seventh
-order on $1920\times480$ (Fig. 18).
+order on $1920\times480$ (Fig. 18). Pazner reads the Kelvin–Helmholtz
+roll-ups near the triple point of his $N=3$ DG run as a sign of low
+dissipation (Fig. 13). Wang et al. (2021) find both multi-resolution
+schemes resolving the roll-up better than WENO-JS5 (Fig. 5.13).
 
 **Robustness and stability margin.** The strong shock is also a
 robustness test. Luo & Wu must lower the CFL number to 0.1 for every
@@ -123,7 +132,12 @@ larger values (§5.3.3). Huang et al. replace HLLC by HLL to avoid the
 [carbuncle](/definitions/carbuncle-phenomenon.md) at the Mach stem
 (§6.7). Peng et al. run third- and fourth-order OEDG without any
 positivity limiter being mentioned; they say only that their results
-agree with earlier computations.
+agree with earlier computations. Li, Shu & Qiu report that the
+unmodified sixth-order HWENO "will blow up without modification" on
+this problem, and show only the run with modified first moments; they
+recall that the original Hermite WENO schemes are "not stable enough"
+for it, because the first derivatives grow large near discontinuities
+(§1, Ex. 3.9, Fig. 3.7).
 
 **Cost.** Takagi et al. report cost per step (Table 3, hardware not
 stated): WENO5-Z 696 / 2802 ms, TENO5 810 / 3255 ms, TENO-THINC 946 /
@@ -145,8 +159,12 @@ triangular meshes of 151,850 to 752,708 cells (Fig. 11).
   al. print "$t=2.0$" in the caption of Fig. 10 while their §4.6 text
   says $t=0.2$; the final time of the problem is $0.2$ in every source
   that states it in the text.
-- Deng computes on $[0,3]\times[0,1]$, the others on $[0,4]\times[0,1]$
-  (Balsara et al. compute on $[0,4]$ and plot $[0,3]$).
+- Deng and Wang et al. (2021) compute on $[0,3]\times[0,1]$, the
+  others on $[0,4]\times[0,1]$ (Balsara et al. compute on $[0,4]$ and
+  plot $[0,3]$).
+- Pazner's Fig. 13 caption gives $t=0.275$, later than the $t=0.2$ of
+  the other sources; the run is therefore at a later stage of the
+  roll-up.
 
 # Citations
 
@@ -160,3 +178,6 @@ triangular meshes of 151,850 to 752,708 cells (Fig. 11).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 4, Figs. 3–4.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.17, Fig. 13 (arXiv v1).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §IX.h, Fig. 18.
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1; Ex. 3.9, Fig. 3.7 (arXiv v1).
+- [Pazner (2021)](/sources/pazner-2021.md) — §5.7, Fig. 13 (arXiv v1).
+- [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.7, Fig. 5.13.

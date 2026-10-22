@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "Periodic two-dimensional Euler shear-layer benchmark, in sharp, exponentially smoothed and tanh-smoothed variants; used as a visual dissipation gauge, a positivity stress test for high-order DG, and a probe of the non-convergence of inviscid shear-flow simulations."
+description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; a smooth guiding-center Vlasov variant serves as a convergence test."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
-tags: [benchmark, low-dissipation, central-scheme, dg, positivity]
-timestamp: 2026-10-21T12:00:00Z
+tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -18,11 +18,15 @@ physical viscosity, cascade to ever smaller scales. Because the
 inviscid problem has no grid-converged solution, the benchmark does not
 measure an error: it measures how much small-scale structure a scheme
 lets develop on a given grid, and, for high-order element methods,
-whether it stays positive under strong under-resolution.
+whether it stays positive under strong under-resolution. A different
+model, the guiding-center Vlasov equation, carries a smooth version of
+the same instability whose solution does converge, and is used as an
+accuracy test.
 
 ## Variants
 
-Three setups appear in the sources, all periodic, in $(\rho,v_1,v_2,p)$.
+Three compressible-Euler setups appear in the sources, all periodic, in
+$(\rho,v_1,v_2,p)$.
 
 **Exponentially smoothed layers.**
 [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 8 and
@@ -61,6 +65,21 @@ setup, where $\rho$ runs from $0.5$ to $2$ *(compiler check, not in the
 sources)*), shear-layer thickness, perturbation wavenumber ($4\pi$ versus $2\pi$), background
 pressure (1.5, 2.5, 1) and final time (4, 1, 10), so results do not
 transfer between them.
+
+**Guiding-center Vlasov variant.**
+[Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
+the guiding-center model, a scalar density $\rho$ transported by the
+drift velocity of its own electrostatic field: with $\Phi_{\mathrm e}$
+the potential, $-\Delta\Phi_{\mathrm e}=\rho$, and
+$E=-\nabla\Phi_{\mathrm e}$, the drift is
+$E^\perp=(-\partial_y\Phi_{\mathrm e},\partial_x\Phi_{\mathrm e})=(E_2,-E_1)$
+(Eq. 60) and $\partial_t\rho+\nabla\cdot(E^\perp\rho)=0$
+(page-local symbols; the drift field is divergence-free, so the flow is
+incompressible). The data are
+$\rho(x,y,0)=\sin y+0.015\cos(x/2)$ on the periodic box
+$[0,4\pi]\times[0,2\pi]$, a shear layer with a long-wave
+perturbation; accuracy at $T=5$, contours at $T=40$. The model
+conserves mass, energy and enstrophy, which serve as diagnostics.
 
 ## Findings across sources
 
@@ -102,12 +121,44 @@ says "about three orders of magnitude lower"). The authors note that the
 two solutions differ visibly by $t=6.7$ and evolve to "substantially
 different solutions" at $t=10$; they do not say which is more accurate.
 
+**Convergence and operator splitting on the guiding-center variant.**
+Zheng et al. compare their non-split
+[conservative semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
+scheme with a dimensionally split fourth-order semi-Lagrangian WENO
+scheme of the same group. Against reference solutions at $T=5$, the
+non-split scheme converges at fourth order ($L^2$ error from
+$3.49\times10^{-3}$ on $16^2$ to $8.89\times10^{-11}$ on $512^2$, rates
+3.73, 4.66, 4.49, 7.22, 5.14), while the split scheme converges at
+first order (rates 0.88–0.99, $9.03\times10^{-4}$ on $512^2$); at fixed
+mesh $128^2$ the temporal order is four for the non-split scheme and one
+for the split one (Table 5, Fig. 15). At $T=40$ the non-split scheme at
+CFL 1 and 10.2 matches published solutions, while the split scheme
+matches them at CFL 0.1 and deviates "significantly" at CFL 1
+(Figs. 16–17). Energy and enstrophy deviations are smaller with the
+non-split scheme; mass is conserved to about $10^{-13}$ by both
+(Fig. 18). Here, unlike the Euler variants, the instability is a smooth,
+convergent flow, and the benchmark measures an error.
+
 ## Qualifications
 
 - Chertock et al. print the Cesàro average with upper index $n$ where
   $m$ is meant, and refer to "the adaptive scheme" in the Ex. 8 text,
   a leftover: the paper has no adaptive scheme.
-- None of the sources reports an error measure for this benchmark.
+- None of the sources reports an error measure for the compressible
+  Euler variants; the only error measurements are for the
+  guiding-center variant, whose model, data and convergence behaviour
+  differ entirely from the Euler ones.
+- Zheng et al. state CFL $=10.2$ for Table 5 in the text and CFL $=1$
+  in the table's caption; the paper does not resolve which was used.
+  The second-to-last rate 7.22 of the non-split scheme is printed
+  without comment.
+- Kelvin–Helmholtz roll-up also appears as a secondary feature of other
+  benchmarks: on the interface of the [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
+  where [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §4.6
+  find it sharpens with mesh refinement in 2D and is not captured on
+  their 3D mesh, and in the two-material tri-point problem of
+  [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.7, resolved by
+  the moving-mesh scheme. These are not runs of the benchmark itself.
 
 # Citations
 
@@ -115,3 +166,6 @@ different solutions" at $t=10$; they do not say which is more accurate.
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 8, Fig. 8.
 - [Fu (2021)](/sources/fu-2021.md) — §5.6, Fig. 10 (arXiv v1).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.2.1, Figs. 4–6 (arXiv v2).
+- [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §4.3, Ex. 4.6, Eq. (62), Table 5, Figs. 15–18.
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–18 (roll-up on a shocked bubble only).
+- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7 (roll-up in the tri-point problem only; arXiv v1).

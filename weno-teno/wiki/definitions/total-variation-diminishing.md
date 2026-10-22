@@ -1,18 +1,20 @@
 ---
 type: Definition
 title: "Total variation diminishing (TVD) and slope limiters"
-description: "TVD reconstruction limits the interface value of a second-order scheme by a limiter function of the slope ratio inside Sweby's region; this page collects the limiter formulas of the chunk-1 sources (MinMod, generalized minmod, SuperBee, van Leer, van Albada, OSPRE, MC, Deng's shape-preserving limiter), their normalised-variable reading, and the roles limiters play inside WENO, central-upwind and DG schemes."
+description: "TVD reconstruction limits the interface value of a second-order scheme by a limiter of the slope ratio inside Sweby's region; the page gives the incremental-form TVD conditions for explicit and implicit Euler steps, the limiter formulas of the sources, their normalised-variable reading, the first-order barrier at extrema, and the roles of limiters in WENO, central and DG schemes."
 status: established
 aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
 
-**Total variation diminishing** (TVD) schemes are used by the chunk-1 sources
-without a restated definition: none of them prints the total-variation
-estimate, and all of them impose the property through Sweby's limiter region.
+**Total variation diminishing** (TVD) schemes satisfy $TV(u^{n+1})\le TV(u^n)$.
+The chunk-1 sources use the property without restating it and impose it
+through Sweby's limiter region; the estimate and the incremental-form
+conditions behind that region are restated by
+[Puppo et al. (2023)](/sources/puppo-2023.md) (§2; next section).
 For a second-order reconstruction the TVD constraint is imposed through a
 **limiter** $\psi$ of the slope ratio
 
@@ -23,6 +25,39 @@ with the mirror formula, $\psi(1/r_i)$ and $\bar u_{i-1}-\bar u_i$, for
 $u^+_{i-1/2}$ ([Deng (2023)](/sources/deng-2023.md), §4.1, Eqs. (4.1)–(4.2)).
 Deng places Sweby's **second-order TVD region** between MinMod and SuperBee
 (§4.1, Fig. 2).
+
+## TVD conditions in incremental form, explicit and implicit
+
+[Puppo et al. (2023)](/sources/puppo-2023.md) (§2) revisit the TVD bounds for
+$\partial_tu+a\partial_xu=0$, $a>0$, periodic data, to motivate an implicit
+high-order scheme ([Quinpi](/methods/quinpi.md)). Write the limited
+second-order update in Harten's incremental form, with page-local coefficients
+$\mathsf C_i$:
+
+$$\begin{aligned}
+\text{explicit:}\quad u^{n+1}_i&=u^n_i-\mathsf C_{i-1}\big(u^n_i-u^n_{i-1}\big),\\
+\text{implicit:}\quad u^{n}_i&=u^{n+1}_i+\mathsf C_{i-1}\big(u^{n+1}_i-u^{n+1}_{i-1}\big),
+\end{aligned}\qquad
+\mathsf C_{i-1}=\frac{a\Delta t}{\Delta x}\Big[1-\tfrac12\Big(\psi(r_{i-1})-\frac{\psi(r_i)}{r_i}\Big)\Big],$$
+
+with the slope ratio $r_i$ and limited slope $\psi(r_i)(u_{i+1}-u_i)$ of this
+page. Then (Puppo et al., §2, citing Harten, Sweby and LeVeque):
+
+- the explicit step is TVD iff $\mathsf C_i\ge0$ and $1-\mathsf C_i\ge0$; the
+  first condition gives Sweby's region $0\le\psi(r)/r\le2$, $0\le\psi(r)\le2$, the
+  second a CFL condition;
+- the implicit step is TVD if $\mathsf C_i\ge0$ and $1+\mathsf C_i\ge0$; the first
+  condition is the same limiter region and the second always holds, so the
+  implicit Euler step with a TVD limiter is TVD for every $\Delta t/\Delta x$;
+  the first-order implicit upwind scheme ($\psi\equiv0$) is unconditionally
+  TVD by the reverse triangle inequality;
+- second-order accuracy needs $\psi(1)=1$ and $\psi$ at least Lipschitz, so
+  $\psi$ and $r$ may be computed from any at least first-order approximation of
+  $u(x,t^{n+1})$, e.g. a predictor.
+
+In the implicit step the coefficients $\mathsf C_i$ depend on $u^{n+1}$ through
+$\psi$ and $r$. Quinpi carries the last item over to its CWENO reconstruction,
+whose nonlinear weights it computes from a first-order predictor (§2–§3).
 
 ## Limiter formulas
 
@@ -52,6 +87,22 @@ $$\begin{aligned}
 ($\beta$ and $\varepsilon$ here are the limiter's own parameters, not a
 smoothness indicator and not the WENO regularization), and recommend van Albada
 for implicit problems because it is continuous in the slopes.
+[Kanbar et al. (2022)](/sources/kanbar-2022.md) (§3, Eq. (8)) use the
+three-argument form of the MC limiter for the undivided slope,
+
+$$\mathrm{minmod}\Big(\beta(\bar u_i-\bar u_{i-1}),\ \tfrac12(\bar u_{i+1}-\bar u_{i-1}),\ \beta(\bar u_{i+1}-\bar u_i)\Big),\qquad 1<\beta<2,$$
+
+with $\beta=1.5$ in all tests (the source's $\theta$), componentwise on the
+conserved deviation $\delta u=u-u_{\mathrm e}$ from a known steady state (and on
+$u^n$ and $u_{\mathrm e}$ for the predictor) of their
+[unstaggered central scheme](/methods/unstaggered-central-scheme.md); the formula is
+written here for $\bar u$.
+*(Compiler check, not in the sources: this is $\mathrm{MC}_\beta$ above, since
+$\tfrac12(\mathrm{sgn}\,\delta^++\mathrm{sgn}\,\delta^-)\min(\cdot)$ equals the
+three-argument minmod; the generalized minmod with factor 2 below is the case
+$\beta=2$.)* The MFC code offers minmod, MC, OSPRE, SuperBee, Sweby, van Albada
+and van Leer as flux limiters ([Bryngelson et al. (2021)](/sources/bryngelson-2021.md),
+§4.2.2; no formulas printed).
 *(Compiler check, not in the sources: with $\varepsilon=0$, $\mathrm{vA}$ is the
 undivided slope $\delta^+\psi(r_i)$ of the van Albada limiter of the table, since
 $\tfrac12\delta^+\psi(r_i)=\tfrac12\delta^+\delta^-(\delta^++\delta^-)/((\delta^+)^2+(\delta^-)^2)$.)*
@@ -103,6 +154,27 @@ with minmod "the most compressive out of dissipative limiters".
 
 ## Roles of limiters in high-order schemes
 
+- **Flux-limited WENO.** "The WENO schemes we utilize are, in general, not TVD",
+  which can cause instability "even when the usual CFL criteria are met"; MFC
+  therefore optionally blends the first-order (piecewise-constant) Riemann flux
+  with the WENO Riemann flux, low-order flux plus $\psi(r_i)$ times the
+  difference, where $r_i$ is the slope ratio of the volume fraction taken on
+  the upwind side of the contact velocity of the Riemann solver
+  ([Bryngelson et al. (2021)](/sources/bryngelson-2021.md), §4.2.2, Eq. (34); the
+  blend is described in words). The dissipation is so confined to material
+  interfaces where WENO "cannot form a smooth stencil". See
+  [hybrid central-WENO schemes](/methods/hybrid-weno.md) and [MFC](/software/mfc.md).
+- **The sign property.** In the entropy-stable TVD-ES subcell scheme of
+  [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§4,
+  Eqs. (72)–(81)) the minmod reconstruction of the scaled entropy variables
+  makes every reconstructed jump have the sign of the cell-mean jump, which is
+  what entropy stability needs; citing Fjordholm, Mishra and Tadmor, they state
+  that minmod is the only symmetric TVD limiter with this sign property. The
+  reconstruction is done in reference space on the non-uniform Gauss–Lobatto
+  subcell grid, and the variant without reconstruction in the element-boundary
+  subcells gave the best Orszag–Tang results (§6.2, Fig. 6). See
+  [TeCNO schemes](/methods/tecno-scheme.md).
+
 - **Variable choice.** Minmod applied to conservative variables "typically leads
   to large oscillations", so Chertock et al. apply it to local characteristic
   variables (§2.1; see [characteristic decomposition](/methods/characteristic-decomposition.md)).
@@ -127,6 +199,18 @@ with minmod "the most compressive out of dissipative limiters".
   total-variation estimates, as their printed form shows (see
   [convex limiting](/methods/convex-limiting.md)).
 
+## The first-order barrier at extrema
+
+[Pazner (2021)](/sources/pazner-2021.md) (§4.4) recalls that TVD schemes are
+provably at most first-order accurate at smooth extrema, and observes the
+analogous loss for the local maximum principle of his flux-corrected DG: with
+strictly enforced local bounds the $L^1$ convergence rates on $\sin(2\pi x)$
+advection are about one (1.00, 1.04, 1.29 for $p=3,4,5$), while relaxing the
+bounds to global ones in cells flagged smooth by a modal indicator restores
+4.00, 5.00, 5.86 (§5.1, Table 1; $p$ the source's polynomial degree). See
+[convex limiting](/methods/convex-limiting.md) and
+[critical-point accuracy](/properties/critical-point-accuracy.md).
+
 ## Qualifications
 
 - Deng's claim that symmetric TVD limiters cannot reach uniform second order in
@@ -142,3 +226,8 @@ with minmod "the most compressive out of dissipative limiters".
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §3, Eq. (5): minmod in the CURH anti-diffusion term.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII.a, App. D, Eqs. (D.7)–(D.10): MC and van Albada base polynomial.
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §2.2, §4, §5.2: minmod subcell reconstruction, TVD-like bounds.
+- [Puppo et al. (2023)](/sources/puppo-2023.md) — §2: explicit and implicit incremental-form TVD conditions (arXiv v2).
+- [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3, Eq. (8): three-argument MC limiter, $\beta=1.5$ (arXiv v1).
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.2.2, Eq. (34): flux-limited WENO in MFC (arXiv v1).
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §4, Eqs. (72)–(81), §6.2: minmod and the sign property (arXiv v1).
+- [Pazner (2021)](/sources/pazner-2021.md) — §4.4, §5.1, Table 1: first-order barrier at extrema (arXiv v1).

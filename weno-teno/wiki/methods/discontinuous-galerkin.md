@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin method"
-description: "The discontinuous Galerkin (DG) semi-discretization of a conservation law with piecewise polynomials of degree N coupled only through numerical fluxes, its Runge–Kutta time stepping and CFL limit, the cell-average update behind bound preservation, and the stabilization families the sources attach to it."
+description: "The discontinuous Galerkin (DG) semi-discretization of a conservation law with piecewise polynomials of degree N coupled only through numerical fluxes, its modal, nodal and space–time variants, its Runge–Kutta time stepping and CFL limit, the cell-average update behind bound preservation, and the stabilization and adaptation strategies the sources attach to it."
 status: established
-aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG]
+aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -42,7 +42,15 @@ Two families of bases appear in the sources:
 - **Modal bases.** These are orthogonal (scaled Legendre) bases, in which the
   zeroth coefficient is the cell average. The OEDG damping step of Peng et
   al. is diagonal in such a basis
-  ([OEDG](/methods/oedg.md)).
+  ([OEDG](/methods/oedg.md)). On unstructured meshes of arbitrary element
+  shape, [Basile et al. (2022)](/sources/basile-2022.md) build a
+  hierarchical orthonormal modal basis per element by modified Gram–Schmidt
+  on monomials, so the mass matrix is diagonal and the modes group by total
+  degree. Their solver CODA uses a Roe flux with a Harten-type entropy fix,
+  BR1 for the viscous terms and implicit backward Euler with matrix-free
+  GMRES (§2.3). The grouping by degree is what their
+  [hp-adaptation](/methods/hp-adaptation.md) estimator and smoothness test
+  read.
 - **Nodal bases.** These are Lagrange bases at Legendre–Gauss–Lobatto nodes
   $\xi_j$ with collocated quadrature. The result is the
   [DGSEM](/methods/dgsem.md), whose mass matrix is diagonal and whose
@@ -54,9 +62,30 @@ Two families of bases appear in the sources:
   [flux differencing](/methods/flux-differencing.md) and of the
   [entropy-stable](/properties/entropy-stability.md) DG schemes.
 
+Two further formulations appear:
+
+- **Space–time DG.** [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
+  treat time as an extra coordinate: a 1D unsteady problem becomes a 2D
+  problem in $(x,t)$ with flux $(f(u),u)$, discretized by DG on space–time
+  elements, slab by slab (§2–3.1, Eqs. (2.4)–(3.4)). They list as advantages
+  arbitrary orders in space and time, an automatically satisfied geometric
+  conservation law, and remeshing without conservative interpolation.
+  Moving the element faces with the solution gives
+  [implicit shock tracking](/methods/implicit-shock-tracking.md).
+- **Moment equations with reconstruction.** [Li, Shu & Qiu (2022)](/sources/li-2022-d.md)
+  test the conservation law with $1$ and $(x-x_i)/\Delta x$ on each cell
+  (§2.1, Eqs. (2.2)–(2.4)). These two functions span $\mathbb P^1(I_i)$, so
+  the equations are the weak form of $\mathbb P^1$ DG *(compiler check, not
+  in the sources)*. They
+  evolve the cell average and the first moment, but do not carry a DG
+  polynomial: the point values needed by the flux and by the volume
+  integral of $f(u)$ come from a multi-resolution Hermite-WENO
+  reconstruction on a compact stencil, sixth order on three cells
+  ([Hermite WENO](/methods/hermite-weno.md)).
+
 ## Time stepping and the CFL limit
 
-Peng et al. (2024) write the $s$-stage, $r$th-order explicit Runge–Kutta
+Peng et al. (2024) write the $s$-stage, $r_{\mathrm{RK}}$th-order explicit Runge–Kutta
 method in Shu–Osher form,
 $u_h^{n,\ell+1}=\sum_{m\le\ell}\big(c_{\ell m}u_h^{n,m}+\Delta t\,d_{\ell m}\mathcal L(u_h^{n,m})\big)$
 with $\sum_mc_{\ell m}=1$ (page-local coefficients $c_{\ell m}$, $d_{\ell m}$;
@@ -73,16 +102,16 @@ $$\Delta t\Big(\frac{a^{(1)}}{\Delta x}+\frac{a^{(2)}}{\Delta y}\Big)\le\frac1{2
 
 with $a^{(d)}$ the maximum wave speed in direction $d$. Peng et al. (2024)
 run their OEDG tests at CFL $1/(2N+1)$ (§5). Peng et al.'s Prop. 4.6,
-collected from the RKDG stability literature, states for $r$th-order
-$r$-stage Runge–Kutta on linear problems that the $L^2$ stability estimate
+collected from the RKDG stability literature, states for $r_{\mathrm{RK}}$th-order
+$r_{\mathrm{RK}}$-stage Runge–Kutta on linear problems that the $L^2$ stability estimate
 $\|u_h^{n+1}\|^2\le(1+C_s\Delta t)\|u_h^n\|^2$ (their Assumption 4.5,
-page-local constant $C_s$) holds under $\Delta t\le C\,\Delta x^{\kappa}$
-with the following exponents:
+page-local constant $C_s$) holds under $\Delta t\le C\,\Delta x^{\mathsf k}$ (page-local exponent
+$\mathsf k$, not the kinetic energy $\kappa$) with the following exponents:
 
-- $\kappa=1+1/r$ for $r\equiv1\pmod 4$;
-- $\kappa=1+1/(r+1)$ for $r\equiv2\pmod4$;
-- $\kappa=1$ and $C_s=0$ for $r\equiv3\pmod4$;
-- $\kappa=1$ and $C_s=0$ after combining two or three steps for $r\equiv0\pmod4$.
+- $\mathsf k=1+1/r_{\mathrm{RK}}$ for $r_{\mathrm{RK}}\equiv1\pmod 4$;
+- $\mathsf k=1+1/(r_{\mathrm{RK}}+1)$ for $r_{\mathrm{RK}}\equiv2\pmod4$;
+- $\mathsf k=1$ and $C_s=0$ for $r_{\mathrm{RK}}\equiv3\pmod4$;
+- $\mathsf k=1$ and $C_s=0$ after combining two or three steps for $r_{\mathrm{RK}}\equiv0\pmod4$.
 
 ## The cell-average update
 
@@ -127,7 +156,7 @@ $N=2$. See
 
 ## Stabilization of discontinuous solutions
 
-Unmodified DG oscillates at discontinuities, and the sources attach four
+Unmodified DG oscillates at discontinuities, and the sources attach five
 distinct remedies.
 
 - **Limiters that overwrite troubled cells.** A
@@ -149,10 +178,30 @@ distinct remedies.
   (2024) instead solves the damping step exactly after each Runge–Kutta stage
   as a modal filter. This preserves the cell average and the scale and
   evolution invariance. For linear advection it keeps the optimal
-  fully-discrete $L^2$ estimate $O(\Delta x^{N+1}+\Delta t^r)$ under
+  fully-discrete $L^2$ estimate $O(\Delta x^{N+1}+\Delta t^{r_{\mathrm{RK}}})$ under
   $N>d/2$, $r>d/2+1$, a stable underlying RKDG scheme and a lower bound on
   the deviation of $u_h$ from its average (Thm 4.1).
 - **Artificial viscosity.** See [artificial viscosity](/methods/artificial-viscosity.md).
+- **Fitting the discontinuity.** Implicit shock tracking moves the element
+  faces onto discontinuities, so that no limiter, reconstruction or
+  artificial viscosity is needed. Luo et al. (2021) use a plain central
+  flux at interior faces (§3.3,
+  [implicit shock tracking](/methods/implicit-shock-tracking.md)).
+
+[Pazner (2021)](/sources/pazner-2021.md) gives the
+invariant-domain-preserving variant of the blending remedy. His low-order
+scheme is a graph-viscosity method built on a sparsified, $O(1)$-stencil
+derivative operator, and the high-order nodal DG update is limited
+subcell by subcell (§3–4). Applying graph viscosity to the full DG operator
+instead makes the low-order method more diffusive as $N$ grows at fixed
+degrees of freedom, because each node couples to $O(N)$ others (§3.4,
+Fig. 1; [convex limiting](/methods/convex-limiting.md)).
+
+Li, Shu & Qiu (2022) flag troubled cells with a modified KXRCF indicator,
+an indicator from the RKDG literature, in which the power of $h$ in the
+denominator is $(l+1)/3$ with $l=5$ the reconstruction degree instead of
+the original $(N+1)/2$ (Eqs. (2.25), (2.32)–(2.34);
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md)).
 
 [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) contrast the first remedy
 with their continuous-Galerkin scheme, which never modifies the finite
@@ -177,9 +226,13 @@ decomposition cuts CPU time by 20–50 % (§8).
 
 - The CFL bound $1/(2N+1)$ is cited by Cui et al. (2024) as an empirical
   formula, not a theorem.
-- The sources use different symbols for the degree: Peng et al. and Cui et
-  al. write $k$, Ranocha et al. write $p$, Wu & Shu write $K$, and
-  Rueda-Ramírez et al. write $N$. All are translated to $N$ here.
+- The sources use different symbols for the degree: Peng et al. and Cui
+  et al. write $k$, Ranocha et al., Pazner, Luo et al. and Basile et al.
+  write $p$, Wu & Shu write $K$, and Rueda-Ramírez et al. write $N$. All
+  are translated to $N$ here.
+- Luo et al.'s claim that the central flux suffices rests on the converged
+  interface condition. It does not carry over to DG on a fixed mesh, where
+  the sources above use upwind-type numerical fluxes.
 
 # Citations
 
@@ -189,3 +242,7 @@ decomposition cuts CPU time by 20–50 % (§8).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §1, Remark 2, §8.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, Ex. 2.3.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §5.
+- [Basile et al. (2022)](/sources/basile-2022.md) — §2.3 Eqs. (15)–(23) (author manuscript).
+- [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §2, §3.1–3.3 Eqs. (2.4)–(3.15) (author manuscript).
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1 Eqs. (2.2)–(2.4), Eqs. (2.25), (2.32)–(2.34) (arXiv v1).
+- [Pazner (2021)](/sources/pazner-2021.md) — §3, §3.4 Fig. 1, §4 (arXiv v1).

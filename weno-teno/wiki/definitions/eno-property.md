@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # ENO property
@@ -41,6 +41,15 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   kept with its linear weight or dropped. It differs from ENO, which keeps only the smoothest stencil
   and cannot recover the full-stencil linear scheme, whereas TENO "tends to rule out the nonsmoothest
   stencil crossed by genuine discontinuities" ([targeted ENO](/methods/targeted-eno.md)).
+- **Weighted least squares.** [WLS-ENO](/methods/wls-eno.md) has no candidate stencils: a single
+  least-squares fit on the whole stencil weights each neighbour row by
+  $W_j=1/\big((\bar u_j-\bar u_i)^2+\epsilon h_i^2\big)$ (page-local $W_j$, $h_i$ the square root of
+  the cell area; $\epsilon=10^{-2}$), which is $O(h_i^{-2})$ on smooth data and $O(1)$ across a jump
+  (Liu, Zhang, Li & Shen 2021, §2.3, recalling Liu & Jiao). Liu et al. state that their
+  locally divergence-free variant "retains ENO property" (§3.1, §5) and use no limiter other than a
+  positivity limiter in any test (Abstract, §4). No proof or measurement of the property is given;
+  *(compiler check, not in the sources: the weights reduce a row across a jump by a factor $O(h_i^2)$
+  relative to smooth rows, they do not remove it)*.
 - **Learned weights.** WENO3-NN appends an "ENO layer" that zeroes network weights below
   $2\times10^{-4}$ and renormalizes (Huang et al. 2026, Eq. (3.11);
   [learned WENO weights](/methods/learned-weno-weights.md)).
@@ -77,3 +86,4 @@ to deliver them.
 - [Fu (2023)](/sources/fu-2023.md) — §2.3.
 - [Fu (2021)](/sources/fu-2021.md) — Abstract; §5.7.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1.
+- [Liu et al. (2021)](/sources/liu-2021.md) — Abstract; §2.3; §3.1; §4; §5.

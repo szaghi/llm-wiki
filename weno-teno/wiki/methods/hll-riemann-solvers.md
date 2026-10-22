@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "HLL-family approximate Riemann solvers"
-description: "HLL, HLLE, HLLC and HLLEM/HLLI two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, positivity and CFL properties, carbuncle behaviour, and the switching of low- and high-dissipation solvers in high-order schemes."
+description: "HLL, HLLE, HLLC, HLLEM/HLLI and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates, positivity proofs for gas and gas–liquid mixtures, the entropy-stable relaxation solver, carbuncle behaviour, and the switching of low- and high-dissipation solvers in high-order schemes."
 status: established
-aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, Harten–Lax–van Leer solver]
-tags: [riemann-solver, numerical-flux, finite-volume, positivity]
-timestamp: 2026-10-21T00:00:00Z
+aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver]
+tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -39,6 +39,16 @@ intermediate state of the central-upwind anti-diffusion of
 [Wang et al. (2023)](/sources/wang-2023-b.md) (Eq. (5)) is $u^{\mathrm{HLL}}$ with the same
 speeds.
 
+[Liu et al. (2021)](/sources/liu-2021.md) (§2, Eq. (4)) use the single formula
+$h=\big(s^+f(u^-)-s^-f(u^+)+s^+s^-(u^+-u^-)\big)/(s^+-s^-)$ with
+$s^-=\min(\sigma^{\mathrm l},0)$ and $s^+=\max(\sigma^{\mathrm r},0)$ clipped from the
+leftmost and rightmost wave-speed estimates (page-local $\sigma^{\mathrm l},\sigma^{\mathrm r}$),
+evaluated on face Gauss points through rotational invariance; the same speeds upwind
+the Godunov–Powell divergence term of their MHD scheme (Eq. (3)). *(Compiler check, not
+in the sources: with this clipping the subsonic formula reduces to $f(u^-)$ or $f(u^+)$
+in the supersonic cases, so it covers all three cases above.)* See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
 [Fu (2023)](/sources/fu-2023.md) (§3.6, Eq. (29)) writes Roe, Rusanov, HLL and HLLC fluxes in
 one form, $h\approx\tfrac12\big(f(u^-)+f(u^+)-\lvert\tilde a_{i+1/2}\rvert(u^+-u^-)\big)$, with
 $\tilde a_{i+1/2}$ an averaged characteristic signal speed set by the solver (page-local;
@@ -59,7 +69,81 @@ the title of Dumbser & Balsara (2016) calls it HLLEM. Details on
 [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) (§4) state that HLLE and HLLEM
 preserve positivity of density and pressure.
 
+## HLLC: star states and wave speeds
+
+HLLC restores the contact by two intermediate states separated by a contact
+speed $s^*$ (page-local). It is the default solver of [MFC](/software/mfc.md)
+(HLL and an exact solver are options; no formulas printed;
+[Bryngelson et al. (2021)](/sources/bryngelson-2021.md), §2.2, §4.1), of all tests
+of the unstructured CWENO of [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md),
+where its normal velocity also discretizes the $\phi_1\nabla\!\cdot v$ source of
+the five-equation model (§3.1, Eqs. (15)–(16)), and of the two sources below,
+which print it.
+
+**Five-equation gas–liquid model** ([Wong et al. (2021)](/sources/wong-2021.md),
+§3.2, Eqs. (24)–(27)). With $\chi^\pm=(s^\pm-v^\pm)/(s^\pm-s^*)$ (page-local) the
+star states are, in 1D,
+
+$$u^{*,\pm}=\chi^\pm\Big(\phi_1\rho_1,\ \phi_2\rho_2,\ \rho s^*,\ E+(s^*-v)\big(\rho s^*+\tfrac{p}{s^\pm-v}\big)\Big)^\pm,\qquad\phi_1^{*,\pm}=\phi_1^\pm,$$
+
+(the superscript $\pm$ outside the bracket: evaluated at $u^\pm$; $\phi_k$ the
+volume fractions, registry §10), with the Einfeldt speeds
+$s^-=\min(\{\!\{v\}\!\}-\{\!\{c\}\!\},\ v^--c^-)$,
+$s^+=\max(\{\!\{v\}\!\}+\{\!\{c\}\!\},\ v^++c^+)$ and the Batten contact speed
+
+$$s^*=\frac{p^+-p^-+\rho^-v^-(s^--v^-)-\rho^+v^+(s^+-v^+)}{\rho^-(s^--v^-)-\rho^+(s^+-v^+)}.$$
+
+The contact speed also advects the volume fraction upwind (Eqs. (40)–(43)).
+
+**Pressure-based speeds** ([Li, Shu & Qiu (2022)](/sources/li-2022-d.md), §2.1,
+Eqs. (2.5)–(2.7)), for the Euler equations: a primitive-variable estimate
+
+$$p^*=\tfrac12\big(p^-+p^++(v^--v^+)\{\!\{\rho\}\!\}\{\!\{c\}\!\}\big),\qquad s^*=\tfrac12\Big(v^-+v^++\frac{p^--p^+}{\{\!\{\rho\}\!\}\{\!\{c\}\!\}}\Big),$$
+
+and $s^-=v^--c^-\mathsf z^-$, $s^+=v^++c^+\mathsf z^+$ with $\mathsf z^\pm=1$ if
+$p^*\le p^\pm$ and $\mathsf z^\pm=\sqrt{1+\frac{\gamma+1}{2\gamma}(p^*/p^\pm-1)}$
+otherwise (page-local $\mathsf z^\pm$), chosen "to better adapt to our high order
+scheme" in a moment-based [Hermite WENO](/methods/hermite-weno.md).
+
+## Relaxation solvers
+
+[Renac (2021)](/sources/renac-2021.md) (§4, Eqs. (51)–(56), App. C) builds an
+entropy-stable and positive three-point flux for the multicomponent Euler
+equations by composing a Coquel–Perthame energy relaxation (a polytropic
+pressure law with a constant exponent larger than every species' $\gamma$) with
+Bouchut's pressure (Suliciu) relaxation. The result is an HLLC-like three-wave
+solver: mass fractions are unchanged across the outer waves, and with Bouchut's
+approximate Lagrangian sound speeds $\mathsf a^\pm$ (page-local)
+
+$$s^*=\frac{\mathsf a^-v^-+\mathsf a^+v^++p^--p^+}{\mathsf a^-+\mathsf a^+},\qquad p^*=\frac{\mathsf a^+p^-+\mathsf a^-p^++\mathsf a^-\mathsf a^+(v^--v^+)}{\mathsf a^-+\mathsf a^+},\qquad s^\mp=v^\mp\mp\frac{\mathsf a^\mp}{\rho^\mp}.$$
+
+It is consistent, Lipschitz, entropy stable and positive under
+$\frac{\Delta t}{\Delta x}\max_i\big(\lvert v_i\rvert+\mathsf a/\rho\big)<\tfrac12$ (Eq. (52)),
+largely by reference to Bouchut and to Marmignon, Naddei and Renac; because the
+relaxation entropy is only non-strictly convex (Lemma 4.1), the general
+relaxation framework does not apply directly and the pressure relaxation supplies
+the entropy inequality. In the experiments the relaxation exponent is
+$\max(\gamma_1,\gamma_2)$ and the wave speeds are multiplied by 1.05. Against it, an
+entropy-conservative flux plus scalar Rusanov-type dissipation (App. D) is entropy
+stable but non-Lipschitz, needs CFL 0.2 instead of 0.4, and the 2D runs stop on
+negative solutions (Figs. D.9–D.10). Renac also states that fast upper bounds of the
+maximum wave speed, which HLL, Roe and Rusanov need, are not known for this
+multicomponent model (§1.3). See [entropy stability](/properties/entropy-stability.md)
+and [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md).
+
 ## Positivity and the bound-preserving CFL
+
+- [Wong et al. (2021)](/sources/wong-2021.md) (§3.3, Eqs. (46)–(70)) prove that the
+  first-order HLLC scheme above keeps partial densities non-negative, the volume
+  fraction in $[0,1]$ and $\rho e-\bar p_\infty>0$ (page-local mixture stiffening
+  pressure of the [stiffened-gas law](/definitions/stiffened-gas-equation-of-state.md)),
+  under CFL $\le0.5$ with a directional split of the 2D update. The energy condition
+  reduces to a quadratic in $s^*-v^-$ with negative discriminant iff
+  $s^-<v^--(p^-+\bar p^-_\infty)/\sqrt{2\rho^-(\rho e-\bar p_\infty)^-}$, and the
+  right-hand side exceeds $v^--c^-$, so the Einfeldt speed suffices (Eq. (57)). The
+  proof needs the convexity of the admissible set, which holds when the ideal-gas phase
+  has the smaller $\gamma$ (Lemma 1, Thm. 1; see
+  [bound preservation](/properties/bound-preservation.md)).
 
 - [Cui et al. (2024)](/sources/cui-2024.md) (§7, Eq. (7.5), Remark 7.7) use the maximum CFL
   number $c_0$ of the first-order bound-preserving three-point scheme: $c_0=1$ for
@@ -102,6 +186,17 @@ where any monotone two-point flux can be used, HLLC gives the best dissipation-r
 on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and beats Steger–Warming
 splitting in both alternative-formulation schemes (§4.9, Figs. 10–12).
 
+## No Riemann solver: shock fitting
+
+In the moving DG method MDG+ICE of [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
+the interface condition, enforced weakly, makes the face flux unique at convergence, so
+the interior flux is the plain central average and no Riemann solver is used (§3.3,
+Eqs. (3.14)–(3.15)); the authors state that how to extend an upwind flux to their
+space-time formulation consistently with the interface condition "remains an open
+problem", while most upwind fluxes can be used in the steady-state version. See
+[implicit shock tracking](/methods/implicit-shock-tracking.md) and
+[carbuncle](/definitions/carbuncle-phenomenon.md).
+
 ## Cost
 
 In the flux microbenchmarks of [Ranocha et al. (2023)](/sources/ranocha-2023.md) (§4.2,
@@ -120,3 +215,10 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §3, §4.9 (Figs. 10–12).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.2, Table 2 (arXiv v2).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — Eq. (5) (intermediate state).
+- [Wong et al. (2021)](/sources/wong-2021.md) — §3.2–3.3 (Eqs. (24)–(70), Lemma 1, Thm. 1) (arXiv v1).
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1, §2.1 (Eqs. (2.5)–(2.7)) (arXiv v1).
+- [Renac (2021)](/sources/renac-2021.md) — §1.3, §4 (Eqs. (51)–(56), Lemma 4.1), §7, Apps. C–D (arXiv v3).
+- [Liu et al. (2021)](/sources/liu-2021.md) — §2 (Eqs. (3)–(4)).
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §4.1 (arXiv v1).
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.1, §3.3.
+- [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.3 (author manuscript).

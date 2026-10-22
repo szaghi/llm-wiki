@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Isentropic vortex"
-description: "Smooth exact solution of the two-dimensional Euler equations, an isentropic vortex advected by a uniform stream on a periodic box; used for design-order convergence studies and, with an amplified vortex strength, as a stress test of entropy-conservative flux implementations."
+description: "Smooth exact solution of the Euler equations, an isentropic vortex advected by a uniform stream (or held steady) on a periodic box; used for design-order convergence studies, which expose the time-step scaling and multidimensional quadrature high orders need, and, with an amplified vortex strength, as a stress test of entropy-conservative fluxes."
 status: established
-aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection]
-tags: [benchmark, weno, dg, entropy-stable]
-timestamp: 2026-10-21T12:00:00Z
+aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
+tags: [benchmark, weno, dg, entropy-stable, finite-volume]
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Isentropic vortex
@@ -18,7 +18,11 @@ exact solution is the initial data translated along the diagonal, the
 error after any number of periods is measurable; Wang et al. and
 Balsara et al. use it as their two-dimensional order-of-accuracy check
 for the Euler equations, and Ranocha et al. call it "a widely used
-benchmark problem" with an analytical solution.
+benchmark problem" with an analytical solution. Without the stream the
+vortex is steady, and the error is the deviation from the initial data
+([Bryngelson et al. (2021)](/sources/bryngelson-2021.md)); a rotated
+copy gives a three-dimensional test
+([Li, Duan & Tang (2022)](/sources/li-2022-c.md)).
 
 ## Setup
 
@@ -45,12 +49,30 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Wang et al. (2023)](/sources/wang-2023-b.md) Example 3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$ | $t=1$; $L^2$ error of $\rho$ on $\Delta x=1/2,\dots,1/64$ |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §VII.a | square periodic box; $[-10,10]^2$ and doubled time for orders 7 and 9 | not restated | not restated | design order, $64^2$ to $512^2$ |
 | [Ranocha et al. (2023)](/sources/ranocha-2023.md) §4.1 | $[-5,5]^d$, $d=2,3$, periodic | 20 | $\rho_0=1$, $p_0=10$, $v_0=(1,1,0)$ | timing only, 8 elements per direction |
+| [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.1 | $[-10,10]^2$, centre $(-2,-2)$, periodic | 5 | $\rho_0=1$, temperature 1 with $c_v=1$, stream $(1,1)$ | $t=4$; $\ell^1$, $\ell^\infty$ errors of $\rho$, $N_x=40$ to $320$, moving mesh |
+| Li, Duan & Tang (2022) Ex. 5.5 | $[-10,10]^3$, 2D vortex rotated onto the domain diagonal | 5 | as Ex. 5.1 | $t=0.1$; $N_x=40$ to $320$ |
+| [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.1 | $[-10,10]^2$ (enlarged from $[-5,5]^2$), periodic | amplitude not printed | $\rho_0=1$, $p_0=1/\gamma$, stream of Mach $\sqrt{2/\gamma}$ at $45°$ | one cycle; $100^2$ to $500^2$, CFL 0.6 down to 0.00625 |
+| [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §5.4 | steady vortex, no stream; setup deferred to an earlier MFC paper | not printed | not printed | $\lVert\rho(1)-\rho(0)\rVert_\infty$, $1/N\in[10^{-3},10^{-1}]$ |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
 which is the table's form with $\mathcal E=5$, $T_0=1$. Balsara et al.
 take the setup of Pao & Salas as described in Balsara & Shu, without
 restating its parameters. Wang et al. take theirs from three earlier
 papers, Ranocha et al. cite Shu.
+
+The other normalizations reduce to the same vortex *(compiler check, not
+in the sources)*. Li et al. write $p=(\gamma-1)\rho T$ with $c_v=1$, so
+their temperature perturbation $-\mathcal E^2e^{1-r^2}/(8\gamma\pi^2)$
+is the table's $T$-perturbation divided by $\gamma-1$; their velocity
+perturbation turns the other way, $\propto(\bar y,-\bar x)$.
+Sciacovelli et al. write the perturbations through a Gaussian
+$\Omega=A_\Omega e^{-r^2/2}$ with an amplitude $A_\Omega$ they do not print (page-local symbols), $\delta v=\Omega(-\bar y,\bar x)$,
+$\rho=(1-\tfrac{\gamma-1}2\Omega^2)^{1/(\gamma-1)}$ and
+$p=\rho^\gamma/\gamma$; this is the table's form with
+$\mathcal E=2\pi A_\Omega e^{-1/2}$ and $T_0=1/\gamma$, i.e. unit background
+sound speed. Sciacovelli et al. enlarge the domain to $[-10,10]^2$ "to
+reduce artificial shear layers at boundaries", and Li et al. and
+Balsara et al. (orders 7 and 9) use the same box.
 
 ## Uses in the sources
 
@@ -76,6 +98,46 @@ order, with irregular rates: OLD 3.27, 2.39, 6.38, 4.99, 6.20; NEW
 $\Delta x=1/64$ are $3.45\times10^{-9}$ (OLD) and $3.62\times10^{-9}$
 (NEW); the NEW errors are slightly larger on every grid (Table 1).
 
+**Ninth order and the time-integration error.** Sciacovelli et al. run
+a ninth-order central-difference scheme with Jameson-type adaptive
+[artificial dissipation](/methods/artificial-viscosity.md) and the
+third-order TVD Runge–Kutta method of Gottlieb & Shu. At constant CFL
+the observed order wanders between 3 and 9: a ninth-order range appears
+only for CFL $\le0.2$, and ninth order holds over the whole range
+$100^2$–$500^2$ only at CFL $1.25\times10^{-2}$ and
+$6.25\times10^{-3}$ (§4.1, Fig. 2). They explain the behaviour by the
+error balance: keeping the ratio of temporal to spatial error fixed
+needs $\Delta t\propto\Delta x^{9/3}=\Delta x^3$, whereas a constant CFL
+gives $\Delta t\propto\Delta x$ (Eq. 40). The same balance is what
+Wang et al.'s CFL $\Delta x^{2/3}$ and Li et al.'s
+$\Delta t=C_{\mathrm{CFL}}(\min\Delta\xi_k)^{5/3}$ (Li et al., §5) realize
+for fifth order with a third-order integrator: across the sources, a
+convergence study above third order with SSP-RK3 is only meaningful
+with a refined time step or a small CFL. See
+[SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md).
+
+**Moving meshes and entropy.** Li et al. advect the vortex on an
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md) (monitor built
+from $\lvert\nabla\rho\rvert$ and $\lvert\Delta\rho\rvert$) with
+entropy-stable fluxes whose dissipation uses
+[multi-resolution WENO](/methods/multi-resolution-weno.md) and reach
+fifth order in $\ell^1$ and $\ell^\infty$ at $t=4$ (Ex. 5.1, Fig. 5.2),
+and the expected fifth order in three dimensions at $t=0.1$ (Ex. 5.5,
+Fig. 5.6). The same runs check [entropy stability](/properties/entropy-stability.md):
+the total entropy stays almost constant with the
+[entropy-conservative flux](/methods/entropy-conservative-flux.md) and
+decays with the entropy-stable one, to about $-4.2\times10^{-6}$ at
+$t=4$ on $160^2$ in 2D and to about $-1\times10^{-7}$ by $t=0.1$ in 3D.
+
+**Multidimensional finite-volume quadrature.** Bryngelson et al. use
+the steady vortex to verify the finite-volume WENO5 scheme of
+[MFC](/software/mfc.md): the $L^\infty$ density error converges at
+second order when face fluxes are evaluated at face midpoints and at
+fifth order with a $2\times2$ Gauss rule on each face, so "the
+4th-order-accurate cell averaging we employ is required to achieve
+5th-order accuracy associated with the WENO reconstructions" in
+multiple dimensions (§5.4, Fig. 5a).
+
 **Implementation stress test.** Ranocha et al. raise the strength to
 $\mathcal E=20$ "to make sure that all possible paths in the logarithmic
 mean are followed" in the [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)
@@ -100,9 +162,25 @@ logarithmic mean (§7.2, Fig. 6).
   refinement) is printed without comment.
 - Ranocha et al. report timings only; their strengthened vortex
   carries no accuracy result.
+- Bryngelson et al. call the $2\times2$ Gauss rule fourth-order accurate
+  and observe fifth order. A face-average error of order
+  $\Delta x^4$ bounds the formal order of the scheme at four *(compiler
+  check, not in the sources)*; the paper does not comment on the
+  observed slope of five. They also print the Gauss points as
+  $y_j+(2l+1)\Delta y_j/(2\sqrt3)$, $l=1,2$, which lie outside the face;
+  the two-point Gauss points are $y_j\pm\Delta y_j/(2\sqrt3)$.
+- Bryngelson et al.'s vortex is steady, so it tests the spatial operator
+  without transport across the grid; it is not the advected benchmark
+  of the other sources.
+- Sciacovelli et al. do not print the amplitude $A_\Omega$, so their
+  error levels cannot be reproduced from the paper; their scheme is a
+  central scheme with artificial dissipation, not a WENO scheme.
 
 # Citations
 
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 3, Table 1.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII.a, Table I.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.1, Eq. (4.1); §7.2, Fig. 6 (arXiv v2).
+- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Eq. (5.1), Ex. 5.1, Fig. 5.2; Ex. 5.5, Fig. 5.6 (arXiv v1).
+- [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §4.1, Eqs. (37)–(40), Fig. 2 (arXiv v1).
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1, Eqs. (29)–(30); §5.4, Fig. 5a (arXiv v1).

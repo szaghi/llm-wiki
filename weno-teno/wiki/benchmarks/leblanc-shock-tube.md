@@ -1,0 +1,89 @@
+---
+type: Benchmark
+title: "Leblanc shock tube"
+description: "One-dimensional Euler Riemann problem with a pressure ratio of 10^9 and a density ratio of 10^3 or 2×10^3, printed in two inequivalent versions under one name; a robustness test of near-vacuum, extreme-ratio shock tubes in which positivity limiters and low dissipation are judged against a fine reference."
+status: established
+aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
+tags: [benchmark, positivity, bound-preserving, low-dissipation]
+timestamp: 2026-10-22T12:00:00Z
+---
+
+# Leblanc shock tube
+
+A Riemann problem of the Euler equations whose left state carries a
+pressure nine orders of magnitude above the right one, with the right
+density about three orders below the left. The solution is a strong
+rarefaction to the left and a very strong shock and contact to the
+right (the left gas is at rest at the higher pressure); the extreme
+ratios make it a robustness test, and resolution is judged visually
+against an exact or fine-grid reference. Two inequivalent problems go
+by the name.
+
+## Version on $[0,9]$, $\gamma=5/3$
+
+| Source | Left, $x<3$ | Right | Grid | Final time |
+|---|---|---|---|---|
+| [Fu (2021)](/sources/fu-2021.md) §5.7.1 | $(\rho,v,p)=(1,\ 0,\ \tfrac23\times10^{-1})$ | $(10^{-3},\ 0,\ \tfrac23\times10^{-10})$ | 800 points; reference WENO5-JS, 4000 | 6 |
+| [Deng (2023)](/sources/deng-2023.md) App. A.8 | $(\rho,v,e)=(1,\ 0,\ 0.1)$ | $(0.001,\ 0,\ 10^{-7})$ | 200 cells | 6 |
+
+Deng prints the specific internal energy $e$. With
+$p=(\gamma-1)\rho e$ and $\gamma=5/3$, his states are
+$p=\tfrac23\times0.1$ and $p=\tfrac23\times0.001\times10^{-7}=\tfrac23\times10^{-10}$,
+Fu's states exactly *(compiler check, not in the sources)*. The
+pressure ratio is $10^9$ and the density ratio $10^3$.
+
+## Version on $[-10,10]$, $\gamma=1.4$
+
+| Source | Left, $x<0$ | Right | Grid | Final time |
+|---|---|---|---|---|
+| [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.5 | $(\rho,v,p)=(2,\ 0,\ 10^9)$ | $(0.001,\ 0,\ 1)$ | 3200 cells, logarithmic plots | $10^{-4}$ |
+| [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5c | same | same | 6400 points | $10^{-4}$ |
+
+Inlet/outlet boundaries (Fan et al.). The pressure ratio is again
+$10^9$, the density ratio $2\times10^3$; with a different $\gamma$ and
+different states this is a different problem from the first version,
+not a rescaling of it *(compiler check, not in the sources)*. Wang et
+al. describe the density and pressure ratios as $O(10^3)$ and
+$O(10^9)$.
+
+## Findings across sources
+
+**Robustness needs a positivity safeguard.** Fu runs his very-high-order
+[TENO-AA](/methods/adaptive-teno.md) on this problem with LLF splitting
+and the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md),
+like all his extreme cases, and reports it stable (§5.7). Fan et al.'s
+positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) triggers
+its scaling limiter in only 0.25 % of the cells and flags 0.97 %
+($\mathrm{Re}=1000$) and 1.35 % ($\mathrm{Re}=\infty$) as troubled; they
+state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows up on it
+from loss of positivity (§1, §4). Wang et al. run their
+[multi-resolution WENO](/methods/multi-resolution-weno.md) without a
+positivity limiter; they state that the ratio of the linear weights
+"used in this paper" is too large for the extreme problems and use
+those of the original multi-resolution scheme instead (Example 5.5,
+Fig. 5.11); which weights the paper uses elsewhere is ambiguous as
+printed.
+
+**Low dissipation.** Deng finds low-dissipation
+[ROUND](/methods/round-scheme.md) "much less dissipative and less
+oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
+
+**Cost of hybridization.** Fan et al. record their largest CPU saving
+here: the hybrid scheme saves 88.59 % ($\mathrm{Re}=\infty$) and
+89.64 % ($\mathrm{Re}=1000$) of the time of the non-hybrid one, because
+almost no cells are troubled (Table 4.2).
+
+## Qualifications
+
+- The two versions share a name and the pressure ratio only; results
+  on one say nothing directly about the other.
+- Evidence is visual against fine-grid or exact references; no source
+  reports an error norm.
+- Deng states neither the CFL number nor the Runge–Kutta variant.
+
+# Citations
+
+- [Fu (2021)](/sources/fu-2021.md) — §5.7.1 (arXiv v1).
+- [Deng (2023)](/sources/deng-2023.md) — App. A.8, Fig. 34.
+- [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.5, Fig. 4.5, Table 4.2.
+- [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5c, Fig. 5.11.

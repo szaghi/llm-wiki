@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # WENO-Z weights
@@ -85,6 +85,35 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
   Wu 2021, §5.2.5, §5.3.3–5.3.4). Li et al. (2022, Fig. 3) report an asymmetric WENO7-Z solution near
   the square wave of the Jiang–Shu composite profile.
 
+## Z-type weights on other stencil families
+
+The form $d_k\big(1+\tau/(\beta_k+\epsilon)\big)$ is reused far from the classical shifted stencils,
+each time with a global indicator built against the largest candidate:
+
+| scheme | global indicator | ratio | source |
+|---|---|---|---|
+| fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md), stencils of 1, 3, 5 points | $\tau=\big(\tfrac12(\lvert\beta_3-\beta_1\rvert+\lvert\beta_3-\beta_2\rvert)\big)^2$ | $\tau/(\epsilon+\beta_m)$, $\epsilon=10^{-10}$ | Wang et al. 2021, Eq. (3.17), "same as the popular WENO-Z scheme" |
+| sixth-order multi-resolution [HWENO](/methods/hermite-weno.md), four levels | $\tau=\big(\tfrac13\sum_{l\le3}\lvert\beta_4-\beta_l\rvert\big)^2$ | $\tau/(\beta_l+\epsilon)$, $\epsilon=10^{-10}$ | Li, Shu & Qiu 2022, Eqs. (2.21)–(2.22), citing Castro, Costa & Don |
+| 2-D WENO-ZQ ([CWENO](/methods/cweno.md)), $\mathbb P^3$ and four $\mathbb P^1$ | $\tau=\big(\tfrac14\sum_{k\le4}\lvert\beta_0-\beta_k\rvert\big)^2$ | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-14}$ | Zheng, Cai, Qiu & Qiu 2022, Eqs. (13)–(14) |
+| incremental-stencil interpolation of WCNS-IS | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
+| WENO-AO($\mathcal R$,3) | $\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ | $\tau^2$, $\tau^3$, $\tau^4$ over $(\beta+\epsilon)^2$ for $\mathcal R=5,7,9$ | Balsara et al. 2024, App. D ([WENO-AO](/methods/weno-ao.md)) |
+
+All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. The same construction,
+with the mean of $(\beta_0-\beta_r)^2$ over four small stencils of a six-point stencil, drives the
+smooth discontinuity indicator of Zheng, Shu & Qiu (2021, §2.2.4), who cite Zhu & Qiu for it rather
+than Borges et al. ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). For the
+incremental stencils, Wong et al. (2021, App. B, Eqs. (B.14), (B.21)) derive
+$\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)=O(\Delta x^4)$ away from critical points and defer the last
+step of the fifth-order argument to Borges et al.
+
+*(Compiler check, not in the sources.)* The first three rows square the mean absolute difference and
+keep exponent 1 on the ratio, so the ratio is homogeneous of degree 2 in the data: under
+$f\mapsto\sigma f$ (page-local $\sigma$) it scales by $\sigma^2$ even with $\epsilon=0$, whereas
+$(\tau/(\beta+\epsilon))^q$ with the classical $\tau_5$, the AO(5,3) ratio and the WENO-IS ratio are
+of degree 0 when $\epsilon\to0$ (the AO(7,3) and AO(9,3) ratios are of degree 2 and 4). These weights therefore depend on the amplitude of the data beyond the
+$\epsilon$ effect discussed under [scale invariance](/properties/scale-invariance.md); none of the
+three sources discusses it.
+
 ## Uses in the bundle
 
 WENO-Z is the interpolation of the fifth-order [A-WENO](/methods/alternative-weno.md) schemes of
@@ -100,6 +129,8 @@ in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
   al. and the WENO-Z scheme to Castro et al.; their §2.2 then correctly cites WENO-Z to Borges et al.
 - Huang et al. (2026, Eq. (3.6)) and Deng (2023, Eq. (4.24)) print the index $k$ inside $\alpha_j$;
   the index is $j$.
+- **Naming.** WENO-ZQ (Zhu & Qiu) shares the Z-type weight form but is a different reconstruction,
+  of CWENO type (Zheng, Cai, Qiu & Qiu 2022, §2.2); it is not the WENO-Z of Borges et al.
 
 # Citations
 
@@ -114,3 +145,8 @@ in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §4 (WENO5-Z comparator).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §2.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; App. D.
+- [Wang et al. (2021)](/sources/wang-2021.md) — §3.1.1, Step 5, Eq. (3.17).
+- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1, Eqs. (2.16)–(2.22).
+- [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §2.2, Eqs. (13)–(14).
+- [Wong et al. (2021)](/sources/wong-2021.md) — §4.3, Eqs. (91)–(93); App. B, Eqs. (B.14), (B.20)–(B.21).
+- [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §2.2.4; App. B.

@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Local conservation is equivalent to a flux form"
-description: "Coppola and Veldman prove that a banded periodic matrix has vanishing column sums iff it factors as (I − T⁻¹)F, so for volume-consistent schemes global conservation of a linear invariant implies local conservation with an explicit face flux, and every globally conservative finite-difference scheme is a cell-centred finite-volume scheme."
+description: "Coppola and Veldman prove that a banded periodic matrix has vanishing column sums iff it factors as (I − T⁻¹)F, so for volume-consistent schemes global conservation of a linear invariant implies local conservation with an explicit face flux, and every globally conservative finite-difference scheme is a cell-centred finite-volume scheme; the same zero-sum-to-flux step makes subcell limiting and time blending conservative."
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -84,6 +84,39 @@ flux-differencing DG form with diagonal mass and boundary operators (§2,
 after Eq. (2.5)). See [flux differencing](/methods/flux-differencing.md) and
 [summation-by-parts operator](/operators/summation-by-parts-operator.md).
 
+## Zero sums turned into fluxes: limiting and blending
+
+The step "vanishing sum, hence differences of fluxes" is also how two sources keep
+nonlinear corrections conservative.
+
+- **Subcell limiting of DG** ([Pazner (2021)](/sources/pazner-2021.md), §4,
+  Props. 8–10, Eqs. (49)–(57)). The antidiffusive residuals $r^H_i-r^L_i$ between the
+  high- and low-order DG updates sum to zero over each element (Prop. 8) and, by the
+  Kronecker structure, along every line of nodes in each direction (Prop. 9). Hence the
+  nodal antidiffusive flux in direction $k$ is a difference of subcell-face fluxes,
+  $r_{i,k}=r_{m_i^+,k}-r_{m_i^-,k}$, where the face flux $r_{m,k}$ is the sum of the nodal
+  ones on one side of the face (page-local symbols). Limiting each face with the minimum of
+  the coefficients of its two nodes is then conservative (Prop. 10), and with $2d$ provisional
+  states per node it is also invariant-domain preserving (Prop. 11). *(Compiler check, not
+  in the sources: on one line this is Lemma A.1 above with the partial sums as flux, the
+  zero line sum playing the role of the vanishing column sums.)* See
+  [convex limiting](/methods/convex-limiting.md).
+- **Blending in time** ([Puppo et al. (2023)](/sources/puppo-2023.md), §3.3.4,
+  Eqs. (28)–(32)). The cell-wise blend of a high-order and a first-order implicit solution
+  in [Quinpi](/methods/quinpi.md) leaves an interface mass defect, which is redistributed to
+  the two neighbouring cells in proportion to their high-order weights; the result is a
+  conservative scheme with an explicit interface flux, in which the high-order flux is
+  weighted by the harmonic mean of the two cells' high-order weights. Without the correction
+  the shock position is wrong (Fig. 7; see [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)).
+
+A conservative scheme need not be written in flux form to conserve mass: the
+semi-Lagrangian finite-volume update of [Zheng et al. (2022)](/sources/zheng-2022.md)
+integrates the reconstruction over the upstream cell, cut by the Eulerian mesh and
+integrated by Green's theorem as line integrals; the line integrals over interior mesh
+segments are exact and cancel between neighbouring pieces, which gives mass conservation
+for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18). See
+[semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md).
+
 ## Qualifications
 
 - **Flux consistency is assumed.** The Lax–Wendroff consistency of the flux,
@@ -108,3 +141,6 @@ after Eq. (2.5)). See [flux differencing](/methods/flux-differencing.md) and
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4 Eqs. (18)–(22) Observation 1 Remarks 1–2, §2.5 Observation 2, §3.2–3.4 Observations 3, 5 Eqs. (35), (53), App. A Lemma A.1 Eqs. (A.1)–(A.3), Lemma A.3, Corollary A.4, §7.2 Fig. 1.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1 Eqs. (8)–(11).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2.
+- [Pazner (2021)](/sources/pazner-2021.md) — §4, Props. 8–11, Eqs. (49)–(57) (arXiv v1).
+- [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.3.4, Eqs. (28)–(32), Fig. 7 (arXiv v2).
+- [Zheng et al. (2022)](/sources/zheng-2022.md) — §2.3, Prop. 3.1, Figs. 13, 18.

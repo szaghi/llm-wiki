@@ -148,7 +148,7 @@ its printed year. Same-author same-year pairs take suffixes in printed order (Fe
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Adaptive-diffusion central-upwind Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md)
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)

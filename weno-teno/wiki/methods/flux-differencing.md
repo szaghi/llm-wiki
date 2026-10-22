@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by a sum of symm
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term]
 tags: [dg, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -61,6 +61,23 @@ The finite-difference split forms they reproduce are on
   entropy-dissipative if the surface flux is entropy-dissipative instead
   (Ranocha et al. (2023), §2, citing Carpenter et al. and Gassner–Winters–Kopriva).
   See [entropy stability](/properties/entropy-stability.md).
+  [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) explain why
+  the dissipation belongs in the surface flux. The volume contribution to
+  the element entropy balance is $\sum_{j,k}Q_{jk}r_{(j,k)}$, with
+  page-local $r_{(j,k)}$ the entropy production of the volume flux between
+  nodes $j$ and $k$, and $Q$ has entries of both signs. An
+  entropy-dissipative volume flux therefore gives an "unpredictable"
+  entropy balance; only an EC volume flux makes the volume part vanish
+  (Lemma 2, Eq. (61), §3.3.2).
+  [Renac (2021)](/sources/renac-2021.md) uses the construction on
+  straight-sided unstructured quadrilaterals, with his multicomponent EC
+  flux in the volume and an entropy-stable relaxation flux at the
+  interfaces. In 2D the volume term at node $(i,j)$ of element $K$ reads
+  $$2\mathsf w_i\mathsf w_j\Big(\sum_kD_{ik}\,f^{\mathrm{ec}}\big(u^{ij},u^{kj},\{\!\{Ja^{(1)}\}\!\}_{(i,k)j}\big)+\sum_kD_{jk}\,f^{\mathrm{ec}}\big(u^{ij},u^{ik},\{\!\{Ja^{(2)}\}\!\}_{i(j,k)}\big)\Big),$$
+  with the contravariant metric terms $Ja^{(1)}$, $Ja^{(2)}$ (Renac's
+  $J\nabla\xi$ and its companion) averaged between the two nodes, as in
+  the curvilinear form below. The
+  scheme satisfies a cell entropy inequality (§5.2, Eqs. (62)–(64)).
 - **Accuracy.** For general symmetric volume fluxes the scheme keeps the
   order of accuracy of the derivative operator (Ranocha et al. (2023), §2,
   citing Chen–Shu and Ranocha). This is the route to high order with
@@ -85,6 +102,30 @@ The finite-difference split forms they reproduce are on
   [Lax–Wendroff](/results/lax-wendroff-theorem.md) sense. It is what allows
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)
   to blend DG and finite-volume fluxes at each subcell interface.
+
+## Non-conservative terms
+
+Rueda-Ramírez et al. (2021) extend the split form to GLM-MHD, whose
+entropy analysis needs the non-conservative Powell and GLM terms (§2.2).
+In 1D, with page-local $\Phi$ the nodal non-conservative "flux",
+$\Phi^\diamond_{(j,k)}$ its surface two-point term and $\Phi^*_{(j,k)}$ its
+volume two-point term, the advective and non-conservative part of the
+nodal balance is (Eq. (32))
+
+$$\begin{aligned}J\mathsf w_j\frac{d}{dt}u_j={}&-2\sum_kQ_{jk}f^{\mathrm{vol}}(u_j,u_k)-\sum_kQ_{jk}\Phi^*_{(j,k)}+\delta_{jN}(f_N+\Phi_N)-\delta_{j0}(f_0+\Phi_0)\\&-\delta_{jN}\big(h_{(N,R)}+\Phi^\diamond_{(N,R)}\big)+\delta_{j0}\big(h_{(0,L)}+\Phi^\diamond_{(0,L)}\big),\end{aligned}$$
+
+with $L$ and $R$ the outer neighbour states. The two-point fluxes must be
+symmetric and consistent. The non-conservative terms need only
+consistency, $\Phi^\diamond_{(j,j)}=\Phi^*_{(j,j)}=\Phi_j$, and they are not
+symmetric. The surface term multiplies the nodal coefficient vector by the
+arithmetic mean of the field it differentiates, e.g. $\{\!\{B_1\}\!\}$ and
+$\{\!\{\psi_{\mathrm{GLM}}\}\!\}$, and the volume term satisfies
+$\Phi^*_{(j,k)}=2\Phi^\diamond_{(j,k)}-\Phi_j$ (Eqs. (35)–(37), (106)).
+Together with the Derigs et al. EC flux, this split form is entropy
+conservative in the generalized Tadmor sense
+([entropy stability](/properties/entropy-stability.md)). On 3D curvilinear
+meshes the non-conservative terms carry averaged metric terms as well
+(App. C.1, Eqs. (133)–(139)).
 
 ## Efficient evaluation
 
@@ -186,3 +227,5 @@ Eqs. (6.1)–(6.3)).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2 Eq. (2.5) and Table 1, §2.1–2.3 Eqs. (2.7)–(2.19), §4.2 Table 2, §5 Fig. 2, §6 Eqs. (6.1)–(6.3) Figs. 3–4, §8 Table 3, §9.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1 Eqs. (2)–(11).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §6.1 Observation 9.
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §2.2, §3.1 Eqs. (32)–(37), §3.3.2 Lemma 2 Eq. (61), App. B Eq. (106), App. C.1 Eqs. (133)–(139) (arXiv v1).
+- [Renac (2021)](/sources/renac-2021.md) — §5.2 Eqs. (62)–(64) (arXiv v3).

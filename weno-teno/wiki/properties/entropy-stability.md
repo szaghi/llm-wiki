@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Entropy stability"
-description: "A scheme is entropy stable when its discrete total entropy obeys the entropy inequality of the PDE; the page gives the flux- and scheme-level conditions, entropy-stable DG from EC volume and ED surface fluxes, which limiting steps keep the property, the KPP evidence, and the minimum entropy principle as a convex bound."
+description: "A scheme is entropy stable when its discrete total entropy obeys the entropy inequality of the PDE; the page gives the flux- and scheme-level conditions with their non-conservative extension, entropy-stable DG, which dissipation operators and limiting steps keep the property, discrete entropy tests, the KPP evidence and the minimum entropy principle."
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Entropy stability
@@ -18,10 +18,35 @@ the discrete analogue. It is non-increasing apart from boundary fluxes,
 and locally its change is an entropy-flux difference plus a non-positive
 production. It is **entropy-conservative** (EC) when the production
 vanishes. In the sources, scheme-level EC/ED is built from the flux-level
-conditions of Tadmor: $[\![w]\!]\cdot f=[\![\psi]\!]$ (EC) and
-$[\![w]\!]\cdot f-[\![\psi]\!]\le0$ (ED)
+conditions of Tadmor on a two-point flux $h$: $[\![w]\!]\cdot h=[\![\psi]\!]$ (EC, $h=f^{\mathrm{ec}}$) and
+$[\![w]\!]\cdot h-[\![\psi]\!]\le0$ (ED)
 ([Ranocha et al. (2023)](/sources/ranocha-2023.md), Def. 2.5;
 [entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)).
+
+## Flux-level and scheme-level conditions
+
+[Renac (2021)](/sources/renac-2021.md) lists the requirements on a
+directional two-point flux $h(u^-,u^+,n)$: symmetry and consistency of the
+entropy-conservative flux, the inequality $[\![w]\!]\cdot h\le[\![\psi\cdot n]\!]$
+for the entropy-stable one, conservation $h(u^-,u^+,n)=-h(u^+,u^-,-n)$, and
+Lipschitz continuity (§3.1, Eqs. (19)–(23)). He does not prove the flux
+inequality directly for his relaxation flux. It follows from an entropy
+inequality of the whole three-point scheme by a lemma of Bouchut, as he
+recalls it (§3.2, §4.3.2).
+
+**Non-conservative systems.** For GLM-MHD with the Powell and GLM
+non-conservative terms, [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md)
+generalize Tadmor's condition (Eq. (51)). With page-local
+$\Phi^\diamond_{(j,k)}$ the surface non-conservative term between nodes $j$
+and $k$, and $\psi$ the entropy flux potential augmented by the
+non-conservative contribution (their Eq. (21)), the condition reads
+
+$$[\![w]\!]_{(j,k)}\cdot h_{(j,k)}+w_k\cdot\Phi^\diamond_{(k,j)}-w_j\cdot\Phi^\diamond_{(j,k)}=[\![\psi]\!]_{(j,k)} .$$
+
+Its left-hand side minus its right-hand side is the entropy production
+$r_{(j,k)}$ of the interface (Def. 2, Eq. (55)); the scheme dissipates
+entropy where $r_{(j,k)}\le0$. The matching numerical entropy flux is
+symmetric (Def. 1, Eq. (54)).
 
 ## Entropy-stable DG
 
@@ -34,6 +59,24 @@ citing Carpenter et al. and Gassner–Winters–Kopriva;
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) use
 an EC volume flux with a local Lax–Friedrichs surface flux, and state that
 the resulting scheme "satisfies a discrete entropy inequality" (§5.1).
+
+Two chunk-2 sources apply the construction to new systems:
+
+- **Multicomponent Euler.** Renac (2021) combines his EC flux in the
+  volume with an entropy-stable relaxation flux at the interfaces on
+  straight-sided unstructured quadrilaterals. The scheme satisfies a cell
+  entropy inequality, as an instance of the Fisher–Carpenter framework
+  (§5.2, Eqs. (62)–(64)).
+- **Resistive GLM-MHD.** Rueda-Ramírez et al. (2021) prove the element
+  entropy balance of the split-form DGSEM with non-conservative terms
+  (Lemma 2, Eq. (61)). Its volume part is $\sum_{j,k}Q_{jk}r_{(j,k)}$. Since
+  $Q$ has entries of both signs, a dissipative volume flux gives an
+  "unpredictable" entropy balance, so the volume flux must be EC and the
+  dissipation must sit in the surface flux (§3.3.2;
+  [summation-by-parts operator](/operators/summation-by-parts-operator.md)).
+  The visco-resistive terms keep the estimate when BR1 is applied to the
+  gradients of the entropy variables, as recalled from earlier work (§2,
+  Eqs. (38)–(39)).
 
 On Legendre–Gauss nodes, entropy stability needs two further ingredients:
 
@@ -62,6 +105,15 @@ Rueda-Ramírez et al. (2022) map three cases (§2.2, §4; see
   variables after Fjordholm–Mishra–Tadmor. The blend stays provably entropy
   stable as long as both schemes share the surface terms. The proofs, for
   Euler and MHD, are cited from Hennemann et al. and follow-ups.
+  Rueda-Ramírez et al. (2021) is one of these follow-ups. Their blending
+  lemma (Lemma 3; Lemma 6 in 3D) takes any two schemes with identical
+  element-boundary terms and arbitrary interior terms. The entropy balance
+  of the blend is the boundary part plus $(1-\alpha)$ times the DG interior
+  production plus $\alpha$ times the finite-volume one (Eqs. (64), (68)).
+  The blend is therefore EC if both parts are EC, for any element-wise
+  $\alpha$, and ES if one part is ES and the other EC or ES (Eq. (69)). The
+  lemma covers non-conservative terms and the second-order
+  [TeCNO-type subcell scheme](/methods/tecno-scheme.md).
 - **Subcell-wise blending.** One coefficient per subcell interface is used.
   The proof of entropy dissipation is "still missing" (§4, item 2).
 - **A posteriori limiting.** Invariant-domain bounds from Guermond–Popov bar
@@ -75,6 +127,80 @@ Rueda-Ramírez et al. (2022) map three cases (§2.2, §4; see
   bounds hold for the Rusanov low-order scheme. With HLLE or second-order
   finite volumes they are not guaranteed, and the algorithm returns the
   solution "closest to the restrictions" (§5.2.3).
+
+## Dissipation operators
+
+An ES flux is usually an EC flux minus a dissipation. In Rueda-Ramírez
+et al. (2021), Li, Duan & Tang (2022) and Renac's Roe-type flux the
+dissipation acts on the jump of the entropy variables, not of the
+conserved variables, which is what gives the production a provable sign.
+
+- **Lax–Friedrichs on $[\![u]\!]$.** As recalled by Rueda-Ramírez et al.
+  (2021) after Derigs et al., $f^{\mathrm{ec}}-\tfrac12a[\![u]\!]$ is not
+  entropy stable for MHD (§3.3.1, Eq. (52)).
+- **Dissipation on $[\![w]\!]$.** Replacing $[\![u]\!]$ by
+  $\frac{\partial u}{\partial w}[\![w]\!]$ at a mean state, with Barth's
+  eigenvector scaling, gives the production
+  $-\tfrac12[\![w]\!]^\top D_w[\![w]\!]\le0$ with a symmetric positive-definite
+  page-local matrix $D_w$ (Eqs. (57)–(60)). The "ES Rusanov" flux of their
+  tests puts the largest advective eigenvalue in every entry of the
+  eigenvalue matrix (§6).
+- **Reconstructed jumps.** Applying the dissipation to reconstructed jumps
+  raises its order and keeps the sign if the reconstruction has the sign
+  property ([TeCNO schemes](/methods/tecno-scheme.md);
+  [Li, Duan & Tang (2022)](/sources/li-2022-c.md), Eq. (3.21)).
+- **Robustness of "EC plus dissipation".** Renac (2021) proves that a
+  Roe-type flux, his EC flux minus a scalar dissipation on the entropy
+  variables, is ES (App. D.1, Eq. (D.1)). He argues that such fluxes are
+  not Lipschitz continuous, which blocks the positivity proofs, and they
+  are expensive because of the logarithmic means (§1.2). In his tests the
+  Roe-type flux needs CFL 0.2 instead of 0.4 and the 2D runs stop on
+  negative states (App. D, Figs. D.9–D.10). His alternative is a
+  relaxation solver, Bouchut's pressure relaxation composed with a
+  Coquel–Perthame energy relaxation. It is ES and positive under
+  $\frac{\Delta t}{\Delta x}\max(\lvert v\cdot n\rvert+a_{\mathrm L}/\rho)<\tfrac12$, with page-local Lagrangian
+  sound speed $a_{\mathrm L}$, provided the relaxation constant exceeds every
+  component's ratio of specific heats (§4.3–4.4, Eqs. (36), (52)).
+
+## Entropy stability does not give positivity
+
+The entropy analysis assumes positive density and pressure. Rueda-Ramírez
+et al. (2021) note that high-order oscillations at strong shocks can
+violate positivity and crash an ES scheme (§1). On the GEM reconnection
+challenge their ES DGSEM without subcell stabilization crashes for that
+reason (§6.3). Renac (2021) builds positivity in separately: the
+relaxation flux makes the first-order scheme positive, the DGSEM cell
+averages stay admissible under a CFL condition, and a Zhang–Shu-type
+limiter restores the nodal values (Theorem 6.1, Eq. (67);
+[bound preservation](/properties/bound-preservation.md)).
+
+## Discrete entropy tests
+
+With EC fluxes everywhere, the semi-discrete total entropy is conserved,
+and the fully discrete error is a time-integration error.
+
+- **Renac (2021)**, multicomponent Riemann problem on a periodic domain,
+  100 cells, $N=3$, SSP-RK(4,3). The global entropy error falls from
+  $-6.34\times10^{-8}$ to $-2.89\times10^{-11}$ as $\Delta t$ is halved four
+  times, at observed order 3.00, the order of the time integrator. With the
+  ES flux the entropy change is $-7.70\times10^{-7}$ independent of
+  $\Delta t$ (§7.2, Table 3).
+- **Rueda-Ramírez et al. (2021)**, weak magnetic blast on the warped 3D
+  mesh, $N=4$ and $6$, SSP-RK(5,4). The EC entropy error converges to zero
+  at fourth order in the CFL number, down to machine precision; the ES and
+  TVD-ES schemes dissipate (§6.1, Fig. 5).
+- **Li, Duan & Tang (2022)**, finite differences on a moving mesh. The EC
+  scheme keeps the total entropy almost constant on the isentropic
+  vortex, and the ES scheme decays it, to about $-4.2\times10^{-6}$ at $t=4$
+  in 2D (Ex. 5.1, 5.5; [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
+  Their sufficient condition for an EC flux on a moving curvilinear mesh
+  weights the jumps of the entropy potential and of the flux potentials
+  with averaged metric terms (Prop. 3.1, Eq. (3.5)); its proof is deferred
+  to Duan & Tang.
+
+Both sources attribute the EC residual to the time integrator, and the
+observed orders 3 and 4 are the orders of their Runge–Kutta methods
+(Renac (2021), §7.2; Rueda-Ramírez et al. (2021), §6, §6.1).
 
 ## Evidence: the KPP problem
 
@@ -135,8 +261,16 @@ a discrete, local relative of the same principle.
     ($\eta=-\rho s/(\gamma-1)$ for Euler); they do not state the sign
     convention or the convexity explicitly.
   - The KPP tests use $\eta=\tfrac12u^2$.
-  - The minimum principles of Rueda-Ramírez et al. and Wu & Shu bound
+  - Renac (2021) and Li, Duan & Tang (2022) use the mixture entropy
+    $\eta=-\rho s$ with the specific entropy of the mixture, without the
+    factor $1/(\gamma-1)$; Rueda-Ramírez et al. (2021) use
+    $\eta=-\rho s/(\gamma-1)$ as in the registry. All three take $\eta$
+    convex and require production $\le0$.
+  - The minimum principles of Rueda-Ramírez et al. (2022) and Wu & Shu bound
     functions of the physical specific entropy from below.
+- **Printed slip.** Renac's cell entropy inequality (64) prints the
+  surface sum without the quadrature weight, while the analogous sum in
+  the proof of his Theorem 6.1 carries it. The weight is missing in (64).
 
 # Citations
 
@@ -144,3 +278,6 @@ a discrete, local relative of the same principle.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.2, §4 items (1)–(3), §5.1 Eqs. (37)–(40) Figs. 2–3, §5.2.2 Eqs. (47)–(48), §5.2.3.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §3, §7.4 Figs. 6–8.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Eq. (2.3), Thms 4.7, 4.10.
+- [Renac (2021)](/sources/renac-2021.md) — §1.2, §3.1–3.2 Eqs. (19)–(23), §4.3–4.4 Eq. (52), §5.2 Eqs. (62)–(64), Theorem 6.1, Eq. (67), §7.2 Table 3, App. D (arXiv v3).
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §1, §2 Eqs. (21), (38)–(39), §3.3 Eqs. (51)–(69), Lemmas 2–3, §6.1 Fig. 5, §6.3 (arXiv v1).
+- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eq. (3.21), Ex. 5.1, 5.5 (arXiv v1).

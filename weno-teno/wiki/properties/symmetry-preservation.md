@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Symmetry preservation"
-description: "Symmetry preservation has two meanings in the chunk-1 sources: keeping the mirror symmetry of a symmetric flow (Rayleigh–Taylor, 2D Riemann problems) in the presence of round-off, which low-dissipation schemes lose unless implemented consistently, and preserving the skew-symmetry of the continuous convective operator, which yields discrete conservation of kinetic energy; this page states both and the evidence on each."
+description: "Symmetry preservation has two meanings in the sources: keeping the mirror symmetry of a symmetric flow under round-off or on an unstructured mesh, which low-dissipation schemes lose unless implemented consistently, and preserving the skew-symmetry of the continuous convective operator, which yields discrete kinetic-energy conservation; this page states both and the evidence on each."
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Symmetry preservation
@@ -48,6 +48,17 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   directional dependence), which grow exponentially,
   keeps the TENO5 solution symmetric to machine precision; the same was done for
   BVD schemes (as recalled by Fu 2023, §3.8). The review sides with this view.
+- *The mesh itself*: on unstructured meshes the discrete problem is not
+  symmetric in the first place. [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md)
+  (§4.6, Figs. 16–17) report that their fifth-order unstructured
+  [CWENO](/methods/cweno.md) solution of the 2D air–helium
+  [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md) loses its
+  symmetry at late times on the medium ($D_b/120$) and fine ($D_b/400$) mixed
+  meshes, "indicative of multi-dimensional reconstruction nature of the
+  framework employed and of the arbitrary unstructured elements in the refined
+  shock-bubble interaction zone" ($D_b$ the bubble diameter). The time-averaged
+  interface velocities still agree with the experiment within its uncertainty
+  (Table 2).
 
 **The remedy in practice.** [Takagi et al. (2022)](/sources/takagi-2022.md)
 (§4) use the Fleischmann et al. technique in all runs and report preserved
@@ -88,8 +99,11 @@ to compressible flow (§6). These results are developed on
 - The two meanings are independent: a skew-symmetric (kinetic-energy-preserving)
   central scheme can still break mirror symmetry by round-off, and a
   mirror-symmetric shock-capturing scheme is in general not skew-symmetric.
-- On mirror symmetry the chunk-1 evidence is the authors' visual inspection of
-  contour plots; none quantifies the asymmetry.
+- On mirror symmetry the evidence is the authors' visual inspection of
+  contour plots; none quantifies the asymmetry. Tsoutsanis et al.'s case differs
+  from the others: the loss is attributed to the multidimensional reconstruction on
+  arbitrary unstructured elements, not to round-off, and no symmetric mesh is run to
+  separate the two.
 - [Fu (2021)](/sources/fu-2021.md) (§5.5.2) and the view Fu (2023) adopts are
   compatible on the cause (round-off) and differ on the role of dissipation: in
   the first, low dissipation fails to damp the round-off asymmetry; in the second,
@@ -105,3 +119,4 @@ to compressible flow (§6). These results are developed on
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.6: symmetric ROUND and LD-ROUND results.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.2: WENO-Z+M symmetry on Riemann configuration 3.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §3.3, §5.1, §5.3, §6, Corollary A.4: skew-symmetry and kinetic-energy conservation.
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–17, Table 2: symmetry loss on unstructured meshes.

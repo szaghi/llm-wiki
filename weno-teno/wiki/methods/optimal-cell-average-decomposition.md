@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -162,6 +162,44 @@ low density, 1299.55 min (optimal), 1327.45 min (quasi-optimal), 1772.26 min
 [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md) and the
 relativistic jet (§8.3, §8.5).
 
+## Classic decompositions in other sources
+
+Two further sources of the bundle prove bound preservation with the classic
+Gauss–Lobatto decomposition, and their CFL numbers show what the optimal
+one would change.
+
+- **Finite-volume Hermite WENO for Navier–Stokes**
+  ([Fan, Zhang & Qiu (2021)](/sources/fan-2021.md), §3.1–§3.2, Eqs.
+  (3.9)–(3.12), (3.26)–(3.30)). For a reconstruction of degree $k$ they use
+  the $L$-point Gauss–Lobatto rule with $L=\lceil(k+3)/2\rceil$ (the smallest $L$ with $2L-3\ge k$,
+  *compiler check, not in the sources*), and endpoint weight
+  $\varpi=1/(L(L-1))$ ($L=4$, $\varpi=1/12$, for their quintic 1D
+  reconstruction, which is also their time-step constant). The internal
+  part of the decomposition is replaced by the residual, whose components
+  are, by the mean-value theorem, values of the reconstruction's components
+  at (not necessarily equal) points inside the cell,
+  $(\bar u_i-\varpi u^+_{i-1/2}-\varpi u^-_{i+1/2})/(1-2\varpi)$ (Eq. (3.10)),
+  which is the 1D form of the internal-node average $\Pi_{ij}$ above. In 2D
+  the tensor Gauss / Gauss–Lobatto decomposition is weighted by
+  $\Delta t/\Delta x$ and $\Delta t/\Delta y$ (Eq. (3.26)), and the CFL
+  condition is $\Delta t(1/\Delta x+1/\Delta y)\max a^{\mathrm{NS}}<\varpi$
+  with the viscous Lax–Friedrichs coefficient $a^{\mathrm{NS}}$ of the
+  [bound preservation](/properties/bound-preservation.md) page (Eq. (3.30)),
+  the classic condition with one wave speed in both directions *(compiler
+  remark, not in the sources)*.
+- **DGSEM on unstructured quadrilaterals** ([Renac (2021)](/sources/renac-2021.md),
+  Thm 6.1, Rem. 6.1, App. A). The decomposition is the DGSEM's own
+  quadrature on its $N+1$ Gauss–Lobatto collocation nodes, with endpoint
+  weight $\mathsf w_0=2/(N(N+1))$ on $[-1,1]$, i.e. $1/(N(N+1))$ on the unit
+  interval, combined with sub-triangle decompositions of the element and
+  the minimum of the Jacobian over the element boundary; the CFL bound is
+  $1/(2N(N+1))$ for a first-order scheme with $c_0=1/2$ (Eq. (66)). Renac
+  calls it not optimal (Rem. 6.1). For $N\ge2$ the endpoint weight of the
+  $N+1$ collocation nodes is smaller than that of the minimal rule with
+  $L=\lceil(N+3)/2\rceil$ points (for $N=3$: $1/12$ against $1/6$), so a
+  decomposition that is not tied to the collocation nodes would already
+  double the bound there *(compiler check, not in the sources)*.
+
 ## Qualifications
 
 - Optimality is within decompositions of the Zhang–Shu form, whose boundary
@@ -187,3 +225,5 @@ relativistic jet (§8.3, §8.5).
 
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Defs 1.1, 1.3; Problems 1.2, 1.4; Eqs. (1.6), (1.10), (1.13)–(1.15)); Thm 2.3; §3 (Lemmas 3.1–3.20, Thms 3.4, 3.12, 3.26, 3.29); Thm 4.1; §5 (Thms 5.1–5.17, Alg. 5.20); Thm 6.1 and Fig. 11; §7 (Thm 7.1, Rems. 7.4, 7.7); §8 (Tables 1–10); App. C.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thm 6.2 (Gauss–Lobatto BP CFL condition).
+- [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §3.1–§3.2 (Eqs. (3.9)–(3.12), (3.26)–(3.30)).
+- [Renac (2021)](/sources/renac-2021.md) — arXiv v3: Thm 6.1 (Eq. (66)), Rem. 6.1, App. A.

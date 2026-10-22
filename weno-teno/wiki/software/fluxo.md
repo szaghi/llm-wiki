@@ -1,11 +1,11 @@
 ---
 type: Software
 title: "FLUXO"
-description: "FLUXO is an open-source Fortran code for split-form and entropy-stable DGSEM on 3D curved unstructured hexahedral meshes, with compile-time selection of flux and degree; the sources benchmark it against Trixi.jl and use it for subcell-limiting tests on Euler and GLM-MHD."
+description: "FLUXO is an open-source Fortran code for split-form and entropy-stable DGSEM on 3D curved unstructured hexahedral meshes, with compile-time selection of flux and degree; the sources benchmark it against Trixi.jl and use it for subcell-limiting tests on Euler, ideal and resistive GLM-MHD with non-conservative terms, up to a 20.7 M-DOF Io–plasma-torus run."
 status: established
 aliases: [FLUXO code]
 tags: [software, dg, entropy-stable, mhd, limiting]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # FLUXO
@@ -74,13 +74,45 @@ SSP-RK3 at CFL 0.5.
    - Note: the conservative GLM form is used even though the
      non-conservative form is needed to prove entropy stability.
 
+[Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) run all
+their tests with FLUXO: the entropy-stable split-form DGSEM for resistive
+GLM-MHD with the Powell and GLM non-conservative terms and BR1
+visco-resistive terms, blended element-wise with first-order or TVD-ES
+subcell finite volumes ([TeCNO schemes](/methods/tecno-scheme.md)). FLUXO
+is a 3D code; the 2D runs use extruded meshes with one element in $z$, and
+the meshes come from the HOPR generator (§6). The time integrator is
+five-stage fourth-order SSP-RK with CFL 0.5. The TVD-ES subcell scheme
+replaces only the volume integral and needs no additional MPI
+communication (§4).
+
+1. **Free-stream and entropy tests** on a heavily warped 3D mesh
+   ($10^3$ elements, geometry degree 4, $N=4$ and $6$): free streams kept to
+   $10^{-13}$–$10^{-15}$ with random element-wise blending; the EC entropy
+   error converges at fourth order in the CFL number (§6.1;
+   [free-stream preservation](/properties/free-stream-preservation.md)).
+2. **[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)** with
+   $256^2$ to $1024^2$ degrees of freedom, $N=3$ and $7$, compared with
+   the second-order constrained-transport code Athena (§6.2).
+3. **GEM reconnection challenge** (resistivity $10^{-3}$ and
+   $5\times10^{-3}$, $512\times256$ and $1024\times512$ degrees of freedom).
+   The DGSEM without subcell stabilization crashes from loss of
+   positivity; with it the runs reach $t=100$ (§6.3).
+4. **Io–plasma-torus interaction**: 165 888 curved hexahedra with
+   geometry degree 2 and $N=4$, 20.736 M degrees of freedom, run to $t=10$
+   and compared with Galileo magnetometer data along the I31 flyby
+   (§6.4).
+
 ## Qualifications
 
 - The performance figures are single-core measurements on the Euler
   equations. Non-conservative terms and MPI are outside the scope of
-  Ranocha et al. (2023), §9.
+  Ranocha et al. (2023), §9. Rueda-Ramírez et al. (2021) report no timings.
+- The Io comparison matches the Galileo data only after shifting two
+  magnetic-field components by $+240$ nT and $-700$ nT (Rueda-Ramírez et
+  al. (2021), §6.4).
 
 # Citations
 
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §1, §4–4.1 Fig. 1, §6 Eq. (6.3), §7.1 Fig. 5, §7.3 Fig. 7, §9.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5, §5.2.1–5.2.3, §5.3.
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §4, §5 Eq. (89), §6.1–6.4 Table 1, Figs. 5–19 (arXiv v1).

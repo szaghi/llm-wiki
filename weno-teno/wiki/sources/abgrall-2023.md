@@ -255,7 +255,7 @@ alphabetically. The list is merged complete into the [bibliography](/bibliograph
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Active Flux](/methods/active-flux.md)
 * [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)

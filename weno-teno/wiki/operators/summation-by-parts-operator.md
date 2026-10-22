@@ -1,12 +1,12 @@
 ---
 type: Operator
 title: "Summation-by-parts operator"
-description: "A first-derivative matrix D with a symmetric positive-definite norm M is summation-by-parts when MD + DᵀM equals the boundary operator; LGL collocation (DGSEM) has this property with diagonal norm, which yields the strong–weak equivalence, the skew-symmetric flux-differencing operator and the flux form of nodal DG."
+description: "A first-derivative matrix D with a symmetric positive-definite norm M is summation-by-parts when MD + DᵀM equals the boundary operator; LGL collocation (DGSEM) has this property with diagonal norm, which yields the strong–weak equivalence, the skew-symmetric flux-differencing operator, the flux form of nodal DG and its entropy proofs, and a sparse first-order SBP operator for low-order schemes."
 status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Summation-by-parts operator
@@ -54,7 +54,20 @@ The following special cases appear in the sources:
   [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md)
   write the same operator as $Q_{ij}=\mathsf w_i\ell_j'(\xi_i)$ with Lagrange
   polynomials $\ell_j$ (page-local), and $B=\mathrm{diag}(-1,0,\dots,0,1)$
-  (Eq. (4)).
+  (Eq. (4)). [Pazner (2021)](/sources/pazner-2021.md) calls $Q$ the
+  *weighted* differentiation matrix, on the reference interval $[0,1]$, and
+  states its two defining sums as Prop. 1:
+  - (P1) every row sums to zero, $\sum_jQ_{ij}=0$, because
+    $\sum_j\ell_j\equiv1$; this is conservation;
+  - (P2) the column sums are $-1$ for the first node, $+1$ for the last and
+    $0$ otherwise, because LGL quadrature is exact for degree $2N-1$; this
+    is the SBP property.
+
+  [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) list the
+  same identities, $\sum_kQ_{jk}=0$ and $\sum_jQ_{jk}=\delta_{kN}-\delta_{k0}$,
+  next to $Q+Q^\top=B$ (Eqs. (107)–(110)). In several dimensions the
+  operators are Kronecker products, e.g. $M\otimes Q$ and $Q\otimes M$ in
+  2D (Pazner (2021), Eq. (9)).
 - **Generalized SBP, Gauss nodes.** Lagrange collocation at Legendre–Gauss
   nodes is also SBP, but the volume nodes exclude the boundary, so
   $\mathcal R$ is a dense interpolation (Ranocha et al. (2023), §6).
@@ -70,6 +83,22 @@ The following special cases appear in the sources:
   (Ranocha et al. (2023), Eq. (2.14)). Here $D_{n,\xi}$ is the reference
   tensor-product operator in direction $n$, and $Ja^{(n)}_d$ is the $d$th
   Cartesian component of $Ja^{(n)}$.
+- **Sparsified first-order operator.** Pazner (2021), Eq. (23), replaces
+  $Q$ by the weighted differentiation matrix $\widehat Q$ of the
+  piecewise-linear hat functions on the LGL subgrid. It is tridiagonal with
+  entries $\pm\tfrac12$: first row $(-\tfrac12,\tfrac12,0,\dots)$, interior
+  rows $(\dots,-\tfrac12,0,\tfrac12,\dots)$, last row $(\dots,0,-\tfrac12,\tfrac12)$
+  (the last row is implied, not printed). It is first-order accurate, and
+  Pazner states that it satisfies (P1) and (P2). Hence
+  $\widehat Q+\widehat Q^\top=B$ holds exactly, with the same $B$, so
+  $\widehat D=M^{-1}\widehat Q$ is itself a first-order SBP operator for
+  the LGL norm *(compiler check, not in the sources: add the tridiagonal
+  matrix to its transpose)*. Its stencil has $O(1)$ width for every $N$,
+  which is what keeps Pazner's graph-viscosity low-order scheme from
+  growing more diffusive with $N$ (§3, Fig. 1;
+  [convex limiting](/methods/convex-limiting.md)). On curved elements it
+  needs corrected metric terms
+  ([free-stream preservation](/properties/free-stream-preservation.md)).
 
 ## Consequences used by the sources
 
@@ -102,7 +131,12 @@ The following special cases appear in the sources:
    and the hinge of
    [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
    Ranocha et al. (2023) state the same consequence, for diagonal $M$ and
-   diagonal boundary operators, after their Eq. (2.5).
+   diagonal boundary operators, after their Eq. (2.5). Pazner (2021) uses
+   (P1) and the Kronecker structure in the same way for the antidiffusive
+   corrections of his limiter: their nodal residuals sum to zero along
+   every line of nodes, so they can be rewritten as differences of
+   subcell-face fluxes and limited face by face (Props. 8–9,
+   Eqs. (53)–(54)).
 5. **Entropy and kinetic-energy estimates.** Combined with symmetric
    two-point volume fluxes, the SBP property makes the DG scheme
    entropy-conservative or entropy-dissipative when the volume flux is
@@ -110,6 +144,23 @@ The following special cases appear in the sources:
    surface flux is entropy-conservative or dissipative (Ranocha et al.
    (2023), §2, citing Fisher, Carpenter, Gassner and co-workers). See
    [entropy stability](/properties/entropy-stability.md).
+   Rueda-Ramírez et al. (2021) carry the argument out for GLM-MHD with
+   non-conservative terms. With the identities (107)–(110) the element
+   entropy balance reduces to the boundary terms plus
+   $\sum_{j,k}Q_{jk}\,r_{(j,k)}$, where page-local $r_{(j,k)}$ is the entropy
+   production of the volume flux between nodes $j$ and $k$ (Lemma 2,
+   Eq. (61)). Because $Q$ has entries of both signs, this sum has no sign
+   unless every $r_{(j,k)}$ vanishes, so the volume flux must be
+   entropy-conservative; a dissipative volume flux gives an
+   "unpredictable" entropy balance (§3.3.2).
+   [Renac (2021)](/sources/renac-2021.md) uses the same diagonal-norm SBP
+   framework for his entropy-stable DGSEM on unstructured quadrilaterals
+   (§1.2, §5).
+6. **Boundary weight and positivity.** The first and last LGL weights on
+   $[-1,1]$ are $\mathsf w_0=\mathsf w_N=2/(N(N+1))$. Renac (2021) shows that
+   this weight fixes the CFL factor $1/(2N(N+1))$ of his
+   positivity-preserving DGSEM (Remark 6.1, Theorem 6.1;
+   [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
 
 ## Relation to periodic finite-difference operators
 
@@ -127,3 +178,6 @@ route to non-periodic boundaries, which they do not treat.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — Defs. 2.1–2.2, Ex. 2.3, Eqs. (2.3), (2.5)–(2.7), (2.11), (2.14), §6 Eq. (6.2).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, Eqs. (3)–(4), (8)–(11).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §3.2.
+- [Pazner (2021)](/sources/pazner-2021.md) — §2 Prop. 1 Eqs. (8)–(9), §3 Eq. (23) Fig. 1, Props. 8–9 Eqs. (53)–(54) (arXiv v1).
+- [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §3.3.2 Lemma 2 Eq. (61), App. B Eqs. (107)–(110) (arXiv v1).
+- [Renac (2021)](/sources/renac-2021.md) — §1.2, §5, Theorem 6.1, Remark 6.1 (arXiv v3).

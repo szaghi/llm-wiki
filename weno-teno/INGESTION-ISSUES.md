@@ -6,6 +6,96 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 2 — WENO variants, entropy-stable DG, multiphase, shock tracking (2026-10-22)
+
+Sources (20): pazner-2021, bryngelson-2021, sciacovelli-2021, wang-2021,
+fan-2021, liu-2021, luo-2021, matsushita-2021, renac-2021,
+ruedaramirez-2021, wong-2021, zheng-2021, tsoutsanis-2021, kanbar-2022,
+li-2022-d, puppo-2023, li-2022-c, zheng-2022, arun-2022, basile-2022. 40 of
+207 ingested, 109 concept pages plus the registry, 1619 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Archive defects of chunk 1** (still open): re-download of Feng et al.
+   2026 and Li et al. 2024, and the overwrite of the three misnamed files.
+2. **Contradiction "conservation of WCNS"** ([WCNS](wiki/methods/weighted-compact-nonlinear-scheme.md)):
+   Fu (2023, §3.7) calls the lack of conservation "the main flaw" of WCNS
+   family schemes; Wong et al. (2021, §4.1) show their compact WCNS in
+   flux-difference form and call it conservative (their compact case is
+   relayed from Subramaniam et al., not ingested). The auditor found both
+   speak of the compact interface-to-node form. *Open*; the TENO $\tau_K$
+   entry of chunk 1 also stays open.
+3. **Book printings folded by the merger:** `leveque-2004` onto
+   `leveque-2002` and `hesthaven-2008` onto `hesthaven-2007` (same book,
+   reprint or copyright year). In ode-integration the same question
+   (same-DOI printings kept apart by printed year) is still open; one
+   ruling could serve both bundles. `sedov-1993` (CRC edition) kept apart
+   from `sedov-1959`.
+4. **kanbar-2022 ref [4]** (`brackbill-2004`): printed with Brackbill &
+   Barnes' authors and title but the venue J. Comput. Phys. 201:261–285
+   (2004), which on Crossref is Balbás, Tadmor & Wu. Kept as printed and
+   marked unresolved.
+5. **Bundle fit (no D17 copy made):** arun-2022 (first order, mostly
+   time integration and asymptotics) is a candidate for a copy into
+   ode-integration, which has an asymptotic-preserving page;
+   matsushita-2021 (GPU two-phase low-Mach solver) and basile-2022 (h/hp
+   adaptivity for steady subsonic RANS, no shocks) sit at the edge of
+   this bundle; bryngelson-2021 is mainly a software paper.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  pazner-2021 (v1, 2020; Rueda-Ramírez et al. 2022 cite its Eqs. (34)/(35),
+  which are Eq. (23) and Prop. 5 in v1), bryngelson-2021 (v1, 2019),
+  sciacovelli-2021, renac-2021 (v3), ruedaramirez-2021 (v1), wong-2021,
+  kanbar-2022 (14 pp. against 21 published), li-2022-d, puppo-2023 (v2),
+  li-2022-c, arun-2022; author manuscripts luo-2021 and basile-2022.
+- luo-2021: page 1 reads "Interface Conservation Enforcement", Crossref
+  "interface condition enforcement"; the published title is used.
+- Page-1 initials used where they differ from Crossref (arun-2022
+  "Arun K.R.", Qiu J.-M., Chapelier J.-B.).
+- luo-2021: a drafter "corrected" the third author of Dennis, Gay & Walsh
+  to Welsch from memory; Crossref lists Walsh, as printed, and the page
+  keeps the printed name.
+
+### Printed slips (the Source pages list them in full)
+
+- kanbar-2022: the off-diagonal magnetic stress ($-\tfrac12B_iB_j$ for
+  $-B_iB_j$), the $x$-flux of the induction equation, and the MHD vortex
+  (not divergence-free, pressure negative for $r>\sqrt2$); the scheme keeps
+  the reference state by construction, so the test cannot reveal it
+  (compiler checks).
+- pazner-2021: the time-step bound (40) negative as printed.
+- sciacovelli-2021: $k_\varepsilon$ printed as the inverse of what the
+  equations use; the sign of the general dissipation formula against its
+  four explicit members.
+- fan-2021: SSP-RK3 positivity CFL "one third" of forward Euler; Wong et
+  al. (2021) §5.3 keep the forward-Euler bound — recorded as two
+  sufficient conditions.
+- matsushita-2021: Weber number 0.26 printed (13.1 from the printed data),
+  "<7 %" error (−12 %, +17 %), volume error 1.5 % in the text and 0.16 % in
+  the figure.
+- tsoutsanis-2021: CWENO cost "60–80 %" of WENO (0.55–0.94 from Table 1);
+  water-column diameter 96 mm against the printed geometry (9.6 mm fits);
+  refs [37] and [39] print the DOIs of refs [13] and [34].
+- kanbar-2022 and li-2022-c print the $x>0,y>0$ state of the same MHD
+  four-state problem with opposite signs (+0.5 / −0.5); neither comments.
+- wang-2021: which linear weights "New WENO5" uses is ambiguous.
+- puppo-2023: CWENO3 indicator factor 52/3 printed, 13/3 from its own
+  definition.
+
+### Candidates for later pages
+
+Kept inline until a second source or a named contribution arrives: the
+relaxation Riemann solver (Renac), hydrostatic reconstruction (Arun), DIRK
+and IMEX stepping, JST-type high-order dissipation and the product shock
+sensor (Sciacovelli), graph viscosity, constrained transport and the
+Godunov–Powell source term, interface pressure–velocity equilibrium and
+primitive-variable reconstruction (four sources), the Noh problem and wall
+overheating, Richtmyer–Meshkov, the triple-point problem, GEM
+reconnection, Brio–Wu, the viscous shock tube.
+
 ## Chunk 1 — founding chunk: reviews and vocabulary (2026-10-21)
 
 Sources (20): fu-2023, wu-2023-b, deng-2023, huang-2026, balsara-2024,

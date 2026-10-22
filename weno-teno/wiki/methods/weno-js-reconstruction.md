@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # WENO-JS reconstruction
@@ -73,6 +73,36 @@ value that "reduces the influence of non-linear weights"; Kuzmin & Vedral (2023,
 $\epsilon=10^{-6}$ and $q=2$ for the Jiang–Shu-type weights of their Hermite candidates. For WENO-Z
 weights Borges et al. suggest $\epsilon=10^{-40}$ (as recalled by Deng 2023, §4.3), the value Luo &
 Wu (2021) use; Wang & Don (2022) test $10^{-12}$ and $10^{-40}$ ([WENO-Z](/methods/weno-z.md)).
+Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$.
+
+**Interpolation of point values.** When WENO interpolates a function value at an arbitrary
+$x\in[x_{i-1/2},x_{i+1/2}]$ from point values, as in the
+[alternative formulation](/methods/alternative-weno.md), the linear weights depend on the position.
+Zheng, Shu & Qiu (2021, §2.2.4) combine the three quadratics on
+$\{x_{i-2+k},x_{i-1+k},x_{i+k}\}$, $k=0,1,2$, into the quartic on five points with
+
+$$d_0(x)=\frac{(x-x_{i+1})(x-x_{i+2})}{12\Delta x^2},\qquad d_2(x)=\frac{(x-x_{i-2})(x-x_{i-1})}{12\Delta x^2},\qquad d_1=1-d_0-d_2,$$
+
+and Jiang–Shu indicators and weights. *(Compiler check, not in the sources: at $x_{i+1/2}$ these give
+$(d_0,d_1,d_2)=(\tfrac1{16},\tfrac58,\tfrac5{16})$, the interpolation weights, distinct from the
+reconstruction weights above.)* They apply it to primitive variables in local characteristic fields.
+
+**Multi-dimensional finite volumes.** A finite-volume WENO in several dimensions needs face
+quadrature to keep its order. In the MFC code, Bryngelson et al. (2021, §4.1, §5.4, Fig. 5a)
+reconstruct first-, third- or fifth-order WENO dimension by dimension at two-point Gauss nodes of each
+face: on the 2-D [isentropic vortex](/benchmarks/isentropic-vortex.md) the $L_\infty$ density error
+converges at second order with midpoint (second-order) cell averaging and at fifth order with the
+fourth-order averaging, "required to achieve 5th-order accuracy associated with the WENO
+reconstructions" ([MFC](/software/mfc.md)). Wong et al. (2021, §4.3), citing Sebastian & Shu, state
+that finite-difference WENO and WCNS avoid the multi-dimensional reconstruction and are "four times
+cheaper in 2D and nine times cheaper in 3D" than finite-volume WENO (relayed; no timing is printed).
+On unstructured meshes, Tsoutsanis et al. (2021, Eq. (32)) keep the Jiang–Shu weight form with $q=4$,
+$\epsilon=10^{-6}$; their unstructured WENO carries the full order on every directional stencil,
+unlike their [CWENO](/methods/cweno.md) (§3.2).
+
+**Hamilton–Jacobi form.** Matsushita & Aoki (2021, §3.1) use the third-order Jiang–Peng WENO for the
+advective derivatives of a weakly compressible two-phase solver and blend it with first-order
+upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid-weno.md)).
 
 ## Properties and limitations
 
@@ -104,7 +134,28 @@ Wu (2021) use; Wang & Don (2022) test $10^{-12}$ and $10^{-40}$ ([WENO-Z](/metho
   ([symmetry preservation](/properties/symmetry-preservation.md)).
 - **Measured accuracy.** On $u_t+u_x=0$, $u_0=\sin\pi x$, $t=2$, WENO5-JS has $L_1$ error
   $7.94\times10^{-11}$ at $N_x=640$, against $9.72\times10^{-12}$ for TENO5 (Ye et al. 2022,
-  Tables 7–8).
+  Tables 7–8). On a 1-D Euler density wave at 320 points, WENO-JS5 has $L_1$ error
+  $1.93\times10^{-10}$ against $2.93\times10^{-11}$ for the linear Upwind5 scheme, at 1.5809 s against
+  0.9217 s (Wang et al. 2021, Table 5.1).
+- **Variables at material interfaces.** Reconstructing conserved variables or fluxes across a
+  material interface oscillates in pressure and velocity: Zheng, Shu & Qiu (2021, Fig. 6) measure
+  $|u-u_0|$, $|p-p_0|$ near $10^{-4}$–$10^{-3}$ for conservative-variable WENO-JS on a moving contact,
+  against $10^{-11}$–$10^{-10}$ for their primitive-variable A-WENO, and a spurious interface jump on a
+  gas–water Riemann problem (Fig. 11); Tsoutsanis et al. (2021, §4.2) and Bryngelson et al. (2021,
+  §4.1) reconstruct primitive variables for the same reason
+  ([gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
+  [five-equation model](/definitions/five-equation-model.md)).
+- **Values at fixed points only.** Zheng, Cai, Qiu & Qiu (2022, §1, §2.2) judge WENO-JS unsuitable for
+  semi-Lagrangian finite volumes, which need the reconstruction "at any spatial position", and use the
+  CWENO-type WENO-ZQ instead ([semi-Lagrangian finite volumes](/methods/semi-lagrangian-finite-volume.md)).
+- **As a comparator.** In the entropy-stable moving-mesh schemes of Li, Duan & Tang (2022, §5), WENO-JS
+  in the dissipation term resolves less small-scale structure than multi-resolution WENO at slightly
+  lower cost ([multi-resolution WENO](/methods/multi-resolution-weno.md)); in Wang et al. (2021,
+  Examples 5.6–5.9) it captures less Kelvin–Helmholtz roll-up than the multi-resolution schemes on
+  2-D shock problems.
+- **Not TVD.** Bryngelson et al. (2021, §4.2.2) note that "the WENO schemes we utilize are, in
+  general, not TVD", which can cause instability "even when the usual CFL criteria are met", and add
+  an optional flux limiter.
 
 ## Descendants
 
@@ -144,3 +195,11 @@ reconstructing fluxes.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §2.2, Eqs. (7)–(10).
 - [Ye et al. (2022)](/sources/ye-2022.md) — §2, Eqs. (3)–(5); §2.2; §4.1, Tables 7–8.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I.
+- [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §2.2.4, Eqs. (23)–(24); §4, Figs. 6, 11.
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1; §4.2.2; §5.4, Fig. 5a.
+- [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.2, Eq. (32); §4.2.
+- [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.1, Eqs. (26)–(27).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §5, Table 5.1.
+- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Remark 3.2.
+- [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §1; §2.2.

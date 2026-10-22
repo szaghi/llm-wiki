@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -170,6 +170,25 @@ Recorded here because they have no page of their own:
   [WCNS](/methods/weighted-compact-nonlinear-scheme.md); learned weights with a
   TENO cut-off layer, see [learned WENO weights](/methods/learned-weno-weights.md).
 
+## Ingredients borrowed outside TENO
+
+The incremental-stencil WENO interpolation of the WCNS-IS of Wong, Angel, Barad & Kiris (2021, §4.3,
+Eqs. (91)–(101)), adapted from Wang, Xiang & Hu, takes two TENO ingredients into a WENO-type convex
+combination ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)):
+
+- **Incremental candidates**, but starting from two points: $\{i,i+1\}$ and $\{i-1,i\}$ (second
+  order), then $\{i,i+1,i+2\}$ and $\{i-2,i-1,i\}$ (third order), with linear weights
+  $\tfrac{15}{32},\tfrac5{32},\tfrac5{16},\tfrac1{16}$ that reproduce the five-point interpolant. Wong
+  et al. credit the two-point stencils with robustness when discontinuities are closely located (p.
+  20, citing Wang et al.). Fu (2023, §2.1) judges that starting TENO from two-point stencils adds the
+  dissipation of a second-order candidate, "which renders the motivation questionable"; the two
+  statements weigh robustness and dissipation differently and do not test the same scheme.
+- **The TENO reference indicator** $\tau^{\mathrm{ref}}_5$, the third- and fourth-derivative part of
+  the five-point Jiang–Shu indicator, attributed to Fu, Hu & Adams, with
+  $\tau^{\mathrm{ref}}_5=(u_i''')^2\Delta x^6+O(\Delta x^8)$ (Eq. (100); App. B, Eq. (B.20)); it enters
+  WENO-Z-type weights, not a cut-off ([smoothness indicators](/definitions/smoothness-indicator.md),
+  [WENO-Z](/methods/weno-z.md)). Its order, 6, matches that of the sixth-order $\tau_K$ above.
+
 ## Qualifications
 
 - "$K$-point TENO is $K$th order" (Fu 2023, §2) holds when the $d_k$ are chosen
@@ -218,3 +237,4 @@ al.'s rate is the one that smooth WENO-Z-type weights need.)*
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, Eqs. (5)–(14), Table 2, Table 3: TENO5 recipe, order, cost.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §2, Eqs. (1)–(10); §3.3–3.5, Eqs. (24)–(39); §4.5, §4.7: stencils, $\tau_K$, $q$ and $C_T$ tests.
 - [Fu (2021)](/sources/fu-2021.md) — §§2–3.4: TENO background, dissipation of standard TENO.
+- [Wong et al. (2021)](/sources/wong-2021.md) — §4.3, Eqs. (84)–(101); App. B: incremental-stencil interpolation with the TENO reference indicator.

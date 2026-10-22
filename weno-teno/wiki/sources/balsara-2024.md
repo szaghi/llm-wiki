@@ -175,7 +175,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
@@ -188,6 +188,7 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mach 3 forward-facing step](/benchmarks/forward-facing-step.md)
 * [Mapped WENO](/methods/mapped-weno.md)
+* [Multi-resolution WENO](/methods/multi-resolution-weno.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
@@ -197,7 +198,7 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)
 * [Two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)
 * [Well-balancing](/properties/well-balancing.md)
-* [WENO-AO and multi-resolution WENO](/methods/weno-ao.md)
+* [WENO-AO (adaptive-order WENO)](/methods/weno-ao.md)
 * [WENO-JS reconstruction](/methods/weno-js-reconstruction.md)
 * [WENO-Z weights](/methods/weno-z.md)
 * [Woodward–Colella interacting blast waves](/benchmarks/woodward-colella-blast-wave.md)

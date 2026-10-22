@@ -98,7 +98,10 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 1 staged 2026-10-21 (scaffold, D29):** the 20 reviews and
-vocabulary papers; 20 of 207 ingested, 82 concept pages plus the registry,
-860 bibliography entries, deep lint done, one contradiction open (accuracy
-condition on $\tau_K$ of TENO). Next: chunk 2 per the archive's order.
+**Chunk 2 staged 2026-10-22:** WENO variants, entropy-stable DG,
+multiphase models, shock tracking; 40 of 207 ingested, 109 concept pages
+plus the registry, 1619 bibliography entries, deep lint done, two
+contradictions open (TENO $\tau_K$; conservation of WCNS). Next: chunk 3.
+
+**Chunk 1 committed 2026-10-22 (3bc58e0):** scaffold (D29) and the 20
+reviews and vocabulary papers.

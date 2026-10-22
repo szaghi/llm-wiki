@@ -231,7 +231,7 @@ All items parse.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bound preservation](/properties/bound-preservation.md)
@@ -242,5 +242,6 @@ Chunk 1 (2026-10-21). This source is cited on:
 * [Hermite WENO](/methods/hermite-weno.md)
 * [KPP rotating wave](/benchmarks/kpp-rotating-wave.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
+* [Solid-body rotation](/benchmarks/solid-body-rotation.md)
 * [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)
 * [WENO-JS reconstruction](/methods/weno-js-reconstruction.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Characteristic decomposition"
-description: "Local characteristic decomposition projects stencil data onto the eigenvectors of the flux Jacobian at an interface state, reconstructs each field separately and projects back; the bundle's WENO, TENO and central-upwind schemes rely on it to suppress oscillations, while OEDG shows a method that does without it."
+description: "Local characteristic decomposition projects stencil data onto the eigenvectors of the flux Jacobian at an interface state, reconstructs each field separately and projects back; WENO, TENO and central-upwind schemes use it against oscillations, multiphase sources project primitive variables at material interfaces, entropy-stable schemes scale the eigenvectors, and some schemes do without it."
 status: established
-aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables]
-tags: [characteristic, reconstruction, weno, teno, central-scheme]
-timestamp: 2026-10-21T00:00:00Z
+aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
+tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Characteristic decomposition
@@ -44,9 +44,11 @@ cases), [Li et al. (2022)](/sources/li-2022-b.md) ("global Lax–Friedrichs flux
 local characteristic fields", with Eq. (38)), [Luo & Wu (2021)](/sources/luo-2021-b.md) (§5),
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§4, where THINC is applied per characteristic
 component and per split-flux direction), and [Wang & Don (2022)](/sources/wang-2022-b.md)
-(§3.3, well-balanced shallow-water WENO). [Wang et al. (2023)](/sources/wang-2023-b.md) apply
-it to the WENO-Z *interpolation* of point values in [A-WENO](/methods/alternative-weno.md)
-(§2).
+(§3.3, well-balanced shallow-water WENO), and
+[Wang et al. (2021)](/sources/wang-2021.md) (§3.1, Remark 1, for their
+[multi-resolution WENO](/methods/multi-resolution-weno.md)).
+[Wang et al. (2023)](/sources/wang-2023-b.md) apply it to the WENO-Z *interpolation* of
+point values in [A-WENO](/methods/alternative-weno.md) (§2).
 
 ## Variants of the frozen state and of where the projection acts
 
@@ -66,6 +68,16 @@ it to the WENO-Z *interpolation* of point values in [A-WENO](/methods/alternativ
   [Chertock et al. (2023)](/sources/chertock-2023.md) use the projection also to give each
   field its own central-upwind diffusion, the
   [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md) (§3).
+- **Entropy-scaled eigenvectors in the dissipation.** In the entropy-stable
+  moving-mesh finite-difference scheme of [Li, Duan & Tang (2022)](/sources/li-2022-c.md)
+  (§3.4, Eqs. (3.21)–(3.22)) the dissipation acts on jumps of the reconstructed
+  scaled entropy variables, with right-eigenvector matrices scaled so that
+  $\partial u/\partial w=RR^\top$ ($w$ the entropy variables). They print these
+  matrices for the single- and two-component Euler equations with the
+  [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md),
+  evaluated at interface averages built from logarithmic means, and rotate the
+  directional flux to the face normal. See [TeCNO schemes](/methods/tecno-scheme.md)
+  and [entropy-conservative fluxes](/methods/entropy-conservative-flux.md).
 
 For the Euler equations, [Chertock et al. (2023)](/sources/chertock-2023.md) (App. A) print,
 at the averaged state with velocity $v$, sound speed $c$ and enthalpy $H$,
@@ -73,6 +85,51 @@ at the averaged state with velocity $v$, sound speed $c$ and enthalpy $H$,
 $$R_{i+1/2}=\begin{pmatrix}1&1&1\\ v-c&v&v+c\\ H-vc&\tfrac12v^2&H+vc\end{pmatrix},$$
 
 and its inverse with $2H-v^2=2c^2/(\gamma-1)$; App. B gives the 2D version.
+
+## Primitive variables at material interfaces
+
+At a material interface the density and the equation-of-state parameters jump
+while velocity and pressure are continuous. The multiphase sources agree that
+reconstructing **conservative** variables there makes velocity and pressure
+oscillate, and that the projection must therefore act on primitive variables:
+
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) (§2.2, §4.1, §5.5) let
+  [MFC](/software/mfc.md) reconstruct primitive, conservative or characteristic
+  variables, with primitive as the default; recalling Coralic & Colonius, they
+  state that conservative reconstruction at an advected air–water interface
+  gives spurious oscillations and "even negative pressures", primitive
+  reconstruction none to round-off.
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) (§3.3, §4.2, Figs. 3–4)
+  show on an isolated interface with a $\gamma$ jump that conservative
+  reconstruction oscillates and primitive reconstruction keeps pressure and
+  velocity errors close to machine precision; they then state, citing
+  Johnsen–Colonius and others, that reconstruction "in conservative or
+  characteristic variables" suffers from such oscillations. Characteristic
+  variables are not tested in the paper.
+- [Wong et al. (2021)](/sources/wong-2021.md) (App. A) and
+  [Zheng et al. (2021)](/sources/zheng-2021.md) (§2.2, §3.1.3) do both: they
+  project the **primitive** variables onto the characteristic fields of the
+  quasilinear primitive system and interpolate there.
+
+For the Euler equations in primitive variables $u_{\mathrm p}=(\rho,v,p)$
+(page-local), the quasilinear system $\partial_tu_{\mathrm p}+A_{\mathrm p}\partial_xu_{\mathrm p}=0$
+has (Zheng et al., §2.2)
+
+$$A_{\mathrm p}=\begin{pmatrix}v&\rho&0\\0&v&1/\rho\\0&\rho c^2&v\end{pmatrix},\quad
+R=\begin{pmatrix}1&1&1\\-c/\rho&0&c/\rho\\c^2&0&c^2\end{pmatrix},\quad
+L=\begin{pmatrix}0&-\rho/(2c)&1/(2c^2)\\1&0&-1/c^2\\0&\rho/(2c)&1/(2c^2)\end{pmatrix},$$
+
+with eigenvalues $v-c$, $v$, $v+c$. *(Compiler check, not in the sources: the
+three columns of $R$ are eigenvectors of $A_{\mathrm p}$ for $v-c$, $v$, $v+c$.)*
+Zheng et al. add that characteristic decomposition has "a reduced effect at the
+interface", whose characteristic structure is unclear because two fluids lie on
+its two sides (§1); their interface is sharp and each fluid keeps its own nodal
+values. For the five-equation diffuse-interface model with primitive variables
+$(\phi_1\rho_1,\phi_2\rho_2,v_1,v_2,p,\phi_1)$ ($\phi_k$ the volume fractions,
+registry §10), Wong et al. give $A_{\mathrm p}$ with eigenvalues
+$v-c$, $v$ (four times), $v+c$, and evaluate $R$ at arithmetic averages of the
+partial densities, the mixture density and the sound speed (App. A, Eq. (A.4)).
+See [five- and six-equation models](/definitions/five-equation-model.md).
 
 ## Why it is used, and what it costs
 
@@ -88,7 +145,12 @@ gain "by a factor of four" ([hybrid central-WENO schemes](/methods/hybrid-weno.m
 characteristic variables, so the shallow-water still-water state is preserved without
 further linearization ([well-balancing](/properties/well-balancing.md)).
 
-## A method that needs none
+## Methods that need none
+
+The [unstaggered central scheme](/methods/unstaggered-central-scheme.md) of
+[Kanbar et al. (2022)](/sources/kanbar-2022.md) limits its slopes componentwise
+on the conserved deviation from a known steady state (§3, Eq. (8)); being Riemann-solver free, it has no
+interface eigensystem to project on.
 
 [Peng et al. (2024)](/sources/peng-2024.md) apply the [OEDG](/methods/oedg.md) damping to
 the conservative variables with one coefficient (the maximum over components), without
@@ -121,3 +183,10 @@ invariance. On the [Woodward–Colella blast waves](/benchmarks/woodward-colella
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.3.
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §2.
 - [Peng et al. (2024)](/sources/peng-2024.md) — §2 (Eq. (2.17), Remark 2.12), Ex. 5.7.
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §4.1, §5.5 (arXiv v1).
+- [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.3, §4.2 (Figs. 3–4).
+- [Wong et al. (2021)](/sources/wong-2021.md) — §4.2, App. A (arXiv v1).
+- [Zheng et al. (2021)](/sources/zheng-2021.md) — §1, §2.2, §3.1.3.
+- [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Remark 1.
+- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.4, Eqs. (3.21)–(3.22) (arXiv v1).
+- [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3, Eq. (8) (arXiv v1).

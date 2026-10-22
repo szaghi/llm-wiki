@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-21T14:00:00Z
+timestamp: 2026-10-22T14:00:00Z
 ---
 
 # Notation registry
@@ -184,7 +184,22 @@ uses the same letter.
 | $\sigma^m_i$ | OEDG damping coefficient of mode $m$ in cell $i$ | OEDG, artificial viscosity |
 | $\mathcal T$, $V$, $\mathcal C$, $\mu_\bullet$ | periodic shift, control volumes, convective matrix and split weights of Coppola & Veldman | split convective forms, kinetic energy preservation, local conservation |
 | $\mathcal E$ | vortex strength | isentropic vortex, shock–vortex interaction |
+| $\phi_k$, $\rho_k$, $Y_k$ | volume fraction, phase density and mass fraction of phase or component $k$ | five-equation model, stiffened-gas equation of state, multicomponent Euler equations, shock–water column, gas–liquid Riemann problems |
+| $p_{\infty,k}$ | stiffened-gas constant of phase $k$, $p_k=(\gamma_k-1)\rho_ke_k-\gamma_kp_{\infty,k}$ | stiffened-gas equation of state, multiphase benchmarks |
+| $u_{\mathrm e}$, $\delta u=u-u_{\mathrm e}$ | reference equilibrium state and deviation from it | well-balancing, unstaggered central schemes, TVD |
+| $\beta_{\mathrm{ms}}$ | multiscale exponent of the stiff scaling $\varepsilon^{\beta_{\mathrm{ms}}}$ | asymptotic preservation, well-balancing |
+| $\Xi_i$ | Sciacovelli et al.'s product shock sensor | troubled-cell indicators, artificial viscosity, numerical dissipation |
+| $\varphi_{\mathrm D}$ | Zheng et al.'s discontinuity indicator | troubled-cell indicators, level-set methods, alternative WENO |
+| $\bar u^{(1)}_i$ | first normalized moment of $u$ on $I_i$ (Hermite WENO) | Hermite WENO, multi-resolution WENO |
+| $\tau^{\mathrm{ref}}_5$ | Wong et al.'s TENO reference indicator (not the registry's $\tau_5$) | smoothness indicators, TENO, WENO-Z, critical points |
+| $P_{\mathrm{opt}}$, $P_k$ | optimal (central) and candidate polynomials of CWENO-type reconstructions | CWENO, semi-Lagrangian finite volumes |
+| $W_j$ | least-squares row weights of WLS-ENO | WLS-ENO, ENO property |
+| $\ell_j$ | Lagrange basis polynomial of node $\xi_j$ | DGSEM, subcell limiting |
+| $\beta_{\mathrm p}$ | plasma beta $2p/\lvert B\rvert^2$ | MHD blast wave, high-Mach jets |
+| $r_{\mathrm{RK}}$ | order of a Runge–Kutta method | discontinuous Galerkin, OEDG |
 
 $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic
-variables, Z+M coefficient/affine translation); no page uses both families.
+variables, Z+M coefficient/affine translation); no page uses both families. The
+gravitational potential is written $\phi$ without subscript on well-balancing pages; the
+volume fraction always carries its phase index, $\phi_k$.

@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Numerical dissipation and anti-dissipation"
-description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; this page fixes the three ways the chunk-1 sources measure and control it (flux viscosity term, leading truncation error on the normalised-variable diagram, imaginary part of the modified wavenumber) and the design levers they use."
+description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; the page fixes three measures (flux viscosity term, leading truncation error, imaginary part of the modified wavenumber), the design levers of the sources, and the implicit-LES evidence that dissipation order outweighs convective order."
 status: established
-aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND]
+aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T12:00:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -16,7 +16,7 @@ gradients and Fourier modes; **anti-dissipation** (anti-diffusion, negative
 dissipation) is error of the opposite sign, which steepens profiles and amplifies
 modes. Shock capturing needs some dissipation at discontinuities; the
 low-dissipation literature of this bundle tries to remove it everywhere else.
-The chunk-1 sources measure it in three compatible ways, each tied to a
+The sources measure it in three compatible ways, each tied to a
 different object.
 
 ## 1. The viscosity term of the numerical flux
@@ -58,6 +58,56 @@ jumps.
   $A^+u^-_{i+1/2}+A^-u^+_{i+1/2}$ whatever the signs of the eigenvalues
   (Lemma 3.1), whereas the original reduces to upwind only when all eigenvalues
   have one sign. See [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md).
+- **A scalar or a matrix speed.** [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md)
+  (§3, Eqs. (20)–(22)) write the first-order upwind flux of a finite-difference
+  scheme as $\hat f_{i+1/2}=\tfrac12(f_i+f_{i+1})-\tfrac12\lvert Q_{i+1/2}\rvert(u_{i+1}-u_i)$,
+  with a dissipation matrix $Q$ ($Q=a_{i+1/2}I$ gives Rusanov, the Roe matrix gives
+  Roe; page-local $Q$). They choose the scalar $a_{i+1/2}$, the spectral radius of
+  $A$, because the Roe average has no unique, cheap extension to real and
+  multi-species gases, and they attribute to this choice the extra damping of the
+  entropy waves behind the shock of the [Shu–Osher problem](/benchmarks/shu-osher-problem.md):
+  the scalar viscosity acts equally on acoustic and entropic fields (§4.3, Fig. 4).
+
+### An explicit high-order dissipation term
+
+The same flux form with a higher-order dissipation term is the Lerat–Corre
+family that [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§3,
+Eqs. (23)–(28)) build on: a central approximation of order $2(P+2)$ of the
+flux derivative on $2(P+2)+1$ points plus a dissipation term of order $2P+3$,
+proportional to $\lvert Q\rvert\Delta^{2P+3}u$ (here $\Delta^m$ is the $m$-th
+undivided difference of the registry, taken at the interface for odd $m$;
+$P=0,\dots,3$ gives orders 3, 5, 7, 9). Following Jameson, Schmidt and Turkel, the
+authors blend it with a second-order term switched on by a shock sensor (§3,
+Eqs. (30)–(31)):
+
+$$\begin{aligned}
+D_{i+1/2}&=a_{i+1/2}\Big[\mathsf c_{2}\,[\![u]\!]_{i+1/2}+(-1)^{P+1}\mathsf c_{2P+4}\,\Delta^{2P+3}u_{i+1/2}\Big],\\
+\mathsf c_{2}&=k_2\max(\Xi_i,\Xi_{i+1}),\qquad
+\mathsf c_{2P+4}=\max\big(0,\ k_{2P+4}-k_\varepsilon\,\mathsf c_2\big),
+\end{aligned}$$
+
+with $\hat f_{i+1/2}$ the central part minus $D_{i+1/2}$ (page-local:
+$\mathsf c_2$, $\mathsf c_{2P+4}$ the blended coefficients, $k_2$, $k_{2P+4}$,
+$k_\varepsilon$ constants, $\Xi_i$ the sensor). The default is the
+ninth-order member, $P=3$, with $k_2=1$ and $k_{10}=1/1260$, the upwind value;
+the shock tubes use $k_2=2$, $k_{10}=1/630$. The sensor is the product of three
+factors (§3, Eq. (36)):
+
+$$\Xi_i=\tfrac12\Big[1-\tanh\Big(2.5+10\,\tfrac{\Delta x}{c}\nabla\!\cdot v\Big)\Big]\cdot\frac{(\nabla\!\cdot v)^2}{(\nabla\!\cdot v)^2+\lvert\nabla\times v\rvert^2+\epsilon}\cdot\Big\lvert\frac{p_{i+1}-2p_i+p_{i-1}}{p_{i+1}+2p_i+p_{i-1}}\Big\rvert,\qquad\epsilon=10^{-16},$$
+
+the Bhagatwala–Lele dilatation switch, the Ducros dilatation-to-vorticity ratio
+and Jameson's pressure sensor. On an underexpanded jet the authors show each
+factor's failure alone (Ducros close to one in smooth irrotational regions,
+Jameson unable to separate a shock from a high-vorticity solenoidal region,
+Bhagatwala–Lele over-damping dilatation on coarse grids) and the product
+confining the low-order term to the shocks, with values below $0.02$ elsewhere
+(§5.1, Fig. 8). In 1D the Ducros factor is inactive, and the Bhagatwala–Lele
+factor improves the entropy waves of the Shu–Osher problem by suppressing
+spurious activations of the pressure sensor (§4.3); on the reacting 9000 K shock
+tube it had to be turned off "for better numerical robustness" (§4.4). The same
+blend of a low- and a high-order term is the idea of
+[artificial viscosity](/methods/artificial-viscosity.md) and of the
+[hybrid schemes](/methods/hybrid-weno.md); this one is explicit in the flux.
 
 ## 2. The leading truncation error of a reconstruction
 
@@ -74,6 +124,19 @@ $\tilde u_i$ the normalised cell average). Two consequences:
   anti-dissipative for $\tilde u>1/2$ (§4.1);
 - on the diagram, curves below the third-order line P3 are diffusive and curves
   above it anti-diffusive (§5).
+
+For the odd-order Lerat–Corre schemes the leading truncation error is
+$\frac{\mathsf a_P}{2}\Delta x^{2P+3}\partial_x^{2(P+2)}u$, an even-order derivative, which
+the authors call dissipative ([Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md), §3,
+Eq. (24); $\mathsf a_P$ the page-local last correction coefficient of the
+family, $\mathsf a_3=-1/630$). The authors choose the dissipation order so that the overall
+truncation error is dissipation dominated, to limit the appearance and
+amplification of spurious oscillations and the activation of the low-order term
+(§1); they also recall that explicit odd-order constant-coefficient schemes are
+$L^\infty$-stable for non-smooth data under a CFL condition, so their
+oscillations stay bounded (§3, citing Thomée and Després). Because the sensor
+is off at a contact (constant pressure), the contact smearing in their Sod and
+Lax tubes is due to the high-order term alone (§4.2).
 
 Deng's low-dissipative [ROUND](/methods/round-scheme.md) operators deliberately
 put parts of the curve above P3, so that positive and negative second-order
@@ -108,6 +171,31 @@ modes, not by a proof. TENO avoids nonlinear dissipation in smooth regions
 differently, by restoring the linear weights exactly
 ([targeted ENO](/methods/targeted-eno.md)).
 
+## Dissipation as an implicit subgrid model
+
+[Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) use the ninth-order
+dissipation as implicit LES regularization, acting only on
+$\vartheta\gtrsim0.35\pi$ ([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+On the compressible [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+(Re 1600, $M=0.1,0.5,1$, $64^3$–$1024^3$) they report (§5.2, Figs. 9–12):
+
+- no energy pile-up at small scales even at $64^3$, and the low-order term
+  correctly off at $M=0.1$;
+- third-order dissipation on $256^3$ gives results similar to ninth-order
+  dissipation on $64^3$; going beyond ninth order gains little;
+- third-order dissipation combined with convective fluxes of orders up to ten
+  gives nearly identical results, so "the dissipation order is the fundamental
+  ingredient";
+- at low Mach number the small scales are damped more, because the acoustic
+  time-step limit needs more steps to reach $t^*=16$, hence more applications of
+  the dissipation operator (an interpretation, §5.2).
+
+In the opposite direction, [Wang et al. (2021)](/sources/wang-2021.md) motivate
+their multi-resolution WENO by the observation, recalled from Johnsen et al.,
+that WENO dissipation can overwhelm physical dissipation in turbulence (§1), and
+find the new scheme the closest of four WENO schemes to the DNS kinetic-energy
+history of the Taylor–Green vortex at $128^3$ (Example 5.13, Fig. 5.22).
+
 ## Reading dissipation off 2D results
 
 Without a closed-form measure, the 2D sources compare dissipation through flow
@@ -132,6 +220,13 @@ which "apparently depends on the choice of the numerical diffusion".
   with $\tilde u$).
 - Visual dissipation proxies (curlier contacts, more vortices) are what most of
   the chunk-1 2D claims rest on; none of these sources quantifies them.
+- Sciacovelli et al. state $k_\varepsilon=\mathsf a_0/\mathsf a_P$, but their explicit members
+  print the factors $1$, $\tfrac15$, $\tfrac3{70}$, $\tfrac1{105}$, which are
+  $\lvert\mathsf a_P/\mathsf a_0\rvert$; and the sign $-\tfrac{\mathsf a_P}{2}$ of their general
+  formula disagrees with the signs of the four explicit members (§3,
+  Eqs. (23)–(35)). The page uses the explicit members. Their conclusion on
+  dissipation order versus convective order is an ILES conclusion on one
+  turbulence test; it is not stated for shocked flows.
 
 # Citations
 
@@ -142,3 +237,5 @@ which "apparently depends on the choice of the numerical diffusion".
 - [Huang et al. (2026)](/sources/huang-2026.md) — §4.2: controlled anti-dissipation.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.3: anti-diffusive THINC.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4: negative dissipation, nonlinear dissipation of weights.
+- [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §1, §3 (Eqs. (20)–(36)), §4.2–4.4, §5.1–5.2 (Figs. 4, 8–12): scalar dissipation, Lerat–Corre family, JST-type blend, sensor, ILES (arXiv v1).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §1, Example 5.13 (Fig. 5.22): WENO dissipation in turbulence.

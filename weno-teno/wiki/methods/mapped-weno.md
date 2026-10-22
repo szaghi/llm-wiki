@@ -5,7 +5,7 @@ description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–S
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Mapped WENO
@@ -21,7 +21,10 @@ sources prints the mapping function itself, so its form is not recorded here.
 - **Purpose: critical points.** WENO-M was designed because WENO-JS fails to recover the optimal
   order at critical points (Deng 2023, §1; Fu 2021, §1; Takagi et al. 2022, §1; Balsara et al. 2024,
   §I). Li et al. (2022, §2) recall that it satisfies the fifth-order condition at first-order
-  critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)). Deng (2023,
+  critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)). Wang et al.
+  (2021, §1) describe it as one of "two important variants" for "achieving optimal order near critical
+  points", whose "nonlinear weights are pushed smoothly to the optimal values by a regularization
+  process", the other being [WENO-Z](/methods/weno-z.md). Deng (2023,
   §1) adds that Henrick et al. also pointed out the sensitivity of WENO schemes to the regularization
   $\epsilon$.
 - **Cost.** Luo & Wu (2021, §1) state that the mapping functions "dramatically" increase the
@@ -36,6 +39,10 @@ sources prints the mapping function itself, so its form is not recorded here.
   the cellular structure of a two-dimensional self-sustained detonation on coarse meshes better than
   WENO5-JS and WENO-M, and WENO5-JS gives incorrect cellular structures
   ([targeted ENO](/methods/targeted-eno.md)).
+
+- **In codes.** Bryngelson et al. (2021, §4.1) cite Henrick, Aslam & Powers among the WENO
+  references of the MFC solver, but do not state whether MFC uses mapped weights
+  ([MFC](/software/mfc.md)).
 
 ## Place in the family
 
@@ -59,3 +66,5 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 - [Fu (2021)](/sources/fu-2021.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §2.3; §5.2, Fig. 18.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I.
+- [Wang et al. (2021)](/sources/wang-2021.md) — §1.
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1.

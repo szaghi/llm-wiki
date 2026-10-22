@@ -4,8 +4,8 @@ title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central or optimal upwind) reconstruction where a sensor declares the stencil smooth and switch to a nonlinear WENO or TENO reconstruction elsewhere; they cut dissipation and cost, but their quality hinges on the sensor, which the sources call case- and parameter-sensitive unless it is built from the TENO cut-off flags."
 status: established
 aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme]
-tags: [weno, teno, reconstruction, low-dissipation, turbulence]
-timestamp: 2026-10-21T00:00:00Z
+tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -42,10 +42,42 @@ nor, for systems, a [characteristic decomposition](/methods/characteristic-decom
   replaces TENO at genuine discontinuities. They contrast it with classical hybrids, which "dedicate
   to deploying the optimal linear scheme as much as possible in smooth regions" for efficiency
   (§3.2, item 4; [TENO-THINC](/methods/teno-thinc.md)).
+- **Hybrid Hermite WENO.** In the moment-based [HWENO](/methods/hermite-weno.md) of Zhao, Chen &
+  Qiu, made positivity-preserving by Fan, Zhang & Qiu (2021, §1, §4), a troubled-cell indicator
+  selects the cells where the nonlinear HWENO reconstruction, preceded by a limiter on the first
+  moment, replaces a linear Hermite reconstruction. With 0.97–19.57 % of cells flagged in their shock
+  tests, the hybrid saves 59.05–89.64 % of the CPU time of the non-hybrid positivity-preserving HWENO
+  (Table 4.2, hardware not stated), and the positivity limiter is triggered in identical fractions of
+  cells in both (Table 4.2). The hybrid of Zhao et al. without positivity preservation blows up on
+  their Examples 4.3–4.7 (Euler).
+
+## Blends with a first-order flux
+
+A second kind of hybrid blends a WENO flux with a **first-order** one through a limiter function,
+rather than switching to a linear high-order scheme:
+
+- In MFC, Bryngelson et al. (2021, §4.2.2, Eq. (34)) add an optional flux limiter, because "the WENO
+  schemes we utilize are, in general, not TVD": the flux is the first-order (piecewise-constant)
+  Riemann flux plus a limiter of the volume-fraction ratio
+  $(\phi_i-\phi_{i-1})/(\phi_{i+1}-\phi_i)$ (upwinded with the contact velocity; page-local
+  volume fraction $\phi_i$) times the difference between the WENO and first-order fluxes, with
+  minmod, MC, ospre, superbee, Sweby, van Albada or van Leer limiters; the blend is described in words
+  ([MFC](/software/mfc.md)).
+- Matsushita & Aoki (2021, §3.1, Eqs. (26)–(27)) write the advective derivative as
+  $f_x^{\mathrm{1st}}+\psi(r_i)\big(f_x^{\mathrm{WENO}}-f_x^{\mathrm{1st}}\big)$ with the minmod
+  limiter $\psi$ of the upwinded slope ratio $r_i$ and third-order Hamilton–Jacobi WENO, to prevent
+  instabilities at the steep density change of a gas–liquid interface.
+
+Both are TVD-limiter hybrids localized at material interfaces
+([TVD limiters](/definitions/total-variation-diminishing.md)), the counterpart of the
+low-order/high-order flux blending used for bound preservation
+([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
 
 ## The sensor problem
 
-Takagi et al. (2022, §1) state that hybrid schemes, although much less dissipative than their ENO or
+Wang et al. (2021, §1), recalling Hu, Wang & Adams, call the hybrid method "minimally dissipative"
+with "sharp shocks and well-resolved broadband turbulence", but say that it "relies on an appropriate
+shock senor [sic]". Takagi et al. (2022, §1) state that hybrid schemes, although much less dissipative than their ENO or
 WENO counterparts, depend in practice on the effectiveness of a shock sensor "which is mostly case
 and parameter sensitive", and point to the parameter-free
 [boundary variation diminishing](/definitions/boundary-variation-diminishing.md) selection as the
@@ -75,3 +107,7 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §3.2.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §5.3.1, Table 1.
 - [Fu (2021)](/sources/fu-2021.md) — §1.
+- [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §4, Table 4.2.
+- [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.2.2, Eq. (34).
+- [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.1, Eqs. (26)–(27).
+- [Wang et al. (2021)](/sources/wang-2021.md) — §1.

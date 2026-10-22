@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Carbuncle phenomenon"
-description: "The carbuncle is a numerical instability that low-dissipation approximate Riemann solvers such as HLLC and Roe can develop near strong shocks; the bundle's sources avoid it by switching to the more dissipative, carbuncle-free HLL solver at strong shocks."
+description: "The carbuncle is a numerical instability that low-dissipation approximate Riemann solvers such as HLLC and Roe can develop near strong shocks; the bundle's shock-capturing sources avoid it by switching to the more dissipative, carbuncle-free HLL solver at strong shocks, and a shock-fitting moving DG method reports no carbuncle on hypersonic bow shocks."
 status: established
 aliases: [carbuncle problem, carbuncle instability, shock instability of low-dissipation Riemann solvers]
 tags: [riemann-solver, numerical-flux, benchmark]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Carbuncle phenomenon
@@ -39,14 +39,28 @@ gives at strong shocks ([HLL-family solvers](/methods/hll-riemann-solvers.md),
   the Mach-10 [double Mach reflection](/benchmarks/double-mach-reflection.md) "to mitigate
   the carbuncle phenomenon".
 
+- **Fitting the shock instead of capturing it.** In the moving discontinuous
+  Galerkin method MDG+ICE of [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
+  the bow shock is a mesh face located by the weakly enforced interface
+  ([Rankine–Hugoniot](/definitions/rankine-hugoniot-condition.md)) condition,
+  and the interior flux is the plain central average, with no Riemann solver.
+  On the steady Mach 8 (315 elements) and Mach 15 (497 elements) flows past a
+  half cylinder, computed with linear elements, the authors observe "no shock
+  instabilities or carbuncle phenomenon" (§IV.E, Fig. 28). The evidence is the
+  figure alone; no shock-capturing comparison is run. See
+  [implicit shock tracking](/methods/implicit-shock-tracking.md).
+
 ## Qualifications
 
-- Neither source describes the carbuncle's form or its mechanism; this page records only
-  what they state. Fu (2023) cites a dedicated reference for it and, among its references,
+- None of the sources describes the carbuncle's form or its mechanism; this page records
+  only what they state. Fu (2023) cites a dedicated reference for it and, among its references,
   a rotated-hybrid carbuncle-free Riemann solver (Nishikawa & Kitamura), which the review
   mis-cites as the Rusanov solver (§3.6).
+- Luo, Absillis & Nourgaliev's Fig. 28 caption gives Mach 8 and 18, the text Mach 8 and 15;
+  the page follows the text.
 
 # Citations
 
 - [Fu (2023)](/sources/fu-2023.md) — §3.6 (Eq. (30), Fig. 9).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.7 (Fig. 12).
+- [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.3, §IV.E (Fig. 28; author manuscript).

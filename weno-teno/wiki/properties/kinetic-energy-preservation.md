@@ -5,7 +5,7 @@ description: "A semi-discretization is kinetic-energy-preserving when its convec
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, turbulence]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T00:00:00Z
 ---
 
 # Kinetic energy preservation
@@ -136,7 +136,19 @@ volume flux ([Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-202
   entropy-conservative (Ranocha et al. (2023), §3.2, properties cited from
   the literature);
 - the Chandrashekar flux, entropy-conservative and KEP (Rueda-Ramírez et
-  al. (2022), §4).
+  al. (2022), §4);
+- Renac's multicomponent flux, entropy-conservative and formally KEP "in
+  Jameson's sense", a property that "can fail discretely"
+  ([Renac (2021)](/sources/renac-2021.md), Remark 3.2, Eq. (24)).
+
+Renac's momentum flux is the mixture mass flux times $\{\!\{v\}\!\}$ plus the
+pressure mean $\{\!\{p/T\}\!\}/\{\!\{1/T\}\!\}$ times $n$, which has the structure of
+the Coppola–Veldman face-flux condition above, and for one component his
+flux reduces to the Chandrashekar flux *(compiler check, not in the
+sources: compare with Observation 7; set the number of components $n_c$
+(page-local) to 1 in his Eq. (24), with
+$p/T=\rho r_{\mathrm g}$, page-local gas constant $r_{\mathrm g}$)*. He does not say under which
+discrete conditions the property fails.
 
 Their formulas and a structural comparison with the Coppola–Veldman
 face-flux condition are on
@@ -162,3 +174,4 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.1 Eqs. (4)–(6), §5.1 Eqs. (59)–(62), §5.2 Observation 7 Eqs. (64)–(71), §5.3 Eq. (72), Corollary A.4, §6 Observation 9 Eqs. (74)–(78), §7.3 Fig. 2, §8.1.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, §3.2.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §4.
+- [Renac (2021)](/sources/renac-2021.md) — §3.1 Eq. (24), Remark 3.2 (arXiv v3).
