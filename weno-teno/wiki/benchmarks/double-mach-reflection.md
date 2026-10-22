@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Double Mach reflection
@@ -21,9 +21,11 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Thirteen sources of the bundle run it; most cite
-Woodward & Colella (1984) for it, while Peng, Sun & Wu cite no source
-for the setup.
+source that runs it. Twenty-one sources of the bundle run it, eighteen
+in the Woodward–Colella form and three in a variant (a wedge on an
+unstructured mesh, a relativistic version, a dimensional ramp with an
+immersed boundary); most cite Woodward & Colella (1984) for it, while
+Peng, Sun & Wu cite no source for the setup.
 
 ## Setup
 
@@ -56,31 +58,88 @@ the top, outflow on the right, pre-shock $\rho=1.4$, $p=1$.
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.17 and
 [Wang et al. (2023)](/sources/wang-2023-b.md) Example 4 write the same
 geometry as $x<\tfrac16+y/\sqrt3$ with post-shock state
-$(8,\ 8.25\cos\tfrac\pi6,\ -8.25\sin\tfrac\pi6,\ 116.5)$. The line
+$(8,\ 8.25\cos\tfrac\pi6,\ -8.25\sin\tfrac\pi6,\ 116.5)$. The same
+post-shock pressure $116.5$ is printed by
+[Bezgin et al. (2022)](/sources/bezgin-2022.md) Eq. (37), as
+$(8,7.145,-4.125,116.5)$ above $y=1.732(x-0.1667)$;
+[Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.3, as
+$(\rho,p,v_1,v_2)=(8,116.5,8.25\cos30^\circ,-8.25\sin30^\circ)$ with
+the shock through $(1/6,0)$ at $60^\circ$ to the $x$-axis;
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.4, as
+$(8,7.14471,-4.125,116.5)$ for $x<1/6+\tan(30^\circ)\,y$, with the
+upper boundary moving as $x\le1/6+\tan(30^\circ)\,y+\frac{10}{\cos30^\circ}t$;
+and [Hiejima (2022)](/sources/hiejima-2022.md) §3.4, Eq. (29), as
+$(8.0,\ 8.25\sin\theta,\ -8.25\cos\theta,\ 116.5)$ with
+$\theta=60^\circ$ the angle of the shock to the $x$-axis and the upper
+boundary at $x_s=10t/\sin\theta+1/6+1/\tan\theta$.
+[Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.4 give the geometry
+($[0,4]\times[0,1]$, wall from $x=1/6$, Mach 10 shock at $60^\circ$,
+$t=0.2$) without printing the states. The line
 $y=1.732(x-0.1667)$ is the same front to the printed digits, and the
-velocity components agree ($8.25\cos30^\circ=7.145$,
-$8.25\sin30^\circ=4.125$). The two groups differ in the post-shock
+velocity components agree ($8.25\cos30^\circ=8.25\sin60^\circ=7.145$,
+$8.25\sin30^\circ=8.25\cos60^\circ=4.125$). The two groups differ in the post-shock
 pressure, $116.5$ versus $116.8333$. The Rankine–Hugoniot conditions
 for a Mach 10 shock entering $(\rho,p)=(1.4,1)$ with $\gamma=1.4$
 (sound speed $c=1$, shock speed $10$) give
 $\rho=1.4\cdot\frac{(\gamma+1)M^2}{(\gamma-1)M^2+2}=1.4\cdot\frac{240}{42}=8$,
-a post-shock speed $10\,(1-1.4/8)=8.25$ and
+a post-shock speed $\frac{2c}{\gamma+1}\big(M-\frac1M\big)=8.25$ and
 $p=1+\tfrac{2\gamma}{\gamma+1}(M^2-1)=1+\tfrac76\cdot99=116.5$
-*(compiler check, not in the sources; recomputed 2026-10-21)*, so
+*(compiler check, not in the sources)*, so
 $116.5$ is the Rankine–Hugoniot post-shock pressure and $116.8333$ is
 $1/3$ (about 0.29 %) higher; Fu (2021), Takagi et al., Ye et al. and
 Huang et al. print it without comment. It is a setup difference, not a
 contradiction: no source compares the two. The shock's horizontal
-speed $10/\sin60^\circ=20/\sqrt3$ matches Peng et al.'s upper-boundary
-formula *(compiler check, not in the sources)*.
+speed $10/\sin60^\circ=10/\cos30^\circ=20/\sqrt3$ matches the
+upper-boundary formulas of Peng et al., Dzanic & Witherden and Hiejima
+*(compiler check, not in the sources)*.
 
 Wording differs in one more place: Ye et al. call the shock "at 30°"
-starting at $x=1/6$ and [Deng (2023)](/sources/deng-2023.md) App. A.11
-speak of "a 30° ramp", whereas Fu, Takagi et al., Huang et al., Peng et
-al. and [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.h speak of a
+starting at $x=1/6$, [Deng (2023)](/sources/deng-2023.md) App. A.11
+speak of "a 30° ramp", Dzanic & Witherden of a "30° ramp" and Hiejima
+of a shock "reflected by an inclined plane of 30°", whereas Fu, Takagi
+et al., Huang et al., Peng et al., Du et al., Yu & Hesthaven and
+[Balsara et al. (2024)](/sources/balsara-2024.md) §IX.h speak of a
 $60^\circ$ incidence. The printed data are the same; a shock normal to
 the flow meets a $30^\circ$ ramp at $60^\circ$, so the two angles
 describe one configuration *(compiler check, not in the sources)*.
+
+### Variants
+
+- **Wedge in the physical frame, unstructured mesh.**
+  [Chen et al. (2022)](/sources/chen-2022.md) §6.5 compute the
+  original wedge geometry instead of the rotated one: a Mach 10 shock
+  at $x=0$ moves into $(\rho,v_1,v_2,p)=(1.4,0,0,1)$, the post-shock
+  state "from the Rankine–Hugoniot relations", on
+  $[-0.5,2.5]\times[0,2.5]$ containing a slip-wall wedge that starts
+  at $x=0$; post-shock state on the left, supersonic outlet on the
+  right; 576,910 triangles, van Leer flux-vector splitting, four-stage
+  Runge–Kutta, $\Delta t=2.5\times10^{-5}$, $t=0.2$, 48 density
+  contours 2–24. The wedge angle is not stated in the text; their
+  Fig. 21 shows the ramp rising from $(0,0)$ to about $(2.5,1.44)$,
+  which is $30^\circ$ ($\tan30^\circ=0.577$, $1.44/2.5=0.576$)
+  *(compiler check, not in the sources)*.
+- **Relativistic double Mach reflection.**
+  [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.8 (arXiv v1) run
+  the special-relativistic version, also without rotation, on the wedge
+  domain with vertices $(-0.1,0)$, $(0,0)$, $(2.7,0.9\sqrt2)$,
+  $(2.7,2)$, $(-0.1,2)$, $h=1/240$ triangles, $\gamma=1.4$: a shock at
+  $x=0$ with speed $0.4984$, post-shock primitive state
+  $(\rho,v_1,v_2,p)=(8.564,0.4247,-0.4247,0.3808)$ and pre-shock state
+  $(1.4,0,0,0.0025)$, $t=4$. See
+  [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)
+  for the system.
+- **Dimensional ramp with an immersed boundary.**
+  [Wang et al. (2022)](/sources/wang-2022.md) §3.4 represent a
+  $36^\circ$ ramp by an
+  [immersed boundary](/methods/immersed-boundary-method.md) on a
+  Cartesian grid: air at 300 K, $p_0=2$ kPa, $\rho_0=0.02312$
+  kg m$^{-3}$, $c_0=348.04$ m s$^{-1}$; a Mach 4.5 shock starting at
+  $(0,0)$ with post-shock $\rho_s=0.11123$ kg m$^{-3}$ and
+  $p_s=46.917$ kPa; domain $[-5,70]\times[0,60]$ mm, $6000\times4800$
+  cells ($12.5\,\mu$m), $t=40\,\mu$s, constant inflow on the left,
+  slip wall on the bottom, outflow elsewhere; experiment of Ben-Dor &
+  Glass for comparison. Their printed post-shock normal velocity is
+  discussed under Qualifications.
 
 ## Runs in the sources
 
@@ -99,6 +158,14 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.9 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), sixth order, HLLC, modified first moments (HWENO6-M5-I) | $[0,4]\times[0,1]$, $1600\times400$ | CFL 0.6; 30 contours 1.5–22.7 |
 | [Pazner (2021)](/sources/pazner-2021.md) §5.7 | sparse IDP DG, $N=3$, subcell [convex limiting](/methods/convex-limiting.md) | $[0,4]\times[0,1]$, $2400\times600$ elements | $t=0.275$ (caption); 30 equispaced contours |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.7 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR) vs WENO-JS5, WENO-AO5 | $[0,3]\times[0,1]$, $1200\times400$ | CFL 0.6 |
+| [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.6 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS; finite volume, LLF, characteristic | $1024\times256$ | plotted $[2,3]\times[0,1]$, 40 contours 1.85–21.5; cost test (3700 steps) |
+| [Hiejima (2022)](/sources/hiejima-2022.md) §3.4 | [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with JS weights (WCNS-JS) and TENO-type weights (WCNS-T), interpolation orders 5–11, AUSMDV, RK4 at CFL 0.8 | $1024\times256\times5$, $2048\times512\times5$ (three-dimensional code) | 43 contours 1.887–20.9; zoom $2\le x\le3$ |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.4 | flux reconstruction, $\mathbb P_3$, with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) | $[0,4]\times[0,1]$, $2400\times600$ elements | HLLC |
+| [Du, Shu & Zhong (2022)](/sources/du-2022.md) Exs. 4.3, 4.9 | RKDG $P^1$, $P^2$ with the improved [simple WENO limiter](/methods/weno-limiter-dg.md) vs the original one | triangles $h=1/200$; point clouds of 400,000 ($P^1$) and 800,000 ($P^2$) points | KXRCF threshold $C_k=0.01$; 30 contours 1.1–22 (triangles), 29 contours 1.3–23 (point clouds) |
+| [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.4 | nodal DG on triangles with ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md), $P^2$–$P^4$ | $[0,4]\times[0,1]$, $h=1/204$ | fixed-DOF comparison $P^2$ (1,259,712 DOFs) vs $P^4$ (1,248,480 DOFs) |
+| [Chen et al. (2022)](/sources/chen-2022.md) §6.5 | second-order cell-centred FV with [vertex-based gradient reconstruction](/methods/unstructured-gradient-reconstruction.md) (VWLSQ with nonlinear weighting) vs WLSQ with the MLP-pw limiter | wedge, 576,910 triangles | variant above |
+| [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.8 | third-order FV WENO on triangles, physical-constraint-preserving limiter, HLL | wedge, $h=1/240$ | relativistic variant above |
+| [Wang et al. (2022)](/sources/wang-2022.md) §3.4 | ghost-cell [immersed boundary](/methods/immersed-boundary-method.md) (baseline, BCGCM, HBCGCM) vs a cut-cell method, MUSCL–Hancock | $6000\times4800$; error study on $1500\times1200$ | dimensional variant above |
 
 ## What the benchmark measures
 
@@ -117,39 +184,107 @@ and TENO6 at $512\times128$. Wang et al. (2023) find the new
 adaptive-diffusion flux resolves the wall-jet roll-up, the triple point
 and the slip-line instabilities "much better" (Figs. 3–4). Huang et al.
 find WENO3-NN, WENO5-JS and ROUND comparable and LD-ROUND richer
-(Fig. 12); Deng reports that ROUND resolves the second contact on
+(Fig. 12); Bezgin et al. likewise find WENO3-NN resolving finer
+structures than WENO3-JS, WENO3-Z and WENO3-N and close to WENO5-JS
+(§4.6, Fig. 14). Deng reports that ROUND resolves the second contact on
 $h=1/300$, "comparable and even better" than WENO-JS5 on a coarser mesh
 (Figs. 25, 36). Balsara et al. resolve Mach-stem instabilities at seventh
 order on $1920\times480$ (Fig. 18). Pazner reads the Kelvin–Helmholtz
 roll-ups near the triple point of his $N=3$ DG run as a sign of low
-dissipation (Fig. 13). Wang et al. (2021) find both multi-resolution
+dissipation (Fig. 13); Dzanic & Witherden find sub-element shock
+resolution with the roll-up kept, the filter acting mainly at the shock
+fronts (Fig. 4). Wang et al. (2021) find both multi-resolution
 schemes resolving the roll-up better than WENO-JS5 (Fig. 5.13).
+
+**Order does not buy roll-up by itself.** Hiejima's WCNS-JS shows no
+Kelvin–Helmholtz roll-up along the slip line at fifth order, and its
+seventh, ninth and eleventh orders look like its fifth; WCNS-T shows
+ripples at fifth order, a wavy slip line with small scales in the
+rolled-up vortex at seventh and more waves at ninth order, and at
+$2048\times512$ the small scales grow with order up to the end of the
+wall jet (§3.4, Figs. 7–9). At eleventh order on $1024\times256$ the
+slip line shows no waves, which Hiejima attributes, with a "probably",
+to the first-order interpolation the code falls back to where reconstructed density or
+pressure turn negative. Yu & Hesthaven find the roll-up more noticeable
+at higher DG degree on one mesh, but at comparable degrees of freedom
+($P^2$ against $P^4$) the shock thickness is comparable and the contacts
+are slightly sharper for $P^2$ (§5.4.4, Figs. 18–20). The meshes of
+that comparison are not printed; on uniform quadrilaterals split into
+two triangles the DOF counts correspond to $h=1/162$ for $P^2$ and
+$h=1/102$ for $P^4$ *(compiler check, not in the sources)*. For the
+immersed-boundary variant, Wang et al. (2022) recall that the numerical
+scheme is "generally thought" to influence the roll-up more than the
+boundary treatment; on $6000\times4800$ their four boundary methods put
+the discontinuities in the same place and differ in the wall jet, where
+the improved ghost-cell method produces smaller-scale vortices and a
+smoother field than the cut-cell method (§3.4, Figs. 14–15).
 
 **Robustness and stability margin.** The strong shock is also a
 robustness test. Luo & Wu must lower the CFL number to 0.1 for every
 scheme because their ninth-order reference WENO-Z9 does not run at
 larger values (§5.3.3). Huang et al. replace HLLC by HLL to avoid the
 [carbuncle](/definitions/carbuncle-phenomenon.md) at the Mach stem
-(§6.7). Peng et al. run third- and fourth-order OEDG without any
+(§6.7). Chen et al. (2022) report kinked Mach stems with the weighted
+least-squares gradients and the MLP-pw limiter, most strongly with the
+vertex stencil, and none with their nonlinear vertex weighting on the
+same stencil; since the flux (van Leer) is the same for all runs, they
+attribute the kinks to the reconstruction and limiter, not to the flux
+(§6.5, Fig. 22). Bezgin et al. see a slightly more pronounced
+post-shock instability behind the incident shock with WENO3-NN than
+with WENO3-N or WENO5-JS (§4.6). Hiejima needs a first-order fallback
+where interpolated $\rho$ or $p$ is negative, "due to the difficulty of
+calculating this problem using a high-order accuracy interpolation due
+to the strong shock wave" (§3.4). Peng et al. run third- and
+fourth-order OEDG without any
 positivity limiter being mentioned; they say only that their results
 agree with earlier computations. Li, Shu & Qiu report that the
 unmodified sixth-order HWENO "will blow up without modification" on
 this problem, and show only the run with modified first moments; they
 recall that the original Hermite WENO schemes are "not stable enough"
 for it, because the first derivatives grow large near discontinuities
-(§1, Ex. 3.9, Fig. 3.7).
+(§1, Ex. 3.9, Fig. 3.7). In the relativistic variant Chen & Wu's
+physical-constraint-preserving limiter acts on one or two cells in the
+first three steps only (Ex. 4.8).
+
+**Limiters on unstructured meshes.** Du et al. find the improved
+simple WENO limiter as good as the original at $P^1$ and better at
+$P^2$, with "better control" of oscillations and a better-resolved
+double Mach region on triangles (Ex. 4.3, Figs. 4.3–4.4); on point
+clouds the $P^2$ Mach stem is better resolved with the improved limiter,
+and they state that the original limiter needed $1{,}664{,}000$ points
+in their earlier work for the resolution they reach with $800{,}000$
+(Ex. 4.9, Figs. 4.14–4.15).
 
 **Cost.** Takagi et al. report cost per step (Table 3, hardware not
 stated): WENO5-Z 696 / 2802 ms, TENO5 810 / 3255 ms, TENO-THINC 946 /
 3810 ms, TENO6 867 / 3330 ms at $512\times128$ / $1024\times256$, i.e.
-TENO-THINC costs 16.8 % (17.1 %) more than TENO5.
+TENO-THINC costs 16.8 % (17.1 %) more than TENO5. Bezgin et al. time
+the $1024\times256$ run for 3700 steps in JAX on a GPU, in ns per cell
+and step: WENO3-JS 389, WENO3-Z 396, WENO3-N 411, WENO3-NN1 1676 (4.31
+times WENO3-JS), WENO3-NN2 1743 (4.48 times), WENO5-JS 561 (1.44 times),
+with unoptimized networks (§4.9, Table 2). Du et al. measure the CPU
+time saved by the improved limiter: 12.34 % ($P^1$) and 17.88 %
+($P^2$) on triangles (Table 4.7), 36.11 % and 54.92 % on point clouds,
+the latter with 10 and 30 MPI processes respectively (Table 4.17).
 
 **Unstructured meshes.** Fu (2023) reproduces finite-volume TENO6 on
-triangular meshes of 151,850 to 752,708 cells (Fig. 11).
+triangular meshes of 151,850 to 752,708 cells (Fig. 11). Chen et al.
+(2022), Chen & Wu (2022), Du et al. and Yu & Hesthaven also compute on
+triangles, and Du et al. on polygonal cells built from point clouds.
+
+**Error norms.** Wang et al. (2022) are the only source that measures
+an error: density errors on $1500\times1200$ against the baseline
+ghost-cell solution on $6000\times4800$, with the hybrid ghost-cell
+method lowest of four in all norms ($L^1$ error total /
+boundary region $2.3\times10^{-4}$ / $5.0\times10^{-4}$, against
+$4.2\times10^{-4}$ / $2.1\times10^{-3}$ for the cut-cell method;
+§3.4, Table 2). The reference is one of the compared methods on a finer
+grid, not an exact solution.
 
 ## Qualifications
 
-- The roll-up criterion is qualitative. No source gives an error
+- The roll-up criterion is qualitative. Except for Wang et al.
+  (2022), no source gives an error
   norm; claims of superiority rest on contour plots, often against
   figures of other papers (Fu 2021 compares with
   figures of another work; Ye et al. with literature grids; Deng's
@@ -165,6 +300,41 @@ triangular meshes of 151,850 to 752,708 cells (Fig. 11).
 - Pazner's Fig. 13 caption gives $t=0.275$, later than the $t=0.2$ of
   the other sources; the run is therefore at a later stage of the
   roll-up.
+- Hiejima's text calls condition (A) the post-shock state and imposes
+  "post-shock condition (A)" at the inflow and on $0\le x\le1/6$ of the
+  bottom, but Eq. (29) gives (A) the values $(1.4,0,0,0,1.0)$, the gas
+  at rest ahead of the shock, and (B) the compressed state
+  $(8.0,\dots,116.5)$. The values are the Woodward–Colella ones: the
+  state $(1.4,1)$ has sound speed 1, consistent with the
+  upper-boundary speed $10/\sin\theta$ of a Mach 10 shock, and the
+  Rankine–Hugoniot relations map it to $(8,8.25,116.5)$ (see Setup)
+  *(compiler check, not in the sources)*. The labels (A)/(B) in the
+  text and in Fig. 6 are swapped against Eq. (29).
+- Dzanic & Witherden print "no-slip adiabatic wall" conditions on the
+  bottom for $x\ge1/6$ in an inviscid computation (§5.1.4); a no-slip
+  condition cannot be imposed on the Euler equations, and the paper
+  itself replaces no-slip by slip for the hyperbolic step (§4.1). The
+  reflecting wall of the other sources is what the setup requires.
+- Wang et al. (2022) print the post-shock normal velocity as
+  $u_{n,s}=1566.2$ m s$^{-1}$. With their $c_0=348.04$ m s$^{-1}$,
+  $4.5\,c_0=1566.2$ m s$^{-1}$ is the shock speed; the Rankine–Hugoniot
+  gas velocity behind a Mach 4.5 shock is
+  $\frac{2c_0}{\gamma+1}\big(M-\frac1M\big)\approx1240.7$ m s$^{-1}$,
+  while their density ratio $0.11123/0.02312=4.811$ and pressure ratio
+  $46.917/2=23.458$ agree with the Rankine–Hugoniot values $4.812$ and $23.458$
+  *(compiler check, not in the sources)*. Only the printed velocity is
+  inconsistent; which value the code used cannot be read from the paper.
+- Chen & Wu's relativistic post-shock state has $v_2=-0.4247$ for a
+  shock at $x=0$ moving in $+x$. With $\gamma=1.4$, the state
+  $(8.564,0.4247,0,0.3808)$ satisfies the relativistic
+  Rankine–Hugoniot conditions against $(1.4,0,0,0.0025)$ at shock speed
+  $0.4984$ to the four printed digits (residuals below $10^{-3}$),
+  whereas the printed state with $v_2=-0.4247$ leaves residuals of
+  order $10^{-1}$ *(compiler check, not in the sources)*. The
+  $v_2$ entry is therefore inconsistent with the stated shock; the
+  paper's figure cannot decide which data were run.
+- Yu & Hesthaven print no initial states; their run is listed as a
+  Woodward–Colella run on their own citation of the setup.
 
 # Citations
 
@@ -181,3 +351,11 @@ triangular meshes of 151,850 to 752,708 cells (Fig. 11).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1; Ex. 3.9, Fig. 3.7 (arXiv v1).
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.7, Fig. 13 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.7, Fig. 5.13.
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.6, Eq. (37), Fig. 14; §4.9, Table 2.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4, Eq. (29), Figs. 6–9.
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.4, Fig. 4 (arXiv v3).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — Exs. 4.3, 4.9, Figs. 4.2–4.4, 4.13–4.15, Tables 4.7, 4.17.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.4, Figs. 18–20.
+- [Chen et al. (2022)](/sources/chen-2022.md) — §6.5, Figs. 21–22.
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.8, Fig. 12 (arXiv v1).
+- [Wang et al. (2022)](/sources/wang-2022.md) — §3.4, Table 2, Figs. 14–15.

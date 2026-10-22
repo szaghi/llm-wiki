@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Bound preservation"
-description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and its invariant-domain form, the admissible sets of the sources with their convexity, the cell-average route of Zhang and Shu, the flux-limiting and convex-limiting routes, and the geometric-quasilinearization proofs."
+description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and its invariant-domain form, the admissible sets of the sources with their convexity, the Zhang–Shu cell-average route with its viscous, reacting-flow and relativistic extensions, the flux-limiting, convex-limiting and filtering routes, and the geometric-quasilinearization proofs."
 status: established
-aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, BP, PP, IDP]
+aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Bound preservation
@@ -41,21 +41,30 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 | linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2 |
 | Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25) |
 | Euler with a minimum principle on the specific entropy | $\{\rho>0,\ \rho e>0,\ s\ge s_{\min}\}$, i.e. $p\rho^{-\gamma}\ge\exp(s_{\min})$; Pazner writes the specific entropy as $\ln(e^{1/(\gamma-1)}\rho^{-1})$ | Wu & Shu (2023), Eq. (2.3), Thm 4.7; Pazner (2021), Eq. (65) |
+| Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
+| reacting multicomponent Navier–Stokes, calorically perfect species | $\{\rho\ge0,\ P(u)\ge0,\ \rho Y_k\ge0\}$, $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2=p/(\gamma(u)-1)$ ($h_k(0)$ formation enthalpies, page-local); $Y_k\le1$ is not in $G$ | Du & Yang (2022), §4.1, Eq. (4.1) |
 | five-equation two-phase model, stiffened gases | $\{0\le\phi_1\le1,\ \phi_k\rho_k\ge0,\ \rho e-\bar p_\infty>0\}$ ($\phi_k$ volume fractions, $\bar p_\infty$ mixture stiffness, page-local) | Wong et al. (2021), Eqs. (10), (12) |
-| special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum) | Wu & Shu (2023), Thm 4.9; Cui et al. (2024), Ex. 4–5 |
+| special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
 | ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
 | multicomponent MHD | $0\le Y_k\le1$, $\rho>0$, $p>0$ | Wu & Shu (2023), Eq. (6.4) |
 
 Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md),
+[Du & Yang (2022)](/sources/du-2022-b.md),
+[Chen & Wu (2022)](/sources/chen-2022-b.md),
 [Renac (2021)](/sources/renac-2021.md),
 [Wong et al. (2021)](/sources/wong-2021.md),
 [Liu et al. (2021)](/sources/liu-2021.md),
 [Zheng et al. (2022)](/sources/zheng-2022.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
-[five-equation model](/definitions/five-equation-model.md) pages.
+[five-equation model](/definitions/five-equation-model.md) pages, the
+relativistic one on
+[relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
+Chen & Wu call bound preservation for that set *physical-constraint
+preservation* (PCP).
 
 **Convexity.** Every set in the table is convex, and convexity is not
 incidental: [Wu & Shu (2023)](/sources/wu-2023-b.md) take "$G$ convex with
@@ -75,7 +84,14 @@ ratio of specific heats, and that it cannot be concave otherwise (Lemma 1,
 Theorem 1); they call the hypothesis mild for gas–liquid pairs (water
 $\gamma$ 4–7 against 1.4 for air, §2). Fan et al. also note that
 $p>0\Leftrightarrow e>0$ holds for the ideal gas and fails for other
-equations of state such as JWL (§3.1).
+equations of state such as JWL (§3.1). For reacting mixtures
+[Du & Yang (2022)](/sources/du-2022-b.md) use that the mixture
+$\gamma(u)-1=\sum_kY_kR_u/W_k\big/\sum_kY_kc_{v,k}$ is positive for
+$Y_k\ge0$, so $p\ge0\Leftrightarrow P(u)\ge0$, and that $P$ is concave,
+hence $G$ convex (§4.1; $R_u$, $W_k$, $c_{v,k}$ the gas constant, molar
+masses and specific heats, page-local). For relativistic hydrodynamics
+$g(u)=E-\sqrt{D^2+\lvert m\rvert^2}$ is concave (Chen & Wu, Lemma 2.1,
+recalled from Wu & Tang).
 
 ## Route 1: first-order BP scheme, cell-average decomposition, scaling limiter
 
@@ -120,8 +136,8 @@ when the point values are, and the limiter supplies the point values
 $\mathsf w_0^{\mathrm{GL}}=1/(L(L-1))$ with $L=\lceil(N+3)/2\rceil$ in 1D
 and on Cartesian $\mathbb Q^N$ cells; Cui et al. prove it optimal there and,
 for $\mathbb P^N$ at zero anisotropy, improve it by a factor between 1.5
-($N=2,3$) and about 1.74 ($N=6,7$) (Thms 2.3, 4.1; Table 1; the ratios
-are the compiler's, from the tabulated values).
+($N=2,3$) and about 1.74 ($N=6,7$) (Thms 2.3, 4.1; Table 1) *(compiler
+check, not in the sources: ratios of the tabulated weights)*.
 
 **Extensions of the route in the sources.**
 
@@ -161,6 +177,48 @@ are the compiler's, from the tabulated values).
   average without any CFL bound (CFL 10.2 in the tests); the guarantee is
   conditional on exact evaluation of the line integrals, and the limiter
   needs the exact minimum of the polynomial over the cell (Rem. 2.1).
+- *Viscous reacting flows* ([Du & Yang (2022)](/sources/du-2022-b.md),
+  §3–§5). For local DG on the reacting multicomponent Navier–Stokes
+  equations, the total flux $f^{\mathrm a}-f^{\mathrm d}$ (advective minus
+  diffusive) is treated as one flux, as in Zhang (2017), with a
+  Lax–Friedrichs penalty $a^{\mathrm R}$ (page-local; the source's $\beta$)
+  that Lemma 4.1 extends to species: $u\pm f/a^{\mathrm R}\in G$ **iff**
+  $a^{\mathrm R}\ge\max\big\{\lvert v+\frac{b}{2\rho P}\rvert+\frac{\sqrt{\mathfrak D}}{2\rho P},\ \lvert v+v_k\rvert\big\}$,
+  with $v_k$ the species diffusion velocities and $b$, $\mathfrak D$ built
+  from the heat flux, the viscous stress and the pressure (Eq. (3.5);
+  page-local). The upper bound $Y_k\le1$ is not limited but follows from
+  conservation: with the constant vector $\mathsf v=(1,0,0,0,-1,\dots,-1)$
+  (page-local), $u\cdot\mathsf v=\rho-\sum_k\rho Y_k$, and a numerical flux
+  with $\hat f\cdot\mathsf v=0$ ("consistent") makes the semi-discrete and
+  the fully discrete schemes preserve $\sum_kY_k=1$ exactly (Defs. 2.1, 3.1,
+  Thms 3.1–3.2), so non-negative partial densities give $Y_k\le1$. Stiff
+  chemistry is integrated by the authors' third-order conservative
+  modified exponential Runge–Kutta method, which adds a linear damping
+  $\mu_{\mathrm R}u$ (page-local) and writes each stage as a convex
+  combination of a convective update and a source update
+  $\bar s/\mu_{\mathrm R}+\bar u$; the cell averages stay in $G$ under the
+  Gauss–Lobatto CFL bound times $\min\alpha_{jl}/\beta_{jl}$ over the method's
+  Shu–Osher coefficients and a lower bound on $\mu_{\mathrm R}$ from the
+  production rates (Thms 4.1–4.3, 2D Thms 5.4–5.6). The factor is about
+  0.793 *(compiler check, not in the sources: from the printed
+  coefficients)*. A four-step
+  [scaling limiter](/methods/zhang-shu-scaling-limiter.md) supplies the
+  point values. On a stiff accuracy test (source coefficient $10^6$) the
+  scheme converges at third order where SSP-RK3 with the same step returns
+  NaN (Table 6.2); without the limiter the He/N$_2$ and H$_2$/O$_2$/Ar
+  shock tubes blow up (Figs. 6.2–6.3).
+- *Relativistic hydrodynamics on triangles* ([Chen & Wu (2022)](/sources/chen-2022-b.md),
+  §3). Third-order finite-volume WENO with the HLL flux is PCP under
+  $\Delta t\,\hat a\,\lvert e\rvert/\lvert K\rvert\le\frac23\mathsf w^{\mathrm{GL}}_0$
+  on every edge (Thm 3.1), from the triangle decomposition of
+  [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md),
+  a two-step scaling limiter and the GQL proof of Route 2. Because every
+  flux evaluation needs the pressure from a nonlinear equation, the route
+  also needs a primitive recovery that is guaranteed to converge to a
+  positive pressure for admissible states; Chen & Wu provide three
+  (bisection, a contractive fixed point and a hybrid) and note that
+  Newton's method can return a negative pressure (§3.4, Rem. 3.6). Without
+  the limiter their code fails on most tests (§4).
 
 **Time stepping.** The sources extend the forward-Euler result to
 [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and SSP multistep methods,
@@ -172,7 +230,9 @@ because SSP methods are convex combinations of forward-Euler steps
 [Wong et al. (2021)](/sources/wong-2021.md), §5.3, "the CFL upper limit is
 still 0.5"). The limiter must then be applied at every stage. Fan et al.
 state instead that their theorems hold for SSP-RK3 "if the CFL is one
-third" of the forward-Euler bound (§3.3); see Qualifications.
+third" of the forward-Euler bound (§3.3); see Qualifications. Du & Yang
+replace SSP stepping by an exponential method whose stages are convex
+combinations as well, with the CFL factor above (Thm 4.3).
 
 ## Route 2: proofs for nonlinear constraints — geometric quasilinearization
 
@@ -189,7 +249,11 @@ Its use for BP is that linearity commutes with the convex-combination and
 flux-difference structure of the update: Wu & Shu give short BP proofs for
 first-order Lax–Friedrichs and gas-kinetic schemes for Euler, a
 Navier–Stokes scheme without convex splitting of convection and diffusion,
-and a ten-moment Lax–Friedrichs scheme (§5). The Navier–Stokes flux of
+and a ten-moment Lax–Friedrichs scheme (§5).
+[Chen & Wu (2022)](/sources/chen-2022-b.md) use the 2D GQL form of the
+relativistic admissible set to prove the HLL flux PCP; the difficulty the
+linear form removes is that pressure and velocity are implicit functions
+of the conserved variables (§1, §3.5). The Navier–Stokes flux of
 Fan et al. above obtains the same guarantee by a different route, a
 Lax–Friedrichs coefficient large enough to absorb the viscous flux.
 
@@ -228,6 +292,19 @@ the bounds.
   and needs the limiter on the Mach 2000 jet, where it activates only near
   the jet front and inlet corners
   ([Wang & Don (2022)](/sources/wang-2022-b.md), §3.2.4, Fig. 8).
+
+## Route 4: constraint-driven filtering
+
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) assume that the
+element mean of nodal DG or flux reconstruction stays admissible under SSP
+stepping, a CFL condition and a positivity-preserving Riemann solver (§2.2,
+attributed to Zhang & Shu and others "without presenting a comprehensive
+proof"), and after every stage filter each violating element with an
+exponential modal filter whose strength is the smallest that brings every
+nodal value into $G$, including a local minimum of $\rho s$
+([entropy filtering](/methods/entropy-filtering.md)). The guarantee is
+nodal: between nodes the filtered polynomial may leave $G$. The linear
+scaling limiter is the special case of a degenerate filter (§3.1).
 
 ## Bound preservation and the divergence of the magnetic field
 
@@ -270,10 +347,26 @@ The details are on
   on the Mach 800 jet with degree-2 reconstruction), attributed to the
   ill-conditioning of the least-squares solve and removed by a looser SVD
   truncation (§4.5); they state that their limiter acts on "reconstructed
-  polynomials of density and thermal pressure", without saying how the
-  pressure polynomial relates to the reconstructed conservative variables
-  on which Route 1 guarantees the cell average *(compiler remark, not in the
-  sources)*.
+  polynomials of density and thermal pressure", and do not state how the
+  pressure polynomial is obtained from the reconstructed conservative
+  variables (§3.3.4).
+- **Proved and practised steps differ.** Du & Yang's runs use
+  $\Delta t=\min\{a_\Delta\Delta x/a^*,\ b_\Delta\Delta x^2/\eta^*\}$ with a wave speed $a^*$
+  that omits the viscous and heat-flux terms of the proved penalty, compute
+  the damping rate from $u^n$ only although the theorem needs it at every
+  stage, and restart a step with doubled damping and halved $\Delta t$
+  whenever a cell average leaves $G$, which Theorem 4.3 guarantees to
+  terminate ("very few recomputations are observed", §6, Eqs. (6.1)–(6.2);
+  $a_\Delta$, $b_\Delta$, $a^*$, $\eta^*$ page-local, $\eta^*$ the largest viscosity,
+  not an entropy). Their 2D detonation runs at $N=1$, because higher
+  order needs a further oscillation limiter (§6.6).
+- **Entropy control is not positivity.** [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
+  find that central DG and SBP finite differences with entropy and
+  kinetic-energy [correction terms](/methods/entropy-correction-term.md)
+  still blow up on the inviscid Taylor–Green vortex, from negative nodal
+  densities or pressures, after which entropy variables cannot be formed
+  (§4.2.2, §6); their high-order radial Sod runs use MOOD for positivity
+  (Fig. 5).
 - **Clipping is not bound preservation.** MFC clips volume fractions to
   $[0,1]$ and renormalises them only when it evaluates mixture properties,
   so as not to pollute conservation, and claims no positivity
@@ -281,7 +374,12 @@ The details are on
   Eq. (33)). [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md)
   truncate the reconstructed interface density with $[\cdot]_+=\max(0,\cdot)$
   in their hydrostatic reconstructions and prove no positivity theorem for
-  the update (§4.1, Eqs. (4.13)–(4.14)).
+  the update (§4.1, Eqs. (4.13)–(4.14)). [Hiejima (2022)](/sources/hiejima-2022.md)
+  falls back to first-order interpolation wherever an interpolated density
+  or pressure of his WCNS is negative, on the double Mach reflection only,
+  after Kamiya et al.; the paper does not say on which side or for which
+  variables (§3.4), and its 11th-order slip line loses its wavy structure,
+  "probably caused by" this fallback.
 - **SSP time stepping.** Fan et al.'s "one third of the CFL" for SSP-RK3
   (§3.3) is stricter than the statement of Wong et al. that the bound is
   unchanged (§5.3). Each stage of the Shu–Osher form that Fan et al. print
@@ -327,3 +425,8 @@ The details are on
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — arXiv v1: §4.2.1, Eq. (33) (clipping only).
 - [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md) — arXiv v1: §4.1, Eqs. (4.13)–(4.14) (truncation only).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: Ex. 5.17–5.18 (no positivity limiter mentioned).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §1; §2 (Lemmas 2.1–2.2); §3 (Thm 3.1); §3.4 (Rem. 3.6); §3.5; §4.
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §2.4 (Def. 2.1); §3 (Def. 3.1, Thms 3.1–3.2, Eq. (3.5)); §4 (Eq. (4.1), Lemma 4.1, Thms 4.1–4.3); §5 (Thms 5.4–5.6); §6 (Eqs. (6.1)–(6.2), Tables 6.1–6.2, Figs. 6.2–6.3, §6.6).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §2.2; §3.1–§3.2; §4.1.
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: Fig. 5 (MOOD); §4.2.2; §6.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4 (first-order fallback).

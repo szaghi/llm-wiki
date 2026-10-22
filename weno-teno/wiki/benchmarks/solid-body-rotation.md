@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Solid-body rotation
@@ -20,8 +20,9 @@ measures how a scheme handles a smooth profile, a kink and a
 discontinuity at once: the $L^1$ error measures dissipation, and the
 range of the computed solution against $[0,1]$ measures over- and
 undershoots, a [bound-preservation](/properties/bound-preservation.md)
-test for the scalar maximum principle. Both sources attribute it to
-LeVeque.
+test for the scalar maximum principle. Pazner and Kuzmin & Vedral
+attribute it to LeVeque; a third source rotates a single smooth bump
+for a different purpose.
 
 ## Setup
 
@@ -77,6 +78,32 @@ peak clipping (§4.4, Fig. 6). See
 [convex limiting](/methods/convex-limiting.md) and
 [troubled-cell indicators](/definitions/troubled-cell-indicator.md).
 
+## Rotating smooth bump
+
+[Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) §4.1,
+Eq. (43) (arXiv v4) rotate a single Gaussian,
+$u_0=\exp(-40(x^2+(y-0.5)^2))$, once on the unit disk to $t=1$ with
+outflow boundaries, fourth-order continuous Galerkin residual
+distribution on Bernstein polynomials, SSPRK(5,4), CFL 0.4, 3582
+triangles, applying their
+[entropy correction term](/methods/entropy-correction-term.md) at each
+Runge–Kutta stage. The test compares the two weightings of the
+correction on smooth data, not limiters: the energy changes are
+$2.2904450548\times10^{-19}$ against $2.2904450546\times10^{-19}$ at
+$t=0.5$ and $1.20908075699\times10^{-17}$ against
+$1.20908075829\times10^{-17}$ at $t=1$, and the $L^\infty$ errors
+$1.5323772081\times10^{-4}$ against $1.5323772103\times10^{-4}$
+(Table 1), so the weightings differ only in the tenth significant
+digit, relative differences of about $10^{-10}$ to $10^{-9}$
+*(compiler check, not in the sources)*. They
+call it a "linear rotation" of a bump "moving around in a circle", but
+print the fluxes $\partial_x(2\pi yu)+\partial_y(2\pi xu)$, i.e. the
+velocity $(2\pi y,2\pi x)$, whose streamlines $x^2-y^2=\mathrm{const}$
+are hyperbolas through a saddle at the origin; a rotation of period one
+needs opposite signs, e.g. $(-2\pi y,2\pi x)$ *(compiler check, not in
+the sources)*. A sign is lost in print; which field was run cannot be
+read from the paper.
+
 ## Qualifications
 
 - Kuzmin & Vedral write "the exact solution of the linear advection
@@ -93,3 +120,4 @@ peak clipping (§4.4, Fig. 6). See
 
 - [Pazner (2021)](/sources/pazner-2021.md) — §4.1.4, Fig. 4; §4.4, Fig. 6; §5.4, Fig. 10 (arXiv v1).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §7.3, Eqs. (24)–(25), Figs. 3–5 (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.1, Eq. (43), Table 1 (arXiv v4).

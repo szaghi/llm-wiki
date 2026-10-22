@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Smoothness indicators
@@ -39,7 +39,20 @@ $$\begin{aligned}
 The same three expressions appear in TENO papers under the central-first labelling
 (Fu 2021, Eq. (28); Takagi et al. 2022, Eq. (10); Ye et al. 2022, Eq. (5)). On the compact two-point
 stencils of third-order WENO they reduce to $\beta_0=(\bar u_{i-1}-\bar u_i)^2$,
-$\beta_1=(\bar u_i-\bar u_{i+1})^2$ (Deng 2023, Eq. (4.22); Huang et al. 2026, Eq. (3.4)).
+$\beta_1=(\bar u_i-\bar u_{i+1})^2$ (Deng 2023, Eq. (4.22); Huang et al. 2026, Eq. (3.4); Bezgin,
+Schmidt & Adams 2022, Eq. (10)). For the point-value *interpolation* of the alternative formulation,
+Chu, Kurganov & Na (2022, Eqs. (3.6)–(3.7)) use the same three fifth-order expressions, and reuse them
+unchanged for the interpolation to the quarter points $x_{i\mp1/4}$, where only the linear weights
+change ([alternative WENO](/methods/alternative-weno.md)).
+
+**Difference-operator form.** In WCNS interpolation, Hiejima (2022, Eq. (14)), after Deng & Zhang,
+sums the unweighted squares of the scaled finite-difference derivatives of the candidate,
+$\beta_k=\sum_n\big[\mathsf D^n_k\big]^2$, over the derivative orders the substencil supports, where
+$\mathsf D^n_k$ is the difference approximation of $\Delta x^n\partial_x^nu$ at $x_i$ on $S_k$
+(page-local, as on the source page; $u$ one primitive variable, interpolated componentwise). On
+$\{i-1,i,i+1\}$ it is $\big[\tfrac12(u_{i+1}-u_{i-1})\big]^2+(u_{i-1}-2u_i+u_{i+1})^2$. *(Compiler check, not in the
+sources: the Jiang–Shu $\beta_1$ above is the same expression with the second-difference square weighted
+by $\tfrac{13}{12}$ instead of 1.)* Hiejima applies it to substencils of 3 to $(K+3)/2$ points, $K$ the size of his full stencil.
 
 **Wider stencils.** Ye et al. (2022, Eq. (5)) give the four-point indicators of TENO7, e.g. for
 $\{i,\dots,i+3\}$
@@ -159,6 +172,22 @@ the cell-average correction of the candidates does not affect the indicator (Rem
   $\beta_s=\sum_k\sum_lc^s_k\,\mathcal O_{kl}\,c^s_l$ is a quadratic form in the polynomial
   coefficients $c^s_k$ with a precomputed "oscillation indicator" matrix $\mathcal O_{kl}$
   (page-local symbols); no mesh-size factor is printed ([CWENO](/methods/cweno.md)).
+- **Triangles.** In the Zhu–Qiu reconstruction on triangles, Chen & Wu (2022, §3.2.1, Eq. (33))
+  scale the derivatives of order $|\alpha|$ of the quadratic by $|K|^{|\alpha|-1}$ and the linear
+  candidates without factor (as in Hu–Shu), and form the global indicator
+  $\tau=\tfrac14\sum_{\ell=1}^4|\beta_0-\beta_\ell|=O(|K|^{3/2})$ from the quadratic's and the four
+  linear candidates' indicators (citing Zhu & Qiu; their $\tau^2$ is Zhu & Qiu's $\tau$). In the
+  simple WENO limiter for DG, Du, Shu & Zhong (2022, Eq. (3.6)) use
+  $\beta=\sum_{1\le|\ell|\le N}|K_0|^{|\ell|-1}\int_{K_0}\big(\tfrac{1}{|\ell|!}\partial^{\ell}p\big)^2d\mathbf x$ for a
+  degree-$N$ polynomial $p$ on the target triangle $K_0$ (page-local multi-index $\ell$), with the
+  factor $1/|\ell|!$ that the one-dimensional form lacks
+  ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+- **Vertex gradients.** In a second-order unstructured finite-volume scheme, Chen, Zhang, Liu & Chen
+  (2022, §5, Eq. (25)) measure the smoothness of each vertex gradient direction by direction,
+  $(\partial_xu_a)^2|K|$ and $(\partial_yu_a)^2|K|$ (page-local: $u_a$ the
+  least-squares vertex value, $|K|$ the cell area), which scales as $h^2|\nabla u|^2$ like a
+  $\beta_k$; the weights are WENO-JS-type with exponent 2 and an unscaled
+  $\epsilon=10^{-3}$ ([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)).
 - **Cartesian 2-D.** Li, Shu & Qiu (2022, Eq. (2.48)) scale each derivative of order $|\alpha|$ by
   $|I_{i,j}|^{|\alpha|-1}$; Zheng, Cai, Qiu & Qiu (2022, Eq. (12)) by
   $\Delta x^{l_1}\Delta y^{l_2}$ for $\partial_x^{l_1}\partial_y^{l_2}$, summed up to the degree of the
@@ -178,17 +207,34 @@ the cell-average correction of the candidates does not affect the indicator (Rem
 
 ## Other meanings of the term
 
-Two sources use "smoothness indicator" for quantities of a different kind:
+Several sources use "smoothness indicator" for quantities of a different kind:
 
-- Basile et al. (2022, §4.2, Eqs. (36)–(37)), after Mavriplis, call the decay rate $\sigma_K$ of a
-  least-squares fit $\mathcal N_n\simeq Ce^{-\sigma_Kn}$ to the per-degree norms $\mathcal N_n$ of a DG element's modal
-  coefficients, $n\ge1$, a smoothness indicator (page-local symbols); $\sigma_K>1$ means smooth and selects
+- Basile et al. (2022, §4.2, Eqs. (36)–(37)), after Mavriplis, call the decay rate $\varrho_K$ of a
+  least-squares fit $\mathcal N_n\simeq Ce^{-\varrho_Kn}$ to the per-degree norms $\mathcal N_n$ of a DG element's modal
+  coefficients, $n\ge1$, a smoothness indicator (page-local symbols); $\varrho_K>1$ means smooth and selects
   $p$-enrichment, otherwise $h$-refinement. It grows with smoothness, the opposite sense of $\beta_k$,
   and is computable only for degree $\ge2$ ([h- and hp-adaptation](/methods/hp-adaptation.md)).
 - Matsushita & Aoki (2021, §3.1, Eq. (27)) call the slope ratio of a minmod-limited blend of third-order
   WENO with first-order upwinding a "smoothness indicator"; it is the TVD ratio $r_i$ of the registry
   ([TVD limiters](/definitions/total-variation-diminishing.md),
   [hybrid schemes](/methods/hybrid-weno.md)).
+
+- Yu & Hesthaven (2022, §4.1, Eqs. (4.1)–(4.2)), after Klöckner, Warburton & Hesthaven, use the
+  algebraic decay rate $\mathfrak a_K$ of the modal coefficients of a DG element,
+  $|\hat q_m|\simeq c\,m^{-\mathfrak a_K}$ (page-local, as on the [artificial viscosity](/methods/artificial-viscosity.md) page; their $\tau$, unrelated to the WENO-Z
+  $\tau$), with the Fourier analogy $\mathfrak a_K=1$ for a jump, 2 for a kink ($C^0$ but not $C^1$), 3 for $C^1$ but
+  not $C^2$ (their Eq. (4.2)); the least-squares estimate is replaced by a neural-network prediction from 11
+  normalized point values, and $\mathfrak a_K$ sets an artificial viscosity
+  ([artificial viscosity](/methods/artificial-viscosity.md),
+  [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). It also grows with smoothness.
+- Bezgin et al. (2022, §3.2, Eq. (22)) use a "resolvedness indicator"
+  $\varsigma=\dfrac{|\bar u_{i-1}-2\bar u_i+\bar u_{i+1}|}{|\bar u_i-\bar u_{i-1}|+|\bar u_{i+1}-\bar u_i|+\epsilon}\in[0,1]$
+  (page-local, as on the learned-weights page; their $\gamma$), derived from the ratio of the second- to the first-order Taylor term,
+  only in the training loss of WENO3-NN, to weight the reconstruction error against the deviation
+  from the linear weights ([learned WENO weights](/methods/learned-weno-weights.md)).
+  *(Compiler check, not in the sources: $\varsigma=1$ exactly when the two one-sided
+  differences have opposite signs or one vanishes, i.e. at every discrete extremum of the averages,
+  smooth or not.)*
 
 ## Qualifications
 
@@ -209,6 +255,13 @@ Two sources use "smoothness indicator" for quantities of a different kind:
   first-order derivatives. *(Compiler check, not in the sources: a zeroth-order term makes the
   indicator change when a constant is added to the data.)* The paper does not comment.
 - Wong et al. (2021) do not print the value of $\epsilon$ in their weights.
+- Bezgin et al. (2022, Eq. (9)) print the general indicator with the sum starting at the zeroth
+  derivative and the integrand not squared; their own two-point values (Eq. (10)) are those of the
+  squared first derivative, the Jiang–Shu form above. Chu et al. (2022, Eq. (3.6)) print both limits
+  of the integral as $x_{j+1/2}$; their explicit forms (3.7) are the Jiang–Shu ones.
+- Hiejima (2022, Eq. (14)) writes the sum over $n=1,\dots,(K-1)/2$ (his $r-1$) for every substencil, though the
+  difference operators exist only up to one less than the substencil size (blank in his Tables 1, 3,
+  5); the sum runs over the available orders.
 
 # Citations
 
@@ -234,3 +287,10 @@ Two sources use "smoothness indicator" for quantities of a different kind:
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.1, Eqs. (8)–(9); §3.3.3, Eq. (27).
 - [Basile et al. (2022)](/sources/basile-2022.md) — §4.2, Eqs. (36)–(37).
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.1, Eqs. (26)–(27).
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §2, Eqs. (9)–(10); §3.2, Eqs. (20)–(22).
+- [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eqs. (25)–(26).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §3.2.1, Eqs. (32)–(34).
+- [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §3, Eqs. (3.6)–(3.7); §4.
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3.1, Eq. (3.6).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.4, Eq. (14); Tables 1, 3, 5.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §4.1, Eqs. (4.1)–(4.3).

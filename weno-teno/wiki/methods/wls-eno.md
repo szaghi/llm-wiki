@@ -5,7 +5,7 @@ description: "WLS-ENO is a single-stencil finite-volume reconstruction: a weight
 status: established
 aliases: [WLS-ENO, weighted least-squares ENO, conservative WLS-ENO, locally divergence-free WLS-ENO, LDF WLS-ENO]
 tags: [reconstruction, finite-volume, mhd, positivity]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # WLS-ENO reconstruction
@@ -107,6 +107,21 @@ normal-jump part (Eqs. (32)–(35)). No limiter other than the positivity limite
   with $\sigma_1\times10^{-6}$, the failure being "possibly attributed to ill-conditioned matrix"
   (§4.5; [high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md)).
 
+## The same idea at second order
+
+Chen, Zhang, Liu & Chen (2022, §5, Eq. (24)) use solution-dependent least-squares weights in a
+second-order unstructured finite-volume scheme, relating them to the solution-dependent least
+squares of Mandal et al. rather than to WLS-ENO: in the fit of a linear function at each mesh vertex
+$a$ through the surrounding cell values, the geometric weight $w_i$ of cell $i$ becomes
+$w_i/\big((p_a-p_i)^2+\epsilon\big)$, with the vertex and cell pressures as the only detector, so one
+matrix serves all variables, and $\epsilon=10^{-3}$ by default
+([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)).
+The vertex gradients are then combined by WENO-JS-type weights, and no limiter is used. *(Compiler
+check, not in the sources: with $\epsilon$ fixed rather than proportional to $h_i^2$ as in WLS-ENO,
+the weights tend to the geometric ones in smooth regions as the mesh is refined, and a row across a
+jump is reduced by a factor of about $\epsilon/(\Delta p)^2$, independent of $h$, against $O(h_i^2)$
+in WLS-ENO; both regularizations use the data in absolute units.)*
+
 ## Qualifications
 
 - **ENO property.** "Retains ENO property" (§3.1, §5) is asserted, neither proved nor measured
@@ -130,3 +145,4 @@ normal-jump part (Eqs. (32)–(35)). No limiter other than the positivity limite
 # Citations
 
 - [Liu et al. (2021)](/sources/liu-2021.md) — Abstract; §1; §2, Eqs. (1)–(8); §3.1–3.3, Eqs. (9)–(38); §4, Table 1, Figs. 4–17; §5.
+- [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eq. (24).

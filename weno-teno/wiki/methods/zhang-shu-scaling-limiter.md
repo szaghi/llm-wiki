@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -26,7 +26,9 @@ the next cell average stays in $G$
 Rem. 7.3; [Wu & Shu (2023)](/sources/wu-2023-b.md), App. B;
 [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md), §3.1;
 [Renac (2021)](/sources/renac-2021.md), §6.3;
-[Liu et al. (2021)](/sources/liu-2021.md), §3.3.4).
+[Liu et al. (2021)](/sources/liu-2021.md), §3.3.4;
+[Chen & Wu (2022)](/sources/chen-2022-b.md), §3.3;
+[Du & Yang (2022)](/sources/du-2022-b.md), §4.3).
 
 ## Scalar bounds
 
@@ -71,6 +73,45 @@ scaling acting on the result of the previous one, with the density first:
   page-local). The mass fractions are allowed to go slightly negative, down
   to a bound fixed by the gas constants of the components, which still
   keeps the partial densities and the mixture gas constant positive.
+- **Reacting multicomponent Navier–Stokes** ([Du & Yang (2022)](/sources/du-2022-b.md),
+  §4.3, from the authors' earlier work). Four steps on the point set of
+  Gauss–Lobatto and Gauss points of Thm 4.3: if $\bar\rho\le10^{-13}$ the
+  cell is set to its mean; otherwise density and all partial densities
+  $\rho Y_k$ are scaled together with
+  $\theta_1=(\bar\rho-10^{-13})/(\bar\rho-\rho_{\min})$ where $\rho_{\min}<0$;
+  then the partial densities are pulled toward
+  $\hat\rho\,\overline{\rho Y_k}/\bar\rho$ (the limited density times the
+  cell's mean mass fraction), by **one** factor for all species, the
+  smallest pull toward that state that makes every $\rho Y_k$
+  non-negative at the points where one is negative; finally the whole vector
+  is scaled toward the mean by the smallest pointwise ratio
+  $P(\bar u)/(P(\bar u)-P(\tilde u(x)))$ over the points where $P<0$, with
+  $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2$ the concave
+  pressure surrogate of the
+  [bound-preservation](/properties/bound-preservation.md) page ($h_k(0)$
+  formation enthalpies, page-local). A common factor in the second step
+  keeps $\sum_k\rho Y_k=\rho$ when it holds before *(compiler check, not in
+  the sources: sum the convex combination over $k$)*; no upper bound on
+  $Y_k$ is enforced, because the scheme conserves $\sum_kY_k=1$ exactly and
+  non-negative partial densities then give $Y_k\le1$. The second step is
+  the construction of Renac above, toward the same target state.
+- **Special relativistic hydrodynamics on triangles**
+  ([Chen & Wu (2022)](/sources/chen-2022-b.md), §3.3, Eqs. (40)–(43),
+  Prop. 3.1). Two steps: the lab-frame density $D$ with
+  $\theta_1=\min\{(\bar D-\varepsilon_1)/(\bar D-D_{\min}),1\}$, then the
+  whole vector with
+  $\theta_2=\min\{(g(\bar u)-\varepsilon_2)/(g(\bar u)-g_{\min}),1\}$ for the
+  concave $g(u)=E-\sqrt{D^2+\lvert m\rvert^2}$ that defines the admissible
+  set of [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md),
+  $\varepsilon_{1,2}=\min\{10^{-13},\cdot\}$ of the mean. The minima are taken over
+  the edge Gauss points and over one "interior remainder" state, the
+  triangle form of $\Pi_{ij}$ below, so no interior quadrature point is
+  evaluated (Rem. 3.5, after a simplified limiter of earlier work).
+  Concavity of $g$ replaces the quadratic equation of Qin, Shu & Yang's
+  RHD limiter. Without the floors the limiter commutes with scaling: the
+  limited version of $\sigma u_h$ is $\sigma$ times the limited $u_h$ for
+  $\sigma>0$ (Eq. (45)), which the homogeneity of the RHD scheme needs. The printed $\theta_2$ carries an
+  absolute value inside the minimum (Eq. (42)).
 - **Multicomponent MHD** ([Wu & Shu (2023)](/sources/wu-2023-b.md), App. B):
   three successive scalings — density, mass fractions (from negative
   partial densities), and the concave function
@@ -167,6 +208,16 @@ non-hybrid scheme (Table 4.2;
 [Sedov](/benchmarks/sedov-blast-wave.md),
 [Leblanc](/benchmarks/leblanc-shock-tube.md)).
 
+**As a special case of filtering.** [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md)
+(§3.1, Remark (Limiting)) recover the linear scaling limiter as their
+[entropy filtering](/methods/entropy-filtering.md) with a degenerate
+"filter" that keeps the mean mode and multiplies all others by one factor,
+and replace it by an exponential modal filter whose strength is set by the
+same nodal constraints, which they call a nonlinear generally non-convex
+limiting. On the Mach 800 jet they report "significantly better
+resolution" than Wu & Shu's DG results with the linear limiter, partly
+attributable to the magnetic field present in those (§5.1.6, Fig. 6).
+
 **A separate oscillation control.** In most sources a separate mechanism
 acts first in troubled cells flagged by a
 [troubled-cell indicator](/definitions/troubled-cell-indicator.md): a WENO
@@ -222,3 +273,6 @@ on the fluxes.
 - [Zheng et al. (2022)](/sources/zheng-2022.md) — §2.3.3 (Eqs. (22)–(24), Rem. 2.1); Prop. 3.2.
 - [Wong et al. (2021)](/sources/wong-2021.md) — arXiv v1: §5.1 (Algorithms 1–3).
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — author preprint, discussion after Thm 2.2 (scaling limiter incompatible with prescribed interface values).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §3.3 (Eqs. (40)–(45), Prop. 3.1, Rems. 3.4–3.5).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §4.1; §4.3 (limiter); Thm 4.3 (point set).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §5.1.6 (Fig. 6).

@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -55,6 +55,13 @@ with it:
 | [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) | unstructured CWENO, multicomponent | 0.1 in the convergence test, others not printed |
 | [Fan et al. (2021)](/sources/fan-2021.md) | positivity-preserving FV hybrid HWENO, Navier–Stokes | $\Delta t=\min\{\Delta x/(12a),\ 0.001\,\mathrm{Re}\,\Delta x^2\}$, halved on failure (below) |
 | [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) | MFC, FV WENO with HLLC | not stated; RK orders 1 to 5 available |
+| [Bezgin et al. (2022)](/sources/bezgin-2022.md) | FV learned three-point WENO (WENO3-NN) | 0.6; 0.05 in the $\sin^3$ convergence run |
+| [Chen & Wu (2022)](/sources/chen-2022-b.md) | physical-constraint-preserving FV WENO on triangles, relativistic | 0.5 (default) |
+| [Chu et al. (2022)](/sources/chu-2022.md) | fifth-order A-WENO path-conservative CU | 0.5; $\frac1{10}\Delta x^{2/3}$ in the accuracy test |
+| [Du, Shu & Zhong (2022)](/sources/du-2022.md) | RKDG with simple WENO limiter, triangles | 0.3 ($\mathbb P^1$), 0.18 ($\mathbb P^2$, $\mathbb P^3$); $\Delta t\sim h^{4/3}$ for $\mathbb P^3$ accuracy |
+| [Duan & Tang (2022)](/sources/duan-2022.md) | entropy-stable moving-mesh FD, relativistic (M)HD | 0.4 (2D), 0.3 (3D); $\Delta t=\nu\Delta\xi^2$ (sixth-order EC) and $\nu\Delta\xi^{5/3}$ (fifth-order ES) in the accuracy tests |
+| [Nguyen et al. (2022)](/sources/nguyen-2022.md) | FV MUSCL, $N$-phase model, update of primitive variables | 0.5 (water–air), 0.9 (gas–gas) |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) | FR with entropy filtering after every stage | not stated |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -71,7 +78,7 @@ increment form, $u^{(2)}=u^n+\tfrac14\Delta t\big(\mathcal L(u^n)+\mathcal L(u^{
 $u^{n+1}=u^n+\tfrac16\Delta t\big(\mathcal L(u^n)+\mathcal L(u^{(1)})+4\mathcal L(u^{(2)})\big)$,
 and accumulate the stage fluxes so that every stage, and the final step, is a single
 conservative flux difference from $u^n$; this is what lets their cell merging and
-redistribution near a material interface stay conservative. *(Compiler check, not in the
+redistribution near a material interface stay conservative. *(compiler check, not in the
 sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 
 ## Why SSP: forward Euler suffices
@@ -102,7 +109,17 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   Qualifications.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) (Remark 3.1) quote free-stream
   preservation of the fully discrete moving-mesh scheme with SSP-RK3 as proved in the
-  companion paper of Duan & Tang, not in the paper itself.
+  companion paper of Duan & Tang, not in the paper itself. For the high-order
+  finite-difference case the proof is in [Duan & Tang (2022)](/sources/duan-2022.md)
+  (Prop. 3.2): forward Euler with the discrete volume and surface conservation laws keeps a
+  constant state, and SSP-RK, a convex combination of forward-Euler steps, inherits it
+  ([free-stream preservation](/properties/free-stream-preservation.md)).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) (Thm. 3.1, Eq. (26)) prove the
+  physical-constraint-preserving property of the relativistic finite-volume WENO scheme for
+  forward Euler and obtain it for SSP-RK3 "by convexity" of the admissible set.
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.2, Alg. 3) filter after every
+  stage and compute the local minimum-entropy bound from the previous stage, which keeps the
+  forward-Euler argument stage by stage ([entropy filtering](/methods/entropy-filtering.md)).
 
 ## Sizing the time step
 
@@ -122,9 +139,9 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   reduction.
 - **Adaptively, for positivity.** [Fan et al. (2021)](/sources/fan-2021.md) (§3.3, Eq. (3.33))
   start from $\Delta t=\min\{\Delta x/(12a),\ 0.001\,\mathrm{Re}\,\Delta x^2\}$ ($a$ the
-  maximum of $\lvert v\rvert+c$; *compiler check, not in the sources: $1/12$ equals the
-  boundary Gauss–Lobatto weight $\hat\omega=1/(N(N-1))$ of their decomposition for the
-  four-point rule*) and, if any stage cell average leaves the admissible set, halve $\Delta t$
+  maximum of $\lvert v\rvert+c$; $1/12$ equals the boundary Gauss–Lobatto weight
+  $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ of their decomposition for the four-point rule
+  *(compiler check, not in the sources)*) and, if any stage cell average leaves the admissible set, halve $\Delta t$
   and restart the step from the first stage; their theorems guarantee termination. The
   viscous bound $O(\mathrm{Re}\,\Delta x^2)$ is needed in addition, since the positivity
   bound is only $O(\Delta x)$.
@@ -158,6 +175,33 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   [Pazner (2021)](/sources/pazner-2021.md) (§5.1).
 - **Lower order matched to the space order.** SSP-RK2 for the second-order and SSP-RK3 for
   the third-order LDF WLS-ENO scheme of [Liu et al. (2021)](/sources/liu-2021.md) (§3.3).
+- **Ketcheson's low-storage SSP methods.** [Abgrall et al. (2022)](/sources/abgrall-2022.md)
+  (§4) use SSPRK(3,3), SSPRK(5,4) and SSPRK(10,4) with their entropy-correction terms, applied
+  at every stage, which give semi-discrete entropy conservation only; for a fully discrete
+  entropy-conservative scheme they instead apply the correction to the whole space–time
+  residual of a deferred-correction residual-distribution scheme (Remark 2.2, Eq. (19);
+  [entropy correction terms](/methods/entropy-correction-term.md)).
+- **Stiff sources.** [Du & Yang (2022)](/sources/du-2022-b.md) (§1) state that the SSP time
+  stepping of earlier positivity-preserving schemes for reacting flows "limits the time step
+  for stiff sources", and replace it by a third-order conservative modified exponential RK
+  whose stages are convex combinations of a convective forward-Euler state and a source state;
+  with $c=10^6$ in the artificial stiff source of their 1D accuracy test, SSP-RK3 at the same step returns NaN on 10
+  and 20 cells and runs with $\tfrac25$ of it (Table 6.2;
+  [asymptotic preservation](/properties/asymptotic-preservation.md)). Their convective CFL
+  factor is $\min\alpha_{jl}/\beta_{jl}$ over the Shu–Osher-form coefficients (Thm. 4.3); *(compiler
+  check, not in the sources: from the printed coefficients this is
+  $\alpha_{21}/\beta_{21}=\alpha_{32}/\beta_{32}\approx0.793$)*.
+- **Classical, non-SSP RK.** RK4 and, after a temporal convergence study, a second-order RK
+  with a factor-two speed-up for the disturbance equations of
+  [Browne et al. (2022)](/sources/browne-2022.md) (§4.1, §5, Table 6; the two statements of the
+  integrator are inconsistent in the paper); the Jameson–Schmidt–Turkel four-step scheme at
+  CFL 0.8 in the high-order WCNS of [Hiejima (2022)](/sources/hiejima-2022.md) (§2.2); the
+  five-stage fourth-order low-storage RK of Carpenter and Kennedy in the DG of
+  [Yu & Hesthaven (2022)](/sources/yu-2022.md) (§2.3); and "three-stage or four-stage
+  Runge–Kutta", SSP not stated, at CFL 0.2 (two-phase Shu–Osher: 0.3 for $\mathbb P^0$, $\mathbb P^1$
+  and 0.1 for $\mathbb P^3$) in the sharp-interface DG of
+  [Bai & Li (2022)](/sources/bai-2022.md) (§2.2, Eq. (30)), whose CFL carries no
+  degree-dependent factor.
 - **Not Runge–Kutta at all.** The [unstaggered central scheme](/methods/unstaggered-central-scheme.md)
   of [Kanbar et al. (2022)](/sources/kanbar-2022.md) is a single-step predictor–corrector in
   time (§3). The implicit [Quinpi](/methods/quinpi.md) scheme of
@@ -180,6 +224,12 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   argument (§6.2).
 - [Huang et al. (2026)](/sources/huang-2026.md) report "3rd-order Runge–Kutta" at CFL 0.4
   without saying whether it is SSP.
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) print their SSP-RK3 stepper (Alg. 3,
+  and the split version Alg. 4) without the factors $\tfrac14$ and $\tfrac23$ on the $\Delta t$
+  terms of the second and third stages. *(compiler check, not in the sources: as printed, the
+  linear test $u'=\lambda u$ gives $u^{n+1}=\big(1+\tfrac{11}6z+\dots\big)u^n$, $z=\lambda\Delta t$, so the
+  printed scheme is not even first-order consistent; with the factors it is the Shu–Osher
+  scheme above.)*
 - **Two statements of the positivity CFL of SSP-RK3.** [Fan et al. (2021)](/sources/fan-2021.md)
   (§3.3) state that their forward-Euler positivity bound carries over to SSP-RK3 "if the
   CFL is one third" of it; [Wong et al. (2021)](/sources/wong-2021.md) (§5.3) state for
@@ -226,3 +276,16 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.5 (Eq. (39)) (arXiv v1).
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §2, §4.5 (Table 2) (arXiv v2).
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3 (arXiv v1).
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4, App. A.5.
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §3.1 (Eq. (26)), Thm. 3.1, §4 (arXiv v1).
+- [Chu et al. (2022)](/sources/chu-2022.md) — §7.
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §2.1 (Eq. (2.1)), §4.
+- [Duan & Tang (2022)](/sources/duan-2022.md) — Prop. 3.2, §6 (Eq. (6.1)) (arXiv v1).
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eqs. (29)–(31)).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §3.2, Apps. A (Algs. 3–4) (arXiv v3).
+- [Abgrall et al. (2022)](/sources/abgrall-2022.md) — Remark 2.2, Eq. (19), §4 (arXiv v4).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §1, §3.2, Thm. 4.3, §6.1 (Table 6.2).
+- [Browne et al. (2022)](/sources/browne-2022.md) — §4.1, §5 (Table 6).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §2.3.
+- [Bai & Li (2022)](/sources/bai-2022.md) — §2.2 (Eq. (30)).

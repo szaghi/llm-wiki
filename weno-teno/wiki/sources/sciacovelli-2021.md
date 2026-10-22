@@ -8,7 +8,7 @@ authors: [Sciacovelli L., Passiatore D., Cinnella P., Pascazio G.]
 year: 2021
 venue: "Comput. Fluids 230:105134"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2021_Crossref_Computers_amp_Fluids_Sciacovelli_Assessment_of_a_high-order_shock-capturing_central-differenc.pdf"
-tags: [central-scheme, finite-difference, numerical-dissipation, shock-indicator, turbulence, implicit-les]
+tags: [central-scheme, finite-difference, numerical-dissipation, troubled-cell, turbulence, implicit-les]
 timestamp: 2026-10-22T12:00:00Z
 ---
 
@@ -134,7 +134,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)

@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,14 +17,15 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Fourteen sources of the
+resolution against a fine-grid reference. Fifteen sources of the
 bundle run it.
 
 ## Setup
 
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
-et al. (2023), Chertock et al., Deng, Huang et al., Li, Shu & Qiu and
-Wang et al. (2021) (Li et al. differ in one value, see Qualifications),
+et al. (2023), Chertock et al., Deng, Huang et al., Li, Shu & Qiu,
+Wang et al. (2021) and Bezgin et al. (Li et al. differ in one value,
+see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
 $$
@@ -53,6 +54,7 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.2–3.2.3 | 800 (scaled variant) | Ai-WENO-Z, 3200 | [affine-invariant weights](/methods/affine-invariant-weno.md) |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.7 | 800 cells, CFL 0.6 | FD WENO5, 16,000 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC; boundary conditions not printed |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4b | 400, CFL 0.6 | WENO-JS5, 20,000 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) vs original WENO5-MR, WENO-AO5, WENO-JS5 |
+| [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.3, Eq. (32) | 400, 800; CFL 0.6 | — | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS, WENO5-Z; LLF, characteristic |
 
 ## Findings across sources
 
@@ -85,6 +87,16 @@ strongly, whereas OEDG works with or without it (Fig. 4). Balsara et al.
 show the shock positions converging at orders 3, 5 and 7 on 1000 zones
 (Fig. 10).
 
+**A cut-off for learned weights.** Bezgin et al. use the problem to
+motivate the test-time "ENO layer" of WENO3-NN, a TENO-like cut-off
+($2\times10^{-4}$) followed by renormalization: the network alone
+cannot output essentially zero weights, because its softmax output
+saturates, so spurious oscillations pass and at these very strong
+shocks it can reconstruct negative densities or pressures (§3.2,
+App. A.4, Fig. 21). With the cut-off, WENO3-NN on 400 points is similar
+to WENO3-JS on 800 and gives the best density of the three-point schemes
+(§4.3, Fig. 11).
+
 **Grid convergence and the TENO cut-off.** Takagi et al. refine from
 400 to 3200 points: with $C_T=10^{-4}$ the solution converges
 monotonically to the reference, whereas with the default
@@ -108,8 +120,8 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 - Li et al. print the middle pressure as $0.001$ (Eq. (41)) where Fu
   (2021), Takagi et al., Ye et al., Wang et al. (2023), Chertock et
-  al., Deng, Huang et al., Li, Shu & Qiu and Wang et al. (2021) print
-  $0.01$; whether this is a misprint or the value run cannot be decided
+  al., Deng, Huang et al., Li, Shu & Qiu, Wang et al. (2021) and
+  Bezgin et al. print $0.01$; whether this is a misprint or the value run cannot be decided
   from the paper.
 - Balsara et al. place the problem on $[-0.5,0.5]$; their initial
   states are not recorded on this page.
@@ -137,3 +149,4 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.2–3.2.3, Figs. 6–7.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.7, Fig. 3.5; comment p. 31 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.4b, Fig. 5.8.
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §3.2; §4.3, Eq. (32), Fig. 11; App. A.4, Fig. 21.

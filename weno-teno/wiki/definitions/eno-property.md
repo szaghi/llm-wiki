@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # ENO property
@@ -52,7 +52,12 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   relative to smooth rows, they do not remove it)*.
 - **Learned weights.** WENO3-NN appends an "ENO layer" that zeroes network weights below
   $2\times10^{-4}$ and renormalizes (Huang et al. 2026, Eq. (3.11);
-  [learned WENO weights](/methods/learned-weno-weights.md)).
+  [learned WENO weights](/methods/learned-weno-weights.md)). Bezgin, Schmidt & Adams (2022, §3.2,
+  Eq. (16); App. A.4), who introduced it, give the reason: a softmax output layer saturates and cannot
+  return an essentially zero weight, so the network alone lets oscillations through; for a single jump
+  the trained network still gives the discontinuous stencil a weight "of around $10^{-4}$" (Eq. (A.1),
+  Fig. 21), which sets the cut-off at $2\times10^{-4}$. The layer is applied at test time only, is
+  "similar" to the TENO cut-off, and acts only near discontinuities (A.4).
 
 ## How it is lost
 
@@ -65,6 +70,10 @@ in a blast-wave problem with background pressure. Their conclusion (§3.2.2): th
 non-affine-invariant WENO scheme can be violated when $|\sigma|\ll|\mu|$. The remedy is a relative
 sensitivity parameter ([affine-invariant WENO](/methods/affine-invariant-weno.md),
 [scale invariance](/properties/scale-invariance.md)).
+
+A learned weight function can lose the property in a second way, by construction rather than by
+scaling: Bezgin et al. (2022, §3.2, App. A.4, Fig. 21) report that without the ENO layer WENO3-NN
+reconstructs negative densities or pressures in the interacting blast waves.
 
 ## Beyond weights
 
@@ -87,3 +96,4 @@ to deliver them.
 - [Fu (2021)](/sources/fu-2021.md) — Abstract; §5.7.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1.
 - [Liu et al. (2021)](/sources/liu-2021.md) — Abstract; §2.3; §3.1; §4; §5.
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eq. (16); App. A.4, Eqs. (A.1)–(A.3), Fig. 21.

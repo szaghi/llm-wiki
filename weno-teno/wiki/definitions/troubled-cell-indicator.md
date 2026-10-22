@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Troubled-cell and shock indicators"
-description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme must be limited, blended or switched; the page defines the indicators the sources use — modal energy and decay, KXRCF, WENO deviation, smooth WENO-Z-type, undivided-difference, TENO-flag, physical-sensor and flattener types — with their parameters and stated limitations."
+description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme must be limited, blended or switched; the page defines the indicators the sources use (modal energy and decay, KXRCF, time-reversibility defect, WENO deviation, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor and flattener types) with their parameters and limitations."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor]
-tags: [limiting, dg, teno, finite-difference, low-dissipation]
-timestamp: 2026-10-22T12:00:00Z
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator]
+tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -84,16 +84,50 @@ from $[0,0.95]$ (§4.4, Fig. 6;
 [solid-body rotation](/benchmarks/solid-body-rotation.md)).
 
 **Modal-decay rate for $hp$ decisions.** [Basile et al. (2022)](/sources/basile-2022.md)
-(§4.2, Eqs. (36)–(37)) fit $\lvert a^{(q)}\rvert\simeq C\,e^{-\mathfrak d_Kq}$
-to the per-degree $L^2$ norms $a^{(q)}$ of the modal coefficients of the
-momentum norm, $q=1,\dots,N$ (the mean $q=0$ is excluded because it "can
-severely bias the decay rate"), after Mavriplis; $\mathfrak d_K>1$ means
-smooth and selects $p$-enrichment, otherwise $h$-refinement ($\mathfrak d_K$
-page-local, the source's $\sigma$; $N=1$ cells are always treated as
+(§4.2, Eqs. (36)–(37)) fit $\hat a^{(\ell)}_K\simeq C\,e^{-\varrho_K\ell}$
+to the per-degree $L^2$ norms $\hat a^{(\ell)}_K$ of the modal coefficients of the
+momentum norm, $\ell=1,\dots,N$ (the mean $\ell=0$ is excluded because it "can
+severely bias the decay rate"), after Mavriplis; $\varrho_K>1$ means
+smooth and selects $p$-enrichment, otherwise $h$-refinement ($\hat a^{(\ell)}_K$,
+$\varrho_K$ page-local, as on the [h- and hp-adaptation](/methods/hp-adaptation.md)
+page; the source writes $a^{(q)}$ and $\sigma$; $N=1$ cells are always treated as
 smooth). The authors state that it is not suited to shocks
 and that strong discontinuities need another indicator. They call it a
 "smoothness indicator", with larger values smoother, the opposite sense of
 WENO's $\beta_k$ ([h- and hp-adaptation](/methods/hp-adaptation.md)).
+
+**Algebraic modal decay, fitted or learned (artificial viscosity).**
+[Yu & Hesthaven (2022)](/sources/yu-2022.md) (§1, §4.1, Eqs. (4.1)–(4.3))
+start from the Klöckner–Warburton–Hesthaven model
+$\lvert\hat u_m\rvert\simeq c_{\mathrm m}\,m^{-\mathfrak a_K}$ for the orthonormal
+Legendre coefficients of the element solution ($\mathfrak a_K$, $c_{\mathrm m}$
+page-local; the source writes $\tau$, which is not the registry's $\tau$).
+By the Fourier analogy, $\mathfrak a_K=1$ for a discontinuity, 2 for a kink,
+3 for a $C^1$ function with a jump in the second derivative (Eq. (4.2)).
+The least-squares estimate of $\mathfrak a_K$ with Klöckner et al.'s
+baseline modal decay and skyline pessimization is called **MDA** (averaged
+modal decay). Yu & Hesthaven replace it by a feedforward neural network
+that maps 11 values of the element solution, normalized by the maximum
+nodal magnitude and resampled at 11 uniform points, to $\mathfrak a_K$
+(three hidden ReLU layers of 32, 16 and 8 neurons, 1057 parameters, Adam,
+weight penalty; §3, §4.1.2). It is trained on canonical functions with
+known decay: jumps labelled 1, kinks 2, and constants, noisy constants,
+linear and trigonometric functions labelled 4 (Table 1). Because the
+viscosity law that consumes it is constant below 1 and above 3, any output
+outside $[1,3]$ can be clipped to the nearer end without changing the
+viscosity, so the output range is compact; the authors call the compactness
+of input and output "critical to the success of training" (§4.1.1, §6). In
+2D the 1D network is applied along each edge of a triangle, since a
+discontinuity crossing the element crosses an edge, and the edge rates are
+combined by their minimum or by the mean of the two smallest (Eqs.
+(4.8)–(4.9), after Yu & Hesthaven 2020). The indicator drives an
+[artificial viscosity](/methods/artificial-viscosity.md) (larger
+$\mathfrak a_K$ smoother; full viscosity below 1, none above 3). On a test
+function with a pulse, a plateau and a peak (65 elements) the network gives
+$\mathfrak a_K\approx1$ at the discontinuities and above 3 in smooth zones,
+more reliably than MDA, whose rate in constant regions is close to $N$
+because of the baseline decay and over-dissipates below $N=4$ (§4.1.3,
+Fig. 4).
 
 ## Jump and deviation indicators
 
@@ -117,6 +151,46 @@ it costs no extra reconstruction, unlike earlier HWENO indicators
 it flags no cells (stated, from the observed orders). KXRCF also precedes
 the bound-preserving limiter in
 [Wu & Shu (2023)](/sources/wu-2023-b.md) (§7).
+
+[Du, Shu & Zhong (2022)](/sources/du-2022.md) (§4, Eqs. (4.2)–(4.3)) use
+KXRCF with the original exponent: cell $K$ is troubled if
+$$\frac{\Big\lvert\sum_{e\subset\partial K^-}\int_e\big(\rho_h\vert_K-\rho_h\vert_{K'}\big)\,ds\Big\rvert}{h_K^{(N+1)/2}\,\lvert\partial K^-\rvert\,\lVert\rho_h\vert_K\rVert}>C_k$$
+or the same with the total energy, with $K'$ the neighbour across edge $e$,
+$\lVert\cdot\rVert$ the $L^2$ norm on $K$, $h_K$ the circumradius of a
+triangle or the largest point distance of a polygon, and $C_k$ a threshold
+(page-local) tuned per example: 0.01 in every shock test, and as low as
+$10^{-5}$ in accuracy tests, chosen so that most smooth cells are flagged
+on purpose. The two sources therefore normalize differently (exponent
+$(N+1)/2$, $L^2$ norm, tuned $C_k$, density and energy, against
+$(\ell+1)/3$, maximum norm, threshold 1, density); both are recorded, not
+reconciled. Du, Shu & Zhong state that no troubled-cell indicator is
+"bullet-proof", so that the limiter must be safe on wrongly flagged smooth
+cells ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
+**Time-reversibility defect (artificial viscosity).**
+[Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) (§2, Eqs.
+(3)–(5)) use the fact that entropy solutions are time-reversible only where
+an entropy is conserved, that is, away from shocks (citing Dafermos). From
+$u^n$ they take one forward Euler step with an upwind-biased discrete
+divergence and one backward step of $-\Delta t$ with a downwind-biased one,
+upwind with respect to reversed time,
+$$u^{n+1}=u^n-\Delta t\,\nabla\cdot f^+(u^n),\qquad u^\dagger=u^{n+1}+\Delta t\,\nabla\cdot f^-(u^{n+1}),\qquad d_{\mathrm{TR}}(u^n)=\lvert u^\dagger-u^n\rvert,$$
+componentwise ($u^\dagger$, $d_{\mathrm{TR}}$ page-local; the source writes
+$u^*$, $\mathcal D$). In PyFR the downwind divergence is obtained by
+flipping the sign of the dissipative part of the Riemann solver (§4.2).
+The defect is posited to scale like the truncation error,
+$O(h^{p_{\mathrm s}}\Delta t^{r_{\mathrm{RK}}+1})$ with $p_{\mathrm s}$ and
+$r_{\mathrm{RK}}$ the spatial and temporal orders (page-local $p_{\mathrm s}$),
+in smooth regions and like
+$O(h^{-1}\Delta t)$ at shocks, which the paper derives only for
+first-order upwind schemes (§2, §3). It is a continuous, vector-valued
+indicator (one value per conserved component) that needs no entropy pair
+and no extra equation; the authors set it against the Persson–Peraire
+modal sensor, whose magnitude rests on "approximate scaling arguments", and
+against entropy-residual indicators (§1). It sets the magnitude of their
+time-reversibility viscosity ([artificial viscosity](/methods/artificial-viscosity.md))
+and, they state, could serve any shock-capturing method that needs an
+indicator (§2).
 
 **WENO-deviation sensor (continuous finite elements).**
 [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) (§3, Eqs. (9)–(10)) define
@@ -235,6 +309,25 @@ from them.
   [THINC](/methods/thinc-reconstruction.md) flux in
   [TENO-THINC](/methods/teno-thinc.md).
 
+**Pressure-jump shock indicator (Riemann-solver switch).**
+[Bai & Li (2022)](/sources/bai-2022.md) (§2.4, Eqs. (16)–(20), after Kim et
+al. and a Joukowsky-type criterion) blend the HLLC and HLL star states at
+each face, $\hat u^*=f\,u^*_{\mathrm{HLLC}}+(1-f)\,u^{\mathrm{HLL}}$ (registry §10
+$u^{\mathrm{HLL}}$), with
+$$f_p=\begin{cases}1,&\lvert p^--p^+\rvert>\alpha_J\,\lvert v_n^--v_n^+\rvert\sqrt{\gamma\min\big(\rho^-(p^-+p_\infty),\ \rho^+(p^++p_\infty)\big)},\\0,&\text{otherwise},\end{cases}\qquad\alpha_J=0.3,$$
+$f=f_p$ when the normal Mach numbers on both sides are both above or both
+below one, $f=0$ otherwise ($f$, $f_p$, $\alpha_J$ page-local; $v_n^\pm$ the
+face-normal velocities, $p_\infty$ the stiffened-gas constant of the fluid,
+registry §10 $p_{\infty,k}$). The criterion compares the pressure jump with
+the acoustic impedance times the velocity jump, "similar to the Joukowsky
+equation except for an parameter" (§2.4). The stated aim is to use HLL "to
+avoid the shock instability" near strong shocks
+([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). As printed,
+however, $f=1$ (pure HLLC) where the indicator fires and $f=0$ (pure HLL)
+elsewhere, the opposite of that aim *(compiler check, not in the sources:
+Eqs. (16), (18) and (19) read together)*; either $f=1-f_p$ is meant or the
+roles are inverted in print.
+
 **Flattener (antidiffusion control).**
 [Balsara et al. (2024)](/sources/balsara-2024.md) (§III, Eq. (3.8)) multiply
 the antidiffusive term of their HLLI Riemann solver by a shock
@@ -244,6 +337,15 @@ good flattener exists, so antidiffusion is switched off in its Riemann
 problems (§VIII.b).
 
 ## Indicators that only select cells
+
+Two sources replace the indicator by the quantity they control.
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) filter an element
+only if its nodal values violate positivity or a local minimum entropy
+bound, so the constraint check is the indicator ([entropy filtering](/methods/entropy-filtering.md),
+§3.1). In the [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md)
+of [Sousa & Scalo (2022)](/sources/sousa-2022.md) the estimate of the energy
+at the grid cutoff switches the dissipation on at shocks and at
+under-resolved eddies alike, with no separate sensor (§4.2).
 
 Several sources use an indicator without defining or analysing it:
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) apply a locally divergence-free
@@ -267,10 +369,8 @@ Several sources use an indicator without defining or analysing it:
 - **Case and parameter dependence.** [Takagi et al. (2022)](/sources/takagi-2022.md)
   state that the sensors of classical hybrid schemes are mostly "case and
   parameter sensitive" (§1, §3.2) and present their detector as
-  parameter-free; the three-cell reach of the rule, the THINC steepness and
-  the first-order fallback for non-monotone data are nonetheless fixed
-  design choices *(compiler remark, not in the sources)*, and
-  their own blast-wave refinement shows $C_T$ affects overshoots at contacts
+  parameter-free, while their own blast-wave refinement shows that $C_T$
+  affects overshoots at contacts
   (§4.5, Fig. 9). Rueda-Ramírez et al. (2022) call the modal-energy
   indicator heuristic (§2.4).
 - **Physical sensors.** Fu (2023) reports the case-dependence of the Ducros
@@ -294,8 +394,16 @@ Several sources use an indicator without defining or analysing it:
 - **Indicators as bound relaxation, not switches.** Pazner's use of the
   modal indicator to interpolate between local and global bounds (above)
   weakens a guarantee instead of triggering a stabilization: in smooth
-  cells only the global bounds hold. Among the sources ingested so far it
-  is the only use of this kind *(compiler remark, not in the sources)*.
+  cells only the global bounds hold *(compiler check, not in the sources:
+  $\varepsilon_K=0$ in the relaxation formula above)*.
+- **Against highest-mode sensors.** [Yu & Hesthaven (2022)](/sources/yu-2022.md)
+  state that the Persson–Peraire indicator, which assumes that the highest
+  mode scales as $1/N^2$, "tends to underestimate the smoothness", and that
+  fits over all modes relieve this (§1). They add that on coarse meshes
+  "no essential distinction" exists between spurious oscillations and
+  physical fluctuations, so the learned indicator flags both (§4.1.3, §6).
+  Rueda-Ramírez et al. use the two highest modes, to avoid odd/even effects
+  (above).
 
 ## Qualifications
 
@@ -303,15 +411,27 @@ Several sources use an indicator without defining or analysing it:
   $\beta_k$ dominate $\epsilon$ and that the first derivative does not vanish
   at $x_{i+1/2}$ (Appendix B); the paper does not discuss the critical-point
   case, where the $\beta_k$ of the small stencils drop to $O(\Delta x^4)$
-  *(compiler remark, not in the sources; see [critical-point accuracy](/properties/critical-point-accuracy.md))*.
+  *(compiler check, not in the sources: Taylor expansion of $\beta_k$ with
+  $\partial_xu=0$; see [critical-point accuracy](/properties/critical-point-accuracy.md))*.
   The value of $\epsilon$ in the indicator is not printed.
 - Li, Shu & Qiu's derivation of the KXRCF scaling (Eqs. (2.32)–(2.33)) is
   written with a boundary measure $\lvert\partial I_i^-\rvert\sim h$; in 1D
-  the inflow boundary is a point *(compiler remark, not in the sources)*.
+  the inflow boundary is a point *(compiler check, not in the sources)*.
 - Pazner's "expected asymptotic rates for all cases except $N=1$" (§5.1) is
   not what Table 1 prints for $N=2$ (rates 1.18, 1.36, 1.82 with the
   indicator): only $N\ge3$ reach $N+1$, whereas §4.4 calls the indicator
   parameters effective for $N>1$ *(compiler check, not in the sources: comparison of the printed table with the text)*.
+
+- Yu & Hesthaven's network has no reflection symmetry built in: they
+  attribute a slight asymmetry of the viscosity on a Burgers shock to the
+  randomness of the training samples (§5.2). The text of §4.2 calls the
+  rule (4.9) "the average of the largest two decay rates", while Eq. (4.9),
+  $\frac12\big(\sum_e\mathfrak a_e-\max_e\mathfrak a_e\big)$, is the mean of the two
+  smallest; whether one network is trained per degree $N$ is not stated,
+  although the training samples depend on $N$ (Table 1).
+- Dzanic, Trojak & Witherden's scalings at high order are posited, not
+  derived; the derivation covers forward Euler with first-order upwind
+  fluxes on step data (§3).
 
 # Citations
 
@@ -332,3 +452,9 @@ Several sources use an indicator without defining or analysing it:
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — author manuscript: §I, §V.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §7 (KXRCF indicator).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §8, Ex. 3–5 (WENO limiter in troubled cells).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3 (indicator-insensitive limiter); §4 (Eqs. (4.2)–(4.3), thresholds per example).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1; §3; §4.1 (Eqs. (4.1)–(4.3), Table 1, Fig. 4); §4.2 (Eqs. (4.8)–(4.9)); §5.2; §6.
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — arXiv v2: §1; §2 (Eqs. (3)–(5)); §3; §4.2.
+- [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (16)–(20)).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (constraint violation as indicator).
+- [Sousa & Scalo (2022)](/sources/sousa-2022.md) — arXiv v2: §4.2 (no separate shock sensor).

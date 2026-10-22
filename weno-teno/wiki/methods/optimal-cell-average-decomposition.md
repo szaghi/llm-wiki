@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -164,9 +164,9 @@ relativistic jet (§8.3, §8.5).
 
 ## Classic decompositions in other sources
 
-Two further sources of the bundle prove bound preservation with the classic
-Gauss–Lobatto decomposition, and their CFL numbers show what the optimal
-one would change.
+Four further sources of the bundle prove bound preservation with classic
+decompositions, and their CFL numbers show what an optimal one would
+change.
 
 - **Finite-volume Hermite WENO for Navier–Stokes**
   ([Fan, Zhang & Qiu (2021)](/sources/fan-2021.md), §3.1–§3.2, Eqs.
@@ -186,7 +186,8 @@ one would change.
   with the viscous Lax–Friedrichs coefficient $a^{\mathrm{NS}}$ of the
   [bound preservation](/properties/bound-preservation.md) page (Eq. (3.30)),
   the classic condition with one wave speed in both directions *(compiler
-  remark, not in the sources)*.
+  check, not in the sources: compare with the classic 2D condition
+  above)*.
 - **DGSEM on unstructured quadrilaterals** ([Renac (2021)](/sources/renac-2021.md),
   Thm 6.1, Rem. 6.1, App. A). The decomposition is the DGSEM's own
   quadrature on its $N+1$ Gauss–Lobatto collocation nodes, with endpoint
@@ -199,6 +200,43 @@ one would change.
   $L=\lceil(N+3)/2\rceil$ points (for $N=3$: $1/12$ against $1/6$), so a
   decomposition that is not tied to the collocation nodes would already
   double the bound there *(compiler check, not in the sources)*.
+
+- **Triangles** ([Chen & Wu (2022)](/sources/chen-2022-b.md), Rem. 3.4,
+  Eqs. (44), (58)–(59), after Zhang, Xia & Shu). On any triangle a
+  positive quadrature exact for $\mathbb P^N$ contains the $Q$ Gauss points
+  of each edge, with weight $\frac23\mathsf w^{\mathrm{GL}}_0\,\mathsf w^{\mathrm G}_q$ per
+  edge point ($\mathsf w^{\mathrm{GL}}_0=1/(L(L-1))$, $L=\lceil(N+3)/2\rceil$,
+  $\mathsf w^{\mathrm G}_q$ the edge Gauss weights), and positive interior weights that
+  sum to $1-2\mathsf w^{\mathrm{GL}}_0$; it is obtained from the rectangle
+  rule by a transformation the paper calls "Dubinar transform" (as
+  printed; Rem. 3.4). The remainder
+  $\big(\bar u_K-\frac23\mathsf w^{\mathrm{GL}}_0\sum_{j,q}\mathsf w^{\mathrm G}_qu(x^{(jq)})\big)/(1-2\mathsf w^{\mathrm{GL}}_0)$
+  is therefore a convex combination of interior values, the triangle form
+  of the internal-node average $\Pi_{ij}$ above. The decomposition is used
+  only in the proof and in the definition of the limiter; the interior
+  points are never evaluated. For their quadratic ($N=2$) reconstruction,
+  $\mathsf w^{\mathrm{GL}}_0=1/6$, and the BP condition with the HLL flux is
+  $\Delta t\,\hat a\,\lvert e\rvert/\lvert K\rvert\le\frac23\cdot\frac16$ on every
+  edge $e$ of triangle $K$ (Thm 3.1, Eq. (57); $\hat a$ the edge spectral
+  radius, page-local). The paper applies it to
+  [special relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
+- **LDG for reacting flows** ([Du & Yang (2022)](/sources/du-2022-b.md),
+  Thm 4.1, Thms 5.4–5.6, Rem. 5.1). In 1D the $L$-point Gauss–Lobatto
+  rule with $L$ the smallest integer with $2L-3\ge N$ and endpoint weight
+  $1/(L(L-1))$; on polygonal cells a cell quadrature that contains all edge
+  Gauss points, with the condition
+  $\Delta t\frac{\lvert e_i\rvert}{\lvert K\rvert}\max a^{\mathrm R}\le\min_{\nu,i}a_{\nu,i}/b_\nu$
+  ($a_{\nu,i}$ the normalized cell weights of the edge points, $b_\nu$ the
+  edge Gauss weights, page-local); on rectangles the tensor Gauss /
+  Gauss–Lobatto rule, $\Delta t(1/\Delta x+1/\Delta y)\max a^{\mathrm R}\le1/(L(L-1))$,
+  recalled from Zhang (2017). The wave speed $a^{\mathrm R}$ there is a viscous
+  Lax–Friedrichs penalty (page-local, the symbol of the
+  [bound preservation](/properties/bound-preservation.md) page), and their
+  exponential time integrator multiplies the bound by
+  $\min\alpha_{jl}/\beta_{jl}$ over its Shu–Osher coefficients (Thm 4.3,
+  Eq. (4.17)), $\approx0.793$ *(compiler check, not in the sources:
+  $\alpha_{21}/\beta_{21}=\alpha_{32}/\beta_{32}=0.79298$, $\alpha_{10}/\beta_{10}=1.41404$,
+  the others infinite)*.
 
 ## Qualifications
 
@@ -227,3 +265,5 @@ one would change.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thm 6.2 (Gauss–Lobatto BP CFL condition).
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §3.1–§3.2 (Eqs. (3.9)–(3.12), (3.26)–(3.30)).
 - [Renac (2021)](/sources/renac-2021.md) — arXiv v3: Thm 6.1 (Eq. (66)), Rem. 6.1, App. A.
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: Rem. 3.4 (Eq. (44)); Thm 3.1 (Eqs. (57)–(59)).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — Thm 4.1; Thm 4.3 (Eq. (4.17)); Thms 5.4–5.6; Rem. 5.1.

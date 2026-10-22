@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO-CU6"
-description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that adds a downwind three-point stencil to the fifth-order set, uses a six-point global smoothness indicator of order Δx⁶ and a WENO-Z-type weight with constant C = 20; in the bundle it is the standard low-dissipation comparator of the TENO papers."
+description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that adds a downwind three-point stencil to the fifth-order set, uses a six-point global smoothness indicator of order Δx⁶ and a WENO-Z-type weight with constant C = 20; in the bundle it is the main low-dissipation comparator of the TENO papers."
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # WENO-CU6
@@ -15,7 +15,8 @@ recalled by the bundle's sources: Fu (2021, §1) describes it as an "adaptive ce
 sixth-order WENO-CU6 scheme with a modified weighting strategy"; Ye et al. (2022, §1) say it was
 built "by adding a downwind stencil" to the fifth-order WENO stencils; Li et al. (2022, §1) that it
 uses an "extra three-points substencil and a corresponding global smoothness indicator to construct
-the sixth-order central-upwind WENO-Z type scheme". The global stencil is the six-point
+the sixth-order central-upwind WENO-Z type scheme"; Hiejima (2022, §1) places it "in the weighting
+strategy to reduce the sensitivity of nonlinear adaptation". The global stencil is the six-point
 $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
 
 ## Ingredients recalled in the sources
@@ -81,3 +82,4 @@ list WENO-CU6 only in their survey (§1).
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §2.2, Eq. (6); §3.4–3.5, Eqs. (28)–(39).
 - [Li et al. (2022)](/sources/li-2022-b.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (18); Figs. 4, 15–17.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §1.

@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Characteristic decomposition
@@ -43,12 +43,16 @@ listed below): [Fu (2021)](/sources/fu-2021.md) (§5; Rusanov splitting, LLF for
 cases), [Li et al. (2022)](/sources/li-2022-b.md) ("global Lax–Friedrichs flux splitting with
 local characteristic fields", with Eq. (38)), [Luo & Wu (2021)](/sources/luo-2021-b.md) (§5),
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§4, where THINC is applied per characteristic
-component and per split-flux direction), and [Wang & Don (2022)](/sources/wang-2022-b.md)
-(§3.3, well-balanced shallow-water WENO), and
+component and per split-flux direction), [Wang & Don (2022)](/sources/wang-2022-b.md)
+(§3.3, well-balanced shallow-water WENO) and
 [Wang et al. (2021)](/sources/wang-2021.md) (§3.1, Remark 1, for their
 [multi-resolution WENO](/methods/multi-resolution-weno.md)).
 [Wang et al. (2023)](/sources/wang-2023-b.md) apply it to the WENO-Z *interpolation* of
-point values in [A-WENO](/methods/alternative-weno.md) (§2).
+point values in [A-WENO](/methods/alternative-weno.md) (§2). [Browne et al. (2022)](/sources/browne-2022.md) use the
+finite-difference algorithm with Rusanov splitting for fifth-order WENO on disturbance fluxes,
+the characteristic transform being applied "to improve the shock capturing characteristics"
+(§2.2); [Bezgin et al. (2022)](/sources/bezgin-2022.md) use the finite-volume algorithm with the
+local Lax–Friedrichs flux for their learned three-point WENO (§2, §4).
 
 ## Variants of the frozen state and of where the projection acts
 
@@ -64,6 +68,37 @@ point values in [A-WENO](/methods/alternative-weno.md) (§2).
   $u^-_{i+1/2}$ and $u^+_{i-1/2}$ from one projection (§VI, steps 2–3); this is what lets
   their [fluctuation-form scheme](/methods/fluctuation-form-fd-weno.md) use one
   reconstruction per zone instead of two.
+- **Non-conservative systems.** [Chu et al. (2022)](/sources/chu-2022.md) (Remarks 6.2–6.3)
+  project with the eigenvectors of $A(\hat u_{i+1/2})+\mathcal C(\hat u_{i+1/2})$ (in this
+  bundle's sign; their $A-B$), the quasilinear matrix of the two-layer shallow-water system
+  including its non-conservative products, at Roe averages of the layer depths and velocities;
+  $R$ and $L$ are computed numerically and applied to the six values $u_{i-2},\dots,u_{i+3}$ of
+  the fifth-order WENO-Z interpolation. They recall that componentwise WENO-Z interpolation may
+  oscillate (Remark 3.1) and credit the decomposition with "substantially less oscillatory
+  behavior" than an earlier second-order central-upwind computation (§7.2, Ex. 7;
+  [path-conservative schemes](/methods/path-conservative-scheme.md)).
+- **Several directions per cell on unstructured meshes.** On triangles,
+  [Chen & Wu (2022)](/sources/chen-2022-b.md) (§3.2.2, Eq. (38)) project the stencil averages onto
+  the eigenvectors of the normal Jacobian for each of the three edge normals of the target cell,
+  evaluated at the cell average through the recovered primitive state, reconstruct in each
+  frame, project back, and average the three polynomials with weights $\lvert K_j\rvert$, the
+  areas of the three neighbours in the paper's notation for cell areas (§2.2). The resulting
+  operator stays homogeneous of degree one, $R_h(\sigma u)=\sigma R_h(u)$ for $\sigma>0$, because the
+  eigenvector matrices are invariant under $u\mapsto\sigma u$ (Lemma 3.2;
+  [scale invariance](/properties/scale-invariance.md)).
+- **Fewer projections in a DG limiter.** In the simple WENO limiter for DG on triangles,
+  [Du, Shu & Zhong (2022)](/sources/du-2022.md) (§3.1, Eqs. (3.1)–(3.8)) use, for each edge
+  normal $\mathbf n_l$, the Jacobian $A_l=n_{l,x}\partial f/\partial u+n_{l,y}\partial g/\partial u$ at the
+  target-cell average, and project **two** polynomial vectors — the target cell's and the
+  neighbour's across edge $l$, shifted to the target average — instead of all four as in the
+  original limiter of Zhu, Zhong, Shu and Qiu; the directional results are averaged with weights
+  $\lvert K_l\rvert$, the neighbour areas. On polygonal meshes from point clouds the count drops from
+  $N_j+1$ (the number of neighbours plus one) to two, with the direction taken from cell centre to
+  neighbour centre (§3.2). Accuracy is kept under heavy over-flagging, and CPU time falls by
+  about 6–55 % on shocked problems (§4, Tables 4.7–4.10, 4.17–4.18); the sharper double-Mach stem
+  is attributed by the authors to "less information being used for reconstruction in each
+  direction", a cause not isolated by their runs. See
+  [WENO limiters for DG](/methods/weno-limiter-dg.md).
 - **In the numerical diffusion, not only in the reconstruction.**
   [Chertock et al. (2023)](/sources/chertock-2023.md) use the projection also to give each
   field its own central-upwind diffusion, the
@@ -76,7 +111,12 @@ point values in [A-WENO](/methods/alternative-weno.md) (§2).
   matrices for the single- and two-component Euler equations with the
   [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md),
   evaluated at interface averages built from logarithmic means, and rotate the
-  directional flux to the face normal. See [TeCNO schemes](/methods/tecno-scheme.md)
+  directional flux to the face normal. [Duan & Tang (2022)](/sources/duan-2022.md) (§4,
+  Eq. (4.1)) use the same construction for relativistic (magneto)hydrodynamics on moving
+  curvilinear meshes: fifth-order Jiang–Shu WENO acts on the rotated, scaled entropy variables
+  $R^\top T\,w$ ($T$ the page-local rotation to the face normal), and the dissipation matrix is a
+  scalar maximal speed times $T^{-1}R$, a Rusanov-type magnitude rather than a field-by-field
+  $\lvert\Lambda\rvert$. See [TeCNO schemes](/methods/tecno-scheme.md)
   and [entropy-conservative fluxes](/methods/entropy-conservative-flux.md).
 
 For the Euler equations, [Chertock et al. (2023)](/sources/chertock-2023.md) (App. A) print,
@@ -119,7 +159,7 @@ $$A_{\mathrm p}=\begin{pmatrix}v&\rho&0\\0&v&1/\rho\\0&\rho c^2&v\end{pmatrix},\
 R=\begin{pmatrix}1&1&1\\-c/\rho&0&c/\rho\\c^2&0&c^2\end{pmatrix},\quad
 L=\begin{pmatrix}0&-\rho/(2c)&1/(2c^2)\\1&0&-1/c^2\\0&\rho/(2c)&1/(2c^2)\end{pmatrix},$$
 
-with eigenvalues $v-c$, $v$, $v+c$. *(Compiler check, not in the sources: the
+with eigenvalues $v-c$, $v$, $v+c$. *(compiler check, not in the sources: the
 three columns of $R$ are eigenvectors of $A_{\mathrm p}$ for $v-c$, $v$, $v+c$.)*
 Zheng et al. add that characteristic decomposition has "a reduced effect at the
 interface", whose characteristic structure is unclear because two fluids lie on
@@ -190,3 +230,9 @@ invariance. On the [Woodward–Colella blast waves](/benchmarks/woodward-colella
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Remark 1.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.4, Eqs. (3.21)–(3.22) (arXiv v1).
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3, Eq. (8) (arXiv v1).
+- [Browne et al. (2022)](/sources/browne-2022.md) — §2.2.
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §2, §4.
+- [Chu et al. (2022)](/sources/chu-2022.md) — Remarks 3.1, 6.2–6.3, §7.2 (Ex. 7).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §3.2.2 (Eq. (38), Lemma 3.2), App. A (arXiv v1).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3.1–3.2 (Eqs. (3.1)–(3.9)), §4.
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §4 (Eq. (4.1)) (arXiv v1).

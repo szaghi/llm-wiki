@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Geometric quasilinearization (GQL)
@@ -101,6 +101,13 @@ Wu & Shu derive (§4.2):
   $E-m\,v_*-D\sqrt{1-v_*^2}>0$ for all $v_*\in(-1,1)$ in 1D ($m$ the
   momentum, $D$ the relativistic mass density); with the entropy principle
   a single family also implies the energy constraint (Thm 4.10).
+  [Chen & Wu (2022)](/sources/chen-2022-b.md) state and prove the 2D form,
+  $D>0$ and $u\cdot n_*>0$ with
+  $n_*=\big(-\sqrt{1-\lvert v_*\rvert^2},\,-v_*,\,1\big)^\top$ for all
+  $\lvert v_*\rvert<1$ in the ordering $u=(D,m,E)$ (Lemma 3.4, Eq. (48)):
+  the choice $v_*=m/\sqrt{D^2+\lvert m\rvert^2}$ gives one inclusion and
+  Cauchy–Schwarz the other. The model is on
+  [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
 - **Ten-moment Gaussian closure** (Thm 4.11): positive definiteness of the
   pressure tensor becomes $z^\top(\mathcal E-m\otimes v_*+\tfrac12\rho\,v_*\otimes v_*)z>0$
   for all $v_*\in\mathbb R^2$, $z\ne0$, with $\mathcal E$ the energy tensor
@@ -134,6 +141,22 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   decomposition of convection and diffusion. The authors say the
   decomposition approach gives stricter time-step limits (§5.2, Eq. (5.11),
   Rem. 5.3), an assertion they do not quantify.
+- **HLL for special relativistic hydrodynamics on triangles.**
+  [Chen & Wu (2022)](/sources/chen-2022-b.md) (§3.5) bound the normal flux
+  against the 2D form above: for $a\ge\lambda_4(u)$, the largest
+  eigenvalue along the normal $n$,
+  $-\big(f(u)\cdot n\big)\cdot n_*>-a\,u\cdot n_*$ (Lemma 3.6, Eq. (52); the
+  proof uses $\gamma\le2$), and the HLL flux with wave-speed bounds clipped
+  at zero satisfies the corresponding bounds for $D$ and $u\cdot n_*$ with
+  the spectral radius of the normal Jacobian (Lemma 3.7). With the
+  triangle cell-average decomposition of Zhang, Xia & Shu this proves the
+  third-order finite-volume WENO scheme physical-constraint-preserving
+  under $\Delta t\,\hat a\,\lvert e\rvert/\lvert K\rvert\le\frac23\mathsf w^{\mathrm{GL}}_0$
+  on every edge $e$ of every triangle $K$ (Thm 3.1, Eq. (57); $\hat a$ the
+  edge spectral radius, page-local; $\mathsf w^{\mathrm{GL}}_0=1/6$ for their
+  quadratic reconstruction). The auxiliary variable never appears in the
+  scheme: it is used only in the proof, which checks $D>0$ and
+  $u\cdot n_*>0$ for all $v_*$ at once.
 - **Ten-moment Lax–Friedrichs in 2D.** BP under
   $\frac{\Delta t}{\Delta x}a^{(1)}+\frac{\Delta t}{\Delta y}a^{(2)}<1$, via an
   AM–GM bound on the GQL form (§5.3, Eqs. (5.16)–(5.18)).
@@ -168,7 +191,12 @@ quasilinearization (§3.7, Fig. 4); see
   $\rho e$ is small *(compiler check, not in the sources: Cauchy–Schwarz and
   AM–GM)*. Whether the version of record corrects it is not known.
 
+- Chen & Wu (2022, arXiv v1) print "$-U^\pm\cdot\xi_*>0$" in the proof of
+  Lemma 3.7, where their own Lemma 3.4 and the proof of Lemma 3.6 give
+  $u^\pm\cdot n_*>0$; the inequalities that follow use the positive sign.
+
 # Citations
 
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Def. 3.1; Thm 3.2; Assumption 3.4; Thms 3.9, 3.10 (App. A, Eqs. (3.12)–(3.15)); Rems. 3.3, 3.12; Thms 4.1, 4.2 (Eq. (4.6)); §4.1.3; Thms 4.4, 4.7–4.13 and Rem. 4.6; §5 (Eqs. (5.11), (5.16)–(5.18)); §6 (Thms 6.1–6.4).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §3.7, Fig. 4 (link to GQL).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §3.5 (Lemmas 3.4–3.7, Eqs. (48), (52), Thm 3.1, Eq. (57)).

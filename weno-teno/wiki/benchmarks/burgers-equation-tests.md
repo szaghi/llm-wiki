@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation tests"
-description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock forms and shock capturing after, discontinuous data, a two-dimensional four-quadrant Riemann problem, and special Euler data with gamma = 3 whose solution is a Burgers solution; records setups, breaking times and reported orders."
+description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock forms and shock capturing after, energy and entropy tests of split forms, discontinuous data, a two-dimensional four-quadrant Riemann problem, and special Euler data with gamma = 3 whose solution is a Burgers solution; records setups, breaking times and reported orders."
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Burgers equation tests
@@ -28,12 +28,20 @@ that reduce exactly to Burgers.
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.5/\pi$, 10–320 cells | $1.5/\pi$, 200 cells |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.2 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,4]^2$, periodic | $0.5/\pi$, $10^2$–$320^2$ | $1.5/\pi$, $200^2$, cut along $x=y$ |
 | [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) §4.1, §4.3.1 | $u_0=0.5-0.25\sin(\pi x)$ | $[0,2]$, periodic | $1$, $\Delta t=h,10h,50h$ | $2$, 256 cells, $\Delta t=3h,5h$ |
+| [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) §4.1 | $u_0=\sin(\pi x)+0.01$ | $[0,2]$, periodic | — | $3$, 8 elements, $N=4,5$, RK4, $\Delta t=10^{-4}$ |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P_4$ on 15 and $\mathbb P_{14}$ on 5 elements |
+| [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.2 | $u_0=\sin(2\pi x)$, flux printed $u^2$ | $[0,1]$ | — | $0.3$, 80 elements |
+| [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$; along the diagonal the
 two-dimensional data have the same breaking time; for
 $u_0=0.5-0.25\sin(\pi x)$, $t_{\mathrm b}=4/\pi\approx1.27$ *(compiler
 check, not in the sources)*. The accuracy times thus lie before and
-the shock times after breaking.
+the shock times after breaking. Likewise $t_{\mathrm b}=1/\pi$ for
+Cicchino et al., $1/(2\pi)\approx0.16$ for Dzanic et al., $2/\pi\approx0.64$
+for Sousa & Scalo, and, with Yu & Hesthaven's flux $u^2$ (characteristic
+speed $2u$), $1/(4\pi)\approx0.08$ *(compiler check, not in the
+sources)*: all four run past breaking.
 
 **Orders.** Li, Shu & Qiu's sixth-order moment-based
 [multi-resolution HWENO](/methods/hermite-weno.md), with the first
@@ -53,6 +61,79 @@ implicit Euler is first order and the unlimited DIRK–CWENO scheme D3P1
 third order on the same data (Fig. 1). After the shock forms, Q3P1 is
 slightly more diffusive than D3P1 but much less than implicit Euler,
 and at $\Delta t=5h$ it reduces D3P1's oscillations (Figs. 4–5).
+
+**Shock capturing in element methods.** Dzanic, Trojak & Witherden
+use the shocked sine to show that their residual-based
+[artificial viscosity](/methods/artificial-viscosity.md) with $c_\mu=1$
+resolves the shock over 4–5 solution points without spurious
+oscillations at $\mathbb P_{14}$ on 5 elements, at a width similar to
+$\mathbb P_4$ on 15 elements, with the viscosity localized at the shock:
+"the proposed approach does not suffer with increasing approximation
+order" (§5.1.1, Fig. 1). Yu & Hesthaven capture the discontinuity
+without spurious oscillations on 80 elements with ANN-predicted
+viscosity, whose peak decreases with the degree; a slight asymmetry of
+the viscosity is attributed to the randomness of the training samples
+(§5.2, Figs. 5–6).
+
+**Spectral make-up of added dissipation.** Sousa & Scalo filter the
+shocked sine with a sharp spectral filter and compute the exact
+sub-filter flux from the characteristic solution: its energy spectrum
+spans all resolved wavenumbers with a plateau and a cusp near the
+cut-off, the shape of the Kraichnan and Chollet–Lesieur turbulence
+spectra, here produced by shock formation (§2.3, Fig. 1b). A
+posteriori, dynamic Smagorinsky dissipates uniformly across the
+spectrum, over-damps large scales, under-damps near the cut-off and
+lets oscillations pile up, and spectral vanishing viscosity with an
+inviscid low range under-damps low wavenumbers; their
+[quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md), tuned
+on this test, matches the exact spectrum best (Fig. 1).
+
+## Energy and entropy tests
+
+Burgers' equation with the square entropy $\eta=u^2/2$ serves as the
+scalar test of discrete energy (entropy) conservation in the sources below.
+[Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+§4 (arXiv v1) split the volume term as
+$\tfrac23\partial_x(u^2/2)+\tfrac13u\partial_xu$ in energy-stable
+[flux reconstruction](/methods/flux-reconstruction.md) and run the
+shocked sine above on Gauss–Lobatto nodes (collocated), on $N+1$ Gauss
+nodes (uncollocated) and on $N+3$ Gauss nodes (overintegrated), with
+an energy-conservative or a local Lax–Friedrichs interface flux. With
+their split form, in which the flux-reconstruction filter also acts on
+the non-conservative volume term, the energy is conserved to
+$O(10^{-12})$ with the conservative flux and decreases monotonically
+with Lax–Friedrichs, for $c_{\mathrm{DG}}$, $c_+$ and $c=10^4$ (their
+correction parameters); the conservative DG scheme and the classical
+split forms, filtered on the surface only, do neither, except Huynh's
+lumped-Lobatto $g_2$ scheme (Tables 1–3). A manufactured solution
+$u=\cos(\pi(x-t))$ with source term
+$\pi\sin(\pi(x-t))\big(1-\cos(\pi(x-t))\big)$ to $t=1$ gives orders
+near $N+1$ for $N=4$ and about 5.7 for $c_+$ at $N=5$ (Tables 4–7). See
+[split convective forms](/methods/split-convective-forms.md) and
+[entropy stability](/properties/entropy-stability.md).
+
+[Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) (arXiv v4)
+use two Burgers-type tests of their
+[entropy correction term](/methods/entropy-correction-term.md):
+
+- Example 2.12, $\partial_tu+\partial_x(u^2/2)=0$ on periodic $[0,3]$
+  with $u_0=-1$ on $(1,2)$ and $+1$ elsewhere, whose entropy solution
+  has a stationary shock at $x=1$ and a rarefaction at $x=2$. Central
+  finite-difference and Fourier collocation schemes, with or without
+  the correction, keep the initial data stationary, so a global entropy
+  equality does not make a scheme converge to the entropy solution (no
+  numbers given). The shock at $x=1$ is stationary because the
+  Rankine–Hugoniot speed is $\tfrac12(1+(-1))=0$, and the jump at $x=2$
+  from $-1$ to $+1$ is an expansion shock in the initial data
+  *(compiler check, not in the sources)*.
+- §4.1, a two-dimensional Burgers-type equation
+  $\partial_tu+\partial_x(\cos u)+\partial_yu=0$ on the unit disk with
+  $u_0=\exp(-40(x^2+y^2))$, outflow, to $t=0.2$ before shock formation,
+  third-order continuous Galerkin residual distribution, SSPRK(3,3),
+  CFL 0.1. The non-polynomial flux makes the quadrature inexact. The
+  entropy changes at $t=0.2$ are $1.6819\times10^{-15}$ and
+  $1.6822\times10^{-15}$ for the two weightings of the correction, so
+  the weighting makes no significant difference on smooth data.
 
 ## Discontinuous data and interacting shocks
 
@@ -111,7 +192,7 @@ use this to obtain exact smooth Euler solutions:
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.3–3.4 use the
   same data with the factors printed as $2\sqrt3$ and $\sqrt6$, which
   equal $2\sqrt\gamma$ and $\sqrt{2\gamma}$ only for $\gamma=3$, a value they
-  do not state *(compiler inference)*; exact solution taken from their
+  do not state *(compiler check, not in the sources)*; exact solution taken from their
   earlier paper; $t=3$. M5-I reaches $1.69\times10^{-12}$ at 320 cells
   (order 6.03) and $4.67\times10^{-11}$ at $320^2$ (6.49), M5-NI again
   about fifth order (Tables 3.3–3.4).
@@ -128,6 +209,13 @@ in the sources)*, matching Zheng et al.'s statement.
 - Puppo et al.'s Table 1 prints a rate on the first row of each
   sub-table, against a coarser grid that is not listed; their Fig. 7
   caption gives $t=5$ for a test that ends at $t=0.5$.
+- Cicchino et al. write that "all schemes yield the expected
+  convergence rates of $p+1$", while their split form with $c_+$ at
+  $N=5$ gives 5.70–5.76 (Tables 5, 7); they define $c_+$ as the value at
+  which an order is about to be lost, which explains the rates but not
+  the sentence.
+- Yu & Hesthaven print the flux as $f=u^2$, not $u^2/2$, a scaling that
+  doubles the wave speeds against the other sources.
 - The accuracy tests of Zheng et al. use $\Delta t=O(\Delta x^{5/3})$;
   the other sources' accuracy runs state CFL 0.6 with a reduced time
   step (Li, Shu & Qiu) or prescribed multiples of $h$ (Puppo et al.).
@@ -139,3 +227,8 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5, Fig. 11 (arXiv v1).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.11 (arXiv v1).
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §4, Ex. 1 and Ex. 8, Tables 2 and 4.
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §4.1–4.2, Tables 1–7 (arXiv v1).
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.1.1, Fig. 1 (arXiv v2).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.2, Figs. 5–6.
+- [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §2.3, Fig. 1 (arXiv v2).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — Example 2.12; §4.1, Eq. (44) (arXiv v4).

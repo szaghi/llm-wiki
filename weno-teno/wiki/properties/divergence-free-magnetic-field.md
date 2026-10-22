@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Divergence-free magnetic field"
-description: "The magnetic field of MHD obeys div B = 0; discretizations enforce it exactly, locally, through divergence cleaning or not at all, and Wu and Shu show that bound preservation of high-order MHD schemes requires a discrete divergence-free condition, recovered by a Godunov-symmetrization source term; the page adds locally divergence-free finite-volume reconstruction and constrained transport for unstaggered central schemes."
+description: "The magnetic field of MHD obeys div B = 0; discretizations enforce it exactly, locally, by cleaning or not at all. Wu and Shu show that bound preservation of high-order MHD schemes needs a discrete divergence-free condition, recovered by a Godunov-symmetrization source; the page adds Powell-type sources, locally divergence-free reconstruction and constrained transport."
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term]
-tags: [mhd, bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -23,7 +23,11 @@ generalized-Lagrange-multiplier (GLM) divergence cleaning
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md));
 through constrained transport in an unstaggered central scheme
 ([Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md)) and in
-finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)).
+finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)); and,
+without cleaning or transport, through a Powell-type source alone, in
+flux reconstruction ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md))
+and in entropy-stable relativistic MHD
+([Duan & Tang (2022)](/sources/duan-2022.md)).
 
 ## The Powell source term
 
@@ -42,6 +46,33 @@ with a GLM term required by Galilean invariance, are needed for the
 continuous entropy analysis to hold, and they enter the entropy flux
 potential through an extra term proportional to $(v\cdot B)B$ (§2.2,
 Eqs. (21)–(22)).
+
+**Flux reconstruction.** [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)
+(§5.3, Eq. (48)) add the eight-wave Powell source
+$-(0,\ B,\ v,\ v\cdot B)^\top\,\nabla\cdot B$, the same vector, with
+$\nabla\cdot B$ the corrected divergence of their
+[flux-reconstruction](/methods/flux-reconstruction.md) scheme built from
+centred common interface values, and run the MHD rotor and the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) with their
+time-reversibility [artificial viscosity](/methods/artificial-viscosity.md);
+no further divergence control is used.
+
+**Relativistic MHD.** For special relativistic MHD
+([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md))
+[Duan & Tang (2022)](/sources/duan-2022.md) (§2, Eqs. (2.4)–(2.5), after
+Wu & Shu) use the symmetrizing source $-\Phi'(w)^\top\sum_d\partial_{x_d}B_d$,
+with $w$ the entropy variables and $\Phi=\rho W(v\cdot B)/p$ homogeneous of
+degree one in $w$ (page-local), so that
+$\Phi'(w)=\big(0,\ B/W^2+v(v\cdot B),\ v\cdot B,\ v\big)$ in the ordering
+$(D,m,E,B)$. Without it the thermodynamic entropy pair does not symmetrize
+the system for $B\not\equiv0$. On moving curvilinear meshes they discretize
+it by the same $2p$th-order linear combination of two-point fluxes as the
+entropy-conservative flux, with a two-point "source flux" built from the
+averaged metrics and the averaged $B_d$ (Eqs. (3.4), (3.9)), and add no
+dissipation to it; the entropy-conservation proof uses this compatibility
+(Thm 3.2; [entropy-conservative flux](/methods/entropy-conservative-flux.md),
+[TeCNO schemes](/methods/tecno-scheme.md)). No cleaning or constrained
+transport is used.
 
 ## Divergence and bound preservation
 
@@ -203,10 +234,9 @@ compatible with the CFL condition
   density limiting with second-order subcell finite volumes limits less and
   develops more turbulent structure than with first-order ones (§5.3.1).
 
-The two choices are compatible *(compiler remark, not in the sources)*: the
-earlier paper shows that element-wise blending can carry the
-non-conservative terms with an entropy proof, the later one trades them
-for subcell-wise blending, for which the entropy proof is "still missing"
+The earlier paper carries the non-conservative terms with an entropy proof
+for element-wise blending; the later one gives them up for subcell-wise
+blending, for which the entropy proof is "still missing"
 (Rueda-Ramírez et al. 2022, §4 item (2)).
 
 ## Qualifications
@@ -229,8 +259,8 @@ for subcell-wise blending, for which the entropy proof is "still missing"
   pressure unless the SVD truncation of the least-squares solve is loosened
   (§3.3.3, §4.5).
 - Kanbar et al.'s CTM preserves the centred discrete divergence at the
-  nodes, not a face-centred divergence *(compiler remark, not in the
-  sources)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
+  nodes, not a face-centred divergence *(compiler check, not in the
+  sources: the divergence of Eqs. (20)–(21) is the centred nodal one)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
 
 # Citations
 
@@ -240,3 +270,5 @@ for subcell-wise blending, for which the entropy proof is "still missing"
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §2.2 (Eqs. (13)–(15), (21)–(22)); §3; §6; §6.2 (Figs. 9–10).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — arXiv v2: §5.3 (Eqs. (51)–(52)); §5.3.1 (Figs. 10–11).
 - [Fu (2023)](/sources/fu-2023.md) — §5.3, Fig. 19.
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — arXiv v2: §5.3 (Eq. (48)).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — arXiv v1: §2 (Eqs. (2.4)–(2.5)); §3 (Eqs. (3.4), (3.9), Thm 3.2).

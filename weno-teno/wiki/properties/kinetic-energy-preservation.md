@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Kinetic energy preservation"
-description: "A semi-discretization is kinetic-energy-preserving when its convective terms neither create nor destroy discrete kinetic energy, which Coppola and Veldman reduce to the skew-symmetry of C − ½diag(d_mass); the page gives that criterion, its local form, the finite-volume face-flux condition, the second-order barrier for product fluxes, and the DG two-point fluxes with the property."
+description: "A semi-discretization is kinetic-energy-preserving when its convective terms neither create nor destroy discrete kinetic energy, which Coppola and Veldman reduce to the skew-symmetry of C − ½diag(d_mass); the page gives that criterion, face-flux conditions, the second-order barrier, SBP proofs including the rotational form, correction terms, and DG two-point fluxes."
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, turbulence]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Kinetic energy preservation
@@ -124,6 +124,74 @@ smooth tests, the KEP central members with $\zeta\in\{0,\tfrac12,1\}$ conserve
 mass, momentum and energy to $O(10^{-15})$–$O(10^{-16})$, and members that
 violate the weights lose energy at $O(10^{-3})$–$O(10^{-4})$ (§7.3, Fig. 2).
 
+## Summation-by-parts proofs and the rotational form
+
+[Edoh (2022)](/sources/edoh-2022.md) proves kinetic-energy preservation of
+split forms with diagonal-norm finite-difference
+[summation-by-parts operators](/operators/summation-by-parts-operator.md):
+the convective contribution to the discrete kinetic-energy balance
+collapses to a boundary flux by $Q+Q^\top=B$ and the commutation of the
+diagonal norm with diagonal data matrices (Eqs. (11)–(12), (22)–(24)).
+His results (§3, Tables 1–3):
+
+- **Incompressible.** The Morinishi (skew-symmetric) splitting, his
+  rotational-form splitting Div-rot and the derived Div-str are
+  kinetic-energy preserving when the discrete velocity is solenoidal,
+  $D_jv_j=0$. For Div-rot the proof relabels indices under the double sum
+  over components, so the property holds only for the summed
+  multi-dimensional kinetic energy, not component by component
+  (Remark 3).
+- **EMAC fails discretely.** The strain-based EMAC form of Charnyi et al.
+  leaves an indefinite residual of the order of the operator, because the
+  discrete product rule fails pointwise, and its compressible version of
+  Both et al. likewise (Eqs. (16), (25)). The EMAC papers are finite
+  element papers with a weakly imposed solenoidal constraint, so the
+  disagreement concerns the discrete setting.
+- **Compressible.** In square-root-density variables, compressible Div-rot
+  and Div-str, and the one-parameter family that contains Rozema's
+  splitting, are kinetic-energy preserving without any solenoidal
+  condition (Eqs. (24), (26)). The KEP families are therefore not unique:
+  Edoh's family with geometric density averages and Coppola et al.'s
+  family with arithmetic ones (the $\zeta$ family above) are distinct
+  ([split convective forms](/methods/split-convective-forms.md)).
+- **Total energy.** Building the total-energy flux as internal energy plus
+  the kinetic energy induced by mass and momentum (after Kuya et al.)
+  gives a neutral-stability statement in the auxiliary variables
+  $(\sqrt\rho,\sqrt\rho v,\sqrt{\rho e})$, as Edoh states after the
+  literature (§4).
+- **Time integration.** Exact preservation in time needs implicit
+  symplectic or relaxation-type integrators; Edoh presumes the temporal
+  error negligible at small $\Delta t$ and does not study it (§4.1.1).
+
+His tests show the practical side. Without filtering, Div-rot is more
+robust than the divergence form but more prone to aliasing than the
+Feiereisen and Kennedy–Gruber splittings on the isentropic vortex; on the
+Taylor–Green vortex at $\mathrm{Re}=1600$ both Kennedy–Gruber and Div-rot
+run severely under-resolved grids on which the divergence form fails
+(§4, Figs. 1, 3).
+
+## Kinetic-energy correction terms
+
+[Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) state the
+kinetic-energy-preserving surface flux condition as a momentum flux
+$\{\!\{v_m\}\!\}f_\rho+\{\!\{p\}\!\}n_m$ for any mass flux $f_\rho$ (Eq. (40)), the
+Coppola–Veldman face condition with a central pressure added *(compiler
+check, not in the sources: Coppola & Veldman treat no pressure)*. The
+semi-discrete kinetic-energy balance of such a scheme contains the
+volume pressure work $p^\top MD_jv_j$ and a surface term
+$p^-\tfrac12(v^+_j-v^-_j)$ for $-p\,\partial_jv_j$ (Eq. (41)). Taking this
+balance as a constraint, an element-wise
+[correction term](/methods/entropy-correction-term.md) makes any
+baseline DG or SBP scheme kinetic-energy preserving with the smallest
+change in the mass-matrix norm (Eq. (42), Prop. 3.5), and it can be
+combined with the entropy correction (Remark 3.6). On the inviscid 2D
+Taylor–Green vortex the kinetic-energy correction removes the growth of
+kinetic energy before the central scheme blows up, but does not prevent
+the blow-up (on the sixth-order finite-difference grid it fails at about
+the same time as the central scheme, App. A.3), while flux differencing with Pirozzoli's or Ranocha's
+kinetic-energy-preserving flux survives much longer (§4.2.2, App. A.3;
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+
 ## In DG: kinetic-energy-preserving volume fluxes
 
 In split-form DGSEM the property is a choice of the symmetric two-point
@@ -164,6 +232,9 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - Coppola & Veldman's theory is for periodic 1D grids and the convective
   terms only. It is not an entropy analysis: "kinetic energy" there is the
   generalized quadratic $\tfrac12\rho\phi^2$.
+- Edoh's statement that Div-rot is the only KEP splitting whose
+  kinetic-energy flux does not average velocities from both sides of an
+  interface is qualified "to the author's knowledge" (§3.2, Remark 4).
 - Coppola & Veldman print a sign slip in their Eq. (6): the time derivative
   of $\tfrac12\rho\phi^2$ is $-\phi A\phi$, as their own Eqs. (4) and (59)
   give *(compiler check, not in the sources: re-derived from their
@@ -175,3 +246,5 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, §3.2.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §4.
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eq. (24), Remark 3.2 (arXiv v3).
+- [Edoh (2022)](/sources/edoh-2022.md) — §3.1 Eqs. (11)–(18), Remark 3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Table 3, §4, §4.1.1, Figs. 1, 3.
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §3.3 Eqs. (38)–(42), Prop. 3.5, Remarks 3.4, 3.6, §4.2.2, App. A.3 (arXiv v4).

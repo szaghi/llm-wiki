@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -52,7 +52,10 @@ speed and 682.08 with respect to the ambient one.
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.4 | [affine-invariant WENO-Z/D](/methods/affine-invariant-weno.md) | setup from Gao et al. (not reproduced) | — | PP limiter needed |
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) §5.2.3 | [DGSEM](/methods/dgsem.md), $N=3$, [subcell IDP limiting](/methods/subcell-finite-volume-limiting.md) | $[-0.5,0.5]^2$, $256^2$ elements | $10^{-3}$ | bar-state bounds |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.18 | [OEDG](/methods/oedg.md), third order | $320\times160$ | $0.001$ | none mentioned |
+| [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.6 | nodal DG on triangles, $P^2$–$P^4$, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) (decay-rate threshold $\mathfrak a_0=2.5$, page-local; min-rule) | $h=1/320$, mesh symmetric about $y=0$ | $0.001$ | none; first layer of elements next to the inlet initialized with the jet state |
 
+Yu & Hesthaven print the Mach 2000 data and domain above but not
+$\gamma$.
 Rueda-Ramírez et al. run the Mach 2000 jet on the square
 $[-0.5,0.5]^2$ with inflow at $x=-0.5$, periodic top and bottom and
 characteristic inflow/outflow left and right, a different box from the
@@ -79,6 +82,14 @@ nor mentions a positivity limiter, and says only that the results agree
 with earlier ones (Ex. 5.18, Fig. 14). Whether OEDG alone keeps $\rho$
 and $p$ positive here is not established by the source.
 
+**Artificial viscosity alone, and its order dependence.** Yu &
+Hesthaven run the jet with artificial viscosity and no positivity
+limiter: $P^3$ and $P^4$ are stable, $P^2$ goes unstable from
+insufficient dissipation, which they attribute to the scarce smoothness
+information carried by low-degree polynomials (§5.4.6, Figs. 24–25;
+§6). The run needs the tuned settings $\mathfrak a_0=2.5$ (default 2) and the min-rule
+and a start-up layer of jet-state elements.
+
 **Resolution.** Takagi et al. rank TENO-THINC, then TENO5, then WENO5-Z
 by small-scale structure and claim TENO-THINC beats earlier WENO5-JS and
 DG results (Fig. 20). Fu (2021) claims "much richer small-scale
@@ -93,6 +104,20 @@ closest to them (§5.2.3).
 
 ## Relativistic, MHD and gas–liquid variants
 
+- **Mach 800 dense jet without field.** [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md)
+  §5.1.6 (arXiv v3) take the setup of the Mach 800 MHD jet below,
+  "without magnetic field": half domain $[0,0.5]\times[0,1.5]$ with a
+  slip symmetry line on the $y$-axis, ambient $\rho=0.1\gamma$, $v=0$,
+  $p=1$, inlet $x\le0.05$ on $y=0$ with $(\rho,v_1,v_2,p)=(\gamma,0,800,1)$,
+  free boundaries elsewhere, $t=0.002$, flux reconstruction $\mathbb P_3$
+  on $200\times600$ and $800\times2400$ elements with
+  [entropy filtering](/methods/entropy-filtering.md). The run is robust;
+  the filter acts mainly at the leading shock, and on the fine mesh less
+  at the cocoon–jet interface. They claim "significantly better
+  resolution" than Wu & Shu's earlier DG with the linear
+  [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md), conceding
+  that the magnetic field of that run can stabilize the flow (Fig. 6);
+  the comparison is with a different problem.
 - **Axisymmetric relativistic jet.** [Cui, Ding & Wu (2024)](/sources/cui-2024.md)
   Example 5: special-relativistic hydrodynamics in cylindrical $(r,z)$
   coordinates with a geometric source, $\gamma=5/3$, domain
@@ -104,7 +129,19 @@ closest to them (§5.2.3).
   bound-preserving limiter; with the
   [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
   the $\mathbb P^4$ run takes 297.26 h against 414.19 h for the classic
-  decomposition (Table 10).
+  decomposition (Table 10). [Chen & Wu (2022)](/sources/chen-2022-b.md)
+  Ex. 4.12 (arXiv v1) run the same jet with their third-order
+  finite-volume WENO on triangles ($h=1/25$): beam $\rho_{\mathrm b}=0.01$,
+  $v_z=0.99$ through $r\le1$, ambient $(\rho,v_z,v_r,p)=(1,0,0,1.70305\times10^{-4})$,
+  pressure matched; classical Mach 6 and relativistic Mach about 41.95,
+  output at $t=60$, 80 and 100. The physical-constraint-preserving
+  limiter is needed (the run fails within a few steps without it) and
+  no carbuncle appears (Fig. 18). With $\gamma=5/3$ the beam sound
+  speed is $0.165=0.99/6$ and the relativistic Mach number
+  $Wv/(W_sc_s)=41.95$, $W_s$ the Lorentz factor of the sound speed
+  *(compiler check, not in the sources)*. The two papers print
+  different ambient densities, $1$ (Chen & Wu) against $0.01$ (Cui et
+  al.); the Mach numbers depend only on the beam state.
 - **Two-component MHD jet.** [Wu & Shu (2023)](/sources/wu-2023-b.md)
   Ex. 7.2: two-component ideal MHD, domain $[-0.5,0.5]\times[0,1.5]$,
   ambient $(\rho,p)=(0.14,1)$, inflow $(\rho,p)=(1.4,1)$ with
@@ -163,6 +200,9 @@ closest to them (§5.2.3).
   $t=10^{-3}$ for Mach 2000.
 - Resolution claims are visual comparisons, partly against figures
   from other papers.
+- Dzanic & Witherden compute a half domain $[0,0.5]\times[0,1.5]$
+  with a stated symmetry boundary, the configuration Liu et al.'s
+  printed domain also suggests.
 - Liu et al. print the domain of the MHD jet as $[0,0.5]\times[0,1.5]$,
   while the nozzle $-0.05<x<0.05$ lies at its edge; either the domain
   is misprinted or a half domain with an unstated symmetry boundary is
@@ -182,3 +222,6 @@ closest to them (§5.2.3).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Ex. 7.2, Fig. 6 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.5, Figs. 14–17.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §6.7, Tables 10–11, Figs. 17–19 (arXiv v1).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.6, Figs. 24–25; §6.
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.6, Fig. 6 (arXiv v3).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.12, Fig. 18 (arXiv v1).

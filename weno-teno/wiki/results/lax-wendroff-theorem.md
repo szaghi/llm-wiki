@@ -5,7 +5,7 @@ description: "The Lax–Wendroff theorem makes conservation, in flux form with c
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -99,6 +99,15 @@ Two sources show the consequence the theorem warns of, a wrong shock speed:
 - Rueda-Ramírez et al. attribute "local subelement-wise conservation" to the theorem; the
   conservation itself follows from the flux form (8), while the theorem is what gives it
   meaning for shock capturing.
+- **Scope: conservation laws only.** For a system with a non-conservative product,
+  $\partial_tu+\partial_xf(u)+\mathcal C(u)\partial_xu=0$, the product has no flux, so the
+  flux-form hypothesis cannot be met for it *(compiler check, not in the sources)*. As
+  recalled by [Chu et al. (2022)](/sources/chu-2022.md) (§1), weak solutions of such systems
+  are defined as Borel measures in the sense of Dal Maso, LeFloch and Murat, which needs a
+  choice of path across each jump, and are computed with
+  [path-conservative schemes](/methods/path-conservative-scheme.md); with $\mathcal C=0$ their
+  path-conservative central-upwind scheme is the conservative central-upwind scheme
+  (§2, Eq. (2.1)).
 - Coppola & Veldman's dual-sided first-order scheme conserves mass, momentum and total
   energy and gives a shock profile between the oscillating central and the smeared upwind
   scheme in a 1D Euler test without added dissipation (§8.2); they make no entropy claim.
@@ -110,3 +119,4 @@ Two sources show the consequence the theorem warns of, a wrong shock speed:
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §2.1 (Eq. (8)), §5.1 (Figs. 2–3) (arXiv v2).
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.3.4, §4.3.2 (Fig. 7) (arXiv v2).
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §1, §2.3, §4 (Example 4, Fig. 8).
+- [Chu et al. (2022)](/sources/chu-2022.md) — §1, §2 (Eq. (2.1)).

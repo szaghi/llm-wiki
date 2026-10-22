@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity controls oscillations by adding solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend of finite-difference central schemes, the nonlinear blend of projection stabilization and isotropic viscosity in continuous finite elements, graph viscosity, and the damping of DG modes that acts as a modal filter."
+description: "Artificial viscosity controls oscillations by adding solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend in finite differences and continuous finite elements, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, spectral and quasi-spectral eddy viscosities, and modal damping and solution filtering read as dissipation."
 status: established
-aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity]
-tags: [limiting, dg, low-dissipation, finite-difference, weno]
-timestamp: 2026-10-22T12:00:00Z
+aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD]
+tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -13,16 +13,24 @@ timestamp: 2026-10-22T12:00:00Z
 Artificial viscosity suppresses spurious oscillations by adding a
 dissipative term whose strength depends on the solution, rather than by
 replacing the solution in troubled cells as limiters do. In the sources of
-this bundle it appears in four forms: a **blend of low- and high-order
+this bundle it appears in six forms: a **blend of low- and high-order
 dissipation** switched by a shock sensor, in finite-difference central
 schemes ([Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md)) and in
 continuous finite elements ([Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md));
 a first-order **graph viscosity** that makes a low-order scheme
 invariant-domain preserving ([Pazner (2021)](/sources/pazner-2021.md));
-and a **damping of the modal coefficients** of a DG solution, which is the
+a **Laplacian viscosity for DG and flux reconstruction** whose magnitude
+comes from an indicator, a time-reversibility defect
+([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)) or a learned
+modal decay rate ([Yu & Hesthaven (2022)](/sources/yu-2022.md));
+**spectral and quasi-spectral eddy viscosities** that act on the highest
+resolved wavenumbers ([Sousa & Scalo (2022)](/sources/sousa-2022.md));
+a **damping of the modal coefficients** of a DG solution, which is the
 high-order dissipation of spectral-viscosity and filtering methods
-([Peng, Sun & Wu (2024)](/sources/peng-2024.md)). The JST-type, finite
-element and modal forms are evaluated in every cell; the first two need a
+([Peng, Sun & Wu (2024)](/sources/peng-2024.md)); and **solution
+filtering** read as a dissipation operator ([Edoh (2022)](/sources/edoh-2022.md)).
+The JST-type, finite element, quasi-spectral and modal forms are evaluated
+in every cell; the first two need a
 [shock sensor](/definitions/troubled-cell-indicator.md) only to set the
 weight of the low-order part.
 
@@ -151,6 +159,104 @@ freedom; on a sparsified operator with an $O(1)$ stencil it does not
 smoothness indicator Pazner uses to relax the limiter bounds is taken from
 Persson and Peraire's shock-capturing work (§4.4).
 
+## Laplacian viscosity for DG and flux reconstruction
+
+Both sources add to the conservation law a parabolic term,
+$\partial_tu+\nabla\cdot f(u)=\nabla\cdot(\mu\nabla u)$, discretized with the
+DG machinery of second-order terms, and differ in how they set the
+elementwise viscosity.
+
+**Time-reversibility (TR) viscosity.**
+[Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) (§2, Eqs.
+(2)–(7)) take the componentwise defect $d_{\mathrm{TR}}$ of a forward
+upwind Euler step followed by a backward downwind one (defined on the
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) page),
+and set a **vector** viscosity, one value per conserved component
+(page-local $\mu_{\mathrm{TR}}$, $c_\mu$, $\Delta_\Omega u$),
+$$\mu_{\mathrm{TR}}=c_\mu\,\frac{h^2\,d_{\mathrm{TR}}(u^n)}{\Delta t\,\Delta_\Omega u^n},\qquad \Delta_\Omega u^n=\max_\Omega u-\min_\Omega u\ \text{ over }[t^n,t^{n+1}],$$
+componentwise, with $h$ the local mesh scale ($h^d$ the element volume). A
+first-order analysis on step data (forward Euler, upwind flux, uniform grid,
+§3) gives for linear advection with speed $a>0$ a defect
+$\nu(1-\nu)\lvert[\![u]\!]\rvert$ on both sides of the jump, hence
+$$\mu_{\mathrm{TR}}=c_\mu\big(a\Delta x-a^2\Delta t\big)\ \to\ c_\mu\,a\,\Delta x\quad(\Delta t\to0)$$
+(Eqs. (18)–(20); *compiler check, not in the sources: substituting the two
+steps into the step data*). With $c_\mu=\tfrac12$ this is the "monotone"
+viscosity, with which a second-order central scheme becomes first-order
+upwind. For Burgers' equation with $u^-,u^+>0$ the limit is
+$c_\mu\lvert\tfrac12(u^-+u^+)\rvert\Delta x$, the shock speed times $c_\mu\Delta x$
+(Eq. (30)). The viscosity is elementwise constant and capped by
+$\mu_{\max}=c_{\max}\hat a\,h_{\max}$, $c_{\max}\approx100$, $\hat a$ an a
+priori maximum wave speed, only to keep transients from limiting the
+explicit step (Eq. (40); page-local); in 1D, with implicit viscous terms,
+results were identical with and without the cap. The method is
+implemented in PyFR ([PyFR](/software/pyfr.md);
+[flux reconstruction](/methods/flux-reconstruction.md) recovering nodal DG,
+Rusanov flux with Davis wave speeds, BR1, RK4), with one forward Euler pair
+per stage (§4). The paper relates it to Guermond et al.'s entropy
+viscosity: both rest on entropy production, but TR viscosity needs no
+entropy residual and no entropy pair (§2).
+
+Evidence (§5): on [Burgers](/benchmarks/burgers-equation-tests.md), $N=14$
+on 5 elements resolves the shock over 4–5 solution points like $N=4$ on 15
+elements; on [Sod](/benchmarks/sod-and-lax-shock-tubes.md) the $L^1$ rates
+are about one for $N=2$–7 (Table 1); on the
+[isentropic vortex](/benchmarks/isentropic-vortex.md) the $L^2$ rates are
+3.30–8.74 for $N=2$–7, at least $N+1$, and the largest viscosity
+components fall from about $10^{-7}$ to $10^{-9}$ when the mesh is halved
+($N=7$; Table 2, §5.2.3); on the
+[KPP rotating wave](/benchmarks/kpp-rotating-wave.md) ($N=9$),
+[Shu–Osher](/benchmarks/shu-osher-problem.md), an MHD rotor and the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) discontinuities are
+resolved within 2–5 solution points; on Orszag–Tang the density and
+magnetic-field viscosities differ visibly, which the authors read as the
+benefit of a vector viscosity (Fig. 13). $c_\mu$ ranges from 1 to 8 between
+problems and is kept fixed under refinement and order changes (§4.2).
+
+**Learned modal-decay viscosity.** [Yu & Hesthaven (2022)](/sources/yu-2022.md)
+(§2, §4.1, Eqs. (2.1)–(2.23), (4.3)–(4.5)) set the element viscosity
+(registry §10 $\mu_e$) from the decay exponent $\mathfrak a_K$ of the
+modal coefficients, estimated by a neural network (troubled-cell indicator
+page):
+$$\mu_e=\mu_{\max}\begin{cases}1,&\mathfrak a_K<1,\\1-\tfrac12(\mathfrak a_K-1),&1\le\mathfrak a_K\le3,\\0,&\mathfrak a_K>3,\end{cases}\qquad
+\mu_{\max}=c_{\max}\frac{\mathcal H}{N}\max_{x\in K}\lvert f'(u_h)\rvert,$$
+with $c_{\max}=0.5$ (page-local) and the length scale $\mathcal H=h$ if
+$\mathfrak a_K<\mathfrak a_0$ or $h<\tilde{\mathcal H}$, and
+$\mathcal H=\tilde{\mathcal H}=\max_e[\![u]\!]_e$, the largest jump across
+the element's edges, otherwise; $\mathfrak a_0=2$ by default and 2.5 on the
+forward step and the jet (page-local $\mathcal H$, $\tilde{\mathcal H}$,
+$\mathfrak a_0$). The jump-based scale is meant to tell spurious
+oscillations from physical fluctuations. The same viscosity acts on all
+components, computed from the density for Euler, and is made continuous by
+averaging it at the nodes of a quadratic Lagrange basis (Remarks 1–2). The
+viscous term uses an LDG-type auxiliary gradient with central fluxes, and
+the explicit step obeys
+$\Delta t\sim\nu/(aN^2/h+\mu_eN^4/h^2)$, which the authors call a stringent
+restriction (Eq. (2.23)). On smooth tests the viscosity acts only on the
+coarsest grids, after which the errors equal those of the inviscid scheme
+(Tables 2–3); shocks from Burgers to the double Mach reflection, the
+forward step on unstructured triangles and the
+[high-Mach jet](/benchmarks/high-mach-astrophysical-jet.md) (inflow speed
+800) are captured without oscillation, but $N=2$ fails on the jet from
+insufficient dissipation (§5.4.6).
+
+## Spectral and quasi-spectral eddy viscosities
+
+[Sousa & Scalo (2022)](/sources/sousa-2022.md) recall Tadmor's spectral
+vanishing viscosity (SVV), which adds $\epsilon_{\mathrm{SV}}\partial_x(\mathcal K_{\mathrm{SV}}*\partial_xu)$
+with a kernel acting only above an activation wavenumber $\sim k_c^{\beta_{\mathrm{SV}}}$,
+$\beta_{\mathrm{SV}}<\tfrac12$, and $\epsilon_{\mathrm{SV}}\ge1/k_c$ (Eqs.
+(13)–(16); page-local), and show that it is formally an LES eddy viscosity
+for the filtered Burgers equation; on a forming Burgers shock an inviscid
+low-wavenumber range makes it under-damp large scales and oscillate (§2.3).
+Their [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) sets
+the magnitude from a filter-residual estimate of the energy at the grid
+cutoff and shapes it in wavenumber with filter residuals, on a sixth-order
+compact central scheme, and is compared with the local artificial
+diffusivity (LAD) of Cook and Kawai–Lele, an artificial shear and bulk
+viscosity and conductivity that needs an explicit filter (§5). At $M=5$,
+$\gamma=1.15$, LAD oscillates and breaks symmetry where QSV does not
+(§5.3).
+
 ## Damping of DG modes as a modal filter
 
 The oscillation-free DG method (Lu, Liu & Shu, as recalled by
@@ -170,6 +276,32 @@ damped more, so the damping operator is an exponential **modal filter** with
 solution-dependent strength, which links oscillation-free damping to spectral
 viscosity and spectral filtering (Rem. 2.3, §1.2). Conservation and the
 non-increase of the elementwise $L^2$ norm follow at once (Rems. 2.2–2.3).
+
+The same exponential modal filter, with a strength chosen per element as
+the smallest one that makes the nodal values positive and above a local
+entropy bound, is [entropy filtering](/methods/entropy-filtering.md)
+([Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md), §3), which its
+authors count, with artificial viscosity, limiting and stencil
+modification, among the four classes of shock capturing for discontinuous
+spectral element methods (§1).
+
+## Solution filtering read as dissipation
+
+[Edoh (2022)](/sources/edoh-2022.md) (App. B, Eqs. (B.1)–(B.5)) stabilizes
+kinetic-energy-preserving central schemes with a temporally consistent
+implicit tangent filter of the conservative variables (Eq. (29)), and
+analyses it in the semi-discrete limit as an artificial dissipation
+$\partial_tu=\mathcal L(u)+\mathcal D_{\mathrm f}u$ with a conservative operator
+$\mathcal D_{\mathrm f}\le0$ of even-order differences (page-local; periodic
+grid). Filtering the total energy then tends to decrease the global
+entropy, filtering the momentum to increase it, and filtering the mass is
+indefinite (derived under these assumptions). Momentum-only filtering, which
+he calls entropy-stability promoting, gives strict kinetic-energy decay and
+entropy growth for all splittings tested, and on the
+[isentropic vortex](/benchmarks/isentropic-vortex.md) after 100 vortex
+widths minimum densities 0.5677 (divergence form), 0.6663 (Feiereisen),
+0.6671 (Kennedy–Gruber) and 0.6981 (Div-rot) against the exact 0.5479
+(Figs. B.5–B.6; [split convective forms](/methods/split-convective-forms.md)).
 
 ## Limiters read as artificial viscosity
 
@@ -199,6 +331,16 @@ the review gives no formula.
   discontinuities with the moving mesh and need neither artificial
   viscosity nor limiters nor WENO reconstruction (§I;
   [implicit shock tracking](/methods/implicit-shock-tracking.md)).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) list
+  artificial viscosity, with relaxation and implicit methods, as a way to
+  turn a semi-discretely entropy-conservative or entropy-dissipative scheme
+  into a fully discrete one (Rem. 2.2); they obtain it instead with
+  [entropy correction terms](/methods/entropy-correction-term.md) applied to
+  the space–time residual.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) accept the time-step cost
+  that Rueda-Ramírez et al. object to and leave implicit time stepping to
+  future work (§2.3); Dzanic, Trojak & Witherden cap the viscosity for the
+  same reason (§4.2).
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) take the
   opposite line for turbulent flows: a high-order dissipation applied
   everywhere serves as the subgrid regularization of an implicit LES, and
@@ -228,6 +370,26 @@ the review gives no formula.
   Sciacovelli et al. prove no stability or accuracy theorem; their
   evidence is numerical.
 
+- **Tuning.** Dzanic, Trojak & Witherden present TR viscosity as having one
+  parameter and being independent of mesh and order (Abstract, §6), yet
+  tune $c_\mu$ per problem between 1 and 8 and keep a second constant
+  $c_{\max}$ whose influence is checked only in 1D (§4.2, §5). Their
+  normalization by the global range of each component makes the viscosity
+  at a weak shock depend on a strong jump elsewhere in the domain
+  *(compiler check, not in the sources: $\Delta_\Omega u^n$ in Eq. (6) is
+  a domain-wide range)*. Yu & Hesthaven tune
+  $\mathfrak a_0$ and the edge rule for the forward step and the jet.
+- In Yu & Hesthaven's switch (4.5) the length scale is either $h$, a length,
+  or $\tilde{\mathcal H}$, a jump of the solution, and the comparison
+  $h<\tilde{\mathcal H}$ is dimensionally consistent only for
+  non-dimensional variables *(compiler check, not in the sources: units of
+  the two branches of Eq. (4.5))*.
+- Dzanic, Trojak & Witherden's first-order analysis of Burgers prints the
+  $\zeta^2$ term of Eqs. (27) and (29) with the wrong sign and drops factors
+  of two inside Eq. (29); the limit (30) is unaffected *(compiler check,
+  not in the sources: with $k=\Delta t/(2\Delta x)$ the defect is
+  $k\lvert\zeta-2ku^+\zeta-k^2\zeta^2\rvert$, $\zeta=(u^-)^2-(u^+)^2$)*.
+
 # Citations
 
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — arXiv v1: §1; §3 (Eqs. (20)–(35), Fig. 1); §4.1; §5.2 (Fig. 11).
@@ -238,3 +400,9 @@ the review gives no formula.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §1; §6.4.
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — author manuscript: §I.
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (adaptive artificial viscosity among hybrid TENO uses, named only).
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — arXiv v2: Abstract; §2 (Eqs. (2)–(7)); §3 (Eqs. (8)–(30)); §4 (Eqs. (31)–(40)); §5 (Tables 1–2, Figs. 1–14); §6.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §2 (Eqs. (2.1)–(2.23)); §4.1 (Eqs. (4.3)–(4.5), Remarks 1–2); §5 (Tables 2–3, §5.4.6).
+- [Sousa & Scalo (2022)](/sources/sousa-2022.md) — arXiv v2: §2.2–§2.3 (Eqs. (13)–(16), Fig. 1); §5 (LAD comparison, Figs. 4–11).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §1; §3 (entropy filtering).
+- [Edoh (2022)](/sources/edoh-2022.md) — §4 (Eq. (29)); App. B (Eqs. (B.1)–(B.5), Figs. B.5–B.6).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: Rem. 2.2.

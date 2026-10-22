@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Three-dimensional periodic vortex flow that transitions to turbulence, run inviscid at low Mach number to compare the kinetic-energy loss and enstrophy growth of shock-capturing schemes, and viscous at Re=1600, also at Mach numbers up to 1, to compare their dissipation rate with DNS; the bundle's smooth-turbulence resolution test for TENO-type and implicit-LES schemes."
+description: "Three-dimensional periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth of shock-capturing schemes, viscous at Re=1600 or 5000 and Mach numbers up to 1.2 to compare dissipation rates with DNS, and in two dimensions a robustness test of entropy- and kinetic-energy-preserving DG."
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -35,8 +35,8 @@ $$
 
 on periodic $[0,2\pi]^3$. The background pressure $100$ makes the
 maximum Mach number about $0.08$ for $\gamma=5/3$
-($c=\sqrt{\gamma p/\rho}\approx12.9$ with $\lvert v\rvert\le1$;
-*compiler check, not in the sources*), so the flow is nearly
+($c=\sqrt{\gamma p/\rho}\approx12.9$ with $\lvert v\rvert\le1$)
+*(compiler check, not in the sources)*, so the flow is nearly
 incompressible. Li et al. use $\gamma=5/3$ and grids $64^3$, $128^3$ up
 to $t=6$; Takagi et al. do not print $\gamma$ and use $64^3$ to $t=10$.
 Li et al. write the pressure as $100+([\cos(2z)+2][\cos(2x)+\cos(2y)]-2)/16$,
@@ -70,7 +70,47 @@ $\mathrm{Re}=1600$, $\mathrm{Pr}=0.71$, $\gamma=1.4$, and
 $M=0.1$, $0.5$, $1$; grids $64^3$ to $1024^3$, third-order Runge–Kutta
 at CFL 0.5, up to $t=16$. This is Ye et al.'s field rescaled by the
 velocity instead of the sound speed (divide Ye et al.'s velocities by
-$M$ and pressure by $M^2$; *compiler check, not in the sources*).
+$M$ and pressure by $M^2$) *(compiler check, not in the sources)*.
+
+**Viscous, $\mathrm{Re}=1600$, element and compact schemes.**
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.2.1 (arXiv v3)
+and [Edoh (2022)](/sources/edoh-2022.md) §4.2, Eqs. (31)–(32), use Ye
+et al.'s field on $[-\pi L,\pi L]^3$ (Dzanic & Witherden with $L=1$,
+unit velocity amplitude and $p_0=1/(\gamma M^2)$, i.e. Sciacovelli et
+al.'s normalization). Dzanic & Witherden: $M=0.08$,
+$\mu=1/1600$, flux reconstruction $\mathbb P_3$ with $96^3$, $128^3$
+and $160^3$ DOFs and $\mathbb P_3$–$\mathbb P_5$ at about $120^3$ DOFs,
+against the DNS of van Rees et al.; diagnostics the kinetic-energy
+dissipation rate (smoothed by a moving average) and the enstrophy-based
+rate $\frac{2\mu}{V}\int\tfrac12\rho\lvert\omega\rvert^2$ ($\omega$ the
+vorticity, $V=8\pi^3$). Edoh: $M_0=0.1$, $\mathrm{Pr}=0.71$,
+$\gamma=1.4$, the sixth-order compact central scheme CD06 for the
+convective and pressure terms with second-order viscous terms, RK4,
+grids $64^3$, $128^3$ and $192^3$ without filtering, up to $t\approx16t_c$
+($t_c$ the convective time); diagnostics kinetic-energy decay rate,
+entropy change, density fluctuations, numerical dissipation and
+vorticity magnitude at $t\approx9t_c$.
+
+**Viscous, $\mathrm{Re}=5000$, subsonic and supersonic.**
+[Sousa & Scalo (2022)](/sources/sousa-2022.md) §§6.1, 7.1 (arXiv v2)
+print the same field on $[-\pi L,\pi L]^3$ with $\rho_0=1$,
+$p_0=1/\gamma$, $\mathrm{Re}=\rho_0V_0L/\mu_0=5000$ ($V_0$ the velocity
+amplitude), at turbulent Mach numbers $M_t=0.1$ and $1.2$: a DNS on
+$384^3$, a priori analysis with a sharp filter at $k_c=48$, and LES on
+$96^3$ (grid studies $72^3$–$144^3$ at $M_t=0.1$ and $96^3$–$384^3$ at
+$M_t=1.2$), with a sixth-order compact scheme; at $M_t=1.2$ shocklets
+form near $tV_0/L\approx6.5$–$6.75$.
+
+**Two-dimensional, inviscid.** [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
+§4.2.2 and App. A.3 (arXiv v4) run the planar field $\rho=1$,
+$v=(\sin x\cos y,\ -\cos x\sin y)$,
+$p=\frac{100}\gamma+\frac14(\cos2x+\cos2y)$, $\gamma=1.4$, on
+periodic $[0,2\pi]^2$, to $t=30$: nodal DG on Gauss–Lobatto nodes,
+$N=5$ on $16^2$ elements, SSPRK(10,4) with
+$\Delta t=\frac{\Delta x}{10}\frac1{N^2+1}$, and a sixth-order SBP finite
+difference scheme on $100^2$ nodes with $\Delta t=\Delta x/8$. It is a
+long-time robustness test of the semi-discrete entropy and
+kinetic-energy budgets, not a turbulence test.
 
 **Viscous, after Brachet et al.** [Bryngelson et al. (2021)](/sources/bryngelson-2021.md)
 §5.4 run the Taylor–Green vortex of Brachet et al. with the
@@ -111,6 +151,58 @@ Smagorinsky model and ALDM for the dissipation rate (§4.2).
 The sources agree that WENO-JS-type weights are the most dissipative
 of the schemes compared, and no source reports a newer scheme
 dissipating more than its WENO-JS baseline.
+
+**Shock-capturing devices must stay off.** Dzanic & Witherden find
+their [entropy filter](/methods/entropy-filtering.md) predominantly
+inactive: all their runs agree with the DNS and are nearly identical to
+unfiltered runs (Fig. 7). Sousa & Scalo's
+[quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md),
+tuned partly on a priori spectra of this flow, stays inactive early, as
+do the dynamic Smagorinsky model and the model labelled CvP, but
+not plain Smagorinsky; at $M_t=0.1$ on $96^3$ it is closer to the filtered DNS than
+the other models from $tV_0/L\approx6$ on, slightly over-damps before,
+is the only one to recover the post-peak plateau of the dissipation
+rate, and improves monotonically from $72^3$ to $144^3$; without a model
+the run diverges near $tV_0/L\approx10$ (§6.1, Figs. 12–14). Its cost on
+$96^3$ is $78.5\,\%$ above the model-free run, against $34.3\,\%$ for
+Smagorinsky and $72.5\,\%$ for the dynamic model (Table 2, hardware not
+stated).
+
+**Supersonic turbulence needs the right energy norm.** At $M_t=1.2$
+Sousa & Scalo find the volume-averaged kinetic energy non-monotonic,
+with a negative apparent dissipation, while Myers' compressible energy
+norm decays monotonically, so they measure dissipation with the latter.
+Without shock capturing every turbulence model blows up on $96^3$;
+their quasi-spectral viscosity runs stably. With localized artificial
+diffusion added, all the other runs over-dissipate around
+$tV_0/L\approx6.5$, where the shocks are strongest, and underpredict the
+dissipation peak, while the quasi-spectral viscosity stays closest to
+its own $384^3$ reference (§7.1, Figs. 16–19).
+
+**Split forms in under-resolved runs.** Edoh finds the divergence
+form of the convective terms unstable on his coarse grids (stable only
+on $512^3$, footnote 5), while the kinetic-energy-preserving
+Kennedy–Gruber splitting and his compressible rotational form are
+robust even severely under-resolved; at $64^3$ the rotational form shows
+larger density fluctuations and numerical dissipation, attributed to
+aliasing, yet cleaner vortical structures, and the two agree as the grid
+is refined (Figs. 3–4). In two dimensions, Abgrall, Öffner & Ranocha
+find that central DG blows up at $t\approx3.8$; their
+[entropy correction terms](/methods/entropy-correction-term.md) remove
+the kinetic-energy growth or keep the entropy constant but only delay
+the blow-up (to $t\approx4.3$ when both are applied), whereas
+[flux-differencing](/methods/flux-differencing.md) DG with
+entropy-conservative or kinetic-energy-preserving fluxes stays stable
+until $t\approx35$, and the Ducros split form with both corrections
+runs to $t=30$ (§4.2.2, Figs. 7–8).
+The corrected schemes fail through negative nodal density or pressure,
+after which neither the entropy variables nor the correction exist. In
+the SBP finite-difference runs, central and corrected schemes blow up
+between $t\approx23.5$ and $25.5$, flux differencing with Pirozzoli's or
+Ranocha's flux survives $[0,30]$ and crashes around $t\approx35$
+(App. A.3, Fig. 11). See
+[split convective forms](/methods/split-convective-forms.md) and
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
 **Agreement with spectral DNS.** Bryngelson et al. find that MFC's
 dissipation rate "closely match[es]" Brachet et al.'s spectral solution,
@@ -158,6 +250,20 @@ Steger–Warming) separates the dissipation rates.
 - Sciacovelli et al.'s scheme is a central scheme with artificial
   dissipation, not a WENO or TENO scheme; their conclusion on
   dissipation order is drawn within that family.
+- Edoh gives the time step as $\Delta t=t_c/10^4$ and as $\Delta t=10^{-3}$
+  with $\nu_{V_0}\approx0.01$ on $64^3$ (§4.2.1). With
+  $\Delta x=2\pi L/64=0.098L$, $\nu_{V_0}=0.01$ requires
+  $\Delta t\approx10^{-3}t_c$, so $t_c/10^4$ is the inconsistent value
+  *(compiler check, not in the sources)*.
+- Dzanic & Witherden print the pressure perturbation as
+  $\tfrac1{16}(\cos2x+\cos2y)(\cos(2z+2))$; the velocity field is even
+  in $z$, so the pressure it induces must be, and the form of the other
+  sources, $(\cos2z+2)$, is meant *(compiler check, not in the
+  sources)*. They define the kinetic-energy dissipation rate as
+  $\mathrm dK/\mathrm dt$ but plot it positive for a decaying flow, so a
+  minus sign is missing.
+- Abgrall, Öffner & Ranocha's Fig. 7 caption is truncated ("with a
+  Taylor-Green").
 - In the inviscid runs there is no converged reference: the sources
   compare schemes with each other (Li et al. also with a linear upwind
   scheme), not with an exact energy history.
@@ -170,3 +276,7 @@ Steger–Warming) separates the dissipation rates.
 - [Fu (2023)](/sources/fu-2023.md) — Figs. 4 and 14; §4.2 (reproduced).
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §5.2, Eqs. (46)–(50), Figs. 9–12 (arXiv v1).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §5.4, Fig. 5b (arXiv v1).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.2.1, Eq. (31), Fig. 7 (arXiv v3).
+- [Edoh (2022)](/sources/edoh-2022.md) — §4.2, Eqs. (31)–(32), Figs. 3–4.
+- [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §6.1, Eqs. (62)–(66), Figs. 12–14, Table 2; §7.1, Figs. 16–19 (arXiv v2).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2, Figs. 7–8; App. A.3, Fig. 11 (arXiv v4).

@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,7 +19,7 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Eight
+[symmetry preservation](/properties/symmetry-preservation.md). Nine
 sources of the bundle discuss it; Fu (2021), Takagi et al., Ye et al. and
 Huang et al. cite Xu & Shu for it, Li et al. cite Shi, Zhang & Shu and
 Young et al.
@@ -30,8 +30,9 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Takagi et al. (2022)](/sources/takagi-2022.md) §4.7,
 [Ye et al. (2022)](/sources/ye-2022.md) §4.7, Eq. (47),
 [Li et al. (2022)](/sources/li-2022-b.md) §4.4.1, Eq. (45),
-[Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 9 and
-[Wang et al. (2023)](/sources/wang-2023-b.md) Example 9, with
+[Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 9,
+[Wang et al. (2023)](/sources/wang-2023-b.md) Example 9 and
+[Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7, Eq. (38), with
 $c=\sqrt{\gamma p/\rho}$:
 
 $$
@@ -56,9 +57,12 @@ Chertock et al. describe the instability as "a layer of heavier fluid
 ... placed on top of a layer of lighter fluid". Ye et al. say "the direction of gravity is the
 same as the $y$ axis" without giving the sign of the source; Li et al.
 write that $\rho$ and $\rho v_2$ are added "to the flux" of the
-$y$-momentum and energy equations, without writing the term; Takagi et al., Fu (2021) and
-[Huang et al. (2026)](/sources/huang-2026.md) do not describe the
-gravity term.
+$y$-momentum and energy equations, without writing the term; Takagi et al., Fu (2021),
+[Huang et al. (2026)](/sources/huang-2026.md) and Bezgin et al. do not
+describe the gravity term. For Bezgin et al. this is a gap in the
+printed model: they state the homogeneous Euler system (their Eq. (26)),
+for which the initial pressures $2y+1$ and $y+3/2$ are not in
+equilibrium.
 
 ## Runs in the sources
 
@@ -72,6 +76,7 @@ gravity term.
 | [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 9 | [LCD central-upwind](/methods/lcd-central-upwind-scheme.md) vs earlier CU | $\Delta x=\Delta y=1/1024$ | 1.95, 2.95 |
 | [Wang et al. (2023)](/sources/wang-2023-b.md) Example 9 | A-WENO with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) | $\Delta x=\Delta y=1/800$ | 1.95, 2.95 |
 | [Fu (2023)](/sources/fu-2023.md) §3.8 | TENO review: symmetry discussion | — | — |
+| [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
 ## Findings across sources
 
@@ -87,11 +92,14 @@ only cross-grid calibration: AFTENO5 at $h=1/480$ is comparable to
 fifth-order WENO-JS at $h=1/1920$ and ninth-order WENO-JS at $h=1/960$
 from earlier literature, and lowering the TENO cut-off $C_T$ from
 $10^{-6}$ to $10^{-8}$ resolves more scales, matching those references
-at $C_T=10^{-8}$ (Fig. 8).
+at $C_T=10^{-8}$ (Fig. 8). Bezgin et al. find the three-point
+WENO3-NN resolving finer structures than WENO3-JS and WENO3-Z, and
+report that at $256\times1024$ WENO5-JS shows no vortical structures at
+all (§4.7, Figs. 15–16).
 
 **Symmetry.** The data are symmetric about $x=1/8$ ($\cos 8\pi x$ is
-invariant under $x\mapsto\tfrac14-x$; *compiler check, not in the
-sources*), and the sources
+invariant under $x\mapsto\tfrac14-x$) *(compiler check, not in the
+sources)*, and the sources
 report different outcomes for low-dissipation schemes:
 
 - Fu (2021) observes a **loss of symmetry** with very-high-order TENO on
@@ -112,13 +120,8 @@ Both Fu papers name round-off as the seed of the asymmetry. They
 weigh the role of dissipation differently: Fu (2021) writes that the
 round-off "cannot be hidden by the low numerical dissipation of the
 present schemes", Fu (2023), reporting Fleischmann et al., that there
-is no causal link between symmetry breaking and low dissipation. The
-two statements are compatible if dissipation only masks an asymmetry
-whose source is the implementation, which is what Fleischmann et al.'s
-symmetric TENO5 results show; Fu (2023) frames its account as
-countering the earlier TENO5 observation, not Fu (2021). Whether a
-given run is symmetric is therefore a property of the implementation as
-much as of the scheme.
+is no causal link between symmetry breaking and low dissipation. Fu (2023) frames its account as countering the earlier TENO5
+observation, not Fu (2021).
 
 ## Qualifications
 
@@ -149,3 +152,4 @@ much as of the scheme.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.2, Ex. 9 (arXiv v2).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 9, Fig. 9.
 - [Fu (2023)](/sources/fu-2023.md) — §3.8.
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.7, Eqs. (26), (38), Figs. 15–16.

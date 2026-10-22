@@ -5,7 +5,7 @@ description: "Balsara, Bhoriya, Shu and Kumar write point-value FD-WENO as an in
 status: established
 aliases: [FD-WENO in fluctuation form, path-conservative FD-WENO, FD-WENO with non-conservative products, HLLI FD-WENO]
 tags: [finite-difference, weno, riemann-solver, multiphase, well-balanced]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Fluctuation-form finite-difference WENO for non-conservative systems
@@ -18,7 +18,7 @@ point-value FD-WENO to
 
 $$\partial_tu+\partial_xf(u)+\mathcal C(u)\,\partial_xu=0,\qquad \partial_tu+A\,\partial_xu=0,\quad A=\frac{\partial f}{\partial u}+\mathcal C,$$
 
-with $\mathcal C$ (page-local) the matrix of non-conservative products (§II, Eqs.
+with $\mathcal C$ (registry §10) the matrix of non-conservative products (§II, Eqs.
 (2.4)–(2.5)), by writing the scheme in fluctuation form. To their knowledge this is the
 first FD-WENO for nonlinear systems with non-conservative products (Abstract, §I).
 
@@ -41,7 +41,7 @@ authors state is "needed in order to obtain the order property"; the Riemann sol
 Runge–Kutta in time. Multi-D is dimension by dimension.
 
 **Fluctuations** (§III, Eqs. (3.1)–(3.9), from Dumbser & Balsara 2016). The resolved state
-$u^{\mathrm{HLL}}_{i+1/2}$ (page-local) solves
+$u^{\mathrm{HLL}}_{i+1/2}$ (registry §10) solves
 
 $$u^{\mathrm{HLL}}=\frac{s^+u^+-s^-u^--\big(f(u^+)-f(u^-)\big)}{s^+-s^-}-\frac{\tilde{\mathcal C}(u^-,u^{\mathrm{HLL}})(u^{\mathrm{HLL}}-u^-)+\tilde{\mathcal C}(u^{\mathrm{HLL}},u^+)(u^+-u^{\mathrm{HLL}})}{s^+-s^-},$$
 
@@ -116,6 +116,23 @@ mild nonlinearity but, like Eq. (2.3), cannot preserve a stationary contact and 
   [shock–vortex](/benchmarks/shock-vortex-interaction.md) problems for the three
   non-conservative systems (§§VIII.d, IX).
 
+## Relation to the A-WENO path-conservative central-upwind scheme
+
+The priority claim above is the authors' own. In the same corpus
+[Chu et al. (2022)](/sources/chu-2022.md) build a fifth-order point-value scheme for
+$\partial_tu+\partial_xf(u)=-\mathcal C(u)\partial_xu$ (their $B=-\mathcal C$) by a different
+route: the system is written with a global flux $f+\int^x\mathcal C\,\partial_\xi u\,d\xi$, the
+[path-conservative](/methods/path-conservative-scheme.md) central-upwind flux of that global flux
+is inserted in [A-WENO](/methods/alternative-weno.md), and the cell integral of the
+non-conservative product is evaluated by a new five-point quadrature (§4, Eqs. (4.1)–(4.4)).
+Both schemes reconstruct (Chu et al.: interpolate) point values in local characteristic
+variables — per interface with a Roe-type matrix in Chu et al. (Remarks 6.2–6.3), per zone here —
+and use the straight-line path; Chu et al.'s is Riemann-solver-free (only
+one-sided speeds) and does not claim stationary-contact preservation, while the HLLI
+anti-diffusion here does. Chu et al. motivate A-WENO by stating that the original FD-WENO
+"relies on flux splitting, which is quite diffusive" (§1); the present scheme avoids flux
+splitting as well. The two papers share the two-layer shallow-water system as a test case.
+
 ## Qualifications
 
 - No truncation-error analysis of the nonlinear fluctuation form is given, and discrete
@@ -132,3 +149,4 @@ mild nonlinearity but, like Eq. (2.3), cannot preserve a stationary contact and 
 # Citations
 
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I, §II (Eqs. (2.2)–(2.6)), §III (Eqs. (3.1)–(3.9)), §IV (Eq. (4.1)), §V (Eqs. (5.1)–(5.5)), §VI, §§VII–X, App. D (accepted manuscript).
+- [Chu et al. (2022)](/sources/chu-2022.md) — §1, §4 (Eqs. (4.1)–(4.4)), §6; the A-WENO PCCU scheme used for the comparison.

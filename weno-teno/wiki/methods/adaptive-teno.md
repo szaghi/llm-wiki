@@ -5,7 +5,7 @@ description: "Adaptive TENO varies the TENO cut-off locally through a low-order-
 status: established
 aliases: [TENO-A, TENO-AA, TENO8-AA, TENO10-AA, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -38,7 +38,7 @@ $$\sigma_i=\frac{\lvert2\Delta f_{i+1/2}\Delta f_{i-1/2}\rvert+\epsilon_\sigma}{
 \mu_d=1-\min\Big(1,\frac{\sigma_{i+1/2}}{C_r}\Big),$$
 
 with $\Delta f_{i+1/2}$ the first undivided difference of the reconstructed
-variable (presumably $f_{i+1}-f_i$; neither source defines it) and
+variable (neither source defines it further) and
 $\mu_d\approx1$ at discontinuities, $\approx0$ in smooth regions
 ([Fu (2023)](/sources/fu-2023.md), Eqs. (31)–(32);
 [Fu (2021)](/sources/fu-2021.md), Eqs. (17)–(18)). The regularization differs:
@@ -69,7 +69,7 @@ TENO5-A to TENO8-A, plus TENO10-A with a positivity-preserving limiter.
 3-point stencils of TENO5, $S_0,S_1,S_2$, plus nested large stencils symmetric
 about $x_{i+1/2}$, $S_3=\{i-2,\dots,i+3\}$ (6 points), $S_4=\{i-3,\dots,i+4\}$
 (8 points), $S_5=\{i-4,\dots,i+5\}$ (10 points), and so on. Upwind-biased large
-candidates, those of standard TENO, are "particularly not recommended" because
+candidates, those of the original TENO, are "particularly not recommended" because
 their spectral properties "typically do not satisfy the approximate
 dispersion-relation" (§3.1).
 
@@ -84,8 +84,8 @@ starting from the largest stencil. In each group the four $\beta$, $\gamma$,
 $\chi$ and $\delta$ are computed with the sharp cut-off; if the large stencil
 passes, its linear flux alone is returned. If no large stencil passes, the flux
 is the TENO5-type combination $\omega_k=d_k\delta_k/\sum_{l=0}^2d_l\delta_l$ of the
-three small stencils (the flags presumably from the last group; the paper does
-not say). The small stencils serve both as the reference against which a large
+three small stencils; the paper does not say from which group the flags are
+taken. The small stencils serve both as the reference against which a large
 stencil's smoothness is judged and as the shock-capturing fallback (Remark 3.1).
 In smooth regions the largest stencil is always selected, so the design order
 holds (Remark 3.2).
@@ -118,6 +118,17 @@ turbulence, a Taylor–Green dissipation rate on $64^3$ closer to DNS than dynam
 Smagorinsky and ALDM, and agreement with filtered DNS for decaying compressible
 isotropic turbulence on $64^3$.
 
+## Motivation from fixed-cut-off schemes
+
+Hiejima (2022, §§3.2–3.3, §4) gives a case from outside the TENO papers for adapting the cut-off. His
+TENO-weighted [WCNS](/methods/weighted-compact-nonlinear-scheme.md) interpolation (WCNS-T) uses the
+simplified measure $\gamma_k=1/(\beta_k+\epsilon)^q$ with $q=6$, $\epsilon=10^{-40}$ and a fixed
+$C_T=10^{-5}$ on all candidate stencils. At this value Sod shows slight under- and overshoots that
+grow with the order, while $C_T=10^{-7}$ makes the Lax plateau between shock and contact oscillate
+(stated, not shown); at 11th order the Shu–Osher result does not improve on the 9th. He proposes
+to optimize $q$ and $C_T$ "following" adaptive TENO, citing the 10-point eighth-order TENO10-A,
+but does not do it.
+
 ## Qualifications
 
 - *(Compiler check, not in the sources.)* With the Arshed–Hoffmann weights the
@@ -142,3 +153,4 @@ isotropic turbulence on $64^3$.
 
 - [Fu (2021)](/sources/fu-2021.md) — §§3–5, Eqs. (11)–(29), Remarks 3.1–3.3, Figs. 1–15: TENO-AA.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (19); §4, Eqs. (31)–(33), Figs. 12–17; §5.4: TENO-A and its evidence.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.5.2, Eqs. (16)–(18); §§3.1–3.3; §4: fixed-cut-off WCNS-T and the proposal to adapt it.

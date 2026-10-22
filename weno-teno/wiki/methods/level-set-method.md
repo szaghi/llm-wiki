@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Level-set and ghost-fluid interface methods"
-description: "Interface methods that locate a material interface by the zero contour of a signed-distance level-set function: its transport and reinitialization, the ghost-fluid family and its loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging and flux blending, and the coupling of a level set with a conservative phase field."
+description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization and topology changes, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, and level-set–phase-field coupling."
 status: established
-aliases: [level set, level-set function, ghost fluid method, GFM, sharp-interface method, conservative sharp-interface scheme]
-tags: [interface-capturing, multiphase, finite-difference, weno, limiting]
-timestamp: 2026-10-22T12:00:00Z
+aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
+tags: [interface-capturing, multiphase, finite-difference, weno, dg, immersed-boundary]
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Level-set and ghost-fluid interface methods
@@ -16,15 +16,20 @@ distance from the interface ($\lvert\nabla\Phi\rvert=1$), negative in
 one fluid and positive in the other. The function is transported with
 the interface and periodically reinitialized to a distance function;
 it supplies the interface position, its normal $\nabla\Phi/\lvert\nabla\Phi\rvert$
-and its curvature. In this bundle it appears in two roles: as the
+and its curvature. In this bundle it appears in four roles: as the
 interface tracker of a sharp-interface, two-fluid, conservative
 finite-difference scheme for compressible gas–gas and gas–water flows
-([Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md)), and as the
+([Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md)); as the tracker of
+a sharp-interface discontinuous Galerkin scheme with ghost fluids in
+cut cells ([Bai & Li (2022)](/sources/bai-2022.md)); as the
 geometric companion of a mass-conserving phase field in a weakly
 compressible gas–liquid solver
-([Matsushita & Aoki (2021)](/sources/matsushita-2021.md)). The
-alternative, capturing the interface as a diffuse mixture region, is
-the [five-equation model](/definitions/five-equation-model.md).
+([Matsushita & Aoki (2021)](/sources/matsushita-2021.md)); and, kept
+stationary, as the representation of a rigid wall in
+[immersed-boundary methods](/methods/immersed-boundary-method.md)
+([Wang et al. (2022)](/sources/wang-2022.md)). The alternative,
+capturing the interface as a diffuse mixture region, is the
+[five-equation model](/definitions/five-equation-model.md).
 
 ## Transport and reinitialization
 
@@ -38,7 +43,14 @@ $\partial_x\Phi$ (and $\partial_y\Phi$) after Jiang & Peng, with
 $\Phi$ stored at half nodes (1D) or cell corners (2D) (§2.2, Eqs.
 21–22; §3, Eqs. 41–42). Matsushita & Aoki advect
 $\partial_t\Phi=-v\cdot\nabla\Phi$ with third-order Hamilton–Jacobi WENO
-every step (Eq. 16).
+every step (Eq. 16). Bai & Li transport $\Phi$ with an extension
+velocity, $\partial_t\Phi+v_\Phi\cdot\nabla\Phi=0$, where $v_\Phi$
+(page-local) is the interface velocity of an exact two-phase Riemann
+problem, extended off the interface by
+$\partial_\tau v_\Phi+n\cdot\nabla v_\Phi=0$ with
+$n=\nabla\Phi/\lvert\nabla\Phi\rvert$; both equations use the
+third-order HOUC scheme in space and Runge–Kutta in time, with $\Phi$
+stored at cell vertices (§2.5.1, Eqs. 21–22).
 
 **Reinitialization.** Both sources restore the distance property by
 solving to pseudo-steady state
@@ -51,7 +63,22 @@ with $S$ a sign function: $\mathrm{sign}(\Phi_0)$ of the initial
 contour, with TVD Runge–Kutta in pseudo-time, $\Delta\tau=0.1\min(\Delta x,\Delta y)$,
 every 100 steps in 2D (Zheng et al. §3.1.5); or the smoothed sign
 $S(\Phi)=\Phi/\sqrt{\Phi^2+\lvert\nabla\Phi\rvert^2\Delta x^2}$ with 20
-iterations every several dozen steps (Matsushita & Aoki §2.2, Eq. 15).
+iterations every several dozen steps (Matsushita & Aoki §2.2, Eq. 15);
+or, in Bai & Li, the same smoothed sign multiplied by
+$\lvert2H(\Phi_0)-1\rvert$, with $H$ a smoothed Heaviside function of
+half-width $\epsilon_H$ (page-local), $H=\tfrac12\big[1+\Phi_0/\epsilon_H+\tfrac1\pi\sin(\pi\Phi_0/\epsilon_H)\big]$
+for $\lvert\Phi_0\rvert\le\epsilon_H$ (Eqs. 23–25).
+
+**Topology changes.** A fixed reinitialization interval suits an
+interface of small curvature, not one that breaks up or merges. Bai &
+Li reinitialize by default every 100 steps, and in addition whenever a
+topology-change identifier fires: a vertex whose sign is opposite to
+all eight neighbours, or a pair of adjacent vertices of one sign whose
+four flanking vertices have the other sign, in either direction
+(Eq. 26). Isolated structures whose volume is below half a cell are
+deleted and the level set reinitialized at once; the mass so lost is
+recorded on shock–bubble runs and called "weak", deletion being rare
+(§2.5.3, Fig. 6).
 
 **Geometry.** Zheng et al. cut each cell by the straight segment
 between the zero crossings of $\Phi$ on its edges and compute the
@@ -68,6 +95,17 @@ $\lvert\Phi\rvert$ is below the diagonal length of its children
 (§3.5, Eq. 47).
 
 ## Ghost-fluid methods and conservation
+
+A ghost-fluid method gives each fluid, in a band beyond the interface,
+fictitious ("ghost") states built from the real states and interface
+conditions, so that each fluid's own scheme can be applied across the
+interface with its own equation of state. Bai & Li use the original
+ghost-fluid method of Fedkiw et al. for gas–gas interfaces and a
+gas–water variant for air–water ones, with the interface normal of the
+cut face and the exact two-phase Riemann state (§2.5.2).
+[Nguyen et al. (2022)](/sources/nguyen-2022.md) §1 state that the
+ghost-fluid method needs "complex thermodynamic management" and "is
+limited to two fluids".
 
 Zheng et al. group the ghost-fluid method (GFM) with its isobaric fix,
 the modified GFM, the real GFM, interface-treatment methods and
@@ -146,6 +184,49 @@ Stages of the third-order SSP Runge–Kutta method are assembled from
 $t^n$ with accumulated fluxes, so that the final update is a single
 conservative flux difference (§2.2.5–2.2.6).
 
+## A DG cut-cell scheme with real–ghost mixing
+
+Bai & Li (2022) build a sharp-interface
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md) solver,
+DGCCGF, for two-dimensional gas–gas and gas–water flows: the level set
+cuts each crossed Cartesian cell $K$ by a straight line into $K_1$ and
+$K_2$, and each fluid is updated on its own part. To avoid both the
+small-cell time-step limit and the cell merging of their earlier DG
+cut-cell method (which could not follow topology changes), each fluid
+$\ell$ receives an intermediate polynomial on the whole cell,
+
+$$
+\int_Ku^\star_\ell\,\varphi\,dx=\int_{K_\ell}u_\ell\,\varphi\,dx+\int_{K\setminus K_\ell}u^{\mathrm g}_\ell\,\varphi\,dx\qquad\forall\varphi\in\mathbb P^N(K),
+$$
+
+the $L^2$ projection of the real polynomial $u_\ell$ on its part and of
+the ghost polynomial $u^{\mathrm g}_\ell$ on the other (Eqs. 27–28;
+page-local symbols, $\varphi$ the test function). The ghost state of
+the cut part comes from the ghost-fluid method;
+its higher-order coefficients are assumed equal to those of the real
+fluid. Each fluid is then advanced on the full cell like a regular
+cell. Their earlier finite-volume method is the degree-zero case, which
+transplanted to DG is "excessively" dissipative; cells cut twice are
+handled by summing the real parts (Eq. 29), and Appendix A classifies
+the 3D cut types by vertex signs (no 3D test). The faces use an
+HLLC–HLL flux switched by a pressure-jump shock indicator (Eqs. 16–20;
+see [HLL-family solvers](/methods/hll-riemann-solvers.md)), a TVB
+minmod limiter controls oscillations, and quadtree adaptive refinement
+follows the interface ([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)).
+
+On Jain et al.'s drop in a compressible shear flow (degree 2, $T=2$),
+the shape error falls at observed orders 2.00, 1.68, 1.33 and the
+volume error at 2.55, 2.70, 3.26 from $64^2$ to $512^2$ (Table 1);
+the authors note that the errors "may be seriously effected by the
+re-initialization". The other tests are the
+[gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
+the [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
+the [Richtmyer–Meshkov instability](/benchmarks/richtmyer-meshkov-instability.md)
+and an [underwater explosion](/benchmarks/underwater-explosion.md). Like
+the ghost-fluid methods in Zheng et al.'s classification, the scheme is
+not conservative at the interface; Bai & Li quantify only the mass
+removed by deletion.
+
 ## Level set coupled with a conservative phase field
 
 Matsushita & Aoki capture the interface by the conservative phase-field
@@ -175,6 +256,21 @@ while the volume of each phase is not conserved (gas-area error within
 1.5 % in the text, see Qualifications); on the Rider–Kothe single-vortex
 test the interface error converges at roughly second order (rates
 2.06, 1.40, 2.29, 2.04 on $32^2$ to $512^2$; Appendix 8.4, Table 4).
+
+## Level sets for rigid walls
+
+With a stationary level set, $\Phi(x,t)=\Phi(x)$, the same machinery
+describes a rigid body on a Cartesian grid. Wang et al. (2022) take the
+signed distance to the wall, positive in the fluid, and compute
+$n=\nabla\Phi/\lvert\nabla\Phi\rvert$ and the curvature
+$\nabla\cdot n$ by second-order central differences (§2.2,
+Eqs. 12–15), to place the mirror and image points of a ghost-cell
+immersed boundary ([immersed-boundary methods](/methods/immersed-boundary-method.md)).
+[Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §1 note that
+the level-set and ghost-fluid boundaries of [AMROC](/software/amroc.md)
+are sometimes expensive, "especially when the number of cut-off cells
+... is large", and can force very small time steps in small cut cells,
+which motivates their body-fitted mapped meshes.
 
 ## Qualifications
 
@@ -207,8 +303,26 @@ test the interface error converges at roughly second order (rates
 - The scheme of Zheng et al. is conservative for the computational
   variable and for each fluid's mass; momentum in Matsushita & Aoki's
   non-conservative velocity form is "not exactly satisfied" (§3.1).
+- Bai & Li state in their introduction that for DG "the local
+  conservation can not be easily guaranteed", while finite volumes
+  achieve it easily (§1), an attributed remark with no argument
+  attached. Their own weak form with the test function $1$ updates the
+  cell mean by a difference of single-valued numerical fluxes, which is
+  local conservation in the sense of the
+  [flux-form result](/results/local-conservation-flux-form.md); the
+  steps of their solver that do not conserve are the ghost-fluid mixing
+  in cut cells and the deletion of isolated structures *(compiler check,
+  not in the sources)*.
+- Bai & Li print the HLLC star density of both sides with the left mass
+  flux $\rho^-(s^--v_1^-)$ in the numerator (Eq. 11), where the mass
+  jump condition gives the mass flux of the side considered, and cite
+  reference [1] for Quirk & Karni's problem, which is their [63].
 
 # Citations
 
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.1–2.3, Eqs. (1)–(27); §3, Eqs. (28)–(42); §4, Ex. 1–11, Tables 2–4, Figs. 6, 8, 11–15; Appendices A–B.
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §2.1–2.2, Eqs. (8)–(20); §3.2, §3.4–3.5, Eqs. (32)–(35), (39)–(41), (47); §5.1; Appendices 8.1, 8.3, 8.4.
+- [Bai & Li (2022)](/sources/bai-2022.md) — §1; §2.4–2.6, Eqs. (16)–(29), Figs. 2–7; §3.2, Table 1; Appendix A.
+- [Wang et al. (2022)](/sources/wang-2022.md) — §2.2, Eqs. (12)–(15).
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1 (statement on ghost-fluid methods only).
+- [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).

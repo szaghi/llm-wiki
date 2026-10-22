@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Targeted ENO (TENO)"
-description: "TENO builds a K-point reconstruction from candidate stencils of incremental width, separates smooth from non-smooth stencils by a strongly scale-separated measure and a sharp cut-off, and combines the surviving stencils with their renormalized linear weights, so that smooth regions recover the background linear scheme exactly; this page gives the standard recipe, its parameters, variants and recorded disagreements."
+description: "TENO builds a K-point reconstruction from candidate stencils of incremental width, separates smooth from non-smooth stencils by a strongly scale-separated measure and a sharp cut-off, and combines the surviving stencils with their renormalized linear weights, so that smooth regions recover the background linear scheme exactly; this page gives the basic recipe, its parameters, variants and recorded disagreements."
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -25,7 +25,7 @@ WENO, where every stencil contributes with a smoothness-dependent weight, and fr
 ENO, which keeps only the smoothest stencil and cannot recover the full-stencil
 optimal accuracy (Fu 2023, §2.3).
 
-## The standard recipe (finite difference)
+## The basic recipe (finite difference)
 
 The setting is the conservative finite-difference scheme on split point fluxes
 $f^\pm$ (see [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
@@ -126,7 +126,7 @@ An adaptive, locally varying $C_T$ is the subject of
   §2.1, Figs. 1–2; schematic).
 - **Dissipation.** Fu (2023, §1) reports that WENO's excess dissipation can
   underpredict "approximately the upper 3/4 of the resolvable wavenumbers" in
-  broadband turbulence, which is TENO's motivation. Yet standard TENO is "still
+  broadband turbulence, which is TENO's motivation. Yet fixed-cut-off TENO is "still
   excessively dissipative" for high-wavenumber physical fluctuations, because
   high-order undivided differences respond both to such fluctuations and to
   discontinuities ([Fu (2021)](/sources/fu-2021.md), §3.4; Fu 2023, §4.1).
@@ -189,6 +189,29 @@ combination ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)):
   WENO-Z-type weights, not a cut-off ([smoothness indicators](/definitions/smoothness-indicator.md),
   [WENO-Z](/methods/weno-z.md)). Its order, 6, matches that of the sixth-order $\tau_K$ above.
 
+Two further schemes take only the cut-off or the stencils:
+
+- **TENO-weighted WCNS interpolation.** Hiejima's WCNS-T (2022, §2.3, §2.5.2, Fig. 1, Eqs. (16)–(18))
+  interpolates primitive point values to $x_{i+1/2}$ on $K-2$ candidates over $K$ points, $K=5,7,9,11$
+  (the source's $2r-1$): the central $\{i-1,i,i+1\}$, then pairs $\{i,\dots,i+s+1\}$ and
+  $\{i-s-1,\dots,i\}$, $s=1,\dots,\tfrac{K-3}2$, described as the "pyramid" of the original TENO
+  scheme. *(Compiler check, not in the sources: this is the stencil set of $K$-point TENO for odd $K$,
+  e.g. the five TENO7 stencils $S_0,\dots,S_4$ listed above for $K=7$.)* Its linear weights are those
+  of point-value interpolation, e.g.
+  $(\tfrac{35}{64},\tfrac{35}{128},\tfrac7{128},\tfrac7{64},\tfrac1{64})$ for $K=7$ in the order central,
+  downwind, upwind, downwind, upwind (Table 2), not TENO7's $(18,9,3,4,1)/35$. The measure has no
+  constant and no global indicator, $\gamma_k=1/(\beta_k+\epsilon)^q$ with $q=6$, $\epsilon=10^{-40}$,
+  the form of the hybrid TENO indicator and of Fu (2021) above; the cut-off $C_T=10^{-5}$ acts on every
+  candidate independently, with no hierarchical voting, and the surviving linear weights are
+  renormalized ([WCNS](/methods/weighted-compact-nonlinear-scheme.md),
+  [adaptive TENO](/methods/adaptive-teno.md)). Hiejima (§1) also recalls TENO as candidate stencils
+  "defined in incremental width in combination with strong scale separation and ENO-like stencil
+  selection".
+- **A cut-off on learned weights.** The ENO layer of WENO3-NN applies the sharp cut-off, "similarly"
+  to TENO, directly to the two network weights, $c_{\mathrm{eno}}=2\times10^{-4}$, and renormalizes
+  (Bezgin, Schmidt & Adams 2022, §3.2, Eq. (16)); there is no scale-separated measure in between
+  ([learned WENO weights](/methods/learned-weno-weights.md)).
+
 ## Qualifications
 
 - "$K$-point TENO is $K$th order" (Fu 2023, §2) holds when the $d_k$ are chosen
@@ -236,5 +259,7 @@ al.'s rate is the one that smooth WENO-Z-type weights need.)*
 - [Fu (2023)](/sources/fu-2023.md) — §§1–5, Eqs. (2)–(33), Figs. 1–9: the review of the family.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, Eqs. (5)–(14), Table 2, Table 3: TENO5 recipe, order, cost.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §2, Eqs. (1)–(10); §3.3–3.5, Eqs. (24)–(39); §4.5, §4.7: stencils, $\tau_K$, $q$ and $C_T$ tests.
-- [Fu (2021)](/sources/fu-2021.md) — §§2–3.4: TENO background, dissipation of standard TENO.
+- [Fu (2021)](/sources/fu-2021.md) — §§2–3.4: TENO background, dissipation of fixed-cut-off TENO.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3, Eqs. (84)–(101); App. B: incremental-stencil interpolation with the TENO reference indicator.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.3, Fig. 1, Tables 2, 4, 6; §2.5.2, Eqs. (16)–(18): TENO stencils and cut-off in WCNS interpolation.
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eq. (16): TENO-like cut-off on learned weights.

@@ -8,7 +8,7 @@ authors: [Takagi S., Fu L., Wakimura H., Xiao F.]
 year: 2022
 venue: "J. Comput. Phys. 452:110899"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2022_Crossref_Journal_of_Computational_Physics_Takagi_A_novel_high-order_low-dissipation_TENO-THINC_scheme_for_hyp.pdf"
-tags: [teno, thinc, hybrid-scheme, shock-indicator, finite-difference, low-dissipation]
+tags: [teno, thinc, hybrid-scheme, troubled-cell, finite-difference, low-dissipation]
 timestamp: 2026-10-21T12:00:00Z
 ---
 
@@ -137,7 +137,7 @@ preprint, [24] a conference contribution and [63] a book. No item is unparseable
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Bound preservation](/properties/bound-preservation.md)

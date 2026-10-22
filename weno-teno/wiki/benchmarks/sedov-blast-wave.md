@@ -5,7 +5,7 @@ description: "Point-explosion benchmark in which the energy of one cell drives a
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Sedov blast wave
@@ -56,6 +56,14 @@ $\rho=1$, $v=0$, on $160\times160$ cells ($\Delta x=\Delta y=1.1/160$).
   $t=10^{-3}$; $\gamma$ not printed; [TENO-AA](/methods/adaptive-teno.md)
   with LLF splitting and the
   [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.3, after Xiong,
+  Qiu & Xu's positivity-preserving flux-limiter paper (their ref. [62]):
+  the data of Fan et al. on triangles of
+  size $1.1/160$, the total energy $0.244816/(\Delta x\Delta y)$ put in
+  the two triangles at the lower-left corner, inviscid walls on the left
+  and bottom and extrapolation elsewhere, $t=1$; nodal DG with
+  ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md)
+  and no positivity limiter mentioned.
 
 The two setups are one problem under the similarity scaling of the
 blast *(compiler check, not in the sources)*. With $\gamma=1.4$,
@@ -106,6 +114,11 @@ multi-resolution scheme (Example 5.5); which weights the paper uses
 elsewhere is ambiguous as printed (see
 [multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
+Yu & Hesthaven report that their artificial viscosity suppresses the
+spurious oscillations at the strong shock and that its distribution
+captures the symmetric structure of the blast (§5.4.3, Figs. 16–17);
+the paper names no positivity safeguard for this run.
+
 **Resolution of the density peak.** Wang et al. find WENO-JS5 and both
 multi-resolution schemes similar, and all worse than WENO-AO5 near the
 peak; they conjecture that near strong shocks of large pressure ratio
@@ -135,3 +148,4 @@ stated (Table 4.2).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5a, Fig. 5.9.
 - [Fu (2021)](/sources/fu-2021.md) — §5.7.2, Eq. (44) (arXiv v1).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §6.4, Table 7, Figs. 9–10 (arXiv v1).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.3, Figs. 16–17.

@@ -6,6 +6,81 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 3 — flux reconstruction, entropy correction, limiters, multiphase and relativistic flows (2026-10-22)
+
+Sources (20): browne-2022, dzanic-2022, hiejima-2022, nguyen-2022,
+peng-2022, wang-2022, yu-2022, abgrall-2022, bai-2022, bezgin-2022,
+sousa-2022, chen-2022-b, chen-2022, chu-2022, cicchino-2022, duan-2022,
+du-2022, du-2022-b, dzanic-2022-b, edoh-2022. 60 of 207 ingested, 127
+concept pages plus the registry, 2250 bibliography entries.
+
+### Decisions for the human
+
+1. **Still open from chunks 1–2:** the archive re-download and overwrite
+   (Feng 2026, Li 2024); the two open contradictions (TENO $\tau_K$,
+   conservation of WCNS); book printings (leveque, hesthaven); kanbar-2022
+   ref [4].
+2. **Bai & Li (2022) on DG local conservation** ("can not be easily
+   guaranteed", §1): recorded as an attributed qualification on the DG
+   and local-conservation pages, against the flux-form conservation
+   results there. Promote to a contradiction if you read it as a claim.
+3. **Bibliography calls:** `osher-2002` folded onto `osher-2003` (the
+   first edition printed with year 2002 by bai-2022) — a year variant
+   under the merger's reading, a separate entry under a strict edition
+   rule; `abgrall-2017-b` ("Comp. Fluids 19 (2017)", no pages) kept as
+   printed, unresolved.
+4. **Bundle fit (no D17 copy made):** browne-2022 (hypersonic transition
+   prediction), sousa-2022 (LES closure with shock capturing),
+   peng-2022 (AMROC combustion solver), wang-2022 (second-order ghost-cell
+   immersed boundaries) sit at the edge of this bundle.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  dzanic-2022 (v2), abgrall-2022 (v4), sousa-2022 (v2), chen-2022-b (v1),
+  cicchino-2022 (v1), duan-2022 (v1), dzanic-2022-b (v3); author
+  manuscript peng-2022.
+- yu-2022: the printed title reads "Galekin"; Crossref carries the same
+  spelling and the page keeps it.
+- sousa-2022: Crossref gives the family name "C. B. Sousa" (first author
+  Victor C. B. Sousa); slug `sousa-2022`.
+
+### Printed slips (the Source pages list them in full)
+
+- dzanic-2022-b: the SSP-RK3 stages of Algs. 3–4 lack the 1/4 and 2/3
+  factors (not first-order consistent as printed); tables print $L^2<L^1$
+  errors, which its own definitions exclude.
+- hiejima-2022: the double Mach reflection labels (A)/(B) are swapped
+  against Eq. (29); the WCNS-T flux derivative is a two-point interface
+  difference, formally second order (compiler check).
+- wang-2022: the printed post-shock velocity 1566.2 m/s is the shock
+  speed (Rankine–Hugoniot gives about 1240.7 m/s); Eq. (23) sign slip.
+- chen-2022-b: the strong vortex requires $\gamma=1.4$ (the stated
+  default is 5/3); the relativistic double-Mach state satisfies the jump
+  conditions only with $v_2=0$, the shock-diffraction state only with
+  $\gamma=5/3$.
+- nguyen-2022: the exact phasic mass conservation claimed is reached only
+  to $O(\Delta t^2)$ by the primitive-variable update (compiler check).
+- sousa-2022: the closed-form Fejér weights do not match Eq. (30).
+- edoh-2022: the Taylor–Green time step printed both as $t_c/10^4$ and
+  $10^{-3}$; the vortex diameter 2.1 m against about 3.3 m from the formula
+  (assuming $\gamma=1.4$, not printed).
+- bai-2022: the copper stiffening constant printed in bar (must be Pa);
+  the HLLC/HLL switch of Eqs. (16)–(19) reads, as printed, partly opposite
+  to its stated aim (Mach numbers in the mesh frame).
+- abgrall-2022: the "rotation" test field of Eq. (43) is a saddle.
+
+### Candidates for later pages
+
+Kept inline until a second source or a named contribution arrives:
+primitive-variable recovery for relativistic flows, spectral vanishing
+viscosity and local artificial diffusivity, Du & Yang's conservative
+modified exponential Runge–Kutta, two-layer shallow-water equations
+(chu-2022, balsara-2024), AUSM-family fluxes (peng-2022, hiejima-2022),
+residual distribution, solution filtering, the Div-rot splitting, the
+Prandtl–Meyer expansion, the Daru–Tenaud viscous shock tube, the MHD
+rotor, the Gresho vortex, the dam break.
+
 ## Chunk 2 — WENO variants, entropy-stable DG, multiphase, shock tracking (2026-10-22)
 
 Sources (20): pazner-2021, bryngelson-2021, sciacovelli-2021, wang-2021,

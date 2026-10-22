@@ -130,7 +130,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)

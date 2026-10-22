@@ -5,7 +5,7 @@ description: "Symmetry preservation has two meanings in the sources: keeping the
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Symmetry preservation
@@ -60,6 +60,25 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   interface velocities still agree with the experiment within its uncertainty
   (Table 2).
 
+- *Spurious post-shock oscillations of the shock-capturing term*:
+  [Sousa & Scalo (2022)](/sources/sousa-2022.md) (§5.3, Fig. 11) run a Mach 5 shock
+  reflecting off a sinusoidal wall with $\gamma=1.15$ on a sixth-order compact central scheme.
+  With the local artificial diffusivity (LAD) of Cook and Kawai–Lele they observe "a high
+  level of spurious oscillations" and "an early symmetry breaking behavior"; with their
+  [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) the run "preserve[s]
+  symmetry". No mechanism is proposed; the authors relate the oscillations to similar
+  post-shock oscillations reported by Lodato et al. (2017). Here the symmetry loss comes with
+  the oscillations of one explicit [artificial viscosity](/methods/artificial-viscosity.md),
+  not with low dissipation as such.
+
+**Not every asymmetry is numerical.** In the strong shock–strong vortex interaction
+([shock–vortex interaction](/benchmarks/shock-vortex-interaction.md)), Sousa & Scalo, following
+Rault et al. (2003) and Tonicello et al. (2020), describe the physical outcome as "a symmetry
+breaking event": the vortex splits into two co-rotating vortices, the bottom one trailing the
+top one; both QSV and LAD miss the asymmetric splitting on the coarsest grid ($192\times96$) and
+converge to it on finer grids (§5.2, Fig. 6). A symmetric numerical result is therefore the
+wrong answer for such a flow.
+
 **The remedy in practice.** [Takagi et al. (2022)](/sources/takagi-2022.md)
 (§4) use the Fleischmann et al. technique in all runs and report preserved
 symmetry for TENO-THINC on Rayleigh–Taylor
@@ -76,7 +95,7 @@ than WENO-IS-I and WENO-Z9, by WENO-Z+M on the same configuration at $401^2$
 ## 2. Skew-symmetry of the discrete convective operator
 
 For the transport model $\partial_t\rho+\nabla\cdot(\rho v)=0$,
-$\partial_t(\rho\phi)+\nabla\cdot(\rho v\phi)=0$ (with $\phi=v$ for momentum),
+$\partial_t(\rho\phi)+\nabla\cdot(\rho v\phi)=0$ (page-local transported quantity $\phi$, with $\phi=v$ for momentum),
 [Coppola & Veldman (2023)](/sources/coppola-2023.md) (§5.1, Eqs. (59)–(60)) prove
 that the discrete scheme conserves the quadratic invariant
 $\tfrac12\rho\phi^2$ globally iff the discrete operator
@@ -120,3 +139,4 @@ to compressible flow (§6). These results are developed on
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.2: WENO-Z+M symmetry on Riemann configuration 3.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §3.3, §5.1, §5.3, §6, Corollary A.4: skew-symmetry and kinetic-energy conservation.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–17, Table 2: symmetry loss on unstructured meshes.
+- [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §5.2 (Fig. 6), §5.3 (Fig. 11): physical symmetry breaking in strong shock–vortex interaction; LAD symmetry loss with spurious oscillations, QSV symmetric (arXiv v2).

@@ -6,7 +6,7 @@ status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Summation-by-parts operator
@@ -83,6 +83,37 @@ The following special cases appear in the sources:
   (Ranocha et al. (2023), Eq. (2.14)). Here $D_{n,\xi}$ is the reference
   tensor-product operator in direction $n$, and $Ja^{(n)}_d$ is the $d$th
   Cartesian component of $Ja^{(n)}$.
+- **Diagonal-norm finite-difference SBP.** On a grid of points the
+  derivative is $D=M^{-1}Q$ with a diagonal positive norm $M$ that is a
+  quadrature, $\mathbf 1^\top M\mathbf x^k\approx(x_R^{k+1}-x_L^{k+1})/(k+1)$,
+  and a boundary operator $B$ with $\mathbf 1^\top B\mathbf x^k=x_R^k-x_L^k$;
+  multi-dimensional operators are tensor products
+  ([Edoh (2022)](/sources/edoh-2022.md), §2, Eqs. (1)–(2)). Because a
+  diagonal norm commutes with diagonal data matrices $A=\mathrm{diag}(\mathbf a)$,
+  the SBP property gives the integrated discrete product rule
+  $$\mathbf 1^\top M\big(\mathrm{diag}(\mathbf a)D\mathbf b+\mathrm{diag}(\mathbf b)D\mathbf a\big)=\mathbf a^\top B\mathbf b=a_Rb_R-a_Lb_L,$$
+  the identity behind every kinetic-energy proof of split forms (Eq. (2)). Edoh
+  leaves out boundary and interface simultaneous-approximation terms.
+  [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) run a
+  sixth-order SBP finite-difference scheme on the periodic 2D Taylor–Green
+  vortex (App. A.3) and write nodal DG in the general element-wise form
+  above, $MD_j+D_j^\top M=\mathcal R^\top B_\partial N_j\mathcal R$ (§2.2,
+  Eq. (20)); they note that a single-block finite-difference or Fourier
+  collocation scheme is a one-element DG scheme in this sense (Example 2.12).
+- **Stiffness operator with dense norms.**
+  [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+  use the stiffness matrix $Q_{ij}=\int\chi_i\,\partial_\xi\chi_j$ of a
+  modal or nodal basis $\{\chi_i\}$ (page-local) evaluated by a quadrature
+  exact to degree at least $2N-1$. It satisfies
+  $Q+Q^\top=\sum_{\text{faces}}V_f^\top W_f\,n_f\,V_f$, with page-local face
+  interpolation $V_f$, face weights $W_f$ and reference normal $n_f$,
+  whatever the collocation of solution and quadrature nodes and with a
+  dense mass matrix (Eq. (24)). Earlier nonlinear-stability proofs for
+  split forms relied on a diagonal norm, which commutes with the diagonal
+  solution matrix; splitting with respect to $Q$ instead of $D$ is what
+  lets them prove energy stability of an uncollocated, overintegrated or
+  modal flux-reconstruction split form (§3;
+  [flux reconstruction](/methods/flux-reconstruction.md)).
 - **Sparsified first-order operator.** Pazner (2021), Eq. (23), replaces
   $Q$ by the weighted differentiation matrix $\widehat Q$ of the
   piecewise-linear hat functions on the LGL subgrid. It is tridiagonal with
@@ -162,6 +193,25 @@ The following special cases appear in the sources:
    positivity-preserving DGSEM (Remark 6.1, Theorem 6.1;
    [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
 
+7. **Kinetic-energy proofs.** Edoh (2022) proves kinetic-energy
+   preservation of split forms entirely in this algebra: the contribution
+   of the convective term to $\mathbf v_i^\top M\frac{d}{dt}\mathbf v_i$
+   collapses to the boundary term
+   $\tfrac12\mathbf v_i^\top B\,\mathrm{diag}(\mathbf v_j)\,\mathbf v_i$, the discrete
+   $\tfrac12\big[v_j\lvert v\rvert^2\big]$ at the boundary, using $Q+Q^\top=B$, the commuting diagonal norm and, for
+   the rotational form, index relabelling under the double sum (Eqs.
+   (11)–(12), (15), (22)–(24)). The same algebra shows that the strain-based
+   EMAC form is not kinetic-energy preserving, because the discrete
+   product rule fails pointwise (Eq. (16);
+   [split convective forms](/methods/split-convective-forms.md),
+   [kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+8. **Element-wise constraints.** With a diagonal-norm SBP element, local
+   conservation and the element entropy balance are linear constraints
+   on the time derivative, $\mathbf 1^\top M\frac{d}{dt}u_m$ and
+   $\sum_mw_m^\top M\frac{d}{dt}u_m$ equal to boundary fluxes; Abgrall et al.
+   (2022) enforce both with the smallest correction in the $M$-norm (§2.2,
+   Eqs. (23)–(26); [entropy correction term](/methods/entropy-correction-term.md)).
+
 ## Relation to periodic finite-difference operators
 
 [Coppola & Veldman (2023)](/sources/coppola-2023.md) build their
@@ -181,3 +231,6 @@ route to non-periodic boundaries, which they do not treat.
 - [Pazner (2021)](/sources/pazner-2021.md) — §2 Prop. 1 Eqs. (8)–(9), §3 Eq. (23) Fig. 1, Props. 8–9 Eqs. (53)–(54) (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §3.3.2 Lemma 2 Eq. (61), App. B Eqs. (107)–(110) (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §5, Theorem 6.1, Remark 6.1 (arXiv v3).
+- [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (1)–(2), §3 Eqs. (11)–(16), (22)–(24).
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — Eq. (19), §3 Eq. (24) (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), Example 2.12, App. A.3 (arXiv v4).

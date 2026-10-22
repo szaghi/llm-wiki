@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI and relaxation two-point fluxes as the
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -33,18 +33,18 @@ to extremize the speeds over all contributing stencils (§III, §IV) — and tha
 [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) solver is its special case $s^\pm=\pm a$
 (§III).
 
-*Compiler check, not in the sources:* the subsonic HLL flux above is term by term the
+*(compiler check, not in the sources: the subsonic HLL flux above is term by term the
 [central-upwind](/methods/central-upwind-scheme.md) flux with $s^\pm=a^\pm$, and the
 intermediate state of the central-upwind anti-diffusion of
 [Wang et al. (2023)](/sources/wang-2023-b.md) (Eq. (5)) is $u^{\mathrm{HLL}}$ with the same
-speeds.
+speeds.)*
 
 [Liu et al. (2021)](/sources/liu-2021.md) (§2, Eq. (4)) use the single formula
 $h=\big(s^+f(u^-)-s^-f(u^+)+s^+s^-(u^+-u^-)\big)/(s^+-s^-)$ with
 $s^-=\min(\sigma^{\mathrm l},0)$ and $s^+=\max(\sigma^{\mathrm r},0)$ clipped from the
 leftmost and rightmost wave-speed estimates (page-local $\sigma^{\mathrm l},\sigma^{\mathrm r}$),
 evaluated on face Gauss points through rotational invariance; the same speeds upwind
-the Godunov–Powell divergence term of their MHD scheme (Eq. (3)). *(Compiler check, not
+the Godunov–Powell divergence term of their MHD scheme (Eq. (3)). *(compiler check, not
 in the sources: with this clipping the subsonic formula reduces to $f(u^-)$ or $f(u^+)$
 in the supersonic cases, so it covers all three cases above.)* See
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
@@ -94,6 +94,32 @@ $s^+=\max(\{\!\{v\}\!\}+\{\!\{c\}\!\},\ v^++c^+)$ and the Batten contact speed
 $$s^*=\frac{p^+-p^-+\rho^-v^-(s^--v^-)-\rho^+v^+(s^+-v^+)}{\rho^-(s^--v^-)-\rho^+(s^+-v^+)}.$$
 
 The contact speed also advects the volume fraction upwind (Eqs. (40)–(43)).
+
+**Split form for two-medium DG** ([Bai & Li (2022)](/sources/bai-2022.md), §2.4,
+Eqs. (7)–(15)). The flux is split as $f=v\,u+\mathsf D$ with the pressure part
+$\mathsf D=p\,(0,1,0,v)^\top$ (page-local), and with $\beta_K=\rho_K(s_K-v_K)$, $K=L,R$
+(page-local; $L,R$ the sides $u^-,u^+$),
+
+$$s^*=\frac{\beta_Rv_R-\beta_Lv_L+p_L-p_R}{\beta_R-\beta_L},\qquad p^*=\frac{\beta_Rp_L-\beta_Lp_R-\beta_L\beta_R(v_L-v_R)}{\beta_R-\beta_L},$$
+
+the star fluxes being $s^*u^*_K+\mathsf D^*$ with $\mathsf D^*=(0,p^*,0,p^*s^*)^\top$ and the
+Einfeldt speeds $s^-=\min(v_L-c_L,\hat v-\hat c)$, $s^+=\max(v_R+c_R,\hat v+\hat c)$ from Roe
+averages. *(compiler check, not in the sources: multiplying numerator and denominator by $-1$
+turns this $s^*$ into the Batten contact speed printed by Wong et al. above.)* The solver is
+blended with HLL by a shock sensor in an HLLC–HLL hybrid
+([carbuncle](/definitions/carbuncle-phenomenon.md),
+[Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md)); the printed star
+density carries a slip, $\beta_L$ for both sides (Eq. (11)).
+
+**$N$-phase pressure–temperature equilibrium model** ([Nguyen et al. (2022)](/sources/nguyen-2022.md),
+§2.3, Eqs. (20)–(25)). HLLC is "reconstructed" for one mass equation per phase plus mixture
+momentum and energy: every partial density $\phi_k\rho_k$ is carried across the outer waves by
+the same factor $(s_K-v_K)/(s_K-s^*)$ as the mixture density, with no special treatment of the
+volume fractions; $s^*$ is again the Batten form and the speeds are the Davis–Einfeldt blend
+with Roe averages. The printed right speed $s^+=\max(v_R-c_R,\hat v+\hat c)$ uses $v_R-c_R$ where
+symmetry with $s^-$ requires $v_R+c_R$ (Eq. (23)). On 1D water–air interface advection HLLC keeps
+the interface sharper than the Rusanov flux over Mach 0.001–1, within three to five cells
+depending on the limiter (§3.1, Figs. 3–4).
 
 **Pressure-based speeds** ([Li, Shu & Qiu (2022)](/sources/li-2022-d.md), §2.1,
 Eqs. (2.5)–(2.7)), for the Euler equations: a primitive-variable estimate
@@ -145,6 +171,27 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
   has the smaller $\gamma$ (Lemma 1, Thm. 1; see
   [bound preservation](/properties/bound-preservation.md)).
 
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) (§3.5, Lemmas 3.6–3.7, Thm. 3.1) prove that the
+  HLL flux with $s^-=\min\{\lambda_1(u^-),\lambda_1(u^+),0\}$ and
+  $s^+=\max\{\lambda_4(u^-),\lambda_4(u^+),0\}$ keeps the cell averages of a third-order
+  finite-volume WENO scheme for special relativistic hydrodynamics on triangles in the
+  admissible set (positive density and pressure, subluminal velocity) under
+  $\Delta t\,\hat\sigma^{(j)}_K\lvert E^j_K\rvert/\lvert K\rvert\le\tfrac23\hat\omega_1$, with
+  $\hat\sigma$ the spectral radius of the normal Jacobian, $\lvert E^j_K\rvert$ the edge lengths,
+  $\lvert K\rvert$ the area and $\hat\omega_1=1/(L(L-1))$ the first Gauss–Lobatto weight,
+  $L=\lceil(N+3)/2\rceil$ for reconstruction degree $N$ (page-local). The proof works on the
+  [geometric-quasilinearization](/methods/geometric-quasilinearization.md) form of the admissible
+  set, in which the constraints are linear in $u$ (Lemma 3.4). They also show
+  $h^{\mathrm{HLL}}(\sigma u^-,\sigma u^+)=\sigma\,h^{\mathrm{HLL}}(u^-,u^+)$ for $\sigma>0$, since the
+  speeds are invariant, which keeps the scheme homogeneous like the relativistic evolution
+  (§3.6; [scale invariance](/properties/scale-invariance.md)). That Lax–Friedrichs and HLLC
+  "also meet" the property in this framework is stated, not proved (§3.1).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§4.1) need the element means of a
+  DG/flux-reconstruction scheme to stay positive and to obey a local minimum entropy principle,
+  which they attribute, citing Zhang–Shu and Chen–Shu, to SSP time stepping, a CFL condition and
+  an entropy-stable positivity-preserving Riemann solver such as Godunov, local Lax–Friedrichs or
+  HLLC "with suitable wave speeds"; their implementation uses HLLC
+  ([entropy filtering](/methods/entropy-filtering.md)).
 - [Cui et al. (2024)](/sources/cui-2024.md) (§7, Eq. (7.5), Remark 7.7) use the maximum CFL
   number $c_0$ of the first-order bound-preserving three-point scheme: $c_0=1$ for
   Lax–Friedrichs and $c_0=\tfrac12$ for HLL and HLLC (cited from earlier work). The
@@ -186,6 +233,35 @@ where any monotone two-point flux can be used, HLLC gives the best dissipation-r
 on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) and beats Steger–Warming
 splitting in both alternative-formulation schemes (§4.9, Figs. 10–12).
 
+## Other fluxes in the same codes
+
+Several sources pair or compare HLL-type solvers with other interface fluxes:
+
+- **Hybrid Roe/HLL and AUSM** on mapped meshes ([Peng et al. (2022)](/sources/peng-2022.md),
+  §2.3, Eqs. (13)–(14)): the momentum is rotated into the face-normal frame,
+  $\hat f=T_S^{-1}h(T_Su^-,T_Su^+)$ with the page-local rotation $T_S$, and $h$ is the AUSM flux of
+  Liou–Steffen or a Roe solver that switches to HLL, with a multidimensional entropy correction
+  and a mass-fraction positivity correction (not written out). For the stagnation-point
+  oscillation of shock-induced combustion in front of a blunt body (Lehr's experiments,
+  148 kHz at Mach 4.18 and 425 kHz at Mach 4.48), AUSM and Roe/HLL give 160 and 165 kHz, and
+  425 and 430 kHz, with the Jachimowski mechanism; AUSM gives the more regular oscillations at
+  Mach 4.18 (§4.3, Table 5; [shock-induced combustion](/benchmarks/shock-induced-combustion.md)).
+- **AUSMDV** of Wada and Liou is the interface flux of the high-order
+  [WCNS](/methods/weighted-compact-nonlinear-scheme.md) of
+  [Hiejima (2022)](/sources/hiejima-2022.md) (§2.2), who stresses that a WCNS can use any
+  flux-difference, flux-vector-splitting or AUSM-type flux (§1).
+- **Primitive-variable Riemann solver (PVRS)** in the second-order MUSCL–Hancock solver of the
+  [immersed-boundary](/methods/immersed-boundary-method.md) method of
+  [Wang et al. (2022)](/sources/wang-2022.md) (§2.1, Eqs. (9)–(11)), chosen "to avoid the
+  correction of the Riemann solver for the immersed method":
+  $$p^*=\frac{C_Rp_L+C_Lp_R+C_LC_R(v_L-v_R)}{C_L+C_R},\qquad s^*=\frac{C_Lv_L+C_Rv_R+p_L-p_R}{C_L+C_R},\qquad C_K=\sqrt{\gamma p_K\rho_K},$$
+  with $\rho^*_K=\rho_K+(p^*-p_K)/c_K^2$; HLL is used for the reactive case (§3.6).
+  *(compiler check, not in the sources: these are Renac's relaxation $p^*$, $s^*$ above with the
+  Lagrangian sound speeds set to the acoustic impedances, $\mathsf a_K=C_K=\rho_Kc_K$.)*
+- **van Leer flux-vector splitting** for every shocked case of the second-order unstructured
+  finite-volume scheme of [Chen et al. (2022)](/sources/chen-2022.md), to exclude flux-induced
+  shock instabilities, and HLLC, for its contact resolution, for the shock-free ones (§2).
+
 ## No Riemann solver: shock fitting
 
 In the moving DG method MDG+ICE of [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
@@ -222,3 +298,11 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §4.1 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.1, §3.3.
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.3 (author manuscript).
+- [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (7)–(20)).
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eqs. (20)–(25)), §3.1 (Figs. 3–4).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §3.1, §3.5 (Lemmas 3.4–3.7, Thm. 3.1), §3.6 (arXiv v1).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §4.1, §4.2 (arXiv v3).
+- [Peng et al. (2022)](/sources/peng-2022.md) — §2.3 (Eqs. (13)–(14)), §4.3 (Table 5) (accepted manuscript).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §1, §2.2.
+- [Wang et al. (2022)](/sources/wang-2022.md) — §2.1 (Eqs. (9)–(11)), §3.6.
+- [Chen et al. (2022)](/sources/chen-2022.md) — §2.

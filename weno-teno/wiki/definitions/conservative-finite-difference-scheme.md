@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -43,6 +43,21 @@ operator dimension by dimension. [WENO-JS](/methods/weno-js-reconstruction.md),
 [TENO-THINC](/methods/teno-thinc.md) are used in this form in the bundle. Takagi et al. (2022, §2.1)
 call $\phi$ the "primitive function" and the $f_i$ "cell-averaged values".
 
+Browne, Haas, Fasel & Brehm (2022, §2.2) apply the same construction to a disturbance formulation of
+the compressible Navier–Stokes equations: the state is split exactly into a steady baseflow
+$u_{\mathrm b}$ and a disturbance $u'=u-u_{\mathrm b}$ (page-local symbols), and only $u'$ is
+evolved, with fifth-order WENO reconstruction of the Rusanov-split disturbance fluxes in
+characteristic variables. Subtracting the baseflow splitting from the total-flow splitting
+$\tfrac12\big(f(u)\pm a\,u\big)$ leaves a dissipation $\tfrac12\big(a_{\mathrm b}u'+(a-a_{\mathrm b})(u_{\mathrm b}+u')\big)$,
+with $a_{\mathrm b}$ the baseflow spectral radius; they call the term $(a-a_{\mathrm b})u_{\mathrm b}$
+"not consistent with the formal definition of the Rusanov flux" and destabilizing, and adopt
+$f'^{\pm}=\tfrac12\big(f'\pm a\,u'\big)$, the total spectral radius acting on the disturbance only
+(Eqs. (18)–(21); $a_{\mathrm b}$ in place of $a$ for the linearized equations, Eq. (22)). No analysis or
+test supports the stability claim. Their viscous terms are deliberately discretized in non-conservative
+chain-rule form with second-order central differences (Eqs. (34)–(36)), and a manufactured-solution
+test gives observed orders of about 5.8–6.0 for the convective right-hand side alone and about 2 with
+the viscous terms (App. A, Tables A.1–A.2).
+
 Balsara et al. (2024, §I) recall that Shu–Osher FD-ENO schemes "offered high order accuracies at a
 price point that is much lower than their finite volume counterparts of comparable order for
 multidimensional problems", and note that for linear systems with constant coefficients the
@@ -56,11 +71,27 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   (Ye et al. 2022, Eqs. (11)–(13); Wang et al. 2023, Eqs. (2)–(4)). Any Riemann solver can be used
   and any variables interpolated ([alternative WENO](/methods/alternative-weno.md),
   [AFTENO](/methods/afteno.md)). Ye et al. (2022, §1) draw the load-bearing distinction: classical
-  WENO/TENO *reconstruct* split fluxes, the alternative family *interpolates* states.
+  WENO/TENO *reconstruct* split fluxes, the alternative family *interpolates* states. Chu, Kurganov
+  & Na (2022, §§3–4) carry the form over to non-conservative systems
+  $\partial_tu+\partial_xf(u)+\mathcal C(u)\partial_xu=0$ (they write the product on the right-hand
+  side, $+B(u)\partial_xu$ with $B=-\mathcal C$) through the quasi-conservative form
+  $\partial_tu+\partial_xK(u)=0$ with the global flux
+  $K(u)=f(u)+\int^x\mathcal C(u)\,\partial_\xi u\,d\xi$ (page-local $K$): the two-point flux of $K$
+  is a [path-conservative](/methods/path-conservative-scheme.md) [central-upwind](/methods/central-upwind-scheme.md) flux, and the derivative corrections of $K$ split into finite
+  differences of $f$ and of $\mathcal C(u)\partial_xu$ (Eq. (4.1)).
 - **Weighted compact nonlinear schemes.** Fu (2023, §3.7) recalls the three steps of WCNS:
   nonlinear node-to-interface interpolation, interface flux evaluation, compact interface-to-node
   flux differencing, and names the lack of conservation as the main flaw of the family
-  ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
+  ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)). Hiejima (2022, §2.2, Eq. (5)) uses the
+  name for a scheme without the third step: primitive variables are interpolated to $x_{i\pm1/2}$ at
+  orders 5 to 11, an AUSMDV flux is evaluated there, and the flux derivative is the plain difference
+  $(\hat f_{i+1/2}-\hat f_{i-1/2})/\Delta x$, "the WCNS does not include a compact procedure for
+  calculating the flux derivative". The scheme is conservative by construction, and the paper says
+  nothing about conservation. *(Compiler check, not in the sources: for exact interface values,
+  $\big(f(x_i+\Delta x/2)-f(x_i-\Delta x/2)\big)/\Delta x=\partial_xf(x_i)+\tfrac{\Delta x^2}{24}\partial_x^3f(x_i)+O(\Delta x^4)$,
+  so the operator is formally second order for point values whatever the interpolation order, the
+  limit Wang et al. (2023) state for an uncorrected two-point flux; Hiejima shows no convergence
+  test.)*
 - **Central flux plus high-order dissipation.** Sciacovelli, Passiatore, Cinnella & Pascazio (2021,
   §3, Eqs. (20)–(35)), after Lerat & Corre, write the flux as a central part corrected by recursive
   truncation-error terms plus a dissipation of matching odd order: on $2(P+2)+1$ points,
@@ -96,14 +127,21 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   conservation law in time-dependent curvilinear coordinates and evolve $(Ju)_i$ by
   $\frac{d}{dt}(Ju)_i=-\sum_k\frac1{\Delta\xi_k}\big(\hat F_{k,i+1/2}-\hat F_{k,i-1/2}\big)$ in each
   computational direction $\xi_k$ (page-local $\xi_k$, $\hat F_k$; $J$ the Jacobian of the map), with
-  the Jacobian evolved by the same flux form. The $2w$th-order entropy-conservative flux is the
+  the Jacobian evolved by the same flux form. The $2n$th-order entropy-conservative flux is the
   LeFloch–Mercier–Rohde combination
-  $\hat F^{2w}_{i+1/2}=\sum_{m=1}^wc_{w,m}\sum_{s=0}^{m-1}\hat F(u_{i-s},u_{i-s+m})$ of a symmetric
-  two-point flux, with $\sum_mm\,c_{w,m}=1$ and $\sum_mm^{2s-1}c_{w,m}=0$, $s=2,\dots,w$ (page-local
-  $c_{w,m}$; Eq. (3.6)). The same combination applied to the metric terms, written in conservative
+  $\hat F^{2n}_{i+1/2}=\sum_{m=1}^nc_{n,m}\sum_{s=0}^{m-1}\hat F(u_{i-s},u_{i-s+m})$ of a symmetric
+  two-point flux, with $\sum_mm\,c_{n,m}=1$ and $\sum_mm^{2s-1}c_{n,m}=0$, $s=2,\dots,n$ (page-local
+  $n$ and $c_{n,m}$, the source's $w$, which the registry reserves for entropy variables; Eq. (3.6)). The same combination applied to the metric terms, written in conservative
   cross-product form, satisfies the discrete geometric conservation laws, and free-stream preservation
-  is quoted as proved in Duan & Tang (Eqs. (3.7)–(3.10), Remark 3.1;
-  [entropy-conservative fluxes](/methods/entropy-conservative-flux.md),
+  is quoted as proved in Duan & Tang (Eqs. (3.7)–(3.10), Remark 3.1). Duan & Tang (2022, §3,
+  Prop. 3.1, Theorem 3.2, Prop. 3.2) prove the corresponding statements for
+  [special-relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md): the
+  combination (their order $2p$, coefficients with the same two constraints) is $2p$th-order accurate
+  for the flux, for the symmetrizing source term and for the Jacobian evolution; the metrics,
+  discretized in cross-product form with the same central operator, satisfy the discrete geometric
+  conservation laws exactly because the difference operators commute; and the fully discrete SSP
+  Runge–Kutta scheme preserves free streams
+  ([entropy-conservative fluxes](/methods/entropy-conservative-flux.md),
   [free-stream preservation](/properties/free-stream-preservation.md),
   [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 - **Two-medium flows.** Zheng, Shu & Qiu (2021, §2.3, §3.2) keep a sharp interface in a point-value
@@ -172,3 +210,7 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2, Eqs. (2.2)–(2.3); §3, Eqs. (3.1)–(3.10), Remark 3.1.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.2–2.3, Eqs. (4)–(5); §3.2.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Eq. (3.1); §3.1.2, Eqs. (3.29)–(3.30).
+- [Browne et al. (2022)](/sources/browne-2022.md) — §2.2, Eqs. (16)–(22), (34)–(36); App. A, Tables A.1–A.2.
+- [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §3, Eqs. (3.1)–(3.3); §4, Eq. (4.1).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §3, Eqs. (3.4)–(3.17), Prop. 3.1, Theorem 3.2, Prop. 3.2.

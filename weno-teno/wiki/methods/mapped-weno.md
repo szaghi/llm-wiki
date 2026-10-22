@@ -5,7 +5,7 @@ description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–S
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Mapped WENO
@@ -26,7 +26,8 @@ sources prints the mapping function itself, so its form is not recorded here.
   points", whose "nonlinear weights are pushed smoothly to the optimal values by a regularization
   process", the other being [WENO-Z](/methods/weno-z.md). Deng (2023,
   §1) adds that Henrick et al. also pointed out the sensitivity of WENO schemes to the regularization
-  $\epsilon$.
+  $\epsilon$. Hiejima (2022, §1) recalls it as "adjusting the weights to smoothly move the optimal
+  values and meet the fifth-order accuracy".
 - **Cost.** Luo & Wu (2021, §1) state that the mapping functions "dramatically" increase the
   computational expense, and recall Hong's mapping-function-free WENO-M, which uses a pre-discrete
   mapping to reduce that cost. Deng (2023, §1) and Luo & Wu (2021, §1) recall that
@@ -68,3 +69,4 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1.
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §1.

@@ -5,7 +5,7 @@ description: "A scheme preserves stationary contacts when an isolated discontinu
 status: established
 aliases: [exact capture of stationary contact discontinuities, preservation of stationary linearly degenerate discontinuities, stationary discontinuity preservation]
 tags: [riemann-solver, finite-difference, well-balanced, multiphase, dg]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Stationary contact preservation
@@ -47,10 +47,10 @@ works they cite also stress ([well-balancing](/properties/well-balancing.md)).
   $(1,-19.59745,0.01)$ otherwise on $[-1,1]$, $t=0.03$, $\Delta x=1/100$ (Ex. 3). Both the
   original and the [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md) are
   non-oscillatory and the LCD scheme resolves the contact better, but neither is claimed to
-  keep it exact. *Compiler check, not in the sources:* for a constant-coefficient linear
+  keep it exact. *(compiler check, not in the sources: for a constant-coefficient linear
   system the LCD scheme is exactly upwind (Lemma 3.1), and the upwind flux carries no
   contribution of a field with zero eigenvalue, so a stationary jump of that field stays
-  fixed in the linear case.
+  fixed in the linear case.)*
 - **Entropy-stable DGSEM with contact-resolving fluxes: yes, for material interfaces.**
   [Renac (2021)](/sources/renac-2021.md) proves exact preservation of stationary material
   interfaces in his [DGSEM](/methods/dgsem.md) for the
@@ -93,6 +93,24 @@ conservative schemes, after Abgrall and Abgrall–Karni.
   for moving material interfaces. Renac accepts the oscillations to keep species mass
   conservation, and notes that quasi-conservative alternatives remove them at the cost of
   conservation (§1.2).
+- **A moving interface kept in equilibrium.** [Nguyen et al. (2022)](/sources/nguyen-2022.md)
+  advect a water–air interface at uniform $v=150$ m/s, $p=101325$ Pa, $T=293.15$ K in their
+  $N$-phase model with velocity, pressure and temperature equilibrium (one mass equation per
+  phase, mixture momentum and energy; stiffened-gas phases in $(p,T)$ form) and report
+  velocity, pressure and temperature errors at the interface "on the order of $10^{-14}$",
+  with the interface about three cells thick under compressive limiters (§3.1, Fig. 1). The
+  scheme reconstructs the primitive variables $(p,v,T,\phi_2,\dots,\phi_N)$ with MUSCL and
+  advances them through $[\partial u/\partial w]^{-1}$ of the conservative-to-primitive Jacobian
+  (Eqs. (7), (26)–(30); page-local primitive vector $w$), while the paper states that the
+  model "is always mass conservative for each phase". No conservation error is reported.
+  *(compiler check, not in the sources: for the printed update
+  $w^{n+1}=w^n-\Delta t\,[\partial u/\partial w]^{-1}\nabla\cdot f$ (Eq. (29), sign restored),
+  $u(w^{n+1})-u(w^n)=-\Delta t\,\nabla\cdot f+O(\Delta t^2)$, and the $O(\Delta t^2)$
+  remainder, from the curvature of $u(w)$ (e.g. $\phi_1\rho_1(p,T)$), is not a flux
+  difference, so the cell sums of $u$ are not conserved to round-off unless the scheme
+  recovers $u$ in some way the paper does not describe. The result therefore does not clearly
+  test the statement, recalled by Renac, that discretely conservative schemes oscillate at
+  moving material interfaces; see [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md).)*
 - In the Baer–Nunziato Riemann problems 1–6 the anti-diffusion is switched off for lack of a
   good flattener (§VIII.b), so the property is not used there.
 - The anti-diffusion needs the eigenvectors of the linearly degenerate fields only; for
@@ -104,3 +122,4 @@ conservative schemes, after Abgrall and Abgrall–Karni.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §II (Eqs. (2.3), (2.6)), §III (Eqs. (3.7)–(3.9)), §IV, §VIII.a–c (Figs. 2, 5, 7) (accepted manuscript).
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — Ex. 3 (Fig. 5.3), Lemma 3.1 (arXiv v2).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, Theorem 6.1 (proof p. 16), §7.2 Fig. 4 (RP4, RP5) (arXiv v3).
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.1 (Eqs. (2), (7)), §2.3 (Eqs. (26)–(30)), §3.1 (Fig. 1).

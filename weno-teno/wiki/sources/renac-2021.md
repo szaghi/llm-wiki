@@ -153,7 +153,7 @@ printed duplicates or unparseable items.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
@@ -168,6 +168,7 @@ Chunk 2 (2026-10-22). This source is cited on:
 * [Logarithmic mean](/operators/logarithmic-mean.md)
 * [Multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 * [Optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
+* [Richtmyer–Meshkov instability](/benchmarks/richtmyer-meshkov-instability.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)

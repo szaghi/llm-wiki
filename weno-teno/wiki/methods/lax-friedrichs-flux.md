@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -35,14 +35,14 @@ and "LLF" for extreme cases; [Takagi et al. (2022)](/sources/takagi-2022.md) (§
 "Rusanov (global/local Lax–Friedrichs)". [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md)
 (§3, Eq. (22)) write the first-order flux as a central average minus
 $\tfrac12\lvert Q\rvert(u_{i+1}-u_i)$ and print $Q=\tfrac12I$ for "Lax–Friedrichs" and
-$Q=a_{i+1/2}I$ for Rusanov. *(Compiler check, not in the sources: the classical
+$Q=a_{i+1/2}I$ for Rusanov. *(compiler check, not in the sources: the classical
 Lax–Friedrichs scheme in this form has $Q=\frac{\Delta x}{\Delta t}I$, so $\tfrac12I$ needs a
 normalization the paper does not state.)* This page reads every occurrence by the
 speed bound it uses.
 
 ## In finite-difference WENO and TENO for systems
 
-The standard recipe is [characteristic decomposition](/methods/characteristic-decomposition.md)
+The recipe of these finite-difference sources is [characteristic decomposition](/methods/characteristic-decomposition.md)
 with Roe averages, LF splitting of each characteristic field with that field's maximum speed,
 nonlinear reconstruction of both split parts, and back-projection
 ([Fu (2023)](/sources/fu-2023.md), Algorithm 1, $a^{(l)}$ the maximum $l$-th characteristic
@@ -79,6 +79,18 @@ one in fluctuation form (§VI).
   [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) (all tests, §5) and among the
   benchmarked surface fluxes of [Ranocha et al. (2023)](/sources/ranocha-2023.md) (Table 2);
   global LF in all tests of [Cui et al. (2024)](/sources/cui-2024.md) (§7).
+- Local LF in the nodal DG of [Yu & Hesthaven (2022)](/sources/yu-2022.md) (§2.2, Eq. (2.10)),
+  with $a$ the larger of the two traces' maximal wave speeds on each edge ($\lvert v\rvert+c$ for
+  1D Euler) and centred fluxes for the auxiliary-gradient and artificial-viscosity terms; and in
+  the third-order finite-volume WENO3-NN tests of [Bezgin et al. (2022)](/sources/bezgin-2022.md)
+  (§2, §4), with characteristic reconstruction and TVD-RK3 at CFL 0.6
+  ([learned WENO weights](/methods/learned-weno-weights.md)).
+- In the $N$-phase pressure–temperature equilibrium model of
+  [Nguyen et al. (2022)](/sources/nguyen-2022.md) (§2.3, Eq. (19)) the Rusanov flux takes $a$ as
+  the largest eigenvalue modulus at Roe-averaged states. On a water–air interface advected at
+  Mach about 0.001 on 100 cells it smears the interface: with the van Leer limiter it grows
+  beyond ten cells, against three to five with HLLC (§3.1, Figs. 3–4;
+  [HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - In the implicit [Quinpi](/methods/quinpi.md) scheme the global LF flux,
   $a=\max_u\lvert f'(u)\rvert$, is used in every predictor and corrector stage
   ([Puppo et al. (2023)](/sources/puppo-2023.md), Eqs. (14), (20)); together with
@@ -148,13 +160,72 @@ $u\pm F(u,\nabla u)/a^{\mathrm{NS}}\in G$ for any gradient, so the update can be
 convex combination of admissible states under
 $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS}}\le\frac1{N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$, the
 boundary weight of an $N_{\mathrm{GL}}$-point Gauss–Lobatto decomposition (page-local
-$N_{\mathrm{GL}}$; Thm. 1, Eqs. (3.11)–(3.13)). *(Compiler check, not in the sources: for
+$N_{\mathrm{GL}}$; Thm. 1, Eqs. (3.11)–(3.13)). *(compiler check, not in the sources: for
 $\mathrm{Re}=\infty$, $q_{\mathrm h}=0$ and $\tau_{\mathrm v}=0$, the bound reduces to
-$\lvert v\rvert+\sqrt{(\gamma-1)p/(2\rho)}$, below $\lvert v\rvert+c$, so the usual LF speed
+$\lvert v\rvert+\sqrt{(\gamma-1)p/(2\rho)}$, below $\lvert v\rvert+c$, so the LF speed $\lvert v\rvert+c$
 satisfies it.)* See
 [bound preservation](/properties/bound-preservation.md),
 [Hermite WENO](/methods/hermite-weno.md) and
 [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md).
+
+For multicomponent reacting flows [Du & Yang (2022)](/sources/du-2022-b.md) (§3.1, Eq. (3.5);
+§4.2, Lemma 4.1) extend the same construction to one partial-density equation per species
+with diffusion velocities $v^{\mathrm d}_k$ (page-local) and formation enthalpies, and prove the sharp form:
+for $u\in G$, $u\pm F/a^{\mathrm{NS}}\in G$ **iff**
+
+$$a^{\mathrm{NS}}\ge\max\Big\{\Big|v+\frac{b_{\mathrm h}}{2\rho P}\Big|+\frac{\sqrt{D_{\mathrm h}}}{2\rho P},\ \lvert v+v^{\mathrm d}_k\rvert\Big\},\qquad
+D_{\mathrm h}=b_{\mathrm h}^2+2\rho P\,(p-\tau_{\mathrm v})^2,$$
+
+with $P$ the internal energy per volume without formation energies and
+$b_{\mathrm h}=\rho q_{\mathrm h}-\rho\sum_k\rho Y_k\,h_k(0)\,v^{\mathrm d}_k$ (page-local; $h_k(0)$ the formation
+enthalpies). The penalty enters an LDG scheme whose numerical flux must also satisfy
+$\hat F\cdot\mathbf e_\Sigma=0$ for the constant vector $\mathbf e_\Sigma$ that encodes $\sum_kY_k=1$
+(Def. 3.1, Thm. 3.1; page-local $\mathbf e_\Sigma$), which the LF form satisfies because both physical
+fluxes and the jump are orthogonal to $\mathbf e_\Sigma$ when $\sum_kY_k=1$ (stated "easy to check").
+*(compiler check, not in the sources: for one species without formation energy,
+$b_{\mathrm h}=\rho q_{\mathrm h}$ and $P=\rho e$, and the condition becomes
+$\lvert v+q_{\mathrm h}/(2\rho e)\rvert+\sqrt{\rho^2q_{\mathrm h}^2+2\rho^2e(p-\tau_{\mathrm v})^2}/(2\rho^2e)$,
+which never exceeds the bound used by Fan et al., since
+$\lvert v+x\rvert\le\lvert v\rvert+\lvert x\rvert$.)* The time step actually run uses the different
+estimate $\lvert v\rvert+\sqrt{p^2/(2\rho P)}$ (Eq. (6.1)), with a restart (doubled exponential
+damping, halved step) whenever a cell average leaves $G$ (§6).
+
+## Variants of the dissipation term
+
+- **Energy stability of a split ESFR scheme.** For Burgers' equation, $f=u^2/2$,
+  [Cicchino et al. (2022)](/sources/cicchino-2022.md) (§3.1.2, Eqs. (46)–(50)) write the interface
+  flux as $\tfrac12\big(f(u^-)+f(u^+)\big)-\lambda_{\mathrm F}(u^+-u^-)$ (page-local
+  $\lambda_{\mathrm F}=a/2$ in this page's form) and show that their nonlinearly stable split
+  [flux-reconstruction](/methods/flux-reconstruction.md) scheme with split parameter
+  $\alpha=2/3$ (page-local split weight, not the DG–FV blending coefficient) has interface energy production
+  $(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm F}\big)$, hence is energy stable iff
+  $\lambda_{\mathrm F}\ge\tfrac1{12}(u^+-u^-)$; equality is the energy-conserving flux, and LLF,
+  $\lambda_{\mathrm F}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies it. With LF the
+  discrete energy decreases monotonically in their Burgers tests (Tables 1–3;
+  [entropy stability](/properties/entropy-stability.md)).
+- **Disturbance form.** [Browne et al. (2022)](/sources/browne-2022.md) (§2.2, Eqs. (16)–(22))
+  solve the compressible Navier–Stokes equations for the disturbance $u'=u-u_{\mathrm b}$ about a
+  steady baseflow $u_{\mathrm b}$, with fifth-order FD-WENO in characteristic variables on
+  Rusanov-split disturbance fluxes $f'$ (page-local subscript $\mathrm b$ and prime, as on the
+  Source page). Writing the total Rusanov splitting with $a=a_{\mathrm b}+a'$ and subtracting the
+  baseflow splitting leaves
+  $f'^\pm=\tfrac12\big(f'\pm\{a_{\mathrm b}u'+a'(u_{\mathrm b}+u')\}\big)$ (Eq. (19)), whose
+  term $a'u_{\mathrm b}$ they call "not consistent with the formal definition of the Rusanov flux"
+  and destabilizing; they adopt $f'^\pm=\tfrac12\big(f'\pm a\,u'\big)$ for the nonlinear and
+  $\tfrac12\big(f'\pm a_{\mathrm b}u'\big)$ for the linearized disturbance equations
+  (Eqs. (21)–(22)). The stability claim is argued by inspection; no analysis or comparison is
+  shown. *(compiler check, not in the sources: Eq. (19) minus Eq. (21) is $\pm\tfrac12a'u_{\mathrm b}$,
+  so with Eq. (21) the discrete disturbance scheme is not the discrete total-flow scheme minus
+  the discrete baseflow scheme, although the continuous disturbance equations are an exact
+  rewriting.)*
+- **Downwinding by sign flip.** [Dzanic et al. (2022)](/sources/dzanic-2022.md) (§2, §4.2) obtain
+  the downwind-biased divergence of their time-reversibility shock indicator by negating the
+  dissipative term of the Rusanov flux (Davis wave speeds) used in the forward step; the defect
+  between the state and its forward-then-backward image drives an
+  [artificial viscosity](/methods/artificial-viscosity.md). In their first-order analysis
+  with upwind fluxes the viscosity tends to $c_\mu a\Delta x$, which for $c_\mu=\tfrac12$ is the
+  viscosity that turns a central scheme into first-order upwind (§3.1, Eqs. (18)–(20); page-local
+  constant $c_\mu$).
 
 ## Entropy stability: dissipation on entropy-variable jumps
 
@@ -207,3 +278,10 @@ their default wherever dissipation is needed (§6). See
 - [Arun et al. (2022)](/sources/arun-2022.md) — §4, §5 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Remark 1.
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §2.1–2.2 (Eqs. (1), (6)).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §2.2 (Eq. (2.10)).
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §2, §4.
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eq. (19)), §3.1 (Figs. 3–4).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §3.1 (Eqs. (3.4)–(3.5), Def. 3.1, Thm. 3.1), §4.2 (Lemma 4.1), §6 (Eq. (6.1)).
+- [Cicchino et al. (2022)](/sources/cicchino-2022.md) — §3.1.2 (Eqs. (46)–(50)), §4 (Tables 1–3) (arXiv v1).
+- [Browne et al. (2022)](/sources/browne-2022.md) — §2.2 (Eqs. (16)–(22)).
+- [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2, §3.1 (Eqs. (18)–(20)), §4.2 (arXiv v2).

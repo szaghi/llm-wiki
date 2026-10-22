@@ -5,7 +5,7 @@ description: "The Rankine–Hugoniot condition ties the speed of a discontinuity
 status: established
 aliases: [Rankine–Hugoniot condition, jump condition, interface condition, interface conservation, discrete Rankine–Hugoniot speed]
 tags: [shock-tracking, riemann-solver, numerical-flux, central-scheme]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Rankine–Hugoniot jump condition
@@ -44,7 +44,7 @@ cells and steady oblique and bow shocks in 2D (§IV); see
 [implicit shock tracking](/methods/implicit-shock-tracking.md) and
 [carbuncle](/definitions/carbuncle-phenomenon.md).
 
-*(Compiler check, not in the sources: Lemma 2's algebra gives a speed for any jump,
+*(compiler check, not in the sources: Lemma 2's algebra gives a speed for any jump,
 including $u^-<u^+$, so the interface condition alone also admits the
 entropy-violating expansion shock of Burgers' equation; the paper discusses no entropy
 condition.)* Separately, Luo et al. note that their method can converge on tangled meshes
@@ -68,16 +68,41 @@ it bounds $a^+$ from above and $-a^-$ likewise, and symmetrically for the smalle
 (Eq. (9)). The paper's further reduction of the speeds in smooth regions and the
 dissipation switch are on [adaptive-diffusion central-upwind flux](/methods/adaptive-diffusion-central-upwind-flux.md).
 
-*(Compiler check, not in the sources: the same jump relation defines the single
+*(compiler check, not in the sources: the same jump relation defines the single
 intermediate state of the [HLL solver](/methods/hll-riemann-solvers.md):
 $u^{\mathrm{HLL}}$ is the state for which $s^-(u^{\mathrm{HLL}}-u^-)+s^+(u^+-u^{\mathrm{HLL}})=[\![f(u)]\!]$,
 i.e. the Rankine–Hugoniot relations across its two waves, summed.)*
+
+## Jump relations inside approximate Riemann solvers and shock sensors
+
+[Bai & Li (2022)](/sources/bai-2022.md) use the condition twice in a sharp-interface DG solver
+for two-medium flows with a stiffened-gas equation of state.
+
+- **HLLC star states.** Across each outer wave of speed $s^\mp$ the jump relation
+  $s\,[\![u]\!]=[\![f(u)]\!]$ is imposed, with the flux split into an advective and a pressure
+  part (§2.4, Eqs. (8)–(9)); the mass component gives the star density
+  $\rho^*_K(s_K-v^*)=\rho_K(s_K-v_K)$, $K=L,R$, with $v^*$ the contact speed (Eqs. (10)–(14);
+  see [HLL-family solvers](/methods/hll-riemann-solvers.md)). Bai & Li print the numerator of
+  $\rho^*_K$ as $\beta_L$ for both $K$ (Eq. (11)), where the mass relation requires
+  $\beta_K=\rho_K(s_K-v_K)$.
+- **A pressure-jump shock indicator** (Eq. (18), $\alpha_{\mathrm s}=0.3$ page-local):
+  $$f_p=1\quad\text{if}\quad|p_L-p_R|>\alpha_{\mathrm s}\,|v_L-v_R|\,\sqrt{\gamma\min\big(\rho_L(p_L+p_\infty),\,\rho_R(p_R+p_\infty)\big)},\qquad f_p=0\ \text{otherwise},$$
+  with $p_\infty$ the stiffening constant (the registry's $p_{\infty,k}$ of the fluid at hand; [stiffened gas](/definitions/stiffened-gas-equation-of-state.md)).
+  The authors say it is derived from the Rankine–Hugoniot conditions "with some empiric
+  observations" and is "similar to the Joukowsky equation except for an parameter $\alpha$",
+  i.e. equivalent to $|p_L-p_R|>\alpha_{\mathrm s}|v_L-v_R|\min(\rho_Lc_L,\rho_Rc_R)$ (§2.4).
+  *(compiler check, not in the sources: the momentum relation across a shock of speed
+  $s_{\mathrm d}$ gives $[\![p]\!]=-\rho^-(v^--s_{\mathrm d})[\![v]\!]$, whose acoustic limit is the
+  Joukowsky relation $|[\![p]\!]|=\rho c\,|[\![v]\!]|$; for a stiffened gas
+  $\rho c=\sqrt{\gamma\rho(p+p_\infty)}$, so the indicator fires when the pressure jump exceeds a
+  fraction $\alpha_{\mathrm s}$ of the acoustic one.)* It switches the HLLC–HLL hybrid flux;
+  how it is combined is on [carbuncle](/definitions/carbuncle-phenomenon.md).
 
 ## Qualifications
 
 - The Luo et al. Lemmas are two-line verifications for single-jump Riemann data on straight
   faces, called proofs; their Eqs. (3.9) and (3.12) print the two terms of the jump with the
-  same sign, while the conclusions (3.10) and (3.13) carry $+$. *(Compiler check, not in
+  same sign, while the conclusions (3.10) and (3.13) carry $+$. *(compiler check, not in
   the sources: the printed (3.9) gives $x^{n+1}=x^n-a\Delta t$; a face with tangent
   $(\Delta x,\Delta t)$ has normal proportional to $(\Delta t,-\Delta x)$, which gives the
   conclusions with $+$.)*
@@ -89,3 +114,4 @@ i.e. the Rankine–Hugoniot relations across its two waves, summed.)*
 
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.2 (Eqs. (3.5)–(3.13), Lemmas 1–2), §3.3 (Eqs. (3.14)–(3.15)), §3.5, §IV (author manuscript).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §3.1 (Eqs. (6)–(9)), App. A.
+- [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (8)–(18)).

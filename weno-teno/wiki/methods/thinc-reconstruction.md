@@ -5,7 +5,7 @@ description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump prof
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # THINC reconstruction
@@ -76,10 +76,9 @@ At $\beta_{\mathrm T}=1.6$, the value used by Takagi et al. and recalled as
 typical by Fu (2023, §3.5), THINC's modified wavenumber has a positive imaginary
 part in some ranges, i.e. anti-diffusion that "squares" smooth profiles
 ([Takagi et al. (2022)](/sources/takagi-2022.md), §2.3, citing Deng et al.
-2018); see [numerical dissipation](/definitions/numerical-dissipation.md). That
-anti-diffusion is what makes it sharp at contacts and unsuitable for smooth scales,
-which is why every scheme in the sources uses it only where a discontinuity is
-detected or selected.
+2018); see [numerical dissipation](/definitions/numerical-dissipation.md). Every
+scheme in the sources uses THINC only where a discontinuity is detected or
+selected.
 
 ## Hybrids
 
@@ -92,6 +91,19 @@ detected or selected.
   is the precedent Huang et al. cite for the controlled anti-dissipation of
   LD-ROUND ([Huang et al. (2026)](/sources/huang-2026.md), §4.2; see
   [ROUND schemes](/methods/round-scheme.md)).
+
+## Place among interface-sharpening methods
+
+Nguyen, Phan, Duy, Kim & Park (2022, §1) list THINC twice in their review of interface capturing
+for compressible multiphase flow: as an interface representation alongside level sets, front
+tracking and VOF in ghost-fluid approaches, and as a sharpening technique of diffuse-interface
+(five-, six- and seven-equation) models alongside level-set and VOF sharpening
+([five-equation model](/definitions/five-equation-model.md),
+[level-set method](/methods/level-set-method.md)). Their own model does without it: a MUSCL
+reconstruction with the compressive "overbee" limiter of Chiapolino, Saurel & Nkonga on the volume
+fractions keeps interfaces about three cells thick (§2.3, §3.1, Figs. 3–4), a limiter-based route to
+sharp interfaces without a tanh profile ([TVD limiters](/definitions/total-variation-diminishing.md),
+[multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
 
 ## Qualifications
 
@@ -108,3 +120,4 @@ detected or selected.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.3, Eqs. (15)–(17).
 - [Fu (2023)](/sources/fu-2023.md) — §3.5, Eqs. (25)–(26); §3.6.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §4.2: THINC as precedent for controlled anti-dissipation.
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1: THINC among interface-sharpening methods; §2.3, §3.1: limiter-based alternative.

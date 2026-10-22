@@ -171,7 +171,10 @@ uses the same letter.
 | $\Theta$, $C_\Theta$ | WENO-ZN adaptive term and its constant | WENO-ZN (the adaptive-diffusion central-upwind flux uses its own page-local $\Theta$) |
 | $z_k$, $\zeta$, $\mu$ | WENO-Z+ ratio terms and the WENO-Z+M coefficient | WENO-Z+ |
 | $\mu_d$, $\sigma_i$, $b$, $b_1$, $b_2$, $\xi_{\mathrm A}$ | TENO-A discontinuity measure, its mapping and constants | adaptive TENO, troubled-cell indicators |
-| $x^c_i$, $\varsigma$, $\mathcal T$, $\mathcal A$ | THINC jump centre, jump sign and profile parameters | THINC, TENO-THINC, symmetry preservation |
+| $x^c_i$, $\varsigma$, $\mathcal T$, $\mathcal A$ | THINC jump centre, normalized position of the cell average in the jump $\varsigma=(\bar u_i-f_{\mathrm m})/f_{\mathrm j}$, and profile parameters | THINC, TENO-THINC, symmetry preservation |
+| $\varsigma$ (learned weights) | WENO3-NN resolvedness indicator; no page uses it together with the THINC $\varsigma$ | learned WENO weights, smoothness indicators |
+| $\varrho_K$ | exponential modal decay rate of a DG solution in element $K$ (Basile et al.) | hp-adaptation, troubled-cell indicators, smoothness indicators |
+| $\mathfrak a_K$ | algebraic modal decay exponent predicted by Yu et al.'s network | artificial viscosity, hp-adaptation, troubled-cell indicators |
 | $\mathcal R$, $\mu_0$, $\mu_1$ | normalised reconstruction operator, intercept and slope of a linear one | normalised-variable diagram, ROUND, numerical dissipation |
 | $u^{\mathrm{HLL}}$ | HLL intermediate state | HLL solvers, central-upwind, fluctuation-form FD-WENO |
 | $\mathcal C(u)$ | matrix of the non-conservative product $\mathcal C(u)\partial_xu$ | fluctuation-form FD-WENO, HLL solvers |
@@ -202,4 +205,6 @@ $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic
 variables, Z+M coefficient/affine translation); no page uses both families. The
 gravitational potential is written $\phi$ without subscript on well-balancing pages; the
-volume fraction always carries its phase index, $\phi_k$.
+volume fraction always carries its phase index, $\phi_k$. The MUSCL parameter is written $\kappa_{\mathrm M}$ and the minmod
+parameter is declared page-local wherever used, to keep $\kappa$ (kinetic energy) and $\theta$
+(Zhang–Shu factor) free.

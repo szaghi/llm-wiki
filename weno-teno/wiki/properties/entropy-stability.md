@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Entropy stability"
-description: "A scheme is entropy stable when its discrete total entropy obeys the entropy inequality of the PDE; the page gives the flux- and scheme-level conditions with their non-conservative extension, entropy-stable DG, which dissipation operators and limiting steps keep the property, discrete entropy tests, the KPP evidence and the minimum entropy principle."
+description: "A scheme is entropy stable when its discrete total entropy obeys the entropy inequality of the PDE; the page gives flux- and scheme-level conditions, including non-conservative and moving-mesh forms, entropy-stable DG and FR, correction terms, dissipation, limiting and filtering, discrete entropy tests, the KPP evidence, the limits of the property and the minimum entropy principle."
 status: established
-aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG]
+aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Entropy stability
@@ -48,6 +48,28 @@ $r_{(j,k)}$ of the interface (Def. 2, Eq. (55)); the scheme dissipates
 entropy where $r_{(j,k)}\le0$. The matching numerical entropy flux is
 symmetric (Def. 1, Eq. (54)).
 
+**Moving curvilinear meshes.** [Duan & Tang (2022)](/sources/duan-2022.md)
+write the entropy inequality of relativistic (M)HD in time-dependent
+curvilinear coordinates, $\partial_\tau(J\eta)+\sum_k\partial_{\xi_k}(\cdot)\le0$,
+which holds under the geometric conservation laws (Eqs. (2.10)–(2.11)).
+They give a sufficient two-point condition with metric averages and the
+non-conservative symmetrizing source (Def. 3.1), prove that the
+high-order finite-difference scheme built on it is entropy conservative
+(Thm. 3.2), and that the TeCNO-type scheme with a WENO dissipation and a
+sign switch satisfies the semi-discrete entropy inequality (Thm. 4.1;
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md),
+[TeCNO schemes](/methods/tecno-scheme.md)). Li, Duan & Tang (2022) state
+the same properties for the stiffened gas with reference to Duan & Tang
+(Prop. 3.1).
+
+**Semi-discrete and fully discrete.** All the conditions above are
+semi-discrete. [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
+separate semi-discretely entropy-conservative or dissipative schemes from
+fully discrete ones; the semi-discrete property becomes fully discrete only
+with relaxation, artificial viscosity, implicit time stepping or, for
+their deferred-correction residual-distribution schemes, a correction of
+the whole space–time residual (Remark 2.2).
+
 ## Entropy-stable DG
 
 The flux-differencing DGSEM is EC when its symmetric volume flux is EC and
@@ -60,7 +82,7 @@ citing Carpenter et al. and Gassner–Winters–Kopriva;
 an EC volume flux with a local Lax–Friedrichs surface flux, and state that
 the resulting scheme "satisfies a discrete entropy inequality" (§5.1).
 
-Two chunk-2 sources apply the construction to new systems:
+Two sources apply the construction to new systems:
 
 - **Multicomponent Euler.** Renac (2021) combines his EC flux in the
   volume with an entropy-stable relaxation flux at the interfaces on
@@ -77,6 +99,28 @@ Two chunk-2 sources apply the construction to new systems:
   The visco-resistive terms keep the estimate when BR1 is applied to the
   gradients of the entropy variables, as recalled from earlier work (§2,
   Eqs. (38)–(39)).
+
+**Correction terms instead of fluxes.** Abgrall et al. (2022) obtain an
+element-wise entropy equality or inequality without entropy-conservative
+fluxes, by adding to any baseline scheme the smallest correction that
+enforces it; with the inequality constraint, the baseline is left
+unchanged in elements where it already dissipates enough entropy
+(Thms. 2.8, 3.1; [entropy correction term](/methods/entropy-correction-term.md)).
+On the inviscid Taylor–Green vortex the corrected central schemes conserve
+entropy and still blow up, earlier than flux differencing (§4.2.2).
+
+**Flux reconstruction.** For energy-stable flux reconstruction the
+relevant norm is the broken Sobolev norm $M+K_{\mathrm{FR}}$ (page-local
+$K_{\mathrm{FR}}$ the correction operator). [Cicchino, Nadarajah & Del Rey
+Fernández (2022)](/sources/cicchino-2022.md) prove for 1D Burgers that the
+classical split form, with the correction acting only on the surface terms,
+leaves a volume term without sign in the energy balance, so no nonlinear
+stability claim can be made, and that applying the correction to the
+volume terms as well gives energy (square-entropy) stability for an
+energy-conservative or local Lax–Friedrichs interface flux (Eqs. (23),
+(46)–(50); [flux reconstruction](/methods/flux-reconstruction.md)). Their
+numerical energy is conserved to $O(10^{-12})$ or decreases monotonically,
+while the classical split form does neither (Tables 1–3).
 
 On Legendre–Gauss nodes, entropy stability needs two further ingredients:
 
@@ -130,7 +174,7 @@ Rueda-Ramírez et al. (2022) map three cases (§2.2, §4; see
 
 ## Dissipation operators
 
-An ES flux is usually an EC flux minus a dissipation. In Rueda-Ramírez
+In the sources an ES flux is an EC flux minus a dissipation. In Rueda-Ramírez
 et al. (2021), Li, Duan & Tang (2022) and Renac's Roe-type flux the
 dissipation acts on the jump of the entropy variables, not of the
 conserved variables, which is what gives the production a provable sign.
@@ -162,6 +206,33 @@ conserved variables, which is what gives the production a provable sign.
   sound speed $a_{\mathrm L}$, provided the relaxation constant exceeds every
   component's ratio of specific heats (§4.3–4.4, Eqs. (36), (52)).
 
+## Filtering, viscosity and the entropy balance
+
+Shock-capturing steps outside the flux also move the entropy:
+
+- **Solution filtering.** [Edoh (2022)](/sources/edoh-2022.md) writes a
+  conservative solution filter in its semi-discrete limit as an artificial
+  dissipation operator $\bar{\mathcal D}\le0$ (page-local) and finds that
+  filtering the total energy tends to decrease the global entropy, an
+  unphysical effect, filtering the momentum tends to increase it, and
+  filtering the mass is indefinite (App. B, Eqs. (B.2)–(B.5); periodic
+  domain, unit norm). His "entropy-stability-promoting" filter acts on the
+  momentum only; on the isentropic vortex it gives strict kinetic-energy
+  decay and entropy increase for all his kinetic-energy-preserving
+  splittings, while the Kennedy–Gruber split with all variables filtered
+  keeps kinetic energy but decreases entropy (Figs. 1, B.5).
+- **Entropy-bounded filtering.** [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md)
+  choose the strength of a modal filter so that the nodal values satisfy a
+  local discrete minimum entropy bound (below;
+  [entropy filtering](/methods/entropy-filtering.md)).
+- **Time-reversibility viscosity.** [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)
+  use entropy production as a sensor: where an entropy is conserved the
+  system is invariant under $t\to-t$, and at shocks the entropy condition
+  makes the entropy solution irreversible, as they recall after Dafermos.
+  The defect of a forward–backward step pair sets the viscosity; unlike
+  entropy viscosity it needs no entropy pair (§2;
+  [artificial viscosity](/methods/artificial-viscosity.md)).
+
 ## Entropy stability does not give positivity
 
 The entropy analysis assumes positive density and pressure. Rueda-Ramírez
@@ -172,7 +243,34 @@ reason (§6.3). Renac (2021) builds positivity in separately: the
 relaxation flux makes the first-order scheme positive, the DGSEM cell
 averages stay admissible under a CFL condition, and a Zhang–Shu-type
 limiter restores the nodal values (Theorem 6.1, Eq. (67);
-[bound preservation](/properties/bound-preservation.md)).
+[bound preservation](/properties/bound-preservation.md)). Abgrall et al.
+(2022) find the same in their Taylor–Green tests: corrected schemes that
+conserve entropy blow up once nodal density or pressure turns negative,
+after which the entropy variables cannot even be formed (§4.2.2, §6).
+
+## Entropy conservation is not robustness
+
+Abgrall et al. (2022) state that "EC/D is not the holy grail" (§4):
+
+- a single-block finite-difference or Fourier collocation scheme is one
+  element, so an entropy correction gives only a global entropy balance;
+  on periodic Burgers data with a stationary shock and a rarefaction, the
+  central scheme with or without correction stays at a stationary,
+  non-entropic solution, because the entropy defect is zero
+  (Example 2.12);
+- nodal DG with closed Newton–Cotes (Boole) quadrature for linear
+  advection has an entropy error that falls with the fourth power of
+  $\Delta t$, yet highly oscillatory solutions (App. A.2, Fig. 10);
+- a bad baseline remains bad when it is forced to be entropy conservative
+  or dissipative (§4, App. A.2).
+
+They also note that for a scalar law and a fixed entropy the
+entropy-conservative flux is unique, so DG surface fluxes cannot in
+general make several entropies conserved at once, while Osher's E-schemes,
+which satisfy all entropy inequalities, are at most first order
+(Remark 3.3). Together with the KPP evidence below, this places entropy
+stability as a necessary ingredient whose sufficiency the sources do not
+claim.
 
 ## Discrete entropy tests
 
@@ -191,15 +289,20 @@ and the fully discrete error is a time-integration error.
   TVD-ES schemes dissipate (§6.1, Fig. 5).
 - **Li, Duan & Tang (2022)**, finite differences on a moving mesh. The EC
   scheme keeps the total entropy almost constant on the isentropic
-  vortex, and the ES scheme decays it, to about $-4.2\times10^{-6}$ at $t=4$
-  in 2D (Ex. 5.1, 5.5; [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
+  vortex, and the ES scheme decays it monotonically, in 2D and 3D (Ex. 5.1,
+  5.5, plotted curves only; [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
   Their sufficient condition for an EC flux on a moving curvilinear mesh
   weights the jumps of the entropy potential and of the flux potentials
   with averaged metric terms (Prop. 3.1, Eq. (3.5)); its proof is deferred
-  to Duan & Tang.
+  to Duan & Tang, and is in Duan & Tang (2022), Thm. 3.2.
+- **Duan & Tang (2022)**, relativistic MHD on a moving mesh. The discrete
+  total entropy stays constant for the sixth-order EC scheme and decays
+  monotonically for the fifth-order ES scheme, on the 2D vortex at
+  $N_x=160$ to $t=4$ and on the 3D vortex to $t=0.1$ (Figs. 6.4, 6.14).
 
-Both sources attribute the EC residual to the time integrator, and the
-observed orders 3 and 4 are the orders of their Runge–Kutta methods
+Renac and Rueda-Ramírez et al. attribute the EC residual to the time
+integrator, and the observed orders 3 and 4 are the orders of their
+Runge–Kutta methods
 (Renac (2021), §7.2; Rueda-Ramírez et al. (2021), §6, §6.1).
 
 ## Evidence: the KPP problem
@@ -238,6 +341,19 @@ with positivity it defines a convex invariant region, so it can be enforced
 as a [bound-preservation](/properties/bound-preservation.md) constraint
 rather than through fluxes (§2, Eq. (2.3)).
 
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) enforce a
+*local discrete* minimum entropy principle on the nodal values of nodal DG
+and FR. With the physical sign convention, an entropy $\sigma$ that
+increases across shocks (page-local), the bound for element $K$ is the
+minimum of $\sigma$ over the nodes of $K$ and of its face neighbours at the
+previous stage. For an explicit scheme under a CFL condition they take this
+neighbourhood to contain the domain of influence of the element over one
+step, so that the local minimum is non-decreasing in time over its domain
+of influence (§3.2,
+Eqs. (20)–(21)). For Euler they take $\sigma=\rho\ln(p\rho^{-\gamma})$,
+with a tolerance $10^{-4}$ on the bound (§4.1, §4.3,
+[entropy filtering](/methods/entropy-filtering.md)).
+
 Wu & Shu represent it, by
 [geometric quasilinearization](/methods/geometric-quasilinearization.md), as
 a family of constraints linear in $u$ (Thm 4.7; Eq. (2.3)). For 1D Euler the
@@ -268,6 +384,26 @@ a discrete, local relative of the same principle.
     convex and require production $\le0$.
   - The minimum principles of Rueda-Ramírez et al. (2022) and Wu & Shu bound
     functions of the physical specific entropy from below.
+  - Duan & Tang (2022) use the convex
+    $\eta=-\rho Ws/(\gamma-1)$ of relativistic flows, with production
+    $\le0$ (Eq. (2.3)). Dzanic & Witherden (2022) use the physical sign,
+    $\partial_t\sigma+\nabla\cdot\Sigma\ge0$ (page-local entropy flux
+    $\Sigma$), opposite to Tadmor's (§2.1), yet call $\sigma$ "some convex
+    entropy functional" (§3); with the physical sign $\rho s$ is concave
+    in $u$, since $-\rho s/(\gamma-1)$ is the registry's convex entropy
+    *(compiler check, not in the sources)*.
+- **Which entropy the minimum principle bounds** *(compiler check, not in
+  the sources: the comparison is the compiler's; the functional is printed
+  in Dzanic & Witherden's §4.1, checked on the PDF)*. Tadmor's minimum
+  principle, in the forms used by Wu & Shu and by Rueda-Ramírez et al.
+  (2022), bounds a function of the *specific* entropy. Dzanic & Witherden
+  bound the density-weighted $\sigma=\rho\ln(p\rho^{-\gamma})$ instead
+  (§4.1). They state that the entropy pair can be chosen arbitrarily, "the
+  particular choice of which is posited to have a minor overall effect"
+  (§3.2), and do not test the choice. Their set
+  $\{\rho s\ge\sigma_{\min}\}$ is convex, as the superlevel set of a
+  concave function, but the sources give no argument that a local minimum
+  of $\rho s$ is non-decreasing for entropy solutions.
 - **Printed slip.** Renac's cell entropy inequality (64) prints the
   surface sum without the quadrature weight, while the analogous sum in
   the proof of his Theorem 6.1 carries it. The weight is missing in (64).
@@ -281,3 +417,9 @@ a discrete, local relative of the same principle.
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §3.1–3.2 Eqs. (19)–(23), §4.3–4.4 Eq. (52), §5.2 Eqs. (62)–(64), Theorem 6.1, Eq. (67), §7.2 Table 3, App. D (arXiv v3).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §1, §2 Eqs. (21), (38)–(39), §3.3 Eqs. (51)–(69), Lemmas 2–3, §6.1 Fig. 5, §6.3 (arXiv v1).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eq. (3.21), Ex. 5.1, 5.5 (arXiv v1).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eqs. (2.3), (2.10)–(2.11), Def. 3.1, Thm. 3.2, Thm. 4.1, Figs. 6.4, 6.14 (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — Remark 2.2, Thms. 2.8, 3.1, Example 2.12, Remark 3.3, §4, §4.2.2, §6, App. A.2 Fig. 10 (arXiv v4).
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3 Eq. (23), §3.1.2 Eqs. (43)–(50), Tables 1–3 (arXiv v1).
+- [Edoh (2022)](/sources/edoh-2022.md) — App. B Eqs. (B.1)–(B.5), Figs. 1, B.5.
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §2 (arXiv v2).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.1 Eqs. (2)–(4), §3.2 Eqs. (20)–(21), §4.1, §4.3 (arXiv v3).

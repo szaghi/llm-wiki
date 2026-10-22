@@ -5,7 +5,7 @@ description: "Hermite WENO (HWENO) builds WENO candidates from cell averages and
 status: established
 aliases: [HWENO, Hermite WENO reconstruction, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Hermite WENO
@@ -93,9 +93,9 @@ for compressible Navier–Stokes (Euler at $\mathrm{Re}=\infty$):
 - **Theorem 1 (1-D).** With degree-$k$ reconstruction, the forward-Euler cell average stays in
   $G=\{\rho>0,\ \rho e>0\}$ if the interface traces and the Gauss–Lobatto residual state
   $(\bar u_i-\hat{\mathsf w}u^+_{i-1/2}-\hat{\mathsf w}u^-_{i+1/2})/(1-2\hat{\mathsf w})$ lie in $G$,
-  under $\frac{\Delta t}{\Delta x}\max_i(\text{coefficient})\le\hat{\mathsf w}=\frac1{N(N-1)}$,
-  $N=\lceil(k+3)/2\rceil$ (Eqs. (3.11)–(3.12); page-local $\hat{\mathsf w}$, the end Gauss–Lobatto
-  weight). Theorem 2 is the 2-D analogue (Eqs. (3.29)–(3.30)). Both are enforced by a density-then-
+  under $\frac{\Delta t}{\Delta x}\max_i(\text{coefficient})\le\hat{\mathsf w}=\frac1{n_{\mathrm{GL}}(n_{\mathrm{GL}}-1)}$,
+  $n_{\mathrm{GL}}=\lceil(k+3)/2\rceil$ (Eqs. (3.11)–(3.12); page-local $\hat{\mathsf w}$, the end
+  Gauss–Lobatto weight, and $n_{\mathrm{GL}}$ the number of Gauss–Lobatto points, the source's $N$). Theorem 2 is the 2-D analogue (Eqs. (3.29)–(3.30)). Both are enforced by a density-then-
   internal-energy [scaling limiter](/methods/zhang-shu-scaling-limiter.md) on point values only
   ([bound preservation](/properties/bound-preservation.md)).
 - **Viscous derivatives.** App. A reconstructs $u_x$ with HWENO at the interfaces of flagged stencils
@@ -146,6 +146,44 @@ implementing them, additional Hermite candidates from vertex neighbours and Lagr
 interpolated on the convex hull of neighbouring barycentres, generalizing a DG-$\mathbb P^1$
 construction of Luo et al. to arbitrary order.
 
+## The simple WENO limiter for DG
+
+The same candidates, the target polynomial and its mean-corrected neighbours, are the simple WENO
+limiter of Zhong & Shu and its triangle version by Zhu, Zhong, Shu & Qiu, as recalled by Du, Shu &
+Zhong (2022, §1, §3.1), which **overwrites** the DG polynomial of a troubled cell
+([WENO limiters for DG](/methods/weno-limiter-dg.md)). Their improvement concerns systems: for each
+edge normal $n_l$ of a triangle the original limiter projects all four polynomial vectors (target and
+three neighbours) on the characteristic fields of the normal Jacobian at the target average; the new
+one projects only the target polynomial $p_0$ and the corrected neighbour across edge $l$, combines
+the two per field,
+
+$$p^{\mathrm{new}}_l=\omega_0\,L_lp_0+\omega_1\,L_l\tilde p_l,\qquad \omega_i\propto\frac{d_i}{(\epsilon+\beta_i)^2},$$
+
+maps back with $R_l$, and averages the three directional results with the neighbour areas as weights,
+$p^{\mathrm{new}}_0=\sum_lR_lp^{\mathrm{new}}_l|K_l|/\sum_l|K_l|$ (Eqs. (3.1)–(3.8); page-local
+$p$, $\tilde p_l$, $L_l$, $R_l$ for the polynomial vectors and the directional eigenvector matrices).
+The linear weights are $d_0=0.999$, $d_1=0.001$ on triangles and $0.9995$, $0.0005$ on polygonal meshes
+built from point clouds (where the direction is the centre-to-centre vector and $N_j$ neighbours give
+$N_j$ two-polynomial combinations instead of one $(N_j+1)$-polynomial one, §3.2, Eq. (3.9)), and
+$\epsilon=10^{-6}$; any positive $d_0+d_1=1$ is argued to keep the accuracy, since both candidates are
+$(N+1)$th-order in smooth regions (§3.1). The cell average is preserved because each neighbour is
+shifted to the target average ([characteristic decomposition](/methods/characteristic-decomposition.md),
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)). Numerically, with the KXRCF
+threshold lowered so that up to 91 % of the cells are flagged, both limiters keep the design order
+and the error size of unlimited DG for $\mathbb P^1$–$\mathbb P^3$ (Tables 4.1–4.6), the new one
+perturbing the error less (e.g. $\mathbb P^1$, $h=2\pi/10$, $L^2$ $2.46\times10^{-2}$ against
+$3.87\times10^{-2}$, unlimited $5.63\times10^{-3}$); on shock problems it saves 6–55 % of the CPU time,
+most for $\mathbb P^2$ and point clouds, and reduces the spurious Mach stem of the $\mathbb P^2$
+[forward-facing step](/benchmarks/forward-facing-step.md) (Tables 4.7–4.18, Fig. 4.9). The authors'
+attribution of the sharper resolution to "less information being used for reconstruction in each
+direction" is not isolated by any experiment.
+
+Other passages only cite HWENO limiters for RKDG: Du, Shu & Zhong (2022, §1) as earlier
+wider-stencil and compact WENO limiters; Yu & Hesthaven (2022, §1) as reducing the stencil, adding that WENO and HWENO
+limiters reconstructing whole polynomials are "difficult to extend … to higher order cases (typically
+higher than 3rd order) due to the stability issue of extrapolation"; Bai & Li (2022, §3.1.5) use a
+simple or Hermite WENO limiter (their refs. [90, 91]) only on their two-phase Shu–Osher problem.
+
 ## Use as a sensor, not a limiter
 
 Classical RKDG schemes with WENO or HWENO limiters **overwrite** the solution in troubled cells by the
@@ -186,7 +224,7 @@ are given in the ingested sources.
 - **Order of the positivity CFL under SSP-RK3.** Fan et al. (2021, §3.3) state that Theorems 1–2 hold
   for SSP-RK3 "if the CFL is one third" of the forward-Euler bound; the Shu–Osher RK3 is a convex
   combination of forward-Euler steps of size $\Delta t$, so the convexity argument gives the
-  forward-Euler bound itself, not a third of it *(compiler check, not in Fan et al.)*; Wong et al.
+  forward-Euler bound itself, not a third of it *(compiler check, not in the sources)*; Wong et al.
   (2021, §5.3) state this for their limiters, the SSP-RK extension being "trivial since SSPRK time
   stepping schemes are convex combinations of Euler forward steps"
   ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
@@ -209,3 +247,6 @@ are given in the ingested sources.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §3.10.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1.
 - [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eq. (8).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3.1–3.2, Eqs. (3.1)–(3.9); §4, Tables 4.1–4.18, Fig. 4.9.
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1.
+- [Bai & Li (2022)](/sources/bai-2022.md) — §2.6; §3.1.5.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD blast wave and rotor"
-description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave at plasma beta about 2.5×10^-4 and the Tóth-type rotor, which probe positivity of pressure and the effect of divergence errors, plus a weak, smooth magnetic blast used in three dimensions to verify entropy conservation and stability of DG schemes."
+description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave at plasma beta about 2.5×10^-4, its relativistic counterpart, and the first and second rotor problems, which probe positivity of pressure and the effect of divergence errors, plus a weak, smooth magnetic blast used in three dimensions to verify entropy conservation and stability of DG schemes."
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # MHD blast wave and rotor
@@ -29,7 +29,7 @@ $\rho=1$, $v=0$, $B=(100/\sqrt{4\pi},\ 0,\ 0)$, and $p=1000$ for
 $r\le0.1$, $p=0.1$ otherwise; $t=0.01$ on $200^2$ cells. The ambient
 plasma beta, page-local $\beta_{\mathrm p}=2p/|B|^2$, is
 $2\cdot0.1/(10^4/4\pi)=2.51\times10^{-4}$, the value they print
-*(compiler check of their value)*.
+*(compiler check, not in the sources)*.
 
 Their second- and third-order locally divergence-free
 [WLS-ENO](/methods/wls-eno.md) finite-volume scheme, with HLL flux,
@@ -37,6 +37,22 @@ Godunov–Powell source term and a Zhang–Shu-type
 [scaling limiter](/methods/zhang-shu-scaling-limiter.md) on density and
 pressure, produces no negative pressure, and its density is
 "significantly smoother" than earlier published results (Fig. 13).
+
+### Relativistic MHD blast
+
+[Duan & Tang (2022)](/sources/duan-2022.md) Ex. 6.5 (arXiv v1) run the
+relativistic-MHD blast after earlier relativistic papers: on
+$[-6,6]^2$ with outflow boundaries, $\gamma=4/3$, $B_1=0.1$, an
+explosion zone $r<0.8$ with $\rho=0.01$, $p=1$, an ambient medium
+$r>1$ with $\rho=10^{-4}$, $p=5\times10^{-4}$, and a linear taper of
+$\rho$ and $p$ in between; $t=4$. The lab-frame ratio $2p/\lvert B\rvert^2$
+of the ambient medium is $0.1$ *(compiler check, not in the sources)*,
+so this blast is far less magnetically dominated than the Newtonian one
+above. Their fifth-order entropy-stable scheme on an
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md) with
+$150^2$ cells (2 min 3 s on 4 cores) is much better than the uniform
+$150^2$ mesh (30 s) and comparable to the uniform $600^2$ mesh
+(28 min 14 s), i.e. at 7.26 % of its CPU time (Table 6.1, Fig. 6.9).
 
 ## Rotor
 
@@ -62,6 +78,26 @@ overshoots of the third-order scheme in $B_1$ and $B_2$ slices
 16 cores); they read the visual quality of the third-order $200^2$ run
 against the second-order $600^2$ one as showing "the superiority of
 higher-order methods".
+
+### First rotor
+
+[Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.1
+(arXiv v2) run the rotor in the faster, more strongly magnetized form
+they attribute to their ref. [34]: on $[0,1]^2$ with free boundaries
+and $\gamma=1.4$, $\rho=1+9\varphi$, $p=1$,
+$v=\tfrac{2}{r_0}\varphi\,(-(y-0.5),\ x-0.5)$, $B=(5/\sqrt{4\pi},0)$,
+with $\varphi=1$ for $r\le r_0$, $1-(r-r_0)/(r_1-r_0)$ for
+$r_0<r\le r_1$, $0$ beyond, $r_0=0.1$, $r_1=0.115$; $t=0.15$. The disk
+edge thus rotates at speed 2, against 1 in Liu et al.'s second rotor,
+and the plasma beta is $2p/|B|^2=8\pi/25\approx1.0$, against
+$16\pi/25\approx2.0$ there *(compiler check, not in the sources)*. Their residual-based
+[artificial viscosity](/methods/artificial-viscosity.md) ($c_\mu=2$)
+gives effectively non-oscillatory profiles at $\mathbb P_4$ on $128^2$
+and $\mathbb P_9$ on $64^2$ elements, with discontinuities resolved
+over 2–3 solution points and no visible deterioration at the higher
+order (Figs. 10–11). They print $r=\sqrt{x^2+y^2}$, while the velocity
+field is centred at $(0.5,0.5)$; consistent use requires $r$ to be the
+distance to $(0.5,0.5)$.
 
 ## Weak magnetic blast
 
@@ -93,9 +129,11 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - The weak magnetic blast is smooth, and with entropy-conservative
   fluxes the semi-discrete scheme conserves entropy exactly, so the
   fourth-order decay measures the time-integration error, not a spatial
-  order *(compiler remark, not in the sources)*.
+  order *(compiler check, not in the sources)*.
 
 # Citations
 
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.3–4.4, Figs. 9–13.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.1, Eq. (95), Table 2, Figs. 4–5 (arXiv v1).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — Ex. 6.5, Table 6.1, Fig. 6.9 (arXiv v1).
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.1, Figs. 10–11 (arXiv v2).

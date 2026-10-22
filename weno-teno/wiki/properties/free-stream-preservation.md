@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Free-stream preservation"
-description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers the DGSEM identity and the strong–weak asymmetry, corrected and subcell metrics for low-order operators, warped-mesh tests, geometric conservation laws on moving meshes, and an untested TENO claim."
+description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers the DGSEM identity, corrected and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes with the Duan–Tang proof, and an untested TENO claim."
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization]
 tags: [dg, finite-difference, limiting, entropy-stable]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Free-stream preservation
@@ -30,9 +30,9 @@ averaged between node pairs in the two-point flux, as
 $\{\!\{Ja^{(n)}\}\!\}_{(i,m)}$ (Eq. (2.17);
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md),
 Eq. (6)). Ranocha et al. reorder the sums into directional volume fluxes.
-They note that free-stream preservation "still requires the usual care"
-with the metric terms and cite the literature for it rather than proving it
-(§2.3).
+They note that "the usual care must be taken to ensure free-stream
+preservation" when the contravariant vectors are computed, and cite the
+literature for it rather than proving it (§2.3).
 
 [Pazner (2021)](/sources/pazner-2021.md) states the condition and proves
 its effect. With $G$ the diagonal matrix of nodal Jacobians and $GJ^{-1}$
@@ -139,23 +139,67 @@ discrete metric identities are the ingredients of the proofs in App. C.
 ## Moving meshes: geometric conservation laws
 
 On a mesh that moves in time, a uniform state must also survive the mesh
-motion. [Li, Duan & Tang (2022)](/sources/li-2022-c.md) write the law in
+motion. [Duan & Tang (2022)](/sources/duan-2022.md) and
+[Li, Duan & Tang (2022)](/sources/li-2022-c.md) write the law in
 time-dependent curvilinear coordinates together with the volume
-conservation law (VCL) and the surface conservation laws (SCLs) (Eq. (2.3);
-[adaptive moving mesh](/methods/adaptive-moving-mesh.md)). Discretely:
+conservation law (VCL), $\partial_\tau J+\sum_k\partial_{\xi_k}(J\partial_t\xi_k)=0$,
+and the surface conservation laws (SCLs),
+$\sum_k\partial_{\xi_k}(J\partial_{x_j}\xi_k)=0$ (Duan & Tang, Eq. (2.9); Li,
+Duan & Tang, Eq. (2.3); [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
+As Duan & Tang recall, these identities make constant states exact
+solutions of the transformed equations (§2). Discretely, in both papers:
 
 - the SCL metric terms are written in conservative cross-product form with
-  the same $2w$th-order central difference as the entropy-conservative
-  flux, which gives the discrete SCLs (Eq. (3.9));
+  the same central difference, of order $2n_{\mathrm o}$ (page-local, as
+  on [flux differencing](/methods/flux-differencing.md)), as the
+  entropy-conservative flux, which gives the discrete SCLs (Li, Duan &
+  Tang, Eq. (3.9); Duan & Tang, Eq. (3.17));
 - the time metric is computed from the mesh velocity as
   $J\partial_t\xi_k=-\sum_j\dot x_j\,J\partial_{x_j}\xi_k$, which gives the
-  semi-discrete VCL (Eq. (3.10)), page-local computational coordinates
-  $\xi_k$.
+  semi-discrete VCL (Li, Duan & Tang, Eq. (3.10); Duan & Tang, Eq. (3.18)),
+  page-local computational coordinates $\xi_k$ and computational time
+  $\tau$.
 
-They state that the fully discrete scheme with SSP-RK3 then preserves free
-streams, proved by Duan & Tang (Remark 3.1). As recalled from Visbal &
-Gaitonde, violating free-stream preservation "causes large errors and
-instabilities" for high-order schemes (§3.2).
+Li, Duan & Tang state that the fully discrete scheme with SSP-RK3 then
+preserves free streams, proved by Duan & Tang (Remark 3.1). As recalled
+from Visbal & Gaitonde, violating free-stream preservation "causes large
+errors and instabilities" for high-order schemes (§3.2).
+
+**The proof** (Duan & Tang (2022), §3.3, Prop. 3.2). The proof for the
+high-order finite-difference case, which Li, Duan & Tang defer to "Duan &
+Tang", is in this paper:
+
+1. *Discrete SCLs.* The metrics are written in divergence
+   (cross-product) form, e.g.
+   $J\partial_{x_1}\xi_1=\partial_{\xi_3}(x_3\,\partial_{\xi_2}x_2)-\partial_{\xi_2}(x_3\,\partial_{\xi_3}x_2)$,
+   and every derivative is replaced by the same central operator
+   $\delta_k a_i=\tfrac12\sum_nc_n(a_{i+n\mathbf e_k}-a_{i-n\mathbf e_k})$
+   (page-local coefficients $c_n$, those of the entropy-conservative flux
+   combination; [flux differencing](/methods/flux-differencing.md)). The
+   discrete SCLs then hold exactly, because the directional operators
+   commute, $\delta_j\delta_k=\delta_k\delta_j$ (Eqs. (3.15)–(3.17), after the
+   conservative metric method of Thomas & Lombard). In 2D the metrics
+   reduce to central differences of the node coordinates (App. B); in 1D
+   the SCL holds automatically (App. A).
+2. *Discrete VCL.* The temporal metrics are
+   $J\partial_t\xi_k=-\sum_j\dot x_j\,J\partial_{x_j}\xi_k$ at the nodes, and
+   $J$ is advanced by the same flux combination applied to the averaged
+   temporal metrics (Eqs. (3.5), (3.8), (3.18)).
+3. *Forward Euler.* With $u^n_i=u_0$ everywhere, the update gives
+   $J^{n+1}_i=J^n_i-\sum_k\frac{\Delta t}{\Delta\xi_k}\,\delta_k[J\partial_t\xi_k]$
+   and $(Ju)^{n+1}_i=J^{n+1}_iu_0$, so the state stays $u_0$; explicit
+   SSP Runge–Kutta methods are convex combinations of forward-Euler steps,
+   which extends the result (Prop. 3.2).
+4. *Entropy-stable dissipation.* The dissipation of their TeCNO-type flux
+   acts on jumps of reconstructed entropy variables and vanishes for a
+   constant state, so the entropy-stable scheme preserves free streams too
+   (Remark 4.1; [TeCNO schemes](/methods/tecno-scheme.md)).
+
+Discrete GCLs are also needed for the discrete entropy conservation of the
+moving-mesh scheme (Duan & Tang, Remark 2.1, Thm. 3.2;
+[entropy stability](/properties/entropy-stability.md)). Neither paper
+prints a free-stream test; the property is proved, and the accuracy tests
+on moving meshes reach the design orders (Duan & Tang, Exs. 6.1, 6.7).
 
 ## Finite-difference reconstruction schemes
 
@@ -169,14 +213,15 @@ the source.
 
 ## Qualifications
 
-- Of the chunk-1 sources, none proves free-stream preservation itself.
-  Ranocha et al. (2023) and Rueda-Ramírez et al. (2022) cite it from the
-  literature for the DGSEM and the subcell normals. Ye et al. (2022) assert
-  it without a test. Pazner (2021) proves it for the strong-form DGSEM and
-  for his corrected low-order scheme (Props. 3–4), and Rueda-Ramírez et al.
-  (2021) prove that the curvilinear entropy-balance residuals vanish under
-  the metric identities and show free-stream preservation numerically.
-  Li, Duan & Tang (2022) cite the proof for moving meshes.
+- **Who proves what.** Ranocha et al. (2023) and Rueda-Ramírez et al.
+  (2022) cite free-stream preservation from the literature for the DGSEM
+  and the subcell normals. Ye et al. (2022) assert it without a test.
+  Pazner (2021) proves it for the strong-form DGSEM and for his corrected
+  low-order scheme (Props. 3–4), and Rueda-Ramírez et al. (2021) prove
+  that the curvilinear entropy-balance residuals vanish under the metric
+  identities and show free-stream preservation numerically. Li, Duan &
+  Tang (2022) cite the proof for moving meshes; Duan & Tang (2022) give it
+  (Prop. 3.2).
 - **Strong and weak forms.** Pazner's statement that the weak form (14)
   "will not in general" preserve constants ("e.g. curved meshes", §2.4.2)
   is not a conflict with the strong–weak equivalence of Ranocha et al.
@@ -203,3 +248,4 @@ the source.
 - [Pazner (2021)](/sources/pazner-2021.md) — §2.4 Eq. (22) Prop. 3, §3.1 Eqs. (25)–(29) Props. 4–5, §3.3 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.1 Eqs. (91)–(94) Table 1, App. C Lemmas 4–5 Eqs. (145), (150) (arXiv v1).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2 Eq. (2.3), §3.2 Eqs. (3.9)–(3.10), Remark 3.1 (arXiv v1).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eq. (2.9), Remark 2.1, §3.3 Eqs. (3.5), (3.8), (3.15)–(3.18), Prop. 3.2, Thm. 3.2, Remark 4.1, App. A–B, Exs. 6.1, 6.7 (arXiv v1).

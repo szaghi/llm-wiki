@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Split convective forms"
-description: "Split forms write the convective terms of the mass and momentum equations as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family, the weight conditions and duality relations under which a discretization conserves mass, momentum and kinetic energy, the dual-sided variant and the finite-volume face fluxes they correspond to."
+description: "Split forms write the convective terms of the mass and momentum equations as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and its conservation conditions, the rotational-form Div-rot and Div-str splittings of Edoh with square-root-density variables, the Burgers split of DG and FR, and the face fluxes and two-point fluxes they correspond to."
 status: established
-aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization]
+aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, turbulence, low-dissipation]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Split convective forms
@@ -117,6 +117,131 @@ coefficient ([local conservation and flux form](/results/local-conservation-flux
   products such as $\rho_{i-2}v_{i-1}$ have no advective
   finite-difference counterpart.
 
+## Rotational-form splittings (Edoh)
+
+[Edoh (2022)](/sources/edoh-2022.md) analyses split forms with
+diagonal-norm finite-difference
+[summation-by-parts operators](/operators/summation-by-parts-operator.md)
+$D_j=M^{-1}Q_j$ in direction $j$, using their two-point-flux
+representation ([flux differencing](/methods/flux-differencing.md)).
+Page-local notation: $V_j=\mathrm{diag}(v_j)$ for nodal data, summation
+over repeated indices, and the *splitting error operator*
+
+$$\mathcal S_j(a,b)=AD_j\mathbf b+BD_j\mathbf a-D_jA\mathbf b,$$
+
+which is telescoping ($\mathbf 1^\top M\mathcal S_j(a,b)=0$) and locally
+of the order of the operator, a "zero-consistent" correction (Eq. (7)).
+
+**Incompressible splittings** (Table 1, $D_jv_j=0$ for the
+kinetic-energy statements):
+
+| name | momentum convective term | kinetic-energy preserving |
+|---|---|---|
+| Div | $D_jV_jv_i$ | no |
+| Prod | $V_jD_jv_i+V_iD_jv_j$ | no |
+| EMAC-str (Charnyi et al.) | Prod $+\tfrac12\delta_{ij}\mathcal S_j(v_k,v_k)$ | no, discretely |
+| Morinishi (skew-symmetric) | $\tfrac12\big(D_jV_jv_i+V_jD_jv_i+V_iD_jv_j\big)$ | yes |
+| Div-rot (new) | Prod $-\tfrac12\delta_{ij}\mathcal S_j(v_k,v_k)$ | yes |
+| Div-str (new) | $D_jV_jv_i+\tfrac12\delta_{ij}\mathcal S_j(v_k,v_k)$ | yes |
+
+- **Derivation.** Writing the advective term with the antisymmetric part
+  of the velocity gradient, $v_j\partial_jv_i=v_j(\partial_jv_i-\partial_iv_j)+\tfrac12\partial_i(v_jv_j)$,
+  the rotational form $\omega\times v+\tfrac12\nabla\lvert v\rvert^2$ (Horiuti),
+  and substituting into the product form gives Div-rot; the strain-rate
+  analogue gives EMAC-str (Eqs. (13)–(14)). For a discretely solenoidal
+  velocity Div-rot *is* the rotational form; earlier kinetic-energy-
+  preserving splittings (Morinishi, Feiereisen, Kennedy–Gruber, Coppola,
+  Rozema) reduce instead to the skew-symmetric form (§3.1). Edoh reads
+  Div-rot as the advective form plus a zero-consistent correction, of
+  the form $\tfrac12\mathcal S_i(v_k,v_k)$, to the static-pressure gradient
+  (Remark 2).
+- **Kinetic energy.** Div-rot is kinetic-energy preserving, with
+  kinetic-energy flux $\tfrac12(\!(v_j;\lvert v\rvert^2)\!)$, but only in the
+  summed multi-dimensional sense: the proof relabels indices under the
+  double summation and does not hold component by component (Eq. (15),
+  Remark 3). EMAC-str leaves an indefinite residual of the order of the
+  operator, because the discrete product rule fails,
+  $(\!(v_j;v_j)\!)\ne(\!(1;v_jv_j)\!)$ (Eq. (16)).
+- **Div-str and the one-parameter family.** Div-str is twice Morinishi
+  minus Div-rot, a kinetic-energy-preserving rendition of EMAC-str under
+  SBP algebra that also preserves angular momentum (Eq. (17)). With
+  page-local weight $\alpha_{\mathrm E}$,
+  $\alpha_{\mathrm E}\,\text{Div-rot}+(1-\alpha_{\mathrm E})\,\text{Div-str}=\alpha_{\mathrm E}(V_iD_jv_j+V_jD_jv_i)+(1-\alpha_{\mathrm E})D_jV_jv_i+\tfrac{1-2\alpha_{\mathrm E}}2\delta_{ij}\mathcal S_j(v_k,v_k)$
+  is a family of kinetic-energy-preserving splittings, Morinishi at
+  $\alpha_{\mathrm E}=1/2$ (Eq. (18)).
+- **Secondary invariants** (Table 2, App. A). Momentum is conserved a
+  priori by all six; kinetic energy (for $D_jv_j=0$) by Morinishi, Div-rot
+  and Div-str; angular momentum a priori only by Div and Div-str;
+  vorticity (for a solenoidal field) by all six; helicity only by Div-rot;
+  enstrophy by none.
+
+**Compressible splittings** (Table 3). With page-local square-root-density
+variables $\breve v_i=\sqrt\rho\,v_i$, applied in both the mass and the
+momentum equations, compressible Div-rot reads
+
+$$\text{mass: }\ \sqrt R\,D_j\breve v_j+\breve V_jD_j\sqrt{\boldsymbol\rho},\qquad \text{momentum: }\ \breve V_iD_j\breve v_j+\breve V_jD_j\breve v_i-\tfrac12\delta_{ij}\big[\mathcal S_j(\breve v_k,\breve v_k)-\mathcal S_j(\sqrt\rho,\breve v_kv_k)\big],$$
+
+with $R=\mathrm{diag}(\rho)$; its two-point mass flux is
+$(\!(\sqrt\rho;\breve v_j)\!)$, a geometric density average, and its
+kinetic-energy flux $\tfrac12(\!(\breve v_j;v_i\breve v_i)\!)$. It is
+kinetic-energy preserving without any solenoidal condition (Eq. (24)), and
+Edoh calls it "the first analogue to the rotational form for compressible
+flows". The compressible EMAC-str of Both et al. is not kinetic-energy
+preserving under this discrete calculus (Eq. (25)). Compressible Div-str
+is twice Rozema's splitting minus Div-rot, and the family
+$\alpha_{\mathrm E}\,\text{Div-rot}+(1-\alpha_{\mathrm E})\,\text{Div-str}$
+contains the cubic splitting of Rozema et al. at
+$\alpha_{\mathrm E}=1/2$ (Eq. (26)).
+
+Edoh contrasts this family with the one of Coppola et al., the convex
+combinations of the Feiereisen and Coppola splittings with arithmetic
+density averages, which contains Kennedy–Gruber at even weighting and does
+not contain Rozema's splitting (§3.2). That family is the $\zeta$ family of
+the table above ($\zeta=1$ Feiereisen, $\zeta=1/2$ Kennedy–Gruber, $\zeta=0$
+Coppola) *(compiler check, not in the sources: Edoh does not cite
+Coppola & Veldman 2023)*. The total energy is built as internal energy
+plus the kinetic energy induced by mass and momentum, after Kuya et al.,
+with the pressure work in product form; for Div-rot the total-energy flux
+is exactly the sum of the internal- and kinetic-energy fluxes (Table 4,
+Remark 4).
+
+**Evidence** (Edoh, §4; sixth-order central differences, RK4):
+
+- **Isentropic vortex**, about six points across the vortex, 100 vortex
+  widths. Without filtering the divergence form fails within five widths
+  and Div-rot within fifteen; Feiereisen and Kennedy–Gruber survive but
+  are noisy. With solution filtering all are stable and Div-rot has the
+  lowest density error; after 100 widths the minimum density is 0.6261
+  (Div-rot), 0.5069 (Feiereisen) and 0.4490 (Kennedy–Gruber) against the
+  exact 0.5479 (Figs. 1–2; [isentropic vortex](/benchmarks/isentropic-vortex.md)).
+- **Taylor–Green vortex** at $\mathrm{Re}=1600$, $M_0=0.1$, $64^3$ to
+  $192^3$ points. The divergence form is unstable on these grids (stable at
+  $512^3$); Kennedy–Gruber and Div-rot are robust even severely
+  under-resolved. At $64^3$ Div-rot shows larger density variability and
+  numerical dissipation, which Edoh attributes to the aliasing of its
+  product-form momentum term, but cleaner vortical structures (Figs. 3–4;
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+
+## Split forms in DG and flux reconstruction
+
+For Burgers, $\partial_tu+\partial_x(u^2/2)=0$, the split form is
+$\alpha_{\mathrm s}\,\partial_x(u^2/2)+(1-\alpha_{\mathrm s})\,u\,\partial_xu$
+with page-local weight $\alpha_{\mathrm s}$; $\alpha_{\mathrm s}=2/3$ makes the
+volume terms cancel in the energy balance of a summation-by-parts
+discretization. [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+take the split with respect to the stiffness operator, which satisfies
+summation by parts for dense norms and uncollocated nodes, instead of the
+differential operator, and obtain an energy-stable split form of
+energy-stable flux reconstruction (§3.1;
+[flux reconstruction](/methods/flux-reconstruction.md)).
+[Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) use the
+Ducros et al. split form, which on its own is neither entropy conservative
+nor kinetic-energy preserving, as the volume term of nodal DG plus
+entropy and kinetic-energy correction terms; on the inviscid 2D
+Taylor–Green vortex this behaves like flux differencing with an
+entropy-conservative flux and does not blow up before $t=30$ (§4.2.2,
+Fig. 8; [entropy correction term](/methods/entropy-correction-term.md)).
+
 ## Dual-sided discretization
 
 A *dual-sided* scheme pairs a directionally biased operator with its
@@ -153,7 +278,16 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
 ## Qualifications
 
-- The theory is for periodic 1D grids with exact time integration. The tests
+- Edoh's disagreement with Charnyi et al. and Both et al. on EMAC is a
+  disagreement about the discrete setting: the EMAC papers are finite
+  element papers with a weakly imposed solenoidal constraint, and Edoh's
+  negative result holds under diagonal-norm SBP finite-difference algebra
+  (§3.1). Edoh's priority claims ("first", "only") are qualified "to the
+  author's knowledge".
+- Edoh does not study the temporal kinetic-energy error and presumes it
+  negligible at small $\Delta t$; exact preservation in time needs
+  implicit symplectic or relaxation integrators (§4.1.1).
+- The theory of Coppola & Veldman is for periodic 1D grids with exact time integration. The tests
   use classical RK4 with very small steps, and non-periodic boundaries are
   only pointed to (via SBP).
 - The non-dissipative dual-sided shock profile is shown on one coarse 1D
@@ -167,3 +301,6 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.1–2.2 Eqs. (7)–(11), §3.3 Eq. (43), §3.4 Eq. (53), §4.2 Eqs. (56)–(58), §5.3–5.4 Eqs. (72)–(73) Table 1, §7.3 Figs. 2–3, §8.2 Fig. 4.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, §9.
+- [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (1)–(7), §3.1 Eqs. (9)–(18), Remarks 2–3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Tables 3–4, §4 Figs. 1–4, App. A.
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3, §3.1 Eqs. (20)–(28), §3.1.2 Eq. (46) (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2 Fig. 8 (arXiv v4).

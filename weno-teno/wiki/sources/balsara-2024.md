@@ -175,7 +175,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
@@ -189,6 +189,7 @@ Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cite
 * [Mach 3 forward-facing step](/benchmarks/forward-facing-step.md)
 * [Mapped WENO](/methods/mapped-weno.md)
 * [Multi-resolution WENO](/methods/multi-resolution-weno.md)
+* [Path-conservative schemes](/methods/path-conservative-scheme.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Shock–vortex interaction](/benchmarks/shock-vortex-interaction.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)

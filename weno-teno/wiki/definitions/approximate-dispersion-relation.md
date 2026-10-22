@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a (possibly nonlinear)
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Approximate dispersion relation
@@ -23,7 +23,9 @@ the sources use but do not restate ([Luo & Wu (2021)](/sources/luo-2021-b.md),
 §3; [Li et al. (2022)](/sources/li-2022-b.md), §3.3(3);
 [Deng (2023)](/sources/deng-2023.md), Figs. 18, 28;
 [Huang et al. (2026)](/sources/huang-2026.md), §5.2;
-[Wang et al. (2021)](/sources/wang-2021.md), §4).
+[Wang et al. (2021)](/sources/wang-2021.md), §4;
+[Bezgin et al. (2022)](/sources/bezgin-2022.md), §4.8;
+[Hiejima (2022)](/sources/hiejima-2022.md), Appendix).
 
 ## Linear schemes and the sign convention
 
@@ -35,7 +37,7 @@ gives
 $$\tilde\vartheta_r=\sum_lc_l\sin(l\vartheta),\qquad
 \tilde\vartheta_i=-\sum_lc_l\cos(l\vartheta),$$
 
-and calls $\tilde\vartheta_i\le0$ dissipative. *(Compiler check, not in the
+and calls $\tilde\vartheta_i\le0$ dissipative. *(compiler check, not in the
 sources: inserting $u_j=\hat u\,e^{\mathrm ij\vartheta}$ gives
 $\frac{d\hat u}{dt}=\frac{1}{\Delta x}(-\mathrm i\tilde\vartheta_r+\tilde\vartheta_i)\hat u$,
 so the mode decays exactly when $\tilde\vartheta_i<0$ and grows, i.e. is
@@ -62,7 +64,7 @@ facts off the curves:
   about six points, and leaves larger scales almost unaffected; the authors
   present it on this ground as an implicit subgrid regularization for LES.
 
-*(Compiler check, not in the sources: the dissipation term of the flux is an
+*(compiler check, not in the sources: the dissipation term of the flux is an
 odd-order difference centred at the interface, so its contribution to the flux
 derivative is an even-order symmetric difference; in the splitting of the next
 section it belongs to the symmetric part $D_{\mathrm{diss}}$ and contributes only
@@ -107,7 +109,7 @@ TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
-Li et al., Deng, Huang et al. and Wang et al. (2021), it names the numerically evaluated
+Li et al., Deng, Huang et al., Wang et al. (2021), Bezgin et al. and Hiejima, it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
 condition is imposed on the curve) but a page citing "the ADR" must say which
 is meant.
@@ -157,6 +159,35 @@ is meant.
   [multi-resolution WENO](/methods/multi-resolution-weno.md) and
   [WENO-AO](/methods/weno-ao.md).
 
+- **A learned three-point WENO.** [Bezgin et al. (2022)](/sources/bezgin-2022.md) (§4.8,
+  Fig. 17) compare their two neural-network weightings with WENO3-JS, WENO5-JS and the linear
+  schemes they label CU1, CU3, CU5, "central-upwind" in their naming, not the Kurganov-type
+  [central-upwind fluxes](/methods/central-upwind-scheme.md) (no parameters of the procedure
+  printed). WENO3-NN2 is
+  "considerably less dissipative" than WENO3-JS over the whole wavenumber range, slightly less
+  dissipative than WENO5-JS at high wavenumbers, with a monotone dissipation curve. WENO3-NN1 keeps
+  the dissipation minimal and has **zero dissipation at the cut-off wavenumber**, which the
+  authors call "counterintuitive to classical discretization-design principles" and read as
+  under-resolved wave packets kept "without interacting with resolved scales", "akin to soliton
+  solutions". Huang et al. (above) find their ROUND schemes markedly less dissipative than
+  WENO3-NN at high wavenumbers. See [learned WENO weights](/methods/learned-weno-weights.md).
+- **High-order WCNS whose curves do not separate.** [Hiejima (2022)](/sources/hiejima-2022.md)
+  (Appendix, Fig. A.1; $n_x=100$, first-order upwind as reference) computes the ADR of his
+  [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md) with
+  Jiang–Shu (WCNS-JS) and TENO-type (WCNS-T) weights at interpolation orders 5, 7, 9 and 11:
+  WCNS-T is better than WCNS-JS, "however, both cases are not so different in accuracy", and the
+  curves of the four orders nearly coincide, which the author reads as an open issue in the
+  formulation of the nonlinear weight. The scheme differences the AUSMDV fluxes of the
+  interpolated interface states by the two-point formula
+  $(\hat f_{i+1/2}-\hat f_{i-1/2})/\Delta x$ and "does not include a compact procedure for
+  calculating the flux derivative" (§2.2, Eq. (5)). *(compiler check, not in the sources: for
+  exact interface values, $\big(f(x_i+\tfrac{\Delta x}2)-f(x_i-\tfrac{\Delta x}2)\big)/\Delta x=f'(x_i)+\tfrac{\Delta x^2}{24}f'''(x_i)+O(\Delta x^4)$,
+  whose modified wavenumber is $2\sin(\vartheta/2)$, so whatever the interpolation order the
+  spatial operator carries a second-order dispersion error at low wavenumbers; this is the
+  error the derivative corrections of [A-WENO](/methods/alternative-weno.md) remove, and it is
+  consistent with curves that do not separate with the interpolation order. The paper offers
+  no convergence test that would decide between the two readings.)*
+
 ## Qualifications
 
 - The ADR of a nonlinear scheme depends on the test signal (a single Fourier
@@ -184,3 +215,5 @@ is meant.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §5.2, Fig. 5: ROUND, LD-ROUND, WENO3-NN spectra.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, Fig. 1: dispersion and dissipation of the Lerat–Corre family, $0.35\pi$ threshold (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §4, Fig. 4.1: multi-resolution WENO spectra.
+- [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.8, Fig. 17: WENO3-NN spectra, zero dissipation at the cut-off.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2 (Eq. (5)), Appendix (Fig. A.1): WCNS-JS and WCNS-T spectra at orders 5–11.

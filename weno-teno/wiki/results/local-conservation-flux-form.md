@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -84,6 +84,26 @@ flux-differencing DG form with diagonal mass and boundary operators (§2,
 after Eq. (2.5)). See [flux differencing](/methods/flux-differencing.md) and
 [summation-by-parts operator](/operators/summation-by-parts-operator.md).
 
+The property survives dense norms and a filter on the volume terms.
+[Cicchino et al. (2022)](/sources/cicchino-2022.md) (§3.1.1, Eqs. (34)–(42)) prove it for
+their nonlinearly stable split form of energy-stable
+[flux reconstruction](/methods/flux-reconstruction.md) applied to Burgers' equation, a modal
+or nodal scheme of degree $N$ in which both the conservative and the non-conservative volume
+terms of $\alpha\,\partial_x(\tfrac12u^2)+(1-\alpha)\,u\,\partial_xu$ and the face terms are
+multiplied by the inverse of the filtered mass matrix $M+K_{\mathrm{FR}}$, with
+$K_{\mathrm{FR}}=c_{\mathrm{FR}}(D^N)^\top MD^N$ (page-local $K_{\mathrm{FR}}$ and correction
+parameter $c_{\mathrm{FR}}$, page-local split weight $\alpha\in[0,1]$, not the DG–FV blending coefficient; $M$ is dense in general). Testing with the constant function and
+using the summation-by-parts property of the stiffness operator, which holds for any
+quadrature exact to degree $2N-1$ and uncollocated nodes (Eq. (24)), they obtain for every
+$\alpha$
+
+$$\mathbf 1^\top(M+K_{\mathrm{FR}})\frac{d\hat u}{dt}=-\mathbf 1^\top\sum_{\text{faces}}(\text{face quadrature of }\hat n\,h)\quad(\text{Eq. (42), in words}),$$
+
+i.e. the element integral changes only through the single-valued numerical face fluxes:
+local, hence global, conservation. *(compiler check, not in the sources: $\mathbf 1^\top K_{\mathrm{FR}}=0$
+because $D^N$ annihilates constants for $N\ge1$, so the left side is the time derivative of
+the element integral itself.)* All schemes of their tests conserve to $O(10^{-16})$ (§4).
+
 ## Zero sums turned into fluxes: limiting and blending
 
 The step "vanishing sum, hence differences of fluxes" is also how two sources keep
@@ -97,7 +117,7 @@ nonlinear corrections conservative.
   $r_{i,k}=r_{m_i^+,k}-r_{m_i^-,k}$, where the face flux $r_{m,k}$ is the sum of the nodal
   ones on one side of the face (page-local symbols). Limiting each face with the minimum of
   the coefficients of its two nodes is then conservative (Prop. 10), and with $2d$ provisional
-  states per node it is also invariant-domain preserving (Prop. 11). *(Compiler check, not
+  states per node it is also invariant-domain preserving (Prop. 11). *(compiler check, not
   in the sources: on one line this is Lemma A.1 above with the partial sums as flux, the
   zero line sum playing the role of the vanishing column sums.)* See
   [convex limiting](/methods/convex-limiting.md).
@@ -127,6 +147,18 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
   consistency. See [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md).
 - **Periodic grids only.** The proofs are for periodic grids. The extension
   to non-periodic boundaries is only pointed to via SBP operators.
+- **A dissenting remark on DG.** [Bai & Li (2022)](/sources/bai-2022.md) write in their
+  introduction that for the DG method "the cost per cell is higher and the local conservation
+  can not be easily guaranteed", whereas the finite-volume scheme "can easily achieve local
+  conservation" (§1, p. 2). The remark is a passing characterization in a comparison of
+  FD, FV and DG approaches to multiphase flow, with no argument, definition or reference
+  attached, and it does not say which DG formulation is meant. It is at odds with the flux-form
+  results recorded above for nodal DG (Rueda-Ramírez et al., Ranocha et al., Cicchino et al.);
+  it is recorded here as an attributed remark, not as a contradiction, because no argument is
+  given that could be weighed against those proofs. In Bai & Li's own sharp-interface DG
+  scheme the non-conservative steps are elsewhere: ghost-fluid states, the projection mixing
+  of cut cells and the deletion of isolated structures, whose mass loss is reported (§2.5,
+  Fig. 6).
 - **Diagonal control volumes.** Coppola & Veldman allow non-diagonal $V$ in
   principle (Remark 2) but prove the results for diagonal $V$.
 - **Order on stretched grids.** The choice $V=\mathrm{diag}(D\mathbf x)$ keeps
@@ -144,3 +176,5 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Pazner (2021)](/sources/pazner-2021.md) — §4, Props. 8–11, Eqs. (49)–(57) (arXiv v1).
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.3.4, Eqs. (28)–(32), Fig. 7 (arXiv v2).
 - [Zheng et al. (2022)](/sources/zheng-2022.md) — §2.3, Prop. 3.1, Figs. 13, 18.
+- [Cicchino et al. (2022)](/sources/cicchino-2022.md) — §3.1 (Eqs. (24), (28)), §3.1.1 (Eqs. (34)–(42)), §4 (arXiv v1).
+- [Bai & Li (2022)](/sources/bai-2022.md) — §1 (p. 2), §2.5, Fig. 6.

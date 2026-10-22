@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux differencing and split-form DG"
-description: "Flux differencing replaces the DG volume term D f by a sum of symmetric two-point volume fluxes weighted by 2D; on diagonal-norm SBP (LGL) elements it recovers split forms, inherits entropy conservation or kinetic-energy preservation from the volume flux, admits a local flux form, and costs about N+1 times the flux evaluations of the strong form."
+description: "Flux differencing replaces the DG volume term D f by symmetric two-point volume fluxes weighted by 2D; on diagonal-norm SBP elements and finite-difference grids it recovers split forms, inherits entropy or kinetic-energy properties from the volume flux, reaches high order through two-point flux combinations, and costs about N+1 times the strong form's flux evaluations."
 status: established
-aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term]
-tags: [dg, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-22T12:00:00Z
+aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
+tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -54,6 +54,60 @@ The fluxes themselves are on
 The finite-difference split forms they reproduce are on
 [split convective forms](/methods/split-convective-forms.md).
 
+## Finite-difference split forms as flux differencing
+
+[Edoh (2022)](/sources/edoh-2022.md) uses the same identity in the other
+direction, to analyse finite-difference split forms with diagonal-norm SBP
+operators $D=M^{-1}Q$. For nodal vectors $\mathbf a,\mathbf b$ and their
+diagonal matrices $A,B$ (page-local), a quadratic split term is a sum of
+two-point fluxes (Eqs. (3)–(6)):
+
+$$\big(AD\mathbf b+BD\mathbf a\big)_i=\sum_m2D_{im}\,(\!(a;b)\!)_{im},\qquad (\!(a;b)\!)_{im}=\tfrac12(a_ib_m+a_mb_i),$$
+
+in Hadamard-product notation $AD\mathbf b+BD\mathbf a=[D\circ(\!(a;b)\!)]\mathbf 1$;
+$(\!(a;b)\!)$ is the product mean of
+[entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md),
+with $(\!(1;a)\!)$ the arithmetic mean. Hence a quadratic split form is
+locally conservative with respect to that special average and obeys a
+precise discrete product rule; the identity
+$(\!(a;b)\!)=2(\!(1;a)\!)(\!(1;b)\!)-(\!(1;ab)\!)$ shows the two-point flux
+"extrapolates" between a non-split and a split flux (Eq. (6)). Edoh's
+page-local *splitting error operator*
+$\mathcal S_D(a,b)=AD\mathbf b+BD\mathbf a-DA\mathbf b=[D\circ((\!(a;b)\!)-(\!(1;ab)\!))]\mathbf 1$
+is telescoping, $\mathbf 1^\top M\mathcal S_D(a,b)=0$ in the periodic
+case, and locally of the order of the operator; it encodes the
+zero-consistent corrections of his kinetic-energy-preserving splittings
+(Eq. (7); [split convective forms](/methods/split-convective-forms.md)).
+
+## High-order finite-difference fluxes from two-point fluxes
+
+On a uniform finite-difference grid, the LeFloch–Mercier–Rohde
+construction raises a symmetric, consistent two-point flux $\tilde f$ to
+order $2n_{\mathrm o}$ (page-local $n_{\mathrm o}\ge1$, coefficients
+$c_n$):
+
+$$\hat f_{i+1/2}=\sum_{n=1}^{n_{\mathrm o}}c_n\sum_{s=0}^{n-1}\tilde f\big(u_{i-s},u_{i-s+n}\big),\qquad \sum_nn\,c_n=1,\quad \sum_nn^{2s-1}c_n=0\ \ (s=2,\dots,n_{\mathrm o}).$$
+
+[Duan & Tang (2022)](/sources/duan-2022.md) prove that
+$\frac1{\Delta\xi}(\hat f_{i+1/2}-\hat f_{i-1/2})$ approximates
+$\partial_\xi f$ to order $2n_{\mathrm o}$ also on moving curvilinear
+meshes, with the metric terms evaluated at the same two nodes, and that
+the same combination discretizes the geometric conservation laws and a
+non-conservative source term consistently (Prop. 3.1, Eqs.
+(3.6)–(3.12)). The key step is their Lemma 3.1: for a consistent
+symmetric two-point function,
+$2\,\partial_{\zeta_r}\tilde f(u(\zeta_l),u(\zeta_r))\vert_{\zeta_r=\zeta_l}=\partial_\zeta f(u(\zeta))\vert_{\zeta_l}$,
+an identity they credit to Chan. With an entropy-conservative $\tilde f$
+the flux is entropy conservative (Thm. 3.2). For $n_{\mathrm o}=2$ the
+constraints give $c_1=4/3$, $c_2=-1/6$, the fourth-order central weights
+*(compiler check, not in the sources: the paper prints no values of the
+coefficients)*. This is the finite-difference counterpart of DG flux
+differencing: a central difference whose products are replaced by
+two-point fluxes. Duan & Tang (sixth order, $n_{\mathrm o}=3$) and Li, Duan
+& Tang build their moving-mesh TeCNO schemes on it
+([adaptive moving mesh](/methods/adaptive-moving-mesh.md),
+[TeCNO schemes](/methods/tecno-scheme.md)).
+
 ## Properties
 
 - **Entropy.** The scheme is entropy-conservative if the volume flux is
@@ -78,6 +132,28 @@ The finite-difference split forms they reproduce are on
   $J\nabla\xi$ and its companion) averaged between the two nodes, as in
   the curvilinear form below. The
   scheme satisfies a cell entropy inequality (§5.2, Eqs. (62)–(64)).
+- **Robustness against correction terms.** [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
+  compare flux differencing with central DG made entropy conservative or
+  kinetic-energy preserving by an element-wise
+  [entropy correction term](/methods/entropy-correction-term.md). On the
+  inviscid 2D [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  with nodal DG at $N=5$ on $16^2$ elements, the central scheme blows up at
+  $t\approx3.8$ and the version with both corrections at $t\approx4.3$, while flux differencing with an
+  entropy-conservative and kinetic-energy-preserving volume flux runs to
+  $t\approx35$; on a sixth-order SBP finite-difference grid of $100^2$
+  nodes the corrected schemes fail at $t\approx23.5$–$25.5$ and flux
+  differencing with the Pirozzoli or Ranocha flux does not fail before
+  $t=30$ (§4.2.2, App. A.3, Figs. 7, 11). The authors suggest that flux
+  differencing gains from the local (inter-element and subcell) entropy
+  balances it satisfies, which an element-wise correction does not (§6).
+- **Chain-rule split forms.** For Burgers,
+  [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+  split the volume term as $\tfrac23\partial_x(u^2/2)+\tfrac13u\,\partial_xu$
+  with respect to the stiffness operator rather than through two-point
+  fluxes; for DG their scheme coincides with Chan's flux-differencing form,
+  and for collocated LGL DG with Gassner's split form (§3.1). They extend
+  it to energy-stable flux reconstruction
+  ([flux reconstruction](/methods/flux-reconstruction.md)).
 - **Accuracy.** For general symmetric volume fluxes the scheme keeps the
   order of accuracy of the derivative operator (Ranocha et al. (2023), §2,
   citing Chen–Shu and Ranocha). This is the route to high order with
@@ -155,8 +231,9 @@ each one in [Trixi.jl](/software/trixi-jl.md) and [FLUXO](/software/fluxo.md).
    (2.18) loses (§2.3, Eq. (2.19)).
 4. **Directional fluxes.** Directional fluxes should be coded directly
    rather than through rotation to the first coordinate direction (§4.2,
-   Table 2). Free-stream preservation on curved meshes still needs the usual
-   care with the metric terms (§2.3;
+   Table 2). Free-stream preservation on curved meshes still depends on how
+   the contravariant vectors are computed, for which the authors cite the
+   literature (§2.3;
    [free-stream preservation](/properties/free-stream-preservation.md)).
 
 ### Cost
@@ -229,3 +306,7 @@ Eqs. (6.1)–(6.3)).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §6.1 Observation 9.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §2.2, §3.1 Eqs. (32)–(37), §3.3.2 Lemma 2 Eq. (61), App. B Eq. (106), App. C.1 Eqs. (133)–(139) (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §5.2 Eqs. (62)–(64) (arXiv v3).
+- [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (1)–(7).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §3.2 Prop. 3.1, Lemma 3.1, Eqs. (3.6)–(3.12), Thm. 3.2 (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Ex. 2.4 Eq. (22), §4.2.2 Figs. 7–8, §6, App. A.3 Fig. 11 (arXiv v4).
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1 (arXiv v1).

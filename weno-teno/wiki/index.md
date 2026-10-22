@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–2 of 11 ingested (40 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–3 of 11 ingested (60 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -35,7 +35,13 @@ sparse invariant-domain-preserving DG, entropy-stable DGSEM for multicomponent
 flows and resistive MHD, TeCNO and moving-mesh entropy-stable finite differences,
 implicit shock tracking, Quinpi, semi-Lagrangian WENO, well-balanced and
 asymptotic-preserving central schemes, positivity-preserving WCNS and the MFC
-multiphase solver. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+multiphase solver. Chunk 3 (2021–2022 papers): flux reconstruction and its
+entropy filtering and time-reversibility viscosity, entropy correction terms,
+WENO limiters for DG, data-driven shock capturing and WENO3-NN, quasi-spectral
+viscosity, entropy-stable moving meshes for relativistic MHD, path-conservative
+A-WENO, WCNS-T, kinetic-energy-preserving splittings, bound-preserving DG for
+reacting flows, physical-constraint-preserving WENO for relativistic flows, and
+multiphase, combustion and immersed-boundary solvers. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -58,7 +64,9 @@ weight families follow: [WENO-Z](/methods/weno-z.md),
 [hybrid central-WENO schemes](/methods/hybrid-weno.md) and
 [learned WENO weights](/methods/learned-weno-weights.md). The
 [semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
-reconstructs on Lagrangian cells.
+reconstructs on Lagrangian cells, and
+[gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)
+builds second-order finite volumes.
 The [alternative WENO](/methods/alternative-weno.md) formulation interpolates
 values instead of reconstructing fluxes, as do the
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
@@ -84,8 +92,10 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [LCD variant](/methods/lcd-central-upwind-scheme.md) and the
 [adaptive-diffusion Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md);
 [unstaggered central schemes](/methods/unstaggered-central-scheme.md);
+[MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md);
 [fluctuation-form finite-difference WENO](/methods/fluctuation-form-fd-weno.md)
-for non-conservative systems, with
+and [path-conservative schemes](/methods/path-conservative-scheme.md) for
+non-conservative systems, with
 [stationary contact preservation](/properties/stationary-contact-preservation.md)
 [well-balancing](/properties/well-balancing.md) and
 [asymptotic preservation](/properties/asymptotic-preservation.md).
@@ -97,12 +107,16 @@ and [symmetry preservation](/properties/symmetry-preservation.md).
 
 **5. Discontinuous Galerkin and structure preservation.** The
 [discontinuous Galerkin method](/methods/discontinuous-galerkin.md) and
-[DGSEM](/methods/dgsem.md) on [summation-by-parts operators](/operators/summation-by-parts-operator.md);
+[DGSEM](/methods/dgsem.md) on [summation-by-parts operators](/operators/summation-by-parts-operator.md),
+and [flux reconstruction](/methods/flux-reconstruction.md) with its code
+[PyFR](/software/pyfr.md);
 [flux differencing](/methods/flux-differencing.md) with
 [entropy-conservative and kinetic-energy-preserving fluxes](/methods/entropy-conservative-flux.md)
 (built on the [logarithmic mean](/operators/logarithmic-mean.md)) gives
 [entropy stability](/properties/entropy-stability.md), and
-[TeCNO schemes](/methods/tecno-scheme.md) carry it to high-order reconstruction; on the
+[TeCNO schemes](/methods/tecno-scheme.md) carry it to high-order reconstruction;
+[entropy correction terms](/methods/entropy-correction-term.md) restore it a
+posteriori; on the
 finite-difference side, [split convective forms](/methods/split-convective-forms.md)
 give [kinetic energy preservation](/properties/kinetic-energy-preservation.md),
 and [local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md).
@@ -115,21 +129,29 @@ the codes [Trixi.jl](/software/trixi-jl.md) and [FLUXO](/software/fluxo.md).
 **6. Limiting and bounds.** [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)
 decide where to act; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
 [convex limiting](/methods/convex-limiting.md), [OEDG](/methods/oedg.md),
-[artificial viscosity](/methods/artificial-viscosity.md) and
+[artificial viscosity](/methods/artificial-viscosity.md),
+[quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md),
+[entropy filtering](/methods/entropy-filtering.md),
+[WENO limiters for DG](/methods/weno-limiter-dg.md) and
 [WENO-stabilized continuous finite elements](/methods/weno-stabilized-continuous-galerkin.md)
 are the remedies. [Bound preservation](/properties/bound-preservation.md) is
 analysed by [geometric quasilinearization](/methods/geometric-quasilinearization.md)
 and enforced by the [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)
 or the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md),
 whose time-step bound the [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
-sharpens; MHD adds the [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+sharpens; MHD adds the [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+and [special relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)
+add the recovery of primitive variables.
 
 **7. Multiphase and multicomponent flows.** The
 [five- and six-equation models](/definitions/five-equation-model.md), the
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md) and the
 [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md);
-[level-set and ghost-fluid methods](/methods/level-set-method.md); the solver
-[MFC](/software/mfc.md).
+[level-set and ghost-fluid methods](/methods/level-set-method.md) and
+[immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md);
+[block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md);
+the solvers [MFC](/software/mfc.md) and [AMROC](/software/amroc.md); verification
+by the [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md).
 
 **8. Beyond method-of-lines reconstruction.** [Active Flux](/methods/active-flux.md),
 the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) behind every
@@ -150,13 +172,17 @@ Smooth: the [isentropic vortex](/benchmarks/isentropic-vortex.md) and the
 shocks: [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
 [double Mach reflection](/benchmarks/double-mach-reflection.md), the
 [forward-facing step](/benchmarks/forward-facing-step.md),
+[shock diffraction](/benchmarks/shock-diffraction.md),
 [shock–vortex](/benchmarks/shock-vortex-interaction.md) and
 [shock–bubble](/benchmarks/shock-bubble-interaction.md) interactions, the
 [shock–water column](/benchmarks/shock-water-column.md) and
-[gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md), and
+[gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
+[underwater explosions](/benchmarks/underwater-explosion.md),
+[shock-induced combustion and detonation](/benchmarks/shock-induced-combustion.md), and
 [high-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md).
-Instabilities: [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md)
-and [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md). Non-convex
+Instabilities: [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md),
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) and
+[Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md). Non-convex
 and MHD: the [KPP rotating wave](/benchmarks/kpp-rotating-wave.md) and the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) and the
 [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md).

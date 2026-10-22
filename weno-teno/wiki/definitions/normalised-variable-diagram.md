@@ -5,7 +5,7 @@ description: "The normalised-variable diagram plots the normalised interface val
 status: established
 aliases: [NVD, normalized variable diagram, unified normalised-variable diagram, UND]
 tags: [reconstruction, finite-volume, limiting, weno, low-dissipation]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Normalised-variable diagram
@@ -136,7 +136,11 @@ Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
   below $2.5\tilde u$ on $(0,1)$, and for $\tilde u<0$ (critical point inside
   cell $i$) leave UW2 and bend toward CD2
   ([Huang et al. (2026)](/sources/huang-2026.md), §3.4, Fig. 2); see
-  [learned WENO weights](/methods/learned-weno-weights.md).
+  [learned WENO weights](/methods/learned-weno-weights.md). The network's
+  candidates are UW2 and CD2 with linear weights $d_0=1/3$, $d_1=2/3$, i.e. P3
+  as the linear limit, in the original paper
+  ([Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md), §2, Eqs. (6)–(10)),
+  which does not use the diagram.
 
 ## Qualifications
 
@@ -144,7 +148,16 @@ Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
   non-normalisable schemes (classical WENO3, WENO3-NN) the plotted curve is one
   section through a two-parameter family, obtained by fixing
   $\bar u_{i-1}=0$, $\bar u_{i+1}=1$; Huang et al. explicitly *assume* the
-  network's scale independence when sampling it.
+  network's scale independence when sampling it. Bezgin et al. (2022, §3.2,
+  Eqs. (14)–(15)) build that independence in: the network sees only the absolute
+  first and second differences of the three averages divided by
+  $\max(\lvert\bar u_i-\bar u_{i-1}\rvert,\lvert\bar u_{i+1}-\bar u_i\rvert,\epsilon)$,
+  which are invariant under adding a constant and, up to $\epsilon$, under scaling.
+  *(Compiler check, not in the sources: the four inputs depend only on the ratio
+  $(\bar u_{i+1}-\bar u_i)/(\bar u_i-\bar u_{i-1})=1/\tilde u_i-1$, so up to
+  $\epsilon$ the WENO3-NN weights are functions of $\tilde u_i$ alone and, by
+  Deng's Proposition 6, the scheme is normalisable; the section Huang et al.
+  plot is then the whole scheme.)*
 - The CBC–CFL link ($k\leftrightarrow$ CFL $<1/k$) is stated, not derived, in both
   sources; Deng also reports, after Giuliani and Krivodonova, that the TVD bound
   CFL $<0.5$ is "overly stringent" with high-order SSP Runge–Kutta stepping.
@@ -157,3 +170,4 @@ Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
 
 - [Deng (2023)](/sources/deng-2023.md) — §§2–5, Definitions 1–8, Lemmas 1–2, Propositions 1–6, Table 1, Figs. 2–9, Eqs. (3.1)–(4.33).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §2.2, Eqs. (2.6)–(2.13); §3.4, Fig. 2.
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §2, Eqs. (6)–(10); §3.2, Eqs. (14)–(15).

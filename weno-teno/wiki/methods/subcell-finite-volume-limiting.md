@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -267,6 +267,17 @@ the [double Mach reflection](/benchmarks/double-mach-reflection.md) at
 $2400\times600$ elements, $N=3$, shows Kelvin–Helmholtz roll-ups near the
 triple point (§5.2–§5.7).
 
+## Other limiter classes
+
+[Du, Shu & Zhong (2022)](/sources/du-2022.md) (§1) cite the a posteriori
+subcell finite-volume limiters of Dumbser, Zanotti, Loubère and Diot as a
+separate class of DG limiters, next to the WENO and Hermite WENO limiters
+that replace the polynomial of a troubled cell, and develop the latter
+([WENO limiters for DG](/methods/weno-limiter-dg.md)), which replace the
+polynomial of a troubled cell; the blending of this page instead mixes a
+low-order update into the DG one, by an amount set a priori or by target
+bounds.
+
 ## Qualifications
 
 - Rueda-Ramírez et al. (2022) report no convergence-order study; "high
@@ -302,3 +313,4 @@ triple point (§5.2–§5.7).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — arXiv v2: §2.1 (Eqs. (2)–(11)); §2.2 (Eqs. (12)–(15)); §2.3 (Eqs. (16)–(18)); §2.4 (Eqs. (19)–(29)); §3 (Props. 1–2); §4; §5 (Eq. (45), Figs. 2–11); §6.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §1; §3 (Eqs. (28), (31)–(37), (41)–(47)); §3.3 (Lemmas 1–3, Eqs. (52)–(71)); §4 (Eqs. (72)–(81)); §5 (Eqs. (82)–(88)); §6 (Tables 1, Figs. 5–19); App. C (Lemmas 4–6, Eq. (150)).
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §4.1.3–§4.1.4 (Figs. 2–4); §4.2.2 (Props. 8–11); §4.4; §5 (Table 1, Figs. 7–13).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1 (subcell finite-volume limiters named as a class).

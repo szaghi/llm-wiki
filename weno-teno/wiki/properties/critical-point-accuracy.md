@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Accuracy at critical points
@@ -82,6 +82,27 @@ On $\sin(\pi x)$, which has first-order critical points at $x=\pm\tfrac12$, the 
 Huang et al. (2026, Table 3) converge at $L_1$ orders 2.4–2.6 and $L_\infty$ orders 1.6–1.7
 (WENO3-NN, ROUND, LD-ROUND, $t=20$, $N_x=320$–$1280$); the paper does not comment on the order.
 
+Bezgin, Schmidt & Adams (2022, §3.4, Fig. 2) measure the $L_2$ convergence of the face reconstruction
+of a function, not of a PDE solution: on $\tanh(2x)$, which has no critical point, WENO3-JS, WENO3-Z
+and WENO3-NN reach 3.00, 3.01 and 2.93; on $\sin^3(\pi x)$ on $[-1,1]$, with a saddle point at $x=0$
+*(compiler check, not in the sources: $\sin^3(\pi x)=\pi^3x^3+O(x^5)$, so $f'=f''=0\ne f^{(3)}$ at $x=0$, a
+second-order critical point)*, all three fall to 2.44, 2.40 and 2.33. Plotting
+$\omega_0$, they find that WENO3-JS and WENO3-Z "degenerate at the saddle point" while WENO3-NN
+"distinguish[es]" it, as does WENO-F3+ (§3.5, Fig. 4); the order is not improved by it
+([learned WENO weights](/methods/learned-weno-weights.md)).
+
+## Second-order limiters
+
+Chen, Zhang, Liu & Chen (2022, §1) state that second-order TVD-type slope limiters "typically loss
+their designed accuracy at smooth critical points" and, citing Zhang, Liu & Chen (2018, the MLP-pw
+limiter), that several common limiters
+"cannot strictly guarantee the monotonicity principle"; their WENO-type weighting of vertex gradients
+replaces the limiter. The only evidence is the isentropic vortex on triangles, where the weighted and
+the linear schemes have the same error on the two finest meshes (last order 1.90) and the weighted one
+a larger error on the coarsest (Table 1); no extremum test is run
+([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md),
+[TVD limiters](/definitions/total-variation-diminishing.md)).
+
 ## Weight of the evidence
 
 Fu (2023, §2.3) recalls Acker et al.'s finding that raising the weights of the less-smooth stencils
@@ -111,3 +132,5 @@ resolution).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1.1, Eqs. (3.13)–(3.20).
 - [Wong et al. (2021)](/sources/wong-2021.md) — App. B, Eqs. (B.14)–(B.21).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1, Remark 1, Eq. (2.29).
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.4, Fig. 2; §3.5, Fig. 4.
+- [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §1; §6.3, Table 1.

@@ -5,7 +5,7 @@ description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/
 status: established
 aliases: [CU scheme, Kurganov–Noelle–Petrova flux, semi-discrete central-upwind scheme, Riemann-solver-free scheme]
 tags: [central-scheme, numerical-flux, finite-volume, characteristic, low-dissipation]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Central-upwind schemes
@@ -33,17 +33,17 @@ $$\hat f_{i+1/2}=\frac{a^+_{i+1/2}f(u^-_{i+1/2})-a^-_{i+1/2}f(u^+_{i+1/2})}{a^+_
 
 $$a^+_{i+1/2}=\max\big\{\lambda_m(A(u^-_{i+1/2})),\lambda_m(A(u^+_{i+1/2})),0\big\},\qquad a^-_{i+1/2}=\min\big\{\lambda_1(A(u^-_{i+1/2})),\lambda_1(A(u^+_{i+1/2})),0\big\}.$$
 
-*Compiler check, not in the sources:* since $a^-\le0\le a^+$, the coefficient of the jump is
-non-positive, so the second term is dissipative. [Wang et al. (2023)](/sources/wang-2023-b.md) stress a sign
+*(compiler check, not in the sources: since $a^-\le0\le a^+$, the coefficient of the jump is
+non-positive, so the second term is dissipative.)* [Wang et al. (2023)](/sources/wang-2023-b.md) stress a sign
 convention: on $u^\pm$ the superscript denotes the side of the interface, on $a^\pm$ the
 largest positive and smallest negative speed (§3.1).
 
-*Compiler check, not in the sources:* this is, term by term, the subsonic branch of the
+*(compiler check, not in the sources: this is, term by term, the subsonic branch of the
 [HLL flux](/methods/hll-riemann-solvers.md) as printed by
 [Balsara et al. (2024)](/sources/balsara-2024.md) (Eq. (3.6), without non-conservative
 products) with $s^-=a^-$, $s^+=a^+$; the clipping of the speeds at zero makes the CU flux
 coincide with HLL also in the supersonic cases. With $a^+=-a^-=a$ it is the
-[local Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md).
+[local Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md).)*
 
 The CU scheme reduces to the upwind scheme for a system whose Jacobian has only positive (or
 only negative) eigenvalues, but not otherwise
@@ -87,6 +87,10 @@ $$u^{\mathrm{HLL}}_{i+1/2}=\frac{a^+_{i+1/2}u^+_{i+1/2}-a^-_{i+1/2}u^-_{i+1/2}-\
 
 (Eq. (5); $\Delta^{\mathrm{ad}}$ and $u^{\mathrm{HLL}}$ page-local; minmod componentwise), and
 tightens $a^\pm$ with regularized Rankine–Hugoniot speeds and a smoothness switch.
+The same built-in anti-diffusion appears in the path-conservative CU flux of
+[Chu et al. (2022)](/sources/chu-2022.md) (Eqs. (2.2), (2.5)–(2.6)), who note that it "was
+switched off" in the second-order path-conservative CU scheme of Castro Díaz, Kurganov and
+Morales de Luna (2019) because that scheme was built on the earlier CU flux without it (§2).
 
 Both papers measure the gain by the same qualitative proxies on Euler tests: sharper
 contacts in 1D, curlier contact curves in the explosion problem, a longer jet in the
@@ -97,6 +101,27 @@ sideband instability in 2D Riemann configuration 3
 ([Chertock et al. (2023)](/sources/chertock-2023.md), §5;
 [Wang et al. (2023)](/sources/wang-2023-b.md), §4). See
 [numerical dissipation](/definitions/numerical-dissipation.md).
+
+## Non-conservative systems and fifth order
+
+For $\partial_tu+\partial_xf(u)+\mathcal C(u)\partial_xu=0$ the CU flux is combined with path
+integrals of the non-conservative product, shared between the two neighbouring cells with the
+weights $a^+/(a^+-a^-)$ and $-a^-/(a^+-a^-)$: the path-conservative central-upwind (PCCU)
+scheme, recalled by [Chu et al. (2022)](/sources/chu-2022.md) (§2, Eqs. (2.1)–(2.9)) and
+written out on [path-conservative schemes](/methods/path-conservative-scheme.md). Chu et al.
+insert the PCCU flux of a global flux into [A-WENO](/methods/alternative-weno.md) to reach fifth
+order on point values (§4, Eq. (4.1)), with fifth-order WENO-Z interpolation of the interface
+states in local characteristic variables of a Roe-averaged matrix (Remark 6.2). For the
+two-layer shallow-water system the one-sided speeds are taken from Lagrange-theorem bounds
+(citing Kurganov–Petrova) instead of Eq. (2.7) (§2).
+
+Their evidence that the high order pays off is a comparison at equal cost: in a 2D two-layer
+interface-propagation problem the fifth-order scheme on $\Delta x=\Delta y=1/200$ and the
+second-order PCCU scheme (generalized minmod parameter $\theta=1$, page-local) on $1/450$ take "approximately the same
+CPU time", and the fifth-order scheme gives the better resolution (§7.2, Ex. 6, Fig. 7.10; no
+absolute timings or hardware printed). In 1D the fifth-order scheme resolves the intermediate
+state of an interface Riemann problem "much better" than the second-order scheme on the same
+meshes, $\Delta x=1/200$ and $1/400$ (Ex. 3, Fig. 7.4).
 
 ## Qualifications
 
@@ -114,3 +139,4 @@ sideband instability in 2D Riemann configuration 3
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §1, §2 (Eqs. (2.2)–(2.8)), §3 (Eqs. (3.1)–(3.4)), §5 (arXiv v2).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, §3 (Eqs. (5)–(9)), §4.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — Eq. (3.6), the HLL flux used for the comparison.
+- [Chu et al. (2022)](/sources/chu-2022.md) — §2 (Eqs. (2.1)–(2.9)), §4 (Eq. (4.1)), Remark 6.2, §7 (Exs. 3, 6).

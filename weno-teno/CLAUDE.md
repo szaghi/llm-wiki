@@ -98,10 +98,14 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 2 staged 2026-10-22:** WENO variants, entropy-stable DG,
-multiphase models, shock tracking; 40 of 207 ingested, 109 concept pages
-plus the registry, 1619 bibliography entries, deep lint done, two
-contradictions open (TENO $\tau_K$; conservation of WCNS). Next: chunk 3.
+**Chunk 3 staged 2026-10-22:** flux reconstruction, entropy correction,
+DG limiters, multiphase and relativistic flows; 60 of 207 ingested, 127
+concept pages plus the registry, 2250 bibliography entries, deep lint
+done, two contradictions open (TENO $\tau_K$; conservation of WCNS).
+Next: chunk 4.
+
+**Chunk 2 committed 2026-10-22 (fb1b286):** WENO variants, entropy-stable
+DG, multiphase models, shock tracking.
 
 **Chunk 1 committed 2026-10-22 (3bc58e0):** scaffold (D29) and the 20
 reviews and vocabulary papers.

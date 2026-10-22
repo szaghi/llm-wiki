@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Entropy-conservative and kinetic-energy-preserving two-point fluxes"
-description: "Two-point fluxes that satisfy Tadmor's jump condition conserve entropy, and entropy-dissipative fluxes satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form, gives the Ranocha, Shima, multicomponent, stiffened-gas, GLM-MHD and KPP fluxes, the dissipation that makes them entropy stable, and the logarithmic mean."
+description: "Two-point fluxes that satisfy Tadmor's jump condition conserve entropy, and entropy-dissipative fluxes satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form, gives the Ranocha, Shima, multicomponent, stiffened-gas, GLM-MHD and KPP fluxes, the dissipation that makes them entropy stable, the relativistic-MHD case, the Burgers flux and the logarithmic mean."
 status: established
-aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, logarithmic mean]
+aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -29,7 +29,23 @@ symmetry, consistency, Tadmor's condition and the conservation relation,
 and adds Lipschitz continuity for the entropy-stable flux (§3.1,
 Eqs. (19)–(23)).
 
+The matching **numerical entropy flux** is
+$F^{\mathrm{num}}_\eta=\{\!\{w\}\!\}\cdot f^{\mathrm{ec}}-\{\!\{\psi\}\!\}$
+([Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md), Eqs.
+(27)–(28); the alternative $\{\!\{w\}\!\}\cdot f^{\mathrm{ec}}-\psi(\{\!\{w\}\!\})$
+also works, Remark 2.6).
+[Duan & Tang (2022)](/sources/duan-2022.md) use the same form, with metric
+terms, for their moving-mesh scheme (Eqs. (3.20)–(3.21)).
+
 ## Role in DG
+
+Abgrall et al. (2022) point out that with EC surface fluxes, element-wise
+conservation and element-wise entropy conservation are compatible: if the
+DG solution is constant in every element the scheme is an EC
+finite-volume scheme, and the two element constraints can only conflict
+for a constant element state (Remarks 2.5–2.7, Eq. (29)). This is what
+lets an [entropy correction term](/methods/entropy-correction-term.md)
+enforce both at once.
 
 Used as the symmetric volume flux of
 [flux differencing](/methods/flux-differencing.md) on a diagonal-norm
@@ -104,6 +120,31 @@ remark, after Chandrashekar, is that the free mass-flux choice can be used
 to induce entropy conservation. See
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
+Abgrall et al. (2022) state the kinetic-energy-preserving condition on a
+surface flux in the same form, $f_{\rho v_m}=\{\!\{v_m\}\!\}f_\rho+\{\!\{p\}\!\}\,n_m$
+for any mass flux $f_\rho$, with the kinetic-energy numerical flux
+$\tfrac12(v^-\cdot v^+)f_\rho+\tfrac12(p^+\,v^-\cdot n+p^-\,v^+\cdot n)$
+(Eq. (40), §3.3, after Jameson and Ranocha). In their Taylor–Green tests,
+flux differencing with the Ranocha flux or with Pirozzoli's
+kinetic-energy-preserving flux outlasts every central scheme with
+correction terms (§4.2.2, App. A.3;
+[flux differencing](/methods/flux-differencing.md)).
+
+**Square-root-density kinetic-energy fluxes.** Written as two-point
+fluxes, the split forms of finite differences imply kinetic-energy fluxes
+in the product mean $(\!(a;b)\!)$ of this page
+([Edoh (2022)](/sources/edoh-2022.md), Eqs. (3)–(6); his $\tilde F(a,b)$).
+Edoh states that every kinetic-energy-preserving split form he knows
+implies a kinetic-energy flux built on $(\!(v_m;v_m)\!)=v_m^-v_m^+$, a
+geometric-type average of the velocities on the two sides, while his
+Div-rot splitting squares one variable: its kinetic-energy flux is
+$\tfrac12(\!(\sqrt\rho\,v_j;\sqrt\rho\,\lvert v\rvert^2)\!)$ in direction $j$; he argues this promotes
+realizability when the interface velocities change sign, and that it lets
+the total-energy flux be exactly the internal-energy flux plus the
+kinetic-energy flux (Remark 4, Table 4). The realizability argument is
+stated, not tested. The splittings are on
+[split convective forms](/methods/split-convective-forms.md).
+
 ## Multicomponent Euler
 
 Renac (2021) derives a new EC flux for a mixture of $n_c$ polytropic ideal
@@ -136,17 +177,38 @@ h_E&=\sum_{i<n_c}\frac{C_{v,i}-C_{v,n_c}}{\{\!\{1/T\}\!\}_{\log}}h_{\rho Y_i}+\B
   $\tilde p=r_1\{\!\{\rho\}\!\}/\{\!\{1/T\}\!\}$, and
   $\{\!\{v\}\!\}\cdot\{\!\{v\}\!\}-\tfrac12\{\!\{\lvert v\rvert^2\}\!\}=\tfrac12v^-\cdot v^+$)*.
 
-## Stiffened gas on moving meshes
+## Moving curvilinear meshes: stiffened gas and relativistic MHD
 
+[Duan & Tang (2022)](/sources/duan-2022.md) and
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) work in time-dependent
 curvilinear coordinates ([adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
-Their sufficient condition for an EC flux $\hat F_k$ in computational
+The sufficient condition for an EC flux $\hat F_k$ in computational
 direction $k$ weights the jumps of the page-local entropy potential
 $\phi=w\cdot u-\eta$ and of the flux potentials with averaged metric terms
-(Prop. 3.1, Eq. (3.5)). It is met by
+(Duan & Tang, Def. 3.1, Eq. (3.1); Li, Duan & Tang, Prop. 3.1, Eq. (3.5)).
+For relativistic MHD in the symmetrizable form of Wu & Shu, Duan & Tang's
+condition carries the extra term
+$-\sum_j\{\!\{J\partial_{x_j}\xi_k\}\!\}\{\!\{B_j\}\!\}[\![\Phi]\!]$ of the
+non-conservative source, page-local $\Phi$ the degree-one homogeneous
+function of the entropy variables whose gradient multiplies
+$\nabla\cdot B$ (Eqs. (2.4)–(2.5), (3.1)). It is met by
 $\hat F_k=\{\!\{J\partial_t\xi_k\}\!\}\tilde u+\sum_j\{\!\{J\partial_{x_j}\xi_k\}\!\}f^{\mathrm{ec},(j)}$,
-where $f^{\mathrm{ec},(j)}$ is a Cartesian EC flux and the page-local state
-$\tilde u$ satisfies $[\![w]\!]\cdot\tilde u=[\![\phi]\!]$ (Eqs. (3.11)–(3.12)).
+where $f^{\mathrm{ec},(j)}$ is a Cartesian EC flux (satisfying the
+Cartesian condition with the source term, for MHD) and the page-local
+"entropy-conservative state" $\tilde u$ satisfies
+$[\![w]\!]\cdot\tilde u=[\![\phi]\!]$ (Duan & Tang, Eqs. (3.2)–(3.3);
+Li, Duan & Tang, Eqs. (3.11)–(3.12)). The mesh motion enters only through
+$\tilde u$. Duan & Tang prove that the resulting scheme is entropy
+conservative (Thm. 3.2), which is the proof Li, Duan & Tang defer to them.
+
+**Relativistic MHD.** Duan & Tang take the Cartesian relativistic-MHD EC
+flux from their earlier DG work and derive the new state $\tilde u$ in
+arithmetic and [logarithmic means](/operators/logarithmic-mean.md) of the
+rest-mass density $\rho$, of $\rho/p$, of the Lorentz factor $W$ and of
+the four-velocity and four-magnetic-field components (§3.1; its mass
+component is $\{\!\{\rho\}\!\}_{\log}\{\!\{W\}\!\}$). The entropy pair is
+$\eta=-\rho W s/(\gamma-1)$, $F^{(j)}_\eta=\eta v_j$ (Eq. (2.3);
+[relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)).
 
 For one stiffened gas, $p=\rho r_{\mathrm g}T-p_\infty$ with page-local gas
 constant $r_{\mathrm g}$ and heat capacity $c_v$, and $p_\infty$ the
@@ -171,7 +233,10 @@ $f(u^-,u^+;\varphi_1,\varphi_2)=T_{\mathrm{rot}}^{-1}f^{\mathrm{ec}}(T_{\mathrm{
 with page-local rotation $T_{\mathrm{rot}}$ and angles $\varphi_1,\varphi_2$,
 because $w(T_{\mathrm{rot}}u)=T_{\mathrm{rot}}w(u)$ (Eqs. (3.19)–(3.20)). High
 order comes from the LeFloch–Mercier–Rohde combination of the two-point
-flux over wider stencils, applied to the metric terms as well (Eqs. (3.6)–(3.7);
+flux over wider stencils, applied to the metric terms as well (Li, Duan &
+Tang, Eqs. (3.6)–(3.7); Duan & Tang, Prop. 3.1, who prove order
+$2n_{\mathrm o}$ for $n_{\mathrm o}$ two-point terms, page-local;
+[flux differencing](/methods/flux-differencing.md),
 [TeCNO schemes](/methods/tecno-scheme.md)).
 
 ## GLM-MHD with non-conservative terms
@@ -205,7 +270,13 @@ is subtracted.
   his relaxation flux.
 - **Reconstructed dissipation.** Applying the dissipation to reconstructed
   jumps with the sign property gives high-order entropy-stable fluxes
-  ([TeCNO schemes](/methods/tecno-scheme.md)).
+  ([TeCNO schemes](/methods/tecno-scheme.md)). Duan & Tang (2022) use a
+  scalar maximal wave speed (including the mesh velocity) times the scaled
+  eigenvector matrix, not a Roe-type $R\lvert\Lambda\rvert R^{-1}$ (§4).
+- **Correction instead of flux design.** Abgrall et al. (2022) avoid the
+  construction of an EC flux altogether: an element-wise
+  [entropy correction term](/methods/entropy-correction-term.md) makes any
+  baseline scheme entropy conservative or dissipative (§5).
 
 ## Scalar case: the KPP flux
 
@@ -217,7 +288,26 @@ $f=(\sin u,\cos u)$, the potentials are $\psi=(-\cos u,\sin u)$
 (Rueda-Ramírez et al. (2022), Eqs. (39)–(40)). The authors call it "the unique
 two-point entropy conservative flux". Uniqueness holds because, for a scalar,
 the EC condition is one linear equation in one unknown *(compiler check, not
-in the sources)*. It does not carry over to systems.
+in the sources)*. It does not carry over to systems. Abgrall et al. (2022)
+state the same uniqueness for a scalar law and a fixed entropy,
+$f^{\mathrm{ec}}=[\![\psi]\!]/[\![w]\!]$, and conclude that the surface
+fluxes of DG cannot in general make several entropies conserved at once;
+Osher's E-schemes satisfy all entropy inequalities but are at most first
+order (Remark 3.3).
+
+**Burgers.** For $f=u^2/2$ and $\eta=u^2/2$,
+[Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+write the interface flux as
+$\tfrac12\big(\tfrac12(u^-)^2+\tfrac12(u^+)^2\big)-\lambda_{\mathrm s}(u^+-u^-)$
+with page-local dissipation coefficient $\lambda_{\mathrm s}$. With their
+split form at weight $2/3$, the interface energy contribution is
+$(u^+-u^-)^2\big(\tfrac1{12}(u^+-u^-)-\lambda_{\mathrm s}\big)$, so the
+scheme is energy stable for $\lambda_{\mathrm s}\ge\tfrac1{12}(u^+-u^-)$
+and energy conservative at equality; local Lax–Friedrichs,
+$\lambda_{\mathrm s}=\tfrac12\max(\lvert u^-\rvert,\lvert u^+\rvert)$, satisfies the bound
+(Eqs. (47)–(50)). The energy-conservative choice is
+$\big((u^-)^2+u^-u^++(u^+)^2\big)/6$, which equals Tadmor's
+$[\![u^3/6]\!]/[\![u]\!]$ *(compiler check, not in the sources)*.
 
 ## The logarithmic mean and its evaluation
 
@@ -262,6 +352,13 @@ Table 2).
   the curvilinear volume term evaluates them at unnormalized averaged
   contravariant vectors (Eq. (2.19)). The scaling is linear, as their
   rotation Algorithm 4 makes explicit.
+- Abgrall et al. (2022) argue that the construction of EC fluxes hinges on
+  the structure of a calorically perfect gas, and that for temperature-
+  dependent or tabulated heat capacities the algebra becomes case by case
+  (§1, §5). The EC fluxes on this page are consistent with that scope:
+  Renac's mixture of polytropic gases and Li, Duan & Tang's stiffened gas
+  both have constant heat capacities *(compiler check, not in the
+  sources)*.
 
 # Citations
 
@@ -271,3 +368,7 @@ Table 2).
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eqs. (19)–(24), Lemma 3.1, Remarks 3.1–3.2, App. B Eq. (B.1), App. D Eq. (D.1) (arXiv v3).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Prop. 3.1 Eq. (3.5), Eqs. (3.6)–(3.7), (3.11)–(3.20), §3.3.1–3.3.2 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §3.3.1 Eqs. (51)–(60), App. A Eqs. (102)–(103) (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §1, Remarks 2.5–2.7 Eqs. (27)–(29), Remark 3.3, §3.3 Eq. (40), §4.2.2, §5 Eq. (45), App. A.3 (arXiv v4).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eqs. (2.3)–(2.6), §3.1 Def. 3.1 Eqs. (3.1)–(3.3), Prop. 3.1, Thm. 3.2 Eqs. (3.20)–(3.21), §4 (arXiv v1).
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1.2 Eqs. (46)–(50) (arXiv v1).
+- [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (3)–(6), §3.2 Remark 4, Table 4.

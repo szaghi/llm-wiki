@@ -5,7 +5,7 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Alternative WENO (A-WENO)
@@ -115,10 +115,70 @@ problem where WENO-JS produces one (Fig. 11) ([gas–liquid Riemann problems](/b
 [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)). CFL 0.5, SSP-RK3 assembled so that
 each stage is one conservative update from $u^n$ ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
 
+## Non-conservative systems: path-conservative central-upwind A-WENO
+
+Chu, Kurganov & Na (2022) extend A-WENO to systems with non-conservative products,
+$\partial_tu+\partial_xf(u)+\mathcal C(u)\partial_xu=0$ (they write $+B(u)\partial_xu$ on the
+right-hand side, $B=-\mathcal C$), with the second-order finite-volume path-conservative
+central-upwind (PCCU) scheme of Castro Díaz, Kurganov & Morales de Luna (2019) as the two-point part
+([path-conservative schemes](/methods/path-conservative-scheme.md),
+[central-upwind schemes](/methods/central-upwind-scheme.md)).
+
+- **Global flux.** The system is read as $\partial_tu+\partial_xK(u)=0$ with
+  $K(u)=f(u)+\int^x\mathcal C(u)\,\partial_\xi u\,d\xi$ (page-local $K$; §4), and the A-WENO flux
+  of $K$ is assembled from the PCCU flux and the corrections of $K$. In the registry's sign convention the
+  fifth-order scheme reads (Eq. (4.1); page-local $\mathcal B_i$, $\mathcal B_{\Psi,i+1/2}$)
+  $$\begin{aligned}\frac{du_i}{dt}=&-\frac1{\Delta x}\Big[h_{i+1/2}-h_{i-1/2}+\mathcal B_i+\frac{a^+_{i-1/2}}{a^+_{i-1/2}-a^-_{i-1/2}}\mathcal B_{\Psi,i-1/2}-\frac{a^-_{i+1/2}}{a^+_{i+1/2}-a^-_{i+1/2}}\mathcal B_{\Psi,i+1/2}\Big]\\&+\frac{\Delta x}{24}\big[(\partial_x^2K)_{i+1/2}-(\partial_x^2K)_{i-1/2}\big]-\frac{7\Delta x^3}{5760}\big[(\partial_x^4K)_{i+1/2}-(\partial_x^4K)_{i-1/2}\big],\end{aligned}$$
+  where $h$ is the central-upwind flux of $f$ with one-sided speeds $a^\pm_{i+1/2}$ and the built-in
+  anti-diffusion term (a minmod of the differences between $u^\pm_{i+1/2}$ and $u^{\mathrm{HLL}}$),
+  $\mathcal B_i=\int_{I_i}\mathcal C(u)\partial_xu\,dx$ is the cell integral and
+  $\mathcal B_{\Psi,i+1/2}=\int_0^1\mathcal C(\Psi(s))\Psi'(s)\,ds$ the path integral along the linear
+  segment $\Psi$ from $u^-_{i+1/2}$ to $u^+_{i+1/2}$ (Eqs. (2.1)–(2.9), (4.2)). The anti-diffusion term,
+  switched off in the 2019 scheme, is kept (§2).
+- **Corrections.** $(\partial_x^2K)=(\partial_x^2f)+[\partial_x(\mathcal C\partial_xu)]$ and
+  $(\partial_x^4K)=(\partial_x^4f)+[\partial_x^3(\mathcal C\partial_xu)]$, with the six-point formulas
+  above for $f$ and, for $g_m=\mathcal C(u_m)(\partial_xu)_m$ (page-local),
+  $[\partial_xg]_{i+1/2}=\frac{-g_{i+2}+27g_{i+1}-27g_i+g_{i-1}}{24\Delta x}$ and
+  $[\partial_x^3g]_{i+1/2}=\frac{g_{i+2}-3g_{i+1}+3g_i-g_{i-1}}{\Delta x^3}$, the nodal derivatives
+  $(\partial_xu)_m$ by five-point one-sided or central differences on $i-2,\dots,i+3$ (§4).
+  *(Compiler check, not in the sources: the nodal derivative formulas and $[\partial_xg]$ are exact on
+  polynomials up to degree 4, $[\partial_x^3g]$ likewise, i.e. fourth- and second-order accurate.)*
+- **Cell integral.** A finite-difference scheme has no piecewise polynomial in $I_i$ on which to
+  integrate $\mathcal B_i$, so a new five-point quadrature integrates the product of quartic
+  interpolants through $x_{i-1/2},x_{i-1/4},x_i,x_{i+1/4},x_{i+1/2}$ (Eqs. (4.3)–(4.4)); the
+  quarter-point values come from fifth-order WENO-Z interpolation with the same three candidates
+  and indicators and new linear weights $d_0=\tfrac{15}{64}$, $d_1=\tfrac{21}{32}$, $d_2=\tfrac7{64}$
+  at $x_{i-1/4}$ (mirrored at $x_{i+1/4}$). Its fifth order is stated as "easy to show", without
+  proof (Remark 4.1). *(Compiler check, not in the sources: these weights combine the three printed
+  parabolic values at $x_{i-1/4}$ into the five-point Lagrange interpolant exactly.)*
+- **Interpolation.** Fifth-order WENO-Z point-value interpolation with $d=(\tfrac1{16},\tfrac58,\tfrac5{16})$,
+  $q=2$, $\epsilon=10^{-12}$ (Eqs. (3.4)–(3.7)), in local characteristic variables of the Roe-averaged
+  matrix $A(\hat u)+\mathcal C(\hat u)$, eigenvectors computed numerically (Remarks 6.2–6.3;
+  [WENO-Z](/methods/weno-z.md), [characteristic decomposition](/methods/characteristic-decomposition.md)).
+  The 2-D scheme is dimension by dimension (Eq. (5.2)).
+
+Applied to the two-layer shallow water equations in the equilibrium variables
+$(h_1,q_1,w,q_2)$, $w$ the lower-layer surface (their notation), the scheme is stated to preserve the lake-at-rest
+state exactly ([well-balancing](/properties/well-balancing.md)); no proof or round-off test is
+given, only perturbation plots (§6.1, Example 2). Observed $L^1$ rates are self-convergence rates
+and erratic (7.69, 3.55, 5.01, 5.37 for $h_1+w$; Table 7.1), and at about equal CPU time
+(no timings printed) the fifth-order scheme on $\Delta x=1/200$ resolves a 2-D interface problem
+better than the second-order PCCU scheme on $1/450$ (Example 6, Fig. 7.10). Chu et al. (§1) motivate
+the choice of A-WENO by calling flux-split finite-difference WENO "quite diffusive". Unlike the
+[fluctuation-form FD-WENO](/methods/fluctuation-form-fd-weno.md) of Balsara et al. (2024), the
+scheme uses no Riemann solver and claims no stationary-contact preservation.
+
 ## Relation to other schemes
 
 - Ye et al. (2022, §1) state that AFWENO "is similar to WCNS and is equivalent to the HWCNS scheme
   under specific parameters" ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
+- The "WCNS" of Hiejima (2022, §2.2, Eq. (5)) interpolates primitive variables to $x_{i+1/2}$ at
+  orders 5 to 11, evaluates an AUSMDV flux on them and takes the plain flux difference, i.e. the
+  leading term of the alternative formulation without its corrections; the paper does not cite
+  the alternative formulation. *(Compiler check, not in the sources: the plain difference of exact interface fluxes is
+  $\partial_xf(x_i)+\tfrac{\Delta x^2}{24}\partial_x^3f(x_i)+O(\Delta x^4)$, so such a scheme is formally
+  second order for point values, consistent with Wang et al.'s statement above; Hiejima shows no
+  convergence test.)*
 - Ye et al. (2022) replace the WENO interpolation by a TENO interpolation and obtain
   [AFTENO](/methods/afteno.md); they argue that AFWENO is odd-order only and loses every smooth
   candidate when two discontinuities fall in the global stencil, whereas incremental TENO stencils
@@ -162,6 +222,11 @@ each stage is one conservative update from $u^n$ ([SSP Runge–Kutta](/methods/s
 - Zheng, Shu & Qiu (2021, App. A) need $\Delta t=O(\Delta x^r)$ with $r\le2$ because the low-order
   interface flux, obtained from a space–time balance over one step, carries an $O(\Delta x^{2-r})$
   error, so very small time steps degrade it; their accuracy tests use $\Delta t=O(\Delta x^{5/3})$.
+- Chu et al. (2022) print the convergence rate without the logarithm (p. 12; Table 7.1 gives
+  $\log_2$ of the error ratios), label Table 7.1's rows by the finer grid of each pair against their
+  printed definition, write $u^-_{j+1/2}$ for $\phi^-_{j+1/2}$ in the derivative of the quartic
+  interpolant (p. 7), print two vanishing differences in the $y$-path integral $C^{(6)}$ (p. 11), and
+  a positive exponent in the bottom of Example 9.
 - Ye et al. (2022) print sign errors in rows of their central-coefficient Tables 3 and 5: the
   six-point second-derivative row of Table 3 reads $(34,-39,5)/48$ for the pairs
   $(c_i,c_{i+1}),(c_{i-1},c_{i+2}),(c_{i-2},c_{i+3})$, the negative of the exact coefficients given
@@ -174,3 +239,5 @@ each stage is one conservative update from $u^n$ ([SSP Runge–Kutta](/methods/s
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4), Remarks 1–3; §3; §4.4, Table 1.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.1–2.3, Eqs. (1)–(27), Propositions 2.1–2.3; §3; §4, Tables 2–4, Figs. 6–15; Apps. A–B.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
+- [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §1; §§2–5, Eqs. (2.1)–(5.2), Remark 4.1; §6, Remarks 6.1–6.3; §7, Table 7.1, Figs. 7.3, 7.10.
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).

@@ -123,7 +123,7 @@ print "and et al.". No item is unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)

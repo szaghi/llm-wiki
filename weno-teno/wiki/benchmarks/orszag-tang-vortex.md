@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Orszag–Tang vortex
@@ -58,6 +58,24 @@ snapshots and pressure slices of Rueda-Ramírez et al. (2021); both
 unit-square papers run to $t=1$. The printed sign of $B_2$ differs
 ($-\sin4\pi x$ against $+\sin2x$); no source comments on it.
 
+[Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2
+(arXiv v2) also compute on periodic $[0,1]^2$ with $\gamma=5/3$ to
+$t=0.48$, with $v$ as above and $B=\frac1{\sqrt{4\pi}}\big(-\sin(2\pi y),\
+\sin(2\pi x)\big)$, but print $\rho=\tfrac{25}{36}\pi$ and
+$p=\tfrac{5}{12}\pi$, with $\pi$ in the numerator. These printed data
+are not a rescaling of the other two: the sound speed is still 1, but
+$2p/\lvert B\rvert^2$ is $\pi^2$ times larger, and $B_2$ has the
+wavenumber of $v$ instead of the doubled one *(compiler check, not in
+the sources)*. The pressure axis of their own Fig. 14 (slice at
+$y/L=0.3125$, which they state agrees with Jiang & Wu's published
+slice) is labelled from $0.0$ to $0.3$: the magnitude of the
+$p=5/(12\pi)\approx0.133$ printed by Rueda-Ramírez et al., not of
+$5\pi/12\approx1.31$. Against that figure and the other sources'
+printed data the placement of $\pi$ is a printed slip *(compiler
+check, not in the sources)*; the $B_2$ wavenumber cannot be checked
+from the paper. Their $t=0.48$ is the unit-square counterpart of Liu et
+al.'s $t=3$ to two digits.
+
 [Fu (2023)](/sources/fu-2023.md) §5.3 reproduces Orszag–Tang results
 from the TENO-MHD paper it reviews, on $200\times200$, with a
 WENO5-JS reference on $512\times512$ and 30 density contours from 1.1
@@ -73,6 +91,7 @@ constraint.
 | [Fu (2023)](/sources/fu-2023.md) §5.3, Fig. 19 (reproduced) | [TENO-A](/methods/adaptive-teno.md), 5 to 8 points | $200^2$ | constrained transport |
 | [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) §6.2 | entropy-stable DGSEM, $N=3$ and $7$, element-wise blending with first-order FV or the TVD-ES [subcell scheme](/methods/tecno-scheme.md), indicator on $p$; code [FLUXO](/software/fluxo.md) | $256^2$, $512^2$, $1024^2$ DOFs | GLM cleaning with Powell and GLM non-conservative terms |
 | [Liu et al. (2021)](/sources/liu-2021.md) §4.2 | finite-volume [WLS-ENO](/methods/wls-eno.md), locally divergence-free, second and third order, HLL flux, positivity-preserving framework | $200^2$ (both orders), $600^2$ (second order) | locally divergence-free reconstruction plus Godunov–Powell source term |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2 | flux reconstruction, $\mathbb P_7$, vector-valued residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=3$ | $32^2$, $64^2$ elements | none stated |
 
 ## Findings
 
@@ -111,6 +130,15 @@ $y=0.625\pi$, shocks near $x=0.5$, $1.6$, $4.4$), keeps the divergence
 norm controlled over time and conserves total energy to a relative
 deviation within $10^{-5}$ at third order on $200^2$ (Figs. 5–8).
 
+**Component-wise viscosity.** Dzanic et al. use the problem to show
+the benefit of a vector-valued viscosity: the density component and
+the magnetic component of their artificial viscosity are "particularly
+distinct", since hydrodynamic and magnetic shocks occur independently,
+so dissipation is added only to the components that need it (Fig. 13).
+The pressure slice at $y/L=0.3125$ agrees well with Jiang & Wu on
+$64^2$ elements and is over-diffused at small scales on $32^2$
+(Figs. 12, 14).
+
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
 adaptive TENO family carries over to MHD with constrained transport
@@ -118,8 +146,11 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All four sources compare contour plots or slices; none reports an
-  error norm. Rueda-Ramírez et al. (2021) compare with another code.
+- All five sources compare contour plots or slices; none reports an
+  error norm. Rueda-Ramírez et al. (2021) compare with another code,
+  Dzanic et al. with another paper's slice.
+- Dzanic et al. refer to the Orszag–Tang density contours as "Fig. 7",
+  which is their explosion test; the contours are their Fig. 12.
 - Fu (2023) is a review: the run is reproduced from the cited TENO-MHD
   work and its setup is not reprinted, so grid, time and data
   differences between the runs cannot be checked from the bundle.
@@ -136,3 +167,4 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Fu (2023)](/sources/fu-2023.md) — §5.3, Fig. 19 (reproduced).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.2, Figs. 6–11 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.2, Figs. 5–8.
+- [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.2, Figs. 12–14 (arXiv v2).

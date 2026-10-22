@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # WENO-JS reconstruction
@@ -57,16 +57,17 @@ the candidate polynomials; they agree with Li et al.'s tables except the slip no
 Qualifications.)*
 
 **Third-order compact form.** On the three-cell stencil $\{I_{i-1},I_i,I_{i+1}\}$ of a finite-volume
-scheme, Deng (2023, Eqs. (4.19)–(4.23)) and Huang et al. (2026, Eqs. (3.1)–(3.5)) write WENO3-JS as
+scheme, Deng (2023, Eqs. (4.19)–(4.23)), Huang et al. (2026, Eqs. (3.1)–(3.5)) and Bezgin, Schmidt &
+Adams (2022, §2, Eqs. (6)–(10), with $\epsilon=10^{-15}$) write WENO3-JS as
 a blend of the second-order upwind and central reconstructions,
 
 $$u^-_{i+1/2}=\omega_0\big(\tfrac32\bar u_i-\tfrac12\bar u_{i-1}\big)+\omega_1\big(\tfrac12\bar u_i+\tfrac12\bar u_{i+1}\big),\qquad
 (d_0,d_1)=\big(\tfrac13,\tfrac23\big),$$
 
 with $\beta_0=(\bar u_{i-1}-\bar u_i)^2$, $\beta_1=(\bar u_i-\bar u_{i+1})^2$ and $q=2$. The linear
-limit is the third-order scheme $-\tfrac16\bar u_{i-1}+\tfrac56\bar u_i+\tfrac13\bar u_{i+1}$. Both
-papers state the design conditions: consistency $\sum\omega_k=1$, accuracy $\omega_k-d_k=O(\Delta x^2)$,
-and $\omega_k\to0$ iff the stencil contains a discontinuity.
+limit is the third-order scheme $-\tfrac16\bar u_{i-1}+\tfrac56\bar u_i+\tfrac13\bar u_{i+1}$. Deng and
+Huang et al. state the design conditions: consistency $\sum\omega_k=1$, accuracy $\omega_k-d_k=O(\Delta x^2)$,
+and $\omega_k\to0$ iff the stencil contains a discontinuity (Deng; Huang et al.).
 
 **Regularization.** Deng (2023, §1) recalls that Jiang and Shu recommended $\epsilon=10^{-6}$, a
 value that "reduces the influence of non-linear weights"; Kuzmin & Vedral (2023, §5) use
@@ -99,6 +100,23 @@ cheaper in 2D and nine times cheaper in 3D" than finite-volume WENO (relayed; no
 On unstructured meshes, Tsoutsanis et al. (2021, Eq. (32)) keep the Jiang–Shu weight form with $q=4$,
 $\epsilon=10^{-6}$; their unstructured WENO carries the full order on every directional stencil,
 unlike their [CWENO](/methods/cweno.md) (§3.2).
+
+**Other carriers of the weights.** The Jiang–Shu weight form is reused on objects that are not
+candidate fluxes:
+
+- *DG limiting.* The simple WENO limiter combines a DG cell's polynomial with mean-corrected neighbour
+  polynomials by $\omega_i\propto d_i/(\epsilon+\beta_i)^2$, $\epsilon=10^{-6}$, $d_0=0.999$, "the
+  classical WENO procedure" (Du, Shu & Zhong 2022, Eqs. (3.4)–(3.5);
+  [Hermite WENO](/methods/hermite-weno.md), [WENO limiters for DG](/methods/weno-limiter-dg.md)).
+- *Second-order gradients.* Chen, Zhang, Liu & Chen (2022, §5, Eq. (26)) weight the vertex gradients
+  of an unstructured second-order scheme by $d_a/(\epsilon+\beta_a)^2$, direction by direction, in
+  place of a slope limiter ([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)).
+- *Entropy-stable dissipation.* Duan & Tang (2022, §4) apply WENO5-JS to the rotated, scaled entropy
+  variables, and the jump of the two reconstructions drives the dissipation of a TeCNO-type flux
+  ([TeCNO schemes](/methods/tecno-scheme.md)).
+- *WCNS interpolation.* Hiejima's WCNS-JS weights point-value interpolants on TENO-type substencils
+  with $q=2$, $\epsilon=10^{-40}$ and Deng–Zhang indicators (2022, Eq. (15);
+  [WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
 
 **Hamilton–Jacobi form.** Matsushita & Aoki (2021, §3.1) use the third-order Jiang–Peng WENO for the
 advective derivatives of a weakly compressible two-phase solver and blend it with first-order
@@ -136,7 +154,11 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   $7.94\times10^{-11}$ at $N_x=640$, against $9.72\times10^{-12}$ for TENO5 (Ye et al. 2022,
   Tables 7–8). On a 1-D Euler density wave at 320 points, WENO-JS5 has $L_1$ error
   $1.93\times10^{-10}$ against $2.93\times10^{-11}$ for the linear Upwind5 scheme, at 1.5809 s against
-  0.9217 s (Wang et al. 2021, Table 5.1).
+  0.9217 s (Wang et al. 2021, Table 5.1). In a manufactured-solution test of a 3-D finite-difference
+  disturbance solver with characteristic WENO5 on Rusanov-split fluxes, the convective right-hand
+  side converges at observed $L_2$ orders of about 5.8–6.0 (Browne et al. 2022, App. A, Table A.1).
+  On face reconstruction of $\sin^3(\pi x)$, which has a saddle point, WENO3-JS converges at 2.44 and
+  degenerates at the saddle (Bezgin et al. 2022, §3.4–3.5, Figs. 2, 4).
 - **Variables at material interfaces.** Reconstructing conserved variables or fluxes across a
   material interface oscillates in pressure and velocity: Zheng, Shu & Qiu (2021, Fig. 6) measure
   $|u-u_0|$, $|p-p_0|$ near $10^{-4}$–$10^{-3}$ for conservative-variable WENO-JS on a moving contact,
@@ -152,7 +174,10 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   in the dissipation term resolves less small-scale structure than multi-resolution WENO at slightly
   lower cost ([multi-resolution WENO](/methods/multi-resolution-weno.md)); in Wang et al. (2021,
   Examples 5.6–5.9) it captures less Kelvin–Helmholtz roll-up than the multi-resolution schemes on
-  2-D shock problems.
+  2-D shock problems. In Hiejima's WCNS (2022, §§3.3–3.4) raising the interpolation order from 5 to 11
+  with Jiang–Shu weights changes neither the Shu–Osher waves nor the absent slip-line roll-up of double
+  Mach reflection, which TENO weighting resolves; the author attributes this to the dissipation of the
+  Jiang–Shu weights.
 - **Not TVD.** Bryngelson et al. (2021, §4.2.2) note that "the WENO schemes we utilize are, in
   general, not TVD", which can cause instability "even when the usual CFL criteria are met", and add
   an optional flux limiter.
@@ -203,3 +228,9 @@ reconstructing fluxes.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §5, Table 5.1.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Remark 3.2.
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §1; §2.2.
+- [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §2, Eqs. (6)–(10); §3.4–3.5, Figs. 2, 4.
+- [Browne et al. (2022)](/sources/browne-2022.md) — §2.2; App. A, Table A.1.
+- [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eqs. (25)–(26).
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3.1, Eqs. (3.4)–(3.6).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §4, Eq. (4.1).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §2.5.1, Eq. (15); §§3.3–3.4.

@@ -6,7 +6,7 @@ status: established
 symbol: "$\\{\\!\\{a\\}\\!\\}_{\\log}$"
 aliases: [log mean, Ismail–Roe mean, inverse logarithmic mean]
 tags: [entropy-stable, numerical-flux, dg, kinetic-energy-preserving]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T18:00:00Z
 ---
 
 # Logarithmic mean
@@ -15,8 +15,10 @@ For two positive numbers $a^-$, $a^+$ the logarithmic mean is
 
 $$\{\!\{a\}\!\}_{\log}=\frac{[\![a]\!]}{[\![\ln a]\!]}=\frac{a^+-a^-}{\ln a^+-\ln a^-},\qquad \{\!\{a\}\!\}_{\log}=a\ \text{ if }a^-=a^+=a .$$
 
-[Ranocha et al. (2023)](/sources/ranocha-2023.md) (Eq. (3.3)) and
-[Renac (2021)](/sources/renac-2021.md) (§3.1) attribute it to Ismail & Roe.
+[Ranocha et al. (2023)](/sources/ranocha-2023.md) (Eq. (3.3)),
+[Renac (2021)](/sources/renac-2021.md) (§3.1) and
+[Duan & Tang (2022)](/sources/duan-2022.md) (§3.1) attribute it to Ismail
+& Roe.
 It is symmetric in its arguments and consistent. It lies between the
 geometric and the arithmetic mean,
 $\sqrt{a^-a^+}\le\{\!\{a\}\!\}_{\log}\le\{\!\{a\}\!\}$ *(compiler check, not in the
@@ -63,6 +65,12 @@ properties are wanted (§3.1).
   robustness gain because the logarithmic mean "requires positive
   arguments to avoid floating point exceptions": fewer means, fewer
   chances of such an exception.
+- **Relativistic MHD.** The entropy-conservative state that Duan & Tang
+  (2022) add to the Cartesian flux on moving meshes contains the
+  logarithmic means of the rest-mass density $\rho$ and of $\rho/p$, its
+  mass component being $\{\!\{\rho\}\!\}_{\log}\{\!\{W\}\!\}$ with $W$ the Lorentz
+  factor (§3.1); the entropy variables of relativistic flows contain
+  $\ln(p\rho^{-\gamma})$ as in the classical case (§2).
 - **Interface states.** Li, Duan & Tang (2022) also average with
   logarithmic means when they evaluate the scaled eigenvectors at an
   interface, e.g. $\bar\rho=\{\!\{\rho\}\!\}_{\log}$ and
@@ -70,6 +78,17 @@ properties are wanted (§3.1).
 
 The flux formulas are on
 [entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md).
+
+**Other density averages.** Kinetic-energy-preserving split forms that do
+not aim at entropy conservation average the density arithmetically
+(Feiereisen, Coppola, Kennedy–Gruber) or geometrically: the splittings of
+Rozema et al. and the Div-rot and Div-str splittings of
+[Edoh (2022)](/sources/edoh-2022.md) work in square-root-density
+variables, so their two-point mass fluxes carry $\sqrt{\rho^-\rho^+}$-type
+averages (§3.2, Table 3;
+[split convective forms](/methods/split-convective-forms.md)). Since the
+logarithmic mean lies between the geometric and the arithmetic mean, it
+sits between these two families *(compiler check, not in the sources)*.
 
 ## Evaluation
 
@@ -117,3 +136,5 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eq. (24), Remark 3.1, App. B (arXiv v3).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.3 Eq. (3.15), §3.4 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — App. A Eqs. (102)–(103) (arXiv v1).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — §2, §3.1 (arXiv v1).
+- [Edoh (2022)](/sources/edoh-2022.md) — §3.2, Table 3.

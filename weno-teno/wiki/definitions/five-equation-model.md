@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -212,6 +212,42 @@ are, in general, not TVD" (Bryngelson et al. §4.2, Eqs. 33–34; see
 [hybrid central-WENO schemes](/methods/hybrid-weno.md)). Neither device
 is a positivity guarantee.
 
+## Objections from fully conservative and sharp-interface sources
+
+[Nguyen et al. (2022)](/sources/nguyen-2022.md) §1 classify
+interface-capturing approaches into non-conservative
+pressure-equation formulations, quasi-conservative schemes that advect
+$1/(\gamma-1)$, ghost-fluid methods with a level set, and diffuse-interface
+models (the seven-equation Baer–Nunziato model and its six-, five- and
+three-equation reductions, possibly sharpened by level set, VOF or
+THINC). They raise two objections to the five-equation family and one
+to the quasi-conservative alternative:
+
+1. it is not fully conservative and needs a mixture equation of state,
+   whose temperature closure in pressure equilibrium is "questionable"
+   and "can result in temperature spikes at material discontinuities";
+2. the quasi-conservative $1/(\gamma-1)$ approaches are "unclear" for
+   three or more fluids, because "the number of unknowns would be higher
+   than the number of equations";
+3. on the Martin–Moyce dam break, the five-equation results of Murrone &
+   Guillard, "without special treatments for the sharp interface",
+   overestimate the water level and underestimate the wavefront
+   propagation, while their own pressure–temperature-equilibrium model
+   stays close to the experiment (§3.5, Figs. 21–22).
+
+Their alternative is the
+[multicomponent Euler system](/definitions/multicomponent-euler-equations.md)
+with phasic mass equations and pressure–temperature equilibrium. For the
+dam break they state that "the same computational grid resolution was
+used for the comparison", without saying whether the five-equation
+results were recomputed or taken from Murrone & Guillard's paper; the
+temperature-spike objection is stated, not demonstrated on any test.
+[Bai & Li (2022)](/sources/bai-2022.md) §1 list five-equation models
+among the diffuse-interface methods and build a sharp-interface
+discontinuous Galerkin solver instead, with one equation of state per
+fluid and ghost-fluid states in cut cells
+([level-set and ghost-fluid methods](/methods/level-set-method.md)).
+
 ## Qualifications
 
 - "Characteristic variables" means different projections in the
@@ -241,3 +277,5 @@ is a positivity guarantee.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §2, Eqs. (1)–(12); §3.1, Eqs. (13)–(16); §3.3; §4.2, Figs. 3–4.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §2, Eqs. (1)–(14); §3.2–3.3, Eqs. (19)–(70); §4.1–4.2; §5; §6.2, §6.6; Appendix A (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §7.2 (comparison only; arXiv v3).
+- [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §3.5, Figs. 21–22 (objections and comparison only).
+- [Bai & Li (2022)](/sources/bai-2022.md) — §1 (contrast only).

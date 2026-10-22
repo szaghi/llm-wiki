@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Two-dimensional Riemann problems"
-description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12 plus a four-contact spiral; used as visual tests of resolution, of the jet's sideband and neck instabilities, of scale invariance and of moving-mesh efficiency, with MHD and Burgers relatives."
+description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12 plus a four-contact spiral; used as visual tests of resolution, of the jet's sideband and neck instabilities, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -19,8 +19,8 @@ configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor). Three ar
 sideband and neck instabilities serve as a resolution gauge,
 **configuration 12**, and a configuration of four contacts that roll up
 into a spiral. The data of the first two are symmetric under the
-exchange $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ *(compiler check,
-from the tables below)*, so they also test
+exchange $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ (see the tables
+below) *(compiler check, not in the sources)*, so they also test
 [symmetry preservation](/properties/symmetry-preservation.md).
 All states use $\gamma=1.4$ and are written $(\rho,v_1,v_2,p)$.
 
@@ -67,12 +67,17 @@ Eq. (34), who call it configuration 12 after Lax & Liu
 exact form: $\rho=4/5$, $v=0$, $p=1$ on $(0,\tfrac12)^2$; $\rho=1$ with
 $v=(3/\sqrt{17},0)$ and $v=(0,3/\sqrt{17})$, $p=1$, in the upper-left
 and lower-right quadrants; $\rho=17/32$, $v=0$, $p=2/5$ on
-$(\tfrac12,1)^2$ ($3/\sqrt{17}=0.72761$, $17/32=0.53125$, *compiler
-check*). He makes the problem periodic on $[0,2]^2$ by reflection about
+$(\tfrac12,1)^2$ ($3/\sqrt{17}=0.72761$, $17/32=0.53125$)
+*(compiler check, not in the sources)*. He makes the problem periodic on $[0,2]^2$ by reflection about
 $(1,1)$ and runs it to $t=0.25$.
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.3, their "2D
 Riemann problem I", print the decimal states of the table above,
 citing Brio, Zakharian & Webb (2001), and run to $t=0.25$.
+[Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.1, citing Kurganov &
+Tadmor for "Case 12", print the same decimal states, make the problem
+periodic by tiling it on $[-0.5,2.5]^2$, and run nodal DG with
+ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md)
+on triangles with $h=1/160$ to $t=0.25$ (30 contours 0.515–1.665).
 [Fu (2023)](/sources/fu-2023.md) Fig. 7 reproduces a configuration-12
 run showing the density with the TENO discontinuity flags in $x$ and $y$
 (43 contours).
@@ -82,7 +87,7 @@ configuration number nor Lax & Liu; they call their two problems the
 problems. Their printed states coincide, quadrant by quadrant and with
 the same split $(0.5,0.5)$, with Takagi et al.'s Eq. (34)
 (configuration 12) and Eq. (33) (configuration 3) *(compiler check, not
-in the sources: comparison of the printed states)*; on that basis they
+in the sources)*; on that basis they
 are listed here under those configurations.
 
 ## A four-contact configuration
@@ -100,7 +105,7 @@ Riemann problem II", citing Lax & Liu without a configuration number:
 The pressure is uniform and the four initial discontinuities are
 contacts, which roll up into a spiral; $t=0.3$. The data are not
 symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ *(compiler
-check)*.
+check, not in the sources)*.
 
 ## Findings across sources
 
@@ -123,6 +128,9 @@ more roll-up than WENO-JS5 and WENO-AO5 on configuration 3 (Fig. 5.12).
 Pazner compares $N=1$ on $128^2$ elements with $N=3$ on $64^2$, the same
 number of degrees of freedom, on configuration 12: $N=3$ gives sharper
 interfaces and better small-scale features (Fig. 12).
+
+Yu & Hesthaven report the oscillations suppressed and the contact
+lines preserved on configuration 12 (Fig. 12).
 
 **Moving meshes against uniform ones.** Li, Duan & Tang compare their
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md) multi-resolution
@@ -151,13 +159,59 @@ special-relativistic hydrodynamics ([Cui, Ding & Wu 2024](/sources/cui-2024.md)
 Example 4, $\gamma=5/3$, $[0,1]^2$, $400\times400$, $t=0.4$, a
 mushroom-like structure; the problem is symmetric about $y=x$, so the
 quasi-optimal cell-average decomposition is close to the optimal one,
-Table 9); the stiff Baer–Nunziato two-phase model
+Table 9; see below for two further relativistic sources); the stiff Baer–Nunziato two-phase model
 ([Balsara et al. 2024](/sources/balsara-2024.md) §X.b, Table XIV,
 $400\times400$, $t=0.15$); and the two-dimensional Burgers equation
 ([Peng, Sun & Wu 2024](/sources/peng-2024.md) Ex. 5.11, quadrant
 values $0.5$, $0.8$, $-1$, $-0.2$, $256^2$, $t=0.5$; the same quadrant
 values in [Pazner 2021](/sources/pazner-2021.md) §5.5, see
 [Burgers equation tests](/benchmarks/burgers-equation-tests.md)).
+
+**Relativistic configurations.** In
+[relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)
+the quadrant states are printed as $(\rho,v_1,v_2,p)$ with
+$\lvert v\rvert<1$, split at $(0.5,0.5)$ of $[0,1]^2$.
+[Chen & Wu (2022)](/sources/chen-2022-b.md) Exs. 4.6–4.7 (arXiv v1),
+on triangles with $h=1/400$ to $t=0.4$:
+
+| Quadrant | Ex. 4.6 | Ex. 4.7 |
+|---|---|---|
+| $x>0.5$, $y>0.5$ | $(0.1,0,0,0.01)$ | $(0.1,0,0,20)$ |
+| $x<0.5$, $y>0.5$ | $(0.1,0.99,0,1)$ | $(0.00414329639576,\ 0.9946418833556542,\ 0,\ 0.05)$ |
+| $x<0.5$, $y<0.5$ | $(0.5,0,0,1)$ | $(0.01,0,0,0.05)$ |
+| $x>0.5$, $y<0.5$ | $(0.1,0,0.99,1)$ | $(0.00414329639576,\ 0,\ 0.9946418833556542,\ 0.05)$ |
+
+Their third-order finite-volume WENO blows up without the
+physical-constraint-preserving limiter on both, on Ex. 4.7 in the first
+step; on Ex. 4.6 the limiter acts on about 100 cells (0.3 %) early and
+on 3 later (Figs. 10–11). In Ex. 4.7, they state, the shocks move at speed
+0.66525606186639 and the contacts are stationary.
+[Duan & Tang (2022)](/sources/duan-2022.md) Exs. 6.2–6.4 (arXiv v1) run
+three relativistic configurations to $t=0.4$ (domain and boundary
+conditions not stated, $[0,1]^2$ by the split): four vortex sheets of
+one sign that wind into a low-density spiral, $(0.5,0.5,-0.5,5)$,
+$(1,0.5,0.5,5)$, $(3,-0.5,0.5,5)$, $(1.5,-0.5,-0.5,5)$ in the quadrant
+order above; four rarefactions, $(1,0,0,1)$, $(0.5771,-0.3529,0,0.4)$,
+$(1,-0.3529,-0.3529,1)$, $(0.5771,0,-0.3529,0.4)$; and two contacts with
+two shocks, $(0.035145216124503,0,0,0.162931056509027)$,
+$(0.1,0.7,0,1)$, $(0.5,0,0,1)$, $(0.1,0,0.7,1)$, which forms a central
+"mushroom cloud". Their fifth-order entropy-stable scheme on an
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md) with $200^2$
+cells matches the uniform-mesh scheme on $500^2$, $500^2$ and $600^2$
+cells at 17.8 %, 30.6 % and 13.7 % of its CPU time, and on $150^2$
+beats their second-order moving-mesh scheme on $200^2$ at comparable
+cost (Figs. 6.5–6.7).
+
+**Multispecies shock box.** [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md)
+§3.3 (accepted manuscript) fill a $1000\times1000$ mm box with slip walls
+with an O$_2$:N$_2$ = 1:3.76 mixture at $(\rho,p)=(1.225$ kg m$^{-3}$,
+$101325$ Pa$)$ in the corner $x\le250$ mm, $y\le250$ mm and
+$(4.9$ kg m$^{-3}$, $405300$ Pa$)$ elsewhere, a two-state relative of the
+four-quadrant problems; base mesh $128\times128$ with three levels of
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md), CFL
+0.8, $t=2$ ms on a distorted mapped mesh. Pressure and Mach number agree
+with Owen et al., and the reflected shock is captured on the finest
+level of the distorted mesh (Figs. 7–8).
 
 [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md) §5.2 run
 an ideal-MHD four-state problem with the uniform field $B=(2,0,1)$ and
@@ -166,7 +220,7 @@ $x<0,y>0$, $(1,-0.75,0.5,1)$ for $x<0,y<0$, $(3,-0.75,-0.5,1)$ for
 $x>0,y<0$, on $[-1,1]^2$ with $400\times400$ cells to $t=0.8$. Its
 hydrodynamic states are those of the four-contact configuration above
 except the sign of $v_2$ in the first quadrant ($0.5$ against $-0.5$)
-*(compiler check: comparison of the printed states)*. With the
+*(compiler check, not in the sources)*. With the
 constrained transport step of their
 [unstaggered central scheme](/methods/unstaggered-central-scheme.md) the
 discrete divergence of $B$ stays at the $10^{-14}$ level, without it it
@@ -185,6 +239,14 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
   non-default weights $(0.95,0.045,0.005)$ are set in Ex. 5.3.
+- Yu & Hesthaven assign the first state $(0.5313,0,0,0.4)$ to
+  "$0.5<x<1$, $0.5<y<1.5$" on their tiled domain, while the other states
+  occupy $0.5\le x<1.5$ or $0.5\le y<1.5$; read literally, the strip
+  $1\le x<1.5$, $0.5<y<1.5$ would take the "otherwise" state
+  $(0.8,0,0,1)$ and break the tiling that their other states and the
+  configuration-12 data of Takagi et al. and Pazner define, so the
+  printed range is inconsistent with the tiling, which needs
+  $0.5<x<1.5$.
 - Evidence is visual throughout.
 
 # Citations
@@ -203,3 +265,7 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5–5.6, Figs. 11–12 (arXiv v1).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.3–5.4, Table 5.1 (arXiv v1).
 - [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md) — §5.2, Figs. 4–5 (arXiv v1).
+- [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.1, Eq. (5.7), Fig. 12.
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — Exs. 4.6–4.7, Figs. 10–11 (arXiv v1).
+- [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.2–6.4, Figs. 6.5–6.7 (arXiv v1).
+- [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.3, Figs. 7–8 (accepted manuscript).

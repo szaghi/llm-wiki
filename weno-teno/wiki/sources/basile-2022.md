@@ -8,7 +8,7 @@ authors: [Basile F., Chapelier J.-B., de la Llave Plata M., Laraufie R., Frey P.
 year: 2022
 venue: "Comput. Fluids 233:105245"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2022_Crossref_Computers_amp_Fluids_Basile_Unstructured_h-_and_hp-adaptive_strategies_for_discontinuous.pdf"
-tags: [dg, mesh-adaptation]
+tags: [dg, amr]
 timestamp: 2026-10-22T12:00:00Z
 ---
 
@@ -144,7 +144,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [h- and hp-adaptation for DG](/methods/hp-adaptation.md)

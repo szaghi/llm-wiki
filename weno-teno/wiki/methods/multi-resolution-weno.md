@@ -5,7 +5,7 @@ description: "Multi-resolution WENO combines polynomials on nested central stenc
 status: established
 aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Multi-resolution WENO
@@ -141,6 +141,13 @@ The sources agree that the linear weights do not affect smooth-region accuracy b
 - Li, Duan & Tang (2022, §5) use $(1,10,100)/111$ by default and $(0.95,0.045,0.005)$ in three
   examples.
 
+Chen & Wu (2022, §1) place the hierarchy in the line of reconstructions whose linear weights "can
+also be chosen arbitrarily": after the Zhu–Qiu combination of one high-degree polynomial with several
+linear ones, which extends easily to triangles and tetrahedra, "the multi-resolution WENO schemes
+with similar linear weights were proposed" ([CWENO](/methods/cweno.md)). Du, Shu & Zhong (2022, §1)
+recall compact DG limiters built on the multi-resolution procedure, which "appear to be quite robust
+for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
 ## Performance
 
 - **Smooth accuracy.** On a 1-D Euler density wave at 320 points, Wang et al. (2021, Table 5.1) give
@@ -165,7 +172,7 @@ The sources agree that the linear weights do not affect smooth-region accuracy b
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (Wang et al. 2021, Examples 5.6–5.9,
   5.13). WENO-AO(5,3) is better near the Sedov peak and on the
   [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (Examples 5.4–5.5), where Wang et al.
-  conjecture that their algorithm "is rapidly reduced to the first order accuracy" at strong shocks.
+  suggest that their algorithm "is rapidly reduced to the first order accuracy" at strong shocks.
   The approximate dispersion relation of the multi-resolution schemes is better than WENO-JS5 (§4,
   Fig. 4.1; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
 - **Entropy-stable dissipation.** Li, Duan & Tang (2022, §3.4, Eq. (3.21)) reconstruct the jump of
@@ -174,7 +181,7 @@ The sources agree that the linear weights do not affect smooth-region accuracy b
   [adaptive moving mesh](/methods/adaptive-moving-mesh.md)). Against the same scheme with WENO-JS,
   it "better capture[s] the localized structures" (Remark 3.2); the printed timings (Tables 5.1–5.2)
   are 2m56s vs 2m37s, 2m50s vs 2m38s, 13m53s vs 13m52s and 3m21s vs 3m3s, i.e. 0.1–12 % more
-  *(compiler arithmetic from the tables)*.
+  *(compiler check, not in the sources: ratios of the printed timings)*.
 
 ## Qualifications
 
@@ -188,8 +195,8 @@ The sources agree that the linear weights do not affect smooth-region accuracy b
 - Wang et al. (2021, §5.4) write that their scheme costs "9%–30%" more than WENO-JS5, but Table 5.8
   gives up to 1.60 (Example 5.10); "about 0.7 times" WENOZS5 is the lower end of the table's
   0.70–0.87.
-- *(Compiler check.)* The $\Delta x^4$ bracket printed for $|\beta_3-\beta_1|$ in Wang et al. (2021,
-  Eq. (3.18)) is the $\Delta x^4$ term of $\beta_{10}=(f_i-f_{i-1})^2$ itself; the difference of
+- *(Compiler check, not in the sources.)* The $\Delta x^4$ bracket printed for $|\beta_3-\beta_1|$ in
+  Wang et al. (2021, Eq. (3.18)) is the $\Delta x^4$ term of $(f_i-f_{i-1})^2$ itself; the difference of
   their Eqs. (3.13) and (3.16) gives $\tfrac56(f'')^2-\tfrac13f'f'''$. The order conclusions are
   unaffected.
 - Li, Duan & Tang (2022, App. A) phrase the algorithm "for the given cell average values"; applied
@@ -207,3 +214,5 @@ The sources agree that the linear weights do not affect smooth-region accuracy b
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §3.4, Eq. (3.21), Remark 3.2; §5, Tables 5.1–5.2; App. A.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1; §2.1, Eqs. (2.9)–(2.24), Remark 1; §2.2, Eqs. (2.42)–(2.56).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; §VII.a–b, Tables I, III; App. D, Eqs. (D.7)–(D.10).
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §1.
+- [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1.

@@ -8,7 +8,7 @@ authors: [Zheng F., Shu C.-W., Qiu J.]
 year: 2021
 venue: "J. Comput. Phys. 445:110597"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2021_Crossref_Journal_of_Computational_Physics_Zheng_A_high_order_conservative_finite_difference_scheme_for_compr.pdf"
-tags: [multiphase, alternative-weno, finite-difference, interface-capturing, shock-indicator, weno]
+tags: [multiphase, alternative-weno, finite-difference, interface-capturing, troubled-cell, weno]
 timestamp: 2026-10-22T12:00:00Z
 ---
 
@@ -129,7 +129,7 @@ a note on the swap (see Printed slips). No item is unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
 * [Alternative WENO (A-WENO)](/methods/alternative-weno.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)

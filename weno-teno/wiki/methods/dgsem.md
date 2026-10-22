@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -71,13 +71,31 @@ See [entropy-conservative and kinetic-energy-preserving two-point fluxes](/metho
 [entropy stability](/properties/entropy-stability.md) and
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 
+A central (standard) volume term can instead be made entropy conservative,
+kinetic-energy preserving or both by an element-wise
+[entropy correction term](/methods/entropy-correction-term.md) added to
+the semi-discretization, without changing the volume flux
+([Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md), §2.2, §3.3).
+On the inviscid 2D Taylor–Green vortex the two routes behave differently;
+see *Variants and evidence* below.
+
+**Collocation removes the face splitting.** On the LGL nodes the face
+value of the interpolated flux equals the flux of the face value of the
+solution. [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md)
+note that this is why the split form of collocated DG needs no splitting
+of the face term, while uncollocated volume nodes (Gauss, or
+overintegration) do (§3.1). They also state that Huynh's $g_2$
+lumped-Lobatto flux-reconstruction scheme is the collocated LGL DG scheme
+in disguise (Remark 3.1); see
+[flux reconstruction](/methods/flux-reconstruction.md).
+
 ## Curvilinear meshes
 
 The element map gives the Jacobian $J$ and the contravariant metric terms
 $Ja^{(n)}_d$, computed at the nodes by applying the SBP derivative to the
 node coordinates (Ranocha et al. (2023), Eqs. (2.12)–(2.14)).
 Free-stream preservation needs metric terms that satisfy discrete metric
-identities. Ranocha et al. note the usual care with metric terms (§2.3).
+identities; Ranocha et al. refer to the literature for that treatment (§2.3).
 Rueda-Ramírez et al. carry the identities over to the subcell level
 ([free-stream preservation](/properties/free-stream-preservation.md)). The
 directional-flux reordering of Ranocha et al. keeps the tensor-product
@@ -220,10 +238,23 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   [double Mach reflection](/benchmarks/double-mach-reflection.md) on
   $2400\times600$ elements at $N=3$; at fixed degrees of freedom the results
   improve with $N$ (§5; [convex limiting](/methods/convex-limiting.md)).
+- **Correction terms versus flux differencing.** Abgrall, Öffner &
+  Ranocha (2022) run nodal DG on LGL nodes with $N=5$ on $16^2$ elements
+  on the inviscid 2D [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md),
+  with SSP-RK(10,4) and $\Delta t=\frac{\Delta x}{10}\frac1{N^2+1}$
+  (§4.2.2). The central DGSEM blows up at $t\approx3.8$. Entropy and
+  kinetic-energy correction terms control the two quantities until blow-up
+  but do not prevent it ($t\approx4.3$ with both). The split form with an
+  entropy-conservative and kinetic-energy-preserving volume flux runs to
+  $t\approx35$. The authors attribute the blow-up of the corrected central
+  scheme to negative nodal densities or pressures, after which entropy
+  variables cannot be formed (§4.2.2, §6). The split form of Ducros et
+  al. plus both corrections behaves like flux differencing up to $t=30$
+  (Fig. 8).
 - **Codes.** The method is implemented in [Trixi.jl](/software/trixi-jl.md)
   (Julia) and [FLUXO](/software/fluxo.md) (Fortran). Their serial
-  performance is similar (Ranocha et al. (2023), §4, Fig. 1). The
-  chunk-2 sources also use Aghora (Renac) and MFEM (Pazner).
+  performance is similar (Ranocha et al. (2023), §4, Fig. 1). Renac
+  (2021) uses Aghora and Pazner (2021) MFEM.
 
 ## Qualifications
 
@@ -233,6 +264,7 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   al. write $N$. Pazner's reference element is $[0,1]^d$, the others' is
   $[-1,1]^d$. Renac prints the sums of his cell average (59)–(60) from
   $1$ instead of $0$; the nodes run from $0$ to $N$.
+  Abgrall et al. and Cicchino et al. also write the degree $p$.
   Rueda-Ramírez et al. write the quadrature weights $\omega$, which this
   bundle writes $\mathsf w$ to keep $\omega_k$ for WENO weights; Ranocha et
   al. name no weight symbol and work with the mass matrix $M$.
@@ -244,3 +276,5 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
 - [Pazner (2021)](/sources/pazner-2021.md) — §2 Eqs. (3)–(15), Props. 1–3, §5 (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §5 Eqs. (57)–(64), §6 Theorem 6.1 Eqs. (65)–(67), Remark 6.1, Lemma 3.2, App. A, §7 Table 1 (arXiv v3).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §2–3 Eqs. (28), (31)–(39), §5 Eq. (89), §6, App. C.1 Lemma 4 (arXiv v1).
+- [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), §3.3, §4.2.2 Figs. 7–8, §6 (arXiv v4).
+- [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).

@@ -5,7 +5,7 @@ description: "Periodic two-dimensional shear-layer benchmark: Euler variants wit
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -50,6 +50,13 @@ $\Delta x=\Delta y=1/1024$ and Wang et al. $1/400$.
 $(\rho,v_1)=(2,-0.5)$ for $|y|\le0.25$, $(1,0.5)$ otherwise,
 $v_2=0.01\sin(2\pi x)$, $p=2.5$, $\gamma=1.4$, on $[-0.5,0.5]^2$ with
 $512\times512$ points, $t=1$.
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.5 use the
+same strip and pressure on $[-0.5,0.5]^2$ with the velocities reversed,
+$(\rho,v_1,v_2,p)=(2,0.5,0,2.5)$ for $|y|\le0.25$ and $(1,-0.5,0,2.5)$
+otherwise, $\gamma=1.4$, and no seeded perturbation: the instability
+grows from round-off. They run flux reconstruction of degree $N=4$ on
+$100^2$, $200^2$, $400^2$ and $800^2$ elements to $t=2$; the boundary
+conditions are not stated.
 
 **Tanh-smoothed layers.**
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md)
@@ -63,8 +70,9 @@ $64\times64$ elements of degree $N=7$, $t=10$, Mach number up to about
 The three setups differ in density ratio (2, 2, and 4 for the tanh
 setup, where $\rho$ runs from $0.5$ to $2$ *(compiler check, not in the
 sources)*), shear-layer thickness, perturbation wavenumber ($4\pi$ versus $2\pi$), background
-pressure (1.5, 2.5, 1) and final time (4, 1, 10), so results do not
-transfer between them.
+pressure (1.5, 2.5, 1) and final time (4, 1 or 2, 10), so results do not
+transfer between them; Dzanic & Witherden also leave the perturbation
+to round-off where the other sources seed it.
 
 **Guiding-center Vlasov variant.**
 [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
@@ -114,12 +122,20 @@ positivity limiter on this case. With
 enforcing $\rho\ge0.1\rho^{\mathrm{FV}}$, $p\ge0.1p^{\mathrm{FV}}$, the
 peak blending coefficient is about 0.025 for both element-wise and
 subcell-wise blending, but the space–time averaged amount of low-order
-method is about three orders of magnitude smaller with subcell
-blending (element-wise of order $10^{-6}$–$10^{-5}$, subcell-wise of
-order $10^{-9}$–$10^{-8}$, read from Fig. 4b at ingestion; the text
-says "about three orders of magnitude lower"). The authors note that the
+method is "about three orders of magnitude lower" with subcell
+blending (Fig. 4b). The authors note that the
 two solutions differ visibly by $t=6.7$ and evolve to "substantially
 different solutions" at $t=10$; they do not say which is more accurate.
+
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) take a
+different route to positivity: their
+[entropy filter](/methods/entropy-filtering.md), implemented in
+[PyFR](/software/pyfr.md), damps the modes of each element that
+violates positivity of $\rho$ and $p$ or a local minimum entropy
+principle, with no low-order blending. On the unseeded sharp-layer
+setup they report a resolved roll-up, no spurious oscillations and
+pressure waves that are not over-dissipated, on meshes of $100^2$ to
+$800^2$ elements (Fig. 5); the evidence is visual, as for the other Euler variants.
 
 **Convergence and operator splitting on the guiding-center variant.**
 Zheng et al. compare their non-split
@@ -159,6 +175,21 @@ convergent flow, and the benchmark measures an error.
   their 3D mesh, and in the two-material tri-point problem of
   [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.7, resolved by
   the moving-mesh scheme. These are not runs of the benchmark itself.
+- The roll-up of the slip line of the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) is
+  read the same way, as a dissipation gauge:
+  [Hiejima (2022)](/sources/hiejima-2022.md) §3.4 finds no roll-up with
+  Jiang–Shu weights at fifth to eleventh order of a
+  [WCNS](/methods/weighted-compact-nonlinear-scheme.md), while with
+  [TENO](/methods/targeted-eno.md) weights the roll-up grows from fifth
+  to ninth order and vanishes at eleventh order on $1024\times256$,
+  which the author attributes to a first-order fallback for negative
+  interpolated states;
+  Dzanic & Witherden §5.1.4 keep it with their filter;
+  [Wang et al. (2022)](/sources/wang-2022.md) §3.4 state that it is
+  "generally thought" to depend more on the interior scheme than on the
+  [immersed-boundary](/methods/immersed-boundary-method.md) treatment.
+  These, too, are not runs of the Kelvin–Helmholtz benchmark.
 
 # Citations
 
@@ -169,3 +200,6 @@ convergent flow, and the benchmark measures an error.
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §4.3, Ex. 4.6, Eq. (62), Table 5, Figs. 15–18.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–18 (roll-up on a shocked bubble only).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7 (roll-up in the tri-point problem only; arXiv v1).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.5, Fig. 5; §5.1.4 (slip-line roll-up only) (arXiv v3).
+- [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4, Figs. 7–9 (slip-line roll-up of the double Mach reflection only).
+- [Wang et al. (2022)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).

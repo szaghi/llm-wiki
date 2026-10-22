@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -204,6 +204,25 @@ equivalence (§4.1.3). The equivalence is why the bar-state bounds can
 always be met for that low-order scheme: on the Mach 4 bow shock they hold
 to machine precision (§5.2.2).
 
+## A nonlinear relative: constraint-driven modal filtering
+
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.1, Remark
+(Limiting)) name flux-corrected transport and convex limiting as related
+to their [entropy filtering](/methods/entropy-filtering.md).
+It shares the structure of choosing, per element, the least restrictive
+member of a one-parameter family that meets convex nodal bounds (positivity
+of density and pressure, and a local minimum of $\rho s$ over the element
+and its face neighbours), but the family is an exponential modal filter of
+the high-order solution, not a convex combination with a low-order update.
+With a degenerate linear filter it reduces to the element-wise blend of the
+high-order solution with its cell average, the
+[Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md); with the
+exponential filter it is "a nonlinear (and generally non-convex) limiting
+operation". The same authors relax the entropy bound by an absolute
+tolerance $10^{-4}$, citing among their reasons that strictly enforced
+entropy bounds can degrade accuracy, with reference to convex-limiting work
+(§4.3).
+
 ## Related flux limiters
 
 Parametrized positivity- and maximum-principle-preserving flux limiters
@@ -269,3 +288,4 @@ minimum and maximum bounds.
 - [Wong et al. (2021)](/sources/wong-2021.md) — arXiv v1: §5.2 (flux limiter blending with first-order HLLC).
 - [Fu (2021)](/sources/fu-2021.md) — arXiv v1: §5.7 (Hu–Adams–Shu limiter used).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.9 (Hu–Adams–Shu limiter used).
+- [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §4.3 (entropy tolerance).

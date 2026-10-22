@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Central WENO (CWENO)"
-description: "Central WENO schemes subtract weighted low-order candidates from one central high-order polynomial and recombine them nonlinearly, so the linear weights may be any positive numbers summing to one and the result is a full polynomial on the cell; the page gives CWENO3, unstructured CWENO, the 2-D WENO-ZQ variant, predictor-based weights for implicit schemes, and measured costs."
+description: "Central WENO schemes subtract weighted low-order candidates from one central high-order polynomial and recombine them nonlinearly, so the linear weights may be any positive numbers summing to one and the result is a full polynomial on the cell; the page gives CWENO3, unstructured CWENO, WENO-ZQ in 2-D and its scale-invariant form on triangles, predictor-based weights, and costs."
 status: established
 aliases: [CWENO, central WENO, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-22T00:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Central WENO (CWENO)
@@ -112,6 +112,39 @@ discontinuities, "a similar spirit with p-adaptive DG methods" (§1). It is the 
 [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md) whose cell minimum is found
 exactly.
 
+**On triangles, with scale-invariant weights.** Chen & Wu (2022, §3.2.1) use the third-order
+Zhu–Qiu reconstruction on unstructured triangles in a bound-preserving finite-volume scheme for
+special-relativistic hydrodynamics ([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)):
+
+- $P_{\mathrm{opt}}$ is a quadratic fitted by least squares on a 10-cell stencil (the target, its
+  three face neighbours and two further neighbours of each), the $P_\ell$, $\ell=1,\dots,4$, are
+  linear polynomials on a central and three sectorial 4-cell stencils, all in a zero-mean basis, and
+  the combination is the CWENO one above (Eq. (28)), with $d_0=0.96$, $d_{1,\dots,4}=0.01$;
+- the indicators are of Hu–Shu type and the global indicator is
+  $\tau=\tfrac14\sum_{\ell=1}^4|\beta_0-\beta_\ell|=O(|K|^{3/2})$, $|K|$ the cell area (Eq. (33);
+  the square of this $\tau$ is Zhu & Qiu's $\tau$);
+- Zhu & Qiu's weights $\alpha_\ell=d_\ell\big(1+\tau^2/(\beta_\ell+\epsilon)\big)$ (Eq. (34)) are
+  replaced by
+  $$\alpha_\ell=d_\ell\Big(1+\frac{\tau^2}{(\beta_\ell+\epsilon)^2}\Big),\qquad \epsilon=|K_0|\max_{K\in N_0}\bar u_K^2,$$
+  with $N_0$ the large stencil (Eq. (32)). Under $\bar u\mapsto\sigma\bar u$ (the scaling constant of
+  [scale invariance](/properties/scale-invariance.md)) $\beta_\ell$, $\tau$ and $\epsilon$ all scale by $\sigma^2$, so the weights are invariant
+  and the reconstruction is homogeneous of degree one (Lemma 3.1); in the original weights $\tau^2$
+  scales as $\sigma^4$ against $\sigma^2$ (Remark 3.3). Third order is kept because
+  $\tau^2/(\beta_\ell+\epsilon)^2=O(|K|)$ (Remark 3.3) ([scale invariance](/properties/scale-invariance.md));
+- the reconstruction is done in local characteristic variables for each of the three edge normals
+  and the three results are averaged with weights $|K_j|$ (Eq. (38); $|K|$ denotes the cell area, §2.2), then passed to a two-step scaling limiter ([Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md),
+  [bound preservation](/properties/bound-preservation.md)).
+
+On a Riemann problem scaled by $\sigma=10^{-2}$ and $10^{-4}$ the difference between the scaled and
+the unscaled density solutions is $O(10^{-12})$–$O(10^{-13})$ with the new weights and $O(10^{-1})$
+and $O(10^{-2})$ with Zhu & Qiu's, which also overshoot (Example 4.4, Figs. 6–8); Zhu & Qiu's weights
+also undershoot at the contacts of a multi-scale four-state problem (Example 4.5, Fig. 9). Third order
+holds on the relativistic isentropic vortex ($l^1$ order 2.9971 at 238592 cells; Table 1). Chen & Wu
+(§1) recall why the big-plus-small construction is used on triangles: Hu–Shu-type linear weights of
+equal-order unstructured WENO depend on the quadrature and the topology and can be negative.
+*(Compiler check, not in the sources: the Zheng, Cai, Qiu & Qiu weights above have the original
+Zhu–Qiu form with an absolute $\epsilon=10^{-14}$, so Chen & Wu's scaling argument applies to them.)*
+
 ## Position in the WENO family
 
 - **Stability before accuracy.** Balsara et al. (2024, §I) place CWENO in a trend of scheme design
@@ -147,7 +180,7 @@ cognate unequal-stencil approaches when he introduces TENO-AA
 
 - **Cost ratio.** The "approximately 60–80%" of Tsoutsanis et al. (2021, §4.1) does not cover their
   own Table 1: the printed CWENO/WENO time ratios range from 0.547 (6th order) to 0.941 (3rd order)
-  *(compiler arithmetic from the printed normalized times)*; at 80 edges per side they are 0.84 (3rd),
+  *(compiler check, not in the sources: ratios of the printed normalized times)*; at 80 edges per side they are 0.84 (3rd),
   0.82 (4th), 0.64 (5th) and 0.62 (6th).
 - Tsoutsanis et al. (2021) print the weight numerator as $\lambda_m$ in Eq. (32) while the rest of the
   section indexes by $s$, and their Eq. (23) for $K$ counts the constant coefficient that Eqs.
@@ -171,3 +204,4 @@ cognate unequal-stencil approaches when he introduces TENO-AA
 - [Deng (2023)](/sources/deng-2023.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §2.5.
 - [Fu (2021)](/sources/fu-2021.md) — §1.
+- [Chen & Wu (2022)](/sources/chen-2022-b.md) — §1; §3.2, Eqs. (28)–(38), Lemmas 3.1–3.2, Remark 3.3; §4, Examples 4.1, 4.4–4.5, Tables 1–2, Figs. 6–9.

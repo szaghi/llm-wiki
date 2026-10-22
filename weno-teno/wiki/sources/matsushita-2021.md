@@ -145,8 +145,9 @@ the citing year); [31] and [60] print arXiv identifiers. Garbled author lists
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
 
+* [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Hybrid central-WENO schemes](/methods/hybrid-weno.md)
 * [Level-set and ghost-fluid interface methods](/methods/level-set-method.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)

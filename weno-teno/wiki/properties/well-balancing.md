@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Well-balancing"
-description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest or a hydrostatic atmosphere exactly; in this bundle it follows from affine-invariant WENO weights, stationary-contact-preserving fluctuations, hydrostatic reconstruction for Euler with gravity in an asymptotic-preserving scheme, and evolution of the deviation from a known MHD equilibrium."
+description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest or a hydrostatic atmosphere exactly; in this bundle it follows from affine-invariant WENO weights, stationary-contact-preserving fluctuations, equilibrium variables, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known MHD equilibrium."
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Well-balancing
@@ -65,6 +65,43 @@ lake-at-rest tests "without any special modifications for the well-balancing":
 - two-layer shallow water: bump on $[1.4,1.6]$, interface at $0.65$, surface perturbation
   $0.2$ or $10^{-3}$ on $[1.1,1.2]$, 400 zones on $[0,2]$, $t=0.2$ (§VIII.c, Fig. 9).
 
+## Two-layer shallow water: WB from equilibrium variables
+
+[Chu et al. (2022)](/sources/chu-2022.md) define well-balanced schemes as those "capable of
+preserving (several) steady-state solutions of the studied system within a machine accuracy"
+(§6.1). For the two-layer shallow-water equations, with upper and lower depths $h_1,h_2$,
+discharges $q_k=h_kv_k$, density ratio $r=\rho_1/\rho_2<1$ and bottom $b$ (all page-local; Chu
+et al. write $Z$ for the bottom), they follow earlier central-upwind work in replacing $h_2$ by
+the interface elevation $w=h_2+b$, so that the unknowns are $(h_1,q_1,w,q_2)$ (Eq. (6.3)):
+
+$$\begin{aligned}
+&\partial_th_1+\partial_xq_1=0,\qquad
+\partial_tq_1+\partial_x\Big(\frac{q_1^2}{h_1}+\frac g2h_1^2\Big)=-gh_1\,\partial_xw,\\
+&\partial_tw+\partial_xq_2=0,\qquad
+\partial_tq_2+\partial_x\Big(\frac{q_2^2}{w-b}+\frac g2w^2\Big)=gb\,\partial_xw-gr(w-b)\,\partial_xh_1,
+\end{aligned}$$
+
+equivalent to the original form for smooth solutions. The lake at rest is
+$v_1=v_2=0$, $h_1=$ const, $w=$ const (Eq. (6.2)). The right-hand sides are non-conservative
+products, discretized by the [path-conservative](/methods/path-conservative-scheme.md)
+central-upwind scheme inside fifth-order [A-WENO](/methods/alternative-weno.md), with the bottom
+interpolated once by the same WENO-Z operator (Remark 6.1). The resulting scheme is stated to
+be well-balanced (Abstract, §6.1, §8); no proof is printed. *(compiler check, not in the
+sources: at the lake at rest every interpolated state is the constant itself, because WENO-Z
+weights sum to one and the characteristic projection is linear; then the jumps $u^+-u^-$, the
+built-in anti-diffusion, the path integrals and the cell integrals of $\partial_xw$ and
+$\partial_xh_1$ vanish, the point fluxes are constant because $q_1=q_2=0$ removes the only
+$b$-dependence, and the A-WENO derivative corrections of constant fluxes are zero, so the right
+side vanishes exactly.)* The same paper names flux globalization as the route to moving-water
+equilibria, left to future work (§8).
+
+**Evidence** (§7.1, Ex. 2, Fig. 7.3): a $10^{-5}$ perturbation of $h_1$ on $0.1<x<0.2$ over the
+lake at rest $(h_1,w)=(1,-1)$, $g=10$, $r=0.98$, on $[-0.2,1]$ with $\Delta x=1/100$ to
+$t=0.15$, over a smooth bump $b=0.25(\cos(10\pi(x-0.5))+1)-2$ on $0.4<x<0.6$ and over a step
+($b=-1.5$ for $x>0.5$, $-2$ otherwise): both the fifth-order and the second-order scheme
+propagate the perturbation without spurious oscillations, the fifth-order one with much higher
+resolution (reference: $\Delta x=1/1600$).
+
 ## Euler with gravity: hydrostatic reconstruction
 
 [Arun et al. (2022)](/sources/arun-2022.md) build a first-order finite-volume
@@ -99,7 +136,7 @@ themselves (Definition 4.1). The construction (§4):
 
 Theorem 4.3(ii) states well-balancing for this discrete state: there
 $u^-_{i+1/2}=u^+_{i+1/2}$, the flux differences cancel the upwinded sources, and
-the central terms of the mass update cancel. *(Compiler check, not in the
+the central terms of the mass update cancel. *(compiler check, not in the
 sources: inserting (4.16) into (4.14) gives equal arguments of $[\cdot]_+$ for
 $\rho^-_{i+1/2}$ and $\rho^+_{i+1/2}$, so the two reconstructed states indeed
 coincide.)* The well-balancing must hold in the mass equation too, which a
@@ -136,7 +173,7 @@ which uses that the gravity source $S$ is linear in $u$ (§3, Eqs. (4)–(7)), a
 recovers $u=\delta u+u_{\mathrm e}$. If $\delta u^n=0$, the predictor gives
 $\delta u^{n+1/2}=0$ (proved, Eq. (17)), and the staggered and back-projected
 updates stay zero (called "straight forward"), so the reference state is
-preserved "up to machine precision". *(Compiler check, not in the sources: the
+preserved "up to machine precision". *(compiler check, not in the sources: the
 cancellation uses that $f(u_{\mathrm e})$ is subtracted with the same discrete
 operator, that the limited slopes of $u^n$ and $u_{\mathrm e}$ coincide when
 $u^n=u_{\mathrm e}$, and that $S(0)=0$.)*
@@ -166,7 +203,8 @@ sense only.
   quadruple precision); Arun et al. state that the challenge is to resolve perturbations
   "up to machine precision" (§1) but report $L^1$ errors of $10^{-6}$ to $10^{-4}$ on 100
   cells; they interpolate the exact equilibrium onto the grid (§5.2.1); Kanbar et al. print
-  no magnitude. *(Compiler check, not in the sources: the errors fall by about 100 per
+  no magnitude; Chu et al. print no lake-at-rest round-off test either, only the
+  perturbation plots. *(compiler check, not in the sources: the errors fall by about 100 per
   tenfold refinement, i.e. second order; and for $\gamma=1$, $\varepsilon=1$, $\phi=x$ the
   interpolated state $\rho_i=e^{x_i}$ misses the discrete equilibrium (4.16) by
   $\rho_{i+1}-\rho_i-\{\!\{\rho\}\!\}_{i+1/2}(\phi_{i+1}-\phi_i)=-\tfrac1{12}e^{x_i}\Delta x^3+O(\Delta x^4)$,
@@ -180,4 +218,5 @@ sense only.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — Introduction, §2.3 (Thm. 1), §3.3 (Eqs. (26)–(30), Figs. 9–10).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §III, §VIII.a (Fig. 4), §VIII.c (Fig. 9) (accepted manuscript).
 - [Arun et al. (2022)](/sources/arun-2022.md) — §1, §2.1, §4 (Def. 4.1, Eqs. (4.6), (4.14), (4.16), Thm. 4.3, Remark 4.2), §5.2 (Tables 1–2, Figs. 3–10) (arXiv v1).
+- [Chu et al. (2022)](/sources/chu-2022.md) — §6.1 (Eqs. (6.1)–(6.4), Remark 6.1), §7.1 (Ex. 2, Fig. 7.3), §8.
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3 (Eqs. (4)–(7), (17)), §§5.3–5.5, §6 (arXiv v1).

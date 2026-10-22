@@ -5,7 +5,7 @@ description: "A positivity-preserving flux limiter blends, interface by interfac
 status: established
 aliases: [PP flux limiter, Hu–Adams–Shu limiter, positivity-preserving limiter, positivity- and boundedness-preserving flux limiter, parametrized flux limiter]
 tags: [positivity, bound-preserving, limiting, finite-difference, numerical-flux]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Positivity-preserving flux limiter (Hu–Adams–Shu)
@@ -139,9 +139,18 @@ Hu–Adams–Shu limiter, without describing it:
   are computed from half-cell states and floors on $g(u)$ (positivity and
   boundedness), not from local minimum and maximum bounds, so the limiter is
   inactive away from near-vacuum or near-pure-phase states *(compiler
-  remark, not in the sources)*. [Wu & Shu (2023)](/sources/wu-2023-b.md)
+  check, not in the sources: $\theta=1$ unless a high-order half-cell state
+  falls below a floor, Algorithms 4–6)*. [Wu & Shu (2023)](/sources/wu-2023-b.md)
   recall the Xu and Hu–Adams–Shu limiters, together with the Guermond–Popov
   framework, as background of bound-preserving schemes (§1).
+- **Flux limiters for convection–diffusion DG.** [Du & Yang (2022)](/sources/du-2022-b.md)
+  name flux limiters as "another direction" for high-order
+  maximum-principle- and positivity-preserving schemes for
+  convection–diffusion equations, citing Xiong, Qiu & Xu and Guo & Yang
+  "as an incomplete list" (§1). Their own reacting-flow DG does not use
+  one: it takes the cell-average route with a Lax–Friedrichs penalty on the
+  total flux and a scaling limiter
+  ([bound preservation](/properties/bound-preservation.md)).
 - **Scaling limiter.** The [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md)
   acts on the reconstructed polynomial of a cell before the flux is
   computed; the flux limiter acts after it, on the flux. Both reduce to
@@ -183,3 +192,4 @@ Hu–Adams–Shu limiter, without describing it:
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §1 (flux limiters recalled).
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — Eqs. (15)–(16) (indicator-blended fluxes).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — arXiv v1: §4.2.2, Eq. (34) (TVD flux blending in MFC).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §1 (flux limiters for convection–diffusion recalled).

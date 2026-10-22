@@ -153,7 +153,7 @@ a page number. DOIs are printed only for [10] and [43]. No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
@@ -166,6 +166,7 @@ Chunk 1 (2026-10-21), cited further in chunk 2 (2026-10-22). This source is cite
 * [Normalised-variable diagram](/definitions/normalised-variable-diagram.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)
+* [Richtmyer–Meshkov instability](/benchmarks/richtmyer-meshkov-instability.md)
 * [ROUND schemes](/methods/round-scheme.md)
 * [Scale and affine invariance](/properties/scale-invariance.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)

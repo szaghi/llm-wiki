@@ -5,7 +5,7 @@ description: "A scheme for a singularly perturbed problem is asymptotic preservi
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme]
 tags: [asymptotic-preserving, well-balanced, finite-volume]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T20:00:00Z
 ---
 
 # Asymptotic preservation
@@ -90,6 +90,28 @@ All tests are 1D and first order (§5):
   up on the coarsest mesh in the parabolic regime and oscillates in the hyperbolic one
   (§5.3, Figs. 11–12).
 
+## Stiff sources without an AP claim
+
+Stiffness alone does not make a scheme asymptotic preserving in the sense above, which
+needs a limit problem. [Du & Yang (2022)](/sources/du-2022-b.md) treat stiff finite-rate
+chemistry in multicomponent reacting Navier–Stokes with a third-order conservative modified
+exponential Runge–Kutta (CMERK) method of their own earlier work: an artificial linear damping
+$\mu u$ (page-local rate $\mu$) is added to and subtracted from the source, the stages carry
+exponential factors $e^{\beta_{10}\mu\Delta t}$, $e^{\mathsf A\mu\Delta t}$ (page-local
+Shu–Osher-form coefficients $\alpha_{jl}$, $\beta_{jl}$ and their combination
+$\mathsf A=\beta_{20}+\alpha_{21}\beta_{10}+\beta_{21}$, Eq. (3.7); not the weights $\alpha_k$ or
+the indicators $\beta_k$), and each stage of the cell-average update is a convex combination of a
+convective forward-Euler state and a source state $\bar s/\mu+\bar u$ (§3.2, Eqs. (3.6)–(3.10);
+§4.2, Eqs. (4.3)–(4.6)). Bound preservation then holds under a convective CFL condition with
+factor $\min\alpha_{jl}/\beta_{jl}$ and a lower bound on $\mu$ set by the source
+(Thms. 4.2–4.3). On a 1D accuracy test with artificial sources $\mp c\,(\rho Y_1)^7$ in the two
+species equations and $c=10^6$, CMERK
+with the step of Eq. (6.1) converges at third order ($L^2$ error $1.28\times10^{-8}$ at
+$N=640$, order 2.96), while three-stage [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) with the
+same step returns NaN on $N=10,20$ and runs with $\tfrac25\Delta t$ (Table 6.2). No limit
+equation and no $c$-uniform stability statement are given, and the paper does not use the term
+asymptotic preserving.
+
 ## Qualifications
 
 - The AP property is shown by limit arguments on the scheme's formulas and by figures; the
@@ -105,3 +127,4 @@ All tests are 1D and first order (§5):
 # Citations
 
 - [Arun et al. (2022)](/sources/arun-2022.md) — Abstract, §1, §2 (Eqs. (2.4)–(2.10), Def. 2.1), §3 (Eqs. (3.1)–(3.6), Thm. 3.2, Remark 3.1), §4 (Thm. 4.3, Remark 4.2, Eqs. (4.29)–(4.30)), §5 (Eq. (5.1), Figs. 1–2, 11–12) (arXiv v1).
+- [Du & Yang (2022)](/sources/du-2022-b.md) — §3.2 (Eqs. (3.6)–(3.10)), §4.2 (Eqs. (4.3)–(4.6), Thms. 4.2–4.3), §6.1 (Eq. (6.1), Table 6.2).
