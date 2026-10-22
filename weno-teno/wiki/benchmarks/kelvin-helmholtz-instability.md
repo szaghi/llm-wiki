@@ -5,7 +5,7 @@ description: "Periodic two-dimensional shear-layer benchmark: Euler variants wit
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -26,7 +26,8 @@ accuracy test.
 ## Variants
 
 Three compressible-Euler setups appear in the sources, all periodic, in
-$(\rho,v_1,v_2,p)$.
+$(\rho,v_1,v_2,p)$, plus a low-Mach variant run at the incompressible
+limit of an all-Mach scheme.
 
 **Exponentially smoothed layers.**
 [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 8 and
@@ -50,6 +51,13 @@ $\Delta x=\Delta y=1/1024$ and Wang et al. $1/400$.
 $(\rho,v_1)=(2,-0.5)$ for $|y|\le0.25$, $(1,0.5)$ otherwise,
 $v_2=0.01\sin(2\pi x)$, $p=2.5$, $\gamma=1.4$, on $[-0.5,0.5]^2$ with
 $512\times512$ points, $t=1$.
+[Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.7 print the same data
+(single mode, $\gamma=1.4$, $t=1$) and run them on triangular meshes
+with $h\approx1/500$ (577,416 elements, §5.10).
+[Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.6, Eq. (5.8), also
+print the same state, $(2,-0.5,0.01\sin(2\pi x),2.5)$ for $|y|\le0.25$
+and $(1,0.5,0.01\sin(2\pi x),2.5)$ otherwise, but run it to $t=2$ on
+$1000\times1000$ cells at CFL 0.5, with a second-order MUSCL scheme.
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.5 use the
 same strip and pressure on $[-0.5,0.5]^2$ with the velocities reversed,
 $(\rho,v_1,v_2,p)=(2,0.5,0,2.5)$ for $|y|\le0.25$ and $(1,-0.5,0,2.5)$
@@ -73,6 +81,20 @@ sources)*), shear-layer thickness, perturbation wavenumber ($4\pi$ versus $2\pi$
 pressure (1.5, 2.5, 1) and final time (4, 1 or 2, 10), so results do not
 transfer between them; Dzanic & Witherden also leave the perturbation
 to round-off where the other sources seed it.
+
+**Low-Mach (incompressible-limit) variant.**
+[Boscarino, Qiu, Russo & Xiong (2022)](/sources/boscarino-2022.md)
+Ex. 5.6 run their semi-implicit all-Mach scheme at global Mach number
+$\varepsilon=10^{-6}$ with $\rho=p=1$ initially (here $\varepsilon$ is
+the paper's Mach-number scaling, page-local). Their Kelvin–Helmholtz
+case is $v_1=\cos y$, $v_2=0.03\sin(0.5x)$ on the periodic box
+$[0,4\pi]\times[0,2\pi]$ (the box of the guiding-center variant
+below), $T=40$, $256\times128$ points; a companion double shear layer
+on $[0,2\pi]^2$ has $v_1=\tanh((y-\pi/2)/\delta_s)$ for $y\le\pi$ and
+$\tanh((3\pi/2-y)/\delta_s)$ for $y>\pi$, $v_2=\delta\cos x$, $T=6$,
+$256^2$, where the layer thickness $\delta_s$ (printed $\rho$) and the
+amplitude $\delta$ are not given (page-local symbols). Both are smooth
+shear flows; no density contrast is involved.
 
 **Guiding-center Vlasov variant.**
 [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
@@ -100,6 +122,21 @@ against the earlier [central-upwind scheme](/methods/central-upwind-scheme.md). 
 [TENO](/methods/adaptive-teno.md) than with
 [WENO-CU6](/methods/weno-cu6.md) (Fig. 10). All three read
 "more structure" as "less [numerical dissipation](/definitions/numerical-dissipation.md)".
+Ji et al. read the sharp-layer case the same way on unstructured
+triangles: finite-volume TENO3 is much more dissipative than the
+higher-order [unstructured TENO](/methods/targeted-eno.md) schemes, and
+TENO5/6 resolve more than [CWENO](/methods/cweno.md)5/6 (Figs. 18–20);
+the text says TENO5/6 do better "in terms of preserving the kinetic
+energy", but the figures show density only. The case also serves as
+their cost benchmark: the normalised reconstruction time per element
+and iteration grows from $1.32\times10^{-6}$ s (TENO3) to
+$2.20\times10^{-6}$ s (TENO6), "roughly 65%" (Table 7).
+Hu et al. use the case to compare [HLL-type solvers](/methods/hll-riemann-solvers.md)
+inside one second-order scheme: their RHLLEM-LD solver gives the
+sharpest interfaces and more filamentation, and is the only one of the
+compared solvers (HLLE, HLLEM, HLLC, RHLLEM-LD) that retains the
+symmetry of the roll-up (Fig. 5.6). Here the dissipation gauge ranks
+Riemann solvers, not reconstructions.
 
 **Non-convergence and Cesàro averages.** Chertock et al. state that
 numerical solutions of this problem do not converge under mesh
@@ -136,6 +173,19 @@ principle, with no low-order blending. On the unseeded sharp-layer
 setup they report a resolved roll-up, no spurious oscillations and
 pressure waves that are not over-dissipated, on meshes of $100^2$ to
 $800^2$ elements (Fig. 5); the evidence is visual, as for the other Euler variants.
+
+**Divergence at the incompressible limit.** Boscarino et al. report
+vorticity comparable to the isentropic all-Mach results of their earlier
+scheme, and an $L^\infty$ error of $\nabla\cdot v$ (measured with
+zero-viscosity fifth-order WENO and with fourth-order central
+differences) that grows in time and jumps when the fine structures are
+no longer resolved (Fig. 5.7). They state that, for incompressible or
+weakly compressible flows without initial discontinuities, high-order
+linear reconstruction "would perform better than WENO reconstructions in
+preserving the divergence and in resolving solution structures"; the
+divergence comparison is shown, the resolution claim is not shown
+separately. See [asymptotic preservation](/properties/asymptotic-preservation.md)
+for the scheme's low-Mach limit.
 
 **Convergence and operator splitting on the guiding-center variant.**
 Zheng et al. compare their non-split
@@ -186,6 +236,10 @@ convergent flow, and the benchmark measures an error.
   which the author attributes to a first-order fallback for negative
   interpolated states;
   Dzanic & Witherden §5.1.4 keep it with their filter;
+  [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 find the beginning
+  of Kelvin–Helmholtz rolls on the jet only with the least diffusive
+  reconstructions of their second-order code (LimO3, PPM) at
+  $1920\times480$ (Fig. 3);
   [Wang et al. (2022)](/sources/wang-2022.md) §3.4 state that it is
   "generally thought" to depend more on the interior scheme than on the
   [immersed-boundary](/methods/immersed-boundary-method.md) treatment.
@@ -201,5 +255,9 @@ convergent flow, and the benchmark measures an error.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–18 (roll-up on a shocked bubble only).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7 (roll-up in the tri-point problem only; arXiv v1).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.5, Fig. 5; §5.1.4 (slip-line roll-up only) (arXiv v3).
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.7, Figs. 18–20; §5.10, Table 7 (preprint).
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.6, Eq. (5.8), Fig. 5.6.
+- [Boscarino, Qiu, Russo & Xiong (2022)](/sources/boscarino-2022.md) — Ex. 5.6, Fig. 5.7 (arXiv v2).
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Fig. 3 (slip-line roll-up of the double Mach reflection only; arXiv v1).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4, Figs. 7–9 (slip-line roll-up of the double Mach reflection only).
 - [Wang et al. (2022)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).

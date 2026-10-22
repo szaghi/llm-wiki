@@ -5,7 +5,7 @@ description: "WENO-Z+ adds to the WENO-Z weight a term proportional to (β_k+ε)
 status: established
 aliases: [WENO-Z+, WENO-Z+M, WENO-ZP, WENO-P+, Acker–Borges–Costa WENO]
 tags: [weno, reconstruction, low-dissipation, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # WENO-Z+ and WENO-Z+M
@@ -120,6 +120,11 @@ $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
 - Deng (2023, abstract) says "the improved WENO-Z scheme is neither scale-invariant nor
   mesh-size-independent"; the body (§4.4) states this of WENO-P+, the third-order analogue of
   WENO-Z+.
+- **Two-dimensional problems.** Liang, Xiao, Shyy & Fu (2022, §1) state that the performance of WENO-Z+
+  "degenerates to that of WENO-Z for two-dimensional complex problems containing multiscale structures,
+  such as the double Mach reflection problem"; the paper runs no WENO-Z+ test. In Luo & Wu's double Mach
+  comparison (Fig. 14) the best resolution is that of the modified WENO-Z+M
+  ([double Mach reflection](/benchmarks/double-mach-reflection.md)).
 
 # Citations
 
@@ -127,3 +132,4 @@ $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
 - [Deng (2023)](/sources/deng-2023.md) — §4.4, Eq. (4.27), Fig. 6.
 - [Fu (2023)](/sources/fu-2023.md) — §2.3.
 - [Li et al. (2022)](/sources/li-2022-b.md) — Eq. (12) (optimal-order condition recalled).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1.

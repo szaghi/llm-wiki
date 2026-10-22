@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive TENO (TENO-A, TENO-AA)"
-description: "Adaptive TENO varies the TENO cut-off locally through a low-order-undivided-difference discontinuity measure (TENO-A, adaptive dissipation) and, in TENO-AA, also tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of both."
+description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure or a wavenumber scale sensor (TENO-A, adaptive dissipation) and, in TENO-AA, also tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of both."
 status: established
-aliases: [TENO-A, TENO-AA, TENO8-AA, TENO10-AA, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
+aliases: [TENO-A, TENO-AA, TENO5-A, TENO8-AA, TENO10-AA, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -17,7 +17,16 @@ high-wavenumber content and strongly nonlinear at shocks
 ([Fu (2023)](/sources/fu-2023.md), §4); **TENO-AA** ("adaptive accuracy order and
 adaptive dissipation control") adds a new stencil arrangement in which nested
 symmetric large stencils are tested largest-first, and the first one found
-smooth supplies the whole flux ([Fu (2021)](/sources/fu-2021.md), §3).
+smooth supplies the whole flux ([Fu (2021)](/sources/fu-2021.md), §3). A later
+five-point variant keeps the TENO5-A recipe but drives the cut-off by a
+wavenumber [scale sensor](/definitions/scale-sensor.md) instead of the
+discontinuity measure ([Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), §3).
+As recalled by [Hong, Ye & Ye (2022)](/sources/hong-2022.md) (abstract, §1, §2.5),
+the adaptive TENO paper of Fu et al. (2018) is also the origin of the
+hierarchical voting of nested stencils, of explicit discontinuity-location
+detection and of the dissipation-optimized six- and eight-point background
+schemes that other TENO variants reuse (see the TENO-M variant on
+[targeted ENO](/methods/targeted-eno.md)).
 
 ## Adaptive cut-off (TENO-A)
 
@@ -28,7 +37,9 @@ fluctuations from genuine discontinuities; low-order undivided differences can
 [Fu (2021)](/sources/fu-2021.md), §3.4). Design constraints listed by Fu (2023,
 §4.1): no case-by-case tuning, Galilean invariance, no physical-variable sensors,
 no spurious oscillations, and, as an implicit LES model, Kolmogorov scaling for
-infinite-$\mathrm{Re}$ under-resolved turbulence.
+infinite-$\mathrm{Re}$ under-resolved turbulence. Huang et al. (2023, §1) restate
+the aim: low dissipation at low wavenumbers, comparatively high dissipation at
+high wavenumbers, adequate dissipation at discontinuities.
 
 **Discontinuity measure** (after Ren, Liu and Zhang 2003, as recalled; page-local
 symbols $\sigma_i$, $\mu_d$, $\Delta f_{i+1/2}$):
@@ -38,30 +49,128 @@ $$\sigma_i=\frac{\lvert2\Delta f_{i+1/2}\Delta f_{i-1/2}\rvert+\epsilon_\sigma}{
 \mu_d=1-\min\Big(1,\frac{\sigma_{i+1/2}}{C_r}\Big),$$
 
 with $\Delta f_{i+1/2}$ the first undivided difference of the reconstructed
-variable (neither source defines it further) and
+variable and
 $\mu_d\approx1$ at discontinuities, $\approx0$ in smooth regions
 ([Fu (2023)](/sources/fu-2023.md), Eqs. (31)–(32);
-[Fu (2021)](/sources/fu-2021.md), Eqs. (17)–(18)). The regularization differs:
+[Fu (2021)](/sources/fu-2021.md), Eqs. (17)–(18)). Huang et al. (2023, §3.1,
+Eqs. (18)–(19)) write $\Delta f_{i+1/2}=f_{i+1}-f_i$ explicitly, which neither Fu
+paper does. The regularization differs:
 Fu (2021) uses $\epsilon_\sigma=10^{-40}$ and $C_r=0.265$; Fu (2023) writes
 $\epsilon_\sigma=\frac{0.9C_r}{1-0.9C_r}\,\xi_{\mathrm A}^2$ with scheme-dependent
 constants $C_r$, $\xi_{\mathrm A}$ (page-local) whose values it does not give.
+
+**Variant of the sensor stencil and constant in TENO5-A.** For the five-point
+TENO5-A, [Huang et al. (2023)](/sources/huang-2023-b.md) (§3.1, Eq. (19) and the
+following line) print the same $\epsilon_\sigma$ form as Fu (2023) with
+$\xi_{\mathrm A}=10^{-3}$ and $C_r=0.24$, and a **three-point** minimum,
+$\sigma_{i+1/2}=\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$, where the two Fu
+papers (on TENO-A of various orders and on TENO-AA) use the four-point minimum
+above and Fu (2021) $C_r=0.265$. No source states that the other's stencil or
+constant is wrong; the values are recorded as variants, possibly scheme-dependent
+(five-point against wider schemes), which none of the sources discusses. In a
+different use, the shock detector of hybrid schemes,
+[Li, Chen & Ren (2022)](/sources/li-2022.md) (§3.2, Eqs. (48)–(54)) recall
+Ren's original as a two-point minimum
+$\sigma_{i+1/2}=\min(\sigma_i,\sigma_{i+1})$ with threshold $0.3$ and
+$\xi_{\mathrm A}=10^{-3}$, and run it with the four-point minimum "after Kim and
+Kwon" and a binary switch; so the minimum over two, three and four points all
+occur in the sources.
 
 **Cut-off.** With page-local $\varphi$ and $b$,
 
 $$\varphi(\mu_d)=(1-\mu_d)^4(1+4\mu_d),\qquad b=b_1-b_2\big(1-\varphi(\mu_d)\big),\qquad C_T=10^{-\lfloor b\rfloor}$$
 
 ([Fu (2023)](/sources/fu-2023.md), Eq. (33); [Fu (2021)](/sources/fu-2021.md),
-Eq. (19)). At a discontinuity, $\varphi\approx0$ and
+Eq. (19); [Huang et al. (2023)](/sources/huang-2023-b.md), Eq. (20), with
+$\lfloor\cdot\rfloor$ the "Gauss bracket"). At a discontinuity, $\varphi\approx0$ and
 $C_T\to10^{-\lfloor b_1-b_2\rfloor}$ (robust shock capturing); in smooth regions,
 $\varphi\approx1$ and $C_T\approx10^{-\lfloor b_1\rfloor}$ (near-linear). Fu
 (2023, Fig. 13) interprets $10^{-\lfloor b_1\rfloor}$ as separating low from high
 wavenumbers and $10^{-\lfloor b_1-b_2\rfloor}$ as separating high wavenumbers
 from discontinuities. TENO-AA uses $b_1=14$, $b_2=6.4$, so $C_T$ moves between
-$10^{-7}$ and $10^{-14}$ (Fu 2021, §3.4); Fu (2023) calls $b_1$, $b_2$
-case-independent but does not print them. Variants recalled by Fu (2023, §4.1):
-TCNS with adaptive dissipation, TENO6-A with a modified Ducros sensor in place of
-$\mu_d$, and a cheaper adaptive control of Peng et al.; the family runs from
-TENO5-A to TENO8-A, plus TENO10-A with a positivity-preserving limiter.
+$10^{-7}$ and $10^{-14}$ (Fu 2021, §3.4); TENO5-A uses $b_1=10$, $b_2=5$, so
+$C_T$ moves between $10^{-5}$ and $10^{-10}$ (Huang et al. 2023, Eq. (20));
+Fu (2023) calls $b_1$, $b_2$ case-independent but does not print them. Variants
+recalled by Fu (2023, §4.1): TCNS with adaptive dissipation, TENO6-A with a
+modified Ducros sensor in place of $\mu_d$, and a cheaper adaptive control of
+Peng et al.; the family runs from TENO5-A to TENO8-A, plus TENO10-A with a
+positivity-preserving limiter.
+
+**TENO5-A ingredients besides the cut-off** (as recalled and used by Huang et al.
+2023, §3.2, Eqs. (32)–(35)): TENO5 stencils and Jiang–Shu $\beta_k$, $C=1$,
+$q=6$, the spectrally optimized linear weights $d_0=0.5065006634$,
+$d_1=0.3699651429$, $d_2=0.1235341937$ (the small-stencil weights of TENO-AA
+below), and a global indicator $\tau_5$ printed as a quadratic form in
+$f_{i-2},\dots,f_{i+2}$ with denominator $5040$, called "sixth-order" and
+different from the $\tau_5=\lvert\beta_1-\beta_2\rvert$ of standard TENO5.
+*(Compiler check, not in the sources: the printed form is mirror-symmetric under
+$i\pm m\leftrightarrow i\mp m$ and vanishes on samples of polynomials of degree
+at most 2, so on smooth data it is $O(\Delta x^6)$, consistent with the name.)*
+With these weights the background linear scheme is third order, and Huang et
+al. measure exactly third order for both TENO5-A and their variant on
+$\partial_tu+\partial_xu=0$, $u_0=\sin(\pi x)$, with identical errors (e.g.
+$L_1=7.37\times10^{-8}$, $L_\infty=1.16\times10^{-7}$ at $N_x=640$; §4.1,
+Table 2): the "five-point" of the name is the stencil, not the order.
+
+## Scale-sensor-driven cut-off (Huang et al. 2023)
+
+**Criticism of the discontinuity measure.** $\mu_d$ "can roughly locate the
+discontinuities, but is incapable of estimating the specific wavenumber": on four
+test functions its value at critical points of a sine differs from its value at
+other points of the same wavenumber, and in one case it is smaller at the
+discontinuity than at some critical points ([Huang et al. (2023)](/sources/huang-2023-b.md),
+§3.1, Fig. 2). The six-point scale sensors of Su et al. and Sun et al. and the six-point sensor of
+[Li, Chen & Ren (2022)](/sources/li-2022.md) cannot be applied directly to a five-point
+stencil (Huang et al., §1, §3.1).
+
+**Five-point scale sensor** (Huang et al., §3.1, Eqs. (29)–(31); page-local
+$\vartheta_{\mathrm{ESW}}$ for their estimated scaled wavenumber and
+$\mathsf D_p$ for the five-point central approximations of
+$\Delta x^pf^{(p)}(x_i)$ and $\varepsilon_{\mathrm s}$ for the regularization, as on
+[scale sensors](/definitions/scale-sensor.md)):
+
+$$\vartheta_{\mathrm{ESW},i}=\sqrt{\frac{\lvert\mathsf D_3\rvert+\lvert\mathsf D_4\rvert}{\lvert\mathsf D_1\rvert+\lvert\mathsf D_2\rvert+\varepsilon_{\mathrm s}}},\quad\varepsilon_{\mathrm s}=10^{-12},\qquad
+\begin{aligned}
+\mathsf D_1&=\tfrac1{12}f_{i-2}-\tfrac23f_{i-1}+\tfrac23f_{i+1}-\tfrac1{12}f_{i+2},\\
+\mathsf D_2&=-\tfrac1{12}f_{i-2}+\tfrac43f_{i-1}-\tfrac52f_i+\tfrac43f_{i+1}-\tfrac1{12}f_{i+2},\\
+\mathsf D_3&=-\tfrac12f_{i-2}+f_{i-1}-f_{i+1}+\tfrac12f_{i+2},\\
+\mathsf D_4&=f_{i-2}-4f_{i-1}+6f_i-4f_{i+1}+f_{i+2}.
+\end{aligned}$$
+
+For $f=A\sin(k_wx+\varphi_0)$ the ratios of exact derivatives give $\vartheta=k_w\Delta x$ at every
+point, critical and inflection points included, and the sensor is large at
+discontinuities (Eqs. (24)–(28)). It is evaluated at $x_i$ rather than at
+$x_{i+1/2}$ as in the six-point version, which the authors call "almost
+identical" without a test (§3.1); they also state, without a sensitivity study,
+that results are insensitive to $\varepsilon_{\mathrm s}$. The construction
+is developed on [scale sensors](/definitions/scale-sensor.md).
+
+**Cut-off** (Eq. (33)): with the mapping $\tanh(1.01\,\vartheta_{\mathrm{ESW}})$,
+chosen for "its rigorous boundedness and good smoothness",
+
+$$b=b_1-b_2\tanh(1.01\,\vartheta_{\mathrm{ESW}}),\qquad C_T=10^{-\lfloor b\rfloor},\qquad b_1=10,\ b_2=5,$$
+
+so small wavenumbers give $C_T=10^{-10}$ (nearly linear) and large sensor values
+$C_T\to10^{-5}$. *(Compiler check, not in the sources: with
+$\tanh\in[0,1)$, $b\in(5,10]$, so $C_T$ takes the six values
+$10^{-10},\dots,10^{-5}$, the same extremes as TENO5-A, whose mapping
+$\varphi(\mu_d)$ is decreasing in the measure and enters through $1-\varphi$.)*
+Everything else is TENO5-A.
+
+**Evidence** (Huang et al., §§3.2–4.7; Rusanov splitting, Roe-average
+characteristic decomposition, SSP-RK3 at CFL 0.4): its
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+has lower dispersion and dissipation than TENO5 (Fig. 3); on Jiang–Shu
+multi-wave advection to $t=2$ it equals TENO5-A and is sharper than WENO5-Z and
+TENO5, and to $t=18$ it avoids the "obvious oscillations even in the smooth
+regions" of TENO5-A (Figs. 4–5); on Shu–Osher it removes TENO5-A's slight
+overshoot near $x=3.25$; on double Mach reflection at $1024\times256$ it gives
+"much less numerical noise" behind the incident shock than TENO5-A; on
+Rayleigh–Taylor ($96\times384$) it resolves the richest structure. The cost
+equals TENO5-A's: 80.41 s against 78.47 s at $512\times128$, with WENO5-Z 54.99 s
+and TENO5 55.10 s (Table 3; hardware and step count not stated). The claim of
+"much lower dissipation than the existing five-point shock-capturing schemes"
+(§5) rests on comparisons with WENO5-Z, TENO5 and TENO5-A only.
 
 ## Adaptive accuracy order (TENO-AA)
 
@@ -116,7 +225,11 @@ or more small-scale structure than WENO of the same order on half the
 resolution per direction, Kolmogorov scaling for infinite-$\mathrm{Re}$
 turbulence, a Taylor–Green dissipation rate on $64^3$ closer to DNS than dynamic
 Smagorinsky and ALDM, and agreement with filtered DNS for decaying compressible
-isotropic turbulence on $64^3$.
+isotropic turbulence on $64^3$. For TENO5-A, Huang et al. (2023, Figs. 4–11)
+find a sharper Gaussian pulse and triangle than WENO5-Z and TENO5, better
+high-wavenumber resolution on Shu–Osher and a better blast-wave peak near
+$x=0.78$, but long-time oscillations and post-shock noise that their
+scale-sensor variant removes (previous section).
 
 ## Motivation from fixed-cut-off schemes
 
@@ -127,30 +240,44 @@ $C_T=10^{-5}$ on all candidate stencils. At this value Sod shows slight under- a
 grow with the order, while $C_T=10^{-7}$ makes the Lax plateau between shock and contact oscillate
 (stated, not shown); at 11th order the Shu–Osher result does not improve on the 9th. He proposes
 to optimize $q$ and $C_T$ "following" adaptive TENO, citing the 10-point eighth-order TENO10-A,
-but does not do it.
+but does not do it. [Liang et al. (2022)](/sources/liang-2022.md) (§1) mention TENO-A among the
+low-dissipation TENO developments but build their own low-dissipation scheme on fixed-cut-off
+TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 
 ## Qualifications
 
-- *(Compiler check, not in the sources.)* With the Arshed–Hoffmann weights the
-  combined 5-point linear fallback of TENO-AA reproduces the target exactly only
-  for polynomials up to degree 2: it is third-order accurate, not fifth (exact
-  evaluation of $\sum_kd_k\hat f^{(k)}_{i+1/2}$ on $x^n$, $n\le5$). Fu (2021)
-  calls it "the five-point reconstruction" without stating its order.
+- Huang et al. (2023, Table 2) confirm that the TENO5-A linear background with the
+  Arshed–Hoffmann weights is third order. *(Compiler check, not in the sources,
+  and in agreement: with these weights the combined 5-point linear fallback of
+  TENO-AA reproduces the target exactly only for polynomials up to degree 2,
+  by exact evaluation of $\sum_kd_k\hat f^{(k)}_{i+1/2}$ on $x^n$, $n\le5$.)*
+  Fu (2021) calls it "the five-point reconstruction" without stating its order.
 - The design orders of TENO8-AA and TENO10-AA (6 and 8) are below their point
   counts by construction; Fu (2023) writes "10-point 8th-order".
 - The Rayleigh–Taylor solution of TENO-AA loses mirror symmetry; Fu (2021,
-  §5.5.2) attributes this to round-off that low dissipation no longer hides; see
+  §5.5.2) attributes this to round-off that low dissipation no longer hides.
+  Huang et al. (2023, §4.7) report the same loss for TENO5, TENO5-A and their
+  variant and give the same explanation; see
   [symmetry preservation](/properties/symmetry-preservation.md).
 - Fu (2021) prints $\gamma_k$ for $k=0,\dots,p-1$ with $p$ "the total candidate
   stencil number", while the selection uses $S_p$ as the largest stencil; the two
   indexings cannot both hold.
+- Huang et al. (2023, Eq. (20)) define the exponent as $\beta$ and use $\bar\beta$
+  in the next line; Eq. (33) uses $\bar\beta$ throughout. The page writes $b$.
 - The GPU argument of Fu (2021, §4.4), that wide stencils are not the parallel
   bottleneck, rests on other codes (HTR, 96.6% weak-scaling efficiency on 512
   GPUs); no TENO-AA timing is given. TENO6-A costs 17% more than WENO5-JS on GPU,
-  47% on CPU (Fu 2023, §5.4).
+  47% on CPU (Fu 2023, §5.4); TENO5-A costs 42% more than TENO5 per run at
+  $512\times128$ in Huang et al.'s timing (78.47 s against 55.10 s, Table 3).
+  *(Compiler check, not in the sources: the 42% is the ratio of the printed times,
+  $78.47/55.10=1.424$.)*
 
 # Citations
 
 - [Fu (2021)](/sources/fu-2021.md) — §§3–5, Eqs. (11)–(29), Remarks 3.1–3.3, Figs. 1–15: TENO-AA.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (19); §4, Eqs. (31)–(33), Figs. 12–17; §5.4: TENO-A and its evidence.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.1, Eqs. (18)–(31), Fig. 2; §3.2, Eqs. (32)–(35), Fig. 3; §4, Tables 2–3, Figs. 4–11: TENO5-A parameters and the scale-sensor variant (arXiv v1).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — abstract, §1, §2.5: adaptive TENO of Fu et al. (2018) as the origin of hierarchical voting and optimized backgrounds.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1: TENO-A recalled.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.5.2, Eqs. (16)–(18); §§3.1–3.3; §4: fixed-cut-off WCNS-T and the proposal to adapt it.

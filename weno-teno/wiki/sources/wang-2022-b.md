@@ -142,7 +142,7 @@ is merged complete into the [bibliography](/bibliography.md) with `citedby`
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Affine-invariant WENO weights](/methods/affine-invariant-weno.md)

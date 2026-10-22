@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -195,12 +195,40 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   the modified metric terms exactly, so the singular-value-decomposition
   step of that construction is unnecessary.
 
+**Whole-element switching on equidistant subcells.** FLEXI's
+finite-volume subcell scheme, as described by Mossier et al. (2022),
+uses neither the LGL subcells nor a blend. A troubled element is replaced
+as a whole ($\alpha\in\{0,1\}$) by a second-order minmod-TVD
+finite-volume scheme on $N_{\mathrm{FV}}^d$ subcells that are equidistant
+in reference space (page-local $N_{\mathrm{FV}}$ per direction). The DG
+data go to the subcells as subcell integral means; the way back is a
+least-squares pseudo-inverse constrained by conservation of the element
+integral, and DG/FV faces are evaluated on the subcell face distribution
+(§4, Eqs. (19)–(30), Fig. 2). The switch is a priori, decided by a
+modal-decay indicator before the step and after each stage, which Mossier
+et al. contrast with the a posteriori MOOD-type detection of Dumbser et
+al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+
 ## Variants and evidence
 
 - **Legendre–Gauss nodes.** Collocation at Gauss nodes needs generalized SBP
   operators, a hybridized operator and an entropy projection to be entropy
   stable. It is 1.5× to 5× more expensive than the LGL-DGSEM at equal $N$
   (Ranocha et al. (2023), §6, Fig. 4).
+  Without an entropy-stability requirement, Gauss collocation is the
+  baseline of [FLEXI](/software/flexi.md): [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md)
+  run a standard (not split-form) Gauss-node DGSEM on curved hexahedra,
+  $J\partial_tu+\nabla_\xi\cdot\tilde f=0$ with contravariant fluxes
+  $\tilde f^{(d)}=Ja^{(d)}\cdot f$, an explicit four-stage Runge–Kutta
+  method and a step proportional to $\Delta x/\big((2N+1)a\big)$
+  (maximum signal speed $a$; §3, Eqs. (5)–(18)).
+- **Variable degree.** Mossier et al. let the degree vary from element to
+  element. A face between degrees $N<M$ (page-local $M$) is evaluated at
+  the $M+1$ nodes of the higher degree, after interpolating the lower
+  trace, and the flux is returned to degree $N$ by Legendre modal
+  truncation; the mixed-degree scheme converges at the order of the lowest
+  degree present (§3.3, Eqs. (14)–(17), §8.2 Table 2;
+  [h- and hp-adaptation](/methods/hp-adaptation.md)).
 - **KPP problem.** With element-wise shock capturing, the standard DGSEM
   converges to a non-entropic solution of the
   [KPP rotating wave](/benchmarks/kpp-rotating-wave.md). The entropy-stable
@@ -253,8 +281,9 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   (Fig. 8).
 - **Codes.** The method is implemented in [Trixi.jl](/software/trixi-jl.md)
   (Julia) and [FLUXO](/software/fluxo.md) (Fortran). Their serial
-  performance is similar (Ranocha et al. (2023), §4, Fig. 1). Renac
-  (2021) uses Aghora and Pazner (2021) MFEM.
+  performance is similar (Ranocha et al. (2023), §4, Fig. 1). The Gauss
+  variant is the basis of [FLEXI](/software/flexi.md) (Mossier et al.
+  (2022)). Renac (2021) uses Aghora and Pazner (2021) MFEM.
 
 ## Qualifications
 
@@ -268,6 +297,10 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   Rueda-Ramírez et al. write the quadrature weights $\omega$, which this
   bundle writes $\mathsf w$ to keep $\omega_k$ for WENO weights; Ranocha et
   al. name no weight symbol and work with the mass matrix $M$.
+- Mossier et al. (2022) call their Legendre–Gauss collocation scheme
+  "DGSEM" as well; the definition in the lead of this page (LGL nodes,
+  boundary nodes in the quadrature) is the convention of the other
+  sources.
 
 # Citations
 
@@ -278,3 +311,4 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §2–3 Eqs. (28), (31)–(39), §5 Eq. (89), §6, App. C.1 Lemma 4 (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), §3.3, §4.2.2 Figs. 7–8, §6 (arXiv v4).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.

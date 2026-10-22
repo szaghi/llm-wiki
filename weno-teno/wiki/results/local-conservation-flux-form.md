@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -129,6 +129,19 @@ nonlinear corrections conservative.
   weighted by the harmonic mean of the two cells' high-order weights. Without the correction
   the shock position is wrong (Fig. 7; see [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)).
 
+**Upwind finite differences in flux form, and vertex residuals.**
+[Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) (§3.1) write Iserles'
+interpolatory upwind differences $\delta u_i=\sum_k\alpha^{\mathrm I}_ku_{i+k}$ (page-local
+coefficients $\alpha^{\mathrm I}_k$, summing to zero) in conservative form,
+$\delta u_i=\hat u_{i+1/2}-\hat u_{i-1/2}$ with face values $\hat u_{i+1/2}=\sum_k\beta^{\mathrm I}_ku_{i+k}$
+and $\beta^{\mathrm I}_k=\sum_{m\ge k}\alpha^{\mathrm I}_m$. *(compiler check, not in the sources:
+this is Lemma A.1 with constant diagonals, $\mathsf b_k=\sum_{h\ge k}\mathsf c_h$.)* In 2D the
+nodal update of their [discrete kinetic relaxation scheme](/methods/discrete-kinetic-relaxation-scheme.md)
+is split into four residuals sent by the quads around the node, and the residuals of one quad
+sum to an approximation of the flux through its boundary, which "guarantees the local
+conservation" and lets a single quad be recomputed by a first-order scheme in their MOOD step
+without breaking it (§2.1, Eqs. (15)–(16), Fig. 1).
+
 A conservative scheme need not be written in flux form to conserve mass: the
 semi-Lagrangian finite-volume update of [Zheng et al. (2022)](/sources/zheng-2022.md)
 integrates the reconstruction over the upstream cell, cut by the Eulerian mesh and
@@ -178,3 +191,4 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Zheng et al. (2022)](/sources/zheng-2022.md) — §2.3, Prop. 3.1, Figs. 13, 18.
 - [Cicchino et al. (2022)](/sources/cicchino-2022.md) — §3.1 (Eqs. (24), (28)), §3.1.1 (Eqs. (34)–(42)), §4 (arXiv v1).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (p. 2), §2.5, Fig. 6.
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §2.1 (Eqs. (15)–(16), Fig. 1), §3.1.

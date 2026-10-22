@@ -6,6 +6,83 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 4 — TENO variants, positivity for Navier–Stokes, shock tracking, all-Mach IMEX, codes (2026-10-23)
+
+Sources (20): fan-2022, huang-2022, hu-2022, jain-2022, jeong-2022,
+kou-2022, li-2022, liang-2022, wan-2022, dao-2022, hong-2022, ji-2022,
+li-2023, mossier-2022, boscarino-2022, balsara-2023, lesur-2023,
+huang-2023-b, abgrall-2024, fan-2023. 80 of 207 ingested, 149 concept
+pages plus the registry, 2688 bibliography entries.
+
+### Decisions for the human
+
+1. **Still open from chunks 1–3:** the archive re-download and overwrite
+   (Feng 2026, Li 2024); the open contradictions (TENO $\tau_K$,
+   conservation of WCNS); book printings (leveque, hesthaven, osher);
+   kanbar-2022 ref [4]; abgrall-2017-b; Bai & Li's DG remark.
+2. **Boscarino et al. (2022), SI-IMEX(4,4,3):** the printed tableau fails
+   the explicit third-order condition $b^\top\tilde A\tilde c=1/6$ (0.19885),
+   all other conditions up to order 3 holding; checked twice on the page
+   image. Either a coefficient is misprinted or the explicit coupling is
+   second order. Recorded as a compiler check on the IMEX and Source
+   pages; a reading of the version of record could settle it.
+3. **Bibliography calls by the merger to confirm:** `jin-2010` (summer
+   school lecture notes printed with a journal's pages) folded onto
+   `jin-2012`; godlewski-2014 (no 2014 edition known), feiereisen-1983
+   (thesis vs the 1981 report) and nocedal-2006 (2nd edition) kept
+   distinct; li-2023's `fu-2016` printed at JCP 352:498 (2018), a place
+   where Crossref has no Fu paper, keyed by title and authors. The
+   compiler moved huang-2023-b's citations of the Springer reprint
+   collection onto `shu-1989-b` and a new `harten-1987-c`, and split the
+   "accepted" Bai et al. citation of ji-2022 into `bai-2022-c`, by the
+   reprint and preprint rules.
+4. **Bundle fit (no D17 copy made):** lesur-2023 (IDEFIX) is mainly a
+   software paper whose numerics are cited standard methods — it also
+   fits astrophysical-simulation-codes; boscarino-2022 and abgrall-2024
+   are as much time-integration papers (ode-integration).
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  huang-2022 (v2), jain-2022 (v1), dao-2022 (v1, despite the filename),
+  boscarino-2022 (v2), lesur-2023 (v1), huang-2023-b (v1); author preprint
+  ji-2022.
+- The archive's byte-copy file named "Li 2024" holds liang-2022 (chunk-1
+  defect); liang-2022 is ingested from its own file.
+
+### Printed slips (the Source pages list them in full)
+
+- hu-2022 and chertock-2023: the Titarev–Toro shock labelled "Mach 1.1" is
+  a Mach 1.3 state, with $\sin(20x)$ where other sources print
+  $\sin(20\pi x)$; which wavenumber the original uses is not settled by
+  any ingested source.
+- li-2022 Eq. (44): coefficient 271799 for 271779 (the coefficients then
+  sum to 20 instead of 0).
+- fan-2023: wrong sign on a $q_0$ coefficient (fails on $f=x$); the
+  printed limiter indicator is not that of the stated quartic.
+- lesur-2023: viscous stress and heat flux anti-diffusive as printed
+  (sign-convention dependent); Sod test printed with $p_L=p_R$.
+- abgrall-2024: amplification factor $G_4$ with $1/(2\theta)$, the
+  bound 1.745 (1.321 from the norm condition), swapped symbol maxima;
+  Table 1 not reproducible from the text.
+- boscarino-2022: Gresho middle pressure branch with the wrong log sign;
+  Table 5.2 exponent.
+- dao-2022: sound speed without the square root; negative initial
+  pressure of the MHD vortex.
+- jeong-2022 Eq. (19): 47/30 for 47/60.
+- huang-2022: initial condition (78) contradicts its exact solution (79).
+- fan-2022: Mach 2000 jet inflow density printed as 0.5.
+
+### Candidates for later pages
+
+TENO-M and unstructured TENO (long variant sections on the TENO page),
+linear and matrix shock-stability analysis, volume penalization,
+residual-based viscosity, the interface-equilibrium condition and the
+conservative diffuse-interface method, steady-state convergence, the MHD
+rotor (five sources), blunt-body bow shock, decaying isotropic
+turbulence, Jiang–Shu multi-wave linear advection, the Quirk and Elling
+carbuncle tests.
+
 ## Chunk 3 — flux reconstruction, entropy correction, limiters, multiphase and relativistic flows (2026-10-22)
 
 Sources (20): browne-2022, dzanic-2022, hiejima-2022, nguyen-2022,

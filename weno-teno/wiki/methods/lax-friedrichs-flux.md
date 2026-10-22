@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -26,7 +26,9 @@ $\hat f^-_{i+1/2}$ from $f^-$ by the mirror rule, and $\hat f_{i+1/2}=\hat f^+_{
 
 ## Naming conventions
 
-The sources disagree on words, not on mathematics. [Fu (2023)](/sources/fu-2023.md)
+The sources disagree on words, not on mathematics. [Jeong et al. (2022)](/sources/jeong-2022.md)
+(§5, Eq. (44)) call $a=\max\lvert f'(u)\rvert$ "over the whole range of" $u$ "the local numerical
+viscosity", a global bound under a local name. [Fu (2023)](/sources/fu-2023.md)
 (§3.4 Algorithm 1) calls "Rusanov" the splitting with a **global** per-field maximum speed;
 [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) (§3) and
 [Wang et al. (2023)](/sources/wang-2023-b.md) (§1) use "Rusanov" for the **local** flux;
@@ -63,6 +65,36 @@ derivative corrections are multiplied by a discontinuity indicator near the inte
 that the normalised-variable framework extends to conservative finite differences by
 applying it to the split flux, or to the split flux in characteristic space.
 
+Further users among the TENO and WENO papers: Rusanov splitting (global or local not
+stated) with Roe-averaged characteristic fields in [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md)
+(§4) and [Liang et al. (2022)](/sources/liang-2022.md) (§3); global LF splitting of both the
+flux and the derivative flux $f'(u)u_x$ of the finite-difference Hermite WENO of
+[Fan et al. (2023)](/sources/fan-2023.md) (§2), whose positivity-preserving flux limiter takes
+the first-order LF flux as its low-order flux (App. A;
+[positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)); global LF
+with $a=\max\rho(\partial f/\partial u)$ in the A-WENO of [Li et al. (2023)](/sources/li-2023.md)
+(Eq. (35)). Three sources make the choice of speed matter:
+
+- **Local characteristic LF for turbulence.** [Li et al. (2022)](/sources/li-2022.md) use
+  global LF splitting, componentwise or in characteristic fields, except for the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), where they switch to local
+  characteristic LF because, citing earlier work, the global one is too dissipative there
+  (§3.4, §4.4).
+- **A larger speed for steady convergence.** [Wan & Xia (2022)](/sources/wan-2022.md) (§4)
+  march steady Euler problems to convergence with global LF splitting, $a=\max(\lvert v\rvert+c)$
+  per direction; multiplying $a$ by 1.1 makes the residue of a stalled scheme converge on the
+  [forward-facing step](/benchmarks/forward-facing-step.md) (MRWENO, $90\times30$, Ex. 4.5) and
+  on the square-column flows (CWENOZ, Exs. 4.12–4.13), but not on the $400^2$ one-plate flow
+  (Ex. 4.7), and per-field speeds instead of $\max(\lvert v\rvert+c)$ make all three schemes
+  converge on the shock reflection (Ex. 4.4; [characteristic decomposition](/methods/characteristic-decomposition.md)).
+- **A Mach-dependent speed.** In the semi-implicit all-Mach scheme of
+  [Boscarino et al. (2022)](/sources/boscarino-2022.md) (Eq. (3.32)) the global LF splitting of
+  the explicit flux uses $\max\big(\lvert v_1\rvert+\lvert v_2\rvert+\min(1,1/\varepsilon)\,c\big)$, $\varepsilon$
+  the reference Mach number and $c$ the scaled sound speed, so that the acoustic speed
+  $c/\varepsilon$ is excluded for $\varepsilon<1$; the implicit acoustic flux is reconstructed
+  componentwise with zero numerical diffusion (§1;
+  [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+
 [Balsara et al. (2024)](/sources/balsara-2024.md) (§II, Eq. (2.2)) write the same splitting
 at matrix level, $A^\pm=\tfrac12(A\pm aI)$, $a$ the largest eigenvalue of $\lvert A\rvert$,
 with first-order CFL limit $\Delta t=\Delta x/a$; the high-order version (Eq. (2.3)) reduces
@@ -96,6 +128,21 @@ one in fluctuation form (§VI).
   ([Puppo et al. (2023)](/sources/puppo-2023.md), Eqs. (14), (20)); together with
   predictor-based reconstruction weights it keeps the stage systems nonlinear only
   through $f$.
+- Rusanov as the inviscid interface flux of the volume-penalization
+  [flux reconstruction](/methods/flux-reconstruction.md) of [Kou et al. (2022)](/sources/kou-2022.md)
+  (with LDG viscous fluxes, Eq. (15)); local LF for the 3D explosion in FLEXI, chosen as "robust ... for this focusing wave
+  problem" ([Mossier et al. (2022)](/sources/mossier-2022.md), §8.9); and the most diffusive of
+  the four run-time options of IDEFIX, second order with linear reconstruction on linear MHD
+  waves ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.3, §4.2, Fig. 7;
+  [Roe solver](/methods/roe-riemann-solver.md)).
+- **As a first-order limit.** The first-order version of the
+  [discrete kinetic relaxation scheme](/methods/discrete-kinetic-relaxation-scheme.md) of
+  [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) "amounts to global
+  Lax–Friedrichs" and is the fallback of its MOOD stabilization (§3.2.2); the first-order
+  viscosity $C_{\max}h\lambda_{\max}$ (page-local constant and mesh size) of the residual-viscosity
+  continuous finite elements of [Dao & Nazarov (2022)](/sources/dao-2022.md) reproduces 1D
+  Lax–Friedrichs for $C_{\max}=0.5$, stated without proof (§4.2;
+  [artificial viscosity](/methods/artificial-viscosity.md)).
 - [Arun et al. (2022)](/sources/arun-2022.md) (§5) use "a Rusanov-type approximate Riemann
   solver" on hydrostatically reconstructed interface states (no formula printed; see
   [well-balancing](/properties/well-balancing.md)).
@@ -167,6 +214,15 @@ satisfies it.)* See
 [bound preservation](/properties/bound-preservation.md),
 [Hermite WENO](/methods/hermite-weno.md) and
 [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md).
+
+The finite-difference counterpart is [Fan et al. (2022)](/sources/fan-2022.md) (§3,
+Eqs. (3.3)–(3.10)): the Lax–Friedrichs splitting of the Shu–Osher finite-difference WENO is
+replaced by the splitting of the total flux, $z^\pm=\tfrac12\big(u\pm F(u,\nabla u)/a^{\mathrm{NS}}_{i+1/2}\big)$
+(page-local $z^\pm$), with the same bound on $a^{\mathrm{NS}}$ taken over the WENO stencil, which
+they say "has no specific physical meaning". A variant (§4, Eqs. (4.1)–(4.4)) splits the advective flux by
+global LF and the diffusive flux separately, with the opposite signs and its own coefficient.
+The details, the Gauss–Lobatto CFL condition and the halve-and-restart time stepping are on
+[positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md).
 
 For multicomponent reacting flows [Du & Yang (2022)](/sources/du-2022-b.md) (§3.1, Eq. (3.5);
 §4.2, Lemma 4.1) extend the same construction to one partial-density equation per species
@@ -285,3 +341,17 @@ their default wherever dissipation is needed (§6). See
 - [Cicchino et al. (2022)](/sources/cicchino-2022.md) — §3.1.2 (Eqs. (46)–(50)), §4 (Tables 1–3) (arXiv v1).
 - [Browne et al. (2022)](/sources/browne-2022.md) — §2.2 (Eqs. (16)–(22)).
 - [Dzanic et al. (2022)](/sources/dzanic-2022.md) — §2, §3.1 (Eqs. (18)–(20)), §4.2 (arXiv v2).
+- [Jeong et al. (2022)](/sources/jeong-2022.md) — §5 (Eq. (44)).
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §3.
+- [Fan et al. (2023)](/sources/fan-2023.md) — §2, App. A.
+- [Fan et al. (2022)](/sources/fan-2022.md) — §3 (Eqs. (3.3)–(3.10)), §4 (Eqs. (4.1)–(4.4)).
+- [Li et al. (2023)](/sources/li-2023.md) — Eq. (35), §4.2.
+- [Li et al. (2022)](/sources/li-2022.md) — §3.4, §4.4.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §4 (Exs. 4.4, 4.5, 4.7, 4.12–4.13).
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §1, §3.3.1 (Eq. (3.32)) (arXiv v2).
+- [Kou et al. (2022)](/sources/kou-2022.md) — Eq. (15).
+- [Mossier et al. (2022)](/sources/mossier-2022.md) — §8.9.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Fig. 7).
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.2.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §4.2.

@@ -5,7 +5,7 @@ description: "Symmetry preservation has two meanings in the sources: keeping the
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Symmetry preservation
@@ -28,7 +28,9 @@ The term covers two distinct properties, which a page or claim must keep apart.
 **The observation.** Low-dissipation schemes break the symmetry of the
 Rayleigh–Taylor solution where more dissipative ones keep it. TENO-AA loses it
 at $64\times256$, $t=1.95$ ([Fu (2021)](/sources/fu-2021.md), §5.5.2, Fig. 9),
-and Fu cites similar asymmetries for WENO-SYMBO, WENO-CU6 and WENO9. As recalled
+and Fu cites similar asymmetries for WENO-SYMBO, WENO-CU6 and WENO9. [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) (§4.7, Fig. 11)
+report the loss on Rayleigh–Taylor at $96\times384$, $t=1.95$, for TENO5, TENO5-A and their
+scale-sensor variant ([adaptive TENO](/methods/adaptive-teno.md)). As recalled
 by [Fu (2023)](/sources/fu-2023.md) (§3.8), WENO9-JS breaks it at $\Delta x=1/1920$ while
 WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
 
@@ -38,6 +40,13 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   (§5.5.2) attributes the asymmetry to machine round-off that low dissipation no
   longer hides, and cites Fleischmann et al. for a cure by careful floating-point
   implementation.
+  Huang et al. (2023, §4.7) give the same explanation for their TENO runs,
+  citing two earlier works, and [Liang et al. (2022)](/sources/liang-2022.md) (§4) state
+  that their scheme, TENO-THINC and TENO5, all very low-dissipation, "may cause the
+  so-called symmetry breaking issue ... due to machine round-off errors".
+  [Hong, Ye & Ye (2022)](/sources/hong-2022.md) (§5.5) raise the regularization to
+  $\epsilon=10^{-4}$ in their TENO Rayleigh–Taylor runs "to alleviate" it, following Fu et
+  al. (2018).
 - *Unstable forms of the smoothness indicators*: Don et al. attribute it to
   round-off in unstable forms of the low-order smoothness indicators and propose
   a compact form (as recalled by Fu 2023, §3.8; see
@@ -59,6 +68,11 @@ WENO5-JS keeps it, and TENO5 breaks it on a coarse grid where WENO5-JS keeps it.
   shock-bubble interaction zone" ($D_b$ the bubble diameter). The time-averaged
   interface velocities still agree with the experiment within its uncertainty
   (Table 2).
+
+  A counter-example on unstructured meshes: [Ji, Liang & Fu (2022)](/sources/ji-2022.md)
+  (§5.4, Figs. 6–7) run the Sod and Lax shock tubes on 1967 uniform triangles with
+  finite-volume TENO and report that the one-dimensional symmetry is "well" preserved; the
+  evidence is visual, as for the other cases.
 
 - *Spurious post-shock oscillations of the shock-capturing term*:
   [Sousa & Scalo (2022)](/sources/sousa-2022.md) (§5.3, Fig. 11) run a Mach 5 shock
@@ -86,7 +100,11 @@ symmetry for TENO-THINC on Rayleigh–Taylor
 ($1024^2$); they also write the THINC flux with $\mathrm{sgn}(\varsigma)$ and
 $\lvert\varsigma\rvert$ rather than in the form of Deng et al. (2019), a
 difference they relate to symmetry breaking from floating-point errors (§2.3;
-see [THINC](/methods/thinc-reconstruction.md)). Symmetry is also reported kept
+see [THINC](/methods/thinc-reconstruction.md)). [Liang et al. (2022)](/sources/liang-2022.md)
+(§4, §§4.9–4.10, Figs. 21–23) apply the same technique, together with the BVD-based
+symmetry-preserving enforcement of Wakimura, Takagi and Xiao, and report "rigorous flow symmetry"
+for their improved [TENO-THINC](/methods/teno-thinc.md) scheme on the implosion problem
+($800^2$, $t=0.8$) and on Rayleigh–Taylor. Symmetry is also reported kept
 by ROUND and LD-ROUND on Riemann configuration 3 at $600\times600$
 ([Huang et al. (2026)](/sources/huang-2026.md), §6.6) and, as "more symmetric"
 than WENO-IS-I and WENO-Z9, by WENO-Z+M on the same configuration at $401^2$
@@ -122,7 +140,10 @@ to compressible flow (§6). These results are developed on
   contour plots; none quantifies the asymmetry. Tsoutsanis et al.'s case differs
   from the others: the loss is attributed to the multidimensional reconstruction on
   arbitrary unstructured elements, not to round-off, and no symmetric mesh is run to
-  separate the two.
+  separate the two. Ji et al.'s symmetric shock tubes on uniform triangles show that an
+  unstructured TENO reconstruction need not break a planar symmetry on its own; their
+  test is one-dimensional and short, Tsoutsanis et al.'s two-dimensional and long, so the
+  two observations concern different situations.
 - [Fu (2021)](/sources/fu-2021.md) (§5.5.2) and the view Fu (2023) adopts are
   compatible on the cause (round-off) and differ on the role of dissipation: in
   the first, low dissipation fails to damp the round-off asymmetry; in the second,
@@ -139,4 +160,8 @@ to compressible flow (§6). These results are developed on
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.2: WENO-Z+M symmetry on Riemann configuration 3.
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §3.3, §5.1, §5.3, §6, Corollary A.4: skew-symmetry and kinetic-energy conservation.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.6, Figs. 16–17, Table 2: symmetry loss on unstructured meshes.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.7, Fig. 11: TENO5-type Rayleigh–Taylor asymmetry and its stated cause (arXiv v1).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4, §§4.9–4.10, Figs. 21–23: round-off statement, symmetric results with the consistent implementation.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.4, Figs. 6–7: 1D symmetry on triangular meshes (preprint).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.5: enlarged $\epsilon$ against symmetry breaking.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §5.2 (Fig. 6), §5.3 (Fig. 11): physical symmetry breaking in strong shock–vortex interaction; LAD symmetry loss with spurious oscillations, QSV symmetric (arXiv v2).

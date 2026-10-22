@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Boundary variation diminishing (BVD)"
-description: "BVD is the selection principle that, in each cell, picks among candidate reconstructions (polynomial WENO or TENO versus THINC) the one that minimizes the jump of reconstructed values at cell interfaces, and so the dissipation term of the Riemann flux; this page records how the chunk-1 sources define, use and contrast it."
+description: "BVD is the selection principle that, in each cell, picks among candidate reconstructions (polynomial WENO or TENO versus THINC) the one that minimizes the jump of reconstructed values at cell interfaces, and so the dissipation term of the Riemann flux; this page records how the sources define, use and contrast it, including an interface-wise variant inside a Riemann-solver dissipation term."
 status: established
 aliases: [BVD, BVD principle, boundary variation diminishing algorithm]
-tags: [reconstruction, low-dissipation, interface-capturing, finite-volume]
-timestamp: 2026-10-21T12:00:00Z
+tags: [reconstruction, low-dissipation, interface-capturing, finite-volume, riemann-solver]
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Boundary variation diminishing (BVD)
@@ -51,6 +51,22 @@ printed flux form; the sources do not state a theorem on it.)*
   the pattern of a cell containing a discontinuity. Both rules are free of tunable
   parameters; Takagi et al. work in finite difference (on split point
   fluxes), whereas BVD is recalled as a finite-volume rule.
+- **Interface-wise BVD inside a Riemann solver.** [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md)
+  (§4.2, Eqs. (4.7)–(4.9)) write their shock-stable HLLEM flux as a central part plus a
+  dissipation term, $\hat f_{i+1/2}=\tfrac12\big(f(u^-_{i+1/2})+f(u^+_{i+1/2})\big)+D_{i+1/2}$
+  (page-local $D_{i+1/2}$), and compute the density *inside $D_{i+1/2}$ only* from the
+  combination of MUSCL (P) and THINC (T) interface values with the smallest jump,
+  $$\lvert\rho^+-\rho^-\rvert=\min\big(\lvert\rho^{\mathrm T,+}-\rho^{\mathrm T,-}\rvert,\ \lvert\rho^{\mathrm P,+}-\rho^{\mathrm P,-}\rvert,\ \lvert\rho^{\mathrm T,+}-\rho^{\mathrm P,-}\rvert,\ \lvert\rho^{\mathrm P,+}-\rho^{\mathrm T,-}\rvert\big),$$
+  an interface-wise selection over all four left/right pairs for one variable, not the
+  cell-wise selection recalled above. Whether the central part uses these values is not
+  stated. The resulting RHLLEM-LD solver resolves contacts and interfaces more sharply than the
+  solvers it is compared with (HLLE and HLLEM on the isolated contact) on an isolated
+  contact, the blast wave, Titarev–Toro, Richtmyer–Meshkov and Kelvin–Helmholtz tests at
+  second order (§5, Figs. 5.1–5.6), and the
+  BVD step does not change the robustness of the solver at strong shocks: HLLEM with BVD
+  alone stays unstable on the stationary inclined shock, the shock-stable version stays
+  stable (Fig. 5.7, §5.7; see [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md),
+  [HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - **A contrast: ROUND.** [Deng (2023)](/sources/deng-2023.md) (Remark 7.2)
   sets BVD against the low-dissipative [ROUND schemes](/methods/round-scheme.md),
   which do not minimize the boundary jump but the *overall* error in a cell, by
@@ -59,10 +75,14 @@ printed flux form; the sources do not state a theorem on it.)*
 
 ## Qualifications
 
-- None of the chunk-1 sources gives the BVD selection formula in full (stage
-  structure, which interfaces enter the comparison, tie rules); the definition
-  above is the common content of their recollections. A page that needs the
+- No ingested source gives the original cell-wise BVD selection formula in full
+  (stage structure, which interfaces enter the comparison, tie rules); the
+  definition above is the common content of the recollections. Hu et al. (2022)
+  give a complete formula for their own interface-wise, density-only variant,
+  which is not the original algorithm. A page that needs the original
   algorithm must wait for an ingested BVD source.
+- Hu et al. do not give the THINC formula, its steepness or the MUSCL limiter
+  used in their BVD candidates.
 - "Parameter-free" refers to the selection; the THINC candidate carries its
   steepness $\beta_{\mathrm T}$ (1.6 at discontinuities in the cited BVD
   variants, see [THINC](/methods/thinc-reconstruction.md)).
@@ -73,3 +93,4 @@ printed flux form; the sources do not state a theorem on it.)*
 - [Fu (2023)](/sources/fu-2023.md) — §3.6, Eq. (29): unified flux, BVD-TENO5-THINC; §3.8: symmetry for BVD.
 - [Deng (2023)](/sources/deng-2023.md) — Remark 7.2: BVD versus ROUND.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §2.1, Eq. (2.5): unified flux form.
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §4.2, Eqs. (4.7)–(4.9); §5, Figs. 5.1–5.7: interface-wise BVD of density in the HLLEM dissipation term.

@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Bound preservation"
-description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and its invariant-domain form, the admissible sets of the sources with their convexity, the Zhang–Shu cell-average route with its viscous, reacting-flow and relativistic extensions, the flux-limiting, convex-limiting and filtering routes, and the geometric-quasilinearization proofs."
+description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and its invariant-domain form, the admissible sets of the sources with their convexity, the Zhang–Shu cell-average route with its viscous, reacting-flow and relativistic extensions, the flux-limiting, convex-limiting, filtering and a posteriori (MOOD) routes, and the geometric-quasilinearization proofs."
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Bound preservation
@@ -133,7 +133,7 @@ literature these sources recall: the cell average is guaranteed in $G$
 when the point values are, and the limiter supplies the point values
 ([Wu & Shu (2023)](/sources/wu-2023-b.md), concepts recalled in §1 and
 §6.2). The BP CFL number of the standard Gauss–Lobatto decomposition is
-$\mathsf w_0^{\mathrm{GL}}=1/(L(L-1))$ with $L=\lceil(N+3)/2\rceil$ in 1D
+$\mathsf w_0^{\mathrm{GL}}=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ with $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ in 1D
 and on Cartesian $\mathbb Q^N$ cells; Cui et al. prove it optimal there and,
 for $\mathbb P^N$ at zero anisotropy, improve it by a factor between 1.5
 ($N=2,3$) and about 1.74 ($N=6,7$) (Thms 2.3, 4.1; Table 1) *(compiler
@@ -153,13 +153,26 @@ check, not in the sources: ratios of the tabulated weights)*.
   Zhang 2017, as recalled; Eqs. (3.4)–(3.5)). With it, the forward-Euler
   finite-volume HWENO update keeps the cell averages in $G$ if the
   interface states and the decomposition residual are in $G$ and
-  $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS}}\le\varpi=1/(L(L-1))$, $L$ the
+  $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS}}\le\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$, $N_{\mathrm{GL}}$ the
   number of Gauss–Lobatto points (Theorem 1, Eq. (3.12); the 2D condition
   (3.30) is strict). The condition is $\Delta t=O(\Delta x)$ and does not
   replace the explicit viscous restriction $\Delta t=O(\mathrm{Re}\,\Delta x^2)$;
   the authors take $\Delta t=\min\{\Delta x/(12a),\ 0.001\,\mathrm{Re}\,\Delta x^2\}$
   and halve the step and restart whenever a stage cell average leaves $G$,
   which terminates by the theorems (§3.3, Eq. (3.33)).
+- *Viscous fluxes in finite differences* ([Fan, Zhang & Qiu (2022)](/sources/fan-2022.md),
+  §3–§4, Theorems 1–2). With no cell polynomial, they split the total
+  flux with the same coefficient, $\tfrac12(u\pm F/a^{\mathrm{NS}})$, read
+  the finite-difference WENO scheme as a formal finite-volume scheme for
+  the auxiliary functions of the split variables, and obtain a weak
+  positivity result under $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS}}\le\frac1{2N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$,
+  $N_{\mathrm{GL}}=\lceil(2r+3)/2\rceil$, enforced by a scaling limiter on the
+  reconstructed split values and the same halve-and-restart stepping
+  ($\Delta t=\min\{0.6\Delta x/\max(\lvert v\rvert+c),\ 0.001\,\mathrm{Re}\,\Delta x^2\}$,
+  Algorithm 2). They state that without the flux and limiter WENO-JS5,
+  WENO-JS7 and WENO-ZQ5 blow up on every 1D and 2D test of the paper
+  (§5; not shown). Both viscous constructions are on
+  [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md).
 - *Unstructured quadrilaterals* ([Renac (2021)](/sources/renac-2021.md),
   Lemma 3.2, Thm 6.1, App. A). Extending Perthame–Shu from triangles, a
   positive three-point scheme gives a positive scheme on quadrilateral (and
@@ -292,8 +305,34 @@ the bounds.
   and needs the limiter on the Mach 2000 jet, where it activates only near
   the jet front and inlet corners
   ([Wang & Don (2022)](/sources/wang-2022-b.md), §3.2.4, Fig. 8).
+  [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) write out the
+  parametrized limiter of Xiong, Qiu and Xu for 2D finite differences,
+  applied to the Runge–Kutta-combined flux at the final stage, with a
+  density step and a pressure step over the 16 vertices of a box of
+  limiter parameters (Appendix). Their fifth-order Hermite WENO runs the
+  1D and 2D Sedov, double-rarefaction and Leblanc problems without it and
+  needs it only on the Mach 2000 jet (0.0146 % of cells limited) and a
+  Mach 10 reflection–diffraction problem (0.0012 %) (Ex. 3.5–3.12,
+  Remark 3.2); the limiter is sufficient only, and its accuracy rests on
+  numerical verification.
 
-## Route 4: constraint-driven filtering
+## Route 4: a posteriori recomputation (MOOD)
+
+[Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) (§3.2.2)
+compute the fourth-order update of their explicit kinetic scheme first,
+flag grid points where the recovered density or pressure is non-positive
+or NaN, flag the quadrilaterals touching them, and recompute their vertex
+residuals with the first-order scheme, which is global Lax–Friedrichs
+([MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
+Done at each deferred-correction cycle this would make the scheme
+domain-invariant preserving, they state; in the tests it is done once per
+time step. On a radial shock with pressure ratio 1000 it is required, and
+the flagged elements are few and at the discontinuities (§5.2.3,
+Fig. 10). [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
+use MOOD positivity enforcement for their fourth-order DeC radial Sod
+runs (Fig. 5).
+
+## Route 5: constraint-driven filtering
 
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) assume that the
 element mean of nodal DG or flux reconstruction stays admissible under SSP
@@ -367,6 +406,21 @@ The details are on
   densities or pressures, after which entropy variables cannot be formed
   (§4.2.2, §6); their high-order radial Sod runs use MOOD for positivity
   (Fig. 5).
+- **Shock capturing without a bound guarantee.** [Dao & Nazarov (2022)](/sources/dao-2022.md)
+  leave positivity and invariant-domain preservation out of scope for
+  their residual-viscosity finite elements for MHD (§1, §6); their MHD
+  rotor runs with a minimum pressure of $3.86\times10^{-2}$ (§5.5), a
+  numerical observation ([artificial viscosity](/methods/artificial-viscosity.md)).
+  The robustness that [Fan et al. (2023)](/sources/fan-2023.md) claim for
+  their Hermite WENO without limiters is likewise numerical: their
+  unlimited isentropic-vortex runs report negative minimum pressures on
+  coarse meshes (Table 3.3).
+- **Admissible set for general equations of state.**
+  [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) note that
+  $G=\{\rho>0,\ \rho e>0\}$ is convex for any equation of state, since
+  $\rho e(u)$ is concave for $\rho>0$, but that for laws other than the
+  ideal gas (e.g. JWL) it no longer ensures positive pressure; positivity
+  of $\rho$ and $e$ then suffices for robustness, they state (§1).
 - **Clipping is not bound preservation.** MFC clips volume fractions to
   $[0,1]$ and renormalises them only when it evaluates mixture properties,
   so as not to pollute conservation, and claims no positivity
@@ -429,4 +483,8 @@ The details are on
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §2.4 (Def. 2.1); §3 (Def. 3.1, Thms 3.1–3.2, Eq. (3.5)); §4 (Eq. (4.1), Lemma 4.1, Thms 4.1–4.3); §5 (Thms 5.4–5.6); §6 (Eqs. (6.1)–(6.2), Tables 6.1–6.2, Figs. 6.2–6.3, §6.6).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §2.2; §3.1–§3.2; §4.1.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: Fig. 5 (MOOD); §4.2.2; §6.
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.2; §5.2.2–5.2.3, Figs. 9–10.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §5.5; §6.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1, Eqs. (1.2)–(1.3); §3–§4, Theorems 1–2, Algorithm 2; §5.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Remark 2.3; Ex. 3.3, Table 3.3; Ex. 3.5–3.12, Remark 3.2; Appendix.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4 (first-order fallback).

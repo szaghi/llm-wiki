@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -240,6 +240,35 @@ $\rho e-\bar p_\infty$ ([stiffened-gas equation of state](/definitions/stiffened
 [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)
 on the fluxes.
 
+[Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) (§3.3, Eqs.
+(3.12)–(3.14), Algorithm 1) transfer the limiter itself to
+finite-difference WENO for Navier–Stokes. Read as a formal finite-volume
+scheme, the point value of each split variable at $x_i$ is the "cell
+average" of an auxiliary function, and the WENO value at $x_{i+1/2}$ is
+its interface trace
+([positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
+For each interface they scale the reconstructed trace toward that point
+value, first the density with
+$\theta_1=\min\{1,(\bar\rho-\varepsilon_1)/(\bar\rho-\rho_{\min})\}$,
+then the internal energy with the factor $\theta_2$ that brings $\rho e$ of the
+trace and of the derived residual state up to $\varepsilon_1$, with
+$\varepsilon_1=\min\{10^{-13},\bar\rho\}$ and $\bar\rho$ the point value
+of the split density; the residual state is computed, not
+reconstructed. Each interface uses one value per side, so the
+limited flux stays conservative. The limiter is "essentially the same" as
+the finite-volume one applied to the two formal schemes of the proof, and
+the scheme reduces to Zhang and Shu's finite-difference scheme for Euler
+when the viscous flux vanishes (§1.3, §3.3). It acts on few cells: at the
+finest accuracy meshes 0.01–1.25 % (Tables 5.1–5.2), and on average per
+step 0.0001–0.42 % in the 2D shock tests (Ex. 5.5–5.8). That it keeps
+high order is stated, by reference to Zhang and Shu, not proved.
+
+[Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) take the other
+route for finite-difference Hermite WENO: they note that the earlier
+finite-volume HWENO schemes enforce positivity by polynomial scaling, and
+use instead a parametrized flux limiter, which "allows larger time steps
+in practice and is more convenient for FD schemes" (§1, Remark 2.3).
+
 ## Qualifications
 
 - **Incompatible with prescribed interface values.**
@@ -254,9 +283,9 @@ on the fluxes.
   so as printed it can exceed one; the text says the limiter acts only "if
   this happens", i.e. on violation. Zheng et al. (2022) likewise print
   $\theta_{i,j}=\min\{\lvert\bar u/(\bar u-m)\rvert\}$ with a single
-  argument (Eq. (22)). Cui et al., Fan et al., Renac and Liu et al. print
+  argument (Eq. (22)). Cui et al., Fan et al. (2021, 2022), Renac and Liu et al. print
   the cap.
-- **A sign slip in one printing.** Fan et al.'s 1D energy factor (p. 6)
+- **A sign slip in one printing.** Fan et al. (2021)'s 1D energy factor (p. 6)
   prints the numerator $\rho e(u_q)-\varepsilon$, which is negative whenever
   the limiter triggers; their 2D version and their Eq. (3.15) carry
   $\rho e(\bar u_i)-\varepsilon$, which is the correct form.
@@ -276,3 +305,5 @@ on the fluxes.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §3.3 (Eqs. (40)–(45), Prop. 3.1, Rems. 3.4–3.5).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §4.1; §4.3 (limiter); Thm 4.3 (point set).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §5.1.6 (Fig. 6).
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.3; §3.3, Eqs. (3.12)–(3.14), Algorithm 1; Tables 5.1–5.2; Ex. 5.5–5.8.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; Remark 2.3 (scaling not used; flux limiter instead).

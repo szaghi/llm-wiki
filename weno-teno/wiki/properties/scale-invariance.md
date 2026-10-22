@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Scale and affine invariance
@@ -34,7 +34,9 @@ from affine invariance. Deng (2023) defines scale invariance as homogeneity only
 (2022, Lemma 3.1), for whom it is the homogeneity of degree one of reconstruction, limiter and scheme. Peng, Sun & Wu
 (2024, Theorem 2.6) call "scale-invariant" what Wang & Don call affine invariant:
 $\mathcal S(\sigma u_h+\mu)=\sigma\mathcal S(u_h)+\mu$ for their oscillation-eliminating step
-$\mathcal S$ (page-local name). This page uses Wang & Don's split.
+$\mathcal S$ (page-local name). This page uses Wang & Don's split. Li, Li, Don & Wang (2023, Definition 1)
+follow Wang & Don's scale invariance, $\mathsf R[\sigma f]=\sigma\mathsf R[f]$ for every real $\sigma$, negative
+values included, i.e. homogeneity of degree one.
 
 ## How classical weights fail
 
@@ -61,6 +63,26 @@ depend on $\sigma$ (Wang & Don 2022, Eq. (18)).
   that $\beta_k$ and $\Delta x$ have different dimensions, so the solution depends on the reference
   values used to nondimensionalize the problem.
 
+## A criterion for WENO-type operators
+
+Li, Li, Don & Wang (2023, §2.3) turn the reduction to the weights into necessary and sufficient
+conditions for an operator $\mathsf R[f]=\sum_k\omega_k[f]P^{(k)}[f]$ with linear candidates:
+**Theorem 1**, $\mathsf R$ is scale-invariant iff $\omega_k[\sigma f]=\omega_k[f]$ for all $k$;
+**Theorem 2**, for $\epsilon>0$ this holds iff $\alpha_k[\sigma f]=C\,\alpha_k[f]$ with $C$ independent of
+$k$. They name WCNS, TENO, Hermite WENO, WENO-Z+M, unstructured finite-volume WENO with unequal
+substencils and approximations of high-order derivatives as schemes the criterion can check.
+**Theorem 3** applies it: the multi-resolution A-WENO operator of Wang, Zhu, Yang & Zhao is not
+scale-invariant for any $\sigma\ne0,\pm1$, proved on data with nonzero global indicator, because the ratio
+$\alpha_k[\sigma f]/\alpha_k[f]$ depends on $k$, which they trace to the different scalings of $\beta_k$, $\tau$
+and $\epsilon$ *(compiler check, not in the sources: $\tau$ is quartic and $\beta_k$ quadratic in the data, so the
+dependence on $k$ persists even for $\epsilon=0$)* ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
+With a squared undivided-difference global indicator and $\epsilon\,\mathsf m^2$, $\mathsf m$ the mean of
+$|f_j|$ (the Si descaler), **Theorem 4** proves invariance; the measured error
+$\max|\mathsf R[\sigma f]/\sigma-\mathsf R[f]|$, floored at machine epsilon, is at round-off in quadruple
+precision for $\sigma\in[10^{-19},10^{19}]$ on sine, ReLU and Heaviside data, while the original operator's
+error vanishes only at $\sigma=1$ (§2.4, Fig. 3). On the Lax problem scaled by $10^{-7}$ the original scheme
+oscillates even with $\epsilon=10^{-40}$ (Fig. 1).
+
 ## Routes to invariance
 
 **Relative sensitivity parameter.** Replace $\epsilon$ by $\epsilon\,\mathsf m^2[f]$ with
@@ -68,7 +90,11 @@ $\mathsf m$ the mean absolute value of the stencil data (Si-WENO, Don et al. 202
 its mean absolute deviation (Ai-WENO); Wang & Don (2022, Theorems 1–2) prove the Ai-property for
 Z-, D- and JS-type weights ([affine-invariant WENO](/methods/affine-invariant-weno.md)). The same
 paper shows the practical payoff: shallow-water still water preserved to roundoff without the
-"WENO linearization technique" ([well-balancing](/properties/well-balancing.md)).
+"WENO linearization technique" ([well-balancing](/properties/well-balancing.md)). Li et al. (2023, §4, Theorem 5)
+obtain the analogous payoff for the Euler equations with gravity: in a characteristic-wise
+[A-WENO](/methods/alternative-weno.md) scheme the equilibrium characteristic variables are the
+equilibrium pressure times an interface constant, so a scale-invariant interpolation (an affine-invariant
+one is not needed) keeps hydrostatic states to round-off in double and quadruple precision.
 
 **Data-scaled $\epsilon$ with matching powers.** Chen & Wu (2022, §3.2.1, Eq. (32), Lemma 3.1) make
 the Zhu–Qiu weights homogeneous by squaring the denominator and scaling the regularization with the
@@ -152,3 +178,4 @@ decomposition can destroy invariance, because eigenvectors are defined up to an 
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §2, Eqs. (13)–(14), Prop. 2.1; §3.2.1, Eqs. (32)–(34), Lemma 3.1, Remark 3.3; §3.6, Theorem 3.2; Examples 4.4–4.5.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eqs. (14)–(15).
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eqs. (24)–(26).
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.

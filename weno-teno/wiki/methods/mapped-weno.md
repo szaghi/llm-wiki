@@ -5,7 +5,7 @@ description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–S
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Mapped WENO
@@ -30,7 +30,8 @@ sources prints the mapping function itself, so its form is not recorded here.
   values and meet the fifth-order accuracy".
 - **Cost.** Luo & Wu (2021, §1) state that the mapping functions "dramatically" increase the
   computational expense, and recall Hong's mapping-function-free WENO-M, which uses a pre-discrete
-  mapping to reduce that cost. Deng (2023, §1) and Luo & Wu (2021, §1) recall that
+  mapping to reduce that cost. Wan & Xia (2022, §1) put the extra CPU time of WENO-M at "about 20%"
+  (stated, without a measurement). Deng (2023, §1) and Luo & Wu (2021, §1) recall that
   [WENO-Z](/methods/weno-z.md) is more accurate than WENO-JS and cheaper than WENO-M, and Deng
   (2023, §4.3) that WENO-Z3 gives sharper solutions than mapped WENO.
 - **Resolution.** Luo & Wu (2021, §1) recall that WENO-M "achieves significantly better results than
@@ -40,6 +41,14 @@ sources prints the mapping function itself, so its form is not recorded here.
   the cellular structure of a two-dimensional self-sustained detonation on coarse meshes better than
   WENO5-JS and WENO-M, and WENO5-JS gives incorrect cellular structures
   ([targeted ENO](/methods/targeted-eno.md)).
+
+- **As a comparator.** Jeong, Yang & Yoon (2022, §5) run WENO-M against their sixth-order RBF-based
+  WENO without printing the mapping: on linear advection of $\sin^2(2\pi x)$ at $N_x=640$ WENO-M and
+  [WENO-Z](/methods/weno-z.md) give the same $L^\infty$ error, $1.96\times10^{-8}$, against
+  $1.62\times10^{-7}$ for WENO-JS (Table 1), and WENO-M costs 42.28 s against 40.30 s for WENO-JS and
+  40.51 s for WENO-Z in MATLAB (Table 3) ([RBF-based WENO](/methods/rbf-weno.md)).
+- **Recalled in passing** by Hong, Ye & Ye (2022, §1), Li, Chen & Ren (2022, §1) and Liang et al.
+  (2022, §1) as the first remedy for the critical-point defect.
 
 - **In codes.** Bryngelson et al. (2021, §4.1) cite Henrick, Aslam & Powers among the WENO
   references of the MFC solver, but do not state whether MFC uses mapped weights
@@ -70,3 +79,8 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1.
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.1.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1.
+- [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §5, Tables 1–3.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §1.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1.

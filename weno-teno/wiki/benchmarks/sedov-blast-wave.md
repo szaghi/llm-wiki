@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Sedov blast wave"
-description: "Point-explosion benchmark in which the energy of one cell drives a strong shock into cold gas of near-zero pressure, in one dimension and in a two-dimensional corner, with an exact similarity solution; a robustness test of positivity preservation at pressure ratios near 10^20, with a gas–liquid variant."
+description: "Point-explosion benchmark in which the energy of one or a few cells drives a strong shock into cold gas of near-zero pressure, in one dimension, in a two-dimensional corner or centre and in three dimensions, with an exact similarity solution; a robustness test of positivity preservation at pressure ratios near 10^20 and of grid-aligned shock stability, with a gas–liquid variant."
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Sedov blast wave
@@ -15,8 +15,8 @@ internal energy elsewhere is $10^{-12}$ per unit volume. A strong
 shock (planar in 1D, cylindrical in the 2D corner version) runs outwards, and behind it the density
 falls towards zero at the centre, so the solution combines a shock of
 enormous strength with a near-vacuum core. The problem has a
-self-similar exact solution, which two of the one-dimensional sources
-use as reference (Fan et al., Li, Shu & Qiu). Pressure is a tiny difference of large energies near the
+self-similar exact solution, which four of the one-dimensional sources
+use as reference (the three Fan et al. papers and Li, Shu & Qiu). Pressure is a tiny difference of large energies near the
 centre, so a high-order scheme without a
 [positivity](/properties/bound-preservation.md) safeguard tends to
 produce negative pressure; the sources use the test as a robustness
@@ -37,8 +37,21 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.4 | 400 | exact solution | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), Euler and Navier–Stokes ($\mathrm{Re}=1000$) |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.8 | 400 | exact solution | moment-based multi-resolution HWENO, with and without modified first moments |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5a | 400 | WENO-JS5, 6400 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR), WENO-AO5, WENO-JS5 |
+| [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.3 | 400 | exact solution | finite-difference WENO-JS5, JS7, ZQ5 with the [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md), $\mathrm{Re}=1000$ |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.5 | 800 | exact solution | finite-difference HWENO-R, HWENO-L, WENO-ZQ; outflow boundaries |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.3 | 800 ($\Delta x=5\times10^{-3}$) | — | MR-AWENO-Si and MR-AWENO with a [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
+| [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 800 | — | hybrid MDCD-HY and MDAD-HY, TENO-HY |
 
-Wang et al. attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
+Li, Li, Don & Wang and Li, Chen & Ren print the same blast in
+$(\rho,v,p)$: pressure $4\times10^{-13}$, and $2.56\times10^8$ in the
+cell $|x|\le\Delta x/2$ (Li et al. 2023), or $1.28\times10^6/\Delta x$ in
+the cell centred at $x=2$ with zero-gradient boundaries (Li, Chen &
+Ren, who print no domain; a centre at $x=2$ suggests $[0,4]$). With
+$\gamma=1.4$, $p=(\gamma-1)E$ maps $4\times10^{-13}$ to $E=10^{-12}$ and
+$1.28\times10^6/\Delta x$ to $E=3.2\times10^6/\Delta x$, and
+$2.56\times10^8\times5\times10^{-3}=1.28\times10^6$, so all are the
+common data *(compiler check, not in the sources)*. Li et al. (2023)
+call the pressure ratio $O(10^{21})$. Wang et al. attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
 print the deposited cell as "the centre cell" and plot density,
 velocity, pressure and the troubled cells (Fig. 3.6).
 
@@ -58,7 +71,7 @@ $\rho=1$, $v=0$, on $160\times160$ cells ($\Delta x=\Delta y=1.1/160$).
   [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.3, after Xiong,
   Qiu & Xu's positivity-preserving flux-limiter paper (their ref. [62]):
-  the data of Fan et al. on triangles of
+  the data of Fan, Zhang & Qiu (2021) on triangles of
   size $1.1/160$, the total energy $0.244816/(\Delta x\Delta y)$ put in
   the two triangles at the lower-left corner, inviscid walls on the left
   and bottom and extrapolation elsewhere, $t=1$; nodal DG with
@@ -67,7 +80,7 @@ $\rho=1$, $v=0$, on $160\times160$ cells ($\Delta x=\Delta y=1.1/160$).
 
 The two setups are one problem under the similarity scaling of the
 blast *(compiler check, not in the sources)*. With $\gamma=1.4$,
-$p=(\gamma-1)E$ turns Fan et al.'s ambient $E=10^{-12}$ into Fu's
+$p=(\gamma-1)E$ turns Fan, Zhang & Qiu's ambient $E=10^{-12}$ into Fu's
 $p=4\times10^{-13}$ and their corner energy into
 $p=0.0979264/(\Delta x\Delta y)$, which is $10^{-6}$ times Fu's corner
 pressure. Fu's run thus deposits $10^6$ times the energy and stops at
@@ -78,6 +91,44 @@ $E_0t^2$ is the same in both runs, so the shock reaches the same radius; velocit
 Fu's run and its ambient pressure is relatively $10^6$ times smaller,
 both immaterial for a strong blast. Fu's printed factor $\times10^4$ is
 therefore consistent with a rescaled run, not evidence of a misprint.
+
+Two further corner runs use the same data on $320\times320$ cells
+($\Delta x=1.1/320$), $t=1$: [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md)
+Example 5.5, at $\mathrm{Re}=1000$ and $\mathrm{Re}=\infty$, 20 density
+contours from 0.1 to 5 (Fig. 5.4), and
+[Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.10, Euler,
+without positivity limiter.
+
+## Centred two-dimensional version: grid-aligned instability
+
+[Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.9 place the blast in
+the four central cells of $[0,2.4]^2$, $960\times960$ cells:
+$(\rho,v_1,v_2,p)=(1,0,0,10^{-10})$ except $p=3.5\times10^5$ in those
+cells, reflecting walls, CFL 0.5, $t=0.1$, second-order MUSCL with
+second-order TVD Runge–Kutta, $\gamma=1.4$. The test serves as a probe
+of the [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md):
+where the cylindrical shock is aligned with the grid lines, HLLC and
+HLLEM, "especially the latter", produce shock instabilities, while
+their shock-stable HLLEM variant RHLLEM-LD does not (§5.9); see
+[HLL-family solvers](/methods/hll-riemann-solvers.md). The deposited
+energy is $4\,\Delta x^2p/(\gamma-1)=21.9$ with $\Delta x=0.0025$
+*(compiler check, not in the sources)*.
+
+## Three-dimensional version
+
+[Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 (arXiv v1) validate
+the [IDEFIX](/software/idefix.md) code on a Sedov–Taylor blast with
+$\gamma=5/3$, $\rho=1$, ambient $P=10^{-2}$ and an energy 1 deposited as
+pressure in a sphere of radius $r_i$ (value not printed), $t=0.1$, HLL
+solver, linear reconstruction and RK2. They run it on a periodic
+Cartesian box of side 1 with $512^3$ cells and on a spherical grid
+$n_r\times n_\theta\times n_\phi=256\times256\times512$ covering
+$r\in[0.5,1.5]$, $\theta\in[0,0.7]$, $\phi\in[0,2\pi]$, with the blast
+at $(x,y,z)=(0.1,0,1)$, close to the polar axis: the spherical shock
+crosses the axis, where IDEFIX applies its axis regularity boundary
+condition, and the test shows that it propagates through the axis
+(Figs. 4–5). With an ambient pressure of $10^{-2}$ this blast is far
+from the near-vacuum regime of the other versions.
 
 ## Gas–liquid version
 
@@ -99,8 +150,8 @@ spurious oscillations, and the WCNS gives much sharper shocks
 
 ## Findings across sources
 
-**A positivity safeguard is the price of running the test.** Fan et al.
-state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows up on
+**A positivity safeguard is the price of running the test.** Fan,
+Zhang & Qiu (2021) state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows up on
 both Sedov problems from loss of positivity (no figure shown); their
 scaling limiter is triggered in 3.00 % of the cells in 1D and 1.09 % in
 2D, identically for the hybrid and non-hybrid positivity-preserving
@@ -114,6 +165,25 @@ multi-resolution scheme (Example 5.5); which weights the paper uses
 elsewhere is ambiguous as printed (see
 [multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
+Fan, Zhang & Qiu (2022) state that without their positivity flux and
+limiter all three WENO schemes blow up on the Sedov tests; in 2D their
+limiter acts on 0.303 %, 0.248 % and 0.299 % of the cells per step for
+WENO-JS5, JS7 and ZQ5 at $\mathrm{Re}=\infty$, and 0.309 %, 0.119 % and
+0.139 % at $\mathrm{Re}=1000$ (Examples 5.3, 5.5). Fan, Zhao, Xiong &
+Qiu run both Sedov problems with HWENO-R **without** a positivity
+limiter, while HWENO-L, whose flux reconstruction uses the unrestricted
+derivative, fails in 1D even with the parametrized PP flux limiter:
+after one step its density derivative exceeds 4000, against less than
+20 for HWENO-R, and the limiter "can keep the positivity … but cannot
+control numerical oscillations" (Ex. 3.5, Fig. 3.9). Li, Li, Don & Wang
+use their PP limiter on both schemes; MR-AWENO oscillates near the
+shocks at $x\approx\pm1.5$ and MR-AWENO-Si is sharper (§3.3, Fig. 6).
+Li, Chen & Ren's hybrid schemes need case-specific thresholds,
+$\psi_c=0.4$ for MDCD-HY and $0.8$ for MDAD-HY (against 0.5 on the
+blast waves), and TENO-HY (with its optimized TENO6) fails "even with
+$C_T=0.1$"; the shock front lies near $x=3.43$ (§4.2, Fig. 18); see
+[MDCD schemes](/methods/mdcd-scheme.md).
+
 Yu & Hesthaven report that their artificial viscosity suppresses the
 spurious oscillations at the strong shock and that its distribution
 captures the symmetric structure of the blast (§5.4.3, Figs. 16–17);
@@ -126,7 +196,7 @@ their algorithm reduces quickly to first order (Fig. 5.9). Li, Shu &
 Qiu find their modified HWENO "much better" resolved than the unmodified
 one (comment p. 31).
 
-**Troubled cells and cost.** In Fan et al.'s hybrid scheme the
+**Troubled cells and cost.** In Fan, Zhang & Qiu's (2021) hybrid scheme the
 nonlinear reconstruction is applied only in troubled cells: 11.92 %
 (Navier–Stokes) and 14.50 % (Euler) of the cells in 1D, 13.82 % and
 14.62 % in 2D, concentrated in a band behind the shock. The hybrid
@@ -138,8 +208,9 @@ stated (Table 4.2).
 
 - Fu (2021) prints the corner-cell condition as "$x\le\Delta x$ and
   $x\le\Delta y$"; the second inequality must read $y\le\Delta y$.
-- The 1D sources print no $\gamma$ for the problem; Fan et al. use
-  $\gamma=1.4$ throughout their paper.
+- Among the 1D sources only Fan, Zhao, Xiong & Qiu and Li, Li, Don &
+  Wang print $\gamma=1.4$ for the problem; Fan, Zhang & Qiu (2021) use
+  $\gamma=1.4$ throughout their paper, the others print none.
 
 # Citations
 
@@ -149,3 +220,9 @@ stated (Table 4.2).
 - [Fu (2021)](/sources/fu-2021.md) — §5.7.2, Eq. (44) (arXiv v1).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §6.4, Table 7, Figs. 9–10 (arXiv v1).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.3, Figs. 16–17.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Examples 5.3 and 5.5, Figs. 5.2, 5.4.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.5, Ex. 3.10, Fig. 3.9.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.3, Fig. 6.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.2, Fig. 18.
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.9.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Figs. 4–5 (arXiv v1).

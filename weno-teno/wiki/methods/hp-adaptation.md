@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "h- and hp-adaptation for DG"
-description: "Solution-adaptive DG refines the mesh (h) or raises the polynomial degree (p) where an error estimator is large; Basile et al. give an hp loop with a modal-decay smoothness test on steady shock-free flows, Bai and Li a quadtree h-refinement with shocks and interfaces, and Abgrall et al. entropy-stable transfer between degrees."
+description: "Adaptive DG refines the mesh (h) or raises the polynomial degree (p) where an estimator is large: Basile et al.'s hp loop with a modal-decay smoothness test on shock-free flows, Bai and Li's quadtree h-refinement, Mossier et al.'s p-adaptation with finite-volume subcells on a static mesh, Kou et al.'s static p-refinement, and Abgrall et al.'s entropy-stable degree transfer."
 status: established
-aliases: [hp-adaptivity, h-adaptation, metric-based mesh adaptation, a posteriori error estimation, SSED estimator]
-tags: [dg, amr, entropy-stable, turbulence]
-timestamp: 2026-10-22T20:00:00Z
+aliases: [hp-adaptivity, h-adaptation, p-adaptation, p-refinement, metric-based mesh adaptation, a posteriori error estimation, SSED estimator, hp-shock capturing]
+tags: [dg, amr, entropy-stable, limiting, turbulence]
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # h- and hp-adaptation for DG
@@ -108,6 +108,150 @@ with three levels where the reference uses $1200\times1200$ cells
 block-structured finite-volume counterpart is on
 [adaptive mesh refinement](/methods/adaptive-mesh-refinement.md).
 
+## p-adaptation with finite-volume subcells on a static mesh
+
+[Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) call their scheme
+"hp-adaptive", but the DG mesh never changes at run time: it "comes
+without the need for mesh adaptation during the run time" (§1, §4). The
+"p" is a variable element-local degree $N\in[N_{\min},N_{\max}]$ of the
+Gauss-node [DGSEM](/methods/dgsem.md) of [FLEXI](/software/flexi.md) in
+smooth regions. The "h" is the switch of a whole troubled element to a
+second-order TVD finite-volume scheme on $N_{\mathrm{FV}}^d$ equidistant
+subcells of the reference element, with $N_{\mathrm{FV}}$ (page-local,
+subcells per direction) chosen independently of $N$. The method is
+therefore a variant of [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)
+combined with p-adaptation, not mesh refinement in the sense of Basile et
+al. or Bai & Li: the element is either pure DG or pure finite volume, with
+no convex blending ($\alpha\in\{0,1\}$ in the registry's terms). The
+authors motivate the split by the finding of Li and Jameson, as they
+recall it, that h-refinement is better at discontinuities and
+p-refinement more efficient in smooth regions (§1).
+
+**Coupling of different degrees** (§3.3, Eqs. (14)–(17)). At a face
+between degrees $N<M$ (page-local $M$), the lower-degree trace is
+interpolated to the $M+1$ nodes of the higher degree, the Riemann solver
+is evaluated there, and the flux is brought back to degree $N$ by a
+Legendre modal cut-off: nodal values to modal coefficients by a
+Vandermonde matrix, truncation to the first $N+1$ modes, back to nodal
+values. Any distribution of degrees between neighbours is admissible. The
+authors call the modal-truncation projection "conservative". It keeps the
+reference-space mean; whether it conserves $\int Ju\,d\xi$ on curved
+elements, where $J$ varies, is not discussed *(compiler check, not in
+the sources)*.
+
+**Subcell resolution and time step** (§4.3, Eqs. (18), (31)). The DG
+step is $\Delta t=\nu\,\alpha_{\mathrm{RK}}(N)\,\Delta x_{\mathrm{DG}}/\big((2N+1)a\big)$
+and the subcell step $\Delta t=\nu\,\alpha_{\mathrm{RK}}(0)\,\Delta x_{\mathrm{FV}}/a$,
+with page-local Runge–Kutta factor $\alpha_{\mathrm{RK}}>1$, element and
+subcell sizes $\Delta x_{\mathrm{DG}}$, $\Delta x_{\mathrm{FV}}=\Delta x_{\mathrm{DG}}/N_{\mathrm{FV}}$
+CFL number $\nu$ and maximum signal speed $a$. Following Dumbser et al.,
+as recalled, subcells do not tighten the time step up to
+$N_{\mathrm{FV}}=2N+1$. Equating the two bounds and ignoring the
+difference between $\alpha_{\mathrm{RK}}(N)$ and $\alpha_{\mathrm{RK}}(0)$
+gives exactly this value *(compiler check, not in the sources)*. The
+hp setups use one global $N_{\mathrm{FV}}=2N_{\max}+1$, against
+$N_{\mathrm{FV}}=N+1$ in the earlier FLEXI subcell scheme of Sonntag and
+Munz. The step counts confirm it: 4695/4726/4765 (double Mach
+reflection), 19 969/19 136/19 993 (forward-facing step) and 235/241/248
+(3D explosion) for static, p-adaptive and hp-adaptive runs (Tables 3, 4,
+6).
+
+**Transfer operators** (§4.3, Eqs. (27)–(30)). DG to subcells is the
+subcell integral mean, evaluated by the DG quadrature mapped to each
+subinterval; subcells back to DG is the pseudo-inverse, a constrained
+least-squares fit with conservation of the element integral as
+constraint, after Dumbser and Zanotti, so that the two operators compose
+to the identity on the DG space. Subcell metric terms are the subcell
+means of $J$ and $Ja^{(d)}$, the same operator applied to the DG metrics
+(Eqs. (19)–(21); [free-stream preservation](/properties/free-stream-preservation.md)).
+
+**One indicator for both decisions** (§5, §7.3, Eqs. (32)–(38)). The
+indicator is the Mavriplis modal decay rate, as recalled: the relative
+energy of the modes of order $m$ in reference direction $d$, summed over
+the other two directions and normalized by the total, is fitted to
+$a\,e^{-\varrho^{(d)}_Km}$ (page-local amplitude $a$), and the indicator is
+$\min_d\lvert\varrho^{(d)}_K\rvert$, evaluated on one scalar (density or
+pressure, per test). The fitting procedure, including which modes enter,
+is not specified. Four thresholds per degree, ordered
+$FV^N_{\mathrm{lower}}<FV^N_{\mathrm{upper}}<DG^N_{\mathrm{refine}}<DG^N_{\mathrm{coarse}}$
+(page-local), act as follows:
+
+| indicator of a DG element | action |
+|---|---|
+| above $DG^N_{\mathrm{coarse}}$ | lower $N$ by one if $N>N_{\min}$ (over-resolved) |
+| between $DG^N_{\mathrm{refine}}$ and $DG^N_{\mathrm{coarse}}$ | keep $N$ |
+| between $FV^N_{\mathrm{lower}}$ and $DG^N_{\mathrm{refine}}$ | raise $N$ by one if $N<N_{\max}$ |
+| below $FV^N_{\mathrm{lower}}$ | switch to finite-volume subcells |
+
+A finite-volume element returns to DG when the indicator, computed on its
+least-squares DG polynomial, exceeds $FV^N_{\mathrm{upper}}$; the band
+between the two FV thresholds is a hysteresis that prevents repeated
+switching. Thresholds are linear in $N$, which leaves four free
+parameters, the $FV_{\mathrm{lower}}$ and $DG_{\mathrm{refine}}$ values at
+$N_{\min}$ and $N_{\max}$, tuned per test case: e.g. $[3.5,5.0]$ and
+$[2.4,3.3]$ for Sod, $[5.6,6.5]$ and $[3.2,4.1]$ for the double Mach
+reflection. The decay rate here is fitted to squared coefficients and per
+direction, Basile et al.'s to coefficient norms by total degree with the
+mean excluded, so the numerical thresholds of the two papers are not
+comparable *(compiler check, not in the sources: an amplitude decay
+$e^{-\varrho\ell}$ gives an energy decay $e^{-2\varrho\ell}$)*. The
+indicator is recorded on [troubled-cell indicator](/definitions/troubled-cell-indicator.md).
+
+**When the decisions are taken** (§7.2). Degrees change only at the start
+of a time step, after which the indicator is recomputed for the new
+degree and DG/FV switching applied. After each Runge–Kutta stage only the
+switch from DG to finite volumes is checked; the reverse switch and
+degree changes inside a step "could violate the time step restriction".
+
+**Implementation** (§6). To keep FLEXI's static arrays, the solution,
+face and flux arrays of every degree in $[N_{\min},N_{\max}]$ and the
+subcell arrays are allocated for every element at start-up, and metric
+terms are precomputed for all degrees and for the subcells. Memory grows
+by about 20 % (p-adaptive) and a factor 4 (hp-adaptive), dominated by the
+metric terms (§6, §8.6). Load balancing is not addressed; all adaptive
+runs are single-core (§8.3, §9).
+
+**Evidence** (§8, Euler, $\gamma=1.4$). Three setups are compared:
+static ($N$ fixed, $N_{\mathrm{FV}}=N+1$, the open-source FLEXI),
+p-adaptive ($N_{\mathrm{FV}}=N_{\max}+1$) and hp-adaptive
+($N_{\mathrm{FV}}=2N_{\max}+1$).
+
+| test | DOFs per element (static/p/hp) | wall time, s (static/p/hp) |
+|---|---|---|
+| [Double Mach reflection](/benchmarks/double-mach-reflection.md), $240\times60$, $N\in[2,5]$ | 216 / 35 / 54 | 15 578 / 3856 / 6569 |
+| [Forward-facing step](/benchmarks/forward-facing-step.md), Mach 3 | 216 / 44 / 82 | 65 782 / 19 774 / 40 217 |
+| 3D spherical explosion, $50^3$ | 216 / 56 / 141 | 10 839 / 3557 / 8601 |
+
+The authors state speedups of "a factor 4" and "almost a factor 2.5"
+(double Mach reflection), "almost a factor 3" and "about 1.6"
+(forward-facing step), and three and 25 % (3D explosion) for the p- and
+hp-adaptive setups; the table ratios are 4.04, 2.37, 3.33, 1.64, 3.05 and
+1.26 *(compiler check, not in the sources)*, with equal or sharper shocks; in the 3D case almost
+8 % of the elements are finite-volume limited, which cuts the hp gain
+(Tables 3, 4, 6). On the [Sod shock tube](/benchmarks/sod-and-lax-shock-tubes.md)
+the adaptive run uses 151.6 against 216 DOFs per element and resolves the
+shock more sharply, on the [Shu–Osher problem](/benchmarks/shu-osher-problem.md)
+70.8 against 216 with a better match behind the shock (§8.4–8.5). Mixed
+degrees converge at the order $N_{\min}+1$ of the lowest degree present
+(checkerboard $N_{\max}=6$, $N_{\min}=2$–$5$, Table 2), and the cost per
+degree of freedom and time step is at most about 15 % above FLEXI for a
+half–half split of degrees and up to 80 % for a checkerboard (Fig. 7).
+The DG/FV interfaces emit acoustic waves, strongest for
+$N_{\mathrm{FV}}=N+1$, which $N_{\mathrm{FV}}=2N+1$ "almost completely
+avoids" (§8.6–8.7, schlieren images).
+
+## Static local p-refinement
+
+[Kou et al. (2022)](/sources/kou-2022.md) use a fixed, geometry-based
+p-refinement of [flux reconstruction](/methods/flux-reconstruction.md)
+near an immersed wall: degree 1 in the far field, 2 in a buffer and 3 in
+cells whose centre lies within a quarter of the cylinder diameter of its surface, with
+mortar elements at faces between degrees, on which the common and
+interaction fluxes are computed and projected back (§5.2). On the
+cylinder at $\mathrm{Re}=40$ this reproduces the uniform degree-3 result
+with 148 296 against 532 576 degrees of freedom, 28 % (Fig. 14); solution-adaptive
+p-adaptation is left to future work ([immersed-boundary methods](/methods/immersed-boundary-method.md)).
+
 ## Entropy-stable transfer between degrees
 
 Transferring a solution between degrees by interpolation or $L^2$
@@ -181,6 +325,24 @@ solver on stiff problems (§5.2, §6.2); no failing alternative is shown.
   authors defer them (§4.2). Bai & Li's refinement handles shocks but is
   h-only and uses geometric and pressure-gradient criteria, not an error
   estimator.
+- "hp" means different things in the sources. In Basile et al. it is
+  mesh refinement plus degree enrichment; in Mossier et al. it is degree
+  adaptation plus whole-element switching to finite-volume subcells on a
+  fixed mesh (§1, §4). The two are kept apart on this page; neither
+  source compares with the other's strategy.
+- Mossier et al.'s comparisons are single-core, except the static airfoil
+  run on 32 cores; there the adaptive runs need about 2.9 times fewer time
+  steps, but 2.4–2.7 times the wall time of the 32-core run (Table 5),
+  which the text gives as "about 3 times" *(compiler check, not in the sources: ratios of the printed Table 5 values)*. Their thresholds are tuned per
+  test, and their statement "about 25% less DOFs" on Sod corresponds to
+  $1-151.6/216=30$ % (§8.4) *(compiler check, not in the sources)*.
+- Mossier et al. print the linear threshold law (37)–(38) with $N$ where
+  linear interpolation between $N_{\min}$ and $N_{\max}$ needs $N-N_{\min}$;
+  as printed it reproduces the end values only for $N_{\min}=0$
+  *(compiler check, not in the sources)*. One bullet of §7.3 names
+  $FV^N_{\mathrm{lower}}$ as the switch-back threshold where the other
+  bullet and Fig. 4 use $FV^N_{\mathrm{upper}}$, which is meant. How
+  $DG^N_{\mathrm{coarse}}$ is set is not stated.
 - Eq. (43) prints the new degree as $\max(N_K+1,N_{\max})$. The text and
   Algorithm 2 increase the degree by one with the cap $N_{\max}$, which is
   $\min$.
@@ -191,3 +353,5 @@ solver on stiff problems (§5.2, §6.2); no failing alternative is shown.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.6, §3.4, §3.6.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §4.1.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — App. A.1 Eqs. (47)–(50), Fig. 9 (arXiv v4).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3.3 Eqs. (14)–(18), §4.1–4.3 Eqs. (19)–(31), §5 Eqs. (32)–(36), §6, §7.2–7.3 Eqs. (37)–(38) Figs. 3–4, §8.2–8.9 Tables 2–6, Fig. 7, §9.
+- [Kou et al. (2022)](/sources/kou-2022.md) — §5.2, Fig. 14.

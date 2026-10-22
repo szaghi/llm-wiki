@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Entropy stability
@@ -272,6 +272,27 @@ which satisfy all entropy inequalities, are at most first order
 stability as a necessary ingredient whose sufficiency the sources do not
 claim.
 
+[Jain & Moin (2022)](/sources/jain-2022.md) make the same point for
+two-phase flows from the other side. As they recall, discrete
+kinetic-energy conservation is enough for stability in incompressible
+flow but not in compressible flow, where entropy must also be controlled;
+for compressible two-phase flows they add that entropy stability alone is
+not enough either: the volume fraction must stay bounded and the scheme
+must keep uniform velocity and pressure uniform across interfaces
+(§1). In their tests Chandrashekar's internal-energy flux and the cubic
+split, which conserve kinetic energy and approximately entropy, are
+stable in single-phase under-resolved Taylor–Green and isotropic
+turbulence, but diverge at density ratio 10, which the authors attribute
+to their violation of the interface-equilibrium condition (§4.1–4.2;
+[entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md)).
+The entropy in this analysis is the physical specific entropy of each
+phase. Its transport equation contains source terms proportional to the
+interface-regularization flux, so phase entropy is conserved only at the
+equilibrium (hyperbolic-tangent) interface profile; regularization is
+irreversible, and its entropy production in a stationary slab test is
+small and positive, of order $10^{-7}$ relative (§2.2, Eqs. (19)–(21),
+App. A).
+
 ## Discrete entropy tests
 
 With EC fluxes everywhere, the semi-discrete total entropy is conserved,
@@ -423,3 +444,4 @@ a discrete, local relative of the same principle.
 - [Edoh (2022)](/sources/edoh-2022.md) — App. B Eqs. (B.1)–(B.5), Figs. 1, B.5.
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §2 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.1 Eqs. (2)–(4), §3.2 Eqs. (20)–(21), §4.1, §4.3 (arXiv v3).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §2.2 Eqs. (19)–(21), §4.1–4.2, App. A Fig. 12 (arXiv v1).

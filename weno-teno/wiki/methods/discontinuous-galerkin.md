@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -104,6 +104,13 @@ Two further formulations appear:
   conservation law, and remeshing without conservative interpolation.
   Moving the element faces with the solution gives
   [implicit shock tracking](/methods/implicit-shock-tracking.md).
+  [Huang & Zahr (2022)](/sources/huang-2022.md) also solve unsteady
+  problems as steady ones in $d$-dimensional space–time, with nodal DG of
+  total degree $N$ on curved simplices whose element map is continuous and
+  of its own degree, and add an *enriched* residual, the same DG form
+  tested with degree $N+1$, which they call a surrogate for the violation
+  of the infinite-dimensional weak form (§1); minimizing it over the node positions is the
+  HOIST method (§2.3, §4, Eqs. (8)–(14)).
 - **Moment equations with reconstruction.** [Li, Shu & Qiu (2022)](/sources/li-2022-d.md)
   test the conservation law with $1$ and $(x-x_i)/\Delta x$ on each cell
   (§2.1, Eqs. (2.2)–(2.4)). These two functions span $\mathbb P^1(I_i)$, so
@@ -125,7 +132,13 @@ Three further formulations:
   (3.2)–(3.5), after X. Zhang's positivity-preserving DG for Navier–Stokes).
   Yu & Hesthaven use an LDG-type mixed form with centred viscous fluxes for
   their artificial-viscosity term (§2), PyFR uses BR1 or BR2 (Dzanic et al.,
-  §4.2; Dzanic & Witherden, §4.2).
+  §4.2; Dzanic & Witherden, §4.2), and [Kou et al. (2022)](/sources/kou-2022.md)
+  use the LDG common solution $\{\!\{u\}\!\}-\beta_{\mathrm{LDG}}[\![u]\!]$ and
+  viscous flux $\{\!\{f_v\}\!\}+\tau_{\mathrm{LDG}}[\![u]\!]+\beta_{\mathrm{LDG}}[\![f_v]\!]$
+  with $\beta_{\mathrm{LDG}}=0.5$, $\tau_{\mathrm{LDG}}=0.1$ (page-local
+  parameters and viscous flux $f_v$) inside
+  [flux reconstruction](/methods/flux-reconstruction.md) (§3, Eqs. (9),
+  (15)).
 - **DG on point clouds.** [Du, Shu & Zhong (2022)](/sources/du-2022.md)
   run DG on polygonal, possibly non-convex cells built by grouping
   Voronoi regions of scattered data points, each cell holding at least
@@ -268,7 +281,9 @@ interfaces.
   coefficients
   ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
   [convex limiting](/methods/convex-limiting.md); Rueda-Ramírez et al.
-  (2022)).
+  (2022)). [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) switch
+  whole elements instead, from p-adaptive DG to a finite-volume scheme on
+  refined subcells ([h- and hp-adaptation](/methods/hp-adaptation.md)).
 - **Damping and filtering.** Oscillation-free DG adds stiff damping terms to
   the semi-discrete system. The [OEDG](/methods/oedg.md) method of Peng et al.
   (2024) instead solves the damping step exactly after each Runge–Kutta stage
@@ -291,7 +306,11 @@ interfaces.
   faces onto discontinuities, so that no limiter, reconstruction or
   artificial viscosity is needed. Luo et al. (2021) use a plain central
   flux at interior faces (§3.3,
-  [implicit shock tracking](/methods/implicit-shock-tracking.md)).
+  [implicit shock tracking](/methods/implicit-shock-tracking.md)). Huang
+  & Zahr (2022) keep the standard upwind DG equations as a constraint and
+  minimize the enriched residual over the node positions; a modal sensor
+  is used only to reset oscillatory elements during the iterations
+  (Remark 5, §5.2.3).
 
 [Pazner (2021)](/sources/pazner-2021.md) gives the
 invariant-domain-preserving variant of the blending remedy. His low-order
@@ -357,7 +376,8 @@ use different shock-capturing methods, so this is not a contradiction.
   et al. write $k$, Ranocha et al., Pazner, Luo et al. and Basile et al.
   write $p$, Wu & Shu write $K$, and Rueda-Ramírez et al. write $N$; Bai
   & Li, Du, Shu & Zhong and Du & Yang write $k$; Abgrall et al., Cicchino
-  et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$. All are translated to $N$ here. Dzanic et al. use $u^+$ for
+  et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$;
+  Huang & Zahr write $p$ and Kou et al. $P$; Mossier et al. write $N$. All are translated to $N$ here. Dzanic et al. use $u^+$ for
   the trace of the element of interest and $u^-$ for the neighbour, and
   Dzanic & Witherden print opposite labels in text and figure; this page
   writes inner and outer traces in words.
@@ -394,3 +414,6 @@ use different shock-capturing methods, so this is not a contradiction.
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §4.1–4.2, §5, Table 1 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.2–2.3 Eq. (10), §4.2, Alg. 2, Tables 3–4 (arXiv v3).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §2 Eq. (2.23), §5.3.2.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §2.3 Eqs. (8)–(14), §4, Remark 5, §5.2.3 (arXiv v2).
+- [Kou et al. (2022)](/sources/kou-2022.md) — §3 Eqs. (9), (15).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4, §7.

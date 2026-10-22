@@ -5,7 +5,7 @@ description: "MUSCL reconstructs limited piecewise-linear states from cell avera
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
 tags: [reconstruction, limiting, finite-volume, riemann-solver]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
@@ -79,6 +79,8 @@ inverse Jacobian $[\partial u/\partial w]^{-1}$ (Eqs. (29)–(30); page-local pr
 | [Peng et al. (2022)](/sources/peng-2022.md) | [AMROC](/software/amroc.md)–Clawpack, multispecies reactive Euler, curvilinear block-structured AMR | AUSM, hybrid Roe/HLL | mapped-mesh slopes, area-weighted restriction, Newton-solved bilinear prolongation ([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)) |
 | [Wang et al. (2022)](/sources/wang-2022.md) | AMROC, Euler on Cartesian grids with level-set geometry | PVRS; HLL for the reactive case | bilinearly complete ghost-cell reconstruction ([immersed boundaries](/methods/immersed-boundary-method.md)) |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) | $N$-phase pressure–temperature equilibrium model | Rusanov, HLLC | MUSCL $\kappa_{\mathrm M}=1/3$ with compressive limiters (no Hancock step) |
+| [Hu et al. (2022)](/sources/hu-2022.md) | Cartesian FV, Euler, dimension by dimension | HLLE, HLLEM, HLLC, RHLLEM | second-order MUSCL with second-order TVD Runge–Kutta, no Hancock step; MUSCL interface densities compete with THINC ones in a face-wise BVD selection ([HLL-family solvers](/methods/hll-riemann-solvers.md)) |
+| [Lesur et al. (2023)](/sources/lesur-2023.md) | IDEFIX, HD and MHD on primitive variables | Rusanov, HLL, HLLC/HLLD, Roe | piecewise-linear reconstruction with the van Leer limiter (second order) beside LimO3 and PPM, with explicit RK2/RK3 ([IDEFIX](/software/idefix.md)) |
 
 Chemistry enters Peng et al.'s scheme by second-order Strang splitting with a semi-implicit
 fourth-order generalized Runge–Kutta integrator, GRK4A (§2.1); see
@@ -87,7 +89,14 @@ fourth-order generalized Runge–Kutta integrator, GRK4A (§2.1); see
 
 ## Accuracy actually observed
 
-The formal second order is not measured as a global order in these sources.
+The formal second order is not measured as a global order in the three AMR, immersed-boundary
+and multiphase sources; Hu et al. (2022) run no convergence study either (their order is the
+formal one of MUSCL and RK2). The code paper is the exception:
+[Lesur et al. (2023)](/sources/lesur-2023.md) (§4.2, Figs. 7–8) show second-order convergence
+on linear MHD waves with piecewise-linear reconstruction and RK2 for all four Riemann solvers;
+with HLLD, LimO3 and PPM (with RK3) have lower errors, but PPM stops converging at high
+resolution, reaching about $10^{-2}$ for the slow mode, and the authors recommend LimO3, "as it
+shows proper second order convergence for all of the resolutions we have tested".
 
 - Peng et al.'s manufactured-solution test on stretched, skewed and distorted meshes with three
   static refinement levels (§3.1, Fig. 5) is read by the authors as second order; the paper
@@ -111,3 +120,5 @@ The formal second order is not measured as a global order in these sources.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eqs. (26)–(31)), §3.1.
 - [Peng et al. (2022)](/sources/peng-2022.md) — §2.1, §2.3, §2.4 (Eqs. (15)–(20)), §2.5.2, §3.1 (Fig. 5) (accepted manuscript).
 - [Wang et al. (2022)](/sources/wang-2022.md) — §2.1 (Eqs. (4)–(11)), §3.3 (Table 1), §3.6.
+- [Hu et al. (2022)](/sources/hu-2022.md) — §2.1, §4.2, §5.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Figs. 7–8).

@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-22T14:00:00Z
+timestamp: 2026-10-23T12:00:00Z
 ---
 
 # Notation registry
@@ -173,8 +173,12 @@ uses the same letter.
 | $\mu_d$, $\sigma_i$, $b$, $b_1$, $b_2$, $\xi_{\mathrm A}$ | TENO-A discontinuity measure, its mapping and constants | adaptive TENO, troubled-cell indicators |
 | $x^c_i$, $\varsigma$, $\mathcal T$, $\mathcal A$ | THINC jump centre, normalized position of the cell average in the jump $\varsigma=(\bar u_i-f_{\mathrm m})/f_{\mathrm j}$, and profile parameters | THINC, TENO-THINC, symmetry preservation |
 | $\varsigma$ (learned weights) | WENO3-NN resolvedness indicator; no page uses it together with the THINC $\varsigma$ | learned WENO weights, smoothness indicators |
-| $\varrho_K$ | exponential modal decay rate of a DG solution in element $K$ (Basile et al.) | hp-adaptation, troubled-cell indicators, smoothness indicators |
+| $\varrho_K$, $\varrho^{(d)}_K$ | exponential modal decay rate of a DG solution in element $K$ (Basile et al.; per direction $d$, Mossier et al.) | hp-adaptation, troubled-cell indicators, smoothness indicators |
 | $\mathfrak a_K$ | algebraic modal decay exponent predicted by Yu et al.'s network | artificial viscosity, hp-adaptation, troubled-cell indicators |
+| $N_{\mathrm{GL}}$ | number of Gauss–Lobatto points of a cell-average decomposition, endpoint weight $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ | optimal cell-average decomposition, bound preservation, positivity-preserving Navier–Stokes flux, SSP Runge–Kutta |
+| $a^{\mathrm{NS}}$ | Lax–Friedrichs coefficient of a positivity-preserving viscous (Navier–Stokes) flux | positivity-preserving Navier–Stokes flux, bound preservation, optimal cell-average decomposition |
+| $\vartheta_{\mathrm{ESW}}$, $\mathsf D_p$, $\varepsilon_{\mathrm s}$ | effective scaled wavenumber of a scale sensor, its $p$-th difference operator and regularization | scale sensors, adaptive TENO, MDCD schemes, hybrid WENO |
+| $c_{\mathrm{disp}}$, $c_{\mathrm{diss}}$ | dispersion and dissipation parameters of MDCD schemes | MDCD schemes, approximate dispersion relation, numerical dissipation |
 | $\mathcal R$, $\mu_0$, $\mu_1$ | normalised reconstruction operator, intercept and slope of a linear one | normalised-variable diagram, ROUND, numerical dissipation |
 | $u^{\mathrm{HLL}}$ | HLL intermediate state | HLL solvers, central-upwind, fluctuation-form FD-WENO |
 | $\mathcal C(u)$ | matrix of the non-conservative product $\mathcal C(u)\partial_xu$ | fluctuation-form FD-WENO, HLL solvers |

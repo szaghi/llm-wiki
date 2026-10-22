@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hermite WENO"
-description: "Hermite WENO (HWENO) builds WENO candidates from cell averages and derivative or first-moment information, giving compact stencils; the page records the moment-based finite-volume HWENO (P¹-weak-form moment equations, multi-resolution hierarchy, troubled-cell moment modification, positivity-preserving hybrid version for Navier–Stokes) and its use as a smoothness sensor for continuous finite elements."
+description: "Hermite WENO (HWENO) builds WENO candidates from cell averages and derivative or first-moment information, giving compact stencils; the page records the moment-based finite-volume HWENO (moment equations, multi-resolution hierarchy, moment modification, positivity-preserving hybrid), the finite-difference HWENO-R that drops the target-point derivative, and its use as a finite-element sensor."
 status: established
-aliases: [HWENO, Hermite WENO reconstruction, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
+aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Hermite WENO
@@ -119,6 +119,50 @@ read that limiter as "artificial viscosity": fewer troubled cells at $\mathrm{Re
 sharper fronts than at $\mathrm{Re}=\infty$ (Example 4.2, §5;
 [artificial viscosity](/methods/artificial-viscosity.md)).
 
+## Finite-difference HWENO without the target-point derivative (HWENO-R)
+
+Finite-difference HWENO (Liu & Qiu; Zhao, Zhang & Qiu; Zhang & Zhao's HWENO-L, as recalled by Fan, Zhao,
+Xiong & Qiu 2023, §1) evolves the point values $u_i$ together with $v_i=\partial_xu(x_i)$ through
+$\partial_tv+\partial_x\big(f'(u)v\big)=0$, both in [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md)
+form with Lax–Friedrichs splitting of $f$ and of $f'(u)v$ (page-local $h_j$ the split derivative
+fluxes; Eqs. (2.2)–(2.3)). Fan et al. (2023, §2.1) build **HWENO-R** for the Euler equations by
+**dropping the derivative at the target point** from the flux reconstruction:
+
+- the large candidate is the quartic $q_0$ matching the three point fluxes $f^+_{i-1},f^+_i,f^+_{i+1}$ as
+  cell averages and the two derivative fluxes $h^+_{i-1},h^+_{i+1}$; the small candidates are the linear
+  polynomials on $\{f^+_{i-1},f^+_i\}$ and $\{f^+_i,f^+_{i+1}\}$ (Fig. 2.1(a));
+- $q_0(x_{i+1/2})=-\tfrac{23}{120}f^+_{i-1}+\tfrac{19}{30}f^+_i+\tfrac{67}{120}f^+_{i+1}-\Delta x\big(\tfrac3{40}h^+_{i-1}+\tfrac7{40}h^+_{i+1}\big)$
+  (sign corrected, see Qualifications), and the derivative flux is the linear value
+  $\hat h^+_{i+1/2}=q_0'(x_{i+1/2})=\tfrac1{8\Delta x}(3f^+_{i-1}-16f^+_i+13f^+_{i+1})+\tfrac18h^+_{i-1}-\tfrac38h^+_{i+1}$,
+  which "works well without spurious oscillations" (Eq. (2.5));
+- the nonlinear combination is the [CWENO](/methods/cweno.md)/WENO-ZQ one with
+  $\tau=\big(\tfrac12(|\beta_0-\beta_1|+|\beta_0-\beta_2|)\big)^2$ (page-local), $\epsilon=10^{-10}$ and any
+  positive linear weights, recommended $(0.99,0.005,0.005)$; $\tau/(\beta_k+\epsilon)=O(\Delta x^4)$ is
+  asserted by Taylor expansion (Step III);
+- the derivative unknowns pass through a fifth-order HWENO limiter, a point-value Hermite quartic and two
+  linear interpolants with weights $(0.9,0.05,0.05)$, but only in the stage values of SSP-RK3; the
+  spatial operator sees the unlimited derivatives (Eqs. (2.6)–(2.7));
+- in 2-D the mixed derivative fluxes are fourth-order linear,
+  $\tfrac1{12}(-q_{i-1}+7q_i+7q_{i+1}-q_{i+2})$ (page-local $q$), not the third-order split
+  reconstruction of earlier schemes (Eq. (2.11)); reconstruction is characteristic-wise for the main
+  fluxes and component-wise for the derivative fluxes (Remark 2.2).
+
+HWENO-L also uses $h^+_i$, i.e. $v_i$, in a quintic and a sixth-order reconstruction, but its limiter is fifth
+order, so the scheme is fifth order; HWENO-R makes the reconstruction order equal the scheme order
+(Remark 2.1). The authors attribute HWENO-L's failures to the unlimited $v_i$: after one step of the 1-D
+[Sedov](/benchmarks/sedov-blast-wave.md) problem its density derivative exceeds 4000, against below 20
+for HWENO-R, and HWENO-L fails even with a positivity-preserving flux limiter (Example 3.5, Fig. 3.9).
+HWENO-R runs the 1-D and 2-D Sedov, [double rarefaction](/benchmarks/double-rarefaction-problem.md) and
+[Leblanc](/benchmarks/leblanc-shock-tube.md) problems without positivity limiters; the Mach 2000
+[jet](/benchmarks/high-mach-astrophysical-jet.md) and a Mach 10 reflection–diffraction problem need the
+parametrized flux limiter of Xiong, Qiu & Xu, active in 0.0146 % and 0.0012 % of cells
+([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)). It is fifth order
+on Burgers, 1-D Euler and a near-vacuum isentropic vortex (Tables 3.1–3.3), more accurate than WENO-ZQ
+at equal CPU time (CPU ratios 1.2–1.8, error ratios about 1/5), slightly cheaper than HWENO-L, and on
+the [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md) at $120\times480$ comparable
+to WENO-ZQ at $240\times960$ (Example 3.13). Fan et al. (§1) count three points for fifth-order HWENO
+against five for WENO.
+
 ## HWENO candidates on a finite element mesh
 
 Kuzmin & Vedral (2023, §5, Eq. (11)) outline, "without claiming originality", the Zhong–Shu-type
@@ -214,6 +258,15 @@ are given in the ingested sources.
   any positive numbers as long as their sum equals one", but in §1 that their gap "cannot be too
   large" and in Remark 1 that larger weights on higher-degree polynomials make the scheme less stable;
   "any" holds for smooth-region accuracy only.
+- **HWENO-R slips and limits.** Fan et al. (2023, §2.1) print
+  $-\Delta x\big(\tfrac3{40}h^+_{i-1}-\tfrac7{40}h^+_{i+1}\big)$ in $q_0(x_{i+1/2})$. *(Compiler check, not in
+  the sources: solving the five Hermite conditions gives $+\tfrac7{40}$; for $f=x$ the corrected value
+  returns $x_{i+1/2}$, the printed one does not.)* Their printed indicator of the limiter's point-value
+  quartic does not equal the Jiang–Shu integral of that quartic
+  ([smoothness indicators](/definitions/smoothness-indicator.md)). "Arbitrary" positive linear weights
+  coexist with a recommended band $\gamma_0/\gamma_1\in[100,300]$, $d_0/d_1\in[10,30]$ (Example 3.4), and
+  "robust without positivity limiters" coexists with negative minimum pressures on coarse meshes of the
+  near-vacuum vortex run without limiters (Table 3.3).
 - **Heuristic resolution argument.** Remark 1 of Li, Shu & Qiu (2022) assumes the low-order indicators
   stay $O(\Delta x^2)$ in a cell that contains a discontinuity, and that after modification all
   indicators behave as on smooth data, although the modified moment is built from averages that
@@ -250,3 +303,4 @@ are given in the ingested sources.
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3.1–3.2, Eqs. (3.1)–(3.9); §4, Tables 4.1–4.18, Fig. 4.9.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.6; §3.1.5.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.11), Remarks 2.1–2.4; §3, Tables 3.1–3.4, Examples 3.4–3.13, Fig. 3.9; App.

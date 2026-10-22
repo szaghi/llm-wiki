@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multi-resolution WENO"
-description: "Multi-resolution WENO combines polynomials on nested central stencils of increasing size, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy, the fifth-order finite-difference variant of Wang et al. with weight-free indicators, its Hermite and entropy-stable uses, costs, and the third-order fix of Balsara et al."
+description: "Multi-resolution WENO combines polynomials on nested central stencils of increasing size, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy, the fifth-order finite-difference variant of Wang et al., the scale-invariant MR-AWENO interpolation, its Hermite, entropy-stable and steady-state uses, costs, and the third-order fix of Balsara et al."
 status: established
-aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO]
+aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Multi-resolution WENO
@@ -91,6 +91,43 @@ smooth problems" (§3.1.1, p. 5), and show the original scheme (WENOZS5) missing
 third weight set and failing to converge on their 3-D viscous test (§5.1, Figs. 5.2–5.6). Their scheme
 reaches fifth order with $(0.95,0.049,0.001)$, $(1/3,1/3,1/3)$ and $(0.001,0.049,0.95)$ (§5.1). The
 decoupling of indicators from linear weights is the paper's main contribution.
+
+## Multi-resolution interpolation for A-WENO (MR-AWENO) and its scale-invariant form
+
+Li, Li, Don & Wang (2023, §2.1) recall the MR-AWENO interpolation of Wang, Zhu, Yang & Zhao (2021) for the
+[alternative formulation](/methods/alternative-weno.md): point-value Lagrange interpolants of degree 0, 2,
+4 on $T_1$, $T_2$, $T_3$ (Eqs. (12)–(15)), e.g. the interface values
+$f_i$, $-\tfrac18f_{i-1}+\tfrac34f_i+\tfrac38f_{i+1}$ and
+$\tfrac3{128}f_{i-2}-\tfrac5{32}f_{i-1}+\tfrac{45}{64}f_i+\tfrac{15}{32}f_{i+1}-\tfrac5{128}f_{i+2}$; linear weights
+$(1,10,100)/111$; the Legendre-form indicators of the [smoothness indicators](/definitions/smoothness-indicator.md)
+page with $\beta_1=\min\big((f_{i-1}-f_i)^2,(f_i-f_{i+1})^2\big)$; the global indicator of Step 4 above;
+$\epsilon=10^{-6}$; and the interface value of Step 5 (Eqs. (16)–(25)). *(Compiler check, not in the sources:
+up to point values in place of cell averages, the hierarchy, the global indicator and the interface value
+coincide with Steps 1–5 above; the CMAME paper of Wang, Zhu, Yang & Zhao is not the ingested Comput. Fluids
+paper of Wang et al. 2021.)*
+
+**Not scale-invariant.** Li et al. (2023) prove that the operator commutes with $f\mapsto\sigma f$ iff its
+weights are invariant, iff the unnormalized weights scale by a $k$-independent factor (Theorems 1–2),
+and that the MR-AWENO weights fail this for every $\sigma\ne0,\pm1$ (Theorem 3, on data with $\tau\ne0$),
+which they trace to the different scalings of $\beta_k$, $\tau$ and $\epsilon$ (§2.3); on the Lax problem scaled by $10^{-7}$ the
+scheme oscillates (Fig. 1) ([scale invariance](/properties/scale-invariance.md)).
+
+**MR-AWENO-Si.** The fix has two parts (§2.3): the global indicator is replaced by the squared fifth
+undivided difference $\tau^*$ on $T_3\cup\{x_{i+3}\}$ (Eq. (42)), and $\epsilon$ by $\epsilon\,\mathsf m^2$
+with the descaler $\mathsf m=\tfrac15\sum_{T_3}|f_j|+10^{-100}$ of [affine-invariant WENO](/methods/affine-invariant-weno.md)
+(Eqs. (43)–(44)); Theorem 4 proves scale invariance. In quadruple precision the scale-invariance error is
+at round-off for $\sigma\in[10^{-19},10^{19}]$ on sine, ReLU and Heaviside data, while MR-AWENO's vanishes
+only at $\sigma=1$ (§2.4, Fig. 3). The two parts act differently: on the scaled Lax problem $\tau^*$ alone
+removes the oscillations at $\sigma=1$ but not at $10^{-7}$ (§2.5, Fig. 4,
+[ENO property](/definitions/eno-property.md)), so the improvement at standard scaling, where MR-AWENO
+already oscillates on the Einfeldt, Sod and Lax problems at $N_x=200$ (§3.2, Fig. 5), comes from $\tau^*$.
+Both schemes are fifth order on a 1-D density wave ($L^1$ $6.44\times10^{-11}$ at 320 points, Table 1) and
+the [isentropic vortex](/benchmarks/isentropic-vortex.md) (Table 2); MR-AWENO-Si is sharper on
+[double Mach reflection](/benchmarks/double-mach-reflection.md) ($1600\times400$), and both run with a
+positivity-preserving limiter on [Sedov](/benchmarks/sedov-blast-wave.md) and the Mach 2000
+[jet](/benchmarks/high-mach-astrophysical-jet.md) (§3). Scale invariance is what makes the
+characteristic-wise scheme well-balanced for the Euler equations with gravity (§4;
+[well-balancing](/properties/well-balancing.md)).
 
 ## Hermite and moment-based hierarchy
 
@@ -183,6 +220,20 @@ for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limite
   are 2m56s vs 2m37s, 2m50s vs 2m38s, 13m53s vs 13m52s and 3m21s vs 3m3s, i.e. 0.1–12 % more
   *(compiler check, not in the sources: ratios of the printed timings)*.
 
+**Steady states.** Wan & Xia (2022, §2.4, Eqs. (2.31)–(2.45)) reprint the finite-difference Zhu–Shu
+scheme ("MRWENO"), with the original equivalent polynomials, linear weights $1,10,100$ (normalized) and
+a weighted base indicator built from the two one-sided differences, as a comparator for steady Euler
+problems: its residue stalls at about $10^{-3.5}$ on the $400^2$ plate problems, does not converge on a 3-D plate, and on
+the [forward-facing step](/benchmarks/forward-facing-step.md) it converges only with the Lax–Friedrichs
+speed enlarged by 10 % (Examples 4.5, 4.7–4.8, 4.15; [hybrid schemes](/methods/hybrid-weno.md)). Their
+§1 credits it with "lovely convergence" but oscillations near discontinuities, where it behaves almost
+like a linear scheme.
+
+**On triangles.** Ji, Liang & Fu (2022, §5.8) state, by comparison with the published figure, that their
+unstructured fifth-order TENO at $h\approx1/200$ resolves double Mach reflection comparably to Zhu & Shu's
+triangular multi-resolution WENO5 at $h\approx1/320$; the codes and fluxes differ. Balsara, Samantaray &
+Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative for prolongation.
+
 ## Qualifications
 
 - **Which weights were used.** Wang et al. (2021) recommend $(1,10,100)/111$ "for all examples in
@@ -205,6 +256,13 @@ for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limite
 - The claim against the original multi-resolution WENO is made by Wang et al. with Zhu, a co-author
   of the original; Balsara et al.'s third-order fix is likewise made by a group including Shu.
   Neither is an independent test, and the original Zhu–Shu paper is not ingested.
+- *(Compiler check, not in the sources.)* Li et al.'s ratio (Eq. (41)),
+  $\alpha_k[\sigma f]/\alpha_k[f]=1+(\sigma^2-1)\frac{\tau}{\tau+\beta_k+\epsilon}\big(1+\frac{\epsilon}{\beta_k+\epsilon/\sigma^2}\big)$,
+  is exact for $\beta_k$ quadratic and $\tau$ quartic in the data, and depends on $k$ even for $\epsilon=0$.
+- Li et al. (2023, §5.2) call the polytropic accuracy result "super-convergence behavior like the spectral
+  method": the printed order 12.55 comes from a well-balanced error of $7.49\times10^{-4}$ at $N=32$,
+  after which the errors equal those of the non-well-balanced scheme (Table 6). On the vortex at $160^2$
+  the MR-AWENO-Si error is $3.09\times10^{-6}$ against $1.05\times10^{-7}$ for MR-AWENO (Table 2).
 - Balsara et al. (2024, Table III) contain an unexplained rate of 12.06 for ninth-order
   multi-resolution WENO.
 
@@ -216,3 +274,7 @@ for RKDG methods of various orders" ([WENO limiters for DG](/methods/weno-limite
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; §VII.a–b, Tables I, III; App. D, Eqs. (D.7)–(D.10).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §1.
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1; §2.1–2.5, Eqs. (12)–(46), Theorems 1–4, Figs. 1–4; §3, Tables 1–2, Figs. 5–8; §4; §5, Table 6.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §1; §2.4, Eqs. (2.31)–(2.45); §4, Examples 4.5, 4.7–4.8, 4.15.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.8.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.

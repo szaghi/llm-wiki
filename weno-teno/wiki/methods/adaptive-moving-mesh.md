@@ -5,7 +5,7 @@ description: "An r-adaptive finite-difference scheme moves a fixed number of gri
 status: established
 aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Adaptive moving mesh finite differences
@@ -268,6 +268,17 @@ approach is block-structured h-refinement on mapped meshes
 discretization ([h- and hp-adaptation](/methods/hp-adaptation.md)). No
 source compares the two strategies on a common test.
 
+[Huang & Zahr (2022)](/sources/huang-2022.md) describe their implicit
+shock tracking as having "r-adaptive behavior" (§1): the number and
+connectivity of the nodes are fixed apart from element removals, and the
+nodes move. The motion is not driven by a monitor function and a
+redistribution equation, as here, but is an unknown of an optimization
+problem that minimizes an enriched DG residual, so the mesh converges to
+one aligned with the discontinuities instead of clustering points near
+them ([implicit shock tracking](/methods/implicit-shock-tracking.md)).
+Unsteady problems are solved as steady problems in space–time, with no
+time step on a moving mesh.
+
 ## Qualifications
 
 - The efficiency claims rest on a visual comparison of solutions; no error
@@ -292,3 +303,4 @@ source compares the two strategies on a common test.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, §2 Eqs. (2.1)–(2.3), §3 Eqs. (3.1)–(3.12), Prop. 3.1, Remark 3.1, §3.4 Eq. (3.21), Remark 3.2, §4 Eqs. (4.1)–(4.2), Remark 4.1, §5 Eq. (5.1), Ex. 5.1–5.11, Tables 5.1–5.3 (arXiv v1).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — ref. [9] (moving-mesh work cited); block-structured h-refinement used.
 - [Bai & Li (2022)](/sources/bai-2022.md) — quadtree AMR of the DG solver.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2.1 (arXiv v2).

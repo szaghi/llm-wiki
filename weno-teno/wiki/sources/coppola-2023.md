@@ -276,7 +276,7 @@ No item is unparseable.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)

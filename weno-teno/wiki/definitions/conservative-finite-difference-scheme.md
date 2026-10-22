@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -57,6 +57,39 @@ test supports the stability claim. Their viscous terms are deliberately discreti
 chain-rule form with second-order central differences (Eqs. (34)–(36)), and a manufactured-solution
 test gives observed orders of about 5.8–6.0 for the convective right-hand side alone and about 2 with
 the viscous terms (App. A, Tables A.1–A.2).
+
+The same construction, in the same form, is the stated background of further finite-difference sources: Hong, Ye & Ye (2022, Eqs. (3)–(5)), Huang, Liang & Fu (2023, Eqs. (2)–(5)) and Liang et
+al. (2022, Eqs. (3)–(5)) for TENO variants, Wan & Xia (2022, Eqs. (2.2)–(2.4)), who call $\phi$ the
+"sliding function", for a steady-state hybrid WENO, Jeong, Yang & Yoon (2022, Eqs. (3)–(5)) for an
+RBF-based WENO, and Li, Chen & Ren (2022, Eqs. (2)–(4)) for linear six-point fluxes
+([MDCD schemes](/methods/mdcd-scheme.md)). Three extensions of the construction appear:
+
+- **Order and the approximation space.** Jeong et al. (2022, Remark 2.1) note that the order survives
+  the division by $\Delta x$ because $\hat f_{i-1/2}$ uses the same stencil structure shifted by one
+  cell and the polynomial space is shift- and scale-invariant; an RBF space is not, so their proof
+  has to control the change of the shape parameter between neighbouring interfaces
+  ([RBF-based WENO](/methods/rbf-weno.md)). They invoke the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)
+  for convergence to weak solutions (§2.1).
+- **Derivative equations.** The finite-difference Hermite WENO of Fan, Zhao, Xiong & Qiu (2023, §2,
+  Eqs. (2.2)–(2.3)) evolves $u$ and $v=\partial_xu$ with
+  $\partial_tv+\partial_x\big(f'(u)v\big)=0$, both in flux-difference form, with one implicit function
+  for $f$ and one for $f'(u)v$, both Lax–Friedrichs split ([Hermite WENO](/methods/hermite-weno.md)).
+- **Positivity analysis.** Because the point values are cell averages of $\phi$, the forward-Euler
+  update can be decomposed like a finite-volume one. Fan, Zhang & Qiu (2022, §3.2) build on this the
+  sufficient positivity conditions of a finite-difference WENO scheme for the Navier–Stokes equations:
+  with a nonlinear splitting $\tfrac12\big(u\pm f(u,\partial_xu)/\beta_{i+1/2}\big)$ of the total flux and
+  an $N_{\mathrm{GL}}$-point Gauss–Lobatto decomposition of the implicit function (page-local
+  $\beta_{i+1/2}$, $N_{\mathrm{GL}}=\lceil(2r+3)/2\rceil$), Theorem 1 gives positivity of $\rho$ and $\rho e$
+  under $\frac{\Delta t}{\Delta x}\max\beta_{i+1/2}\le\frac1{2N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$ when the
+  reconstructed values and a residual state are admissible
+  ([positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md),
+  [bound preservation](/properties/bound-preservation.md)). They call it an "intrinsic property of any
+  finite difference scheme interpreted as a finite volume scheme for an auxiliary variable" (Remark 3.3).
+
+Boscarino, Qiu, Russo & Xiong (2022, §3.3) use two flux-difference operators side by side in a
+semi-implicit all-Mach scheme: characteristic-wise fifth-order WENO with global Lax–Friedrichs
+splitting for the explicit (material) flux, and component-wise WENO, with zero numerical diffusion
+according to §1, for the implicit acoustic flux ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
 
 Balsara et al. (2024, §I) recall that Shu–Osher FD-ENO schemes "offered high order accuracies at a
 price point that is much lower than their finite volume counterparts of comparable order for
@@ -156,6 +189,28 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   viscous flux to $x_{i+1/2}$, so that the derivative stencil reaches $i\pm3$ and the interpolation
   $i-2,\dots,i+3$.
 
+## Linear fluxes and split forms
+
+- **Upwind interpolatory differences.** Abgrall & Nassajian Mojarrad (2024, §3.1), after Iserles, write
+  the upwind-biased interpolatory derivative $\frac1{\Delta x}\sum_k\alpha^{\mathrm I}_kf_{i+k}$ (page-local
+  coefficients $\alpha^{\mathrm I}_k$, orders 1–4) in flux form, the flux coefficient of $f_{i+k}$ being
+  the tail sum $\sum_{m\ge k}\alpha^{\mathrm I}_m$, e.g. the third-order flux
+  $-\tfrac16f_{i-1}+\tfrac56f_i+\tfrac13f_{i+1}$ and the fourth-order upwind flux
+  $\tfrac1{12}f_{i-2}-\tfrac5{12}f_{i-1}+\tfrac{13}{12}f_i+\tfrac14f_{i+1}$; in 2-D the same fluxes are
+  regrouped into vertex residuals, which keeps local conservation and allows element-wise a posteriori
+  recomputation ([deferred correction](/methods/deferred-correction.md),
+  [discrete kinetic relaxation](/methods/discrete-kinetic-relaxation-scheme.md)).
+- **Split forms on a collocated grid.** Jain & Moin (2022, §3, Eqs. (31)–(42)) call their two-phase
+  scheme finite-volume, but its unknowns are collocated point values and its face fluxes are products
+  of two-point arithmetic averages (quadratic, cubic, and new quartic and quintic splits), i.e. a
+  second-order central flux-difference scheme ([split convective forms](/methods/split-convective-forms.md),
+  [kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+- **Curvilinear grids.** Li, Chen & Ren (2022, §3.4 Remark, Eqs. (62)–(69)) apply the 1-D flux along
+  each computational direction to the transformed flux $J(\xi_xf+\xi_yg)$ (page-local metrics) and show
+  that on smooth periodic grids its modified wavenumber equals the Cartesian one, so their dispersion
+  optimization carries over; the metrics are fourth-order central differences and the geometric
+  conservation law is not discussed ([free-stream preservation](/properties/free-stream-preservation.md)).
+
 ## Conservation in matrix form
 
 Coppola & Veldman (2023) write a semi-discretization as $V\frac{d}{dt}\phi+\mathcal C\phi=0$ with a
@@ -195,6 +250,16 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
   stencil $i-2,\dots,i+3$ printed in Eqs. (3.29)–(3.30) each exceed the five-point WENO stencil, and
   composed they reach $i-5,\dots,i+6$.)*
 
+- Hong et al. (2022, Eq. (2)) print $\partial_tu_i=\partial_xf|_{x_i}$ without the minus sign that their
+  Eqs. (1) and (3) require; Li, Chen & Ren (2022, Eqs. (7), (34)) print the numerical flux with an
+  extra factor $1/\Delta x$ ([MDCD schemes](/methods/mdcd-scheme.md)).
+- Abgrall & Nassajian Mojarrad (2024, §3.1) print the first-order flux as $f_{i+1}$ for $\delta f=f_i-f_{i-1}$, and a
+  fourth-order centred flux whose difference does not reproduce their centred derivative (neither is
+  used). *(Compiler check, not in the sources: the tail-sum rule gives $f_i$ and
+  $-\tfrac1{12}f_{i-1}+\tfrac7{12}f_i+\tfrac7{12}f_{i+1}-\tfrac1{12}f_{i+2}$.)*
+- Fan, Zhang & Qiu (2022, Theorem 2) print $N=\lceil2r+3\rceil$ for the diffusive half-update where
+  Theorem 1, whose proof it repeats, has $\lceil(2r+3)/2\rceil$.
+
 # Citations
 
 - [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eqs. (1)–(4).
@@ -214,3 +279,14 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §3, Eqs. (3.1)–(3.3); §4, Eq. (4.1).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §3, Eqs. (3.4)–(3.17), Prop. 3.1, Theorem 3.2, Prop. 3.2.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §2, Eqs. (1)–(5).
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (1)–(5).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §2.1, Eqs. (3)–(6).
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §2.1, Eqs. (2.2)–(2.9).
+- [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.1, Eqs. (3)–(5), Remark 2.1.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2, Eqs. (2)–(7); §3.4, Eqs. (62)–(69).
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §2.1, Eqs. (2.2)–(2.3).
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §2.1; §3.1–3.2, Eqs. (3.1)–(3.11), Theorem 1, Remark 3.3; §4, Theorem 2.
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §1; §3.3.
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.1.
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Eqs. (31)–(42).

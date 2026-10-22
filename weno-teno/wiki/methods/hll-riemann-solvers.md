@@ -3,9 +3,9 @@ type: Method
 title: "HLL-family approximate Riemann solvers"
 description: "HLL, HLLE, HLLC, HLLEM/HLLI and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates, positivity proofs for gas and gas–liquid mixtures, the entropy-stable relaxation solver, carbuncle behaviour, and the switching of low- and high-dissipation solvers in high-order schemes."
 status: established
-aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver]
+aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -54,6 +54,53 @@ one form, $h\approx\tfrac12\big(f(u^-)+f(u^+)-\lvert\tilde a_{i+1/2}\rvert(u^+-u
 $\tilde a_{i+1/2}$ an averaged characteristic signal speed set by the solver (page-local;
 the source's $\tilde\partial$), and remarks that all of them scale with the sound or
 convection speed.
+
+[Ji et al. (2022)](/sources/ji-2022.md) (§4, Eqs. (29)–(36)) evaluate the same HLL formula on
+unstructured meshes in the face-normal frame, $h=T^{-1}h^{\mathrm{HLL}}(Tu^-,Tu^+)$ at each face
+Gauss point (page-local rotation $T$), with the Einfeldt–Batten speeds
+$s^-=\min(v_1^--c^-,\hat v_1-\hat c)$, $s^+=\max(v_1^++c^+,\hat v_1+\hat c)$ from Roe averages
+([Roe solver](/methods/roe-riemann-solver.md)); they state that HLL is "free from Carbuncle
+problem and the necessity of entropy fix" and that the solver choice "does not affect our
+conclusion" (§5). [Hu et al. (2022)](/sources/hu-2022.md) (Eqs. (2.5)–(2.6)) call the HLL flux
+with $s^-=\min(0,v_1^--c^-,\hat v_1-\hat c)$, $s^+=\max(0,v_1^++c^+,\hat v_1+\hat c)$ the **HLLE**
+flux; including $0$ in the extrema makes it the upwind $f(u^-)$ or $f(u^+)$ in supersonic flow.
+
+## HLLEM: anti-diffusion on the linearly degenerate fields
+
+As printed by Hu et al. (2022) (§2.3, Eqs. (2.7)–(2.8), after Einfeldt, Munz, Roe and
+Sjögreen), for the 2D Euler equations and a face normal to $x$,
+
+$$h^{\mathrm{HLLEM}}=\frac{s^+f(u^-)-s^-f(u^+)}{s^+-s^-}+\frac{s^-s^+}{s^+-s^-}\Big([\![u]\!]-\delta_{\mathrm a}\,\mathfrak w_2\hat r_2-\delta_{\mathrm a}\,\mathfrak w_3\hat r_3\Big),$$
+
+with page-local entropy- and shear-wave eigenvectors and strengths at the Roe average,
+$\hat r_2=\big(1,\hat v_1,\hat v_2,\tfrac12(\hat v_1^2+\hat v_2^2)\big)^\top$, $\hat r_3=(0,0,1,\hat v_2)^\top$,
+$\mathfrak w_2=[\![\rho]\!]-[\![p]\!]/\hat c^2$, $\mathfrak w_3=\hat\rho\,[\![v_2]\!]$, and anti-diffusion
+coefficient $\delta_{\mathrm a}=\hat c/(\hat c+\lvert\hat v_1\rvert)$. Keeping only the
+$\hat r_2$ term gives the HLLEC, only the $\hat r_3$ term the HLLES flux (Eqs. (3.17)–(3.18)).
+Hu et al. state, citing earlier work, that HLLEM is equivalent to Roe's solver for suitable
+parameters, cheaper, adjustable through $s^\pm$ on the nonlinear waves, and free of Roe's
+sonic-point glitch and expansion shocks (§1, §2.3); like Roe and HLLC it is shock-unstable.
+
+**RHLLEM** (§4.1, Eq. (4.1)). Both anti-diffusion terms are multiplied by a switching function
+$f_{\mathrm s}\in[0,1]$ of a pressure-ratio sensor read on the faces transverse to the current
+one, so that $f_{\mathrm s}=1$ recovers HLLEM in smooth flow and $f_{\mathrm s}\to0$ gives HLLE at
+strong shocks; the linear and matrix stability analyses behind it, and the absence of a
+tunable parameter, are on [carbuncle](/definitions/carbuncle-phenomenon.md).
+
+**RHLLEM-LD** (§4.2, Eqs. (4.7)–(4.9)). Writing the flux as
+$\tfrac12\big(f(u^-)+f(u^+)\big)+D$, the density inside the dissipation term $D$ is chosen per
+face among MUSCL and [THINC](/methods/thinc-reconstruction.md) left and right values so that
+$\lvert\rho^+-\rho^-\rvert$ is the smallest of the four combinations, a face-wise
+[BVD](/definitions/boundary-variation-diminishing.md) selection on density only. The THINC
+formula and its steepness are not given. With second-order MUSCL and second-order TVD
+Runge–Kutta it resolves contacts and waves better than HLLE and HLLEM (and, in 2D, HLLC) on
+an isolated contact (100 cells, CFL 0.9), the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md)
+(500 cells) and the Titarev–Toro problem (1000 cells, the high-frequency wave), and gives the
+sharpest interfaces in an interface-only problem and in
+[Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md) and
+[Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md) runs, where only it keeps the
+symmetry (§5.1–5.6, Figs. 5.1–5.6); the BVD step leaves the shock robustness of RHLLEM
+unchanged (§5.7). See also [stationary contact preservation](/properties/stationary-contact-preservation.md).
 
 ## Non-conservative products and anti-diffusion (HLLEM/HLLI)
 
@@ -262,6 +309,23 @@ Several sources pair or compare HLL-type solvers with other interface fluxes:
   finite-volume scheme of [Chen et al. (2022)](/sources/chen-2022.md), to exclude flux-induced
   shock instabilities, and HLLC, for its contact resolution, for the shock-free ones (§2).
 
+## Solver menus in codes
+
+- **IDEFIX** ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.3–2.5, no formulas printed):
+  Rusanov, HLL (Einfeldt), HLLC and, in MHD, HLLD of Miyoshi and Kusano, and Roe, selectable at
+  run time and ordered "from most to least diffusive"; the edge electric fields of constrained
+  transport can also come from 2D HLL and HLLD solvers. With the Hall effect the whistler speed
+  is added to the HLL fan for the magnetic-field fluxes only, which makes HLL "our only solver
+  compatible with the Hall effect", "known to be diffusive" but stable; a Hall-modified EMF
+  average led to instabilities. On a Hall-dominated shock the error falls by a factor 3–4 per
+  doubling, "slightly less than second order", attributed to the grid-scale whistler diffusivity
+  (§4.2, Fig. 15). See [IDEFIX](/software/idefix.md).
+- **FLEXI** ([Mossier et al. (2022)](/sources/mossier-2022.md), §8.4–8.9): HLLE for the
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) and the
+  [forward-facing step](/benchmarks/forward-facing-step.md), Roe with a Harten–Hyman entropy fix
+  for the Sod, Shu–Osher and transonic-airfoil cases, local Lax–Friedrichs for the 3D explosion
+  ([FLEXI](/software/flexi.md)).
+
 ## No Riemann solver: shock fitting
 
 In the moving DG method MDG+ICE of [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md)
@@ -306,3 +370,7 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1, §2.2.
 - [Wang et al. (2022)](/sources/wang-2022.md) — §2.1 (Eqs. (9)–(11)), §3.6.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §2.
+- [Hu et al. (2022)](/sources/hu-2022.md) — §1, §2.2–2.3 (Eqs. (2.5)–(2.8)), §3.2 (Eqs. (3.17)–(3.18)), §4 (Eqs. (4.1)–(4.9)), §5.1–5.7.
+- [Ji et al. (2022)](/sources/ji-2022.md) — §4 (Eqs. (29)–(36)), §5.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3–2.5, §4.2 (Fig. 15).
+- [Mossier et al. (2022)](/sources/mossier-2022.md) — §8.4–8.9.

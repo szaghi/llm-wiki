@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Divergence-free magnetic field"
-description: "The magnetic field of MHD obeys div B = 0; discretizations enforce it exactly, locally, by cleaning or not at all. Wu and Shu show that bound preservation of high-order MHD schemes needs a discrete divergence-free condition, recovered by a Godunov-symmetrization source; the page adds Powell-type sources, locally divergence-free reconstruction and constrained transport."
+description: "The magnetic field of MHD obeys div B = 0; discretizations enforce it exactly, locally, by cleaning or not at all. Wu and Shu show that bound-preserving high-order MHD needs a discrete divergence-free condition, recovered by a Godunov-symmetrization source; the page adds Powell-type sources, locally divergence-free reconstruction, constrained transport, projection and GLM cleaning, and divergence-preserving prolongation on adaptive meshes."
 status: established
-aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term]
+aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -13,7 +13,7 @@ timestamp: 2026-10-22T20:00:00Z
 The ideal MHD equations carry the involution $\nabla\cdot B=0$: it holds for
 all time if it holds initially, but the conservative flux form does not
 enforce it, and discretizations generally do not preserve any discrete
-version of it. The sources of this bundle meet the constraint in five ways:
+version of it. The sources of this bundle meet the constraint in seven ways:
 as a hypothesis that [bound preservation](/properties/bound-preservation.md)
 needs ([Wu & Shu (2023)](/sources/wu-2023-b.md)); as a constraint built
 into the reconstruction polynomial, cell by cell
@@ -23,7 +23,13 @@ generalized-Lagrange-multiplier (GLM) divergence cleaning
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md));
 through constrained transport in an unstaggered central scheme
 ([Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md)) and in
-finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)); and,
+finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)), and on
+face-centred staggered fields in a GPU Godunov code
+([Lesur et al. (2023)](/sources/lesur-2023.md)); by projection or GLM
+cleaning in continuous finite elements
+([Dao & Nazarov (2022)](/sources/dao-2022.md)); as a constraint that
+prolongation onto refined meshes must keep
+([Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md)); and,
 without cleaning or transport, through a Powell-type source alone, in
 flux reconstruction ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md))
 and in entropy-stable relativistic MHD
@@ -197,6 +203,50 @@ clearly nonzero without CTM and zero "up to machine precision" with it
 (Fig. 3). The authors apply CTM "whenever needed" and give no criterion
 (§6).
 
+**Staggered constrained transport in IDEFIX.**
+[Lesur et al. (2023)](/sources/lesur-2023.md) (§2.4, Eqs. (6)–(8))
+evolve face-averaged $B$ by $\partial_tB=-\nabla\times\mathcal E$ with
+the electric field $\mathcal E$ (page-local) on cell edges, after Evans
+and Hawley, so that the discrete Stokes theorem keeps the face-based
+divergence of each cell "in principle" at machine precision; the
+cell-centred $B$ in the conserved vector is reconstructed from the faces
+([IDEFIX](/software/idefix.md)). The edge field comes from the
+face-centred Riemann fluxes, by arithmetic averaging, by Gardiner and
+Stone's $\mathcal E^0$ or $\mathcal E^c$ (the default, "a good trade-off
+between accuracy, stability and computing time"), or from 2D HLL and
+HLLD Riemann solvers at the edges after Mignone and Del Zanna, all
+selectable at run time; no formulas are printed. Round-off can still
+accumulate over billions of steps: with second-order Runge–Kutta–Legendre
+super time-stepping for Ohmic and ambipolar diffusion the round-off
+divergence grows like $O(n)$ in the number of cycles, against
+$O(\sqrt n)$ with the explicit integrator (§2.8; stated from their
+tests). An optional vector-potential form, $\partial_tA=-\mathcal E$ with
+$A$ on edges and $B=\nabla\times A$, "mathematically equivalent to the
+original CT algorithm", stops the accumulation at the cost of memory, an
+initial condition written for $A$, and possible overflow of $A$ under a
+large-scale constant electric field (§2.4). On the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+$\lvert\nabla\cdot B\rvert\ll10^{-12}$ in all runs (§4.2, Fig. 11). For
+the Hall effect the edge field is the arithmetic average, because a
+Hall-modified $\mathcal E^c$ "led to numerical instabilities" (§2.5).
+
+**Prolongation onto refined meshes.** On a block-structured
+[adaptive mesh](/methods/adaptive-mesh-refinement.md) the face-collocated
+field of a newly refined coarse zone must be filled so that every new fine
+zone satisfies the constraint. Balsara, Samantaray & Subramanian (2023)
+treat $\nabla\cdot B=0$ and the electrodynamic $\nabla\cdot D=\rho_{\mathrm q}$
+together ($D$ the electric displacement, $\rho_{\mathrm q}$ the charge
+density, page-local), recalling Yee's staggering and constrained-transport
+MHD as the face-collocated setting (§1). Fine faces that overlie coarse
+faces keep the coarse data, so the normal component stays continuous;
+only the internal fine faces are new. Their high-order constructions,
+an analytically exact fourth-order reconstruction and a WENO-type face
+interpolation with a least-squares touch-up, give fine-zone divergences
+of $10^{-15}$–$10^{-12}$ (Tables 2–11); details on
+[divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md).
+Their sub-cycled two-level step adds edge-field defect correction, without
+which, they state, divergence builds up at fine–coarse interfaces (§7).
+
 **TENO-A with unstaggered constrained transport.**
 [Fu (2023)](/sources/fu-2023.md) reviews TENO-A for MHD with unstaggered
 constrained transport (§5.3, recalled from earlier work): in 1D the cost of
@@ -239,6 +289,36 @@ for element-wise blending; the later one gives them up for subcell-wise
 blending, for which the entropy proof is "still missing"
 (Rueda-Ramírez et al. 2022, §4 item (2)).
 
+## Projection and cleaning in continuous finite elements
+
+[Dao & Nazarov (2022)](/sources/dao-2022.md) (§3.2, Eqs. (3.6)–(3.7);
+§5.3) compare three divergence controls for their residual-viscosity
+continuous Galerkin MHD solver:
+
+- **Projection** (Brackbill–Barnes, as recalled): $B\leftarrow B-\nabla\Psi_{\mathrm p}$
+  with $\nabla^2\Psi_{\mathrm p}=\nabla\cdot B$ (page-local
+  $\Psi_{\mathrm p}$), after which pressure, total energy and entropy
+  functions are updated; one Poisson solve per step.
+- **Pseudo-time stepping** (Hayashi, as recalled): the same correction
+  reached by iterating
+  $\partial_{\tilde t}\Psi_{\mathrm p}-\nabla^2\Psi_{\mathrm p}+\nabla\cdot B=0$,
+  ten pseudo-iterations per step.
+- **Hyperbolic GLM cleaning** (Dedner et al.):
+  $\partial_t\psi_{\mathrm{GLM}}+c_h\nabla\cdot B=-\frac{c_rc_h}{h}\psi_{\mathrm{GLM}}$
+  with $c_r=0.3$ in 2D and 1 in 3D, $c_h$ the largest modulus of the
+  extreme (fast-wave) eigenvalues $\lambda_1$, $\lambda_8$ over the nodes
+  and $h$ the local mesh function (page-local $c_r$, $h$), coupled to the
+  system by a source term.
+
+On a $40\times40$ $\mathbb P^1$ Orszag–Tang run all three keep
+$\int\lvert\nabla\cdot B_h\rvert$ small; pseudo-time stepping is best and
+most expensive, projection costs more than GLM cleaning (Fig. 5; cost
+stated, no timings). Without any control, Orszag–Tang breaks down around
+$t\approx0.7$ on a sufficiently fine mesh (stated; the figure shows only
+the coarse run), while up to $t=0.5$ cleaning makes no visible
+difference, as Balsara also observed (as recalled). Their production runs
+to $t=1$ in 2D and the 3D extension use projection.
+
 ## Qualifications
 
 - The Godunov-symmetrization source is non-conservative; Wu & Shu do not
@@ -258,6 +338,14 @@ blending, for which the entropy proof is "still missing"
   for the code; a degree-2 run of the Mach 800 jet fails with negative
   pressure unless the SVD truncation of the least-squares solve is loosened
   (§3.3.3, §4.5).
+- Lesur et al.'s round-off growth rates ($O(n)$ with super
+  time-stepping, $O(\sqrt n)$ without) are stated from their tests with no
+  figure; Dao & Nazarov's ranking of cleaning methods rests on one coarse
+  $\mathbb P^1$ run without timings.
+- Balsara et al.'s constructions preserve the constraint for prolonged
+  data; the evolution between regrids relies on the face-centred update
+  and on defect correction, whose effect is shown on one 2D linear
+  electrodynamics test (§9).
 - Kanbar et al.'s CTM preserves the centred discrete divergence at the
   nodes, not a face-centred divergence *(compiler check, not in the
   sources: the divergence of Eqs. (20)–(21) is the centred nodal one)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
@@ -272,3 +360,6 @@ blending, for which the entropy proof is "still missing"
 - [Fu (2023)](/sources/fu-2023.md) — §5.3, Fig. 19.
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — arXiv v2: §5.3 (Eq. (48)).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — arXiv v1: §2 (Eqs. (2.4)–(2.5)); §3 (Eqs. (3.4), (3.9), Thm 3.2).
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — arXiv v1: §2.4, Eqs. (6)–(8); §2.5; §2.8; §4.2, Fig. 11.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §3.2, Eqs. (3.6)–(3.7); §5.3, Fig. 5; §5.4.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §2–§5; §7; Tables 2–11.

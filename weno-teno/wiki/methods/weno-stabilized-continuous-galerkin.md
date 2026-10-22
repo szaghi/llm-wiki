@@ -4,8 +4,8 @@ title: "Dissipation-based WENO stabilization of continuous finite elements"
 description: "The CG-WENO method of Kuzmin and Vedral uses a Hermite WENO reconstruction only to measure how far a continuous finite element solution is from smooth, and turns that measure into a cellwise blend of high-order projection stabilization and low-order artificial viscosity; the solution is never overwritten, and the stabilization is O(h^(N+1/2)) consistent for smooth solutions."
 status: established
 aliases: [CG-WENO, dissipation-based WENO stabilization, WENO-based nonlinear stabilization]
-tags: [weno, limiting, low-dissipation]
-timestamp: 2026-10-21T00:00:00Z
+tags: [weno, limiting, low-dissipation, mhd]
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Dissipation-based WENO stabilization of continuous finite elements
@@ -109,6 +109,57 @@ fixed number of degrees of freedom $N_h$ (§7):
 | LeVeque solid-body rotation, $129^2$ | bounded and non-oscillatory for all $N$, e.g. $N=4$ range $[0.000,0.998]$ (Figs. 3–5) |
 | [KPP rotating wave](/benchmarks/kpp-rotating-wave.md), $129^2$, $t=1$ | reproduces the entropy spiral where unstabilized and high-order-only CG fail; range $[0.778,10.980]$ at $N=4$ (Figs. 6–8) |
 
+## A residual-based alternative for systems
+
+[Dao & Nazarov (2022)](/sources/dao-2022.md) stabilize explicit continuous
+Lagrange $\mathbb P_N$ elements on simplices ($N=1,2,3$) for the ideal MHD
+equations without any reconstruction. They note that the plain Galerkin
+discretization is equivalent to central differencing and oscillates at
+shocks, and that Galerkin-least-squares stabilization is implicit by
+construction and hard to make high order in time (§1, §4). Instead they
+add a viscous regularization: the resistive-MHD viscous flux with
+artificial viscosity, heat conduction and resistivity, plus a mass
+diffusion flux proportional to $\nabla\rho$, which they motivate by
+Guermond–Popov's argument for the Euler equations, as recalled, that
+regularizing the mass equation matters for positivity and the minimum
+entropy principle (§4.1, Eq. (4.4)). No positivity, entropy or invariance
+property is proved for MHD. All coefficients are set to one nodal
+viscosity
+
+$$\mu_i=\min\big(\mu^{\mathrm L}_i,\mu^{\mathrm H}_i\big),\qquad \mu^{\mathrm L}_i=C_{\max}h_i\,a_i,\qquad \mu^{\mathrm H}_i=C_{\mathrm R}h_i^2\,\mathsf R_i$$
+
+(page-local symbols; §4.2–4.3, Eq. (4.10)). Here $h_i$ is a nodal mesh
+size already divided by the degree, $a_i$ the local maximum wave speed,
+and $\mathsf R_i$ the largest over the conserved components of the
+nodal $L^2$ projection of the absolute PDE residual (BDF2 in time)
+divided by a normalization. The residual is $O(h^{N+1})$ in smooth regions
+and has $O(h^{-1})$ jumps at discontinuities, so it acts as the shock
+sensor (§4.3). The new normalization of a component $w$,
+$\mathsf n(w)_i=\bar S(w)\big(1-C_l\,\frac{\max_{\mathcal I(i)}w-\min_{\mathcal I(i)}w}{\max_\Omega w-\min_\Omega w}\big)$
+with $\bar S(w)=\lVert w-\mathrm{mean}(w)\rVert_{L^\infty}$ and $\mathcal I(i)$
+the nodes in the support of node $i$, stays in $[(1-C_l)\bar S,\bar S]$ for
+$C_l\in(0,1)$, whereas their earlier one could vanish for mixed-sign
+fields such as momentum and magnetic field (Eqs. (4.6)–(4.7)). The
+constants are $C_{\max}=0.5$, $C_{\mathrm R}=1$, $C_l=0.4$, with classical
+RK4 at CFL 0.3; with $C_{\max}=0.5$ the low-order viscosity is
+Lax–Friedrichs in 1D, as stated (§4.2, §5).
+
+The two designs share the structure "high-order term in smooth regions,
+first-order viscosity at shocks, switched by a sensor"; they differ in the
+sensor (a Hermite WENO deviation against a PDE residual) and in the
+high-order term (projection stabilization against a viscosity of size
+$h^2$ times the residual) *(compiler check, not in the sources: Dao &
+Nazarov do not cite Kuzmin & Vedral)*. Dao & Nazarov's smooth tests show
+the stabilized errors close to the Galerkin ones, fourth order in $L^1$
+for $\mathbb P_3$ but only second order for $\mathbb P_2$, which they
+attribute to a known continuous-Galerkin issue (Tables 1–2). Their shock
+tests are the [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), the 2D [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+run to $t=0.5$ and $1$ on $450\times450$ nodes, a 3D Orszag–Tang vortex and the MHD
+rotor ([MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)), with
+projection, pseudo-time or hyperbolic divergence cleaning (§5;
+[artificial viscosity](/methods/artificial-viscosity.md),
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 ## Qualifications
 
 - Scalar problems only; the analysis covers the steady linear problem.
@@ -121,9 +172,15 @@ fixed number of degrees of freedom $N_h$ (§7):
 - Global bounds and entropy inequalities are not guaranteed; the authors
   suggest enforcing them with algebraic flux correction on top
   ([convex limiting](/methods/convex-limiting.md)).
-- arXiv v1 prints the low-order part of $s_h(u_h;v_h,w_h)$ in §6 with
+- Dao & Nazarov's "fourth-order convergence" holds in $L^1$ for
+  $\mathbb P_3$; the $L^2$ rate falls to 2.56 on the finest mesh of the
+  vortex test, and $\mathbb P_2$ converges at second order (Tables 1–2).
+  Positivity and invariant-domain preservation are outside their scope
+  (§1, §6).
+- Kuzmin & Vedral's arXiv v1 prints the low-order part of $s_h(u_h;v_h,w_h)$ in §6 with
   $\nabla u_h$ where the stated bilinearity requires $\nabla v_h$.
 
 # Citations
 
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — arXiv v1: §2; §3 (Eqs. (4)–(10), Rem. 1); Rems. 2–4; §5 (Eq. (11)); §6 (Eqs. (12)–(18), Rems. 5–7); §7 (Tables 1–3, Figs. 1–8); §8.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §1, §4.1–4.4 Eqs. (4.3)–(4.12), §5 Tables 1–2, Figs. 2–7, §6 (arXiv v1).

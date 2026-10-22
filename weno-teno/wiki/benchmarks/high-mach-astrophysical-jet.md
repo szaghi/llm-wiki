@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -51,11 +51,24 @@ speed and 682.08 with respect to the ambient one.
 | [Fu (2023)](/sources/fu-2023.md) Fig. 5 | TENO10 (review, reproduced) | $448\times224$, $800\times400$ | — | positivity-preserving limiter |
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.4 | [affine-invariant WENO-Z/D](/methods/affine-invariant-weno.md) | setup from Gao et al. (not reproduced) | — | PP limiter needed |
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) §5.2.3 | [DGSEM](/methods/dgsem.md), $N=3$, [subcell IDP limiting](/methods/subcell-finite-volume-limiting.md) | $[-0.5,0.5]^2$, $256^2$ elements | $10^{-3}$ | bar-state bounds |
+| [Liang, Xiao, Shyy & Fu (2022)](/sources/liang-2022.md) §4.11 | fifth-order TENO with THINC-type discontinuity reconstruction, TENO5, TENO5-THINC, WENO5-Z | both jets $800\times400$, CFL 0.35 | not printed | positivity-preserving flux limiter |
+| [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.7 | finite-difference WENO-JS5, WENO-JS7, WENO-ZQ5, Euler and Navier–Stokes ($\mathrm{Re}=1000$) | $\Delta x=\Delta y=1/640$ | $0.001$ | [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md) and scaling limiter |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.11 | finite-difference [HWENO](/methods/hermite-weno.md) (HWENO-R, HWENO-L), WENO-ZQ | $640\times320$ | $0.001$ | parametrized PP flux limiter |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.6 | scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) (MR-AWENO-Si), MR-AWENO | $800\times400$ | $0.001$ | [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.18 | [OEDG](/methods/oedg.md), third order | $320\times160$ | $0.001$ | none mentioned |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.6 | nodal DG on triangles, $P^2$–$P^4$, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) (decay-rate threshold $\mathfrak a_0=2.5$, page-local; min-rule) | $h=1/320$, mesh symmetric about $y=0$ | $0.001$ | none; first layer of elements next to the inlet initialized with the jet state |
 
 Yu & Hesthaven print the Mach 2000 data and domain above but not
-$\gamma$.
+$\gamma$. Liang et al. print both jets with the common data (Mach 80
+with $(5,0,0,0.4127)$ on the rest of the left boundary) and no final
+times. Fan, Zhao, Xiong & Qiu and Li et al. print the Mach 2000 data
+above. Fan, Zhang & Qiu (2022) print the jet inflow as
+$(\rho,v_1,v_2,p)=(0.5,800,0,0.4127)$, the ambient density, not 5
+(checked on the PDF page); with that density the jet sound speed is
+$1.173$ and the jet Mach number $800/1.173=682$, the value
+Rueda-Ramírez et al. give with respect to the ambient sound speed
+*(compiler check, not in the sources)*. Fan, Zhang & Qiu still call it
+the Mach 2000 jet.
 Rueda-Ramírez et al. run the Mach 2000 jet on the square
 $[-0.5,0.5]^2$ with inflow at $x=-0.5$, periodic top and bottom and
 characteristic inflow/outflow left and right, a different box from the
@@ -75,12 +88,28 @@ make DGSEM robust by blending with a low-order finite-volume scheme up
 to invariant-domain-preserving bar-state bounds, element-wise or
 subcell-wise (Figs. 8–9).
 
+Liang et al. report all four of their schemes stable with the
+positivity-preserving flux limiter. Fan, Zhang & Qiu (2022) find that
+negative density and pressure never appear; their limiter acts on
+0.178 %, 0.230 % and 0.416 % of the cells per step for WENO-JS5, JS7 and
+ZQ5 at $\mathrm{Re}=\infty$ (0.103 %, 0.070 %, 0.225 % at
+$\mathrm{Re}=1000$), and "WENO schemes without any positivity treatment
+will simply blow up for this test", which is stated, not shown
+(Example 5.7, Fig. 5.6). Fan, Zhao, Xiong & Qiu need the limiter for
+HWENO-R and WENO-ZQ, although HWENO-R runs their one-dimensional
+extreme problems without it; it acts on 0.0146 % of the cells
+(Remark 3.2). Li et al. find that only the pressure part of the limiter
+is active, at the jet front, and the density stays positive (§3.6).
+
 **An exception without a stated limiter.** Peng, Sun & Wu compute the
 Mach 2000 jet with OEDG on $320\times160$ to $t=0.001$ and report no
 nonphysical oscillations; the paper neither claims bound preservation
 nor mentions a positivity limiter, and says only that the results agree
 with earlier ones (Ex. 5.18, Fig. 14). Whether OEDG alone keeps $\rho$
 and $p$ positive here is not established by the source.
+
+**Cost.** Fan, Zhao, Xiong & Qiu's HWENO-R takes 2292.73 s on the jet,
+1.577 times WENO-ZQ, in Fortran 95 on an Intel Xeon Gold 6130 (Ex. 3.11).
 
 **Artificial viscosity alone, and its order dependence.** Yu &
 Hesthaven run the jet with artificial viscosity and no positivity
@@ -90,7 +119,10 @@ information carried by low-degree polynomials (§5.4.6, Figs. 24–25;
 §6). The run needs the tuned settings $\mathfrak a_0=2.5$ (default 2) and the min-rule
 and a start-up layer of jet-state elements.
 
-**Resolution.** Takagi et al. rank TENO-THINC, then TENO5, then WENO5-Z
+**Resolution.** Liang et al. claim richer small-scale structures for
+their scheme than for the three comparators on both jets (Figs. 24–25).
+Li et al. find MR-AWENO noisier than MR-AWENO-Si along the rear and
+above the jet tail (Fig. 8). Takagi et al. rank TENO-THINC, then TENO5, then WENO5-Z
 by small-scale structure and claim TENO-THINC beats earlier WENO5-JS and
 DG results (Fig. 20). Fu (2021) claims "much richer small-scale
 structures" than fifth- and seventh-order WENO and a DG scheme (Figs.
@@ -195,9 +227,13 @@ closest to them (§5.2.3).
 
 ## Qualifications
 
-- Fu (2021) and Takagi et al. do not print the final times of the jets;
-  the sources that do (Rueda-Ramírez et al., Peng et al.) use
-  $t=10^{-3}$ for Mach 2000.
+- Fu (2021), Takagi et al. and Liang et al. do not print the final
+  times of the jets; the sources that do (Rueda-Ramírez et al., Peng et
+  al., Fan et al. 2022 and 2023, Li et al. 2023) use $t=10^{-3}$ for
+  Mach 2000.
+- Fan, Zhang & Qiu (2022)'s printed jet density 0.5 makes their jet a
+  Mach 682 jet as defined on this page; whether the printed value or
+  the name is the slip cannot be told from the paper.
 - Resolution claims are visual comparisons, partly against figures
   from other papers.
 - Dzanic & Witherden compute a half domain $[0,0.5]\times[0,1.5]$
@@ -218,6 +254,10 @@ closest to them (§5.2.3).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.4, Fig. 8.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.2.3, Figs. 8–9 (arXiv v2).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.18, Fig. 14 (arXiv v1).
+- [Liang, Xiao, Shyy & Fu (2022)](/sources/liang-2022.md) — §4.11, Figs. 24–25.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Example 5.7, Fig. 5.6.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.11, Remark 3.2.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.6, Fig. 8.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Example 5, Table 10 (arXiv v1).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Ex. 7.2, Fig. 6 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.5, Figs. 14–17.

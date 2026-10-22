@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Mach 3 forward-facing step"
-description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel with a step, run to t=4; it tests robustness at the expansion corner and the resolution of the Kelvin–Helmholtz roll-up of the vortex sheet from the triple point."
+description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel with a step, run to t=4 or to a steady state; it tests robustness at the expansion corner, the resolution of the Kelvin–Helmholtz roll-up of the vortex sheet from the triple point, shock stability of Riemann solvers and steady-state convergence of WENO residuals."
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -17,10 +17,10 @@ top, and a triple point forms on the upper wall from which a vortex
 sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
-scheme survives and how much small-scale structure it resolves. Eight
-sources of the bundle run it, two of them on unstructured triangles and
-one in a relativistic version; those that name an origin attribute it
-to Woodward & Colella.
+scheme survives and how much small-scale structure it resolves. Twelve
+sources of the bundle run it, three of them on triangles (one of these
+in a relativistic version) and one as a steady-state problem; those
+that name an origin attribute it to Woodward & Colella.
 
 ## Setup
 
@@ -47,6 +47,30 @@ local mesh refinement. [Yu & Hesthaven (2022)](/sources/yu-2022.md)
 without special treatment of the corner, and compare with Chaudhuri et
 al.
 
+[Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.11 and
+[Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.7 print the
+same data in $(\rho,v_1,v_2,p)$, $(1.4,3,0,1)$, in
+$[0,3]\times[0,1]$ with the step $[0.6,3]\times[0,0.2]$; Hu et al.
+impose inflow on the left, zero gradient on the right and reflecting
+walls, to $t=4$, citing Woodward & Colella; Mossier et al. run the
+domain as one element thick in $z$ with periodic $z$ boundaries and
+print no final time. [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md)
+Ex. 3.9 describe a right-going Mach 3 flow, reflecting walls, inflow
+and outflow, $t=4$, and 30 density contours from 0.32 to 6.15, on a
+domain printed as $[0,0.6]\times[0,1]\cup[0.6,1]\times[0.2,1]$ (checked
+on the PDF page), a tunnel of length 1 rather than 3. Their
+$960\times320$ mesh gives square cells only for a tunnel of length 3,
+and the contour levels are those of the length-3 runs above, so the
+mesh and the contours fit a tunnel of length 3, not the printed upper
+bound 1 *(compiler check, not in the sources)*.
+
+**Steady version.** [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.5
+march the same tunnel ($3\times1$, step of height 0.2 on $[0.6,3]$,
+Mach 3 inflow $(1.4,3,0,1)$) to a steady state on $90\times30$ cells,
+with the corner fix of Woodward & Colella, and judge schemes by whether
+the residual falls to machine zero; at finer grids the flow is not
+purely steady because of the slip line.
+
 **Relativistic version.** [Chen & Wu (2022)](/sources/chen-2022-b.md)
 Ex. 4.9 (arXiv v1) run the same tunnel and step for the
 [relativistic](/definitions/relativistic-hydrodynamics.md) Euler
@@ -64,6 +88,10 @@ fix at the corner.
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.8 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR) vs WENO-JS5, WENO-AO5 | $1200\times400$ | 0.6 |
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Ex. 4.5 | RKDG $P^1$, $P^2$ with the improved vs the original [simple WENO limiter](/methods/weno-limiter-dg.md), KXRCF $C_k=0.01$ | triangles, $h=1/400$ near the corner, $1/100$ elsewhere | 0.3 ($P^1$), 0.18 ($P^2$) |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.5 | nodal DG, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) with decay-rate threshold $\mathfrak a_0=2.5$ (page-local) and their min-rule (4.8) | unstructured triangles, $h=1/80$ | — |
+| [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.11 | second-order MUSCL, TVD RK2; HLLC, HLLEM and the shock-stable RHLLEM-LD | $720\times240$ | 0.5 |
+| [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.7 | [p-adaptive DG with FV-subcell hp shock capturing](/methods/hp-adaptation.md) in [FLEXI](/software/flexi.md), HLLE, density indicator | $180\times60\times1$ minus the $144\times12\times1$ step, $h=1/60$ | — |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.9 | finite-difference [HWENO](/methods/hermite-weno.md): HWENO-R, HWENO-L vs WENO-ZQ | $960\times320$ | — |
+| [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.5 | steady [hybrid WENO](/methods/hybrid-weno.md) WENO-H vs CWENOZ (WENO-ZQ), MRWENO, WENO-JS | $90\times30$ | — |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.9 | third-order FV WENO on triangles, physical-constraint-preserving limiter, HLL (relativistic) | triangles, $h=1/160$ | 0.5 |
 
 ## What the benchmark measures
@@ -93,6 +121,32 @@ in their viscosity switch, page-local; default 2) with the min-rule
 relativistic runs the physical-constraint-preserving limiter is needed
 to keep the scheme running at every inflow speed (Ex. 4.9, Fig. 13).
 
+**Shock stability of the Riemann solver.** Hu, Yuan & Zhao use the
+step as one of their tests of the
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md): HLLC and
+HLLEM, "especially the latter", show shock instabilities, and their
+RHLLEM-LD does not (§5.11); see
+[HLL-family solvers](/methods/hll-riemann-solvers.md).
+
+**Steady-state convergence.** On Wan & Xia's steady run all schemes
+converge to a residual of about $10^{-13}$ except MRWENO, which stalls;
+raising its Lax–Friedrichs speed by a factor 1.1 (MRWENO(1.1)) makes
+it converge (Ex. 4.5).
+
+**Cost of adaptivity and of Hermite WENO.** Mossier et al. compare a
+static run with their $p$-adaptive and $hp$-adaptive setups: 216, 44
+and 82 degrees of freedom per element, wall times 65,782 s, 19,774 s
+and 40,217 s, memory 4.8, 5.8 and 18.7 GB (Table 4); the speedups are
+$65782/19774=3.33$ and $65782/40217=1.64$ *(compiler check, not in the
+sources)*, which the paper describes as "almost a factor 3" and "about
+1.6". Their finer FV subcells ($N_{\mathrm{FV}}=2N+1$) almost completely
+suppress the acoustic waves that DG/FV interfaces emit with
+$N_{\mathrm{FV}}=N+1$ (§8.7, Fig. 16). Fan et al.'s HWENO-R and HWENO-L
+resolve the flow better than WENO-ZQ, owing to their more compact
+stencils, HWENO-R slightly better than HWENO-L (Fig. 3.13); the total
+CPU times are 29093.92 s, 31945.12 s and 20542.55 s, ratios 1.416 and
+1.555 to WENO-ZQ, in Fortran 95 on an Intel Xeon Gold 6130 (Ex. 3.9).
+
 **Vortex-sheet roll-up.** Li et al. find that all schemes capture the
 shocks and that WENO-ZN gives the clearest Kelvin–Helmholtz roll-up of
 the vortex sheet (§4.4.3, Fig. 9). Balsara et al. show "pronounced"
@@ -115,13 +169,15 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 
 - Evidence is visual (contour plots); no source reports an error norm
   or a reference solution.
-- The Cartesian grids differ by a factor of three in each direction
-  ($481\times161$ to $1440\times480$), the triangular meshes are
+- The Cartesian grids of the unsteady runs differ by a factor of three
+  in each direction ($481\times161$ to $1440\times480$), Mossier et
+  al.'s $180\times60$ DG elements and Wan & Xia's steady $90\times30$
+  cells are coarser still, the triangular meshes are
   locally refined or unstructured, and the time steppers and fluxes
   differ, so the roll-up seen in the papers is not comparable across
   them.
-- Yu & Hesthaven stop at $t=3$, the other non-relativistic runs at
-  $t=4$.
+- Yu & Hesthaven stop at $t=3$, the other non-relativistic unsteady
+  runs that print a final time at $t=4$; Mossier et al. print none.
 - Li et al. write that the problem "is also originally from the paper
   of [30]", with no preceding mention of that paper.
 
@@ -135,3 +191,7 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — Ex. 4.5, Figs. 4.8–4.9, Table 4.9.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.5, Figs. 21–23.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.9, Fig. 13 (arXiv v1).
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.11.
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.7, Table 4, Fig. 16.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.9, Fig. 3.13.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.5.

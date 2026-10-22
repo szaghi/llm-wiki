@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Accuracy at critical points
@@ -42,9 +42,15 @@ coefficients $A_k$ are not defined in the paper).
 | OWENO (Baeza et al.) | optimal order at critical points of any order | Li et al. 2022, §2 (recalled) |
 | [TENO](/methods/targeted-eno.md) | design order on a test function with a second-order critical point, no tuning of $\epsilon$ | Fu 2023, §3.1 (stated, numerics in cited work) |
 | fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md) | $\omega_m=d_m+O(\Delta x^4)$ also at first-order critical points, since $\tau$ and the indicators both drop by two orders there; no critical-point test | Wang et al. 2021, Eqs. (3.18)–(3.20) (derived) |
+| sixth-order [RBF-based WENO](/methods/rbf-weno.md) (WENO-G) | $\lvert\omega_k-\bar d_k\rvert\le c\Delta x^4$ "regardless of critical points" for $\epsilon=\Delta x^\ell$, $0<\ell\le4(2q-1)/q$; 6.01 on $\sin(2\pi x-\sin(2\pi x)/\pi)$, where WENO-JS gives 3.54–4.13 | Jeong, Yang & Yoon 2022, Prop. 4.5, Table 2 |
+| MR-AWENO-Si ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | $\tau^*=O(\Delta x^{10})$ at first- to third-order critical points is said to recover the order; no proof, no critical-point test | Li, Li, Don & Wang 2023, §2.3 (stated) |
 
 Li et al. (2022, §4.1) also recall that the WENO-Z of Don & Borges with $\epsilon=\Delta x^m$ satisfies a
-sufficient condition for optimal order, and reject it for its dimensional inconsistency.
+sufficient condition for optimal order, and reject it for its dimensional inconsistency. Hong, Ye & Ye (2022, §1) recall
+the same Don & Borges $\epsilon(\Delta x)$ remedy and Henrick et al.'s analysis of WENO-JS at critical
+points, as background for TENO. Jeong et al.'s Proposition 4.5 also uses $\epsilon=\Delta x^\ell$: its proof
+assumes $\beta_k=A_k\Delta x^{r_\beta}+\dots$ with $r_\beta\ge2$ and $\tau=O(\Delta x^8)$ (page-local
+exponent $r_\beta$), and the experiments do not state the value of $\epsilon$ actually used.
 
 ## Accuracy analyses that assume $f'\ne0$
 
@@ -119,6 +125,10 @@ resolution).
   $\delta\in(1,2)$ (in $I_{i+1}$) to $\tfrac23<\tilde u_i<1$. Proposition 1 is correct but weaker.
 - The WENO-ZN order count of Li et al. ignores the adaptive term of the weight; see the
   Qualifications of [WENO-ZN](/methods/weno-zn.md).
+- Li et al. (2023, §2.3) argue from the order of $\tau^*$ alone. *(Compiler check, not in the sources:
+  $\tau^*$ is $O(\Delta x^{10})$ for any smooth data, critical point or not; what decides the weights is
+  $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, and at an $m$th-order critical point $\beta_k$ also drops to
+  $O(\Delta x^{2m+2})$, which their statement does not examine.)*
 - Wang & Don (2022) name the property ("Cp-property") but run no critical-point test of their
   affine-invariant weights ([affine-invariant WENO](/methods/affine-invariant-weno.md)).
 
@@ -134,3 +144,6 @@ resolution).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1, Remark 1, Eq. (2.29).
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.4, Fig. 2; §3.5, Fig. 4.
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §1; §6.3, Table 1.
+- [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §4.3, Prop. 4.5, Eqs. (39)–(43); §5, Table 2.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.3 (properties of $\tau^*$).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.

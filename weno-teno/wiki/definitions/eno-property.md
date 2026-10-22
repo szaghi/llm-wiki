@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # ENO property
@@ -41,6 +41,18 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   kept with its linear weight or dropped. It differs from ENO, which keeps only the smoothest stencil
   and cannot recover the full-stencil linear scheme, whereas TENO "tends to rule out the nonsmoothest
   stencil crossed by genuine discontinuities" ([targeted ENO](/methods/targeted-eno.md)).
+  Hong, Ye & Ye (2022, §1) say that this ENO-like selection preserves the ENO property at
+  arbitrary order; their TENO-M grows the target stencil point by point and stops at the first
+  three-point extension that fails a relative-difference test between neighbouring indicators. On unstructured meshes Ji, Liang & Fu (2022, §3.3, Eqs. (24)–(28)) enforce
+  the property explicitly in two steps: the large stencil is used alone if it survives the cut-off,
+  otherwise the cut-off is repeated among the small stencils and the survivors are averaged with
+  equal weights. *(Compiler check, not in the sources: with $K$ small stencils the largest normalized
+  measure is at least $1/K>C_T=10^{-6}$, so at least one stencil always survives.)*
+- **Blending with a linear reconstruction.** In the steady-state hybrid WENO-H of Wan & Xia (2022,
+  §3.1), the non-smooth-region reconstruction is a blend of a CWENO-type nonlinear and a linear
+  polynomial whose weights bound the blended smoothness indicator by twice an amplification factor
+  times the nonlinear one; the authors state that the ENO property is kept, without a proof
+  ([hybrid schemes](/methods/hybrid-weno.md)).
 - **Weighted least squares.** [WLS-ENO](/methods/wls-eno.md) has no candidate stencils: a single
   least-squares fit on the whole stencil weights each neighbour row by
   $W_j=1/\big((\bar u_j-\bar u_i)^2+\epsilon h_i^2\big)$ (page-local $W_j$, $h_i$ the square root of
@@ -69,7 +81,12 @@ scheme reverts to the linear upwind scheme, with visible Gibbs oscillations in l
 in a blast-wave problem with background pressure. Their conclusion (§3.2.2): the ENO property of a
 non-affine-invariant WENO scheme can be violated when $|\sigma|\ll|\mu|$. The remedy is a relative
 sensitivity parameter ([affine-invariant WENO](/methods/affine-invariant-weno.md),
-[scale invariance](/properties/scale-invariance.md)).
+[scale invariance](/properties/scale-invariance.md)). Li, Li, Don & Wang (2023, §2.5, Fig. 4) separate the two ingredients on the
+Lax problem scaled by $\sigma$ (page-local scaling, the source's $\lambda$): with $\sigma=1$ a new
+higher-order global indicator alone removes the oscillations of the multi-resolution A-WENO scheme,
+with $\sigma=10^{-7}$ it does not, and only the relative $\epsilon$ restores the ENO behaviour: "the
+ENO-property of the solution cannot be satisfied by using the new $\tau^*$ alone"
+([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 
 A learned weight function can lose the property in a second way, by construction rather than by
 scaling: Bezgin et al. (2022, §3.2, App. A.4, Fig. 21) report that without the ENO layer WENO3-NN
@@ -97,3 +114,7 @@ to deliver them.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1.
 - [Liu et al. (2021)](/sources/liu-2021.md) — Abstract; §2.3; §3.1; §4; §5.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eq. (16); App. A.4, Eqs. (A.1)–(A.3), Fig. 21.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1; §3.2–3.3.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.3, Eqs. (24)–(28); §3.4.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §3.1, Eqs. (3.8)–(3.13).
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.5, Fig. 4.

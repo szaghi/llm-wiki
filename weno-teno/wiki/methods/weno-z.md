@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # WENO-Z weights
@@ -98,6 +98,10 @@ each time with a global indicator built against the largest candidate:
 | Zhu–Qiu WENO on triangles ([CWENO](/methods/cweno.md)), quadratic and four linear | $\tau^2$ with $\tau=\tfrac14\sum_{\ell\le4}\lvert\beta_0-\beta_\ell\rvert$ (Zhu & Qiu's $\tau$) | $\tau^2/(\beta_\ell+\epsilon)$ (Zhu & Qiu); $\tau^2/(\beta_\ell+\epsilon)^2$, $\epsilon=\lvert K_0\rvert\max\bar u^2$ (Chen & Wu) | Chen & Wu 2022, Eqs. (32)–(34) |
 | incremental-stencil interpolation of WCNS-IS | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
 | WENO-AO($\mathcal R$,3) | $\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ | $\tau^2$, $\tau^3$, $\tau^4$ over $(\beta+\epsilon)^2$ for $\mathcal R=5,7,9$ | Balsara et al. 2024, App. D ([WENO-AO](/methods/weno-ao.md)) |
+| MR-AWENO interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-6}$ | Li, Li, Don & Wang 2023, Eqs. (23)–(24), recalling Wang, Zhu, Yang & Zhao |
+| MR-AWENO-Si | squared fifth undivided difference $\tau^*$ on six points | $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, descaler $\mathsf m$ | Li, Li, Don & Wang 2023, Eqs. (42)–(44) |
+| WENO-G ([RBF-based WENO](/methods/rbf-weno.md)) | $\lvert\nabla^4f\rvert^2$, an exponential-moment fourth difference | $(\tau/(\beta_k+\epsilon))^q$, $q=1$ (2 on blast waves), RBF ideal weights | Jeong, Yang & Yoon 2022, Eqs. (37)–(39) |
+| WENO-H non-smooth region ([hybrid schemes](/methods/hybrid-weno.md)) | as in the CWENOZ/WENO-ZQ rows, five-point | $\tau/\big((\epsilon+\beta_k)C_R\big)$, data- and grid-dependent $C_R$ | Wan & Xia 2022, Eqs. (3.1)–(3.4) |
 
 All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. The same construction,
 with the mean of $(\beta_0-\beta_r)^2$ over four small stencils of a six-point stencil, drives the
@@ -119,6 +123,14 @@ $f\mapsto\sigma f$) and restore degree 0 by squaring the denominator and scaling
 with the data; on scaled Riemann problems the original weights oscillate and break the homogeneity of
 the solution, the new ones keep it to $10^{-12}$–$10^{-13}$ (Example 4.4).
 
+Of the last four rows, the MR-AWENO row has degree 2 like the first three; Li et al. (2023, §2.3,
+Theorem 3) prove that this operator is not scale-invariant and trace it to the different scalings of
+$\beta_k$, $\tau$ and $\epsilon$; MR-AWENO-Si and WENO-G are of degree 0,
+the former exactly once $\epsilon$ is scaled by $\mathsf m^2$ (Theorem 4) *(compiler check, not in the sources,
+for WENO-G: $\nabla^4f$ and the $\beta_k^{1/2}$ are homogeneous of degree 1 in the data, so the ratio has
+degree 0 up to $\epsilon$)*. Wan & Xia's $C_R$ contains $\big(\sum|u_j|\big)^2\Delta x$, a deliberate amplitude
+dependence meant to make the weights more linear on fine grids (§3.1).
+
 ## Uses in the bundle
 
 WENO-Z is the interpolation of the fifth-order [A-WENO](/methods/alternative-weno.md) schemes of
@@ -134,6 +146,19 @@ WENO-AO $\tau$ of Balsara et al. (2024, App. D) ([WENO-AO](/methods/weno-ao.md))
 in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 [WENO-ZN](/methods/weno-zn.md) and the affine-invariant Ai-WENO-Z.
 
+Several TENO variants take the fifth-order $\tau_5$ as their global indicator "for a low
+computational cost": Hong, Ye & Ye (2022, Eq. (17)) in TENO-M and Liang et al. (2022, §2.2) in TENO5,
+written $|\beta_1-\beta_2|$ in the TENO labelling, the same outer pair; Huang, Liang & Fu (2023, §3.2) use
+a sixth-order five-point form in TENO5-A instead, and Ji, Liang & Fu (2022, §3.2) say a WENO-Z-type measure
+"can be applied" on unstructured meshes but drop it to save cost ([targeted ENO](/methods/targeted-eno.md)).
+Wan & Xia (2022, §3) divide $\tau_5$ by the mean of the three $\beta_k$ to get a three-region smoothness
+detector ([hybrid schemes](/methods/hybrid-weno.md)). As a comparator WENO5-Z is the most dissipative
+scheme in the approximate dispersion relation of Li, Chen & Ren (2022, Figs. 11–12) and generates their
+reference solutions; Huang, Liang & Fu (2023, §4.6) find it, like TENO5, "excessively dissipative" on double
+Mach reflection; Jeong et al. (2022, Table 1) measure the same $L^\infty$ error as WENO-M on smooth
+advection at $N_x=640$ ($1.96\times10^{-8}$). Liang et al. (2022, §2.2) note that WENO-Z "typically" uses $q=1$ and $C=1$ in the template
+above.
+
 ## Qualifications
 
 - Ye et al. (2022, §1) attribute the redesign of the smoothness indicator for WENO-M to Borges et
@@ -143,6 +168,9 @@ in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 - Hiejima (2022, §1) recalls WENO-Z only in passing, as "more accurate than the nonlinear weights
   of JS as a high-order global smoothness indicator"; the WCNS-JS weighting he uses is the Jiang–Shu
   one ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)).
+- Jeong, Yang & Yoon (2022, Eq. (10)) recall WENO-Z with $\tau_5=|\beta_2-\beta_0|^2$, squared, and $q=1$
+  recommended; Luo & Wu (2021) and Wang & Don (2022) write $|\beta_0-\beta_2|$. The recall is not used in their own
+  scheme, and the two forms differ in the homogeneity count of the previous section.
 - **Naming.** WENO-ZQ (Zhu & Qiu) shares the Z-type weight form but is a different reconstruction,
   of CWENO type (Zheng, Cai, Qiu & Qiu 2022, §2.2); it is not the WENO-Z of Borges et al.
 
@@ -168,3 +196,11 @@ in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §3, Eqs. (3.4)–(3.7); §4.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.4–3.5, Figs. 2, 4; §4.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §2.5, Eq. (17).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §2.2, Eqs. (10)–(12); §4.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (15)–(16); §3.2, Eq. (32); §4.6.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.2.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.3, Figs. 11–12; §4.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.1.1, Eqs. (23)–(24); §2.3, Eqs. (42)–(44), Theorems 3–4.
+- [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.2, Eq. (10); §4.3, Eqs. (37)–(39); §5, Table 1.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §2.3, Eq. (2.28); §3, Eqs. (3.1)–(3.4).

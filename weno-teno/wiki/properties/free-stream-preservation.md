@@ -5,7 +5,7 @@ description: "A discretization on curvilinear or moving grids is free-stream pre
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization]
 tags: [dg, finite-difference, limiting, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Free-stream preservation
@@ -136,6 +136,33 @@ and $10^{-14}$–$10^{-15}$ with the entropy-stable and TVD-ES fluxes
 kept for random element-wise blends; the subcell metrics (150) and the
 discrete metric identities are the ingredients of the proofs in App. C.
 
+## Mixed degrees and finite-volume subcells
+
+[Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) test a hybrid
+that couples three things on one curved mesh: Gauss-node
+[DGSEM](/methods/dgsem.md) elements of different degrees, joined at faces
+by interpolation to the higher degree and modal truncation back, and
+elements switched to a finite-volume scheme on $N_{\mathrm{FV}}^d$
+equidistant subcells (page-local $N_{\mathrm{FV}}$ per direction;
+[h- and hp-adaptation](/methods/hp-adaptation.md)). The subcell metric
+terms are the subcell integral means of the DG metric fields,
+
+$$J^{\mathrm{FV}}=\frac{\int_eJ\,d\xi}{\int_ed\xi},\qquad (Ja^{(d)})^{\mathrm{FV}}=\frac{\int_eJa^{(d)}\,d\xi}{\int_ed\xi},$$
+
+for each subcell $e$ (page-local), i.e. the DG-to-subcell transfer
+operator applied to the DG metrics (§4.1, Eqs. (19)–(21)). The paper
+states no discrete metric identity for these terms; the evidence is a
+test (§8.1). A constant state $u=(1,1,1,1,1)$ on a periodic cube distorted
+by $x\mapsto x+0.1\sin x_1\sin x_2\sin x_3$, with geometry degree 2, one
+half covered by a checkerboard of $N=2$ and $N=7$ DG elements and the
+other half by finite-volume elements with $N_{\mathrm{FV}}=15$, is run to
+$t=0.5$ (165 steps). The $L^2$ errors of the five conserved variables are
+$7.79\times10^{-16}$ to $3.37\times10^{-15}$ and the $L^\infty$ errors
+$6.35\times10^{-14}$ to $2.89\times10^{-13}$ (Eq. (39), Table 1), from
+which the authors conclude free-stream preservation on curved meshes.
+The test covers DG/DG faces of different degrees and DG/FV faces at
+once; it does not separate them.
+
 ## Moving meshes: geometric conservation laws
 
 On a mesh that moves in time, a uniform state must also survive the mesh
@@ -221,7 +248,8 @@ the source.
   that the curvilinear entropy-balance residuals vanish under the metric
   identities and show free-stream preservation numerically. Li, Duan &
   Tang (2022) cite the proof for moving meshes; Duan & Tang (2022) give it
-  (Prop. 3.2).
+  (Prop. 3.2), and Mossier et al. (2022) show it numerically for
+  mixed-degree DG with finite-volume subcells, without a proof.
 - **Strong and weak forms.** Pazner's statement that the weak form (14)
   "will not in general" preserve constants ("e.g. curved meshes", §2.4.2)
   is not a conflict with the strong–weak equivalence of Ranocha et al.
@@ -248,4 +276,5 @@ the source.
 - [Pazner (2021)](/sources/pazner-2021.md) — §2.4 Eq. (22) Prop. 3, §3.1 Eqs. (25)–(29) Props. 4–5, §3.3 (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.1 Eqs. (91)–(94) Table 1, App. C Lemmas 4–5 Eqs. (145), (150) (arXiv v1).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2 Eq. (2.3), §3.2 Eqs. (3.9)–(3.10), Remark 3.1 (arXiv v1).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.1 Eqs. (19)–(21), §8.1 Eq. (39), Table 1.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eq. (2.9), Remark 2.1, §3.3 Eqs. (3.5), (3.8), (3.15)–(3.18), Prop. 3.2, Thm. 3.2, Remark 4.1, App. A–B, Exs. 6.1, 6.7 (arXiv v1).

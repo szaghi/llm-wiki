@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Subcell finite-volume limiting for DG"
-description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the blending lemma that keeps entropy stability with non-conservative terms, and the measured effect of each choice."
+description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the entropy-stable blending lemma with non-conservative terms, element switching on finer equidistant subcells, and the measured effect of each choice."
 status: established
-aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes]
+aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -267,14 +267,65 @@ the [double Mach reflection](/benchmarks/double-mach-reflection.md) at
 $2400\times600$ elements, $N=3$, shows Kelvin–Helmholtz roll-ups near the
 triple point (§5.2–§5.7).
 
+## Element switching on finer, equidistant subcells
+
+[Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) extend FLEXI's
+a priori subcell scheme (Sonntag and Munz, as recalled), which differs
+from the framework above in all four ingredients. The DG scheme is a
+Legendre–Gauss collocation DGSEM, not LGL. A troubled element is
+switched as a whole ($\alpha\in\{0,1\}$) to a second-order
+finite-volume scheme with piecewise-linear minmod reconstruction on
+$N_{\mathrm{FV}}^d$ subcells that are **equidistant in reference space**
+(page-local $N_{\mathrm{FV}}$ per direction), not the LGL subcells
+(§4.1–4.2). Because the subcells do not share the DG degrees of freedom,
+two transfer operators are needed (§4.3, Eqs. (27)–(30)):
+
+- DG to FV: the subcell integral means of the DG polynomial, computed
+  with the DGSEM quadrature on each subinterval;
+- FV to DG: for $N_{\mathrm{FV}}>N+1$ an overdetermined problem, solved by
+  least squares constrained by conservation of the element integral (a
+  discrete projection, after Dumbser and Zanotti), with
+  $V^{\mathrm{FV2DG}}\circ V^{\mathrm{DG2FV}}=I$ (page-local operator
+  names).
+
+Subcell metric terms are the subcell means of the DG metrics (Eqs.
+(19)–(21)); DG/FV faces are evaluated on the subcell face distribution
+and transformed back (Fig. 2). The novelty is the subcell count. FLEXI
+used $N_{\mathrm{FV}}=N+1$; Mossier et al. take $N_{\mathrm{FV}}=2N+1$
+from Dumbser et al.'s a posteriori subcell limiter, the largest count
+that does not shorten the explicit step, since the DG step scales with
+$\Delta x/(2N+1)$ and the subcell step with $\Delta x/N_{\mathrm{FV}}$
+(Eqs. (18), (31)); in a $p$-adaptive run one global
+$N_{\mathrm{FV}}=2N_{\max}+1$ is used. Equality of the two limits gives
+$N_{\mathrm{FV}}=2N+1$ only up to the Runge–Kutta factors, which depend
+on $N$ *(compiler check, not in the sources)*. The step counts confirm
+it: 4695, 4726 and 4765 steps on the double Mach reflection, 235, 241
+and 248 on a 3D explosion, for the static, $p$-adaptive and finer-subcell
+setups (Tables 3, 6). The switch is a priori, by a modal-decay
+[indicator](/definitions/troubled-cell-indicator.md) checked before the
+step and after each stage for DG-to-FV, which they call "a priori", as
+against the "a posteriori FV sub-cell limiting" of Dumbser et al. (§1;
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
+
+Measured effects (§8): free-stream preservation on a curved hybrid mesh
+with $N_{\mathrm{FV}}=15$ to $10^{-13}$–$10^{-16}$ (Table 1); DG/FV
+interfaces emit acoustic waves, strongest for $N_{\mathrm{FV}}=N+1$,
+which $N_{\mathrm{FV}}=2N+1$ "almost completely avoids" (schlieren
+images, Figs. 13, 16); the finer subcells sharpen shocks on Sod, the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) and the
+[forward-facing step](/benchmarks/forward-facing-step.md), and improve
+the wake of a transonic airfoil where only about three elements are
+limited. With $p$-adaptation the authors call the result "hp-adaptive";
+see [h- and hp-adaptation](/methods/hp-adaptation.md). They do not use
+split-form DG, to isolate the stabilizing effect of the subcells (§9).
+
 ## Other limiter classes
 
 [Du, Shu & Zhong (2022)](/sources/du-2022.md) (§1) cite the a posteriori
 subcell finite-volume limiters of Dumbser, Zanotti, Loubère and Diot as a
 separate class of DG limiters, next to the WENO and Hermite WENO limiters
 that replace the polynomial of a troubled cell, and develop the latter
-([WENO limiters for DG](/methods/weno-limiter-dg.md)), which replace the
-polynomial of a troubled cell; the blending of this page instead mixes a
+([WENO limiters for DG](/methods/weno-limiter-dg.md)); the blending of this page instead mixes a
 low-order update into the DG one, by an amount set a priori or by target
 bounds.
 
@@ -299,6 +350,15 @@ bounds.
 - The Kelvin–Helmholtz runs differ visibly between blendings by $t=6.7$;
   the source does not use this difference to rank the blendings by
   accuracy.
+- Mossier et al. call the modal-truncation projection between degrees
+  "conservative"; on curved elements truncating the Legendre modes of $u$
+  keeps $\int u\,d\xi$, not $\int J u\,d\xi$, so element integrals are
+  conserved only for constant $J$ *(compiler check, not in the sources)*.
+  They print the overdetermination condition as $N_{\mathrm{FV}}+1>N$
+  (§4.3), which also holds in the square and underdetermined cases; the
+  least-squares problem is overdetermined for $N_{\mathrm{FV}}>N+1$. Their
+  speedups are single-core and load balancing is "work in progress"
+  (§8.3, §9).
 - Printed slips of Rueda-Ramírez et al. (2021, arXiv v1) that touch this
   page: the middle case of the clipping (86) reads
   "$\tilde\alpha_{\min}\le\alpha\le\alpha_{\max}$" for
@@ -314,3 +374,4 @@ bounds.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §1; §3 (Eqs. (28), (31)–(37), (41)–(47)); §3.3 (Lemmas 1–3, Eqs. (52)–(71)); §4 (Eqs. (72)–(81)); §5 (Eqs. (82)–(88)); §6 (Tables 1, Figs. 5–19); App. C (Lemmas 4–6, Eq. (150)).
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §4.1.3–§4.1.4 (Figs. 2–4); §4.2.2 (Props. 8–11); §4.4; §5 (Table 1, Figs. 7–13).
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1 (subcell finite-volume limiters named as a class).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §3.3, Eq. (18); §4.1–4.3, Eqs. (19)–(31), Fig. 2; §7.2; §8.1, §8.6–§8.9, Tables 1, 3, 6, Figs. 13, 16; §9.

@@ -5,7 +5,7 @@ description: "The Rankine–Hugoniot condition ties the speed of a discontinuity
 status: established
 aliases: [Rankine–Hugoniot condition, jump condition, interface condition, interface conservation, discrete Rankine–Hugoniot speed]
 tags: [shock-tracking, riemann-solver, numerical-flux, central-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Rankine–Hugoniot jump condition
@@ -43,6 +43,16 @@ of the [Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md) with eight sp
 cells and steady oblique and bow shocks in 2D (§IV); see
 [implicit shock tracking](/methods/implicit-shock-tracking.md) and
 [carbuncle](/definitions/carbuncle-phenomenon.md).
+
+**Tracking without enforcing it.** The high-order implicit shock tracking (HOIST) of
+[Huang & Zahr (2022)](/sources/huang-2022.md) recalls that the Rankine–Hugoniot conditions
+hold at the discontinuities of the steady or space–time conservation law it solves (§2.1),
+but does not impose them: the nodal coordinates are moved by minimizing the DG residual in an
+enriched test space of degree $N+1$, subject to the standard DG equations with a smoothed
+upwind or Roe flux, and the minimization drives element faces onto the discontinuities
+(Eqs. (27)–(30), Remark 5). The two "implicit tracking" methods of the bundle thus differ in
+where the jump condition enters: as a weakly enforced interface equation in MDG+ICE, as a
+by-product of the residual minimization in HOIST ([implicit shock tracking](/methods/implicit-shock-tracking.md)).
 
 *(compiler check, not in the sources: Lemma 2's algebra gives a speed for any jump,
 including $u^-<u^+$, so the interface condition alone also admits the
@@ -98,6 +108,22 @@ for two-medium flows with a stiffened-gas equation of state.
   fraction $\alpha_{\mathrm s}$ of the acoustic one.)* It switches the HLLC–HLL hybrid flux;
   how it is combined is on [carbuncle](/definitions/carbuncle-phenomenon.md).
 
+## Shock states in test problems
+
+Shocked initial data are built from the jump condition with zero speed or with the shock
+speed. [Hu et al. (2022)](/sources/hu-2022.md) (§3.2) take the up- and downstream states of
+their steady Mach-8 matrix-stability test from the Rankine–Hugoniot relations
+([carbuncle](/definitions/carbuncle-phenomenon.md)). *(compiler check, not in the sources: their
+Elling data, $(\rho,v_1,p)=(1,1,5/63)$ ahead of $(27/7,7/27,155/189)$, and their Quirk data,
+$(896/115,735/112,74.5)$ behind a shock moving into $(1.4,0,1)$, are the exact normal-shock
+states of a steady Mach-3 and a moving Mach-8 shock, $\gamma=1.4$.)*
+Their Titarev–Toro shock–entropy test is described as driven by "a right-traveling shock wave
+with Mach 1.1" (§5.3) with post-shock state $(\rho,v,p)=(1.515695,0.523346,1.805)$ into
+$(1,0,1)$, $\gamma=1.4$. *(compiler check, not in the sources: the normal-shock pressure ratio
+$p^-/p^+=\frac{2\gamma M^2-(\gamma-1)}{\gamma+1}=1.805$ gives $M^2=1.69$, $M=1.3$, and the
+density ratio $\frac{(\gamma+1)M^2}{(\gamma-1)M^2+2}=1.5157$ agrees; the printed state is that
+of a Mach-1.3 shock.)*
+
 ## Qualifications
 
 - The Luo et al. Lemmas are two-line verifications for single-jump Riemann data on straight
@@ -115,3 +141,5 @@ for two-medium flows with a stiffened-gas equation of state.
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.2 (Eqs. (3.5)–(3.13), Lemmas 1–2), §3.3 (Eqs. (3.14)–(3.15)), §3.5, §IV (author manuscript).
 - [Wang et al. (2023)](/sources/wang-2023-b.md) — §3.1 (Eqs. (6)–(9)), App. A.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (8)–(18)).
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §2.1, Eqs. (27)–(30), Remark 5.
+- [Hu et al. (2022)](/sources/hu-2022.md) — §3.2, §5.3, §5.8, §5.10.

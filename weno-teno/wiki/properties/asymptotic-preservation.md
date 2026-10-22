@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Asymptotic preservation"
-description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; in this bundle a first-order semi-implicit, well-balanced finite-volume scheme is asymptotic preserving for both the parabolic and the hyperbolic relaxation limits of Euler with gravity and friction."
+description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; the bundle has three cases: relaxation limits of Euler with gravity and friction, the incompressible limit of full Euler, and the hydrodynamic limit of discrete kinetic schemes."
 status: established
-aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme]
+aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
 tags: [asymptotic-preserving, well-balanced, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Asymptotic preservation
@@ -90,6 +90,49 @@ All tests are 1D and first order (§5):
   up on the coarsest mesh in the parabolic regime and oscillates in the hyperbolic one
   (§5.3, Figs. 11–12).
 
+## The low-Mach limit of full Euler
+
+[Boscarino et al. (2022)](/sources/boscarino-2022.md) take $\varepsilon$ as the reference Mach
+number of the scaled full Euler equations; as $\varepsilon\to0$ the thermodynamic pressure
+becomes constant, the leading-order velocity divergence-free, and the limit is the
+incompressible Euler system with a hydrodynamic pressure solving an elliptic equation (§2,
+Eqs. (2.1)–(2.8)). Their [semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
+treats the acoustic pressure implicitly, so its time step is set by the material speed.
+
+- **AP** (Thm. 4.1, §4.1). For well-prepared data (constant leading pressure,
+  divergence-free leading velocity), the first-order time-semi-discrete scheme gives at leading
+  order a constant pressure and $\nabla\cdot v_0^{n+1}=0$ **exactly**, a consistent
+  discretization of incompressible Euler; the exactness comes from the implicit density in the
+  energy flux, whereas the scheme of Cordier, Degond and Kumbaro gives a divergence
+  $O(\Delta t)$ (Remark 4.2).
+- **Asymptotic accuracy** (AA; Def. 4.3, Prop. 4.4). A scheme is asymptotically accurate if it
+  keeps its temporal order on the limit system. A stiffly accurate type-A
+  [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) scheme of order $r_{\mathrm{RK}}$ is AA for
+  well-prepared data: after one step the limit pressure is constant, the velocity
+  divergence-free and the state equals the incompressible solution up to
+  $O(\Delta t^{r_{\mathrm{RK}}+1})$. The first stage needs a nonzero diagonal coefficient, which
+  rules out ARS-type tableaux (§3.2.2).
+
+Both statements are formal (asymptotic expansion, continuous in space). The scheme is not
+uniformly accurate in between: the observed order drops to 0.91 at $\varepsilon=10^{-2}$ while
+it is about 4 at $\varepsilon=1$ and 5 at $\varepsilon=10^{-6}$ (Table 5.2, Fig. 5.3). On the
+[Gresho vortex](/benchmarks/gresho-vortex.md) at $\varepsilon=10^{-1},10^{-2},10^{-6}$ shape and
+kinetic energy are kept over two periods with a time step independent of the acoustic speed
+(Ex. 5.5).
+
+## Hydrodynamic limit of discrete kinetic schemes
+
+For a discrete BGK (Jin–Xin) relaxation system with relaxation time $\varepsilon$, the limit is
+the conservation law itself, $\mathsf f=\mathbb M(u)+O(\varepsilon)$ (page-local kinetic unknown
+and Maxwellian). [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) define AP "in
+the sense of Jin" as stability and accuracy uniform in $\varepsilon$ (§1) and show for their
+explicit [deferred-correction](/methods/deferred-correction.md)
+[kinetic scheme](/methods/discrete-kinetic-relaxation-scheme.md) that the iteration contracts
+with a constant independent of $\varepsilon$ (Prop. 1) and that, up to $O(\varepsilon)$, the
+conserved update is a DeC discretization of the limit conservation law (Prop. 2). The
+relaxation source is implicit in form but computed explicitly, because the projection onto the
+conserved variables annihilates it. The tests do not state the value of $\varepsilon$.
+
 ## Stiff sources without an AP claim
 
 Stiffness alone does not make a scheme asymptotic preserving in the sense above, which
@@ -117,6 +160,10 @@ asymptotic preserving.
 - The AP property is shown by limit arguments on the scheme's formulas and by figures; the
   $\varepsilon$-independent stability is asserted with reference to earlier work, not
   proved or measured.
+- Across the three cases the evidence is of the same kind: formal limits of the
+  time-semi-discrete or fully discrete formulas (Arun et al., Thm. 3.2 and 4.3; Boscarino et
+  al., Thm. 4.1 and Prop. 4.4; Abgrall & Nassajian Mojarrad, Prop. 2), with tests at one or a
+  few fixed values of the small parameter; none measures stability uniformly in it.
 - The time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
   "uniform in $\varepsilon$" does not mean hyperbolic-CFL.
 - The printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
@@ -128,3 +175,5 @@ asymptotic preserving.
 
 - [Arun et al. (2022)](/sources/arun-2022.md) — Abstract, §1, §2 (Eqs. (2.4)–(2.10), Def. 2.1), §3 (Eqs. (3.1)–(3.6), Thm. 3.2, Remark 3.1), §4 (Thm. 4.3, Remark 4.2, Eqs. (4.29)–(4.30)), §5 (Eq. (5.1), Figs. 1–2, 11–12) (arXiv v1).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §3.2 (Eqs. (3.6)–(3.10)), §4.2 (Eqs. (4.3)–(4.6), Thms. 4.2–4.3), §6.1 (Eq. (6.1), Table 6.2).
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §2 (Eqs. (2.1)–(2.9)), §3.2.2, §4 (Thm. 4.1, Remark 4.2, Def. 4.3, Prop. 4.4), §5 (Table 5.2, Fig. 5.3, Ex. 5.5) (arXiv v2).
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §1, §2.2 (Props. 1–2), §5.

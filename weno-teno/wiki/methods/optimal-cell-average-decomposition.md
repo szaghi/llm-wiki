@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -46,9 +46,9 @@ $\Delta t\le c_0\min\{\varpi_1^\pm\Delta x/a^{(1)},\ \varpi_2^\pm\Delta y/a^{(2)
 (Eq. (1.13)), and the 2D OCAD maximizes the right-hand side (Problem 1.4).
 
 **The classic decomposition** (Zhang and Shu, as recalled in §1, Eqs.
-(1.6), (1.14)). In 1D, the $L$-point Gauss–Lobatto rule with
-$L=\lceil(N+3)/2\rceil$, whose endpoint weights are
-$\mathsf w^{\mathrm{GL}}_0=\mathsf w^{\mathrm{GL}}_{L-1}=1/(L(L-1))$. In 2D,
+(1.6), (1.14)). In 1D, the $N_{\mathrm{GL}}$-point Gauss–Lobatto rule with
+$N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$, whose endpoint weights are
+$\mathsf w^{\mathrm{GL}}_0=\mathsf w^{\mathrm{GL}}_{N_{\mathrm{GL}}-1}=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$. In 2D,
 the tensor product of Gauss and Gauss–Lobatto rules blended with weights
 proportional to $a^{(1)}/\Delta x$ and $a^{(2)}/\Delta y$, which gives
 $$\Delta t\Big(\frac{a^{(1)}}{\Delta x}+\frac{a^{(2)}}{\Delta y}\Big)\le c_0\,\mathsf w^{\mathrm{GL}}_0 .$$
@@ -60,11 +60,11 @@ in their notation).
 
 **1D optimality** ([Cui et al. (2024)](/sources/cui-2024.md), Thm 2.3).
 For every $N\ge1$ the Gauss–Lobatto decomposition is the 1D OCAD, with
-unique optimal boundary weights $\varpi_\star^\pm=1/(L(L-1))$. The proof
+unique optimal boundary weights $\varpi_\star^\pm=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$. The proof
 tests the constraint "$\bar p-\varpi^-p(x_{i-1/2})-\varpi^+p(x_{i+1/2})\ge0$ for
 all non-negative $p\in\mathbb P^N$" with
-$p^\star=\prod_{\ell=1}^{L-2}(x-x^{\mathrm{GL}}_\ell)^2$, which has degree
-$2(L-2)\le N$ and vanishes at the internal nodes. This confirms a claim of
+$p^\star=\prod_{\ell=1}^{N_{\mathrm{GL}}-2}(x-x^{\mathrm{GL}}_\ell)^2$, which has degree
+$2(N_{\mathrm{GL}}-2)\le N$ and vanishes at the internal nodes. This confirms a claim of
 Zhang and Shu, who had checked it only for $N=2,3$ (as recalled after
 Thm 2.3).
 
@@ -99,8 +99,8 @@ Thm 2.3).
   DG mass matrix of the registry).
 
 **$\mathbb Q^N$.** The classic tensor decomposition, with
-$L=\lceil(N+3)/2\rceil$ and $Q\ge(N+1)/2$, is an OCAD for every $N$ and every
-$\varkappa$, with $\varpi_\star=1/(L(L-1))$ (Thm 4.1).
+$N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ and $Q\ge(N+1)/2$, is an OCAD for every $N$ and every
+$\varkappa$, with $\varpi_\star=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ (Thm 4.1).
 
 **$\mathbb P^N$.** The classic decomposition is optimal only at
 $\varkappa=\pm1$ (Thms 5.1–5.2); for $\varkappa\in(-1,1)$ its boundary
@@ -110,7 +110,7 @@ in symmetric reduced form: 1 node for $\mathbb P^{2,3}$, 2 for
 $\mathbb P^{4,5}$, 4 for $\mathbb P^{6,7}$ (Thms 5.7–5.17, Table 2). At
 $\varkappa=0$:
 
-| $N$ | classic $1/(L(L-1))$ | optimal $\varpi_\star(0,\mathbb P^N)$ | linear-stability CFL $1/(2N+1)$ |
+| $N$ | classic $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ | optimal $\varpi_\star(0,\mathbb P^N)$ | linear-stability CFL $1/(2N+1)$ |
 |---|---|---|---|
 | 1 | 1/2 | 1/2 | 1/3 |
 | 2, 3 | 1/6 | 1/4 | 1/5, 1/7 |
@@ -164,16 +164,16 @@ relativistic jet (§8.3, §8.5).
 
 ## Classic decompositions in other sources
 
-Four further sources of the bundle prove bound preservation with classic
+Five further sources of the bundle prove bound preservation with classic
 decompositions, and their CFL numbers show what an optimal one would
 change.
 
 - **Finite-volume Hermite WENO for Navier–Stokes**
   ([Fan, Zhang & Qiu (2021)](/sources/fan-2021.md), §3.1–§3.2, Eqs.
   (3.9)–(3.12), (3.26)–(3.30)). For a reconstruction of degree $k$ they use
-  the $L$-point Gauss–Lobatto rule with $L=\lceil(k+3)/2\rceil$ (the smallest $L$ with $2L-3\ge k$,
+  the $N_{\mathrm{GL}}$-point Gauss–Lobatto rule with $N_{\mathrm{GL}}=\lceil(k+3)/2\rceil$ (the smallest $N_{\mathrm{GL}}$ with $2N_{\mathrm{GL}}-3\ge k$,
   *compiler check, not in the sources*), and endpoint weight
-  $\varpi=1/(L(L-1))$ ($L=4$, $\varpi=1/12$, for their quintic 1D
+  $\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ ($N_{\mathrm{GL}}=4$, $\varpi=1/12$, for their quintic 1D
   reconstruction, which is also their time-step constant). The internal
   part of the decomposition is replaced by the residual, whose components
   are, by the mean-value theorem, values of the reconstruction's components
@@ -188,6 +188,33 @@ change.
   the classic condition with one wave speed in both directions *(compiler
   check, not in the sources: compare with the classic 2D condition
   above)*.
+- **Finite-difference WENO for Navier–Stokes**
+  ([Fan, Zhang & Qiu (2022)](/sources/fan-2022.md), §3.2, Theorem 1,
+  Eqs. (3.6)–(3.11)). A finite-difference scheme has no polynomial in the
+  cell, so they read it, after Shu and Osher, as a formal finite-volume
+  scheme for the auxiliary functions of the two split variables, whose
+  "cell averages" are the point values of the split variables
+  ([positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
+  The update of $u_i$ is split into two halves, one per interface; each
+  half needs the decomposition of one split variable's cell average with
+  only one endpoint, written with a degree-$2r$ interpolating polynomial
+  (used in the proof only) and the $N_{\mathrm{GL}}$-point Gauss–Lobatto rule,
+  $N_{\mathrm{GL}}=\lceil(2r+3)/2\rceil$, so that $2N_{\mathrm{GL}}-3\ge2r$. Each half is a convex
+  combination if $\frac{\Delta t}{\Delta x}a^{\mathrm{NS}}_{i+1/2}\le\frac12\varpi$,
+  $\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$, which gives the bound
+  $\frac{\Delta t}{\Delta x}\max_ia^{\mathrm{NS}}_{i+1/2}\le\frac1{2N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$
+  (Eq. (3.10); $a^{\mathrm{NS}}$ the viscous Lax–Friedrichs coefficient, the source's $\beta$).
+  This is $1/24$ for fifth-order WENO ($r=2$, $N_{\mathrm{GL}}=4$) and $1/40$ for
+  seventh order ($r=3$, $N_{\mathrm{GL}}=5$), half the finite-volume bound with the same
+  number of Gauss–Lobatto points, because each half-update uses half of
+  the point value *(compiler check, not in the sources)*. In 2D the update
+  is the average of two doubled 1D updates, so the bound applies to
+  $2\Delta t$ in each direction, $\frac{\Delta t}{\Delta x}\max a^{\mathrm{NS},(1)}\le\frac1{4N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$
+  and the same in $y$ *(compiler check, not in the sources; the paper
+  does not write the 2D bound)*. The diffusion-only variant of their §4
+  carries $\frac1{4N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}$ already in 1D (Theorem 2), where they print
+  $N_{\mathrm{GL}}=\lceil2r+3\rceil$; the proof "following the same lines" needs
+  $\lceil(2r+3)/2\rceil$.
 - **DGSEM on unstructured quadrilaterals** ([Renac (2021)](/sources/renac-2021.md),
   Thm 6.1, Rem. 6.1, App. A). The decomposition is the DGSEM's own
   quadrature on its $N+1$ Gauss–Lobatto collocation nodes, with endpoint
@@ -197,7 +224,7 @@ change.
   $1/(2N(N+1))$ for a first-order scheme with $c_0=1/2$ (Eq. (66)). Renac
   calls it not optimal (Rem. 6.1). For $N\ge2$ the endpoint weight of the
   $N+1$ collocation nodes is smaller than that of the minimal rule with
-  $L=\lceil(N+3)/2\rceil$ points (for $N=3$: $1/12$ against $1/6$), so a
+  $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$ points (for $N=3$: $1/12$ against $1/6$), so a
   decomposition that is not tied to the collocation nodes would already
   double the bound there *(compiler check, not in the sources)*.
 
@@ -205,7 +232,7 @@ change.
   Eqs. (44), (58)–(59), after Zhang, Xia & Shu). On any triangle a
   positive quadrature exact for $\mathbb P^N$ contains the $Q$ Gauss points
   of each edge, with weight $\frac23\mathsf w^{\mathrm{GL}}_0\,\mathsf w^{\mathrm G}_q$ per
-  edge point ($\mathsf w^{\mathrm{GL}}_0=1/(L(L-1))$, $L=\lceil(N+3)/2\rceil$,
+  edge point ($\mathsf w^{\mathrm{GL}}_0=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$, $N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$,
   $\mathsf w^{\mathrm G}_q$ the edge Gauss weights), and positive interior weights that
   sum to $1-2\mathsf w^{\mathrm{GL}}_0$; it is obtained from the rectangle
   rule by a transformation the paper calls "Dubinar transform" (as
@@ -221,19 +248,19 @@ change.
   radius, page-local). The paper applies it to
   [special relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
 - **LDG for reacting flows** ([Du & Yang (2022)](/sources/du-2022-b.md),
-  Thm 4.1, Thms 5.4–5.6, Rem. 5.1). In 1D the $L$-point Gauss–Lobatto
-  rule with $L$ the smallest integer with $2L-3\ge N$ and endpoint weight
-  $1/(L(L-1))$; on polygonal cells a cell quadrature that contains all edge
+  Thm 4.1, Thms 5.4–5.6, Rem. 5.1). In 1D the $N_{\mathrm{GL}}$-point Gauss–Lobatto
+  rule with $N_{\mathrm{GL}}$ the smallest integer with $2N_{\mathrm{GL}}-3\ge N$ and endpoint weight
+  $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$; on polygonal cells a cell quadrature that contains all edge
   Gauss points, with the condition
   $\Delta t\frac{\lvert e_i\rvert}{\lvert K\rvert}\max a^{\mathrm R}\le\min_{\nu,i}a_{\nu,i}/b_\nu$
   ($a_{\nu,i}$ the normalized cell weights of the edge points, $b_\nu$ the
   edge Gauss weights, page-local); on rectangles the tensor Gauss /
-  Gauss–Lobatto rule, $\Delta t(1/\Delta x+1/\Delta y)\max a^{\mathrm R}\le1/(L(L-1))$,
+  Gauss–Lobatto rule, $\Delta t(1/\Delta x+1/\Delta y)\max a^{\mathrm R}\le1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$,
   recalled from Zhang (2017). The wave speed $a^{\mathrm R}$ there is a viscous
   Lax–Friedrichs penalty (page-local, the symbol of the
   [bound preservation](/properties/bound-preservation.md) page), and their
   exponential time integrator multiplies the bound by
-  $\min\alpha_{jl}/\beta_{jl}$ over its Shu–Osher coefficients (Thm 4.3,
+  $\min\alpha_{jl}/\beta_{jl}$ over its Shu–Osher coefficients (page-local $\alpha_{jl}$, $\beta_{jl}$; Thm 4.3,
   Eq. (4.17)), $\approx0.793$ *(compiler check, not in the sources:
   $\alpha_{21}/\beta_{21}=\alpha_{32}/\beta_{32}=0.79298$, $\alpha_{10}/\beta_{10}=1.41404$,
   the others infinite)*.
@@ -264,6 +291,7 @@ change.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Defs 1.1, 1.3; Problems 1.2, 1.4; Eqs. (1.6), (1.10), (1.13)–(1.15)); Thm 2.3; §3 (Lemmas 3.1–3.20, Thms 3.4, 3.12, 3.26, 3.29); Thm 4.1; §5 (Thms 5.1–5.17, Alg. 5.20); Thm 6.1 and Fig. 11; §7 (Thm 7.1, Rems. 7.4, 7.7); §8 (Tables 1–10); App. C.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Thm 6.2 (Gauss–Lobatto BP CFL condition).
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §3.1–§3.2 (Eqs. (3.9)–(3.12), (3.26)–(3.30)).
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §3.2, Eqs. (3.6)–(3.11), Theorem 1; §3.4, Eq. (3.23); §4.2, Theorem 2.
 - [Renac (2021)](/sources/renac-2021.md) — arXiv v3: Thm 6.1 (Eq. (66)), Rem. 6.1, App. A.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: Rem. 3.4 (Eq. (44)); Thm 3.1 (Eqs. (57)–(59)).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — Thm 4.1; Thm 4.3 (Eq. (4.17)); Thms 5.4–5.6; Rem. 5.1.

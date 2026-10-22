@@ -134,7 +134,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–4 (2026-10-22/23). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
@@ -142,6 +142,7 @@ Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cite
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
+* [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)

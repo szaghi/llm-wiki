@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Approximate dispersion relation"
-description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio, and what the sources read off it for WENO, TENO, THINC, ROUND and multi-resolution WENO schemes and for central schemes with high-order artificial dissipation."
+description: "The modified-wavenumber characterization of a (possibly nonlinear) spatial scheme, its sign convention for dissipation and anti-dissipation, the Hu-type dispersion-to-dissipation design ratio and its pointwise use for adaptive dissipation, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, hybrid and multi-resolution WENO schemes and for central schemes with high-order artificial dissipation."
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Approximate dispersion relation
@@ -45,7 +45,31 @@ anti-dissipated, when $\tilde\vartheta_i>0$.)* The same convention is used by
 [Luo & Wu (2021)](/sources/luo-2021-b.md) (§3: positive imaginary part
 = negative dissipation, "anti-diffusion") and by
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.3, for THINC). All
-chunk-1 sources agree on this sign; none uses the opposite one.
+chunk-1 sources agree on this sign, none uses the opposite one, and
+[Li, Chen & Ren (2022)](/sources/li-2022.md) (§2.1, Eqs. (8)–(15)) use it too.
+
+**A scheme with decoupled dispersion and dissipation.** The fourth-order
+six-point MDCD flux of Sun et al. (2011), as used by
+[Li, Chen & Ren (2022)](/sources/li-2022.md) (§2.1, Eqs. (6)–(15); see
+[MDCD schemes](/methods/mdcd-scheme.md)), has two free parameters, page-local
+$c_{\mathrm{disp}}$ and $c_{\mathrm{diss}}$ as on the MDCD page (the source's
+$\gamma_{disp}$, $\gamma_{diss}$), and its modified wavenumber splits exactly:
+
+$$\begin{aligned}
+\tilde\vartheta_r&=c_{\mathrm{disp}}\sin3\vartheta-\big(4c_{\mathrm{disp}}+\tfrac16\big)\sin2\vartheta+\big(5c_{\mathrm{disp}}+\tfrac43\big)\sin\vartheta,\\
+\tilde\vartheta_i&=c_{\mathrm{diss}}\big(\cos3\vartheta-6\cos2\vartheta+15\cos\vartheta-10\big)=4\,c_{\mathrm{diss}}(\cos\vartheta-1)^3 .
+\end{aligned}$$
+
+Since $(\cos\vartheta-1)^3\le0$, $c_{\mathrm{diss}}\ge0$ is dissipative in the
+convention above, and $c_{\mathrm{diss}}=0$ is a non-dissipative central scheme
+(Eqs. (14)–(15)). The dispersion parameter is fixed at $0.0463783$ by minimizing
+$\int_0^\pi e^{-8\vartheta}(\tilde\vartheta_r-\vartheta)^2d\vartheta$ (after Martín et al.,
+Eqs. (12)–(13)); with the criterion $\lvert\tilde\vartheta_r-\vartheta\rvert<0.005$ of Hu,
+Hussaini and Manthey the well-resolved range then extends to $\vartheta=1.297$, against
+$0.976$ for both the sixth-order central (C6) and fifth-order upwind (UW5) schemes, which
+have "exactly the same dispersion" (Figs. 1–2). *(Compiler check, not in the sources: the
+trigonometric identity for $\tilde\vartheta_i$ follows from $\cos3\vartheta=4\cos^3\vartheta-3\cos\vartheta$
+and $\cos2\vartheta=2\cos^2\vartheta-1$.)*
 
 **Central schemes with high-order dissipation.**
 [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) (§3, Fig. 1) give the
@@ -107,9 +131,28 @@ separately once the order constraint is relaxed; this is why its TENO8-AA and
 TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 [adaptive TENO](/methods/adaptive-teno.md)).
 
+**The ratio used pointwise.** [Li, Chen & Ren (2022)](/sources/li-2022.md) write the same
+condition as $\zeta\sim1<10$ and use it twice. Imposing $\zeta(\pi)\le9$ at the
+wavenumber of largest dispersion error gives the fixed dissipation parameter
+$c_{\mathrm{diss}}=0.012$ (§2.1, Eqs. (16)–(17)). *(Compiler check, not in the
+sources: $\lvert d\tilde\vartheta_r/d\vartheta-1\rvert_{\vartheta=\pi}=16c_{\mathrm{disp}}+\tfrac83=3.4087$
+and $\lvert\tilde\vartheta_i(\pi)\rvert=32c_{\mathrm{diss}}$, so $\zeta(\pi)=9$ needs
+$c_{\mathrm{diss}}=0.01184$, and $0.012$ gives $\zeta(\pi)=8.88$.)* Inverting the
+condition at each wavenumber at $\zeta=9$ gives a dissipation parameter as a function of
+$\vartheta$; evaluated at the local wavenumber estimated by a
+[scale sensor](/definitions/scale-sensor.md), and replaced below $\vartheta=1$ by the floor
+$0.001$, it makes the dissipation adapt to the local scale: the MDAD scheme, whose range with
+$\lvert\tilde\vartheta_i\rvert\le0.001$ reaches $\vartheta<1.02$, about 35% beyond the fixed
+MDCD (§2.3, Eqs. (34)–(38), Fig. 7). These are sine-wave calibrations of a solution-dependent
+scheme, not a linear symbol (the paper calls MDAD "linear" for convenience, §3). On smooth
+curvilinear grids, applied to the transformed flux, the one-dimensional stencil keeps the
+same modified wavenumber under the stated assumptions (smooth grids, periodicity, a
+Fourier component of the transformed flux; §3.4 Remark, Eqs. (62)–(69)).
+
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
-Li et al., Deng, Huang et al., Wang et al. (2021), Bezgin et al. and Hiejima, it names the numerically evaluated
+Li et al., Deng, Huang et al., Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
+Wan & Xia and Li, Chen & Ren, it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
 condition is imposed on the curve) but a page citing "the ADR" must say which
 is meant.
@@ -125,6 +168,33 @@ is meant.
   is stated without a new ADR computation by
   [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.2). See
   [targeted ENO](/methods/targeted-eno.md).
+- **Adaptive-dissipation TENO.** The five-point TENO5-A variant of
+  [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), with a cut-off driven by a scale
+  sensor, has better dispersion and dissipation than TENO5, and its optimized third-order
+  background "can be restored exactly up to an intermediate wavenumber" (§3.2, Fig. 3,
+  against the upwind fifth-order and optimized third-order linear schemes; no cut-off
+  wavenumbers printed). See [adaptive TENO](/methods/adaptive-teno.md).
+- **TENO-M and its extension threshold.** For the six- and eight-point TENO-M of
+  [Hong, Ye & Ye (2022)](/sources/hong-2022.md) (§4.3, Figs. 6–7), $C_s=0$ reproduces the
+  spectral properties of TENO5 and $C_s=1$ those of the linear background in the low to
+  intermediate range; larger $C_s$ lowers high-wavenumber dissipation, which hurts stable
+  shock capturing, and $C_s=0.8$ is the adopted compromise. In the intermediate to high range
+  TENO-M has better dispersion than TENO of the same width. See
+  [targeted ENO](/methods/targeted-eno.md).
+- **Hybrid schemes and their detectors.** The MDAD-HY hybrid of
+  [Li, Chen & Ren (2022)](/sources/li-2022.md) (§3.3, Figs. 11–12) recovers the MDAD dissipation and
+  the MDCD dispersion up to $\vartheta=2.06$, beyond which the WENO part activates; TENO-HY and
+  MDCD-HY show irregular dissipation at low wavenumbers, which the authors trace to detector
+  misjudgments, and WENO-Z is the most dissipative. The same sine-wave procedure grades the
+  detectors themselves: the TENO-based one of Fu is correct only below $0.64$, the modified
+  Ren detector up to $2.06$ (§3.2, Fig. 9). See [hybrid central–WENO schemes](/methods/hybrid-weno.md).
+- **A three-region hybrid for steady states.** The WENO-H of
+  [Wan & Xia (2022)](/sources/wan-2022.md) (§3, Fig. 3.2; linear weights $(0.8,0.1,0.1)$,
+  $\epsilon=10^{-6}$) has lower dissipative and dispersive errors than the central WENO of
+  Zhu and Shu (WENO-ZQ, linear weights $(0.98,0.01,0.01)$), the multi-resolution WENO
+  (weights $(1,10,100)/111$) and WENO-JS, with UW5 as reference; the curves are given, no
+  values. See [hybrid central–WENO schemes](/methods/hybrid-weno.md) and
+  [CWENO](/methods/cweno.md).
 - **Negative dissipation in WENO-Z+.** The ADR of WENO-Z+ with large
   coefficient $\lambda$ has $\tilde\vartheta_i>0$ in a narrow band around
   $\vartheta\approx1.1834$, and decreasing $\lambda$ removes it only slowly
@@ -217,3 +287,7 @@ is meant.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §4, Fig. 4.1: multi-resolution WENO spectra.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.8, Fig. 17: WENO3-NN spectra, zero dissipation at the cut-off.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2 (Eq. (5)), Appendix (Fig. A.1): WCNS-JS and WCNS-T spectra at orders 5–11.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.1–2.3, Eqs. (6)–(38), Figs. 1–7; §3.2–3.4, Figs. 9, 11–12, Eqs. (62)–(69): MDCD symbol, pointwise dispersion–dissipation ratio, MDAD-HY and detector spectra.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.2, Fig. 3: spectra of the scale-sensor TENO5-A (arXiv v1).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §4.3, Figs. 6–7: TENO-M spectra against $C_s$.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Fig. 3.2: WENO-H, WENO-ZQ, MRWENO, WENO-JS spectra.

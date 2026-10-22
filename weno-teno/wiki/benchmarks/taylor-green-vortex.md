@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Three-dimensional periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth of shock-capturing schemes, viscous at Re=1600 or 5000 and Mach numbers up to 1.2 to compare dissipation rates with DNS, and in two dimensions a robustness test of entropy- and kinetic-energy-preserving DG."
+description: "Periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth of shock-capturing schemes, viscous at Re=1600 or 5000 and Mach up to 1.2 to compare dissipation rates with DNS, in 2D a robustness test of entropy- and kinetic-energy-preserving DG, with a density slab a test of two-phase schemes."
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -39,6 +39,14 @@ maximum Mach number about $0.08$ for $\gamma=5/3$
 *(compiler check, not in the sources)*, so the flow is nearly
 incompressible. Li et al. use $\gamma=5/3$ and grids $64^3$, $128^3$ up
 to $t=6$; Takagi et al. do not print $\gamma$ and use $64^3$ to $t=10$.
+[Li, Chen & Ren (2022)](/sources/li-2022.md) §4.4.1 print the same
+data (after Brachet et al. and Shu et al.) and run four linear schemes
+without shock capturing (fifth-order upwind UW5, sixth-order central
+C6, and the fourth-order [MDCD](/methods/mdcd-scheme.md) and adaptive
+MDAD fluxes) on $128^3$ to $t=10$, with local characteristic
+Lax–Friedrichs splitting, which they prefer to the global splitting as
+less dissipative here; diagnostics are the kinetic energy, the spectrum
+at $t=10$ and $Q=3$ iso-surfaces.
 Li et al. write the pressure as $100+([\cos(2z)+2][\cos(2x)+\cos(2y)]-2)/16$,
 the same expression.
 
@@ -56,6 +64,12 @@ $\mathrm{Re}=1600$, $\mathrm{Pr}=0.71$, $\gamma=1.4$, $256^3$ points,
 $t\in[0,20]$; diagnostics are the kinetic energy, the dissipation rate
 split into solenoidal and dilatational parts, and $Q$-criterion
 iso-surfaces ($Q=2.5$ at $t=10$).
+
+Li, Chen & Ren (2022) §4.4.2 run the same case after Hillewaert, with
+unit velocity amplitude, $p=\frac1{\gamma M_0^2}+\frac1{16}(\cos2x+\cos2y)(2+\cos2z)$,
+$\rho=\gamma M_0^2p$, $M_0=0.1$, $\mathrm{Pr}=0.71$, against a
+pseudo-spectral DNS on $512^3$; comparisons on $256^3$, plus $208^3$
+(MDCD) and $168^3$ (MDAD) for equal enstrophy error.
 
 **Viscous, $\mathrm{Re}=1600$, at three Mach numbers.**
 [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §5.2,
@@ -112,6 +126,22 @@ difference scheme on $100^2$ nodes with $\Delta t=\Delta x/8$. It is a
 long-time robustness test of the semi-discrete entropy and
 kinetic-energy budgets, not a turbulence test.
 
+**Two-phase, inviscid.** [Jain & Moin (2022)](/sources/jain-2022.md)
+§4.1 (arXiv v1) put a slab of width $2L$ of fluid 1 across the middle
+of the periodic box $[0,2\pi]^3$, with volume fraction
+$\phi_1=1-\frac12\big[1+\tanh\big((\lvert x-\pi\rvert-L)/(2\epsilon_{\mathrm i})\big)\big]$
+($\epsilon_{\mathrm i}=\Delta x$ the interface thickness, page-local),
+density $\rho=\rho_{1o}\phi_1+\rho_{2o}(1-\phi_1)$, $L=1$,
+$v_1=M_o\sin x\cos y\cos z$, $v_2=-M_o\cos x\sin y\cos z$, $v_3=0$ and
+$p=\frac1\gamma+\frac{\rho M_o^2}{16}(\cos2x+\cos2y)(\cos2z+2)$
+(Eq. (66), $M_o$ the initial Mach number, page-local), $\gamma_1=\gamma_2=1.4$,
+no viscosity or surface tension, $64^3$, RK4 at CFL about 0.65, to
+$M_ot=40$ (and $100$). With $\rho_{1o}=\rho_{2o}=1$ it is the
+single-phase vortex with a passive slab ("pseudo-two-phase", §4.1.1);
+with $\rho_{2o}/\rho_{1o}=10$ and $1000$ and $M_o=0.05$, $0.2$ (and
+$0.4$) it is a [five-equation-model](/definitions/five-equation-model.md)
+two-phase flow (§4.1.2).
+
 **Viscous, after Brachet et al.** [Bryngelson et al. (2021)](/sources/bryngelson-2021.md)
 §5.4 run the Taylor–Green vortex of Brachet et al. with the
 finite-volume WENO5 scheme of [MFC](/software/mfc.md), with parameters
@@ -151,6 +181,42 @@ Smagorinsky model and ALDM for the dissipation rate (§4.2).
 The sources agree that WENO-JS-type weights are the most dissipative
 of the schemes compared, and no source reports a newer scheme
 dissipating more than its WENO-JS baseline.
+
+**Adaptive dissipation in a linear scheme.** In the inviscid run of
+Li, Chen & Ren, the non-dissipative C6 and the nearly non-dissipative
+MDCD with dissipation parameter 0.001 blow up at $t=4$–$5$; UW5 and
+MDCD with 0.012 run but dissipate more; MDAD runs without tuning,
+best preserves the kinetic energy and follows a $-5/3$ spectrum slope
+at $t=10$ (Figs. 27–28). At $\mathrm{Re}=1600$, C6 diverges and MDAD
+matches the DNS kinetic energy before $t=9$ and the peak dissipation
+rate, better than a WENO-CU6 variant (Fig. 29). On $256^3$ the enstrophy
+at $t=9$ is $9.866$ (MDAD), $9.214$ (MDCD) and $8.581$ (UW5) against
+$10.284$ for the DNS, errors of $4.1\%$, $10.4\%$ and $16.6\%$, at a CPU
+cost of MDAD 19.3% above UW5 (97268 s against 81525 s) (Table 4); the
+printed percentages and the cost ratio 1.193 reproduce from the printed
+values *(compiler check, not in the sources)*. At matched enstrophy
+error MDAD needs $168^3$ points against $208^3$ for MDCD and $256^3$
+for UW5, i.e. 1.90 and 3.54 times as many points in total *(compiler
+check, not in the sources)*, and the paper reports efficiency ratios
+3.7 and 1.8 (Table 5, Fig. 30(b)).
+
+**Kinetic-energy-preserving split forms and two-phase interfaces.**
+Jain & Moin find that, for the single-phase (pseudo-two-phase) vortex,
+three internal-energy flux forms (their quadratic-split QS, the cubic
+split of Kennedy–Gruber and Kuya et al., and Chandrashekar's form)
+all conserve kinetic energy, approximately conserve entropy and are
+stable at $M_o=0.05$ and $0.2$, so the
+[kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+scheme is not unique (Figs. 2–3). With density ratio 10 only QS is
+stable: the two cubic forms violate the interface-equilibrium
+condition, produce "spurious mixing of internal energy at the interface"
+and diverge (Figs. 4–5). QS stays stable at density ratio 1000 for
+$M_o=0.05$, $0.2$, $0.4$ up to $M_ot=100$, the departure of the kinetic
+energy from its initial value at larger $M_o$ being reversible pressure
+work (Fig. 7). A divergence-form mass flux, or flux forms inconsistent
+with their conditions, make the two-phase run diverge (App. C, D). The
+evidence is stability and conservation, not agreement with a reference;
+the flow has no shocks and $M\le0.4$.
 
 **Shock-capturing devices must stay off.** Dzanic & Witherden find
 their [entropy filter](/methods/entropy-filtering.md) predominantly
@@ -264,6 +330,13 @@ Steger–Warming) separates the dissipation rates.
   minus sign is missing.
 - Abgrall, Öffner & Ranocha's Fig. 7 caption is truncated ("with a
   Taylor-Green").
+- Li, Chen & Ren's §4.4.2 refers to "Fig. 3(b)" for the enstrophy
+  history at matched error; Fig. 30(b) is meant (Fig. 3 is a linear
+  dissipation plot).
+- Jain & Moin call the cubic- and quadratic-split forms "QS and CS ...
+  cubic-split and quadratic-split forms, respectively" in §3.5, the
+  reverse of their own definitions (QS is quadratic split), and write
+  "QC" for QS in §4.1.2 and §4.2.
 - In the inviscid runs there is no converged reference: the sources
   compare schemes with each other (Li et al. also with a linear upwind
   scheme), not with an exact energy history.
@@ -280,3 +353,5 @@ Steger–Warming) separates the dissipation rates.
 - [Edoh (2022)](/sources/edoh-2022.md) — §4.2, Eqs. (31)–(32), Figs. 3–4.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §6.1, Eqs. (62)–(66), Figs. 12–14, Table 2; §7.1, Figs. 16–19 (arXiv v2).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2, Figs. 7–8; App. A.3, Fig. 11 (arXiv v4).
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.4.1–4.4.2, Figs. 27–30, Tables 4–5.
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §4.1, Eq. (66), Figs. 2–7; App. C–D (arXiv v1).

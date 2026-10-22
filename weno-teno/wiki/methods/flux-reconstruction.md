@@ -5,7 +5,7 @@ description: "Flux reconstruction corrects the discontinuous interpolated flux o
 status: established
 aliases: [FR, CPR, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
 tags: [flux-reconstruction, dg, entropy-stable, software]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Flux reconstruction and energy-stable FR
@@ -63,6 +63,47 @@ finds an admissible filter strength (§2.2, Eq. (10)). Dzanic et al. build
 a reverse-time (downwind) divergence for their
 [artificial viscosity](/methods/artificial-viscosity.md) simply by
 flipping the sign of the dissipative part of the Rusanov flux (§4.2).
+
+## FR on Gauss points with LDG viscous terms
+
+[Kou et al. (2022)](/sources/kou-2022.md) state Huynh's FR for the
+compressible Navier–Stokes equations in seven stages (§3, Eqs.
+(7)–(19), after Huynh, Vincent et al. and Williams et al.). On Cartesian
+tensor-product elements the solution of degree $N$ lives at
+$(N+1)^d$ solution points and the correction functions have degree
+$N+1$; solution and flux points are Gauss points (Gauss–Lobatto named as
+the alternative). The stages are:
+
+1. interpolate the solution to the flux points;
+2. form the common interface solution by LDG,
+   $\{\!\{u\}\!\}-\beta_{\mathrm{LDG}}[\![u]\!]$, and the solution
+   correction (Eqs. (9)–(10));
+3. compute the corrected gradient from the interior gradient plus the
+   correction functions times the solution corrections (Eqs. (11)–(13));
+4. evaluate the inviscid and viscous fluxes at the solution points and
+   interpolate them to the flux points (Eq. (14));
+5. compute the interaction fluxes: Rusanov for the inviscid part, the LDG
+   flux $\{\!\{f_v\}\!\}+\tau_{\mathrm{LDG}}[\![u]\!]+\beta_{\mathrm{LDG}}[\![f_v]\!]$
+   for the viscous part, with $\beta_{\mathrm{LDG}}=0.5$ and
+   $\tau_{\mathrm{LDG}}=0.1$ (page-local parameters and viscous flux $f_v$;
+   Eq. (15));
+6. add the flux correction, the jump between interaction and interpolated
+   flux times the divergence of the correction functions (Eqs. (16)–(17));
+7. advance $\frac{d}{dt}u=\mathcal L(u)$ (Eqs. (18)–(19)) with three-stage
+   [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) (Eqs. (20)–(22)).
+
+Which member of the correction-function family is used is not stated.
+Local p-refinement couples elements of different degrees through mortar
+faces, on which the common and interaction fluxes are computed and
+projected back (§5.2; [h- and hp-adaptation](/methods/hp-adaptation.md)).
+Kou et al. add a volume-penalization source to this scheme to impose
+walls on Cartesian grids ([immersed-boundary methods](/methods/immersed-boundary-method.md)).
+In a 1D penalized advection–diffusion test the FR rate $O(h^{N+1})$ is
+kept when the solid points are penalized towards the exact solution, but
+falls to about first order over the fluid domain when they are penalized
+towards the boundary value, while the rate away from the wall stays
+$N+1$ (§5.1, Figs. 9–10). They recall that the explicit time step of
+high-order methods scales with the inverse square of the order (§4.6).
 
 ## Energy-stable FR as filtered DG
 
@@ -219,3 +260,4 @@ Dzanic & Witherden, §5); see [PyFR](/software/pyfr.md).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §1, §2 Eqs. (9)–(17), Remark 2.1, Eqs. (19)–(23), §3 Eq. (24), §3.1 Eqs. (26)–(33), Lemma 3.1, Remarks 3.1–3.2, §3.1.1 Eq. (42), §3.1.2 Eqs. (43)–(50), §4 Tables 1–5 (arXiv v1).
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §4.1 Eqs. (31)–(38), §4.2, §5 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §2.2 Eqs. (5)–(10), §4.2 Eqs. (25)–(26), §5 (arXiv v3).
+- [Kou et al. (2022)](/sources/kou-2022.md) — §3 Eqs. (7)–(22), §4.6, §5.1 Figs. 9–10, §5.2.

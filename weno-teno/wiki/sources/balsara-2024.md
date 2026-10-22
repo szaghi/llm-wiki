@@ -175,7 +175,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
@@ -184,6 +184,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)
 * [Fluctuation-form finite-difference WENO for non-conservative systems](/methods/fluctuation-form-fd-weno.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
+* [IMEX Runge–Kutta schemes](/methods/imex-runge-kutta.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mach 3 forward-facing step](/benchmarks/forward-facing-step.md)

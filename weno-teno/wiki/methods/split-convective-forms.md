@@ -3,9 +3,9 @@ type: Method
 title: "Split convective forms"
 description: "Split forms write the convective terms of the mass and momentum equations as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and its conservation conditions, the rotational-form Div-rot and Div-str splittings of Edoh with square-root-density variables, the Burgers split of DG and FR, and the face fluxes and two-point fluxes they correspond to."
 status: established
-aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting]
-tags: [kinetic-energy-preserving, finite-difference, finite-volume, turbulence, low-dissipation]
-timestamp: 2026-10-22T18:00:00Z
+aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split]
+tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Split convective forms
@@ -116,6 +116,48 @@ coefficient ([local conservation and flux form](/results/local-conservation-flux
 - **Wider stencils.** The finite-volume framework is strictly larger. Face
   products such as $\rho_{i-2}v_{i-1}$ have no advective
   finite-difference counterpart.
+
+## Split face fluxes of products (Jain & Moin)
+
+[Jain & Moin (2022)](/sources/jain-2022.md) write the split forms directly
+as face fluxes of a second-order collocated scheme on a uniform grid,
+$\partial_xq\approx(\hat q_{i+1/2}-\hat q_{i-1/2})/\Delta x$, with
+$\overline{a}_{i+1/2}=\tfrac12(a_i+a_{i+1})$ the two-point average (§3.1,
+Eqs. (38)–(41)). For a product $q=abc$ of three factors:
+
+| form | face flux $\hat q_{i+1/2}$ |
+|---|---|
+| divergence | $\overline{abc}$ |
+| quadratic split | $\overline{ab}\;\overline c$ |
+| cubic split | $\overline a\;\overline b\;\overline c$ |
+
+Jain & Moin take these splits from Blaisdell et al. and Kennedy &
+Gruber, as they recall, and give their pointwise equivalents, e.g. the cubic split as the seven-term average of
+$\delta(abc)$, $c\,\delta(ab)$, $a\,\delta(bc)$, $b\,\delta(ac)$,
+$ab\,\delta c$, $bc\,\delta a$, $ac\,\delta b$ over $4\delta x$ (Eq. (42)).
+They add **quartic** and **quintic** splits, the product of four or five
+two-point averages, for the four- and five-factor products that the
+interface-regularization terms of their two-phase model create
+(Eqs. (40)–(41)).
+
+Their single-phase choice is $\hat C=\overline\rho\,\overline v$ for mass
+and $\hat M=\overline\rho\,\overline v\,\overline v$ for momentum
+(Eq. (58)); these are the face fluxes of the Kennedy–Gruber row
+($\zeta=1/2$) of the Coppola–Veldman table above *(compiler check, not in
+the sources: $\overline\rho\,\overline v=\tfrac14(\rho_i+\rho_{i+1})(v_i+v_{i+1})$)*.
+The divergence mass flux $\overline{\rho v}$ is the Feiereisen row
+($\zeta=1$) *(compiler check, not in the sources)*. In their two-phase
+Taylor–Green tests the divergence mass flux, even with a momentum and
+kinetic-energy flux consistent with it, diverges, which they attribute to
+aliasing (App. C, Table 2, Fig. 13). The internal-energy flux is where
+the splits matter most for two phases: only the quadratic split
+$\overline{\rho e}\;\overline v$ satisfies their interface-equilibrium
+condition, while the cubic split $\overline\rho\,\overline e\,\overline v$
+(Kennedy–Gruber, Kuya et al.) and Chandrashekar's harmonic-mean variant
+violate it and diverge at density ratio 10 (Lemma 3.1, §4.1.2;
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+The full rule is that each internal-energy and enthalpy flux take the
+same split as the mass or regularization flux it pairs with.
 
 ## Rotational-form splittings (Edoh)
 
@@ -292,6 +334,13 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
   only pointed to (via SBP).
 - The non-dissipative dual-sided shock profile is shown on one coarse 1D
   test. The paper makes no entropy-stability claim for it (§8.2).
+- Jain & Moin's split-form tests are inviscid, shock-free and at
+  initial Mach numbers up to 0.4; their divergence-form failure is one
+  test (App. C). Edoh's divergence-form failures are likewise on smooth
+  under-resolved problems. Neither source tests the forms at shocks.
+- Jain & Moin print "QS and CS stands for cubic-split and quadratic-split
+  forms, respectively" (§3.5); their own definitions and Eq. (62) make QS
+  the quadratic and CS the cubic split.
 - In their §7.3 tests with the central split family, weights violating
   Eq. (10) still conserve mass and momentum but lose kinetic energy at
   $O(10^{-3})$–$O(10^{-4})$. The variant $\mu_\rho=1$ ("$\delta=1$" in the
@@ -304,3 +353,4 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (1)–(7), §3.1 Eqs. (9)–(18), Remarks 2–3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Tables 3–4, §4 Figs. 1–4, App. A.
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3, §3.1 Eqs. (20)–(28), §3.1.2 Eq. (46) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2 Fig. 8 (arXiv v4).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §3.1 Eqs. (38)–(42), §3.5 Eqs. (58)–(62), §4.1.2, App. C Table 2 Fig. 13 (arXiv v1).

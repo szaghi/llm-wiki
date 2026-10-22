@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient reconstruction on unstructured meshes"
-description: "Second-order cell-centred finite volumes on unstructured meshes reconstruct a cell gradient for the face states and the viscous fluxes; this page records the Green–Gauss and least-squares families, the vertex-based least-squares averaged gradient (VWLSQ) with its iterative boundary treatment, face-gradient decoupling, and a WENO-type nonlinear weighting that replaces the slope limiter."
+description: "Cell-centred finite volumes on unstructured meshes reconstruct a cell gradient, or a higher-degree polynomial, from neighbouring averages; this page records the Green–Gauss and least-squares gradient families, the vertex-based averaged gradient (VWLSQ) with iterative boundary treatment, face-gradient decoupling, a WENO-type weighting replacing the limiter, and the constrained least-squares polynomials of high-order WENO and TENO."
 status: established
-aliases: [VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW]
+aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW]
 tags: [finite-volume, reconstruction, limiting, weno]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Gradient reconstruction on unstructured meshes
@@ -132,6 +132,25 @@ new for second-order finite-volume shock capturing.
   the correction, which however misses the velocity profile and skin friction); cylinder wake length
   2.14 (2.095 with the correction) against 2.13, drag 1.588 (1.591) against 1.48 (§§6.6–6.7, Table 3).
 
+## Beyond second order: constrained least-squares polynomials
+
+The high-order unstructured reconstructions of the bundle generalize the least-squares gradient to a
+polynomial of degree $\mathsf r$ (page-local) per stencil. Ji, Liang & Fu (2022, §2.2, Eqs. (4)–(14)),
+in the framework of Tsoutsanis and co-workers ([UCNS3D](/software/ucns3d.md)), map each element to a
+reference space by an affine map of one of its sub-triangles or sub-tetrahedra, which leaves cell averages
+unchanged, and expand the polynomial in a zero-mean basis $\varphi_l-\frac1{|V_0'|}\int_{V_0'}\varphi_l$ over
+the target cell (page-local monomials $\varphi_l$, reference volume $V_0'$), so the target average is
+matched exactly. Matching the averages of the other $N_s$ stencil cells gives an over-determined system
+solved in the least-squares sense through a Householder QR; the matrix is geometric and precomputed, so
+each reconstruction is a matrix–vector product. The stencil size is $N_s=2N_k$, $N_k$ the number of
+coefficients, "recommended … according to various studies". Large central stencils come from a
+"naive cell-based" algorithm and small directional ones from the "Type3" algorithm; the same polynomials
+feed unstructured WENO, [CWENO](/methods/cweno.md) and the unstructured TENO of Ji et al.
+([targeted ENO](/methods/targeted-eno.md)), and the [CWENO](/methods/cweno.md) page records the same
+construction from Tsoutsanis et al. (2021). On a 2-D advection test on triangles the linear schemes of
+orders 3 to 6 converge at $L_\infty$/$L_2$ orders 2.92/3.01, 3.61/3.83, 4.93/5.01 and 5.97/5.90 at the
+finest pair ($h=1/80\to1/160$; Tables 1–4), the fourth-order one below its design order.
+
 ## Relation to limiters
 
 Chen et al. (§1, §5) motivate NW by the limitations of limiters: second-order TVD-type limiters lose
@@ -166,7 +185,12 @@ been discussed in a few test cases" (§6.4).
   experimental result"; the drag reference is Visbal's paper, whose title evaluates an implicit
   Navier–Stokes solver, and 1.588 differs from 1.48 by 7 % *(compiler check, not in the sources:
   $1.588/1.48=1.073$)*.
+- Ji et al. (2022, Eq. (6)) give $N_k=\frac1{n_d!}\prod_{m=1}^{n_d}(\mathsf r+m)$ coefficients ($n_d$ the dimension,
+  page-local), which counts the constant term, while their expansion (Eq. (7)) writes the cell average
+  plus $N_k$ non-constant terms; the two differ by one. *(Compiler check, not in the sources: for
+  $\mathsf r=1$, $n_d=2$ Eq. (6) gives 3, the number of monomials of degree at most 1.)*
 
 # Citations
 
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §1; §2, Eqs. (1)–(9); §3, Eqs. (10)–(17); §4, Eqs. (18)–(23); §5, Eqs. (24)–(27); §6, Tables 1–3, Figs. 3–27; §7; App. B, Algorithm 1; App. C, Eqs. (C.1)–(C.8).
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.2, Eqs. (4)–(14); §3.1; §5.1, Tables 1–4.

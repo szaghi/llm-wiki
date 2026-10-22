@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Central WENO (CWENO)
@@ -112,6 +112,29 @@ discontinuities, "a similar spirit with p-adaptive DG methods" (§1). It is the 
 [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md) whose cell minimum is found
 exactly.
 
+**In finite differences.** Wan & Xia (2022, §2.3, Eqs. (2.24)–(2.30)) write the fifth-order
+finite-difference WENO-ZQ, which they rename CWENOZ following Cravero, Semplice & Visconti, on the
+point fluxes read as cell averages: the quartic $P_{\mathrm{opt}}$ on five cells, linear polynomials on
+$\{I_{i-1},I_i\}$ and $\{I_i,I_{i+1}\}$, $(d_0,d_1,d_2)=(0.98,0.01,0.01)$,
+$\tau=\big(\tfrac12(|\beta_0-\beta_1|+|\beta_0-\beta_2|)\big)^2$ (page-local) and
+$\alpha_k=d_k\big(1+\tau/(\epsilon+\beta_k)\big)$, combined as above. Fan, Zhang & Qiu (2022, §5) use the
+same WENO-ZQ5 with the same linear weights as one of three reconstructions of their positivity-preserving
+Navier–Stokes scheme: it is less dissipative than WENO-JS5 and JS7 on the double rarefaction and the
+Mach 10 reflection–diffraction problem and more oscillatory on the Leblanc problem, "possibly due to its
+wider stencil" (Examples 5.2, 5.4, 5.8; [Leblanc shock tube](/benchmarks/leblanc-shock-tube.md)). The
+finite-difference Hermite WENO of Fan, Zhao, Xiong & Qiu (2023) takes its weight form, which permits
+arbitrary positive linear weights, from WENO-ZQ and uses it as comparator
+([Hermite WENO](/methods/hermite-weno.md)).
+
+**Steady states.** Wan & Xia (2022, §1) recall that Zhu & Shu's CWENO and multi-resolution steady
+schemes converge much better than classical WENO, but "some oscillations may appear near
+discontinuities because the schemes perform similarly to a linear scheme". In their tests CWENOZ
+stalls on a shock reflection with the global Lax–Friedrichs speed (all schemes converge with
+per-field speeds) and on fine-grid square columns, where enlarging the Lax–Friedrichs speed by 10 %
+restores convergence, and it goes to negative pressure on a 3-D plate, which the linear weights
+$(0.8,0.1,0.1)$ cure (Examples 4.4, 4.12–4.13, 4.15). Their WENO-H uses the CWENOZ stencils with $(0.8,0.1,0.1)$
+and a modified weight in its non-smooth region ([hybrid schemes](/methods/hybrid-weno.md)).
+
 **On triangles, with scale-invariant weights.** Chen & Wu (2022, §3.2.1) use the third-order
 Zhu–Qiu reconstruction on unstructured triangles in a bound-preserving finite-volume scheme for
 special-relativistic hydrodynamics ([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)):
@@ -145,11 +168,26 @@ equal-order unstructured WENO depend on the quadrature and the topology and can 
 *(Compiler check, not in the sources: the Zheng, Cai, Qiu & Qiu weights above have the original
 Zhu–Qiu form with an absolute $\epsilon=10^{-14}$, so Chen & Wu's scaling argument applies to them.)*
 
+**Against unstructured TENO.** Ji, Liang & Fu (2022, §2.4) use the unstructured CWENO of the same
+code family as comparator: a large central-biased stencil with the target-order polynomial, third-order
+(quadratic) directional polynomials, where Tsoutsanis et al. (2021) use linear ones, Jiang–Shu-type weights with exponent 4 and $\epsilon=10^{-14}$, and
+$d_0=1-1/d_0'$ with $d_0'=10^4$ for all orders. Larger $d_0'$ ($10^7$, $10^{15}$, values allowed in earlier
+work) resolve the Shu–Osher waves better but lose robustness, and double Mach reflection "typically
+fails" with too large a value (§5.5, Fig. 11; the failures are not shown). At equal order CWENO is the most
+dissipative of the three on double Mach reflection, TENO the least, equal-order unstructured WENO in
+between, at the same cost as TENO (e.g. 1.98 against 1.96 μs per element per iteration at fifth order; §5.8, §5.10,
+Table 7) ([targeted ENO](/methods/targeted-eno.md), [UCNS3D](/software/ucns3d.md)). They also state
+that CWENO is cheaper than equal-order WENO and that its compact small stencils make a smooth candidate
+near shocks more likely (§2.4).
+
 ## Position in the WENO family
 
 - **Stability before accuracy.** Balsara et al. (2024, §I) place CWENO in a trend of scheme design
   that "has also begun to emphasize stability": CWENO schemes "emphasize the central, and most stable,
-  stencil over and above all the other stencils". Fu (2023, §1) groups CWENO with WENO-AO and
+  stencil over and above all the other stencils". Balsara, Samantaray & Subramanian (2023, §6.3) recall CWENO and WENO-ZQ as combining
+  piecewise-linear small stencils with one large central stencil, against which WENO-AO's third-order
+  small stencils "retain the prospect that local extrema could be somewhat represented"; Liang et al.
+  (2022, §1) credit CWENO with "stronger numerical robustness". Fu (2023, §1) groups CWENO with WENO-AO and
   WENO-ZQ as alternatives "which emphasize more on numerical stability by introducing the
   unequal-size candidate stencils and the tailored weighting strategy".
 - **Descendants.** [WENO-AO](/methods/weno-ao.md) hybridizes a large central stencil with an $r=3$
@@ -205,3 +243,8 @@ cognate unequal-stencil approaches when he introduces TENO-AA
 - [Fu (2023)](/sources/fu-2023.md) — §1; §2.5.
 - [Fu (2021)](/sources/fu-2021.md) — §1.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §1; §3.2, Eqs. (28)–(38), Lemmas 3.1–3.2, Remark 3.3; §4, Examples 4.1, 4.4–4.5, Tables 1–2, Figs. 6–9.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §1; §2.3, Eqs. (2.24)–(2.30); §4, Examples 4.4, 4.12–4.13, 4.15.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Examples 5.2, 5.4, 5.8.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.4, Eqs. (18)–(22); §5.5, Fig. 11; §5.8; §5.10, Table 7.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1.

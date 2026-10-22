@@ -5,7 +5,7 @@ description: "A WENO limiter replaces the DG polynomial of a troubled cell by a 
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter]
 tags: [dg, weno, limiting, characteristic]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -152,6 +152,15 @@ given.
 - Du, Shu & Zhong argue the opposite need: since no troubled-cell indicator
   is "bullet-proof", the limiter itself must be harmless in wrongly flagged
   smooth cells (§3), which they test by deliberate over-flagging (§4).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) list the
+  Hermite WENO limiter of Qiu and Shu and the WENO limiter of Zhu et al.
+  (as cited) among DG shock-capturing options, with artificial viscosity
+  and subcell finite volumes, and choose the last; their argument, after
+  Li and Jameson, is that $h$-refinement is better at discontinuities and
+  $p$-refinement more efficient in smooth regions, which finite-volume
+  subcells inside a $p$-adaptive DG realize (§1;
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
+  [h- and hp-adaptation](/methods/hp-adaptation.md)).
 - Du, Shu & Zhong list the a posteriori subcell finite-volume limiters of
   Dumbser and coworkers as another class (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
@@ -182,3 +191,4 @@ given.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §8, Exs. 3–5 (Qiu–Shu WENO limiter).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1 (critique of WENO/HWENO limiters).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (troubled-cell limiters problem-dependent).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1 (WENO limiters named among alternatives).

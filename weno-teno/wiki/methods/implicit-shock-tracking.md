@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Implicit shock tracking and moving DG (MDG-ICE)"
-description: "Implicit shock tracking treats the mesh geometry as an unknown and moves element faces onto discontinuities by enforcing the flux-jump (Rankine–Hugoniot) condition weakly; the page gives the MDG-ICE formulation of Corrigan et al. as recalled and the MDG+ICE variant of Luo, Absillis and Nourgaliev, with its tests and the limits of its claims."
+description: "Implicit shock tracking makes the mesh geometry an unknown and moves element faces onto discontinuities, either by weakly enforcing the flux-jump condition (MDG-ICE and the MDG+ICE variant of Luo, Absillis and Nourgaliev) or by minimizing an enriched DG residual constrained by the DG equations (HOIST, made robust by Huang and Zahr); formulations, solvers, tests and the limits of the claims."
 status: established
-aliases: [MDG-ICE, MDG+ICE, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
+aliases: [MDG-ICE, MDG+ICE, HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)
@@ -27,6 +27,16 @@ enforcing it drives faces onto shocks and contacts.
 [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) develop the
 MDG+ICE variant of this approach for the compressible Euler equations
 (§I–III).
+[Huang & Zahr (2022)](/sources/huang-2022.md) group MDG-ICE with a second
+method of the same class, the High-Order Implicit Shock Tracking (HOIST)
+method of Zahr and Persson, which reaches the aligned mesh by optimization
+rather than through the interface condition: both "discretize the
+conservation law on a mesh without knowledge of the flow field and pose
+an optimization problem over the discrete flow variables and nodal
+coordinates", and only one topological mesh operation, element removal,
+is needed (§1). Unlike explicit shock tracking, which fits a known
+discontinuity as an internal boundary, neither needs the shock topology
+in advance.
 
 ## MDG-ICE (Corrigan, Kercher & Kessler)
 
@@ -86,6 +96,114 @@ meshes and negative density or pressure during the iterations, but the
 authors call solutions on tangled meshes "either non-physical or
 meaningless".
 
+## HOIST (Zahr & Persson; Huang & Zahr)
+
+**Formulation** (Huang & Zahr §2–4, recalled from Zahr & Persson). A
+steady law, or an unsteady one written as a steady law in space–time,
+$\nabla\cdot F(u)=S(u)$ with page-local $F$, is discretized by
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md) on simplices
+with total degree $N$; the element map is continuous and of degree
+$q_{\mathrm g}$ (page-local; the source's $q$). Let $\mathbf u$ be the DG
+coefficients and $\mathbf x=\phi(\mathbf y)$ the nodal coordinates as a
+function of free parameters $\mathbf y$ (page-local). With $\mathbf r$ the
+standard DG residual (test degree $N$, smoothed upwind or smoothed Roe
+flux with the Harten–Hyman entropy fix) and $\mathbf R$ the *enriched*
+residual (test degree $N+1$, central flux), HOIST solves
+
+$$\min_{\mathbf u,\mathbf y}\ \tfrac12\lVert\mathbf R(\mathbf u,\phi(\mathbf y))\rVert_2^2+\tfrac{\kappa_{\mathrm m}^2}2\lVert\mathbf R_{\mathrm{msh}}(\phi(\mathbf y))\rVert_2^2\quad\text{subject to}\quad \mathbf r(\mathbf u,\phi(\mathbf y))=0$$
+
+(Eqs. (27)–(31); page-local mesh-penalty weight $\kappa_{\mathrm m}$, not
+the kinetic energy, and $\mathbf R_{\mathrm{msh}}$ an element distortion
+measure against an ideal element). The enriched residual is a surrogate
+for the violation of the infinite-dimensional weak form; minimizing it
+drives faces onto discontinuities, "which endows the method with
+r-adaptive behavior" (§1). Because the constraint is the standard DG
+system with an upwind flux, the authors state that HOIST inherits
+consistency, conservation and stability of DG independently of the
+objective; the central flux appears only in $\mathbf R$, "because it is
+smooth and conservative" (Remark 5). No limiter or artificial viscosity is
+used, and the solver never needs a converged DG solution on a
+non-aligned mesh.
+
+**Difference from MDG-ICE/MDG+ICE** *(compiler check, not in the
+sources: comparison of Huang & Zahr's Remark 5 with Luo et al.'s
+§3.3)*. MDG+ICE imposes the face condition as equations and uses a
+central interior flux in the converged scheme; HOIST keeps an upwind DG
+system as the constraint and uses the central flux only in the objective.
+The two converged solutions are thus defined by different fluxes. Huang
+& Zahr state that most of their developments "will apply to MDG-ICE with
+minor modifications" (§1).
+
+**Boundary-preserving parametrization** (§3.2, Eqs. (17)–(26)). The node
+coordinates are an affine function $\mathbf x=A\mathbf y+\mathbf b$ built
+from the normals of all planar boundaries through each node, so that
+nodes stay on every planar boundary, edge and corner they start on;
+directions of free motion are chosen greedily closest to the null space
+of the normal matrix. Curved boundaries still need the earlier analytic
+treatment.
+
+**Solver** (§5.1). A sequential quadratic programming method with a
+Levenberg–Marquardt Hessian approximation advances $(\mathbf u,\mathbf y)$
+together, with a backtracking line search on an $\ell_1$ merit function.
+Huang & Zahr change four parts of the solver of Zahr, Shi & Persson,
+which they find "not sufficiently robust" for high Mach numbers and
+complex discontinuity surfaces (§5.1.4): a new merit penalty parameter
+(Eq. (46), after Nocedal–Wright), replacing one that caused scaling
+mismatch and many line-search iterations; an isotropic linear-elasticity
+mesh regularizer in the Hessian; an adaptive $\kappa_{\mathrm m}$ that
+keeps the residual term slightly dominant, since a single a priori value
+"does not work well in practice" (Eq. (51)); and three robustness
+measures applied after each step during the first $M$ iterations
+(page-local).
+
+**Robustness measures** (§5.2).
+
+1. *Element removal by edge collapse.* An element whose volume, edge
+   ratio or Jacobian ratio is too small (four tests, Eqs. (56)–(60), usual
+   tolerances 0.2, $10^{-10}$, 0.2, 0) has its shortest edge collapsed.
+   This works for simplices of any degree in any dimension, since
+   collapsing any edge of a simplex sends its volume to zero. The kept
+   endpoint is the one on more boundaries; on a tie, the one where the
+   multi-valued DG solution has the largest range, so that nodes on a
+   shock stay on it.
+2. *Straightening.* Curved elements with a small ratio of the infimum to
+   the supremum of the map's Jacobian are made straight-sided instead of
+   removed (Eq. (61)).
+3. *Re-initialization.* Elements flagged by the Persson–Peraire modal
+   sensor on density, and their neighbours not separated from them by a
+   large jump, are reset to a patch average that does not cross the shock
+   (Eqs. (62)–(69); [troubled-cell indicator](/definitions/troubled-cell-indicator.md)).
+   Without it the solver stalls on the accelerating-shock Burgers problem
+   at $N=3$ (Figs. 17–19).
+
+The iteration starts from the shock-agnostic mesh and the first-order
+finite-volume ($N=0$) solution for every $N$, which removes the degree
+homotopy of the earlier method; an $L^2$ projection of the exact solution
+or an artificial-viscosity solution as initial guess "did not offer
+noticeable advantages" (§5.3, Remark 22). All element collapses occur in
+early iterations (Remark 18).
+
+**Evidence** (Huang & Zahr §6; $N=q_{\mathrm g}=2$ unless stated).
+
+| test | mesh (initial → final elements) | result |
+|---|---|---|
+| 3D linear advection, planar and curved discontinuity | 324 tetrahedra, $N=0$ | 29 SQP iterations, residuals $O(10^{-10})$ and $O(10^{-8})$, no removal (planar); 12 collapses, $O(10^{-8})$ and $O(10^{-4})$ (curved) |
+| space–time [Burgers](/benchmarks/burgers-equation-tests.md), accelerating shock | 72 triangles, $N=q_{\mathrm g}=1,2,3$ | shock tracked in about 20 iterations; refinement study in Table 2 |
+| space–time Burgers, shock formation and merger | 400 triangles, $N=2,3$ | formation and the space–time triple point of the merger tracked from an uninformed mesh |
+| quasi-1D nozzle, shock at $x=7.94$ | 12 elements, $N=2$ | "indistinguishable from the exact solution"; Persson–Peraire [artificial viscosity](/methods/artificial-viscosity.md) needs 50 elements at $N=4$ and smears the shock |
+| space–time [Sod shock tube](/benchmarks/sod-and-lax-shock-tubes.md), $N=2$, $q_{\mathrm g}=1$ | 108 → 84 | shock, contact, rarefaction head and tail tracked, in that order (iterations about 27, 52, 66, 106) |
+| Mach 2 diamond in a tunnel | 220 → 201 | all shocks and four triple points tracked; the slip line from the trailing-edge triple point is not |
+| Mach 5 scramjet | 1442 → 1299 and 2679 → 2523 | the fine mesh tracks all discontinuities, the slip line included |
+| Mach 2 flow over a sphere (3D) | 511 → 491 quadratic tetrahedra | stagnation pressure 5.6465 against 5.6404, 0.11 % |
+
+The 0.11 % agrees with the normal-shock pitot formula at $M=2$,
+$\gamma=1.4$, which gives $p_0/p_\infty=5.6404$ *(compiler check, not in
+the sources)*. On the nozzle the observed rates of the $L^1$ density error
+and of the shock-position error are near $N+1$ for $N=1$–$5$ (Table 3),
+while the artificial-viscosity reference at $N=2$ converges below first
+order, which the authors attribute to the smoothing of the discontinuity
+and the corruption of the downstream solution (§6.3, Fig. 26).
+
 ## Why the jump condition fits discontinuities
 
 Luo et al. verify the mechanism on Riemann data, along a straight
@@ -133,7 +251,8 @@ Tables 1). No test compares with a shock-capturing scheme.
   other numerical methods can", and that it removes overheating "which no
   other numerical methods can". The first rests on three data points per
   problem. They cite but do not discuss the optimization-based implicit
-  shock tracking of Zahr & Persson (ref. 44).
+  shock tracking of Zahr & Persson (ref. 44); see *Uniqueness of
+  high-order convergence* below.
 - **"Interface conservation" is not discrete conservation.** Luo et al.
   write that shock capturing has "a fatal flaw" because interface
   conservation "can never be achieved for discontinuities" (§I). Their
@@ -145,6 +264,53 @@ Tables 1). No test compares with a shock-capturing scheme.
 - **Stability of the central flux.** The central interior flux is said to
   enhance stability for under-resolved flows. The paper attributes
   stability to the converged interface condition and gives no analysis.
+- **"Optimal" rates in HOIST.** Huang & Zahr's captions say the
+  segment-wise slopes tend "to at least the optimal rate ($p+1$)". Their
+  printed slopes mostly support this for the shock position, but the
+  final-segment slopes of the Burgers solution error are 2.88 ($N=2$) and
+  3.73 ($N=3$) and decrease with refinement (Table 2), and on the nozzle
+  the density slope at $N=2$ falls to 2.26 and the shock-position slope at
+  $N=4$ to 4.50 (Table 3). "Optimal" holds approximately, not uniformly.
+- **Shock capturing called globally first order.** Huang & Zahr write
+  that limiters, WENO and artificial viscosity are first order near shocks,
+  "which translates into a globally first-order accurate scheme" (§1). The
+  paper's own evidence is the sub-first-order $L^1$ convergence of one
+  artificial-viscosity run on the nozzle (§6.3); no capturing scheme is
+  run on the other problems. Their remark that WENO has "not
+  been demonstrated on unstructured meshes for practical problems" is
+  theirs; this bundle holds unstructured WENO-type reconstructions
+  ([WLS-ENO](/methods/wls-eno.md),
+  [unstructured gradient reconstruction](/methods/unstructured-gradient-reconstruction.md)).
+- **Positivity during the iterations.** Huang & Zahr state that accepted
+  iterates cannot have negative density or pressure because the line
+  search guarantees a sufficient decrease of the merit function
+  (Remark 20). No argument is given; MDG+ICE, by contrast, tolerates
+  negative states during the iterations.
+- **Printed slips in Huang & Zahr.** The initial condition of the
+  accelerating-shock Burgers problem (Eq. (78)) prints a constant right
+  state $-\mu_2$, which contradicts their exact solution (79) and shock
+  path (80); these two are consistent with each other and with the
+  Rankine–Hugoniot speed, and correspond to the right state
+  $\mu_2(z-1)$ at $t=0$ (page-local parameters $\mu_1=4$, $\mu_2=3$ and
+  space coordinate $z$) *(compiler check, not in the sources)*. Eq. (21)
+  prints $Z_I\hat x^u_I$ where its derivation and Eq. (22) need
+  $B_IZ_I\hat x^u_I$, and §5.2.2 gives one straightening tolerance (0.05)
+  where Table A.4 lists per-case values.
+- **Uniqueness of high-order convergence.** Luo, Absillis & Nourgaliev
+  (2021) write that the MDG method attains "the formal rate of
+  p-convergence even for discontinuous solutions and solutions with
+  singularities, that no other numerical methods can to the best of our
+  knowledge" (§IV.A), and in the abstract and conclusions an "exponential rate of
+  convergence" on the Sod and Lax tubes, citing but not discussing Zahr &
+  Persson's HOIST. Huang & Zahr (2022) report for HOIST h-convergence at
+  rates near $N+1$ for both the solution and the shock position on
+  discontinuous Burgers and quasi-1D nozzle problems (Tables 2–3) and
+  claim "the optimal convergence rate of the underlying discretization
+  even for flows containing discontinuities" (abstract). The two claims
+  concern different refinements (p against h); Huang & Zahr make no
+  p-convergence claim and do not discuss Luo et al.'s, so the sources do
+  not contradict each other. Moved here from *Contradictions* at the
+  chunk-4 deep lint (2026-10-23).
 - **Title.** Page 1 of the manuscript read says "Interface Conservation
   Enforcement"; the published title, per Crossref, says "interface
   condition enforcement".
@@ -152,3 +318,4 @@ Tables 1). No test compares with a shock-capturing scheme.
 # Citations
 
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §I, §3.1–3.5 Eqs. (3.1)–(3.17), Lemmas 1–2, Figs. 2–7, §IV.A–E Figs. 8–28, Tables 1, §V (author manuscript).
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2–3 Eqs. (1)–(26), §4 Eqs. (27)–(37), Remarks 5–8, §5.1 Eqs. (38)–(55), Remarks 9–11, §5.2 Eqs. (56)–(70), Remarks 13–20, §5.3 Remark 22, §6 Eqs. (78)–(87), Tables 2–3, Figs. 13–34, App. A Table A.4 (arXiv v2).

@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: sine data for accuracy 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Burgers equation tests
@@ -27,6 +27,7 @@ that reduce exactly to Burgers.
 |---|---|---|---|---|
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.5/\pi$, 10–320 cells | $1.5/\pi$, 200 cells |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.2 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,4]^2$, periodic | $0.5/\pi$, $10^2$–$320^2$ | $1.5/\pi$, $200^2$, cut along $x=y$ |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 10–320 cells; $10^2$–$320^2$ | — |
 | [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) §4.1, §4.3.1 | $u_0=0.5-0.25\sin(\pi x)$ | $[0,2]$, periodic | $1$, $\Delta t=h,10h,50h$ | $2$, 256 cells, $\Delta t=3h,5h$ |
 | [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) §4.1 | $u_0=\sin(\pi x)+0.01$ | $[0,2]$, periodic | — | $3$, 8 elements, $N=4,5$, RK4, $\Delta t=10^{-4}$ |
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P_4$ on 15 and $\mathbb P_{14}$ on 5 elements |
@@ -34,7 +35,8 @@ that reduce exactly to Burgers.
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$; along the diagonal the
-two-dimensional data have the same breaking time; for
+two-dimensional data have the same breaking time (the data of Li, Shu
+& Qiu, also run by Fan et al.); for
 $u_0=0.5-0.25\sin(\pi x)$, $t_{\mathrm b}=4/\pi\approx1.27$ *(compiler
 check, not in the sources)*. The accuracy times thus lie before and
 the shock times after breaking. Likewise $t_{\mathrm b}=1/\pi$ for
@@ -49,7 +51,19 @@ moments modified only in cells flagged by their indicator (M5-I),
 reaches $L^1$ error $3.95\times10^{-13}$ at 320 cells (order 5.96) in
 1D and $6.83\times10^{-12}$ at $320^2$ (order 6.36) in 2D; modifying the
 moments in every cell (M5-NI) drops the order to five, as they expect
-(4.97 and 4.88; Tables 3.1–3.2). On the shocked data the unmodified and
+(4.97 and 4.88; Tables 3.1–3.2). Fan, Zhao, Xiong & Qiu's fifth-order finite-difference
+[Hermite WENO](/methods/hermite-weno.md) with restricted derivatives
+(HWENO-R) gives $L^1$ errors $3.69\times10^{-10}$ at 320 cells and
+$3.64\times10^{-10}$ at $320^2$, against $3.24\times10^{-10}$ and
+$3.20\times10^{-10}$ for HWENO-L and $2.12\times10^{-9}$ and
+$2.10\times10^{-9}$ for WENO-ZQ (Table 3.1). On meshes of at least 160
+cells HWENO-R costs about 1.2 times the CPU time of WENO-ZQ (1.45 in
+2D) for an error about 5.3 times smaller, so it is the more efficient at
+equal error (Fig. 3.1). Its observed 1D orders oscillate, 2.98, 4.61,
+6.99, 6.15, 5.32, which the authors explain only qualitatively
+(Remark 3.1); $\log_2(1.32\times10^{-4}/1.04\times10^{-6})=6.99$
+reproduces the printed order at 80 cells *(compiler check, not in the
+sources)*. Back to Li, Shu & Qiu: on the shocked data the unmodified and
 modified schemes both match the exact solution with "not much
 difference" (Figs. 3.1–3.2). Puppo et al.'s time-limited implicit
 [Quinpi](/methods/quinpi.md) scheme Q3P1 converges at third order even
@@ -87,6 +101,41 @@ lets oscillations pile up, and spectral vanishing viscosity with an
 inviscid low range under-damps low wavenumbers; their
 [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md), tuned
 on this test, matches the exact spectrum best (Fig. 1).
+
+## Space–time Burgers: accelerating shock and shock merger
+
+[Huang & Zahr (2022)](/sources/huang-2022.md) (arXiv v2) solve
+Burgers' equation as a steady problem in the space–time slab with their
+high-order [implicit shock tracking](/methods/implicit-shock-tracking.md)
+method, which moves the mesh so that element faces fit the
+discontinuity:
+
+- *Accelerating shock* (§6.2.1, iburg-acc): $(z,t)\in(-0.2,1)\times(0,1.2)$,
+  inflow value $\mu_1=4$ at $z=-0.2$, $\mu_2=3$. The exact solution
+  (79) is $u=\mu_1$ left of the shock and $u=\mu_2(z-1)/(1+\mu_2t)$
+  right of it, and the shock path (80) starts at $z=0$ and accelerates.
+  On 72 right triangles whose hypotenuses cross the shock, with
+  $p=q=1,2,3$, the discontinuity is mostly tracked after 20 iterations;
+  re-initializing oscillatory elements is needed for $p=3$, without
+  which the solver stalls (Figs. 17–19). Under refinement (Table 2) the
+  solution error $E_\phi$ along $z=0.8$ decreases with segment slopes
+  5.88, 3.92, 2.88 for $p=2$ and 6.60, 5.21, 3.73 for $p=3$, and the
+  shock-position error $E_{z_s}$ with slopes of at least $p+1$ except
+  the first $p=1$ segment (1.09).
+- *Shock formation and merger* (§6.2.2, iburg-form): $(z,t)\in(-1,1)\times(0,1)$,
+  $u_0=1.2\exp(-(z+0.5)^2/0.025)-\exp(-(z-0.5)^2/0.025)$, Dirichlet
+  data $u_0(\pm1)$, 400 right triangles, $p=q=2,3$. Two shocks form and
+  merge in a space–time triple point that the method tracks from a mesh
+  carrying no knowledge of them; where the formation is under-resolved
+  the steep continuous profile is represented by a growing
+  discontinuity (Figs. 21–22).
+
+The printed exact solution satisfies Burgers' equation
+($u_t+uu_z=0$ for $u=\mu_2(z-1)/(1+\mu_2t)$), and with
+$s=\sqrt{1+\mu_2t}$ the path $z_s=1+(\mu_1/\mu_2)s(s-1)-s$ starts at
+$z_s(0)=0$ and moves at the Rankine–Hugoniot speed
+$\tfrac12\big(\mu_1+\mu_2(z_s-1)/(1+\mu_2t)\big)$ *(compiler check,
+not in the sources)*.
 
 ## Energy and entropy tests
 
@@ -216,6 +265,16 @@ in the sources)*, matching Zheng et al.'s statement.
   the sentence.
 - Yu & Hesthaven print the flux as $f=u^2$, not $u^2/2$, a scaling that
   doubles the wave speeds against the other sources.
+- Huang & Zahr print the initial condition (78) as
+  $\mu_1H(-z)-\mu_2H(z)$, a constant right state $-3$, which would move
+  the shock at the constant speed $(4-3)/2=1/2$; their exact solution
+  (79) and shock path (80), consistent with each other, start instead
+  from $\mu_2(z-1)$ for $z>0$ *(compiler check, not in the sources)*.
+  Their Table 2 caption says the slopes "tend to at least the optimal
+  rate ($p+1$)", while the final $E_\phi$ slopes for $p=2,3$ are 2.88
+  and 3.73; the printed slopes agree with the printed errors and mesh
+  sizes ($\ln(6.36/0.866)/\ln(3.63/1.81)=2.87$) *(compiler check, not
+  in the sources)*.
 - The accuracy tests of Zheng et al. use $\Delta t=O(\Delta x^{5/3})$;
   the other sources' accuracy runs state CFL 0.6 with a reduced time
   step (Li, Shu & Qiu) or prescribed multiples of $h$ (Puppo et al.).
@@ -223,6 +282,8 @@ in the sources)*, matching Zheng et al.'s statement.
 # Citations
 
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.1–3.4, Tables 3.1–3.4, Figs. 3.1–3.2 (arXiv v1).
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.1, Table 3.1, Fig. 3.1, Remark 3.1.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §6.2.1–6.2.2, Eqs. (78)–(80), Table 2, Figs. 17–22 (arXiv v2).
 - [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) — §4.1, §4.3, Table 1, Figs. 1, 4–9 (arXiv v2).
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.5, Fig. 11 (arXiv v1).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.11 (arXiv v1).

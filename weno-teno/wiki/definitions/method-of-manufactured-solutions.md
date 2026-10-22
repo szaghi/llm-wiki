@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Method of manufactured solutions"
-description: "Code verification by a chosen smooth solution: the equations applied to it give a source term, the source is added to the solver, and the observed error order is compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, to a semi-discrete operator and to a gradient reconstruction."
+description: "Code verification by a chosen smooth solution: the equations applied to it give a source term, the source is added to the solver, and the observed error order is compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, to a steady-state shock-capturing solver, to a semi-discrete operator and to a gradient reconstruction."
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, order-of-accuracy verification]
 tags: [benchmark, finite-volume, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Method of manufactured solutions
@@ -31,9 +31,9 @@ Peng et al. introduce it as a method "used in many published studies to
 verify CFD codes and test the accuracy of the scheme", citing two
 references, and Chen et al. cite Roache.
 
-## Three uses in the sources
+## Four uses in the sources
 
-The sources apply the idea at three levels of a solver.
+The sources apply the idea at four levels of a solver.
 
 **Whole solver on mapped adaptive meshes.**
 [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §3.1 verify
@@ -65,6 +65,27 @@ simulating the smoothly varying flow field on a hierarchically refined
 mapped mesh"; they print no observed orders, and the conclusion rests on
 the decrease of the errors in the figure.
 
+**Steady solver driven to a converged residual.**
+[Wan & Xia (2022)](/sources/wan-2022.md) verify their steady-state
+[hybrid WENO](/methods/hybrid-weno.md) finite-difference scheme (WENO-H)
+on steady Euler equations with a source term, marched in pseudo-time
+with SSP-RK3. In 2D (Ex. 4.2) the source is
+$(0.4,0.6,0.6,1.8)\cos(x+y)$ for the exact solution
+$\rho=1+0.2\sin(x+y)$, $v_1=v_2=1$, $p=1+0.2\sin(x+y)$ on $[0,2\pi]^2$
+with exact boundary values, run to $T=120$ on $20^2$ to $70^2$ points;
+the $L^1$ error falls from $1.86\times10^{-3}$ to $3.69\times10^{-6}$ at
+observed orders 4.94–4.99 (Table 4.1). In 3D (Ex. 4.14) the source is
+$(0.6,0.8,0.8,0.8,3)\cos(x+y+z)$ for $\rho=p=1+0.2\sin(x+y+z)$,
+$v=(1,1,1)$, CFL 0.6, $T=40$, $20^3$ to $70^3$; the $L^1$ error falls from
+$3.90\times10^{-3}$ to $7.06\times10^{-6}$ at orders 5.01–5.07
+(Table 4.3). With $\gamma=1.4$ the 2D source is exactly
+$\nabla\cdot f(u_{\mathrm m})$ for this field *(compiler check, not in
+the sources)*. The errors of WENO-H and of the linear fifth-order
+upwind scheme are identical to all printed digits in both tables, so
+the hybrid's smoothness detector selects the linear scheme everywhere
+and the test verifies the linear scheme and the steady-state marching,
+not the nonlinear branch *(compiler check, not in the sources)*.
+
 **Semi-discrete operator only.** [Browne et al. (2022)](/sources/browne-2022.md)
 Appendix A verify the right-hand side of their nonlinear disturbance
 equations, not a time-marched solution: manufactured baseflow and
@@ -93,16 +114,18 @@ Figs. 11–12). Their vertex-based least-squares reconstruction with the
 iterative boundary treatment gives the lowest boundary-cell and
 boundary-face errors in both cases.
 
-## What the three uses verify
+## What the four uses verify
 
-Only Peng et al. march a solution in time, with boundary conditions
-and coarse–fine transfer in the loop, and measure a solution error.
+Peng et al. march a solution in time, with boundary conditions
+and coarse–fine transfer in the loop, and measure a solution error;
+Wan & Xia march to a steady state and measure the converged solution
+error.
 Browne et al. evaluate the discrete right-hand side once, against
 "exact" derivatives that are themselves a sixth-order central difference
 of the exact fluxes (Eq. A.3). Chen et al. evaluate a gradient from
-exact cell values and solve no equation (§6.2). The three observed
-orders therefore refer to a solution, an operator and a reconstruction
-respectively *(compiler check, not in the sources)*.
+exact cell values and solve no equation (§6.2). The four observed
+orders therefore refer to an unsteady solution, a steady solution, an
+operator and a reconstruction respectively *(compiler check, not in the sources)*.
 
 ## Qualifications
 
@@ -122,5 +145,6 @@ respectively *(compiler check, not in the sources)*.
 # Citations
 
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.1, Eq. (35), Figs. 4–5, Table A (accepted manuscript).
+- [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.2, Table 4.1; Ex. 4.14, Table 4.3.
 - [Browne et al. (2022)](/sources/browne-2022.md) — Appendix A, Eqs. (A.1)–(A.3), Tables A.1–A.2, Fig. A.30.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.2, Eq. (31), Figs. 11–12.

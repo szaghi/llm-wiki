@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Orszag–Tang vortex
@@ -58,6 +58,29 @@ snapshots and pressure slices of Rueda-Ramírez et al. (2021); both
 unit-square papers run to $t=1$. The printed sign of $B_2$ differs
 ($-\sin4\pi x$ against $+\sin2x$); no source comments on it.
 
+[Dao & Nazarov (2022)](/sources/dao-2022.md) §5.3 (arXiv v1) and
+[Lesur et al. (2023)](/sources/lesur-2023.md) §4.2 (arXiv v1) print the
+unit-square data with $\gamma=5/3$ (Dao & Nazarov) and the same
+$\rho$, $p$, $v$, but with $B=\frac{1}{\sqrt{4\pi}}\big(-\sin(2\pi y),\
++\sin(4\pi x)\big)$: the sign of $B_2$ of Liu et al., not that of
+Rueda-Ramírez et al. Lesur et al. stop at $t=0.5$; Dao & Nazarov run
+to $t=0.5$ and on to $t=1.0$, noting that results beyond $t=0.5$ have
+"rarely been reported" and that up to $t=0.5$ the problem is easy for
+shock-capturing schemes. They state that $t=3.14$ in Tóth's
+normalization corresponds approximately to their $t=0.5$, which is the
+$2\pi$ time scaling above: $3.14/(2\pi)=0.4997$ *(compiler check, not in
+the sources)*.
+
+**Three-dimensional versions.** Dao & Nazarov §5.4, after Helzel et
+al., extend the 2D data with $v_3=0$, $B_3=0$ and add the velocity
+perturbation $\big(-a\sin2\pi z\sin2\pi y,\ a\sin2\pi z\sin2\pi x,\ a\sin2\pi z\big)$
+with $a=0.2$ (page-local), periodic, to $t=0.5$. Lesur et al. §5 use
+another 3D field as their performance test: on the periodic unit cube
+with the 2D $\rho$ and $p$,
+$v=\big(-\sin2\pi y,\ \sin2\pi x+\cos2\pi z,\ \cos2\pi x\big)$ and
+$B=B_0\big(-\sin2\pi y,\ \sin4\pi x,\ \cos2\pi x+\sin2\pi y\big)$,
+$B_0=1/\sqrt{4\pi}$, to $t=1$.
+
 [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2
 (arXiv v2) also compute on periodic $[0,1]^2$ with $\gamma=5/3$ to
 $t=0.48$, with $v$ as above and $B=\frac1{\sqrt{4\pi}}\big(-\sin(2\pi y),\
@@ -92,6 +115,8 @@ constraint.
 | [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) §6.2 | entropy-stable DGSEM, $N=3$ and $7$, element-wise blending with first-order FV or the TVD-ES [subcell scheme](/methods/tecno-scheme.md), indicator on $p$; code [FLUXO](/software/fluxo.md) | $256^2$, $512^2$, $1024^2$ DOFs | GLM cleaning with Powell and GLM non-conservative terms |
 | [Liu et al. (2021)](/sources/liu-2021.md) §4.2 | finite-volume [WLS-ENO](/methods/wls-eno.md), locally divergence-free, second and third order, HLL flux, positivity-preserving framework | $200^2$ (both orders), $600^2$ (second order) | locally divergence-free reconstruction plus Godunov–Powell source term |
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.2 | flux reconstruction, $\mathbb P_7$, vector-valued residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=3$ | $32^2$, $64^2$ elements | none stated |
+| [Dao & Nazarov (2022)](/sources/dao-2022.md) §§5.3–5.4 | continuous Galerkin $\mathbb P_1$, $\mathbb P_3$ with residual-based [artificial viscosity](/methods/artificial-viscosity.md), RK4, CFL 0.3 | $450\times450$ nodes (2D), $120^3$ nodes ($\mathbb P_3$, 3D) | projection cleaning; pseudo-time and hyperbolic (GLM) cleaning compared |
+| [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
 
@@ -139,6 +164,35 @@ The pressure slice at $y/L=0.3125$ agrees well with Jiang & Wu on
 $64^2$ elements and is over-diffused at small scales on $32^2$
 (Figs. 12, 14).
 
+**Long times and divergence cleaning in continuous finite elements.**
+Dao & Nazarov capture all shocks "locally and accurately" with
+$\mathbb P_1$ and $\mathbb P_3$ to $t=1.0$ with unchanged parameters;
+printed ranges are $\rho_h\in[0.0814,\,0.495]$ ($\mathbb P_1$, $t=0.5$)
+and $[0.0377,\,0.419]$ ($\mathbb P_3$, $t=1.0$), the artificial
+viscosity below $4.2\times10^{-4}$, and $\mathbb P_3$ reproduces a
+twisting central density upsurge seen with a third-order DG scheme
+(Figs. 3–4). Without cleaning, they state, the solution breaks near
+$t\approx0.7$ on a fine mesh. On a coarse $40\times40$ $\mathbb P_1$
+run, projection, pseudo-time stepping (10 pseudo-iterations) and
+hyperbolic cleaning all keep $\int\lvert\nabla\cdot B_h\rvert$ small,
+pseudo-time stepping being best and costliest (Fig. 5); up to $t=0.5$
+cleaning makes no noticeable difference. The 3D run reproduces the 2D
+solution in its $z=0$ cut (Fig. 6). See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
+**Solver combinations and performance in a Godunov code.** Lesur et al.
+compare density cuts at $y=0.316$ and $y=0.425$ across reconstruction,
+Riemann solver and time stepper: RK3 with PPM and Roe is the most
+accurate combination at a given resolution, and constrained transport
+keeps $\lvert\nabla\cdot B\rvert\ll10^{-12}$ in all runs (Figs. 10–11).
+The 3D field is their performance benchmark (HLLD, linear
+reconstruction, RK2, double precision): 41.3 Mcell/s on a dual AMD Rome
+node, 25.0 on a dual Intel Cascade Lake node, 484 on four V100 GPUs and
+1240 on four MI250X, i.e. 19.3 and 49.6 times the Cascade Lake node
+(they print 19.3 for $484/25.0=19.36$ *(compiler check, not in the
+sources)*), with weak-scaling efficiency above 80 % on V100 and AMD
+Rome and above 95 % on MI250X (Table 4, Fig. 18).
+
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
 adaptive TENO family carries over to MHD with constrained transport
@@ -146,9 +200,16 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All five sources compare contour plots or slices; none reports an
+- All seven sources compare contour plots or slices; none reports an
   error norm. Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
+- Lesur et al.'s text gives the 2D resolution as "$128^3$, plus a
+  reference case at $512^3$", their captions $128^2$ and $1024^2$; the
+  captions are taken here. Dao & Nazarov's Fig. 3(c) caption reads
+  $t=0.5$ for a panel whose printed range and the text place at
+  $t=1.0$.
+- Dao & Nazarov's cleaning ranking rests on one coarse $\mathbb P_1$ run
+  without timings; the break-up at $t\approx0.7$ is stated, not shown.
 - Dzanic et al. refer to the Orszag–Tang density contours as "Fig. 7",
   which is their explosion test; the contours are their Fig. 12.
 - Fu (2023) is a review: the run is reproduced from the cited TENO-MHD
@@ -168,3 +229,5 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.2, Figs. 6–11 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.2, Figs. 5–8.
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.2, Figs. 12–14 (arXiv v2).
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §§5.3–5.4, Figs. 3–6 (arXiv v1).
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.2, §5, Table 4, Figs. 10–11, 18 (arXiv v1).

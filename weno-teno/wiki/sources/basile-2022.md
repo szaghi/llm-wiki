@@ -144,9 +144,10 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–4 (2026-10-22/23). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [h- and hp-adaptation for DG](/methods/hp-adaptation.md)
+* [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
 * [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)

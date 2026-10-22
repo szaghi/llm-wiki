@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -240,7 +240,27 @@ partial densities, volume fraction and a concave energy-like quantity
 (§5.2); it is on the
 [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)
 page. Its coefficients are computed from floors on $g(u)$, not from local
-minimum and maximum bounds.
+minimum and maximum bounds. Limiting that recomputes flagged cells after
+the step instead of blending fluxes before it is
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md).
+
+## Viscosity without invariant-domain guarantees
+
+[Dao & Nazarov (2022)](/sources/dao-2022.md) stabilize continuous finite
+elements for ideal MHD with a residual-based
+[artificial viscosity](/methods/artificial-viscosity.md) capped by a
+first-order viscosity $C_{\max}h_ia_i$ ($h_i$ a nodal mesh size, $a_i$
+the largest eigenvalue modulus at node $i$; page-local $C_{\max}$,
+$h_i$), which in 1D gives the Lax–Friedrichs scheme, but claim no
+invariant-domain property. They cite the convex limiting of Guermond,
+Nazarov, Popov and Tomas as the route to invariant-domain preservation
+and to a correction of strongly imposed boundary conditions, and state,
+citing Guermond and Popov's first-order invariant-domain scheme, that a
+positivity-preserving first-order viscosity would need a more accurate
+maximum-wave-speed estimate than the largest eigenvalue they use
+(§1, §4.2, §4.5, §6). The graph viscosity above instead takes its wave
+speed $a_{\max}$ from the maximum wave speed of the Riemann problem between neighbouring
+nodes (Pazner, §3.1).
 
 ## Qualifications
 
@@ -289,3 +309,4 @@ minimum and maximum bounds.
 - [Fu (2021)](/sources/fu-2021.md) — arXiv v1: §5.7 (Hu–Adams–Shu limiter used).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.9 (Hu–Adams–Shu limiter used).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §4.3 (entropy tolerance).
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §4.2; §4.5; §6 (invariant-domain preservation left out of scope).

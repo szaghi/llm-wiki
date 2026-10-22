@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed-boundary and cut-cell methods"
-description: "Treatments of walls and material interfaces that do not follow the mesh on Cartesian grids: sharp-interface ghost-cell immersed boundaries that fill solid cells from mirror or image points, the bilinearly complete hybrid reconstruction of Wang et al., and cut-cell methods with their small-cell problem, cell merging and real–ghost mixing."
+description: "Treatments of walls and material interfaces that do not follow the mesh: sharp-interface ghost-cell immersed boundaries filling solid cells from mirror or image points, the bilinearly complete hybrid reconstruction of Wang et al., cut cells with the small-cell problem, cell merging and real–ghost mixing, and the diffuse-interface volume penalization that Kou et al. couple with high-order flux reconstruction."
 status: established
-aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM]
-tags: [immersed-boundary, finite-volume, interface-capturing, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP]
+tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -25,6 +25,11 @@ As [Wang et al. (2022)](/sources/wang-2022.md) §1 put it, cut cells are
 strictly conservative but suffer from the small-cell problem: an
 explicit time step limited by the smallest cut cell, ill-conditioning
 for implicit schemes.
+Both are *sharp-interface* methods. A third family, **volume
+penalization**, is a *diffuse-interface* method: it only marks points as
+inside or outside the body and adds a relaxation source there, so the
+exact wall position is not represented
+([Kou et al. (2022)](/sources/kou-2022.md), §1, §4.6).
 
 ## Ghost-cell immersed boundaries
 
@@ -145,6 +150,82 @@ immersed-boundary code on a [shock diffraction](/benchmarks/shock-diffraction.md
 over a cylinder, and states that its compact stencil needs fewer ghost
 nodes and "speeds up" the method; no timing is given.
 
+## Volume penalization with flux reconstruction
+
+[Kou et al. (2022)](/sources/kou-2022.md) couple Brinkman-type volume
+penalization with high-order [flux reconstruction](/methods/flux-reconstruction.md)
+on Cartesian grids for the compressible Navier–Stokes equations over
+static and rigidly moving bodies; they present the combination with a
+high-order method as the "aim and novelty" of the work (§1).
+
+**Penalized equations** (§4.1, Eqs. (23)–(26)). A sharp mask
+$\chi_{\mathrm s}(x,t)$ (page-local; 1 in the solid, 0 in the fluid) is
+evaluated at the solution points, and every covered solution point is
+penalized. With solid velocity $v_{\mathrm s}$ and penalization parameter
+$\eta_{\mathrm p}$ (page-local, physically a permeability), the source
+added to the right-hand side is
+
+$$S(u)=\frac{\chi_{\mathrm s}}{\eta_{\mathrm p}}\begin{pmatrix}0\\ \rho v_{\mathrm s}-\rho v\\ \tfrac12\rho\lvert v_{\mathrm s}\rvert^2-\tfrac12\rho\lvert v\rvert^2\end{pmatrix},$$
+
+which relaxes momentum and kinetic energy towards the solid motion; the
+continuity equation is not penalized, and the wall is adiabatic, after
+Abgrall et al. as recalled. No-slip on a static body is $v_{\mathrm s}=0$.
+
+**Stiff source and time stepping** (§4.1, Eqs. (27)–(35)). The source is
+treated by Strang splitting: a half step of the source, a full
+three-stage SSP Runge–Kutta step of the convective and viscous terms, a
+second half step of the source. The source sub-steps are either explicit
+Euler or a linearized backward Euler step, which Kou et al. present as "a
+new approach proposed in this paper", while citing similar implicit
+treatments for compressible and incompressible multiphase flows. For
+$v_{\mathrm s}=0$ the Jacobian $\partial S/\partial u$ has $-1/\eta_{\mathrm p}$
+on the momentum diagonal and the row $\tfrac1{\eta_{\mathrm p}}\big(\tfrac12\lvert v\rvert^2,-v^\top,0\big)$
+for the energy, and $I-\tfrac{\Delta t}2\,\partial S/\partial u$ has a
+closed-form inverse, so no linear solve is needed. The implicit forcing
+allows $\eta_{\mathrm p}$ "about one or two orders of magnitude" smaller
+than explicit forcing at a given step; no table quantifies this.
+Explicit treatment requires $\Delta t<\eta_{\mathrm p}$, as recalled
+(§4.6).
+
+**Error structure** (§4.6, Eqs. (44)–(46), as recalled from the
+penalization literature). The error splits into a penalization error
+$\propto\eta_{\mathrm p}^{1/2}$ for Dirichlet conditions ($\eta_{\mathrm p}$
+for Neumann) and a discretization error whose rate is the smaller of the
+scheme's order and the regularity of the penalized solution at the
+boundary. The error saturates at $\Delta t\approx\eta_{\mathrm p}$, which
+gives the rule used throughout, $\eta_{\mathrm p}=\Delta t$, with $\Delta t$
+fixed by the CFL condition.
+
+**Geometry and surface data** (§4.2–4.4). The mask of a convex body given
+by Lagrangian marker points comes from a simplified ray casting (two
+intercepts along one coordinate line; non-convex bodies need intersection
+counting); a rigidly moving body is handled by mapping each solution
+point back to the body frame at $t=0$, $\chi_{\mathrm s}(x,t)=\chi_{\mathrm s}(\tilde x,0)$,
+with the rigid-body velocity prescribed (Eqs. (36)–(38)). Wall pressure
+and shear stress come from inverse-distance weighting at an interpolation
+point on the wall normal (IDW-IP, after Bharadwaj and Ghosh), using only
+fluid points, $2$ to $3$ times the number of solution points of a
+near-wall element. Evaluating the element polynomial at the wall instead
+uses non-physical solid values and gives strongly oscillatory pressure
+and wall vorticity (App. C, Fig. C.24).
+
+**Evidence** (§5, App. D).
+
+| test | setting | result |
+|---|---|---|
+| 1D penalized advection–diffusion | 80 elements, $\Delta t=10^{-7}$ | penalization error $O(\eta_{\mathrm p}^{1/2})$ at large $\eta_{\mathrm p}$; FR order kept with exact solid data, about first order globally with boundary-value solid data (§5.1) |
+| cylinder, $\mathrm{Re}=40$, $M=0.2$ | $h=0.03D_{\mathrm c}$–$0.01D_{\mathrm c}$ (page-local diameter $D_{\mathrm c}$), degree 2–3 | $L/D_{\mathrm c}=2.27$–$2.30$, separation angle $51.2°$–$52.0°$, $C_d=1.50$–$1.52$, against body-fitted FR $2.24$, $51.0°$, $1.53$ (Table 1) |
+| NACA0012, $\mathrm{Re}=5000$, $M=0.5$, $2°$ | $h=0.004$ chord, degree 2 | accuracy improves as $\eta_{\mathrm p}$ decreases down to $\Delta t$, then saturates and oscillates (Fig. 15) |
+| sphere, $\mathrm{Re}=100$, $M=0.2$ | $h=0.03D_{\mathrm c}$, degree 2 | $C_d\approx1.06$ against 1.08 and 1.09 in the literature (§5.4) |
+| pitching–plunging NACA0012, $\mathrm{Re}=1000$, $M=0.2$ | degrees 1–3 | forces agree with a body-fitted reference and smooth out as the degree grows (§5.5) |
+| compressible cylinder (Canuto–Taira), $M=0.1$–$0.5$ | degree 2 | drag, wake lengths, lift and Strouhal trends reproduced (App. D) |
+
+Local p-refinement near the wall reproduces the uniform degree-3 cylinder
+result with 28 % of the degrees of freedom (Fig. 14;
+[h- and hp-adaptation](/methods/hp-adaptation.md)). Smoothing the mask
+with a Gaussian reduces near-wall pressure oscillations but adds
+friction error at the leading edge and is not used (App. B).
+
 ## Qualifications
 
 - Wang et al. call their method "second-order accurate", with the
@@ -167,7 +248,23 @@ nodes and "speeds up" the method; no timing is given.
   print the stationary-vortex pressure in a form that does not satisfy
   the radial balance it is derived from, and a curved-wall profile
   that leaves $0.6<x<0.7$ undefined.
-- Their vortex test calls the wall a slip wall in one paragraph and a
+- Volume penalization with boundary-value solid data loses the high
+  order at the wall: Kou et al.'s global rate is about first order, by
+  their account from the low regularity across the boundary (§4.6, §5.1).
+  The FR order survives only away from the wall or with exact solid data.
+- Kou et al.'s statement that volume penalization "has not been studied
+  with the high-order methods" sits next to their own citations of
+  penalization with Fourier spectral (Kolomenskiy & Schneider) and
+  pseudo-spectral methods (§1).
+- Kou et al.'s closed-form Jacobian (Eq. (34)) is that of the source with
+  $v_{\mathrm s}=0$; with a moving body the momentum rows gain density
+  derivatives $\chi_{\mathrm s}v_{\mathrm s}/\eta_{\mathrm p}$, and which
+  Jacobian is used for the moving cases is not stated *(compiler check,
+  not in the sources)*. They print the $\eta_{\mathrm p}$ convergence as
+  "$O(\eta^{-1})$" and "$O(\eta^{-0.5})$"; the rates as
+  $\eta_{\mathrm p}\to0$ are $O(\eta_{\mathrm p})$ and
+  $O(\eta_{\mathrm p}^{1/2})$, consistent with their Eq. (45) (§5.1).
+- Wang et al.'s vortex test calls the wall a slip wall in one paragraph and a
   no-slip wall in another; the two coincide only where the vortex
   velocity vanishes at the wall.
 
@@ -177,3 +274,4 @@ nodes and "speeds up" the method; no timing is given.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1; §2.2; §2.5.2–2.5.3, Eqs. (27)–(29); Appendix A.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
 - [Deng (2023)](/sources/deng-2023.md) — §8, Fig. 38.
+- [Kou et al. (2022)](/sources/kou-2022.md) — §1, §4.1 Eqs. (23)–(35), §4.2–4.4 Eqs. (36)–(43), §4.6 Eqs. (44)–(46), §5.1–5.5 Table 1, Figs. 8–21, Apps. B–D.

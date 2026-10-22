@@ -138,7 +138,7 @@ and [15], [32] are theses. No printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunk 4 (2026-10-23). This source is cited on:
 
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)

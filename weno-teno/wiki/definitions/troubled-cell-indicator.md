@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Troubled-cell and shock indicators"
-description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme must be limited, blended or switched; the page defines the indicators the sources use (modal energy and decay, KXRCF, time-reversibility defect, WENO deviation, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor and flattener types) with their parameters and limitations."
+description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme must be limited, blended or switched; the page defines the indicators the sources use (modal energy and decay, KXRCF, time-reversibility defect, WENO deviation, PDE residual, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor and flattener types) with their parameters and limitations."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator]
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -95,6 +95,53 @@ smooth). The authors state that it is not suited to shocks
 and that strong discontinuities need another indicator. They call it a
 "smoothness indicator", with larger values smoother, the opposite sense of
 WENO's $\beta_k$ ([h- and hp-adaptation](/methods/hp-adaptation.md)).
+
+**Modal-decay rate as shock sensor and error estimator at once.**
+[Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) (§5, Eqs.
+(32)–(36); §7.3, Eqs. (37)–(38)) use Mavriplis' decay rate in FLEXI with
+a dual role. For each reference direction they compute the relative
+energy $w_m$ of Legendre mode $m$ (the squared modal coefficients of
+mode $m$ in that direction summed over the others, over the total), fit
+$w_m=a\,e^{-\varrho^{(d)}_Km}$, and take the indicator
+$\mathrm{ind}=\min_d\lvert\varrho^{(d)}_K\rvert$ (page-local $w_m$, $a$,
+$\mathrm{ind}$; $\varrho^{(d)}_K$ the exponential decay rate of registry §10
+in direction $d$, as on the [h- and hp-adaptation](/methods/hp-adaptation.md)
+page; the source writes $\sigma^d$; larger is smoother),
+evaluated on density or pressure per test case; which modes enter the fit
+and how it is done are not stated. Four thresholds per degree $N$,
+$FV^N_{\mathrm{lower}}<FV^N_{\mathrm{upper}}<DG^N_{\mathrm{refine}}<DG^N_{\mathrm{coarse}}$,
+split the axis: below $FV_{\mathrm{lower}}$ a DG element switches to
+[finite-volume subcells](/methods/subcell-finite-volume-limiting.md),
+between $FV_{\mathrm{lower}}$ and $DG_{\mathrm{refine}}$ its degree is
+raised, above $DG_{\mathrm{coarse}}$ lowered; an FV element switches back
+to DG only above $FV_{\mathrm{upper}}$, and the gap between the two FV
+thresholds is a hysteresis band against excessive switching (Figs. 3–4).
+The thresholds vary linearly in $N$, which leaves four free parameters
+tuned per test case (e.g. Sod: $[DG^{N_{\min}}_{\mathrm{refine}},DG^{N_{\max}}_{\mathrm{refine}}]=[3.5,5.0]$,
+$[FV^{N_{\min}}_{\mathrm{lower}},FV^{N_{\max}}_{\mathrm{lower}}]=[2.4,3.3]$;
+§8.4). Degree changes happen only at the start of a time step; DG-to-FV
+switching is also checked after each Runge–Kutta stage, FV-to-DG never
+inside a step (§7.2). For FV elements the indicator is evaluated on the
+DG polynomial recovered from the subcells
+([h- and hp-adaptation](/methods/hp-adaptation.md)).
+
+**Persson–Peraire sensor as a re-initialization trigger.**
+[Huang & Zahr (2022)](/sources/huang-2022.md) (§5.2.3, Eqs. (62)–(65))
+evaluate the Persson–Peraire sensor
+$\log_{10}\big(\lVert\chi(u_h)-\chi(\Pi_{N-1}u_h)\rVert/\lVert\chi(u_h)\rVert\big)$,
+with $\chi$ the density and $\Pi_{N-1}$ the projection to total degree
+$N-1$ (page-local), not to add viscosity but to choose the elements of
+their [implicit shock tracking](/methods/implicit-shock-tracking.md)
+iteration whose solution is reset to a patch average that does not cross
+the shock. An element is flagged when the sensor exceeds a threshold
+$c_5$, or, after more than five line-search iterations, when it exceeds
+a fraction $c_6$ (typically 0.01) of the largest value. The flagged
+elements and their face neighbours are reset, each to the average over
+itself and those face neighbours whose average density jump across the
+shared face is at most a tolerance $c_7$ (Eqs. (64)–(68); page-local
+constants, per test in their Table A.4).
+Without it the iteration stalls on an accelerating Burgers shock at
+$N=3$ (§6.2.1, Fig. 19).
 
 **Algebraic modal decay, fitted or learned (artificial viscosity).**
 [Yu & Hesthaven (2022)](/sources/yu-2022.md) (§1, §4.1, Eqs. (4.1)–(4.3))
@@ -211,7 +258,47 @@ overwriting the solution
 the authors mention, without using it, a separate troubled-cell detector to
 skip the reconstruction in smooth cells (§5).
 
+**Normalized PDE residual (continuous finite elements).**
+[Dao & Nazarov (2022)](/sources/dao-2022.md) (§4.3, Eqs. (4.6)–(4.10))
+use the residual of the ideal-MHD equations evaluated on the continuous
+finite element solution, with a BDF2 time derivative, as a nodal
+indicator: it is $O(h^{N+1})$ in smooth regions and has jumps of size
+$O(h^{-1})$ at discontinuities (stated). Each conserved component $q$
+is made unitless by a normalization
+$$n(q)_i=\bar S(q)\Big(1-C_l\,\frac{\max_{\mathcal I(i)}q_j-\min_{\mathcal I(i)}q_j}{\max_\Omega q-\min_\Omega q}\Big),\qquad \bar S(q)=\lVert q-\mathrm{mean}(q)\rVert_{L^\infty(\Omega)},$$
+with $\mathcal I(i)$ the nodes in the support of basis function $i$ and
+$C_l\in(0,1)$, 0.4 in all tests (page-local $n$, $\bar S$, $C_l$,
+$\mathcal I$). The bracket lies in $[1-C_l,1]$, so $n$ is strictly
+positive; the authors' earlier normalization ($C_l$ replaced by a factor
+of one) can vanish at the largest jump of a mixed-sign field such as the
+momentum or magnetic field and let the normalized residual grow
+"uncontrollably" (§4.3). The maximum of the normalized componentwise
+residuals sets the high-order part of a residual-based
+[artificial viscosity](/methods/artificial-viscosity.md); the indicator
+is not thresholded, and the viscosity is capped by a first-order one.
+
 ## Finite-difference indicators
+
+**Three-region WENO-Z-type detector.** [Wan & Xia (2022)](/sources/wan-2022.md)
+(§3, Algorithm 1) classify each five-point stencil of their
+steady-state [hybrid WENO](/methods/hybrid-weno.md) scheme with
+$$\eta_{\mathrm W}=\frac{\tau_5}{\epsilon+\beta^{\mathrm M}},\qquad \tau_5=\lvert\beta_0-\beta_2\rvert,\qquad \beta^{\mathrm M}=\tfrac13(\beta_0+\beta_1+\beta_2),\qquad\epsilon=10^{-6}$$
+(page-local $\eta_{\mathrm W}$, $\beta^{\mathrm M}$; registry stencil
+numbering, the source's $\eta$, $\beta^{(1)}_1,\beta^{(1)}_3$), built
+from the [WENO-JS](/methods/weno-js-reconstruction.md) indicators: smooth
+if $\eta_{\mathrm W}\le\frac12$ (linear fifth-order reconstruction),
+non-smooth if $\eta_{\mathrm W}\ge1$ (a CWENO-type reconstruction
+blended with its linear counterpart), and a transition region in
+between, where a smooth weight $M(\eta_{\mathrm W})$ with $M=1$ at
+$\frac12$ and $M\to0$ at 1 blends the two. The motivation is the
+expansion $\tau_5=O(\Delta x^5)$, $\beta^{\mathrm M}=O(\Delta x^2)$ away
+from critical points. The authors state that the smooth transition is
+"essential for the steady-state convergence" (§3.2); no sharp-switch
+ablation is shown. On the smooth steady manufactured tests the hybrid and the
+linear scheme print identical errors, so the detector selects the linear
+scheme everywhere *(compiler check, not in the sources: Tables 4.1, 4.3
+agree to all printed digits; see
+[method of manufactured solutions](/definitions/method-of-manufactured-solutions.md))*.
 
 **Smooth WENO-Z-type discontinuity indicator.**
 [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) (§2.2.4, Appendix B),
@@ -282,6 +369,21 @@ high-order undivided differences respond to high-wavenumber turbulent
 fluctuations and to genuine discontinuities alike, low-order ones separate
 them (Fu 2023, §4.1; Fu 2021, §3.4).
 
+[Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) (§3.1, Eqs.
+(18)–(20)) recall the same sensor, after Ren et al. (2003), for the
+five-point TENO5-A with $C_r=0.24$, $\xi_{\mathrm A}=10^{-3}$, a
+three-point minimum $\sigma_{i+1/2}=\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})$
+and the cut-off $C_T=10^{-\lfloor10-5(1-\varphi(\mu_d))\rfloor}$, i.e.
+between $10^{-10}$ and $10^{-5}$. They object that the sensor "can
+roughly locate the discontinuities, but is incapable of estimating the
+specific wavenumber": on sampled sines its value at critical points
+differs from its value elsewhere at the same wavenumber, and in one test
+it is smaller at the discontinuity than at some critical points
+(Fig. 2). They replace it by a five-point
+[scale sensor](/definitions/scale-sensor.md) that estimates the local
+scaled wavenumber exactly on sinusoids and is large at discontinuities
+([adaptive TENO](/methods/adaptive-teno.md)).
+
 **TENO-flag indicators.** The binary cut-off flags
 $\delta_k$ of [TENO](/methods/targeted-eno.md) already say which candidate
 stencils are crossed by a discontinuity, and two sources build indicators
@@ -308,6 +410,28 @@ from them.
   beyond TENO5's ($q=6$, $C_T=10^{-5}$) and triggers the
   [THINC](/methods/thinc-reconstruction.md) flux in
   [TENO-THINC](/methods/teno-thinc.md).
+- *Improved location detector* ([Liang et al. (2022)](/sources/liang-2022.md),
+  §3.1, Eqs. (17), (22)–(24), (32)). Liang et al. state that Takagi et
+  al.'s rule misses discontinuities and misclassifies high-wavenumber
+  content "due to the excessive use of downwind stencil points". A step
+  located at the interface $x_{i+1/2}$ rather than at a cell centre gives
+  $\zeta_i=1$ and escapes the rule, which needs $\zeta_i=0$ (Tables 2–3).
+  Their detector flags cell $i$ if condition I or condition II holds.
+  Condition I is Takagi et al.'s rule without $\zeta_{i+3}$: some
+  $\zeta_{i-3..i-1}\in\{1,2\}$, $\zeta_i=0$, some
+  $\zeta_{i+1..i+2}\in\{-1,2\}$. Condition II catches the interface
+  step: some $\zeta_{i-2..i-1}\in\{1,2\}$, $\zeta_i=1$, $\zeta_{i+1}=-1$
+  and $\zeta_{i+2}\in\{-1,2\}$. A stricter variant with "and" in place
+  of "or" among the neighbours (and without $\zeta_{i-3}$) marks "very
+  steep" discontinuities and raises the steepness of the replacement
+  tanh flux from 0.91 to 1.23 ([TENO-THINC](/methods/teno-thinc.md)).
+  Like Takagi et al.'s, the detector uses only TENO's $\delta_k$ and adds
+  no parameter. On $\sin(10\pi x)$ and $\sin(24\pi x)$ with 120 points on
+  $[0,2]$ neither detector fires; on discontinuous static data the new
+  one has far fewer misjudgments (Figs. 2–5). By the flags of Tables 2–3,
+  the sharpest interface step of Eq. (22) does not satisfy the stricter
+  variant ($\zeta_{i-2}=0$), so it receives the lower steepness *(compiler
+  check, not in the sources)*.
 
 **Pressure-jump shock indicator (Riemann-solver switch).**
 [Bai & Li (2022)](/sources/bai-2022.md) (§2.4, Eqs. (16)–(20), after Kim et
@@ -432,6 +556,25 @@ Several sources use an indicator without defining or analysing it:
 - Dzanic, Trojak & Witherden's scalings at high order are posited, not
   derived; the derivation covers forward Euler with first-order upwind
   fluxes on step data (§3).
+- The undivided-difference sensor is printed with different stencils and
+  constants: a four-point minimum and $C_r=0.265$ in Fu (2021), a
+  three-point minimum and $C_r=0.24$, $\xi_{\mathrm A}=10^{-3}$ in Huang,
+  Liang & Fu (2023). The two belong to different schemes (Fu 2021's
+  cut-off uses $b_1=14$, $b_2=6.4$; the five-point TENO5-A uses 10 and
+  5), so the difference is recorded as a per-scheme choice; neither
+  source discusses it.
+- Mossier et al. print the linear threshold rule as
+  $FV^N_{\mathrm{lower}}=FV^{N_{\min}}_{\mathrm{lower}}+N\,(FV^{N_{\max}}_{\mathrm{lower}}-FV^{N_{\min}}_{\mathrm{lower}})/(N_{\max}-N_{\min})$
+  (Eq. 37), which does not return the end values at $N=N_{\min}$ and
+  $N=N_{\max}$ unless $N_{\min}=0$; interpolation needs $N-N_{\min}$ in
+  place of $N$ *(compiler check, not in the sources)*. One bullet of
+  §7.3 names $FV^N_{\mathrm{lower}}$ as the switch-back threshold where
+  the other bullet and Fig. 4 use $FV^N_{\mathrm{upper}}$; how
+  $DG^N_{\mathrm{coarse}}$ is set is not stated.
+- Liang et al.'s condition list and guard leave a precedence ambiguity:
+  their flat-data guard ($(f_{i+1}-f_i)(f_i-f_{i-1})\le10^{-15}$ forces
+  the first-order flux) also covers every non-monotone triple for which
+  they prescribe the central flux ([TENO-THINC](/methods/teno-thinc.md)).
 
 # Citations
 
@@ -458,3 +601,9 @@ Several sources use an indicator without defining or analysing it:
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (16)–(20)).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (constraint violation as indicator).
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — arXiv v2: §4.2 (no separate shock sensor).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §5, Eqs. (32)–(36); §7.2–7.3, Eqs. (37)–(38), Figs. 3–4; §8.4.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — arXiv v2: §5.2.3, Eqs. (62)–(67); §6.2.1, Fig. 19; Table A.4.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §4.3, Eqs. (4.6)–(4.10).
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Algorithm 1; Tables 4.1, 4.3.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — arXiv v1: §3.1, Eqs. (18)–(20), Fig. 2.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §3.1, Eqs. (17)–(18), (22)–(24), (32)–(33), Tables 1–3, Figs. 2–5.

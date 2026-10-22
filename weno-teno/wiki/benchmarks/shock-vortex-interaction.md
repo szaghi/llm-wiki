@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Shock–vortex interaction
@@ -24,8 +24,9 @@ vortex the same configuration becomes a near-vacuum test for
 [Li et al. (2022)](/sources/li-2022-b.md) §4.4.2, Eq. (46),
 [Huang et al. (2026)](/sources/huang-2026.md) §6.10,
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 and
-[Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 print the same
-construction. The upstream state is
+[Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 and
+[Liang et al. (2022)](/sources/liang-2022.md) §4.7, Eq. (43), print the
+same construction. The upstream state is
 $(\rho,v_1,v_2,p)=(1,\,1.1\sqrt\gamma,\,0,\,1)$, so that the stream
 moves at Mach 1.1 into the stationary shock; the downstream state
 follows from the Rankine–Hugoniot conditions; $\gamma=1.4$. Let
@@ -51,9 +52,28 @@ sources)*.
 | [Li et al. (2022)](/sources/li-2022-b.md) §4.4.2 | 0.3 | 0.204 | 0.05 | $200\times100$; reference $2000\times1000$ WENO7-Z | 0.6 | [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z |
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.10 | 0.3 | 0.204 | 0.05 | $h=1/100$; fine-mesh WENO5-JS reference | not printed | [ROUND, LD-ROUND](/methods/round-scheme.md) vs WENO3-NN, WENO5-JS |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 | 0.3 | 0.204 | 0.05 | $400\times200$, reflective top and bottom | 0.8 | [OEDG](/methods/oedg.md) |
+| [Liang et al. (2022)](/sources/liang-2022.md) §4.7 | 0.3 | 0.204 | 0.05 | $300\times150$; reference $2000\times1000$ WENO5-JS | 0.6 | [TENO-THINC](/methods/teno-thinc.md) variant vs WENO5-Z, TENO5, TENO5-THINC |
 | [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 | 1.378106 | 0.204 | 0.4 | $450\times225$, $\mathbb P^2$ and $\mathbb P^4$ DG | 0.6 (pressure at 0.2, 0.35, 0.6) | bound-preserving DG with [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md) |
 
 ### Variants of the Euler setup
+
+- **Viscous, Tenaud et al. setting, curvilinear mesh.**
+  [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.3, after Tenaud et
+  al. (2000), hold a stationary shock at $x=1.0$ in a square box of side
+  $L_x=2L_0$, pre-shock $(\rho,v_1,v_2,p)=(1,1.1588,0,1/\gamma)$ (unit
+  sound speed, so $M=1.1588$), post-shock state from Rankine–Hugoniot,
+  $\mathrm{Re}=2000$. The vortex, centred at $(0.5,1.0)$, has core radius
+  $0.075$ and peak speed parameter $0.25$:
+  $(\delta v_1,\delta v_2)=\frac{0.25}{0.075}e^{0.5(1-r^2/0.075^2)}(-\bar y,\bar x)$,
+  $\delta T=-\frac{\gamma-1}{2}\,0.25^2\,e^{1-r^2/0.075^2}$ with the
+  temperature normalised as $T=\gamma p/\rho$; it rotates the other way
+  from the vortex of the reference setup, and $\mathcal A=0.5$. Top and
+  bottom are periodic, $t=0.7$. The grid is a $58\times58$ curvilinear
+  mesh, stretched in $x$ by a $\sinh$ map (stretching parameter 2.5) and
+  waved in $y$ by $0.1\cos(4\pi(x-x_{\min})/L_x)$; the reference is
+  WENO-Z on $500\times500$. The paper calls $\Delta p/p_0=0.4$ "the assigned
+  pressure jump"; the Rankine–Hugoniot pressure ratio at $M=1.1588$,
+  $\gamma=1.4$, is $1.39995$ *(compiler check, not in the sources)*.
 
 - **Moving shock, same vortex.** [Yu & Hesthaven (2022)](/sources/yu-2022.md)
   §5.4.2 use the vortex parameters of the table ($\mathcal E=0.3$,
@@ -98,7 +118,22 @@ closest to the $2000\times1000$ reference in pressure along $y=0.5$
 WENO3-NN and WENO5-JS, and LD-ROUND most accurate near $x\approx0.55$,
 capturing the lowest pressure near $x\approx0.95$ (Fig. 15). Peng et
 al. use the test as a robustness check and report no nonphysical
-oscillations (Fig. 12).
+oscillations (Fig. 12). Liang et al. find all compared schemes in
+agreement with the reference, their scheme resolving the contact wave
+"without adding strong disturbances" (Fig. 19).
+
+**Error and efficiency on the curvilinear mesh.** Li, Chen & Ren give
+the only quantitative errors: the centreline density $L_1$ error on
+$58\times58$ is $0.9768\times10^{-3}$ for their hybrid MDAD-HY (CPU
+1.644 s), against $1.624\times10^{-3}$ for MDCD-HY (1.656 s),
+$1.920\times10^{-3}$ for TENO-HY (1.776 s) and $2.464\times10^{-3}$ for
+WENO-Z (3.013 s) (Table 2). Refining each scheme until $L_1<10^{-3}$,
+they measure the efficiency $1/(\text{error}\times\text{CPU time})$:
+622.7 for MDAD-HY on $58^2$, 430.1 for MDCD-HY ($70^2$), 288.8 for
+TENO-HY ($80^2$) and 107.7 for WENO-Z ($88^2$), i.e. ratios 1.45, 2.16
+and 5.78 *(compiler check, not in the sources)* against the paper's
+1.5, 2.2 and 5.8 (Table 3). The schemes are described on the
+[MDCD scheme](/methods/mdcd-scheme.md) page; no hardware is reported.
 
 Yu & Hesthaven stabilize the computation "with reasonable wiggles";
 the vortex is well resolved and only marginally affected by the
@@ -154,6 +189,12 @@ a numerical result.
   velocity is a strain field, not a rotation, and its Gaussian decays
   over a unit length instead of $r_c$; the form of the other sources
   has $-\bar x$ and $r/r_c$. The paper does not show which was run.
+- Liang et al. print the vortex temperature of Eq. (43) as
+  $\delta T=-\frac{(\gamma-1)\mathcal E^2}{4\mathcal A\gamma}e^{2\mathcal A(1-\gamma^2)}$,
+  with $\gamma^2$ in the exponent where their velocity carries
+  $1-r^2/r_c^2$; taken literally $\delta T$ would be uniform in space.
+  The exponent of the other sources, $2\mathcal A(1-r^2/r_c^2)$, is
+  meant; their other parameters are those of the table.
 - Huang et al. do not print the final time, so their pressure profiles
   cannot be placed against those of Li et al. ($t=0.6$) and Peng et al.
   ($t=0.8$).
@@ -171,3 +212,5 @@ a numerical result.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.2, Figs. 13–15.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §5.2, Eqs. (58)–(60), Figs. 6–7 (arXiv v2).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.10, Figs. 15–16 (arXiv v1).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4.7, Eq. (43), Fig. 19.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.3.3, Eq. (70), Tables 2–3.

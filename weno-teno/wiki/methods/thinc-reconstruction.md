@@ -5,7 +5,7 @@ description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump prof
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # THINC reconstruction
@@ -42,7 +42,9 @@ $$\hat f_{i+1/2}=f_{\mathrm m}+f_{\mathrm j}\,\frac{\mathcal A+\mathcal T}{1+\ma
 \mathcal A=\frac{\mathrm{sgn}(\varsigma)}{\mathcal T}\,\frac{e^{\lvert\varsigma\rvert\beta_{\mathrm T}}-1}{e^{\lvert\varsigma\rvert\beta_{\mathrm T}}+1},$$
 
 with the first-order fallback $\hat f_{i+1/2}=f_i$ where
-$(f_{i+1}-f_i)(f_i-f_{i-1})\le10^{-15}$ (Takagi et al., Eq. (17)).
+$(f_{i+1}-f_i)(f_i-f_{i-1})\le10^{-15}$ (Takagi et al., Eq. (17)). The same closed form,
+with $\beta_{\mathrm T}=1.6$ and the profile centred by the cell-average condition, is
+printed by [Liang et al. (2022)](/sources/liang-2022.md) (§2.3, Eqs. (19)–(21)).
 *(Compiler check, not in the sources: $\mathcal A=\tanh(\varsigma\beta_{\mathrm T}/2)/\mathcal T$,
 and for $f_{i-1}=0$, $f_i=0.3$, $f_{i+1}=1$, $\beta_{\mathrm T}=1.6$ the formula
 agrees to $10^{-13}$ with the value at $x_{i+1/2}$ of the tanh profile whose
@@ -80,6 +82,19 @@ part in some ranges, i.e. anti-diffusion that "squares" smooth profiles
 scheme in the sources uses THINC only where a discontinuity is detected or
 selected.
 
+## The cell-average constraint and a point-interpolation alternative
+
+[Liang et al. (2022)](/sources/liang-2022.md) (§3.2, Fig. 6) argue that the
+cell-average constraint is itself a source of dissipation at a jump: for some
+sub-cell positions of a step (their cases (c)–(e)) the face value of the fitted
+profile deviates strongly from the exact flux, while for others ((a), (b)) the
+deviation is negligible (schematic, not measured). Their remedy keeps the tanh
+shape but fixes the shift by requiring the curve to pass through the point value
+$f_i$ at the cell centre, with two steepness levels chosen by a TENO-flag detector;
+see [TENO-THINC](/methods/teno-thinc.md). This is a dissipation claim at
+discontinuities; the anti-diffusion recorded in the previous section concerns
+smooth scales, a different regime.
+
 ## Hybrids
 
 - **BVD**: per-cell selection between a polynomial (WENO, TENO) candidate and
@@ -87,6 +102,12 @@ selected.
   recalled by Fu 2023, §3.6); see [BVD](/definitions/boundary-variation-diminishing.md).
 - **TENO-THINC**: THINC where the TENO5 stencil flags show the pattern of a jump
   cell; see [TENO-THINC](/methods/teno-thinc.md).
+- **Inside a Riemann solver.** [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) (§4.2,
+  Eq. (4.9)) use THINC density values only in the dissipation term of their
+  shock-stable HLLEM flux, selected against MUSCL values by a BVD-type minimal-jump
+  rule over the four left/right combinations; the THINC formula and steepness are not
+  given (see [BVD](/definitions/boundary-variation-diminishing.md),
+  [HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - **Anti-dissipative design**: the behaviour of THINC above the third-order line
   is the precedent Huang et al. cite for the controlled anti-dissipation of
   LD-ROUND ([Huang et al. (2026)](/sources/huang-2026.md), §4.2; see
@@ -121,3 +142,5 @@ sharp interfaces without a tanh profile ([TVD limiters](/definitions/total-varia
 - [Fu (2023)](/sources/fu-2023.md) — §3.5, Eqs. (25)–(26); §3.6.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §4.2: THINC as precedent for controlled anti-dissipation.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1: THINC among interface-sharpening methods; §2.3, §3.1: limiter-based alternative.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §2.3, Eqs. (19)–(21); §3.2, Fig. 6: closed form restated, dissipation of the cell-average constraint.
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §4.2, Eq. (4.9): THINC density in the HLLEM dissipation term.

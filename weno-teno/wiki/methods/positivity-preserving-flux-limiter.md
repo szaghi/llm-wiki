@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Positivity-preserving flux limiter (Hu–Adams–Shu)"
-description: "A positivity-preserving flux limiter blends, interface by interface, a high-order numerical flux with a first-order admissible flux so that the half-cell states of the forward-Euler update stay admissible; the page gives Wong et al.'s construction with a first-order HLLC flux for the five-equation model, and the finite-difference papers that rely on it."
+description: "A positivity-preserving flux limiter blends, interface by interface, a high-order flux with a first-order admissible flux so that the forward-Euler update stays admissible; the page gives Wong et al.'s HLLC-based construction for the five-equation model, Xiong–Qiu–Xu's parametrized limiter on the Runge–Kutta-combined flux of a Hermite WENO scheme, and the finite-difference papers relying on it."
 status: established
 aliases: [PP flux limiter, Hu–Adams–Shu limiter, positivity-preserving limiter, positivity- and boundedness-preserving flux limiter, parametrized flux limiter]
 tags: [positivity, bound-preserving, limiting, finite-difference, numerical-flux]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Positivity-preserving flux limiter (Hu–Adams–Shu)
@@ -24,9 +24,10 @@ limiter acts on fluxes, not on a polynomial, so it fits finite-difference
 schemes, where no cell polynomial exists for the
 [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md) to
 scale. The idea goes back to Hu, Adams and Shu (2013), as recalled by the
-sources of this bundle; the only source that writes a limiter of this kind
-out is [Wong et al. (2021)](/sources/wong-2021.md), for HLLC and the
-five-equation model. They cite Hu et al. among the limiters applied
+sources of this bundle; two sources write a limiter of this kind out:
+[Wong et al. (2021)](/sources/wong-2021.md), for HLLC and the
+five-equation model, and [Fan et al. (2023)](/sources/fan-2023.md), for
+the parametrized limiter of Xiong, Qiu and Xu in two dimensions. Wong et al. cite Hu et al. among the limiters applied
 directly to fluxes (§1) and for the directional split (Eq. (59)), but do
 not present their limiter as an extension of it.
 
@@ -103,6 +104,41 @@ limiter is a convex blend of the kind of the scaling limiter, which Wong et
 al. cite as motivation (§1), but toward a node value, not toward a cell
 average.
 
+## Parametrized limiter on the Runge–Kutta flux (Fan et al. 2023)
+
+[Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) (Remark 2.3,
+Appendix, Eqs. (A.4)–(A.10), Algorithm A.1) give a 2D finite-difference
+implementation of the parametrized positivity-preserving flux limiter of
+Xiong, Qiu and Xu (as recalled) for their fifth-order
+[Hermite WENO](/methods/hermite-weno.md) scheme. It is applied once per
+time step, at the final stage, to the convex combination of the stage
+fluxes that SSP-RK3 implies, written as
+$u^{n+1}_{ij}=u^n_{ij}-\frac{\Delta t}{\Delta x}(\hat f^{\mathrm{RK}}_{i+1/2,j}-\hat f^{\mathrm{RK}}_{i-1/2,j})-\frac{\Delta t}{\Delta y}(\hat g^{\mathrm{RK}}_{i,j+1/2}-\hat g^{\mathrm{RK}}_{i,j-1/2})$
+(page-local $\hat f^{\mathrm{RK}}$, $\hat g^{\mathrm{RK}}$). Each interface
+flux is replaced by
+$\theta(\hat f^{\mathrm{RK}}-\hat f^{\mathrm{LF}})+\hat f^{\mathrm{LF}}$, with
+$\hat f^{\mathrm{LF}}$ the first-order
+[Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) with
+$a=\lVert\lvert v_1\rvert+c\rVert_\infty$, whose first-order update is
+positive. The floors are $\epsilon_\rho=\min\{\hat\rho^{n+1}_{ij},10^{-13}\}$
+and likewise for the pressure, with $\hat\rho^{n+1}$ the first-order
+update. Step I turns the density floor, which is linear in the four
+$\theta$'s of a cell, into upper bounds on them (left, right, down, up)
+from the signs of the four flux differences. Step II tests the 16
+vertices of the box of these bounds for the pressure floor, scales any
+failing vertex toward the origin by the root of a quadratic, and keeps
+the largest box whose vertices pass. Step III takes, at each interface,
+the smaller of the bounds of its two cells. The procedure is sufficient
+only, so it may act where no negative state would appear, and its
+preservation of high order "relies on numerical verification" (as
+recalled). The authors choose it over polynomial scaling because it
+"allows larger time steps in practice and is more convenient for FD
+schemes" (§1, Remark 2.3). It is needed, for their scheme and for the
+WENO-ZQ comparison, only on the Mach 2000 jet (active in 0.0146 % of the
+cells) and on a Mach 10 reflection–diffraction problem (0.0012 %); the
+1D and 2D Sedov, double-rarefaction and Leblanc problems run without it
+(Ex. 3.5–3.7, 3.10–3.12, Remark 3.2).
+
 ## Use in the corpus
 
 Several finite-difference schemes of the bundle are not
@@ -122,6 +158,16 @@ Hu–Adams–Shu limiter, without describing it:
   §3.2.4, Fig. 8): "not positivity preserving in general"; on the Mach 2000
   jet the limiter (Hu–Adams–Shu, and Li et al. 2018, as cited) activates
   only near the jet front and the two inlet corners at the final time.
+- **Improved TENO-THINC** ([Liang et al. (2022)](/sources/liang-2022.md),
+  §4.11): the Hu–Adams–Shu limiter for the Mach 80 and Mach 2000 jets on
+  $800\times400$ points at CFL 0.35; every compared scheme is stable with
+  it ([TENO-THINC](/methods/teno-thinc.md)).
+- **Scale-invariant MR-AWENO** ([Li et al. (2023)](/sources/li-2023.md),
+  §3.3, §3.6): the limiter of Hu–Adams–Shu and of Li, Don, Wang and Gao
+  (as cited) on the Sedov blast wave, with ambient pressure
+  $4\times10^{-13}$, and on the Mach 2000 jet, where only its pressure
+  stage is active, at the jet front, and the density stays positive
+  ([multi-resolution WENO](/methods/multi-resolution-weno.md)).
 - **PP-WCNS-IS** ([Wong et al. (2021)](/sources/wong-2021.md), §6.6–§6.7):
   on the Mach 10 shock–water-column interaction the unlimited scheme fails
   with an imaginary sound speed at the incident shock, inside the column
@@ -143,6 +189,14 @@ Hu–Adams–Shu limiter, without describing it:
   falls below a floor, Algorithms 4–6)*. [Wu & Shu (2023)](/sources/wu-2023-b.md)
   recall the Xu and Hu–Adams–Shu limiters, together with the Guermond–Popov
   framework, as background of bound-preserving schemes (§1).
+- **No first-order flux for viscous terms.** [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md)
+  state that the positivity-preserving finite-difference methods for the
+  Euler equations (Hu–Adams–Shu, Xiong–Qiu–Xu, Seal et al., Guo et al., as
+  cited) rely on a first-order positivity-preserving scheme, and that the
+  compressible Navier–Stokes diffusion operator has no standard one, "the
+  key difficulty"; they therefore use a positivity-preserving splitting of
+  the total flux and a scaling limiter instead of a flux limiter (§1.1;
+  [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
 - **Flux limiters for convection–diffusion DG.** [Du & Yang (2022)](/sources/du-2022-b.md)
   name flux limiters as "another direction" for high-order
   maximum-principle- and positivity-preserving schemes for
@@ -170,9 +224,18 @@ Hu–Adams–Shu limiter, without describing it:
 ## Qualifications
 
 - **No guarantee is stated where the limiter is only used.** Fu (2021),
-  Takagi et al. (2022) and Wang & Don (2022) print no limiter formulas, no
+  Takagi et al. (2022), Wang & Don (2022), Liang et al. (2022) and Li et
+  al. (2023) print no limiter formulas, no
   low-order flux of the limiter and no statement of the CFL condition it
   needs; their positivity claims are therefore numerical.
+- **Printed slips in Fan et al.'s appendix.** The density box of Step II
+  is printed $[0,\Lambda^\rho_L]\times[0,\Lambda^\rho_R]\times[0,\Lambda^\rho_L]\times[0,\Lambda^\rho_D]$,
+  while its vertices are built with the down and up bounds; the third and
+  fourth factors are meant to be the down and up bounds. Line 15 of
+  Algorithm A.1 tests "$f(k)=1$" for the flag set on line 12. Their
+  isentropic-vortex runs without the limiter report negative minimum
+  pressures on coarse meshes (Table 3.3), so "robust without limiters"
+  holds for their shock tests, not for that case.
 - **Strict-interior bounds.** Wong et al.'s bounds are floors
   ($\epsilon\le\phi_1\le1-\epsilon$, $\rho e-\bar p_\infty\ge\epsilon$),
   not the closed admissible set, and the hard switches are tolerances, not
@@ -193,3 +256,7 @@ Hu–Adams–Shu limiter, without describing it:
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — Eqs. (15)–(16) (indicator-blended fluxes).
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — arXiv v1: §4.2.2, Eq. (34) (TVD flux blending in MFC).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §1 (flux limiters for convection–diffusion recalled).
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; Remark 2.3; Ex. 3.5–3.12, Remark 3.2; Appendix, Eqs. (A.4)–(A.10), Algorithm A.1.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.1 (first-order fluxes for Euler, none for diffusion).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4.11 (limiter used for the jets).
+- [Li et al. (2023)](/sources/li-2023.md) — §3.3, §3.6 (limiter used; pressure stage active at the jet front).

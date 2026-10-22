@@ -231,7 +231,7 @@ All items parse.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bound preservation](/properties/bound-preservation.md)

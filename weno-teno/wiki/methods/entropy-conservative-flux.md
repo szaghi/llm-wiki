@@ -5,7 +5,7 @@ description: "Two-point fluxes that satisfy Tadmor's jump condition conserve ent
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -144,6 +144,38 @@ the total-energy flux be exactly the internal-energy flux plus the
 kinetic-energy flux (Remark 4, Table 4). The realizability argument is
 stated, not tested. The splittings are on
 [split convective forms](/methods/split-convective-forms.md).
+
+**Two-phase KEEP face fluxes.** [Jain & Moin (2022)](/sources/jain-2022.md)
+build a second-order central scheme for a diffuse-interface five-equation
+two-phase model from face fluxes chosen to satisfy kinetic-energy,
+mass-summation, interface-equilibrium and pressure-work consistency
+conditions (§3, Eq. (58)). In this page's notation, with $\{\!\{\cdot\}\!\}$
+the two-point average, their single-phase part is
+
+$$f_\rho=\{\!\{\rho\}\!\}\{\!\{v\}\!\},\quad f_{\rho v}=f_\rho\{\!\{v\}\!\}+\{\!\{p\}\!\},\quad f_E=f_\rho\tfrac12(\!(v;v)\!)+\{\!\{\rho e\}\!\}\{\!\{v\}\!\}+(\!(p;v)\!),$$
+
+with $\rho e$ the internal energy per unit volume. For an ideal gas,
+$\rho e=p/(\gamma-1)$ and $\{\!\{\rho e\}\!\}=\{\!\{p\}\!\}/(\gamma-1)$, so this is the
+Shima et al. flux above *(compiler check, not in the sources: neither
+source compares the two)*. Jain & Moin call the scheme kinetic-energy-
+and entropy-preserving, but its entropy conservation is the approximate
+conservation of the physical phase entropies observed in their tests,
+not Tadmor's condition; they also call Chandrashekar's flux an
+"approximate entropy conserving flux formulation" (§3.5). Their
+comparison concerns the internal-energy part of $f_E$ only:
+
+| internal-energy flux | as named by Jain & Moin | interface equilibrium |
+|---|---|---|
+| $\{\!\{\rho e\}\!\}\{\!\{v\}\!\}$ | quadratic split (theirs) | yes |
+| $\{\!\{\rho\}\!\}\{\!\{e\}\!\}\{\!\{v\}\!\}$ | cubic split (Kennedy–Gruber, Kuya et al.) | no |
+| $\{\!\{\rho\}\!\}\dfrac{2e^-e^+}{e^-+e^+}\{\!\{v\}\!\}$ | Chandrashekar's harmonic mean | no |
+
+(Eqs. (60)–(62), Table 1; $e$ the specific internal energy). All three
+run stably in single-phase tests; only the first survives at density
+ratio 10 ([kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+The two-phase part of the scheme adds regularization fluxes in quartic
+and quintic splits (Eq. (59);
+[split convective forms](/methods/split-convective-forms.md)).
 
 ## Multicomponent Euler
 
@@ -372,3 +404,4 @@ Table 2).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eqs. (2.3)–(2.6), §3.1 Def. 3.1 Eqs. (3.1)–(3.3), Prop. 3.1, Thm. 3.2 Eqs. (3.20)–(3.21), §4 (arXiv v1).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1.2 Eqs. (46)–(50) (arXiv v1).
 - [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (3)–(6), §3.2 Remark 4, Table 4.
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §3, §3.5 Eqs. (58)–(62), Table 1, §4.1 (arXiv v1).

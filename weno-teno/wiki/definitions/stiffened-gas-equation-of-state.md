@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Stiffened-gas equation of state
@@ -24,7 +24,7 @@ c^2=\frac{\gamma\,(p+p_\infty)}{\rho},
 $$
 
 so that $E=\rho e+\tfrac12\rho\lvert v\rvert^2$ as in §5 of the
-registry. With $p_\infty=0$ it is the ideal gas. All seven sources that
+registry. With $p_\infty=0$ it is the ideal gas. All eight sources that
 use it write it in one of these forms
 ([Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §3, Eqs. 6–7;
 [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §2, Eq. 6;
@@ -32,7 +32,8 @@ use it write it in one of these forms
 [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) §2;
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) §1, Eq. 1.2;
 [Bai & Li (2022)](/sources/bai-2022.md) §2, Eq. 2;
-[Nguyen et al. (2022)](/sources/nguyen-2022.md) §2.2, Eqs. 8–11).
+[Nguyen et al. (2022)](/sources/nguyen-2022.md) §2.2, Eqs. 8–11;
+[Jain & Moin (2022)](/sources/jain-2022.md) §2, Eqs. 5–9).
 Because only $p+p_\infty$ enters the sound speed, the pressure itself
 may be negative: [Wong et al. (2021)](/sources/wong-2021.md) §6.4 start
 a Sedov test in water at $p=-3\times10^7$ Pa, an admissible state since
@@ -89,6 +90,23 @@ $p+p_\infty>0$.
   $\partial h_k/\partial T=\gamma_kC_{v,k}$ (Eq. 11): the enthalpy of
   a stiffened gas depends on temperature alone. They do not print the
   $C_{v,k}$ and $e_{0,k}$ values they use.
+- **Linear form.** Jain & Moin write each phase as
+  $p_k=\alpha_k\rho_ke_k+\beta_k$, with $\alpha_k=\gamma_k-1$ and
+  $\beta_k=-\gamma_kp_{\infty,k}$ for the stiffened gas (page-local
+  $\alpha_k$, $\beta_k$), so that the single-pressure mixture of the
+  [five-equation model](/definitions/five-equation-model.md) has
+  $p=\big(\rho e+\sum_k\phi_k\beta_k/\alpha_k\big)\big/\sum_k\phi_k/\alpha_k$
+  (Eq. 5), the same mixture rule as below. They give
+  $c_k=\sqrt{\gamma_k(p+p_{\infty,k})/\rho_k}$,
+  $h_k=\gamma_k(p+p_{\infty,k})/\big(\rho_k(\gamma_k-1)\big)$
+  (Eqs. 8–9) and the phasic entropy
+  $s_k=C_{v,k}\ln\big((p+p_{\infty,k})/\rho_k^{\gamma_k}\big)+s_{0,k}$
+  (Eq. 65; page-local $C_{v,k}$, $s_{0,k}$), whose transport they use to
+  measure the entropy production of interface regularization. Their
+  proof that matching split forms keep interface equilibrium uses the
+  linear form, through $\rho_kh_k=(p-\beta_k)/\alpha_k+p$ (Appendix B,
+  printed as "$h_l$"); they state, without showing it, that a more
+  general cubic equation of state can be used.
 - **Parameters for liquids.** Bryngelson et al. state that the liquid
   constants are fitted to shock-Hugoniot data (§3).
 
@@ -146,6 +164,11 @@ the phase law above (Eq. 9); see
 difference. In the multicomponent model with thermal equilibrium the
 mixture follows from the temperature form instead (Li et al.; see
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+Jain & Moin's Eq. (5) is the volume-fraction rule written with
+$\alpha_k,\beta_k$: with $\alpha_k=\gamma_k-1$ and
+$\beta_k=-\gamma_kp_{\infty,k}$ it reproduces $1/(\gamma-1)=\sum_k\phi_k/(\gamma_k-1)$
+and $\gamma p_\infty/(\gamma-1)=\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)$
+*(compiler check, not in the sources)*.
 
 ## Admissible states and convexity
 
@@ -201,6 +224,7 @@ sound speed $c^2=\gamma(p+p_\infty)/\rho$ (§3.3–3.4).
 | Bai & Li §3.1.4, §3.5–3.6, water | 4.4 | $6.0\times10^8$ Pa | SI; $C_p=2653.87$ in §3.1.4, not printed for §3.5–3.6 |
 | Bai & Li §3.3.2, copper-like metal | 3.0 | $4.62\times10^{10}$ (unit printed "bar") | SI; $C_p=2587$ |
 | Nguyen et al. §3.3, water | 4.4 | $6\times10^8$ Pa | SI |
+| Jain & Moin §4, Taylor–Green and isotropic-turbulence tests | 1.4 | 0 | non-dimensional; in §5 the $p_{\infty,k}$ are chosen to equalize the turbulent Mach number, values not printed |
 
 The fits differ from test to test within one source (Tsoutsanis et al.
 use three water fits in three tests without comment, Bai & Li two): the
@@ -233,3 +257,4 @@ sources)*.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, Eq. (1.2); §3.3–3.4, Eqs. (3.13)–(3.17); Ex. 5.2, 5.9 (arXiv v1).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2, Eq. (2); §3.1–3.6, Table 3.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.2, Eqs. (8)–(13); §3.1, Table 1; §3.3, Table 2.
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §2, Eqs. (5)–(9); §4–5; Eq. (65); Appendix B (arXiv v1).

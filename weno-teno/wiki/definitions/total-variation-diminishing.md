@@ -5,7 +5,7 @@ description: "TVD reconstruction limits the interface value of a second-order sc
 status: established
 aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
@@ -241,6 +241,34 @@ with minmod "the most compressive out of dissipative limiters".
   total-variation estimates, as their printed form shows (see
   [convex limiting](/methods/convex-limiting.md)).
 
+- **Subcell fallback of a $p$-adaptive DG.** In the FLEXI scheme of
+  [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) (§4.2) troubled elements switch
+  whole to a second-order TVD finite-volume scheme on $N_{\mathrm{FV}}^d$ equidistant
+  reference-space subcells, with MinMod-limited piecewise-linear reconstruction; the
+  subcell count $N_{\mathrm{FV}}=2N+1$ is the largest that does not shrink the explicit time
+  step (page-local $N_{\mathrm{FV}}$; see
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
+  [hp-adaptation](/methods/hp-adaptation.md), [FLEXI](/software/flexi.md)).
+- **Limiting a high-order difference operator.** [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md)
+  (§3.2.1) limit the upwind differences of their discrete kinetic scheme in the spirit of
+  Sweby and of Yee, Warming and Harten: the high-order difference is written as the
+  first-order one times $1+\phi_{\mathrm A}(r_{\mathrm A})r_{\mathrm A}/6$, with a page-local
+  smoothness ratio $r_{\mathrm A}$ of differences ($r_{\mathrm A}\approx0$ on smooth data) and a
+  page-local limiter $\phi_{\mathrm A}$ (the source's $\theta$) equal to 1 on a central interval
+  and cut back outside it so that $0\le1+\phi_{\mathrm A}r_{\mathrm A}/6\le M_{\mathrm A}$ (page-local
+  bound $M_{\mathrm A}\ge1$, which controls the CFL number). On a radial Sod problem the limited and the
+  [MOOD](/methods/mood-a-posteriori-limiting.md)-stabilized fourth-order runs are almost
+  identical; the limiter removes the shock overshoot and reduces the undershoot (§5.2.2,
+  Figs. 8–9). The authors expect weaknesses because the limiting acts on kinetic variables,
+  without any role for the projection onto conservative variables (§3.2.1). See
+  [discrete kinetic relaxation schemes](/methods/discrete-kinetic-relaxation-scheme.md).
+- **A TVB comparator.** The second-order member of the semi-implicit all-Mach schemes of
+  [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3, S2T2) uses a second-order TVB
+  reconstruction with constant $M_{\mathrm{TVB}}=1$ (page-local, the source's $M$, renamed to
+  keep $M$ for the Mach number) in place of fifth-order WENO; it is
+  between the WENO scheme and the oscillatory variants on 2D Riemann problems, with poorer
+  resolution (Ex. 5.4).
+
 ## The first-order barrier at extrema
 
 [Pazner (2021)](/sources/pazner-2021.md) (§4.4) recalls that TVD schemes are
@@ -258,6 +286,14 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - Deng's claim that symmetric TVD limiters cannot reach uniform second order in
   smooth regions is relayed from Tang and Li's accuracy tests (Deng, §1); the
   third-order impossibility is Deng's own (Remark 4.1).
+- Abgrall & Nassajian Mojarrad's §3.2.1 is printed with inconsistencies: the
+  factor $\tfrac16$ appears twice in one line and is dropped in a later one, and the
+  second branch of the limiter reads "$r<-6+\theta$" where its margin parameter is meant,
+  with a gap left between the first and third branches. *(Compiler check, not in the
+  sources: the printed difference $\tfrac16(f_{i-2}-3f_i+2f_{i+1})$, labelled second minus
+  first order, is the third- minus the first-order upwind difference of their §3.1; the
+  second- minus first-order one is $\tfrac12f_{i-2}-f_{i-1}+\tfrac12f_i$.)* The page states
+  the intended structure only.
 - The TVD left boundary of slope 2 is Sweby's; Deng's reading of it as a free
   CFL-dependent slope $k$ is a reinterpretation, not Sweby's statement.
 
@@ -276,3 +312,6 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3, Eqs. (26)–(28), §3.1, §3.4: SuperBee, OverBee and van Leer in a multiphase MUSCL scheme.
 - [Peng et al. (2022)](/sources/peng-2022.md) — §2.4, Eqs. (15)–(20): minmod MUSCL on mapped meshes (accepted manuscript).
 - [Chen et al. (2022)](/sources/chen-2022.md) — §1, §5, §6.3–6.4, Tables 1–2: limiters versus nonlinear weights on unstructured grids.
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.2: MinMod TVD subcell finite volumes in FLEXI.
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.1, §5.2.2, Figs. 8–9: flux limitation of kinetic upwind differences.
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3, Ex. 5.4: TVB reconstruction in S2T2 (arXiv v2).

@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -62,6 +62,15 @@ with it:
 | [Duan & Tang (2022)](/sources/duan-2022.md) | entropy-stable moving-mesh FD, relativistic (M)HD | 0.4 (2D), 0.3 (3D); $\Delta t=\nu\Delta\xi^2$ (sixth-order EC) and $\nu\Delta\xi^{5/3}$ (fifth-order ES) in the accuracy tests |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) | FV MUSCL, $N$-phase model, update of primitive variables | 0.5 (water–air), 0.9 (gas–gas) |
 | [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) | FR with entropy filtering after every stage | not stated |
+| [Fan et al. (2022)](/sources/fan-2022.md) | positivity-preserving FD WENO, Navier–Stokes | $\Delta t=\min\{0.6\,\Delta x/a,\ 0.001\,\mathrm{Re}\,\Delta x^2\}$, halved on failure (Alg. 2, below) |
+| [Fan et al. (2023)](/sources/fan-2023.md) | FD Hermite WENO (HWENO-R) | 0.6; $\Delta t\propto\Delta x^{5/3}$ in the smooth tests (§3) |
+| [Hong et al. (2022)](/sources/hong-2022.md) | FD TENO-M | 0.5 |
+| [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) | FD adaptive TENO | 0.4; 0.35 for the blast waves (§4, Eq. (17)) |
+| [Liang et al. (2022)](/sources/liang-2022.md) | FD TENO with THINC switch | 0.4; 0.35 for the high-Mach jets; double Mach reflection "not very sensitive" to 0.2, 0.4, 0.6 (§4.5, Fig. 15) |
+| [Ji et al. (2022)](/sources/ji-2022.md) | unstructured FV TENO (UCNS3D) | 0.4 (§5) |
+| [Jeong et al. (2022)](/sources/jeong-2022.md) | FD RBF-based WENO | 0.4 |
+| [Li et al. (2023)](/sources/li-2023.md) | FD scale-invariant MR A-WENO | 0.45 |
+| [Wan & Xia (2022)](/sources/wan-2022.md) | FD WENO, steady problems by pseudo-time marching | 0.2; 0.6 in 3D (Eq. (4.1)) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -117,6 +126,13 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) (Thm. 3.1, Eq. (26)) prove the
   physical-constraint-preserving property of the relativistic finite-volume WENO scheme for
   forward Euler and obtain it for SSP-RK3 "by convexity" of the admissible set.
+- [Fan et al. (2022)](/sources/fan-2022.md) (§3.5) state that any SSP Runge–Kutta method keeps
+  positivity, being a convex combination of forward-Euler steps and $G$ convex, and apply their
+  scaling limiter at every stage of SSP-RK3 (Eq. (3.24)). [Fan et al. (2023)](/sources/fan-2023.md)
+  (§2.2, Eq. (2.6)) replace, at every stage, the derivative component that enters the convex
+  combination by its limited version, and apply their positivity-preserving flux limiter at the
+  final stage to the Runge–Kutta-combined flux (App. A;
+  [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.2, Alg. 3) filter after every
   stage and compute the local minimum-entropy bound from the previous stage, which keeps the
   forward-Euler argument stage by stage ([entropy filtering](/methods/entropy-filtering.md)).
@@ -145,6 +161,18 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   and restart the step from the first stage; their theorems guarantee termination. The
   viscous bound $O(\mathrm{Re}\,\Delta x^2)$ is needed in addition, since the positivity
   bound is only $O(\Delta x)$.
+  [Fan et al. (2022)](/sources/fan-2022.md) (§3.5, Alg. 2, Remark 3.4) use the same strategy
+  in their finite-difference counterpart: $\Delta t=\min\{0.6\,\Delta x/a,\ 0.001\,\mathrm{Re}\,\Delta x^2\}$,
+  $a=\max_i(\lvert v_i\rvert+c_i)$, halved and restarted when a stage leaves $G$, termination
+  guaranteed by their Theorem 1; for smooth solutions the positivity bound gives $\Delta t=O(\Delta x)$,
+  so the viscous bound must always be obeyed and the positivity bound is enforced only when
+  positivity is lost (Remark 3.3). Their accuracy tests take $\Delta t=\min\{0.6\Delta x^{5/3},0.001\,\mathrm{Re}\,\Delta x^2\}$
+  for fifth-order and $\Delta x^{7/3}$ for seventh-order WENO *(compiler check, not in the sources:
+  $(\Delta x^{5/3})^3=\Delta x^5$ and $(\Delta x^{7/3})^3=\Delta x^7$, so the third-order time error
+  matches the spatial order)*.
+- **For accuracy tests with classical RK4.** [Jeong et al. (2022)](/sources/jeong-2022.md) (§5)
+  run their order tests with the fourth-order "non-TVD" Runge–Kutta and $\Delta t\sim(\Delta x)^{6/4}$,
+  so that, in their words, the time error is effectively sixth order.
 - **DG step formulas.** [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md)
   (§5, Eq. (89)) take $\Delta t=\min\big(\mathrm{CFL}\,\beta^a(N)\Delta x/(\lambda^a_{\max}(2N+1)),\ \mathrm{CFL}_\nu\beta^\nu(N)\Delta x^2/(\lambda^\nu_{\max}(2N+1)^2)\big)$
   with empirical factors $\beta^a,\beta^\nu$ (page-local) and CFL $=$ CFL$_\nu=0.5$.
@@ -202,6 +230,31 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   and 0.1 for $\mathbb P^3$) in the sharp-interface DG of
   [Bai & Li (2022)](/sources/bai-2022.md) (§2.2, Eq. (30)), whose CFL carries no
   degree-dependent factor.
+- **More classical RK4.** In the two-phase kinetic-energy- and entropy-preserving scheme of
+  [Jain & Moin (2022)](/sources/jain-2022.md) (§4), $\Delta t=\nu\min(\Delta x/c_1,\Delta x/c_2)$
+  with $\nu\approx0.65$ ($c_1,c_2$ the phase sound speeds, page-local); a low-storage
+  fourth-order RK at CFL 0.6 in the hybrid MDAD scheme of [Li et al. (2022)](/sources/li-2022.md)
+  (§4), cited to Shu's ENO/WENO lecture notes and not specified further.
+- **Code-level integrators.** IDEFIX ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.7–2.8,
+  Table 1, Eq. (10)) offers forward Euler and the TVD RK2 and RK3 of Gottlieb and Shu, written
+  as $u_{\mathrm s}=w_{\mathrm s}u^*+w^0_{\mathrm s}u^0$ with tabulated weights; the step
+  $\Delta t=\nu\big(\max\big[\sum_d c_{\max,d}/\Delta x_d+2\eta_{\max}/\Delta x_d^2\big]\big)^{-1}$
+  combines hyperbolic and parabolic limits pointwise ($c_{\max,d}$ the maximum signal speed,
+  $\eta_{\max}$ the largest diffusion coefficient; page-local), stable for $\nu<1$; parabolic terms
+  can instead use second-order Runge–Kutta–Legendre super time stepping, whose stage count grows
+  like $2\sqrt{\Delta t_{\mathrm{hyp}}/\Delta t_{\mathrm{par}}}$ against $2\Delta t_{\mathrm{hyp}}/\Delta t_{\mathrm{par}}$
+  for explicit RK2 (Eq. (13)).
+- **Strang splitting around SSP-RK3.** The volume-penalization immersed boundary of
+  [Kou et al. (2022)](/sources/kou-2022.md) (§4.1, Eqs. (20)–(22), (27)–(29)) advances the
+  convective step with three-stage TVD-RK3 between two half-steps of the penalization source,
+  which they solve by linearized backward Euler; explicit treatment of the source would need
+  $\Delta t$ below the penalization time, Strang splitting relaxes this and the implicit forcing
+  relaxes it further, by "about one or two orders of magnitude" in the penalization parameter
+  for a given CFL, stated without a table (§4.6;
+  [immersed boundaries](/methods/immersed-boundary-method.md)).
+- **Second-order TVD RK.** [Hu et al. (2022)](/sources/hu-2022.md) (§5) pair it with
+  second-order MUSCL at CFL 0.9 in 1D and 0.5 in the 2D interface-only problem; their linear
+  carbuncle analysis is of one forward-Euler step ([carbuncle](/definitions/carbuncle-phenomenon.md)).
 - **Not Runge–Kutta at all.** The [unstaggered central scheme](/methods/unstaggered-central-scheme.md)
   of [Kanbar et al. (2022)](/sources/kanbar-2022.md) is a single-step predictor–corrector in
   time (§3). The implicit [Quinpi](/methods/quinpi.md) scheme of
@@ -234,9 +287,9 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   (§3.3) state that their forward-Euler positivity bound carries over to SSP-RK3 "if the
   CFL is one third" of it; [Wong et al. (2021)](/sources/wong-2021.md) (§5.3) state for
   the same integrator that the CFL upper limit is unchanged, and
-  [Wu & Shu (2023)](/sources/wu-2023-b.md), [Cui et al. (2024)](/sources/cui-2024.md) and
-  [Pazner (2021)](/sources/pazner-2021.md) transfer their forward-Euler results to SSP time
-  stepping without stating any reduction. Both kinds of statement are sufficient
+  [Wu & Shu (2023)](/sources/wu-2023-b.md), [Cui et al. (2024)](/sources/cui-2024.md),
+  [Pazner (2021)](/sources/pazner-2021.md) and [Fan et al. (2022)](/sources/fan-2022.md) (§3.5)
+  transfer their forward-Euler results to SSP time stepping without stating any reduction. Both kinds of statement are sufficient
   conditions, so they do not contradict each other formally, but they disagree on what the
   convex-combination argument costs for the three-stage scheme; neither side prints the SSP
   coefficient it relies on. Fan et al.'s working step, $\Delta x/(12a)$ with $a$ the maximum
@@ -289,3 +342,17 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §2.3.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.2 (Eq. (30)).
+- [Fan et al. (2022)](/sources/fan-2022.md) — §3.5 (Eq. (3.24), Alg. 2, Remarks 3.3–3.4), §5.
+- [Fan et al. (2023)](/sources/fan-2023.md) — §2.2 (Eq. (2.6)), §3, App. A.
+- [Hong et al. (2022)](/sources/hong-2022.md) — §5.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4 (Eq. (17)), §4.4.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §3, §4.5 (Fig. 15), §4.11.
+- [Ji et al. (2022)](/sources/ji-2022.md) — Eq. (3), §5.
+- [Jeong et al. (2022)](/sources/jeong-2022.md) — §5.
+- [Li et al. (2023)](/sources/li-2023.md) — numerical set-up.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §4 (Eq. (4.1)).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §4.
+- [Li et al. (2022)](/sources/li-2022.md) — §4.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.7–2.8 (Table 1, Eqs. (9)–(13)).
+- [Kou et al. (2022)](/sources/kou-2022.md) — §4.1 (Eqs. (20)–(22), (27)–(29)), §4.6.
+- [Hu et al. (2022)](/sources/hu-2022.md) — §3.1, §5.

@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -23,12 +23,17 @@ to each other. In this bundle the models are the setting of
 of unstructured [CWENO](/methods/cweno.md)
 ([Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md)) and of a
 positivity-preserving [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
-([Wong et al. (2021)](/sources/wong-2021.md)); in all three each phase is
+([Wong et al. (2021)](/sources/wong-2021.md)), and of a non-dissipative
+kinetic-energy- and entropy-preserving central scheme
+([Jain & Moin (2022)](/sources/jain-2022.md)); in all four each phase is
 closed by the [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md).
 
 Page-local symbols: $\phi_k$, $\rho_k$, $e_k$, $c_k$ (volume fraction,
 density, specific internal energy and sound speed of phase $k$),
-$Y_k=\phi_k\rho_k/\rho$ the mass fraction, $K$ the Kapila coefficient.
+$Y_k=\phi_k\rho_k/\rho$ the mass fraction, $K$ the Kapila coefficient,
+$s_k$ and $T_k$ the specific entropy and temperature of phase $k$, and
+$j_k$ the volumetric interface-regularization flux of phase $k$
+(defined below).
 
 ## The five-equation model
 
@@ -77,7 +82,57 @@ MFC offers both. They add that the $K$ term "can result in numerical
 instabilities for problems with strong compression or expansion in
 mixture regions due to its non-conservative nature", and leave the
 choice to the user (§3.1–3.2). MFC also adds viscous stresses to the
-momentum and energy equations (Eqs. 3–4).
+momentum and energy equations (Eqs. 3–4). Jain & Moin use the same
+Kapila form, with the same coefficient $K$ (their Eq. 7), and state that
+it is preferred over Allaire et al.'s form for high compression or
+expansion, while for weakly compressible flows both gave identical
+results in their experience (§2; the last part is an observation, not
+shown).
+
+## Conservative diffuse-interface regularization and phase entropy
+
+Jain & Moin (2022) add to the Kapila model the interface-regularization
+fluxes of the conservative diffuse-interface (phase-field) method of
+Jain, Mani & Moin, which keep the interface at a fixed thickness
+(§2, Eqs. 1–5, recalled from that work):
+
+$$
+\begin{aligned}
+&\partial_t\phi_1+\nabla\cdot(\phi_1v)=(\phi_1+K)\,\nabla\cdot v+\nabla\cdot j_1,\qquad
+\partial_t(\phi_k\rho_k)+\nabla\cdot(\phi_k\rho_kv)=\nabla\cdot(\rho_kj_k),\\
+&j_1=\Gamma\big(\varepsilon_{\mathrm I}\nabla\phi_1-\phi_1(1-\phi_1)\hat n_1\big),\qquad j_2=-j_1,\qquad
+\hat n_1=\frac{\nabla\phi_1}{\lvert\nabla\phi_1\rvert},
+\end{aligned}
+$$
+
+with $\Gamma$ a velocity scale and $\varepsilon_{\mathrm I}$ an
+interface-thickness scale (page-local), and consistent correction terms
+$\nabla\cdot(v\otimes f_{\mathrm r})$ and
+$\nabla\cdot(\kappa f_{\mathrm r}/\rho+\sum_k\rho_kh_kj_k)$, where
+$f_{\mathrm r}=\sum_k\rho_kj_k$ is the regularization mass flux and $h_k$
+the phasic specific enthalpy, in the momentum and energy equations; the
+momentum equation also carries viscous stress, surface tension and
+gravity. The mixture mass equation becomes
+$\partial_t\rho+\nabla\cdot(\rho v)=\nabla\cdot f_{\mathrm r}$ (Eq. 10).
+The method conserves the mass of each phase, momentum and total energy,
+keeps $\phi_1$ bounded, and reduces to the single-phase Navier–Stokes
+equations when the phase properties coincide (§1, §2.3, stated as
+properties of Jain, Mani & Moin's method).
+
+From the Gibbs relation of each phase they derive transport equations
+for the phasic entropies (§2.2, Eqs. 16–20): $\rho_k\phi_k\,Ds_k/Dt$ is a
+combination of terms proportional to the regularization flux $j_k$, so
+phase entropy is conserved only in the limit $j_k\to0$ of the equilibrium
+(hyperbolic-tangent) interface profile, where
+$\partial_t(\rho_k\phi_ks_k)+\nabla\cdot(\rho_k\phi_ks_kv)=0$ and the
+mixture entropy $\rho s=\sum_k\rho_k\phi_ks_k$ is conserved (Eq. 21).
+Interface regularization is therefore irreversible. On a stationary
+air–water slab the entropy change it causes is small and positive for
+$\varepsilon_{\mathrm I}=0.75\Delta x$ and $1.25\Delta x$, and
+negligible for $\varepsilon_{\mathrm I}=\Delta x$, the equilibrium
+thickness (Appendix A, Fig. 12; the paper prints no value in the text).
+The entropy here is the physical phasic entropy $s_k$, which increases,
+not the registry's mathematical entropy $\eta$.
 
 **Rewritten volume-fraction equation.** Tsoutsanis et al., after
 Johnsen & Colonius, write the advection equation as
@@ -132,8 +187,8 @@ Across a material interface moving with the flow, $p$ and $v$ are
 continuous while $\rho$, $\phi_k$ and the equation-of-state constants
 jump. A scheme that reconstructs conserved variables then mixes the
 jumps of every component into the pressure and creates spurious
-pressure and velocity oscillations. The three sources agree on the
-remedy, reconstruction of primitive variables:
+pressure and velocity oscillations. The three shock-capturing sources
+agree on the remedy, reconstruction of primitive variables:
 
 - Bryngelson et al. recall that, for an advected air–water interface,
   conservative-variable reconstruction is "corrupted by spurious
@@ -159,6 +214,30 @@ remedy, reconstruction of primitive variables:
   $1000/1.204$, $\phi_1=1-10^{-8}$ in the water) the relative velocity
   and pressure errors stay at $O(10^{-12})$ and $O(10^{-10})$ (§6.2,
   Figs. 5–6).
+
+Jain & Moin (2022) meet the same requirement in a non-dissipative
+second-order central scheme without any reconstruction, by choosing the
+split forms of the face fluxes (§3.3, Lemma 3.1, proof in Appendix B as
+"Lemma 6.1"). Their interface-equilibrium condition, after Abgrall
+(1996), is that uniform $v$ and $p$ stay uniform over one time step.
+They prove that it holds, for stiffened-gas phases, when the
+internal-energy flux $\widehat{\rho ev}$ has the same split form as the
+mass flux and the volume-fraction flux, and the enthalpy part of the
+regularization flux has the same split form as the regularization mass
+flux. The quadratic split $\widehat{\rho ev}=\overline{\rho e}\,\bar v$
+("QS") satisfies it; the cubic split $\bar\rho\,\bar e\,\bar v$ of
+Kennedy & Gruber and Kuya et al. ("CS") and Chandrashekar's
+harmonic-mean form ("CS-H") do not. At density ratio 10, CS and CS-H
+cause "spurious mixing of internal energy at the interface" and diverge
+on the inviscid two-phase Taylor–Green vortex and on two-phase isotropic
+turbulence, while QS stays stable, also at density ratio 1000 and
+initial Mach number up to 0.4 to $M_0t=100$ (§3.5, §4.1.2, §4.2,
+Figs. 4–8; see [split convective forms](/methods/split-convective-forms.md),
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md),
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)). For
+single-phase flow all three forms are stable (Figs. 2–3). The lemma is
+proved for the stiffened gas; extension to a cubic equation of state is
+stated, not shown.
 
 The same equilibrium requirement drives the multicomponent
 ([Renac (2021)](/sources/renac-2021.md), see
@@ -270,12 +349,25 @@ fluid and ghost-fluid states in cut cells
 - The six-equation results (cost, sound speed after relaxation) are
   quoted by Bryngelson et al. from an earlier paper, not shown in the
   paper read.
+- Jain & Moin's "entropy preservation" is the observed approximate
+  conservation of the physical phasic entropies in shock-free,
+  low-Mach ($M\le0.4$) inviscid tests, not a Tadmor-type
+  [entropy-conservative flux](/methods/entropy-conservative-flux.md);
+  their scheme has no shock capturing and no positivity guarantee.
+  They print "QS and CS stands for cubic-split and quadratic-split
+  forms, respectively" (§3.5), inverted against their own definitions
+  (§3.1, Eqs. 61–62), and write $e=\sum_l\rho_le_l$ (§2), whose
+  dimensionally consistent form $\rho e=\sum_k\phi_k\rho_ke_k$ they use in
+  Appendix B. Their discretization uses collocated point values and
+  two-point arithmetic averages, i.e. a second-order central
+  finite-difference-like scheme, although they call it finite-volume.
 
 # Citations
 
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §3.1–3.2, Eqs. (1)–(14); §4.1–4.2, Eqs. (31)–(34); §4.6; §5.5 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §2, Eqs. (1)–(12); §3.1, Eqs. (13)–(16); §3.3; §4.2, Figs. 3–4.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §2, Eqs. (1)–(14); §3.2–3.3, Eqs. (19)–(70); §4.1–4.2; §5; §6.2, §6.6; Appendix A (arXiv v1).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §2, Eqs. (1)–(10), (16)–(21); §3.3, Lemma 3.1; §3.5, Eqs. (58)–(62); §4.1–4.2, Figs. 2–8; Appendices A–B (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §7.2 (comparison only; arXiv v3).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §3.5, Figs. 21–22 (objections and comparison only).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (contrast only).

@@ -5,7 +5,7 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Alternative WENO (A-WENO)
@@ -168,6 +168,30 @@ the choice of A-WENO by calling flux-split finite-difference WENO "quite diffusi
 [fluctuation-form FD-WENO](/methods/fluctuation-form-fd-weno.md) of Balsara et al. (2024), the
 scheme uses no Riemann solver and claims no stationary-contact preservation.
 
+## Multi-resolution interpolation and gravity
+
+Li, Li, Don & Wang (2023) use the fifth-order formulation with a global Lax–Friedrichs flux on states
+interpolated by the multi-resolution A-WENO operator of Wang, Zhu, Yang & Zhao, made scale-invariant
+([multi-resolution WENO](/methods/multi-resolution-weno.md)). Their corrections are the same:
+$b_2=-\tfrac1{24}$, $b_4=\tfrac7{5760}$ with the six-point second- and fourth-derivative formulas above
+(Eqs. (27)–(29)), which they describe as giving an overall $O(\Delta x^6)$ flux; interpolation is
+characteristic-wise with Roe-averaged eigenvectors on $i-2,\dots,i+3$, time stepping TVD-RK3 at CFL
+0.45 (§2.2). They restate the advantages of the family: any monotone flux, where flux-reconstruction
+FD-WENO needs a smooth flux splitting, lower dissipation and dispersion errors, and free-stream
+preservation on curvilinear meshes (§1; stated, citing earlier work).
+
+For the Euler equations with gravity the structure of the flux is what makes the scheme
+[well-balanced](/properties/well-balancing.md) (§4.1, Theorem 5): the Lax–Friedrichs dissipation acts on
+the interpolated deviation $\delta u=u-u_{\mathrm e}$ from the hydrostatic state, the momentum source is
+rewritten as $(\rho/\rho_{\mathrm e})\partial_xp_{\mathrm e}$ (page-local $\rho_{\mathrm e}$, $p_{\mathrm e}$ the
+equilibrium density and pressure) and discretized by the same
+interpolation-plus-correction operator applied to $p_{\mathrm e}$, and the interpolation is
+scale-invariant. At equilibrium the Roe-averaged characteristic variables are multiples of
+$p_{\mathrm e}$ with a factor $(2\tilde c^2_{i+1/2})^{-1}$ (page-local) that is constant over the stencil
+of one interface, so scale invariance makes the interpolated pressure of the characteristic-wise
+scheme consistent with the discrete source (Eqs. (65)–(71), App. A). Steady states stay at round-off
+in double and quadruple precision (Tables 4–8).
+
 ## Relation to other schemes
 
 - Ye et al. (2022, §1) state that AFWENO "is similar to WCNS and is equivalent to the HWCNS scheme
@@ -241,3 +265,4 @@ scheme uses no Riemann solver and claims no stationary-contact preservation.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §1; §§2–5, Eqs. (2.1)–(5.2), Remark 4.1; §6, Remarks 6.1–6.3; §7, Table 7.1, Figs. 7.3, 7.10.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2, Eq. (5).
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1; §2.2, Eqs. (6)–(8), (26)–(35); §4, Eqs. (61)–(71), Theorem 5; App. A; §5, Tables 3–8.

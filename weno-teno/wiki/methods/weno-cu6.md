@@ -5,7 +5,7 @@ description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that add
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # WENO-CU6
@@ -40,7 +40,12 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
 - **Weight template.** Ye et al. (2022, §2.2) write WENO-Z, WENO-CU6 and TENO as
   $\big(C+\tau/(\beta_k+\epsilon)\big)^q$ with $C=1$ for [WENO-Z](/methods/weno-z.md) and $C=20$ for
   WENO-CU6; a large $C$ pulls the weights towards the linear ones. The sources do not print the
-  WENO-CU6 linear weights or exponent.
+  WENO-CU6 linear weights or exponent. Li, Chen & Ren (2022, §3.1, Eqs. (42)–(45)) evaluate the weights of their MDAD-WENO
+  "by the same method as the WENO-CU6 scheme", with
+  $\alpha_k=d_k\big(20+\tau_6/(\beta_k+\epsilon)\big)^2$, $\epsilon=10^{-40}$, the downwind three-point indicator
+  replaced by $\beta_6$ "following WENO-CU6", and their own dissipation-dependent linear weights
+  ([MDCD schemes](/methods/mdcd-scheme.md)); they print $C=20$ and $q=2$ but do not say whether $q=2$ is the
+  original WENO-CU6 exponent.
 
 The six-point indicator, the $\tau_6$ combination and the downwind stencil were carried over into
 sixth-order [TENO](/methods/targeted-eno.md) and [AFTENO](/methods/afteno.md) (Ye et al. 2022,
@@ -69,12 +74,29 @@ In Fu's review (2023, Figs. 4, 15–17) WENO-CU6 is the reference for the invisc
 isotropic turbulence on $64^3$, where TENO8-A matches the filtered DNS more closely. Li et al. (2022)
 list WENO-CU6 only in their survey (§1).
 
+Hong, Ye & Ye (2022, §5), with Roe or Van Leer fluxes and characteristic variables, report for
+WENO-CU6 a slight oscillation at the Sod contact ($N_x=100$), an overshoot at the left density peak of the
+blast waves and near the Shu–Osher valleys, Rayleigh–Taylor resolution comparable to their TENO-M6, and
+slightly more dissipation than TENO6 in decaying isotropic turbulence ($128^3$). Their CPU times per 1000
+steps put WENO-CU6 about 6 % above TENO-M6 and TENO8 about 50 % above WENO-CU6 (e.g. 1489.53 s against
+2277.26 s on double Mach reflection, $960\times240$; Table 4). Li, Chen & Ren (2022, §4.4.2) use the
+low-dissipation WENO-CU6-M1 as comparator in the viscous Taylor–Green vortex at $\mathrm{Re}=1600$, where
+their MDAD scheme matches the peak dissipation rate better. Liang et al. (2022, §1) state that WENO-CU6 may
+produce spurious waves in under-resolved simulations "due to the non-dissipative nature of the background
+central scheme".
+
 ## Qualifications
 
 - All comparisons are by the developers of the competing scheme and rest on visual inspection of
   figures; the bundle has no source by the WENO-CU6 authors.
 - The WENO-CU6 weights are recalled only through the template above; the exact form of the
   central-upwind weighting is not printed in any ingested source.
+- Hong et al. (2022, §1) quote the earlier TENO paper of Fu et al. (its Table 4) for eight-point TENO
+  taking "nearly 70 %" more time than WENO-CU6 on double Mach reflection at $1024\times256$; their own
+  Table 4 gives 50–55 % *(compiler check, not in the sources: 2277.26/1489.53 = 1.53, and 1.54, 1.50 on
+  the other two cases)*. Codes, grids and hardware differ.
+- Li, Chen & Ren (2022, Eq. (44)) print the $f_{i-2}^2$ coefficient of $\beta_6$ as 271799, against
+  271779 above; see [MDCD schemes](/methods/mdcd-scheme.md).
 
 # Citations
 
@@ -83,3 +105,6 @@ list WENO-CU6 only in their survey (§1).
 - [Li et al. (2022)](/sources/li-2022-b.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §3.1, Eq. (18); Figs. 4, 15–17.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1; §5.2–5.8, Figs. 9–16; §6, Table 4.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.1, Eqs. (42)–(45); §4.4.2, Fig. 29.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1.

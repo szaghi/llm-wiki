@@ -123,10 +123,12 @@ print "and et al.". No item is unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunk 3 (2026-10-22). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–4 (2026-10-22/23). This source is cited on:
 
+* [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+* [Hydrostatic equilibrium tests under gravity](/benchmarks/hydrostatic-equilibrium-tests.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)
 * [Total variation diminishing (TVD) and slope limiters](/definitions/total-variation-diminishing.md)
 * [Two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)

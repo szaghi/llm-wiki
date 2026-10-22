@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Two-dimensional Riemann problems"
-description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12 plus a four-contact spiral; used as visual tests of resolution, of the jet's sideband and neck instabilities, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
+description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12, with configuration 7 and two four-contact configurations; used as visual tests of resolution, of the jet's sideband and neck instabilities, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
 status: established
-aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12]
+aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -14,11 +14,13 @@ A two-dimensional Riemann problem divides the square into four
 quadrants, each with a constant state; the sources that number the
 configurations follow Lax & Liu (cited by Takagi et al., Luo & Wu,
 Deng and Huang et al.; Wang et al. (2023) and Chertock et al. take
-configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor). Three are used in the bundle:
+configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor;
+Boscarino et al., Hong, Ye & Ye and Liang et al. cite Lax & Liu or
+Schulz-Rinne et al.). Four kinds are used in the bundle:
 **configuration 3**, in which a jet forms along the diagonal whose
 sideband and neck instabilities serve as a resolution gauge,
-**configuration 12**, and a configuration of four contacts that roll up
-into a spiral. The data of the first two are symmetric under the
+**configuration 12**, **configuration 7**, and configurations of four
+contacts that roll up into a spiral. The data of the first two are symmetric under the
 exchange $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ (see the tables
 below) *(compiler check, not in the sources)*, so they also test
 [symmetry preservation](/properties/symmetry-preservation.md).
@@ -47,9 +49,34 @@ The sources use three placements and several final times:
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.8.1 | $[0,1]^2$, $(0.5,0.5)$ | $1024\times1024$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md) |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.15 (their "second Riemann problem") | $[0,1]^2$, $(0.5,0.5)$, outflow | $320\times320$ | 0.35 | [OEDG](/methods/oedg.md), third order, data scaled by $\lambda\in\{1,100\}$ |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.6 ("four shocks") | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.6 | 0.8 | [multi-resolution WENO](/methods/multi-resolution-weno.md) vs WENO-JS5, WENO-AO5 |
+| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(a) ("modified" configuration 3) | $[-1,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.25 | 0.8 | [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S4T3 at $\varepsilon=1$, reconstruction approaches A1–A3, S2T2 |
+| [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.7 ("four-shock configuration") | $[0,1]^2$, $(0.5,0.5)$ | $512\times512$, van Leer flux | 0.3 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO, WENO; timing |
+| [Liang et al. (2022)](/sources/liang-2022.md) §4.6 | $[0,1]^2$, split not recorded | $512^2$, $1024^2$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5, WENO5-Z |
 
 Contours: Deng 40 from 0.14 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
 Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023) 35 from 0.1 to 1.8.
+Boscarino et al.'s placement puts the split at $(0.8,0.8)$ of
+$[-1,1]^2$, so the low-pressure quadrant covers $[-1,0.8]^2$ and the
+high-pressure one only $[0.8,1]^2$ *(compiler check, not in the
+sources)*; with $t=0.8$ the jet is not at the stage of the $[0,1]^2$
+runs with the same split. Their time step uses
+$\Delta t=\mathrm{CFL}\,\Delta x/\max(\lvert v_1\rvert+\lvert v_2\rvert+c)$
+at $\varepsilon=1$ (§5).
+
+## Configuration 7
+
+[Liang et al. (2022)](/sources/liang-2022.md) §4.6, citing Lax & Liu,
+run configuration 7 on $1024^2$ to $t=0.25$:
+
+| Quadrant | State |
+|---|---|
+| north-east | $(1,\ 0.1,\ 0.1,\ 1)$ |
+| north-west | $(0.5197,\ -0.6259,\ 0.1,\ 0.4)$ |
+| south-west | $(0.8,\ 0.1,\ 0.1,\ 0.4)$ |
+| south-east | $(0.5197,\ 0.1,\ -0.6259,\ 0.4)$ |
+
+The data are symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$
+*(compiler check, not in the sources)*.
 
 ## Configuration 12
 
@@ -90,7 +117,7 @@ the same split $(0.5,0.5)$, with Takagi et al.'s Eq. (34)
 in the sources)*; on that basis they
 are listed here under those configurations.
 
-## A four-contact configuration
+## Four-contact configurations
 
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.4, their "2D
 Riemann problem II", citing Lax & Liu without a configuration number:
@@ -107,6 +134,26 @@ contacts, which roll up into a spiral; $t=0.3$. The data are not
 symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ *(compiler
 check, not in the sources)*.
 
+[Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(b), citing
+Lax & Liu's configuration 5, print on $[-1,1]^2$ with the split at
+$(0.5,0.5)$, $400\times400$, $t=0.23$:
+
+| Quadrant | State |
+|---|---|
+| north-east | $(1,\ -0.75,\ -0.5,\ 1)$ |
+| north-west | $(2,\ -0.75,\ 0.5,\ 1)$ |
+| south-west | $(1,\ 0.75,\ 0.5,\ 1)$ |
+| south-east | $(3,\ 0.75,\ -0.5,\ 1)$ |
+
+These are Li, Duan & Tang's states with $v_1$ negated in every quadrant.
+The normal velocity is continuous across both splits in either set, so
+both are four-contact problems, but the tangential jumps across the
+horizontal split change sign, so the two are different configurations,
+not one problem in two placements *(compiler check, not in the
+sources)*. Li, Duan & Tang give no configuration number; which of the
+two is Lax & Liu's configuration 5 cannot be decided from the bundle's
+sources.
+
 ## Findings across sources
 
 **Jet instabilities as a dissipation gauge.** On configuration 3 the
@@ -122,6 +169,26 @@ WENO-Z+M better resolved and more symmetric than WENO-IS-I and WENO-Z9
 (Fig. 14). Deng resolves the main structures "with less grid number"
 than WENO-JS5 on $600\times600$ (Figs. 24, 35); Huang et al. compare
 ROUND and LD-ROUND with WENO3-NN and WENO5-JS on the same grid.
+
+Liang et al. find their scheme resolving more instability and vortical
+structure than WENO5-Z, TENO5 and TENO5-THINC on configurations 3 and
+7 (§4.6, Figs. 16–18). Hong, Ye & Ye find TENO-M slightly better than
+TENO on the small structures along the slip lines, both much better
+than the WENO schemes (§5.7, Fig. 15); per 1000 steps TENO-M6 takes
+1632.51 s against 2034.43 s for TENO6, 1432.34 s for WENO-JS and
+1746.42 s for WENO-CU6, and TENO-M8 1838.13 s against 2626.74 s for
+TENO8 (Table 4, Intel i9-10980XE).
+
+**Characteristic reconstruction in a semi-implicit scheme.** Boscarino
+et al. use both of their problems at $\varepsilon=1$ to choose where
+characteristic decomposition is needed in their all-Mach splitting:
+characteristic-wise WENO on the explicit flux part with component-wise
+WENO on the semi-implicit part (approach A1) is closest to the
+reference without obvious oscillations, while component-wise
+reconstruction everywhere (A2) or no splitting (A3) oscillates in the
+middle region; the second-order S2T2 is closer to A1 but less resolved
+(Ex. 5.4, Figs. 5.4–5.5). See [characteristic
+decomposition](/methods/characteristic-decomposition.md).
 
 Wang et al. (2021) find both multi-resolution WENO5 schemes capturing
 more roll-up than WENO-JS5 and WENO-AO5 on configuration 3 (Fig. 5.12).
@@ -229,6 +296,8 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 
 ## Qualifications
 
+- Boscarino et al. print an unmatched parenthesis in the
+  configuration-3 data, "(0.5323, 1.206, 0, 0.3))" (Eq. (5.6)).
 - Deng compares with WENO-JS5 results "in [65]", a reference on an
   improved third-order WENO-Z scheme.
 - The configuration-3 runs differ in split, domain and final time
@@ -269,3 +338,6 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Exs. 4.6–4.7, Figs. 10–11 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.2–6.4, Figs. 6.5–6.7 (arXiv v1).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.3, Figs. 7–8 (accepted manuscript).
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §5, Ex. 5.4, Eq. (5.6), Figs. 5.4–5.5 (arXiv v2).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.7, Fig. 15; §6, Table 4.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4.6, Figs. 16–18.

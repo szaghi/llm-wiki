@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Characteristic decomposition
@@ -53,6 +53,24 @@ finite-difference algorithm with Rusanov splitting for fifth-order WENO on distu
 the characteristic transform being applied "to improve the shock capturing characteristics"
 (§2.2); [Bezgin et al. (2022)](/sources/bezgin-2022.md) use the finite-volume algorithm with the
 local Lax–Friedrichs flux for their learned three-point WENO (§2, §4).
+The TENO papers of [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) (§4) and
+[Liang et al. (2022)](/sources/liang-2022.md) (§3–4) use the finite-difference algorithm with
+Roe averages and Rusanov splitting (global or local not stated);
+[Hong et al. (2022)](/sources/hong-2022.md) reconstruct in characteristic variables with a Roe
+flux by default for their TENO-M schemes (§2, §5);
+[Jeong et al. (2022)](/sources/jeong-2022.md) (§5) use it for the 1D Euler tests of their
+RBF-based WENO, with eigenvalues $v-c$, $v$, $v+c$, and treat 2D dimension by dimension.
+[Wan & Xia (2022)](/sources/wan-2022.md) (§2, Eqs. (2.7)–(2.9)) state the averaged state as a
+Roe average satisfying $f(u_{i+1})-f(u_i)=A(u_{i+1/2})(u_{i+1}-u_i)$, split each field with its
+own maximum $\max_j\lvert\lambda_l(u_j)\rvert$ over the stencil, and in most tests use instead
+the global $\max(\lvert v\rvert+c)$ per direction. [Li et al. (2023)](/sources/li-2023.md)
+(Eqs. (30)–(33)) project the conservative variables with Roe-averaged $L_{i+1/2}$, $R_{i+1/2}$
+for the six-point interpolation of their [A-WENO](/methods/alternative-weno.md).
+[Fan et al. (2022)](/sources/fan-2022.md) (§3) project, with the eigenvectors of the Roe matrix
+of $u_i$ and $u_{i+1}$, not the Lax–Friedrichs split fluxes but the split auxiliary variables of
+their positivity-preserving Navier–Stokes splitting
+([positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md));
+they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
 
 ## Variants of the frozen state and of where the projection acts
 
@@ -99,6 +117,24 @@ local Lax–Friedrichs flux for their learned three-point WENO (§2, §4).
   is attributed by the authors to "less information being used for reconstruction in each
   direction", a cause not isolated by their runs. See
   [WENO limiters for DG](/methods/weno-limiter-dg.md).
+- **Only where a detector fires.** The hybrid MDAD scheme of [Li et al. (2022)](/sources/li-2022.md)
+  (§3.4) decomposes only at interfaces flagged non-smooth by its shock detector, with $R$ from
+  the simple average of the two neighbouring states, splits by global Lax–Friedrichs in
+  characteristic space and runs a second detection on each split characteristic flux, which
+  chooses between the linear scheme and the nonlinear one field by field; elsewhere the
+  reconstruction is componentwise. For the Taylor–Green vortex they switch to local
+  characteristic Lax–Friedrichs splitting because, citing earlier work, the global one is too
+  dissipative (§4.4;
+  [hybrid central-WENO schemes](/methods/hybrid-weno.md)).
+- **Eigenvectors of another system.** In the semi-implicit all-Mach scheme of
+  [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3.1) only the explicit
+  (material-wave) flux is reconstructed characteristic-wise, with the local eigenvectors of the
+  full Euler system **at Mach number one**, not of the split flux; the implicit acoustic flux is
+  reconstructed componentwise ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
+- **Main fluxes only.** The finite-difference Hermite WENO of [Fan et al. (2023)](/sources/fan-2023.md)
+  (§2, Remark 2.2) reconstructs the fluxes of the conservation law in local characteristic
+  directions and the fluxes of its derivative equations componentwise
+  ([Hermite WENO](/methods/hermite-weno.md)).
 - **In the numerical diffusion, not only in the reconstruction.**
   [Chertock et al. (2023)](/sources/chertock-2023.md) use the projection also to give each
   field its own central-upwind diffusion, the
@@ -180,10 +216,38 @@ explicit: the hybrid TENO uses the optimal linear scheme **without** characteris
 decomposition wherever the TENO indicator flags smoothness and reports an overall efficiency
 gain "by a factor of four" ([hybrid central-WENO schemes](/methods/hybrid-weno.md)).
 
+The most direct evidence is that of [Boscarino et al. (2022)](/sources/boscarino-2022.md)
+(Ex. 5.4, Figs. 5.4–5.5): on two [2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)
+($400^2$, Mach number one) the scheme with characteristic-wise WENO on the explicit flux is
+closest to the reference with no obvious oscillations, while componentwise WENO everywhere,
+with or without the pressure splitting, shows "clear oscillations" in the middle region; the
+authors conclude on "the importance of characteristic reconstructions". [Ji et al. (2022)](/sources/ji-2022.md)
+(§2.3) recommend characteristic variables as "generally believed" to suppress oscillations
+better than primitive or conservative ones, yet state for their shock tubes that conservative
+variables are reconstructed "due to the simplicity".
+[Hong et al. (2022)](/sources/hong-2022.md) (§6) note that their timings include flux splitting
+and characteristic decomposition, whose cost is the same for every reconstruction, so the saving
+of TENO-M over TENO in the reconstruction alone is "much higher" than the totals show (not
+measured).
+
+**The field speeds matter beyond oscillations.** For steady Euler problems
+[Wan & Xia (2022)](/sources/wan-2022.md) (Ex. 4.4, Figs. 4.4–4.6) find that on the shock
+reflection ($120\times30$) only their WENO-H residue falls to about $10^{-12}$ with the global speed
+$\max(\lvert v\rvert+c)$, whereas with per-field speeds $\max\lvert v-c\rvert$, $\max\lvert v\rvert$
+(twice), $\max\lvert v\rvert+c$ all three schemes tested converge to that level
+([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+
 [Wang & Don (2022)](/sources/wang-2022-b.md) (§3.3) use the linearity of the projection: an
 [affine-invariant WENO](/methods/affine-invariant-weno.md) operator stays affine invariant in
 characteristic variables, so the shallow-water still-water state is preserved without
 further linearization ([well-balancing](/properties/well-balancing.md)).
+[Li et al. (2023)](/sources/li-2023.md) (§4.2, Thm. 5) make the same argument for the Euler
+equations with gravity: at a hydrostatic equilibrium the Roe-averaged velocity vanishes and the
+characteristic variables are $(\lambda_{\mathrm e}p_{\mathrm e},\ \rho_{\mathrm e}-2\lambda_{\mathrm e}p_{\mathrm e},\ \lambda_{\mathrm e}p_{\mathrm e})$
+with $\lambda_{\mathrm e}=(2\hat c^2_{i+1/2})^{-1}$ (page-local; $\rho_{\mathrm e}$, $p_{\mathrm e}$ the
+equilibrium density and pressure), multiples of the equilibrium pressure, so a scale-invariant
+interpolation in characteristic variables reproduces the equilibrium exactly; they call this
+"the crucial novel idea".
 
 ## Methods that need none
 
@@ -201,6 +265,12 @@ applied in characteristic variables, and a characteristic decomposition can dest
 invariance. On the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md)
 (640 cells) OEDG works with or without it, while the earlier OFDG without it "smears much"
 (Ex. 5.7, Fig. 4).
+
+[Lesur et al. (2023)](/sources/lesur-2023.md) (§2.3) reconstruct the primitive variables
+$(\rho,v,B,p)$ in IDEFIX, avoiding characteristic decomposition "while keeping the basic
+physical constraints (density and pressure positivity for instance)" (no proof given), and
+attribute a small post-shock velocity oscillation in the [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md)
+to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 
 ## Qualifications
 
@@ -236,3 +306,15 @@ invariance. On the [Woodward–Colella blast waves](/benchmarks/woodward-colella
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §3.2.2 (Eq. (38), Lemma 3.2), App. A (arXiv v1).
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3.1–3.2 (Eqs. (3.1)–(3.9)), §4.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §4 (Eq. (4.1)) (arXiv v1).
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3.1, Ex. 5.4 (Figs. 5.4–5.5) (arXiv v2).
+- [Fan et al. (2022)](/sources/fan-2022.md) — §3.
+- [Fan et al. (2023)](/sources/fan-2023.md) — §2, Remark 2.2.
+- [Hong et al. (2022)](/sources/hong-2022.md) — §5, §6.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §3, §4.
+- [Jeong et al. (2022)](/sources/jeong-2022.md) — §5.
+- [Ji et al. (2022)](/sources/ji-2022.md) — §2.3, §5.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Fig. 6).
+- [Li et al. (2022)](/sources/li-2022.md) — §3.4, §4.4.
+- [Li et al. (2023)](/sources/li-2023.md) — Eqs. (30)–(33), §4.2 (Thm. 5).
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §2 (Eqs. (2.7)–(2.9)), Ex. 4.4.

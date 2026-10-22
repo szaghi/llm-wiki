@@ -151,12 +151,13 @@ of [50] is cut off but its DOI is complete, and the DOI of [17] is possibly trun
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
+* [FLEXI](/software/flexi.md)
 * [Flux differencing and split-form DG](/methods/flux-differencing.md)
 * [FLUXO](/software/fluxo.md)
 * [Free-stream preservation](/properties/free-stream-preservation.md)

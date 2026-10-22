@@ -4,8 +4,8 @@ title: "Kinetic energy preservation"
 description: "A semi-discretization is kinetic-energy-preserving when its convective terms neither create nor destroy discrete kinetic energy, which Coppola and Veldman reduce to the skew-symmetry of C − ½diag(d_mass); the page gives that criterion, face-flux conditions, the second-order barrier, SBP proofs including the rotational form, correction terms, and DG two-point fluxes."
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
-tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, turbulence]
-timestamp: 2026-10-22T20:00:00Z
+tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Kinetic energy preservation
@@ -86,6 +86,36 @@ advection matrix. That cannot be KEP for compressible flow (§5.2, §6.1). The
 authors therefore regard the splitting of the mass flux, the focus of much
 earlier work, as irrelevant to energy preservation (though it can affect
 accuracy) (§6.1).
+
+[Jain & Moin (2022)](/sources/jain-2022.md) prove the same face-flux
+conditions as sufficient conditions for a second-order collocated scheme
+on a uniform grid, with $\overline a_{i+1/2}$ the two-point average and
+$\hat C$, $\hat M$, $\hat K$ the mass, momentum and kinetic-energy face
+fluxes (page-local):
+
+- **Theorem 3.1 (global).** Total kinetic energy is conserved by the
+  convective terms if $\hat M_{i+1/2}=\hat C_{i+1/2}\,\overline v_{i+1/2}$
+  (Eq. (43)).
+- **Theorem 3.2 (local).** It is preserved locally if, in addition, the
+  kinetic-energy flux is $\hat K_{i+1/2}=\hat C_{i+1/2}\,\tfrac12v_iv_{i+1}$
+  (Eq. (50)).
+
+These are Coppola & Veldman's momentum flux and kinetic-energy flux
+*(compiler check, not in the sources: Jain & Moin do not cite Coppola &
+Veldman 2023; they compare their condition with Jameson's KEP flux)*. Jain
+& Moin extend both conditions to the interface-regularization fluxes of a
+diffuse-interface two-phase model: the regularization momentum and
+kinetic-energy fluxes must be the regularization mass flux times
+$\overline v$ and times $\tfrac12v_iv_{i+1}$ (Eqs. (44), (51)). With
+pressure, the pressure flux $\hat P$ and the pressure-work flux $\hat W$
+(page-local) must satisfy the discrete product rule
+$\hat P_{i+1/2}\overline v_{i+1/2}+p_i\overline v_{i+1/2}=\hat W_{i+1/2}$,
+an idea they take from Kok and Kuya et al. (§3.3); their choice
+$\hat P=\overline p$, $\hat W=\tfrac12(v_{i+1}p_i+v_ip_{i+1})$ meets it
+(Eq. (58)). Each condition fails in their two-phase Taylor–Green vortex
+when violated: an inconsistent momentum flux, a kinetic-energy flux with
+face values $\tfrac12v_{i+1/2}^2$, or an inconsistent regularization
+kinetic-energy flux each make the run diverge (App. D, Fig. 14).
 
 **Order barrier and its bypass** (§6).
 
@@ -170,6 +200,40 @@ Taylor–Green vortex at $\mathrm{Re}=1600$ both Kennedy–Gruber and Div-rot
 run severely under-resolved grids on which the divergence form fails
 (§4, Figs. 1, 3).
 
+## Kinetic energy and entropy in two-phase flows (KEEP)
+
+Jain & Moin (2022) call a scheme KEEP when it preserves kinetic energy
+exactly and entropy approximately, the entropy being the physical entropy
+of each phase, not a Tadmor-type entropy (§1, §3). They state, after
+Honein (2005) as recalled, that kinetic-energy conservation suffices for
+stability in incompressible flow but not in compressible flow, where
+entropy must also be controlled, and that for two-phase flows the
+interface-equilibrium condition is a further requirement: uniform
+velocity and pressure must stay uniform (Lemma 3.1;
+[entropy stability](/properties/entropy-stability.md)). Their tests, all
+inviscid, at $64^3$ (Taylor–Green vortex with a slab of a second fluid)
+and $32^3$ (isotropic turbulence), with classical RK4 at CFL about 0.65:
+
+- **Single phase.** All three internal-energy fluxes tested, their
+  quadratic split, the Kennedy–Gruber/Kuya cubic split and Chandrashekar's
+  harmonic-mean variant, conserve kinetic energy and are stable at initial
+  Mach numbers 0.05 and 0.2, so the KEEP scheme "is not unique" (§4.1.1,
+  Figs. 2–3).
+- **Two phases, density ratio 10.** Only the quadratic split is stable;
+  the other two cause "spurious mixing of internal energy at the
+  interface" and diverge, in the Taylor–Green vortex and in isotropic
+  turbulence (§4.1.2, §4.2, Figs. 4–5, 8).
+- **Density ratio 1000.** The proposed scheme stays stable at initial
+  Mach numbers 0.05, 0.2 and 0.4 up to $Mt=100$; the drift of kinetic
+  energy at the larger Mach numbers is attributed to reversible pressure
+  work (Fig. 7).
+
+A $256^3$ droplet-laden decaying isotropic turbulence with density ratios
+1–1000 reproduces the trends of incompressible reference data (§5).
+The face fluxes of the scheme are on
+[split convective forms](/methods/split-convective-forms.md) and
+[entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md).
+
 ## Kinetic-energy correction terms
 
 [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) state the
@@ -235,6 +299,11 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - Edoh's statement that Div-rot is the only KEP splitting whose
   kinetic-energy flux does not average velocities from both sides of an
   interface is qualified "to the author's knowledge" (§3.2, Remark 4).
+- Jain & Moin's conservation statements exclude pressure work,
+  viscosity, thermal diffusion and time-discretization errors (abstract,
+  §6); "exact" kinetic-energy conservation refers to the convective
+  terms. Their stability evidence is inviscid, shock-free and at Mach
+  numbers up to 0.4.
 - Coppola & Veldman print a sign slip in their Eq. (6): the time derivative
   of $\tfrac12\rho\phi^2$ is $-\phi A\phi$, as their own Eqs. (4) and (59)
   give *(compiler check, not in the sources: re-derived from their
@@ -248,3 +317,4 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Renac (2021)](/sources/renac-2021.md) — §3.1 Eq. (24), Remark 3.2 (arXiv v3).
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.1 Eqs. (11)–(18), Remark 3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Table 3, §4, §4.1.1, Figs. 1, 3.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §3.3 Eqs. (38)–(42), Prop. 3.5, Remarks 3.4, 3.6, §4.2.2, App. A.3 (arXiv v4).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §3.2 Thms. 3.1–3.2 Eqs. (43)–(52), §3.3 Lemma 3.1, §3.5 Eq. (58), §4.1–4.2 Figs. 2–8, §5, §6, App. D Fig. 14 (arXiv v1).

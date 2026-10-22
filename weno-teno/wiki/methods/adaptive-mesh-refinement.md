@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Block-structured adaptive mesh refinement"
-description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested levels of patches or fixed-size blocks: Berger–Oliger/Colella patch refinement in AMROC, tree-based block refinement on GPUs and in PARAMESH, the refinement criteria (gradients, Richardson error estimates, interface distance, disturbance indicators), coarse–fine transfer, and the measured savings over uniform meshes."
+description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested levels of patches or fixed-size blocks: Berger–Oliger/Colella patch refinement in AMROC, tree-based block refinement on GPUs and in PARAMESH, the refinement criteria (gradients, Richardson error estimates, interface distance, disturbance indicators), coarse–fine transfer including divergence-preserving prolongation and edge-field defect correction for constrained fields, and the measured savings over uniform meshes."
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
-tags: [amr, finite-volume, finite-difference, software, gpu, multiphase]
-timestamp: 2026-10-22T20:00:00Z
+tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -112,6 +112,49 @@ refinement steps in about 130,000 time steps (§5).
 - **Flux consistency.** Matsushita & Aoki average fine fluxes on coarse
   faces at level gaps, which keeps the phase field conserved (§4); their
   mass error stays at $10^{-16}$ on uniform and adaptive grids (§5.1).
+- **Constrained vector fields.** For face-collocated fields with an
+  involution constraint, $\nabla\cdot B=0$ or $\nabla\cdot D=\rho_{\mathrm q}$
+  (page-local $D$, the electric displacement, and $\rho_{\mathrm q}$, the
+  charge density), prolongation must also satisfy the constraint on every
+  new fine zone. [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md)
+  keep the coarse facial data on the fine faces that overlie coarse faces,
+  reconstruct only the new internal faces, and either use an analytically
+  exact fourth-order divergence-preserving reconstruction or a WENO-type
+  face interpolation followed by a least-squares touch-up that enforces
+  the fine-zone constraint to round-off
+  ([divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md)).
+  The charge density, an unconstrained zone-averaged variable, is
+  prolonged by finite-volume WENO at design orders 2–5 (Table 12).
+
+## Time sub-cycling and edge-field defect correction
+
+Balsara et al. (2023) §7 describe a two-level step for a Faraday-type
+update with refinement ratio 2, proper nesting and time sub-cycling,
+adapted from Balsara (2001). The coarse mesh steps from $t^n$ to
+$t^{n+1}$ with an ADER predictor; the fine mesh takes two steps of
+$\Delta t/2$, its ghost zones prolonged from the coarse solution at
+$t^n$ and from the stored coarse space–time predictor at $t^{n+1/2}$.
+The predictor may fill ghost zones but "can never be used to
+re-initialize a fine mesh", because it is only approximately
+divergence-preserving. Consistency of the composite mesh requires each
+coarse face to equal the mean of its four fine faces after the step
+(Eq. 47), which holds only if each coarse edge electric field equals
+the space–time average of the coinciding fine edge fields (Eq. 48).
+**Defect correction** enforces this: the coarse edge fields at
+fine–coarse interfaces are stored, the coinciding fine edge fields are
+accumulated with weight $\frac14$ over the fine steps, and one coarse
+update with the defects replaces them, also correcting the transverse
+coarse faces (Eqs. 50–52); **restriction** then resets coarse faces that
+overlie fine faces by area averaging. It is the edge-field analogue of
+flux refluxing, and both steps give primacy to the fine mesh. Without
+defect correction, they state, a sub-cycled composite mesh develops
+late-time instabilities or a localized build-up of divergence at
+fine–coarse interfaces (§7). On a 2D Maxwell pulse scattering off a
+dielectric cylinder with a static refined patch they observe design
+orders 2, 3 and 4 on the finest mesh pair, an undivided divergence of
+$10^{-14}$–$10^{-12}$, and no late-time instability, error pile-up or
+mesh imprinting over many thousands of steps (§9, Tables 13–15,
+Figs. 13–15).
 
 ## Measured savings
 
@@ -140,6 +183,22 @@ is Fourier-spectral in the spanwise direction, a caveat they state
   ghost-cell [immersed boundary](/methods/immersed-boundary-method.md)
   in AMROC but run it on uniform grids; combining it with adaptive
   refinement is left to future work (§1, §4).
+- Not every adaptive high-order code in the bundle refines the mesh.
+  [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) call their
+  FLEXI scheme "hp-adaptive", but the "h" is a finer finite-volume
+  subcell grid inside limited elements and the DG mesh never changes
+  at run time (§1, §4; see [h- and hp-adaptation](/methods/hp-adaptation.md),
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+  [IDEFIX](/software/idefix.md) has no AMR; [Lesur et al. (2023)](/sources/lesur-2023.md)
+  note that its sequential, dimension-by-dimension ghost-zone exchange,
+  faster than a simultaneous 26-neighbour exchange on GPUs, "would not
+  suit an AMR version", and point to the Kokkos-based Parthenon framework
+  for AMR (§3.4, §6).
+- Balsara et al. (2023) show the time-dependent order of accuracy only
+  in 2D, on a static two-level mesh with linear media and a final time of
+  about $5.7\times10^{-8}$ s; their claim of a "conceptually tight
+  solution" of the late-time instability of composite-mesh
+  electrodynamics rests on that single test (§9).
 - Browne et al. give three different savings figures: 60 % and 9 % in
   Table 6, "about 10%" in the abstract, and "about 5%" in §5.
 - Peng et al.'s second-order claim on mapped adaptive meshes is
@@ -157,3 +216,6 @@ is Fourier-spectral in the spanwise direction, a caveat they state
 - [Browne et al. (2022)](/sources/browne-2022.md) — §3, §3.4, Eqs. (64)–(68), Figs. 8–10; §5, Table 6.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1, §2.2.
 - [Wang et al. (2022)](/sources/wang-2022.md) — §1, §4.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §7, Eqs. (43)–(52), Figs. 8–10; §8.7, Table 12; §9, Tables 13–15, Figs. 12–15.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §3.4; §6 (arXiv v1).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §4 (no mesh adaptation).

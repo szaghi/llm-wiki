@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Well-balancing"
-description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest or a hydrostatic atmosphere exactly; in this bundle it follows from affine-invariant WENO weights, stationary-contact-preserving fluctuations, equilibrium variables, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known MHD equilibrium."
+description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest or a hydrostatic atmosphere exactly; in this bundle it follows from affine- or scale-invariant WENO interpolation, stationary-contact-preserving fluctuations, equilibrium variables, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known equilibrium."
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Well-balancing
@@ -158,6 +158,44 @@ explain by the limit equation sharing the steady state and by the NWB scheme
 being asymptotic preserving; in long runs ($T=100$) the NWB scheme drifts at
 $\varepsilon=1$ and oscillates at $\varepsilon=0.1,0.01$.
 
+## Euler with gravity: WB from scale invariance
+
+[Li et al. (2023)](/sources/li-2023.md) (§4, after the methodology of Li and Gao) make a
+characteristic-wise fifth-order [A-WENO](/methods/alternative-weno.md) scheme well-balanced for
+the Euler equations with gravity, $S=(0,-\rho\,\partial_x\phi,-\rho v\,\partial_x\phi)$, and a
+known hydrostatic equilibrium $v=0$, $\partial_xp_{\mathrm e}=-\rho_{\mathrm e}\partial_x\phi$
+(page-local $\rho_{\mathrm e}$, $p_{\mathrm e}$; isothermal
+$\rho_{\mathrm e}=\rho_0e^{-\phi/(RT_0)}$ or polytropic, Eqs. (57)–(60)). Three ingredients
+(§4.1, Eqs. (61)–(64)):
+
+1. the [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) dissipation acts on the interpolated
+   deviation $u-u_{\mathrm e}$ instead of $u$;
+2. the momentum source is rewritten as $(\rho/\rho_{\mathrm e})\,\partial_xp_{\mathrm e}$, with
+   $\partial_xp_{\mathrm e}$ discretized by the same interpolation and A-WENO derivative
+   correction as the flux;
+3. the interpolation operator is **scale invariant**, $\mathcal W[\lambda q]=\lambda\mathcal W[q]$
+   (page-local operator $\mathcal W$; [scale invariance](/properties/scale-invariance.md)).
+
+**Theorem 5** (§4.2, Eqs. (65)–(71), App. A; 1D): with these, the hydrostatic equilibrium is
+preserved exactly. At equilibrium the Roe-averaged velocity vanishes and the local
+characteristic variables are multiples of $p_{\mathrm e}$ by one interface constant
+([characteristic decomposition](/methods/characteristic-decomposition.md)), so the sufficient
+condition is the scale invariance of the interpolation applied to $p_{\mathrm e}$; the authors
+call this "the crucial novel idea". It is the Euler-with-gravity counterpart of Wang & Don's
+affine-invariance argument above, which Wang & Don state but do not test for Euler.
+
+**Evidence** (§5, Tables 4–8, Figs. 9–14). Isothermal steady states in 1D ($\phi=x$, $t=2$,
+$N_x=10$–$160$) and 2D ($\phi=x+y$, $t=1$): the well-balanced scheme stays at $O(10^{-16})$ in
+double and $O(10^{-34})$ in quadruple precision, while the unmodified scheme starts at
+$O(10^{-10})$ on 10 points and reaches only $O(10^{-19})$ at $N_x=160$ in quadruple precision.
+Polytropic states (1D $\phi=3.15x$ to $t=10$; 2D Lane–Emden polytrope, $\gamma=2$, to $t=14.8$):
+same picture. Perturbations of amplitude $10^{-10}$ to $10^{-12}$ are resolved only by the
+well-balanced scheme, and in a Sod problem under gravity the unmodified scheme oscillates near
+the shock and the contact. The accuracy is fifth order for both versions; with the polytropic
+equilibrium the error on 32 points is $7.49\times10^{-4}$ and then coincides with the
+unmodified scheme (order 12.55 on the first refinement), which the authors call
+"super-convergence behavior like the spectral method" (Table 6).
+
 ## Known equilibria: evolving the deviation
 
 [Kanbar et al. (2022)](/sources/kanbar-2022.md) make an
@@ -199,8 +237,8 @@ sense only.
 - Balsara et al. write "We don't consider well-balancing in this paper" (§III) and later
   call the method well-balanced (§VIII.c); their evidence is visual agreement with the
   reference results of Dumbser & Balsara (2016), not a round-off equilibrium measurement.
-- **Three kinds of evidence.** Wang & Don measure round-off ($\approx10^{-33}$ in
-  quadruple precision); Arun et al. state that the challenge is to resolve perturbations
+- **Three kinds of evidence.** Wang & Don and Li et al. (2023) measure round-off
+  ($\approx10^{-33}$ to $10^{-34}$ in quadruple precision); Arun et al. state that the challenge is to resolve perturbations
   "up to machine precision" (§1) but report $L^1$ errors of $10^{-6}$ to $10^{-4}$ on 100
   cells; they interpolate the exact equilibrium onto the grid (§5.2.1); Kanbar et al. print
   no magnitude; Chu et al. print no lake-at-rest round-off test either, only the
@@ -220,3 +258,4 @@ sense only.
 - [Arun et al. (2022)](/sources/arun-2022.md) — §1, §2.1, §4 (Def. 4.1, Eqs. (4.6), (4.14), (4.16), Thm. 4.3, Remark 4.2), §5.2 (Tables 1–2, Figs. 3–10) (arXiv v1).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §6.1 (Eqs. (6.1)–(6.4), Remark 6.1), §7.1 (Ex. 2, Fig. 7.3), §8.
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3 (Eqs. (4)–(7), (17)), §§5.3–5.5, §6 (arXiv v1).
+- [Li et al. (2023)](/sources/li-2023.md) — §4 (Eqs. (57)–(71), Thm. 5), App. A, §5 (Tables 3–8, Figs. 9–14).

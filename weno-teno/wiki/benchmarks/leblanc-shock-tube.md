@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem with a pressure ratio of 10^
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Leblanc shock tube
@@ -38,8 +38,12 @@ pressure ratio is $10^9$ and the density ratio $10^3$.
 |---|---|---|---|---|
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.5 | $(\rho,v,p)=(2,\ 0,\ 10^9)$ | $(0.001,\ 0,\ 1)$ | 3200 cells, logarithmic plots | $10^{-4}$ |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5c | same | same | 6400 points | $10^{-4}$ |
+| [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.4 | same, Navier–Stokes $\mathrm{Re}=1000$ | same | 3200 points | $10^{-3}$ as printed |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.7 | same | same | 6400 cells | $10^{-4}$ |
 
-Inlet/outlet boundaries (Fan et al.). The pressure ratio is again
+Fan, Zhang & Qiu (2021) use inlet/outlet boundaries, Fan, Zhang & Qiu
+(2022) inflow/outflow and Fan, Zhao, Xiong & Qiu outflow ones. The
+pressure ratio is again
 $10^9$, the density ratio $2\times10^3$; with a different $\gamma$ and
 different states this is a different problem from the first version,
 not a rescaling of it *(compiler check, not in the sources)*. Wang et
@@ -51,8 +55,8 @@ $O(10^9)$.
 **Robustness needs a positivity safeguard.** Fu runs his very-high-order
 [TENO-AA](/methods/adaptive-teno.md) on this problem with LLF splitting
 and the [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md),
-like all his extreme cases, and reports it stable (§5.7). Fan et al.'s
-positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) triggers
+like all his extreme cases, and reports it stable (§5.7). Fan, Zhang &
+Qiu's (2021) positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) triggers
 its scaling limiter in only 0.25 % of the cells and flags 0.97 %
 ($\mathrm{Re}=1000$) and 1.35 % ($\mathrm{Re}=\infty$) as troubled; they
 state that the earlier hybrid HWENO of Zhao, Chen & Qiu blows up on it
@@ -64,11 +68,25 @@ those of the original multi-resolution scheme instead (Example 5.5,
 Fig. 5.11); which weights the paper uses elsewhere is ambiguous as
 printed.
 
+Fan, Zhang & Qiu (2022) compute it with their
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md)
+and scaling limiter at $\mathrm{Re}=1000$; WENO-ZQ5 "produces more
+oscillation possibly due to its wider stencil" than WENO-JS5 and
+WENO-JS7 (Fig. 5.3), and without the positivity treatment all three
+schemes blow up, as stated (§5). Fan, Zhao, Xiong & Qiu's finite-difference
+[HWENO](/methods/hermite-weno.md) with restricted derivatives (HWENO-R)
+runs it **without** positivity limiters, while the HWENO-L scheme of
+Zhang & Zhao, whose flux reconstruction uses the unrestricted
+derivative, "cannot simulate" it even with them (§1, Ex. 3.7). They
+also state that the other finite-difference HWENO schemes cannot
+simulate the problem directly, which is shown only for HWENO-L.
+
 **Low dissipation.** Deng finds low-dissipation
 [ROUND](/methods/round-scheme.md) "much less dissipative and less
 oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
 
-**Cost of hybridization.** Fan et al. record their largest CPU saving
+**Cost of hybridization.** Fan, Zhang & Qiu (2021) record their largest
+CPU saving
 here: the hybrid scheme saves 88.59 % ($\mathrm{Re}=\infty$) and
 89.64 % ($\mathrm{Re}=1000$) of the time of the non-hybrid one, because
 almost no cells are troubled (Table 4.2).
@@ -79,6 +97,13 @@ almost no cells are troubled (Table 4.2).
   on one say nothing directly about the other.
 - Evidence is visual against fine-grid or exact references; no source
   reports an error norm.
+- Fan, Zhang & Qiu (2022) print $T=0.001$, ten times the $10^{-4}$ of
+  the other three sources of this version. The head of the left
+  rarefaction moves at $c=\sqrt{1.4\times10^9/2}\approx2.65\times10^4$,
+  so it travels about 2.6 by $t=10^{-4}$ but about 26 by $t=10^{-3}$,
+  beyond the left end of $[-10,10]$ *(compiler check, not in the
+  sources)*; the printed time is either a slip or a run in which the
+  rarefaction leaves through the boundary.
 - Deng states neither the CFL number nor the Runge–Kutta variant.
 
 # Citations
@@ -87,3 +112,5 @@ almost no cells are troubled (Table 4.2).
 - [Deng (2023)](/sources/deng-2023.md) — App. A.8, Fig. 34.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.5, Fig. 4.5, Table 4.2.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5c, Fig. 5.11.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Example 5.4, Fig. 5.3.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1, Ex. 3.7.

@@ -153,11 +153,12 @@ NIST-JANAF web tables.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunk 4 (2026-10-23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
 * [Bound preservation](/properties/bound-preservation.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
+* [Deferred correction (DeC) time integration](/methods/deferred-correction.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
 * [Entropy correction terms](/methods/entropy-correction-term.md)
@@ -166,6 +167,7 @@ Chunk 3 (2026-10-22). This source is cited on:
 * [Flux differencing and split-form DG](/methods/flux-differencing.md)
 * [h- and hp-adaptation for DG](/methods/hp-adaptation.md)
 * [Kinetic energy preservation](/properties/kinetic-energy-preservation.md)
+* [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)
 * [Solid-body rotation](/benchmarks/solid-body-rotation.md)

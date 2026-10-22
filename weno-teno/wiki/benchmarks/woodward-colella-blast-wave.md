@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,15 +17,16 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Fifteen sources of the
+resolution against a fine-grid reference. Twenty-one sources of the
 bundle run it.
 
 ## Setup
 
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
 et al. (2023), Chertock et al., Deng, Huang et al., Li, Shu & Qiu,
-Wang et al. (2021) and Bezgin et al. (Li et al. differ in one value,
-see Qualifications),
+Wang et al. (2021), Bezgin et al., Fan et al., Hong, Ye & Ye, Hu,
+Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren and Liang et al. (Li et
+al. differ in one value, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
 $$
@@ -55,6 +56,12 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.7 | 800 cells, CFL 0.6 | FD WENO5, 16,000 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC; boundary conditions not printed |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.4b | 400, CFL 0.6 | WENO-JS5, 20,000 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) vs original WENO5-MR, WENO-AO5, WENO-JS5 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.3, Eq. (32) | 400, 800; CFL 0.6 | — | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS, WENO5-Z; LLF, characteristic |
+| [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.4 | not recorded | classical WENO, 2001 | finite-difference [Hermite WENO](/methods/hermite-weno.md) HWENO-R vs HWENO-L and WENO-ZQ; linear-weight study |
+| [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.3 | 400 | WENO-JS, 2000 | TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension) vs TENO6/8, [WENO-CU6](/methods/weno-cu6.md), WENO-JS, WENO7, WENO9 |
+| [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.2, Eq. (5.2) | 500, CFL 0.9 | — | second-order MUSCL with [HLL-family](/methods/hll-riemann-solvers.md) solvers HLLE, HLLEM, RHLLEM-LD; boundaries not stated |
+| [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.4 | 400, CFL 0.35 | WENO5-JS, 2000 | Roe flux with entropy fix; five-point TENO with a new [scale sensor](/definitions/scale-sensor.md) vs [TENO5-A](/methods/adaptive-teno.md), TENO5, WENO5-Z |
+| [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 400, CFL 0.6 | WENO-Z, 2000 | MDAD-HY ([MDCD](/methods/mdcd-scheme.md)-type hybrid) with switch threshold $\psi_c=0.5$; TENO-HY with $C_T=10^{-5}$ |
+| [Liang et al. (2022)](/sources/liang-2022.md) §4.3 | 400 | WENO5-JS, 2500 | Roe flux with entropy fix; [TENO-THINC](/methods/teno-thinc.md)-family scheme vs TENO5-THINC, TENO5 ($C_T=10^{-4}$), WENO5-Z |
 
 ## Findings across sources
 
@@ -75,7 +82,20 @@ moments "much better" resolved and sharper than the unmodified one
 (Fig. 3.5, comment p. 31). Wang et al. (2021) find their New WENO5
 similar to WENO-AO5, both better than WENO-JS5 and the original
 multi-resolution WENO5, at about 0.67 of the latter's cost (0.76 s
-against 1.14 s; Fig. 5.8).
+against 1.14 s; Fig. 5.8). Among TENO variants, Hong, Ye & Ye find
+TENO6 and TENO-M6 alike and much better than WENO-JS near the valley at
+$x\approx0.75$ and the peak at $0.78$, WENO-CU6 overshooting near the
+left peak at $0.65$, and TENO8/TENO-M8 less dissipative than WENO7 and
+slightly better than WENO9 (§5.3, Fig. 11); Huang, Liang & Fu find
+TENO5-A and their scale-sensor scheme better than WENO5-Z and TENO5 at
+the $0.78$ peak (§4.4, Fig. 7); Liang et al. capture the shocks as
+sharply as WENO5-Z and TENO5 and resolve the peak "slightly better"
+(§4.3, Fig. 9). Fan et al. find HWENO-R and HWENO-L better than WENO-ZQ
+and HWENO-R slightly better than HWENO-L (Ex. 3.4, Fig. 3.4). With only
+a second-order MUSCL reconstruction, Hu, Yuan & Zhao find their
+RHLLEM-LD Riemann solver giving "obviously higher resolution for all
+waves" than HLLE and HLLEM (§5.2, Fig. 5.2): the problem also ranks
+Riemann solvers, not only reconstructions.
 
 **Robustness and the stability margin of very-high-order schemes.**
 Luo & Wu use the problem to choose the largest admissible constant of
@@ -101,7 +121,22 @@ to WENO3-JS on 800 and gives the best density of the three-point schemes
 400 to 3200 points: with $C_T=10^{-4}$ the solution converges
 monotonically to the reference, whereas with the default
 $C_T=10^{-5}$ a small overshoot appears near the strong contact at the
-highest resolutions (Fig. 9). See [TENO](/methods/targeted-eno.md).
+highest resolutions (Fig. 9). Liang et al. likewise run TENO5 with
+$C_T=10^{-4}$, which it needs "to run stably" here (§4.3), while Li,
+Chen & Ren run their TENO-HY comparator with $C_T=10^{-5}$ and tune
+their hybrid's switch threshold per problem ($\psi_c=0.5$ here,
+against 0.4 and 0.8 on the [Sedov problem](/benchmarks/sedov-blast-wave.md);
+§4.2). See [TENO](/methods/targeted-eno.md).
+
+**Linear weights.** Fan et al. use the problem to study the linear
+weights of HWENO-R, which they state may be arbitrary positive numbers
+summing to one: nine flux sets G1–G9 and nine derivative-limiter sets
+D1–D9 (Table 3.4) show that the resolution depends strongly on them,
+and they recommend the linear weights $(0.99,0.005,0.005)$ for the
+flux and $(0.9,0.05,0.05)$ for the limiter, central-to-side ratios in
+$[100,300]$ and $[10,30]$ respectively giving similar results (§3, Ex. 3.4,
+Figs. 3.5–3.7). The caption of Table 3.4 reads "(Gk,Dk)", the text
+"(Dk,Gk)".
 
 ## Scaled variant
 
@@ -125,6 +160,11 @@ with specifications deferred to an earlier paper (Fig. 7).
   from the paper.
 - Balsara et al. place the problem on $[-0.5,0.5]$; their initial
   states are not recorded on this page.
+- Hu, Yuan & Zhao print the intervals $[0,0.1]$, $(0.1,0.9]$, $(0.9,1]$
+  and Li, Chen & Ren $(0,0.1]$, $(0.1,0.9]$, $(0.9,1]$; Hu et al. state
+  no boundary conditions.
+- Huang, Liang & Fu attribute the problem to "Woodward and Colella" while
+  their reference list prints only Woodward as author.
 - Ye et al. give 400 points in the text and $N=1500$ in the caption of
   Fig. 6.
 - Wang et al. (2023) compute their reference with the OLD scheme
@@ -150,3 +190,9 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Ex. 3.7, Fig. 3.5; comment p. 31 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.4b, Fig. 5.8.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §3.2; §4.3, Eq. (32), Fig. 11; App. A.4, Fig. 21.
+- [Fan et al. (2023)](/sources/fan-2023.md) — §3, Ex. 3.4, Table 3.4, Figs. 3.4–3.7.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.3, Fig. 11.
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.2, Eq. (5.2), Fig. 5.2.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.4, Fig. 7 (arXiv v1).
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.2, Fig. 17.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4.3, Fig. 9.

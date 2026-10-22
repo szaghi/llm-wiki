@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -40,20 +40,33 @@ the right half.
 | [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.1 | $\mathbb P_3$, $\mathbb P_5$ at about 200 DOFs; $N=40$–$640$ ($L^1$), $20$–$320$ ($L^2$), and $M=100$–$1600$ DOFs, $\mathbb P_2$–$\mathbb P_7$ | 0.2 | flux reconstruction with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.3.1 | 100 elements | 0.2 | nodal DG with ANN-predicted artificial viscosity |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §5.1 | grid study (grids not printed in the text) | 0.2 | diaphragm at $x=0$; Dirichlet left, Neumann right; compact central scheme with [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md) vs localized artificial diffusion; $\gamma$ not printed (arXiv v2) |
+| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.2 | 50 | 0.2 | reflective boundaries; [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) WENO S2T2 and S4T3 at $\varepsilon=1$, CFL 0.25 (arXiv v2) |
+| [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.2 | 100 | 0.2 | on $[-0.5,0.5]$, zero-gradient boundaries; TENO-M6/M8 ([TENO](/methods/targeted-eno.md) with stencil extension); $\gamma$ not printed |
+| [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.3 | 100 | 0.2 | five-point TENO with a new [scale sensor](/definitions/scale-sensor.md) vs TENO5-A, TENO5, WENO5-Z (arXiv v1) |
+| [Liang et al. (2022)](/sources/liang-2022.md) §4.2 | 100 | 0.2 | [TENO-THINC](/methods/teno-thinc.md)-family scheme |
+| [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.4, Table 6 ("ST01") | Cartesian strip, $h=1/100$; 1967 triangles | 0.2 | unstructured finite-volume TENO3–6, conservative-variable reconstruction; states printed with a column shift, see Qualifications (preprint) |
+| [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 | 500 | 0.2 | [IDEFIX](/software/idefix.md), Roe solver, linear reconstruction, RK2; left pressure printed $0.1$, see Qualifications (arXiv v1) |
+| [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.4 | 10 elements, static $N=5$ or $p$-adaptive $N\in[2,5]$ | 0.2 | Dirichlet; Roe with entropy fix; [$p$-adaptive DG](/methods/hp-adaptation.md) with [FV subcells](/methods/subcell-finite-volume-limiting.md), $N_{\mathrm{FV}}=6$ or 11 |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.2 | 200 | 2 | mirrored, on $[-5,5]$: $(0.125,0,0.1)$ on $[-5,0)$, $(1,0,1)$ on $[0,5]$; scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) |
+| [Huang & Zahr (2022)](/sources/huang-2022.md) §6.4.1 | 108 space–time triangles, 84 after element removal | 0.2 | [implicit shock tracking](/methods/implicit-shock-tracking.md) HOIST, $p=2$ (arXiv v2) |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
 evolution operator at CFL 0.5 (Fig. 24); and seventh order at CFL 0.01
 on a periodic tube with discontinuities at $x=1/3$ and $x=2/3$ (Fig. 28),
 which doubles the problem so that periodic boundaries can be used.
-Pazner, Luo et al., Hiejima and Sousa & Scalo place the diaphragm at
-$x=0$ (of a tube centred on the origin, for the first three), a shift
+Pazner, Luo et al., Hiejima, Hong, Ye & Ye and Sousa & Scalo place the
+diaphragm at $x=0$ (of a tube centred on the origin, for the first
+four), a shift
 of the $[0,1]$ placement. Sousa & Scalo also run a "mirrored Sod" tube
 on the periodic interval $[-1,1]$, with $(1,0,1)$ for $|x|<0.5$ and
 $(0.125,0,0.1)$ elsewhere, to $t=0.2$ with a Fourier pseudo-spectral
 method on 64 to 512 points, used to calibrate their model constants
 (App. A); like Abgrall & Barsukow's doubled tube, it makes the problem
-periodic.
+periodic. Li, Li, Don & Wang's mirrored run on $[-5,5]$ at $t=2$ is the
+mirrored $[0,1]$ tube at $t=0.2$ under $x\mapsto(x+5)/10$,
+$t\mapsto t/10$ *(compiler check, not in the sources)*, the same
+mirroring as Ye et al.'s.
 
 ## Lax
 
@@ -78,6 +91,12 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (30) | $[0,1]$ | 200 | 0.14 | right pressure printed $0.5710$ |
 | [Hiejima (2022)](/sources/hiejima-2022.md) §3.2, Eq. (27) | $[-0.5,0.5]$ | 101 | 0.14 | right pressure printed $0.5710$ |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.3.1 | $[0,1]$ (stated for Sod) | 100 elements | 0.13 | |
+| [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.2 | $[0,1]$, reflective | 50 | 0.16 | semi-implicit all-Mach WENO at $\varepsilon=1$ |
+| [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.2 | $[-0.5,0.5]$, zero-gradient | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.3 | $[0,1]$ | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Liang et al. (2022)](/sources/liang-2022.md) §4.2 | $[0,1]$ | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.4 ("ST02") | $[0,1]$ strip | $h=1/100$; 1967 triangles | 0.14 | column shift in Table 6 |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §2.5, §3.2 | $[-5,5]$ | 200 | 1.3 | also scaled by $\lambda\in\{1,10^{-7}\}$ |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -114,6 +133,23 @@ Qiu report that modifying the first moment in troubled cells gives
 "much better resolutions and sharper shock transitions" than the
 unmodified sixth-order HWENO on Lax and on their five other shock tests
 (Ex. 3.5, Fig. 3.3, comment p. 31).
+
+TENO variants agree in kind. Hong, Ye & Ye find every scheme stable on
+both tubes, with a slight oscillation of WENO-CU6 near the contact;
+TENO-M6 matches TENO6 and resolves the contact and the expansion better
+than WENO-JS, and TENO-M8 the discontinuities better than WENO9 (§5.2,
+Figs. 9–10). Liang et al. report sharper shocks and contacts and a more
+accurate rarefaction than their baselines (§4.2, Figs. 7–8). Huang,
+Liang & Fu find all four of their schemes free of oscillations
+(§4.3, Fig. 6). On a Cartesian strip with conservative-variable
+reconstruction, Ji, Liang & Fu see no spurious oscillations and slight
+overshoots near the Lax contact; on 1967 triangles the two tubes keep
+their one-dimensional symmetry (§5.4, Figs. 5–7); see [symmetry
+preservation](/properties/symmetry-preservation.md). Boscarino et al.'s
+semi-implicit schemes capture both tubes at $\varepsilon=1$ on 50 cells
+"without any observable numerical oscillations" (Ex. 5.2, Fig. 5.2).
+Lesur et al. use Sod only to validate the Roe solver of a second-order
+finite-volume code against the exact solution (§4.1, Fig. 2).
 
 **Three-point and very-high-order reconstructions.** Bezgin et al.'s
 learned three-point WENO3-NN has a lower $L_1$ error than fifth-order
@@ -158,6 +194,14 @@ explicit Padé filter ($\alpha=0.495$), the quasi-spectral viscosity does
 not, although an optional filter ($\alpha=0.499$) attenuates residual
 high-wavenumber oscillations (§5.1, Fig. 4).
 
+**$p$-adaptation.** Mossier, Beck & Munz's $p$-adaptive DG with
+subcell FV resolves the Sod shock more sharply than the static $N=5$
+scheme with 151.6 against 216.0 degrees of freedom per element, using
+the highest degree only at the contact and a slightly raised one at the
+rarefaction (§8.4, Figs. 8–9). They call this "about 25% less" degrees
+of freedom; the printed counts give 29.8 % *(compiler check, not in the
+sources)*.
+
 **Shock tracking instead of capturing.** Luo, Absillis & Nourgaliev fit
 the shock and the contact as true discontinuities of a space–time mesh
 of eight quadrilaterals, six of them degenerate at the diaphragm, and
@@ -168,7 +212,12 @@ $\log_{10}\|\rho-\rho_{\mathrm e}\|=-2.82,\ -4.36,\ -5.67$ on Sod
 (slopes 8.75 and 10.48 against $\log_{10}(1/\sqrt{\mathrm{DOFs}})$) and
 $-3.38,\ -4.54,\ -5.59$ on Lax (slopes 6.59 and 8.44), which they call
 exponential $p$-convergence (Table 1 and the second Table 1); no
-shock-capturing scheme is run for comparison. See
+shock-capturing scheme is run for comparison. Huang & Zahr's HOIST
+method tracks the Sod waves on a space–time mesh of 108 triangles
+refined near the diaphragm ($p=2$, geometry $q=1$), removing 24
+elements; the features are tracked in order of strength, the shock by
+about iteration 27, the contact by 52, the rarefaction head by 66 and
+its tail by 106 (§6.4.1, Fig. 29). See
 [implicit shock tracking](/methods/implicit-shock-tracking.md).
 
 **Robustness of Hermite WENO at high Reynolds number.** Fan, Zhang &
@@ -183,7 +232,17 @@ positivity limiter, so they attribute the stability on this problem to
 the first-moment limiter; a small velocity dent is a numerical artifact
 also seen in an earlier finite-volume WENO (Fig. 4.2, Table 4.2).
 
-**Scale invariance.** Scaling the Lax data by a factor $\lambda$
+**Scale invariance.** Li, Li, Don & Wang scale the Lax data, density
+and pressure, by $\lambda\in\{1,10^{-7}\}$ (page-local symbol), after
+Wang & Don: the earlier multi-resolution A-WENO (MR-AWENO) oscillates
+at the contact and the shock for both $\lambda$; their new global
+indicator alone removes the oscillations at $\lambda=1$ but not at
+$10^{-7}$; their scale-invariant MR-AWENO-Si is essentially
+non-oscillatory for both (§2.5, Fig. 4). On the unscaled Sod, Lax and
+Einfeldt ([123](/benchmarks/double-rarefaction-problem.md)) problems
+MR-AWENO already shows strong oscillations near the shock, contact and
+rarefaction, which MR-AWENO-Si does not (§3.2, Fig. 5).
+Scaling the Lax data by a factor $\lambda$
 (page-local symbol) exposes schemes
 whose weights depend on the magnitude of the data: OEDG is exactly
 scale-invariant, whereas the earlier OFDG smears at $\lambda=100$,
@@ -222,6 +281,11 @@ single-gas Euler equations.
   on 8000 cells as reference: the moving mesh with $100^3$ cells gives
   results comparable to a uniform $200^3$ mesh at 37.2 % of its CPU time
   (Table 5.2).
+- **Gravity.** Li, Li, Don & Wang run the Sod states under gravity
+  $\phi_x=1$ on $[0,1]$ to $t=0.2$ with $N=100$; their
+  non-well-balanced scheme oscillates near the shock and the contact,
+  the well-balanced one does not (§5.1, Fig. 9); see [hydrostatic
+  equilibrium tests](/benchmarks/hydrostatic-equilibrium-tests.md).
 - **Relaxation and gravity.** [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md)
   §5.1 solve the barotropic Euler equations with gravity ($\phi(x)=x$)
   and stiff friction relaxation for the Sod densities
@@ -264,8 +328,17 @@ single-gas Euler equations.
   down at $t\approx0.16$; with their
   [entropy correction term](/methods/entropy-correction-term.md) it runs
   to $t=0.25$, the two correction variants being indistinguishable
-  without zoom (Figs. 1–2). The three-dimensional spherical version of
-  Li, Duan & Tang is listed above.
+  without zoom (Figs. 1–2). [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md)
+  §5.2.2 run the same radial data on $[-1,1]^2$ with periodic
+  boundaries, $200\times200$, CFL 1, to $t=0.16$, with their
+  fourth-order [kinetic scheme](/methods/discrete-kinetic-relaxation-scheme.md):
+  flux limitation and [MOOD](/methods/mood-a-posteriori-limiting.md)
+  give almost identical results, MOOD never falls back to first order
+  and leaves over- and undershoots at the shock, while the limiter
+  removes the overshoot and reduces the undershoot (Figs. 8–9). The
+  three-dimensional spherical version of Li, Duan & Tang is listed
+  above; the two-dimensional and spherical explosions of other sources
+  are on the [explosion and implosion page](/benchmarks/explosion-and-implosion-problems.md).
 - **Relativistic tubes.** [Chen & Wu (2022)](/sources/chen-2022-b.md)
   Exs. 4.2–4.5 (arXiv v1) run quasi-one-dimensional
   [relativistic](/definitions/relativistic-hydrodynamics.md) Riemann
@@ -290,6 +363,24 @@ single-gas Euler equations.
 
 ## Qualifications
 
+- Lesur et al. print the Sod states as $\rho_{\mathrm L}=1$,
+  $p_{\mathrm L}=0.1$, $\rho_{\mathrm R}=0.125$, $p_{\mathrm R}=0.1$, $v=0$
+  (§4.1). With equal pressures and zero velocity the data are a
+  stationary contact and nothing but the contact would appear, whereas
+  their Fig. 2 shows a rarefaction, a contact and a shock against the
+  analytical solution; the printed $p_{\mathrm L}$ is inconsistent with
+  their own run, and the other sources print $p_{\mathrm L}=1$.
+- Ji, Liang & Fu's Table 6 prints, under
+  $\rho_{\mathrm L},v_{\mathrm L},p_{\mathrm L},\rho_{\mathrm R},v_{\mathrm R},p_{\mathrm R}$,
+  the rows "1.0 0.0 1.0 1.0 0.125 0.0" (ST01, Sod) and "0.445 0.698
+  3.528 3.528 0.5 0.0" (ST02, Lax), and a strong tube ST03 "1.0 0.0 1000
+  1000 1.0 0.0" with $t=0.012$ and diaphragm at $x=0.6$: in every row the
+  printed $\rho_{\mathrm R}$ repeats $p_{\mathrm L}$ and $p_{\mathrm R}=0$, a
+  degenerate state, so a column is shifted and the right-state values
+  cannot be recovered from the table. They also print the strips as
+  $[0,0.2]\times[0,1]$ for data defined on $0\le x\le1$.
+- Mossier, Beck & Munz state Dirichlet boundaries; Boscarino et al.
+  reflective ones; Hong, Ye & Ye zero-gradient ones.
 - Luo & Wu print the left Lax pressure as $0.3528$ (Eq. (16)), where
   Fu (2021), Takagi et al., Li et al., Deng, Huang et al., Peng et
   al., Li, Shu & Qiu, Fan et al. and Sciacovelli et al. print $3.528$;
@@ -354,3 +445,13 @@ single-gas Euler equations.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4, Figs. 1–5 (arXiv v4).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Exs. 4.2–4.5, Figs. 4–9 (arXiv v1).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.1.1–3.1.2, Figs. 8–9.
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §5.2.2, Figs. 8–9.
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — Ex. 5.2, Fig. 5.2 (arXiv v2).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.2, Figs. 9–10.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §6.4.1, Fig. 29 (arXiv v2).
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §4.3, Fig. 6 (arXiv v1).
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.4, Table 6, Figs. 5–7 (preprint).
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Fig. 2 (arXiv v1).
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.5, Fig. 4; §3.2, Fig. 5; §5.1, Fig. 9.
+- [Liang et al. (2022)](/sources/liang-2022.md) — §4.2, Figs. 7–8.
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.4, Figs. 8–9.

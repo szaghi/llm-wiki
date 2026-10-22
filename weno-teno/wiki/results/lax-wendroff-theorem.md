@@ -5,7 +5,7 @@ description: "The Lax–Wendroff theorem makes conservation, in flux form with c
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -37,6 +37,12 @@ $$F\phi_a\,\mathbf 1=F(\phi_a)\qquad\text{for every constant }\phi_a,$$
 which "basically says that conservation and consistency imply that the numerical fluxes are
 a fair interpolation between the adjacent nodal values". They assume it at the generality of
 their framework and state that they "can not (yet) prove this" (§2.4).
+
+The finite-difference statement is the same with point values: [Jeong et al. (2022)](/sources/jeong-2022.md)
+(§2.1) write the conservative scheme $\frac{d}{dt}u_i=-\frac1{\Delta x}(\hat f_{i+1/2}-\hat f_{i-1/2})$
+with a numerical flux $\hat f$ that is Lipschitz and consistent, $\hat f(u,\dots,u)=f(u)$, and
+invoke the theorem for convergence to weak solutions of their
+[RBF-based WENO](/methods/rbf-weno.md) ([conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)).
 
 ## Which schemes satisfy the flux-form hypothesis
 
@@ -120,3 +126,4 @@ Two sources show the consequence the theorem warns of, a wrong shock speed:
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §3.3.4, §4.3.2 (Fig. 7) (arXiv v2).
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §1, §2.3, §4 (Example 4, Fig. 8).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §1, §2 (Eq. (2.1)).
+- [Jeong et al. (2022)](/sources/jeong-2022.md) — §2.1.

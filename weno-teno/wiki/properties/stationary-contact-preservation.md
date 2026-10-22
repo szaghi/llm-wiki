@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Stationary contact preservation"
-description: "A scheme preserves stationary contacts when an isolated discontinuity of a linearly degenerate field with zero speed stays exactly on the mesh; Balsara et al. obtain it in high-order FD-WENO through HLLI anti-diffusion, Renac in an entropy-stable multicomponent DGSEM through contact-resolving fluxes, while Lax–Friedrichs-type FD-WENO and central-upwind schemes do not have it."
+description: "A scheme preserves stationary contacts when an isolated discontinuity of a linearly degenerate field with zero speed stays exactly on the mesh; Balsara et al. obtain it in FD-WENO through HLLI anti-diffusion, Renac in multicomponent DGSEM through contact-resolving fluxes, Lax–Friedrichs-type FD-WENO and central-upwind schemes lack it, and for moving interfaces the weaker interface equilibrium condition applies."
 status: established
 aliases: [exact capture of stationary contact discontinuities, preservation of stationary linearly degenerate discontinuities, stationary discontinuity preservation]
 tags: [riemann-solver, finite-difference, well-balanced, multiphase, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Stationary contact preservation
@@ -86,6 +86,35 @@ to 0.1, $v=0$, $p=1$) is resolved exactly. The same interface moving at $v=1$ pr
 spurious pressure and velocity oscillations, which Renac calls inherent to discretely
 conservative schemes, after Abgrall and Abgrall–Karni.
 
+## Moving contacts: interface equilibrium and resolution
+
+For a contact or material interface in motion the analogous requirement is weaker: velocity
+and pressure, uniform across it, must stay uniform, while the jump itself is transported and
+smeared. [Jain & Moin (2022)](/sources/jain-2022.md) (§3.3, after Abgrall 1996) call this the
+**interface equilibrium condition**: a scheme satisfies it if $v=v_0$ and $p=p_0$ at every
+point at step $k$ imply the same at step $k+1$. For their second-order central
+finite-volume discretization of the five-equation model with a conservative diffuse-interface
+regularization, Lemma 3.1 (proof App. B, stiffened-gas phases) states that it holds when the
+internal-energy face flux uses the same split form as the mass flux (and the volume-fraction
+flux), and the regularization enthalpy flux the same as the regularization mass flux
+([split convective forms](/methods/split-convective-forms.md),
+[five-equation model](/definitions/five-equation-model.md)). The two split forms of the
+internal-energy flux that violate it (cubic, and cubic in enthalpy) cause "spurious mixing of
+internal energy at the interface" and diverge in the two-phase Taylor–Green vortex at density
+ratio 10, while all three are stable in single phase (§4.1, Figs. 4–5). Their stationary-slab
+test ($u=v=0$, $p=1$, density ratio 1000, $64^2$, to $t=10$) shows the regularization's
+entropy production instead: small positive relative changes of the two phase entropies,
+plotted on axes scaled by $10^{-7}$ and $10^{-8}$, for interface widths off the equilibrium one
+(App. A, Fig. 12).
+
+Sharpness of a moving contact is a matter of the flux's dissipation on the contact field.
+[Hu et al. (2022)](/sources/hu-2022.md) (§5.1, Eq. (5.1), Fig. 5.1) advect an isolated contact,
+$(\rho,v,p)=(1.4,0.1,1)$ to $(1,0.1,1)$, over 100 cells at CFL 0.9 to $t=2$: their RHLLEM-LD, which keeps the HLLEM
+anti-diffusion on the contact field and selects a THINC density in the dissipation term,
+captures "a sharper contact discontinuity than the HLLE and HLLEM solvers"; on a 2D
+interface-only problem (a density disc advected diagonally, $100\times100$) it gives "a
+significant improvement" over both (§5.4; [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+
 ## Qualifications
 
 - Stationary and moving interfaces behave differently in Renac (2021). The property is
@@ -123,3 +152,5 @@ conservative schemes, after Abgrall and Abgrall–Karni.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — Ex. 3 (Fig. 5.3), Lemma 3.1 (arXiv v2).
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, Theorem 6.1 (proof p. 16), §7.2 Fig. 4 (RP4, RP5) (arXiv v3).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.1 (Eqs. (2), (7)), §2.3 (Eqs. (26)–(30)), §3.1 (Fig. 1).
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §3.3 (Lemma 3.1), §4.1 (Figs. 4–5), Apps. A–B.
+- [Hu et al. (2022)](/sources/hu-2022.md) — §5.1 (Eq. (5.1), Fig. 5.1), §5.4.

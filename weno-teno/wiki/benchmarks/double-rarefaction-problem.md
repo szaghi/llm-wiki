@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem of two gases receding from e
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -37,6 +37,9 @@ right of the centre.
 | [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) §IV.C | $(1,\mp2,0.4)$ | $(-0.5,0.5)$ | 16 space–time quadrilaterals, $\mathbb P^2$ | 0.15 |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.3 | $(7,\mp1,0.2)$ | $[-1,1]$ | 200 cells, exact reference | 0.6 |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.5b | $(7,\mp1,0.2)$ | $[-1,1]$ | 400 points, reference from Zhang & Shu | 0.6 |
+| [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.2 | $(7,\mp1,0.2)$, Navier–Stokes $\mathrm{Re}=1000$; inflow left, outflow right | $[-1,1]$ | 400 points | 0.6 |
+| [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.6 | $(7,\mp1,0.2)$, outflow | $[-1,1]$ | 400 cells | 0.6 |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.2, "Einfeldt problem" | $(1,\mp2,0.4)$ | $[-5,5]$ | 200 cells | 1 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (31) | $(1,\mp2,0.4)$ | $[0,1]$ (stated for their Sod tube) | 200 cells | 0.15 |
 | [Fu (2021)](/sources/fu-2021.md) §5.7.1, Eq. (42) | $(1,\mp2,0.1)$, split at $x=0.5$; $\gamma$ not printed | $[0,1]$ | 400 points, exact reference | 0.1 |
 
@@ -69,8 +72,8 @@ $t=0.15$, entropy-stable DGSEM with $N=3$ on 100 cells.
 
 ## Findings across sources
 
-**Positivity limiters are triggered.** Fan et al.'s positivity-preserving
-hybrid [HWENO](/methods/hermite-weno.md) computes the critical case
+**Positivity limiters are triggered.** Fan, Zhang & Qiu's (2021)
+positivity-preserving hybrid [HWENO](/methods/hermite-weno.md) computes the critical case
 robustly; its scaling limiter acts in 10.00 % of the cells, the largest
 share among their tests, and 11.30 % ($\mathrm{Re}=1000$) and 19.57 %
 ($\mathrm{Re}=\infty$) of the cells are troubled; they state that the
@@ -86,6 +89,27 @@ keeps positivity on RP3 (§7.2, Figs. 3–4); his Theorem 6.1 proves
 positive cell averages under a CFL condition with factor
 $1/(2N(N+1))$, while the runs use a practical time-step bound of 0.4
 (§6.2, §7).
+
+Fan, Zhang & Qiu (2022) run the critical case with the compressible
+Navier–Stokes equations at $\mathrm{Re}=1000$ and their
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md)
+with a finite-difference WENO convection; their results are comparable
+to the positivity-preserving DG of Zhang, and WENO-ZQ5 is better than
+WENO-JS5 and WENO-JS7 in the zoomed low-density centre (Fig. 5.1, which
+also maps where the limiter acts in space and time). They state that
+without the positivity flux and limiter all three WENO schemes blow up
+on this test, without showing the failed runs (§5). Fan, Zhao, Xiong &
+Qiu instead run their finite-difference HWENO with restricted
+derivatives (HWENO-R) and WENO-ZQ on the same data **without**
+positivity limiters, and both complete (Ex. 3.6).
+
+**Scale invariance and spurious oscillations.** Li, Li, Don & Wang run
+the no-vacuum data under the name of Einfeldt and find that the
+multi-resolution [alternative WENO](/methods/alternative-weno.md)
+MR-AWENO of Wang, Zhu, Yang & Zhao produces spurious oscillations near
+the rarefactions already on the unscaled data, while their
+scale-invariant MR-AWENO-Si is essentially non-oscillatory (§3.2,
+Fig. 5); see [scale invariance](/properties/scale-invariance.md).
 
 **Accuracy between the rarefactions.** Bezgin et al. run the
 no-vacuum data without a positivity limiter and rank the schemes by the
@@ -111,7 +135,7 @@ method achieves "to the best of our knowledge" (Figs. 18–21); the
 evidence is figures, without error norms, and no capturing scheme is
 run for comparison.
 
-**Cost.** Fan et al.'s hybridization saves 59.05 % ($\mathrm{Re}=\infty$)
+**Cost.** Fan, Zhang & Qiu's (2021) hybridization saves 59.05 % ($\mathrm{Re}=\infty$)
 and 67.34 % ($\mathrm{Re}=1000$) of the CPU time of the non-hybrid
 scheme (Table 4.2).
 
@@ -123,10 +147,13 @@ identical and non-oscillatory (Fig. 7); see
 
 ## Qualifications
 
-- Fan et al. caption Fig. 4.3 "$\mathrm{Re}=\infty$ (right) and 1000
+- Fan, Zhang & Qiu (2021) caption Fig. 4.3 "$\mathrm{Re}=\infty$ (right) and 1000
   (left)", the reverse of their convention in the other figures.
 - Fu prints the data on $0\le x<0.5$ and $0.5\le x\le1$ (Eq. (42)) but
   no $\gamma$ for this problem.
+- Fan, Zhang & Qiu (2022) caption Fig. 5.1 "Double Rarefraction
+  problem" and print inflow on the left for data whose left gas moves
+  out of the domain.
 - Luo et al.'s claim that no other method avoids overheating is
   attributed to Liou and not tested in the paper.
 
@@ -136,6 +163,9 @@ identical and non-oscillatory (Fig. 7); see
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; Ex. 4.3, Fig. 4.3, Table 4.2.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.5b, Fig. 5.10.
 - [Fu (2021)](/sources/fu-2021.md) — §5.7.1 (arXiv v1).
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Example 5.2, Fig. 5.1.
+- [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.6.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.2, Fig. 5.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.2, Eq. (31), Figs. 10, 26; App. A.6, Table 4.
 - [Renac (2021)](/sources/renac-2021.md) — §7.2, RP3, Figs. 3–4 (arXiv v3).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.3, Fig. 7.

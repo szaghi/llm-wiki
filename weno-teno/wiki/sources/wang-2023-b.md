@@ -134,7 +134,7 @@ same-year pairs take suffixes in printed order (Kurganov 2021 [17]/[18], Schulz-
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–4 (2026-10-22/23). This source is cited on:
 
 * [Adaptive-diffusion central-upwind Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md)
 * [Alternative WENO (A-WENO)](/methods/alternative-weno.md)
@@ -152,6 +152,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–3 (2026-10-22). This source is
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)
 * [Total variation diminishing (TVD) and slope limiters](/definitions/total-variation-diminishing.md)
+* [Two-dimensional explosion and implosion problems](/benchmarks/explosion-and-implosion-problems.md)
 * [Two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)
 * [WENO-Z weights](/methods/weno-z.md)
 * [Woodward–Colella interacting blast waves](/benchmarks/woodward-colella-blast-wave.md)

@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer b
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # MHD blast wave and rotor
@@ -99,6 +99,36 @@ order (Figs. 10–11). They print $r=\sqrt{x^2+y^2}$, while the velocity
 field is centred at $(0.5,0.5)$; consistent use requires $r$ to be the
 distance to $(0.5,0.5)$.
 
+[Dao & Nazarov (2022)](/sources/dao-2022.md) §5.5 (arXiv v1) print the
+same problem up to the taper velocity, citing Balsara & Spicer and calling it the "first rotor"
+of Tóth: on $[0,1]^2$ with $\gamma=1.4$, ambient $\rho=1$, $v=0$, $p=1$,
+$B=(5/\sqrt{4\pi},0)$; $\rho=10$, $v=\tfrac{u_0}{r_0}(0.5-y,\ x-0.5)$ for
+$r<r_0$; $\rho=1+9\varphi$, $v=\varphi\tfrac{u_0}{r}(0.5-y,\ x-0.5)$ in
+the taper; $r_0=0.1$, $r_1=0.115$; $t=0.15$. The disk-edge speed $u_0$
+is not printed and no boundary conditions are stated; with $u_0=2$ the
+disk data are Dzanic et al.'s, while in the taper Dao & Nazarov's speed
+$\varphi u_0$ and Dzanic et al.'s $2\varphi r/r_0$ differ by the factor
+$r/r_0\le1.15$ *(compiler check, not in the sources)*. Their
+continuous-Galerkin $\mathbb P_3$ scheme with residual-based
+[artificial viscosity](/methods/artificial-viscosity.md) and projection
+divergence cleaning, on $300\times300$ nodes, runs without negative
+pressure, with printed ranges $\rho_h\in[0.727,\,8.42]$,
+$p_h\in[0.0386,\,1.93]$, Mach number up to 4.82 and magnetic pressure
+$\tfrac12\lvert B_h\rvert^2\in[0.0551,\,2.30]$, and captures circular
+Mach contours (Fig. 7). The method has no positivity guarantee; they
+leave invariant-domain preservation out of scope.
+
+### Rotor in polar coordinates
+
+[Lesur et al. (2023)](/sources/lesur-2023.md) §4.2 (arXiv v1) run the
+Balsara–Spicer rotor "as Mignone et al. (2007), with smooth
+transitions", without reprinting the data, to validate the curvilinear
+implementation of their [IDEFIX](/software/idefix.md) code: once on a
+Cartesian $512^2$ grid (Roe solver, RK2, CFL 0.2, constrained transport
+with Gardiner–Stone electromotive-force averaging) and once on a polar grid $N_R\times N_\varphi=256\times1024$
+with $R\in[0.05,0.5]$ (Fig. 9). See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
 ## Weak magnetic blast
 
 [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) §6.1, after
@@ -125,7 +155,8 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - Liu et al. give no CFL number or time-step rule for any test; they
   print periodic boundaries for the rotor without comment.
 - The blast-wave comparison with earlier results is visual, against
-  figures of other papers.
+  figures of other papers; so are the rotor runs of Dao & Nazarov and
+  Lesur et al.
 - The weak magnetic blast is smooth, and with entropy-conservative
   fluxes the semi-discrete scheme conserves entropy exactly, so the
   fourth-order decay measures the time-integration error, not a spatial
@@ -137,3 +168,5 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §6.1, Eq. (95), Table 2, Figs. 4–5 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Ex. 6.5, Table 6.1, Fig. 6.9 (arXiv v1).
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.3.1, Figs. 10–11 (arXiv v2).
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §5.5, Fig. 7 (arXiv v1).
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.2, Fig. 9 (arXiv v1).

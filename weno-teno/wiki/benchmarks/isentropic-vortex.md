@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Isentropic vortex
@@ -25,7 +25,10 @@ copy gives a three-dimensional test
 ([Li, Duan & Tang (2022)](/sources/li-2022-c.md)), and Lorentz-boosted
 versions give relativistic and relativistic-MHD tests
 ([Chen & Wu (2022)](/sources/chen-2022-b.md),
-[Duan & Tang (2022)](/sources/duan-2022.md)). Run for a hundred vortex
+[Duan & Tang (2022)](/sources/duan-2022.md)), and a magnetized
+relative an ideal-MHD test ([Dao & Nazarov (2022)](/sources/dao-2022.md)).
+With a near-vacuum core it becomes a positivity test
+([Fan et al. (2023)](/sources/fan-2023.md)). Run for a hundred vortex
 widths on a coarse grid, it is also a long-time robustness test of
 kinetic-energy-preserving central schemes
 ([Edoh (2022)](/sources/edoh-2022.md)).
@@ -64,6 +67,11 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.1.2 | $[-10,10]^2$, centre $(-5,-5)$ | 5 | $\rho_0=T_0=1$, stream $(1,1)$ | $t=10$; $L^2$, $L^\infty$ errors, $N_g=40$ to 640 triangles per direction |
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.3, Eq. (45) | $[-10,10]^2$, periodic quadrilaterals | Gaussian of width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$ | one convective period; $L^2$ density error, $N=20$ to 67 |
 | [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.3 | as Dzanic, Trojak & Witherden | as above | as above | one pass; $L^2$ error with $(2p)^2$ Gauss–Legendre points per element, $N=20$ to 67; cost on a V100 |
+| [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.3, Eq. (3.1) | $[-5,15]^2$, centre $(5,5)$, periodic | 10.0828 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=0.01$; $L^1$ errors and CPU time, $20^2$ to $640^2$, with and without positivity-preserving limiters |
+| [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.2 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $L_\infty$ errors on triangles, $h\approx0.1$ to $0.01$ |
+| [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.4 | $[0,10]^2$, centre $(5,5)$, exact boundary values | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; $160^2$ to $640^2$ |
+| [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=0.2$, $\Delta t\approx\Delta x^{5/3}$; $L^1$, $L^\infty$ errors, $10^2$ to $320^2$ |
+| [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) §5.2.1 | $[-10,10]^2$, periodic | 2.5 (printed strength 5 in their normalization) | $\rho_0=p_0=1$, stream $(1,\sqrt2/2)$ or $(1,\sqrt3/2)$, see Qualifications | $t=5$ convergence, CFL 1; $t=200$ on $200^2$ |
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
@@ -88,7 +96,25 @@ Yu & Hesthaven, the two Dzanic papers and Balsara et al. (orders 7
 and 9) use the same box. Chen et al. (2022), Du et al. and Yu &
 Hesthaven print the table's form with $\mathcal E=5$ and unit
 background; Du et al. write it through $\delta T$ with $T=p/\rho$ and
-zero entropy perturbation.
+zero entropy perturbation, as do Ji, Liang & Fu, Li, Li, Don & Wang and
+Wan & Xia with $\mathcal E=5$ on $[0,10]^2$, and Fan et al. with
+$\mathcal E=10.0828$. Abgrall & Nassajian Mojarrad write
+$\rho=\big[1-\frac{(\gamma-1)\beta_{\mathrm v}^2}{32\gamma\pi^2}e^{1-r^2}\big]^{1/(\gamma-1)}$
+and velocity perturbation
+$\frac{\beta_{\mathrm v}}{4\pi}e^{(1-r^2)/2}(-\bar y,\bar x)$ with
+$\beta_{\mathrm v}=5$ (page-local symbol), $p=\rho^\gamma$: the
+table's form with $\mathcal E=\beta_{\mathrm v}/2=2.5$ and $T_0=1$
+*(compiler check, not in the sources)*, half the strength
+$\mathcal E=5$ of most rows of the table. They choose the stream so that the vortex centre never
+crosses grid points.
+
+**Near-vacuum strength.** With $\mathcal E=10.0828$ and unit
+background the centre temperature is
+$1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e=2.28\times10^{-6}$,
+the density $7.83\times10^{-15}$ and the pressure $1.78\times10^{-20}$
+*(compiler check, not in the sources)*: Fan et al. print the minima
+$7.8\times10^{-15}$ and $1.7\times10^{-20}$, the same strength as Chen &
+Wu's relativistic case below.
 
 Two sources use other profiles. Dzanic, Trojak & Witherden and Dzanic &
 Witherden write the perturbation through
@@ -113,6 +139,28 @@ background is $p_\infty=114285.7$ Pa, $c_\infty=400$ m s$^{-1}$, Mach 0.5,
 the centre temperature drops by $21.4\,\%$ and the minimum density is
 $0.5479$ kg m$^{-3}$, the value he prints *(compiler check, not in the
 sources)*, which supports $\gamma=1.4$.
+
+### MHD version
+
+[Dao & Nazarov (2022)](/sources/dao-2022.md) §5.1.1 run the smooth
+ideal-MHD vortex of Wu & Shu, as they cite it, on $[-10,10]^2$,
+periodic, $\gamma=5/3$, to $t=0.05$: background
+$(\rho,v,p,B)=(1,(1,1),p_0,(0.1,0.1))$ with
+$\delta v=\frac{\mu_{\mathrm v}}{\pi\sqrt2}e^{(1-r^2)/2}(-\bar y,\bar x)$,
+$\delta B=\frac{\mu_{\mathrm v}}{2\pi}e^{(1-r^2)/2}(-\bar y,\bar x)$,
+$\delta p=-\frac{\mu_{\mathrm v}^2(1+r^2)e^{1-r^2}}{8\pi^2}$,
+$\mu_{\mathrm v}=5.389489439$ (page-local symbol). They print $p_0=0$,
+which makes the pressure negative everywhere; the printed
+$\mu_{\mathrm v}$ gives $\delta p=-1.0000$ to ten digits at the centre,
+so a background $p_0=1$ would leave a centre pressure of about
+$5\times10^{-12}$ *(compiler check, not in the sources)*. On continuous
+$\mathbb P_1$–$\mathbb P_3$ elements with their residual-based
+[artificial viscosity](/methods/artificial-viscosity.md) the
+viscous and Galerkin solutions have nearly the same errors; $\mathbb P_3$
+reaches about fourth order in $L^1$ (rates 3.81, 3.96, 3.71 for the
+velocity), $\mathbb P_2$ only second, which they call a known
+suboptimality of continuous Galerkin (Table 1, Fig. 1). Their rates are
+computed from the degrees of freedom, not from a mesh halving.
 
 ### Relativistic versions
 
@@ -160,6 +208,62 @@ order, with irregular rates: OLD 3.27, 2.39, 6.38, 4.99, 6.20; NEW
 $\Delta x=1/64$ are $3.45\times10^{-9}$ (OLD) and $3.62\times10^{-9}$
 (NEW); the NEW errors are slightly larger on every grid (Table 1).
 
+Wan & Xia run the same refined time step $\Delta t\approx\Delta x^{5/3}$
+for their [hybrid WENO](/methods/hybrid-weno.md) WENO-H against the
+linear upwind scheme UW5, CWENOZ and MRWENO. They state that all
+schemes reach fifth order; the printed WENO-H orders are irregular,
+3.45 ($L^1$) and 2.42 ($L^\infty$) at $80^2$, then 6.71 and 8.19 at
+$160^2$, with 4.62–4.67 for all schemes at $320^2$, and the WENO-H
+$L^1$ error at $80^2$, $2.22\times10^{-4}$, is 3.5 times that of UW5,
+$6.33\times10^{-5}$ (Ex. 4.3, Table 4.2); recomputing
+$\log_2(2.42\times10^{-3}/2.22\times10^{-4})=3.45$ and
+$\log_2(2.22\times10^{-4}/2.12\times10^{-6})=6.71$ reproduces the
+printed orders *(compiler check, not in the sources)*, so the
+irregularity is in the printed errors, not in the rate computation.
+
+**Scale invariance costs accuracy on coarse grids.** Li, Li, Don & Wang
+compare their scale-invariant multi-resolution
+[A-WENO](/methods/alternative-weno.md) (MR-AWENO-Si) with MR-AWENO:
+both reach fifth order once the vortex is resolved, with identical
+errors from $320^2$ on ($3.31\times10^{-9}$ to $1.04\times10^{-10}$), but at
+$160^2$ the scale-invariant scheme's error is $3.09\times10^{-6}$
+against $1.05\times10^{-7}$, about 30 times larger, and its printed
+first order of 9.87 is the drop from that coarse error (§3.4, Table 2);
+$\log_2(3.09\times10^{-6}/3.31\times10^{-9})=9.87$ *(compiler check, not in
+the sources)*. See [scale invariance](/properties/scale-invariance.md).
+
+**Unstructured TENO.** Ji, Liang & Fu verify the design order of their
+finite-volume TENO3–6 on triangles in $L_\infty$, with the numbers
+shown only in a figure (§5.2, Fig. 2); see
+[TENO](/methods/targeted-eno.md) and [UCNS3D](/software/ucns3d.md).
+
+**Positivity limiters on a near-vacuum vortex.** Fan et al. run the
+$\mathcal E=10.0828$ vortex with their finite-difference
+[Hermite WENO](/methods/hermite-weno.md) HWENO-R, HWENO-L and WENO-ZQ,
+with (WL) and without (WO) the [positivity-preserving flux
+limiter](/methods/positivity-preserving-flux-limiter.md), to $t=0.01$.
+All three reach fifth order either way (HWENO-R $L^1$ errors
+$1.24\times10^{-3}$ at $20^2$ to $1.34\times10^{-11}$ at $640^2$,
+orders 3.23, 4.32, 7.11, 6.64, 5.16), but the WO runs print negative
+minima on coarse meshes, $p_{\min}=-1.90\times10^{-3}$ for HWENO-R on
+$40^2$ and $-1.55$ for HWENO-L on $20^2$, $\rho_{\min}=-1.92\times10^{-4}$
+for WENO-ZQ on $40^2$, and still run to the end (Table 3.3). On
+meshes from $320^2$ the CPU ratio HWENO-R/WENO-ZQ is 1.823 (WO) and
+1.609 (WL) at about 1/5.5 of the error, so they call HWENO-R more
+efficient (Ex. 3.3, Fig. 3.3). See [bound
+preservation](/properties/bound-preservation.md).
+
+**CFL above one with kinetic schemes.** Abgrall & Nassajian Mojarrad
+run their arbitrary-order [discrete kinetic relaxation
+scheme](/methods/discrete-kinetic-relaxation-scheme.md) with
+[deferred-correction](/methods/deferred-correction.md) time stepping
+(four-wave model, fourth order in space and time) at CFL 1, measured
+on the kinetic speeds: the $t=5$ convergence curves approach fourth
+order (Fig. 6), and on $200^2$ to $t=200$, about twenty crossings, the
+pressure error stays in $[-4.2\times10^{-3},1.6\times10^{-3}]$ (Fig. 7);
+with five iterations CFL 1.2 reaches $t=200$, while they could not run
+above CFL 1.3 (Remark 1, §4).
+
 **Ninth order and the time-integration error.** Sciacovelli et al. run
 a ninth-order central-difference scheme with Jameson-type adaptive
 [artificial dissipation](/methods/artificial-viscosity.md) and the
@@ -170,12 +274,11 @@ $100^2$–$500^2$ only at CFL $1.25\times10^{-2}$ and
 $6.25\times10^{-3}$ (§4.1, Fig. 2). They explain the behaviour by the
 error balance: keeping the ratio of temporal to spatial error fixed
 needs $\Delta t\propto\Delta x^{9/3}=\Delta x^3$, whereas a constant CFL
-gives $\Delta t\propto\Delta x$ (Eq. 40). The same balance is what
-Wang et al.'s CFL $\Delta x^{2/3}$ and Li et al.'s
+gives $\Delta t\propto\Delta x$ (Eq. 40). Wang et al.'s CFL
+$\Delta x^{2/3}$ and Li et al.'s
 $\Delta t=C_{\mathrm{CFL}}(\min\Delta\xi_k)^{5/3}$ (Li et al., §5) realize
-for fifth order with a third-order integrator: across the sources, a
-convergence study above third order with SSP-RK3 is only meaningful
-with a refined time step or a small CFL. See
+the same balance for fifth order with a third-order integrator
+*(compiler check, not in the sources)*. See
 [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md).
 
 **Second order on unstructured triangles.** Chen et al. (2022)
@@ -272,6 +375,18 @@ logarithmic mean (§7.2, Fig. 6).
 
 ## Qualifications
 
+- Fan et al. print the temperature perturbation as
+  $+\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e^{1-r^2}$ (Eq. (3.1)); with the
+  plus sign the centre temperature would be about 2, and only the minus
+  sign of Ji, Liang & Fu, Li, Li, Don & Wang and Wan & Xia gives their
+  printed minima *(compiler check, not in the sources)*.
+- Abgrall & Nassajian Mojarrad print $v_2=\frac{\sqrt2}2+\dots$ in the
+  initial data and $v_{2,\infty}=\sqrt3/2$ for the free stream that
+  moves the centre; one of the two is a slip. They do not state the
+  relaxation parameter or kinetic speeds used.
+- Dao & Nazarov label the second error block of the $\mathbb P_2$ and
+  $\mathbb P_3$ panels of Table 1 "$u$", where the caption and the
+  $\mathbb P_1$ panel indicate $B$.
 - Wang et al. print "$r=(x-5)^2+(y-5)^2$" while the formulas use
   $e^{1-r^2}$; the formulas are consistent only with
   $r^2=(x-5)^2+(y-5)^2$, i.e. with $r$ the distance from the centre as
@@ -336,3 +451,9 @@ logarithmic mean (§7.2, Fig. 6).
 - [Edoh (2022)](/sources/edoh-2022.md) — §4.1, Eqs. (27)–(28), Figs. 1–2.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.1, Tables 1–2 (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.1, 6.7, Figs. 6.3–6.4, 6.13 (arXiv v1).
+- [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §4, Remark 1; §5.2.1, Figs. 6–7.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §5.1.1, Table 1, Fig. 1 (arXiv v1).
+- [Fan et al. (2023)](/sources/fan-2023.md) — Ex. 3.3, Eq. (3.1), Table 3.3, Fig. 3.3.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.2, Fig. 2 (preprint).
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §3.4, Table 2.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.3, Table 4.2.

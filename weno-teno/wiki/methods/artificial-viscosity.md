@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity controls oscillations by adding solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend in finite differences and continuous finite elements, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, spectral and quasi-spectral eddy viscosities, and modal damping and solution filtering read as dissipation."
+description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend in finite differences and continuous finite elements, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, residual-based continuous-finite-element viscosity, spectral and quasi-spectral eddy viscosities, and modal damping and filtering read as dissipation."
 status: established
-aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD]
+aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -22,7 +22,9 @@ invariant-domain preserving ([Pazner (2021)](/sources/pazner-2021.md));
 a **Laplacian viscosity for DG and flux reconstruction** whose magnitude
 comes from an indicator, a time-reversibility defect
 ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)) or a learned
-modal decay rate ([Yu & Hesthaven (2022)](/sources/yu-2022.md));
+modal decay rate ([Yu & Hesthaven (2022)](/sources/yu-2022.md)), and its
+continuous-finite-element counterpart driven by a normalized PDE residual
+([Dao & Nazarov (2022)](/sources/dao-2022.md));
 **spectral and quasi-spectral eddy viscosities** that act on the highest
 resolved wavenumbers ([Sousa & Scalo (2022)](/sources/sousa-2022.md));
 a **damping of the modal coefficients** of a DG solution, which is the
@@ -239,6 +241,62 @@ forward step on unstructured triangles and the
 800) are captured without oscillation, but $N=2$ fails on the jet from
 insufficient dissipation (§5.4.6).
 
+## Residual-based viscosity (continuous finite elements, MHD)
+
+[Dao & Nazarov (2022)](/sources/dao-2022.md) stabilize an explicit
+continuous Galerkin method with Lagrange $\mathbb P^N$ elements,
+$N=1,2,3$, for ideal MHD, whose plain Galerkin form is equivalent to
+central differencing and oscillates at shocks (§4). They reject
+Galerkin-least-squares stabilization as implicit by construction and
+hard to make high order in time, and keep only its viscosity (§1).
+
+**Viscous regularization** (§4.1, Eqs. (4.3)–(4.5)). The added flux is
+the resistive-MHD viscous flux (Navier–Stokes stress with dynamic and
+bulk viscosity, heat conduction on $T=p/\rho$, resistivity on the
+magnetic field) augmented by a mass diffusion $\nu_h\nabla\rho$ (page-local $\nu_h$, not the CFL number) in the
+continuity equation, following Guermond and Popov's argument for the
+Euler equations that regularizing the mass equation is what keeps
+density and internal energy positive and a minimum entropy principle;
+with $B=0$ and without the mass term it is the Navier–Stokes flux. The
+paper proves none of these properties for MHD and lists positivity,
+entropy and Galilean invariance as future work (§6). All coefficients
+(mass diffusion, dynamic viscosity, heat conduction, resistivity) are
+set equal to one nodal viscosity $\mu_i$; the bulk viscosity used is not
+stated.
+
+**The viscosity** (§4.2–4.3, Eqs. (4.6)–(4.10)), with $h_i$ the nodal
+value of a mesh function already divided by the degree $N$ (page-local)
+and $a_i$ the largest MHD eigenvalue modulus at node $i$ (registry $a$):
+$$\mu_i=\min\big(\mu^{\mathrm L}_i,\mu^{\mathrm H}_i\big),\qquad
+\mu^{\mathrm L}_i=C_{\max}h_ia_i,\qquad
+\mu^{\mathrm H}_i=C_Rh_i^2\widetilde R_i,$$
+with $C_{\max}=0.5$, $C_R=1$ (page-local), and $\widetilde R_i$ the
+largest, over all conserved components, of the absolute PDE residual
+(with a BDF2 time derivative, $L^2$-projected to the nodes and
+mass-lumped for $\mathbb P^1$, $\mathbb P^3$) divided by the
+normalization $n(q)$ defined on the
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md) page
+($C_l=0.4$). In 1D the first-order viscosity with $C_{\max}=0.5$ gives
+the [Lax–Friedrichs](/methods/lax-friedrichs-flux.md) scheme (stated);
+the authors add that a positivity-preserving first-order scheme would
+need a sharper wave-speed estimate than the largest eigenvalue (§4.2).
+The viscosity is computed at $t^n$ and frozen over the classical RK4
+stages; the time step is $0.3\min h/\max a$, with no
+parabolic restriction discussed (§4.4). The residual is $O(h^{N+1})$ in
+smooth regions and $O(h^{-1})$ at shocks (stated), so the high-order
+viscosity vanishes at the design rate where the solution is smooth.
+
+**Evidence** (§5). On smooth MHD vortex and wave tests the RV errors
+stay close to the Galerkin errors: $\mathbb P^1$ about second order,
+$\mathbb P^3$ $L^1$ rates 3.71–4.24, and $\mathbb P^2$ only second
+order, which the authors attribute to a known continuous-Galerkin issue
+(Tables 1–2). Brio–Wu, the [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+to $t=1$, its 3D extension and the MHD
+rotor run without oscillations visible in the figures; the rotor's
+minimum pressure is $3.86\times10^{-2}$. Positivity and invariant-domain
+preservation are left out of scope (§1, §6). Divergence control is
+separate ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 ## Spectral and quasi-spectral eddy viscosities
 
 [Sousa & Scalo (2022)](/sources/sousa-2022.md) recall Tadmor's spectral
@@ -315,6 +373,16 @@ lists, among hybrid uses of the TENO discontinuity indicator, an adaptive
 artificial viscosity for a quintic-spline scheme (§3.4, ref. [183] there);
 the review gives no formula.
 
+[Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) frame their
+positivity-preserving flux splitting and scaling limiter for
+finite-difference WENO as possible sources of artificial viscosity: the
+splitting coefficient includes viscous stress and heat flux and the
+splitting is nonlinear, so "its artificial-viscosity properties are less
+understood" than those of Lax–Friedrichs splitting (§1.3, §3). On a
+Mach 10 reflection–diffraction problem they conclude, from contour plots,
+that the flux and limiter "do not induce excessive numerical viscosity"
+(Ex. 5.8; see [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
+
 ## Positions against artificial viscosity
 
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) (§1) reject
@@ -331,6 +399,19 @@ the review gives no formula.
   discontinuities with the moving mesh and need neither artificial
   viscosity nor limiters nor WENO reconstruction (§I;
   [implicit shock tracking](/methods/implicit-shock-tracking.md)).
+  [Huang & Zahr (2022)](/sources/huang-2022.md) give a direct comparison
+  on a quasi-1D nozzle: their tracking method at degree 2 on 12 elements
+  is "indistinguishable from the exact solution", while the
+  Persson–Peraire artificial viscosity needs 50 elements at degree 4 for
+  a similar, smeared solution, and converges at a sub-first-order rate
+  under refinement, which they attribute to the smoothing of the
+  discontinuity and its downstream corruption (§6.3, Table 3, Figs.
+  24–26).
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) recall the
+  von Neumann–Richtmyer, Persson–Peraire and data-driven (Zeifang & Beck)
+  viscosities among DG shock-capturing options and use finite-volume
+  subcells instead (§1;
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) list
   artificial viscosity, with relaxation and implicit methods, as a way to
   turn a semi-discretely entropy-conservative or entropy-dissipative scheme
@@ -406,3 +487,7 @@ the review gives no formula.
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §1; §3 (entropy filtering).
 - [Edoh (2022)](/sources/edoh-2022.md) — §4 (Eq. (29)); App. B (Eqs. (B.1)–(B.5), Figs. B.5–B.6).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — arXiv v4: Rem. 2.2.
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §4.1–4.4, Eqs. (4.3)–(4.12); §5, Tables 1–2, Figs. 2–7; §6.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.3; §3; Ex. 5.8.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — arXiv v2: §6.3, Table 3, Figs. 24–26.
+- [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1.

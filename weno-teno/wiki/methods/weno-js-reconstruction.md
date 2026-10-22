@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # WENO-JS reconstruction
@@ -49,7 +49,8 @@ $$\begin{aligned}
 \end{aligned}\qquad (d_0,d_1,d_2)=\big(\tfrac1{10},\tfrac35,\tfrac3{10}\big),$$
 
 and the linear combination is the fifth-order upwind scheme UD5,
-$(2f_{i-2}-13f_{i-1}+47f_i+27f_{i+1}-3f_{i+2})/60$ (Luo & Wu 2021, Eq. (3)). Li et al. (2022,
+$(2f_{i-2}-13f_{i-1}+47f_i+27f_{i+1}-3f_{i+2})/60$ (Luo & Wu 2021, Eq. (3)). Wan & Xia (2022, Eqs. (2.10)–(2.23))
+and Jeong, Yang & Yoon (2022, Eqs. (6)–(9)) restate the same scheme, the former with $\epsilon=10^{-6}$, $q=2$. Li et al. (2022,
 Tables 1–2) tabulate the seventh- and ninth-order cases: $d=(1/35,12/35,18/35,4/35)$ for $r=4$
 and $d=(1/126,10/63,10/21,20/63,5/126)$ for $r=5$. *(Compiler check, not in the sources: all
 candidate coefficients and linear weights for $r=3,4,5$ were recomputed by exact integration of
@@ -74,7 +75,12 @@ value that "reduces the influence of non-linear weights"; Kuzmin & Vedral (2023,
 $\epsilon=10^{-6}$ and $q=2$ for the Jiang–Shu-type weights of their Hermite candidates. For WENO-Z
 weights Borges et al. suggest $\epsilon=10^{-40}$ (as recalled by Deng 2023, §4.3), the value Luo &
 Wu (2021) use; Wang & Don (2022) test $10^{-12}$ and $10^{-40}$ ([WENO-Z](/methods/weno-z.md)).
-Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$.
+Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$. Fan, Zhang & Qiu (2022, §5, Tables 5.1–5.2)
+compare $\epsilon=10^{-15}$ with $\epsilon=\Delta x^2$ (after Aràndiga et al.) in a positivity-preserving
+Navier–Stokes scheme: WENO-JS5 is about fifth order with both (4.36 at the finest 1-D pair with
+$10^{-15}$, 5.10 with $\Delta x^2$), WENO-JS7 reaches seventh order with
+$\Delta x^2$ (7.36 in 1-D at 320 points) and shows "certain order loss" with $10^{-15}$ (6.50 at the finest
+pair), and outside the accuracy test the choice makes a "marginal difference".
 
 **Interpolation of point values.** When WENO interpolates a function value at an arbitrary
 $x\in[x_{i-1/2},x_{i+1/2}]$ from point values, as in the
@@ -99,7 +105,14 @@ that finite-difference WENO and WCNS avoid the multi-dimensional reconstruction 
 cheaper in 2D and nine times cheaper in 3D" than finite-volume WENO (relayed; no timing is printed).
 On unstructured meshes, Tsoutsanis et al. (2021, Eq. (32)) keep the Jiang–Shu weight form with $q=4$,
 $\epsilon=10^{-6}$; their unstructured WENO carries the full order on every directional stencil,
-unlike their [CWENO](/methods/cweno.md) (§3.2).
+unlike their [CWENO](/methods/cweno.md) (§3.2). Ji, Liang & Fu (2022, §2.3, Eqs. (15)–(16))
+use the same equal-order unstructured WENO as comparator, with exponent 4, $\epsilon=10^{-14}$ and
+unnormalized linear weights $10^4$ for the central and 1 for the directional stencils, chosen
+"empirically", because on unstructured meshes the optimal linear weights of a high-order combination
+"may be negative or may not exist". Their WENO5 and WENO6 fail on
+[double Mach reflection](/benchmarks/double-mach-reflection.md) without an additional extended-bounds
+limiter of Tsoutsanis, where their TENO and CWENO run (§5.8, Figs. 24–25;
+[targeted ENO](/methods/targeted-eno.md)).
 
 **Other carriers of the weights.** The Jiang–Shu weight form is reused on objects that are not
 candidate fluxes:
@@ -178,9 +191,28 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   with Jiang–Shu weights changes neither the Shu–Osher waves nor the absent slip-line roll-up of double
   Mach reflection, which TENO weighting resolves; the author attributes this to the dissipation of the
   Jiang–Shu weights.
+- **Cost and dissipation against TENO.** In Hong, Ye & Ye's timings (2022, Table 4) WENO-JS5 is the
+  cheapest of eight schemes and the most dissipative, while the paper states that TENO-M costs about as
+  much as classical WENO. *(Compiler check, not in the sources: TENO-M6 takes 100.84/88.64 = 1.14,
+  1406.65/1252.31 = 1.12 and 1632.51/1432.34 = 1.14 times the WENO-JS5 time, and TENO-M8 0.997–1.007 times
+  the ninth-order WENO time.)*
+- **Against a sixth-order RBF scheme.** On $\sin(2\pi x-\sin(2\pi x)/\pi)$, whose critical points degrade
+  WENO-JS, Jeong, Yang & Yoon (2022, Table 2) measure $L^\infty$ orders 3.54–4.13 for WENO-JS against 6.01
+  for their WENO-G ([RBF-based WENO](/methods/rbf-weno.md)).
+- **Order near shocks.** Huang & Zahr (2022, §1), motivating implicit shock tracking, state that
+  limiters, WENO and artificial viscosity are first order near shocks, "which translates into a globally
+  first-order accurate scheme", and that WENO has "not been demonstrated on unstructured meshes for
+  practical problems" ([implicit shock tracking](/methods/implicit-shock-tracking.md)); see
+  Qualifications.
 - **Not TVD.** Bryngelson et al. (2021, §4.2.2) note that "the WENO schemes we utilize are, in
   general, not TVD", which can cause instability "even when the usual CFL criteria are met", and add
   an optional flux limiter.
+- **Inside other operators.** Boscarino, Qiu, Russo & Xiong (2022, §3.3) use fifth-order finite-difference
+  WENO, characteristic-wise for the explicit and component-wise for the semi-implicit flux of an all-Mach
+  scheme, without printing the weights ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md));
+  Balsara, Samantaray & Subramanian (2023, §1, §8.7) use the Jiang–Shu and Balsara–Shu finite-volume
+  class to prolong the charge density on AMR hierarchies at orders 2–5
+  ([divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md)).
 
 ## Descendants
 
@@ -196,6 +228,10 @@ reconstructing fluxes.
 
 ## Qualifications
 
+- Huang & Zahr's (2022, §1) statement about unstructured WENO sits beside the unstructured WENO,
+  CWENO and TENO runs of Tsoutsanis et al. (2021) and Ji et al. (2022), which include double Mach
+  reflection and Kelvin–Helmholtz problems on triangles; Huang & Zahr do not define "practical problems",
+  nor the error norm of their "globally first-order".
 - **Stencil labelling differs between families.** The Jiang–Shu convention used here numbers
   $S_0$ as the most upwind stencil. TENO papers (Fu 2021, Eq. (29); Takagi et al. 2022, Eq. (7);
   Ye et al. 2022, §3.3) number the central stencil $S_0=\{i-1,i,i+1\}$, the downwind-biased
@@ -234,3 +270,11 @@ reconstructing fluxes.
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §3.1, Eqs. (3.4)–(3.6).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §4, Eq. (4.1).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.5.1, Eq. (15); §§3.3–3.4.
+- [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §5, Tables 5.1–5.2.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §1; §2.3, Eqs. (15)–(16); §5.8, Figs. 24–25.
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5; §6, Table 4.
+- [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.2, Eqs. (8)–(9); §5, Table 2.
+- [Huang & Zahr (2022)](/sources/huang-2022.md) — §1.
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §8.7, Table 12.
+- [Wan & Xia (2022)](/sources/wan-2022.md) — §2.2, Eqs. (2.10)–(2.23).

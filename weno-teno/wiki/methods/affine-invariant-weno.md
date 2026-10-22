@@ -5,7 +5,7 @@ description: "Wang & Don's Ai-WENO weights multiply the sensitivity parameter ε
 status: established
 aliases: [Ai-WENO, Ai-WENO-Z, Ai-WENO-D, Ai-WENO-JS, affine-invariant WENO operator]
 tags: [weno, reconstruction, well-balanced, finite-difference]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Affine-invariant WENO weights
@@ -103,6 +103,20 @@ flops", citing CPU timings of Don et al. 2022 (Remark 3).
   needed when $W$ acts on sums or products of two functions, as in two-$\gamma$ multicomponent
   equilibria (Introduction).
 
+## Reuse of the descaler
+
+Li, Li, Don & Wang (2023, §2.3, Eqs. (43)–(44)) carry the Si descaler over to the
+[multi-resolution A-WENO](/methods/multi-resolution-weno.md) interpolation: with Z-type weights on
+nested central stencils, $\alpha_k=d_k\big(1+\tau^*/(\beta_k+\epsilon\,\mathsf m^2)\big)$ and
+$\mathsf m=\tfrac15\sum_{j=i-2}^{i+2}|f_j|+\mathsf m_0$, $\mathsf m_0=10^{-100}$, $\epsilon=10^{-6}$, citing
+this paper and Don, Li, Wang & Wang for it. Their Theorem 4 proves scale invariance with $\mathsf m_0=0$,
+since $\tau^*$, $\beta_k$ and $\mathsf m^2$ all scale by $\sigma^2$. They use the mean of $|f_j|$, not of
+$|f_j-\langle f\rangle|$ *(compiler check, not in the sources: so the operator is scale- but not
+affine-invariant, since $\mathsf m$ changes under $f\mapsto f+\mu$)*; it serves their
+well-balanced scheme, where the characteristic variables at equilibrium are multiples of the
+equilibrium pressure, a pure scaling ([scale invariance](/properties/scale-invariance.md),
+[well-balancing](/properties/well-balancing.md)).
+
 ## Qualifications
 
 - Theorem 1 holds with $\mathsf m_0=0$ in exact arithmetic; the implementation uses
@@ -121,3 +135,4 @@ flops", citing CPU timings of Don et al. 2022 (Remark 3).
 # Citations
 
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §1, Defs. 1–4; §2, Eqs. (4)–(18), Theorem 1, Remarks 1–3; §3, Eqs. (19)–(30), Figs. 1–10; App. A, Theorem 2.
+- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1; §2.3, Eqs. (42)–(45), Theorem 4; §4.2, Theorem 5.

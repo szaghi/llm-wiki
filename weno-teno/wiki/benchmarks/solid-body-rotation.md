@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # Solid-body rotation
@@ -20,9 +20,9 @@ measures how a scheme handles a smooth profile, a kink and a
 discontinuity at once: the $L^1$ error measures dissipation, and the
 range of the computed solution against $[0,1]$ measures over- and
 undershoots, a [bound-preservation](/properties/bound-preservation.md)
-test for the scalar maximum principle. Pazner and Kuzmin & Vedral
-attribute it to LeVeque; a third source rotates a single smooth bump
-for a different purpose.
+test for the scalar maximum principle. Pazner, Kuzmin & Vedral and
+Ji, Liang & Fu attribute it to LeVeque; a fourth source rotates a single
+smooth bump for a different purpose.
 
 ## Setup
 
@@ -35,6 +35,12 @@ $u=0$ outside the three disks:
 - cone centred at $(0.5,0.25)$: $u=1-r$;
 - slotted cylinder centred at $(0.5,0.75)$: $u=1$ if $|x-0.5|\ge0.025$ or
   $y\ge0.85$, and $u=0$ in the slot.
+
+[Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.3 print the same three
+bodies (their SB01–SB03, radius $r_0=0.15$) with the unscaled rotation
+$v=(\tfrac12-y,\ x-\tfrac12)$, so one revolution takes $t=2\pi$, and with
+periodic boundaries; the two velocity scalings give the same solution
+at the end of one revolution *(compiler check, not in the sources)*.
 
 ## Runs and results
 
@@ -56,6 +62,11 @@ comparable at equal cost *(compiler check, not in the sources)*.
 Kuzmin & Vedral also run $\mathbb Q^2$; their HO-only $\mathbb Q^4$ error is
 $1.25\times10^{-2}$.
 
+Ji, Liang & Fu run finite-volume [TENO](/methods/targeted-eno.md) of
+orders 3 to 6 on uniform triangles with $h=1/80$ (14,860 elements),
+against unstructured WENO5 and [CWENO](/methods/cweno.md)5; they report
+no error norms (Figs. 3–4).
+
 ## Findings across sources
 
 **Bounds versus $L^1$ error.** In both papers the scheme with the
@@ -67,6 +78,13 @@ low-order scheme on which the limiting is built (Fig. 10). Kuzmin &
 Vedral call WENO-stabilized CG "superior" for all degrees although its
 $L^1$ error is about twice that of HO stabilization; the superiority is
 in boundedness and freedom from oscillations (Figs. 3–5).
+
+**Order and candidate-stencil selection on unstructured meshes.**
+Ji, Liang & Fu find TENO4/5/6 much less dissipative than TENO3 on the
+slotted cylinder, and TENO5 with fewer overshoots than WENO5 and less
+dissipation than CWENO5 (Figs. 3–4); the evidence is visual, with no
+$L^1$ error or range printed, so their runs cannot be entered in the
+table.
 
 **Subcell versus element-wise limiting.** On a coarse $25\times25$
 mesh with $N=3$, Pazner's subcell limiting is less diffusive than
@@ -114,10 +132,11 @@ read from the paper.
   values and above the LO error $1.10\times10^{-1}$ of a visibly more
   diffused solution; it reads as a slip for $2.67\times10^{-2}$, and no
   $\mathbb Q^2$ value is entered in the table.
-- Neither paper reports errors for the three bodies separately.
+- None of the papers reports errors for the three bodies separately.
 
 # Citations
 
 - [Pazner (2021)](/sources/pazner-2021.md) — §4.1.4, Fig. 4; §4.4, Fig. 6; §5.4, Fig. 10 (arXiv v1).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §7.3, Eqs. (24)–(25), Figs. 3–5 (arXiv v1).
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.3, Figs. 3–4 (preprint).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.1, Eq. (43), Table 1 (arXiv v4).

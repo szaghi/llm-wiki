@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Numerical dissipation and anti-dissipation"
-description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; the page fixes three measures (flux viscosity term, leading truncation error, imaginary part of the modified wavenumber), the design levers of the sources, and the implicit-LES evidence that dissipation order outweighs convective order."
+description: "Numerical dissipation is the part of a scheme's error that damps resolved content, anti-dissipation the part that amplifies or steepens it; the page fixes three measures (flux viscosity term, leading truncation error, imaginary part of the modified wavenumber), the design levers of the sources, including scale-adaptive control, the non-dissipative alternative, and the implicit-LES evidence on dissipation order."
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T10:00:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -88,6 +88,43 @@ jumps.
   disturbance about a baseflow the Rusanov dissipation should be the full spectral radius times
   the disturbance only, and drop a term proportional to the baseflow state as destabilizing
   ([Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+
+- **Anti-diffusion of linearly degenerate waves, and its price.** The HLLEM flux adds to
+  HLLE "anti-diffusion" terms for the entropy and shear waves, i.e. it removes part of the
+  HLLE dissipation on those fields, which resolves contacts like Roe
+  ([Hu, Yuan & Zhao (2022)](/sources/hu-2022.md), §2.3, Eqs. (2.7)–(2.8)). Their linear
+  saw-tooth analysis shows the price: in the flux transverse to a grid-aligned shock, density
+  and shear-velocity perturbations get amplification factor exactly 1 for every time step,
+  i.e. no damping, while HLLE damps them under $\Delta t<\Delta y/c$ (§3.1, Eqs. (3.11)–(3.12));
+  they hold this responsible for the [carbuncle](/definitions/carbuncle-phenomenon.md), and
+  restore damping by multiplying both anti-diffusion terms by a smooth function of a
+  transverse pressure-ratio sensor, without a tunable parameter and without a stricter CFL
+  bound (§4.1, Eqs. (4.1)–(4.6)). They also write the flux as central part plus a dissipation
+  term and lower that term further by a minimal-jump choice of the density in it
+  ([BVD](/definitions/boundary-variation-diminishing.md); [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+- **A ranking of solvers.** [Lesur et al. (2023)](/sources/lesur-2023.md) (§2.3) order the
+  Riemann solvers of IDEFIX "from most to least diffusive": Rusanov, HLL, HLLC (HLLD in MHD),
+  Roe; on linear MHD waves with linear reconstruction all four are second order and within
+  small factors of each other (§4.2, Fig. 7), and on double Mach reflection at $1920\times480$
+  the least diffusive reconstructions (LimO3, PPM) give a more vigorous jet with the onset of
+  Kelvin–Helmholtz rolls (§4.1, Fig. 3). Their Hall-effect treatment, a whistler speed added to
+  the HLL fan for the magnetic fluxes only, is "known to be diffusive" but stable (§2.5). See
+  [IDEFIX](/software/idefix.md).
+- **Low Mach number.** Upwind numerical viscosity scales as $1/M$ at low Mach number, as
+  recalled by [Boscarino, Qiu, Russo & Xiong (2022)](/sources/boscarino-2022.md) (§2), who split
+  the acoustic part off implicitly and take the Lax–Friedrichs splitting speed from the material
+  waves, $\max(\lvert v_1\rvert+\lvert v_2\rvert+\min(1,1/M)c)$ in their scaled variables
+  (Eq. (3.32)); on the Gresho vortex at $M=10^{-1},10^{-2},10^{-6}$ the kinetic energy is "well
+  maintained" over two periods, better by their third- than by their second-order scheme on
+  $100^2$ (Ex. 5.5, Fig. 5.6). See [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)
+  and [Gresho vortex](/benchmarks/gresho-vortex.md).
+- **Galerkin as a central scheme.** The plain continuous-Galerkin discretization "is equivalent
+  to central differencing" and oscillates at shocks; [Dao & Nazarov (2022)](/sources/dao-2022.md)
+  (§4, §4.2–4.3, Eq. (4.10)) add a residual-based viscosity, the minimum of a first-order
+  viscosity $\tfrac12h\lambda_{\max}$, which "can be shown" to give the first-order
+  Lax–Friedrichs scheme in 1D, and a high-order one proportional to $h^2$ times the normalized
+  PDE residual (page-local $h$ the mesh size, $\lambda_{\max}$ the local maximum speed). See
+  [artificial viscosity](/methods/artificial-viscosity.md).
 
 ### An explicit high-order dissipation term
 
@@ -190,7 +227,11 @@ cancelling the linear one, so their spectral curves can beat UD5's in a
 wavenumber band. The argument is supported by plots of $\omega_k/d_k$ on Fourier
 modes, not by a proof. TENO avoids nonlinear dissipation in smooth regions
 differently, by restoring the linear weights exactly
-([targeted ENO](/methods/targeted-eno.md)). The same contrast appears in
+([targeted ENO](/methods/targeted-eno.md)). [Ji, Liang & Fu (2022)](/sources/ji-2022.md) (§3.4, §6) put the
+same point as the source of WENO dissipation: the smooth weighting of candidates
+starts the nonlinear adaptation already at low wavenumbers, while TENO applies a
+stencil optimally or discards it; on unstructured meshes they find TENO less
+dissipative than CWENO and equal-order WENO at the same order (§5). The same contrast appears in
 the weighted compact nonlinear schemes of [Hiejima (2022)](/sources/hiejima-2022.md) (§3.3–3.4,
 Figs. 4, 7): with Jiang–Shu weights in the substencils the Shu–Osher result does not change
 from fifth to eleventh order and the double-Mach slip line does not roll up at any order,
@@ -202,6 +243,52 @@ training loss of their learned WENO3 weights the deviation of the weights from t
 weights in smooth data; without that penalty the scheme converges only at second order (orders
 1.90 and 1.95 on two test functions), with it at about third order on $\tanh(2x)$ (2.93)
 ([learned WENO weights](/methods/learned-weno-weights.md)).
+
+## Dissipation adapted to the local scale
+
+Several sources make the dissipation of the linear background itself a function
+of the local resolution.
+
+- **Order traded for dissipation.** The six- and eight-point backgrounds of wide TENO are
+  dissipation-optimized at fifth and sixth order instead of sixth and eighth, to damp spurious
+  waves at marginally resolved wavenumbers ([Hong, Ye & Ye (2022)](/sources/hong-2022.md), §1,
+  §5.1; see [targeted ENO](/methods/targeted-eno.md)).
+- **A dissipation parameter set by a scale sensor.** In the MDCD flux of
+  [Li, Chen & Ren (2022)](/sources/li-2022.md) dissipation enters only through the parameter
+  $c_{\mathrm{diss}}$ of the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+  page. Their MDAD scheme sets it per interface, from $0.001$ where a
+  [scale sensor](/definitions/scale-sensor.md) reports a reduced wavenumber of at most 1 (more
+  than about six points per wavelength) to $0.012$ at the highest wavenumbers (§2.3, Eq. (38)). On the
+  inviscid Taylor–Green vortex at $128^3$ the non-dissipative C6 and the nearly
+  non-dissipative MDCD with $0.001$ blow up at $t=4$–$5$, UW5 and MDCD with $0.012$ run but
+  dissipate more, and MDAD runs without tuning and best preserves the kinetic energy
+  (§4.4.1, Figs. 27–28); at $\mathrm{Re}=1600$ on $256^3$ its enstrophy at $t=9$ is within 4.1%
+  of DNS against 16.6% for UW5 and 10.4% for MDCD, at 19.3% more CPU time, and it reaches UW5's
+  error with $168^3$ instead of $256^3$ points (§4.4.2, Tables 4–5). See
+  [MDCD schemes](/methods/mdcd-scheme.md).
+- **A cut-off set by a scale sensor.** [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md)
+  (§1, §3.2) aim at low dissipation at low wavenumbers, comparatively high dissipation at high
+  wavenumbers and enough at discontinuities by driving the TENO cut-off with an estimated
+  wavenumber ([adaptive TENO](/methods/adaptive-teno.md)).
+- **Dissipation at a jump.** [Liang et al. (2022)](/sources/liang-2022.md) (§1, §3.2, Fig. 6)
+  attribute residual dissipation of THINC at discontinuities to its cell-average constraint and
+  replace it by point interpolation with two steepness levels in cells a TENO-flag detector marks
+  ([TENO-THINC](/methods/teno-thinc.md), [THINC](/methods/thinc-reconstruction.md)).
+
+## Doing without dissipation: consistency instead
+
+[Jain & Moin (2022)](/sources/jain-2022.md) build a non-dissipative central
+finite-volume scheme for the compressible two-phase
+[five-equation model](/definitions/five-equation-model.md) with no upwinding and no
+subgrid model, and obtain stability in under-resolved inviscid turbulence from
+discrete consistency conditions instead: kinetic-energy and entropy preservation
+of the split fluxes, plus an interface-equilibrium condition tying the internal-energy
+flux to the mass and volume-fraction fluxes (§3, Theorems 3.1–3.2, Lemma 3.1). For a
+density ratio 10 only the form that satisfies all conditions runs; the single-phase
+kinetic-energy-preserving forms of Kennedy–Gruber/Kuya and Chandrashekar diverge, as do a
+divergence-form mass flux and inconsistent momentum or kinetic-energy fluxes (§4, Figs. 4–8;
+App. C–D). See [kinetic energy preservation](/properties/kinetic-energy-preservation.md) and
+[split convective forms](/methods/split-convective-forms.md).
 
 ## Explicit dissipation: artificial viscosity and its spectral shape
 
@@ -292,7 +379,10 @@ different Cesàro averages for the original and the LCD central-upwind schemes
 and read this as non-uniqueness of the limiting dissipative weak solution,
 which "apparently depends on the choice of the numerical diffusion".
 
-Two more proxies: [Chen et al. (2022)](/sources/chen-2022.md) (§6.7, Table 3)
+Resolution at reduced grid is a third: [Fan et al. (2023)](/sources/fan-2023.md)
+(Ex. 3.13, Fig. 3.17) find their fifth-order Hermite WENO on $120\times480$ comparable to
+WENO-ZQ on $240\times960$ for the Rayleigh–Taylor instability and read it as lower dissipation
+of the compact stencils ([Hermite WENO](/methods/hermite-weno.md)). Two more proxies: [Chen et al. (2022)](/sources/chen-2022.md) (§6.7, Table 3)
 read the shorter recirculation length behind a cylinder at $\mathrm{Re}=40$ (2.095 against 2.14
 without, experiment 2.13) produced by a face-gradient correction of the viscous flux as extra
 numerical dissipation; [Bai & Li (2022)](/sources/bai-2022.md) (§2.5.2, §3.4) call the zero-order
@@ -338,3 +428,14 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §4.1.3, Fig. 4: over-dissipation of the averaged modal-decay indicator.
 - [Edoh (2022)](/sources/edoh-2022.md) — §4.2 (Eq. (33), Fig. 3), App. B (Eqs. (B.1)–(B.5), Figs. B.5–B.6): numerical dissipation rate, filtering as dissipation.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.7, Table 3: wake length as dissipation proxy.
+- [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §2.3, §3.1, §4.1–4.2, Eqs. (2.7)–(4.9): HLLEM anti-diffusion, undamped transverse perturbations, controlled anti-diffusion.
+- [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §2.5, §4.1–4.2, Figs. 3, 7: solver ranking and diffusive Hall treatment (arXiv v1).
+- [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §2, Eq. (3.32), Ex. 5.5: low-Mach viscosity scaling, Gresho vortex (arXiv v2).
+- [Dao & Nazarov (2022)](/sources/dao-2022.md) — §4, Eq. (4.10): Galerkin as central differencing, residual viscosity (arXiv v1).
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.4, §5, §6: WENO weighting dissipation, unstructured TENO (preprint).
+- [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1, §5.1: order traded for dissipation.
+- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.3, Eq. (38); §4.4, Tables 4–5, Figs. 27–30: scale-adaptive dissipation and Taylor–Green evidence.
+- [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §1, §3.2: wavenumber-adaptive cut-off (arXiv v1).
+- [Liang et al. (2022)](/sources/liang-2022.md) — §1, §3.2, Fig. 6: dissipation of THINC's cell-average constraint.
+- [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Theorems 3.1–3.2, Lemma 3.1; §4, App. C–D: non-dissipative consistent two-phase scheme (arXiv v1).
+- [Fan et al. (2023)](/sources/fan-2023.md) — Ex. 3.13, Fig. 3.17: Rayleigh–Taylor resolution as a dissipation proxy.

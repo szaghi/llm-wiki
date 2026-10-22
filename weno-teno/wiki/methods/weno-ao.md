@@ -5,7 +5,7 @@ description: "WENO-AO nonlinearly hybridizes one large central high-order stenci
 status: established
 aliases: [WENO-AO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-23T08:00:00Z
 ---
 
 # WENO-AO (adaptive-order WENO)
@@ -81,6 +81,20 @@ the Rayleigh–Taylor instability (Examples 5.4–5.6, 5.9;
 [Sedov blast wave](/benchmarks/sedov-blast-wave.md),
 [Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)).
 
+## Other uses and comparisons
+
+- **Small stencils of third order.** Balsara, Samantaray & Subramanian (2023, §6.3), by an overlapping
+  author group, contrast WENO-AO with CWENO and WENO-ZQ, whose small stencils are piecewise linear:
+  WENO-AO's third-order small stencils "retain the prospect that local extrema could be somewhat
+  represented". They take the Legendre basis and the perfect-square indicators of WENO-AO into their
+  face-interpolation WENO for divergence-preserving prolongation (§3;
+  [divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md),
+  [smoothness indicators](/definitions/smoothness-indicator.md)).
+- **Unstructured meshes.** Ji, Liang & Fu (2022, §5.8) state, by comparison with a published figure,
+  that unstructured WENO5-AO needs about twice their fifth-order TENO's resolution per direction to
+  match its Mach-stem roll-up on [double Mach reflection](/benchmarks/double-mach-reflection.md); codes,
+  meshes and fluxes differ ([targeted ENO](/methods/targeted-eno.md)).
+
 ## Qualifications
 
 - **Text–appendix mismatch.** Balsara et al. (2024, §VII.a) say that for WENO-AO "we had to change the
@@ -95,3 +109,5 @@ the Rayleigh–Taylor instability (Examples 5.4–5.6, 5.9;
 
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; §VI; §VII.a–d, Tables I–V; App. D, Eqs. (D.1)–(D.6).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §5 (WENOAO5 linear weights); §5.1; Examples 5.4–5.9; §5.4, Table 5.8.
+- [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §3; §6.3.
+- [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.8.
