@@ -1,16 +1,16 @@
 ---
 type: Method
 title: "Minimized-dispersion and controllable-dissipation (MDCD) schemes"
-description: "MDCD schemes are six-point fourth-order finite-difference fluxes whose dispersion and dissipation are set by two independent parameters; Li, Chen and Ren make the dissipation follow a scale sensor (MDAD), weight it like WENO-CU6 and hybridize it, and Zhou et al. carry the same two parameters into a WCNS interpolation optimized with its nonlinear weights."
+description: "MDCD schemes are six-point fourth-order finite-difference fluxes whose dispersion and dissipation are set by two parameters; Li, Chen and Ren make the dissipation follow a scale sensor (MDAD), weight it like WENO-CU6 and hybridize it, Li et al. tune both parameters on the fully discrete scheme (ADADF), and Zhou et al. carry the same two parameters into a WCNS interpolation."
 status: established
-aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt]
+aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt, ADADF, ADADF-HY]
 tags: [finite-difference, low-dissipation, weno, turbulence]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Minimized-dispersion and controllable-dissipation (MDCD) schemes
 
-The MDCD scheme of Sun et al. (2011), as recalled by Li, Chen & Ren (2022, §2.1), is a linear
+The MDCD scheme of Sun et al. (2011), as recalled by Li, Chen & Ren (2022a, §2.1), is a linear
 [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md) flux on the
 six-point stencil $\{i-2,\dots,i+3\}$ whose order is lowered from the maximal six to four, and the two
 freed degrees of freedom become a dispersion parameter $c_{\mathrm{disp}}$ and a dissipation parameter
@@ -58,7 +58,7 @@ scheme (Eqs. (14)–(15); [approximate dispersion relation](/definitions/approxi
 
 ## Adaptive dissipation: MDAD
 
-Li, Chen & Ren (2022, §2.3) set $c_{\mathrm{diss}}$ interface by interface from the
+Li, Chen & Ren (2022a, §2.3) set $c_{\mathrm{diss}}$ interface by interface from the
 [scale sensor](/definitions/scale-sensor.md) $\vartheta_{\mathrm{ESW},i+1/2}$ (Eqs. (34)–(38)).
 Inverting the ratio condition pointwise at $\Lambda_{\mathrm{dd}}=9$,
 $c_{\mathrm{diss}}(\vartheta)=|\partial\tilde\vartheta_r/\partial\vartheta-1|/(9|4(\cos\vartheta-1)^3|)$
@@ -105,6 +105,57 @@ terms use fourth-order central differences, curvilinear grids fourth-order centr
 stepping is a low-storage fourth-order Runge–Kutta scheme at CFL 0.6. For smooth curvilinear grids the
 1-D modified wavenumber carries over to the transformed flux (Remark, Eqs. (62)–(69)).
 
+## Fully discrete design: ADADF
+
+Li, Sun, Zha, Zhu, Ding & Xia (2023b) keep the six-point flux above and make **both** parameters
+adaptive, tuned on the fully discrete scheme with three-stage third-order Runge–Kutta rather than on
+the semi-discrete one. They name two defects of MDAD: its dissipation law ignores the errors of the
+time integrator, and its scale sensor underestimates the wavenumber at medium and large $\vartheta$,
+so it dissipates too little there (§1, §3.2). The scheme is called ADADF (adaptive dispersion,
+critical-adaptive dissipation, fully discrete). Li et al. (2023b, §2) print the same flux and the same
+modified wavenumber as Li, Chen & Ren (2022a), with the Fourier convention $e^{-\mathrm ik_wx}$ and
+$\tilde\vartheta_i=4c_{\mathrm{diss}}(\cos\vartheta-1)^3\le0$ dissipative.
+
+**Fully discrete errors** (§3.1, Eqs. (16)–(22)). For linear advection at CFL number $\nu$, one RK3
+step multiplies a Fourier mode by $\mathcal G=1+K+K^2/2+K^3/6$, $K=-\mathrm i\tilde\vartheta\nu$
+(page-local $\mathcal G$, $K$, as on the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md) page), against $e^{-\mathrm i\vartheta\nu}$ exactly. The total dissipation error
+is $|\mathcal G|$ and the total dispersion error $\delta_\nu=\arg \mathcal G+\vartheta\nu$
+(page-local $\delta_\nu$). Each now depends on both parameters; the cross-effects are called
+insignificant for $c_{\mathrm{disp}}<0.1$, $c_{\mathrm{diss}}<0.012$ and are ignored (Figs. 2–3).
+
+**Three design steps** (§3.1–3.3):
+
+1. *Fixed dispersion.* Minimizing $\int_0^\pi e^{-8\vartheta}\delta_\nu^2d\vartheta$ gives
+   $c_{\mathrm{disp}}=0.0464$ for $\nu\le0.25$ and a cubic fit in $\nu$ above (Eqs. (26)–(27)), the
+   semi-discrete optimum 0.0463783 recalled by Li, Chen & Ren for small $\nu$.
+2. *Critical-adaptive dissipation.* The ratio condition of Hu et al., used by MDAD with bound 9, is
+   replaced by $|\delta_\nu|/\big||\mathcal G|-1\big|\le10$ (Eq. (38)). Its iso-surface at 10 gives
+   $c_{\mathrm{diss}}$ as a function of the sensed wavenumber, fitted by cubics for $\nu=0.1,0.3,0.5$,
+   floored at 0.001 and capped at 0.012 (Eqs. (39)–(41)); after step 3 the floor is extended to
+   $\vartheta<2.08$ (Eqs. (48)–(50)).
+3. *Adaptive dispersion.* $c_{\mathrm{disp}}$ is chosen to make $\delta_\nu=0$ at the sensed
+   wavenumber, the fully discrete form of Li, Ren & Su's semi-discrete condition
+   $\tilde\vartheta_r=\vartheta$; cubic fits for $\nu=0.1,0.3,0.5$ run from about 0.034 below
+   $\vartheta=0.3$ to 0.093–0.100 above 2.08 (Eqs. (42)–(46)).
+
+Both parameters follow a re-optimized six-point [scale sensor](/definitions/scale-sensor.md), reliable
+to $\vartheta=2.08$. With them ADADF keeps a resolving efficiency of about 65.58 % at every $\nu$ tested,
+while the total dispersion errors of MDCD and MDAD grow with $\nu$ (§3.4, Fig. 11). The hybrid with
+WENO-CU6, ADADF-HY, is on [hybrid schemes](/methods/hybrid-weno.md). Its WENO-CU6 partner uses the
+MDAD-WENO linear weights below, $\alpha_k=d_k\big(100+\tau_6/(\beta_k+\epsilon)\big)$ with exponent 1 and
+$\epsilon=10^{-40}$ (Eq. (53)), where Li, Chen & Ren use $\big(20+\tau_6/(\beta_k+\epsilon)\big)^2$.
+
+**Results** (§4; figures only, no error norms, convergence orders or timings): on multi-wave advection
+($m=20$ waves, 150 points, $\nu=0.5$) only ADADF-HY keeps phase and amplitude; on
+[Shu–Osher](/benchmarks/shu-osher-problem.md), 2-D Riemann problems,
+[Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md),
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) and
+[double Mach reflection](/benchmarks/double-mach-reflection.md) it shows the most small-scale
+structure, with a slightly asymmetric Rayleigh–Taylor density field that the authors attribute to its low
+dissipation (§4.5); in the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($128^3$) the
+kinetic energy decays as $t^{-1.2}$ and the spectrum follows $-5/3$ best. The title's "arbitrarily
+high-order" family is only claimed: the fourth-order six-point member is the one built.
+
 ## The same two parameters in a WCNS interpolation
 
 Zhou, Ding, Huang & Luo (2023, §3–4) free the first and last coefficients of the six-point central
@@ -134,7 +185,7 @@ The four-candidate weights of their WCNS-SA, $d_0=\tfrac43(\xi_{\mathrm Z}+\eta_
 $d_3=\tfrac43(\eta_{\mathrm Z}-\xi_{\mathrm Z})$ (Eq. (27)), are the interpolation counterpart of the MDAD-WENO
 weights above; results are on the WCNS page.
 
-## Results (Li, Chen & Ren 2022, §4)
+## Results (Li, Chen & Ren 2022a, §4)
 
 Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
 [targeted ENO](/methods/targeted-eno.md)).
@@ -177,8 +228,22 @@ Comparators: [WENO-Z](/methods/weno-z.md), MDCD-HY and TENO-HY (Fu 2019,
   with 271779 they sum to 0.)* They also call MDAD-WENO "MADA-WENO" once (§3.4) and index the candidate
   fluxes by $i$ while the interface is $j+1/2$.
 
+- **Printed slips of Li et al. (2023b).**
+  - Table 1 prints $d_3=\tfrac32(c_{\mathrm{diss}}-c_{\mathrm{disp}})$, the negative of the value of
+    Li, Chen & Ren (2022a, Table 1) above. *(Compiler check, not in the sources: solving
+    $\sum_kd_k\hat f^{(k)}=\hat f$ gives $d_3=\tfrac32(c_{\mathrm{disp}}-c_{\mathrm{diss}})$, and with
+    the printed sign the weights sum to $1+3c_{\mathrm{diss}}-3c_{\mathrm{disp}}$.)*
+  - The cubic fits are discontinuous at their joins. *(Compiler check, not in the sources: the
+    $c_{\mathrm{disp}}$ cubic of Eq. (27) gives 0.04608 at $\nu=0.25$ against 0.0464; the
+    $c_{\mathrm{diss}}$ cubics of Eqs. (48)–(50) give 0.00348, 0.00372 and 0.00264 at
+    $\vartheta=2.08$, where the floor is 0.001, and the $\nu=0.5$ cubic reaches 0.01292 at $\vartheta=\pi$,
+    above the cap 0.012.)* The authors call the effect of extending the floor small.
+  - The text after Eq. (46) calls $c_{\mathrm{disp}}$ the dissipation parameter; §4.7 attributes the
+    Taylor–Green results to "the ADADF scheme", not ADADF-HY.
+
 # Citations
 
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1; §2.1, Eqs. (6)–(17), Figs. 1–3; §2.3, Eqs. (34)–(38), Figs. 6–7; §3.1–3.4, Eqs. (39)–(69), Table 1, Figs. 8–12; §4, Tables 2–5, Figs. 14–30.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1; §2.1, Eqs. (6)–(17), Figs. 1–3; §2.3, Eqs. (34)–(38), Figs. 6–7; §3.1–3.4, Eqs. (39)–(69), Table 1, Figs. 8–12; §4, Tables 2–5, Figs. 14–30.
 - [Ye et al. (2022)](/sources/ye-2022.md) — Eq. (29) ($\beta_6$ coefficient).
+- [Li et al. (2023b)](/sources/li-2023-b.md) — §1; §2, Eqs. (3)–(15); §3.1–3.4, Eqs. (16)–(50), Figs. 2–11; §3.5, Eq. (53), Table 1; §4, Figs. 13–25.
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1; §3, Eqs. (19)–(26), Table 1; §4, Eqs. (27)–(32), Tables 2–3, Fig. 7.

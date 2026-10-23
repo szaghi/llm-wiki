@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -166,7 +166,14 @@ mesh-based CFL number kept positivity in all runs, without a proof (§7).
 Because the LGL mass matrix is diagonal, the whole DGSEM can be written as
 differences of high-order inter-node fluxes. The nodal values then act as
 subcell values with subcell widths $\mathsf w_i$ in reference space
-(Rueda-Ramírez et al. (2022), Eqs. (8)–(11)). A compatible first- or
+(Rueda-Ramírez et al. (2022), Eqs. (8)–(11)).
+[Peyvan et al. (2023)](/sources/peyvan-2023.md) print the 1D inter-node
+fluxes explicitly: with $Q=MD$, $\bar f_0=f(u_0)$, $\bar f_{N+1}=f(u_N)$ and
+
+$$\bar f_j=\sum_{m=j}^{N}\sum_{n=0}^{j-1}2Q_{nm}f^{\mathrm{vol}}(u_n,u_m),\qquad j=1,\dots,N,$$
+
+the split volume term at node $i$ is $(\bar f_{i+1}-\bar f_i)/\mathsf w_i$
+(§2.3, Eqs. (48)–(54), after Fisher & Carpenter; page-local $\bar f_j$). A compatible first- or
 second-order finite-volume scheme on the same subcells shares the degrees
 of freedom. Its subcell normals are derived from the DGSEM metrics. The
 DGSEM is made robust by convex blending with that scheme, either one
@@ -279,6 +286,32 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   variables cannot be formed (§4.2.2, §6). The split form of Ducros et
   al. plus both corrections behaves like flux differencing up to $t=30$
   (Fig. 8).
+- **Strong shocks and real chemistry.** [Peyvan et al. (2023)](/sources/peyvan-2023.md)
+  compare, in 1D, the entropy-stable DGSEM with element-wise subcell
+  blending of Hennemann et al. (HLLC surface and subcell fluxes,
+  $\alpha\le\alpha_{\max}=0.5$) against flux reconstruction and spectral
+  difference with the entropy-based adaptive filter of Dzanic & Witherden,
+  the positivity-preserving modal DG and the positivity-preserving
+  fifth-order finite-difference WENO of Zhang & Shu (§1, §2.3, §4; arXiv
+  v1). All runs use $N=3$ (comparison DG $N=2$) and the Carpenter–Kennedy
+  low-storage RK45. On the [Leblanc shock tube](/benchmarks/leblanc-shock-tube.md)
+  (1000 elements) the DGSEM smears the contact more than FR and SD but has
+  the smallest oscillations; on a Mach-10 variant of the
+  [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (170 elements) it
+  resolves the post-shock features at $x=2.82$ and $x=3.265$ that FR and SD
+  miss; on a three-species reacting Sod problem every scheme except modal
+  DG gives the right solution, and WENO behaves like the DGSEM (§4.1–4.3,
+  Figs. 1–3). The authors conclude that the DGSEM is the most robust,
+  oscillates least and needs the fewest tuning parameters ($\alpha_{\max}$
+  "usually kept at 0.5"), but smears discontinuities more, because the
+  shock indicator acts per element (§4.2, §5). They extend it to
+  five-species air with vibrational energy, new entropy-conservative
+  volume fluxes, Park's finite-rate chemistry and BR1 viscous terms on the
+  primitive variables $(\rho_k,v,T)$ (§2.3.2, §3–4;
+  [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+  Their statements that the DGSEM needs "the least computational effort"
+  and scales more readily than high-order WENO come with no timing or
+  scaling data (Abstract, §5).
 - **Codes.** The method is implemented in [Trixi.jl](/software/trixi-jl.md)
   (Julia) and [FLUXO](/software/fluxo.md) (Fortran). Their serial
   performance is similar (Ranocha et al. (2023), §4, Fig. 1). The Gauss
@@ -293,10 +326,19 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   al. write $N$. Pazner's reference element is $[0,1]^d$, the others' is
   $[-1,1]^d$. Renac prints the sums of the cell average (59)–(60) from
   $1$ instead of $0$; the nodes run from $0$ to $N$.
-  Abgrall et al. and Cicchino et al. also write the degree $p$.
+  Abgrall et al. and Cicchino et al. also write the degree $p$, and
+  Peyvan et al. write $P$ and the LGL weights $\omega_j$.
   Rueda-Ramírez et al. write the quadrature weights $\omega$, which this
   bundle writes $\mathsf w$ to keep $\omega_k$ for WENO weights; Ranocha et
   al. name no weight symbol and work with the mass matrix $M$.
+- Peyvan et al.'s Mach-10 Shu–Osher left state $(\rho,v,p)=(3.857143,9.76153,116.5)$
+  (Eq. (93)) is not a single Mach-10 shock into $(1,0,1)$ with $\gamma=1.4$:
+  the Rankine–Hugoniot relations give $p=116.5$ and $v=9.76153$ but
+  $\rho=240/42=5.714286$, while $3.857143$ is the post-shock density of a
+  Mach-3 shock, $27/7$, the value of the classical problem as printed by
+  [Li et al. (2022b)](/sources/li-2022-b.md) and [Ye et al. (2022)](/sources/ye-2022.md)
+  *(compiler check, not in the sources)*. The paper does not say which state the runs used; see
+  [Shu–Osher problem](/benchmarks/shu-osher-problem.md).
 - Mossier et al. (2022) call their Legendre–Gauss collocation scheme
   "DGSEM" as well; the definition in the lead of this page (LGL nodes,
   boundary nodes in the quadrature) is the convention of the other
@@ -312,3 +354,4 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), §3.3, §4.2.2 Figs. 7–8, §6 (arXiv v4).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §2.3 Eqs. (42)–(59), §4.1–4.3 Figs. 1–3, §5 (arXiv v1).

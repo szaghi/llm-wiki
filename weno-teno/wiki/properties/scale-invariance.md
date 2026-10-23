@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Scale and affine invariance
@@ -34,7 +34,7 @@ from affine invariance. Deng (2023) defines scale invariance as homogeneity only
 (2022, Lemma 3.1), for whom it is the homogeneity of degree one of reconstruction, limiter and scheme. Peng, Sun & Wu
 (2024, Theorem 2.6) call "scale-invariant" what Wang & Don call affine invariant:
 $\mathcal S(\sigma u_h+\mu)=\sigma\mathcal S(u_h)+\mu$ for their oscillation-eliminating step
-$\mathcal S$ (page-local name). This page uses Wang & Don's split. Li, Li, Don & Wang (2023, Definition 1)
+$\mathcal S$ (page-local name). This page uses Wang & Don's split. Li, Li, Don & Wang (2023a, Definition 1)
 follow Wang & Don's scale invariance, $\mathsf R[\sigma f]=\sigma\mathsf R[f]$ for every real $\sigma$, negative
 values included, i.e. homogeneity of degree one.
 
@@ -59,13 +59,37 @@ depend on $\sigma$ (Wang & Don 2022, Eq. (18)).
   $\sigma^4$ and $\beta_\ell+\epsilon$ as $\sigma^2$, so the ratio is of degree 2 in the data even
   with $\epsilon\propto\sigma^2$ ([CWENO](/methods/cweno.md), [WENO-Z](/methods/weno-z.md), whose
   table of Z-type weights records the same degree count).
-- Li et al. (2022, §4.1) object to the WENO-Z variant with $\epsilon=\Delta x^m$ of Don & Borges
+- Li et al. (2022b, §4.1) object to the WENO-Z variant with $\epsilon=\Delta x^m$ of Don & Borges
   that $\beta_k$ and $\Delta x$ have different dimensions, so the solution depends on the reference
   values used to nondimensionalize the problem.
 
+- **Exponential weights.** Chen & Deng (2023, §5) describe their weights
+  $d_k\exp(-\beta_k^{\lambda_{\mathrm E}}/\lambda_{\mathrm E})$ as built "without using any dimensional
+  scales": they use stencil data only, with no $\Delta x$-dependent $\epsilon$ and no global quantity
+  ([exponential weights](/methods/exponential-nonlinear-weights.md)). *(Compiler check, not in the
+  sources: the weights are still not scale-invariant. For $\lambda_{\mathrm E}=1$,
+  $\omega_k/\omega_l=(d_k/d_l)e^{-(\beta_k-\beta_l)}$ and $\beta_k\mapsto\sigma^2\beta_k$ under
+  $f\mapsto\sigma f$, so the ratio depends on $\sigma$; the exponent's argument
+  $\tau_5/(\min_k\beta_k+\epsilon)^{0.8}$ scales as $\sigma^{0.4}$, and the constants 3, 0.8, $10^{-6}$ act
+  on data in absolute units. Translation by $\mu$ leaves the $\beta_k$ unchanged, so the defect is one of
+  scaling only.)*
+- **Indicators that carry the cell width.** Zhong et al. (2023, Eq. (21)) fix the parameter of their
+  $L^1$-derived indicators to $\xi_{\mathrm{NS}}=\Delta x$, which gives
+  $\beta^{\mathrm{IMP}}_k=c_k\Delta x\,(\text{first difference})^2+(\text{second difference})^2$ with $c_k=4,1,4$
+  (page-local $\xi_{\mathrm{NS}}$, $\beta^{\mathrm{IMP}}_k$, $c_k$)
+  ([smoothness indicators](/definitions/smoothness-indicator.md)). *(Compiler check, not in the sources:
+  under $f\mapsto\sigma f$ both terms and the global indicator scale by $\sigma^2$, so the weights are
+  scale-invariant up to $\epsilon=10^{-40}$; but $\Delta x$ is a length and the differences are undivided, so the
+  balance of the two terms, and the weights, change with the unit of length, which classical Jiang–Shu
+  indicators of undivided differences do not.)* The paper does not discuss invariance.
+- **High powers of the global indicator.** The unstructured CWENOZ weights of Maltsev et al. (2023,
+  Eqs. (22)–(23)) raise the mean indicator difference to the fourth power against an exponent 1 on the
+  ratio, a ratio of degree 6 in the data *(compiler check, not in the sources; see the homogeneity count
+  on [WENO-Z](/methods/weno-z.md))*.
+
 ## A criterion for WENO-type operators
 
-Li, Li, Don & Wang (2023, §2.3) turn the reduction to the weights into necessary and sufficient
+Li, Li, Don & Wang (2023a, §2.3) turn the reduction to the weights into necessary and sufficient
 conditions for an operator $\mathsf R[f]=\sum_k\omega_k[f]P^{(k)}[f]$ with linear candidates:
 **Theorem 1**, $\mathsf R$ is scale-invariant iff $\omega_k[\sigma f]=\omega_k[f]$ for all $k$;
 **Theorem 2**, for $\epsilon>0$ this holds iff $\alpha_k[\sigma f]=C\,\alpha_k[f]$ with $C$ independent of
@@ -90,7 +114,7 @@ $\mathsf m$ the mean absolute value of the stencil data (Si-WENO, Don et al. 202
 its mean absolute deviation (Ai-WENO); Wang & Don (2022, Theorems 1–2) prove the Ai-property for
 Z-, D- and JS-type weights ([affine-invariant WENO](/methods/affine-invariant-weno.md)). The same
 paper shows the practical payoff: shallow-water still water preserved to roundoff without the
-"WENO linearization technique" ([well-balancing](/properties/well-balancing.md)). Li et al. (2023, §4, Theorem 5)
+"WENO linearization technique" ([well-balancing](/properties/well-balancing.md)). Li et al. (2023a, §4, Theorem 5)
 obtain the analogous payoff for the Euler equations with gravity: in a characteristic-wise
 [A-WENO](/methods/alternative-weno.md) scheme the equilibrium characteristic variables are the
 equilibrium pressure times an interface constant, so a scale-invariant interpolation (an affine-invariant
@@ -174,8 +198,11 @@ decomposition can destroy invariance, because eigenvectors are defined up to an 
 - [Deng (2023)](/sources/deng-2023.md) — §1; §2.2–2.3, Lemma 1, Def. 7, Prop. 2; §4.3; §6.2, Prop. 6, Eq. (6.6); App. A.2, Fig. 13.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §1; §2, Eqs. (2.6), (2.13)–(2.14), Theorems 2.6, 2.10, Remarks 2.8–2.12; Ex. 5.6–5.8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §2.2; §3.2, Eq. (3.10); §3.4.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.1.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.1.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — §2, Eqs. (13)–(14), Prop. 2.1; §3.2.1, Eqs. (32)–(34), Lemma 3.1, Remark 3.3; §3.6, Theorem 3.2; Examples 4.4–4.5.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eqs. (14)–(15).
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eqs. (24)–(26).
-- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.
+- [Chen & Deng (2023)](/sources/chen-2023.md) — §1; §3, Eqs. (26)–(34); §5.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §3.2, Eqs. (21)–(26).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(23).
+- [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.

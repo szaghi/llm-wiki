@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WLS-ENO reconstruction"
-description: "WLS-ENO is a single-stencil finite-volume reconstruction: a weighted least-squares fit whose row weights fall where neighbouring averages jump; Liu et al. make it conservative with a zero-mean basis and locally divergence-free for the magnetic field, and run it unlimited, except for positivity, in a second- and third-order ideal-MHD scheme."
+description: "WLS-ENO is a single-stencil finite-volume reconstruction: a weighted least-squares fit whose row weights fall where neighbouring averages jump; Liu et al. make it conservative with a zero-mean basis and locally divergence-free for the magnetic field, and run it in second- and third-order ideal-MHD schemes, with a Zhang–Shu or Barth–Jespersen limiter and an HLL or generalized-Riemann-problem flux."
 status: established
 aliases: [WLS-ENO, weighted least-squares ENO, conservative WLS-ENO, locally divergence-free WLS-ENO, LDF WLS-ENO]
-tags: [reconstruction, finite-volume, mhd, positivity]
-timestamp: 2026-10-22T18:00:00Z
+tags: [reconstruction, finite-volume, mhd, positivity, riemann-solver]
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # WLS-ENO reconstruction
@@ -107,6 +107,38 @@ normal-jump part (Eqs. (32)–(35)). No limiter other than the positivity limite
   with $\sigma_1\times10^{-6}$, the failure being "possibly attributed to ill-conditioned matrix"
   (§4.5; [high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md)).
 
+## With a generalized-Riemann-problem flux
+
+Liu, Feng & Wang (2023a, §3.1) reuse the locally divergence-free WLS-ENO at second order ($n=1$, four
+face neighbours, the row weights above with $\epsilon=10^{-2}$, truncated SVD with threshold
+$\sigma_1\times10^{-10}$) in a one-step finite-volume scheme for ideal MHD whose flux is the HLL
+approximate solver of the generalized Riemann problem, applied edge by edge after rotation to the edge
+normal ([generalized Riemann problem](/methods/generalized-riemann-problem.md),
+[HLL-family solvers](/methods/hll-riemann-solvers.md)). Three differences from Liu et al. (2021):
+
+- **Primitive variables.** The reconstruction acts on $(\rho,v,B,p)$; the conservative gradients that the
+  generalized Riemann problem needs are assembled at each edge midpoint by the product and chain rules
+  (Eqs. (30)–(40)).
+- **One constraint round.** $\partial_xB_1|_i=-\partial_yB_2|_i$ is imposed after reconstructing $B_2$, and
+  $\partial_yB_1$ comes from a one-unknown weighted fit (Eqs. (23)–(24)). Constraining $\partial_yB_2$ instead,
+  or both and averaging, "didn't make much difference" (no data shown); Liu et al. (2021) report a
+  slight advantage for the average.
+- **Limiter.** Instead of the Zhang–Shu scaling, a Barth–Jespersen limiter on density and pressure bounds
+  their values at the edge midpoints by the extrema of the neighbouring averages, which the authors call
+  a "PP limiter" (Eqs. (25)–(29)). The CFL condition of Wu & Shu is applied "without making a rigorous
+  proof" of positivity (§2.2) ([bound preservation](/properties/bound-preservation.md)).
+
+The smooth [Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) at CFL 0.2 converges at $L_1$
+orders 2.11, 1.95, 2.36, 1.86 with the generalized-Riemann-problem flux and 2.10, 1.99, 2.44, 2.39 with
+SSP-RK2 and the HLL flux; the $L_1(v_1)$ errors at $256^2$ are $5.54\times10^{-5}$ and
+$3.68\times10^{-5}$, at 4202 s and 1681 s on 64 cores, the cost of the one-step scheme attributed to its
+SVD solves (§4.2, Table 1). No run on Brio–Wu, Orszag–Tang to $t=100$, the rotor or 2-D and 3-D blast
+waves produced negative density or pressure (§4–5;
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), [MHD blast wave](/benchmarks/mhd-blast-wave.md),
+[Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md)). *(Compiler check, not in the sources: the SSP-RK2
+errors are close to the $3.78\times10^{-5}$ of the $n=1$ scheme of Liu et al. (2021) at the same mesh,
+whose limiter and time step rule differ.)*
+
 ## The same idea at second order
 
 Chen, Zhang, Liu & Chen (2022, §5, Eq. (24)) use solution-dependent least-squares weights in a
@@ -139,10 +171,13 @@ in WLS-ENO; both regularizations use the data in absolute units.)*
   $-0.05<x<0.05$, and the rotor is printed with periodic boundaries on $[0,1]^2$ without comment; Eq. (17) solves for
   $\partial^2_xB_1|_i$ while the text names $\tfrac12\partial^2_xB_1|_i$; "conservative WLE-ENO" for
   WLS-ENO (§3.2).
+- Liu et al. (2023a) state that their scheme attains "the expected convergence order"; the finest-level
+  rate 1.86 is below the SSP-RK2 one and the authors do not discuss the drop.
 - Locally divergence-free is not globally divergence-free: the normal component stays discontinuous
   across edges, which the Powell term only controls (§3.3.3, §5).
 
 # Citations
 
 - [Liu et al. (2021)](/sources/liu-2021.md) — Abstract; §1; §2, Eqs. (1)–(8); §3.1–3.3, Eqs. (9)–(38); §4, Table 1, Figs. 4–17; §5.
+- [Liu et al. (2023a)](/sources/liu-2023.md) — §2.2; §3.1, Eqs. (19)–(40); §3.3; §4, Table 1; §5.
 - [Chen, Zhang, Liu & Chen (2022)](/sources/chen-2022.md) — §5, Eq. (24).

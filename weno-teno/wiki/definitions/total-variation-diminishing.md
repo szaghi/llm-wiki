@@ -130,7 +130,7 @@ $z_j<0$, $0$ otherwise, is the reconstruction of the second-order
 central-upwind schemes ([Chertock et al. (2023)](/sources/chertock-2023.md),
 §2.1, Eqs. (2.5)–(2.7)). The same minmod function enters the
 anti-diffusion correction of the CURH flux
-([Wang et al. (2023)](/sources/wang-2023-b.md), §3, Eq. (5)).
+([Wang et al. (2023b)](/sources/wang-2023-b.md), §3, Eq. (5)).
 
 **Slopes on stretched and mapped meshes.** [Peng et al. (2022)](/sources/peng-2022.md)
 (§2.4, Eqs. (15)–(20)) use minmod-limited MUSCL in a MUSCL–Hancock finite-volume scheme on
@@ -301,7 +301,7 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 
 - [Deng (2023)](/sources/deng-2023.md) — §1, §4.1, Eqs. (4.1)–(4.15), Remark 4.1, §6.1, Eqs. (6.1)–(6.2), Figs. 2–3, 10–12.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §2.1, Eqs. (2.5)–(2.7): generalized minmod, limiter classes.
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §3, Eq. (5): minmod in the CURH anti-diffusion term.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §3, Eq. (5): minmod in the CURH anti-diffusion term.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII.a, App. D, Eqs. (D.7)–(D.10): MC and van Albada base polynomial.
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §2.2, §4, §5.2: minmod subcell reconstruction, TVD-like bounds.
 - [Puppo et al. (2023)](/sources/puppo-2023.md) — §2: explicit and implicit incremental-form TVD conditions (arXiv v2).

@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -54,6 +54,7 @@ the right half.
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | 200 | 0.2 | MEG7 vs WCNS7M; exact Riemann reference (arXiv v1) |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (34) | 100 | 0.2 | on $[-0.5,0.5]$; six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD, ONL6; HLLC, TVD-RK3, CFL 0.4; reference fifth-order WENO on 4000 cells |
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.2 | 200 | $t/t_0=2$ | data "provided by Jiang and Shu", plotted on $x/L_0\in[-5,5]$; extrapolation boundaries; [WENO-Z](/methods/weno-z.md)3/5/7, TENO5, TENO-A5 in [URANOS](/software/uranos.md); 2000-point reference |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 6 | 300 cells | 0.2 | modified left state $(1,0.75,1)$, see below; transmissive; fifth-order FV IMWENO-P vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | two blocks: 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.1, 0.2 | multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with [boundary closures](/methods/shock-capturing-boundary-closure.md) at the interface |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
@@ -72,7 +73,13 @@ method on 64 to 512 points, used to calibrate their model constants
 periodic. Li, Li, Don & Wang's mirrored run on $[-5,5]$ at $t=2$ is the
 mirrored $[0,1]$ tube at $t=0.2$ under $x\mapsto(x+5)/10$,
 $t\mapsto t/10$ *(compiler check, not in the sources)*, the same
-mirroring as Ye et al.'s.
+mirroring as Ye et al.'s. Zhong et al. call their Ex. 6 "Sod's
+shock-tube problem" but print a moving left state, $(\rho,v,p)=(1,0.75,1)$
+on $[0,0.5)$ against $(0.125,0,0.1)$: a different Riemann problem from
+Sod's, whose left gas is at rest. With $N=300$ at $t=0.2$ they find
+IMWENO-P, WENO-NS, WENO-P and MWENO-P capturing the discontinuities
+better than WENO-JS and WENO-Z, and IMWENO-P slightly ahead of the other
+three (Fig. 5).
 
 ## Lax
 
@@ -89,7 +96,7 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.5 | $[-0.5,0.5]$ | 200 cells | 0.16 | moment-based [multi-resolution HWENO](/methods/hermite-weno.md); troubled cells shown in the $x$–$t$ plane |
 | [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) §IV.B | $(-0.5,0.5)$ | 8 space–time quadrilaterals | 0.15 | printed $(0.445,\ 0.698876404,\ 3.52773)$; called the "Lax–Harden" problem |
 | [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) §4.2 | $[-0.5,0.5]$ | 200 | 0.13 | $\Delta t=10^{-3}$ |
-| [Li et al. (2022)](/sources/li-2022-b.md) §4.3.1, Eq. (39) | $[-5,5]$ | 200 | 1.3 | zero-gradient BCs, CFL 0.5; reference fifth-order WENO-Z with 4000 points |
+| [Li et al. (2022b)](/sources/li-2022-b.md) §4.3.1, Eq. (39) | $[-5,5]$ | 200 | 1.3 | zero-gradient BCs, CFL 0.5; reference fifth-order WENO-Z with 4000 points |
 | [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.2.4, Eq. (16) | $[-5,5]$ | 101 | 1.3 | CFL 0.5 |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.6 | $[-5,5]$ | 256 cells | 1.3 | outflow; data scaled by $\lambda\in\{1,0.01,100\}$ |
 | [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) Ex. 4.2, Eq. (4.1) | $[-5,5]$ (figures) | 200 cells | 1.3 | positivity-preserving hybrid [HWENO](/methods/hermite-weno.md), Navier–Stokes at $\mathrm{Re}\in\{100,1000,10^4,\infty\}$ |
@@ -107,6 +114,7 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.9 | not printed | 200 | 0.14 | |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | not printed | 200 | 0.14 | text prints "$t=01.4$", Fig. 3 caption $0.14$ |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (36) | $[-0.5,0.5]$ | 100 | 0.14 | right pressure printed $0.5710$ |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 7 | $[-5,5]$ | 300 cells | 1.3 | WENO-JS lowest resolution, then WENO-Z; IMWENO-P as MWENO-P, marginally above WENO-P and WENO-NS (Fig. 6) |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | $[0,1]$, jump at $0.5$ | single domain; two blocks 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.14; two blocks also 0.06 | |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
@@ -361,6 +369,38 @@ single-gas Euler equations.
   code blows up (Ex. 6.2, Figs. 6.1–6.2). See
   [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
   and [bound preservation](/properties/bound-preservation.md).
+- **Two materials on a Lagrangian mesh.** [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md)
+  §3.5.5 run the Sod states with $\gamma=1.4$ on the left and
+  $\gamma=5/3$ on the right of $[0,1]\times[0,0.1]$, $201\times3$ points
+  with the interface on mesh edges (no mixed cells), fixed left and
+  right states, reflective top and bottom, to $t=0.2$, with an indirect
+  ALE method that rezones without moving the interface nodes and remaps
+  every 20 Lagrangian steps with their positivity-preserving
+  [conservative remapping](/methods/conservative-remapping.md); the ALE
+  method "can handle this multi-material flow problem very well"
+  (Fig. 20). Their text gives $201\times3$ points, the Fig. 20 caption
+  $N_x=200$, $N_y=3$; $3$ points in $y$ make 2 cells, so the caption's
+  $N_y$ does not count cells as $N_x$ does *(compiler check, not in the
+  sources)*.
+- **Reacting and non-equilibrium air.** [Peyvan et al. (2023)](/sources/peyvan-2023.md)
+  (arXiv v1) run three Sod-type tubes for multi-species hypersonic
+  flows with their entropy-stable DGSEM. A three-species
+  ($\mathrm O$, $\mathrm O_2$, $\mathrm N_2$) tube after Zhang & Shu with
+  one dissociation reaction, $(v,p)=(0,1000)$ against $(0,1)$ at a
+  uniform 8000 K on $[-1,1]$, $t=10^{-4}$, CFL 0.1, 800 elements of
+  degree 3, against ES-DGSEM on 4000: all schemes except a modal
+  positivity-preserving DG get the right solution, flux reconstruction
+  and spectral difference oscillate, WENO and ES-DGSEM do not but smear
+  more (§4.3, Fig. 3). A five-species non-equilibrium tube after
+  Grossman & Cinnella, $(T,v,p)=(9000\ \mathrm K,0,195256\ \mathrm{Pa})$
+  against $(300\ \mathrm K,0,10^4\ \mathrm{Pa})$ on $[0,1]$, 200 elements,
+  CFL 0.01, matches the cited reference in all variables and mass
+  fractions (§4.5.1, Fig. 6); they state that flux reconstruction and
+  spectral difference with filtering are unstable on it. A third tube
+  into the 44 km atmosphere compares equilibrium and finite-rate
+  chemistry at driver temperatures 2000–4000 K, which deviate from
+  3000 K on (§4.5.2, Fig. 7). See
+  [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md).
 - **Radial Sod in two dimensions.** [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
   §4 (arXiv v4) run $(\rho,v_1,v_2,p)=(1,0,0,1)$ for $r\le0.5$ and
   $(0.125,0,0,0.1)$ for $0.5<r\le1$, CFL 0.25, $t=0.25$, with
@@ -478,7 +518,7 @@ single-gas Euler equations.
 - [Deng (2023)](/sources/deng-2023.md) — §1; App. A.4–A.5, Fig. 15.
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §3.5.3 and §5.6, Figs. 19, 24, 28 (author preprint).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.3, Fig. 8.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.3.1, Eq. (39), Fig. 4.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.3.1, Eq. (39), Fig. 4.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.2.4, Eq. (16), Fig. 12.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.6, Fig. 3 (arXiv v1).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.3, Fig. 7.
@@ -520,3 +560,6 @@ single-gas Euler equations.
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.1, Eqs. (34)–(36), Figs. 8–10.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — App. A.2, Fig. 12.
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §4.1, Table 1, Figs. 5–6.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Exs. 6–7, Figs. 5–6.
+- [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.5, Fig. 20.
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §§4.3, 4.5, Tables 1–2, Figs. 3, 6–7 (arXiv v1).

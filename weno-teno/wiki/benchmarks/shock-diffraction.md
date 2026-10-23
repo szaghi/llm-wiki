@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock diffraction"
-description: "Benchmarks of a shock diffracting into gas at rest: the two-dimensional Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 variant over a step, robustness tests of positivity-preserving and limited high-order schemes in the near-vacuum expansion behind the corner, and the three-dimensional diffraction of a strong shock by a sphere, an adaptive-mesh GPU scaling test."
+description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its relativistic counterpart and a Mach 10 step variant, testing positivity-preserving and limited schemes in the near-vacuum expansion behind the corner; the 3D diffraction of a strong shock by a sphere, an adaptive-mesh GPU scaling test; and Schardin's weak shock over a wedge, checking hybrid DG–FV switching against experiment."
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Shock diffraction
@@ -22,8 +22,9 @@ contours of density and pressure at $t=2.3$ are compared visually.
 Five sources of the bundle run it, four in the Euler form (one on a
 rescaled geometry) and one in a relativistic form; two more run a
 Mach 10 variant in which the double-Mach-reflection shock meets a
-backward step, and one runs the three-dimensional diffraction of a
-strong shock by a sphere.
+backward step, one runs the three-dimensional diffraction of a
+strong shock by a sphere, and one the diffraction of a weak shock by a
+triangular wedge (Schardin's problem).
 
 ## Setup
 
@@ -141,6 +142,23 @@ digits at Mach 2.81 ($\rho=5.1432014$, $p=9.04545$, $v_1=2.045107$)
 *(compiler check, not in the sources)*: the computed shock is about
 Mach 2.81.
 
+### Diffraction by a wedge: Schardin's problem
+
+[Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.5 compute a
+triangular wedge hit by a normal shock of Mach 1.34 moving left to
+right, in a domain of the dimensions of Schardin's experiment, with the
+Euler equations, $\gamma=1.4$, $R=287$ J/(kg K): pre-shock $p=101325$
+Pa, $T=288.15$ K, at rest; post-shock $p=195557.25$ Pa, $T=350.5$ K,
+$v_1=168.62$ m/s (their Table 2). Walls of wedge, top and bottom are
+reflective, left and right boundaries non-reflecting; about 340,000
+mixed quadrilaterals and triangles with edge size $h=0.01$ mm near the
+wedge; SSP-RK3 at CFL 0.3; the run starts when the shock meets the
+wedge and stops at $t=200$ ms as printed. They compare a pure
+finite-volume CWENOZ5 scheme with their hybrid DG($P_3$)–FV(CWENOZ4)
+and DG($P_4$)–FV(CWENOZ5) schemes in [UCNS3D](/software/ucns3d.md), with
+a relaxed MOOD-type [troubled-cell](/definitions/troubled-cell-indicator.md)
+switch.
+
 ## Runs in the sources
 
 | Source | Scheme | Mesh | Notes |
@@ -218,10 +236,22 @@ photograph of Bryson & Gross, the curved reflected shock being slightly
 ahead in the experiment (Fig. 11); they claim the finest resolution
 published for this case.
 
+**Hybrid DG–FV against experiment on the wedge.** Maltsev et al. find
+the tip vortices, bow shock and contact surfaces between the vortices
+and the shock triple point in agreement with the experiment of Chang &
+Chang that they cite (Fig. 13); both hybrid variants resolve more
+structures and acoustic waves from the shock–vortexlet interactions
+than pure FV-CWENOZ5 (Fig. 14), the Mach number along the wedge
+symmetry line agrees among the three schemes, and fewer than 0.4 %
+($P_3$) and 0.2 % ($P_4$) of the cells are troubled throughout (Fig. 15).
+
 ## Qualifications
 
 - Evidence is visual throughout; no source reports a reference
-  solution or an error norm.
+  solution or an error norm. Maltsev et al. compare with experimental
+  flow visualization.
+- Maltsev et al. name the pure FV variant FV(CWENOZ5) in the text and
+  Fig. 14 and FV(CWENOZ4) in the caption of Fig. 15.
 - Zaghi et al.'s Table 1 labels the grind time "[s]" while the printed
   values (0.28 for $1.019$ s per step on $3.6\times10^6$ cells and one GPU)
   are in microseconds per cell update; their "8 billions" cells for
@@ -249,3 +279,4 @@ published for this case.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.12, Remark 3.2.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.12.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.2–3.3, Table 1, Figs. 4–15.
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.5, Table 2, Figs. 12–15.

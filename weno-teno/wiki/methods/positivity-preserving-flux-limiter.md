@@ -162,7 +162,7 @@ Hu–Adams–Shu limiter, without describing it:
   §4.11): the Hu–Adams–Shu limiter for the Mach 80 and Mach 2000 jets on
   $800\times400$ points at CFL 0.35; every compared scheme is stable with
   it ([TENO-THINC](/methods/teno-thinc.md)).
-- **Scale-invariant MR-AWENO** ([Li et al. (2023)](/sources/li-2023.md),
+- **Scale-invariant MR-AWENO** ([Li et al. (2023a)](/sources/li-2023.md),
   §3.3, §3.6): the limiter of Hu–Adams–Shu and of Li, Don, Wang and Gao
   (as cited) on the Sedov blast wave, with ambient pressure
   $4\times10^{-13}$, and on the Mach 2000 jet, where only its pressure
@@ -259,4 +259,4 @@ Hu–Adams–Shu limiter, without describing it:
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; Remark 2.3; Ex. 3.5–3.12, Remark 3.2; Appendix, Eqs. (A.4)–(A.10), Algorithm A.1.
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.1 (first-order fluxes for Euler, none for diffusion).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.11 (limiter used for the jets).
-- [Li et al. (2023)](/sources/li-2023.md) — §3.3, §3.6 (limiter used; pressure stage active at the jet front).
+- [Li et al. (2023a)](/sources/li-2023.md) — §3.3, §3.6 (limiter used; pressure stage active at the jet front).

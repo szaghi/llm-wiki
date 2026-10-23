@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Entropy stability
@@ -196,6 +196,44 @@ Rueda-Ramírez et al. (2022) map three cases (§2.2, §4; see
   finite volumes they are not guaranteed, and the algorithm returns the
   solution "closest to the restrictions" (§5.2.3).
 
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md) add positivity to
+entropy-stable nodal DG for Euler and Navier–Stokes, on quadrilaterals and
+triangles, and keep the semi-discrete entropy inequality (§5–6; arXiv v2):
+
+- **The low-order scheme is entropy stable.** Their low-order scheme is
+  the skew-symmetric DG form with a sparse low-order SBP operator and a
+  graph viscosity. With the viscosity coefficient of each node pair taken
+  as the larger of a maximum wave-speed bound and the Navier–Stokes
+  positivity coefficient of Zhang, the scheme can be read as a subcell
+  finite-volume scheme with local Lax–Friedrichs-type fluxes, and it
+  satisfies a semi-discrete entropy balance per element, including the
+  viscous dissipation (Thm. 6.1, Eqs. (45)–(53)). For Euler the positivity
+  coefficient never exceeds the wave speed, so the coefficient reduces to
+  the wave-speed estimate (§6.2).
+- **Element-wise blending keeps it.** One limiting parameter per element,
+  the largest value in $[0,1]$ that keeps every nodal density and internal
+  energy above relaxed bounds, blends the low- and high-order updates; the
+  limited solution is a convex combination of two conservative,
+  entropy-stable semi-discretizations, so on a periodic domain it is
+  conservative and satisfies
+  $\frac{d}{dt}\int\eta(u)\le-\sum_{d,d'}\Theta_d^\top MK_{dd'}\Theta_{d'}$ with
+  page-local entropy-variable gradients $\Theta_d$ and viscosity blocks
+  $K_{dd'}$ (Thm. 6.2, Eqs. (54)–(55)). This is the element-wise case of
+  Rueda-Ramírez et al. above, with the positivity limiter choosing the
+  coefficient ([bound preservation](/properties/bound-preservation.md)).
+- **Subcell convex limiting does not.** With positivity as the only
+  constraint, convex limiting cannot be shown to keep a cell entropy
+  inequality; earlier convex-limiting work enforces stronger local bounds
+  or entropic constraints for that purpose (App. B.1;
+  [convex limiting](/methods/convex-limiting.md)).
+- **Caveats.** The result is semi-discrete: to the authors' knowledge no
+  fully discrete entropy inequality can be proved for the high-order
+  method with forward Euler or Runge–Kutta, and they point to space–time
+  DG or relaxation Runge–Kutta (§6.2). The Davis wave-speed estimate they
+  use is not a guaranteed upper bound, which could compromise the provable
+  positivity and entropy stability of the low-order scheme; they observed
+  no such case (footnote 3).
+
 ## Dissipation operators
 
 In the sources an ES flux is an EC flux minus a dissipation. In Rueda-Ramírez
@@ -271,6 +309,13 @@ limiter restores the nodal values (Theorem 6.1, Eq. (67);
 (2022) find the same in their Taylor–Green tests: corrected schemes that
 conserve entropy blow up once nodal density or pressure turns negative,
 after which the entropy variables cannot even be formed (§4.2.2, §6).
+Lin, Chan & Tomas (2023) state the same premise for entropy-stable DG of
+Euler and Navier–Stokes: the semi-discrete entropy inequality holds only
+while density and internal energy stay positive, and nothing in the
+scheme enforces that (§1, Thm. 4.1). Without their limiter, entropy-stable
+DG fails on a strong isentropic vortex (minimum density
+$2.145\times10^{-3}$) and on a Mach-20 viscous shock on coarse meshes
+(§8.1.2, §8.2.1).
 
 ## Entropy conservation is not robustness
 
@@ -345,6 +390,14 @@ and the fully discrete error is a time-integration error.
   monotonically for the fifth-order ES scheme, on the 2D vortex at
   $N_x=160$ to $t=4$ and on the 3D vortex to $t=0.1$ (Figs. 6.4, 6.14).
 
+- **Peyvan et al. (2023)**, five-species air with vibrational energy,
+  1D DGSEM, 170 elements, $N=3$, EC volume and surface fluxes, no
+  stabilization. The global entropy rate stays at order $10^{-5}$ to
+  $t=0.1$ instead of machine zero; the authors attribute it to the
+  $\sim10^{-7}$ Newton tolerance of the temperature inversion, without
+  varying the tolerance ([Peyvan et al. (2023)](/sources/peyvan-2023.md),
+  §4.4, Fig. 4; [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+
 Renac and Rueda-Ramírez et al. attribute the EC residual to the time
 integrator, and the observed orders 3 and 4 are the orders of their
 Runge–Kutta methods
@@ -415,6 +468,18 @@ for all free auxiliary $\rho_*>0$ and $v_*\in\mathbb R$. They give the relativis
 $e\rho^{1-\gamma}$ in the subcell limiting of Rueda-Ramírez et al. (2022) is
 a discrete, local relative of the same principle.
 
+Lin, Chan & Tomas (2023) do not impose a minimum entropy principle: they
+state that it is consistent with the compressible Euler equations but not
+with Navier–Stokes, and limit only density and internal energy (§1).
+Dzanic & Witherden (2022), whom they cite among the works that impose a
+local minimum entropy principle, impose the entropy bound for
+Navier–Stokes only on the inviscid update of each stage and filter the
+result of the viscous increment for positivity only
+([entropy filtering](/methods/entropy-filtering.md)). Without a monotonicity
+or entropy bound, Lin, Chan & Tomas's limited solutions oscillate near
+shocks; a larger relaxation factor of the bounds or an added shock-capturing
+blend reduces the oscillations (§8.2–8.4).
+
 ## Qualifications
 
 - **Convergence is asserted, not proved.** Rueda-Ramírez et al. (2022) state
@@ -462,8 +527,17 @@ a discrete, local relative of the same principle.
   as an offset that $p\rho^{-\gamma}$ must exceed; both are absolute and
   depend on the scale of the data *(compiler check, not in the sources;
   details on [entropy filtering](/methods/entropy-filtering.md))*.
+- **What entropy conservation buys.** Peyvan et al. (2023) attribute to
+  Gassner et al. the conclusion that the high-order accuracy of
+  flux-differencing DGSEM comes from the symmetry and consistency of the
+  two-point flux, not from entropy conservation (§2.3.1). Lin, Chan &
+  Tomas (2023) and Peyvan et al. use the registry convention
+  $\eta=-\rho s/(\gamma-1)$ and a physical-like $\rho s$ respectively;
+  Peyvan et al.'s entropy variables are printed as $\partial(\rho s)/\partial u$
+  but their last component, $-1/T$, is that of $-\rho s$, a sign
+  inconsistency of the text only (Eqs. (63)–(66)).
 - **Energy-equation splittings do not conserve entropy.**
-  [De Michele & Coppola (2023)](/sources/demichele-2023.md) show for
+  [De Michele & Coppola (2023a)](/sources/demichele-2023.md) show for
   central split forms that none of their total-energy, internal-energy,
   pressure, total-enthalpy or sound-speed discretizations conserves
   entropy exactly: the induced entropy terms are not flux differences in
@@ -492,4 +566,6 @@ a discrete, local relative of the same principle.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §2.2 Eqs. (19)–(21), §4.1–4.2, App. A Fig. 12 (arXiv v1).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §1, Prop. 3.1, App. A, Thms. 4.2–4.3, Remark 4.3, §6.1.2 Fig. 1 (arXiv v2).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.1 Eq. (5), §3.1 Eq. (22), §4 (arXiv v2).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §4.2.5 Eqs. (72)–(77), Table 2 (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §4.2.5 Eqs. (72)–(77), Table 2 (arXiv v1).
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §1, Thm. 4.1, §5, §6.1–6.2 Thms. 6.1–6.2 Eqs. (45)–(55), §8.1–8.4, footnote 3, App. B.1 (arXiv v2).
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §2.3.1, §3 Eqs. (63)–(66), §4.4 Fig. 4 (arXiv v1).

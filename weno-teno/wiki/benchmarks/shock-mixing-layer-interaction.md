@@ -68,7 +68,7 @@ $L_z=40$, on $600\times120\times120$ points to $t=120$.
 
 | Source | Scheme | Grid | Reference |
 |---|---|---|---|
-| Li et al. (2022) | MDAD-HY: [minimized-dispersion, adaptive-dissipation](/methods/mdcd-scheme.md) linear scheme hybridized with WENO by their shock detector | $1600\times320$, non-uniform, refined near $y=0$ | none |
+| Li et al. (2022a) | MDAD-HY: [minimized-dispersion, adaptive-dissipation](/methods/mdcd-scheme.md) linear scheme hybridized with WENO by their shock detector | $1600\times320$, non-uniform, refined near $y=0$ | none |
 | Chamarthi (2023a) | [gradient-based](/methods/gradient-based-reconstruction.md) MEG6, MIG4 vs TENO5, all with [α-damping](/methods/alpha-damping-viscous-flux.md) compact viscous gradients | $320\times80$ | none |
 | Chamarthi (2023b) | seventh-order MEG7 vs seventh-order mapped [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS7M | $320\times80$ | none |
 | Wang et al. (2021) | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) against WENO-JS5, [WENO-AO](/methods/weno-ao.md)5, WENO-ZS5; sixth-order central viscous fluxes | $500\times100$ | seventh-order WENO-JS on $2000\times400$ |

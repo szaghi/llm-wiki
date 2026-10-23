@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Bound preservation"
-description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and its invariant-domain form, the admissible sets of the sources with their convexity, the Zhang–Shu cell-average route with its viscous, reacting-flow and relativistic extensions, the flux-limiting, convex-limiting, filtering and a posteriori (MOOD) routes, and the geometric-quasilinearization proofs."
+description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and invariant-domain form, the sources' admissible sets, the Zhang–Shu cell-average route and its viscous, reacting, relativistic, moving-mesh and phase-field extensions, flux, convex and elementwise limiting, filtering, MOOD, and geometric quasilinearization."
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Bound preservation
@@ -39,12 +39,13 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 |---|---|---|
 | scalar law | $[U_{\min},U_{\max}]$ (global maximum principle); any interval is an invariant set | Cui et al. (2024), §1; Pazner (2021), Def. 1 |
 | linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2 |
-| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25) |
+| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1 |
 | Euler with a minimum principle on the specific entropy | $\{\rho>0,\ \rho e>0,\ s\ge s_{\min}\}$, i.e. $p\rho^{-\gamma}\ge\exp(s_{\min})$; Pazner writes the specific entropy as $\ln(e^{1/(\gamma-1)}\rho^{-1})$ | Wu & Shu (2023), Eq. (2.3), Thm 4.7; Pazner (2021), Eq. (65) |
 | Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
 | reacting multicomponent Navier–Stokes, calorically perfect species | $\{\rho\ge0,\ P(u)\ge0,\ \rho Y_k\ge0\}$, $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2=p/(\gamma(u)-1)$ ($h_k(0)$ formation enthalpies, page-local); $Y_k\le1$ is not in $G$ | Du & Yang (2022), §4.1, Eq. (4.1) |
 | five-equation two-phase model, stiffened gases | $\{0\le\phi_1\le1,\ \phi_k\rho_k\ge0,\ \rho e-\bar p_\infty>0\}$ ($\phi_k$ volume fractions, $\bar p_\infty$ mixture stiffness, page-local) | Wong et al. (2021), Eqs. (10), (12) |
+| two-phase diffuse-interface model, phase-field step | $\{0\le\phi_1\le1,\ \phi_1\rho_1\ge0,\ (1-\phi_1)\rho_2\ge0\}$ | Huang & Johnsen (2023), Thm 3.2 |
 | special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
 | ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
@@ -59,7 +60,10 @@ Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Renac (2021)](/sources/renac-2021.md),
 [Wong et al. (2021)](/sources/wong-2021.md),
 [Liu et al. (2021)](/sources/liu-2021.md),
-[Zheng et al. (2022)](/sources/zheng-2022.md). The multicomponent and
+[Zheng et al. (2022)](/sources/zheng-2022.md),
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md),
+[Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md),
+[Huang & Johnsen (2023)](/sources/huang-2023.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
 [five-equation model](/definitions/five-equation-model.md) pages, the
@@ -234,6 +238,27 @@ check, not in the sources: ratios of the tabulated weights)*.
   (bisection, a contractive fixed point and a hybrid) and note that
   Newton's method can return a negative pressure (§3.4, Rem. 3.6). Without
   the limiter their code fails on most tests (§4).
+- *Moving meshes* ([Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md),
+  §2.6, Theorems 2.1–2.2). For the remap of an ALE method, posed as a
+  linear conservation law on a mesh moving in pseudo-time, the
+  first-order upwind remap keeps the averages in $G$ under a step
+  proportional to cell area over perimeter times the normal mesh speed;
+  the high-order remap does so when the nine Simpson point values of the
+  mapped quadrilateral are in $G$, with the Jacobian of the map entering
+  the decomposition and the step bound $\frac{\mathsf w_1}{2}\cdot\frac12$
+  times the corresponding ratio, $\mathsf w_1=\tfrac16$ (Eq. 2.12). In
+  practice the code runs at a CFL step of 0.8 and halves the step when an
+  average leaves $G$ ([conservative remapping](/methods/conservative-remapping.md)).
+- *Phase-field fluxes* ([Huang & Johnsen (2023)](/sources/huang-2023.md),
+  Theorem 3.2, Appendix B). The phase-field step of a two-phase
+  diffuse-interface model is a conservation law whose "velocity" is the
+  gradient of an auxiliary potential $\Upsilon$ (page-local); with
+  upwind–downwind products of the volume fractions in the flux, the
+  first-order forward-Euler update keeps $\phi_1\in[0,1]$ and both partial
+  densities non-negative under $2\Delta t\max\lvert\partial_x\Upsilon\rvert/\Delta x\le1$,
+  and the high-order extension uses a Zhang–Shu Gauss–Lobatto
+  decomposition (Theorems B.3–B.4)
+  ([phase-field methods](/methods/phase-field-method.md)).
 
 **Time stepping.** The sources extend the forward-Euler result to
 [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and SSP multistep methods,
@@ -291,6 +316,26 @@ the bounds.
   through invariant-domain bounds built from bar states (Eqs. (47)–(48)).
   Details on [convex limiting](/methods/convex-limiting.md) and
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+- **Elementwise blending with a low-order DG scheme.**
+  [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) blend, with one
+  parameter $\mathsf l_K$ per element $K$ ($1$ = high order, so $\alpha=1-\mathsf l_K$), an entropy-stable nodal DG update with a
+  low-order graph-viscosity update on a sparse SBP operator, which is
+  positivity-preserving for the Euler and the explicit Navier–Stokes
+  equations under $\Delta t\le m_i/(2\lambda_i)$ (Theorem 5.2; page-local:
+  $m_i$ the lumped mass, $\lambda_i$ the summed
+  graph-viscosity coefficients, $\mathsf l_K$). The parameter is the largest $\mathsf l_K\in[0,1]$
+  keeping every node above the relaxed bounds
+  $\rho\ge\zeta_{\mathrm r}\rho(u^{\mathrm L}_i)$ and
+  $\rho e\ge\zeta_{\mathrm r}\rho e(u^{\mathrm L}_i)$, $u^{\mathrm L}_i$ the low-order nodal
+  value and $\zeta_{\mathrm r}\in(0,1]$ page-local; it is obtained in
+  closed form, from a linear condition for density and a quadratic one
+  for internal energy (Eqs. 38–43). Because two conservative,
+  entropy-stable semi-discretizations are blended with one parameter per
+  element, conservation and the semi-discrete cell entropy inequality are
+  kept (Theorem 6.2;
+  [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md),
+  [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md),
+  [entropy stability](/properties/entropy-stability.md)).
 - **Flux limiting in finite differences.** The
   [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)
   blends, interface by interface, a high-order flux with an admissible
@@ -387,6 +432,25 @@ The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
 ## Qualifications
+
+- **Positivity by design, not by proof.** [Paula, Adami & Adams (2023)](/sources/paula-2023.md)
+  call their time-averaged THINC reconstruction of the volume fractions
+  "positivity-preserving" (§5.2); no theorem is given, and with more than
+  two phases the normalization of the face values to $\sum_k\phi_k=1$
+  can defeat it, so their triple-point run needs CFL 0.15 (§7.5;
+  [discrete equations method](/methods/discrete-equations-method.md)).
+  [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) take the CFL-type
+  condition of Wu and Shu's provably positive MHD scheme without proving
+  positivity for their own one-step HLL-GRP scheme (§2.2); no negative
+  density or pressure occurs in their runs (§5).
+- **Positivity only, not monotonicity.** Lin et al.'s blending enforces
+  positivity alone; their Shu–Osher, Sedov and double-Mach solutions keep
+  oscillations near shocks, reduced by a larger $\zeta_{\mathrm r}=0.5$ or
+  by an added shock-capturing blending (§8.2–8.4). Their relaxed bounds
+  are stronger than the minimal bounds $\epsilon_0>0$ and avoid "the
+  time-step size converging to zero" (§6.1); the positivity step is
+  $O(h/N^2)$, observed 2–3 times smaller than the maximum stable DG step
+  (Remark 1).
 
 - **Local versus global bounds.** [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md)
   state that schemes of order above two cannot be *locally* bound
@@ -536,3 +600,8 @@ The details are on
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1, Eqs. (1.2)–(1.3); §3–§4, Theorems 1–2, Algorithm 2; §5.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Remark 2.3; Ex. 3.3, Table 3.3; Ex. 3.5–3.12, Remark 3.2; Appendix.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4 (first-order fallback).
+- [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §2.6, Theorems 2.1–2.2, Eqs. (2.9)–(2.12), Remark.
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §3.2.3, Theorem 3.2, Eqs. (37)–(41); Appendix B, Theorems B.3–B.4.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: Eq. (3); §5, Theorem 5.2, Remark 1; §6.1–6.2, Eqs. (38)–(44), Theorem 6.2; §8.2–8.4.
+- [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §5.2; §7.5.
+- [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §2.2; §5.

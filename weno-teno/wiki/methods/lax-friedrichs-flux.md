@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -21,7 +21,7 @@ $\pm\,\partial f^\pm/\partial u\ge0$, is the upwinding device of
 [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md)
 WENO and TENO: $\hat f^+_{i+1/2}$ is reconstructed from $f^+$ on a left-biased stencil,
 $\hat f^-_{i+1/2}$ from $f^-$ by the mirror rule, and $\hat f_{i+1/2}=\hat f^+_{i+1/2}+\hat f^-_{i+1/2}$
-([Li et al. (2022)](/sources/li-2022-b.md), §2, Eqs. (1)–(4);
+([Li et al. (2022b)](/sources/li-2022-b.md), §2, Eqs. (1)–(4);
 [Ye et al. (2022)](/sources/ye-2022.md), Eq. (20), $a=\max\lvert f'(u)\rvert$).
 
 ## Naming conventions
@@ -31,7 +31,7 @@ The sources disagree on words, not on mathematics. [Jeong et al. (2022)](/source
 viscosity", a global bound under a local name. [Fu (2023)](/sources/fu-2023.md)
 (§3.4 Algorithm 1) calls "Rusanov" the splitting with a **global** per-field maximum speed;
 [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) (§3) and
-[Wang et al. (2023)](/sources/wang-2023-b.md) (§1) use "Rusanov" for the **local** flux;
+[Wang et al. (2023b)](/sources/wang-2023-b.md) (§1) use "Rusanov" for the **local** flux;
 [Fu (2021)](/sources/fu-2021.md) (§5) uses "Rusanov splitting" for conventional gas dynamics
 and "LLF" for extreme cases; [Takagi et al. (2022)](/sources/takagi-2022.md) (§4) write
 "Rusanov (global/local Lax–Friedrichs)". [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md)
@@ -48,7 +48,7 @@ The recipe of these finite-difference sources is [characteristic decomposition](
 with Roe averages, LF splitting of each characteristic field with that field's maximum speed,
 nonlinear reconstruction of both split parts, and back-projection
 ([Fu (2023)](/sources/fu-2023.md), Algorithm 1, $a^{(l)}$ the maximum $l$-th characteristic
-speed over the whole domain). Users: global LF in [Li et al. (2022)](/sources/li-2022-b.md)
+speed over the whole domain). Users: global LF in [Li et al. (2022b)](/sources/li-2022-b.md)
 ("with local characteristic fields"; $\Delta t=\nu\,\Delta x/\max_i(\lvert v_i\rvert+c_i)$,
 $\nu=0.5$, Eq. (38)), [Luo & Wu (2021)](/sources/luo-2021-b.md),
 [Wang & Don (2022)](/sources/wang-2022-b.md) (§3.3, in the well-balanced shallow-water
@@ -72,10 +72,10 @@ flux and the derivative flux $f'(u)u_x$ of the finite-difference Hermite WENO of
 [Fan et al. (2023)](/sources/fan-2023.md) (§2), whose positivity-preserving flux limiter takes
 the first-order LF flux as its low-order flux (App. A;
 [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)); global LF
-with $a=\max\rho(\partial f/\partial u)$ in the A-WENO of [Li et al. (2023)](/sources/li-2023.md)
+with $a=\max\rho(\partial f/\partial u)$ in the A-WENO of [Li et al. (2023a)](/sources/li-2023.md)
 (Eq. (35)). Three sources make the choice of speed matter:
 
-- **Local characteristic LF for turbulence.** [Li et al. (2022)](/sources/li-2022.md) use
+- **Local characteristic LF for turbulence.** [Li et al. (2022a)](/sources/li-2022.md) use
   global LF splitting, componentwise or in characteristic fields, except for the
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), where they switch to local
   characteristic LF because, citing earlier work, the global one is too dissipative there
@@ -165,7 +165,7 @@ one in fluctuation form (§VI).
 - [Arun et al. (2022)](/sources/arun-2022.md) (§5) use "a Rusanov-type approximate Riemann
   solver" on hydrostatically reconstructed interface states (no formula printed; see
   [well-balancing](/properties/well-balancing.md)).
-- In [A-WENO](/methods/alternative-weno.md), as [Wang et al. (2023)](/sources/wang-2023-b.md)
+- In [A-WENO](/methods/alternative-weno.md), as [Wang et al. (2023b)](/sources/wang-2023-b.md)
   recall (§1, App. A), the Rusanov flux was the finite-volume building block before
   adaptive-diffusion variants; their "OLD" flux is LF with a
   single adaptively reduced coefficient
@@ -259,6 +259,34 @@ global LF and the diffusive flux separately, with the opposite signs and its own
 The details, the Gauss–Lobatto CFL condition and the halve-and-restart time stepping are on
 [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md).
 
+**Graph viscosity for entropy-stable DG.** [Lin et al. (2023)](/sources/lin-2023.md) (§5,
+Eqs. (16)–(28)) use the same coefficient as the graph viscosity of a sparse low-order nodal DG
+scheme for explicit Navier–Stokes: central flux differencing of the total flux with a sparse
+low-order [SBP operator](/operators/summation-by-parts-operator.md), plus
+$\sum_jd_{ij}(u_j-u_i)$ with $d_{ij}=\max\{a^{\mathrm{NS}}(u_i,\sigma_i,n_{ij}),a^{\mathrm{NS}}(u_j,\sigma_j,n_{ij})\}\lVert n_{ij}\rVert$
+(page-local $d_{ij}$, $n_{ij}$ the low-order "normal" from the skew entries of the operator,
+$\sigma_i$ the viscous auxiliary flux), where
+
+$$a^{\mathrm{NS}}(u,\sigma,n)=\epsilon_0+\lvert n\cdot v\rvert+\frac{1}{2\rho^2e}\Big(\sqrt{\rho^2(q_{\mathrm h}\cdot n)^2+2\rho^2e\,\lVert n\cdot\tau_{\mathrm v}-pn\rVert^2}+\rho\lvert q_{\mathrm h}\cdot n\rvert\Big),$$
+
+$\epsilon_0>0$ arbitrarily small ($10^{-14}$ in the tests), "motivated by" Zhang (Eq. (18)). *(compiler check, not in the sources: in 1D with
+$n=1$ it is the bound of Fan et al. above plus $\epsilon_0$.)* The forward-Euler update is then a convex
+combination of the bar states
+$\tfrac12(u_i+u_j)-\frac{1}{2a^{\mathrm{NS}}}\frac{n}{\lVert n\rVert}\cdot\big(F(u_j)-F(u_i)\big)$ of the
+total flux (Eqs. (21)–(24)), admissible by Lemma 5.1, and Theorem 5.2 proves conservation and
+positivity of density and internal energy under $\Delta t\le m_i/(2\lambda_i)$, $m_i$ the lumped
+mass and $\lambda_i$ the sum of the node's graph and face coefficients (page-local). The step
+scales as $O(h/N^2)$ and is about 2–3 times smaller than the largest stable DG step (Remark 1,
+citing earlier work). With the coefficient enlarged to
+$\max\{\lambda_{\max},a^{\mathrm{NS}}_i,a^{\mathrm{NS}}_j\}$, $\lambda_{\max}$ a maximum wave-speed bound,
+the low-order scheme is also semi-discretely entropy stable, proved by reading it as a subcell
+finite-volume scheme with LLF-type fluxes (Theorem 6.1, Eqs. (45)–(53)); for the Euler equations
+$a^{\mathrm{NS}}$ never exceeds the maximum wave speed, so the enlargement reduces to the
+wave-speed estimate $\lambda_{\max}$ (§6.2), in agreement with the compiler check on the bound of
+Fan et al. above. Details are on
+[convex limiting](/methods/convex-limiting.md) and
+[positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md).
+
 For multicomponent reacting flows [Du & Yang (2022)](/sources/du-2022-b.md) (§3.1, Eq. (3.5);
 §4.2, Lemma 4.1) extend the same construction to one partial-density equation per species
 with diffusion velocities $v^{\mathrm d}_k$ (page-local) and formation enthalpies, and prove the sharp form:
@@ -342,6 +370,16 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 
 ## Qualifications
 
+- **Wave-speed estimates are not always bounds.** Lin et al. (2023) use the Davis estimate
+  $\max\{\lvert v^-\cdot n\rvert+c^-,\lvert v^+\cdot n\rvert+c^+\}$ (Eq. (58)) in the LLF interface flux of
+  their entropy-stable DG, which is entropy stable "when the maximum wave speed estimate is
+  suitably chosen" (§4), and note, citing Guermond and Popov, that such Davis or Rusanov
+  estimates can underestimate the maximum wave speed, which could compromise the positivity and
+  entropy stability of the low-order scheme; no issue was observed in their tests (footnote 3).
+- Lin et al. print the Navier–Stokes coefficient with $\lVert n\cdot\tau_{\mathrm v}-pn\rVert^2$ in
+  Eq. (18) and without the square in the condition (20) that motivates it, and $u_2$ in place of
+  $n_2$ in the second component of $n\cdot\tau_{\mathrm v}$ (Eq. (18)).
+
 - Wu & Shu's LF statements are proved for the first-order scheme; the high-order FV/DG MHD
   result uses Gauss-quadrature LF fluxes with a viscosity bound and its proof is "omitted"
   (Thm. 6.2).
@@ -350,7 +388,7 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2 (Eqs. (1)–(4)), Eq. (38).
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2 (Eqs. (1)–(4)), Eq. (38).
 - [Ye et al. (2022)](/sources/ye-2022.md) — Eqs. (13), (19)–(22).
 - [Fu (2023)](/sources/fu-2023.md) — §3.4 (Algorithm 1), §3.6.
 - [Fu (2021)](/sources/fu-2021.md) — §5, §5.7 (arXiv v1).
@@ -364,7 +402,7 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Cui et al. (2024)](/sources/cui-2024.md) — §7, Remark 7.7 (arXiv v1).
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §3 (Prop. 1, Eqs. (25), (30)–(33)), §5.2 (arXiv v2).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — §5.1, §5.3, Thms. 6.1–6.2 (arXiv v1).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, App. A.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, App. A.
 - [Fan et al. (2021)](/sources/fan-2021.md) — §3.1 (Eqs. (3.4)–(3.5), (3.11)–(3.13), Thm. 1), §3.2 (Eqs. (3.23)–(3.24)).
 - [Pazner (2021)](/sources/pazner-2021.md) — §2 (Eq. (6)), §3.1 (Eqs. (30)–(39), Props. 5–7) (arXiv v1).
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — §3.3.1 (Eqs. (52)–(60)), §6 (arXiv v1).
@@ -385,8 +423,8 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Liang et al. (2022)](/sources/liang-2022.md) — §3.
 - [Fan et al. (2023)](/sources/fan-2023.md) — §2, App. A.
 - [Fan et al. (2022)](/sources/fan-2022.md) — §3 (Eqs. (3.3)–(3.10)), §4 (Eqs. (4.1)–(4.4)).
-- [Li et al. (2023)](/sources/li-2023.md) — Eq. (35), §4.2.
-- [Li et al. (2022)](/sources/li-2022.md) — §3.4, §4.4.
+- [Li et al. (2023a)](/sources/li-2023.md) — Eq. (35), §4.2.
+- [Li et al. (2022a)](/sources/li-2022.md) — §3.4, §4.4.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §4 (Exs. 4.4, 4.5, 4.7, 4.12–4.13).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §1, §3.3.1 (Eq. (3.32)) (arXiv v2).
 - [Kou et al. (2022)](/sources/kou-2022.md) — Eq. (15).
@@ -397,3 +435,4 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.3 (Eqs. (3.11)–(3.14)), §5 (arXiv v1).
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, Table 2, §7.4 (Eqs. (48)–(50), Figs. 20–21) (arXiv v1).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1.2 (Eq. (21)), §4.2, App. B (arXiv v2).
+- [Lin et al. (2023)](/sources/lin-2023.md) — §4, §5 (Eqs. (16)–(28), Lemma 5.1, Thm. 5.2, Remark 1), §6.2 (Eqs. (45)–(53), Thm. 6.1), §8 (Eq. (58), footnote 3) (arXiv v2).

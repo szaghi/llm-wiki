@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Well-balancing"
-description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest or a hydrostatic atmosphere exactly; in this bundle it follows from affine- or scale-invariant WENO interpolation, stationary-contact-preserving fluctuations, equilibrium variables, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known equilibrium."
+description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest, a moving-water equilibrium or a hydrostatic atmosphere exactly; in this bundle it follows from affine- or scale-invariant WENO interpolation, stationary-contact-preserving fluctuations, equilibrium variables, flux globalization, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known equilibrium."
 status: established
-aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing]
+aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Well-balancing
@@ -15,7 +15,10 @@ a given steady state if discrete data equal to that steady state stay unchanged 
 round-off, i.e. the discrete flux divergence and the discrete source cancel exactly. For the
 shallow-water equations the steady state of interest is still water, "lake at rest";
 [Wang & Don (2022)](/sources/wang-2022-b.md) (§2–§3.3) use "WB-property" and "C-property"
-for its exact preservation. Below, $h$ is the water depth, $b$ the bottom, $H_{\mathrm s}=h+b$
+for its exact preservation. Moving-water and discontinuous equilibria are a stronger target,
+reached in the bundle by [flux globalization](/methods/flux-globalization.md) (section below);
+the equilibria themselves are on [shallow-water equations](/definitions/shallow-water-equations.md).
+Below, $h$ is the water depth, $b$ the bottom, $H_{\mathrm s}=h+b$
 the free-surface level and $g$ gravity (page-local; $h$ is not a numerical flux here).
 
 ## Shallow water: WB from affine invariance
@@ -93,7 +96,7 @@ built-in anti-diffusion, the path integrals and the cell integrals of $\partial_
 $\partial_xh_1$ vanish, the point fluxes are constant because $q_1=q_2=0$ removes the only
 $b$-dependence, and the A-WENO derivative corrections of constant fluxes are zero, so the right
 side vanishes exactly.)* The same paper names flux globalization as the route to moving-water
-equilibria, left to future work (§8).
+equilibria, left to future work (§8); the next section records two sources that take it.
 
 **Evidence** (§7.1, Ex. 2, Fig. 7.3): a $10^{-5}$ perturbation of $h_1$ on $0.1<x<0.2$ over the
 lake at rest $(h_1,w)=(1,-1)$, $g=10$, $r=0.98$, on $[-0.2,1]$ with $\Delta x=1/100$ to
@@ -101,6 +104,56 @@ $t=0.15$, over a smooth bump $b=0.25(\cos(10\pi(x-0.5))+1)-2$ on $0.4<x<0.6$ and
 ($b=-1.5$ for $x>0.5$, $-2$ otherwise): both the fifth-order and the second-order scheme
 propagate the perturbation without spurious oscillations, the fifth-order one with much higher
 resolution (reference: $\Delta x=1/1600$).
+
+[Kurganov et al. (2023)](/sources/kurganov-2023.md) state that the original second-order
+path-conservative central-upwind scheme preserves only this lake at rest of the two-layer
+system (§1, §4).
+
+## Moving and discontinuous equilibria: flux globalization
+
+Writing $\partial_tu+\partial_xK=0$ with a global flux $K=f-\int^xS$ (page-local) makes every steady state a
+state of constant $K$ ([flux globalization](/methods/flux-globalization.md)). Two sources build
+well-balanced schemes on it, with different discrete notions of the preserved state.
+
+- **Equilibrium variables** ([Kurganov et al. (2023)](/sources/kurganov-2023.md), §4). For
+  non-conservative systems whose steady states are $\mathsf E(u)\equiv$ const for algebraic
+  equilibrium variables $\mathsf E$ (page-local), the second-order scheme reconstructs
+  $\mathsf E$, integrates the non-conservative product along a path linear in $\mathsf E$ with
+  trapezoidal quadratures, and lets the global part jump at interfaces; Theorem 4.1 proves that
+  discrete data with constant $\mathsf E$ have constant global flux. A further condition is
+  needed: the diffusion term of the [central-upwind](/methods/central-upwind-scheme.md) flux
+  vanishes at such states only if it is built from modified interface states that coincide
+  whenever $\mathsf E^+=\mathsf E^-$ (§4.2). The equilibria covered include discontinuous nozzle
+  flows at a jump of the cross-section and two-layer moving-water states over a step; a
+  discontinuous nozzle steady state is kept with errors $0$ and $8.88\times10^{-16}$ (Table 7.1).
+- **Constant global-flux averages** ([Ciallella et al. (2023)](/sources/ciallella-2023.md), §3).
+  The arbitrary-order WENO finite-volume scheme for single-layer shallow water with friction
+  keeps every discrete state with $\bar K_i\equiv K_0$ (Prop. 3.1), and, with a split bottom
+  source, shared WENO weights and an interface jump of the global part, the lake at rest
+  exactly (Prop. 3.3), at $L^2$ errors of about $10^{-13}$ (Table 1). The discrete steady states
+  are not the analytical moving equilibria (Remark 3.2), so the method "is not exactly well
+  balanced with respect to all analytically computable equilibria" (§1); on moving equilibria
+  its errors are 2 to 5 orders of magnitude below a standard WENO scheme at orders 3 and 5, and
+  $q$ and $K$ are kept to about $10^{-9}$ (§5.3).
+
+Ciallella et al. do not compare with still-water well-balanced WENO schemes, citing earlier
+work that such methods "do not provide better performances on moving-water equilibria" (§5).
+
+## Stationarity preservation of Active Flux
+
+For linear acoustics, the analogue of well-balancing is the preservation of all discrete
+stationary states *(compiler check, not in the sources: for
+$\partial_tp+c\nabla\cdot v=0$, $\partial_tv+c\nabla p=0$ these are the states with
+$\nabla\cdot v=0$ and $\nabla p=0$)*. As recalled by
+[Calhoun et al. (2023)](/sources/calhoun-2023.md) (§1), Barsukow showed that the Cartesian
+[Active Flux](/methods/active-flux.md) method with the evolution operator of Barsukow et al. is
+stationarity preserving: it adds no dissipation to discrete representations of all stationary
+states. Calhoun et al. find that the property "does not carry over to adaptively refined
+meshes" with their approaches: with that operator the solver on
+[AMR](/methods/adaptive-mesh-refinement.md) grids becomes unstable, stated as an observation
+without analysis (§4.6, Conclusions). Their own Eymann–Roe operator is not stationarity
+preserving, yet third order plus AMR keeps a stationary vortex accurate to $t=100$ (§4.6,
+Fig. 16).
 
 ## Euler with gravity: hydrostatic reconstruction
 
@@ -160,7 +213,7 @@ $\varepsilon=1$ and oscillates at $\varepsilon=0.1,0.01$.
 
 ## Euler with gravity: WB from scale invariance
 
-[Li et al. (2023)](/sources/li-2023.md) (§4, after the methodology of Li and Gao) make a
+[Li et al. (2023a)](/sources/li-2023.md) (§4, after the methodology of Li and Gao) make a
 characteristic-wise fifth-order [A-WENO](/methods/alternative-weno.md) scheme well-balanced for
 the Euler equations with gravity, $S=(0,-\rho\,\partial_x\phi,-\rho v\,\partial_x\phi)$, and a
 known hydrostatic equilibrium $v=0$, $\partial_xp_{\mathrm e}=-\rho_{\mathrm e}\partial_x\phi$
@@ -237,7 +290,7 @@ sense only.
 - Balsara et al. write "We don't consider well-balancing in this paper" (§III) and later
   call the method well-balanced (§VIII.c); their evidence is visual agreement with the
   reference results of Dumbser & Balsara (2016), not a round-off equilibrium measurement.
-- **Three kinds of evidence.** Wang & Don and Li et al. (2023) measure round-off
+- **Three kinds of evidence.** Wang & Don and Li et al. (2023a) measure round-off
   ($\approx10^{-33}$ to $10^{-34}$ in quadruple precision); Arun et al. state that the challenge is to resolve perturbations
   "up to machine precision" (§1) but report $L^1$ errors of $10^{-6}$ to $10^{-4}$ on 100
   cells; they interpolate the exact equilibrium onto the grid (§5.2.1); Kanbar et al. print
@@ -250,6 +303,12 @@ sense only.
   truncation-level rather than round-off errors.)*
 - Arun et al.'s scheme is first order in space and time; the deviation formulation of
   Kanbar et al. is applied to a second-order scheme whose order is not measured.
+- **Which equilibrium is preserved.** "Well-balanced" ranges in the bundle from the lake at rest
+  or a supplied hydrostatic state (Wang & Don, Li et al. (2023a), Arun et al., Kanbar et al.) to
+  every discrete state of constant equilibrium variables (Kurganov et al.) or of constant
+  global-flux averages (Ciallella et al.); the last two are fully discrete notions, and
+  Ciallella et al. say explicitly that theirs differ from the analytical equilibria. Claims are
+  comparable only within one notion.
 
 # Citations
 
@@ -258,4 +317,7 @@ sense only.
 - [Arun et al. (2022)](/sources/arun-2022.md) — §1, §2.1, §4 (Def. 4.1, Eqs. (4.6), (4.14), (4.16), Thm. 4.3, Remark 4.2), §5.2 (Tables 1–2, Figs. 3–10) (arXiv v1).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §6.1 (Eqs. (6.1)–(6.4), Remark 6.1), §7.1 (Ex. 2, Fig. 7.3), §8.
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §3 (Eqs. (4)–(7), (17)), §§5.3–5.5, §6 (arXiv v1).
-- [Li et al. (2023)](/sources/li-2023.md) — §4 (Eqs. (57)–(71), Thm. 5), App. A, §5 (Tables 3–8, Figs. 9–14).
+- [Li et al. (2023a)](/sources/li-2023.md) — §4 (Eqs. (57)–(71), Thm. 5), App. A, §5 (Tables 3–8, Figs. 9–14).
+- [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1, §4 (Theorem 4.1, Eqs. (4.13)–(4.16)), §7 (Table 7.1).
+- [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §1, §3 (Props. 3.1, 3.3, Remark 3.2), §5 (Table 1, §5.3) (author manuscript).
+- [Calhoun et al. (2023)](/sources/calhoun-2023.md) — §1, §4.6 (Fig. 16), Conclusions (arXiv v2).

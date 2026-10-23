@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -17,15 +17,15 @@ top, and a triple point forms on the upper wall from which a vortex
 sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
-scheme survives and how much small-scale structure it resolves. Twelve
-sources of the bundle run it, three of them on triangles (one of these
+scheme survives and how much small-scale structure it resolves. Fifteen
+sources of the bundle run it, five of them on triangles (one of these
 in a relativistic version) and one as a steady-state problem; those
 that name an origin attribute it to Woodward & Colella.
 
 ## Setup
 
 [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.g and
-[Li et al. (2022)](/sources/li-2022-b.md) §4.4.3 print the same data:
+[Li et al. (2022b)](/sources/li-2022-b.md) §4.4.3 print the same data:
 domain $[0,3]\times[0,1]$, step corner at $(0.6,0.2)$, Mach 3 inflow
 with $\rho=1.4$, $p=1$, $\gamma=1.4$, final time $t=4$. The sound speed
 of that state is $c=\sqrt{1.4\cdot1/1.4}=1$, so the inflow velocity is
@@ -64,6 +64,20 @@ and the contour levels are those of the length-3 runs above, so the
 mesh and the contours fit a tunnel of length 3, not the printed upper
 bound 1 *(compiler check, not in the sources)*.
 
+[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 16 print the domain
+as $[0,0.6]\times[0,1]\cup[0.6,3]\times[0.2,1]$ with $(1.4,3.0,0,1.0)$,
+inflow/outflow and reflective walls, to $t=4$.
+[Liu et al. (2023b)](/sources/liu-2023-b.md) §5.3 print
+$[0,3]\times[0,1]$, a step of height 0.2 at $x=0.6$, inflow
+$(1.4,3,0,1)$, reflecting top and bottom, $t=4$.
+[Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.6 (arXiv v1)
+print the domain $[0,3]\times[0,1]\setminus[0.6,3]\times[0,0.2]$ with
+inflow $\rho=1$, $v=(3,0)$, $p=1/1.4$, slip walls, no corner fix, to
+$t=4$. Their state has sound speed $\sqrt{1.4\cdot(1/1.4)/1}=1$, so it is
+the same Mach 3 flow as $(1.4,3,0,1)$ with density and pressure both
+divided by 1.4, which changes no velocity and no wave pattern
+*(compiler check, not in the sources)*.
+
 **Steady version.** [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.5
 march the same tunnel ($3\times1$, step of height 0.2 on $[0.6,3]$,
 Mach 3 inflow $(1.4,3,0,1)$) to a steady state on $90\times30$ cells,
@@ -82,7 +96,7 @@ fix at the corner.
 | Source | Scheme | Grid | CFL |
 |---|---|---|---|
 | [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.3.4 | [WENO-Z+M](/methods/weno-z-plus.md) vs WENO-Z, WENO-Z+, WENO-IS-I, WENO-Z7, WENO-Z9 | $481\times161$ | 0.5 |
-| [Li et al. (2022)](/sources/li-2022-b.md) §4.4.3 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $600\times200$ | not restated for 2D |
+| [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.3 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $600\times200$ | not restated for 2D |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §IX.g | seventh-order [FD-WENO in fluctuation form](/methods/fluctuation-form-fd-weno.md), HLL-based (Fig. 17 caption) | $1440\times480$ | 0.4 |
 | [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) Ex. 3.10 | sixth-order moment-based [multi-resolution HWENO](/methods/hermite-weno.md), HLLC: HWENO6 vs HWENO6-M5-I | $600\times200$ | 0.6 |
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.8 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR) vs WENO-JS5, WENO-AO5 | $1200\times400$ | 0.6 |
@@ -92,6 +106,9 @@ fix at the corner.
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.7 | [p-adaptive DG with FV-subcell hp shock capturing](/methods/hp-adaptation.md) in [FLEXI](/software/flexi.md), HLLE, density indicator | $180\times60\times1$ minus the $144\times12\times1$ step, $h=1/60$ | — |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.9 | finite-difference [HWENO](/methods/hermite-weno.md): HWENO-R, HWENO-L vs WENO-ZQ | $960\times320$ | — |
 | [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.5 | steady [hybrid WENO](/methods/hybrid-weno.md) WENO-H vs CWENOZ (WENO-ZQ), MRWENO, WENO-JS | $90\times30$ | — |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 16 | fifth-order FV IMWENO-P (symmetric smoothness indicators) vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P; global LF, SSP-RK3 | $900\times300$ | 0.5 |
+| [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.3 | implicit fourth-order [RBF differential-quadrature](/methods/rbf-differential-quadrature.md) FV (IRBFDQ-FV), Roe flux, PEEB limiter, vs a second-order FV scheme | 108,543 triangles ($h\approx1/160$ equivalent) | — |
+| [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.6 | fourth-order compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md), no troubled-cell detection | triangles, $h=1/120$ | 0.8 |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.9 | third-order FV WENO on triangles, physical-constraint-preserving limiter, HLL (relativistic) | triangles, $h=1/160$ | 0.5 |
 
 ## What the benchmark measures
@@ -104,9 +121,11 @@ WENO-Z9 on the [double Mach reflection](/benchmarks/double-mach-reflection.md),
 so the two problems together expose a stability margin that design
 order alone does not show.
 
-**The corner without a fix.** Three sources describe no
-Woodward–Colella corner treatment: Yu & Hesthaven and Chen & Wu say
-so, Du et al. mention only local mesh refinement. Du et al. see a spurious Mach stem at
+**The corner without a fix.** Four sources describe no
+Woodward–Colella corner treatment: Yu & Hesthaven, Chen & Wu and Zhao
+et al. say so, Du et al. mention only local mesh refinement. Zhao et
+al.'s compact gas-kinetic scheme at CFL 0.8 captures the slip-line
+instability without a corner fix (Fig. 9). Du et al. see a spurious Mach stem at
 the bottom wall, caused by the corner, in the $P^2$ result with the
 original limiter, which "decreases when using the improved limiter";
 the improved limiter saves 9.35 % ($P^1$) and 33.96 % ($P^2$) of the
@@ -153,7 +172,16 @@ the vortex sheet (§4.4.3, Fig. 9). Balsara et al. show "pronounced"
 vortex-sheet roll-up at seventh order on $1440\times480$ (Fig. 17).
 Luo & Wu plot 60 density contours from 0.2568 to 6.607. Wang et al.
 (2021) find the multi-resolution schemes resolving the roll-up better
-than WENO-JS5 (Fig. 5.14).
+than WENO-JS5 (Fig. 5.14). In Zhong et al.'s runs all schemes capture
+the shocks sharply; WENO-JS and WENO-Z fail to resolve the vortex
+sheets from the Mach stem, WENO-NS, WENO-P, MWENO-P and IMWENO-P show
+them, and IMWENO-P and WENO-NS roll them up more intensely than WENO-P
+and MWENO-P (Fig. 21). On triangles, Liu et al. (2023b) find
+that their fourth-order IRBFDQ-FV captures the Kelvin–Helmholtz
+instability along the contact discontinuity, which their second-order
+scheme does not, and separates the shock from the wall-reflected wave;
+the pattern agrees with k-exact finite-volume results they cite
+(Fig. 8).
 
 **Hermite WENO and its first moments.** Li, Shu & Qiu recall that the
 original Hermite WENO schemes are "not stable enough" for the forward
@@ -184,7 +212,7 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 # Citations
 
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.4, Fig. 16.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.4.3, Fig. 9.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.3, Fig. 9.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §IX.g, Fig. 17.
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1; Ex. 3.10, Fig. 3.8; comment p. 31 (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — Example 5.8, Fig. 5.14.
@@ -195,3 +223,6 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.7, Table 4, Fig. 16.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.9, Fig. 3.13.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.5.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 16, Fig. 21.
+- [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.3, Fig. 8.
+- [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.6, Fig. 9 (arXiv v1).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Path-conservative schemes"
-description: 'Path-conservative schemes discretize systems with a non-conservative product $\mathcal C(u)\partial_xu$ by integrating it along a path between interface states and over each cell; the central-upwind (PCCU) and HLL/HLLI fluctuation forms of the bundle both use the straight-line path and reduce to conservative fluxes when $\mathcal C=0$.'
+description: 'Path-conservative schemes discretize systems with a non-conservative product $\mathcal C(u)\partial_xu$ by integrating it along a path between interface states and over each cell; the central-upwind (PCCU) and HLL/HLLI fluctuation forms of the bundle use the straight-line path in $u$ or, for well-balancing, a path linear in equilibrium variables, and reduce to conservative fluxes when $\mathcal C=0$.'
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Path-conservative schemes
@@ -21,17 +21,20 @@ term $\mathcal C(u)\partial_xu$, so neither the conservative form of the
 [Chu et al. (2022)](/sources/chu-2022.md) (§1, §2), weak solutions are then defined as Borel
 measures following Dal Maso, LeFloch and Murat, which requires a family of paths in state
 space connecting the two sides of a jump, and path-conservative schemes discretize the
-product by integrating it along such a path at each interface and over each cell. Both
-bundle sources use the straight-line (linear segment) path
+product by integrating it along such a path at each interface and over each cell;
+[Kurganov et al. (2023)](/sources/kurganov-2023.md) (§1) recall the same Borel-measure basis.
+Chu et al. and Balsara et al. use the straight-line (linear segment) path
 
 $$\Psi_{i+1/2}(\mathsf s)=u^-_{i+1/2}+\mathsf s\,\big(u^+_{i+1/2}-u^-_{i+1/2}\big),\qquad \mathsf s\in[0,1]$$
 
 (page-local $\Psi$ and path parameter $\mathsf s$; [Chu et al. (2022)](/sources/chu-2022.md),
-Eq. (4.2); [Balsara et al. (2024)](/sources/balsara-2024.md), Eqs. (3.2)–(3.3)).
+Eq. (4.2); [Balsara et al. (2024)](/sources/balsara-2024.md), Eqs. (3.2)–(3.3)); the
+well-balanced variant of Kurganov et al. uses a path linear in equilibrium variables (section
+below).
 
-**Sign convention.** Chu et al. write $\partial_tu+\partial_xf=B(u)\partial_xu$ with the product
-on the right-hand side (§1, Eq. (1.1)), Balsara et al. write it on the left with $+C$
-(Eq. (2.4)); this page uses the registry form above, so Chu et al.'s $B$ is $-\mathcal C$.
+**Sign convention.** Chu et al. and Kurganov et al. write $\partial_tu+\partial_xf=B(u)\partial_xu$ with the product
+on the right-hand side (§1, Eq. (1.1) in both), Balsara et al. write it on the left with $+C$
+(Eq. (2.4)); this page uses the registry form above, so their $B$ is $-\mathcal C$.
 
 ## The two discrete non-conservative terms
 
@@ -51,8 +54,9 @@ The schemes differ in how the interface term is shared between the two neighbour
 ## Path-conservative central-upwind (PCCU) scheme
 
 The second-order finite-volume PCCU scheme of Castro Díaz, Kurganov and Morales de Luna
-(2019), as recalled by [Chu et al. (2022)](/sources/chu-2022.md) (§2, Eqs. (2.1)–(2.9)), is,
-in the sign convention of this page,
+(2019), as recalled by [Chu et al. (2022)](/sources/chu-2022.md) (§2, Eqs. (2.1)–(2.9)) and
+by [Kurganov et al. (2023)](/sources/kurganov-2023.md) (§2, Eqs. (2.1)–(2.6)), is, in the sign
+convention of this page,
 
 $$\frac{d\bar u_i}{dt}=-\frac1{\Delta x}\Big[\hat f_{i+1/2}-\hat f_{i-1/2}+\mathcal B_i
 +\frac{a^+_{i-1/2}}{a^+_{i-1/2}-a^-_{i-1/2}}\,\mathcal B_{\Psi,i-1/2}
@@ -118,26 +122,54 @@ integrals "often sufficient" (§III). Its fluctuations, plus an interior quasili
 the [fluctuation-form FD-WENO](/methods/fluctuation-form-fd-weno.md) scheme; Balsara et al.
 do not cite the Dal Maso–LeFloch–Murat theory by name.
 
+## Well-balanced PCCU: paths linear in equilibrium variables
+
+[Kurganov et al. (2023)](/sources/kurganov-2023.md) (§4) make the second-order PCCU scheme
+well-balanced for steady states with algebraic equilibrium variables $\mathsf E(u)\equiv$ const,
+where $\partial_xf+\mathcal C\,\partial_xu=\mathsf M(u)\,\partial_x\mathsf E(u)$ with $\mathsf M$
+invertible (page-local; §1, Eqs. (1.4)–(1.5)). Derived through
+[flux globalization](/methods/flux-globalization.md), the scheme is in local form (Remark 4.2)
+the PCCU scheme above with three changes:
+
+1. **reconstruct $\mathsf E$**, not $u$, and recover $u^\pm$ from $\mathsf E(u^\pm)=\mathsf E^\pm$;
+2. take the **path linear in $\mathsf E$**, $\mathsf E(\Psi(\mathsf s))=\mathsf E^-+\mathsf s(\mathsf E^+-\mathsf E^-)$
+   (Eq. (4.7)), and evaluate $\mathcal B_i$ and $\mathcal B_{\Psi,i+1/2}$ by the trapezoidal rule on
+   $\mathsf M\,\partial_x\mathsf E$, so that each differs from the corresponding flux difference
+   only by a term proportional to the jump of $\mathsf E$ (Eqs. (4.8)–(4.10)); at a discrete steady state that term vanishes and
+   the flux differences cancel the non-conservative contributions exactly (Theorem 4.1);
+3. build the **diffusion term** of the [central-upwind flux](/methods/central-upwind-scheme.md)
+   from modified states $\check u^\pm$ (page-local) that coincide when $\mathsf E^+=\mathsf E^-$ (Eq. (4.15)).
+
+The original PCCU scheme with a path linear in $u$ preserves only the lake at rest of two-layer
+shallow water and fails on a discontinuous steady state over a step (§1, §7.2 Ex. 5), and for
+the nozzle system the non-well-balanced PCCU variant with linear paths in $p$ and the
+cross-section produces large oscillations on small perturbations (§7.1, Ex. 3). A similar
+segment-path idea, applied to the jump of a global source integral across interfaces, makes
+the WENO global-flux scheme of [Ciallella et al. (2023)](/sources/ciallella-2023.md) exact at the
+lake at rest; the authors call it "similar to classical strategies used in well-balanced path
+conservative methods" (§3.3).
+
 ## Comparison of the two routes
 
-| | PCCU / A-WENO PCCU (Chu et al. 2022) | fluctuation-form FD-WENO (Balsara et al. 2024) |
-|---|---|---|
-| unknowns | cell averages (2nd order) or point values (5th order) | point values |
-| interface solver | none: one-sided speeds $a^\pm$ | HLL or HLLI, implicit resolved state |
-| sharing of $\mathcal B_\Psi$ | weights $a^\pm/(a^+-a^-)$ | HLL fluctuations $\mathcal D^\pm$ |
-| cell term | quadrature of $\mathcal C\partial_x\tilde u$ (Eq. (4.4)) | interior term $A(u_i)(u^-_{i+1/2}-u^+_{i-1/2})$ |
-| path | straight line | straight line |
-| stationary contacts | not claimed | preserved with HLLI anti-diffusion |
-| lake at rest | via equilibrium variables, asserted | passed "without any special modifications" |
+| | PCCU / A-WENO PCCU (Chu et al. 2022) | well-balanced PCCU (Kurganov et al. 2023) | fluctuation-form FD-WENO (Balsara et al. 2024) |
+|---|---|---|---|
+| unknowns | cell averages (2nd order) or point values (5th order) | cell averages (2nd order) | point values |
+| interface solver | none: one-sided speeds $a^\pm$ | none: one-sided speeds $a^\pm$ | HLL or HLLI, implicit resolved state |
+| sharing of $\mathcal B_\Psi$ | weights $a^\pm/(a^+-a^-)$ | weights $a^\pm/(a^+-a^-)$ | HLL fluctuations $\mathcal D^\pm$ |
+| cell term | quadrature of $\mathcal C\partial_x\tilde u$ (Eq. (4.4)) | trapezoidal rule on $\mathsf M\,\partial_x\mathsf E$ (Eq. (4.8)) | interior term $A(u_i)(u^-_{i+1/2}-u^+_{i-1/2})$ |
+| path | straight line in $u$ | straight line in $\mathsf E$ | straight line in $u$ |
+| stationary contacts | not claimed | discontinuous steady states preserved (Theorem 4.1) | preserved with HLLI anti-diffusion |
+| lake at rest | via equilibrium variables, asserted | special case of constant $\mathsf E$ *(compiler check, not in the sources: $q_1=q_2=0$ and constant layer energies give $h_1$, $h_2+b$ constant)* | passed "without any special modifications" |
 
-Both use the two-layer shallow-water equations as a test system. For lake-at-rest
+All three use the two-layer shallow-water equations as a test system. For lake-at-rest
 preservation see [well-balancing](/properties/well-balancing.md); for exact stationary jumps
 see [stationary contact preservation](/properties/stationary-contact-preservation.md).
 
 ## Qualifications
 
-- Neither source discusses the dependence of the computed weak solution on the choice of
-  path; both fix the straight line.
+- None of the three sources discusses the dependence of the computed weak solution on the
+  choice of path; Chu et al. and Balsara et al. fix the straight line in $u$, Kurganov et al.
+  the straight line in $\mathsf E$, chosen for well-balancing.
 - The well-balancing of the A-WENO PCCU scheme for the two-layer lake at rest is asserted
   ("capable of exactly preserving"), with no proof and no round-off table; the evidence is the
   small-perturbation test (Chu et al., §6.1, Ex. 2).
@@ -154,3 +186,5 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 
 - [Chu et al. (2022)](/sources/chu-2022.md) — §1, §2 (Eqs. (2.1)–(2.9)), §3 (Eqs. (3.1)–(3.7)), §4 (Eqs. (4.1)–(4.4), Remark 4.1), §5 (Eq. (5.2)), §6 (Eqs. (6.1)–(6.4), Remarks 6.1–6.3), §7.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §II (Eqs. (2.4)–(2.5)), §III (Eqs. (3.1)–(3.6)), §IV (accepted manuscript).
+- [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1 (Eqs. (1.1), (1.4)–(1.5)), §2 (Eqs. (2.1)–(2.6), Remark 2.2), §4 (Eqs. (4.5)–(4.15), Theorem 4.1, Remark 4.2), §7 (Exs. 3, 5).
+- [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §3.3 (Eq. (38)) (author manuscript).

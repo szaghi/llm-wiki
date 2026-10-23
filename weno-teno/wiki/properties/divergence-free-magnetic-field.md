@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Divergence-free magnetic field
@@ -213,6 +213,30 @@ reconstruction at $200^2$ cells and for linear at $600^2$ (§4.3, Fig. 12). The 
 that local is not global: a globally divergence-free scheme would also make
 the normal component continuous, so that the Powell term vanishes (§5).
 
+**One-step time-centred form.** [Liu, Feng & Wang (2023a)](/sources/liu-2023.md)
+use the same ingredients with linear reconstruction of the primitive
+variables inside a one-step HLL generalized-Riemann-problem scheme
+([generalized Riemann problem](/methods/generalized-riemann-problem.md);
+§3.1.1, §3.2.2). The gradients of $B_2$ come from the weighted least
+squares, $\partial_xB_1=-\partial_yB_2$ is imposed in the cell, and
+$\partial_yB_1$ follows from a one-unknown least-squares fit; constraining
+$\partial_yB_2$ instead, or both and averaging, "didn't make much
+difference" (stated, no data). The Godunov–Powell source keeps Wu and
+Shu's upwind discretization by normal-field jumps but is evaluated at the
+half step $t^n+\Delta t/2$, with the interface states predicted by a
+Cauchy–Kowalewski step (Eqs. 67–70); the generalized Riemann problem at
+the edge is posed without the source, "following the usual rotation
+schemes", because adding it "may affect the stability and accuracy"
+(§3.1.3). They monitor the normalized divergence
+$\Delta x\,\lvert\nabla\cdot B\rvert_i/\lvert B\rvert_i$, computed from
+the normal-field jumps (Eqs. 86–87). Its global norm is comparable to or
+lower than that of forward-Euler and two-stage Runge–Kutta HLL schemes
+with the same reconstruction on the [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+(run to $t=100$ without negative pressure), concentrates at the shock
+front of the low-$\beta_{\mathrm p}$ [blast wave](/benchmarks/mhd-blast-wave.md),
+and stays at the $10^{-3}$ level on a 3D blast wave at $200^3$
+(§4.3–4.6, Figs. 7–11, 16–20).
+
 ## Constrained transport
 
 **Unstaggered central scheme.** [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md)
@@ -401,6 +425,10 @@ to $t=1$ in 2D and the 3D extension use projection.
   for the code; a degree-2 run of the Mach 800 jet fails with negative
   pressure unless the SVD truncation of the least-squares solve is loosened
   (§3.3.3, §4.5).
+- Liu et al. (2023a) do not state which discrete divergence enters the
+  Cauchy–Kowalewski predictor of the source (Eq. 70); with the locally
+  divergence-free reconstruction the in-cell divergence is zero. Their
+  divergence comparisons are relative to their own two baseline schemes.
 - Lesur et al.'s round-off growth rates ($O(n)$ with super
   time-stepping, $O(\sqrt n)$ without) are stated from their tests with no
   figure; Dao & Nazarov's ranking of cleaning methods rests on one coarse
@@ -420,6 +448,7 @@ to $t=1$ in 2D and the 3D extension use projection.
 # Citations
 
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §6 (Eqs. (6.3)–(6.5), (6.17)–(6.22); Thms 6.1, 6.2, 6.4; Rem. 6.3); §7 (Ex. 7.1–7.2, Figs. 5–6).
+- [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §2.1–2.2, Eqs. (1)–(7); §3.1.1, Eqs. (19)–(24); §3.1.3; §3.2.2, Eqs. (67)–(70); §4.3–4.6, Eqs. (86)–(87), Figs. 7–11, 16–20.
 - [Liu et al. (2021)](/sources/liu-2021.md) — Eq. (1); §3.1–§3.2 (Eqs. (15)–(26)); §3.3.3 (Eqs. (32)–(35)); §4.3 (Fig. 12); §4.5; §5.
 - [Kanbar, Touma & Klingenberg (2022)](/sources/kanbar-2022.md) — arXiv v1: §4 (Eqs. (18)–(21)); §5.1–§5.2, §5.5 (Figs. 3–5, 10–11); §6.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §2.2 (Eqs. (13)–(15), (21)–(22)); §3; §6; §6.2 (Figs. 9–10).

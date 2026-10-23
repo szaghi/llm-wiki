@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -107,6 +107,27 @@ two-point fluxes. Duan & Tang (sixth order, $n_{\mathrm o}=3$) and Li, Duan
 & Tang build their moving-mesh TeCNO schemes on it
 ([adaptive moving mesh](/methods/adaptive-moving-mesh.md),
 [TeCNO schemes](/methods/tecno-scheme.md)).
+
+[De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) state the same
+construction from a central derivative formula (App. A, Eqs. (16)–(18),
+after Theorem 3.1 of Ranocha and after Pirozzoli; arXiv v2). If
+$\partial_x\phi_i\approx\sum_{k=-L_{\mathrm s}}^{L_{\mathrm s}}\mathsf a_k\phi_{i+k}$ with central weights
+$\mathsf a_k=-\mathsf a_{-k}$ (page-local $\mathsf a_k$ and half-width $L_{\mathrm s}$), then
+$\partial_xf\approx\sum_k2\mathsf a_k\tilde f(u_i,u_{i+k})$ with the same order, and
+the central sum is the difference of
+
+$$\hat f_{i+1/2}=2\sum_{k=1}^{L_{\mathrm s}}\mathsf a_k\sum_{m=0}^{k-1}\tilde f\big(u_{i-m},u_{i-m+k}\big).$$
+
+This is the formula above with $c_k=2\mathsf a_k$, and $\sum_kk\,c_k=1$ is the
+consistency of the central derivative, $\sum_{k=-L_{\mathrm s}}^{L_{\mathrm s}}k\,\mathsf a_k=1$ *(compiler
+check, not in the sources)*. The authors note that for fluxes built from
+arithmetic and product means the formula reduces to a high-order finite
+difference of a combination of advective and divergence forms, and that it
+extends high order to nonlinear two-point fluxes, such as their
+asymptotically entropy-conservative ones, for which no split-form
+representation exists. They run it at fourth and sixth order on the
+inviscid Taylor–Green vortex (§5;
+[entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
 
 ## Properties
 
@@ -310,3 +331,4 @@ Eqs. (6.1)–(6.3)).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §3.2 Prop. 3.1, Lemma 3.1, Eqs. (3.6)–(3.12), Thm. 3.2 (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Ex. 2.4 Eq. (22), §4.2.2 Figs. 7–8, §6, App. A.3 Fig. 11 (arXiv v4).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1 (arXiv v1).
+- [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — App. A Eqs. (16)–(18), §5 (arXiv v2).

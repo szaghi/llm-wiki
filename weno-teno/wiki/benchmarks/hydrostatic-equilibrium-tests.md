@@ -22,7 +22,7 @@ and whether a perturbation of small amplitude $\eta_{\mathrm p}$
 (page-local) is resolved. Equilibrium states are written
 $u_{\mathrm e}=(\rho_{\mathrm e},0,p_{\mathrm e})$.
 
-**Sign convention.** [Li et al. (2023)](/sources/li-2023.md) use the
+**Sign convention.** [Li et al. (2023a)](/sources/li-2023.md) use the
 source $-\rho\,\partial_x\phi$, under which density falls as $\phi$
 grows. [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md)
 print the source as $-\rho\,\partial_x\phi$ in their Eq. (2.2) but use
@@ -31,7 +31,7 @@ grow with $\phi$. The formulas below are as each source prints them.
 
 ## Steady states
 
-| Equilibrium | Arun et al. (2022) §5.2 | Li et al. (2023) §5 |
+| Equilibrium | Arun et al. (2022) §5.2 | Li et al. (2023a) §5 |
 |---|---|---|
 | isothermal | $\rho_{\mathrm e}=e^{\phi}$, $\gamma=1$, $\phi=x,\ x^2/2,\ \sin2\pi x$ on $[0,1]$ | $\rho_{\mathrm e}=p_{\mathrm e}=e^{-\phi}$, $\phi=x$ on $[0,1]$; 2D $\rho_0=1.21$, $\phi=x+y$ |
 | isentropic / polytropic | $\rho_{\mathrm e}=\big(1+\tfrac{\gamma-1}{\gamma}\phi\big)^{1/(\gamma-1)}$, $\gamma=1.4$ | $\rho_{\mathrm e}=\big(1-\tfrac{\gamma-1}{\gamma}\phi\big)^{1/(\gamma-1)}$, $p_{\mathrm e}=\rho_{\mathrm e}^\gamma$; 1D $\phi=3.15x$ |
@@ -133,6 +133,6 @@ not as a well-balancing one.
 
 # Citations
 
-- [Li et al. (2023)](/sources/li-2023.md) — §5.1–5.2, Theorem 5, Tables 3–8, Figs. 9–14.
+- [Li et al. (2023a)](/sources/li-2023.md) — §5.1–5.2, Theorem 5, Tables 3–8, Figs. 9–14.
 - [Arun, Krishnan & Samantaray (2022)](/sources/arun-2022.md) — §2, §5.1–5.2, Tables 1–2, Figs. 1–10 (arXiv v1).
 - [Kanbar et al. (2022)](/sources/kanbar-2022.md) — §5.4–5.5, Figs. 7–12 (arXiv v1).

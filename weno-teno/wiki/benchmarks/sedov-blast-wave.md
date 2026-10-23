@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Sedov blast wave"
-description: "Point-explosion benchmark in which the energy of one or a few cells drives a strong shock into cold gas of near-zero pressure, in one dimension, in a two-dimensional corner or centre and in three dimensions, with an exact similarity solution; a robustness test of positivity preservation at pressure ratios near 10^20 and of grid-aligned shock stability, with a gas–liquid variant."
+description: "Point-explosion benchmark: the energy of one or a few cells drives a strong shock into cold gas of near-zero pressure, in 1D, in a 2D corner or centre and in 3D, with an exact similarity solution; tests positivity preservation at pressure ratios near 10^20, positivity-limited DG, ALE remapping and grid-aligned shock stability, with a gas–liquid variant."
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Sedov blast wave
@@ -44,13 +44,13 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 
 Li, Li, Don & Wang and Li, Chen & Ren print the same blast in
 $(\rho,v,p)$: pressure $4\times10^{-13}$, and $2.56\times10^8$ in the
-cell $|x|\le\Delta x/2$ (Li et al. 2023), or $1.28\times10^6/\Delta x$ in
+cell $|x|\le\Delta x/2$ (Li et al. 2023a), or $1.28\times10^6/\Delta x$ in
 the cell centred at $x=2$ with zero-gradient boundaries (Li, Chen &
 Ren, who print no domain; a centre at $x=2$ suggests $[0,4]$). With
 $\gamma=1.4$, $p=(\gamma-1)E$ maps $4\times10^{-13}$ to $E=10^{-12}$ and
 $1.28\times10^6/\Delta x$ to $E=3.2\times10^6/\Delta x$, and
 $2.56\times10^8\times5\times10^{-3}=1.28\times10^6$, so all are the
-common data *(compiler check, not in the sources)*. Li et al. (2023)
+common data *(compiler check, not in the sources)*. Li et al. (2023a)
 call the pressure ratio $O(10^{21})$. Wang et al. attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
 print the deposited cell as "the centre cell" and plot density,
 velocity, pressure and the troubled cells (Fig. 3.6).
@@ -92,6 +92,20 @@ Fu's run and its ambient pressure is relatively $10^6$ times smaller,
 both immaterial for a strong blast. Fu's printed factor $\times10^4$ is
 therefore consistent with a rescaled run, not evidence of a misprint.
 
+**Lagrangian and ALE corner run.** [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md)
+§3.5.1 run the corner blast on a moving mesh of $35\times35$ cells of
+$[0,1.1]^2$: $\rho=1$, $v=0$, specific internal energy $e=10^{-14}$
+except $182.09$ in the cell containing the origin, $\gamma=1.4$,
+$p=(\gamma-1)\rho e$, reflective boundaries on all four sides, $t=1$.
+The deposited energy per unit depth is
+$182.09\,(1.1/35)^2\approx0.180$ *(compiler check, not in the
+sources)*. Both the pure Lagrangian scheme (the third-order
+positivity-preserving ENO Lagrangian scheme of Cheng & Shu) and the
+ALE method with their positivity-preserving multi-resolution WENO
+[conservative remapping](/methods/conservative-remapping.md) every 20
+steps capture the density peak and shock position and keep the radial
+symmetry, with better mesh quality in the ALE run (Figs. 13–14).
+
 Two further corner runs use the same data on $320\times320$ cells
 ($\Delta x=1.1/320$), $t=1$: [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md)
 Example 5.5, at $\mathrm{Re}=1000$ and $\mathrm{Re}=\infty$, 20 density
@@ -99,7 +113,24 @@ contours from 0.1 to 5 (Fig. 5.4), and
 [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.10, Euler,
 without positivity limiter.
 
-## Centred two-dimensional version: grid-aligned instability
+## Centred two-dimensional version
+
+**Smoothed deposit for positivity-limited DG.**
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.3 (arXiv v2) put
+the energy $E_0=1$ in the disc $r<r_0$, $r_0=4h$, $h=3/K_{1D}$ (page-local
+element count per direction), of $[-1.5,1.5]^2$ as the uniform pressure
+$p=(\gamma-1)E_0/(\pi r_0^2)$, with $\rho=1$, $v=0$, ambient
+$p=10^{-5}$, $\gamma=1.4$, periodic boundaries, $T=1$. With $N=3$
+entropy-stable DG on $K_{1D}=100$ quadrilaterals and triangles, blended
+elementwise with a low-order positivity-preserving scheme under relaxed
+bounds (relaxation $\zeta_{\mathrm r}$, their $\zeta$), all three configurations ($\zeta_{\mathrm r}=0.1$ without and with
+shock-capturing blending, $\zeta_{\mathrm r}=0.5$ without) remain robust; with
+$\zeta_{\mathrm r}=0.1$ alone spurious oscillations appear on both meshes, and
+shock capturing, or to some extent $\zeta_{\mathrm r}=0.5$, reduces them
+(Figs. 7–8, density on a log scale truncated to $[0.01,6]$). See
+[convex limiting](/methods/convex-limiting.md).
+
+### Grid-aligned instability
 
 [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) §5.9 place the blast in
 the four central cells of $[0,2.4]^2$, $960\times960$ cells:
@@ -226,3 +257,5 @@ stated (Table 4.2).
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.2, Fig. 18.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.9.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Figs. 4–5 (arXiv v1).
+- [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.1, Figs. 13–14.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.3, Eq. (65), Figs. 7–8 (arXiv v2).

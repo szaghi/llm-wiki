@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Triple-point problem"
-description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in which a shock from a high-pressure strip runs along two regions of different density, producing a vortex at the triple point with Kelvin–Helmholtz roll-up; run with one material and with two materials of different specific-heat ratio, as a test of interface and small-scale resolution."
+description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in which a shock from a high-pressure strip runs along two regions of different density, producing a vortex at the triple point with Kelvin–Helmholtz roll-up; run with one material and with two or three materials of different specific-heat ratio, as a test of interface and small-scale resolution and of multi-phase discretizations."
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Triple-point problem
@@ -50,6 +50,16 @@ points, $t=5$. Chamarthi prints the lower-right region as
 two regions fix it as $[1,7]\times[0,1.5]$ *(compiler check, not in the
 sources)*.
 
+[Paula, Adami & Adams (2023)](/sources/paula-2023.md) §7.5 run a
+**three-material** version after Pan et al. and earlier work: on
+$[0,7]\times[0,3]$ with the triple point at $(1,1.5)$, three ideal gases
+$(\rho,v,p,\gamma)=(1,0,1,1.5)$ in the left strip, $(0.125,0,0.1,1.5)$
+in the upper right and $(1,0,0.1,1.4)$ in the lower right, each region
+a separate phase, symmetry boundaries on all sides, $3584\times1536$
+cells, $t=5$, CFL 0.15. The states and ratios of specific heats are
+those of Chamarthi and of Li, Duan & Tang; the left strip and the upper
+right, which carry the same gas there, are separate phases here.
+
 ## Findings
 
 **Low-dissipation TENO.** Liang et al. compare their TENO scheme with a
@@ -83,9 +93,24 @@ vorticity on $1792\times768$ is comparable to, and in places "much more
 enhanced than", that of Pan et al. on $3584\times1536$ (Fig. 23). Chamarthi labels the waves C1–C3, S1,
 S2, TS1, TS2 and RS1.
 
+**Discrete equations with interface capturing.** Paula et al. run
+their robust [discrete-equations method](/methods/discrete-equations-method.md)
+RDEMIC with time-averaged multi-dimensional
+[THINC](/methods/thinc-reconstruction.md) for the volume fractions,
+WENO3 for the other variables and HLLC. The vortex at the triple point
+rolls up all three phases, and thin filaments break up within it into
+small-scale structures; the wave system and the interface deformation
+are in "very good agreement" with the high-resolution results of Pan et
+al. (numerical schlieren and density at $t=3$ and $5$, Fig. 18). The CFL
+number is lowered to 0.15 "to prevent loss of positivity", because the
+normalisation of the THINC volume fractions for more than two phases
+can make their positivity-preserving time integration ineffective; that
+positivity design carries no proof (see
+[bound preservation](/properties/bound-preservation.md)).
+
 ## Qualifications
 
-- All three sources judge by density, vorticity or schlieren-type
+- All four sources judge by density, vorticity or schlieren-type
   contours; no error measure is given.
 - Liang et al. do not state $\gamma$; Li, Duan & Tang are read as arXiv
   v1, not the version of record.
@@ -98,3 +123,4 @@ S2, TS1, TS2 and RS1.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.8, Fig. 20.
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7, Table 5.2 (arXiv v1).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.17, Eq. (84), Fig. 23 (arXiv v2).
+- [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.5, Figs. 17–18.

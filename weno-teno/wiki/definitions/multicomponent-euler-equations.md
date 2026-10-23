@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Multicomponent Euler equations
@@ -37,7 +37,14 @@ $n_{\mathrm c}$ partial densities, one more unknown than needed
 Navier–Stokes system (§2, Eqs. 1–6, accepted manuscript);
 [Zhou et al. (2023)](/sources/zhou-2023.md) write the two-species
 system with $\rho$ and the single partial density $\rho Y_1$
-(Eqs. 1–2). Unlike the
+(Eqs. 1–2);
+[Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) solve the
+$n_{\mathrm c}$ partial densities, momentum and total energy, and show the
+$(\rho,\rho Y_1,\dots,\rho Y_{n_{\mathrm c}-1})$ form equivalent, also
+discretely for their scheme (§2.1, Eq. (1); Appendix A);
+[Peyvan et al. (2023)](/sources/peyvan-2023.md) solve the one-dimensional
+reacting Navier–Stokes system with all partial densities (§2.1, Eqs. (1)–(7);
+arXiv v1). Unlike the
 [five-equation model](/definitions/five-equation-model.md), the system
 is a system of conservation laws with no volume-fraction equation: the
 volume fractions follow from the closure.
@@ -64,7 +71,7 @@ with $R(Y)=C_p(Y)-C_v(Y)$. Mechanical equilibrium gives $\rho R(Y)=\rho_kR_k$
 for every $k$, so the volume fractions are explicit,
 $\phi_k=R_kY_k/R(Y)$ (Eq. 8).
 
-**Stiffened components.** Li et al. close each component with the
+**Stiffened components.** Li et al. (2022c) close each component with the
 temperature form of the [stiffened-gas law](/definitions/stiffened-gas-equation-of-state.md),
 $\rho_ke_k=C_{v,k}\rho_kT+p_{\infty,k}$, again in thermal equilibrium,
 which gives $p=\sum_k\big(\rho Y_kR_kT-p_{\infty,k}\big)$ and a mixture
@@ -79,7 +86,14 @@ Renac's $\gamma(Y)=C_p(Y)/C_v(Y)$, since $C_{v,k}=R_u/\big(W_k(\gamma_k-1)\big)$
 and $C_{p,k}=\gamma_kC_{v,k}$ with $R_u$ the universal gas constant
 *(compiler check, not in the sources)*. They name water at
 very high pressure (underwater explosions, shock lithotripsy) as the
-application.
+application. Fujiwara et al. (§2.2, Eq. (4)) write the same rule for the
+function $\mathsf G=1/(\gamma-1)$ (page-local; the source's $G$, which is
+not the registry's admissible set) as
+$$\mathsf G=\bar W\sum_k\frac{\mathsf G_kY_k}{W_k},\qquad \mathsf G_k=\frac1{\gamma_k-1},\qquad \bar W=\Big(\sum_k\frac{Y_k}{W_k}\Big)^{-1},$$
+so that $\rho e=p\,\mathsf G$; for stiffened components they add
+$\rho e=p\,\mathsf G+\mathsf A$ with the same mixing rule for
+$\mathsf A_k=\gamma_kp_{\infty,k}/(\gamma_k-1)$ (Appendix B, Eqs. (B.1)–(B.2);
+page-local $\bar W$, $\mathsf A$).
 
 **Stiffened phases in pressure–temperature form.** Nguyen et al.
 present the same system with stiffened-gas phases, written as functions
@@ -125,6 +139,21 @@ cell on the GPU (§2, Eqs. 4–7; §5; see
 is recovered from the internal energy by a Newton iteration (§2,
 Alg. 2).
 
+**Vibrationally excited air.** Peyvan et al. take five-species air
+($\mathrm N$, $\mathrm O$, $\mathrm{NO}$, $\mathrm N_2$, $\mathrm O_2$,
+no ionization) with a rigid-rotor harmonic-oscillator internal energy and
+the ideal-gas law $p=\sum_k\rho Y_kR_kT$ (§2.2.1, §3, Eqs. (8)–(12), (60)).
+Let $e^0_k$ be the formation energy, $\theta^{\mathrm v}_k$ the
+vibrational characteristic temperature, $\mathsf a_k=3/2$ for atoms and
+$5/2$ for diatomic molecules, and $\mathsf d_k\in\{0,1\}$ the vibration
+switch (page-local; the source's $\theta_k$, $a_k$, $\alpha_k$). Then
+
+$$e_k=e^0_k+\mathsf a_kR_kT+\mathsf d_kR_k\frac{\theta^{\mathrm v}_k}{e^{\theta^{\mathrm v}_k/T}-1}$$
+
+(Eq. (60)). Transport coefficients (Chapman–Enskog, Stefan–Maxwell
+diffusion) and Park's five-reaction finite-rate chemistry come from the
+Mutation++ library (§2.2.2–2.2.3).
+
 ## Admissible set and waves
 
 Renac's admissible set is
@@ -135,7 +164,7 @@ $c^2=\gamma(Y)\big(\gamma(Y)-1\big)e$ and $\gamma(Y)\le\max_k\gamma_k$
 (Eqs. 10–11). Renac notes that, to the author's knowledge, fast upper bounds of
 the maximum wave speed (two-rarefaction or Guermond–Popov type), which
 simple-wave solvers such as HLL, Rusanov or relaxation need, do not
-exist for this model (§1.3). Li et al. give the entropy-scaled right-eigenvector
+exist for this model (§1.3). Li et al. (2022c) give the entropy-scaled right-eigenvector
 matrices (whose product with their transpose is $\partial u/\partial w$)
 explicitly for one and two stiffened components, following Gouasmi et al.'s ideal-gas
 construction for two (§3.4; see
@@ -160,11 +189,16 @@ scheme.
 Both sources use the mass-weighted mixture entropy. Renac sets
 $\eta=-\rho s$, $s=\sum_kY_ks_k$, $s_k=C_{v,k}\ln\big(e_k/\rho_k^{\gamma_k-1}\big)+\mathrm{const}$,
 and obtains the entropy flux $F_\eta=-\rho sv$ and the flux potential
-$\psi=R(Y)\rho v$ (Eqs. 13–18). Li et al. set
+$\psi=R(Y)\rho v$ (Eqs. 13–18). Li et al. (2022c) set
 $\eta=-\sum_k\rho Y_kS_k$ with $S_k=C_{v,k}\ln T-R_k\ln(\rho Y_k)$, flux
 potential $\big(\sum_k(R_k\rho Y_k-p_{\infty,k}/T)\big)v$ (Eqs. 3.16–3.17).
 The entropy variables $w$ have one component per partial density (or
-mass fraction), plus $v/T$ and $-1/T$ (Renac Eq. 17; Li et al. §3.3).
+mass fraction), plus $v/T$ and $-1/T$ (Renac Eq. 17; Li et al. (2022c) §3.3).
+Peyvan et al. extend the mass-weighted entropy of Gouasmi et al. to the
+vibrational energy above,
+$s_k=\int c_{v,k}(\tau)\tau^{-1}d\tau-R_k\ln\rho_k$ with
+$c_{v,k}=de_k/dT$ (§3, Eqs. (62)–(64)), and their entropy variables have
+the same structure (Eqs. (65)–(66)).
 
 ## Entropy-conservative and entropy-stable schemes
 
@@ -178,11 +212,41 @@ Appendix B (Eq. B.1). It is therefore cheaper for $n_{\mathrm c}>2$ and
 less exposed to floating-point exceptions, since every logarithmic mean
 needs positive arguments (Remark 3.1); it is also formally
 kinetic-energy preserving in Jameson's sense, a property that can fail
-discretely (Remark 3.2). Li et al. derive explicit two-point fluxes for
+discretely (Remark 3.2). Li et al. (2022c) derive explicit two-point fluxes for
 one and two stiffened components from jumps of the parameter vector
 $(\rho Y_k,v,1/T)$ and logarithmic means of the partial densities and
 of $1/T$, with an extra "entropy-conservative state" for the
 mesh-velocity term on moving meshes (§3.3, Eqs. 3.11–3.18).
+
+Peyvan et al. derive two-point entropy-conservative fluxes for the
+vibrationally excited mixture from Tadmor's condition, with the parameter
+vector $(\rho Y_k,v,1/T)$ (§3, Eqs. (68)–(91)). The vibrational term needs
+a new mean. For a page-local quantity $q$ they define the exponential mean
+$\{\!\{q\}\!\}_{\exp,k}=(q^+-q^-)/(e^{\theta^{\mathrm v}_kq^+}-e^{\theta^{\mathrm v}_kq^-})$
+and the composite mean
+$\{\!\{q\}\!\}_{\ln\exp,k}=\{\!\{e^{\theta^{\mathrm v}_kq}-1\}\!\}_{\log}\{\!\{q\}\!\}_{\exp,k}$,
+so that $[\![\ln(e^{\theta^{\mathrm v}_kq}-1)]\!]=[\![q]\!]/\{\!\{q\}\!\}_{\ln\exp,k}$
+(Eqs. (78)–(82); page-local symbols). The flux is
+
+$$\begin{aligned}
+f^{\mathrm{ec}}_{\rho Y_k}&=\{\!\{v\}\!\}\{\!\{\rho Y_k\}\!\}_{\log},\\
+f^{\mathrm{ec}}_{\rho v}&=\frac{\sum_kR_k\{\!\{\rho Y_k\}\!\}}{\{\!\{1/T\}\!\}}+\{\!\{v\}\!\}\sum_kf^{\mathrm{ec}}_{\rho Y_k},\\
+f^{\mathrm{ec}}_{E}&=\sum_k\Big(e^0_k-\mathsf d_kR_k\theta^{\mathrm v}_k+\frac{\mathsf a_kR_k}{\{\!\{1/T\}\!\}_{\log}}+\frac{\mathsf d_kR_k}{\{\!\{1/T\}\!\}_{\ln\exp,k}}-\tfrac12\{\!\{v^2\}\!\}\Big)f^{\mathrm{ec}}_{\rho Y_k}+\{\!\{v\}\!\}f^{\mathrm{ec}}_{\rho v}
+\end{aligned}$$
+
+(Eqs. (89)–(91)). For nearly equal states the exponential mean is
+evaluated by a truncated series in $\sinh x/x$, after the device of
+Winters et al. for the logarithmic mean (Eqs. (83)–(87);
+[logarithmic mean](/operators/logarithmic-mean.md)). The authors claim
+that the flux is also kinetic-energy preserving, citing Ranocha, without
+showing it (end of §3). They state that no entropy-conservative flux had
+been derived before for an internal energy with translational,
+rotational and vibrational parts, Gouasmi et al. covering constant or
+polynomial specific heats (§1). With entropy-conservative volume and
+surface fluxes and no stabilization, the global entropy rate on a smooth
+periodic five-species problem stays at $O(10^{-5})$ up to $t=0.1$, which
+they attribute to the $\sim10^{-7}$ tolerance of the Newton inversion of
+energy to temperature in Mutation++ (§4.4, Fig. 4).
 
 **Entropy-stable, positive schemes.**
 
@@ -215,7 +279,7 @@ mesh-velocity term on moving meshes (§3.3, Eqs. 3.11–3.18).
   dissipation, is entropy stable (Appendix D.1) but not Lipschitz,
   blocks the positivity proof, needs CFL 0.2 instead of 0.4, and the 2D
   computations with it stop on negative states (Appendix D).
-- Li et al. add to their high-order entropy-conservative flux a
+- Li et al. (2022c) add to their high-order entropy-conservative flux a
   dissipation built on jumps of [multi-resolution WENO](/methods/multi-resolution-weno.md)
   reconstructions of the scaled entropy variables with a sign switch,
   a [TeCNO-type](/methods/tecno-scheme.md) construction, on an
@@ -224,6 +288,27 @@ mesh-velocity term on moving meshes (§3.3, Eqs. 3.11–3.18).
   ([isentropic vortex](/benchmarks/isentropic-vortex.md)) and state
   that the entropy inequality follows as in the single-component case;
   no proof is printed.
+
+**Entropy-stable DGSEM for reacting hypersonic flow.** Peyvan et al. use
+the flux above in the volume terms of an entropy-stable
+[DGSEM](/methods/dgsem.md), with HLLC surface fluxes and the
+[subcell finite-volume blending](/methods/subcell-finite-volume-limiting.md)
+of Hennemann et al. ($\alpha\le0.5$), BR1 viscous terms and the
+low-storage fourth-order Runge–Kutta method of Carpenter and Kennedy
+(§2.3, §4). On one-dimensional strong-shock and reacting problems they
+compare it with flux reconstruction and spectral difference stabilized by
+an [entropy filter](/methods/entropy-filtering.md), the
+positivity-preserving modal DG and the positivity-preserving fifth-order
+finite-difference WENO of Zhang and Shu. On the three-species Sod problem
+with one dissociation reaction all schemes except the modal DG give the
+right solution; WENO and ES-DGSEM do not oscillate but smear more (§4.3,
+Fig. 3). The filtered FR and SD extensions to five species are unstable,
+because no filter strength satisfies positivity of the five densities,
+positivity of pressure and the entropy criterion at once (§4.5.1). The
+hypersonic ES-DGSEM matches the Grossman–Cinnella non-equilibrium Sod
+reference in all five mass fractions (Fig. 6). Equilibrium and finite-rate
+chemistry agree at a driver temperature of 2000 K and diverge from
+3000 K on (§4.5.2, Fig. 7).
 
 ## Bound preservation for reacting mixtures
 
@@ -320,6 +405,53 @@ $\gamma_i^n\ne\gamma_{i+1}^n$, so the double-flux update is not
 discretely conservative there *(compiler check, not in the sources)*;
 the paper does not discuss it.
 
+**A fully conservative, pressure-equilibrium-preserving scheme.**
+Fujiwara et al. (2023) state that conventional conservative schemes for
+the species masses, momentum and total energy generate spurious pressure
+oscillations at interfaces even when the interfaces and the specific heats
+vary smoothly, so interface-capturing diffusion is "not a fundamental
+solution" (§1). They classify the remedies as non-conservative (Karni's
+pressure equation, Abgrall's transport of $\mathsf G$) or overspecified
+([double-flux methods](/methods/double-flux-method.md), which carry two
+discrete pressures or two species masses). For an arbitrary equation of
+state $\rho e=\rho e(p,\rho Y_k)$ with initially uniform $p$ and $v$, they
+derive the condition for pressure equilibrium (§2.3, Eqs. (5)–(12)):
+
+$$\partial_x(\rho e)=\sum_k\Big(\frac{\partial\rho e}{\partial\rho Y_k}\Big)_{p,\rho Y_{l\ne k}}\partial_x(\rho Y_k).$$
+
+For ideal gases it reduces to Abgrall's condition
+$\partial_t\mathsf G+v\,\partial_x\mathsf G=0$ (Eq. (15)). Its discrete
+analogue on a half-point flux form, the "compatibility condition", is a
+condition on the interface values used in the fluxes (Eq. (21); see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+For ideal gases they satisfy it, for any number of species, by the
+symmetric interface values
+
+$$\rho Y_k\big|_{i+1/2}=\tfrac12\big(\mathsf w^-\rho Y_{k,i}+\mathsf w^+\rho Y_{k,i+1}\big),\qquad
+\mathsf G\big|_{i+1/2}=\tfrac12(\mathsf G_i+\mathsf G_{i+1}),\qquad
+\mathsf w^+=\frac{\bar W_{i+1}\rho_i}{\rho_{i+1}\bar W_i}=\frac1{\mathsf w^-}$$
+
+(Eqs. (38)–(39), (48); page-local $\mathsf w^\pm$, the source's
+$\phi^\pm$). In a second-order central flux these give FC/PE (S), a
+[split form](/methods/split-convective-forms.md) that reduces to the
+KEEP-PE scheme of Shima et al. for one component, and FC/PE (D), a
+divergence form (Table 1). Both are fully conservative and preserve
+pressure equilibrium for a uniform velocity. With a nonuniform velocity
+only FC/PE (S) satisfies the extended condition (§5, Eqs. (55)–(59)).
+
+On smooth (tanh-profiled) interfaces advected at uniform $p$ and $v$,
+FC/PE (S) keeps $p$ and $v$ at $\simeq10^{-13}$ (1D, two species, 501
+points) and $\simeq10^{-12}$ (2D, three species, $501^2$), conserves mass
+and energy exactly and runs to $t=20$. Over the same 1D run the
+pressure-equation scheme loses energy conservation and the
+$\mathsf G$-transport scheme loses species-mass conservation. FC/PE (D)
+diverges at $t\approx3.8$ and the non-equilibrium divergence scheme at
+$t\approx6.5$ (1D) and $5.5$ (2D) (§4, Figs. 2–8; see
+[material-interface advection](/benchmarks/material-interface-advection.md)).
+Shocks and sharp interfaces are outside the scope: the authors offer the
+scheme as a non-dissipative baseline to which numerical diffusion must
+still be added (§1, §6).
+
 Nguyen et al. report the opposite outcome for a moving interface: a
 water–air interface advected at 150 m/s at uniform $p$, $v$ and $T$
 keeps velocity, pressure and temperature errors "on the order of
@@ -362,7 +494,7 @@ two-component Riemann problems including a Sod-type one, a He–N$_2$
 shock tube, a near-vacuum double rarefaction and the stationary and
 moving interfaces; the [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 with helium (Mach 1.22) and hydrogen (Mach 2); and a Richtmyer–Meshkov
-instability with re-shock (Mach 1.21, Atwood number 0.6053). Li et al.:
+instability with re-shock (Mach 1.21, Atwood number 0.6053). Li et al. (2022c):
 the isentropic vortex in 2D and 3D, a quasi-2D stiffened shock tube, two
 2D Riemann problems, a 3D spherical shock tube, a two-material tri-point
 problem and the shock–bubble interactions with ideal and stiffened
@@ -382,6 +514,26 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 
 ## Qualifications
 
+- Renac calls the moving-interface oscillations "inherent to discretely
+  conservative schemes", while Fujiwara et al. present FC/PE (S) as a
+  discretely conservative scheme that preserves pressure equilibrium, and
+  claim it is the first. The scopes differ: Renac's moving interface is a
+  discontinuity computed by a dissipative entropy-stable DGSEM;
+  Fujiwara et al.'s interfaces are smooth and their scheme has no
+  dissipation. A shock-capturing scheme built on the compatibility
+  condition, run on a sharp moving interface, would decide whether the
+  two statements conflict.
+- Peyvan et al. (arXiv v1) print the rotational energy as $R/W_k$ without
+  the factor $T$ (Eq. (11)), against $\mathsf a_k=5/2$ in Eq. (60), and the
+  vibrational part of $c_{v,k}$ with a negative sign (Eq. (62)), while
+  Eq. (64) follows from the positive one *(compiler check, not in the
+  sources: $\frac{d}{dT}\frac{\theta}{e^{\theta/T}-1}=\frac{\theta^2}{T^2}\frac{e^{\theta/T}}{(e^{\theta/T}-1)^2}>0$)*.
+  *(Compiler check, not in the sources: their Eq. (66) differs from the
+  Gibbs form of Eq. (65) by the constant $R_k$, which leaves every jump, and
+  hence the flux, unchanged.)* They
+  print no timings for their claim that ES-DGSEM "requires the least
+  computational effort".
+
 - Renac's design-order table is irregular on coarse meshes (at $N=1$ the
   error grows from $1/4$ to $1/8$; at $N=3$ the rate falls to 3.33 at
   $1/64$ after 4.96), while the text states that the expected order is
@@ -391,7 +543,7 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 - The positivity theorem covers the forward-Euler update and cell
   averages; the time-step bound 0.4 used in practice is not covered by
   it.
-- Li et al.'s entropy-stability statement and their curvilinear
+- Li et al. (2022c)'s entropy-stability statement and their curvilinear
   entropy-conservation condition are quoted from an earlier paper by the
   same group, with no proof printed in the version read.
 - Nguyen et al. state that their scheme "is always mass conservative
@@ -451,3 +603,5 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1–2 (sharp-interface contrast only).
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §2, Eqs. (1)–(7), Alg. 2; §3; §5, Eqs. (11)–(12); §6 (accepted manuscript).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §2, Eqs. (1)–(2); §4.3, Eq. (33); §5.4, Figs. 13–14; §5.8.
+- [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §1; §2.1–2.3, Eqs. (1)–(16); §3, Eqs. (17)–(49), Table 1; §4, Figs. 2–8; §5, Eqs. (55)–(59); Appendices A–B.
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1; §2.1–2.3, Eqs. (1)–(55); §3, Eqs. (60)–(91); §4.3–4.5, Figs. 3–7 (arXiv v1).

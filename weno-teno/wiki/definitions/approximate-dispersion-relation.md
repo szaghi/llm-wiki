@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Approximate dispersion relation"
-description: "The modified-wavenumber characterization of a possibly nonlinear spatial scheme: its sign convention for dissipation, the Hu-type dispersion-to-dissipation ratio and its critique, optimization on the nonlinear ADR, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, WCNS, gradient-based, hybrid and multi-resolution schemes and central schemes with artificial dissipation."
+description: "The modified-wavenumber characterization of a possibly nonlinear spatial scheme: its sign convention for dissipation, the Hu-type dispersion-to-dissipation ratio, its fully discrete Runge–Kutta form and its critique, optimization on the nonlinear ADR, and what the sources read off it for WENO, TENO, THINC, ROUND, MDCD, WCNS, gradient-based, hybrid and multi-resolution schemes and central schemes with artificial dissipation."
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Approximate dispersion relation
@@ -20,7 +20,7 @@ $\tilde\vartheta_i$ dissipation (ideal $0$). For a linear scheme the map is
 exact and analytic; for a nonlinear scheme (WENO, TENO, ROUND, THINC) it is
 *approximate*, evaluated numerically by the procedure of Pirozzoli (2006), which
 the sources use but do not restate ([Luo & Wu (2021)](/sources/luo-2021-b.md),
-§3; [Li et al. (2022)](/sources/li-2022-b.md), §3.3(3);
+§3; [Li et al. (2022b)](/sources/li-2022-b.md), §3.3(3);
 [Deng (2023)](/sources/deng-2023.md), Figs. 18, 28;
 [Huang et al. (2026)](/sources/huang-2026.md), §5.2;
 [Wang et al. (2021)](/sources/wang-2021.md), §4;
@@ -116,7 +116,7 @@ to U5 (Fig. 2). In the companion paper,
 Appendix A) uses the same analysis as a design tool. Two free parameters of
 the second-derivative estimate are fixed by Fourier analysis at $38/7$ and
 $3/190$ for a seventh-order upwind scheme on the same nine-point flux
-stencil. Chamarthi finds the seventh-order scheme less dissipative and the
+stencil. Chamarthi (2023b) finds the seventh-order scheme less dissipative and the
 fourth-order one slightly better in dispersion (§3.2, Fig. 15). *(Compiler
 check, not in the sources: the symbols of the printed flux forms, Eq. (33)
 for seventh and Eq. (64) for fourth order, are
@@ -205,6 +205,63 @@ curvilinear grids, applied to the transformed flux, the one-dimensional stencil 
 same modified wavenumber under the stated assumptions (smooth grids, periodicity, a
 Fourier component of the transformed flux; §3.4 Remark, Eqs. (62)–(69)).
 
+## Fully discrete analysis
+
+The relations above concern the semi-discrete operator. [Li et al. (2023b)](/sources/li-2023-b.md)
+(§3.1, Eqs. (16)–(22)) carry them to the fully discrete scheme with the three-stage third-order
+Runge–Kutta method, at CFL number $\nu=a\Delta t/\Delta x$. Let $\mathcal G(\vartheta,\nu)$ denote
+the amplification factor of one step (page-local; the source's $F$). With
+$K=-\mathrm i\nu\tilde\vartheta$ (page-local, not the TENO stencil size), it is
+
+$$\mathcal G=1+K+\tfrac12K^2+\tfrac16K^3 .$$
+
+The exact factor of one step is $e^{-\mathrm i\vartheta\nu}$. The ratio of the two defines a
+total dissipation error $\lvert\mathcal G\rvert$ (ideal $1$) and a total dispersion error
+$\delta_\nu=\arg\mathcal G+\vartheta\nu$ (ideal $0$; page-local, the source's $r_{total}$ and
+$\delta_{total}$). Written out,
+
+$$\begin{aligned}
+\Re\mathcal G&=1+\nu\tilde\vartheta_i-\tfrac12(\nu\tilde\vartheta_r)^2+\tfrac12(\nu\tilde\vartheta_i)^2-\tfrac12\nu^3\tilde\vartheta_r^2\tilde\vartheta_i+\tfrac16\nu^3\tilde\vartheta_i^3,\\
+\Im\mathcal G&=-\nu\tilde\vartheta_r-\nu^2\tilde\vartheta_r\tilde\vartheta_i+\tfrac16\nu^3\tilde\vartheta_r^3-\tfrac12\nu^3\tilde\vartheta_r\tilde\vartheta_i^2
+\end{aligned}$$
+
+(Eq. (19)). *(Compiler check, not in the sources: these are the real and imaginary parts of
+$1+K+K^2/2+K^3/6$ with $\tilde\vartheta=\tilde\vartheta_r+\mathrm i\tilde\vartheta_i$, verified
+symbolically.)* The source's sign convention is the registry's: its MDCD symbol is the one printed
+above, with $\tilde\vartheta_i=4c_{\mathrm{diss}}(\cos\vartheta-1)^3\le0$ (Eqs. (7)–(8)).
+
+**Coupling by the time integrator.** The semi-discrete $\tilde\vartheta_r$ depends only on
+$c_{\mathrm{disp}}$ and $\tilde\vartheta_i$ only on $c_{\mathrm{diss}}$. In the fully discrete
+scheme, $\delta_\nu$ and $\lvert\mathcal G\rvert$ each depend on both. The authors find the
+cross-effects "insignificant" for $c_{\mathrm{disp}}<0.1$ and $c_{\mathrm{diss}}<0.012$, with a
+visible deviation only at $c_{\mathrm{diss}}=0.033$, and ignore them (§3.1, Figs. 2–3).
+
+**Fully discrete optimization and ratio.** Li et al. (2023b) use three fully discrete
+replacements of the semi-discrete tools above.
+
+- *Weighted error integral.* They minimize
+  $E=e^{-8\pi}\int_0^\pi e^{8(\pi-\vartheta)}(\arg\mathcal G+\nu\vartheta)^2d\vartheta$ (Eq. (26)).
+  They present it as the fully discrete version of the integral of Sun et al. (Eq. (25)), whose
+  integrand is $(\tilde\vartheta_r-\vartheta)^2$. The optimum is $c_{\mathrm{disp}}=0.0464$ for $\nu\le0.25$ and a fitted cubic
+  in $\nu$ above (Eq. (27)). *(Compiler check, not in the sources: the constant agrees with the
+  semi-discrete optimum $0.0463783$ of Li, Chen & Ren printed above, and the cubic of Eq. (27)
+  gives $0.04608$ at $\nu=0.25$, $0.04600$ at $0.3$ and $0.04343$ at $0.5$, so the fitted
+  function jumps by about $3\times10^{-4}$ at $\nu=0.25$.)*
+- *Modified dispersion–dissipation condition.* They impose
+  $\lvert\delta_\nu\rvert/\big\lvert\lvert\mathcal G\rvert-1\big\rvert\le10$ (Eq. (38)), the
+  fully discrete counterpart of the Hu-type ratio $\zeta$. Its iso-surface at $10$ in
+  $(\vartheta,\nu,c_{\mathrm{diss}})$ gives a "critical-adaptive" dissipation parameter. They
+  fit it by cubics in the sensed wavenumber for $\nu=0.1$, $0.3$ and $0.5$, with the floor
+  $0.001$ and the cap $0.012$ (§3.3, Eqs. (39)–(41), (48)–(50), Fig. 8, Appendix A).
+- *Adaptive dispersion.* They choose $c_{\mathrm{disp}}$ so that $\delta_\nu=0$ at the sensed
+  wavenumber (Eq. (43)). This replaces the semi-discrete condition $\tilde\vartheta_r=\vartheta$
+  of an earlier preprint by Li et al. (Eq. (42)). The two choices differ negligibly at small
+  $\nu$ and significantly at large $\nu$ (Eq. (47), Fig. 10).
+
+The local wavenumber comes from a re-optimized [scale sensor](/definitions/scale-sensor.md),
+reliable to $\vartheta=2.08$ (§3.2). The resulting scheme, ADADF, is on
+[MDCD schemes](/methods/mdcd-scheme.md).
+
 **Optimizing the nonlinear scheme, not its linear part.**
 [Zhou et al. (2023)](/sources/zhou-2023.md) (§§3–4) minimize the same kind of
 weighted dispersion error,
@@ -252,7 +309,7 @@ different roles of the same condition.)*
 
 **Two meanings of the name.** In the Fu papers "approximate dispersion relation"
 names the condition on $\zeta$; in Pirozzoli's usage, followed by Luo & Wu,
-Li et al., Deng, Huang et al., Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
+Li et al. (2022b), Deng, Huang et al., Wang et al. (2021), Bezgin et al., Hiejima, Hong et al.,
 Wan & Xia and Li, Chen & Ren, it names the numerically evaluated
 $\tilde\vartheta(\vartheta)$ of a nonlinear scheme. The two are compatible (the
 condition is imposed on the curve) but a page citing "the ADR" must say which
@@ -289,6 +346,12 @@ is meant.
   misjudgments, and WENO-Z is the most dissipative. The same sine-wave procedure grades the
   detectors themselves: the TENO-based one of Fu is correct only below $0.64$, the modified
   Ren detector up to $2.06$ (§3.2, Fig. 9). See [hybrid central–WENO schemes](/methods/hybrid-weno.md).
+- **Resolution that does not degrade with the CFL number.** On the fully discrete curves of
+  [Li et al. (2023b)](/sources/li-2023-b.md) (§3.4, Fig. 11), ADADF keeps a resolving efficiency
+  of about $65.58\%$ for every $\nu$ tested, while the total dispersion errors of MDCD and MDAD
+  grow rapidly with $\nu$. Its dissipation is much lower than MDCD's at low $\vartheta$ and grows
+  at large $\vartheta$. *(Compiler check, not in the sources: $65.58\%$ of $\pi$ is
+  $\vartheta=2.06$, against the sensor limit $2.08$, i.e. $66.21\%$.)*
 - **A three-region hybrid for steady states.** The WENO-H of
   [Wan & Xia (2022)](/sources/wan-2022.md) (§3, Fig. 3.2; linear weights $(0.8,0.1,0.1)$,
   $\epsilon=10^{-6}$) has lower dissipative and dispersive errors than the central WENO of
@@ -306,7 +369,7 @@ is meant.
   [WENO-Z+](/methods/weno-z-plus.md).
 - **WENO-ZN.** Lower dissipation and dispersion error over a large range of
   medium wavenumbers than WENO-JS and WENO-Z at fifth and seventh order, with
-  UW5 and UW7 as references ([Li et al. (2022)](/sources/li-2022-b.md),
+  UW5 and UW7 as references ([Li et al. (2022b)](/sources/li-2022-b.md),
   §3.3(3), Fig. 2). See [WENO-ZN](/methods/weno-zn.md).
 - **THINC is anti-diffusive at $\beta_{\mathrm T}=1.6$.** Its modified wavenumber
   has a positive imaginary part in some ranges, like the TVD Superbee limiter,
@@ -348,7 +411,7 @@ is meant.
   dispersion and dissipation than MEG6 and [TENO5](/methods/targeted-eno.md). Reusing the
   high-order second derivative as the limiter curvature improves the dispersion of MIG4
   over its base version, "marginal[ly]" for MEG6
-  ([monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)). Chamarthi's
+  ([monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)). Chamarthi (2023a)'s
   summary Table 5 rates the dissipation error "Medium" for MIG4 and MEG6 and "Low" for
   TENO5, and the dispersion error Low, Medium and High (see Qualifications).
 - **High-order WCNS whose curves do not separate.** [Hiejima (2022)](/sources/hiejima-2022.md)
@@ -381,13 +444,20 @@ is meant.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) is not self-consistent on TENO5. The text
   near Fig. 3 says that MIG4 has "superior dispersion and dissipation properties than the MEG6
   and TENO5 scheme", while Table 5 rates TENO5's dissipation error "Low" and MIG4's
-  "Medium". Chamarthi also says Fig. 2 shows the "imaginary and real parts" of the modified wavenumber as
+  "Medium". Chamarthi (2023a) also says Fig. 2 shows the "imaginary and real parts" of the modified wavenumber as
   dispersion and dissipation, but labels the panels "Real" and "Imag" in the other order. The page
   uses the printed series, not the panel labels.
 - Zhou et al. (2023) do not print the weight exponent $\sigma$ used for their nonlinear optimization
   (Table 2). The large-$C$ limit $0.0384$ equals the linear optimum at $\sigma=6$ of their Table 1.
   They also never print the exponent of their nonlinear weights, although they attribute post-shock
   noise to its value (§5.6).
+- The fully discrete design of [Li et al. (2023b)](/sources/li-2023-b.md) is tied to the
+  three-stage third-order Runge–Kutta method and calibrated at $\nu=0.1$, $0.3$, $0.5$ only. Its
+  evidence is spectral curves and figures; the paper prints no error norms, convergence study or
+  timings. The fits are not continuous. *(Compiler check, not in the sources: the dissipation cubics of
+  Eqs. (48)–(50) give $0.00348$, $0.00372$ and $0.00264$ at the sensed wavenumber $2.08$, where
+  the floor $0.001$ ends, and the $\nu=0.5$ cubic gives $0.01292$ at $\vartheta=\pi$, above the cap
+  $0.012$.)* The authors call the effect of extending the floor to $2.08$ small and ignore it (§3.3).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) (§6) present "beating the
   underlying linear scheme" as contrary to the view, attributed to Pirozzoli,
   that nonlinear shock-capturing mechanisms always degrade spectral
@@ -399,7 +469,8 @@ is meant.
 - [Fu (2021)](/sources/fu-2021.md) — §3.1, §4.1, Eqs. (20)–(24): splitting, error integral, $\zeta\approx O(10)$.
 - [Fu (2023)](/sources/fu-2023.md) — §2.5, Eqs. (12)–(16), Figs. 2–3: sign convention, TENO spectra.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §§3–4, Figs. 1–4: Pirozzoli ADR, negative dissipation of WENO-Z+.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §3.3(3), Fig. 2: WENO-ZN spectra.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §3.3(3), Fig. 2: WENO-ZN spectra.
+- [Li et al. (2023b)](/sources/li-2023-b.md) — §3.1–3.4, Eqs. (16)–(27), (38)–(50), Figs. 2–3, 8–11: RK3 fully discrete errors, fully discrete integrated error and dispersion–dissipation ratio, ADADF spectra.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.2, §2.3: TENO and THINC spectral statements.
 - [Deng (2023)](/sources/deng-2023.md) — Figs. 18, 28: ROUND spectra.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §5.2, Fig. 5: ROUND, LD-ROUND, WENO3-NN spectra.

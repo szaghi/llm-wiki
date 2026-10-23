@@ -3,9 +3,9 @@ type: Method
 title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost or restore order, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid]
+aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -58,7 +58,7 @@ nor, for systems, a [characteristic decomposition](/methods/characteristic-decom
 
 ## A dissipation-adaptive hybrid: MDAD-HY
 
-Li, Chen & Ren (2022, §3) hybridize the six-point MDAD flux, a linear fourth-order flux whose
+Li, Chen & Ren (2022a, §3) hybridize the six-point MDAD flux, a linear fourth-order flux whose
 dissipation follows a [scale sensor](/definitions/scale-sensor.md), with its WENO-CU6-type counterpart
 MDAD-WENO by a binary flag $\delta^{\mathrm H}_{i+1/2}$ (page-local; [MDCD schemes](/methods/mdcd-scheme.md)),
 and compare four detectors on static data and in the approximate dispersion relation:
@@ -86,6 +86,58 @@ details matter: inputs normalized by $\max(|f_{\max}|,1)$ (after which TENO-HY d
 better" than in Fu's own paper), detection on density and entropy once per step, buffer zones of 1–3
 points, and a second detection on each split characteristic flux at flagged interfaces (§3.4, §4.3.1).
 Thresholds still vary by case: 0.5 for the blast waves, 0.8 for Sedov (§4.2).
+
+## A fully discrete successor: ADADF-HY
+
+Li, Sun, Zha, Zhu, Ding & Xia (2023b, §3.5–3.6, Eqs. (51)–(61)) hybridize their fully discrete
+adaptive-dispersion, critical-adaptive-dissipation flux ADADF ([MDCD schemes](/methods/mdcd-scheme.md))
+with a [WENO-CU6](/methods/weno-cu6.md) flux whose linear weights are the MDCD ones. The blend is
+continuous,
+
+$$\hat f_{i+1/2}=\mathfrak w_{i+1/2}\hat f^{\mathrm{ADADF}}_{i+1/2}+(1-\mathfrak w_{i+1/2})\hat f^{\mathrm{WENO\text{-}CU6}}_{i+1/2},\qquad
+\mathfrak w_{i+1/2}=\min\big(1,\mathfrak s_{i+1/2}/\mathfrak s_c\big),\quad \mathfrak s_c=0.4,$$
+
+with Ren et al.'s indicator in the notation of the MDAD-HY section,
+$\mathfrak s_i=(2\mathsf a\mathsf b+\delta_{\mathrm R})/(\mathsf a^2+\mathsf b^2+\delta_{\mathrm R})$,
+$\delta_{\mathrm R}=10^{-3}$ (page-local; their $\delta$), and $\mathfrak s_{i+1/2}=\min(\mathfrak s_i,\mathfrak s_{i+1})$
+(page-local blending weight $\mathfrak w$; their $\sigma$). Where $\mathfrak s\ge\mathfrak s_c$ the WENO-CU6 flux is not computed. For
+the Euler equations the indicator is evaluated on Roe-averaged characteristic variables and the split
+characteristic fluxes use global Lax–Friedrichs splitting. All evidence is visual: on
+[Shu–Osher](/benchmarks/shu-osher-problem.md), 2-D Riemann configurations 3 and 6,
+[Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md),
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) and
+[double Mach reflection](/benchmarks/double-mach-reflection.md) ADADF-HY resolves the most structure
+of WENO-Z, MDCD-HY, MDAD-HY and itself; its Rayleigh–Taylor field is slightly asymmetric, which the
+authors attribute to its low dissipation (§4).
+
+Li et al. (2023b) return to Ren et al.'s indicator, which Li, Chen & Ren (2022a) had found to flag
+critical points "at very low wavenumbers" and had replaced by their new detector, without comment.
+Their Eq. (60) and implementation steps switch between the purely linear flux and a "nonlinear" one
+at the threshold instead of blending; the two agree where $\mathfrak w=1$, and which flux "nonlinear"
+means is not stated.
+
+## A parameter-free switch: hybrid MR-WCNS
+
+Wang, Zhu, Wang & Zhao (2023c, §3, Step 2, Remark 1) switch the node-to-midpoint interpolation of a
+fifth-order [WCNS](/methods/weighted-compact-nonlinear-scheme.md) between the linear five-point value
+$\tfrac1{128}(3u_{i-2}-20u_{i-1}+90u_i+60u_{i+1}-5u_{i+2})$ and their multi-resolution interpolation
+([multi-resolution WENO](/methods/multi-resolution-weno.md)). The rule: let $p_1$ be the quartic
+interpolant on the five points; if no extreme point of its derivative $p_1'$ lies within the stencil,
+the linear value is used, otherwise the nonlinear one. The extreme points have an explicit expression
+taken from Zhao, Zhu, Chen & Qiu's hybrid WENO. The authors call the switch problem-independent and
+free of artificial parameters. It is applied in characteristic variables, which makes the map of
+marked points periodic rather than symmetric in their Richtmyer–Meshkov runs; they keep it because
+characteristic variables "more accurately identify the troubled cells" (Example 4.7).
+
+Cost relative to WENO-JS (Table 5.1, twelve runs, hardware not stated): 0.81–1.07 for the hybrid,
+1.50–2.31 for the non-hybrid MR-WCNS of Zhang, Wang & Zhang. Errors in the smooth accuracy tests are
+about one order below WENO-JS (Tables 4.1–4.4).
+
+*(Compiler check, not in the sources: the extreme points of the cubic $p_1'$ are the roots of the
+quadratic $p_1''$, i.e. inflection points of $p_1$. A smooth wave with an inflection point inside the
+stencil, as the sine waves of the accuracy tests have every half period, therefore takes the nonlinear
+branch; the accuracy tables measure the nonlinear interpolation at those points.)* The paper does not
+say whether "within the stencil" means $[x_{i-2},x_{i+2}]$ or the union of the five cells.
 
 ## Energy-preserving central / WENO-TENO hybrids in LES
 
@@ -212,7 +264,7 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 ## Qualifications
 
 - **Detector rankings depend on the test.** Fu (2023, §3.4) calls the TENO-based indicator "more
-  universal" than physical sensors; Li, Chen & Ren (2022, Figs. 9–12) measure it correct only below
+  universal" than physical sensors; Li, Chen & Ren (2022a, Figs. 9–12) measure it correct only below
   $\vartheta=0.64$ on sine waves, with detector inputs normalized by $\max(|f_{\max}|,1)$, a step to which
   they attribute TENO-HY's better detection than in Fu's own paper (§4.3.1).
 - Chamarthi (2023b) prints the regularization $\varepsilon=\tfrac{0.9\mathfrak s_c}{1-0.9\mathfrak s_c}\xi^2$ (Eq. (37)) but
@@ -224,6 +276,9 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
   WENO-H orders are 2.42 ($L^\infty$) at $80^2$ and 8.19 at $160^2$, with an $L^1$ error at $80^2$ about 3.5
   times that of the linear UW5 (Table 4.2); their bound on the blended indicator is misstated (see
   [smoothness indicators](/definitions/smoothness-indicator.md)).
+- Wang et al. (2023c) call their efficiency "the highest among these three methods" (Example 4.1)
+  and claim improved efficiency throughout, while their Table 5.1 has the hybrid slower than WENO-JS in
+  four of twelve runs (1.01–1.07); it is always faster than the non-hybrid MR-WCNS.
 - The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
   hardware nor the share of flagged points is given in the review.
 
@@ -237,7 +292,7 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §4.2.2, Eq. (34).
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.1, Eqs. (26)–(27).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.2, Eqs. (46)–(60), Figs. 9–12; §3.4; §4.2–4.3.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §3.2, Eqs. (46)–(60), Figs. 9–12; §3.4; §4.2–4.3.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §1; §3, Eqs. (3.1)–(3.15), Algorithm 1, Remark 3.1; §4, Tables 4.1–4.3.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1; §3.1–3.2.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.
@@ -246,3 +301,5 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.2.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4, Eqs. (31)–(37); §3, Table 1.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A.2, Figs. A.15–A.16.
+- [Li et al. (2023b)](/sources/li-2023-b.md) — §3.5–3.6, Eqs. (51)–(61); §4, Figs. 15–23.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Step 2, Eqs. (3.6)–(3.9), Remarks 1, 3; §4, Examples 4.1, 4.7, Tables 4.1–4.4; §5, Table 5.1.

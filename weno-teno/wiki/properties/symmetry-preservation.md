@@ -1,16 +1,16 @@
 ---
 type: Property
 title: "Symmetry preservation"
-description: "Symmetry preservation has two meanings in the sources: keeping the mirror symmetry of a symmetric flow under round-off or on an unstructured mesh, which low-dissipation schemes lose unless implemented consistently, and preserving the skew-symmetry of the continuous convective operator, which yields discrete kinetic-energy conservation; this page states both and the evidence on each."
+description: "Symmetry preservation has three meanings in the sources: keeping the mirror symmetry of a symmetric flow under round-off or on an unstructured mesh, which low-dissipation schemes lose unless implemented consistently; preserving the skew-symmetry of the convective operator, which yields discrete kinetic-energy conservation; and mirror-symmetric coefficients of WENO smoothness indicators; this page states all three and the evidence on each."
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Symmetry preservation
 
-The term covers two distinct properties, which a page or claim must keep apart.
+The term covers three distinct properties, which a page or claim must keep apart.
 
 1. **Solution (mirror) symmetry.** A problem whose data are symmetric under a
    reflection, such as the single-mode Rayleigh–Taylor instability or the 2D
@@ -22,6 +22,11 @@ The term covers two distinct properties, which a page or claim must keep apart.
    symmetry of the continuous convective operator: discrete convection is
    skew-symmetric, which makes quadratic invariants such as kinetic energy
    discretely conserved.
+3. **Symmetric smoothness indicators.** In the sense of
+   [Zhong et al. (2023)](/sources/zhong-2023.md), the
+   [smoothness indicators](/definitions/smoothness-indicator.md) of a
+   fifth-order WENO are symmetry-preserving if $\beta_{2-k}$ is the mirror
+   image of $\beta_k$ about the centre cell (section 3 below).
 
 ## 1. Mirror symmetry of the solution
 
@@ -93,6 +98,16 @@ top one; both QSV and LAD miss the asymmetric splitting on the coarsest grid ($1
 converge to it on finer grids (§5.2, Fig. 6). A symmetric numerical result is therefore the
 wrong answer for such a flow.
 
+A further low-dissipation case: [Li et al. (2023b)](/sources/li-2023-b.md)
+(§4.5, Fig. 21) find their ADADF-HY density field of the Rayleigh–Taylor
+instability ($120\times480$, $t=1.95$) slightly asymmetric while the more
+dissipative WENO-Z stays symmetric. They attribute this to low dissipation
+that does not damp round-off and truncation disturbances, as Fu (2021)
+does. Zhong et al. (2023) (§4.4, Fig. 13) report that their IMWENO-P,
+despite its symmetric smoothness indicators, "still shows a
+symmetry-broken phenomenon" on Rayleigh–Taylor at $240\times960$, and cite
+Don et al. for the issue.
+
 **The remedy in practice.** [Takagi et al. (2022)](/sources/takagi-2022.md)
 (§4) use the Fleischmann et al. technique in all runs and report preserved
 symmetry for TENO-THINC on Rayleigh–Taylor
@@ -131,7 +146,75 @@ to compressible flow (§6). These results are developed on
 [kinetic energy preservation](/properties/kinetic-energy-preservation.md) and
 [split convective forms](/methods/split-convective-forms.md).
 
+## 3. Mirror-symmetric smoothness indicators
+
+Write each Jiang–Shu indicator of fifth-order WENO as a weighted sum of
+squared linear combinations of cell averages on its stencil $S_k$,
+$k=0,1,2$, the first combination a first-difference term and the second a
+second-difference term. Zhong et al. (2023) (§3.1, Eqs. (19)–(20), Table 1,
+Fig. 1) call the indicators **symmetry-preserving** when, for both terms
+$m=1,2$ and $n=0,1,2$, the coefficient of $\bar u_{i-n}$ in term $m$ of
+$\beta_k$ equals $(-1)^{km}$ times the coefficient of $\bar u_{i+n}$ in term
+$m$ of $\beta_{2-k}$. The condition concerns the coefficients inside each
+squared term, not the prefactors. *(Compiler check, not in the sources:
+since the terms are squared, the condition states that the reflection
+$\bar u_{i+n}\leftrightarrow\bar u_{i-n}$ maps $\beta_0$ to $\beta_2$ and
+$\beta_1$ to itself.)* The Jiang–Shu indicators of WENO-JS, WENO-Z and
+WENO-M satisfy it, and so do those of WENO-ZS and WENO-η. The
+$L^1$-norm-type indicators of WENO-NS, WENO-P and MWENO-P do not (§3.2).
+*(Compiler check, not in the sources: their one-sided first differences
+are $\bar u_{i-2}-3\bar u_{i-1}+2\bar u_i$ on $S_0$ and
+$\bar u_{i+1}-\bar u_i$ on $S_2$, not mirror images.)*
+
+Zhong et al. build symmetric indicators from the same building blocks,
+with the weight of the first-difference term fixed at the mesh width
+$\Delta x$:
+
+$$\begin{aligned}
+\beta_0&=4\Delta x\,(\bar u_{i-2}-3\bar u_{i-1}+2\bar u_i)^2+(\bar u_{i-2}-2\bar u_{i-1}+\bar u_i)^2,\\
+\beta_1&=\Delta x\,(\bar u_{i-1}-\bar u_{i+1})^2+(\bar u_{i-1}-2\bar u_i+\bar u_{i+1})^2,\\
+\beta_2&=4\Delta x\,(2\bar u_i-3\bar u_{i+1}+\bar u_{i+2})^2+(\bar u_i-2\bar u_{i+1}+\bar u_{i+2})^2
+\end{aligned}$$
+
+(Eqs. (21)–(22); Lemma 1, proof omitted as "straightforward"). Their
+global indicator is the square of the fourth undivided difference,
+$(\Delta^4\bar u_i)^2=(\bar u_{i-2}-4\bar u_{i-1}+6\bar u_i-4\bar u_{i+1}+\bar u_{i+2})^2$,
+itself symmetric (Eqs. (23)–(25)), in WENO-Z-type weights
+$\alpha_k=d_k\big(1+((\Delta^4\bar u_i)^2/(\beta_k+\epsilon))^q\big)$ with
+$q=1$ (Eq. (26)). The scheme is called IMWENO-P; its accuracy at critical
+points is on [accuracy at critical points](/properties/critical-point-accuracy.md).
+*(Compiler check, not in the sources: the printed $\beta_0$, $\beta_1$,
+$\beta_2$ satisfy the mirror relation above.)*
+
+**Evidence.** On the low-density, low-internal-energy double rarefaction
+($(\rho,v,p)=(1,\mp2,0.4)$, 300 cells, $t=0.15$), WENO-NS, WENO-P and
+MWENO-P produce negative pressure and fail, while IMWENO-P, WENO-JS,
+WENO-Z, WENO-η and WENO-ZS finish (§4.3, Example 10, Figs. 9–10; see
+[double rarefaction](/benchmarks/double-rarefaction-problem.md)). The
+authors state that this "is not enough to link the symmetry-preserving
+property with the positivity-preserving property", while the symmetric
+schemes are "more stable numerically ... at least for the present test".
+With the symmetry error
+$E_s=\big(\tfrac1{N_x}\sum_i\lvert\rho(x_i,t)-\rho(x_{N_x-i},t)\rvert^2\big)^{1/2}$
+(Eqs. (45)–(46)), IMWENO-P has the smallest error of the schemes over
+$0.041<t<0.093$, and later the level of WENO-JS, WENO-Z and WENO-η,
+much below WENO-ZS (Figs. 11–12). This is the only quantified measure of
+solution symmetry on this page. The construction is limited to fifth order
+"if no further modifications are done" (§3.2).
+
 ## Qualifications
+
+- Coefficient symmetry of the indicators (meaning 3) does not give mirror
+  symmetry of the solution (meaning 1): Zhong et al.'s IMWENO-P breaks the
+  Rayleigh–Taylor symmetry, and their symmetric reference schemes WENO-JS
+  and WENO-Z keep the double-rarefaction symmetry no worse than IMWENO-P
+  at late times. Zhong et al.'s indicators also carry the absolute mesh
+  width as the weight of the first-difference term *(compiler check, not
+  in the sources: the relative weight of the two terms therefore depends
+  on the unit of length, while a rescaling $u\mapsto\sigma u$ multiplies
+  every term by $\sigma^2$ and leaves the weights unchanged up to
+  $\epsilon$; see [scale invariance](/properties/scale-invariance.md))*.
+  The paper does not discuss it.
 
 - The two meanings are independent: a skew-symmetric (kinetic-energy-preserving)
   central scheme can still break mirror symmetry by round-off, and a
@@ -164,4 +247,6 @@ to compressible flow (§6). These results are developed on
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4, §§4.9–4.10, Figs. 21–23: round-off statement, symmetric results with the consistent implementation.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.4, Figs. 6–7: 1D symmetry on triangular meshes (preprint).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.5: enlarged $\epsilon$ against symmetry breaking.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §3.1–3.2, Eqs. (19)–(26), Table 1, Fig. 1, Lemma 1; §4.3, Example 10, Eqs. (45)–(46), Figs. 9–12; §4.4, Fig. 13: symmetric smoothness indicators, symmetry error, Rayleigh–Taylor asymmetry.
+- [Li et al. (2023b)](/sources/li-2023-b.md) — §4.5, Fig. 21: ADADF-HY Rayleigh–Taylor asymmetry and its stated cause.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §5.2 (Fig. 6), §5.3 (Fig. 11): physical symmetry breaking in strong shock–vortex interaction; LAD symmetry loss with spurious oscillations, QSV symmetric (arXiv v2).

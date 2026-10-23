@@ -11,7 +11,7 @@ timestamp: 2026-10-21T12:00:00Z
 # Adaptive-diffusion central-upwind Rankine–Hugoniot flux
 
 The adaptive-diffusion central-upwind Rankine–Hugoniot (CURH) flux of
-[Wang et al. (2023)](/sources/wang-2023-b.md) is the two-point finite-volume flux
+[Wang et al. (2023b)](/sources/wang-2023-b.md) is the two-point finite-volume flux
 $h(u^-,u^+)$ of a fifth-order [alternative WENO](/methods/alternative-weno.md) scheme for the
 Euler equations. It is a [central-upwind](/methods/central-upwind-scheme.md) flux in three
 layers: a built-in minmod anti-diffusion (Garg, Kurganov & Liu 2021, as recalled); one-sided
@@ -117,5 +117,5 @@ regularizations $10^{-10}$, $c_{\varsigma}=0.1$ (§4).
 
 # Citations
 
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, §2 (Eqs. (2)–(4)), §3.1 (Eqs. (5)–(13)), §3.2 (Eqs. (14)–(18)), §4 (Exs. 1–9, Table 1), App. A.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, §2 (Eqs. (2)–(4)), §3.1 (Eqs. (5)–(13)), §3.2 (Eqs. (14)–(18)), §4 (Exs. 1–9, Table 1), App. A.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §1 (Rankine–Hugoniot speeds and dissipation switch as dissipation-reduction routes).

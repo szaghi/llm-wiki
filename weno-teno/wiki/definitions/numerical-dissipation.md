@@ -36,7 +36,7 @@ jumps.
 - **Smaller speeds.** The [central-upwind flux](/methods/central-upwind-scheme.md)
   uses the one-sided speeds $a^\pm_{i+1/2}$; it "in general" carries more ND than
   upwind fluxes but needs no Riemann solver
-  ([Wang et al. (2023)](/sources/wang-2023-b.md), §1). Wang et al. reduce ND by
+  ([Wang et al. (2023b)](/sources/wang-2023-b.md), §1). Wang et al. reduce ND by
   tightening $a^\pm$ with regularized discrete Rankine–Hugoniot speeds, by
   replacing them in smooth regions (relative interface jump $\le\Delta x^2$) by
   symmetric speeds built from the fluid velocity and capped by $0.1$ of the
@@ -436,7 +436,7 @@ Without a closed-form measure, the 2D sources compare dissipation through flow
 features that only dissipation suppresses: the curliness of the contact in the
 explosion problem, which is physically unstable and "may be stabilized by the ND
 only", and the distance travelled by the jet of the implosion problem
-([Wang et al. (2023)](/sources/wang-2023-b.md), Examples 6–7); Chertock et al.
+([Wang et al. (2023b)](/sources/wang-2023-b.md), Examples 6–7); Chertock et al.
 present the explosion problem as a benchmark of the amount of ND and compare at
 equal CPU time on the implosion (Examples 6–7). For the Kelvin–Helmholtz
 problem, where solutions do not converge under refinement,
@@ -490,7 +490,7 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 # Citations
 
 - [Fu (2023)](/sources/fu-2023.md) — §3.6, Eq. (29): flux as central part plus jump term.
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, §3, Eqs. (5)–(18), Examples 6–7: CURH speeds, ND switch, ND proxies.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, §3, Eqs. (5)–(18), Examples 6–7: CURH speeds, ND switch, ND proxies.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §3, Lemma 3.1, Examples 6–8: field-wise diffusion, Cesàro averages.
 - [Deng (2023)](/sources/deng-2023.md) — Proposition 5, Table 1, Remarks 3.1, 7.2, §§4.1, 5: sign of the leading error.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §4.2: controlled anti-dissipation.

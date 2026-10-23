@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–bubble interaction"
-description: "A planar shock hitting a circular or spherical region of different density or material: one-dimensional analogues, the Mach 1.22 air–helium and air–R22 experiments of Haas and Sturtevant, stronger air–helium and air–hydrogen cases, gas bubbles in water or stiffened gas, a relativistic version, and Baer–Nunziato and shallow-water variants; tests interface sharpness, robustness at material contrasts and the resolved roll-up."
+description: "A planar shock hitting a circular or spherical region of different density or material: one-dimensional analogues, the Mach 1.22 air–helium and air–R22 experiments of Haas and Sturtevant, a helium–R22 three-phase bubble, stronger air–helium and air–hydrogen cases, gas bubbles in water or stiffened gas, a relativistic version, Baer–Nunziato and shallow-water variants; tests interface sharpness, robustness and roll-up."
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Shock–bubble interaction
@@ -66,7 +66,7 @@ the three agree up to slight differences, which the authors attribute
 to the piecewise-constant structure of the solution (Figs. 10–13).
 
 **Mach 1.22 air–helium (Haas & Sturtevant).** A Mach 1.22 shock in air
-hits a helium bubble of diameter 5 cm. Ten sources run it, in four
+hits a helium bubble of diameter 5 cm. Twelve sources run it, in five
 models:
 
 | Source | Model and scheme | Setup as printed | Grid |
@@ -80,17 +80,27 @@ models:
 | [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) §5.2.5 | sharp interface: level set of Hu et al. in the finite-volume [JAX-Fluids](/software/jax-fluids.md); scheme settings not restated for this case | helium bubble of diameter 50 mm at the origin, shock 5 mm to its left, moving right; domain $[-90,266]\times[-44.5,44.5]$ mm; gas states not printed | not printed (arXiv v1) |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.16 | [five-equation model](/definitions/five-equation-model.md), finite-difference [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) (MEG6, MIG4) and TENO5, HLLC | $(\rho,v_1,v_2,p,\gamma)$: post-shock air $(1.3764,-0.3336,0,1.5698/1.4,1.4)$, helium $(0.1819,0,0,1/1.4,1.648)$, pre-shock air $(1,0,0,1/1.4,1.4)$; $[0,6.5]\times[0,1.78]$ in diameters, bubble at $(3.5,0.89)$, shock at $x=4.5$ moving left; slip walls top and bottom; CFL 0.1 | $1300\times356$, $2600\times712$ (arXiv v2) |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.8 | two-species Euler with the double-flux method, six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) (WCNS-SA, WCNS-LD, ONL6) + HLLC | the same three states and geometry as Chamarthi, after Shankar et al.; zeroth-order extrapolation left and right, slip walls top and bottom, an artificial diffusion layer at the interface; CFL 0.5 | $\Delta x=D/150$ |
+| [Huang & Johnsen (2023)](/sources/huang-2023.md) §4.4 | [five-equation model](/definitions/five-equation-model.md) with a [phase-field](/methods/phase-field-method.md) term, MUSCL–minmod + HLLC | $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, phase 1 helium: pre-shock air and bubble moving at $v_1=114.49$, $(0.166,1.204,114.49,0,101325,\phi_1)$ with $\phi_1=10^{-15}$ outside and $1-10^{-15}$ in the bubble; air at rest $(0.166,1.658,0,0,159060,10^{-15})$ for $x>30$ mm; $[-44.5,44.5]^2$ mm, bubble radius 25 mm; $\gamma=1.67$ (helium), $1.40$ (air); zero-gradient left and right, reflecting top and bottom; CFL 0.4 | upper half, $200\times100$; to $983\,\mu$s |
+| [Paula et al. (2023)](/sources/paula-2023.md) §7.6 | Baer–Nunziato model, [discrete equations method](/methods/discrete-equations-method.md) (RDEMIC) with time-averaged [THINC](/methods/thinc-reconstruction.md), WENO3, HLLC, multiresolution | half domain of height 44.5 mm and length 356 mm, shock at $x=40$ mm, bubble of diameter 50 mm at $x=90$ mm; post-shock air $(\rho,v_1,p)=(1.6573,114.5,159056)$, air $(1.2041,0,101325)$, helium $\rho=0.166$, $\gamma=5/3$ (Table 3); symmetry at axis and top, zero-gradient left and right | $8192\times1024$ effective, about 1150 cells per diameter |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.4 | multicomponent Euler in $p$–$T$ equilibrium, MUSCL with overbee limiter on volume fractions, HLLC | $325\times89$ mm; shock 25 mm from the bubble, moving right to left; pre-shock air $(\rho,p)=(1.4,10^5)$, post-shock $(1.92691,\ v_1=-114.42,\ 156{,}980)$; helium $\rho=0.25463$, $\gamma=1.648$ (SI values of their Table 3, whose column headers are misaligned with the rows) | $325\times90$, $650\times180$, $1300\times360$ (about 50, 100, 200 cells per diameter) |
 
 The post-shock pressure ratio $1.5698$ of Zheng et al. is that of a
 Mach 1.22 shock in air, $1+\frac{2\gamma}{\gamma+1}(M^2-1)$ with
 $\gamma=1.4$ *(compiler check, not in the sources)*, and Tsoutsanis et al.'s and
-Li et al.'s $159060/101325=1.5698$ is the same, so these sources run
+Li et al. (2022c)'s $159060/101325=1.5698$ is the same, so these sources run
 the same shock strength; they differ in the helium contamination, the
 air state and the non-dimensionalization. Nguyen et al.'s post-shock
 ratios, $156{,}980/10^5=1.5698$ and $1.92691/1.4=1.3764$, are the same
 *(compiler check, not in the sources)*; Bai & Li print the pre-shock
-states only.
+states only. So are Paula et al.'s, $159{,}056/101{,}325=1.5698$ and
+$1.6573/1.2041=1.3764$, and Huang & Johnsen's pressure ratio
+$159060/101325$; their density ratio $1.658/1.204=1.3771$ differs from the
+Mach 1.22 value $1.3764$ in the fourth digit *(compiler check, not in the
+sources)*. Huang & Johnsen's frame has the pre-shock air and the bubble
+moving at $114.49$ m/s towards gas at rest. Paula et al.'s shock reaches
+the bubble at $59.7\,\mu$s, which equals the 25 mm gap divided by
+$1.22\sqrt{1.4\cdot101325/1.2041}$ m/s *(compiler check, not in the
+sources)*.
 
 **Mach 1.22 air–R22.** Bai & Li §3.4 also run Haas & Sturtevant's
 heavy-gas case: an R22 cylinder ($\rho=3.8635$ kg/m³, $\gamma=1.249$)
@@ -100,6 +110,21 @@ of the interfaces and of the incident, refracted and transmitted shocks
 "almost coincide" with a front-tracking computation of Ullah et al.;
 the interface carries a richer vortex head, secondary vortex and jet,
 which the authors attribute to higher resolution (Figs. 27–30).
+Paula et al. §7.6.2 run the R22 case (R22 $\rho=3.7975$ kg/m³,
+$\gamma=1.249$) on the setup of their helium row. The feature trajectories
+agree "excellent[ly]" with the experiment and with two computations,
+except the late downstream centreline jet, which runs ahead of the
+experiment; they attribute this to the missing viscous dissipation
+(Fig. 22).
+
+**Three-phase bubble.** Paula et al. §7.6.3–7.6.4 put a helium core of
+diameter 30 mm inside an R22 shell of diameter 50 mm, in 2D and in 3D on a
+quarter domain of $3072\times384\times384$ cells (431 and 259 cells per
+outer and inner diameter). The global shape agrees with Pelanti &
+Shyue's computation with much finer structure; like Pelanti & Shyue, they
+find it notably different from Billaud Friess & Kokh's. In 3D the R22 jet
+is faster and longer and the upstream wall moves more slowly than in 2D
+(Figs. 23–25).
 
 **Mach 6 air–helium interaction.** [Huang et al. (2026)](/sources/huang-2026.md)
 §6.12, Eqs. (6.11)–(6.12), after a cited multiphase work: in
@@ -162,15 +187,29 @@ being refracted by it.
   height and width histories agree with Shukla's computation
   (Figs. 31–33). The two sources' post-shock states differ slightly
   ($1.9$ against $1.915$ GPa, $681.058$ against $685.86$ m/s).
+  Paula et al. §7.7 run the same problem with a Mach 1.715 shock:
+  post-shock water $(\rho,v_1,p)=(1323.65\ \mathrm{kg/m^3},\ 681.58\ \mathrm{m/s},\ 1.9\times10^9\ \mathrm{Pa})$,
+  water at rest $(1000,0,10^5)$, air $(1,0,10^5)$, bubble of diameter
+  6 mm at $x=12$ mm, shock at $x=6.6$ mm, domain of height 12 mm and
+  length 24 mm, $4096\times2048$ cells (1024 per diameter), zero-gradient
+  boundaries except at the axis (Table 4). HLLC develops shock
+  instabilities in the gas inside the bubble, where the Mach number
+  exceeds 2. HLLC-LM, applied only to the air–air Riemann problems,
+  removes them; the authors read this as evidence that the discrete
+  equations method can combine different Riemann solvers (Fig. 26; see
+  [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). The water
+  jet hits the downstream bubble wall about $2.83\,\mu$s after the shock
+  reaches the bubble ($3.69\,\mu$s absolute), "which agrees perfectly"
+  with an earlier computation.
 - **Underwater shock on a gas bubble.** Zheng et al. Ex. 11: pre-shock
   water $(\rho,v_1,v_2,p,\gamma,p_\infty)=(1000,0,0,1,7.15,3309)$,
   post-shock $(1176.3576,1.1692,0,9120,7.15,3309)$ for $x<-1.2$, gas
   $(1,0,0,1,1.4,0)$ in the unit circle; $280\times240$ cells; density at
   $t=0.06$, $0.19$, $0.357$, $0.471$, stopped before collapse (Fig. 15).
-- **Ideal-gas bubble in a stiffened gas, Mach 10.** Li et al. Ex. 5.9
+- **Ideal-gas bubble in a stiffened gas, Mach 10.** Li et al. (2022c) Ex. 5.9
   and 5.11 (3D): bubble $(\rho_1,\rho_2,v_1,v_2,p)=(0.05,4.95,0,0,100)$
   in a stiffened gas $(0.95,0.05,0,0,100)$, post-shock
-  $(1.930198,0.05,-121.2497,0,29800)$ (Li et al. write the trace
+  $(1.930198,0.05,-121.2497,0,29800)$ (Li et al. (2022c) write the trace
   partial density $0.05$ as a symbol and subtract it from the main one);
   stiffened gas $\gamma_1=3$, $p_{\infty,1}=100$, bubble gas
   $\gamma_2=1.4$; $t=0.8$ (2D), $0.64$ (3D).
@@ -266,7 +305,20 @@ upstream, jet and downstream interface points "in very good quantitative agreeme
 Terashima & Tryggvason computation. Their schlieren images agree qualitatively with the
 Haas–Sturtevant images and with a computation by the ALPACA code.
 Three sources thus compare with Terashima & Tryggvason: Nguyen et al. and Bezgin et al. agree with it,
-and Bai & Li find it delayed.
+and Bai & Li find it delayed. Paula et al. find good agreement of the
+helium case with the experiment and with three computations (§7.6.1,
+Fig. 20).
+
+**Holding a diffuse interface thin.** Huang & Johnsen's phase-field term
+keeps the helium–air interface 4–5 cells thick for the whole run, with
+the thickness parameter equal to $\Delta x$ (§4.4, Figs. 8–9). Without
+it, a non-negligible amount of air diffuses into the helium bubble.
+Initializing the volume fraction exactly at 0 and 1 produces negative
+round-off volume fractions after a few steps, with or without the
+phase-field term; the bounds $[10^{-15},1-10^{-15}]$ avoid it. Violating
+their consistent reconstruction or flux computation of mass and volume
+fraction creates mass spikes near the interface, up to $40\%$ in the second
+case (§5.1, Figs. 10–12).
 
 **Interface thickness at fixed grid.** Two chunk-5 sources run the same non-dimensional setup and
 compare schemes on one grid. Chamarthi (Ex. 4.16, Figs. 20–21) finds no noticeable spurious
@@ -296,7 +348,7 @@ authors attribute to the multidimensional reconstruction and the
 arbitrary elements in the interaction zone; see
 [symmetry preservation](/properties/symmetry-preservation.md).
 
-**Cost of resolution.** Li et al. find their moving-mesh runs better
+**Cost of resolution.** Li et al. (2022c) find their moving-mesh runs better
 than, or comparable to, uniform-mesh runs with three times (2D) or
 twice (3D) as many cells per direction, at 26.2 % (2D helium), 23.6 %
 (2D stiffened), 29.2 % (3D helium) and 18.0 % (3D stiffened) of their
@@ -324,7 +376,7 @@ qualitative claim with no reference comparison (Figs. 13–15).
   Euler, bubble collapse pressures in water, order comparisons for
   non-conservative systems) carry over between them.
 - The Haas–Sturtevant setups differ in the helium state: Tsoutsanis et
-  al. and Li et al. model the contamination with air (28 % air), while
+  al. and Li et al. (2022c) model the contamination with air (28 % air), while
   Renac and Zheng et al. use a single helium gas with their own
   constants ($\gamma=1.648$ and $5/3$). Interface-velocity agreement is
   therefore model-dependent within the experimental scatter.
@@ -338,6 +390,11 @@ qualitative claim with no reference comparison (Figs. 13–15).
   shock speeds $3.86$ and $3.68$, and with the printed $\rho$ and $p$ a single shock would carry
   $v_1\approx2.58$, with $\gamma=1.4$, the value the paper fixes for its Euler tests in §3.4)*.
   The paper does not comment on the inflow state.
+- The helium constants differ again: Huang & Johnsen take
+  $\gamma=1.67$ and Paula et al. $5/3$. The post-shock water velocity of
+  the bubble-in-water problem is printed as $681.058$ m/s by Tsoutsanis
+  et al. and $681.58$ m/s by Paula et al., with the same density and
+  pressure, and the shock Mach number as $1.72$ and $1.715$.
 - Apart from the interface velocities of Tsoutsanis et al. and the
   feature velocities of Bryngelson et al., the evidence is from contour
   plots; no source reports an error norm.
@@ -359,3 +416,5 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.16, Figs. 20–21 (arXiv v2).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.8, Eq. (43), Figs. 19–20.
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.5.2, Eq. (41), Fig. 11.
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.4, Eq. (51), Figs. 8–9; §5.1, Figs. 10–12.
+- [Paula et al. (2023)](/sources/paula-2023.md) — §7.6, Table 3, Figs. 20–25; §7.7, Table 4, Fig. 26.

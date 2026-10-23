@@ -119,4 +119,4 @@ critical point, where it is worse than WENO5-JS (3.39–3.72).
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eqs. (12)–(23); §3, Eqs. (24)–(32), Tables 4–5, Figs. 1–2; §4, Tables 6–8, Figs. 3–11.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (12)–(23); §3, Eqs. (24)–(32), Tables 4–5, Figs. 1–2; §4, Tables 6–8, Figs. 3–11.

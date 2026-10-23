@@ -1,17 +1,18 @@
 ---
 type: Benchmark
 title: "Shock–water-column interaction"
-description: "A planar shock in air hitting a cylindrical water column (or a spherical droplet), the liquid counterpart of the shock–bubble problem: validation against the interferograms of Igra and Takayama and the schlieren images of Sembian et al. at Mach 1.47 and 2.4, a column with an air cavity, and a Mach 10 case that tests positivity of high-order schemes."
+description: "A planar shock in air hitting a cylindrical water column or a droplet: validation against the interferograms of Igra and Takayama and the schlieren images of Sembian et al. at Mach 1.47 and 2.4, a column with an air cavity, a Mach 10 positivity test of high-order schemes, and Mach 1.5 shocks on water and n-dodecane droplets in their own vapour, with and without phase change."
 status: established
 aliases: [shock–water column, shock–water cylinder, shock–droplet interaction, water column in air, shocked water cylinder]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Shock–water-column interaction
 
 A planar shock travelling through air hits a cylinder of water, about
-a thousand times denser than the air in every setup below. The shock
+a thousand times denser than the air in the air–water setups below; one
+source replaces the air by the liquid's own vapour. The shock
 is reflected and a shock is transmitted into the water; the incident
 shock wraps round the column, its Mach stems converge at the rear
 stagnation point, expansion waves follow, and a pair of
@@ -22,12 +23,14 @@ the heavy, stiff medium is inside. The sources run it with
 [five-equation diffuse-interface models](/definitions/five-equation-model.md)
 closed by the [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md)
 and use it in two roles: validation against shock-tube experiments and,
-at high Mach number, a robustness test for high-order schemes.
+at high Mach number, a robustness test for high-order schemes. A
+sharp-interface [level-set](/methods/level-set-method.md) source uses it
+for evaporating and condensing droplets.
 
 Page-local symbols: $\phi_1$ the water volume fraction, $D$ the column
 diameter, $(\gamma,p_\infty)$ the stiffened-gas constants. Water is
 $(\gamma,p_\infty)=(6.12,\ 3.43\times10^8\ \mathrm{Pa})$ and air
-$(1.4,0)$ in every setup below that prints them.
+$(1.4,0)$ in every air–water setup below that prints them.
 
 ## Setups
 
@@ -37,6 +40,27 @@ $(1.4,0)$ in every setup below that prints them.
 | [Wong et al. (2021)](/sources/wong-2021.md) §6.5 | 2.4 | domain 11.1 cm × 7.4 cm, $D=2.2$ cm at $(4\ \mathrm{cm},0)$; pre-shock air $\phi_2\rho_2=1.17$, $p=1.01\times10^5$ Pa; post-shock air $\phi_2\rho_2=3.7579$, $v_1=574.57$ m/s, $p=6.6189\times10^5$ Pa; water $1000$, $p=1.01\times10^5$ Pa; constant extrapolation | $3072\times2048$ | shadowgraph/schlieren images of Sembian et al. at $t=4$, 17, 40, 67 µs |
 | [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §4.5 | 2.4 | $(\rho,v_1,v_2,p,\gamma,p_\infty,\phi_1)$: post-shock air $(3.85,567.3,0,0.664\times10^6,1.4,0,0)$, pre-shock $(1.2,0,0,0.101\times10^6,1.4,0,0)$, water $(1000,0,0,10^5,6.12,0.343\times10^9,1)$; $x\in[0,0.2208]$, $y\in[0,0.1152]$ m, column centred at $(0.0576,0.0576)$ m, shock at $x=0.05$ m; with or without a coaxial air cavity of radius 3.6 mm; non-reflecting left and right, slip walls top and bottom; run to $tv_{\mathrm s}/D=10$ ($v_{\mathrm s}$ the post-shock velocity) | about 0.89 million quadrilaterals, edge $\approx D/192$, CWENO5 | Xiang & Wang's computations; schlieren of Sembian et al. |
 | Wong et al. §6.6 | 10 | $[0,30L]\times[-10L,10L]$, $L=1$ mm, $D=8L$ at $(13L,0)$; pre-shock air $\phi_2\rho_2=1.2$, $p=10^5$ Pa; post-shock air $\phi_2\rho_2=6.8571$, $v_1=2.8179\times10^3$ m/s, $p=1.165\times10^7$ Pa; water $1000$, $p=10^5$ Pa | $1152\times768$ | first-order HLLC; the unlimited scheme |
+
+**Droplets in their own vapour, with phase change.**
+[Long, Cai & Pan (2023)](/sources/long-2023.md) §4.4 run a Mach 1.5 shock
+on a liquid droplet surrounded by its vapour, with their conservative
+cut-cell level-set scheme and a Riemann solver with phase change
+([Riemann solvers with phase change](/methods/phase-change-riemann-solver.md)).
+States are $(\rho,v_1,v_2,p,T)$ in kg/m³, m/s, Pa and K:
+
+| Case | pre-shock vapour | post-shock vapour | droplet |
+|---|---|---|---|
+| n-dodecane, 2D (Eq. (38)) | $(4.38,0,0,10^5,500)$ | $(10.63,130.29,0,226613,511.19)$ | $(593.47,0,0,10^5,490)$ |
+| water, 2D (Eq. (39)) | $(0.57,0,0,10^5,380.0)$ | $(1.09,345.47,0,242704,482.47)$ | $(1093.67,0,0,10^5,373)$ |
+
+The 2D domain is $10\times10$ mm (top half computed), with the shock at
+$x=2$ mm, inflow and outflow left and right and symmetry top and bottom,
+on a multiresolution grid of effective resolution $2048\times1024$. The
+droplet is the zero level of $-1.0+\sqrt{(x-0.35)^2+y^2}$ in mm, a radius
+of 1 mm. A 3D water droplet is run on one eighth of a $10\times5\times5$ mm
+domain at effective $1024\times512\times512$ (Eq. (40)). The water is a
+stiffened gas with $\gamma=2.35$ and $p_\infty=10^9$ Pa, its vapour an
+ideal gas, and n-dodecane has a Helmholtz-energy equation of state (§2.2).
 
 A three-dimensional relative, the aerobreakup of a spherical water
 droplet behind a helium shock (post-shock flow Mach 0.59, conditions of
@@ -58,6 +82,13 @@ al.'s images (Fig. 12). Tsoutsanis et al. find all key features
 in agreement with Xiang & Wang and with Sembian et al.'s schlieren, for
 both the plain column and the column with a cavity (Figs. 10–13). All
 three comparisons are visual; no source reports a quantitative error.
+
+**Phase change.** With phase change Long et al. see an additional wave
+from the initial evaporation, condensation after the shock has passed,
+and a larger deformation of the interface than without phase change
+(§4.4.1, Figs. 14–15). They state that their finer resolution shows more
+structures than earlier phase-change computations. The 3D water droplet
+is compared qualitatively with Das & Udaykumar (§4.4.3).
 
 **Negative pressure and the cavity.** In Tsoutsanis et al.'s plain
 column the pressure dip below zero inside the water at $t v_{\mathrm s}/D=0.8$
@@ -91,6 +122,17 @@ See [bound preservation](/properties/bound-preservation.md) and the
   $567.3$ m/s, $p=6.6189\times10^5$ against $6.64\times10^5$ Pa).
 - Wong et al.'s figure caption calls the experimental images
   shadowgraphs and the text calls them grey schlieren images.
+- As printed, Long et al.'s droplet centre is $x=0.35$ mm, with the
+  shock at $x=2$ mm and the post-shock vapour moving in $+x$ *(compiler
+  check, not in the sources: a shock that moves in $+x$ leaves the shocked
+  vapour at $x<2$ mm, and a 1 mm droplet about $x=0.35$ mm spans
+  $x\in[-0.65,1.35]$ mm, so it would start inside the shocked region and
+  never be hit by the shock)*. The printed geometry and the described
+  test therefore disagree; the text does not state the n-dodecane droplet
+  radius either. *(Compiler check, not in the sources: the liquid–vapour
+  density ratio is $593.47/4.38\approx135$ for n-dodecane and
+  $1093.67/0.57\approx1900$ for water, not the air–water 1000 of the other
+  setups.)*
 - Bryngelson et al.'s Mach 1.47 run prints no grid or state, so it
   cannot be placed against the others quantitatively.
 
@@ -99,3 +141,4 @@ See [bound preservation](/properties/bound-preservation.md) and the
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §5.2, Figs. 2–3 (arXiv v1).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §6.5, Table 8, Figs. 11–12; §6.6, Table 9, Figs. 13–16 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §4.5, Eq. (44), Figs. 9–13.
+- [Long, Cai & Pan (2023)](/sources/long-2023.md) — §2.2; §4.4, Eqs. (38)–(40), Figs. 14–15: shock on droplets in their vapour, with and without phase change.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD blast wave and rotor"
-description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, relativistic, two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
+description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, a 3D blast, relativistic, two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # MHD blast wave and rotor
@@ -38,6 +38,19 @@ Godunov–Powell source term and a Zhang–Shu-type
 pressure, produces no negative pressure, and its density is
 "significantly smoother" than earlier published results (Fig. 13).
 
+**One-step HLL-GRP.** [Liu, Feng & Wang (2023a)](/sources/liu-2023.md)
+§4.4 run the same data (same domain, outgoing boundaries, $\gamma=1.4$,
+$200^2$, $t=0.01$, 100 cores), printing $\beta_{\mathrm p}\approx2.51\times10^{-4}$,
+with the same WLS-ENO reconstruction followed by a Barth–Jespersen-type
+limiter on density and pressure at edge midpoints, which they call a
+"PP limiter" while stating that no positivity proof is made. Their
+one-step HLL [generalized Riemann problem](/methods/generalized-riemann-problem.md)
+scheme produces no negative pressure; its profiles are "almost
+identical" to those of a two-stage SSP-RK2 HLL scheme, its divergence
+norm lies between those of the forward-Euler and RK2 HLL schemes, and
+the divergence error concentrates at the shock front, where the plasma
+beta is lowest (Figs. 8–11).
+
 **All-Mach IMEX with constrained transport.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)
 Ex. 5.7 (arXiv v1) run a blast on $[-0.5,0.5]^2$ with periodic
 boundaries: $\rho=1$, $v=0$, $B=(10\sin\theta,10\cos\theta,0)$ with
@@ -69,6 +82,21 @@ than HLLC here. They print the plasma beta as $2.5\times10^{-4}$; with
 $B_1=1000/\sqrt{4\pi}$ and $p=0.1$, $2p/\lvert B\rvert^2=2.51\times10^{-6}$,
 and $2.5\times10^{-4}$ is the value of the original data
 *(compiler check, not in the sources)*.
+
+### Three-dimensional blast
+
+Liu, Feng & Wang (2023a) §4.6 run a 3D blast after CESE
+computations they cite: $\rho=1$, $v=0$,
+$B_1=B_2=B_3=1/\sqrt3$, $p=10$ inside the sphere of radius 0.1 about
+$(1.5,0,0)$ and $p=0.1$ outside, on $[1,2]\times[-0.5,0.5]^2$ with
+outgoing boundaries, $\gamma=1.4$, $200^3$ cells, $t=0.2$, 512 cores.
+The HLL-GRP profiles are almost identical to those of RK2, the HLL-GRP
+and RK2 divergence norms coincide below that of the forward-Euler
+scheme, the divergence is "controlled to the $10^{-3}$ magnitude", and
+the results agree with the cited CESE runs (Figs. 16–20). In this
+blast $2p/\lvert B\rvert^2=0.2$ in the ambient medium
+*(compiler check, not in the sources)*, three orders of magnitude above
+the Balsara–Spicer value.
 
 ### Relativistic MHD blast
 
@@ -131,7 +159,15 @@ $\varphi=(r_1-r)/(r_1-r_0)$ (page-local); periodic boundaries as printed;
 $t=0.295$; $200^2$ cells at second and third order, $600^2$ at second
 order.
 
-They report no negative pressure and undistorted Mach-number contours
+Liu, Feng & Wang (2023a) §4.5 print the same second-rotor data,
+again with periodic boundaries ($200^2$, $t=0.295$, 100 cores): their
+one-step HLL-GRP scheme captures the discontinuities crisply, without
+spurious oscillations and without distortion of the rotating velocity
+field in the central Mach-number plot, and its divergence norm is
+slightly lower than those of the forward-Euler and RK2 HLL schemes
+(Figs. 12–15).
+
+Liu et al. (2021) report no negative pressure and undistorted Mach-number contours
 in the centre, whose distortion earlier work attributes to divergence
 errors; the divergence norm stays below $10^{-3}$ (about
 $10^{-3.3}$–$10^{-3.6}$ on $200^2$, $10^{-4}$ on $600^2$), with small
@@ -215,8 +251,16 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 
 ## Qualifications
 
-- Liu et al. give no CFL number or time-step rule for any test; they
-  print periodic boundaries for the rotor without comment.
+- Liu et al. (2021) give no CFL number or time-step rule for any test; they
+  print periodic boundaries for the rotor without comment, and so do
+  Liu, Feng & Wang (2023a), who run at CFL 0.8 with the Wu–Shu
+  time-step condition.
+- Liu, Feng & Wang (2023a) label the blast-wave quantity of their
+  Fig. 8 "magnetic pressure $\lvert B\rvert$" with range $[21,34]$, while
+  their rotor and 3D figures plot $\lvert B\rvert^2/2$; the initial
+  $\lvert B\rvert=100/\sqrt{4\pi}=28.2$ lies in $[21,34]$ and
+  $\lvert B\rvert^2/2\approx398$ does not, so the plotted quantity is
+  $\lvert B\rvert$ *(compiler check, not in the sources)*.
 - Dzanic & Witherden define the magnetic pressure as
   $\tfrac12(\gamma-1)\lvert B\rvert^2$ (§2.1), not the $\tfrac12\lvert B\rvert^2$
   of their own flux (Eq. 2) and plasma beta $2p/\lvert B\rvert^2$.
@@ -240,3 +284,4 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.5, Eq. (46), Figs. 10–13 (arXiv v2).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.2, Figs. 8–13 (arXiv v2).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.2.1, Figs. 8–10 (arXiv v1).
+- [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §§4.4–4.6, Figs. 8–20.

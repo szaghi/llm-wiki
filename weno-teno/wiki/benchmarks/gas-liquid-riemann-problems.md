@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Gas–liquid Riemann problems"
-description: "One-dimensional Riemann problems between an ideal gas and a stiffened-gas liquid, with exact solutions: compressed air against water (Cocchi et al.), water at a billion pascals against air, water at two gigapascals moving into air, a gas–water double rarefaction and a rarefaction reflected into water; they test interface location, contact oscillations and robustness."
+description: "One-dimensional gas–liquid Riemann problems with exact or reference solutions: compressed air against water, water at a billion pascals and at a terapascal against air, a weak water shock through an air interface, water at two gigapascals moving into air, gas–water rarefactions and liquid–vapour tubes with phase change; they test interface location, contact oscillations and robustness."
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -60,6 +60,34 @@ underwater-explosion water has $p_\infty=6\times10^8$ Pa). They solve
 the [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 in pressure–temperature equilibrium with MUSCL and HLLC.
 
+**Air–water tube of Beig & Johnsen.** [Huang & Johnsen (2023)](/sources/huang-2023.md)
+§4.2, Eq. (49), states in $(\rho_1,\rho_2,v,p,\phi_1)$ with phase 1 air and
+phase 2 water: $(1,881.6,0.184,714,0)$ for $0\le x<0.7$ against
+$(1,881.6,0,0.714,1)$ for $0.7\le x\le1$. The air is an ideal gas
+($\gamma=1.4$), the water a stiffened gas with $\gamma=2.35$,
+$p_\infty=10^9$ Pa and energy constant $-1.167\times10^3$ J/kg. The run uses
+1000 cells, CFL 0.4 and $t=0.1$, with the
+[phase-field](/methods/phase-field-method.md) thickness parameter equal to
+$\Delta x$. *(Compiler check, not in the sources: the pressure ratio is
+$714/0.714=1000$.)*
+
+**Water at $10^{12}$ Pa against air.** [Paula et al. (2023)](/sources/paula-2023.md)
+§7.4.2 put water of density 1000 kg/m³ at
+$10^{12}$ Pa against air at $10^5$ Pa of density 1 or 10 kg/m³, with the
+interface at $x=0.6$ m on a 1 m domain. The water is a stiffened gas
+($\gamma=4.4$, $p_\infty=6\times10^8$ Pa), the air ideal ($\gamma=1.4$).
+They use 1024 cells, zero-gradient boundaries, CFL 0.4 and
+$t=8.3\,\mu$s.
+
+**Weak shock in water through an air interface.** Paula et al. §7.4.1:
+on a 1 m domain, a shock at $x=0.3$ m in water runs into an air interface
+at $x=0.7$ m. The states in $(\rho,v,p)$ are post-shock water
+$(1001.8658\ \mathrm{kg/m^3},\ 3.0337923\ \mathrm{m/s},\ 5.0421806\times10^6\ \mathrm{Pa})$,
+pre-shock water $(1000,0,10^5)$ and air $(1,0,10^5)$, with the water and air
+constants of the previous problem (Table 2). They use 1024 cells,
+zero-gradient boundaries, $t=600\,\mu$s and the THINC steepness
+$\beta_{\mathrm T}\in\{0.325,1,3\}$.
+
 **Water at 2 GPa moving into air (Saurel & Abgrall).**
 [Bai & Li (2022)](/sources/bai-2022.md) §3.1.2, Eq. (32), with the
 temperature form of the stiffened gas: water
@@ -80,6 +108,28 @@ $(1.002,0,50,7.15,3309)$, $[-5,5]$, $N_x=200$, $t=0.01$.
 water $(1000,0,25000,7.15,3309)$ for $x<2$ against gas
 $(1,-10,1,1.4,0)$, $[-5,5]$, $N_x=200$, $t=0.25$.
 
+**Liquid–vapour tubes with phase change.** [Long et al. (2023)](/sources/long-2023.md)
+§4.1 run four Riemann problems between a liquid and its vapour, with the
+exact solutions of Fechter et al.'s phase-change Riemann problem as
+reference. States are $(\rho,v,p,T)$, the liquid always on one side:
+
+| Problem | left | right | $t$ |
+|---|---|---|---|
+| n-dodecane, evaporation (Eq. (28)) | $(584.08,0,1.5\times10^5,500)$ | $(4.38,0,1.0\times10^5,500)$ | 0.7 ms |
+| n-dodecane, condensation (Eq. (30)) | $(4.38,0,1.0\times10^5,500)$ | $(584.05,0,1.4\times10^5,500)$ | 0.7 ms |
+| water, evaporation (Eq. (31)) | $(1073.57,0,1.5\times10^5,380)$ | $(0.68,0,1.2\times10^5,380)$ | 0.3 ms |
+| water, condensation (Eq. (32)) | $(0.68,0,1.2\times10^5,380)$ | $(1073.56,0,1.4\times10^5,380)$ | 0.3 ms |
+
+Units are kg/m³, m/s, Pa and K, the discontinuity at $x=0.5$ m on the
+n-dodecane tubes. n-Dodecane uses a Helmholtz-energy equation of state.
+Water and vapour are stiffened gases: liquid $\gamma=2.35$,
+$p_\infty=10^9$ Pa, vapour $\gamma=1.33$, $p_\infty=0$ (§2.2). The grids
+have 200 and 2000 uniform cells, plus a multiresolution grid of effective
+resolution 409600 for the n-dodecane condensation. The Hertz–Knudsen
+coefficients of the phase-change model differ per problem. The fan has
+four waves: two outer waves, the phase interface and a contact
+([Riemann solvers with phase change](/methods/phase-change-riemann-solver.md)).
+
 **Recalled, not rerun.** [Bryngelson et al. (2021)](/sources/bryngelson-2021.md)
 §5.5 state that [MFC](/software/mfc.md) matches the exact solutions of
 the Cocchi et al. gas–liquid shock tube and of a Mach 8.96 helium shock
@@ -99,6 +149,11 @@ air–helium tube with a hot driver, air
 $(\rho,p,T)=(1.2036\ \mathrm{kg/m^3},\ 10.1\ \mathrm{bar},\ 2931.5\ \mathrm K)$
 against helium $(0.167\ \mathrm{kg/m^3},\ 1.01\ \mathrm{bar},\ 293.15\ \mathrm K)$,
 $\gamma=1.4$ and $1.63$, both at rest, on $[-5,5]$ m to $t=1.7817$ ms.
+Huang & Johnsen (2023) §4.1, Eq. (48), run an air–helium tube on $[0,2]$:
+air $(\rho,v,p)=(1,0,1)$, $\gamma=1.4$, for $x<1$ against helium
+$(0.125,0,0.1)$, $\gamma=1.6$, with 200 cells, CFL 0.4 and $t=0.4$.
+*(Compiler check, not in the sources: these are the states of Chamarthi's
+Abgrall–Karni tube below on a domain twice as long, run twice as long.)*
 [Chamarthi (2023a)](/sources/chamarthi-2023.md) runs two gas–gas problems on the
 [five-equation model](/definitions/five-equation-model.md), with states in
 $(\phi_1\rho_1,\phi_2\rho_2,v,p,\phi_1,\gamma)$ and CFL 0.1 (arXiv v2):
@@ -121,6 +176,41 @@ with 200 cells to $t=0.15$. They use the sharp-interface
 initial states.
 
 ## Findings across sources
+
+**Holding the interface thickness.** Huang & Johnsen's
+[phase-field](/methods/phase-field-method.md) term keeps the material
+interface of the air–helium tube at 6–7 cells for a thickness parameter of
+$1.5\Delta x$, while without it the interface keeps thickening; with the
+term the volume fraction is insensitive to the TVD limiter (§4.1,
+Figs. 2–3). A parameter of $0.1\Delta x$ gives 1–2 cells and $2\Delta x$
+gives 8–9; below $\Delta x$ mass overshoots can appear near the
+interface, and they recommend a parameter between $\Delta x$ and
+$2\Delta x$ (Fig. 4). On the air–water tube the interface stays at 4–5
+cells (§4.2, Fig. 5).
+
+**Extreme ratios with the discrete equations method.** Paula et al.'s
+[DEM](/methods/discrete-equations-method.md) scheme with time-averaged
+[THINC](/methods/thinc-reconstruction.md) agrees "perfectly" with a
+published reference solution and the exact solution on the $10^{12}$ Pa tube at
+density ratio 100, and also runs at ratio 1000 (Fig. 15). On the weak-shock
+problem the computed interface position matches the theoretical one for
+every $\beta_{\mathrm T}$, and "in contrast to" an earlier diffuse-interface
+computation the shock-front position is reproduced without oscillations
+whatever the interface diffusion. Only $\beta_{\mathrm T}=0.325$ shows
+small deviations of the air pressure and velocity on the liquid side. No
+relaxation is needed, because the two-phase Riemann problem enforces
+mechanical equilibrium (§7.4.1, Figs. 13–14).
+
+**Phase change.** Long et al. find that the mass flux of the phase-change
+model must be evaluated from the states adjacent to the phase interface:
+taken from the initial left and right states it converges to a wrong
+solution (§4.1.1, Fig. 4). The density-ratio closure of their approximate
+solver errs by about $11.6\%$ at first, against exact interfacial
+solutions recorded in the cut cell, and the error then drops quickly to
+zero (Fig. 5). In the condensation tubes the interval between phase
+interface and contact, $4.9\times10^{-5}$ m for n-dodecane and
+$2.6\times10^{-6}$ m for water, is unresolved on 2000 cells, without
+spurious waves or instability (§4.1.2, §4.1.4).
 
 **Sharp-interface DG.** Bai & Li's discontinuous Galerkin solver with
 ghost-fluid states in cut cells ([level-set methods](/methods/level-set-method.md))
@@ -194,6 +284,14 @@ cost in conservation is discussed under
   maximum of 1, while the text sets the water at $10^9$ Pa; the text
   also labels the water side "$\phi_1=1$", whereas their interface
   advection test of §3.1 makes water phase 2.
+- Huang & Johnsen print the air–water states without units or a
+  nondimensionalization, while the water constants are in Pa and J/kg
+  ($p=714$ beside $p_\infty=10^9$ Pa; §4.2). Their scheme is at most
+  second order (MUSCL with minmod).
+- Long et al. tune the Hertz–Knudsen coefficients to match the exact
+  solution: $(1.0,0.9)$ with the adjacent-state mass flux against
+  $(0.756,0.680)$ with the initial states (§4.1.1). The exact solution
+  itself depends on the phase-change model.
 - Bai & Li's air temperature of 2931.5 K is consistent with their
   temperature form: $\frac{\gamma-1}{\gamma}C_p\rho T\approx1.013\times10^6$
   Pa, the printed 10.1 bar *(compiler check, not in the sources)*.
@@ -209,3 +307,6 @@ cost in conservation is discussed under
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.1.1–3.1.2, Eqs. (31)–(32), Figs. 8–9.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.14–4.15; Appendix A, Eqs. (93)–(95): gas–gas two-fluid tube and shock–curtain on the five-equation model (arXiv v2).
 - [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §5.2.1, Fig. 13: sharp-interface air–helium tube (arXiv v1; gas–gas only).
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.1–4.2, Eqs. (48)–(49), Figs. 2–5: air–helium and air–water tubes with a phase-field term.
+- [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.1–7.4.2, Table 2, Figs. 13–15: weak shock through a water–air interface, $10^{12}$ Pa water–air tube.
+- [Long et al. (2023)](/sources/long-2023.md) — §2.2, §4.1, Eqs. (28)–(32), Figs. 4–5: liquid–vapour tubes with evaporation and condensation.

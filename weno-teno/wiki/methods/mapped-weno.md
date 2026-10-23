@@ -87,7 +87,7 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1.
 - [Fu (2021)](/sources/fu-2021.md) — §1.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §2.3; §5.2, Fig. 18.

@@ -98,10 +98,16 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 5 staged 2026-10-23:** gradient-based schemes, wall-modelled LES,
+**Chunk 6 staged 2026-10-23:** WCNS weights, flux globalization,
+entropy-stable DG for air, interface methods; 120 of 207 ingested, 181
+concept pages plus the registry, 3765 bibliography entries, deep lint
+done, three contradictions open (TENO $\tau_K$; conservation of WCNS;
+entropy-filter tolerance). Next: chunk 7.
+
+**Chunk 5 committed 2026-10-23 (a001f6a):** gradient-based schemes, wall-modelled LES,
 structure-preserving MHD, GPU codes; 100 of 207 ingested, 167 concept
 pages plus the registry, 3291 bibliography entries, deep lint done, two
-contradictions open (TENO $\tau_K$; conservation of WCNS). Next: chunk 6.
+contradictions open (TENO $\tau_K$; conservation of WCNS).
 
 **Chunk 4 committed 2026-10-23 (9324881):** TENO variants, positivity for
 Navier–Stokes, shock tracking, all-Mach IMEX, codes.

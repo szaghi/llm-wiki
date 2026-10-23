@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -33,13 +33,18 @@ ideal-gas phases, as the two-species setting of a
 finite-difference scheme with a
 [monotonicity-preserving limiter](/methods/monotonicity-preserving-limiter.md)
 and HLLC fluxes, viscous terms included after Coralic & Colonius.
+[Huang & Johnsen (2023)](/sources/huang-2023.md) generalize the model to
+$N$ phases with a [phase-field](/methods/phase-field-method.md) flux in
+every equation, and solve its hyperbolic part, the five-equation model, by
+second-order MUSCL finite volumes with HLLC.
 
 Page-local symbols: $\phi_k$, $\rho_k$, $e_k$, $c_k$ (volume fraction,
 density, specific internal energy and sound speed of phase $k$),
 $Y_k=\phi_k\rho_k/\rho$ the mass fraction, $K$ the Kapila coefficient,
 $s_k$ and $T_k$ the specific entropy and temperature of phase $k$, and
 $j_k$ the volumetric interface-regularization flux of phase $k$
-(defined below).
+(defined below), and $\Lambda_k$ the compressibility coefficient of
+Huang & Johnsen's $N$-phase form (their $K_p$).
 
 ## The five-equation model
 
@@ -99,6 +104,37 @@ expansion, while for weakly compressible flows both gave identical
 results in their experience (§2; the last part is an observation, not
 shown).
 
+**One coefficient for both forms.** Huang & Johnsen (2023) write the
+volume-fraction equation of phase $k$, $k=1,\dots,N$, with a coefficient
+$\Lambda_k$ subject only to $\sum_k\phi_k\Lambda_k=0$ (§2.1, Eq. (1); here
+without their phase-field terms):
+
+$$
+\partial_t\phi_k+\nabla\cdot(\phi_kv)=\phi_k(1+\Lambda_k)\,\nabla\cdot v .
+$$
+
+$\Lambda_k=0$ is Allaire et al.'s form, and
+$\Lambda_k=\rho c^2/(\rho_kc_k^2)-1$ is Kapila et al.'s, which gives
+Wood's sound speed. For stiffened-gas phases the mixture sound speed of
+the general form is
+
+$$
+\rho c^2=\frac{\sum_k\phi_k\rho_kc_k^2(1+\Lambda_k)/(\gamma_k-1)}{\sum_k\phi_k/(\gamma_k-1)},
+$$
+
+so with $\Lambda_k=0$ it is a convex combination of the phasic
+$\rho_kc_k^2$ (§2.9, Eqs. (23)–(25); $\gamma_k$ page-local, the
+stiffened-gas ratio of phase $k$). *(Compiler check, not in the sources:
+for two phases the Kapila choice gives
+$\phi_1\Lambda_1=\phi_1\phi_2(\rho_2c_2^2-\rho_1c_1^2)/(\phi_1\rho_2c_2^2+\phi_2\rho_1c_1^2)$,
+which is Bryngelson et al.'s $K$ above, and Wood's relation gives
+$\sum_k\phi_k\Lambda_k=\rho c^2\sum_k\phi_k/(\rho_kc_k^2)-1=0$.)* In the
+incompressible limit the volume-fraction and mass equations of a phase of
+constant density are consistent only if $\Lambda_k=-1$; Kapila's
+coefficient satisfies this and Allaire's does not (§5.3). The authors
+nonetheless set $\Lambda_1=0$ in all their computations, "as in"
+earlier works (§3).
+
 ## Conservative diffuse-interface regularization and phase entropy
 
 Jain & Moin (2022) add to the Kapila model the interface-regularization
@@ -143,6 +179,22 @@ negligible for $\varepsilon_{\mathrm I}=\Delta x$, the equilibrium
 thickness (Appendix A, Fig. 12; the paper prints no value in the text).
 The entropy here is the physical phasic entropy $s_k$, which increases,
 not the registry's mathematical entropy $\eta$.
+
+**A generic regularization flux.** Huang & Johnsen (2023) leave the
+flux $j_k$ unspecified and propagate it into every equation: $-\rho_kj_k$
+in the flux of the partial density of phase $k$, a consistent mass flux
+$\sum_k(\phi_kv-j_k)\rho_k$ in the momentum and energy fluxes, and
+$-\sum_k\nabla\cdot j_k$ inside the compressibility term of the
+volume-fraction equation (§2.1–2.4, Eqs. (1)–(8)). They state the
+conditions on $j_k$ for the second law, Galilean invariance, interface
+equilibrium and consistency of reduction (Theorems 2.2–2.5), and single
+out $\sum_kj_k=0$ as the favourable case. *(Compiler check, not in the
+sources: Jain & Moin's two-phase flux above, with $j_2=-j_1$, is such a
+case.)* With the conservative Allen–Cahn model supplying
+$\nabla\cdot j_1$, the interface stays 4–5 cells thick for an
+interface-thickness parameter equal to $\Delta x$, where without the
+regularization it keeps thickening (§4). The discrete flux and its bound
+preservation are on [phase-field methods](/methods/phase-field-method.md).
 
 **Rewritten volume-fraction equation.** Tsoutsanis et al., after
 Johnsen & Colonius, write the advection equation as
@@ -203,6 +255,13 @@ as the fluxes; the sources do it in three ways.
   $(\nabla\cdot v)$ in each cell by a midpoint rule from face-averaged
   velocities computed like the fluxes (§4.1, Eq. 31).
 
+Huang & Johnsen (2023) give a reason for the first choice. Consistency of
+reduction, i.e. that the scheme recovers the single-phase equations where
+one phase is absent, requires the discrete $\nabla\cdot v$ of the
+volume-fraction equation to equal the discrete $\nabla\cdot(\phi_1v)$
+with $\phi_1\equiv1$, so the face velocity must be the one the Riemann
+solver returns (§3.1, Theorem A.1).
+
 ## Interface equilibrium and the choice of reconstructed variables
 
 Across a material interface moving with the flow, $p$ and $v$ are
@@ -248,6 +307,20 @@ agree on the remedy, reconstruction of primitive variables:
   a viscous air–SF$_6$ [Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md)
   problem, with the interface thinnest for the author's compact-gradient MIG4
   scheme, compared with MEG6 and TENO5 (§4, Exs. 4.14–4.18).
+- Huang & Johnsen (2023) state a sufficient condition for the mass
+  variables: the partial densities and $\phi_1$ must be reconstructed by
+  one scheme that commutes with affine maps $g=af+b$, so that a constant
+  phasic density is preserved by the reconstruction ("consistent
+  reconstruction of mass and volume fraction", Definition 1). MUSCL with
+  most TVD limiters satisfies it; characteristic reconstruction does not.
+  They therefore keep only velocity and pressure from the characteristic
+  reconstruction and reconstruct the partial densities and $\phi_1$ from
+  the primitive variables (§3.1). Reconstructing the partial densities by
+  WENO5 with a positivity limiter and $\phi_1$ by MUSCL creates mass
+  spikes near the interface (§5.1, Fig. 10). The same condition suffices
+  for temperature equilibrium in the hyperbolic step, which they call
+  weaker than the conditions of Beig & Johnsen (Theorem 5.2,
+  Remark 5.2.1).
 
 Jain & Moin (2022) meet the same requirement in a non-dissipative
 second-order central scheme without any reconstruction, by choosing the
@@ -324,6 +397,18 @@ superbee, van Leer and others), because "the WENO schemes we utilize
 are, in general, not TVD" (Bryngelson et al. §4.2, Eqs. 33–34; see
 [hybrid central-WENO schemes](/methods/hybrid-weno.md)). Neither device
 is a positivity guarantee.
+
+## The parent seven-equation model
+
+[Paula et al. (2023)](/sources/paula-2023.md) (§2.1, Eqs. (1)–(5)) use the
+non-equilibrium Baer–Nunziato model, of which the five- and six-equation
+models are reductions: each phase has its own volume-fraction, mass,
+momentum and energy equations, coupled by non-conservative terms in an
+interface pressure and velocity. With two phases it is the
+seven-equation model. They name the Kapila, Allaire and six-equation
+models only in passing. The [discrete equations method](/methods/discrete-equations-method.md)
+obtains the interface pressure and velocity from Riemann solutions, and
+the authors use no relaxation (§7.4.1).
 
 ## Objections from fully conservative and sharp-interface sources
 
@@ -402,6 +487,10 @@ fluid and ghost-fluid states in cut cells
   TENO to the five-equation model, so the bundle neither confirms nor
   contradicts the priority claim. Chamarthi's interface-thickness ranking is
   shown by plotted profiles and fields (Exs. 4.14–4.18).
+- Huang & Johnsen's scheme is at best second order (MUSCL with minmod,
+  midpoint face fluxes, CFL $\le0.5$; §3.4), and their argument that
+  Allaire's coefficient is inconsistent concerns the incompressible
+  limit, while their own runs use it.
 
 # Citations
 
@@ -413,3 +502,5 @@ fluid and ghost-fluid states in cut cells
 - [Renac (2021)](/sources/renac-2021.md) — §1.2, §7.2 (comparison only; arXiv v3).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §3.5, Figs. 21–22 (objections and comparison only).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (contrast only).
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §2.1–2.10, Eqs. (1)–(8), (22)–(25), Theorems 2.2–2.5; §3.1, Definition 1, Theorem A.1; §3.4; §4; §5.1–5.3, Fig. 10, Theorem 5.2.
+- [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eqs. (1)–(5); §7.4.1 (parent model only).

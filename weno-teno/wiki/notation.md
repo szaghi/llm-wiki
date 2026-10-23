@@ -208,11 +208,21 @@ uses the same letter.
 | $\alpha_{\mathrm D}$, $\beta_{\mathrm D}$ | α-damping coefficient and curvature coefficient of the interface velocity states in the viscous flux of gradient-based schemes | α-damping viscous flux, gradient-based reconstruction |
 | $\lambda_{\mathrm s}$ | scaling $\lambda_{\mathrm s}^{n-1}$ of the $n$-th derivative in Qin et al.'s smoothness indicators | smoothness indicators, multi-resolution WENO, shock-capturing boundary closure |
 | $\eta_{\mathrm Z}$, $\xi_{\mathrm Z}$ | dispersion and dissipation parameters of Zhou et al.'s optimized WCNS interpolation ($c_{\mathrm{disp}}=\tfrac{64}{45}\eta_{\mathrm Z}$, $c_{\mathrm{diss}}=\tfrac{64}{45}\xi_{\mathrm Z}$) | weighted compact nonlinear schemes, MDCD schemes, approximate dispersion relation, numerical dissipation |
+| $\mathsf G=1/(\gamma-1)$, $\mathsf G_k$, $\mathsf A$, $\bar W$, $\mathsf w^\pm$ | inverse of $\gamma-1$ (per component), stiffened-gas coefficient $\gamma p_\infty/(\gamma-1)$, mixture molar mass and Fujiwara et al.'s interface weights | multicomponent Euler equations, stiffened-gas equation of state, pressure-equilibrium preservation, split convective forms, double-flux method |
+| $K$, $\mathcal G$ (flux globalization) | global flux $K=f-\mathcal G$ and the integral $\mathcal G$ of the source term; no page uses it together with the amplification factor $\mathcal G$ | flux globalization, central-upwind, path-conservative, well-balancing, shallow-water equations |
+| $\mathcal G$, $\delta_\nu$ (spectral) | fully discrete Runge–Kutta amplification factor and total dispersion error | approximate dispersion relation, MDCD schemes |
+| $\check u^\pm$, $\mathsf E$, $\mathsf M$ | modified interface states and the equilibrium variables of moving-equilibrium well-balancing | flux globalization, central-upwind, path-conservative, well-balancing |
+| $\dot m$, $\sigma_{\mathrm{st}}$, $\kappa_{\mathrm c}$, $s_{\mathrm p}$ | interfacial mass flux, surface-tension coefficient, interface curvature and interface speed | Riemann solvers with phase change, level-set methods, Rankine–Hugoniot condition, local conservation |
+| $\{\!\{a\}\!\}_{\mathrm G}$, $\{\!\{a\}\!\}_{\mathrm H}$, $\mathsf j_a$, $N_{\mathrm T}$ | geometric and harmonic means, relative jump, truncation order of De Michele & Coppola's asymptotic means | entropy-conservative fluxes, logarithmic mean, pressure-equilibrium preservation |
+| $\{\!\{\cdot\}\!\}_{\exp,k}$, $\{\!\{\cdot\}\!\}_{\ln\exp,k}$, $T^{\mathrm v}_k$ | Peyvan et al.'s exponential means and vibrational temperature of species $k$ | entropy-conservative fluxes, logarithmic mean, multicomponent Euler equations |
+| $\beta^{\mathrm{IMP}}_k$, $\tau^{\mathrm{IMP}}$, $\xi_{\mathrm{NS}}$ | IMWENO-P smoothness indicators, global indicator and WENO-NS parameter (Zhong et al.) | smoothness indicators, critical-point accuracy, WENO-Z, scale invariance |
+| $\lambda_{\mathrm E}$, $\theta_{\mathrm E}$ | parameter and argument of Chen & Deng's exponential weights | exponential nonlinear weights, WCNS, critical-point accuracy, scale invariance |
+| $N_\phi$ | number of phases | phase-field methods, discrete equations method, bound preservation |
 | $W_k$, $\epsilon_k$, $\Omega_k$ | molar mass, molar internal energy and mass production rate of species $k$ | multicomponent Euler equations, operator splitting |
 
 $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic
-variables, Z+M coefficient/affine translation); no page uses both families. The
+variables, Z+M coefficient/affine translation); no page uses both families. $\mathcal G$ is likewise the global part of the flux on flux-globalization pages and the Runge–Kutta amplification factor on spectral pages, and $\mathsf G$ is $1/(\gamma-1)$ on multicomponent pages but Ramani & Shkoller's target map on the moving-mesh pages; no page uses both meanings. The
 gravitational potential is written $\phi$ without subscript on well-balancing pages; the
 volume fraction always carries its phase index, $\phi_k$. The MUSCL parameter is written $\kappa_{\mathrm M}$ and the minmod
 parameter is declared page-local wherever used, to keep $\kappa$ (kinetic energy) and $\theta$

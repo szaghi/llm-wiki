@@ -1,17 +1,17 @@
 ---
 type: Benchmark
 title: "Flow past a circular cylinder"
-description: "Cylinder flows in three regimes: supersonic and hypersonic inviscid flow with a steady detached bow shock, used to test steady-state shock capturing, limiters and immersed walls; subsonic inviscid flow, whose zero drag and fore–aft symmetry test the accuracy of wall boundary treatments; and viscous flow at Re 40 and 100, validated through wake length, separation angle and drag."
+description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock, testing steady shock capturing, limiters and immersed walls; hypersonic viscous flow over an isothermal wall, judged by wall pressure and heat flux; subsonic inviscid flow, whose zero drag and symmetry test wall treatments; and viscous flow at Re 40 and 100 (wake, separation, drag)."
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Flow past a circular cylinder
 
 A uniform stream past a circular cylinder of diameter $D$ is run in
-three regimes that test different things. **Supersonic inviscid flow** forms a
+four regimes that test different things. **Supersonic inviscid flow** forms a
 detached bow shock ahead of the cylinder and a steady flow behind it; the
 test asks whether a shock-capturing scheme converges to a steady state
 (residual to round-off) without oscillations behind the shock; in both
@@ -19,7 +19,9 @@ supersonic sources some nonlinear weights and limiters stall that
 convergence. **Subsonic inviscid flow** has an exact steady solution
 that is fore–aft symmetric with zero drag, so any drag, asymmetry or
 entropy produced at the wall measures the error of the wall boundary
-condition. **Viscous subsonic flow**
+condition. **Hypersonic viscous flow** over a cold isothermal wall
+adds a boundary layer behind the bow shock and is judged by the wall
+pressure and heat flux. **Viscous subsonic flow**
 at Reynolds numbers 40 (a steady closed wake) and 100 (periodic vortex
 shedding) validates the wall treatment of a viscous solver against
 literature values of wake length, separation angle, drag coefficient and
@@ -75,6 +77,17 @@ literature (Fig. 14); no quantity is measured. They call the inflow the
 post-shock state; $(1,\sqrt{1.4}\,M,0,1)$ is the undisturbed free stream
 at Mach $M$ *(compiler check, not in the sources)*.
 
+**Mach 8 and Mach 20 on triangles with a compact scheme.**
+[Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.7 (arXiv v1)
+run inviscid flow at Mach 8 and Mach 20 with an adiabatic reflective
+wall on a refined regular triangular mesh, with their fourth-order
+compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md) at CFL 0.8,
+the same nonlinear reconstruction as in all their tests and no
+troubled-cell detection. The Mach 20 case starts from $t=0$ "without
+additional treatment in the initial phase"; agreement with their
+non-compact high-order gas-kinetic scheme on structured meshes is
+asserted, with no comparison figure (Figs. 10–11).
+
 Wan & Xia and Chen et al. report the same observation from different
 discretizations: in their runs the switch of a nonlinear scheme or
 limiter stalled steady-state convergence, and their smoother switch
@@ -82,6 +95,28 @@ limiter stalled steady-state convergence, and their smoother switch
 weighting in place of a limiter) converged. Neither source discusses the
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md) of
 blunt-body flows on this test.
+
+## Hypersonic viscous flow
+
+Two sources print the same free stream and wall: $T_\infty=124.94$ K,
+isothermal wall at $T_{\mathrm w}=294.44$ K, $\mathrm{Re}=1.835\times10^5$.
+
+- [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.7 run it at
+  $M=8.03$, with $\mathrm{Re}$ based on the cylinder radius, on
+  $60\times160$ quadrilaterals with first-cell spacing 1/2000, with
+  their implicit [RBF differential-quadrature](/methods/rbf-differential-quadrature.md)
+  finite-volume method (Roe flux, a discrete gas-kinetic viscous flux),
+  initialized by a first-order run at CFL 1000 and continued at CFL 1.0.
+  The strong shock is captured "without the carbuncle phenomenon" (see
+  [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)); wall
+  pressure and heat flux agree with Wieting's experiment and a
+  gas-kinetic BGK computation that they cite, and the heat flux is
+  better than with their second-order scheme (Figs. 17–18).
+- Zhao, Ji, Shyy & Xu (2023) §4.7 print $M=5$ with the same
+  $T_\infty$, $T_{\mathrm w}$ and $\mathrm{Re}$, an outflow boundary on
+  the right and high-aspect-ratio triangles, and run their fourth-order
+  compact gas-kinetic scheme at CFL 0.35 (Fig. 12); the Reynolds-number
+  length is not stated.
 
 ## Subsonic inviscid flow
 
@@ -184,6 +219,10 @@ the trend with Mach number is captured (Fig. D.25).
   $\gamma=1.4$, which they do not print *(compiler check, not in the
   sources)*.
 - Funada & Imamura's sphere diameter is not stated in §3.4.
+- Liu et al. (2023b) and Zhao et al. print identical free-stream
+  temperature, wall temperature and Reynolds number at different Mach
+  numbers (8.03 and 5); neither paper compares with the other, and
+  Zhao et al. show no comparison with experiment for their run.
 
 # Citations
 
@@ -193,3 +232,5 @@ the trend with Mach number is captured (Fig. D.25).
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §5.2.2, Fig. 14 (arXiv v1).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §3.2–3.4, Tables 1–3, Figs. 17–25.
 - [Wei et al. (2023)](/sources/wei-2023.md) — §7.2, Eq. 42, Table 5, Figs. 17–22.
+- [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.7, Figs. 17–18.
+- [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.7, Figs. 10–12 (arXiv v1).

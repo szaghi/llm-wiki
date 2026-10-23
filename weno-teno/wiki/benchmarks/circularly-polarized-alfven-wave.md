@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circularly polarized Alfvén wave"
-description: "Smooth exact travelling-wave solution of ideal (and relativistic) MHD in which the transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected over one period in 1D or along a rotated direction in 2D, it serves as a convergence-order test of MHD schemes."
+description: "Smooth exact travelling-wave solution of ideal (and relativistic) MHD in which the transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected over one period in 1D or along a rotated direction in 2D, it serves as a convergence-order test of MHD schemes, from fifth-order WENO to one-step second-order GRP finite volumes."
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -37,6 +37,17 @@ $(-\cos\theta,-\sin\theta)$, $\theta=\pi/4$, on
 $[0,1/\cos\theta]\times[0,1/\sin\theta]$ with $\Delta t$ scaled by
 $\Delta x^{5/3}$ and $\Delta y^{5/3}$.
 
+**Non-relativistic, rotated, [Liu, Feng & Wang (2023a)](/sources/liu-2023.md).**
+§4.2 on $[0,1/\cos\theta]\times[0,1/\sin\theta]$, $\theta=\pi/4$,
+periodic: with the page-local phase $\ell=x\cos\theta+y\sin\theta$,
+$\rho=1$, parallel velocity $0$, perpendicular velocity
+$0.1\sin(2\pi\ell)$, $v_3=0.1\cos(2\pi\ell)$, parallel field $1$,
+perpendicular field equal to the perpendicular velocity, $B_3=v_3$,
+$p=0.1$, $\gamma=5/3$, Alfvén speed 1, $t=2$, CFL 0.2, meshes $16^2$ to
+$256^2$. The reference is "the exact solution at $t=2$, which is the
+initial value", and the error is that of the reconstructed polynomial
+(their Eq. (84)).
+
 **Relativistic, [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md).**
 §4.1.1, Eqs. 44–47: $v_2=-A\cos\!\big(\tfrac{2\pi}{\lambda}(x-v_at)\big)$,
 $v_3=-A\sin(\cdot)$, $B_1=B_0$, $B_2=-B_0v_2/v_a$, $B_3=-B_0v_3/v_a$,
@@ -61,6 +72,27 @@ $1.54\times10^{-3}$ on $8^2$ to $1.84\times10^{-9}$ on $128^2$, orders
 4.13), because $B=\nabla\times\mathsf A$ is formed from the vector potential $\mathsf A$ (page-local) by
 fourth-order central differences (Table 5.3; see
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+**Second order of a one-step GRP scheme.** Liu, Feng & Wang compare
+three second-order finite-volume schemes with the same locally
+divergence-free [WLS-ENO](/methods/wls-eno.md) reconstruction: their
+one-step HLL [generalized Riemann problem](/methods/generalized-riemann-problem.md)
+flux (HLL-GRP), a forward-Euler HLL scheme (FE) and a two-stage SSP-RK2
+HLL scheme (RK2) (Table 1, $L^1$ errors of $v_1$):
+
+- HLL-GRP: $1.7210\times10^{-2}$ on $16^2$ to $5.5446\times10^{-5}$ on
+  $256^2$, orders 2.1125, 1.9463, 2.3627, 1.8565;
+- RK2: orders 2.0953, 1.9895, 2.4408, 2.3915, error
+  $3.6834\times10^{-5}$ on $256^2$;
+- FE: orders falling to 1.0034 on $256^2$.
+
+The authors state that HLL-GRP "achieves the expected convergence
+order" with errors close to RK2. At $256^2$ on 64 cores (Tianhe-1A, two
+six-core Xeon X5670 per node) the wall times are 714.77 s (FE),
+4202.02 s (HLL-GRP) and 1681.45 s (RK2), which the authors ascribe to the
+truncated-SVD least-squares solves of the GRP star-state gradient: the
+one-step scheme costs 2.50 times the two-stage one
+*(compiler check, not in the sources)*.
 
 **Order of reconstruction and time stepping in relativistic MHD.**
 López-Miralles et al. run their RMHD code with HLL, HLLC, HLLD and a
@@ -95,10 +127,16 @@ smooth Alfvén wave as the order test of their
 - Chen, Wu & Xiong scale $\Delta t$ with $\Delta x^{5/3}$ to observe the
   spatial order; their third-order IMEX scheme is not tested at
   $\Delta t\propto\Delta x$ on this case.
-- Both sources are read as arXiv v1 preprints.
+- Liu, Feng & Wang's HLL-GRP orders oscillate between 1.86 and 2.36,
+  and at $256^2$ the HLL-GRP error is 1.5 times that of RK2
+  *(compiler check, not in the sources)*; the paper does not discuss
+  the drop to 1.86 at the finest pair.
+- Chen, Wu & Xiong and López-Miralles et al. are read as arXiv v1
+  preprints; Liu, Feng & Wang as the version of record.
 
 # Citations
 
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Exs. 5.1, 5.4, Tables 5.1, 5.3 (arXiv v1).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.1.1, Eqs. 44–47, Tables 1–4, Fig. 1 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.1, Table 1.
+- [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.2, Table 1.

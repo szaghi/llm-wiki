@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Troubled-cell and shock indicators"
-description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme must be limited, blended or switched; the page defines the indicators the sources use (modal energy and decay, KXRCF, time-reversibility defect, WENO deviation, PDE residual, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor and flattener types) with their parameters and limitations."
+description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines the sources' indicators (modal decay, KXRCF and variants, MOOD admissibility, time-reversibility, WENO deviation, PDE residual, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor, flattener) with parameters and limits."
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -213,6 +213,35 @@ $(\ell+1)/3$, maximum norm, threshold 1, density); both are recorded, not
 reconciled. Du, Shu & Zhong state that no troubled-cell indicator is
 "bullet-proof", so that the limiter must be safe on wrongly flagged smooth
 cells ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
+**A cell-average variant, and MOOD admissibility, in a hybrid DG–FV
+scheme.** [Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.5,
+Eqs. 35–37) compare two indicator families for switching modal DG to a
+same-order CWENOZ reconstruction on unstructured meshes. Their "shock
+detector" (SD), "similar to" KXRCF and to Fu & Shu, flags cell $V_0$ if
+$$\frac{\sum_{n=1}^{N_n}\Big\lvert\frac1{\lvert V_0\rvert}\int_{V_0}u_0\,dV-\frac1{\lvert V_n\rvert}\int_{V_n}u_n\,dV\Big\rvert}{\max_{n\in\{0,\dots,N_n\}}\frac1{\lvert V_n\rvert}\Big\lvert\int_{V_n}u_n\,dV\Big\rvert}>C_k,$$
+with $V_n$ the $N_n$ neighbours, $u_n$ their DG solutions and $C_k$ a
+threshold (page-local): 1 by default, 1.5 on the Shu–Osher problem, 0.4
+and 0.2 on the subsonic and supersonic Taylor–Green vortex and the
+sonic-boom case. As printed it compares cell averages of the target and
+neighbour cells, not the traces on the inflow boundary that KXRCF uses.
+The second family is the physical and numerical admissibility of MOOD
+used a priori, a relaxed discrete maximum principle with margin
+$\alpha_{\mathrm N}=10^{-3}$ or $10^{-1}$ of the local range, over the
+direct neighbours or over the whole reconstruction stencil
+([MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
+Both check density and energy only. The SD flags only the shock region on
+the Shu–Osher problem, where the NAD flags erratically (§3.3, Figs. 8–9),
+but flags up to 100 % of the cells of a smooth scalar advection at $N=4$
+on coarse meshes, where the strict NAD flags few cells near the peaks
+(Appendix B, Table B.3); the strict NAD flags the smooth core of the
+isentropic vortex (Fig. 4). On a supersonic Taylor–Green vortex the SD's
+troubled fraction rises suddenly between $t=5$ and 12 and falls with mesh
+refinement (§3.7, Fig. 18); on Schardin's problem below 0.4 % of cells
+are troubled throughout (§3.5). The hybrid costs about 1.4–1.5 times pure
+DG on coarse meshes with many troubled cells and about 1.05 times on fine
+ones (§3.1, Table 1), and the extra cost is negligible on unstructured
+meshes while the troubled fraction stays within 20 % (Appendix B).
 
 **Time-reversibility defect (artificial viscosity).**
 [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) (§2, Eqs.
@@ -504,6 +533,24 @@ shocks and 1 in smooth flow (page-local). For the Baer–Nunziato system no
 good flattener exists, so antidiffusion is switched off in its Riemann
 problems (§VIII.b).
 
+**Extreme points of the derivative of the interpolant.**
+[Wang et al. (2023c)](/sources/wang-2023-c.md) (§3, Step 2, Remark 1) switch
+their [hybrid](/methods/hybrid-weno.md) multi-resolution
+[WCNS](/methods/weighted-compact-nonlinear-scheme.md) between the linear
+fifth-order midpoint interpolation and the nonlinear multi-resolution one
+by a rule without a threshold: a point is troubled if an extreme point of
+$p_1'$, the derivative of the degree-four interpolant on the five-point
+stencil, lies within that stencil; the coordinates of the extreme points
+have an explicit expression, which they take from Zhao, Zhu, Chen and Qiu
+(2019) without restating it. The rule is applied to characteristic
+variables, which the authors keep because they "more accurately identify
+the troubled cells", although they make the map of marked points periodic
+rather than symmetric in some regions of the Richtmyer–Meshkov runs, and
+state that classifying by conservative variables would restore the
+symmetry (Ex. 4.7). They call the switch problem-independent and free of
+artificial parameters (Remark 1, §6); the hybrid costs 0.81–1.07 times
+WENO-JS, against 1.50–2.31 for the non-hybrid scheme (Table 5.1).
+
 ## Indicators that only select cells
 
 Two sources replace the indicator by the quantity they control.
@@ -559,6 +606,12 @@ Several sources use an indicator without defining or analysing it:
   discontinuities with the mesh and need no indicator, limiter or
   artificial viscosity (§I, §V;
   [implicit shock tracking](/methods/implicit-shock-tracking.md)).
+- **Tuning when the fallback has the same order.** Maltsev et al.
+  conclude that fine tuning of the DG-to-FV switch is "not a necessity"
+  when the finite-volume scheme has the same order as the DG one, and
+  mandatory with an order mismatch, e.g. a second-order fallback (§4); on
+  their tests the choice of bounds (extended over limited) matters more
+  than the frequency of the check (§3.2).
 - **Indicators as bound relaxation, not switches.** Pazner's use of the
   modal indicator to interpolate between local and global bounds (above)
   weakens a guarantee instead of triggering a stabilization: in smooth
@@ -582,6 +635,18 @@ Several sources use an indicator without defining or analysing it:
   *(compiler check, not in the sources: Taylor expansion of $\beta_k$ with
   $\partial_xu=0$; see [critical-point accuracy](/properties/critical-point-accuracy.md))*.
   The value of $\epsilon$ in the indicator is not printed.
+- Wang et al. (2023c)'s extreme points of the cubic $p_1'$ are the real
+  roots of the quadratic $p_1''$, the inflection points of $p_1$, so a
+  smooth profile with an inflection point inside the stencil, such as the
+  sine waves of their accuracy tests, takes the nonlinear branch at those
+  points *(compiler check, not in the sources)*; they do not say whether
+  "within the stencil" means $[x_{i-2},x_{i+2}]$ or the cell-face span.
+  The scheme still has $\epsilon$ and the linear weights; "parameter-free"
+  refers to the switch.
+- Maltsev et al.'s convergence rates with an active indicator exceed the
+  design order (up to 6.89 at $N=4$) because refinement lowers the
+  troubled fraction, which they state makes the convergence of the hybrid
+  "practically difficult to determine" (Appendix B).
 - Li, Shu & Qiu's derivation of the KXRCF scaling (Eqs. (2.32)–(2.33)) is
   written with a boundary measure $\lvert\partial I_i^-\rvert\sim h$; in 1D
   the inflow boundary is a point *(compiler check, not in the sources)*.
@@ -656,3 +721,5 @@ Several sources use an indicator without defining or analysing it:
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — arXiv v1: §3.1, Eqs. (18)–(20), Fig. 2.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §3.1, Eqs. (17)–(18), (22)–(24), (32)–(33), Tables 1–3, Figs. 2–5.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4, Eqs. (31)–(37); Table 1 (arXiv v1).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.5, Eqs. (35)–(37); §3.1–3.7, Table 1, Figs. 4, 8–9, 18; §4; Appendices A–B, Table B.3.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Step 2, Remarks 1, 3; Ex. 4.7; §5, Table 5.1; §6.

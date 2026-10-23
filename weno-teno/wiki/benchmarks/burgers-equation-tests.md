@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation tests"
-description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock forms and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, a two-dimensional Riemann problem, and special Euler data with gamma = 3 whose solution is a Burgers solution; records setups, breaking times and reported orders."
+description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, 2D Riemann and sine data, the latter on adaptive Active Flux grids, and gamma = 3 Euler data reducing to Burgers; setups, breaking times, orders."
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Burgers equation tests
@@ -33,11 +33,19 @@ that reduce exactly to Burgers.
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P_4$ on 15 and $\mathbb P_{14}$ on 5 elements |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.2 | $u_0=\sin(2\pi x)$, flux printed $u^2$ | $[0,1]$ | — | $0.3$, 80 elements |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 5 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.15$, 20–320 cells | $0.5$, 20 and 40 cells, reference WENO-JS on 10000 |
+| [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) §4.4 | $u_0=\sin(2\pi x)\sin(2\pi y)+0.1$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, boundary conditions not stated | $0.05$, AMR | $0.2$, $0.6$, $1.0$, AMR levels 3–5 |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.2 | $u_0=0.25+0.5\sin(\pi x)$ | $[-1,1]$, periodic, boundary closures kept active | $0.3$, 40–640 points | $4$, $7.9$, $8.1$, 200 points |
 
-For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$; along the diagonal the
+For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
+al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
-& Qiu, also run by Fan et al.); for
+& Qiu, also run by Fan et al.); for Calhoun et al.'s two-dimensional
+data, whose characteristics carry the Jacobian
+$1+t\,(\partial_xu_0+\partial_yu_0)$ and
+$\partial_xu_0+\partial_yu_0=2\pi\sin(2\pi(x+y))$,
+$t_{\mathrm b}=1/(2\pi)\approx0.16$ *(compiler check, not in the
+sources)*; for
 $u_0=0.5-0.25\sin(\pi x)$, $t_{\mathrm b}=4/\pi\approx1.27$ *(compiler
 check, not in the sources)*. The accuracy times thus lie before and
 the shock times after breaking. Likewise $t_{\mathrm b}=1/\pi$ for
@@ -76,6 +84,16 @@ implicit Euler is first order and the unlimited DIRK–CWENO scheme D3P1
 third order on the same data (Fig. 1). After the shock forms, Q3P1 is
 slightly more diffusive than D3P1 but much less than implicit Euler,
 and at $\Delta t=5h$ it reduces D3P1's oscillations (Figs. 4–5).
+
+**Symmetric smoothness indicators.** Zhong et al.'s fifth-order
+finite-volume IMWENO-P, whose smoothness indicators satisfy their
+mirror-symmetry condition (see
+[smoothness indicator](/definitions/smoothness-indicator.md)), reaches
+fifth order on the smooth data with $L_1$ error $3.30\times10^{-9}$ at
+320 cells, against $1.63\times10^{-8}$ for
+[WENO-JS](/methods/weno-js-reconstruction.md) (Table 6; SSP-RK3, global
+Lax–Friedrichs flux, CFL number $(\Delta x)^{2/3}$); the shocked solutions at $t=0.5$ on 20 and 40 cells are
+compared with the WENO-JS reference (Fig. 3).
 
 **Boundary closures.** Qin et al. run the sine with their fifth-order
 multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
@@ -118,6 +136,22 @@ lets oscillations pile up, and spectral vanishing viscosity with an
 inviscid low range under-damps low wavenumbers; their
 [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md), tuned
 on this test, matches the exact spectrum best (Fig. 1).
+
+**Active Flux on adaptive grids.** Calhoun, Chudzik & Helzel run the
+two-dimensional sine data with their Cartesian
+[Active Flux](/methods/active-flux.md) method in ForestClaw
+([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md) with
+subcycling and a conservative fix at coarse–fine interfaces). The
+point values are evolved by a fixed-point iteration of the implicit
+characteristic relation $u(x,y,t)=u_0(x-ut,\,y-ut)$, each iteration
+gaining one order, two iterations from a first-order guess giving the
+third order of the biquadratic reconstruction (§2.2). At $t=0.05$, with
+refinement fixed along the diagonal and CFL at most 0.5, they state
+third order, with the result "not shown here". At $t=0.2$, $0.6$ and
+$1.0$ on levels 3–5, unlimited Active Flux shows unphysical oscillations
+along the curve where the characteristic speed changes sign; the
+bound-preserving limiter of their earlier work, applied where the
+refinement criterion flags steep gradients, avoids them (Fig. 12).
 
 ## Space–time Burgers: accelerating shock and shock merger
 
@@ -302,6 +336,13 @@ in the sources)*, matching Zheng et al.'s statement.
   and 3.73; the printed slopes agree with the printed errors and mesh
   sizes ($\ln(6.36/0.866)/\ln(3.63/1.81)=2.87$) *(compiler check, not
   in the sources)*.
+- Calhoun et al. print the refinement criterion as
+  $(q_{i,j+1}-q_{i,j+1})/(2\Delta y)\ge15$ (their $q$ is $u$), which is
+  identically zero, next to the centred
+  $(q_{i+1,j}-q_{i-1,j})/(2\Delta x)\ge15$ for $x$, so the $y$-criterion
+  read as the centred difference $q_{i,j+1}-q_{i,j-1}$ is the
+  non-trivial one; both are printed without absolute values. They are
+  read in the arXiv v2 preprint.
 - The accuracy tests of Zheng et al. use $\Delta t=O(\Delta x^{5/3})$;
   the other sources' accuracy runs state CFL 0.6 with a reduced time
   step (Li, Shu & Qiu) or prescribed multiples of $h$ (Puppo et al.).
@@ -321,3 +362,5 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §2.3, Fig. 1 (arXiv v2).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — Example 2.12; §4.1, Eq. (44) (arXiv v4).
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.2, Table 11, Figs. 3–4.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.1, Ex. 5, Table 6, Fig. 3.
+- [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §2.2, §4.4, Eqs. (7)–(10), (30), Fig. 12 (arXiv v2).

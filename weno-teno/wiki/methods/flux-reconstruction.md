@@ -5,7 +5,7 @@ description: "Flux reconstruction corrects the discontinuous interpolated flux o
 status: established
 aliases: [FR, CPR, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
 tags: [flux-reconstruction, dg, entropy-stable, software, immersed-boundary]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Flux reconstruction and energy-stable FR
@@ -295,6 +295,24 @@ inviscid ONERA M6 wing and an LES of the VFE-2 delta wing at $\mathbb P^3$
 with $1.04\times10^8$ degrees of freedom per component (Dzanic et al., §5;
 Dzanic & Witherden, §5); see [PyFR](/software/pyfr.md).
 
+[Peyvan et al. (2023)](/sources/peyvan-2023.md) compare, in 1D at $N=3$,
+FR and spectral difference (SD), both stabilized by the
+[entropy filter](/methods/entropy-filtering.md) of Dzanic & Witherden,
+with an entropy-stable [DGSEM](/methods/dgsem.md) with subcell blending
+(§4; arXiv v1). On the [Leblanc shock tube](/benchmarks/leblanc-shock-tube.md)
+FR and SD resolve the contact more sharply but oscillate more, SD the most;
+the authors attribute SD's overshoots to its flux polynomial of degree
+$N+1$ (§4.1, Fig. 1). On a Mach-10 variant of the
+[Shu–Osher problem](/benchmarks/shu-osher-problem.md) FR misses the dip at
+$x=2.82$ and the valley at $x=3.265$ that the DGSEM resolves (§4.2, Fig. 2).
+On a three-species reacting Sod problem FR and SD agree better with the
+reference than the DGSEM and WENO but oscillate (§4.3, Fig. 3), and on
+five-species air they are unstable because the filter finds no admissible
+strength (§4.5.1; stated, no figure). The authors also report from
+experience that artificial viscosity "cannot stabilize the high-order
+spectral method for high-pressure ratios shock waves" (§4.1), without
+evidence in the paper.
+
 ## Qualifications
 
 - The new split form is no longer an FR scheme in the sense of a
@@ -315,3 +333,4 @@ Dzanic & Witherden, §5); see [PyFR](/software/pyfr.md).
 - [Kou et al. (2022)](/sources/kou-2022.md) — §3 Eqs. (7)–(22), §4.6, §5.1 Figs. 9–10, §5.2.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.2 Eqs. (6)–(16), §2.3 Eqs. (18)–(19) (arXiv v2).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §2.1 Eqs. (1)–(12), §2.2 Fig. 3, §2.3, §2.4, §3.1 Fig. 10.
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §4.1–4.3 Figs. 1–3, §4.5.1 (arXiv v1).

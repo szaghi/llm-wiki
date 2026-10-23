@@ -1,12 +1,12 @@
 ---
 type: Operator
 title: "Logarithmic mean"
-description: "The logarithmic mean of two positive numbers, the jump of a quantity divided by the jump of its logarithm, is the mean that makes two-point fluxes entropy-conservative for entropies with logarithmic terms; the page gives its identity, its stable and division-reduced evaluation, its cost, and the fluxes that use it."
+description: "The logarithmic mean of two positive numbers, the jump of a quantity divided by the jump of its logarithm, makes two-point fluxes entropy-conservative for entropies with logarithmic terms; the page gives its identity and mean inequalities, its stable, division-reduced and truncated evaluations, its cost, an exponential variant, and the fluxes that use it."
 status: established
 symbol: "$\\{\\!\\{a\\}\\!\\}_{\\log}$"
 aliases: [log mean, Ismail–Roe mean, inverse logarithmic mean]
 tags: [entropy-stable, numerical-flux, dg, kinetic-energy-preserving]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Logarithmic mean
@@ -21,10 +21,20 @@ $$\{\!\{a\}\!\}_{\log}=\frac{[\![a]\!]}{[\![\ln a]\!]}=\frac{a^+-a^-}{\ln a^+-\l
 & Roe.
 It is symmetric in its arguments and consistent. It lies between the
 geometric and the arithmetic mean,
-$\sqrt{a^-a^+}\le\{\!\{a\}\!\}_{\log}\le\{\!\{a\}\!\}$ *(compiler check, not in the
-sources: with $a^\pm=c\,e^{\pm t/2}$, $t\ge0$ by symmetry, the three means are $c$,
+$\sqrt{a^-a^+}\le\{\!\{a\}\!\}_{\log}\le\{\!\{a\}\!\}$, strictly for $a^-\ne a^+$,
+as [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) recall from
+Carlson (Eq. (5); arXiv v2) *(compiler check, not in the sources: with
+$a^\pm=c\,e^{\pm t/2}$, $t\ge0$ by symmetry, the three means are $c$,
 $c\,2\sinh(t/2)/t$ and $c\cosh(t/2)$, and the inequalities reduce to
-$t/2\le\sinh(t/2)$ and $\tanh(t/2)\le t/2$)*.
+$t/2\le\sinh(t/2)$ and $\tanh(t/2)\le t/2$)*. Applied to $1/a$, the same
+chain gives (Eq. (7))
+
+$$\frac{a^-a^+}{\{\!\{a\}\!\}}\le\Big(\{\!\{1/a\}\!\}_{\log}\Big)^{-1}\le\sqrt{a^-a^+},$$
+
+harmonic mean on the left, geometric on the right. With the page-local
+relative jump $\mathsf j_a=[\![a]\!]/(2\{\!\{a\}\!\})$, $\lvert\mathsf j_a\rvert<1$,
+the geometric mean is $\{\!\{a\}\!\}(1-\mathsf j_a^2)^{1/2}$ and the harmonic
+mean $\{\!\{a\}\!\}(1-\mathsf j_a^2)$ (Eqs. (6), (8)).
 
 ## Why entropy-conservative fluxes need it
 
@@ -79,6 +89,27 @@ properties are wanted (§3.1).
 The flux formulas are on
 [entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md).
 
+**Exponential means for vibrational energy.** [Peyvan et al. (2023)](/sources/peyvan-2023.md)
+need, for the entropy-conservative flux of air with a harmonic-oscillator
+vibrational energy, the jump of $\ln(e^{T^{\mathrm v}_ka}-1)$ with
+$a=1/T$ and page-local characteristic temperature $T^{\mathrm v}_k$ of
+species $k$ (§3, Eqs. (78)–(87); arXiv v1). They define two page-local
+means,
+
+$$\{\!\{a\}\!\}_{\exp,k}=\frac{[\![a]\!]}{[\![e^{T^{\mathrm v}_ka}]\!]},\qquad \{\!\{a\}\!\}_{\ln\exp,k}=\{\!\{e^{T^{\mathrm v}_ka}-1\}\!\}_{\log}\,\{\!\{a\}\!\}_{\exp,k},$$
+
+so that $[\![\ln(e^{T^{\mathrm v}_ka}-1)]\!]=[\![a]\!]/\{\!\{a\}\!\}_{\ln\exp,k}$:
+the logarithmic-mean identity applied to $e^{T^{\mathrm v}_ka}-1$, whose jump
+is that of $e^{T^{\mathrm v}_ka}$. For $a^-\approx a^+$ the exponential mean is
+evaluated, after the device of Winters et al. used for the logarithmic
+mean, by writing $a^\pm=\{\!\{a\}\!\}(1\pm\mathsf j_a)$:
+
+$$\{\!\{a\}\!\}_{\exp,k}=\frac{1}{T^{\mathrm v}_k\,e^{T^{\mathrm v}_k\{\!\{a\}\!\}}}\,\frac{x}{\sinh x},\qquad x=T^{\mathrm v}_k\{\!\{a\}\!\}\mathsf j_a,$$
+
+with $\sinh x/x$ replaced by its series $1+x^2/3!+x^4/5!+x^6/7!$ (Eq. (87)).
+No switching threshold is printed. The flux is on
+[entropy-conservative fluxes](/methods/entropy-conservative-flux.md).
+
 **Other density averages.** Kinetic-energy-preserving split forms that do
 not aim at entropy conservation average the density arithmetically
 (Feiereisen, Coppola, Kennedy–Gruber) or geometrically: the splittings of
@@ -103,6 +134,20 @@ $$F=\begin{cases}1+\varsigma/3+\varsigma^2/5+\varsigma^3/7,&\varsigma<10^{-4},\\
 the threshold being for 64-bit arithmetic. The series is that of
 $\ln\xi_{\mathrm r}=2\operatorname{artanh}f_{\mathrm r}$ *(compiler check, not in the
 sources)*.
+
+**Truncation by design.** De Michele & Coppola (2023b) write the same
+expansion exactly, $[\![\ln a]\!]=\frac{[\![a]\!]}{\{\!\{a\}\!\}}\sum_{n\ge0}\frac{\mathsf j_a^{2n}}{2n+1}$,
+so $\{\!\{a\}\!\}_{\log}=\{\!\{a\}\!\}\big/\sum_{n\ge0}\mathsf j_a^{2n}/(2n+1)$
+(Eqs. (11)–(12)), recalling that Ismail & Roe used such an expansion to
+remove the singularity. Since $f_{\mathrm r}=-\mathsf j_a$, it is the series
+of Algorithm 1 with $\varsigma=\mathsf j_a^2$ *(compiler check, not in the
+sources)*. Instead of switching to it near $a^-=a^+$, they truncate it at a
+fixed order $N_{\mathrm T}$ (page-local) everywhere, which gives purely algebraic fluxes whose
+entropy error decreases as $N_{\mathrm T}$ grows; the zeroth-order truncation of
+$\big(\{\!\{1/e\}\!\}_{\log}\big)^{-1}$ is the harmonic mean of $e$ (§4, Eq.
+(13); [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+They state that this is cheaper than the logarithmic mean and avoids the
+local treatment against division by zero, without timings (§1, §6).
 
 Ranocha et al.'s Algorithm 2 computes $\varsigma$ with one division,
 $\varsigma=\big(a^-(a^--2a^+)+(a^+)^2\big)/\big(a^-(a^-+2a^+)+(a^+)^2\big)$. It
@@ -129,6 +174,11 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
   ([bound preservation](/properties/bound-preservation.md)).
 - The series branch of Algorithms 1–3 is given without an error bound in
   Ranocha et al. (2023).
+- Peyvan et al. print the $\sinh$ argument of their Eq. (86) as
+  $T^{\mathrm v}_k\mathsf j_a$ and the remainder of Eq. (87) as $O(x^9)$; the
+  argument is $T^{\mathrm v}_k\{\!\{a\}\!\}\mathsf j_a$, as their Eq. (87) uses,
+  and the remainder of an even series truncated after $x^6$ is $O(x^8)$
+  *(compiler check, not in the sources)*.
 
 # Citations
 
@@ -138,3 +188,5 @@ speed-up of about 10 % to 75 % depending on the data (Ranocha et al.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — App. A Eqs. (102)–(103) (arXiv v1).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2, §3.1 (arXiv v1).
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.2, Table 3.
+- [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §1, §3 Eqs. (5)–(8), §4 Eqs. (11)–(13), §6 (arXiv v2).
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §3 Eqs. (76)–(87) (arXiv v1).

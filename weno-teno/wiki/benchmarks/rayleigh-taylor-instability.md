@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Rayleigh–Taylor instability"
-description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes; a three-dimensional magnetized variant tests positivity-preserving DG for ideal MHD."
+description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes; a diffuse-interface variant measures the speed-up of adaptive moving meshes, and a three-dimensional magnetized variant tests positivity-preserving DG for ideal MHD."
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,11 +19,12 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Sixteen
+[symmetry preservation](/properties/symmetry-preservation.md). Nineteen
 sources of the bundle discuss it (one of them only in a
-three-dimensional magnetized variant); Fu (2021), Takagi et al., Ye et al.,
+three-dimensional magnetized variant, one only in a diffuse-interface
+variant); Fu (2021), Takagi et al., Ye et al.,
 Huang et al. (2026), Huang, Liang & Fu (2023) and Li, Chen & Ren (2022)
-cite Xu & Shu for it, Li et al. (2022, WENO-ZN) cite Shi, Zhang & Shu
+cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) cite Shi, Zhang & Shu
 and Young et al.
 
 ## Setup
@@ -31,9 +32,11 @@ and Young et al.
 The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Takagi et al. (2022)](/sources/takagi-2022.md) §4.7,
 [Ye et al. (2022)](/sources/ye-2022.md) §4.7, Eq. (47),
-[Li et al. (2022)](/sources/li-2022-b.md) §4.4.1, Eq. (45),
+[Li et al. (2022b)](/sources/li-2022-b.md) §4.4.1, Eq. (45),
 [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 9,
-[Wang et al. (2023)](/sources/wang-2023-b.md) Example 9,
+[Wang et al. (2023b)](/sources/wang-2023-b.md) Example 9,
+[Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.8,
+[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 11,
 [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7, Eq. (38),
 [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.5,
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.7,
@@ -52,9 +55,11 @@ $$
 
 reflecting walls at $x=0$ and $x=1/4$, fixed states
 $(\rho,v_1,v_2,p)=(2,0,0,1)$ at $y=0$ and $(1,0,0,2.5)$ at $y=1$, final
-time $t=1.95$.
+time $t=1.95$ (Zhong et al. stop at $t=1.98$; Wang et al. (2023c) defer
+the boundary conditions to the literature and also run a viscous case
+at $\mathrm{Re}=50000$).
 
-**Gravity convention.** Chertock et al. and Wang et al. state the
+**Gravity convention.** Chertock et al. and Wang et al. (2023b) state the
 gravity term explicitly: $+\rho$ in the $y$-momentum equation and
 $+\rho v_2$ in the energy equation, i.e. gravity of unit magnitude
 along $+y$, which is consistent with the hydrostatic profiles
@@ -66,7 +71,10 @@ Chertock et al. describe the instability as "a layer of heavier fluid
 [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.5 likewise add $\rho$
 and $\rho v_2$ to the $y$-momentum and energy equations as source
 terms (Hong et al.: "added to the third and fourth Euler equations"),
-and so do Zhou et al. ("added to the right-hand sides").
+and so do Zhou et al. ("added to the right-hand sides"), Zhong et al.
+(the zero right-hand side "is replaced by $(0,0,\rho,\rho v)^{T}$") and
+Wang et al. (2023c) (source terms $\rho$ and $\rho v_2$ in the third and
+fourth equations).
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
 same convention. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
@@ -82,17 +90,34 @@ printed model: they state the homogeneous Euler system (their Eq. (26)),
 for which the initial pressures $2y+1$ and $y+3/2$ are not in
 equilibrium.
 
+**Diffuse-interface variant with downward gravity.**
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md) §7.2 (arXiv v2), after
+a setup they cite, write gravity as the source $-\mathcal J\rho g$ in
+the vertical momentum and $-\mathcal J\rho g v_2$ in the energy
+equation of their ALE system ($\mathcal J$ the Jacobian of their mesh
+map, page-local), $g=1$, on $[-0.25,0.25]\times[0,1]$, periodic in $x$,
+free-flow in $y$, $v=0$, a smoothed interface
+$\rho=1+\tfrac12\big[1+\tanh\big((y-\eta_0(x))/h\big)\big]$ with
+$\eta_0=0.5-0.01\cos(4\pi x)$ and $h=0.005$ (page-local), so that the
+heavy fluid $\rho=2$ lies above the light one $\rho=1$ against
+downward gravity, and hydrostatic pressure $p=5-y$ below and
+$5-0.5-2(y-0.5)$ above $y=0.5$; $T=2.5$. The ratio of specific heats is
+not stated for this test; the paper's default is $1.4$. The perturbation
+is of the interface position, not of the velocity, and with wavenumber
+$4\pi$ on a domain twice as wide it has one wavelength per domain
+width, as the common setup *(compiler check, not in the sources)*.
+
 ## Runs in the sources
 
 | Source | Scheme | Grid | Times |
 |---|---|---|---|
 | [Fu (2021)](/sources/fu-2021.md) §5.5.2 | very-high-order [TENO](/methods/adaptive-teno.md) vs [WENO-CU6](/methods/weno-cu6.md); Rusanov and Roe | $64\times256$ | 1.95 |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.7 | [TENO-THINC](/methods/teno-thinc.md) vs WENO5-Z, TENO5; Rusanov and Roe | $64\times256$, $128\times512$ | 1.95 |
-| [Li et al. (2022)](/sources/li-2022-b.md) §4.4.1 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $120\times480$ | 1.95 |
+| [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.1 | seventh-order [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z | $120\times480$ | 1.95 |
 | [Ye et al. (2022)](/sources/ye-2022.md) §4.7 | [AFTENO](/methods/afteno.md) vs TENO5, AFWENO; HLLC | $120\times480$ ($h=1/480$) | 1.95 |
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.8 | [ROUND, LD-ROUND](/methods/round-scheme.md) vs WENO5-JS, WENO5-Z | $128\times512$ | 1.95 |
 | [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 9 | [LCD central-upwind](/methods/lcd-central-upwind-scheme.md) vs earlier CU | $\Delta x=\Delta y=1/1024$ | 1.95, 2.95 |
-| [Wang et al. (2023)](/sources/wang-2023-b.md) Example 9 | A-WENO with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) | $\Delta x=\Delta y=1/800$ | 1.95, 2.95 |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 9 | A-WENO with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) | $\Delta x=\Delta y=1/800$ | 1.95, 2.95 |
 | [Fu (2023)](/sources/fu-2023.md) §3.8 | TENO review: symmetry discussion | — | — |
 | [Hong, Ye & Ye (2022)](/sources/hong-2022.md) §5.5 | [TENO-M](/methods/targeted-eno.md)6/8 vs TENO6/8, [WENO-CU6](/methods/weno-cu6.md), WENO-JS, WENO7, WENO9; $\epsilon=10^{-4}$ | $64\times256$ | 1.95 |
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.7 | five-point [adaptive TENO](/methods/adaptive-teno.md) with a new scale sensor vs WENO5-Z, TENO5, TENO5-A; Roe | $96\times384$ | 1.95; 43 contours 0.9–2.2 |
@@ -100,6 +125,9 @@ equilibrium.
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.10 | TENO5 with THINC jump reconstruction ([TENO-THINC](/methods/teno-thinc.md)) vs WENO5-Z, TENO5, TENO5-THINC, TENO6; Rusanov | $64\times256$, $128\times512$ | 1.95 |
 | [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 | finite-difference [Hermite WENO](/methods/hermite-weno.md) HWENO-R vs WENO-ZQ | $120\times480$, $240\times960$ | 1.95 |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.7 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6; HLLC, TVD-RK3, CFL 0.5 | $60\times240$, $120\times480$ | 1.95 |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 11 | fifth-order FV IMWENO-P (mirror-symmetric smoothness indicators) vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P; global LF | $240\times960$ | 1.98 |
+| [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.8 | hybrid multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) vs MR-WCNS, WENO-JS; inviscid and $\mathrm{Re}=50000$ | $240\times960$ | 1.95; 15 contours 0.952269–2.14589 |
+| [Ramani & Shkoller (2023)](/sources/ramani-2023.md) §7.2 | simplified FD WENO ALE solver with C-method artificial viscosity on uniform grids and on a dynamic [adaptive moving mesh](/methods/adaptive-moving-mesh.md) (SAM-ALE) | uniform $64\times128$ to $512\times1024$; SAM-ALE $64\times128$ | 2.5 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
 ## Findings across sources
@@ -111,7 +139,10 @@ Figs. 14–17); WENO-ZN over WENO-JS and WENO-Z (Li et al., Fig. 7);
 AFTENO5 with HLLC richest among the TENO and AFWENO variants (Ye et
 al., Fig. 7); the new central-upwind fluxes over their predecessors,
 with earlier secondary mushrooms and a "jellyfish-like" structure at
-$t=2.95$ (Wang et al., Fig. 9; Chertock et al.). Ye et al. give the
+$t=2.95$ (Wang et al. (2023b), Fig. 9; Chertock et al.); IMWENO-P,
+WENO-NS, WENO-P and MWENO-P finer than WENO-JS and WENO-Z, WENO-JS the
+most dissipative (Zhong et al., Fig. 13); both multi-resolution WCNS
+over WENO-JS on the same grid (Wang et al. (2023c), Figs. 4.15–4.16). Ye et al. give the
 only cross-grid calibration: AFTENO5 at $h=1/480$ is comparable to
 fifth-order WENO-JS at $h=1/1920$ and ninth-order WENO-JS at $h=1/960$
 from earlier literature, and lowering the TENO cut-off $C_T$ from
@@ -137,6 +168,20 @@ Zhou et al. find bubble, spike and the small vortices on the spike
 neck reproduced by all three of their six-point WCNS, and more
 small-scale structure with the adaptive-dissipation WCNS-SA on both
 grids (Figs. 17–18).
+
+**Cost of resolution on adaptive meshes.** Ramani & Shkoller compare
+their SAM-ALE run on $64\times128$ (target mesh concentrated at the
+tracked interface, depth parameter $\delta=0.97$ of their target, page-local, with a large zoom-in homotopy at
+restarts) with uniform runs: it is comparable to the $256\times512$
+uniform run at 138 s against 1370 s of CPU time, about 10 times faster,
+and 88 times faster than the $512\times1024$ run (12100 s), and its
+vorticity norms track the $512\times1024$ run for $t\le1.75$ (Table 7,
+Fig. 18). Mesh generation costs about as much as the ALE solve. They
+state that their simplified flux, with no Riemann solver, misses
+roll-up that their interface tracking captures (§7.2.4), and claim that
+running the classical problem on coarse adaptive grids faster than on
+uniform ones is "the first of its kind" (footnote 3). The uniform runs
+use C-method viscosity $\mu=7.5\times10^{-4}$.
 
 **Symmetry.** The data are symmetric about $x=1/8$ ($\cos 8\pi x$ is
 invariant under $x\mapsto\tfrac14-x$) *(compiler check, not in the
@@ -164,6 +209,13 @@ report different outcomes for low-dissipation schemes:
   round-off errors", apply a symmetry-preserving implementation
   technique from the literature, and report "rigorous flow symmetry"
   (§4, §4.10).
+- Zhong et al. find that IMWENO-P "still shows a symmetry-broken
+  phenomenon", although its smoothness indicators satisfy their
+  mirror-symmetry condition on the coefficients, and leave the issue to
+  the literature (Ex. 11).
+- Wang et al. (2023c) measure a symmetry error of the hybrid MR-WCNS of
+  $1.07\times10^{-12}$ inviscid and $1.55\times10^{-14}$ at
+  $\mathrm{Re}=50000$ (their Eq. (4.9)).
 - Hong et al. raise the weight regularization to $\epsilon=10^{-4}$ on
   this case "to alleviate" round-off symmetry breaking, following
   Fu et al. (§5.5).
@@ -214,7 +266,7 @@ the sources)*.
   the printed initial data give $(\rho,p)=(1,1.5)$ at $y=0$ and $(2,3)$
   at $y=1$ *(compiler check, not in the sources)*; the common setup is
   the one printed by Fu (2021), Takagi et al., Ye et al., Li et al.,
-  Chertock et al. and Wang et al. The gravity term is not given, so the run actually computed
+  Chertock et al. and Wang et al. (2023b). The gravity term is not given, so the run actually computed
   cannot be reconstructed from the paper.
 - Hong et al. print the domain as "$[0,0.25]\times[0,1][0,1]$", a
   duplicated interval.
@@ -229,11 +281,11 @@ the sources)*.
 
 - [Fu (2021)](/sources/fu-2021.md) — §5.5.2, Fig. 9 (arXiv v1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.7, Figs. 14–17.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.4.1, Eq. (45), Fig. 7.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.1, Eq. (45), Fig. 7.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.7, Eq. (47), Figs. 7–8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.8, Eq. (6.10).
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.2, Ex. 9 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 9, Fig. 9.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4, Example 9, Fig. 9.
 - [Fu (2023)](/sources/fu-2023.md) — §3.8.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.7, Eqs. (26), (38), Figs. 15–16.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §5.5, Fig. 13; §6, Table 4.
@@ -243,3 +295,6 @@ the sources)*.
 - [Fan et al. (2023)](/sources/fan-2023.md) — Ex. 3.13, Fig. 3.17.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.6, Eqs. (47)–(52), Figs. 14–17 (arXiv v2).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.7, Eq. (42), Figs. 17–18.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 11, Fig. 13.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — Example 4.8, Eq. (4.9), Figs. 4.15–4.16.
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §7.2, Eq. (58), Table 7, Figs. 15–18, footnote 3 (arXiv v2).

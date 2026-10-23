@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Block-structured adaptive mesh refinement"
-description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested levels of patches or fixed-size blocks: Berger–Oliger/Colella patch refinement in AMROC, tree-based block refinement on GPUs and in PARAMESH, the refinement criteria (gradients, Richardson error estimates, interface distance, disturbance indicators), coarse–fine transfer including divergence-preserving prolongation and edge-field defect correction for constrained fields, and the measured savings over uniform meshes."
+description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested levels of patches or fixed-size blocks: Berger–Oliger/Colella patch refinement in AMROC, tree-based block refinement on GPUs, in PARAMESH and in ForestClaw, the refinement criteria, coarse–fine transfer including Active Flux point values and divergence-preserving prolongation, sub-cycling with and without time interpolation, and the measured savings and accuracy against uniform meshes."
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -45,6 +45,18 @@ for several GPUs, rebuilt at every remeshing (§3.5, §4).
 PARAMESH (blocks of $40\times40$ cells in 2D and $50\times14\times12$ in
 3D, up to nine levels). Bai & Li describe their mesh as a quadtree-like
 multi-level Cartesian mesh (§2.2).
+[Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) implement
+[Active Flux](/methods/active-flux.md) in ForestClaw, a quadtree (or
+multi-block forest) of quadrants managed by p4est, each quadrant holding a
+Cartesian patch with the same number of cells on every level
+($16\times16$ in all their tests), with 2:1 balance between adjacent
+quadrants and coarsening only when all four siblings satisfy the
+criterion (§3). [Paula, Adami & Adams (2023)](/sources/paula-2023.md)
+run their multiphase [discrete-equations method](/methods/discrete-equations-method.md)
+in ALPACA, whose block-based multiresolution adapts the mesh by Harten's
+wavelet analysis of the cell averages and keeps shocks and interfaces on
+the finest level; their "effective resolution" is that finest level
+(§2.2).
 [Zaghi et al. (2023)](/sources/zaghi-2023.md) build the same kind of
 octree in [ADAM](/software/adam.md): identical blocks of $8^3$ to $32^3$
 cells with 26 ghost regions each, 2:1 balance, the tree stored in a hash
@@ -96,6 +108,13 @@ being done on the CPU (§2.2, Fig. 3).
   90° out of phase with the pressure, fills holes in the mesh between
   pressure peaks (Figs. 8–10).
 
+- **Solution variation.** Calhoun et al. refine a patch where
+  $q_{\max}-q_{\min}>0.001$ (advection) or
+  $\lvert p_{\max}-p_{\min}\rvert\ge0.001$ (acoustics), and where a
+  centred difference quotient of $q$ is at least 15 (two-dimensional
+  Burgers, where the same cells are also limited); in convergence tests
+  they force the refinement along a diagonal band instead (§4).
+
 **When to remesh.** Matsushita & Aoki remesh when the interface has
 moved $2\Delta x_{\min}$, estimated from the acoustic time step
 (Eq. 42); Browne et al. every $n_{\mathrm R}=\Delta t_{x,b}/\Delta t$
@@ -128,9 +147,23 @@ refinement steps in about 130,000 time steps (§5).
   Zaghi et al. fill ghost cells between blocks of different levels by
   second-order interpolation (§2.2); refinement and coarsening of the
   field are interpolations whose order is not stated.
+- **Point values and averages (Active Flux).** The degrees of freedom of
+  Active Flux are a cell average plus point values at corners and edge
+  midpoints, shared between cells, and each cell carries the biquadratic
+  reconstruction that interpolates its eight boundary values and matches
+  its average. Calhoun et al. coarsen by averaging the four fine averages
+  and copying the coarse point values from the fine vertices, discarding
+  fine values that are not at coarse locations; they refine by evaluating
+  the coarse reconstruction at the fine point locations and computing the
+  fine averages by the two-dimensional Simpson rule, which is exact for
+  the biquadratic, so the four fine averages sum exactly to the coarse
+  one and the transfer is conservative (§3.1, Figs. 3–4).
 - **Flux consistency.** Matsushita & Aoki average fine fluxes on coarse
   faces at level gaps, which keeps the phase field conserved (§4); their
   mass error stays at $10^{-16}$ on uniform and adaptive grids (§5.1).
+  Calhoun et al. use the Berger–Colella conservative fix, updating both
+  coarse and fine cells at a coarse–fine face with the fluxes of the
+  finer grid (§3.2).
 - **Constrained vector fields.** For face-collocated fields with an
   involution constraint, $\nabla\cdot B=0$ or $\nabla\cdot D=\rho_{\mathrm q}$
   (page-local $D$, the electric displacement, and $\rho_{\mathrm q}$, the
@@ -175,6 +208,24 @@ $10^{-14}$–$10^{-12}$, and no late-time instability, error pile-up or
 mesh imprinting over many thousands of steps (§9, Tables 13–15,
 Figs. 13–15).
 
+**Sub-cycling without time interpolation.** Calhoun et al. (§3.2,
+Figs. 5–6) advance level $\ell+1$ with $\Delta t_{\ell+1}=\Delta t_\ell/2$
+but, unlike Berger–Oliger–Colella, never interpolate coarse ghost data in
+time: two ghost layers are reconstructed around each patch, the first
+layer is advanced together with the interior and used at intermediate
+times, and at synchronized times the ghost data are replaced by averaged
+or interpolated data from the neighbours. For their constant-state
+preserving Active Flux on a swirling flow, global time stepping keeps
+constants exactly on adaptive grids, because a coarse flux equals the mean
+of its two fine fluxes (Corollary 4.3); with sub-cycling the
+intermediate-time fine fluxes are not balanced by coarse ones, and a
+constant field shows an error of $10^{-13}$ against about $10^{-16}$
+without sub-cycling (§4.3; [free-stream preservation](/properties/free-stream-preservation.md)).
+On smooth swirl data sub-cycling does not change the accuracy noticeably
+(Table 3). Paula et al. adapt the time step after every finest-level step
+by local time stepping, which lets them use the CFL numbers of uniform
+grids (§2.2).
+
 ## Measured savings
 
 | Source | Problem | Adaptive against uniform |
@@ -206,9 +257,20 @@ Figs. 5, 7). Browne et al. compare finite-difference adaptive points with a DNS 
 is Fourier-spectral in the spanwise direction, a caveat they state
 (§5).
 
+**Accuracy on refined grids.** Calhoun et al. measure third order of
+Active Flux on adaptive grids, in $L^1$ (Tables 1–4). Advecting a
+smoothed disc, refinement that follows the solution (levels 3–6) matches
+the finest uniform grid, $1.07\times10^{-6}$ against $1.07\times10^{-6}$
+(EOC 2.985 against 2.987), whereas refinement along a fixed diagonal
+band (levels 5–6) matches the coarser uniform grid (Table 1). For solid-body
+rotation the adaptive levels 3–7 give $5.92\times10^{-7}$ against
+$5.83\times10^{-7}$ on the uniform level 7 (Table 2), and on the
+acoustics test of Lukáčová et al. the adaptive grid is about as accurate
+as the coarser uniform one (Table 4).
+
 ## Qualifications
 
-- [Wang et al. (2022)](/sources/wang-2022.md) implement their
+- [Wang et al. (2022a)](/sources/wang-2022.md) implement their
   ghost-cell [immersed boundary](/methods/immersed-boundary-method.md)
   in AMROC but run it on uniform grids; combining it with adaptive
   refinement is left to future work (§1, §4).
@@ -239,7 +301,26 @@ is Fourier-spectral in the spanwise direction, a caveat they state
   al.; WENO3 in their appendix) and discontinuous Galerkin (Bai & Li);
   none analyses the accuracy of the coarse–fine interface for its
   high-order scheme. Zaghi et al. state only that level jumps "seem to
-  not pollute the solution" of a WENO3 vortex (Appendix).
+  not pollute the solution" of a WENO3 vortex (Appendix). Calhoun et al.
+  measure third-order convergence of Active Flux on refined grids, a
+  measurement rather than an analysis of the interface error (§4).
+- Calhoun et al. call theirs "the first implementation of the Active
+  Flux method on adaptively refined Cartesian grids" (Abstract). The
+  stationarity-preserving acoustic evolution operator of Barsukow et al.
+  keeps discrete steady states on a regular grid, but their solver with
+  it becomes unstable on adaptive grids (§4.6, Conclusions); the operator
+  they use is not stationarity preserving. In their Table 4 the adaptive
+  row prints EOCs 3.1045 ($p$) and 2.8564 ($v$), while the printed errors
+  give $\log_2(1.64\times10^{-4}/2.06\times10^{-5})=2.99$ and
+  $\log_2(3.33\times10^{-5}/3.87\times10^{-6})=3.11$ *(compiler check,
+  not in the sources)*.
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) argue for
+  r-adaptation instead: the dyadic refinement of AMR produces spurious
+  reflection, refraction and scattering of waves at refinement jumps,
+  which corrupts Noh and Rayleigh–Taylor solutions and persists or
+  worsens under refinement, citing work with RAGE and FLASH (§1.1, §7.1);
+  this is a stated argument, not a test of this bundle
+  ([adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 
 # Citations
 
@@ -247,8 +328,11 @@ is Fourier-spectral in the spanwise direction, a caveat they state
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.5, Eqs. (42), (47)–(48); §4, Figs. 6–17; §5.1, Figs. 21–22; §6.3.
 - [Browne et al. (2022)](/sources/browne-2022.md) — §3, §3.4, Eqs. (64)–(68), Figs. 8–10; §5, Table 6.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1, §2.2.
-- [Wang et al. (2022)](/sources/wang-2022.md) — §1, §4.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §1, §4.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §7, Eqs. (43)–(52), Figs. 8–10; §8.7, Table 12; §9, Tables 13–15, Figs. 12–15.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §3.4; §6 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §4 (no mesh adaptation).
 - [Zaghi, Salvadore, Di Mascio & Rossi (2023)](/sources/zaghi-2023.md) — §2.2, Figs. 2–3; §3.2, Table 1, Figs. 5–7; Appendix.
+- [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — arXiv v2: §3.1–3.2, Figs. 3–6; §4.1–4.6, Corollary 4.3, Tables 1–4; Conclusions.
+- [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §2.2 (ALPACA multiresolution and local time stepping).
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §1.1, §7.1 (argument against dyadic refinement).

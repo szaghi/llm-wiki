@@ -5,7 +5,7 @@ description: "The Rankine–Hugoniot condition ties the speed of a discontinuity
 status: established
 aliases: [Rankine–Hugoniot condition, jump condition, interface condition, interface conservation, discrete Rankine–Hugoniot speed]
 tags: [shock-tracking, riemann-solver, numerical-flux, central-scheme]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Rankine–Hugoniot jump condition
@@ -63,7 +63,7 @@ e.g. a multivalued Burgers solution in their earlier work (§3.5).
 
 ## Discrete Rankine–Hugoniot speeds in central-upwind fluxes
 
-[Wang et al. (2023)](/sources/wang-2023-b.md) (§3.1, Eqs. (7)–(9), after Garg, Kurganov
+[Wang et al. (2023b)](/sources/wang-2023-b.md) (§3.1, Eqs. (7)–(9), after Garg, Kurganov
 and Liu) tighten the one-sided speeds $a^\pm_{i+1/2}$ of the
 [central-upwind flux](/methods/central-upwind-scheme.md) with componentwise, regularized
 Rankine–Hugoniot speeds of the interface jump,
@@ -108,6 +108,27 @@ for two-medium flows with a stiffened-gas equation of state.
   fraction $\alpha_{\mathrm s}$ of the acoustic one.)* It switches the HLLC–HLL hybrid flux;
   how it is combined is on [carbuncle](/definitions/carbuncle-phenomenon.md).
 
+**Phase interfaces with mass transfer.** At a liquid–vapour interface with evaporation or
+condensation, [Long et al. (2023)](/sources/long-2023.md) (§3.1, Eq. (9), after Fechter et al.)
+use the jump conditions of a discontinuity of speed $s_{\mathrm p}$ that carries a mass flux
+$\dot m$, surface tension $\sigma_{\mathrm{st}}\kappa_{\mathrm c}$ and latent heat $Q_{\mathrm{lat}}$
+(page-local):
+$[\![\rho(V-s_{\mathrm p})]\!]=0$, $[\![\rho(V-s_{\mathrm p})V+p]\!]=-\sigma_{\mathrm{st}}\kappa_{\mathrm c}$ and
+$[\![\rho(V-s_{\mathrm p})(e+\tfrac12V^2)+pV]\!]=\dot mQ_{\mathrm{lat}}-\sigma_{\mathrm{st}}\kappa_{\mathrm c}s_{\mathrm p}$,
+$V$ the normal velocity. *(compiler check, not in the sources: with
+$\sigma_{\mathrm{st}}=Q_{\mathrm{lat}}=0$ these are $s_{\mathrm p}[\![u]\!]=[\![f(u)]\!]$ for the 1D Euler
+equations, and with $\dot m=0$ they reduce to a contact with a surface-tension pressure jump.)*
+The jump system is underdetermined for a subsonic phase interface and needs a phase-change
+model for $\dot m$. In their four-wave HLL-type solver the outer waves are treated as shocks
+obeying the plain jump relations with Davis speeds (Eq. (14)); see
+[Riemann solvers with phase change](/methods/phase-change-riemann-solver.md).
+
+**Gradients of an HLL state.** In the HLL-GRP solver the gradient of the intermediate state is
+obtained, "according to the Rankine–Hugoniot jump conditions" across the two HLL waves, from an
+overdetermined least-squares system
+([Liu et al. (2023a)](/sources/liu-2023.md), §3.2.1, Eq. (64);
+[generalized Riemann problem](/methods/generalized-riemann-problem.md)).
+
 ## Shock states in test problems
 
 Shocked initial data are built from the jump condition with zero speed or with the shock
@@ -139,7 +160,9 @@ of a Mach-1.3 shock.)*
 # Citations
 
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §3.2 (Eqs. (3.5)–(3.13), Lemmas 1–2), §3.3 (Eqs. (3.14)–(3.15)), §3.5, §IV (author manuscript).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §3.1 (Eqs. (6)–(9)), App. A.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §3.1 (Eqs. (6)–(9)), App. A.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (8)–(18)).
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §2.1, Eqs. (27)–(30), Remark 5.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §3.2, §5.3, §5.8, §5.10.
+- [Long et al. (2023)](/sources/long-2023.md) — §3.1 (Eqs. (9)–(12)), §3.2 (Eq. (14)).
+- [Liu et al. (2023a)](/sources/liu-2023.md) — §3.2.1 (Eq. (64)).

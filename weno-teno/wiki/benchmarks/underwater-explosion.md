@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Underwater explosion"
-description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface: the two-dimensional test of compressible two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by a sharp-interface DG solver and a pressure–temperature-equilibrium finite-volume model."
+description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface, the two-dimensional test of two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by a sharp-interface DG solver and a pressure–temperature-equilibrium model; and a spherically symmetric one-dimensional explosion bubble with published collapse radius and time."
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Underwater explosion
@@ -63,7 +63,34 @@ handles high density and pressure ratios with strong shocks; neither
 reports a failure, a positivity fix specific to this case or an error
 norm.
 
+## A spherically symmetric variant
+
+[Paula et al. (2023)](/sources/paula-2023.md) §7.4.3 run a different,
+one-dimensional problem after two published computations: a spherical gas
+bubble of radius $0.16$ m in unbounded water, computed with a
+spherical-symmetry source term. Water is a stiffened gas with
+$\gamma=5.5$, $p_\infty=492.115\times10^6$ Pa, at $1025$ kg/m³ and
+$10^6$ Pa; the gas has $\gamma=1.4$, $1630$ kg/m³ and $8.381\times10^9$ Pa.
+The domain reaches $400$ m, with symmetry at $r=0$ and zero gradient at
+$400$ m, on five multiresolution levels with finest cells from
+$3.91\times10^{-2}$ to $2.44\times10^{-3}$ m; the CFL number is halved
+until $t=10^{-4}$ s. The scheme is their
+[discrete equations method](/methods/discrete-equations-method.md) with
+time-averaged [THINC](/methods/thinc-reconstruction.md).
+
+They find a minimum bubble radius of about $0.422$ m at $T\approx0.196$ s,
+followed by a rebound, in "very good agreement" with a sharp-interface
+computation, at an accuracy comparable to it at similar resolution, while a
+second published method needs significantly higher resolution. Their
+solution converges from above, like the sharp-interface one; the other
+converges from below (Fig. 16).
+
 ## Qualifications
+
+- Paula et al.'s spherical problem shares only the name with the
+  free-surface problem: it has no free surface, a gas pressure of
+  $8.381$ GPa instead of 1 GPa and different water constants
+  ($\gamma=5.5$, $p_\infty=492.115$ MPa against $4.4$ and $600$ MPa).
 
 - The two setups share the geometry and the bubble state but not the
   models: a sharp interface with one equation of state per fluid against
@@ -82,3 +109,4 @@ norm.
 
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.6, Figs. 34–36.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.3, Table 2, Figs. 11–15.
+- [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.3, Fig. 16: spherically symmetric explosion bubble.

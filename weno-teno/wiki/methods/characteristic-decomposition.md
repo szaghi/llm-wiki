@@ -40,14 +40,14 @@ finite-difference papers of this bundle.
 
 Users of the finite-difference algorithm with Lax–Friedrichs splitting (the averaged state is
 listed below): [Fu (2021)](/sources/fu-2021.md) (§5; Rusanov splitting, LLF for extreme
-cases), [Li et al. (2022)](/sources/li-2022-b.md) ("global Lax–Friedrichs flux splitting with
+cases), [Li et al. (2022b)](/sources/li-2022-b.md) ("global Lax–Friedrichs flux splitting with
 local characteristic fields", with Eq. (38)), [Luo & Wu (2021)](/sources/luo-2021-b.md) (§5),
 [Takagi et al. (2022)](/sources/takagi-2022.md) (§4, where THINC is applied per characteristic
 component and per split-flux direction), [Wang & Don (2022)](/sources/wang-2022-b.md)
 (§3.3, well-balanced shallow-water WENO) and
 [Wang et al. (2021)](/sources/wang-2021.md) (§3.1, Remark 1, for their
 [multi-resolution WENO](/methods/multi-resolution-weno.md)).
-[Wang et al. (2023)](/sources/wang-2023-b.md) apply it to the WENO-Z *interpolation* of
+[Wang et al. (2023b)](/sources/wang-2023-b.md) apply it to the WENO-Z *interpolation* of
 point values in [A-WENO](/methods/alternative-weno.md) (§2). [Browne et al. (2022)](/sources/browne-2022.md) use the
 finite-difference algorithm with Rusanov splitting for fifth-order WENO on disturbance fluxes,
 the characteristic transform being applied "to improve the shock capturing characteristics"
@@ -63,7 +63,7 @@ RBF-based WENO, with eigenvalues $v-c$, $v$, $v+c$, and treat 2D dimension by di
 [Wan & Xia (2022)](/sources/wan-2022.md) (§2, Eqs. (2.7)–(2.9)) state the averaged state as a
 Roe average satisfying $f(u_{i+1})-f(u_i)=A(u_{i+1/2})(u_{i+1}-u_i)$, split each field with its
 own maximum $\max_j\lvert\lambda_l(u_j)\rvert$ over the stencil, and in most tests use instead
-the global $\max(\lvert v\rvert+c)$ per direction. [Li et al. (2023)](/sources/li-2023.md)
+the global $\max(\lvert v\rvert+c)$ per direction. [Li et al. (2023a)](/sources/li-2023.md)
 (Eqs. (30)–(33)) project the conservative variables with Roe-averaged $L_{i+1/2}$, $R_{i+1/2}$
 for the six-point interpolation of their [A-WENO](/methods/alternative-weno.md).
 [Fan et al. (2022)](/sources/fan-2022.md) (§3) project, with the eigenvectors of the Roe matrix
@@ -117,7 +117,7 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   is attributed by the authors to "less information being used for reconstruction in each
   direction", a cause not isolated by their runs. See
   [WENO limiters for DG](/methods/weno-limiter-dg.md).
-- **Only where a detector fires.** The hybrid MDAD scheme of [Li et al. (2022)](/sources/li-2022.md)
+- **Only where a detector fires.** The hybrid MDAD scheme of [Li et al. (2022a)](/sources/li-2022.md)
   (§3.4) decomposes only at interfaces flagged non-smooth by its shock detector, with $R$ from
   the simple average of the two neighbouring states, splits by global Lax–Friedrichs in
   characteristic space and runs a second detection on each split characteristic flux, which
@@ -281,7 +281,7 @@ $\max(\lvert v\rvert+c)$, whereas with per-field speeds $\max\lvert v-c\rvert$, 
 [affine-invariant WENO](/methods/affine-invariant-weno.md) operator stays affine invariant in
 characteristic variables, so the shallow-water still-water state is preserved without
 further linearization ([well-balancing](/properties/well-balancing.md)).
-[Li et al. (2023)](/sources/li-2023.md) (§4.2, Thm. 5) make the same argument for the Euler
+[Li et al. (2023a)](/sources/li-2023.md) (§4.2, Thm. 5) make the same argument for the Euler
 equations with gravity: at a hydrostatic equilibrium the Roe-averaged velocity vanishes and the
 characteristic variables are $(\lambda_{\mathrm e}p_{\mathrm e},\ \rho_{\mathrm e}-2\lambda_{\mathrm e}p_{\mathrm e},\ \lambda_{\mathrm e}p_{\mathrm e})$
 with $\lambda_{\mathrm e}=(2\hat c^2_{i+1/2})^{-1}$ (page-local; $\rho_{\mathrm e}$, $p_{\mathrm e}$ the
@@ -327,11 +327,11 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §2.1 (Eqs. (2.5)–(2.8)), §3, Apps. A–B (arXiv v2).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VI (pointwise algorithm, steps 2–3).
 - [Fu (2021)](/sources/fu-2021.md) — §5.
-- [Li et al. (2022)](/sources/li-2022-b.md) — Eq. (38) and the numerical set-up.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — Eq. (38) and the numerical set-up.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4, §4.11.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.3.
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §2.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §2.
 - [Peng et al. (2024)](/sources/peng-2024.md) — §2 (Eq. (2.17), Remark 2.12), Ex. 5.7.
 - [Bryngelson et al. (2021)](/sources/bryngelson-2021.md) — §2.2, §4.1, §5.5 (arXiv v1).
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.3, §4.2 (Figs. 3–4).
@@ -355,8 +355,8 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Jeong et al. (2022)](/sources/jeong-2022.md) — §5.
 - [Ji et al. (2022)](/sources/ji-2022.md) — §2.3, §5.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Fig. 6).
-- [Li et al. (2022)](/sources/li-2022.md) — §3.4, §4.4.
-- [Li et al. (2023)](/sources/li-2023.md) — Eqs. (30)–(33), §4.2 (Thm. 5).
+- [Li et al. (2022a)](/sources/li-2022.md) — §3.4, §4.4.
+- [Li et al. (2023a)](/sources/li-2023.md) — Eqs. (30)–(33), §4.2 (Thm. 5).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2 (Eqs. (2.7)–(2.9)), Ex. 4.4.
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.3 (arXiv v1).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §3.3 (Eqs. (62)–(64)), Fig. 10 (arXiv v2).

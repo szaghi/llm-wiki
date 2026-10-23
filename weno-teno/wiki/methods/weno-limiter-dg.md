@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO limiters for discontinuous Galerkin"
-description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the compact simple WENO limiter, Du, Shu and Zhong's direction-wise characteristic variant with two polynomials per direction on triangles and point-cloud meshes, and the uses and critiques in the sources."
+description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the compact simple WENO limiter, Du, Shu and Zhong's direction-wise characteristic variant, Maltsev et al.'s same-order CWENOZ replacement of the DG modes on mixed meshes, and the sources' uses and critiques."
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter]
 tags: [dg, weno, limiting, characteristic]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -92,6 +92,53 @@ The idea "may be generalized to other limiters with a characteristic-wise
 limiting procedure" and to higher dimensions (§5); characteristic
 projection is on [characteristic decomposition](/methods/characteristic-decomposition.md).
 
+## Same-order CWENOZ replacement on mixed unstructured meshes
+
+[Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.1–2.4, Eq. 33)
+build hybrid DG–finite-volume schemes up to fifth order ($N=2$ to $4$) on
+mixed-element meshes in 2D and 3D, in [UCNS3D](/software/ucns3d.md). The
+modal DG uses a cell-centred Taylor basis normalized by $h_i$ (page-local), the square
+root of the cell volume, whose modes $k=1,\dots,\mathcal K$ (page-local $\mathcal K$) have zero cell mean; without
+the normalization they "could not achieve higher than 4th of accuracy"
+(§2.1, stated without data). The finite-volume reconstruction is
+[CWENOZ](/methods/cweno.md) on the same Taylor basis: a least-squares
+central polynomial on $2\mathcal K$ neighbours combined with lower-order
+directional polynomials, weights
+$\alpha_s=d_s\big(1+\tau/(\epsilon+\beta_s)\big)$, $\omega_s=\alpha_s/\sum_l\alpha_l$, with
+$\tau$ the mean absolute difference of the directional indicators from
+the central one raised to the power 4, $\epsilon=10^{-14}$, and a
+non-normalized central linear weight $10^7$ (Eqs. 18–28; stencils
+numbered from $s=1$, the central one). At every Runge–Kutta stage the unlimited
+DG solution is checked by a [troubled-cell indicator](/definitions/troubled-cell-indicator.md),
+a priori; in troubled cells the DG coefficients of modes $1,\dots,\mathcal K$ are
+overwritten by the CWENOZ coefficients reconstructed from the cell
+averages, and mode 0 is kept, so the replacement is a copy of
+coefficients and conservative. The reconstruction has the same order as
+the DG polynomial (DG degree $N$ with CWENOZ of order $N+1$), so no order is
+lost in a wrongly flagged cell.
+
+Their evidence (§3, Appendix B):
+
+- with every cell flagged, the hybrid keeps the design order on smooth
+  advection on quadrilaterals ($L^2$ orders 3.01, 4.04, 4.99 for
+  $N=2,3,4$), as accurate as pure CWENOZ (Table B.4);
+- pure DG reaches close to design order on the
+  [isentropic vortex](/benchmarks/isentropic-vortex.md), CWENOZ of the
+  same order only on finer meshes ($N=4$ on quadrilaterals:
+  DG $2.97\times10^{-4}\to1.14\times10^{-9}$, CWENOZ
+  $7.64\times10^{-2}\to7.20\times10^{-4}$ over 8 to 64 edges per side,
+  Table 1), and the hybrid approaches DG as the mesh is refined;
+- the hybrid costs 1.4–1.5 times pure DG on coarse meshes and about 1.05
+  times on fine ones (Table 1);
+- on Schardin's shock–wedge problem the hybrids resolve more structure
+  and acoustic waves than pure fifth-order CWENOZ, with below 0.4 % of
+  cells troubled (§3.5; [shock diffraction](/benchmarks/shock-diffraction.md));
+- on the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  at $64^3$ the hybrid is closer to the DNS than pure FV but its modal DG
+  part shows aliasing, though it runs without over-integration, filtering
+  or split-form fluxes (§3.6); on the LM1021 sonic-boom case it matches
+  the measured pressure signature better than third-order CWENOZ (§3.8).
+
 ## Evidence
 
 Du, Shu & Zhong test the 2D Euler equations ($\gamma=1.4$) with SSP-RK3,
@@ -165,6 +212,13 @@ given.
   Dumbser and coworkers as another class (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
 
+- **Against subcell limiting on unstructured meshes.** Maltsev et al.
+  prefer replacing the modes to subcell finite-volume limiting, which
+  keeps more of the DG subcell information but is "not as
+  straightforward" on meshes with arbitrary elements, transition layers
+  and poor cells and may restrict the time step (§2.4;
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+
 ## Qualifications
 
 - The attribution of the sharper Mach stem to "less information being used
@@ -183,6 +237,15 @@ given.
   saved decreases with refinement (§4.1) is not monotone in Table 4.2
   (40.61, 44.29, 40.63, 27.91, 1.77%).
 
+- Maltsev et al.'s Eq. (5) gives the number of degrees of freedom as
+  $\frac1{d!}\prod_{l=1}^d(N+l)$ and names it with the highest mode index
+  $\mathcal K$, while it counts the $\mathcal K+1$ functions $k=0,\dots,\mathcal K$;
+  the text calls the growth exponential, while the formula is a
+  polynomial of degree $d$ in $N$ *(compiler check, not in the sources:
+  $N=1$, $d=2$ gives 3, the functions $1,x,y$)*. Their
+  printed Runge–Kutta stages add $+\Delta tM^{-1}R$ for a residual defined
+  by $M\,dU/dt+R=0$.
+
 # Citations
 
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3 (Eqs. (3.1)–(3.9)); §4 (Exs. 4.1–4.10, Tables 4.1–4.18, Figs. 4.2–4.16); §5.
@@ -192,3 +255,4 @@ given.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1 (critique of WENO/HWENO limiters).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (troubled-cell limiters problem-dependent).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1 (WENO limiters named among alternatives).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1–2.4, Eqs. (2)–(34); §3.1, Table 1; §3.5–3.8; §4; Appendix B, Tables B.3–B.4.

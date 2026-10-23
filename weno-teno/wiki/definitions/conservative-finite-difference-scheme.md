@@ -123,7 +123,7 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   nothing about conservation. *(Compiler check, not in the sources: for exact interface values,
   $\big(f(x_i+\Delta x/2)-f(x_i-\Delta x/2)\big)/\Delta x=\partial_xf(x_i)+\tfrac{\Delta x^2}{24}\partial_x^3f(x_i)+O(\Delta x^4)$,
   so the operator is formally second order for point values whatever the interpolation order, the
-  limit Wang et al. (2023) state for an uncorrected two-point flux; Hiejima shows no convergence
+  limit Wang et al. (2023b) state for an uncorrected two-point flux; Hiejima shows no convergence
   test.)*
 - **Interpolated states with a Riemann flux, and its order.** The
   [gradient-based reconstruction](/methods/gradient-based-reconstruction.md) of Chamarthi (2023a, §2–3,
@@ -137,7 +137,7 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   problems, whereas interpolating the point fluxes $f_j$ with the same high-order formula restores the design
   order; the interface fluxes and the states "must be computed independently" (§2.4). Chamarthi's seventh-order scheme switches between the
   two per interface with a density-based detector and converges at observed rates 6.0–6.7 on the vortex
-  (Table 1; [hybrid schemes](/methods/hybrid-weno.md)). This is the same limit that Wang et al. (2023) state for
+  (Table 1; [hybrid schemes](/methods/hybrid-weno.md)). This is the same limit that Wang et al. (2023b) state for
   an uncorrected two-point flux (Qualifications), reached by flux interpolation instead of derivative
   corrections.
 - **Central flux plus high-order dissipation.** Sciacovelli, Passiatore, Cinnella & Pascazio (2021,
@@ -279,12 +279,12 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eqs. (1)–(4).
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (1)–(4).
 - [Fu (2021)](/sources/fu-2021.md) — §2, Eqs. (4)–(10).
 - [Fu (2023)](/sources/fu-2023.md) — §2, Eqs. (1)–(4); §3.4, Algorithm 1; §3.7.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §2.1, Eqs. (1)–(5).
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §3.1, Eqs. (11)–(13).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4).
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; §II, Eqs. (2.2)–(2.6); §IV, Eq. (4.1); §V, Eqs. (5.1)–(5.5).
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4–2.5, Eqs. (18)–(26); App. A.1, Lemma A.1; §3.4; §7.2.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, Eqs. (18)–(35).

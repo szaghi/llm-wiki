@@ -29,15 +29,15 @@ u^{n+1}&=\tfrac13u^n+\tfrac23u^{(2)}+\tfrac23\Delta t\,\mathcal L(u^{(2)}).
 \end{aligned}$$
 
 Several sources call it "third-order TVD Runge–Kutta"
-([Li et al. (2022)](/sources/li-2022-b.md), [Luo & Wu (2021)](/sources/luo-2021-b.md),
+([Li et al. (2022b)](/sources/li-2022-b.md), [Luo & Wu (2021)](/sources/luo-2021-b.md),
 [Wang & Don (2022)](/sources/wang-2022-b.md), citing Gottlieb & Shu 1998). CFL numbers used
 with it:
 
 | Source | Scheme | CFL $\nu$ |
 |---|---|---|
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) | DGSEM with subcell limiting | 0.5 (blending recomputed every stage, §5) |
-| [Li et al. (2022)](/sources/li-2022-b.md) | FD WENO-ZN, 1D | 0.5 (Eq. (38)) |
-| [Wang et al. (2023)](/sources/wang-2023-b.md) | A-WENO with CURH flux | 0.45; $\Delta x^{2/3}$ in the accuracy test (Remark 1) |
+| [Li et al. (2022b)](/sources/li-2022-b.md) | FD WENO-ZN, 1D | 0.5 (Eq. (38)) |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) | A-WENO with CURH flux | 0.45; $\Delta x^{2/3}$ in the accuracy test (Remark 1) |
 | [Wang & Don (2022)](/sources/wang-2022-b.md) | FD affine-invariant WENO | 0.45 (§3) |
 | [Fu (2021)](/sources/fu-2021.md), [Takagi et al. (2022)](/sources/takagi-2022.md) | FD TENO, TENO-THINC | 0.4 (0.35 for the blast waves in Takagi et al.) |
 | [Chertock et al. (2023)](/sources/chertock-2023.md) | central-upwind FV | 0.4 |
@@ -69,7 +69,7 @@ with it:
 | [Liang et al. (2022)](/sources/liang-2022.md) | FD TENO with THINC switch | 0.4; 0.35 for the high-Mach jets; double Mach reflection "not very sensitive" to 0.2, 0.4, 0.6 (§4.5, Fig. 15) |
 | [Ji et al. (2022)](/sources/ji-2022.md) | unstructured FV TENO (UCNS3D) | 0.4 (§5) |
 | [Jeong et al. (2022)](/sources/jeong-2022.md) | FD RBF-based WENO | 0.4 |
-| [Li et al. (2023)](/sources/li-2023.md) | FD scale-invariant MR A-WENO | 0.45 |
+| [Li et al. (2023a)](/sources/li-2023.md) | FD scale-invariant MR A-WENO | 0.45 |
 | [Wan & Xia (2022)](/sources/wan-2022.md) | FD WENO, steady problems by pseudo-time marching | 0.2; 0.6 in 3D (Eq. (4.1)) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
@@ -233,7 +233,7 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - **More classical RK4.** In the two-phase kinetic-energy- and entropy-preserving scheme of
   [Jain & Moin (2022)](/sources/jain-2022.md) (§4), $\Delta t=\nu\min(\Delta x/c_1,\Delta x/c_2)$
   with $\nu\approx0.65$ ($c_1,c_2$ the phase sound speeds, page-local); a low-storage
-  fourth-order RK at CFL 0.6 in the hybrid MDAD scheme of [Li et al. (2022)](/sources/li-2022.md)
+  fourth-order RK at CFL 0.6 in the hybrid MDAD scheme of [Li et al. (2022a)](/sources/li-2022.md)
   (§4), cited to Shu's ENO/WENO lecture notes and not specified further.
 - **Code-level integrators.** IDEFIX ([Lesur et al. (2023)](/sources/lesur-2023.md), §2.7–2.8,
   Table 1, Eq. (10)) offers forward Euler and the TVD RK2 and RK3 of Gottlieb and Shu, written
@@ -304,9 +304,9 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII, §VIII, §IX, §X (Eqs. (10.1)–(10.7)).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4, §4.2, §4.5.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §2, §5 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — Remark 1, §4.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — Remark 1, §4.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.
-- [Li et al. (2022)](/sources/li-2022-b.md) — Eq. (38).
+- [Li et al. (2022b)](/sources/li-2022-b.md) — Eq. (38).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — numerical set-up.
 - [Peng et al. (2024)](/sources/peng-2024.md) — §5 (arXiv v1).
 - [Fu (2023)](/sources/fu-2023.md) — §3.4, Algorithms 1–2.
@@ -349,10 +349,10 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Liang et al. (2022)](/sources/liang-2022.md) — §3, §4.5 (Fig. 15), §4.11.
 - [Ji et al. (2022)](/sources/ji-2022.md) — Eq. (3), §5.
 - [Jeong et al. (2022)](/sources/jeong-2022.md) — §5.
-- [Li et al. (2023)](/sources/li-2023.md) — numerical set-up.
+- [Li et al. (2023a)](/sources/li-2023.md) — numerical set-up.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §4 (Eq. (4.1)).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §4.
-- [Li et al. (2022)](/sources/li-2022.md) — §4.
+- [Li et al. (2022a)](/sources/li-2022.md) — §4.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.7–2.8 (Table 1, Eqs. (9)–(13)).
 - [Kou et al. (2022)](/sources/kou-2022.md) — §4.1 (Eqs. (20)–(22), (27)–(29)), §4.6.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §3.1, §5.

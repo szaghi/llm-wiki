@@ -138,6 +138,9 @@ def test_reserved_files_are_math_checked(repo: Path) -> None:
 
 def test_corporate_author_braces_are_not_rendered() -> None:
     # {{ ... }} in the generated Markdown is Vue interpolation on the site
-    entry = {"key": "sundials-2021", "fields": {"author": "{{SUNDIALS Team}} and Smith, J.", "year": "2021", "title": "T"}}
+    entry = {
+        "key": "sundials-2021",
+        "fields": {"author": "{{SUNDIALS Team}} and Smith, J.", "year": "2021", "title": "T"},
+    }
     out = bib_to_md._format_work(entry)
     assert "{{" not in out and out.startswith("SUNDIALS Team; Smith, J. (2021).")

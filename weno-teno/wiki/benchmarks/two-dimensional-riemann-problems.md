@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Two-dimensional Riemann problems"
-description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12, with configuration 7 and two four-contact configurations; used as visual tests of resolution, of the jet's sideband and neck instabilities, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
+description: "Four-quadrant Riemann problems of the two-dimensional Euler equations in the Lax–Liu classification, chiefly configurations 3 and 12, with configurations 7 and 13 and two four-contact configurations; used as visual tests of resolution, of the jet's sideband and neck instabilities and of slip-line instability, of scale invariance and of moving-mesh efficiency, with relativistic, MHD, multispecies and Burgers relatives."
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -13,13 +13,13 @@ timestamp: 2026-10-23T16:00:00Z
 A two-dimensional Riemann problem divides the square into four
 quadrants, each with a constant state; the sources that number the
 configurations follow Lax & Liu (cited by Takagi et al., Luo & Wu,
-Deng and Huang et al.; Wang et al. (2023) and Chertock et al. take
+Deng, Huang et al. and Zhong et al.; Wang et al. (2023b) and Chertock et al. take
 configuration 3, and Fu 2023 configuration 12, from Kurganov & Tadmor;
 Boscarino et al., Hong, Ye & Ye and Liang et al. cite Lax & Liu or
 Schulz-Rinne et al.). Four kinds are used in the bundle:
 **configuration 3**, in which a jet forms along the diagonal whose
 sideband and neck instabilities serve as a resolution gauge,
-**configuration 12**, **configuration 7**, and configurations of four
+**configuration 12**, **configuration 7**, **configuration 13**, and configurations of four
 contacts that roll up into a spiral. The data of the first two are symmetric under the
 exchange $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ (see the tables
 below) *(compiler check, not in the sources)*, so they also test
@@ -43,7 +43,7 @@ The sources use three placements and several final times:
 |---|---|---|---|---|
 | [Deng (2023)](/sources/deng-2023.md) App. A.10 | $[0,1]^2$, $(0.8,0.8)$ | $600\times600$ | 0.8 | [ROUND](/methods/round-scheme.md) |
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.6, Eq. (6.8) | $[0,1]^2$, $(0.8,0.8)$ | $600\times600$ | 0.8 | ROUND, LD-ROUND, [WENO3-NN](/methods/learned-weno-weights.md), WENO5-JS |
-| [Wang et al. (2023)](/sources/wang-2023-b.md) Example 5 | $[0,1]^2$, $(0.8,0.8)$, free boundaries | $\Delta x=\Delta y=1/400$ | 0.8 | A-WENO with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 5 | $[0,1]^2$, $(0.8,0.8)$, free boundaries | $\Delta x=\Delta y=1/400$ | 0.8 | A-WENO with [adaptive-diffusion CURH flux](/methods/adaptive-diffusion-central-upwind-flux.md) |
 | [Luo & Wu (2021)](/sources/luo-2021-b.md) §5.3.2 | not restated | $401\times401$, CFL 0.5 | 0.8 | [WENO-Z+M](/methods/weno-z-plus.md) |
 | [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 5 | $[0,1.2]^2$, $(1,1)$, free boundaries | $\Delta x=\Delta y=3/2500$ | 1 | [LCD central-upwind](/methods/lcd-central-upwind-scheme.md) |
 | [Takagi et al. (2022)](/sources/takagi-2022.md) §4.8.1 | $[0,1]^2$, $(0.5,0.5)$ | $1024\times1024$ | 0.3 | [TENO-THINC](/methods/teno-thinc.md) |
@@ -55,6 +55,7 @@ The sources use three placements and several final times:
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.7 | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $400\times400$, CFL 0.2 | 0.8 | [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MIG4-base, MEG6 vs TENO5, primitive variables (arXiv v2) |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.9 | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.2 | 0.8 | MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.6, Eq. (41) | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $\Delta x=\Delta y=1/400$, CFL 0.5, HLLC with pressure control | 0.8 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6 |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 13 ("a similar version of Configuration 3") | $[0,1]^2$, $(0.8,0.8)$, zero gradient | $400\times400$, CFL 0.5 | 0.8 | fifth-order FV IMWENO-P vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P |
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.3 | box $L_0\times L_0$, quadrants split at $x=y=0$, extrapolation | $1600\times1600$ | $t/t_0=0.3$ | [WENO-Z](/methods/weno-z.md)5, WENO-Z7, TENO5, [TENO-A5](/methods/adaptive-teno.md) in [URANOS](/software/uranos.md) |
 
 The two Chamarthi papers print the states as fractions,
@@ -64,7 +65,7 @@ $9/310=0.029032$ round to the decimals of the table *(compiler check,
 not in the sources)*.
 
 Contours: Deng 40 from 0.14 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
-Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023) 35 from 0.1 to 1.8.
+Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023b) 35 from 0.1 to 1.8.
 Boscarino et al.'s placement puts the split at $(0.8,0.8)$ of
 $[-1,1]^2$, so the low-pressure quadrant covers $[-1,0.8]^2$ and the
 high-pressure one only $[0.8,1]^2$ *(compiler check, not in the
@@ -87,6 +88,25 @@ run configuration 7 on $1024^2$ to $t=0.25$:
 
 The data are symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$
 *(compiler check, not in the sources)*.
+
+## Configuration 13
+
+[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 14, citing Lax & Liu's
+configuration 13, on $[0,1]^2$ split at $(0.5,0.5)$, transmissive
+boundaries, $t=0.3$, $800\times800$ and $1200\times1200$:
+
+| Quadrant | State |
+|---|---|
+| $x>0.5$, $y>0.5$ | $(1,\ 0,\ -0.3,\ 1)$ |
+| $x<0.5$, $y>0.5$ | $(2,\ 0,\ 0.3,\ 1)$ |
+| $x<0.5$, $y<0.5$ | $(1.0625,\ 0,\ 0.8145,\ 0.4)$ |
+| $x>0.5$, $y<0.5$ | $(0.5313,\ 0,\ 0.4276,\ 0.4)$ |
+
+On both halves of the vertical split $x=0.5$ the normal velocity $v_1$
+vanishes and the pressure is continuous while $v_2$ jumps, so the two
+discontinuities on $x=0.5$ are slip lines; across $y=0.5$ the pressure
+falls from 1 to 0.4 *(compiler check, not in the sources)*. Zhong et
+al. use the slip line as the dissipation gauge.
 
 ## Configuration 12
 
@@ -171,7 +191,7 @@ lower-dissipation schemes resolve the sideband instability of the jet
 and the instability along its neck: the LCD central-upwind scheme
 against the earlier central-upwind scheme (Chertock et al., Fig. 5.5),
 and the adaptive-diffusion CURH flux against the earlier A-WENO flux
-(Wang et al. 2023, Fig. 5), with the same wording in both papers. Takagi et
+(Wang et al. 2023b, Fig. 5), with the same wording in both papers. Takagi et
 al. find TENO-THINC finer than WENO5-Z and TENO5 on both
 configurations, with shocks sharp and stable and symmetry preserved
 (Figs. 18–19). Luo & Wu find WENO-Z+ about equal to WENO-Z, and
@@ -245,6 +265,20 @@ Fig. 7).
 factor $\lambda=100$ (page-local symbol): the OFDG damping grows, they state, to "$\lambda^2$ times
 its original magnitudes" and smooths the features, while OEDG matches
 its $\lambda=1$ result (Figs. 10–11).
+
+**Symmetric smoothness indicators.** Zhong et al. find on
+configuration 3 that all six fifth-order finite-volume schemes capture
+the reflected shocks and contacts, that IMWENO-P, WENO-NS, WENO-P and
+MWENO-P roll up the Kelvin–Helmholtz instability where WENO-JS and
+WENO-Z do not, and that IMWENO-P resolves the finest roll-up (Fig. 15);
+they add that weak solutions of the two-dimensional Euler equations are
+not unique, so the small scales are scheme- and mesh-determined and
+"usually are non-physical", while the test is still widely used as a
+dissipation gauge. On configuration 13 at $800\times800$ only IMWENO-P
+captures the slip-line instability; at $1200\times1200$ IMWENO-P and
+MWENO-P resolve it, WENO-NS "very slightly", and WENO-JS, WENO-Z and
+WENO-P do not (Figs. 16–19). See
+[smoothness indicator](/definitions/smoothness-indicator.md).
 
 ## Other systems
 
@@ -330,8 +364,8 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - The configuration-3 runs differ in split, domain and final time
   ($t=0.3$ to $1$), so the jet is at different stages of development in
   different papers; only the runs with split $(0.8,0.8)$ on $[0,1]^2$
-  and $t=0.8$ (Deng, Huang et al., Wang et al. 2023, Wang et al. 2021,
-  the two Chamarthi papers, Zhou et al.) are directly comparable.
+  and $t=0.8$ (Deng, Huang et al., Wang et al. 2023b, Wang et al. 2021,
+  the two Chamarthi papers, Zhou et al., Zhong et al.) are directly comparable.
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
   non-default weights $(0.95,0.045,0.005)$ are set in Ex. 5.3.
@@ -349,7 +383,7 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 
 - [Deng (2023)](/sources/deng-2023.md) — App. A.10, Figs. 24, 35.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.6, Eq. (6.8).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 5, Fig. 5.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4, Example 5, Fig. 5.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §5.3.2, Fig. 14.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.2, Ex. 5, Fig. 5.5 (arXiv v2).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.8, Figs. 18–19.
@@ -372,3 +406,4 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.9, Fig. 12, Table 2 (arXiv v1).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.6, Eq. (41), Fig. 16.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — App. A.3, Fig. 13.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Exs. 13–14, Figs. 15–19.

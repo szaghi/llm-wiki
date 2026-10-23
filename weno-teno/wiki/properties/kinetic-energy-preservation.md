@@ -5,7 +5,7 @@ description: "A semi-discretization is kinetic-energy-preserving when its convec
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Kinetic energy preservation
@@ -156,7 +156,7 @@ violate the weights lose energy at $O(10^{-3})$–$O(10^{-4})$ (§7.3, Fig. 2).
 
 ## Induced equations and the energy variable
 
-[De Michele & Coppola (2023)](/sources/demichele-2023.md) define the
+[De Michele & Coppola (2023a)](/sources/demichele-2023.md) define the
 property through the induced equation: with
 $\partial_t(\rho\phi)=-C_{\rho\phi}-P_{\rho\phi}$ and $\mathcal M=C_\rho$
 (page-local convective and pressure terms), a scheme is KEP when
@@ -187,6 +187,30 @@ agree with the Coppola–Veldman criterion above and add three points:
   (§4.2, §5, §6, Table 3). A KEP internal-energy splitting cannot be
   [pressure-equilibrium preserving](/properties/pressure-equilibrium-preservation.md)
   (§4.2.2).
+
+The same authors' later note, [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md),
+restates the two-point condition: a second-order two-point flux is KEP iff
+the momentum flux is the mass flux times the arithmetic mean of the
+velocity, $f_{\rho v}=f_\rho\{\!\{v\}\!\}$, also on non-uniform and
+non-Cartesian meshes, and the induced kinetic-energy flux is
+$\tfrac12f_\rho v_iv_{i+1}$ (§2, citing Veldman and Coppola & Veldman;
+arXiv v2). Every flux of their asymptotically entropy-conservative family
+has this form ([entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+They read the choice of the internal-energy flux through the induced
+equations, consistently with the "KEP of the energy variable" point above:
+
+- the arithmetic-mean flux $f_{\rho e}=f_\rho\{\!\{e\}\!\}$ (the KEEP scheme of
+  Kuya et al., KGP($\rho e$)) makes the induced equation for $\rho e^2$
+  conservative;
+- the geometric-mean flux $f_{\rho e}=f_\rho\sqrt{e_ie_{i+1}}$ is a KEP
+  discretization of the equation for $\rho\sqrt e$, inspired by Kok's
+  sound-speed equation, and makes the balance of $\rho\sqrt e$
+  conservative; the two are "dual" (§2, Eqs. (3)–(4)).
+
+Neither is pressure-equilibrium preserving, and the arithmetic-mean flux
+diverges at $t\approx22$ on their density-wave test while Aρ-He (harmonic
+mean of $e$) and Gρ-Ge (geometric means of $\rho$ and $e$), both
+pressure-equilibrium preserving, run to $t=100$ (§5, Fig. 1a).
 
 ## Summation-by-parts proofs and the rotational form
 
@@ -352,4 +376,5 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Edoh (2022)](/sources/edoh-2022.md) — §3.1 Eqs. (11)–(18), Remark 3, Tables 1–2, §3.2 Eqs. (20)–(26), Remark 4, Table 3, §4, §4.1.1, Figs. 1, 3.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §3.3 Eqs. (38)–(42), Prop. 3.5, Remarks 3.4, 3.6, §4.2.2, App. A.3 (arXiv v4).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §3.2 Thms. 3.1–3.2 Eqs. (43)–(52), §3.3 Lemma 3.1, §3.5 Eq. (58), §4.1–4.2 Figs. 2–8, §5, §6, App. D Fig. 14 (arXiv v1).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §2.2, §3.1–3.4 Eqs. (10)–(28), §4.1 Eq. (31), §4.2, §4.2.2, §5, §6, Table 3 (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §2.2, §3.1–3.4 Eqs. (10)–(28), §4.1 Eq. (31), §4.2, §4.2.2, §5, §6, Table 3 (arXiv v1).
+- [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §2 Eqs. (2)–(4), §5 Fig. 1 (arXiv v2).

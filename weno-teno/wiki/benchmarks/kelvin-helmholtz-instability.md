@@ -5,7 +5,7 @@ description: "Periodic two-dimensional shear-layer benchmark: Euler variants wit
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -31,7 +31,7 @@ limit of an all-Mach scheme.
 
 **Exponentially smoothed layers.**
 [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 8 and
-[Wang et al. (2023)](/sources/wang-2023-b.md) Example 8 print the same
+[Wang et al. (2023b)](/sources/wang-2023-b.md) Example 8 print the same
 data on $[-0.5,0.5]^2$ with $L=0.00625$:
 
 $$
@@ -45,7 +45,7 @@ $$
 $$
 
 $\gamma=1.4$, snapshots at $t=1$, $2.5$, $4$. Chertock et al. use
-$\Delta x=\Delta y=1/1024$ and Wang et al. $1/400$.
+$\Delta x=\Delta y=1/1024$ and Wang et al. (2023b) $1/400$.
 
 **Sharp layers.** [Fu (2021)](/sources/fu-2021.md) §5.6:
 $(\rho,v_1)=(2,-0.5)$ for $|y|\le0.25$, $(1,0.5)$ otherwise,
@@ -58,6 +58,13 @@ with $h\approx1/500$ (577,416 elements, §5.10).
 print the same state, $(2,-0.5,0.01\sin(2\pi x),2.5)$ for $|y|\le0.25$
 and $(1,0.5,0.01\sin(2\pi x),2.5)$ otherwise, but run it to $t=2$ on
 $1000\times1000$ cells at CFL 0.5, with a second-order MUSCL scheme.
+[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 12 print the same
+two states on $[0,1]^2$ with the strip $0.25\le y\le0.75$,
+$(\rho,v_1,p)=(2,0.5,2.5)$ inside and $(1,-0.5,2.5)$ outside, and a
+perturbation localized at the two layers,
+$v_2=0.1\sin(4\pi x)\big[e^{-(y-0.25)^2/(2\sigma^2)}+e^{-(y-0.75)^2/(2\sigma^2)}\big]$
+with $\sigma=0.05/\sqrt2$ (page-local width), on $600\times600$ cells
+to $t=0.8$; boundary conditions are not printed.
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.5 use the
 same strip and pressure on $[-0.5,0.5]^2$ with the velocities reversed,
 $(\rho,v_1,v_2,p)=(2,0.5,0,2.5)$ for $|y|\le0.25$ and $(1,-0.5,0,2.5)$
@@ -77,8 +84,9 @@ $64\times64$ elements of degree $N=7$, $t=10$, Mach number up to about
 
 The three setups differ in density ratio (2, 2, and 4 for the tanh
 setup, where $\rho$ runs from $0.5$ to $2$ *(compiler check, not in the
-sources)*), shear-layer thickness, perturbation wavenumber ($4\pi$ versus $2\pi$), background
-pressure (1.5, 2.5, 1) and final time (4, 1 or 2, 10), so results do not
+sources)*), shear-layer thickness, perturbation wavenumber ($4\pi$ versus $2\pi$, and $4\pi$ on the unit
+box of Zhong et al.) and amplitude, background
+pressure (1.5, 2.5, 1) and final time (4, 1, 2 or 0.8, 10), so results do not
 transfer between them; Dzanic & Witherden also leave the perturbation
 to round-off where the other sources seed it.
 
@@ -126,7 +134,7 @@ conserves mass, energy and enstrophy, which serve as diagnostics.
 
 ## Findings across sources
 
-**Visual dissipation gauge.** Wang et al. find that the A-WENO scheme
+**Visual dissipation gauge.** Wang et al. (2023b) find that the A-WENO scheme
 with the [adaptive-diffusion central-upwind flux](/methods/adaptive-diffusion-central-upwind-flux.md)
 forms more pronounced vortex streets and more complex mixing than the
 earlier flux (Fig. 8). Chertock et al. find the same for their
@@ -144,6 +152,11 @@ energy", but the figures show density only. The case also serves as
 their cost benchmark: the normalised reconstruction time per element
 and iteration grows from $1.32\times10^{-6}$ s (TENO3) to
 $2.20\times10^{-6}$ s (TENO6), "roughly 65%" (Table 7).
+Zhong et al. find that all six fifth-order finite-volume WENO schemes
+they compare capture the small vortical structures and the
+filamentation, with the largest degree of filamentation for their
+IMWENO-P, whose smoothness indicators are mirror-symmetric (Fig. 14);
+see [smoothness indicator](/definitions/smoothness-indicator.md).
 Hu et al. use the case to compare [HLL-type solvers](/methods/hll-riemann-solvers.md)
 inside one second-order scheme: their RHLLEM-LD solver gives the
 sharpest interfaces and more filamentation, and is the only one of the
@@ -259,7 +272,7 @@ convergent flow, and the benchmark measures an error.
   of Kelvin–Helmholtz rolls on the jet only with the least diffusive
   reconstructions of their second-order code (LimO3, PPM) at
   $1920\times480$ (Fig. 3);
-  [Wang et al. (2022)](/sources/wang-2022.md) §3.4 state that it is
+  [Wang et al. (2022a)](/sources/wang-2022.md) §3.4 state that it is
   "generally thought" to depend more on the interior scheme than on the
   [immersed-boundary](/methods/immersed-boundary-method.md) treatment.
   These, too, are not runs of the Kelvin–Helmholtz benchmark.
@@ -267,7 +280,7 @@ convergent flow, and the benchmark measures an error.
 # Citations
 
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.2, Ex. 8, Fig. 5.9 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 8, Fig. 8.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4, Example 8, Fig. 8.
 - [Fu (2021)](/sources/fu-2021.md) — §5.6, Fig. 10 (arXiv v1).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.2.1, Figs. 4–6 (arXiv v2).
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §4.3, Ex. 4.6, Eq. (62), Table 5, Figs. 15–18.
@@ -279,5 +292,6 @@ convergent flow, and the benchmark measures an error.
 - [Boscarino, Qiu, Russo & Xiong (2022)](/sources/boscarino-2022.md) — Ex. 5.6, Fig. 5.7 (arXiv v2).
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Fig. 3 (slip-line roll-up of the double Mach reflection only; arXiv v1).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §3.4, Figs. 7–9 (slip-line roll-up of the double Mach reflection only).
-- [Wang et al. (2022)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.9, Fig. 5.7 (arXiv v1).
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 12, Fig. 14.

@@ -140,7 +140,7 @@ kept as printed. No unparseable items and no printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
 
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)
 * [Ducros shock sensor](/definitions/ducros-shock-sensor.md)

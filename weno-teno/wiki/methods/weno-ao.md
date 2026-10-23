@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO-AO (adaptive-order WENO)"
-description: "WENO-AO nonlinearly hybridizes one large central high-order stencil with the three small stencils of third-order WENO; Balsara et al. show that its weights need a higher power of the global indicator to reach orders 7 and 9, and Wang et al. measure the cost of its four sub-stencils; multi-resolution WENO has its own page."
+description: "WENO-AO nonlinearly hybridizes one large central high-order stencil with the three small stencils of third-order WENO; Balsara et al. show that its weights need a higher power of the global indicator to reach orders 7 and 9, Wang et al. measure the cost of its four sub-stencils, and Zhao et al. use it in compact gas-kinetic schemes."
 status: established
-aliases: [WENO-AO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
+aliases: [WENO-AO, combination of ENO and WENO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # WENO-AO (adaptive-order WENO)
@@ -56,6 +56,33 @@ $(1-\gamma_{\mathrm{Hi}})(1-\gamma_{\mathrm{Lo}})/2$, $(1-\gamma_{\mathrm{Hi}})\
 $(1-\gamma_{\mathrm{Hi}})(1-\gamma_{\mathrm{Lo}})/2$ for the three small stencils, with
 $\gamma_{\mathrm{Hi}}=\gamma_{\mathrm{Lo}}=0.85$ "the same as in" the original paper (page-local
 parameters; the paper does not say which small stencil takes which weight)
+
+## Compact gas-kinetic variant
+
+Zhao, Ji, Shyy & Xu (2023, §3.4, Eqs. (28)–(30); arXiv v1 read) reconstruct with the same structure,
+which they call "a combination of ENO and WENO methodology", in compact gas-kinetic schemes that evolve
+cell averages and cell-averaged gradients ([gas-kinetic schemes](/methods/gas-kinetic-scheme.md)). With
+the large-stencil polynomial $P$ and $n$ small-stencil polynomials $q_k$ (page-local),
+
+$$R(x)=\sum_{k=1}^n\omega_kq_k(x)+\omega_0\Big(\frac{1+C}{C}P(x)-\sum_{k=1}^n\frac{C_k}{C}q_k(x)\Big),\qquad
+d_0=\frac{C}{1+C},\quad d_k=\frac{C_k}{1+C},$$
+
+$\sum_kC_k=1$, with $C=5$ and $C_k=1/n$ (page-local constants), and WENO-Z weights
+$\alpha_k=d_k\big(1+(\tau_{\mathrm Z}/(\beta_k+\epsilon))^2\big)$, $\epsilon=10^{-5}$, where $\tau_{\mathrm Z}$
+(page-local) is built from the small-stencil indicators ([smoothness indicators](/definitions/smoothness-indicator.md)).
+To save cost the large-stencil indicator is replaced by $\max_k\beta_k$. Two stencil sets are used:
+
+- **1-D, eighth order.** The large stencil holds four cell averages and four averaged slopes
+  (a degree-7 polynomial); the small ones are three quadratics, including one from two averages and a
+  slope, and two cubics with one slope each.
+- **Triangles, fourth order.** A cubic from the cell, its neighbours, their neighbours and four averaged
+  gradients; three linear polynomials, each from a face neighbour and its gradient; three quadratics.
+
+The authors find the scheme insensitive to $C$ and $C_k$. On a 1-D density wave the $L_1$ errors fall
+from $2.76\times10^{-4}$ to $5.97\times10^{-11}$ over $\Delta x=1/10$ to $1/80$ (orders 6.26, 8.15, 7.73)
+with $\Delta t=0.5\Delta x^2$ (§4.1, Table 1); the shock tests run at CFL 0.8 unless stated, without
+troubled-cell detection, which they credit to the two-sided interface update and the temporal limiter rather than to
+the reconstruction (§3.4, §4).
 
 ## Accuracy in fluctuation-form FD-WENO
 
@@ -111,3 +138,4 @@ the Rayleigh–Taylor instability (Examples 5.4–5.6, 5.9;
 - [Wang et al. (2021)](/sources/wang-2021.md) — §5 (WENOAO5 linear weights); §5.1; Examples 5.4–5.9; §5.4, Table 5.8.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §3; §6.3.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.8.
+- [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.4, Eqs. (28)–(32), Figs. 2–4; §4.1, Table 1.

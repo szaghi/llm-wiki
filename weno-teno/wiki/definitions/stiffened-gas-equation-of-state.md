@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Stiffened-gas equation of state
@@ -24,8 +24,9 @@ c^2=\frac{\gamma\,(p+p_\infty)}{\rho},
 $$
 
 so that $E=\rho e+\tfrac12\rho\lvert v\rvert^2$ as in §5 of the
-registry. With $p_\infty=0$ it is the ideal gas. All eight sources that
-use it write it in one of these forms
+registry. With $p_\infty=0$ it is the ideal gas. The sources that use
+it write it in one of these forms, possibly with an additive energy
+constant (below)
 ([Bryngelson et al. (2021)](/sources/bryngelson-2021.md) §3, Eqs. 6–7;
 [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §2, Eq. 6;
 [Wong et al. (2021)](/sources/wong-2021.md) §2, Eq. 6;
@@ -33,7 +34,11 @@ use it write it in one of these forms
 [Li, Duan & Tang (2022)](/sources/li-2022-c.md) §1, Eq. 1.2;
 [Bai & Li (2022)](/sources/bai-2022.md) §2, Eq. 2;
 [Nguyen et al. (2022)](/sources/nguyen-2022.md) §2.2, Eqs. 8–11;
-[Jain & Moin (2022)](/sources/jain-2022.md) §2, Eqs. 5–9).
+[Jain & Moin (2022)](/sources/jain-2022.md) §2, Eqs. 5–9;
+[Huang & Johnsen (2023)](/sources/huang-2023.md) §2.9, Eqs. 22–24;
+[Long, Cai & Pan (2023)](/sources/long-2023.md) §2.2, Eq. 3;
+[Paula et al. (2023)](/sources/paula-2023.md) §2.1, Eq. 3;
+[Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) Appendix B).
 Because only $p+p_\infty$ enters the sound speed, the pressure itself
 may be negative: [Wong et al. (2021)](/sources/wong-2021.md) §6.4 start
 a Sedov test in water at $p=-3\times10^7$ Pa, an admissible state since
@@ -47,14 +52,14 @@ $p+p_\infty>0$.
   Zheng et al. write the total energy
   $E=\tfrac12\rho v^2+\frac{p+\gamma p_\infty}{\gamma-1}$ and call this
   relation the "Tait EOS". All are the same law.
-- **Temperature form.** Li et al. close each species with
+- **Temperature form.** Li et al. (2022c) close each species with
   $\rho_ke_k=C_{v,k}\rho_kT+p_{\infty,k}$ and, in thermal equilibrium,
   obtain $p=\sum_k\big(\rho_kR_kT-p_{\infty,k}\big)$ with
   $R_k=C_{v,k}(\gamma_k-1)$ (Eq. 1.2; page-local $T$, $C_{v,k}$, $R_k$).
   With $p_\infty=\sum_kp_{\infty,k}$ and the mixture ratio
   $\gamma=\sum_k\gamma_kC_{v,k}\rho_k/\sum_kC_{v,k}\rho_k$, this is the
   energy form $\rho e=(p+\gamma p_\infty)/(\gamma-1)$ for the mixture
-  (Li et al. print it as $\frac{p+p_\infty}{\gamma-1}+p_\infty=\rho e$,
+  (Li et al. (2022c) print it as $\frac{p+p_\infty}{\gamma-1}+p_\infty=\rho e$,
   the same expression). The equivalence needs
   $\gamma\sum_kC_{v,k}\rho_k=\sum_k\gamma_kC_{v,k}\rho_k$, which is the
   definition of the mixture $\gamma$ *(compiler check, not in the
@@ -107,6 +112,27 @@ $p+p_\infty>0$.
   linear form, through $\rho_kh_k=(p-\beta_k)/\alpha_k+p$ (Appendix B,
   printed as "$h_l$"); they state, without showing it, that a more
   general cubic equation of state can be used.
+- **Coefficient form with an energy constant.** Huang & Johnsen, after
+  Le Métayer et al., write each phase as
+  $\rho_k(e_k-e_{0,k})=\mathsf G_kp+\mathsf A_k=\rho_kC_{v,k}T+p_{\infty,k}$
+  with $\mathsf G_k=1/(\gamma_k-1)$ and
+  $\mathsf A_k=\gamma_kp_{\infty,k}/(\gamma_k-1)$ (Eq. 22; page-local
+  $\mathsf G_k$, $\mathsf A_k$, as for Fujiwara et al. below, and $e_{0,k}$,
+  $C_{v,k}$ for their $A^P_p$, $B^P_p$, $D_p$, $C^T_p$). The phase sound speed is
+  $\rho_kc_k^2=\big((\mathsf G_k+1)p+\mathsf A_k\big)/\mathsf G_k$ (Eq. 23),
+  which is $\gamma_k(p+p_{\infty,k})$ *(compiler check, not in the
+  sources)*. Their mixture internal energy is linear in $p$ at fixed
+  volume fractions and phase densities,
+  $\rho e=p\sum_k\phi_k\mathsf G_k+\sum_k\phi_k\mathsf A_k+\sum_k\phi_k\rho_ke_{0,k}$
+  (Eq. 24). Temperature equilibrium across an interface at uniform $p$ and
+  $T$ follows from consistent reconstruction of the partial densities and
+  volume fraction alone, because the pressure-based and temperature-based
+  reconstructed internal energies then coincide (§5.2, Lemma 5.1,
+  Theorem 5.2; see [five-equation model](/definitions/five-equation-model.md)).
+  Long et al. write the same law as
+  $e=\frac{p+\gamma p_\infty}{(\gamma-1)\rho}+e_{0}$ and
+  $T=\frac{p+p_\infty}{C_v(\gamma-1)\rho}$ for liquid water and its vapour
+  (Eq. 3).
 - **Parameters for liquids.** Bryngelson et al. state that the liquid
   constants are fitted to shock-Hugoniot data (§3).
 
@@ -127,6 +153,13 @@ step: advecting a water–air interface at 1.5 m/s took 195,249
 iterations with the stiffened gas and 52,017 with the Tait liquid
 (Table 1). How the barotropic law enters their pressure–temperature
 formulation is not explained.
+
+[Long, Cai & Pan (2023)](/sources/long-2023.md) §4.5 use a Tait law for
+liquid water in their near-wall bubble-collapse test,
+$p=B\big[(\rho/\rho_0)^{\gamma_{\mathrm T}}-1\big]+p_0$ with $B=3310$ bar,
+$p_0=1$ bar and $\rho_0=1000$ kg/m³, and drop the liquid energy equation
+(isothermal water at 293 K). They do not print the exponent
+$\gamma_{\mathrm T}$.
 
 The isentropes of a stiffened gas are
 $(p+p_\infty)\rho^{-\gamma}=\mathrm{const}$, i.e.
@@ -162,7 +195,17 @@ $\frac1{\rho c^2}=\sum_k\frac{\phi_k}{\rho_kc_k^2}$ with each $c_k$ from
 the phase law above (Eq. 9); see
 [five-equation model](/definitions/five-equation-model.md) for the
 difference. In the multicomponent model with thermal equilibrium the
-mixture follows from the temperature form instead (Li et al.; see
+mixture follows from the temperature form instead (Li et al. (2022c); see
+[multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+Huang & Johnsen's mixture sound speed for $N$ phases depends on the
+coefficient of their volume-fraction equation; with Allaire's choice it is
+a convex combination of the phasic $\rho_kc_k^2$ weighted by
+$\phi_k/(\gamma_k-1)$, with Kapila's it is Wood's (§2.9, Eq. 25). For a
+multicomponent mixture in mass fractions, Fujiwara et al. write
+$\rho e=p\,\mathsf G+\mathsf A$ with mixing rules in mass fractions and
+molar masses for both $\mathsf G=1/(\gamma-1)$ and
+$\mathsf A=\gamma p_\infty/(\gamma-1)$ (Appendix B, Eqs. B.1–B.2;
+page-local symbols, see
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
 Jain & Moin's Eq. (5) is the volume-fraction rule written with
 $\alpha_k,\beta_k$: with $\alpha_k=\gamma_k-1$ and
@@ -195,13 +238,13 @@ $p_\infty=0$; pairs of two stiffened phases lie outside it.
 
 ## Entropy
 
-For one stiffened-gas species, Li et al. use the specific entropy
+For one stiffened-gas species, Li et al. (2022c) use the specific entropy
 $S=C_v\ln T-R\ln\rho$ and the convex entropy $\eta=-\rho S$ with flux
 $F_\eta=\eta v$ (§3.3.1, Eq. 3.13). The entropy flux potential (§6 of
 the registry) is $\psi=\big(R\rho-p_\infty/T\big)v$, so the stiffening
 pressure enters the potential through $p_\infty/T$ (Eq. 3.14). For
 mixtures the entropy is the mass-weighted sum of species entropies
-(Eqs. 3.16–3.17). With these, Li et al. derive explicit
+(Eqs. 3.16–3.17). With these, Li et al. (2022c) derive explicit
 [entropy-conservative two-point fluxes](/methods/entropy-conservative-flux.md)
 built from [logarithmic means](/operators/logarithmic-mean.md) of the
 partial densities and of $1/T$, and entropy-scaled eigenvectors with the
@@ -218,12 +261,18 @@ sound speed $c^2=\gamma(p+p_\infty)/\rho$ (§3.3–3.4).
 | Zheng et al., water | 7.15 | $3.309\times10^8$ Pa | SI; non-dimensional 3309 |
 | Zheng et al. Ex. 5 | 5.5 | 1.505 | non-dimensional |
 | Zheng et al. Ex. 2, 9 ("gas" side of a pure interface) | 4 | 1 | non-dimensional |
-| Li et al. Ex. 5.2, single-fluid shock tube | 3 | 1 | non-dimensional |
-| Li et al. Ex. 5.9, 5.11, surrounding medium | 3 | 100 | non-dimensional |
+| Li et al. (2022c) Ex. 5.2, single-fluid shock tube | 3 | 1 | non-dimensional |
+| Li et al. (2022c) Ex. 5.9, 5.11, surrounding medium | 3 | 100 | non-dimensional |
 | Bai & Li §3.1.2, water against air | 2.788103 | $7.862511\times10^8$ Pa | SI; $C_p=4190$ J/(kg K) |
 | Bai & Li §3.1.4, §3.5–3.6, water | 4.4 | $6.0\times10^8$ Pa | SI; $C_p=2653.87$ in §3.1.4, not printed for §3.5–3.6 |
 | Bai & Li §3.3.2, copper-like metal | 3.0 | $4.62\times10^{10}$ (unit printed "bar") | SI; $C_p=2587$ |
 | Nguyen et al. §3.3, water | 4.4 | $6\times10^8$ Pa | SI |
+| Huang & Johnsen §4.2, air–water Riemann problem | 2.35 | $10^9$ Pa | energy constant $-1.167\times10^3$ J/kg |
+| Huang & Johnsen §4.3, water disk advection | 6.12 | $3.43\times10^8$ Pa | §5.2: $C_v=223.37$ (water), $701.27$ (air) J/(kg K) |
+| Long et al. §2.2, liquid water | 2.35 | $10^9$ Pa | energy constant $-1167\times10^3$ J/kg, $C_v=1816$ J/(kg K) |
+| Long et al. §2.2, water vapour | 1.33 | 0 | energy constant $1990\times10^3$ J/kg, $C_v=1399$ J/(kg K) |
+| Paula et al. §7.4.1–7.4.2, water | 4.4 | $6\times10^8$ Pa | SI |
+| Paula et al. §7.4.3, underwater explosion | 5.5 | $492.115\times10^6$ Pa | SI |
 | Jain & Moin §4, Taylor–Green and isotropic-turbulence tests | 1.4 | 0 | non-dimensional; in §5 the $p_{\infty,k}$ are chosen to equalize the turbulent Mach number, values not printed |
 
 The fits differ from test to test within one source (Tsoutsanis et al.
@@ -233,20 +282,31 @@ water model. For Bai & Li's metal, $p_\infty=4.62\times10^{10}$ Pa with
 $\rho=8930$ kg/m³ gives $c=\sqrt{3(p+p_\infty)/\rho}\approx3.9$ km/s,
 a metal-like sound speed, while the printed unit "bar" would give about
 1250 km/s; the unit is evidently pascal *(compiler check, not in the
-sources)*.
+sources)*. Huang & Johnsen's heat capacities follow from the
+temperature form at $p=101325$ Pa, $T=300$ K and densities $1.204$ and
+$1000$ kg/m³: $2.5\cdot101325/(1.204\cdot300)=701.3$ and
+$(101325+3.43\times10^8)/(5.12\cdot1000\cdot300)=223.37$ J/(kg K)
+*(compiler check, not in the sources)*; the paper prints the states of
+that test in an unstated nondimensional scaling ($p=4.819\times10^{-5}$,
+water density 1; §4.3, Eq. 50).
 
 ## Qualifications
+
+- Huang & Johnsen (§4.2) and Long et al. (§2.2) give liquid water the
+  same constants $\gamma=2.35$, $p_\infty=10^9$ Pa, but print its energy
+  constant as $-1.167\times10^3$ J/kg and $-1167\times10^3$ J/kg, a factor
+  of 1000 apart.
 
 - The name is not uniform: Zheng et al. call the stiffened-gas energy
   relation the "Tait EOS"; the other sources call it stiffened gas, and
   Nguyen et al. use "Tait" for the barotropic law of the section above.
   Nguyen et al. also call the Tait exponent "the heat capacity ratio".
 - The law has no temperature in its energy form; the temperature form
-  of Li et al. adds a constant heat capacity per species, which is what
+  of Li et al. (2022c) adds a constant heat capacity per species, which is what
   makes a thermal-equilibrium mixture and a physical entropy available.
 - Wong et al.'s concavity result covers a stiffened phase paired with an
   ideal gas; it says nothing about the temperature-based multicomponent
-  closure of Li et al.
+  closure of Li et al. (2022c)
 
 # Citations
 
@@ -258,3 +318,7 @@ sources)*.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2, Eq. (2); §3.1–3.6, Table 3.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.2, Eqs. (8)–(13); §3.1, Table 1; §3.3, Table 2.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §2, Eqs. (5)–(9); §4–5; Eq. (65); Appendix B (arXiv v1).
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §2.9, Eqs. (22)–(25); §4.2–4.3, Eqs. (49)–(50); §5.2, Lemma 5.1, Theorem 5.2.
+- [Long, Cai & Pan (2023)](/sources/long-2023.md) — §2.2, Eq. (3); §4.5 (Tait law).
+- [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eq. (3); §7.4.1–7.4.3 (parameter values).
+- [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — Appendix B, Eqs. (B.1)–(B.2) (mass-fraction mixture rule).

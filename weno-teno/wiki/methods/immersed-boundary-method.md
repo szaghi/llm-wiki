@@ -21,7 +21,7 @@ inside the solid ("ghost cells", those with at least one fluid
 neighbour) with values that make the fluid scheme see the boundary
 condition. A **cut-cell method** (CCM) cuts each crossed cell along the
 boundary and applies the finite-volume or DG update to the cut part.
-As [Wang et al. (2022)](/sources/wang-2022.md) §1 put it, cut cells are
+As [Wang et al. (2022a)](/sources/wang-2022.md) §1 put it, cut cells are
 strictly conservative but suffer from the small-cell problem: an
 explicit time step limited by the smallest cut cell, ill-conditioning
 for implicit schemes.
@@ -392,7 +392,7 @@ boundary is not assessed separately from the AMR (§3).
 
 # Citations
 
-- [Wang et al. (2022)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (16)–(38), Figs. 1–2; §3.1–3.7, Tables 1–2, Figs. 3–20.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (16)–(38), Figs. 1–2; §3.1–3.7, Tables 1–2, Figs. 3–20.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1; §2.2; §2.5.2–2.5.3, Eqs. (27)–(29); Appendix A.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
 - [Deng (2023)](/sources/deng-2023.md) — §8, Fig. 38.

@@ -5,13 +5,13 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # WENO-Z weights
 
 WENO-Z (Borges et al., with the higher-order extension of Castro et al., as recalled by Li et al.
-2022, Luo & Wu 2021 and Fu 2021, who present it with mapped WENO as the fix for the
+2022b, Luo & Wu 2021 and Fu 2021, who present it with mapped WENO as the fix for the
 critical-point defect of WENO-JS) keeps the candidate stencils and linear weights $d_k$ of
 [WENO-JS](/methods/weno-js-reconstruction.md) and changes only the unnormalized weights:
 
@@ -24,7 +24,7 @@ $\tau_5=|\beta_0-\beta_2|$ (Luo & Wu 2021, Eq. (4); Wang & Don 2022, Eqs. (6)–
 
 ## Global indicator and order
 
-For general $r$, Li et al. (2022, Eq. (15)) recall
+For general $r$, Li et al. (2022b, Eq. (15)) recall
 
 $$\tau_{2r-1}=\begin{cases}|\beta_0-\beta_{r-1}|, & r\ \text{odd},\\ |\beta_0-\beta_1-\beta_{r-2}+\beta_{r-1}|, & r\ \text{even},\end{cases}$$
 
@@ -34,11 +34,11 @@ it, the ratio $\tau/\beta_k$ vanishes as $\Delta x\to0$ away from critical point
 $\omega_k\to d_k$ faster than with Jiang–Shu weights. *(Compiler check,
 not in the sources: a Taylor expansion of the Jiang–Shu $\beta_k$ for $r=3$ gives
 $\beta_0-\beta_2=\big(f'f^{(4)}-\tfrac{13}{3}f''f'''\big)\Delta x^5+O(\Delta x^6)$ up to sign, so
-$\tau_5=O(\Delta x^5)$.)* For $r=4$, Li et al. (2022, Eq. (17)) derive
+$\tau_5=O(\Delta x^5)$.)* For $r=4$, Li et al. (2022b, Eq. (17)) derive
 $\tau_7=\big|\tfrac43f'f^{(5)}-\tfrac{13}{3}f''f^{(4)}\big|\Delta x^6+O(\Delta x^8)$, so $\tau_7$ is
 $O(\Delta x^6)$ and $\tau_7/\beta_k=O(\Delta x^4)$.
 
-Li et al. (2022, §2) state a structural limit: when the leading term of $\tau_{2r-1}$ has the same
+Li et al. (2022b, §2) state a structural limit: when the leading term of $\tau_{2r-1}$ has the same
 order as that of $\beta_k$, WENO-Z falls back to the convergence rate of the $r$th-order ENO scheme.
 This happens at critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)):
 their Table 4 shows that WENO7-Z cannot improve the order at a third-order critical point for
@@ -50,7 +50,7 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
 ## Parameters
 
 - **Exponent.** Luo & Wu (2021, §2.2) use $q=2$ for fifth order, as do Wang & Don (2022, §2.1);
-  Li et al. (2022, §3.2) state instead that $q=1$ is widely used at fifth order (less dissipation)
+  Li et al. (2022b, §3.2) state instead that $q=1$ is widely used at fifth order (less dissipation)
   and $q=2$ is suggested for higher orders for robustness. These are choices, not a disagreement
   about the scheme.
 - **Regularization.** Deng (2023, §4.3) recalls that Borges et al. suggest $\epsilon=10^{-40}$, so
@@ -58,6 +58,11 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
   (2022) test $10^{-12}$ and $10^{-40}$.
   De Vanna et al. (2023a, §3.1) and De Vanna et al. (2023b, §3.1), in the arbitrary-order WENO-Z of
   Castro et al. at orders 3, 5 and 7, set $\epsilon=10^{-12}$ to limit the dissipation ("to reduce the dissipation", 2023a).
+- **WCNS interpolation.** Chen & Deng (2023, Eqs. (17)–(18)) run WCNS-Z with $q=2$ and
+  $\epsilon=10^{-40}$, "as suggested" by Borges et al. to avoid division by zero only, and reuse $\tau_5$
+  inside the stencil-local exponent of their [exponential weights](/methods/exponential-nonlinear-weights.md).
+  Zhong et al. (2023, Eq. (10)) recall WENO-Z with exponent 2 and $\epsilon=10^{-40}$ for all their
+  schemes; on $\sin^3(\pi x)$ it falls to $L_2$ order about 3 ([accuracy at critical points](/properties/critical-point-accuracy.md)).
 - **Third order.** In the compact three-cell stencil, $\tau_Z=|\beta_0-\beta_1|$ with exponent 1
   (Deng 2023, Eqs. (4.24)–(4.25); Huang et al. 2026, Eqs. (3.6)–(3.7)).
 - **Common template.** Ye et al. (2022, §2.2) write WENO-Z, WENO-CU6 and TENO as instances of
@@ -74,7 +79,7 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
   the WENO-Z weight of the less-smooth stencil is still always below its linear weight. This is the
   starting point of [WENO-Z+](/methods/weno-z-plus.md), which pushes that weight above $d_k$.
 - **Spectral behaviour.** WENO-Z is a reference curve in the approximate dispersion relations of
-  Li et al. (2022, Fig. 2), Fu (2023, Fig. 2) and Luo & Wu (2021, Fig. 3); in each, the newer
+  Li et al. (2022b, Fig. 2), Fu (2023, Fig. 2) and Luo & Wu (2021, Fig. 3); in each, the newer
   scheme (WENO-ZN, TENO, WENO-Z+M) shows less dissipation than WENO-Z at medium wavenumbers
   ([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)). Luo & Wu
   (2021, Table 1) find WENO-Z and UD5 errors identical on a smooth 2-D density wave
@@ -86,7 +91,7 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
   [affine-invariant WENO](/methods/affine-invariant-weno.md)).
 - **High order.** WENO9-Z fails on interacting blast waves at $N_x=401$ and needs CFL 0.1 on double
   Mach reflection; WENO7-Z and WENO9-Z both fail on the forward-facing step at $481\times161$ (Luo &
-  Wu 2021, §5.2.5, §5.3.3–5.3.4). Li et al. (2022, Fig. 3) report an asymmetric WENO7-Z solution near
+  Wu 2021, §5.2.5, §5.3.3–5.3.4). Li et al. (2022b, Fig. 3) report an asymmetric WENO7-Z solution near
   the square wave of the Jiang–Shu composite profile.
 
 ## Z-type weights on other stencil families
@@ -97,16 +102,21 @@ each time with a global indicator built against the largest candidate:
 | scheme | global indicator | ratio | source |
 |---|---|---|---|
 | fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md), stencils of 1, 3, 5 points | $\tau=\big(\tfrac12(\lvert\beta_3-\beta_1\rvert+\lvert\beta_3-\beta_2\rvert)\big)^2$ | $\tau/(\epsilon+\beta_m)$, $\epsilon=10^{-10}$ | Wang et al. 2021, Eq. (3.17), "same as the popular WENO-Z scheme" |
-| sixth-order multi-resolution [HWENO](/methods/hermite-weno.md), four levels | $\tau=\big(\tfrac13\sum_{l\le3}\lvert\beta_4-\beta_l\rvert\big)^2$ | $\tau/(\beta_l+\epsilon)$, $\epsilon=10^{-10}$ | Li, Shu & Qiu 2022, Eqs. (2.21)–(2.22), citing Castro, Costa & Don |
+| sixth-order multi-resolution [HWENO](/methods/hermite-weno.md), four levels | $\tau=\big(\tfrac13\sum_{l\le3}\lvert\beta_4-\beta_l\rvert\big)^2$ | $\tau/(\beta_l+\epsilon)$, $\epsilon=10^{-10}$ | Li, Shu & Qiu 2022d, Eqs. (2.21)–(2.22), citing Castro, Costa & Don |
 | 2-D WENO-ZQ ([CWENO](/methods/cweno.md)), $\mathbb P^3$ and four $\mathbb P^1$ | $\tau=\big(\tfrac14\sum_{k\le4}\lvert\beta_0-\beta_k\rvert\big)^2$ | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-14}$ | Zheng, Cai, Qiu & Qiu 2022, Eqs. (13)–(14) |
 | Zhu–Qiu WENO on triangles ([CWENO](/methods/cweno.md)), quadratic and four linear | $\tau^2$ with $\tau=\tfrac14\sum_{\ell\le4}\lvert\beta_0-\beta_\ell\rvert$ (Zhu & Qiu's $\tau$) | $\tau^2/(\beta_\ell+\epsilon)$ (Zhu & Qiu); $\tau^2/(\beta_\ell+\epsilon)^2$, $\epsilon=\lvert K_0\rvert\max\bar u^2$ (Chen & Wu) | Chen & Wu 2022, Eqs. (32)–(34) |
 | incremental-stencil interpolation of WCNS-IS | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
 | WENO-AO($\mathcal R$,3) | $\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ | $\tau^2$, $\tau^3$, $\tau^4$ over $(\beta+\epsilon)^2$ for $\mathcal R=5,7,9$ | Balsara et al. 2024, App. D ([WENO-AO](/methods/weno-ao.md)) |
 | WCNS-MR interpolation of Qin et al. ([shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)), indicators with scaled derivative sums | as in the first row | $\tau/(\beta_m+\epsilon)$, $\epsilon=10^{-10}$ | Qin, Chen, Lin & Deng 2023, Eqs. (11)–(14) |
-| MR-AWENO interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-6}$ | Li, Li, Don & Wang 2023, Eqs. (23)–(24), recalling Wang, Zhu, Yang & Zhao |
-| MR-AWENO-Si | squared fifth undivided difference $\tau^*$ on six points | $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, descaler $\mathsf m$ | Li, Li, Don & Wang 2023, Eqs. (42)–(44) |
+| MR-AWENO interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-6}$ | Li, Li, Don & Wang 2023a, Eqs. (23)–(24), recalling Wang, Zhu, Yang & Zhao |
+| MR-AWENO-Si | squared fifth undivided difference $\tau^*$ on six points | $\tau^*/(\beta_k+\epsilon\mathsf m^2)$, descaler $\mathsf m$ | Li, Li, Don & Wang 2023a, Eqs. (42)–(44) |
 | WENO-G ([RBF-based WENO](/methods/rbf-weno.md)) | $\lvert\nabla^4f\rvert^2$, an exponential-moment fourth difference | $(\tau/(\beta_k+\epsilon))^q$, $q=1$ (2 on blast waves), RBF ideal weights | Jeong, Yang & Yoon 2022, Eqs. (37)–(39) |
 | WENO-H non-smooth region ([hybrid schemes](/methods/hybrid-weno.md)) | as in the CWENOZ/WENO-ZQ rows, five-point | $\tau/\big((\epsilon+\beta_k)C_R\big)$, data- and grid-dependent $C_R$ | Wan & Xia 2022, Eqs. (3.1)–(3.4) |
+| MR-WCNS interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\epsilon+\beta_n)$, $\epsilon=10^{-6}$ | Wang, Zhu, Wang & Zhao 2023c, Eq. (3.23) |
+| third-order two-level WENO on moving quadrilaterals | $\lvert\beta_2-\beta_1\rvert$ | $(\tau/(\beta_l+\epsilon))^2$, $\epsilon=10^{-3}$ | Gu, Li, Cheng & Shu 2023, §2.4, after Castro, Costa & Don |
+| unstructured CWENOZ ([CWENO](/methods/cweno.md)) | $\big(\tfrac1{s_t-1}\sum_{s\ge1}\lvert\beta_s-\beta_0\rvert\big)^4$ | $\tau/(\epsilon+\beta_s)$, $\epsilon=10^{-14}$ | Maltsev et al. 2023, Eqs. (22)–(23) |
+| IMWENO-P ([smoothness indicators](/definitions/smoothness-indicator.md)) | squared undivided fourth difference $\tau^{\mathrm{IMP}}$ | $(\tau^{\mathrm{IMP}}/(\beta^{\mathrm{IMP}}_k+\epsilon))^q$, $q=1$, $\epsilon=10^{-40}$ | Zhong et al. 2023, Eqs. (23)–(26) |
+| compact gas-kinetic reconstruction ([WENO-AO](/methods/weno-ao.md)) | $\lvert3(\beta_1-\beta_2)+(\beta_3-\beta_2)\rvert$ (1-D), $\tfrac13\sum\lvert2\beta_0-\beta_k-\beta_l\rvert$ (triangles) | $(\tau/(\beta_k+\epsilon))^2$, $\epsilon=10^{-5}$ | Zhao, Ji, Shyy & Xu 2023, Eqs. (29), (31)–(32) |
 
 All the $\tau$ in the table are page-local and none is the registry's $\tau_5$. The same construction,
 with the mean of $(\beta_0-\beta_r)^2$ over four small stencils of a six-point stencil, drives the
@@ -128,7 +138,7 @@ $f\mapsto\sigma f$) and restore degree 0 by squaring the denominator and scaling
 with the data; on scaled Riemann problems the original weights oscillate and break the homogeneity of
 the solution, the new ones keep it to $10^{-12}$–$10^{-13}$ (Example 4.4).
 
-Of the last four rows, the MR-AWENO row has degree 2 like the first three; Li et al. (2023, §2.3,
+Of the last four rows, the MR-AWENO row has degree 2 like the first three; Li et al. (2023a, §2.3,
 Theorem 3) prove that this operator is not scale-invariant and trace it to the different scalings of
 $\beta_k$, $\tau$ and $\epsilon$; MR-AWENO-Si and WENO-G are of degree 0,
 the former exactly once $\epsilon$ is scaled by $\mathsf m^2$ (Theorem 4) *(compiler check, not in the sources,
@@ -136,10 +146,18 @@ for WENO-G: $\nabla^4f$ and the $\beta_k^{1/2}$ are homogeneous of degree 1 in t
 degree 0 up to $\epsilon$)*. Wan & Xia's $C_R$ contains $\big(\sum|u_j|\big)^2\Delta x$, a deliberate amplitude
 dependence meant to make the weights more linear on fine grids (§3.1).
 
+*(Compiler check, not in the sources, for the five rows added with chunk 6.)* The MR-WCNS ratio has
+degree 2 like the first row; it is the MR-AWENO weight, and Li et al.'s (2023a) Theorem 3 covers it. The
+moving-quadrilateral, IMWENO-P and compact gas-kinetic ratios have degree 0 up to $\epsilon$, though
+$\epsilon=10^{-3}$ in the first is large against small-amplitude data. The CWENOZ ratio has degree
+$2b-2=6$ for $b=4$, the strongest amplitude dependence in the table. IMWENO-P is invariant to data scaling
+up to $\epsilon$ but its indicators $\beta^{\mathrm{IMP}}_k$ carry the cell width as a factor, so its weights change with the unit
+of length; see [scale invariance](/properties/scale-invariance.md).
+
 ## Uses in the bundle
 
 WENO-Z is the interpolation of the fifth-order [A-WENO](/methods/alternative-weno.md) schemes of
-Wang et al. (2023, §2), applied characteristic-wise, and of Chu, Kurganov & Na (2022, Eqs. (3.4)–(3.7)):
+Wang et al. (2023b, §2), applied characteristic-wise, and of Chu, Kurganov & Na (2022, Eqs. (3.4)–(3.7)):
 point-value interpolation at $x_{i+1/2}$ with $d=(\tfrac1{16},\tfrac58,\tfrac5{16})$, $q=2$,
 $\epsilon=10^{-12}$, and at the quarter points $x_{i\mp1/4}$ of their cell quadrature with the same
 indicators, the same $\tau_5$ and $d=(\tfrac{15}{64},\tfrac{21}{32},\tfrac7{64})$ (§4); the comparator
@@ -158,7 +176,7 @@ a sixth-order five-point form in TENO5-A instead, and Ji, Liang & Fu (2022, §3.
 "can be applied" on unstructured meshes but drop it to save cost ([targeted ENO](/methods/targeted-eno.md)).
 Wan & Xia (2022, §3) divide $\tau_5$ by the mean of the three $\beta_k$ to get a three-region smoothness
 detector ([hybrid schemes](/methods/hybrid-weno.md)). As a comparator WENO5-Z is the most dissipative
-scheme in the approximate dispersion relation of Li, Chen & Ren (2022, Figs. 11–12) and generates their
+scheme in the approximate dispersion relation of Li, Chen & Ren (2022a, Figs. 11–12) and generates their
 reference solutions; Huang, Liang & Fu (2023, §4.6) find it, like TENO5, "excessively dissipative" on double
 Mach reflection; Jeong et al. (2022, Table 1) measure the same $L^\infty$ error as WENO-M on smooth
 advection at $N_x=640$ ($1.96\times10^{-8}$). Liang et al. (2022, §2.2) note that WENO-Z "typically" uses $q=1$ and $C=1$ in the template
@@ -199,7 +217,7 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eqs. (14)–(17), Table 4; §3.2; Tables 6–7; Fig. 3.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (14)–(17), Table 4; §3.2; Tables 6–7; Fig. 3.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §2.2, Eq. (4); §4; §5, Table 1.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §2.1, Eqs. (4)–(8); §3.2.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3, Eqs. (4.24)–(4.25); Fig. 13.
@@ -208,10 +226,10 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 - [Fu (2023)](/sources/fu-2023.md) — §2.5, Fig. 2; §3.1, Eq. (17).
 - [Fu (2021)](/sources/fu-2021.md) — §1.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §1; §4 (WENO5-Z comparator).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §2.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §2.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §I; App. D.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1.1, Step 5, Eq. (3.17).
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §2.1, Eqs. (2.16)–(2.22).
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — §2.1, Eqs. (2.16)–(2.22).
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §2.2, Eqs. (13)–(14).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3, Eqs. (91)–(93); App. B, Eqs. (B.14), (B.20)–(B.21).
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §2.2.4; App. B.
@@ -223,8 +241,8 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 - [Liang et al. (2022)](/sources/liang-2022.md) — §2.2, Eqs. (10)–(12); §4.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (15)–(16); §3.2, Eq. (32); §4.6.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.2.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §3.3, Figs. 11–12; §4.
-- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.1.1, Eqs. (23)–(24); §2.3, Eqs. (42)–(44), Theorems 3–4.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §3.3, Figs. 11–12; §4.
+- [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §2.1.1, Eqs. (23)–(24); §2.3, Eqs. (42)–(44), Theorems 3–4.
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.2, Eq. (10); §4.3, Eqs. (37)–(39); §5, Table 1.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.3, Eq. (2.28); §3, Eqs. (3.1)–(3.4).
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §4.2–4.3, Figs. 1–5, 7.
@@ -232,3 +250,9 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §8.1.3, Fig. 9f; §8.3.2–8.3.3, Table 3; §9.1, Tables 5–7.
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §2.3, Eq. (14).
 - [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §2.1, Eqs. (11)–(14).
+- [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.3, Eq. (27); §3.4, Eqs. (28)–(32).
+- [Chen & Deng (2023)](/sources/chen-2023.md) — §2, Eqs. (17)–(18); §3, Eq. (33).
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §2, Eqs. (10)–(11); §3.2, Eqs. (23)–(26); Table 4.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eq. (3.23).
+- [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(25).

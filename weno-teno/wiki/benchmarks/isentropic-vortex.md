@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Isentropic vortex
@@ -32,7 +32,7 @@ With a near-vacuum core it becomes a positivity test
 widths on a coarse grid, it is also a long-time robustness test of
 kinetic-energy-preserving central schemes
 ([Edoh (2022)](/sources/edoh-2022.md)) and of the choice of energy
-equation ([De Michele & Coppola (2023)](/sources/demichele-2023.md)),
+equation ([De Michele & Coppola (2023a)](/sources/demichele-2023.md)),
 and on a randomly distorted grid a test of free-stream-preserving
 metrics ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md)).
 
@@ -40,7 +40,7 @@ metrics ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md)).
 
 Let $T=p/\rho$ be the temperature, $\mathcal E$ the vortex strength
 and $r$ the distance from the vortex centre (page-local symbols). The
-form printed by [Wang et al. (2023)](/sources/wang-2023-b.md) Example 3
+form printed by [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 3
 and, in three dimensions, by
 [Ranocha et al. (2023)](/sources/ranocha-2023.md) §4.1, Eq. (4.1) is,
 in two dimensions,
@@ -58,7 +58,7 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 
 | Source | Domain | $\mathcal E$ | Background | Final time / use |
 |---|---|---|---|---|
-| [Wang et al. (2023)](/sources/wang-2023-b.md) Example 3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$ | $t=1$; $L^2$ error of $\rho$ on $\Delta x=1/2,\dots,1/64$ |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$ | $t=1$; $L^2$ error of $\rho$ on $\Delta x=1/2,\dots,1/64$ |
 | [Balsara et al. (2024)](/sources/balsara-2024.md) §VII.a | square periodic box; $[-10,10]^2$ and doubled time for orders 7 and 9 | not restated | not restated | design order, $64^2$ to $512^2$ |
 | [Ranocha et al. (2023)](/sources/ranocha-2023.md) §4.1 | $[-5,5]^d$, $d=2,3$, periodic | 20 | $\rho_0=1$, $p_0=10$, $v_0=(1,1,0)$ | timing only, 8 elements per direction |
 | [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.1 | $[-10,10]^2$, centre $(-2,-2)$, periodic | 5 | $\rho_0=1$, temperature 1 with $c_v=1$, stream $(1,1)$ | $t=4$; $\ell^1$, $\ell^\infty$ errors of $\rho$, $N_x=40$ to $320$, moving mesh |
@@ -77,10 +77,13 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) §5.2.1 | $[-10,10]^2$, periodic | 2.5 (printed strength 5 in their normalization) | $\rho_0=p_0=1$, stream $(1,\sqrt2/2)$ or $(1,\sqrt3/2)$, see Qualifications | $t=5$ convergence, CFL 1; $t=200$ on $200^2$ |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.3 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$, stream $(1,1)$ | $T=10$; errors on $25^2$ to $200^2$ (printed "252–2002"); time-step law not stated |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.1 | $[-5,5]^2$, centre at the origin, periodic | 5 | $T_0=1$, stream $(1,1)$ | $t=10$; $L_2$ density error, $25^2$ to $200^2$, CFL 0.2 |
-| [De Michele & Coppola (2023)](/sources/demichele-2023.md) §5.1, Eqs. (79)–(81) | unit square, centre $(0.5,0.5)$, periodic | vortex Mach number $M_{\mathrm v}=0.5$, radius $r_{\mathrm v}=1/15$ | $\rho_\infty=1$, $u_\infty=1$, $M_\infty=0.5$ | robustness: $40^2$ to $t=5$, and $30^2$ to $T=50$ at CFL 0.01, 0.1, 0.5 |
+| [De Michele & Coppola (2023a)](/sources/demichele-2023.md) §5.1, Eqs. (79)–(81) | unit square, centre $(0.5,0.5)$, periodic | vortex Mach number $M_{\mathrm v}=0.5$, radius $r_{\mathrm v}=1/15$ | $\rho_\infty=1$, $u_\infty=1$, $M_\infty=0.5$ | robustness: $40^2$ to $t=5$, and $30^2$ to $T=50$ at CFL 0.01, 0.1, 0.5 |
 | [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) §8.1.2, Eq. (47) | $[0,16]^2$, centre $(8,8)$, periodic; grid randomized by 20 % in the central region | $C/(U_\infty R)=0.02$ | $\rho=1$, $M=0.1$, advection speed 1 | one period, $t=16$; $64\times64$ |
 | [Funada & Imamura (2023)](/sources/funada-2023.md) §3.1 | $[-6,18]\times[-12,12]$, centre at the origin, periodic in $x$, Riemann boundaries in $y$ | $\kappa_{\mathrm v}=0.02$ (page-local) | $\rho=1$, $M_\infty=0.1$, stream along $x$ | $L_\infty$ error of $v_2$ when the vortex reaches $x=8$; $\Delta x=0.375$, $0.1875$, $0.09375$; RK4 |
 | [Zaghi et al. (2023)](/sources/zaghi-2023.md) Appendix, Eqs. (A.1)–(A.6) | periodic cube of side 10 m, centre $(2,5,5)$ m, 3D | vortex Mach number $M_{\mathrm v}=0.1$, radius 0.5 m | $\rho_0=1.226$ kg m$^{-3}$, $p_0=101325$ Pa, free-stream Mach 0.1 along $x$ | period 0.29 s; AMR performance test, WENO3, 4768 blocks, about 2.4M cells |
+| [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2.1 | $[0,20]\times[0,10]$, centre $(9,5)$, periodic | $\beta=8.5$ in their form, see below | $\rho_0=p_0=1$, stream $(1,0)$ | $T=2$; $L^2$ errors, $N=1$–$4$, $K_{1D}=2$–$32$ ($2K_{1D}\times K_{1D}$ elements, page-local), quadrilaterals (CFL 0.9) and triangles (CFL 0.5) |
+| [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.1.2, Eqs. (43)–(45) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; $L_\infty$, $L_1$ density errors on uniform triangles, 800 to 12800 points; with and without the PEEB limiter |
+| [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $e_{L^2}$, $e_{L^\infty}$ on triangular, hybrid and uniform meshes, 16–128 edges per side ($P_2$, $P_3$), 8–64 ($P_4$); CFL 0.5 |
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
@@ -142,6 +145,22 @@ Zaghi et al. print a dimensional three-dimensional vortex after Poinsot
 $\bar y$ like $v_1$, and their density exponent does not give radial
 equilibrium with the printed velocity (see the
 [Source page](/sources/zaghi-2023.md), Printed slips).
+
+Liu et al. (2023b) (after Hu & Shu) and Maltsev et al. (after Balsara
+& Shu) print the table's form with $\mathcal E=5$, $T=p/\rho$ and unit
+background. Lin, Chan & Tomas print
+$\rho=\big[1-\frac1{8\gamma\pi^2}\,\tfrac12(\gamma-1)\big(\beta e^{1-r^2}\big)^2\big]^{1/(\gamma-1)}$,
+$v=(1,0)+\frac\beta{2\pi}e^{1-r^2}(-\bar y,\ \bar x)$, $p=\rho^\gamma$
+($\beta$ page-local), with $e^{1-r^2}$ where the table has
+$e^{(1-r^2)/2}$ in the velocity. Writing $r=r'/\sqrt2$ turns it into
+the table's form in the coordinate $r'$ with
+$\mathcal E=\beta\sqrt{e/2}\approx1.166\,\beta$, i.e. a vortex
+$1/\sqrt2$ times narrower and of strength $\mathcal E\approx9.91$ for
+$\beta=8.5$ *(compiler check, not in the sources)*. They state that most
+experiments in the literature choose $\beta=5$, with minimum density 0.36, and that $\beta=8.5$ gives a minimum
+density $2.145\times10^{-3}$; their printed formula gives 0.3617 and
+$2.145\times10^{-4}$ at the centre with $\gamma=1.4$ *(compiler check,
+not in the sources)*.
 
 **Near-vacuum strength.** With $\mathcal E=10.0828$ and unit
 background the centre temperature is
@@ -351,6 +370,39 @@ $5.98\times10^{-4}$, $1.34\times10^{-4}$, $3.59\times10^{-5}$ (orders
 $6.12\times10^{-4}$, then the same values, so the weighting costs
 accuracy only on the coarse meshes (§6.3, Table 1).
 
+**Fourth order of RBF differential-quadrature finite volumes.** Liu
+et al. (2023b) find their implicit
+[RBF differential-quadrature](/methods/rbf-differential-quadrature.md)
+finite volumes, LSFD-FV and k-exact FV all at fourth order in
+$L_\infty$ and $L_1$ of density on the four triangular meshes, with
+IRBFDQ-FV the most accurate and the cheapest at equal error (no
+numbers in the text); switching on their PEEB limiter changes the
+errors only slightly (§5.1.2, Figs. 3–5).
+
+**Positivity-only limiting of entropy-stable DG.** On Lin, Chan &
+Tomas's strengthened vortex, unlimited entropy-stable DG fails "due to
+large jumps in the density and pressure"; with elementwise blending
+under bounds relaxed by $\zeta_{\mathrm r}=0.1$ and $0.5$ (their $\zeta$) the solutions converge with
+asymptotic rates between $N+\tfrac12$ and $N+1$, which they call
+optimal, e.g. $N=4$ on quadrilaterals $1.915\times10^{-4}$ at $K_{1D}=32$
+with last rates 6.30 ($\zeta_{\mathrm r}=0.1$) and 5.21 ($\zeta_{\mathrm r}=0.5$), and
+$3.248\times10^{-4}$ (rate 4.85) on triangles (Tables 6–9). The
+quadrilateral $N=4$, $K_{1D}=32$ error is identical for both $\zeta_{\mathrm r}$, as
+limiting is inactive there. See
+[convex limiting](/methods/convex-limiting.md).
+
+**Troubled-cell switching in hybrid DG–FV.** Maltsev et al. find pure
+DG close to design order, while CWENOZ finite volumes of the same
+polynomial order reach it only on finer meshes (quadrilateral $P_4$:
+DG $e_{L^2}$ $2.97\times10^{-4}$ to $1.14\times10^{-9}$ from 8 to 64
+edges, FV $7.64\times10^{-2}$ to $7.20\times10^{-4}$); their MOOD-type
+switch flags cells in the vortex core, from 26–46 % of the cells on the
+coarsest meshes to 0.08–0.16 % on the finest $P_2$ and $P_3$ meshes
+(0.35–0.72 % for $P_4$ on 64 edges), and the hybrid then costs 1.26–1.56
+times pure DG on the coarsest and 1.01–1.06 times on the finest meshes
+(Table 1, Fig. 4). See
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md).
+
 **Limiters and artificial viscosity must leave the order intact.**
 Du et al. deliberately lower the KXRCF threshold ($C_k=10^{-4}$ on
 triangles, $10^{-3}$ on point clouds) so that many smooth cells are
@@ -557,15 +609,23 @@ logarithmic mean (§7.2, Fig. 6).
   Their remark that higher resolution can lower the blow-up time
   compares runs that differ in both grid and order ($40^2$ eighth order,
   $30^2$ fourth order).
+- Maltsev et al. state that the simulation runs "for 10 periods" with
+  errors at "final time $t=10$"; with stream $(1,1)$ on the periodic
+  $[0,10]^2$ one period is $t=10$ *(compiler check, not in the
+  sources)*. Their Table 1 prints a DG $L^\infty$ order of 6.69 for
+  quadrilateral $P_4$ at 32 edges, where
+  $\log_2(6.99\times10^{-5}/5.63\times10^{-7})=6.96$ *(compiler check,
+  not in the sources)*.
+- Lin, Chan & Tomas are read as arXiv v2.
 - Chamarthi (2023a) and (2023b) are read as arXiv preprints, Chandravamsi
-  et al. and De Michele & Coppola as arXiv v1.
+  et al. and De Michele & Coppola (2023a) as arXiv v1.
 - Yu & Hesthaven's DG solution and Du et al.'s unlimited DG are the
   baselines of their tests; the sub-design orders above are those of
   the baselines, not of the shock-capturing devices.
 
 # Citations
 
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §4, Example 3, Table 1.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §4, Example 3, Table 1.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §VII.a, Table I.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.1, Eq. (4.1); §7.2, Fig. 6 (arXiv v2).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Eq. (5.1), Ex. 5.1, Fig. 5.2; Ex. 5.5, Fig. 5.6 (arXiv v1).
@@ -587,8 +647,11 @@ logarithmic mean (§7.2, Fig. 6).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.3, Table 4.2.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.3, Tables 2–3 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.1, Table 1 (arXiv v1).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §5.1, Eqs. (79)–(81), Table 3, Figs. 1–5 (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §5.1, Eqs. (79)–(81), Table 3, Figs. 1–5 (arXiv v1).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §8.1.2, Eq. (47), Fig. 8 (arXiv v1).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.1, Eqs. (38)–(41), Tables 1–2 (arXiv v2).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §3.1, Fig. 10.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — Appendix, Eqs. (A.1)–(A.6), Figs. A.16–A.18.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.2.1, Tables 6–9 (arXiv v2).
+- [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.1.2, Eqs. (43)–(45), Figs. 3–5.
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.1, Table 1, Fig. 4.

@@ -6,6 +6,93 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 6 — WCNS weights, flux globalization, entropy-stable DG for air, interface methods (2026-10-23)
+
+Sources (20): chen-2023, demichele-2023-b, fujiwara-2023, gu-2023,
+huang-2023, kurganov-2023, li-2023-b, lin-2023, liu-2023-b, liu-2023,
+long-2023, maltsev-2023, paula-2023, peyvan-2023, ramani-2023,
+wang-2023-c, zhao-2023, zhong-2023, calhoun-2023, ciallella-2023. 120 of
+207 ingested, 181 concept pages plus the registry, 3765 bibliography
+entries.
+
+### Decisions for the human
+
+1. **Still open from chunks 1–5:** the archive re-download and overwrite
+   (Feng 2026, Li 2024); the open contradictions (TENO $\tau_K$,
+   conservation of WCNS); the wrong-year keys `boscarino-2008`,
+   `gande-2020`, `ranocha-2021-b`/`-c`; the citation-label convention
+   (now applied bundle-wide: letters by slug suffix, Li et al. 2022a–d,
+   2023a/b, Liu et al. 2023a/b, De Michele & Coppola 2023a/b, Wang et al.
+   2023b/c, Chamarthi 2023a/b, De Vanna et al. 2023a/b/c); the earlier
+   merger and book-printing calls.
+2. **New open contradiction — is the entropy-filter tolerance problem
+   dependent?** ([entropy filtering](wiki/methods/entropy-filtering.md)):
+   Dzanic & Witherden (2022, §6) call the filter "free of
+   problem-dependent tunable parameters"; Peyvan et al. (2023, §4.2) say
+   the threshold "must be tuned according to the problem". Peyvan et
+   al.'s side rests on one figure with no run at another threshold.
+3. **Bibliography calls to confirm:** `berberich-2021-b` (Comput. Fluids
+   219:104858, cited by ciallella-2023) and `berberich-2019` (same title
+   and authors, printed by kanbar-2022 as "J. Comput. Phys. 2019" with no
+   volume) kept as two entries; `karniadakis-2005` and `-2013` (same book
+   title, edition or reprint unverified) kept distinct; the compiler
+   re-keyed `gupta-2021` (a placeholder year) to `gupta-1990`, the year
+   peyvan-2023 prints; `johnsen-2012` for fujiwara-2023's "JCP 231 (2006)".
+4. **Bundle fit (no D17 copy made):** zhao-2023 (gas-kinetic direct
+   modelling) and liu-2023-b (RBF-DQ with a gas-kinetic viscous flux) sit
+   at the edge of the bundle; ramani-2023 is mainly mesh generation;
+   long-2023 and paula-2023 are multiphase-physics papers; kurganov-2023
+   and ciallella-2023 treat shallow-water and nozzle balance laws.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  demichele-2023-b (v2), calhoun-2023 (v2), zhao-2023 (v1 of 2021),
+  peyvan-2023 (v1), lin-2023 (v2), ramani-2023 (v2); author manuscript
+  ciallella-2023 (dated 4 January 2024).
+- Key traps resolved: chen-2023 and maltsev-2023 print `li-2022`/`-b` and
+  `tsoutsanis-2021`/`-b` in swapped order; dzanic-2022 → dzanic-2022-b in
+  lin-2023 and peyvan-2023; zhong-2023 cites five different works under
+  planned slugs (`li-2022`, `li-2022-b`, `li-2023`, `li-2023-b`,
+  `luo-2021`); ramani-2023 cites the arXiv preprint of li-2022-c (kept
+  distinct).
+
+### Printed slips (the Source pages list them in full)
+
+- zhong-2023: Eqs. (40)–(41) give only $O(\Delta x^2)$ for
+  $\omega_s-d_s$ at second-order critical points; the fifth order rests
+  on Table 4.
+- wang-2023-c: Eq. (3.20) misses the cross term $-3495756\,u_iu_{i+1}$.
+- huang-2023: Eq. (C.2) is false in general (gap in the TVD proof of
+  Thm C.1; the bounds theorem is unaffected); Eq. (50) phase labels.
+- chen-2023: the exponential weights change under $u\to\sigma u$, against
+  the paper's "no dimensional scale" claim.
+- li-2023-b: Table 1 $d_3$ sign; Eqs. (12), (30), (32).
+- kurganov-2023: $E\equiv5.5$ printed for $\gamma=1.6$ (data give 14/3).
+- peyvan-2023: Mach-10 Shu–Osher with the Mach-3 density 27/7; Leblanc
+  density ratio $10^5$ for $2\times10^3$.
+- lin-2023: Shu–Osher interface at $x=4$ (shock leaves the domain);
+  vortex minimum density $10^{-4}$ scale; Table 5c exponent; Eq. (18)/(20).
+- ciallella-2023: Eq. (36) sign; Table 1 orders computed with $N_e-1$.
+- calhoun-2023: Table 4 AMR orders; maltsev-2023: Table 1 6.69 for 6.96;
+  ramani-2023: Table 3 speed-ups; long-2023: droplet placed behind the
+  initial shock; gu-2023, fujiwara-2023, paula-2023, zhao-2023,
+  demichele-2023-b (TGV $\cos2x+2$, as in demichele-2023): minor slips.
+
+### Candidates for later pages
+
+- Fujiwara et al.'s FC/PE scheme, smooth adaptive meshing (ramani-2023),
+  hybrid DG–FV switching (maltsev-2023), asymptotically
+  entropy-conservative fluxes (demichele-2023-b), the S2O4 two-stage
+  fourth-order time stepping with its temporal limiter (zhao-2023),
+  ForestClaw, the Baer–Nunziato model, Schardin's problem, the
+  Rider–Kothe vortex deformation, a lake-at-rest / flow-over-a-bump
+  benchmark: each has one source so far.
+- Tag near-synonyms for a whole-bundle pass: limiter/limiting,
+  unstructured/unstructured-mesh, compact-scheme/compact-stencil,
+  positivity/bound-preserving, high-order/very-high-order,
+  entropy-filtering/solution-filtering, multicomponent/multiphase.
+
 ## Chunk 5 — gradient-based schemes, wall-modelled LES, structure-preserving MHD, GPU codes (2026-10-23)
 
 Sources (20): bernardini-2023, bezgin-2023, devanna-2023-b,

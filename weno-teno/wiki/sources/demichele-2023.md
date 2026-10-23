@@ -110,7 +110,7 @@ and $[\![g]\!]=(g_{i+1/2}-g_{i-1/2})/\Delta x$ denotes a **flux difference**
 
 # Notation map
 
-| De Michele & Coppola (2023) | Registry ([notation](/notation.md)) | Note |
+| De Michele & Coppola (2023a) | Registry ([notation](/notation.md)) | Note |
 |---|---|---|
 | $u_\alpha$ | $v$ (components $v_\alpha$) | velocity |
 | $h$ | $\Delta x$ | uniform mesh width |
@@ -141,7 +141,7 @@ kept as printed. No printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
 
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)

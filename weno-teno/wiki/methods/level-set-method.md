@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Level-set and ghost-fluid interface methods"
-description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization and topology changes, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, a conservative cut-cell finite-volume method with apertures and conservative mixing, and level-set–phase-field coupling."
+description: "Methods that locate a material interface or rigid wall by the zero contour of a signed-distance level set: transport, reinitialization, ghost-fluid methods and their loss of conservation, a conservative sharp-interface finite-difference scheme with cell merging, a DG cut-cell scheme with real–ghost mixing, a conservative cut-cell finite-volume method extended to liquid–vapour phase change, and level-set–phase-field coupling."
 status: established
 aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
 tags: [interface-capturing, multiphase, finite-difference, weno, dg, immersed-boundary]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Level-set and ghost-fluid interface methods
@@ -22,7 +22,8 @@ finite-difference scheme for compressible gas–gas and gas–water flows
 ([Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md)); as the cut-cell
 geometry of a conservative sharp-interface finite-volume method for
 fluid–fluid and fluid–solid interfaces in [JAX-Fluids](/software/jax-fluids.md)
-([Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md)); as the tracker of
+([Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md)), extended to
+liquid–vapour phase change by [Long, Cai & Pan (2023)](/sources/long-2023.md); as the tracker of
 a sharp-interface discontinuous Galerkin scheme with ghost fluids in
 cut cells ([Bai & Li (2022)](/sources/bai-2022.md)); as the
 geometric companion of a mass-conserving phase field in a weakly
@@ -30,7 +31,7 @@ compressible gas–liquid solver
 ([Matsushita & Aoki (2021)](/sources/matsushita-2021.md)); and, kept
 stationary, as the representation of a rigid wall in
 [immersed-boundary methods](/methods/immersed-boundary-method.md)
-([Wang et al. (2022)](/sources/wang-2022.md)). The alternative,
+([Wang et al. (2022a)](/sources/wang-2022.md)). The alternative,
 capturing the interface as a diffuse mixture region, is the
 [five-equation model](/definitions/five-equation-model.md).
 
@@ -143,6 +144,11 @@ shock front and the interface wrongly, while their conservative scheme
 does not (§4, Ex. 4, Fig. 8). They also argue against diffuse-interface
 capturing, whose smeared interface carries mixture states
 "inconsistent with what is really happening in physics" (§1).
+
+Long, Cai & Pan (2023) make the same objection for phase change: the
+ghost-fluid-based phase-change methods of Houim & Kuo, Das & Udaykumar
+and Fechter et al. are "inherently non-conservative", which motivates
+their cut-cell scheme below (§1).
 
 ## A conservative sharp-interface finite-difference scheme
 
@@ -259,6 +265,72 @@ well" with Terashima & Tryggvason (Fig. 18). The gradient of the
 integral entropy with respect to the shock Mach number, computed by
 automatic differentiation through the whole level-set pipeline, matches
 finite differences (§7.3).
+
+## Phase change in the conservative cut-cell scheme
+
+[Long, Cai & Pan (2023)](/sources/long-2023.md) extend the same
+conservative sharp-interface method of Hu et al. to inviscid
+liquid–vapour flow with evaporation and condensation. As recalled in
+§2.3, the forward-Euler update of phase $k$ in a 2D cut cell is
+
+$$
+\begin{aligned}
+(\phi_k\bar u_k)^{n+1}_{i,j}={}&(\phi_k\bar u_k)^n_{i,j}+\frac{\Delta t}{\Delta x\Delta y}\hat X_{i,j}
++\frac{\Delta t}{\Delta x}\big(A_{i-1/2,j}\hat f_{i-1/2,j}-A_{i+1/2,j}\hat f_{i+1/2,j}\big)\\
+&+\frac{\Delta t}{\Delta y}\big(A_{i,j-1/2}\hat g_{i,j-1/2}-A_{i,j+1/2}\hat g_{i,j+1/2}\big),
+\end{aligned}
+$$
+
+with $A$ the face apertures and $\hat X$ (page-local) the interfacial
+flux on the interface segment of the cell (Eq. (5)). The two phases are
+coupled only through $\hat X$. Ghost states enter only as inputs of the
+interfacial Riemann problem, built by the extending algorithm of Fu et
+al. Small cells are treated by the mixing procedure of Hu et al.
+
+The interfacial flux comes from a four-wave approximate Riemann problem
+with a mass flux through the interface, latent heat and surface tension
+([Riemann solvers with phase change](/methods/phase-change-riemann-solver.md)).
+Let $\dot m$ be the mass flux through the interface, $Q_{\mathrm{lat}}$ the
+latent heat, $\sigma_{\mathrm{st}}$ the surface-tension coefficient,
+$\kappa_{\mathrm c}$ the curvature, $n$ the normal, $s_{\mathrm p}$ the
+interface speed and $\Delta\Gamma$ the length of the interface segment
+(all page-local). The vapour and liquid fluxes then sum to
+
+$$
+\hat X_{\mathrm{vap}}+\hat X_{\mathrm{liq}}=\Delta\Gamma\,\big(0,\ -\sigma_{\mathrm{st}}\kappa_{\mathrm c}n,\ \dot m\,Q_{\mathrm{lat}}-\sigma_{\mathrm{st}}\kappa_{\mathrm c}s_{\mathrm p}\big)
+$$
+
+(Eqs. (26)–(27); the source prints Eq. (27) without the factor
+$\Delta\Gamma$ of Eq. (26)). Mass is therefore conserved exactly, and
+the momentum and energy residuals are the surface-tension force and the
+latent-heat and surface-tension work. With phase change and surface
+tension switched off, the scheme is Hu et al.'s. The total surface force
+on a drop of constant curvature is zero ("zero-order consistency"). The
+conserved energy is the total energy corrected by the latent heat of the
+mass that changed phase (§3.2, Eq. (34), Fig. 12).
+
+The level set is transported with the interface speed of the
+interfacial Riemann problem, extended off the interface, and gives the
+normal $n=\nabla\Phi$ and the curvature
+$\nabla\cdot(\nabla\Phi/\lvert\nabla\Phi\rvert)$ (§2.4, Eqs. (7)–(8)).
+Fluxes and level-set gradients use fifth-order WENO. Time stepping is
+second-order SSP Runge–Kutta at CFL 0.6 with the full-cell CFL
+condition, on wavelet-adaptive multiresolution grids (§4). The tests are
+liquid–vapour [Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
+a circular droplet and a bubble with phase change, an oscillating water
+droplet, 2D and 3D [shock–droplet interactions](/benchmarks/shock-water-column.md)
+and a vapour-bubble collapse near a wall. In the oscillating-droplet
+test the computed period is $0.207$ ms against $0.204$ ms from the
+two-phase Rayleigh formula, an error of about $1.47\%$ (§4.3). *(Compiler
+check, not in the sources: the formula
+$\omega^2=(o^3-o)\sigma_{\mathrm{st}}/\big((\rho_{\mathrm{liq}}+\rho_{\mathrm{vap}})R^3\big)$
+with mode $o=2$, $\sigma_{\mathrm{st}}=20$ N/m, densities $1073.55$ and
+$0.74$ kg/m³ and $R=0.4899$ mm gives $2\pi/\omega=0.2039$ ms.)*
+
+The authors qualify their "fully conservative" claim themselves:
+reinitialization can delete under-resolved droplets or bubbles and so
+violate conservation, as in Hu et al.'s original method. They leave
+remedies to future work (§3.2).
 
 ## A DG cut-cell scheme with real–ghost mixing
 
@@ -405,7 +477,8 @@ which motivates their body-fitted mapped meshes.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.1–2.3, Eqs. (1)–(27); §3, Eqs. (28)–(42); §4, Ex. 1–11, Tables 2–4, Figs. 6, 8, 11–15; Appendices A–B.
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §2.1–2.2, Eqs. (8)–(20); §3.2, §3.4–3.5, Eqs. (32)–(35), (39)–(41), (47); §5.1; Appendices 8.1, 8.3, 8.4.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1; §2.4–2.6, Eqs. (16)–(29), Figs. 2–7; §3.2, Table 1; Appendix A.
-- [Wang et al. (2022)](/sources/wang-2022.md) — §2.2, Eqs. (12)–(15).
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §2.2, Eqs. (12)–(15).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1 (statement on ghost-fluid methods only).
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1 (accepted manuscript).
 - [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §3.6, Eqs. (16)–(31), Fig. 6; §5.2, Figs. 13–18; §7.3 (arXiv v1).
+- [Long, Cai & Pan (2023)](/sources/long-2023.md) — §1; §2.3–2.4, Eqs. (5)–(8); §3.2, Eqs. (26)–(27), (34); §4, §4.3, Fig. 12: conservative cut-cell scheme with phase change.

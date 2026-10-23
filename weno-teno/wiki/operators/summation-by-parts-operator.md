@@ -1,12 +1,12 @@
 ---
 type: Operator
 title: "Summation-by-parts operator"
-description: "A first-derivative matrix D with a symmetric positive-definite norm M is summation-by-parts when MD + DᵀM equals the boundary operator; LGL collocation (DGSEM) has this property with diagonal norm, which yields the strong–weak equivalence, the skew-symmetric flux-differencing operator, the flux form of nodal DG and its entropy proofs, and a sparse first-order SBP operator for low-order schemes."
+description: "A first-derivative matrix D with a symmetric positive-definite norm M is summation-by-parts when MD + DᵀM equals the boundary operator; LGL collocation (DGSEM) has this property with diagonal norm, which yields the strong–weak equivalence, the skew-symmetric flux-differencing operator, the flux form of nodal DG and its entropy proofs, and sparse low-order SBP operators on quadrilaterals and triangles."
 status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Summation-by-parts operator
@@ -131,6 +131,41 @@ The following special cases appear in the sources:
   needs corrected metric terms
   ([free-stream preservation](/properties/free-stream-preservation.md)).
 
+- **Multidimensional diagonal-norm SBP on triangles and a sparse
+  low-order companion.** [Lin, Chan & Tomas (2023)](/sources/lin-2023.md)
+  use nodal SBP operators on quadrilaterals and triangles whose volume
+  quadrature, with positive weights and exact for degree $2N-1$, contains
+  an $(N+1)$-point Gauss–Lobatto face quadrature exact for degree $2N$;
+  with the 0/1 face-extraction matrix $E$ and $B_r=\mathrm{diag}(\text{face weights}\times\hat n_r)$
+  (page-local $E$, $B_r$ for reference direction $r$), the property reads
+  $Q_r+Q_r^\top=E^\top B_rE$ (§3.1, Eq. (5); arXiv v2). For their
+  positivity-preserving low-order scheme they need a sparse operator
+  $Q^{\mathrm L}_r$ with the same SBP property and $Q^{\mathrm L}_r\mathbf 1=0$
+  (Eqs. (7)–(8)):
+  - on tensor-product elements, Pazner's piecewise-linear operator above,
+    $I\otimes\widehat Q$ and $\widehat Q\otimes I$;
+  - on simplices, a new construction. A diagonal-norm SBP operator is fixed
+    by its skew-symmetric part, $Q_r=\tfrac12(Q_r-Q_r^\top)+\tfrac12E^\top B_rE$
+    (Eqs. (9)–(10)), so they prescribe the sparsity of the skew part from an
+    adjacency graph of the nodes (two nodes adjacent when closer than a
+    multiple of a power of their quadrature weights, Eq. (11)) and write its
+    entries as differences of a page-local potential vector $\mathsf p$,
+    $(Q^{\mathrm L}_r-Q^{\mathrm L\top}_r)_{jk}/2=\mathsf p_k-\mathsf p_j$ on
+    edges, after Wu, Trask & Chan. The conservation condition then becomes
+    the graph-Laplacian system $\mathsf L\mathsf p=\tfrac12E^\top B_rE\,\mathbf 1$
+    with zero-mean $\mathsf p$, which has a unique solution (§3.2) *(compiler
+    check, not in the sources: the row sum of the skew part at node $j$ is
+    $-(\mathsf L\mathsf p)_j$)*.
+
+  The adjacency parameters are "not optimal" and the results "not
+  sensitive" to them (§8). Sparsifying keeps the low-order scheme from
+  becoming more diffusive as $N$ grows: at 600 degrees of freedom its
+  Leblanc solutions at $N=2$ and $N=5$ nearly coincide (§5, Table 1a,
+  Fig. 3), the multi-dimensional, simplex counterpart of Pazner's
+  observation. On curved meshes both operators stay SBP and conservative if
+  the geometric terms satisfy a discrete GCL (App. A;
+  [free-stream preservation](/properties/free-stream-preservation.md)).
+
 ## Consequences used by the sources
 
 1. **Discrete integration by parts.** For nodal vectors $\mathbf u$,
@@ -234,3 +269,4 @@ route to non-periodic boundaries, which they do not treat.
 - [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (1)–(2), §3 Eqs. (11)–(16), (22)–(24).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — Eq. (19), §3 Eq. (24) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), Example 2.12, App. A.3 (arXiv v4).
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1 Eq. (5), §3.2 Eqs. (7)–(11), §5 Table 1a Fig. 3, §8, App. A (arXiv v2).

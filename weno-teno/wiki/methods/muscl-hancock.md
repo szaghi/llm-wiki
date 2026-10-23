@@ -42,14 +42,14 @@ limiter factor for both differences; $\kappa_{\mathrm M}=\omega=0$ is the centre
 The variables reconstructed differ: primitive variables $(p,v,T,\phi_2,\dots,\phi_N)$ in the
 multiphase model of Nguyen et al., with the over-compressive OverBee limiter on the volume
 fractions and van Leer elsewhere; primitive or conservative variables in Peng et al.; primitive
-variables in [Wang et al. (2022)](/sources/wang-2022.md) (§2.1). On curvilinear meshes Peng et
+variables in [Wang et al. (2022a)](/sources/wang-2022.md) (§2.1). On curvilinear meshes Peng et
 al. divide the differences by physical centroid-to-face distances (Eqs. (18)–(20)); the
 printed form is exact for linear data only where the two distances are equal, as worked out on
 the TVD page.
 
 ## The Hancock predictor
 
-As written by [Wang et al. (2022)](/sources/wang-2022.md) (§2.1, Eqs. (4)–(6), after van Leer and
+As written by [Wang et al. (2022a)](/sources/wang-2022.md) (§2.1, Eqs. (4)–(6), after van Leer and
 Toro), with a slope $\Delta_i$ per cell and page-local boundary values $u^{\mathrm L}_i$, $u^{\mathrm R}_i$
 at the left and right faces of cell $i$:
 
@@ -77,7 +77,7 @@ inverse Jacobian $[\partial u/\partial w]^{-1}$ (Eqs. (29)–(30); page-local pr
 | Source | Solver and setting | Riemann solver | Contribution built on it |
 |---|---|---|---|
 | [Peng et al. (2022)](/sources/peng-2022.md) | [AMROC](/software/amroc.md)–Clawpack, multispecies reactive Euler, curvilinear block-structured AMR | AUSM, hybrid Roe/HLL | mapped-mesh slopes, area-weighted restriction, Newton-solved bilinear prolongation ([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)) |
-| [Wang et al. (2022)](/sources/wang-2022.md) | AMROC, Euler on Cartesian grids with level-set geometry | PVRS; HLL for the reactive case | bilinearly complete ghost-cell reconstruction ([immersed boundaries](/methods/immersed-boundary-method.md)) |
+| [Wang et al. (2022a)](/sources/wang-2022.md) | AMROC, Euler on Cartesian grids with level-set geometry | PVRS; HLL for the reactive case | bilinearly complete ghost-cell reconstruction ([immersed boundaries](/methods/immersed-boundary-method.md)) |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) | $N$-phase pressure–temperature equilibrium model | Rusanov, HLLC | MUSCL $\kappa_{\mathrm M}=1/3$ with compressive limiters (no Hancock step) |
 | [Hu et al. (2022)](/sources/hu-2022.md) | Cartesian FV, Euler, dimension by dimension | HLLE, HLLEM, HLLC, RHLLEM | second-order MUSCL with second-order TVD Runge–Kutta, no Hancock step; MUSCL interface densities compete with THINC ones in a face-wise BVD selection ([HLL-family solvers](/methods/hll-riemann-solvers.md)) |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) | IDEFIX, HD and MHD on primitive variables | Rusanov, HLL, HLLC/HLLD, Roe | piecewise-linear reconstruction with the van Leer limiter (second order) beside LimO3 and PPM, with explicit RK2/RK3 ([IDEFIX](/software/idefix.md)) |
@@ -119,6 +119,6 @@ shows proper second order convergence for all of the resolutions we have tested"
 
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §2.3 (Eqs. (26)–(31)), §3.1.
 - [Peng et al. (2022)](/sources/peng-2022.md) — §2.1, §2.3, §2.4 (Eqs. (15)–(20)), §2.5.2, §3.1 (Fig. 5) (accepted manuscript).
-- [Wang et al. (2022)](/sources/wang-2022.md) — §2.1 (Eqs. (4)–(11)), §3.3 (Table 1), §3.6.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §2.1 (Eqs. (4)–(11)), §3.3 (Table 1), §3.6.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §2.1, §4.2, §5.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Figs. 7–8).

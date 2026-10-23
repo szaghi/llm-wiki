@@ -131,5 +131,5 @@ $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §2.3, Eq. (6); §3, Eqs. (7)–(9), Figs. 1–3, 13; §4, Figs. 4–7; §5, Table 1, Figs. 8–18; §6.
 - [Deng (2023)](/sources/deng-2023.md) — §4.4, Eq. (4.27), Fig. 6.
 - [Fu (2023)](/sources/fu-2023.md) — §2.3.
-- [Li et al. (2022)](/sources/li-2022-b.md) — Eq. (12) (optimal-order condition recalled).
+- [Li et al. (2022b)](/sources/li-2022-b.md) — Eq. (12) (optimal-order condition recalled).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.

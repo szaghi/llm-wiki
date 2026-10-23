@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -142,6 +142,22 @@ sum to an approximation of the flux through its boundary, which "guarantees the 
 conservation" and lets a single quad be recomputed by a first-order scheme in their MOOD step
 without breaking it (§2.1, Eqs. (15)–(16), Fig. 1).
 
+**Interface fluxes between phases.** In a conservative cut-cell scheme the two phases of a
+cell are coupled only through an interfacial flux on the interface segment, entered with
+opposite signs in the two phases. [Long et al. (2023)](/sources/long-2023.md) (§2.3, §3.2,
+Eqs. (5), (26)–(27)) keep this structure with phase change: the liquid and vapour interfacial
+fluxes, built from one phase-change Riemann solution, sum to
+$\big[0,\ -\sigma_{\mathrm{st}}\kappa_{\mathrm c}n,\ \dot m\,Q_{\mathrm{lat}}-\sigma_{\mathrm{st}}\kappa_{\mathrm c}s_{\mathrm p}\big]^\top$
+(page-local surface tension $\sigma_{\mathrm{st}}$, curvature $\kappa_{\mathrm c}$, mass flux $\dot m$,
+latent heat $Q_{\mathrm{lat}}$, phase-interface speed $s_{\mathrm p}$). Mass is conserved exactly, and
+the momentum and energy defects are the physical surface-tension force and the latent-heat
+and surface-tension work, so total energy is conserved once the latent heat of the converted
+mass is counted (Eq. (34)). The authors contrast this with ghost-fluid phase-change methods,
+"inherently non-conservative", and state that reinitialization of the level set can still
+delete under-resolved droplets and so break conservation (§1, §3.2). See
+[Riemann solvers with phase change](/methods/phase-change-riemann-solver.md) and
+[level-set methods](/methods/level-set-method.md).
+
 A conservative scheme need not be written in flux form to conserve mass: the
 semi-Lagrangian finite-volume update of [Zheng et al. (2022)](/sources/zheng-2022.md)
 integrates the reconstruction over the upstream cell, cut by the Eulerian mesh and
@@ -192,3 +208,4 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Cicchino et al. (2022)](/sources/cicchino-2022.md) — §3.1 (Eqs. (24), (28)), §3.1.1 (Eqs. (34)–(42)), §4 (arXiv v1).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (p. 2), §2.5, Fig. 6.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §2.1 (Eqs. (15)–(16), Fig. 1), §3.1.
+- [Long et al. (2023)](/sources/long-2023.md) — §1, §2.3 (Eq. (5)), §3.2 (Eqs. (26)–(27), (34)).

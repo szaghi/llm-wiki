@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Zhang–Shu scaling limiter"
-description: "The Zhang–Shu limiter scales a high-order polynomial linearly toward its cell average until the point values used by a cell-average decomposition lie in the admissible set; it conserves the cell average and, with a BP first-order flux and a CFL bound, makes the cell-average update bound-preserving."
+description: "The Zhang–Shu limiter scales a high-order polynomial linearly toward its cell average until the point values of a cell-average decomposition lie in the admissible set; it conserves the cell average and, with a BP first-order flux and a CFL bound, makes the update bound-preserving; a one-parameter blend toward a low-order update reuses its algebra."
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -62,6 +62,17 @@ scaling acting on the result of the previous one, with the density first:
   only where $\rho e(u_q)<\varepsilon$, and justify $\theta_2\in[0,1]$ by
   the concavity of $\rho e$ (Jensen). Here $\varepsilon_1$, $\varepsilon_2$
   are round-off floors (page-local), not WENO regularizations.
+- **Remapping on moving quadrilaterals** ([Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md),
+  §2.6.3). The same two steps at the nine Simpson points of a
+  quadrilateral mapped to $[-\tfrac12,\tfrac12]^2$: density with
+  $\varepsilon_1=10^{-13}$, then the whole state with $\theta_2=1$ where
+  $\rho e(\hat u)\ge0$ at the point ($\hat u$ the density-limited state) and otherwise
+  $\theta_2=\min_q\rho e(\bar u_i)/\big(\rho e(\bar u_i)-\rho e(\hat u_q)\big)$
+  over the points; the floor is zero, so by the concavity argument later in this section
+  the limited states satisfy $\rho e\ge0$, not the strict $\rho e>0$ of
+  $G$ *(compiler check, not in the sources)*. It is the limiter of their
+  "P-WENO" [conservative remap](/methods/conservative-remapping.md); in
+  the remap tests it removes all negative cell averages (Tables 3.1–3.3).
 - **Multicomponent Euler** ([Renac (2021)](/sources/renac-2021.md), §6.3,
   Eq. (67)). Three scalings on the nodal values of the DGSEM: density as
   above; each partial density toward
@@ -134,6 +145,37 @@ check, not in the sources: the inequality is the definition of
 concavity)*. The
 [geometric quasilinearization](/methods/geometric-quasilinearization.md)
 representation is the sources' tool for constraints that are not concave.
+
+## A one-parameter blend toward a low-order update
+
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md) (§6.1, Eqs. 37–43) use
+the same algebra with a different target: instead of scaling the
+polynomial toward its cell average, they move the nodal update of an
+entropy-stable DG element from a positivity-preserving low-order update
+$u^{\mathrm L}_i$ toward the high-order one, $u_i=u^{\mathrm L}_i+\mathsf l_K\,P_i$ with
+$P_i=\frac{\Delta t}{m_i}(r^{\mathrm L}_i-r^{\mathrm H}_i)$ and one $\mathsf l_K\in[0,1]$ per element $K$
+($r^{\mathrm L}$, $r^{\mathrm H}$ the low- and high-order residuals, $m_i$ the lumped mass;
+page-local), the largest $\mathsf l_K$ that keeps $\rho\ge\rho^{\min}_i$ and
+$\rho e\ge\rho e^{\min}_i$ at every node. They call it "Zhang–Shu type".
+The density bound is linear in $\mathsf l_K$; the internal-energy bound, multiplied
+by $\rho>0$, is the quadratic $a\mathsf l^2+b\mathsf l+c\ge0$ with
+$a=E^P\rho^P-\tfrac12\lvert(\rho v)^P\rvert^2$,
+$b=E^{\mathrm L}\rho^P+\rho^{\mathrm L}E^P-(\rho v)^{\mathrm L}\cdot(\rho v)^P-\rho^P\rho e^{\min}$,
+$c=E^{\mathrm L}\rho^{\mathrm L}-\tfrac12\lvert(\rho v)^{\mathrm L}\rvert^2-\rho^{\mathrm L}\rho e^{\min}$
+(superscripts $\mathrm L$ and $P$ for the components of $u^{\mathrm L}_i$ and $P_i$), and $\mathsf l^{\rho e}$ is its smallest non-negative root,
+or 1 if none; $\mathsf l_K=\min(\mathsf l^\rho,\mathsf l^{\rho e})$ (Eqs. 39–42) *(compiler check,
+not in the sources: expanding $(\rho^{\mathrm L}+\mathsf l\rho^P)(E^{\mathrm L}+\mathsf lE^P)-\tfrac12\lvert(\rho v)^{\mathrm L}+\mathsf l(\rho v)^P\rvert^2-(\rho^{\mathrm L}+\mathsf l\rho^P)\rho e^{\min}$
+gives these coefficients)*. The bounds are relaxed to
+$\rho^{\min}_i=\zeta_{\mathrm r}\rho(u^{\mathrm L}_i)$,
+$\rho e^{\min}_i=\zeta_{\mathrm r}\rho e(u^{\mathrm L}_i)$ with
+$\zeta_{\mathrm r}\in(0,1]$ (page-local; 0.1 or 0.5 in the runs) rather
+than to a floor $\epsilon_0$, which they found to avoid "the time-step
+size converging to zero" (§6.1). The update stays a convex combination
+of the low- and high-order states, so it is conservative and keeps the
+semi-discrete entropy inequality of both (Theorem 6.2); the target is
+the low-order solution, not the cell average
+([convex limiting](/methods/convex-limiting.md),
+[bound preservation](/properties/bound-preservation.md)).
 
 ## Point sets and the simplified limiter
 
@@ -307,3 +349,5 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §5.1.6 (Fig. 6).
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.3; §3.3, Eqs. (3.12)–(3.14), Algorithm 1; Tables 5.1–5.2; Ex. 5.5–5.8.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; Remark 2.3 (scaling not used; flux limiter instead).
+- [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §2.6.3; §3.1–3.3, Tables 3.1–3.3.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §6.1, Eqs. (37)–(44); §6.2, Theorem 6.2; §7.

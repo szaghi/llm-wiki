@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gradient reconstruction on unstructured meshes"
-description: "Cell-centred finite volumes on unstructured meshes reconstruct a cell gradient, or a higher-degree polynomial, from neighbouring averages; this page records Green–Gauss and least-squares gradients, the vertex-based VWLSQ, boundary treatments up to the ghost-cell-constrained WLSQ-GCC, face-gradient decoupling, a WENO-type weighting replacing the limiter, GPU face loops, and the constrained least-squares polynomials of high-order WENO and TENO."
+description: "Cell-centred finite volumes on unstructured meshes reconstruct a cell gradient, or a higher-degree polynomial, from neighbouring averages; this page records Green–Gauss and least-squares gradients, the vertex-based VWLSQ, boundary treatments up to the ghost-cell-constrained WLSQ-GCC, face-gradient decoupling, a WENO-type weighting replacing the limiter, GPU face loops, the constrained least-squares polynomials of high-order WENO, TENO and hybrid DG–FV, and RBF-quadrature derivatives."
 status: established
-aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW, WLSQ-GCC, ghost-cell constraint, WLSQ-EC, WLSQ-EA, WLSQ-WA, curvature-corrected symmetry technique, Gauss gradient]
+aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW, WLSQ-GCC, ghost-cell constraint, WLSQ-EC, WLSQ-EA, WLSQ-WA, curvature-corrected symmetry technique, Gauss gradient, volume-normalized Taylor basis]
 tags: [finite-volume, reconstruction, limiting, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Gradient reconstruction on unstructured meshes
@@ -210,6 +210,40 @@ construction from Tsoutsanis et al. (2021). On a 2-D advection test on triangles
 orders 3 to 6 converge at $L_\infty$/$L_2$ orders 2.92/3.01, 3.61/3.83, 4.93/5.01 and 5.97/5.90 at the
 finest pair ($h=1/80\to1/160$; Tables 1–4), the fourth-order one below its design order.
 
+**Volume-normalized Taylor basis.** Maltsev, Yuan, Jenkins, Skote & Tsoutsanis (2023, §2.1–2.2,
+Eqs. (2)–(17)) use the same least-squares construction in [UCNS3D](/software/ucns3d.md), but solve it
+in **physical space**, without the reference-space map of their earlier work, and in the cell-centred
+Taylor basis of their modal DG,
+$\phi_k=\big((x-x_c)/h\big)^{p_k}\big((y-y_c)/h\big)^{q_k}\big((z-z_c)/h\big)^{r_k}$ minus its cell mean
+(page-local exponents $p_k,q_k,r_k$), normalized by $h$, the square root of the target cell's volume.
+They state that without the normalization they "could not achieve higher than 4th" order on the meshes
+and tests they tried (no data shown). The stencils follow the same stencil-based compact algorithm with
+$M=2K$ neighbours, QR and a pre-stored pseudo-inverse. Because DG and finite volume share the basis, a
+CWENOZ reconstruction can replace the higher DG modes of a troubled cell by copying coefficients, with
+the cell average kept ([CWENO](/methods/cweno.md), [WENO limiters for DG](/methods/weno-limiter-dg.md)).
+Their count of degrees of freedom, $K(r,d)=\tfrac1{d!}\prod_{l=1}^d(r+l)$ (Eq. (5)), is Ji et al.'s
+count below and includes the constant mode, although their expansion sums $k=0,\dots,K$; they say it
+"increases exponentially as the order is increased" *(compiler check, not in the sources: it is a
+polynomial of degree $d$ in $r$)*.
+
+**Derivatives from point values: RBF differential quadrature.** Liu, Shu, Yang, Liu, Liu & Zhang
+(2023b) build a cubic Taylor polynomial per triangle or quadrilateral whose nine derivatives come from a
+meshless multiquadric-RBF differential quadrature on the **centre point values** of up to three rings of
+neighbours, not from a fit to cell averages. The unknowns are then point values, and the finite-volume
+balance acquires a non-diagonal mass operator, which makes the method implicit
+([RBF differential-quadrature finite volumes](/methods/rbf-differential-quadrature.md)). On
+$\sin(\pi x)\sin(\pi y)$ over triangles its gradients and Laplacians are more accurate than least-squares
+finite differences (LSFD) and $k$-exact reconstruction (fitted slopes 3.67 against 3.20 and 3.17 for the
+gradient), and on the isentropic vortex the resulting fourth-order scheme beats LSFD-FV and $k$-exact FV
+in accuracy and cost (§5.1, Figs. 2–4). Its PEEB limiter bounds the polynomial's extrema at Gauss
+points, vertices and centre by the extrema of the vertex neighbours' polynomials, relaxed by
+$100h^{1.5}$, and scales all derivatives by one factor (§4).
+
+**Weighted least squares for MHD.** The locally divergence-free WLS-ENO of Liu, Feng & Wang (2023a) fits
+a linear polynomial to four neighbours with data-dependent row weights, solved by truncated SVD, and
+limits density and pressure with a Barth–Jespersen limiter at the edge midpoints
+([WLS-ENO](/methods/wls-eno.md)).
+
 ## Relation to limiters
 
 Chen et al. (§1, §5) motivate NW by the limitations of limiters: second-order TVD-type limiters lose
@@ -262,3 +296,6 @@ been discussed in a few test cases" (§6.4).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.2, Eqs. (4)–(14); §3.1; §5.1, Tables 1–4.
 - [Wei, Zhang, Liu, Su & Xu (2023)](/sources/wei-2023.md) — §1; §2, Eqs. (4)–(12); §4, Eqs. (13)–(22); §5, Eqs. (23)–(33), Fig. 5; §6, Tables 1–3, Figs. 8–10; §7, Tables 4–7, Figs. 13–22; §8.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3; §4, Alg. 1; §6.3, Fig. 9; App. B.
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1, Eqs. (2)–(9); §2.2.1, Eqs. (10)–(17); §2.4, Eq. (33).
+- [Liu et al. (2023b)](/sources/liu-2023-b.md) — §2, Eqs. (1)–(7); §3.1.1, Eqs. (12)–(17); §4; §5.1, Figs. 2–4.
+- [Liu et al. (2023a)](/sources/liu-2023.md) — §3.1, Eqs. (19)–(29); §3.3.

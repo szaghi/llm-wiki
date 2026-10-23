@@ -201,7 +201,7 @@ Fig. 21).
 
 - **Formal and observed order.** "Fourth-order" and "seventh-order" are the linear (Fourier) orders.
   With state reconstruction the observed order on a nonlinear problem is two (Chamarthi 2023a, Table 3),
-  the limit that Wang et al. (2023) state on the
+  the limit that Wang et al. (2023b) state on the
   [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md) page for an
   uncorrected two-point flux. The viscous discretization is only second order with Sutherland's law
   (Chamarthi 2023b, Remark 2.1).

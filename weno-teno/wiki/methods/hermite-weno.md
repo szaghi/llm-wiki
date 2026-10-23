@@ -299,7 +299,7 @@ are given in the ingested sources.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §3, Eq. (8); Eq. (9); §5, Eq. (11), Remarks 2–4, 6; §7.4.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §3.10.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1.
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eq. (8).
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eq. (8).
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3.1–3.2, Eqs. (3.1)–(3.9); §4, Tables 4.1–4.18, Fig. 4.9.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.6; §3.1.5.

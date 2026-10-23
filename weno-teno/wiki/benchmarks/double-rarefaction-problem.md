@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Double rarefaction (123) problem"
-description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test, run by capturing schemes with positivity limiters and by a shock-tracking DG method."
+description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test, run by capturing schemes with and without positivity limiters and by a shock-tracking DG method."
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -41,6 +41,7 @@ right of the centre.
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.6 | $(7,\mp1,0.2)$, outflow | $[-1,1]$ | 400 cells | 0.6 |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.2, "Einfeldt problem" | $(1,\mp2,0.4)$ | $[-5,5]$ | 200 cells | 1 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (31) | $(1,\mp2,0.4)$ | $[0,1]$ (stated for their Sod tube) | 200 cells | 0.15 |
+| [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 10, "low density and low internal energy" | $(1,\mp2,0.4)$, transmissive | $[0,1]$ | 300 cells; 30 cells | 0.15; 0.0295 |
 | [Fu (2021)](/sources/fu-2021.md) §5.7.1, Eq. (42) | $(1,\mp2,0.1)$, split at $x=0.5$; $\gamma$ not printed | $[0,1]$ | 400 points, exact reference | 0.1 |
 
 The three data sets fall in the three regimes of the vacuum criterion
@@ -111,6 +112,21 @@ the rarefactions already on the unscaled data, while their
 scale-invariant MR-AWENO-Si is essentially non-oscillatory (§3.2,
 Fig. 5); see [scale invariance](/properties/scale-invariance.md).
 
+**Smoothness indicators and failure without a limiter.** Zhong et
+al. run the no-vacuum data with eight fifth-order finite-volume WENO
+schemes, SSP-RK3, global Lax–Friedrichs flux and characteristic
+decomposition, without a positivity limiter (Figs. 9–12). WENO-NS,
+WENO-P and MWENO-P, whose $L^1$-type smoothness indicators are not
+mirror-symmetric, "fail to finish the simulation" on 300 cells and
+produce negative pressure on 30 cells by $t=0.0295$; WENO-JS, WENO-Z,
+WENO-η, WENO-ZS and their symmetric IMWENO-P complete it. They state
+that this "is not enough to link the symmetry-preserving property with
+the positivity-preserving property". Their symmetry error of the
+solution is smallest for IMWENO-P over $0.041<t<0.093$ and afterwards
+at the level of WENO-JS, WENO-Z and WENO-η, much below WENO-ZS (see
+[symmetry preservation](/properties/symmetry-preservation.md) and
+[smoothness indicator](/definitions/smoothness-indicator.md)).
+
 **Accuracy between the rarefactions.** Bezgin et al. run the
 no-vacuum data without a positivity limiter and rank the schemes by the
 summed $L_1$ error of $\rho$, $v$ and $p$: their three-point learned
@@ -169,3 +185,4 @@ identical and non-oscillatory (Fig. 7); see
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.2, Eq. (31), Figs. 10, 26; App. A.6, Table 4.
 - [Renac (2021)](/sources/renac-2021.md) — §7.2, RP3, Figs. 3–4 (arXiv v3).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.3, Fig. 7.
+- [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Ex. 10, Figs. 9–12.

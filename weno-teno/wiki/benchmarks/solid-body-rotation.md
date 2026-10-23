@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Solid-body rotation"
-description: "LeVeque's two-dimensional linear-advection test in which a smooth hump, a cone and a slotted cylinder rotate rigidly for one revolution; the exact solution is the initial data, so L1 errors and the solution range measure together the dissipation and the bound violations of limited high-order finite element schemes."
+description: "LeVeque's two-dimensional linear-advection test in which a smooth hump, a cone and a slotted cylinder rotate rigidly for one revolution; the exact solution is the initial data, so L1 errors and the solution range measure dissipation and bound violations of limited high-order schemes and troubled-cell switches; smooth rotations test order on adaptive grids."
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Solid-body rotation
@@ -21,8 +21,8 @@ discontinuity at once: the $L^1$ error measures dissipation, and the
 range of the computed solution against $[0,1]$ measures over- and
 undershoots, a [bound-preservation](/properties/bound-preservation.md)
 test for the scalar maximum principle. Pazner, Kuzmin & Vedral and
-Ji, Liang & Fu attribute it to LeVeque; a fourth source rotates a single
-smooth bump for a different purpose.
+Ji, Liang & Fu attribute it to LeVeque, and so do Maltsev et al.; two
+more sources rotate a single smooth profile for different purposes.
 
 ## Setup
 
@@ -41,6 +41,12 @@ bodies (their SB01–SB03, radius $r_0=0.15$) with the unscaled rotation
 $v=(\tfrac12-y,\ x-\tfrac12)$, so one revolution takes $t=2\pi$, and with
 periodic boundaries; the two velocity scalings give the same solution
 at the end of one revolution *(compiler check, not in the sources)*.
+[Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.2 print the same
+bodies, centres and radius with the unscaled rotation
+$v=(0.5-y,\ x-0.5)$ to $t_f=2\pi$, but state the domain as "again a
+$[0,10]\times[0,10]$ square"; the rotation centre $(0.5,0.5)$, the body
+centres and $r_0=0.15$ place the bodies in the unit square, as in the
+other sources *(compiler check, not in the sources)*.
 
 ## Runs and results
 
@@ -67,6 +73,15 @@ orders 3 to 6 on uniform triangles with $h=1/80$ (14,860 elements),
 against unstructured WENO5 and [CWENO](/methods/cweno.md)5; they report
 no error norms (Figs. 3–4).
 
+Maltsev et al. run hybrid DG–FV schemes of orders 3 to 5
+(DG($P_r$) whose troubled cells receive CWENOZ coefficients of the same
+order) in [UCNS3D](/software/ucns3d.md) on a hybrid
+quadrilateral–triangle mesh with 64 edges per side, CFL 0.5, with
+MOOD-type switches of strict ($10^{-3}$) or relaxed ($10^{-1}$)
+discrete-maximum-principle margin and bounds from direct neighbours
+("limited") or from the whole reconstruction stencil ("extended")
+(Figs. 5–7); no error norm or range is printed.
+
 ## Findings across sources
 
 **Bounds versus $L^1$ error.** In both papers the scheme with the
@@ -85,6 +100,16 @@ slotted cylinder, and TENO5 with fewer overshoots than WENO5 and less
 dissipation than CWENO5 (Figs. 3–4); the evidence is visual, with no
 $L^1$ error or range printed, so their runs cannot be entered in the
 table.
+
+**Troubled-cell switches.** Maltsev et al. find that extended bounds
+flag fewer troubled cells than limited ones, especially in smooth
+regions, while limited bounds over-diffuse the profiles; that the
+troubled-cell percentage falls with increasing order, which they
+attribute to the subcell resolution of DG; and that re-checking the
+troubled cells at every Runge–Kutta stage or freezing them for the step
+makes a negligible difference (§3.2, Figs. 6–7). See
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md) and
+[MOOD](/methods/mood-a-posteriori-limiting.md).
 
 **Subcell versus element-wise limiting.** On a coarse $25\times25$
 mesh with $N=3$, Pazner's subcell limiting is less diffusive than
@@ -122,6 +147,29 @@ needs opposite signs, e.g. $(-2\pi y,2\pi x)$ *(compiler check, not in
 the sources)*. A sign is lost in print; which field was run cannot be
 read from the paper.
 
+## Smooth rotation on adaptive grids
+
+[Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) §4.2
+(arXiv v2) rotate a smoothed disc,
+$q_0=H(r+r_0)-H(r-r_0)$ with $H(r)=(\tanh(r/0.02)+1)/2$ and $r_0=0.15$
+(page-local; their Eq. (16)), on $[-1,1]^2$ with the stream function
+$\Psi=\tfrac\pi2(x^2+y^2)$, i.e. $v=(-\pi y,\ \pi x)$, of period 2,
+with their Cartesian [Active Flux](/methods/active-flux.md) method in
+ForestClaw ([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md));
+the centre of the disc is not restated for this domain. With point
+values evolved along the exact characteristics, $L^1$ errors at $t=2$
+are $4.60\times10^{-6}$ and $5.83\times10^{-7}$ on uniform levels 6 and 7
+(EOC 2.9807) and $4.67\times10^{-6}$, $5.92\times10^{-7}$ on AMR levels
+3–6 and 3–7 (2.9801); with their general constant-state-preserving
+flux, in which the velocity is frozen at the edge midpoint, the errors
+are slightly larger, $5.79\times10^{-6}$ and $7.35\times10^{-7}$ on both
+grids (2.9786, 2.9781) (Table 2, Fig. 8). The exact-characteristics
+variant preserves constant states on regular Cartesian grids, since
+its $x$-fluxes depend only on $y$ and its $y$-fluxes only on $x$
+(Remark 4.1); see [free-stream preservation](/properties/free-stream-preservation.md).
+Their text speaks of the error "after a half rotation", the Table 2
+caption of $t=2$, a full rotation of the period-2 flow.
+
 ## Qualifications
 
 - Kuzmin & Vedral write "the exact solution of the linear advection
@@ -133,6 +181,8 @@ read from the paper.
   diffused solution; it reads as a slip for $2.67\times10^{-2}$, and no
   $\mathbb Q^2$ value is entered in the table.
 - None of the papers reports errors for the three bodies separately.
+- Maltsev et al. run their other unit-scale scalar tests (square-wave
+  advection) on a domain also printed as $[0,10]^2$.
 
 # Citations
 
@@ -140,3 +190,5 @@ read from the paper.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §7.3, Eqs. (24)–(25), Figs. 3–5 (arXiv v1).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.3, Figs. 3–4 (preprint).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.1, Eq. (43), Table 1 (arXiv v4).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.2, Figs. 5–7.
+- [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2, Eqs. (16)–(21), Remark 4.1, Table 2, Fig. 8 (arXiv v2).

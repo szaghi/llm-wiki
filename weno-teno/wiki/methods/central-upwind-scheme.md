@@ -5,7 +5,7 @@ description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/
 status: established
 aliases: [CU scheme, Kurganov–Noelle–Petrova flux, semi-discrete central-upwind scheme, Riemann-solver-free scheme]
 tags: [central-scheme, numerical-flux, finite-volume, characteristic, low-dissipation]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Central-upwind schemes
@@ -19,7 +19,7 @@ central schemes, which "basically average over the Riemann fans rather than reso
 and therefore carry large numerical dissipation; CU schemes use non-uniform control volumes
 whose size is proportional to the one-sided speeds, and were proposed to reduce the
 excessive dissipation of central schemes; higher resolution, they add, comes from reducing
-it further. [Wang et al. (2023)](/sources/wang-2023-b.md) (§1) state that CU fluxes in
+it further. [Wang et al. (2023b)](/sources/wang-2023-b.md) (§1) state that CU fluxes in
 general carry more numerical dissipation than upwind fluxes.
 
 ## The second-order CU flux
@@ -34,7 +34,7 @@ $$\hat f_{i+1/2}=\frac{a^+_{i+1/2}f(u^-_{i+1/2})-a^-_{i+1/2}f(u^+_{i+1/2})}{a^+_
 $$a^+_{i+1/2}=\max\big\{\lambda_m(A(u^-_{i+1/2})),\lambda_m(A(u^+_{i+1/2})),0\big\},\qquad a^-_{i+1/2}=\min\big\{\lambda_1(A(u^-_{i+1/2})),\lambda_1(A(u^+_{i+1/2})),0\big\}.$$
 
 *(compiler check, not in the sources: since $a^-\le0\le a^+$, the coefficient of the jump is
-non-positive, so the second term is dissipative.)* [Wang et al. (2023)](/sources/wang-2023-b.md) stress a sign
+non-positive, so the second term is dissipative.)* [Wang et al. (2023b)](/sources/wang-2023-b.md) stress a sign
 convention: on $u^\pm$ the superscript denotes the side of the interface, on $a^\pm$ the
 largest positive and smallest negative speed (§3.1).
 
@@ -78,7 +78,7 @@ Chertock et al. (§1) list the earlier routes: built-in anti-diffusion from a mo
 evolution step, a numerical-dissipation switch, and sharper one-sided speeds from discrete
 Rankine–Hugoniot conditions. Two of them meet in the
 [adaptive-diffusion central-upwind Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md)
-of [Wang et al. (2023)](/sources/wang-2023-b.md), which adds to the flux above the
+of [Wang et al. (2023b)](/sources/wang-2023-b.md), which adds to the flux above the
 minmod "anti-diffusion" correction
 
 $$u^+_{i+1/2}-u^-_{i+1/2}\ \longrightarrow\ u^+_{i+1/2}-u^-_{i+1/2}-\Delta^{\mathrm{ad}}_{i+1/2},\qquad \Delta^{\mathrm{ad}}_{i+1/2}=\mathrm{minmod}\big(u^+_{i+1/2}-u^{\mathrm{HLL}}_{i+1/2},\,u^{\mathrm{HLL}}_{i+1/2}-u^-_{i+1/2}\big),$$
@@ -99,7 +99,7 @@ and [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) structures, 
 sideband instability in 2D Riemann configuration 3
 ([two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md))
 ([Chertock et al. (2023)](/sources/chertock-2023.md), §5;
-[Wang et al. (2023)](/sources/wang-2023-b.md), §4). See
+[Wang et al. (2023b)](/sources/wang-2023-b.md), §4). See
 [numerical dissipation](/definitions/numerical-dissipation.md).
 
 ## Non-conservative systems and fifth order
@@ -115,6 +115,11 @@ states in local characteristic variables of a Roe-averaged matrix (Remark 6.2). 
 two-layer shallow-water system the one-sided speeds are taken from Lagrange-theorem bounds
 (citing Kurganov–Petrova) instead of Eq. (2.7) (§2).
 
+[Kurganov et al. (2023)](/sources/kurganov-2023.md) (Remark 2.2, citing Castro, Morales de Luna and
+Parés 2017) state that the first-order version of the PCCU scheme coincides with the semi-discrete
+HLL scheme for non-conservative systems, which agrees, for the conservative case, with the
+compiler check in the section on the second-order CU flux.
+
 Their evidence that the high order pays off is a comparison at equal cost: in a 2D two-layer
 interface-propagation problem the fifth-order scheme on $\Delta x=\Delta y=1/200$ and the
 second-order PCCU scheme (generalized minmod parameter $\theta=1$, page-local) on $1/450$ take "approximately the same
@@ -122,6 +127,27 @@ CPU time", and the fifth-order scheme gives the better resolution (§7.2, Ex. 6,
 absolute timings or hardware printed). In 1D the fifth-order scheme resolves the intermediate
 state of an interface Riemann problem "much better" than the second-order scheme on the same
 meshes, $\Delta x=1/200$ and $1/400$ (Ex. 3, Fig. 7.4).
+
+## Global fluxes and well-balanced diffusion
+
+Central-upwind fluxes are the natural partner of [flux globalization](/methods/flux-globalization.md)
+because they need no Riemann solver for the global flux $K$, which upwind schemes would
+([Kurganov et al. (2023)](/sources/kurganov-2023.md), §1). The flux-globalized CU flux is the
+formula above with $f(u^\pm)$ replaced by $K^\pm_{i+1/2}$ (§3, Eq. (3.3)). At a discrete steady
+state $K^+=K^-$, but the diffusion term $\frac{a^+a^-}{a^+-a^-}(u^+-u^-)$ survives wherever the
+interface states differ, which is generic at a jump of the cross-section or of the bottom, and
+the scheme is then not well-balanced unless $a^+a^-=0$ or $u^+=u^-$ (§4.2, Eqs.
+(4.13)–(4.14)). Kurganov et al. therefore replace $u^\pm$ in the diffusion term only by
+modified states $\check u^\pm$ (page-local) that coincide whenever the reconstructed equilibrium variables
+coincide and differ from $u^\pm$ by $O(\Delta x^2)$ in smooth flow (Eqs. (4.15)–(4.16)); for a
+static component (cross-section, bottom) its two interface values are replaced by their
+average (Remark 4.3). The scheme is written out on
+[flux globalization](/methods/flux-globalization.md) and its well-balancing on
+[well-balancing](/properties/well-balancing.md).
+
+Their second-order setting is piecewise-linear reconstruction with the generalized minmod
+limiter, parameter $1.3$ in the range $[1,2]$ (Chertock et al. use $2$, CFL $0.4$), three-stage
+SSP Runge–Kutta and CFL $1/2$, $\Delta t=\Delta x/(2\max_i\max(a^+_{i+1/2},-a^-_{i+1/2}))$ (§2, §7).
 
 ## In finite-volume codes
 
@@ -148,8 +174,9 @@ flows"), while the inviscid fluxes use HLLC; no formula for the viscous terms is
 # Citations
 
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §1, §2 (Eqs. (2.2)–(2.8)), §3 (Eqs. (3.1)–(3.4)), §5 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1, §3 (Eqs. (5)–(9)), §4.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, §3 (Eqs. (5)–(9)), §4.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — Eq. (3.6), the HLL flux used for the comparison.
 - [Chu et al. (2022)](/sources/chu-2022.md) — §2 (Eqs. (2.1)–(2.9)), §4 (Eq. (4.1)), Remark 6.2, §7 (Exs. 3, 6).
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1.
+- [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1, §2 (Eqs. (2.2)–(2.4), Remark 2.2), §3 (Eq. (3.3)), §4.2 (Eqs. (4.13)–(4.16), Remark 4.3), §7.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3 (accepted manuscript).

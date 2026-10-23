@@ -30,7 +30,7 @@ hydrogen mixture; the bow shock ignites it, and at subdetonative speeds
 the reaction front behind the shock oscillates periodically, at a
 frequency Lehr measured. Two sources compute it:
 
-| | [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §4 | [Wang et al. (2022)](/sources/wang-2022.md) §3.6 |
+| | [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §4 | [Wang et al. (2022a)](/sources/wang-2022.md) §3.6 |
 |---|---|---|
 | Mixture | stoichiometric H$_2$–air, 293 K, 42 663.04 Pa | H$_2$:O$_2$:N$_2$ = 2:1:3.76, 298 K, 42.663 kPa |
 | Speed | Mach 4.18, 4.48 (subdetonative), 5.04 (superdetonative) | 1931 m/s, stated to equal the Chapman–Jouguet speed |
@@ -193,7 +193,7 @@ incorrect cellular structures.
 # Citations
 
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.4, Table 1, Figs. 9–11; §4, Tables 2–5, Figs. 12–21 (accepted manuscript).
-- [Wang et al. (2022)](/sources/wang-2022.md) — §3.6, Fig. 19.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §3.6, Fig. 19.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §6, Ex. 6.4, 6.6, Figs. 6.4–6.7.
 - [Fu (2023)](/sources/fu-2023.md) — §5.2, Fig. 18 (reproduced result).
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1; §§4.4–4.6, Figs. 11–16: real-gas Chapman–Jouguet, ZND and cellular detonations.

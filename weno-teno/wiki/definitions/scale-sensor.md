@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Scale sensors and the effective scaled wavenumber"
-description: "A scale sensor estimates the local reduced wavenumber of the data, exactly for a sinusoid, so that numerical dissipation or the TENO cut-off can follow the resolved length scale; the page gives the six-point MDAD and five-point TENO5-A effective scaled wavenumbers and the bounded second-derivative sensor that drives the WCNS-SA dissipation."
+description: "A scale sensor estimates the local reduced wavenumber of the data, exactly for a sinusoid, so that numerical dissipation or the TENO cut-off can follow the resolved length scale; the page gives the six-point MDAD sensor and its re-optimized form, the five-point TENO5-A effective scaled wavenumber and the bounded second-derivative sensor that drives the WCNS-SA dissipation."
 status: established
-aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor]
+aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor, optimized scale sensor]
 tags: [low-dissipation, teno, finite-difference, limiting]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Scale sensors and the effective scaled wavenumber
@@ -23,24 +23,24 @@ two uses are a locally adaptive dissipation parameter of a linear scheme
 
 Write the Taylor expansion of the data about $x_0$ and let $\mathsf D_p$ (page-local) denote the
 magnitude of its order-$p$ contribution without the factorial,
-$\mathsf D_p=f^{(p)}(x_0)\Delta x^p$ (Li, Chen & Ren 2022, Eqs. (18)–(19); Huang, Liang & Fu 2023,
+$\mathsf D_p=f^{(p)}(x_0)\Delta x^p$ (Li, Chen & Ren 2022a, Eqs. (18)–(19); Huang, Liang & Fu 2023,
 Eqs. (21)–(22)). A dimensionless length scale follows from any pair $p>q$,
 
 $$\delta=\beta_{\mathrm c}\Big|\frac{\mathsf D_q}{\mathsf D_p}\Big|^{1/(p-q)}=\frac{\beta_{\mathrm c}}{\Delta x}\Big|\frac{f^{(q)}}{f^{(p)}}\Big|^{1/(p-q)}$$
 
-(page-local $\delta$ and calibration constant $\beta_{\mathrm c}$; Li, Chen & Ren 2022, Eq. (20)).
+(page-local $\delta$ and calibration constant $\beta_{\mathrm c}$; Li, Chen & Ren 2022a, Eq. (20)).
 Calibration on $f=A\sin(k_wx+\phi_0)$ selects $p=q+2$, "the simplest" choice with exact scaling,
 and $\beta_{\mathrm c}=2\pi$ gives $\delta=\lambda_w/\Delta x$, the number of points per wavelength
 $\lambda_w$ (page-local), hence $\vartheta=2\pi/\delta$ (Eqs. (21)–(26)). For a sinusoid
 
 $$\sqrt{\frac{|\mathsf D_3|}{|\mathsf D_1|}}=\sqrt{\frac{|\mathsf D_4|}{|\mathsf D_2|}}=k_w\Delta x=\vartheta ,$$
 
-(Li, Chen & Ren 2022, Eqs. (27)–(28); Huang, Liang & Fu 2023, Eqs. (24)–(28)). Each ratio alone is
+(Li, Chen & Ren 2022a, Eqs. (27)–(28); Huang, Liang & Fu 2023, Eqs. (24)–(28)). Each ratio alone is
 singular where $f'$ or $f''$ vanishes, so both sources combine them,
 
 $$\vartheta_{\mathrm{ESW}}=\sqrt{\frac{|\mathsf D_3|+|\mathsf D_4|}{|\mathsf D_1|+|\mathsf D_2|+\epsilon_{\mathrm s}}}$$
 
-(page-local regularization $\epsilon_{\mathrm s}$; Li, Chen & Ren 2022, Eq. (29); Huang, Liang &
+(page-local regularization $\epsilon_{\mathrm s}$; Li, Chen & Ren 2022a, Eq. (29); Huang, Liang &
 Fu 2023, Eq. (29)). *(Compiler check, not in the sources: for the sinusoid the numerator is
 $\vartheta^2$ times the denominator, $\vartheta^3|A|(|\cos|+\vartheta|\sin|)$ against
 $\vartheta|A|(|\cos|+\vartheta|\sin|)$, so with $\epsilon_{\mathrm s}=0$ the combination is
@@ -48,7 +48,7 @@ exact at every phase, critical and inflection points included.)* At a discontinu
 differences dominate and the sensor is large: Li, Chen & Ren read a jump as "a high-frequency
 component" (§2.2, Fig. 5).
 
-## Six-point sensor at the interface (Li, Chen & Ren 2022)
+## Six-point sensor at the interface (Li, Chen & Ren 2022a)
 
 The [MDAD scheme](/methods/mdcd-scheme.md) evaluates the sensor at $x_{i+1/2}$ on its six-point
 stencil $\{i-2,\dots,i+3\}$. The highest-order differences are "not the best"; optimized six-point
@@ -78,6 +78,45 @@ implementation the sensor is computed from the density, with inputs normalized b
 $\max(|f_{\max}|,1)$; in the Taylor–Green vortex from the split characteristic fluxes (§3.4, §4.4).
 The authors state that the calibration targets dissipation control only and that other uses need
 further study.
+
+## A re-optimized six-point sensor (Li et al. 2023b)
+
+Li, Sun, Zha, Zhu, Ding & Xia (2023b, §3.2, Eqs. (29)–(34)) measure the six-point sensor above against
+the exact wavenumber of sinusoids and find it accurate only at low $\vartheta$: within a 0.6 % relative
+error (Lele's resolving-efficiency criterion) it reaches "around 41.06 %" of $\pi$, so it
+underestimates $\vartheta$, and the dissipation it drives is too small, at medium and large
+wavenumbers (Fig. 4a). Li, Chen & Ren (2022a) report the same sensor accurate below $\vartheta=1.5$
+(section above); under the 0.6 % criterion the limit is $\vartheta\approx1.29$ *(compiler check, not
+in the sources: $0.4106\pi=1.29$)*.
+
+- **A fifth difference does not help.** Adding $|\mathsf D_5|$ to the numerator and $|\mathsf D_3|$ to
+  the denominator (Eqs. (29)–(30)) makes the sensor oscillate in $\vartheta$, because its component
+  ratios $\sqrt{|\mathsf D_3|/|\mathsf D_1|}$, $\sqrt{|\mathsf D_4|/|\mathsf D_2|}$ and
+  $\sqrt{|\mathsf D_5|/|\mathsf D_3|}$, each exact for a sinusoid, disagree on sampled data; the first
+  is the most accurate, exact below 1.33 (Eq. (31), Figs. 4b, 5).
+- **Re-optimized stencils.** They parametrize $\mathsf D_1$ and $\mathsf D_3$ by their symmetric
+  coefficients, keep consistency, and optimize the free ones for the largest $\vartheta$ within the
+  0.6 % tolerance (Eq. (32)). The final sensor has the form of $\vartheta_{\mathrm{ESW}}$ with
+  $\epsilon_{\mathrm s}=10^{-8}$ and, on $f_{i-2},\dots,f_{i+3}$ (Eqs. (33)–(34)),
+
+  | | $f_{i-2}$ | $f_{i-1}$ | $f_i$ | $f_{i+1}$ | $f_{i+2}$ | $f_{i+3}$ |
+  |---|---|---|---|---|---|---|
+  | $\mathsf D_1$ | $0.032$ | $-0.07$ | $-0.95$ | $0.95$ | $0.07$ | $-0.032$ |
+  | $\mathsf D_2$ | $0.0483$ | $0.3551$ | $-0.4034$ | $-0.4034$ | $0.3551$ | $0.0483$ |
+  | $\mathsf D_3$ | $0.15$ | $-1.75$ | $4.5$ | $-4.5$ | $1.75$ | $-0.15$ |
+  | $\mathsf D_4$ | $\tfrac12$ | $-\tfrac32$ | $1$ | $1$ | $-\tfrac32$ | $\tfrac12$ |
+
+  It is reliable up to $\vartheta=2.08$ for amplitudes 5, 0.5 and 0.05, "66.21 % resolving efficiency"
+  (Fig. 6) *(compiler check, not in the sources: $2.08/\pi=0.662$)*. On three
+  waveform tests it tracks high wavenumbers better than the earlier sensor, with slight oscillations
+  (Eqs. (35)–(37), Fig. 7). Extension to non-uniform meshes is deferred.
+- **Use.** It drives both the dispersion and the dissipation parameters of the fully discrete ADADF
+  flux, with 2.08 as the end of every fit ([MDCD schemes](/methods/mdcd-scheme.md)).
+
+*(Compiler check, not in the sources: the optimized stencils trade formal accuracy for spectral
+fidelity. Taylor moments about $x_{i+1/2}$ show $\mathsf D_1=f'\Delta x-\tfrac{29}{600}f'''\Delta x^3+\dots$,
+$\mathsf D_2=f''\Delta x^2+\tfrac{2287}{7500}f^{(4)}\Delta x^4+\dots$ and
+$\mathsf D_3=f'''\Delta x^3-\tfrac1{40}f^{(5)}\Delta x^5+\dots$; $\mathsf D_4$ is unchanged.)*
 
 ## Five-point sensor at the node (Huang, Liang & Fu 2023)
 
@@ -129,7 +168,7 @@ The five-point sensor is the six-point one of Li, Chen & Ren, which Huang et al.
 and Su et al.) as its origin, moved from the interface to the node and with plain instead of optimized
 differences and a constant instead of an amplitude-dependent $\epsilon_{\mathrm s}$. Both sources
 use it to modulate dissipation, not to switch schemes: the MDAD flux maps it to a dissipation
-parameter, TENO5-A to a cut-off. Li, Chen & Ren (2022, §1) claim the sensor and the adaptive-dissipation
+parameter, TENO5-A to a cut-off. Li, Chen & Ren (2022a, §1) claim the sensor and the adaptive-dissipation
 strategy as first "according to our knowledge", while citing an earlier scale sensor of Li et al.
 (2016) designed for second-derivative schemes (§2.2).
 
@@ -138,14 +177,25 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 - On sampled data the finite differences have their own modified wavenumber, so the sensor is exact
   only in the limit of resolved sinusoids; Li, Chen & Ren document the underestimate above
   $\vartheta=1.5$, Huang et al. do not analyse it.
-- Li, Chen & Ren (2022, §2.2) write that $\epsilon_{\mathrm s}$ is below $5\times10^{-5}$ when
+- Li, Chen & Ren (2022a, §2.2) write that $\epsilon_{\mathrm s}$ is below $5\times10^{-5}$ when
   $f_{\max}-f_{\min}\ge0.01$. *(Compiler check, not in the sources: Eq. (33) gives
   $0.005e^{-4.5}=5.55\times10^{-5}$ at 0.01; the bound holds from about 0.0102.)*
+- Li et al. (2023b) reprint the sensor of Li, Chen & Ren (2022a) with two slips: the $f_{i-2}$
+  coefficient of $\mathsf D_1$ as $-\tfrac1{96}$ and the last term of $\mathsf D_2$ as
+  "$-\tfrac1{24}f_{i+1}$", where the table above has $+\tfrac1{96}$ and $\tfrac1{24}f_{i+3}$
+  (their Eq. (12)); the same index slip recurs in their Eq. (30). *(Compiler check, not in the sources:
+  with the printed values neither stencil annihilates constants; with the values above $\mathsf D_1$ is
+  a consistent fourth-order $f'\Delta x$ and $\mathsf D_2$ a consistent $f''\Delta x^2$.)* Their
+  constraint relations of Eq. (32) have sign slips: the consistency conditions for the patterns
+  $(-a_3,a_2,-a_1,a_1,-a_2,a_3)$ and $(c_3,-c_2,c_1,-c_1,c_2,-c_3)$ give $a_3=(1+3a_2-a_1)/5$,
+  $c_3=(c_2-1)/5$ and $c_1=2c_2+1$, which reproduce both their Eq. (30) and Eq. (34), where the printed
+  relations reproduce neither *(compiler check, not in the sources)*.
 - Li, Chen & Ren drop the $1/p!$ of the Taylor term in $\mathsf D_p$ (Eq. (19)); the ratios that enter
   the sensor are calibrated on that convention, which Huang et al. share.
 
 # Citations
 
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1; §2.2, Eqs. (18)–(33), Figs. 4–5; §2.3; §3.4; §4.4.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1; §2.2, Eqs. (18)–(33), Figs. 4–5; §2.3; §3.4; §4.4.
+- [Li et al. (2023b)](/sources/li-2023-b.md) — §3.2, Eqs. (11)–(14), (29)–(37), Figs. 4–7; §3.3.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §1; §3.1, Eqs. (21)–(31), Fig. 2; §3.2, Eq. (33).
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §4.3, Eqs. (29)–(32), Table 3.

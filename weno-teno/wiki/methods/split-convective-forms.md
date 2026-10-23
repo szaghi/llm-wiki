@@ -5,7 +5,7 @@ description: "Split forms write the convective terms of mass and momentum as wei
 status: established
 aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Split convective forms
@@ -159,6 +159,45 @@ violate it and diverge at density ratio 10 (Lemma 3.1, §4.1.2;
 The full rule is that each internal-energy and enthalpy flux take the
 same split as the mass or regularization flux it pairs with.
 
+## Multi-component split and divergence forms (Fujiwara et al.)
+
+[Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) carry the
+KEEP-type face fluxes to the inviscid multi-component Euler equations in
+$(\rho Y_k,\rho v,E)$ form ([multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)),
+with the energy flux split, as in KEEP, into kinetic, internal and
+pressure-work parts (§3.1, Eq. (17)). With $\overline a$ the two-point
+average and page-local $\widehat{\rho Y_k}=\tfrac12(\mathsf w^-(\rho Y_k)_i+\mathsf w^+(\rho Y_k)_{i+1})$,
+$\hat\rho$ the same for the density, $\mathsf G=1/(\gamma-1)$ of the mixture and the weights $\mathsf w^\pm$ (page-local, the source's $\phi^\pm$; node index $i$ for the source's $m$), their
+two flux sets are (Table 1):
+
+| face flux | FC/PE (S), split | FC/PE (D), divergence |
+|---|---|---|
+| species mass | $\widehat{\rho Y_k}\,\overline v$ | $\tfrac12\big(\mathsf w^-(\rho Y_kv)_i+\mathsf w^+(\rho Y_kv)_{i+1}\big)$ |
+| momentum (convective) | $\hat\rho\,\overline v\,\overline v$ | $\tfrac12\big(\mathsf w^-(\rho vv)_i+\mathsf w^+(\rho vv)_{i+1}\big)$ |
+| pressure | $\overline p$ | $\overline p$ |
+| kinetic energy | $\hat\rho\,\overline v\,\tfrac12v_iv_{i+1}$ | $\tfrac12\big(\mathsf w^-(\rho v\tfrac{v^2}2)_i+\mathsf w^+(\rho v\tfrac{v^2}2)_{i+1}\big)$ |
+| internal energy | $\overline{p\mathsf G}\,\overline v$ | $\overline{p\mathsf Gv}$ |
+| pressure work | $\tfrac12(v_ip_{i+1}+v_{i+1}p_i)$ | $\overline{vp}$ |
+
+The weights $\mathsf w^\pm$, built from the mixture molar mass and the density,
+come from their pressure-equilibrium compatibility condition and tend to 1
+where the composition is uniform; there the split set reduces to the
+KEEP-PE scheme of Shima et al. and the divergence set to the standard
+divergence scheme, with no sensor switching between them (§3.4). Its
+kinetic-energy and momentum fluxes have the KEP structure
+$\hat M=\hat C\,\overline v$, with $\hat C=\hat\rho\,\overline v$ the total mass flux, and kinetic-energy face flux $\hat K=\hat C\,\tfrac12v_iv_{i+1}$ of the
+Jain & Moin conditions *(compiler check, not in the sources; the KEP
+property of the multi-component scheme is not analysed in the paper)*.
+Both sets preserve pressure equilibrium for constant initial velocity;
+with a non-uniform velocity only the split set satisfies the extended
+condition (Eqs. (55)–(59)), so the divergence set diverges in long runs
+($t\approx3.8$ in their 1D test) while the split set shows no error growth
+to $t=6$ and runs to $t=20$ (§4–5, Figs. 3–5;
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+This is a case where the split form, not the divergence form, is what
+keeps a second-order central scheme stable. As with Jain & Moin, the
+internal-energy flux is a quadratic split of $p\mathsf G$ times $\overline v$.
+
 ## Rotational-form splittings (Edoh)
 
 [Edoh (2022)](/sources/edoh-2022.md) analyses split forms with
@@ -266,7 +305,7 @@ Remark 4).
 
 ## Flux form with a pointwise weight, and the generalized kinetic-energy flux
 
-[De Michele & Coppola (2023)](/sources/demichele-2023.md) use the same
+[De Michele & Coppola (2023a)](/sources/demichele-2023.md) use the same
 family, their $\xi$ being the $\zeta$ of the table above, Feiereisen at
 $\zeta=1$ (Eqs. (15)–(16), §4.2.5, Table 2). They write its second-order
 member as a finite-volume flux difference with the face mass flux
@@ -442,6 +481,7 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3, §3.1 Eqs. (20)–(28), §3.1.2 Eq. (46) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.2.2 Fig. 8 (arXiv v4).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3.1 Eqs. (38)–(42), §3.5 Eqs. (58)–(62), §4.1.2, App. C Table 2 Fig. 13 (arXiv v1).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §3.1–3.4 Eqs. (12)–(28), §4.1 Eq. (30), §4.2 Eqs. (32)–(77), Tables 1–3, §5, §6, App. A Eq. (A.6) (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §3.1–3.4 Eqs. (12)–(28), §4.1 Eq. (30), §4.2 Eqs. (32)–(77), Tables 1–3, §5, §6, App. A Eq. (A.6) (arXiv v1).
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A Figs. A.13–A.16 (accepted manuscript).
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1, §4.3.1, §4.4.
+- [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §3.1 Eq. (17), §3.4 Table 1, §4, §5 Eqs. (55)–(59).

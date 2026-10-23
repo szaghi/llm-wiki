@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive moving mesh finite differences"
-description: "An r-adaptive finite-difference scheme moves a fixed number of grid points by solving variational mesh-redistribution equations driven by a monitor function, and discretizes the conservation law in time-dependent curvilinear coordinates with discrete geometric conservation laws; Duan and Tang, then Li, Duan and Tang, make it high-order entropy stable and measure its cost against uniform meshes."
+description: "An r-adaptive finite-difference scheme moves a fixed number of grid points, by variational redistribution driven by a monitor function or by prescribing the mesh Jacobian, and discretizes the conservation law in moving curvilinear coordinates with discrete geometric conservation laws; the sources make it entropy stable or fast and measure its cost against uniform meshes."
 status: established
-aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6]
+aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Adaptive moving mesh finite differences
@@ -35,6 +35,12 @@ entropy-stable version of the scheme:
 Li, Duan & Tang state several of their discrete properties with reference
 to Duan & Tang; the proofs for the high-order finite-difference case are
 those of Duan & Tang (2022), as recorded below.
+
+A third source, [Ramani & Shkoller (2023)](/sources/ramani-2023.md),
+builds the mesh differently: it prescribes the Jacobian determinant of the
+mesh map instead of solving variational redistribution equations, and
+couples the mesh to a simplified finite-difference WENO
+arbitrary-Lagrangian–Eulerian (ALE) solver (section "Jacobian-prescribed meshes" below).
 
 ## The conservation law in moving coordinates
 
@@ -257,7 +263,126 @@ resolves more small-scale structure "with a slight increase in the
 computational cost" (Li, Duan & Tang, Remark 3.2); the printed timings give
 0.1 % to 12 % more *(compiler check, not in the sources)*.
 
+## Jacobian-prescribed meshes: smooth adaptive meshing
+
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md) argue that the
+bottleneck of moving-mesh hydrodynamics is the cost of mesh generation, not
+the discretization of the flow equations (§1; arXiv v2). Their smooth
+adaptive meshing (SAM) builds the mesh map $\mathsf X:\Omega_{\mathrm{ref}}\to\Omega$
+(page-local, as are $\mathsf G$, $\Phi_{\mathrm S}$, $\mathsf w$, $\mathsf Y$,
+$\tau_{\mathrm p}$, $\mathsf P$, $N_{\mathrm c}$ and $\Lambda$ below) from a uniform reference mesh by prescribing
+its Jacobian through a target cell-size function $\mathsf G$ on the
+physical domain:
+
+$$\det\nabla_\xi\mathsf X(\xi)=\mathsf G\big(\mathsf X(\xi)\big)\ \text{in }\Omega_{\mathrm{ref}},\qquad \mathsf X(\xi)\cdot n=\xi\cdot n\ \text{on }\partial\Omega_{\mathrm{ref}},$$
+
+a Monge–Ampère-type equation with no-penetration (tangential slip) boundary
+conditions and fixed corners, solvable iff $\int_\Omega1/\mathsf G\,dx=\lvert\Omega\rvert$
+(Eqs. (7)–(9)). Small $\mathsf G$ compresses cells. The solution is unique in
+1D and not unique for $d\ge2$; optimal transport (Monge–Kantorovich, MK)
+selects the map of least $L^2$ displacement (§3.1).
+
+**Static SAM (Algorithm 1)** is a version of the Dacorogna–Moser
+deformation method: after normalizing $\mathsf G$ to meet the solvability
+condition, solve one Neumann Poisson problem
+$\Delta\Phi_{\mathrm S}=1/\mathsf G-1$, $\nabla\Phi_{\mathrm S}\cdot n=0$, and
+transport the identity map in a pseudo-time $\tau_{\mathrm p}\in[0,1]$,
+
+$$\partial_{\tau_{\mathrm p}}\mathsf Y+\mathsf w\cdot\nabla\mathsf Y=0,\quad\mathsf Y(\xi,0)=\xi,\qquad \mathsf w=\frac{\nabla\Phi_{\mathrm S}}{\tau_{\mathrm p}+(1-\tau_{\mathrm p})/\mathsf G},$$
+
+with $\mathsf X=\mathsf Y(\cdot,1)$ (Eqs. (10)–(14); the source's flowmap $\eta$
+and pseudo-time $\tau$). Ramani & Shkoller prove that
+this map solves the prescribed-Jacobian problem by showing that a weighted
+Jacobian of the back-to-labels map is constant in $\tau_{\mathrm p}$ (§3.2.1); existence on
+rectangles is asserted, not shown (§3.2.2). The Poisson problem is solved by
+FFT on a symmetrically doubled domain, the transport by fifth-order linear
+upwind differences and RK4 with a pseudo-time CFL of 2 (§3.3). The Eulerian
+transport avoids the interpolation of Lagrangian versions of the method,
+which the authors credit with "an order of magnitude speed-up" (§3.2.2).
+
+- **Accuracy.** When the target satisfies $\nabla\mathsf G\cdot n=0$ on the
+  boundary, the Jacobian error converges at fourth order: from
+  $2.85\times10^{-2}$ on $32^2$ to $9.89\times10^{-8}$ on $1024^2$, observed
+  orders 2.5 to 4.3 (Table 1). Without the Neumann condition the symmetric
+  extension of $\mathsf G$ is only Lipschitz, and the Jacobian converges at
+  order 1.5; a tanh boundary smoothing restores it (§3.3.2, App. B). The
+  authors state that "all other grid generation schemes are at best 2nd
+  order accurate" (§3.4.2).
+- **Against MK.** On the Delzanno et al. target $2+\cos(8\pi r)$, SAM with
+  the boundary-smoothed target has smaller Jacobian error than MK at every
+  resolution ($3.25\times10^{-4}$ against $3.67\times10^{-4}$ on $256^2$), and
+  its $L^2$ mesh displacement, $0.0178$, is close to MK's optimal $0.0174$.
+  With the unsmoothed target SAM falls to order about 1.75 and its errors
+  exceed MK's on $128^2$ and $256^2$ (Table 2). SAM is reported "almost 200
+  times faster" than MK on $256^2$ (0.042 s against 8.636 s); the MK times
+  are taken from Delzanno et al. and divided by a machine factor of 2.2
+  measured on a third method, so the comparison is not a same-machine run
+  of both codes (Table 3, App. C.1).
+- **Dynamic SAM (Algorithm 2).** For a time-dependent target the map is
+  updated by composition, $\mathsf X_{k+1}=\mathsf X_k\circ\delta\mathsf X_{k+1}$,
+  where the near-identity map $\delta\mathsf X_{k+1}$ solves the same static
+  problem on $\Omega_{\mathrm{ref}}$ with target
+  $\mathsf P_{k+1}=(\mathsf G_{k+1}/\mathsf G_k)\circ\mathsf X_k$ (Eqs.
+  (25)–(27)). Under a physical CFL condition $\Delta t\sim N_{\mathrm c}^{-1/2}$ in 2D
+  ($N_{\mathrm c}$ cells), $\lVert1-1/\mathsf P\rVert_{L^\infty}=O(\Delta t)$, so the
+  pseudo-time step stays $O(1)$ and one mesh update costs $O(N_{\mathrm c})$, against
+  $O(N_{\mathrm c}^{3/2})$ for static SAM (§4.1.2, §4.2.2, Eq. (29)). Composition
+  accumulates distortion; the restarted variant (Algorithm 3) recomputes
+  the map by static SAM when an $L^1$ distortion measure exceeds $\Lambda$
+  times its reference ($\Lambda=1.01$ or $1.003$, §4.3, §5).
+
+**SAM-ALE solver.** The Euler equations are written on $\Omega_{\mathrm{ref}}$
+in ALE conservation form for $(J\rho,J\rho v,JE)$ with the cofactor metrics
+and the mesh velocity, and the geometric conservation law
+$\partial_tJ-\partial_{\xi_j}(\text{cofactor}\cdot\partial_t\mathsf X)=0$ is
+appended as a fifth conserved equation, so $J$ is evolved by the scheme and
+not recomputed from the determinant (§6.1.3, Eqs. (44)–(46)). The flux is a
+simplified [conservative finite-difference](/definitions/conservative-finite-difference-scheme.md)
+form on point values: each transported variable is reconstructed at the
+half point by fifth-order WENO-JS, upwinded on the sign of the
+interpolated transport velocity, and multiplied by that velocity; the
+velocity and pressure use the fourth-order linear average
+$(-\mathsf b_{i-1}+7\mathsf b_i+7\mathsf b_{i+1}-\mathsf b_{i+2})/12$ of a quantity $\mathsf b$ (page-local); there is no
+characteristic decomposition and no Riemann solver, and stability comes
+from the authors' C-method [artificial viscosity](/methods/artificial-viscosity.md)
+(Eqs. (47)–(51), Remark 1, App. A). The metrics are fourth-order central
+differences of $\mathsf X$. A moving contact is tracked by an explicit
+interface curve advected in ALE coordinates (§6.2.2). The authors state that
+"many standard schemes (including WENO) fail to preserve the free-stream" on
+dynamic adaptive meshes (§6.1.3); theirs keeps
+$\lVert\rho-1\rVert_{L^\infty}=9.10\times10^{-14}$ at $T=80$ on an oscillating
+$50\times50$ mesh ([free-stream preservation](/properties/free-stream-preservation.md),
+§6.2.1).
+
+**Speed-ups.** On the 2D [Noh implosion](/benchmarks/noh-implosion-problem.md) ($\gamma=5/3$, $T=2$) the
+$50\times50$ SAM-ALE run has $L^2$ density error $0.4897$ against $0.5406$
+for the $200\times200$ uniform run, in 45.6 s against 289 s of CPU time and
+7.8 MB against 43.7 MB of memory, "approximately 6 times faster" (Table 6,
+§7.1). On a Rayleigh–Taylor problem the $64\times128$ SAM-ALE run is
+comparable to the $256\times512$ uniform run, 138 s against 1370 s, and 88
+times faster than $512\times1024$ (Table 7, §7.2;
+[Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)).
+Mesh generation costs about as much as the flow solve in that run, from
+which the authors conclude that an MK-based ALE scheme, 100 to 200 times
+slower in mesh generation, "cannot provide a speed-up over uniform mesh
+simulations" (§7.2.4); this is a cost extrapolation, not a run. They
+describe the moving-mesh literature, citing the preprint of Li, Duan & Tang,
+as reporting 2 to 6 times speed-ups (§1), consistent with the CPU ratios
+of 18 % to 41 % in the table above.
+
+**Two routes to the mesh.** Duan & Tang and Li, Duan & Tang move the
+nodes by Jacobi iterations of a Winslow-type equation driven by a gradient
+monitor; Ramani & Shkoller prescribe the cell size directly through
+$\mathsf G$ and solve one linear Poisson problem and one transport problem.
+No source runs both on a common test.
+
 ## Relation to other adaptive methods
+
+Ramani & Shkoller state that the dyadic jumps of resolution in
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md) produce
+spurious reflection and scattering at refinement boundaries that corrupt
+Noh and Rayleigh–Taylor solutions and persist under refinement, citing
+AMR codes (§1.1, §7.1); a smooth moving mesh has no such jumps.
 
 Moving-mesh r-adaptivity is one of several ways the sources concentrate
 resolution. [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) cite adaptive
@@ -281,8 +406,10 @@ time step on a moving mesh.
 
 ## Qualifications
 
-- The efficiency claims rest on a visual comparison of solutions; no error
-  norm is computed for the shock tests in either paper.
+- The efficiency claims of Duan & Tang and Li, Duan & Tang rest on a visual
+  comparison of solutions; no error norm is computed for the shock tests in
+  either paper. Ramani & Shkoller compare an $L^2$ density error for Noh and
+  vorticity norms for Rayleigh–Taylor (Tables 6–7, Fig. 18).
 - The free-stream and entropy-conservation results of Li, Duan & Tang are
   stated with reference to Duan & Tang, who print the proofs for the
   high-order finite-difference case (Prop. 3.2, Thm. 3.2, Thm. 4.1 of
@@ -296,6 +423,25 @@ time step on a moving mesh.
   sources)*. Their other printed percentages agree with their tables.
 - Duan & Tang's mesh-motion limiter (§5) mixes $(x_1)$ and $(x_k)$ in one
   formula; $(x_k)$ is evidently meant in both places.
+- Ramani & Shkoller's Table 3 prints SAM-over-MK speed-up factors 47, 131,
+  160, 174, 190 for $16^2$ to $256^2$; the printed times give 37.5, 107,
+  148, 171 and 206 *(compiler check, not in the sources)*. One of the two
+  rows is inconsistent; the order of magnitude stands.
+- Ramani & Shkoller's §1.2 claims "better convergence rates" than MK, but
+  their own Table 2 gives last-level orders 2.12 and 1.94 for SAM with the
+  smoothed target against 1.99 and 1.99 for MK; only the error levels
+  favour SAM.
+- As printed, Ramani & Shkoller's Noh target (Eq. (57)) has the exponent
+  $-400(r^2-t^2/9)$ without a square, which peaks at $r=0$ instead of at the
+  shock radius $r=t/3$ that it is said to track; their other targets
+  (Eqs. (19), (32)) square the bracket *(compiler check, not in the sources)*.
+- Ramani & Shkoller's ALE wave speeds (Eq. (43)) are printed as
+  $(v^j\pm c)/J$ with a transport velocity $v^j$ that already contains the
+  factor $1/J$; in one dimension the eigenvalues of the ALE flux Jacobian
+  are $v\pm c/J$ *(compiler check, not in the sources)*.
+- The SAM-ALE solver is described by its authors as "not meant to be
+  representative of the full class of ALE solvers" (§7.2.4): it misses the
+  small-scale Rayleigh–Taylor roll-up that the tracked interface shows.
 
 # Citations
 
@@ -304,3 +450,4 @@ time step on a moving mesh.
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — ref. [9] (moving-mesh work cited); block-structured h-refinement used.
 - [Bai & Li (2022)](/sources/bai-2022.md) — quadtree AMR of the DG solver.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2.1 (arXiv v2).
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §1, §3 Eqs. (7)–(14), (16)–(17), Tables 1–3, App. B, C.1; §4 Eqs. (25)–(29), Algorithms 1–3; §5; §6 Eqs. (41)–(51), Remark 1, App. A; §7 Tables 6–7 (arXiv v2).

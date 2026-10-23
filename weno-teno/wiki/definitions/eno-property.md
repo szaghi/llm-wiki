@@ -104,7 +104,7 @@ to deliver them.
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §3.3(2); §4.1.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §3.3(2); §4.1.
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.1–3.2.2, Figs. 4–6.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §1; §2.3.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3; §5 IV.

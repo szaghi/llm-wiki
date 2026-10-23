@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Convex limiting and invariant-domain-preserving schemes"
-description: "Convex limiting blends a high-order update with a bound-preserving low-order update, adding as much antidiffusive flux as target bounds allow; the page gives the FCT form, graph viscosity and bar states, Pazner's sparse low-order DG operator, the Zalesak and convex limiters, element- versus subcell-wise blending, bound relaxation, and the equivalence of subcell Rusanov finite volumes with sparse IDP DG."
+description: "Convex limiting blends a high-order update with a bound-preserving low-order update, adding as much antidiffusive flux as target bounds allow; the page gives the FCT form, graph viscosity and bar states, sparse low-order DG operators (Pazner; Navier–Stokes and simplices), Zalesak and convex limiters, element- versus subcell-wise blending, bound relaxation, and subcell Rusanov finite volumes as sparse IDP DG."
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -93,6 +93,31 @@ For variable-velocity advection the bar states and the viscosity are
 modified (Eqs. (42)–(43)), which requires a discrete divergence-free
 condition on the velocity in the metric correction (§3.3).
 
+**Navier–Stokes and triangles** ([Lin, Chan & Tomas (2023)](/sources/lin-2023.md),
+§3.2, §5). Lin et al. carry the construction to entropy-stable nodal DG on
+quadrilaterals and triangles for the Euler and the explicit Navier–Stokes
+equations. On quadrilaterals they use Pazner's piecewise-linear sparse
+operator; on simplices they build a new sparse low-order SBP operator
+from an adjacency graph of the nodes (two nodes adjacent when their
+distance is below a multiple of a power of their quadrature weights,
+Eq. 11), using that a diagonal-norm SBP operator is fixed by its skew
+part: the skew entries are differences of a "potential" vector obtained
+from one graph-Laplacian solve with a zero-mean constraint (Eqs. 9–10,
+§3.2; [summation-by-parts operator](/operators/summation-by-parts-operator.md)).
+The low-order scheme is central flux differencing of the *total*
+(inviscid minus viscous) flux on that operator plus a graph viscosity
+whose coefficient is Zhang's Navier–Stokes positivity coefficient
+(Eqs. 16–18; [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md));
+its forward-Euler step is a convex combination of bar states that include
+the viscous fluxes, hence positivity-preserving under
+$\Delta t\le m_i/(2\lambda_i)$, with $\lambda_i$ the summed
+coefficients of node $i$ (page-local; Lemma 5.1, Theorem 5.2). With the
+coefficient enlarged to include a maximum-wave-speed bound it is also
+semi-discretely entropy stable, being a subcell finite-volume scheme with
+Lax–Friedrichs-type fluxes (Theorem 6.1, Eq. 45). Sparsifying keeps the
+low-order Leblanc solution nearly the same for $N=2$ and $N=5$ at 600
+degrees of freedom (Table 1a, Fig. 3).
+
 ## Target bounds
 
 Three kinds are used (Pazner, §4.1.1, §4.3; Rueda-Ramírez et al. 2022,
@@ -176,6 +201,20 @@ calls consistent with the literature (§5.1, Table 1).
   dimension-by-dimension procedure as the author's improvement over the
   multidimensional subcell limiter of Lohmann et al., which required a
   minimization problem (§4.1.3).
+
+- **Element-wise for positivity only, in closed form** (Lin et al.,
+  §6.1, Eqs. 37–43). Lin et al. limit the update, not the fluxes:
+  $m_iu^{n+1}_i=m_iu^{\mathrm L,n+1}_i+\Delta t\,\mathsf l_K\,(r^{\mathrm L}_i-r^{\mathrm H}_i)$,
+  with $u^{\mathrm L,n+1}_i$ the low-order update, $r^{\mathrm L}_i$, $r^{\mathrm H}_i$
+  their low- and high-order residuals, defined with the sign opposite to
+  Pazner's above ($m_i(u^{\mathrm L,n+1}_i-u^n_i)/\Delta t+r^{\mathrm L}_i=0$),
+  and one $\mathsf l_K\in[0,1]$ per element $K$ (page-local; $\mathsf l_K=1-\alpha$
+  in this page's convention), the
+  largest that keeps every node above relaxed bounds proportional to the
+  low-order density and internal energy. The density constraint is
+  linear in $\mathsf l_K$ and the internal-energy constraint quadratic, so $\mathsf l_K$ is
+  the minimum of a ratio and of the smallest non-negative root of a
+  quadratic ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
 
 Subcell-wise coefficients are stricter per interface, because each must
 guarantee the bound independently of the others, yet they limit less in
@@ -274,7 +313,26 @@ nodes (Pazner, §3.1).
   semi-discretization exists for element-wise blending of entropy-stable DG
   with entropy-stable finite volumes; for subcell-wise blending the proof
   is "still missing" (Rueda-Ramírez et al. 2022, §4 item (2)); see
-  [entropy stability](/properties/entropy-stability.md).
+  [entropy stability](/properties/entropy-stability.md). Lin et al. agree:
+  one blending parameter per element blends two entropy-stable
+  semi-discretizations and keeps the semi-discrete cell entropy
+  inequality (Theorem 6.2), whereas subcell convex limiting with
+  positivity as the only constraint cannot be shown to keep it (App. B.1);
+  earlier convex limiting enforced local density bounds and a minimum
+  principle on the specific entropy, which Lin et al. drop because that
+  principle holds for Euler but not for Navier–Stokes (§1). When the
+  high- and low-order schemes share the same Lax–Friedrichs interface flux
+  and interface matrices, subcell limiting localizes to element interiors
+  and needs no exchange of limiting parameters between neighbours
+  (App. B.2, Eqs. 80–81).
+- **Wave-speed estimates.** The Davis estimate used by Lin et al. is not
+  a guaranteed upper bound of the maximum wave speed; a case where the
+  Rusanov estimate underestimates it would compromise the provable
+  positivity and entropy stability of the low-order scheme, though none
+  was observed (footnote 3). They also note a staircasing-like effect of
+  the sparse low-order scheme near element boundaries, seen in other
+  bar-state discretizations and speculatively attributed to diagonal mass
+  entries that decrease towards the boundary (footnote 4).
 - **Order barrier of local bounds.** [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md)
   state that local discrete maximum principles impose a second-order
   accuracy barrier and that global-DMP limiters "may fail to prevent
@@ -310,3 +368,4 @@ nodes (Pazner, §3.1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.9 (Hu–Adams–Shu limiter used).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §4.3 (entropy tolerance).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §4.2; §4.5; §6 (invariant-domain preservation left out of scope).
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §3.2, Eqs. (9)–(11); §5, Eqs. (16)–(24), Lemma 5.1, Theorem 5.2; §6.1–6.2, Eqs. (37)–(45), Theorems 6.1–6.2; Table 1, Fig. 3; App. B, Eqs. (70)–(81); footnotes 3–4.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend in finite differences and continuous finite elements, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, residual-based continuous-finite-element viscosity, spectral and quasi-spectral eddy viscosities, and modal damping and filtering read as dissipation."
+description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, and modal damping read as dissipation."
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -34,7 +34,9 @@ filtering** read as a dissipation operator ([Edoh (2022)](/sources/edoh-2022.md)
 The JST-type, finite element, quasi-spectral and modal forms are evaluated
 in every cell; the first two need a
 [shock sensor](/definitions/troubled-cell-indicator.md) only to set the
-weight of the low-order part.
+weight of the low-order part. A further form, a space–time smooth
+viscosity scaled by C-functions on moving meshes, is that of
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md).
 
 ## High-order Jameson–Schmidt–Turkel dissipation (finite differences)
 
@@ -160,6 +162,11 @@ freedom; on a sparsified operator with an $O(1)$ stencil it does not
 ($N=3,7,15,31$ on 128 degrees of freedom, §3.4, Fig. 1). The modal
 smoothness indicator Pazner uses to relax the limiter bounds is taken from
 Persson and Peraire's shock-capturing work (§4.4).
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md) use the same graph
+viscosity on a sparse low-order SBP operator for the Navier–Stokes
+equations, with Zhang's viscous positivity coefficient in place of the
+wave-speed bound (§5, Eqs. 16–18;
+[positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
 
 ## Laplacian viscosity for DG and flux reconstruction
 
@@ -296,6 +303,44 @@ rotor run without oscillations visible in the figures; the rotor's
 minimum pressure is $3.86\times10^{-2}$. Positivity and invariant-domain
 preservation are left out of scope (§1, §6). Divergence control is
 separate ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+## Space–time smooth viscosity with C-functions (ALE finite differences)
+
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md) stabilize a
+simplified finite-difference WENO scheme for the Euler equations in ALE
+form with the C-method of their earlier work, carried here to moving
+meshes (§6.2, Appendix A). The advective fluxes reconstruct the conserved
+variables by fifth-order WENO at half-points, upwinded on the sign of
+the ALE transport velocity, and multiply them by a fourth-order averaged
+velocity, without characteristic decomposition or Riemann solver; the
+authors call it cheaper and less robust, oscillatory on hard problems,
+and in need of the C-method viscosity (Remark 1). Let $\mathsf a^j_i$
+denote the cofactors of the mesh map and $\mathcal J$ its Jacobian
+(page-local), $C_{\mathrm s}$ the shock C-function and $\tau_{\mathrm c}$
+the smoothed contact tangent (page-local). The viscosities are
+
+$$\mathcal D[w;b]=\partial_k\big(\tilde b\,\rho\,C_{\mathrm s}\,\mathsf a^k_i\mathsf a^l_i\,\partial_lw\big),\quad \tilde b=\frac{\lvert\Delta x\rvert^2}{\max C_{\mathrm s}}\,b,\qquad
+\mathcal D_\tau[w;\mu_{\mathrm c}]=\partial_k\big(\tilde\mu_{\mathrm c}\,\rho\,\tau^i_{\mathrm c}\tau^j_{\mathrm c}\,\mathsf a^k_i\mathsf a^l_j\,\partial_lw\big)$$
+
+with $\tilde\mu_{\mathrm c}=\lvert\Delta x\rvert^2\mu_{\mathrm c}\big/\big(\max_x\max_i\lvert\tau^i_{\mathrm c}\rvert\big)^2$
+(Eqs. 61–63), isotropic for shocks and anisotropic along contacts,
+applied to the velocity (with coefficient $b_v$) and to $E/\rho$ (with
+$b_E$) (Eq. 65; page-local $b$, $b_v$, $b_E$, $\mu_{\mathrm c}$). The
+C-functions are smooth in space and time because they solve
+reaction–diffusion equations forced by the solution,
+$\partial_tC_{\mathrm s}=\frac{S_{\mathrm c}}{\varepsilon_{\mathrm c}\lvert\Delta x\rvert}(\hat F-C_{\mathrm s})+\kappa_{\mathrm c}S_{\mathrm c}\lvert\Delta x\rvert\Delta C_{\mathrm s}$,
+with $\hat F$ the normalized magnitude of the density gradient for the
+shock function and the rotated density gradient for the contact tangent
+(Eqs. 64–67; page-local $S_{\mathrm c}$, $\varepsilon_{\mathrm c}$,
+$\kappa_{\mathrm c}$, whose values are not printed). The coefficients
+used are $b_v=0.35$, $b_E=2.5$, $\mu_{\mathrm c}=0$ for the Noh
+implosion on uniform grids and $b_v=0.1$, $b_E=0.7$ on the adaptive
+grid, and $\mu_{\mathrm c}=7.5\times10^{-4}$, $b_v=b_E=0$ for
+Rayleigh–Taylor (§7.1–7.2). The Noh runs show very small wall heating
+and preserved radial symmetry, attributed to the viscosity together with
+the alignment of the moving mesh with the shock (§7.1.3;
+[Noh implosion](/benchmarks/noh-implosion-problem.md),
+[adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
 
 ## Spectral and quasi-spectral eddy viscosities
 
@@ -491,3 +536,5 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.3; §3; Ex. 5.8.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — arXiv v2: §6.3, Table 3, Figs. 24–26.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1.
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §6.2, Eqs. (47)–(51), Remark 1; Appendix A, Eqs. (60)–(67); §7.1–7.2.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §5, Eqs. (16)–(18) (graph viscosity for Navier–Stokes).

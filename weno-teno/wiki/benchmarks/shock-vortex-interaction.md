@@ -21,7 +21,7 @@ vortex the same configuration becomes a near-vacuum test for
 
 ## Reference setup
 
-[Li et al. (2022)](/sources/li-2022-b.md) §4.4.2, Eq. (46),
+[Li et al. (2022b)](/sources/li-2022-b.md) §4.4.2, Eq. (46),
 [Huang et al. (2026)](/sources/huang-2026.md) §6.10,
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 and
 [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 and
@@ -49,7 +49,7 @@ sources)*.
 
 | Source | $\mathcal E$ | $\mathcal A$ | $r_c$ | Grid | Final time | Scheme |
 |---|---|---|---|---|---|---|
-| [Li et al. (2022)](/sources/li-2022-b.md) §4.4.2 | 0.3 | 0.204 | 0.05 | $200\times100$; reference $2000\times1000$ WENO7-Z | 0.6 | [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z |
+| [Li et al. (2022b)](/sources/li-2022-b.md) §4.4.2 | 0.3 | 0.204 | 0.05 | $200\times100$; reference $2000\times1000$ WENO7-Z | 0.6 | [WENO-ZN](/methods/weno-zn.md) vs WENO-JS, WENO-Z |
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.10 | 0.3 | 0.204 | 0.05 | $h=1/100$; fine-mesh WENO5-JS reference | not printed | [ROUND, LD-ROUND](/methods/round-scheme.md) vs WENO3-NN, WENO5-JS |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 | 0.3 | 0.204 | 0.05 | $400\times200$, reflective top and bottom | 0.8 | [OEDG](/methods/oedg.md) |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.7 | 0.3 | 0.204 | 0.05 | $300\times150$; reference $2000\times1000$ WENO5-JS | 0.6 | [TENO-THINC](/methods/teno-thinc.md) variant vs WENO5-Z, TENO5, TENO5-THINC |
@@ -204,7 +204,7 @@ a numerical result.
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.4.2, Eq. (46), Fig. 8.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.2, Eq. (46), Fig. 8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.10, Fig. 15.
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — Ex. 5.16, Fig. 12 (arXiv v1).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Example 3, Table 8 (arXiv v1).

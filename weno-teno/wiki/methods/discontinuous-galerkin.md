@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -50,7 +50,18 @@ Two families of bases appear in the sources:
   BR1 for the viscous terms and implicit backward Euler with matrix-free
   GMRES (§2.3). The grouping by degree is what their
   [hp-adaptation](/methods/hp-adaptation.md) estimator and smoothness test
-  read.
+  read. [Maltsev et al. (2023)](/sources/maltsev-2023.md) use instead a
+  cell-centred Taylor basis, the monomials $(x-x_c)^{p}(y-y_c)^{q}(z-z_c)^{r}$
+  of total degree $\le N$ scaled by $h^{p+q+r}$ with $h$ the square root
+  of the cell volume, minus their cell means, so that every mode but the
+  zeroth has zero mean (§2.1, Eq. (6); page-local exponents and $h$). One
+  basis serves tetrahedra, hexahedra, prisms, pyramids, triangles and
+  quadrilaterals, integrated by decomposition into simplices, and the
+  authors chose a modal basis to avoid the under-integration errors of
+  nodal implementations. Without the scaling by $h$ they "could not achieve
+  higher than 4th of accuracy", which they attribute to the conditioning of
+  the mass matrix (§2.1; no data shown). The same Taylor basis carries the
+  finite-volume reconstruction of their hybrid scheme (see below).
 - **Nodal bases.** These are Lagrange bases at Legendre–Gauss–Lobatto nodes
   $\xi_j$ with collocated quadrature. The result is the
   [DGSEM](/methods/dgsem.md), whose mass matrix is diagonal and whose
@@ -74,6 +85,12 @@ Two families of bases appear in the sources:
   DG on LGL nodes in 1D and $\alpha$-optimized nodes on triangles with an
   orthonormal Legendre or Dubiner modal basis, whose coefficient decay
   their [artificial viscosity](/methods/artificial-viscosity.md) reads (§2).
+  [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) run nodal
+  entropy-stable DG on quadrilaterals and triangles with diagonal-norm
+  multidimensional SBP operators: tensor-product LGL nodes on quadrilaterals,
+  and on triangles volume nodes that contain $(N+1)$-point Gauss–Lobatto
+  face nodes, with volume quadrature exact for degree $2N-1$ and face
+  quadrature for degree $2N$ (§3.1, Fig. 1; arXiv v2).
 
 Two algebraic rewritings of the same semi-discretization appear in
 [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md):
@@ -131,7 +148,13 @@ Three further formulations:
   total flux with a single Lax–Friedrichs-type penalty (§3, Eqs.
   (3.2)–(3.5), after X. Zhang's positivity-preserving DG for Navier–Stokes).
   Yu & Hesthaven use an LDG-type mixed form with centred viscous fluxes for
-  their artificial-viscosity term (§2), PyFR uses BR1 or BR2 (Dzanic et al.,
+  their artificial-viscosity term (§2). Lin, Chan & Tomas (2023) use an
+  LDG-type form in the entropy variables, $\Theta_d=\partial w/\partial x_d$ and
+  viscous flux $\sigma_d=\sum_{d'}K_{dd'}\Theta_{d'}$ with the symmetric
+  positive semi-definite blocks $K_{dd'}$ of the symmetrized viscous operator
+  and central interface averages (page-local $\Theta$, $\sigma$, $K$), so the
+  entropy-stable DG dissipates entropy also for Navier–Stokes, as recalled
+  from Chan's earlier work (§4, Eq. (15), Thm. 4.1). PyFR uses BR1 or BR2 (Dzanic et al.,
   §4.2; Dzanic & Witherden, §4.2), and [Kou et al. (2022)](/sources/kou-2022.md)
   use the LDG common solution $\{\!\{u\}\!\}-\beta_{\mathrm{LDG}}[\![u]\!]$ and
   viscous flux $\{\!\{f_v\}\!\}+\tau_{\mathrm{LDG}}[\![u]\!]+\beta_{\mathrm{LDG}}[\![f_v]\!]$
@@ -171,7 +194,18 @@ RK4; Yu & Hesthaven (2022) use the five-stage fourth-order low-storage
 Runge–Kutta method of Carpenter & Kennedy. Yu & Hesthaven state the
 explicit restriction with an artificial viscosity $\mu$ as
 $\Delta t\sim\mathrm{CFL}/\big(a N^2/h+\mu N^4/h^2\big)$, which they call
-stringent (Eq. (2.23)). For stiff chemistry, Du & Yang (2022) replace
+stringent (Eq. (2.23)). Maltsev et al. (2023) use third-order TVD Runge–Kutta with
+$\Delta t=\nu\,\frac1{2N+1}\min_i(h_i/a_i)$, $h_i$ a characteristic cell length
+and $a_i$ the maximum wave speed, the same for their DG and finite-volume
+parts, at $\nu=0.5$, and $0.3$ for the Schardin, Taylor–Green and sonic-boom
+runs (§2.3, Eq. (32), §3). Lin, Chan & Tomas
+(2023) use SSPRK(3,3) with a step set by their positivity condition
+$\Delta t=\nu\min_im_i/(2\lambda_i)$, page-local graph-viscosity sums
+$\lambda_i$ and lumped masses $m_i$; they recall that this step scales as
+$O(h/N^2)$ and has been observed to be 2–3 times smaller than the largest
+stable high-order DG step, and with explicit viscous terms the parabolic
+restriction $O(h^2\mathrm{Re})$ adds to it (§5 Remarks 1–2, §7, Eq. (57)).
+For stiff chemistry, Du & Yang (2022) replace
 SSP-RK by a third-order conservative modified exponential Runge–Kutta
 method; on a stiff test with source coefficient $10^6$, SSP-RK3 at the
 same step blows up on the two coarsest meshes and needs $\tfrac25$ of it
@@ -274,7 +308,29 @@ interfaces.
   variables; they save about 6–55 % of the CPU time on shocked problems
   ([WENO limiters for DG](/methods/weno-limiter-dg.md)). Bai & Li (2022)
   use a TVB minmod limiter, and a WENO limiter for their two-phase
-  Shu–Osher problem (§2.6, §3.1.5).
+  Shu–Osher problem (§2.6, §3.1.5). Maltsev et al. (2023) overwrite on
+  unstructured mixed-element meshes: at every Runge–Kutta stage the
+  unlimited modal DG solution is checked a priori, by a KXRCF-like shock
+  detector or by MOOD-type positivity and relaxed-maximum-principle
+  criteria, and in flagged cells the modes $1,\dots,K$ (all but the cell
+  average, $K+1$ the number of basis functions) are replaced by the
+  coefficients of a CWENOZ least-squares reconstruction of the same order
+  built from neighbouring averages in the same Taylor basis (§2.4, Eq.
+  (33), §2.5; [CWENO](/methods/cweno.md)). Keeping mode 0 keeps
+  conservation, and matching the orders, DG($\mathbb P^N$) with
+  CWENOZ($N+1$), avoids an accuracy mismatch. The hybrid costs 1.4–1.5 times
+  pure DG on coarse meshes with many flagged cells and about 1.05 times on
+  fine ones (Table 1). Re-checking at every stage or freezing the flag for
+  the step makes a negligible difference (§3.2). The authors conclude that
+  fine tuning of the switch is "not a necessity" when the finite-volume
+  scheme has the DG order, and mandatory with an order mismatch (§4),
+  while their shock detector flags up to 100 % of the cells of a smooth
+  advection at $N=4$ on coarse meshes (Table B.3); see
+  [troubled-cell indicator](/definitions/troubled-cell-indicator.md) and
+  [WENO limiters for DG](/methods/weno-limiter-dg.md). They argue that
+  subcell limiters, which keep more DG information, are not straightforward
+  on meshes with arbitrary elements, transition layers and bad-quality
+  cells (§2.4).
 - **Blending with a low-order scheme.** The nodal DG update is convexly
   blended with a compatible subcell finite-volume update, element by element
   or interface by interface, with a priori or a posteriori blending
@@ -284,6 +340,15 @@ interfaces.
   (2022)). [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) switch
   whole elements instead, from p-adaptive DG to a finite-volume scheme on
   refined subcells ([h- and hp-adaptation](/methods/hp-adaptation.md)).
+  Lin, Chan & Tomas (2023) blend element-wise, with one coefficient per
+  element, a high-order entropy-stable DG update and a low-order
+  positivity-preserving graph-viscosity update on a sparse low-order SBP
+  operator; because both are conservative and entropy stable, the blend
+  keeps the semi-discrete cell entropy inequality (Thm. 6.2), while subcell
+  convex limiting with positivity as the only constraint cannot be shown to
+  keep it (App. B.1). See
+  [bound preservation](/properties/bound-preservation.md) and
+  [entropy stability](/properties/entropy-stability.md).
 - **Damping and filtering.** Oscillation-free DG adds stiff damping terms to
   the semi-discrete system. The [OEDG](/methods/oedg.md) method of Peng et al.
   (2024) instead solves the damping step exactly after each Runge–Kutta stage
@@ -343,6 +408,20 @@ stated, not demonstrated (§8).
 
 ## Accuracy
 
+Lin, Chan & Tomas (2023) observe, with their positivity limiter, rates
+between $O(h^N)$ and $O(h^{N+1})$ for a $M_0=3$ and $20$ viscous shock and a
+strong isentropic vortex (minimum density $2.145\times10^{-3}$) on which
+unlimited entropy-stable DG fails; the limiter is active only on coarse
+meshes (Tables 3–9). Maltsev et al. (2023) find that pure DG reaches close
+to design order on the isentropic vortex while CWENOZ of the same order
+needs finer meshes (quadrilaterals, $N=4$: DG $L^2$ errors
+$2.97\times10^{-4}$ to $1.14\times10^{-9}$, CWENOZ $7.64\times10^{-2}$ to
+$7.20\times10^{-4}$ on 8 to 64 edges; Table 1). With all cells forced
+troubled the hybrid keeps the design order of CWENOZ (Table B.4); with active
+detectors its observed orders exceed the design order (up to 6.89) because
+the flagged fraction falls under refinement, and the authors say they
+should not be read as convergence rates (App. B).
+
 Peng et al. (2024) observe optimal order $N+1$ for advection, Burgers and
 1D Euler. They also observe order $N+2$ superconvergence of cell averages and
 downwind point values for OEDG (Table 1). This superconvergence is proved
@@ -377,7 +456,8 @@ use different shock-capturing methods, so this is not a contradiction.
   write $p$, Wu & Shu write $K$, and Rueda-Ramírez et al. write $N$; Bai
   & Li, Du, Shu & Zhong and Du & Yang write $k$; Abgrall et al., Cicchino
   et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$;
-  Huang & Zahr write $p$ and Kou et al. $P$; Mossier et al. write $N$. All are translated to $N$ here. Dzanic et al. use $u^+$ for
+  Huang & Zahr write $p$ and Kou et al. $P$; Mossier et al. and Lin,
+  Chan & Tomas write $N$; Maltsev et al. write $r$. All are translated to $N$ here. Dzanic et al. use $u^+$ for
   the trace of the element of interest and $u^-$ for the neighbour, and
   Dzanic & Witherden print opposite labels in text and figure; this page
   writes inner and outer traces in words.
@@ -391,6 +471,14 @@ use different shock-capturing methods, so this is not a contradiction.
   scheme comes from the cut-cell and ghost-fluid treatment and the
   deletion of isolated structures, whose mass loss they record (§2.5.3)
   *(compiler check, not in the sources)*.
+- Maltsev et al. (2023) run their modal DG on the under-resolved
+  inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+  without over-integration, modal filtering or split-form fluxes; it does
+  not crash, but they state that it is not free of aliasing errors
+  (§3.6). Their Eq. (5) calls $\frac1{d!}\prod_{l=1}^d(N+l)$ the number of
+  degrees of freedom $K$, but for $N=1$, $d=2$ it gives 3, the number of
+  basis functions $K+1$ of their Eq. (2) *(compiler check, not in the
+  sources)*.
 - Luo et al.'s claim that the central flux suffices rests on the converged
   interface condition. It does not carry over to DG on a fixed mesh, where
   the sources above use upwind-type numerical fluxes.
@@ -417,3 +505,5 @@ use different shock-capturing methods, so this is not a contradiction.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §2.3 Eqs. (8)–(14), §4, Remark 5, §5.2.3 (arXiv v2).
 - [Kou et al. (2022)](/sources/kou-2022.md) — §3 Eqs. (9), (15).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4, §7.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1, §4 Eq. (15) Thm. 4.1, §5 Remarks 1–2, §6 Thm. 6.2, §7 Eq. (57), Tables 3–9, App. B.1 (arXiv v2).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1 Eqs. (2)–(9), §2.3 Eq. (32), §2.4 Eq. (33), §2.5, §3.1–3.2, §3.6, §4, Table 1, App. B Tables B.3–B.4.

@@ -34,10 +34,10 @@ scheme](/definitions/conservative-finite-difference-scheme.md) the point fluxes,
 [Lax–Friedrichs splitting](/methods/lax-friedrichs-flux.md) $f=f^++f^-$, are treated as cell
 averages of an implicit function, and the WENO procedure reconstructs $\hat f^+_{i+1/2}$ from
 $f^+_{i-r+1},\dots,f^+_{i+r-1}$; $\hat f^-_{i+1/2}$ follows "by the symmetric rule" about
-$x_{i+1/2}$ (Li et al. 2022, §2; Luo & Wu 2021, §2.1; Takagi et al. 2022, §2.1). For systems the
+$x_{i+1/2}$ (Li et al. 2022b, §2; Luo & Wu 2021, §2.1; Takagi et al. 2022, §2.1). For systems the
 reconstruction is carried out in local characteristic fields
 ([characteristic decomposition](/methods/characteristic-decomposition.md)) with Roe-averaged
-eigenvectors in Li et al. (2022), Luo & Wu (2021), Fu (2021) and Takagi et al. (2022).
+eigenvectors in Li et al. (2022b), Luo & Wu (2021), Fu (2021) and Takagi et al. (2022).
 
 **Candidate fluxes and linear weights.** With $S_k=\{x_{i+k-r+1},\dots,x_{i+k}\}$ ($S_0$ the most
 upwind), the fifth-order case ($r=3$) is (Luo & Wu 2021, Eq. (1); Li et al. 2022, Table 2)
@@ -245,7 +245,7 @@ reconstructing fluxes.
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §2, Eqs. (2)–(7); Tables 1–2, 6–8; §4.5, Fig. 11.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §2, Eqs. (2)–(7); Tables 1–2, 6–8; §4.5, Fig. 11.
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) — §2.1, Eqs. (1)–(5); §4.
 - [Deng (2023)](/sources/deng-2023.md) — §1; §4.3, Eqs. (4.19)–(4.23); Figs. 5, 13.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §3.1, Eqs. (3.1)–(3.5).

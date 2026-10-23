@@ -19,7 +19,7 @@ it, the Clawpack package is implemented in AMROC with detailed chemical
 kinetics for multispecies thermally perfect gas mixtures, and these
 solvers have been used for supersonic combustion and detonation; walls
 that are not Cartesian are represented by a level set with ghost-fluid
-boundary cells. [Wang et al. (2022)](/sources/wang-2022.md) implement
+boundary cells. [Wang et al. (2022a)](/sources/wang-2022.md) implement
 their immersed-boundary variants in it. Both sources are by groups that
 include the framework's author.
 
@@ -91,4 +91,4 @@ They compare it with a cut-cell method in a different framework, AMReX.
 # Citations
 
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §1; §2.1–2.6, Eqs. (9)–(31); §3–4 (accepted manuscript).
-- [Wang et al. (2022)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (4)–(18); §3.6; §4.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §1; §2.1–2.3, Eqs. (4)–(18); §3.6; §4.

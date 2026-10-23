@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Taylor–Green vortex
@@ -22,7 +22,7 @@ measures.
 
 ## Setups
 
-**Inviscid, low Mach number.** [Li et al. (2022)](/sources/li-2022-b.md)
+**Inviscid, low Mach number.** [Li et al. (2022b)](/sources/li-2022-b.md)
 §4.5, Eqs. (47)–(49) and [Takagi et al. (2022)](/sources/takagi-2022.md)
 §4.10 print
 
@@ -54,12 +54,27 @@ the same expression.
 data on $64^3$ to $t=10$ ($\gamma=5/3$ printed in Chamarthi 2023a);
 Chamarthi (2023a) runs only linear schemes, because the high mean
 pressure makes the flow nearly incompressible.
-[De Michele & Coppola (2023)](/sources/demichele-2023.md) §5.2, Eqs.
+[De Michele & Coppola (2023a)](/sources/demichele-2023.md) §5.2, Eqs.
 (82)–(86) (arXiv v1) run it on $32^3$ nodes with fourth-order explicit
 central differences, RK4 at CFL 0.1, to $t=100$, all fifteen of their
 energy-equation formulations emulated through the total-energy
 equation (equivalent under exact time integration), and an additional
 run at $M\approx0.3$ described in the text only.
+[De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) §5
+(arXiv v2) run the same velocity field with $\rho=1$ and
+$p=10+\frac1{16}\big[(\cos2x+\cos2y)(\cos2x+2)-2\big]$ as printed,
+$M\approx0.26$, on $32^3$ nodes of $[0,2\pi]^3$ with fourth- and
+sixth-order central fluxes of $\rho$, $\rho v$ and $\rho E$, RK4 at
+CFL 0.1, comparing entropy-conservation properties of their
+asymptotically entropy-conservative fluxes with other
+[kinetic-energy-preserving](/properties/kinetic-energy-preservation.md)
+split forms.
+[Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.6 print
+$\rho=1$, the same velocity with wavenumber $k$ and
+$p=100+\frac\rho{16}[\cos2z+2][\cos2x+\cos2y]$, $M\approx0.08$, on
+$64^3$ hexahedra to $t^*=14$, against the DNS of Brachet et al., with
+third- and fourth-order finite-volume CWENOZ and hybrid DG–FV schemes
+(shock detector $C_k=0.4$), SSP-RK3 at CFL 0.3; spectra at $t=10$.
 [Zhou et al. (2023)](/sources/zhou-2023.md) §5.9, Eq. (44) write the
 field with $L=V_0=\rho_0=1$ on periodic $[0,2\pi L]^3$ and
 $p_0=\rho_0V_0^2/(\gamma M^2)$, $M=0.1$, and run it inviscid on $64^3$
@@ -70,6 +85,14 @@ against Brachet et al.'s DNS, and in the supersonic variant of Lusher
 & Sandham ($M=1.25$, $\mathrm{Re}=1600$, density set for a constant
 initial temperature, Eq. 47) on $128^3$ against TENO6 on $512^3$; HLLC,
 TVD-RK3.
+
+**Inviscid, supersonic.** Maltsev et al. §3.7 run the inviscid form
+of Lusher & Sandham's supersonic vortex: same domain and velocity,
+$p=\frac1{\gamma M_{\mathrm{ref}}^2}+\frac1{16}[\cos2z+2][\cos2x+\cos2y]$,
+density from the equation of state, $M_{\mathrm{ref}}=1.25$ (page-local
+reference Mach number), on $64^3$ (several orders) and $128^3$ to
+$t=20$, shock detector $C_k=0.2$, RK3 at CFL 0.3, against a WENO5
+reference on $512^3$.
 
 **Viscous, $\mathrm{Re}=1600$.** [Ye et al. (2022)](/sources/ye-2022.md)
 §4.9, Eqs. (49)–(52): a cube of side $2\pi L$, reference Mach number
@@ -218,6 +241,27 @@ three schemes underestimate the total viscous dissipation, WCNS-SA and
 WCNS-LD less than ONL6 (Fig. 25). Per 1000 steps of the supersonic case
 on 32 Xeon Gold 6154 cores they take 4592 s (ONL6), 4630 s (WCNS-LD)
 and 4713 s (WCNS-SA), 3 % more for the adaptive scheme (Table 4).
+
+**Hybrid DG–FV in under-resolved vortices.** Maltsev et al. find the
+hybrid DG–FV on $64^3$ closer than pure FV to the DNS kinetic energy and
+dissipation rate, and to the Kolmogorov slope over a wider range; the
+modal DG part shows aliasing errors, but the scheme does not crash
+without over-integration, modal filtering or split-form fluxes
+(Figs. 16–17). In the supersonic run the troubled-cell fraction rises
+suddenly between $t=5$ and 12 and decreases with mesh refinement, and
+the kinetic energy agrees closely with the $512^3$ reference
+(Figs. 18–20). See
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md).
+
+**Entropy budgets of split forms.** De Michele & Coppola (2023b) find
+that their AEC(1) flux and the KEEP(1) form of Tamaki, Kuya & Kawai
+keep the entropy integral most nearly constant, that the harmonic- and
+geometric-mean internal-energy fluxes (Aρ-He, Gρ-Ge) conserve entropy
+better than the arithmetic-mean ones (Aρ-Ap, Aρ-Ae), that the linear
+invariants are conserved to machine precision, and that density and
+temperature fluctuations stay bounded for every scheme, the last
+not shown (Fig. 2); see
+[entropy-conservative flux](/methods/entropy-conservative-flux.md).
 
 **TENO beats WENO on the viscous dissipation rate.** Ye et al. find
 the kinetic energy nearly scheme-independent at $256^3$, but the
@@ -408,12 +452,20 @@ cells (§9, Figs. 21–24).
   sources)*. They define the kinetic-energy dissipation rate as
   $\mathrm dK/\mathrm dt$ but plot it positive for a decaying flow, so a
   minus sign is missing.
-- De Michele & Coppola print the pressure as
+- De Michele & Coppola (2023a) print the pressure as
   $100+\frac1{16}\big[(\cos2x+\cos2y)(\cos2x+2)-2\big]$, with $\cos2x$ in
   the second factor where the other sources have $\cos2z$; the velocity
   field induces a pressure depending on $z$, so the printed form is a
   slip unless a different field was run *(compiler check, not in the
   sources)*.
+- De Michele & Coppola (2023b) print the same second factor
+  $(\cos2x+2)$, with background pressure 10, where Li et al. (2022b),
+  Takagi et al., Li, Chen & Ren, the two Chamarthi papers and Maltsev
+  et al. print $(\cos2z+2)$; the comparison marks it as the same printed
+  slip as in De Michele & Coppola (2023a).
+- Maltsev et al. state that the $128^3$ supersonic run uses "a
+  fourth-order DG-FV scheme", while their Figs. 19–20 show
+  DG($P_4$)–FV(CWENOZ5), a fifth-order scheme, on $128^3$.
 - Bezgin et al.'s text gives "around 25 μs per time step" for what their
   Table 3 shows as about $25\times10^{-9}$ s per cell and step, and lists
   four grids while the tables include $32^3$.
@@ -432,7 +484,7 @@ cells (§9, Figs. 21–24).
 
 # Citations
 
-- [Li et al. (2022)](/sources/li-2022-b.md) — §4.5, Eqs. (47)–(49), Figs. 10–11.
+- [Li et al. (2022b)](/sources/li-2022-b.md) — §4.5, Eqs. (47)–(49), Figs. 10–11.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.10, Fig. 21.
 - [Ye et al. (2022)](/sources/ye-2022.md) — §4.9, Eqs. (49)–(52), Figs. 10–12.
 - [Fu (2023)](/sources/fu-2023.md) — Figs. 4 and 14; §4.2 (reproduced).
@@ -446,7 +498,9 @@ cells (§9, Figs. 21–24).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §4.1, Eq. (66), Figs. 2–7; App. C–D (arXiv v1).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.5, Fig. 8 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3.2, Fig. 16 (arXiv v1).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §5.2, Eqs. (82)–(86), Figs. 6–10 (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §5.2, Eqs. (82)–(86), Figs. 6–10 (arXiv v1).
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §6, Tables 3–4 (arXiv v1).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §9, Tables 5–7, Figs. 21–24 (arXiv v1).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.9, Eqs. (44)–(49), Table 4, Figs. 21–25.
+- [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §5, Fig. 2 (arXiv v2).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §§3.6–3.7, Eqs. (47)–(48), Figs. 16–20.

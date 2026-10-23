@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Entropy-conservative and kinetic-energy-preserving two-point fluxes"
-description: "Two-point fluxes that satisfy Tadmor's jump condition conserve entropy, and entropy-dissipative fluxes satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form, gives the Ranocha, Shima, multicomponent, stiffened-gas, GLM-MHD and KPP fluxes, the dissipation that makes them entropy stable, the relativistic-MHD and three-velocity relativistic-hydrodynamics cases, the Burgers flux and the logarithmic mean."
+description: "Two-point fluxes satisfying Tadmor's jump condition conserve entropy, and entropy-dissipative ones satisfy it as an inequality; the page states the condition in Cartesian, directional, moving-mesh and non-conservative form and gives the Ranocha, Shima, asymptotically entropy-conservative algebraic, multicomponent, vibrating-air, stiffened-gas, GLM-MHD, relativistic and scalar fluxes and their entropy-stable dissipation."
 status: established
-aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux]
+aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -176,6 +176,134 @@ ratio 10 ([kinetic energy preservation](/properties/kinetic-energy-preservation.
 The two-phase part of the scheme adds regularization fluxes in quartic
 and quintic splits (Eq. (59);
 [split convective forms](/methods/split-convective-forms.md)).
+
+## Asymptotically entropy-conservative algebraic fluxes
+
+[De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) write the
+Ranocha flux in internal-energy form for a perfect gas, convective parts
+only, with the pressure term $p\,\partial_xv$ discretized centrally:
+$f_\rho=\{\!\{\rho\}\!\}_{\log}\{\!\{v\}\!\}$, $f_{\rho v}=f_\rho\{\!\{v\}\!\}$,
+$f_{\rho e}=f_\rho/\{\!\{1/e\}\!\}_{\log}$, with $e$ the specific internal
+energy (§2, Eq. (2); arXiv v2). It agrees with the total-energy form above
+because $\rho/p=1/((\gamma-1)e)$ gives
+$(\gamma-1)\{\!\{\rho/p\}\!\}_{\log}=\{\!\{1/e\}\!\}_{\log}$ *(compiler check,
+not in the sources)*. Its only non-algebraic ingredients are the two
+logarithmic means. The authors replace them by algebraic means and order
+the candidates with the mean inequalities. With page-local geometric and
+harmonic means $\{\!\{a\}\!\}_{\mathrm G}=\sqrt{a^-a^+}$,
+$\{\!\{a\}\!\}_{\mathrm H}=a^-a^+/\{\!\{a\}\!\}$ and the page-local relative jump
+$\mathsf j_a=[\![a]\!]/(2\{\!\{a\}\!\})$, $\lvert\mathsf j_a\rvert<1$ for $a>0$:
+
+$$\{\!\{a\}\!\}_{\mathrm G}\le\{\!\{a\}\!\}_{\log}\le\{\!\{a\}\!\},\qquad \{\!\{a\}\!\}_{\mathrm H}\le\big(\{\!\{1/a\}\!\}_{\log}\big)^{-1}\le\{\!\{a\}\!\}_{\mathrm G},$$
+
+strict for $a^-\ne a^+$, with $\{\!\{a\}\!\}_{\mathrm G}=\{\!\{a\}\!\}(1-\mathsf j_a^2)^{1/2}$
+and $\{\!\{a\}\!\}_{\mathrm H}=\{\!\{a\}\!\}_{\mathrm G}(1-\mathsf j_a^2)^{1/2}$ (Eqs.
+(5)–(8); the first chain recalled from Carlson). Hence the arithmetic mean
+is the natural algebraic surrogate for the density in the mass flux, but
+the harmonic or geometric mean, not the arithmetic one, for the internal
+energy (§3). The fluxes compared, named by the mean of $\rho$ in $f_\rho$
+and of $e$ in $f_{\rho e}$, all with $f_{\rho v}=f_\rho\{\!\{v\}\!\}$:
+
+| flux | $f_\rho$ | $f_{\rho e}$ | properties stated |
+|---|---|---|---|
+| Aρ-Ae | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}$ | KEP, not PEP; equals KGP($\rho e$) and, for exact time integration, the KEEP scheme of Kuya et al. |
+| Aρ-Ge | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm G}$ | KEP, not PEP |
+| Gρ-Ge | $\{\!\{\rho\}\!\}_{\mathrm G}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm G}$ | KEP and PEP |
+| Aρ-He (new) | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $f_\rho\{\!\{e\}\!\}_{\mathrm H}$ | KEP and PEP |
+| Aρ-Ap | $\{\!\{\rho\}\!\}\{\!\{v\}\!\}$ | $\{\!\{v\}\!\}\{\!\{p\}\!\}/(\gamma-1)$ | KEP and PEP (KEEP-PE of Shima et al.) |
+
+(Eqs. (3), (4), (9), (10), (15)). PEP is
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+The last row is the Shima et al. flux of the previous section.
+
+**The AEC($N_{\mathrm T}$) hierarchy.** The exact series
+$[\![\ln a]\!]=\frac{[\![a]\!]}{\{\!\{a\}\!\}}\sum_{n\ge0}\frac{\mathsf j_a^{2n}}{2n+1}$
+(Eqs. (11)–(12)) inserted in both logarithmic means and truncated at
+order $N_{\mathrm T}$ (page-local truncation order, not a DG degree) gives
+
+$$f_\rho=\{\!\{\rho\}\!\}\{\!\{v\}\!\}\Big(\sum_{n=0}^{N_{\mathrm T}}\frac{\mathsf j_\rho^{2n}}{2n+1}\Big)^{-1},\qquad f_{\rho e}=f_\rho\,\{\!\{e\}\!\}_{\mathrm H}\sum_{n=0}^{N_{\mathrm T}}\frac{\mathsf j_e^{2n}}{2n+1}$$
+
+(Eq. (13)): $N_{\mathrm T}=0$ is Aρ-He and $N_{\mathrm T}\to\infty$ the Ranocha flux. The
+internal-energy factor comes from $[\![\ln e]\!]$ expanded while
+$[\![1/e]\!]$ is kept exact, which produces the harmonic mean. The authors
+call the family asymptotically entropy conservative: the entropy
+production of the spatial discretization can be reduced at will by
+raising $N_{\mathrm T}$, with algebraic operations only (§1, §4). The series is the
+one Ranocha et al. truncate to evaluate the logarithmic mean (Algorithm 2,
+below, with $\varsigma=\mathsf j_a^2$) *(compiler check, not in the
+sources)*; here it is truncated by design, not to machine precision.
+
+- **PEP for every $N_{\mathrm T}$.** With $v\equiv v_0$ and $p\equiv p_0$ constant,
+  $\{\!\{e\}\!\}_{\mathrm H}=p_0/\big((\gamma-1)\{\!\{\rho\}\!\}\big)$ and
+  $\mathsf j_e=-\mathsf j_\rho$, so the two truncated sums cancel and
+  $f_{\rho e}=v_0p_0/(\gamma-1)$, provided the same $N_{\mathrm T}$ is used in both
+  expansions (§4, Eq. (14)).
+- **Against KEEP($N_{\mathrm T}$).** The expansion of Tamaki, Kuya & Kawai also
+  expands $[\![1/e]\!]$; its $N=1$ member,
+  $f_{\rho e}=f_\rho\{\!\{e\}\!\}(1+\mathsf j_e^2/3)/(1+\mathsf j_e^2)$ in this
+  notation, is not PEP (§4, §5).
+- **Evidence.** On a 1D [density wave](/benchmarks/density-wave-advection.md) ($\rho_0=1+\exp(\sin2\pi x)$,
+  $v=p=1$, 61 points, RK4, CFL 0.01) Aρ-Ae diverges at $t\approx22$ while
+  Aρ-He and Gρ-Ge run to $t=100$; AEC(1) and KEEP(1) conserve entropy
+  best, but KEEP(1) shows spurious pressure oscillations (Fig. 1b plots
+  $p-p_0$ on a $10^{-7}$ scale) and AEC(1) none (§5, Fig. 1); the authors
+  state that the Ranocha flux gives entropy production at machine zero
+  (§5, not plotted). On the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($32^3$, fourth
+  and sixth order by flux differencing) Aρ-He and Gρ-Ge beat Aρ-Ap and
+  Aρ-Ae in entropy conservation, and AEC(1) and KEEP(1) keep the entropy
+  integral most nearly constant (Fig. 2).
+
+The authors state that the AEC fluxes are cheaper than logarithmic-mean
+fluxes and need no protection against division by zero, without timings
+(§1, §6). Their observation that, with a pure sine density, global entropy
+was conserved by symmetry despite local non-conservation is why they use
+a non-sinusoidal profile (§5).
+
+## Five-species air with vibrational energy
+
+[Peyvan et al. (2023)](/sources/peyvan-2023.md) derive EC fluxes for the
+1D Euler equations of five-species air ($N$, $O$, $NO$, $N_2$, $O_2$) with
+a rigid-rotor harmonic-oscillator internal energy (§3, Eqs. (60)–(91);
+arXiv v1). Page-local symbols, per species $k$: partial density $\rho_k$,
+gas constant $r_k$, formation energy $e^0_k$, vibrational characteristic
+temperature $T^{\mathrm v}_k$, $\mathsf a_k=3/2$ for atoms and $5/2$ for
+diatomic molecules, and the vibration switch $\mathsf b_k\in\{0,1\}$, so
+that $e_k=e^0_k+\mathsf a_kr_kT+\mathsf b_kr_kT^{\mathrm v}_k/(e^{T^{\mathrm v}_k/T}-1)$.
+The entropy is the multicomponent entropy of Gouasmi et al.,
+$\rho s=\sum_k\rho_ks_k$ with $s_k=\int c_{v,k}/T\,dT-r_k\ln\rho_k$, and
+Tadmor's condition is worked in the parameter vector $(\rho_k,v,1/T)$.
+The vibrational term needs the jump of $\ln(e^{T^{\mathrm v}_k/T}-1)$, which
+the authors write with a new composite mean: for $z=1/T$,
+
+$$[\![\ln(e^{T^{\mathrm v}_kz}-1)]\!]=\frac{[\![z]\!]}{\{\!\{z\}\!\}_{\ln\exp,k}},\qquad \{\!\{z\}\!\}_{\ln\exp,k}=\{\!\{e^{T^{\mathrm v}_kz}-1\}\!\}_{\log}\,\{\!\{z\}\!\}_{\exp,k},\quad \{\!\{z\}\!\}_{\exp,k}=\frac{[\![z]\!]}{[\![e^{T^{\mathrm v}_kz}]\!]}$$
+
+(Eqs. (78)–(82); page-local means, details on
+[logarithmic mean](/operators/logarithmic-mean.md)). The flux is
+
+$$\begin{aligned}
+f_{\rho_k}&=\{\!\{v\}\!\}\{\!\{\rho_k\}\!\}_{\log},\qquad f_{\rho v}=\frac{\sum_kr_k\{\!\{\rho_k\}\!\}}{\{\!\{1/T\}\!\}}+\{\!\{v\}\!\}\sum_kf_{\rho_k},\\
+f_E&=\sum_k\Big(e^0_k-\mathsf b_kr_kT^{\mathrm v}_k+\frac{\mathsf a_kr_k}{\{\!\{1/T\}\!\}_{\log}}+\frac{\mathsf b_kr_k}{\{\!\{1/T\}\!\}_{\ln\exp,k}}-\tfrac12\{\!\{v^2\}\!\}\Big)f_{\rho_k}+\{\!\{v\}\!\}f_{\rho v}
+\end{aligned}$$
+
+(Eqs. (89)–(91)). The authors state that EC fluxes had not been derived
+before for hypersonic gases whose internal energy has translational,
+rotational and vibrational parts; Gouasmi et al. covered constant or
+polynomial-in-$T$ heat capacities (§1). With $\mathsf b_k=0$ the flux has
+the structure of a frozen multicomponent EC flux, its momentum flux is
+$\{\!\{v\}\!\}$ times the total mass flux plus a pressure mean, and the
+kinetic part of $f_E$ is $\big(\{\!\{v\}\!\}^2-\tfrac12\{\!\{v^2\}\!\}\big)\sum_kf_{\rho_k}=\tfrac12v^-v^+\sum_kf_{\rho_k}$,
+the kinetic-energy-preserving structure of the previous section *(compiler
+check, not in the sources)*; the authors state the KEP property by citing
+Ranocha, without showing it (end of §3).
+
+With EC volume and surface fluxes and no stabilization, a smooth periodic
+five-species problem keeps the global entropy rate at order $10^{-5}$ up to
+$t=0.1$ instead of machine zero. The authors attribute the residual to the
+$\sim10^{-7}$ tolerance of the Newton inversion from energy to temperature
+in Mutation++, without varying the tolerance (§4.4, Fig. 4). The flux is
+the volume flux of their entropy-stable [DGSEM](/methods/dgsem.md) with
+subcell blending.
 
 ## Multicomponent Euler
 
@@ -446,13 +574,27 @@ Table 2).
   Renac's mixture of polytropic gases and Li, Duan & Tang's stiffened gas
   both have constant heat capacities *(compiler check, not in the
   sources)*.
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) deliberately
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) deliberately
   leave Tadmor-type EC fluxes out of their split-form study: they need the
   logarithmic mean, are hard to recast as classical finite-difference
   split forms, need protection against division by zero and cost more
   (§1, citing Tamaki et al.). They state that their induced-equation
   entropy analysis is "basically equivalent" to Tadmor's theory with
-  $\eta=-\rho s$, without proving it (§4.2.5).
+  $\eta=-\rho s$, without proving it (§4.2.5). Their later note (De
+  Michele & Coppola (2023b)) approaches the same fluxes from the other
+  side, with algebraic truncations of the logarithmic means.
+- Peyvan et al. print the stable form of the exponential mean as
+  $\frac{\{\!\{a\}\!\}}{e^{T^{\mathrm v}_k\{\!\{a\}\!\}}}\frac{\mathsf j_a}{\sinh(T^{\mathrm v}_k\mathsf j_a)}$
+  (Eq. (86)); the argument of $\sinh$ must be $T^{\mathrm v}_k\{\!\{a\}\!\}\mathsf j_a$,
+  which their Eq. (87) uses. The truncation error of their series, which
+  has only even powers, is $O(x^8)$, not the printed $O(x^9)$ *(compiler
+  check, not in the sources)*.
+- Peyvan et al.'s Eq. (62) prints a negative vibrational heat capacity;
+  the derivative of $T^{\mathrm v}_k/(e^{T^{\mathrm v}_k/T}-1)$ in $T$ is
+  positive, and their entropy (64) follows from the positive sign
+  *(compiler check, not in the sources)*. Their entropy variables (66)
+  differ from the Gibbs form by a constant $r_k$, which does not change
+  the jumps or the flux.
 
 # Citations
 
@@ -468,4 +610,6 @@ Table 2).
 - [Edoh (2022)](/sources/edoh-2022.md) — §2 Eqs. (3)–(6), §3.2 Remark 4, Table 4.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, §3.5 Eqs. (58)–(62), Table 1, §4.1 (arXiv v1).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §4.1.1 Eqs. (13)–(19), Thm. 4.2, Remarks 4.1–4.2, §4.1.2 Eqs. (20)–(22), §4.2, App. B.2 (arXiv v2).
-- [De Michele & Coppola (2023)](/sources/demichele-2023.md) — §1, §4.2.5 (arXiv v1).
+- [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §1, §4.2.5 (arXiv v1).
+- [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §1–§6, Eqs. (1)–(15), Figs. 1–2 (arXiv v2).
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §3 Eqs. (60)–(91), §4.4 Fig. 4 (arXiv v1).

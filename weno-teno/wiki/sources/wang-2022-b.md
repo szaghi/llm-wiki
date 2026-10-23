@@ -142,7 +142,7 @@ is merged complete into the [bibliography](/bibliography.md) with `citedby`
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–5 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–6 (2026-10-22/23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Affine-invariant WENO weights](/methods/affine-invariant-weno.md)
@@ -154,6 +154,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–5 (2026-10-22/23). This source
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Positivity-preserving flux limiter (Hu–Adams–Shu)](/methods/positivity-preserving-flux-limiter.md)
 * [Scale and affine invariance](/properties/scale-invariance.md)
+* [Shallow-water equations](/definitions/shallow-water-equations.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [Smoothness indicators](/definitions/smoothness-indicator.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)

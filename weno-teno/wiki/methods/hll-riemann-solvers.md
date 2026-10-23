@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -36,7 +36,7 @@ to extremize the speeds over all contributing stencils (§III, §IV) — and tha
 *(compiler check, not in the sources: the subsonic HLL flux above is term by term the
 [central-upwind](/methods/central-upwind-scheme.md) flux with $s^\pm=a^\pm$, and the
 intermediate state of the central-upwind anti-diffusion of
-[Wang et al. (2023)](/sources/wang-2023-b.md) (Eq. (5)) is $u^{\mathrm{HLL}}$ with the same
+[Wang et al. (2023b)](/sources/wang-2023-b.md) (Eq. (5)) is $u^{\mathrm{HLL}}$ with the same
 speeds.)*
 
 [Liu et al. (2021)](/sources/liu-2021.md) (§2, Eq. (4)) use the single formula
@@ -210,6 +210,31 @@ $p^*\le p^\pm$ and $\mathsf z^\pm=\sqrt{1+\frac{\gamma+1}{2\gamma}(p^*/p^\pm-1)}
 otherwise (page-local $\mathsf z^\pm$), chosen "to better adapt to our high order
 scheme" in a moment-based [Hermite WENO](/methods/hermite-weno.md).
 
+## HLL fans with linear data and with phase change
+
+- **Generalized Riemann problem.** The HLL-GRP solver evolves the three states of the HLL fan
+  linearly in time from piecewise-linear data, obtains the gradient of the intermediate state
+  from a Rankine–Hugoniot-based least-squares system, and gives the one-step second-order flux
+  $h^{\mathrm{HLL}}-A(u^{\mathrm{HLL}})^2\,\partial_xu^{\mathrm{HLL}}\,\Delta t/2$ in the subsonic case
+  ([Liu et al. (2023a)](/sources/liu-2023.md), §3.2.1, Eqs. (57)–(66); written out on
+  [generalized Riemann problem](/methods/generalized-riemann-problem.md)). In their
+  multidimensional ideal-MHD scheme the speeds are the Wu–Shu estimates: $s^-$ is the minimum of
+  the smallest eigenvalues of both states and of
+  $\min(v_1^-,\bar v_1)-\varphi_{\mathrm f}(u^-)-\lvert B^--B^+\rvert/(\sqrt{\rho^-}+\sqrt{\rho^+})$, with
+  $\bar v_1$ the $\sqrt\rho$-weighted normal velocity and $\varphi_{\mathrm f}$ a modified fast speed
+  built with $(\gamma-1)p$ (page-local), and $s^+$ symmetrically; $0$ is included in the
+  minimum and maximum for the weights of the Godunov–Powell source and omitted for the GRP fan
+  (Eqs. (10)–(15), (59)–(60)). The forward-Euler and SSP-RK2 comparison schemes use the plain HLL
+  flux of Wu and Shu (§4).
+- **Non-conservative first-order limit.** The first-order path-conservative central-upwind scheme
+  is the semi-discrete HLL scheme for non-conservative systems
+  ([Kurganov et al. (2023)](/sources/kurganov-2023.md), Remark 2.2, citing Castro, Morales de
+  Luna and Parés 2017; [path-conservative schemes](/methods/path-conservative-scheme.md)).
+- **Phase change.** Long et al. extend an HLL-type fan with Davis speeds to four waves (two outer
+  shocks, a phase interface, a contact) for the liquid–vapour Riemann problem with evaporation
+  and condensation, closed by a density-ratio supplement and the Hertz–Knudsen mass flux
+  ([Long et al. (2023)](/sources/long-2023.md), §3.2; [Riemann solvers with phase change](/methods/phase-change-riemann-solver.md)).
+
 ## Relaxation solvers
 
 [Renac (2021)](/sources/renac-2021.md) (§4, Eqs. (51)–(56), App. C) builds an
@@ -370,7 +395,7 @@ Several sources pair or compare HLL-type solvers with other interface fluxes:
   flux-difference, flux-vector-splitting or AUSM-type flux (§1).
 - **Primitive-variable Riemann solver (PVRS)** in the second-order MUSCL–Hancock solver of the
   [immersed-boundary](/methods/immersed-boundary-method.md) method of
-  [Wang et al. (2022)](/sources/wang-2022.md) (§2.1, Eqs. (9)–(11)), chosen "to avoid the
+  [Wang et al. (2022a)](/sources/wang-2022.md) (§2.1, Eqs. (9)–(11)), chosen "to avoid the
   correction of the Riemann solver for the immersed method":
   $$p^*=\frac{C_Rp_L+C_Lp_R+C_LC_R(v_L-v_R)}{C_L+C_R},\qquad s^*=\frac{C_Lv_L+C_Rv_R+p_L-p_R}{C_L+C_R},\qquad C_K=\sqrt{\gamma p_K\rho_K},$$
   with $\rho^*_K=\rho_K+(p^*-p_K)/c_K^2$; HLL is used for the reactive case (§3.6).
@@ -435,7 +460,7 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) — §4, §5.2.3 (Figs. 8–9) (arXiv v2).
 - [Ye et al. (2022)](/sources/ye-2022.md) — §3, §4.9 (Figs. 10–12).
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §4.2, Table 2 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — Eq. (5) (intermediate state).
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — Eq. (5) (intermediate state).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §3.2–3.3 (Eqs. (24)–(70), Lemma 1, Thm. 1) (arXiv v1).
 - [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — §1, §2.1 (Eqs. (2.5)–(2.7)) (arXiv v1).
 - [Renac (2021)](/sources/renac-2021.md) — §1.3, §4 (Eqs. (51)–(56), Lemma 4.1), §7, Apps. C–D (arXiv v3).
@@ -449,7 +474,7 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §4.1, §4.2 (arXiv v3).
 - [Peng et al. (2022)](/sources/peng-2022.md) — §2.3 (Eqs. (13)–(14)), §4.3 (Table 5) (accepted manuscript).
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1, §2.2.
-- [Wang et al. (2022)](/sources/wang-2022.md) — §2.1 (Eqs. (9)–(11)), §3.6.
+- [Wang et al. (2022a)](/sources/wang-2022.md) — §2.1 (Eqs. (9)–(11)), §3.6.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §2.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §1, §2.2–2.3 (Eqs. (2.5)–(2.8)), §3.2 (Eqs. (3.17)–(3.18)), §4 (Eqs. (4.1)–(4.9)), §5.1–5.7.
 - [Ji et al. (2022)](/sources/ji-2022.md) — §4 (Eqs. (29)–(36)), §5.
@@ -462,3 +487,6 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3, App. A (Figs. A.13–A.16) (accepted manuscript).
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, Table 2 (arXiv v1).
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1.
+- [Liu et al. (2023a)](/sources/liu-2023.md) — §2.2 (Eqs. (10)–(15)), §3.2.1 (Eqs. (57)–(66)), §4.
+- [Kurganov et al. (2023)](/sources/kurganov-2023.md) — Remark 2.2.
+- [Long et al. (2023)](/sources/long-2023.md) — §3.2 (Eqs. (13)–(15)).

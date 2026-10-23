@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -267,6 +267,35 @@ the [double Mach reflection](/benchmarks/double-mach-reflection.md) at
 $2400\times600$ elements, $N=3$, shows Kelvin–Helmholtz roll-ups near the
 triple point (§5.2–§5.7).
 
+**Peyvan et al. (2023).** [Peyvan, Shukla, Chan & Karniadakis (2023)](/sources/peyvan-2023.md)
+use the element-wise blending of Hennemann et al., "identical" to it, in
+an entropy-stable DGSEM for one-dimensional strong-shock and reacting
+problems: $\alpha$ is constant per element, set from the decay of the
+modal energy and capped at a user-defined $\alpha_{\max}=0.5$, and the
+subcell fluxes are HLLC (§2.3.1, Eqs. 55–56). Against spectral
+difference and flux reconstruction stabilized by the adaptive entropy
+filter, Zhang–Shu positivity-preserving modal DG and positivity-preserving
+fifth-order finite-difference WENO (§4.1–4.3):
+
+| Test | Setup | Finding |
+|---|---|---|
+| [Leblanc shock tube](/benchmarks/leblanc-shock-tube.md), pressure ratio $10^9$ | 1000 elements, $N=3$, Chandrashekar volume flux | smallest oscillations; discontinuities smeared more than by FR and SD, which the authors attribute to the per-element shock detection; FR and SD overshoot, SD the most (Fig. 1) |
+| Mach-10 variant of the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) | 170 elements, $N=3$, reference on 3000 | resolves the dip at $x=2.82$, which SD and FR miss, and the valley at $x=3.265$, which FR misses (Fig. 2) |
+| three-species reacting Sod | 800 elements, $N=3$ | correct solution, no oscillations, comparable with WENO; modal DG gives non-physical species densities (Fig. 3) |
+
+They conclude that the blended scheme is the most robust, with the
+fewest tuning parameters, and extend it to five-species air in
+thermochemical non-equilibrium with new entropy-conservative fluxes
+([entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
+
+**Lin et al. (2023).** [Lin, Chan & Tomas (2023)](/sources/lin-2023.md)
+read their sparse low-order DG scheme as a subcell finite-volume scheme
+with Lax–Friedrichs-type fluxes on the node graph (§6.2, Eqs. 47–48),
+which is how they prove its semi-discrete entropy stability, and state
+that their approach most closely resembles those of Hennemann et al. and
+Rueda-Ramírez & Gassner; the blending is element-wise, with a
+coefficient from positivity constraints ([convex limiting](/methods/convex-limiting.md)).
+
 ## Element switching on finer, equidistant subcells
 
 [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) extend FLEXI's
@@ -328,6 +357,13 @@ that replace the polynomial of a troubled cell, and develop the latter
 ([WENO limiters for DG](/methods/weno-limiter-dg.md)); the blending of this page instead mixes a
 low-order update into the DG one, by an amount set a priori or by target
 bounds.
+[Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.4) find subcell
+limiters attractive on uniform meshes but "not as straightforward" on
+unstructured meshes of arbitrary elements with transition layers and
+poor-quality cells, and possibly restrictive on the time step, while
+acknowledging their extension to Voronoi meshes; they replace the higher
+DG modes of troubled cells by a same-order CWENOZ reconstruction instead
+([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
 ## Qualifications
 
@@ -359,6 +395,11 @@ bounds.
   least-squares problem is overdetermined for $N_{\mathrm{FV}}>N+1$. Their
   speedups are single-core and load balancing is "work in progress"
   (§8.3, §9).
+- Peyvan et al. call the blending "not problem dependent" (§4.2), yet
+  $\alpha_{\max}$ is user-defined and "usually kept at 0.5"; their claim
+  of the "least computational effort" (Abstract) is not supported by any
+  timing, and their preference over WENO for parallel scaling (§5) by
+  no scaling data. All their tests are one-dimensional.
 - Printed slips of Rueda-Ramírez et al. (2021, arXiv v1) that touch this
   page: the middle case of the clipping (86) reads
   "$\tilde\alpha_{\min}\le\alpha\le\alpha_{\max}$" for
@@ -374,4 +415,7 @@ bounds.
 - [Rueda-Ramírez et al. (2021)](/sources/ruedaramirez-2021.md) — arXiv v1: §1; §3 (Eqs. (28), (31)–(37), (41)–(47)); §3.3 (Lemmas 1–3, Eqs. (52)–(71)); §4 (Eqs. (72)–(81)); §5 (Eqs. (82)–(88)); §6 (Tables 1, Figs. 5–19); App. C (Lemmas 4–6, Eq. (150)).
 - [Pazner (2021)](/sources/pazner-2021.md) — arXiv v1: §4.1.3–§4.1.4 (Figs. 2–4); §4.2.2 (Props. 8–11); §4.4; §5 (Table 1, Figs. 7–13).
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1 (subcell finite-volume limiters named as a class).
+- [Peyvan, Shukla, Chan & Karniadakis (2023)](/sources/peyvan-2023.md) — arXiv v1: Abstract; §2.3.1, Eqs. (47)–(56); §4.1–4.3, Figs. 1–3; §5.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §6.2, Eqs. (47)–(48).
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.4.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §3.3, Eq. (18); §4.1–4.3, Eqs. (19)–(31), Fig. 2; §7.2; §8.1, §8.6–§8.9, Tables 1, 3, 6, Figs. 13, 16; §9.

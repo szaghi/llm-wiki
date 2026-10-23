@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Free-stream preservation"
-description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers the DGSEM identity, corrected and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes with the Duan–Tang proof, the linear-interpolation metric recipe for gradient-based finite differences, and an untested TENO claim."
+description: "A discretization on curvilinear or moving grids is free-stream preserving when a uniform state stays an exact discrete steady solution, which requires discrete metric identities; the page covers DGSEM and subcell metrics, warped-mesh tests, geometric conservation laws on moving meshes, constant states under divergence-free transport, gradient-based finite differences, and an untested TENO claim."
 status: established
-aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization]
+aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Free-stream preservation
@@ -228,6 +228,61 @@ moving-mesh scheme (Duan & Tang, Remark 2.1, Thm. 3.2;
 prints a free-stream test; the property is proved, and the accuracy tests
 on moving meshes reach the design orders (Duan & Tang, Exs. 6.1, 6.7).
 
+**Appending the GCL as a conserved equation.**
+[Ramani & Shkoller (2023)](/sources/ramani-2023.md) take a third route in
+their finite-difference WENO arbitrary-Lagrangian–Eulerian scheme on
+meshes moved by smooth adaptive meshing
+([adaptive moving mesh](/methods/adaptive-moving-mesh.md); arXiv v2). They
+append the geometric conservation law $\partial_tJ-\partial_{\xi_j}(\text{cofactor}\cdot\partial_t\mathsf X)=0$
+(page-local mesh map $\mathsf X$) to the Euler system as a fifth conserved
+equation, discretized with the same fluxes, and evolve $J$ with it instead
+of recomputing it from the determinant (§6.1.3, Eqs. (44)–(46)). The
+cofactor metrics are fourth-order central differences of $\mathsf X$, and
+every interface velocity is the fourth-order linear average
+$(-\mathsf b_{i-1}+7\mathsf b_i+7\mathsf b_{i+1}-\mathsf b_{i+2})/12$ of a quantity $\mathsf b$ (page-local); for a constant
+state the scheme is then linear in the data, which is their argument for
+free-stream preservation (§6.2.1, Eqs. (49)–(51)). On a mesh oscillating
+as $\mathsf X_1=\xi_1+0.4\sin(3\pi t/T)\sin(\tfrac{3\pi}8(\xi_2+8))$ and
+$\mathsf X_2=\xi_2+0.8\sin(3\pi t/T)\sin(\tfrac{3\pi}8(\xi_1+8))$ on
+$[-8,8]^2$, $50\times50$, uniform data stay uniform to
+$\lVert\rho-1\rVert_{L^\infty}=9.10\times10^{-14}$ at $T=80$ (Eq. (52)). The
+authors take the GCL as equivalent to free-stream preservation for their
+system (§6.1.3) and state that "many standard schemes (including WENO)
+fail to preserve the free-stream" on dynamic adaptive meshes (§6.1.3);
+the sources above instead distinguish the GCL from the discrete metric
+identities that a nonlinear reconstruction can break.
+
+## Constant states under variable-velocity transport
+
+A related property holds on Cartesian grids for
+$\partial_tu+\nabla\cdot(v\,u)=0$ with a given divergence-free velocity
+field $v$: a constant $u$ is an exact solution, and a
+scheme preserves it only if its discrete velocity is discretely
+divergence-free. Pazner (2021) notes this for the corrected low-order
+scheme above (§3.3). [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md)
+prove it for the third-order Cartesian [Active Flux](/methods/active-flux.md)
+method (§4.2–4.3; arXiv v2):
+
+- for solid-body rotation, with exact characteristics, the flux of a
+  constant through an $x$-edge depends only on $y$ and through a $y$-edge
+  only on $x$, so the flux differences cancel (Remark 4.1);
+- for a time-dependent swirl, the velocity at each edge midpoint is the
+  centred difference of the stream function between the two ends of the
+  edge, and the flux freezes the velocity at the edge midpoint; the update of a constant then reduces to
+  differences of the stream function at the four cell corners that cancel
+  exactly (Thm. 4.2, Eqs. (25)–(28));
+- on adaptively refined grids with global time stepping the coarse flux at
+  a coarse–fine edge equals the mean of the two fine fluxes, and the
+  property survives (Cor. 4.3);
+- with subcycling the intermediate-time fine fluxes are not balanced by
+  coarse fluxes: constant data on levels 3–4 have error $10^{-13}$ at
+  $t=1$ against about $10^{-16}$ without subcycling (§4.3).
+
+The mechanism is a discrete stream function, not a metric identity; the
+role it plays, a discrete divergence-free condition, is the one of the
+surface conservation laws on curvilinear grids *(compiler check, not in
+the sources)*.
+
 ## Gradient-based finite differences on curvilinear and deforming grids
 
 [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) give a recipe
@@ -317,7 +372,10 @@ the source.
   identities and show free-stream preservation numerically. Li, Duan &
   Tang (2022) cite the proof for moving meshes; Duan & Tang (2022) give it
   (Prop. 3.2), and Mossier et al. (2022) show it numerically for
-  mixed-degree DG with finite-volume subcells, without a proof.
+  mixed-degree DG with finite-volume subcells, without a proof. Ramani &
+  Shkoller (2023) argue it from linearity and test it on a moving mesh;
+  Calhoun et al. (2023) prove constant-state preservation for their
+  variable-velocity Active Flux schemes (Thm. 4.2, Cor. 4.3).
 - **Chandravamsi et al.'s proof.** The metric-identity cancellation is
   shown symbolically, partly in a supplementary notebook, for MEG6 only;
   for MIG4 it is asserted (§7). The first lines of their Eqs. (41)–(42)
@@ -355,3 +413,5 @@ the source.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.1 Eqs. (19)–(21), §8.1 Eq. (39), Table 1.
 - [Duan & Tang (2022)](/sources/duan-2022.md) — §2 Eq. (2.9), Remark 2.1, §3.3 Eqs. (3.5), (3.8), (3.15)–(3.18), Prop. 3.2, Thm. 3.2, Remark 4.1, App. A–B, Exs. 6.1, 6.7 (arXiv v1).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §1, §3, §4.2 Eqs. (10)–(14), §5.1, §7 Eqs. (36)–(44), §8.1–8.2 Table 2 Figs. 8–12, §9.4, App. D (arXiv v1).
+- [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §6.1.3 Eqs. (44)–(46), §6.2.1 Eqs. (49)–(52) (arXiv v2).
+- [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2–4.3, Remark 4.1, Thm. 4.2, Cor. 4.3, Eqs. (25)–(28) (arXiv v2).

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Central WENO (CWENO)"
-description: "Central WENO schemes subtract weighted low-order candidates from one central high-order polynomial and recombine them nonlinearly, so the linear weights may be any positive numbers summing to one and the result is a full polynomial on the cell; the page gives CWENO3, unstructured CWENO, WENO-ZQ in 2-D and its scale-invariant form on triangles, predictor-based weights, and costs."
+description: "Central WENO schemes subtract weighted low-order candidates from one central high-order polynomial and recombine them nonlinearly, so the linear weights may be any positive numbers summing to one and the result is a full polynomial on the cell; the page gives CWENO3, unstructured CWENO, WENO-ZQ and its scale-invariant form on triangles, CWENOZ as a DG limiter, predictor-based weights and costs."
 status: established
-aliases: [CWENO, central WENO, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
+aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Central WENO (CWENO)
@@ -89,6 +89,36 @@ Riemann problem CWENO5 is less oscillatory than WENO3 (§4.3;
 primitive variables is needed to keep pressure and velocity free of oscillations at interfaces with
 variable $\gamma$ (§4.2, Figs. 3–4; [five-equation model](/definitions/five-equation-model.md),
 [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
+
+**CWENOZ as a DG limiter.** Maltsev, Yuan, Jenkins, Skote & Tsoutsanis (2023, §2.2.2, Eqs. (18)–(28))
+use the unstructured CWENOZ of Tsoutsanis & Dumbser (as they recall it) inside a hybrid
+discontinuous Galerkin–finite-volume scheme in [UCNS3D](/software/ucns3d.md):
+
+- the polynomials are least-squares fits in **physical space**, without the reference-space map of
+  the authors' earlier work, in the same volume-normalized Taylor basis as the modal DG solution,
+  with central stencils of $M=2K$ cells and a pre-stored pseudo-inverse (§2.2.1;
+  [gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md));
+- the directional "Type3" stencils carry linear polynomials, as in Tsoutsanis et al. (2021);
+- the weights are of WENO-Z type,
+  $$\alpha_s=d_s\Big(1+\frac{\tau}{\epsilon+\beta_s}\Big),\qquad
+  \tau=\Big(\frac{1}{s_t-1}\sum_{s\ge1}|\beta_s-\beta_0|\Big)^{b},\qquad b=4,\ \epsilon=10^{-14}$$
+  (page-local $\tau$, $b$; their central index 1 written 0 here), with indicators that are quadratic
+  forms in the coefficients with a precomputed oscillation-indicator matrix;
+- the central weight follows the same rule as above, $d_0=1-1/d_0'$, with $d_0'=10^7$; the authors
+  state, citing Tsoutsanis & Dumbser, that any $d_0'>10^3$ gives the design order and that CWENOZ,
+  unlike CWENO, is insensitive to the magnitude of the central weight (§2.2.2, §2.4).
+
+In troubled cells the CWENOZ coefficients overwrite the higher DG modes, with the cell average kept
+and the same order as the DG polynomial (DG($\mathbb P^N$)–FV(CWENOZ$(N+1)$)). On the isentropic vortex
+pure CWENOZ of the same degree reaches the design order only on finer meshes than DG: on quadrilaterals
+at $\mathbb P^4$ the $L^2$ error falls from $7.64\times10^{-2}$ to $7.20\times10^{-4}$ over 8 to 64 edges,
+against $2.97\times10^{-4}$ to $1.14\times10^{-9}$ for DG (Table 1). With every cell forced to the
+finite-volume branch the hybrid keeps the design order on smooth advection (3.01, 4.04, 4.99 for
+$\mathbb P^2$–$\mathbb P^4$; Table B.4) ([WENO limiters for DG](/methods/weno-limiter-dg.md),
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)). *(Compiler check, not in the
+sources: the ratio $\tau/(\epsilon+\beta_s)$ is of degree $2b-2=6$ in the data, so these weights depend
+strongly on its amplitude; see the homogeneity count on [WENO-Z](/methods/weno-z.md).)* Ji, Liang & Fu
+(2022) use $d_0'=10^4$ and Jiang–Shu-type weights in the same code family (below).
 
 ## WENO-ZQ
 
@@ -196,7 +226,10 @@ near shocks more likely (§2.4).
   local extrema; Zheng et al. (2022) describe it instead by the lower-order polynomials above; [multi-resolution WENO](/methods/multi-resolution-weno.md) nests
   the subtraction level by level. The fifth-order multi-resolution scheme of Wang et al. (2021, Step 6,
   Eq. (3.21)) assembles its interface value "as in" WENO-ZQ, i.e. by this CWENO combination, with
-  any positive linear weights.
+  any positive linear weights. Wang, Zhu, Wang & Zhao (2023c, Eqs. (3.17)–(3.18)) state the same
+  Levy–Puppo–Russo decomposition for their multi-resolution WCNS interpolation, and Gu, Li, Cheng & Shu
+  (2023, §2.4) use the same subtraction, after Zhu & Shu, in a third-order two-level reconstruction on
+  moving quadrilaterals, whose linear weights need not change with the cell shapes.
 - **Third order.** Deng (2023, §1) recalls third-order compact CWENO schemes and judges that their
   performance "is usually dependent on parameters in an ad hoc way"; Deng's answer is the
   [ROUND](/methods/round-scheme.md) family.
@@ -231,6 +264,9 @@ cognate unequal-stencil approaches when introducing TENO-AA
   [smoothness indicators](/definitions/smoothness-indicator.md). The name WENO-ZQ refers to Zhu and
   Qiu, not to the WENO-Z of Borges et al.
 - Puppo et al. (2023, Eq. (7)) print $C(x-x_j^2)$ for $C(x-x_j)^2$ in the central polynomial.
+- Maltsev et al. (2023) write "$\lambda_1=10^7$" in the tests for the non-normalized central weight
+  $d_0'$ of their Eq. (24), and attribute the two NAD margins of their troubled-cell indicator to
+  different references in §2.5 and App. C.
 
 # Citations
 
@@ -248,3 +284,6 @@ cognate unequal-stencil approaches when introducing TENO-AA
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §2.4, Eqs. (18)–(22); §5.5, Fig. 11; §5.8; §5.10, Table 7.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §6.3.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
+- [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2, Eqs. (10)–(28); §2.4; §3.1, Table 1; App. B, Table B.4.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eqs. (3.17)–(3.18).
+- [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.

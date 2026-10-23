@@ -28,7 +28,7 @@ print no $\gamma$ for their explosions.
 ## Long-time cylindrical explosion
 
 [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 6 (arXiv v2) and
-[Wang et al. (2023)](/sources/wang-2023-b.md) Ex. 6 print the same data:
+[Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 6 print the same data:
 $(\rho,v_1,v_2,p)=(1,0,0,1)$ for $x^2+y^2<0.16$, i.e. inside the circle
 of radius 0.4, and $(0.125,0,0,0.1)$ outside, computed in the first
 quadrant $[0,1.5]^2$ with solid walls at $x=0$ and $y=0$ and free
@@ -55,7 +55,7 @@ Wendroff.
 | Source | Low state inside | Domain and boundaries | Grid | $t$ |
 |---|---|---|---|---|
 | [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 7 | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[0,0.3]^2$, solid walls | $\Delta x=1/2000$ (also $1/2500$, $3/10000$ for the old scheme) | 2.5 |
-| [Wang et al. (2023)](/sources/wang-2023-b.md) Ex. 7 | same | $[0,0.3]^2$, solid walls | $\Delta x=3/4000$ | 2.5 |
+| [Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 7 | same | $[0,0.3]^2$, solid walls | $\Delta x=3/4000$ | 2.5 |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.9 | $(0.125,0,0,0.14)$ for $\lvert x+y\rvert<0.15$ and $\lvert x-y\rvert<0.15$ | "periodic box" $[-0.3,0.3]^2$ | $800\times800$ | 0.8 |
 
 The ambient state is $(1,0,0,1)$ in all three. The two printed regions
@@ -159,7 +159,7 @@ one on an adaptive moving mesh are recorded on
 # Citations
 
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — Exs. 6–7, Fig. 5.6 (arXiv v2).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — Exs. 6–7, Figs. 6–7.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — Exs. 6–7, Figs. 6–7.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4, §4.9, Fig. 21.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.6, §5.9, Figs. 12–17, 26 (preprint).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.9, Table 6.

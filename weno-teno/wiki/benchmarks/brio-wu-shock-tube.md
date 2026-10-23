@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Brio–Wu MHD shock tube"
-description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution contains a compound wave; used to validate MHD Riemann solvers, continuous finite elements, unstaggered central schemes, positivity-filtered DG, all-Mach IMEX WENO, and, in a relativistic two-fluid variant, entropy-stable finite differences."
+description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution contains a compound wave; used to validate MHD Riemann solvers, continuous finite elements, unstaggered central schemes, positivity-filtered DG, all-Mach IMEX WENO, a one-step HLL-GRP finite-volume scheme, and, in a relativistic two-fluid variant, entropy-stable finite differences."
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -30,16 +30,18 @@ and the field $B=(B_1,B_2,B_3)$ in the notation of the registry.
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2 | 1D | "as Mignone et al. (2007)", not reprinted | — | 5/3 | not printed |
 | [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.3 | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.2 | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,B_1,B_2,p)=(1,0,0,0.75,1,1)$ | $(0.125,0,0,0.75,-1,0.1)$ | 2 | 0.1 |
+| [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) §4.1 | $(-1,1)$, jump at $x=0$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
 
-Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong and Dzanic & Witherden
-print the same states; their final times differ (0.2 on $[0,1]$ for Dao
+Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong, Dzanic & Witherden and
+Liu, Feng & Wang print the same states; their final times differ (0.2 on $[0,1]$ for Dao
 & Nazarov, 0.1 on $[0,1]$ for Chen, Wu & Xiong and Dzanic & Witherden,
-0.25 on a domain twice as wide for Kanbar et al.). Chen, Wu & Xiong use
+0.25 on a domain twice as wide for Kanbar et al., 0.1 on the domain
+$(-1,1)$ for Liu, Feng & Wang). Chen, Wu & Xiong use
 reflective boundaries; Dzanic & Witherden run it on a one-element-wide
 2D quadrilateral mesh, Dirichlet left and right, periodic top and
 bottom. Lesur et al.
-state $\gamma=5/3$, while Dao & Nazarov, Chen, Wu & Xiong and Dzanic &
-Witherden print $\gamma=2$: the sources
+state $\gamma=5/3$, while Dao & Nazarov, Chen, Wu & Xiong, Dzanic &
+Witherden and Liu, Feng & Wang print $\gamma=2$: the sources
 run the problem in two variants of the ratio of specific heats, and the
 wave positions of one cannot be compared with those of the other. Both
 Dao & Nazarov and Lesur et al. write MHD in units without $4\pi$
@@ -97,6 +99,16 @@ regime) on $N=200$ against an explicit WENO reference on $N=2400$
 (Fig. 5.1, $\rho$ and $B_2$), as the shock-capturing check of an
 [asymptotic-preserving](/properties/asymptotic-preservation.md) scheme.
 
+**One-step HLL-GRP finite volumes.** Liu, Feng & Wang run the tube as
+the first test of their multidimensional finite-volume implementation of
+the HLL [generalized Riemann problem](/methods/generalized-riemann-problem.md)
+solver (one stage, second order in time), with locally divergence-free
+[WLS-ENO](/methods/wls-eno.md) reconstruction of primitive variables, on
+800 cells at CFL 0.8 on one core, against a forward-Euler HLL run on
+2000 cells as reference (Fig. 3). The one-step HLL-GRP profiles and
+those of a two-stage SSP-RK2 HLL scheme with the same reconstruction
+"basically coincide".
+
 **Relativistic two-fluid variant.** [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md)
 (§6.1.2) solve the two-fluid relativistic plasma equations (ion and
 electron relativistic fluids coupled to Maxwell's equations) on
@@ -127,10 +139,12 @@ diffusion) give (Figs. 1–2, Table 4):
 
 The same sources follow the tube with two-dimensional MHD tests: the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) (Dao & Nazarov,
-Lesur et al., Chen, Wu & Xiong, Dzanic & Witherden, Bhoriya et al. in
-its relativistic form), the [rotor](/benchmarks/mhd-blast-wave.md) (Dao &
-Nazarov, Lesur et al.), the [MHD blast wave](/benchmarks/mhd-blast-wave.md)
-(Chen, Wu & Xiong, Dzanic & Witherden, Bhoriya et al.) and a four-state
+Lesur et al., Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang,
+Bhoriya et al. in its relativistic form), the [rotor](/benchmarks/mhd-blast-wave.md) (Dao &
+Nazarov, Lesur et al., Liu, Feng & Wang), the [MHD blast wave](/benchmarks/mhd-blast-wave.md)
+(Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang, Bhoriya et al.), the
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
+(Liu, Feng & Wang) and a four-state
 MHD Riemann problem (Kanbar et al., recorded on
 [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)).
 
@@ -141,9 +155,11 @@ MHD Riemann problem (Kanbar et al., recorded on
   formula the right state has skin depth $4\times10^{-3}>\Delta x$
   *(compiler check, not in the sources)*.
 - No source reports an error norm; all comparisons are visual, against
-  a reference code (Athena, PLUTO), a fine-grid run or the literature.
-- All sources are read in arXiv versions (v1; Dzanic & Witherden v2,
-  Bhoriya et al. v2), not the versions of record. Kanbar et al. print no $\gamma$ for any test; Lesur et al. do
+  a reference code (Athena, PLUTO), a fine-grid run, a lower-order
+  run (Liu, Feng & Wang's forward-Euler reference) or the literature.
+- All sources except Liu, Feng & Wang (version of record) are read in
+  arXiv versions (v1; Dzanic & Witherden v2, Bhoriya et al. v2), not the
+  versions of record. Kanbar et al. print no $\gamma$ for any test; Lesur et al. do
   not reprint the data.
 
 # Citations
@@ -154,3 +170,4 @@ MHD Riemann problem (Kanbar et al., recorded on
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.3, Fig. 5.1 (arXiv v1).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.2, Eq. (42), Fig. 2 (arXiv v2).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.1.2, Figs. 1–2, Table 4 (arXiv v2).
+- [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.1, Fig. 3.

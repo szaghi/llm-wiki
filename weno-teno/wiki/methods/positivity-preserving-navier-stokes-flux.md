@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Positivity-preserving numerical fluxes for Navier–Stokes"
-description: "Zhang's Lax–Friedrichs-type flux of the total (advective minus diffusive) Navier–Stokes flux, with a coefficient that includes viscous stress and heat flux, keeps density and internal energy positive; the page gives its finite-volume, finite-difference-splitting and multicomponent LDG forms, the CFL conditions, the halve-and-restart time stepping and the evidence."
+description: "Zhang's Lax–Friedrichs-type flux of the total (advective minus diffusive) Navier–Stokes flux, with a coefficient that includes viscous stress and heat flux, keeps density and internal energy positive; the page gives its finite-volume, finite-difference-splitting and multicomponent LDG forms, its use as graph viscosity in entropy-stable nodal DG, the CFL conditions, the halve-and-restart time stepping and the evidence."
 status: established
 aliases: [positivity-preserving viscous flux, positivity-preserving Navier–Stokes flux, Zhang's positivity-preserving flux, positivity-preserving convection–diffusion flux splitting, total-flux Lax–Friedrichs flux]
 tags: [positivity, bound-preserving, numerical-flux, finite-difference, finite-volume, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Positivity-preserving numerical fluxes for Navier–Stokes
@@ -16,7 +16,7 @@ first-order updates that are positive by themselves. The compressible
 Navier–Stokes equations have no standard first-order
 positivity-preserving scheme for the diffusion operator, which
 [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) call "the key
-difficulty" (§1.1). The remedy that three sources of the bundle use, due
+difficulty" (§1.1). The remedy that four sources of the bundle use, due
 to X. Zhang (2017) as they recall it, treats the **total** flux
 $F(u,\nabla u)=f(u)-f^\nu(u,\nabla u)$, advective minus diffusive, as a
 single convective flux and applies a
@@ -78,7 +78,7 @@ that the forward-Euler cell-average update stays in $G$ if the interface
 states $u^\pm_{i\pm1/2}$ and the residual state
 $(\bar u_i-\varpi u^+_{i-1/2}-\varpi u^-_{i+1/2})/(1-2\varpi)$ are in $G$,
 under
-$$\frac{\Delta t}{\Delta x}\max_i a^{\mathrm{NS}}_{i+1/2}\le\varpi=\frac1{L(N_{\mathrm{GL}}-1)}.$$
+$$\frac{\Delta t}{\Delta x}\max_i a^{\mathrm{NS}}_{i+1/2}\le\varpi=\frac1{N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)}.$$
 The update is rewritten as a convex combination of the residual state
 and of four states of the form $u\pm F/a$, each admissible by the lemma.
 In 2D the Gauss × Gauss–Lobatto decomposition weighted by
@@ -169,6 +169,41 @@ $\mathsf b=0.001$). Du & Yang do the same with their exponential
 integrator, doubling its damping rate and halving $\Delta t$ on failure,
 and report very few recomputations (§6, Eqs. (6.1)–(6.2)).
 
+## As graph viscosity in entropy-stable nodal DG
+
+[Lin, Chan & Tomas (2023)](/sources/lin-2023.md) use the coefficient,
+"motivated by Zhang", as the graph-viscosity coefficient of a low-order
+scheme for nodal entropy-stable DG on quadrilaterals and triangles, with
+the viscous terms explicit (§5, Eqs. 16–20). With $n$ a unit normal and
+$\epsilon_0>0$ arbitrarily small ($10^{-14}$ in the runs), their
+coefficient is
+
+$$a^{\mathrm{NS}}(u,n)=\epsilon_0+\lvert n\cdot v\rvert+\frac{1}{2\rho^2e}\Big(\sqrt{\rho^2(q_{\mathrm h}\cdot n)^2+2\rho^2e\,\lVert n\cdot\tau_{\mathrm v}-pn\rVert^2}+\rho\lvert q_{\mathrm h}\cdot n\rvert\Big)$$
+
+(Eq. 18, their $\beta$; $q_{\mathrm h}$ and $\tau_{\mathrm v}$ computed
+from the auxiliary viscous variables of a local-DG discretization in
+entropy variables), and the coefficient of a node pair is the larger of
+the two nodal values times the norm of the low-order "normal" built from
+the skew part of the sparse SBP operator (Eq. 17). The low-order update is
+central flux differencing of the total flux plus this viscosity; written
+as a convex combination of bar states
+$\tfrac12(u_L+u_R)-\frac{1}{2a^{\mathrm{NS}}_{LR}}\,n\cdot\big(F(u_R)-F(u_L)\big)$,
+each admissible by the lemma above (Lemma 5.1), it keeps $u$ in $G$ under
+forward Euler and $\Delta t\le m_i/(2\lambda_i)$, $m_i$ the lumped mass and
+$\lambda_i$ the summed coefficients of node $i$ (page-local; Theorem 5.2,
+Eq. 27). The step scales as $O(h/N^2)$ (Remark 1). Taking the maximum of
+this coefficient and a maximum wave-speed bound makes the low-order
+scheme also semi-discretely entropy stable (Theorem 6.1, Eq. 45); for the
+Euler equations the coefficient never exceeds the wave speed, so the
+maximum is the wave-speed estimate itself (§6.2). The high-order update is blended
+with it element by element ([convex limiting](/methods/convex-limiting.md),
+[bound preservation](/properties/bound-preservation.md)). Unlike Guermond
+et al. and Dzanic & Witherden, who split off the parabolic terms
+implicitly, Lin et al. keep them explicit and accept the parabolic CFL
+condition, which the positivity step does not imply; the hyperbolic step
+scales as $O(h)$ and the parabolic one as $O(h^2\mathrm{Re})$, "not overly
+restrictive" for $h=O(1/\mathrm{Re})$ (§1, Remark 2, §5).
+
 ## Evidence
 
 - **Accuracy with the limiter active.** Fan et al. (2022), at
@@ -191,6 +226,19 @@ and report very few recomputations (§6, Eqs. (6.1)–(6.2)).
   one- and two-dimensional examples" (§5); Fan et al. (2021) state the
   same for the hybrid HWENO predecessor on their Examples 4.3–4.7.
   Neither shows the blow-ups.
+- **Nodal DG** (Lin et al., §8, Tables 2–5, 10–11). On a translating
+  steady viscous shock at $M_0=3$ the low-order scheme is first order in
+  $L^1$ (rates 0.84–0.97); the limited scheme converges at rates the
+  authors describe as between $O(h^N)$ and $O(h^{N+1/2})$, limiting being
+  active only on the coarsest mesh (e.g. $N=5$, $N_{\mathrm{el}}=160$ elements, page-local $N_{\mathrm{el}}$:
+  $6.652\times10^{-7}$, rate 6.13). At $M_0=20$, $\mu=0.001$, the
+  unlimited entropy-stable DG fails on coarse meshes and the limited one
+  converges, and is "virtually identical" to the unlimited one at
+  $N_{\mathrm{el}}=1600$. The [Daru–Tenaud viscous shock tube](/benchmarks/viscous-shock-tube.md)
+  at $\mathrm{Re}=1000$ and 10000 runs robustly; with an added
+  Persson–Peraire blending shock capturing the shock and boundary-layer
+  structure "appear to be incorrect" against the references (§8.5,
+  Figs. 12–14).
 - **Reacting flows.** Du & Yang: third order with and without the
   limiter on stiff accuracy tests, and He/N$_2$ and H$_2$/O$_2$/Ar shock
   tubes that blow up without the bound-preserving limiter (§6,
@@ -216,6 +264,16 @@ and report very few recomputations (§6, Eqs. (6.1)–(6.2)).
   Gauss–Lobatto exactness argument gives the latter. Fan et al. (2021)
   print $\rho e=(\gamma-1)(E-\frac12m^2/\rho)$ in Eq. (3.7), which is the
   pressure; their 2D Eq. (3.25) omits the factor.
+- **Printed forms in Lin et al. (arXiv v2).** Their motivating condition
+  (Eq. 20) prints $2\rho^2e\lVert n\cdot\tau_{\mathrm v}-pn\rVert$ without
+  the square that their Eq. (18) and Fan et al. (2021) Eq. (3.5) carry;
+  and the second component of $n\cdot\tau_{\mathrm v}$ in Eq. (18) has
+  $u_2$ where the first component has $n_2$. Their Table 5c prints the
+  $N=2$, $N_{\mathrm{el}}=200$ error as $9.858\times10^{-2}$, while the rates on either
+  side, 1.23 and 1.54, follow from $9.858\times10^{-3}$
+  *(compiler check, not in the sources:
+  $\log_2(2.305\times10^{-2}/9.858\times10^{-3})=1.23$,
+  $\log_2(9.858\times10^{-3}/3.382\times10^{-3})=1.54$)*.
 - No source compares the cost of the finite-difference scheme with the
   finite-volume or DG versions; Fan et al. (2022) state that it is
   cheaper and easier to implement (§1.3).
@@ -238,4 +296,5 @@ and report very few recomputations (§6, Eqs. (6.1)–(6.2)).
 
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §3.1–3.3, Eqs. (3.4)–(3.15), (3.23)–(3.33), Theorems 1–2; §4, Ex. 4.1–4.7, Tables 4.1–4.2; Appendix A.
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.1–1.3; §2.2, Eqs. (2.7)–(2.9); §3.1–3.5, Eqs. (3.1)–(3.24), Theorem 1, Remarks 3.2–3.5, Algorithms 1–2; §4, Theorem 2; §5, Tables 5.1–5.2, Ex. 5.2–5.8.
+- [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §5, Eqs. (16)–(28), Lemma 5.1, Theorem 5.2, Remarks 1–2; §6.2, Theorem 6.1, Eq. (45); §8.1.2, Tables 2–5; §8.5, Figs. 12–14.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §3.1, Eqs. (3.4)–(3.5), Def. 3.1, Thm 3.1; §4.2, Lemma 4.1; §5, Lemma 5.1; §6, Eqs. (6.1)–(6.2), Figs. 6.1–6.3.

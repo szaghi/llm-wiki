@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Weighted compact nonlinear schemes (WCNS)"
-description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, an interface flux, and high-order interface-to-node differencing; the page records explicit, TENO-weighted, spectrally optimized adaptive-dissipation, multi-resolution and mapped members, and an open disagreement on conservation."
+description: "WCNS are finite-difference shock-capturing schemes in three steps — nonlinear node-to-interface interpolation, an interface flux, and high-order interface-to-node differencing; the page records explicit, TENO-weighted, spectrally optimized adaptive-dissipation, exponential-weight, multi-resolution, hybrid and mapped members, and an open disagreement on conservation."
 status: established
-aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme]
+aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)
@@ -236,6 +236,48 @@ preservation and its freedom in the flux function (§1). The construction and it
 [shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md) and
 [multi-resolution WENO](/methods/multi-resolution-weno.md).
 
+## Staggered WCNS with exponential weights (WCNS-EXP)
+
+Chen & Deng (2023, §2) use a fifth-order WCNS on a staggered layout: solution points at the cell
+centres, flux points at the interfaces, with the domain ends at flux points, which the authors say
+avoids special treatment at a corner such as that of the forward-facing step. The interpolation is the
+point-value one with weights $(\tfrac1{16},\tfrac58,\tfrac5{16})$ and point-value indicators (Eqs. (14)–(16)); the
+interface flux is Roe's; variables are interpolated characteristic-wise; SSP-RK3 at CFL 0.6. The
+differencing, after Nonomura & Fujii, mixes interface fluxes $\hat f_{i\pm1/2}$, $\hat f_{i\pm3/2}$ and
+nodal fluxes $f_{i\pm1}$ (Eqs. (5)–(6)):
+
+$$\partial_xf\big|_i\approx\frac1{\Delta x}\Big[\tfrac32\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big)-\tfrac3{10}\big(f_{i+1}-f_{i-1}\big)+\tfrac1{30}\big(\hat f_{i+3/2}-\hat f_{i-3/2}\big)\Big],$$
+
+sixth order with error $\tfrac1{8960}\partial_x^7f\,\Delta x^6$ *(compiler check, not in the sources: a
+Taylor expansion confirms it)*, and "more robust" than the scheme with interface fluxes only because of
+its lower resolution. Their new weights, $d_k\exp(-\beta_k^{\lambda_{\mathrm E}}/\lambda_{\mathrm E})$ with a
+stencil-local exponent, keep fifth-order interpolation at critical points of any order; with them the
+scheme is WCNS-EXP, about 1.2–1.34 times WCNS-JS in cost and much cheaper than WCNS-MR; it needs a
+first-order fallback on negative density or pressure in double Mach reflection and the forward-facing
+step ([exponential weights](/methods/exponential-nonlinear-weights.md)). They credit WCNS with an easier
+free-stream preservation on curvilinear grids when the metrics are discretized by the symmetric
+conservative metric method, and with more choices of numerical flux (§1;
+[free-stream preservation](/properties/free-stream-preservation.md)).
+
+## Hybrid multi-resolution WCNS
+
+Wang, Zhu, Wang & Zhao (2023c, §3) build a fifth-order explicit WCNS for Euler and Navier–Stokes flows
+with interface-only differencing,
+
+$$\partial_xf\big|_i\approx\frac1{\Delta x}\Big[\tfrac{75}{64}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big)-\tfrac{25}{384}\big(\hat f_{i+3/2}-\hat f_{i-3/2}\big)+\tfrac3{640}\big(\hat f_{i+5/2}-\hat f_{i-5/2}\big)\Big]$$
+
+(Eq. (3.4), the explicit member, with compact coefficient zero, of a compact family; they prefer it to the tridiagonal implicit
+member for cost), Lax–Friedrichs midpoint fluxes "from the perspective of stability and computational
+efficiency", characteristic-wise interpolation and TVD-RK3 at CFL 0.6. *(Compiler check, not in the
+sources: the formula is sixth order, leading error $\tfrac5{7168}\partial_x^7f\,\Delta x^6$.)* The
+interpolation is a simplified multi-resolution one on nested 5-, 3- and 1-point stencils
+([multi-resolution WENO](/methods/multi-resolution-weno.md)), and a parameter-free switch uses the linear
+five-point value wherever the derivative of the five-point interpolant has no extreme point inside the
+stencil ([hybrid schemes](/methods/hybrid-weno.md)). The scheme costs 0.81–1.07 times WENO-JS, against
+1.50–2.31 for the MR-WCNS of Zhang, Wang & Zhang (Table 5.1). The authors recall that the
+node-to-midpoint interpolation "dominates" the resolution of WCNS (§1, §3), the view also stated by
+Zhou et al. above.
+
 ## Members recalled in the sources
 
 - **WCNS-JS and WCNS-Z**: interpolation weighted with Jiang–Shu or WENO-Z weights; WCNS-Z beats
@@ -312,7 +354,7 @@ preservation and its freedom in the flux function (§1). The construction and it
 - **Order of Hiejima's schemes.** The orders 5 to 11 are interpolation orders. *(Compiler check, not
   in the sources: with no step 3, the plain difference of exact interface fluxes is
   $\partial_xf(x_i)+\tfrac{\Delta x^2}{24}\partial_x^3f(x_i)+O(\Delta x^4)$, so the spatial operator is
-  formally second order for point values, the limit Wang et al. 2023 state for an uncorrected
+  formally second order for point values, the limit Wang et al. 2023b state for an uncorrected
   two-point flux in finite differences; see
   [conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md).)*
   The paper shows no convergence test that could confirm or refute the higher order.
@@ -370,4 +412,6 @@ et al. for periodic grids only.)*
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1; §2.2–2.3, Eqs. (5)–(18); §3, Eqs. (19)–(26), Table 1; §4, Eqs. (27)–(33), Tables 2–3, Figs. 4–7; §5, Table 4.
 - [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §1; §2, Eqs. (3)–(5); §4: staggered WCNS-MR, global conservation.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Eqs. (42)–(49), Table 2; Ex. 3.3: WCNS7M.
+- [Chen & Deng (2023)](/sources/chen-2023.md) — §1; §2, Eqs. (1)–(16); §4, Table 1: staggered WCNS-EXP.
+- [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Eqs. (3.2)–(3.24); §5, Table 5.1: hybrid MR-WCNS.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.2, Eq. (5); §§2.3–2.6, Eqs. (6)–(25), Tables 1–6, Fig. 1; §3, Figs. 2–9; §4; App., Fig. A.1: WCNS-T and WCNS-JS at orders 5–11.

@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–5 of 11 ingested (100 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–6 of 11 ingested (120 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -53,7 +53,13 @@ the IDEFIX code. Chunk 5 (2023 papers): gradient-based reconstruction and
 split forms, entropy filtering for MHD, entropy-stable two-fluid relativistic plasma
 schemes, shock-capturing multi-block boundary closures, optimized WCNS, all-Mach MHD,
 a polynomial-viscosity-matrix solver for radiation MHD, high-order immersed boundaries and
-boundary gradients, and the GPU solvers ADAM, URANOS, STREAmS-2.0 and JAX-Fluids. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+boundary gradients, and the GPU solvers ADAM, URANOS, STREAmS-2.0 and JAX-Fluids. Chunk 6 (2023
+papers): exponential WCNS weights, hybrid multi-resolution WCNS, spatio-temporal MDCD
+schemes, IMWENO-P, flux globalization for moving equilibria, HLL-GRP for MHD, gas-kinetic
+schemes, asymptotically entropy-conservative and pressure-equilibrium-preserving fluxes,
+entropy-stable DG for reacting air and with positivity for Navier–Stokes, hybrid DG–FV,
+phase-field, discrete-equations and phase-change interface methods, WENO remapping,
+smooth adaptive meshing and Cartesian-grid Active Flux with AMR. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -88,6 +94,10 @@ reuses compact-scheme gradients for the interface states, with the
 at discontinuities, and the
 [shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)
 keeps multi-block finite differences globally conservative.
+[Exponential nonlinear weights](/methods/exponential-nonlinear-weights.md) are designed for
+optimal order at critical points, and
+[RBF differential-quadrature finite volumes](/methods/rbf-differential-quadrature.md)
+reconstruct on unstructured meshes.
 The [alternative WENO](/methods/alternative-weno.md) formulation interpolates
 values instead of reconstructing fluxes, as do the
 [weighted compact nonlinear schemes](/methods/weighted-compact-nonlinear-scheme.md).
@@ -107,7 +117,10 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [Lax–Friedrichs flux and flux splitting](/methods/lax-friedrichs-flux.md), the
 [HLL-family Riemann solvers](/methods/hll-riemann-solvers.md), the
 [Roe solver](/methods/roe-riemann-solver.md), the
-[polynomial viscosity matrix solvers](/methods/polynomial-viscosity-matrix-solver.md), the
+[polynomial viscosity matrix solvers](/methods/polynomial-viscosity-matrix-solver.md),
+[generalized Riemann problem solvers](/methods/generalized-riemann-problem.md),
+[gas-kinetic schemes](/methods/gas-kinetic-scheme.md),
+[Riemann solvers with phase change](/methods/phase-change-riemann-solver.md), the
 [α-damping viscous flux](/methods/alpha-damping-viscous-flux.md), the
 [Rankine–Hugoniot condition](/definitions/rankine-hugoniot-condition.md) and the
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md);
@@ -120,7 +133,9 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [fluctuation-form finite-difference WENO](/methods/fluctuation-form-fd-weno.md)
 and [path-conservative schemes](/methods/path-conservative-scheme.md) for
 non-conservative systems, with
-[stationary contact preservation](/properties/stationary-contact-preservation.md)
+[stationary contact preservation](/properties/stationary-contact-preservation.md),
+[flux globalization](/methods/flux-globalization.md) for the
+[shallow-water equations](/definitions/shallow-water-equations.md) and other balance laws,
 [well-balancing](/properties/well-balancing.md) and
 [asymptotic preservation](/properties/asymptotic-preservation.md).
 
@@ -179,7 +194,11 @@ add the recovery of primitive variables.
 [five- and six-equation models](/definitions/five-equation-model.md), the
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md) and the
 [stiffened-gas equation of state](/definitions/stiffened-gas-equation-of-state.md);
-[level-set and ghost-fluid methods](/methods/level-set-method.md) and
+[level-set and ghost-fluid methods](/methods/level-set-method.md),
+[conservative phase-field methods](/methods/phase-field-method.md), the
+[discrete equations method](/methods/discrete-equations-method.md), the
+[double-flux method](/methods/double-flux-method.md),
+[conservative remapping](/methods/conservative-remapping.md) for ALE schemes and
 [immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md);
 [block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md);
 the solvers [MFC](/software/mfc.md), [AMROC](/software/amroc.md),
@@ -206,9 +225,11 @@ the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md) and
 [double rarefaction problem](/benchmarks/double-rarefaction-problem.md),
 the [Shu–Osher problem](/benchmarks/shu-osher-problem.md), the
 [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md) and the
-[Sedov blast wave](/benchmarks/sedov-blast-wave.md); viscous: the
+[Sedov blast wave](/benchmarks/sedov-blast-wave.md), the
+[Noh implosion](/benchmarks/noh-implosion-problem.md); viscous: the
 [viscous shock tube](/benchmarks/viscous-shock-tube.md).
-Smooth: the [isentropic vortex](/benchmarks/isentropic-vortex.md), the
+Smooth: [density-wave advection](/benchmarks/density-wave-advection.md),
+[material-interface advection](/benchmarks/material-interface-advection.md), the [isentropic vortex](/benchmarks/isentropic-vortex.md), the
 [Gresho vortex](/benchmarks/gresho-vortex.md), the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), the
 [hydrostatic equilibrium tests](/benchmarks/hydrostatic-equilibrium-tests.md) and

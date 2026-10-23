@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "THINC reconstruction"
-description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump profile fitted to the cell average and bounded by the neighbouring values; this page gives its finite-volume, finite-difference and normalised closed forms, the role of the steepness parameter (diffusive, nearly second order, anti-diffusive), and how it is hybridized with polynomial reconstructions."
+description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump profile fitted to the cell average and bounded by the neighbouring values; this page gives its finite-volume, finite-difference and normalised closed forms, the role of the steepness parameter (diffusive, nearly second order, anti-diffusive), a genuinely multi-dimensional form with time averaging for multi-stage Runge–Kutta, and how it is hybridized with polynomial reconstructions."
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # THINC reconstruction
@@ -95,6 +95,78 @@ see [TENO-THINC](/methods/teno-thinc.md). This is a dissipation claim at
 discontinuities; the anti-diffusion recorded in the previous section concerns
 smooth scales, a different regime.
 
+## Multi-dimensional THINC for volume fractions
+
+[Paula et al. (2023)](/sources/paula-2023.md) (§5.1, Eqs. (51)–(55),
+Appendix B) reconstruct the volume fraction of each phase in a multiphase
+[discrete equations method](/methods/discrete-equations-method.md) by a
+genuinely multi-dimensional THINC function, after Ii et al. and Xie &
+Xiao. In the unit cell $-\tfrac12\le X,Y,Z\le\tfrac12$, with interface
+normal $n=\nabla\phi_k/\lvert\nabla\phi_k\rvert$, linear surface function
+$\mathsf P(X)=n_1X+n_2Y+n_3Z$ and normalised distance $\mathsf d_i$, the
+THINC profile $\Phi_i$ of the volume fraction is (page-local symbols;
+$\Phi_i$ is the registry's $u^{\mathrm T}$ for $u=\phi_k$; quadratic surfaces
+are not used)
+
+$$\Phi_i(X)=\tfrac12\Big[1+\tanh\big(\beta_{\mathrm T}(\mathsf P(X)+\mathsf d_i)\big)\Big],$$
+
+and $\mathsf d_i$ is fixed by requiring that the two-point Gauss
+quadrature (tensor points $\pm\sqrt3/6$, weights $\tfrac12$) of $\Phi_i$
+equal the cell average $\bar\phi_{k,i}$. With the addition formula for
+$\tanh$ this is a scalar equation in $\tanh(\beta_{\mathrm T}\mathsf d_i)$,
+solved by Newton's method with the shift of Kumar et al., which converges
+quadratically to the unique solution from the stated initial guesses
+(Eqs. (B.1)–(B.9); tolerance $10^{-6}$). Face values are taken at the same
+Gauss points on each face (2 per face in 2D, 4 in 3D). They state that
+applying the 1D THINC dimension by dimension gives severe grid effects,
+citing earlier work. The default steepness is $\beta_{\mathrm T}=3$, with
+$0.325$ and $1$ also tested (§6, §7.4.1).
+
+**Normals from an inverted profile.** The normal is computed from an
+approximate signed distance obtained by inverting the 1D profile at the
+cell average, with a constant-offset correction:
+$\mathsf d_i\approx\frac1{2\beta_{\mathrm T}}\ln\frac{\bar\phi_{k,i}}{1-\bar\phi_{k,i}}+\mathsf d_{\mathrm{corr}}(2\bar\phi_{k,i}-1)$,
+$\mathsf d_{\mathrm{corr}}=\frac1{2\beta_{\mathrm T}}\ln\frac{\sinh\beta_{\mathrm T}}{\beta_{\mathrm T}}$,
+the offset of the exact cell average far from the interface (Appendix D,
+Eqs. (D.1)–(D.3)). Its maximum error is below $10^{-2}$ for
+$\beta_{\mathrm T}=3$ (Fig. D.29). A Youngs-type vertex-averaged gradient
+of this distance gives $n$ (Eqs. (D.4)–(D.6)). *(Compiler check, not in
+the sources: for $\beta_{\mathrm T}=3$, $\mathsf d_{\mathrm{corr}}=0.2010$.)*
+
+**Time averaging for multi-stage Runge–Kutta.** To keep the volume taken
+from an upwind cell from exceeding its content, Paula et al. replace the
+THINC function by its average over its own translation at the interface
+velocity $v_{\mathrm I}$ (page-local; mass-weighted, Eq. (59)) during the
+step, $\tilde\Phi(x)=\frac1{\Delta t}\int_0^{\Delta t}\Phi(x-v_{\mathrm I}t)\,dt$
+(Eq. (56)), which holds for forward Euler (§5.2). For the three-stage SSP
+Runge–Kutta method the averaging intervals of the three stages must be
+$[0,\Delta t]$, $[-\Delta t,0]$ and $[-\tfrac12\Delta t,\tfrac12\Delta t]$,
+each $\Phi$ built from that stage's data (Eq. (58)). They derive this by
+rewriting the second stage as
+$u^{(2)}=u^n+\tfrac14\Delta t\mathcal L(u^n)+\tfrac14\Delta t\mathcal L(u^{(1)})$,
+a prediction at $t^{n+1/2}$ (Eq. (57)). In practice the average is a
+three-point Gauss–Lobatto sum in time, i.e. a shift of $\mathsf d$ by
+$-n\cdot v_{\mathrm I}\beta_{\mathrm T}\Delta t/\Delta x$ per quadrature
+point (Appendix C, Eqs. (C.1)–(C.4)). They state that, to their knowledge,
+time averaging had not been proposed for multi-stage integration or for
+compressible flow; earlier works average the upwind volume flux of a
+single-step incompressible scheme. They call the result
+"positivity-preserving" but prove no theorem
+([bound preservation](/properties/bound-preservation.md)). With more than
+two phases the face values are normalised to sum to one, because the THINC
+function is symmetric only for two phases, and this normalisation can
+defeat the time averaging: the triple-point problem needed CFL 0.15
+(§6, §7.5).
+
+**Evidence.** Interfaces advected at uniform $p$ and $v$ keep the
+velocity and pressure at round-off, $10^{-15}$–$10^{-14}$ in 1D and in 2D
+with 2 and 5 materials (Table 1; see
+[material-interface advection](/benchmarks/material-interface-advection.md)).
+With a cut-off of $10^{-9}$ on the volume fractions, the diffuse interface
+stays within about eight cells at $\beta_{\mathrm T}=3$ (§6). On a smooth
+profile advected with an interface, the density error is about the same
+with and without the interface (§7.3, Fig. 12).
+
 ## Hybrids
 
 - **BVD**: per-cell selection between a polynomial (WENO, TENO) candidate and
@@ -125,12 +197,21 @@ reconstruction with the compressive "overbee" limiter of Chiapolino, Saurel & Nk
 fractions keeps interfaces about three cells thick (§2.3, §3.1, Figs. 3–4), a limiter-based route to
 sharp interfaces without a tanh profile ([TVD limiters](/definitions/total-variation-diminishing.md),
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+[Huang & Johnsen (2023)](/sources/huang-2023.md) take a third route: a
+[phase-field](/methods/phase-field-method.md) flux added to the equations
+holds the diffuse interface at 4–7 cells with a second-order MUSCL
+reconstruction (§4). They state that higher-order schemes "would only
+delay" the unbounded thickening of material interfaces (§1); the paper
+does not cite THINC-type reconstructions.
 
 ## Qualifications
 
 - Fu (2023, Eq. (25)) and Takagi et al. (§2.3) print the conservation constraint
   without the factor $1/\Delta x$ (or with the integral meant in the local
   coordinate), and the profile of Fu (2023) has unbalanced parentheses.
+- Paula et al.'s steepness $\beta_{\mathrm T}=3$ is far above the
+  $1.1$–$1.6$ of the one-dimensional sources, and their fluxes are not
+  integrated over cell faces, which limits the lateral order to two (§6).
 - The finite-difference form applies a finite-volume construction to point fluxes
   read as cell averages of $\phi$; the sources use it this way without separate
   justification.
@@ -144,3 +225,5 @@ sharp interfaces without a tanh profile ([TVD limiters](/definitions/total-varia
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1: THINC among interface-sharpening methods; §2.3, §3.1: limiter-based alternative.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §2.3, Eqs. (19)–(21); §3.2, Fig. 6: closed form restated, dissipation of the cell-average constraint.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §4.2, Eq. (4.9): THINC density in the HLLEM dissipation term.
+- [Paula et al. (2023)](/sources/paula-2023.md) — §5.1–5.2, Eqs. (51)–(59); §6; §7.1, §7.3, §7.5, Table 1, Fig. 12; Appendices B–D: multi-dimensional THINC, time averaging for SSP-RK3, inverted-profile normals.
+- [Huang & Johnsen (2023)](/sources/huang-2023.md) — §1, §4: phase-field alternative to sharpening reconstructions (contrast only).

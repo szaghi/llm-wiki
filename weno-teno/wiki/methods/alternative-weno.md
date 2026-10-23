@@ -228,7 +228,7 @@ in double and quadruple precision (Tables 4–8).
 - "Odd order only" is a property of the Jiang–Shu–Zhang WENO interpolation, not of the alternative
   formulation: Ye et al.'s own AFTENO uses the same flux expansion and reaches even orders through
   its incremental stencils (coefficients up to eighth order, Tables 1–2; only fifth order is tested).
-- Wang et al. (2023) give no proof that the non-smooth switches (minmod, max/min, smoothness
+- Wang et al. (2023b) give no proof that the non-smooth switches (minmod, max/min, smoothness
   detector) inside their two-point flux preserve the formal order; only Table 1 supports it.
 - **Riemann solvers in finite differences.** Wong et al. (2021, §4.3) write that "a finite difference
   WENO scheme can only be used with flux-vector splitting methods ... when high-order of accuracy is
@@ -260,7 +260,7 @@ in double and quadruple precision (Tables 4–8).
 # Citations
 
 - [Ye et al. (2022)](/sources/ye-2022.md) — §1; §2.1; §3.1–3.2, Eqs. (11)–(23), Tables 3–6; §4, Tables 7–8, 13; §4.9; App., Eqs. (A.1)–(A.26).
-- [Wang et al. (2023)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4), Remarks 1–3; §3; §4.4, Table 1.
+- [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1; §2, Eqs. (2)–(4), Remarks 1–3; §3; §4.4, Table 1.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.1–2.3, Eqs. (1)–(27), Propositions 2.1–2.3; §3; §4, Tables 2–4, Figs. 6–15; Apps. A–B.
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.3.
 - [Chu, Kurganov & Na (2022)](/sources/chu-2022.md) — §1; §§2–5, Eqs. (2.1)–(5.2), Remark 4.1; §6, Remarks 6.1–6.3; §7, Table 7.1, Figs. 7.3, 7.10.

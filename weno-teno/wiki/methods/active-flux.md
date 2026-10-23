@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Active Flux"
-description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order through larger stencils, extra point values or extra moments."
+description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order in 1D, and Calhoun et al. run the third-order Cartesian version on adaptively refined grids."
 status: established
-aliases: [AF, active point value method, high-order Active Flux]
+aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux]
 tags: [finite-volume, reconstruction, characteristic, limiting]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-23T23:00:00Z
 ---
 
 # Active Flux
@@ -127,9 +127,123 @@ reconstruction can self-steepen into a shock within one step (§2.3, Eqs. (32)�
 fix chooses among several characteristic foot points the one of largest speed modulus;
 variants A and C use a switch (Eq. (53)) that degrades accuracy at sonic points (§3.3).
 
+## Two-dimensional Cartesian Active Flux
+
+[Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) recall the fully discrete
+Cartesian AF of Eymann–Roe, Barsukow et al. and Helzel et al. for
+$\partial_tu+\partial_xf(u)+\partial_yg(u)=0$ (§2, Eqs. (1)–(3), Fig. 1; arXiv v2). The degrees
+of freedom of cell $(i,j)$ at $t^n$ are the average $\bar u_{i,j}$ and point values at the four
+corners $u_{i\pm1/2,j\pm1/2}$ and the four edge midpoints $u_{i\pm1/2,j}$, $u_{i,j\pm1/2}$. An edge
+value is shared by two cells and a corner value by four, so each cell owns four degrees of
+freedom: one average and three point values. On the reference cell a biquadratic polynomial
+(nine coefficients, including the product of the two squared coordinates) interpolates the eight boundary values
+and has mean $\bar u_{i,j}$; the global reconstruction is continuous and piecewise
+biquadratic. The averages are updated by
+
+$$\bar u^{n+1}_{i,j}=\bar u^n_{i,j}-\frac{\Delta t}{\Delta x}\big(\hat f_{i+1/2,j}-\hat f_{i-1/2,j}\big)-\frac{\Delta t}{\Delta y}\big(\hat g_{i,j+1/2}-\hat g_{i,j-1/2}\big),$$
+
+where $\hat f_{i+1/2,j}$ is a $3\times3$ tensor Simpson rule in space along the edge and in time,
+with weights $\tfrac1{36}(1,4,1)\otimes(1,4,1)$ on the edge endpoints and midpoint at $t^n$,
+$t^{n+1/2}$, $t^{n+1}$ (Eq. (2)). The point values at $t^{n+1/2}$ serve only the flux; those at
+$t^{n+1}$ also build the next reconstruction. The time integration is this one-step space–time
+quadrature with an evolution operator for the point values, not the method-of-lines AF of the
+previous section. The evolution operators recalled are:
+
+- **Linear advection** with velocity $(v_1,v_2)$: exact characteristic tracing of the
+  reconstruction (Eqs. (4)–(5)). With $\nu=\max(\lvert v_1\rvert\Delta t/\Delta x,\lvert v_2\rvert\Delta t/\Delta y)$
+  the tracing needs $\nu\le1$, but linear stability is stricter and the authors run
+  with $\nu\le0.75$, from Helzel et al. (Eq. (6), §2.1).
+- **Burgers' equation** $\partial_tu+\partial_x(u^2/2)+\partial_y(u^2/2)=0$: a fixed-point
+  iteration on the implicit characteristic relation $u(x,y,t)=u\big(x-u\,t,\,y-u\,t,0\big)$ that
+  gains one order per iteration, so two iterations from a first-order guess give third order,
+  the maximum the quadratic reconstruction allows (Eqs. (7)–(10)). The pointwise guess
+  $u^{(0)}=u^n$ at the same location is unstable where the characteristic speed changes sign; a
+  guess from the mean of the adjacent cell averages is stable (§2.2).
+- **Linear acoustics**: the Eymann–Roe evolution operator, which assumes constant vorticity and
+  evaluates exactly on the piecewise biquadratic data a weighted mean over a disc of radius
+  $ct$ (Eqs. (11)–(14)). The time step keeps the circle around an edge midpoint inside the two
+  adjacent cells, $\max(c\Delta t/\Delta x,c\Delta t/\Delta y)\le\tfrac12$ (Eq. (15)); the
+  authors report this as necessary and, by Helzel et al., sufficient for linear stability on a
+  regular Cartesian grid (§2.3).
+
+These two-dimensional fully discrete limits ($0.75$, $\tfrac12$) and the one-dimensional limits
+recalled by Abgrall & Barsukow ($\nu=1$ for the original scheme, $0.77$ for the semi-discrete
+RK version) belong to different schemes (two-dimensional fully discrete against
+one-dimensional); they are not competing values for one method.
+
+Calhoun et al. also recall Barsukow's result that the Cartesian AF for acoustics with the exact
+evolution operator is stationarity preserving: it adds no dissipation to discrete
+representations of all stationary states (§1). The Eymann–Roe operator they use does not have
+this property (§4.6).
+
+## Adaptive mesh refinement
+
+[Calhoun et al. (2023)](/sources/calhoun-2023.md) present what they call the first
+implementation of AF on adaptively refined Cartesian grids (Abstract), as a solver in
+ForestClaw: quadtree patch-based AMR on p4est, fixed-size patches ($16\times16$ in all tests),
+refinement ratio 2 and adjacent quadrants differing by at most one level (§3). The
+AF-specific ingredients are:
+
+- **Coarse to fine:** the coarse biquadratic reconstruction is evaluated at the fine
+  point-value locations, and the fine averages are computed by the 2D Simpson rule, which is
+  exact for the reconstruction, so the four fine averages sum exactly to the coarse one and
+  conservation holds (§3.1, Fig. 4).
+- **Fine to coarse:** the coarse average is the mean of the four fine averages; coarse point
+  values are copied from the fine vertex values, and fine edge values at no coarse location
+  are discarded (Fig. 3).
+- **Subcycling** with $\Delta t_{\ell+1}=\Delta t_\ell/2$ on level $\ell$, without time
+  interpolation of coarse ghost data, unlike Berger–Oliger–Colella: two ghost layers are
+  reconstructed, the first one is advanced together with the interior, and at synchronized
+  time levels the ghost data are replaced by averaged or interpolated neighbour data (§3.2,
+  Figs. 5–6).
+- **Refluxing** à la Berger–Colella: at coarse–fine interfaces coarse and fine cells are both
+  updated with the fluxes of the finer grid (§3.2).
+
+The tests (smoothed-disc advection, solid-body rotation, swirl flow, 2D Burgers, acoustics)
+show third-order $L^1$ convergence on AMR grids. Refinement that follows the solution gives
+the accuracy of the uniform grid at the finest level (smoothed disc: $8.47\times10^{-6}$ and
+$1.07\times10^{-6}$ on levels 3–5 and 3–6 against $8.45\times10^{-6}$ and $1.07\times10^{-6}$ on
+uniform levels 5 and 6; observed orders $2.98$–$2.99$), while fixed diagonal refinement matches
+the coarser uniform grid (Table 1). Subcycling does not change the swirl-flow accuracy
+significantly (Table 3). For 2D Burgers after shock formation, unlimited AF oscillates along
+the curve where the characteristic speed changes sign; the bound-preserving limiter of Helzel
+et al., applied where the refinement criterion holds, removes the oscillations (§4.4, Fig. 12).
+With the stationarity-preserving acoustic operator of Barsukow et al., the AMR solver becomes
+unstable; with the Eymann–Roe operator the stationary vortex stays accurate to $t=100$ on
+levels 3–5 although the scheme is not stationarity preserving (§4.6, Conclusions).
+
+### Constant states for variable-velocity transport
+
+For $\partial_tu+\partial_x(v_1u)+\partial_y(v_2u)=0$ with divergence-free velocity, Calhoun et
+al. introduce AF variants that preserve constant states (§4.2–4.3). For solid-body rotation
+the characteristics are traced exactly, and the flux of a constant state through an $x$-edge
+depends only on $y$ and through a $y$-edge only on $x$, so the flux differences cancel
+(Remark 4.1). For a time-dependent swirl with stream function $\Psi(x,y,t)$ (page-local), the
+velocities are discrete differences of $\Psi$,
+
+$$v_1(x,y,t)=-\frac{\Psi(x,y+\Delta y/2,t)-\Psi(x,y-\Delta y/2,t)}{\Delta y},\qquad v_2(x,y,t)=\frac{\Psi(x+\Delta x/2,y,t)-\Psi(x-\Delta x/2,y,t)}{\Delta x},$$
+
+(Eq. (25)), and the flux freezes the velocity at the edge midpoint while Simpson's rule
+integrates the point values (Eqs. (26)–(28)). **Theorem 4.2:** this AF preserves constant
+states on regular Cartesian grids, because the update of a constant reduces to differences of
+$\Psi$ at the four cell corners that cancel. **Corollary 4.3:** constant states are also
+preserved on AMR grids with global time stepping, since the coarse flux at a coarse–fine edge
+equals the mean of the two fine fluxes. With subcycling the intermediate-time fine fluxes are
+not balanced by coarse fluxes: constant data on levels 3–4 have error $10^{-13}$ at $t=1$ with
+subcycling against about $10^{-16}$ without (§4.3). See
+[free-stream preservation](/properties/free-stream-preservation.md).
+
 ## Qualifications
 
-- One-dimensional only; multi-dimensional extensions are deferred (§1, §7).
+- Abgrall & Barsukow's arbitrary-order variants are one-dimensional; multi-dimensional
+  extensions are deferred (§1, §7). The Cartesian AMR method of Calhoun et al. is third order.
+- Calhoun et al.'s Table 4 (acoustics, arXiv v2) prints observed orders for the AMR rows that
+  do not follow from its own errors: $\log_2(1.64\times10^{-4}/2.06\times10^{-5})=2.99$ for $p$
+  and $\log_2(3.33\times10^{-5}/3.87\times10^{-6})=3.11$ for $v$, against the printed $3.1045$ and
+  $2.8564$; the uniform rows agree within rounding *(compiler check, not in the sources)*.
+  The errors themselves show third order.
+- Calhoun et al.'s §4.2 speaks of the error "after a half rotation" while Table 2 is at $t=2$,
+  one full period of their rotation (§4.2, Table 2).
 - For the Euler equations variant B uses the third-order approximate evolution operator,
   so it is formally third order in time, which the authors liken to RK3 with a high-order
   spatial method (§4.5.3).
@@ -144,3 +258,4 @@ variants A and C use a switch (Eq. (53)) that degrades accuracy at sonic points 
 # Citations
 
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §§1–7, Defs. 2.1, 2.2, 4.1, 5.1, Thms. 2.1, 2.2, 4.1, 4.2, Eqs. (11), (23)–(24), (37), (43), (47)–(49), (53), (100)–(115), Tables 1–2, Figs. 16–28 (author preprint).
+- [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §§1–4, Eqs. (1)–(15), (25)–(28), Remark 4.1, Thm. 4.2, Cor. 4.3, Tables 1–4, Figs. 3–6, 12, 16 (arXiv v2).

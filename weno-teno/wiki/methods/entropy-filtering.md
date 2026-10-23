@@ -5,7 +5,7 @@ description: "Entropy filtering applies, after every Runge–Kutta stage, an ele
 status: established
 aliases: [adaptive filtering, entropy-based adaptive filtering, positivity-preserving entropy filtering, constraint-driven modal filtering]
 tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, mhd]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T20:00:00Z
 ---
 
 # Entropy filtering for DG and FR
@@ -259,8 +259,57 @@ except HLL for the blast, SSP-RK3, fixed $\Delta t$):
 | [magnetized blast](/benchmarks/mhd-blast-wave.md), pressure ratio $10^5$, $B_0=1000/\sqrt{4\pi}$ | $N=4$ on triangles, $h=1/200$ and $1/400$ | discontinuities resolved over one to two nodes; without positivity treatment "would diverge almost instantly" (Figs. 10–13) |
 | 3D magnetized [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) | $N=3$, $64\times64\times128$, $B_0=0$, $0.1B_c$, $0.5B_c$, cutoff field $B_c=\sqrt2$ (page-local) | well behaved in all three regimes; the field slows the growth (Figs. 14–16) |
 
+## Independent comparison on strong shocks
+
+[Peyvan et al. (2023)](/sources/peyvan-2023.md) use the filter as the
+stabilizer of flux reconstruction and spectral difference (SD) in a 1D
+comparison with an entropy-stable [DGSEM](/methods/dgsem.md) with subcell
+blending, all at $N=3$, with the entropy threshold set to $10^{-4}$ (§1,
+§4.1–4.3; arXiv v1). They describe the filter strength as found by
+bisection so that density and pressure stay positive and the nodal entropy
+at all solution and flux points stays above the minimum over the
+neighbourhood at the previous stage (§1). Their findings:
+
+- **[Leblanc shock tube](/benchmarks/leblanc-shock-tube.md)** (1000
+  elements): filtered FR and SD resolve the contact more sharply than the
+  DGSEM but oscillate more; SD has the largest oscillations and
+  undershoots, which the authors attribute to its degree-$(N+1)$ flux
+  polynomial (§4.1, Fig. 1).
+- **Mach-10 [Shu–Osher problem](/benchmarks/shu-osher-problem.md)** (170
+  elements): SD and FR miss the dip at $x=2.82$ and FR also misses the
+  valley at $x=3.265$, which the DGSEM resolves; the authors attribute this
+  to over-filtering of high-gradient smooth regions (§4.2, Fig. 2).
+- **Three-species reacting Sod** (800 elements): FR and SD agree better with
+  the reference than the DGSEM and WENO but oscillate, and SD has a large
+  $O_2$ undershoot (§4.3, Fig. 3).
+- **Five-species non-equilibrium Sod:** FR and SD are unstable, because the
+  filter cannot find a strength that satisfies positivity of the five
+  species densities, positivity of pressure and the entropy criterion at
+  once (§4.5.1; stated, no figure).
+
+## Contradictions
+
+**Is the entropy tolerance of the filter problem dependent?** *Open.*
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) call the approach
+"free of problem-dependent tunable parameters", the floors, the entropy
+tolerance $\epsilon_\sigma=10^{-4}$ and the iteration count being global
+constants (§4.3, §6). [Peyvan et al. (2023)](/sources/peyvan-2023.md) state
+that the filter has a problem-dependent entropy threshold that must be
+tuned to avoid over-filtering high-gradient smooth regions, while the
+DGSEM blending parameter is "not problem dependent" (§4.2), with their
+Mach-10 Shu–Osher run at $10^{-4}$ as evidence (Fig. 2); they show no run
+with another threshold. A study of the same filtered scheme on several
+problems over a range of thresholds would decide it. (Peyvan et al.'s own
+blending cap $\alpha_{\max}=0.5$ is also user defined.)
+
 ## Qualifications
 
+- **Scope of the existence argument.** A feasible filter strength exists
+  because the element mean is assumed admissible (§3.1 of the 2022
+  paper). Peyvan et al.'s five-species failure involves stiff chemical
+  sources and five partial-density constraints, outside the source-free
+  Euler setting of that assumption; the failure therefore does not test the
+  2022 argument *(compiler check, not in the sources)*.
 - **Guarantee.** Positivity and the entropy bound hold at the solution nodes
   and rest on the assumed properties of the element mean; between nodes the
   filtered polynomial may violate them (§2.2, §3).
@@ -329,3 +378,4 @@ except HLL for the blast, SSP-RK3, fixed $\Delta t$):
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §1; §2.2–§2.3 (Eqs. (10)–(15)); §3.1 (Eqs. (16)–(19), Remark (Limiting)); §3.2 (Eqs. (20)–(21)); §4.1 (Eqs. (22)–(24), Remarks); §4.2; §4.3 (Eq. (27)); §5 (Tables 1–5, Figs. 2–11); §6; App. A (Algs. 1–4).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1.2; §2.2 (exponential damping of modes, for comparison); Rem. 2.3.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.1 Eq. (5); §2.3 Eqs. (17)–(19); §3.1 Eqs. (21)–(22); §3.2 Eqs. (29)–(34); §4, §4.1 Eqs. (35)–(37); §5 Tables 1–2, Figs. 2–17.
+- [Peyvan et al. (2023)](/sources/peyvan-2023.md) — arXiv v1: §1; §4.1–4.3 (Figs. 1–3); §4.5.1; §5.
