@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -56,6 +56,8 @@ the right half.
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.2 | 200 | $t/t_0=2$ | data "provided by Jiang and Shu", plotted on $x/L_0\in[-5,5]$; extrapolation boundaries; [WENO-Z](/methods/weno-z.md)3/5/7, TENO5, TENO-A5 in [URANOS](/software/uranos.md); 2000-point reference |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 6 | 300 cells | 0.2 | modified left state $(1,0.75,1)$, see below; transmissive; fifth-order FV IMWENO-P vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | two blocks: 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.1, 0.2 | multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with [boundary closures](/methods/shock-capturing-boundary-closure.md) at the interface |
+| [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (28) | 200 | 0.2 | mirrored: $(0.125,0,0.1)$ on $[0,0.5]$, $(1,0,1)$ on $(0.5,1]$; [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD, global LF splitting; reference WENO-JS on 4000 |
+| [Jiang et al. (2024)](/sources/jiang-2024.md) §4.2.1 | particle spacing $\Delta x_0=0.0025$ | 0.15 | on $[-0.5,0.5]$; Lagrangian weighted-least-squares particles with WENO-Z-type pair states vs the GSPH and WENO-SPH particle methods |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -115,6 +117,7 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.2 | not printed | 200 | 0.14 | text prints "$t=01.4$", Fig. 3 caption $0.14$ |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.1, Eq. (36) | $[-0.5,0.5]$ | 100 | 0.14 | right pressure printed $0.5710$ |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 7 | $[-5,5]$ | 300 cells | 1.3 | WENO-JS lowest resolution, then WENO-Z; IMWENO-P as MWENO-P, marginally above WENO-P and WENO-NS (Fig. 6) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.3 | $[0,1]\times[0,0.1]$, polygons | $h=1/430$, $P_2$, $P_3$ | 0.14 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables; reference 1D residual distribution on 50,000 points (arXiv v1) |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | $[0,1]$, jump at $0.5$ | single domain; two blocks 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.14; two blocks also 0.06 | |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
@@ -152,6 +155,17 @@ Qiu report that modifying the first moment in troubled cells gives
 "much better resolutions and sharper shock transitions" than the
 unmodified sixth-order HWENO on Lax and on their five other shock tests
 (Ex. 3.5, Fig. 3.3, comment p. 31).
+
+Tang reports pronounced unphysical oscillations of TENO-A on Sod, and
+the TENO-AZ comparable to TENO-LAD and better than TENO-A and TENO-Z
+(§4.3, Fig. 6), at the cost of TENO-Z (ratio 1.00; TENO-A 1.19,
+TENO-LAD 1.33, Table 5). Jiang et al.'s particle method matches the
+exact Sod solution with lower dissipation than the GSPH and WENO-SPH
+particle results they compare with (§4.2.1, Fig. 4). On Lax, Gaburro et
+al.'s second-order conservative subcell limiter activates "exactly where
+the shock wave is located", and the primitive-variable DG elsewhere
+leaves no shock-speed error (§5.1.3, Fig. 2; see
+[local conservation](/results/local-conservation-flux-form.md)).
 
 TENO variants agree in kind. Hong, Ye & Ye find every scheme stable on
 both tubes, with a slight oscillation of WENO-CU6 near the contact;
@@ -401,6 +415,26 @@ single-gas Euler equations.
   chemistry at driver temperatures 2000–4000 K, which deviate from
   3000 K on (§4.5.2, Fig. 7). See
   [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md).
+- **Five-species air in three codes.** [Başkaya et al. (2024)](/sources/baskaya-2024.md)
+  §4.4 (author preprint) run the same Grossman–Cinnella tube, the
+  driver at 9000 K and 195256 Pa and the driven gas at 300 K and
+  $10^4$ Pa, five-species air initially in equilibrium, Park's 1985
+  mechanism, on $[0,1]$ m with 600 cells to $t=99$ μs, in three
+  finite-volume codes sharing one thermochemistry library: contact,
+  shock and expansion are captured and the post-shock density peak
+  matches the reference "without any oscillations", one code (CHESS)
+  giving slightly more N$_2$ and less N than the other two (Figs. 5–6).
+  Two-temperature runs showed "no significant differences", so
+  equilibrium results are shown.
+- **Single planar shocks.** [Gaburro et al. (2024)](/sources/gaburro-2024.md)
+  §5.1.2 run a right-moving shock of Mach 5, 10 or 20 into
+  $(\rho,v,p)=(\gamma,0,1)$ on $[0,1.2]\times[0,0.1]$, the post-shock
+  state from the normal-shock relations, at $P_2$ and $P_3$ on polygons
+  with $h=1/180$ to $t=0.04$: shock position and magnitude are "always
+  perfectly captured", with start-up perturbations downstream that they
+  attribute to the mismatch between one-dimensional Rankine–Hugoniot and
+  discrete two-dimensional jump conditions, as also seen with
+  conservative schemes (Fig. 1).
 - **Radial Sod in two dimensions.** [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
   §4 (arXiv v4) run $(\rho,v_1,v_2,p)=(1,0,0,1)$ for $r\le0.5$ and
   $(0.125,0,0,0.1)$ for $0.5<r\le1$, CFL 0.25, $t=0.25$, with
@@ -563,3 +597,7 @@ single-gas Euler equations.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Exs. 6–7, Figs. 5–6.
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.5, Fig. 20.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §§4.3, 4.5, Tables 1–2, Figs. 3, 6–7 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §4.3, Eq. (28), Fig. 6, Table 5.
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.2.1, Fig. 4.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.2–§5.1.3, Figs. 1–2 (arXiv v1).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §4.4, Table 5, Figs. 5–6 (author preprint).

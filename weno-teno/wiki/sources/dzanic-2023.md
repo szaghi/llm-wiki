@@ -149,7 +149,7 @@ while [32] prints the same volume with 2010. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
@@ -158,7 +158,9 @@ Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cite
 * [Entropy stability](/properties/entropy-stability.md)
 * [Flux reconstruction and energy-stable FR](/methods/flux-reconstruction.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Magnetized (MHD) vortex](/benchmarks/magnetized-vortex.md)
 * [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)
+* [MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md)
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
 * [PyFR](/software/pyfr.md)
 * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)

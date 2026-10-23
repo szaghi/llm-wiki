@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -17,9 +17,10 @@ top, and a triple point forms on the upper wall from which a vortex
 sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
-scheme survives and how much small-scale structure it resolves. Fifteen
+scheme survives and how much small-scale structure it resolves. Seventeen
 sources of the bundle run it, five of them on triangles (one of these
-in a relativistic version) and one as a steady-state problem; those
+in a relativistic version), one on polygons and one as a steady-state
+problem; those
 that name an origin attribute it to Woodward & Colella.
 
 ## Setup
@@ -78,6 +79,21 @@ the same Mach 3 flow as $(1.4,3,0,1)$ with density and pressure both
 divided by 1.4, which changes no velocity and no wave pattern
 *(compiler check, not in the sources)*.
 
+[Tang (2024)](/sources/tang-2024.md) §4.4.7, Eq. (40) print
+$(1.4,3.0,0,1.0)$ in the fluid region $[0,0.6]\times[0,1]\cup[0.6,3]\times[0.2,1]$,
+inflow on the left, outflow on the right, reflective top, bottom and
+step face, to $t=4.0$, and set the field inside the step to the
+constant $(0.1,0.1,0.1,0.1)$ "with inflow boundaries set in the step",
+which the author calls "not physically realistic".
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 (arXiv v1)
+print the domain as $[0,7]\times[0,3]-[0.6,7]\times[0,0.2]$, the Mach 3 flow with $\rho_0=\gamma=1.4$, $p_0=1$, the
+left ghost state fixed to the initial data, a supersonic exit and walls
+top and bottom, with outputs at $t=2.5$ and $4.0$; with a tunnel height
+of 3 the step of height 0.2 is a fifteenth of the height instead of a
+fifth, so the printed domain is not the Woodward–Colella tunnel
+*(compiler check, not in the sources)*; the text does not say whether
+the printed domain is the one that was run.
+
 **Steady version.** [Wan & Xia (2022)](/sources/wan-2022.md) Ex. 4.5
 march the same tunnel ($3\times1$, step of height 0.2 on $[0.6,3]$,
 Mach 3 inflow $(1.4,3,0,1)$) to a steady state on $90\times30$ cells,
@@ -110,6 +126,8 @@ fix at the corner.
 | [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.3 | implicit fourth-order [RBF differential-quadrature](/methods/rbf-differential-quadrature.md) FV (IRBFDQ-FV), Roe flux, PEEB limiter, vs a second-order FV scheme | 108,543 triangles ($h\approx1/160$ equivalent) | — |
 | [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.6 | fourth-order compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md), no troubled-cell detection | triangles, $h=1/120$ | 0.8 |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.9 | third-order FV WENO on triangles, physical-constraint-preserving limiter, HLL (relativistic) | triangles, $h=1/160$ | 0.5 |
+| [Tang (2024)](/sources/tang-2024.md) §4.4.7 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 | $720\times240$ | 0.45 |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $P_2$, $P_3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
 
 ## What the benchmark measures
 
@@ -139,6 +157,13 @@ in their viscosity switch, page-local; default 2) with the min-rule
 (§5.4.5, Figs. 21–23). In Chen & Wu's
 relativistic runs the physical-constraint-preserving limiter is needed
 to keep the scheme running at every inflow speed (Ex. 4.9, Fig. 13).
+
+Tang lowers the CFL number to 0.45 because TENO-Z and TENO-A "may
+fail if the CFL number is too large"; at that value the TENO-AZ
+captures finer vortices near $y=0.7$ than the other TENO schemes
+(§4.4.7, Fig. 17), with 45 density contours in $[0.5,6.5]$. Gaburro et
+al.'s primitive-variable DG with a conservative correction only in the
+shock-triggered subcells runs at third and fourth order (Fig. 5).
 
 **Shock stability of the Riemann solver.** Hu, Yuan & Zhao use the
 step as one of their tests of the
@@ -208,6 +233,8 @@ troubled cells flagged by their modified KXRCF indicator are plotted
   runs that print a final time at $t=4$; Mossier et al. print none.
 - Li et al. write that the problem "is also originally from the paper
   of [30]", with no preceding mention of that paper.
+- Tang's step interior and Gaburro et al.'s printed domain depart from
+  the Woodward–Colella setup (see Setup).
 
 # Citations
 
@@ -226,3 +253,5 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 16, Fig. 21.
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.3, Fig. 8.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.6, Fig. 9 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.7, Eq. (40), Fig. 17.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.6, Fig. 5 (arXiv v1).

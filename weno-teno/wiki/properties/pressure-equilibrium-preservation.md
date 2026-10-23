@@ -5,7 +5,7 @@ description: "A discretization is pressure-equilibrium preserving when initial d
 status: established
 aliases: [PEP, pressure equilibrium preserving, KEEP-PE, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, multiphase, turbulence]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -305,6 +305,40 @@ volume-fraction equation, Paula et al. phasic equations with
 non-conservative interface terms. No source compares them on a common
 test.
 
+**Primitive variables away from shocks (quasi-conservative).**
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) take the opposite route:
+an [ADER](/methods/ader-scheme.md)-DG scheme that evolves
+$(\rho,v_1,v_2,p,\chi)$ with an advected material marker $\chi$ (page-local),
+so that the thermodynamics of the mixture is never evaluated across an
+interface, and recomputes only shock-triggered subcells in conservative
+variables (§1, §4.4; arXiv v1). Their Prop. 5 states that near a contact,
+with $v=v_0+O(h^{1+\epsilon_{\mathrm c}})$ and $p=p_0+O(h^{1+\epsilon_{\mathrm c}})$
+(page-local $\epsilon_{\mathrm c}>0$) and density, temperature and marker
+possibly discontinuous, the primitive scheme has a vanishing conservation
+defect for one material, for two materials with the closure
+$1/(\tilde\gamma-1)=\chi/(\gamma-1)$ (page-local mixture $\tilde\gamma$), the
+transport of $\mathsf G$ of Abgrall's condition above, and with
+$\tilde\gamma=\chi\gamma$ under an extra discrete condition (Eq. (64), App.
+B). They call it a generalization of Abgrall's 1996 result, and the shock
+cells, where the defect does not vanish, are the ones made conservative
+([Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)). On the 1D
+Quirk–Karni problem and the air–helium
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md), a
+conservative second-order finite-volume scheme on a five- or tenfold finer
+mesh produces spurious pressure waves at the interface, and the $N=2$
+quasi-conservative scheme none; both use the same ENO reconstruction at the
+limiter level, from which the authors conclude that the oscillations "are
+induced by the conservative fluxes at material interfaces and not related
+to Gibbs-like oscillations" (§5.2, Figs. 7–9).
+
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) keep the fully
+conservative partial-density formulation, which they call "critical" for
+correct shock speeds at high Mach number, and report that on the
+Quirk–Karni tube at $N=3$ the pressure oscillations "commonly seen in
+conservative approaches" in $0.4<x<0.7$ "were not visually noticeable",
+expecting them to shrink with resolution (§1, §5.1.3, Fig. 5; arXiv v1;
+[entropy filtering](/methods/entropy-filtering.md)).
+
 Related exact-at-rest properties of conservative multicomponent schemes,
 which lose equilibrium for moving interfaces, are on
 [stationary contact preservation](/properties/stationary-contact-preservation.md)
@@ -312,6 +346,31 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 
 ## Qualifications
 
+- Scope of "conservative formulations cannot preserve pressure
+  equilibrium". [Trojak & Dzanic (2024)](/sources/trojak-2024.md) state it
+  in passing, citing Abgrall and others (§1), and Gaburro et al. (2024)
+  attribute the interface oscillations of their conservative runs to the
+  conservative fluxes themselves (Fig. 8 caption); both concern dissipative
+  shock-capturing schemes (filtered DSEM, second-order FV) at sharp material
+  interfaces. [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md)
+  present FC/PE (S), which solves only the species-mass, momentum and
+  total-energy equations and keeps velocity and pressure at equilibrium to
+  $10^{-13}$–$10^{-12}$ (§1, §4, §6), but on smooth, resolved interfaces and
+  without numerical dissipation, and they place shocks and sharp
+  interfaces out of scope (§1). The statements do not meet on a common
+  case, so the entry is a qualification, as the parallel Renac–Fujiwara
+  entry on [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
+  is: a conservative shock-capturing scheme built on the compatibility
+  condition and run on a sharp moving interface would decide whether they
+  conflict.
+- Gaburro et al.'s Prop. 1 writes the vanishing defect as "$O(1)$", which
+  the text defines as "a quantity vanishing when $h\to0$", i.e. $o(1)$ (§4.1).
+  Their App. B prints the constant of case 3 as
+  $\frac1{\chi_2-\chi_1}\big(\frac1{\gamma_2-1}-\frac1{\gamma_2-1}\big)$, which is
+  zero; the linear map below their Eq. (64) has $\gamma_1$ in the second term
+  *(compiler check, not in the sources)*. Their helium–bubble air density is
+  printed $1.29\cdot10^{-3}$ kg/m³, while their sound speed 331.6 m/s with
+  $p_a=101325$ Pa needs $1.29$ kg/m³ *(compiler check, not in the sources)*.
 - De Michele & Coppola's conditions are for exact time integration and
   periodic uniform meshes; their tests use RK4 and attribute the CFL
   dependence of the blow-up times to RK4 dissipation, an explanation
@@ -333,3 +392,5 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §1, §2.3 Eqs. (5)–(16), §3 Eqs. (17)–(49), Table 1, §4 Figs. 2–8, §5 Eqs. (55)–(59), §6, App. B.
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §2.7 Thm. 2.4, §3.1 Def. 1, §3.2 Def. 2, Thm. 3.1, §4.3 Fig. 7, §5.1 Figs. 10–12, §5.2 Thms. 5.2, 5.4.
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.1 Table 1, §7.4.1.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §1, §2.1 Eqs. (8)–(18), §4.1, §4.3.2 Prop. 5 Eqs. (63)–(64), §4.4, §5.2 Figs. 7–9, App. B.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1, §5.1.3 Fig. 5.

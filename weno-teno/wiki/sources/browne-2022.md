@@ -133,7 +133,7 @@ an arXiv preprint, [21] a thesis and [52] a Sandia report. DOIs are printed only
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–6 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–7 (2026-10-23). This source is cited on:
 
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)

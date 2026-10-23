@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -202,6 +202,52 @@ Rueda-Ramírez et al. (2022) prove two results about this construction:
   the modified metric terms exactly, so the singular-value-decomposition
   step of that construction is unnecessary.
 
+**Monolithic convex limiting on the subcell form.**
+[Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md)
+write the subcell fluxes of the LGL-DGSEM in closed form. With the
+skew-symmetric $S=2Q-B=Q-Q^\top$ (page-local) and nodal fluxes, per unit
+Jacobian (§2.1, Eqs. (5)–(8), arXiv v1):
+
+$$J\frac{d}{dt}u_i=\frac1{\mathsf w_i}\Big(\hat f^{\mathrm{DG}}_{(i-1,i)}-\hat f^{\mathrm{DG}}_{(i,i+1)}\Big),\qquad \hat f^{\mathrm{DG}}_{(i,i+1)}=\sum_{l=0}^{i}\sum_{k=0}^{N}S_{lk}\,f^{\mathrm{vol}}(u_l,u_k),$$
+
+with the surface numerical fluxes as the outer fluxes $\hat f^{\mathrm{DG}}_{(-1,0)}$,
+$\hat f^{\mathrm{DG}}_{(N,N+1)}$. Because $S$ is skew-symmetric and
+$f^{\mathrm{vol}}$ symmetric, the terms with $l,k\le i$ cancel, so only
+pairs $l\le i<k$ contribute; there $B_{lk}=0$ and $S_{lk}=2Q_{lk}$, which is
+Peyvan et al.'s $\bar f_{i+1}$ above, and summing the recursion of
+Rueda-Ramírez et al. (2022) gives the same expression *(compiler check, not
+in the sources)*. Reading the nodal values as subcell means of width
+$J\mathsf w_i$, the compatible low-order scheme is the subcell Rusanov
+scheme with fluxes $\hat f^{\mathrm{FV}}_{(i,j)}$, whose bar states
+$\bar u_{(i,j)}$ (page-local, Guermond–Popov form) are HLL intermediate
+states, so the forward-Euler low-order update is invariant-domain
+preserving under $\Delta t\le J\mathsf w_i/(a_{(i,i-1)}+a_{(i,i+1)})$ (Eqs.
+(9)–(13); [convex limiting](/methods/convex-limiting.md)). Three
+LGL-specific facts carry the method:
+
+- **No linear solves.** For DG with a dense mass matrix, such as a
+  Bernstein basis with $N>1$, recovering a flux-differencing form needs
+  $m$ sparse $(N+1)\times(N+1)$ linear systems per element and Runge–Kutta
+  stage, and the low-order scheme needs a sparsified operator with graph
+  viscosity; the diagonal LGL norm needs neither (Remarks 2, 5).
+- **Element-local limiting.** The LGL nodes include the element boundary,
+  so the DG and finite-volume fluxes at the element interfaces are the same
+  surface flux and the blend $(1-\alpha)\hat f^{\mathrm{DG}}+\alpha\hat f^{\mathrm{FV}}$
+  (registry $\alpha$; the source's correction factor is $1-\alpha$) does not
+  depend on $\alpha$ there (Remark 6).
+- **Symmetric ratio bar states.** The bar state of a ratio $\phi=(\rho\phi)/\rho$
+  reduces on LGL nodes to $(\overline{\rho\phi})_{(i,j)}/\bar\rho_{(i,j)}$, which
+  the authors list as an advantage over Bernstein-basis DG (Eq. (25)).
+
+The anti-diffusive fluxes $\hat f^{\mathrm{DG}}-\hat f^{\mathrm{FV}}$ are then
+limited in closed form at the semi-discrete level
+([monolithic convex limiting](/methods/convex-limiting.md); details of the
+density, sequential, pressure and entropy limiters there and on
+[entropy stability](/properties/entropy-stability.md)). The authors state
+that the method applies to any discretization with sparse SBP gradient
+operators, Gauss-node DGSEM included, where inter-element fluxes and
+projections need further analysis (§1, Remark 3).
+
 **Whole-element switching on equidistant subcells.** FLEXI's
 finite-volume subcell scheme, as described by Mossier et al. (2022),
 uses neither the LGL subcells nor a blend. A troubled element is replaced
@@ -251,6 +297,29 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
     [astrophysical jet](/benchmarks/high-mach-astrophysical-jet.md) at $N=3$;
   - the GLM-MHD [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) at
     $N=3$, with the Chandrashekar–Klingenberg flux.
+- **Monolithic convex limiting.** Rueda-Ramírez et al. (2024) run the
+  split-form DGSEM with the Ranocha volume flux (Chandrashekar's for
+  Sedov) and LLF surface fluxes in Trixi.jl (§3):
+  - [density-wave advection](/benchmarks/density-wave-advection.md),
+    $N=3,4$ on $4^2$–$32^2$ elements: mean rates 4.16 and 4.75 with
+    positivity bounds only, 1.82 and 1.61 with tight local bar-state bounds,
+    which cap the rate at about two whatever $N$ (Tables 1–4);
+  - [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md),
+    $N=7$, $64^2$ elements, to $t=10$, with results "remarkably similar" to
+    the predictor–corrector subcell limiter of Rueda-Ramírez et al. (2022)
+    (Figs. 1–3);
+  - a bow shock ahead of a blunt body on an isoparametric curved mesh,
+    $N=5$, where local bounds remove the oscillations that positivity
+    bounds leave (Fig. 4);
+  - the [Sedov blast wave](/benchmarks/sedov-blast-wave.md), $N=3$, $64^2$,
+    where limiting the density bar states and applying their effective
+    factor to all fluxes removes "Carbuncle-like artefacts" at the front
+    (Figs. 5–7);
+  - the Mach $\approx2000$ [astrophysical jet](/benchmarks/high-mach-astrophysical-jet.md),
+    $N=3$, $256^2$, where the number of steps is exactly inversely
+    proportional to the CFL number (10284 to 102844 for CFL 0.9 to 0.09),
+    unlike the predictor–corrector limiter, whose dissipation depends on the
+    step (Table 5, Fig. 8).
 - **Multicomponent flows.** Renac (2021) runs $N=3$ with SSP-RK(4,3) in the
   ONERA code Aghora. Smooth convection reaches the design order $N+1$
   ($L^1$ errors $9.28\times10^{-5}$, $3.05\times10^{-6}$, $3.03\times10^{-7}$ at
@@ -339,6 +408,14 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   [Li et al. (2022b)](/sources/li-2022-b.md) and [Ye et al. (2022)](/sources/ye-2022.md)
   *(compiler check, not in the sources)*. The paper does not say which state the runs used; see
   [Shu–Osher problem](/benchmarks/shu-osher-problem.md).
+- Rueda-Ramírez et al. (2024), arXiv v1, state that the bow-shock state
+  $\rho=1.4$, $p=1$, $v_1=4$ "corresponds to a Mach number Ma = 1.4" (§3.3,
+  Eq. (55)); with $\gamma=1.4$ the sound speed is $c=1$ and the Mach number
+  4, the value Rueda-Ramírez et al. (2022) give for the same test *(compiler
+  check, not in the sources)*. They also write that the step count "depends
+  linearly" on the CFL number, while their Table 5 gives CFL times steps
+  constant at about 9256, an inverse proportionality *(compiler check, not
+  in the sources)*.
 - Mossier et al. (2022) call their Legendre–Gauss collocation scheme
   "DGSEM" as well; the definition in the lead of this page (LGL nodes,
   boundary nodes in the quadrature) is the convention of the other
@@ -355,3 +432,4 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §2.3 Eqs. (42)–(59), §4.1–4.3 Figs. 1–3, §5 (arXiv v1).
+- [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §1, §2.1 Eqs. (3)–(8), Remarks 1–3, §2.2 Eqs. (9)–(25), Remarks 5–6, §3 Tables 1–5, Figs. 1–8 (arXiv v1).

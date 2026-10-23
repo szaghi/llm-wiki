@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Rayleigh–Taylor instability"
-description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes; a diffuse-interface variant measures the speed-up of adaptive moving meshes, and a three-dimensional magnetized variant tests positivity-preserving DG for ideal MHD."
+description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu setting: a heavy and a light gas, γ=5/3, a single-mode interface perturbation on [0,1/4]×[0,1] run to t=1.95; used to compare the small-scale structure and the left–right symmetry of low-dissipation schemes; a diffuse-interface variant measures the speed-up of adaptive moving meshes, and three-dimensional magnetized and two-species viscous variants test positivity-preserving DG."
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,10 +19,11 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Nineteen
+[symmetry preservation](/properties/symmetry-preservation.md). Twenty-two
 sources of the bundle discuss it (one of them only in a
-three-dimensional magnetized variant, one only in a diffuse-interface
-variant); Fu (2021), Takagi et al., Ye et al.,
+three-dimensional magnetized variant, one only in a three-dimensional
+two-species viscous variant, one only in a diffuse-interface variant,
+and one with Lagrangian particles); Fu (2021), Takagi et al., Ye et al.,
 Huang et al. (2026), Huang, Liang & Fu (2023) and Li, Chen & Ren (2022)
 cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) cite Shi, Zhang & Shu
 and Young et al.
@@ -43,7 +44,9 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.3.2,
 [Liang et al. (2022)](/sources/liang-2022.md) §4.10,
 [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 and
-[Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42), with
+[Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42),
+[Tang (2024)](/sources/tang-2024.md) §4.4.5, Eq. (37) and, for a
+particle method, [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1, with
 $c=\sqrt{\gamma p/\rho}$:
 
 $$
@@ -57,7 +60,9 @@ reflecting walls at $x=0$ and $x=1/4$, fixed states
 $(\rho,v_1,v_2,p)=(2,0,0,1)$ at $y=0$ and $(1,0,0,2.5)$ at $y=1$, final
 time $t=1.95$ (Zhong et al. stop at $t=1.98$; Wang et al. (2023c) defer
 the boundary conditions to the literature and also run a viscous case
-at $\mathrm{Re}=50000$).
+at $\mathrm{Re}=50000$; Tang states inflow and outflow at the bottom
+and top; Jiang et al. use reflective side walls where the WENO-SPH run
+they compare with used periodic ones, and run to $t=2.05$).
 
 **Gravity convention.** Chertock et al. and Wang et al. (2023b) state the
 gravity term explicitly: $+\rho$ in the $y$-momentum equation and
@@ -79,8 +84,12 @@ fourth equations).
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
 same convention. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
 "gravity source terms" without writing them, and
-[Liang et al. (2022)](/sources/liang-2022.md) do not write the gravity
-term. Ye et al. say "the direction of gravity is the
+[Liang et al. (2022)](/sources/liang-2022.md) and Tang, whose governing
+Eq. (32) is the homogeneous Euler system, do not write the gravity
+term. Jiang et al. write $g_y=1$ in the Lagrangian momentum equation
+$\mathrm dv/\mathrm dt=-\nabla p/\rho+g$, which balances $\partial_yp=2$ at
+$\rho=2$ only with $g$ along $+y$, the convention above *(compiler check,
+not in the sources)*. Ye et al. say "the direction of gravity is the
 same as the $y$ axis" without giving the sign of the source; Li et al.
 write that $\rho$ and $\rho v_2$ are added "to the flux" of the
 $y$-momentum and energy equations, without writing the term; Takagi et al., Fu (2021),
@@ -128,6 +137,8 @@ width, as the common setup *(compiler check, not in the sources)*.
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 11 | fifth-order FV IMWENO-P (mirror-symmetric smoothness indicators) vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P; global LF | $240\times960$ | 1.98 |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.8 | hybrid multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) vs MR-WCNS, WENO-JS; inviscid and $\mathrm{Re}=50000$ | $240\times960$ | 1.95; 15 contours 0.952269–2.14589 |
 | [Ramani & Shkoller (2023)](/sources/ramani-2023.md) §7.2 | simplified FD WENO ALE solver with C-method artificial viscosity on uniform grids and on a dynamic [adaptive moving mesh](/methods/adaptive-moving-mesh.md) (SAM-ALE) | uniform $64\times128$ to $512\times1024$; SAM-ALE $64\times128$ | 2.5 |
+| [Tang (2024)](/sources/tang-2024.md) §4.4.5 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; global LF splitting, TVD-RK3 at CFL 0.5 | $256\times1024$ (timing on $240\times960$) | 1.95; 14 contours 0.9–2.2 |
+| [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1 | Lagrangian weighted-least-squares particles with Roe-type pair states (LWLS-RR) or [WENO-Z](/methods/weno-z.md)-type reconstruction (LWLS-WENO-Z), vs RR-SPH and WENO-SPH; GPU | particle spacing $\Delta x_0=0.002$, $0.001$, $0.0005$ | 2.05 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
 ## Findings across sources
@@ -168,6 +179,20 @@ Zhou et al. find bubble, spike and the small vortices on the spike
 neck reproduced by all three of their six-point WCNS, and more
 small-scale structure with the adaptive-dissipation WCNS-SA on both
 grids (Figs. 17–18).
+
+Tang finds that the adaptive-cut-off TENO-AZ "preserves the richest
+vortex structure while maintaining symmetry" (Fig. 14), at 0.98–1.01 of
+TENO-Z's cost per step against 1.33–1.44 for TENO-A (Table 6). Jiang et
+al.'s particle scheme with WENO-Z-type pair states and WENO-SPH are less
+dissipative than the two Riemann-solver particle methods, LWLS-RR being
+less dissipative than RR-SPH (Fig. 9); refining the particles to
+$\Delta x_0=0.001$ and $0.0005$ gives more roll-ups and a weaker
+asymmetry, consistent with a WENO-JS grid result they cite at
+$\Delta x=0.001$ (Fig. 10). Their single-GPU (Titan RTX) code is 213,
+233 and 243 times faster than one core of a Xeon Silver 4214 for 10000
+steps on $125\times501$, $251\times1001$ and $501\times2001$ particles,
+and the WENO-Z-type reconstruction costs about five times the
+Riemann-solver variant (§5.2.1, Table 3).
 
 **Cost of resolution on adaptive meshes.** Ramani & Shkoller compare
 their SAM-ALE run on $64\times128$ (target mesh concentrated at the
@@ -256,6 +281,28 @@ at about the same number of degrees of freedom (Fig. 17). The speedup
 factors are recomputed from the printed hours *(compiler check, not in
 the sources)*.
 
+## Three-dimensional two-species viscous variant
+
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.2.1, Eqs. (38)–(39)
+(arXiv v1) run the same three-dimensional geometry and mode as Dzanic &
+Witherden without a magnetic field, but with two species and physical
+viscosity: on $[-0.5,0.5]^2\times[-1,1]$, species 0 of density 1 below
+$z=0$ and species 1 of density 3 above (Atwood number $1/2$), $v_1=v_2=0$,
+$v_3=A\cos(\pi z/(2L))\sin(4\pi x/L)\sin(4\pi y/L)$ with $A=0.05$,
+gravity sources $-\rho g$ and $-\rho gv_3$, $g=1$, and
+$p=p_0-\rho gz$, $p_0=6$; periodic in $x$ and $y$, slip adiabatic top and
+bottom; $c_v=3.11$, $c_p=5.19$ (species 0) and $c_v=0.72$, $c_p=1.007$
+(species 1), $\mathrm{Pr}=0.71$, viscosity $10^{-4}$, $5\times10^{-5}$
+and $10^{-5}$; $\mathbb P_3$ on $32\times32\times64$ hexahedra to $t=5$.
+Their positivity-preserving [entropy filter](/methods/entropy-filtering.md)
+with the pressure-jump entropy switch gives a volume-averaged kinetic
+energy whose peak rises as the viscosity falls on the same mesh, which
+they read as the dissipation being "primarily introduced through the
+physical viscosity, not the numerical stabilisation approach" (Fig. 12).
+They do not define $L$ in this section; with $L=1$, the value of
+Dzanic & Witherden, the mode is theirs *(compiler check, not in the
+sources)*.
+
 ## Qualifications
 
 - Huang et al. (Eq. (6.10) and the text after it) print the heavy gas
@@ -273,6 +320,11 @@ the sources)*.
 - Li et al. print the domain as "$[0,0.25]\times[0.1]$"; Eq. (45) and
   the $120\times480$ grid fix it as $[0,0.25]\times[0,1]$. They also use
   $\alpha$ for the sound speed in the data.
+- Tang prints the grid as $256\times1024$ in the text but times the run
+  on $240\times960$ (Table 6), and Jiang et al. print the first particle
+  set of Table 3 as $125\times501$ where $L/\Delta x_0+1$ gives
+  $126\times501$ *(compiler check, not in the sources)*; their figures
+  are at $t=2.05$, their GPU runs "until wall time $t=2$".
 - More small-scale structure is not evidence of accuracy: the
   inviscid problem has no grid-converged solution (see
   [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)).
@@ -298,3 +350,6 @@ the sources)*.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 11, Fig. 13.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Example 4.8, Eq. (4.9), Figs. 4.15–4.16.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §7.2, Eq. (58), Table 7, Figs. 15–18, footnote 3 (arXiv v2).
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.5, Eqs. (32), (37), Fig. 14; §4.4.8, Table 6.
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.2.1, Table 3, Figs. 9–10.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.1, Eqs. (38)–(40), Figs. 12–13 (arXiv v1).

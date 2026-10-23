@@ -3,9 +3,9 @@ type: Property
 title: "Divergence-free magnetic field"
 description: "The magnetic field of MHD obeys div B = 0; discretizations enforce it exactly, locally, by cleaning or not at all. Wu and Shu show that bound-preserving high-order MHD needs a discrete divergence-free condition, recovered by a Godunov-symmetrization source; the page adds Powell-type sources, locally divergence-free reconstruction, constrained transport, projection and GLM cleaning, and divergence-preserving prolongation on adaptive meshes."
 status: established
-aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
+aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, upwind constrained transport, UCT, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Divergence-free magnetic field
@@ -27,7 +27,9 @@ vector potential in a semi-implicit all-Mach finite-difference WENO scheme
 ([Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)) and in
 finite-difference TENO codes ([Fu (2023)](/sources/fu-2023.md)), and on
 face-centred staggered fields in a GPU Godunov code
-([Lesur et al. (2023)](/sources/lesur-2023.md)); by projection or GLM
+([Lesur et al. (2023)](/sources/lesur-2023.md)) and in a fourth-order
+finite-volume scheme for classical and relativistic MHD
+([Berta et al. (2024)](/sources/berta-2024.md)); by projection or GLM
 cleaning in continuous finite elements
 ([Dao & Nazarov (2022)](/sources/dao-2022.md)); as a constraint that
 prolongation onto refined meshes must keep
@@ -317,6 +319,46 @@ accuracy in $B$: on the rotated Alfvén wave the momentum converges at
 fifth order and $B_1$ at about fourth ($L^1$ order 4.13 at $128^2$), which
 they attribute to the central-difference curl (Table 5.3).
 
+**Fourth-order upwind constrained transport.**
+[Berta et al. (2024)](/sources/berta-2024.md) (§2, §4, App. B, arXiv v4)
+build a fourth-order finite-volume scheme for classical and special
+relativistic MHD on Cartesian grids in the PLUTO code. The staggered,
+face-averaged normal field is advanced by the discrete Stokes theorem
+with edge-averaged electric fields, so the face-based discrete divergence
+of each cell has zero time derivative exactly (Eqs. 11–15). Fourth order
+needs conversions between averages and point values, all built from
+undivided Laplacians with the factor $1/24$: the face point value of the
+normal field is the face average minus $1/24$ of its transverse
+Laplacian (Eq. 21); the cell-centred field is an unlimited fourth-order
+interpolation of the face point values,
+$B_{1,i}=\tfrac9{16}\big(B_{1,i+1/2}+B_{1,i-1/2}\big)-\tfrac1{16}\big(B_{1,i+3/2}+B_{1,i-3/2}\big)$
+(Eq. 22, in 1D notation); and the edge-centred electric field from the
+upwind constrained-transport (UCT) average of Mignone and Del Zanna,
+built from the transverse velocities and normal fields reconstructed
+from face centres to edges with flux and diffusion coefficients of the
+HLL, HLLD or GFORCE solver (Eq. 39,
+[HLL-family solvers](/methods/hll-riemann-solvers.md)), is turned into an
+edge average by adding $1/24$ of its Laplacian along the edge (Eq. 40).
+The relativistic extension of UCT-GFORCE is new (App. B). Because the
+reconstruction acts on point values, the electric field needs three
+layers of transverse ghost zones rather than four (§4). Appendix B also
+corrects Mignone and Del Zanna's GFORCE transverse-velocity formula,
+whose Eq. 51 "contains 'y' instead of 't'".
+
+The evidence is on divergence-sensitive benchmarks (§5). On rotated 3D
+shock tubes the oscillations of the normal field are of the same order as
+with Mignone's fifth-order finite-difference scheme and smaller than with
+an earlier scheme they cite (Figs. 2–3). On
+[field-loop advection](/benchmarks/field-loop-advection.md) ($256\times128$,
+two periods) the loop is smeared less at fourth than at second order,
+pointwise WENO-Z "performs the best", pointwise MP5 leaves small over- and
+undershoots at the tail and head of the loop, the magnetic energy decays
+fastest at second order, and the Riemann solver matters "only
+marginally", with GFORCE better (Figs. 6–7). On circularly polarized
+Alfvén waves the damping rate, their measure of dissipation, falls as
+about $N_x^{-5}$ at fourth order against $N_x^{-3}$ at second order (§5.3,
+Fig. 5; [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)).
+
 **Prolongation onto refined meshes.** On a block-structured
 [adaptive mesh](/methods/adaptive-mesh-refinement.md) the face-collocated
 field of a newly refined coarse zone must be filled so that every new fine
@@ -441,12 +483,18 @@ to $t=1$ in 2D and the 3D extension use projection.
   which discrete divergence they measure (§5.2).
 - Dzanic & Witherden (2023) do not quantify the divergence added by the
   nonlinear filter; "negligible" is stated (§3.2).
+- Berta et al. define the field-loop vector potential as $A_3=A_0(R-r)$
+  for $R_1<r\le R$ and zero "elsewhere" (Eq. 54), which makes $A_3$ jump
+  by $A_0(R-R_1)$ at $r=R_1$ and would put a singular azimuthal field
+  there; a constant $A_3=A_0(R-R_1)$ for $r\le R_1$ gives a field-free
+  core without the singular sheet *(compiler check, not in the sources)*.
 - Kanbar et al.'s CTM preserves the centred discrete divergence at the
   nodes, not a face-centred divergence *(compiler check, not in the
   sources: the divergence of Eqs. (20)–(21) is the centred nodal one)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
 
 # Citations
 
+- [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2 (Eqs. (11)–(15)); §3.1 (Eqs. (21)–(22)); §4 (Eqs. (38)–(40)); App. B; §5.1, §5.3–5.4 (Figs. 2–3, 5–7).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: §6 (Eqs. (6.3)–(6.5), (6.17)–(6.22); Thms 6.1, 6.2, 6.4; Rem. 6.3); §7 (Ex. 7.1–7.2, Figs. 5–6).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §2.1–2.2, Eqs. (1)–(7); §3.1.1, Eqs. (19)–(24); §3.1.3; §3.2.2, Eqs. (67)–(70); §4.3–4.6, Eqs. (86)–(87), Figs. 7–11, 16–20.
 - [Liu et al. (2021)](/sources/liu-2021.md) — Eq. (1); §3.1–§3.2 (Eqs. (15)–(26)); §3.3.3 (Eqs. (32)–(35)); §4.3 (Fig. 12); §4.5; §5.

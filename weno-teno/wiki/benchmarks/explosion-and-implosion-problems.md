@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -22,8 +22,9 @@ then serve as gauges of
 [numerical dissipation](/definitions/numerical-dissipation.md). Run for a
 short time, a circular or spherical Sod problem tests monotonicity and
 symmetry on unstructured or adaptive meshes. All runs solve the Euler
-equations; every source prints $\gamma=1.4$ except Ji, Liang & Fu, who
-print no $\gamma$ for their explosions.
+equations; every source prints $\gamma=1.4$ except Ji, Liang & Fu
+(2022), who print no $\gamma$ for their explosions; their sequel (2023)
+states $\gamma=1.4$ for all its Euler tests (§2.1).
 
 ## Long-time cylindrical explosion
 
@@ -57,8 +58,9 @@ Wendroff.
 | [Chertock et al. (2023)](/sources/chertock-2023.md) Ex. 7 | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[0,0.3]^2$, solid walls | $\Delta x=1/2000$ (also $1/2500$, $3/10000$ for the old scheme) | 2.5 |
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 7 | same | $[0,0.3]^2$, solid walls | $\Delta x=3/4000$ | 2.5 |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.9 | $(0.125,0,0,0.14)$ for $\lvert x+y\rvert<0.15$ and $\lvert x-y\rvert<0.15$ | "periodic box" $[-0.3,0.3]^2$ | $800\times800$ | 0.8 |
+| [Tang (2024)](/sources/tang-2024.md) §4.4.3, Eq. (35) | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[-0.3,0.3]^2$, reflecting | $400\times400$ | 2.5 |
 
-The ambient state is $(1,0,0,1)$ in all three. The two printed regions
+The ambient state is $(1,0,0,1)$ in all four. The two printed regions
 are the same diamond, since $\max(\lvert x+y\rvert,\lvert x-y\rvert)=\lvert x\rvert+\lvert y\rvert$,
 and Liang et al.'s $800\times800$ grid on a side of 0.6 has the spacing
 $3/4000$ of Wang et al. *(compiler check, not in the sources)*. A solution
@@ -67,7 +69,10 @@ $x$ and in $y$, is in the periodic box the same as the solution on the
 quadrant $[0,0.3]^2$ with solid walls on all four sides, because
 evenness and period $0.6$ make $x=\pm0.3$ mirror lines as well as $x=0$
 *(compiler check, not in the sources)*. The three sources thus run one
-problem; Liang et al. stop at $t=0.8$, the others at $t=2.5$.
+problem; Liang et al. stop at $t=0.8$, the others at $t=2.5$. Tang's
+full box with reflecting walls is, for a symmetric solution, the same
+problem again, on a grid of spacing $3/2000$, twice that of Wang et al.
+*(compiler check, not in the sources)*.
 
 What is measured differs. Chertock et al. and Wang et al. read the
 distance the jet travels along $y=x$ as a sign of low dissipation: the
@@ -84,7 +89,10 @@ their low-dissipation TENO scheme with a
 "rigorous flow symmetry", with a symmetry-preserving implementation
 technique taken from earlier work, since such schemes "may cause the
 so-called symmetry breaking issue … due to machine round-off errors"
-(Fig. 21).
+(Fig. 21). Tang reads the jet as Chertock et al. and Wang et al. do:
+the adaptive-cut-off TENO-AZ builds finer and longer diagonal jets,
+while the TENO-Z and TENO-LAD results "show a large amount of noise"
+(§4.4.3, Fig. 12; see [adaptive TENO](/methods/adaptive-teno.md)).
 
 **A training variant.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 (§7.4, Eq. 49, arXiv v1) use a corner implosion on $[0,1]^2$ as the
@@ -116,15 +124,49 @@ unstructured finite-volume [TENO](/methods/targeted-eno.md) schemes
 (TENO3 to TENO6), WENO5 and [CWENO5](/methods/cweno.md) all preserve
 monotonicity; on EP02 TENO and CWENO5 are similar, while WENO5 shows
 spurious oscillations near the discontinuities (Figs. 12–17).
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.3 rerun EP01 and EP02 on
+the same mesh to $t=0.2$ with their dual-stencil-selection TENO4-D to
+TENO7-D and find the discontinuities captured without obvious
+oscillations, in agreement with the reference and with CWENO of the same
+order (Figs. 3–6).
+
+**Circular Sod explosion and conservation.**
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.4 (arXiv v1) use
+the same states, $(1,0,0,1)$ inside $r\le0.5$ and $(0.125,0,0,0.1)$
+outside, on $[-1,1]^2$ with walls, to $t=0.25$, on polygonal meshes with
+$h=1/50$ and $1/215$, against a one-dimensional radial reference with
+geometric source terms. Their ADER-DG evolves primitive variables; applied
+everywhere, shocks included, it gives a wrong shock speed, and switching
+to a conservative finite-volume update only in the shock-triggered
+subcells "is enough to restore" the correct speed at $P_2$ and $P_3$
+(Fig. 3). The switch follows from their modified
+[Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) (§4): a
+scheme whose local conservation defect vanishes with $h$ converges, if
+it converges, to a weak solution; the defect of the primitive-variable
+update vanishes for smooth flow and for contacts but not at shocks, so
+the conservative update is applied in the shock cells only.
+
+**Lagrangian particles.** [Jiang et al. (2024)](/sources/jiang-2024.md)
+§4.2.2 run a cylindrical Sod problem on the disc $x^2+y^2\le1.5$ with
+$(p,\rho)=(1,1)$ inside and $(0.1,0.125)$ outside, the inner radius not
+printed, with particle spacing $\Delta x_0=0.01$ to $t=0.2$: their
+Lagrangian weighted-least-squares scheme with WENO-Z-type pair states
+is less dissipative than the WENO-SPH and MWSPH particle methods of the
+literature, and its accuracy rises with the number of local refinement
+levels on $\Delta x_0=0.02$ (Fig. 5).
 
 **Spherical explosions in three dimensions.** Two sources run the Sod
 states $(\rho,v,p)=(1,0,1)$ for $r\le0.5$ and $(0.125,0,0.1)$ outside:
 
-- Ji et al. §5.9, on uniform tetrahedra with $h\approx1/30$ to $t=0.25$,
+- Ji, Liang & Fu (2022) §5.9, on uniform tetrahedra with $h\approx1/30$ to $t=0.25$,
   domain not printed: TENO3 to TENO6 show no obvious artefacts in
   density and pressure profiles, which "agree with the analytical
   solutions well" (Fig. 26), although no analytical solution or its
-  source is given.
+  source is given. Their sequel (2023) §4.9 repeats the case on the
+  same kind of mesh ($h\approx1/30$, $t=0.25$; the sentence giving both
+  is printed at the end of §4.8): TENO6-D and TENO7-D show no obvious
+  artefacts and agree with the analytical solutions and with CWENO
+  (Fig. 21).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.9, on
   $[-1,1]^3$ with $50^3$ elements and Dirichlet boundaries to $t=0.2$,
   local Lax–Friedrichs flux ("robust … for this focusing wave problem"),
@@ -154,7 +196,8 @@ one on an adaptive moving mesh are recorded on
   Chertock et al. against the original central-upwind scheme.
 - Liang et al.'s final time is given only in the caption of Fig. 21.
 - Ji et al. print "$\lVert r\rVert\le0.5$" without restating the centre
-  of the disc; the 3D domain is not printed.
+  of the disc; the 3D domain is not printed. Ji, Liang & Fu (2023) print
+  the disc as "a unit circle of radius $R=1$ centered at $[1,1]$" again.
 
 # Citations
 
@@ -164,3 +207,7 @@ one on an adaptive moving mesh are recorded on
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.6, §5.9, Figs. 12–17, 26 (preprint).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §8.9, Table 6.
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §7.4, Eq. 49, Figs. 20–21 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.3, Eq. (35), Fig. 12.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.3, Eqs. (39)–(40), Figs. 3–6; §4.9, Eq. (45), Fig. 21.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.4, Fig. 3 (arXiv v1).
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.2.2, Fig. 5.

@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -61,7 +61,14 @@ Gauss point (page-local rotation $T$), with the Einfeldt–Batten speeds
 $s^-=\min(v_1^--c^-,\hat v_1-\hat c)$, $s^+=\max(v_1^++c^+,\hat v_1+\hat c)$ from Roe averages
 ([Roe solver](/methods/roe-riemann-solver.md)); they state that HLL is "free from Carbuncle
 problem and the necessity of entropy fix" and that the solver choice "does not affect our
-conclusion" (§5). [Hu et al. (2022)](/sources/hu-2022.md) (Eqs. (2.5)–(2.6)) call the HLL flux
+conclusion" (§5). The sequel of [Ji, Liang & Fu (2023)](/sources/ji-2023.md) (§2.2, Eqs. (11)–(13))
+keeps the same rotated HLL flux and speeds for its fourth- to seventh-order unstructured
+[TENO](/methods/targeted-eno.md), states, citing earlier work, that the choice of $s^\pm$ is
+"non-unique as long as the entropy condition is satisfied and the exact resolution of isolated
+shock waves can be restored", and justifies HLL over HLLC and Roe because contact-resolving
+solvers "may suffer from stubborn Carbuncle phenomena" near strong shocks, the dissipation being
+controlled by the low-dissipation reconstruction instead
+([carbuncle](/definitions/carbuncle-phenomenon.md)). [Hu et al. (2022)](/sources/hu-2022.md) (Eqs. (2.5)–(2.6)) call the HLL flux
 with $s^-=\min(0,v_1^--c^-,\hat v_1-\hat c)$, $s^+=\max(0,v_1^++c^+,\hat v_1+\hat c)$ the **HLLE**
 flux; including $0$ in the extrema makes it the upwind $f(u^-)$ or $f(u^+)$ in supersonic flow.
 
@@ -422,6 +429,20 @@ Several sources pair or compare HLL-type solvers with other interface fluxes:
   for the Sod, Shu–Osher and transonic-airfoil cases, local Lax–Friedrichs for the 3D explosion
   ([FLEXI](/software/flexi.md)).
 
+- **Fourth-order finite volumes for MHD in PLUTO** ([Berta et al. (2024)](/sources/berta-2024.md),
+  §3.3, §4, App. B). Roe, HLL, HLLC, HLLD, Lax–Friedrichs and GFORCE are available and are
+  applied once per face to pointwise-reconstructed states. For upwind constrained transport the
+  solver is rewritten as flux coefficients $a^\mp$ and a diffusion coefficient $d$ (page-local)
+  that also build the edge electric field: for HLL and HLLC, with $\alpha^+=\max(0,s^+)$ and
+  $\alpha^-=-\min(0,s^-)$ (page-local),
+  $$a^-=\frac{\alpha^+}{\alpha^++\alpha^-},\qquad a^+=\frac{\alpha^-}{\alpha^++\alpha^-},\qquad d=\frac{\alpha^+\alpha^-}{\alpha^++\alpha^-}$$
+  (Eqs. (B.1)–(B.4)), and HLLD coefficients from the Alfvén speeds of its fan (Eqs. (B.5)–(B.6)).
+  *(compiler check, not in the sources: $a^-f(u^-)+a^+f(u^+)-d\,(u^+-u^-)$ is the HLL flux above,
+  with $a^-$ multiplying $f(u^-)$.)* The appendix corrects typos of Mignone and Del Zanna in the
+  GFORCE transverse velocity and gives a relativistic UCT-GFORCE. In the field-loop advection the
+  Riemann solver "matters only marginally", GFORCE doing slightly better (§5.4); the Orszag–Tang
+  runs use Roe or HLLD, the two MHD 3D blast waves HLL and the relativistic one GFORCE (§5.6–5.7;
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 - **JAX-Fluids** ([Bezgin et al. (2023)](/sources/bezgin-2023.md), §3.3, Table 2): HLL, HLLC
   and the low-Mach shock-stable HLLC-LM of Fleischmann et al., with arithmetic, Davis, Einfeldt
   or Toro speed estimates, besides Lax–Friedrichs, Rusanov and AUSM+; the default setup is
@@ -490,3 +511,5 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Liu et al. (2023a)](/sources/liu-2023.md) — §2.2 (Eqs. (10)–(15)), §3.2.1 (Eqs. (57)–(66)), §4.
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — Remark 2.2.
 - [Long et al. (2023)](/sources/long-2023.md) — §3.2 (Eqs. (13)–(15)).
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §2.2 (Eqs. (11)–(13)).
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.3, §4, §5.4–5.7, App. B (Eqs. (B.1)–(B.6)) (arXiv v4).

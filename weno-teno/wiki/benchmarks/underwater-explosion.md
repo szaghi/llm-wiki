@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Underwater explosion"
-description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface, the two-dimensional test of two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by a sharp-interface DG solver and a pressure–temperature-equilibrium model; and a spherically symmetric one-dimensional explosion bubble with published collapse radius and time."
+description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface: a two-dimensional test of two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by a sharp-interface DG solver, an equilibrium model and a Lagrangian particle method; plus a spherically symmetric one-dimensional explosion bubble."
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Underwater explosion
@@ -19,8 +19,8 @@ above the bubble is drawn into a liquid film, the "ligament" of Nguyen
 et al. (§3.3). The test combines three material regions (explosion
 gas, water as a [stiffened gas](/definitions/stiffened-gas-equation-of-state.md),
 air), density ratios of about 1000 and pressure ratios of about $10^4$,
-and both sources present it as a test of robustness at such ratios and
-of interface sharpness. The two sources run the same
+and the sources present it as a test of robustness at such ratios and
+of interface sharpness. The three sources run the same
 geometry: a bubble of diameter $0.24$ m centred $0.3$ m below the free
 surface, with the bubble at $\rho=1250$ kg/m³ and $p=1$ GPa ($10^9$ Pa)
 and ambient air and water at atmospheric pressure.
@@ -38,6 +38,21 @@ and ambient air and water at atmospheric pressure.
 | Grids | $160\times160$ background, three adaptive levels | $150^2$, $300^2$, $600^2$ |
 | Output | up to 3.156 ms; density along $x=2$ m at 0.2 ms | 0.5, 1.0, 1.5 ms; up to 12 ms on the large domain |
 
+[Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.2 run the same states,
+(bubble, air, water) $=(\rho,p,\gamma,p_\infty)=(1250,10^9,1.4,0)$,
+$(1.225,101325,1.4,0)$, $(1000,101325,4.4,6\times10^8)$ in SI units, on
+$[-2,2]\times[-1.5,1]$ m with the free surface at $y=0$, the bubble of
+radius $0.12$ m centred at $(0,-0.3)$ m and a reflective bottom at
+$y=-1.5$ m. Their scheme is a Lagrangian weighted-least-squares particle
+method on a single GPU: each particle pair is a 1D Riemann problem solved
+with a Roe-type Lagrangian solver, whose left and right states come either
+from the particle values (LWLS-RR) or from a fifth-order three-stencil
+reconstruction with [WENO-Z+](/methods/weno-z-plus.md)-type weights on
+collinear virtual points (LWLS-WENO-Z); each particle carries its own
+phase's stiffened-gas law. Initial spacing $0.01$ m with two static
+refinement levels ($1/4$ of it in the bubble, $1/2$ on
+$0.12<\sqrt{x^2+(y+0.3)^2}<1.1$), about $2.2\times10^5$ particles.
+
 ## Findings
 
 **Interface sharpness and limiters.** Nguyen et al. compare limiters on
@@ -51,6 +66,14 @@ about 1.9 ms, which they attribute to their sharp-interface treatment;
 their density profile along $x=2$ m at 0.2 ms agrees with two other
 computations except at the bubble centre (Figs. 34–36).
 
+**A particle method against grid-based results.** Jiang et al. find
+density and pressure along $x=0$ in agreement with the grid-based results
+of Hu et al., Shukla and Shyue that they cite, and LWLS-WENO-Z less
+dissipative than LWLS-RR (Figs. 11–12). Their method is non-conservative
+(it advances the logarithm of density, velocity and internal energy),
+and on smooth data it converges at about second order (2.2–2.35 for
+LWLS-WENO-Z), not fifth ([density-wave advection](/benchmarks/density-wave-advection.md)).
+
 **Temperature.** Nguyen et al. start the bubble at $T_0=2779.91$ K,
 obtained from their stiffened-gas law, and report a maximum bubble
 temperature still about 2750 K at 0.2 ms; their model carries a single
@@ -58,10 +81,11 @@ temperature for all phases (Fig. 14). They do not print the heat
 capacities, so the value cannot be checked from the paper. Bai & Li do
 not print heat capacities for this case either.
 
-**Robustness.** Both papers present the run as evidence that the scheme
-handles high density and pressure ratios with strong shocks; neither
-reports a failure, a positivity fix specific to this case or an error
-norm.
+**Robustness.** The two grid-based papers present the run as evidence
+that the scheme handles high density and pressure ratios with strong
+shocks; Jiang et al. present it, with the cavitation bubble near a wall,
+as a flow with strong shocks and large volume changes. None reports a
+failure, a positivity fix specific to this case or an error norm.
 
 ## A spherically symmetric variant
 
@@ -92,8 +116,9 @@ converges from below (Fig. 16).
   $8.381$ GPa instead of 1 GPa and different water constants
   ($\gamma=5.5$, $p_\infty=492.115$ MPa against $4.4$ and $600$ MPa).
 
-- The two setups share the geometry and the bubble state but not the
-  models: a sharp interface with one equation of state per fluid against
+- The setups share the geometry and the bubble state but not the
+  models (Jiang et al.'s is a sharp, purely Lagrangian two-fluid particle
+  model, with an interface repulsive force): a sharp interface with one equation of state per fluid against
   a homogeneous mixture in pressure and temperature equilibrium. Their
   agreement with earlier computations is visual.
 - Bai & Li state that the physical parameters are those of their
@@ -110,3 +135,4 @@ converges from below (Fig. 16).
 - [Bai & Li (2022)](/sources/bai-2022.md) — §3.6, Figs. 34–36.
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.3, Table 2, Figs. 11–15.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.3, Fig. 16: spherically symmetric explosion bubble.
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.2.2, Figs. 11–12; §§3.1–3.3, §4.1: Lagrangian WLS particle method with WENO-Z-type reconstruction.

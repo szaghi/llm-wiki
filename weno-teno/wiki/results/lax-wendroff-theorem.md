@@ -1,11 +1,11 @@
 ---
 type: Result
 title: "Lax–Wendroff theorem"
-description: "The Lax–Wendroff theorem makes conservation, in flux form with consistent numerical fluxes, the condition for a convergent scheme to converge to a weak solution; the bundle's sources invoke it to justify local conservation, Active Flux, the subcell flux form of DGSEM and conservative sharp-interface multi-medium schemes, and show wrong shock positions when conservation is dropped."
+description: "The Lax–Wendroff theorem makes conservation in flux form, with consistent numerical fluxes, the condition for a convergent scheme to converge to a weak solution; the sources invoke it for local conservation, Active Flux, subcell fluxes of DGSEM and conservative multi-medium schemes, extend it to a vanishing conservation defect, and show wrong shock speeds without conservation."
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Lax–Wendroff theorem
@@ -21,9 +21,10 @@ $$\frac{d}{dt}\bar u_i=-\frac1{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big),
 
 and the numerical flux is **consistent** with the physical one. The sources use it in one
 direction only: conservation (with consistent fluxes) is what a scheme needs for
-convergence to a weak solution (Abgrall & Barsukow, §1). No source
-of this bundle restates the convergence hypotheses or the proof; the bundle records the
-theorem through what they derive from it.
+convergence to a weak solution (Abgrall & Barsukow, §1). Only
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) restate convergence hypotheses, for a
+modified version of the theorem (below); otherwise the bundle records the theorem through
+what the sources derive from it.
 
 ## The consistency condition
 
@@ -68,9 +69,52 @@ invoke the theorem for convergence to weak solutions of their
   ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
   [flux differencing](/methods/flux-differencing.md)).
 
+## A modified theorem: vanishing conservation defect
+
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) (§4.1, Eq. (49), Prop. 1) relax the
+flux-form hypothesis. On a mesh of polygonal cells $K_i$, a scheme satisfies a
+**modified local conservation statement** if
+
+$$\lvert K_i\rvert\,\frac{\bar u_i^{n+1}-\bar u_i^n}{\Delta t}+\sum_\ell\hat f^n_{i\ell}=\lvert K_i\rvert\,\mathsf d^n_i,$$
+
+with $\hat f^n_{i\ell}$ the face fluxes and $\mathsf d^n_i$ the **local
+conservation defect** (page-local; $\ell$ runs over the faces of $K_i$). Proposition 1:
+if the discrete initial data converge weakly to the exact ones, a TVB-type condition
+$h^2\sum_i\sum_\alpha\max_{x\in B_{i,\alpha}}\lVert u^n_h(x)-u^n_h(x_{i,\alpha})\rVert\to0$ holds
+(Eq. (50); $B_{i,\alpha}$ balls around subcells, page-local), the meshes are shape regular and
+$\sup_{i,n}\lVert\mathsf d^n_i\rVert$ vanishes as $h\to0$ (Eq. (51)), then a convergent sequence
+of discrete solutions converges to a weak solution. The proof follows Shi and Shu and Abgrall and
+Roe, with the extra term bounded by $\lvert\Omega\rvert\,t_{\mathrm f}\,\lVert\varphi\rVert_{L^\infty}\sup_{i,n}\lVert\mathsf d^n_i\rVert$
+for a test function $\varphi$ (page-local $t_{\mathrm f}$ the final time). Schemes satisfying it
+are called **locally quasi-conservative**.
+
+The authors use it for an ADER-DG scheme that evolves the primitive variables
+$(\rho,v,p,\chi)$ of multi-material Euler with [path-conservative](/methods/path-conservative-scheme.md)
+fluctuations, whose cell averages of the conserved variables are therefore not updated in
+flux form. They show that the defect vanishes (§4.3):
+
+- for locally smooth discrete solutions, in the DG update and in the subcell finite-volume
+  update, with $\mathsf d^n_i=O(h)$ under bounds on the first derivatives and on the face jumps
+  that they call stronger than the TVB condition (Props. 2–3, App. A);
+- at faces between limited and unlimited cells of the a posteriori limiter when the two face
+  states differ by $O(h^{1+\beta})$, $\beta>0$, which justifies extending the troubled flag to
+  neighbours instead of correcting the fluxes of unflagged cells (Prop. 4;
+  [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md));
+- across quasi-1D contacts with velocity and pressure constant up to terms $O(h^{1+\epsilon_{\mathrm c}})$, $\epsilon_{\mathrm c}>0$ (Eq. (63); page-local exponent), for one
+  material and for two materials with the marker closure $1/(\tilde\gamma-1)=\chi/(\gamma-1)$,
+  and with $\tilde\gamma=\chi\gamma$ under an extra discrete condition (Prop. 5, App. B; page-local
+  $\chi$, $\tilde\gamma$; a generalization of Abgrall's result, in their words;
+  [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+
+At shocks the defect does not vanish. The scheme therefore flags shock cells with a
+divergence-based sensor and, in those subcells only, recomputes the update in
+**conservative** variables with a Rusanov flux (Eq. (67)), which "entirely removes the local
+conservation defect" there (§4.4; [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md),
+[MUSCL–Hancock](/methods/muscl-hancock.md)).
+
 ## What dropping conservation costs
 
-Two sources show the consequence the theorem warns of, a wrong shock speed:
+Three sources show the consequence the theorem warns of, a wrong shock speed:
 
 - **Non-conservative blending in time.** The [Quinpi](/methods/quinpi.md) scheme blends a
   high-order and a first-order implicit solution cell by cell, which is not conservative.
@@ -91,11 +135,25 @@ Two sources show the consequence the theorem warns of, a wrong shock speed:
   material interfaces (§1), which is the price conservation brings there (see
   [characteristic decomposition](/methods/characteristic-decomposition.md) on primitive
   variables).
+- **Non-conservative variables at shocks.** On the circular Sod explosion
+  ([explosion and implosion problems](/benchmarks/explosion-and-implosion-problems.md)) the
+  ADER-DG scheme of [Gaburro et al. (2024)](/sources/gaburro-2024.md) applied to the
+  primitive-variable formulation everywhere gives a wrong shock speed; the conservative
+  subcell correction in shock-flagged cells alone "is enough to restore" the correct one, at
+  $h=1/50$ and $h=1/215$ with $\mathbb P^2$ and $\mathbb P^3$ (§5.1.4, Fig. 3). They recall that the
+  segment path of path-conservative schemes is "in general not consistent with the correct
+  jump conditions" (§1).
 
 ## Qualifications
 
-- What the sources cite is the conservation-and-consistency requirement; none of them
-  proves a convergence statement for its own scheme from it. Conservation does not select
+- What most sources cite is the conservation-and-consistency requirement; only Gaburro
+  et al. (2024) prove a statement of the theorem's type for their own scheme, and it is
+  conditional, like the theorem: *if* the scheme converges. They print the vanishing of the
+  defect as "$O(1)$" in Eqs. (47) and (51) and state that it denotes "a quantity vanishing
+  when $h\to0$", i.e. $o(1)$; Props. 2–3 conclude $o(1)$. *(compiler check, not in the sources:
+  their smoothness hypotheses bound face jumps by a constant times $h$, so no $O(1)$ jump
+  satisfies them; at discontinuities only the contact case of Prop. 5 and the conservative
+  shock correction cover the defect.)* Conservation does not select
   the physically relevant weak solution: on the KPP rotating-wave problem the (conservative)
   standard DGSEM with shock capturing gives clean but **nonentropic** solutions, while the
   entropy-stable split-form DGSEM converges to the entropy solution
@@ -127,3 +185,4 @@ Two sources show the consequence the theorem warns of, a wrong shock speed:
 - [Zheng et al. (2021)](/sources/zheng-2021.md) — §1, §2.3, §4 (Example 4, Fig. 8).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §1, §2 (Eq. (2.1)).
 - [Jeong et al. (2022)](/sources/jeong-2022.md) — §2.1.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §1, §4.1 (Eqs. (47)–(51), Prop. 1), §4.3 (Props. 2–5), §4.4 (Eq. (67)), §5.1.4 (Fig. 3), Apps. A–B (arXiv v1).

@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Bound preservation"
-description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and invariant-domain form, the sources' admissible sets, the Zhang–Shu cell-average route and its viscous, reacting, relativistic, moving-mesh and phase-field extensions, flux, convex and elementwise limiting, filtering, MOOD, and geometric quasilinearization."
+description: "A scheme is bound-preserving when its discrete solution stays in the convex admissible set G of the PDE; the page states the definition and invariant-domain form, the sources' admissible sets, the Zhang–Shu cell-average route and its viscous, reacting, relativistic, staggered, moving-mesh and phase-field extensions, provably positive primitive recovery, flux, convex and elementwise limiting, filtering, MOOD, and geometric quasilinearization."
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Bound preservation
@@ -44,9 +44,11 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 | Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
 | reacting multicomponent Navier–Stokes, calorically perfect species | $\{\rho\ge0,\ P(u)\ge0,\ \rho Y_k\ge0\}$, $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2=p/(\gamma(u)-1)$ ($h_k(0)$ formation enthalpies, page-local); $Y_k\le1$ is not in $G$ | Du & Yang (2022), §4.1, Eq. (4.1) |
+| multi-species Euler / Navier–Stokes in thermal equilibrium, nodal DG | $\{\rho>0,\ p>0,\ \text{every partial density}\ \ge0\}$, plus a local minimum of the mixture entropy where a pressure-jump sensor fires | Trojak & Dzanic (2024), Eqs. (22)–(25) |
+| barotropic Euler / shallow water on staggered grids | $\{\rho\ge0\}$, dry states $\rho=0$ included | Goudon & Minjeaud (2024), §2.2 |
 | five-equation two-phase model, stiffened gases | $\{0\le\phi_1\le1,\ \phi_k\rho_k\ge0,\ \rho e-\bar p_\infty>0\}$ ($\phi_k$ volume fractions, $\bar p_\infty$ mixture stiffness, page-local) | Wong et al. (2021), Eqs. (10), (12) |
 | two-phase diffuse-interface model, phase-field step | $\{0\le\phi_1\le1,\ \phi_1\rho_1\ge0,\ (1-\phi_1)\rho_2\ge0\}$ | Huang & Johnsen (2023), Thm 3.2 |
-| special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5 |
+| special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5; Cai et al. (2024), Eqs. (1.5)–(1.6) |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
 | ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
 | ideal MHD with a local minimum of $p\rho^{-\gamma}$ at the solution nodes | $\{\rho>\epsilon_{\mathrm f},\ p>\epsilon_{\mathrm f},\ p\rho^{-\gamma}>(p\rho^{-\gamma})^K_{\min}+\epsilon_{\mathrm f}\}$, tolerance $\epsilon_{\mathrm f}=10^{-8}$ (page-local), bound over the element and its face neighbours from the previous stage | Dzanic & Witherden (2023), Eqs. (21)–(22), §4 |
@@ -63,7 +65,10 @@ Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Zheng et al. (2022)](/sources/zheng-2022.md),
 [Lin, Chan & Tomas (2023)](/sources/lin-2023.md),
 [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md),
-[Huang & Johnsen (2023)](/sources/huang-2023.md). The multicomponent and
+[Huang & Johnsen (2023)](/sources/huang-2023.md),
+[Cai, Qiu & Wu (2024)](/sources/cai-2024.md),
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md),
+[Goudon & Minjeaud (2024)](/sources/goudon-2024.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
 [five-equation model](/definitions/five-equation-model.md) pages, the
@@ -259,6 +264,47 @@ check, not in the sources: ratios of the tabulated weights)*.
   and the high-order extension uses a Zhang–Shu Gauss–Lobatto
   decomposition (Theorems B.3–B.4)
   ([phase-field methods](/methods/phase-field-method.md)).
+- *Relativistic Hermite WENO and provably positive recovery*
+  ([Cai, Qiu & Wu (2024)](/sources/cai-2024.md), arXiv v1). The
+  finite-volume Hermite WENO scheme evolves cell averages and first
+  moments; with the four-point Gauss–Lobatto decomposition
+  $\bar u_i=\tfrac56\Pi_i+\tfrac1{12}\big(u^+_{i-1/2}+u^-_{i+1/2}\big)$,
+  the Lax–Friedrichs splitting property $u\pm f(u)/a\in G$ (recalled from
+  Wu & Tang) and a two-stage scaling limiter, the forward-Euler update of
+  the averages is PCP under $\Delta t\le\Delta x/(12a)$ (Thm 3.1), in 2D
+  under $\Delta t\le\tfrac1{12}/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$
+  (Thm 4.1), with a further restriction from the geometric source in
+  axisymmetric coordinates (§4.3, Eq. 4.12). The limiter acts at all four
+  Gauss–Lobatto points, inner ones included, because the flux is
+  evaluated there and the recovery of $p$ converges only for states in
+  $G$ (Remark 3.4; [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+  The paper's main contribution closes the recovery gap left by Chen &
+  Wu's linearly convergent algorithms: a recovery algorithm is called PCP
+  if all its iterates are positive (Def. 2.1). Newton's method on the
+  monic quartic obtained by squaring the pressure equation (NR-I), whose
+  smallest positive root is the physical pressure (Thms 2.1–2.2), and on
+  $(E+p)$ times the pressure equation (NR-II), each started from a proved
+  initial guess, are monotone, PCP and quadratically convergent (Thms
+  2.5–2.6, 2.10); a hybrid uses NR-II where the quartic is ill-conditioned
+  ($\gamma<1.01$ or $D^2/(E^2-\lvert m\rvert^2)<10^{-4}$) (§2.4). In $10^8$
+  random samples per set none of the algorithms produced a negative
+  pressure (§5.1, Tables 1–3). Without the limiter the code breaks down
+  after one step on a shock-heating test with $v_0=1-10^{-10}$ and cannot
+  take one step on a shock–vortex interaction with minimum density
+  $7.8\times10^{-15}$ (Ex. 5.4, 5.8); with it only two cells are limited
+  on a 1D Riemann problem (Ex. 5.3). See
+  [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md).
+- *Staggered grids* ([Goudon & Minjeaud (2024)](/sources/goudon-2024.md),
+  §2.2, version of record). In an explicit staggered finite-volume scheme
+  for barotropic Euler with a potential source (densities on primal
+  cells, velocities on the dual nodes), the mass flux is split kinetically,
+  $\mathcal F^+(\rho,v)+\mathcal F^-(\rho,v)=\rho v$ with $\pm\mathcal F^\pm$
+  non-decreasing in $\rho$ (page-local $\mathcal F^\pm$), and fed with
+  hydrostatic reconstructions that never exceed the neighbouring cell
+  density. Density stays non-negative under a CFL condition on the
+  characteristic speeds $v\pm c$, the argument concluded "as in
+  Proposition 3.7" of the authors' earlier paper, and dry states are
+  preserved ([well-balancing](/properties/well-balancing.md)).
 
 **Time stepping.** The sources extend the forward-Euler result to
 [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and SSP multistep methods,
@@ -362,6 +408,17 @@ the bounds.
   Mach 10 reflection–diffraction problem (0.0012 %) (Ex. 3.5–3.12,
   Remark 3.2); the limiter is sufficient only, and its accuracy rests on
   numerical verification.
+- **Semi-discrete limiting of bar states.**
+  [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (§2.2,
+  arXiv v1) limit the subcell antidiffusive fluxes of an LGL-DGSEM before
+  the time step so that every limited bar state lies in the bounds; with
+  a non-negative density bound and a closed-form pressure fix as the last
+  stage the scheme is positivity preserving (§2.2.3), under the bar-state
+  condition $\Delta t\lesssim\min_im_i/(2\sum_da^{(d)}_i)$, more
+  restrictive than the usual low-order CFL condition (Eq. 44). The
+  FCT/IDP alternative needs a positive fraction of the low-order density
+  and pressure as bound, "as otherwise some nodes might get an invalid
+  vacuum state" (§3.2; [convex limiting](/methods/convex-limiting.md)).
 
 ## Route 4: a posteriori recomputation (MOOD)
 
@@ -412,6 +469,35 @@ Without the filter their shock–cloud run diverges with negative
 pressure, and the extreme [MHD blast wave](/benchmarks/mhd-blast-wave.md)
 (pressure ratio $10^5$) "would diverge almost instantly" (§5.4–5.5).
 
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) (§3–§4, arXiv v1)
+extend the filter to conservative multi-species Euler and Navier–Stokes
+in thermal equilibrium. The constraints are positivity of the mixture
+density, of the pressure and of every partial density, the mixture
+density being kept as a separate constraint although the partial
+densities imply it, because of numerical tolerances (Eqs. 22–23), and a
+local minimum principle on the mixture entropy of Gouasmi et al.
+Enforced everywhere, the entropy constraint gives "exceedingly
+deficient" results at species interfaces, where a smooth mixture
+density can hide discontinuous partial densities; it is therefore
+switched on only where a pressure-jump sensor fires
+([troubled-cell indicator](/definitions/troubled-cell-indicator.md)),
+while the positivity constraints always hold, so that positivity does
+not depend on the switch (§3.1). The existence of an admissible filter
+strength is stated to follow from the first-order Godunov character of
+the element mean under SSP stepping and a positivity-preserving,
+entropy-stable Riemann solver (§3.1). For Navier–Stokes the filter acts
+after the inviscid substep, the viscous increment is added explicitly,
+and a positivity-only filter follows, "very rarely" needed (§3.3).
+Tolerances are $10^{-5}$, added to density, pressure and entropy and to
+the initial partial densities (Eqs. 31–32). On a convecting two-species
+[density wave](/benchmarks/density-wave-advection.md) with species
+densities down to $2\times10^{-12}$ the $L^\infty$ errors converge at
+fitted rates 2.28, 3.16, 3.93, 5.17 and 6.61 for degrees 1–5 with the
+switch and almost the same without it (Tables 1–2); the pairwise rates
+are irregular (5.85 for degree 3 and 9.9 for degree 5 between 32 and 64
+elements), so the meshes are not yet asymptotic *(compiler check, not in
+the sources)*.
+
 ## Bound preservation and the divergence of the magnetic field
 
 For ideal and multicomponent MHD the BP property of the cell-average
@@ -432,6 +518,38 @@ The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
 ## Qualifications
+
+- **Proved step bound against the tested CFL number.** Cai, Qiu & Wu
+  prove PCP for $\Delta t\le\Delta x/(12a)$ (Thms 3.1, 4.1) and run all
+  tests at "CFL number 0.6", without defining it (§5); measured against
+  $\Delta x/a$ that would be about seven times the proved bound
+  *(compiler check, not in the sources: $0.6\times12=7.2$)*. Their claim
+  that hybrid Newton is superior "in terms of speed … across all tests"
+  is not borne out by their Table 3, where Chen & Wu's hybrid-linear
+  recovery (33.876 s) and NR-I (35.504 s) are faster than hybrid Newton
+  (37.629 s).
+- **Staggered positivity condition, sign.** Goudon & Minjeaud print the
+  CFL condition as
+  $\frac{\delta t}{\delta x}\big([\lambda^+]_++[\lambda^-]_-\big)\le1$
+  with $[z]_-=\min(0,z)\le0$ (p. 1272); from their fluxes
+  $\mathcal F^+\le\rho[\lambda^+]_+$ and $\mathcal F^-\ge\rho[\lambda^-]_-$,
+  which gives
+  $\bar\rho\ge\rho\big(1-\frac{\delta t}{\delta x}([\lambda^+]_+-[\lambda^-]_-)\big)$,
+  so the condition needs $-[\lambda^-]_-$, a stronger requirement than the
+  printed one *(compiler check, not in the sources)*. They also print the
+  kinetic flux as $\int_{\pm\xi>0}M(\xi)\,d\xi$ (p. 1267), a dimensionless
+  fraction, without the factor $\rho\,\xi$ that their Eqs. (6)–(7) require
+  *(compiler check, not in the sources)*.
+- **Modified entropy.** Trojak & Dzanic replace the mixture entropy by
+  the exponential of a clipped version and justify that it "retains the
+  local minimum entropy principle" because the exponential is strictly
+  convex (§4, Eq. 33); a minimum principle survives any increasing
+  transformation, which the exponential is, so the conclusion holds for
+  the unclipped functional by monotonicity rather than convexity
+  *(compiler check, not in the sources)*; the clipping
+  $\max(\epsilon,\cdot)$ inside the logarithm but not in its prefactor
+  makes the functional differ from the exponential of the entropy where
+  a partial density falls below $\epsilon$.
 
 - **Positivity by design, not by proof.** [Paula, Adami & Adams (2023)](/sources/paula-2023.md)
   call their time-averaged THINC reconstruction of the volume fractions
@@ -605,3 +723,7 @@ The details are on
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: Eq. (3); §5, Theorem 5.2, Remark 1; §6.1–6.2, Eqs. (38)–(44), Theorem 6.2; §8.2–8.4.
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §5.2; §7.5.
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §2.2; §5.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §1, Eqs. (1.5)–(1.6); §2 (Defs. 2.1–2.2, Thms 2.1–2.10, Algorithms 2.1–2.4); §3 (Lemmas 3.1–3.2, Thm 3.1, Remark 3.4); §4 (Thm 4.1, Eq. (4.12)); §5, Tables 1–3, Ex. 5.3–5.4, 5.8.
+- [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.2, Eqs. (5)–(18), pp. 1267, 1271–1272.
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2–2.2.4, Eqs. (31)–(36), (43)–(45); §3.2.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1; §3.1–3.3, Eqs. (17)–(30); §4, Eqs. (31)–(33); §5.1.1, Tables 1–2.

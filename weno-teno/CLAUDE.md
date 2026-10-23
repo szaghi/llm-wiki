@@ -46,11 +46,15 @@ here, in this bundle's notation.
     is a byte copy of Liang et al. 2022 (TENO, JCP 467:111465);
   - the "Feng 2026" Physics of Fluids file holds Wang, Don & Wang 2023
     (AWENO with adaptive numerical diffusion, C&F 251:105743), which is
-    ingested from it as `wang-2023`.
-  Two works are therefore missing: Feng et al. 2026 (Phys. Fluids
-  38:011302) and Li et al. 2024 (JCP 519:113375). The list for the
-  re-download is `~/papers/mosaic/weno-teno-redownload.csv`. These sources
-  and `wang-2023` are ingested last (chunk 11).
+    ingested from it as `wang-2023`;
+  - the "Wu 2023" SIAM J. Numer. Anal. file holds only the 9-page
+    Supplementary Materials of Wu & Shu's positivity-preserving central
+    DG paper (found 2026-10-23, chunk 7).
+  Three works are therefore missing or incomplete: Feng et al. 2026
+  (Phys. Fluids 38:011302), Li et al. 2024 (JCP 519:113375) and Wu &
+  Shu 2023 (SINUM 61:250-285). The list for the re-download is
+  `~/papers/mosaic/weno-teno-redownload.csv`. These sources and
+  `wang-2023` are ingested last (chunk 11).
 - **Version rule:** the Source page records the version read (arXiv vN,
   HAL, SSRN, accepted manuscript, version of record); its metadata is the
   published identity from Crossref. Claims and equations are those of the
@@ -98,11 +102,18 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 6 staged 2026-10-23:** WCNS weights, flux globalization,
+**Chunk 7 staged 2026-10-23:** TENO variants, limiters, ADER,
+well-balanced and multiphase solvers; 139 of 207 ingested (wu-2023
+deferred: the archive file holds only its supplement), 191 concept pages
+plus the registry, 4315 bibliography entries, deep lint done, four
+contradictions open (TENO $\tau_K$; conservation of WCNS; entropy-filter
+tolerance; cost of WENO-Z against mapped WENO). Next: chunk 8.
+
+**Chunk 6 committed 2026-10-23 (82b0c9e):** WCNS weights, flux globalization,
 entropy-stable DG for air, interface methods; 120 of 207 ingested, 181
 concept pages plus the registry, 3765 bibliography entries, deep lint
 done, three contradictions open (TENO $\tau_K$; conservation of WCNS;
-entropy-filter tolerance). Next: chunk 7.
+entropy-filter tolerance).
 
 **Chunk 5 committed 2026-10-23 (a001f6a):** gradient-based schemes, wall-modelled LES,
 structure-preserving MHD, GPU codes; 100 of 207 ingested, 167 concept

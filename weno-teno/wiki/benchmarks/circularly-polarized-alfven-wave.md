@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circularly polarized Alfvén wave"
-description: "Smooth exact travelling-wave solution of ideal (and relativistic) MHD in which the transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected over one period in 1D or along a rotated direction in 2D, it serves as a convergence-order test of MHD schemes, from fifth-order WENO to one-step second-order GRP finite volumes."
+description: "Smooth exact travelling-wave solution of ideal and relativistic MHD in which the transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected over one period in 1D or along a rotated direction in 2D and 3D, it is a convergence-order test of MHD schemes, from fifth-order WENO to second-order GRP finite volumes."
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -47,6 +47,24 @@ $p=0.1$, $\gamma=5/3$, Alfvén speed 1, $t=2$, CFL 0.2, meshes $16^2$ to
 $256^2$. The reference is "the exact solution at $t=2$, which is the
 initial value", and the error is that of the reconstructed polynomial
 (their Eq. (84)).
+
+**Non-relativistic and relativistic, 2D and 3D, [Berta et al. (2024)](/sources/berta-2024.md).**
+§5.3, Eqs. (47)–(49), after Mignone (MHD) and Del Zanna (RMHD) as they
+cite them. With the page-local phase $\varphi_{\mathrm A}=k_wx-\omega t$
+(wavenumber $k_w$, angular frequency $\omega$) and amplitude
+$\eta_{\mathrm A}$ (page-local), the 1D MHD profile is
+$v=(0,\ \eta_{\mathrm A}\sin\varphi_{\mathrm A},\ \eta_{\mathrm A}\cos\varphi_{\mathrm A})$,
+$B=(c_a\sqrt\rho,\ \sqrt\rho\,\eta_{\mathrm A}\sin\varphi_{\mathrm A},\ \sqrt\rho\,\eta_{\mathrm A}\cos\varphi_{\mathrm A})$,
+with $c_a=\omega/k_w=1$, $\eta_{\mathrm A}=0.1$, $\rho=1$, $p=2$,
+$\gamma=5/3$. The relativistic profile is
+$v=(0,\ -c_A\eta_{\mathrm A}\cos\varphi_{\mathrm A},\ -c_A\eta_{\mathrm A}\sin\varphi_{\mathrm A})$,
+$B=(B_0,\ B_0\eta_{\mathrm A}\cos\varphi_{\mathrm A},\ B_0\eta_{\mathrm A}\sin\varphi_{\mathrm A})$,
+with $B_0=1$, $\eta_{\mathrm A}=1$, $\gamma=4/3$ and the relativistic Alfvén
+speed $c_A$ of their Eq. (49). The wave is rotated by $45^\circ$ about
+the $y$ axis in 2D and by a further $45^\circ$ about the $z$ axis in 3D,
+on the unit square or cube, periodic; one period; $N_x=8$ to $512$;
+CFL 0.4 (2D) and 0.3 (3D); $L^1$ error of $B_2$ between final and
+initial profiles.
 
 **Relativistic, [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md).**
 §4.1.1, Eqs. 44–47: $v_2=-A\cos\!\big(\tfrac{2\pi}{\lambda}(x-v_at)\big)$,
@@ -94,6 +112,40 @@ truncated-SVD least-squares solves of the GRP star-state gradient: the
 one-step scheme costs 2.50 times the two-stage one
 *(compiler check, not in the sources)*.
 
+**Fourth order, cost and dissipation of pointwise finite volumes.**
+Berta et al.'s fourth-order constrained-transport finite-volume scheme
+(pointwise [MP5](/methods/monotonicity-preserving-limiter.md) or
+pointwise [WENO-Z](/methods/weno-z.md) interface values, Laplacian
+point/average conversions, SSPRK(5,4)) reaches $O_{L_1}=4.00$ at
+$N_x=512$ in every configuration, and its MP5 and WENO-Z errors are
+almost identical (Table 2; WENO-Z shown):
+
+| $\varepsilon_1(B_2)$ | $N_x=8$ | 64 | 512 |
+|---|---|---|---|
+| MHD, 2D | 3.02E-03 | 5.08E-07 | 1.21E-10 |
+| MHD, 3D | 3.83E-03 | 7.57E-07 | 1.82E-10 |
+| RMHD, 2D | 2.60E-02 | 4.33E-06 | 1.04E-09 |
+| RMHD, 3D | 3.48E-02 | 6.45E-06 | 1.58E-09 |
+
+In 3D MHD the scheme has smaller errors than Mignone's fifth-order
+finite-difference scheme (as they quote its Table 1) below $256^3$; at
+$256^3$ the errors are $\varepsilon_1(B_2)\approx3.74\times10^{-9}$
+(finite difference) and $2.91\times10^{-9}$ (theirs). From the 3D runs
+they fit a cost model: with cost $T=\tau N^{d+1}$ and error
+$\varepsilon=CN^{-p_{\mathrm o}}$ ($\tau$, $C$, $p_{\mathrm o}$ page-local: cost per cell
+update, error constant, order), equal accuracy at second and fourth order needs
+$N_4\sim(C_4/C_2)^{1/4}\sqrt{N_2}$ and
+$T_4/T_2=(C_4/C_2)^{(d+1)/4}(\tau_4/\tau_2)/\sqrt{N_2^{d+1}}$; measured
+$\tau_4/\tau_2\approx4.3$ and $3.7$, $C_4/C_2\approx5.0$ and $8.7$ (MHD,
+RMHD) give $T_4/T_2\sim K/N_2^2$ with $K\approx21$ and $32$, so a smooth
+MHD run on $512^3$ at second order is matched at fourth order with
+$N_4\approx34$ and a time reduction of about $1.2\times10^4$ (Eqs.
+(50)–(52)). The numerical dissipation, measured from the decay rate of
+$\big(\iiint B_3^2\big)^{1/2}$, is more than an order of
+magnitude below that of the second-order scheme already at $N\sim8$ and
+scales as $N^{-5}$ against $N^{-3}$ (Fig. 5); see
+[numerical dissipation](/definitions/numerical-dissipation.md).
+
 **Order of reconstruction and time stepping in relativistic MHD.**
 López-Miralles et al. run their RMHD code with HLL, HLLC, HLLD and a
 Jacobian-free [polynomial viscosity matrix](/methods/polynomial-viscosity-matrix-solver.md)
@@ -131,11 +183,16 @@ smooth Alfvén wave as the order test of their
   and at $256^2$ the HLL-GRP error is 1.5 times that of RK2
   *(compiler check, not in the sources)*; the paper does not discuss
   the drop to 1.86 at the finest pair.
+- Berta et al.'s fourth-order scheme uses a fifth-order interface
+  interpolation; at $N_x\le64$ their orders lie between 4.01 and 4.34,
+  above the design order.
 - Chen, Wu & Xiong and López-Miralles et al. are read as arXiv v1
-  preprints; Liu, Feng & Wang as the version of record.
+  preprints, Berta et al. as arXiv v4; Liu, Feng & Wang as the version
+  of record.
 
 # Citations
 
+- [Berta et al. (2024)](/sources/berta-2024.md) — §5.3, Eqs. (47)–(52), Table 2, Fig. 5 (arXiv v4).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Exs. 5.1, 5.4, Tables 5.1, 5.3 (arXiv v1).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.1.1, Eqs. 44–47, Tables 1–4, Fig. 1 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.1, Table 1.

@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Isentropic vortex
@@ -35,6 +35,9 @@ kinetic-energy-preserving central schemes
 equation ([De Michele & Coppola (2023a)](/sources/demichele-2023.md)),
 and on a randomly distorted grid a test of free-stream-preserving
 metrics ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md)).
+With a second species rolled up by the vortex and the velocity reversed
+at half time it measures the irreversibility added at species interfaces
+([Trojak & Dzanic (2024)](/sources/trojak-2024.md)).
 
 ## Setup
 
@@ -84,6 +87,10 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2.1 | $[0,20]\times[0,10]$, centre $(9,5)$, periodic | $\beta=8.5$ in their form, see below | $\rho_0=p_0=1$, stream $(1,0)$ | $T=2$; $L^2$ errors, $N=1$–$4$, $K_{1D}=2$–$32$ ($2K_{1D}\times K_{1D}$ elements, page-local), quadrilaterals (CFL 0.9) and triangles (CFL 0.5) |
 | [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.1.2, Eqs. (43)–(45) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; $L_\infty$, $L_1$ density errors on uniform triangles, 800 to 12800 points; with and without the PEEB limiter |
 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $e_{L^2}$, $e_{L^\infty}$ on triangular, hybrid and uniform meshes, 16–128 edges per side ($P_2$, $P_3$), 8–64 ($P_4$); CFL 0.5 |
+| [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.1, Eqs. (48)–(51) | $[-5,5]^2$, centre at the origin, periodic | 5 | no stream; specific internal energy $1$ at infinity, see below | $t=10$; density $L_1$, degree 0 to 7, exponential in the degree |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.1 | $[-20,30]^2$, centre $(5,5)$, wall boundaries | 5 | $\rho_0=p_0=1$, no stream | $t=1$; $L_2$ errors of $\rho$, $p$, $P_1$–$P_3$ on polygons |
+| [Tang (2024)](/sources/tang-2024.md) §4.4.1, Eq. (33) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=100$, $\Delta x=0.2$; density along $y=5$ |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.2, Eqs. (37a)–(37f) | $[-10,10]^2$, two species, periodic | Gaussian width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$, species fraction $\tfrac12\sin(\pi y/10)+\tfrac12$ | to $t=20$, velocity reversed, to $t=40$; $\mathbb P_4$, $20^2$–$80^2$ |
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
@@ -161,6 +168,26 @@ experiments in the literature choose $\beta=5$, with minimum density 0.36, and t
 density $2.145\times10^{-3}$; their printed formula gives 0.3617 and
 $2.145\times10^{-4}$ at the centre with $\gamma=1.4$ *(compiler check,
 not in the sources)*.
+
+Gaburro et al. write the table's form with $\mathcal E=5$ and unit
+background through $\delta T$, $\delta\rho=(1+\delta T)^{1/(\gamma-1)}-1$,
+$\delta p=(1+\delta T)^{\gamma/(\gamma-1)}-1$, but with no stream; their
+section title says "moving" while the text calls the vortex "a
+stationary equilibrium". Tang prints
+$\rho=[1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e^{1-r^2}]^{1/(\gamma-1)}$,
+$p=\rho^\gamma$ and the table's velocity with $\mathcal E=5$; the final
+time $t=100$ is ten periods of the stream $(1,1)$ on $[0,10]^2$
+*(compiler check, not in the sources)*. Cernetic et al. (after Yee et
+al.) print the steady vortex through the specific internal energy,
+$\mathrm e=1-\frac{\mathcal E^2}{8\gamma\pi^2}e^{1-r^2}$, $\rho=[(\gamma-1)\mathrm e]^{1/(\gamma-1)}$
+($\mathrm e$ page-local), with the table's velocity perturbation and no
+stream: this is the table's form with $T_0=\gamma-1=0.4$ and
+$\rho_0=0.4^{2.5}\approx0.101$, which satisfies the radial balance
+because the isentropic balance does not depend on $T_0$ *(compiler check,
+not in the sources)*. Trojak & Dzanic's profile is that of the two
+Dzanic papers below ($S_{\mathrm v}=13.5$, $R_{\mathrm v}=1.5$, $M=0.4$,
+stream $(0,1)$), written per species with $\gamma_0=\gamma_1=1.4$ but
+different heat capacities ($c_p=1.4$, $c_v=1$ and $c_p=2.8$, $c_v=2$).
 
 **Near-vacuum strength.** With $\mathcal E=10.0828$ and unit
 background the centre temperature is
@@ -358,6 +385,40 @@ $\Delta t=C_{\mathrm{CFL}}(\min\Delta\xi_k)^{5/3}$ (Li et al., §5) realize
 the same balance for fifth order with a third-order integrator
 *(compiler check, not in the sources)*. See
 [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md).
+
+**Exponential convergence of modal DG.** Cernetic et al.'s GPU DG code
+([TENET](/software/tenet.md)) converges as $L_1\propto N_x^{-(N+1)}$ for
+degrees $N=0$ to 7, with fitted orders slightly above design except at
+$N=0$, and at fixed $N_x$ the error falls exponentially with the degree;
+an edge effect of the periodic box floors $L_1$ at about $10^{-11}$
+(§5.1, Fig. 5). Error and initial projection use $N+2$ Gauss points per
+direction. See [discontinuous Galerkin](/methods/discontinuous-galerkin.md).
+
+**Primitive-variable DG with a posteriori limiting.** Gaburro et al.'s
+[ADER](/methods/ader-scheme.md)-DG in primitive variables on polygonal
+meshes, with the subcell limiter never activated, gives $L_2$ density
+errors $1.28\times10^{-1}$ to $9.86\times10^{-3}$ for $P_1$ (orders 2.3,
+2.4, 2.2), $4.43\times10^{-2}$ to $2.06\times10^{-3}$ for $P_2$ (2.6,
+2.9, 2.7) and $3.55\times10^{-2}$ to $2.73\times10^{-3}$ for $P_3$ (3.3,
+3.6, 3.8), with similar pressure errors, which they call the expected
+orders, "up to fourth order" (§5.1.1, Table 1).
+
+**Long-time resolution of adaptive TENO.** On Tang's coarse grid
+($\Delta x=0.2$) after ten periods the adaptive-cut-off TENO-AZ density
+along $y=5$ is closer to the exact one than that of TENO-Z, TENO-A and
+TENO-LAD (§4.4.1, Fig. 10; see [adaptive TENO](/methods/adaptive-teno.md));
+it costs 0.98–1.01 of TENO-Z's time per step on $100\times100$ (Table 6).
+
+**Interface dissipation of a multi-species entropy filter.** Trojak &
+Dzanic run their positivity-preserving
+[entropy filter](/methods/entropy-filtering.md) for two-species DG at
+$\mathbb P_4$ to $t=20$, reverse the velocity and run to $t=40$, so that
+a reversible scheme would return the initial species field; there is
+no exact multi-species solution, and the irreversibility is their error
+proxy. With their pressure-jump entropy switch the species roll-up is
+well resolved on $40^2$ and converges towards $80^2$; with the entropy
+constraint enforced everywhere, the $80^2$ run is on the level of the
+$20^2$ run with the switch (§5.1.2, Figs. 1–4).
 
 **Second order on unstructured triangles.** Chen et al. (2022)
 use the vortex to check that their nonlinear vertex weighting of
@@ -617,6 +678,18 @@ logarithmic mean (§7.2, Fig. 6).
   $\log_2(6.99\times10^{-5}/5.63\times10^{-7})=6.96$ *(compiler check,
   not in the sources)*.
 - Lin, Chan & Tomas are read as arXiv v2.
+- Gaburro et al.'s last $P_3$ orders, 3.8 ($\rho$) and 3.6 ($p$), are
+  3.53 and 3.40 when recomputed from the printed errors and the printed
+  $h=1.15$ and $0.92$; rounding $h$ to two digits moves them to at most
+  3.69 and 3.56, which covers the printed 3.6 for $p$ but not the 3.8 for
+  $\rho$ *(compiler check, not in the sources)*. They do not define
+  $r$, and are read as arXiv v1.
+- Tang prints "$r=\bar x^2+\bar y$" in Eq. (33), where the formulas need
+  $r^2=\bar x^2+\bar y^2$.
+- Cernetic et al. (arXiv v2, accepted) label curves by the polynomial
+  degree in their figures but call $p=n+1$ the order in §2.3, so their
+  "$p$" alternates between order and degree; the ranges above are given
+  in degrees. Trojak & Dzanic are read as arXiv v1.
 - Chamarthi (2023a) and (2023b) are read as arXiv preprints, Chandravamsi
   et al. and De Michele & Coppola (2023a) as arXiv v1.
 - Yu & Hesthaven's DG solution and Du et al.'s unlimited DG are the
@@ -655,3 +728,7 @@ logarithmic mean (§7.2, Fig. 6).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.2.1, Tables 6–9 (arXiv v2).
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.1.2, Eqs. (43)–(45), Figs. 3–5.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.1, Table 1, Fig. 4.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §5.1, Eqs. (48)–(51), Fig. 5 (arXiv v2).
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.1, Table 1 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.1, Eq. (33), Fig. 10, Table 6.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.2, Eqs. (37a)–(37f), Figs. 1–4 (arXiv v1).

@@ -5,7 +5,7 @@ description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Shock diffraction
@@ -159,6 +159,19 @@ and DG($P_4$)–FV(CWENOZ5) schemes in [UCNS3D](/software/ucns3d.md), with
 a relaxed MOOD-type [troubled-cell](/definitions/troubled-cell-indicator.md)
 switch.
 
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.7, Eq. (44) run a
+dimensionless Schardin problem, with initial data taken from an earlier
+paper they cite: on $[-2,6]\times[-3,3]$, a wedge of unit length and
+height with its tip at the origin, symmetry top and bottom, inflow and
+outflow left and right, $(\rho,v_1,v_2,p)=(2.122,0.442,0,1.805)$ for
+$x<-1$ and $(1.4,0,0,1)$ for $x\ge-1$, on 403,660 triangles
+($h\approx3/275$), with their dual-stencil-selection unstructured TENO
+of orders 4 to 7 in [UCNS3D](/software/ucns3d.md), outputs at $t=2.1$
+and $4.0$. The pre-shock state has unit sound speed, and the printed
+post-shock state is the Rankine–Hugoniot state of a Mach 1.3 shock
+into it to the printed digits ($\rho=2.12197$, $p=1.805$,
+$v_1=0.44231$) *(compiler check, not in the sources)*.
+
 ## Runs in the sources
 
 | Source | Scheme | Mesh | Notes |
@@ -245,6 +258,12 @@ than pure FV-CWENOZ5 (Fig. 14), the Mach number along the wedge
 symmetry line agrees among the three schemes, and fewer than 0.4 %
 ($P_3$) and 0.2 % ($P_4$) of the cells are troubled throughout (Fig. 15).
 
+Ji, Liang & Fu (2023) find their seventh-order TENO7-D at $t=2.1$ in
+good agreement with the experimental shadowgraph of Van Dyke's album,
+plotted as $e^{-\lvert\nabla\rho\rvert}$ with a normalised gradient, and
+all orders with similar shock patterns and counter-rotating vortices at
+$t=4.0$, without visible oscillations (§4.7, Figs. 16–17).
+
 ## Qualifications
 
 - Evidence is visual throughout; no source reports a reference
@@ -280,3 +299,4 @@ symmetry line agrees among the three schemes, and fewer than 0.4 %
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.12.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.2–3.3, Table 1, Figs. 4–15.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.5, Table 2, Figs. 12–15.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.7, Eq. (44), Figs. 16–17.

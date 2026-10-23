@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting for stiff source terms"
-description: "Operator splitting advances the transport part of a reacting-flow balance law with an explicit shock-capturing step and the stiff chemical source separately, as a constant-volume reactor in each cell with the flow frozen; the bundle's two sources use Strang splitting with second-order Runge–Kutta, and a convection–primitive-update–chemistry sequence with a Cantera reactor."
+description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and the source separately; for stiff chemistry the source step is a constant-volume reactor per cell (Strang splitting, or a convection–chemistry sequence with a Cantera reactor), while for a singular Dirac-delta source Yu, Liu and Feng prove that splitting is never well-balanced."
 status: established
 aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step]
-tags: [finite-volume, software, gpu, reacting-flows, stiff-source]
-timestamp: 2026-10-23T16:00:00Z
+tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced]
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Operator splitting for stiff source terms
@@ -47,12 +47,44 @@ serves the Redlich–Kwong and Noble–Abel real-gas laws without modification (
 - **Strang splitting.** Bielawski et al. (§3) combine explicit second-order Runge–Kutta for
   the flow with Strang splitting "to achieve nominally second order accuracy", citing
   earlier work; no convergence study is shown.
+- **Strang splitting with a stiff ODE solver.** The INCA solver in the immersed-boundary
+  assessment of [Başkaya et al. (2024)](/sources/baskaya-2024.md) (§3.2) advances reacting
+  hypersonic flow with third-order WENO, HLLC and the Gottlieb–Shu third-order Runge–Kutta
+  scheme, and the chemistry by second-order Strang splitting with the VODE integrator; the
+  second code of that paper, CHESS, applies a Gauss–Seidel chemistry step after the
+  Runge–Kutta step. No splitting error is examined.
 - **Sequential steps.** Weng & Mével (§3.1) describe the blastFoam sequence: the convection
   step (MUSCL reconstruction with a limiter, an
   [HLL-family](/methods/hll-riemann-solvers.md) flux, [SSP Runge–Kutta](/methods/ssp-runge-kutta.md)),
   then the update of the primitive variables from the conserved ones, then, for reactive
   runs, the chemistry correction. The paper does not state whether the sequence is
   symmetrized, nor its order.
+
+## Singular sources: splitting is never well-balanced
+
+For the 1D Euler equations with a source concentrated at $x=0$,
+$\partial_tu+\partial_xf(u)=\delta_{\mathrm D}(x)\,S$ with $\delta_{\mathrm D}$ the Dirac delta and,
+for positive velocities on both sides, $S=\mathrm{diag}(k_1,k_2,k_3)\,f(u(0^-))$ (page-local
+symbols; constants $k_l>-1$), the source induces a stationary wave at $x=0$ with jump relation
+$f(u^-)+S=f(u^+)$, $u^\mp=u(0^\mp)$ ([Yu, Liu & Feng (2023)](/sources/yu-2023.md), §1–§2). Splitting advances
+$u^{n+1}=\mathcal S^{(\Delta t)}\mathcal C^{(\Delta t)}(u^n)$, with $\mathcal C$ the convection
+and $\mathcal S$ the source solution operator (page-local; Eqs. (3.5)–(3.6)).
+
+**Theorem 3.1** (Yu et al.): the splitting method is not well-balanced for any $\Delta t>0$,
+even when both sub-problems are solved exactly. The proof: exact convection of the
+stationary data $(u^-,u^+)$ changes them, because the classical Riemann problem between
+$u^-$ and $u^+$ would otherwise be a single stationary contact, which needs zero velocity on
+both sides and so contradicts $u^-\ne u^+$, or a single stationary shock, excluded by their
+admissibility criterion; the source step acts only at $x=0$, so the perturbation that the
+convection step leaves elsewhere persists (Proof 3.1). Their upwind discretization of the
+source step (Eq. (3.9)) maps every stationary state to itself (stated, "It can be shown"), so the defect comes from
+the convection step, and they conclude that no consistent and stable choice of the
+transport scheme can repair it (§3.1). In their Test 1 the split scheme (third-order DG with
+a TVD limiter and local Lax–Friedrichs fluxes) shows spurious perturbations along the three
+characteristic families and overshoots at the origin that do not shrink from $\Delta x=0.05$ to
+$\Delta x=0.00625$ (§5, Fig. 2), while an unsplit conservative scheme with two one-sided interface
+fluxes at the source is well-balanced; that construction is on
+[well-balancing](/properties/well-balancing.md).
 
 ## Cost and parallel implementation
 
@@ -96,8 +128,9 @@ Neither source isolates the splitting error.
 
 ## Qualifications
 
-- Neither source measures the order of the split scheme or compares it with an unsplit
-  (IMEX) integration.
+- No source measures the order of the split scheme or compares it with an unsplit
+  (IMEX) integration for stiff chemistry. The one comparison with an unsplit scheme, Yu et al.'s,
+  concerns a singular source and a stationary equilibrium, not a stiff one.
 - Bielawski et al. print the reactor temperature equation (Eq. (12)) with
   $\sum_kY_k/c_{v,k}$ in place of $1/(\rho\sum_kY_kc_{v,k})$ and without the factor $1/\rho$
   that the units require; they replace that equation by a Newton solve in practice, so the
@@ -110,3 +143,5 @@ Neither source isolates the splitting error.
 
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §2, §3, §4, §5 (Eqs. (11)–(14), Algs. 3–4, Table 1), §6.4 (Figs. 11–12, Table 3), Table 2 (accepted manuscript).
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1–3.2 (Eqs. (12)–(14), (20)–(21)), §4 (§§4.3–4.6).
+- [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §1, §2.1, §3.1 (Eqs. (3.5)–(3.9), Thm. 3.1), §5 (Test 1, Fig. 2) (arXiv v1).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.2 (author preprint).

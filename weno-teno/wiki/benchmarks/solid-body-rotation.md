@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Solid-body rotation
@@ -71,7 +71,11 @@ $1.25\times10^{-2}$.
 Ji, Liang & Fu run finite-volume [TENO](/methods/targeted-eno.md) of
 orders 3 to 6 on uniform triangles with $h=1/80$ (14,860 elements),
 against unstructured WENO5 and [CWENO](/methods/cweno.md)5; they report
-no error norms (Figs. 3–4).
+no error norms (Figs. 3–4). Their sequel,
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.2, Table 5, reruns the
+same bodies, rotation, time $t=2\pi$ and mesh ($h\approx1/80$, 14,860
+triangles) with the dual-stencil-selection TENO4-D to TENO7-D, again
+without error norms (Fig. 2).
 
 Maltsev et al. run hybrid DG–FV schemes of orders 3 to 5
 (DG($P_r$) whose troubled cells receive CWENOZ coefficients of the same
@@ -99,7 +103,10 @@ Ji, Liang & Fu find TENO4/5/6 much less dissipative than TENO3 on the
 slotted cylinder, and TENO5 with fewer overshoots than WENO5 and less
 dissipation than CWENO5 (Figs. 3–4); the evidence is visual, with no
 $L^1$ error or range printed, so their runs cannot be entered in the
-table.
+table. In the sequel all TENO-D orders preserve the shapes well, and
+"no significant improvement can be noticed by increasing the
+reconstruction accuracy order" from four to seven (Ji, Liang & Fu 2023,
+§4.2, Fig. 2).
 
 **Troubled-cell switches.** Maltsev et al. find that extended bounds
 flag fewer troubled cells than limited ones, especially in smooth
@@ -189,6 +196,7 @@ caption of $t=2$, a full rotation of the period-2 flow.
 - [Pazner (2021)](/sources/pazner-2021.md) — §4.1.4, Fig. 4; §4.4, Fig. 6; §5.4, Fig. 10 (arXiv v1).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §7.3, Eqs. (24)–(25), Figs. 3–5 (arXiv v1).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.3, Figs. 3–4 (preprint).
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.2, Table 5, Fig. 2.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.1, Eq. (43), Table 1 (arXiv v4).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.2, Figs. 5–7.
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2, Eqs. (16)–(21), Remark 4.1, Table 2, Fig. 8 (arXiv v2).

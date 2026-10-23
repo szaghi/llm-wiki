@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Richtmyer–Meshkov instability"
-description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas density interface used to rank Riemann solvers and low-dissipation reconstructions, and a viscous air–SF6 two-material version of it; it tests interface sharpness, growth rates and mixing-zone resolution."
+description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas density interface ranking Riemann solvers and reconstructions, and its viscous air–SF6 version; also shocked N2 and He bubbles. It tests interface sharpness, growth rates and mixing-zone resolution."
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -27,7 +27,7 @@ the Atwood number $A=(\rho_{\mathrm h}-\rho_{\mathrm l})/(\rho_{\mathrm h}+\rho_
 
 ## Setups in the sources
 
-All five setups are two-dimensional and single-mode.
+The five planar setups are two-dimensional and single-mode; a sixth source runs shocked bubbles under the same name.
 
 **Air–SF$_6$, Mach 1.2.** [Bai & Li (2022)](/sources/bai-2022.md)
 §3.3.1, Table 2: domain $[-28,32]\times[-1.875,1.875]$ cm, symmetry
@@ -104,6 +104,26 @@ against the printed $0.8787$ and $1.6272/1.4=1.1623$
 *(compiler check, not in the sources)*, but the heavy gas now has
 $\gamma=1.093$.
 
+**Shock-accelerated bubbles, multi-species OpenFOAM.**
+[Duronio & Di Mascio (2024)](/sources/duronio-2024.md) §3.1 call two
+shock–bubble cases Richtmyer–Meshkov flows: a square N$_2$ bubble of
+edge 56.6 mm in SF$_6$, after the experiment of Zhai et al. (2014), and
+a circular He bubble of diameter 50 mm in N$_2$, after Haas &
+Sturtevant (1987), both at $101325$ Pa and 273 K, ideal gases, on
+$[0,45]\times[0,14]$ cm, the shock crossing the domain left to right
+(square bubble) or right to left (circle), its post-shock state set by
+the normal-shock relations (Eq. (9)); the shock Mach number is not
+printed. The square-bubble grids are $450\times140$, $900\times280$
+and $1800\times560$ hexahedra; the circular-bubble grids are not
+printed. The solver is a finite-volume multi-species extension of a
+kinetic-energy-preserving central scheme with AUSM$^+$-up dissipation,
+whose convective part is switched by a Ducros-type sensor (see
+[split convective forms](/methods/split-convective-forms.md),
+[Ducros sensor](/definitions/ducros-shock-sensor.md),
+[OpenFOAM](/software/openfoam.md)). The geometry is that of the
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
+not a sinusoidal planar interface.
+
 ## Findings
 
 **Growth against models and other computations.** On air–SF$_6$, Bai &
@@ -122,6 +142,18 @@ vortical structures" before and after re-shock, with spike roll-up
 after the first passage and "complex fine flow field structures and a
 low Mach number flow field" after the second (§7.4, Fig. 7). The
 evidence is contour plots; no growth rate or mixing width is measured.
+
+**Grid convergence and experiments for shocked bubbles.** Duronio & Di
+Mascio's three-grid Roache analysis along the axis gives observed
+orders 1.53 ($p$) and 1.46 ($\rho$) with grid-convergence indices 0.92%
+and 0.97% for the square bubble, and 1.35 and 1.46 with 1.1% and 0.77%
+for the circular one (Table 1). The square-bubble run reproduces the
+experimental wave sequence from 82 to 1334 μs (transmitted, precursor,
+reflected and diffracted shocks, Mach stem, corner vortices, jet and
+vortex pair); its interface width agrees "excellent[ly]" with the
+experiment and its height is "slightly higher" after 0.75 ms (Figs.
+4–5). For the He bubble the trajectories of the upstream and downstream
+interface points agree with Haas & Sturtevant (Figs. 6–7).
 
 **Riemann-solver ranking.** Hu et al. compare
 [HLL-type solvers](/methods/hll-riemann-solvers.md) (HLLE, HLLEM, HLLC
@@ -177,6 +209,12 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
   about 5.08 *(compiler check, not in the sources)*.
 - Renac's figure labels the snapshots in microseconds for a
   non-dimensional computation.
+- Duronio & Di Mascio's observed orders of 1.35–1.53 are those of a
+  flow with shocks and material interfaces on three grids, not the
+  design order of their second-order scheme; they print neither the
+  shock Mach number nor the circular-bubble grids, and their §3.1.2 says
+  Table 1 reports density only while the table gives pressure and
+  density.
 
 # Citations
 
@@ -186,3 +224,4 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.5, Eqs. (5.6)–(5.7).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Exs. 4.8, 4.18, Fig. 11 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.6, Fig. 9, Table 2 (arXiv v1).
+- [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 (Eqs. (6)–(9)), §3.1, Table 1, Figs. 1–7.

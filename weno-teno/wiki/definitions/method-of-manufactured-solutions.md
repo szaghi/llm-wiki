@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Method of manufactured solutions"
-description: "Code verification by a chosen smooth solution: the equations applied to it give a source term, the source is added to the solver, and the observed error order is compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, to a steady-state shock-capturing solver, to a semi-discrete operator and to a gradient reconstruction."
+description: "Code verification by a chosen smooth solution whose source term is added to the solver, the observed order being compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, a steady shock-capturing solver, curved-boundary conditions on unfitted meshes, a semi-discrete operator and a gradient reconstruction."
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, order-of-accuracy verification]
-tags: [benchmark, finite-volume, finite-difference]
-timestamp: 2026-10-23T08:00:00Z
+tags: [benchmark, finite-volume, finite-difference, dg, immersed-boundary]
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Method of manufactured solutions
@@ -31,9 +31,9 @@ Peng et al. introduce it as a method "used in many published studies to
 verify CFD codes and test the accuracy of the scheme", citing two
 references, and Chen et al. cite Roache.
 
-## Four uses in the sources
+## Five uses in the sources
 
-The sources apply the idea at four levels of a solver.
+The sources apply the idea at five levels of a solver.
 
 **Whole solver on mapped adaptive meshes.**
 [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) §3.1 verify
@@ -86,6 +86,34 @@ the hybrid's smoothness detector selects the linear scheme everywhere
 and the test verifies the linear scheme and the steady-state marching,
 not the nonlinear branch *(compiler check, not in the sources)*.
 
+**Boundary treatment on curved, unfitted meshes.**
+[Ciallella et al. (2024)](/sources/ciallella-2024.md) §6.1 use the same
+steady field as Wan & Xia, $\rho=1+0.2\sin(x+y)$, $v=(1,1)$,
+$p=1+0.2\sin(x+y)$, with the same source
+$(0.4,0.6,0.6,1.8)\cos(x+y)$ and $\gamma=1.4$, but to measure the
+consistency of boundary conditions rather than of the interior scheme. The
+exact solution is imposed as Dirichlet data on a curved trefoil-like
+boundary $r=1+\frac1{10}\sin(3\theta)$ (Eq. 37), which the mesh does not
+fit: either a conformal triangulation with straight boundary edges (levels
+0–3, mesh size $h=1.54\times10^{-1}$ to $1.93\times10^{-2}$, page-local, Table 1) or a fully
+embedded triangulation of $[-1.5,1.5]^2$ whose surrogate boundary is
+detached from the true one ($5\times5$ to $35\times35$, Table 3). Modal
+ADER-[DG](/methods/discontinuous-galerkin.md) of degree $N=1$–$3$ with
+naive boundary conditions stays at second order for every degree on the
+conformal meshes (finest rates 2.00–2.01; $N=3$ density error
+$2.6792\times10^{-5}$ at level 3, Table 2). With the constrained
+least-squares boundary reconstruction ROD (reconstruction for off-site
+data) the same meshes give rates 2.61–2.99 for $N=2$ and 4.10–4.67 for
+$N=3$ (finest density error $1.5035\times10^{-10}$, Table 4); its
+space–time ADER variant gives nearly the same errors (Table 6). On the
+embedded meshes the rates oscillate between levels, which the authors
+attribute to how the surrogate boundary cuts the background mesh
+(Tables 5, 7). Here the test isolates a boundary closure
+([immersed and cut-cell boundaries](/methods/immersed-boundary-method.md)):
+the interior scheme is the same in all runs, and only the boundary
+treatment changes. Final time, steady-state criterion and CFL number are
+not printed.
+
 **Semi-discrete operator only.** [Browne et al. (2022)](/sources/browne-2022.md)
 Appendix A verify the right-hand side of their nonlinear disturbance
 equations, not a time-marched solution: manufactured baseflow and
@@ -114,18 +142,20 @@ Figs. 11–12). Their vertex-based least-squares reconstruction with the
 iterative boundary treatment gives the lowest boundary-cell and
 boundary-face errors in both cases.
 
-## What the four uses verify
+## What the five uses verify
 
 Peng et al. march a solution in time, with boundary conditions
 and coarse–fine transfer in the loop, and measure a solution error;
 Wan & Xia march to a steady state and measure the converged solution
-error.
+error. Ciallella et al. hold the interior scheme fixed and vary only
+the boundary closure, so their observed order is that of the boundary
+treatment on a non-fitted geometry.
 Browne et al. evaluate the discrete right-hand side once, against
 "exact" derivatives that are themselves a sixth-order central difference
 of the exact fluxes (Eq. A.3). Chen et al. evaluate a gradient from
 exact cell values and solve no equation (§6.2). The four observed
-orders therefore refer to an unsteady solution, a steady solution, an
-operator and a reconstruction respectively *(compiler check, not in the sources)*.
+orders therefore refer to an unsteady solution, a steady solution, a
+boundary closure, an operator and a reconstruction respectively *(compiler check, not in the sources)*.
 
 ## Qualifications
 
@@ -139,6 +169,14 @@ operator and a reconstruction respectively *(compiler check, not in the sources)
 - Peng et al.'s manufactured fields assume a constant ratio of specific
   heats, while their solver models thermally perfect mixtures; the test
   therefore does not exercise the temperature-dependent closure.
+- Ciallella et al. write that "in all cases, the expected convergence of
+  $M+1$ is achieved" (§6.1; their $M$ is the registry's $N$), while their
+  $N=2$ rates on conformal meshes stay below 3 at every level (2.61–2.99
+  in Table 4, 2.60–2.97 in Table 6) and the $N=3$ rates exceed 4. The
+  order columns of their Table 5 (embedded meshes, ROD-DG) are not
+  reproduced from the printed errors and the mesh sizes of Table 3,
+  whereas those of Table 7 are (to about $\pm0.03$) *(compiler check, not
+  in the sources)*.
 - Chen et al. call their profile a manufactured solution, although no
   source term is added and no equation is solved (§6.2).
 
@@ -146,5 +184,6 @@ operator and a reconstruction respectively *(compiler check, not in the sources)
 
 - [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md) — §3.1, Eq. (35), Figs. 4–5, Table A (accepted manuscript).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — Ex. 4.2, Table 4.1; Ex. 4.14, Table 4.3.
+- [Ciallella et al. (2024)](/sources/ciallella-2024.md) — §6.1, Eq. (37), Tables 1–7 (arXiv v1).
 - [Browne et al. (2022)](/sources/browne-2022.md) — Appendix A, Eqs. (A.1)–(A.3), Tables A.1–A.2, Fig. A.30.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.2, Eq. (31), Figs. 11–12.

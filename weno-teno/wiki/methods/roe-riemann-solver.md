@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Roe approximate Riemann solver"
-description: "Roe's solver upwinds every characteristic field of a linearized flux Jacobian at the Roe-averaged state; in the bundle's sources it is the least diffusive run-time option of finite-volume codes, the default interface flux of several WENO and TENO tests, used with a Harten–Hyman-type entropy fix, and prone to the carbuncle at strong shocks."
+description: "Roe's solver upwinds every characteristic field of a linearized flux Jacobian at the Roe-averaged state; in the bundle's sources it is the least diffusive option of finite-volume codes, the default flux of several WENO and TENO tests, used with a Harten–Hyman-type entropy fix, prone to the carbuncle, and, in a Lagrangian acoustic form, a particle-pair solver."
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -70,8 +70,9 @@ among Roe's defects; the sources that use the solver add an entropy fix:
 - the finite-difference TENO studies switch from Rusanov flux splitting to a Roe flux with
   entropy fix for the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md):
   [Fu (2021)](/sources/fu-2021.md) (§5.5), [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md)
-  (§4.4, CFL 0.35) and [Liang et al. (2022)](/sources/liang-2022.md) (§4.3, where TENO5 needs
-  $C_T=10^{-4}$ to run stably).
+  (§4.4, CFL 0.35), [Liang et al. (2022)](/sources/liang-2022.md) (§4.3, where TENO5 needs
+  $C_T=10^{-4}$ to run stably) and the hybrid TENO-S of
+  [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§4.4), "to obtain a stable result".
 
 The fix itself is not written out in any of these sources.
 
@@ -86,6 +87,29 @@ The fix itself is not written out in any of these sources.
 | [Liang et al. (2022)](/sources/liang-2022.md) | FD TENO with THINC switch | blast waves (§4.3) |
 | [Fu (2021)](/sources/fu-2021.md), [Takagi et al. (2022)](/sources/takagi-2022.md) | FD TENO, TENO-THINC | Rayleigh–Taylor with Rusanov and Roe fluxes ([Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)) |
 | [Basile et al. (2022)](/sources/basile-2022.md) | modal DG (CODA) | convective flux with Harten-type fix |
+| [Berta et al. (2024)](/sources/berta-2024.md) | fourth-order FV, MHD and relativistic MHD (PLUTO) | one of six solvers on pointwise-reconstructed face states; Orszag–Tang runs with Roe or HLLD and UCT-HLLD electric fields (§3.3, §5.6) |
+| [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) | FV Hermite WENO, relativistic hydrodynamics | no Roe flux (global Lax–Friedrichs); the eigenvectors of the Eulderink–Mellema Roe matrix, rescaled, for the characteristic reconstruction (§3.1.3, Remark 3.3) |
+
+## Lagrangian acoustic form between particles
+
+[Jiang et al. (2024)](/sources/jiang-2024.md) (§3.1, Eqs. (9a)–(9c)) stabilize a meshless
+Lagrangian weighted-least-squares (LWLS) particle method by solving, for every particle pair
+$(i,n)$, a 1D Riemann problem along the unit vector $\mathbf e_{ni}$ from $i$ to $n$, with left
+state at $i$, right state at $n$ and normal velocities $v_{\mathrm n}=v\cdot\mathbf e_{ni}$
+(page-local). They call the intermediate states, taken from earlier SPH work, "Roe's Lagrangian
+intermediate states":
+$$p^*=\tfrac12\big[p_L+p_R+C_{LR}(v_{\mathrm n,L}-v_{\mathrm n,R})\big],\qquad v^*=\tfrac12\Big[v_L+v_R+\frac{p_L-p_R}{C_{LR}}\,\mathbf e_{ni}\Big],\qquad C_{LR}=\tfrac12(\rho_Lc_L+\rho_Rc_R),$$
+where $C_{LR}$, called an average Lagrangian sound speed, is a mean acoustic impedance.
+*(compiler check, not in the sources: with equal impedances $C_L=C_R=C_{LR}$ these are the
+primitive-variable Riemann-solver states $p^*$ and $s^*$ (the normal component of $v^*$) of [Wang et al. (2022a)](/sources/wang-2022.md)
+recorded on [HLL-family solvers](/methods/hll-riemann-solvers.md).)* The states replace the
+neighbour values in the least-squares right-hand side of the derivative fit (LWLS-RR). The
+authors report LWLS-RR smooth but "about first-order or lower" near non-uniform particles
+(Remark 1); on smooth density waves it converges at order about 2.0, and with WENO-Z+-type
+left and right states reconstructed along the pair line (LWLS-WENO-Z) at 2.2–2.35, about five
+times dearer (§4.1, Tables 1–2, §5.2.1; [WENO-Z+](/methods/weno-z-plus.md)). On the bubble
+collapse near a wall LWLS-RR is too dissipative to reproduce the bubble's depression and the
+micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 
 ## Qualifications
 
@@ -114,3 +138,7 @@ The fix itself is not written out in any of these sources.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3 (Eqs. (20)–(22)) (arXiv v1).
 - [Basile et al. (2022)](/sources/basile-2022.md) — §2.3.
 - [Mossier et al. (2022)](/sources/mossier-2022.md) — §8.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.3, §5.6 (arXiv v4).
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.1 (Eqs. (9a)–(10e), Remark 1), §4.1 (Tables 1–2), §5.2.1, §5.2.3 (Fig. 14).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3, Remark 3.3 (arXiv v1).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4.4.

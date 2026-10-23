@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Density-wave advection
@@ -35,6 +35,10 @@ property, and conserves entropy.
 | Zhao et al. §4.4 | $1+0.5\,e^{-\ln2\,x^2/b^2}$, $b=2$ and $1.5$ | 1, 1 | $[-800,1000]$, free-flow | $h=1$, $t=400$, CFL 0.4 and 0.8 | long-time propagation |
 | [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) §5 | $1+\exp(\sin(2\pi x/L))$, $L=1$ | 1, 1 | $[0,1]$, periodic | 61 points, RK4 at CFL 0.01, to $t=100$ | pressure equilibrium and entropy |
 | [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.4 | temperature $9000+200\sin(2\pi x)$ K, equilibrium five-species composition | 11450 m/s, 195256 Pa | $[0,1]$, periodic | 170 elements, $P=3$, $t=0.1$ | entropy conservation of two-point fluxes |
+| [Jiang et al. (2024)](/sources/jiang-2024.md) §4.1.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $N=100$, 200, 400 particles, fixed; $t=2$ | accuracy of a Lagrangian particle scheme |
+| Jiang et al. §4.1.2 | $1+0.2\sin(x+y)$ | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $51^2$, $101^2$, $201^2$ particles (and a non-uniform set); $t=1$ | 2D accuracy |
+| [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.1 | $2+0.98\sin(2\pi(x+y))$ | $(0.1,0.2)$, 20 | $[-1,1]^2$ | $N_e=4$–$32$ elements per direction, $N=3,4$, CFL 0.9; final time not printed | accuracy under convex limiting with global and local bounds |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P_1$–$\mathbb P_5$; $t=1$ | accuracy and positivity near vacuum |
 
 All with $\gamma=1.4$, except Wang et al.'s Navier–Stokes cases
 ($\gamma=5/3$, $\mu=0.0005$, $\mathrm{Pr}=2/3$, $\mathrm{Re}=1000$, after
@@ -48,6 +52,16 @@ of local conservation. Peyvan et al.'s Table 1 prints constant $p$,
 $\rho=0.03805$ kg m$^{-3}$ and $u$, with the temperature and composition
 varying, so their wave is one of temperature and composition at
 printed constant density.
+
+Jiang et al. hold the particles fixed in their accuracy tests, so
+these measure the weighted-least-squares approximation with WENO-Z-type
+left and right states, not the Lagrangian motion. Rueda-Ramírez et al.'s
+amplitude $0.98$ about a mean of 2 brings the minimum density to $1.02$
+and is used with a pressure of 20. Trojak & Dzanic's wave is a
+near-vacuum test: $\epsilon_{\mathrm v}=10^{-12}$ (page-local; their
+$\epsilon$), each species density has minimum $2\times10^{-12}$, and the
+two species have $c_p=1.4$, $c_v=1$ and $c_p=4.21$, $c_v=2.52$; the
+Gaussian of width parameter 500 is the density, the sine the composition.
 
 ## Findings across sources
 
@@ -117,7 +131,51 @@ the tolerance of about $10^{-7}$ of the Newton inversion from energy to
 temperature (Figs. 4–5); the attribution is not tested, for example by
 varying the tolerance.
 
+**Order of a Lagrangian particle scheme.** Jiang et al.'s
+Lagrangian weighted-least-squares method converges at order about 2.00
+with Roe-type intermediate states between particle pairs (LWLS-RR) and
+at 2.22–2.35 with WENO-Z-type reconstruction of the pair states
+(LWLS-WENO-Z), with lower errors, in 1D and 2D and for smoothing lengths
+$h/\Delta x_0=1.2$–$1.9$ (Tables 1–2); on a non-uniform particle set the
+2D errors are "slightly larger" but of the same order of magnitude
+(Table 2c). The fifth order of the WENO-Z-type reconstruction does
+not show in these rates, and the paper does not discuss why; see
+[WENO-Z](/methods/weno-z.md).
+
+**Bounds and order under convex limiting.** Rueda-Ramírez et al.'s
+monolithic convex limiting of LGL-DGSEM with global (positivity) bounds
+only keeps the design order: mean experimental orders 4.16 for $N=3$
+($L^2$ density errors $1.29\times10^{-1}$ to $2.25\times10^{-5}$ on
+$N_e=4$ to 32) and 4.75 for $N=4$ ($1.75\times10^{-2}$ to
+$8.97\times10^{-7}$) (Tables 1–2). With tight local bounds on density,
+velocity and specific total energy the order falls to at most about
+two, independent of $N$: mean 1.82 for $N=3$ and 1.61 for $N=4$ (Tables
+3–4); the bounds must be relaxed, for instance by a smoothness sensor,
+to recover high order. See [convex limiting](/methods/convex-limiting.md).
+
+**Positivity at near vacuum.** Trojak & Dzanic's positivity-preserving
+entropy filter for two-species DG (flux reconstruction in PyFR)
+converges at fitted rates 2.28, 3.16, 3.93, 5.17 and 6.61 in $L^\infty$
+for $\mathbb P_1$–$\mathbb P_5$ with their pressure-jump entropy switch,
+and at 2.28, 3.16, 3.93, 5.22 and 6.47 with the entropy constraint
+active everywhere, with nearly identical errors (Tables 1–2): the
+authors observe $p+1$ convergence "even at smooth extrema" and conclude
+that the scheme keeps its high-order accuracy with the entropy
+constraints active. See [entropy filtering](/methods/entropy-filtering.md)
+and [bound preservation](/properties/bound-preservation.md).
+
 ## Qualifications
+
+- Trojak & Dzanic's printed rates are least-squares slopes over all
+  grids; pairwise rates are irregular (for example 5.85 for $\mathbb P_3$
+  from 32 to 64 elements), so the data are pre-asymptotic *(compiler
+  check, not in the sources)*. The paper is read as arXiv v1.
+- Jiang et al.'s Table 2b prints the $L_2$ error $3.95\times10^{-4}$ on
+  $201^2$ particles at $h/\Delta x_0=1.5$ with a rate 2.347, which holds
+  only for $3.95\times10^{-5}$, the value of the $L_{\mathrm{RMS}}$
+  error on the same row *(compiler check, not in the sources)*.
+- Rueda-Ramírez et al. are read as arXiv v1 and do not print the final
+  time of their convergence test.
 
 - Wang et al. (2023c) state that the original multi-resolution WCNS
   reaches fifth order only with the first weight set,
@@ -147,3 +205,6 @@ varying the tolerance.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.1, §4.4, Table 1, Fig. 7 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §5, Fig. 1 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §4.4, Table 1, Eq. (97), Figs. 4–5 (arXiv v1).
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.1, Tables 1–2.
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.1, Eq. (46), Tables 1–4 (arXiv v1).
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.1, Eqs. (36a)–(36e), Tables 1–2 (arXiv v1).

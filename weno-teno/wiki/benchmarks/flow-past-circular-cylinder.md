@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a circular cylinder"
-description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock, testing steady shock capturing, limiters and immersed walls; hypersonic viscous flow over an isothermal wall, judged by wall pressure and heat flux; subsonic inviscid flow, whose zero drag and symmetry test wall treatments; and viscous flow at Re 40 and 100 (wake, separation, drag)."
+description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock (steady shock capturing, limiters, immersed walls); hypersonic viscous flow over isothermal or catalytic walls in perfect or reacting gas (wall heat flux); subsonic inviscid flow, whose zero drag and symmetry test wall treatments; viscous flow at Re 40 and 100 (wake, separation, drag)."
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Flow past a circular cylinder
@@ -118,6 +118,46 @@ isothermal wall at $T_{\mathrm w}=294.44$ K, $\mathrm{Re}=1.835\times10^5$.
   compact gas-kinetic scheme at CFL 0.35 (Fig. 12); the Reynolds-number
   length is not stated.
 
+**Reacting air and immersed walls.** [Başkaya et al. (2024)](/sources/baskaya-2024.md)
+§4.5 (author preprint) run the HEG cylinder of Knight et al. (2012),
+radius 0.045 m, total enthalpy 22.4 MJ/kg, $M_\infty=8.98$,
+$v_\infty=5956$ m/s, $T_\infty=901$ K, $p_\infty=476$ Pa,
+$\rho_\infty=1.547\times10^{-3}$ kg m$^{-3}$, in five-species air
+(mass fractions of N$_2$, O$_2$, NO, N, O $=0.7543$, $0.00713$,
+$0.01026$, $6.5\times10^{-7}$, $0.2283$) with the Park mechanism, for
+three walls: inert adiabatic, inert isothermal at $T_{\mathrm w}=300$ K
+and fully catalytic isothermal at 300 K. A body-fitted solver (US3D,
+modified Steger–Warming flux, MUSCL) is the reference for two
+[immersed-boundary](/methods/immersed-boundary-method.md) treatments on
+adaptive Cartesian grids: a strictly conservative cut-cell method in
+INCA (third-order WENO with HLLC, RK3) and ghost-cell methods in CHESS
+and in INCA with the cut-cell fluxes switched off, all with the same
+thermochemistry library.
+
+- Adiabatic wall: shock stand-off and dissociation agree for all
+  methods (Fig. 7).
+- Isothermal wall: body-fitted and cut-cell results match "almost
+  exactly", the CHESS ghost-cell result shows a larger stand-off
+  distance (Fig. 8). The stagnation heat flux goes from 8.422 to
+  7.308 MW/m$^2$ body-fitted (wall spacings 0.44 to 0.05 μm) and from
+  6.684 to 7.189 MW/m$^2$ with cut cells (2.5 to 0.3125 μm); the authors
+  take the medium-fine values, 7.345 and 7.144 MW/m$^2$, as converged,
+  against $7.402\pm0.220$ MW/m$^2$ measured and 5.971 MW/m$^2$ for an
+  earlier simulation in Knight et al.; the CHESS ghost-cell method gives
+  0.167 MW/m$^2$ (Table 7). The wall pressure is accurate for all
+  methods (Fig. 9).
+- Fully catalytic wall: body-fitted and cut-cell results agree, and
+  catalysis raises the heat flux only within the experimental
+  uncertainty (Fig. 11); taking the body-fitted run as reference, the
+  cut-cell stagnation heat flux is 2.7% lower on the inert and 0.2% lower
+  on the catalytic wall.
+- INCA's ghost-cell variant, which differs from its cut-cell version
+  only in the conservative flux treatment, also misses the cold-wall
+  heat flux, so the authors attribute the failure to the conservation
+  errors of ghost-cell methods, which act as an unphysical surface
+  blowing and matter where wall gradients of the conserved variables are
+  large (§5, Fig. 18).
+
 ## Subsonic inviscid flow
 
 | Source | Method | $M$ | Domain and grid | Measures |
@@ -219,6 +259,11 @@ the trend with Mach number is captured (Fig. D.25).
   $\gamma=1.4$, which they do not print *(compiler check, not in the
   sources)*.
 - Funada & Imamura's sphere diameter is not stated in §3.4.
+- Başkaya et al. expect the ghost-cell conservation errors to converge
+  at the truncation rate of the base scheme, but show no convergence
+  study of them, and their grid study covers the body-fitted and
+  cut-cell runs only; the ghost-cell result is for one wall spacing,
+  1.0 μm (Table 7).
 - Liu et al. (2023b) and Zhao et al. print identical free-stream
   temperature, wall temperature and Reynolds number at different Mach
   numbers (8.03 and 5); neither paper compares with the other, and
@@ -234,3 +279,4 @@ the trend with Mach number is captured (Fig. D.25).
 - [Wei et al. (2023)](/sources/wei-2023.md) — §7.2, Eq. 42, Table 5, Figs. 17–22.
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.7, Figs. 17–18.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.7, Figs. 10–12 (arXiv v1).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §4.5, Tables 6–7, Figs. 7–11; §5, Fig. 18 (author preprint).

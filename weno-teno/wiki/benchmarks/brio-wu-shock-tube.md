@@ -5,7 +5,7 @@ description: "One-dimensional ideal-MHD Riemann problem with a constant normal f
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -148,6 +148,31 @@ Nazarov, Lesur et al., Liu, Feng & Wang), the [MHD blast wave](/benchmarks/mhd-b
 MHD Riemann problem (Kanbar et al., recorded on
 [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)).
 
+**A different MHD shock tube, rotated in 3D.** [Berta et al. (2024)](/sources/berta-2024.md)
+§5.1, Eqs. (41)–(42) (arXiv v4) run another one-dimensional MHD
+Riemann problem, not Brio–Wu's: in the rotated frame
+$(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1.08,1.2,0.01,0.5,\tfrac{2}{\sqrt{4\pi}},\tfrac{3.6}{\sqrt{4\pi}},\tfrac{2}{\sqrt{4\pi}},0.95)$
+on the left and $(1,0,0,0,\tfrac{2}{\sqrt{4\pi}},\tfrac{4}{\sqrt{4\pi}},\tfrac{2}{\sqrt{4\pi}},1)$
+on the right, with a relativistic counterpart
+$(1.08,0.4,0.3,0.2,2,0.3,0.3,0.95)$ / $(1,-0.45,-0.2,0.2,2,-0.7,0.5,1)$.
+The data are rotated about $z$ by an angle with tangent $1/2$ and then
+about $y$ by one with tangent $-1/(2\sqrt5)$, on
+$[-L/2,L/2]\times[0,L/96]^2$ with $768\times8\times8$ zones and
+integer-shifted periodicity, to $t=t'\cos\alpha_{\mathrm r}\cos\gamma_{\mathrm r}$
+with $t'=0.2$ (MHD) and $0.55$ (RMHD) ($\alpha_{\mathrm r}$, $\gamma_{\mathrm r}$
+the page-local rotation angles). The solution holds a contact, two fast
+shocks, rotational and slow waves. Their fourth-order finite-volume
+scheme with [WENO-Z](/methods/weno-z.md) in
+[characteristic variables](/methods/characteristic-decomposition.md)
+(MHD) and MP5 in primitive variables (RMHD) reproduces the profiles of
+a second-order 1D reference on 16384 points, with oscillations of the
+normal field of the same order as in Mignone's finite-difference
+results and smaller than in Gardiner & Stone's second-order ones (Figs.
+2–3). The printed final time, "$t_f=\dots=4/\sqrt{21}$", omits the factor
+$t'$: $\cos\alpha_{\mathrm r}\cos\gamma_{\mathrm r}=4/\sqrt{21}\approx0.873$,
+so the MHD run ends at $t\approx0.175$ *(compiler check, not in the
+sources)*.
+
 ## Qualifications
 
 - Bhoriya et al. state that $\Delta x=0.0025$ at 400 cells is slightly
@@ -171,3 +196,4 @@ MHD Riemann problem (Kanbar et al., recorded on
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.2, Eq. (42), Fig. 2 (arXiv v2).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.1.2, Figs. 1–2, Table 4 (arXiv v2).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.1, Fig. 3.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §5.1, Eqs. (41)–(42), Figs. 2–3 (arXiv v4; a rotated non-Brio–Wu MHD tube).

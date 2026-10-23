@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Artificial viscosity and spectral viscosity"
-description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect or a learned modal decay, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, and modal damping read as dissipation."
+description: "Artificial viscosity adds solution-dependent dissipation instead of overwriting the solution; the page covers the high-order Jameson–Schmidt–Turkel blend, graph viscosity, Laplacian DG viscosities driven by a time-reversibility defect, a learned modal decay or a time-evolved SPH-type switch, residual-based finite-element viscosity, spectral and quasi-spectral eddy viscosities, C-function viscosity on moving meshes, and modal damping read as dissipation."
 status: established
-aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity]
+aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -21,8 +21,10 @@ a first-order **graph viscosity** that makes a low-order scheme
 invariant-domain preserving ([Pazner (2021)](/sources/pazner-2021.md));
 a **Laplacian viscosity for DG and flux reconstruction** whose magnitude
 comes from an indicator, a time-reversibility defect
-([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)) or a learned
-modal decay rate ([Yu & Hesthaven (2022)](/sources/yu-2022.md)), and its
+([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md)), a learned
+modal decay rate ([Yu & Hesthaven (2022)](/sources/yu-2022.md)) or a
+viscosity field evolved in time by sources and decay
+([Cernetic et al. (2023)](/sources/cernetic-2023.md)), and its
 continuous-finite-element counterpart driven by a normalized PDE residual
 ([Dao & Nazarov (2022)](/sources/dao-2022.md));
 **spectral and quasi-spectral eddy viscosities** that act on the highest
@@ -170,7 +172,7 @@ wave-speed bound (§5, Eqs. 16–18;
 
 ## Laplacian viscosity for DG and flux reconstruction
 
-Both sources add to the conservation law a parabolic term,
+The sources add to the conservation law a parabolic term,
 $\partial_tu+\nabla\cdot f(u)=\nabla\cdot(\mu\nabla u)$, discretized with the
 DG machinery of second-order terms, and differ in how they set the
 elementwise viscosity.
@@ -247,6 +249,71 @@ forward step on unstructured triangles and the
 [high-Mach jet](/benchmarks/high-mach-astrophysical-jet.md) (inflow speed
 800) are captured without oscillation, but $N=2$ fails on the jet from
 insufficient dissipation (§5.4.6).
+
+**Time-evolved viscosity field (SPH-type switch).**
+[Cernetic et al. (2023)](/sources/cernetic-2023.md) (§4.1, Eqs. 43–46,
+accepted manuscript) carry the strength of the viscosity as an extra
+field $\alpha_{\mathrm{AV}}(x,t)$ of their modal DG code
+[TENET](/software/tenet.md) (page-local; not the registry's blending
+$\alpha$), expanded in the DG basis and evolved, after the viscosity
+switches of smoothed-particle hydrodynamics (Morris & Monaghan, Cullen &
+Dehnen), by
+$$\partial_t\alpha_{\mathrm{AV}}=f_v\max(0,-\nabla\cdot v)+f_w\max\Big(0,\frac{d\ln S^{\mathrm{PP}}_K}{dt}\Big)-\frac{\alpha_{\mathrm{AV}}}{\tau_{\mathrm{AV}}},\qquad
+\tau_{\mathrm{AV}}=f_\tau\frac{\Delta x}{(N+1)\,c},\qquad
+\mu=\alpha_{\mathrm{AV}}\,c\,\frac{\Delta x}{N+1},$$
+with the second source active only while the Persson–Peraire sensor
+$S^{\mathrm{PP}}_K$ exceeds an onset value $S_{\mathrm{on}}$ (page-local
+$f_v$, $f_w$, $f_\tau$, $\tau_{\mathrm{AV}}$, $S_{\mathrm{on}}$; the source
+writes $h$ for $\Delta x$ and $p$ for the order $N+1$). The viscosity $\mu$
+diffuses all conserved variables, $\nabla\cdot(\mu\nabla u)$, and is
+capped by $\alpha_{\mathrm{AV}}\le1$ to stay within the explicit diffusion
+limit at the Courant-limited step. The compression source fires at
+shocks; the sensor-rate source targets oscillations ahead of shocks and
+at moving contacts, which it alone sees
+([troubled-cell indicator](/definitions/troubled-cell-indicator.md)). The
+field is deliberately not advected: it lags behind moving discontinuities,
+and advecting it at high order would itself need limiting. Defaults
+$f_v=2.5$, $f_\tau=0.5$, $f_w=0.2$, $S_{\mathrm{on}}=10^{-4}$ and a global
+scaling 1.0 are used for every order; no slope limiter is used, only a
+positivity limiter as a last line of defence
+([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+
+The viscous term needs interface gradients. Bassi–Rebay's BR1 lifting
+was implemented first and abandoned: it triples the cost of the gradient
+solve in 3D, gives large in-cell derivatives for initial data with large
+jumps, and "does not converge rapidly at high order either" (§3.1). In
+its place the two cell polynomials adjacent to a face are
+$L^2$-projected onto one polynomial of degree $N+1$ in the normal
+direction on a domain straddling the face over a fraction $f$ of each
+cell, $f=\tfrac34$ for $N\le2$ and 1 for $N>2$, in the manner of van Leer
+and Nomura's recovery; the interface value and gradient are taken from
+it (Eqs. 29–36). For piecewise-constant data and $f=\tfrac34$ the
+recovered gradient is $(u^+-u^-)/\Delta x$ along the normal (Eq. 36).
+The projection is a fixed sparse map, and the two sides exchange partial
+sums, so the communication costs the same as an average.
+
+Evidence (§4–§7, Figs. 3–15): a Mach 4 shock (captions; "$\mathcal M=3$"
+in the text) at $\Delta x=1/21$ and the highest order shown is captured
+within a fraction of a cell with negligible ringing, and the 20–80% width
+of the density jump falls in proportion to $1/p$ in units of $\Delta x$
+for $p\ge2$, $p$ the label of Fig. 4. On the
+[isentropic vortex](/benchmarks/isentropic-vortex.md) the $L^1$ error
+converges at the design order for orders 1–8 and exponentially in the
+order at fixed cells; on a periodic Gaussian diffusion test the recovery
+flux converges at the design order for five orders and exponentially up
+to tenth order. On the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md)
+with 100 cells the degree-7 run matches the degree-1 run on 400 cells,
+which has the same degrees of freedom; an eighth-order WENO on 400 cells
+(Zhao et al. 2017) is closer to the reference with half the degrees of
+freedom of the degree-7 run, which the authors concede; they state that
+real discontinuities converge only at first order in resolution. On
+top-hat advection over 100 box crossings with 64 cells the fitted growth
+exponent $s$ of $L^1\propto t^s$ (page-local) falls from 0.427 (degree 0) to 0.028
+(degree 9) (Fig. 10); lowering $S_{\mathrm{on}}$ to $10^{-6}$ damps the
+ringing at the top-hat edges at the cost of a slightly wider front
+(Fig. 9). On the viscous [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
+of Lecoanet et al. the $L^2$ dye error at 64 cells and order 4 equals
+that of ATHENA at 2048 cells (§6.3, Fig. 14).
 
 ## Residual-based viscosity (continuous finite elements, MHD)
 
@@ -464,9 +531,17 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   [entropy correction terms](/methods/entropy-correction-term.md) applied to
   the space–time residual.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) accept the time-step cost
-  that Rueda-Ramírez et al. object to and leave implicit time stepping to
+  that Rueda-Ramírez et al. (2021) object to and leave implicit time stepping to
   future work (§2.3); Dzanic, Trojak & Witherden cap the viscosity for the
   same reason (§4.2).
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) take the opposite
+  line to Rueda-Ramírez et al. (2021) for astrophysical DG: slope limiters that
+  discard high-order coefficients "defeat" high-order DG in problems with
+  many shocks, including the limiters of their own predecessor codes, and
+  the problem of shocks in high-order DG "still awaits a compelling and
+  reasonably simple solution" (§1, §4.1); they also reject
+  threshold-triggered viscosity, since the oscillations must already
+  exist before it acts (§4.1).
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) take the
   opposite line for turbulent flows: a high-order dissipation applied
   everywhere serves as the subgrid regularization of an implicit LES, and
@@ -496,6 +571,29 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   Sciacovelli et al. prove no stability or accuracy theorem; their
   evidence is numerical.
 
+- **Cernetic et al.'s parameters and labels.** §4.1 gives "$f_v\sim1.0$"
+  and an onset $10^{-4}/p^2$ in the text, but defaults $f_v=2.5$ and
+  $10^{-4}$; the global viscous-flux scaling factor is also called
+  $\alpha$. The paper defines $p=n+1$ as the order (§2.3) but most
+  figures, Table 1 and §5.3 label curves by the degree ("order of the
+  method is $p+1$"); the memory formula of Table 1 holds only with $p$
+  the degree (accepted manuscript). Their claim that sub-cell shock
+  capturing in DG had been "a nagging problem for decades" (§4.1) stands
+  next to their own citation of Persson & Peraire's "Sub-Cell Shock
+  Capturing for Discontinuous Galerkin Methods".
+- **Cernetic et al.'s recovery coefficients.** As printed, Eq. (35) has
+  the prefactor $1/(2f)$; with $|K^\star|=2f\Delta x$ the projection gives
+  $\tfrac12$, which reproduces their Eq. (36), while $1/(2f)$ would give
+  $\tfrac43(u^+-u^-)/\Delta x$ for $f=\tfrac34$. Their sum stops at
+  $m_x=l_x$, exact for $f=1$ but not for $f=\tfrac34$ (e.g.
+  $\int_{-1}^0\sqrt3(\tfrac32x+1)\,dx=\sqrt3/4\ne0$); and the right-cell
+  overlap integral is printed with the argument of the left cell,
+  $2fx+1$ instead of $2fx-1$ *(compiler check, not in the sources)*.
+  Their viscous stress (Eq. 39) is printed with $+\tfrac23\nabla\cdot v$
+  and no identity tensor; with the identity understood its trace is
+  $4\nu\rho\nabla\cdot v$ ($\nu$ the source's kinematic viscosity), so it is
+  not the trace-free shear stress the text describes *(compiler check, not
+  in the sources)*.
 - **Tuning.** Dzanic, Trojak & Witherden present TR viscosity as having one
   parameter and being independent of mesh and order (Abstract, §6), yet
   tune $c_\mu$ per problem between 1 and 8 and keep a second constant
@@ -538,3 +636,4 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §6.2, Eqs. (47)–(51), Remark 1; Appendix A, Eqs. (60)–(67); §7.1–7.2.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §5, Eqs. (16)–(18) (graph viscosity for Navier–Stokes).
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1; §2.3; §3.1–3.2, Eqs. (24)–(36); §4.1, Eqs. (41)–(46), Figs. 3–4; §5.1–5.4, Figs. 5–10; §6.3, Fig. 14.

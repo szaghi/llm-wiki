@@ -146,8 +146,9 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-23), cited further in chunks 5–6 (2026-10-23). This source is cited on:
+Chunk 4 (2026-10-23), cited further in chunks 5–7 (2026-10-23). This source is cited on:
 
+* [ADER schemes](/methods/ader-scheme.md)
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Central WENO (CWENO)](/methods/cweno.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)

@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Taylor–Green vortex
@@ -186,6 +186,25 @@ with $\rho_{2o}/\rho_{1o}=10$ and $1000$ and $M_o=0.05$, $0.2$ (and
 $0.4$) it is a [five-equation-model](/definitions/five-equation-model.md)
 two-phase flow (§4.1.2).
 
+**Two-species, viscous, $\mathrm{Re}=1600$.**
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.2.2, Eqs.
+(41)–(44) (arXiv v1) run the standard velocity field with $\rho=1$,
+$p=p_0+\frac1{16}(\cos2x+\cos2y)(\cos2z+2)$, $p_0=1/(\gamma M^2)$,
+$\gamma=1.4$, $M=0.08$, $\mathrm{Re}=1600$, $\mathrm{Pr}=0.71$, as a
+two-species flow in which both species have the same heat capacities
+($c_p=1.005$, $c_v=0.718$), so that it is physically identical to the
+single-species vortex: case A one species; case B a smooth species
+fraction $\tfrac12+\tfrac1{16}(\cos x+1)(\cos y+1)(\cos z+1)$; case C
+a sharp one,
+$\tfrac12+\tfrac14\tanh(1000(x-\pi))\tanh(1000(y-\pi))\tanh(1000(z-\pi))$.
+$\mathbb P_3$ DG (flux reconstruction in [PyFR](/software/pyfr.md)) on
+$32^3$ and $40^3$ elements; the metric is the enstrophy-based
+dissipation rate, against a DNS of van Rees et al. obtained by private
+communication. They print the pressure factor as $\cos(2z+2)$; the
+pressure Poisson equation of the printed velocity is satisfied by
+$(\cos2z+2)$, the form of every other source, and not by $\cos(2z+2)$
+*(compiler check, not in the sources)*.
+
 **Viscous, after Brachet et al.** [Bryngelson et al. (2021)](/sources/bryngelson-2021.md)
 §5.4 run the Taylor–Green vortex of Brachet et al. with the
 finite-volume WENO5 scheme of [MFC](/software/mfc.md), with parameters
@@ -208,6 +227,17 @@ TGV dissipation rate on $64^3$ against DNS on $256^3$ (TENO8-A against
 the ALDM and dynamic Smagorinsky models, Fig. 14).
 
 ## Findings across sources
+
+**Species fields add dissipation.** In Trojak & Dzanic's
+multi-species runs with a positivity-preserving
+[entropy filter](/methods/entropy-filtering.md) and a pressure-jump
+switch of its entropy constraint, both two-species cases slightly
+underpredict the enstrophy against the single-species run, and the
+differences shrink with resolution; the smooth species field (B)
+underpredicts more than the sharp one (C), which they attribute, as a
+hypothesis, to aliasing errors of the nonlinear description of the
+interface, entropy constraints being known to mitigate aliasing
+(§5.2.2, Fig. 14).
 
 **Kinetic-energy loss ranks the schemes; WENO-JS loses most.** Li et
 al. find that WENO-JS dissipates the most kinetic energy of the WENO
@@ -504,3 +534,4 @@ cells (§9, Figs. 21–24).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.9, Eqs. (44)–(49), Table 4, Figs. 21–25.
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §5, Fig. 2 (arXiv v2).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §§3.6–3.7, Eqs. (47)–(48), Figs. 16–20.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.2, Eqs. (41)–(44), Table 5, Fig. 14 (arXiv v1).

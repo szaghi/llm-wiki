@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Characteristic decomposition
@@ -104,6 +104,24 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   operator stays homogeneous of degree one, $R_h(\sigma u)=\sigma R_h(u)$ for $\sigma>0$, because the
   eigenvector matrices are invariant under $u\mapsto\sigma u$ (Lemma 3.2;
   [scale invariance](/properties/scale-invariance.md)).
+- **Scaling of the eigenvectors.** A right eigenvector $\mathsf r$ (column of $R$) and its
+  left eigenvector $\mathsf l$ (row of $L$) can be rescaled to $(\mu_{\mathrm r}\mathsf r,\mathsf l/\mu_{\mathrm r})$
+  for any $\mu_{\mathrm r}\neq0$ ($\mathsf r$, $\mathsf l$, $\mu_{\mathrm r}$ page-local) without
+  changing $RL=I$. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (Remark 3.3) compare, for
+  relativistic hydrodynamics, no rescaling, "unitization" $\mu_{\mathrm r}=\lvert\mathsf l\rvert$,
+  which can make $\lvert\mu_{\mathrm r}\mathsf r\rvert$ huge, and "matching"
+  $\mu_{\mathrm r}=\sqrt{\lvert\mathsf l\rvert/\lvert\mathsf r\rvert}$, which equalizes the two
+  norms. On their second 2D relativistic Riemann problem ($400^2$) the unrescaled and unitized
+  eigenvectors give "serious oscillations", matching does not (Ex. 5.7, Fig. 7). Their
+  eigenvectors are those of the Roe matrix of Eulderink and Mellema, evaluated from the
+  primitive variables recovered by their provably convergent Newton iterations; only the
+  interface points of troubled cells are reconstructed characteristic-wise, the inner
+  quadrature points and the non-troubled cells componentwise (§3.1.3, Step 2;
+  [Hermite WENO](/methods/hermite-weno.md),
+  [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)). The scaling is the
+  same freedom that [Peng et al. (2024)](/sources/peng-2024.md) invoke against
+  characteristic-wise damping (below): Cai et al. show that it changes the numerical solution,
+  Peng et al. that it changes scale invariance.
 - **Fewer projections in a DG limiter.** In the simple WENO limiter for DG on triangles,
   [Du, Shu & Zhong (2022)](/sources/du-2022.md) (§3.1, Eqs. (3.1)–(3.8)) use, for each edge
   normal $\mathbf n_l$, the Jacobian $A_l=n_{l,x}\partial f/\partial u+n_{l,y}\partial g/\partial u$ at the
@@ -126,6 +144,17 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   characteristic Lax–Friedrichs splitting because, citing earlier work, the global one is too
   dissipative (§4.4;
   [hybrid central-WENO schemes](/methods/hybrid-weno.md)).
+  The TENO-S scheme of [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§3.2, Algorithm 1)
+  goes further: its eight-point discontinuity indicator is evaluated on the conserved
+  variables in physical space, and only in flagged cells are the eight point values and
+  fluxes $u_{i-3},\dots,u_{i+4}$ projected with Roe-average $L_{i+1/2}$, split field by field
+  with Rusanov (Lax–Friedrichs) splitting at the field's maximum speed, reconstructed by
+  eight-point TENO and projected back with $R_{i+1/2}$; smooth cells take a kinetic-energy-preserving
+  [split-form](/methods/split-convective-forms.md) central flux in physical variables, which
+  the authors call "significantly more efficient" than characteristic-space ENO-like
+  reconstruction (§2.3). They report that more than 90 % of the cells of the double Mach
+  reflection take the split-form branch (§4.6; no count shown), and replace Rusanov by Roe
+  splitting with entropy fix "to obtain a stable result" on the interacting blast waves (§4.4).
 - **Eigenvectors of another system.** In the semi-implicit all-Mach scheme of
   [Boscarino et al. (2022)](/sources/boscarino-2022.md) (§3.3.1) only the explicit
   (material-wave) flux is reconstructed characteristic-wise, with the local eigenvectors of the
@@ -162,6 +191,13 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   with one-point face quadrature, with a Roe or arithmetic face state, componentwise local
   Lax–Friedrichs or Roe splitting of the characteristic fluxes, WENO on the split fluxes and
   back-projection.
+- **Point values inside a finite-volume scheme.** The fourth-order finite-volume MHD scheme of
+  [Berta et al. (2024)](/sources/berta-2024.md) reconstructs interface point values from
+  cell-centre point values with pointwise WENO-Z or MP5, "in primitive or characteristic
+  variables" (§3.2; §4, step 7); their 3D rotated MHD shock tube uses WENO-Z in characteristic
+  variables and the relativistic one MP5 in primitive variables (§5.1). The detector of
+  their order-reduction fallback uses primitive variables, which "has shown to yield a more
+  robust identification method" (§3.4).
 - **Main fluxes only.** The finite-difference Hermite WENO of [Fan et al. (2023)](/sources/fan-2023.md)
   (§2, Remark 2.2) reconstructs the fluxes of the conservation law in local characteristic
   directions and the fluxes of its derivative equations componentwise
@@ -363,3 +399,6 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.3 (arXiv v1).
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1, App. A (arXiv v1).
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, §5.1.2, §6 (Table 3) (arXiv v1).
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.2, §3.4, §4 (step 7), §5.1 (arXiv v4).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3 (Step 2), Remark 3.3, Ex. 5.7 (Fig. 7) (arXiv v1).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3, §3.2 (Algorithm 1), §4.4, §4.6.

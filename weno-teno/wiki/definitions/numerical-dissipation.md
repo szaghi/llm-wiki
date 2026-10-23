@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -306,6 +306,22 @@ of the local resolution.
   Brachet's dissipation rate at $\mathrm{Re}=100$ on $32^3$ and at $200$ and $400$ on $64^3$.
   Inviscid on $64^3$, it preserves the kinetic energy better than ONL6 and WCNS-LD on $128^3$
   (§5.9, Figs. 21–24). Its extra cost is 3% over ONL6 (Table 4, 32 cores).
+- **No dissipation where smooth, tuned dissipation where flagged.** The TENO-S hybrid
+  of [Liang & Fu (2024b)](/sources/liang-2024-b.md) (§§3.1–3.3) uses, in points its
+  TENO-type indicator declares smooth, an eight-point kinetic-energy-preserving
+  skew-symmetric split-form flux, which has only a dispersive part and is "still
+  non-dissipative". In flagged points it uses eight-point TENO whose background's
+  dissipation is set separately by one coefficient, $b_0=0.01$, chosen from the Hu-type
+  dispersion–dissipation ratio of the
+  [approximate dispersion relation](/definitions/approximate-dispersion-relation.md), with a
+  TENO-A cut-off between $10^{-7}$ and $10^{-10}$ ([adaptive TENO](/methods/adaptive-teno.md)).
+  *(Compiler check, not in the sources: that background is the central scheme plus
+  $\tfrac{b_0}{70\Delta x}$ times the eighth undivided difference.)* On the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) on $64^3$ to $t=100$ it performs,
+  in their words, "long-time stable computations without numerical dissipation by preserving the
+  total kinetic energy", where WENO-CU6, TENO6 and TENO8 smear the small vortices after
+  $t\approx5$ (§4.10, Figs. 17–18). The non-dissipative property they state is that of the
+  smooth branch; the TENO branch is dissipative by design.
 - **Dissipation at a jump.** [Liang et al. (2022)](/sources/liang-2022.md) (§1, §3.2, Fig. 6)
   attribute residual dissipation of THINC at discontinuities to its cell-average constraint and
   replace it by point interpolation with two steepness levels in cells a TENO-flag detector marks
@@ -430,6 +446,23 @@ that WENO dissipation can overwhelm physical dissipation in turbulence (§1), an
 find the new scheme the closest of four WENO schemes to the DNS kinetic-energy
 history of the Taylor–Green vortex at $128^3$ (Example 5.13, Fig. 5.22).
 
+## Measured from the decay of an exact wave or a proxy
+
+[Berta et al. (2024)](/sources/berta-2024.md) (§5.3, Fig. 5; arXiv v4) measure the
+dissipation of whole MHD schemes from the damping of an exact solution: for a circularly
+polarized [Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) in 3D, the decay
+rate of $\big(\iiint B_3^2\,dx\,dy\,dz\big)^{1/2}$, read as
+$\tfrac12(\nu_{\mathrm v}+\eta_{\mathrm m})k_w^2$ with an effective viscosity $\nu_{\mathrm v}$
+and resistivity $\eta_{\mathrm m}$ and the wavenumber $k_w$ (page-local). Their fourth-order finite-volume scheme is more than an order of magnitude
+less dissipative than the second-order one already at 8 points per direction, and the
+gap widens: the rate scales as $N^{-5}$ against $N^{-3}$. On the
+[field-loop advection](/benchmarks/field-loop-advection.md) the magnetic energy decays
+considerably faster at second order than at third and fourth (Fig. 7), and on the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) they use the normalized pressure
+maximum $\max(p)/\langle p\rangle$ at the end of the run ($\langle p\rangle$ the average
+pressure, page-local), which "generally increases with better resolution", as a proxy for the
+decrease of numerical dissipation (§5.6).
+
 ## Reading dissipation off 2D results
 
 Without a closed-form measure, the 2D sources compare dissipation through flow
@@ -489,6 +522,8 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 
 # Citations
 
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §§3.1–3.3, Eqs. (36)–(49); §4.10, Figs. 17–18: non-dissipative smooth branch, tuned TENO dissipation.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §5.3, Fig. 5; §5.4, Fig. 7; §5.6: Alfvén-wave damping, magnetic-energy decay, pressure-maximum proxy (arXiv v4).
 - [Fu (2023)](/sources/fu-2023.md) — §3.6, Eq. (29): flux as central part plus jump term.
 - [Wang et al. (2023b)](/sources/wang-2023-b.md) — §1, §3, Eqs. (5)–(18), Examples 6–7: CURH speeds, ND switch, ND proxies.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §3, Lemma 3.1, Examples 6–8: field-wise diffusion, Cesàro averages.

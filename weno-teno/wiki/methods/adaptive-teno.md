@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive TENO (TENO-A, TENO-AA)"
-description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure or a wavenumber scale sensor (TENO-A, adaptive dissipation) and, in TENO-AA, also tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of both."
+description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure, a wavenumber scale sensor or a global smoothness factor (TENO-A, TENO-LAD, TENO-AZ) and, in TENO-AA, also tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of these variants."
 status: established
-aliases: [TENO-A, TENO-AA, TENO5-A, TENO8-AA, TENO10-AA, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
+aliases: [TENO-A, TENO-AA, TENO5-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -102,7 +102,8 @@ $q=6$, the spectrally optimized linear weights $d_0=0.5065006634$,
 $d_1=0.3699651429$, $d_2=0.1235341937$ (the small-stencil weights of TENO-AA
 below), and a global indicator $\tau_5$ printed as a quadratic form in
 $f_{i-2},\dots,f_{i+2}$ with denominator $5040$, called "sixth-order" and
-different from the $\tau_5=\lvert\beta_1-\beta_2\rvert$ of standard TENO5.
+different from the $\tau_5$ of classical TENO5 ($\lvert\beta_0-\beta_2\rvert$ in the
+registry's stencil numbering).
 *(Compiler check, not in the sources: the printed form is mirror-symmetric under
 $i\pm m\leftrightarrow i\mp m$ and vanishes on samples of polynomials of degree
 at most 2, so on smooth data it is $O(\Delta x^6)$, consistent with the name.)*
@@ -111,6 +112,17 @@ al. measure exactly third order for both TENO5-A and their variant on
 $\partial_tu+\partial_xu=0$, $u_0=\sin(\pi x)$, with identical errors (e.g.
 $L_1=7.37\times10^{-8}$, $L_\infty=1.16\times10^{-7}$ at $N_x=640$; §4.1,
 Table 2): the "five-point" of the name is the stencil, not the order.
+
+**Parameters in two later uses.** [Liang & Fu (2024b)](/sources/liang-2024-b.md)
+(§3.3.2, Eqs. (47)–(49)) take the TENO-A cut-off of Fu et al. (2018)
+for the eight-point TENO branch of their hybrid TENO-S scheme (see
+[targeted ENO](/methods/targeted-eno.md)) with the four-point minimum,
+$\xi_{\mathrm A}=10^{-3}$, $C_r=0.23$, $b_1=10.5$, $b_2=3.5$, so that
+$C_T$ moves between $10^{-7}$ at discontinuities and $10^{-10}$ in
+smooth regions. [Tang (2024)](/sources/tang-2024.md) (§2, Eqs.
+(15)–(16)) recalls TENO-A for the fifth-order scheme with the three-point
+minimum, $\xi_{\mathrm A}=10^{-3}$, $C_r=0.24$, $b_1=10$, $b_2=5$,
+Huang et al.'s TENO5-A values.
 
 ## Scale-sensor-driven cut-off (Huang et al. 2023)
 
@@ -171,6 +183,81 @@ equals TENO5-A's: 80.41 s against 78.47 s at $512\times128$, with WENO5-Z 54.99 
 and TENO5 55.10 s (Table 3; hardware and step count not stated). The claim of
 "much lower dissipation than the existing five-point shock-capturing schemes"
 (§5) rests on comparisons with WENO5-Z, TENO5 and TENO5-A only.
+
+## Cut-off from shock sensors (TENO-LAD) and from a global factor (TENO-AZ)
+
+**TENO-LAD** (Peng et al. 2021, as recalled by
+[Tang (2024)](/sources/tang-2024.md), §2, Eqs. (17)–(18)) adapts $C_T$
+through the shock sensor of Peng et al.'s adaptive WENO-Z. With
+page-local $\theta_{\mathrm L}$, $m_{\mathrm L}$ and $H$,
+
+$$C_T=10^{-m_{\mathrm L}},\qquad m_{\mathrm L}=B_l+\big\lfloor\theta_{\mathrm L}(B_u-B_l)\big\rfloor,\qquad
+\theta_{\mathrm L}=\frac{1}{1+\max_k\big(\tfrac{\tau_5}{\beta_k+\epsilon}\big)/H},$$
+
+$H=10$, $B_l=4$, $B_u=10$, so $C_T$ moves between $10^{-4}$ and $10^{-10}$
+*(compiler check, not in the sources)*. Tang recalls that TENO-LAD was
+motivated by cases in which TENO-A's adaptive $C_T$ is "ineffective in
+the control of numerical oscillations", and that its authors report
+about 20 % less CPU time than TENO-A in 2D.
+
+**TENO-AZ** ([Tang (2024)](/sources/tang-2024.md), §3, Eqs.
+(19)–(20)) replaces both the discontinuity measure and the TENO-Z
+global indicator of the five-point scheme by one factor, a second
+difference of the Jiang–Shu indicators,
+
+$$\tau_{\mathrm{AZ}}=\lvert\beta_0+\beta_2-2\beta_1\rvert,\qquad
+\gamma_k=\Big(1+\frac{\tau_{\mathrm{AZ}}}{\beta_k+\epsilon}\Big)^6,\qquad
+C_T=\min\big(10^{-5},\ \tau_{\mathrm{AZ}}\big)$$
+
+($\tau_{\mathrm{AZ}}$ page-local; TENO5 stencils, $d_k=(0.1,0.6,0.3)$
+from the most upwind stencil, $\epsilon=10^{-40}$). The design aims are
+few parameters, a simple structure, and $C_T=0$ in smooth regions: with
+$C_T=0$ every $\delta_k=1$, and the flux is the fifth-order linear
+upwind scheme. Near discontinuities $\tau_{\mathrm{AZ}}>0$ and the cut-off
+is capped at $10^{-5}$, the TENO-Z value. Tang states, without results,
+that using $\tau_5$ in the cut-off instead "will produce numerical
+oscillations" and instability, and that keeping $\tau_5$ in $\gamma_k$
+with the new $C_T$ also restores the order at critical points but saves
+no time. No order estimate of $\tau_{\mathrm{AZ}}$ is derived. *(Compiler
+check, not in the sources: under $f\mapsto\sigma f$ the measure
+$\chi_k$ is unchanged while $\tau_{\mathrm{AZ}}\mapsto\sigma^2\tau_{\mathrm{AZ}}$,
+so the cut-off $\min(10^{-5},\tau_{\mathrm{AZ}})$ depends on the
+amplitude of the data; see [scale invariance](/properties/scale-invariance.md).)*
+
+**Evidence** (Tang 2024, §4; third-order TVD Runge–Kutta, CFL 0.5,
+global Lax–Friedrichs splitting; whether the reconstruction is
+characteristic-wise is not stated):
+
+- *Critical points* (Tables 1–3; $f=e^x-\sum_{k=1}^{n_{\mathrm{cp}}}x^k/k!$,
+  $\epsilon=\Delta x^{2n_{\mathrm{cp}}+3}$, $\Delta x=0.001/2^j$, $j=0,\dots,5$).
+  At a first-order critical point all four schemes give orders 6.00,
+  5.58, 5.41, 5.32, 5.26. At $n_{\mathrm{cp}}=2$ TENO-Z, TENO-A and
+  TENO-LAD fall to 3.00, 2.58, 2.41, 2.32, 2.26 and at $n_{\mathrm{cp}}=3$
+  to 4.01, 3.59, 3.41, 3.32, 3.26, while TENO-AZ keeps the errors of
+  the linear scheme; see
+  [critical-point accuracy](/properties/critical-point-accuracy.md).
+- *Spectral properties.* Its [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+  lies between TENO-Z and TENO-A/TENO-LAD in both dispersion and
+  dissipation (Fig. 1).
+- *Shock problems.* On Sod, the double rarefaction and the interacting
+  blast waves (200 cells) TENO-A shows pronounced oscillations and, near
+  the centre of the 123 problem, a trend "directly opposite" to the
+  reference; TENO-AZ is comparable to TENO-LAD and better than TENO-A
+  and TENO-Z. TENO-A and TENO-LAD fail the blast waves above CFL 0.2.
+  In 2D (isentropic vortex, Riemann problem, implosion, double Mach
+  reflection, Rayleigh–Taylor, forward-facing step) TENO-AZ resolves
+  comparable or finer structure, TENO-A more vortices with more noise
+  in double Mach reflection (Figs. 6–17).
+- *Robustness.* On the inviscid shock–shear-layer problem on
+  $1000\times200$, TENO-Z and TENO-LAD fail at CFL 0.3, 0.5 and 0.8,
+  TENO-A runs at 0.3 only, TENO-AZ at all three (§4.4.6, Fig. 16). Tang
+  attributes this to the "jump breaks" of the floor-function cut-offs
+  against the continuity of the new one, without testing the cause.
+- *Cost* (Intel i7-9700, averages of 1000 runs in 1D and 100 in 2D;
+  Tables 5–6), relative to TENO-Z: TENO-AZ 0.95–1.03, TENO-A 1.06–1.44,
+  TENO-LAD 1.10–1.38. In 1D TENO-LAD is slower than TENO-A in three of
+  four cases; in 2D it is faster, in line with the saving Peng et al.
+  report.
 
 ## Adaptive accuracy order (TENO-AA)
 
@@ -326,10 +413,29 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
   the background is the fifth-order upwind scheme)*. The page does not record this as a
   contradiction, because the two statements need not concern the same
   scheme. Printing the URANOS weights would decide it.
-- Three values of $C_r$ are recorded for nominally the same TENO-A recipe:
-  $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023) and $0.25$ (De Vanna et al.
-  2023a, 2023b, both attributing the value to Fu et al. 2018). No source
+- Four values of $C_r$ are recorded for nominally the same TENO-A recipe:
+  $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023; Tang 2024), $0.25$ (De
+  Vanna et al. 2023a, 2023b, both attributing the value to Fu et al.
+  2018) and $0.23$ (Liang & Fu 2024b, citing Fu et al. 2018). No source
   discusses the difference.
+- Tang (2024) prints the TENO-A cut-off as $C_T=10^{\lfloor b\rfloor}$
+  (Eq. (15)); with $b\in[5,10]$ this gives $C_T\ge10^5$, above every
+  normalized measure $\chi_k\le1$, so every stencil would be cut. The
+  exponent is $-\lfloor b\rfloor$, as Fu (2021), Fu (2023) and Huang et
+  al. (2023) print *(compiler check, not in the sources)*. Tang's
+  Table 5 prints the TENO-A/TENO-Z ratio of the blast wave as 1.30;
+  the printed times give $2.0913/1.5552=1.345$ *(compiler check, not in
+  the sources)*.
+- Tang's order recovery at critical points rests on $\epsilon=\Delta x^{2n_{\mathrm{cp}}+3}$,
+  which uses the order of the critical point, and on $n_{\mathrm{cp}}\le3$;
+  "optimal order accuracy at any order critical point" is not shown
+  beyond that. All other tests use $\epsilon=10^{-40}$. The errors of
+  Tables 1–3 fall to $2.6\times10^{-22}$ on data of size one, below
+  double-precision rounding of the point values *(compiler check, not
+  in the sources)*; the arithmetic precision is not stated.
+- Tang's introduction says TENO-Z, TENO-A and TENO-LAD all fail at
+  CFL $\ge0.3$ on the $1000\times200$ shear-layer mesh, §4.4.6 that
+  TENO-A runs at 0.3; the section is followed here.
 - The design orders of TENO8-AA and TENO10-AA (6 and 8) are below their point
   counts by construction; Fu (2023) writes "10-point 8th-order".
 - The Rayleigh–Taylor solution of TENO-AA loses mirror symmetry; Fu (2021,
@@ -358,6 +464,8 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — abstract, §1, §2.5: adaptive TENO of Fu et al. (2018) as the origin of hierarchical voting and optimized backgrounds.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1, §3.2, Eqs. (48)–(54): Ren's detector, two- and four-point minimum.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1: TENO-A recalled.
+- [Tang (2024)](/sources/tang-2024.md) — §§2–4, Eqs. (15)–(20), Tables 1–6, Figs. 1–17: TENO-A and TENO-LAD recalled, TENO-AZ and its evidence.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.3.2, Eqs. (47)–(49): TENO-A cut-off in the TENO branch of TENO-S.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.5.2, Eqs. (16)–(18); §§3.1–3.3; §4: fixed-cut-off WCNS-T and the proposal to adapt it.
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §§4.2–4.4, Table 2, Figs. 1–9: TENO-A5 parameters, wall-modelled LES evidence, cost.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.1; §5.2, Fig. 10; App. A.1–A.3, Figs. 11–13: TENO-A5 in URANOS, convergence, shock tests.

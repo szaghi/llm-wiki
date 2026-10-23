@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Entropy stability
@@ -93,6 +93,25 @@ fully discrete ones; the semi-discrete property becomes fully discrete only
 with relaxation, artificial viscosity, implicit time stepping or, for
 their deferred-correction residual-distribution schemes, a correction of
 the whole space–time residual (Remark 2.2).
+
+**Staggered grids with a potential source.**
+[Goudon & Minjeaud (2024)](/sources/goudon-2024.md) prove a semi-discrete
+entropy inequality for an explicit, well-balanced staggered finite-volume
+scheme for the barotropic Euler equations with source $-\rho\,\partial_xz$
+(page-local potential $z$; shallow water for $p=\rho^2/2$), densities on
+primal cells and velocities on the dual nodes. The entropy is the total
+energy $\tfrac12\rho v^2+\Phi(\rho)+\rho z$, with page-local internal energy
+$\Phi$, $\rho\Phi'-\Phi=p$ (Eq. (29)). The proof combines a discrete
+internal-plus-potential energy inequality on the primal cells with a
+kinetic-energy inequality on the dual cells, averaged over two dual nodes,
+to give $\frac{d}{dt}\eta_{j+1/2}+(H_{j+1}-H_j)/\delta x_{j+1/2}\le0$
+(page-local discrete entropy $\eta_{j+1/2}$ and flux $H_j$); its key step is an
+inequality for hydrostatically reconstructed states, obtained from the
+source-free lemma of the authors' earlier scheme (pp. 1272–1275, Eqs.
+(30)–(35); [well-balancing](/properties/well-balancing.md)). The fully
+discrete inequality is left open. For collocated hydrostatic-reconstruction
+schemes they recall that it has been shown only up to an error vanishing
+with the mesh, or with ad hoc artificial viscosity (p. 1275).
 
 ## Entropy-stable DG
 
@@ -195,6 +214,28 @@ Rueda-Ramírez et al. (2022) map three cases (§2.2, §4; see
   bounds hold for the Rusanov low-order scheme. With HLLE or second-order
   finite volumes they are not guaranteed, and the algorithm returns the
   solution "closest to the restrictions" (§5.2.3).
+
+**Interface-wise entropy limiting in monolithic convex limiting.**
+[Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md)
+limit the subcell fluxes of the LGL-DGSEM at the semi-discrete level, so
+that the spatial operator does not depend on $\Delta t$
+([DGSEM](/methods/dgsem.md), [convex limiting](/methods/convex-limiting.md)).
+After the bound-preserving limiters, a last factor
+$\alpha^s_{(i,j)}\in[0,1]$ (page-local) scales the limited anti-diffusive
+flux so that each subcell flux satisfies Tadmor's condition,
+$[\![w]\!]_{(i,j)}\cdot\hat f_{(i,j)}\le[\![\psi]\!]_{(i,j)}$ with
+$\hat f_{(i,j)}=\hat f^{\mathrm{FV}}_{(i,j)}+\alpha^s_{(i,j)}\Delta\hat f^{\mathrm{Lim}}_{(i,j)}/(i-j)$
+(Eqs. (37)–(39), after Kuzmin, Hajduk & Rupp; arXiv v1). The condition is
+linear in $\alpha^s$, so the factor is closed-form, and the authors stress
+that all their correction factors are, unlike predictor–corrector schemes
+that solve nonlinear equations (Remark 9). Substituting the blended flux
+gives $\alpha^s\le\big([\![\psi]\!]-[\![w]\!]\cdot\hat f^{\mathrm{FV}}\big)/\big([\![w]\!]\cdot\Delta\hat f^{\mathrm{Lim}}/(i-j)\big)$
+when the denominator is positive, and the numerator is non-negative when
+the low-order flux itself satisfies Tadmor's condition *(compiler check,
+not in the sources)*. The
+predictor–corrector alternative of their 2022 paper, which they compare
+against, takes a local minimum of $e\rho^{1-\gamma}$ as bound (§3.2, Eq.
+(51)).
 
 [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) add positivity to
 entropy-stable nodal DG for Euler and Navier–Stokes, on quadrilaterals and
@@ -457,6 +498,19 @@ $p\rho^{-\gamma}-(p\rho^{-\gamma})^K_{\min}-10^{-8}>0$, and cite Dao & Nazarov f
 entropy solutions in the vanishing-viscosity sense, identical to the
 gas-dynamics one (§2.1 Eq. (5), §3.1 Eq. (22), §4).
 
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) carry the local
+minimum principle to multi-species flows, on the mixture entropy of
+Gouasmi et al. (a partial-density-weighted sum of species entropies),
+again in the physical sign convention, and impose it through the filter
+only where a pressure-jump sensor detects a shock: imposed everywhere it
+over-dissipates species interfaces, where a smooth mixture density can hide
+discontinuous partial densities (§2.2, §3.1–3.2, Eqs. (7)–(12), (25)–(27);
+arXiv v1). They impose it on an exponentiated, clipped functional and state
+that the exponential's strict convexity keeps the principle (§4, Eq. (33));
+a lower bound carries over to any increasing function of the entropy, so
+monotonicity is what is used *(compiler check, not in the sources; details
+on [entropy filtering](/methods/entropy-filtering.md))*.
+
 Wu & Shu represent it, by
 [geometric quasilinearization](/methods/geometric-quasilinearization.md), as
 a family of constraints linear in $u$ (Thm 4.7; Eq. (2.3)). For 1D Euler the
@@ -497,6 +551,10 @@ blend reduces the oscillations (§8.2–8.4).
     factor $1/(\gamma-1)$; Rueda-Ramírez et al. (2021) use
     $\eta=-\rho s/(\gamma-1)$ as in the registry. All three take $\eta$
     convex and require production $\le0$.
+  - Rueda-Ramírez et al. (2024) use $\eta=-\rho s/(\gamma-1)$ with
+    production $\le0$, as the registry (App. A). Goudon & Minjeaud (2024)
+    write the barotropic entropy (total energy) with production $\le0$, and
+    their $\eta$ also names the constant water level of the lake at rest.
   - The minimum principles of Rueda-Ramírez et al. (2022) and Wu & Shu bound
     functions of the physical specific entropy from below.
   - Duan & Tang (2022) use the convex
@@ -544,6 +602,11 @@ blend reduces the oscillations (§8.2–8.4).
   general (Eqs. (73)–(74)); a direct entropy discretization conserves
   $\rho s$ but loses total energy (§4.2.5, Table 2;
   [split convective forms](/methods/split-convective-forms.md)).
+- **Printed slip (Rueda-Ramírez et al. (2024), arXiv v1).** Eq. (39)
+  prints the numerator of $\alpha^s$ as $[\![w]\!]\cdot\hat f^{\mathrm{FV}}-[\![\psi]\!]+\epsilon$,
+  the opposite sign of the bound obtained by substituting their Eq. (38)
+  into Eq. (37) (see above); as printed it would give $\alpha^s\le0$ up to
+  $\epsilon$ in the limited branch *(compiler check, not in the sources)*.
 - **Printed slip.** Renac's cell entropy inequality (64) prints the
   surface sum without the quadrature weight, while the analogous sum in
   the proof of Renac's Theorem 6.1 carries it. The weight is missing in (64).
@@ -569,3 +632,6 @@ blend reduces the oscillations (§8.2–8.4).
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §4.2.5 Eqs. (72)–(77), Table 2 (arXiv v1).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §1, Thm. 4.1, §5, §6.1–6.2 Thms. 6.1–6.2 Eqs. (45)–(55), §8.1–8.4, footnote 3, App. B.1 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §2.3.1, §3 Eqs. (63)–(66), §4.4 Fig. 4 (arXiv v1).
+- [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.2 Eqs. (37)–(39), Remark 9, §3.2 Eq. (51), App. A (arXiv v1).
+- [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — pp. 1272–1275 Eqs. (26)–(35) (HAL wrap of the version of record).
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §2.2 Eqs. (7)–(12), §3.1–3.2 Eqs. (25)–(27), §4 Eq. (33) (arXiv v1).

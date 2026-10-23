@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Immersed-boundary and cut-cell methods"
-description: "Treatments of walls and interfaces that do not follow the mesh: ghost-cell immersed boundaries filled from image points, the bilinearly complete reconstruction of Wang et al., cut cells and the small-cell problem, volume penalization with flux reconstruction, image lines keeping FR at design order, ghost points with a wall model, and signed-distance extrapolation on adaptive meshes."
+description: "Treatments of walls and interfaces off the mesh: ghost-cell immersed boundaries and the bilinearly complete reconstruction, cut cells and the small-cell problem, volume penalization with flux reconstruction, image lines, ghost points with a wall model, signed-distance extrapolation on adaptive meshes, cut against ghost cells at cold walls, and true-boundary reconstruction for embedded DG."
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Immersed-boundary and cut-cell methods
@@ -339,8 +339,136 @@ shock by a sphere on up to 350 million cells and 256 GPUs
 ([shock diffraction](/benchmarks/shock-diffraction.md)); the immersed
 boundary is not assessed separately from the AMR (§3).
 
+## Ghost cells against cut cells at cold and reacting walls
+
+[Başkaya et al. (2024)](/sources/baskaya-2024.md) compare wall treatments
+for hypersonic flows in chemical non-equilibrium with gas–surface
+interaction, on a curated set of eight verification and validation cases
+(§4, Table 1; author preprint). All three solvers use the same
+thermochemistry library, so the authors attribute the differences to the
+numerics:
+
+- **body-fitted (BF)**: US3D, modified Steger–Warming flux with MUSCL,
+  implicit relaxation to steady state;
+- **cut cells (IB-CC)**: INCA, a block-Cartesian AMR finite-volume solver
+  with third-order [WENO](/methods/weno-js-reconstruction.md), HLLC, RK3 and
+  Strang-split chemistry. Its "cut-element" method keeps every intersection
+  of the Cartesian grid with the surface triangulation, possibly several
+  cut-elements per cut cell, and balances the fluxes over the fluid part of
+  each cut cell with face fluxes scaled by wetted areas; small cut cells
+  are mixed or merged with neighbours. Ghost cells are kept as well, so
+  that unmodified stencils work everywhere (§3, §3.2);
+- **ghost cells (IB-GP)**: CHESS, Steger–Warming splitting with MUSCL, and
+  INCA itself with the cut-cell flux treatment switched off (§3.2, §5).
+
+The authors describe the ghost-cell method as not strictly conservative,
+with errors from the nonlinearity of the flux, the image-point
+interpolation and the interface curvature (§3). Results on the HEG
+cylinder (radius 0.045 m, $M_\infty=8.98$, 5-species air;
+[flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)):
+
+| wall | finding |
+|---|---|
+| inert adiabatic | shock stand-off and dissociation agree for all three (Fig. 7) |
+| inert isothermal, $T_w=300$ K | BF and IB-CC agree "almost exactly"; stagnation heat flux 7.345 (BF) and 7.144 (IB-CC) MW/m² on the medium–fine meshes against an experimental $7.402\pm0.220$; IB-GP 0.167 MW/m², with a larger stand-off distance (Table 7, Fig. 8) |
+| fully catalytic, 300 K | BF and IB-CC in "excellent agreement", IB-CC 0.2 % below BF (Fig. 11) |
+
+On a graphite ablator in nitrogen plasma both ghost-cell solvers
+overpredict the mass blowing rate. Because INCA-GP and INCA-CC differ only
+in the conservative flux treatment, and INCA-GP's heat flux is closer to
+the body-fitted one than CHESS's but still "clearly wrong", the authors
+conclude that conservation errors of ghost-cell methods cause the large
+errors at cold walls, acting as an unphysical surface blowing (§5, Fig.
+18). They expect these errors to converge at the truncation rate of the
+base scheme, so to matter only where the wall gradients of the conserved
+variables are large, cold isothermal and reacting walls and not adiabatic
+ones (§5); no convergence study of the conservation error is shown. They
+reject the explanation of Brahmachary et al., linear interpolation of
+temperature, because the cut-cell method also reconstructs to second order
+and predicts correctly (§4.5.2). The conservative cut cells of Wang et al.
+above likewise lose the least mass on the rotating vortex.
+
+## Embedded boundaries for DG: reconstruction on the true boundary
+
+[Ciallella et al. (2024)](/sources/ciallella-2024.md) treat curved walls in
+modal [ADER](/methods/ader-scheme.md)-[DG](/methods/discontinuous-galerkin.md)
+on triangulations whose boundary $\partial\Omega_h$ differs from the true
+boundary $\partial\Omega$: conformal straight-sided meshes, and fully
+embedded meshes whose surrogate boundary is detached from it (§1, §4;
+arXiv v1). Imposing the boundary data on $\partial\Omega_h$ limits DG to
+second order, and to first-order boundary consistency on embedded meshes
+(§4). Their method transfers the Reconstruction for Off-site Data (ROD) of
+Costa, Clain et al. from finite volumes to DG (§5, page-local symbols):
+
+- **Reconstruction.** In each boundary element the DG polynomial used in
+  the boundary flux is replaced by a polynomial of the same degree in a
+  monomial basis, fitted by weighted least squares to the element's own
+  predictor values at its quadrature points, under linear constraints
+  $\mathsf a_\Gamma\varphi+\mathsf b_\Gamma\partial_n\varphi=g_\Gamma$ (page-local
+  Robin coefficients and data) at the projections of the boundary-face
+  quadrature points onto $\partial\Omega$ along the normal; Lagrange
+  multipliers give a saddle-point system (Eqs. (22)–(29)). Unlike the
+  finite-volume ROD, which needs a neighbour stencil of about $1.5$ times
+  the number of coefficients found by a search, the DG version uses only
+  the element's own polynomial (Remark 3). For $N=2$ and $N=3$ the local
+  systems are $9\times9$ and $14\times14$ (§7).
+- **Space–time variant.** Written in the ADER predictor's space–time basis,
+  one constrained solve per space–time boundary element replaces one per
+  sub-time node (Eqs. (30)–(33); see the ADER page).
+- **Curved slip walls.** After Chertock, Coco, Kurganov & Russo the slip
+  condition on a curved wall is imposed as
+  $v_n=0$, $\partial_n(p\rho^{-\gamma})=0$, $\partial_nH=0$ and
+  $\partial_nv_t-v_t\,\kappa_{\mathrm c}=0$ (page-local normal and tangential
+  velocity $v_n$, $v_t$; boundary curvature $\kappa_{\mathrm c}$ as in the registry; Eqs. (16)–(21)), linear in
+  $(v_n,p\rho^{-\gamma},H,v_t)$, which are obtained by a space–time $L_2$
+  projection of the predictor; the normal and tangent come from a level set
+  (Eqs. (34)–(35), Remark 5). This is the set of wall conditions that Funada
+  & Imamura impose with image lines, their $\partial_nv_t=v_t/R_{\mathrm c}$
+  with $\kappa_{\mathrm c}=1/R_{\mathrm c}$ up to the sign convention of the
+  curvature *(compiler check, not in the sources)*. Troubled boundary cells
+  flagged by the a posteriori limiter use a corrected wall flux after
+  Krivodonova & Berger instead, said to be at most third order (§5.3.2).
+
+**Evidence** (§6). On a manufactured steady Euler solution with Dirichlet
+data on a trefoil-like boundary, the uncorrected scheme converges at second
+order for $N=1$–3 (Table 2), the reconstruction at finest-level rates 2.02,
+2.82, 4.10 on conformal meshes ($\rho$ error $1.5035\times10^{-10}$ at $N=3$,
+Table 4), and non-monotonically on embedded meshes, e.g. 3.76, 4.17, 1.53,
+4.47 for the space–time variant at $N=3$ (Table 7), which the authors call
+typical of embedded methods because the surrogate boundary approaches the
+true one depending on how it cuts the background mesh. With curved slip
+walls on the supersonic vortex between concentric arcs the authors state
+order $N$ rather than $N+1$, because the Neumann and Robin conditions use
+polynomial derivatives (finest-level rates 2.04–2.11, 2.07–2.09, 2.40–2.57
+for $N=1,2,3$), against uncorrected rates below 2 with errors that grow
+with $N$ and a crash at $N=3$ on the coarsest mesh (Tables 9–10). They
+point to neighbour information for the derivative polynomials of the
+Neumann and Robin cells, as in the finite-volume ROD of Costa et al., to
+recover the order (§6.2). A Mach 1.3
+shock–cylinder interaction at $N=3$ with subcell limiting gives smooth
+contours where naive reflecting walls generate spurious waves (§6.3,
+Figs. 8–9).
+
 ## Qualifications
 
+- Funada & Imamura's image lines reach order $N+1$ with curved slip-wall
+  conditions on the same variables, while Ciallella et al. reach about $N$;
+  the two treatments differ (image lines through fluid cells in FR, against
+  constrained reconstruction inside one DG element) and are tested on
+  different problems, so the difference is not a contradiction.
+- Ciallella et al. write that "in all cases, the expected convergence of
+  $M+1$ is achieved" (§6.1, their $M$ the degree), while their $N=2$ rates
+  on conformal meshes are 2.61–2.99 (Table 4) and their embedded rates
+  oscillate between 0.57 and 4.50 (Tables 5, 7). The order columns of their
+  Table 5 are not reproduced by the printed errors and the mesh sizes of
+  their Table 3 (e.g. $N=1$, $\rho$: 2.42, 1.50, 0.73, 2.50 against the printed
+  2.26, 1.64, 0.74, 2.26), whereas those of Table 7 are, to about $\pm0.04$
+  *(compiler check, not in the sources)*. Their cost saving of about 10 %
+  for the space–time variant is given without timings.
+- Başkaya et al.'s evidence is two second-order ghost-cell
+  implementations; higher-order or conservatively corrected ghost-cell
+  variants, such as those above, are not tested. Their read version is the
+  submitted preprint, whose numbers may differ from the version of record.
 - Funada & Imamura assert, without derivation, that their two wall
   condition sets (14) and (15) are equivalent for smooth 2D inviscid flow.
   $\partial_nH=0$ and $\partial_n(p\rho^{-\gamma})=0$ at the wall hold when
@@ -400,3 +528,5 @@ boundary is not assessed separately from the AMR (§3).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §1, §2.3 Eqs. (14)–(23), Figs. 4–9, §3.2–3.4 Tables 1–3 Figs. 12–25, §4.
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §2.3 Eqs. (9), (15)–(18), §3.5 Eqs. (21)–(25), §4.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.1.1 Eq. (10).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — author preprint: §3, §3.2, §4 Table 1, §4.5 Table 7 Figs. 7–11, §4.6, §5 Fig. 18.
+- [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §1, §4 Eqs. (15)–(21), §5 Eqs. (22)–(36), Remarks 3–5, §6 Tables 2, 4, 5, 7, 9, 10, Figs. 8–9, §7.

@@ -3,9 +3,9 @@ type: Method
 title: "Hermite WENO"
 description: "Hermite WENO (HWENO) builds WENO candidates from cell averages and derivative or first-moment information, giving compact stencils; the page records the moment-based finite-volume HWENO (moment equations, multi-resolution hierarchy, moment modification, positivity-preserving hybrid), the finite-difference HWENO-R that drops the target-point derivative, and its use as a finite-element sensor."
 status: established
-aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
+aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Hermite WENO
@@ -21,7 +21,7 @@ practice less robust, and the extra equation for the derivative or moment raises
 ## Moment-based HWENO
 
 The finite-volume HWENO of Zhao, Chen & Qiu, used by Fan et al. (2021, §3, Eqs. (3.2)–(3.6)) and by Li,
-Shu & Qiu (2022, §2.1, Eqs. (2.2)–(2.8)), evolves the cell average $\bar u_i$ and the first moment
+Shu & Qiu (2022d, §2.1, Eqs. (2.2)–(2.8)), evolves the cell average $\bar u_i$ and the first moment
 $\bar u^{(1)}_i=\frac1{\Delta x}\int_{I_i}u\,\frac{x-x_i}{\Delta x}\,dx$ (page-local symbol). Testing
 $\partial_tu+\partial_xf=0$ with $1$ and $(x-x_i)/\Delta x$ — the $\mathbb P^1$
 [discontinuous Galerkin](/methods/discontinuous-galerkin.md) weak form — gives
@@ -32,14 +32,14 @@ $$\frac{d\bar u_i}{dt}=-\frac{\hat f_{i+1/2}-\hat f_{i-1/2}}{\Delta x},\qquad
 with the volume integral by the four-point Gauss–Lobatto rule on $x_{i\pm1/2}$,
 $x_i\pm\frac{\sqrt5}{10}\Delta x$ (weights $\tfrac1{12},\tfrac5{12},\tfrac5{12},\tfrac1{12}$). Only
 point values at these four points are reconstructed; the two boundary values feed the numerical flux.
-Li et al. (2022, §1) contrast this with their earlier multi-resolution HWENO, which evolved derivative
+Li, Shu & Qiu (2022d, §1) contrast this with their earlier multi-resolution HWENO, which evolved derivative
 values and reconstructed function and derivative values at cell boundaries. *(Compiler check, not in
 the sources: for linear data $\bar u^{(1)}_i=u'\Delta x/12$, so the moment and derivative variables
 agree up to a factor only for linear data.)*
 
 ## Sixth-order multi-resolution HWENO (HWENO6-M5-I)
 
-Li, Shu & Qiu (2022, §2) build a sixth-order scheme on three cells in 1-D and $3\times3$ cells in 2-D
+Li, Shu & Qiu (2022d, §2) build a sixth-order scheme on three cells in 1-D and $3\times3$ cells in 2-D
 ("the same size as the general HWENO scheme and more compact than the general WENO scheme of the same
 order", Abstract; §4):
 
@@ -73,7 +73,7 @@ fifth order, 4.88–5.10, "as expected" (Tables 3.1–3.4;
 gives sharper shocks than HWENO6 on the Lax, Shu–Osher, blast-wave, Sedov and
 [forward-facing step](/benchmarks/forward-facing-step.md) problems (§3, figure comparisons only).
 
-**Stability history.** Li et al. (2022, §1) state that the original Qiu–Shu HWENO "is not stable enough"
+**Stability history.** Li, Shu & Qiu (2022d, §1) state that the original Qiu–Shu HWENO "is not stable enough"
 for the double Mach and forward-step problems, largely because first-derivative values become very
 large near discontinuities, and that their own earlier multi-resolution HWENO improved resolution but
 not stability, "since the first two layers in the hierarchy do not contain the information of the
@@ -118,6 +118,58 @@ triggered: the first-moment limiter alone makes the hybrid scheme "already very 
 read that limiter as "artificial viscosity": fewer troubled cells at $\mathrm{Re}=1000$ give slightly
 sharper fronts than at $\mathrm{Re}=\infty$ (Example 4.2, §5;
 [artificial viscosity](/methods/artificial-viscosity.md)).
+
+## Physical-constraint-preserving HWENO for relativistic hydrodynamics
+
+Cai, Qiu & Wu (2024, §§3–4; arXiv v1 read) build the moment-based finite-volume HWENO of Zhao & Qiu, with "artificial
+linear weights", for the special-relativistic Euler equations, where the primitive variables must be recovered from the
+conserved ones by a root solve ([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)). The moment
+equations are those above, with the four-point Gauss–Lobatto rule in the moment equation (Eqs. (3.2)–(3.3)) and a
+global Lax–Friedrichs flux (Eq. (3.4); [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
+
+- **Linear and nonlinear operators** (§3.1.1–3.1.2). A linear operator fits a quintic to the averages and first moments
+  of $I_{i-1},I_i,I_{i+1}$ (sixth order in 1-D); e.g.
+  $P_0(x_{i+1/2})=\tfrac{13}{108}\bar u_{i-1}+\tfrac7{12}\bar u_i+\tfrac8{27}\bar u_{i+1}+\tfrac{25}{54}\bar u^{(1)}_{i-1}+\tfrac{241}{54}\bar u^{(1)}_i-\tfrac{28}{27}\bar u^{(1)}_{i+1}$.
+  The HWENO operator adds two quadratics, on $\{\bar u_{i-1},\bar u_i,\bar u^{(1)}_i\}$ and $\{\bar u_i,\bar u_{i+1},\bar u^{(1)}_i\}$,
+  combined with the quintic in the [CWENO](/methods/cweno.md) form $\omega_0\big(P_0-\sum_{n\ge1}d_nP_n\big)/d_0+\sum_{n\ge1}\omega_nP_n$, with
+  Jiang–Shu indicators (e.g. $\beta_1=144(\bar u^{(1)}_i)^2+\tfrac{13}3(\bar u_{i-1}-\bar u_i+12\bar u^{(1)}_i)^2$) and
+  $$\alpha_n=d_n\Big(1+\frac{\tau^2}{\beta_n^2+\epsilon}\Big),\qquad \tau=\tfrac12\big(|\beta_0-\beta_1|+|\beta_0-\beta_2|\big)$$
+  (page-local $\tau$; Eq. (3.8)), which the authors call scale-invariant, crediting Chen & Wu for the idea that such weights
+  suppress oscillations in multiscale relativistic flows (Remark 3.2; [scale invariance](/properties/scale-invariance.md)).
+  The values of $d_n$, $\epsilon$ and the KXRCF threshold are not printed.
+- **Hybrid procedure** (§3.1.3). A KXRCF indicator marks troubled cells
+  ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)); there the first moment is modified by the HWENO
+  limiter of Zhao & Qiu, with weights $d_n\big(1+\tau_\ell^2\Delta x/(\beta_{\ell,n}^2+\epsilon)\big)$ (page-local), the
+  two inner Gauss–Lobatto values are reconstructed component-wise, and the two interface values characteristic-wise with
+  the eigenvectors of the Eulderink–Mellema Roe matrix; elsewhere all four values come from the linear operator
+  ([hybrid schemes](/methods/hybrid-weno.md)). The eigenvector pairs $(r,l)$ may be rescaled to $(cr,l/c)$, and the
+  "matching" choice $c=\sqrt{|l|/|r|}$ removes the "serious oscillations" that unrescaled or "unitized" ($c=|l|$)
+  eigenvectors give on an ultra-relativistic 2-D Riemann problem (Remark 3.3, Example 5.7, Fig. 7;
+  [characteristic decomposition](/methods/characteristic-decomposition.md)).
+- **Physical-constraint limiter** (§3.1.3, Step 3; Lemma 3.2). A two-stage
+  [Zhang–Shu scaling](/methods/zhang-shu-scaling-limiter.md), first on the lab-frame density, then on the concave
+  constraint function of the admissible set, is applied at all four Gauss–Lobatto points, the inner ones included,
+  because the primitive recovery converges only for admissible states (Remark 3.4), together with the interior value
+  $\Pi_i=\big(\bar u_i-\tfrac1{12}u^+_{i-1/2}-\tfrac1{12}u^-_{i+1/2}\big)/(1-\tfrac16)$ of the Gauss–Lobatto
+  decomposition, both traces taken from cell $i$ (Eq. (3.11)).
+- **Theorem 3.1.** With the end Gauss–Lobatto weight $1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))=\tfrac1{12}$
+  ($N_{\mathrm{GL}}=4$), the forward-Euler cell average stays in the admissible set if
+  $\Delta t\le\tfrac1{12}\Delta x/a$, $a$ the global Lax–Friedrichs speed; SSP Runge–Kutta keeps it by convexity.
+  Theorem 4.1 is the 2-D analogue, $\Delta t\le\tfrac1{12}/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$, and §4.3 adds a step
+  restriction for the axisymmetric source term ([bound preservation](/properties/bound-preservation.md),
+  [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+- **2-D** (§4, Apps. A–B). Three moments per cell, a $3\times3$ stencil, a quartic that matches the nine averages and the
+  centre's two first moments exactly and four first moments in least squares (fifth order), and four quadratics on the
+  $2\times2$ sub-blocks with $\tau=\tfrac14\sum_n|\beta_0-\beta_n|$.
+
+The pointwise recovery uses Newton–Raphson methods proved convergent and positivity-preserving (§2). The 1-D scheme reaches
+sixth order on an ultra-relativistic smooth problem, where the limiter is needed ($L^1$ errors $3.56\times10^{-1}$ to
+$1.74\times10^{-9}$ for $N=30$ to 180, orders 6.00, 5.99, 5.97 at $N=120$, 150, 180; Table 4), the 2-D scheme fifth
+order (5.35, 5.20, 5.08; Table 5). Without the limiter the code breaks down after one step on the shock-heating problem
+with $|v_0|=1-10^{-10}$ and cannot take one step on the demanding shock–vortex test with minimum pressure
+$1.7847\times10^{-20}$; with it only two cells are limited in the 1-D Riemann problem, and the axisymmetric jet with
+beam speed 0.99 runs (Examples 5.3–5.4, 5.8–5.9; [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
+[high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md)).
 
 ## Finite-difference HWENO without the target-point derivative (HWENO-R)
 
@@ -244,7 +296,7 @@ artificial viscosity, so the semi-discrete scheme keeps the structure of a conti
 DG-WENO schemes "have more in common with finite volume methods". If the finite element solution on
 the stencil union is a polynomial of degree $\le N$, every candidate equals it, $\varsigma_e=1$ for any
 nonlinear weights, and polynomial solutions are reproduced exactly (Remark 6). The moment modification
-of Li, Shu & Qiu (2022), by contrast, does overwrite the evolved moment in flagged cells.
+of Li, Shu & Qiu (2022d), by contrast, does overwrite the evolved moment in flagged cells.
 
 ## Hermite TENO
 
@@ -254,7 +306,7 @@ are given in the ingested sources.
 
 ## Qualifications
 
-- **Linear weights.** Li, Shu & Qiu (2022) state in the Abstract and §4 that the linear weights "can be
+- **Linear weights.** Li, Shu & Qiu (2022d) state in the Abstract and §4 that the linear weights "can be
   any positive numbers as long as their sum equals one", but in §1 that their gap "cannot be too
   large" and in Remark 1 that larger weights on higher-degree polynomials make the scheme less stable;
   "any" holds for smooth-region accuracy only.
@@ -267,12 +319,12 @@ are given in the ingested sources.
   coexist with a recommended band $\gamma_0/\gamma_1\in[100,300]$, $d_0/d_1\in[10,30]$ (Example 3.4), and
   "robust without positivity limiters" coexists with negative minimum pressures on coarse meshes of the
   near-vacuum vortex run without limiters (Table 3.3).
-- **Heuristic resolution argument.** Remark 1 of Li, Shu & Qiu (2022) assumes the low-order indicators
+- **Heuristic resolution argument.** Remark 1 of Li, Shu & Qiu (2022d) assumes the low-order indicators
   stay $O(\Delta x^2)$ in a cell that contains a discontinuity, and that after modification all
   indicators behave as on smooth data, although the modified moment is built from averages that
   straddle the jump; the resolution gain is supported by figures only. Their claim of "smaller errors
   than multi-resolution WENO under the same meshes" (§4) is not shown in the paper.
-- Li, Shu & Qiu (2022) justify the KXRCF exponent $(l+1)/3$ by asking the indicator to converge "twice
+- Li, Shu & Qiu (2022d) justify the KXRCF exponent $(l+1)/3$ by asking the indicator to converge "twice
   as fast" in smooth regions as it diverges at discontinuities; Krivodonova et al. use $(k+1)/2$.
 - **Order of the positivity CFL under SSP-RK3.** Fan et al. (2021, §3.3) state that Theorems 1–2 hold
   for SSP-RK3 "if the CFL is one third" of the forward-Euler bound; the Shu–Osher RK3 is a convex
@@ -287,14 +339,22 @@ are given in the ingested sources.
   Lax-problem CPU savings quoted in the text (77.68 %, 75.08 %) differ from Table 4.2 (71.20 %,
   69.98 %). The 2-D derivative reconstruction is third order (App. A.2) while the 2-D scheme is
   reported fourth order.
-- Li et al. (2022, Eq. (8)) — the WENO-ZN paper — call the rescaled Legendre basis used by Balsara et
+- **Step bound against the tests.** Cai, Qiu & Wu (2024) prove the physical-constraint property under
+  $\Delta t\le\tfrac1{12}\Delta x/a$, but run all tests at a "CFL number" of 0.6 without defining it (§5). *(Compiler
+  check, not in the sources: if the CFL number is taken relative to $\Delta x/a$, 0.6 exceeds the proved bound by a factor
+  7.2.)* Their claim that the hybrid Newton recovery is superior in speed "across all tests" (§5.1) is not borne out by
+  their own timings on the third sample set, where the linearly convergent hybrid of Chen & Wu is faster.
+- Cai, Qiu & Wu (2024, §3.1.2) state that the weights "remain unchanged" under $(\bar u,\bar u^{(1)})\mapsto\sigma(\bar u,\bar u^{(1)})$
+  for any $\sigma\ne0$. *(Compiler check, not in the sources: $\tau^2$ and $\beta_n^2$ both scale as $\sigma^4$, so the
+  ratio is invariant only up to $\epsilon$, whose value is not printed.)*
+- Li et al. (2022b, Eq. (8)) — the WENO-ZN paper — call the rescaled Legendre basis used by Balsara et
   al. for smoothness indicators "Hermite polynomials"; that reconstruction is not Hermite WENO.
 - The nonlinear HWENO reconstruction of Kuzmin & Vedral is printed once with a tilde
   ($\tilde u_h^{e,*}$) and referred to without it elsewhere; they are the same object.
 
 # Citations
 
-- [Li, Shu & Qiu (2022)](/sources/li-2022-d.md) — Abstract; §1; §2.1–2.2, Eqs. (2.2)–(2.34), (2.36)–(2.59), Remarks 1–3; §3, Tables 3.1–3.4, Examples 3.5–3.10; §4.
+- [Li, Shu & Qiu (2022d)](/sources/li-2022-d.md) — Abstract; §1; §2.1–2.2, Eqs. (2.2)–(2.34), (2.36)–(2.59), Remarks 1–3; §3, Tables 3.1–3.4, Examples 3.5–3.10; §4.
 - [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md) — §1; §3, Eqs. (3.2)–(3.33), Theorems 1–2; §4, Tables 4.1–4.2, Fig. 4.1; §5; App. A.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §3, Eq. (8); Eq. (9); §5, Eq. (11), Remarks 2–4, 6; §7.4.
 - [Fu (2023)](/sources/fu-2023.md) — §1; §3.10.
@@ -304,3 +364,4 @@ are given in the ingested sources.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.6; §3.1.5.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.11), Remarks 2.1–2.4; §3, Tables 3.1–3.4, Examples 3.4–3.13, Fig. 3.9; App.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1, Eqs. (3.2)–(3.8), Remarks 3.2–3.4; Lemma 3.2, Theorem 3.1; §4, Theorem 4.1, Apps. A–B; §5, Examples 5.2–5.9, Tables 4–5 (arXiv v1).

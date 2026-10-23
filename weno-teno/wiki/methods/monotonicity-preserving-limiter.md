@@ -3,9 +3,9 @@ type: Method
 title: "Monotonicity-preserving (MP) limiter"
 description: "The Suresh–Huynh monotonicity-preserving limiter keeps a high-order interface value unless it leaves a monotonicity bound and otherwise clips it into an interval built from median, upper-limit and large-curvature values; the page records its form in the gradient-based MEG/MIG schemes, the gradient-based curvature that replaces the three-point one, and MP3/MP5 convergence in a relativistic code."
 status: established
-aliases: [MP limiter, MP5, MP3, MP reconstruction, Suresh–Huynh limiter, monotonicity-preserving scheme, monotonicity-preserving reconstruction, improved MP5 limiter]
-tags: [limiting, reconstruction, finite-difference, finite-volume, relativistic]
-timestamp: 2026-10-23T16:00:00Z
+aliases: [MP limiter, MP5, MP3, MP reconstruction, Suresh–Huynh limiter, monotonicity-preserving scheme, monotonicity-preserving reconstruction, improved MP5 limiter, pointwise MP5]
+tags: [limiting, reconstruction, finite-difference, finite-volume, relativistic, mhd]
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Monotonicity-preserving (MP) limiter
@@ -100,6 +100,24 @@ Chandravamsi et al. (2023, App. E) give neither value.
 
   The authors state that the earlier code was tested only to second order. MP reconstruction is
   restricted there to non-radiative problems; radiative runs use piecewise-linear reconstruction (§3.2).
+- **Pointwise MP5 in a fourth-order finite-volume scheme.** Berta, Mignone, Bugli & Mattia (2024, §3.2, Eq. (23); arXiv
+  v4 read) apply MP5 to **point values** inside a finite-volume scheme for classical and relativistic MHD: the cell
+  averages are first converted to fourth-order point values at cell centres by a Laplacian correction, then to primitive
+  variables, and the unlimited interface value is the five-point point-value interpolation
+  $$u^{\mathrm{lin}}_{i+1/2}=\tfrac1{128}\big(3u_{i-2}-20u_{i-1}+90u_i+60u_{i+1}-5u_{i+2}\big),$$
+  the finite-difference form, instead of the reconstruction from cell averages. The limiting step is unchanged, "as
+  monotonicity-preserving bounds are equally well expressed in terms of point values", and the authors claim the
+  first use of pointwise MP5 and WENO-Z in a finite-volume scheme (§1, §3.2; [WENO-Z](/methods/weno-z.md)). With
+  SSPRK(5,4) the scheme is fourth order: on the 2-D and 3-D
+  [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) the MP5 and WENO-Z errors are
+  "almost identical" and the $L_1$ orders reach 4.00 at $N_x=512$ (Table 2), and on the
+  [magnetized vortex](/benchmarks/magnetized-vortex.md) the finest $L_1$ errors of $B_x$ are $5.76\times10^{-9}$ for both
+  reconstructions (Table 1). In [field-loop advection](/benchmarks/field-loop-advection.md) MP5 shows small overshoots
+  at the tail and undershoots at the head of the loop, while WENO-Z "performs the best" (§5.4, Figs. 6–7); MP5 with
+  HLLD resolves a central magnetic island in the [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) at $64^2$
+  (§5.6), and MP5 in primitive variables is the reconstruction of their relativistic rotated shock tube (§5.1).
+  Robustness rests on an a priori order reduction that switches flagged cells to WENO3 or piecewise-linear
+  reconstruction ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
 ## Qualifications
 
@@ -119,3 +137,4 @@ Chandravamsi et al. (2023, App. E) give neither value.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.3, Eqs. (25)–(27); Ex. 3.5.
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §5.1, Step 4; §8.3; App. E, Eqs. (E.1)–(E.4).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §3.2; §4.1.1, Tables 1–4; §5.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §1; §3.1–3.2, Eq. (23); §5.1–5.4, §5.6, Tables 1–2, Figs. 6–7 (arXiv v4).

@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,8 +17,8 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Twenty-six sources of the
-bundle run it.
+resolution against a fine-grid reference. Twenty-nine sources of the
+bundle run it, and one more runs its left half as a single blast.
 
 ## Setup
 
@@ -67,6 +67,9 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.4 | 800, CFL 0.6 | WENO-JS, 20000 | hybrid multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) vs MR-WCNS and WENO-JS; boundary conditions not stated, intervals printed open |
 | [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.2 | 400 | — | eighth-order compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md) at CFL 0.4 and 0.8 vs the authors' earlier compact scheme (arXiv v1) |
 | [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.13, Eq. (80) | 600, CFL 0.2 | exact | right region printed from $x=0.8$, see Qualifications; [gradient-based](/methods/gradient-based-reconstruction.md) MIG4, MEG6 vs TENO5 (arXiv v2) |
+| [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (31) | 200, CFL 0.2 | WENO-JS, 4000 | global LF splitting; [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; boundary conditions not stated |
+| [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.3 | 100 cells at degree 1, 3, 7; 400 cells at degree 1; $f_{\mathrm{CFL}}=0.3$ | same code, 10,000 cells | modal DG with an evolved [artificial-viscosity](/methods/artificial-viscosity.md) field, HLLC; middle pressure printed $0.1$, boundaries not stated (arXiv v2) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.5 | strip $[0,1]\times[0,0.1]$, polygons, $h=1/1080$, $P_2$, $P_3$ | 1D residual distribution, 50,000 points | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with conservative subcell correction at shocks (arXiv v1) |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.4, Eq. (55) | 600, CFL 0.2 | exact | right region printed from $x=0.8$; MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 
 ## Findings across sources
@@ -166,6 +169,37 @@ $[100,300]$ and $[10,30]$ respectively giving similar results (§3, Ex. 3.4,
 Figs. 3.5–3.7). The caption of Table 3.4 reads "(Gk,Dk)", the text
 "(Dk,Gk)".
 
+**Adaptive TENO, DG at equal degrees of freedom, primitive-variable
+DG.** Tang must run at CFL 0.2 because TENO-A and TENO-LAD fail above
+it; TENO-A shows pronounced unphysical oscillations, and TENO-AZ is
+comparable to TENO-LAD and better than TENO-A and TENO-Z (§4.3, Fig. 9);
+Tang's CPU-time ratios to TENO-Z are 1.03 (TENO-AZ), 1.30 (TENO-A) and
+1.10 (TENO-LAD) (Table 5). Cernetic et al. find the profile improving
+with the degree at 100 cells, the degree-7 run on 100 cells matching
+the degree-1 run on 400 cells, which has the same number of degrees of
+freedom; Krivodonova's moment limiter, as they cite it, is "marginally
+better" at low order, and an eighth-order WENO of the literature on 400
+cells is closer to the reference with half the degrees of freedom of
+their degree-7 run. They conclude that
+discontinuities converge at first order and that high-order DG gives
+"no magic solution" for them (Figs. 7–8; see
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md)). Gaburro
+et al. find all waves and shock positions correct against the
+residual-distribution reference and visual convergence from $P_2$ to
+$P_3$ (Fig. 4), with the conservative update confined to the
+shock-triggered subcells.
+
+## Single blast
+
+[Jiang et al. (2024)](/sources/jiang-2024.md) §5.1.2 run the left half
+of the problem as a single blast on $[-0.5,0.5]$: $(\rho,p)=(1,1000)$ on
+the left and $(1,0.01)$ on the right, at rest, to $t=0.012$, with
+particle spacing $\Delta x_0=0.0025$, against a WENO-Z run on 5000
+points: their Lagrangian weighted-least-squares particle method with
+WENO-Z-type pair states captures pressure and internal energy close to
+the reference (Fig. 7). There is no interaction of two blasts, so the
+run tests the strong pressure ratio only.
+
 ## Two-dimensional strip on triangles
 
 Zhao et al. §4.5 run the same data on $[0,1]\times[0,0.25]$ with
@@ -203,6 +237,14 @@ with specifications deferred to an earlier paper (Fig. 7).
   al., Deng, Huang et al., Li, Shu & Qiu, Wang et al. (2021) and
   Bezgin et al. print $0.01$; whether this is a misprint or the value run cannot be decided
   from the paper.
+- Cernetic et al. print the middle pressure as $0.1$, ten times the
+  $0.01$ of the other sources, and mix order and degree in their text
+  ("order $p=2,4,8$" for the runs their Fig. 7 labels $p=1,3,7$); the
+  degrees above follow the figure.
+- Tang's Table 5 prints the TENO-A ratio 1.30 on this problem, where
+  Tang's times give $2.0913/1.5552=1.345$ *(compiler check, not in the
+  sources)*.
+- Gaburro et al. call the problem "a standard low energy benchmark".
 - Balsara et al. place the problem on $[-0.5,0.5]$; their initial
   states are not recorded on this page.
 - Hu, Yuan & Zhao print the intervals $[0,0.1]$, $(0.1,0.9]$, $(0.9,1]$
@@ -249,3 +291,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.3, Eq. (38), Fig. 12.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Example 4.4, Eq. (4.4), Fig. 4.6, Table 5.1.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.2, §4.5, Figs. 5, 8 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §4.3, Eq. (31), Fig. 9, Table 5.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §2.5, §5.3, Figs. 7–8 (arXiv v2).
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.5, Fig. 4 (arXiv v1).
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.1.2, Fig. 7.

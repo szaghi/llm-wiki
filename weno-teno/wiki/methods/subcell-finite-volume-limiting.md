@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Subcell finite-volume limiting for DG"
-description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the entropy-stable blending lemma with non-conservative terms, element switching on finer equidistant subcells, and the measured effect of each choice."
+description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the entropy-stable blending lemma, semi-discrete monolithic convex limiting, element switching on finer equidistant subcells, and the measured effect of each choice."
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -144,6 +144,12 @@ nodes as "subcell-centred values" and limits fluxes through subcell faces
   coefficient per subcell interface,
   $\hat f_{(a,b)}=(1-\alpha_{(a,b)})\hat f^{\mathrm{DG}}_{(a,b)}+\alpha_{(a,b)}\hat f^{\mathrm{FV}}_{(a,b)}$,
   inserted in the subcell form; the update stays conservative.
+  [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (Remark 6,
+  arXiv v1) note that with LGL nodes the DG and finite-volume fluxes at
+  the element boundary coincide when the two schemes use the same surface
+  flux, so the blended flux there does not depend on the coefficient and
+  subcell-wise limiting is purely element-local, the point Lin, Chan &
+  Tomas make for their sparse scheme ([convex limiting](/methods/convex-limiting.md)).
   [Pazner (2021)](/sources/pazner-2021.md) reaches the same structure from
   the nodal side (§4.1.3, §4.2.2, Props. 8–11): the antidiffusive residuals
   of the DGSEM minus the low-order scheme sum to zero over each element and
@@ -195,7 +201,13 @@ entropy proof for subcell-wise blending is "still missing"
   parameter-dependent.
 - **A posteriori**: FCT / [convex limiting](/methods/convex-limiting.md)
   against target bounds — local min/max, Guermond–Popov bar states, or a
-  fraction of the finite-volume solution. In Pazner's method the a priori
+  fraction of the finite-volume solution.
+- **Semi-discrete, on the bar states**: monolithic convex limiting
+  (Rueda-Ramírez et al. 2024, §2.2) limits each subcell antidiffusive
+  flux in closed form so that the two bar states of the interface stay in
+  their bounds, before any time step; the limited operator then depends on
+  the state, not on $\Delta t$, unlike FCT/IDP, whose antidiffusive
+  correction and bounds depend on the step ([convex limiting](/methods/convex-limiting.md)). In Pazner's method the a priori
   modal indicator serves a different purpose: it relaxes the a posteriori
   bounds toward global ones in smooth elements, which recovers the design
   order (§4.4, §5.1).
@@ -210,7 +222,11 @@ entropy-stable DGSEM + subcell FV + element-wise blending + a priori modal
 indicator. Rueda-Ramírez et al. (2021) add a third: split-form
 entropy-stable DGSEM with non-conservative terms + first-order or TVD-ES
 subcell FV + element-wise blending of the advective part + a priori modal
-indicator with clipping and relaxation.
+indicator with clipping and relaxation. Rueda-Ramírez et al. (2024) a
+fourth: split-form DGSEM (Ranocha's or Chandrashekar's volume flux) +
+first-order Rusanov subcell FV + subcell-wise blending + semi-discrete
+monolithic convex limiting of density, ratio quantities, pressure and
+entropy on the bar states.
 
 ## Limiting-amount diagnostics
 
@@ -288,6 +304,16 @@ fewest tuning parameters, and extend it to five-species air in
 thermochemical non-equilibrium with new entropy-conservative fluxes
 ([entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
 
+**Rueda-Ramírez et al. (2024)** (§3, Trixi.jl). With monolithic convex
+limiting the LGL-DGSEM keeps its design order under positivity bounds
+only (mean orders 4.16 for $N=3$, 4.75 for $N=4$ on a density wave) and
+drops to 1.82 and 1.61 under tight local bar-state bounds (Tables 1–4).
+On a Mach-2000 jet ($N=3$, $256^2$ elements) its number of time steps
+is inversely proportional to the CFL number, while that of the FCT/IDP
+subcell limiter of Rueda-Ramírez, Pazner & Gassner is not, and the
+FCT/IDP solution changes markedly with the CFL number (Table 5, Fig. 8).
+Details are on the [convex limiting](/methods/convex-limiting.md) page.
+
 **Lin et al. (2023).** [Lin, Chan & Tomas (2023)](/sources/lin-2023.md)
 read their sparse low-order DG scheme as a subcell finite-volume scheme
 with Lax–Friedrichs-type fluxes on the node graph (§6.2, Eqs. 47–48),
@@ -349,6 +375,24 @@ see [h- and hp-adaptation](/methods/hp-adaptation.md). They do not use
 split-form DG, to isolate the stabilizing effect of the subcells (§9).
 
 ## Other limiter classes
+
+**A posteriori recomputation on subcells.** In ADER-DG,
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) (§3.4) and
+[Ciallella et al. (2024)](/sources/ciallella-2024.md) (§3.4) use the a
+posteriori limiter of Dumbser and coworkers: the unlimited candidate is
+checked for positivity and a relaxed maximum principle, troubled cells
+are recomputed with a second-order MUSCL–Hancock finite-volume scheme on
+triangular subcells, and a DG polynomial is rebuilt from the subcell
+averages. Nothing is blended; the troubled cell's DG update is replaced.
+The subcells are $N^2$ sub-triangles of each barycentric triangle of a
+polygon (Gaburro et al.) or $(2N+1)^d$ sub-triangles of a triangle
+(Ciallella et al.), not LGL subcells, and the subcell scheme does not
+share the DG degrees of freedom; see
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md).
+[Cernetic et al. (2023)](/sources/cernetic-2023.md) (§1) cite subcell
+finite-volume treatments (Zanotti et al. 2015; Markert et al. 2021) as the
+"recent advanced treatments" of shocks in DG and use a time-evolved
+[artificial viscosity](/methods/artificial-viscosity.md) instead.
 
 [Du, Shu & Zhong (2022)](/sources/du-2022.md) (§1) cite the a posteriori
 subcell finite-volume limiters of Dumbser, Zanotti, Loubère and Diot as a
@@ -417,5 +461,9 @@ DG modes of troubled cells by a same-order CWENOZ reconstruction instead
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1 (subcell finite-volume limiters named as a class).
 - [Peyvan, Shukla, Chan & Karniadakis (2023)](/sources/peyvan-2023.md) — arXiv v1: Abstract; §2.3.1, Eqs. (47)–(56); §4.1–4.3, Figs. 1–3; §5.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §6.2, Eqs. (47)–(48).
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.1–2.2, Remarks 1, 6; §3.1, Tables 1–4; §3.5, Table 5, Fig. 8.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §3.4 (a posteriori subcell limiter).
+- [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.4, Remark 1.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.4.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §3.3, Eq. (18); §4.1–4.3, Eqs. (19)–(31), Fig. 2; §7.2; §8.1, §8.6–§8.9, Tables 1, 3, 6, Figs. 13, 16; §9.

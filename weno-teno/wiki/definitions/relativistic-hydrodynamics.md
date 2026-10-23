@@ -5,7 +5,7 @@ description: "The special relativistic (magneto)hydrodynamics equations in lab-f
 status: established
 aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD
@@ -53,6 +53,17 @@ $$m=\big(\rho h_{\mathrm R}W^2+\lvert B\rvert^2\big)v-(v\cdot B)B,\qquad E=D h_{
 $$f^{(d)}=\Big(D v_d,\ m\,v_d-B_d\big(B/W^2+(v\cdot B)v\big)+p_{\mathrm{tot}}e_d,\ m_d,\ v_dB-B_dv\Big),$$
 subject to $\nabla\cdot B=0$. RHD is the case $B\equiv0$.
 
+[Berta et al. (2024)](/sources/berta-2024.md) (§2, Eq. (7)) print the RMHD system with the
+energy $E=\rho h_{\mathrm R}W^2-p+\tfrac12\lvert B\rvert^2+\tfrac12\big(\lvert v\rvert^2\lvert B\rvert^2-(v\cdot B)^2\big)$
+and the momentum flux $w_{\mathrm t}W^2v\,v_d-\mathsf b\,\mathsf b_d+p_{\mathrm{tot}}e_d$, with
+$w_{\mathrm t}=\rho h_{\mathrm R}+\lvert B\rvert^2/W^2+(v\cdot B)^2=\rho h_{\mathrm R}+\lvert b\rvert^2$
+(the comoving $\lvert b\rvert^2$ above) and the spatial part of the magnetic four-vector
+$\mathsf b=B/W+W(v\cdot B)v$ (page-local; its Euclidean norm is not $\lvert b\rvert$). *(compiler check, not in the sources: with
+$1/W^2=1-\lvert v\rvert^2$ both expressions equal Duan & Tang's above, so the two sources use the
+same system.)* They evolve it with a fourth-order finite-volume scheme with constrained
+transport in PLUTO and do not describe their primitive recovery
+([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 ## Primitive recovery
 
 For RHD the pressure is the root on $[0,\infty)$ of (Chen & Wu, Eqs. (7)–(8);
@@ -86,6 +97,38 @@ time on four tests, against 15.4–23.0% for Newton, 14.6–17.1% for bisection
 and 14.0–27.4% for the fixed point; none of the three provable solvers
 failed (Table 3, Rem. 4.1).
 
+**Provably convergent Newton iterations.** [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§2)
+call a recovery algorithm PCP if every iterate is positive and *convergent* if the iterates
+tend to the physical pressure $p(u)$ (Defs. 2.1–2.2), and give three Newton variants, PCP,
+convergent for every $u\in G$ and quadratically convergent (Thms. 2.5–2.6, 2.10):
+
+- **NR-I** applies Newton to the monic quartic $\phi(p)=(\gamma-1)^2(h_1-h_2)$ obtained by
+  squaring the pressure equation, with $h_1(p)=\big(\lvert m\rvert^2+(E+p)(\tfrac{p}{\gamma-1}-E)\big)^2$
+  and $h_2(p)=D^2\big((E+p)^2-\lvert m\rvert^2\big)$ (page-local; Eqs. (2.5)–(2.8)). The quartic has
+  two positive roots and either two negative or two complex ones, and $p(u)$ is the smaller
+  positive root (Thms. 2.1–2.2). Started from $p_0=0$ if its $p^2$ coefficient $c_2$ is positive,
+  and otherwise from the largest root of $\phi''$, the iteration increases monotonically to $p(u)$
+  (Alg. 2.1, Thms. 2.3–2.5; page-local $c_2$).
+- **NR-II** applies Newton to $\psi(p)=(E+p)\,\mathcal P_u(p)$, whose first and third
+  derivatives are positive on $p\ge0$; started from $0$ when $D\ge(E^2-\lvert m\rvert^2)/E$ and
+  otherwise from a closed-form guess above $p(u)$, it is always PCP and convergent (Alg. 2.3,
+  Lemma 2.6, Thms. 2.7–2.10). It needs one square root per iteration.
+- **Hybrid NR** uses NR-I unless $\gamma<1.01$ or $D^2/(E^2-\lvert m\rvert^2)<10^{-4}$, where the
+  two positive roots of the quartic cluster (as $D\to0^+$ and as $\gamma\to1^+$, Lemmas 2.7–2.8)
+  and NR-I is ill-conditioned; NR-II is used there (Alg. 2.4, Eq. (2.22)).
+
+A closed-form Ferrari root of the quartic exists but is "very costly and sometimes of low
+accuracy" (Alg. 2.2). In $10^8$ random samples per set (C++, one core of an i5-7300HQ;
+tolerance $10^{-14}$) no algorithm produced a negative pressure. On the first set the hybrid
+took 38.775 s against 120.152 s for the Chen & Wu hybrid and 62.906 s for the velocity-proxy
+Newton method of Riccardi and Durante, with maximum error $1.15\times10^{-9}$ against
+$1.81\times10^{-4}$ for NR-I; on an extreme low-density set NR-I needs 13.19 iterations on average,
+NR-II and the hybrid about 3.2; on a large-density, low-velocity set the Chen & Wu hybrid is
+fastest, 33.876 s against 37.629 s (§5.1, Tables 1–3). Cai et al. call the Chen & Wu algorithms
+only linearly convergent (§1). Because the recovery converges only for $u\in G$, they require
+the admissible set at every point where a flux is evaluated, inner quadrature points included,
+which they say "differs from the Euler equations" (Remark 3.4).
+
 ## Admissible set
 
 The physically admissible states are $\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ in
@@ -108,7 +151,12 @@ $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0,\ p(u)>0\}$ (Eq. (4.22), from Wu &
 Tang 2017) with an explicit GQL family indexed by $(v_*,B_*)$ (Thm 4.13).
 Schemes that keep $G$ are called **physical-constraint-preserving** (PCP)
 by Chen & Wu; it is [bound preservation](/properties/bound-preservation.md)
-for this $G$.
+for this $G$. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3–§4) prove a
+finite-volume [Hermite WENO](/methods/hermite-weno.md) scheme PCP with the global
+[Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md), a two-stage scaling limiter (first on
+$D$, then on the concave $g$) at all Gauss–Lobatto points, and the step
+$\Delta t\le\tfrac1{12}\Delta x/a$ (Thm. 3.1); the axisymmetric version adds a step restriction
+from the geometric source (§4.3).
 
 ## Homogeneity
 
@@ -247,11 +295,23 @@ $v_1$ up to 0.999 (Chen & Wu Exs. 4.8–4.9),
 4.10–4.11), the axisymmetric
 [relativistic jet](/benchmarks/high-mach-astrophysical-jet.md) at
 relativistic Mach number about 41.95 (Chen & Wu Ex. 4.12; Cui et al. Ex. 5),
-the [MHD blast wave](/benchmarks/mhd-blast-wave.md) with $\gamma=4/3$ and
+the [MHD blast wave](/benchmarks/mhd-blast-wave.md) with $\gamma=4/3$ (also Berta et al.'s
+relativistic case R1) and
 RMHD shock–cloud interactions in 2D and 3D, and a 3D
 [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md) (Duan
 & Tang Exs. 6.5–6.10). Chen & Wu's code fails without the PCP limiter on
 most of these (Exs. 4.3, 4.6, 4.7, 4.9, 4.10, 4.12).
+[Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§5) run sixth-order (1D) and fifth-order (2D)
+smooth ultra-relativistic accuracy tests, a 1D Riemann problem, the shock-heating (wall) problem
+with inflow speed $1-10^{-10}$, two 2D Riemann problems, the shock–vortex interaction with a
+mild and the demanding vortex, and an axisymmetric jet with beam speed 0.99; without the PCP
+limiter the code fails after one step on the shock-heating problem and cannot take one step on
+the demanding vortex (Exs. 5.4, 5.8). [Berta et al. (2024)](/sources/berta-2024.md) (§5) run
+relativistic MHD versions of the 3D rotated shock tube, a new iso-enthalpy vortex, the
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) (observed
+$L_1$ order $4.00$ at 512 cells), [field-loop advection](/benchmarks/field-loop-advection.md), the
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), a 3D blast wave and a 3D
+[shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md).
 
 ## Qualifications
 
@@ -266,7 +326,8 @@ most of these (Exs. 4.3, 4.6, 4.7, 4.9, 4.10, 4.12).
   keeping the pressure gradient gives
   $S=-\frac1r(Dv_1,m_1v_1,m_2v_1,m_1)$, and their time-step restriction,
   active only where $v_1>0$, is consistent with the negative sign
-  *(compiler check, not in the sources)*.
+  *(compiler check, not in the sources)*. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§4.3)
+  print the negative sign, $S=-\frac1r(Dv_1,m_1v_1,m_2v_1,m_1)$.
 - Chen & Wu state $\gamma=5/3$ as default and no other value for the
   strong vortex of Ex. 4.1 (vortex strength $\mathcal E=10.0828$, registry
   §10; the source writes $\varepsilon$). With $\gamma=5/3$ the printed
@@ -276,7 +337,18 @@ most of these (Exs. 4.3, 4.6, 4.7, 4.9, 4.10, 4.12).
   $\rho_{\min}=7.83\times10^{-15}$ and $p_{\min}=1.78\times10^{-20}$, the
   printed minima, and $\gamma=1.4$ is the value Ex. 4.10 states for the
   same vortex *(compiler check, not in the sources)*. The paper does not
-  print the $\gamma$ of Ex. 4.1.
+  print the $\gamma$ of Ex. 4.1. Cai, Qiu & Wu (2024) run the same vortex "as in" Chen & Wu with
+  $\gamma=1.4$ stated and print $\rho_{\min}=7.8337\times10^{-15}$, $p_{\min}=1.7847\times10^{-20}$
+  (Ex. 5.8).
+- **Newton on the pressure equation.** Chen & Wu's statement that Newton's method is not
+  convergence-guaranteed concerns plain Newton on $\mathcal P_u$ from an arbitrary start; Cai et
+  al. apply Newton to other functions ($\phi$, $\psi$) from designed starting values, so the two
+  results do not conflict. Cai et al. call their hybrid superior "in terms of speed ... across
+  all tests" (§5.1), but in their own Table 3 the Chen & Wu hybrid and NR-I are faster, and in
+  Table 2 NR-II is marginally faster (49.493 s against 49.734 s).
+- Cai et al.'s tests run at "CFL number 0.6", whose definition is not printed, while the PCP
+  proof needs $\Delta t\le\tfrac1{12}\Delta x/a$ (§5; see
+  [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
 
 # Citations
 
@@ -286,3 +358,5 @@ most of these (Exs. 4.3, 4.6, 4.7, 4.9, 4.10, 4.12).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §8, Exs. 4–5 (relativistic Riemann problem and jet).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — arXiv v2: §2 (Eqs. (1)–(3), (27)–(29)); §3 (Lemma 3.1, Prop. 3.1); §4.1 (Remark 4.3); §6; Apps. A, B.
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — arXiv v1: §2 (Eqs. (1)–(17)); §3.2 (Eqs. (23)–(31)).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §1; §2 (Eqs. (2.3)–(2.22), Defs. 2.1–2.2, Lemmas 2.1–2.8, Thms. 2.1–2.10, Algs. 2.1–2.4); §3 (Thm. 3.1, Remark 3.4); §4.3; §5 (Tables 1–3, Exs. 5.2–5.9).
+- [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2 (Eq. (7)); §5.

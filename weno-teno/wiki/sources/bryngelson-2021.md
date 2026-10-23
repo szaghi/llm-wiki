@@ -137,7 +137,7 @@ review (2019)", [36] arXiv preprint. No DOIs are printed.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–6 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–7 (2026-10-22/23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
@@ -148,6 +148,7 @@ Chunk 2 (2026-10-22), cited further in chunks 3–6 (2026-10-22/23). This source
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Mapped WENO](/methods/mapped-weno.md)
 * [MFC](/software/mfc.md)
+* [OpenFOAM-based compressible solvers](/software/openfoam.md)
 * [Positivity-preserving flux limiter (Hu–Adams–Shu)](/methods/positivity-preserving-flux-limiter.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Shock–water-column interaction](/benchmarks/shock-water-column.md)

@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -129,6 +129,17 @@ representation exists. They run it at fourth and sixth order on the
 inviscid Taylor–Green vortex (§5;
 [entropy-conservative fluxes](/methods/entropy-conservative-flux.md)).
 
+The central weights need not be those of maximum order.
+[Liang & Fu (2024b)](/sources/liang-2024-b.md) use the same formula with
+four terms and the Kennedy–Gruber triple-average two-point flux, but fix
+only the consistency and second- and fourth-order conditions on
+$\mathsf a_1,\dots,\mathsf a_4$ and choose the remaining freedom by a
+weighted spectral optimization, giving a sixth-order eight-point flux with
+$\mathsf a_1=0.8441336457279522$, $\mathsf a_2=-0.2441336457279522$,
+$\mathsf a_3=0.0570096576929319$, $\mathsf a_4=-0.006723831837710873$
+(§2.3 Eqs. (27)–(28), §3.3.1 Eqs. (40)–(42)). Details are on
+[split convective forms](/methods/split-convective-forms.md).
+
 ## Properties
 
 - **Entropy.** The scheme is entropy-conservative if the volume flux is
@@ -199,6 +210,21 @@ inviscid Taylor–Green vortex (§5;
   [Lax–Wendroff](/results/lax-wendroff-theorem.md) sense. It is what allows
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)
   to blend DG and finite-volume fluxes at each subcell interface.
+  [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md)
+  print the closed form,
+  $\hat f^{\mathrm{DG}}_{(i,i+1)}=\sum_{l=0}^{i}\sum_{k=0}^{N}S_{lk}\,f^{\mathrm{vol}}(u_l,u_k)$,
+  symmetric in its two indices, so that with the unit normals $\pm1$ the
+  subcell fluxes are antisymmetric (§2.1, Eqs. (5)–(8), Remark 1; arXiv
+  v1); summing the recursion above gives exactly this sum
+  *(compiler check, not in the sources)*. They add that the form is free
+  only for diagonal-norm SBP operators: DG with a dense mass matrix, such as
+  a Bernstein basis of degree $N>1$, needs one sparse
+  $(N+1)\times(N+1)$ linear solve per equation, element and Runge–Kutta
+  stage to recover it (Remark 2), and Gauss-node DGSEM admits it with
+  inter-element fluxes and projections still to be analysed (Remark 3).
+  They limit these fluxes against a Rusanov subcell scheme by monolithic
+  convex limiting ([DGSEM](/methods/dgsem.md),
+  [convex limiting](/methods/convex-limiting.md)).
 
 ## Non-conservative terms
 
@@ -332,3 +358,5 @@ Eqs. (6.1)–(6.3)).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Ex. 2.4 Eq. (22), §4.2.2 Figs. 7–8, §6, App. A.3 Fig. 11 (arXiv v4).
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — App. A Eqs. (16)–(18), §5 (arXiv v2).
+- [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.1 Eqs. (5)–(8), Remarks 1–3 (arXiv v1).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (27)–(28), §3.3.1 Eqs. (40)–(42).

@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -71,6 +71,10 @@ with it:
 | [Jeong et al. (2022)](/sources/jeong-2022.md) | FD RBF-based WENO | 0.4 |
 | [Li et al. (2023a)](/sources/li-2023.md) | FD scale-invariant MR A-WENO | 0.45 |
 | [Wan & Xia (2022)](/sources/wan-2022.md) | FD WENO, steady problems by pseudo-time marching | 0.2; 0.6 in 3D (Eq. (4.1)) |
+| [Ji, Liang & Fu (2023)](/sources/ji-2023.md) | unstructured FV TENO-D, orders 4–7 (UCNS3D) | 0.4 (§4) |
+| [Liang & Fu (2024b)](/sources/liang-2024-b.md) | FD hybrid TENO-S | 0.4; Sod and a 2D Riemann problem "not very sensitive" to 0.4–0.6 (§4.2, §4.5.1, Figs. 4, 9) |
+| [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) | FV Hermite WENO, relativistic | 0.6, definition not printed; PCP proved for $\Delta t\le\tfrac1{12}\Delta x/a$ (§3, §5) |
+| [Yu, Liu & Feng (2023)](/sources/yu-2023.md) | third-order RKDG, Euler with a singular source | $\sup\lvert\lambda_l\rvert\Delta t/\Delta x\le\tfrac12$ (§5) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -179,6 +183,27 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 
 ## Other SSP methods and refinement rules
 
+- **Five-stage fourth order, printed.** [Berta et al. (2024)](/sources/berta-2024.md) (§3.3,
+  Eqs. (31)–(32)) advance their fourth-order finite-volume MHD scheme with eSSPRK(5,4), with
+  page-local stages $u^{(1)},\dots,u^{(4)}$:
+  $$\begin{aligned}
+  u^{(1)}&=u^n+0.391752226571890\,\Delta t\,\mathcal L(u^n),\\
+  u^{(2)}&=0.444370493651235\,u^n+0.555629506348765\,u^{(1)}+0.368410593050371\,\Delta t\,\mathcal L(u^{(1)}),\\
+  u^{(3)}&=0.620101851488403\,u^n+0.379898148511597\,u^{(2)}+0.251891774271694\,\Delta t\,\mathcal L(u^{(2)}),\\
+  u^{(4)}&=0.178079954393132\,u^n+0.821920045606868\,u^{(3)}+0.544974750228521\,\Delta t\,\mathcal L(u^{(3)}),\\
+  u^{n+1}&=0.517231671970585\,u^{(2)}+0.096059710526147\,u^{(3)}+0.063692468666290\,\Delta t\,\mathcal L(u^{(3)})\\
+  &\quad+0.386708617503268\,u^{(4)}+0.226007483236906\,\Delta t\,\mathcal L(u^{(4)}),
+  \end{aligned}$$
+  "strongly stable" under the forward-Euler restriction, with
+  $\Delta t=\nu\min_{ijk}\min_d\big(\Delta x^{(d)}/\lvert\lambda^{(d)}_{\max}\rvert\big)$, $\lambda^{(d)}_{\max}$
+  the outermost fast magnetosonic speed (page-local $\Delta x^{(d)}$, $\lambda^{(d)}_{\max}$); CFL
+  0.4 in 2D and 0.3 in 3D for the Alfvén-wave convergence runs, 0.4 for the field loop and the
+  current sheet, 0.5 for Orszag–Tang (§5). RK2 and RK3 serve their second- and third-order
+  reference schemes. They note that the fifth-order finite-difference scheme they compare
+  against needs $\Delta t\sim\Delta x^{5/3}$ with RK3 to keep fifth order (§5.2). *(compiler check,
+  not in the sources: the convex coefficients of every stage sum to one, and on $u'=\lambda u$ the
+  printed scheme gives $u^{n+1}=\big(1+z+\tfrac{z^2}2+\tfrac{z^3}6+\tfrac{z^4}{24}+0.00448\,z^5\big)u^n$,
+  $z=\lambda\Delta t$, i.e. fourth order.)*
 - Higher order in time: the fourth-order SSP-RK of Spiteri & Ruuth
   ([Balsara et al. (2024)](/sources/balsara-2024.md), §VII); a five-stage fourth-order SSP-RK
   for the $t=2000$ advection run of [Takagi et al. (2022)](/sources/takagi-2022.md) (§4.2);
@@ -356,3 +381,8 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.7–2.8 (Table 1, Eqs. (9)–(13)).
 - [Kou et al. (2022)](/sources/kou-2022.md) — §4.1 (Eqs. (20)–(22), (27)–(29)), §4.6.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §3.1, §5.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.3 (Eqs. (31)–(32)), §5 (arXiv v4).
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4 (Figs. 4, 9).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3 (Eq. (3.10), Thm. 3.1), §5 (arXiv v1).
+- [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §5 (arXiv v1).

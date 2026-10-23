@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Split convective forms"
-description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and its conservation conditions, Edoh's rotational-form splittings, De Michele and Coppola's flux form and energy-equation splittings, the Burgers split of DG and FR, and the corresponding face and two-point fluxes."
+description: "Split forms write the convective terms of mass and momentum as weighted mixtures of divergence and advective forms; the page gives the Coppola–Veldman family and conditions, Edoh's rotational forms, De Michele and Coppola's flux form and energy splittings, the Burgers split of DG and FR, an optimized eight-point cubic split in a TENO hybrid, and the face and two-point fluxes."
 status: established
 aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Split convective forms
@@ -384,6 +384,74 @@ of shock-free Mach 2 boundary layers best of the six schemes compared, and
 diverges at Mach 5.86 because of shocklets unless hybridized with WENO or
 TENO (§3.1, §4.3.1, §4.4).
 
+## Eight-point optimized cubic split with TENO (Liang & Fu)
+
+[Liang & Fu (2024b)](/sources/liang-2024-b.md) recall the quadratic
+(Feiereisen) and cubic (Kennedy–Gruber) split forms of
+$\partial_x(\rho v\phi)$ for $\phi\in\{1,v_1,v_2,v_3,E/\rho\}$, call the cubic
+one the more robust, and use Pirozzoli's locally conservative form of it
+(§2.3, Eqs. (21)–(26)):
+
+$$\hat f^{\mathrm{skew}}_{i+1/2}=2\sum_{\ell=1}^{4}\mathsf a_\ell\sum_{m=0}^{\ell-1}\tfrac18\big(\rho_{i-m}+\rho_{i-m+\ell}\big)\big(\phi_{i-m}+\phi_{i-m+\ell}\big)\big(v_{i-m}+v_{i-m+\ell}\big),$$
+
+with central first-derivative weights $\mathsf a_\ell$ (page-local, as on
+[flux differencing](/methods/flux-differencing.md); Eqs. (27)–(28)). For
+$\ell=1$ only, the face flux is
+$\overline\rho\,\overline\phi\,\overline v$, the cubic split of the Jain &
+Moin table above *(compiler check, not in the sources)*. Instead of the
+maximum-order weights they impose consistency and the second- and
+fourth-order conditions and fix the last degree of freedom by minimizing
+the dispersion error $\int_0^\pi e^{7(\pi-\vartheta)}(\tilde\vartheta_r-\vartheta)^2d\vartheta$,
+which weights low wavenumbers because at high ones the TENO branch takes
+over (§3.3.1, Eqs. (36)–(42)). The resulting sixth-order weights are
+$\mathsf a_1=0.8441336457279522$, $\mathsf a_2=-0.2441336457279522$,
+$\mathsf a_3=0.0570096576929319$, $\mathsf a_4=-0.006723831837710873$; the
+central part of the background linear scheme of their eight-point TENO has
+the same weights, so the smooth and shock-capturing branches share their
+dispersion (§3.3.1, Eq. (46)). The flux is used, without characteristic
+decomposition, in every cell that a TENO-type discontinuity indicator on
+six three-point stencils declares smooth, and the TENO flux elsewhere
+(Eq. (35), Algorithm 1; [hybrid schemes](/methods/hybrid-weno.md)). The
+authors report that the split branch handles more than 90 % of the cells
+of the double Mach reflection (stated, no count shown), and their 2D
+wall-clock times on one CPU make the hybrid 16–53 % cheaper than WENO-CU6,
+TENO6 and TENO8 *(compiler check, not in the sources: ratios of the printed
+timings, Tables 6–11)* (§4.5–4.8; [kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
+
+The Euler fluxes are given term by term (Eqs. (29)–(30)): mass
+$\mathcal M$ as $\overline\rho\,\overline v$, momentum as
+$\overline\rho\,\overline v\,\overline v_d$, energy convection
+$\mathcal E$ as $\overline E\,\overline v$, pressure work $\mathcal K$ as
+$\overline p\,\overline v$ and pressure gradient $\mathcal P$ as
+$\overline p$, each inside the same $\ell$, $m$ double sum (page-local
+symbols; their $\mathcal E$ is not the registry's energy). Algorithm 1
+instead writes the energy flux with $\phi=E/\rho$, the triple average
+$\overline\rho\,\overline{(E/\rho)}\,\overline v$, which differs in general
+from $\overline E\,\overline v$ *(compiler check, not in the sources)*. Which
+one the code uses is not stated.
+
+## Unstructured face flux with species (Duronio & Di Mascio)
+
+[Duronio & Di Mascio (2024)](/sources/duronio-2024.md) apply the cubic
+split on unstructured OpenFOAM meshes as a face flux between owner and
+neighbour cell centres $O$, $N$ (page-local), after Modesti & Pirozzoli,
+splitting the inviscid flux AUSM-style into a convective part
+$\rho v_n\tilde q$ and a pressure part, with $\tilde q=(1,v,H,Y_k)$
+(Eqs. (4)–(6)):
+
+$$F^C_u=\tfrac18(\rho_O+\rho_N)(\tilde q_O+\tilde q_N)(v_O+v_N)\cdot n,\qquad F^C_p=\tfrac12(p_O+p_N)\,n .$$
+
+The species mass fractions are the only new components; the total-energy
+row carries $H$, so the pressure work sits in the convective flux. A
+compression-only Ducros-type sensor switches AUSM$^+$-up dissipation on the
+convective part (Eqs. (7)–(8)). The assessment is on Richtmyer–Meshkov
+shock–bubble interactions, a supercritical LOX/H$_2$ mixing layer with a
+Peng–Robinson equation of state and a gasoline injector, with qualitative
+or graphical agreement and three-grid observed orders 1.35–1.53 (§3,
+Table 1); no smooth accuracy or kinetic-energy test is run. The paper
+prints $H=(e+p)/\rho$ with $e$ the total energy per unit mass, where
+$H=e+p/\rho$ is meant by its own definitions (§2).
+
 ## Split forms in DG and flux reconstruction
 
 For Burgers, $\partial_tu+\partial_x(u^2/2)=0$, the split form is
@@ -485,3 +553,5 @@ and [kinetic energy preservation](/properties/kinetic-energy-preservation.md).
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A Figs. A.13–A.16 (accepted manuscript).
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1, §4.3.1, §4.4.
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §3.1 Eq. (17), §3.4 Table 1, §4, §5 Eqs. (55)–(59).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (21)–(30), §3.2 Eq. (35) Algorithm 1, §3.3.1 Eqs. (36)–(46), §4.5–4.8 Tables 6–11.
+- [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 Eqs. (1)–(8), §3 Table 1.

@@ -5,7 +5,7 @@ description: "One-dimensional gas–liquid Riemann problems with exact or refere
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -41,6 +41,15 @@ description (compressed air on the left, water at atmospheric pressure
 on the right), their constants (air 1.4, water 5.5 with
 $p_\infty=1.505$) and the readable numbers coincide with Zheng et al.'s
 Ex. 5 *(compiler check, not in the sources)*.
+[Jiang et al. (2024)](/sources/jiang-2024.md) §5.1.3 run the problem,
+citing Gu et al., on $[-5,5]$ to $t=1$ with their Lagrangian
+weighted-least-squares particle method (pairwise Roe-type Lagrangian
+Riemann solver with [WENO-Z+](/methods/weno-z-plus.md)-type
+reconstruction on virtual points, LWLS-WENO-Z), each particle carrying
+its own phase's stiffened-gas law, but print the water pressure as
+$0.000359$ (see Qualifications). They capture it "without the
+additional treatment" of the interface that mesh-based WENO schemes
+need, and the solution converges under particle refinement (Fig. 8).
 
 **Water at $10^9$ Pa against air.** [Wong et al. (2021)](/sources/wong-2021.md)
 §6.3 (after Chen & Liang and Wang et al.): on $[0,1.5]$ m, water
@@ -275,6 +284,16 @@ cost in conservation is discussed under
   $p=3.059\times10^{-4}$ (water) rests on Zheng et al.'s Ex. 5, which
   prints the same numbers in full *(compiler check, not in the
   sources)*.
+- For the compressed-air–water problem, Jiang et al. (2024, §5.1.3)
+  print the initial water pressure as $0.000359$, while Zheng, Shu &
+  Qiu (2021, Ex. 5) and Tsoutsanis et al. (2021, §4.3) print
+  $3.059\times10^{-4}$ for what all three present as the same problem
+  (Jiang et al. attribute it to Gu et al., Zheng et al. to Cheng et
+  al.). The papers do not show which value their runs used; the
+  difference, $5.3\times10^{-5}$, is $3.5\times10^{-5}$ of
+  $p+p_\infty\approx1.5053$, so it hardly changes the water's sound
+  speed *(compiler check, not in the sources)*. It is recorded as
+  a difference of printed data, not resolved.
 - The stiffened-gas constants of water differ between problems and
   sources ($\gamma=5.5$, $6.12$, $7.15$), so the problems do not share a
   water model.
@@ -309,4 +328,5 @@ cost in conservation is discussed under
 - [Bezgin, Buhendwa & Adams (2023)](/sources/bezgin-2023.md) — §5.2.1, Fig. 13: sharp-interface air–helium tube (arXiv v1; gas–gas only).
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.1–4.2, Eqs. (48)–(49), Figs. 2–5: air–helium and air–water tubes with a phase-field term.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.1–7.4.2, Table 2, Figs. 13–15: weak shock through a water–air interface, $10^{12}$ Pa water–air tube.
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.1.3, Fig. 8: air–water problem in a Lagrangian WLS particle method.
 - [Long et al. (2023)](/sources/long-2023.md) — §2.2, §4.1, Eqs. (28)–(32), Figs. 4–5: liquid–vapour tubes with evaporation and condensation.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; low-Mach Euler and MHD variants check all-Mach schemes; a smooth guiding-center Vlasov variant serves as a convergence test."
+description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; low-Mach Euler and MHD variants check all-Mach schemes; guiding-center Vlasov and viscous Navier–Stokes variants serve as convergence tests."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -80,7 +80,24 @@ page-local symbol, not the magnetic field),
 $\rho=\tfrac12+\tfrac34B$, $p=1$, $v_1=\tfrac12(B-1)$,
 $v_2=\tfrac1{10}\sin(2\pi x)$; $\gamma$ not stated in that subsection;
 $64\times64$ elements of degree $N=7$, $t=10$, Mach number up to about
-0.6.
+0.6. [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.2,
+Eq. (49) (arXiv v1) rerun the same data, mesh, degree and final time at
+CFL 0.9, again without stating $\gamma$ in the subsection.
+
+**Viscous smooth layers with a passive dye.**
+[Cernetic et al. (2023)](/sources/cernetic-2023.md) §6 (arXiv v2) run
+the Navier–Stokes variant of Lecoanet et al. (2016), whose solution
+converges: on the periodic box of width 1 and height 2,
+$\rho=1+\frac{\Delta\rho}{\rho_0}\frac12\big[\tanh\frac{y-y_1}a-\tanh\frac{y-y_2}a\big]$,
+$v_1=u_{\mathrm f}\big[\tanh\frac{y-y_1}a-\tanh\frac{y-y_2}a-1\big]$,
+$v_2=A\sin(2\pi x)\big[e^{-(y-y_1)^2/\sigma^2}+e^{-(y-y_2)^2/\sigma^2}\big]$,
+and a dye $c=\frac12\big[\tanh\frac{y-y_2}a-\tanh\frac{y-y_1}a+2\big]$,
+with $u_{\mathrm f}=1$, $a=0.05$, $y_1=0.5$, $y_2=1.5$, $A=0.01$,
+$\sigma=0.2$, $p_0=10$ (Mach about 0.25) and $\Delta\rho/\rho_0=0$
+(all page-local); $\mathrm{Re}=10^5$ with kinematic viscosity, thermal
+and dye diffusivity $2u_{\mathrm f}/\mathrm{Re}=2\times10^{-5}$, and
+$\mathrm{Re}=10^6$ also run. The metrics are the dye entropy and the
+$L_2$ dye difference against the published DEDALUS spectral reference.
 
 The three setups differ in density ratio (2, 2, and 4 for the tanh
 setup, where $\rho$ runs from $0.5$ to $2$ *(compiler check, not in the
@@ -164,6 +181,18 @@ compared solvers (HLLE, HLLEM, HLLC, RHLLEM-LD) that retains the
 symmetry of the roll-up (Fig. 5.6). Here the dissipation gauge ranks
 Riemann solvers, not reconstructions.
 
+**A converged viscous reference.** On the Lecoanet variant Cernetic et
+al.'s modal DG with artificial viscosity matches the DEDALUS dye entropy
+already at 64 cells per unit length and fourth order, 256 degrees of
+freedom per dimension; under-resolved mesh runs over-mix, while the SPH
+results of Tricco (2019) they cite under-mix (§6.2, Fig. 13). Their
+$L_2$ dye error at 64 cells and fourth order equals that of the ATHENA
+finite-volume code on 2048 cells, the SPH error is "orders of magnitude
+larger", and among equal-degree-of-freedom runs (64 cells with $p=8$,
+128 with $p=4$, 256 with $p=2$ in their labelling) the highest order has the lowest error,
+which falls exponentially with the order at $t=4$ (§6.3, Figs. 14–15;
+see [discontinuous Galerkin](/methods/discontinuous-galerkin.md)).
+
 **Non-convergence and Cesàro averages.** Chertock et al. state that
 numerical solutions of this problem do not converge under mesh
 refinement and that the limit is a dissipative weak solution, which
@@ -189,6 +218,19 @@ method is "about three orders of magnitude lower" with subcell
 blending (Fig. 4b). The authors note that the
 two solutions differ visibly by $t=6.7$ and evolve to "substantially
 different solutions" at $t=10$; they do not say which is more accurate.
+
+Rueda-Ramírez et al. (2024) compare their monolithic
+[convex limiting](/methods/convex-limiting.md) of LGL-DGSEM, which limits
+at the semi-discrete level, with the predictor–corrector FCT/IDP
+subcell limiting of the 2022 paper. With strict positivity bounds
+(MCL) and with the 2022 heuristic bounds $\rho\ge0.1\rho^{\mathrm{FV}}$,
+$p\ge0.1p^{\mathrm{FV}}$ (FCT/IDP) both reach $t=10$ with "remarkably
+similar looking results"; FCT/IDP needs the positive threshold, "as
+otherwise some nodes might get an invalid vacuum state" (§3.2, Fig. 1).
+With local bounds (MCL on density, velocity and specific total energy;
+FCT/IDP on density and a minimum of the modified specific entropy) the
+two again agree, and local bounds add more dissipation than global ones
+(Fig. 2); the mean limiting factors are plotted in Fig. 3.
 
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) take a
 different route to positivity: their
@@ -245,7 +287,13 @@ convergent flow, and the benchmark measures an error.
 - None of the sources reports an error measure for the compressible
   Euler or MHD variants; the only error measurements are for the
   guiding-center variant, whose model, data and convergence behaviour
-  differ entirely from the Euler ones.
+  differ entirely from the Euler ones, and for Cernetic et al.'s viscous
+  Navier–Stokes variant against a spectral reference.
+- Cernetic et al. print the DEDALUS resolution as $3096\times6144$ for a
+  domain of aspect ratio 1:2, and the ATHENA resolution as 1024 cells in
+  one sentence of §6.3 and 2048 cells in the next and in Fig. 14; they
+  also alternate between degree and order for their "$p$" in captions and
+  text (the orders above follow the text).
 - Zheng et al. state CFL $=10.2$ for Table 5 in the text and CFL $=1$
   in the table's caption; the paper does not resolve which was used.
   The second-to-last rate 7.22 of the non-split scheme is printed
@@ -295,3 +343,5 @@ convergent flow, and the benchmark measures an error.
 - [Wang et al. (2022a)](/sources/wang-2022.md) — §3.4 (slip-line roll-up only).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.9, Fig. 5.7 (arXiv v1).
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 12, Fig. 14.
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.2, Eq. (49), Figs. 1–3 (arXiv v1).
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §6, Figs. 11–15 (arXiv v2).

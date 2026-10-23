@@ -5,7 +5,7 @@ description: "A generalized Riemann problem has piecewise-linear (or piecewise-s
 status: established
 aliases: [GRP, HLL-GRP, HLL-type generalized Riemann problem solver, generalized Riemann problem, rotational gradient]
 tags: [riemann-solver, numerical-flux, finite-volume, mhd]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Generalized Riemann problem (GRP) solvers
@@ -130,7 +130,10 @@ the same reconstruction.
   field is $\lvert B\rvert$.)*
 - A time-dependent interface flux with its time derivative is also what
   [gas-kinetic schemes](/methods/gas-kinetic-scheme.md) supply to two-stage fourth-order
-  time stepping; the sources do not compare the two.
+  time stepping; the sources do not compare the two. Liu et al. (2023a) evaluate the time
+  integral of the flux by "the flux expansion approach" of Titarev and Toro's ADER schemes
+  (Eq. (65)); the one-step space-time predictor–corrector family is on
+  [ADER schemes](/methods/ader-scheme.md).
 
 # Citations
 

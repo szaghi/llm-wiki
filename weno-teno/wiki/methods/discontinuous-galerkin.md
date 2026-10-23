@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -62,6 +62,21 @@ Two families of bases appear in the sources:
   higher than 4th of accuracy", which they attribute to the conditioning of
   the mass matrix (§2.1; no data shown). The same Taylor basis carries the
   finite-volume reconstruction of their hybrid scheme (see below).
+  Rescaled Taylor monomials about the barycentre are also the spatial
+  basis of the [ADER](/methods/ader-scheme.md)-DG schemes of
+  [Ciallella et al. (2024)](/sources/ciallella-2024.md) on triangles
+  (scaled by the incircle diameter, §3.2) and
+  [Gaburro et al. (2024)](/sources/gaburro-2024.md) on polygons (scaled by
+  the radius of gyration, Eqs. (22)–(24); both arXiv v1).
+  [Cernetic et al. (2023)](/sources/cernetic-2023.md) use tensor products
+  of orthonormal scaled Legendre polynomials truncated at total degree
+  $N$, $(N+1)(N+2)(N+3)/6$ functions per cube, on uniform Cartesian
+  meshes, with Gauss quadrature of $N+1$ points per direction, more than
+  polynomial integrands need, because the flux integrands are rational
+  functions of the state (§2.3–2.4, Eqs. (13)–(18); accepted manuscript).
+  [Huang & Fu (2024)](/sources/huang-2024.md) use the scaled Legendre basis
+  $1$, $(x-x_i)/\Delta x$, $((x-x_i)/\Delta x)^2-\tfrac1{12}$ of RKDG, whose
+  coefficients their limiter rebuilds (§3, Eqs. (16)–(23)).
 - **Nodal bases.** These are Lagrange bases at Legendre–Gauss–Lobatto nodes
   $\xi_j$ with collocated quadrature. The result is the
   [DGSEM](/methods/dgsem.md), whose mass matrix is diagonal and whose
@@ -139,7 +154,7 @@ Two further formulations appear:
   reconstruction on a compact stencil, sixth order on three cells
   ([Hermite WENO](/methods/hermite-weno.md)).
 
-Three further formulations:
+Further formulations and boundary treatments:
 
 - **Local DG for viscous terms.** [Du & Yang (2022)](/sources/du-2022-b.md)
   discretize the multi-species reacting Navier–Stokes equations by LDG: the
@@ -162,6 +177,41 @@ Three further formulations:
   parameters and viscous flux $f_v$) inside
   [flux reconstruction](/methods/flux-reconstruction.md) (§3, Eqs. (9),
   (15)).
+  [Cernetic et al. (2023)](/sources/cernetic-2023.md) implemented BR1 and
+  abandoned it: it triples the cost of the gradient solve in 3D, gives
+  unphysically large in-cell derivatives for initial data with large jumps
+  and, they write, "does not converge rapidly at high order" (§3.1). They
+  take the interface value and gradient of the viscous flux instead from
+  the $L^2$ projection of the two neighbouring polynomials onto one
+  polynomial of degree $N+1$ in the normal direction, on an overlap domain
+  covering a fraction $f_{\mathrm o}$ (page-local) of each cell, after the
+  recovery method of van Leer & Nomura; $f_{\mathrm o}=3/4$ gives the
+  expected diffusion orders for $N\le2$ and $f_{\mathrm o}=1$ is needed above
+  (§3.2, Eqs. (29)–(36)). The projection is a precomputed sparse map, and
+  exchanging the two partial sums costs no more communication than an
+  average.
+- **Primitive variables with a conservation defect.**
+  [Gaburro et al. (2024)](/sources/gaburro-2024.md) evolve a non-conservative
+  set of variables, $(\rho,v_1,v_2,p)$ plus a material marker, in both the
+  predictor and the corrector of an [ADER](/methods/ader-scheme.md)-DG
+  scheme, with path-integral fluctuations at the faces
+  ([path-conservative schemes](/methods/path-conservative-scheme.md);
+  §3.3, Eqs. (32)–(34)). Such a scheme satisfies the cell balance only up to
+  a local conservation defect, which they prove vanishes as $h\to0$ for
+  smooth solutions and at contacts, so that a modified
+  [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) holds (Props.
+  1–5); at shocks it does not, and the shock-triggered subcells are
+  recomputed in conservative variables (§4.4, Eq. (67)).
+- **Curved boundaries on straight-sided or embedded meshes.** Ciallella
+  et al. (2024) note that ghost-state boundary conditions imposed on the
+  straight faces of a conformal linear triangulation make DG at best
+  second order whatever $N$, and first order in boundary consistency on a
+  fully embedded mesh whose surrogate boundary is detached from the true
+  one (§4, Fig. 1). On a manufactured steady Euler solution the uncorrected
+  scheme converges at rates 2.00–2.01 for $N=1,2,3$ alike, e.g. $\rho$ error
+  $2.6792\times10^{-5}$ at $N=3$ on the finest level (Table 2). Their remedy, a
+  constrained least-squares boundary reconstruction on the true boundary,
+  is on [immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md).
 - **DG on point clouds.** [Du, Shu & Zhong (2022)](/sources/du-2022.md)
   run DG on polygonal, possibly non-convex cells built by grouping
   Voronoi regions of scattered data points, each cell holding at least
@@ -205,6 +255,14 @@ $\lambda_i$ and lumped masses $m_i$; they recall that this step scales as
 $O(h/N^2)$ and has been observed to be 2–3 times smaller than the largest
 stable high-order DG step, and with explicit viscous terms the parabolic
 restriction $O(h^2\mathrm{Re})$ adds to it (§5 Remarks 1–2, §7, Eq. (57)).
+Cernetic et al. (2023) take $\Delta t=f_{\mathrm{CFL}}\,h/\big[2(N+1)(c_{\max}+\lvert v\rvert_{\max})\big]$
+with $f_{\mathrm{CFL}}=0.5$ (0.3 for strong blast waves) and SSP Runge–Kutta
+methods whose order rises with $N$, up to five stages and fourth order; for
+$N+1>4$ they saw no dominance of the time error, which they attribute to the
+small Courant factor (§2.5, Eq. (23)). Huang & Fu (2024) run third-order
+RKDG ($N=2$) with SSP-RK3 at CFL 0.15 (§6). The ADER-DG schemes of Ciallella
+et al. (2024) and Gaburro et al. (2024) are one-step and bound the step by
+$1/(2N+1)$ times a mesh ratio ([ADER schemes](/methods/ader-scheme.md)).
 For stiff chemistry, Du & Yang (2022) replace
 SSP-RK by a third-order conservative modified exponential Runge–Kutta
 method; on a stiff test with source coefficient $10^6$, SSP-RK3 at the
@@ -331,13 +389,35 @@ interfaces.
   subcell limiters, which keep more DG information, are not straightforward
   on meshes with arbitrary elements, transition layers and bad-quality
   cells (§2.4).
+  [Huang & Fu (2024)](/sources/huang-2024.md) carry TENO stencil selection
+  into both steps of third-order RKDG on Cartesian grids. Their
+  troubled-cell indicator forms $\gamma_n=1/(\beta_n+10^{-3})^6$ from the
+  smoothness indicators of the DG polynomials of cells $i-1$, $i$, $i+1$,
+  normalizes them and flags cell $i$ when its own share falls below
+  $C_T=10^{-4}$, direction by direction in 2D (§4.3, §5.1, Eqs. (32)–(35)).
+  In flagged cells their limiter keeps the cell average and rebuilds the
+  first and second modes from compact candidate polynomials, Hermite-type
+  with neighbouring first moments, combined with linear weights restricted
+  to the candidates that survive a TENO cut-off (§4.4, §5.2;
+  [troubled-cell indicator](/definitions/troubled-cell-indicator.md),
+  [WENO limiters for DG](/methods/weno-limiter-dg.md),
+  [TENO](/methods/targeted-eno.md)).
+  On the 1D and 2D density waves the indicator flags no cell, so the errors
+  equal those of the unlimited scheme, e.g. $L^1$ errors $3.53\times10^{-7}$ to
+  $6.94\times10^{-10}$ at $N_x=100$ to 800 and rates 2.99–3.00 in 1D (Table 1),
+  2.98–2.99 in 2D (Table 3).
 - **Blending with a low-order scheme.** The nodal DG update is convexly
   blended with a compatible subcell finite-volume update, element by element
   or interface by interface, with a priori or a posteriori blending
   coefficients
   ([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
   [convex limiting](/methods/convex-limiting.md); Rueda-Ramírez et al.
-  (2022)). [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) switch
+  (2022)). The ADER-DG schemes of Ciallella et al. (2024) and Gaburro et
+  al. (2024) recompute flagged elements a posteriori on subcells with a
+  second-order MUSCL–Hancock scheme
+  ([MOOD-type a posteriori limiting](/methods/mood-a-posteriori-limiting.md),
+  [ADER schemes](/methods/ader-scheme.md)).
+  [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) switch
   whole elements instead, from p-adaptive DG to a finite-volume scheme on
   refined subcells ([h- and hp-adaptation](/methods/hp-adaptation.md)).
   Lin, Chan & Tomas (2023) blend element-wise, with one coefficient per
@@ -364,7 +444,13 @@ interfaces.
 - **Artificial viscosity.** Two sources give sensors for nodal DG: the
   time-reversibility defect of Dzanic et al. (2022), which gives a
   separate viscosity for every conserved variable, and the modal decay
-  rate predicted by a neural network of Yu & Hesthaven (2022). See
+  rate predicted by a neural network of Yu & Hesthaven (2022). Cernetic et
+  al. (2023) replace slope limiting altogether by a viscosity field carried
+  as an extra DG variable and evolved in time, with a compression source,
+  a source from the growth rate of the Persson–Peraire modal sensor and a
+  decay over $f_\tau h/((N+1)c)$ (page-local $f_\tau=0.5$); the applied viscosity is
+  $\alpha_{\mathrm v}c\,h/(N+1)$ with page-local $\alpha_{\mathrm v}\le1$ (§4.1,
+  Eqs. (43)–(46)). See
   [artificial viscosity](/methods/artificial-viscosity.md) and
   [troubled-cell indicators](/definitions/troubled-cell-indicator.md).
 - **Fitting the discontinuity.** Implicit shock tracking moves the element
@@ -446,6 +532,36 @@ fixed degrees of freedom the first finds a marginally lower error at
 higher degree, the second a marginally lower error at lower degree
 (Dzanic et al., Table 1; Dzanic & Witherden, Tables 3–4). The two studies
 use different shock-capturing methods, so this is not a contradiction.
+Cernetic et al. (2023), with their evolved viscosity, capture a shock
+within one cell with a 20–80 % width proportional to $h/(N+1)$ for
+$N\ge1$ (Figs. 3–4), and find on the Woodward–Colella blast wave that the
+degree-7 run on 100 cells matches the degree-1 run on 400 cells, which has
+the same number of degrees of freedom; an eighth-order WENO run of Zhao et
+al. on 400 cells is closer to the reference with half the degrees of
+freedom of their degree-7 run (§5.3, Figs. 7–8). They conclude that real
+discontinuities converge only at first order and that at equal degrees of
+freedom high-order DG captures shocks as accurately as a second-order
+method (§5.3;
+[Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)).
+On smooth problems they observe rate $N+1$ for $N=0$–7, slightly above it
+except at $N=0$, on the
+[isentropic vortex](/benchmarks/isentropic-vortex.md) and exponential
+decay of the error with $N$ at fixed mesh, down to a floor of about
+$10^{-11}$ that they attribute to the truncated vortex at the periodic box
+edge (§5.1, Fig. 5). On the viscous Kelvin–Helmholtz problem the dye
+error of $64$ cells at fourth order equals that of the finite-volume code
+ATHENA on 2048 cells, and among runs with equal degrees of freedom the
+highest order has the lowest error (§6.3, Figs. 14–15;
+[Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)).
+
+Boundaries cap the order independently of the interior scheme. With the
+straight-face boundary treatment above, Ciallella et al. (2024) measure
+second order for $N=1$–3 (Table 2); with their boundary reconstruction the
+rates rise to 2.02, 2.82 and 4.10 at the finest level (Table 4). With
+slip-wall conditions that involve normal derivatives, on the supersonic
+vortex between concentric arcs, the authors state order $N$ rather than
+$N+1$; their finest-level rates are 2.04–2.11, 2.07–2.09 and 2.40–2.57 for
+$N=1,2,3$ (§6.2, Table 10).
 
 ## Qualifications
 
@@ -457,7 +573,12 @@ use different shock-capturing methods, so this is not a contradiction.
   & Li, Du, Shu & Zhong and Du & Yang write $k$; Abgrall et al., Cicchino
   et al. and the two Dzanic papers write $p$; Yu & Hesthaven write $P$;
   Huang & Zahr write $p$ and Kou et al. $P$; Mossier et al. and Lin,
-  Chan & Tomas write $N$; Maltsev et al. write $r$. All are translated to $N$ here. Dzanic et al. use $u^+$ for
+  Chan & Tomas write $N$; Maltsev et al. write $r$; Ciallella et al. write
+  $M$ and Gaburro et al. $N$; Huang & Fu write $k$; Cernetic et al. define
+  the degree $n$ and the order $p=n+1$ but label most figures, Table 1 and
+  part of the text by the degree under the name $p$ (e.g. the text calls
+  the degree-1, 3, 7 runs of Fig. 7 "order $p=2$, 4, 8" while the figure
+  labels them $p=1$, 3, 7), so their $p$ is read from context. All are translated to $N$ here. Dzanic et al. use $u^+$ for
   the trace of the element of interest and $u^-$ for the neighbour, and
   Dzanic & Witherden print opposite labels in text and figure; this page
   writes inner and outer traces in words.
@@ -507,3 +628,7 @@ use different shock-capturing methods, so this is not a contradiction.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4, §7.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1, §4 Eq. (15) Thm. 4.1, §5 Remarks 1–2, §6 Thm. 6.2, §7 Eq. (57), Tables 3–9, App. B.1 (arXiv v2).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1 Eqs. (2)–(9), §2.3 Eq. (32), §2.4 Eq. (33), §2.5, §3.1–3.2, §3.6, §4, Table 1, App. B Tables B.3–B.4.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript (arXiv v2): §2.3–2.5 Eqs. (13)–(23), §3.1–3.2 Eqs. (29)–(36), §4.1 Eqs. (43)–(46) Figs. 3–4, §5.1 Fig. 5, §5.3 Figs. 7–8, §6.3 Fig. 14.
+- [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.2, §4 Fig. 1, §6.1 Tables 2, 4, §6.2 Table 10.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §3.1–3.3 Eqs. (22)–(34), §4.1–4.4 Props. 1–5, Eq. (67).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §3 Eqs. (16)–(23), §4.3–4.4 Eqs. (32)–(50), §5.1–5.2, §6 Tables 1, 3.

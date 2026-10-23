@@ -5,7 +5,7 @@ description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in whi
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Triple-point problem
@@ -60,6 +60,20 @@ cells, $t=5$, CFL 0.15. The states and ratios of specific heats are
 those of Chamarthi and of Li, Duan & Tang; the left strip and the upper
 right, which carry the same gas there, are separate phases here.
 
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.8 run the
+single-material version with the states of Liang et al. (printed in
+their Fig. 18) and $\gamma=1.4$, on 210,000 ($h\approx1/100$) and
+840,000 ($h\approx1/200$) quadrilaterals to $t=5$, with their
+unstructured dual-stencil-selection TENO4-D to TENO7-D against
+[CWENO](/methods/cweno.md) of the same order in
+[UCNS3D](/software/ucns3d.md).
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.5 (arXiv v1) run
+the two-material version after Galera et al., with the densities and
+pressures of the table, $\gamma=1.5$ in the left strip and the upper
+right and $1.4$ in the lower right, $c_v=1$ and $c_p=\gamma$ for both
+species, slip adiabatic walls on all sides, $\mathbb P_3$ DG on
+$2800\times1200$ uniform quadrilaterals, density at $t=1,\dots,6$.
+
 ## Findings
 
 **Low-dissipation TENO.** Liang et al. compare their TENO scheme with a
@@ -108,10 +122,24 @@ can make their positivity-preserving time integration ineffective; that
 positivity design carries no proof (see
 [bound preservation](/properties/bound-preservation.md)).
 
+**Unstructured TENO and multi-species entropy filtering.** Ji, Liang
+& Fu (2023) find the higher-order TENO-D less dissipative, resolving
+the interfacial instability better, and TENO-D better than CWENO of the
+same order, "particularly in the vicinity of the tips of the mushroom
+structures" (§4.8, Figs. 19–20). Trojak & Dzanic's positivity-preserving
+[entropy filter](/methods/entropy-filtering.md) for two-species DG
+resolves the Kelvin–Helmholtz roll-up well, and they state that the
+results "compare favourably" with Kolev & Rieben, without a
+side-by-side figure (Figs. 10–11).
+
 ## Qualifications
 
-- All four sources judge by density, vorticity or schlieren-type
+- All six sources judge by density, vorticity or schlieren-type
   contours; no error measure is given.
+- Ji, Liang & Fu (2023) print at the end of their §4.8 a sentence on
+  final time $t=0.25$ and a tetrahedral mesh that belongs to their 3D
+  explosion of §4.9; the triple-point figures are at $t=5$ on
+  quadrilaterals.
 - Liang et al. do not state $\gamma$; Li, Duan & Tang are read as arXiv
   v1, not the version of record.
 - The single- and two-material versions are different problems: the
@@ -124,3 +152,5 @@ positivity design carries no proof (see
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — Ex. 5.7, Table 5.2 (arXiv v1).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.17, Eq. (84), Fig. 23 (arXiv v2).
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.5, Figs. 17–18.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.8, Figs. 18–20.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.5, Figs. 10–11 (arXiv v1).

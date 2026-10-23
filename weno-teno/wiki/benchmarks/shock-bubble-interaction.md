@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Shock–bubble interaction
@@ -65,8 +65,32 @@ to a finite-volume cut-cell reference; at equal element count degrees
 the three agree up to slight differences, which the authors attribute
 to the piecewise-constant structure of the solution (Figs. 10–13).
 
+**The Quirk–Karni helium slab.** Two sources run the one-dimensional
+air–helium problem of Quirk & Karni in non-dimensional form, a shocked
+air state $(\rho,v_1,p)=(1.3765,0.3948,1.57)$ on the left, a helium slab
+$\rho=0.138$ at rest with $p=1$ in air $(1,0,1)$, to $t=0.35$.
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.2.1 (arXiv v1)
+place the shock at $x\le0.2$ and the slab on $[0.4,0.6]$ in a strip
+$[0,1]\times[0,0.05]$ and carry a material marker $\chi$ (page-local),
+$5/(3\gamma)$ in the helium; their $\mathbb P_2$ ADER-DG scheme in
+primitive variables on $h=1/270$ "perfectly agree[s]" with a reference
+Kapila-model solution on 20000 cells, while a conservative second-order
+finite-volume scheme produces spurious pressure oscillations at the
+interfaces even on $h=1/2690$ (Fig. 7).
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.3, Table 3 (arXiv
+v1) place the shock at $x\le0.25$ and the slab on $(0.4,0.6]$
+(helium $\gamma=1.67$, $c_v=2.52$; air $1.4$, $0.72$); their
+conservative multi-species DG with entropy filtering ($\mathbb P_3$,
+$N=50$, 100, 200) is in "excellent agreement" at $N=200$ with a
+first-order Godunov reference on $5\cdot10^4$ elements, and the
+pressure-equilibrium oscillations of conservative schemes "were not
+visually noticeable" (Fig. 5). The left states are the Mach 1.22
+post-shock state of the right one with $\gamma=1.4$
+($\rho=1.3764$, $p=1.5698$, $v_1=0.3947$) *(compiler check, not in the
+sources)*.
+
 **Mach 1.22 air–helium (Haas & Sturtevant).** A Mach 1.22 shock in air
-hits a helium bubble of diameter 5 cm. Twelve sources run it, in five
+hits a helium bubble of diameter 5 cm. Sixteen sources run it, in several
 models:
 
 | Source | Model and scheme | Setup as printed | Grid |
@@ -82,6 +106,10 @@ models:
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.8 | two-species Euler with the double-flux method, six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) (WCNS-SA, WCNS-LD, ONL6) + HLLC | the same three states and geometry as Chamarthi, after Shankar et al.; zeroth-order extrapolation left and right, slip walls top and bottom, an artificial diffusion layer at the interface; CFL 0.5 | $\Delta x=D/150$ |
 | [Huang & Johnsen (2023)](/sources/huang-2023.md) §4.4 | [five-equation model](/definitions/five-equation-model.md) with a [phase-field](/methods/phase-field-method.md) term, MUSCL–minmod + HLLC | $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, phase 1 helium: pre-shock air and bubble moving at $v_1=114.49$, $(0.166,1.204,114.49,0,101325,\phi_1)$ with $\phi_1=10^{-15}$ outside and $1-10^{-15}$ in the bubble; air at rest $(0.166,1.658,0,0,159060,10^{-15})$ for $x>30$ mm; $[-44.5,44.5]^2$ mm, bubble radius 25 mm; $\gamma=1.67$ (helium), $1.40$ (air); zero-gradient left and right, reflecting top and bottom; CFL 0.4 | upper half, $200\times100$; to $983\,\mu$s |
 | [Paula et al. (2023)](/sources/paula-2023.md) §7.6 | Baer–Nunziato model, [discrete equations method](/methods/discrete-equations-method.md) (RDEMIC) with time-averaged [THINC](/methods/thinc-reconstruction.md), WENO3, HLLC, multiresolution | half domain of height 44.5 mm and length 356 mm, shock at $x=40$ mm, bubble of diameter 50 mm at $x=90$ mm; post-shock air $(\rho,v_1,p)=(1.6573,114.5,159056)$, air $(1.2041,0,101325)$, helium $\rho=0.166$, $\gamma=5/3$ (Table 3); symmetry at axis and top, zero-gradient left and right | $8192\times1024$ effective, about 1150 cells per diameter |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.2.2 | two-gas Euler with marker $\chi$, ADER-DG $\mathbb P_2$ in primitive variables with a posteriori subcell FV limiting, conservative MUSCL–Hancock in shock-triggered subcells; polygonal meshes | $(\rho,v_1,v_2,p,\chi)$: pre-shock air $(1,0,0,1/\gamma,1)$, post-shock $(1.3764,-0.3336,0,1.5698/\gamma,1)$, helium $(0.1819,0,0,1/\gamma,1.648/\gamma)$, $\gamma=1.4$; $[0,7D]\times[-0.89D,0.89D]$, shock at $x=4.5D$ moving left, bubble at $(3.5D,0)$, radius printed $r_b=0.05$ with $D=1$ m; walls top and bottom | $h=1/30$, $1/75$, $1/150$ (arXiv v1) |
+| [Jiao et al. (2024)](/sources/jiao-2024.md) §4.2, Table 4.3 | four-equation mass-fraction model, second-order compact FV, all-Mach flux, THINC on the gas mass fraction with EOS-consistent face density (THINC-TDU) | pre-shock air $(p,v_1,\rho)=(101325\ \mathrm{Pa},0,1.225\ \mathrm{kg/m^3})$, post-shock $(159059,\ 113.5\ \mathrm{m/s},\ 1.686)$, helium $(101325,0,0.169)$; air $\gamma=1.4$, helium $1.67$; $M=1.22$; walls top and bottom, zero gradient left and right | $14400\times1600$, cell $0.055625$ mm |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.4, Table 4 | conservative multi-species Euler, nodal DG $\mathbb P_3$ with positivity-preserving [entropy filtering](/methods/entropy-filtering.md) and a pressure-jump entropy switch ([PyFR](/software/pyfr.md)) | half of $[0,1]\times[-0.1,0.1]$ with symmetry; bubble radius $5/89$ at $(0.8,0)$, helium with 28 % air by mass; shock $M=1.22$ at $x=0.9$ moving left; air $(\rho,v_1,p)=(1,0,1)$, $\gamma=1.3986$; shocked air $(1.37636,-0.55957,1.5698)$; bubble $\rho=0.18187$, $\gamma=1.6467$ | unstructured triangles at three edge lengths (arXiv v1) |
+| [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) §3.1 | multi-species Navier–Stokes in [OpenFOAM](/software/openfoam.md), kinetic-energy-preserving central flux plus Ducros-switched AUSM$^+$-up dissipation | helium circle $d=50$ mm in N$_2$ at $101325$ Pa, 273 K, shock moving right to left; shock Mach number not printed | three hexahedral grids, sizes not printed for this case |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.4 | multicomponent Euler in $p$–$T$ equilibrium, MUSCL with overbee limiter on volume fractions, HLLC | $325\times89$ mm; shock 25 mm from the bubble, moving right to left; pre-shock air $(\rho,p)=(1.4,10^5)$, post-shock $(1.92691,\ v_1=-114.42,\ 156{,}980)$; helium $\rho=0.25463$, $\gamma=1.648$ (SI values of their Table 3, whose column headers are misaligned with the rows) | $325\times90$, $650\times180$, $1300\times360$ (about 50, 100, 200 cells per diameter) |
 
 The post-shock pressure ratio $1.5698$ of Zheng et al. is that of a
@@ -101,6 +129,21 @@ moving at $114.49$ m/s towards gas at rest. Paula et al.'s shock reaches
 the bubble at $59.7\,\mu$s, which equals the 25 mm gap divided by
 $1.22\sqrt{1.4\cdot101325/1.2041}$ m/s *(compiler check, not in the
 sources)*.
+
+Gaburro et al.'s non-dimensional states, with pressure $1/\gamma$ and
+unit sound speed, are Zheng et al.'s with velocities scaled by the air
+sound speed: $0.3947/\sqrt{1.4}=0.3336$ *(compiler check, not in the
+sources)*; their helium state is Chamarthi's.
+
+**A square N$_2$ bubble in SF$_6$.** Duronio & Di Mascio §3.1 also run a
+square nitrogen bubble of edge $56.6$ mm in SF$_6$ on $[0,45]\times[0,14]$ cm
+(three grids, $450\times140$ to $1800\times560$), against the
+experiments of Zhai et al.; the shock Mach number is not printed. The
+wave sequence (transmitted, free precursor and secondary shocks, Mach
+stem, corner vortices, jet) matches the experiment from 82 to 1334 µs,
+the interface width agrees "excellent[ly]" and the height is slightly
+high after 0.75 ms (Figs. 4–5); see
+[Richtmyer–Meshkov instability](/benchmarks/richtmyer-meshkov-instability.md).
 
 **Mach 1.22 air–R22.** Bai & Li §3.4 also run Haas & Sturtevant's
 heavy-gas case: an R22 cylinder ($\rho=3.8635$ kg/m³, $\gamma=1.249$)
@@ -309,6 +352,30 @@ and Bai & Li find it delayed. Paula et al. find good agreement of the
 helium case with the experiment and with three computations (§7.6.1,
 Fig. 20).
 
+**Four further codes against experiment or references.** Gaburro et
+al. find that a second-order conservative ENO finite-volume scheme on
+$h=1/750$ emits circular spurious pressure waves from the interface,
+while their quasi-conservative $\mathbb P_2$ scheme on $h=1/150$
+"completely avoids any spurious oscillations"; since both use the same
+ENO reconstruction at limiter level, they ascribe the waves to the
+conservative fluxes at the material interface, "not related to
+Gibbs-like oscillations" (Fig. 8). The limiter acts at the interface and
+the shock, the conservative update only in shock-triggered cells, and
+the main structures converge over $h=1/30$ to $1/150$ (Figs. 9–10); see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+Jiao et al. find their THINC-sharpened interface in good agreement with
+Quirk & Karni's results, including the space–time diagram of interface
+points (Figs. 4.5–4.7), and use the case for their scaling tests.
+Trojak & Dzanic find "very good agreement" of schlieren images at
+$t=0.25$ and $0.39$ (426 and 674 µs) with Kundu's ninth-order upwind
+finite-difference solution at roughly equal solution-point spacing
+(Fig. 9). Duronio & Di Mascio's upstream and downstream interface
+trajectories agree with the Haas–Sturtevant measurements ("excellent
+agreement", Figs. 6–7); a three-grid Roache analysis along the axis gives
+observed orders 1.35 ($p$) and 1.46 ($\rho$) and grid-convergence
+indices of 1.1 % and 0.77 % for this bubble, 1.53 and 1.46 with 0.92 %
+and 0.97 % for the square one (Table 1).
+
 **Holding a diffuse interface thin.** Huang & Johnsen's phase-field term
 keeps the helium–air interface 4–5 cells thick for the whole run, with
 the thickness parameter equal to $\Delta x$ (§4.4, Figs. 8–9). Without
@@ -390,6 +457,39 @@ qualitative claim with no reference comparison (Figs. 13–15).
   shock speeds $3.86$ and $3.68$, and with the printed $\rho$ and $p$ a single shock would carry
   $v_1\approx2.58$, with $\gamma=1.4$, the value the paper fixes for its Euler tests in §3.4)*.
   The paper does not comment on the inflow state.
+- Trojak & Dzanic's Table 4 prints the shocked-air velocity as
+  $-0.55957$; a Mach 1.22 shock into their quiescent air gives
+  $\lvert v_1\rvert=0.3948$ ($\gamma=1.3986$) or $0.3947$ ($\gamma=1.4$),
+  the value their own Quirk–Karni Table 3 uses, and their printed
+  $\rho=1.37636$, $p=1.5698$ are the $\gamma=1.4$ values, not those of
+  their $\gamma=1.3986$ *(compiler check, not in the sources)*. Their text
+  also names the unit state "post-shock" and the Rankine–Hugoniot state
+  "pre-shock", the reverse of the table and of the bubble's stated
+  equilibrium with the surrounding air at $p=1$.
+- Jiao et al.'s Table 4.3 prints the post-shock velocity as $+113.5$ m/s
+  and its non-dimensional value as $-0.394$; $113.5/\sqrt{101325/1.225}=0.3946$,
+  so only the sign differs *(compiler check, not in the sources)*.
+- Gaburro et al. print the air density as $1.29\cdot10^{-3}$ kg/m³, which
+  with $p=101325$ Pa gives a sound speed of about $10^4$ m/s instead of
+  their $331.6$ m/s, which $1.29$ kg/m³ gives *(compiler check, not in
+  the sources)*. Their output times are listed as
+  $T^*+[0.584,\dots,5.754]$ for $t^*+[32,\dots,983]$ µs; the ratio
+  $(t^*+\Delta t)/T$ is constant at about 183 µs while
+  $\Delta t/\Delta T$ is not, so the list holds absolute dimensionless
+  times, and their time scale $r_b/(cM)$ with the printed $r_b$, $c$ and
+  $M$ gives 123.6 µs *(compiler check, not in the sources)*: one of the
+  printed parameters is inconsistent, and the paper does not show which.
+  Their Quirk–Karni "otherwise" state has six entries for a
+  five-component vector.
+- Gaburro et al. state that conservative schemes oscillate at material
+  interfaces "even if run on a very fine mesh"; Trojak & Dzanic find the
+  oscillations of their conservative DG "not visually noticeable" and
+  expect them to reduce with resolution. The schemes differ (second-order
+  finite volumes against entropy-filtered $\mathbb P_3$ DG), so the
+  statements are not recorded as a contradiction.
+- Duronio & Di Mascio's observed orders measure grid convergence of a
+  solution with shocks and interfaces, not the design order of the
+  scheme.
 - The helium constants differ again: Huang & Johnsen take
   $\gamma=1.67$ and Paula et al. $5/3$. The post-shock water velocity of
   the bubble-in-water problem is printed as $681.058$ m/s by Tsoutsanis
@@ -401,6 +501,10 @@ qualitative claim with no reference comparison (Figs. 13–15).
 
 # Citations
 
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.2.1–5.2.2, Eq. (75), Figs. 7–10 (arXiv v1).
+- [Jiao et al. (2024)](/sources/jiao-2024.md) — §4.2, Tables 4.3–4.4, Figs. 4.4–4.7.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.3–5.1.4, Tables 3–4, Figs. 5–9 (arXiv v1).
+- [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §3.1, Table 1, Figs. 1–7.
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §5.1, Ex. 1, Fig. 5.1 (arXiv v2).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §6.12, Eqs. (6.11)–(6.12), Fig. 17.
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §IX.a, §IX.c, §IX.e, Table IX, Figs. 11, 13, 15.

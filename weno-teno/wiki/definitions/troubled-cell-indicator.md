@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Troubled-cell and shock indicators"
-description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines the sources' indicators (modal decay, KXRCF and variants, MOOD admissibility, time-reversibility, WENO deviation, PDE residual, WENO-Z-type, undivided-difference, TENO-flag, pressure-jump, physical-sensor, flattener) with parameters and limits."
+description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines the sources' modal, KXRCF-type, TVB, admissibility, time-reversibility, residual, WENO- and TENO-type, undivided-difference, derivative-ratio, divergence and physical indicators, with parameters and limits."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor]
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -82,6 +82,27 @@ it the rates are about one (§5.1, Table 1); on solid-body rotation
 $2.6\times10^{-2}$ to $1.9\times10^{-2}$ and restores the range $[0,1]$
 from $[0,0.95]$ (§4.4, Fig. 6;
 [solid-body rotation](/benchmarks/solid-body-rotation.md)).
+
+**Rate of the Persson–Peraire sensor as a viscosity source.**
+[Cernetic et al. (2023)](/sources/cernetic-2023.md) (§4.1, Eqs. 41–45,
+accepted manuscript) evaluate the Persson–Peraire sensor in its modal
+form, the share of the squared modal weights of the highest degree in the
+total, on the density of a modal DG solution in an orthonormal Legendre
+basis,
+$$S^{\mathrm{PP}}_K=\frac{\sum_{l\in\text{top degree}}w_l^2}{\sum_lw_l^2}\in[0,1]$$
+($S^{\mathrm{PP}}_K$, $w_l$ page-local; Eq. 42 prints the lower bound of
+the numerator sum one index too low, see Qualifications). Persson and
+Peraire's argument that modal coefficients decay like $1/N^2$ gives
+$S^{\mathrm{PP}}_K\sim1/N^4$ in oscillatory cells; the authors measure
+about $1/N^2$ for troubled cells (stated, no figure). They do not
+threshold it: because "some damage must have already happened before the
+fix is applied", the viscosity is switched on by a physical compression
+term $\max(0,-\nabla\cdot v)$, and the sensor enters only through its
+logarithmic growth rate, $\max\big(0,\,d\ln S^{\mathrm{PP}}_K/dt\big)$,
+above an onset value $10^{-4}$, as a second source of a time-evolved
+viscosity field aimed at oscillations ahead of shocks and at moving
+contacts, where the compression term is blind
+([artificial viscosity](/methods/artificial-viscosity.md)).
 
 **Modal-decay rate for $hp$ decisions.** [Basile et al. (2022)](/sources/basile-2022.md)
 (§4.2, Eqs. (36)–(37)) fit $\hat a^{(\ell)}_K\simeq C\,e^{-\varrho_K\ell}$
@@ -213,6 +234,52 @@ $(\ell+1)/3$, maximum norm, threshold 1, density); both are recorded, not
 reconciled. Du, Shu & Zhong state that no troubled-cell indicator is
 "bullet-proof", so that the limiter must be safe on wrongly flagged smooth
 cells ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
+[Huang & Fu (2024)](/sources/huang-2024.md) (§4.2, Eq. 31) recall KXRCF
+for RKDG with a third normalization: exponent $(N+1)/2$, $h$ the radius
+of the circumscribed circle of the cell, the maximum norm in the cell, and
+threshold 1. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, §4.1,
+arXiv v1) apply KXRCF to a finite-volume Hermite WENO scheme for
+relativistic hydrodynamics, direction by direction in 2D, a cell being
+troubled if it is flagged in either direction; its threshold is not
+printed.
+
+**TVB minmod indicator (RKDG).** Huang & Fu (§4.1, Eqs. 27–30) also
+recall Shu's TVB indicator: with $\tilde u_i=u^-_{i+1/2}-\bar u_i$ and
+$\tilde{\tilde u}_i=\bar u_i-u^+_{i-1/2}$, each is replaced by
+$\tilde m(\cdot,\bar u_{i+1}-\bar u_i,\bar u_i-\bar u_{i-1})$, where the
+TVB-corrected minmod $\tilde m$ returns its first argument if it is at
+most $M_{\mathrm{TVB}}\Delta x^2$ in magnitude and the minmod of all
+arguments otherwise; the cell is troubled if either value changes
+(page-local $\tilde u$, $\tilde{\tilde u}$, $\tilde m$, $M_{\mathrm{TVB}}$).
+The number of troubled cells falls as $M_{\mathrm{TVB}}$ grows, too large
+a value misses troubled cells and can make the computation fail, and the
+value must be chosen per problem (stated); the authors use
+$M_{\mathrm{TVB}}=1$ precisely because it "always labels some troubled
+cells", to test their limiter's order in smooth flow
+([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
+**Pressure-jump convergence sensor as a constraint switch.**
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) (§3.2, Eqs. 26–27, 34–35,
+arXiv v1) build a sensor "similarly to the method of Krivodonova et al."
+for multi-species nodal DG and flux reconstruction:
+$$S_i=\frac{\Big\lvert\int_{\partial\Omega_i}\big(p^+-p^-\big)\,ds\Big\rvert}{h^{N+1}\,\lVert p^-\rVert_\infty\,\lvert\partial\Omega_i\rvert},$$
+with $p^-$ and $p^+$ the interior and exterior traces of the pressure,
+the integral over the **whole** boundary of element $\Omega_i$, and
+$h$ the diameter of the $d$-ball with the element's surface area
+($h=A/\pi$ in 2D, $\sqrt{A/\pi}$ in 3D) (page-local $S_i$, $\Omega_i$,
+$A$). The interface jump is "expected" to be at least $O(h^{N+1})$ for
+smooth solutions and $O(h)$ at discontinuities; $S_i\ge1$ marks an
+element. The quantity is the pressure, so contacts and species
+interfaces, across which it is continuous, are not marked, while shocks
+are. The sensor does not trigger a limiter: it switches on the local
+minimum entropy constraint of their
+[entropy filter](/methods/entropy-filtering.md), while the positivity
+constraints stay always active, so positivity does not depend on it. Against
+KXRCF as recalled above it changes four things: whole boundary instead of
+inflow part, pressure instead of density, exponent $N+1$ instead of
+$(N+1)/2$ or $(\ell+1)/3$, and a fixed threshold 1. The authors call it
+parameter-free.
 
 **A cell-average variant, and MOOD admissibility, in a hybrid DG–FV
 scheme.** [Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.5,
@@ -376,6 +443,69 @@ improves the entropy waves of the
 spurious activations of the pressure sensor (§4.3); on a reacting 9000 K
 shock tube it had to be switched off for robustness (§4.4).
 
+**Order-reduction detectors (fourth-order finite volumes).**
+[Berta et al. (2024)](/sources/berta-2024.md) (§3.4, Eqs. 33–37, arXiv v4)
+switch their fourth-order MHD scheme to a lower-order "fallback" in
+flagged cells: the point-value correction and the face-flux integration
+are skipped and the reconstruction drops to WENO3 or piecewise-linear
+([MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md) for
+the contrast with a posteriori fallbacks). A cell is flagged, "along
+with first neighbours", when a detector value $\Lambda$ exceeds a
+threshold $\Lambda_{\mathrm d}$ (page-local; the source's $\eta$, $\eta_d$,
+and its flag $\theta_c$). Two detectors are offered, evaluated on cell
+averages $\bar\Upsilon$ of an indicator quantity (page-local):
+
+- *Jameson type* (Eq. 35), per direction
+  $$\Lambda_x=\frac{\bar\Upsilon_{i+1}-2\bar\Upsilon_i+\bar\Upsilon_{i-1}}{\lvert\bar\Upsilon_{i+1}\rvert+2\lvert\bar\Upsilon_i\rvert+\lvert\bar\Upsilon_{i-1}\rvert+\epsilon},\qquad\Lambda=\big(\Lambda_x^2+\Lambda_y^2+\Lambda_z^2\big)^{1/2},$$
+  on density, pressure and magnetic pressure, the maximum taken. It needs
+  no extra ghost zone, "albeit three zones may not be sufficient to
+  distinguish a discontinuity from a smooth extremum". Its form matches
+  the Jameson factor of Sciacovelli et al. above, with absolute values in
+  the denominator and the numerator printed without them.
+- *Derivatives ratio* (new, Eqs. 36–37): with second-order centred
+  undivided approximations $\delta^{(m)}$ of the $m$-th derivative,
+  $\delta^{(1)}=\tfrac12(\bar\Upsilon_{i+1}-\bar\Upsilon_{i-1})$,
+  $\delta^{(2)}=\bar\Upsilon_{i+1}-2\bar\Upsilon_i+\bar\Upsilon_{i-1}$,
+  $\delta^{(3)}=\tfrac12\big(\bar\Upsilon_{i+2}-2(\bar\Upsilon_{i+1}-\bar\Upsilon_{i-1})-\bar\Upsilon_{i-2}\big)$,
+  $\delta^{(4)}=\bar\Upsilon_{i+2}-4\bar\Upsilon_{i+1}+6\bar\Upsilon_i-4\bar\Upsilon_{i-1}+\bar\Upsilon_{i-2}$
+  (page-local $\delta^{(m)}$; $\delta^{(3)}$ as corrected in
+  Qualifications),
+  $$\Lambda^{\mathrm o}=\frac{\lvert\delta^{(3)}\rvert}{\lvert\bar\Upsilon_{\mathrm{ref}}\rvert+\lvert\delta^{(1)}\rvert+\lvert\delta^{(3)}\rvert+\epsilon},\qquad
+  \Lambda^{\mathrm e}=\frac{\lvert\delta^{(4)}\rvert}{\lvert\bar\Upsilon_{\mathrm{ref}}\rvert+\lvert\delta^{(2)}\rvert+\lvert\delta^{(4)}\rvert+\epsilon},\qquad
+  \Lambda=\max(\Lambda^{\mathrm o},\Lambda^{\mathrm e}),$$
+  on the primitive variables computed from the cell averages at the
+  beginning of the stage, with the reference $\bar\Upsilon_{\mathrm{ref}}$
+  the quantity itself for density and pressure, $\sqrt{p/\rho}$ for the
+  velocity components and $\lvert B\rvert$ for the magnetic ones. The
+  rationale is that near discontinuities high-wavenumber modes are not
+  damped, so higher derivatives become non-negligible. It needs one extra
+  ghost zone; primitive variables "yield a more robust identification".
+
+No value of $\Lambda_{\mathrm d}$ or of $\epsilon$ is printed, nor which
+detector runs in which test. The fallback "played an essential role" in
+their 3D magnetized blast waves, and its extension to the flux
+integration was "fundamental" in the 3D shock–cloud interaction (§5.7–5.8;
+[MHD blast wave](/benchmarks/mhd-blast-wave.md),
+[MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md)).
+
+**Undivided-divergence shock sensor (a posteriori subcell limiting).**
+[Gaburro et al. (2024)](/sources/gaburro-2024.md) (§4.4, Eqs. 65–66,
+arXiv v1) add to the positivity and relaxed-maximum-principle checks of
+their a posteriori subcell limiter a shock criterion attributed to
+Balsara, with similarities to Ducros' sensor:
+$$\sigma_{i,\alpha}=\frac{\widetilde{\nabla\cdot v}\big|_{i,\alpha}+m_1h_{i,\alpha}c_{\min}}{m_1h_{i,\alpha}c_{\min}}<0\quad\Longrightarrow\quad\text{shock-triggered},$$
+where $\widetilde{\nabla\cdot v}$ is the undivided divergence of subcell
+$\tau_{i,\alpha}$ (face sum of $(v^-+v^+)\cdot n$ weighted by face
+length, times $h_{i,\alpha}/|\tau_{i,\alpha}|$), $h_{i,\alpha}=\sqrt{|\tau_{i,\alpha}|}$,
+$c_{\min}$ the smallest sound speed over its faces, and $m_1\in[1,15]$
+($m_1=1$ single gas, 15 multi-material; page-local symbols). A subcell
+fires when its compression exceeds $m_1$ times the sound speed over the
+subcell size. The flag selects a conservative finite-volume correction in
+an otherwise primitive-variable scheme, so it decides where conservation
+is restored rather than where oscillations are damped
+([MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
+The authors list the free parameter $m_1$ as an open issue (§6).
+
 **Undivided-difference sensor (Ren–Liu–Zhang type).**
 [Fu (2021)](/sources/fu-2021.md) (§3.4, Eqs. (17)–(19)) and
 [Fu (2023)](/sources/fu-2023.md) (§4.1, Eqs. (31)–(32)) use, with
@@ -505,6 +635,51 @@ from them.
   the sharpest interface step of Eq. (22) does not satisfy the stricter
   variant ($\zeta_{i-2}=0$), so it receives the lower steepness *(compiler
   check, not in the sources)*.
+- *Eight-point switch with equal stencils* ([Liang & Fu (2024b)](/sources/liang-2024-b.md),
+  §3.1, Eqs. 31–34). For the hybrid TENO-S scheme
+  ([hybrid schemes](/methods/hybrid-weno.md)) six three-point stencils of
+  equal size cover $x_{i-3},\dots,x_{i+4}$: the three classical ones
+  $S_0=\{i-1,i,i+1\}$, $S_1=\{i,i+1,i+2\}$, $S_2=\{i-2,i-1,i\}$ and three
+  that do not contain $x_i$, $S_3=\{i+1,i+2,i+3\}$, $S_4=\{i-3,i-2,i-1\}$,
+  $S_5=\{i+2,i+3,i+4\}$ (source numbering). Each $\beta_k$ is the
+  Jiang–Shu integral over the target cell $[x_{i-1/2},x_{i+1/2}]$, which
+  lies outside the last three stencils (e.g.
+  $\beta_3=\tfrac13\lvert10f_{i+3}^2-49f_{i+2}f_{i+3}+29f_{i+1}f_{i+3}+61f_{i+2}^2-73f_{i+1}f_{i+2}+22f_{i+1}^2\rvert$,
+  Eq. 31). Then $\gamma_k=1/(\beta_k+\epsilon)^6$,
+  $\chi_k=\gamma_k/\sum_l\gamma_l$, and the cell is smooth iff
+  $\chi_k>10^{-6}$ for all six $k$, with $\epsilon=10^{-4}$ in 1D and
+  $10^{-2}$ in multi-D. The indicator reads conserved variables in
+  physical space, density and total energy in 1D and density alone in
+  multi-D, dimension by dimension, without characteristic decomposition,
+  so the costly characteristic TENO path runs only in flagged cells.
+  Equal sizes keep the indicators cheap. The authors state that "more
+  than 90%" of the cells of the double Mach reflection take the
+  non-dissipative central flux (§4.6, no count shown) and call the
+  indicator "more universal" than physical sensors such as Ducros' (§3.1),
+  without a comparison. Against Fu's hybrid switch above it uses six
+  equal stencils instead of four incremental ones and a cut-off
+  $10^{-6}$ instead of $5\times10^{-4}$.
+- *Compact DG indicator* ([Huang & Fu (2024)](/sources/huang-2024.md),
+  §4.3, Eqs. 32–35; §5.1). For RKDG the candidates are the DG
+  polynomials of the cells themselves: on $I_{i-1}$, $I_i$, $I_{i+1}$,
+  $\beta_n=\sum_{l=1}^{2}\int_{I_n}\Delta x^{2l-1}\big(\partial_x^lu_h\vert_{I_n}\big)^2dx$,
+  $\gamma_n=1/(\beta_n+\epsilon)^q$ with $\epsilon=10^{-3}$, $q=6$,
+  $\chi_n=\gamma_n/\sum_l\gamma_l$, and cell $i$ is troubled iff its own
+  $\chi_i<C_T=10^{-4}$; only the target's flag is tested. The authors
+  present it as a compact version of Fu's finite-difference discontinuity
+  indicator, which needs four candidate stencils over six points; in 2D it
+  is applied in $x$ and $y$ separately and a cell is troubled if flagged
+  in either direction, the strategy of Fu's hybrid TENO. The same
+  constants serve all their tests, "without tuning". On the
+  [density wave](/benchmarks/density-wave-advection.md) it flags no cell, so
+  the limited errors equal the unlimited ones (Tables 1, 3); on the
+  [Shu–Osher problem](/benchmarks/shu-osher-problem.md) it flags the
+  under-resolved fluctuations behind the shock, which the authors say must
+  be flagged and which KXRCF misses; on configuration 3 of the
+  [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)
+  KXRCF flags "over 50 percent of cells" at both resolutions (§6.4, §6.6).
+  It drives their TENO-weighted limiter
+  ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
 **Pressure-jump shock indicator (Riemann-solver switch).**
 [Bai & Li (2022)](/sources/bai-2022.md) (§2.4, Eqs. (16)–(20), after Kim et
@@ -588,6 +763,18 @@ Several sources use an indicator without defining or analysing it:
   affects overshoots at contacts
   (§4.5, Fig. 9). Rueda-Ramírez et al. (2022) call the modal-energy
   indicator heuristic (§2.4).
+- **Parameter-free claims.** Huang & Fu (2024) state that TVB and KXRCF
+  "generally rely on a critical parameter that is dependent on the
+  solution" and must be tuned case by case, while their indicator "adopts
+  a uniform parameter for different cases" (Abstract, §4); for KXRCF they
+  print the fixed threshold 1 themselves (Eq. 31) and say only that its
+  activation in accuracy tests "heavily relies on the parameter settings
+  and the mesh resolutions", without naming the parameter (§6.1.1).
+  Trojak & Dzanic call their sensor parameter-free while fixing the
+  threshold 1 and the exponent $N+1$; Liang & Fu (2024b) say no
+  case-by-case tuning is needed while setting $\epsilon$ differently in
+  1D and in multi-D. In all three, "parameter-free" means fixed across
+  the authors' tests.
 - **Physical sensors.** Fu (2023) reports the case-dependence of the Ducros
   sensor as a reason for the TENO-based indicator (§3.4), yet records that
   later TENO6-A work replaced the undivided-difference sensor by a modified
@@ -685,6 +872,28 @@ Several sources use an indicator without defining or analysing it:
   the first-order flux) also covers every non-monotone triple for which
   they prescribe the central flux ([TENO-THINC](/methods/teno-thinc.md)).
 
+- Huang & Fu's $\epsilon=10^{-3}$ and Liang & Fu's $\epsilon=10^{-4}$ or
+  $10^{-2}$ are absolute regularizations added to $\beta$, which scales as
+  the square of the data: under $u\mapsto\sigma u$ the measures change
+  and the flags can change, so neither indicator is scale invariant as
+  printed *(compiler check, not in the sources)*; neither paper discusses
+  units ([scale invariance](/properties/scale-invariance.md)). Huang &
+  Fu do not say whether the indicator reads density, each conserved
+  component or characteristic variables.
+- Trojak & Dzanic's discrete sensor (Eq. 34) prints the weighted sum of
+  pressure jumps without the absolute value of Eq. (27), so a negative
+  net jump would never trigger, and sums over the solution nodes $S$ where
+  the jump exists only at interface nodes; Eq. (25) sets the inactive
+  entropy constraint to zero although constraints are required to be
+  strictly positive (Eqs. 17, 21); the intent is clear from the text.
+- Berta et al. print $\delta^{(3)}=\tfrac12\big(\bar\Upsilon_{i+2}-2(\bar\Upsilon_{i+1}-2\bar\Upsilon_{i-1})-\bar\Upsilon_{i-2}\big)$
+  (Eq. 37, with "$i+2\hat e_x$" for "$c+2\hat e_x$"), whose coefficients
+  $(1,-2,0,4,-1)/2$ sum to 1 and are not antisymmetric, so it does not
+  vanish on constants; the antisymmetric third difference above is meant
+  *(compiler check, not in the sources)*.
+- Cernetic et al.'s Eq. (42) starts the numerator sum at the last index of
+  the degree-$(N-1)$ set, which by their Eq. (41) belongs to the retained
+  part; the sum should start one index later.
 - Chamarthi (2023b) attributes the "original" detector once to Li &
   Jaberi (2012) and once to Li, Chen & Ren (2022) (§2.4, refs. [52] and
   [53]).
@@ -723,3 +932,10 @@ Several sources use an indicator without defining or analysing it:
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4, Eqs. (31)–(37); Table 1 (arXiv v1).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.5, Eqs. (35)–(37); §3.1–3.7, Table 1, Figs. 4, 8–9, 18; §4; Appendices A–B, Table B.3.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Step 2, Remarks 1, 3; Ex. 4.7; §5, Table 5.1; §6.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §4.1, Eqs. (41)–(45).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §1; §4.1–4.3, Eqs. (27)–(35); §5.1; §6.1, §6.4, §6.6, Tables 1–4.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3, §4.1 (KXRCF, direction-wise).
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §3.1–3.2, Eqs. (25)–(27); §4, Eqs. (34)–(35).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.1, Eqs. (31)–(34); §3.2; §4.6.
+- [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §3.4, Eqs. (33)–(37); §5.7–5.8.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §4.4, Eqs. (65)–(66); §6.

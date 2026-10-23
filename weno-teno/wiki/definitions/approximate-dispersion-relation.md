@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Approximate dispersion relation
@@ -186,6 +186,23 @@ whereas symmetric stencils let dispersion and dissipation be optimized
 separately once the order constraint is relaxed; this is why its TENO8-AA and
 TENO10-AA linear schemes are of order 6 and 8 rather than 8 and 10 (see
 [adaptive TENO](/methods/adaptive-teno.md)).
+
+**Printed values for an eight-point background.** [Liang & Fu (2024b)](/sources/liang-2024-b.md)
+(§3.3.1, Eqs. (36)–(46)) give the procedure with numbers. The
+dispersive coefficients $a_1,\dots,a_4$ satisfy the Taylor constraints of
+the first derivative up to $\Delta x^4f^{(5)}$ (sixth order) and minimize
+$E$ with weight $\sigma=7$; they explain the emphasis on low wavenumbers
+by the TENO nonlinear adaptation, which "will dominate the spectral
+resolution properties" at higher ones. The dissipative coefficients
+satisfy four constraints that cancel the $f$, $\Delta xf''$,
+$\Delta x^3f^{(4)}$ and $\Delta x^5f^{(6)}$ terms, and the fifth sets
+$b_0=0.01$ so that $\zeta\approx O(10)$. They state that splitting the
+operator this way also removes the anti-dissipation at intermediate
+wavenumbers. The same $a_\ell$ serve their kinetic-energy-preserving
+split-form flux, which is the dispersive part alone and so
+non-dissipative. *(Compiler check, not in the sources: the resulting
+dissipative part is $\tfrac{b_0}{70\Delta x}$ times the eighth undivided
+difference; see [targeted ENO](/methods/targeted-eno.md).)*
 
 **The ratio used pointwise.** [Li, Chen & Ren (2022)](/sources/li-2022.md) write the same
 condition as $\zeta\sim1<10$ and use it twice. Imposing $\zeta(\pi)\le9$ at the
@@ -405,6 +422,24 @@ is meant.
   under-resolved wave packets kept "without interacting with resolved scales", "akin to soliton
   solutions". Huang et al. (above) find their ROUND schemes markedly less dissipative than
   WENO3-NN at high wavenumbers. See [learned WENO weights](/methods/learned-weno-weights.md).
+- **A learned five-point WENO and its hyperparameters.** [Nogueira et al. (2024)](/sources/nogueira-2024.md)
+  (§3.3, Fig. 5) apply Pirozzoli's ADR to their WENO5-NN, whose weights a
+  network outputs; the network is trained with a loss carrying two
+  hyperparameters that they name $\alpha$ and $\beta$: $\alpha$ is the
+  exponent of the loss, and $\beta$ is never identified with a printed
+  symbol of it. Over a large wavenumber range it has
+  less dispersion error than WENO5-JS and less dissipation in the
+  well-resolved range. The five pairs $(\alpha,\beta)$ tested give a
+  family of schemes with similar dispersion and different
+  high-wavenumber dissipation, so the training hyperparameters act as
+  spectral design parameters; $(0.2,0.1)$ is adopted. No values are
+  printed. This WENO5-NN is not Stevens & Colonius's scheme of the same
+  name (see [learned WENO weights](/methods/learned-weno-weights.md)).
+- **An adaptive cut-off from a global smoothness factor.** The TENO-AZ of
+  [Tang (2024)](/sources/tang-2024.md) (§3, Fig. 1) has better dispersion
+  and lower dissipation than TENO-Z but is worse than TENO-A and TENO-LAD
+  in both, with "some bias" of its curves near reduced wavenumbers 1.5
+  (dispersion) and 2.0 (dissipation); see [adaptive TENO](/methods/adaptive-teno.md).
 - **MP-limited gradient-based reconstruction against TENO5.** With the ADR procedure of
   Zhao et al., [Chamarthi (2023a)](/sources/chamarthi-2023.md) (§3.3, Fig. 3) finds
   that MIG4, the author's compact-gradient scheme with the monotonicity-preserving limiter, has better
@@ -477,6 +512,9 @@ is meant.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, Fig. 1: dispersion and dissipation of the Lerat–Corre family, $0.35\pi$ threshold (arXiv v1).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §4, Fig. 4.1: multi-resolution WENO spectra.
 - [Bezgin et al. (2022)](/sources/bezgin-2022.md) — §4.8, Fig. 17: WENO3-NN spectra, zero dissipation at the cut-off.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.3.1, Eqs. (36)–(46): dispersion–dissipation splitting with printed weight, constraints and $b_0$.
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.3, Fig. 5: ADR of WENO5-NN for five hyperparameter pairs.
+- [Tang (2024)](/sources/tang-2024.md) — §3, Fig. 1: ADR of TENO-AZ against TENO-Z, TENO-A and TENO-LAD.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §2.2 (Eq. (5)), Appendix (Fig. A.1): WCNS-JS and WCNS-T spectra at orders 5–11.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.1–2.3, Eqs. (6)–(38), Figs. 1–7; §3.2–3.4, Figs. 9, 11–12, Eqs. (62)–(69): MDCD symbol, pointwise dispersion–dissipation ratio, MDAD-HY and detector spectra.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §3.2, Fig. 3: spectra of the scale-sensor TENO5-A (arXiv v1).

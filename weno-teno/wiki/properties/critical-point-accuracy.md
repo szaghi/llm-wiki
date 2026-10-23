@@ -4,8 +4,8 @@ title: "Accuracy at critical points"
 description: "A nonlinear reconstruction keeps its design order at a critical point, where the first m derivatives vanish, only if its weights still converge fast enough to the linear weights there; WENO-JS and WENO-Z lose orders, and mapped, ZN, symmetric-indicator and exponential weight designs restore them up to a scheme-dependent critical-point order or, for exponential weights, at any order."
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
-tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+tags: [weno, reconstruction, finite-difference, critical-points]
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Accuracy at critical points
@@ -41,6 +41,9 @@ coefficients $A_k$ are not defined in the paper).
 | WENO-Z$\eta$ (Fan) | up to $(r-1)$th-order points, with an $O(\Delta x^{2r+2})$ global indicator | Li et al. 2022b, §3.3 (derived) |
 | OWENO (Baeza et al.) | optimal order at critical points of any order | Li et al. 2022b, §2 (recalled) |
 | [TENO](/methods/targeted-eno.md) | design order on a test function with a second-order critical point, no tuning of $\epsilon$ | Fu 2023, §3.1 (stated, numerics in cited work) |
+| fifth-order TENO-Z, TENO-A, TENO-LAD (global indicator $\tau_5$, fixed or floor-based cut-off) | design order at a first-order critical point; orders 3.00 to 2.26 at a second-order one and 4.01 to 3.26 at a third-order one | Tang 2024, §4.1, Tables 1–3 |
+| TENO-AZ ([adaptive TENO](/methods/adaptive-teno.md)), cut-off $C_T=\min(10^{-5},\lvert\beta_0+\beta_2-2\beta_1\rvert)$ | errors of the linear fifth-order scheme at critical points of order 1, 2 and 3 | Tang 2024, §3, Eqs. (19)–(20); §4.1, Tables 1–3 |
+| WENO5-NN ([learned WENO weights](/methods/learned-weno-weights.md)) | weights deviate less from $d_k$ than WENO5-JS near the saddle points of $\sin^3(\pi x)$; no order test | Nogueira et al. 2024, §3.4, Fig. 6 |
 | fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md) | $\omega_m=d_m+O(\Delta x^4)$ also at first-order critical points, since $\tau$ and the indicators both drop by two orders there; no critical-point test | Wang et al. 2021, Eqs. (3.18)–(3.20) (derived) |
 | sixth-order [RBF-based WENO](/methods/rbf-weno.md) (WENO-G) | $\lvert\omega_k-\bar d_k\rvert\le c\Delta x^4$ "regardless of critical points" for $\epsilon=\Delta x^\ell$, $0<\ell\le4(2q-1)/q$; 6.01 on $\sin(2\pi x-\sin(2\pi x)/\pi)$, where WENO-JS gives 3.54–4.13 | Jeong, Yang & Yoon 2022, Prop. 4.5, Table 2 |
 | MR-AWENO-Si ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | $\tau^*=O(\Delta x^{10})$ at first- to third-order critical points is said to recover the order; no proof, no critical-point test | Li, Li, Don & Wang 2023a, §2.3 (stated) |
@@ -56,6 +59,47 @@ the same Don & Borges $\epsilon(\Delta x)$ remedy and Henrick et al.'s analysis 
 points, as background for TENO. Jeong et al.'s Proposition 4.5 also uses $\epsilon=\Delta x^\ell$: its proof
 assumes $\beta_k=A_k\Delta x^{r_\beta}+\dots$ with $r_\beta\ge2$ and $\tau=O(\Delta x^8)$ (page-local
 exponent $r_\beta$), and the experiments do not state the value of $\epsilon$ actually used.
+
+## TENO at higher-order critical points: an adaptive cut-off
+
+Tang (2024, §4.1) uses the definition above with $n_{\mathrm{cp}}\ge0$ the order (page-local symbol; $n_{\mathrm{cp}}=0$
+means $f'\ne0$) and the test function
+
+$$f(x)=e^x-\sum_{k=1}^{n_{\mathrm{cp}}}\frac{x^k}{k!},$$
+
+which has an $n_{\mathrm{cp}}$th-order critical point at $x=0$ (Eqs. (21)–(22)). The error is the $L^1$ error of the
+finite-difference approximation of $f(x_{1/2})-f(x_{-1/2})$, on six grids $\Delta x=0.001/2^\ell$, $\ell=0,\dots,5$
+(page-local level $\ell$; the source writes $q$), with $\epsilon=\Delta x^{2n_{\mathrm{cp}}+3}$, chosen of higher order
+than $\beta_k$ after Vevek et al. and Don & Borges (as recalled). The fifth-order TENO-Z (with the WENO-Z
+$\tau_5=|\beta_0-\beta_2|$ in $\gamma_k$ and $C_T=10^{-5}$), TENO-A and TENO-LAD give, for the six grids:
+
+| $n_{\mathrm{cp}}$ | TENO-Z, TENO-A, TENO-LAD | TENO-AZ |
+|---|---|---|
+| 1 | identical errors $5.1972\times10^{-14}$ to $2.5868\times10^{-22}$, orders 6.00, 5.58, 5.41, 5.32, 5.26 | the same |
+| 2 | orders 3.00, 2.58, 2.41, 2.32, 2.26 (TENO-Z $2.0823\times10^{-6}$ to $3.3908\times10^{-10}$) | the errors of row 1 |
+| 3 | orders 4.01, 3.59, 3.41, 3.32, 3.26 | the errors of row 1 |
+
+(Tables 1–3). Tang reads row 2 as the reduction "to the 2nd-order accuracy at the 2nd-order critical point" of
+all three earlier schemes, adaptive cut-offs included. *(Compiler check, not in the sources: the printed errors $e_\ell$
+satisfy $e_\ell(\ell+1)2^{p\ell}=\text{const}$ to within 0.3%, so every printed order between levels $\ell-1$ and
+$\ell$ equals $p+\log_2\frac{\ell+1}{\ell}$ to within 0.01, with $p=5$ in row 1 and for TENO-AZ, $p=2$ and $p=3$ for
+the earlier schemes in rows 2 and 3; the asymptotic rates are therefore 5, 2 and 3, and the rate 2 at a
+second-order critical point is that of WENO5-JS in the table above. The test functions differ by polynomials of degree at most 3, which the linear fifth-order scheme
+treats exactly, so the identical TENO-AZ errors show that TENO-AZ is the linear scheme on every grid.)*
+
+TENO-AZ (§3, Eqs. (19)–(20)) replaces $\tau_5$ in $\gamma_k=\big(1+\tau_5/(\beta_k+\epsilon)\big)^6$ by the page-local
+$\tau_{\mathrm{AZ}}=|\beta_0+\beta_2-2\beta_1|$ and sets $C_T=\min(10^{-5},\tau_{\mathrm{AZ}})$, so that $C_T\to0$, all
+stencils are kept and the linear scheme is recovered wherever $\tau_{\mathrm{AZ}}\to0$; at discontinuities the cut-off
+is capped at $10^{-5}$. The paper's claim of "optimal accuracy at any order critical point" (Abstract, §5) rests on
+Tables 1–3 ($n_{\mathrm{cp}}\le3$); no order of $\tau_{\mathrm{AZ}}$ is derived, and other exponents $q$ are said to give
+the same result, not shown (§4.1). *(Compiler check, not in the sources: with the expansions of Wan & Xia recorded on
+[smoothness indicators](/definitions/smoothness-indicator.md), the $\Delta x^5$ terms of $\beta_0$ and $\beta_2$ cancel in
+the sum and $\tau_{\mathrm{AZ}}=2|f'f'''|\Delta x^4+O(\Delta x^6)$ away from critical points. Since $\gamma_k\ge1$, every
+$\chi_k$ is bounded below whenever the ratios $\tau_{\mathrm{AZ}}/(\beta_k+\epsilon)$ stay bounded, and then no $\chi_k$
+falls below $C_T=\tau_{\mathrm{AZ}}\to0$; this supports the mechanism at critical points of any order where those ratios
+stay bounded, which the choice of $\epsilon$ above helps to ensure.)* Tang also states that keeping $\tau_5$ in
+$\gamma_k$ but adopting the new $C_T$ gives the same optimal order, and that $\tau_5$ itself in the cut-off produces
+oscillations; neither is shown (§3).
 
 ## Interpolation and flux conditions
 
@@ -184,6 +228,19 @@ resolution).
 
 ## Qualifications
 
+- **Which TENO loses order.** Fu (2023, §3.1) reports no degeneration of TENO at a second-order critical point
+  with the sixth-order global indicator $\tau_K$; the TENO-Z, TENO-A and TENO-LAD that Tang (2024, Eqs. (12)–(13),
+  Table 2) measures at second order carry the fifth-order $\tau_5=|\beta_0-\beta_2|$. The two statements concern
+  different global indicators, so they do not contradict each other.
+- Tang (2024, §1) recalls an earlier paper of the author as finding TENO-Z degraded "to the 3rd-order" at
+  higher-order critical points; the paper's own Table 2 gives second order at $n_{\mathrm{cp}}=2$ and its Table 3
+  third order at $n_{\mathrm{cp}}=3$.
+- *(Compiler check, not in the sources.)* TENO-AZ compares the dimensionless $\chi_k$ with $\tau_{\mathrm{AZ}}$, which
+  scales as $\sigma^2$ under $f\mapsto\sigma f$ (page-local $\sigma$); wherever $\tau_{\mathrm{AZ}}<10^{-5}$ the cut-off
+  decisions therefore depend on the amplitude and units of the data
+  ([scale invariance](/properties/scale-invariance.md)). The paper does not discuss scaling.
+- Nogueira et al. (2024, §3.4) write that WENO5-NN "also alleviates" the critical-point order loss of WENO5-JS;
+  the evidence is a plot of the weights on $\sin^3(\pi x)$ at $\Delta x=0.01$, without a convergence test.
 - *(Compiler check, not in the sources.)* Lemma 2 gives sharper bounds than Proposition 1 states:
   $\delta\in(-1,0)$ (critical point in $I_{i-1}$) maps to $0<\tilde u_i<\tfrac13$ and
   $\delta\in(1,2)$ (in $I_{i+1}$) to $\tfrac23<\tilde u_i<1$. Proposition 1 is correct but weaker.
@@ -221,3 +278,5 @@ resolution).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.
 - [Chen & Deng (2023)](/sources/chen-2023.md) — §1; §3, Eqs. (25)–(34), Theorem 3.1; §4.1, Fig. 2.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §2, Eqs. (10)–(18); §3.3, Eqs. (27)–(41); §4.1, Tables 2–5; §4.2.
+- [Tang (2024)](/sources/tang-2024.md) — §1; §2, Eqs. (9)–(18); §3, Eqs. (19)–(20); §4.1, Eqs. (21)–(22), Tables 1–3; §5.
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.4, Fig. 6.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Material-interface advection tests"
-description: "Uniform-velocity, uniform-pressure advection of material interfaces between gases or between gas and liquid, in 1D and 2D and with up to five materials, whose exact solution is pure translation; used to check that multi-component and multi-phase schemes keep pressure and velocity in equilibrium, conserve mass and keep interfaces thin."
+description: "Uniform-velocity, uniform-pressure advection of material interfaces between gases or between gas and liquid, in 1D and 2D with up to five materials, and of a single-gas contact over many crossings, with pure translation as exact solution; it checks that multi-component and multi-phase schemes keep pressure and velocity in equilibrium, conserve mass and keep interfaces thin."
 status: established
 aliases: [interface advection, advection of a material interface, interface translation test, water disk advection, smooth interface advection]
 tags: [benchmark, multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Material-interface advection tests
@@ -86,6 +86,29 @@ cells, CFL 0.2, with their [phase-field](/methods/phase-field-method.md)
 regularization at interface-thickness parameter $\eta/\Delta x=1$ (their
 $\eta$, page-local).
 
+**A square column of heavy gas, four-equation model.**
+[Jiao et al. (2024)](/sources/jiao-2024.md) §4.1 advect a square column
+of one ideal gas in another at $u=5$ m/s and $p_0=10^7$ Pa, 300 K, on a
+periodic 0.2 m domain with 100 cells, CFL 1.4, for four periods to
+$t=0.16$ s: component 1 with $\gamma=5$, $\rho=4.444$ kg m$^{-3}$,
+component 2 with $\gamma=1.6$, $\rho=117.647$ kg m$^{-3}$ (Table 4.1),
+both isothermal, in a mass-fraction four-equation model. They compare
+second-order MUSCL reconstructions of the mass fraction with the six
+limiters of their Table 4.2 (Van Albada, Van Leer, MinMod,
+Chakravarthy, MC, Koren) against THINC, each followed by their
+"thermodynamic-dependent update" of the interface density from the
+equation of state.
+
+**Single-gas contact over a hundred crossings.**
+[Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.4 (arXiv v2) run
+the supersonic top-hat of Schaal et al.: in 2D, density 4 inside a
+central square of side 0.5 of the unit square and 1 outside, $p=2.5$,
+$\gamma=1.4$, $(v_1,v_2)=(100,50)$; the results shown are for the 1D
+version with 64 cells, degrees 0 to 9, to $t=1$, i.e. 100 crossings,
+and with 10 cells at degree 9 for one crossing. It is a contact in one
+gas, so it tests the sub-cell resolution and long-time diffusion of a
+discontinuity rather than pressure equilibrium between materials.
+
 ## Findings across sources
 
 **Pressure and velocity to round-off.** Every source reports
@@ -125,6 +148,9 @@ the split form survives long runs. See
 [double-flux methods](/methods/double-flux-method.md) for the
 overspecified alternatives they argue against.
 
+Jiao et al. likewise find pressure and velocity at their initial
+values after four periods with every reconstruction (Fig. 4.3).
+
 **Interface thickness and shape.** Huang & Johnsen find that, without
 the phase-field term, the disk becomes diamond-like from mesh
 anisotropy; with it, the interface holds 4–5 cells and the circular
@@ -135,6 +161,21 @@ with triple points distorted and the quadruple point not (§7.1.2);
 in the vortex the interface breaks up at maximum deformation and the
 topology is restored at $t=T$ with slight deformation (Fig. 11). See
 [THINC reconstruction](/methods/thinc-reconstruction.md).
+
+On Jiao et al.'s square column all MUSCL limiters smear the interface,
+Koren's least, and THINC with the thermodynamic update is noticeably
+sharper (Fig. 4.2).
+
+**Long-time error growth of high-order DG.** Cernetic et al.'s modal DG
+with an evolved artificial-viscosity field captures the top-hat inside
+a cell; the $L_1$ error grows in time like $t^{n_{\mathrm t}}$ with
+fitted exponents $n_{\mathrm t}=0.427$, 0.335, 0.172, 0.056, 0.054,
+0.049, 0.048, 0.046, 0.039, 0.028 for degrees 0 to 9 ($n_{\mathrm t}$
+page-local), and degree 0 loses the profile after about 10 crossings
+(Fig. 10). Lowering the onset threshold of their oscillation sensor from
+$10^{-4}$ to $10^{-6}$ damps the ringing at the discontinuities at the
+cost of a slightly wider front (Fig. 9); see
+[artificial viscosity](/methods/artificial-viscosity.md).
 
 **Order on smooth profiles.** Paula et al. find first order for their
 first-order scheme and second order for the "nominally third-order
@@ -164,6 +205,15 @@ faces.
   and $T=300$ K, so the printed data are scaled by the water density
   and an unstated pressure scale *(compiler check, not in the
   sources)*.
+- Jiao et al. print the gas constants in kJ/(kg K) and the densities in
+  kJ/m$^3$ (Table 4.1); the printed $\rho=p_0/(RT)$ values, e.g.
+  $10^7/(7500.75\cdot300)=4.444$, hold with $R$ in J/(kg K) and $\rho$
+  in kg m$^{-3}$ *(compiler check, not in the sources)*. Their §3.3 and
+  Table 4.2 give two different formulas for the MinMod limiter, and they
+  do not define the CFL number of 1.4.
+- Cernetic et al. say in §5.4 that 10 cells are used for the multi-degree
+  comparison at $t=1$, while the Fig. 9 caption gives 64 cells for it
+  and 10 cells for the degree-9 run at $t=0.01$.
 - Fujiwara et al. restrict their scheme to smooth interfaces without
   shocks and to non-dissipative central fluxes; whether equilibrium
   survives added shock-capturing dissipation is left open.
@@ -173,3 +223,5 @@ faces.
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — §4.1–4.3, §5, Eqs. (50)–(52), Figs. 2–8.
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §6, §7.1–7.3, Table 1, Figs. 11–12.
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.3, §5.2, Eq. (50), Figs. 6–7, 13.
+- [Jiao et al. (2024)](/sources/jiao-2024.md) — §4.1, Tables 4.1–4.2, Figs. 4.1–4.3.
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §5.4, Figs. 9–10 (arXiv v2).

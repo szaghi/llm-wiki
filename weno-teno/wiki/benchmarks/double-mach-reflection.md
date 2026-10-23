@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Double Mach reflection
@@ -21,11 +21,11 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Thirty-eight sources of the bundle run it,
-thirty-five in the Woodward–Colella form (one of them on a randomly
-distorted curvilinear grid) and three in a variant (a
-wedge on an unstructured mesh, a relativistic version, a dimensional
-ramp with an immersed boundary); most cite Woodward & Colella (1984)
+source that runs it. Forty-one sources of the bundle run it,
+thirty-seven in the Woodward–Colella form (one of them on a randomly
+distorted curvilinear grid) and four in a variant (two
+wedges in the physical frame on unstructured meshes, a relativistic
+version, a dimensional ramp with an immersed boundary); most cite Woodward & Colella (1984)
 for it, while Peng, Sun & Wu cite no source for the setup. A Mach 10
 reflection-and-diffraction relative over a backward step is recorded
 under Variants.
@@ -38,7 +38,8 @@ Common data, as printed by
 [Ye et al. (2022)](/sources/ye-2022.md) §4.8 and
 [Huang et al. (2026)](/sources/huang-2026.md) §6.7, Eq. (6.9), and
 likewise by [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.6,
-[Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.8 and
+[Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.8,
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5, Eq. (42) and
 [Liang et al. (2022)](/sources/liang-2022.md) §4.5, in
 $(\rho,v_1,v_2,p)$:
 
@@ -127,12 +128,25 @@ $p=1+\tfrac{2\gamma}{\gamma+1}(M^2-1)=1+\tfrac76\cdot99=116.5$
 *(compiler check, not in the sources)*, so
 $116.5$ is the Rankine–Hugoniot post-shock pressure and $116.8333$ is
 $1/3$ (about 0.29 %) higher; Fu (2021), Takagi et al., Ye et al. and
-Huang et al., Huang, Liang & Fu, Ji, Liang & Fu and Liang et al.
-print it without comment. It is a setup difference, not a
+Huang et al., Huang, Liang & Fu, Ji, Liang & Fu (2022, 2023) and
+Liang et al. print it without comment. It is a setup difference, not a
 contradiction: no source compares the two. The shock's horizontal
 speed $10/\sin60^\circ=10/\cos30^\circ=20/\sqrt3$ matches the
 upper-boundary formulas of Peng et al., Dzanic & Witherden and Hiejima
 *(compiler check, not in the sources)*.
+
+[Tang (2024)](/sources/tang-2024.md) §4.4.4, Eq. (36) prints, under
+the heading $(\rho,v_1,v_2,p)$, the states $(8,\ 57.1597,\ -33.0012,\ 563.544)$
+for $y<\sqrt3(x-1/6)$ and $(1.4,0,0,2.5)$ otherwise on $[0,4]\times[0,1]$.
+These are the conservative variables $(\rho,\rho v_1,\rho v_2,E)$ of the
+Woodward–Colella states: $E=1/(\gamma-1)=2.5$ for $p=1$ at rest, and the
+post-shock $8\cdot8.25\cos30^\circ=57.158$, $-8\cdot8.25\sin30^\circ=-33.0$
+and $116.5/0.4+\tfrac12\cdot8\cdot8.25^2=563.5$ match the printed values
+to about $10^{-4}$ relative *(compiler check, not in the sources)*.
+The inequality $y<\sqrt3(x-1/6)$ assigns the post-shock state to the
+region below the front, the opposite side to the other sources' $y\ge1.732(x-0.1667)$,
+which is the gas at rest ahead of the shock on the wall side; the
+text does not otherwise state which side carries the post-shock state.
 
 [Lesur et al. (2023)](/sources/lesur-2023.md) §4.1 take "Colella &
 Woodward (1984) initial conditions" without printing them, and
@@ -163,6 +177,13 @@ describe one configuration *(compiler check, not in the sources)*.
   right; 576,910 triangles, van Leer flux-vector splitting, four-stage
   Runge–Kutta, $\Delta t=2.5\times10^{-5}$, $t=0.2$, 48 density
   contours 2–24. The wedge angle is not stated in the text.
+  [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.7 (arXiv v1)
+  likewise compute in physical coordinates, as in an earlier work they
+  cite: the unstructured polygon with vertices $(-2,0)$, $(0,0)$,
+  $(3,\sqrt3)$, $(3,2)$, $(-2,2)$, a ramp of angle $\pi/6$ starting at
+  the origin, and a Mach 10 shock along $x$ with
+  $(\rho,v_1,v_2,p)=(8,8.25,0,116.5)$ for $x\le0$ and $(\gamma,0,0,1)$
+  for $x>0$, $t=0.2$.
 - **Relativistic double Mach reflection.**
   [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.8 (arXiv v1) run
   the special-relativistic version, also without rotation, on the wedge
@@ -237,6 +258,9 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.4 | entropy-stable [DGSEM](/methods/dgsem.md), $N=3$, elementwise blending with a sparse low-order positivity-preserving scheme, bound relaxation $\zeta_{\mathrm r}=0.1$ (their $\zeta$; with and without shock-capturing blending) and $\zeta_{\mathrm r}=0.5$ | $[0,3.5]\times[0,1]$, $875\times250$ quadrilaterals | $\mathrm{Re}=\infty$ (arXiv v2) |
 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.4 | hybrid DG($P_3$)–FV(CWENOZ4) in [UCNS3D](/software/ucns3d.md), a priori [troubled-cell](/definitions/troubled-cell-indicator.md) switch: shock detector, MOOD$^{\mathrm O}$, MOOD$^{\mathrm R}$, extended bounds; CFL 0.5 | about 150,000 triangles, $h=1/125$ | — |
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.6 | [$p$-adaptive DG](/methods/hp-adaptation.md) $N\in[2,5]$ with [FV subcells](/methods/subcell-finite-volume-limiting.md) ($N_{\mathrm{FV}}=6$ or 11) vs static $N=5$; HLLE; [FLEXI](/software/flexi.md) | $240\times60\times1$ elements ($h=1/60$), periodic in $z$ | $t=0.28$; pressure indicator |
+| [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5 | unstructured finite-volume TENO4-D–TENO7-D (dual stencil selection) vs [CWENO](/methods/cweno.md)6/7, HLL, SSP-RK3 at CFL 0.4; [UCNS3D](/software/ucns3d.md) | 151,850 ($h\approx1/125$), 369,794 ($h\approx1/200$), 752,708 ($h\approx1/280$) triangles | 43 contours of $\ln\rho$ in $[1,3]$; cost table |
+| [Tang (2024)](/sources/tang-2024.md) §4.4.4 | [TENO-AZ](/methods/adaptive-teno.md) (adaptive cut-off) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 at CFL 0.5 | $960\times240$ | 30 contours in $[2,20]$; cost table |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.7 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with a posteriori [subcell FV limiter](/methods/mood-a-posteriori-limiting.md), conservative correction in shock cells, $P_2$ | physical-frame wedge, polygonal mesh $h=1/220$ | variant above (arXiv v1) |
 
 ## What the benchmark measures
 
@@ -319,6 +343,22 @@ WCNS schemes better than WENO-JS on the same grid in the zoom around the
 Mach stems, and their hybrid switch marks the shock structures
 (Figs. 4.7–4.8); their hybrid costs 0.87 of WENO-JS's CPU time here,
 the original MR-WCNS 1.92 (Table 5.1).
+
+The unstructured TENO and adaptive-TENO sources of chunk 7 read the
+figure the same way. Ji, Liang & Fu (2023) find that higher-order TENO-D
+resolves more small scales in the blow-up region while keeping the
+shocks sharp, and that at equal order TENO-D shows "much lower
+numerical dissipation" than CWENO (§4.5, Figs. 9–14); by reference to a
+figure of another paper they call TENO-D at $h\approx1/200$
+"significantly better" than fifth-order WENO-AO at $h\approx1/400$.
+Tang finds that the adaptive-cut-off TENO-AZ resolves finer vortices
+than TENO-Z and TENO-LAD, while TENO-A gives more vortices but
+significantly more noise (§4.4.4). Gaburro et al.'s primitive-variable
+ADER-DG uses the conservative update only in the shock-triggered
+subcells, so most of the domain stays in primitive variables, and the
+small-scale roll-up of the shear layer is visible at $P_2$ on
+$h=1/220$ (§5.1.7, Fig. 6; see
+[local conservation](/results/local-conservation-flux-form.md)).
 
 **Order does not buy roll-up by itself.** Hiejima's WCNS-JS shows no
 Kelvin–Helmholtz roll-up along the slip line at fifth order, and its
@@ -446,6 +486,16 @@ $2.24\times10^{-6}$ s (TENO6) on 369,794 triangles, "roughly 65%", with
 TENO5 and CWENO5 at $1.96$ and $1.98\times10^{-6}$ s (Intel Xeon
 E5-2690, 8 MPI ranks × 7 OpenMP threads; §5.10, Table 7).
 
+Ji, Liang & Fu (2023) time the $h\approx1/125$ run at 2517.38 s
+(CWENO6), 3050.80 s (CWENO7), 2694.45 s (TENO6-D) and 3126.84 s
+(TENO7-D), "approximately the same", hardware not stated (Table 7); the
+TENO-D/CWENO ratios are 1.070 and 1.025 here against 0.949 and 0.932 on
+their Shu–Osher run *(compiler check, not in the sources)*. Tang
+times one step at $t=\mathrm{CFL}\cdot\Delta x$, averaged over 100 runs
+on an Intel i7-9700, over seven two-dimensional problems including
+this one: TENO-AZ costs 0.98–1.01 of TENO-Z, TENO-A 1.33–1.44 and
+TENO-LAD 1.11–1.18 (Table 6).
+
 Chamarthi (2023b, Table 2) times the $1024\times256$ run at 1806 s
 (MEG7-prim), 1946 s (MEG7-cons) and 2493 s (WCNS7M), hardware not
 stated. Chandravamsi et al. time it on one GPU against one Xeon Gold
@@ -536,6 +586,9 @@ grid, not an exact solution.
   paper's figure cannot decide which data were run.
 - Yu & Hesthaven print no initial states; their run is listed as a
   Woodward–Colella run on their own citation of the setup.
+- Tang's states are conservative variables printed under a primitive
+  heading (see Setup), and the caption of Tang's Fig. 13 reads "implosion
+  problem" while §4.4.4 uses Fig. 13 for this run.
 
 # Citations
 
@@ -578,3 +631,6 @@ grid, not an exact solution.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Example 4.5, Figs. 4.7–4.8, Table 5.1.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.4, Figs. 9–11 (arXiv v2).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.4, Figs. 10–11.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.5, Eq. (42), Figs. 9–14, Table 7.
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.4, Eq. (36), Fig. 13; §4.4.8, Table 6.
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.7, Fig. 6 (arXiv v1).

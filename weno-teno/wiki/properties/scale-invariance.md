@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Scale and affine invariance
@@ -138,6 +138,20 @@ new ones do not (Examples 4.4–4.5, Figs. 6–9). *(Compiler check, not in the 
 constant to the data changes $\max\bar u_K^2$, so these weights are scale- but not affine-invariant,
 and $\epsilon\to0$ when all data on the stencil are near zero, as characteristic variables can be.)*
 
+**Squared denominators in Hermite WENO.** Cai, Qiu & Wu (2024, §3.1.2, Eq. (3.8), Remark 3.2; arXiv v1 read) take the
+same step for the moment-based [Hermite WENO](/methods/hermite-weno.md) of a physical-constraint-preserving scheme for
+special-relativistic hydrodynamics, crediting Chen & Wu for the idea:
+$$\alpha_n=d_n\Big(1+\frac{\tau^2}{\beta_n^2+\epsilon}\Big),\qquad \tau=\tfrac12\big(|\beta_0-\beta_1|+|\beta_0-\beta_2|\big),$$
+(page-local $\tau$, not the registry's $\tau_5$), and state that the weights "remain unchanged" when the zeroth and first moments are multiplied by any $\sigma\ne0$. The
+first-moment limiter of troubled cells uses $d_n\big(1+\tau_\ell^2\Delta x/(\beta_{\ell,n}^2+\epsilon)\big)$ (page-local).
+*(Compiler check, not in the sources: $\tau^2$ and $\beta_n^2$ both scale as $\sigma^4$, so the ratio has degree 0 in the
+data, and the weights are invariant up to $\epsilon$, whose value the paper does not print and which is not scaled with the
+data as in Chen & Wu; the extra $\Delta x$ in the limiter weights makes them change with the unit of length, as for the
+indicators of Zhong et al. above.)* In the same scheme the characteristic projection uses rescaled eigenvector pairs
+$(cr,l/c)$ with $c=\sqrt{|l|/|r|}$, which the authors find necessary to avoid oscillations on an ultra-relativistic 2-D
+Riemann problem (Remark 3.3, Example 5.7); it is a fix of the arbitrary eigenvector scaling that Peng et al. identify below
+as a threat to invariance ([characteristic decomposition](/methods/characteristic-decomposition.md)).
+
 **Normalised variables.** In a compact three-cell stencil, a reconstruction that depends on the
 data only through the normalized cell average $\tilde u_i=(\bar u_i-\bar u_{i-1})/(\bar u_{i+1}-\bar u_{i-1})$
 is called *normalisable*, $\tilde u_{i+1/2}=\mathcal R(\tilde u_i)$, and Deng (2023, Proposition 2) proves
@@ -206,3 +220,4 @@ decomposition can destroy invariance, because eigenvectors are defined up to an 
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §3.2, Eqs. (21)–(26).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(23).
 - [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.2–3.1.3, Eq. (3.8), Remarks 3.2–3.3; Example 5.7 (arXiv v1).

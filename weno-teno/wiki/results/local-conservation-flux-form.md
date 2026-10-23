@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -158,6 +158,29 @@ delete under-resolved droplets and so break conservation (§1, §3.2). See
 [Riemann solvers with phase change](/methods/phase-change-riemann-solver.md) and
 [level-set methods](/methods/level-set-method.md).
 
+**Flux balance at immersed walls.** [Başkaya et al. (2024)](/sources/baskaya-2024.md)
+(§3, §5) compare the two ways of imposing a wall on a Cartesian finite-volume mesh for
+reacting hypersonic flow ([immersed-boundary methods](/methods/immersed-boundary-method.md)).
+Ghost-cell methods fill solid cells by extrapolation from an image point and reconstruct
+fluxes "without considering the location and shape of the fluid-solid interface", so they do
+not conserve mass, momentum and energy at the wall; the errors "result from the nonlinearity
+of the flux function, from the image point interpolation, and from the interface curvature".
+The cut-cell (cut-element) method of the INCA code keeps the flux balance over the fluid part
+of each cut cell, with face fluxes scaled by the wetted areas and the wall exchange computed
+from the boundary condition, and is "a consistent and conservative extension of the finite
+volume flux balance" (§3.2). Switching the cut-cell flux treatment off in the same code gives
+a ghost-cell method of nominally the same order, and only this switch separates the two runs
+(§5). On the HEG cylinder with an isothermal 300 K wall the grid-converged stagnation heat flux
+of the cut-cell method is 7.144 MW/m², against 7.345 MW/m² body-fitted and $7.402\pm0.220$ MW/m²
+measured, while the ghost-cell method of a second code gives 0.167 MW/m² (Table 7); both
+ghost-cell methods mispredict the cold-wall heat flux and overpredict the ablation blowing rate
+(Fig. 18; [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)). The
+authors conclude that "conservation errors inherent to ghost-cell IB methods are responsible
+for large errors at cold walls", acting as an unphysical surface blowing, and expect them to
+converge at the truncation rate of the base scheme, hence to be small where wall gradients are
+small, as on adiabatic walls (§4.5.2, §5); the convergence of the conservation error is stated,
+not measured, and the evidence is two ghost-cell implementations.
+
 A conservative scheme need not be written in flux form to conserve mass: the
 semi-Lagrangian finite-volume update of [Zheng et al. (2022)](/sources/zheng-2022.md)
 integrates the reconstruction over the upstream cell, cut by the Eulerian mesh and
@@ -209,3 +232,4 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (p. 2), §2.5, Fig. 6.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §2.1 (Eqs. (15)–(16), Fig. 1), §3.1.
 - [Long et al. (2023)](/sources/long-2023.md) — §1, §2.3 (Eq. (5)), §3.2 (Eqs. (26)–(27), (34)).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3, §3.2, §4.5.2 (Table 7), §5 (Fig. 18) (author preprint).

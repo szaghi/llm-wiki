@@ -5,7 +5,7 @@ description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that add
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # WENO-CU6
@@ -48,7 +48,8 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   original WENO-CU6 exponent.
   Li, Sun, Zha, Zhu, Ding & Xia (2023b, Eq. (53)) write WENO-CU6 as $\alpha_k=d_k\big(C+\tau_6/(\beta_k+\epsilon)\big)$,
   exponent 1, "$C\gg1$", choose $C=100$ and $\epsilon=10^{-40}$, and use the same dissipation-dependent
-  MDCD linear weights; they define neither the indicators nor $\tau_6$. The bundle's sources thus use
+  MDCD linear weights; they define neither the indicators nor $\tau_6$. Liang & Fu (2024b, §4) state only $C=20$.
+  The bundle's sources thus use
   three weight settings under the name WENO-CU6 ($C=20$ in Ye et al.'s template; $C=20$, $q=2$; $C=100$,
   $q=1$), none of them traced to the original paper.
 
@@ -90,6 +91,20 @@ their MDAD scheme matches the peak dissipation rate better. Liang et al. (2022, 
 produce spurious waves in under-resolved simulations "due to the non-dissipative nature of the background
 central scheme".
 
+Liang & Fu (2024b, §4) run WENO-CU6 with $C=20$ (exponent not printed) against TENO6, TENO8 and their hybrid TENO-S
+([hybrid schemes](/methods/hybrid-weno.md)), all on one CPU with SSP-RK3 at CFL 0.4 (characteristic decomposition is stated for the TENO branch of TENO-S only):
+
+- **Cost.** WENO-CU6 is cheaper than TENO6 and TENO8 in every 2-D case, e.g. 517.96 s against 540.17 s and 628.79 s on
+  2-D Riemann configuration 12 ($800^2$) and 29.42 s against 31.13 s and 36.38 s on
+  [double Mach reflection](/benchmarks/double-mach-reflection.md) at $512\times128$; TENO-S is cheaper still (388.08 s,
+  17.42 s; Tables 7, 9). In 1-D WENO-CU6 is faster than TENO8 (e.g. Sod 32.66 ms against 43.87 ms; Table 3).
+- **Resolution.** WENO-CU6 at $800\times200$ is "even not better" than TENO-S at $512\times128$ on double Mach reflection
+  (§4.6); it is "much more dissipative" on the [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
+  (§4.8); on the [interacting blast waves](/benchmarks/woodward-colella-blast-wave.md) it shows a pressure overshoot and a
+  velocity oscillation near $x=0.86$, as in Fu (2021) (§4.4, Fig. 7); in the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) it smears the small vortices after $t\approx5$, like TENO6 and
+  TENO8 (§4.10). It is absent from their implosion test without explanation (Table 12).
+
 ## Qualifications
 
 - All comparisons are by the developers of the competing scheme and rest on visual inspection of
@@ -116,3 +131,4 @@ central scheme".
 - [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §3.1, Eqs. (42)–(45); §4.4.2, Fig. 29.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §3.5, Eqs. (51)–(53), Table 1.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4, Tables 3, 6–12, Figs. 7, 12–18.

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Path-conservative schemes"
-description: 'Path-conservative schemes discretize systems with a non-conservative product $\mathcal C(u)\partial_xu$ by integrating it along a path between interface states and over each cell; the central-upwind (PCCU) and HLL/HLLI fluctuation forms of the bundle use the straight-line path in $u$ or, for well-balancing, a path linear in equilibrium variables, and reduce to conservative fluxes when $\mathcal C=0$.'
+description: 'Path-conservative schemes discretize a non-conservative product $\mathcal C(u)\partial_xu$ by integrating it along a path between interface states and over each cell; the bundle''s central-upwind (PCCU) and HLL/HLLI forms use a straight-line path in $u$ or in equilibrium variables, reduce to conservative fluxes when $\mathcal C=0$, and also evolve conservation laws in primitive variables.'
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Path-conservative schemes
@@ -149,6 +149,39 @@ the WENO global-flux scheme of [Ciallella et al. (2023)](/sources/ciallella-2023
 lake at rest; the authors call it "similar to classical strategies used in well-balanced path
 conservative methods" (§3.3).
 
+## Conservation laws evolved in primitive variables
+
+A conservation law can be rewritten, without any non-conservative physics, in a
+non-conservative set of variables. [Gaburro et al. (2024)](/sources/gaburro-2024.md) (§2,
+Eqs. (4)–(5)) evolve the primitive vector $w=(\rho,v_1,v_2,p,\chi)$ of two-material Euler
+($\chi$ an advected material marker; page-local $w$, $\chi$) through
+$\partial_tw+A_{\mathrm p}\partial_xw+B_{\mathrm p}\partial_yw=0$, with $A_{\mathrm p}=TAT^{-1}$,
+$B_{\mathrm p}=TA^{(2)}T^{-1}$ and $T=\partial w/\partial u$ (page-local $A_{\mathrm p}$, $B_{\mathrm p}$, $T$),
+matrices similar to the flux Jacobians and with the same eigenvalues. Their ADER-DG corrector
+on polygonal cells integrates the quasilinear term inside each cell and adds at the faces the
+segment-path fluctuation
+$$\mathcal D_{\mathbf n}=\int_0^1\Big\{\big[A_{\mathrm p}(\Psi),B_{\mathrm p}(\Psi)\big]\cdot\mathbf n\Big\}^-\frac{d\Psi}{d\mathsf s}\,d\mathsf s,$$
+the negative part computed by eigendecomposition, a fluctuation of the Osher, Toumi and Parés
+type that they cite (§3.3, Eqs. (32)–(34); page-local $\mathcal D_{\mathbf n}$, $\mathbf n$ the face
+normal); the second-order subcell limiter uses the same fluctuations in a
+[MUSCL–Hancock](/methods/muscl-hancock.md) update (Eq. (39)). The motivation is that the
+primitive formulation avoids the spurious pressure oscillations of conservative schemes at
+material interfaces; on the 1D Quirk–Karni and the 2D Haas–Sturtevant shock–helium bubble
+problems their second-order conservative reference schemes oscillate at the interface on much
+finer meshes, the primitive scheme does not (§5.2, Figs. 7–8;
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+
+The price is at shocks. Gaburro et al. recall that the segment path "is in general not
+consistent with the correct jump conditions" and may give a wrong shock evolution "unless some
+additional correction is included" (§1). Their correction is to recompute, in subcells flagged
+by a divergence-based shock sensor, a conservative finite-volume update with a Rusanov flux, and
+to prove that elsewhere the conservation defect vanishes as $h\to0$
+([Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)); with the primitive formulation
+everywhere the circular Sod explosion has a wrong shock speed, with the correction it does not
+(§4.4, §5.1.4, Fig. 3). They list the extension to systems with genuinely non-conservative
+terms, "where the conservative correction is not obvious", as open (§6).
+
 ## Comparison of the two routes
 
 | | PCCU / A-WENO PCCU (Chu et al. 2022) | well-balanced PCCU (Kurganov et al. 2023) | fluctuation-form FD-WENO (Balsara et al. 2024) |
@@ -167,9 +200,12 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 
 ## Qualifications
 
-- None of the three sources discusses the dependence of the computed weak solution on the
-  choice of path; Chu et al. and Balsara et al. fix the straight line in $u$, Kurganov et al.
-  the straight line in $\mathsf E$, chosen for well-balancing.
+- None of the three sources on non-conservative systems discusses the dependence of the
+  computed weak solution on the choice of path; Chu et al. and Balsara et al. fix the straight
+  line in $u$, Kurganov et al. the straight line in $\mathsf E$, chosen for well-balancing. Only
+  Gaburro et al. (2024), for a conservation law in primitive variables, recall the inconsistency
+  of the segment path with the jump conditions, and they avoid it by conservative updates at
+  shocks rather than by another path.
 - The well-balancing of the A-WENO PCCU scheme for the two-layer lake at rest is asserted
   ("capable of exactly preserving"), with no proof and no round-off table; the evidence is the
   small-perturbation test (Chu et al., §6.1, Ex. 2).
@@ -188,3 +224,4 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §II (Eqs. (2.4)–(2.5)), §III (Eqs. (3.1)–(3.6)), §IV (accepted manuscript).
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1 (Eqs. (1.1), (1.4)–(1.5)), §2 (Eqs. (2.1)–(2.6), Remark 2.2), §4 (Eqs. (4.5)–(4.15), Theorem 4.1, Remark 4.2), §7 (Exs. 3, 5).
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §3.3 (Eq. (38)) (author manuscript).
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §1, §2 (Eqs. (4)–(5)), §3.3–3.4 (Eqs. (32)–(39)), §4.4, §5.1.4, §5.2, §6 (arXiv v1).

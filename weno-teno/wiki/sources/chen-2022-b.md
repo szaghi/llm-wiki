@@ -157,7 +157,7 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–6 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–7 (2026-10-23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)
@@ -168,6 +168,7 @@ Chunk 3 (2026-10-22), cited further in chunks 4–6 (2026-10-23). This source is
 * [High-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
+* [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mach 3 forward-facing step](/benchmarks/forward-facing-step.md)
 * [Multi-resolution WENO](/methods/multi-resolution-weno.md)
 * [Optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)

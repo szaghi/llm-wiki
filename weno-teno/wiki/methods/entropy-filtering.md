@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Entropy filtering for DG and FR"
-description: "Entropy filtering applies, after every Runge–Kutta stage, an elementwise exponential modal filter whose strength is the smallest making the nodal values positive and above a local entropy minimum, assuming the element mean already is; the page gives the filter, constraints, floors and tolerances, algorithm, Navier–Stokes split, ideal-MHD operator split and faster strength solve."
+description: "Entropy filtering applies, after every Runge–Kutta stage, an elementwise exponential modal filter whose strength is the smallest making the nodal values positive and above a local entropy minimum, assuming the element mean already is; the page gives the filter, constraints, floors and tolerances, algorithm, Navier–Stokes split, ideal-MHD split, faster strength solve and multi-species pressure-sensor switch."
 status: established
 aliases: [adaptive filtering, entropy-based adaptive filtering, positivity-preserving entropy filtering, constraint-driven modal filtering]
 tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, mhd]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Entropy filtering for DG and FR
@@ -197,6 +197,63 @@ smooth isentropic vortex; the 2023 figures are whole-run times of a 3D
 magnetized Rayleigh–Taylor instability. The two statements
 concern different problems *(compiler check, not in the sources)*.
 
+## Multi-species flows: switched entropy constraint
+
+[Trojak & Dzanic (2024)](/sources/trojak-2024.md) extend the filter to the
+conservative multi-species Euler and Navier–Stokes equations in thermal
+equilibrium, with partial densities $\rho Y_k$, $k=1,\dots,N_{\mathrm s}$
+(page-local species count), momentum and total energy, and the mixture
+$\gamma$ the partial-density-weighted ratio of $c_p$ to $c_v$ (§2.1,
+Eqs. (1)–(4), arXiv v1;
+[multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)).
+The discretization is nodal DG through FR in PyFR, as in the single-species
+papers (§4).
+
+**Constraints** (§3.1, Eqs. (22)–(25)). Positivity of $\rho$, of $p$ and of
+every $\rho Y_k$, plus the local minimum principle on the mixture entropy
+of Gouasmi et al., $s_{\mathrm{mix}}$ (page-local, as on the source page),
+in the physical sign convention (an entropy that increases). Positivity of $\rho$ is implied by that of the partial densities
+and is kept as a separate constraint only because of the numerical
+tolerances.
+
+**The switch.** Imposing the entropy constraint in every element, the
+"naive" extension, gives "exceedingly deficient approximations,
+particularly around species interfaces", where a smooth mixture density may
+hide discontinuous partial densities and the mixture entropy is
+numerically ill-behaved (§3.1, Figs. 1–2, 4). The entropy constraint is
+therefore enforced only in elements where a pressure-jump sensor, after the
+interface-jump convergence argument of Krivodonova et al., reaches one
+(Eqs. (25)–(27)):
+
+$$\mathcal S_K=\frac{\Big\lvert\int_{\partial K}\big(p^+-p^-\big)\,ds\Big\rvert}{h^{N+1}\,\lVert p^-\rVert_\infty\,\lvert\partial K\rvert}\ \ge1,$$
+
+with $p^-$ the trace of $K$, $p^+$ that of the neighbour, and the mesh scale
+$h$ the diameter of the $d$-ball with the surface area of $K$, $h=A/\pi$ in
+2D and $\sqrt{A/\pi}$ in 3D (Eq. (35); page-local $\mathcal S_K$, $h$, $A$). The
+rationale is that the jump is at least $O(h^{N+1})$ where the solution is
+smooth and $O(h)$ at a discontinuity, and that pressure is continuous across
+contacts and species interfaces, so the sensor isolates shocks (§3.2). The
+positivity constraints stay active everywhere, so positivity does not
+depend on the switch, whose purpose is accuracy at species interfaces
+(§3.1). The authors call the switch parameter-free.
+
+**Entropy functional and tolerances** (§4, Eqs. (31)–(33)). The constraint
+uses
+$s^*_{\mathrm{mix}}=\exp\big[\sum_kc_{v,k}\rho Y_k\log\big(\max(\epsilon_{\mathrm{tol}},\rho Y_k)^{1-\gamma_k}T\big)\big]$
+(page-local $c_{v,k}$, $\gamma_k$, temperature $T$, tolerance $\epsilon_{\mathrm{tol}}$), clipped so that it is
+defined at zero partial density; the authors report it "significantly
+improved" robustness and accuracy, and state that it keeps the local
+minimum principle because the exponential is strictly convex. One
+tolerance $\epsilon_{\mathrm{tol}}=10^{-5}$ is applied as $\rho-\epsilon_{\mathrm{tol}}$, $p-\epsilon_{\mathrm{tol}}$ and
+$s_{\mathrm{mix}}-s_{\mathrm{mix},\min}+\epsilon_{\mathrm{tol}}$, unless stated otherwise; for the partial
+densities it is added to the initial data instead. The strength solve is
+the Illinois root-bracketing method, at most 20 iterations, tolerance
+$10^{-8}$, with the structured filter matrices of Dzanic & Witherden
+(2023), §4.1; the Navier–Stokes split is that of the 2022 paper,
+followed by a positivity-only re-filter that is "very rarely" needed
+(§3.3). HLLC "was found to yield notably better results" than Rusanov (§4;
+no data shown). Runs used up to 40 NVIDIA V100 GPUs.
+
 ## Relation to other limiters
 
 - **Scaling limiter.** With the degenerate "filter" $H_j(\hat u_j)=\hat u_j$
@@ -259,6 +316,19 @@ except HLL for the blast, SSP-RK3, fixed $\Delta t$):
 | [magnetized blast](/benchmarks/mhd-blast-wave.md), pressure ratio $10^5$, $B_0=1000/\sqrt{4\pi}$ | $N=4$ on triangles, $h=1/200$ and $1/400$ | discontinuities resolved over one to two nodes; without positivity treatment "would diverge almost instantly" (Figs. 10–13) |
 | 3D magnetized [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) | $N=3$, $64\times64\times128$, $B_0=0$, $0.1B_c$, $0.5B_c$, cutoff field $B_c=\sqrt2$ (page-local) | well behaved in all three regimes; the field slows the growth (Figs. 14–16) |
 
+Multi-species (Trojak & Dzanic (2024), §5; HLLC, BR2, SSP-RK3 with fixed
+$\Delta t$; two species unless stated):
+
+| Test | Setup | Finding |
+|---|---|---|
+| near-vacuum [density wave](/benchmarks/density-wave-advection.md), minimum partial density $2\times10^{-12}$ | $N=1$–5, $8$–$512$ elements per direction, $t=1$ | $L^\infty$ density rates 2.28, 3.16, 3.93, 5.17, 6.61 with the switch and 2.28, 3.16, 3.93, 5.22, 6.47 with the entropy constraint everywhere, errors "nearly identical", order $N+1$ also at smooth extrema (Tables 1–2) |
+| [isentropic vortex](/benchmarks/isentropic-vortex.md) with a sinusoidal species field, run to $T=20$, velocity reversed, run to $2T$ | $N=4$, $20^2$–$80^2$ | without the switch the $80^2$ run is about as dissipated at the species interface as the $20^2$ run with it (Figs. 1–4) |
+| Quirk–Karni shock tube with a helium slab | $N=3$, 50–200 elements, $t=0.35$ | converges to a $5\times10^4$-element Godunov reference; the interface pressure oscillations of conservative schemes "were not visually noticeable" (Fig. 5) |
+| helium–air [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md), $M=1.22$ | $N=3$, unstructured triangles | "very good agreement" with Kundu's ninth-order upwind finite-difference schlieren at $t=0.25$, $0.39$ (Fig. 9) |
+| [triple-point problem](/benchmarks/triple-point-problem.md) | $N=3$, $2800\times1200$ | Kelvin–Helmholtz roll-up resolved (Fig. 11) |
+| 3D viscous [Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md), Atwood 1/2 | $N=3$, $32\times32\times64$, $\mu=10^{-4}$, $5\times10^{-5}$, $10^{-5}$ | kinetic-energy peak grows as $\mu$ falls on the same mesh, read as dissipation set by the physical viscosity (Fig. 12) |
+| [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), $\mathrm{Re}=1600$, two identical gases | $N=3$, $32^3$, $40^3$ | slightly lower enstrophy-based dissipation rate than the single-species run, more for a smooth than for a sharp species field, differences shrinking with resolution (Fig. 14) |
+
 ## Independent comparison on strong shocks
 
 [Peyvan et al. (2023)](/sources/peyvan-2023.md) use the filter as the
@@ -300,7 +370,14 @@ DGSEM blending parameter is "not problem dependent" (§4.2), with their
 Mach-10 Shu–Osher run at $10^{-4}$ as evidence (Fig. 2); they show no run
 with another threshold. A study of the same filtered scheme on several
 problems over a range of thresholds would decide it. (Peyvan et al.'s own
-blending cap $\alpha_{\max}=0.5$ is also user defined.)
+blending cap $\alpha_{\max}=0.5$ is also user defined.) A further data
+point, not a decision: [Trojak & Dzanic (2024)](/sources/trojak-2024.md),
+with a co-author of the 2022 paper, call their multi-species filter
+parameter-free, set the tolerance to $10^{-5}$ rather than $10^{-4}$, and for
+the near-vacuum density wave set $\epsilon_{\mathrm{tol}}=10^{-12}$ and state that "the
+tolerances and minimum density/pressure conditions for the scheme were
+also modified accordingly" (§4, §5.1.1); they show no run with the default
+tolerance on that problem.
 
 ## Qualifications
 
@@ -346,6 +423,28 @@ blending cap $\alpha_{\max}=0.5$ is also user defined.)
   (Dzanic & Witherden (2023), §3.2); the evidence is the tests. The
   Powell form is non-conservative, which the authors note can cause
   inaccurate predictions near discontinuities, after Tóth (§2.3).
+- **Multi-species: what the exponential preserves.** Trojak & Dzanic
+  justify $s^*_{\mathrm{mix}}$ by the strict convexity of the exponential (§4). A
+  lower bound $s_{\mathrm{mix}}(x_0)\ge\min s_{\mathrm{mix}}$ carries over to $g(s_{\mathrm{mix}})$ for any
+  increasing $g$, convex or not, so the operative property is monotonicity;
+  and because the clipping $\max(\epsilon_{\mathrm{tol}},\rho Y_k)$ acts only inside the
+  logarithm, $s^*_{\mathrm{mix}}$ equals $\exp(s_{\mathrm{mix}})$ only where every
+  $\rho Y_k\ge\epsilon_{\mathrm{tol}}$ *(compiler check, not in the sources)*. Their
+  tolerance enters as $s_{\mathrm{mix}}-s_{\mathrm{mix},\min}+\epsilon_{\mathrm{tol}}$, the sign of the 2022
+  tolerance, not the margin of the 2023 paper.
+- **Printed slips (Trojak & Dzanic (2024), arXiv v1).** The discrete
+  sensor (Eq. (34)) drops the absolute value of Eq. (27), so a negative
+  pressure jump would never trigger it, and sums over the solution nodes
+  where the interface nodes are meant. The "else" branch of Eq. (25) sets
+  the entropy constraint to $0$, while constraints are strict inequalities
+  $>0$; the text makes clear the constraint is dropped. The helium–air mesh
+  is described as "average edge lengths of $h/R=50$, 100, and 200", which
+  must be $R/h$ since resolution grows from coarse to fine. The
+  Taylor–Green pressure is printed with $\cos(2z+2)$; the pressure of that
+  velocity field has the factor $(\cos2z+2)$, as printed on the
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) page by its
+  other sources and by [Liang & Fu (2024b)](/sources/liang-2024-b.md), §4.10
+  *(compiler check, not in the sources)*.
 - **Printed slips (Dzanic & Witherden (2023), arXiv v2).** With the
   printed vortex data $\delta p=-\mu_{\mathrm v}^2(1+r^2)\phi(r)^2/(8\pi^2)$,
   $\phi=\exp(1-r^2)$ (page-local $\phi$, $\mu_{\mathrm v}=5.38948938512$, $r$ the radius;
@@ -379,3 +478,5 @@ blending cap $\alpha_{\max}=0.5$ is also user defined.)
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1.2; §2.2 (exponential damping of modes, for comparison); Rem. 2.3.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.1 Eq. (5); §2.3 Eqs. (17)–(19); §3.1 Eqs. (21)–(22); §3.2 Eqs. (29)–(34); §4, §4.1 Eqs. (35)–(37); §5 Tables 1–2, Figs. 2–17.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — arXiv v1: §1; §4.1–4.3 (Figs. 1–3); §4.5.1; §5.
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §2.1 Eqs. (1)–(4); §3.1–3.3 Eqs. (22)–(30); §4 Eqs. (31)–(35); §5 Tables 1–2, Figs. 1–5, 9, 11, 12, 14.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4.10 (Taylor–Green pressure, for comparison).

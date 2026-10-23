@@ -5,7 +5,7 @@ description: "A semi-discretization is kinetic-energy-preserving when its convec
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Kinetic energy preservation
@@ -349,8 +349,59 @@ that split-form DGSEM with the Chandrashekar flux plus subcell finite-volume
 blending is more stable on under-resolved turbulence with shocks than
 standard DGSEM/FV, and needs less low-order blending (§4).
 
+## KEP fluxes inside shock-capturing hybrids
+
+Two sources use a KEP central flux where the flow is smooth and switch in
+dissipation elsewhere, so the full scheme is KEP only where the switch is
+off:
+
+- **Eight-point skew-symmetric flux with TENO.**
+  [Liang & Fu (2024b)](/sources/liang-2024-b.md) take the Kennedy–Gruber
+  triple-average two-point flux in Pirozzoli's high-order conservative form
+  with dispersion-optimized sixth-order coefficients, and replace it by a
+  characteristic-wise eight-point [TENO](/methods/targeted-eno.md) flux
+  where a TENO-type indicator flags the stencil (§2.3, §3.1–3.2;
+  [split convective forms](/methods/split-convective-forms.md),
+  [hybrid schemes](/methods/hybrid-weno.md)). Its mass flux is
+  $\overline\rho\,\overline v$ and its momentum flux
+  $\overline\rho\,\overline v\,\overline v$ for every pair of the sum (Eq.
+  (30)), i.e. mass flux times the arithmetic mean velocity, so each
+  two-point term meets the face-flux condition above whatever the central
+  weights *(compiler check, not in the sources)*. On the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $64^3$ to
+  $t=100$ the hybrid keeps the total kinetic energy, to plotting accuracy,
+  while WENO-CU6, TENO6 and TENO8 dissipate it after $t\approx5$ (§4.10,
+  Figs. 17–18). The authors attribute this to the "non-dissipative"
+  skew-symmetric branch; the time integrator is SSP-RK3 at CFL 0.4 (§4).
+- **KEP central flux with switched AUSM dissipation on unstructured
+  meshes.** [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) extend an
+  OpenFOAM solver of Modesti & Pirozzoli to multi-species ideal and real
+  gases. The convective face flux is Pirozzoli's triple product
+  $\tfrac18(\rho_O+\rho_N)(\tilde q_O+\tilde q_N)(v_O+v_N)\cdot n$ between the
+  owner and neighbour cell centres (page-local $O$, $N$ and transported
+  vector $\tilde q=(1,v,H,Y_k)$), which they state preserves total kinetic
+  energy semi-discretely, "as proved" by Pirozzoli, giving "strong nonlinear
+  stability" (§2, Eq. (6)). AUSM$^+$-up dissipation is added to the
+  convective part where a compression-only
+  [Ducros-type sensor](/definitions/ducros-shock-sensor.md) exceeds 0.05
+  (Eqs. (7)–(8)). They recall that earlier low-diffusion variants of
+  OpenFOAM's central solver do not guarantee discrete kinetic-energy
+  conservation (§1). The paper runs no kinetic-energy test.
+
 ## Qualifications
 
+- Duronio & Di Mascio print the pressure dissipation
+  $\mathbf F^D_p=I_P\mathbf F^{\mathrm{AUSM}}_p$ without the sensor factor
+  that multiplies the convective dissipation (Eq. (8)); read as printed it
+  acts everywhere, so the scheme as run would not be KEP even where the
+  sensor is off *(compiler check, not in the sources)*. The species
+  components extend the transported vector but leave mass and momentum
+  fluxes, hence the kinetic-energy argument, unchanged.
+- Liang & Fu's kinetic-energy conservation in the inviscid Taylor–Green
+  vortex is shown as a plotted curve; their Eq. (30) and Algorithm 1 write
+  the energy flux differently (see
+  [split convective forms](/methods/split-convective-forms.md)), which does
+  not affect the mass and momentum fluxes that the KEP property involves.
 - Coppola & Veldman's theory is for periodic 1D grids and the convective
   terms only. It is not an entropy analysis: "kinetic energy" there is the
   generalized quadratic $\tfrac12\rho\phi^2$.
@@ -378,3 +429,5 @@ standard DGSEM/FV, and needs less low-order blending (§4).
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §1, §3.2 Thms. 3.1–3.2 Eqs. (43)–(52), §3.3 Lemma 3.1, §3.5 Eq. (58), §4.1–4.2 Figs. 2–8, §5, §6, App. D Fig. 14 (arXiv v1).
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §2.2, §3.1–3.4 Eqs. (10)–(28), §4.1 Eq. (31), §4.2, §4.2.2, §5, §6, Table 3 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §2 Eqs. (2)–(4), §5 Fig. 1 (arXiv v2).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (25)–(30), §3.1–3.2 Algorithm 1, §4, §4.10 Figs. 17–18.
+- [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §1, §2 Eqs. (4)–(8).

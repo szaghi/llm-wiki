@@ -141,7 +141,7 @@ unparseable items.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
@@ -151,6 +151,7 @@ Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cite
 * [IMEX Runge–Kutta schemes](/methods/imex-runge-kutta.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
+* [Magnetic field-loop advection](/benchmarks/field-loop-advection.md)
 * [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
 * [Semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)

@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Well-balancing"
-description: "A scheme for a balance law is well-balanced if it preserves a steady state such as the lake at rest, a moving-water equilibrium or a hydrostatic atmosphere exactly; in this bundle it follows from affine- or scale-invariant WENO interpolation, stationary-contact-preserving fluctuations, equilibrium variables, flux globalization, hydrostatic reconstruction for Euler with gravity, and evolution of the deviation from a known equilibrium."
+description: "A scheme for a balance law is well-balanced if it preserves a steady state exactly, such as the lake at rest, moving water, a hydrostatic atmosphere or a stationary wave at a singular source; the sources obtain it from invariant WENO interpolation, stationary-contact-preserving fluctuations, equilibrium variables, flux globalization, hydrostatic reconstruction, deviation evolution and source-aware interface flux pairs."
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Well-balancing
@@ -211,6 +211,91 @@ explain by the limit equation sharing the steady state and by the NWB scheme
 being asymptotic preserving; in long runs ($T=100$) the NWB scheme drifts at
 $\varepsilon=1$ and oscillates at $\varepsilon=0.1,0.01$.
 
+## Staggered grids: hydrostatic reconstruction with dry areas
+
+[Goudon & Minjeaud (2024)](/sources/goudon-2024.md) carry hydrostatic reconstruction to an
+explicit **staggered** finite-volume scheme for the barotropic Euler equations with a potential
+source, $\partial_t\rho+\partial_x(\rho v)=0$, $\partial_t(\rho v)+\partial_x(\rho v^2+p(\rho))=-\rho\,\partial_xz$
+(page-local potential or topography $z$; shallow water is $p=\rho^2/2$). Densities live on
+primal cells, $\rho_{j+1/2}$, velocities at the nodes, $v_j$ (page-local: in this paragraph a
+half index is a density cell, an integer index a velocity node). With the enthalpy-like
+potential $\mathcal E(\rho)=p(\rho)/\rho+\int_0^\rho p(s)s^{-2}ds$ (page-local, not the vortex strength; $\mathcal E(\rho)=\rho$
+for shallow water), the rest states including dry shores are
+$v=0$, $\mathcal E(\rho)+z=\max(\eta_{\mathrm l},z)$ for a level $\eta_{\mathrm l}$ (page-local; Eq. (2)).
+The construction (§2.2, Eqs. (14)–(18)):
+
+- $z_j=\max(z_{j+1/2},z_{j-1/2})$ and reconstructed densities at the node,
+  $\mathcal E(\rho^r_j)=[\mathcal E(\rho_{j+1/2})+z_{j+1/2}-z_j]_+$,
+  $\mathcal E(\rho^\ell_j)=[\mathcal E(\rho_{j-1/2})+z_{j-1/2}-z_j]_+$, fed into the kinetic-type split
+  mass fluxes and the upwinded momentum fluxes;
+- the discrete source $S_j=p(\rho^r_j)-p(\rho_{j+1/2})-p(\rho^\ell_j)+p(\rho_{j-1/2})$, so that
+  centred pressure plus source collapse to $p(\rho^r_j)-p(\rho^\ell_j)$.
+
+At a discrete rest state $\mathcal E(\rho^r_j)=\mathcal E(\rho^\ell_j)=[\eta_{\mathrm l}-z_j]_+$, so
+$\rho^r_j=\rho^\ell_j$, and all mass fluxes, momentum fluxes and pressure-plus-source vanish,
+dry areas included; the positive part is what makes the dry case work (§2.2, proved). The scheme
+is first-order consistent, also near dry cells when $\lim_{\rho\to0}p''\ne0$ (Remark 2.1), keeps
+the density non-negative under a CFL condition, and satisfies a **semi-discrete** entropy
+inequality; a fully discrete one is left open, the authors noting that for collocated
+hydrostatic-reconstruction schemes it holds only up to a vanishing error or with added
+viscosity (pp. 1272–1275; [entropy stability](/properties/entropy-stability.md)). For shallow
+water far from dry areas, $S_j=\tfrac12(\rho_{j+1/2}+\rho_{j-1/2})\,\delta z_j-\tfrac12(\rho^r_j-\rho^\ell_j)\lvert\delta z_j\rvert$
+with $\delta z_j=z_{j+1/2}-z_{j-1/2}$ (Eq. (19)).
+
+The **second-order** version reconstructs $\rho$ and $\mathcal E(\rho)+z$ linearly
+([MUSCL](/methods/muscl-hancock.md)), derives interface topographies from the two
+reconstructions, and adds $+\tfrac12(\rho^r_j-\rho^\ell_j)\lvert\delta z_j\rvert$ to the source to remove
+the first-order defect of Eq. (19) (Eq. (36)); for shallow water away from dry areas the source
+then reduces to the centred $\tfrac12(\rho_{j+1/2}+\rho_{j-1/2})\,\delta z_j$. Rest states with and
+without dry areas are still preserved, by limiter properties and a four-case argument (§2.3).
+Moving-water steady states are not preserved: the error is proportional to the mesh size,
+visible on the discharge (§3.3).
+
+**Evidence** (§3): lake at rest without and with a dry zone for $\gamma\in\{1.4,2,3,4\}$ kept at
+machine precision up to $T=1500$ and $T=1000$; convergence to the rest state from constant data;
+LeVeque's perturbed lake at rest for $\gamma=1.4,2,3$; flow over a bump in four regimes and two
+tests of Castro et al., with second-order $L^1$ convergence on the smooth ones; a wet/dry front
+over a step; and the 2D Thacker paraboloid, observed order 1.8
+([flow over a bump and lake at rest](/benchmarks/flow-over-a-bump.md)).
+
+## Singular sources: an interface flux pair
+
+For the 1D Euler equations with a Dirac-delta source at $x=0$,
+$\partial_tu+\partial_xf(u)=\delta_{\mathrm D}(x)\,S$ with $S=\mathrm{diag}(k_1,k_2,k_3)f(u(0^\mp))$
+taken upwind (page-local symbols), the equilibria are single **stationary waves**, jumps fixed at
+$x=0$ with $f(u^-)+S=f(u^+)$, $u^\mp=u(0^\mp)$, $u^+$ on a subsonic or supersonic branch of a
+stationary-wave curve of $u^-$ and the one-sided Mach numbers in admissible sets
+([Yu, Liu & Feng (2023)](/sources/yu-2023.md), §2.1, Table 1; the admissibility criterion and the
+classification of Riemann solutions are taken from the authors' companion preprint). They
+define a scheme as well-balanced if it keeps every such stationary wave, placed on a cell
+interface, unchanged (Def. 3.1; also "C-property").
+
+- **Splitting fails.** Convection followed by an exact source step is not well-balanced for any
+  $\Delta t>0$ (Thm. 3.1; [operator splitting](/methods/operator-splitting.md)).
+- **Sufficient condition.** An unsplit conservative scheme with two one-sided fluxes at the
+  source interface $x_{i_0+1/2}=0$, $\hat f_{i_0+1/2,-}$ for the left cell and $\hat f_{i_0+1/2,+}$
+  for the right one, whose difference approximates the time-integrated source, is well-balanced if
+  $\hat f_-(u^-,u^+)=f(u^-)$ and $\hat f_+(u^-,u^+)=f(u^+)$ for every admissible stationary pair,
+  ordinary consistency holding elsewhere (Eqs. (3.18)–(3.23), Thm. 3.2).
+- **Kröner–Thanh flux.** Two classical Riemann problems, each with one side mapped across the
+  stationary wave, satisfy the condition (Thm. 4.1), but their fluxes are "unavailable" when a
+  one-sided Mach number leaves its admissible set (Thm. 4.2, stated without proof), and the two
+  fluxes may use different branches of the discontinuous stationary-wave curve. In choked cases
+  (a sonic state next to the stationary wave) the scheme runs only with ad hoc corrections and
+  oscillates or gives wrong solutions (§4.1, §5, Tests 4–7).
+- **Solution-structure based solver.** Predicting the structure of the Riemann solution (five of
+  seven types; the two limit types are left out) and computing the states $\tilde u^\mp$ (page-local) at
+  $x/t=0^\mp$, by bisection on a pressure function for the non-choked type with a subsonic left
+  state, gives a solver that is exact on any single stationary wave (Lemma 4.1), hence fluxes
+  $f(\tilde u^\mp)$ that make the scheme well-balanced (Thm. 4.3), with both fluxes on the same
+  branch by construction (§4.2).
+
+**Evidence** (§5; third-order RKDG with a characteristic TVD limiter, local Lax–Friedrichs away
+from the source, $\gamma=1.4$, $\Delta x=0.05$): the single stationary wave is kept by the Kröner–Thanh
+and the present scheme, not by splitting; on Riemann problems of the seven types the present
+scheme agrees with the exact solutions, including the choked ones where Kröner–Thanh fails. No
+round-off magnitude, error table or convergence study is printed.
+
 ## Euler with gravity: WB from scale invariance
 
 [Li et al. (2023a)](/sources/li-2023.md) (§4, after the methodology of Li and Gao) make a
@@ -307,8 +392,19 @@ sense only.
   or a supplied hydrostatic state (Wang & Don, Li et al. (2023a), Arun et al., Kanbar et al.) to
   every discrete state of constant equilibrium variables (Kurganov et al.) or of constant
   global-flux averages (Ciallella et al.); the last two are fully discrete notions, and
-  Ciallella et al. say explicitly that theirs differ from the analytical equilibria. Claims are
-  comparable only within one notion.
+  Ciallella et al. say explicitly that theirs differ from the analytical equilibria. Goudon &
+  Minjeaud preserve the lake at rest including dry areas, not moving water; Yu et al. preserve
+  single stationary waves at a singular source, discontinuous equilibria by construction. Claims
+  are comparable only within one notion.
+- Goudon & Minjeaud print the shallow-water relation as $\rho^r_j=\rho_{j+1/2}-[\delta z_j]_-$
+  (p. 1269), with $[a]_-=\min(0,a)$. From their Eqs. (14)–(15) with $\mathcal E(\rho)=\rho$, the case
+  $\delta z_j\le0$ gives $z_j=z_{j-1/2}$ and $\rho^r_j=\rho_{j+1/2}+\delta z_j$, so the sign should be
+  $+$; their Eq. (19) holds with $+$ in both sign cases *(compiler check, not in the sources)*.
+  They also print the second-order source correction with a minus on p. 1277 where Eq. (36) and
+  the subsequent expansions carry a plus.
+- Yu et al. (arXiv v1) print the singleton and empty cases of their stationary-wave curve
+  (Property 2.1) on Mach ranges that are the complements of the admissible sets of their
+  Table 1; their Algorithm 1 tests the left state with the ranges of Table 1 (Eq. (4.4)).
 
 # Citations
 
@@ -321,3 +417,5 @@ sense only.
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1, §4 (Theorem 4.1, Eqs. (4.13)–(4.16)), §7 (Table 7.1).
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §1, §3 (Props. 3.1, 3.3, Remark 3.2), §5 (Table 1, §5.3) (author manuscript).
 - [Calhoun et al. (2023)](/sources/calhoun-2023.md) — §1, §4.6 (Fig. 16), Conclusions (arXiv v2).
+- [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.3 (Eqs. (2), (14)–(19), (26)–(36), Remark 2.1), §3 (Figs. 3–24) (HAL wrap of the version of record).
+- [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §2.1 (Table 1, Property 2.1), §3 (Def. 3.1, Thms. 3.1–3.2, Eqs. (3.18)–(3.23)), §4 (Thms. 4.1–4.3, Lemma 4.1, Alg. 1), §5 (arXiv v1).

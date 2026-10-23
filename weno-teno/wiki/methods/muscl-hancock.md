@@ -5,7 +5,7 @@ description: "MUSCL reconstructs limited piecewise-linear states from cell avera
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
 tags: [reconstruction, limiting, finite-volume, riemann-solver]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
@@ -72,6 +72,33 @@ the predictor not written out. Nguyen et al. do not use the Hancock step: they a
 primitive variables with three-stage [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) through the
 inverse Jacobian $[\partial u/\partial w]^{-1}$ (Eqs. (29)–(30); page-local primitive vector $w$).
 
+**Quasilinear predictor on subcells.** In the a posteriori subcell limiter of the
+primitive-variable ADER-DG scheme of [Gaburro et al. (2024)](/sources/gaburro-2024.md)
+(§3.4, Eqs. (38)–(39)), the troubled subcells are recomputed by a MUSCL–Hancock scheme on
+triangles, "equivalent to a second order ADER-FV scheme", written for the primitive vector
+$w$ with its quasilinear matrices $A_{\mathrm p}$, $B_{\mathrm p}$ in $x$ and $y$ (page-local):
+the predictor is
+$\tilde w=w^n-(A_{\mathrm p}S_x+B_{\mathrm p}S_y)(t-t^n)+S_x(x-x_c)+S_y(y-y_c)$, $(x_c,y_c)$
+the subcell barycentre, i.e. the time derivative is taken from the quasilinear system rather
+than from flux differences; the slopes $S_x$, $S_y$ are chosen variable by variable by an ENO
+rule, the candidate minimizing $S_x^2+S_y^2$. The corrector adds a volume term at
+$t^{n+1/2}$ and [path-conservative](/methods/path-conservative-scheme.md) fluctuations at the
+edge midpoints and $t^{n+1/2}$. In subcells flagged by their shock sensor the same predictor
+feeds a **conservative** corrector, a Rusanov flux on the conserved variables (Eq. (67)),
+which removes the conservation defect there (§4.4;
+[Lax–Wendroff theorem](/results/lax-wendroff-theorem.md),
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
+
+**Reconstructing an equilibrium variable.** The second-order well-balanced staggered scheme
+of [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) (§2.3) is MUSCL-type without a Hancock
+step: it reconstructs linearly the density, the equilibrium variable $\mathcal E(\rho)+z$
+($\mathcal E$ the enthalpy-like potential, $z$ the topography or force potential, page-local)
+and the velocity on the dual mesh; interface topography values
+$z^\pm=(\mathcal E(\rho)+z)^\pm-\mathcal E(\rho^\pm)$ follow from the first two reconstructions; the limiters are called
+"completely standard" and not specified, and only a forward-Euler step is written. The
+reconstructed values feed hydrostatic reconstructions, and the source term needs a correction
+to stay second order (see [well-balancing](/properties/well-balancing.md)).
+
 ## Where the sources use it
 
 | Source | Solver and setting | Riemann solver | Contribution built on it |
@@ -81,6 +108,9 @@ inverse Jacobian $[\partial u/\partial w]^{-1}$ (Eqs. (29)–(30); page-local pr
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) | $N$-phase pressure–temperature equilibrium model | Rusanov, HLLC | MUSCL $\kappa_{\mathrm M}=1/3$ with compressive limiters (no Hancock step) |
 | [Hu et al. (2022)](/sources/hu-2022.md) | Cartesian FV, Euler, dimension by dimension | HLLE, HLLEM, HLLC, RHLLEM | second-order MUSCL with second-order TVD Runge–Kutta, no Hancock step; MUSCL interface densities compete with THINC ones in a face-wise BVD selection ([HLL-family solvers](/methods/hll-riemann-solvers.md)) |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) | IDEFIX, HD and MHD on primitive variables | Rusanov, HLL, HLLC/HLLD, Roe | piecewise-linear reconstruction with the van Leer limiter (second order) beside LimO3 and PPM, with explicit RK2/RK3 ([IDEFIX](/software/idefix.md)) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) | subcell limiter of primitive-variable ADER-DG, polygonal meshes, single- and multi-material Euler | path-conservative fluctuations; Rusanov in shock subcells | quasilinear Hancock predictor with ENO slopes; conservative corrector in shock-flagged subcells |
+| [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) | staggered barotropic Euler and shallow water | kinetic-type split mass fluxes (no Riemann solver) | MUSCL on $\rho$ and $\mathcal E(\rho)+z$, well-balanced lake at rest including dry areas |
+| [Başkaya et al. (2024)](/sources/baskaya-2024.md) | US3D (body-fitted) and CHESS (ghost-cell IB), reacting hypersonic flow | modified Steger–Warming; Steger–Warming flux-vector splitting | second-order MUSCL as the reference and the ghost-cell discretizations of an immersed-boundary assessment ([immersed boundaries](/methods/immersed-boundary-method.md)) |
 
 Chemistry enters Peng et al.'s scheme by second-order Strang splitting with a semi-implicit
 fourth-order generalized Runge–Kutta integrator, GRK4A (§2.1); see
@@ -101,6 +131,14 @@ shows proper second order convergence for all of the resolutions we have tested"
 - Peng et al.'s manufactured-solution test on stretched, skewed and distorted meshes with three
   static refinement levels (§3.1, Fig. 5) is read by the authors as second order; the paper
   prints no observed orders, only error curves against a second-order slope.
+- Goudon & Minjeaud's second-order scheme reaches second-order $L^1$ accuracy on subcritical
+  and supercritical shallow-water flow over a bump (§3.3.1, Fig. 13) and on a smooth steady
+  test of Castro et al. (§3.3.4, Figs. 18–19), not on their transcritical test with a stationary
+  shock, where the authors blame the shock and the limiter (Figs. 20–21), and gives an observed
+  order of 1.8 on the 2D Thacker paraboloid (§3.5, Fig. 24).
+- Gaburro et al. measure the order of the unlimited DG scheme only (their limiter never
+  activates on the smooth vortex, §5.1.1), so their MUSCL–Hancock subcell scheme has no
+  measured order.
 - Wang et al.'s Prandtl–Meyer tests give boundary-region $L_2$ entropy orders between 1.13 and 1.37
   (1.36, 1.37, 1.35, 1.33 at deflections 20°–50° with their hybrid ghost-cell method, 1.13–1.25
   with the other two ghost-cell variants, Table 1), the order of the coupled scheme near an immersed wall, which they compare with
@@ -122,3 +160,6 @@ shows proper second order convergence for all of the resolutions we have tested"
 - [Wang et al. (2022a)](/sources/wang-2022.md) — §2.1 (Eqs. (4)–(11)), §3.3 (Table 1), §3.6.
 - [Hu et al. (2022)](/sources/hu-2022.md) — §2.1, §4.2, §5.
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §2.3, §4.2 (Figs. 7–8).
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §3.4 (Eqs. (38)–(39)), §4.4 (Eq. (67)), §5.1.1 (arXiv v1).
+- [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.3, §3.3, §3.5 (HAL wrap of the version of record).
+- [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.1–3.2 (author preprint).

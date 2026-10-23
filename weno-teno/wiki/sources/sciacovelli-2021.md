@@ -134,7 +134,7 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–6 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–7 (2026-10-22/23). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Convex limiting and invariant-domain-preserving schemes"
-description: "Convex limiting blends a high-order update with a bound-preserving low-order update, adding as much antidiffusive flux as target bounds allow; the page gives the FCT form, graph viscosity and bar states, sparse low-order DG operators (Pazner; Navier–Stokes and simplices), Zalesak and convex limiters, element- versus subcell-wise blending, bound relaxation, and subcell Rusanov finite volumes as sparse IDP DG."
+description: "Convex limiting blends a high-order update with a bound-preserving low-order update, adding as much antidiffusive flux as target bounds allow; the page gives the FCT form, graph viscosity and bar states, sparse low-order DG operators, Zalesak and convex limiters, element- versus subcell-wise blending, bound relaxation, subcell Rusanov finite volumes as sparse IDP DG, and semi-discrete monolithic convex limiting."
 status: established
-aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting]
+aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -242,6 +242,134 @@ describes the nodes as subcell-centred values but does not state the
 equivalence (§4.1.3). The equivalence is why the bar-state bounds can
 always be met for that low-order scheme: on the Mach 4 bow shock they hold
 to machine precision (§5.2.2).
+[Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (§2.2.1,
+Eqs. 9–13, arXiv v1) restate the scheme in bar-state form,
+$u^{\mathrm{FV},n+1}_i=\big(1-\tfrac{\Delta t}{J\mathsf w_i}(a_{(i,i-1)}+a_{(i,i+1)})\big)u^n_i+\tfrac{\Delta t}{J\mathsf w_i}\big(a_{(i,i-1)}\breve u_{(i,i-1)}+a_{(i,i+1)}\breve u_{(i,i+1)}\big)$,
+with $a_{(i,j)}$ an upper bound of the maximum wave speed of the Riemann
+problem between nodes $i$ and $j$, and note that the Rusanov bar state
+is the HLL intermediate state, which is why it lies in every convex
+invariant set ([HLL-family solvers](/methods/hll-riemann-solvers.md)).
+
+## Monolithic convex limiting
+
+[Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (§2.2, arXiv
+v1) transfer Kuzmin's monolithic convex limiting (MCL), designed for
+continuous finite elements and extended by Hajduk to Bernstein-basis DG,
+to the LGL [DGSEM](/methods/dgsem.md). The LGL-DGSEM is first written in
+subcell [flux-differencing](/methods/flux-differencing.md) form with
+explicit symmetric subcell fluxes $\hat f^{\mathrm{DG}}_{(i,i+1)}$ between
+neighbouring nodes (Eqs. 5–8), and the compatible low-order scheme is the
+Rusanov subcell scheme above. For the LGL nodes this needs no
+sparsification of the derivative operator, no graph Laplacian and no
+linear solve; for Bernstein DG with $N>1$ the same form requires solving
+$n_{\mathrm{eq}}$ linear systems of size $N+1$ per element and
+Runge–Kutta stage (Remark 2). The limited semi-discretization is
+$$J\mathsf w_i\,\dot u_i=\hat f_{(i-1,i)}-\hat f_{(i,i+1)},\qquad
+\hat f_{(i,j)}=\hat f^{\mathrm{FV}}_{(i,j)}+(1-\alpha_{(i,j)})\big(\hat f^{\mathrm{DG}}_{(i,j)}-\hat f^{\mathrm{FV}}_{(i,j)}\big)$$
+(Eqs. 14–15, in this page's convention for $\alpha$; the source's factor,
+1 for the high-order flux, is $1-\alpha$). With the antisymmetric
+antidiffusive flux $\Delta\hat f_{(i,j)}=(i-j)\big(\hat f^{\mathrm{DG}}_{(i,j)}-\hat f^{\mathrm{FV}}_{(i,j)}\big)$
+the high-order update takes the bar-state form with **high-order bar
+states** $\breve u_{(i,j)}+\Delta\hat f_{(i,j)}/a_{(i,j)}$ (Eq. 19). MCL
+limits $\Delta\hat f$ so that the **limited bar states**
+$\breve u_{(i,j)}+\Delta\hat f^{\mathrm{Lim}}_{(i,j)}/a_{(i,j)}$ satisfy
+the bounds (Eq. 21). The constraints are imposed on the
+semi-discretization, before any time step: the limited flux depends on
+the state only, and the nonlinear spatial operator is independent of
+$\Delta t$, unlike the FCT/IDP form above, whose antidiffusive correction
+and bounds depend on the step (§2.2.2, §2.2.4).
+
+All correction factors are in closed form (Remark 9):
+
+- **Conserved scalar** (Eqs. 22–24). With bounding fluxes
+  $\Delta\hat f^{\rho,+}_{(i,j)}=a_{(i,j)}\min\{\rho^{\max}_i-\breve\rho_{(i,j)},\ \breve\rho_{(i,j)}-\rho^{\min}_j\}$
+  and
+  $\Delta\hat f^{\rho,-}_{(i,j)}=a_{(i,j)}\max\{\rho^{\min}_i-\breve\rho_{(i,j)},\ \breve\rho_{(i,j)}-\rho^{\max}_j\}$,
+  the limited flux is $\min\{\Delta\hat f^\rho,\Delta\hat f^{\rho,+}\}$ if
+  $\Delta\hat f^\rho\ge0$ and $\max\{\Delta\hat f^\rho,\Delta\hat f^{\rho,-}\}$
+  otherwise, which guarantees the two-sided bounds on both bar states of
+  the interface and is a convex blend of the FV and DG fluxes. Computing
+  $\alpha$ explicitly is "unnecessary and numerically ill posed" for small
+  denominators.
+- **Ratios** (sequential limiting, Eqs. 25–30). For
+  $\phi=(\rho\phi)/\rho$ (velocity components, specific total energy) the
+  density flux is limited first, then an auxiliary flux built from the
+  discrete product rule keeps the limited $\phi$ bar states in their
+  bounds; with LGL nodes the low-order bar state of $\phi$ is symmetric,
+  $\breve\phi_{(i,j)}=\breve{(\rho\phi)}_{(i,j)}/\breve\rho_{(i,j)}$, which the authors list as an
+  advantage over Bernstein-basis DG. The factor this induces on the
+  conserved flux of $\rho\phi$ "does not necessarily lie in the range
+  [0,1]" (Remark 8).
+- **Pressure positivity** (Eqs. 31–36). One factor for all components of
+  an interface turns positivity of $\rho(\rho E)-\tfrac12\lvert\rho v\rvert^2$
+  at the limited bar states into a quadratic inequality in the factor;
+  with $\alpha^2\le\alpha$ on $[0,1]$ a linear sufficient condition gives
+  it in closed form ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)
+  for the same algebra). A "sharp" variant uses the exact linear
+  coefficient, a "cautious" one an upper bound of it, chosen for
+  continuous dependence on the data; on the high-Mach jet the cautious
+  variant suppresses the vortical structures of the shear layer that the
+  sharp one lets develop (Fig. 9).
+- **Entropy** (Eqs. 37–39, after Kuzmin, Hajduk and Rupp). One factor
+  per interface enforces Tadmor's shuffle condition
+  $[\![w]\!]\cdot\hat f_{(i,j)}\le[\![\psi]\!]$ on the limited flux
+  ([entropy stability](/properties/entropy-stability.md)).
+
+**Bounds** (§2.2.3). Global bounds are physical admissibility
+($\rho\ge0$, $p\ge0$); local bounds are the extrema of the low-order bar
+states around a node, $\phi^{\min}_i=\min_{j\in\{i-1,i,i+1\}}\breve\phi_{(i,j)}$
+with $\breve\phi_{(i,i)}=\phi_i$ (Eq. 41), which makes the constraints
+always feasible. Bounds taken from the next-step low-order solution, the
+FCT/IDP choice, are more dissipative but can relax the time step. The
+paper uses the tight bounds (41) for both MCL and FCT/IDP, without
+relaxation.
+
+**Time step** (§2.2.4, Eqs. 43–45). Bar-state constraints, in MCL and in
+FCT/IDP, require
+$\Delta t\lesssim\min_i m_i/\big(2\sum_da^{(d)}_i\big)$ ($m_i$ the
+diagonal mass entry, $a^{(d)}_i$ the largest wave speed at node $i$ in
+direction $d$; page-local), more restrictive than the usual low-order
+condition $\Delta t\lesssim\min_i\min_d\Delta x^{(d)}_i/a^{(d)}_i$,
+"especially for multiple space dimensions". To the authors' knowledge
+the only way to circumvent it while keeping the bounds is FCT/IDP without
+bar-state bounds.
+
+**Evidence** (§3, Euler in Trixi.jl, LGL-DGSEM with Ranocha's
+entropy-conservative and kinetic-energy-preserving volume flux unless
+stated; [Trixi.jl](/software/trixi-jl.md)).
+
+- **Accuracy.** On a 2D [density wave](/benchmarks/density-wave-advection.md)
+  with only the positivity bounds, the mean experimental orders over
+  $N_e=4\to32$ elements per direction are 4.16 ($N=3$) and 4.75 ($N=4$);
+  with the tight local bounds they are 1.82 and 1.61, "at most second
+  order, independent of the polynomial degree" (Tables 1–4).
+- **Robustness.** On the [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
+  ($N=7$, $64^2$ elements, $t=10$) MCL with strict positivity and FCT/IDP
+  with the relative bounds $\rho\ge0.1\rho^{\mathrm{FV}}$,
+  $p\ge0.1p^{\mathrm{FV}}$ both reach the final time with "remarkably
+  similar looking results"; FCT/IDP needs the positive fraction, "as
+  otherwise some nodes might get an invalid vacuum state" (Fig. 1). Local
+  bounds add dissipation in both (Fig. 2).
+- **Limiter variants.** On the [Sedov blast wave](/benchmarks/sedov-blast-wave.md)
+  ($N=3$, $64^2$, Chandrashekar volume flux) the sequential limiter with
+  local bounds followed by the pressure and entropy limiters leaves
+  "artifacts at the shock front"; limiting the density first and applying
+  its effective factor to all conserved fluxes removes these
+  "Carbuncle-like artefacts" ([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md));
+  adding the sequential limiter after it is "clearly more dissipative"
+  (§3.4, Figs. 5–7).
+- **Dependence on the time step.** On a [high-Mach jet](/benchmarks/high-mach-astrophysical-jet.md)
+  (jet Mach number 2156.91, $N=3$, $256^2$, $t=10^{-3}$) the number of MCL
+  steps is 10284, 20568, 41138 and 102844 at CFL 0.9, 0.45, 0.225 and
+  0.09, a constant CFL × steps of about 9256, while FCT/IDP takes 10758,
+  25608, 71577 and 241974 steps (CFL × steps from 9682 to 21778)
+  *(compiler check, not in the sources: the products)*. The FCT/IDP solution changes markedly with CFL:
+  a smaller step limits less, lowers $\rho_{\min}$ from $4.43\times10^{-3}$
+  to $7.11\times10^{-4}$ and raises $p_{\max}$ from 172640 to 228165,
+  which raises the sound speed and shortens the step further, a "feedback
+  effect" (Table 5, Fig. 8). The authors conclude that "time convergence
+  can be expected for MCL but not for FCT schemes in problems that need
+  stabilization" (§4).
 
 ## A nonlinear relative: constraint-driven modal filtering
 
@@ -344,6 +472,36 @@ nodes (Pazner, §3.1).
   calls "consistent with other results reported in the literature" (§5.1), and the design order returns only
   where the bounds are relaxed to global ones (Table 1). Pazner recalls that
   TVD schemes are at most first order at smooth extrema (§4.4).
+  Rueda-Ramírez et al. (2024) measure the second-order version of the
+  barrier with MCL on tight bar-state bounds (mean orders 1.82 and 1.61
+  for $N=3$, 4) and the design order with global bounds (4.16, 4.75), and
+  name smoothness indicators as a way to relax the bounds (§2.2.3, §3.1).
+  First order (Pazner, strict bar-state bounds on advection) and second
+  order (Rueda-Ramírez et al., local bounds on the Euler density wave) are
+  measured on different tests and limiters, and both lie at or under
+  Kuzmin & Vedral's barrier.
+- **Time-step independence, one test.** The claim that MCL converges in
+  time and FCT/IDP does not (Rueda-Ramírez et al. 2024, §2.2.4, §4) rests
+  on the jet test; the authors add that the dependence of FCT/IDP on the
+  step "may be an advantage or a disadvantage" depending on the
+  application.
+- **Printed slips of Rueda-Ramírez et al. (2024, arXiv v1).** In the
+  pressure constraint (Eq. 33) the constant term is printed
+  $Q=\breve w^\rho\breve w^{\rho E}+\tfrac12\lvert\breve w^{\rho v}\rvert^2$
+  ($\breve w=a\breve u$); expanding the positivity condition (31) at
+  the limited bar states gives the printed quadratic and linear
+  coefficients and $Q=\breve w^\rho\breve w^{\rho E}-\tfrac12\lvert\breve w^{\rho v}\rvert^2$,
+  $a^2$ times $\rho\cdot\rho e$ of the low-order bar state *(compiler
+  check, not in the sources)*. In the entropy factor (Eq. 39) the
+  numerator is printed $[\![w]\!]\cdot\hat f^{\mathrm{FV}}-[\![\psi]\!]$;
+  substituting the limited flux into the shuffle condition bounds the
+  factor by $\big([\![\psi]\!]-[\![w]\!]\cdot\hat f^{\mathrm{FV}}\big)/\big([\![w]\!]\cdot\Delta\hat f^{\mathrm{Lim}}/(i-j)\big)$,
+  the opposite sign *(compiler check, not in the sources)*. The bow-shock
+  state $\rho=1.4$, $p=1$, $v_1=4$ is printed as "Mach number Ma = 1.4";
+  with $\gamma=1.4$ its sound speed is 1 and its Mach number 4 (§3.3)
+  *(compiler check, not in the sources)*. §3.5 says the number of steps
+  "depends linearly" on the CFL number for MCL; Table 5 shows it
+  inversely proportional.
 - **Printed slips of Pazner (arXiv v1)** that touch this page: the CFL
   bound (40) is printed $\Delta t\le\min_i m_i/(2\hat d_{ii})$ with
   $\hat d_{ii}=-\sum_{j\ne i}\hat d_{ij}\le0$, which is negative; the
@@ -368,4 +526,5 @@ nodes (Pazner, §3.1).
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §4.9 (Hu–Adams–Shu limiter used).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — arXiv v3: §3.1 (Remark (Limiting)); §4.3 (entropy tolerance).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §4.2; §4.5; §6 (invariant-domain preservation left out of scope).
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.1–2.2 (Eqs. (5)–(45), Remarks 2, 6–9); §3.1–3.5 (Tables 1–5, Figs. 1–9); §4.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §3.2, Eqs. (9)–(11); §5, Eqs. (16)–(24), Lemma 5.1, Theorem 5.2; §6.1–6.2, Eqs. (37)–(45), Theorems 6.1–6.2; Table 1, Fig. 3; App. B, Eqs. (70)–(81); footnotes 3–4.

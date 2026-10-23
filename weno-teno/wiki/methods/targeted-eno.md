@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -105,6 +105,21 @@ formal-order weights for $K=3,\dots,8$:
 The $K=7$ row agrees with Ye et al. The $d_k$ can instead be chosen by
 spectral optimization (TENO8-opt; Fu 2023, §2.5), see
 [approximate dispersion relation](/definitions/approximate-dispersion-relation.md).
+[Liang & Fu (2024b)](/sources/liang-2024-b.md) (§2.2, Eqs. (9)–(20);
+§3.3.1, Eqs. (36)–(46)) recall the eight-point recipe in full, stencil
+widths $\{3,3,3,4,4,5\}$, $q=6$, $\epsilon=10^{-40}$ and the sixth-order
+$\tau_8$ with the prefactor $1/62270208000$ also printed by Hong et al.,
+and optimize a sixth-order eight-point background with
+$d=(0.4130855804023061,\ 0.2193140179474727,\ 0.06459052081827904,\ 0.1439236310125986,\ 0.02746675592227204,\ 0.1316194938970745)$:
+its dispersive part minimizes $\int_0^\pi e^{7(\pi-\vartheta)}(\tilde\vartheta_r-\vartheta)^2d\vartheta$,
+and its dissipation is fixed by a single coefficient $b_0=0.01$ chosen to
+give the dispersion–dissipation ratio of order 10. *(Compiler check, not
+in the sources: the flux difference of their Eq. (46) is the
+antisymmetric eight-point central derivative with the coefficients
+$a_\ell=(0.8441336457,\ -0.2441336457,\ 0.0570096577,\ -0.0067238318)$ of
+their split-form flux plus $\tfrac{b_0}{70}$ times the eighth undivided
+difference $(1,-8,28,-56,70,-56,28,-8,1)$, i.e. a central scheme with a
+pure eighth-order dissipation term.)*
 Fu (2023, §2.5) argues, from Kang and Li's criterion for the existence of
 linear weights, that the TENO linear combination "will always work" for the first
 derivative on uniform Cartesian meshes, and extends to non-uniform Cartesian
@@ -132,6 +147,9 @@ Values used:
 | $<10^{-3}$ | two-phase cavitation onset | Fu 2023, §5.1 |
 | $10^{-5}$ | shock train under back-pressure (results insensitive) | Fu 2023, §5.4 |
 | $10^{-7}$ | TENO5 in pure and Ducros-switched hybrid wall-modelled LES (after Fu et al. 2017) | [De Vanna et al. (2023a)](/sources/devanna-2023.md), §3.1 |
+| $10^{-7}$; $10^{-6}$ | TENO6 and TENO8 comparators; equal-stencil TENO-type indicator of TENO-S | [Liang & Fu (2024b)](/sources/liang-2024-b.md), §3.1, §4 |
+| $10^{-7}$ then $10^{-5}$ | unstructured TENO4-D to TENO7-D: all candidates, then small stencils only | [Ji, Liang & Fu (2023)](/sources/ji-2023.md), §3.2.2 |
+| $10^{-5}$; $10^{-4}$ | FV TENO5 "usually"; TENO-type troubled-cell indicator and limiter for RKDG | [Huang & Fu (2024)](/sources/huang-2024.md), §2, §§4.3–4.4 |
 
 An adaptive, locally varying $C_T$ is the subject of
 [adaptive TENO](/methods/adaptive-teno.md).
@@ -198,6 +216,35 @@ Recorded here because they have no page of their own:
   the linear scheme without characteristic decomposition where all stencils are
   smooth, improving efficiency "by a factor of four"; see
   [hybrid central–WENO schemes](/methods/hybrid-weno.md).
+  **TENO-S** ([Liang & Fu (2024b)](/sources/liang-2024-b.md), §§3.1–3.2,
+  Eqs. (31)–(35), Algorithm 1) takes the same route with an eight-point
+  indicator built from six *equal* three-point stencils covering
+  $x_{i-3},\dots,x_{i+4}$, three of which do not contain $x_i$ (their
+  Jiang–Shu indicators are extrapolated integrals over $I_i$, Eq. (31)):
+  $\gamma_k=1/(\beta_k+\epsilon)^6$ with $\epsilon=10^{-4}$ in 1D and
+  $10^{-2}$ in multi-D, normalized to $\chi_k$, and the point is smooth
+  only if every $\chi_k>10^{-6}$; it is evaluated on the conserved
+  density (and total energy in 1D) in physical space, direction by
+  direction. Where smooth, the flux is an eight-point
+  kinetic-energy-preserving skew-symmetric split form
+  ([split convective forms](/methods/split-convective-forms.md)) with the
+  optimized $a_\ell$ above; elsewhere the characteristic-wise eight-point
+  TENO with the TENO-A cut-off ([adaptive TENO](/methods/adaptive-teno.md))
+  and Rusanov splitting. Evidence (§4; SSP-RK3, CFL 0.4, one Ryzen 9 5950X
+  core): sixth order on entropy-wave advection ($L_1$ orders up to 5.995),
+  more than 90 % of the cells on the split-form branch in double Mach
+  reflection (stated), wall times 25–52 % below WENO-CU6, TENO6 and TENO8
+  on 2D problems (e.g. 388.08 s against 517.96, 540.17 and 628.79 s on
+  Riemann configuration 12, $800^2$, Table 7), finer slip-line vortices
+  at $512\times128$ than TENO8, and, in the inviscid
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) to $t=100$,
+  long-time stable runs "preserving the total kinetic energy" where the
+  other schemes smear the small vortices after $t\approx5$ (Figs. 17–18). The
+  interacting blast waves need Roe splitting with entropy fix "to obtain
+  a stable result", and positivity preservation is left to future work.
+  *(Compiler check, not in the sources: with an absolute $\epsilon$ on
+  raw density the indicator depends on the amplitude of the data; see
+  [scale invariance](/properties/scale-invariance.md).)*
   [Li, Chen & Ren (2022)](/sources/li-2022.md) (§3.2, Eqs. (55)–(57), Fig. 9) run this
   indicator ($q=6$, $\epsilon=10^{-4}$, threshold $5\times10^{-4}$, distinct from the TENO
   $C_T$) on sine waves and find it correct only below the reduced wavenumber $0.64$, against
@@ -267,6 +314,47 @@ Recorded here because they have no page of their own:
   reflection, and stay robust where equal-order WENO5/6 need an extra limiter (§5). TENO and
   CWENO of equal order cost the same, and TENO6 about 65% more per element and step than
   TENO3 (Table 7).
+  **Dual cut-off (TENO-D).** [Ji, Liang & Fu (2023)](/sources/ji-2023.md) (§3.2,
+  Eqs. (29)–(36)) keep the two-step selection on the same layout, with $n_s$ small
+  directional stencils, $\gamma_k=1/(\beta_k+\epsilon)^6$, $\epsilon=10^{-12}$,
+  but use two cut-offs: $C_T=10^{-7}$ among all $n_s+1$ candidates, so that the
+  large-stencil polynomial, which is then used exactly, survives up to higher
+  wavenumbers, and the larger $C_T=10^{-5}$ among the small stencils, for "a
+  stronger separation of the discontinuities"; the survivors are averaged
+  with $d_k=1/n_s$. They build TENO4-D to TENO7-D in UCNS3D (HLL in the rotated
+  face frame, SSP-RK3, CFL 0.4, one parameter set for all tests, §4). On
+  $u_t+u_x+u_y=0$ on triangles ($N_e=374$ to $58{,}330$) the errors equal
+  the linear schemes' digit for digit, with finest-pair $L_\infty$/$L_2$
+  orders 3.61/3.83, 4.93/5.01, 5.97/5.90 and 6.44/6.53 for orders 4–7
+  (Tables 1–4). TENO6-D and TENO7-D are less dissipative than CWENO6 and
+  CWENO7 on Shu–Osher, double Mach reflection (up to 752,708 triangles) and
+  a single-material [triple point](/benchmarks/triple-point-problem.md),
+  with solid-body rotation, explosions, shock–vortex interaction, Schardin's
+  wedge and a 3D explosion run robustly. Their wall times are "approximately
+  the same" as CWENO's (Tables 6–7): TENO-D/CWENO ratios are 0.949 and 0.932
+  on Shu–Osher and 1.070 and 1.025 on double Mach reflection *(compiler
+  check, not in the sources)*.
+- **Finite-volume TENO5 with a five-point candidate** ([Huang & Fu (2024)](/sources/huang-2024.md),
+  §2, Eqs. (7)–(15), after Fu et al. 2017): the three TENO5 stencils plus
+  the full five-point stencil $S_3$ (their numbering: $S_0$ central,
+  $S_1$ downwind, $S_2$ upwind), $\gamma_k=(1+\tau_5/(\beta_k+\epsilon))^6$
+  with the full-stencil form $\tau_5=\lvert\beta_{3}-\tfrac16(\beta_1+\beta_2+4\beta_0)\rvert=O(\Delta x^6)$
+  in place of the outer-stencil difference; if $S_3$ survives, its fifth-order
+  value is used, otherwise the small-stencil combination with $d=(6/10,3/10,1/10)$.
+- **TENO weighting in DG limiting** ([Huang & Fu (2024)](/sources/huang-2024.md),
+  §§4.3–4.4, §5, Eqs. (32)–(64)): a troubled-cell indicator that normalizes
+  $\gamma_n=1/(\beta_n+10^{-3})^6$ of the DG polynomials of cells $i-1,i,i+1$
+  and flags cell $i$ when its own $\chi_i<C_T=10^{-4}$ (direction by direction
+  in 2D), and a compact limiter for $\mathbb P^2$ RKDG that keeps the cell
+  average and rebuilds the higher modes from Hermite-type candidate
+  polynomials with TENO weights $\gamma_n=t_n/(\beta_n+10^{-10})^6$, a bias
+  $t_n=10$ towards the central candidates and $C_T=10^{-4}$; see
+  [troubled-cell indicators](/definitions/troubled-cell-indicator.md) and
+  [WENO limiters for DG](/methods/weno-limiter-dg.md). On density waves the
+  indicator triggers no limiting (errors equal the unlimited scheme's, third
+  order), and on shock problems the limiter is less dissipative than the
+  compact WENO limiter of Zhu, Qiu and Zhu it is compared with (visual
+  evidence).
 - **Very high order and adaptive order**: TENO8-AA, TENO10-AA and TENO-A, see
   [adaptive TENO](/methods/adaptive-teno.md); **TENO-THINC** and its improved
   detector and interpolation-like jump flux of [Liang et al. (2022)](/sources/liang-2022.md), see
@@ -428,6 +516,25 @@ primitive variables and applies an HLLC flux (arXiv v2). Chamarthi reports:
   than $C_T$, and that $q=2$ brings AFTENO closer to the reference than $q=6$
   (§4.5, Fig. 5): the default $q=6$ is not uniformly best.
 
+- Ji, Liang & Fu (2023, §3.3) present the dual selection as "novel"
+  against their 2022 unstructured TENO, which already had the two-step
+  structure with one $C_T=10^{-6}$; the new element is the pair of
+  different cut-offs and the extension to seventh order. They call the
+  $C_T$ values "rather generally applicable" without case-by-case tuning,
+  while changing them between the two papers. Their fourth-order scheme
+  stays below 4 and the seventh-order one reaches 6.44/6.53 at the finest
+  pair, against the text's "without degeneration"; the fourth- to
+  sixth-order finest-pair orders equal those recorded for the 2022 paper,
+  as expected if the same linear schemes run on the same meshes.
+- Huang & Fu (2024, §4.3) take $C_T=10^{-4}$ in DG "for better robustness"
+  while recalling (§2) that $10^{-5}$ is "usually" taken; their indicator's absolute
+  $\epsilon_1=10^{-3}$ makes it depend on the amplitude of the data
+  *(compiler check, not in the sources)*, and they do not state the
+  variables on which the indicator and limiter act for the Euler system.
+- Liang & Fu (2024b) claim the TENO-S indicator needs no case-by-case
+  tuning, yet its $\epsilon$ differs between 1D ($10^{-4}$) and multi-D
+  ($10^{-2}$).
+
 ## Contradictions
 
 **Accuracy condition on the global indicator $\tau_K$.** *Open.*
@@ -471,6 +578,9 @@ distinguish the two conditions.
 - [Hiejima (2022)](/sources/hiejima-2022.md) — §1; §2.3, Fig. 1, Tables 2, 4, 6; §2.5.2, Eqs. (16)–(18): TENO stencils and cut-off in WCNS interpolation.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §3.2, Eq. (16): TENO-like cut-off on learned weights.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §§2–6, Eqs. (6)–(30), Tables 1–4, Figs. 6–16: hierarchical voting, TENO-M, cost of wide TENO.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.2, Eqs. (29)–(36); §3.3; §4, Tables 1–7: dual-cut-off unstructured TENO4-D to TENO7-D.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.2, Eqs. (9)–(20); §§3.1–3.3, Eqs. (31)–(46), Algorithm 1; §4, Tables 1–12: TENO8 recipe, optimized background, TENO-S hybrid.
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §2, Eqs. (7)–(15); §§4.3–4.4, §5: FV TENO5 with a five-point candidate; TENO-type troubled-cell indicator and limiter for RKDG.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §§3–5, Eqs. (23)–(28), Tables 1–4, 7: unstructured finite-volume TENO (preprint).
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §2, Eqs. (6)–(16), Table 1; Table 3: general recipe, formal-order linear weights, cost (arXiv v1).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §2.2, Eqs. (6)–(15); §4.1, Table 4; §4.3: TENO5 recipe, linear recovery, $C_T$ for the blast wave.

@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -184,6 +184,25 @@ sources)*. Li, Duan & Tang give no configuration number; which of the
 two is Lax & Liu's configuration 5 cannot be decided from the bundle's
 sources.
 
+[Tang (2024)](/sources/tang-2024.md) §4.4.2, Eq. (34) prints on $[0,1]^2$,
+split at $(0.5,0.5)$, zero-order extrapolation boundaries, $512\times512$,
+$t=0.8$, 14 density contours in $[0.2,2.2]$:
+
+| Quadrant | State |
+|---|---|
+| $x\ge0.5$, $y\ge0.5$ | $(3,\ -0.75,\ -0.5,\ 1)$ |
+| $x<0.5$, $y\ge0.5$ | $(2,\ 0.75,\ 0.5,\ 1)$ |
+| $x<0.5$, $y<0.5$ | $(1,\ -0.75,\ 0.5,\ 1)$ |
+| $x\ge0.5$, $y<0.5$ | $(1,\ 0.75,\ -0.5,\ 1)$ |
+
+These are Li, Duan & Tang's states with the two right quadrants
+exchanged. The normal velocity is then continuous across the horizontal
+split but jumps across the vertical one ($0.75$ to $-0.75$ on top,
+$-0.75$ to $0.75$ below), so the vertical discontinuities are not
+contacts and the problem is not a four-contact configuration
+*(compiler check, not in the sources)*; Tang cites no configuration
+number.
+
 ## Findings across sources
 
 **Jet instabilities as a dissipation gauge.** On configuration 3 the
@@ -280,6 +299,12 @@ MWENO-P resolve it, WENO-NS "very slightly", and WENO-JS, WENO-Z and
 WENO-P do not (Figs. 16–19). See
 [smoothness indicator](/definitions/smoothness-indicator.md).
 
+**Adaptive TENO on the Tang configuration.** Tang finds that the
+TENO-AZ generates more refined Kelvin–Helmholtz microstructures than
+TENO-Z, TENO-A and TENO-LAD (§4.4.2, Fig. 11;
+see [adaptive TENO](/methods/adaptive-teno.md)), at 0.98–1.01 of
+TENO-Z's time per step on $400\times400$ (Table 6).
+
 ## Other systems
 
 The same four-quadrant construction appears for other equations:
@@ -329,6 +354,19 @@ cells matches the uniform-mesh scheme on $500^2$, $500^2$ and $600^2$
 cells at 17.8 %, 30.6 % and 13.7 % of its CPU time, and on $150^2$
 beats their second-order moving-mesh scheme on $200^2$ at comparable
 cost (Figs. 6.5–6.7).
+
+[Cai, Qiu & Wu (2024)](/sources/cai-2024.md) Exs. 5.6–5.7 (arXiv v1)
+run Chen & Wu's two configurations again, on $[-0.5,0.5]^2$ (their text;
+the Fig. 6 caption says $[0,1]^2$) with $400\times400$ cells to $t=0.4$,
+Ex. 5.7 cited to Wu & Tang, with their physical-constraint-preserving
+finite-volume [Hermite WENO](/methods/hermite-weno.md). On the first
+two reflected curved shocks and a mushroom structure form and few cells
+are limited. The second serves to compare the scaling of the
+eigenvectors in the [characteristic decomposition](/methods/characteristic-decomposition.md):
+without rescaling, and with "unitization" ($c=\lvert l\rvert$ for an
+eigenvector pair $(cr,l/c)$, page-local), serious oscillations appear;
+the "matching" scaling $c=\sqrt{\lvert l\rvert/\lvert r\rvert}$, which makes
+$\lvert l\rvert/c=c\lvert r\rvert$, is best (Remark 3.3, Fig. 7).
 
 **Multispecies shock box.** [Peng, Atkins & Deiterding (2022)](/sources/peng-2022.md)
 §3.3 (accepted manuscript) fill a $1000\times1000$ mm box with slip walls
@@ -407,3 +445,5 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §5.6, Eq. (41), Fig. 16.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — App. A.3, Fig. 13.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Exs. 13–14, Figs. 15–19.
+- [Tang (2024)](/sources/tang-2024.md) — §4.4.2, Eq. (34), Fig. 11, Table 6.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Remark 3.3; Exs. 5.6–5.7, Figs. 6–7 (arXiv v1).

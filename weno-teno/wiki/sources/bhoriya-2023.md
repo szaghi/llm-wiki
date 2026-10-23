@@ -144,7 +144,7 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Entropy stability](/properties/entropy-stability.md)

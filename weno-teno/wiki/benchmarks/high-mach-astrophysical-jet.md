@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -51,6 +51,7 @@ speed and 682.08 with respect to the ambient one.
 | [Fu (2023)](/sources/fu-2023.md) Fig. 5 | TENO10 (review, reproduced) | $448\times224$, $800\times400$ | — | positivity-preserving limiter |
 | [Wang & Don (2022)](/sources/wang-2022-b.md) §3.2.4 | [affine-invariant WENO-Z/D](/methods/affine-invariant-weno.md) | setup from Gao et al. (not reproduced) | — | PP limiter needed |
 | [Rueda-Ramírez et al. (2022)](/sources/ruedaramirez-2022.md) §5.2.3 | [DGSEM](/methods/dgsem.md), $N=3$, [subcell IDP limiting](/methods/subcell-finite-volume-limiting.md) | $[-0.5,0.5]^2$, $256^2$ elements | $10^{-3}$ | bar-state bounds |
+| [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.5 | LGL-DGSEM, $N=3$, Ranocha volume flux; monolithic convex limiting (MCL) against FCT/IDP subcell limiting, CFL 0.9, 0.45, 0.225, 0.09 | $[-0.5,0.5]^2$, $256^2$ elements, periodic top and bottom | $10^{-3}$ | limited bar states (MCL), local bounds (FCT/IDP) |
 | [Liang, Xiao, Shyy & Fu (2022)](/sources/liang-2022.md) §4.11 | fifth-order TENO with THINC-type discontinuity reconstruction, TENO5, TENO5-THINC, WENO5-Z | both jets $800\times400$, CFL 0.35 | not printed | positivity-preserving flux limiter |
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.7 | finite-difference WENO-JS5, WENO-JS7, WENO-ZQ5, Euler and Navier–Stokes ($\mathrm{Re}=1000$) | $\Delta x=\Delta y=1/640$ | $0.001$ | [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md) and scaling limiter |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.11 | finite-difference [HWENO](/methods/hermite-weno.md) (HWENO-R, HWENO-L), WENO-ZQ | $640\times320$ | $0.001$ | parametrized PP flux limiter |
@@ -100,6 +101,30 @@ HWENO-R and WENO-ZQ, although HWENO-R runs their one-dimensional
 extreme problems without it; it acts on 0.0146 % of the cells
 (Remark 3.2). Li et al. find that only the pressure part of the limiter
 is active, at the jet front, and the density stays positive (§3.6).
+
+**Time-step dependence of the limited scheme.** [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md)
+(§3.5, Table 5, Figs. 8–9; arXiv v1) use the Mach 2000 jet, which
+they attribute to Ha et al. and run with the inflow through
+$y\in[-0.05,0.05]$ at $x=-0.5$, to compare two ways of limiting DGSEM
+towards its subcell finite-volume scheme
+([convex limiting](/methods/convex-limiting.md),
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+Their MCL limits the anti-diffusive fluxes at the semi-discrete level,
+so the limited spatial operator does not depend on $\Delta t$; FCT/IDP
+limiting corrects each stage and does. The number of steps to
+$t=10^{-3}$ is 10284, 20568, 41138 and 102844 for MCL at CFL 0.9, 0.45,
+0.225 and 0.09, exactly inverse to the CFL number (the product is 9256
+throughout *(compiler check, not in the sources)*), against 10758,
+25608, 71577 and 241974 for FCT/IDP. In FCT/IDP a smaller CFL number
+reduces the dissipation: $\rho_{\min}$ falls from $4.43\times10^{-3}$ to
+$7.11\times10^{-4}$ and $p_{\max}$ rises from 172640 to 228165, which raises
+the sound speed and cuts the step further, a "feedback effect"; its
+vortical structures change markedly with the CFL number, those of MCL
+only weakly. They conclude that "time convergence can be expected for
+MCL but not for FCT schemes in problems that need stabilization". Of
+their two pressure-positivity fixes, the "cautious" one suppresses the
+vortical structures of the shear layer, while the "sharp" one "allows
+the development of turbulence" (Fig. 9).
 
 **An exception without a stated limiter.** Peng, Sun & Wu compute the
 Mach 2000 jet with OEDG on $320\times160$ to $t=0.001$ and report no
@@ -174,6 +199,20 @@ closest to them (§5.2.3).
   *(compiler check, not in the sources)*. The two papers print
   different ambient densities, $1$ (Chen & Wu) against $0.01$ (Cui et
   al.); the Mach numbers depend only on the beam state.
+  [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) Example 5.9 (arXiv v1)
+  run the jet with Chen & Wu's ambient density, ambient
+  $\rho=1$, $v=0$, $p=1.70303\times10^{-4}$, and beam $v_{\mathrm b}=0.99$,
+  $\rho_{\mathrm b}=0.01$, $p_{\mathrm b}=1.70303\times10^{-4}$ through
+  $r\le1$ on the low-$z$ boundary, on $[0,15]\times[0,45]$ with
+  $375\times1125$ cells, reflective at $r=0$ and outflow elsewhere,
+  output at $t=60$, 80, 100, $\gamma=5/3$. Their physical-constraint-preserving
+  finite-volume [Hermite WENO](/methods/hermite-weno.md) scheme with
+  provably convergent Newton–Raphson recovery of the pressure (see
+  [relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md))
+  captures the bow shock and Kelvin–Helmholtz instabilities of the beam,
+  and the limiter is necessary. Their tests run at "CFL number 0.6",
+  whose definition is not printed, while their positivity theorem requires
+  $\Delta t\le\Delta x/(12a)$.
 - **Two-component MHD jet.** [Wu & Shu (2023)](/sources/wu-2023-b.md)
   Ex. 7.2: two-component ideal MHD, domain $[-0.5,0.5]\times[0,1.5]$,
   ambient $(\rho,p)=(0.14,1)$, inflow $(\rho,p)=(1.4,1)$ with
@@ -234,6 +273,15 @@ closest to them (§5.2.3).
 - Fan, Zhang & Qiu (2022)'s printed jet density 0.5 makes their jet a
   Mach 682 jet as defined on this page; whether the printed value or
   the name is the slip cannot be told from the paper.
+- The ambient pressure of the axisymmetric relativistic jet is printed
+  as $1.70303\times10^{-4}$ (Cai et al.), $1.70305\times10^{-4}$ (Chen &
+  Wu) and $1.70304823218172071\times10^{-4}$ (Cui et al.); the
+  differences lie in the sixth significant digit.
+- Rueda-Ramírez et al. (2024) write that the number of time steps
+  "depends linearly on the CFL number" for MCL; their Table 5 shows it
+  inversely proportional, as their next paragraph's "not inversely
+  proportional" for FCT/IDP implies. Their evidence for the time
+  dependence of FCT/IDP limiting is this one test.
 - Resolution claims are visual comparisons, partly against figures
   from other papers.
 - Dzanic & Witherden compute a half domain $[0,0.5]\times[0,1.5]$
@@ -265,3 +313,5 @@ closest to them (§5.2.3).
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §5.4.6, Figs. 24–25; §6.
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §5.1.6, Fig. 6 (arXiv v3).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.12, Fig. 18 (arXiv v1).
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §2.2.4, §3.5, Table 5, Figs. 8–9; §4 (arXiv v1).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.9; Theorems 3.1, 4.1 (arXiv v1).

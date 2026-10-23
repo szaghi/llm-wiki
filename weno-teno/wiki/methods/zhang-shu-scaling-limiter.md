@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -123,6 +123,24 @@ scaling acting on the result of the previous one, with the density first:
   limited version of $\sigma u_h$ is $\sigma$ times the limited $u_h$ for
   $\sigma>0$ (Eq. (45)), which the homogeneity of the RHD scheme needs. The printed $\theta_2$ carries an
   absolute value inside the minimum (Eq. (42)).
+  [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, Eq. (3.9),
+  Lemma 3.2, Remark 3.4, arXiv v1) use the same two stages, $D$ then the
+  concave $g$, with $\varepsilon_D=\min_i\{10^{-13},\bar D_i\}$ and
+  $\varepsilon_g=\min_i\{10^{-13},g(\bar u_i)\}$ and the absolute values
+  inside the minimum, in a finite-volume Hermite WENO scheme. The point set
+  is the four Gauss–Lobatto points of the cell, the two inner ones
+  included, plus the interior state
+  $\Pi_i=\big(\bar u_i-\tfrac1{12}(u^+_{i-1/2}+u^-_{i+1/2})\big)/(1-\tfrac16)$
+  of the four-point decomposition (in 2D, the Gauss points of the edges
+  and the inner points, with the directional weights
+  $\mu_1=\dfrac{a^{(1)}/\Delta x}{a^{(1)}/\Delta x+a^{(2)}/\Delta y}$,
+  $\mu_2=1-\mu_1$, page-local, $a^{(1)}$, $a^{(2)}$ the global maximum
+  wave speeds in $x$ and $y$).
+  The inner points are limited too because the fluxes are evaluated there,
+  and the recovery of the primitive variables converges only for states in
+  $G$, which the authors note "differs from the Euler equations" (Remark
+  3.4). Lemma 3.2, the admissibility of all limited states, is stated with
+  a proof "similar to" Chen & Wu's Prop. 3.1.
 - **Multicomponent MHD** ([Wu & Shu (2023)](/sources/wu-2023-b.md), App. B):
   three successive scalings — density, mass fractions (from negative
   partial densities), and the concave function
@@ -134,6 +152,19 @@ scaling acting on the result of the previous one, with the density first:
   $\epsilon=\min\{10^{-13},\bar u_i\}$, applied to "the reconstructed
   polynomials of density and thermal pressure"; how the pressure polynomial
   is obtained from the reconstructed conservative variables is not stated.
+
+**Iterated halving for the pressure.** In the GPU discontinuous Galerkin
+code [TENET](/software/tenet.md), [Cernetic et al. (2023)](/sources/cernetic-2023.md)
+(§4.2, Eq. 47, accepted manuscript) evaluate the density at the union of
+the volume and surface Gauss quadrature points of the cell, and if its
+minimum falls below $\rho_{\mathrm{bot}}=10^{-6}\bar\rho$ (page-local) they
+multiply the higher modal weights of **all** fields by
+$(\bar\rho-\rho_{\mathrm{bot}})/(\bar\rho-\rho_{\min})$. For the
+pressure they "simply adopt" the factor $0.5$ and apply it repeatedly
+until the minimum pressure exceeds a floor whose value is not printed.
+They describe the limiter as a last line of defence that keeps the run
+alive, not an oscillation control; it never acts on their smooth tests
+and acts only during the first steps of discontinuous initial data.
 
 Concavity is what lets a factor computed from point values alone work:
 for concave $g$ and $\theta\in[0,1]$,
@@ -176,6 +207,16 @@ semi-discrete entropy inequality of both (Theorem 6.2); the target is
 the low-order solution, not the cell average
 ([convex limiting](/methods/convex-limiting.md),
 [bound preservation](/properties/bound-preservation.md)).
+
+[Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) (§2.2.2,
+Eqs. 31–35, arXiv v1) meet the same quadratic pressure constraint in
+monolithic convex limiting, one factor per subcell interface of an LGL
+element rather than per element, and do not solve for its root: since
+$\alpha^2\le\alpha$ on $[0,1]$ they replace $A\alpha^2+B\alpha\le Q$ by
+the linear sufficient condition $\big(\max\{0,A\}+|B|\big)\alpha\le Q$,
+which gives the factor in closed form (page-local $A$, $B$, $Q$; their
+$\alpha$ = 1 is the high-order flux; see
+[convex limiting](/methods/convex-limiting.md)).
 
 ## Point sets and the simplified limiter
 
@@ -351,3 +392,6 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; Remark 2.3 (scaling not used; flux limiter instead).
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §2.6.3; §3.1–3.3, Tables 3.1–3.3.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §6.1, Eqs. (37)–(44); §6.2, Theorem 6.2; §7.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3, Eq. (3.9); Lemma 3.2; Remark 3.4; §4.1 (2D point set).
+- [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §4.2, Eq. (47).
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2, Eqs. (31)–(35).

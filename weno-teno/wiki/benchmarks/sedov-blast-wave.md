@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Sedov blast wave
@@ -129,6 +129,25 @@ $\zeta_{\mathrm r}=0.1$ alone spurious oscillations appear on both meshes, and
 shock capturing, or to some extent $\zeta_{\mathrm r}=0.5$, reduces them
 (Figs. 7–8, density on a log scale truncated to $[0.01,6]$). See
 [convex limiting](/methods/convex-limiting.md).
+
+**FLASH-type deposit for monolithic convex limiting.**
+[Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.4, Eq.
+(56) (arXiv v1) use the same kind of deposit, after the FLASH setup:
+$\rho=1$, $v=0$, ambient $p_0=10^{-5}$, and
+$p=(\gamma-1)e_0/(\pi r_0^2)$ for $r<r_0=0.21875$ with energy $e_0=1$
+(page-local), on the periodic $[-2,2]^2$ with $64\times64$ elements of
+degree $N=3$, Chandrashekar's entropy-conservative volume flux, CFL 0.9,
+to $t=3$; $\gamma$ is not printed for this test. They compare three
+orderings of their limiters of LGL-DGSEM: A, sequential limiting of
+density, velocity and specific total energy under local bounds, then
+the sharp pressure fix and the entropy limiter, shows "artifacts at
+the shock front"; B, limiting of the density bar states only, with the
+resulting factor applied to all conserved fluxes, then pressure and
+entropy, "removes the Carbuncle-like artefacts"; C, B followed by
+sequential limiting, removes them too, needs the least pressure limiting
+and no entropy limiting at $t=3$, but is "clearly more dissipative"
+(Figs. 5–7). See [convex limiting](/methods/convex-limiting.md) and
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md).
 
 ### Grid-aligned instability
 
@@ -259,3 +278,4 @@ stated (Table 4.2).
 - [Lesur et al. (2023)](/sources/lesur-2023.md) — §4.1, Figs. 4–5 (arXiv v1).
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.1, Figs. 13–14.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.3, Eq. (65), Figs. 7–8 (arXiv v2).
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.4, Eqs. (56)–(58), Figs. 5–7 (arXiv v1).

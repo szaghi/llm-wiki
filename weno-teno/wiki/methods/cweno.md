@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Central WENO (CWENO)
@@ -210,6 +210,25 @@ Table 7) ([targeted ENO](/methods/targeted-eno.md), [UCNS3D](/software/ucns3d.md
 that CWENO is cheaper than equal-order WENO and that its compact small stencils make a smooth candidate
 near shocks more likely (§2.4).
 
+Ji, Liang & Fu (2023, §3.1.2, Eqs. (23)–(28)) keep the same comparator for their dual-cut-off TENO of orders 4 to 7:
+$\alpha_k=d_k/(\beta_k+\epsilon)^4$, $\epsilon=10^{-14}$, $d_0=1-1/d_0'$ with $d_0'=10^4$ and the remaining weight shared
+equally by the directional stencils, and reference-space indicators summed over derivative orders 1 to the degree, without
+a mesh-size factor (Eq. (26); [smoothness indicators](/definitions/smoothness-indicator.md)). Their TENO-D uses the same
+candidate arrangement, one large central-biased stencil and small directional ones, but returns the large-stencil polynomial
+exactly when its stencil passes the cut-off, whereas CWENO recovers it only asymptotically, $\omega_k\approx d_k$ (§3.2.2,
+§3.3). They argue that CWENO's smooth weighting activates the nonlinear adaptation "in the low-wavenumber ranges", with
+excess dissipation for multiscale flows, and call its choice of $d_k$ "rather ad hoc" against TENO's cut-offs, which
+"function in the spectral space" (§3.1.2, §3.3); these are statements, not measurements. At equal order TENO6-D and TENO7-D
+resolve the [Shu–Osher](/benchmarks/shu-osher-problem.md) waves "much better" than CWENO6 and CWENO7 and show "much lower
+numerical dissipation" on [double Mach reflection](/benchmarks/double-mach-reflection.md) and the
+[triple-point problem](/benchmarks/triple-point-problem.md) (§4.4, §4.5, §4.8, figure comparisons). The wall times are
+"approximately the same": on Shu–Osher ($h\approx1/20$) 173.12 s and 211.01 s for CWENO6 and CWENO7 against 164.26 s and
+196.57 s for TENO6-D and TENO7-D, on double Mach reflection ($h\approx1/125$) 2517.38 s and 3050.80 s against 2694.45 s
+and 3126.84 s (Tables 6–7; hardware not stated). *(Compiler check, not in the sources: the TENO-D to CWENO ratios are 0.95
+and 0.93 in Table 6, 1.07 and 1.02 in Table 7.)* On the explosion problems and the 3-D spherical explosion TENO-D and
+CWENO of equal order agree with the references (§4.3, §4.9;
+[explosion and implosion problems](/benchmarks/explosion-and-implosion-problems.md)).
+
 ## Position in the WENO family
 
 - **Stability before accuracy.** Balsara et al. (2024, §I) place CWENO in a trend of scheme design
@@ -287,3 +306,4 @@ cognate unequal-stencil approaches when introducing TENO-AA
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2, Eqs. (10)–(28); §2.4; §3.1, Table 1; App. B, Table B.4.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eqs. (3.17)–(3.18).
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (23)–(28); §3.2.2; §3.3; §4.3–4.5, §4.8–4.9, Tables 6–7.

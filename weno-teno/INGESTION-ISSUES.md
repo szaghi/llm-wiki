@@ -6,6 +6,100 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 7 — TENO variants, limiters, ADER, well-balanced and multiphase solvers (2026-10-23)
+
+Sources (19): baskaya-2024, berta-2024, cai-2024, cernetic-2023,
+ciallella-2024, duronio-2024, gaburro-2024, goudon-2024, huang-2024,
+ji-2023, jiang-2024, jiao-2024, liang-2024-b, mcquaid-2024,
+nogueira-2024, ruedaramirez-2024, tang-2024, trojak-2024, yu-2023. 139 of
+207 ingested, 191 concept pages plus the registry, 4315 bibliography
+entries.
+
+### Decisions for the human
+
+1. **New archive defect — wu-2023** (Wu & Shu, SIAM J. Numer. Anal.
+   61:250-285, positivity-preserving central DG for MHD): the archive
+   file holds only the 9-page Supplementary Materials (no article, no
+   tests, no reference list). Deferred to chunk 11 with the other
+   defects and added to `~/papers/mosaic/weno-teno-redownload.csv`.
+   Chunk 7 therefore stages 19 sources.
+2. **Still open from chunks 1–6:** the archive re-download (now three
+   works: Feng 2026, Li 2024, Wu 2023); the open contradictions (TENO
+   $\tau_K$, conservation of WCNS, entropy-filter tolerance); wrong-year
+   keys; the berberich and karniadakis pairs; the label convention.
+3. **New open contradiction — cost of WENO-Z against mapped WENO**
+   (`wiki/methods/weno-z.md`): Deng (2023, §1, after Borges et al.)
+   calls WENO-Z cheaper than WENO-M; McQuaid & Brehm (2024, after Brehm
+   et al. 2015) call it more expensive. Neither prints a timing.
+4. **Bibliography calls to confirm:** wrong-year keys `hickel-2023`
+   (Phys. Fluids 26:106101, 2014) and `eulderink-1994` (A&AS 110:587,
+   1995) kept with notes; `andrianov-2004` recorded at JCP 212:434 while
+   jiao-2024 prints 195:434; `modesti-2016-b` (arXiv:1612.05223) linked
+   to `modesti-2017` as its preprint only on the reader's reading (the
+   printed titles differ); undated citations keyed by their Crossref
+   issue year (`duronio-2023`, `mohapatra-2023`, `loseille-2022`,
+   `couplet-2021`, `wissink-2009`, which mcquaid-2024 prints as 2020);
+   the DOI mcquaid-2024 prints for `zibitsker-2022` resolves to another
+   work (McQuaid et al. 2021) and was removed with a note.
+5. **Bundle fit (no D17 copy made):** cernetic-2023 (TENET, GPU DG for
+   astrophysical turbulence) also fits astrophysical-simulation-codes;
+   baskaya-2024 and mcquaid-2024 are mainly hypersonic gas–surface and
+   heat-flux papers; duronio-2024 is an OpenFOAM application paper;
+   jiao-2024 and jiang-2024 are cavitation/multiphase solvers.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  berta-2024 (v4), cai-2024 (v1), cernetic-2023 (v2, accepted),
+  ciallella-2024 (v1), gaburro-2024 (v1), ruedaramirez-2024 (v1),
+  trojak-2024 (v1), yu-2023 (v1); author preprint baskaya-2024; HAL wrap
+  of the version of record goudon-2024.
+- ji-2023 calls its dual stencil selection new; ji-2022 already used
+  the two-step structure with one cut-off ($C_T=10^{-6}$). New here are
+  the pair of cut-offs ($10^{-7}$, $10^{-5}$) and the seventh order.
+- Nogueira et al.'s "WENO5-NN" is a different scheme from Stevens &
+  Colonius's WENO5-NN; the learned-weights page keeps them apart.
+- Future label family: liang-2024 (planned, chunk 8) shares "Liang & Fu
+  (2024)" with liang-2024-b; letters will be applied then.
+
+### Printed slips (the Source pages list them in full)
+
+- huang-2024: Eq. (38) sign; Table 2 $L^\infty$ exponent.
+- tang-2024: Eq. (15) exponent sign (as printed every $\delta_k$ is 0);
+  Table 5 ratio; double-Mach states given in conservative variables.
+- ciallella-2024: Eq. (38) $(\gamma+1)/2$ for $(\gamma-1)/2$; Table 5
+  orders not reproducible from its errors.
+- gaburro-2024: $\Gamma_0$ identically zero; bubble time scale and air
+  density inconsistent; Table 1 $P_3$ orders.
+- goudon-2024: equilibrium relation and positivity-CFL signs.
+- ruedaramirez-2024: Eqs. (33), (39); a "Ma = 1.4" state that is Mach 4.
+- trojak-2024: helium–air post-shock state fits no Rankine–Hugoniot
+  state; Taylor–Green $\cos(2z+2)$.
+- cernetic-2023: Eq. (35) prefactor; Eq. (39) not trace-free; "3096"
+  cells inconsistent with the stated doubling.
+- berta-2024: Eqs. (27), (28), (37); Eq. (46) Lorentz factor.
+- jiao-2024: THINC normalisation; Table 4.3 velocity sign; units.
+- mcquaid-2024: Eq. (22) MUSCL right state independent of $\kappa$.
+- jiang-2024: Tables 1b, 2b; the point-value WENO5 gives a second-order
+  midpoint value; water pressure 0.000359 against $3.059\times10^{-4}$
+  printed by Zheng et al. (2021) and Tsoutsanis et al. (2021).
+- cai-2024: tests at "CFL 0.6" against the proved bound $1/12$.
+- liang-2024-b: Eq. (30) against Algorithm 1 (energy flux);
+  baskaya-2024, duronio-2024, yu-2023, ji-2023, nogueira-2024: minor.
+
+### Candidates for later pages
+
+- Quirk–Karni shock/helium-slab tube (trojak-2024, gaburro-2024) —
+  qualifies now; hydrostatic reconstruction (goudon-2024 collocated and
+  staggered); TENO-AZ and TENO-S; reconstruction for off-site data;
+  upwind constrained transport; quasi-conservative schemes; the Jameson
+  pressure sensor; a shock–cylinder benchmark.
+- Tag near-synonyms for a whole-bundle pass: amr/adaptive-mesh-refinement,
+  troubled-cell/troubled-cell-indicator, compact-scheme/compact-stencil,
+  positivity/bound-preserving, multicomponent/multiphase,
+  cut-cell/ghost-cell/immersed-boundary, solution-filtering/entropy-filtering,
+  ducros-sensor, split-form.
+
 ## Chunk 6 — WCNS weights, flux globalization, entropy-stable DG for air, interface methods (2026-10-23)
 
 Sources (20): chen-2023, demichele-2023-b, fujiwara-2023, gu-2023,

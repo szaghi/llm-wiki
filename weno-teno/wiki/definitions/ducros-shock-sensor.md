@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Ducros shock sensor"
-description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio, the modified compression-only form that switches hybrid central/TENO and central/WENO schemes, its regularization and thresholds, and its recorded failures and repairs."
+description: "The Ducros sensor flags compressions by the share of dilatation in the velocity-gradient magnitude; the page gives the classical squared ratio, the modified compression-only form that switches hybrid central/TENO and central/WENO schemes, its use as a weight blending WENO-Z with a first-order flux, its regularization and thresholds, and its recorded failures and repairs."
 status: established
 aliases: [Ducros sensor, modified Ducros sensor, improved Ducros sensor, Ducros dilatation–vorticity sensor, Ducros level, dilatation-to-vorticity ratio]
 tags: [central-scheme, teno, weno, finite-difference, turbulence]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Ducros shock sensor
@@ -24,7 +24,9 @@ where a [hybrid scheme](/methods/hybrid-weno.md) leaves its central
 energy-preserving flux for WENO-Z or [TENO](/methods/targeted-eno.md)
 ([De Vanna et al. (2023a)](/sources/devanna-2023.md);
 [De Vanna et al. (2023b)](/sources/devanna-2023-b.md);
-[De Vanna et al. (2023c)](/sources/devanna-2023-c.md)).
+[De Vanna et al. (2023c)](/sources/devanna-2023-c.md)). In a hypersonic
+Cartesian solver it weights a blend of fifth-order WENO-Z with a
+first-order flux ([McQuaid & Brehm (2024)](/sources/mcquaid-2024.md)).
 
 ## Two forms
 
@@ -108,6 +110,55 @@ Table 2). The later immersed-boundary work uses $\Psi^*=0.1$ with TENO-A7 and
 TENO-A5 (De Vanna et al. 2023c, §§4.3–4.4;
 [adaptive TENO](/methods/adaptive-teno.md)).
 
+**Two more switched schemes.** [Duronio & Di Mascio (2024)](/sources/duronio-2024.md)
+(§2, Eq. (7)) use the modified form, compression-only and not squared,
+with $\epsilon_{\mathrm D}=v_0^2/L_0^2$ from "suitable velocity and
+length scales" (values not printed), calling it "the classical shock
+sensor" of Ducros et al.; averaged to faces, it switches on the
+AUSM$^+$-up dissipation of the convective flux of a
+kinetic-energy-preserving central scheme in
+[OpenFOAM](/software/openfoam.md) above $\Psi^*=0.05$. The pressure
+dissipation is not switched. [Jiao et al. (2024)](/sources/jiao-2024.md)
+(App. D) use the classical squared ratio with $\epsilon_{\mathrm D}=10^{-20}$,
+combined with gas and vapour volume-fraction variation sensors, to
+blend a fourth-order central, an upwind MUSCL and a THINC reconstruction
+in an implicit-LES scheme for multiphase flow, with the threshold 0.95
+they take from Egerer et al. The form Duronio & Di Mascio call
+"classical" is thus not the squared ratio Jiao et al. use.
+
+## Use as a blending weight towards first order
+
+McQuaid & Brehm (§3.8, Eq. (20)) blend, on the block-structured
+Cartesian off-body grid of their overset hypersonic solver, the
+fifth-order finite-difference [WENO-Z](/methods/weno-z.md) flux
+(reconstruction in [characteristic variables](/methods/characteristic-decomposition.md)
+on the Roe-averaged state, Steger–Warming flux splitting) with a
+first-order flux $\hat f^{\mathrm O1}_{i+1/2}$ (page-local),
+
+$$\hat f_{i+1/2}=(1-\tilde\alpha_{\mathrm D})\,\hat f^{\mathrm{WENO}}_{i+1/2}+\tilde\alpha_{\mathrm D}\,\hat f^{\mathrm O1}_{i+1/2},$$
+
+where $\tilde\alpha_{\mathrm D}$ (page-local) is the "Ducros sensor
+value" of the "classical Ducros sensor" they cite; the sensor formula,
+its regularization and any threshold are not printed. The scheme thus
+falls fully to first order at strong shocks; unlike the hybrid switches
+above, the partner of WENO-Z is a first-order flux, not an
+energy-preserving central one (see [hybrid central–WENO schemes](/methods/hybrid-weno.md)).
+They motivate it by shock-induced artefacts on grids not aligned with
+the shock: "even the reduced order WENO scheme can produce pre- and
+post-shock artifacts". On the Mach 9.47 Mars Science Laboratory capsule
+at $8^\circ$ incidence they compare four Cartesian flux treatments,
+WENO-Z with local Rusanov splitting, with stencil-maximum ("global")
+Rusanov splitting, with Steger–Warming splitting, and the Ducros blend
+(§4.1, Fig. 14). The first three send velocity streaks from the shock
+to the interface with the near-body grid, which imprint a significant
+artefact in the surface heat flux; only the Ducros blend removes it, at
+the cost of a slightly more diffused shock. They assume, without
+testing it, that the cause is the misalignment of shock and grid, and
+attribute a slight leeward over-prediction of the heating and a
+somewhat low peak temperature (AS-202 capsule) to the first-order
+reduction (§4.1, §4.3). They describe the sensor as detecting shocks
+"with a minimal increase in computational overhead".
+
 ## Failure modes and repairs
 
 - **Smooth irrotational flow.** Where both the dilatation and the vorticity are
@@ -133,7 +184,13 @@ TENO-A5 (De Vanna et al. 2023c, §§4.3–4.4;
   ([hybrid central–WENO schemes](/methods/hybrid-weno.md)). Fu also records that
   the TENO6-A variant used for transitional shock/boundary-layer interaction
   replaces the TENO discontinuity measure by a modified Ducros sensor (§4.1,
-  §5.4; [adaptive TENO](/methods/adaptive-teno.md)).
+  §5.4; [adaptive TENO](/methods/adaptive-teno.md)). [Liang & Fu (2024b)](/sources/liang-2024-b.md)
+  (§3.1) make the same claim for their eight-point TENO-type indicator of
+  the TENO-S hybrid, which separates non-smooth high-wavenumber
+  fluctuations "in the wavenumber space" and is "more universal for
+  general conservation laws" than physical-variable sensors such as the
+  Ducros sensor; they show indicator maps but no comparison with a
+  Ducros-switched run ([targeted ENO](/methods/targeted-eno.md)).
 
 **Repair by multiplication.** Sciacovelli et al. (§3, Eq. (36)) multiply the
 classical ratio by the Bhagatwala–Lele dilatation switch and Jameson's
@@ -144,8 +201,29 @@ underexpanded jet the product confines the low-order dissipation to the
 intercepting shocks, the Mach disk and the reflected shocks, with values below
 $0.02$ elsewhere (§5.1, Fig. 8).
 
+## Not a Ducros sensor: Jameson-type pressure sensors
+
+The pressure sensor of Jameson et al. that enters Sciacovelli et al.'s
+product $\Xi_i$ is a different detector, a normalized second difference
+of a scalar rather than a velocity-gradient ratio.
+[Berta et al. (2024)](/sources/berta-2024.md) (§3.4, Eq. (35), arXiv v4)
+use a Jameson-type sensor of this kind, not the Ducros sensor, in their
+fourth-order MHD finite-volume scheme: per direction,
+$(\bar q_{i+1}-2\bar q_i+\bar q_{i-1})/(\lvert\bar q_{i+1}\rvert+2\lvert\bar q_i\rvert+\lvert\bar q_{i-1}\rvert+\epsilon)$
+on the cell averages $\bar q$ (page-local) of density, pressure and magnetic pressure, the
+maximum over them and the Euclidean norm over directions compared with
+a threshold whose value is not printed; flagged cells and their first
+neighbours drop to a lower-order reconstruction. They note that it
+keeps the stencil compact, "albeit three zones may not be sufficient to
+distinguish a discontinuity from a smooth extremum", and propose a
+derivatives-ratio detector beside it (see
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+
 ## Qualifications
 
+- McQuaid & Brehm print neither the Ducros formula nor a threshold, so
+  their blend cannot be compared quantitatively with the hybrid
+  switches above; it is a continuous weight, not a binary switch.
 - Thresholds do not transfer between the two forms. A value of $\Psi^*$ for
   the modified sensor equals $(\Psi^*)^2$ for the classical ratio (compiler
   check above), and both depend on the choice of $\epsilon_{\mathrm D}$. The
@@ -166,3 +244,8 @@ $0.02$ elsewhere (§5.1, Fig. 8).
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.2, Eqs. (8)–(10): improved Ducros sensor among URANOS detectors, flagged band, tuning.
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §3.2, Eq. (13); §§4.3–4.4: index form, $\Psi^*=0.1$ with TENO-A.
 - [Fu (2023)](/sources/fu-2023.md) — §3.4, §4.1, §5.4: case dependence of physical sensors; modified Ducros sensor in TENO6-A.
+- [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2, Eq. (7): modified form switching AUSM$^+$-up dissipation, $\Psi^*=0.05$.
+- [Jiao et al. (2024)](/sources/jiao-2024.md) — App. D: classical ratio in a multiphase implicit-LES blending sensor.
+- [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20); §4.1, Fig. 14; §4.3: Ducros-weighted blend of WENO-Z with a first-order flux, heating artefacts on non-aligned grids.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.1: TENO-type indicator claimed more universal than the Ducros sensor.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.4, Eq. (35): Jameson-type sensor, distinct from Ducros' (arXiv v4).

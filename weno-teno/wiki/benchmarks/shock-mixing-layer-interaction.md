@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–mixing-layer interaction"
-description: "Viscous two-dimensional (and three-dimensional) benchmark after Yee, Sandham & Djomehri in which an oblique shock impinges on a spatially developing, periodically forced mixing layer at Re 500, producing vortices, shocklets and acoustic waves; used to test shock detectors and the resolution of low-dissipation schemes."
+description: "Viscous two-dimensional (and three-dimensional) benchmark after Yee, Sandham & Djomehri (also run inviscid) in which an oblique shock impinges on a spatially developing, periodically forced mixing layer at Re 500, producing vortices, shocklets and acoustic waves; used to test shock detectors and the resolution of low-dissipation schemes."
 status: established
 aliases: [shock/mixing-layer interaction, shock–shear layer interaction, Yee–Sandham–Djomehri mixing layer, viscous shock–mixing layer]
 tags: [benchmark, low-dissipation, turbulence, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Shock–mixing-layer interaction
@@ -59,6 +59,18 @@ gives a density ratio $1.28868$ against the printed $1.28869$, a shock
 angle of $12.0^\circ$ to the stream $(3,0)$, and behind it the velocity
 $(2.9709,-0.1367)$, the printed one.
 
+**Inviscid version.** [Tang (2024)](/sources/tang-2024.md) §4.4.6,
+Eq. (38) runs the setup with the Euler equations: the same domain,
+inlet profile, upper stream $(1.6374,\,0.3327)$, forcing with
+$a_1=a_2=0.05$, $b=10$ and period $30/2.68$, but without printing the
+phases $\varphi_k$ or the post-shock state ("the rear shock wave" on
+the upper boundary), with a slip wall below and outflow on the right,
+and the lower-stream density printed as $0.3636$. With $\gamma=1.4$ the
+other sources' $0.3626$ gives $u_c=2.6800$ and a convective Mach number
+$0.59998$, Tang's $0.3636$ gives $2.6797$ and $0.6005$: both agree with
+$u_c=2.68$ and $0.6$ to the printed digits, the former more closely
+*(compiler check, not in the sources)*.
+
 **Three-dimensional extension.** Wang et al. Ex. 5.12 extend the domain
 to $[0,200]\times[-20,20]^2$ with symmetric boundaries in $z$ and the
 forcing $v_2'=\sum_ka_k\cos\big(2\pi k(t/T_{\mathrm f}+z/L_z)+\varphi_k\big)e^{-y^2/b}$,
@@ -71,6 +83,7 @@ $L_z=40$, on $600\times120\times120$ points to $t=120$.
 | Li et al. (2022a) | MDAD-HY: [minimized-dispersion, adaptive-dissipation](/methods/mdcd-scheme.md) linear scheme hybridized with WENO by their shock detector | $1600\times320$, non-uniform, refined near $y=0$ | none |
 | Chamarthi (2023a) | [gradient-based](/methods/gradient-based-reconstruction.md) MEG6, MIG4 vs TENO5, all with [α-damping](/methods/alpha-damping-viscous-flux.md) compact viscous gradients | $320\times80$ | none |
 | Chamarthi (2023b) | seventh-order MEG7 vs seventh-order mapped [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS7M | $320\times80$ | none |
+| Tang (2024) | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 | $500\times100$; $1000\times200$ at CFL 0.3, 0.5, 0.8 | none |
 | Wang et al. (2021) | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5) against WENO-JS5, [WENO-AO](/methods/weno-ao.md)5, WENO-ZS5; sixth-order central viscous fluxes | $500\times100$ | seventh-order WENO-JS on $2000\times400$ |
 
 **Detector behaviour.** Li et al. use the case as the robustness test
@@ -92,6 +105,20 @@ example, and 0.87 times that of WENO-ZS5 (Table 5.8), above the
 "9 %–30 %" overhead their text gives for all examples. The 3D extension
 is shown in Figs. 5.20–5.21.
 
+**Stability margin of adaptive TENO.** Tang finds that the TENO-AZ
+resolves "much finer unstable vortices" than the other TENO schemes on
+$500\times100$, with 12 density levels in $[0.4,2.4]$ (Fig. 15). On
+$1000\times200$, TENO-Z and TENO-LAD fail at CFL 0.3, 0.5 and 0.8,
+TENO-A runs at 0.3 and fails at 0.5 and 0.8, and TENO-AZ runs at all
+three (Fig. 16). Tang attributes this to the continuity of the new
+cut-off threshold against the "jump breaks" of the others' floor-based
+thresholds, without testing the attribution; the 0/1 cut-off flag
+$\delta_k$ is discontinuous in all four schemes, only the threshold
+$C_T$ varies continuously in TENO-AZ *(compiler check, not in the
+sources)*. Tang's CPU times on $500\times100$ are 0.821 (TENO-Z), 1.095
+(TENO-A), 0.912 (TENO-LAD) and 0.807 (TENO-AZ), hardware an Intel
+i7-9700 (Table 6).
+
 ## Qualifications
 
 - No source gives an error norm; the comparisons are visual (Wang et al.
@@ -105,6 +132,11 @@ is shown in Figs. 5.20–5.21.
   ($1600\times320$ against $500\times100$) *(compiler check, not in the sources)* and in grid
   type (uniform against refined near the layer), so their figures
   cannot be compared directly.
+- Tang's run is inviscid, while the setup of Yee et al. that the paper cites
+  is viscous ($\mathrm{Re}=500$ in the other sources), so Tang's run is
+  not the same problem as theirs; the introduction says
+  TENO-Z, TENO-A and TENO-LAD "fail at $CFL\ge0.3$" on $1000\times200$,
+  while §4.4.6 has TENO-A running at 0.3.
 - Wang et al. call the 3D case an "extension of the previous Example
   4.10"; the 2D case is their Example 5.10.
 
@@ -114,3 +146,4 @@ is shown in Figs. 5.20–5.21.
 - [Wang et al. (2021)](/sources/wang-2021.md) — Exs. 5.10, 5.12, Table 5.8, Figs. 5.16–5.17, 5.20–5.21.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.2 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.11, Fig. 14 (arXiv v1).
+- [Tang (2024)](/sources/tang-2024.md) — §1, §4.4.6, Eq. (38), Figs. 15–16; §4.4.8, Table 6.

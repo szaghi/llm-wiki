@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # WENO-Z weights
@@ -169,6 +169,26 @@ WENO-AO $\tau$ of Balsara et al. (2024, App. D) ([WENO-AO](/methods/weno-ao.md))
 in the bundle are [WENO-Z+ and WENO-Z+M](/methods/weno-z-plus.md),
 [WENO-ZN](/methods/weno-zn.md) and the affine-invariant Ai-WENO-Z.
 
+**Point values in finite volumes, particles and hypersonic overset grids.** Berta, Mignone, Bugli & Mattia (2024, §3.2,
+Eqs. (24)–(28); arXiv v4 read) use the same point-value interpolation weights $(\tfrac1{16},\tfrac58,\tfrac5{16})$ inside a
+fourth-order finite-volume scheme for classical and relativistic MHD, on point values recovered from the cell averages,
+with $\tau_5$ at exponent $q=1$, $\epsilon=10^{-40}$, in primitive or characteristic variables, and claim the first such
+use in a finite-volume scheme ([WENO-JS](/methods/weno-js-reconstruction.md),
+[MP limiter](/methods/monotonicity-preserving-limiter.md)). Their third-order fallback is the Yamaleev–Carpenter WENO3 in
+point-value form, $\alpha_l=d_l\big(1+|u_{i+1}-2u_i+u_{i-1}|^2/(\beta_l+\epsilon)\big)$ with squared one-sided differences as
+$\beta_l$, $d=(\tfrac34,\tfrac14)$ and $\epsilon=\Delta x^2$ "to avoid loss of accuracy at critical points" (Eqs. (27)–(28)).
+In their tests WENO-Z and MP5 have almost identical errors on the circularly polarized Alfvén wave (orders reaching 4.00)
+and WENO-Z "performs the best" in [field-loop advection](/benchmarks/field-loop-advection.md) (§5.3–5.4). Jiang et al.
+(2024, §3.2, Eqs. (12)–(15)) embed fifth-order Z-type weights, $\tau_5$ with exponent 2 and $\epsilon=10^{-10}$ in
+numerator and denominator, plus the WENO-Z+ term, in a Lagrangian meshless particle method, interpolating primitive
+variables component-wise along each particle pair; the observed orders are only 2.2–2.35 on smooth density waves
+(Tables 1–2; [WENO-Z+](/methods/weno-z-plus.md)). McQuaid & Brehm (2024, §3.8) use fifth-order finite-difference WENO-Z
+with Roe-averaged characteristic reconstruction and Steger–Warming splitting on the Cartesian grid of a hypersonic overset
+solver, blended with a first-order flux by the Ducros sensor at strong shocks ([hybrid schemes](/methods/hybrid-weno.md));
+they print it as "the WENO-Z scheme of Jiang and Shu with smoothness indicators proposed by Liu et al.", and state that it
+"eliminates order reduction at critical points" without qualification, against the second-order rates of WENO5-Z at
+second-order critical points recalled above (Li et al. 2022b, Table 6).
+
 Several TENO variants take the fifth-order $\tau_5$ as their global indicator "for a low
 computational cost": Hong, Ye & Ye (2022, Eq. (17)) in TENO-M and Liang et al. (2022, §2.2) in TENO5,
 written $|\beta_1-\beta_2|$ in the TENO labelling, the same outer pair; Huang, Liang & Fu (2023, §3.2) use
@@ -212,8 +232,21 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 - Jeong, Yang & Yoon (2022, Eq. (10)) recall WENO-Z with $\tau_5=|\beta_2-\beta_0|^2$, squared, and $q=1$
   recommended; Luo & Wu (2021) and Wang & Don (2022) write $|\beta_0-\beta_2|$. The recall is not used in their own
   scheme, and the two forms differ in the homogeneity count of the previous section.
+- Berta et al. (2024, Eq. (27)) print the upwind WENO3 candidate and the indicator labels inconsistently with their
+  linear weights; see [WENO-JS](/methods/weno-js-reconstruction.md). Jiang et al. (2024, Eq. (14)) label all three
+  indicators alike and repeat the point $i+1$ in the last term of the third, where the first term of the same indicator
+  and the candidate of Eq. (13) use $i+2$, i.e. the stencil $\{i,i+1,i+2\}$.
 - **Naming.** WENO-ZQ (Zhu & Qiu) shares the Z-type weight form but is a different reconstruction,
   of CWENO type (Zheng, Cai, Qiu & Qiu 2022, §2.2); it is not the WENO-Z of Borges et al.
+
+## Contradictions
+
+**Cost of WENO-Z against mapped WENO.** *Open.* [Deng (2023)](/sources/deng-2023.md) (§1, after Borges et al.) states that
+WENO-Z is "less computationally expensive than the WENO-M scheme" ([mapped WENO](/methods/mapped-weno.md));
+[McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) (§3.8, citing Brehm et al. 2015) state that WENO-Z "is more expensive
+than a mapped WENO scheme". Both are statements about the same comparison, WENO-Z against Henrick et al.'s mapped
+weights, each resting on a cited work; neither paper prints a timing. What would decide it: wall-clock or operation counts of WENO-Z and
+WENO-M in one code, on one problem and hardware.
 
 # Citations
 
@@ -256,3 +289,6 @@ gradients, and costs about as much as MIG4 on viscous cases (§9.1, Tables 5–7
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eq. (3.23).
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(25).
+- [Berta et al. (2024)](/sources/berta-2024.md) — §1; §3.2, Eqs. (24)–(28); §5.3–5.4 (arXiv v4).
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.2, Eqs. (12)–(15); §4.1, Tables 1–2.
+- [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20).

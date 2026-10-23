@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # WENO-JS reconstruction
@@ -24,7 +24,7 @@ The linear weights $d_k$ make $\sum_kd_k\hat f^{(k)}_{i+1/2}$ the $(2r-1)$th-ord
 linear scheme on the global stencil. The [smoothness indicators](/definitions/smoothness-indicator.md)
 $\beta_k$ push the weight of a stencil crossed by a discontinuity towards zero, which is the
 [ENO property](/definitions/eno-property.md). Classical WENO uses $q=2$ (Fu 2023, §3.1; Ye et al. 2022, §2.2,
-"for most WENO schemes"); Li et al. (2022, Eq. (5)) call the exponent the knob that "controls the
+"for most WENO schemes"); Li et al. (2022b, Eq. (5)) call the exponent the knob that "controls the
 magnitude of the numerical dissipation", and Fu (2023, §3.1) contrasts it with TENO's larger $q=6$–$7$.
 
 ## Construction
@@ -40,7 +40,7 @@ reconstruction is carried out in local characteristic fields
 eigenvectors in Li et al. (2022b), Luo & Wu (2021), Fu (2021) and Takagi et al. (2022).
 
 **Candidate fluxes and linear weights.** With $S_k=\{x_{i+k-r+1},\dots,x_{i+k}\}$ ($S_0$ the most
-upwind), the fifth-order case ($r=3$) is (Luo & Wu 2021, Eq. (1); Li et al. 2022, Table 2)
+upwind), the fifth-order case ($r=3$) is (Luo & Wu 2021, Eq. (1); Li et al. 2022b, Table 2)
 
 $$\begin{aligned}
 \hat f^{(0)}_{i+1/2}&=\tfrac13f_{i-2}-\tfrac76f_{i-1}+\tfrac{11}6f_i,\\
@@ -50,7 +50,7 @@ $$\begin{aligned}
 
 and the linear combination is the fifth-order upwind scheme UD5,
 $(2f_{i-2}-13f_{i-1}+47f_i+27f_{i+1}-3f_{i+2})/60$ (Luo & Wu 2021, Eq. (3)). Wan & Xia (2022, Eqs. (2.10)–(2.23))
-and Jeong, Yang & Yoon (2022, Eqs. (6)–(9)) restate the same scheme, the former with $\epsilon=10^{-6}$, $q=2$. Li et al. (2022,
+and Jeong, Yang & Yoon (2022, Eqs. (6)–(9)) restate the same scheme, the former with $\epsilon=10^{-6}$, $q=2$. Li et al. (2022b,
 Tables 1–2) tabulate the seventh- and ninth-order cases: $d=(1/35,12/35,18/35,4/35)$ for $r=4$
 and $d=(1/126,10/63,10/21,20/63,5/126)$ for $r=5$. *(Compiler check, not in the sources: all
 candidate coefficients and linear weights for $r=3,4,5$ were recomputed by exact integration of
@@ -93,6 +93,17 @@ $$d_0(x)=\frac{(x-x_{i+1})(x-x_{i+2})}{12\Delta x^2},\qquad d_2(x)=\frac{(x-x_{i
 and Jiang–Shu indicators and weights. *(Compiler check, not in the sources: at $x_{i+1/2}$ these give
 $(d_0,d_1,d_2)=(\tfrac1{16},\tfrac58,\tfrac5{16})$, the interpolation weights, distinct from the
 reconstruction weights above.)* They apply it to primitive variables in local characteristic fields.
+
+**Point values inside a finite-volume scheme.** Berta, Mignone, Bugli & Mattia (2024, §3.2, Eqs. (24)–(26); arXiv v4
+read) convert the cell averages of a fourth-order finite-volume MHD scheme to point values at cell centres and
+interpolate those, so the candidates are the point-value interpolants
+$\tfrac18(3u_{i-2}-10u_{i-1}+15u_i)$, $\tfrac18(-u_{i-1}+6u_i+3u_{i+1})$, $\tfrac18(3u_i+6u_{i+1}-u_{i+2})$ with the interpolation
+weights $(\tfrac1{16},\tfrac58,\tfrac5{16})$, and the Jiang–Shu indicators "have been found to be the same" on point values;
+the weights are of [WENO-Z](/methods/weno-z.md) type. *(Compiler check, not in the sources: these weights reproduce the
+five-point interpolation $\tfrac1{128}(3,-20,90,60,-5)$ coefficient by coefficient.)* The same paper's fallback WENO3 is
+the point-value version of the third-order scheme, with linear weights $\tfrac34$ on the central and $\tfrac14$ on the upwind
+candidate against $\tfrac23$ and $\tfrac13$ in the cell-average form, Z-type weights after Yamaleev & Carpenter and
+$\epsilon=\Delta x^2$ "to avoid loss of accuracy at critical points" (Eqs. (27)–(28); see Qualifications).
 
 **Multi-dimensional finite volumes.** A finite-volume WENO in several dimensions needs face
 quadrature to keep its order. In the MFC code, Bryngelson et al. (2021, §4.1, §5.4, Fig. 5a)
@@ -157,7 +168,7 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   Fu (2023, §1) states that for broadband turbulence this excess dissipation can underpredict
   "approximately the upper 3/4 of the resolvable wavenumbers". In the inviscid Taylor–Green vortex
   WENO7-JS dissipates more kinetic energy at $128^3$ than the seventh-order linear upwind scheme at
-  $64^3$ (Li et al. 2022, §4.5, Fig. 11). In the normalised-variable plane WENO3-JS lies close to
+  $64^3$ (Li et al. 2022b, §4.5, Fig. 11). In the normalised-variable plane WENO3-JS lies close to
   the MinMod limiter on $0<\tilde u_i<1$ (Deng 2023, Fig. 5;
   [normalised-variable diagram](/definitions/normalised-variable-diagram.md)).
 - **Symmetry.** Fu (2023, §3.8) recalls that WENO9-JS breaks the symmetry of the Rayleigh–Taylor
@@ -171,7 +182,11 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
   disturbance solver with characteristic WENO5 on Rusanov-split fluxes, the convective right-hand
   side converges at observed $L_2$ orders of about 5.8–6.0 (Browne et al. 2022, App. A, Table A.1).
   On face reconstruction of $\sin^3(\pi x)$, which has a saddle point, WENO3-JS converges at 2.44 and
-  degenerates at the saddle (Bezgin et al. 2022, §3.4–3.5, Figs. 2, 4).
+  degenerates at the saddle (Bezgin et al. 2022, §3.4–3.5, Figs. 2, 4). On the 2-D entropy wave with
+  characteristic-wise global Lax–Friedrichs splitting, $q=2$ and $\epsilon=10^{-6}$, WENO5-JS has $L_2$ density errors
+  $1.16\times10^{-1}$ to $7.88\times10^{-7}$ from $25^2$ to $400^2$, orders 2.80, 4.46, 4.90, 5.00, four to six times
+  those of the learned WENO5-NN that keeps its candidates and linear weights (Nogueira et al. 2024, §2, Eqs. (5)–(10);
+  §4.1, Table 3; [learned WENO weights](/methods/learned-weno-weights.md)).
 - **Variables at material interfaces.** Reconstructing conserved variables or fluxes across a
   material interface oscillates in pressure and velocity: Zheng, Shu & Qiu (2021, Fig. 6) measure
   $|u-u_0|$, $|p-p_0|$ near $10^{-4}$–$10^{-3}$ for conservative-variable WENO-JS on a moving contact,
@@ -183,7 +198,7 @@ upwinding through a minmod-limited slope ratio ([hybrid schemes](/methods/hybrid
 - **Values at fixed points only.** Zheng, Cai, Qiu & Qiu (2022, §1, §2.2) judge WENO-JS unsuitable for
   semi-Lagrangian finite volumes, which need the reconstruction "at any spatial position", and use the
   CWENO-type WENO-ZQ instead ([semi-Lagrangian finite volumes](/methods/semi-lagrangian-finite-volume.md)).
-- **As a comparator.** In the entropy-stable moving-mesh schemes of Li, Duan & Tang (2022, §5), WENO-JS
+- **As a comparator.** In the entropy-stable moving-mesh schemes of Li, Duan & Tang (2022c, §5), WENO-JS
   in the dissipation term resolves less small-scale structure than multi-resolution WENO at slightly
   lower cost ([multi-resolution WENO](/methods/multi-resolution-weno.md)); in Wang et al. (2021,
   Examples 5.6–5.9) it captures less Kelvin–Helmholtz roll-up than the multi-resolution schemes on
@@ -237,10 +252,15 @@ reconstructing fluxes.
   Ye et al. 2022, §3.3) number the central stencil $S_0=\{i-1,i,i+1\}$, the downwind-biased
   $S_1=\{i,i+1,i+2\}$ and the upwind $S_2=\{i-2,i-1,i\}$, so their $(d_0,d_1,d_2)=(6/10,3/10,1/10)$
   is the same scheme.
-- Li et al. (2022, Table 2) print the entry $77/20$ in the $r=5$, $k=4$ row; the row sums to 1 only
+- Li et al. (2022b, Table 2) print the entry $77/20$ in the $r=5$, $k=4$ row; the row sums to 1 only
   with $77/60$, which is the value the candidate polynomial gives (and the mirror of the $k=0$ row
   of the same table).
-- Li et al. (2022, Eq. (8)) call the rescaled Legendre basis of Balsara et al. "Hermite
+- Berta et al. (2024, Eq. (27)) print the upwind WENO3 candidate as $\tfrac12(-u_{i+1}+3u_i)$ and, in Eq. (28),
+  $\beta_0=(u_i-u_{i-1})^2$ for the weight of the central candidate. *(Compiler check, not in the sources: with
+  $(\tfrac34,\tfrac14)$ only $\tfrac12(3u_i-u_{i-1})$ gives the quadratic interpolant $\tfrac18(-u_{i-1}+6u_i+3u_{i+1})$ at
+  $x_{i+1/2}$, and the central candidate on $\{i,i+1\}$ has the jump $u_{i+1}-u_i$, so the indicator labels are swapped
+  relative to the candidates.)*
+- Li et al. (2022b, Eq. (8)) call the rescaled Legendre basis of Balsara et al. "Hermite
   polynomials"; it has nothing to do with [Hermite WENO](/methods/hermite-weno.md).
 
 # Citations
@@ -262,7 +282,7 @@ reconstructing fluxes.
 - [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) — §3.2, Eq. (32); §4.2.
 - [Matsushita & Aoki (2021)](/sources/matsushita-2021.md) — §3.1, Eqs. (26)–(27).
 - [Wang et al. (2021)](/sources/wang-2021.md) — §5, Table 5.1.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §5, Remark 3.2.
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §5, Remark 3.2.
 - [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) — §1; §2.2.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §2, Eqs. (6)–(10); §3.4–3.5, Figs. 2, 4.
 - [Browne et al. (2022)](/sources/browne-2022.md) — §2.2; App. A, Table A.1.
@@ -278,3 +298,5 @@ reconstructing fluxes.
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §8.7, Table 12.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.2, Eqs. (2.10)–(2.23).
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §2, Eqs. (5)–(10); §4.1, Table 3.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §3.2, Eqs. (24)–(28) (arXiv v4).

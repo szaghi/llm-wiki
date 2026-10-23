@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer b
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # MHD blast wave and rotor
@@ -97,6 +97,31 @@ the results agree with the cited CESE runs (Figs. 16–20). In this
 blast $2p/\lvert B\rvert^2=0.2$ in the ambient medium
 *(compiler check, not in the sources)*, three orders of magnitude above
 the Balsara–Spicer value.
+
+[Berta et al. (2024)](/sources/berta-2024.md) §5.7, Table 3 (arXiv v4)
+run three 3D blasts on $192^3$ zones in a cube of side $L$ centred at
+the origin, zero-gradient boundaries, an over-pressurized sphere of
+radius $r_0$, and an oblique uniform field
+$B=B_0(\sin\theta_B\cos\phi_B,\ \sin\theta_B\sin\phi_B,\ \cos\theta_B)$ with
+$\theta_B=\pi/2$, $\phi_B=\pi/4$ (page-local angles), i.e. along the
+diagonal of the $xy$ plane:
+
+| Case | $\rho_{\mathrm{in}}$, $\rho_{\mathrm{out}}$ | $p_{\mathrm{in}}$, $p_{\mathrm{out}}$ | $B_0$ | $\gamma$ | $r_0$, $L$ | $t$ | solver | energy correction |
+|---|---|---|---|---|---|---|---|---|
+| C1 (MHD, Felker & Stone's with three times the magnetization) | 1, 1 | 10, 0.1 | 3 | 5/3 | 0.1, 1 | 0.2 | HLL | no |
+| C2 (MHD, Balsara & Spicer) | 1, 1 | $10^3$, 0.1 | $100/\sqrt{4\pi}$ | 1.4 | 0.1, 1 | 0.01 | HLL | yes |
+| R1 (RMHD) | $10^{-2}$, $10^{-4}$ | 1, $5\times10^{-3}$ | 1 | 4/3 | 0.08, 6 | 4 | GFORCE | yes |
+
+The ambient $\beta_{\mathrm p}$ is $0.022$ (C1), $2.51\times10^{-4}$ (C2)
+and $0.01$ in the lab frame (R1) *(compiler check, not in the
+sources)*. C1 has "the largest magnetization our scheme can afford"
+without the energy-correction step, which is applied, still at second
+order, in C2 and R1. Their fourth-order finite-volume scheme resolves
+the anisotropic, oval fast shock and the two plasma blobs moving along
+the field and keeps the point symmetry (Figs. 11–13); the order
+reduction ("fallback") to WENO3 or linear reconstruction in cells
+flagged by a discontinuity detector "played an essential role" in
+this test (see [troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
 ### Relativistic MHD blast
 
@@ -285,3 +310,4 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.2, Figs. 8–13 (arXiv v2).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.2.1, Figs. 8–10 (arXiv v1).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §§4.4–4.6, Figs. 8–20.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §5.7, Eq. (55), Table 3, Figs. 11–13 (arXiv v4).

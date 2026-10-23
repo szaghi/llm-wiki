@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Smoothness indicators
@@ -151,7 +151,31 @@ the five-point point-value quartic of a multi-resolution WCNS interpolation as a
 prefactor $\tfrac1{60480}$ (diagonal coefficients 82364, 1228889, 2695779, 1228889, 82364); see the
 Qualifications for a missing term.
 
+**Stencils that do not contain the target cell.** For the eight-point discontinuity indicator of TENO-S, Liang & Fu
+(2024b, §3.1, Eq. (31)) evaluate the Jiang–Shu integral over the target cell $[x_{i-1/2},x_{i+1/2}]$ for three-point
+stencils lying beside it, i.e. for extrapolated quadratics, e.g. on $\{i+1,i+2,i+3\}$
+$$\beta=\tfrac13\big|10f_{i+3}^2-49f_{i+2}f_{i+3}+29f_{i+1}f_{i+3}+61f_{i+2}^2-73f_{i+1}f_{i+2}+22f_{i+1}^2\big|,$$
+with analogous forms on $\{i-3,i-2,i-1\}$ and $\{i+2,i+3,i+4\}$; equal stencil sizes keep the cost low
+([hybrid schemes](/methods/hybrid-weno.md)). *(Compiler check, not in the sources: integrating the squared first and
+second derivatives of the quadratic matching $f_{i+1},f_{i+2},f_{i+3}$ as cell averages over the target cell reproduces this
+form exactly.)* The same paper prints the four- and five-point indicators of eight-point TENO (prefactors $\tfrac1{240}$ and
+$\tfrac1{5040}$) and recalls $\tau_8=\big|\beta_8-\tfrac16(\beta_{1,3}+\beta_{2,3}+4\beta_{0,3})\big|=O(\Delta x^6)$ in the TENO
+labelling (Eqs. (14)–(16); page-local $\beta_{k,r}$, stencil $k$ of width $r$).
+
+**Finite-volume TENO5.** Huang & Fu (2024, §2, Eqs. (9)–(11)) recall the three-point indicators in the central-first
+labelling, the five-point indicator $\beta_{3,5}$ as a quadratic form in $\bar u_{i-2},\dots,\bar u_{i+2}$ with prefactor
+$\tfrac1{5040}$ (diagonal coefficients 6908, 104963, 231153, 104963, 6908), and the global indicator
+$\tau_K=\big|\beta_{3,5}-\tfrac16(\beta_{1,3}+\beta_{2,3}+4\beta_{0,3})\big|=O(\Delta x^6)$ with $K=5$, after Fu et al.: the
+TENO full-stencil form of [targeted ENO](/methods/targeted-eno.md), not the registry's WENO-Z $\tau_5=|\beta_0-\beta_2|$.
+
 ## $L^1$-type and symmetric indicators (the WENO-NS line)
+
+**As network inputs.** Nogueira et al. (2024, §3.1, Eqs. (12)–(14)) feed their learned WENO5 weights with the
+absolute-value analogues of the Jiang–Shu indicators, page-local
+$\beta^{\mathrm{abs}}_0=\tfrac{13}{12}|f_{i-2}-2f_{i-1}+f_i|+\tfrac14|f_{i-2}-4f_{i-1}+3f_i|$ and its two shifts, divided by
+their maximum; with the squared $\beta_k$ the network trained "less accurately" (stated, no data). The max-normalization
+maps machine-zero data such as $(10^{-16},10^{-15},10^{-16})$ to $(0.1,1,0.1)$, which "may correspond with a non-smooth situation", so a plateau
+detector bypasses the network there ([learned WENO weights](/methods/learned-weno-weights.md)).
 
 Zhong, Wang, Qiu & Gao (2023, §2–3) review fifth-order finite-volume indicators built from the
 undivided differences of Ha et al. (page-local $\mathsf L_{n,k}$),
@@ -305,6 +329,9 @@ the cell-average correction of the candidates does not affect the indicator (Rem
   $\gamma_k=(\beta_k+\epsilon)^{-6}$, $\epsilon=10^{-12}$, without the global indicator of Cartesian TENO,
   which "can be applied" but is left out to save cost (§3.2;
   [targeted ENO](/methods/targeted-eno.md)).
+  Ji, Liang & Fu (2023, Eq. (26)) keep the reference-space form, printed without mesh-size factor, for both their
+  dual-cut-off TENO ($\gamma_k=(\beta_k+\epsilon)^{-6}$, $\epsilon=10^{-12}$) and their CWENO comparator (exponent 4,
+  $\epsilon=10^{-14}$) at orders 4 to 7 (§3.1.2, §3.2.2).
   Maltsev et al. (2023, Eqs. (26)–(28)) use the same quadratic form, integrated over the target cell in
   physical space with a volume-normalized Taylor basis shared with their modal DG, for the CWENOZ
   limiter of a hybrid DG–finite-volume scheme ([CWENO](/methods/cweno.md)).
@@ -328,6 +355,17 @@ the cell-average correction of the candidates does not affect the indicator (Rem
   $|I_{i,j}|^{|\alpha|-1}$; Zheng, Cai, Qiu & Qiu (2022, Eq. (12)) by
   $\Delta x^{l_1}\Delta y^{l_2}$ for $\partial_x^{l_1}\partial_y^{l_2}$, summed up to the degree of the
   candidate.
+- **DG cells and limiter candidates.** Huang & Fu (2024, §4.3, Eq. (32)) apply the one-dimensional Jiang–Shu form,
+  derivatives 1 and 2, to the $\mathbb P^2$ DG polynomial of each of the three cells $I_{i-1},I_i,I_{i+1}$ on its own
+  cell; with $\gamma_n=(\beta_n+10^{-3})^{-6}$ normalized over the three cells, cell $i$ is troubled when its own share
+  falls below $10^{-4}$ ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). The same form on the target
+  cell measures the candidates of their TENO limiter (Eq. (41); [WENO limiters for DG](/methods/weno-limiter-dg.md)). In
+  2-D (Eq. (59)) the terms are scaled by $|I_{ij}|^{2k-1}$, $|I_{ij}|$ the cell area, and the indicators of the
+  second-order modes include first-derivative terms, which differs from the HWENO limiter "for better robustness" (no
+  ablation shown). *(Compiler check, not in the sources: with an area raised to $2k-1$ the $k=1$ and $k=2$ terms carry
+  different powers of length, whereas the $|I|^{|\alpha|-1}$ scaling of Li, Shu & Qiu and Chen & Wu above makes every term
+  scale like the squared data; the absolute $10^{-3}$ in the troubled-cell measure also makes it depend on the amplitude of
+  the data.)*
 - **Derivative reconstruction.** When the reconstructed quantity is a derivative, Fan, Zhang & Qiu
   (2021, App. A, Eqs. (A.1), (A.3)) sum only derivative orders 2 and 3 of the Hermite candidates, i.e.
   the variation of the candidate's derivative.
@@ -538,4 +576,8 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eqs. (3.19)–(3.22).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (26)–(28).
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4, Eq. (2.6).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.2, Eqs. (13)–(16); §3.1, Eqs. (31)–(34).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §2, Eqs. (9)–(11); §4.3, Eq. (32); §4.4, Eq. (41); §5.2, Eq. (59).
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (25)–(26); §3.2.2, Eq. (29).
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.1, Eqs. (12)–(14).
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.3, Eq. (27); §3.4, Eqs. (28)–(32).

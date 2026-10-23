@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Orszag–Tang vortex"
-description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vortical velocity and magnetic fields steepen into interacting shocks and current sheets; used for high-order MHD shock capturing, density-bound limiting, entropy stability, divergence control and long-time robustness, in two normalizations that differ by a rescaling, and in a relativistic two-fluid version."
+description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vortical velocity and magnetic fields steepen into interacting shocks and current sheets; used for high-order MHD shock capturing, density-bound limiting, entropy stability, divergence control and long-time robustness, in two normalizations that differ by a rescaling, and in relativistic single-fluid and two-fluid versions."
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Orszag–Tang vortex
@@ -51,6 +51,13 @@ field), on $192^2$ points to $T=4$.
 [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) §4.3 print the same
 data again ($200^2$, contours at $t=3$, slice at $y=0.625\pi$) and run
 on to $t=100$.
+[Berta et al. (2024)](/sources/berta-2024.md) §5.6 (arXiv v4) print
+$\rho=25/9$, $p=5/3$, $(v_1,v_2)=(-\sin y,\ \sin x)$,
+$(B_1,B_2)=(-\sin y,\ \sin2x)$, periodic (the domain is not printed),
+to $t=2\pi$, the unit-square $t=1$ under the scaling below; their
+relativistic-MHD version halves the velocity,
+$(v_1,v_2)=(-0.5\sin y,\ 0.5\sin x)$, citing earlier relativistic
+papers.
 
 The two are one problem up to a rescaling *(compiler check, not in the
 sources)*. Multiplying $\rho$, $p$ and $|B|^2$ of the unit-square data
@@ -145,6 +152,7 @@ constraint.
 | [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.6 | semi-implicit IMEX fifth-order finite-difference WENO, all-Mach formulation at $\varepsilon=1$ | $192^2$ | constrained transport through $\mathsf A_3$ |
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3 | nodal DG / flux reconstruction, $\mathbb P_3$, positivity-preserving [entropy filtering](/methods/entropy-filtering.md) | $64^2$, $128^2$, $256^2$ elements, $\Delta t=4,2,1\times10^{-4}$ | Powell source term |
 | [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) §6.2.1 | [entropy-stable](/properties/entropy-stability.md) finite differences, orders 3 and 4, IMEX | $200^2$ | hyperbolic (perfectly hyperbolic Maxwell) cleaning |
+| [Berta et al. (2024)](/sources/berta-2024.md) §5.6 | fourth-order finite volume, pointwise MP5 or WENO-Z (LINEAR second-order comparison), Roe or HLLD with UCT-HLLD (MHD), GFORCE with UCT-GFORCE (RMHD), SSPRK(5,4), CFL 0.5 | MHD $64^2$, $512^2$; RMHD $128^2$, $1024^2$ | upwind constrained transport |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
@@ -253,6 +261,23 @@ discontinuities form, the third-order scheme dissipating slightly more
 than the fourth; the divergence error concentrates at discontinuities
 with similar $L^1$ norms for both orders up to $t=2$ (Figs. 4–7).
 
+**Magnetic islands as a dissipation probe.** Berta et al. show the
+thermal pressure at $t=2\pi$ (Figs. 9–10). In MHD at only 64 points
+the fourth-order scheme with MP5 and HLLD resolves a magnetic island
+(an O-point) in the central current sheet; they recall that the
+tearing instability develops on ideal time scales only if the
+numerical dissipation is low enough. As a scalar proxy they use the
+normalized pressure maximum $\max(p)/\langle p\rangle$ at the end of
+the run, which grows with resolution: MP5 with HLLD against LINEAR
+gives an average effective-resolution gain of about 2.23, hence a
+speedup of about 2.58 once the 4.3 times higher cost per cell update
+is counted ($2.23^3/4.3=2.58$ *(compiler check, not in the
+sources)*), which they call "only a rough estimate". In RMHD the
+schemes do not differ visibly at 128 points, while at 1024 points the
+fourth-order runs produce several, still unresolved, O-points in the
+high-pressure filament. See
+[numerical dissipation](/definitions/numerical-dissipation.md).
+
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
 adaptive TENO family carries over to MHD with constrained transport
@@ -260,8 +285,9 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All eleven sources compare contour plots or slices; none reports an
-  error norm. Rueda-Ramírez et al. (2021) compare with another code,
+- All twelve sources compare contour plots or slices; none reports an
+  error norm (Berta et al.'s normalized pressure maximum is a scalar
+  proxy, not an error). Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
 - Lesur et al.'s text gives the 2D resolution as "$128^3$, plus a
   reference case at $512^3$", their captions $128^2$ and $1024^2$; the
@@ -295,3 +321,4 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.3, Eq. (43), Figs. 3–6 (arXiv v2).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.1, Figs. 4–7 (arXiv v2).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.3, Figs. 4–7.
+- [Berta et al. (2024)](/sources/berta-2024.md) — §5.6, Figs. 9–10 (arXiv v4).

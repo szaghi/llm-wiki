@@ -1,18 +1,18 @@
 ---
 type: Software
 title: "PyFR"
-description: "PyFR is an unstructured high-order flux-reconstruction solver for CPUs and GPUs; three Dzanic et al. papers implement in it a time-reversibility artificial viscosity and a positivity- and entropy-bounded adaptive modal filter, later extended to ideal MHD, run nodal DG through FR from degree 2 to 14 on mixed meshes, and report filter costs on V100 GPUs."
+description: "PyFR is an unstructured high-order flux-reconstruction solver for CPUs and GPUs; four papers of Dzanic and co-authors implement in it a time-reversibility artificial viscosity and a positivity- and entropy-bounded adaptive modal filter, later extended to ideal MHD and multi-species flows, run nodal DG through FR from degree 2 to 14 on mixed meshes, and report filter costs on V100 GPUs."
 status: established
 aliases: [PyFR solver, Py-FR]
 tags: [software, flux-reconstruction, dg, gpu]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # PyFR
 
 PyFR is an open-source solver for unstructured meshes based on the
 [flux reconstruction](/methods/flux-reconstruction.md) (FR) approach, which
-runs on CPUs and GPUs, as recalled by the two bundle sources that use it
+runs on CPUs and GPUs, as recalled by two of the bundle sources that use it
 ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md), §4.2;
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md), §4.2). Neither
 source is a paper about PyFR itself; both use it as the host of a new
@@ -74,6 +74,18 @@ flux, so the sensor reuses the solver's own residual evaluation (§4.2).
   $\mathbb P^3$ and from 257 to 39.8 at $\mathbb P^4$, with an example
   implementation in their supplementary material (§4.1, §5.6, Fig. 17;
   [entropy filtering](/methods/entropy-filtering.md)).
+- **Multi-species flows.** [Trojak & Dzanic (2024)](/sources/trojak-2024.md)
+  run the entropy filter in PyFR on the conservative multi-species Euler
+  and Navier–Stokes equations, with solution and flux points at
+  Gauss–Lobatto points on tensor-product elements and $\alpha$-optimized
+  points on simplices, HLLC inviscid and BR2 viscous fluxes, and SSP-RK3
+  with a fixed step (§4, arXiv v1). The runs go up to $\mathbb P^5$ on a
+  near-vacuum density wave, $\mathbb P^3$ on $2800\times1200$ quadrilaterals
+  for a triple-point problem and on $32\times32\times64$ hexahedra for a
+  3D Rayleigh–Taylor instability, on up to 40 NVIDIA V100 GPUs; with the
+  structured filter matrices of Dzanic & Witherden (2023) the filter is
+  stated to be "only a small portion of the total compute time", with no
+  timing printed (§4–5; [entropy filtering](/methods/entropy-filtering.md)).
 - **As seen from other GPU codes.** [Bielawski et al. (2023)](/sources/bielawski-2023.md)
   cite PyFR as a GPU-accelerated unstructured high-order FR solver whose
   dominant cost is sparse and dense matrix multiplication handled by BLAS
@@ -94,7 +106,7 @@ The benchmark results are on the pages of the two methods and on
 
 ## Qualifications
 
-- Everything on this page is the configuration of three papers by the same
+- Everything on this page is the configuration of four papers by the same
   group, not a description of the code's full capabilities; the PyFR
   paper itself is cited by them, not ingested.
 
@@ -103,6 +115,7 @@ The benchmark results are on the pages of the two methods and on
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §4.1 Eqs. (31)–(38), §4.2, §5 (arXiv v2).
 - [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) — §4.2 Eqs. (25)–(26), §5.1.3, §5.2.3, Alg. 2 (arXiv v3).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §4, §4.1, §5.6 Fig. 17 (arXiv v2).
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §4, §5 (arXiv v1).
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §1 (accepted manuscript).
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §2.1.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §1.

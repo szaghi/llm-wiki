@@ -150,7 +150,7 @@ Ref. [50] prints no volume, [36] and [56] no pages, [37] no volume; [73] and
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunk 6 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
 
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)

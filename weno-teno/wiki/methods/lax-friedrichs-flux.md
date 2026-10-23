@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -73,7 +73,13 @@ flux and the derivative flux $f'(u)u_x$ of the finite-difference Hermite WENO of
 the first-order LF flux as its low-order flux (App. A;
 [positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)); global LF
 with $a=\max\rho(\partial f/\partial u)$ in the A-WENO of [Li et al. (2023a)](/sources/li-2023.md)
-(Eq. (35)). Three sources make the choice of speed matter:
+(Eq. (35)). In the hybrid TENO-S of [Liang & Fu (2024b)](/sources/liang-2024-b.md)
+(Algorithm 1) the splitting $f^{(l)\pm}=\tfrac12\big(f^{(l)}\pm a^{(l)}\zeta^{(l)}\big)$ of each
+Roe-averaged characteristic field, called Rusanov splitting, is applied only in the cells
+that their discontinuity indicator flags, the others taking a non-dissipative split-form
+central flux; for the [interacting blast waves](/benchmarks/woodward-colella-blast-wave.md)
+they replace it by "the Roe scheme with entropy-fix ... to obtain a stable result" (§4.4;
+[Roe solver](/methods/roe-riemann-solver.md)). Three sources make the choice of speed matter:
 
 - **Local characteristic LF for turbulence.** [Li et al. (2022a)](/sources/li-2022.md) use
   global LF splitting, componentwise or in characteristic fields, except for the
@@ -212,6 +218,22 @@ one trained network on one problem; no generalization test to other flows is sho
   not carry over to HLLE or second-order FV (§5.2.3). See
   [convex limiting](/methods/convex-limiting.md),
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+- **Monolithic convex limiting.** [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md)
+  (§2.2.1, Eqs. (9)–(13)) take the same LGL subcell LLF fluxes as the low-order scheme of
+  monolithic convex limiting for DGSEM, with $\lambda^{\max}_{(i,j)}=\lambda^{\max}_{(j,i)}$ an
+  upper bound of the maximum wave speed of the Riemann problem between nodes $i$ and $j$
+  (page-local). The forward-Euler update is a convex combination of $u_i^n$ and the bar states
+  $\bar u_{(i,i\pm1)}$ under $\Delta t\le J\mathsf w_i/(\lambda^{\max}_{(i,i-1)}+\lambda^{\max}_{(i,i+1)})$
+  ($J$ the element Jacobian, $\mathsf w_i$ the LGL weight), and the bar state is the HLL
+  intermediate state, so it preserves every convex invariant (citing earlier work). The high-order subcell flux is the LLF flux plus an anti-diffusive flux,
+  and the limiter bounds the **limited bar states**
+  $\bar u_{(i,j)}+\Delta\hat f^{\mathrm{Lim}}_{(i,j)}/\lambda^{\max}_{(i,j)}$ (page-local
+  $\Delta\hat f^{\mathrm{Lim}}$) in closed form, at the semi-discrete level, so the limited
+  operator does not depend on $\Delta t$ (Eqs. (14)–(24)). The price is the stricter step
+  $\Delta t\lesssim\min_im_i/(2\sum_d\lambda^{\max,d}_i)$, $m_i$ the diagonal mass entry, against
+  the low-order condition $\Delta t\lesssim\min_i\min_d\Delta x^d_i/\lambda^{\max,d}_i$ (Eqs. (43)–(45), §2.2.4). LLF is
+  also the surface flux of all their tests (§3). See
+  [convex limiting](/methods/convex-limiting.md).
 - **The original sparse IDP DG.** [Pazner (2021)](/sources/pazner-2021.md) chooses the
   LLF interface flux of the author's DGSEM because it is compatible with graph viscosity: its jump
   term merges with the in-element graph viscosity
@@ -221,6 +243,20 @@ one trained network on one problem; no generalization test to other flows is sho
   the forward-Euler update is a convex combination of the bar states
   $\tfrac12(u_i+u_j)+\frac{\hat c_{ij}}{2\hat d_{ij}}\cdot\big(f(u_j)-f(u_i)\big)$ (Eqs. (38)–(39),
   Prop. 7). See [convex limiting](/methods/convex-limiting.md).
+- **Relativistic hydrodynamics on Gauss–Lobatto points.** [Cai, Qiu & Wu (2024)](/sources/cai-2024.md)
+  (§3, Eq. (3.4), Lemma 3.1, Thm. 3.1) use the global LF flux on the interface values of a
+  finite-volume [Hermite WENO](/methods/hermite-weno.md) scheme, with $a$ the maximum spectral
+  radius over all interface states. The LF splitting property they recall from Wu and Tang,
+  $u\in G\Rightarrow u\pm f(u)/a\in G$ for every $a$ not below the spectral radius at $u$, and the
+  decomposition of $\bar u_i$, after a Zhang–Shu-type scaling limiter, on the four Gauss–Lobatto points ($N_{\mathrm{GL}}=4$, endpoint
+  weight $\tfrac1{12}$) give a physical-constraint-preserving update under
+  $\Delta t\le\tfrac1{12}\Delta x/a$, and $\Delta t\le\tfrac1{12}/(a^{(1)}/\Delta x+a^{(2)}/\Delta y)$ in
+  2D (Thm. 4.1; page-local directional speeds $a^{(d)}$); the HLL flux is named as an alternative
+  whose positivity was proved by [Chen & Wu (2022)](/sources/chen-2022-b.md)
+  ([relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md),
+  [bound preservation](/properties/bound-preservation.md)). Their tests run at "CFL number
+  0.6", whose definition is not printed (§5). *(compiler check, not in the sources: if that
+  number multiplies $\Delta x/a$, it is $7.2$ times the proved bound $\tfrac1{12}$.)*
 - **Positivity by an external limiter.** [Fu (2021)](/sources/fu-2021.md) (§5.7) runs the
   extreme cases (double rarefaction, Le Blanc, Sedov, Mach 80 and Mach 2000 jets) with LLF
   plus the positivity-preserving flux limiter of Hu, Adams & Shu; the TENO reconstruction
@@ -436,3 +472,6 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Bezgin et al. (2023)](/sources/bezgin-2023.md) — §3.3, Table 2, §7.4 (Eqs. (48)–(50), Figs. 20–21) (arXiv v1).
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §4.1.2 (Eq. (21)), §4.2, App. B (arXiv v2).
 - [Lin et al. (2023)](/sources/lin-2023.md) — §4, §5 (Eqs. (16)–(28), Lemma 5.1, Thm. 5.2, Remark 1), §6.2 (Eqs. (45)–(53), Thm. 6.1), §8 (Eq. (58), footnote 3) (arXiv v2).
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — Algorithm 1, §4.4.
+- [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §2.2.1–2.2.4 (Eqs. (9)–(24), (43)–(45)), §3 (arXiv v1).
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3 (Eq. (3.4), Lemma 3.1, Thm. 3.1), §4 (Thm. 4.1), §5 (arXiv v1).

@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–6 of 11 ingested (120 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–7 of 11 ingested (139 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -59,7 +59,15 @@ schemes, IMWENO-P, flux globalization for moving equilibria, HLL-GRP for MHD, ga
 schemes, asymptotically entropy-conservative and pressure-equilibrium-preserving fluxes,
 entropy-stable DG for reacting air and with positivity for Navier–Stokes, hybrid DG–FV,
 phase-field, discrete-equations and phase-change interface methods, WENO remapping,
-smooth adaptive meshing and Cartesian-grid Active Flux with AMR. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+smooth adaptive meshing and Cartesian-grid Active Flux with AMR. Chunk 7 (2023–2024
+papers): TENO-AZ, TENO-S and dual-selection TENO, learned WENO5-NN weights, a TENO
+limiter for Hermite-WENO DG, relativistic Hermite WENO with positivity, fourth-order
+upwind constrained transport, monolithic convex limiting, ADER with reconstruction for
+off-site data and quasi-conservative multimaterial schemes, entropy filtering for
+multicomponent flows, an evolving artificial-viscosity field (TENET), staggered
+well-balanced schemes, singular-source Riemann solvers, a Lagrangian particle WENO-Z+,
+an all-Mach THINC, and immersed boundaries, OpenFOAM and overset solvers for hypersonic
+and multiphase flows. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -204,11 +212,13 @@ add the recovery of primitive variables.
 the solvers [MFC](/software/mfc.md), [AMROC](/software/amroc.md),
 [UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md),
 [ADAM](/software/adam.md), [URANOS](/software/uranos.md),
-[STREAmS](/software/streams.md) and [JAX-Fluids](/software/jax-fluids.md);
+[STREAmS](/software/streams.md), [JAX-Fluids](/software/jax-fluids.md),
+[TENET](/software/tenet.md) and the [OpenFOAM-based solvers](/software/openfoam.md);
 [operator splitting](/methods/operator-splitting.md) of stiff chemistry; verification
 by the [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md).
 
 **8. Beyond method-of-lines reconstruction.** [Active Flux](/methods/active-flux.md),
+[ADER schemes](/methods/ader-scheme.md),
 the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) behind every
 conservative scheme, [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md),
 [IMEX Runge–Kutta schemes](/methods/imex-runge-kutta.md) and the
@@ -233,7 +243,8 @@ Smooth: [density-wave advection](/benchmarks/density-wave-advection.md),
 [Gresho vortex](/benchmarks/gresho-vortex.md), the
 [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md), the
 [hydrostatic equilibrium tests](/benchmarks/hydrostatic-equilibrium-tests.md) and
-[flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md). Two-dimensional
+[flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md) and the
+[supersonic vortex between arcs](/benchmarks/supersonic-vortex-between-arcs.md). Two-dimensional
 shocks: [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
 [double Mach reflection](/benchmarks/double-mach-reflection.md), the
 [forward-facing step](/benchmarks/forward-facing-step.md),
@@ -246,6 +257,8 @@ shocks: [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-p
 [shock–bubble](/benchmarks/shock-bubble-interaction.md) interactions, the
 [shock–water column](/benchmarks/shock-water-column.md) and
 [gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md),
+[bubble collapse near a wall](/benchmarks/bubble-collapse-near-wall.md), the
+[oscillating droplet](/benchmarks/oscillating-droplet.md),
 [underwater explosions](/benchmarks/underwater-explosion.md),
 [shock-induced combustion and detonation](/benchmarks/shock-induced-combustion.md), and
 [high-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md).
@@ -254,9 +267,13 @@ Instabilities: [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md)
 [Richtmyer–Meshkov](/benchmarks/richtmyer-meshkov-instability.md). Non-convex
 and MHD: the [KPP rotating wave](/benchmarks/kpp-rotating-wave.md), the
 [Brio–Wu shock tube](/benchmarks/brio-wu-shock-tube.md), the
-[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) and the
-[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md) and the
-[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md).
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), the
+[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md), the
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md),
+[magnetic field-loop advection](/benchmarks/field-loop-advection.md), the
+[magnetized vortex](/benchmarks/magnetized-vortex.md) and the
+[MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md).
+Shallow water: [flow over a bump and lake at rest](/benchmarks/flow-over-a-bump.md).
 Turbulence: [decaying compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md),
 [turbulent channel flow](/benchmarks/turbulent-channel-flow.md) and the
 [supersonic turbulent boundary layer](/benchmarks/supersonic-turbulent-boundary-layer.md).

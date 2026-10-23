@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Learned WENO weights"
-description: "Learned WENO weights replace the smoothness-indicator formula of a WENO scheme by a trained neural network that outputs the nonlinear weights; this page describes WENO3-NN (architecture, invariance and ENO layers, ideal-weight loss, training, order, dissipation, cost), its normalised-variable diagram, the closed-form ROUND operators fitted to it, and a network that learns a DG smoothness indicator."
+description: "Learned WENO weights replace the smoothness-indicator formula of a WENO scheme by a trained neural network that outputs the nonlinear weights; this page describes WENO3-NN and the five-point WENO5-NN of Nogueira et al. (architecture, ENO layers, ideal-weight loss, training, order, dissipation, cost), the ROUND operators fitted to WENO3-NN, and a learned DG smoothness indicator."
 status: established
-aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
-tags: [machine-learning, weno, reconstruction, finite-volume]
-timestamp: 2026-10-22T20:00:00Z
+aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
+tags: [machine-learning, weno, reconstruction, finite-volume, finite-difference]
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Learned WENO weights
@@ -88,6 +88,62 @@ Eqs. (3.8)–(3.13), Fig. 1):
   linear function and a jump at a face from a sine extremum; five random seeds per
   model, and the model kept is the one with the lowest validation error among those
   that pass all 1-D benchmarks.
+
+## WENO5-NN (Nogueira et al. 2024)
+
+Nogueira, Fernández-Fidalgo, Ramos, Couceiro & Ramírez (2024) extend the WENO3-NN methodology to the five-point
+stencil of finite-difference WENO5-JS ([WENO-JS](/methods/weno-js-reconstruction.md)): the three candidate fluxes
+and the linear weights $(d_0,d_1,d_2)=(0.1,0.6,0.3)$ are kept, and a network returns $(\omega_0,\omega_1,\omega_2)$
+directly (Abstract; §2, Eqs. (5)–(10); §3). This WENO5-NN is not the WENO5-NN of Stevens & Colonius recalled below,
+which perturbs the WENO5-JS coefficients and whose post-processing "results in a reduction in the overall accuracy
+of the method to first-order", in Nogueira et al.'s description (§1).
+
+- **Inputs.** Four features (§3.1, Eqs. (12)–(14)): the absolute-value analogues of the Jiang–Shu indicators,
+  page-local $\beta^{\mathrm{abs}}_k$, e.g.
+  $\beta^{\mathrm{abs}}_0=\tfrac{13}{12}|f_{i-2}-2f_{i-1}+f_i|+\tfrac14|f_{i-2}-4f_{i-1}+3f_i|$, each divided by the
+  largest of the three, and the five-point maximum $\varsigma^{\mathrm s}=\max_k\varsigma_k$ of three-point ratios of
+  the form of $\varsigma$ above, $\varsigma_k=|f_{j-1}-2f_j+f_{j+1}|/(|f_j-f_{j-1}|+|f_{j+1}-f_j|+10^{-15})$ centred
+  on the three nodes $j=i-1,i,i+1$, which the authors call a five-point extension of Jameson's shock detector
+  (page-local $\varsigma_k$, $\varsigma^{\mathrm s}$; the source's $\delta_k$, $\gamma_i$, $\gamma^s$). Squared
+  indicators as inputs trained less accurately, and adding $\varsigma^{\mathrm s}$ improved the results
+  "considerably" (stated, no data; [smoothness indicators](/definitions/smoothness-indicator.md)).
+- **Body.** Dense layers of 32, 16 and 16 neurons with swish activations, three outputs (Eq. (11), Fig. 2); the
+  output activation is not stated.
+- **ENO layer and plateau bypass.** Weights at or below $4\times10^{-7}$ are zeroed and the rest renormalized, at
+  inference only (Eq. (15); [ENO property](/definitions/eno-property.md)). Because the max-normalization turns
+  machine-zero data such as $(10^{-16},10^{-15},10^{-16})$ into $(0.1,1,0.1)$, a curvature-based plateau detector
+  after Clain, Loubère & Machado sets $\omega_k=d_k$ in flat regions and skips the network there; its formula and
+  threshold are not given (§3.1).
+- **Loss.** A loss of the WENO3-NN type, "after" Bezgin et al.: the reconstruction error weighted by
+  $(\varsigma^{\mathrm s})^{p_s}$ and the ideal-weight deviation $\sum_k(\omega_k-d_k)^2$ weighted by
+  $(1-\varsigma^{\mathrm s})^{p_s}$, as printed (WENO3-NN weights it by $1-\varsigma^{p_s}$), plus a regularization
+  with $b_W=10^{-9}$ (Eqs. (16)–(17)). Fig. 5 maps the pair of hyperparameters the
+  paper calls "$\alpha$ and $\beta$" ($\alpha$ is the exponent $p_s$; the paper does not say which coefficient
+  $\beta$ is), over $(0.2,0.1)$, $(0.5,0.1)$, $(0.05,0.1)$, $(0.2,0.25)$, $(0.2,0.05)$: similar
+  dispersion, different high-wavenumber dissipation, "a family of schemes"; $(0.2,0.1)$ is kept (§3.3).
+- **Training** (§3.2, Tables 1–2): static functions only, sampled at $\Delta x=0.01$, with wider ranges than
+  WENO3-NN ("necessary" for strong shocks and for dispersion): 655861 jumps with states in $\mathcal U(-40,80)$,
+  460355 samples of $\sin(k\pi x)$, $k\in[2,27]$, 72135 sawtooth, 82837 $\tanh(kx)$, $k\in[5,30]$, and 52700 cubic,
+  63935 quadratic, 2893 linear and 393 constant samples, with outliers removed by ranges of $\varsigma^{\mathrm s}$;
+  Nadam at learning rate $10^{-3}$, mini-batches of 128, 1000 epochs, five repetitions, the network kept being the
+  best on the 1-D tests.
+
+**Results** (characteristic-wise global Lax–Friedrichs splitting, explicit third-order Runge–Kutta, §4). On the
+2-D entropy wave ([density-wave advection](/benchmarks/density-wave-advection.md), $25^2$ to $400^2$) the $L_2$
+density errors of WENO5-NN are $8.47\times10^{-2}$ to $1.59\times10^{-7}$ with orders 4.16, 5.12, 5.06, 4.68,
+against $1.16\times10^{-1}$ to $7.88\times10^{-7}$ and 2.80, 4.46, 4.90, 5.00 for WENO5-JS: four to six times
+smaller errors, but the order "seems to start to drop below 5 at the finest grid", as for WENO3-NN (Table 3). In
+the approximate dispersion relation the chosen network has less dispersion error than WENO5-JS over a wide range
+and less dissipation in the well-resolved range (Fig. 5;
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)). It is less dissipative than
+WENO5-JS and stable on the Sod, Lax, [123](/benchmarks/double-rarefaction-problem.md) and
+[Leblanc](/benchmarks/leblanc-shock-tube.md) tubes (where it "greatly reduces the overshoots" of WENO5-JS at 900
+points), the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) (200 points, with a slight phase error),
+2-D Riemann configurations 3 and 6, [double Mach reflection](/benchmarks/double-mach-reflection.md) ($960\times240$),
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md) ($128\times512$, with a "slight loss of symmetry")
+and the [Mach 3 step](/benchmarks/forward-facing-step.md) (§4.2–4.4, figure comparisons). The cost is "several
+times" that of WENO5-JS, unmeasured; the authors present the network as a tool for discovering analytical weight
+functions rather than as a production scheme (§3.1, §5).
 
 ## Order, dissipation and cost
 
@@ -206,6 +262,15 @@ not under adding a constant, unlike the WENO3-NN features.)*
 
 ## Qualifications
 
+- **Two schemes named WENO5-NN.** Nogueira et al. (2024) and Stevens & Colonius (recalled by Bezgin et al. 2022, §1,
+  and Nogueira et al., §1) use the same name for different constructions: direct regression of the weights with an ENO
+  layer, against a perturbation of the WENO5-JS coefficients with post-processing.
+- Nogueira et al. (2024, §3.2) call the third loss term a regularization "on the neural network weights", while
+  Eq. (17) prints it as $\omega_0^2+\omega_1^2+\omega_2^2$, the squared output weights; the hyperparameters of Fig. 5
+  are called "$\alpha$ and $\beta$" without saying which coefficient $\beta$ is. Their outlier table lists the
+  oscillatory functions, which the text omits. Their evidence of lower dissipation on double Mach reflection and the
+  Riemann problems is the appearance of small structures, which the paper itself cites as possibly non-physical.
+
 - The diagram of a non-normalisable scheme is one section through its weights; Huang
   et al. do not verify the scale-independence assumption used to sample WENO3-NN.
   Bezgin et al.'s Delta layer makes it hold by construction up to $\epsilon$ (see the
@@ -244,3 +309,4 @@ not under adding a constant, unlike the WENO3-NN features.)*
 - [Huang et al. (2026)](/sources/huang-2026.md) — §§3.2–3.4, Eqs. (3.8)–(3.14), Table 1, Fig. 2; §4; §5.1, Table 2; §6.1, Table 3; §6.4; §7.
 - [Fu (2023)](/sources/fu-2023.md) — §3.10: WENO3-NN among TENO-related schemes.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — Abstract; §3, Eq. (3.4); §4.1–4.2, Eqs. (4.1)–(4.9), Table 1, Fig. 4; §5, Tables 2–3; §5.2; §5.4.6.
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — Abstract; §1; §2, Eqs. (5)–(10); §3.1–3.3, Eqs. (11)–(17), Tables 1–2, Figs. 2, 5; §3.4, Fig. 6; §4, Table 3, Figs. 8–22; §5.

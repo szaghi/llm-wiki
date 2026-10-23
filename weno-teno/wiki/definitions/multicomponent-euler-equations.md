@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Multicomponent Euler equations
@@ -44,7 +44,14 @@ $(\rho,\rho Y_1,\dots,\rho Y_{n_{\mathrm c}-1})$ form equivalent, also
 discretely for their scheme (§2.1, Eq. (1); Appendix A);
 [Peyvan et al. (2023)](/sources/peyvan-2023.md) solve the one-dimensional
 reacting Navier–Stokes system with all partial densities (§2.1, Eqs. (1)–(7);
-arXiv v1). Unlike the
+arXiv v1), and [Trojak & Dzanic (2024)](/sources/trojak-2024.md) solve
+the multi-species Euler and Navier–Stokes systems with all partial
+densities, $\rho=\sum_k\rho Y_k$, in thermal equilibrium (§2, Eqs.
+(1)–(6); arXiv v1). [Jiao et al. (2024)](/sources/jiao-2024.md) (§2.1,
+Eqs. (2–1)–(2–2)) call their mixture system, mixture mass, momentum
+and energy plus one species-mass equation per non-condensable gas, a
+"four-equation model" and state that it "is fully conservative when no
+additional source terms are introduced". Unlike the
 [five-equation model](/definitions/five-equation-model.md), the system
 is a system of conservation laws with no volume-fraction equation: the
 volume fractions follow from the closure.
@@ -154,6 +161,34 @@ $$e_k=e^0_k+\mathsf a_kR_kT+\mathsf d_kR_k\frac{\theta^{\mathrm v}_k}{e^{\theta^
 diffusion) and Park's five-reaction finite-rate chemistry come from the
 Mutation++ library (§2.2.2–2.2.3).
 
+**Mixture ratio of specific heats from mass fractions.** Trojak & Dzanic
+(Eq. (4)) take ideal gases in thermal equilibrium with
+$p=(\gamma-1)\rho e$ and the mixture ratio
+$\gamma=\sum_k\rho Y_kC_{p,k}\big/\sum_k\rho Y_kC_{v,k}$, and for
+Navier–Stokes mass-fraction-weighted viscosity and Prandtl number
+(Eq. (6)).
+
+**A barotropic cavitating mixture.** Jiao et al. (§2.2, after Örley et
+al. and Trummler et al.) close the system for liquid, liquid–vapour
+mixture and up to two isothermal ideal gases by a barotropic
+equilibrium law: the liquid density is linearized about saturation,
+$\rho=\rho_{\mathrm{sat,liq}}+(p-p_{\mathrm{sat}})/c^2$, with the
+mixture sound speed $(p_{\mathrm{sat}}/\rho_{\mathrm{sat,liq}})^{1/2}$
+below saturation, the gases are ideal at fixed reference temperatures,
+and the vapour volume fraction follows from the density (Eqs.
+(2–3)–(2–7)); stiffened-gas and Peng–Robinson closures with an energy
+equation are given in appendices.
+
+**A two-material marker form.** [Gaburro et al. (2024)](/sources/gaburro-2024.md)
+(§2.1, Eqs. (8)–(18); arXiv v1) write two-gas Euler with one advected
+marker $\chi_{\mathrm m}$ (page-local), conserved as $\rho\chi_{\mathrm m}$,
+and the mixture law $p=(\tilde\gamma-1)(E-\tfrac12\rho\lvert v\rvert^2)$
+with either $1/(\tilde\gamma-1)=\chi_{\mathrm m}/(\gamma-1)$,
+$\chi_{\mathrm m}=(\gamma-1)/(\gamma_k-1)$ in component $k$, or the
+"simpler" $\tilde\gamma=\chi_{\mathrm m}\gamma$, $\chi_{\mathrm m}=\gamma_k/\gamma$.
+They evolve it in the primitive variables $(\rho,v,p,\chi_{\mathrm m})$
+(see Material interfaces).
+
 ## Admissible set and waves
 
 Renac's admissible set is
@@ -186,7 +221,7 @@ scheme.
 
 ## Mixture entropy
 
-Both sources use the mass-weighted mixture entropy. Renac sets
+Renac and Li et al. (2022c) use the mass-weighted mixture entropy. Renac sets
 $\eta=-\rho s$, $s=\sum_kY_ks_k$, $s_k=C_{v,k}\ln\big(e_k/\rho_k^{\gamma_k-1}\big)+\mathrm{const}$,
 and obtains the entropy flux $F_\eta=-\rho sv$ and the flux potential
 $\psi=R(Y)\rho v$ (Eqs. 13–18). Li et al. (2022c) set
@@ -199,6 +234,21 @@ vibrational energy above,
 $s_k=\int c_{v,k}(\tau)\tau^{-1}d\tau-R_k\ln\rho_k$ with
 $c_{v,k}=de_k/dT$ (§3, Eqs. (62)–(64)), and their entropy variables have
 the same structure (Eqs. (65)–(66)).
+Trojak & Dzanic (Eqs. (8)–(11), after Gouasmi et al.) use the
+physical-sign mixture entropy
+$\rho s=\sum_kC_{v,k}\rho Y_k\ln\big((\rho Y_k)^{1-\gamma_k}T\big)$,
+$T=\rho e/\sum_kC_{v,k}\rho Y_k$, with its local minimum principle.
+Since $C_{v,k}\ln\big((\rho Y_k)^{1-\gamma_k}T\big)=C_{v,k}\ln T-R_k\ln(\rho Y_k)$,
+this is $-\eta$ of Li et al. (2022c) for ideal gases *(compiler check,
+not in the sources)*. Enforced everywhere as a constraint of their
+positivity-preserving [entropy filter](/methods/entropy-filtering.md),
+it over-dissipates at species interfaces, because a smooth mixture
+density can consist of discontinuous partial densities that make the
+entropy field ill-behaved (§3.1, Figs. 1–4); they enforce it only in
+elements where a pressure-jump sensor exceeds 1, keep positivity of
+$\rho$, $p$ and every $\rho Y_k$ always, and replace the entropy by the
+exponential of the sum with $\max(\epsilon,\rho Y_k)$ in the logarithm
+to keep it defined at zero partial density (§§3.1–3.3, Eqs. (22)–(27)).
 
 ## Entropy-conservative and entropy-stable schemes
 
@@ -466,6 +516,37 @@ factor (Eqs. 19–25; see [HLL-family solvers](/methods/hll-riemann-solvers.md))
 and the time update acts on the primitive vector; see Qualifications
 for what this costs in conservation.
 
+**Conservation where it is needed.** Gaburro et al. take the
+opposite route to fully conservative schemes. Their ADER-DG scheme
+evolves the primitive variables, which avoids the interface pressure
+oscillations of conservative schemes; it is not conservative, but they
+prove a modified Lax–Wendroff theorem for "locally quasi-conservative"
+schemes whose conservation defect vanishes with $h$ (Prop. 1; see
+[Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)), show that the
+defect vanishes for smooth solutions and across contacts with uniform
+velocity and pressure for both marker closures (Props. 2–5,
+generalizing Abgrall), and restore exact conservation at shocks by a
+conservative second-order finite-volume update in subcells flagged by
+a shock sensor (§4.4). They attribute the oscillations of a conservative
+second-order finite-volume scheme in the Quirk–Karni and Haas–Sturtevant
+problems to "the conservative fluxes at material interfaces", "not
+related to Gibbs-like oscillations" ([shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
+Trojak & Dzanic (§1) state the trade-off from the other side: conservative
+multi-species formulations cannot preserve pressure equilibrium at
+species interfaces but predict shock speeds correctly, which makes them
+"critical" at high Mach number; they expect the oscillations to decay
+with resolution (§5.1.3).
+
+**Recomputing the face density from the equation of state.** Jiao et
+al. (§3.3, Eq. (3–5)) reconstruct only the gas mass fractions at a
+liquid–gas interface, with [THINC](/methods/thinc-reconstruction.md)
+($\beta_{\mathrm T}=1.6$), and recompute the face density from the
+reconstructed mass fractions and the interface pressure of an all-Mach
+flux, $\rho^*=\rho(p^*,Y^*)$, instead of reconstructing it; on 1D
+two-component interface advection (100 cells, four periods) pressure and
+velocity stay at their initial values (§4.1, Figs. 4.2–4.3; see
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+
 ## Tests in the sources
 
 Nguyen et al.: interface advection, a two-fluid Sod tube and a
@@ -514,6 +595,20 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 
 ## Qualifications
 
+- Gaburro et al.'s position that only shocks need exact conservation
+  stands beside Fujiwara et al.'s fully conservative scheme that
+  preserves pressure equilibrium; the two are not in conflict as
+  recorded, because Fujiwara et al.'s interfaces are smooth and
+  non-dissipative and Gaburro et al.'s evidence concerns a second-order
+  conservative ENO scheme at sharp interfaces. Gaburro et al. print the
+  constant $\Gamma_0$ of App. B, case 3, as
+  $\frac{1}{\chi_2-\chi_1}\big(\frac1{\gamma_2-1}-\frac1{\gamma_2-1}\big)$,
+  identically zero; their own linear map below Eq. (64) has
+  $\frac1{\gamma_2-1}-\frac1{\gamma_1-1}$.
+- Jiao et al. claim full conservation of their four-equation model
+  without a conservation test, while they recall that quasi-conservative
+  models conserve species masses poorly.
+
 - Renac calls the moving-interface oscillations "inherent to discretely
   conservative schemes", while Fujiwara et al. present FC/PE (S) as a
   discretely conservative scheme that preserves pressure equilibrium, and
@@ -522,7 +617,11 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
   Fujiwara et al.'s interfaces are smooth and their scheme has no
   dissipation. A shock-capturing scheme built on the compatibility
   condition, run on a sharp moving interface, would decide whether the
-  two statements conflict.
+  two statements conflict. Trojak & Dzanic's general statement that
+  conservative formulations cannot preserve pressure equilibrium (§1,
+  citing Abgrall and others) has the scope of Renac's, filtered DSEM at
+  sharp species interfaces, and is recorded the same way on
+  [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
 - Peyvan et al. (arXiv v1) print the rotational energy as $R/W_k$ without
   the factor $T$ (Eq. (11)), against $\mathsf a_k=5/2$ in Eq. (60), and the
   vibrational part of $c_{v,k}$ with a negative sign (Eq. (62)), while
@@ -595,6 +694,9 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 
 # Citations
 
+- [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §1; §2, Eqs. (1)–(11); §3, Eqs. (22)–(27) (arXiv v1).
+- [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §2.1, Eqs. (8)–(18); §4, Props. 1–5, App. B; §5.2 (arXiv v1).
+- [Jiao et al. (2024)](/sources/jiao-2024.md) — §1.1, §1.3; §2.1–2.2, Eqs. (2–1)–(2–7); §3.3, Eq. (3–5); §4.1.
 - [Renac (2021)](/sources/renac-2021.md) — §1.2–1.3; §2, Eqs. (1)–(18); §3.1, Lemma 3.1, Eq. (24), Remarks 3.1–3.2; §4, Lemma 4.1, Eqs. (52)–(56); §5, Eqs. (62)–(64); §6, Theorem 6.1, Eq. (67); §7, Tables 1, 3, Fig. 4; Appendices A–D (arXiv v3).
 - [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §1, Eqs. (1.1)–(1.2); §3.3–3.4, Eqs. (3.11)–(3.21); §5 (arXiv v1).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §1; §2.1–2.3, Eqs. (2)–(31); §3, Figs. 1–5, Table 1; Appendix.

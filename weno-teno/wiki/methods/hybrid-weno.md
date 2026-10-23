@@ -3,9 +3,9 @@ type: Method
 title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost or restore order, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS]
+aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -55,6 +55,40 @@ nor, for systems, a [characteristic decomposition](/methods/characteristic-decom
   uses the central stencil wherever the solution is smooth and WENO only in troubled zones. Hong, Ye & Ye (2022, §1) recall Fu's TENO-based-indicator hybrid as the
   alternative to their own speed-up, which makes TENO itself cheaper instead
   ([targeted ENO](/methods/targeted-eno.md)).
+
+## A kinetic-energy-preserving TENO hybrid: TENO-S
+
+Liang & Fu (2024b) pair an eight-point TENO with a non-dissipative split-form flux. In cells judged smooth the
+interface flux is the cubic (Kennedy–Gruber) split form in Pirozzoli's locally conservative two-point form, extended to
+eight points with dispersion-optimized central coefficients (sixth order), which preserves kinetic energy in smooth
+flow ([split convective forms](/methods/split-convective-forms.md),
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md)); in flagged cells it is a characteristic-wise
+eight-point TENO with Rusanov splitting, an optimized sixth-order background scheme and the adaptive cut-off of TENO-A,
+$C_T$ between $10^{-7}$ and $10^{-10}$ ([adaptive TENO](/methods/adaptive-teno.md)) (§3.2, Eq. (35), Algorithm 1;
+§3.3). The switch is an eight-point variant of the TENO-based indicator above (§3.1, Eqs. (31)–(34)):
+
+- six **equal-sized** three-point stencils, the three standard ones and three that do not contain $x_i$
+  ($\{i+1,i+2,i+3\}$, $\{i-3,i-2,i-1\}$, $\{i+2,i+3,i+4\}$), with Jiang–Shu indicators integrated over the target cell
+  ([smoothness indicators](/definitions/smoothness-indicator.md));
+- $\gamma_k=(\beta_k+\epsilon)^{-6}$ with $\epsilon=10^{-4}$ in 1-D and $10^{-2}$ in multi-D, $\chi_k=\gamma_k/\sum_l\gamma_l$,
+  and the cell is smooth only if every $\chi_k>10^{-6}$;
+- computed on the conserved variables without characteristic decomposition, on density and total energy in 1-D and on
+  density alone in multi-D, dimension by dimension.
+
+Equal stencil sizes keep the indicator cheap; the authors call it "more universal for general conservation laws" than
+physical sensors such as Ducros' (no comparison shown; [Ducros sensor](/definitions/ducros-shock-sensor.md)). In double
+Mach reflection "more than 90%" of the cells take the split-form branch (§4.6, stated without a count). Wall times on one
+CPU (AMD Ryzen 9 5950X) favour TENO-S in every test: on 2-D Riemann configuration 12 ($800^2$) 388.08 s against 517.96 s,
+540.17 s and 628.79 s for [WENO-CU6](/methods/weno-cu6.md), TENO6 and TENO8, "about 25.07%, 28.15% and 38.28%" cheaper
+(Table 7); on double Mach reflection at $512\times128$ 17.42 s against 29.42 s, 31.13 s and 36.38 s (Table 9). On the
+entropy wave it converges at sixth order ($L_1$ orders 5.617 to 5.995; Tables 1–2;
+[density-wave advection](/benchmarks/density-wave-advection.md)); on the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) ($64^3$, to $t=100$) it keeps the total kinetic energy, where
+WENO-CU6, TENO6 and TENO8 smear the small vortices after $t\approx5$ (§4.10, Figs. 17–18). Liang & Fu (§1) criticise the
+earlier hybrids: Pirozzoli's compact–WENO hybrid "inevitably generates slight spurious oscillations" because its detector
+reads only low-order information, hybrid performance "strongly depends on the discontinuity indicator, which is mostly
+problem-sensitive", and compact schemes cost more than central ones of the same order. They leave positivity preservation
+for extreme configurations to future work (§5).
 
 ## A dissipation-adaptive hybrid: MDAD-HY
 
@@ -233,7 +267,17 @@ rather than switching to a linear high-order scheme:
   limiter $\psi$ of the upwinded slope ratio $r_i$ and third-order Hamilton–Jacobi WENO, to prevent
   instabilities at the steep density change of a gas–liquid interface.
 
-Both are TVD-limiter hybrids localized at material interfaces
+- McQuaid & Brehm (2024, §3.8, Eq. (20)) blend, on the Cartesian off-body grid of a hypersonic overset solver, a
+  fifth-order characteristic-wise [WENO-Z](/methods/weno-z.md) flux with Steger–Warming splitting and a first-order flux,
+  $\hat f_{i+1/2}=(1-\tilde\alpha_{\mathrm D})\hat f^{\mathrm{WENO}}_{i+1/2}+\tilde\alpha_{\mathrm D}\hat f^{\mathrm{O1}}_{i+1/2}$, with the
+  "Ducros sensor value" $\tilde\alpha_{\mathrm D}$ (page-local, as on the Ducros page; cited to Ducros et al.) as weight (the formula, any threshold and the regularization are
+  not printed; [Ducros sensor](/definitions/ducros-shock-sensor.md)), so that the scheme falls fully to first order at strong
+  shocks. Of four convective treatments on a Mach 9.47 capsule at 8° (WENO-Z with local or stencil-wise Rusanov
+  splitting, with Steger–Warming, and with the Ducros blend), only the blend removes the velocity streaks that a shock on
+  the non-aligned Cartesian grid sends to the near-body interface and that imprint a surface-heating artefact, at the cost
+  of a slightly more diffused shock (§4.1, Fig. 14).
+
+The first two are TVD-limiter hybrids localized at material interfaces
 ([TVD limiters](/definitions/total-variation-diminishing.md)), the counterpart of the
 low-order/high-order flux blending used for bound preservation
 ([positivity-preserving flux limiter](/methods/positivity-preserving-flux-limiter.md)).
@@ -279,6 +323,17 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - Wang et al. (2023c) call their efficiency "the highest among these three methods" (Example 4.1)
   and claim improved efficiency throughout, while their Table 5.1 has the hybrid slower than WENO-JS in
   four of twelve runs (1.01–1.07); it is always faster than the non-hybrid MR-WCNS.
+- **TENO-type indicator settings.** The same construction is run with $\epsilon=10^{-4}$ and threshold $5\times10^{-4}$ on
+  four stencils (Fu's, as recalled by Li, Chen & Ren 2022a) and with $\epsilon=10^{-4}$ or $10^{-2}$ by dimension and
+  threshold $10^{-6}$ on six equal stencils (Liang & Fu 2024b), absolute values applied to the raw conserved variables.
+  Liang & Fu present the parameters as fixed for all tests, yet $\epsilon$ changes with the number of dimensions.
+- Liang & Fu (2024b, Abstract, §4.10) describe TENO-S as performing inviscid Taylor–Green computations "without numerical
+  dissipation". *(Compiler check, not in the sources: the split form conserves kinetic energy semi-discretely only where it
+  is used; the TENO branch acts in flagged cells and SSP-RK3 is not kinetic-energy-conservative, so the evidence is the
+  plotted energy history of Fig. 17, not an exact property.)*
+- McQuaid & Brehm (2024) attribute the residual heating differences of their capsule cases (slight leeward
+  over-prediction at 8°, lower peak temperature on AS-202) to the first-order fallback at the shock; this is their
+  interpretation, not a tested result (§4.1, §4.3).
 - The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
   hardware nor the share of flagged points is given in the review.
 
@@ -303,3 +358,5 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — App. A.2, Figs. A.15–A.16.
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §3.5–3.6, Eqs. (51)–(61); §4, Figs. 15–23.
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Step 2, Eqs. (3.6)–(3.9), Remarks 1, 3; §4, Examples 4.1, 4.7, Tables 4.1–4.4; §5, Table 5.1.
+- [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §1; §3.1–3.3, Eqs. (31)–(35), Algorithm 1; §4, Tables 1–2, 7, 9, Figs. 17–18; §5.
+- [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20); §4.1, Fig. 14.

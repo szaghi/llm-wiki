@@ -212,11 +212,15 @@ uses the same letter.
 | $K$, $\mathcal G$ (flux globalization) | global flux $K=f-\mathcal G$ and the integral $\mathcal G$ of the source term; no page uses it together with the amplification factor $\mathcal G$ | flux globalization, central-upwind, path-conservative, well-balancing, shallow-water equations |
 | $\mathcal G$, $\delta_\nu$ (spectral) | fully discrete Runge–Kutta amplification factor and total dispersion error | approximate dispersion relation, MDCD schemes |
 | $\check u^\pm$, $\mathsf E$, $\mathsf M$ | modified interface states and the equilibrium variables of moving-equilibrium well-balancing | flux globalization, central-upwind, path-conservative, well-balancing |
-| $\dot m$, $\sigma_{\mathrm{st}}$, $\kappa_{\mathrm c}$, $s_{\mathrm p}$ | interfacial mass flux, surface-tension coefficient, interface curvature and interface speed | Riemann solvers with phase change, level-set methods, Rankine–Hugoniot condition, local conservation |
+| $\dot m$, $\sigma_{\mathrm{st}}$, $\kappa_{\mathrm c}$, $s_{\mathrm p}$ | interfacial mass flux, surface-tension coefficient, curvature (of an interface or of an immersed boundary) and interface speed | Riemann solvers with phase change, level-set methods, Rankine–Hugoniot condition, local conservation |
 | $\{\!\{a\}\!\}_{\mathrm G}$, $\{\!\{a\}\!\}_{\mathrm H}$, $\mathsf j_a$, $N_{\mathrm T}$ | geometric and harmonic means, relative jump, truncation order of De Michele & Coppola's asymptotic means | entropy-conservative fluxes, logarithmic mean, pressure-equilibrium preservation |
 | $\{\!\{\cdot\}\!\}_{\exp,k}$, $\{\!\{\cdot\}\!\}_{\ln\exp,k}$, $T^{\mathrm v}_k$ | Peyvan et al.'s exponential means and vibrational temperature of species $k$ | entropy-conservative fluxes, logarithmic mean, multicomponent Euler equations |
 | $\beta^{\mathrm{IMP}}_k$, $\tau^{\mathrm{IMP}}$, $\xi_{\mathrm{NS}}$ | IMWENO-P smoothness indicators, global indicator and WENO-NS parameter (Zhong et al.) | smoothness indicators, critical-point accuracy, WENO-Z, scale invariance |
 | $\lambda_{\mathrm E}$, $\theta_{\mathrm E}$ | parameter and argument of Chen & Deng's exponential weights | exponential nonlinear weights, WCNS, critical-point accuracy, scale invariance |
+| $\tau_{\mathrm{AZ}}$ | TENO-AZ adaptive cut-off factor (Tang) | adaptive TENO, critical-point accuracy, smoothness indicators |
+| $\beta^{\mathrm{abs}}_k$, $\varsigma_k$, $\varsigma^s$ | Nogueira et al.'s absolute-difference indicators and the network's per-stencil and summed outputs | learned WENO weights, smoothness indicators |
+| $s_{\mathrm{mix}}$, $\epsilon_{\mathrm{tol}}$, $\mathcal S_K$ | mixture entropy, entropy-filter tolerance and filter switch of Trojak & Dzanic | entropy filtering, multicomponent Euler equations |
+| $\mathcal E(h)$ (shallow water) | hydrostatic (enthalpy-like) potential of the depth in the equilibrium variables of Goudon & Minjeaud; no page uses it together with the vortex strength $\mathcal E$ | well-balancing, flow over a bump, shallow-water equations, operator splitting |
 | $N_\phi$ | number of phases | phase-field methods, discrete equations method, bound preservation |
 | $W_k$, $\epsilon_k$, $\Omega_k$ | molar mass, molar internal energy and mass production rate of species $k$ | multicomponent Euler equations, operator splitting |
 

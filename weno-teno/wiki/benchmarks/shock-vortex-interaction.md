@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T23:30:00Z
 ---
 
 # Shock–vortex interaction
@@ -25,7 +25,8 @@ vortex the same configuration becomes a near-vacuum test for
 [Huang et al. (2026)](/sources/huang-2026.md) §6.10,
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 and
 [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 and
-[Liang et al. (2022)](/sources/liang-2022.md) §4.7, Eq. (43), print the
+[Liang et al. (2022)](/sources/liang-2022.md) §4.7, Eq. (43) and
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6, Eq. (43), print the
 same construction. The upstream state is
 $(\rho,v_1,v_2,p)=(1,\,1.1\sqrt\gamma,\,0,\,1)$, so that the stream
 moves at Mach 1.1 into the stationary shock; the downstream state
@@ -53,6 +54,7 @@ sources)*.
 | [Huang et al. (2026)](/sources/huang-2026.md) §6.10 | 0.3 | 0.204 | 0.05 | $h=1/100$; fine-mesh WENO5-JS reference | not printed | [ROUND, LD-ROUND](/methods/round-scheme.md) vs WENO3-NN, WENO5-JS |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 | 0.3 | 0.204 | 0.05 | $400\times200$, reflective top and bottom | 0.8 | [OEDG](/methods/oedg.md) |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.7 | 0.3 | 0.204 | 0.05 | $300\times150$; reference $2000\times1000$ WENO5-JS | 0.6 | [TENO-THINC](/methods/teno-thinc.md) variant vs WENO5-Z, TENO5, TENO5-THINC |
+| [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6 | 0.3 | 0.204 | 0.05 | $[0,2]\times[0,1]$, shock at $x=0.5$, vortex at $(0.25,0.5)$; 45,790 triangles ($h\approx1/150$) | 0.6 | unstructured dual-stencil TENO4-D–TENO7-D vs CWENO6/7, HLL, [UCNS3D](/software/ucns3d.md) |
 | [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 | 1.378106 | 0.204 | 0.4 | $450\times225$, $\mathbb P^2$ and $\mathbb P^4$ DG | 0.6 (pressure at 0.2, 0.35, 0.6) | bound-preserving DG with [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md) |
 
 ### Variants of the Euler setup
@@ -109,6 +111,13 @@ sources)*.
   $y=\pm5$, $t=19$. The printed post-shock state satisfies the
   relativistic Rankine–Hugoniot conditions of a standing shock to about
   $10^{-12}$ *(compiler check, not in the sources)*.
+  [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) Example 5.8 (arXiv v1)
+  run the same configuration, with the same printed post-shock state,
+  vortex speed $w=0.9$, $\gamma=1.4$ and strengths 5 (mild) and 10.0828
+  (demanding, minimum density $7.8337\times10^{-15}$ and pressure
+  $1.7847\times10^{-20}$), on $800\times400$ cells with inflow on the
+  right, outflow on the left and reflective top and bottom; the final
+  time $t=19$ is read from their figure captions.
 
 ## Findings across sources
 
@@ -158,7 +167,18 @@ optimal one allows larger time steps: for $\mathbb P^4$, 1299.55 min
 (optimal), 1327.45 min (quasi-optimal) and 1772.26 min (classic) to
 $t=0.6$ (Table 8). In Chen & Wu's relativistic run the
 physical-constraint-preserving limiter is required for the strong
-vortex, as it is for the vortex alone (Ex. 4.10, Figs. 15–16).
+vortex, as it is for the vortex alone (Ex. 4.10, Figs. 15–16). Cai,
+Qiu & Wu's finite-volume [Hermite WENO](/methods/hermite-weno.md) for
+relativistic hydrodynamics, with provably convergent Newton recovery of
+the primitive variables, cannot run one time step on the demanding
+vortex without their physical-constraint-preserving limiter, which acts
+on only a few cells near shocks (Ex. 5.8); see
+[relativistic hydrodynamics](/definitions/relativistic-hydrodynamics.md)
+and [bound preservation](/properties/bound-preservation.md).
+
+**Unstructured TENO.** On Ji, Liang & Fu's triangular mesh all compared
+schemes give similar solutions, with no artificial instabilities
+(§4.6, Fig. 15).
 
 ## Non-conservative variants
 
@@ -194,7 +214,18 @@ a numerical result.
   with $\gamma^2$ in the exponent where their velocity carries
   $1-r^2/r_c^2$; taken literally $\delta T$ would be uniform in space.
   The exponent of the other sources, $2\mathcal A(1-r^2/r_c^2)$, is
-  meant; their other parameters are those of the table.
+  meant; their other parameters are those of the table. Ji, Liang &
+  Fu (2023), of the same group, print the same exponent $2\mathcal A(1-\gamma^2)$
+  in their Eq. (43).
+- Ji, Liang & Fu (2023) give $h\approx1/150$ for 45,790 triangles on
+  $[0,2]\times[0,1]$: the square root of the mean element area is about
+  $1/151$, while the edge of an equilateral triangle of that area is
+  about $1/100$, the measure that reproduces their $h$ for other meshes
+  *(compiler check, not in the sources)*.
+- Cai, Qiu & Wu print the vortex region as "$x>6$" and the post-shock
+  region as "$x<6$" for a shock at $x=-6$; $x>-6$ and $x<-6$ are meant.
+  They do not define their CFL number of 0.6, so whether the runs meet
+  the time-step bound of their positivity theorem cannot be checked.
 - Huang et al. do not print the final time, so their pressure profiles
   cannot be placed against those of Li et al. ($t=0.6$) and Peng et al.
   ($t=0.8$).
@@ -214,3 +245,5 @@ a numerical result.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.10, Figs. 15–16 (arXiv v1).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.7, Eq. (43), Fig. 19.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.3.3, Eq. (70), Tables 2–3.
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.6, Eq. (43), Fig. 15.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.8 (arXiv v1).

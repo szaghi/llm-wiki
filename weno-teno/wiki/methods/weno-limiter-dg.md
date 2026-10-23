@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO limiters for discontinuous Galerkin"
-description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the compact simple WENO limiter, Du, Shu and Zhong's direction-wise characteristic variant, Maltsev et al.'s same-order CWENOZ replacement of the DG modes on mixed meshes, and the sources' uses and critiques."
+description: "A WENO limiter replaces the DG polynomial of a troubled cell by a nonlinear, cell-average-preserving combination of polynomials from the cell and its neighbours; the page gives the compact simple WENO limiter, a direction-wise characteristic variant, Maltsev et al.'s same-order CWENOZ replacement on mixed meshes, Huang and Fu's TENO-weighted compact limiter, and critiques."
 status: established
-aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter]
-tags: [dg, weno, limiting, characteristic]
-timestamp: 2026-10-23T23:00:00Z
+aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
+tags: [dg, weno, teno, limiting, characteristic]
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -139,6 +139,74 @@ Their evidence (§3, Appendix B):
   or split-form fluxes (§3.6); on the LM1021 sonic-boom case it matches
   the measured pressure signature better than third-order CWENOZ (§3.8).
 
+## TENO-weighted compact limiter
+
+[Huang & Fu (2024)](/sources/huang-2024.md) (§4.4, §5.2) keep the
+candidate polynomials of the compact Hermite WENO limiters and replace
+the WENO weighting by the stencil selection of
+[TENO](/methods/targeted-eno.md), for third-order RKDG ($N=2$). In 1D the
+DG solution of $I_i$ is $\sum_{l=0}^2u^{(l)}_iv_l$ in the scaled Legendre
+basis $v_0=1$, $v_1=(x-x_i)/\Delta x$, $v_2=v_1^2-\tfrac1{12}$, with
+$\int_{I_i}v_l^2\,dx=c_l$ (page-local $u^{(l)}_i$, $v_l$, $c_l$; Eq. 16).
+The cell average $u^{(0)}_i$ is kept, and the two higher modes are
+rebuilt one after the other from candidates on the cell and its two
+neighbours (numbered as in the source, $k=2$ the central one):
+
+| mode | candidates $p_0$, $p_1$, $p_2$ | target (page-local $P_{\mathrm{tar}}$) | linear weights $d_0,d_1,d_2$ |
+|---|---|---|---|
+| $u^{(1)}_i$ | quadratics: averages of $I_{i-1},I_i$ and first moment of $I_{i-1}$; averages of $I_i,I_{i+1}$ and first moment of $I_{i+1}$; the three averages | quartic: three averages and the first moments of $I_{i\pm1}$ | $\tfrac{11}{38},\tfrac{11}{38},\tfrac8{19}$ |
+| $u^{(2)}_i$ | cubics: averages and first moments of $I_{i-1},I_i$; of $I_i,I_{i+1}$; three averages and the first moment of $I_i$ | quintic: three averages and three first moments | $\tfrac{45}{154},\tfrac{45}{154},\tfrac{32}{77}$ |
+
+The linear weights make the combination of the candidates' moments equal
+the target's moment, $\int_{I_i}P_{\mathrm{tar}}v_l=\sum_kd_k\int_{I_i}p_kv_l$
+(Eqs. 37–40, 47–49). The nonlinear step is (Eqs. 41–46, 50)
+$$\beta_k=\sum_{l=1}^{2}\int_{I_i}\Delta x^{2l-1}\big(\partial_x^lp_k\big)^2dx,\qquad
+\gamma_k=\frac{t_k}{(\beta_k+\epsilon)^q},\qquad
+\omega_k=\frac{d_k\delta_k}{\sum_ld_l\delta_l},\qquad
+u^{(l),\mathrm{new}}_i=\frac1{c_l}\sum_k\omega_k\int_{I_i}p_kv_l\,dx,$$
+with $\chi_k=\gamma_k/\sum_l\gamma_l$, $\delta_k=0$ if $\chi_k<C_T$, the
+cut-off $C_T=10^{-4}$, $q=6$, $\epsilon=10^{-10}$, and a bias $t_0=t_1=1$,
+$t_2=10$ (page-local) "to enlarge the chance to choose the central
+stencil". This $\gamma_k$ has neither the constant $C$ nor the global
+indicator $\tau$ of the registry's TENO measure. When all three
+candidates survive, the new mode is the target's moment; otherwise it is
+the renormalized convex combination of the surviving candidates. There is
+no option that keeps the target when some candidate is cut.
+
+In 2D (§5.2, Eqs. 51–64) the limiter rebuilds the five higher modes of a
+$\mathbb P^2$ solution on rectangles from eight quadratic candidates on
+the $3\times3$ block: four match the averages of a $2\times2$ sub-block
+plus one $x$- and one $y$-moment, as in the Hermite WENO limiter, and four
+match six cell averages. Exactness conditions plus a minimum-norm
+condition $\min\sum_k(d_k^{(l)})^2$ give linear weights $\tfrac{11}{76}$
+(first four) and $\tfrac2{19}$ (last four) for the two first-order modes,
+and $\tfrac18$ for every candidate for the three second-order modes
+(Eqs. 56–58). The bias is $t=10$ on the six-average candidates. The
+indicators of the second-order modes add first-derivative terms to those
+of the Hermite WENO limiter "for better robustness" (Eq. 59; no ablation
+shown). The limiter acts only in cells flagged by the authors' TENO-type
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md), and
+standard RKDG runs elsewhere.
+
+**Evidence** (§6; Euler, $\gamma=1.4$, SSP-RK3, CFL 0.15, Rusanov flux).
+On the [density wave](/benchmarks/density-wave-advection.md) the
+indicator flags no cell, so limited and unlimited runs give identical
+errors ($L^1$ $3.53\times10^{-7}\to6.94\times10^{-10}$ for
+$N_x=100\to800$, orders 2.99–3.00, Table 1). Forcing limiting with the
+TVB indicator at $M=1$ keeps third order ($L^1$ $3.02\times10^{-6}\to
+5.58\times10^{-9}$, $N_x=50\to400$, orders 3.05, 3.02, 3.01, Table 2; in
+2D $L^1$ orders 2.79, 2.90, 2.99, Table 4). On the
+[Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md), the
+[Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md),
+the [Shu–Osher problem](/benchmarks/shu-osher-problem.md), the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) and
+configuration 3 of the
+[two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md),
+the TENO limiter is oscillation-free and resolves more small-scale
+structure than the compact WENO limiter of Zhu, Qiu and Zhu (2020) driven
+by the same indicator. The comparison is visual; no error norm or
+spectral measure is given for the discontinuous tests.
+
 ## Evidence
 
 Du, Shu & Zhong test the 2D Euler equations ($\gamma=1.4$) with SSP-RK3,
@@ -185,6 +253,15 @@ given.
   [Cui, Ding & Wu (2024)](/sources/cui-2024.md) the Qiu–Shu WENO limiter
   (Exs. 3–5): the WENO limiter controls oscillations, the scaling limiter
   bounds.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3.1.3, arXiv v1) apply
+  the Hermite WENO limiter of Zhao and Qiu to the first moments of
+  KXRCF-flagged cells of a finite-volume Hermite WENO scheme for
+  relativistic hydrodynamics (moments, not a DG polynomial), with weights
+  $d_k\big(1+\tau^2\Delta x/(\beta_k^2+\epsilon)\big)$ that they call
+  scale-invariant; the values of the linear weights, of $\epsilon$ and of
+  the KXRCF threshold are not printed
+  ([Hermite WENO](/methods/hermite-weno.md),
+  [scale invariance](/properties/scale-invariance.md)).
 
 ## Positions on WENO limiters
 
@@ -208,6 +285,9 @@ given.
   subcells inside a $p$-adaptive DG realize (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
   [h- and hp-adaptation](/methods/hp-adaptation.md)).
+- Huang & Fu call the compact WENO limiter of Zhu, Qiu and Zhu "highly
+  dissipative" and motivate the TENO limiter by its smearing of small
+  scales (§1, §6); the evidence is the visual comparisons above.
 - Du, Shu & Zhong list the a posteriori subcell finite-volume limiters of
   Dumbser and coworkers as another class (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
@@ -237,6 +317,25 @@ given.
   saved decreases with refinement (§4.1) is not monotone in Table 4.2
   (40.61, 44.29, 40.63, 27.91, 1.77%).
 
+- **Printed slips in Huang & Fu.** The fourth line of their Eq. (38)
+  prints the target's first moment as
+  $c_1\big(\tfrac{15}{19}(u^{(0)}_{i-1}-u^{(0)}_{i+1})-\tfrac{11}{38}(u^{(1)}_{i-1}+u^{(1)}_{i+1})\big)$;
+  for the linear function $u=(x-x_i)/\Delta x$ ($u^{(0)}_{i\pm1}=\pm1$,
+  all $u^{(1)}=1$, exact moment $c_1$) this gives $-\tfrac{41}{19}c_1$,
+  while the average term with $u^{(0)}_{i+1}-u^{(0)}_{i-1}$ gives $c_1$;
+  the other three lines and the weights of Eqs. (40) and (49) are
+  consistent *(compiler check, not in the sources)*. In Table 2 the $L^\infty$
+  error of the new limiter at $N_x=50$ is printed $5.38\times10^{-7}$,
+  below the $N_x=100$ value $5.56\times10^{-7}$; the printed order 3.27
+  is $\log_2$ of $5.38\times10^{-6}/5.56\times10^{-7}$ *(compiler check,
+  not in the sources)*. Eq. (56) enforces exactness for basis functions
+  $v_6,\dots,v_9$ that the paper never defines, so the 2D weights cannot
+  be re-derived from the text.
+- Huang & Fu weight the 2D indicators by powers of the cell area,
+  $|I_{ij}|^{2k-1}$, where the 1D ones use $\Delta x^{2l-1}$ (Eqs. 41,
+  59), and do not say whether the limiter acts on conserved or
+  characteristic variables, nor whether the just-limited $u^{(1)}_i$
+  enters the second-mode candidates.
 - Maltsev et al.'s Eq. (5) gives the number of degrees of freedom as
   $\frac1{d!}\prod_{l=1}^d(N+l)$ and names it with the highest mode index
   $\mathcal K$, while it counts the $\mathcal K+1$ functions $k=0,\dots,\mathcal K$;
@@ -255,4 +354,6 @@ given.
 - [Yu & Hesthaven (2022)](/sources/yu-2022.md) — §1 (critique of WENO/HWENO limiters).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (troubled-cell limiters problem-dependent).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1 (WENO limiters named among alternatives).
+- [Huang & Fu (2024)](/sources/huang-2024.md) — §4.4, Eqs. (36)–(50); §5.2, Eqs. (51)–(64); §6, Tables 1–4, Figs. 4–15.
+- [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3 (Hermite WENO limiter on first moments).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1–2.4, Eqs. (2)–(34); §3.1, Table 1; §3.5–3.8; §4; Appendix B, Tables B.3–B.4.

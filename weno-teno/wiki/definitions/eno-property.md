@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # ENO property
@@ -30,7 +30,7 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   for smooth stencils, and the weights of [WENO-JS](/methods/weno-js-reconstruction.md) and
   [WENO-Z](/methods/weno-z.md) decrease with $\beta_k$
   ([smoothness indicators](/definitions/smoothness-indicator.md)).
-- **WENO-ZN.** Li et al. (2022, §3.3(2)) argue that $S_0$ and $S_{r-1}$ cover the global stencil
+- **WENO-ZN.** Li et al. (2022b, §3.3(2)) argue that $S_0$ and $S_{r-1}$ cover the global stencil
   without overlap, so any discontinuity falls in one of them; then the adaptive term of the weights is
   small and the ranking by $\beta_k$ takes over. This is a heuristic argument, not a theorem
   ([WENO-ZN](/methods/weno-zn.md)). Li et al. leave WENO-Z$\eta$ and the WENO-Z of Don & Borges with
@@ -47,7 +47,9 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   the property explicitly in two steps: the large stencil is used alone if it survives the cut-off,
   otherwise the cut-off is repeated among the small stencils and the survivors are averaged with
   equal weights. *(Compiler check, not in the sources: with $K$ small stencils the largest normalized
-  measure is at least $1/K>C_T=10^{-6}$, so at least one stencil always survives.)*
+  measure is at least $1/K>C_T=10^{-6}$, so at least one stencil always survives.)* Ji, Liang & Fu (2023, §3.2.2, Eqs. (29)–(36)) keep the two steps and use
+  different cut-offs, $C_T=10^{-7}$ among all candidates and $10^{-5}$ among the small stencils, so that the second step
+  "ensures the preservation of ENO property" with stronger nonlinear adaptation at discontinuities.
 - **Blending with a linear reconstruction.** In the steady-state hybrid WENO-H of Wan & Xia (2022,
   §3.1), the non-smooth-region reconstruction is a blend of a CWENO-type nonlinear and a linear
   polynomial whose weights bound the blended smoothness indicator by twice an amplification factor
@@ -69,7 +71,13 @@ the singularity, against Gibbs-type oscillations when the property is lost.
   return an essentially zero weight, so the network alone lets oscillations through; for a single jump
   the trained network still gives the discontinuous stencil a weight "of around $10^{-4}$" (Eq. (A.1),
   Fig. 21), which sets the cut-off at $2\times10^{-4}$. The layer is applied at test time only, is
-  "similar" to the TENO cut-off, and acts only near discontinuities (A.4).
+  "similar" to the TENO cut-off, and acts only near discontinuities (A.4). Nogueira et al. (2024, §3.1, Eq. (15))
+  carry the device over to their five-point WENO5-NN: network weights at or below $4\times10^{-7}$ are zeroed and
+  the rest renormalized, a threshold set "following the same procedure" as Bezgin et al.; the layer is not used in
+  training and "restores the ENO property", preventing small non-zero weights on discontinuous stencils (stated, no
+  ablation shown). Their indicator inputs are normalized by their maximum, and near machine-zero plateaus the normalized
+  input "may correspond with a non-smooth situation", so a curvature-based plateau detector bypasses the network and sets $\omega_k=d_k$
+  there (§3.1).
 
 ## How it is lost
 
@@ -81,7 +89,7 @@ scheme reverts to the linear upwind scheme, with visible Gibbs oscillations in l
 in a blast-wave problem with background pressure. Their conclusion (§3.2.2): the ENO property of a
 non-affine-invariant WENO scheme can be violated when $|\sigma|\ll|\mu|$. The remedy is a relative
 sensitivity parameter ([affine-invariant WENO](/methods/affine-invariant-weno.md),
-[scale invariance](/properties/scale-invariance.md)). Li, Li, Don & Wang (2023, §2.5, Fig. 4) separate the two ingredients on the
+[scale invariance](/properties/scale-invariance.md)). Li, Li, Don & Wang (2023a, §2.5, Fig. 4) separate the two ingredients on the
 Lax problem scaled by $\sigma$ (page-local scaling, the source's $\lambda$): with $\sigma=1$ a new
 higher-order global indicator alone removes the oscillations of the multi-resolution A-WENO scheme,
 with $\sigma=10^{-7}$ it does not, and only the relative $\epsilon$ restores the ENO behaviour: "the
@@ -117,4 +125,6 @@ to deliver them.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1; §3.2–3.3.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.3, Eqs. (24)–(28); §3.4.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3.1, Eqs. (3.8)–(3.13).
-- [Li, Li, Don & Wang (2023)](/sources/li-2023.md) — §2.5, Fig. 4.
+- [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §2.5, Fig. 4.
+- [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.1, Eqs. (12)–(15).
+- [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.2.2, Eqs. (29)–(36).

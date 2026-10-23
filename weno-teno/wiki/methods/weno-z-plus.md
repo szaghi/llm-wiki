@@ -5,7 +5,7 @@ description: "WENO-Z+ adds to the WENO-Z weight a term proportional to (β_k+ε)
 status: established
 aliases: [WENO-Z+, WENO-Z+M, WENO-ZP, WENO-P+, Acker–Borges–Costa WENO]
 tags: [weno, reconstruction, low-dissipation, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:45:00Z
 ---
 
 # WENO-Z+ and WENO-Z+M
@@ -88,6 +88,35 @@ Luo & Wu conclude (§6) that a well-designed nonlinear mechanism can improve res
 the underlying linear scheme, against the view, which they attribute to Pirozzoli, that
 shock-capturing nonlinearities always degrade spectral properties.
 
+## WENO-Z+ weights in a Lagrangian particle method
+
+Jiang, Liu, Meng, Sun, Wei & Wang (2024, §3.2, Eqs. (11)–(15)) use the WENO-Z+ weights of Luo & Wu's paper, as they
+attribute them, to give high-order left and right states to the pairwise Riemann problems of a Lagrangian
+weighted-least-squares particle method for compressible multiphase flow. For a particle pair, six collinear points are
+placed on the line through the two particles; the four that are not particles get values copied from, or extrapolated to
+first order with the least-squares gradient of, the nearest particle. The midpoint states are then built from the
+fifth-order candidates $\tfrac13u_{i-2}-\tfrac76u_{i-1}+\tfrac{11}6u_i$, $-\tfrac16u_{i-1}+\tfrac56u_i+\tfrac13u_{i+1}$,
+$\tfrac13u_i+\tfrac56u_{i+1}-\tfrac16u_{i+2}$ of cell-average (finite-difference flux) reconstruction, applied to the point
+values, with the Jiang–Shu indicators, linear weights $(\tfrac1{10},\tfrac35,\tfrac3{10})$ and
+
+$$\alpha_k=d_k\big[1+z_k^2+\mu\,z_k^{-1}\big],\qquad z_k=\frac{\tau_5+10^{-10}}{\beta_k+10^{-10}},\qquad \mu=\lvert x_n-x_i\rvert^{2/3},$$
+
+i.e. the Acker et al. form with $q=2$ and the pair distance $\lvert x_n-x_i\rvert$ (page-local: positions of the two
+particles) in place of $\Delta x$ in $\mu=\Delta x^{2/3}$. Primitive variables $(\rho,v,p)$ are interpolated component by
+component, without characteristic projection, and the states enter a Roe-type linearized Lagrangian Riemann solver
+([Roe solver](/methods/roe-riemann-solver.md)). On smooth density waves with a "fixed particle distribution" the method converges at
+orders 2.22–2.35, against about 2.0 without the reconstruction (Tables 1–2); the authors call it high-order. *(Compiler check, not in the sources:
+these candidates and weights are exact for cell averages, $\bar u_j=u_j+\tfrac{\Delta x^2}{24}u''_j+O(\Delta x^4)$, so on point
+values their linear combination returns $u(x_{i+1/2})-\tfrac{\Delta x^2}{24}u''(x_{i+1/2})+O(\Delta x^4)$, a second-order
+midpoint value (for $u=x^2$, $\Delta x=1$: $\tfrac16$ against $\tfrac14$); the point-value weights would be
+$(\tfrac1{16},\tfrac58,\tfrac5{16})$, as in Berta et al. on [WENO-Z](/methods/weno-z.md). The second-order least-squares
+derivatives and the first-order extrapolation to the four auxiliary points also limit the rate; the observed 2.22–2.35 is
+consistent with a second-order method.)* It is less dissipative than the
+Riemann-solver-only variant on Rayleigh–Taylor, an [underwater explosion](/benchmarks/underwater-explosion.md) and the
+collapse of a bubble near a wall, where only the reconstructed variant reproduces the micro-jet, at about five times the
+cost, and less dissipative than earlier WENO-SPH and Riemann-solver SPH schemes on Sod tubes (figure comparisons) (§4–§5;
+[bubble collapse near a wall](/benchmarks/bubble-collapse-near-wall.md)).
+
 ## Third-order analogue: WENO-P+
 
 Deng (2023, Eq. (4.27)) recalls WENO-P+ of Xu & Wu, the compact third-order counterpart, with
@@ -100,6 +129,11 @@ Deng calls the scheme "neither scale-invariant nor mesh-size-independent" becaus
 $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
 
 ## Qualifications
+
+- Jiang et al. (2024) use equispaced-grid linear weights on points whose values come from the nearest particle; the text
+  does not state that the six points are equispaced. On a non-uniform particle distribution the paper calls the errors "the same order of magnitude"
+  as on the uniform one. *(Compiler check, not in the sources: Tables 2b–2c give non-uniform to uniform $L_{\mathrm{RMS}}$ ratios of 1.8–3.6
+  at $51^2$ and 3.1–6.2 at $101^2$ over the three smoothing lengths, and rates 1.48–1.53 on the non-uniform set.)*
 
 - **Calibration.** $\mu=579$ is fixed on one problem at one resolution with a sharp 579/580
   threshold; robustness across grids and problems is not shown, and the switch from the
@@ -114,7 +148,7 @@ $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
   dominates $1+z_k^2$ as $\Delta x\to0$ and the weights tend to
   $d_k\sqrt{\beta_k}/\sum_ld_l\sqrt{\beta_l}$. Since the $\beta_k$ agree to relative
   $O(\Delta x^2)$, this gives $\omega_k-d_k=O(\Delta x^2)$, the weight rate required by the necessary condition
-  recalled by Li et al. (2022, Eq. (12)), but slower than WENO-Z. This is consistent with the
+  recalled by Li et al. (2022b, Eq. (12)), but slower than WENO-Z. This is consistent with the
   fifth order and the halved error constant of Table 1; Luo & Wu's statement that $\zeta$ "has
   little effects" in smooth regions does not address it.
 - Deng (2023, abstract) says "the improved WENO-Z scheme is neither scale-invariant nor
@@ -133,3 +167,4 @@ $\Delta x$ (§4.4, Fig. 6; [scale invariance](/properties/scale-invariance.md)).
 - [Fu (2023)](/sources/fu-2023.md) — §2.3.
 - [Li et al. (2022b)](/sources/li-2022-b.md) — Eq. (12) (optimal-order condition recalled).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
+- [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.2, Eqs. (11)–(15); §4.1, Tables 1–2; §5.
