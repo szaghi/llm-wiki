@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Approximate dispersion relation
@@ -204,6 +204,34 @@ non-dissipative. *(Compiler check, not in the sources: the resulting
 dissipative part is $\tfrac{b_0}{70\Delta x}$ times the eighth undivided
 difference; see [targeted ENO](/methods/targeted-eno.md).)*
 
+**Order lost by decoupling, and a piecewise alternative.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+(§3.1, Eqs. (18)–(21)) expand the same split on six points: the dispersive part
+multiplies $f'$, $\Delta x^2f'''$, $\Delta x^4f^{(5)}$ by
+$G_1=2a_1+4a_2+6a_3$, $G_2=\tfrac13a_1+\tfrac83a_2+9a_3$,
+$G_3=\tfrac1{60}a_1+\tfrac8{15}a_2+\tfrac{81}{20}a_3$, and the dissipative part has
+coefficients of $f$, $\Delta xf''$, $\Delta x^3f^{(4)}$, $\Delta x^5f^{(6)}$ (page-local
+$G_\ell$ and $a_j$, $b_j$ as above). Sixth order needs $G_1=1$, $G_2=G_3=0$ and all four
+dissipative coefficients zero; dropping $G_3=0$ and the last dissipative constraint frees one
+parameter in each part at the cost of two orders, which reproduces the fourth-order MDCD
+scheme ([MDCD schemes](/methods/mdcd-scheme.md)). From this they conclude that spectrum
+optimization of a finite-difference scheme, by linear weights or by separate dispersion and
+dissipation parameters, "inevitably" sacrifices order. Their remedy, piecewise spectrum
+optimization (§3.2), keeps the optimal order where it is accurate and lowers it only beyond:
+with a 1% tolerance on $\lvert\tilde\vartheta_r/\vartheta-1\rvert$ (Lele's resolved
+bandwidth),
+
+$$\begin{aligned}
+\text{6th order:}\quad&\tilde\vartheta_r=\tfrac1{30}\big(45\sin\vartheta-9\sin2\vartheta+\sin3\vartheta\big),&&\text{bandwidth }1.100,\\
+\text{optimized 4th:}\quad&\tilde\vartheta_r=\tfrac1{150}\big(240\sin\vartheta-57\sin2\vartheta+8\sin3\vartheta\big),&&\text{bandwidth }1.530,\\
+\text{optimized 2nd:}\quad&\tilde\vartheta_r=\tfrac1{500}\big(832\sin\vartheta-229\sin2\vartheta+42\sin3\vartheta\big),&&\text{bandwidth }1.726,
+\end{aligned}$$
+
+switched at $\vartheta=1.085$ and $1.516$, where the dispersion errors on both sides are
+equal; the last bandwidth is about 56.9 % above the first. *(Compiler check, not in the
+sources: the three bandwidths come out as 1.1001, 1.5303 and 1.7264, the switching points as
+1.0850 and 1.5158, and each scheme has $G_1=1$.)* The schemes become the band-wise linear
+backgrounds of TENO6-SA ([adaptive TENO](/methods/adaptive-teno.md)).
+
 **The ratio used pointwise.** [Li, Chen & Ren (2022)](/sources/li-2022.md) write the same
 condition as $\zeta\sim1<10$ and use it twice. Imposing $\zeta(\pi)\le9$ at the
 wavenumber of largest dispersion error gives the fixed dissipation parameter
@@ -343,6 +371,23 @@ is meant.
   is stated without a new ADR computation by
   [Takagi et al. (2022)](/sources/takagi-2022.md) (§2.2). See
   [targeted ENO](/methods/targeted-eno.md).
+- **The cut-off sets the onset of nonlinearity.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+  (§3.2, Table 1) tabulate the reduced wavenumber at which their TENO turns nonlinear, from
+  $1.058$ at $C_T=10^{-4}$ to $1.794$ at $10^{-13}$ (values on
+  [targeted ENO](/methods/targeted-eno.md)), and design TENO6-SA from it. Its resolved
+  bandwidth is $1.767$ at 1 % tolerance, against $1.100$ for TENO6 and TENO6-opt, $1.052$ for
+  TENO6-A, $1.086$ for EWENO-CU6 and $1.330$ for WENO7-Z; at 1.5 % the values are $1.774$,
+  $1.184$, $1.590$, $1.165$ and $1.418$ (§5.2, Fig. 5). They state that their spectra near
+  $\vartheta\approx\pi$ "may differ slightly" from those of Fu et al. because of the grid
+  resolution of the ADR. They complement the single-mode ADR with the nonlinear spectral
+  analysis of Fauconnier & Dick, which applies the scheme to synthetic fields with spectrum
+  $\propto\vartheta^{-5/3}$ up to $\pi$ and random phases and reports the mean and standard
+  deviation of the modified wavenumber over $10^4$ samples; TENO6-SA has the best mean
+  dispersion and a lower deviation at low and moderate wavenumbers (App. A, Fig. 6).
+- **A Gaussian-RBF TENO.** [Liang & Fu (2024a)](/sources/liang-2024.md) (§3.2, Fig. 3;
+  128 points) find both dispersion and dissipation of their nonlinear Gaussian-RBF TENO
+  better than TENO5 and WENO5-Z, with the background linear scheme "restored exactly up to an
+  intermediate wavenumber"; curves only ([RBF-WENO](/methods/rbf-weno.md)).
 - **Adaptive-dissipation TENO.** The five-point TENO5-A variant of
   [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), with a cut-off driven by a scale
   sensor, has better dispersion and dissipation than TENO5, and its optimized third-order
@@ -493,6 +538,14 @@ is meant.
   Eqs. (48)–(50) give $0.00348$, $0.00372$ and $0.00264$ at the sensed wavenumber $2.08$, where
   the floor $0.001$ ends, and the $\nu=0.5$ cubic gives $0.01292$ at $\vartheta=\pi$, above the cap
   $0.012$.)* The authors call the effect of extending the floor to $2.08$ small and ignore it (§3.3).
+- Zhang et al. (2024b) print the coefficient of $\Delta x\,f''$ in the dissipative part as
+  $b_1+4b_2+6b_3$ (Eq. (21)); the expansion of $\sum_jb_j\big(f(x+j\Delta x)+f(x-j\Delta x)\big)$
+  gives $\sum_jj^2b_j=b_1+4b_2+9b_3$, the pattern their other printed coefficients follow
+  *(compiler check, not in the sources)*. Their §3.2 states the order conditions as
+  "$G_1=0$", while §3.1 and the printed schemes have $G_1=1$.
+- Zhang et al.'s observation that conclusions from monochromatic ADR "do not transfer
+  directly to nonlinear problems" (§6.1.3) rests on one cut-off study of the Titarev–Toro
+  problem; see [adaptive TENO](/methods/adaptive-teno.md).
 - [Luo & Wu (2021)](/sources/luo-2021-b.md) (§6) present "beating the
   underlying linear scheme" as contrary to the view, attributed to Pirozzoli,
   that nonlinear shock-capturing mechanisms always degrade spectral
@@ -523,3 +576,5 @@ is meant.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §3.2, Eqs. (46)–(52), Fig. 2; §3.3, Fig. 3, Table 5: gradient-based reconstruction spectra, MIG4 and MEG6 against TENO5 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.2, Eq. (22), Appendix A; §3.2, Fig. 15: Fourier design of the seventh-order gradient-based reconstruction (arXiv v1).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §3, Fig. 3.2: WENO-H, WENO-ZQ, MRWENO, WENO-JS spectra.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3, Eqs. (18)–(21), Table 1, Fig. 1; §5.2, Figs. 5–6; §6.1.3; App. A: order cost of decoupled optimization, piecewise spectrum optimization, cut-off against nonlinearity onset, resolved bandwidths, nonlinear spectral analysis.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, Fig. 3: ADR of a Gaussian-RBF TENO.

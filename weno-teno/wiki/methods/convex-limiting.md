@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -224,6 +224,25 @@ three orders of magnitude less low-order method than element-wise blending
 freedom element-wise limiting stops improving beyond $N=1$ while subcell
 limiting improves with $N$ (Pazner, §4.1.4, Fig. 3); see
 [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+
+- **Convex-constraint factors as caps of an entropy program**
+  ([Lin & Chan (2024)](/sources/lin-2024.md), §3, Thms 3.1–3.3). The
+  factors that a convex limiter allows at each subcell interface
+  (relaxed positivity, $\rho\ge\tfrac12\rho^{\mathrm L}$ and
+  $\rho e\ge\tfrac12\rho e^{\mathrm L}$ of the low-order update, or
+  TVD-like density bounds over the low-order neighbours, Eqs. (62), (67))
+  become upper bounds $l^{\mathrm C}$ on the high-order weights $l=1-\alpha$
+  of a linear program that maximizes $\sum l$ under the semi-discrete cell
+  entropy inequality of the element. Because the constraint is a single
+  linear inequality, the program is a continuous knapsack problem solved
+  exactly by a greedy sort; the result keeps the convex constraints,
+  conservation and the cell entropy inequality (page-local $l$,
+  $l^{\mathrm C}$; the construction is on
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+  The constraints are imposed per substate of the update, half of it
+  carrying each of the two interface fluxes of a node (Eq. (63)), the
+  same device as the per-direction provisional states above *(compiler
+  check, not in the sources)*.
 
 ## Sparse IDP DG is subcell Rusanov finite volumes
 
@@ -452,7 +471,11 @@ nodes (Pazner, §3.1).
   high- and low-order schemes share the same Lax–Friedrichs interface flux
   and interface matrices, subcell limiting localizes to element interiors
   and needs no exchange of limiting parameters between neighbours
-  (App. B.2, Eqs. 80–81).
+  (App. B.2, Eqs. 80–81). Lin & Chan (2024) add the entropy inequality as
+  an extra constraint on the subcell coefficients and prove that subcell
+  blending then keeps the semi-discrete cell entropy inequality (Thms 3.1,
+  3.3); the high-order accuracy of the result is shown only numerically
+  (§4.2).
 - **Wave-speed estimates.** The Davis estimate used by Lin et al. is not
   a guaranteed upper bound of the maximum wave speed; a case where the
   Rusanov estimate underestimates it would compromise the provable
@@ -528,3 +551,4 @@ nodes (Pazner, §3.1).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — arXiv v1: §1; §4.2; §4.5; §6 (invariant-domain preservation left out of scope).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.1–2.2 (Eqs. (5)–(45), Remarks 2, 6–9); §3.1–3.5 (Tables 1–5, Figs. 1–9); §4.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §3.2, Eqs. (9)–(11); §5, Eqs. (16)–(24), Lemma 5.1, Theorem 5.2; §6.1–6.2, Eqs. (37)–(45), Theorems 6.1–6.2; Table 1, Fig. 3; App. B, Eqs. (70)–(81); footnotes 3–4.
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3.1–3.2, Eqs. (25), (46), Thms 3.1–3.3; §4.3–4.4, Eqs. (62)–(68).

@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Characteristic decomposition
@@ -135,6 +135,17 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   is attributed by the authors to "less information being used for reconstruction in each
   direction", a cause not isolated by their runs. See
   [WENO limiters for DG](/methods/weno-limiter-dg.md).
+- **Direction by direction in a nodal limiter.** In the compact TENO/WENO limiter for the
+  nodal [spectral difference method](/methods/spectral-difference-method.md) of
+  [Chen & Fu (2024)](/sources/chen-2024.md) (§6, Eqs. (70)–(72), after Qiu and Shu), the
+  Jacobian is frozen at the cell average of the target cell, $A_i=R_i\Lambda_iL_i$ (page-local
+  $\Lambda_i$), and the cell averages of the target cell and its two face neighbours and the
+  cell-averaged first derivatives of the neighbours are projected by $L_i$; each characteristic
+  component is limited and the result is mapped back by $R_i$. In 2D the limiter runs along lines
+  of solution points, with the characteristic direction that of the sweep ($x$ or $y$), and the
+  nodal values from the two sweeps are averaged (§7, Algorithm 1, Eq. (73)). Their fourth-order
+  candidates also use cell-averaged second derivatives of the neighbours (Eq. (51)), whose
+  characteristic projection Eq. (71) does not list.
 - **Only where a detector fires.** The hybrid MDAD scheme of [Li et al. (2022a)](/sources/li-2022.md)
   (§3.4) decomposes only at interfaces flagged non-smooth by its shock detector, with $R$ from
   the simple average of the two neighbouring states, splits by global Lax–Friedrichs in
@@ -402,3 +413,4 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.2, §3.4, §4 (step 7), §5.1 (arXiv v4).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3 (Step 2), Remark 3.3, Ex. 5.7 (Fig. 7) (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3, §3.2 (Algorithm 1), §4.4, §4.6.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §6 (Eqs. (70)–(72)), §7 (Algorithm 1, Eq. (73)), Eq. (51).

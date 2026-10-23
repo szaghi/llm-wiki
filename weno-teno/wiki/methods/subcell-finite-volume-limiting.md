@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -185,7 +185,67 @@ non-conservative systems and to higher-order subcell schemes.
 Element-wise blending is simpler and therefore admits this global entropy
 estimate; it is typically more dissipative than subcell blending. The
 entropy proof for subcell-wise blending is "still missing"
-(Rueda-Ramírez et al. 2022, §4 item (2)).
+(Rueda-Ramírez et al. 2022, §4 item (2)); Lin & Chan (2024) obtain one by
+constraining the subcell coefficients (next section).
+
+## Subcell coefficients that enforce the cell entropy inequality
+
+[Lin & Chan (2024)](/sources/lin-2024.md) (§3, Thms 3.1–3.3, Algorithms
+1–3) choose the subcell-wise coefficients so that the blended LGL-DGSEM
+satisfies the **semi-discrete cell entropy inequality** of each element,
+the property of entropy-stable DG, instead of a nodal entropy condition.
+They write the high- and low-order schemes as algebraic subcell fluxes,
+$\mathsf m_i\dot u_i=\hat f_i-\hat f_{i-1}$ with
+$\hat f_i=l_i\hat f^{\mathrm H}_i+(1-l_i)\hat f^{\mathrm L}_i$ and
+$l_i=1-\alpha_i\in[0,1]$ the weight of the high-order flux at the subcell
+interface between nodes $i$ and $i+1$ ($\mathsf m_i$ the lumped LGL mass,
+page-local $l_i$); the low-order scheme is the sparse graph-viscosity
+subcell scheme of Lin, Chan & Tomas (2023), positivity-preserving and
+semi-discretely entropy stable ([convex limiting](/methods/convex-limiting.md)).
+Both schemes share the local Lax–Friedrichs interface flux, so their
+element-boundary fluxes coincide and the surface part of the entropy
+balance does not depend on the coefficients (Eqs. (17), (22)). The cell
+entropy inequality then reduces to one linear inequality in the volume
+coefficients, in 1D
+$$\sum_{i=1}^{N}(w_i-w_{i+1})^\top\hat f_i(l_i)\le\psi(u_{N+1})-\psi(u_1),$$
+with $w$ the entropy variables and $\psi$ the entropy flux potential of
+registry §6, nodes numbered $1,\dots,N+1$ (Eq. (23)). The coefficients
+solve the linear program
+$$\max\sum_il_i\quad\text{subject to the inequality above and}\quad0\le l_i\le l^{\mathrm C}_i,$$
+where $l^{\mathrm C}_i$ are the coefficients that any convex-constraint
+limiter allows (Eq. (25); page-local $l^{\mathrm C}$). $l=0$ is feasible
+because the low-order scheme is entropy stable, so the program is always
+solvable, and its solution is conservative, entropy stable and keeps the
+convex constraints (Thm 3.1). It is a continuous knapsack problem, solved
+exactly by a greedy algorithm that releases the subcells in decreasing
+order of their entropy production, at cost $O(m\log m)$ with
+$m=N(N+1)$ per element and direction (Thm 3.2, Algorithm 2). In 2D the
+inequality is imposed dimension by dimension, which reduces the unknowns
+per direction from $(N+2)(N+1)$ to $N(N+1)$ (Eqs. (29)–(46), Thm 3.3). A
+shock-capturing variant tightens the bound by the factor $1-\beta_{\mathrm e}\epsilon_K$,
+with $\epsilon_K\in[0,1]$ the modal smoothness factor of Pazner's
+[indicator](/definitions/troubled-cell-indicator.md) and a user parameter
+$\beta_{\mathrm e}\in[0,1]$, which blends in that fraction of the
+low-order entropy dissipation (Eqs. (49)–(51); page-local $\beta_{\mathrm e}$,
+$\epsilon_K$).
+
+**Evidence** (§4; Euler, SSPRK(3,3), Davis wave speeds;
+[DGSEM](/methods/dgsem.md)):
+
+| Test | Setup | Finding |
+|---|---|---|
+| modified Sod tube (sonic rarefaction) | $N=3$, 50 and 100 elements, $t=0.2$ | DGSEM alone shows an entropy-violating jump at the rarefaction; ESDG and DGSEM with the cell-entropy limiter give a smooth rarefaction (Fig. 2) |
+| [KPP rotating wave](/benchmarks/kpp-rotating-wave.md) | $N=3$, $64^2$ and $128^2$ elements | DGSEM with Hennemann blending converges to a non-entropic solution, with the cell-entropy limiter to the entropic one (Fig. 3) |
+| [isentropic vortex](/benchmarks/isentropic-vortex.md) | $N=1$–4, $K=5$–80, no convex constraint | finest $L^2$ rates 1.84, 2.74 (printed), 4.28, 4.36; the local minimum entropy principle gives at most first order (0.86–0.95), its relaxed form at most second (1.21–1.52) (Tables 1–3) |
+| [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md) | $N=3$, $80^2$, $t=10$, relaxed positivity | robust; applied to ESDG instead of DGSEM the turbulent structures differ visibly (Figs. 4–5) |
+| [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md) | $N=3$, $150^2$, $t=10^{-3}$ | robust with TVD-like density bounds; with $\beta_{\mathrm e}=0.01$ and 0 carbuncles appear, also with the minimum entropy principle; the carbuncle effect, the authors write, "is not due only to a loss of entropy stability, but rather a lack of sufficient dissipation near shocks" (Figs. 6–7, A.8) |
+
+The authors present the method as an alternative to the local minimum
+principle on $\rho^{1-\gamma}e$ of Pazner and Rueda-Ramírez et al., which
+they find limited to compressible flow and to at most second order, and
+to Tadmor's entropy condition on each subcell flux, which by private
+communication also does not keep high order for DGSEM (§1, footnotes 1,
+9). High order with the new limiter is shown, not proved (§4.2).
 
 ## Ingredient IV: a priori or a posteriori coefficients
 
@@ -411,6 +471,27 @@ DG modes of troubled cells by a same-order CWENOZ reconstruction instead
 
 ## Qualifications
 
+- **Lin & Chan (2024): rates and printings.** The stated band
+  "between $O(h^{N+1/2})$ and $O(h^{N+1})$" (§4.2) is not met by every
+  last rate of Table 1 (4.28 for $N=3$ exceeds $N+1$, 4.36 for $N=4$ is
+  below $N+1/2$). Two $N=2$ rates are misprinted: from the printed errors
+  $\log_2(1.785\times10^{-1}/4.126\times10^{-2})=2.11$ (printed 1.11) and
+  $\log_2(6.714\times10^{-3}/1.210\times10^{-3})=2.47$ (printed 2.74). The
+  smoothness factor (Eq. 50; the source's symbols $s$, $s_0$, $\kappa$,
+  page-local here) prints the upper case as "$1$ if
+  $s<s_0+\kappa$" and a ramp $\tfrac12\big(1-\sin(\pi(s-s_0)/(2\kappa))\big)$
+  that equals $\tfrac12-\tfrac12\sin(-\pi/2)=1$ at $s_0-\kappa$ and 0 at
+  $s_0+\kappa$, the reverse of the outer cases (0 below, 1 above), so a
+  continuous ramp needs $+\sin$; Pazner prints the same middle case, as
+  recorded for Pazner's indicator on the
+  [troubled-cell indicator](/definitions/troubled-cell-indicator.md) page
+  *(compiler check, not in the sources)*. Their
+  substate decomposition (Eq. 63) carries $\Delta t/\mathsf m_i$ in each half
+  where $2\Delta t/\mathsf m_i$ reproduces the forward-Euler update
+  *(compiler check, not in the sources)*. With the Davis estimate, which
+  is not always an upper bound of the wave speed, the low-order scheme is
+  not provably positive or entropy stable, so Theorems 3.1 and 3.3 hold
+  under a true wave-speed bound (footnote 8).
 - Rueda-Ramírez et al. (2022) report no convergence-order study; "high
   order" is the formal order of the DGSEM there. Pazner (2021) does: with
   the bound relaxation the subcell IDP scheme reaches order $N+1$ for
@@ -467,3 +548,4 @@ DG modes of troubled cells by a same-order CWENOZ reconstruction instead
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.4.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §3.3, Eq. (18); §4.1–4.3, Eqs. (19)–(31), Fig. 2; §7.2; §8.1, §8.6–§8.9, Tables 1, 3, 6, Figs. 13, 16; §9.
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §1; §2.3; §3.1–3.4, Eqs. (15)–(51), Thms 3.1–3.3, Algorithms 1–3; §4.1–4.4, Tables 1–3, Figs. 2–7, A.8; footnotes 1, 8, 9.

@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD test in which a weak cylindrical magneti
 status: established
 aliases: [field loop advection, advection of a magnetic field loop, current loop advection, Gardiner–Stone field loop]
 tags: [benchmark, mhd, relativistic, low-dissipation]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Magnetic field-loop advection
@@ -25,27 +25,33 @@ discretization ([Berta et al. (2024)](/sources/berta-2024.md) §5.4,
 after Gardiner & Stone and Mignone as they cite them;
 [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.8, which call
 it a test of "capturing a tangential discontinuity for a
-multidimensional flow").
+multidimensional flow"; [Dematté et al. (2024)](/sources/dematte-2024.md)
+§4.2.1, who run the low-Mach variant of Dumbser et al.).
 
 ## Setup as printed
 
-Both sources use $[-1,1]\times[-0.5,0.5]$, doubly periodic, on
-$256\times128$ cells, $\rho=1$, and a loop of radius $0.3$ centred at
-the origin with amplitude $10^{-3}$; with $r=\sqrt{x^2+y^2}$:
+Berta et al. and Chen, Wu & Xiong use $[-1,1]\times[-0.5,0.5]$, doubly
+periodic, on $256\times128$ cells, $\rho=1$, and a loop of radius $0.3$
+centred at the origin with amplitude $10^{-3}$, with $r=\sqrt{x^2+y^2}$;
+Dematté et al. use the same box shifted to $[0,2]\times[0,1]$, doubly
+periodic, on $512\times256$ cells, with the loop centred at $(1,0.5)$:
 
-| | Berta et al. (2024) §5.4, Eqs. (53)–(54) | Chen, Wu & Xiong (2023) Ex. 5.8 |
-|---|---|---|
-| equations | ideal MHD and relativistic MHD | ideal MHD in an all-Mach scaling, sonic Mach parameter $\varepsilon$ |
-| pressure | $p=1$ (MHD), $p=3$ (RMHD, after Beckwith & Stone) | $p=1$ |
-| velocity | $V_0(\cos\vartheta_{\mathrm a},\sin\vartheta_{\mathrm a})$, $\sin\vartheta_{\mathrm a}=1/\sqrt5$, $\cos\vartheta_{\mathrm a}=2/\sqrt5$; $V_0=\sqrt5$ (MHD), $\sqrt5/10$ (RMHD) | $v_0(\cos\vartheta_{\mathrm a},\sin\vartheta_{\mathrm a},0)$, $v_0=1$, $\cos\vartheta_{\mathrm a}=-2/\sqrt5$, $\sin\vartheta_{\mathrm a}=1/\sqrt5$ |
-| potential | $\mathsf A_3=10^{-3}(0.3-r)$ for $0.06<r\le0.3$, $0$ "elsewhere" ($R_1=0.2R$) | $\mathsf A_3=10^{-3}(0.3-r)$ for $r\le0.3$, $0$ otherwise |
-| final time | $t=2$ (MHD), $t=20$ (RMHD): two periods | $T=\sqrt5$: one period |
-| time step | CFL 0.4 | third-order IMEX, CFL 0.25 (paper-wide) |
+| | Berta et al. (2024) §5.4, Eqs. (53)–(54) | Chen, Wu & Xiong (2023) Ex. 5.8 | Dematté et al. (2024) §4.2.1, Eq. (66) |
+|---|---|---|---|
+| equations | ideal MHD and relativistic MHD | ideal MHD in an all-Mach scaling, sonic Mach parameter $\varepsilon$ | ideal MHD, $\gamma=5/3$ |
+| pressure | $p=1$ (MHD), $p=3$ (RMHD, after Beckwith & Stone) | $p=1$ | $p=10^5$ |
+| velocity | $V_0(\cos\vartheta_{\mathrm a},\sin\vartheta_{\mathrm a})$, $\sin\vartheta_{\mathrm a}=1/\sqrt5$, $\cos\vartheta_{\mathrm a}=2/\sqrt5$; $V_0=\sqrt5$ (MHD), $\sqrt5/10$ (RMHD) | $v_0(\cos\vartheta_{\mathrm a},\sin\vartheta_{\mathrm a},0)$, $v_0=1$, $\cos\vartheta_{\mathrm a}=-2/\sqrt5$, $\sin\vartheta_{\mathrm a}=1/\sqrt5$ | $v=(2,1,0)$ |
+| potential | $\mathsf A_3=10^{-3}(0.3-r)$ for $0.06<r\le0.3$, $0$ "elsewhere" ($R_1=0.2R$) | $\mathsf A_3=10^{-3}(0.3-r)$ for $r\le0.3$, $0$ otherwise | $\mathsf A_3=\frac{10^{-3}}{\sqrt{4\pi}}(0.3-r)$ for $r\le0.3$, $0$ otherwise |
+| final time | $t=2$ (MHD), $t=20$ (RMHD): two periods | $T=\sqrt5$: one period | $t=1$: one period |
+| time step | CFL 0.4 | third-order IMEX, CFL 0.25 (paper-wide) | CFL 0.8 with the advective (flow-speed) eigenvalues |
 
 ($\vartheta_{\mathrm a}$ is the page-local advection angle.) The
-velocities give displacements $(4,2)$ in Berta et al.'s runs and
-$(-2,1)$ in Chen, Wu & Xiong's, integer multiples of the box *(compiler
-check, not in the sources)*. Inside the loop
+velocities give displacements $(4,2)$ in Berta et al.'s runs,
+$(-2,1)$ in Chen, Wu & Xiong's and $(2,1)$ in Dematté et al.'s, integer
+multiples of the box *(compiler check, not in the sources)*. Dematté et
+al. state the Mach number as $M\approx0.006$; with $\lvert v\rvert=\sqrt5$
+and $c=\sqrt{\gamma p/\rho}\approx408$ it is $0.0055$ *(compiler check,
+not in the sources)*. Inside the loop
 $\lvert B\rvert=10^{-3}$, so the ambient plasma beta
 $\beta_{\mathrm p}=2p/\lvert B\rvert^2$ is $2\times10^6$ for $p=1$
 *(compiler check, not in the sources)*.
@@ -96,6 +102,29 @@ ERKC is cheaper at $\varepsilon=0.5$; IMEX is 3.47 times faster at
 $\varepsilon=0.1$ and 4.82 times at $\varepsilon=0.05$ *(compiler
 check, not in the sources)*.
 
+**Velocity-based time step.** Dematté et al. run the loop with their
+cell-centred [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md)
+finite-volume scheme, whose time step depends on the flow speed only,
+with staggered [constrained transport](/methods/constrained-transport.md),
+against a second-order explicit MUSCL scheme with an HLLEM solver for the
+pressure sub-system and Gardiner–Stone constrained transport (§4.2.1,
+Fig. 11). Both agree with the literature, the explicit result being more
+diffuse, which the authors ascribe to its far larger number of steps. The
+counts and wall-clock times (hardware not stated) are:
+
+| | time steps | wall-clock |
+|---|---|---|
+| semi-implicit | 960 | 2930 s |
+| explicit MUSCL–HLLEM–CT | 240427 | 85340 s |
+
+The semi-implicit scheme is about 29 times faster in wall-clock time
+*(compiler check, not in the sources)*; the authors note that its cost
+per element and time step is relatively high. In the same run the matrix-free GMRES solve of the pressure
+system needs about one hundred iterations per step, against fewer than
+ten on the Orszag–Tang and Kelvin–Helmholtz tests, which the authors
+attribute to the low Mach number; a loop with amplitude $1$ in place of
+$10^{-3}$ is also run (§4.5, Fig. 22).
+
 ## Qualifications
 
 - As printed, Berta et al.'s Eq. (54) sets $\mathsf A_3=0$ also for
@@ -105,16 +134,21 @@ check, not in the sources)*.
   $\mathsf A_3=10^{-3}(0.3-0.06)$ inside $r=0.06$ would give a field-free
   core without that singularity *(compiler check, not in the sources)*.
   Chen, Wu & Xiong's potential has no inner radius.
-- The two sources differ in direction, speed, number of periods and
-  measured quantity (loop shape and magnetic energy against density
-  deviation, magnetic pressure and cost); neither reports an error norm.
+- The three sources differ in direction, speed, number of periods,
+  pressure and measured quantity (loop shape and magnetic energy;
+  density deviation, magnetic pressure and cost; step count and
+  wall-clock time); none reports an error norm. Dematté et al.'s
+  amplitude carries a factor $1/\sqrt{4\pi}$ that the other two do not,
+  so its field inside the loop is $2.8\times10^{-4}$ instead of $10^{-3}$
+  *(compiler check, not in the sources)*.
 - Chen, Wu & Xiong do not state which wave speed sets the explicit
   ERKC time step at $\varepsilon<1$, nor the hardware or the linear
   solver behind Table 5.5.
 - Berta et al. are read as the arXiv v4 preprint, Chen, Wu & Xiong as
-  arXiv v1.
+  arXiv v1, Dematté et al. as the version of record.
 
 # Citations
 
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.4, Eqs. (53)–(54), Figs. 6–7 (arXiv v4).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — Ex. 5.8, Fig. 5.6, Table 5.5 (arXiv v1).
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.2.1, Eq. (66), Fig. 11; §4.5, Fig. 22.

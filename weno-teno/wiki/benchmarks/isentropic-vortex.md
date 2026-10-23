@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Isentropic vortex
@@ -85,6 +85,7 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Funada & Imamura (2023)](/sources/funada-2023.md) §3.1 | $[-6,18]\times[-12,12]$, centre at the origin, periodic in $x$, Riemann boundaries in $y$ | $\kappa_{\mathrm v}=0.02$ (page-local) | $\rho=1$, $M_\infty=0.1$, stream along $x$ | $L_\infty$ error of $v_2$ when the vortex reaches $x=8$; $\Delta x=0.375$, $0.1875$, $0.09375$; RK4 |
 | [Zaghi et al. (2023)](/sources/zaghi-2023.md) Appendix, Eqs. (A.1)–(A.6) | periodic cube of side 10 m, centre $(2,5,5)$ m, 3D | vortex Mach number $M_{\mathrm v}=0.1$, radius 0.5 m | $\rho_0=1.226$ kg m$^{-3}$, $p_0=101325$ Pa, free-stream Mach 0.1 along $x$ | period 0.29 s; AMR performance test, WENO3, 4768 blocks, about 2.4M cells |
 | [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2.1 | $[0,20]\times[0,10]$, centre $(9,5)$, periodic | $\beta=8.5$ in their form, see below | $\rho_0=p_0=1$, stream $(1,0)$ | $T=2$; $L^2$ errors, $N=1$–$4$, $K_{1D}=2$–$32$ ($2K_{1D}\times K_{1D}$ elements, page-local), quadrilaterals (CFL 0.9) and triangles (CFL 0.5) |
+| [Lin & Chan (2024)](/sources/lin-2024.md) §4.2 | $[0,20]\times[0,10]$, $2K_{1D}\times K_{1D}$ elements, periodic | 5.0 in their normalization (analytic solution of §8.2.1 of their earlier paper) | not restated | $T=1$; relative $L^2$ error over $\rho,\rho v_1,\rho v_2,E$ (LGL quadrature), $N=1$–$4$, $K_{1D}=5$–$80$ |
 | [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.1.2, Eqs. (43)–(45) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; $L_\infty$, $L_1$ density errors on uniform triangles, 800 to 12800 points; with and without the PEEB limiter |
 | [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $e_{L^2}$, $e_{L^\infty}$ on triangular, hybrid and uniform meshes, 16–128 edges per side ($P_2$, $P_3$), 8–64 ($P_4$); CFL 0.5 |
 | [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.1, Eqs. (48)–(51) | $[-5,5]^2$, centre at the origin, periodic | 5 | no stream; specific internal energy $1$ at infinity, see below | $t=10$; density $L_1$, degree 0 to 7, exponential in the degree |
@@ -452,6 +453,20 @@ quadrilateral $N=4$, $K_{1D}=32$ error is identical for both $\zeta_{\mathrm r}$
 limiting is inactive there. See
 [convex limiting](/methods/convex-limiting.md).
 
+**Entropy limiting that keeps high order.** Lin & Chan (2024) use the
+vortex, at a strength for which no positivity limiting is needed and
+with the convex-constraint factors set to 1, to compare entropy
+limiters for [subcell-limited DGSEM](/methods/subcell-finite-volume-limiting.md).
+Their limiter, which enforces a semi-discrete cell entropy inequality by
+solving a small linear program for the subcell limiting factors, shows
+"an asymptotic convergence rate between $O(h^{N+1/2})$ and $O(h^{N+1})$"
+(Table 1; last printed rates 1.84, 2.74, 4.28, 4.36 for $N=1$–4). The
+local minimum-entropy-principle limiter gives at most first order (last
+rates 0.86, 0.93, 0.90, 0.95; Table 2), and its relaxed form at most
+second (1.52, 1.21, 1.49, 1.31; Table 3), for every $N$. High order of
+their limiter is shown numerically only, not proved (§4.2). See
+[entropy stability](/properties/entropy-stability.md).
+
 **Troubled-cell switching in hybrid DG–FV.** Maltsev et al. find pure
 DG close to design order, while CWENOZ finite volumes of the same
 polynomial order reach it only on finer meshes (quadrilateral $P_4$:
@@ -678,6 +693,14 @@ logarithmic mean (§7.2, Fig. 6).
   $\log_2(6.99\times10^{-5}/5.63\times10^{-7})=6.96$ *(compiler check,
   not in the sources)*.
 - Lin, Chan & Tomas are read as arXiv v2.
+- Lin & Chan (2024) print in Table 1, $N=2$, the rate 1.11 at
+  $K_{1D}=20$ and 2.74 at $K_{1D}=80$, where the printed errors give
+  $\log_2(1.785\times10^{-1}/4.126\times10^{-2})=2.11$ and
+  $\log_2(6.714\times10^{-3}/1.210\times10^{-3})=2.47$ *(compiler check,
+  not in the sources)*. With 2.47, and with the last rates 4.28 for
+  $N=3$ (above $N+1$) and 4.36 for $N=4$ (below $N+\tfrac12$), not all
+  rates lie in the band $[N+\tfrac12,N+1]$ that their text states
+  *(compiler check, not in the sources)*.
 - Gaburro et al.'s last $P_3$ orders, 3.8 ($\rho$) and 3.6 ($p$), are
   3.53 and 3.40 when recomputed from the printed errors and the printed
   $h=1.15$ and $0.92$; rounding $h$ to two digits moves them to at most
@@ -726,6 +749,7 @@ logarithmic mean (§7.2, Fig. 6).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §3.1, Fig. 10.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — Appendix, Eqs. (A.1)–(A.6), Figs. A.16–A.18.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.2.1, Tables 6–9 (arXiv v2).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §4.2, Eq. (60), Tables 1–3.
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.1.2, Eqs. (43)–(45), Figs. 3–5.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.1, Table 1, Fig. 4.
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §5.1, Eqs. (48)–(51), Fig. 5 (arXiv v2).

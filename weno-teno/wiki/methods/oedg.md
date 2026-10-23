@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Oscillation-eliminating discontinuous Galerkin (OEDG)"
-description: "OEDG follows every Runge–Kutta stage of a standard DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor; its damping coefficients are scale- and evolution-invariant, it conserves cell averages, and it carries an optimal fully discrete error estimate for linear advection."
+description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor, with scale- and evolution-invariant coefficients, conserved cell averages and an optimal error estimate for linear advection; Fan and Wu carry it to sixth-order Hermite WENO, damping only first moments."
 status: established
-aliases: [OEDG, oscillation-eliminating DG, OE procedure, OE step]
-tags: [dg, limiting, low-dissipation]
-timestamp: 2026-10-21T12:00:00Z
+aliases: [OEDG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
+tags: [dg, limiting, low-dissipation, weno]
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Oscillation-eliminating discontinuous Galerkin (OEDG)
@@ -153,6 +153,92 @@ $(N+1)$th-order RK on smooth ones (§5):
   ($320\times160$, $N=2$) run without nonphysical oscillations (Ex.
   5.15–5.18).
 
+## Oscillation elimination for Hermite WENO (OE-HWENO)
+
+[Fan & Wu (2024)](/sources/fan-2024.md) carry the OE step from DG to
+moment-based finite-volume [Hermite WENO](/methods/hermite-weno.md)
+(arXiv v1). HWENO evolves the cell average $\bar u_i$ and the first
+normalized moment $\bar u^{(1)}_i$, and the authors identify the
+uncontrolled variation of the first moments near discontinuities as the
+source of its spurious oscillations and nonlinear instability (§1).
+Limiting the moments, they state, caps a sixth-order HWENO scheme at fifth
+order, and the oscillation-free OF-HWENO of Zhao & Qiu adds stiff damping
+terms with empirical, problem-dependent parameters that need modified
+exponential Runge–Kutta integration (§1, Remark 1). The OE step is
+applied after every stage of SSP-RK3 (Eq. (2.12)).
+
+**OE step** (§2.2.2, Thm. 1, Eqs. (2.14)–(2.17)). The damping ODE is that
+of OEDG with test functions in $\mathbb P^1$, a single coefficient and its
+initial data $u^*_h$ given by a *linear* sixth-order Hermite
+reconstruction (page-local $u^*_h$, $\hat\sigma_i$). Its exact solution
+leaves the cell average unchanged and multiplies the first moment by one
+exponential factor,
+
+$$\bar u^{(1)}_i\leftarrow\bar u^{(1)}_i\exp\Big(-\frac{a\Delta t}{\Delta x}\hat\sigma_i\Big),\qquad \hat\sigma_i=\frac{\sum_{m=0}^{1}\Delta x^m\big(\lvert[\![\partial_x^mu^*_h]\!]_{i-1/2}\rvert+\lvert[\![\partial_x^mu^*_h]\!]_{i+1/2}\rvert\big)}{\max_j\lvert\bar u_j-u_\Omega\rvert},$$
+
+with $a$ the global maximum wave speed of the Lax–Friedrichs flux and
+$u_\Omega$ the mean of all cell averages ($\hat\sigma_i=0$ for constant
+data). The jumps are explicit linear combinations of
+$\bar u_{i-1},\dots,\bar u_{i+2}$ and $\bar u^{(1)}_{i-1},\dots,\bar u^{(1)}_{i+2}$
+(Eq. (2.17)), so the reconstruction never has to be formed and the step
+costs one multiplication per moment (Remark 3). Compared with the OEDG
+coefficient above, the printed HWENO coefficient keeps only the jumps of
+orders $0$ and $1$, without the factors $(2m+1)/((2N-1)m!)$ and the $\tfrac12$
+in the normaliser, and uses the global rather than the local wave speed.
+For systems one coefficient, the maximum over the components, damps all
+components (Eq. (2.29)); in 2D the factor combines $x$- and $y$-jumps,
+$\exp\big(-a^{(1)}\Delta t\hat\sigma^{(1)}_{i,j}/\Delta x-a^{(2)}\Delta t\hat\sigma^{(2)}_{i,j}/\Delta y\big)$,
+and multiplies both first moments (Thm. 8, Eqs. (2.44)–(2.46)).
+
+**Properties proved.**
+
+- **Accuracy** (Thm. 2; Thm. 9 in 2D): under $a\Delta t/\Delta x\le C<1$,
+  for a $C^{k+1}$ solution with periodic boundaries, $(k+1)$th-order accurate
+  moments stay $(k+1)$th-order accurate after the OE step, because the jumps
+  of the linear reconstruction of smooth data are $O(\Delta x^{k+1})$; the
+  proof assumes $\max_j\lvert\bar u_j-u_\Omega\rvert$ bounded away from zero.
+  This is the sixth order that moment limiting loses.
+- **[Scale invariance](/properties/scale-invariance.md)** (Thm. 4): the OE
+  operator commutes with $u\mapsto\lambda u+c$, $\lambda\ne0$, which the
+  bundle calls affine invariance. A stencil-local **dimensionless
+  transformation**, subtracting the stencil mean and dividing by the stencil
+  range plus machine epsilon $10^{-15}$, makes the HWENO reconstruction
+  itself invariant when that epsilon is neglected (Defs. 2–3, Thm. 5); the
+  authors present it as applicable to any nonlinear reconstruction, while
+  the proof covers HWENO.
+- **Evolution invariance** (Thm. 7), for $\partial_tu+\lambda\partial_xf(u)=0$
+  at a fixed CFL number, as for OEDG.
+- **Bound preservation** (Thm. 11): the forward-Euler cell-average update,
+  which the OE step leaves unchanged, is bound-preserving under
+  $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)\le\varpi$ with the
+  [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
+  of Cui, Ding & Wu, $\varpi=2-\sqrt{14}/2\approx0.1292$ at balanced
+  directional speeds against $1/12$ for the classical decomposition, if the
+  interface Gauss-point values and the interior part of the decomposition
+  are admissible; a Zhang–Shu-type scaling enforces this (Remark 4). The
+  authors call it the first use of the 2D optimal decomposition for HWENO
+  (Remark 5); see [bound preservation](/properties/bound-preservation.md).
+
+**Evidence** (§3; sixth-order OE-HWENO, SSP-RK3, CFL 0.45, $\Delta t\propto\Delta x^2$
+in the accuracy tests). Burgers converges at $\ell^\infty$ orders 6.43,
+6.37, 6.58, 6.38, 6.10 in 1D and 5.38–6.43 in 2D (Table 3.1); the Euler
+[density wave](/benchmarks/density-wave-advection.md) at 6.93–6.99 in 1D
+and 6.47–6.97 in 2D (Table 3.2), above six, which the authors attribute to
+the dominance of the damping error, as observed for OEDG. The
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+with and without the OE step is "nearly identical" (Fig. 2.1). On the
+LWR traffic problem in three unit systems, the Lax tube scaled by
+$10^{-7}$, $1$, $10^{7}$ and a 2D Riemann problem scaled by 100, OE-HWENO
+results coincide while OF-HWENO smears or oscillates (Figs. 3.1, 3.2, 3.8).
+With a positivity-preserving limiter the 1D and 2D
+[Sedov](/benchmarks/sedov-blast-wave.md), [Leblanc](/benchmarks/leblanc-shock-tube.md)
+and [Mach 2000 jet](/benchmarks/high-mach-astrophysical-jet.md) problems
+run; HWENO without the OE step but with the same limiter oscillates on the
+Sedov problem and on the jet, and OF-HWENO stays oscillatory on Sedov for
+all four of its parameter values tried (Figs. 3.4–3.5, 3.11). The
+[double rarefaction](/benchmarks/double-rarefaction-problem.md) problem
+runs without the positivity limiter (Ex. 7).
+
 ## Qualifications
 
 - **No bound preservation.** OEDG is not claimed bound-preserving, and no
@@ -172,7 +258,25 @@ $(N+1)$th-order RK on smooth ones (§5):
   Rem. 2.8 gives a factor $\lvert\lambda\rvert$ (arXiv v1).
 - Read in arXiv v1; numbering may differ in the Mathematics of Computation
   version.
+- **OE-HWENO needs a positivity limiter** on the extreme problems (Sedov,
+  Leblanc, the Mach 2000 jet), while the OEDG jet run above reports
+  none. Both papers run the Mach 2000 jet; neither runs it, or another
+  extreme test, with the OE step alone and states the outcome without the
+  positivity limiter.
+- **Printed slips in Fan & Wu (arXiv v1).** The printed optimal weight of
+  the decomposition has $(78\theta^2+46)$ in the denominator of the
+  arccos argument, which is then $-244/46\approx-5.30$ at $\theta=0$,
+  outside $[-1,1]$; with $(78\theta^2+46)^{3/2}$, the form printed by
+  [Ding & Wu (2024)](/sources/ding-2024-b.md) (Cor. 4.2), it gives
+  $0.1291713=2-\sqrt{14}/2$, the value Fan & Wu state *(compiler check,
+  not in the sources)*. In Tables 3.1–3.2 the $\ell^2$ orders repeat the
+  $\ell^1$ orders digit for digit; from the printed $\ell^2$ errors the 2D
+  Burgers orders are 5.45, 6.15, 6.30, 6.40, 6.49, against the printed
+  5.57, 6.27, 6.43, 6.31, 6.36 *(compiler check, not in the sources)*. The
+  errors still show sixth order.
 
 # Citations
 
+- [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §1; §2.2 Eqs. (2.12)–(2.17), (2.29), Thms. 1–7, Defs. 1–3, Remarks 1–3; §2.3 Eqs. (2.44)–(2.46), Thms. 8–10; §2.4 Thm. 11, Remarks 4–5; §3 Exs. 1–12, Tables 3.1–3.2, Figs. 2.1, 3.1–3.11.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Cor. 4.2 (form of the optimal weight).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (Eqs. (1.2)–(1.4)); §2 (Eqs. (2.3)–(2.17); Rems. 2.1–2.12; Thms 2.6, 2.7, 2.10); §3 (Eqs. (3.8)–(3.12), Rem. 3.1); §4 (Thm 4.1, Assumption 4.5, Lemmas 4.10, 4.14, Rem. 4.4); §5 (Ex. 5.1–5.18, Tables 1–6, Figs. 1–14).

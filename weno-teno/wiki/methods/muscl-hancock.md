@@ -5,7 +5,7 @@ description: "MUSCL reconstructs limited piecewise-linear states from cell avera
 status: established
 aliases: [MUSCL, MUSCL reconstruction, kappa scheme, κ-scheme, MUSCL–Hancock method, MHM, van Leer MUSCL]
 tags: [reconstruction, limiting, finite-volume, riemann-solver]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # MUSCL and MUSCL–Hancock schemes
@@ -111,6 +111,8 @@ to stay second order (see [well-balancing](/properties/well-balancing.md)).
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) | subcell limiter of primitive-variable ADER-DG, polygonal meshes, single- and multi-material Euler | path-conservative fluctuations; Rusanov in shock subcells | quasilinear Hancock predictor with ENO slopes; conservative corrector in shock-flagged subcells |
 | [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) | staggered barotropic Euler and shallow water | kinetic-type split mass fluxes (no Riemann solver) | MUSCL on $\rho$ and $\mathcal E(\rho)+z$, well-balanced lake at rest including dry areas |
 | [Başkaya et al. (2024)](/sources/baskaya-2024.md) | US3D (body-fitted) and CHESS (ghost-cell IB), reacting hypersonic flow | modified Steger–Warming; Steger–Warming flux-vector splitting | second-order MUSCL as the reference and the ghost-cell discretizations of an immersed-boundary assessment ([immersed boundaries](/methods/immersed-boundary-method.md)) |
+| [Wakimura et al. (2024)](/sources/wakimura-2024.md) | six-equation two-phase model with infinite-rate relaxation, wave-propagation form, SSP-RK3 | HLLC fluctuations | method-of-lines MUSCL with the van Leer limiter (no Hancock step) as one candidate of a BVD selection against THINC, on quasi-primitive variables ([boundary variation diminishing](/definitions/boundary-variation-diminishing.md)) |
+| [Dematté et al. (2024)](/sources/dematte-2024.md) | cell-centred semi-implicit all-Mach FV, ideal and visco-resistive MHD | Rusanov on the advective sub-system | second-order TVD MUSCL–Hancock with the van Leer limiter for the explicit advective terms, after Dumbser et al. ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)) |
 
 Chemistry enters Peng et al.'s scheme by second-order Strang splitting with a semi-implicit
 fourth-order generalized Runge–Kutta integrator, GRK4A (§2.1); see
@@ -136,6 +138,11 @@ shows proper second order convergence for all of the resolutions we have tested"
   test of Castro et al. (§3.3.4, Figs. 18–19), not on their transcritical test with a stationary
   shock, where the authors blame the shock and the limiter (Figs. 20–21), and gives an observed
   order of 1.8 on the 2D Thacker paraboloid (§3.5, Fig. 24).
+- Dematté et al. (2024) (§4.1.2, Table 2) measure second order in **space** on a smooth MHD
+  vortex with unlimited MUSCL–Hancock and a fixed $\Delta t=0.01$: $L_2(\rho)$ orders 1.573,
+  1.854, 1.966, 1.992, 1.998 from $16^2$ to $512^2$ cells, error $3.647\times10^{-5}$ on $512^2$;
+  the paper calls this "second order of accuracy in space" and leaves higher order in time to
+  future IMEX Runge–Kutta work (§4.1.2).
 - Gaburro et al. measure the order of the unlimited DG scheme only (their limiter never
   activates on the smooth vortex, §5.1.1), so their MUSCL–Hancock subcell scheme has no
   measured order.
@@ -152,6 +159,15 @@ shows proper second order convergence for all of the resolutions we have tested"
 - Wang et al.'s observed orders mix the interior scheme with the immersed-boundary
   reconstruction, whose own local error they call second order on a Taylor argument; the
   tests do not separate the two.
+- Wakimura et al. (2024) (Eqs. (27)–(28)) print the face values
+  $u^-_{i+1/2}=\bar u_i+\tfrac12\psi(r)\,\Delta_{i+1/2}$ with $r=\Delta_{i+1/2}/\Delta_{i-1/2}$ and
+  $u^+_{i-1/2}=\bar u_i-\tfrac12\psi(r')\,\Delta_{i-1/2}$ with $r'=\Delta_{i-1/2}/\Delta_{i+1/2}$, and the van
+  Leer limiter $\psi(r)=(r+\lvert r\rvert)/(1+\lvert r\rvert)$. *(compiler check, not in the sources: with
+  these ratios and $r>0$ the increments are $\Delta_{i+1/2}^2/(\Delta_{i-1/2}+\Delta_{i+1/2})$ and
+  $\Delta_{i-1/2}^2/(\Delta_{i-1/2}+\Delta_{i+1/2})$, which do not come from one linear profile and are not
+  van Leer's harmonic-mean slope $2\Delta_{i-1/2}\Delta_{i+1/2}/(\Delta_{i-1/2}+\Delta_{i+1/2})$; inverting each
+  ratio recovers van Leer's MUSCL slope, so the printed ratios are inconsistent with the
+  stated limiter.)*
 
 # Citations
 
@@ -163,3 +179,5 @@ shows proper second order convergence for all of the resolutions we have tested"
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §3.4 (Eqs. (38)–(39)), §4.4 (Eq. (67)), §5.1.1 (arXiv v1).
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.3, §3.3, §3.5 (HAL wrap of the version of record).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.1–3.2 (author preprint).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.2 (Eqs. (27)–(28)), §3.2.4, §3.3.
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.1, §4.1.2 (Table 2).

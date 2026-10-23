@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Entropy stability
@@ -275,6 +275,96 @@ triangles, and keep the semi-discrete entropy inequality (§5–6; arXiv v2):
   positivity and entropy stability of the low-order scheme; they observed
   no such case (footnote 3).
 
+**Cell entropy inequality by linear programming.**
+[Lin & Chan (2024)](/sources/lin-2024.md) enforce in subcell-limited
+[DGSEM](/methods/dgsem.md) only the semi-discrete **cell** entropy
+inequality, one scalar inequality per element (and per dimension in 2D),
+which high-order entropy-stable DG satisfies while keeping its accuracy,
+instead of nodal conditions (§1, §3). The DGSEM and the low-order
+scheme, a local Lax–Friedrichs-type finite-volume scheme on the LGL
+subcells that is semi-discretely entropy stable, share the LLF surface
+flux, so their surface subcell fluxes coincide and the surface part of
+the entropy balance does not depend on the limiting factors (Eqs. (17),
+(22)). In 1D, with nodes $0,\dots,N$, subcell fluxes
+$\hat f_{(i,i+1)}=l_i\hat f^{\mathrm H}_{(i,i+1)}+(1-l_i)\hat f^{\mathrm L}_{(i,i+1)}$
+between nodes $i$ and $i+1$, and factors $l_i\in[0,1]$ ($1$ = high
+order, i.e. $l_i=1-\alpha$ in the registry's blending convention;
+page-local $l_i$, $l^{\mathrm C}_i$), the volume part of the cell entropy
+inequality reads
+
+$$\sum_{i=0}^{N-1}\big(w_{i+1}-w_i\big)\cdot\hat f_{(i,i+1)}\big(l_i\big)\le\psi(u_N)-\psi(u_0),$$
+
+one linear inequality in the $l_i$ (Eqs. (23)–(24), translated from the
+source's sign convention $\mathsf w_i\frac{d}{dt}u_i=\bar f_i-\bar f_{i-1}$,
+$\bar f=-\hat f$). It is the sum over the interior subcell interfaces of
+the quantity Tadmor's condition bounds interface by interface, which is
+why the interface-wise limiting above, of Kuzmin, Hajduk & Rupp, implies
+it *(compiler check, not in the sources)*. The factors are the solution
+of the linear program
+
+$$\max\sum_il_i\quad\text{subject to the inequality above and}\quad0\le l_i\le l^{\mathrm C}_i,$$
+
+with $l^{\mathrm C}_i$ the factors of any convex-constraint limiter
+(positivity, TVD-like bounds) (LP (25)). **Theorem 3.1:** the LP is
+solvable, because $l=0$ (the low-order scheme) is feasible, and its
+solution is locally conservative, semi-discretely entropy stable and
+preserves the convex constraints. **Theorem 3.2:** the LP is a continuous
+knapsack problem, solved exactly by a greedy algorithm after Dantzig.
+**Theorem 3.3** states the same for 2D, where the inequality is imposed
+dimension by dimension with $N(N+1)$ unknowns per dimension, and the
+sort-based Algorithm 2 costs $O(m\log m)$, $m=N(N+1)$ (§3.2, §3.4). A
+shock-capturing variant multiplies the admissible entropy budget by
+$(1-\beta_{\mathrm e}\epsilon_K)$, $\epsilon_K\in[0,1]$ a modal smoothness factor after
+Hennemann et al. and Pazner, $\beta_{\mathrm e}\in[0,1]$ user-chosen (Eq. (49), LP
+(51); page-local $\beta_{\mathrm e}$, $\epsilon_K$). The authors state that the
+SSP Runge–Kutta step and its CFL condition are needed only for
+positivity; the entropy inequality is semi-discrete (footnote 7).
+
+Their accuracy comparison on the [isentropic vortex](/benchmarks/isentropic-vortex.md)
+($N=1,\dots,4$, $K=5$ to $80$ elements per direction, relative $L^2$
+error, Tables 1–3) sets the cell inequality against the nodal
+alternatives:
+
+| entropy constraint | last printed rates, $N=1,2,3,4$ |
+|---|---|
+| cell entropy inequality (LP) | 1.84, 2.74, 4.28, 4.36 |
+| local minimum entropy principle on $\rho^{1-\gamma}e$ | 0.86, 0.93, 0.90, 0.95 |
+| relaxed minimum entropy principle | 1.52, 1.21, 1.49, 1.31 |
+
+The authors read the first row as a rate "between $O(h^{N+1/2})$ and
+$O(h^{N+1})$" and the others as at most $O(h)$ and $O(h^2)$ for any $N$;
+high-order accuracy of the cell-entropy limiter is shown numerically,
+not proved (§4.2). They report, by private communication, that
+Tadmor's condition imposed on every subcell flux also falls to $O(h^2)$
+on a smooth sine wave (footnotes 1, 9). On the modified Sod tube and the
+2D KPP problem the unlimited DGSEM is non-entropic and the limiter
+restores the entropy solution (§4.1, Figs. 2–3; see
+[KPP rotating wave](/benchmarks/kpp-rotating-wave.md)).
+
+**Node-based entropy condition of a multi-point finite-volume scheme.**
+For the 2D [shallow-water equations](/definitions/shallow-water-equations.md)
+on unstructured grids, [Del Grosso et al. (2024)](/sources/delgrosso-2024.md)
+take the total energy $h\mathsf e_{\mathrm s}$ as the entropy and build a
+cell-centred scheme whose subface fluxes depend on a nodal velocity
+obtained from all cells around a vertex (§3.4, §4; HAL preprint). The
+entropy condition is imposed at the node, as the sum over the subfaces
+impinging at it, not face by face (Eqs. (13), (37)); the residual of the
+face-wise sufficient conditions vanishes by the nodal solver (Eq. (41)).
+The face-wise conditions (38)–(39) hold when the Lagrangian wave speeds
+of the simple Riemann solver satisfy
+$\mathsf z_{\mathrm L}\ge\sqrt{gh^\star_{\mathrm L}}\,h_{\mathrm L}$ and
+$\mathsf z_{\mathrm R}\ge\sqrt{gh^\star_{\mathrm R}}\,h_{\mathrm R}$
+(page-local $\mathsf z$; $h^\star$ the intermediate depths; Eqs.
+(42)–(43), algebra not shown), conditions implicit in the intermediate
+state and enforced by iteration (Remark 1). Under them and the
+positivity time step, a Jensen argument gives a cell entropy inequality
+with an explicit subface entropy flux, and the domain total of the
+entropy is non-increasing up to the topography source (Eqs. (55)–(58)).
+The same conditions are needed by the face-based two-point version of
+the scheme (Remark 2); the second-order extension is stated, not proved,
+to keep the property (§4.6). See [well-balancing](/properties/well-balancing.md)
+and [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md).
+
 ## Dissipation operators
 
 In the sources an ES flux is an EC flux minus a dissipation. In Rueda-Ramírez
@@ -536,6 +626,16 @@ blend reduces the oscillations (§8.2–8.4).
 
 ## Qualifications
 
+- Lin & Chan's Table 1 prints for $N=2$ the rates 1.11 ($K=20$) and 2.74
+  ($K=80$); its own errors give $\log_2(1.785\times10^{-1}/4.126\times10^{-2})=2.11$
+  and $\log_2(6.714\times10^{-3}/1.210\times10^{-3})=2.47$ *(compiler
+  check, not in the sources)*. With $2.47$ the $N=2$ rate lies below
+  $N+\tfrac12$, as does the $N=4$ rate $4.36$, while the $N=3$ rate $4.28$
+  lies above $N+1$ *(compiler check, not in the sources)*. Their
+  wave-speed estimate (Davis) is not a guaranteed upper bound, on which
+  the solvability of the LP rests through the entropy stability of the
+  low-order scheme (footnote 8).
+
 - **Convergence is asserted, not proved.** Rueda-Ramírez et al. (2022) state
   that the ES DGSEM "will therefore converge to the unique entropic
   solution" of KPP. The support is numerical (Fig. 2). No convergence
@@ -630,6 +730,8 @@ blend reduces the oscillations (§8.2–8.4).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §1, Prop. 3.1, App. A, Thms. 4.2–4.3, Remark 4.3, §6.1.2 Fig. 1 (arXiv v2).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.1 Eq. (5), §3.1 Eq. (22), §4 (arXiv v2).
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §4.2.5 Eqs. (72)–(77), Table 2 (arXiv v1).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §1, §2.3, §3 Eqs. (17)–(28), (49)–(51), Thms. 3.1–3.3, Algorithms 1–3, §4.1–4.2 Tables 1–3, footnotes 1, 7–9.
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §2, §3.4–3.5.3 Eqs. (13), (37)–(43), Remarks 1–2, §4.4 Eqs. (55)–(58), §4.6 (HAL preprint).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §1, Thm. 4.1, §5, §6.1–6.2 Thms. 6.1–6.2 Eqs. (45)–(55), §8.1–8.4, footnote 3, App. B.1 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §2.3.1, §3 Eqs. (63)–(66), §4.4 Fig. 4 (arXiv v1).
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.2 Eqs. (37)–(39), Remark 9, §3.2 Eq. (51), App. A (arXiv v1).

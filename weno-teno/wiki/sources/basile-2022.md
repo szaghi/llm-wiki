@@ -144,7 +144,7 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–7 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–8 (2026-10-22/23). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [h- and hp-adaptation for DG](/methods/hp-adaptation.md)

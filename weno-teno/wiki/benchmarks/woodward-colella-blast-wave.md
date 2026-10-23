@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Woodward–Colella interacting blast waves
@@ -17,7 +17,7 @@ and interact. By $t=0.038$ the density shows narrow peaks and contacts
 (Fu 2021 single out the peak near $x\approx0.78$). The pressure ratio
 $10^5$ makes the problem a robustness test, and the height and position
 of the density peaks and the sharpness of the contacts measure
-resolution against a fine-grid reference. Twenty-nine sources of the
+resolution against a fine-grid reference. Thirty-three sources of the
 bundle run it, and one more runs its left half as a single blast.
 
 ## Setup
@@ -25,8 +25,8 @@ bundle run it, and one more runs its left half as a single blast.
 The common data, printed by Fu (2021), Takagi et al., Ye et al., Wang
 et al. (2023b), Wang et al. (2023c), Zhao et al., Chertock et al., Deng, Huang et al., Li, Shu & Qiu,
 Wang et al. (2021), Bezgin et al., Fan et al., Hong, Ye & Ye, Hu,
-Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al. and Zhou et
-al. (Li et al. differ in one value and the two Chamarthi papers in the position of
+Yuan & Zhao, Huang, Liang & Fu, Li, Chen & Ren, Liang et al., Zhou et
+al., Kolluru et al., Lin & Zhu, Zhang & Zhu and Zuo & Zhu (2024b) (Li et al. differ in one value and the two Chamarthi papers in the position of
 the right break, see Qualifications),
 in $(\rho,v,p)$ with $\gamma=1.4$:
 
@@ -70,6 +70,10 @@ reflecting walls at $x=0$ and $x=1$, final time $t=0.038$.
 | [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (31) | 200, CFL 0.2 | WENO-JS, 4000 | global LF splitting; [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; boundary conditions not stated |
 | [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.3 | 100 cells at degree 1, 3, 7; 400 cells at degree 1; $f_{\mathrm{CFL}}=0.3$ | same code, 10,000 cells | modal DG with an evolved [artificial-viscosity](/methods/artificial-viscosity.md) field, HLLC; middle pressure printed $0.1$, boundaries not stated (arXiv v2) |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.5 | strip $[0,1]\times[0,0.1]$, polygons, $h=1/1080$, $P_2$, $P_3$ | 1D residual distribution, 50,000 points | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with conservative subcell correction at shocks (arXiv v1) |
+| [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9f) | $N_x=1599$, Chebyshev | CLAWPACK HLLE, 8000 cells | spectral relaxation with Fejér–Korovkin and de la Vallée-Poussin kernels ([artificial and spectral viscosity](/methods/artificial-viscosity.md)) (arXiv v2) |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.6 | triangles, 401 vertices along $[0,1]$, strip of width 0.025 | FD WENO5, 20000 | ALW-MR-WENO-3/4/5 vs [MR-WENO](/methods/multi-resolution-weno.md), characteristic-wise, CFL 0.6 |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.6 | 1200 points or cells | WENO-JS5, 2000 | GMR-WENO3/5/7 vs MR-WENO; boundary conditions and $\gamma$ not printed |
+| [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.4 | 800 | WENO-JS5, 20000 | [hybrid](/methods/hybrid-weno.md) HMR-WENO5/7/9 vs MR-WENO, CFL 0.6; boundary conditions not stated |
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.4, Eq. (55) | 600, CFL 0.2 | exact | right region printed from $x=0.8$; MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 
 ## Findings across sources
@@ -131,6 +135,19 @@ strongly, whereas OEDG works with or without it (Fig. 4). Balsara et al.
 show the shock positions converging at orders 3, 5 and 7 on 1000 zones
 (Fig. 10).
 
+**A hard case for spectral methods.** Kolluru et al. call the
+problem "a challenging test case for purely spectral methods" and know
+of no shock-capturing spectral scheme tested on it (a scheme of Cai &
+Shu that reports good results uses ENO interpolation near
+discontinuities and is not purely spectral, as they note). Their dealiased pseudo-spectral
+run destabilizes at once; spectral relaxation with the de la
+Vallée-Poussin kernel destabilizes "for virtually every choice" of its
+parameters, because its oscillations make $\rho$ and $p$ negative so that
+the sound speed cannot be computed; with the positive Fejér–Korovkin
+kernel it stays positive and stable and is accurate until $t=0.032$,
+but does not resolve the fine structure after the interaction (§3.4,
+Fig. 17).
+
 **Time-step limit of compact schemes.** Zhao et al. use the problem
 to show that their compact gas-kinetic scheme, which evolves separate
 left and right interface states and limits the high-order time
@@ -189,6 +206,18 @@ residual-distribution reference and visual convergence from $P_2$ to
 $P_3$ (Fig. 4), with the conservative update confined to the
 shock-triggered subcells.
 
+**Multi-resolution WENO of the Zhu group.** Lin & Zhu (Case 3.6, Fig.
+3.7), Zhang & Zhu (Ex. 3.6, Figs. 3.11–3.12) and Zuo & Zhu (2024b,
+Ex. 3.4, Figs. 3.4–3.5) compare their schemes with MR-WENO of the same
+order on this problem: Lin & Zhu find the two-stencil ALW schemes
+comparable, Zhang & Zhu say GMR-WENO "perform better", and Zuo & Zhu (2024b)
+show the HMR-WENO density against the reference with the troubled cells
+and call the scheme "adept at identifying the troubled cells". The
+costs: 5274.56 s for ALW-MR-WENO-5 against 8343.94 s for MR-WENO-5
+(ratio 0.63; Lin & Zhu, Table 3.1, hardware not stated), and 1.3388,
+2.9974 and 7.9915 s for HMR-WENO against 3.7314, 6.6907 and 10.310 s for
+MR-WENO at orders 5, 7, 9 (Zuo & Zhu 2024b, Table 3.1, a laptop).
+
 ## Single blast
 
 [Jiang et al. (2024)](/sources/jiang-2024.md) §5.1.2 run the left half
@@ -206,7 +235,9 @@ Zhao et al. §4.5 run the same data on $[0,1]\times[0,0.25]$ with
 reflecting boundaries on all sides, on a triangular mesh with $h=1/400$,
 CFL 0.8, $t=0.038$, with their fourth-order compact gas-kinetic scheme,
 and plot density and velocity along the horizontal centreline against
-a reference, as a robustness test on unstructured meshes (Fig. 8).
+a reference, as a robustness test on unstructured meshes (Fig. 8). Lin
+& Zhu's Case 3.6 is likewise a thin strip of triangles, 401 vertices
+along $[0,1]$ and 11 across $[-0.0125,0.0125]$, run as a 1D problem.
 
 ## Scaled variant
 
@@ -223,6 +254,8 @@ with specifications deferred to an earlier paper (Fig. 7).
 
 ## Qualifications
 
+- Kolluru et al. give the Fejér–Korovkin parameters as $(1.35,0.99)$ in
+  the text and $(1.355,0.999)$ in the Fig. 17 caption.
 - Chamarthi (2023a) and (2023b) both print the low-pressure region as
   $0.1\le x<0.8$ and the right high-pressure region as $0.8\le x\le1.0$
   (Eqs. (80) and (55)), against $0.1\le x<0.9$ and $0.9\le x\le1$ in all
@@ -295,3 +328,7 @@ with specifications deferred to an earlier paper (Fig. 7).
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §2.5, §5.3, Figs. 7–8 (arXiv v2).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.5, Fig. 4 (arXiv v1).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.1.2, Fig. 7.
+- [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §3.4, Eq. (9f), Fig. 17 (arXiv v2).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — Case 3.6, Fig. 3.7, Table 3.1.
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.6, Figs. 3.11–3.12.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.4, Figs. 3.4–3.5, Table 3.1.

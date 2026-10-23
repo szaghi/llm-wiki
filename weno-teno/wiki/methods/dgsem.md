@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -248,6 +248,30 @@ that the method applies to any discretization with sparse SBP gradient
 operators, Gauss-node DGSEM included, where inter-element fluxes and
 projections need further analysis (§1, Remark 3).
 
+**Subcell factors from a cell entropy inequality.**
+[Lin & Chan (2024)](/sources/lin-2024.md) use the same subcell form,
+written with a sparse low-order operator on the LGL subcells whose
+subcell fluxes are local Lax–Friedrichs fluxes with graph viscosity, and
+the same LLF surface flux for the DGSEM and the low-order scheme (§2.3,
+Eqs. (12)–(18)). The surface subcell fluxes of the two schemes then
+coincide, so the cell entropy balance of an element depends on the
+interior blending factors only, and linearly. The factors that keep it,
+as large as any convex-constraint limiter allows, are the solution of a
+continuous-knapsack linear program, one per element and dimension,
+solved exactly by a greedy algorithm in $O(m\log m)$ operations,
+$m=N(N+1)$ (§3, Theorems 3.1–3.3, Algorithms 1–3). The construction and
+its accuracy are on [entropy stability](/properties/entropy-stability.md).
+On their tests the unlimited DGSEM violates the entropy condition: it
+keeps a jump at the sonic point of the rarefaction of the modified
+[Sod tube](/benchmarks/sod-and-lax-shock-tubes.md) ($N=3$, 50 and 100
+elements, Fig. 2), and on the [KPP problem](/benchmarks/kpp-rotating-wave.md)
+the DGSEM with Hennemann et al.'s element-wise blending converges to a
+non-entropic solution, which the cell entropy limiter removes (Fig. 3).
+On the [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
+to $T=10$ the same limiter applied to the DGSEM and to the entropy-stable
+flux-differencing DG gives visibly different structures, so the choice
+of the high-order partner matters (§4.3, Figs. 4–5).
+
 **Whole-element switching on equidistant subcells.** FLEXI's
 finite-volume subcell scheme, as described by Mossier et al. (2022),
 uses neither the LGL subcells nor a blend. A troubled element is replaced
@@ -416,6 +440,12 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   linearly" on the CFL number, while their Table 5 gives CFL times steps
   constant at about 9256, an inverse proportionality *(compiler check, not
   in the sources)*.
+- Lin & Chan write the subcell form with the opposite sign,
+  $\mathsf w_i\frac{d}{dt}u_i=\bar f_i-\bar f_{i-1}$ with $\bar f_i$ the
+  cumulative sum of the nodal residuals, and number the nodes from $1$;
+  their basis definition (Eq. (5)) prints $L_i(r)L_i(s)$ for the 2D
+  basis and the Lagrange product with the roles of $r_i$ and $r_j$
+  swapped.
 - Mossier et al. (2022) call their Legendre–Gauss collocation scheme
   "DGSEM" as well; the definition in the lead of this page (LGL nodes,
   boundary nodes in the quadrature) is the convention of the other
@@ -432,4 +462,5 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §2.3 Eqs. (42)–(59), §4.1–4.3 Figs. 1–3, §5 (arXiv v1).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §2.1–2.3 Eqs. (5)–(18), §3, §4.1–4.3 Figs. 2–5.
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §1, §2.1 Eqs. (3)–(8), Remarks 1–3, §2.2 Eqs. (9)–(25), Remarks 5–6, §3 Tables 1–5, Figs. 1–8 (arXiv v1).

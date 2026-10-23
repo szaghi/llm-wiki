@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -147,6 +147,36 @@ scaling acting on the result of the previous one, with the density first:
   $g(u)=E-\tfrac12\big(\lvert\rho v\rvert^2/\rho+\lvert B\rvert^2\big)$,
   used in place of the pressure, which is not concave in $u$ when $\gamma$
   depends on the mass fractions (Eq. (6.3)).
+- **Relativistic MHD, central DG** ([Ding & Wu (2024)](/sources/ding-2024-b.md),
+  §3.3, §4.5, Eqs. (33)–(36), Remarks 4–6, 8). Three successive scalings
+  into the shrunk set $\{D\ge\varepsilon_D,\ q\ge\varepsilon_q,\ \Phi_\varepsilon\ge0\}$,
+  with $q=E-\sqrt{D^2+\lvert m\rvert^2}$ and $\Phi$ the closed-form third
+  constraint of the relativistic MHD admissible set, $\Phi_\varepsilon$ the
+  same with $E-\varepsilon$ ($\varepsilon=10^{-13}\bar E$): the density with
+  $\varepsilon_D=\min\{10^{-13},\bar D\}$; then $(D,m,E)$ toward the mean
+  with $\varepsilon_q=\min\{10^{-13},q(\bar u)\}$, $B$ left unscaled;
+  then the whole vector with the smallest, over the points, root in
+  $[0,1)$ of $\Phi_\varepsilon$ along the segment from the mean (Eq. (36); page-local $q$, $\Phi$,
+  $\varepsilon_D$, $\varepsilon_q$). The point set is the Gauss–Lobatto
+  points of the decomposition **plus** the Gauss flux-quadrature points,
+  because the flux needs primitive variables recovered from conserved
+  ones, which fails for inadmissible states, a requirement the authors say
+  does not arise in non-relativistic MHD (Remark 6). In 1D the limiter
+  keeps the constant $B_1$, in 2D the locally divergence-free space of the
+  magnetic field (Remarks 4, 8; stated). Without it every shock test of the
+  paper fails ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+- **Euler with a nodal spectral-difference method** ([Chen & Fu (2024)](/sources/chen-2024.md),
+  §8, Eqs. (80)–(84)). At the flux points of the
+  [spectral difference method](/methods/spectral-difference-method.md),
+  $\theta_1=\min\{(\bar\rho-\varepsilon_\rho)/(\bar\rho-\rho_{\min}),1\}$ for
+  the density and, if some flux-point pressure is negative,
+  $\theta_2=p(\bar u)/(p(\bar u)-p_{\min})$ for the whole vector. Only the
+  double Mach reflection needs it, and only the pressure step: at $t=0$
+  0.12 % of the cells, mean $\theta_2=0.96$, at the first step for third
+  order and the first few steps for fourth order (§9, Fig. 4). The
+  authors note that their TENO troubled-cell indicator can miss a
+  direction in which three consecutive cells carry the same discontinuity,
+  so the TENO limiter alone cannot guarantee positive pressure (§9).
 - **Ideal MHD with a reconstructed pressure** ([Liu et al. (2021)](/sources/liu-2021.md),
   §3.3.4, Eqs. (36)–(38)): $\theta=\min\{1,(\bar u_i-\epsilon)/(\bar u_i-\min u_h)\}$,
   $\epsilon=\min\{10^{-13},\bar u_i\}$, applied to "the reconstructed
@@ -312,6 +342,23 @@ exception: they use no limiter other than this one and rely on the
 data-dependent weights of [WLS-ENO](/methods/wls-eno.md) for the rest
 (Abstract, §4).
 
+## Scaling toward the mean as oscillation control
+
+[Chen & Fu (2024)](/sources/chen-2024.md) (§5.6, Eqs. (66)–(69)) use the
+same algebra in the opposite role, after their TENO limiter for the
+spectral difference method: in cells where a five-point effective scaled
+wavenumber exceeds $0.6$ ([scale sensor](/definitions/scale-sensor.md)),
+the limited polynomial is compressed toward the cell average,
+$\tilde u^{\mathrm{new}}=(1-r_{\mathrm c})\bar u_i+r_{\mathrm c}\tilde u_h$,
+$r_{\mathrm c}=\min\Big\{\frac{\bar u_i-u_{\mathrm{low}}}{\bar u_i-u_{\min}},\frac{u_{\mathrm{high}}-\bar u_i}{u_{\max}-\bar u_i},1\Big\}$,
+with $u_{\mathrm{low}}$, $u_{\mathrm{high}}$ the extreme nodal values of the
+cell and its two neighbours and $u_{\min}$, $u_{\max}$ those of the limited
+polynomial in the cell (page-local $r_{\mathrm c}$). The bounds are local,
+not those of an admissible set, so the step keeps the cell's nodal values
+within the nodal range of the cell and its two neighbours where the
+sensor fires *(compiler check, not in the sources)*; the authors use it
+for robustness at strong shocks ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
+
 ## Finite-difference counterparts
 
 Finite-difference schemes have no cell polynomial to scale. The
@@ -372,6 +419,12 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
   prints the numerator $\rho e(u_q)-\varepsilon$, which is negative whenever
   the limiter triggers; their 2D version and their Eq. (3.15) carry
   $\rho e(\bar u_i)-\varepsilon$, which is the correct form.
+- **Chen & Fu's pressure factor** is printed as a minimum of a single
+  argument, $\theta_2=\min\{p(\bar u)/(p(\bar u)-p_{\min})\}$, and has no
+  floor, so with $p$ concave in $u$ it gives $p\ge0$ at the flux points,
+  not $p>0$ (Eq. (83)) *(compiler check, not in the sources)*; the density
+  floor is written $\epsilon_\rho$ in the equation and $\varepsilon_\rho$
+  in the text.
 - **Scope.** The guarantee is on cell averages and on the chosen point set;
   between points the polynomial may leave $G$.
 
@@ -395,3 +448,5 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3, Eq. (3.9); Lemma 3.2; Remark 3.4; §4.1 (2D point set).
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §4.2, Eq. (47).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2, Eqs. (31)–(35).
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §3.3, Eqs. (33)–(36), Remarks 4–6; §4.5, Eq. (75), Remark 8; §5.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §5.6, Eqs. (66)–(69); §8, Eqs. (80)–(84); §9, Fig. 4.

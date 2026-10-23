@@ -5,7 +5,7 @@ description: "Symmetry preservation has three meanings in the sources: keeping t
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Symmetry preservation
@@ -125,6 +125,34 @@ by ROUND and LD-ROUND on Riemann configuration 3 at $600\times600$
 than WENO-IS-I and WENO-Z9, by WENO-Z+M on the same configuration at $401^2$
 ([Luo & Wu (2021)](/sources/luo-2021-b.md), §5.3.2).
 
+[Liang & Fu (2024a)](/sources/liang-2024.md) (§4) state that the very low dissipation
+of their Gaussian-RBF TENO and of TENO5 can break flow symmetry through round-off and
+deploy the Fleischmann et al. technique; [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+(§6.3.2) attribute the symmetry breaking of low-dissipation TENO in the 2D Riemann problem
+to floating-point truncation, citing earlier work.
+
+**Two-phase flows.** Two sources carry the floating-point remedy to diffuse-interface
+multiphase schemes ([five- and six-equation models](/definitions/five-equation-model.md)):
+
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) (§3.3, Eq. (44)) note that the mirror
+  relation between the THINC face values for increasing and decreasing volume fraction
+  holds in exact arithmetic but not in floating point, because $e^x=1/e^{-x}$ is not exact,
+  so earlier THINC implementations can break symmetry (as noted by Takagi et al.). They
+  obtain the values of one orientation by mirror flipping those of the other, so the
+  gradient sign never enters the jump centre ([THINC](/methods/thinc-reconstruction.md)).
+  On a Mach 10 shocked water column at $480\times320$, $960\times640$ and
+  $1920\times1280$, the MUSCL-THINC of Garrick et al. loses symmetry more as the grid is
+  refined, while their WENO5IS-THINC "perfectly preserves the symmetry at different
+  resolutions"; the head-on droplet collision also stays symmetric (§4.7, Fig. 13; §4.12;
+  [shock–water-column interaction](/benchmarks/shock-water-column.md)).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) (Appendix A) list the rules for a
+  BVD scheme with HLLC fluctuations on a symmetric mesh: symmetrize asymmetric initial data
+  by averaging at mirror points; use the symmetric THINC closed form, since non-polynomial
+  functions break exact identities in floating point ($\ln a\ne-\ln(1/a)$); add the total
+  fluctuation of the cell last; and in the HLLC fluctuations add the $v_1-c$ and $v_1+c$
+  waves before the contact wave, in every direction. They show no symmetry-error
+  measurement.
+
 ## 2. Skew-symmetry of the discrete convective operator
 
 For the transport model $\partial_t\rho+\nabla\cdot(\rho v)=0$,
@@ -227,6 +255,13 @@ solution symmetry on this page. The construction is limited to fifth order
   unstructured TENO reconstruction need not break a planar symmetry on its own; their
   test is one-dimensional and short, Tsoutsanis et al.'s two-dimensional and long, so the
   two observations concern different situations.
+- Wakimura et al. (2024; received 24 February 2024, online 7 June 2024) state in
+  Appendix A that "to our knowledge, no symmetry-preserving methods have been proposed for
+  two-phase flow". Zhang et al. (2024a; received 7 August 2023, online 28 November 2023)
+  call their THINC reconstruction on the five-equation model "symmetry-preserving" (§5)
+  and show symmetry kept on a Mach 10 water column (§4.7, Fig. 13); Wakimura et al. do not
+  cite them. The two concern different schemes (finite-volume WENO–THINC against BVD with
+  HLLC fluctuations).
 - [Fu (2021)](/sources/fu-2021.md) (§5.5.2) and the view Fu (2023) adopts are
   compatible on the cause (round-off) and differ on the role of dissipation: in
   the first, low dissipation fails to damp the round-off asymmetry; in the second,
@@ -250,3 +285,7 @@ solution symmetry on this page. The construction is limited to fifth order
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §3.1–3.2, Eqs. (19)–(26), Table 1, Fig. 1, Lemma 1; §4.3, Example 10, Eqs. (45)–(46), Figs. 9–12; §4.4, Fig. 13: symmetric smoothness indicators, symmetry error, Rayleigh–Taylor asymmetry.
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §4.5, Fig. 21: ADADF-HY Rayleigh–Taylor asymmetry and its stated cause.
 - [Sousa & Scalo (2022)](/sources/sousa-2022.md) — §5.2 (Fig. 6), §5.3 (Fig. 11): physical symmetry breaking in strong shock–vortex interaction; LAD symmetry loss with spurious oscillations, QSV symmetric (arXiv v2).
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eq. (44); §4.7, Fig. 13; §4.12: floating-point asymmetry of THINC, mirror flipping, symmetry at Mach 10 against MUSCL-THINC.
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — Appendix A, Eqs. (A.3)–(A.5): operation-ordering rules for two-phase BVD with HLLC fluctuations.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §4: round-off symmetry breaking and the Fleischmann et al. technique.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §6.3.2: symmetry breaking of low-dissipation TENO attributed to floating-point truncation.

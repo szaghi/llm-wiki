@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Double rarefaction (123) problem"
-description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test, run by capturing schemes with and without positivity limiters and by a shock-tracking DG method."
+description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test, run by capturing schemes with and without positivity limiters and by a shock-tracking DG method; a two-phase water variant produces cavitation."
 status: established
-aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum]
+aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum, water cavitation tube, two-phase expansion tube]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -174,6 +174,40 @@ paper, and find affine-invariant Z- and D-type weights essentially
 identical and non-oscillatory (Fig. 7); see
 [scale invariance](/properties/scale-invariance.md).
 
+## Two-phase variant: water cavitation tube
+
+[Wakimura et al. (2024)](/sources/wakimura-2024.md) (§4.1, Eq. (46),
+after Pelanti & Shyue) run the same receding-flow configuration for
+liquid water with a little vapour, in the six-equation two-phase model
+with stiffened-gas water (their Table 1; see
+[five- and six-equation models](/definitions/five-equation-model.md) and
+[stiffened gas](/definitions/stiffened-gas-equation-of-state.md)). On
+$x\in[0,1]$ m with outflow boundaries, the liquid volume fraction is
+$\phi_1=0.99$, the phase densities $\rho_1=1150$ and
+$\rho_2=0.63$ kg m$^{-3}$, $p=10^5$ Pa and $T_1=T_2=354.728$ K on both
+sides, and the velocity is $-\lvert v_0\rvert$ for $x<0.5$ m and
+$+\lvert v_0\rvert$ for $x>0.5$ m. Two cases: $\lvert v_0\rvert=2$ m s$^{-1}$
+on 500 cells to $t=3.2$ ms, and $\lvert v_0\rvert=500$ m s$^{-1}$ on 5000
+cells to $t=0.58$ ms, CFL 0.5. The pressure drop in the expansion
+creates vapour; four variants of the relaxation (mechanical only, plus
+thermal, plus chemical, i.e. phase change) are compared. The authors
+obtain the temperature from the liquid density by the isothermal
+condition; the stiffened-gas law with their Table 1 parameters at
+$p=10^5$ Pa and $T=354.728$ K gives back $\rho_1\approx1150.0$ and
+$\rho_2\approx0.630$ kg m$^{-3}$ *(compiler check, not in the sources)*.
+
+The test serves their low-dissipation
+[BVD](/definitions/boundary-variation-diminishing.md) schemes, which
+choose per cell between MUSCL and [THINC](/methods/thinc-reconstruction.md)
+reconstructions of different steepness. MUSCL and the adaptive THINC
+scheme give generally similar solutions, with mass-fraction differences
+between MUSCL-THINC-BVD and MUSCL of at most $1.49\times10^{-6}$ ($2$ m
+s$^{-1}$) and $6.00\times10^{-5}$ ($500$ m s$^{-1}$), in general agreement
+with Pelanti & Shyue (Figs. 1–2). For the strong case the steep THINC
+is admitted in the selection only where $\nabla\cdot v<0$ (compression),
+"to address the strong rarefaction waves"; no result without this
+condition is shown (§4.1).
+
 ## Qualifications
 
 - Fan, Zhang & Qiu (2021) caption Fig. 4.3 "$\mathrm{Re}=\infty$ (right) and 1000
@@ -183,6 +217,9 @@ identical and non-oscillatory (Fig. 7); see
 - Fan, Zhang & Qiu (2022) caption Fig. 5.1 "Double Rarefraction
   problem" and print inflow on the left for data whose left gas moves
   out of the domain.
+- Wakimura et al.'s §4.1 text calls the density 1150 kg m$^{-3}$ "the gas
+  density $\rho_2$", while their Eq. (46) and the liquid phase 1 assign
+  it to $\rho_1$.
 - Luo et al.'s claim that no other method avoids overheating is
   attributed to Liou and not tested in the paper.
 
@@ -200,3 +237,4 @@ identical and non-oscillatory (Fig. 7); see
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §3.2.3, Fig. 7.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Ex. 10, Figs. 9–12.
 - [Tang (2024)](/sources/tang-2024.md) — §4.3, Eq. (30), Fig. 8, Table 5.
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.3–3.2.4, §4.1, Eq. (46), Table 1, Figs. 1–2.

@@ -131,11 +131,12 @@ is an arXiv preprint (2017) kept as its own entry. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunk 7 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–8 (2026-10-23). This source is cited on:
 
 * [Active Flux](/methods/active-flux.md)
 * [Block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
+* [ForestClaw](/software/forestclaw.md)
 * [Free-stream preservation](/properties/free-stream-preservation.md)
 * [Solid-body rotation](/benchmarks/solid-body-rotation.md)
 * [Well-balancing](/properties/well-balancing.md)

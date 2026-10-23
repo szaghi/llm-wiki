@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, upwind constrained transport, UCT, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Divergence-free magnetic field
@@ -38,7 +38,14 @@ without cleaning or transport, through a Powell-type source alone, in
 flux reconstruction ([Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md);
 [Dzanic & Witherden (2023)](/sources/dzanic-2023.md)) and in entropy-stable
 relativistic MHD
-([Duan & Tang (2022)](/sources/duan-2022.md)).
+([Duan & Tang (2022)](/sources/duan-2022.md)). Three further sources add
+locally divergence-free central DG with a symmetrization source for
+relativistic MHD ([Ding & Wu (2024)](/sources/ding-2024-b.md)), tenth-order
+constrained transport ([Teissier et al. (2024)](/sources/teissier-2024.md))
+and constrained transport inside a semi-implicit all-Mach scheme
+([Dematté et al. (2024)](/sources/dematte-2024.md)); the construction of
+staggered schemes is collected on
+[constrained transport](/methods/constrained-transport.md).
 
 ## The Powell source term
 
@@ -173,6 +180,38 @@ observed; they split the source from the flux update so that the
 entropy filter acts on the source-free part
 ([bound preservation](/properties/bound-preservation.md), Route 5;
 §3.2, Eqs. (29)–(33)).
+
+**Central DG for relativistic MHD.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+(§3–§4, §5) carry the same mechanism to central DG on overlapping primal
+and dual meshes, for special relativistic MHD with a general equation of
+state. In 1D the flux of $B_1$ vanishes, so $B_1$ stays constant and the
+discrete condition holds automatically (Remark 3). In 2D they discretize
+the symmetrizable form $\partial_tu+\nabla\cdot f(u)=-(\nabla\cdot B)S(u)$,
+$S=\big(0,(1-\lvert v\rvert^2)B+(v\cdot B)v,\,v,\,v\cdot B\big)^\top$ in the
+ordering $(D,m,B,E)$ (Eq. (7), the relativistic analogue of the Godunov
+form; $S$ page-local), with $(B_1,B_2)$ in the locally divergence-free
+polynomial space of Li and Shu and a source on the interior lines of the
+target cell, where the other mesh's solution jumps: the normal-field jump
+times $S$ of the averaged traces (Eqs. (37)–(38), (51)). In the
+bound-preservation proof the flux term and the source term leave
+divergence terms of opposite sign whose difference is the divergence
+integrated over the four quarter cells, which vanishes for the locally
+divergence-free field by Gauss exactness and the divergence theorem
+(Thm 4.1, Eqs. (70)–(74)). They call this discrete condition on
+overlapping meshes "distinct" from the one Wu and coworkers derived for
+non-central DG (§1). Without the source, bound preservation needs
+globally coupled discrete divergence-free conditions (Thm 4.2), which hold
+for a globally divergence-free field but which the local scaling limiter
+destroys; enforcing both "remains unresolved" (§4.7). The limiter itself
+keeps the locally divergence-free property (Remark 8). They measure a
+relative global divergence, which includes the normal-field jumps on the
+edges, and a local one, the integral of $\lvert\nabla\cdot B_h\rvert$ over the
+cells (Eqs. (90)–(91)): the local one is zero and the global one about
+$10^{-4}$ on the relativistic Orszag–Tang vortex and $10^{-5}$ on the
+shock–cloud interaction (Figs. 7, 9). On Mach 50 jets with plasma beta
+0.001 the code "would quickly break down" without the limiter, without the
+source, or with a conventional (not locally divergence-free) central DG
+(Ex. 5.9; runs described, not shown).
 
 ## Locally divergence-free reconstruction (finite volumes)
 
@@ -359,6 +398,37 @@ Alfvén waves the damping rate, their measure of dissipation, falls as
 about $N_x^{-5}$ at fourth order against $N_x^{-3}$ at second order (§5.3,
 Fig. 5; [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)).
 
+**Tenth-order constrained transport.** [Teissier et al. (2024)](/sources/teissier-2024.md)
+(§2.3, §3.1.1, §3.2.3, arXiv v2) build finite-volume MHD schemes of orders
+2–10 with staggered constrained transport: face averages of the normal
+field, an edge field from a multidimensional Lax–Friedrichs average with
+WENO-reconstructed corner states, and a face-to-cell interpolation by
+explicit formulas up to tenth order, with one reconstructed value per face
+at any order. The face-based discrete divergence is preserved to machine
+precision (Eq. (17)), and the electromotive forcing of their turbulence
+runs is built as a staggered face average in Fourier space so that it adds
+no divergence (§3.5). In their diffusion test the magnetic-field error
+stays near $5\times10^{-15}$ while the velocity error decreases, which they
+attribute to floating-point arithmetic without investigating it (§4.2).
+Formulas and orders are on [constrained transport](/methods/constrained-transport.md).
+
+**Constrained transport inside an implicit iteration.**
+[Dematté et al. (2024)](/sources/dematte-2024.md) (§3.3, Eqs. (39)–(51))
+keep $\nabla\cdot B$ at round-off in a cell-centred semi-implicit all-Mach
+finite-volume scheme, where the magnetic field is first predicted by a
+linear solve that does not respect the constraint. In each inner Picard
+iteration the predictor is corrected either by a staggered adaptation of
+Gardiner and Stone's constrained transport, whose corner electric field
+includes the implicit pressure-subsystem flux and whose cell field is the
+face average, or by an unstaggered adaptation of Rossmanith's
+vector-potential method, which advects the out-of-plane potential at cell
+centres and keeps the central divergence zero. Both keep
+$\lVert\nabla\cdot B\rVert_{L^2}$ near machine precision through the MHD
+rotor (§4.1.4, Fig. 8); magnetic and cross helicity are not conserved
+exactly, with errors comparable to those of an explicit second-order
+divergence-free Godunov scheme (§4.3.2, Fig. 16;
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)).
+
 **Prolongation onto refined meshes.** On a block-structured
 [adaptive mesh](/methods/adaptive-mesh-refinement.md) the face-collocated
 field of a newly refined coarse zone must be filled so that every new fine
@@ -492,6 +562,15 @@ to $t=1$ in 2D and the 3D extension use projection.
   nodes, not a face-centred divergence *(compiler check, not in the
   sources: the divergence of Eqs. (20)–(21) is the centred nodal one)*, and only in the steps where it is applied; it is applied "whenever needed" without a stated criterion.
 
+- Ding & Wu (2024) apply a locally divergence-free WENO limiter in
+  troubled cells before the scaling limiter in their shock tests without
+  naming the troubled-cell indicator (§5); their claim that the scaling
+  limiter keeps the locally divergence-free space is stated, not proved
+  (Remark 8).
+- Dematté et al.'s printed signs of the staggered update (Eq. (39)) and
+  of $B_2$ from the potential (Eqs. (49), (51)) are reversed; see
+  [constrained transport](/methods/constrained-transport.md).
+
 # Citations
 
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2 (Eqs. (11)–(15)); §3.1 (Eqs. (21)–(22)); §4 (Eqs. (38)–(40)); App. B; §5.1, §5.3–5.4 (Figs. 2–3, 5–7).
@@ -509,3 +588,6 @@ to $t=1$ in 2D and the 3D extension use projection.
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §1; §2–§5; §7; Tables 2–11.
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — arXiv v1: §2.4, Eqs. (2.15)–(2.17); §3.1; §3.3–3.4, Eq. (3.14); Thm 4.2; §5.1, Table 5.3; §5.2.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — arXiv v2: §2.3, Eqs. (17)–(19); §3.2, Eqs. (29)–(33); §5.3, Fig. 4.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §1; Remark 3; §4.1–4.2 (Eqs. (7), (37)–(51)); §4.4 (Thm 4.1, Eqs. (70)–(74), Remarks 7–8); §4.7 (Thm 4.2); §5, Eqs. (90)–(91), Ex. 5.5, 5.7, 5.9, Figs. 7, 9.
+- [Teissier et al. (2024)](/sources/teissier-2024.md) — arXiv v2: §2.3, Eq. (17); §3.1.1; §3.2.3; §3.5, Eq. (55); §4.2.
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.3, Eqs. (39)–(51); §4.1.4, Fig. 8; §4.3.2, Fig. 16.

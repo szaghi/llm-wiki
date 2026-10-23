@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Carbuncle phenomenon"
-description: "The carbuncle is a numerical instability that low-dissipation approximate Riemann solvers such as HLLC, HLLEM and Roe develop near strong shocks; a linear saw-tooth and a matrix analysis trace it in HLLEM to undamped density and shear perturbations of the transverse flux, and the sources avoid it by switching to HLL, flux-vector splitting or shock fitting."
+description: "The carbuncle is a numerical instability that low-dissipation approximate Riemann solvers such as HLLC, HLLEM and Roe develop near strong shocks, in gas dynamics and in shallow water; a linear analysis traces it in HLLEM to undamped transverse perturbations, and the sources avoid it by HLL, flux-vector splitting, nodal multidimensional fluxes, extra shock dissipation or shock fitting."
 status: established
-aliases: [carbuncle problem, carbuncle instability, shock instability of low-dissipation Riemann solvers, odd-even decoupling, shock instability]
+aliases: [carbuncle problem, carbuncle instability, shock instability of low-dissipation Riemann solvers, odd-even decoupling, shock instability, carbuncle-like instability]
 tags: [riemann-solver, numerical-flux, carbuncle, benchmark]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Carbuncle phenomenon
@@ -126,6 +126,83 @@ random) and locality, and Hu et al. require a shock-stable scheme to pass both (
   instabilities or carbuncle phenomenon" (§IV.E, Fig. 28). The evidence is the
   figure alone; no shock-capturing comparison is run. See
   [implicit shock tracking](/methods/implicit-shock-tracking.md).
+- **A nodal, multidimensional flux.** [Del Grosso et al. (2024)](/sources/delgrosso-2024.md)
+  replace the face-based two-point flux of a first-order finite-volume scheme on polygonal
+  grids by subface fluxes that depend on all cells around a mesh node (next section); the
+  two-point version of the same solver, which they call "a classical HLLC-like two-point flux
+  FV scheme, even if with different wave speeds' definition" (§6), shows the carbuncle and the
+  nodal one does not (§5.6–5.8).
+- **More dissipation at the shock, in DG with subcell limiting.** For the entropy-limited
+  [DGSEM](/methods/dgsem.md) of [Lin & Chan (2024)](/sources/lin-2024.md) the cure is to keep
+  enough low-order dissipation near shocks (section below).
+
+## A multidimensional-aware scheme: nodal fluxes in shallow water
+
+Del Grosso et al. (2024) (HAL preprint) report the carbuncle outside gas dynamics, for the 2D
+[shallow-water equations](/definitions/shallow-water-equations.md) with topography (§1,
+§5.6–5.8), and invoke the hypothesis, attributed to Fleischmann et al., that the carbuncle has a
+multidimensional nature, so that schemes built from 1D solvers face by face are prone to it and
+a "multi-dimensional-aware" scheme "should be insensitive" (§1). Their construction, with
+page-local symbols (water depth $h$, velocity $v$, bottom $b$, $p=\tfrac12gh^2$, unit normal
+$n_f$ and length $l_f$ of a subface $f$ at a node):
+
+- **Simple solver in Lagrangian coordinates** (§3.3, after Gallice). Across each subface a
+  three-wave, four-state approximate Riemann solver is written in mass coordinates, with
+  outer wave speeds $\mathsf Z^-,\mathsf Z^+>0$ (page-local, of the dimension of a mass flux,
+  approximating the acoustic impedances $h\sqrt{gh}$) and a free intermediate normal velocity
+  $v^*_n$. Its jump conditions make the jump of the intermediate pressures, source included,
+  equal to $(\mathsf Z^-+\mathsf Z^+)(v^*_n-v^{\mathrm G}_n)$, with the Godunov acoustic
+  velocity
+  $$v^{\mathrm G}_n=\frac{\mathsf Z^-v^-_n+\mathsf Z^+v^+_n}{\mathsf Z^-+\mathsf Z^+}-\frac{p^+-p^-+\overline{gh\Delta b}}{\mathsf Z^-+\mathsf Z^+},\qquad \overline{gh\Delta b}=g\,\frac{h^-+h^+}2\,(b^+-b^-)$$
+  (page-local; Eqs. (29)–(30), (34)), then mapped to Eulerian coordinates (§3.6). The choice
+  $v^*_n=v^{\mathrm G}_n$ gives the classical face-based, conservative "two-point" scheme.
+- **Nodal solver** (§3.4, from cell-centred Lagrangian hydrodynamics of Maire and of
+  Després–Mazeran). Instead, every subface impinging on node $\mathsf p$ takes
+  $v^*_{n,f}=v_{\mathsf p}\cdot n_f$ for one nodal velocity $v_{\mathsf p}$ (page-local),
+  fixed by a node-based consistency condition, i.e. the $2\times2$ linear system
+  $$\Big[\sum_fl_f(\mathsf Z^-_f+\mathsf Z^+_f)\,n_f\otimes n_f\Big]v_{\mathsf p}=\sum_fl_f(\mathsf Z^-_f+\mathsf Z^+_f)\,v^{\mathrm G}_{n,f}\,n_f$$
+  (Eq. (33)), stated to be always uniquely solvable (no proof printed). Each subface flux then
+  depends on all cells around the node ("multi-point" scheme), and conservation holds by a sum
+  around each node rather than by cancellation across each face (§4.3;
+  [local conservation](/results/local-conservation-flux-form.md)).
+- **The difference from the two-point flux** is a correction of the normal-momentum
+  component proportional to $\tfrac12(\mathsf Z^-+\mathsf Z^+)(v_{\mathsf p}\cdot n_f-v^{\mathrm G}_{n,f})$ (Eq. (47)),
+  which vanishes when $v_{\mathsf p}\cdot n_f=v^{\mathrm G}_{n,f}$, e.g. at the lake at rest.
+
+The first-order multi-point scheme is proved positive under an explicit time-step condition,
+node-wise conservative, entropy stable under lower bounds on $\mathsf Z^\pm$ and well-balanced for
+the lake at rest (§4.2–4.5; [well-balancing](/properties/well-balancing.md),
+[entropy stability](/properties/entropy-stability.md)); the wave-speed conditions are implicit in
+$v^*_n$ and are met by iteration (Remark 1). A second-order version uses limited least-squares
+slopes and two-stage Runge–Kutta (§4.6).
+
+**Evidence** ($g=9.81$ unless stated; CFL 0.5 at first and 0.25 at second order; §5.6–5.8):
+
+| Test | Setup as printed | Finding |
+|---|---|---|
+| colliding flow | $[-2.5,2.5]^2$, $g=1$, $h=1$, $v_1=30$ for $x\le0$ and $-30$ otherwise, random perturbation of size $10^{-5}$, $50\times50$ quadrangles, $t=2$ (§5.6, Fig. 14) | carbuncle with the two-point scheme; the multi-point solution stays symmetric |
+| odd-even decoupling (Quirk-type) | moving shock in an $800\times20$ m canal with a bump, $800\times20$ quadrangles, $10^{-3}$ perturbation on the central grid line, $t=20$ and $30$ s (§5.7, Figs. 15–16) | instabilities with the first-order two-point scheme, none with the first- and second-order multi-point ones |
+| [flow past a cylinder](/benchmarks/flow-past-circular-cylinder.md) | Froude-5 inflow, cylinder radius $0.5$ m, 81272 triangles (§5.8, Fig. 17) | carbuncle with the two-point scheme, none with the multi-point scheme at first or second order |
+
+The authors also report the two-point scheme "slightly less diffusive" than the multi-point one
+on a radial dam break, as earlier work found for the Euler equations (§5.3).
+
+## DG with subcell limiting: a dissipation threshold
+
+Lin & Chan (2024) (§4.4, Figs. 6–7, A.8) run the Mach-2000
+[astrophysical jet](/benchmarks/high-mach-astrophysical-jet.md) ($N=3$, $150\times150$
+elements, $T=0.001$) with subcell-limited DGSEM in which a linear program chooses the
+blending factors so that a semi-discrete cell entropy inequality holds
+([subcell limiting](/methods/subcell-finite-volume-limiting.md)). A shock-capturing variant
+tightens the entropy bound by a fraction $\beta_{\mathrm e}\epsilon_K$ of the
+low-order entropy dissipation (page-local: $\beta_{\mathrm e}\in[0,1]$ user-chosen,
+$\epsilon_K$ the elementwise modal smoothness factor; Eq. (49)). With
+$\beta_{\mathrm e}=1.0,0.1,0.01,0$ finer features appear as $\beta_{\mathrm e}$ decreases, but
+carbuncles appear at $\beta_{\mathrm e}=0.01$ and $0$, and also with a local minimum entropy
+principle; an elementwise Zhang–Shu-limited entropy-stable DG run shows none, which the authors
+partly explain by that limiter being more dissipative. They conclude that "the carbuncle effect
+is not due only to a loss of entropy stability, but rather a lack of sufficient dissipation near
+shocks", and that the solution is highly sensitive to $\beta_{\mathrm e}$.
 
 ## Test problems
 
@@ -169,6 +246,18 @@ paper does not call the kinked stem a carbuncle.
   mis-cites as the Rusanov solver (§3.6).
 - Luo, Absillis & Nourgaliev's Fig. 28 caption gives Mach 8 and 18, the text Mach 8 and 15;
   the page follows the text.
+- **Two readings of the cause.** Del Grosso et al. (2024) cite the multidimensional nature
+  of the carbuncle as their motivation (§1); Lin & Chan (2024) read their jet runs as a lack of
+  shock dissipation rather than a loss of entropy stability (§4.4). The statements concern
+  different schemes and are not incompatible. Each rests on a few tests: three for Del Grosso
+  et al., one for Lin & Chan. Del Grosso et al. report their two-point scheme as slightly less
+  diffusive than the multi-point one (§5.3) and run no other two-point solver against the
+  multi-point one.
+- Del Grosso et al. attribute the colliding-flow test to two different references (§5 and
+  §5.6), print the random perturbation as $\delta(2z-1)$ with $z\in[-1,1]$ *(compiler check, not
+  in the sources: this ranges over $[-3\delta,\delta]$, whereas $z\in[0,1]$ would give
+  $[-\delta,\delta]$)*, and give the canal inflow of the
+  odd-even test as $u_{\mathrm{in}}=13.283$ in m²/s, the unit of a discharge.
 
 # Citations
 
@@ -181,3 +270,5 @@ paper does not call the kinked stem a carbuncle.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.4 (Eqs. (16)–(20)).
 - [Chen et al. (2022)](/sources/chen-2022.md) — §2, §6.5 (Fig. 22).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.12 (Fig. 18) (arXiv v1).
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §1, §3.3–3.6 (Eqs. (29)–(34)), §4.1–4.6 (Eqs. (33), (47)), §5.3, §5.6–5.8 (Figs. 14–17), §6 (HAL preprint).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3.3 (Eq. (49)), §4.4 (Figs. 6–7, A.8).

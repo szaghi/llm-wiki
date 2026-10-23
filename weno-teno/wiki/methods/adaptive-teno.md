@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive TENO (TENO-A, TENO-AA)"
-description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure, a wavenumber scale sensor or a global smoothness factor (TENO-A, TENO-LAD, TENO-AZ) and, in TENO-AA, also tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of these variants."
+description: "Adaptive TENO varies the TENO cut-off locally through a discontinuity measure, a wavenumber scale sensor or a global smoothness factor (TENO-A, TENO-LAD, TENO-AZ), relays band-wise linear schemes and cut-offs (TENO6-SA) and, in TENO-AA, tests nested symmetric large stencils largest-first so that the accuracy order drops recursively near discontinuities; this page gives the formulas, parameters, orders and evidence of these variants."
 status: established
-aliases: [TENO-A, TENO-AA, TENO5-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
+aliases: [TENO-A, TENO-AA, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)
@@ -20,7 +20,9 @@ symmetric large stencils are tested largest-first, and the first one found
 smooth supplies the whole flux ([Fu (2021)](/sources/fu-2021.md), §3). A later
 five-point variant keeps the TENO5-A recipe but drives the cut-off by a
 wavenumber [scale sensor](/definitions/scale-sensor.md) instead of the
-discontinuity measure ([Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), §3).
+discontinuity measure ([Huang, Liang & Fu (2023)](/sources/huang-2023-b.md), §3),
+and the six-point TENO6-SA switches both the linear background and the cut-off
+by wavenumber bands ([Zhang et al. (2024b)](/sources/zhang-2024-b.md), §5).
 As recalled by [Hong, Ye & Ye (2022)](/sources/hong-2022.md) (abstract, §1, §2.5),
 the adaptive TENO paper of Fu et al. (2018) is also the origin of the
 hierarchical voting of nested stencils, of explicit discontinuity-location
@@ -123,6 +125,156 @@ smooth regions. [Tang (2024)](/sources/tang-2024.md) (§2, Eqs.
 (15)–(16)) recalls TENO-A for the fifth-order scheme with the three-point
 minimum, $\xi_{\mathrm A}=10^{-3}$, $C_r=0.24$, $b_1=10$, $b_2=5$,
 Huang et al.'s TENO5-A values.
+
+**Parameters of TENO6-A as a comparator.** [Zhang et al. (2024b)](/sources/zhang-2024-b.md)
+(§2.5, Eq. (17)) recall the six-point TENO6-A of Fu et al. (2018) with the
+TENO-A cut-off $C_T=10^{-\lfloor b\rfloor}$, a measure written
+$\mu_d=1-\min(1,\sigma_{i+1/2}/C_r)$ (which minimum defines $\sigma_{i+1/2}$ is
+not printed), $\xi_{\mathrm A}=10^{-3}$, $C_r=0.17$, $b_1=10.5$, $b_2=4.5$,
+and the spectrally optimized linear weights $d_0=0.4294317718960898$,
+$d_1=0.1727270875843552$, $d_2=0.0855682281039113$, $d_3=0.312272912415645$
+(TENO stencil order: central, downwind, upwind, four-point downwind).
+*(Compiler check, not in the sources: $b$ runs over $[6,10.5]$, so $C_T$ takes the
+values $10^{-10},\dots,10^{-6}$.)* With these weights TENO6-A converges at fourth
+order on smooth advection ($L_1=2.13\times10^{-10}$ at $N_x=1600$, order 4.00,
+Table 2), against sixth order for TENO6.
+
+## TENO-A in limiters for nodal discontinuous schemes
+
+[Chen & Fu (2024)](/sources/chen-2024.md) (§5.5, Eqs. (63)–(65)) carry the
+TENO-A cut-off into a compact limiter for the nodal
+[spectral difference method](/methods/spectral-difference-method.md), whose
+candidates are Hermite polynomials on the target cell and its two face
+neighbours ([WENO limiters for DG](/methods/weno-limiter-dg.md),
+[Hermite WENO](/methods/hermite-weno.md)). With page-local $p_\sigma$ for their
+exponent on the measure,
+
+$$\mu_d=1-\min\Big(1,\frac{\sigma_i^{\,p_\sigma}}{C_r}\Big),\qquad
+\epsilon_\sigma=\frac{0.9C_r}{1-0.9C_r}\,\xi_{\mathrm A}^2,\ \ \xi_{\mathrm A}=10^{-3},\qquad
+b=b_1-b_2\big(1-\varphi(\mu_d)\big),\qquad C_T=10^{-b},$$
+
+with the same $\sigma_i$ and $\varphi$ as above, evaluated at cell $i$ only
+(no minimum over neighbours) and printed without the floor bracket. The
+parameters are $C_r=0.5$, $p_\sigma=1$, $b_1=8$, $b_2=4$ for the reconstruction
+with three degrees of freedom and $C_r=0.6$, $p_\sigma=2$, $b_1=7$, $b_2=4$ for
+four. *(Compiler check, not in the sources: $C_T$ then moves continuously between
+$10^{-8}$ in smooth regions and $10^{-4}$ at discontinuities for three degrees of
+freedom, and between $10^{-7}$ and $10^{-3}$ for four.)* The authors note that this
+runs against the usual practice of lowering the bounds of $C_T$ and $C_r$ as the
+order rises: their four-degree-of-freedom reconstruction is less robust and needs the
+higher upper bound, and a larger exponent $p_\sigma$ helps stability ("numerical
+experiments", not shown). The measure acts on the solution values $\Delta Q$ of
+neighbouring cells, which Eq. (64) prints as values of the exact solution.
+
+The fourth-order limiter also adapts the order (§5.7): TENO selection runs over
+three Hermite quadratics and four Hermite cubics together; if any cubic survives,
+the quadratics are discarded and the cubics combined with their linear weights
+$(5/14,5/14,1/7,1/7)$, otherwise the quadratics are used; TENO-AA below also
+tests its larger candidates first. The global indicator is
+$\tau=\tfrac12(\lvert\beta_0-\beta_1\rvert+\lvert\beta_1-\beta_2\rvert)$ for the
+three quadratics and $\tfrac12\lvert\beta_3+\beta_5-\beta_4-\beta_6\rvert$ for the
+four cubics, with $C=1$, $q=6$, $\epsilon=10^{-12}$ (§5.4.2, Eqs. (57)–(62)).
+
+**Evidence** (§9; SSPRK(5,3), CFL 0.3, TENO troubled-cell indicator): on a 2D
+density wave with every cell limited, the TENO-A limiters reach design order
+($L_1$ orders 3.03 and 3.08 for third order, 4.13 and 4.09 for fourth) with errors
+"about half" those of the WENO limiter (Table 1). On Lax, Sod, Shu–Osher, double
+Mach reflection, the triple point, a 2D Riemann problem, Rayleigh–Taylor and the
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md), TENO-A is
+sharper and resolves more small-scale vortices than the WENO limiter, and improves
+on constant-$C_T$ TENO; lowering $C_T$ reduces dissipation in double Mach
+reflection (Fig. 13). The fourth-order limiter resolves more than the third-order
+one on Shu–Osher and double Mach reflection, but not significantly more on the
+shock–bubble interaction (§§9.3–9.4, §9.8). See [troubled-cell indicators](/definitions/troubled-cell-indicator.md)
+for the TENO-based indicator of the same paper.
+
+**The same mapping on a shape parameter.** [Liang & Fu (2024a)](/sources/liang-2024.md)
+(§3.2, Eqs. (30)–(32)) reuse the measure and the mapping $\varphi$ to set not a
+cut-off but the shape parameter $\lambda_{\mathrm s}$ of a Gaussian radial basis function
+in their non-polynomial TENO ([RBF-WENO](/methods/rbf-weno.md)):
+$\lambda_{\mathrm s}=3+3\big(1-\varphi(\mu_d)\big)$ with a three-point minimum of
+$\sigma$, $C_r=0.4$ and $\epsilon_\sigma=10^{-40}$, so that the kernel is flat in
+smooth regions and sharp at high-wavenumber content. Their stencil arrangement,
+which picks one target stencil of 5, 4 or 3 points from the three TENO5 flags, is
+"motivated by" the adaptive TENO of Fu et al. (2018) (§3.1; see
+[targeted ENO](/methods/targeted-eno.md)).
+
+## Band-wise linear schemes and cut-offs (TENO6-SA)
+
+[Zhang et al. (2024b)](/sources/zhang-2024-b.md) (§§3–5) adapt both the linear
+background and the cut-off of TENO6 to a local wavenumber, and call the result
+TENO6-SA ("scale-adaptive").
+
+**Piecewise spectrum optimization** (§3.2). Instead of trading formal order for
+spectral resolution everywhere, as spectrally optimized weights do, they keep the
+sixth-order central dispersion scheme at low wavenumbers and switch to spectrally
+optimized fourth- and second-order schemes on the same six-point stencil only
+where the higher-order one exceeds a 1% dispersion-error tolerance. The three
+schemes have resolved bandwidths 1.100, 1.530 and 1.726 and are switched at
+$\vartheta=1.085$ and $1.516$, where the neighbouring schemes have equal
+dispersion error (formulas on the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+All dissipation is left to the nonlinear mechanism.
+
+**Algorithm** (§5.1, Algorithm 1). A six-point
+[scale sensor](/definitions/scale-sensor.md) gives $\vartheta_{\mathrm{ESW}}$ at
+$x_{i+1/2}$ (their Eq. (33), resolving to $\vartheta=2.137$ at 1% error). By band:
+
+| band of $\vartheta_{\mathrm{ESW}}$ | $C_T$ | linear flux where all $\delta_k=1$ | linear weights $d_0,\dots,d_3$ otherwise |
+|---|---|---|---|
+| $[0,1.085)$ | $10^{-5}$ | sixth order, $\tfrac1{60}(1,-8,37,37,-8,1)$ | $\tfrac9{20},\tfrac3{10},\tfrac1{20},\tfrac15$ |
+| $[1.085,1.516)$ | $10^{-10}$ | optimized fourth order, $(\tfrac2{75},-\tfrac{49}{300},\tfrac{191}{300},\tfrac{191}{300},-\tfrac{49}{300},\tfrac2{75})$ | $\tfrac{21}{50},\tfrac9{50},\tfrac2{25},\tfrac8{25}$ |
+| $[1.516,1.726)$ | $10^{-13}$ | optimized second order, $(\tfrac{21}{500},-\tfrac{187}{1000},\tfrac{129}{200},\tfrac{129}{200},-\tfrac{187}{1000},\tfrac{21}{500})$ | $\tfrac{5571}{14000},\tfrac{321}{3500},\tfrac{1429}{14000},\tfrac{1429}{3500}$ |
+| $\ge1.726$ | $10^{-8}$ | as the previous band | as the previous band |
+
+(fluxes on $f_{i-2},\dots,f_{i+3}$). The second-order flux is not a convex
+combination of the TENO6 candidates, so its weights are a least-squares fit; the
+last-stencil indicator is the average of the four-point TENO6 indicator and the
+six-point WENO-CU6 indicator (Eq. (36)). *(Compiler check, not in the sources: the
+first two rows of weights reproduce the sixth- and fourth-order fluxes exactly from
+the TENO6 candidate fluxes, and the third is the least-squares fit under
+$\sum_kd_k=1$; it reproduces the second-order flux only approximately.)* The
+cut-offs are read off Table 1, which maps $C_T$ to the wavenumber at which their
+TENO turns nonlinear in the ADR ($10^{-4}\to1.058$, $10^{-5}\to1.146$, …,
+$10^{-10}\to1.549$, $10^{-13}\to1.794$; see
+[targeted ENO](/methods/targeted-eno.md)): each band's $C_T$ makes the scheme
+nonlinear just where its linear scheme stops being accurate. The authors know of no
+other scheme with $C_T$ as small as $10^{-13}$.
+
+**Trend opposite to TENO-A.** Up to $\vartheta=1.726$ the cut-off *decreases* with
+the wavenumber, the reverse of TENO-A and of the scale-sensor TENO5-A below, which
+raise $C_T$ at high wavenumbers. Zhang et al. reconcile the two: TENO-A keeps one
+linear scheme, while TENO6-SA relays to schemes of better dispersion, which need
+less nonlinear dissipation; above $1.726$ the cut-off is raised again (§5.1). Their
+Titarev–Toro study supports the usual direction within one band: lowering $C_T$ of
+the low-wavenumber band from $10^{-3}$ to $10^{-10}$ sharpens the waves but creates
+pseudo-oscillations from $10^{-7}$ on, so "conclusions from monochromatic ADR do not
+transfer directly to nonlinear problems" (§6.1.3, Fig. 13).
+
+**Evidence** (characteristic decomposition, Lax–Friedrichs splitting, TVD-RK3 at CFL
+0.3; seventh-order linear SSP-RK at CFL 0.1 for accuracy):
+
+- *Order.* On $u_0=\sin(\pi x-\sin(\pi x)/\pi)$ TENO6-SA has the errors of TENO6
+  digit for digit and order 6 ($L_1=6.17\times10^{-15}$ at $N_x=1600$), while
+  TENO6-opt converges at 5 and TENO6-A at 4 (Table 2). At critical points of order
+  0 to 6 its rates equal TENO6's (Table 3;
+  [critical-point accuracy](/properties/critical-point-accuracy.md)).
+- *Spectra.* ADR bandwidth at 1% tolerance 1.767, against 1.100 for TENO6 and
+  TENO6-opt, 1.052 for TENO6-A, 1.086 for EWENO-CU6 and 1.330 for WENO7-Z; at 1.5%
+  TENO6-A reaches 1.590 (§5.2, Fig. 5). It has "no numerical dissipation in its
+  resolvable region" and the best mean dispersion in a nonlinear spectral analysis
+  (Fig. 6).
+- *Waves and shocks.* Best among the six-point schemes on 2D Gaussian advection
+  ($L_1=9.34\times10^{-5}$ at $200^2$, $t=400$), though WENO7-Z is better
+  ($4.10\times10^{-5}$), and TENO6-A shows a forward phase error (Table 4); lowest
+  errors on broadband acoustic waves (Table 5); the 123 problem runs without
+  positivity correction; slight overshoots at the Sod contact and the blast-wave
+  shock. In a shock/wavy-wall interaction on $2500\times500$ TENO6-A fails from
+  pseudo-oscillations while TENO6-SA runs "despite $C_T=10^{-13}$" (§6.3.3).
+- *Turbulence.* Closest to the references in enstrophy and spectra on inviscid and
+  viscous Taylor–Green vortices and compressible isotropic turbulence (§6.4).
+- *Cost.* 15.31–19.29 % more CPU time than WENO7-Z in the flow tests, TENO6
+  4.56–12.32 %, TENO6-A 17.15–25.20 % (Table 6).
 
 ## Scale-sensor-driven cut-off (Huang et al. 2023)
 
@@ -413,11 +565,25 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
   the background is the fifth-order upwind scheme)*. The page does not record this as a
   contradiction, because the two statements need not concern the same
   scheme. Printing the URANOS weights would decide it.
-- Four values of $C_r$ are recorded for nominally the same TENO-A recipe:
+- Five values of $C_r$ are recorded for nominally the same TENO-A recipe:
   $0.265$ (Fu 2021), $0.24$ (Huang et al. 2023; Tang 2024), $0.25$ (De
   Vanna et al. 2023a, 2023b, both attributing the value to Fu et al.
-  2018) and $0.23$ (Liang & Fu 2024b, citing Fu et al. 2018). No source
-  discusses the difference.
+  2018), $0.23$ (Liang & Fu 2024b, citing Fu et al. 2018) and $0.17$
+  (Zhang et al. 2024b, for TENO6-A). No source discusses the difference.
+  Chen & Fu's $0.5$ and $0.6$ belong to a measure raised to the power
+  $p_\sigma$ and taken at one cell, so they are not comparable values.
+- Zhang et al. (2024b, §5.3) state that the scale sensor adds "an approximate
+  13%" to the cost of TENO6; their Table 2 gives TENO6-SA/TENO6 time ratios of
+  1.29–1.31 on every grid (e.g. $1151.83/890.53=1.293$ at $N_x=1600$)
+  *(compiler check, not in the sources)*, i.e. about 30%. In the same table
+  TENO6-A is the most expensive six-point scheme (1215.20 s).
+- Zhang et al. (2024b) use the band limit $1.732$ in §§6.1.3 and 6.3.2
+  ("$\vartheta_{\mathrm{ESW}}$ … generally exceed 1.732") where Algorithm 1
+  and §3.2 have $1.726$; the page follows Algorithm 1.
+- Chen & Fu (2024) give the four-degree-of-freedom limiter's need for a higher
+  $C_T$ bound from "numerical experiments" only, and their claim that a
+  fourth-order limiter is needed with fourth-order spectral differences (TENO3-A
+  with SD4 degrades the solution) is stated without a figure (§9.4).
 - Tang (2024) prints the TENO-A cut-off as $C_T=10^{\lfloor b\rfloor}$
   (Eq. (15)); with $b\in[5,10]$ this gives $C_T\ge10^5$, above every
   normalized measure $\chi_k\le1$, so every stencil would be cut. The
@@ -470,3 +636,6 @@ TENO5 ([TENO-THINC](/methods/teno-thinc.md)).
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §3.1; §§4.2–4.4, Table 2, Figs. 1–9: TENO-A5 parameters, wall-modelled LES evidence, cost.
 - [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) — §3.1; §5.2, Fig. 10; App. A.1–A.3, Figs. 11–13: TENO-A5 in URANOS, convergence, shock tests.
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §3.1; §§4.3–4.4: hybrid TENO-A7 and TENO-A5 with immersed boundaries.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §§5.4–5.7, Eqs. (57)–(65); §9, Table 1, Fig. 13: TENO-A cut-off and order fallback in a compact limiter for spectral differences.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.5, Eq. (17); §3.2; §5, Algorithm 1, Eq. (36), Tables 1–4, 6, Figs. 5–6; §6.1.3, §6.3.3, §6.4: TENO6-A parameters, TENO6-SA and its evidence.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.1; §3.2, Eqs. (30)–(32): TENO-A mapping on the RBF shape parameter.

@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -17,8 +17,8 @@ top, and a triple point forms on the upper wall from which a vortex
 sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
-scheme survives and how much small-scale structure it resolves. Seventeen
-sources of the bundle run it, five of them on triangles (one of these
+scheme survives and how much small-scale structure it resolves. Nineteen
+sources of the bundle run it, six of them on triangles (one of these
 in a relativistic version), one on polygons and one as a steady-state
 problem; those
 that name an origin attribute it to Woodward & Colella.
@@ -127,6 +127,8 @@ fix at the corner.
 | [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) §4.6 | fourth-order compact [gas-kinetic scheme](/methods/gas-kinetic-scheme.md), no troubled-cell detection | triangles, $h=1/120$ | 0.8 |
 | [Chen & Wu (2022)](/sources/chen-2022-b.md) Ex. 4.9 | third-order FV WENO on triangles, physical-constraint-preserving limiter, HLL (relativistic) | triangles, $h=1/160$ | 0.5 |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.7 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 | $720\times240$ | 0.45 |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.9 | finite-volume ALW-MR-WENO-3/4/5 on triangles vs [MR-WENO](/methods/multi-resolution-weno.md), characteristic-wise | triangles, boundary mesh size 1/160; $t=4$; 30 contours 0.32–6.15 | 0.6 |
+| [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.6 | [hybrid](/methods/hybrid-weno.md) HMR-WENO5/7/9 vs MR-WENO; third-order TVD Runge–Kutta | $600\times200$; $t=4$; 30 contours 0.32–6.15 | 0.6 |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $P_2$, $P_3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
 
 ## What the benchmark measures
@@ -208,6 +210,20 @@ scheme does not, and separates the shock from the wall-reflected wave;
 the pattern agrees with k-exact finite-volume results they cite
 (Fig. 8).
 
+**Multi-resolution WENO and its hybrids.** Lin & Zhu find that the
+resolution, "especially for the vortex sheet roll-up", improves with
+the order of their two-stencil ALW-MR-WENO on triangles, which gives
+results similar to MR-WENO of the same order (Case 3.9, Figs.
+3.15–3.17). Zuo & Zhu (2024b) find their hybrid HMR-WENO, which applies
+MR-WENO only in cells where an extremum of the high-degree interpolant
+is detected, outperforming MR-WENO of the same order, "especially for
+addressing the Kelvin-Helmholtz instability and roll-up of the contact
+line" (Ex. 3.6, Figs. 3.9–3.10, with the troubled-cell map), at lower
+cost: MR-WENO 3763.48, 9589.80 and 14582.4 s against HMR-WENO 1671.75,
+4182.02 and 10283.0 s at orders 5, 7 and 9 (Table 3.1, a laptop). Lin &
+Zhu's ALW/MR time ratios over their Cases 3.3–3.11 are 0.60–0.96, smallest at
+fifth order (Table 3.1). Neither paper describes a corner treatment.
+
 **Hermite WENO and its first moments.** Li, Shu & Qiu recall that the
 original Hermite WENO schemes are "not stable enough" for the forward
 step, because first-derivative values grow large near discontinuities
@@ -255,3 +271,5 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.6, Fig. 9 (arXiv v1).
 - [Tang (2024)](/sources/tang-2024.md) — §4.4.7, Eq. (40), Fig. 17.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.6, Fig. 5 (arXiv v1).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.9, Figs. 3.15–3.17, Table 3.1.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §3, Ex. 3.6, Figs. 3.9–3.10, Table 3.1.

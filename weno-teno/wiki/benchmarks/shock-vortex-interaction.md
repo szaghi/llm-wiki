@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Shock–vortex interaction
@@ -26,8 +26,10 @@ vortex the same configuration becomes a near-vacuum test for
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 and
 [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 and
 [Liang et al. (2022)](/sources/liang-2022.md) §4.7, Eq. (43) and
-[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6, Eq. (43), print the
-same construction. The upstream state is
+[Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6, Eq. (43) and
+[Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.10 print the
+same construction (Zhang & Zhu with a different upstream velocity, see
+Qualifications). The upstream state is
 $(\rho,v_1,v_2,p)=(1,\,1.1\sqrt\gamma,\,0,\,1)$, so that the stream
 moves at Mach 1.1 into the stationary shock; the downstream state
 follows from the Rankine–Hugoniot conditions; $\gamma=1.4$. Let
@@ -42,7 +44,7 @@ $$
 \delta s=0 .
 $$
 
-Li et al. and Huang et al. write the velocity as
+Li et al., Huang et al. and Zhang & Zhu write the velocity as
 $\mathcal E\,(r/r_c)\,e^{\mathcal A(1-r^2/r_c^2)}(\sin\theta,-\cos\theta)$
 with $\theta$ the polar angle about the centre, which is the same field,
 since $(r/r_c)\sin\theta=\bar y/r_c$ *(compiler check, not in the
@@ -55,6 +57,7 @@ sources)*.
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.16 | 0.3 | 0.204 | 0.05 | $400\times200$, reflective top and bottom | 0.8 | [OEDG](/methods/oedg.md) |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.7 | 0.3 | 0.204 | 0.05 | $300\times150$; reference $2000\times1000$ WENO5-JS | 0.6 | [TENO-THINC](/methods/teno-thinc.md) variant vs WENO5-Z, TENO5, TENO5-THINC |
 | [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.6 | 0.3 | 0.204 | 0.05 | $[0,2]\times[0,1]$, shock at $x=0.5$, vortex at $(0.25,0.5)$; 45,790 triangles ($h\approx1/150$) | 0.6 | unstructured dual-stencil TENO4-D–TENO7-D vs CWENO6/7, HLL, [UCNS3D](/software/ucns3d.md) |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.10 | 0.3 | 0.204 | 0.05 | $120\times60$; 30 pressure contours 1.1–1.3 | 0.8 | ghost multi-resolution GMR-WENO3/5/7 vs [MR-WENO](/methods/multi-resolution-weno.md), finite differences and finite volumes |
 | [Cui, Ding & Wu (2024)](/sources/cui-2024.md) Example 3 | 1.378106 | 0.204 | 0.4 | $450\times225$, $\mathbb P^2$ and $\mathbb P^4$ DG | 0.6 (pressure at 0.2, 0.35, 0.6) | bound-preserving DG with [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md) |
 
 ### Variants of the Euler setup
@@ -180,6 +183,13 @@ and [bound preservation](/properties/bound-preservation.md).
 schemes give similar solutions, with no artificial instabilities
 (§4.6, Fig. 15).
 
+**Multi-resolution WENO on a coarse grid.** Zhang & Zhu show the
+pressure contours of GMR-WENO and MR-WENO on $120\times60$ (Figs.
+3.18–3.19) without a reference solution or a stated ranking for this
+example; their Table 3.1 includes it in the GMR:MR time ratios of 1:1.23
+to 1:2.18 (finite differences) and 1:1.27 to 1:2.25 (finite volumes)
+over their Examples 3.5–3.10, on an Intel Core i5-8265U.
+
 ## Non-conservative variants
 
 [Balsara et al. (2024)](/sources/balsara-2024.md) introduce three new
@@ -233,6 +243,13 @@ a numerical result.
   where the run ends at $t=0.24$ and the figures are at $0.06$; $0.06$ is
   meant.
 
+- Zhang & Zhu's Table 3.1 caption names Examples 3.5–3.9, but the table
+  also has rows for this Example 3.10. They print the upstream state as
+  $(\rho,v_1,v_2,p)=(1,\sqrt\gamma,0,1)$, while calling the shock Mach
+  1.1. With $\rho=p=1$ the sound speed is $\sqrt{\gamma p/\rho}=\sqrt\gamma$,
+  so the printed stream is at Mach 1; the other sources of the reference
+  setup print $1.1\sqrt\gamma$ *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Li et al. (2022b)](/sources/li-2022-b.md) — §4.4.2, Eq. (46), Fig. 8.
@@ -247,3 +264,4 @@ a numerical result.
 - [Li, Chen & Ren (2022)](/sources/li-2022.md) — §4.3.3, Eq. (70), Tables 2–3.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.6, Eq. (43), Fig. 15.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.8 (arXiv v1).
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.10, Figs. 3.18–3.19, Table 3.1.

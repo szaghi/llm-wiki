@@ -102,12 +102,18 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 7 staged 2026-10-23:** TENO variants, limiters, ADER,
+**Chunk 8 staged 2026-10-23:** multi-resolution WENO, TENO and THINC
+variants, DG limiters, MHD and shallow-water schemes; 159 of 207
+ingested, 200 concept pages plus the registry, 4666 bibliography
+entries, deep lint done, five contradictions open (TENO $\tau_K$;
+conservation of WCNS; entropy-filter tolerance; cost of WENO-Z against
+mapped WENO; order of TENO at a second-order critical point). Next:
+chunk 9.
+
+**Chunk 7 committed 2026-10-23 (2dafcd9):** TENO variants, limiters, ADER,
 well-balanced and multiphase solvers; 139 of 207 ingested (wu-2023
 deferred: the archive file holds only its supplement), 191 concept pages
-plus the registry, 4315 bibliography entries, deep lint done, four
-contradictions open (TENO $\tau_K$; conservation of WCNS; entropy-filter
-tolerance; cost of WENO-Z against mapped WENO). Next: chunk 8.
+plus the registry, 4315 bibliography entries, four contradictions open.
 
 **Chunk 6 committed 2026-10-23 (82b0c9e):** WCNS weights, flux globalization,
 entropy-stable DG for air, interface methods; 120 of 207 ingested, 181

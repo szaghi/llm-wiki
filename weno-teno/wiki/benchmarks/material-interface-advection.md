@@ -5,7 +5,7 @@ description: "Uniform-velocity, uniform-pressure advection of material interface
 status: established
 aliases: [interface advection, advection of a material interface, interface translation test, water disk advection, smooth interface advection]
 tags: [benchmark, multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Material-interface advection tests
@@ -86,6 +86,20 @@ cells, CFL 0.2, with their [phase-field](/methods/phase-field-method.md)
 regularization at interface-thickness parameter $\eta/\Delta x=1$ (their
 $\eta$, page-local).
 
+**Water block and water droplet in air, five-equation model.**
+[Zhang et al. (2024a)](/sources/zhang-2024.md) §4.1 advect, at
+$v=100$ m s$^{-1}$ and $p=101325$ Pa, a water block on
+$0.25\le x<0.75$ of the periodic $[0,1]$ m, with $\rho_1\phi_1=1000$ in
+water and $\rho_2\phi_2=1.2$ kg m$^{-3}$ in air ($N_x=128$, $t=0.1$ s, ten
+periods), and a water droplet of diameter 0.5 m in the periodic
+$[0,1]^2$ m at $(v_1,v_2)=(100,0)$ m s$^{-1}$ on $128^2$ cells for ten
+periods. "Pure" states carry volume fraction $1-10^{-8}$ or $10^{-8}$ and
+partial densities $10^{-8}$; stiffened-gas water and ideal-gas air of
+their Table 1; CFL 0.5 with SSP-RK3 and THINC steepness 1.8. They
+compare fifth-order WENO5IS, MUSCL-THINC and their hybrid WENO5IS-THINC,
+in which THINC reconstructs only $\phi_1$ and the partial densities in
+interface cells.
+
 **A square column of heavy gas, four-equation model.**
 [Jiao et al. (2024)](/sources/jiao-2024.md) §4.1 advect a square column
 of one ideal gas in another at $u=5$ m/s and $p_0=10^7$ Pa, 300 K, on a
@@ -111,8 +125,9 @@ discontinuity rather than pressure equilibrium between materials.
 
 ## Findings across sources
 
-**Pressure and velocity to round-off.** Every source reports
-equilibrium to machine precision for its own scheme:
+**Pressure and velocity to round-off.** The sources below report
+equilibrium to machine precision for their own schemes (Zhang et al.
+(2024a) call their errors "negligible" without a value):
 
 | Source | Scheme | Test | Velocity error | Pressure error |
 |---|---|---|---|---|
@@ -161,6 +176,13 @@ with triple points distorted and the quadruple point not (§7.1.2);
 in the vortex the interface breaks up at maximum deformation and the
 topology is restored at $t=T$ with slight deformation (Fig. 11). See
 [THINC reconstruction](/methods/thinc-reconstruction.md).
+
+On Zhang et al.'s (2024a) water block and droplet, MUSCL-THINC and
+WENO5IS-THINC keep the interface width over ten periods while WENO5IS
+alone diffuses it severely; the velocity and pressure errors are
+negligible and the interface oscillation-free (§4.1, Figs. 3–4). See
+[THINC reconstruction](/methods/thinc-reconstruction.md) and
+[hybrid schemes](/methods/hybrid-weno.md).
 
 On Jiao et al.'s square column all MUSCL limiters smear the interface,
 Koren's least, and THINC with the thermodynamic update is noticeably
@@ -225,3 +247,4 @@ faces.
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.3, §5.2, Eq. (50), Figs. 6–7, 13.
 - [Jiao et al. (2024)](/sources/jiao-2024.md) — §4.1, Tables 4.1–4.2, Figs. 4.1–4.3.
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §5.4, Figs. 9–10 (arXiv v2).
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, §4, §4.1, Table 1, Table 2, Figs. 3–4.

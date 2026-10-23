@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hermite WENO"
-description: "Hermite WENO (HWENO) builds WENO candidates from cell averages and derivative or first-moment information, giving compact stencils; the page records the moment-based finite-volume HWENO (moment equations, multi-resolution hierarchy, moment modification, positivity-preserving hybrid), the finite-difference HWENO-R that drops the target-point derivative, and its use as a finite-element sensor."
+description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plus derivative or first-moment data on compact stencils; the page covers moment-based finite-volume HWENO with moment modification, positivity preservation and the OE-HWENO filter, Hermite candidates for spectral-difference limiting, finite-difference HWENO-R, and HWENO as a finite-element sensor."
 status: established
-aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO]
+aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Hermite WENO
@@ -56,7 +56,7 @@ order", Abstract; §4):
 - **Moment modification.** In a flagged cell the first moment is replaced by that of the quartic
   fitted to the three neighbouring averages and the two neighbouring moments (Eq. (2.27)),
   $$\bar u^{(1)}_i\leftarrow-\tfrac5{76}\bar u_{i-1}+\tfrac5{76}\bar u_{i+1}-\tfrac{11}{38}\bar u^{(1)}_{i-1}-\tfrac{11}{38}\bar u^{(1)}_{i+1},$$
-  and the reconstruction is repeated there (dimension by dimension in 2-D). *(Compiler check: the
+  and the reconstruction is repeated there (dimension by dimension in 2-D). *(Compiler check, not in the sources: the
   coefficients were recomputed from the quartic's moment conditions; they agree.)* The modified moment
   overwrites the evolved one.
 - **Time step.** SSP-RK3 at CFL 0.6 in 1-D and 2-D ([SSP Runge–Kutta](/methods/ssp-runge-kutta.md)).
@@ -102,7 +102,7 @@ for compressible Navier–Stokes (Euler at $\mathrm{Re}=\infty$):
   and linearly elsewhere; in 1-D the three Hermite cubics combine into the quintic's derivative with
   linear weights $\tfrac{11}{459},\tfrac{44}{765},\tfrac{124}{135}$, Jiang–Shu-type weights with
   exponent 2, and indicators summing only derivative orders 2–3 (App. A.1;
-  [smoothness indicators](/definitions/smoothness-indicator.md)). *(Compiler check: the three weights
+  [smoothness indicators](/definitions/smoothness-indicator.md)). *(Compiler check, not in the sources: the three weights
   sum to 1.)*
 
 Results: about fifth order in 1-D and fourth order in 2-D at $\mathrm{Re}=100$ (Table 4.1); the hybrid
@@ -170,6 +170,103 @@ with $|v_0|=1-10^{-10}$ and cannot take one step on the demanding shock–vortex
 $1.7847\times10^{-20}$; with it only two cells are limited in the 1-D Riemann problem, and the axisymmetric jet with
 beam speed 0.99 runs (Examples 5.3–5.4, 5.8–5.9; [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md),
 [high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md)).
+
+## Oscillation-eliminating HWENO (OE-HWENO)
+
+Fan & Wu (2024; arXiv v1 read) keep the sixth-order moment-based scheme and replace moment limiting by
+a filter applied after every Runge–Kutta stage, carrying the [OEDG](/methods/oedg.md) step of Peng, Sun &
+Wu from DG to HWENO. They name the uncontrolled growth of the first moments near discontinuities as the
+source of oscillations and nonlinear instability, and set their method against two earlier fixes:
+moment limiting, which they say keeps "at most fifth-order accuracy for originally sixth-order HWENO
+schemes" (citing Zhao, Chen & Qiu, Li, Shu & Qiu, Zhao & Qiu), and the oscillation-free OF-HWENO of Zhao &
+Qiu, which adds stiff damping terms with empirical, problem-dependent parameters to the moment equations
+and needs modified exponential Runge–Kutta (§1, Remark 1).
+
+- **HWENO operator** (§2.2.1, App. A). On $I_{i-1},I_i,I_{i+1}$: a quintic $p_0$ matching all three averages
+  and moments, a cubic $p_1$ matching the three averages and $\bar u^{(1)}_i$, and two linear polynomials
+  on $\{\bar u_{i-1},\bar u_i\}$ and $\{\bar u_i,\bar u_{i+1}\}$, combined in two nested [CWENO](/methods/cweno.md)
+  levels ($p_0$ with $p_1$, then $p_1$ with the two linears; the
+  [multi-resolution](/methods/multi-resolution-weno.md) structure) with arbitrary positive linear weights
+  (0.025 for the lowest-degree polynomials in all tests) and Z-type weights
+  $d_l\big(1+\tau/(\beta_l+\epsilon)\big)$, $\tau=(\beta_0-\beta_1)^2$ at the top level and
+  $\tau=\big(\tfrac12(|\beta_1-\beta_2|+|\beta_1-\beta_3|)\big)^2$ at the lower one (page-local $\tau$; Eq. (A.2);
+  [WENO-Z](/methods/weno-z.md)). The value of $\epsilon$ is not printed. The quintic's interface value,
+  $p_0(x^-_{i+1/2})=\tfrac{13}{108}\bar u_{i-1}+\tfrac7{12}\bar u_i+\tfrac8{27}\bar u_{i+1}+\tfrac{25}{54}\bar u^{(1)}_{i-1}+\tfrac{241}{54}\bar u^{(1)}_i-\tfrac{28}{27}\bar u^{(1)}_{i+1}$
+  (p. 12). *(Compiler check, not in the sources: these are the coefficients of the linear operator printed by
+  Cai, Qiu & Wu (2024) above.)*
+- **OE step** (§2.2.2, Theorem 1). The modified moments are the solution, after a pseudo-time $\Delta t$,
+  of a linear damping problem in the $\mathbb P^1$ test space, with a coefficient frozen at its initial
+  data; it is solved exactly: the cell average is unchanged and
+  $$\bar u^{(1)}_i\leftarrow\bar u^{(1)}_i\exp\Big(-a\frac{\Delta t}{\Delta x}\hat\sigma_i\Big),\qquad
+  \hat\sigma_i=\frac{\sum_{m=0}^1\Delta x^m\big(\lvert[\![\partial_x^mu_h^*]\!]_{i-1/2}\rvert+\lvert[\![\partial_x^mu_h^*]\!]_{i+1/2}\rvert\big)}{\max_j\lvert\bar u_j-u_\Omega\rvert},$$
+  $u_\Omega$ the mean of all cell averages, $a$ the global Lax–Friedrichs speed, $u_h^*$ a *linear*
+  sixth-order Hermite reconstruction whose jumps are explicit in the averages and moments (Eq. (2.17)),
+  e.g. $[\![u_h^*]\!]_{i+1/2}=\tfrac1{108}\big(-13\bar u_{i-1}-31\bar u_i+31\bar u_{i+1}+13\bar u_{i+2}-50\bar u^{(1)}_{i-1}-370\bar u^{(1)}_i-370\bar u^{(1)}_{i+1}-50\bar u^{(1)}_{i+2}\big)$
+  ($\hat\sigma_i$, $u_\Omega$, $u_h^*$ page-local; $\hat\sigma_i=0$ when $\max_j|\bar u_j-u_\Omega|=0$). The step
+  costs one multiplication per moment and keeps local conservation (Remarks 2–3). For systems the largest
+  coefficient over the components damps all of them (Eq. (2.29)); in 2-D both first moments are multiplied by
+  $\exp(-a^{(1)}\frac{\Delta t}{\Delta x}\hat\sigma_{i,j}-a^{(2)}\frac{\Delta t}{\Delta y}\tilde\sigma_{i,j})$ (Theorem 8; page-local
+  $\tilde\sigma_{i,j}$). *(Compiler check, not in the sources: the jump coefficients of Eq. (2.17) follow from
+  the printed one-sided values of the quintic, and those values reproduce constant and linear data.)*
+- **Accuracy.** Theorem 2: under $a\Delta t/\Delta x\le C_{\mathrm{cfl}}<1$, for $u\in C^{k+1}$ and periodic
+  data, if the moments are $(k+1)$th-order accurate, so are the filtered ones; the proof bounds
+  $1-e^{-x}\le x$ and uses the vanishing jumps of the linear Hermite reconstruction on smooth data, in the
+  nontrivial case $\max_j|\bar u_j-u_\Omega|\ge C>0$. Theorem 9 is the 2-D version (proof omitted).
+- **Invariance** (Theorems 4–7). The OE operator is invariant under affine maps of the data, a
+  dimensionless transformation of the stencil data makes the HWENO operator invariant, and the scheme is
+  evolution invariant ([scale invariance](/properties/scale-invariance.md)).
+- **Bound preservation** (§2.4, Theorem 11). The OE step leaves cell averages unchanged, so the
+  forward-Euler bound-preserving analysis is that of the cell-average update. With the 2-D
+  [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md) of Cui, Ding &
+  Wu, the bound-preserving condition is $\Delta t(a^{(1)}/\Delta x+a^{(2)}/\Delta y)\le\varpi$, with
+  $\varpi=2-\sqrt{14}/2\approx0.1292$ when $a^{(1)}\Delta y=a^{(2)}\Delta x$, against $\tfrac1{12}$ for the classical
+  Zhang–Shu decomposition; it is presented as the first use of the 2-D optimal decomposition for HWENO,
+  also valid without OE (Remark 5). A [Zhang–Shu scaling](/methods/zhang-shu-scaling-limiter.md) and the
+  Euler positivity limiter enforce the hypotheses (Remark 4; [bound preservation](/properties/bound-preservation.md)).
+
+Results (SSP-RK3 with an OE step after each stage, $C_{\mathrm{cfl}}=0.45$, $\Delta t\propto\Delta x^2$ in the
+accuracy tests; §3): $\ell^\infty$ orders 6.10–6.58 on 1-D and 5.38–6.43 on 2-D
+[Burgers](/benchmarks/burgers-equation-tests.md) (Table 3.1) and 6.47–6.99 on the 1-D and 2-D Euler
+[density wave](/benchmarks/density-wave-advection.md) (Table 3.2), above six, which the authors attribute to
+the high-order damping dominating the error, as in OEDG and OF-HWENO. ADR curves with and without OE are
+"nearly identical" (Fig. 2.1; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+OE-HWENO resolves the [Woodward–Colella](/benchmarks/woodward-colella-blast-wave.md) problem better than
+OF-HWENO; on the 1-D [Sedov](/benchmarks/sedov-blast-wave.md) problem OF-HWENO is sensitive to its parameter
+(best of $\{2.5,3.5,5,10\}$ still oscillates) and standard HWENO with the positivity limiter oscillates,
+while OE-HWENO with it is "essentially non-oscillatory" (Ex. 6); [double rarefaction](/benchmarks/double-rarefaction-problem.md)
+runs without the positivity limiter, and [Leblanc](/benchmarks/leblanc-shock-tube.md),
+[double Mach reflection](/benchmarks/double-mach-reflection.md), 2-D Sedov and the Mach 2000
+[jet](/benchmarks/high-mach-astrophysical-jet.md) with it, where standard HWENO with the positivity limiter
+shows "obvious" non-physical oscillations (Ex. 7–12). No timings are reported.
+
+## Hermite candidates for nodal spectral-difference limiting
+
+Chen & Fu (2024) build a compact limiter for the nodal spectral difference (SD) method at third and
+fourth order from Hermite candidates. From the nodal polynomials of the target cell and its two face
+neighbours in one direction they compute, by quadrature, cell averages and the cell averages of the
+first and second derivatives, $\overline{\partial_xu}_j=\frac1{\Delta x}\int_{I_j}\partial_xu_h\,dx$ and
+$\overline{\partial^2_xu}_j$ (page-local), and fit on $I_i$ (§5, Eqs. (36), (51)):
+
+- three quadratics: $p_0$ on the averages of $I_{i-1},I_i$ and $\overline{\partial_xu}_{i-1}$; $p_1$ on the three
+  averages; $p_2$ on the averages of $I_i,I_{i+1}$ and $\overline{\partial_xu}_{i+1}$;
+- for fourth order, four cubics: on the three averages plus $\overline{\partial_xu}_{i-1}$ or plus
+  $\overline{\partial_xu}_{i+1}$, and on two averages plus both derivative averages of the left or of the right
+  neighbour.
+
+All candidates have the cell's average, and the limited polynomial is a **direct convex combination**
+$\sum_k\omega_kp_k$, against earlier compact HWENO limiters that limit low-order moments one at a time (§1). The
+linear weights are fixed by requiring the cell-averaged first derivative to third order and the second
+to second order; they depend on the solution-point set, e.g. for the third-order SD points
+$-\tfrac{11}{96}d_0+\tfrac5{24}d_1-\tfrac{11}{96}d_2=\tfrac1{24}$ with $d_0=d_2$, giving
+$(d_0,d_1,d_2)=(\tfrac8{31},\tfrac{15}{31},\tfrac8{31})$; with the fourth-order SD points the same
+three quadratics take $(\tfrac14,\tfrac12,\tfrac14)$, and the four cubics $(\tfrac5{14},\tfrac5{14},\tfrac17,\tfrac17)$
+(Eqs. (38)–(54)). *(Compiler check, not in the sources: the three printed conditions give $d_0=d_2=\tfrac8{31}$.)*
+The nonlinear weights are Jiang–Shu-type or TENO with an adaptive cut-off; at fourth order all seven
+candidates are classified and the quadratics are discarded when any cubic survives (§5.4–5.7;
+[adaptive TENO](/methods/adaptive-teno.md), [WENO limiters for DG](/methods/weno-limiter-dg.md)). The limiter
+acts dimension by dimension on lines of solution points, characteristic-wise, and leaves cell averages
+unchanged (§6–§7, Eq. (75)). On the 2-D Euler density wave, with every cell forced troubled, all limiters
+keep the design order, the TENO-A errors about half of the WENO ones (Table 1).
 
 ## Finite-difference HWENO without the target-point derivative (HWENO-R)
 
@@ -347,6 +444,24 @@ are given in the ingested sources.
 - Cai, Qiu & Wu (2024, §3.1.2) state that the weights "remain unchanged" under $(\bar u,\bar u^{(1)})\mapsto\sigma(\bar u,\bar u^{(1)})$
   for any $\sigma\ne0$. *(Compiler check, not in the sources: $\tau^2$ and $\beta_n^2$ both scale as $\sigma^4$, so the
   ratio is invariant only up to $\epsilon$, whose value is not printed.)*
+- **What "fifth order" of moment limiting measures.** Fan & Wu (2024, §1, §2.2.2) say that moment
+  limiting keeps "at most fifth-order accuracy" for sixth-order HWENO, citing Li, Shu & Qiu (2022d) among
+  others; Li, Shu & Qiu report sixth order (5.96–6.49) for HWENO6-M5-I, whose modification acts only in flagged
+  cells, and fifth order only when every cell is modified (Tables 3.1–3.4). The two statements are
+  compatible: the first concerns the modification when it is active, the second smooth tests where it is not.
+- **OE-HWENO slips** (Fan & Wu 2024, arXiv v1). The printed optimal decomposition weight,
+  $\big[\tfrac{14}3+\tfrac23\sqrt{78\varkappa^2+46}\cos\big(\tfrac13\arccos\frac{1476\varkappa^2-244}{78\varkappa^2+46}\big)\big]^{-1}$
+  with the anisotropy $\varkappa$ of the decomposition, is undefined at $\varkappa=0$, where the arccos argument is $-244/46$.
+  *(Compiler check, not in the sources: with the denominator $(78\varkappa^2+46)^{3/2}$ the argument is $-0.782$ and
+  the formula gives $0.1291713=2-\sqrt{14}/2$, the value printed on p. 31.)* In Tables 3.1–3.2 the $\ell^2$
+  order columns repeat the $\ell^1$ ones digit for digit. *(Compiler check, not in the sources: recomputed from the printed $\ell^2$
+  errors they are, e.g., 6.83, 6.53, 6.32, 6.36, 6.47 for 1-D Burgers against the printed 6.83, 6.53, 6.40,
+  6.37, 6.54; the $\ell^\infty$ and $\ell^1$ columns agree with their errors.)* The 2-D reconstruction (2.40) is
+  printed with $\gamma$ and $\omega$ exchanged relative to the 1-D Eq. (2.13) and App. B.
+- Chen & Fu (2024, Eq. (3)) call the SD solution points "the Gauss points", but print
+  $X_s=-\tfrac12\cos\big(\tfrac{2s-1}{2N}\pi\big)$ on $[-\tfrac12,\tfrac12]$, Chebyshev–Gauss points *(compiler
+  check: for $N=3$ these are $0,\pm\sqrt3/4$, against $0,\pm\sqrt{15}/10$ for Gauss–Legendre)*; the linear
+  weights depend on this choice.
 - Li et al. (2022b, Eq. (8)) — the WENO-ZN paper — call the rescaled Legendre basis used by Balsara et
   al. for smoothness indicators "Hermite polynomials"; that reconstruction is not Hermite WENO.
 - The nonlinear HWENO reconstruction of Kuzmin & Vedral is printed once with a tilde
@@ -365,3 +480,5 @@ are given in the ingested sources.
 - [Bai & Li (2022)](/sources/bai-2022.md) — §2.6; §3.1.5.
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.11), Remarks 2.1–2.4; §3, Tables 3.1–3.4, Examples 3.4–3.13, Fig. 3.9; App.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1, Eqs. (3.2)–(3.8), Remarks 3.2–3.4; Lemma 3.2, Theorem 3.1; §4, Theorem 4.1, Apps. A–B; §5, Examples 5.2–5.9, Tables 4–5 (arXiv v1).
+- [Fan & Wu (2024)](/sources/fan-2024.md) — §1; §2.1–2.4, Eqs. (2.2)–(2.57), Theorems 1–11, Remarks 1–5; §3, Tables 3.1–3.2, Examples 1–12; App. A–C (arXiv v1).
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5, Eqs. (36)–(69); §6–§7, Eqs. (70)–(75); §9.1, Table 1.

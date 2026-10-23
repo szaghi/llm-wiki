@@ -5,7 +5,7 @@ description: "TENO-THINC is a finite-difference hybrid that uses TENO5 everywher
 status: established
 aliases: [TENO5-THINC, hybrid TENO-THINC scheme]
 tags: [teno, interface-capturing, low-dissipation, finite-difference, reconstruction]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # TENO-THINC
@@ -149,6 +149,34 @@ interaction, the triple-point, implosion and Rayleigh–Taylor problems (symmetr
 and stable Mach 80 and 2000 jets with the Hu–Adams–Shu positivity-preserving flux
 limiter (Figs. 7–25). No timing is reported.
 
+## Reuse in a non-polynomial TENO (Liang & Fu 2024a)
+
+[Liang & Fu (2024a)](/sources/liang-2024.md) (§3.3, Eqs. (33)–(36)) take Liang et
+al.'s detector and jump flux unchanged into their Gaussian-RBF TENO, whose smooth
+branch selects one target stencil from the TENO5 flags
+([targeted ENO](/methods/targeted-eno.md), [RBF-WENO](/methods/rbf-weno.md)). They
+restate the cell flag $\zeta_i$, the detector of Eq. (24) (their Eq. (34)), the
+stricter sensor (their Eq. (36)) and the flux
+$\hat f_{i+1/2}=f_{\mathrm m}+f_{\mathrm j}(\tanh\mathcal A+\varsigma)/(1+\varsigma\tanh\mathcal A)$
+with $\mathcal A=0.91$, or $1.23$ where the stricter sensor holds, "as the same value
+in" Liang et al. (2022). The printed fallback is the first-order flux $f_i$ where
+$(f_{i+1}-f_i)(f_i-f_{i-1})\le10^{-15}$; the central flux for non-monotone triples is
+not restated. The cell flags are those of the TENO5 classification that also drives
+the stencil selection, so the detector again adds no parameter. Their evidence
+(fifth order on Gaussian-pulse advection, a sharper Sod shock and contact, a
+better-resolved Lax rarefaction, better double-Mach slip lines than WENO5-Z, TENO5 and TENO6) is for the combined scheme, so
+the contribution of the jump flux is not separated (§4, Figs. 4–16).
+
+## A finite-volume multiphase analogue
+
+[Zhang et al. (2024a)](/sources/zhang-2024.md) (§1, §3.3) cite TENO-THINC and its
+symmetry treatment in building a WENO–THINC hybrid for the
+[five-equation model](/definitions/five-equation-model.md). Their switch is not a TENO
+flag pattern but a volume-fraction test: a cell is interfacial if
+$10^{-3}<\phi_{1,i}<1-10^{-3}$ and $\phi_1$ is locally monotone (Eq. (46)), and there
+only $\phi_1$ and the two partial densities take THINC values
+([THINC](/methods/thinc-reconstruction.md)).
+
 ## Evidence for the original TENO-THINC
 
 All runs use characteristic-wise reconstruction with Roe eigenvectors, Rusanov
@@ -227,3 +255,5 @@ more expensive than TENO5.
 - [Takagi et al. (2022)](/sources/takagi-2022.md) — §§1–5, Eqs. (15)–(20), Tables 1–3, Figs. 2–25.
 - [Fu (2023)](/sources/fu-2023.md) — §3.5, Eqs. (25)–(26), Fig. 8: review of TENO-THINC.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §§1–5, Eqs. (16)–(33), Tables 1–4, Figs. 2–25: improved detector, interpolation-like two-steepness flux, evidence.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.3, Eqs. (33)–(36); §4: detector and two-steepness flux reused in a Gaussian-RBF TENO.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §1, §3.3, Eq. (46): volume-fraction switch of a finite-volume WENO–THINC multiphase hybrid.

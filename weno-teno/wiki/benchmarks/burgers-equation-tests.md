@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: sine data for accuracy 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Burgers equation tests
@@ -36,11 +36,16 @@ that reduce exactly to Burgers.
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 5 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.15$, 20–320 cells | $0.5$, 20 and 40 cells, reference WENO-JS on 10000 |
 | [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) §4.4 | $u_0=\sin(2\pi x)\sin(2\pi y)+0.1$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, boundary conditions not stated | $0.05$, AMR | $0.2$, $0.6$, $1.0$, AMR levels 3–5 |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.2 | $u_0=0.25+0.5\sin(\pi x)$ | $[-1,1]$, periodic, boundary closures kept active | $0.3$, 40–640 points | $4$, $7.9$, $8.1$, 200 points |
+| [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.1–3.2 | IC0 $u_0=\sin(2\pi x)$; IC1 $u_0=\sin(2\pi x-\pi/2)$ | $[0,1]$, periodic | $0.07$, $N_x=39$–$7995$ | $0.2$, $2.0$ (IC0), $0.17$ (IC1); Fourier, RK4 |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.1 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[-2,2]^2$, periodic, triangles | $0.5/\pi$, 58–14848 cells | — |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.1–3.2 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 100–200 points or cells; $100^2$–$200^2$ | — |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
-& Qiu, also run by Fan et al.); for Calhoun et al.'s two-dimensional
+& Qiu, also run by Fan et al., by Zhang & Zhu and, on $[-2,2]^2$, by Lin
+& Zhu); for $u_0=\sin(2\pi x)$, Kolluru et al. state
+$t_{\mathrm b}=1/(2\pi)\simeq0.159$, the shock forming at $x=0.5$; for Calhoun et al.'s two-dimensional
 data, whose characteristics carry the Jacobian
 $1+t\,(\partial_xu_0+\partial_yu_0)$ and
 $\partial_xu_0+\partial_yu_0=2\pi\sin(2\pi(x+y))$,
@@ -84,6 +89,28 @@ implicit Euler is first order and the unlimited DIRK–CWENO scheme D3P1
 third order on the same data (Fig. 1). After the shock forms, Q3P1 is
 slightly more diffusive than D3P1 but much less than implicit Euler,
 and at $\Delta t=5h$ it reduces D3P1's oscillations (Figs. 4–5).
+
+**Multi-resolution WENO with fewer stencils.** Two schemes of the
+Zhu group, both compared with the
+[multi-resolution WENO](/methods/multi-resolution-weno.md) of Zhu & Shu
+on the same data, run the smooth sine. Lin & Zhu's finite-volume
+ALW-MR-WENO on triangles, which keeps only a one-cell and one large
+stencil, reaches finest-mesh $L^1$ errors $4.90\times10^{-5}$ (third
+order), $1.36\times10^{-6}$ (fourth) and $1.63\times10^{-7}$ (fifth),
+identical to MR-WENO; the fifth-order $L^1$ orders are 2.17, 5.02,
+4.98, 4.88 and the fourth-order ones 3.02, 3.61, 3.97, 4.41, the
+finest-mesh $L^\infty$ orders 2.75, 3.95 and 4.82 (Case 3.1, Table 3.2,
+CFL 0.6, third-order TVD Runge–Kutta). Zhang & Zhu's ghost
+multi-resolution GMR-WENO, built on one central stencil, gives at third
+order, 200 points, $L^1$ error $1.27\times10^{-5}$ and $L^\infty$ error
+$2.37\times10^{-4}$, against $2.25\times10^{-5}$ and $4.61\times10^{-4}$ for
+MR-WENO3; at fifth and seventh order the $L^1$ errors are identical to
+MR-WENO's to the printed digits ($2.27\times10^{-8}$ for both fifth-order
+finite-difference schemes at 200 points) (Ex. 3.1, Table 3.2). Their
+third-order $L^\infty$ orders on Burgers are 2.25–3.37; they take
+$\Delta t\sim(\Delta x)^{\nu/3}$ for a scheme of order $\nu$ to keep the
+third-order Runge–Kutta error below the spatial one, and GMR-WENO
+reaches a given error in less CPU time (Figs. 3.1–3.4).
 
 **Symmetric smoothness indicators.** Zhong et al.'s fifth-order
 finite-volume IMWENO-P, whose smoothness indicators satisfy their
@@ -137,6 +164,45 @@ inviscid low range under-damps low wavenumbers; their
 [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md), tuned
 on this test, matches the exact spectrum best (Fig. 1).
 
+**Spectral relaxation.** Kolluru et al. add to a Fourier
+pseudo-spectral method a relaxation of the solution, at rate $1/\tau$,
+towards its convolution with a positive kernel (spectral relaxation, SR,
+or its time-discontinuous projection form, SP), with exponents
+$(\alpha_{\mathrm{SR}},\gamma_{\mathrm{SR}})$ (page-local; their $(\alpha,\gamma)$) that set how $\tau$ and the
+kernel width scale with $N$; see
+[artificial and spectral viscosity](/methods/artificial-viscosity.md).
+On IC0 without dealiasing, the Fejér–Korovkin kernel with
+$(\alpha_{\mathrm{SR}},\gamma_{\mathrm{SR}})=(0.7,0.99)$, the optimum of a parameter search over
+$t\in[0,9.9]$, removes the "tygers" (localized oscillatory structures that the
+truncated pseudo-spectral Burgers solution develops in smooth regions
+away from the shock) and is monotone at the shock; its smooth-data order
+at $t=0.07$ is about 1.28 ($L^1$) and 1.27 ($L^2$), after the shock about
+0.9 and 0.78, with $L^1$ errors at $N_x=7995$ of $5.8\times10^{-6}$,
+$4.6\times10^{-4}$ and $6.5\times10^{-5}$ at $t=0.07$, $0.2$ and $2$
+(Table 1). Their heuristic scaling of the relaxation term gives an
+order $N^{-(2\gamma_{\mathrm{SR}}-\alpha_{\mathrm{SR}})}$, i.e. $2-\alpha_{\mathrm{SR}}$ for $\gamma_{\mathrm{SR}}\simeq1$, and
+their Fig. 4 shows orders falling from about 1.95 at $\alpha_{\mathrm{SR}}=0$ to about
+1.05 at $\alpha_{\mathrm{SR}}=0.9$, which the authors take as confirming the
+heuristic (§3.1). The de la Vallée-Poussin kernel with $(0.89,0.9)$
+converges spectrally before the shock, $L^1$ errors from
+$1.2\times10^{-5}$ at $N_x=39$ to $2.8\times10^{-13}$ at 205 (orders 6.82,
+9.89, 15.28, then round-off), but after the shock its $L^2$ order is
+only about 0.5 ($t=0.2$) and 0.44 ($t=2$) against about 0.8 for
+Fejér–Korovkin, at equal $L^1$ order (about 0.95; Table 2). The authors
+attribute the better shock convergence of the low-order kernel to its
+monotonicity and maximum principle, and conclude that "high-order
+approximations as the sole criterion for designing accurate numerical
+schemes can be misleading" (§3.1). Spectral vanishing viscosity with
+$\epsilon=N^{-1}$, $M=2\sqrt N$ (their parameters) keeps small Gibbs-like
+oscillations at the shock (Fig. 7). On IC1 the plain Fejér–Korovkin run
+with $(0.97,0.98)$ blows up and needs $(1.18,0.99)$ (orders about 0.80 in
+$L^1$, 0.40 in $L^2$ after the shock; Table 3); with 2/3 dealiasing
+$(0.97,0.98)$ is stable, with $L^1$ orders about 0.99 at $t=0.07$ and
+0.95 at $t=2$ (Table 4). Dealiasing makes the plain pseudo-spectral
+method worse for IC0 and better for IC1, from which the authors
+conclude that the growth of aliasing errors depends on the initial data
+(§3.2, Fig. 10).
+
 **Active Flux on adaptive grids.** Calhoun, Chudzik & Helzel run the
 two-dimensional sine data with their Cartesian
 [Active Flux](/methods/active-flux.md) method in ForestClaw
@@ -187,6 +253,41 @@ $s=\sqrt{1+\mu_2t}$ the path $z_s=1+(\mu_1/\mu_2)s(s-1)-s$ starts at
 $z_s(0)=0$ and moves at the Rankine–Hugoniot speed
 $\tfrac12\big(\mu_1+\mu_2(z_s-1)/(1+\mu_2t)\big)$ *(compiler check,
 not in the sources)*.
+
+[Naudet & Zahr (2024)](/sources/naudet-2024.md) (§5.1) run the same
+problems with the space-time version of the method, in which the
+space-time domain is cut into $S$ slabs solved one after another
+(HOIST):
+
+- *Accelerating shock leaving the domain* (§5.1.1): $z\in(-0.2,1)$,
+  $t\in(0,1)$, $\mu_1=4$, $\mu_2=3$, the exact solution (48) and shock
+  path (49) of the problem above. On 192 quadratic ($p=q=2$) space-time
+  simplices split into $S=1,2,4,8$ slabs of initial heights $1.2$, $0.6$,
+  $0.3$, $0.15$ (the heights are then optimized; $1.2$ is the time interval
+  of Huang & Zahr, longer than the $(0,1)$ printed here), with 100
+  iterations per slab, "as more slabs are added, the
+  residuals converge more rapidly and to deeper tolerances" (Fig. 9). A
+  translating top boundary of the slab places the exit of the shock
+  through $z=1$ exactly; with shock boundary conditions ($S=5$, 6 spatial
+  elements, 24 space-time elements in the first slab) the method
+  "eliminates over half of the space-time elements" (Figs. 10–11).
+  Their path (49), $(\mu_1/\mu_2+1)(1-s)+\mu_1t$, equals Huang & Zahr's
+  $(s-1)(4s-3)/3$ for these $\mu$ and reaches $z=1$ at $s=7/4$, i.e.
+  $t=11/16\approx0.69$, in the fifth slab for $S=8$, as they state
+  *(compiler check, not in the sources)*.
+- *Shock formation and merger* (§5.1.2): the Gaussian data above on
+  $(-1,1)\times(0,1)$, one slab, 96 quadratic triangles; eight rounds of
+  adaptive refinement give 207 triangles that resolve the formation
+  point and agree with a highly refined second-order finite-volume
+  solution at $t=0.1$ (Figs. 12–13).
+- *Curved shock in two dimensions* (§5.1.3, data from Huang & Zahr's
+  method-of-lines paper): flux $\tfrac12u^2(1,0)$ on $(-1,1)^2$,
+  $t\in(0,1.5)$,
+  $u_0=\tfrac43(x+0.75)\big(0.5-2(y^2-0.25)\big)$ on
+  $(-1,0)\times(-0.5,0.5)$ and $0$ elsewhere; three slabs, 32 spatial
+  triangles extruded to 448 quadratic tetrahedra in the first slab. The
+  initially straight shock curves and is captured by the curved
+  elements (Fig. 14).
 
 ## Energy and entropy tests
 
@@ -336,6 +437,21 @@ in the sources)*, matching Zheng et al.'s statement.
   and 3.73; the printed slopes agree with the printed errors and mesh
   sizes ($\ln(6.36/0.866)/\ln(3.63/1.81)=2.87$) *(compiler check, not
   in the sources)*.
+- Naudet & Zahr's Eq. (47) prints the same initial condition
+  $\mu_1H(-z)-\mu_2H(z)$ as Huang & Zahr's (78), again inconsistent with
+  their exact solution (48) and path (49), which are consistent with each
+  other and satisfy the Rankine–Hugoniot speed *(compiler check, not in
+  the sources)*; their §5.1.1 calls $x_s$ "the shock speed", whereas
+  (48)–(49) use it as the shock position.
+- Kolluru et al.'s optimal parameters $\alpha_{\mathrm{SR}}=0.7$ (SR) and $0.65$ (SP)
+  lie outside the range $1<\alpha_{\mathrm{SR}}<2$ of the convergence proof they cite;
+  they attribute the convergence to initial-data-specific "compensation
+  mechanisms" not covered by the theory (§3.2). Their Fig. 4 computes
+  orders from $L^\infty$ errors, while the surrounding text and Table 1
+  use $L^1$ and $L^2$.
+- Lin & Zhu pair their fifth-order scheme with third-order TVD
+  Runge–Kutta at CFL 0.6 and report fifth-order rates without saying
+  whether $\Delta t$ was reduced in the accuracy test.
 - Calhoun et al. print the refinement criterion as
   $(q_{i,j+1}-q_{i,j+1})/(2\Delta y)\ge15$ (their $q$ is $u$), which is
   identically zero, next to the centred
@@ -364,3 +480,7 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.2, Table 11, Figs. 3–4.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.1, Ex. 5, Table 6, Fig. 3.
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §2.2, §4.4, Eqs. (7)–(10), (30), Fig. 12 (arXiv v2).
+- [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §2.2, §3.1–3.2, Tables 1–4, Figs. 3–4, 7, 10 (arXiv v2).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.1, Table 3.2.
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.1.1–5.1.3, Eqs. (46)–(51), Figs. 9–14.
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — §3, Ex. 3.1–3.2, Table 3.2, Figs. 3.1–3.4.

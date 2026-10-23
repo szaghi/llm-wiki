@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Roe approximate Riemann solver
@@ -83,12 +83,42 @@ The fix itself is not written out in any of these sources.
 | [Hong et al. (2022)](/sources/hong-2022.md) | FD WENO/TENO comparison | default flux for systems; van Leer flux-vector splitting for the double Mach reflection and 2D Riemann problems |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) | second-order Godunov FV, HD and MHD (IDEFIX) | linearized Roe solver of Cargo and Gallice for MHD; Sod tube (Roe, linear, RK2, 500 points), Brio–Wu tube, magnetized rotor; RK3 + PPM + Roe is the most accurate Orszag–Tang combination at a given resolution (§4.1–4.2, Figs. 2, 6, 9–11) |
 | [Huang & Zahr (2022)](/sources/huang-2022.md) | high-order implicit shock tracking (DG) | smoothed Roe flux with Harten–Hyman fix |
+| [Naudet & Zahr (2024)](/sources/naudet-2024.md) | space-time implicit shock tracking (DG on space-time slabs) | Roe flux in space-time form, eigenvalues shifted by the time component of the normal |
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) | FD adaptive TENO | blast waves and Rayleigh–Taylor (§4.4, §4.7) |
 | [Liang et al. (2022)](/sources/liang-2022.md) | FD TENO with THINC switch | blast waves (§4.3) |
 | [Fu (2021)](/sources/fu-2021.md), [Takagi et al. (2022)](/sources/takagi-2022.md) | FD TENO, TENO-THINC | Rayleigh–Taylor with Rusanov and Roe fluxes ([Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)) |
 | [Basile et al. (2022)](/sources/basile-2022.md) | modal DG (CODA) | convective flux with Harten-type fix |
 | [Berta et al. (2024)](/sources/berta-2024.md) | fourth-order FV, MHD and relativistic MHD (PLUTO) | one of six solvers on pointwise-reconstructed face states; Orszag–Tang runs with Roe or HLLD and UCT-HLLD electric fields (§3.3, §5.6) |
 | [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) | FV Hermite WENO, relativistic hydrodynamics | no Roe flux (global Lax–Friedrichs); the eigenvectors of the Eulderink–Mellema Roe matrix, rescaled, for the characteristic reconstruction (§3.1.3, Remark 3.3) |
+
+## Space-time form
+
+[Naudet & Zahr (2024)](/sources/naudet-2024.md) (§2.1–2.2, Eqs. (2)–(17)) write the generic
+linearized-Riemann-solver flux across a face with unit spatial normal $\hat n_x$ as
+$\tfrac12\big(f_x(u_{\mathrm{in}})+f_x(u_{\mathrm{ex}})\big)\hat n_x+\tfrac12\tilde A(u_{\mathrm{in}}-u_{\mathrm{ex}})$,
+with $f_x$ the $m\times d'$ spatial flux (columns $f^{(d)}$), $u_{\mathrm{in}}$, $u_{\mathrm{ex}}$ the
+interior and exterior traces of the element and $\tilde A$ a dissipation matrix (page-local; the
+sign of the jump term follows from taking the interior trace first). Roe takes
+$\tilde A=\lvert A_x(\hat u,\hat n_x)\rvert=\hat R\lvert\hat\Lambda_x\rvert\hat R^{-1}$, the projected
+Jacobian $A_x=\partial(f_x\hat n_x)/\partial u$ at the Roe average $\hat u$ with its eigenvector and
+eigenvalue matrices $\hat R$, $\hat\Lambda_x$ (page-local); Rusanov takes the largest eigenvalue
+modulus of the two traces times the identity, Vijayasundaram the Jacobian at the arithmetic mean
+(Remark 2). Smoothed and entropy-fixed versions replace $\lvert\cdot\rvert$ by a smoothed absolute
+value or an entropy fix (Remark 3).
+
+For a time-dependent law rewritten as a steady law on a space-time slab, with space-time flux
+$[f_x(u)\ \ u]$ and space-time unit normal $n=(n_x,n_t)$, $n_x=\lVert n_x\rVert\hat n_x$
+(page-local), the projected space-time Jacobian is
+
+$$A_{xt}(u,n)=\lVert n_x\rVert\,A_x(u,\hat n_x)+n_t\,I,\qquad \Lambda_{xt}=\lVert n_x\rVert\Lambda_x+n_tI,\qquad R_{xt}=R$$
+
+(Eqs. (10)–(12)), so the space-time Roe flux uses
+$\tilde A=\hat R\big\lvert\lVert n_x\rVert\hat\Lambda_x+n_tI\big\rvert\hat R^{-1}$ (Eq. (15)): the
+eigenvectors are those of the spatial problem and only the eigenvalues shift by $n_t$. The authors
+call this the removal of "one of the implementation burdens associated with space-time methods".
+They use the Roe flux in the space-time [implicit shock tracking](/methods/implicit-shock-tracking.md)
+of Burgers, shallow-water and Euler problems, with Roe averages and eigen-decompositions of the
+shallow-water and Euler Jacobians derived with Maple (§5, App. A).
 
 ## Lagrangian acoustic form between particles
 
@@ -142,3 +172,4 @@ micro-jet that LWLS-WENO-Z gives (§5.2.3, Fig. 14).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.1 (Eqs. (9a)–(10e), Remark 1), §4.1 (Tables 1–2), §5.2.1, §5.2.3 (Fig. 14).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3, Remark 3.3 (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4.4.
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §2.1–2.2 (Eqs. (2)–(17), Remarks 2–5), §5, App. A.

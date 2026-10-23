@@ -151,7 +151,7 @@ of [50] is cut off but its DOI is complete, and the DOI of [17] is possibly trun
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–7 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source is cited on:
 
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)

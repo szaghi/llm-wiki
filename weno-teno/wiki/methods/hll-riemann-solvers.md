@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -195,6 +195,31 @@ throughout and, for the 2D shock–entropy wave and the
 [double Mach reflection](/benchmarks/double-mach-reflection.md), the shock-stable HLLC of
 Fleischmann et al. to avoid the carbuncle that appeared in the earlier paper (§3, Exs. 3.7–3.8;
 [carbuncle](/definitions/carbuncle-phenomenon.md)).
+
+**Six-equation model in wave-propagation form** ([Wakimura et al. (2024)](/sources/wakimura-2024.md),
+§3.3, Eqs. (37)–(44), App. A). For the six-equation two-phase model of Pelanti and Shyue, with
+conserved vector $(\phi_1,\phi_1\rho_1,\phi_2\rho_2,\rho v,\phi_1E_1,\phi_2E_2)$ ($E_k$ the
+phasic total energy per unit volume of phase $k$, page-local; $\phi_k$, $\rho_k$ registry §10),
+HLLC is used in LeVeque's fluctuation form rather than as a flux. The speeds are
+$s^-=\min(v^--c^-,v^+-c^+)$, $s^+=\max(v^-+c^-,v^++c^+)$ (Eq. (40)), the contact speed is the
+Batten form above (but see Qualifications), and with $\chi^\pm$ as above the star states are
+
+$$u^{*,\pm}=\Big(\phi_1,\ \chi\,\phi_1\rho_1,\ \chi\,\phi_2\rho_2,\ \chi\,\rho s^*,\ \chi\,\phi_1\rho_1\Big(\frac{E_1}{\rho_1}+(s^*-v)\Big(s^*+\frac{p}{\rho_1(s-v)}\Big)\Big),\ \chi\,\phi_2\rho_2\Big(\frac{E_2}{\rho_2}+(s^*-v)\Big(s^*+\frac{p}{\rho_2(s-v)}\Big)\Big)\Big)^\pm$$
+
+(1D, the superscript $\pm$ outside the bracket meaning evaluation at $u^\pm$ with $s=s^\pm$,
+$\chi=\chi^\pm$), each phasic energy carried across the outer wave with the mixture pressure
+$p$. The three waves $\mathcal W^1=u^{*,-}-u^-$, $\mathcal W^2=u^{*,+}-u^{*,-}$,
+$\mathcal W^3=u^+-u^{*,+}$ and speeds $s^-,s^*,s^+$ (page-local $\mathcal W^l$) give the
+fluctuations $\sum_l(s^l)^\pm\mathcal W^l$ with $(s)^\pm=\tfrac12(s\pm\lvert s\rvert)$, and a
+second Riemann problem between the two reconstructed states inside each cell gives the total
+fluctuation of the high-order wave-propagation method of Ketcheson, Parsani and LeVeque. To keep
+mirror symmetry exactly in floating point, the authors add the $v\mp c$ waves before the contact
+wave and the total fluctuation last (Eqs. (A.3)–(A.5);
+[symmetry preservation](/properties/symmetry-preservation.md)); no symmetry-error measurement is
+shown. The interface states come from BVD-selected MUSCL or
+[THINC](/methods/thinc-reconstruction.md) reconstructions of quasi-primitive variables
+([boundary variation diminishing](/definitions/boundary-variation-diminishing.md)), and the
+relaxation terms are applied afterwards by [operator splitting](/methods/operator-splitting.md).
 
 **Moving curvilinear meshes** ([Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md),
 §5.1.1, Eqs. (26)–(28)). In contravariant form the speeds are
@@ -472,6 +497,14 @@ kinetic-energy-preserving and the expensive entropy-conservative volume fluxes. 
 directional HLL flux is slightly *faster* than the Cartesian one (22.9 vs 23.3 ns), against
 the text's general statement that Cartesian fluxes are 5–20 % faster.
 
+## Qualifications
+
+- Wakimura et al. (2024) print the contact speed (Eq. (41)) with the pressure difference
+  $p^--p^+$ in the numerator, where the Batten form printed by Wong et al. above has $p^+-p^-$.
+  *(compiler check, not in the sources: for $v^\pm=0$, equal densities and $s^\mp=\mp c$ the
+  printed form gives $s^*=-(p^--p^+)/(2\rho c)$, a contact moving towards the high-pressure side,
+  so the printed sign is a slip; Wong et al.'s form gives $+(p^--p^+)/(2\rho c)$.)*
+
 # Citations
 
 - [Balsara et al. (2024)](/sources/balsara-2024.md) — §III (Eqs. (3.1)–(3.9)), §IV (accepted manuscript).
@@ -513,3 +546,4 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Long et al. (2023)](/sources/long-2023.md) — §3.2 (Eqs. (13)–(15)).
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §2.2 (Eqs. (11)–(13)).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.3, §4, §5.4–5.7, App. B (Eqs. (B.1)–(B.6)) (arXiv v4).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.3 (Eqs. (37)–(44)), App. A (Eqs. (A.3)–(A.5)).

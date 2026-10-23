@@ -157,7 +157,7 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–7 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–8 (2026-10-23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)

@@ -138,7 +138,7 @@ and [15], [32] are theses. No printed duplicates were found.
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–7 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–8 (2026-10-23). This source is cited on:
 
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
@@ -148,5 +148,6 @@ Chunk 3 (2026-10-22), cited further in chunks 4–7 (2026-10-23). This source is
 * [Flux reconstruction and energy-stable FR](/methods/flux-reconstruction.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Local conservation is equivalent to a flux form](/results/local-conservation-flux-form.md)
+* [Spectral difference method](/methods/spectral-difference-method.md)
 * [Split convective forms](/methods/split-convective-forms.md)
 * [Summation-by-parts operator](/operators/summation-by-parts-operator.md)

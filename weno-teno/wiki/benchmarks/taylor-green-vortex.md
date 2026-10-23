@@ -5,7 +5,7 @@ description: "Periodic vortex flow that transitions to turbulence: inviscid at l
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Taylor–Green vortex
@@ -85,6 +85,16 @@ against Brachet et al.'s DNS, and in the supersonic variant of Lusher
 & Sandham ($M=1.25$, $\mathrm{Re}=1600$, density set for a constant
 initial temperature, Eq. 47) on $128^3$ against TENO6 on $512^3$; HLLC,
 TVD-RK3.
+[Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.7 and
+[Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.7 print the field with
+$L=V_0=\rho_0=1$, $p_0=100$ and
+$p=p_0+\frac{\rho_0V_0^2}{16}[\cos(2x/L)+\cos(2y/L)][\cos(2z/L)+2]$, the
+form of Maltsev et al., on $128^3$ points with $\gamma=1.4$, CFL 0.6 and
+third-order TVD Runge–Kutta; they plot the volume-averaged kinetic
+energy, initially and exactly $0.125$ in their statement, and $Q=0.5$
+iso-surfaces at $t=10$, without stating the end time of the energy
+history. The initial value $\tfrac1{(2\pi)^3}\int\tfrac12(v_1^2+v_2^2)\,dV=\tfrac18$
+holds for these data *(compiler check, not in the sources)*.
 
 **Inviscid, supersonic.** Maltsev et al. §3.7 run the inviscid form
 of Lusher & Sandham's supersonic vortex: same domain and velocity,
@@ -271,6 +281,16 @@ three schemes underestimate the total viscous dissipation, WCNS-SA and
 WCNS-LD less than ONL6 (Fig. 25). Per 1000 steps of the supersonic case
 on 32 Xeon Gold 6154 cores they take 4592 s (ONL6), 4630 s (WCNS-LD)
 and 4713 s (WCNS-SA), 3 % more for the adaptive scheme (Table 4).
+
+Zuo & Zhu's (2024a, 2024b) two hybrid multi-resolution WENO schemes, which apply
+[MR-WENO](/methods/multi-resolution-weno.md) only in cells flagged by
+their extremum-based troubled-cell indicators and the linear upwind
+scheme elsewhere ([hybrid schemes](/methods/hybrid-weno.md)), are
+presented in both papers as having "substantially lower dissipations"
+than MR-WENO of the same order, on the evidence of the kinetic-energy
+histories (2024a, Figs. 3.11–3.12; 2024b, Figs. 3.11–3.12). The costs are MMR/MR CPU ratios of 31.6 %, 24.2 % and 20.7 % at orders 5, 7, 9
+(2024a, Table 3.1), and MR-WENO 378045, 659238 and 962971 s against
+HMR-WENO 100580, 167615 and 281879 s (2024b, Table 3.1, a laptop).
 
 **Hybrid DG–FV in under-resolved vortices.** Maltsev et al. find the
 hybrid DG–FV on $64^3$ closer than pure FV to the DNS kinetic energy and
@@ -535,3 +555,5 @@ cells (§9, Figs. 21–24).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §5, Fig. 2 (arXiv v2).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §§3.6–3.7, Eqs. (47)–(48), Figs. 16–20.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.2, Eqs. (41)–(44), Table 5, Fig. 14 (arXiv v1).
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.7, Figs. 3.11–3.12, Table 3.1.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.7, Eq. (3.5), Figs. 3.11–3.12, Table 3.1.

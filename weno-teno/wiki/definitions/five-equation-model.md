@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -72,6 +72,21 @@ sound speed is $\rho c^2=\gamma(p+p_\infty)$ with the mixture constants
 mixture by $\frac1{\gamma-1}=\sum_k\frac{\phi_k}{\gamma_k-1}$, with
 $\gamma_k$ (page-local) the ratio of specific heats of phase $k$
 (Eqs. 10–12).
+
+**With viscosity and surface tension.** [Zhang et al. (2024a)](/sources/zhang-2024.md)
+(§2.1, Eqs. (1)–(8)) use the Allaire / Murrone–Guillard form with the viscous stress in
+the momentum and energy equations and surface tension as a continuum volume force
+(Perigaud & Saurel): $-\sigma_{\mathrm{st}}\kappa_{\mathrm c}\nabla\phi_1$ in the momentum
+equation and $-\sigma_{\mathrm{st}}\kappa_{\mathrm c}\big(\nabla\cdot(\phi_1v)-\phi_1\nabla\cdot v\big)$
+in the energy equation, the volume-fraction equation written as
+$\partial_t\phi_1+\nabla\cdot(\phi_1v)-\phi_1\nabla\cdot v=0$ and the capillary energy term
+in the same flux-plus-source form "for consistency". *(Compiler check, not in the sources:
+the capillary energy term equals $\sigma_{\mathrm{st}}\kappa_{\mathrm c}\,v\cdot\nabla\phi_1$.)*
+They compare three mixture sound speeds with stiffened-gas phases (§2.3, Fig. 1): the
+mixture-constant form $\rho c^2=\gamma(p+p_\infty)$, used throughout; Wood's, which is
+non-monotone in the volume fraction and "may" give inaccurate acoustics across a diffused
+interface and computational failure; and the six-equation frozen form, which also works but
+is "not as efficient" in their tests.
 
 **Kapila form.** Bryngelson et al. write the model as
 $\partial_tq+\nabla\cdot F(q)+h(q)\nabla\cdot v=s(q)$ with
@@ -226,6 +241,55 @@ Wood's, the five- and six-equation models reconstruct the same
 variables, and the six-equation model costs about 5 % more on a
 spherical bubble collapse (§3.2, §4.6, quoting an earlier MFC paper).
 
+**Mixture-energy-consistent form with phase change.**
+[Wakimura et al. (2024)](/sources/wakimura-2024.md) (§2, Eqs. (1)–(16)) use the
+six-equation model of Pelanti & Shyue, with phasic total energies
+$E_k=\rho_ke_k+\tfrac12\rho_k\lvert v\rvert^2$ (page-local) in place of internal energies:
+
+$$
+\begin{aligned}
+&\partial_t\phi_1+v\cdot\nabla\phi_1=\mathsf r_{\mathrm p}(p_1-p_2)+\frac{\mathcal Q}{\kappa_{\mathrm I}}+\frac{\dot m}{\rho_{\mathrm I}},\qquad
+\partial_t(\phi_k\rho_k)+\nabla\cdot(\phi_k\rho_kv)=\pm\dot m,\\
+&\partial_t(\rho v)+\nabla\cdot\big(\rho v\otimes v+(\phi_1p_1+\phi_2p_2)I\big)=0,\\
+&\partial_t(\phi_1E_1)+\nabla\cdot\big(\phi_1(E_1+p_1)v\big)+\Sigma=-\mathsf r_{\mathrm p}p_{\mathrm I}(p_1-p_2)+\mathcal Q+e_{\mathrm I}\dot m,
+\end{aligned}
+$$
+
+and the $\phi_2E_2$ equation with $-\Sigma$ and opposite sources, where
+$\Sigma=-v\cdot\big(Y_2\nabla(\phi_1p_1)-Y_1\nabla(\phi_2p_2)\big)$, $\dot m$ carries the
+$+$ sign in the phase-1 mass equation, the heat exchange is
+$\mathcal Q=\mathsf r_{\mathrm T}(T_2-T_1)$ and the mass transfer
+$\dot m=\mathsf r_{\mathrm g}(\mathsf g_2-\mathsf g_1)$ (page-local: relaxation rates
+$\mathsf r_{\mathrm p},\mathsf r_{\mathrm T},\mathsf r_{\mathrm g}$, phasic Gibbs energies
+$\mathsf g_k$, interface pressure $p_{\mathrm I}$, density $\rho_{\mathrm I}$, energy
+$e_{\mathrm I}$, coefficient $\kappa_{\mathrm I}$; the last three need not be specified for
+infinite rates). They choose it because its frozen sound speed $c^2=\sum_kY_kc_k^2$ is
+monotone in the volume fraction, unlike Wood's speed of Kapila's model, which (citing earlier
+works) can make transport of the mixture zone unstable (§1, §2.3). All rates are taken
+infinite and the model is solved by a fractional-step method
+([operator splitting](/methods/operator-splitting.md)): a hyperbolic step, then mechanical,
+thermal and chemical relaxation in one of four orderings (p; p–pT; p–pTg; p–pT–pTg, Eq. (45)),
+the last two with phase change. In closed form (Appendices B–D):
+
+- *mechanical:* with $p_{\mathrm I}=p^*$, the relaxed pressure solves
+  $a(p^*)^2+bp^*+d=0$, $a=\gamma_1\phi_2^0+\gamma_2\phi_1^0$,
+  $b=-\gamma_1\phi_2^0(p_2^0-p_{\infty,1})-\gamma_2\phi_1^0(p_1^0-p_{\infty,2})$,
+  $d=-\gamma_1\phi_2^0p_2^0p_{\infty,1}-\gamma_2\phi_1^0p_1^0p_{\infty,2}$, and
+  $\phi_k^*=\phi_k^0\,\frac{(\gamma_k-1)p^*+p_k^0+\gamma_kp_{\infty,k}}{(\gamma_k-1)p^*+p^*+\gamma_kp_{\infty,k}}$
+  (Eqs. (B.4)–(B.7), superscript $0$ the state before relaxation);
+- *thermal:* a quadratic in the common pressure at constant mass fractions (Eqs. (C.4)–(C.7));
+- *chemical:* a quadratic for the temperature as a function of pressure, substituted into the
+  saturation curve $\mathsf g_1=\mathsf g_2$ and solved for the pressure by Newton–Raphson
+  (Eqs. (D.4)–(D.7)).
+
+The roots are taken in a cancellation-free form, which still loses digits near a double root
+(App. E). Thermal and chemical relaxation act only where $10^{-4}\le\phi_1\le1-10^{-4}$, and
+chemical relaxation only where the liquid is above the saturation temperature, i.e. evaporation
+only; the authors found this does not affect the solution, without showing it (§2.4).
+*(Compiler check, not in the sources: the mechanical coefficients follow from
+$\phi_1^*+\phi_2^*=1$ with the printed $\phi_k^*$.)* The stiffened-gas parameters of water and
+dodecane are on the [stiffened-gas](/definitions/stiffened-gas-equation-of-state.md) page.
+
 ## Discretizing the non-conservative term
 
 The volume-fraction equation needs the velocity divergence (or the
@@ -250,6 +314,12 @@ as the fluxes; the sources do it in three ways.
   (Eqs. 93–94; $s_*$ the contact speed, $s^\pm$ the Einfeldt wave
   speeds, $v_1^\pm$ the face states), the volume fraction joining the
   HLLC star state of the two partial densities (Eq. 91;
+  [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+  Zhang et al. (2024a) (§3.1, Eqs. (21)–(26), App. B) take the same route in finite
+  volumes: $\phi_{1,i}\nabla\cdot v$ from the HLLC face velocities (Johnsen & Colonius),
+  and the surface-tension terms from the HLLC face volume fraction and face velocity, with
+  an HLLC star state and contact speed carrying the capillary pressure jump
+  $\sigma_{\mathrm{st}}\kappa_{\mathrm c}[\![\phi_1]\!]$ (after Garrick et al.; see
   [HLL-family solvers](/methods/hll-riemann-solvers.md)).
 - **Midpoint divergence.** Bryngelson et al. evaluate
   $(\nabla\cdot v)$ in each cell by a midpoint rule from face-averaged
@@ -322,6 +392,23 @@ agree on the remedy, reconstruction of primitive variables:
   weaker than the conditions of Beig & Johnsen (Theorem 5.2,
   Remark 5.2.1).
 
+- Zhang et al. (2024a) reconstruct all primitive variables with the
+  [incremental-stencil WENO](/methods/incremental-stencil-weno.md) and, in interfacial
+  cells, replace only $\phi_1$ and the two partial densities by
+  [THINC](/methods/thinc-reconstruction.md) values, the partial densities proportional to
+  the THINC volume fraction at constant phasic density; velocity and pressure keep the WENO
+  values "since pressure and velocity should be continuous at the interface" (§3.3,
+  Eq. (45)). On a water block advected ten periods through air ($N_x=128$) the velocity and
+  pressure errors are negligible and the interface free of oscillations (§4.1, Fig. 3).
+  *(Compiler check, not in the sources: the proportional reconstruction keeps each cell's
+  phasic densities constant at its face values, the property Huang & Johnsen's condition
+  below is meant to secure.)*
+- Wakimura et al. (2024) reconstruct the quasi-primitive vector
+  $(\phi_1,\phi_1\rho_1,\phi_2\rho_2,v,p)$ of the six-equation model, at second order only,
+  because "a numerical scheme that has accuracy higher than third-order may introduce
+  spurious oscillation error due to the reconstruction of primitive variables" (§1, stated
+  without evidence; see Qualifications).
+
 Jain & Moin (2022) meet the same requirement in a non-dissipative
 second-order central scheme without any reconstruction, by choosing the
 split forms of the face fluxes (§3.3, Lemma 3.1, proof in Appendix B as
@@ -387,6 +474,15 @@ and build a scheme that stays in it:
    without the limiters fails with an imaginary sound speed, while the
    limited scheme runs (§6.6; see
    [shock–water-column interaction](/benchmarks/shock-water-column.md)).
+
+[Zhang et al. (2024a)](/sources/zhang-2024.md) (§3.3, Eqs. (47)–(48), Algorithm 1) reuse
+the interpolation-limiter part of this construction after their WENO–THINC
+reconstruction, in the same three loops (partial densities, volume fractions, then
+$\rho c^2$), each blending the whole reconstructed primitive vector towards the cell value,
+with thresholds $10^{-11}$ for the first two and $10^{-9}$ for the third and an initial
+floor of $10^{-8}$; they add no flux limiter. In a Mach 10 bubble collapse the limiter fires
+in at most 0.04 % of the cells with their base scheme and in more than 1 % with WENO-JS5
+(§4.8, Fig. 16(b)).
 
 MFC takes a weaker route: volume fractions are clipped to $[0,1]$ and
 renormalized to sum to one only when mixture properties are computed,
@@ -487,6 +583,30 @@ fluid and ghost-fluid states in cut cells
   TENO to the five-equation model, so the bundle neither confirms nor
   contradicts the priority claim. Chamarthi's interface-thickness ranking is
   shown by plotted profiles and fields (Exs. 4.14–4.18).
+- Four sources judge Wood's sound speed in opposite directions. Bryngelson et al.
+  call the models without the Kapila term thermodynamically incomplete because they do
+  not reproduce Wood's mixture speed, and Jain & Moin prefer the Kapila form at strong
+  compression; Wakimura et al. (2024, §1) and Zhang et al. (2024a, §2.3) avoid Wood's speed
+  because it is non-monotone in the volume fraction and can make computations fail. The
+  first two speak of the model's physics, the last two of the speed used in the numerical
+  method, so the page records a difference of priorities, not a contradiction.
+- Wakimura et al.'s reason for staying at second order (spurious oscillations from
+  primitive-variable reconstruction above third order) is stated without evidence and
+  hedged ("may"); in the bundle, fifth-order WENO and gradient-based reconstructions of
+  primitive variables run on the five-equation model without interface oscillations
+  (Zhang et al. 2024a, Chamarthi 2023a, Wong et al. 2021, above).
+- Zhang et al. (2024a) print the deformation tensor as
+  $\tfrac12\big(\nabla\cdot v+(\nabla\cdot v)^\top\big)$ (Eq. (8)), a scalar where the
+  velocity gradient is meant, and state that $\rho c^2=(p+p_\infty)/(\gamma-1)$ is limited,
+  whereas their own Eq. (16) gives $\rho c^2=\gamma(p+p_\infty)$ *(compiler check, not in the
+  sources: both are positive exactly when $p+p_\infty>0$, so the limiter acts the same)*.
+- Wakimura et al. (received 24 February 2024, online 7 June 2024) state that "to our
+  knowledge, no symmetry-preserving methods have been proposed for two-phase flow" (App. A).
+  Zhang et al. (2024a) (received 7 August 2023, online 28 November 2023) call their THINC
+  reconstruction on the five-equation model "symmetry-preserving" (§5), implement it so as to
+  "preclude numerical asymmetry errors" (§1, §3.3) and show symmetry kept in a Mach 10
+  water-cylinder test (§4.7, Fig. 13); Wakimura et al. do not cite them
+  ([symmetry preservation](/properties/symmetry-preservation.md)).
 - Huang & Johnsen's scheme is at best second order (MUSCL with minmod,
   midpoint face fluxes, CFL $\le0.5$; §3.4), and their argument that
   Allaire's coefficient is inconsistent concerns the incompressible
@@ -504,3 +624,5 @@ fluid and ghost-fluid states in cut cells
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (contrast only).
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §2.1–2.10, Eqs. (1)–(8), (22)–(25), Theorems 2.2–2.5; §3.1, Definition 1, Theorem A.1; §3.4; §4; §5.1–5.3, Fig. 10, Theorem 5.2.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eqs. (1)–(5); §7.4.1 (parent model only).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1; §2, Eqs. (1)–(16); §3, Eq. (45); Appendices B–E: mixture-energy-consistent six-equation model with heat and mass transfer, infinite-rate relaxation in closed form.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2, Eqs. (1)–(18), Fig. 1; §3.1, Eqs. (21)–(26); §3.3, Eqs. (45)–(48), Algorithm 1; §4.1, §4.8; App. B: five-equation model with viscosity and surface tension, sound-speed choice, HLLC-consistent source terms, THINC on mass variables, interpolation limiter.

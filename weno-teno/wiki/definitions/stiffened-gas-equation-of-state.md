@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Stiffened-gas equation of state
@@ -38,7 +38,9 @@ constant (below)
 [Huang & Johnsen (2023)](/sources/huang-2023.md) §2.9, Eqs. 22–24;
 [Long, Cai & Pan (2023)](/sources/long-2023.md) §2.2, Eq. 3;
 [Paula et al. (2023)](/sources/paula-2023.md) §2.1, Eq. 3;
-[Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) Appendix B).
+[Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) Appendix B;
+[Wakimura et al. (2024)](/sources/wakimura-2024.md) §2.2, Eq. 4;
+[Zhang et al. (2024a)](/sources/zhang-2024.md) §2.2, Eqs. 9–10).
 Because only $p+p_\infty$ enters the sound speed, the pressure itself
 may be negative: [Wong et al. (2021)](/sources/wong-2021.md) §6.4 start
 a Sedov test in water at $p=-3\times10^7$ Pa, an admissible state since
@@ -95,6 +97,24 @@ $p+p_\infty>0$.
   $\partial h_k/\partial T=\gamma_kC_{v,k}$ (Eq. 11): the enthalpy of
   a stiffened gas depends on temperature alone. They do not print the
   $C_{v,k}$ and $e_{0,k}$ values they use.
+  [Wakimura et al. (2024)](/sources/wakimura-2024.md) (§2.2, Eqs. (4)–(8)) use the
+  same law with energy constant $e_{0,k}$ and entropy constant $s_{0,k}$ (their $\eta_k$,
+  $\eta'_k$), the same $T_k$, $s_k$ and Gibbs function, and the phasic sound speed
+  $c_k^2=\gamma_k(p_k+p_{\infty,k})/\rho_k$. The common pressure of the isobaric mixture is
+  $p=\dfrac{\rho e-\sum_k\phi_k\rho_ke_{0,k}-\sum_k\phi_k\gamma_kp_{\infty,k}/(\gamma_k-1)}{\sum_k\phi_k/(\gamma_k-1)}$
+  (Eq. (6)). Equal Gibbs functions of liquid (1) and vapour (2) define the saturation curve
+  (Eqs. (12)–(13)), with page-local $C_{p,k}=\gamma_kC_{v,k}$:
+  $$
+  A_{\mathrm s}+\frac{B_{\mathrm s}}{T}+C_{\mathrm s}\ln T+D_{\mathrm s}\ln(p+p_{\infty,1})-\ln(p+p_{\infty,2})=0,
+  $$
+  $A_{\mathrm s}=\frac{C_{p,1}-C_{p,2}+s_{0,2}-s_{0,1}}{C_{p,2}-C_{v,2}}$,
+  $B_{\mathrm s}=\frac{e_{0,1}-e_{0,2}}{C_{p,2}-C_{v,2}}$,
+  $C_{\mathrm s}=\frac{C_{p,2}-C_{p,1}}{C_{p,2}-C_{v,2}}$,
+  $D_{\mathrm s}=\frac{C_{p,1}-C_{v,1}}{C_{p,2}-C_{v,2}}$ (page-local coefficients).
+  *(Compiler check, not in the sources: $(g_1-g_2)/\big(T(C_{p,2}-C_{v,2})\big)$
+  with the Gibbs functions of the form above is exactly this left-hand side.)* It enters the
+  infinite-rate chemical relaxation of their six-equation model
+  ([five- and six-equation models](/definitions/five-equation-model.md)).
 - **Linear form.** Jain & Moin write each phase as
   $p_k=\alpha_k\rho_ke_k+\beta_k$, with $\alpha_k=\gamma_k-1$ and
   $\beta_k=-\gamma_kp_{\infty,k}$ for the stiffened gas (page-local
@@ -273,6 +293,13 @@ sound speed $c^2=\gamma(p+p_\infty)/\rho$ (§3.3–3.4).
 | Long et al. §2.2, water vapour | 1.33 | 0 | energy constant $1990\times10^3$ J/kg, $C_v=1399$ J/(kg K) |
 | Paula et al. §7.4.1–7.4.2, water | 4.4 | $6\times10^8$ Pa | SI |
 | Paula et al. §7.4.3, underwater explosion | 5.5 | $492.115\times10^6$ Pa | SI |
+| Wakimura et al. Table 1, liquid water ("for 300–500 K") | 2.35 | $10^9$ Pa | $e_0=-1167\times10^3$ J/kg, $s_0=0$, $C_v=1816$ J/(kg K) |
+| Wakimura et al. Table 1, water vapour | 1.43 | 0 | $e_0=2030\times10^3$ J/kg, $s_0=-23.4\times10^3$, $C_v=1040$ J/(kg K) |
+| Wakimura et al. Table 2, liquid dodecane ("for 300–500 K") | 2.35 | $4\times10^8$ Pa | $e_0=-775.269\times10^3$ J/kg, $s_0=0$, $C_v=1077.7$ J/(kg K) |
+| Wakimura et al. Table 2, dodecane vapour | 1.025 | 0 | $e_0=-237.547\times10^3$ J/kg, $s_0=-24.4\times10^3$, $C_v=1956.45$ J/(kg K) |
+| Zhang et al. (2024a) Table 1, water (dimensional tests, §§4.1–4.8) | 4.4 | $6.0\times10^8$ Pa | SI |
+| Zhang et al. (2024a) §4.12, water in droplet collision | 5.0 | $10^8$ Pa | SI |
+| Zhang et al. (2024a) §§4.9–4.11, water in capillary tests | — | 6000 | non-dimensional ($\gamma$ as Table 1) |
 | Jain & Moin §4, Taylor–Green and isotropic-turbulence tests | 1.4 | 0 | non-dimensional; in §5 the $p_{\infty,k}$ are chosen to equalize the turbulent Mach number, values not printed |
 
 The fits differ from test to test within one source (Tsoutsanis et al.
@@ -295,7 +322,18 @@ water density 1; §4.3, Eq. 50).
 - Huang & Johnsen (§4.2) and Long et al. (§2.2) give liquid water the
   same constants $\gamma=2.35$, $p_\infty=10^9$ Pa, but print its energy
   constant as $-1.167\times10^3$ J/kg and $-1167\times10^3$ J/kg, a factor
-  of 1000 apart.
+  of 1000 apart. Wakimura et al. (2024, Table 1) print $-1167\times10^3$ J/kg with
+  the same $\gamma$, $p_\infty$ and $C_v=1816$ J/(kg K) as Long et al., so two sources
+  agree on the larger value; their vapour constants differ from Long et al.'s
+  ($\gamma=1.43$ against $1.33$, $C_v=1040$ against $1399$).
+- Wakimura et al. label their dodecane fit "for 300–500 K" but start the vapour-bubble
+  test at 600 K (§4.4). Their liquid densities follow from the temperature form: e.g.
+  $(10^5+4\times10^8)/(1.35\cdot1077.7\cdot600)=458.3$ kg/m³, the printed $458.338$
+  *(compiler check, not in the sources)*.
+- Zhang et al. (2024a, Fig. 1) give the sound speeds $1625$ m/s for water at
+  $\rho=1000$ kg/m³ and $374$ m/s for air at $\rho=1$ kg/m³, both at $10^5$ Pa;
+  $\sqrt{4.4(10^5+6\times10^8)/1000}=1624.9$ and $\sqrt{1.4\cdot10^5}=374.2$ *(compiler
+  check, not in the sources)*.
 
 - The name is not uniform: Zheng et al. call the stiffened-gas energy
   relation the "Tait EOS"; the other sources call it stiffened gas, and
@@ -322,3 +360,5 @@ water density 1; §4.3, Eq. 50).
 - [Long, Cai & Pan (2023)](/sources/long-2023.md) — §2.2, Eq. (3); §4.5 (Tait law).
 - [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eq. (3); §7.4.1–7.4.3 (parameter values).
 - [Fujiwara, Tamaki & Kawai (2023)](/sources/fujiwara-2023.md) — Appendix B, Eqs. (B.1)–(B.2) (mass-fraction mixture rule).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §2.2, Eqs. (4)–(8), (12)–(13), Tables 1–2; §4.4: caloric form, saturation curve, water and dodecane constants.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2.2–2.3, Eqs. (9)–(16), Table 1, Fig. 1; §§4.9–4.12: parameter values and sound speeds.

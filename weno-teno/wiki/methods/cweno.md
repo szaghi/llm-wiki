@@ -3,9 +3,9 @@ type: Method
 title: "Central WENO (CWENO)"
 description: "Central WENO schemes subtract weighted low-order candidates from one central high-order polynomial and recombine them nonlinearly, so the linear weights may be any positive numbers summing to one and the result is a full polynomial on the cell; the page gives CWENO3, unstructured CWENO, WENO-ZQ and its scale-invariant form on triangles, CWENOZ as a DG limiter, predictor-based weights and costs."
 status: established
-aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit]
+aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit, ALW-MR-WENO, adaptive linear weights]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Central WENO (CWENO)
@@ -229,6 +229,39 @@ and 0.93 in Table 6, 1.07 and 1.02 in Table 7.)* On the explosion problems and t
 CWENO of equal order agree with the references (§4.3, §4.9;
 [explosion and implosion problems](/benchmarks/explosion-and-implosion-problems.md)).
 
+**Two stencils and adaptive linear weights on triangles.** Lin & Zhu (2024) reduce the CWENO combination
+on triangular meshes to two central stencils of unequal size: the target cell alone, with the constant
+$q_1=\bar u_0$, and one big stencil of at least 6, 10 or 15 cells (8, 12 and 20 listed, extended by edge
+neighbours when too few distinct cells remain) carrying a quadratic, cubic or quartic constrained
+least-squares fit that keeps the target average exactly, after Hu & Shu (§2, Steps 1.1–1.3, Eqs. (2.5)–(2.7);
+page-local $q_1$, $q_\ell$). The high-order polynomial is rewritten "with similar ideas for classical CWENO
+schemes" as $p_\ell=q_\ell/d_\ell-(d_1/d_\ell)\,p_1$ with $d_1+d_\ell=1$ (Eqs. (2.8)–(2.10)), weighted by WENO-Z-type
+weights $d_k\big(1+\tau/(\epsilon+\beta_k)\big)$, $\tau=|\beta_\ell-\beta_1|^2$, $\epsilon=10^{-10}$, exponent 1 on the
+ratio (Eqs. (2.12)–(2.13); [WENO-Z](/methods/weno-z.md)); the indicator $\beta_1$ of the constant is deferred to the
+authors' earlier triangular [multi-resolution WENO](/methods/multi-resolution-weno.md). The new element is an *a
+posteriori* adaptation of the linear weights inside each cell: the unnormalized high-order weight starts at
+$10^8$ (low-order weight 1), and while the tentative reconstruction at a boundary Gauss point deviates from
+$\bar u_0$ by more than $\max(\Phi_1,\Phi_2)$, $\Phi_1$ the minimum circumradius of the cell and its edge
+neighbours times $\min|\bar u|$ over them and $\Phi_2=\min_j|\bar u_0-\bar u_j|$ ("Condition I", called an
+improvement of the KXRCF indicator), the weight is divided by 100 and the weights recomputed, as long as it
+exceeds $10^{n_G}$, $n_G=2$ or 3 the Gauss points per edge (Steps 4.3–4.4, Eq. (2.15); page-local $\Phi_1$,
+$\Phi_2$, $n_G$; [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). *(Compiler check, not in the
+sources: from $10^8$ the sequence $10^6,10^4,10^2$ stops after at most three reductions for $n_G=2$ and 3, so
+the normalized high-order linear weight never falls below $100/101$; for any admissible weights the linear
+combination returns $q_\ell$ exactly, which is why they are free.)* The schemes (ALW-MR-WENO-3, 4, 5) use the
+Lax–Friedrichs flux at Gauss points, characteristic reconstruction for Euler and TVD-RK3 at CFL 0.6. They
+reach finest-mesh $L^1$ orders 2.84, 4.41, 4.88 on 2-D [Burgers](/benchmarks/burgers-equation-tests.md) and 3.03,
+4.32, 5.10 on the Euler [density wave](/benchmarks/density-wave-advection.md), with errors equal to those of the
+multi-resolution WENO on the two finest meshes (Tables 3.2–3.3), and take 0.60–0.96 of its CPU time on the shock
+tests, the largest saving at fifth order (Table 3.1; no hardware stated). Results on shock tubes,
+[Shu–Osher](/benchmarks/shu-osher-problem.md), [blast waves](/benchmarks/woodward-colella-blast-wave.md),
+[Schardin's problem](/benchmarks/shock-diffraction.md), [double Mach reflection](/benchmarks/double-mach-reflection.md),
+the [forward-facing step](/benchmarks/forward-facing-step.md) and NACA0012 flows are "comparable" to those of the
+multi-resolution scheme by figure. The authors claim "the first time that any high-order WENO schemes with the
+application of only two unequal-sized stencils are obtained on triangular meshes" (Abstract). *(Compiler check, not in the
+sources: the unstructured CWENO above combines a central stencil with several directional ones, so the claim
+rests on the count "only two".)*
+
 ## Position in the WENO family
 
 - **Stability before accuracy.** Balsara et al. (2024, §I) place CWENO in a trend of scheme design
@@ -307,3 +340,4 @@ cognate unequal-stencil approaches when introducing TENO-AA
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §3, Eqs. (3.17)–(3.18).
 - [Gu et al. (2023)](/sources/gu-2023.md) — §2.4.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (23)–(28); §3.2.2; §3.3; §4.3–4.5, §4.8–4.9, Tables 6–7.
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — Abstract; §1; §2, Steps 1–6, Eqs. (2.2)–(2.17); §3, Tables 3.1–3.3, Cases 3.1–3.11.

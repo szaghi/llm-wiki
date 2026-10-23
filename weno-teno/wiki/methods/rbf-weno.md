@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "RBF-based WENO"
-description: "RBF-based WENO replaces the polynomial candidates of finite-difference WENO by radial-basis-function interpolants; Jeong, Yang and Yoon's WENO-G uses Gaussians plus linear polynomials interpolated in the cell-average sense, RBF-dependent ideal weights and a locally fitted shape parameter that makes the five-point scheme sixth order, with new exponential-moment smoothness indicators."
+description: "RBF-based WENO and TENO replace polynomial candidates by radial-basis-function interpolants: Jeong, Yang and Yoon's WENO-G fits the Gaussian shape parameter to reach sixth order on five points with RBF ideal weights; Liang and Fu's Gaussian-RBF TENO selects one target stencil by TENO flags, needs no linear weights and adapts the shape parameter to the local scale."
 status: established
-aliases: [RBF-WENO, WENO-G, Gaussian RBF WENO, radial basis function WENO, RBF-ENO]
-tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+aliases: [RBF-WENO, WENO-G, Gaussian RBF WENO, radial basis function WENO, RBF-ENO, non-polynomial TENO, Gaussian RBF TENO]
+tags: [weno, teno, reconstruction, finite-difference]
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # RBF-based WENO
@@ -17,7 +17,8 @@ lineage: Iske–Sonar and Sonar, Aboiyar et al. (polyharmonic-spline ADER-WENO),
 (multiquadrics, arbitrary order), Hesthaven & Mönkeberg (RBF-ENO, entropy-stable, 2-D unstructured),
 Guo & Jung, Han et al. (Gauss-kriging) and Christlieb, Sands & Yang, and the exponential-polynomial
 WENO of Ha et al. Their own scheme, **WENO-G**, is a finite-difference scheme on the five-point
-stencil of WENO5 that reaches sixth order.
+stencil of WENO5 that reaches sixth order. Liang & Fu (2024a) carry Gaussian RBFs into
+[TENO](/methods/targeted-eno.md) with a different answer to the linear-weight problem (last section).
 
 ## Cell-average Gaussian interpolation
 
@@ -104,8 +105,98 @@ Euler, TVD-RK3 at CFL 0.4 and classical RK4 with $\Delta t\sim\Delta x^{3/2}$ fo
   Jiang–Shu ones inside the same RBF scheme (Example 5.9). Multiquadric and inverse multiquadric RBFs
   gave "better or at least similar" results (Remark 5.12, no data).
 
+## Gaussian-RBF TENO without linear weights (Liang & Fu 2024a)
+
+Liang & Fu (2024a) build a fifth-order finite-difference scheme of the [TENO](/methods/targeted-eno.md)
+family whose candidates are Gaussian-RBF interpolants and which needs no linear weights. They list three
+drawbacks of the RBF and exponential-polynomial WENO variants above: one fixed non-polynomial basis over
+the whole domain, optimal linear weights that are "complicated and time-consuming" or may "not exist"
+with non-polynomial bases above third order, and shape-parameter fitting by ratios of high derivatives,
+which they call unstable at critical points, citing Jeong et al. among others (§1). Jeong et al.'s
+WENO-G answers the second point by building all three local spaces on the central substencil (above);
+Liang & Fu answer it by dropping the convex combination.
+
+**Stencil selection.** The TENO5 machinery ($q=6$, $C_T=10^{-5}$, $\tau_5=|\beta_1-\beta_2|$ of the
+two non-central candidates in their numbering) is kept only to classify the three three-point
+stencils as smooth ($\delta_k=1$) or not. Each flag pattern selects one *target stencil*, "which utilizes
+as many smooth data as possible while not crossing the non-smooth region": the five-point stencil when
+all are smooth, a four-point one ($\{x_{i-2},\dots,x_{i+1}\}$ or $\{x_{i-1},\dots,x_{i+2}\}$) when the
+downwind or the upwind candidate is cut, a three-point one when only one candidate is smooth (§3.1,
+Fig. 2). The flux is the single reconstruction on the target stencil, so the order "recursively"
+drops from 5 to 4 to 3 near discontinuities, against classical TENO5, in which the renormalized
+combination of two candidates "will not achieve any accuracy order" above that of one candidate (§3.1).
+This is the stencil logic of [adaptive TENO](/methods/adaptive-teno.md) of Fu et al., by which the authors
+say it is "motivated". *(Compiler check, not in the sources: the all-cut pattern cannot occur, since
+$\sum_k\chi_k=1$ forces $\max_k\chi_k\ge\tfrac13>C_T$.)*
+
+**Interface-centred Gaussians on the primitive.** On a target stencil $\{I_{i-r},\dots,I_{i+k}\}$
+the primitive $H(x)=\int_{x_{i-r-1/2}}^xh\,d\xi$ (page-local) is known at the interfaces,
+$H(x_{l+1/2})=\Delta x\sum_{j=i-r}^lf_j$, and is interpolated there by
+$R(x)=\sum_j\alpha^{\mathrm R}_j\exp\big(-\lambda_{\mathrm s}^2(x-x_{j+1/2})^2\big)$ with Gaussians centred at
+the interfaces and no polynomial augmentation ($\alpha^{\mathrm R}_j$ page-local); $R'$ is the flux,
+with $R'=h+O(\Delta x^{k+r+1})$ (Eqs. (18)–(24)). A Taylor expansion "up to degree
+$\lambda_{\mathrm s}^2\Delta x^2$" gives explicit fluxes, e.g. on the five-point stencil (Eq. (25))
+
+$$\hat f_{i+1/2}=\tfrac1{60}\big(2f_{i-2}-13f_{i-1}+47f_i+27f_{i+1}-3f_{i+2}\big)
+-\tfrac{\lambda_{\mathrm s}^2\Delta x^2}{60}\big(-12f_{i-2}+18f_{i-1}+18f_i-42f_{i+1}+18f_{i+2}\big),$$
+
+the classical fifth-order flux plus a zero-sum correction stencil; the four- and three-point fluxes have
+the same structure around the fourth-order and ENO3 fluxes. Their error expansion (Eq. (29)) gives
+$h-\hat f_{i+1/2}=\tfrac1{60}\big(h^{(5)}+30\lambda_{\mathrm s}^2h^{(3)}\big)\Delta x^5+O(\Delta x^6)$
+on five points, fourth order on four, third on three, the $\lambda_{\mathrm s}^2$ terms entering at the order
+of the polynomial truncation term. *(Compiler check, not in the sources: substituting the cell-average
+expansions of Eq. (28) into the $\lambda_{\mathrm s}^2$ parts of all six fluxes of Eq. (25) reproduces the
+$\lambda_{\mathrm s}^2$ terms of Eq. (29); at $\lambda_{\mathrm s}=0$ the fluxes are the polynomial ones, and each
+correction stencil sums to zero.)* Jeong et al.'s Eq. (26) has the same polynomial term with
+$14\lambda_{\mathrm s}^2h^{(3)}$. *(Compiler check, not in the sources: the two interpolation spaces differ
+(cell-centred Gaussians plus $\mathbb P^1$ in the cell-average sense, against interface-centred Gaussians on the
+primitive), so the coefficients need not agree.)*
+
+**Shape parameter from the local scale.** Instead of cancelling the leading error, Liang & Fu set
+$\lambda_{\mathrm s}=\lambda_0+\lambda_\Delta\big(1-\varphi(\mu_d)\big)$ with $\varphi(\mu_d)=(1-\mu_d)^4(1+4\mu_d)$,
+$\mu_d=1-\min\big(1,\min(\sigma_{i-1},\sigma_i,\sigma_{i+1})/C_r\big)$ with Ren et al.'s ratio
+$\sigma_i=\big(|2(f_i-f_{i-1})(f_{i+1}-f_i)|+\epsilon_\sigma\big)/\big((f_i-f_{i-1})^2+(f_{i+1}-f_i)^2+\epsilon_\sigma\big)$,
+$C_r=0.4$, $\lambda_0=\lambda_\Delta=3$, $\epsilon_\sigma=10^{-40}$ (Eqs. (30)–(32); the source's $\alpha_1,\alpha_2,m,\eta_i,g,c_r,\varepsilon$;
+$\lambda_0,\lambda_\Delta$ page-local, $\mu_d$, $\sigma_i$, $\varphi$, $C_r$, $\epsilon_\sigma$ as on
+[adaptive TENO](/methods/adaptive-teno.md)): a flat kernel ($\lambda_{\mathrm s}\to3$) in smooth low-wavenumber regions, a sharp one
+($\lambda_{\mathrm s}\to6$) at high-wavenumber fluctuations. In cells that the TENO-flag detector of
+Liang et al. (2022) marks as genuine discontinuities, the flux is the two-steepness tanh jump flux of
+that work ($\mathcal A=0.91$, or 1.23 under the stricter sensor; first-order fallback where
+$(f_{i+1}-f_i)(f_i-f_{i-1})\le10^{-15}$; §3.3, Eqs. (33)–(36); [TENO-THINC](/methods/teno-thinc.md)).
+
+**Results** (Rusanov splitting, Roe-averaged characteristic decomposition, SSP-RK3 at CFL 0.4, the
+symmetry-preserving implementation of Fleischmann et al.; §4). ADR on 128 points: dispersion and
+dissipation better than TENO5 and WENO5-Z, with the background linear scheme restored "up to an
+intermediate wavenumber" (Fig. 3; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+Fifth order in $L_\infty$ on a Gaussian pulse (Fig. 4; grid sequence only in the figure). Sharper Sod and
+Lax solutions at 100 points, better shocklets on [Shu–Osher](/benchmarks/shu-osher-problem.md) at 200,
+more slip-line structure on [double Mach reflection](/benchmarks/double-mach-reflection.md) at
+$400\times100$ than WENO5-Z and TENO5 at $1000\times250$, and more small-scale structure on
+[Rayleigh–Taylor](/benchmarks/rayleigh-taylor-instability.md),
+[Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md) and three
+[2-D Riemann configurations](/benchmarks/two-dimensional-riemann-problems.md) (3, 8, 11 at $800^2$),
+all by visual comparison except the kinetic-energy histories and spectra (Figs. 5–16). On the
+[interacting blast waves](/benchmarks/woodward-colella-blast-wave.md) (400 points, Roe flux with entropy
+fix) TENO5 needs $C_T=10^{-4}$ to run stably, while the present scheme keeps one parameter set "without
+the necessity of parameter tuning case by case" (§4.3, §5). Wall time on double Mach reflection is
+55.23 s against 40.04 s (TENO5) and 36.51 s (WENO5-Z) at $400\times100$, and 895.52 s against
+630.89 s and 593.16 s at $1000\times250$, which the authors call "not significant" (Table 1;
+hardware not stated). *(Compiler check, not in the sources: the ratios are 1.38 and 1.42 against TENO5, 1.51 against
+WENO5-Z.)*
+
 ## Qualifications
 
+- Liang & Fu (2024a) fix $\lambda_0$, $\lambda_\Delta$ in the units of $x$: $\lambda_{\mathrm s}$ multiplies physical
+  distance and enters the fluxes only as $\lambda_{\mathrm s}^2\Delta x^2$, so the size of the correction
+  depends on the length unit and on $\Delta x$. *(Compiler check, not in the sources: with
+  $\lambda_{\mathrm s}\in[3,6]$, $\lambda_{\mathrm s}\Delta x\in[0.03,0.06]$ on Sod with $\Delta x=0.01$ but
+  $[0.15,0.3]$ on Shu–Osher with $\Delta x=0.05$.)* This is the lack of scale invariance of RBF spaces that
+  Jeong et al. point out (Remark 2.1; [scale invariance](/properties/scale-invariance.md)); Liang & Fu do not
+  discuss it. They state that as $\Delta x\to0$ the scheme "will degenerate to the classical polynomial
+  reconstruction" (§3.2).
+- Liang & Fu write the six flag patterns as products ("$\delta_1\delta_2=0$, $\delta_0=1$") that must mean
+  "$\delta_1=\delta_2=0$", and number the patterns ($\hat f^n$) and the fluxes of Eq. (25) ($R'_n$) in
+  different orders for the two four-point stencils; the mapping is fixed only by the stencils of Fig. 2.
 - Eq. (27) gives $\lambda_{\mathrm s}^2<0$ whenever $f^{(5)}$ and $f^{(3)}$ have the same sign, which
   turns the Gaussian into a growing exponential of $x^2$; likewise the fitted exponent $\nu_k^2=f''/f+O(\Delta x)$ of the
   exponential undivided differences (page-local $\nu_k$, Eq. (34)) can be negative. Neither case, nor the thresholds for "$h^{(3)}\approx0$" and
@@ -120,3 +211,4 @@ Euler, TVD-RK3 at CFL 0.4 and classical RK4 with $\Delta t\sim\Delta x^{3/2}$ fo
 # Citations
 
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §1; §2, Eqs. (3)–(10), Remark 2.1; §3, Eqs. (11)–(28), Prop. 3.2, Remarks 3.3–3.7, Theorem 3.5; §4, Eqs. (29)–(43), Prop. 4.5; §5, Tables 1–7, Figs. 1–10, Remark 5.12; App., Eqs. (54)–(56).
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §1; §3.1, Fig. 2; §3.2, Eqs. (16)–(32), Fig. 3; §3.3, Eqs. (33)–(36); §4, Figs. 4–16, Table 1; §5.

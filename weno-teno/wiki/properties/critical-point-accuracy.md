@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Accuracy at critical points
@@ -47,6 +47,7 @@ coefficients $A_k$ are not defined in the paper).
 | fifth-order [multi-resolution WENO](/methods/multi-resolution-weno.md) | $\omega_m=d_m+O(\Delta x^4)$ also at first-order critical points, since $\tau$ and the indicators both drop by two orders there; no critical-point test | Wang et al. 2021, Eqs. (3.18)–(3.20) (derived) |
 | sixth-order [RBF-based WENO](/methods/rbf-weno.md) (WENO-G) | $\lvert\omega_k-\bar d_k\rvert\le c\Delta x^4$ "regardless of critical points" for $\epsilon=\Delta x^\ell$, $0<\ell\le4(2q-1)/q$; 6.01 on $\sin(2\pi x-\sin(2\pi x)/\pi)$, where WENO-JS gives 3.54–4.13 | Jeong, Yang & Yoon 2022, Prop. 4.5, Table 2 |
 | MR-AWENO-Si ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | $\tau^*=O(\Delta x^{10})$ at first- to third-order critical points is said to recover the order; no proof, no critical-point test | Li, Li, Don & Wang 2023a, §2.3 (stated) |
+| sixth-order WENO-CU6-type, TENO6 and TENO6-SA; seventh-order WENO7-Z | rates at critical points of order 0–6 between 2 and 7, see the next section | Zhang et al. 2024b, §5.4, Table 3 |
 | [exponential weights](/methods/exponential-nonlinear-weights.md) (WCNS-EXP, interpolation) | fifth order on $x^ke^{0.75(x-1)}$ for every $k=1,\dots,6$, i.e. critical points of order 0 to 5, in quadruple precision | Chen & Deng 2023, Theorem 3.1 (argued), §4.1, Fig. 2 |
 | WCNS-JS, WCNS-Z, modified WCNS-MR (interpolation) | third order at $k=2$ for JS and MR, JS back to fifth once $\beta_k<\epsilon=10^{-6}$; Z and MR from second to fifth order as $k$ goes from 3 to 6 | Chen & Deng 2023, §4.1, Fig. 2 |
 | WENO-NS, WENO-P (Ha et al., Kim et al.) | sufficient condition at first-order critical points; not optimal at second-order ones ($L_1$ 3.3–3.6, $L_2$ 2.9–3.1 on $\sin^3(\pi x)$) | Zhong et al. 2023, §2 (recalled), Table 4 |
@@ -217,6 +218,29 @@ a larger error on the coarsest (Table 1); no extremum test is run
 ([gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md),
 [TVD limiters](/definitions/total-variation-diminishing.md)).
 
+## Sixth-order schemes at critical points up to order six
+
+Zhang, Jiang, Qin, Qu & Yan (2024b, §5.4, Eq. (38)) use $f(x)=x^{n_{\mathrm{cp}}+1}e^{100x}$, which has an
+$n_{\mathrm{cp}}$th-order critical point at $x=0$, and report the convergence rate of the reconstructed derivative at
+$x=0$ "disregarding the effect of $\epsilon$" (Table 3; the values of $\epsilon$ and the grids are not given):
+
+| scheme | $n_{\mathrm{cp}}=0$ | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|---|
+| [WENO7-Z](/methods/weno-z.md) | 7 | 7 | 6 | 3 | 4 | 5 | 6 |
+| EWENO-CU6 ([WENO-CU6](/methods/weno-cu6.md)) | 6 | 5 | 2 | 3 | 4 | 5 | 6 |
+| TENO6 ([targeted ENO](/methods/targeted-eno.md)) | 6 | 6 | 2 | 4 | 4 | 6 | 6 |
+| TENO6-opt | 5 | 5 | 2 | 4 | 4 | 6 | 6 |
+| TENO6-A ([adaptive TENO](/methods/adaptive-teno.md)) | 4 | 4 | 4 | 3 | 4 | 6 | 6 |
+| TENO6-SA ([scale sensors](/definitions/scale-sensor.md)) | 6 | 6 | 2 | 4 | 4 | 6 | 6 |
+
+All schemes lose order at some critical point; EWENO-CU6 is the only one that loses an order at a first-order
+point, TENO6-A the only one that keeps its (spectrally reduced) order up to a second-order point, and the
+scale-adaptive TENO6-SA follows TENO6 exactly, "possibly" because the test is "relatively smooth", in the
+authors' words. *(Compiler check, not in the sources: WENO7-Z at a third-order point, rate 3, agrees with the
+3.24–3.55 of Li et al. (2022b) above, and TENO6 at a second-order point, rate 2, with the asymptotic rate 2 of
+fifth-order TENO in Tang's Table 2 derived above.)* Zhang et al. recall a scheme of Zhang et al. that "maintains its order at all critical points by modifying
+the $\epsilon$ parameter in the weighting formula to a grid-dependent form" (§5.4).
+
 ## Weight of the evidence
 
 Fu (2023, §2.3) recalls Acker et al.'s finding that raising the weights of the less-smooth stencils
@@ -231,7 +255,9 @@ resolution).
 - **Which TENO loses order.** Fu (2023, §3.1) reports no degeneration of TENO at a second-order critical point
   with the sixth-order global indicator $\tau_K$; the TENO-Z, TENO-A and TENO-LAD that Tang (2024, Eqs. (12)–(13),
   Table 2) measures at second order carry the fifth-order $\tau_5=|\beta_0-\beta_2|$. The two statements concern
-  different global indicators, so they do not contradict each other.
+  different global indicators, so they do not contradict each other. Zhang et al. (2024b, Table 3) measure
+  rate 2 at a second-order critical point for TENO6, whose $\tau_6$ has the form of Fu's $\tau_K$; that pair is
+  examined on the [TENO](/methods/targeted-eno.md) page.
 - Tang (2024, §1) recalls an earlier paper of the author as finding TENO-Z degraded "to the 3rd-order" at
   higher-order critical points; the paper's own Table 2 gives second order at $n_{\mathrm{cp}}=2$ and its Table 3
   third order at $n_{\mathrm{cp}}=3$.
@@ -280,3 +306,4 @@ resolution).
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §2, Eqs. (10)–(18); §3.3, Eqs. (27)–(41); §4.1, Tables 2–5; §4.2.
 - [Tang (2024)](/sources/tang-2024.md) — §1; §2, Eqs. (9)–(18); §3, Eqs. (19)–(20); §4.1, Eqs. (21)–(22), Tables 1–3; §5.
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.4, Fig. 6.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §5.4, Eq. (38), Table 3.

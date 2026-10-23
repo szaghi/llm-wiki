@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Density-wave advection
@@ -38,9 +38,15 @@ property, and conserves entropy.
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §4.1.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $N=100$, 200, 400 particles, fixed; $t=2$ | accuracy of a Lagrangian particle scheme |
 | Jiang et al. §4.1.2 | $1+0.2\sin(x+y)$ | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $51^2$, $101^2$, $201^2$ particles (and a non-uniform set); $t=1$ | 2D accuracy |
 | [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.1 | $2+0.98\sin(2\pi(x+y))$ | $(0.1,0.2)$, 20 | $[-1,1]^2$ | $N_e=4$–$32$ elements per direction, $N=3,4$, CFL 0.9; final time not printed | accuracy under convex limiting with global and local bounds |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.2 | $1+0.2\sin(\pi(x+y))$ | $(0.5,0.5)$, 1 | $[0,2]^2$, periodic, triangles | 58–14848 cells; $t=2$ | accuracy of unstructured WENO |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.3–3.4 | $1+0.2\sin x$; 2D $1+0.2\sin(x+y)$ | 1; $(1,1)$, 1 | $[0,2\pi]$; $[0,2\pi]^2$, periodic | 40–140 points or cells; $40^2$–$140^2$; $t=2$ | accuracy, finite differences and finite volumes |
+| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.1–3.3; [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.1–3.3 | $1+0.2\sin x$; $1+0.2\sin(x+y)$; $1+0.2\sin(x+y+z)$ | 1; $(1,1)$; $(0.3,0.3,0.4)$; $p_0=1$ | $[0,2\pi]^d$, periodic | $N=100,110,\dots,150$; $10^2$–$60^2$; $10^3$–$60^3$; $t=2$ | orders 5, 7, 9 of hybrid multi-resolution WENO |
+| [Chudzik et al. (2024)](/sources/chudzik-2024.md) Ex. 6.2, 7.1 | $\tfrac52\exp\!\big(-40((x+0.31)^2+(y+0.31)^2)\big)+\tfrac1{10}$ | Ex. 6.2: perturbation $v=(1,1)$, $p=1$ on background $\rho'=c'=1$, $v'=(0.5,0.5)$ to $t=4$ or $(1,1)$ to $t=2$; Ex. 7.1: two velocity cases | $[-1,1]^2$, periodic | $32^2$–$256^2$, CFL 0.275 | third-order Active Flux, linearized and nonlinear Euler |
 | [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P_1$–$\mathbb P_5$; $t=1$ | accuracy and positivity near vacuum |
 
-All with $\gamma=1.4$, except Wang et al.'s Navier–Stokes cases
+All with $\gamma=1.4$ (Lin & Zhu and Zhang & Zhu print no $\gamma$; Chudzik
+et al.'s background primes, page-local, are those of their linearized
+Euler system), except Wang et al.'s Navier–Stokes cases
 ($\gamma=5/3$, $\mu=0.0005$, $\mathrm{Pr}=2/3$, $\mathrm{Re}=1000$, after
 earlier work) and Peyvan et al.'s reacting air (five species, with the
 reaction sources switched off). Zhao et al.'s Gaussian has half-width
@@ -142,6 +148,59 @@ $h/\Delta x_0=1.2$–$1.9$ (Tables 1–2); on a non-uniform particle set the
 not show in these rates, and the paper does not discuss why; see
 [WENO-Z](/methods/weno-z.md).
 
+**Multi-resolution WENO and its hybrids.** Four papers of the Zhu
+group use the wave to compare new schemes with Zhu & Shu's
+[multi-resolution WENO](/methods/multi-resolution-weno.md) (MR-WENO).
+Lin & Zhu's ALW-MR-WENO on triangles reaches finest-mesh $L^1$ errors
+$1.04\times10^{-4}$ (order 3.03), $4.14\times10^{-7}$ (4.32) and
+$9.83\times10^{-8}$ (5.10) at orders 3, 4 and 5, equal to MR-WENO's to
+the printed digits (Case 3.2, Table 3.3). Zhang & Zhu's single-stencil
+GMR-WENO improves on MR-WENO only at third order ($L^1$
+$1.01\times10^{-5}$ against $2.30\times10^{-5}$ at 140 points, finite
+differences); at seventh order both give $9.72\times10^{-12}$ at 100
+points, and at fifth order only $L^\infty$ differs ($1.70\times10^{-6}$
+against $1.96\times10^{-6}$ at 40 points) (Ex. 3.3, Table 3.6). Their
+third-order $L^1$ orders exceed three on these coarse grids (4.35 for
+finite differences at 140 points, 4.53 for finite volumes; Tables
+3.6–3.7).
+
+Zuo & Zhu's (2024a, 2024b) two [hybrid](/methods/hybrid-weno.md) schemes use MR-WENO
+only in cells flagged by a [troubled-cell indicator](/definitions/troubled-cell-indicator.md)
+built on the extrema of high-degree interpolants, and the linear upwind
+scheme elsewhere (CFL 0.6, third-order TVD Runge–Kutta, $\gamma=1.4$).
+Both reach orders 5, 7 and 9 in 1D, 2D and 3D, and in both papers the
+tables print irregular orders for plain MR-WENO5 where the hybrids stay
+near five, without comment on the cause. In 2D the
+MR-WENO5 $L^1$ orders printed in both papers are 2.52, 7.58, 5.98, 8.66,
+5.55 on $10^2\to60^2$, against 4.92–5.00 for MMR-WENO5 (Zuo & Zhu 2024a,
+Table 3.3; $L^1$ error $1.98\times10^{-3}$ against $4.74\times10^{-3}$ on
+$10^2$) and 4.89–5.00 for HMR-WENO5 (Zuo & Zhu 2024b, Table 3.3; $L^1$
+$6.57\times10^{-5}$ against $8.23\times10^{-4}$ on $20^2$). In 1D the
+MR-WENO5 $L^\infty$ orders are 7.10, 5.29, 5.65, 6.53, 5.41 against 5.19,
+4.96, 5.16, 5.05, 5.05 for MMR-WENO5 (2024a, Table 3.2), and HMR-WENO5
+has the same $L^1$ errors as MR-WENO5 but smaller $L^\infty$ errors
+($1.81\times10^{-8}$ against $4.13\times10^{-8}$ at $N=100$; 2024b,
+Table 3.2). In 3D the MR-WENO5 orders are again irregular (2024a: $L^\infty$
+4.73, 5.11, 6.41, 6.32, 6.08; 2024b: $L^1$ 4.73, 5.69, 7.60, 5.00,
+4.98) while the hybrids stay at 4.88–5.00 (Tables 3.4). The
+ninth-order 1D errors reach about $2.5\times10^{-16}$ at $N=150$ (2024a),
+i.e. round-off. Neither paper states a reduced time step for the
+accuracy tests, although with third-order Runge–Kutta at a fixed CFL
+number the time error $O(\Delta t^3)$ would dominate the seventh- and
+ninth-order spatial errors as the grid is refined *(compiler check, not
+in the sources)*.
+
+**Active Flux.** Chudzik et al.'s Cartesian
+[Active Flux](/methods/active-flux.md) method, with point values evolved
+by the bicharacteristic EG2 operator, converges at third order on the
+Gaussian density pulse: $L^1$ EOC 2.9884 and 2.9908 at $256^2$ for the
+linearized Euler equations with the two background velocities, with $p$
+and $v$ constant to machine precision (Ex. 6.2, Table 6), and 2.9874 and
+2.9880 for the nonlinear Euler equations without iteration of the local
+linearization (Ex. 7.1, Table 8). The stability limit in all their
+linearized-Euler tests is the acoustic one, CFL $\le0.279$, found
+empirically (§6).
+
 **Bounds and order under convex limiting.** Rueda-Ramírez et al.'s
 monolithic convex limiting of LGL-DGSEM with global (positivity) bounds
 only keeps the design order: mean experimental orders 4.16 for $N=3$
@@ -176,6 +235,16 @@ and [bound preservation](/properties/bound-preservation.md).
   error on the same row *(compiler check, not in the sources)*.
 - Rueda-Ramírez et al. are read as arXiv v1 and do not print the final
   time of their convergence test.
+- Chudzik et al. call the background $v'=(0.5,0.5)$ "supersonic" and
+  $(1,1)$ "subsonic"; with $c'=1$ the speeds are $\sqrt2/2\approx0.71$
+  and $\sqrt2\approx1.41$, so the labels are reversed *(compiler check,
+  not in the sources)*.
+- Zhang & Zhu print the exact solutions as $\rho(x,0)$ and
+  $\rho(x,0)=1+0.2\sin(x+y-2t)$ for $\rho(x,t)$ and $\rho(x,y,t)$, and
+  label both column groups of their Tables 3.8–3.9 "MR-WENO"; the left
+  groups, with the smaller third-order errors, are GMR-WENO, as their
+  text says. Lin & Zhu's Table 3.3 prints the ALW-MR-WENO-4 $L^\infty$
+  order 3.12 at 232 cells, where the printed errors give 3.10.
 
 - Wang et al. (2023c) state that the original multi-resolution WCNS
   reaches fifth order only with the first weight set,
@@ -208,3 +277,8 @@ and [bound preservation](/properties/bound-preservation.md).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.1, Tables 1–2.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.1, Eq. (46), Tables 1–4 (arXiv v1).
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.1, Eqs. (36a)–(36e), Tables 1–2 (arXiv v1).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.2, Table 3.3.
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.3–3.4, Tables 3.6–3.9.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
+- [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §6, Ex. 6.2, Ex. 7.1, Tables 6 and 8.

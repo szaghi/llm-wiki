@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Shallow-water equations"
-description: "The one- and two-layer shallow-water (Saint-Venant) equations with bottom topography and friction, and their steady states — lake at rest, constant energy, and the general invariants $q$ and global flux $K$ that survive hydraulic jumps — which decide what a well-balanced scheme for them must preserve."
+description: "The one- and two-layer, one- and two-dimensional shallow-water (Saint-Venant) equations with bottom topography and friction, their energy entropy and Lagrangian form, and their steady states — lake at rest, constant energy, and the invariants $q$ and global flux $K$ that survive hydraulic jumps — which decide what well-balancing must preserve."
 status: established
 aliases: [Saint-Venant equations, SWE, shallow water equations, two-layer shallow-water equations, lake at rest, moving-water equilibrium]
-tags: [well-balanced, finite-volume, central-scheme, benchmark]
-timestamp: 2026-10-23T23:00:00Z
+tags: [well-balanced, finite-volume, central-scheme, benchmark, shallow-water]
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Shallow-water equations
@@ -22,6 +22,29 @@ not a weight exponent; [Ciallella et al. (2023)](/sources/ciallella-2023.md), §
 test [well-balancing](/properties/well-balancing.md) in several sources of the bundle: a scheme
 must make the discrete flux divergence and the discrete source cancel at a chosen class of
 steady states.
+
+## Two dimensions, energy and Lagrangian form
+
+[Del Grosso et al. (2024)](/sources/delgrosso-2024.md) (HAL preprint; §2, Eqs. (2)–(6)) write the 2D
+system for $(h,hv_1,hv_2)$ with fluxes $(hv_d,\ hv\,v_d+p\,e_d)$ and source
+$(0,-gh\,\partial_{x_1}b,-gh\,\partial_{x_2}b)$, where $p=\tfrac12gh^2$ (page-local "pressure") and $e_d$ the unit
+vector; the eigenvalues along a unit normal $n$ are $v\cdot n-\sqrt{gh}$, $v\cdot n$,
+$v\cdot n+\sqrt{gh}$. They use the analogy with isentropic gas dynamics ($h$ as density,
+$p=\tfrac g2h^\gamma$ with $\gamma=2$) and take the total energy as the entropy:
+$$\partial_t(h\mathsf e_{\mathrm s})+\nabla\cdot\big((h\mathsf e_{\mathrm s}+p)v\big)\le-gh\,v\cdot\nabla b,\qquad \mathsf e_{\mathrm s}=\tfrac12gh+\tfrac12\lvert v\rvert^2$$
+(page-local $\mathsf e_{\mathrm s}$, the specific energy with internal part $\int p/h^2\,dh=\tfrac12gh$),
+equivalent for regular topography to a conservative inequality for $\mathsf e_{\mathrm s}+gb$. Along a
+face normal they pass to Lagrangian mass coordinates, $dx_n=h^{-1}dm+v_n\,dt$, in which the system
+for $(1/h,v_n,v_t)$ has the ordered eigenvalues $-\sqrt{gh}\,h$, $0$, $\sqrt{gh}\,h$; their approximate
+Riemann solver is built there and mapped back ([carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)).
+Only wet states $h>0$ are treated.
+
+[Naudet & Zahr (2024)](/sources/naudet-2024.md) (§5.2, App. A, Eqs. (52)–(53)) use the
+geopotential $\Phi_{\mathrm g}=gh$ (page-local) as unknown, with flux
+$(\Phi_{\mathrm g}v,\ \Phi_{\mathrm g}v\otimes v+\tfrac12\Phi_{\mathrm g}^2I)$ and bathymetry source
+$(0,\ g\Phi_{\mathrm g}\nabla b')$ in their sign convention for the bottom $b'$ (page-local), and 1D
+eigenvalues $v_n\mp\sqrt{\Phi_{\mathrm g}}$. [Kolluru et al. (2024)](/sources/kolluru-2024.md)
+(arXiv v2; §3.3, Eq. (8a)) use the 1D system without topography, $\partial_t(h,hv)+\partial_x(hv,hv^2+\tfrac12gh^2)=0$.
 
 ## Steady states
 
@@ -97,6 +120,24 @@ not eigenvalues (Kurganov et al., §6; Chu et al., §2).
   at rest, over a smooth bump and over a step (details on
   [well-balancing](/properties/well-balancing.md)).
 
+- **Del Grosso et al. (2024)** (§5, $g=9.81$ unless stated): lake at rest over three mounds,
+  $b=\max\big(0,1-\tfrac18R_{10,11},1-\tfrac3{10}R_{10,31},1-\tfrac4{10}R_{27,20}\big)$ with
+  $R_{a,b}$ the distance from $(a,b)$ (page-local), $h+b=4$, $\Omega=[0,40]^2$, $100\times100$ squares,
+  $t=200$ s, kept to about $10^{-15}$, and its $10^{-3}$ perturbation; a smooth subsonic accuracy
+  test on triangles; radial [dam breaks](/benchmarks/dam-break-problem.md) over flat and
+  cosine-bump bottoms ($h=10$ inside $r_0=11$ m, $1$ outside, $t=0.69$ s); an oblique hydraulic
+  jump (wall deflection $8.95^\circ$, inflow $h=1$, $v_1=8.57$, exact downstream $h=1.5$,
+  $v=7.9556$, jump angle $30^\circ$); a four-quadrant Riemann problem over discontinuous topography;
+  and three carbuncle tests (colliding flow, a Quirk-type canal, Froude-5
+  [flow past a cylinder](/benchmarks/flow-past-circular-cylinder.md)).
+- **Naudet & Zahr (2024)** (§5.2, Eq. (54)): a 1D dam break with $g=1$, flat bottom,
+  $\Omega=(-5,5)$, depth $3$ on the left and $1$ on the right at rest, reflecting walls at both
+  ends, to $t=6$, tracked through the wall reflections by space-time shock tracking.
+- **Kolluru et al. (2024)** (§3.3, Eqs. (8b)–(8c)): a hump of water $h=1+0.4e^{-\beta_{\mathrm h}x^2}$
+  (page-local width $\beta_{\mathrm h}$, value not printed) on periodic $[-5,5]$, which steepens into a
+  shock at $t\simeq3$, and a dam break with $h_{\mathrm l}>h_{\mathrm r}$ (values and $g$ not printed),
+  both on 2665 points with spectral relaxation against a CLAWPACK reference.
+
 ## Qualifications
 
 - Ciallella et al. print $\partial_xR\equiv S$ on p. 5, while their Eq. (4) defines $R=-\int^xS$,
@@ -104,9 +145,15 @@ not eigenvalues (Kurganov et al., §6; Chu et al., §2).
 - Kurganov et al. print the switching condition for the modified depths after Eq. (6.11) with
   indices $j-\tfrac12$ where their general rule and the nozzle analogue use $j+\tfrac12$.
 
+- Del Grosso et al. label all three eigenvalues $\lambda^-$ (§2), and print the oblique-jump
+  profile along $y=40$ m in a domain $[0,40]\times[0,30]$ m (§5.4).
+
 # Citations
 
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §2.1 (Eqs. (1)–(4)), §2.2 (Eqs. (5)–(9)), §5 (Eqs. (45)–(54)) (author manuscript).
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1 (Eq. (1.11)), §4, §6 (Eqs. (6.1)–(6.13)), §7.2 (Exs. 5–7).
 - [Wang & Don (2022)](/sources/wang-2022-b.md) — §2–§3.3 (Eqs. (26)–(28)).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §2, §6.1 (Eqs. (6.2)–(6.3)), §7.1 (Ex. 2).
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §2 (Eqs. (2)–(6)), §2.1, §5.1–5.8 (HAL preprint).
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.2 (Eqs. (52)–(54)), App. A.
+- [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §3.3 (Eqs. (8a)–(8c), Figs. 12–13) (arXiv v2).

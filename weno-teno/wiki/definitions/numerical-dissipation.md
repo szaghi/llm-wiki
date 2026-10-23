@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -33,6 +33,11 @@ jumps.
 
 - **Smaller jumps** is the logic of [BVD](/definitions/boundary-variation-diminishing.md)
   and of sharper reconstructions such as [THINC](/methods/thinc-reconstruction.md).
+  [Wakimura et al. (2024)](/sources/wakimura-2024.md) (§1, §3.2.1, Eq. (26)) state it
+  for the scalar flux $\tfrac12(f(u^-)+f(u^+))-\tfrac{\lvert a\rvert}2(u^+-u^-)$ and
+  motivate their two-phase BVD scheme by the limiter dissipation of MUSCL, which smears
+  discontinuities; to their knowledge, vapour–liquid interfaces created dynamically by
+  phase change "have never been captured" because of it.
 - **Smaller speeds.** The [central-upwind flux](/methods/central-upwind-scheme.md)
   uses the one-sided speeds $a^\pm_{i+1/2}$; it "in general" carries more ND than
   upwind fluxes but needs no Riemann solver
@@ -133,6 +138,18 @@ jumps.
   maintained" over two periods, better by their third- than by their second-order scheme on
   $100^2$ (Ex. 5.5, Fig. 5.6). See [semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)
   and [Gresho vortex](/benchmarks/gresho-vortex.md).
+- **Low Mach number by order, not by solver.** [Teissier et al. (2024)](/sources/teissier-2024.md)
+  (§4.1, Table 2; arXiv v2) run a 3D MHD vortex advected at about Mach 0.1 for one period
+  with Rusanov fluxes, whose dissipation $a[\![u]\!]$ is dominated by the fast
+  magnetosonic speed. Their second-order scheme loses 99 % of the fluctuating kinetic plus
+  magnetic energy on $64^3$ and 60 % on $256^3$, while the higher orders lose far less (e.g.
+  $9.0\times10^{-3}$ at fourth order on $192^3$, $7.7\times10^{-3}$ at sixth order on
+  $96^3$). They read raising the order, which shrinks the interface jump, as an
+  alternative to low-Mach fixes of Roe or HLLD solvers. Their eighth-order scheme without
+  the passage through point values ([cell-average–point-value conversion](/operators/cell-average-point-value-conversion.md))
+  converges only at second order but keeps an energy loss close to the full scheme's,
+  which they take as a hint that its errors are dispersive rather than dissipative.
+  See [magnetized vortex](/benchmarks/magnetized-vortex.md).
 - **Galerkin as a central scheme.** The plain continuous-Galerkin discretization "is equivalent
   to central differencing" and oscillates at shocks; [Dao & Nazarov (2022)](/sources/dao-2022.md)
   (§4, §4.2–4.3, Eq. (4.10)) add a residual-based viscosity, the minimum of a first-order
@@ -322,6 +339,20 @@ of the local resolution.
   total kinetic energy", where WENO-CU6, TENO6 and TENO8 smear the small vortices after
   $t\approx5$ (§4.10, Figs. 17–18). The non-dissipative property they state is that of the
   smooth branch; the TENO branch is dissipative by design.
+- **Only nonlinear dissipation, band by band.** The TENO6-SA of
+  [Zhang et al. (2024b)](/sources/zhang-2024-b.md) (§3.2, §5) relays non-dissipative
+  central and spectrally optimized dispersion schemes by wavenumber band and leaves all
+  dissipation to the TENO cut-off, which it lowers band by band to $10^{-13}$ and raises
+  again above the resolved range ([adaptive TENO](/methods/adaptive-teno.md)). Its
+  approximate dispersion relation shows "no numerical dissipation in its resolvable region"
+  and enough at moderate and high wavenumbers (§5.2, Fig. 5); in the Titarev–Toro problem a
+  too-small cut-off in the low band creates pseudo-oscillations (Fig. 13).
+- **Dissipation through a kernel shape.** In the Gaussian-RBF TENO of
+  [Liang & Fu (2024a)](/sources/liang-2024.md) (§3.2) the shape parameter grows from 3 in
+  smooth low-wavenumber regions to 6 at high-wavenumber content, driven by a smoothness
+  measure; the nonlinear scheme has better dispersion and dissipation than TENO5 and
+  WENO5-Z in the ADR and keeps total kinetic energy better on Kelvin–Helmholtz, where
+  WENO5-Z is the most dissipative (§4.7, Figs. 3, 12(b)).
 - **Dissipation at a jump.** [Liang et al. (2022)](/sources/liang-2022.md) (§1, §3.2, Fig. 6)
   attribute residual dissipation of THINC at discontinuities to its cell-average constraint and
   replace it by point interpolation with two steepness levels in cells a TENO-flag detector marks
@@ -478,6 +509,13 @@ different Cesàro averages for the original and the LCD central-upwind schemes
 and read this as non-uniqueness of the limiting dissipative weak solution,
 which "apparently depends on the choice of the numerical diffusion".
 
+More vortices at the same grid are read the same way for multiphase schemes:
+[Zhang et al. (2024a)](/sources/zhang-2024.md) (§4.6) attribute the clearer vortices and
+stronger interface instabilities of their WENO5IS-THINC, against MUSCL-THINC, to lower
+dissipation, and [Chen & Fu (2024)](/sources/chen-2024.md) (§9) the richer small scales of
+their TENO-A limiter for spectral differences, against the WENO limiter, to the same cause;
+lowering the TENO cut-off reduces the dissipation of their double Mach reflection (Fig. 13).
+
 Resolution at reduced grid is a third: [Fan et al. (2023)](/sources/fan-2023.md)
 (Ex. 3.13, Fig. 3.17) find their fifth-order Hermite WENO on $120\times480$ comparable to
 WENO-ZQ on $240\times960$ for the Rayleigh–Taylor instability and read it as lower dissipation
@@ -558,3 +596,9 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3; App. A.1–A.2, Figs. A.13–A.16: central, HLLC and AUSMDV dissipation on isotropic turbulence, mesh skewness (accepted manuscript).
 - [De Vanna et al. (2023a)](/sources/devanna-2023.md) — §§4.2–4.4, §5, §6, Appendix; Tables 1–4, Figs. 1–10: upwind dissipation in wall-resolved and wall-modelled LES.
 - [Zhou et al. (2023)](/sources/zhou-2023.md) — §§3–4, Eqs. (31)–(32), Table 3, Figs. 3, 6–7; §5.9, Figs. 21–24, Table 4: linear and nonlinear dissipation switched by a sensor.
+- [Teissier et al. (2024)](/sources/teissier-2024.md) — §4.1, Table 2: Rusanov dissipation at low Mach number reduced by order, dispersive errors without point values (arXiv v2).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1, §3.2.1, Eq. (26): flux dissipation term and BVD motivation.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.2, §5.2, Figs. 5, 13: nonlinear dissipation only, band-wise cut-offs.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, §4.7, Figs. 3, 12(b): adaptive kernel shape as dissipation control.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.6: dissipation read off vortex resolution.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §9, Fig. 13: TENO-A against WENO limiters, effect of the cut-off.

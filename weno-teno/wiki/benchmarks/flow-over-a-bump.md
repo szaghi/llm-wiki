@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shallow-water flow over a bump and lake at rest"
-description: "One-dimensional shallow-water tests over an isolated bottom bump: the lake at rest (with and without dry zones), its small perturbation, and sub-, super- and transcritical moving-water steady states, used to measure exact well-balancing, order of accuracy on moving equilibria and spurious waves at hydraulic jumps."
+description: "One-dimensional shallow-water tests over an isolated bottom bump: the lake at rest (with and without dry zones), its small perturbation, and sub-, super- and transcritical moving-water steady states, measuring exact well-balancing, accuracy on moving equilibria and spurious waves at hydraulic jumps; two-dimensional analogues are a lake at rest over three mounds and subsonic flow over a Gaussian bump."
 status: established
 aliases: [flow over a bump, lake at rest, perturbed lake at rest, LeVeque perturbation test, transcritical flow over a bump, subcritical flow over a bump, supercritical flow over a bump, Houghton–Kasahara bump, SWASHES bump]
 tags: [benchmark, well-balanced, finite-volume, central-scheme, shallow-water]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Shallow-water flow over a bump and lake at rest
@@ -99,6 +99,40 @@ reaches a discrete moving-water steady state with two jumps by $t=100$ and resol
 $10^{-4}$ perturbation of $h_1$ better than the original path-conservative scheme (Figs.
 7.20–7.21; see [path-conservative schemes](/methods/path-conservative-scheme.md)).
 
+## Two-dimensional analogues on unstructured grids
+
+[Del Grosso et al. (2024)](/sources/delgrosso-2024.md) (HAL preprint) run
+two-dimensional versions for their multi-dimensional-aware finite-volume
+scheme, whose fluxes come from a nodal solver, with $g=9.81$, CFL 0.5
+(first order) and 0.25 (second order) and the minmod limiter:
+
+- **Lake at rest over three mounds** (§5.2): $[0,40]^2$ m,
+  $b=\max\big(0,\ 1-\tfrac18R_{10,11},\ 1-\tfrac3{10}R_{10,31},\ 1-\tfrac4{10}R_{27,20}\big)$
+  with $R_{a,c}=\sqrt{(x-a)^2+(y-c)^2}$ (page-local), $H_{\mathrm s}=4$ m,
+  $v=0$, outflow boundaries, $100\times100$ squares, $t=200$ s. The
+  first-order multi-point, the second-order and the two-point schemes
+  keep it "up to a machine error of order $10^{-15}$" (Fig. 5). The
+  multi-point scheme needs no modification for this, because of the
+  geometric identity $\sum_p\sum_fl_{pcf}\mathbf n_{pcf}=0$ over the
+  subfaces of a cell (their Eq. (48); $l$ and $\mathbf n$ subface lengths
+  and normals); the second-order extension needs an extra in-cell term
+  (Eq. (60)) (§4.5–4.6).
+- **Perturbation** (§5.2.1): $10^{-3}$ added to $h$ on
+  $19\le x,y\le21$; snapshots at 0, 0.5 and 1 s, the perturbation leaves
+  the domain and the run stops at $t\approx55.45$ s, when the residuals
+  fall below $10^{-10}$ (Fig. 6).
+- **Subsonic flow over a Gaussian bump** (§5.1, a 1D test of Chalons &
+  Del Grosso extended to 2D): $[0,20]\times[0,5]$ m on triangles,
+  $h(x,y,0)=2-0.1e^{-(x-10)^2}$, $v=0$,
+  $b=0.1-0.01e^{-(x-10)^2}$, outflow left and right and walls top and
+  bottom ("no-slip wall" as printed); reference the second-order scheme on 1,007,616 cells; meshes of
+  984 to 62,976 cells; the final time is not printed. The $L^1$ orders
+  for $h$ are 0.80, 0.87, 0.92 at first order and, without limiter,
+  1.80, 1.88, 1.97 at second order (Tables 1–2).
+
+The scheme treats only wet states, $h>0$ (§2, §6); the dry-zone lakes of
+Goudon & Minjeaud have no two-dimensional counterpart here.
+
 ## Qualifications
 
 - "Well-balanced" covers different classes of states here: Goudon & Minjeaud's scheme is exact
@@ -121,3 +155,4 @@ $10^{-4}$ perturbation of $h_1$ better than the original path-conservative schem
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §5.1–§5.5, Eqs. (45)–(54), Table 1, Figs. 3–17 (author manuscript).
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2 (Eq. (2)), §3.1–§3.3, Figs. 3–21 (HAL deposit of the version of record).
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §7.2, Ex. 7, Figs. 7.20–7.21.
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §4.5–4.6, Eqs. (48), (60), §5.1–§5.2.1, Tables 1–2, Figs. 5–6 (HAL preprint).

@@ -3,9 +3,9 @@ type: Method
 title: "WENO-CU6"
 description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that adds a downwind three-point stencil to the fifth-order set, uses a six-point global smoothness indicator of order Δx⁶ and a WENO-Z-type weight with constant C = 20; in the bundle it is the main low-dissipation comparator of the TENO papers."
 status: established
-aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1]
+aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # WENO-CU6
@@ -34,7 +34,7 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   upwind, $S_1$ central, $S_2$ downwind-biased),
   $$\tau_6=\beta_6-\tfrac16\big(\beta_0+\beta_2+4\beta_1\big)=O(\Delta x^6)$$
   (Ye et al. 2022, Eqs. (28)–(32), written there in the TENO labelling; the absolute value is taken in
-  the general TENO form, Eq. (39)). *(Compiler check: a Taylor expansion confirms that the $\Delta x^2$
+  the general TENO form, Eq. (39)). *(Compiler check, not in the sources: a Taylor expansion confirms that the $\Delta x^2$
   to $\Delta x^5$ terms cancel.)* Fu (2023, Eq. (18)) recalls the same combination as the sixth-order
   $\tau_K$ used in TENO.
 - **Weight template.** Ye et al. (2022, §2.2) write WENO-Z, WENO-CU6 and TENO as
@@ -52,6 +52,25 @@ $\{x_{i-2},\dots,x_{i+3}\}$, symmetric about $x_{i+1/2}$.
   The bundle's sources thus use
   three weight settings under the name WENO-CU6 ($C=20$ in Ye et al.'s template; $C=20$, $q=2$; $C=100$,
   $q=1$), none of them traced to the original paper.
+- **The form recalled by Zhang et al. (2024b).** Zhang, Jiang, Qin, Qu & Yan (2024b, §2.4, Eqs. (10)–(13))
+  attribute the scheme to Hu & Adams and write it as $\alpha_k=d_k\big(C+\tau_6/(\beta_k+\epsilon)\big)^q$, with
+  "a positive integer exponent $q$" introduced "to enhance robustness" and a larger $C$ inclining the scheme
+  towards linearity. They state the rule that the downwind stencil does not take a three-point indicator but
+  "directly adopts the smoothness indicator of the whole 6-point stencil", $\beta_6$ above, and print
+  $\tau_6=\beta_6-\tfrac16(\beta_{\mathrm{dw}}+\beta_{\mathrm{up}}+4\beta_{\mathrm c})$ with the central
+  indicator weighted by 4 (page-local labels: dw, up, c for the downwind-biased $\{x_i,x_{i+1},x_{i+2}\}$,
+  upwind and central three-point stencils), the same combination as above.
+- **EWENO-CU6 (adaptive $C$).** Zhang et al. (2024b, Eq. (12)) recall the six-point EWENO-CU scheme of
+  Zhao et al., in which $C$ switches between $C_{\max}=200$ and $C_{\min}=20$:
+  $$C=\begin{cases}C_{\max},&\theta_{\mathrm C}>\xi_{\mathrm C},\\C_{\min},&\text{otherwise,}\end{cases}\qquad
+  \theta_{\mathrm C}=\frac{\sum_{k=0}^2\lvert\omega_k/d_k-1\rvert^{m_{\mathrm C}}}{\lvert1/\min_ld_l-1\rvert^{m_{\mathrm C}}+2},$$
+  with $m_{\mathrm C}=2$, $\xi_{\mathrm C}=0.7$, $q=2$, $\epsilon=10^{-40}$ ($\theta_{\mathrm C}$, $\xi_{\mathrm C}$,
+  $m_{\mathrm C}$ page-local), the sum running over the three candidates inside $\{x_{i-2},\dots,x_{i+2}\}$, not
+  the fourth, most downwind one;
+  $\theta_{\mathrm C}$ measures how far the nonlinear weights are from the linear ones. Zhang et al. state
+  the purpose as capturing small scales in smooth regions "while avoiding oscillations near
+  discontinuities", and do not say which weights $\omega_k$ (those computed with $C_{\max}$ or with
+  $C_{\min}$) enter $\theta_{\mathrm C}$.
 
 The six-point indicator, the $\tau_6$ combination and the downwind stencil were carried over into
 sixth-order [TENO](/methods/targeted-eno.md) and [AFTENO](/methods/afteno.md) (Ye et al. 2022,
@@ -105,10 +124,31 @@ Liang & Fu (2024b, §4) run WENO-CU6 with $C=20$ (exponent not printed) against 
   [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) it smears the small vortices after $t\approx5$, like TENO6 and
   TENO8 (§4.10). It is absent from their implosion test without explanation (Table 12).
 
+Zhang et al. (2024b) use EWENO-CU6 as one of five comparators of their scale-adaptive TENO6-SA
+([scale sensors](/definitions/scale-sensor.md), [adaptive TENO](/methods/adaptive-teno.md)), finite
+differences with characteristic decomposition and TVD-RK3 at CFL 0.3:
+
+- **Accuracy.** On $u_t+u_x=0$ with $u_0=\sin(\pi x-\sin(\pi x)/\pi)$ to $t=2$ (seventh-order linear SSP-RK,
+  CFL 0.1), EWENO-CU6 converges at sixth order with errors identical to TENO6 and TENO6-SA to the printed
+  digits ($L_1=6.17\times10^{-15}$ at $N_x=1600$; Table 2). At critical points of order 0 to 6 its rates are
+  6, 5, 2, 3, 4, 5, 6, the only one of the six schemes that loses an order at a first-order critical point
+  (§5.4, Table 3; [accuracy at critical points](/properties/critical-point-accuracy.md)).
+- **Spectral properties.** Its ADR resolved bandwidth is 1.086 at a 1 % dispersion-error tolerance and
+  1.165 at 1.5 %, against 1.100 and 1.184 for TENO6; its dissipation equals that of TENO6 at low wavenumbers,
+  because the linear weights are unchanged, and lies between those of TENO6 and TENO6-opt for
+  $0.277<\vartheta<1.460$ (§5.2, Fig. 5; [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)).
+- **Cost.** In the advection test EWENO-CU6 is "only slightly" more expensive than TENO6 (941.63 s against
+  890.53 s at $N_x=1600$; §5.3, Table 2).
+
 ## Qualifications
 
 - All comparisons are by the developers of the competing scheme and rest on visual inspection of
   figures; the bundle has no source by the WENO-CU6 authors.
+- Zhang et al. (2024b, Eq. (11)) print the six-point indicator with $1790502f_{i-1}f_{i+1}$ and
+  $286398f_{i+1}f_{i+3}$, where Ye et al. (2022) print $17905032$ and $2863984$, and with
+  $1325006f_{i-1}f_{i+2}$ and $-2792660f_if_{i+2}$ where the pattern of the other rows, and Ye et al., have
+  $f_{i+3}$; they also label the indicator both as the downwind three-point one and as the six-point one
+  ($IS^3_3=IS^6_3$). The coefficients above follow Ye et al. and the compiler check of the integral.
 - The WENO-CU6 weights are recalled only through the template above; the exact form of the
   central-upwind weighting is not printed in any ingested source.
 - Hong et al. (2022, §1) quote the earlier TENO paper of Fu et al. (its Table 4) for eight-point TENO
@@ -132,3 +172,4 @@ Liang & Fu (2024b, §4) run WENO-CU6 with $C=20$ (exponent not printed) against 
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §3.5, Eqs. (51)–(53), Table 1.
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4, Tables 3, 6–12, Figs. 7, 12–18.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.4, Eqs. (10)–(13); §5.2, Fig. 5; §5.3, Table 2; §5.4, Table 3.

@@ -5,7 +5,7 @@ description: "A WENO limiter replaces the DG polynomial of a troubled cell by a 
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
 tags: [dg, weno, teno, limiting, characteristic]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin
@@ -207,6 +207,73 @@ structure than the compact WENO limiter of Zhu, Qiu and Zhu (2020) driven
 by the same indicator. The comparison is visual; no error norm or
 spectral measure is given for the discontinuous tests.
 
+## Nodal Hermite TENO limiter for spectral difference
+
+[Chen & Fu (2024)](/sources/chen-2024.md) (§5–§7, Algorithm 1) build a
+limiter for the nodal [spectral difference method](/methods/spectral-difference-method.md)
+at third and fourth order (SD3, SD4: $N_{\mathrm s}=3,4$ solution points per
+direction, polynomials of degree $N_{\mathrm s}-1$; page-local $N_{\mathrm s}$),
+which they state applies to other nodal discontinuous methods as well. It
+works **dimension by dimension** along each line of solution points and
+uses only the target cell and its two face neighbours in that direction.
+From the nodal values it computes, by quadrature, each cell's average and
+the averages of the first and second derivatives of its polynomial
+(Eqs. (28)–(35)), and builds Hermite candidates from them:
+
+- **3-DoF reconstruction** (both orders): quadratics $p_0$ (averages of
+  $I_{i-1},I_i$ and the derivative average of $I_{i-1}$), $p_1$ (three
+  averages) and $p_2$ (averages of $I_i,I_{i+1}$ and the derivative average
+  of $I_{i+1}$) (Eq. (36));
+- **4-DoF reconstruction** (SD4): cubics $p_3,\dots,p_6$ that add first, or
+  first and second, derivative averages of a neighbour (Eq. (51)).
+
+Instead of limiting low-order moments one after another, as compact
+Hermite WENO limiters do, the limiter takes a direct convex combination of
+these high-order candidates (§1). The linear weights make the average of
+the first derivative over $I_i$ third-order and that of the second
+derivative second-order accurate (Eqs. (38)–(48)), and depend on the
+solution-point set: $d=(8/31,15/31,8/31)$ for SD3,
+$(1/4,1/2,1/4)$ for SD4, and $(5/14,5/14,1/7,1/7)$ for the four cubics
+(Eqs. (49)–(50), (54)). The nonlinear weights are of
+[WENO-JS](/methods/weno-js-reconstruction.md) form ($q=2$,
+$\epsilon=10^{-12}$) or of [TENO](/methods/targeted-eno.md) form with $C=1$,
+$q=6$, $\tau=\tfrac12(\lvert\beta_0-\beta_1\rvert+\lvert\beta_1-\beta_2\rvert)$
+for three candidates and $\tfrac12\lvert\beta_3+\beta_5-\beta_4-\beta_6\rvert$
+for four, and an adaptive cut-off $C_T$ from Ren's discontinuity measure
+mapped by $(1-m)^4(1+4m)$ ([adaptive TENO](/methods/adaptive-teno.md);
+$C_T\in[10^{-8},10^{-4}]$ for 3-DoF and $[10^{-7},10^{-3}]$ for 4-DoF
+*(compiler check, not in the sources: the bounds of their Eq. (65) with
+the stated $\alpha_1$, $\alpha_2$)*). At fourth order the cubics are used
+whenever any of them survives the cut-off, and the quadratics otherwise
+(§5.7). For the Euler equations the limiting is characteristic-wise, with
+the Jacobian at the cell average of the sweep direction; the $x$- and
+$y$-limited nodal values are averaged (Eqs. (70)–(75)), and every step
+keeps the cell average. In cells where a five-point scale sensor exceeds
+$0.6$ a linear compression toward the average follows
+([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)). The
+limiter acts in the directions flagged by their TENO-type
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md).
+
+**Evidence** (§9; SSPRK(5,3), CFL 0.3). With every cell forced troubled
+on a 2D [density wave](/benchmarks/density-wave-advection.md) all limiters
+keep the design order, e.g. $L_1$ orders 3.03, 3.08 for SD3 with TENO3-A
+and 4.13, 4.09 for SD4 with TENO4-A, the TENO-A errors being "about half"
+of the WENO ones (Table 1); at $80^2$ the limited SD3 error,
+$1.99\times10^{-6}$, is below the unlimited one, $2.60\times10^{-6}$. On the
+[Sod and Lax tubes](/benchmarks/sod-and-lax-shock-tubes.md), the
+[Shu–Osher problem](/benchmarks/shu-osher-problem.md), the
+[double Mach reflection](/benchmarks/double-mach-reflection.md), the
+[triple point](/benchmarks/triple-point-problem.md), a
+[two-dimensional Riemann problem](/benchmarks/two-dimensional-riemann-problems.md),
+the [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)
+and a [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
+the TENO-A limiter resolves more small-scale structure than the WENO
+limiter; lowering $C_T$ lowers the dissipation (Fig. 13). On the
+shock–bubble case TENO4-A brings no significant gain over TENO3-A, and
+TENO3-A combined with SD4 degrades the results against SD3, which the
+authors take as the reason a fourth-order limiter is needed (§9.4, §9.8;
+the second point stated without figure). Comparisons are visual.
+
 ## Evidence
 
 Du, Shu & Zhong test the 2D Euler equations ($\gamma=1.4$) with SSP-RK3,
@@ -292,6 +359,12 @@ given.
   Dumbser and coworkers as another class (§1;
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
 
+- **Compact stencils.** Chen & Fu contrast their face-neighbour stencil
+  with the RKDG WENO and TENO limiters of Qiu & Shu and Huang & Fu, whose
+  eight candidate stencils each include at least one cell that does not
+  share a face with the target (§7, Fig. 3), and state that the direct
+  combination of high-order candidates is more efficient at high order
+  than moment-by-moment Hermite WENO limiting (§1, §10; no timing given).
 - **Against subcell limiting on unstructured meshes.** Maltsev et al.
   prefer replacing the modes to subcell finite-volume limiting, which
   keeps more of the DG subcell information but is "not as
@@ -345,6 +418,20 @@ given.
   printed Runge–Kutta stages add $+\Delta tM^{-1}R$ for a residual defined
   by $M\,dU/dt+R=0$.
 
+- **Chen & Fu: gaps.** The Taylor formula of the averaged second
+  derivatives used by the cubics $p_5$, $p_6$ and their characteristic
+  projection are not printed (Eqs. (51), (71)); how the WENO4 weights
+  combine three quadratics and four cubics is not stated, the selection
+  rule of §5.7 relying on the TENO flags; the solution points of Eq. (3),
+  called Gauss points, are Chebyshev–Gauss points ($0,\pm\sqrt3/4$ for
+  $N_{\mathrm s}=3$, against $0,\pm\sqrt{15}/10$ for Gauss–Legendre on
+  $[-\tfrac12,\tfrac12]$), and the printed linear weights belong to the
+  printed points *(compiler check, not in the sources)*. The 4-DoF
+  reconstruction needs a higher upper bound of $C_T$ than the 3-DoF one,
+  which the authors set against "traditional scenarios" in which higher
+  orders lead to reduced bounds; the reason given is the lower robustness
+  of the 4-DoF reconstruction, from experiments not shown (§5.5).
+
 # Citations
 
 - [Du, Shu & Zhong (2022)](/sources/du-2022.md) — §1; §3 (Eqs. (3.1)–(3.9)); §4 (Exs. 4.1–4.10, Tables 4.1–4.18, Figs. 4.2–4.16); §5.
@@ -357,3 +444,4 @@ given.
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §4.4, Eqs. (36)–(50); §5.2, Eqs. (51)–(64); §6, Tables 1–4, Figs. 4–15.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3 (Hermite WENO limiter on first moments).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.1–2.4, Eqs. (2)–(34); §3.1, Table 1; §3.5–3.8; §4; Appendix B, Tables B.3–B.4.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5.1–5.7, Eqs. (21)–(69); §6–7, Eqs. (70)–(75), Algorithm 1, Figs. 2–3; §9, Table 1, Figs. 5–25; §10.

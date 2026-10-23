@@ -170,16 +170,17 @@ were found.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–8 (2026-10-23). This source is cited on:
 
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
-* [Decaying compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
+* [Compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
 * [Flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)
 * [Gas–liquid Riemann problems](/benchmarks/gas-liquid-riemann-problems.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [JAX-Fluids](/software/jax-fluids.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Level-set and ghost-fluid interface methods](/methods/level-set-method.md)
+* [Lid-driven cavity](/benchmarks/lid-driven-cavity.md)
 * [Shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)
 * [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)

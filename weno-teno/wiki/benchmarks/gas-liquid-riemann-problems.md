@@ -5,7 +5,7 @@ description: "One-dimensional gas–liquid Riemann problems with exact or refere
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -68,6 +68,45 @@ computation; the water's $p_\infty$ is not printed for this test (their
 underwater-explosion water has $p_\infty=6\times10^8$ Pa). They solve
 the [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 in pressure–temperature equilibrium with MUSCL and HLLC.
+
+[Zhang et al. (2024a)](/sources/zhang-2024.md) §4.2 (Table 3, set-up of Saurel et al.)
+run the same states on the five-equation model: on $[0,1]$ m, water
+($\phi_1\rho_1=1000$, $p=10^9$ Pa) for $x<0.75$ against air ($\phi_2\rho_2=1$,
+$p=10^5$ Pa), at rest, with water $(\gamma,p_\infty)=(4.4,\ 6\times10^8\ \mathrm{Pa})$ and
+extrapolation boundaries; $N_x=128$ and $512$ to $t=240\,\mu$s against WENO5IS-THINC on
+12800 cells.
+
+**Shock on a water–air interface (Shukla).** Zhang et al. §§4.3–4.4 (Tables 4–5) run two
+cases on $[0,5]$ m with the same water constants. *Static interface:* shocked water
+($\phi_1\rho_1=1230$, $v=432.7$ m/s, $p=10^9$ Pa) on $0<x<1.31$, water
+$(1000,0,10^5)$ on $1.31<x<2$, air $(1,0,10^5)$ beyond, $t=1000\,\mu$s, $N_x=128$ and
+$512$. *Moving interface,* in the shock frame: shocked water $(1230,-1878.1,10^9)$ on
+$0<x<3.62$, water $(1000,-2310.9,10^5)$ on $3.62<x<4.31$, air $(1,-2310.9,10^5)$ beyond,
+$t=1000\,\mu$s, $N_x=512$ and $2048$ (the domain is not restated). Reference solutions on
+12800 cells; $L_1$ errors on $N_x=128,\dots,2048$ (Fig. 8). *(Compiler check, not in the
+sources: in the static case mass conservation gives the shock speed
+$1230\cdot432.7/230\approx2314$ m/s and momentum the jump
+$1000\cdot2314\cdot432.7\approx1.001\times10^9$ Pa, consistent with the printed states.)*
+
+**Cavitation and a mainly-vapour tube (water and vapour, with phase change).**
+[Wakimura et al. (2024)](/sources/wakimura-2024.md) §§4.1–4.2 run two liquid–vapour tubes on
+the six-equation model with infinite-rate relaxation
+([five- and six-equation models](/definitions/five-equation-model.md)), water and vapour with
+the stiffened-gas constants of their Table 1, outflow boundaries, CFL 0.5. States are
+$(\phi_1,\rho_1,\rho_2,v,p)$ in kg/m³, m/s, Pa:
+
+| Problem | left | right | cells | $t$ |
+|---|---|---|---|---|
+| cavitation tube, $\lvert v_0\rvert=2$ m/s (Eq. (46)) | $(0.99,1150,0.63,-2,10^5)$ | $(0.99,1150,0.63,2,10^5)$ | 500 | 3.2 ms |
+| cavitation tube, $\lvert v_0\rvert=500$ m/s | as above with $\mp500$ | | 5000 | 0.58 ms |
+| mainly-vapour shock tube (Eq. (47), after Chiapolino et al.) | $(2.7399\times10^{-4},1034.8,1.1344,0,2\times10^5)$, $T=394.25$ K | $(1.3702\times10^{-4},1094.0,0.59969,0,10^5)$, $T=372.88$ K | 200 | 0.8 ms |
+
+on $[0,1]$ m with the jump at $x=0.5$ m, $T_1=T_2=354.728$ K in the cavitation tube, and a
+liquid mass fraction of 0.2 on both sides of the shock tube. Each is run with pressure
+relaxation alone and with the thermal and chemical relaxations (phase change). *(Compiler
+check, not in the sources: the temperature form gives
+$\rho_1=(10^5+10^9)/(1.35\cdot1816\cdot354.728)=1150.0$ and
+$\rho_2=10^5/(0.43\cdot1040\cdot354.728)=0.630$ kg/m³ for the cavitation tube.)*
 
 **Air–water tube of Beig & Johnsen.** [Huang & Johnsen (2023)](/sources/huang-2023.md)
 §4.2, Eq. (49), states in $(\rho_1,\rho_2,v,p,\phi_1)$ with phase 1 air and
@@ -221,6 +260,21 @@ interface and contact, $4.9\times10^{-5}$ m for n-dodecane and
 $2.6\times10^{-6}$ m for water, is unresolved on 2000 cells, without
 spurious waves or instability (§4.1.2, §4.1.4).
 
+**THINC hybrids against plain WENO and MUSCL.** On the $10^9$ Pa water–air tube,
+Zhang et al.'s WENO5IS-THINC sharpens the interface and places the shock and rarefaction
+more accurately than WENO5IS alone and the MUSCL-THINC of Garrick et al. (§4.2, Fig. 5).
+On the shocked static interface WENO5IS alone oscillates at the transmitted shock and the
+head of the rarefaction, and both THINC hybrids suppress this; on the moving interface the
+oscillations are stronger and a "remarkable discrepancy in the shock position" remains at
+$N_x=512$ (§§4.3–4.4, Figs. 6–7). In $L_1$ the THINC hybrids converge at roughly first
+order, WENO5IS "basically lower than one", and WENO5IS-THINC has the smallest errors
+(Fig. 8). On Wakimura et al.'s mainly-vapour tube the BVD schemes capture the contact at
+$x\approx0.6$ m in about 3–4 cells, MUSCL in more, and the pressure–temperature results
+agree with the four-equation results of Chiapolino et al.; on the cavitation tube the BVD
+and MUSCL solutions are close (mass-fraction differences at most $1.49\times10^{-6}$ and
+$6.00\times10^{-5}$ for the two speeds) and agree with Pelanti & Shyue (§§4.1–4.2,
+Figs. 1–3; [BVD](/definitions/boundary-variation-diminishing.md)).
+
 **Sharp-interface DG.** Bai & Li's discontinuous Galerkin solver with
 ghost-fluid states in cut cells ([level-set methods](/methods/level-set-method.md))
 agrees with the exact solution of the 2 GPa water–air problem except for
@@ -295,10 +349,17 @@ cost in conservation is discussed under
   speed *(compiler check, not in the sources)*. It is recorded as
   a difference of printed data, not resolved.
 - The stiffened-gas constants of water differ between problems and
-  sources ($\gamma=5.5$, $6.12$, $7.15$), so the problems do not share a
+  sources ($\gamma=4.4$, $5.5$, $6.12$, $7.15$), so the problems do not share a
   water model.
-- The evidence is visual comparison with exact or reference solutions;
-  no source reports an error norm for these problems.
+- The evidence is visual comparison with exact or reference solutions,
+  except Zhang et al. (2024a, Fig. 8), whose $L_1$ convergence of the shocked
+  water–air interface problems is plotted, not tabulated.
+- Wakimura et al.'s text calls $\rho_2=1150$ kg/m³ "the gas density" of the cavitation
+  tube; their Eq. (46) and the liquid volume fraction $0.99$ make it the liquid density
+  $\rho_1$, as the table above reads it.
+- Zhang et al.'s water ($\gamma=4.4$, $p_\infty=6\times10^8$ Pa) has the $\gamma$ of Nguyen
+  et al.'s version of the same tube, whose $p_\infty$ is not printed, and differs from the
+  $\gamma=5.5$, $6.12$, $7.15$ fits listed above.
 - Nguyen et al.'s Fig. 10 labels the pressure axis in MPa with a
   maximum of 1, while the text sets the water at $10^9$ Pa; the text
   also labels the water side "$\phi_1=1$", whereas their interface
@@ -330,3 +391,5 @@ cost in conservation is discussed under
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.1–7.4.2, Table 2, Figs. 13–15: weak shock through a water–air interface, $10^{12}$ Pa water–air tube.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.1.3, Fig. 8: air–water problem in a Lagrangian WLS particle method.
 - [Long et al. (2023)](/sources/long-2023.md) — §2.2, §4.1, Eqs. (28)–(32), Figs. 4–5: liquid–vapour tubes with evaporation and condensation.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §§4.2–4.4, Tables 3–5, Figs. 5–8: water–air tube, shock on static and moving water–air interfaces, $L_1$ convergence.
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §§4.1–4.2, Eqs. (46)–(47), Figs. 1–3: cavitation tube and mainly-vapour shock tube with phase change.

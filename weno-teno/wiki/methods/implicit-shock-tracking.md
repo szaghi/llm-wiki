@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Implicit shock tracking and moving DG (MDG-ICE)"
-description: "Implicit shock tracking makes the mesh geometry an unknown and moves element faces onto discontinuities, either by weakly enforcing the flux-jump condition (MDG-ICE and the MDG+ICE variant of Luo, Absillis and Nourgaliev) or by minimizing an enriched DG residual constrained by the DG equations (HOIST, made robust by Huang and Zahr); formulations, solvers, tests and the limits of the claims."
+description: "Implicit shock tracking makes the mesh geometry an unknown and moves element faces onto discontinuities, by weakly enforcing the flux-jump condition (MDG-ICE; the MDG+ICE variant of Luo, Absillis and Nourgaliev) or by minimizing an enriched DG residual constrained by the DG equations (HOIST, made robust by Huang and Zahr, run slab by slab in space–time by Naudet and Zahr)."
 status: established
-aliases: [MDG-ICE, MDG+ICE, HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
+aliases: [MDG-ICE, MDG+ICE, HOIST, space-time HOIST, slab-based HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)
@@ -159,8 +159,9 @@ measures applied after each step during the first $M$ iterations
 **Robustness measures** (§5.2).
 
 1. *Element removal by edge collapse.* An element whose volume, edge
-   ratio or Jacobian ratio is too small (four tests, Eqs. (56)–(60), usual
-   tolerances 0.2, $10^{-10}$, 0.2, 0) has its shortest edge collapsed.
+   ratio or Jacobian ratio is too small (four tests, Eqs. (56)–(60), with
+   tolerances 0.2, $10^{-10}$, 0.2, 0 in four of the nine cases of Table A.4,
+   varied in the others) has its shortest edge collapsed.
    This works for simplices of any degree in any dimension, since
    collapsing any edge of a simplex sends its volume to zero. The kept
    endpoint is the one on more boundaries; on a tie, the one where the
@@ -203,6 +204,81 @@ and of the shock-position error are near $N+1$ for $N=1$–$5$ (Table 3),
 while the artificial-viscosity reference at $N=2$ converges below first
 order, which the authors attribute to the smoothing of the discontinuity
 and the corruption of the downstream solution (§6.3, Fig. 26).
+
+## Slab-based space–time HOIST (Naudet & Zahr)
+
+[Naudet & Zahr (2024)](/sources/naudet-2024.md) carry HOIST from steady
+problems, and from the single space–time domains of Huang & Zahr, to
+unsteady problems solved **slab by slab**: the law in $d'$ space
+dimensions is written as a steady law in $d=d'+1$ dimensions on a slab
+$\Omega_x\times(t_0,t_1)$, HOIST is applied to one slab, and the next
+slab starts from the top of the previous one, with no global coupling in
+time (§1, §2.2, §4). Embedding implicit tracking in a method-of-lines
+time discretization, they state, suits only limited shock motion and
+cannot handle shock–shock or shock–boundary interactions without complex
+mesh operations; in space–time a moving shock is a stationary surface
+and an intersection is a triple point (§1).
+
+**Space–time fluxes from spatial ones** (§2.2, Eqs. (7)–(17)). With
+space–time flux $[f(u)\ \ u]$ and unit normal $(n_x,n_t)$,
+$n_x=\lvert n_x\rvert\eta_x$ (page-local symbols), the projected Jacobian is
+$\lvert n_x\rvert A(u;\eta_x)+n_tI$, with the eigenvalues of the spatial
+Jacobian scaled by $\lvert n_x\rvert$ and shifted by $n_t$ and the same
+eigenvectors. Any linearized-Riemann flux of the form
+$\tfrac12\big(F(u^+)+F(u^-)\big)\cdot n+\tfrac12\tilde A(u^+-u^-)$, among
+them the [Roe](/methods/roe-riemann-solver.md), Vijayasundaram and
+[Rusanov](/methods/lax-friedrichs-flux.md) fluxes, therefore has a
+space–time version written entirely with spatial quantities; e.g. the
+space–time Roe matrix is $R\,\big\lvert\lvert n_x\rvert\Lambda+n_tI\big\rvert\,L$
+at the Roe average (Eq. (15)). The authors present this as removing "one
+of the implementation burdens associated with space-time methods".
+(The source's convention puts $W^+$ inside the element and $W^-$
+outside, the reverse of the registry's $u^\pm$.)
+
+**Slab meshes** (§3). The spatial mesh of a slab is taken from the top
+of the previous slab, extruded into prisms and split into simplices,
+because element removal by edge collapse, key to robust tracking, is
+well defined for simplices in any dimension. Each prism face is split by
+an orientation-independent rule and connected to a central node, giving
+$N_d=dN_{d-1}+2$ simplices per prism, $N_2=4$, $N_3=14$, $N_4=58$ (Eq.
+(35); a constrained Delaunay split gives 11 tetrahedra without a central
+node); the larger splits were observed to make shock fitting more
+robust (Remark 9). Curved high-order refinements are obtained by
+splitting the straight parent element and mapping through the
+isoparametric map, which keeps them conforming (Eqs. (31)–(34)).
+
+**Slab-specific devices** (§4). The temporal coordinate of the top nodes
+is a single extra unknown, so the optimizer can move the slab top onto a
+shock–boundary interaction (the translating top boundary of an earlier
+MDG-ICE work, Eq. (37)); the bottom of later slabs is fixed and
+interpolated from the previous slab; time is rescaled, $t=t^\star\hat t$,
+to keep space–time simplices well shaped; elements are $h$-refined where
+the enriched residual or the Persson–Peraire modal sensor exceeds $1\,\%$
+of its maximum (Eqs. (43)–(45); see
+[troubled-cell indicator](/definitions/troubled-cell-indicator.md),
+[adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)); and
+regions of known upstream flow are removed and replaced by a shock
+boundary condition. Each slab is solved by the SQP method of Huang &
+Zahr from the DG($p=0$) solution on the reference mesh (Algorithm 1).
+
+**Evidence** (§5; no convergence-order study, deferred to the
+single-slab work):
+
+| test | setup | result |
+|---|---|---|
+| [Burgers](/benchmarks/burgers-equation-tests.md), accelerating shock leaving the domain | 192 $P_2$ simplices, $S=1,2,4,8$ slabs | residuals converge faster and deeper as slabs are added (Fig. 9); shock boundary conditions remove over half of the elements (Fig. 11) |
+| Burgers, shock formation and merger | 1 slab, 96 → 207 triangles after 8 refinement rounds | formation point resolved, agreement with a fine second-order FV run at $t=0.1$ |
+| 2D Burgers, curved shock | 3 slabs, 448 $P_2$ tetrahedra in slab 1 | curving shock tracked |
+| shallow-water [dam break](/benchmarks/dam-break-problem.md) with walls | 5 slabs, 32 triangles in slab 1 | shock and rarefaction tracked through the wall reflections |
+| [Sod tube](/benchmarks/sod-and-lax-shock-tubes.md) with walls to $t=1$ | 6 slabs, 65 simplices in slab 1 | all waves, a generalized triple point, shock–shock and shock–contact interactions tracked |
+| [Shu–Osher problem](/benchmarks/shu-osher-problem.md) to $T=2$ with a wall at $x=5$ | 5 slabs, refinement and shock boundary conditions | relative $L^2$ error $3.97\times10^{-4}$ against a second-order FV superbee reference |
+
+When two events occur at nearly the same time, the single translating
+top cannot track both on a coarse mesh; HOIST tracked the stronger
+shock–contact interaction, and freeing the top nodes individually tracks
+both but may violate causality, which no constraint enforces yet
+(§5.3.1, Fig. 18). The authors call the extrude-and-split approach
+inefficient in 3D and impractical in 4D space–time (§6).
 
 ## Why the jump condition fits discontinuities
 
@@ -311,6 +387,21 @@ Tables 1). No test compares with a shock-capturing scheme.
   p-convergence claim and do not discuss Luo et al.'s, so the sources do
   not contradict each other. Moved here from *Contradictions* at the
   chunk-4 deep lint (2026-10-23).
+- **First-order claim.** Naudet & Zahr state that shock-capturing
+  methods reduce the accuracy "near discontinuities, and therefore
+  globally, to first-order", and that their accuracy "will always be
+  limited to first-order" (§1), without naming a norm or a region. The
+  reconstruction pages of this bundle report design-order convergence on
+  smooth solutions (e.g. [WENO-JS](/methods/weno-js-reconstruction.md)).
+- **Printed slips in Naudet & Zahr.** The accelerating-shock initial
+  condition (Eq. (47)) prints the same constant right state $-\mu_2$ as
+  Huang & Zahr's Eq. (78) above, while their exact solution and shock
+  path (Eqs. (48)–(49)) again correspond to $\mu_2(x-1)$; Remark 10
+  speaks of splitting a triangular prism into four tetrahedra, while
+  every split without added vertices has three *(compiler check, not in
+  the sources)*; and the Shu–Osher slab is described as 20 spatial
+  elements giving 160 simplices, where the $N_2=4$ split used elsewhere
+  gives 80 *(compiler check, not in the sources)*.
 - **Title.** Page 1 of the manuscript read says "Interface Conservation
   Enforcement"; the published title, per Crossref, says "interface
   condition enforcement".
@@ -318,4 +409,5 @@ Tables 1). No test compares with a shock-capturing scheme.
 # Citations
 
 - [Luo, Absillis & Nourgaliev (2021)](/sources/luo-2021.md) — §I, §3.1–3.5 Eqs. (3.1)–(3.17), Lemmas 1–2, Figs. 2–7, §IV.A–E Figs. 8–28, Tables 1, §V (author manuscript).
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §1, §2.2 Eqs. (7)–(17), §3 Eqs. (29)–(35), Remarks 9–10, §4 Eqs. (36)–(45), Algorithm 1, §5 Figs. 9–21, §6.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2–3 Eqs. (1)–(26), §4 Eqs. (27)–(37), Remarks 5–8, §5.1 Eqs. (38)–(55), Remarks 9–11, §5.2 Eqs. (56)–(70), Remarks 13–20, §5.3 Remark 22, §6 Eqs. (78)–(87), Tables 2–3, Figs. 13–34, App. A Table A.4 (arXiv v2).

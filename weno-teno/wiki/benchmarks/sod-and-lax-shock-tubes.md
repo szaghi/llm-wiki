@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -58,6 +58,9 @@ the right half.
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | two blocks: 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.1, 0.2 | multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with [boundary closures](/methods/shock-capturing-boundary-closure.md) at the interface |
 | [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (28) | 200 | 0.2 | mirrored: $(0.125,0,0.1)$ on $[0,0.5]$, $(1,0,1)$ on $(0.5,1]$; [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD, global LF splitting; reference WENO-JS on 4000 |
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §4.2.1 | particle spacing $\Delta x_0=0.0025$ | 0.15 | on $[-0.5,0.5]$; Lagrangian weighted-least-squares particles with WENO-Z-type pair states vs the GSPH and WENO-SPH particle methods |
+| [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9c) | Chebyshev with a mapping, $N_x=615$ | not stated | on $[-1,1]$, reflecting walls; spectral relaxation; reference HyPar characteristic WENO5 on 8000 (arXiv v2) |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.4 | triangles, $201\times11$ vertices | 2 | strip $[-5,5]\times[-0.025,0.025]$, jump at $x=0$; ALW-MR-WENO-3/4/5 vs [MR-WENO](/methods/multi-resolution-weno.md); fourth entries printed $2.5$ and $0.25$, see Qualifications |
+| [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.1, Eq. (57) | six space-time slabs, 65 simplices ($q=1$, $p=2$) in the first | 1 | walls at $x=0$ and $1$; space-time [implicit shock tracking](/methods/implicit-shock-tracking.md); reference second-order FV (superbee) on over $10^5$ elements, adaptive RK4 |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -82,6 +85,24 @@ Sod's, whose left gas is at rest. With $N=300$ at $t=0.2$ they find
 IMWENO-P, WENO-NS, WENO-P and MWENO-P capturing the discontinuities
 better than WENO-JS and WENO-Z, and IMWENO-P slightly ahead of the other
 three (Fig. 5).
+
+[Lin & Chan (2024)](/sources/lin-2024.md) §4.1.1 run the same modified
+left state, after Toro's §6.4, with the diaphragm at $x=0.3$:
+$(1,0.75,1)$ for $x<0.3$ and $(0.125,0,0.1)$ on the rest of $[0,1]$,
+inflow at $x=0$, outflow at $x=1$, $K=50$ and 100 elements of degree
+$N=3$, $T=0.2$, $\gamma$ not printed. The left rarefaction is sonic, so
+the test probes entropy violation: plain DGSEM shows a jump at the
+rarefaction, while entropy-stable DG, DGSEM with a minimum-entropy
+limiter and DGSEM with their cell-entropy subcell limiter give a smooth
+rarefaction (Fig. 2; see [entropy stability](/properties/entropy-stability.md)).
+
+Naudet & Zahr run Sod with reflecting walls to $t=1$, "five times
+longer than the one usually associated with this problem", so that the
+waves reflect and interact; their
+slices are at $t=0.2$, $0.34$, $0.43$ and $0.54$ (Fig. 17). Lin & Zhu's
+$[-5,5]$ placement at $t=2$ is the $[0,1]$ placement at $t=0.2$ under
+$x\mapsto(x+5)/10$, $t\mapsto t/10$ *(compiler check, not in the
+sources)*.
 
 ## Lax
 
@@ -119,6 +140,9 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 7 | $[-5,5]$ | 300 cells | 1.3 | WENO-JS lowest resolution, then WENO-Z; IMWENO-P as MWENO-P, marginally above WENO-P and WENO-NS (Fig. 6) |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.3 | $[0,1]\times[0,0.1]$, polygons | $h=1/430$, $P_2$, $P_3$ | 0.14 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables; reference 1D residual distribution on 50,000 points (arXiv v1) |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.4.2 | $[0,1]$, jump at $0.5$ | single domain; two blocks 160 on $[0,0.75]$, 40 on $(0.75,1]$ | 0.14; two blocks also 0.06 | |
+| [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9d) | $[-1,1]$, reflecting walls | Chebyshev, $N_x=615$ | first output 0.02 | printed in conserved variables $(0.445,0.311,8.928)$ and $(0.5,0,1.4275)$ |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.3 | $[-0.5,0.5]$ strip, width 0.05, periodic in $y$, $x$-boundary condition not specified | triangles, $201\times11$ vertices | 0.16 | ALW-MR-WENO vs MR-WENO |
+| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.4 | $[-0.5,0.5]$ | 200 | 0.16 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs MR-WENO and the SHUS-WENO indicator; troubled-cell maps |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -282,6 +306,39 @@ elements; the features are tracked in order of strength, the shock by
 about iteration 27, the contact by 52, the rarefaction head by 66 and
 its tail by 106 (§6.4.1, Fig. 29). See
 [implicit shock tracking](/methods/implicit-shock-tracking.md).
+
+Naudet & Zahr's space-time HOIST, on Sod between walls, tracks the
+shock, the contact and the head and tail of the rarefaction in the first
+slab, where they all meet at the diaphragm ("a generalized triple
+point"), and then the shock–shock and shock–contact interactions and
+the wall reflections (§5.3.1, Figs. 16–17). Where two events occur at
+nearly but not exactly the same time, the translating top boundary of a
+slab cannot track both on the coarse mesh; the method "chose to track
+the shock-contact interaction because it is the stronger feature", and
+freeing the temporal coordinates of the top nodes of the slab tracks
+both, though "causality may be violated", which no constraint yet
+enforces (Fig. 18).
+
+**Spectral relaxation in a Chebyshev basis.** Kolluru et al. solve
+both tubes with a Chebyshev pseudo-spectral method with characteristic
+boundary conditions, which they find needs no extra boundary treatment.
+On Sod the 2/3-dealiased pure pseudo-spectral run destabilizes quickly;
+spectral relaxation with the Fejér–Korovkin kernel, parameters
+$(0.785,0.99)$, is oscillation-free but slightly overdamped, and with the
+de la Vallée-Poussin kernel, $(0.94,0.95)$, closer to the reference with
+small bounded oscillations at corners of the profile; Lax shows
+the same pattern with $(0.91,0.99)$ and $(1.10,0.98)$ (§3.4, Figs.
+14–15). See [artificial and spectral viscosity](/methods/artificial-viscosity.md).
+
+**Multi-resolution WENO of the Zhu group.** Lin & Zhu's ALW-MR-WENO on
+triangular strips gives Lax and Sod results comparable to MR-WENO of
+the same order, and "can capture the contact discontinuities
+precisely" on Sod (Cases 3.3–3.4, Figs. 3.4–3.5). Zuo & Zhu's (2024a) hybrid
+MMR-WENO "perform better overall" than the SHUS-WENO hybrid on Lax; both
+indicators detect the discontinuities, and theirs is called "more
+accurate" from the troubled-cell maps (Ex. 3.4, Figs. 3.4–3.5). Their
+MMR/MR CPU-time ratios are 36.8 %, 31.2 % and 35.7 % at orders 5, 7, 9
+(Table 3.1).
 
 **Robustness of Hermite WENO at high Reynolds number.** Fan, Zhang &
 Qiu run the Lax tube for the compressible Navier–Stokes equations. A
@@ -541,6 +598,18 @@ single-gas Euler equations.
   $L^2\ge L^1$ by the power-mean inequality *(compiler check, not in the
   sources)*. The $L^2$ norm computed differs from the printed one, or the
   labels are swapped; the rates are unaffected.
+- Lin & Zhu print the Sod states as $(\rho,v_1,v_2,p)=(1,0,0,2.5)$ and
+  $(0.125,0,0,0.25)$, whereas their Lax case lists the pressure in the
+  same slot; $2.5$ and $0.25$ equal the total energies $p/(\gamma-1)$ of
+  the Sod states for $\gamma=1.4$ *(compiler check, not in the
+  sources)*, and the paper prints no $\gamma$.
+- Zuo & Zhu (2024a) write that MMR-WENO saves "nearly 60%" of the CPU
+  time on Lax, while their Table 3.1 ratios give savings of 63.2 %,
+  68.8 % and 64.3 % *(compiler check, not in the sources)*.
+- Kolluru et al. print the pressure as "$p=(\gamma-1)\rho$" below their
+  Euler system, without the internal-energy factor, and state no output
+  times for Sod; Naudet & Zahr state no $\gamma$ for Sod (1.4 is given
+  for their Shu–Osher run).
 - Du & Yang print the H$_2$/O$_2$/Ar diaphragm at $x=0.5$ cm of a 10 cm
   domain, Peng et al. at the middle of their 100 mm tube.
 
@@ -601,3 +670,8 @@ single-gas Euler equations.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.2.1, Fig. 4.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.2–§5.1.3, Figs. 1–2 (arXiv v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §4.4, Table 5, Figs. 5–6 (author preprint).
+- [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §3.4, Eqs. (9a)–(9d), Figs. 14–15, App. B (arXiv v2).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Cases 3.3–3.4, Figs. 3.4–3.5.
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §4.1.1, Fig. 2.
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.3.1, Eq. (57), Figs. 16–18.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.4, Figs. 3.4–3.5, Table 3.1.

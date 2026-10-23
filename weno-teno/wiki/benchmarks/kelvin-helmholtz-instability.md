@@ -5,7 +5,7 @@ description: "Periodic two-dimensional shear-layer benchmark: Euler variants wit
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -83,6 +83,9 @@ $64\times64$ elements of degree $N=7$, $t=10$, Mach number up to about
 0.6. [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.2,
 Eq. (49) (arXiv v1) rerun the same data, mesh, degree and final time at
 CFL 0.9, again without stating $\gamma$ in the subsection.
+[Lin & Chan (2024)](/sources/lin-2024.md) §4.3 run the same data on
+$80\times80$ elements of degree $N=3$ to $T=10$, boundary conditions not
+printed.
 
 **Viscous smooth layers with a passive dye.**
 [Cernetic et al. (2023)](/sources/cernetic-2023.md) §6 (arXiv v2) run
@@ -133,6 +136,24 @@ $[-9/32,-7/32]$, $\eta=\tfrac12(1-\sin(16\pi(y-1/4)))$ on $[7/32,9/32]$
 and $0$ otherwise (page-local $\eta$); periodic for the conserved
 variables, first-order extrapolation for $\mathsf A_3$. They print the velocity
 as $1-2\eta(x)$ while $\eta$ is defined as a function of $y$.
+
+**Visco-resistive MHD variant.** [Dematté et al. (2024)](/sources/dematte-2024.md)
+§4.3.2 run a magnetized shear layer on $[0,2]\times[-1,1]$, $1024^2$
+cells, to $t=4$, with $\gamma=5/3$: $\rho_0=1$, $p_0=3/5$,
+$v_1=-\tfrac12U_0\tanh\big((\lvert y\rvert-0.5)/a_{\mathrm l}\big)$,
+$v_2=\delta_v\sin(2\pi x)\sin(\pi\lvert y\rvert)$, $v_3=0$, and a field
+that rotates across the layer, $B=(b_0,0,0)$ for
+$\tfrac12+a_{\mathrm l}<\lvert y\rvert\le1$,
+$(b_0\sin\chi,0,b_0\cos\chi)$ for $\tfrac12-a_{\mathrm l}<\lvert y\rvert\le\tfrac12+a_{\mathrm l}$
+and $(0,0,b_0)$ for $\lvert y\rvert\le\tfrac12-a_{\mathrm l}$, with
+$\chi=\tfrac\pi2\,(y-0.5+a_{\mathrm l})/(2a_{\mathrm l})$; $a_{\mathrm l}=1/25$,
+$U_0=1$, $\delta_v=0.01$, $b_0=0.07/\sqrt{4\pi}$, viscosity and
+resistivity $10^{-3}$, no heat conduction (all page-local). An ideal
+rerun (zero viscosity and resistivity) measures the changes of the
+magnetic helicity $\tfrac12\int\mathsf A\cdot B$ and of the cross
+helicity $\tfrac12\int v\cdot B$ ($\mathsf A$ the vector potential) and
+the magnetic divergence, against an explicit Godunov scheme with
+staggered constrained transport.
 
 **Guiding-center Vlasov variant.**
 [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
@@ -242,6 +263,24 @@ setup they report a resolved roll-up, no spurious oscillations and
 pressure waves that are not over-dissipated, on meshes of $100^2$ to
 $800^2$ elements (Fig. 5); the evidence is visual, as for the other Euler variants.
 
+**Entropy limiting and the choice of high-order scheme.** Lin & Chan
+(2024) run the tanh setup with [DGSEM](/methods/dgsem.md) limited by a
+relaxed positivity constraint plus their semi-discrete cell entropy
+inequality (subcell limiting factors from a linear program); the run is
+robust and resolves fine-scale features. Applying the same limiting to
+entropy-stable DG gives visibly different turbulent structures, from
+which they conclude that the choice of the high-order scheme matters
+(§4.3, Figs. 4–5); like Rueda-Ramírez et al., they do not say which is
+closer to a converged solution.
+
+**Helicity of a semi-implicit MHD scheme.** Dematté et al. show their
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
+on the visco-resistive run in Fig. 15. In the ideal rerun its magnetic-
+and cross-helicity conservation errors are comparable to those of the
+explicit second-order divergence-free Godunov scheme, and the authors
+state that no standard ideal-MHD scheme conserves these quantities exactly (§4.3.2,
+Fig. 16). See [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
 **Divergence at the incompressible limit.** Boscarino et al. report
 vorticity comparable to the isentropic all-Mach results of their earlier
 scheme, and an $L^\infty$ error of $\nabla\cdot v$ (measured with
@@ -345,3 +384,5 @@ convergent flow, and the benchmark measures an error.
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Ex. 12, Fig. 14.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.2, Eq. (49), Figs. 1–3 (arXiv v1).
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §6, Figs. 11–15 (arXiv v2).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §4.3, Figs. 4–5.
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.3.2, Figs. 15–16.

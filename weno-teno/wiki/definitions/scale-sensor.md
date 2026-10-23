@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Scale sensors and the effective scaled wavenumber"
-description: "A scale sensor estimates the local reduced wavenumber of the data, exactly for a sinusoid, so that numerical dissipation or the TENO cut-off can follow the resolved length scale; the page gives the six-point MDAD sensor and its re-optimized form, the five-point TENO5-A effective scaled wavenumber and the bounded second-derivative sensor that drives the WCNS-SA dissipation."
+description: "A scale sensor estimates the local reduced wavenumber of the data, exactly for a sinusoid, so that dissipation, the TENO cut-off or the linear scheme can follow the resolved scale; the page gives the six-point sensors and their phase-independent form, the five-point TENO5-A sensor, a spectral-difference shock detector and a bounded second-derivative sensor."
 status: established
-aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor, optimized scale sensor]
+aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor, optimized scale sensor, phase-independent scale sensor, TENO6-SA sensor]
 tags: [low-dissipation, teno, finite-difference, limiting]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Scale sensors and the effective scaled wavenumber
@@ -162,6 +162,73 @@ $\big((\theta^{\mathrm L}-0.71)/0.29\big)^{1.5}$ towards its maximum (Eqs. (31)�
 feeds the sensor in the Euler system is not stated. The authors compare it with energy-ratio automatic
 dissipation control, which also relies on a sensor (§4.3).
 
+## Phase-independent six-point sensors (Zhang et al. 2024b)
+
+Zhang, Jiang, Qin, Qu & Yan (2024b, §4) analyse the six-point interface sensors above on a sinusoid
+$f=A\sin(k_wx+\phi_0)$, writing them with the two component ratios
+$\vartheta_{\mathrm{ESW},1}=\sqrt{|\mathsf D_3|/|\mathsf D_1|}$ and $\vartheta_{\mathrm{ESW},2}=\sqrt{|\mathsf D_4|/|\mathsf D_2|}$
+(Eq. (25)). They parametrize the four stencils by their symmetric coefficients under the consistency
+constraints (Eqs. (28)–(29); $\mathsf D_4$ is fixed, $(\tfrac12,-\tfrac32,1,1,-\tfrac32,\tfrac12)$), with page-local
+free coefficients $b_1$ of $\mathsf D_2$ on $f_i,f_{i+1}$ and $c_1$ of $\mathsf D_3$, and show:
+
+- **$\vartheta_{\mathrm{ESW},2}$ is phase-independent for any $b_1$**,
+  $$\vartheta_{\mathrm{ESW},2}=\sqrt{\frac{2(1-\cos\vartheta)}{\lvert(1+2b_1)\cos\vartheta-2b_1\rvert}},$$
+  independent of $\phi_0$ and $A$; $b_1=-\tfrac5{12}$ is the Li, Chen & Ren sensor (Eq. (31)), which is
+  phase-independent but resolves only up to $\vartheta=1.454$ within a 1 % error (resolving efficiency
+  46.279 %, §4.1).
+- **Equal component ratios.** The optimized sensor that they attribute to S. Li et al. (J. Sci. Comput., 2022;
+  *compiler check, not in the sources: its coefficients are those of the re-optimized sensor of Li et al.
+  2023b above*) reaches higher wavenumbers
+  but oscillates with phase, because $\vartheta_{\mathrm{ESW},1}\ne\vartheta_{\mathrm{ESW},2}$ on sampled data (Fig. 3).
+  Requiring $\vartheta_{\mathrm{ESW},1}=\vartheta_{\mathrm{ESW},2}$ for every sinusoid gives two constraints on the
+  $\mathsf D_1$ coefficients, $a_1=\tfrac1{10}(1+2c_1+10b_1c_1)$, $a_2=\tfrac1{20}(1-10b_1-3c_1-10b_1c_1)$
+  (page-local $a_1,a_2$; Eq. (32)); the whole sensor then equals the closed form above and depends on $b_1$
+  alone, $c_1$ being irrelevant for single waves.
+- **New sensor.** With $b_1=-0.398$, $c_1=-5$, $\epsilon_{\mathrm s}=10^{-5}$ (Eq. (33)):
+
+  | | $f_{i-2}$ | $f_{i-1}$ | $f_i$ | $f_{i+1}$ | $f_{i+2}$ | $f_{i+3}$ |
+  |---|---|---|---|---|---|---|
+  | $\mathsf D_1$ | $0.0204$ | $-0.004$ | $-1.09$ | $1.09$ | $0.004$ | $-0.0204$ |
+  | $\mathsf D_2$ | $0.051$ | $0.347$ | $-0.398$ | $-0.398$ | $0.347$ | $0.051$ |
+  | $\mathsf D_3$ | $0.2$ | $-2$ | $5$ | $-5$ | $2$ | $-0.2$ |
+  | $\mathsf D_4$ | $\tfrac12$ | $-\tfrac32$ | $1$ | $1$ | $-\tfrac32$ | $\tfrac12$ |
+
+  It resolves up to $\vartheta=2.137$ within 1 % (resolving efficiency 68.012 %, Fig. 4), against 1.454 for
+  $b_1=-\tfrac5{12}$. *(Compiler check, not in the sources: on sampled sinusoids with these coefficients the sensor
+  is the same at every phase to five digits and equals the closed form, and the 1 % limit is 2.137.)*
+- **Against an arccos sensor.** Li & Ren's sensor of $\arccos$ type is exact for sinusoids on $[0,\pi]$ but is capped
+  at $\pi$; the new one gives larger values at discontinuities, since all four differences use all six points,
+  which Zhang et al. judge better suited to a TENO cut-off (§4.2, Eqs. (34)–(35)).
+
+**Use: TENO6-SA.** The sensor selects, per interface, one of four wavenumber bands of a scale-adaptive sixth-order
+TENO (§5.1, Algorithm 1; [adaptive TENO](/methods/adaptive-teno.md)). Below $\vartheta_{\mathrm{ESW}}=1.085$ the
+linear scheme is the sixth-order central one and $C_T=10^{-5}$; on $[1.085,1.516)$ a fourth-order scheme of
+maximum resolved bandwidth on the same six points, $C_T=10^{-10}$; on $[1.516,1.726)$ a second-order one,
+$C_T=10^{-13}$; above 1.726 the second-order scheme with $C_T=10^{-8}$ ("piecewise spectrum optimization"; 1 %
+dispersion bandwidths 1.100, 1.530, 1.726, switch points where the dispersion errors of neighbouring schemes are
+equal). The linear weights reproduce the band's linear flux, $d=(\tfrac9{20},\tfrac3{10},\tfrac1{20},\tfrac15)$ and
+$(\tfrac{21}{50},\tfrac9{50},\tfrac2{25},\tfrac8{25})$ in the TENO6 ordering (central, downwind, upwind, four-point), and
+$(\tfrac{5571}{14000},\tfrac{321}{3500},\tfrac{1429}{14000},\tfrac{1429}{3500})$ by constrained least squares for the
+second-order flux, which no convex combination of the candidates reproduces. The resulting scheme keeps sixth
+order on smooth advection, has an ADR bandwidth of 1.767 against 1.100 for TENO6
+([approximate dispersion relation](/definitions/approximate-dispersion-relation.md)), and survives a shock/wavy-wall
+interaction on which TENO6-A fails (§5–§6). The $C_T$ falling with wavenumber up to 1.726 is opposite to the trend of
+TENO-A; the authors reconcile the two by the relay of linear schemes (§5.1). In the 2-D Riemann problem the sensor
+stays below 1.085 in most of the domain and exceeds the top band at shocks and slip lines (§6.3.2, Fig. 22).
+
+## A five-point sensor on spectral-difference traces (Chen & Fu 2024)
+
+Chen & Fu (2024, §5.6, Eqs. (66)–(69)) use the five-point differences of Huang, Liang & Fu with the
+amplitude-dependent $\epsilon_{\mathrm s}$ of Li, Chen & Ren as a **strong-shock detector** in a limiter for the nodal
+spectral difference method. At an interface the five inputs are cell-centre values, interface means of the two
+traces and a neighbour's trace, spaced $\Delta x/2$, and the cell value is $\vartheta_i=2\min(\vartheta_{i-1/2},\vartheta_{i+1/2})$;
+where $\vartheta_i>0.6$ the limited polynomial is compressed towards the cell average,
+$\tilde u^{\mathrm{new}}=(1-\theta_{\mathrm c})\bar u_i+\theta_{\mathrm c}\tilde u_h$, with $\theta_{\mathrm c}$ (page-local) the largest factor keeping
+the polynomial's range inside the nodal range of the three cells *(compiler check, not in the sources: a
+[Zhang–Shu-type scaling](/methods/zhang-shu-scaling-limiter.md))*.
+Here the sensor neither sets a dissipation parameter nor a cut-off but switches an extra limiting step
+([Hermite WENO](/methods/hermite-weno.md), [troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+
 ## How the sources relate
 
 The five-point sensor is the six-point one of Li, Chen & Ren, which Huang et al. cite (with Sun et al.
@@ -190,6 +257,18 @@ strategy as first "according to our knowledge", while citing an earlier scale se
   $(-a_3,a_2,-a_1,a_1,-a_2,a_3)$ and $(c_3,-c_2,c_1,-c_1,c_2,-c_3)$ give $a_3=(1+3a_2-a_1)/5$,
   $c_3=(c_2-1)/5$ and $c_1=2c_2+1$, which reproduce both their Eq. (30) and Eq. (34), where the printed
   relations reproduce neither *(compiler check, not in the sources)*.
+- Zhang et al. (2024b, §4.2) state that $b_1=-\tfrac5{12}$ is the value for which "the right derivative of the local
+  $\varphi_{ESW}$ curve at $\varphi=0$ equals 1". *(Compiler check, not in the sources: the closed form expands as
+  $\vartheta_{\mathrm{ESW}}=\vartheta\big(1+\vartheta^2[\tfrac{1+2b_1}4-\tfrac1{24}]\big)+O(\vartheta^5)$, so the derivative at 0 is 1
+  for every $b_1$; $b_1=-\tfrac5{12}$ is the value that cancels the $\vartheta^3$ term.)* Their Eq. (31) prints the
+  $f_i$, $f_{i+1}$ coefficients of $\mathsf D_2$ on the sinusoid as 1 instead of $b_1$ (their Eq. (28) has $b_1$). *(Compiler check,
+  not in the sources: the closed form is right only with $b_1$.)* Later sections use 1.732 as the band limit, against 1.726 in Algorithm 1 (§6.1.3, §6.3.2).
+- Zhang et al. (2024b, §5.3) state that the sensor adds "an approximate 13% increase in cost" to TENO6, but their
+  Table 2 gives TENO6-SA/TENO6 CPU ratios of 1.29–1.31 on all five grids (e.g. 1151.83 s against 890.53 s at
+  $N_x=1600$) *(compiler check, not in the sources: ratios of the printed times)*. In the flow tests the increment of
+  TENO6-SA over WENO7-Z is 15.31–19.29 % (Table 6).
+- Chen & Fu (2024, Eq. (67)) print only four of the five inputs of $\vartheta_{i-1/2}$, and use the exact solution's
+  symbol for the cell value in it; the inputs of $\vartheta_{i+1/2}$ are complete.
 - Li, Chen & Ren drop the $1/p!$ of the Taylor term in $\mathsf D_p$ (Eq. (19)); the ratios that enter
   the sensor are calibrated on that convention, which Huang et al. share.
 
@@ -199,3 +278,5 @@ strategy as first "according to our knowledge", while citing an earlier scale se
 - [Li et al. (2023b)](/sources/li-2023-b.md) — §3.2, Eqs. (11)–(14), (29)–(37), Figs. 4–7; §3.3.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §1; §3.1, Eqs. (21)–(31), Fig. 2; §3.2, Eq. (33).
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §4.3, Eqs. (29)–(32), Table 3.
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.2; §4.1–4.2, Eqs. (22)–(35), Figs. 3–4; §5.1, Algorithm 1; §5.3, Table 2; §6.3.2, Fig. 22; Table 6.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §5.6, Eqs. (66)–(69).

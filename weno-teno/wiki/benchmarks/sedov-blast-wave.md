@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Sedov blast wave
@@ -41,6 +41,7 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.5 | 800 | exact solution | finite-difference HWENO-R, HWENO-L, WENO-ZQ; outflow boundaries |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.3 | 800 ($\Delta x=5\times10^{-3}$) | — | MR-AWENO-Si and MR-AWENO with a [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
 | [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 800 | — | hybrid MDCD-HY and MDAD-HY, TENO-HY |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.7 | 400 points or cells | — | ghost multi-resolution GMR-WENO3/5/7 vs [MR-WENO](/methods/multi-resolution-weno.md), finite differences and finite volumes |
 
 Li, Li, Don & Wang and Li, Chen & Ren print the same blast in
 $(\rho,v,p)$: pressure $4\times10^{-13}$, and $2.56\times10^8$ in the
@@ -234,6 +235,13 @@ blast waves), and TENO-HY (with its optimized TENO6) fails "even with
 $C_T=0.1$"; the shock front lies near $x=3.43$ (§4.2, Fig. 18); see
 [MDCD schemes](/methods/mdcd-scheme.md).
 
+Zhang & Zhu, who call the test an "extreme problem", find that both
+their GMR-WENO and MR-WENO "work well" on the common data, plotting
+density, velocity and pressure (Ex. 3.7, Figs. 3.13–3.14); the paper
+names no positivity safeguard, and its Table 3.1 gives the GMR:MR time
+ratios over its Examples 3.5–3.10 as 1:1.23 to 1:2.18 in finite
+differences and 1:1.27 to 1:2.25 in finite volumes.
+
 Yu & Hesthaven report that their artificial viscosity suppresses the
 spurious oscillations at the strong shock and that its distribution
 captures the symmetric structure of the blast (§5.4.3, Figs. 16–17);
@@ -279,3 +287,4 @@ stated (Table 4.2).
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.1, Figs. 13–14.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.3, Eq. (65), Figs. 7–8 (arXiv v2).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.4, Eqs. (56)–(58), Figs. 5–7 (arXiv v1).
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.7, Figs. 3.13–3.14, Table 3.1.

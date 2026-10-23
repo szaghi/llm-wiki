@@ -5,7 +5,7 @@ description: "Artificial viscosity adds solution-dependent dissipation instead o
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Artificial viscosity and spectral viscosity
@@ -315,6 +315,46 @@ ringing at the top-hat edges at the cost of a slightly wider front
 of Lecoanet et al. the $L^2$ dye error at 64 cells and order 4 equals
 that of ATHENA at 2048 cells (§6.3, Fig. 14).
 
+## Viscosity set by a Helmholtz equation and a homotopy (HDG, steady flows)
+
+[Nguyen et al. (2024)](/sources/nguyen-2024.md) (§2.2–2.5, Eqs. (5)–(17),
+arXiv v1) regularize steady compressible Euler and Navier–Stokes problems,
+discretized by hybridizable DG with isoparametric elements of degree 4
+(degree 3 for their double ramp),
+with a Laplacian artificial flux whose shape solves a Helmholtz equation
+(their earlier method, after Barter & Darmofal and Ching et al., as
+recalled):
+$$\nabla\cdot F(u,\nabla u)-\lambda_1\nabla\cdot\big(\mu_{\mathrm h}(\eta_{\mathrm h})\nabla u\big)=0,\qquad
+\eta_{\mathrm h}-\lambda_2^2\nabla\cdot\big(\ell^2\nabla\eta_{\mathrm h}\big)=s_{\mathrm h}(u,\nabla u),$$
+with $\ell=h_{\min}$ the smallest mesh size, $\eta_{\mathrm h}=0$ on walls,
+and the source $s_{\mathrm h}$ a smooth clipping of the shock strength
+$-\nabla\cdot v$ to $[0,s_{\max}]$, $s_{\max}=\tfrac12\lVert\nabla\cdot v\rVert_\infty$
+from the previous iterate (page-local $F$ the physical flux, $\mu_{\mathrm h}$,
+$\eta_{\mathrm h}$, $s_{\mathrm h}$, $\lambda_1$, $\lambda_2$, $\ell$; the
+source's $\eta$ is not an entropy). The shape function is a smoothed ramp of
+$\bar\eta_{\mathrm h}=\eta_{\mathrm h}/\lVert\eta_{\mathrm h}\rVert_\infty$ above
+the threshold $0.2$ (Eq. (8)), and the Helmholtz equation is solved with
+continuous Galerkin so that the viscosity field is continuous. The
+amplitude $\lambda_1$ and the thickness $\lambda_2\ge1$ are not tuned by
+hand: the problem is posed as
+$\min\lambda_1\lambda_2$ subject to the discrete equations, $\rho>0$,
+$p>0$ and a modal smoothness bound $\sigma(\lambda)\le5\,\sigma(\lambda_0)$,
+with $\sigma$ the largest relative $L^1$ defect between a scalar ($\rho$,
+$p$ or Mach number) and its degree-$(N-1)$ truncation over the shock
+elements (Eqs. (12)–(17)). It is solved by a homotopy that shrinks both
+parameters from a conservatively large start and keeps the last iterate
+that still satisfies the constraints (§2.4). In this paper the
+regularization is coupled to r-adaptation by optimal transport
+([adaptive moving mesh](/methods/adaptive-moving-mesh.md)), and the
+homotopy runs only on the final adapted mesh. The authors report that the
+viscosity shrinks in amplitude and width as the mesh adapts, and that on
+a Mach 7 cylinder, a type IV shock–shock interaction ($M_\infty=8.03$) and
+a Mach 17.6 viscous cylinder the adapted solutions are sharp and free of
+oscillation, with the peak surface pressure and the heat-transfer
+coefficient closer to experiment and to the LAURA code than on the initial
+mesh (§4.3–4.5; [flow past a circular cylinder](/benchmarks/flow-past-circular-cylinder.md)).
+No error norm or convergence rate is given.
+
 ## Residual-based viscosity (continuous finite elements, MHD)
 
 [Dao & Nazarov (2022)](/sources/dao-2022.md) stabilize an explicit
@@ -427,6 +467,49 @@ viscosity and conductivity that needs an explicit filter (§5). At $M=5$,
 $\gamma=1.15$, LAD oscillates and breaks symmetry where QSV does not
 (§5.3).
 
+**Spectral relaxation and spectral purging.**
+[Kolluru, Besse & Pandit (2024)](/sources/kolluru-2024.md) (§2–§3, App. A,
+arXiv v2) study numerically two alternatives to SVV proposed by Besse (as
+recalled, submitted). For a Galerkin-truncated Fourier (or Chebyshev)
+pseudospectral solution $u_N$ with truncation wavenumber $N$ (page-local;
+not the registry's DG degree), spectral relaxation (SR) adds a BGK-type
+term toward a mollified state,
+$$\partial_tu_N+\partial_x\big(\mathcal P_N\tfrac12u_N^2\big)=\frac1{\tau_{\mathrm s}}\big(\mathcal K_m*u_N-u_N\big),\qquad m=N^{\gamma_{\mathrm s}},\quad \tau_{\mathrm s}=N^{-\alpha_{\mathrm s}},$$
+which damps every Fourier mode at the rate $(1-\hat{\mathcal K}_m(k))/\tau_{\mathrm s}$,
+while spectral purging (SP) replaces $u_N$ by $\mathcal K_m*u_N$ at time
+intervals $\tau_{\mathrm s}$ (Eqs. (3)–(4); page-local $\mathcal P_N$ the
+projection, $\mathcal K_m$ the kernel, $\alpha_{\mathrm s}$, $\gamma_{\mathrm s}$
+the exponents). Besse proves $L^2$ convergence to the entropy solution of
+inviscid Burgers for positive kernels (Fejér–Korovkin, Jackson,
+Jackson–de La Vallée Poussin) with $\alpha_{\mathrm s}/2<\gamma_{\mathrm s}<1$
+and $1<\alpha_{\mathrm s}<2$ (as recalled, §3.2). The authors state that SR
+and SP get monotonicity and the maximum principle from the positivity of
+the kernel, whereas SVV gets them from the structure of its Laplacian
+(§1). Their findings, on Burgers' equation with $u_0=\sin2\pi x$ and on 1D
+shallow-water and Euler tests:
+
+- the positive Fejér–Korovkin kernel gives monotone, oscillation-free
+  shocks with no "tygers" (resonant oscillations born in smooth regions of
+  Galerkin-truncated solutions), at observed orders of about
+  $2-\alpha_{\mathrm s}$ before the shock and below one after it ($L^1$
+  about 0.9, $L^2$ about 0.78; Table 1, Fig. 4), while SVV with
+  $\epsilon_{\mathrm{SV}}=N^{-1}$ keeps small oscillations at the shock
+  (Fig. 7);
+- the non-positive de La Vallée Poussin kernel converges spectrally
+  before the shock but keeps bounded oscillations at it, with an $L^2$
+  order of about 0.5 after the shock against 0.8 for Fejér–Korovkin
+  (Table 2), which the authors read with LeVeque as "the order of
+  accuracy is not everything";
+- the high-order kernel is needed to keep the entropy waves of the
+  [Shu–Osher problem](/benchmarks/shu-osher-problem.md), and it fails on
+  the [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md)
+  with negative density and pressure, where the positive kernel stays
+  positive and stable but loses the post-interaction structure (§3.4).
+
+The best parameters for $u_0=\sin2\pi x$ ($\alpha_{\mathrm s}=0.7$ for SR,
+0.65 for SP) lie outside the proven range, and every parameter set beyond
+Burgers was chosen by visual agreement (§3.2, §4).
+
 ## Damping of DG modes as a modal filter
 
 The oscillation-free DG method (Lu, Liu & Shu, as recalled by
@@ -446,6 +529,28 @@ damped more, so the damping operator is an exponential **modal filter** with
 solution-dependent strength, which links oscillation-free damping to spectral
 viscosity and spectral filtering (Rem. 2.3, §1.2). Conservation and the
 non-increase of the elementwise $L^2$ norm follow at once (Rems. 2.2–2.3).
+
+[Fan & Wu (2024)](/sources/fan-2024.md) (§2.2.2, Thm 1, Eqs.
+(2.14)–(2.17), arXiv v1) carry the same exactly solved damping to
+finite-volume [Hermite WENO](/methods/hermite-weno.md), whose unknowns are
+the cell average and the first moment of each cell. After every
+Runge–Kutta stage the average is kept and the first moment is multiplied
+by $\exp\big(-a\frac{\Delta t}{\Delta x}\hat\sigma_i\big)$, with $a$ the
+global Lax–Friedrichs speed and $\hat\sigma_i$ the sum of the jumps of the
+value and of $\Delta x$ times the first derivative of a linear sixth-order
+Hermite reconstruction at the two faces, divided by the global range
+$\max_i\lvert\bar u_i-u_\Omega\rvert$, $u_\Omega$ the mean of the cell
+averages (page-local $\hat\sigma_i$, $u_\Omega$). The jumps are explicit
+linear combinations of the moments of four cells, so the step costs one
+multiplication per moment. The authors contrast it with limiting the
+moments, which keeps at most fifth order for sixth-order Hermite WENO, and
+with adding stiff damping terms to the moment equations, which needs
+problem-dependent parameters and exponential Runge–Kutta (§1); they prove
+that the step keeps order $k+1$ under $a\Delta t/\Delta x\le C_{\mathrm{cfl}}<1$
+(Thm 2) and that it commutes with $u\mapsto\lambda u+c$ (Thm 4;
+[scale invariance](/properties/scale-invariance.md)). The approximate
+dispersion relation with and without the step is "nearly identical"
+(Fig. 2.1).
 
 The same exponential modal filter, with a strength chosen per element as
 the smallest one that makes the nodal values positive and above a local
@@ -542,6 +647,11 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   reasonably simple solution" (§1, §4.1); they also reject
   threshold-triggered viscosity, since the oscillations must already
   exist before it acts (§4.1).
+- [Nguyen et al. (2024)](/sources/nguyen-2024.md) choose artificial
+  viscosity because limiters "pose implementation difficulties for
+  implicit time integration schemes and high-order methods on complex
+  geometries" (§1), the reverse of Rueda-Ramírez et al.'s ranking; the
+  claim is stated, not measured.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) take the
   opposite line for turbulent flows: a high-order dissipation applied
   everywhere serves as the subgrid regularization of an implicit LES, and
@@ -608,6 +718,24 @@ that the flux and limiter "do not induce excessive numerical viscosity"
   $h<\tilde{\mathcal H}$ is dimensionally consistent only for
   non-dimensional variables *(compiler check, not in the sources: units of
   the two branches of Eq. (4.5))*.
+- **Nguyen et al.'s printings (arXiv v1).** The shape function (8) is said
+  to vanish below the threshold, but at the threshold it equals
+  $\tfrac12-\arctan(100)/\pi\approx3.2\times10^{-3}$ and at
+  $\bar\eta_{\mathrm h}=0$ about $2.5\times10^{-6}$ *(compiler check, not in
+  the sources)*. The homotopy update
+  $\lambda_{n,1}=\zeta^{n-1}\lambda_{n-1,1}$ ($\zeta\in(0,1)$, page-local)
+  makes no reduction at $n=1$ and a cumulative factor $\zeta^{n(n-1)/2}$
+  *(compiler check, not in the sources)*; $\zeta$ and the starting
+  $\lambda_{0,1}$ are not printed. The statement that the amount of
+  viscosity is "proportional to $\lambda_1\lambda_2$" is not derived.
+- **Fan & Wu's damping is normalized globally.** The denominator
+  $\max_i\lvert\bar u_i-u_\Omega\rvert$ is a domain-wide range, so the
+  damping of a cell depends on data far from it, as for Dzanic, Trojak &
+  Witherden's normalization above *(compiler check, not in the sources)*;
+  the authors call the update local and non-intrusive (Remark 3).
+- Kolluru et al. state the observed order $2\gamma_{\mathrm s}-\alpha_{\mathrm s}$
+  from the scaling of the relaxation term, a heuristic that the authors
+  support with their Fig. 4, not derived (§3.1).
 - Dzanic, Trojak & Witherden's first-order analysis of Burgers prints the
   $\zeta^2$ term of Eqs. (27) and (29) with the wrong sign and drops factors
   of two inside Eq. (29); the limit (30) is unaffected *(compiler check,
@@ -637,3 +765,6 @@ that the flux and limiter "do not induce excessive numerical viscosity"
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §6.2, Eqs. (47)–(51), Remark 1; Appendix A, Eqs. (60)–(67); §7.1–7.2.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §5, Eqs. (16)–(18) (graph viscosity for Navier–Stokes).
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1; §2.3; §3.1–3.2, Eqs. (24)–(36); §4.1, Eqs. (41)–(46), Figs. 3–4; §5.1–5.4, Figs. 5–10; §6.3, Fig. 14.
+- [Nguyen et al. (2024)](/sources/nguyen-2024.md) — arXiv v1: §1; §2.2–2.5, Eqs. (5)–(17); §4.3–4.5; §5.
+- [Kolluru, Besse & Pandit (2024)](/sources/kolluru-2024.md) — arXiv v2: §1; §2.2–2.3, Eqs. (3)–(4); §3.1–3.4, Tables 1–2, Figs. 4, 7, 16–17; §4; App. A.3.
+- [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §1; §2.2.2, Eqs. (2.14)–(2.17), Thms 1–2, Remarks 2–3; §2.2.4, Thm 4; §2.2.6, Fig. 2.1.

@@ -223,6 +223,11 @@ uses the same letter.
 | $\mathcal E(h)$ (shallow water) | hydrostatic (enthalpy-like) potential of the depth in the equilibrium variables of Goudon & Minjeaud; no page uses it together with the vortex strength $\mathcal E$ | well-balancing, flow over a bump, shallow-water equations, operator splitting |
 | $N_\phi$ | number of phases | phase-field methods, discrete equations method, bound preservation |
 | $W_k$, $\epsilon_k$, $\Omega_k$ | molar mass, molar internal energy and mass production rate of species $k$ | multicomponent Euler equations, operator splitting |
+| $\lambda_{\mathrm s}$ (RBF) | shape parameter of a Gaussian or multiquadric RBF reconstruction, adaptive in Liang & Fu (2024a) as $\lambda_{\mathrm s}=\lambda_0+\lambda_\Delta(1-\varphi(\mu_d))$; no page uses it together with Qin et al.'s scaling $\lambda_{\mathrm s}$ | RBF-WENO, adaptive TENO |
+| $\beta_{\mathrm e}$, $\epsilon_K$ | Lin & Chan's user-defined blending fraction $\beta_{\mathrm e}\in[0,1]$ and elementwise modal smoothness factor $\epsilon_K\in[0,1]$, which relax the cell entropy bound by $1-\beta_{\mathrm e}\epsilon_K$ in the shock-capturing variant of entropy-bounded subcell limiting | subcell limiting, troubled-cell indicators, entropy stability, carbuncle phenomenon, high-Mach jets |
+| $n_{\mathrm g}$, $g$ | degree of the nodal-density interpolant of Zuo & Zhu's troubled-cell tests (the sources' $2r$) and the interpolant | troubled-cell indicators, hybrid WENO |
+| $\mathcal E$ (MHD) | electric field $\mathcal E=-v\times B$ (plus resistive terms), its edge or $z$ component $\mathcal E_z$ in constrained transport; no page uses it together with the vortex strength $\mathcal E$ | constrained transport, divergence-free magnetic field, semi-implicit all-Mach scheme, lid-driven cavity |
+| $\mathcal A$ (MHD) | magnetic vector potential, $B=\nabla\times\mathcal A$; no page uses it together with the THINC parameter $\mathcal A$ (field-loop advection and Kelvin–Helmholtz keep their earlier $\mathsf A$, $\mathsf A_3$) | semi-implicit all-Mach scheme |
 
 $\mathcal T$, $\mathcal C$, $\zeta$ and $\mu$ carry two family meanings
 (THINC/shift, non-conservative/convective matrix, Z+/characteristic

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Adaptive moving mesh finite differences"
-description: "An r-adaptive finite-difference scheme moves a fixed number of grid points, by variational redistribution driven by a monitor function or by prescribing the mesh Jacobian, and discretizes the conservation law in moving curvilinear coordinates with discrete geometric conservation laws; the sources make it entropy stable or fast and measure its cost against uniform meshes."
+description: "An r-adaptive scheme moves a fixed number of grid points, by variational redistribution with a monitor function, a prescribed mesh Jacobian or an optimal-transport Monge–Ampère map, and discretizes the conservation law on the moving or adapted mesh; the sources make it entropy stable, fast or shock-resolving and measure its cost against uniform meshes."
 status: established
-aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE]
+aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE, optimal-transport mesh adaptation, Monge–Ampère mesh adaptation]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Adaptive moving mesh finite differences
@@ -41,6 +41,9 @@ builds the mesh differently: it prescribes the Jacobian determinant of the
 mesh map instead of solving variational redistribution equations, and
 couples the mesh to a simplified finite-difference WENO
 arbitrary-Lagrangian–Eulerian (ALE) solver (section "Jacobian-prescribed meshes" below).
+A fourth, [Nguyen et al. (2024)](/sources/nguyen-2024.md), moves the nodes
+of a steady high-order HDG solution with an optimal-transport map
+(section "Optimal-transport meshes" below).
 
 ## The conservation law in moving coordinates
 
@@ -376,6 +379,78 @@ monitor; Ramani & Shkoller prescribe the cell size directly through
 $\mathsf G$ and solve one linear Poisson problem and one transport problem.
 No source runs both on a common test.
 
+## Optimal-transport meshes for steady high-order solvers
+
+[Nguyen, Van Heyningen, Vila-Pérez & Peraire (2024)](/sources/nguyen-2024.md)
+carry r-adaptivity to steady compressible Euler and Navier–Stokes flows
+discretized by hybridizable discontinuous Galerkin (HDG) on isoparametric
+elements of degree $4$ (degree $3$ in one case) (§2.5, §4; arXiv v1). The
+mesh map is the gradient of a convex potential $\Phi_{\mathrm{OT}}$
+(page-local, as are $\varrho_{\mathrm m}$, $\bar\varrho$, $b$ and
+$\beta_{\mathrm m}$ below), which by Brenier's theorem exists and is unique
+up to a constant; under the equidistribution principle it solves the
+Monge–Ampère equation with the second boundary-value condition (§3.1–3.2,
+Eqs. (18)–(23)),
+
+$$\varrho_{\mathrm m}(\nabla\Phi_{\mathrm{OT}})\,\det\big(D^2\Phi_{\mathrm{OT}}\big)=\bar\varrho\ \text{ in }\Omega,\qquad \nabla\Phi_{\mathrm{OT}}(x)\in\partial\Omega\ \text{ on }\partial\Omega,\qquad \int_\Omega\Phi_{\mathrm{OT}}\,dx=0,$$
+
+with $\bar\varrho=\int_\Omega\varrho_{\mathrm m}\,dx/\lvert\Omega\rvert$ and
+$\varrho_{\mathrm m}$ the mesh density. The mesh density solves a Helmholtz
+equation $\varrho_{\mathrm m}-\nabla\cdot(h_{\min}^2\nabla\varrho_{\mathrm m})=b$
+with homogeneous Neumann conditions, $h_{\min}$ the smallest mesh size, and
+a resolution indicator built either from the clipped velocity divergence,
+$b=\sqrt{1+\beta_{\mathrm m}s}$, or from the density gradient,
+$b=\sqrt{1+\beta_{\mathrm m}g(\lvert\nabla\rho\rvert)}$, with $s$ the
+shock source of their artificial viscosity and $g$ a smooth clipping (Eqs.
+(24)–(26)); the smoothing is needed for the Monge–Ampère discretization to
+converge (§3.3). The Monge–Ampère equation is solved as a first-order
+system by a fixed-point HDG iteration from the authors' earlier work,
+extended to a mesh density given by piecewise polynomials on the current
+mesh, which needs a Newton inversion of the isoparametric map at every
+quadrature point (§3.4, Eqs. (27)–(34)). Shocks are captured by the
+PDE-based [artificial viscosity](/methods/artificial-viscosity.md) of the
+authors' earlier work, whose amplitude and thickness are minimized by a
+homotopy continuation under positivity and modal-smoothness constraints
+(§2.2–2.4).
+
+**Algorithm 1** (§3.5): solve the regularized flow problem; compute the
+mesh density; solve the Monge–Ampère problem; move the nodes to the new
+positions $\nabla\Phi_{\mathrm{OT}}$, averaged at duplicated nodes, with the
+same number of nodes and the same connectivity; interpolate the solution
+onto the new mesh as initial guess and solve again; repeat until the change
+in the solution falls below a tolerance (not printed). The homotopy on the
+viscosity parameters runs only on the final mesh. Because the map is the
+gradient of a scalar potential, no node can be pinned explicitly (§4.2).
+On a polygonal domain, imposing the boundary condition face by face makes the
+mesh detach at corners; the authors let boundary nodes slide from face to
+face and then move the vertex nearest to each corner onto it, and leave open
+whether the detachment comes from the HDG discretization or from the
+Monge–Ampère formulation on that domain (§4.2, Figs. 5–6).
+
+The tests are a supersonic channel with a circular-arc bump
+([supersonic bump channel](/benchmarks/supersonic-bump-channel.md), an
+illustration of Algorithm 1, Fig. 1), the transonic
+[NACA 0012 airfoil](/benchmarks/naca0012-airfoil.md) at $M=0.8$,
+angle of attack $1.5^\circ$, a $25^\circ$/$37^\circ$ double ramp at $M=3.6$,
+inviscid and viscous hypersonic
+[cylinders](/benchmarks/flow-past-circular-cylinder.md) ($M=7$; $M=17.6$,
+$\mathrm{Re}=376{,}000$) and a type IV shock–shock interaction at $M=8.03$.
+The authors report sharp, oscillation-free solutions after two or three
+adaptations, an artificial viscosity that shrinks in amplitude and width as
+the mesh adapts, a type IV surface-pressure peak closer to the Wieting–Holden
+experiment, and a viscous-cylinder heat-transfer coefficient that matches the
+LAURA reference only on the adapted mesh (§4, Figs. 2–22). The
+density-gradient indicator is reported more effective than the velocity
+divergence when boundary layers, shear layers and expansions are present
+(§5). No error norm, convergence order, timing or iteration count is
+printed.
+
+Like Ramani & Shkoller's SAM, the method solves a Monge–Ampère-type problem
+for the mesh, but it selects the optimal-transport map and solves the full
+nonlinear equation, which SAM avoids by its Poisson-plus-transport
+construction (§3.1 of Ramani & Shkoller); the two sources run no common
+test.
+
 ## Relation to other adaptive methods
 
 Ramani & Shkoller state that the dyadic jumps of resolution in
@@ -439,6 +514,16 @@ time step on a moving mesh.
   $(v^j\pm c)/J$ with a transport velocity $v^j$ that already contains the
   factor $1/J$; in one dimension the eigenvalues of the ALE flux Jacobian
   are $v\pm c/J$ *(compiler check, not in the sources)*.
+- Nguyen et al.'s homotopy update, printed as
+  $\lambda_{n,1}=\zeta^{n-1}\lambda_{n-1,1}$ with a reduction factor
+  $\zeta\in(0,1)$ (page-local symbols, arXiv v1 §2.4), leaves the first step
+  unreduced and compounds to $\zeta^{n(n-1)/2}$ *(compiler check, not in the
+  sources)*; the values of $\zeta$ and of the initial amplitude are not
+  printed. Their Eq. (21) states the second boundary-value condition for
+  all $x\in\Omega$, where their Eq. (22) has it on $\partial\Omega$.
+- Nguyen et al. dismiss limiters as hard to combine with implicit time
+  integration and high-order methods on complex geometries (§1), a stated
+  motivation, not a measured comparison.
 - The SAM-ALE solver is described by its authors as "not meant to be
   representative of the full class of ALE solvers" (§7.2.4): it misses the
   small-scale Rayleigh–Taylor roll-up that the tracked interface shows.
@@ -451,3 +536,4 @@ time step on a moving mesh.
 - [Bai & Li (2022)](/sources/bai-2022.md) — quadtree AMR of the DG solver.
 - [Huang & Zahr (2022)](/sources/huang-2022.md) — §1, §2.1 (arXiv v2).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §1, §3 Eqs. (7)–(14), (16)–(17), Tables 1–3, App. B, C.1; §4 Eqs. (25)–(29), Algorithms 1–3; §5; §6 Eqs. (41)–(51), Remark 1, App. A; §7 Tables 6–7 (arXiv v2).
+- [Nguyen, Van Heyningen, Vila-Pérez & Peraire (2024)](/sources/nguyen-2024.md) — §1, §2.2–2.5, §3.1–3.5 Eqs. (18)–(34), Algorithm 1, §4.1–4.5 Figs. 1–22, §5 (arXiv v1).

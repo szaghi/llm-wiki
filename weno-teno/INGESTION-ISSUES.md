@@ -6,6 +6,139 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 8 — multi-resolution WENO, TENO and THINC variants, DG limiters, MHD and shallow-water schemes (2026-10-23)
+
+Sources (20): chen-2024, chudzik-2024, delgrosso-2024, dematte-2024,
+ding-2024-b, fan-2024, kolluru-2024, liang-2024, lin-2024-b, lin-2024,
+naudet-2024, nguyen-2024, teissier-2024, wakimura-2024, wei-2024,
+zhang-2024-b, zhang-2024-c, zhang-2024, zuo-2024-b, zuo-2024. 159 of 207
+ingested, 200 concept pages plus the registry, 4666 bibliography entries.
+
+### Decisions for the human
+
+1. **New open contradiction — order of TENO at a second-order critical
+   point** on [targeted ENO](wiki/methods/targeted-eno.md): Fu (2023,
+   §3.1, Eq. (18)) states that the TENO order "does not degenerate even
+   for the test function with a second-order critical point"; Zhang et
+   al. (2024b, Eqs. (13), (15), Table 3) measure rate 2 for TENO6 at such
+   a point with a global indicator of the same form ($C=1$, $q=6$,
+   $\epsilon=10^{-40}$, $C_T=10^{-7}$). Checked in both PDFs; *Open*.
+   Residual doubt: Zhang et al. measure the rate of the reconstructed
+   derivative, Fu does not say what was measured.
+2. **Priority of symmetry preservation for two-phase flow:** Wakimura et
+   al. (2024, App. A; received 24 Feb 2024, online 7 Jun 2024) write that
+   no symmetry-preserving method for two-phase flow had been proposed;
+   Zhang et al. (2024a; received 7 Aug 2023, online 28 Nov 2023) call
+   their THINC "symmetry-preserving" (§5) on the five-equation model and
+   show it on a Mach 10 water column (Fig. 13), and Wakimura et al. do
+   not cite them. The pages state the dates and the two statements only;
+   not entered as a contradiction (a claim of novelty, not of fact about
+   a method).
+3. **Zuo & Zhu (2024a) and (2024b), same authors and journal, different
+   indicators:** of their 216 accuracy-table error entries, 15 differ
+   (all in the seventh- and ninth-order part of Table 3.2, by at most 3 %
+   relative); Tables 3.3–3.4 agree digit for digit; the six MR-WENO CPU
+   times for the double Mach reflection and Taylor–Green vortex are
+   identical. Recorded as counts on both Source pages, without an
+   explanation.
+4. **Still open from chunks 1–7:** the archive re-download (Feng 2026,
+   Li 2024, Wu 2023); the open contradictions (TENO $\tau_K$,
+   conservation of WCNS, entropy-filter tolerance, cost of WENO-Z against
+   mapped WENO); wrong-year keys; the berberich and karniadakis pairs;
+   the label convention; book printings.
+5. **Bibliography rulings to confirm:** `micchelli-1984` and
+   `micchelli-1986` kept distinct; book printings folded into the first
+   printing in line with the chunk-2 pending ruling (`whitham-2011` →
+   1974, `leveque-2004` → 2002, `hesthaven-2017`/`-2008` → 2018/2007).
+6. **Bundle fit (no D17 copy made):** teissier-2024 (forced MHD
+   turbulence, astrophysical motivation) and dematte-2024 (magnetically
+   dominated visco-resistive MHD) also fit astrophysical-simulation-codes;
+   kolluru-2024 (spectral relaxation and purging of tygers) is mainly a
+   spectral-methods paper.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  fan-2024 (2409.09632v1), kolluru-2024 (2402.17688v2), nguyen-2024
+  (2310.01196v1), teissier-2024 (2306.09856v2, earlier title "High-order
+  finite-volume integration schemes for subsonic MHD", Teissier & Müller;
+  identity through its arXiv DOI field and Crossref); HAL preprint
+  delgrosso-2024 (hal-04177987v1). The other 15 are versions of record.
+- Citation labels: Zuo & Zhu 2024a/b (`zuo-2024`, `zuo-2024-b`), Zhang et
+  al. 2024a/b (`zhang-2024`, `zhang-2024-b`; `zhang-2024-c` is Zhang &
+  Zhu), Liang & Fu 2024a/b (`liang-2024`, `liang-2024-b`) applied on every
+  page except the append-only log. Ding & Wu (2024) stays bare until
+  `ding-2024` (chunk 9) is ingested.
+- Zuo & Zhu's ref. [28] (Wang, Tian, Zhu & Zhao 2023) is `wang-2023-d`
+  (not ingested), not the ingested `wang-2023-c`; corrected on the
+  troubled-cell page and both Source pages.
+- Zhang et al. (2024b) credit their sensor coefficients to S. Li et al.
+  (J. Sci. Comput. 2022), not to the ingested Li et al. (2023b); both
+  attributions are recorded as printed.
+- Crossref corrections in the merge: miczek-2015, leidi-2022-b (published)
+  against leidi-2022 (preprint), ha-2013-b vol. 51, kuzmin-2013-b
+  pp. 1178–1190, shu-2005 pp. 1–27, markert-2023 = markert-2021
+  online-first. The DOIs that wakimura-2024 prints for refs. [21] and
+  [26] resolve to other works and were not adopted.
+
+### Printed slips (the Source pages list them in full)
+
+- zhang-2024-b: Eqs. (11), (21), (23), (31), (47) and the $G_1$
+  condition; band limit 1.732 against 1.726.
+- zhang-2024: Eq. (8) deformation tensor; §3.3 $\rho c^2$ against Eq.
+  (16); a 0.064 m cylinder in a 0.03 m domain; Tables 6–7 post-shock
+  states.
+- lin-2024: Table 1 rates (2.11 and 2.47 recomputed, 1.11 and 2.74
+  printed); Eq. (50) upper case; Eqs. (5), (22), (41), (45), (63);
+  $\lambda_i$ of Eq. (52) undefined. The Eq. (50) middle ramp
+  $\tfrac12-\tfrac12\sin(\cdot)$ is the one Pazner prints (Eq. 69) and runs
+  from 1 to 0, the reverse of the outer cases (labelled compiler check).
+- naudet-2024: Eq. (47) initial condition, the same as Huang & Zahr's
+  Eq. (78); slab heights adding to 1.2 on the interval $(0,1)$; "160
+  simplices from 20 elements" left undecided.
+- wakimura-2024: HLLC Eq. (41) with $(p_L-p_R)$, against the Batten form
+  printed by Wong et al. (2021); dodecane table "for 300–500 K" used at
+  600 K; isothermal-state density.
+- lin-2024-b: Schardin state, 4th entry 1.79567 matching neither $p$ nor
+  $E$; Table 3.3 order; Sod state order; ref. [47] year.
+- zhang-2024-c: shock–vortex upstream velocity $\sqrt\gamma$ (Mach 1) for
+  a Mach 1.1 shock; Eq. (2.27) range; table headings.
+- fan-2024: OCAD weight needs the $(\cdot)^{3/2}$ printed by Ding & Wu;
+  Tables 3.1–3.2 $\ell^2$ order columns copy the $\ell^1$ ones.
+- ding-2024-b: tests at $\Delta t=0.25\Delta x$ above the proved bounds
+  ($1/12$ in 1D, $1/8$ in 2D), stated factually; Lemma 2.2 $p^*_m$; empty
+  interval $0.5<x\le0.5$.
+- chudzik-2024: Table 1 Maxwell orders falling below the third order of
+  Theorem 3.1 (recorded as a qualification); "constant vorticity (i.e.
+  irrotational flow)".
+- kolluru-2024: $p=(\gamma-1)\rho$; App. B Eqs. (23b), (30); parameter
+  values differing between text and captions; dam-break depths and $g$
+  not printed.
+- dematte-2024: Eqs. (21), (34), (39), (49), (51), (63); $A=\nabla\times B$.
+- zuo-2024: Eqs. (2.31)–(2.32); unstated sign pairing; double-Mach grid
+  extent ($[0,3]$ or $[0,4]$) unstated. zuo-2024-b: order columns.
+- delgrosso-2024, chen-2024, teissier-2024, nguyen-2024, wei-2024,
+  liang-2024: minor (Source pages).
+
+### Candidates for later pages
+
+- Evolution-Galerkin operators (chudzik-2024), adaptive linear weights
+  (lin-2024-b), central DG on overlapping meshes (ding-2024-b, with the
+  deferred wu-2023), nonlinear spectral analysis (inline on the
+  dispersion-relation page), a static-drop Laplace-law benchmark (inline
+  on the oscillating droplet), Wei & Xia's jump indicator (could merge
+  into the KXRCF section).
+- Registry: $\mathcal E$ is now both the vortex strength and the MHD
+  electric field, $\mathcal A$ both the THINC parameter and the vector
+  potential, $\lambda_{\mathrm s}$ both Qin et al.'s scaling and the RBF
+  shape parameter; no page uses both meanings (§10 notes). A whole-bundle
+  pass could give them distinct letters.
+- Tag near-synonyms for a whole-bundle pass: filtering/solution-filtering/
+  entropy-filtering, compact-scheme/compact-stencil, riemann-problem/
+  riemann-solver, positivity/bound-preserving, high-order/very-high-order,
+  diffuse-interface/interface-capturing, imex/semi-implicit,
+  low-dissipation/numerical-dissipation.
+
 ## Chunk 7 — TENO variants, limiters, ADER, well-balanced and multiphase solvers (2026-10-23)
 
 Sources (19): baskaya-2024, berta-2024, cai-2024, cernetic-2023,

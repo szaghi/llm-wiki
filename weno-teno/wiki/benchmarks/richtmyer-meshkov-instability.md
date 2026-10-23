@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Richtmyer–Meshkov instability"
-description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas density interface ranking Riemann solvers and reconstructions, and its viscous air–SF6 version; also shocked N2 and He bubbles. It tests interface sharpness, growth rates and mixing-zone resolution."
+description: "A planar shock crossing a sinusoidally perturbed interface: single-mode air–SF6 at Mach 1.2 against front tracking and growth models, heavy-to-light copper–gas with phase reversal, Brouillette–Sturtevant air–acetone/SF6 with re-shock, a single-gas interface ranking Riemann solvers and reconstructions, its viscous version, shocked N2 and He bubbles and a cavitating water–vapour variant; it tests interface sharpness, growth rates and mixing."
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -27,7 +27,7 @@ the Atwood number $A=(\rho_{\mathrm h}-\rho_{\mathrm l})/(\rho_{\mathrm h}+\rho_
 
 ## Setups in the sources
 
-The five planar setups are two-dimensional and single-mode; a sixth source runs shocked bubbles under the same name.
+The five planar setups are two-dimensional and single-mode; a sixth source runs shocked bubbles under the same name, and a seventh a cavitating two-phase variant.
 
 **Air–SF$_6$, Mach 1.2.** [Bai & Li (2022)](/sources/bai-2022.md)
 §3.3.1, Table 2: domain $[-28,32]\times[-1.875,1.875]$ cm, symmetry
@@ -124,6 +124,22 @@ whose convective part is switched by a Ducros-type sensor (see
 [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
 not a sinusoidal planar interface.
 
+**Cavitating water–vapour interface.** [Wakimura et al. (2024)](/sources/wakimura-2024.md)
+§4.3 (Eq. (48), after Saurel et al. and Pelanti & Shyue, phase change
+added) solve the six-equation two-phase model with stiffened-gas water
+on $[0,3]\times[0,1]$ m, $300\times100$ cells, outflow on the right and
+reflective walls elsewhere, to $t=10$ ms, CFL 0.5. The state is
+$(\phi_1,\rho_1,\rho_2,v_1,v_2,p)=(1-10^{-6},1000,100,-200,0,10^5)$ for
+$x<1.2$ m and $r>0.6$ m, and $(10^{-6},1000,100,-200,0,10^5)$ otherwise,
+with $r$ the distance from $(1.2,0.5)$ m. The liquid region left of
+$x=1.2$ m thus has a semicircular notch of radius 0.6 m filled with
+vapour, and the whole flow moves at 200 m s$^{-1}$ towards the left
+wall *(compiler check, not in the sources: the geometry)*. The run is
+made with mechanical relaxation only and with full pressure,
+temperature and Gibbs-energy relaxation (phase change), and compares
+MUSCL with the [BVD](/definitions/boundary-variation-diminishing.md)
+schemes MUSCL-THINC-BVD and adaptive THINC-BVD.
+
 ## Findings
 
 **Growth against models and other computations.** On air–SF$_6$, Bai &
@@ -172,6 +188,16 @@ roll-ups (Fig. 9); the wall-clock times are 224 s (MEG7-prim), 205 s
 viscous two-material run of Chamarthi (2023a) the interface stays free of
 oscillations and is thinnest with MIG4 (Ex. 4.18; see
 [five-equation model](/definitions/five-equation-model.md)).
+
+**Cavitation and dissipation.** With phase change Wakimura et al. find
+more vaporization near the left wall than without; the instability is
+more developed with the BVD schemes, which they attribute to their lower
+dissipation, and no scheme shows significant pressure oscillations
+(§4.3, Figs. 4–5). They state that, to their knowledge, results of this
+test with phase change had not been published before. See
+[THINC reconstruction](/methods/thinc-reconstruction.md) and
+[operator splitting](/methods/operator-splitting.md) for the relaxation
+steps.
 
 **Also in the bundle.** [Huang et al. (2026)](/sources/huang-2026.md)
 §6.9 run a Richtmyer–Meshkov problem at $\Delta x=1/200$ to $t=2$ and
@@ -225,3 +251,4 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Exs. 4.8, 4.18, Fig. 11 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.6, Fig. 9, Table 2 (arXiv v1).
 - [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 (Eqs. (6)–(9)), §3.1, Table 1, Figs. 1–7.
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §4, §4.3, Eq. (48), Figs. 4–5.

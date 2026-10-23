@@ -161,7 +161,7 @@ Witherden 2022, J. Comput. Phys. 468:111501) is the ingested source
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunk 7 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–8 (2026-10-23). This source is cited on:
 
 * [Density-wave advection](/benchmarks/density-wave-advection.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
@@ -174,4 +174,5 @@ Chunk 6 (2026-10-23), cited further in chunk 7 (2026-10-23). This source is cite
 * [Multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
 * [Shu–Osher shock–entropy-wave problem](/benchmarks/shu-osher-problem.md)
 * [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md)
+* [Spectral difference method](/methods/spectral-difference-method.md)
 * [Subcell finite-volume limiting for DG](/methods/subcell-finite-volume-limiting.md)

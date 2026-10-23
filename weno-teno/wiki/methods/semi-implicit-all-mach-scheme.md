@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Semi-implicit all-Mach schemes"
-description: "Semi-implicit all-Mach schemes split the scaled Euler or ideal MHD equations into explicit material (and magnetic) waves and implicit acoustic waves, so the time step no longer shrinks with the Mach number; with a linearized equation of state each implicit stage is one linear elliptic equation for the pressure, and the scheme is asymptotic preserving in the incompressible limit."
+description: "Semi-implicit all-Mach schemes split the Euler or MHD equations into explicitly treated material waves and implicitly treated acoustic (and, in one MHD scheme, magnetic) waves, so the time step follows the flow speed; the implicit part is one linear pressure equation per stage or a nested Picard iteration, with asymptotic preservation proved for one family."
 status: established
-aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT]
+aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT, pressure-based semi-implicit MHD, flux-vector-splitting semi-implicit scheme]
 tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation, mhd]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Semi-implicit all-Mach schemes
@@ -209,8 +209,96 @@ cheaper at $\varepsilon=0.5$; the semi-implicit one is about 3.5 and 4.8 times f
 smaller Mach numbers *(compiler check, not in the sources: ratios of the printed times)*, and its own cost is not monotone in $\varepsilon$, which the paper does
 not explain.
 
+## Cell-centred MHD with implicit magnetic terms
+
+[Dematté et al. (2024)](/sources/dematte-2024.md) build a different, pressure-based
+semi-implicit finite-volume scheme for ideal and visco-resistive MHD in which **all**
+magnetic-field terms of the pressure part are implicit, so that the time step is set by the
+fluid velocity alone, also in magnetically dominated flows (target: disruption events in
+magnetic-confinement fusion). They contrast it with the scheme of Dumbser et al. (2019), which
+keeps the magnetic terms explicit and is therefore limited by the Alfvén speed (§1). *(compiler
+check, not in the sources: the same holds for the Chen–Wu–Xiong scheme above, whose capped
+fast magnetosonic speed still contains the Alfvén speed.)*
+
+**Flux-vector splitting** (§2.1, Eq. (15), the MHD splitting of Balsara, Montecinos and Toro
+closest to Toro–Vázquez). With $u=(\rho,\rho v,E,B)$ and, in the $x$ direction, the specific
+enthalpy $h=e+p/\rho$ (page-local), $f=f^{\mathrm a}+f^{\mathrm p}$ with
+
+$$f^{\mathrm a}=v_1\big(\rho,\ \rho v_1,\ \rho v_2,\ \rho v_3,\ \kappa,\ 0,\ B_2,\ B_3\big),\qquad
+f^{\mathrm p}=\big(0,\ p+\tfrac12\lvert B\rvert^2-B_1^2,\ -B_1B_2,\ -B_1B_3,\ v_1(\rho h+\lvert B\rvert^2)-B_1(v\cdot B),\ 0,\ -v_2B_1,\ -v_3B_1\big)$$
+
+(page-local $f^{\mathrm a}$, $f^{\mathrm p}$; $\kappa$ the kinetic energy, registry §6). The advective
+sub-system has eigenvalues $0$ and $v_1$ only; the "pressure" sub-system, which carries the gas
+pressure, the magnetic pressure and the non-advective induction terms, has the eigenvalues
+$0,0,\mp\lvert B_1\rvert/\sqrt\rho$ and $\tfrac12\big[v_1\mp\sqrt{v_1^2+4\big(c^2+(\gamma-1)(B_2^2+B_3^2)/\rho\big)}\big]$
+(Eqs. (17), (19)), so it is always subsonic. The authors note that these fast analogues need not
+bracket the true fast magnetosonic speeds, as for Toro–Vázquez in gas dynamics (§2.1).
+*(compiler check, not in the sources: $f^{\mathrm a}+f^{\mathrm p}$ is the ideal-MHD flux with total
+energy $E=\rho e+\kappa+\tfrac12\lvert B\rvert^2$.)*
+
+**Explicit advective step** (§3.1, Eqs. (21)–(24)). First-order or second-order
+[MUSCL–Hancock](/methods/muscl-hancock.md) (van Leer limiter) interface states and a
+[Rusanov flux](/methods/lax-friedrichs-flux.md) with $a=\max(\lvert v_1^-\rvert,\lvert v_1^+\rvert)$, so
+the dissipation scales with the flow speed only; the step is
+$\Delta t=\nu/(\max\lvert\lambda_x\rvert/\Delta x+\max\lvert\lambda_y\rvert/\Delta y)$ with the advective
+eigenvalues, $\nu=0.8$ unless stated, and a magnetosonic step for the first step when the initial
+velocity is zero or small. The density is final after this step.
+
+**Implicit pressure sub-system by nested Picard iterations** (§3.2, Fig. 1; after Fambri and
+Boscheri–Tavelli for the magnetic and viscous parts, Dumbser–Casulli for the pressure). A main
+loop ($N_{\mathrm r}$ iterations, page-local) contains a magnetic loop ($N_{\mathrm q}$) that solves a linear system for a
+non-solenoidal predictor of $B$ with a provisional momentum and the pressure frozen, quadratic
+terms linearized between Picard iterates, and a pressure loop ($N_{\mathrm s}$) that solves a linear system
+for $p$ with $B$ frozen, from the energy equation with mean-centred implicit fluxes and a
+momentum-weighted face enthalpy (Eqs. (26)–(37)). With the ideal-gas law each pressure iteration
+is linear. All systems are solved by matrix-free GMRES (tolerance $10^{-15}$) without
+preconditioner, the Picard tolerance is $10^{-12}$ (Eq. (38)), and $N_{\mathrm r}=N_{\mathrm q}=N_{\mathrm s}=2$ in all tests. The
+predicted field is corrected inside every magnetic iteration either by a staggered adaptation of
+Gardiner–Stone constrained transport, whose corner electric field includes the implicit pressure
+flux, or by an unstaggered adaptation of Rossmanith's vector-potential method; both keep
+$\nabla\cdot B$ at machine precision (§3.3, Fig. 8;
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+[constrained transport](/methods/constrained-transport.md)). Viscous, resistive and heat-flux
+terms enter the same implicit loops (§3.4), so the step stays velocity-based in
+visco-resistive-dominated flows.
+
+**Evidence** ($\gamma=5/3$; §4):
+
+- four 1D MHD Riemann problems on 1000 cells, including the
+  [Brio–Wu tube](/benchmarks/brio-wu-shock-tube.md): with the purely advective step RP3 and RP4 are
+  less accurate than with an Alfvénic step, so the step size is also an accuracy choice (§4.1.1);
+- second order in space on a smooth [MHD vortex](/benchmarks/magnetized-vortex.md) with fixed
+  $\Delta t=0.01$: $L_2(\rho)$ orders 1.573 to 1.998 from $16^2$ to $512^2$ (Table 2), and a
+  stationary vortex kept to $t=1000$ on $200^2$ cells;
+- rotor, [Orszag–Tang](/benchmarks/orszag-tang-vortex.md) and [blast wave](/benchmarks/mhd-blast-wave.md);
+- low-Mach [field loop](/benchmarks/field-loop-advection.md) ($M\approx0.006$): 960 time steps and
+  2930 s against 240427 steps and 85340 s for an explicit second-order MUSCL–HLLEM–CT scheme
+  (§4.2.1); advected θ-pinch: 1150 against 117546 steps, 104 s against 4240 s, with the
+  semi-implicit error and wall time essentially independent of the axial field from 1 to 32
+  (§4.2.3); hardware not stated;
+- shear layer and current sheet in 23 steps, visco-resistive
+  [Kelvin–Helmholtz](/benchmarks/kelvin-helmholtz-instability.md) with helicity errors comparable
+  to an explicit divergence-free Godunov scheme, and an MHD
+  [lid-driven cavity](/benchmarks/lid-driven-cavity.md) against Fambri et al., plus a new
+  accelerating-lid cavity from very low Mach to $M\simeq2$ and back (§4.3–4.4);
+- GMRES needs fewer than ten iterations per step on Orszag–Tang and Kelvin–Helmholtz and about
+  one hundred for the pressure system of the field loop (§4.5).
+
 ## Qualifications
 
+- **Two meanings of "all Mach".** Boscarino et al. prove asymptotic preservation and asymptotic
+  accuracy (formal, time-semi-discrete); Dematté et al. mean a velocity-based time step and
+  flow-speed-scaled dissipation, give no asymptotic analysis, state that there is "no rigorous
+  proof" of stability under the advective CFL condition (§2.1), and leave higher order in time
+  to future IMEX Runge–Kutta work (§4.1.2, §5).
+- Dematté et al. print the explicit advective update (Eq. (21)) and the semi-discrete energy
+  equation (Eq. (34)) with the sign of the flux divergence reversed, against their Eqs. (16),
+  (26) and (35); the face-field updates of the staggered constrained transport (Eq. (39)) with
+  both signs reversed with respect to Faraday's law with their electric field $\mathcal E_z=v_2B_1-v_1B_2$ (page-local $\mathcal E$, as on [constrained transport](/methods/constrained-transport.md)); and the
+  vector-potential field (Eqs. (49), (51)) with $B_2=+\partial_x\mathcal A$ where $B=\nabla\times(\mathcal A\hat z)$
+  gives $-\partial_x\mathcal A$, so that the printed field would not satisfy their own discrete divergence
+  condition (50). *(compiler check, not in the sources: each of these follows from the paper's
+  own definitions; divergence preservation (40) holds for either sign of (39).)*
 - The scheme is not uniformly accurate in $\varepsilon$: asymptotic accuracy covers only
   $\varepsilon\to0$, and order is lost at intermediate Mach numbers (Table 5.2, Fig. 5.3),
   which the paper observes without explanation.
@@ -237,3 +325,4 @@ not explain.
 
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §2.2–2.4, §3.1–3.4 (Eqs. (3.1)–(3.18)), §4, §5 (Tables 5.1–5.5) (arXiv v1).
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §§1–2 (Eqs. (2.1)–(2.9)), §3.1 (Eqs. (3.10)–(3.19), Remark 3.1), §3.2 (Eqs. (3.25)–(3.40), Remark 3.2), §3.3 (Eq. (3.32)), §4 (Thm. 4.1, Remark 4.2, Def. 4.3, Prop. 4.4), §5 (Tables 5.1–5.2, Figs. 5.1–5.7) (arXiv v2).
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §1, §2.1 (Eqs. (14)–(19)), §3.1 (Eqs. (21)–(24)), §3.2 (Eqs. (25)–(38), Fig. 1), §3.3 (Eqs. (39)–(51)), §3.4, §4 (Tables 1–2, Figs. 2–22).

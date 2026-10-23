@@ -5,7 +5,7 @@ description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Flow past a circular cylinder
@@ -88,6 +88,28 @@ additional treatment in the initial phase"; agreement with their
 non-compact high-order gas-kinetic scheme on structured meshes is
 asserted, with no comparison figure (Figs. 10–11).
 
+**Mach 7 on shock-adapted high-order meshes.** [Nguyen et al. (2024)](/sources/nguyen-2024.md)
+§4.3 (arXiv v1) run inviscid flow over a unit cylinder at
+$M_\infty=7$ with a slip wall and supersonic inflow and outflow, on 900
+quadrilaterals of degree 4, with HDG and an
+[artificial viscosity](/methods/artificial-viscosity.md) driven by a
+density-gradient indicator, the mesh being moved three times by an
+optimal-transport map that clusters elements at the bow shock
+([adaptive moving mesh](/methods/adaptive-moving-mesh.md)). The mesh
+density grows with adaptation, the artificial viscosity shrinks in
+amplitude and width, the pressure and Mach profiles along $y=0$ converge
+(the second and third adaptive meshes being close), and the final mesh
+shows no oscillation or overshoot (Figs. 9–12). No error norm is given.
+
+**Shallow-water analogue.** [Del Grosso et al. (2024)](/sources/delgrosso-2024.md)
+§5.8 (HAL preprint) run the supercritical shallow-water flow past a
+cylinder of radius 0.5 m sitting on a bottom bump, with inflow depth 1
+and velocity $5\sqrt{gh}$ (Froude number 5), wall condition on the
+cylinder and 81,272 triangles, to a residual below $10^{-6}$ or
+$t=200$ s. Their two-point (face-based) scheme develops a
+[carbuncle](/definitions/carbuncle-phenomenon.md); their multi-dimensional-aware (nodal) scheme at first and
+second order does not (Fig. 17). The domain size is not printed.
+
 Wan & Xia and Chen et al. report the same observation from different
 discretizations: in their runs the switch of a nonlinear scheme or
 limiter stalled steady-state convergence, and their smoother switch
@@ -117,6 +139,16 @@ isothermal wall at $T_{\mathrm w}=294.44$ K, $\mathrm{Re}=1.835\times10^5$.
   the right and high-aspect-ratio triangles, and run their fourth-order
   compact gas-kinetic scheme at CFL 0.35 (Fig. 12); the Reynolds-number
   length is not stated.
+
+[Nguyen et al. (2024)](/sources/nguyen-2024.md) §4.5 run the
+Gnoffo–White case: $M_\infty=17.6$, $\mathrm{Re}=376{,}000$,
+$T_\infty=200$ K, isothermal wall at $500$ K, Sutherland viscosity,
+supersonic inflow and outflow, on 1500 quadrilaterals of degree 4 with
+one optimal-transport adaptation. The adapted mesh has smaller elements
+at the wall and at the shock; the pressure coefficient barely changes
+between the meshes, but the wall heat-transfer coefficient is lower on
+the initial mesh, and on the adapted mesh it "agrees very well" with the
+LAURA results of Gnoffo & White (Figs. 17–22).
 
 **Reacting air and immersed walls.** [Başkaya et al. (2024)](/sources/baskaya-2024.md)
 §4.5 (author preprint) run the HEG cylinder of Knight et al. (2012),
@@ -264,6 +296,10 @@ the trend with Mach number is captured (Fig. D.25).
   study of them, and their grid study covers the body-fitted and
   cut-cell runs only; the ghost-cell result is for one wall spacing,
   1.0 μm (Table 7).
+- Nguyen et al. print neither $\gamma$ nor $\mathrm{Pr}$ for their
+  cylinder runs; their mesh moves at fixed connectivity, so the element
+  counts above hold for every adapted mesh, and their claims are visual
+  or against LAURA.
 - Liu et al. (2023b) and Zhao et al. print identical free-stream
   temperature, wall temperature and Reynolds number at different Mach
   numbers (8.03 and 5); neither paper compares with the other, and
@@ -280,3 +316,5 @@ the trend with Mach number is captured (Fig. D.25).
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.7, Figs. 17–18.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.7, Figs. 10–12 (arXiv v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §4.5, Tables 6–7, Figs. 7–11; §5, Fig. 18 (author preprint).
+- [Nguyen et al. (2024)](/sources/nguyen-2024.md) — §2.2, §3, §4.3, §4.5, Figs. 9–12, 17–22 (arXiv v1).
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §5.8, Fig. 17 (HAL preprint).

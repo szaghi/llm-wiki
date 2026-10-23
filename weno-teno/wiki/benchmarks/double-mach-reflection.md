@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Double Mach reflection
@@ -21,8 +21,8 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Forty-one sources of the bundle run it,
-thirty-seven in the Woodward–Colella form (one of them on a randomly
+source that runs it. Forty-five sources of the bundle run it,
+forty-one in the Woodward–Colella form (one of them on a randomly
 distorted curvilinear grid) and four in a variant (two
 wedges in the physical frame on unstructured meshes, a relativistic
 version, a dimensional ramp with an immersed boundary); most cite Woodward & Colella (1984)
@@ -260,6 +260,10 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.6 | [$p$-adaptive DG](/methods/hp-adaptation.md) $N\in[2,5]$ with [FV subcells](/methods/subcell-finite-volume-limiting.md) ($N_{\mathrm{FV}}=6$ or 11) vs static $N=5$; HLLE; [FLEXI](/software/flexi.md) | $240\times60\times1$ elements ($h=1/60$), periodic in $z$ | $t=0.28$; pressure indicator |
 | [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5 | unstructured finite-volume TENO4-D–TENO7-D (dual stencil selection) vs [CWENO](/methods/cweno.md)6/7, HLL, SSP-RK3 at CFL 0.4; [UCNS3D](/software/ucns3d.md) | 151,850 ($h\approx1/125$), 369,794 ($h\approx1/200$), 752,708 ($h\approx1/280$) triangles | 43 contours of $\ln\rho$ in $[1,3]$; cost table |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.4 | [TENO-AZ](/methods/adaptive-teno.md) (adaptive cut-off) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 at CFL 0.5 | $960\times240$ | 30 contours in $[2,20]$; cost table |
+| [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.8 | finite-volume ALW-MR-WENO-3/4/5 on triangles (two stencils, adaptive linear weights) vs [MR-WENO](/methods/multi-resolution-weno.md); characteristic-wise, CFL 0.6 | $[0,4]\times[0,1]$, 708,576 triangles (392,693 points), boundary mesh size 1/320 | 30 contours 1.5–21.5; Mach-stem close-up; cost table |
+| [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.9 | ghost multi-resolution GMR-WENO3/5/7, finite difference and finite volume, vs MR-WENO | $[0,3]\times[0,1]$, $1200\times400$ | 30 contours 1.5–22.7; cost table |
+| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.6 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 (MR-WENO in troubled cells, linear upwind elsewhere) vs MR-WENO; CFL 0.6, TVD-RK3 | $[0,4]\times[0,1]$, plotted $[0,3]\times[0,1]$ "on $1200\times400$ grid points" | 30 contours 1.5–22.7; troubled-cell map; cost table |
+| [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.5 | hybrid HMR-WENO5/7/9 (bisection-based extremum indicator) vs MR-WENO; CFL 0.6, TVD-RK3 | $[0,4]\times[0,1]$, $1200\times400$, plotted $[0,3]\times[0,1]$ | 30 contours 1.5–22.7; troubled-cell map; cost table |
 | [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.7 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with a posteriori [subcell FV limiter](/methods/mood-a-posteriori-limiting.md), conservative correction in shock cells, $P_2$ | physical-frame wedge, polygonal mesh $h=1/220$ | variant above (arXiv v1) |
 
 ## What the benchmark measures
@@ -359,6 +363,19 @@ subcells, so most of the domain stays in primitive variables, and the
 small-scale roll-up of the shear layer is visible at $P_2$ on
 $h=1/220$ (§5.1.7, Fig. 6; see
 [local conservation](/results/local-conservation-flux-form.md)).
+
+The multi-resolution WENO papers of the Zhu group compare new
+schemes with MR-WENO of the same order and find them alike or better.
+Lin & Zhu's two-stencil ALW-MR-WENO on triangles and MR-WENO "can
+provide good resolution" and give similar results (Case 3.8, Figs.
+3.11–3.14). Zhang & Zhu state that GMR-WENO "resolve two Mach stems well
+than" MR-WENO on $1200\times400$ (Ex. 3.9, Figs. 3.16–3.17). Zuo & Zhu's (2024a, 2024b)
+hybrids show "more sophisticated flow structures" in the blow-up around
+the Mach stems than MR-WENO (2024a, Ex. 3.6, Figs. 3.8–3.9; 2024b,
+Ex. 3.5, Figs. 3.6–3.7), and in 2024a the MMR-WENO indicator is called
+"more accurate than" the SHUS-WENO indicator of Wang et al. in
+identifying the flow features, judged from troubled-cell maps (Fig.
+3.10). All four judgements are visual.
 
 **Order does not buy roll-up by itself.** Hiejima's WCNS-JS shows no
 Kelvin–Helmholtz roll-up along the slip line at fifth order, and its
@@ -503,10 +520,21 @@ stated. Chandravamsi et al. time it on one GPU against one Xeon Gold
 and an A100 (Table 5); on this inviscid case WENO-Z is the fastest of
 their three schemes because it needs no gradients (§9.1).
 
+The Zhu-group papers all report savings against MR-WENO. Lin & Zhu
+(Table 3.1, hardware not stated): 660330.33 s for MR-WENO-4 against
+611079.93 s for ALW-MR-WENO-4, and 713307.99 s against 451954.05 s at
+fifth order. Zhang & Zhu (Table 3.1, Intel Core i5-8265U, Visual
+Fortran): 22286.90 s for MR-WENO7-FD against 10285.53 s for GMR-WENO7-FD
+(1:2.17) and 115220.18 s against 71880.31 s in finite volumes (1:1.60).
+Zuo & Zhu (2024a, Table 3.1, hardware not stated): MMR/MR time ratios
+31.1 %, 28.4 % and 24.9 % at orders 5, 7, 9. Zuo & Zhu (2024b, Table
+3.1, a Lenovo XiaoXinAir 14 laptop): MR-WENO 9509.17, 17058.2 and
+26535.5 s against HMR-WENO 3088.51, 5905.18 and 11658.7 s.
+
 **Unstructured meshes.** Fu (2023) reproduces finite-volume TENO6 on
 triangular meshes of 151,850 to 752,708 cells (Fig. 11). Chen et al.
-(2022), Chen & Wu (2022), Du et al., Yu & Hesthaven and Maltsev et al.
-also compute on triangles, and Du et al. on polygonal cells built from point clouds.
+(2022), Chen & Wu (2022), Du et al., Yu & Hesthaven, Maltsev et al. and
+Lin & Zhu also compute on triangles, and Du et al. on polygonal cells built from point clouds.
 
 **Error norms.** Wang et al. (2022) are the only source that measures
 an error: density errors on $1500\times1200$ against the baseline
@@ -544,8 +572,8 @@ grid, not an exact solution.
   findings, not as a contradiction.
 - Mossier, Beck & Munz stop at $t=0.28$, like Pazner a later stage of
   the roll-up.
-- Deng; Wang et al. (2021); Chamarthi (2023a) and Chandravamsi et al.
-  compute on $[0,3]\times[0,1]$, Lin, Chan & Tomas on
+- Deng; Wang et al. (2021); Chamarthi (2023a), Chandravamsi et al. and
+  Zhang & Zhu compute on $[0,3]\times[0,1]$, Lin, Chan & Tomas on
   $[0,3.5]\times[0,1]$, the others on $[0,4]\times[0,1]$ (Balsara et al.
   and Wang et al. (2023c) compute on $[0,4]$ and plot $[0,3]$).
 - Pazner's Fig. 13 caption gives $t=0.275$, later than the $t=0.2$ of
@@ -584,6 +612,11 @@ grid, not an exact solution.
   order $10^{-1}$ *(compiler check, not in the sources)*. The
   $v_2$ entry is therefore inconsistent with the stated shock; the
   paper's figure cannot decide which data were run.
+- Zuo & Zhu (2024a) state the domain $[0,4]\times[0,1]$ and show
+  contours of $[0,3]\times[0,1]$ "on $1200\times400$ grid points",
+  without saying whether the 1200 points cover $[0,4]$ (spacings $1/300$
+  and $1/400$) or $[0,3]$. Both Zuo & Zhu papers (2024a, 2024b) defer the setup to the
+  literature, as does Lin & Zhu's Case 3.8 apart from the geometry.
 - Yu & Hesthaven print no initial states; their run is listed as a
   Woodward–Colella run on their own citation of the setup.
 - Tang's states are conservative variables printed under a primitive
@@ -634,3 +667,7 @@ grid, not an exact solution.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.5, Eq. (42), Figs. 9–14, Table 7.
 - [Tang (2024)](/sources/tang-2024.md) — §4.4.4, Eq. (36), Fig. 13; §4.4.8, Table 6.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.7, Fig. 6 (arXiv v1).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.8, Figs. 3.11–3.14, Table 3.1.
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — §3, Ex. 3.9, Figs. 3.16–3.17, Table 3.1.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.6, Figs. 3.8–3.10, Table 3.1.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.5, Figs. 3.6–3.8, Table 3.1.

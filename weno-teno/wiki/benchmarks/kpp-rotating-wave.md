@@ -5,7 +5,7 @@ description: "Two-dimensional scalar conservation law with the nonconvex flux (s
 status: established
 aliases: [KPP problem, Kurganov–Petrova–Popov problem, rotating wave problem]
 tags: [benchmark, entropy-stable, dg, limiting]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # KPP rotating wave
@@ -26,7 +26,7 @@ entropy solution is a rotating spiral wave (a "composite wave
 structure", Dzanic et al.). Its diagnostic value is that
 oscillation control and entropy stability come apart: a scheme can be
 free of overshoots and still converge to a nonentropic weak solution.
-The three sources use it as a test of whether a shock-capturing device
+The four sources use it as a test of whether a shock-capturing device
 selects the entropy solution of high-order schemes; see
 [entropy stability](/properties/entropy-stability.md).
 
@@ -37,6 +37,7 @@ selects the entropy solution of high-order schemes; see
 | [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) §7.4, Eqs. (26)–(27) | $(-2,2)\times(-2.5,1.5)$ | continuous $\mathbb Q^p$ finite elements, $p\in\{1,2,4\}$, with [dissipation-based WENO stabilization](/methods/weno-stabilized-continuous-galerkin.md) | $N_h=129^2$ degrees of freedom |
 | [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) §5.1, Eqs. (37)–(38) | $[-2,2]^2$ (boundary conditions not stated) | [DGSEM](/methods/dgsem.md), $N=3$, element-wise [subcell FV blending](/methods/subcell-finite-volume-limiting.md) with $\alpha_{\max}=0.5$ | $32^2$ to $256^2$ elements |
 | [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.2 | $[-2,2]^2$, periodic | flux reconstruction, $\mathbb P_9$, residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=6$ | $16^2$ to $64^2$ elements |
+| [Lin & Chan (2024)](/sources/lin-2024.md) §4.1.2 | $[0,2]^2$ as printed; initial condition as in Rueda-Ramírez et al.; final time not printed | DGSEM, $N=3$, blended with the Hennemann et al. shock-capturing function, with and without their cell-entropy subcell limiter | $K_{1D}=64$ and $128$ elements per direction |
 
 The domains differ: Kuzmin & Vedral shift the box downwards to
 $y\in(-2.5,1.5)$, Rueda-Ramírez et al. and Dzanic et al. use the square
@@ -99,6 +100,15 @@ the solution converges qualitatively from $16^2$ to $64^2$ elements
 (§5.1.2, Figs. 2–3). Like Kuzmin & Vedral's dissipation, the device
 needs no entropy–flux pair and carries no entropy proof.
 
+The fourth source isolates the same defect inside one scheme. Lin &
+Chan (2024) show that DGSEM with Hennemann et al.'s blending converges
+from $64^2$ to $128^2$ elements to a non-entropic solution, as
+Rueda-Ramírez et al. found, and that adding their limiter, which
+enforces a semi-discrete cell entropy inequality on the subcell fluxes
+by a linear program for the limiting factors
+([subcell limiting](/methods/subcell-finite-volume-limiting.md)),
+makes the solution entropic (§4.1.2, Fig. 3).
+
 ## Qualifications
 
 - Rueda-Ramírez et al. assert that the entropy-stable split form
@@ -108,6 +118,11 @@ needs no entropy–flux pair and carries no entropy proof.
   the sources)*.
 - No source prints an error norm against a reference solution;
   the evidence is contour plots and solution ranges.
+- Lin & Chan print the domain $[0,2]^2$ while taking the initial
+  condition from Rueda-Ramírez et al., whose domain is $[-2,2]^2$; they
+  print no final time, and their colour range $[-0.5,12]$ is wider than
+  the initial range $[\pi/4,7\pi/2]$ *(compiler check, not in the
+  sources)*.
 - Dzanic et al. tune $c_\mu$ per problem (6 here, 1 to 8 elsewhere in
   the paper) and keep it fixed under refinement; they print no CFL
   number.
@@ -117,3 +132,4 @@ needs no entropy–flux pair and carries no entropy proof.
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §7.4, Eqs. (26)–(27), Figs. 6–8 (arXiv v1).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.1, Eqs. (37)–(39), Figs. 2–3 (arXiv v2).
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.1.2, Figs. 2–3 (arXiv v2).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3, §4.1.2, Fig. 3.

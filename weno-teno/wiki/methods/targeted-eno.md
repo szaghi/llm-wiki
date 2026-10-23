@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Targeted ENO (TENO)
@@ -150,6 +150,20 @@ Values used:
 | $10^{-7}$; $10^{-6}$ | TENO6 and TENO8 comparators; equal-stencil TENO-type indicator of TENO-S | [Liang & Fu (2024b)](/sources/liang-2024-b.md), §3.1, §4 |
 | $10^{-7}$ then $10^{-5}$ | unstructured TENO4-D to TENO7-D: all candidates, then small stencils only | [Ji, Liang & Fu (2023)](/sources/ji-2023.md), §3.2.2 |
 | $10^{-5}$; $10^{-4}$ | FV TENO5 "usually"; TENO-type troubled-cell indicator and limiter for RKDG | [Huang & Fu (2024)](/sources/huang-2024.md), §2, §§4.3–4.4 |
+| $10^{-7}$ | TENO6 and TENO6-opt comparators | [Zhang et al. (2024b)](/sources/zhang-2024-b.md), §2.5 |
+| $10^{-5}$, $10^{-10}$, $10^{-13}$, $10^{-8}$ | the four wavenumber bands of TENO6-SA ([adaptive TENO](/methods/adaptive-teno.md)) | Zhang et al. (2024b), §5.1 |
+| $10^{-5}$; $10^{-4}$ | TENO5 default; Woodward–Colella blast wave with Roe flux, "for a stable result" | [Liang & Fu (2024a)](/sources/liang-2024.md), §2.4, §4.3 |
+| $10^{-5}$ (1D), $5\times10^{-4}$ (2D) | TENO-based troubled-cell indicator for spectral differences | [Chen & Fu (2024)](/sources/chen-2024.md), §4.2 |
+
+**Where TENO turns nonlinear.** Zhang et al. (2024b, §3.2, Table 1) measure "through
+numerical experiments" in the
+[approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
+the reduced wavenumber at which their six-point TENO leaves its linear background, as
+a function of $C_T$ (the table does not name the scheme): $1.058$ at $10^{-4}$, $1.146$ at $10^{-5}$, $1.234$ at
+$10^{-6}$, $1.322$ at $10^{-7}$, $1.398$ at $10^{-8}$, $1.473$ at $10^{-9}$,
+$1.549$ at $10^{-10}$, $1.624$ at $10^{-11}$, $1.706$ at $10^{-12}$ and $1.794$ at
+$10^{-13}$ *(compiler check, not in the sources: about $0.08$ per decade)*. This quantifies the statement of Fu (2023,
+§2.5) that a smaller $C_T$ resolves higher wavenumbers.
 
 An adaptive, locally varying $C_T$ is the subject of
 [adaptive TENO](/methods/adaptive-teno.md).
@@ -171,7 +185,20 @@ An adaptive, locally varying $C_T$ is the subject of
   function with a second-order critical point or for Burgers, where WENO-JS and
   WENO-Z need $\epsilon$ tuning (Fu 2023, §3.1, numerics in cited work). Takagi et
   al. measure fifth order with $L_\infty$ errors identical to the linear upwind-5
-  scheme on all grids (Table 2). See [accuracy at critical points](/properties/critical-point-accuracy.md).
+  scheme on all grids (Table 2). On the pointwise test $f=x^{n_{\mathrm{cp}}+1}e^{100x}$,
+  whose critical point at $x=0$ has order $n_{\mathrm{cp}}$,
+  [Zhang et al. (2024b)](/sources/zhang-2024-b.md) (§5.4, Table 3, "disregarding
+  the effect of $\epsilon$") measure for TENO6 the rates 6, 6, 2, 4, 4, 6, 6 for
+  $n_{\mathrm{cp}}=0,\dots,6$, for TENO6-opt 5, 5, 2, 4, 4, 6, 6, and state that all
+  six schemes tested lose order at high-order critical points; see Contradictions.
+  See [accuracy at critical points](/properties/critical-point-accuracy.md).
+- **Order with one candidate dropped.** [Liang & Fu (2024a)](/sources/liang-2024.md)
+  (§3.1) state that when one TENO5 candidate is cut, the renormalized combination of
+  the two others "will not achieve any accuracy order" beyond that of a single
+  candidate, because the $d_k$ are designed for the three-stencil combination; their
+  variant below reaches fourth order in that case. *(Compiler check, not in the
+  sources: e.g. with $\delta_2=0$ the combination $\tfrac23\hat f^{(0)}+\tfrac13\hat f^{(1)}$
+  is exact only for quadratics, so it is third order like each candidate.)*
 - **Robustness with multiple discontinuities.** With two discontinuities in the
   global stencil all candidates of seventh-order WENO are non-smooth, while
   seventh-order TENO still contains a smooth three-point stencil (Ye et al.,
@@ -198,6 +225,13 @@ An adaptive, locally varying $C_T$ is the subject of
   eight-point TENO "nearly 70%" more expensive than WENO-CU6 on a $1024\times256$
   double Mach reflection. *(Compiler check, not in the sources: Hong et al.'s
   own ratio TENO8/WENO-CU6 is 1.50–1.54; codes, grids and hardware differ.)*
+  In the 2D flow tests of [Zhang et al. (2024b)](/sources/zhang-2024-b.md) (Table 6),
+  TENO6 costs 4.56–12.32 % more CPU time than WENO7-Z; on 1D advection TENO6 is
+  slightly cheaper than EWENO-CU6 (890.53 s against 941.63 s at $N_x=1600$, Table 2).
+  On double Mach reflection, [Liang & Fu (2024a)](/sources/liang-2024.md) (Table 1;
+  hardware not stated) time TENO5 at 40.04 s and 630.89 s, TENO6 at 45.00 s and
+  717.20 s, against 36.51 s and 593.16 s for WENO5-Z, on $400\times100$ and
+  $1000\times250$.
 
 ## Variants
 
@@ -355,6 +389,45 @@ Recorded here because they have no page of their own:
   order), and on shock problems the limiter is less dissipative than the
   compact WENO limiter of Zhu, Qiu and Zhu it is compared with (visual
   evidence).
+- **Non-polynomial TENO with target-stencil selection** ([Liang & Fu (2024a)](/sources/liang-2024.md),
+  §3, Eqs. (16)–(36)). The TENO5 cut-off ($q=6$, $\epsilon=10^{-40}$,
+  $\tau_5=\lvert\beta_1-\beta_2\rvert$, $C_T=10^{-5}$) only *classifies* the three
+  candidates. The flags $(\delta_0,\delta_1,\delta_2)$ select one target stencil, the
+  widest that does not cross the non-smooth region: all five points when all are
+  smooth, $\{i-2,\dots,i+1\}$ when the downwind $S_1$ is cut,
+  $\{i-1,\dots,i+2\}$ when the upwind $S_2$ is cut, and the single surviving
+  three-point stencil otherwise. The flux is the one reconstruction on that stencil,
+  of order 5, 4 or 3, with no convex combination and no linear weights, the logic of
+  TENO-N above. The reconstructions are Gaussian radial-basis-function
+  interpolants of the primitive function with an adaptive shape parameter
+  ([RBF-WENO](/methods/rbf-weno.md); the shape-parameter law is on
+  [adaptive TENO](/methods/adaptive-teno.md)), and cells marked by the TENO-flag
+  detector of Liang et al. (2022) take its tanh jump flux
+  ([TENO-THINC](/methods/teno-thinc.md)). *(Compiler check, not in the sources: the
+  all-cut combination cannot occur, since $\sum_k\chi_k=1$ forces
+  $\max_k\chi_k\ge1/3>C_T$.)* Evidence: fifth order in $L_\infty$ on Gaussian-pulse
+  advection, ADR dispersion and dissipation better than TENO5 and WENO5-Z, more
+  small-scale structure than WENO5-Z and TENO5 on Shu–Osher, double Mach
+  reflection, Rayleigh–Taylor, Kelvin–Helmholtz and three 2D Riemann
+  configurations, and than the six-point TENO6 on double Mach reflection and the
+  2D Riemann problems, at about 1.4 times the wall time of TENO5 (§4, Table 1;
+  Figs. 3–16).
+- **Band-wise relay of linear schemes (TENO6-SA)** ([Zhang et al. (2024b)](/sources/zhang-2024-b.md),
+  §5): TENO6 whose linear background and cut-off switch among sixth-, fourth- and
+  second-order schemes by the wavenumber of a scale sensor; see
+  [adaptive TENO](/methods/adaptive-teno.md).
+- **TENO weighting in limiters for spectral differences** ([Chen & Fu (2024)](/sources/chen-2024.md),
+  §§4–7): the troubled-cell indicator of the DG variant above, carried to the nodal
+  [spectral difference method](/methods/spectral-difference-method.md) with
+  $\gamma_k=1/(\beta_k+\epsilon)^6$ on the polynomials of cells $i-1,i,i+1$,
+  $\epsilon=10^{-4}$ and cut-off $10^{-5}$ in 1D, $\epsilon=10^{-3}$ and
+  $5\times10^{-4}$ in 2D, flags set per direction, and a cell flagged when *any* of the
+  three normalized measures falls below the cut-off (Eq. (18)), where Huang & Fu
+  test only the cell's own measure; the limiter combines
+  Hermite candidates with TENO-A weights ([adaptive TENO](/methods/adaptive-teno.md),
+  [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). A very small
+  $\epsilon$ such as $10^{-12}$ is "not good" because high-wavenumber noise of very low
+  amplitude would then be flagged (§4.2).
 - **Very high order and adaptive order**: TENO8-AA, TENO10-AA and TENO-A, see
   [adaptive TENO](/methods/adaptive-teno.md); **TENO-THINC** and its improved
   detector and interpolation-like jump flux of [Liang et al. (2022)](/sources/liang-2022.md), see
@@ -381,6 +454,15 @@ combination ([WCNS](/methods/weighted-compact-nonlinear-scheme.md)):
   $\tau^{\mathrm{ref}}_5=(u_i''')^2\Delta x^6+O(\Delta x^8)$ (Eq. (100); App. B, Eq. (B.20)); it enters
   WENO-Z-type weights, not a cut-off ([smoothness indicators](/definitions/smoothness-indicator.md),
   [WENO-Z](/methods/weno-z.md)). Its order, 6, matches that of the sixth-order $\tau_K$ above.
+
+[Zhang et al. (2024a)](/sources/zhang-2024.md) (§3.3, App. C, Eqs. (C.1)–(C.11)) use the same
+incremental-stencil WENO5IS, with the same linear weights and reference indicator, as the base
+reconstruction of a finite-volume WENO–THINC multiphase scheme
+([incremental-stencil WENO](/methods/incremental-stencil-weno.md)). Measured by how often the
+positivity- and boundedness-preserving limiter of their scheme fires in a Mach 10 bubble collapse
+at $1920\times960$, TENO5 as base scheme needs it much less often than WENO-JS5, which exceeds
+1 % of the cells, and WENO5IS least, never above 0.04 % (§4.8, Fig. 16(b);
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
 
 Two further schemes take only the cut-off or the stencils:
 
@@ -568,6 +650,26 @@ on Gaussian-pulse advection ([Hong et al. (2022)](/sources/hong-2022.md), §5.1)
 but its background scheme is itself only sixth order, so the test cannot
 distinguish the two conditions.
 
+**Order of TENO at a second-order critical point.** *Open.*
+[Fu (2023)](/sources/fu-2023.md) (§3.1, numerics in cited work, not shown in the
+review) states that with the $\tau_K$ of its Eq. (18), the sixth-order
+$\tau_K$ above,
+"the accuracy order does not degenerate even for the test function with a
+second-order critical point", for the TENO family. [Zhang et al.
+(2024b)](/sources/zhang-2024-b.md) (§5.4, Table 3) measure, for TENO6 with a $\tau_6$
+of the same form (their Eq. (13), "the stencil arrangement order is changed"),
+$C=1$, $q=6$, $\epsilon=10^{-40}$ and $C_T=10^{-7}$, the convergence rate of the
+reconstructed derivative of $x^{n_{\mathrm{cp}}+1}e^{100x}$ at $x=0$: 6 at
+$n_{\mathrm{cp}}=0,1$, 2 at the second-order critical point, 4 at the third- and
+fourth-order ones; they state that all six schemes tested lose order at
+high-order critical points. Both statements concern a six-point-class TENO with
+the same sixth-order global indicator at a critical point where the first and
+second derivatives vanish. Neither source names the other's test: Fu states
+neither the test function nor $\epsilon$ and $C_T$; Zhang et al. report their rates
+"disregarding the effect of $\epsilon$". What would decide it: the same pointwise
+test with TENO6 at several $\epsilon$ and $C_T$, reporting which $\delta_k$ are cut
+at the critical point.
+
 # Citations
 
 - [Fu (2023)](/sources/fu-2023.md) — §§1–5, Eqs. (2)–(33), Figs. 1–9: the review of the family.
@@ -589,3 +691,7 @@ distinguish the two conditions.
 - [De Vanna et al. (2023c)](/sources/devanna-2023-c.md) — §3.1: TENO described as a discrete cut-off.
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.1–4.16, Tables 1–3, 5, Figs. 7, 9, 11, 14, 16: TENO5 as reference scheme, nonlinear order, oscillations, cost (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2.4: order loss of state reconstruction for nonlinear problems (arXiv v1).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.5, Eqs. (14)–(16); §3.2, Table 1; §5.1; §5.4, Table 3; Tables 2, 6: TENO6 parameters, cut-off against nonlinearity onset, critical-point rates, cost, TENO6-SA.
+- [Liang & Fu (2024a)](/sources/liang-2024.md) — §2, Eqs. (7)–(15); §3.1–3.3; §4, Table 1: TENO5 recipe, target-stencil selection without linear weights, $C_T$ for the blast wave, cost.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §4.2, Eqs. (15)–(20); §§5.4–5.7: TENO troubled-cell indicator and TENO weighting for spectral-difference limiters.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, App. C; §4.8, Fig. 16(b): incremental-stencil WENO5IS with the TENO reference indicator; limiter frequency of WENO-JS5, TENO5 and WENO5IS.

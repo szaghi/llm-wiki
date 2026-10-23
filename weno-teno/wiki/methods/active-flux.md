@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Active Flux"
-description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order in 1D, and Calhoun et al. run the third-order Cartesian version on adaptively refined grids."
+description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order in 1D, Calhoun et al. run the third-order Cartesian version on adaptively refined grids, and Chudzik et al. evolve the point values of 2D systems with bicharacteristic operators."
 status: established
-aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux]
+aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux, AF with evolution-Galerkin operators]
 tags: [finite-volume, reconstruction, characteristic, limiting]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Active Flux
@@ -169,12 +169,118 @@ previous section. The evolution operators recalled are:
 These two-dimensional fully discrete limits ($0.75$, $\tfrac12$) and the one-dimensional limits
 recalled by Abgrall & Barsukow ($\nu=1$ for the original scheme, $0.77$ for the semi-discrete
 RK version) belong to different schemes (two-dimensional fully discrete against
-one-dimensional); they are not competing values for one method.
+one-dimensional); they are not competing values for one method. The same holds for the limits
+$0.279$ (EG2) and $0.154$ (EG4) of Chudzik et al. below, which belong to other point-value
+operators.
 
 Calhoun et al. also recall Barsukow's result that the Cartesian AF for acoustics with the exact
 evolution operator is stationarity preserving: it adds no dissipation to discrete
 representations of all stationary states (§1). The Eymann–Roe operator they use does not have
-this property (§4.6).
+this property (§4.6). [Chudzik, Helzel & Lukáčová-Medvid'ová (2024)](/sources/chudzik-2024.md)
+recall the same result (§2.1, §5.3) and the same fully discrete Cartesian scheme with the
+$\tfrac1{36}$ Simpson flux (Eq. (38)); they list three acoustic operators used before them: the
+Eymann–Roe formula, exact for constant vorticity (Eq. (4)); the Fan–Roe formula, exact for general
+data (Eq. (6)); and Barsukow et al.'s radial-derivative form of the exact formula, which
+integrates over a disc of radius $ct$ and needs no differentiation across interfaces (Eq. (7)).
+They write the stability condition of the exact operators as
+$\max(c\Delta t/\Delta x,c\Delta t/\Delta y)\le\tfrac12$, which their earlier work showed is
+sufficient for linear stability (§2.1, Fig. 3).
+
+## Bicharacteristic evolution operators for systems
+
+Exact evolution formulas exist only for a few linear systems, acoustics above all.
+[Chudzik et al. (2024)](/sources/chudzik-2024.md) update the point values of the Cartesian AF
+with **approximate evolution operators from the method of bicharacteristics**, the
+evolution-Galerkin (EG) operators of Lukáčová-Medvid'ová, Morton and Warnecke, and so extend
+third-order AF to systems for which no exact formula is available (§1, §4). The
+bicharacteristic representation of a linear system $\partial_tu+\sum_dA^{(d)}\partial_{x_d}u=0$
+writes the value at the apex $P=(x,y,t^{n+1})$ of a cone as an average, over all directions of
+the unit circle, of characteristic variables taken at the footpoints at $t^n$, plus a mantle
+integral of the off-diagonal terms (Eqs. (17)–(20)). The authors write acoustics as
+$\partial_tp+c\nabla\cdot v=0$, $\partial_tv+c\nabla p=0$ (Eq. (1)). Let $\varphi$ be the angle
+on the base circle, $Q(\varphi)=(x+c\Delta t\cos\varphi,\,y+c\Delta t\sin\varphi,\,t^n)$ its
+points and $P'=(x,y,t^n)$ its centre (page-local symbols). Trapezoidal integration in time,
+Butler's trapezoidal integration of the pressure equation along the cone axis, a lemma on
+periodic integrands and the midpoint rule remove the mantle terms to third order, which leaves
+the **EG2** operator (Eq. (28)):
+
+$$\begin{aligned}
+p(P)&\approx\frac1\pi\int_0^{2\pi}\big(p-v_1\cos\varphi-v_2\sin\varphi\big)(Q(\varphi))\,d\varphi-p(P'),\\
+v_1(P)&\approx\frac1\pi\int_0^{2\pi}\Big(-p\cos\varphi+v_1\big(2\cos^2\varphi-\tfrac12\big)+2v_2\sin\varphi\cos\varphi\Big)(Q(\varphi))\,d\varphi,\\
+v_2(P)&\approx\frac1\pi\int_0^{2\pi}\Big(-p\sin\varphi+2v_1\sin\varphi\cos\varphi+v_2\big(2\sin^2\varphi-\tfrac12\big)\Big)(Q(\varphi))\,d\varphi .
+\end{aligned}$$
+
+EG2 integrates only over the base circle, while the exact representation also integrates over
+the mantle of the cone and Eq. (7) over a disc; on the AF reconstruction the circle integrals
+are evaluated exactly, quadrant by quadrant (Appendix A, Eqs. (40)–(42)).
+**Theorem 4.1:** an AF method for two-dimensional acoustics that updates the point values with
+EG2 is third order in space and time for sufficiently smooth initial data (§4.1).
+
+**Linear stability.** On a doubly periodic $16\times16$ grid the authors compute the eigenvalues
+of the one-step matrix acting on the $12$ unknowns per cell (three variables, four degrees of
+freedom) (§5.1, Table 2, Appendix A). With $\nu=\max(c\Delta t/\Delta x,c\Delta t/\Delta y)$:
+
+| point-value operator | order | stable for | spectral radius just above the limit |
+|---|---|---|---|
+| exact, Eq. (7); Eymann–Roe, Eq. (4), exact for constant vorticity | 3 | $\nu\le0.5$ (§5.1, not in Table 2) | — |
+| EG2, Eq. (28) | 3 | $\nu\le0.279$ | $1.002909442688$ at $\nu=0.28$ |
+| EG4 | 2 | $\nu\le0.154$ | $1.000007260910$ at $\nu=0.155$ |
+| EG1, EG3 | 2 | unstable | $1.000098641879$, $1.000049320939$ at $\nu=0.01$ |
+
+The norms of the powers of the one-step matrix stay bounded up to $100$ steps at $\nu=0.279$ for
+the exact and EG2 operators (Figs. 5–6). The authors call EG2 "the best candidate" for AF (§5.1)
+and note the reversal against piecewise-constant finite volumes, where EG3 had outperformed
+the other EG operators (Remark 4.2).
+
+**Accuracy on non-irrotational data.** On a new periodic acoustic test whose velocity is not
+curl-free (Example 5.1, $t=0.1$, $L^1$, $64^2$–$256^2$), EG2 at $\nu=0.267$ gives observed
+orders $2.92$ ($p$), $2.97$ ($v_1$, $v_2$); the Eymann–Roe operator at $\nu=0.457$ gives $2.99$
+in $p$ but $2.00$ in the velocity; the exact operator (7) gives $2.99$ in $p$ and $2.44$ in the
+velocity (Tables 3–4). With the exact operator the velocity order between $64^2$ and $128^2$
+depends on the final time, from $1.9997$ at $t=0.4$ to $2.9969$ at $t=0.9$ (Table 5); the
+authors note that Samani and Roe reported a similar effect (§5.2). On the stationary vortex the
+exact operator keeps the discrete steady state, EG2 does not but is more accurate than
+Eymann–Roe up to $t=100$ (Example 5.2, Figs. 8–10).
+
+**Maxwell equations.** The source-free two-dimensional Maxwell equations decouple into two
+acoustic systems after a scaling of the fields by $\sqrt\epsilon$, $\sqrt\mu$ (Eqs. (10)–(14)),
+and both divergences become curls of the acoustic velocities. **Theorem 3.1:** AF for the
+source-free 2D Maxwell equations is obtained by solving two acoustic systems; with the exact
+operator (7) it is third order and its solutions satisfy $\nabla\cdot\mathbf E=0$,
+$\nabla\cdot\mathbf B=0$ (§3; page-local field symbols). The proof rests on curl preservation
+by the acoustic solver, argued from the stationarity-preservation result. The convergence study
+on Gaussian plane waves ($t=0.1$, $\nu=0.457$, $64^2$–$256^2$) prints $L^1$ orders at $256^2$ of
+$2.9862$ and $2.9927$ for the out-of-plane components and $2.3797$, $2.7694$ for the in-plane
+components (Table 1).
+
+**Linearised Euler equations.** With the EG2 operator for the linearised Euler equations in
+primitive variables $(\rho,v_1,v_2,p)$, frozen at a state with sound speed $c'$ and velocity
+$(v'_1,v'_2)$ (page-local primes, Eqs. (31)–(33)), the circles have radius $c'\Delta t$ and are
+centred at the upstream point $(x-v'_1\Delta t,\,y-v'_2\Delta t)$. The authors describe the result
+as the first unsplit AF method for the linearised Euler equations (§6, Conclusions). An exact
+operator would need derivatives of the reconstruction across interfaces, while EG2 only needs
+exact integrals on circle segments (Remark 6.1). The observed stability limit is the acoustic
+one, $\max(\lvert v'_1\rvert+c',\lvert v'_2\rvert+c')\Delta t/\Delta x\le0.279$, in all tests
+(empirical, §6). Density advection gives $L^1$ orders $2.988$ and $2.991$ at $256^2$, with
+$p,v_1,v_2$ constant to machine precision; a smooth two-pulse problem gives $2.97$–$2.98$ in all
+variables (Tables 6–7).
+
+**Nonlinear Euler equations.** The averages of the conserved variables are updated by the
+Simpson finite-volume formula; the point values of the **primitive** variables are updated by the
+linearised EG2 operator, linearised locally at each point and iterated (§7, Algorithm 1). The
+half-step value is iterated $L+1$ times over $\Delta t/2$ with the Jacobians frozen at the previous
+iterate, and its last iterate starts the same iteration over $\Delta t$. The primitive averages
+needed for the primitive reconstruction come from the conservative reconstruction evaluated at
+the cell centre and Simpson's rule over the nine nodes. The method ignores the curvature of the
+characteristic cone, which Barsukow showed must be accounted for to reach third order for 1D
+nonlinear systems, so full third order is not expected (§7). Observed $L^1$ orders: $2.987$ on
+density advection with $L=0$ (Table 8); on the Kadioglu–Klein–Minion smooth vortex, measured
+against the next finer grid, $2.62$–$2.83$ with $L=0$ (falling to $2.43$ at $512^2$) and $2.65$,
+$2.89$, $2.93$, $2.82$ with $L=1$ (Table 9, density, $\nu\le0.275$). The
+[Gresho vortex](/benchmarks/gresho-vortex.md) and a
+[two-dimensional Riemann problem](/benchmarks/two-dimensional-riemann-problems.md) are run
+without limiters (Examples 7.2, 7.4); every computation of the paper is unlimited (§5.4, §7).
+The implementation is in [ForestClaw](/software/forestclaw.md).
 
 ## Adaptive mesh refinement
 
@@ -251,6 +357,20 @@ subcycling against about $10^{-16}$ without (§4.3). See
   while its own §3.1 rule requires only order $n-1$; *compiler check, not in the sources:*
   MD5 is exact on $\mathbb P^4$ and not on $\mathbb P^5$, so its error is
   $\mathcal O(\Delta x^4)$ for the fifth-order method, consistent with §3.1.
+- Chudzik et al.'s Theorem 3.1 states third order for Maxwell AF with the exact operator,
+  while their Table 1 prints in-plane orders that fall with refinement, $2.5720\to2.3797$ and
+  $2.8878\to2.7694$, without comment (§3.1); the theorem's divergence claim names no discrete
+  divergence and no divergence errors are shown. The exact operator also loses velocity order
+  on Example 5.1 (Tables 4–5).
+- Chudzik et al. correct a coefficient of the Kadioglu–Klein–Minion vortex pressure polynomial
+  (degree 36): $-\tfrac{269}{15}r^{30}$, not $-\tfrac{259}{15}r^{30}$ (Example 7.3). *(Compiler
+  check, not in the sources.)* Integrating $dp/dr=\rho v_\varphi^2/r$ with
+  $v_\varphi=1024(1-r)^6r^6$ and $\rho=\rho_c+\tfrac12(1-r^2)^6$, the $r^{30}$ coefficient divided
+  by $1024^2$ is $-\tfrac{269}{15}$ and the polynomial has degree 36.
+- Chudzik et al. call the linearised-Euler advection cases $v'_1=v'_2=0.5$ and $1$ (with $c'=1$)
+  "supersonic" and "subsonic" respectively (Example 6.2); with speeds $0.71$ and $1.41$ the order
+  is reversed *(compiler check, not in the sources)*. Their §7 prints the flux at a node with the
+  components of the conserved state instead of the $x$-flux (Eq. (38) context).
 - The Sod tests run 100 cells to $t=0.1$ with CFL $0.25$ (variant A), $0.5$ (B) and $0.01$
   (C); initial states and $\gamma$ are not printed (Figs. 19, 24, 28); see
   [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md).
@@ -259,3 +379,4 @@ subcycling against about $10^{-16}$ without (§4.3). See
 
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §§1–7, Defs. 2.1, 2.2, 4.1, 5.1, Thms. 2.1, 2.2, 4.1, 4.2, Eqs. (11), (23)–(24), (37), (43), (47)–(49), (53), (100)–(115), Tables 1–2, Figs. 16–28 (author preprint).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §§1–4, Eqs. (1)–(15), (25)–(28), Remark 4.1, Thm. 4.2, Cor. 4.3, Tables 1–4, Figs. 3–6, 12, 16 (arXiv v2).
+- [Chudzik, Helzel & Lukáčová-Medvid'ová (2024)](/sources/chudzik-2024.md) — §§1–7, Eqs. (1), (4), (6), (7), (10)–(14), (17)–(20), (28), (31)–(33), (38), Thms. 3.1, 4.1, Remarks 4.2, 6.1, Algorithm 1, Tables 1–9, Examples 5.1–5.2, 6.2–6.3, 7.1–7.4, Appendix A.

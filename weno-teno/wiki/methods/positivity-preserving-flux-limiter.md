@@ -5,7 +5,7 @@ description: "A positivity-preserving flux limiter blends, interface by interfac
 status: established
 aliases: [PP flux limiter, Hu–Adams–Shu limiter, positivity-preserving limiter, positivity- and boundedness-preserving flux limiter, parametrized flux limiter]
 tags: [positivity, bound-preserving, limiting, finite-difference, numerical-flux]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Positivity-preserving flux limiter (Hu–Adams–Shu)
@@ -104,6 +104,28 @@ limiter is a convex blend of the kind of the scaling limiter, which Wong et
 al. cite as motivation (§1), but toward a node value, not toward a cell
 average.
 
+**The interpolation limiter alone, in a finite-volume scheme.**
+[Zhang et al. (2024a)](/sources/zhang-2024.md) (§3.3, Eqs. (47)–(49),
+Algorithm 1) use only the first of Wong et al.'s two limiters, in the
+finite-volume five-equation solver of ALPACA with HLLC fluxes. After the
+reconstruction of the primitive variables (incremental-stencil WENO, with
+THINC for the volume fraction and phase densities in interface cells;
+[THINC](/methods/thinc-reconstruction.md),
+[incremental-stencil WENO](/methods/incremental-stencil-weno.md)), each
+face state $\tilde q$ is blended with the cell value $q_i$,
+$\tilde q^*=(1-\theta)q_i+\theta\tilde q$, in three successive loops: the
+partial densities $\phi_k\rho_k$ and the volume fractions $\phi_k$, each with the floor
+$10^{-11}$, and then $\rho c^2$ with the floor $10^{-9}$, $\theta=0$ when
+the cell value itself is below the floor and otherwise the root of the
+linear interpolation to the floor ($10^{-8}$ is added to the initial
+fields). The whole primitive vector is blended, so a limited face drops to
+first order. They measure how often the limiter acts in a Mach 10
+shock-induced bubble collapse at $1920\times960$: above 1 % of the cells
+with WENO-JS5 as base reconstruction, much less with TENO5 and least with
+the incremental-stencil WENO, never above 0.04 %, which is why they choose
+the last (§4.8, Fig. 16b). No flux limiter follows, and no positivity
+theorem is stated for the scheme.
+
 ## Parametrized limiter on the Runge–Kutta flux (Fan et al. 2023)
 
 [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) (Remark 2.3,
@@ -176,6 +198,12 @@ Hu–Adams–Shu limiter, without describing it:
   Mach 2000 jet, runs with both schemes
   ([shock–water-column interaction](/benchmarks/shock-water-column.md)).
 
+- **WENO5IS-THINC** ([Zhang et al. (2024a)](/sources/zhang-2024.md),
+  §4.5–4.8): the interpolation limiter above, without a flux limiter, on
+  Mach 2.4, 6 and 10 shock–water-cylinder interactions and a 100 GPa
+  bubble collapse ([shock–water-column interaction](/benchmarks/shock-water-column.md),
+  [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)).
+
 ## Relation to other limiters
 
 - **Convex limiting and FCT.** The blend of a high-order and a
@@ -246,6 +274,14 @@ Hu–Adams–Shu limiter, without describing it:
   concave otherwise (Lemma 1), and call the assumption mild for water–air
   pairs (§2).
 
+- **Zhang et al.'s sound-speed quantity.** The text limits
+  "$\rho c^2=\frac{p+P_\infty}{\gamma-1}$" (their $P_\infty$ the mixture
+  stiffened-gas constant, written $p_\infty$ below, page-local); with their
+  frozen sound speed $c^2=\gamma(p+p_\infty)/\rho$ (Eq. (16)),
+  $\rho c^2=\gamma(p+p_\infty)$. Both are positive exactly when
+  $p+p_\infty>0$, so the constraint is the same, but the identity as
+  printed is not *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Wong et al. (2021)](/sources/wong-2021.md) — arXiv v1: §2 (Lemma 1, Theorem 1); §3.3 (Eqs. (46)–(70)); §5.1 (Algorithms 1–3); §5.2 (Eqs. (102)–(107), Algorithms 4–6); §5.3; §6.6–§6.7.
@@ -260,3 +296,4 @@ Hu–Adams–Shu limiter, without describing it:
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.1 (first-order fluxes for Euler, none for diffusion).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §4.11 (limiter used for the jets).
 - [Li et al. (2023a)](/sources/li-2023.md) — §3.3, §3.6 (limiter used; pressure stage active at the jet front).
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2.3, Eq. (16); §3.3, Eqs. (47)–(49), Algorithm 1; §4.5–4.8, Fig. 16b.

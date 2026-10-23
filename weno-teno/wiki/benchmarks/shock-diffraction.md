@@ -5,7 +5,7 @@ description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Shock diffraction
@@ -23,7 +23,7 @@ Five sources of the bundle run it, four in the Euler form (one on a
 rescaled geometry) and one in a relativistic form; two more run a
 Mach 10 variant in which the double-Mach-reflection shock meets a
 backward step, one runs the three-dimensional diffraction of a
-strong shock by a sphere, and one the diffraction of a weak shock by a
+strong shock by a sphere, and three the diffraction of a weak shock by a
 triangular wedge (Schardin's problem).
 
 ## Setup
@@ -172,6 +172,21 @@ post-shock state is the Rankine–Hugoniot state of a Mach 1.3 shock
 into it to the printed digits ($\rho=2.12197$, $p=1.805$,
 $v_1=0.44231$) *(compiler check, not in the sources)*.
 
+[Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.7 run Schardin's
+problem on triangles with their finite-volume ALW-MR-WENO of orders 3
+to 5 and the MR-WENO of the same group: domain $[0,3]\times[0,1.5]$, a
+Mach 1.34 shock passing "half an equilateral triangle", inflow on the
+left and reflection elsewhere, boundary mesh size $1/160$, $t=1.46$,
+CFL 0.6, 30 density contours from 0.5 to 2.9 (Figs. 3.8–3.10). They
+print the states $(2.21953028430161,\,1.09817058096415,\,0.0,\,1.79567311218210)$
+for $x\le1$ and $(1.4,0,0,1)$ for $x>1$ under the heading
+$(\rho,v_1,v_2,p)$. For a Mach 1.34 shock into $(\rho,p)=(1.4,1)$ with
+$\gamma=1.4$ the Rankine–Hugoniot state is $\rho=2.2195302843$,
+$v_1=0.49478$, $\rho v_1=1.0981705810$, $p=1.9282$, $E=5.0922$: the first
+two printed entries are $\rho$ and the momentum $\rho v_1$ to all
+printed digits, while the fourth matches neither $p$ nor $E$ *(compiler
+check, not in the sources)*. The paper prints no $\gamma$.
+
 ## Runs in the sources
 
 | Source | Scheme | Mesh | Notes |
@@ -258,6 +273,12 @@ than pure FV-CWENOZ5 (Fig. 14), the Mach number along the wedge
 symmetry line agrees among the three schemes, and fewer than 0.4 %
 ($P_3$) and 0.2 % ($P_4$) of the cells are troubled throughout (Fig. 15).
 
+Lin & Zhu find that ALW-MR-WENO and MR-WENO "can provide good
+resolution" with similar results on the wedge (Case 3.7, Figs.
+3.8–3.10), the ALW schemes at 0.60–0.96 of the MR-WENO time over their
+two-dimensional cases (Table 3.1). No comparison with experiment is
+made.
+
 Ji, Liang & Fu (2023) find their seventh-order TENO7-D at $t=2.1$ in
 good agreement with the experimental shadowgraph of Van Dyke's album,
 plotted as $e^{-\lvert\nabla\rho\rvert}$ with a normalised gradient, and
@@ -298,5 +319,6 @@ $t=4.0$, without visible oscillations (§4.7, Figs. 16–17).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — Ex. 3.12, Remark 3.2.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §5.12.
 - [Zaghi et al. (2023)](/sources/zaghi-2023.md) — §3, §3.2–3.3, Table 1, Figs. 4–15.
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.7, Figs. 3.8–3.10, Table 3.1.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.5, Table 2, Figs. 12–15.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.7, Eq. (44), Figs. 16–17.

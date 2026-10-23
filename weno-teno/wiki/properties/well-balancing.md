@@ -5,7 +5,7 @@ description: "A scheme for a balance law is well-balanced if it preserves a stea
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Well-balancing
@@ -364,6 +364,38 @@ well-balanced for the supplied $u_{\mathrm e}$; the concluding claim that it
 "is capable of preserving any type of known equilibrium states" holds in that
 sense only.
 
+## Unstructured grids: well-balancing inside the Riemann solver
+
+[Del Grosso et al. (2024)](/sources/delgrosso-2024.md) (HAL preprint; §3.5.1, §4.5, §4.6) build the
+lake-at-rest property into the approximate Riemann solver of a first-order cell-centred finite
+volume for 2D shallow water on polygonal grids, whose subface fluxes depend on a nodal velocity
+$v_{\mathsf p}$ solved from a $2\times2$ system per node (construction on
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md)). The interface source enters the
+Godunov acoustic velocity of each subface through
+$$\overline{gh\Delta b}=g\,\frac{h^-+h^+}2\,(b^+-b^-)$$
+(Eq. (34)), chosen so that a lake-at-rest pair gives zero intermediate normal velocity. Then the
+right side of the nodal system vanishes, $v_{\mathsf p}=0$, the intermediate states equal the
+data, and the cell update cancels by the geometric identity $\sum l_fn_f=0$ around each cell
+(Eq. (48)), so the multi-point scheme preserves the lake at rest "without further modification"
+(§4.5). *(compiler check, not in the sources: with $p=\tfrac12gh^2$,
+$p^+-p^-=g\tfrac{h^-+h^+}2(h^+-h^-)$, and at the lake at rest $h^+-h^-=-(b^+-b^-)$, so
+$p^+-p^-+\overline{gh\Delta b}=0$ exactly.)* The same source term appears in the energy balance,
+multiplied by the intermediate velocity, so that the entropy (energy) inequality holds with the
+topography (§3.5.3).
+
+The second-order version reconstructs $h$, $hv$ and $h+b$ by limited least squares, so the bottom
+is $(h+b)$ minus $h$ cell by cell, and adds an in-cell correction
+$g\tfrac12(\hat h_f+h)(\hat b_f-b)$ between the reconstructed face values $\hat h_f$, $\hat b_f$ and the
+cell values (page-local; Eq. (60)) to keep the lake at rest; positivity and entropy stability of
+the second-order scheme are stated, not proved (§4.6).
+
+**Evidence** (§5.2, Figs. 5–6): the lake at rest over three mounds with $h+b=4$ on
+$[0,40]^2$ m, $100\times100$ squares, kept to $t=200$ s "up to a machine error of order $10^{-15}$"
+by the first-order multi-point, the second-order and the two-point schemes; a $10^{-3}$
+perturbation of the free surface leaves the domain, the run stopping at $t\approx55.45$ s when the
+residuals fall below $10^{-10}$. Only wet states and only zero-velocity steady states are targeted;
+the authors call preservation of all steady states "fully well-balanced" and leave it aside (§2).
+
 ## Qualifications
 
 - Wang & Don's "well-balanced for any $\epsilon$" rests on two values of $\epsilon$; it follows
@@ -394,7 +426,8 @@ sense only.
   global-flux averages (Ciallella et al.); the last two are fully discrete notions, and
   Ciallella et al. say explicitly that theirs differ from the analytical equilibria. Goudon &
   Minjeaud preserve the lake at rest including dry areas, not moving water; Yu et al. preserve
-  single stationary waves at a singular source, discontinuous equilibria by construction. Claims
+  single stationary waves at a singular source, discontinuous equilibria by construction; Del
+  Grosso et al. preserve the lake at rest on unstructured grids, wet states only. Claims
   are comparable only within one notion.
 - Goudon & Minjeaud print the shallow-water relation as $\rho^r_j=\rho_{j+1/2}-[\delta z_j]_-$
   (p. 1269), with $[a]_-=\min(0,a)$. From their Eqs. (14)–(15) with $\mathcal E(\rho)=\rho$, the case
@@ -419,3 +452,4 @@ sense only.
 - [Calhoun et al. (2023)](/sources/calhoun-2023.md) — §1, §4.6 (Fig. 16), Conclusions (arXiv v2).
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.3 (Eqs. (2), (14)–(19), (26)–(36), Remark 2.1), §3 (Figs. 3–24) (HAL wrap of the version of record).
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §2.1 (Table 1, Property 2.1), §3 (Def. 3.1, Thms. 3.1–3.2, Eqs. (3.18)–(3.23)), §4 (Thms. 4.1–4.3, Lemma 4.1, Alg. 1), §5 (arXiv v1).
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §2, §3.5.1 (Eq. (34)), §3.5.3, §4.5 (Eq. (48)), §4.6 (Eq. (60)), §5.2 (Figs. 5–6) (HAL preprint).

@@ -151,10 +151,10 @@ Forum). [47] is a personal communication. No item was unparseable.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunks 6–7 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-23), cited further in chunks 6–8 (2026-10-23). This source is cited on:
 
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
-* [Decaying compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
+* [Compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md)
 * [Gradient reconstruction on unstructured meshes](/methods/unstructured-gradient-reconstruction.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Hybrid central-WENO schemes](/methods/hybrid-weno.md)

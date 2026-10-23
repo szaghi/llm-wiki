@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD blast wave and rotor"
-description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, a 3D blast, relativistic, two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
+description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, a 3D blast, relativistic (up to a field of 2000), two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # MHD blast wave and rotor
@@ -50,6 +50,19 @@ identical" to those of a two-stage SSP-RK2 HLL scheme, its divergence
 norm lies between those of the forward-Euler and RK2 HLL schemes, and
 the divergence error concentrates at the shock front, where the plasma
 beta is lowest (Figs. 8–11).
+
+**Semi-implicit all-Mach finite volumes.** [Dematté et al. (2024)](/sources/dematte-2024.md)
+§4.1.6 run the Balsara–Spicer data ($\rho=1$, $v=0$,
+$B=(100/\sqrt{4\pi},0,0)$, $p=1000$ for $r\le0.1$ and $0.1$ otherwise) on
+$[-0.5,0.5]^2$ with $1000^2$ cells to $t=0.01$, with their default
+$\gamma=5/3$ (§4) instead of the $1.4$ of Liu et al., as a strong-shock
+check of their cell-centred
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md)
+with MUSCL–Hancock advective reconstruction and staggered
+[constrained transport](/methods/constrained-transport.md) (Fig. 10).
+They report results in line with the literature, visually; the time
+step is set by the flow speed, with a magnetosonic first step because
+the initial velocity is zero (§4).
 
 **All-Mach IMEX with constrained transport.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md)
 Ex. 5.7 (arXiv v1) run a blast on $[-0.5,0.5]^2$ with periodic
@@ -124,6 +137,22 @@ flagged by a discontinuity detector "played an essential role" in
 this test (see [troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 
 ### Relativistic MHD blast
+
+[Ding & Wu (2024)](/sources/ding-2024-b.md) Example 5.8 run the same
+relativistic blast geometry ($[-6,6]^2$, $\rho=10^{-2}$, $p=1$ for $r<0.8$,
+$\rho=10^{-4}$, $p=5\times10^{-4}$ for $r>1$, a linear taper in between,
+$v=0$, $B=(B_{\mathrm a},0,0)$, $t=4$, outflow boundaries) with the
+equation of state they label IP, specific enthalpy
+$h=2p/\rho+\sqrt{1+4(p/\rho)^2}$ (their Eq. (87)), instead of $\gamma=4/3$, on $400^2$ cells, for $B_{\mathrm a}=0.1$, $0.5$ and
+$2000$ (page-local field amplitude; Figs. 10–11). Their $\mathbb P^2$
+bound-preserving, locally divergence-free central DG scheme
+([discontinuous Galerkin](/methods/discontinuous-galerkin.md), central
+variant; [geometric quasilinearization](/methods/geometric-quasilinearization.md))
+runs all three cases; without the bound-preserving limiter it fails. The
+global divergence error stays small and the local one is zero by
+construction. With $B_{\mathrm a}=2000$ the ambient
+$2p/\lvert B\rvert^2$ is $2.5\times10^{-10}$ *(compiler check, not in
+the sources)*, far below every other blast on this page.
 
 [Duan & Tang (2022)](/sources/duan-2022.md) Ex. 6.5 (arXiv v1) run the
 relativistic-MHD blast after earlier relativistic papers: on
@@ -203,6 +232,18 @@ overshoots of the third-order scheme in $B_1$ and $B_2$ slices
 against the second-order $600^2$ one as showing "the superiority of
 higher-order methods".
 
+Dematté et al. (2024) §4.1.4 run a rotor with the second-rotor
+kinematics (disk of density 10 rotating with $v=(5-10y,\ 10x-5)$, edge speed
+$1$ at $r=0.1$, Tóth's taper $(23-200r)/3$ up to $r=0.115$) but $p=1$,
+$B=(2.5/\sqrt{4\pi},0,0)$ and their default $\gamma=5/3$, on $[0,1]^2$ with
+$800^2$ cells to $t=0.25$; the plasma beta is $8\pi/6.25\approx4.0$
+*(compiler check, not in the sources)*, twice that of Liu et al.'s second
+rotor. Both of their constrained-transport variants, staggered
+(Gardiner–Stone adapted) and unstaggered (vector potential), agree with
+published results and keep the $L_2$ norm of the divergence at machine
+precision (Figs. 6–8; see
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 ### First rotor
 
 [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.3.1
@@ -241,6 +282,20 @@ $p_h\in[0.0386,\,1.93]$, Mach number up to 4.82 and magnetic pressure
 $\tfrac12\lvert B_h\rvert^2\in[0.0551,\,2.30]$, and captures circular
 Mach contours (Fig. 7). The method has no positivity guarantee; they
 leave invariant-domain preservation out of scope.
+
+### Relativistic rotor
+
+Ding & Wu (2024) Example 5.6 run a relativistic rotor after its
+relativistic extension in the literature they cite, with the
+equation of state they label RC,
+$h=(12p^2+8p\rho+2\rho^2)/(3p\rho+2\rho^2)$ (their Eq. (89)): on $[-0.5,0.5]^2$ with
+outflow boundaries, $\rho=10$, $v=\alpha_{\mathrm r}(-y,x,0)$ for
+$r\le0.1$; $\rho=1+9\varphi$, $v=\alpha_{\mathrm r}\varphi\,\tfrac{0.1}{r}(-y,x,0)$
+for $0.1<r\le0.115$ with $\varphi=(0.115-r)/0.015$; $\rho=1$, $v=0$
+outside; $B=(1,0,0)$, $p=1$ everywhere; $\alpha_{\mathrm r}=9.95$
+(page-local), so the disk edge moves at $0.995$ *(compiler check, not in the sources)*; $400^2$ cells, $t=0.4$
+(Fig. 8). The bound-preserving central DG scheme runs with zero local
+divergence error (Fig. 7b, 7e).
 
 ### Rotor in polar coordinates
 
@@ -310,4 +365,6 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.2, Figs. 8–13 (arXiv v2).
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.2.1, Figs. 8–10 (arXiv v1).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §§4.4–4.6, Figs. 8–20.
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.1.4, §4.1.6, Figs. 6–8, 10.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Examples 5.6, 5.8, Figs. 7–8, 10–11.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.7, Eq. (55), Table 3, Figs. 11–13 (arXiv v4).

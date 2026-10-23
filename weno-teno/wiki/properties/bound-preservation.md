@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Bound preservation
@@ -45,10 +45,12 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
 | reacting multicomponent Navier–Stokes, calorically perfect species | $\{\rho\ge0,\ P(u)\ge0,\ \rho Y_k\ge0\}$, $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2=p/(\gamma(u)-1)$ ($h_k(0)$ formation enthalpies, page-local); $Y_k\le1$ is not in $G$ | Du & Yang (2022), §4.1, Eq. (4.1) |
 | multi-species Euler / Navier–Stokes in thermal equilibrium, nodal DG | $\{\rho>0,\ p>0,\ \text{every partial density}\ \ge0\}$, plus a local minimum of the mixture entropy where a pressure-jump sensor fires | Trojak & Dzanic (2024), Eqs. (22)–(25) |
+| shallow water with topography, wet states only, unstructured grids | $\{h>0\}$ ($h$ the depth, page-local) | Del Grosso et al. (2024), §2, §4.2 |
 | barotropic Euler / shallow water on staggered grids | $\{\rho\ge0\}$, dry states $\rho=0$ included | Goudon & Minjeaud (2024), §2.2 |
 | five-equation two-phase model, stiffened gases | $\{0\le\phi_1\le1,\ \phi_k\rho_k\ge0,\ \rho e-\bar p_\infty>0\}$ ($\phi_k$ volume fractions, $\bar p_\infty$ mixture stiffness, page-local) | Wong et al. (2021), Eqs. (10), (12) |
 | two-phase diffuse-interface model, phase-field step | $\{0\le\phi_1\le1,\ \phi_1\rho_1\ge0,\ (1-\phi_1)\rho_2\ge0\}$ | Huang & Johnsen (2023), Thm 3.2 |
 | special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5; Cai et al. (2024), Eqs. (1.5)–(1.6) |
+| special relativistic MHD, general equation of state satisfying a Taub-type inequality and causality | $\{D>0,\ p>0,\ \lvert v\rvert<1\}$, convex; GQL form linear in $u$ | Ding & Wu (2024), Eq. (8), Lemmas 2.1–2.2 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
 | ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
 | ideal MHD with a local minimum of $p\rho^{-\gamma}$ at the solution nodes | $\{\rho>\epsilon_{\mathrm f},\ p>\epsilon_{\mathrm f},\ p\rho^{-\gamma}>(p\rho^{-\gamma})^K_{\min}+\epsilon_{\mathrm f}\}$, tolerance $\epsilon_{\mathrm f}=10^{-8}$ (page-local), bound over the element and its face neighbours from the previous stage | Dzanic & Witherden (2023), Eqs. (21)–(22), §4 |
@@ -68,7 +70,9 @@ Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Huang & Johnsen (2023)](/sources/huang-2023.md),
 [Cai, Qiu & Wu (2024)](/sources/cai-2024.md),
 [Trojak & Dzanic (2024)](/sources/trojak-2024.md),
-[Goudon & Minjeaud (2024)](/sources/goudon-2024.md). The multicomponent and
+[Goudon & Minjeaud (2024)](/sources/goudon-2024.md),
+[Del Grosso et al. (2024)](/sources/delgrosso-2024.md),
+[Ding & Wu (2024)](/sources/ding-2024-b.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
 [five-equation model](/definitions/five-equation-model.md) pages, the
@@ -306,6 +310,62 @@ check, not in the sources: ratios of the tabulated weights)*.
   Proposition 3.7" of the authors' earlier paper, and dry states are
   preserved ([well-balancing](/properties/well-balancing.md)).
 
+- *Relativistic MHD with central DG* ([Ding & Wu (2024)](/sources/ding-2024-b.md),
+  §3–§4). Central DG evolves a primal and a dual (half-cell-shifted)
+  solution and needs no Riemann solver. In 1D, where $B_1$ stays constant
+  exactly, the cell averages stay in $G$ if the point values at the
+  Gauss–Lobatto nodes of both half-cells are admissible and
+  $\tau_{\max}\le\tfrac12\mathsf w^{\mathrm{GL}}_0\Delta x$, with
+  $\tau_{\max}$ the dissipation parameter of central DG and
+  $\Delta t=\theta_\tau\tau_{\max}$, $\theta_\tau\in(0,1]$ (Thm 3.1;
+  page-local $\tau_{\max}$, $\theta_\tau$). In 2D the locally
+  divergence-free scheme for the symmetrizable form of the equations is BP
+  under $\tau_{\max}\big(\alpha_1/\Delta x+\alpha_2/\Delta y\big)\le\varpi/2$
+  for any feasible symmetric decomposition, applied to the four quarter
+  cells of the overlapping mesh, with $\alpha_\ell=\max\{1,\beta_\ell\}$
+  and $\beta_\ell$ the normal-field jumps across the interior lines divided
+  by $2\sqrt{\{\!\{\rho h\}\!\}}$ (Thm 4.1, Eqs. (62)–(63); page-local
+  $\alpha_\ell$, $\beta_\ell$, $h$ the specific enthalpy). The proof is by
+  [geometric quasilinearization](/methods/geometric-quasilinearization.md);
+  the authors call GQL "essential" because the locally divergence-free
+  constraint couples the interface states, so splitting the scheme into
+  formally 1D BP schemes does not work (§4.4). With the optimal
+  decomposition the bound is $\varpi_\star/2$, e.g. $\varpi_\star=1/4$ for
+  $\mathbb P^{2,3}$ against $1/6$ for the classic one (Cors. 4.1–4.2;
+  [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+  A three-step [scaling limiter](/methods/zhang-shu-scaling-limiter.md)
+  supplies the point values. Without it every shock test fails (Riemann
+  problems "after a few time steps", the relativistic Orszag–Tang vortex
+  at $t\approx2.196$, the shock–cloud interaction at the first step;
+  §5).
+- *Hermite WENO with the optimal decomposition* ([Fan & Wu (2024)](/sources/fan-2024.md),
+  §2.4, Thm 11, arXiv v1). For sixth-order finite-volume Hermite WENO in
+  2D the cell average is decomposed by the optimal decomposition of Cui,
+  Ding & Wu; the forward-Euler update with a global Lax–Friedrichs flux
+  keeps the averages in $G$ if the edge Gauss-point values and the interior
+  remainder are admissible and $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)\le\varpi_\star$,
+  $\varpi_\star=2-\sqrt{14}/2\approx0.1292$ at zero anisotropy against $1/12$
+  for the classic decomposition, which the authors present as the first use
+  of the optimal decomposition for Hermite WENO (Remark 5). The
+  oscillation-eliminating step they add after each stage changes only the
+  first moments and keeps the cell averages, so it does not interfere
+  (§2.4). In 1D the classic decomposition is already optimal (§2.4).
+- *Shallow water on unstructured grids* ([Del Grosso et al. (2024)](/sources/delgrosso-2024.md),
+  §3.5.2, §4.2, HAL preprint). A first-order cell-centred scheme whose
+  subface fluxes come from a simple (three-wave) approximate Riemann solver
+  derived in Lagrangian mass coordinates, made multidimensional by a nodal
+  velocity that every subface around a node shares
+  ([well-balancing](/properties/well-balancing.md)). Positivity of $h$
+  needs lower bounds on the Lagrangian wave speeds that depend on the
+  intermediate normal velocity, hence are implicit and are met by an
+  iteration (Eq. (36), Remark 1); the update is then a convex combination
+  of states of the approximate Riemann fans under
+  $\Delta t\le\min_c\lvert\omega_c\rvert/\sum_{p,f}l_{pcf}\max(\lvert\Lambda_{pcf,\mathrm L}\rvert,\lvert\Lambda_{pcf,\mathrm R}\rvert)$
+  (Eq. (52); page-local cell area $\lvert\omega_c\rvert$, subface lengths
+  $l_{pcf}$ and Eulerian wave speeds $\Lambda$). Only wet states are
+  treated. The second-order extension with limited least-squares slopes is
+  stated to keep the property, without proof (§4.6).
+
 **Time stepping.** The sources extend the forward-Euler result to
 [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and SSP multistep methods,
 because SSP methods are convex combinations of forward-Euler steps
@@ -420,6 +480,18 @@ the bounds.
   and pressure as bound, "as otherwise some nodes might get an invalid
   vacuum state" (§3.2; [convex limiting](/methods/convex-limiting.md)).
 
+- **Convex constraints as caps of an entropy program.**
+  [Lin & Chan (2024)](/sources/lin-2024.md) (§3, §4.3–4.4) blend LGL-DGSEM
+  with a positivity-preserving, entropy-stable low-order subcell scheme,
+  one factor per subcell interface; the factors that any convex-constraint
+  limiter allows (relaxed positivity $\rho\ge\tfrac12\rho^{\mathrm L}$,
+  $\rho e\ge\tfrac12\rho e^{\mathrm L}$, or TVD-like density bounds from the
+  low-order neighbours, Eqs. (62), (67)) are the upper bounds of a linear
+  program that enforces the semi-discrete cell entropy inequality, so the
+  result keeps the convex constraints (Thms 3.1, 3.3;
+  [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+  With them the Mach 2000 jet runs robustly (Fig. 6).
+
 ## Route 4: a posteriori recomputation (MOOD)
 
 [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) (§3.2.2)
@@ -514,6 +586,19 @@ Dzanic & Witherden (2023) state the converse gap for nodal DG with a
 Powell source: the BP argument for the element mean needs a divergence-free
 field, which their discretization does not have, and their positivity is
 therefore observed, not proved (§3.2; Route 5).
+[Ding & Wu (2024)](/sources/ding-2024-b.md) (§4.4, §4.7) state the
+same dependence for relativistic MHD with central DG: in their proof the
+flux term contributes $-(v_*\cdot B_*)$ times a quadrature divergence of the
+dual-mesh field on the outer cell boundary, and a discretized
+symmetrization source, built from the normal-field jumps across the
+interior lines of the cell, contributes the opposite term with the
+interior jumps; the two differ by the divergence integrated over the four
+quarter cells, zero for a locally divergence-free field (Eqs. (70)–(74)).
+Without the source terms the scheme is BP only under globally coupled
+discrete divergence-free conditions (Thm 4.2), which the local scaling
+limiter does not keep; enforcing both is "unresolved" (§4.7). On their
+Mach 50 jets the code "would quickly break down" without any one of the
+limiter, the source and the locally divergence-free space (Ex. 5.9).
 The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
@@ -528,6 +613,19 @@ The details are on
   is not borne out by their Table 3, where Chen & Wu's hybrid-linear
   recovery (33.876 s) and NR-I (35.504 s) are faster than hybrid Newton
   (37.629 s).
+- **Proved and tested steps, central DG.** Ding & Wu (2024) run all tests
+  with $\Delta t=0.25\,\Delta x$ in 1D and $\Delta t=0.25/(1/\Delta x+1/\Delta y)$
+  in 2D, and state that the theoretical bound is sufficient but not
+  necessary (§5); with $\varpi_\star=1/4$ and $\alpha_\ell=1$ (normal-field
+  jumps observed small, Remark 9) the proved 2D condition is
+  $\tau_{\max}(1/\Delta x+1/\Delta y)\le1/8$, and since
+  $\Delta t=\theta_\tau\tau_{\max}$ with $\theta_\tau\le1$ the runs have
+  $\tau_{\max}(1/\Delta x+1/\Delta y)\ge0.25$, at least twice the proved
+  bound; $\tau_{\max}$ and $\theta_\tau$ of the runs are not printed
+  *(compiler check, not in the sources)*.
+- **Implicit wave speeds.** Del Grosso et al.'s positivity and entropy
+  conditions on the wave speeds involve the unknown intermediate velocity
+  and are enforced by iteration, whose cost is not reported (Remark 1).
 - **Staggered positivity condition, sign.** Goudon & Minjeaud print the
   CFL condition as
   $\frac{\delta t}{\delta x}\big([\lambda^+]_++[\lambda^-]_-\big)\le1$
@@ -727,3 +825,7 @@ The details are on
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.2, Eqs. (5)–(18), pp. 1267, 1271–1272.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2–2.2.4, Eqs. (31)–(36), (43)–(45); §3.2.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1; §3.1–3.3, Eqs. (17)–(30); §4, Eqs. (31)–(33); §5.1.1, Tables 1–2.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §2 (Eq. (8), Lemmas 2.1–2.4); §3.2 (Thm 3.1); §4.4 (Thm 4.1, Eqs. (62)–(74)); §4.6 (Cors. 4.1–4.2); §4.7 (Thm 4.2); §5 (Ex. 5.2–5.9).
+- [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §2.4, Eqs. (2.51)–(2.59), Thm 11, Remark 5.
+- [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — HAL preprint: §2; §3.5.2, Eqs. (35)–(36), Remark 1; §4.2, Eqs. (49)–(52); §4.6.
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3, Thms 3.1, 3.3; §4.3–4.4, Eqs. (62)–(68), Fig. 6.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circularly polarized Alfvén wave"
-description: "Smooth exact travelling-wave solution of ideal and relativistic MHD in which the transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected over one period in 1D or along a rotated direction in 2D and 3D, it is a convergence-order test of MHD schemes, from fifth-order WENO to second-order GRP finite volumes."
+description: "Smooth exact travelling-wave solution of ideal and relativistic MHD whose transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected one period in 1D or along a rotated direction in 2D and 3D, it tests the convergence order of MHD schemes, from fifth-order WENO to second-order GRP finite volumes and bound-preserving central DG."
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -76,6 +76,21 @@ $A=\sqrt{2/(7+3\sqrt5)}\approx0.38197$ (page-local amplitude $A$, Alfvén
 speed $v_a$ and wavelength $\lambda$); domain $[0,2\pi]$, $N=8$–$512$,
 one period $T=\lambda/v_a$; $L_1$ error of $v_3$ against the initial
 data.
+
+**Relativistic at $0.99c$, [Ding & Wu (2024)](/sources/ding-2024-b.md).**
+Example 5.1, with the equation of state they label TM,
+$h=\tfrac{5p}{2\rho}+\sqrt{1+\tfrac94(p/\rho)^2}$. In 1D on $[0,1]$,
+periodic: $\rho=1$, $p=0.01$, $v_1=0$,
+$v_2=0.99\sin\big(2\pi(x+t/\kappa_{\mathrm A})\big)$,
+$v_3=0.99\cos(\cdot)$, $B_1=1$, $B_2=\kappa_{\mathrm A}v_2$,
+$B_3=\kappa_{\mathrm A}v_3$, with $\kappa_{\mathrm A}=\sqrt{1+\rho hW^2}$
+(page-local), so the wave moves at speed $1/\kappa_{\mathrm A}$ and
+$W\approx7.09$ *(compiler check, not in the sources)*; $t=1$, error of $v_2$. In 2D the same wave propagates at
+$45^\circ$ on the periodic $[0,\sqrt2]^2$ with phase
+$x\cos\alpha+y\sin\alpha$, $\alpha=\pi/4$, and constant field
+$(\cos\alpha,\sin\alpha)$ added to $\kappa_{\mathrm A}(v_1,v_2)$; $t=1$, error
+of $B_2$. They take the 1D setup from Wu & Tang and describe the 2D one
+as that of Wu & Shu with a lower pressure.
 
 ## Runs and findings
 
@@ -167,6 +182,22 @@ HLLC reproduces the earlier results of Martí (2015), HLLD behaves like
 HLLC on this smooth solution, and the PVM-int-8 errors are very close to
 HLLC's.
 
+**Third order of bound-preserving central DG.** Ding & Wu's $\mathbb P^2$
+central DG scheme for relativistic MHD with SSP-RK3 and CFL 0.25, with
+the bound-preserving limiter active (and, in 2D, locally divergence-free
+spaces and the symmetrization source), converges at third order
+(Tables 1–2):
+
+| | coarsest | finest | $l^1$ orders |
+|---|---|---|---|
+| 1D, $v_2$ | 6.53e-05 ($N=20$) | 1.96e-09 ($N=640$) | 3.02, 3.00, 3.00, 3.00, 3.00 |
+| 2D, $B_2$ | 1.92e-03 ($20^2$) | 3.07e-08 ($640^2$) | 3.93, 3.01, 3.00, 3.00, 3.00 |
+
+The authors conclude that neither the limiter nor the discretized
+source terms degrade the accuracy (§5); see
+[discontinuous Galerkin](/methods/discontinuous-galerkin.md) and
+[bound preservation](/properties/bound-preservation.md).
+
 **Other sources.** [Liu et al. (2021)](/sources/liu-2021.md) use a
 smooth Alfvén wave as the order test of their
 [WLS-ENO](/methods/wls-eno.md) MHD scheme (orders about 2 and 3).
@@ -186,9 +217,21 @@ smooth Alfvén wave as the order test of their
 - Berta et al.'s fourth-order scheme uses a fifth-order interface
   interpolation; at $N_x\le64$ their orders lie between 4.01 and 4.34,
   above the design order.
+- Ding & Wu's 2D $l^1$ order on the coarsest pair, 3.93, and $l^2$ order
+  3.41 lie above three before settling at 3.00 (Table 2).
+- Ding & Wu run every test with $\Delta t=0.25\Delta x$ in 1D and
+  $\Delta t=0.25/(1/\Delta x+1/\Delta y)$ in 2D, while their
+  bound-preserving conditions read $\tau_{\max}\le\tfrac{\varpi}{2}\Delta x$,
+  $\varpi=\tfrac16$ for $N=2$ (1D), and
+  $\tau_{\max}(\alpha_1/\Delta x+\alpha_2/\Delta y)\le\tfrac{\varpi}{2}=\tfrac18$
+  with the Cui–Ding–Wu weight $\varpi=\tfrac14$ (2D), with $\Delta t=\theta_{\mathrm C}\tau_{\max}$,
+  $\theta_{\mathrm C}\in(0,1]$ and $\alpha_\ell\ge1$ (page-local, as on
+  [discontinuous Galerkin](/methods/discontinuous-galerkin.md)); $\tau_{\max}$ and
+  $\theta_{\mathrm C}$ of the runs are not printed. The authors state that the
+  theoretical bound is sufficient but not always necessary (§5).
 - Chen, Wu & Xiong and López-Miralles et al. are read as arXiv v1
-  preprints, Berta et al. as arXiv v4; Liu, Feng & Wang as the version
-  of record.
+  preprints, Berta et al. as arXiv v4; Liu, Feng & Wang and Ding & Wu
+  as versions of record.
 
 # Citations
 
@@ -197,3 +240,4 @@ smooth Alfvén wave as the order test of their
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.1.1, Eqs. 44–47, Tables 1–4, Fig. 1 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.1, Table 1.
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.2, Table 1.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §5, Example 5.1, Eq. (88), Tables 1–2.

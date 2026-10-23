@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Multi-resolution WENO"
-description: "Multi-resolution WENO combines polynomials on nested central stencils of increasing size, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy, the fifth-order finite-difference variant of Wang et al., the scale-invariant MR-AWENO interpolation, WCNS versions with one-sided boundary hierarchies or a parameter-free hybrid switch, a moving-mesh remap, Hermite, entropy-stable and steady-state uses."
+description: "Multi-resolution WENO combines polynomials on nested central stencils, down to a one-point base, with any positive linear weights; the page records the Zhu–Shu hierarchy to ninth order, ghost candidates projected from one stencil, the Wang et al. variant, scale-invariant MR-AWENO, WCNS, hybrid, moving-mesh, Hermite, entropy-stable and steady-state uses."
 status: established
-aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS]
+aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Multi-resolution WENO
@@ -232,6 +232,81 @@ sources: this is the third-order hierarchy with a first-order base polynomial wh
 Balsara et al. report below; on the $20^2$–$320^2$ meshes of Tables 3.1–3.3 no $L^1$ order falls
 below 2.48.)*
 
+## The hierarchy up to ninth order (Zuo & Zhu 2024a, 2024b)
+
+Zuo & Zhu (2024a, §2.1, Eqs. (2.8)–(2.19); 2024b, §2.1, Eqs. (2.8)–(2.14)) recall the finite-difference
+Zhu–Shu scheme at orders 3, 5, 7, 9 as the nonlinear part of their hybrid schemes:
+
+- nested central stencils $T_1,\dots,T_5$ of 1, 3, 5, 7, 9 points (their $T_r=\{I_{i-r},\dots,I_{i+r}\}$,
+  $r=0,\dots,4$), degree-$2(m-1)$ polynomials in the monomial basis about $x_i$, and the CWENO rewriting
+  level by level, $\tilde P_m=P_m/d_{m,m}-\sum_{l<m}(d_{l,m}/d_{m,m})\tilde P_l$ with level-wise linear weights
+  $d_{l,m}\propto10^{l-1}$ (page-local double index: stencil $l$, level $m$);
+- Jiang–Shu indicators on the rewritten polynomials, and a "special" base indicator that Zuo & Zhu
+  (2024a, Eqs. (2.12)–(2.16)) print: with $\zeta_{\mathrm L}=(f_i-f_{i-1})^2$, $\zeta_{\mathrm R}=(f_{i+1}-f_i)^2$,
+  unnormalized weights 10 and 1 given to the smaller and the larger of the two (Eq. (2.13)), and WENO-Z-type factors
+  $1+|\zeta_{\mathrm L}-\zeta_{\mathrm R}|^{m_\zeta}/(\zeta+\epsilon)$, $\beta_1$ is the square of the weighted mean of
+  the two one-sided differences, with "$m_\zeta=1,2,3,4$" not assigned to the orders (page-local
+  $\zeta_{\mathrm L},\zeta_{\mathrm R},m_\zeta$);
+- WENO-Z-type weights $d_{l,m}\big(1+\tau_m/(\epsilon+\beta_l)\big)$, $\epsilon=10^{-10}$, with a global
+  indicator whose power grows with the level,
+  $$\tau_m=\Big(\frac1{m-1}\sum_{l<m}|\beta_m-\beta_l|\Big)^{m-1}$$
+  (page-local, their $\ell_2=m-1$; [WENO-Z](/methods/weno-z.md)). *(Compiler check, not in the sources: the
+  ratio $\tau_m/(\epsilon+\beta_l)$ is then of degree $2(m-1)-2$ in the data, 0 at third order, 2 at fifth,
+  4 at seventh, 6 at ninth, so only the third-order weights are scale-invariant, and only for $\epsilon=0$;
+  [scale invariance](/properties/scale-invariance.md).)*
+
+In their accuracy tables the original fifth-order scheme converges erratically on the 2-D Euler density
+wave, $L^1$ orders 2.52, 7.58, 5.98, 8.66, 5.55 from $10^2$ to $60^2$, printed identically in both papers
+(2024a, Table 3.3; 2024b, Table 3.3), and on the 3-D wave (4.73, 5.69, 7.60, 5.00, 4.98 in $L^1$, 2024b,
+Table 3.4), while their hybrid versions, which use the linear upwind scheme in smooth cells, give clean
+orders 4.89–5.00 with smaller errors on coarse grids; at seventh and ninth order the two coincide to the
+printed digits on fine grids. The authors do not comment on the erratic orders. The hybrid switches, a
+parameter-free extreme-point detector in the target cell, save 63–79 % (2024a) and 22–75 % (2024b) of the
+CPU time ([hybrid schemes](/methods/hybrid-weno.md),
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
+
+## Ghost multi-resolution WENO (Zhang & Zhu 2024)
+
+Zhang & Zhu (2024) build the lower levels of the hierarchy without lower stencils. For order
+$k\in\{3,5,7\}$ one polynomial $P^{(k)}_1$ of degree $k-1$ matches the cell averages on the $k$-cell central
+stencil and is written in the Legendre basis of the target cell, $\xi=(x-x_i)/\Delta x$,
+$L_0=1$, $L_1=\xi$, $L_2=\xi^2-\tfrac1{12}$, $L_3=\xi^3-\tfrac3{20}\xi$, $L_4=\xi^4-\tfrac3{14}\xi^2+\tfrac3{560}$,
+$L_5=\xi^5-\tfrac5{18}\xi^3+\tfrac5{336}\xi$, $L_6=\xi^6-\tfrac{15}{44}\xi^4+\tfrac5{176}\xi^2-\tfrac5{14784}$,
+$P^{(k)}_1=\bar u_i+\sum_{r=1}^{k-1}A^{(k)}_rL_r$ (page-local $L_r$, $A^{(k)}_r$; Eqs. (2.4)–(2.25)). The
+"ghost" candidates $P^{(k)}_\ell$, $\ell=2,\dots,k$, are its $L^2(I_i)$ projections on degree $k-\ell$, obtained by
+dropping the top Legendre modes, so there are $k$ candidates of every degree from $k-1$ down to 0, all with
+the cell average $\bar u_i$ (Remark 1); they "could not be constructed by directly utilizing the information
+defined on real spatial stencils" (§1). The fifth-order coefficients $A^{(5)}_r$ are those of $\mathsf b_r$ in the
+recipe of Wang et al. above. *(Compiler check, not in the sources: the two sets of printed coefficients agree
+term by term.)* The candidates are combined in the CWENO form, with any positive linear weights (used:
+$10{:}5{:}1$, $100{:}25{:}10{:}5{:}1$, $1000{:}125{:}100{:}25{:}10{:}5{:}1$ from the top polynomial down),
+Jiang–Shu indicators written as sums of squares of Legendre coefficients, and
+$$\alpha_r=d_r\Big(1+\frac{\tau_k}{\epsilon+\beta_r}\Big),\qquad
+\tau_k=\Big(\frac1{k-1}\sum_{l=2}^k|\beta_1-\beta_l|\Big)^{(k-1)/2},\qquad\epsilon=10^{-6}$$
+(page-local $\tau_k$; Eqs. (2.26)–(2.30)), in finite-difference form (Lax–Friedrichs splitting) and in
+finite-volume form (dimension by dimension, Gauss points on faces) with TVD-RK3 at CFL 0.6 and
+$\Delta t\sim\Delta x^{k/3}$ in the accuracy tests.
+
+The fifth- and seventh-order errors equal those of the original multi-resolution WENO to the printed digits
+on [Burgers](/benchmarks/burgers-equation-tests.md) and Euler [density waves](/benchmarks/density-wave-advection.md)
+(e.g. $L^1$ $2.27\times10^{-8}$ for both at 200 points, Table 3.2), the third-order ones are about half
+($1.27\times10^{-5}$ against $2.25\times10^{-5}$), with observed third-order $L^1$ rates up to 4.53 and
+$L^\infty$ rates 2.25–3.37 on the meshes used (Tables 3.2–3.9). The CPU ratio to the original scheme is
+1:1.23 to 1:2.18 in finite differences and 1:1.27 to 1:2.25 in finite volumes on the shock tests (Table 3.1;
+Intel Core i5-8265U, Visual Fortran), and figures show better resolution on
+[Shu–Osher](/benchmarks/shu-osher-problem.md), Titarev–Toro, [blast waves](/benchmarks/woodward-colella-blast-wave.md)
+and [double Mach reflection](/benchmarks/double-mach-reflection.md), with both schemes running the
+[Sedov problem](/benchmarks/sedov-blast-wave.md) and a [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md).
+The authors claim "the first time that only one central spatial stencil is utilized in designing high-order
+finite difference and finite volume WENO schemes" (Abstract). *(Compiler check, not in the sources: the CWENO and WENO-ZQ reconstructions of the
+bundle ([CWENO](/methods/cweno.md)) also centre on one large stencil, but their low-order candidates live on
+real substencils, so the new element is the projected candidates.)*
+
+**Two-stencil variant on triangles.** Lin & Zhu (2024) keep only the one-cell stencil and the top stencil of
+the triangular Zhu–Shu hierarchy and adapt the two linear weights cell by cell; the scheme is recorded on the
+[CWENO](/methods/cweno.md) page. Fan & Wu (2024) use a nested quintic–cubic–linear Hermite hierarchy with
+arbitrary linear weights in their OE-HWENO ([Hermite WENO](/methods/hermite-weno.md)).
+
 ## Hermite and moment-based hierarchy
 
 Li, Shu & Qiu (2022d, §2.1, Eqs. (2.9)–(2.24)) build a sixth-order finite-volume hierarchy on the
@@ -376,6 +451,15 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
   definition gives this term, mirror image of the printed $-3495756\,u_{i-1}u_i$, and without it the
   printed form does not vanish on constant data.)*
 
+- Zhang & Zhu (2024, Eq. (2.27)) print the indicator sum up to "$l=2(r-1)$", which in their indexing, where
+  $P^{(k)}_r$ has degree $k-r$, is empty for the top polynomial; it is MR-WENO's increasing-degree count. Their
+  claim that accuracy decreases "gradually" to first order near strong discontinuities (§1, §4) is not tested.
+  *(Compiler check, not in the sources: every ghost candidate except the constant is a truncation of the
+  polynomial on the whole stencil, so all of them see a discontinuity anywhere in the stencil, and the
+  non-oscillatory fallback is to the constant.)* Tables 3.8–3.9 label both column groups "MR-WENO"; the left
+  ones carry the smaller third-order errors that the text attributes to the ghost schemes. Zuo & Zhu (2024a) and (2024b) sum the global indicator up to $\ell_2$ and to
+  $\ell_2-1$, the same quantity since the extra term vanishes.
+
 # Citations
 
 - [Wang et al. (2021)](/sources/wang-2021.md) — §1; §3.1.1, Steps 1–7, Eqs. (3.2)–(3.28), Remark 2; §4, Fig. 4.1; §5.1, Tables 5.1–5.6, Figs. 5.1–5.6; Examples 5.4–5.13; §5.4, Table 5.8; §6.
@@ -392,3 +476,8 @@ Subramanian (2023, §6.3) name the Zhu–Shu scheme as an efficient alternative 
 - [Chen & Deng (2023)](/sources/chen-2023.md) — §2, Eqs. (19)–(24); §3, Fig. 1; §4.1–4.2, Table 1.
 - [Gu et al. (2023)](/sources/gu-2023.md) — §1; §2.4; §3.1–3.2, Tables 3.1–3.3.
 - [Qin, Chen, Lin & Deng (2023)](/sources/qin-2023.md) — §1; §2.1, Eqs. (6)–(22); §2.2, Tables 2–9; §3, Tables 10–12, Fig. 6.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §2.1, Eqs. (2.8)–(2.19); §3, Tables 3.1–3.4.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §2.1, Eqs. (2.8)–(2.14); §3, Tables 3.1–3.4.
+- [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Abstract; §1; §2.1–2.2, Eqs. (2.4)–(2.36), Remark 1; §3, Tables 3.1–3.9, Examples 3.1–3.10; §4.
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §1; §2.
+- [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.1, App. A (arXiv v1).

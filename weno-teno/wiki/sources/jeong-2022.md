@@ -146,7 +146,7 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-23), cited further in chunks 5–7 (2026-10-23). This source is cited on:
+Chunk 4 (2026-10-23), cited further in chunks 5–8 (2026-10-23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)

@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Discontinuous Galerkin method"
-description: "The discontinuous Galerkin (DG) semi-discretization of a conservation law with piecewise polynomials of degree N coupled only through numerical fluxes, its modal, nodal and space–time variants, its Runge–Kutta time stepping and CFL limit, the cell-average update behind bound preservation, and the stabilization and adaptation strategies the sources attach to it."
+description: "The discontinuous Galerkin (DG) semi-discretization of a conservation law with piecewise polynomials of degree N coupled only through numerical fluxes, its modal, nodal, space–time and central (overlapping-mesh) variants, its Runge–Kutta time stepping and CFL limit, the cell-average update behind bound preservation, and the stabilization and adaptation strategies the sources attach to it."
 status: established
-aliases: [DG, RKDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
+aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -143,6 +143,33 @@ Two further formulations appear:
   tested with degree $N+1$, which they call a surrogate for the violation
   of the infinite-dimensional weak form (§1); minimizing it over the node positions is the
   HOIST method (§2.3, §4, Eqs. (8)–(14)).
+  [Naudet & Zahr (2024)](/sources/naudet-2024.md) run the same enriched
+  space–time DG slab by slab on simplex meshes extruded from the top of
+  the previous slab, on a fixed reference slab mapped to the physical one,
+  and build the space–time numerical flux from the spatial one: the
+  space–time projected Jacobian is the spatial one scaled by the length
+  of the spatial part of the normal and shifted by its time component,
+  with unchanged eigenvectors (§2.2–2.4, Eqs. (7)–(28)).
+- **Central DG on overlapping meshes.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+  use the central DG (CDG) method, recalled from the literature they
+  cite, which evolves two copies of the solution, on a primal mesh and
+  on a dual mesh shifted by half a cell, and evaluates every flux on the
+  other copy, which is continuous there, so no Riemann solver is needed
+  (§3.1, Remark 1). In 1D the primal cell average obeys
+
+  $$\frac{d}{dt}\bar u^{\mathrm I}_j=\frac{\bar u^{\mathrm J}_j-\bar u^{\mathrm I}_j}{\tau_{\max}}-\frac{f\big(u^{\mathrm J}_h(x_{j+1/2})\big)-f\big(u^{\mathrm J}_h(x_{j-1/2})\big)}{\Delta x},$$
+
+  where $\bar u^{\mathrm J}_j$ is the average over $I_j$ of the dual
+  solution, the first term is the CDG numerical dissipation and
+  $\tau_{\max}$, the largest stable time step, scales it (Eq. (24);
+  page-local superscripts I, J for primal and dual and $\tau_{\max}$),
+  and the dual average obeys the mirror equation. Because the dual
+  solution jumps inside a primal cell, volume integrals are split at the
+  cell centre and integrated on each half (Eqs. (21)–(22)). Ding & Wu
+  extend CDG to special relativistic MHD with a general equation of
+  state, make it bound-preserving in 1D and 2D and locally
+  divergence-free in 2D (below, and
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 - **Moment equations with reconstruction.** [Li, Shu & Qiu (2022)](/sources/li-2022-d.md)
   test the conservation law with $1$ and $(x-x_i)/\Delta x$ on each cell
   (§2.1, Eqs. (2.2)–(2.4)). These two functions span $\mathbb P^1(I_i)$, so
@@ -328,6 +355,52 @@ $\varepsilon_B$ the ratio of the normal-$B$ jump terms to the viscosity
 parameters (all three page-local). Their tests use the third-order case
 $N=2$. See
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+
+Ding & Wu (2024) carry the route to the central DG scheme above for
+relativistic MHD, with the admissible set $D>0$, $p>0$, $\lvert v\rvert<1$
+written by [geometric quasilinearization](/methods/geometric-quasilinearization.md)
+as constraints linear in $u$. **Theorem 3.1 (1D):** if the cell averages
+and the point values of both copies at the $N_{\mathrm{GL}}$-point
+Gauss–Lobatto nodes of the two half-cells are admissible,
+$N_{\mathrm{GL}}=\lceil(N+3)/2\rceil$, the forward-Euler cell averages
+stay admissible for $\tau_{\max}\le\tfrac{\varpi}{2}\Delta x$ with
+$\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$ the endpoint weight and
+$\Delta t=\theta_{\mathrm C}\tau_{\max}$, $\theta_{\mathrm C}\in(0,1]$
+(page-local); in 1D the normal field stays constant exactly, which
+gives the required discrete divergence-free condition (Remark 3).
+**Theorem 4.1 (2D):** for the locally divergence-free scheme with the
+discretized symmetrization source, on a feasible
+[cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
+extended to overlapping meshes by splitting each cell into four quarter
+cells, the cell averages stay admissible under
+$\tau_{\max}\big(\alpha_1/\Delta x+\alpha_2/\Delta y\big)\le\varpi/2$, with
+$\alpha_\ell\ge1$ (page-local) growing with the normal-field jumps
+(Eqs. (57)–(63)). The divergence terms of the fluxes and of the source
+cancel exactly, by Gauss exactness and the divergence theorem on the
+quarter cells, inside which the field is divergence-free (Eqs.
+(70)–(74)). With the optimal Cui–Ding–Wu decomposition $\varpi=1/4$ for
+$N=2,3$, against $1/6$ for the Gauss–Lobatto tensor rule (Cors.
+4.1–4.2). **Theorem 4.2:** without the source terms, bound preservation
+needs globally coupled discrete divergence-free conditions, which the
+local scaling limiter does not keep; the authors leave enforcing both
+together open (§4.7). As with Wu & Shu, the limiter must also make the
+Gauss flux-quadrature points admissible, because the flux needs a
+primitive-variable recovery there, a requirement the authors note does
+not arise in non-relativistic MHD (Remark 6). Their tests use $N=2$,
+SSP-RK3 and $\Delta t=0.25\Delta x$ (1D),
+$\Delta t=0.25/(1/\Delta x+1/\Delta y)$ (2D), above the bounds
+$\tau_{\max}\le\Delta x/12$ ($\varpi=\tfrac16$, 1D) and
+$\tau_{\max}(\alpha_1/\Delta x+\alpha_2/\Delta y)\le\tfrac18$ ($\varpi=\tfrac14$, 2D)
+of the theorems *(compiler check, not in the sources: $\Delta t\le\tau_{\max}$
+and $\alpha_\ell\ge1$)*, which they call sufficient but not always necessary
+(§5; $\tau_{\max}$ and $\theta_{\mathrm C}$ of the runs are not printed); third order is observed on smooth Alfvén waves, and every
+shock test fails without the bound-preserving limiter (see
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md),
+[Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md),
+[MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md),
+[MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md),
+[high-Mach jets](/benchmarks/high-mach-astrophysical-jet.md),
+[bound preservation](/properties/bound-preservation.md)).
 
 Du & Yang (2022) apply the cell-average route to the LDG scheme for
 reacting multi-species Navier–Stokes. A numerical flux that is
@@ -609,6 +682,8 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §2.1 Eq. (2.2), Eq. (3.3), Prop. 4.6, Thm 4.1, §5.1 Table 1.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Eq. (1.5), Eq. (7.2), Thm 7.1, Remark 7.7, Table 1, §8.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Eqs. (6.6)–(6.8), Thm 6.4, §7.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §3.1 Eqs. (17)–(24), Remarks 1, 3, 6, Thm. 3.1; §4.3–4.7 Eqs. (57)–(74), Thms. 4.1–4.2, Cors. 4.1–4.2; §5.
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §2.2–2.4 Eqs. (7)–(28).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §1, Remark 2, §8.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, Ex. 2.3.
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §2.1, §5.

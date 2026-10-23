@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -164,7 +164,7 @@ one in fluctuation form (§VI).
   [discrete kinetic relaxation scheme](/methods/discrete-kinetic-relaxation-scheme.md) of
   [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) "amounts to global
   Lax–Friedrichs" and is the fallback of its MOOD stabilization (§3.2.2); the first-order
-  viscosity $C_{\max}h\lambda_{\max}$ (page-local constant and mesh size) of the residual-viscosity
+  viscosity $C_{\max}h\,a$ (page-local constant $C_{\max}$ and mesh size $h$) of the residual-viscosity
   continuous finite elements of [Dao & Nazarov (2022)](/sources/dao-2022.md) reproduces 1D
   Lax–Friedrichs for $C_{\max}=0.5$, stated without proof (§4.2;
   [artificial viscosity](/methods/artificial-viscosity.md)).
@@ -314,14 +314,30 @@ positivity of density and internal energy under $\Delta t\le m_i/(2\lambda_i)$, 
 mass and $\lambda_i$ the sum of the node's graph and face coefficients (page-local). The step
 scales as $O(h/N^2)$ and is about 2–3 times smaller than the largest stable DG step (Remark 1,
 citing earlier work). With the coefficient enlarged to
-$\max\{\lambda_{\max},a^{\mathrm{NS}}_i,a^{\mathrm{NS}}_j\}$, $\lambda_{\max}$ a maximum wave-speed bound,
+$\max\{a,a^{\mathrm{NS}}_i,a^{\mathrm{NS}}_j\}$, $a$ a maximum wave-speed bound,
 the low-order scheme is also semi-discretely entropy stable, proved by reading it as a subcell
 finite-volume scheme with LLF-type fluxes (Theorem 6.1, Eqs. (45)–(53)); for the Euler equations
 $a^{\mathrm{NS}}$ never exceeds the maximum wave speed, so the enlargement reduces to the
-wave-speed estimate $\lambda_{\max}$ (§6.2), in agreement with the compiler check on the bound of
+wave-speed estimate $a$ (§6.2), in agreement with the compiler check on the bound of
 Fan et al. above. Details are on
 [convex limiting](/methods/convex-limiting.md) and
 [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md).
+
+**A shared interface flux decouples the cell entropy inequality from limiting.**
+[Lin & Chan (2024)](/sources/lin-2024.md) (§2.3, Eqs. (13)–(17), (22)) blend, subcell interface by
+subcell interface, the algebraic fluxes of DGSEM with those of the sparse low-order scheme of
+Lin et al. (2023), a finite volume on LGL subcells with LLF-type graph viscosity
+$\tfrac12\lVert n_{ij}\rVert\,a(u_i,u_j,n_{ij}/\lVert n_{ij}\rVert)$; here, unlike in Lin et al.
+(2023), the coefficient is split by dimension (footnote 2). Both schemes use the same LLF
+interface flux, $\tfrac12\big(f(u^-)+f(u^+)\big)-\tfrac a2\,\hat n\,(u^+-u^-)$ ($\hat n$ the unit face normal, page-local, placed as printed) with the Davis
+estimate $a=\max\{\lvert v^-\cdot\hat n\rvert+c^-,\lvert v^+\cdot\hat n\rvert+c^+\}$ (Eqs. (14), (54)), so the
+boundary algebraic fluxes of the two coincide (Eq. (17)), the surface contribution to the cell
+entropy balance does not depend on the blending factors (Eq. (22)), and the cell entropy
+inequality reduces to one linear inequality in the volume blending factors, which a linear
+program solves ([subcell limiting](/methods/subcell-finite-volume-limiting.md),
+[entropy stability](/properties/entropy-stability.md)). Solvability of that program rests on the
+low-order scheme being semi-discretely entropy stable (Theorem 3.1), which in turn needs a true
+wave-speed bound (see Qualifications).
 
 For multicomponent reacting flows [Du & Yang (2022)](/sources/du-2022-b.md) (§3.1, Eq. (3.5);
 §4.2, Lemma 4.1) extend the same construction to one partial-density equation per species
@@ -373,6 +389,12 @@ damping, halved step) whenever a cell average leaves $G$ (§6).
   so with Eq. (21) the discrete disturbance scheme is not the discrete total-flow scheme minus
   the discrete baseflow scheme, although the continuous disturbance equations are an exact
   rewriting.)*
+- **Dissipation scaled by the flow speed only.** In the semi-implicit all-Mach MHD scheme of
+  [Dematté et al. (2024)](/sources/dematte-2024.md) (§3.1, Eqs. (22)–(23)) the Rusanov flux
+  acts only on the explicit advective sub-system of a flux-vector splitting, whose eigenvalues
+  are $0$ and $v_1$, with $a_{i+1/2}=\max(\lvert v_1^-\rvert,\lvert v_1^+\rvert)$; the acoustic and magnetic
+  waves are treated implicitly, so neither the dissipation nor the time step contains the sound,
+  Alfvén or fast speeds ([semi-implicit all-Mach schemes](/methods/semi-implicit-all-mach-scheme.md)).
 - **Downwinding by sign flip.** [Dzanic et al. (2022)](/sources/dzanic-2022.md) (§2, §4.2) obtain
   the downwind-biased divergence of their time-reversibility shock indicator by negating the
   dissipative term of the Rusanov flux (Davis wave speeds) used in the forward step; the defect
@@ -412,6 +434,10 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
   suitably chosen" (§4), and note, citing Guermond and Popov, that such Davis or Rusanov
   estimates can underestimate the maximum wave speed, which could compromise the positivity and
   entropy stability of the low-order scheme; no issue was observed in their tests (footnote 3).
+  [Lin & Chan (2024)](/sources/lin-2024.md) (footnote 8) make the same remark for the same
+  estimate (Eq. (54)): with it the low-order subcell scheme is not provably positivity preserving
+  and semi-discretely entropy stable, and Theorem 3.1 derives the solvability of their entropy
+  linear program from the latter property; no issue was observed.
 - Lin et al. print the Navier–Stokes coefficient with $\lVert n\cdot\tau_{\mathrm v}-pn\rVert^2$ in
   Eq. (18) and without the square in the condition (20) that motivates it, and $u_2$ in place of
   $n_2$ in the second component of $n\cdot\tau_{\mathrm v}$ (Eq. (18)).
@@ -475,3 +501,5 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — Algorithm 1, §4.4.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §2.2.1–2.2.4 (Eqs. (9)–(24), (43)–(45)), §3 (arXiv v1).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3 (Eq. (3.4), Lemma 3.1, Thm. 3.1), §4 (Thm. 4.1), §5 (arXiv v1).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §2.3 (Eqs. (13)–(17), footnotes 2, 8), §3.1 (Eq. (22), Theorem 3.1), §4 (Eq. (54)).
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.1 (Eqs. (22)–(23)).

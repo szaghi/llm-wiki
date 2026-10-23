@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Brio–Wu MHD shock tube"
-description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution contains a compound wave; used to validate MHD Riemann solvers, continuous finite elements, unstaggered central schemes, positivity-filtered DG, all-Mach IMEX WENO, a one-step HLL-GRP finite-volume scheme, and, in a relativistic two-fluid variant, entropy-stable finite differences."
+description: "One-dimensional ideal-MHD Riemann problem with a constant normal field and a reversing transverse field, whose solution contains a compound wave; used to validate MHD Riemann solvers, continuous finite elements, unstaggered central schemes, positivity-filtered DG, all-Mach IMEX WENO, a one-step HLL-GRP finite-volume scheme, a semi-implicit all-Mach finite-volume scheme, and, in a relativistic two-fluid variant, entropy-stable finite differences."
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Brio–Wu MHD shock tube
@@ -31,16 +31,18 @@ and the field $B=(B_1,B_2,B_3)$ in the notation of the registry.
 | [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) Ex. 5.3 | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.2 | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,B_1,B_2,p)=(1,0,0,0.75,1,1)$ | $(0.125,0,0,0.75,-1,0.1)$ | 2 | 0.1 |
 | [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) §4.1 | $(-1,1)$, jump at $x=0$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 2 | 0.1 |
+| [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.1, Table 1 (RP1) | $[0,1]$, jump at $x=0.5$ | $(\rho,v_1,v_2,v_3,B_1,B_2,B_3,p)=(1,0,0,0,0.75,1,0,1)$ | $(0.125,0,0,0,0.75,-1,0,0.1)$ | 5/3 (default of §4) | 0.1 |
 
-Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong, Dzanic & Witherden and
-Liu, Feng & Wang print the same states; their final times differ (0.2 on $[0,1]$ for Dao
+Dao & Nazarov, Kanbar et al., Chen, Wu & Xiong, Dzanic & Witherden,
+Liu, Feng & Wang and Dematté et al. print the same states; their final times differ (0.2 on $[0,1]$ for Dao
 & Nazarov, 0.1 on $[0,1]$ for Chen, Wu & Xiong and Dzanic & Witherden,
 0.25 on a domain twice as wide for Kanbar et al., 0.1 on the domain
 $(-1,1)$ for Liu, Feng & Wang). Chen, Wu & Xiong use
 reflective boundaries; Dzanic & Witherden run it on a one-element-wide
 2D quadrilateral mesh, Dirichlet left and right, periodic top and
 bottom. Lesur et al.
-state $\gamma=5/3$, while Dao & Nazarov, Chen, Wu & Xiong, Dzanic &
+state $\gamma=5/3$, and Dematté et al. use their default $\gamma=5/3$ (§4, no
+other value stated for RP1), while Dao & Nazarov, Chen, Wu & Xiong, Dzanic &
 Witherden and Liu, Feng & Wang print $\gamma=2$: the sources
 run the problem in two variants of the ratio of specific heats, and the
 wave positions of one cannot be compared with those of the other. Both
@@ -135,14 +137,38 @@ diffusion) give (Figs. 1–2, Table 4):
   3 and 4 (22.14 s against 13.04 s, 44.90 s against 37.98 s), faster at
   order 2 (14.28 s against 17.90 s).
 
+**Semi-implicit all-Mach finite volumes.** Dematté et al. run Brio–Wu as
+RP1 of four MHD Riemann problems for their cell-centred
+[semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md),
+which splits the flux into an explicit advective part with a Rusanov
+flux scaled by the flow speed and an implicit pressure part holding the
+gas and magnetic pressure (§4.1.1). They use 1000 cells, MUSCL–Hancock
+reconstruction of the advective sub-system and staggered
+[constrained transport](/methods/constrained-transport.md), and compare
+$\rho$ and $B_2$ with a high-resolution explicit MUSCL–HLLC reference,
+each with a purely advective time step and with an Alfvénic one (Fig. 2).
+The other three tubes are the Ryu–Jones seven-wave problem (RP2: left
+state $(1.08,1.2,0.01,0.5,0.564190,1.015541,0.564190,0.95)$, right state
+$(0.9891,-0.0131,0.0269,0.010037,0.564190,1.135262,0.564923,0.97159)$ in the
+variables of the table, $t=0.2$) and two tubes of Dumbser et al. and
+Fambri (RP3 at $t=0.15$, RP4 with the jump at $x=0.4$ and $t=0.16$; Table
+1). The authors report that the scheme reproduces the wave pattern in all
+four; on RP3 and RP4 the advective time step is less accurate than the
+Alfvénic one, and lowering the CFL number from $0.8$ to $0.5$ and $0.4$
+improves accuracy slightly, so the time step is chosen for accuracy as
+well as for stability (Figs. 2–3). Their RP2 left state is, unrotated, the
+left state of Berta et al.'s rotated tube below
+($2/\sqrt{4\pi}=0.564190$, $3.6/\sqrt{4\pi}=1.015541$); the right states
+differ *(compiler check, not in the sources)*.
+
 ## Related problems
 
 The same sources follow the tube with two-dimensional MHD tests: the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md) (Dao & Nazarov,
 Lesur et al., Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang,
-Bhoriya et al. in its relativistic form), the [rotor](/benchmarks/mhd-blast-wave.md) (Dao &
-Nazarov, Lesur et al., Liu, Feng & Wang), the [MHD blast wave](/benchmarks/mhd-blast-wave.md)
-(Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang, Bhoriya et al.), the
+Dematté et al., Bhoriya et al. in its relativistic form), the [rotor](/benchmarks/mhd-blast-wave.md) (Dao &
+Nazarov, Lesur et al., Liu, Feng & Wang, Dematté et al.), the [MHD blast wave](/benchmarks/mhd-blast-wave.md)
+(Chen, Wu & Xiong, Dzanic & Witherden, Liu, Feng & Wang, Dematté et al., Bhoriya et al.), the
 [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)
 (Liu, Feng & Wang) and a four-state
 MHD Riemann problem (Kanbar et al., recorded on
@@ -179,10 +205,15 @@ sources)*.
   larger than the skin depth "in the entire domain"; with their own
   formula the right state has skin depth $4\times10^{-3}>\Delta x$
   *(compiler check, not in the sources)*.
+- Dematté et al. call the compound wave in their density profile
+  "artificial", "a common feature of standard finite volume schemes for
+  ideal MHD" (§4.1.1), while Dao & Nazarov and Dzanic & Witherden report
+  it as a wave their schemes capture (above); no source of the bundle
+  analyses the admissibility of the compound wave.
 - No source reports an error norm; all comparisons are visual, against
   a reference code (Athena, PLUTO), a fine-grid run, a lower-order
   run (Liu, Feng & Wang's forward-Euler reference) or the literature.
-- All sources except Liu, Feng & Wang (version of record) are read in
+- All sources except Liu, Feng & Wang and Dematté et al. (versions of record) are read in
   arXiv versions (v1; Dzanic & Witherden v2, Bhoriya et al. v2), not the
   versions of record. Kanbar et al. print no $\gamma$ for any test; Lesur et al. do
   not reprint the data.
@@ -196,4 +227,5 @@ sources)*.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.2, Eq. (42), Fig. 2 (arXiv v2).
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.1.2, Figs. 1–2, Table 4 (arXiv v2).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.1, Fig. 3.
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.1.1, Table 1, Figs. 2–3.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.1, Eqs. (41)–(42), Figs. 2–3 (arXiv v4; a rotated non-Brio–Wu MHD tube).

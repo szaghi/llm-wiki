@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Magnetized (MHD) vortex"
-description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, in which centrifugal force, magnetic tension and pressure balance radially, advected or held static on a periodic box as convergence-order tests: Balsara's iso-density vortex, a relativistic iso-enthalpy vortex, and the near-vacuum vortex used to test positivity-preserving DG."
+description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, in which centrifugal force, magnetic tension and pressure balance radially, advected or held static on a periodic box as convergence-order tests: Balsara's iso-density vortex, a relativistic iso-enthalpy vortex, a three-dimensional low-Mach vortex run up to tenth order, and the near-vacuum vortex used to test positivity-preserving DG."
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Magnetized (MHD) vortex
@@ -48,6 +48,43 @@ period $t=10$; error $\varepsilon_1(B_1)$ in $L^1$ ($k$, $\mu$, $q$, $f$,
 $v_0$ page-local). Differentiating the printed pressure reproduces the
 balance above term by term, so the data are an exact equilibrium
 *(compiler check, not in the sources)*.
+
+**Dumbser et al.'s vortex, unshifted ([Dematté et al. 2024](/sources/dematte-2024.md)).**
+Dematté et al. §4.1.2 take "the same" setup as Dumbser et al. (2019) on the
+periodic box $[0,10]^2$, $\rho=1$, with the profiles of Berta et al.
+at $q=\tfrac12$, centred at $(5,5)$ and without mean flow:
+$v=k\,e^{\frac12(1-R^2)}(5-y,\,x-5)$, $B=\mu\,e^{\frac12(1-R^2)}(5-y,\,x-5)$,
+$k=\mu=1/(2\pi)$ (their $\varepsilon/(2\pi)$ with $\varepsilon=1$); the
+exact solution is the initial state. In these symbols the pressure is
+printed as $p=1+\tfrac12\mu^2(1-R^2)e^{(1-R^2)}-\tfrac12\tilde k^2e^{\frac12(1-R^2)}$,
+with a symbol $\tilde k$ (their $\tilde\varepsilon/(2\pi)$) that is not
+defined. *(Compiler check, not in the sources.)* With $k=\mu$ and $\rho=1$
+the velocity equals the field, so the state is stationary iff
+$p+\tfrac12\lvert B\rvert^2$ is constant; this holds when the last term is
+$-\tfrac12k^2e^{(1-R^2)}$ and fails with the printed exponent
+$e^{\frac12(1-R^2)}$; the magnetic term is correct as printed. The run
+ends at $t=1$ with a fixed $\Delta t=0.01$, error in $L_2$ against the
+initial state (Eq. (65)). In §4.1.3 the same vortex, centred at the
+origin on the periodic $[-10,10]^2$ with $200^2$ cells, is run to
+$t=1000$ with a velocity-based CFL number of $0.45$ to test the
+preservation of a steady state over long times.
+
+**Three-dimensional vortex at low Mach number ([Teissier et al. 2024](/sources/teissier-2024.md)).**
+Teissier et al. §4.1, Eq. (66) (arXiv v2) use the Balsara profiles in a
+triply periodic $[-5,5]^3$, with the Gaussian of the full 3D radius
+$r=\sqrt{x^2+y^2+z^2}$: $\rho=1$, $v=(1,1,2)+(-y,x,0)\,k\,e^{q(1-r^2)}$,
+$B=(-y,x,0)\,\mu\,e^{q(1-r^2)}$,
+$p=p_0+\frac1{4q}\big[\mu^2\big(1-2q(r^2-z^2)\big)-k^2\rho\big]e^{2q(1-r^2)}$,
+with $k=\mu=1/(2\pi)$, $q=1.75$ and $p_0=360$, chosen higher than in the
+earlier versions so that the advection speed is about a tenth of the
+sound speed; $\gamma$ is not stated. One period ends at $t=10$, and the
+error $\delta_2$ is the root mean square over all cells of the
+differences of all eight conserved variables against $t=0$ (Eq. (67)).
+They also record the fraction $E_{\mathrm{loss}}$ of the fluctuating
+kinetic plus magnetic energy lost in one period (Eq. (69)). *Compiler
+check, not in the sources:* with $k=\mu$ and $\rho=1$,
+$p+\tfrac12\lvert B\rvert^2=p_0$ everywhere, so the 3D data are an
+exact equilibrium despite the $z$-dependence of the Gaussian.
 
 **Iso-enthalpy relativistic vortex (new in Berta et al.).** The same
 profiles with $f=w=5$, the constant enthalpy density $\rho h$
@@ -97,6 +134,56 @@ $N_x\lesssim128$, the finite-difference scheme converging faster; they
 note that it needs $\Delta t\sim\Delta x^{5/3}$ with its third-order
 Runge–Kutta to keep fifth order.
 
+**Semi-implicit all-Mach finite volumes.** Dematté et al.'s cell-centred
+[semi-implicit scheme](/methods/semi-implicit-all-mach-scheme.md), with
+unlimited MUSCL–Hancock reconstruction of the advective sub-system and
+the fixed $\Delta t=0.01$, converges at second order in space (Table 2):
+
+| $N_x=N_y$ | 16 | 32 | 64 | 128 | 256 | 512 |
+|---|---|---|---|---|---|---|
+| $L_2(\rho)$ | 2.436E-02 | 8.186E-03 (1.573) | 2.264E-03 (1.854) | 5.794E-04 (1.966) | 1.457E-04 (1.992) | 3.647E-05 (1.998) |
+| $L_2(E)$ | 2.878E-02 | 7.505E-03 (1.939) | 1.863E-03 (2.010) | 4.647E-04 (2.003) | 1.161E-04 (2.001) | 2.903E-05 (2.000) |
+
+with similar orders for $v_1$ and $B_1$, which the authors call second order
+of accuracy in space; these are orders at a fixed small step, and higher
+order in time is left to future IMEX work (§4.1.2). In the
+long-time run both of their constrained-transport variants (staggered,
+and unstaggered from a vector potential) keep the stationary vortex to
+$t=1000$ (§4.1.3, Figs. 4–5).
+
+**Orders up to ten with point-value fluxes.** Teissier et al.'s
+finite-volume solvers S2–S10 (WENO face reconstruction of order 3 to 11,
+conversion of face averages to point values and back, LLF fluxes,
+constrained transport, SSP multistep–multistage time integration of
+matching order) give (Table 2):
+
+| scheme | $\delta_2$ at $64^3$ | $\delta_2$ at $192^3$ | EOC$_2$ at $192^3$ | $E_{\mathrm{loss}}$ at $192^3$ |
+|---|---|---|---|---|
+| S2 | 8.5E-03 | 5.7E-03 | 0.657 | 0.79 |
+| S4 | 3.9E-03 | 7.5E-05 | 4.46 | 9.0E-03 |
+| S6 | 8.7E-04 | 1.4E-06 | 6.12 | 7.7E-05 |
+| S8 | 1.4E-04 | 2.1E-08 | 7.87 | 9.6E-07 |
+| S10 | 2.9E-05 | 5.0E-10 | 9.74 | 1.1E-08 |
+| S8 without point values (S8P) | 1.4E-04 | 2.9E-06 | 1.99 | 1.1E-06 |
+| S8 with a second-order time integrator (S8T) | 1.4E-04 | 2.7E-07 | 2.12 | 9.0E-07 |
+
+S4–S10 reach their design orders. Without the passage through point
+values the order falls to two, confirming that identifying a face
+average with the face-centre value costs $O(\Delta x^2)$ (Eq. (36));
+S8P keeps an energy loss close to S8's, which the authors read as a sign
+of dispersive rather than dissipative error. S2 loses $99\%$ of the
+fluctuating energy at $64^3$ ($60\%$ at $256^3$), which they ascribe to
+the LLF dissipation at low Mach number, proportional to the fast speed
+times the interface jump; raising the order shrinks the jump and acts as
+an alternative to low-Mach Riemann-solver fixes (§4.1; see
+[numerical dissipation](/definitions/numerical-dissipation.md)). The
+WENO weights use the exponent $1$ (not the vortex parameter $q$) and
+$\epsilon=10^{-12}$, because the "typical choice" of exponent $2$ with $\epsilon=10^{-6}$ "leads to a worse convergence for schemes
+of order strictly greater than 4" (§4.1, no table). With the cost per
+step relative to S2 (Table 3), the authors argue that S6 at $96^3$
+matches the energy loss of S4 at $192^3$ at a fraction of the cost, "a
+factor of order 10" (§4.1).
+
 **Positivity-filtered DG near vacuum.** Dzanic & Witherden's nodal
 DG / flux reconstruction with positivity-preserving
 [entropy filtering](/methods/entropy-filtering.md) converges at
@@ -122,6 +209,12 @@ positivity-preserving DG, which they compare against.
   differ by up to about 2 % of that term *(compiler check, not in the
   sources)*. The paper does not resolve which of the two equations is
   meant.
+- Dematté et al.'s Table 2 orders are spatial, with $\Delta t$ fixed
+  (§4.1.2).
+- Teissier et al. are read as arXiv:2306.09856v2, titled "High-order
+  finite-volume integration schemes for subsonic magnetohydrodynamics"
+  with two of the three authors of the published article; their
+  efficiency argument is restricted to smooth subsonic flows (§1, §5).
 - Dzanic & Witherden's run is short ($t=0.05$, a translation of
   $0.05\sqrt2$), and their error is measured against the translated
   exact solution.
@@ -133,4 +226,6 @@ positivity-preserving DG, which they compare against.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.2, Eqs. (43)–(46), Table 1, Fig. 4 (arXiv v4).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.1, Eqs. (38)–(41), Tables 1–2 (arXiv v2).
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — §5.1.1 (arXiv v1).
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.1.2–4.1.3, Eq. (65), Table 2, Figs. 4–5.
+- [Teissier et al. (2024)](/sources/teissier-2024.md) — §4.1, Eqs. (36), (66)–(69), Tables 2–3 (arXiv v2).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.1, 6.7 (arXiv v1).

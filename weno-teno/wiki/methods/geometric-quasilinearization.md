@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Geometric quasilinearization (GQL)
@@ -119,6 +119,15 @@ Wu & Shu derive (§4.2):
   first found algebraically by Wu in 2018.
 - **Relativistic MHD** (Thm 4.13): an explicit family linear in $u$ and
   indexed by $(v_*,B_*)$, although $p(u)$ and $v(u)$ are implicit.
+  [Ding & Wu (2024)](/sources/ding-2024-b.md) (Lemma 2.2, as recalled from
+  Wu & Tang and Wu & Shu) write it, for a general equation of state with
+  a Taub-type inequality and causality, in the ordering $u=(D,m,B,E)$, as
+  $u\cdot n_1>0$ and
+  $$u\cdot n_*+p^*_{\mathrm m}>0\quad\forall\,\lvert v_*\rvert<1,\ B_*\in\mathbb R^3,\qquad
+  n_*=\big(-\sqrt{1-\lvert v_*\rvert^2},\,-v_*,\,-(1-\lvert v_*\rvert^2)B_*,\,1\big)^\top,\quad
+  p^*_{\mathrm m}=\tfrac12\big((1-\lvert v_*\rvert^2)\lvert B_*\rvert^2+(v_*\cdot B_*)^2\big),$$
+  with $n_1=(1,0,\dots,0)^\top$ (page-local $n_1$, $p^*_{\mathrm m}$, the
+  auxiliary magnetic pressure).
 - **Multicomponent MHD** (Eqs. (6.4)–(6.5)): the ideal-MHD family plus
   linear constraints on the partial densities.
 
@@ -166,6 +175,29 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   (Thms 6.1–6.4); see
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
+- **Relativistic MHD with central DG.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+  (§2, Lemmas 2.3–2.4, Cors. 2.1–2.2; Thms 3.1, 4.1–4.2) derive from the
+  recalled flux bound
+  $(u+\vartheta_{\mathrm s}f_\ell(u))\cdot n_*+p^*_{\mathrm m}+\vartheta_{\mathrm s}\big(v_{*\ell}p^*_{\mathrm m}-B_\ell(v_*\cdot B_*)\big)\ge0$,
+  $\vartheta_{\mathrm s}\in[-1,1]$ (page-local), a two-state bound in which
+  the difference of fluxes of two admissible states leaves the term
+  $-(B_\ell-\tilde B_\ell)(v_*\cdot B_*)$ (Eq. (15)): the jump of the normal
+  field enters linearly, which is how a discrete divergence enters the
+  bound-preservation proof. A recalled source bound (Lemma 2.4) shows that
+  a symmetrization source proportional to $\nabla\cdot B$ produces the
+  opposite term, so the two cancel for a locally divergence-free field;
+  without the source the proof needs globally coupled discrete
+  divergence-free conditions (Thm 4.2). The authors call GQL "essential"
+  here, because the locally divergence-free constraint couples the
+  interface states and prevents the usual splitting into formally 1D
+  bound-preserving schemes (§4.4;
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+  [bound preservation](/properties/bound-preservation.md)). Their limiter
+  uses instead the explicit equivalent form
+  $G=\{D>0,\ q(u)>0,\ \Phi(u)>0\}$ with
+  $q=E-\sqrt{D^2+\lvert m\rvert^2}$ and a closed-form $\Phi$ (Lemma 3.2,
+  recalled; [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+
 ## Relation to cell-average decompositions
 
 [Cui, Ding & Wu (2024)](/sources/cui-2024.md) relate the tangent lines of
@@ -195,8 +227,16 @@ quasilinearization (§3.7, Fig. 4); see
   Lemma 3.7, where their own Lemma 3.4 and the proof of Lemma 3.6 give
   $u^\pm\cdot n_*>0$; the inequalities that follow use the positive sign.
 
+- Ding & Wu (2024) print the auxiliary magnetic pressure of Lemma 2.2 as
+  $\tfrac12\big((1-\lvert v_*\rvert^2)B_*+(v_*\cdot B_*)^2\big)$, with the
+  vector $B_*$ where the scalar $\lvert B_*\rvert^2$ is needed, by analogy
+  with their $p_{\mathrm m}=\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$
+  (p. 2), since the printed form adds a vector to a scalar; the form above
+  uses $\lvert B_*\rvert^2$ *(compiler check, not in the sources)*.
+
 # Citations
 
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Def. 3.1; Thm 3.2; Assumption 3.4; Thms 3.9, 3.10 (App. A, Eqs. (3.12)–(3.15)); Rems. 3.3, 3.12; Thms 4.1, 4.2 (Eq. (4.6)); §4.1.3; Thms 4.4, 4.7–4.13 and Rem. 4.6; §5 (Eqs. (5.11), (5.16)–(5.18)); §6 (Thms 6.1–6.4).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §3.7, Fig. 4 (link to GQL).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §3.5 (Lemmas 3.4–3.7, Eqs. (48), (52), Thm 3.1, Eq. (57)).
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §1; §2 (Eqs. (7)–(16), Lemmas 2.1–2.4, Cors. 2.1–2.2); §3.2–3.3 (Thm 3.1, Lemma 3.2); §4.4 (Thm 4.1, Eqs. (70)–(74)); §4.7 (Thm 4.2).

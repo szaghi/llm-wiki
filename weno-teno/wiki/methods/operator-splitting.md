@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Operator splitting for stiff source terms"
-description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and the source separately; for stiff chemistry the source step is a constant-volume reactor per cell (Strang splitting, or a convection–chemistry sequence with a Cantera reactor), while for a singular Dirac-delta source Yu, Liu and Feng prove that splitting is never well-balanced."
+description: "Operator splitting advances the transport part of a balance law with an explicit shock-capturing step and the source separately; for stiff chemistry the source step is a constant-volume reactor per cell, for two-phase flow with phase change a sequence of algebraic infinite-rate relaxations, while for a singular Dirac-delta source splitting is never well-balanced."
 status: established
-aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step]
-tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced]
-timestamp: 2026-10-23T23:45:00Z
+aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
+tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced, multiphase]
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Operator splitting for stiff source terms
@@ -59,6 +59,50 @@ serves the Redlich–Kwong and Noble–Abel real-gas laws without modification (
   then the update of the primitive variables from the conserved ones, then, for reactive
   runs, the chemistry correction. The paper does not state whether the sequence is
   symmetrized, nor its order.
+
+## Two-phase relaxation: algebraic source steps
+
+[Wakimura et al. (2024)](/sources/wakimura-2024.md) (§2.4, §3, Eqs. (9)–(20), (45), Apps. B–D)
+solve the six-equation two-phase model of Pelanti and Shyue with heat and mass transfer by a
+fractional-step method in which the stiff sources are **relaxation terms with infinite rates**:
+pressure relaxation $\mu_{\mathrm p}(p_1-p_2)$, thermal relaxation proportional to $T_2-T_1$ and
+chemical relaxation proportional to the difference of the phasic Gibbs energies (page-local rates
+$\mu_{\mathrm p}$, temperatures $T_k$; $\phi_k$, $\rho_k$, $Y_k$ registry §10). With the rates set to
+infinity each source step is an algebraic projection onto an equilibrium manifold, not an ODE
+integration. With page-local operators $\mathcal H^{(\Delta t)}$ (hyperbolic step) and
+$\mathcal R_{\mathrm p}$, $\mathcal R_{\mathrm{pT}}$, $\mathcal R_{\mathrm{pTg}}$ (mechanical,
+mechanical–thermal and mechanical–thermal–chemical equilibrium), the four variants are (Eq. (45))
+
+$$u^{n+1}=\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n,\quad
+\mathcal R_{\mathrm{pT}}\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n,\quad
+\mathcal R_{\mathrm{pTg}}\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n,\quad
+\mathcal R_{\mathrm{pTg}}\mathcal R_{\mathrm{pT}}\mathcal R_{\mathrm p}\mathcal H^{(\Delta t)}u^n;$$
+
+only the last two reach Gibbs equilibrium, i.e. model phase change. Mechanical relaxation comes
+first, on the assumption that it is the fastest process.
+
+- **Pressure equilibrium** (App. B): at constant $\phi_k\rho_k$, $\rho v$ and total energy, with
+  interface pressure equal to the relaxed pressure $p^*$, the stiffened-gas law gives a quadratic
+  for $p^*$ (Eqs. (B.5)–(B.6)), solved by a cancellation-free root formula (Eq. (B.7), App. E);
+  the relaxed variables are stated to be mixture-energy consistent.
+- **Pressure–temperature equilibrium** (App. C): at constant $Y_k$, $\rho$ and internal energy,
+  again a quadratic in the common pressure (Eqs. (C.4)–(C.5)), with $\phi_1$ in closed form (Eq. (C.7)).
+- **Gibbs equilibrium** (App. D): $Y_k$ now changes; eliminating it gives a quadratic for the
+  temperature as a function of pressure (Eqs. (D.4)–(D.5)), substituted into the saturation curve
+  and solved for the pressure by Newton–Raphson (Eq. (D.7)).
+
+Thermal and chemical relaxation are activated only in mixture cells,
+$\epsilon_I\le\phi_1\le1-\epsilon_I$ with $\epsilon_I=10^{-4}$ (page-local), and chemical relaxation
+only where the liquid is superheated, $T_{\mathrm{liq}}>T_{\mathrm{sat}}(p)$, so the model has
+evaporation and no condensation; the authors state that this does not affect the solution for
+small enough $\epsilon_I$, without showing a comparison (§2.4, Eqs. (10)–(11)). The hyperbolic
+step is HLLC in wave-propagation form with BVD-selected MUSCL/THINC reconstruction and SSP-RK3
+([HLL-family solvers](/methods/hll-riemann-solvers.md),
+[five- and six-equation models](/definitions/five-equation-model.md),
+[stiffened gas](/definitions/stiffened-gas-equation-of-state.md)); the order of the splitting is
+not stated or measured. On a 1D water cavitation tube the four variants are compared, and in a
+2D piston-driven dodecane vapour-bubble compression the full p-pT-pTg sequence generates new
+vapour bubbles near $y=0.5$ (§4.1, §4.4).
 
 ## Singular sources: splitting is never well-balanced
 
@@ -129,7 +173,7 @@ Neither source isolates the splitting error.
 ## Qualifications
 
 - No source measures the order of the split scheme or compares it with an unsplit
-  (IMEX) integration for stiff chemistry. The one comparison with an unsplit scheme, Yu et al.'s,
+  (IMEX) integration, for stiff chemistry or, in Wakimura et al., for relaxation. The one comparison with an unsplit scheme, Yu et al.'s,
   concerns a singular source and a stationary equilibrium, not a stiff one.
 - Bielawski et al. print the reactor temperature equation (Eq. (12)) with
   $\sum_kY_k/c_{v,k}$ in place of $1/(\rho\sum_kY_kc_{v,k})$ and without the factor $1/\rho$
@@ -145,3 +189,4 @@ Neither source isolates the splitting error.
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1–3.2 (Eqs. (12)–(14), (20)–(21)), §4 (§§4.3–4.6).
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §1, §2.1, §3.1 (Eqs. (3.5)–(3.9), Thm. 3.1), §5 (Test 1, Fig. 2) (arXiv v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3.2 (author preprint).
+- [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §2.4 (Eqs. (9)–(11)), §3 (Eqs. (17)–(20), (45)), §4.1, §4.4, Apps. B–E.

@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # WENO-JS reconstruction
@@ -75,7 +75,12 @@ value that "reduces the influence of non-linear weights"; Kuzmin & Vedral (2023,
 $\epsilon=10^{-6}$ and $q=2$ for the Jiang–Shu-type weights of their Hermite candidates. For WENO-Z
 weights Borges et al. suggest $\epsilon=10^{-40}$ (as recalled by Deng 2023, §4.3), the value Luo &
 Wu (2021) use; Wang & Don (2022) test $10^{-12}$ and $10^{-40}$ ([WENO-Z](/methods/weno-z.md)).
-Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$. Fan, Zhang & Qiu (2022, §5, Tables 5.1–5.2)
+Zheng, Shu & Qiu (2021, Eq. (24)) also use $\epsilon=10^{-6}$ with $q=2$. Zhang, Jiang, Qin, Qu & Yan (2024b, §2.2, Eqs. (5)–(8))
+recall the scheme with $\epsilon=10^{-6}$ "in" Jiang & Shu and $q=2$, against $10^{-40}$ in their WENO-Z, WENO-CU6 and TENO
+runs. At very high order Teissier et al. (2024, §4.1; arXiv v2) drop the default: in finite-volume WENO of orders 5 to 11
+inside an MHD solver, "the typical choice $p=2$, $\epsilon=10^{-6}$ leads to a worse convergence for schemes of order
+strictly greater than 4" (their $p$ the registry's $q$), and they use $q=1$, $\epsilon=10^{-12}$ to reach the design orders
+up to ten on a smooth vortex (no table for the default; [cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)). Fan, Zhang & Qiu (2022, §5, Tables 5.1–5.2)
 compare $\epsilon=10^{-15}$ with $\epsilon=\Delta x^2$ (after Aràndiga et al.) in a positivity-preserving
 Navier–Stokes scheme: WENO-JS5 is about fifth order with both (4.36 at the finest 1-D pair with
 $10^{-15}$, 5.10 with $\Delta x^2$), WENO-JS7 reaches seventh order with
@@ -300,3 +305,5 @@ reconstructing fluxes.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.2, Eqs. (2.10)–(2.23).
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §2, Eqs. (5)–(10); §4.1, Table 3.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.2, Eqs. (24)–(28) (arXiv v4).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.2, Eqs. (5)–(8).
+- [Teissier et al. (2024)](/sources/teissier-2024.md) — §3.1.2, Eqs. (25)–(30); §4.1 (arXiv v2).

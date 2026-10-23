@@ -149,7 +149,7 @@ items parsed.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunk 8 (2026-10-23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Convex limiting and invariant-domain-preserving schemes](/methods/convex-limiting.md)

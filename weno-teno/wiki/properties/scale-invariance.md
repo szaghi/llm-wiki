@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Scale and affine invariance
@@ -34,7 +34,11 @@ from affine invariance. Deng (2023) defines scale invariance as homogeneity only
 (2022, Lemma 3.1), for whom it is the homogeneity of degree one of reconstruction, limiter and scheme. Peng, Sun & Wu
 (2024, Theorem 2.6) call "scale-invariant" what Wang & Don call affine invariant:
 $\mathcal S(\sigma u_h+\mu)=\sigma\mathcal S(u_h)+\mu$ for their oscillation-eliminating step
-$\mathcal S$ (page-local name). This page uses Wang & Don's split. Li, Li, Don & Wang (2023a, Definition 1)
+$\mathcal S$ (page-local name). Fan & Wu (2024, Definition 1; arXiv v1 read) do the same for the Hermite
+WENO setting: an operator is "scale-invariant" if it commutes with
+$A_{\sigma,\mu}:(\bar u_j,\bar u^{(1)}_j)\mapsto(\sigma\bar u_j+\mu,\sigma\bar u^{(1)}_j)$ for all $\sigma\ne0$,
+$\mu\in\mathbb R$ (page-local $A_{\sigma,\mu}$; the first moment $\bar u^{(1)}_j$ is not shifted), which is
+affine invariance in the terms of this page. This page uses Wang & Don's split. Li, Li, Don & Wang (2023a, Definition 1)
 follow Wang & Don's scale invariance, $\mathsf R[\sigma f]=\sigma\mathsf R[f]$ for every real $\sigma$, negative
 values included, i.e. homogeneity of degree one.
 
@@ -188,8 +192,44 @@ constant for it has been found (Remark 2.9). Peng et al. also note that a charac
 decomposition can destroy invariance, because eigenvectors are defined up to an arbitrary scaling
 (Remark 2.12, Ex. 5.7; [characteristic decomposition](/methods/characteristic-decomposition.md)).
 
+**A dimensionless transformation of the stencil data.** Fan & Wu (2024, §2.2.4, Definitions 2–3,
+Theorem 5) make a nonlinear reconstruction invariant from outside instead of changing its weights, the
+route of Wang & Don and Deng above. On the stencil $\Lambda_i$ of cell $i$ they map the moments to
+$$\hat u_j=\frac{\bar u_j-u_{\mathrm{ave}}}{u_{\max}-u_{\min}+\epsilon_{\mathrm m}},\qquad
+\hat u^{(1)}_j=\frac{\bar u^{(1)}_j}{u_{\max}-u_{\min}+\epsilon_{\mathrm m}},$$
+with $u_{\mathrm{ave}}$, $u_{\max}$, $u_{\min}$ the mean, maximum and minimum of the $\bar u_j$ on $\Lambda_i$ and
+$\epsilon_{\mathrm m}=10^{-15}$ (page-local symbols), apply the [Hermite WENO](/methods/hermite-weno.md) operator
+$\mathcal H$ to the mapped data, and map back, $\mathcal H_{\mathcal D}=\mathcal D_u^{-1}\mathcal H\mathcal D$ with
+$\mathcal D_u^{-1}\hat u_h=(u_{\max}-u_{\min}+\epsilon_{\mathrm m})\hat u_h+u_{\mathrm{ave}}$ (Eqs. (2.30)–(2.33)).
+Theorem 5 proves $\mathcal H_{\mathcal D}$ affine-invariant when $\epsilon_{\mathrm m}$ is "treated as machine zero";
+the paper states that $\mathcal D$ "can render any nonlinear reconstruction operator" (WENO, HWENO)
+invariant, and proves it for HWENO only. *(Compiler check, not in the sources: for $\sigma<0$ the range is
+$|\sigma|(u_{\max}-u_{\min})$ and the mapped data change sign; invariance then also needs $\mathcal H$ to be odd,
+$\mathcal H[-f]=-\mathcal H[f]$, which holds for weights that depend on the data only through quadratic
+indicators.)*
+
+**Normalized damping in Hermite WENO.** The oscillation-eliminating step of Fan & Wu's OE-HWENO carries the
+[OEDG](/methods/oedg.md) normalization over: its damping coefficient is a sum of value and derivative jumps
+divided by $\max_i|\bar u_i-u_\Omega|$, $u_\Omega$ the global mean (page-local), so $F_{\mathrm{OE}}$ commutes
+with $A_{\sigma,\mu}$ (Theorem 4). With homogeneous fluxes the whole solution operator is homogeneous of degree
+one (Theorem 6), and for $u_t+\lambda f(u)_x=0$ at fixed CFL number the results do not depend on $\lambda>0$
+(evolution invariance, Theorem 7), because the damping factor depends on the product of the wave speed and
+$\Delta t$. The tests show the payoff against the oscillation-free OF-HWENO of Zhao & Qiu, whose damping
+terms and HWENO operator the authors call not scale-invariant (§2.2.4): on a Lighthill–Whitham–Richards
+traffic problem written in three equivalent unit systems (hours and km, minutes and km, minutes and m)
+OE-HWENO gives consistent results while OF-HWENO smears in one and oscillates and shifts the discontinuity
+in another (Ex. 3, Fig. 3.1); on the Lax problem scaled by $\sigma\in\{10^{-7},1,10^7\}$ OE-HWENO is
+invariant while OF-HWENO smears at $10^7$ and oscillates at $10^{-7}$ (Ex. 4, Fig. 3.2); on a 2-D Riemann
+problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
+
 ## Qualifications
 
+- Fan & Wu (2024, Definition 4) print the 2-D transformation with
+  $u_{\mathrm{ave}}=\frac1{\#\Lambda_{i,j}}\sum|\bar u_\kappa|$, with absolute values that the 1-D Eq. (2.31) does not
+  have, and state the 2-D invariance proof as "similar to Theorem 5". *(Compiler check, not in the sources:
+  with the absolute values the shift part fails for sign-changing data, since
+  $|\sigma\bar u+\mu|\ne\sigma|\bar u|+\mu$ in general; the 1-D form is the consistent one.)* *(Compiler check, not in the sources: like that of OEDG,
+  the OE damping is normalized by a global range, so its strength in one region depends on the data elsewhere.)*
 - **Invariance and accuracy can conflict.** *(Compiler check, not in the sources.)* In smooth
   regions $\tilde u_i=\tfrac12+O(\Delta x)$ (Deng 2023, Lemma 1), and a weight that depends on
   $\tilde u_i$ alone tends to its value at $\tfrac12$, not to the linear weight. For NewWENO,
@@ -221,3 +261,4 @@ decomposition can destroy invariance, because eigenvectors are defined up to an 
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(23).
 - [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.2–3.1.3, Eq. (3.8), Remarks 3.2–3.3; Example 5.7 (arXiv v1).
+- [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.4–2.2.5, Defs. 1–3, Eqs. (2.30)–(2.33), Theorems 4–7; §2.3, Def. 4; Examples 3, 4, 9, Figs. 3.1, 3.2, 3.8 (arXiv v1).

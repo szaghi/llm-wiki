@@ -3,9 +3,9 @@ type: Method
 title: "Hybrid central-WENO schemes"
 description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost or restore order, but hinge on the sensor and its threshold."
 status: established
-aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS]
+aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -173,6 +173,56 @@ stencil, as the sine waves of the accuracy tests have every half period, therefo
 branch; the accuracy tables measure the nonlinear interpolation at those points.)* The paper does not
 say whether "within the stencil" means $[x_{i-2},x_{i+2}]$ or the union of the five cells.
 
+## Extreme points in the target cell: MMR-WENO and HMR-WENO
+
+Zuo & Zhu (2024a, 2024b) switch, cell by cell, between the linear upwind finite-difference scheme of order
+5, 7 or 9 and the [multi-resolution WENO](/methods/multi-resolution-weno.md) of the same order, with a
+detector of the same family as the one above: the nodal density on the big stencil (5, 7 or 9 points) is
+interpolated by a polynomial $g$ of degree $n_{\mathrm g}=4$, 6 or 8 (page-local $g$, $n_{\mathrm g}$; the sources write $2r$
+with their own $r$, not the registry's), and the cell is troubled when $g$ has an
+extreme point in the **target cell** $[x_{i-1/2},x_{i+1/2}]$, a narrower interval than the
+$[x_{i-5/2},x_{i+5/2}]$ of Zhu & Qiu and Zhao et al. or the $[x_{i-3/2},x_{i+3/2}]$ of a Wang, Tian, Zhu & Zhao
+hybrid, as they recall them. They state that those detectors "had a fatal flaw": exact extreme points of a
+quintic or higher-degree polynomial are "not only time-consuming but also unavailable", so the detectors
+served hybrids of order at most five (2024a, §1; 2024b, §1, Remark 1). The two papers decide the extreme
+point differently ([troubled-cell indicators](/definitions/troubled-cell-indicator.md)):
+
+- **Termwise bounds** (MMR-WENO, 2024a, §2.2, Eqs. (2.21)–(2.33), Algorithm 1). The fifth-order quartic is
+  expanded about $x_{i-1/2}$ ($g_1$) and about $x_{i+1/2}$ ($g_2$); on the cell each monomial
+  $((x-x_{i\mp1/2})/\Delta x)^k$ ranges over $[0,1]$ or $[-1,0]$, so the sums of the termwise maxima and minima
+  bound $\Delta x\,g'$, e.g. $\mathrm{MAX}_1=\max(0,4a_4)+\max(0,3a_3)+\max(0,2a_2)+a_1$ for $g_1$ (page-local
+  $a_k$), and the cell is troubled when $(\mathrm{MAX}\pm\Delta x)(\mathrm{MIN}\pm\Delta x)<0$ for $g_1$ or for
+  $g_2$; $g_2$ is skipped when $g_1$ already flags the cell. The $\pm\Delta x$ margin, after Wang et al., guards
+  against round-off. *(Compiler check, not in the sources: $g_1$ and $g_2$ interpolate the same five values with
+  degree 4, so they are one polynomial written about two points — the printed coefficients satisfy, e.g.,
+  $a_3^{\mathrm R}=a_3^{\mathrm L}+4a_4^{\mathrm L}$ — and the second test differs only through its bounds;
+  because the bounds overestimate the range of $g'$, a sign change of the bounds flags the cell without proving
+  an extreme point, while equal signs prove that there is none.)*
+- **Hierarchical bisection** (HMR-WENO, 2024b, §2.2, Eqs. (2.15)–(2.19), Algorithm 1). Starting from the linear
+  $g^{(n_{\mathrm g}-1)}$, each derivative's zeros in the cell (sign test plus bisection) split it into pieces on which the
+  next lower derivative is monotonic, down to $g'$, whose zeros are then counted exactly by endpoint signs;
+  $\mathrm{icount}>0$ flags the cell. The authors claim the first use of a hierarchical bisection to locate
+  monotonicity intervals of an arbitrary-degree polynomial (§1); no tolerance or iteration count is given.
+
+Both are presented as parameter-free and extendable to any order (sextic $g$ at seventh order, octic at
+ninth), dimension by dimension in multi-D; in smooth cells the characteristic projection and all weight
+computations are skipped (2024a, §1). CPU time relative to the same-order multi-resolution WENO: 20.7–36.8 %
+for MMR-WENO on the Lax problem, a 2-D Riemann problem, double Mach reflection and the 3-D Taylor–Green vortex
+(2024a, Table 3.1; no hardware stated) and 25–78 % for HMR-WENO on the blast waves, double Mach reflection, the
+forward step and the Taylor–Green vortex (2024b, Table 3.1; Lenovo XiaoXinAir 14 laptop, Visual Studio 2017).
+Both hybrids keep the design orders 5, 7, 9 on 1-D to 3-D Euler density waves with cleaner fifth-order
+convergence than the non-hybrid scheme, and show more roll-up and lower Taylor–Green dissipation than it by
+figure ([density waves](/benchmarks/density-wave-advection.md),
+[double Mach reflection](/benchmarks/double-mach-reflection.md),
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)); MMR-WENO is said to identify flow features "more
+accurately" than the Wang et al. hybrid (2024a, Ex. 3.4, 3.6), while the claim of more precise detection on the
+narrower interval is not tested against the earlier detectors in 2024b.
+
+*(Compiler check, not in the sources, as for the hybrid MR-WCNS above: a detector of extreme points flags every
+smooth extremum of the density, so the nonlinear branch runs at the crests of the sine waves of the accuracy
+tests; and a jump across which $g$ stays monotonic in the target cell is detected only through the
+oscillations of the interpolant.)*
+
 ## Energy-preserving central / WENO-TENO hybrids in LES
 
 De Vanna, Baldan, Picano & Benini (2023a) make the hybridization level the parameter of a study of
@@ -249,6 +299,16 @@ Liang, Xiao, Shyy & Fu (2022) replace, in cells flagged by a detector built only
 flags, the TENO flux by a tanh interpolation; like [TENO-THINC](/methods/teno-thinc.md), this is a
 hybrid whose second member is a jump reconstruction, not a linear scheme. They recall Hill & Pullin's
 switch and WENO-RL as other hybrids (§1).
+
+Zhang, Fleischmann, Adami & Adams (2024a, §3.3, Eq. (49), Algorithm 1) build the finite-volume analogue for the
+five-equation two-phase model: all primitive variables are reconstructed by the
+[incremental-stencil WENO](/methods/incremental-stencil-weno.md) WENO5IS, and in interfacial cells, detected
+by $10^{-3}<\phi_1<1-10^{-3}$ with a locally monotone volume fraction (Eq. (46)), the volume fraction and the
+two partial densities are replaced by [THINC](/methods/thinc-reconstruction.md) values, velocity and pressure
+keeping the WENO values; a positivity- and boundedness-preserving blend with the first-order state follows
+($\tilde q=\theta[(1-\delta)\tilde q^{\mathrm{WENO}}+\delta\tilde q^{\mathrm{THINC}}]+(1-\theta)\tilde q^{(1)}$, $\delta$ the
+interface switch, $\theta$ the limiter factor, page-local here; [bound preservation](/properties/bound-preservation.md),
+[five-equation model](/definitions/five-equation-model.md)).
 
 ## Blends with a first-order flux
 
@@ -360,3 +420,6 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — §1; §3, Step 2, Eqs. (3.6)–(3.9), Remarks 1, 3; §4, Examples 4.1, 4.7, Tables 4.1–4.4; §5, Table 5.1.
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §1; §3.1–3.3, Eqs. (31)–(35), Algorithm 1; §4, Tables 1–2, 7, 9, Figs. 17–18; §5.
 - [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20); §4.1, Fig. 14.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §1; §2.2, Eqs. (2.21)–(2.33), Algorithm 1, Remarks 1–2; §3, Tables 3.1–3.4, Examples 3.4–3.7.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §1; §2.2, Eqs. (2.15)–(2.19), Algorithm 1, Remarks 1–3; §3, Tables 3.1–3.4.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eqs. (46)–(49), Algorithm 1.

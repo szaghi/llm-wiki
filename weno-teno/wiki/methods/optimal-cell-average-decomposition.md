@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -162,6 +162,54 @@ low density, 1299.55 min (optimal), 1327.45 min (quasi-optimal), 1772.26 min
 [shock–vortex interaction](/benchmarks/shock-vortex-interaction.md) and the
 relativistic jet (§8.3, §8.5).
 
+## Optimal decompositions in later sources
+
+Two sources of the bundle use the optimal decomposition of Cui, Ding & Wu
+in new schemes and print the closed forms of $\varpi_\star(\varkappa)$
+beyond $\mathbb P^{2,3}$.
+
+- **Relativistic MHD, central DG on overlapping meshes**
+  ([Ding & Wu (2024)](/sources/ding-2024-b.md), §4.3, §4.6, Eqs.
+  (53)–(60), Cors. 4.1–4.2). A central-DG solution of one mesh is
+  discontinuous inside the cells of the other, so they split each target
+  cell into four quarter cells and apply a general feasible symmetric
+  decomposition (Eq. (53)) on each. The cell average becomes the sum of
+  an internal part and two boundary parts, one on the interior lines
+  $x_i$, $y_j$, with traces from both sides, and one on the outer boundary
+  (Eq. (59)); the bound-preserving CFL condition is $\varpi/2$, with
+  normal-field-jump factors in the wave speeds
+  ([bound preservation](/properties/bound-preservation.md)). With the
+  classic decomposition the condition is $1/(2N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$
+  (Cor. 4.1); with the optimal one $\varpi_\star(\varkappa,\mathbb P^N)/2$
+  (Cor. 4.2), with
+  $$\varpi_\star=\Big[\tfrac{14}3+\tfrac23\sqrt{78\varkappa^2+46}\,\cos\Big(\tfrac13\arccos\frac{1476\varkappa^2-244}{(78\varkappa^2+46)^{3/2}}\Big)\Big]^{-1}\quad(N=4,5),$$
+  $$\varpi_\star=\Big[\tfrac{20}3+2\lvert\varkappa\rvert+\tfrac23\sqrt{126\varkappa^2+96\lvert\varkappa\rvert+94}\,\cos\Big(\tfrac13\arccos\frac{864\lvert\varkappa\rvert^3+2916\varkappa^2+288\lvert\varkappa\rvert-532}{(126\varkappa^2+96\lvert\varkappa\rvert+94)^{3/2}}\Big)\Big]^{-1}\quad(N=6,7),$$
+  and $1/(4+2\lvert\varkappa\rvert)$ for $N=2,3$, $\tfrac12$ for $N=1$
+  (their $\delta$ is the registry's $\varkappa$). At $\varkappa=0$ the two
+  formulas give $0.129171=2-\sqrt{14}/2$ and $0.087129=1-\sqrt{30}/6$, the
+  table values above, and at $\lvert\varkappa\rvert=1$ the $N=4,5$ formula
+  gives $1/12$, the classic weight, as Thms 5.1–5.2 require *(compiler
+  check, not in the sources)*. For $\mathbb P^2$ the optimal
+  decomposition has one internal node at $\varkappa=0$, the two nodes
+  $(\pm\sqrt{2\lvert\varkappa\rvert/(3+3\lvert\varkappa\rvert)},0)$ merging,
+  against $2Q(N_{\mathrm{GL}}-2)=6$ for the classic one with $Q=N_{\mathrm{GL}}=3$
+  (Eqs. (54)–(56)), so the limiter needs fewer points, the reason they use
+  it in all 2D tests (§4.6). In practice $\alpha_\ell=1$ and, for
+  $\Delta x=\Delta y$, $\varkappa=0$, because the normal-field jumps stay
+  small (Remark 9).
+- **Sixth-order Hermite WENO** ([Fan & Wu (2024)](/sources/fan-2024.md),
+  §2.4, Eq. after (2.53), Thm 11, arXiv v1). For the $\mathbb P^5$
+  reconstruction of their oscillation-eliminating Hermite WENO they use
+  the $N=4,5$ decomposition (their anisotropy $\theta$ is the registry's
+  $\varkappa$), with weights $\varpi_\star$,
+  $\mathsf w_1=\frac{5(1-4\varpi_\star+2\lvert\varkappa\rvert\varpi_\star)^2}{9(1-6\varpi_\star+4\lvert\varkappa\rvert\varpi_\star)}$,
+  $\mathsf w_2=1-2\varpi_\star-\mathsf w_1$ and explicit internal points, and
+  obtain the bound-preserving condition
+  $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)\le\varpi_\star$,
+  $2-\sqrt{14}/2\approx0.1292$ at $\varkappa=0$ against $1/12$ for the
+  classic decomposition (p. 31). In 1D they keep the Gauss–Lobatto rule,
+  which is optimal there (§2.4).
+
 ## Classic decompositions in other sources
 
 Five further sources of the bundle prove bound preservation with classic
@@ -286,6 +334,15 @@ change.
   the proof of Thm 7.1 prints $a_2/\Delta x$ for $a_2/\Delta y$, against the
   source's own definition (3.34) of the anisotropy.
 
+- **A printed exponent.** Fan & Wu print the argument of the arccos as
+  $(1476\varkappa^2-244)/(78\varkappa^2+46)$, without the exponent $3/2$
+  that Ding & Wu print; at $\varkappa=0$ the printed argument is
+  $-244/46\approx-5.30$, outside the domain of the arccos, while with the
+  exponent it is $-0.782$ and the formula returns their own value
+  $2-\sqrt{14}/2$ *(compiler check, not in the sources)*.
+- Ding & Wu's tests run at a step above the proved bound
+  ([bound preservation](/properties/bound-preservation.md), Qualifications).
+
 # Citations
 
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §1 (Defs 1.1, 1.3; Problems 1.2, 1.4; Eqs. (1.6), (1.10), (1.13)–(1.15)); Thm 2.3; §3 (Lemmas 3.1–3.20, Thms 3.4, 3.12, 3.26, 3.29); Thm 4.1; §5 (Thms 5.1–5.17, Alg. 5.20); Thm 6.1 and Fig. 11; §7 (Thm 7.1, Rems. 7.4, 7.7); §8 (Tables 1–10); App. C.
@@ -295,3 +352,5 @@ change.
 - [Renac (2021)](/sources/renac-2021.md) — arXiv v3: Thm 6.1 (Eq. (66)), Rem. 6.1, App. A.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: Rem. 3.4 (Eq. (44)); Thm 3.1 (Eqs. (57)–(59)).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — Thm 4.1; Thm 4.3 (Eq. (4.17)); Thms 5.4–5.6; Rem. 5.1.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §4.3 (Eqs. (53)–(60), Fig. 2); §4.6 (Cors. 4.1–4.2, Eqs. (54)–(56), (76)–(77), Fig. 1, Remark 9).
+- [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §2.4, Eqs. (2.52)–(2.57), Thm 11, Remark 5.

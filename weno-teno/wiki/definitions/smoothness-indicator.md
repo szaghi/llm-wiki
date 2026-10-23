@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Smoothness indicators
@@ -83,6 +83,12 @@ $1/62270208000$ (Eq. (20)); they name these wide indicators as the main cost of 
 [WENO-CU6](/methods/weno-cu6.md), replace the indicator of the fully downwind three-point stencil by
 the six-point $\beta_6$, because a downwind stencil weighted like the upwind ones "may cause the
 instability" ([MDCD schemes](/methods/mdcd-scheme.md)).
+Zhang, Jiang, Qin, Qu & Yan (2024b, Eqs. (11), (16)) print the same rule for WENO-CU6 and the four-point
+indicator of the TENO6 stencil $\{i,\dots,i+3\}$ in expanded form,
+$\tfrac1{240}\big[f_i(2107f_i-9402f_{i+1}+7042f_{i+2}-1854f_{i+3})+f_{i+1}(11003f_{i+1}-17246f_{i+2}+4642f_{i+3})+f_{i+2}(7043f_{i+2}-3882f_{i+3})+547f_{i+3}^2\big]$;
+for their scale-adaptive TENO6-SA they replace it by the mean of this four-point indicator and the six-point
+$\beta_6$ (Eq. (36); [scale sensors](/definitions/scale-sensor.md)). *(Compiler check, not in the sources: the expanded
+form equals Ye et al.'s three-square form above identically.)*
 
 **Legendre form.** Li et al. (2022b, Eqs. (8)–(11)), after Balsara et al., expand the candidate in
 the rescaled Legendre basis $1,\ X,\ X^2-\tfrac1{12},\ X^3-\tfrac3{20}X$ on
@@ -90,7 +96,7 @@ $[-\tfrac12,\tfrac12]$ (page-local $X=(x-x_i)/\Delta x$; the registry keeps $\xi
 
 $$\beta_k=\Big(p^{[1]}_k+\tfrac{1}{10}p^{[3]}_k\Big)^2+\tfrac{13}{3}\big(p^{[2]}_k\big)^2+\tfrac{781}{20}\big(p^{[3]}_k\big)^2 .$$
 
-*(Compiler check: this equals the Jiang–Shu integral exactly.)* Balsara et al. (2024, §I) stress that
+*(Compiler check, not in the sources: this equals the Jiang–Shu integral exactly.)* Balsara et al. (2024, §I) stress that
 indicators written as sums of perfect squares cost few operations, which they credit with improving
 the speed and stability of high-order FD-WENO; they extend the closed forms to finite volumes.
 For the quartic on a five-point central stencil, with the further basis function
@@ -264,7 +270,7 @@ $$\tau^{\mathrm{ref}}_5=\sum_{l=3}^4\int\Delta x^{2l-1}\big(\partial_x^l\tilde u
 =\tfrac{13}{12}(u_{i+2}-4u_{i+1}+6u_i-4u_{i-1}+u_{i-2})^2+\tfrac14(u_{i+2}-2u_{i+1}+2u_{i-1}-u_{i-2})^2,$$
 
 with $\tau^{\mathrm{ref}}_5=(u_i''')^2\Delta x^6+O(\Delta x^8)$ (App. B, Eq. (B.20)) (page-local symbol;
-it is not the WENO-Z $\tau_5=|\beta_0-\beta_2|$ of the registry). *(Compiler check: the closed form
+it is not the WENO-Z $\tau_5=|\beta_0-\beta_2|$ of the registry). *(Compiler check, not in the sources: the closed form
 was recomputed from the integral; it agrees.)*
 
 **Wider stencils for sensors.** Zheng, Shu & Qiu (2021, §2.2.4) evaluate Jiang–Shu indicators with
@@ -316,6 +322,17 @@ between the finite element solution and its WENO reconstruction defines their sm
 [WENO-stabilized continuous Galerkin](/methods/weno-stabilized-continuous-galerkin.md),
 [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). Because only derivatives enter,
 the cell-average correction of the candidates does not affect the indicator (Remark 3).
+
+Chen & Fu (2024, §4.2, Eqs. (15)–(20)) apply the Jiang–Shu form to the whole nodal polynomial of a
+spectral-difference cell, $\beta_i=\sum_{l=1}^{N}\Delta x^{2l-1}\int_{I_i}(\partial^l_xu_h)^2dx$, and in 2-D
+direction by direction, $\beta^x_{i,j}=\sum_{l=1}^{N}\Delta x^{2l-2}\iint_{I_{i,j}}(\partial^l_xu_h)^2\,dx\,dy$ ($N$ the
+polynomial degree, $N+1$ solution points per direction; the source's $N$ counts the points). Three consecutive cells form a TENO-type troubled-cell test with
+$\gamma_k=(\beta_k+\epsilon)^{-q}$, $q=6$, normalized and cut at $10^{-5}$ (1-D) or $5\times10^{-4}$ (2-D), with
+$\epsilon=10^{-4}$ (1-D) and $10^{-3}$ (2-D): a very small $\epsilon$ such as $10^{-12}$ is "not good" because
+high-wavenumber noise of extremely low amplitude would be flagged, and the larger 2-D value is argued from the
+$(N+1)^2$ basis functions of degree up to $2N$ of a nodal 2-D polynomial
+([troubled-cell indicators](/definitions/troubled-cell-indicator.md)). The same paper's Hermite candidates use
+the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/hermite-weno.md)).
 
 ## Multi-dimensional, derivative and time indicators
 
@@ -581,3 +598,5 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §3.1.2, Eqs. (25)–(26); §3.2.2, Eq. (29).
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.1, Eqs. (12)–(14).
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.3, Eq. (27); §3.4, Eqs. (28)–(32).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.4–2.5, Eqs. (11), (16); §5.1, Eq. (36).
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §4.2, Eqs. (15)–(20); §5.4.1, Eq. (56).

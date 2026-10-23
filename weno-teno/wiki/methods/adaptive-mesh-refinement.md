@@ -5,7 +5,7 @@ description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested 
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Block-structured adaptive mesh refinement
@@ -46,7 +46,7 @@ PARAMESH (blocks of $40\times40$ cells in 2D and $50\times14\times12$ in
 3D, up to nine levels). Bai & Li describe their mesh as a quadtree-like
 multi-level Cartesian mesh (§2.2).
 [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) implement
-[Active Flux](/methods/active-flux.md) in ForestClaw, a quadtree (or
+[Active Flux](/methods/active-flux.md) in [ForestClaw](/software/forestclaw.md), a quadtree (or
 multi-block forest) of quadrants managed by p4est, each quadrant holding a
 Cartesian patch with the same number of cells on every level
 ($16\times16$ in all their tests), with 2:1 balance between adjacent
@@ -68,6 +68,24 @@ on the CPU. In ADAM the GPU field array is transposed so that the block
 index is contiguous, for coalesced access, and is copied to the CPU only
 at input/output and AMR updates, refinement and coarsening themselves
 being done on the CPU (§2.2, Fig. 3).
+
+**Unstructured simplices in space–time shock tracking.** Outside the
+block-structured family, [Naudet & Zahr (2024)](/sources/naudet-2024.md)
+(§3.3, §4.5) refine the curved simplex meshes of their slab-based
+space–time [implicit shock tracking](/methods/implicit-shock-tracking.md)
+element by element. A refined element is split in its straight-sided
+parent and mapped through its isoparametric map and the domain map, which
+keeps the refined mesh conforming and curved (Eqs. (31)–(34)). Simplices
+are refined by splitting an edge at its midpoint, together with every
+simplex that shares the edge, or in 2D by uniform 1→4 refinement with
+neighbours refined or edge-split (§3.3.2, Fig. 6); space–time prisms
+extruded from the spatial mesh are cut into $N_d=dN_{d-1}+2$ simplices,
+$N_2=4$, $N_3=14$, $N_4=58$, by splitting every face and connecting it to
+a central node (Eq. (35); page-local $N_d$, $d$ the space–time dimension).
+Simplices are kept because element removal by edge collapse, which the
+tracking needs, is defined in any dimension (§3). Refinement interrupts the
+tracking optimization at an iteration whose residual is below a user
+threshold, while the element count stays below a user limit (§4.5).
 
 ## Refinement criteria
 
@@ -114,6 +132,20 @@ being done on the CPU (§2.2, Fig. 3).
   centred difference quotient of $q$ is at least 15 (two-dimensional
   Burgers, where the same cells are also limited); in convergence tests
   they force the refinement along a diagonal band instead (§4).
+- **Residual and modal sensor (space–time DG).** Naudet & Zahr refine
+  every element whose enriched DG residual (test degree one above the
+  trial degree) is at least $c_1$ times the largest one, or whose
+  Persson–Peraire sensor on the first conserved variable is at least $c_2$
+  times the largest one, $c_1=c_2=0.01$ by default (§4.5, Eqs. (43)–(45);
+  page-local $c_1$, $c_2$;
+  [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). On
+  Burgers shock formation and merging, eight rounds turn 96 quadratic
+  triangles into 207 and resolve the formation point (§5.1.2,
+  Figs. 12–13); on the [Shu–Osher problem](/benchmarks/shu-osher-problem.md),
+  run to $T=2$, refinement and the removal of the known upstream region
+  resolve the shock formation and post-shock oscillations, with a relative
+  $L^2$ error of $3.97\times10^{-4}$ against a refined finite-volume
+  reference (§5.3.2, Figs. 19–21).
 
 **When to remesh.** Matsushita & Aoki remesh when the interface has
 moved $2\Delta x_{\min}$, estimated from the acoustic time step
@@ -314,6 +346,14 @@ as the coarser uniform one (Table 4).
   give $\log_2(1.64\times10^{-4}/2.06\times10^{-5})=2.99$ and
   $\log_2(3.33\times10^{-5}/3.87\times10^{-6})=3.11$ *(compiler check,
   not in the sources)*.
+- Naudet & Zahr's refinement is unstructured and driven by the tracking
+  optimization; it has no coarse–fine interfaces, sub-cycling or
+  refluxing, and the paper gives no convergence-order study (§5). Their
+  Remark 10 states that a triangular prism split without interior points
+  needs "four simplices" ($N_3=4$); a triangular prism without Steiner
+  points is cut into three tetrahedra, e.g. $\{1,2,3,4\}$, $\{2,3,4,5\}$,
+  $\{3,4,5,6\}$ for bottom vertices 1–3 and top vertices 4–6 *(compiler
+  check, not in the sources)*.
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) argue for
   r-adaptation instead: the dyadic refinement of AMR produces spurious
   reflection, refraction and scattering of waves at refinement jumps,
@@ -336,3 +376,4 @@ as the coarser uniform one (Table 4).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — arXiv v2: §3.1–3.2, Figs. 3–6; §4.1–4.6, Corollary 4.3, Tables 1–4; Conclusions.
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §2.2 (ALPACA multiresolution and local time stepping).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — arXiv v2: §1.1, §7.1 (argument against dyadic refinement).
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §3, §3.3 (Eqs. (31)–(35), Remarks 9–10, Fig. 6); §4.5 (Eqs. (43)–(45)); §5.1.2 (Figs. 12–13); §5.3.2 (Figs. 19–21).

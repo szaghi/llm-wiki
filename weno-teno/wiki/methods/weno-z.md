@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # WENO-Z weights
@@ -93,6 +93,15 @@ $\tau_K/(\beta_k+\epsilon)=O(\Delta x^s)$, $s>0$, with WENO-Z's "typical" $\tau_
   Mach reflection; WENO7-Z and WENO9-Z both fail on the forward-facing step at $481\times161$ (Luo &
   Wu 2021, §5.2.5, §5.3.3–5.3.4). Li et al. (2022b, Fig. 3) report an asymmetric WENO7-Z solution near
   the square wave of the Jiang–Shu composite profile.
+- **Seventh order as a reference.** Zhang, Jiang, Qin, Qu & Yan (2024b, Eq. (9), §5) run WENO7-Z with $q=2$ and
+  $\epsilon=10^{-40}$ against sixth-order TENO variants: seventh order on smooth advection ($L_1=3.40\times10^{-17}$ at
+  $N_x=1600$; Table 2), rates 7, 7, 6, 3, 4, 5, 6 at critical points of order 0–6 (Table 3), ADR resolved
+  bandwidths 1.330 and 1.418 at 1 % and 1.5 % dispersion error, above every six-point scheme except their TENO6-SA
+  (1.767 and 1.774) and, at 1.5 %, TENO6-A (1.590), with larger dissipation "due to the upwind mechanism" (§5.2, Fig. 5), the smallest errors of all
+  compared schemes on a long-time 2-D Gaussian advection ($L_1=4.10\times10^{-5}$ against $9.34\times10^{-5}$ for
+  TENO6-SA; Table 4), and the lowest cost, "as it avoids calculating the complex $\tau_6$" (§5.3). They use WENO7-Z
+  on $500^3$ and $512^3$ grids as the reference for their Taylor–Green and isotropic-turbulence runs (§6.4;
+  [scale sensors](/definitions/scale-sensor.md), [critical-point accuracy](/properties/critical-point-accuracy.md)).
 
 ## Z-type weights on other stencil families
 
@@ -105,7 +114,7 @@ each time with a global indicator built against the largest candidate:
 | sixth-order multi-resolution [HWENO](/methods/hermite-weno.md), four levels | $\tau=\big(\tfrac13\sum_{l\le3}\lvert\beta_4-\beta_l\rvert\big)^2$ | $\tau/(\beta_l+\epsilon)$, $\epsilon=10^{-10}$ | Li, Shu & Qiu 2022d, Eqs. (2.21)–(2.22), citing Castro, Costa & Don |
 | 2-D WENO-ZQ ([CWENO](/methods/cweno.md)), $\mathbb P^3$ and four $\mathbb P^1$ | $\tau=\big(\tfrac14\sum_{k\le4}\lvert\beta_0-\beta_k\rvert\big)^2$ | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-14}$ | Zheng, Cai, Qiu & Qiu 2022, Eqs. (13)–(14) |
 | Zhu–Qiu WENO on triangles ([CWENO](/methods/cweno.md)), quadratic and four linear | $\tau^2$ with $\tau=\tfrac14\sum_{\ell\le4}\lvert\beta_0-\beta_\ell\rvert$ (Zhu & Qiu's $\tau$) | $\tau^2/(\beta_\ell+\epsilon)$ (Zhu & Qiu); $\tau^2/(\beta_\ell+\epsilon)^2$, $\epsilon=\lvert K_0\rvert\max\bar u^2$ (Chen & Wu) | Chen & Wu 2022, Eqs. (32)–(34) |
-| incremental-stencil interpolation of WCNS-IS | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
+| [incremental-stencil](/methods/incremental-stencil-weno.md) interpolation of WCNS-IS (also WENO5IS) | TENO reference indicator $\tau^{\mathrm{ref}}_5$ (page-local; see [smoothness indicators](/definitions/smoothness-indicator.md)) | $\tau^{\mathrm{ref}}_5/(\beta_k+\epsilon)$, times $\tau^{\mathrm{ref}}_5/(\beta_{01}+\epsilon)$ for the two-point stencils | Wong et al. 2021, Eqs. (91)–(93) |
 | WENO-AO($\mathcal R$,3) | $\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ | $\tau^2$, $\tau^3$, $\tau^4$ over $(\beta+\epsilon)^2$ for $\mathcal R=5,7,9$ | Balsara et al. 2024, App. D ([WENO-AO](/methods/weno-ao.md)) |
 | WCNS-MR interpolation of Qin et al. ([shock-capturing boundary closure](/methods/shock-capturing-boundary-closure.md)), indicators with scaled derivative sums | as in the first row | $\tau/(\beta_m+\epsilon)$, $\epsilon=10^{-10}$ | Qin, Chen, Lin & Deng 2023, Eqs. (11)–(14) |
 | MR-AWENO interpolation ([multi-resolution WENO](/methods/multi-resolution-weno.md)) | as in the first row | $\tau/(\beta_k+\epsilon)$, $\epsilon=10^{-6}$ | Li, Li, Don & Wang 2023a, Eqs. (23)–(24), recalling Wang, Zhu, Yang & Zhao |
@@ -292,3 +301,4 @@ WENO-M in one code, on one problem and hardware.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §1; §3.2, Eqs. (24)–(28); §5.3–5.4 (arXiv v4).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §3.2, Eqs. (12)–(15); §4.1, Tables 1–2.
 - [McQuaid & Brehm (2024)](/sources/mcquaid-2024.md) — §3.8, Eq. (20).
+- [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.3, Eq. (9); §5.2–5.5, Tables 2–4, Fig. 5; §6.4.

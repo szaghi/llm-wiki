@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Shock–bubble interaction
@@ -90,7 +90,7 @@ post-shock state of the right one with $\gamma=1.4$
 sources)*.
 
 **Mach 1.22 air–helium (Haas & Sturtevant).** A Mach 1.22 shock in air
-hits a helium bubble of diameter 5 cm. Sixteen sources run it, in several
+hits a helium bubble of diameter 5 cm. Seventeen sources run it, in several
 models:
 
 | Source | Model and scheme | Setup as printed | Grid |
@@ -110,6 +110,7 @@ models:
 | [Jiao et al. (2024)](/sources/jiao-2024.md) §4.2, Table 4.3 | four-equation mass-fraction model, second-order compact FV, all-Mach flux, THINC on the gas mass fraction with EOS-consistent face density (THINC-TDU) | pre-shock air $(p,v_1,\rho)=(101325\ \mathrm{Pa},0,1.225\ \mathrm{kg/m^3})$, post-shock $(159059,\ 113.5\ \mathrm{m/s},\ 1.686)$, helium $(101325,0,0.169)$; air $\gamma=1.4$, helium $1.67$; $M=1.22$; walls top and bottom, zero gradient left and right | $14400\times1600$, cell $0.055625$ mm |
 | [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.4, Table 4 | conservative multi-species Euler, nodal DG $\mathbb P_3$ with positivity-preserving [entropy filtering](/methods/entropy-filtering.md) and a pressure-jump entropy switch ([PyFR](/software/pyfr.md)) | half of $[0,1]\times[-0.1,0.1]$ with symmetry; bubble radius $5/89$ at $(0.8,0)$, helium with 28 % air by mass; shock $M=1.22$ at $x=0.9$ moving left; air $(\rho,v_1,p)=(1,0,1)$, $\gamma=1.3986$; shocked air $(1.37636,-0.55957,1.5698)$; bubble $\rho=0.18187$, $\gamma=1.6467$ | unstructured triangles at three edge lengths (arXiv v1) |
 | [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) §3.1 | multi-species Navier–Stokes in [OpenFOAM](/software/openfoam.md), kinetic-energy-preserving central flux plus Ducros-switched AUSM$^+$-up dissipation | helium circle $d=50$ mm in N$_2$ at $101325$ Pa, 273 K, shock moving right to left; shock Mach number not printed | three hexahedral grids, sizes not printed for this case |
+| [Chen & Fu (2024)](/sources/chen-2024.md) §9.8 | single-material Euler ($\gamma=1.4$ throughout), [spectral differences](/methods/spectral-difference-method.md) of third and fourth order with TENO-A and WENO limiters | $(\rho,v_1,v_2,p)$: $(1,0,0,1)$ outside, bubble $(0.1819,0,0,1)$ of radius 0.5 at $(3.5,0.89)$, post-shock $(1.3764,-0.3947,0,1.5698)$ for $x\ge4.5$; $[0,6.5]\times[0,1.78]$; inflow and outflow left and right, reflective top and bottom; $t=2.5$ | $1300\times356$ |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.4 | multicomponent Euler in $p$–$T$ equilibrium, MUSCL with overbee limiter on volume fractions, HLLC | $325\times89$ mm; shock 25 mm from the bubble, moving right to left; pre-shock air $(\rho,p)=(1.4,10^5)$, post-shock $(1.92691,\ v_1=-114.42,\ 156{,}980)$; helium $\rho=0.25463$, $\gamma=1.648$ (SI values of their Table 3, whose column headers are misaligned with the rows) | $325\times90$, $650\times180$, $1300\times360$ (about 50, 100, 200 cells per diameter) |
 
 The post-shock pressure ratio $1.5698$ of Zheng et al. is that of a
@@ -244,6 +245,24 @@ being refracted by it.
   jet hits the downstream bubble wall about $2.83\,\mu$s after the shock
   reaches the bubble ($3.69\,\mu$s absolute), "which agrees perfectly"
   with an earlier computation.
+- **Mach 10 air-bubble collapse in water.** [Zhang et al. (2024a)](/sources/zhang-2024.md)
+  §4.8 (Table 9) run the same geometry as Tsoutsanis et al. with a much stronger shock:
+  domain $[0,0.03]\times[0,0.015]$ m, air bubble of diameter 6 mm at $(0.012,0.0075)$ m,
+  shock at $x=0.0066$ m; post-shock water $(\phi_1\rho_1,v_1,p)=(1579,\ 5958.1\ \mathrm{m/s},\ 9.68\times10^{10}\ \mathrm{Pa})$
+  ("approximately 100 GPa"), water at rest $(1000,0,10^5)$, air $1.2$ kg/m³; water
+  $(\gamma,p_\infty)=(4.4,\ 6\times10^8\ \mathrm{Pa})$; extrapolation boundaries;
+  $3840\times1920$ cells, $0.34$–$1.0\,\mu$s. *(Compiler check, not in the sources: mass and
+  momentum balance give the shock speed $1579\cdot5958.1/579=16249$ m/s, ten times the water
+  sound speed $1625$ m/s, and the jump $1000\cdot16249\cdot5958.1=9.68\times10^{10}$ Pa.)*
+  Their WENO5IS-THINC scheme ([THINC](/methods/thinc-reconstruction.md)) reproduces the
+  jet, the water-hammer shock and sheet jetting; the bubble outline converges over
+  $960\times480$ to $3840\times1920$; the bubble mass over the domain is conserved exactly
+  and the mass inside $\phi_1\le0.5$ converges towards zero error (Figs. 14–16(a)). The
+  positivity- and boundedness-preserving limiter fires in more than 1 % of the cells with
+  WENO-JS5 as base scheme, much less with TENO5, and never above 0.04 % with WENO5IS
+  (Fig. 16(b)). They call the agreement with an earlier computation qualitatively good,
+  describing their ref. [58] as a "front-tracking method"; that reference is the paper of
+  the ALPACA level-set sharp-interface solver.
 - **Underwater shock on a gas bubble.** Zheng et al. Ex. 11: pre-shock
   water $(\rho,v_1,v_2,p,\gamma,p_\infty)=(1000,0,0,1,7.15,3309)$,
   post-shock $(1176.3576,1.1692,0,9120,7.15,3309)$ for $x<-1.2$, gas
@@ -375,6 +394,17 @@ agreement", Figs. 6–7); a three-grid Roache analysis along the axis gives
 observed orders 1.35 ($p$) and 1.46 ($\rho$) and grid-convergence
 indices of 1.1 % and 0.77 % for this bubble, 1.53 and 1.46 with 0.92 %
 and 0.97 % for the square one (Table 1).
+
+**Limited spectral differences.** Chen & Fu's TENO-A limiter resolves more of the
+single-material roll-up than the WENO limiter at third order, but the fourth-order TENO-A
+does not significantly improve on the third-order result; their TENO troubled-cell
+indicator marks only the fronts and tails of the interfaces and leaves the high-wavenumber
+centre unmarked, and they judge it better than the KXRCF indicator here (§9.8, Figs. 23–25;
+[adaptive TENO](/methods/adaptive-teno.md),
+[troubled-cell indicators](/definitions/troubled-cell-indicator.md)). *(Compiler check, not
+in the sources: their states are Chamarthi's above with the pressures multiplied by $1.4$
+and the velocity by $\sqrt{1.4}$, $0.3336\sqrt{1.4}=0.3947$, with a single $\gamma=1.4$, so
+the "bubble" differs from its surroundings in density only.)*
 
 **Holding a diffuse interface thin.** Huang & Johnsen's phase-field term
 keeps the helium–air interface 4–5 cells thick for the whole run, with
@@ -522,3 +552,5 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.5.2, Eq. (41), Fig. 11.
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §4.4, Eq. (51), Figs. 8–9; §5.1, Figs. 10–12.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.6, Table 3, Figs. 20–25; §7.7, Table 4, Fig. 26.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §9.8, Figs. 23–25: single-material shock–bubble interaction with limited spectral differences.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.8, Table 9, Figs. 14–16: Mach 10 air-bubble collapse in water, mass conservation, limiter frequency.

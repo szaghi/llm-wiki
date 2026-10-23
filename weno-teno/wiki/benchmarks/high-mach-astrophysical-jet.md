@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -56,6 +56,7 @@ speed and 682.08 with respect to the ambient one.
 | [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) Example 5.7 | finite-difference WENO-JS5, WENO-JS7, WENO-ZQ5, Euler and Navier–Stokes ($\mathrm{Re}=1000$) | $\Delta x=\Delta y=1/640$ | $0.001$ | [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md) and scaling limiter |
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.11 | finite-difference [HWENO](/methods/hermite-weno.md) (HWENO-R, HWENO-L), WENO-ZQ | $640\times320$ | $0.001$ | parametrized PP flux limiter |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.6 | scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) (MR-AWENO-Si), MR-AWENO | $800\times400$ | $0.001$ | [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
+| [Lin & Chan (2024)](/sources/lin-2024.md) §4.4 | LGL-[DGSEM](/methods/dgsem.md), $N=3$, [subcell limiting](/methods/subcell-finite-volume-limiting.md) towards a low-order entropy-stable scheme, with factors from a linear program enforcing the cell entropy inequality; SSPRK(3,3) | $[-0.5,0.5]^2$, $150^2$ elements, inflow at $x=-0.5$ | $0.001$ | relaxed positivity of $\rho$ and $\rho e$ ($\ge\tfrac12$ of the low-order value) and TVD-like density bounds, as [convex limiting](/methods/convex-limiting.md) constraints |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.18 | [OEDG](/methods/oedg.md), third order | $320\times160$ | $0.001$ | none mentioned |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.6 | nodal DG on triangles, $P^2$–$P^4$, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) (decay-rate threshold $\mathfrak a_0=2.5$, page-local; min-rule) | $h=1/320$, mesh symmetric about $y=0$ | $0.001$ | none; first layer of elements next to the inlet initialized with the jet state |
 
@@ -125,6 +126,26 @@ MCL but not for FCT schemes in problems that need stabilization". Of
 their two pressure-positivity fixes, the "cautious" one suppresses the
 vortical structures of the shear layer, while the "sharp" one "allows
 the development of turbulence" (Fig. 9).
+
+**Entropy bounds, dissipation and carbuncles.** Lin & Chan run the
+Mach 2000 jet, attributed to Ha et al., on the square of Rueda-Ramírez
+et al., ambient $(0.5,0,0,0.4127)$ and inflow $(5,800,0,0.4127)$ through
+$y\in[-0.05,0.05]$ at $x=-0.5$ (§4.4). With TVD-like density bounds,
+relaxed internal-energy positivity and the cell entropy inequality the
+run is robust (Fig. 6). In a shock-capturing variant that blends a
+fraction $\beta_{\mathrm e}\epsilon_K$ of the low-order entropy dissipation into the
+entropy bound ($\epsilon_K$ a modal smoothness factor, $\beta_{\mathrm e}\in[0,1]$
+user-chosen; both page-local here), finer features appear as $\beta_{\mathrm e}$
+decreases through $1$, $0.1$, $0.01$, $0$, but carbuncles appear at
+$\beta_{\mathrm e}=0.01$ and $0$, and also with the local minimum entropy principle
+in place of the cell entropy inequality (Fig. 7, Fig. A.8c). The authors
+conclude that "the carbuncle effect is not due only to a loss of entropy
+stability, but rather a lack of sufficient dissipation near shocks",
+and that the solution is highly sensitive to $\beta_{\mathrm e}$. The element-wise
+Zhang–Shu-limited entropy-stable DG shows no carbuncle, which they
+partly explain by its larger dissipation (Fig. A.8b); see
+[carbuncle phenomenon](/definitions/carbuncle-phenomenon.md) and
+[entropy stability](/properties/entropy-stability.md).
 
 **An exception without a stated limiter.** Peng, Sun & Wu compute the
 Mach 2000 jet with OEDG on $320\times160$ to $t=0.001$ and report no
@@ -213,6 +234,27 @@ closest to them (§5.2.3).
   and the limiter is necessary. Their tests run at "CFL number 0.6",
   whose definition is not printed, while their positivity theorem requires
   $\Delta t\le\Delta x/(12a)$.
+- **Relativistic MHD jets at Mach 50.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+  Example 5.9 run the relativistic MHD jet that Wu & Shu proposed with
+  the ideal equation of state (Numer. Math. 148, their ref. [12]), with the ideal and the RC equations of
+  state: domain $[-12,12]\times[0,25]$, half domain $[0,12]\times[0,25]$
+  on $240\times500$ cells with a reflective axis $x=0$; ambient $\rho=1$,
+  $v=0$, $B=(0,\sqrt{2000p_{\mathrm a}},0)$, $p=p_{\mathrm a}=2.35362407217\times10^{-5}$;
+  inflow $(\rho,v,B,p)=(0.1,\ (0,0.99,0),\ (0,\sqrt{2000p_{\mathrm a}},0),\ p_{\mathrm a})$
+  through $x\in[0,0.5]$ at $y=0$ (page-local $p_{\mathrm a}$); jet Mach
+  number 50, Lorentz factor about $7.09$, relativistic Mach number about
+  $354.37$, plasma beta $0.001$; output at $t=10$, 20, 30 (Figs. 12–14).
+  Their $\mathbb P^2$ bound-preserving, locally divergence-free central
+  DG code "would quickly break down" without any one of the
+  bound-preserving limiter, the discretized symmetrization source, or the
+  locally divergence-free spaces (stated, not shown), the same three
+  ingredients that Wu & Shu (2023) found necessary for the two-component
+  jet below; see
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
+  [bound preservation](/properties/bound-preservation.md). The ideal-EOS
+  results are comparable to Wu & Shu's earlier computation. With the
+  printed data $2p/\lvert B\rvert^2=2p_{\mathrm a}/(2000p_{\mathrm a})=10^{-3}$
+  *(compiler check, not in the sources)*.
 - **Two-component MHD jet.** [Wu & Shu (2023)](/sources/wu-2023-b.md)
   Ex. 7.2: two-component ideal MHD, domain $[-0.5,0.5]\times[0,1.5]$,
   ambient $(\rho,p)=(0.14,1)$, inflow $(\rho,p)=(1.4,1)$ with
@@ -315,3 +357,5 @@ closest to them (§5.2.3).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — Ex. 4.12, Fig. 18 (arXiv v1).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §2.2.4, §3.5, Table 5, Figs. 8–9; §4 (arXiv v1).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.9; Theorems 3.1, 4.1 (arXiv v1).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3.3, §4.4, Eqs. (49), (62), (67), Figs. 6–7, A.8.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Example 5.9, Figs. 12–14.

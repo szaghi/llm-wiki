@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Special relativistic hydrodynamics and MHD"
-description: "The special relativistic (magneto)hydrodynamics equations in lab-frame conservation form, whose primitive variables and fluxes are implicit functions of the conserved ones; the page fixes the variables, the implicit pressure equation and its provably convergent solvers, the convex admissible set and its linear GQL form, homogeneity, wave speeds, the entropy pair, and the two-fluid plasma and radiation-moment extensions."
+description: "The special relativistic (magneto)hydrodynamics equations in lab-frame conservation form, whose primitives and fluxes are implicit functions of the conserved variables; the page fixes the variables, general equations of state, the implicit recovery equations and their solvers, the convex admissible set and its GQL form, homogeneity, wave speeds, entropy and symmetrization, and extensions."
 status: established
 aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD
@@ -64,13 +64,51 @@ same system.)* They evolve it with a fourth-order finite-volume scheme with cons
 transport in PLUTO and do not describe their primitive recovery
 ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 
+[Ding & Wu (2024)](/sources/ding-2024-b.md) (§2, Eqs. (1)–(3)) print the same RMHD system in the
+ordering $u=(D,m,B,E)$, with magnetic pressure
+$\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$ and $E=\rho h_{\mathrm R}W^2-p_{\mathrm{tot}}+\lvert B\rvert^2$.
+*(compiler check, not in the sources: the magnetic pressure is $\tfrac12\lvert b\rvert^2$ above and
+$\rho h_{\mathrm R}W^2=Dh_{\mathrm R}W$, so the system is Duan & Tang's.)*
+
+## Equations of state
+
+Beyond the ideal law, Ding & Wu (2024) (§2, Eqs. (3)–(5), §5, Eqs. (86)–(89)) admit any
+$h_{\mathrm R}=h_{\mathrm R}(p,\rho)$ that satisfies the inequality from relativistic kinetic theory
+$$h_{\mathrm R}\ge\sqrt{1+p^2/\rho^2}+p/\rho$$
+and the causality condition
+$h_{\mathrm R}\big(\tfrac1\rho-\partial_ph_{\mathrm R}\big)<\partial_\rho h_{\mathrm R}<0$ (stated for a positive
+thermal expansion coefficient), and run four of them:
+
+| EOS | $h_{\mathrm R}(p,\rho)$ |
+|---|---|
+| ideal | $1+\dfrac{\gamma p}{(\gamma-1)\rho}$, $\gamma\in(1,2]$ |
+| IP | $2p/\rho+\sqrt{1+4(p/\rho)^2}$ |
+| TM | $\dfrac{5p}{2\rho}+\sqrt{1+\tfrac94(p/\rho)^2}$ |
+| RC | $\dfrac{12p^2+8p\rho+2\rho^2}{3p\rho+2\rho^2}$ |
+
+They state, citing the source of the RC law, that the ideal EOS "provides a poor approximation for
+most relativistic flows", being inconsistent with relativistic kinetic theory and valid only for
+strictly sub-relativistic or ultra-relativistic gases (§5).
+
 ## Primitive recovery
 
 For RHD the pressure is the root on $[0,\infty)$ of (Chen & Wu, Eqs. (7)–(8);
 page-local $\mathcal P_u$)
 $$\mathcal P_u(p)=\frac{p}{\gamma-1}-E+\frac{\lvert m\rvert^2}{E+p}+D\sqrt{1-\frac{\lvert m\rvert^2}{(E+p)^2}}=0,$$
 after which $v=m/(E+p)$ and $\rho=D\sqrt{1-\lvert v\rvert^2}$. For RMHD Duan &
-Tang state only that a nonlinear solve is needed (§1). Chen & Wu prove
+Tang state only that a nonlinear solve is needed (§1). Ding & Wu (2024) (§2.1, Eqs. (9)–(11), following
+earlier work) solve, for a general EOS, the scalar equation
+$$\xi-p\Big(\frac{D}{W(\xi)},\frac{\xi}{DW(\xi)}\Big)-\frac12\Big(\frac{\lvert B\rvert^2}{W^2(\xi)}+\frac{(m\cdot B)^2}{\xi^2}\Big)+\lvert B\rvert^2-E=0$$
+for $\xi=\rho h_{\mathrm R}W^2$ (page-local), with $W(\xi)$ an explicit function of $\xi$ and of
+$\lvert m\rvert^2$, $\lvert B\rvert^2$, $m\cdot B$ on the interval where it is defined; then
+$v=\big(m+\xi^{-1}(m\cdot B)B\big)/(\xi+\lvert B\rvert^2)$, $\rho=D/W$, $h_{\mathrm R}=\xi/(DW)$. The left
+side is strictly increasing with a unique root when $u$ is admissible, as recalled from earlier
+work, and admissibility of $u$ "is essential for robustly recovering the primitive variables"
+(§2.1). For this reason their limiter enforces admissibility also at the Gauss points where fluxes
+are evaluated, not only at the points of their bound-preservation theorem, a requirement they say
+does not arise in non-relativistic MHD (Remark 6); Cai, Qiu & Wu make the same point for RHD below.
+
+For the RHD pressure equation $\mathcal P_u(p)=0$ above, Chen & Wu prove
 (§3.4, Lemma 3.3):
 
 - For $u$ in the admissible set below, $\mathcal P_u$ is strictly increasing
@@ -151,7 +189,17 @@ $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0,\ p(u)>0\}$ (Eq. (4.22), from Wu &
 Tang 2017) with an explicit GQL family indexed by $(v_*,B_*)$ (Thm 4.13).
 Schemes that keep $G$ are called **physical-constraint-preserving** (PCP)
 by Chen & Wu; it is [bound preservation](/properties/bound-preservation.md)
-for this $G$. [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3–§4) prove a
+for this $G$. For RMHD with a general EOS, Ding & Wu (2024) (§2.2, Lemmas 2.1–2.3, recalled
+from earlier work of Wu and coauthors) write the GQL form of
+$G=\{D>0,\ p(u)>0,\ \lvert v(u)\rvert<1\}$ with free variables $\lvert v_*\rvert<1$ and $B_*\in\mathbb R^3$
+(page-local): $D>0$ and $u\cdot n_*+p_{m*}>0$ for all of them, with
+$n_*=\big(-\sqrt{1-\lvert v_*\rvert^2},-v_*,-(1-\lvert v_*\rvert^2)B_*,1\big)$ in the ordering $(D,m,B,E)$
+and an auxiliary magnetic pressure $p_{m*}$ (see Qualifications). Every constraint is linear in
+$u$, and their bound-preserving proofs for central [DG](/methods/discontinuous-galerkin.md) rest
+on it, together with the explicit form $G=\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0,\ \Phi(u)>0\}$
+(Lemma 3.2, $\Phi$ an explicit function, page-local) used by their three-step scaling limiter
+([geometric quasilinearization](/methods/geometric-quasilinearization.md),
+[Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md)). [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) (§3–§4) prove a
 finite-volume [Hermite WENO](/methods/hermite-weno.md) scheme PCP with the global
 [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md), a two-stage scaling limiter (first on
 $D$, then on the concave $g$) at all Gauss–Lobatto points, and the step
@@ -209,6 +257,15 @@ degree one in $w$ (page-local $\Phi$), makes $(\eta,F_\eta)$ an entropy pair
 of the modified system (Eqs. (2.4)–(2.5), after Wu & Shu); the source
 vanishes for divergence-free fields
 ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+Ding & Wu (2024) (§1, Eq. (7)) discretize the modified system
+$\partial_tu+\nabla\cdot f(u)=-(\nabla\cdot B)\,S_{\mathrm G}(u)$ with
+$S_{\mathrm G}=\big(0,\ (1-\lvert v\rvert^2)B+(v\cdot B)v,\ v,\ v\cdot B\big)$ (page-local; ordering
+$(D,m,B,E)$), which they call the relativistic analogue of Godunov's symmetrizable MHD form, for a
+further reason: its exact solutions stay admissible without $\nabla\cdot B=0$, whereas those of the
+conservative system may not, so that the latter "may be ill-posed outside the DF regime" (§1,
+citing Wu & Shu). Without the discretized source their locally divergence-free central DG scheme
+is bound preserving only under globally coupled discrete divergence conditions (Thm. 4.2;
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 On this form Duan & Tang build sixth-order entropy-conservative and
 fifth-order entropy-stable finite-difference schemes on adaptive moving
 meshes ([entropy-conservative flux](/methods/entropy-conservative-flux.md),
@@ -311,7 +368,16 @@ relativistic MHD versions of the 3D rotated shock tube, a new iso-enthalpy vorte
 [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) (observed
 $L_1$ order $4.00$ at 512 cells), [field-loop advection](/benchmarks/field-loop-advection.md), the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), a 3D blast wave and a 3D
-[shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md).
+[shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md). [Ding & Wu (2024)](/sources/ding-2024-b.md) (§5, $\mathbb P^2$ central DG, SSP-RK3,
+CFL 0.25, while the bound-preserving CFL conditions they prove, $\tau_{\max}\le\varpi\Delta x/2$ in 1D (Thm. 3.1) and
+$\tau_{\max}(\alpha_1/\Delta x+\alpha_2/\Delta y)\le\varpi/2$ with $\alpha_\ell\ge1$ in 2D (Thm. 4.1), are called sufficient,
+not necessary; $\tau_{\max}$ the maximum step of central DG, $\alpha_\ell$ page-local) run smooth RMHD Alfvén waves at $\lvert v\rvert=0.99$ with the TM EOS (third order in 1D
+and 2D), three 1D Riemann problems (ideal, RC and IP EOS; a pressure jump of about $10^{12}$ and
+a Lorentz factor of 223.61), the Orszag–Tang vortex, a rotor, the shock–cloud interaction,
+[blast waves](/benchmarks/mhd-blast-wave.md) with field strength up to 2000 and Mach-50
+[jets](/benchmarks/high-mach-astrophysical-jet.md); without the bound-preserving limiter the code
+fails on the non-smooth tests, and for the jets also without the symmetrization source or the
+locally divergence-free discretization (Exs. 5.1–5.9).
 
 ## Qualifications
 
@@ -350,6 +416,16 @@ $L_1$ order $4.00$ at 512 cells), [field-loop advection](/benchmarks/field-loop-
   proof needs $\Delta t\le\tfrac1{12}\Delta x/a$ (§5; see
   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
 
+- Ding & Wu (2024) print the auxiliary magnetic pressure of their GQL form (Lemma 2.2, Eq. (12))
+  as $p_{m*}=\tfrac12\big((1-\lvert v_*\rvert^2)B_*+(v_*\cdot B_*)^2\big)$, which adds a vector to a
+  scalar; by analogy with their magnetic pressure
+  $\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$ the first term should carry
+  $\lvert B_*\rvert^2$ *(compiler check, not in the sources)*. They print the right state of their 1D
+  Riemann problems on "$0.5<x\le0.5$", an empty set.
+- Ding & Wu's statements that the ideal EOS is a poor approximation and that the conservative
+  RMHD system may be ill-posed without $\nabla\cdot B=0$ are cited, not shown; Duan & Tang and
+  Berta et al. on this page use the ideal EOS.
+
 # Citations
 
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §2 (Eqs. (2), (6)–(14), Lemmas 2.1–2.3, Prop. 2.1); §3.1; §3.4 (Algs. 3.1–3.3, Lemma 3.3, Rem. 3.6); §3.5 (Lemmas 3.4–3.7, Thm 3.1); §3.6 (Thm 3.2); §3.7 (Eq. (60)); §4 (Exs. 4.1–4.12, Table 3, Rem. 4.1); App. A.
@@ -360,3 +436,4 @@ $L_1$ order $4.00$ at 512 cells), [field-loop advection](/benchmarks/field-loop-
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — arXiv v1: §2 (Eqs. (1)–(17)); §3.2 (Eqs. (23)–(31)).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §1; §2 (Eqs. (2.3)–(2.22), Defs. 2.1–2.2, Lemmas 2.1–2.8, Thms. 2.1–2.10, Algs. 2.1–2.4); §3 (Thm. 3.1, Remark 3.4); §4.3; §5 (Tables 1–3, Exs. 5.2–5.9).
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2 (Eq. (7)); §5.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §1 (Eq. (7)); §2 (Eqs. (1)–(11), Lemmas 2.1–2.4); §3.3 (Lemma 3.2, Remark 6); §4.7 (Thm. 4.2); §5 (Eqs. (86)–(89), Exs. 5.1–5.9).

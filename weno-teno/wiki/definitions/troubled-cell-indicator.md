@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -82,6 +82,16 @@ it the rates are about one (§5.1, Table 1); on solid-body rotation
 $2.6\times10^{-2}$ to $1.9\times10^{-2}$ and restores the range $[0,1]$
 from $[0,0.95]$ (§4.4, Fig. 6;
 [solid-body rotation](/benchmarks/solid-body-rotation.md)).
+[Lin & Chan (2024)](/sources/lin-2024.md) (§3.3, Eq. 50) reuse the factor
+with $\mathbb S_0=\log_{10}N^{-4}$, $\Delta_{\mathbb S}=1$, computed from the two
+highest modal energies of the element in an orthonormal Legendre basis
+(the form of the modal-energy indicator above), to blend a fraction
+$\beta_{\mathrm e}\varepsilon_K$ of low-order entropy dissipation into their
+entropy-constrained subcell limiter
+([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md));
+for the KPP problem they also cap the subcell weights by Hennemann et al.'s
+logistic blending, with the sharpness $\ln\big((1-10^{-4})/10^{-4}\big)$ and
+threshold $\mathbb T(N)$ above (Eqs. 58–59; page-local $\beta_{\mathrm e}$).
 
 **Rate of the Persson–Peraire sensor as a viscosity source.**
 [Cernetic et al. (2023)](/sources/cernetic-2023.md) (§4.1, Eqs. 41–45,
@@ -164,6 +174,20 @@ constants, per test in their Table A.4).
 Without it the iteration stalls on an accelerating Burgers shock at
 $N=3$ (§6.2.1, Fig. 19).
 
+**Persson–Peraire sensor and residual as refinement indicators.**
+[Naudet & Zahr (2024)](/sources/naudet-2024.md) (§4.5, Eqs. (43)–(45)) use
+the same sensor, with the projection onto total degree $N-1$ and the first
+conserved variable, on space–time elements of their slab-wise
+[implicit shock tracking](/methods/implicit-shock-tracking.md), not to
+stabilize but to choose elements for $h$-refinement: an element is refined
+if its sensor is at least $c_2$ times the largest one or its enriched DG
+residual (test space of one degree higher) at least $c_1$ times the
+largest one, $c_1=c_2=0.01$ (page-local; the source writes $s_{\bar K}$,
+$\chi$). Shocks are represented by mesh faces in this method, so the
+sensor locates under-resolved regions, such as shock formation, rather
+than discontinuities to be smoothed
+([adaptive mesh refinement](/methods/adaptive-mesh-refinement.md)).
+
 **Algebraic modal decay, fitted or learned (artificial viscosity).**
 [Yu & Hesthaven (2022)](/sources/yu-2022.md) (§1, §4.1, Eqs. (4.1)–(4.3))
 start from the Klöckner–Warburton–Hesthaven model
@@ -243,6 +267,53 @@ arXiv v1) apply KXRCF to a finite-volume Hermite WENO scheme for
 relativistic hydrodynamics, direction by direction in 2D, a cell being
 troubled if it is flagged in either direction; its threshold is not
 printed.
+
+**Absolute-jump indicator that also sets the blend (RKDG).**
+[Wei & Xia (2024)](/sources/wei-2024.md) (§3.1–3.2, Eqs. (7)–(11)), in a
+modification of KXRCF that they do not spell out, sum the absolute jumps
+of the DG solution at the $N_{\mathrm d}$ boundary quadrature points of
+the cell (the two endpoints in 1D) and normalize,
+$$\eta^{\mathrm J}_i=\frac{\sum_{j=1}^{N_{\mathrm d}}\big\lvert u^{\mathrm{int}}_{h,j}-u^{\mathrm{ext}}_{h,j}\big\rvert}{N_{\mathrm d}\,h^{\alpha_{\mathrm J}}\,C_\beta},$$
+with $h$ the mesh size (inscribed radius on triangles), $\alpha_{\mathrm J}=1$
+in all tests and a scale $C_\beta$, density as the indicator variable for
+Euler (page-local $\eta^{\mathrm J}_i$, $N_{\mathrm d}$, $\alpha_{\mathrm J}$,
+$C_\beta$; the source writes $\eta_i$ and $\alpha$). A cell is troubled if
+$\eta^{\mathrm J}_i>1$, and the same number sets the weight of the
+unlimited DG polynomial in the hybrid
+$\omega^{\mathrm J}_iP^N_{\mathrm{DG}}+(1-\omega^{\mathrm J}_i)P^1_{\mathrm{lim}}$,
+$\omega^{\mathrm J}_i=(\max_k\eta^{\mathrm J}_k-\eta^{\mathrm J}_i)/(\max_k\eta^{\mathrm J}_k-1)$,
+linear in the indicator, 1 at the threshold and 0 in the cell of the
+largest jump, with $P^1_{\mathrm{lim}}$ the linear polynomial of a
+minmod TVD/TVB, Tu–Aliabadi or Hermite WENO limiter (page-local
+$\omega^{\mathrm J}$, $P$). The blend keeps the cell average when the
+low-order limiter does. Larger $C_\beta$ flags fewer cells; the runs use
+$C_\beta=1/4$ in 1D, 5 on rectangles (0.5 for the vortex accuracy test)
+and 1 on triangles. On smooth Burgers and vortex tests the errors equal
+the unlimited ones to the printed digits (Tables 1, 5). Against the TVD
+limiter the average fraction of troubled cells falls, e.g. for Sod with
+100 cells from 32.44–26.54 % to 6.95–1.72 % for $P^1$–$P^4$ (Tables 2–4),
+and slip lines and the flow under the Mach stem of the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) are
+sharper (§4).
+
+**KXRCF-type deviation test that lowers a linear weight.**
+[Lin & Zhu (2024)](/sources/lin-2024-b.md) (§2, Steps 4.3–4.4, Eq. (2.15))
+use a test that they call "an improvement" of KXRCF inside a
+[multi-resolution WENO](/methods/multi-resolution-weno.md) scheme on
+triangles, to adapt the linear weights rather than to switch a limiter.
+With the tentative reconstruction $Q$ at the boundary Gauss points of
+$\triangle_0$ and its three edge neighbours $\triangle_{1,2,3}$, "Condition
+I" holds if
+$$\lvert Q(x_G)-\bar u_0\rvert>\max(\Phi_1,\Phi_2),\qquad
+\Phi_1=r_{\mathrm c}\min_{l=0..3}\lvert\bar u_l\rvert,\quad
+\Phi_2=\min_{l=1..3}\lvert\bar u_0-\bar u_l\rvert,$$
+with $r_{\mathrm c}$ the smallest circumradius of the four triangles
+(page-local $\Phi_1$, $\Phi_2$, $r_{\mathrm c}$). While it holds, the
+unnormalized weight of the high-order polynomial, initially $10^8$
+against 1 for the constant, is divided by 100 and the nonlinear weights
+are recomputed, down to a floor $10^{rr}$, $rr$ the number of Gauss points
+per edge (2 or 3). Their CPU times are 0.60–0.96 of the original scheme
+(Table 3.1).
 
 **TVB minmod indicator (RKDG).** Huang & Fu (§4.1, Eqs. 27–30) also
 recall Shu's TVB indicator: with $\tilde u_i=u^-_{i+1/2}-\bar u_i$ and
@@ -681,6 +752,32 @@ from them.
   It drives their TENO-weighted limiter
   ([WENO limiters for DG](/methods/weno-limiter-dg.md)).
 
+- *Direction-wise indicator for spectral difference* ([Chen & Fu (2024)](/sources/chen-2024.md),
+  §4.2, Eqs. (15)–(20)). For the nodal
+  [spectral difference method](/methods/spectral-difference-method.md)
+  the candidates are again the cells' own polynomials, on $I_{i-1}$,
+  $I_i$, $I_{i+1}$, with Jiang–Shu indicators of all derivatives up to the
+  degree, $\gamma_k=1/(\beta_k+\epsilon)^6$ and $\chi_k=\gamma_k/\sum_l\gamma_l$;
+  the cell is smooth only if $\chi_k>C_k$ for **all three** $k$, with
+  $\epsilon=10^{-4}$, $C_k=10^{-5}$ in 1D and $\epsilon=10^{-3}$,
+  $C_k=5\times10^{-4}$ in 2D (page-local $C_k$), where 2D indicators along
+  $x$ and along $y$ give two independent flags, so that limiting can act
+  in one direction only. A much smaller $\epsilon$ ($10^{-12}$) would flag
+  high-wavenumber noise of very small amplitude, and the larger 2D values
+  are argued from the $N^2$ nodal basis of degree $2N-2$ (§4.2). Against
+  KXRCF, recalled with exponent $(N+1)/2$ ($N$ the degree), the maximum
+  nodal norm in 2D and threshold 1, on density and energy (Eqs.
+  (13)–(14)), it gives nearly the same cells on the shock tubes, catches
+  the shocklets behind the [Shu–Osher](/benchmarks/shu-osher-problem.md)
+  shock that KXRCF misses, and flags far fewer cells in a 2D Riemann
+  problem, which the authors attribute to relative instead of absolute
+  thresholds (§9.3, §9.6). It can miss a direction in which three
+  consecutive cells carry "completely the same discontinuous degree"
+  (§9, Fig. 4). It drives their Hermite TENO limiter
+  ([WENO limiters for DG](/methods/weno-limiter-dg.md)); with the
+  constants of Huang & Fu above it differs in the all-three test and in
+  $C_k$.
+
 **Pressure-jump shock indicator (Riemann-solver switch).**
 [Bai & Li (2022)](/sources/bai-2022.md) (§2.4, Eqs. (16)–(20), after Kim et
 al. and a Joukowsky-type criterion) blend the HLLC and HLL star states at
@@ -725,6 +822,50 @@ state that classifying by conservative variables would restore the
 symmetry (Ex. 4.7). They call the switch problem-independent and free of
 artificial parameters (Remark 1, §6); the hybrid costs 0.81–1.07 times
 WENO-JS, against 1.50–2.31 for the non-hybrid scheme (Table 5.1).
+
+**Termwise bounds of the derivative (any order).**
+[Zuo & Zhu (2024a)](/sources/zuo-2024.md) (§2.2, Eqs. (2.21)–(2.33),
+Algorithm 1) switch a finite-difference
+[multi-resolution WENO](/methods/multi-resolution-weno.md) scheme of
+orders 5, 7, 9 between the linear upwind scheme of the same order and the
+nonlinear one ([hybrid schemes](/methods/hybrid-weno.md)) by testing for
+extreme points only in the **cell** $[x_{i-1/2},x_{i+1/2}]$, without
+computing roots. They interpolate the nodal densities on the
+$(n_{\mathrm g}+1)$-point stencil by a polynomial of degree $n_{\mathrm g}=4$, 6 or 8
+(page-local; the sources write $2r$) written in the
+monomials $((x-x_{i\mp1/2})/\Delta x)^k$ about each end of the cell, $g_1$
+and $g_2$; on the cell each term of the scaled derivative
+$\Delta x\,g'_l$ is monotone, so the sum of the termwise maxima and of the
+termwise minima bound it, for fifth order
+$\mathrm{MAX}_1=\max(0,4a_4)+\max(0,3a_3)+\max(0,2a_2)+a_1$ and
+$\mathrm{MIN}_1$ with min, $a_k$ the coefficients of $g_1$ (Eqs.
+(2.29)–(2.30); page-local $g_l$, $a_k$, $\mathrm{MAX}_l$, $\mathrm{MIN}_l$).
+The cell is troubled if $(\mathrm{MAX}_l\pm\Delta x)(\mathrm{MIN}_l\pm\Delta x)<0$
+for $l=1$ or 2, the margin $\Delta x$ guarding against round-off; the
+second expansion is evaluated only if the first passes. They contrast
+earlier indicators of this family (Zhu & Qiu, Zhao et al., and Wang, Tian,
+Zhu & Zhao 2023, as recalled), which locate extreme points on the wider
+intervals $[x_{i-3/2},x_{i+3/2}]$ or $[x_{i-5/2},x_{i+5/2}]$, a search they
+call "not only time-consuming but also unavailable" for quintic and
+higher-degree polynomials (§1). CPU time falls
+to 20.7–36.8 % of the non-hybrid scheme on the Lax tube, a 2D Riemann
+problem, the double Mach reflection and the inviscid
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) (Table 3.1).
+
+**Hierarchical bisection (any order).** [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md)
+(§2.2, Eqs. (2.15)–(2.19), Algorithm 1) make the same cell-local test
+exact: the interpolant $g$ of degree $n_{\mathrm g}$ of the nodal densities is
+differentiated down to $g^{(n_{\mathrm g}-1)}$, which is linear; its zero, if any in
+the cell, splits the cell into pieces on which $g^{(n_{\mathrm g}-2)}$ is monotone;
+on each piece an endpoint sign test and a bisection locate the zero of
+$g^{(n_{\mathrm g}-2)}$, and so on down to $g^{(1)}$, whose sign changes on the
+monotone pieces count the extreme points of $g$ in the cell. The cell is
+troubled if the count is positive. The hybrid saves 22–75 % of the CPU
+time of the same-order multi-resolution WENO on four shock tests on a
+stated laptop (Table 3.1), and on 2D and 3D density waves gives clean
+fifth-order rates where the non-hybrid scheme's rates oscillate
+(2.52–8.66 in $L^1$ in 2D, Table 3.3). Both papers call their indicators
+free of problem-dependent parameters (Abstracts).
 
 ## Indicators that only select cells
 
@@ -775,6 +916,13 @@ Several sources use an indicator without defining or analysing it:
   case-by-case tuning is needed while setting $\epsilon$ differently in
   1D and in multi-D. In all three, "parameter-free" means fixed across
   the authors' tests.
+- **Thresholds that remain.** Zuo & Zhu (2024a) test the bounds against
+  the margin $\pm\Delta x$, a length compared with a quantity of the size
+  of the density differences, so the test changes under a rescaling of
+  the density *(compiler check, not in the sources)*. Wei & Xia state
+  that "setting $C_\beta=1$ is effective enough" and that the choice is
+  not sensitive (§3.1, §4.2), while their runs use four values from $1/4$
+  to 5 and no sensitivity study is shown.
 - **Physical sensors.** Fu (2023) reports the case-dependence of the Ducros
   sensor as a reason for the TENO-based indicator (§3.4), yet records that
   later TENO6-A work replaced the undivided-difference sensor by a modified
@@ -894,6 +1042,53 @@ Several sources use an indicator without defining or analysing it:
 - Cernetic et al.'s Eq. (42) starts the numerator sum at the last index of
   the degree-$(N-1)$ set, which by their Eq. (41) belongs to the retained
   part; the sum should start one index later.
+- **Extreme points are not discontinuities.** Both Zuo & Zhu indicators
+  flag every cell in which the interpolant has an extreme point, so smooth
+  extrema always take the nonlinear branch, and a discontinuity across
+  which the interpolant stays monotone in the cell is flagged only through
+  the oscillations it induces *(compiler check, not in the sources)*; the
+  papers show flagged-cell maps but no analysis. The termwise bounds of
+  Zuo & Zhu (2024a) over-estimate the range of $g'_l$, so their test is a
+  sufficient condition for "no extremum" rather than an extremum detector
+  as the text calls it, and $g_1$ and $g_2$ are the same interpolant
+  expanded about two points (the interpolant of five nodes of degree four
+  is unique), so they differ only in the bounds they yield *(compiler
+  check, not in the sources)*. As printed, their bounds of $g'_2$ (Eqs.
+  (2.31)–(2.32)) include the termwise extremes of $g'_1$ inside every max
+  and min, while the text says the bounds follow "as shown in Step 3",
+  which would give $\max(-4a^{\mathrm R}_4,0)+\max(3a^{\mathrm R}_3,0)+\max(-2a^{\mathrm R}_2,0)+a^{\mathrm R}_1$
+  for the coefficients $a^{\mathrm R}_k$ of $g_2$ *(compiler check, not in
+  the sources)*. The pairing of the signs in $\pm\Delta x$ is not stated.
+- Zuo & Zhu (2024b) apply a bisection to the linear $g^{(n_{\mathrm g}-1)}$, whose
+  zero is explicit, and give no tolerance or iteration count.
+- **Global data in a local weight.** Wei & Xia's weight uses
+  $\max_k\eta^{\mathrm J}_k$ over all cells, so the blend in a cell depends
+  on the strongest jump anywhere, and the cell with the largest jump is
+  limited fully; the claim that the limiter "maintains the local data
+  structure" and keeps the parallel efficiency is not tested (Abstract, §5)
+  *(compiler check, not in the sources: the maximum in Eq. (11) runs over
+  the cell index)*. Their identity $\tau_M/\tau_m=\max_i\eta_i$, with
+  $\tau_m=N_{\mathrm d}h^{\alpha_{\mathrm J}}C_\beta$, holds only if $h$ is
+  the same in every cell, which fails on non-uniform triangles *(compiler
+  check, not in the sources)*.
+- **The sine ramps as printed** (in page notation; the sources write
+  $s_K$ or $s$, $s_0$, $\kappa$). Pazner (Eq. (69), checked on the PDF)
+  prints $\varepsilon_K=0$ for $\mathbb S_K<\mathbb S_0-\Delta_{\mathbb S}$,
+  $\tfrac12-\tfrac12\sin\big(\pi(\mathbb S_K-\mathbb S_0)/(2\Delta_{\mathbb S})\big)$
+  for $\lvert\mathbb S_K-\mathbb S_0\rvert\le\Delta_{\mathbb S}$ and 1 for
+  $\mathbb S_K>\mathbb S_0+\Delta_{\mathbb S}$, the form recorded above.
+  Lin & Chan (Eq. (50)) print 0 below, the same middle case
+  $0.5\big(1-\sin(\pi(\mathbb S_K-\mathbb S_0)/(2\Delta_{\mathbb S}))\big)$, and
+  "1, if" $\mathbb S_K<\mathbb S_0+\Delta_{\mathbb S}$ for the upper case. The
+  printed middle case equals $\tfrac12-\tfrac12\sin(-\pi/2)=1$ at
+  $\mathbb S_0-\Delta_{\mathbb S}$ and $\tfrac12-\tfrac12\sin(\pi/2)=0$ at
+  $\mathbb S_0+\Delta_{\mathbb S}$, so in both papers it falls where the
+  outer cases rise from 0 to 1 and jumps at both ends;
+  $\tfrac12+\tfrac12\sin(\cdot)$ would join them continuously *(compiler
+  check, not in the sources)*.
+- Chen & Fu's TENO indicator and their KXRCF comparison are qualitative
+  (flagged-cell plots); the parameters differ from Huang & Fu's for RKDG,
+  a per-method choice.
 - Chamarthi (2023b) attributes the "original" detector once to Li &
   Jaberi (2012) and once to Li, Chen & Ren (2022) (§2.4, refs. [52] and
   [53]).
@@ -939,3 +1134,10 @@ Several sources use an indicator without defining or analysing it:
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §3.1, Eqs. (31)–(34); §3.2; §4.6.
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §3.4, Eqs. (33)–(37); §5.7–5.8.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §4.4, Eqs. (65)–(66); §6.
+- [Chen & Fu (2024)](/sources/chen-2024.md) — §4.1–4.2, Eqs. (13)–(20); §9, §9.3, §9.6, §9.8, Fig. 4.
+- [Lin & Chan (2024)](/sources/lin-2024.md) — §3.3, Eq. (50); §4.1.2, Eqs. (58)–(59).
+- [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §2, Steps 4.3–4.4, Eq. (2.15); Table 3.1.
+- [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §4.5, Eqs. (43)–(45).
+- [Wei & Xia (2024)](/sources/wei-2024.md) — §3.1–3.2, Eqs. (7)–(14); §4, Tables 1–5, Figs. 9–20; §5.
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §1; §2.2, Eqs. (2.21)–(2.33), Algorithm 1, Remarks 1–2; §3, Table 3.1.
+- [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §1; §2.2, Eqs. (2.15)–(2.19), Algorithm 1, Remarks 1–3; §3, Tables 3.1, 3.3.

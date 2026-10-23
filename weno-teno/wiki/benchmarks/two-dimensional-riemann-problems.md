@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -56,6 +56,7 @@ The sources use three placements and several final times:
 | [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) Ex. 3.9 | $[0,1]^2$, $(0.8,0.8)$ | $400\times400$, CFL 0.2 | 0.8 | MEG7 (conservative and primitive) vs seventh-order mapped WCNS7M (arXiv v1) |
 | [Zhou et al. (2023)](/sources/zhou-2023.md) §5.6, Eq. (41) | $[0,1]^2$, $(0.8,0.8)$, non-reflective | $\Delta x=\Delta y=1/400$, CFL 0.5, HLLC with pressure control | 0.8 | six-point [WCNS](/methods/weighted-compact-nonlinear-scheme.md) WCNS-SA vs WCNS-LD and ONL6 |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 13 ("a similar version of Configuration 3") | $[0,1]^2$, $(0.8,0.8)$, zero gradient | $400\times400$, CFL 0.5 | 0.8 | fifth-order FV IMWENO-P vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P |
+| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.5 | $[0,1]^2$, $(0.8,0.8)$, boundary conditions not stated | $400\times400$, CFL 0.6 | 0.8 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs [MR-WENO](/methods/multi-resolution-weno.md) |
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.3 | box $L_0\times L_0$, quadrants split at $x=y=0$, extrapolation | $1600\times1600$ | $t/t_0=0.3$ | [WENO-Z](/methods/weno-z.md)5, WENO-Z7, TENO5, [TENO-A5](/methods/adaptive-teno.md) in [URANOS](/software/uranos.md) |
 
 The two Chamarthi papers print the states as fractions,
@@ -146,6 +147,12 @@ the same split $(0.5,0.5)$, with Takagi et al.'s Eq. (34)
 (configuration 12) and Eq. (33) (configuration 3) *(compiler check, not
 in the sources)*; on that basis they
 are listed here under those configurations.
+[Chudzik et al. (2024)](/sources/chudzik-2024.md) Ex. 7.4, citing
+Schulz-Rinne et al., print the same decimal states with the split at
+$(0.5,0.5)$ of $[0,1]^2$, two forward-moving shocks and two stationary
+contacts, and run them on $128^2$ and $512^2$ with their third-order
+[Active Flux](/methods/active-flux.md) method without any limiter; the
+output time is not given in the text (Fig. 24).
 
 ## Four-contact configurations
 
@@ -244,6 +251,19 @@ print the same four states and find that a higher WENO order and TENO
 resolve additional shear-layer instabilities and more detail of the
 central plume, compared qualitatively with Guo & Shi (App. A.3,
 Fig. 13).
+
+Zuo & Zhu (2024a) find their hybrid MMR-WENO giving "more delicate
+roll-up structures" and "smaller numerical dissipations and higher
+density resolutions" than MR-WENO of the same order on configuration 3,
+with the flagged cells plotted (Ex. 3.5, Figs. 3.6–3.7), at 32.5 %, 23.6 % and 23.2 % of the MR-WENO CPU time
+for orders 5, 7, 9 (Table 3.1).
+
+**Unlimited Active Flux on configuration 12.** Chudzik et al. run
+configuration 12 with no limiter at all, as all simulations of their
+paper; the method uses the linearized bicharacteristic EG2 operator for
+the point values and finite volumes with Simpson-rule fluxes for the
+averages (§7, Ex. 7.4, Fig. 24). Their figure is the only evidence; the
+paper reports no oscillation measure.
 
 **Characteristic reconstruction in a semi-implicit scheme.** Boscarino
 et al. use both of their problems at $\varepsilon=1$ to choose where
@@ -403,7 +423,7 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
   ($t=0.3$ to $1$), so the jet is at different stages of development in
   different papers; only the runs with split $(0.8,0.8)$ on $[0,1]^2$
   and $t=0.8$ (Deng, Huang et al., Wang et al. 2023b, Wang et al. 2021,
-  the two Chamarthi papers, Zhou et al., Zhong et al.) are directly comparable.
+  the two Chamarthi papers, Zhou et al., Zhong et al., Zuo & Zhu 2024a) are directly comparable.
 - Li, Duan & Tang's Ex. 5.4 says its monitor function and linear
   weights are those of Ex. 5.2, which states no linear weights; the
   non-default weights $(0.95,0.045,0.005)$ are set in Ex. 5.3.
@@ -447,3 +467,5 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.4, Exs. 13–14, Figs. 15–19.
 - [Tang (2024)](/sources/tang-2024.md) — §4.4.2, Eq. (34), Fig. 11, Table 6.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Remark 3.3; Exs. 5.6–5.7, Figs. 6–7 (arXiv v1).
+- [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.5, Figs. 3.6–3.7, Table 3.1.
+- [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §7, Ex. 7.4, Fig. 24.

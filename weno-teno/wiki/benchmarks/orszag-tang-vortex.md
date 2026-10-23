@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T23:55:00Z
 ---
 
 # Orszag–Tang vortex
@@ -85,6 +85,23 @@ normalization corresponds approximately to their $t=0.5$, which is the
 $2\pi$ time scaling above: $3.14/(2\pi)=0.4997$ *(compiler check, not in
 the sources)*.
 
+[Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.5 mix the two:
+on the unit square $[0,1]^2$ they print the $2\pi$-periodic amplitudes,
+$\rho=\gamma^2$, $p=\gamma$, $v=(-\sin2\pi y,\ \sin2\pi x,\ 0)$,
+$B=(-\sin2\pi y,\ \sin4\pi x,\ 0)$, $\gamma=5/3$, and output at
+$t=0.5/2\pi$, $2/2\pi$, $3/2\pi$ and $5/2\pi$, i.e. Liu et al.'s times
+under the $2\pi$ time scaling. In the rescaling above this is the
+$2\pi$-periodic problem shrunk to the unit square *(compiler check,
+not in the sources)*.
+
+**Relativistic single-fluid version.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+Example 5.5 run relativistic MHD on periodic $[0,2\pi]^2$ with
+$\rho=1$, $v=A(-\sin y,\ \sin x,\ 0)$, $A=0.99/\sqrt2$, so the maximum
+Lorentz factor is about $7.09$, $B=(-\sin y,\ \sin2x,\ 0)$, $p=10$, and
+the equation of state $h=\tfrac{5p}{2\rho}+\sqrt{1+\tfrac94(p/\rho)^2}$
+they label TM, on $600^2$ cells, with $\log\rho$ and $W$ shown at $t=2.82$
+and $6.85$ (Fig. 6).
+
 **Three-dimensional versions.** Dao & Nazarov §5.4, after Helzel et
 al., extend the 2D data with $v_3=0$, $B_3=0$ and add the velocity
 perturbation $\big(-a\sin2\pi z\sin2\pi y,\ a\sin2\pi z\sin2\pi x,\ a\sin2\pi z\big)$
@@ -153,6 +170,8 @@ constraint.
 | [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) §5.3 | nodal DG / flux reconstruction, $\mathbb P_3$, positivity-preserving [entropy filtering](/methods/entropy-filtering.md) | $64^2$, $128^2$, $256^2$ elements, $\Delta t=4,2,1\times10^{-4}$ | Powell source term |
 | [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) §6.2.1 | [entropy-stable](/properties/entropy-stability.md) finite differences, orders 3 and 4, IMEX | $200^2$ | hyperbolic (perfectly hyperbolic Maxwell) cleaning |
 | [Berta et al. (2024)](/sources/berta-2024.md) §5.6 | fourth-order finite volume, pointwise MP5 or WENO-Z (LINEAR second-order comparison), Roe or HLLD with UCT-HLLD (MHD), GFORCE with UCT-GFORCE (RMHD), SSPRK(5,4), CFL 0.5 | MHD $64^2$, $512^2$; RMHD $128^2$, $1024^2$ | upwind constrained transport |
+| [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.5, §4.5 | cell-centred [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) finite volume, explicit Rusanov advection with MUSCL–Hancock, implicit pressure sub-system by Picard iterations and GMRES, CFL 0.8 on the flow speed | $1000^2$ | unstaggered constrained transport from a vector potential |
+| [Ding & Wu (2024)](/sources/ding-2024-b.md) Ex. 5.5 | $\mathbb P^2$ bound-preserving, locally divergence-free central DG for relativistic MHD, SSP-RK3, CFL 0.25, locally divergence-free WENO limiter in troubled cells | $600^2$ | locally divergence-free spaces plus a symmetrization source on the jumps of the normal field |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
@@ -278,6 +297,21 @@ fourth-order runs produce several, still unresolved, O-points in the
 high-pressure filament. See
 [numerical dissipation](/definitions/numerical-dissipation.md).
 
+**Velocity-based time step.** Dematté et al. report results in line with
+the literature at their four output times (Fig. 9). In the same run the
+normalized residuals of the nested Picard iterations stay between
+$10^{-12}$ and $10^{-4}$ with two iterations per loop, and the GMRES
+solves of the magnetic and pressure systems need fewer than ten
+iterations per step (§4.5, Figs. 21–22).
+
+**Bound preservation in relativistic MHD.** Ding & Wu's central DG code
+fails at $t\approx2.196$ without the bound-preserving limiter; with it,
+the relative global divergence error, which adds the normal jumps of
+$B$ across cell edges to the divergence inside the cells, stays at order $10^{-4}$, and the relative local
+error, inside the cells, stays zero (Figs. 6, 7a, 7d; see
+[bound preservation](/properties/bound-preservation.md),
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
 adaptive TENO family carries over to MHD with constrained transport
@@ -285,7 +319,7 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All twelve sources compare contour plots or slices; none reports an
+- All fourteen sources compare contour plots or slices; none reports an
   error norm (Berta et al.'s normalized pressure maximum is a scalar
   proxy, not an error). Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
@@ -322,3 +356,5 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) — §6.2.1, Figs. 4–7 (arXiv v2).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.3, Figs. 4–7.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.6, Figs. 9–10 (arXiv v4).
+- [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.1.5, §4.5, Figs. 9, 21–22.
+- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Example 5.5, Figs. 6–7.

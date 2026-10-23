@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T23:50:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -68,6 +68,7 @@ with it:
 | [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) | FD adaptive TENO | 0.4; 0.35 for the blast waves (§4, Eq. (17)) |
 | [Liang et al. (2022)](/sources/liang-2022.md) | FD TENO with THINC switch | 0.4; 0.35 for the high-Mach jets; double Mach reflection "not very sensitive" to 0.2, 0.4, 0.6 (§4.5, Fig. 15) |
 | [Ji et al. (2022)](/sources/ji-2022.md) | unstructured FV TENO (UCNS3D) | 0.4 (§5) |
+| [Lin & Chan (2024)](/sources/lin-2024.md) | DGSEM with entropy-LP subcell limiting | $\Delta t=\tfrac12\min_im_i/(2\lambda_i)$, computed at the first stage and kept for all three (Eq. (52); $m_i$ the lumped mass, $\lambda_i$ not defined in the paper, taken from Lin et al. (2023)) |
 | [Jeong et al. (2022)](/sources/jeong-2022.md) | FD RBF-based WENO | 0.4 |
 | [Li et al. (2023a)](/sources/li-2023.md) | FD scale-invariant MR A-WENO | 0.45 |
 | [Wan & Xia (2022)](/sources/wan-2022.md) | FD WENO, steady problems by pseudo-time marching | 0.2; 0.6 in 3D (Eq. (4.1)) |
@@ -141,6 +142,11 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   stage and compute the local minimum-entropy bound from the previous stage, which keeps the
   forward-Euler argument stage by stage ([entropy filtering](/methods/entropy-filtering.md)).
 
+- [Lin & Chan (2024)](/sources/lin-2024.md) (footnote 7) need SSPRK(3,3) and the CFL
+  condition only for positivity; the cell entropy inequality their subcell limiter enforces is
+  semi-discrete and does not depend on the time integrator, and no fully discrete entropy
+  inequality is claimed.
+
 ## Sizing the time step
 
 - **For accuracy tests.** A third-order integrator caps the observed order of a higher-order
@@ -210,6 +216,26 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
   SSP **multistep** methods of order $N+1$ for $\mathbb P^N$-DG, with SSP coefficients $1/3$
   (four-step third order), $\approx0.282$ (ten-step fifth), $\approx0.217$ (eighteen-step
   seventh) and $0.1$ (22-step ninth) in [Cui et al. (2024)](/sources/cui-2024.md) (§7, Ex. 1).
+- **Orders above four: multistep–multistage SSP.** [Teissier et al. (2024)](/sources/teissier-2024.md)
+  (arXiv v2, read under an earlier title with two of the three authors; §3.6, Table 1, Eqs.
+  (60)–(65)) match the time order to the spatial order of finite-volume MHD solvers of orders 2
+  to 10. They recall that no explicit single-step SSP Runge–Kutta method exists above order four
+  and that two-step SSP methods reach at most order eight, so tenth order needs at least three
+  steps. Their integrators, SSP$(p,s,n)$ for order $p$, $s$ stages and $n$ steps (page-local
+  notation), are Ketcheson's ten-stage SSP(2,10,1) and SSP(4,10,1) and the multistep–multistage
+  SSP(6,10,2), SSP(8,10,3) and SSP(10,20,3) from the sspsite collection, with Courant numbers
+  $C_{\mathrm{CFL}}=1.9,1.9,1.5,1.2,2.1$ in $\Delta t\le C_{\mathrm{CFL}}\min(\Delta x/a^{(1)},\Delta y/a^{(2)},\Delta z/a^{(3)})$
+  ($a^{(d)}$ the Lax–Friedrichs speeds, page-local) and separate viscous and resistive constants;
+  the eighth-order two-step methods were rejected because they need a smaller step than the
+  three-step ten-stage one. Multistep start-up doubles a step $\Delta t_{\mathrm{CFL}}/2^{\alpha_{\mathrm s}}$
+  (page-local $\alpha_{\mathrm s}$) taken with the fourth-order starter until the full step is reached,
+  with the first step small enough that the starter's error stays below the target order (Eq. (60)).
+  On a 3D MHD vortex the solvers reach their design orders (EOC 4.46, 6.12, 7.87, 9.74 for orders
+  4 to 10 at $192^3$), while the eighth-order solver with a second-order integrator at CFL 0.5
+  falls to order 2.12 (Table 2). Cost per step relative to the second-order solver is 1.3, 1.6,
+  2.2 and 5.9 for orders 4 to 10, and the cost to a fixed time, i.e. divided by the Courant
+  number, 1.3, 2.0, 3.5 and 5.3 (Table 3; hardware not specified). See
+  [magnetized vortex](/benchmarks/magnetized-vortex.md).
 - For smooth problems, [Peng et al. (2024)](/sources/peng-2024.md) match an explicit RK of
   order $N+1$ to $\mathbb P^N$ (§5); Balsara et al. refine the time step as
   $\Delta t_{\mathrm{fine}}/\Delta t_{\mathrm{coarse}}=(\Delta x_{\mathrm{fine}}/\Delta x_{\mathrm{coarse}})^{r_{\mathrm s}/3}$
@@ -386,3 +412,5 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §4 (Figs. 4, 9).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3 (Eq. (3.10), Thm. 3.1), §5 (arXiv v1).
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §5 (arXiv v1).
+- [Lin & Chan (2024)](/sources/lin-2024.md) — Eq. (52), footnote 7.
+- [Teissier et al. (2024)](/sources/teissier-2024.md) — §3.6 (Eqs. (60)–(65), Table 1), §4.1 (Tables 2–3) (arXiv v2).
