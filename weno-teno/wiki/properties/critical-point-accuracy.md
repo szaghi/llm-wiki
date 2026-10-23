@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Accuracy at critical points
@@ -53,6 +53,7 @@ coefficients $A_k$ are not defined in the paper).
 | WENO-NS, WENO-P (Ha et al., Kim et al.) | sufficient condition at first-order critical points; not optimal at second-order ones ($L_1$ 3.3–3.6, $L_2$ 2.9–3.1 on $\sin^3(\pi x)$) | Zhong et al. 2023, §2 (recalled), Table 4 |
 | MWENO-P (Rathan & Naga Raju) | sufficient condition at first- and second-order critical points; about fifth order on $\sin^3(\pi x)$ | Zhong et al. 2023, §2 (recalled), Table 4 |
 | IMWENO-P | $\omega_k-d_k=O(\Delta x^3)$ claimed at second-order critical points (the printed chain gives $O(\Delta x^2)$, see below); $L_1$ orders 4.94–5.15 on $\sin^3(\pi x)$ | Zhong et al. 2023, §3.3, Eqs. (27)–(41), Table 4 |
+| third-order WENO from mapped TVD weights ([mapped WENO](/methods/mapped-weno.md)), indicators floored by $U^2/n_{\mathrm{sm}}^2$ | weights $\approx\tfrac12$ at critical points by an asymptotic argument; third order on an Alfvén wave, no critical-point test | Komissarov & Phillips 2024, App. A, Eqs. (A7)–(A10) (derived) |
 
 Li et al. (2022b, §4.1) also recall that the WENO-Z of Don & Borges with $\epsilon=\Delta x^m$ satisfies a
 sufficient condition for optimal order, and reject it for its dimensional inconsistency. Hong, Ye & Ye (2022, §1) recall
@@ -206,6 +207,25 @@ $\omega_0$, they find that WENO3-JS and WENO3-Z "degenerate at the saddle point"
 "distinguish[es]" it, as does WENO-F3+ (§3.5, Fig. 4); the order is not improved by it
 ([learned WENO weights](/methods/learned-weno-weights.md)).
 
+## Third-order interpolation with a floored indicator
+
+[Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (App. A1; arXiv v3) state the
+three-point version of the defect: weights built from ratios of the two-point indicators
+$(u_i-u_{i\pm1})^2$, which are the third-order Jiang–Shu ones, "do not differentiate between
+shocks and critical points", because a critical point midway between $x_i$ and $x_{i+1}$ makes
+one difference much smaller than the other, as a jump does. Their remedy floors both indicators,
+$\beta_\pm=(u_i-u_{i\pm1})^2+U^2(\Delta x/L)^2+\epsilon$ with $U=\max(\lvert u_{i-1}\rvert,\lvert u_i\rvert,\lvert u_{i+1}\rvert)$,
+$L=n_{\mathrm{sm}}\Delta x$, $5\lesssim n_{\mathrm{sm}}\lesssim10$ ($n_{\mathrm{sm}}=10$ and
+$\epsilon=10^{-25}$ in the tests; page-local symbols), so that near a critical point, where the
+squared differences are of order $U^2(\Delta x/L)^4$ in their estimate, both indicators are dominated by the
+floor and the TVD weights are close to $\tfrac12$, which the mapping sends to the linear weights
+([mapped WENO](/methods/mapped-weno.md)); at strong shocks the floor is negligible. The argument
+is asymptotic, and no test isolates a critical point. *(Compiler check, not in the sources: since
+$L=n_{\mathrm{sm}}\Delta x$, the floor is the mesh-independent fraction $U^2/n_{\mathrm{sm}}^2$ of the
+squared amplitude, so under refinement the differences of any smooth profile, $O(\Delta x^2)$ in
+square, fall below it everywhere and the interpolation tends to the linear one; a jump smaller than
+about $U/n_{\mathrm{sm}}$ is likewise treated as smooth.)*
+
 ## Second-order limiters
 
 Chen, Zhang, Liu & Chen (2022, §1) state that second-order TVD-type slope limiters "typically loss
@@ -307,3 +327,4 @@ resolution).
 - [Tang (2024)](/sources/tang-2024.md) — §1; §2, Eqs. (9)–(18); §3, Eqs. (19)–(20); §4.1, Eqs. (21)–(22), Tables 1–3; §5.
 - [Nogueira et al. (2024)](/sources/nogueira-2024.md) — §3.4, Fig. 6.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §5.4, Eq. (38), Table 3.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — App. A1–A2, Eqs. (A3)–(A23); §4.1, Table 1 (arXiv v3).

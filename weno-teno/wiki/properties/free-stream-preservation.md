@@ -5,7 +5,7 @@ description: "A discretization on curvilinear or moving grids is free-stream pre
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Free-stream preservation
@@ -56,6 +56,27 @@ e.g. for metrics computed as a discrete curl (App. C.1, Lemma 4,
 Eq. (145)). Free-stream preservation is therefore a prerequisite of their
 entropy conservation and stability proofs, as they state after Hennemann
 et al. (§6.1).
+
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) prove it for a
+modal, uncollocated scheme with flux differencing and a filtered mass
+matrix: nonlinearly stable [flux reconstruction](/methods/flux-reconstruction.md)
+on curvilinear hexahedra, with the weight-adjusted approximation of the
+inverse of $M_K+K_{\mathrm{FR}}$, page-local $M_K$ the element mass matrix
+and $K_{\mathrm{FR}}$ the FR correction operator (Thm. 6.1). The metric cofactor matrix, with
+rows $Ja^{(d)}$, is built in Kopriva's conservative-curl form so that the
+discrete metric identity $\nabla_\xi\cdot(Ja)=0$ holds (Eqs. (14)–(15)), and
+the surface metrics are consistent with the volume ones, after Abe et al.
+For a constant flux the SBP-like property of the hybridized operator
+cancels the surface terms; the Hadamard product with a constant flux
+reduces to a central flux in the metric terms, which vanishes by the
+discrete identity, after Fisher–Carpenter and Gassner et al. (Eq. (51)); and
+the remaining surface terms vanish because interpolating the volume
+metrics and basis to the face reproduces the face values (§6.1). The
+metric average $\tfrac12\big(Ja(\xi_i)+Ja(\xi_j)\big)$ sits inside the reference
+two-point flux (Eq. (40); [flux differencing](/methods/flux-differencing.md)).
+[Schwarz et al. (2025)](/sources/schwarz-2025.md) compute the metric terms of
+both their LGL and Gauss collocation DGSEMs in the same conservative-curl
+form "so that the discrete metric identities hold" (§3.1).
 
 ## Subcell metric identities
 
@@ -135,6 +156,21 @@ and $10^{-14}$–$10^{-15}$ with the entropy-stable and TVD-ES fluxes
 (Table 1; [TeCNO schemes](/methods/tecno-scheme.md)). Free streams are
 kept for random element-wise blends; the subcell metrics (150) and the
 discrete metric identities are the ingredients of the proofs in App. C.
+
+Cicchino & Nadarajah (2025) run the inviscid Taylor–Green vortex on a
+non-symmetrically warped grid of $4^3$ elements,
+$x=a+\tfrac15\sin(a/l)\sin(b/l)\sin(2c/l)$ and similar for $y$, $z$ with
+page-local reference coordinates $(a,b,c)$ and $l=(x_R-x_L)/(2\pi)$, at
+$N=4,5$; free-stream preservation and global conservation hold to
+$O(10^{-16})$ (Eq. (60), §7.3, Tables 2–3;
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+
+Not every subcell scheme is free-stream preserving.
+[Deng et al. (2025)](/sources/deng-2025.md) take the finite-volume metrics
+of their Gauss-weight subcells from the DG transformation, which "may lead
+to the violation of the free-stream preservation or the geometric
+conservation law", and leave it unfixed, referring to the literature
+(§4.7; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
 
 ## Mixed degrees and finite-volume subcells
 
@@ -415,3 +451,6 @@ the source.
 - [Chandravamsi et al. (2023)](/sources/chandravamsi-2023.md) — §1, §3, §4.2 Eqs. (10)–(14), §5.1, §7 Eqs. (36)–(44), §8.1–8.2 Table 2 Figs. 8–12, §9.4, App. D (arXiv v1).
 - [Ramani & Shkoller (2023)](/sources/ramani-2023.md) — §6.1.3 Eqs. (44)–(46), §6.2.1 Eqs. (49)–(52) (arXiv v2).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2–4.3, Remark 4.1, Thm. 4.2, Cor. 4.3, Eqs. (25)–(28) (arXiv v2).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §2 Eqs. (14)–(15), §3.3 Eq. (40), §6.1 Thm. 6.1 Eq. (51), §7.3 Eq. (60), Tables 2–3.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.1 (arXiv v1).
+- [Deng et al. (2025)](/sources/deng-2025.md) — §4.7.

@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # High-Mach astrophysical jets
@@ -57,14 +57,16 @@ speed and 682.08 with respect to the ambient one.
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.11 | finite-difference [HWENO](/methods/hermite-weno.md) (HWENO-R, HWENO-L), WENO-ZQ | $640\times320$ | $0.001$ | parametrized PP flux limiter |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.6 | scale-invariant multi-resolution [A-WENO](/methods/alternative-weno.md) (MR-AWENO-Si), MR-AWENO | $800\times400$ | $0.001$ | [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
 | [Lin & Chan (2024)](/sources/lin-2024.md) §4.4 | LGL-[DGSEM](/methods/dgsem.md), $N=3$, [subcell limiting](/methods/subcell-finite-volume-limiting.md) towards a low-order entropy-stable scheme, with factors from a linear program enforcing the cell entropy inequality; SSPRK(3,3) | $[-0.5,0.5]^2$, $150^2$ elements, inflow at $x=-0.5$ | $0.001$ | relaxed positivity of $\rho$ and $\rho e$ ($\ge\tfrac12$ of the low-order value) and TVD-like density bounds, as [convex limiting](/methods/convex-limiting.md) constraints |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.13 | moment-based [HWENO](/methods/hermite-weno.md) with unified stencils (HWENO-U), HWENO-M, WENO-ZQ, scale-invariant weights | $640\times320$, CFL 0.6 | $0.001$ | PP limiters required |
 | [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.18 | [OEDG](/methods/oedg.md), third order | $320\times160$ | $0.001$ | none mentioned |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.6 | nodal DG on triangles, $P^2$–$P^4$, ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md) (decay-rate threshold $\mathfrak a_0=2.5$, page-local; min-rule) | $h=1/320$, mesh symmetric about $y=0$ | $0.001$ | none; first layer of elements next to the inlet initialized with the jet state |
 
 Yu & Hesthaven print the Mach 2000 data and domain above but not
 $\gamma$. Liang et al. print both jets with the common data (Mach 80
 with $(5,0,0,0.4127)$ on the rest of the left boundary) and no final
-times. Fan, Zhao, Xiong & Qiu and Li et al. print the Mach 2000 data
-above. Fan, Zhang & Qiu (2022) print the jet inflow as
+times. Fan, Zhao, Xiong & Qiu, Fan et al. (2025) and Li et al. print
+the Mach 2000 data above; Fan et al. (2025) run it "without radiative
+cooling". Fan, Zhang & Qiu (2022) print the jet inflow as
 $(\rho,v_1,v_2,p)=(0.5,800,0,0.4127)$, the ambient density, not 5
 (checked on the PDF page); with that density the jet sound speed is
 $1.173$ and the jet Mach number $800/1.173=682$, the value
@@ -156,6 +158,10 @@ and $p$ positive here is not established by the source.
 
 **Cost.** Fan, Zhao, Xiong & Qiu's HWENO-R takes 2292.73 s on the jet,
 1.577 times WENO-ZQ, in Fortran 95 on an Intel Xeon Gold 6130 (Ex. 3.11).
+Fan et al. (2025), on the same processor, need positivity-preserving
+limiters for all their HWENO schemes on the jet, as on their 1D and 2D
+Sedov problems; the total CPU time of HWENO-U lies between those of
+WENO-ZQ and HWENO-M (Ex. 3.13, Fig. 18, Table 7).
 
 **Artificial viscosity alone, and its order dependence.** Yu &
 Hesthaven run the jet with artificial viscosity and no positivity
@@ -187,7 +193,7 @@ closest to them (§5.2.3).
   "without magnetic field": half domain $[0,0.5]\times[0,1.5]$ with a
   slip symmetry line on the $y$-axis, ambient $\rho=0.1\gamma$, $v=0$,
   $p=1$, inlet $x\le0.05$ on $y=0$ with $(\rho,v_1,v_2,p)=(\gamma,0,800,1)$,
-  free boundaries elsewhere, $t=0.002$, flux reconstruction $\mathbb P_3$
+  free boundaries elsewhere, $t=0.002$, flux reconstruction $\mathbb P^3$
   on $200\times600$ and $800\times2400$ elements with
   [entropy filtering](/methods/entropy-filtering.md). The run is robust;
   the filter acts mainly at the leading shock, and on the fine mesh less
@@ -234,7 +240,7 @@ closest to them (§5.2.3).
   and the limiter is necessary. Their tests run at "CFL number 0.6",
   whose definition is not printed, while their positivity theorem requires
   $\Delta t\le\Delta x/(12a)$.
-- **Relativistic MHD jets at Mach 50.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+- **Relativistic MHD jets at Mach 50.** [Ding & Wu (2024b)](/sources/ding-2024-b.md)
   Example 5.9 run the relativistic MHD jet that Wu & Shu proposed with
   the ideal equation of state (Numer. Math. 148, their ref. [12]), with the ideal and the RC equations of
   state: domain $[-12,12]\times[0,25]$, half domain $[0,12]\times[0,25]$
@@ -268,6 +274,22 @@ closest to them (§5.2.3).
   analysis shows is needed for provable bound preservation, even with a
   WENO limiter; this failure is stated in text, without a
   figure.
+- **Mach 800 jet in a strong magnetic field.** [Ding & Wu (2024a)](/sources/ding-2024.md)
+  Ex. 4.5 (arXiv v1), after Wu & Shu: ideal MHD, $\gamma=1.4$, ambient
+  $(\rho,v,B,p)=(0.1\gamma,\ 0,\ (0,\sqrt{200},0),\ 1)$ on
+  $[-0.5,0.5]\times[0,1.5]$, jet $(\rho,v,p)=(\gamma,\ (0,800,0),\ 1)$
+  through $x\in[-0.05,0.05]$ at $y=0$, computed on the half domain
+  $[0,0.5]\times[0,1.5]$ with $200\times600$ cells, reflecting at $x=0$
+  and outflow elsewhere; log-density schlieren at $t=0.001$, $0.0015$,
+  $0.002$. The field gives $\beta_{\mathrm p}=2/200=10^{-2}$ *(compiler
+  check, not in the sources)*. Their discretely divergence-free
+  positivity-preserving finite volumes (second order, and fifth-order
+  [WENO-Z](/methods/weno-z.md) with a characteristic reconstruction and
+  four-point Gauss–Lobatto face quadrature) give results comparable
+  with those of three earlier papers, Wu & Shu's among them; with the positivity-preserving limiter switched off
+  the code blows up quickly (Fig. 4.6). See
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+  and [geometric quasilinearization](/methods/geometric-quasilinearization.md).
 - **Mach 800 dense MHD jet.** [Liu et al. (2021)](/sources/liu-2021.md)
   §4.5, after Wu & Shu's earlier papers: ideal MHD, $\gamma=1.4$, ambient
   $(\rho,v,B,p)=(0.1\gamma,\ 0,\ (0,\sqrt{20000},0),\ 1)$, jet
@@ -305,12 +327,28 @@ closest to them (§5.2.3).
   positivity-preserving [WCNS](/methods/weighted-compact-nonlinear-scheme.md)
   nor first-order HLLC fails; HLLC smears the interface at the jet
   front and shows artifacts at the bow shock (Figs. 17–19).
+- **"Mach 200" two-phase jet.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+  Ex. 4.9: the five-equation (Kapila) model with phase densities
+  $(\rho_1,\rho_2)=(1,100)$, ambient $(v_1,v_2,p)=(0,0,1/1.4)$ with
+  volume fraction $\phi_1=1-10^{-6}$ of fluid 1 (air, $\gamma_1=1.4$), and
+  a jet of fluid 2 ($\gamma_2=1.67$, $\phi_1=10^{-6}$) entering at $x=0$
+  through $y\in[-0.1,0.1]$ with $v=(200,0)$; domain $[0,2]\times[-0.5,0.5]$,
+  $500\times250$ cells, $t=0.008$ (Fig. 11). Their bound-preserving
+  [OEDG](/methods/oedg.md) scheme needs its bound-preserving limiter;
+  without it the run can terminate on negative density or pressure
+  (stated, not shown). The name fits the ambient sound speed,
+  $\sqrt{1.4\cdot(1/1.4)/1}=1$; relative to the jet gas,
+  $\sqrt{1.67\cdot(1/1.4)/100}=0.109$, the injection Mach number is
+  about 1830 *(compiler check, not in the sources)*. The ratio of the
+  two time-step bounds of their bound-preserving CFL condition stays
+  close to or above one (Fig. 21). See
+  [five-equation model](/definitions/five-equation-model.md).
 
 ## Qualifications
 
 - Fu (2021), Takagi et al. and Liang et al. do not print the final
   times of the jets; the sources that do (Rueda-Ramírez et al., Peng et
-  al., Fan et al. 2022 and 2023, Li et al. 2023) use $t=10^{-3}$ for
+  al., Fan et al. 2022, 2023 and 2025, Li et al. 2023) use $t=10^{-3}$ for
   Mach 2000.
 - Fan, Zhang & Qiu (2022)'s printed jet density 0.5 makes their jet a
   Mach 682 jet as defined on this page; whether the printed value or
@@ -358,4 +396,7 @@ closest to them (§5.2.3).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §2.2.4, §3.5, Table 5, Figs. 8–9; §4 (arXiv v1).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Example 5.9; Theorems 3.1, 4.1 (arXiv v1).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3.3, §4.4, Eqs. (49), (62), (67), Figs. 6–7, A.8.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Example 5.9, Figs. 12–14.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Example 5.9, Figs. 12–14.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.5, Fig. 4.6 (arXiv v1).
+- [Fan et al. (2025)](/sources/fan-2025.md) — §3, Ex. 3.13, Fig. 18, Table 7.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.9, Figs. 11, 21.

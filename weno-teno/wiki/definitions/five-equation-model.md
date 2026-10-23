@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:06:00Z
 ---
 
 # Five- and six-equation diffuse-interface models
@@ -37,6 +37,10 @@ and HLLC fluxes, viscous terms included after Coralic & Colonius.
 $N$ phases with a [phase-field](/methods/phase-field-method.md) flux in
 every equation, and solve its hyperbolic part, the five-equation model, by
 second-order MUSCL finite volumes with HLLC.
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) solve the Kapila form with
+ideal-gas phases by bound-preserving
+[OEDG](/methods/oedg.md) discontinuous Galerkin schemes, uniformly high order
+thanks to a new discretization of the non-conservative term.
 
 Page-local symbols: $\phi_k$, $\rho_k$, $e_k$, $c_k$ (volume fraction,
 density, specific internal energy and sound speed of phase $k$),
@@ -149,6 +153,27 @@ constant density are consistent only if $\Lambda_k=-1$; Kapila's
 coefficient satisfies this and Allaire's does not (§5.3). The authors
 nonetheless set $\Lambda_1=0$ in all their computations, "as in"
 earlier works (§3).
+
+**The same coefficient as a source factor.** Yan, Abgrall & Wu (2024)
+(§1, Eqs. (1.1)–(1.3); §2.1, Eq. (2.1)) write Kapila's coefficient with the
+phasic compressibilities $\mathsf k_k=1/(\rho_kc_k^2)$ (page-local; not the reduced wavenumber $\vartheta$) as
+$K=\phi_1\phi_2(\mathsf k_1-\mathsf k_2)/(\phi_1\mathsf k_1+\phi_2\mathsf k_2)$, and
+recast the volume-fraction equation as
+$$\partial_t\phi_1+\nabla\cdot(\phi_1v)=\chi_1\phi_1\nabla\cdot v,\qquad
+\chi_1=\frac{K}{\phi_1}+1=\frac{\mathsf k_1}{\phi_1\mathsf k_1+\phi_2\mathsf k_2},\quad
+\chi_2=-\frac{K}{\phi_2}+1,$$
+so that $\chi_1\phi_1+\chi_2\phi_2=1$ (page-local $\chi_k$). $\phi_1$ is then
+carried as a "conservative" component with flux $\phi_1v$, plus a
+non-conservative source. *(Compiler check, not in the sources: multiplying
+numerator and denominator of Bryngelson et al.'s $K$ above by
+$\phi_1\phi_2\mathsf k_1\mathsf k_2$ gives Yan et al.'s form, and by Wood's
+relation $\chi_k=\rho c^2/(\rho_kc_k^2)=1+\Lambda_k$ with Huang & Johnsen's Kapila
+choice of $\Lambda_k$.)* With ideal-gas phases and $p_1=p_2=p$ the mixture
+law is $\frac1{\gamma-1}=\sum_k\frac{\phi_k}{\gamma_k-1}$, as in Chamarthi
+(2023a). They call the $K=0$ model the Allaire–Massoni model, "also called
+the five-equation transport model", citing an earlier paper for its being
+"not compatible with the assumption that the material derivatives of the
+phase entropies are zero" (§1).
 
 ## Conservative diffuse-interface regularization and phase entropy
 
@@ -321,6 +346,31 @@ as the fluxes; the sources do it in three ways.
   an HLLC star state and contact speed carrying the capillary pressure jump
   $\sigma_{\mathrm{st}}\kappa_{\mathrm c}[\![\phi_1]\!]$ (after Garrick et al.; see
   [HLL-family solvers](/methods/hll-riemann-solvers.md)).
+- **Wave-weighted interface split in DG.** Yan, Abgrall & Wu (2024)
+  (§2.1.2, Eqs. (2.8)–(2.15); 2D §3.1.2, Eqs. (3.6)–(3.15)) split the
+  source integral $\int_{I_i}\chi_1\phi_1\,\partial_xv\,\varphi\,dx$ ($\varphi$ a DG
+  test function, page-local) into the cell interior and two vanishing strips
+  at the interfaces. The interior part is Gauss quadrature of
+  $\chi_1\phi_1\partial_xv$; the interface part is the velocity jump
+  $[\![v]\!]_{i+1/2}$ shared between the two cells with the HLL weights
+  $-s^-/(s^+-s^-)$ (left cell) and $s^+/(s^+-s^-)$ (right cell), the wave
+  speeds clipped at zero, so that all of the jump goes to the left cell
+  when all waves move left and vice versa. Because $v=\rho v/\rho$ is not a
+  polynomial in a cell, $\partial_xv$ is taken from the interpolant of $v$ at
+  $N+1$ Gauss–Lobatto nodes, which makes the Gauss-quadrature integral of
+  $\partial_xv$ equal the jump $v^-_{i+1/2}-v^+_{i-1/2}$ exactly (Eq. (2.10),
+  Remark 2.1). They contrast it with the averaging discretization of
+  earlier bound-preserving DG schemes, which multiplies the cell average of
+  $\chi_1\phi_1$ by a weak derivative of $v$ with interface means and is
+  formally second order, as one of those papers itself states (Remarks
+  2.2, 3.2). On a smooth test with non-constant velocity the averaging
+  variant drops to $L^1$ orders 1.75–1.84 ($\mathbb P^2$) and about 1.95
+  ($\mathbb P^3$), while the new one keeps 3.25–3.77 and about 4.5 (Tables
+  2–3); in 2D the averaging variant at $\mathbb P^3$ gives 0.91, $-0.08$, 1.42
+  against 3.56, 4.12, 4.07 (Tables 5–6). The same split makes the $\phi_2$
+  update identical in form to the $\phi_1$ update, the "symmetry of the
+  volume fractions" used in the bound-preservation proof below
+  ([symmetry preservation](/properties/symmetry-preservation.md)).
 - **Midpoint divergence.** Bryngelson et al. evaluate
   $(\nabla\cdot v)$ in each cell by a midpoint rule from face-averaged
   velocities computed like the fluxes (§4.1, Eq. 31).
@@ -433,6 +483,18 @@ single-phase flow all three forms are stable (Figs. 2–3). The lemma is
 proved for the stiffened gas; extension to a cubic equation of state is
 stated, not shown.
 
+Yan, Abgrall & Wu (2024) prove the interface-equilibrium condition, after
+Abgrall, for their DG scheme with HLL fluxes: the semi-discrete scheme
+with forward Euler (Lemma 2.5), the full scheme with
+[SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and the oscillation-eliminating
+step (Thm 2.6) and the bound-preserving limiter (Thm 2.14) all keep uniform
+$v$ and $p$ uniform, the last two because they preserve every linear
+identity of the state ([pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+In 2D only a constant velocity vector is covered; a contact with
+discontinuous tangential velocity is not (Remark 3.5). On an advected
+interface with $\gamma=5/3$ against 1.4 the velocity and pressure errors stay
+within $\pm1.5\times10^{-12}$ at $t=1$ (Ex. 4.2, Fig. 4).
+
 The same equilibrium requirement drives the multicomponent
 ([Renac (2021)](/sources/renac-2021.md), see
 [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md))
@@ -483,6 +545,39 @@ with thresholds $10^{-11}$ for the first two and $10^{-9}$ for the third and an 
 floor of $10^{-8}$; they add no flux limiter. In a Mach 10 bubble collapse the limiter fires
 in at most 0.04 % of the cells with their base scheme and in more than 1 % with WENO-JS5
 (§4.8, Fig. 16(b)).
+
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) (§2.3, §3.3, App. A) prove
+bound preservation of the cell averages for the Kapila model with
+ideal-gas phases, without the tolerance band of Wong et al.:
+
+1. **Volume fraction** (Thm 2.7; 2D Thm 3.6). If $\phi_1\in[0,1]$ at the Gauss
+   and Gauss–Lobatto points of every cell, then $\bar\phi_1^{n+1}\in[0,1]$ under
+   a CFL condition $\Delta t/\Delta x\le1/(\mathcal A_1+\mathcal A_2)$ in which
+   $\mathcal A_1$ comes from the interior source and $\mathcal A_2$ from the HLL
+   speeds and the weighted velocity jumps divided by the first Gauss–Lobatto
+   weight (page-local $\mathcal A_1$, $\mathcal A_2$; Eqs. (2.31)–(2.32)). The
+   lower bound follows from a convex splitting; the upper bound from the
+   same argument applied to $\phi_2$, possible because of the symmetric form
+   of the two updates.
+2. **Partial densities and internal energy** (Thm 2.12; 2D Thm 3.10). With the
+   [geometric quasilinearization](/methods/geometric-quasilinearization.md)
+   of the admissible set, $\phi_k\rho_k\ge0$, $\rho e>0$, $0\le\phi_1\le1$
+   (Lemma 2.10, with free velocity $v_*$ and constraint normal
+   $(\tfrac12v_*^2,\tfrac12v_*^2,-v_*,1,0)$ in the ordering
+   $(\phi_1\rho_1,\phi_2\rho_2,\rho v,E,\phi_1)$), and flux inequalities for the
+   HLL speeds (Lemma 2.11), the cell averages stay admissible under the
+   minimum of the volume-fraction condition and the usual condition
+   $\Delta t\max(s^+-s^-)/\Delta x\le\varpi$, $\varpi$ the first Gauss–Lobatto weight
+   (Eq. (2.37)).
+3. **Limiter.** A two-step [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)
+   (volume fraction and partial densities, then internal energy, floors
+   $10^{-13}$) on the Gauss and Gauss–Lobatto points enforces the point-value
+   hypotheses and keeps the interface equilibrium (Thms 2.13–2.14).
+
+The CFL number $1/(2N+1)$ is used in all tests, and the volume-fraction
+term $\mathcal A_1$ is reported much smaller than $\mathcal A_2$ (Figs. 9, 21).
+Without the limiter a double rarefaction and a jet "can terminate" on a
+negative density or pressure (stated; no figure).
 
 MFC takes a weaker route: volume fractions are clipped to $[0,1]$ and
 renormalized to sum to one only when mixture properties are computed,
@@ -607,6 +702,15 @@ fluid and ghost-fluid states in cut cells
   "preclude numerical asymmetry errors" (§1, §3.3) and show symmetry kept in a Mach 10
   water-cylinder test (§4.7, Fig. 13); Wakimura et al. do not cite them
   ([symmetry preservation](/properties/symmetry-preservation.md)).
+- Yan, Abgrall & Wu's flux inequality (Lemma 2.11) ends with a strict
+  inequality that needs $p/(\rho\sqrt{2e})$ below the Wood sound speed; the
+  step is not shown. *(Compiler check, not in the sources: with ideal-gas
+  phases $(p/(\rho\sqrt{2e}))^2=(\gamma-1)p/(2\rho)$ and Wood's speed is
+  $c^2=p/(\rho\sum_k\phi_k/\gamma_k)$; since
+  $\sum_k\phi_k/\gamma_k<\sum_k\phi_k/(\gamma_k-1)=1/(\gamma-1)$, the ratio of the two
+  squares is below $\tfrac12$, so the step holds.)* Their admissibility
+  results cover ideal-gas phases only, unlike the stiffened-gas setting of
+  Wong et al.
 - Huang & Johnsen's scheme is at best second order (MUSCL with minmod,
   midpoint face fluxes, CFL $\le0.5$; §3.4), and their argument that
   Allaire's coefficient is inconsistent concerns the incompressible
@@ -625,4 +729,5 @@ fluid and ghost-fluid states in cut cells
 - [Huang & Johnsen (2023)](/sources/huang-2023.md) — §2.1–2.10, Eqs. (1)–(8), (22)–(25), Theorems 2.2–2.5; §3.1, Definition 1, Theorem A.1; §3.4; §4; §5.1–5.3, Fig. 10, Theorem 5.2.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §2.1, Eqs. (1)–(5); §7.4.1 (parent model only).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1; §2, Eqs. (1)–(16); §3, Eq. (45); Appendices B–E: mixture-energy-consistent six-equation model with heat and mass transfer, infinite-rate relaxation in closed form.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §1, Eqs. (1.1)–(1.4); §2.1, Eqs. (2.1)–(2.16), Remarks 2.1–2.2; §2.2, Lemma 2.5, Thms 2.3, 2.6; §2.3, Thms 2.7, 2.12–2.14, Lemmas 2.10–2.11, Eqs. (2.29)–(2.40); §3, Eqs. (3.1)–(3.35), Remarks 3.1, 3.2, 3.5; §4, Exs. 4.1–4.2, Tables 2–3, 5–6, Figs. 4, 9, 21; App. A: Kapila model with uniformly high-order bound-preserving OEDG.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §2, Eqs. (1)–(18), Fig. 1; §3.1, Eqs. (21)–(26); §3.3, Eqs. (45)–(48), Algorithm 1; §4.1, §4.8; App. B: five-equation model with viscosity and surface tension, sound-speed choice, HLLC-consistent source terms, THINC on mass variables, interpolation limiter.

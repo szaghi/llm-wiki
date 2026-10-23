@@ -4,9 +4,9 @@ title: "Summation-by-parts operator"
 description: "A first-derivative matrix D with a symmetric positive-definite norm M is summation-by-parts when MD + DᵀM equals the boundary operator; LGL collocation (DGSEM) has this property with diagonal norm, which yields the strong–weak equivalence, the skew-symmetric flux-differencing operator, the flux form of nodal DG and its entropy proofs, and sparse low-order SBP operators on quadrilaterals and triangles."
 status: established
 symbol: "$Q+Q^\\top=B$"
-aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, discrete integration by parts]
+aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, hybridized SBP operator, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Summation-by-parts operator
@@ -166,6 +166,36 @@ The following special cases appear in the sources:
   the geometric terms satisfy a discrete GCL (App. A;
   [free-stream preservation](/properties/free-stream-preservation.md)).
 
+- **Hybridized operators for nodes without the boundary.** On
+  Legendre–Gauss nodes the volume nodes exclude the faces, and Schwarz et
+  al. extend entropy-stable collocation to them through a generalized SBP
+  property (§3.4). They recall that the diagonal mass matrix needed for the LGL operator is
+  exact on Gauss nodes but a lumping on LGL nodes, because Gauss quadrature
+  integrates degree $2N+1$ exactly and LGL only $2N-1$
+  ([Schwarz et al. (2025)](/sources/schwarz-2025.md), §3.1, §3.3). They
+  print the LGL property as $Q+Q^\top=V_f^\top B$ with the face
+  interpolation $V_f$; the square, conforming form is
+  $Q+Q^\top=V_f^\top BV_f$, which is the registry's $B$ on LGL nodes, where
+  $V_f$ is the 0/1 extraction *(compiler check, not in the sources)*. Entropy-stable Gauss collocation therefore
+  uses Chan's hybridized (generalized) SBP operator coupling volume and face
+  nodes,
+  $Q_{\mathrm h}=\begin{pmatrix}2MD-V_f^\top BV_f&V_f^\top B\\-BV_f&B\end{pmatrix}$
+  in one direction (Eq. (23); page-local $Q_{\mathrm h}$, $V_f$, and
+  $B=\mathrm{diag}(-1,1)$ on the two faces), together with an
+  [entropy projection](/methods/entropy-projection.md) of the face states
+  (Eqs. (24)–(25); see [flux differencing](/methods/flux-differencing.md)).
+  [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) use the modal
+  counterpart for flux reconstruction on curvilinear hexahedra: their
+  discrete integration by parts holds for any quadrature exact to degree
+  $2N-1$ (Eq. (22)), and the hybridized skew-symmetric operator
+  $\tilde Q-\tilde Q^\top$ on volume and surface quadrature nodes satisfies
+  $\tilde Q+\tilde Q^\top=\mathrm{blockdiag}\big(0,\ \mathsf W_f\,\mathrm{diag}(n_f)\big)$,
+  page-local $\mathsf W_f$ the surface weights and $n_f$ the reference
+  normals (Eqs. (38)–(39)). This SBP-like property cancels the surface
+  terms in their free-stream proof and gives local conservation through
+  skew-symmetry (Thms. 6.1–6.2;
+  [flux reconstruction](/methods/flux-reconstruction.md)).
+
 ## Consequences used by the sources
 
 1. **Discrete integration by parts.** For nodal vectors $\mathbf u$,
@@ -270,3 +300,5 @@ route to non-periodic boundaries, which they do not treat.
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — Eq. (19), §3 Eq. (24) (arXiv v1).
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §2.2 Eqs. (20)–(26), Example 2.12, App. A.3 (arXiv v4).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §3.1 Eq. (5), §3.2 Eqs. (7)–(11), §5 Table 1a Fig. 3, §8, App. A (arXiv v2).
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.1, §3.3–3.4 Eqs. (20)–(25) (arXiv v1).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §2 Eq. (22), §3.3 Eqs. (38)–(39), §6 Thms. 6.1–6.2.

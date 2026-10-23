@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting
@@ -257,6 +257,25 @@ one trained network on one problem; no generalization test to other flows is sho
   [bound preservation](/properties/bound-preservation.md)). Their tests run at "CFL number
   0.6", whose definition is not printed (§5). *(compiler check, not in the sources: if that
   number multiplies $\Delta x/a$, it is $7.2$ times the proved bound $\tfrac1{12}$.)*
+- **Ideal MHD with a divergence-dependent viscosity.** [Ding & Wu (2024a)](/sources/ding-2024.md)
+  (arXiv v1; §2.1, Eqs. (6)–(16), Thm. 2.1) use the LF flux with Gauss or Gauss–Lobatto edge
+  quadrature in a high-order finite-volume scheme for the Godunov–Powell form of ideal MHD, and
+  prove with [geometric quasilinearization](/methods/geometric-quasilinearization.md) that the
+  forward-Euler update keeps density and internal energy positive under
+  $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)<1/\big(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1)\big)$, the
+  first Gauss–Lobatto weight, provided the interface values satisfy a discrete divergence-free
+  condition and are admissible. The LF coefficient must be enlarged by a jump term,
+  $a^{(d)}\ge\hat a^{(d)}+\beta^{\mathrm B}_d$, $\beta^{\mathrm B}_1=\max\lvert[\![B_1]\!]\rvert/\big(2\sqrt{\{\!\{\rho\}\!\}}\big)$
+  over the edge quadrature points (page-local $\beta^{\mathrm B}_d$), with $\hat a^{(d)}$ Wu's
+  positivity-preserving wave-speed bound evaluated on the pairs of traces of the same cell, not on
+  the two sides of an interface (Eq. (16)). Their interface-jump source discretization, built from
+  $[\![B_d]\!]$ and $\{\!\{u\}\!\}$ at the quadrature points, differs from Wu and Shu's earlier ones and is
+  stated to give a milder CFL condition (§2.1; no side-by-side constant given); in the proof the
+  divergence remainder cancels exactly by the discrete divergence-free condition (§3.2). As in
+  Wu & Shu's multicomponent-MHD result above (Thm. 6.1), positivity is conditional on a discrete
+  divergence-free condition. See
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md) and
+  [bound preservation](/properties/bound-preservation.md).
 - **Positivity by an external limiter.** [Fu (2021)](/sources/fu-2021.md) (§5.7) runs the
   extreme cases (double rarefaction, Le Blanc, Sedov, Mach 80 and Mach 2000 jets) with LLF
   plus the positivity-preserving flux limiter of Hu, Adams & Shu; the TENO reconstruction
@@ -503,3 +522,4 @@ two-fluid relativistic plasma, and call it "similar to the Roe diffusion operato
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3 (Eq. (3.4), Lemma 3.1, Thm. 3.1), §4 (Thm. 4.1), §5 (arXiv v1).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §2.3 (Eqs. (13)–(17), footnotes 2, 8), §3.1 (Eq. (22), Theorem 3.1), §4 (Eq. (54)).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.1 (Eqs. (22)–(23)).
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — §2.1 (Eqs. (6)–(16), Thm. 2.1), §3.2 (arXiv v1).

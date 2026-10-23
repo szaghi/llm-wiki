@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Oscillation-eliminating discontinuous Galerkin (OEDG)"
-description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor, with scale- and evolution-invariant coefficients, conserved cell averages and an optimal error estimate for linear advection; Fan and Wu carry it to sixth-order Hermite WENO, damping only first moments."
+description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exactly solved damping step that multiplies each modal coefficient by a solution-dependent exponential factor, scale-, evolution- and linearity-invariant and conserving cell averages; Fan and Wu carry it to Hermite WENO, Yan, Abgrall and Wu to a bound-preserving five-equation two-phase scheme."
 status: established
-aliases: [OEDG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
+aliases: [BP-OEDG, OEDG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
 tags: [dg, limiting, low-dissipation, weno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Oscillation-eliminating discontinuous Galerkin (OEDG)
@@ -239,13 +239,66 @@ all four of its parameter values tried (Figs. 3.4–3.5, 3.11). The
 [double rarefaction](/benchmarks/double-rarefaction-problem.md) problem
 runs without the positivity limiter (Ex. 7).
 
+## Bound-preserving OEDG for the five-equation model (BP-OEDG)
+
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) carry OEDG to the Kapila
+[five-equation model](/definitions/five-equation-model.md) in 1D and 2D on
+Cartesian meshes, with the volume-fraction equation written as conservative
+advection plus a non-conservative source, an HLL flux, and a
+[Zhang–Shu-type limiter](/methods/zhang-shu-scaling-limiter.md) after the OE step.
+The OE step is Peng et al.'s, with $a_i$ the spectral radius of the flux Jacobian
+at the cell average and one coefficient per mode, the maximum over the components
+(Eqs. (2.19)–(2.20); 2D Eqs. (3.17)–(3.18), with face-averaged jumps of all
+derivatives of order $m$ by the trapezoidal rule).
+
+**Linearity invariance** (Thm 2.3). If $\Lambda u_h\equiv c$ in a cell for a
+constant matrix $\Lambda$ and vector $c$ (page-local), then
+$\Lambda\mathcal F_{\Delta t}u_h\equiv c$. The proof uses that the damping factor of
+each mode is a scalar common to all components, so the modes $l\ge1$ of
+$\Lambda u_h$, which vanish, stay zero; the factor is common because the
+coefficient is the maximum over the components *(compiler check, not in the
+sources)*. The authors also
+prove the limiter linearity-invariant (Thm 2.13, proof omitted). With uniform
+velocity $v_0$ and pressure $p_0$, momentum minus $v_0$ times the partial
+densities, and total energy minus kinetic energy minus $p_0\sum_k\phi_k/(\gamma_k-1)$,
+are such linear identities, so the OE step and the limiter keep the Abgrall
+equilibrium of an isolated material interface (Thms 2.6, 2.14; 2D Thm 3.4 for a
+constant velocity vector only, Remark 3.5;
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md)).
+Scale invariance of the OE step gives $(\rho v)_\sigma=v_0\rho_\sigma$ in the same
+argument (Remark 2.4, as recalled from Peng et al.).
+
+**Bound preservation.** The OE step conserves cell averages, so the
+bound-preservation proofs concern the DG update: the volume fraction stays in
+$[0,1]$ and the partial densities and internal energy positive under explicit CFL
+conditions with the boundary weight $\varpi$ (the first Gauss–Lobatto weight) of
+the cell-average decomposition (Thms 2.7, 2.12, 3.6, 3.10;
+[bound preservation](/properties/bound-preservation.md),
+[geometric quasilinearization](/methods/geometric-quasilinearization.md)), and the
+limiter, applied at the Gauss and Gauss–Lobatto points after the OE step, supplies
+the point-value hypotheses (Eqs. (2.39)–(2.40)).
+
+**Evidence** (§4; CFL $1/(2N+1)$; RK of order $N+1$ for accuracy, SSP-RK3
+otherwise). With a non-vanishing source the $\mathbb P^2$ scheme keeps $L^1$ orders
+$3.77$, $3.39$, $3.25$ and $\mathbb P^3$ about $4.5$, while the same OE step with the
+earlier second-order averaging of the source (BP-OEDG-AVE) gives $1.69$–$1.84$ and
+$1.94$–$1.96$ (Tables 2–3); in 2D $\mathbb P^3$ gives $3.56$, $4.12$, $4.07$ against
+$0.91$, $-0.08$, $1.42$ (Tables 5–6). The moving-interface test keeps velocity and
+pressure errors within $\pm1.5\times10^{-12}$ (Fig. 4). Thirteen examples, from
+the double rarefaction and LeBlanc tubes to shock–bubble interactions, the
+Richtmyer–Meshkov instability and a jet of velocity 200 relative to an ambient
+sound speed of 1, run with $\mathbb P^2$ and $\mathbb P^3$; the authors state that the
+double rarefaction and the jet can stop on negative density or pressure without the
+limiter (no figure).
+
 ## Qualifications
 
-- **No bound preservation.** OEDG is not claimed bound-preserving, and no
+- **No bound preservation in the original method.** Peng et al.'s OEDG is not claimed bound-preserving, and no
   positivity limiter is mentioned for the Mach 2000 jet and double Mach
   runs; in this corpus TENO-AA, TENO-THINC and affine-invariant WENO need a
   positivity-preserving flux limiter on the Mach 2000 jet
-  ([bound preservation](/properties/bound-preservation.md)).
+  ([bound preservation](/properties/bound-preservation.md)). Yan et al. (2024)
+  obtain bound preservation by adding a scaling limiter, not from the OE step (above).
 - **Global coupling.** The normaliser $\lVert u_h-\mathrm{avg}(u_h)\rVert_{L^\infty(\Omega)}$
   makes the damping strength depend on the global range of the solution.
   A locally scale-invariant variant (Eq. (2.14)) is proposed but not used,
@@ -267,7 +320,7 @@ runs without the positivity limiter (Ex. 7).
   the decomposition has $(78\theta^2+46)$ in the denominator of the
   arccos argument, which is then $-244/46\approx-5.30$ at $\theta=0$,
   outside $[-1,1]$; with $(78\theta^2+46)^{3/2}$, the form printed by
-  [Ding & Wu (2024)](/sources/ding-2024-b.md) (Cor. 4.2), it gives
+  [Ding & Wu (2024b)](/sources/ding-2024-b.md) (Cor. 4.2), it gives
   $0.1291713=2-\sqrt{14}/2$, the value Fan & Wu state *(compiler check,
   not in the sources)*. In Tables 3.1–3.2 the $\ell^2$ orders repeat the
   $\ell^1$ orders digit for digit; from the printed $\ell^2$ errors the 2D
@@ -278,5 +331,6 @@ runs without the positivity limiter (Ex. 7).
 # Citations
 
 - [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §1; §2.2 Eqs. (2.12)–(2.17), (2.29), Thms. 1–7, Defs. 1–3, Remarks 1–3; §2.3 Eqs. (2.44)–(2.46), Thms. 8–10; §2.4 Thm. 11, Remarks 4–5; §3 Exs. 1–12, Tables 3.1–3.2, Figs. 2.1, 3.1–3.11.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Cor. 4.2 (form of the optimal weight).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Cor. 4.2 (form of the optimal weight).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — arXiv v1: §1 (Eqs. (1.2)–(1.4)); §2 (Eqs. (2.3)–(2.17); Rems. 2.1–2.12; Thms 2.6, 2.7, 2.10); §3 (Eqs. (3.8)–(3.12), Rem. 3.1); §4 (Thm 4.1, Assumption 4.5, Lemmas 4.10, 4.14, Rem. 4.4); §5 (Ex. 5.1–5.18, Tables 1–6, Figs. 1–14).
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §1; §2.2, Eqs. (2.17)–(2.22), Thms 2.3, 2.6, 2.13–2.14, Remark 2.4; §3, Eqs. (3.17)–(3.18), Thm 3.4, Remark 3.5; §4, Tables 2–3, 5–6, Fig. 4.

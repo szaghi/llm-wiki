@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Dam-break problems"
-description: "Shallow-water Riemann problems with water at rest at two depths separated by a removed dam, in one dimension, between reflecting walls, and in the radial two-dimensional form, used to test shock and rarefaction capturing, multi-dimensional dissipation, spectral shock capturing and space-time shock tracking."
+description: "Shallow-water Riemann problems with water at rest at two depths separated by a removed dam, in one dimension, between reflecting walls, over non-flat bottoms, in thermal shallow water and in the radial two-dimensional form, used to test shock and rarefaction capturing, multi-dimensional dissipation, characteristic central-upwind fluxes, spectral shock capturing and space-time shock tracking."
 status: established
 aliases: [dam break, dam-break problem, shallow-water dam break, circular dam break, radial dam break, cylindrical dam break]
 tags: [benchmark, shallow-water, riemann-problem, shock-tracking]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Dam-break problems
@@ -18,7 +18,10 @@ running into the shallow water and a rarefaction running into the deep water, wi
 intermediate state between them; with $h_{\mathrm R}=0$ the shock is replaced by a wet–dry
 front. Here $h$ is the depth, $b$ the bottom elevation, $H_{\mathrm s}=h+b$ the free-surface
 level, $g$ the gravity and $r$ the distance from the centre of a radial dam (all page-local,
-as on the shallow-water page). Three variants run in the bundle: the one-dimensional problem
+as on the shallow-water page). In the thermal (Ripa) shallow-water
+equations the layer also carries a buoyancy $\mathsf b$ (page-local; the
+sources' $b$), advected with the flow, and the pressure term
+$\tfrac g2h^2$ becomes $\tfrac{\mathsf b}2h^2$. Three variants run in the bundle: the one-dimensional problem
 on an open or a mirrored domain, the one-dimensional problem between reflecting walls, where
 the waves bounce back and interact, and the radial problem, in which a cylinder of deep water
 collapses into a circular bore and an inward rarefaction.
@@ -36,13 +39,21 @@ the [five-equation model](/definitions/five-equation-model.md) and
 | Del Grosso et al. §5.3.1 | radial, non-flat bottom | $b=\tfrac12\big(1+\cos(2\pi r/2)\big)$, $h=11-b$ inside $r_0$, $h=2-b$ outside | as above | 23736 triangles; $t=0.69$ s |
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.3, Eq. (8c) | 1D, flat bottom | $h=h_{\mathrm L}$ for $x<0$, $h_{\mathrm R}$ for $x>0$, $v=0$, $h_{\mathrm L}>h_{\mathrm R}\ge0$ | $[-5,5]$, mirror-symmetrized about $x=-5$ for the Fourier basis | $N_x=2665$; outputs $t=0.5,1,1.5,2$ |
 | [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.2, Eq. (54) | 1D between walls, flat bottom | $H_{\mathrm s}=3$ on $[-5,0)$, $1$ on $(0,5]$, $v=0$, $g=1$ | $(-5,5)$, non-penetration walls at both ends; time interval $(0,6)$ | 5 space-time slabs; 8 spatial elements, 32 triangles with $q=1$, $p=2$ in the first slab |
+| [Chu et al. (2025b)](/sources/chu-2025-b.md) Ex. 7 | 1D thermal (Ripa), non-flat bottom | $(h,v,\mathsf b)=(5-b,0,1)$ for $y<0$, $(2-b,0,5)$ otherwise; $b=\cos(10\pi(y+0.3))+1$ on $[-0.4,-0.2]$, $\tfrac12[\cos(10\pi(y-0.3))+1]$ on $[0.2,0.4]$, $0$ elsewhere | $[-1,1]$, free boundaries | $\Delta y=1/100$ (also $1/200$, $1/400$); $t=0.2$; reference PCCU on $1/2000$ |
+| Chu et al. (2025b) Ex. 9 | radial thermal, flat bottom, no Coriolis | $(h,v_1,v_2,\mathsf b)=(1.5,0,0,1)$ for $r<0.5$, $(1.2,0,0,1.5)$ otherwise | $[-1,1]^2$, free boundaries | $\Delta x=\Delta y=1/50$; $t=0.15$; reference on $1/400$ |
 
 Del Grosso et al. use CFL 0.5 for their first-order and 0.25 for their second-order
 schemes, with the minmod limiter, in all their tests (§5). Kolluru et al. print neither
 $h_{\mathrm L}$, $h_{\mathrm R}$ nor $g$ (their Eq. (8c) is symbolic). Del Grosso et al.'s
 radial non-flat case is a cosine bump, with a topography "inspired by" an earlier test; the
 region where the bump formula holds is not printed. Naudet & Zahr's free-surface data
-coincide with the depth because their bottom is flat.
+coincide with the depth because their bottom is flat. Chu et al.
+(2025b) write the one-dimensional Ripa problem in the variable $y$ and
+use SSP-RK3 with CFL 0.45 and the generalized minmod limiter with
+parameter 1.3 in all their tests (§5). In their Example 7 the free
+surface $h+b$ is 5 on the left and 2 on the right, and the buoyancy
+jumps from 1 to 5, so the left state has $\tfrac{\mathsf b}2h^2=\tfrac12(5-b)^2$
+and the right one $\tfrac52(2-b)^2$ *(compiler check, not in the sources)*.
 
 **Wave pattern of the walled case** *(compiler check, not in the sources)*. For
 $h_{\mathrm L}=3$, $h_{\mathrm R}=1$, $g=1$, the intermediate state of the Riemann problem
@@ -87,10 +98,35 @@ time so that the wall reflections are "represented perfectly" (§5.2, Fig. 15). 
 coarse by design: 32 curved triangles in the first slab, against grids of thousands of cells
 for the capturing schemes above.
 
+**Characteristic central-upwind fluxes (thermal, 1D and radial).** Chu et al. (2025b) apply
+their flux-globalization [LCD central-upwind](/methods/lcd-central-upwind-scheme.md) scheme
+(LCD-PCCU), in which the numerical diffusion of the path-conservative
+[central-upwind](/methods/central-upwind-scheme.md) flux is set field by field in local
+characteristic variables of the [globalized flux](/methods/flux-globalization.md), and
+compare it with the scalar-diffusion PCCU scheme. Both are
+[well-balanced](/properties/well-balancing.md) through a reconstruction in equilibrium
+variables. On the one-dimensional problem the $L^1$ errors of $h+b$ at $t=0.2$ are (Table 5.4):
+
+| $\Delta y$ | 1/100 | 1/200 | 1/400 |
+|---|---|---|---|
+| PCCU | 5.44e-2 | 3.08e-2 | 1.48e-2 |
+| LCD-PCCU | 2.99e-2 | 1.65e-2 (printed 1.65e-3) | 7.50e-3 |
+
+with rates 0.821, 1.057 (PCCU) and 0.858, 1.137 (LCD-PCCU), close to 1, as the authors
+expect for discontinuous solutions (§5.1); the authors call LCD-PCCU "much more accurate"
+(§5.2), and its errors are 0.51–0.55 times PCCU's *(compiler check, not in the
+sources)*. On the radial problem LCD-PCCU resolves $h$ and $\mathsf b$ more sharply, in the
+plane and along the diagonal $y=x$, than PCCU, which smears them (Figs. 5.14–5.15).
+
 ## Qualifications
 
-- None of the three sources reports an error norm for the dam break; the comparisons are
+- Only Chu et al. (2025b) report an error norm for the dam break; the other comparisons are
   visual, against a fine-grid or a reference solution.
+- Chu et al. (2025b) print the LCD-PCCU error at $\Delta y=1/200$ as 1.65e-3, which with its
+  printed neighbours would give rates 4.18 and $-2.18$; 1.65e-2 reproduces the printed rates
+  0.858 and 1.137 ($\log_2(2.99/1.65)=0.858$, $\log_2(1.65/0.750)=1.138$) *(compiler check, not
+  in the sources)*. They also print the bottom of Example 7 with $x$ inside a function of $y$,
+  and the mesh as $\Delta x$; the first bump carries no factor $\tfrac12$, the second does.
 - Kolluru et al.'s values of $h_{\mathrm L}$, $h_{\mathrm R}$ and $g$ are not printed, so their run
   cannot be reproduced from the paper.
 - Naudet & Zahr write the free-surface height and a boundary-normal component with the same
@@ -101,3 +137,4 @@ for the capturing schemes above.
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §5 (CFL, limiter), §5.3, §5.3.1, Figs. 7–10 (HAL preprint).
 - [Kolluru et al. (2024)](/sources/kolluru-2024.md) — §3.3, Eqs. (8b)–(8c), Figs. 12–13 (arXiv v2).
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.2, Eq. (54), Fig. 15.
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §3, §5.2, Examples 7 and 9, Table 5.4, Figs. 5.11, 5.14–5.15.

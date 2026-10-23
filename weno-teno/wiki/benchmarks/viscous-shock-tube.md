@@ -5,7 +5,7 @@ description: "Two-dimensional Navier–Stokes shock tube of Daru and Tenaud in a
 status: established
 aliases: [Daru–Tenaud viscous shock tube, viscous shock-tube problem, shock–boundary-layer interaction in a shock tube]
 tags: [benchmark, low-dissipation, finite-difference, dg]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Viscous shock tube (Daru–Tenaud)
@@ -54,6 +54,16 @@ page-local), $T=1$, CFL 0.5, with $N=1,2,3$ each on $K_{1D}=150$, $200$, $300$ a
 and $N=2$, $K_{1D}=200$ at $\mathrm{Re}=1000$ and $10000$; diagnostic is
 a numerical schlieren
 $\exp\!\big(-10(g-g_{\min})/(g_{\max}-g_{\min})\big)$ with $g=\lVert\nabla\rho\rVert$.
+
+**DG with non-uniform subcell limiting.** [Deng, Jiang & Yan (2025)](/sources/deng-2025.md)
+§4.6, Eq. (4.11), run $(120,0,0,120/\gamma)$ for $x\le0.5$ and
+$(1.4,0,0,1.2/\gamma)$ beyond, as printed, on $[0,1]\times[0,0.5]$ with a
+symmetry condition on top and no-slip adiabatic walls elsewhere, at
+$\mathrm{Re}=1000$ to $t=1$, with fourth-order DG on $750\times375$
+elements: BR2 viscous terms in the DG elements, second-order central
+differences in the finite-volume subcells, and non-uniform
+[ROUND](/methods/round-scheme.md) reconstruction in troubled elements;
+$\gamma$ and $\mathrm{Pr}$ are not printed.
 
 Chamarthi (2023a) states the shock Mach number as 2.37; the shock-tube
 relation for a pressure ratio of 100 between equal-temperature states
@@ -123,6 +133,16 @@ MIG4 (1). Chamarthi (2023b, Table 2) prints 35455 s for MEG7-prim,
 fast" here because the gradients are shared between the inviscid and
 viscous fluxes. Neither paper names the hardware.
 
+**A positivity fix at start-up.** Deng, Jiang & Yan's run fails at
+the start on negative density or pressure until they add an a
+posteriori fix: where a negative value appears at a Gauss volume point,
+the finite-volume subcells are recomputed with the first-order Godunov
+scheme; the fix is triggered only in the initial stage, and the
+results agree with Daru & Tenaud's along the bottom wall and along
+$y=0.05$ (Figs. 18–19); see
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)
+and [bound preservation](/properties/bound-preservation.md).
+
 **Positivity filtering at higher Reynolds number.** Dzanic & Witherden
 run four viscosities with [entropy filtering](/methods/entropy-filtering.md)
 in [flux reconstruction](/methods/flux-reconstruction.md): agreement with
@@ -153,6 +173,11 @@ filter strength about $10^{-4}$ (Figs. 8–9).
   gradients belong to MIG4; Chamarthi (2023b) prints a normalized
   WCNS7M time of 1.97 for the ratio $70082/35455=1.977$
   *(compiler check, not in the sources)*.
+- Deng, Jiang & Yan print the right density as $1.4$ with pressure
+  $1.2/\gamma$; Chamarthi (2023a, 2023b) and Dzanic & Witherden print
+  the equal-temperature state $(1.2,0,0,1.2/\gamma)$, one hundredth of
+  the left state, and Deng, Jiang & Yan compare with Daru & Tenaud's
+  results for this problem.
 - Dzanic & Witherden compare with a different reference
   (Guermond et al.) at the same and higher Reynolds numbers; their
   results and Chamarthi's are not compared with each other.
@@ -166,3 +191,4 @@ filter strength about $10^{-4}$ (Figs. 8–9).
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §5.5, Eq. (47), Table 2, Fig. 13.
 - [Zhao, Ji, Shyy & Xu (2023)](/sources/zhao-2023.md) — §4.8, Figs. 13–14 (arXiv v1).
 - [Wang et al. (2023c)](/sources/wang-2023-c.md) — Example 4.10, Fig. 4.18, Table 5.1.
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.6, Eq. (4.11), Figs. 18–19.

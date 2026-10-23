@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Sedov blast wave
@@ -15,8 +15,10 @@ internal energy elsewhere is $10^{-12}$ per unit volume. A strong
 shock (planar in 1D, cylindrical in the 2D corner version) runs outwards, and behind it the density
 falls towards zero at the centre, so the solution combines a shock of
 enormous strength with a near-vacuum core. The problem has a
-self-similar exact solution, which four of the one-dimensional sources
-use as reference (the three Fan et al. papers and Li, Shu & Qiu). Pressure is a tiny difference of large energies near the
+self-similar exact solution, which six of the one-dimensional sources
+use as reference (the four Fan et al. papers, Li, Shu & Qiu and Abgrall
+et al. (2026)), and Vilar & Abgrall (2024) compare a polar run with
+its shock radius and peak density. Pressure is a tiny difference of large energies near the
 centre, so a high-order scheme without a
 [positivity](/properties/bound-preservation.md) safeguard tends to
 produce negative pressure; the sources use the test as a robustness
@@ -42,6 +44,7 @@ holds $E=3.2\times10^8$, $3.2\times10^{20}$ times the ambient value
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.3 | 800 ($\Delta x=5\times10^{-3}$) | — | MR-AWENO-Si and MR-AWENO with a [PP flux limiter](/methods/positivity-preserving-flux-limiter.md) |
 | [Li, Chen & Ren (2022)](/sources/li-2022.md) §4.2 | 800 | — | hybrid MDCD-HY and MDAD-HY, TENO-HY |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.7 | 400 points or cells | — | ghost multi-resolution GMR-WENO3/5/7 vs [MR-WENO](/methods/multi-resolution-weno.md), finite differences and finite volumes |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.9 | 800 | exact solution | moment-based finite-volume [HWENO-U](/methods/hermite-weno.md) with unified stencils vs HWENO-M, WENO-ZQ; Zhang–Shu-type positivity limiter; outflow boundaries |
 
 Li, Li, Don & Wang and Li, Chen & Ren print the same blast in
 $(\rho,v,p)$: pressure $4\times10^{-13}$, and $2.56\times10^8$ in the
@@ -55,6 +58,20 @@ common data *(compiler check, not in the sources)*. Li et al. (2023a)
 call the pressure ratio $O(10^{21})$. Wang et al. attribute the setup to Zhang & Shu (2012). Li, Shu & Qiu
 print the deposited cell as "the centre cell" and plot density,
 velocity, pressure and the troubled cells (Fig. 3.6).
+
+**A one-cell deposit for an Active-Flux-type scheme.** [Abgrall et al. (2026)](/sources/abgrall-2026.md)
+Ex. 9 use a different deposit, after Maire's initialization, with the
+exact solution of Kamm: $\rho=1$, $v=0$ and internal energy
+$e_{\min}=10^{-12}$ (per unit mass and per unit volume alike, since
+$\rho=1$) in every cell except $[-\Delta x/2,\Delta x/2]$, which carries
+$e_{\max}=0.538548/\Delta x$, on 401 cells of $[-1,1]$, $\gamma=1.4$,
+$t=0.5$, SSP-RK3 at CFL 0.2. Their bound-preserving
+[PAMPA scheme](/methods/pampa-scheme.md), which evolves cell averages
+and interface point values and blends high- and low-order fluxes and
+residuals ([convex limiting](/methods/convex-limiting.md) with
+[geometric quasilinearization](/methods/geometric-quasilinearization.md)
+for the internal energy), gives "satisfactory results, without any
+numerical defects" (Fig. 10).
 
 ## Two-dimensional corner version
 
@@ -107,12 +124,43 @@ ALE method with their positivity-preserving multi-resolution WENO
 steps capture the density peak and shock position and keep the radial
 symmetry, with better mesh quality in the ALE run (Figs. 13–14).
 
-Two further corner runs use the same data on $320\times320$ cells
+Three further corner runs use the same data on $320\times320$ cells
 ($\Delta x=1.1/320$), $t=1$: [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md)
 Example 5.5, at $\mathrm{Re}=1000$ and $\mathrm{Re}=\infty$, 20 density
-contours from 0.1 to 5 (Fig. 5.4), and
+contours from 0.1 to 5 (Fig. 5.4),
 [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.10, Euler,
-without positivity limiter.
+without positivity limiter, and [Fan et al. (2025)](/sources/fan-2025.md)
+Ex. 3.12, with positivity limiters, which they state are required.
+
+**Two-phase corner run.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+Ex. 4.8 run the corner blast in the Kapila
+[five-equation model](/definitions/five-equation-model.md), after
+Zhang & Cheng: with $(\rho_1,\rho_2,v_1,v_2,E,\phi_1)$,
+$(1,1,0,0,0.244816/(\Delta x\Delta y),1-10^{-6})$ in the corner cell and
+$(1,1,0,0,10^{-12},10^{-6})$ elsewhere, so the energy sits in phase 1
+($\gamma_1=1.67$) and the ambient gas is phase 2 ($\gamma_2=1.4$);
+$[0,1.2]^2$, $120^2$ cells, reflective left and bottom, outflow right
+and top, $t=1$, reference on $240^2$ (Fig. 10). Their bound-preserving
+[OEDG](/methods/oedg.md) scheme ($\mathbb P^2$, $\mathbb P^3$, CFL
+$1/(2N+1)$) proves positivity of the cell averages of the partial
+densities and of the internal energy, and $\phi_1\in[0,1]$, under
+explicit time-step conditions (Thms 3.6, 3.10).
+
+**Polar sector.** [Vilar & Abgrall (2024)](/sources/vilar-2024.md)
+§4.3.2 (HAL preprint) run the blast on the sector
+$(r,\theta)\in[0,1.2]\times[0,\pi/4]$ of unstructured triangles, with
+symmetry conditions on the sector sides and outflow at $r=1.2$:
+$\rho=1$, $v=0$, $p=10^{-14}$, $\gamma=1.4$, and the energy
+$0.244816$ placed only in the DG subcell that contains the origin
+(total energy 1947.5 there, $2.5\times10^{-14}$ elsewhere); the shock
+reaches $r=1$ at $t=1$ with peak density 6. Their $\mathbb P^5$ DG
+with [a posteriori local subcell correction](/methods/mood-a-posteriori-limiting.md),
+which replaces the reconstructed fluxes of troubled subcells by
+first-order finite-volume fluxes
+([DG–subcell equivalence](/results/dg-subcell-finite-volume-equivalence.md)),
+runs on 271 cells, and at third order on 2894 cells (Figs. 38–40).
+They state that "any scheme lacking positivity-preserving property or
+a rigorous stabilization technique would fail".
 
 ## Centred two-dimensional version
 
@@ -247,6 +295,15 @@ spurious oscillations at the strong shock and that its distribution
 captures the symmetric structure of the blast (§5.4.3, Figs. 16–17);
 the paper names no positivity safeguard for this run.
 
+Fan et al. (2025) need the positivity limiter for HWENO-U and HWENO-M
+on both Sedov problems; in 2D, HWENO-M and WENO-ZQ with the original
+WENO-ZQ-type weights still oscillate with the limiter, while HWENO-U
+and HWENO-M with their scale-invariant weights, which normalize
+$\tau$, $\beta_k$ and $\epsilon$ by a local mean of $\lvert\bar u\rvert$,
+do not (Ex. 3.12, Fig. 17; see
+[scale invariance](/properties/scale-invariance.md)). Their CPU times
+for the shock tests fall between those of WENO-ZQ and HWENO-M (Table 7).
+
 **Resolution of the density peak.** Wang et al. find WENO-JS5 and both
 multi-resolution schemes similar, and all worse than WENO-AO5 near the
 peak; they conjecture that near strong shocks of large pressure ratio
@@ -266,8 +323,20 @@ stated (Table 4.2).
 
 - Fu (2021) prints the corner-cell condition as "$x\le\Delta x$ and
   $x\le\Delta y$"; the second inequality must read $y\le\Delta y$.
-- Among the 1D sources only Fan, Zhao, Xiong & Qiu and Li, Li, Don &
-  Wang print $\gamma=1.4$ for the problem; Fan, Zhang & Qiu (2021) use
+- Abgrall et al. (2026) print the grid as $x_i=i\Delta x$, $\Delta x=2/N$,
+  $N=401$, $-N\le i\le N$, which spans $[-2,2]$ and does not fit their
+  centre cell $[-\Delta x/2,\Delta x/2]$, their "401 cells" and plots on
+  $[-1,1]$; they also print the ambient point pressure as
+  $e_{\min}/(\gamma-1)$, while $p=(\gamma-1)e$ is their equation of state,
+  and they set the ambient cells' energy as $E=\rho e_{\min}$ but the
+  centre cell's third component as $\rho e_{\max}/(\gamma-1)$, so the
+  deposited energy is $0.538548$ or $0.538548/(\gamma-1)$ depending on
+  the reading *(compiler check, not in the sources)*.
+- Vilar & Abgrall's background total energy $10^{-14}/0.4=2.5\times10^{-14}$
+  is consistent with $\gamma=1.4$ *(compiler check, not in the sources)*.
+- Among the 1D sources only Fan, Zhao, Xiong & Qiu, Fan et al. (2025),
+  Abgrall et al. (2026) (§4.2) and Li, Li, Don & Wang print $\gamma=1.4$
+  for the problem; Fan, Zhang & Qiu (2021) use
   $\gamma=1.4$ throughout their paper, the others print none.
 
 # Citations
@@ -288,3 +357,7 @@ stated (Table 4.2).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.3, Eq. (65), Figs. 7–8 (arXiv v2).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — §3.4, Eqs. (56)–(58), Figs. 5–7 (arXiv v1).
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — Ex. 3.7, Figs. 3.13–3.14, Table 3.1.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.3.2, Figs. 38–40 (HAL preprint).
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.8, Thms 3.6, 3.10, Fig. 10.
+- [Fan et al. (2025)](/sources/fan-2025.md) — Exs. 3.9, 3.12, Figs. 13, 17, Table 7.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4.2, Ex. 9, Fig. 10.

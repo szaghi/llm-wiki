@@ -3,9 +3,9 @@ type: Method
 title: "Active Flux"
 description: "Active Flux evolves cell averages conservatively with fluxes from point values shared at cell interfaces, giving a globally continuous reconstruction without Riemann solvers; Abgrall and Barsukow extend it to arbitrary order in 1D, Calhoun et al. run the third-order Cartesian version on adaptively refined grids, and Chudzik et al. evolve the point values of 2D systems with bicharacteristic operators."
 status: established
-aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux, AF with evolution-Galerkin operators]
+aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux, AF with evolution-Galerkin operators, PAMPA]
 tags: [finite-volume, reconstruction, characteristic, limiting]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Active Flux
@@ -339,6 +339,28 @@ not balanced by coarse fluxes: constant data on levels 3–4 have error $10^{-13
 subcycling against about $10^{-16}$ without (§4.3). See
 [free-stream preservation](/properties/free-stream-preservation.md).
 
+## PAMPA: bound preservation by blending
+
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) work with the
+[PAMPA scheme](/methods/pampa-scheme.md), Abgrall's method-of-lines relative of
+Active Flux with the same degrees of freedom (averages and shared interface point
+values) and the same parabola on each cell. The point values are evolved by
+upwind residuals $a^\pm$ times the one-sided derivatives of the two cell parabolas
+at the node, the Jacobian split $R\Lambda^\pm L$ for systems (§2, Eqs. (2.6)–(2.9)).
+Unlike the limiting of Abgrall & Barsukow (2023) described above, which only
+lowers the order of the point-value update and never limits the averages, they limit both a priori: the
+average flux is blended with a local Lax–Friedrichs flux, and each of the two
+residuals of a point value is blended separately with a first-order residual that
+mixes the point value and the adjacent average. Both updates are then convex
+combinations of bar-state-type intermediate states, and closed-form coefficients
+make the scheme bound preserving for scalar laws and positivity preserving for
+the Euler equations (Props. 3.1–3.2, §3.4). They state that their scheme does not
+show the transonic difficulties met by Duan, Barsukow & Klingenberg's generalized
+Active Flux, which needed careful flux vector splitting, and that it
+needs no explicit reconstruction inside the cell (§1, Ex. 2, Conclusions). The
+Burgers self-steepening shock of the transonic discussion above is their
+Example 2 ([Burgers tests](/benchmarks/burgers-equation-tests.md)).
+
 ## Qualifications
 
 - Abgrall & Barsukow's arbitrary-order variants are one-dimensional; multi-dimensional
@@ -379,4 +401,5 @@ subcycling against about $10^{-16}$ without (§4.3). See
 
 - [Abgrall & Barsukow (2023)](/sources/abgrall-2023.md) — §§1–7, Defs. 2.1, 2.2, 4.1, 5.1, Thms. 2.1, 2.2, 4.1, 4.2, Eqs. (11), (23)–(24), (37), (43), (47)–(49), (53), (100)–(115), Tables 1–2, Figs. 16–28 (author preprint).
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §§1–4, Eqs. (1)–(15), (25)–(28), Remark 4.1, Thm. 4.2, Cor. 4.3, Tables 1–4, Figs. 3–6, 12, 16 (arXiv v2).
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1; §2, Eqs. (2.6)–(2.9); §3, Props. 3.1–3.2; §3.4; Ex. 2.
 - [Chudzik, Helzel & Lukáčová-Medvid'ová (2024)](/sources/chudzik-2024.md) — §§1–7, Eqs. (1), (4), (6), (7), (10)–(14), (17)–(20), (28), (31)–(33), (38), Thms. 3.1, 4.1, Remarks 4.2, 6.1, Algorithm 1, Tables 1–9, Examples 5.1–5.2, 6.2–6.3, 7.1–7.4, Appendix A.

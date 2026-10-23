@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Double Mach reflection
@@ -21,9 +21,9 @@ a slip line from the primary triple point and a wall jet. The slip line
 is Kelvin–Helmholtz unstable, and the amount of roll-up a scheme
 resolves on a given grid is the visual gauge of its
 [numerical dissipation](/definitions/numerical-dissipation.md) in every
-source that runs it. Forty-five sources of the bundle run it,
-forty-one in the Woodward–Colella form (one of them on a randomly
-distorted curvilinear grid) and four in a variant (two
+source that runs it. Forty-eight sources of the bundle run it,
+forty-four in the Woodward–Colella form (one of them on a randomly
+distorted curvilinear grid, one extruded to three dimensions) and four in a variant (two
 wedges in the physical frame on unstructured meshes, a relativistic
 version, a dimensional ramp with an immersed boundary); most cite Woodward & Colella (1984)
 for it, while Peng, Sun & Wu cite no source for the setup. A Mach 10
@@ -40,7 +40,8 @@ Common data, as printed by
 likewise by [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) §4.6,
 [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.8,
 [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5, Eq. (42) and
-[Liang et al. (2022)](/sources/liang-2022.md) §4.5, in
+[Liang et al. (2022)](/sources/liang-2022.md) §4.5 and
+[Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.5, Eq. (4.10), in
 $(\rho,v_1,v_2,p)$:
 
 $$
@@ -65,7 +66,9 @@ the top, outflow on the right, pre-shock $\rho=1.4$, $p=1$.
 [Peng, Sun & Wu (2024)](/sources/peng-2024.md) Ex. 5.17 and
 [Wang et al. (2023b)](/sources/wang-2023-b.md) Example 4 and
 [Zhou et al. (2023)](/sources/zhou-2023.md) §5.5, Eq. (40) and
-[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 15, Eq. (49) write the same
+[Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 15, Eq. (49) and
+[Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.10 (as
+$(8,\tfrac{33}4\sin\tfrac\pi3,-\tfrac{33}4\cos\tfrac\pi3,116.5)$) write the same
 geometry as $x<\tfrac16+y/\sqrt3$ with post-shock state
 $(8,\ 8.25\cos\tfrac\pi6,\ -8.25\sin\tfrac\pi6,\ 116.5)$, and
 [Chamarthi (2023a)](/sources/chamarthi-2023.md) Ex. 4.4,
@@ -153,6 +156,19 @@ Woodward (1984) initial conditions" without printing them, and
 [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.8 give the Mach 10 shock
 at $x=1/6$ and $60^\circ$ on $[0,4]\times[0,1]$ to $t=0.2$.
 
+[Danis et al. (2025)](/sources/danis-2025.md) §5.7 (arXiv v1) extrude
+the problem to three dimensions on $[0,4]\times[0,1]\times[0,1]$,
+periodic in $z$, with the post-shock state
+$(\rho,v_1,v_2,v_3,p)=(8,\ 8.25\sin\theta,\ -8.25\cos\theta,\ 0,\ 116.5)$,
+$\theta=\pi/3$, the pre-shock state $(1.4,0,0,0,1)$, post-shock data on
+$x<1/6$ of the bottom and a reflective wall beyond, the exact shock on
+the top, $t=0.2$, on $480\times120\times120$ and
+$960\times240\times240$ cells, 30 density contours from 1.5 to 22.9705.
+Their Eq. (41) prints the post-shock region as "$x<\tfrac16$",
+independent of $y$, although their text describes the oblique shock
+through $(1/6,0)$ and an initial rank that grows with the number of
+cells in $y$; the latter requires the $y$-dependent front.
+
 Wording differs in one more place: Ye et al. call the shock "at 30°"
 starting at $x=1/6$, [Deng (2023)](/sources/deng-2023.md) App. A.11
 speak of "a 30° ramp", Dzanic & Witherden and Mossier, Beck & Munz of
@@ -235,7 +251,7 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Wang et al. (2021)](/sources/wang-2021.md) Example 5.7 | [multi-resolution WENO](/methods/multi-resolution-weno.md) (New WENO5, original WENO5-MR) vs WENO-JS5, WENO-AO5 | $[0,3]\times[0,1]$, $1200\times400$ | CFL 0.6 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.6 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO3-N, WENO5-JS; finite volume, LLF, characteristic | $1024\times256$ | plotted $[2,3]\times[0,1]$, 40 contours 1.85–21.5; cost test (3700 steps) |
 | [Hiejima (2022)](/sources/hiejima-2022.md) §3.4 | [WCNS](/methods/weighted-compact-nonlinear-scheme.md) with JS weights (WCNS-JS) and TENO-type weights (WCNS-T), interpolation orders 5–11, AUSMDV, RK4 at CFL 0.8 | $1024\times256\times5$, $2048\times512\times5$ (three-dimensional code) | 43 contours 1.887–20.9; zoom $2\le x\le3$ |
-| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.4 | flux reconstruction, $\mathbb P_3$, with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) | $[0,4]\times[0,1]$, $2400\times600$ elements | HLLC |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.4 | flux reconstruction, $\mathbb P^3$, with [entropy filtering](/methods/entropy-filtering.md) (arXiv v3) | $[0,4]\times[0,1]$, $2400\times600$ elements | HLLC |
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Exs. 4.3, 4.9 | RKDG $P^1$, $P^2$ with the improved [simple WENO limiter](/methods/weno-limiter-dg.md) vs the original one | triangles $h=1/200$; point clouds of 400,000 ($P^1$) and 800,000 ($P^2$) points | KXRCF threshold $C_k=0.01$; 30 contours 1.1–22 (triangles), 29 contours 1.3–23 (point clouds) |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.4.4 | nodal DG on triangles with ANN-predicted [artificial viscosity](/methods/artificial-viscosity.md), $P^2$–$P^4$ | $[0,4]\times[0,1]$, $h=1/204$ | fixed-DOF comparison $P^2$ (1,259,712 DOFs) vs $P^4$ (1,248,480 DOFs) |
 | [Chen et al. (2022)](/sources/chen-2022.md) §6.5 | second-order cell-centred FV with [vertex-based gradient reconstruction](/methods/unstructured-gradient-reconstruction.md) (VWLSQ with nonlinear weighting) vs WLSQ with the MLP-pw limiter | wedge, 576,910 triangles | variant above |
@@ -256,7 +272,7 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 15 | fifth-order FV IMWENO-P (mirror-symmetric smoothness indicators) vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P; global LF, SSP-RK3, CFL 0.5 | $[0,4]\times[0,1]$, $1440\times360$ | zoom around the Mach stems |
 | [Wang et al. (2023c)](/sources/wang-2023-c.md) Example 4.5 | hybrid multi-resolution [WCNS](/methods/weighted-compact-nonlinear-scheme.md) vs MR-WCNS and WENO-JS; LF flux, TVD-RK3, CFL 0.6 | $[0,4]\times[0,1]$, plotted $[0,3]\times[0,1]$, $960\times240$ | 30 contours 1.5–22.7; marked-point map |
 | [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.4 | entropy-stable [DGSEM](/methods/dgsem.md), $N=3$, elementwise blending with a sparse low-order positivity-preserving scheme, bound relaxation $\zeta_{\mathrm r}=0.1$ (their $\zeta$; with and without shock-capturing blending) and $\zeta_{\mathrm r}=0.5$ | $[0,3.5]\times[0,1]$, $875\times250$ quadrilaterals | $\mathrm{Re}=\infty$ (arXiv v2) |
-| [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.4 | hybrid DG($P_3$)–FV(CWENOZ4) in [UCNS3D](/software/ucns3d.md), a priori [troubled-cell](/definitions/troubled-cell-indicator.md) switch: shock detector, MOOD$^{\mathrm O}$, MOOD$^{\mathrm R}$, extended bounds; CFL 0.5 | about 150,000 triangles, $h=1/125$ | — |
+| [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.4 | hybrid DG($\mathbb P^3$)–FV(CWENOZ4) in [UCNS3D](/software/ucns3d.md), a priori [troubled-cell](/definitions/troubled-cell-indicator.md) switch: shock detector, MOOD$^{\mathrm O}$, MOOD$^{\mathrm R}$, extended bounds; CFL 0.5 | about 150,000 triangles, $h=1/125$ | — |
 | [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) §8.6 | [$p$-adaptive DG](/methods/hp-adaptation.md) $N\in[2,5]$ with [FV subcells](/methods/subcell-finite-volume-limiting.md) ($N_{\mathrm{FV}}=6$ or 11) vs static $N=5$; HLLE; [FLEXI](/software/flexi.md) | $240\times60\times1$ elements ($h=1/60$), periodic in $z$ | $t=0.28$; pressure indicator |
 | [Ji, Liang & Fu (2023)](/sources/ji-2023.md) §4.5 | unstructured finite-volume TENO4-D–TENO7-D (dual stencil selection) vs [CWENO](/methods/cweno.md)6/7, HLL, SSP-RK3 at CFL 0.4; [UCNS3D](/software/ucns3d.md) | 151,850 ($h\approx1/125$), 369,794 ($h\approx1/200$), 752,708 ($h\approx1/280$) triangles | 43 contours of $\ln\rho$ in $[1,3]$; cost table |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.4 | [TENO-AZ](/methods/adaptive-teno.md) (adaptive cut-off) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 at CFL 0.5 | $960\times240$ | 30 contours in $[2,20]$; cost table |
@@ -264,7 +280,10 @@ describe one configuration *(compiler check, not in the sources)*.
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.9 | ghost multi-resolution GMR-WENO3/5/7, finite difference and finite volume, vs MR-WENO | $[0,3]\times[0,1]$, $1200\times400$ | 30 contours 1.5–22.7; cost table |
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.6 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 (MR-WENO in troubled cells, linear upwind elsewhere) vs MR-WENO; CFL 0.6, TVD-RK3 | $[0,4]\times[0,1]$, plotted $[0,3]\times[0,1]$ "on $1200\times400$ grid points" | 30 contours 1.5–22.7; troubled-cell map; cost table |
 | [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.5 | hybrid HMR-WENO5/7/9 (bisection-based extremum indicator) vs MR-WENO; CFL 0.6, TVD-RK3 | $[0,4]\times[0,1]$, $1200\times400$, plotted $[0,3]\times[0,1]$ | 30 contours 1.5–22.7; troubled-cell map; cost table |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.7 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with a posteriori [subcell FV limiter](/methods/mood-a-posteriori-limiting.md), conservative correction in shock cells, $P_2$ | physical-frame wedge, polygonal mesh $h=1/220$ | variant above (arXiv v1) |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.7 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG in primitive variables with a posteriori [subcell FV limiter](/methods/mood-a-posteriori-limiting.md), conservative correction in shock cells, $\mathbb P^2$ | physical-frame wedge, polygonal mesh $h=1/220$ | variant above (arXiv v1) |
+| [Danis et al. (2025)](/sources/danis-2025.md) §5.7 | fifth-order finite-difference WENO-JS in [tensor-train format](/methods/tensor-train-weno.md), component-wise | 3D, $480\times120\times120$, $960\times240\times240$ | CFL 0.5; initial data built rank by rank (arXiv v1) |
+| [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.5 | fourth-order DG with Godunov-type FV subcell limiting by non-uniform [ROUND](/methods/round-scheme.md) | $480\times120$ elements ($480\times120\times4^2$ DOFs) | troubled-element map; Schlieren $\log_{10}(\lvert\nabla\rho\rvert+1)$ |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.10 | moment-based [Hermite WENO](/methods/hermite-weno.md) with unified stencils (HWENO-U) vs HWENO-M, WENO-ZQ; scale-invariant weights | $1920\times480$ | data scaled by $\zeta\in\{10^{-7},1,10^7\}$; CFL 0.6 |
 
 ## What the benchmark measures
 
@@ -360,7 +379,7 @@ than TENO-Z and TENO-LAD, while TENO-A gives more vortices but
 significantly more noise (§4.4.4). Gaburro et al.'s primitive-variable
 ADER-DG uses the conservative update only in the shock-triggered
 subcells, so most of the domain stays in primitive variables, and the
-small-scale roll-up of the shear layer is visible at $P_2$ on
+small-scale roll-up of the shear layer is visible at $\mathbb P^2$ on
 $h=1/220$ (§5.1.7, Fig. 6; see
 [local conservation](/results/local-conservation-flux-form.md)).
 
@@ -531,6 +550,36 @@ Zuo & Zhu (2024a, Table 3.1, hardware not stated): MMR/MR time ratios
 3.1, a Lenovo XiaoXinAir 14 laptop): MR-WENO 9509.17, 17058.2 and
 26535.5 s against HMR-WENO 3088.51, 5905.18 and 11658.7 s.
 
+Fan et al. (2025, Table 7; Fortran 95, Intel Xeon Gold 6130) take
+$6.339\times10^4$ s for HWENO-U, $7.582\times10^4$ s for HWENO-M and
+$5.181\times10^4$ s for WENO-ZQ on $1920\times480$.
+
+**Scaled data.** Fan et al. (2025) run the problem also with the initial
+data scaled by $\zeta=10^{-7}$ and $10^7$ ($\zeta$ page-local) and obtain consistent results with their scale-invariant
+nonlinear weights (Figs. 14–15); see
+[scale invariance](/properties/scale-invariance.md).
+
+**Low-rank compression.** Danis et al. find that the cross
+interpolation they use for every other initial condition fails on this
+one; they build it as a sum of $N_y$ rank-one tensor trains with
+rounding, an initial rank of about $N_y\cot(\pi/3)$, and the rank grows
+further as the flow evolves; the shocks are captured on both grids
+(Fig. 11). The authors state that low-rank problems benefit from the
+format while the double Mach reflection and the Rayleigh–Taylor
+instability suffer rank growth, which calls for a local adaptation of
+the rank (§5.7–5.8, §6). Their text puts the supersonic inflow on the
+right boundary and the subsonic outflow on the left, the reverse of
+their own setup, in which the post-shock gas enters from the left.
+
+**DG with ROUND subcells.** Deng, Jiang & Yan find a troubled-element
+distribution comparable to that of Mossier et al., a resolution better
+than Hennemann et al.'s DG with first-order subcells at similar degrees
+of freedom and comparable to Sonntag & Munz's sixth-order run with
+$480\times120\times6^2$ degrees of freedom, as they cite these works;
+small acoustic waves remain, which they attribute to excessive DG/FV
+switching and imperfect coupling (§4.5, Figs. 16–17); see
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+
 **Unstructured meshes.** Fu (2023) reproduces finite-volume TENO6 on
 triangular meshes of 151,850 to 752,708 cells (Fig. 11). Chen et al.
 (2022), Chen & Wu (2022), Du et al., Yu & Hesthaven, Maltsev et al. and
@@ -554,9 +603,10 @@ grid, not an exact solution.
   figures of another work; Ye et al. with literature grids; Deng's
   comparison cites a WENO-JS5 result "in [65]", a reference on an
   improved third-order WENO-Z scheme).
-- Fu (2023) prints "$t=2.0$" in the caption of Fig. 8, and Takagi et
+- Fu (2023) prints "$t=2.0$" in the caption of Fig. 8, Takagi et
   al. print "$t=2.0$" in the caption of Fig. 10 while their §4.6 text
-  says $t=0.2$; the final time of the problem is $0.2$ in every source
+  says $t=0.2$, and Danis et al.'s Fig. 11 caption reads "$T=2$" against
+  their text's $T=0.2$; the final time of the problem is $0.2$ in every source
   that states it in the text.
 - Liang et al. print "$t=2.0$" in the captions of Figs. 11–14 while
   their §4.5 text says $t=0.2$, the same caption slip as Fu (2023) and
@@ -671,3 +721,6 @@ grid, not an exact solution.
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — §3, Ex. 3.9, Figs. 3.16–3.17, Table 3.1.
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.6, Figs. 3.8–3.10, Table 3.1.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.5, Figs. 3.6–3.8, Table 3.1.
+- [Danis et al. (2025)](/sources/danis-2025.md) — §5.7, Eq. (41), Fig. 11; §6 (arXiv v1).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.5, Eq. (4.10), Figs. 16–17.
+- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.10, Figs. 14–15, Table 7.

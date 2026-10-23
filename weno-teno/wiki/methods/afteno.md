@@ -5,7 +5,7 @@ description: "AFTENO places a TENO interpolation of point values inside the alte
 status: established
 aliases: [AFTENO, AFTENO5, alternative formulation of targeted ENO, TENO in the AFWENO framework]
 tags: [teno, finite-difference, numerical-flux, reconstruction]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-23T15:05:00Z
 ---
 
 # AFTENO — alternative-formulation TENO
@@ -110,8 +110,8 @@ TENO to the interpolation-based flux plus derivative terms (§4.2).
   Eq. (13) and Eq. (A.19) give the arguments of $h$ in opposite orders.
 - Tables 9–10 report observed orders 6.1–7.0 on the finest meshes of the 1D
   density wave for fifth-order schemes, with no time step or CFL stated; the
-  domain is printed $[0,1\pi]$ with periodic $\sin x$ data, probably a slip for
-  $[0,2\pi]$.
+  domain is printed $[0,1\pi]$ with periodic $\sin x$ data, whose periodic extension
+  on $[0,\pi]$ has a kink in its derivative *(compiler check, not in the sources)*.
 - "AFWENO has odd order only" is a property of the Jiang–Shu–Zhang construction,
   not of interpolation-based flux formulations in general.
 

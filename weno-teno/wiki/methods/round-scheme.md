@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "ROUND schemes"
-description: "ROUND (Reconstruction Operators on the Unified Normalised-variable Diagram) schemes are three-cell compact finite-volume reconstructions designed directly as functions of the normalised cell average, which makes them scale-invariant and lets dissipation, TVD/CBC and ENO behaviour be placed by construction; this page gives the dissipative, low-dissipative, fine-tuned and neural-network-inspired formulations, their cost and evidence, and their order caveat."
+description: "ROUND schemes are three-cell compact finite-volume reconstructions written directly as functions of the normalised cell average, hence scale-invariant, with dissipation, TVD and ENO behaviour placed by construction; the page gives the dissipative, low-dissipative, fine-tuned, learned-weight-inspired and non-uniform-grid forms, their DG-subcell use, cost, evidence and order caveat."
 status: established
 aliases: [ROUND, LD-ROUND, Reconstruction Operator on Unified Normalised-variable Diagram, low-dissipative ROUND]
 tags: [reconstruction, finite-volume, low-dissipation, limiting]
-timestamp: 2026-10-21T12:00:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # ROUND schemes
@@ -115,6 +115,58 @@ switch to CD2 instead of the $-\tfrac12\tilde u$/P3 branch), near $\tilde u=1$
 ($\tfrac3{50}\tilde u+\tfrac{47}{50}$ instead of $\tfrac9{10}+\tfrac1{10}\tilde u$)
 and for $\tilde u>1$ (CD2 instead of $\min(\tfrac65\tilde u-\tfrac15,\text{P3})$).
 
+## Non-uniform grids and DG subcells (Deng, Jiang & Yan 2025)
+
+[Deng, Jiang & Yan (2025)](/sources/deng-2025.md) (§2) carry ROUND to a three-cell stencil
+of arbitrary widths $\Delta x_{i-1},\Delta x_i,\Delta x_{i+1}$ (page-local width of cell $I_i$;
+$h_-,h_0,h_+$ on the normalised-variable-diagram page),
+with the same normalised variables. The building blocks become (Eqs. (2.13)–(2.15))
+
+$$\mathrm{UW}=\frac{\Delta x_{i-1}+2\Delta x_i}{\Delta x_{i-1}+\Delta x_i}\tilde u,\qquad
+\mathrm{CD}=\frac{\Delta x_{i+1}}{\Delta x_i+\Delta x_{i+1}}\tilde u+\frac{\Delta x_i}{\Delta x_i+\Delta x_{i+1}},$$
+
+and the third-order line P of slope $\mu_1^{\mathrm P}$ and intercept $\mu_0^{\mathrm P}$ given on the
+[normalised-variable diagram](/definitions/normalised-variable-diagram.md), all three passing
+through a grid-dependent accuracy point. The non-uniform ROUND operator is piecewise linear
+(Eq. (2.26)):
+
+$$\mathcal R(\tilde u)=\begin{cases}
+\min\big(-\tfrac14\tilde u,\ \mathrm P\big),&\tilde u\le0,\\
+\min\Big(\tfrac32\,\mathrm{UW},\ \mathrm P,\ \tfrac25\dfrac{\Delta x_{i+1}}{\Delta x_i+\Delta x_{i+1}}(\tilde u-1)+1\Big),&0<\tilde u\le1,\\
+\min\big(\mathrm P,\ \tfrac65(\tilde u-1)+1\big),&\tilde u>1,
+\end{cases}$$
+
+with the four constants $\tfrac14,\tfrac32,\tfrac25,\tfrac65$ (the source's $\beta_1,\dots,\beta_4$,
+not smoothness indicators) used in every test. Larger first, second and fourth constants use
+the third-order line more, with more risk of oscillation; a smaller third one moves the
+curve toward first-order downwind, with the same risk. The curve recovers P away from
+$\tilde u\approx0,1$ and lies entirely in the dissipative region for $0<\tilde u<1$; an
+anti-dissipative variant is said to be possible (§2.4). On a uniform grid the blocks reduce to
+UW2, CD2 and P3 (Remark 2.1). The authors stress that, unlike non-uniform WENO, ROUND needs no
+smoothness indicators, and call it cheaper on that ground (§1, §5; no timings).
+
+**Use as a DG subcell scheme** (§3). The non-uniform cells are the subcells of a modal
+Legendre [DG](/methods/discontinuous-galerkin.md) element, sized by the Gauss–Legendre weights
+and carrying the Gauss-point values, which are interpreted as subcell averages without exact
+averaging; a mass-matrix projection maps the subcell data back to modes. A troubled-element
+indicator built on a relaxed [BVD](/definitions/boundary-variation-diminishing.md) criterion
+switches whole elements to the ROUND finite-volume scheme (hard switching; DG/FV-ROUND;
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)). ROUND is
+[scale-invariant](/properties/scale-invariance.md), but DG/FV-ROUND is not, because the indicator
+threshold is dimensional (§3.3).
+
+**Evidence** (§4). On a rotating passive scalar on $200\times200$ cells, uniform or with the
+widths of the subcells of $50\times50$ fourth-order elements, ROUND is far less dissipative
+than TVD limiters and keeps the shapes on the strongly non-uniform grid, where the van Leer
+limiter distorts them even on the uniform grid; along one line it is less dissipative than
+uniform-grid WENO5-JS, which overshoots (Figs. 5–7). As a subcell scheme it gives $L^2$
+density orders 2.69, 3.40, 3.41, 2.65 at third order on the isentropic vortex, and 2.13–2.60
+when 5 % of the elements are forced troubled at random (Tables 1–2), and keeps conservation
+to round-off (Table 3). Shock tests (blast waves, Shu–Osher and Titarev–Toro, Lax, two 2D
+Riemann problems, double Mach reflection, a viscous shock tube, a type IV shock–shock
+interaction) are compared visually with published DG subcell results; an OpenFOAM
+implementation on unstructured meshes is given in App. A.
+
 ## Cost and evidence
 
 FLOPs per reconstruction: ROUND 11, LD-ROUND 20, WENO3-JS 19, WENO5-JS 55,
@@ -150,6 +202,9 @@ reflection; Deng does not state the Riemann solver):
   value, the scheme is formally second order with a small third-order defect,
   not uniformly third order. The same reasoning applies to every ROUND curve that
   departs from P3 in a neighbourhood of $\tilde u=1/2$ of fixed width.)*
+- **Order on non-uniform grids.** Deng, Jiang & Yan (2025) also call ROUND "high-order"
+  and state no order near $\tilde u\approx0,1$; their DG/FV-ROUND convergence study ends at
+  2.65 on the finest mesh (Table 1).
 - **Resolution claims** against fifth-order WENO rest on visual comparisons, partly
   on different meshes and partly against figures from other papers.
 - **Printed slips** (Deng): the third argument of the middle branch of Eq. (7.1)
@@ -165,3 +220,4 @@ reflection; Deng does not state the Riemann solver):
 
 - [Deng (2023)](/sources/deng-2023.md) — §6.2, Eqs. (6.3)–(6.6), Proposition 6; §7, Eqs. (7.1)–(7.7), Remarks 7.1–7.3, Figs. 13–38; §8.
 - [Huang et al. (2026)](/sources/huang-2026.md) — §4, Eqs. (4.1)–(4.3), Figs. 3–4; §5, Table 2, Fig. 5; §6, Table 3, Figs. 6–17.
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §1; §2, Eqs. (2.10)–(2.26), Remark 2.1; §3.2–3.3; §4, Tables 1–3, Figs. 5–23; §5; App. A.

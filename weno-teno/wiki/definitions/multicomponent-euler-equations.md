@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Multicomponent Euler equations"
-description: "The fully conservative Euler system for a mixture of several gases or stiffened fluids in thermal and mechanical equilibrium, written with partial densities or mass fractions, and its reacting Navier–Stokes extension; its closures, admissible set, wave structure and mixture entropy, and the entropy-stable, positive and bound-preserving schemes built on it, with their behaviour at material interfaces."
+description: "The fully conservative Euler system for a mixture of several gases or stiffened fluids in thermal and mechanical equilibrium, written with partial densities, mass fractions or molar concentrations, and its reacting Navier–Stokes extension; its closures, admissible set, wave structure and mixture entropy, and the entropy-stable, positive and bound-preserving schemes built on it, with their behaviour at material interfaces."
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:06:00Z
 ---
 
 # Multicomponent Euler equations
@@ -47,7 +47,12 @@ reacting Navier–Stokes system with all partial densities (§2.1, Eqs. (1)–(7
 arXiv v1), and [Trojak & Dzanic (2024)](/sources/trojak-2024.md) solve
 the multi-species Euler and Navier–Stokes systems with all partial
 densities, $\rho=\sum_k\rho Y_k$, in thermal equilibrium (§2, Eqs.
-(1)–(6); arXiv v1). [Jiao et al. (2024)](/sources/jiao-2024.md) (§2.1,
+(1)–(6); arXiv v1). [Ching et al. (2025)](/sources/ching-2025.md)
+(§2, Eqs. (2.1)–(2.6)) solve the reacting Navier–Stokes system with the
+molar concentrations $\mathsf C_k$ (page-local) as species unknowns,
+$u=(\rho v,\ \rho e_{\mathrm t},\ \mathsf C_1,\dots,\mathsf C_{n_{\mathrm c}})$
+with $\rho Y_k=W_k\mathsf C_k$ and $\rho=\sum_kW_k\mathsf C_k$ ($e_{\mathrm t}$ the
+specific total energy, page-local). [Jiao et al. (2024)](/sources/jiao-2024.md) (§2.1,
 Eqs. (2–1)–(2–2)) call their mixture system, mixture mass, momentum
 and energy plus one species-mass equation per non-condensable gas, a
 "four-equation model" and state that it "is fully conservative when no
@@ -145,6 +150,14 @@ cell on the GPU (§2, Eqs. 4–7; §5; see
 [operator splitting](/methods/operator-splitting.md)). The temperature
 is recovered from the internal energy by a Newton iteration (§2,
 Alg. 2).
+Ching et al. (2025) use NASA polynomials for the species heat capacities,
+$p=R_uT\sum_k\mathsf C_k$, a species entropy with the term
+$-R_k\ln(\mathsf C_k/\mathsf C_{\mathrm{ref}})$, mixture-averaged diffusion
+velocities corrected so that $\sum_kW_k\mathsf C_kV_k=0$ (page-local $V_k$),
+whose coefficients "can be nonzero for $\mathsf C_k=0$", Wilke viscosity and
+Mathur conductivity, and Strang splitting between transport and a fully
+implicit temporal DG step for the chemistry (§2, §3, Eqs. (2.3)–(2.6),
+(3.3)–(3.5)).
 
 **Vibrationally excited air.** Peyvan et al. take five-species air
 ($\mathrm N$, $\mathrm O$, $\mathrm{NO}$, $\mathrm N_2$, $\mathrm O_2$,
@@ -416,6 +429,29 @@ They note that species are limited in mixing and burning regions as
 well as at shocks. Du & Yang's consistency condition $\hat f\cdot\mathsf v=0$
 (next section) is the property such a scheme loses.
 
+**Separated viscous flux and an entropy bound on the convective part.**
+Ching et al. (2025) extend their positivity-preserving and entropy-bounded
+DG scheme for the reacting multicomponent Euler equations to Navier–Stokes
+(§4). The admissible set is $\{\rho>0,\ \rho e^*>0,\ \mathsf C_k\ge0\}$ with
+$e^*$ the specific internal energy minus its value at zero temperature (positive iff
+$T>0$; page-local), convex because $\rho e^*$ is concave, and the entropy-bounded
+set adds $\rho s-\rho\sigma\ge0$ for a lower bound $\sigma$ (page-local), which
+is concave only if every $\mathsf C_k>0$ and is assumed convex anyway (Eqs.
+(4.1)–(4.3)). Unlike Du & Yang, who treat convective and viscous fluxes as
+one, they keep an HLLC inviscid flux and apply Zhang's Lax–Friedrichs-type
+penalty to the viscous flux alone, with a coefficient larger than the
+largest ratio of species diffusive molar flux to concentration and than a
+temperature bound (Lemma 1, Eqs. (4.4)–(4.5)); the cell-average update is
+split into convective and viscous halves, the first kept in the
+entropy-bounded set and the second in the positivity set (Thms 6, 8). The
+entropy bound is imposed on the convective part only, because the minimum
+entropy principle fails for Navier–Stokes with nonzero thermal diffusivity
+(§1). At a zero concentration no finite penalty keeps $\mathsf C_k\ge0$, since
+the diffusive molar flux is not proportional to $\mathsf C_k$ (Remarks 2–3);
+a scaling of the species gradients restores positivity, needed only at the
+first step of two detonation runs (§4.7, §5.4). Details are on
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md).
+
 ## Material interfaces
 
 Because the system is conservative, its schemes meet the
@@ -593,6 +629,15 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
 ([shock-induced combustion and detonation](/benchmarks/shock-induced-combustion.md);
 §5–6).
 
+Ching et al. (2025): a 1D H$_2$/O$_2$ thermal-bubble advection–diffusion test
+(order $N+1$ for $N=1$–3), a premixed H$_2$/O$_2$ flame compared with
+Cantera, where species clipping overpredicts velocity and minor species, a
+viscous N$_2$/He shock tube with walls (after Houim & Kuo), a 2D
+H$_2$–O$_2$–Ar detonation with adiabatic no-slip walls, on which the
+temperature approaches zero before 50 μs without the entropy limiter, and a
+3D reacting shock–mixing-layer interaction on tetrahedra (§5;
+[shock-induced combustion](/benchmarks/shock-induced-combustion.md)).
+
 ## Qualifications
 
 - Gaburro et al.'s position that only shocks need exact conservation
@@ -693,6 +738,8 @@ ethylene-fuelled scramjet (41 million cells, 300 GPUs)
   and final time; as printed the two runs differ.
 
 # Citations
+
+- [Ching et al. (2025)](/sources/ching-2025.md) — §1; §2, Eqs. (2.1)–(2.7); §3, Eqs. (3.3)–(3.9); §4.1, Lemma 1, Remarks 2–3, 5; §4.2–4.4, Thms 6, 8; §4.7; §5.
 
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §1; §2, Eqs. (1)–(11); §3, Eqs. (22)–(27) (arXiv v1).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §2.1, Eqs. (8)–(18); §4, Props. 1–5, App. B; §5.2 (arXiv v1).

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Flow past a circular cylinder"
-description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock (steady shock capturing, limiters, immersed walls); hypersonic viscous flow over isothermal or catalytic walls in perfect or reacting gas (wall heat flux); subsonic inviscid flow, whose zero drag and symmetry test wall treatments; viscous flow at Re 40 and 100 (wake, separation, drag)."
+description: "Cylinder flows in four regimes: supersonic and hypersonic inviscid flow with a detached bow shock (steady shock capturing, limiters, immersed walls); hypersonic viscous flow over isothermal or catalytic walls in perfect or reacting gas, including a type IV shock–shock interaction (wall heat flux); subsonic inviscid flow testing wall treatments; viscous flow at Re 40 and 100."
 status: established
 aliases: [cylinder flow, supersonic cylinder, bow shock over a cylinder, cylinder wake at Re 40, flow over a cylinder]
 tags: [benchmark, limiting, immersed-boundary, flux-reconstruction]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Flow past a circular cylinder
@@ -149,6 +149,33 @@ at the wall and at the shock; the pressure coefficient barely changes
 between the meshes, but the wall heat-transfer coefficient is lower on
 the initial mesh, and on the adapted mesh it "agrees very well" with the
 LAURA results of Gnoffo & White (Figs. 17–22).
+
+**Type IV shock–shock interaction.** [Deng, Jiang & Yan (2025)](/sources/deng-2025.md)
+§4.7 send an oblique shock onto the bow shock of a cylinder of
+diameter 0.0762 m with an isothermal no-slip wall at $T_{\mathrm w}=294.44$ K,
+after the experiment of Wieting & Holden: the outer boundary is split at
+$(-0.1536,-0.0339)$ m into an upper inlet with $\rho_\infty=0.023$
+kg m$^{-3}$, $v=(1.692\times10^3,0)$ m/s, $T_\infty=110.56$ K, and a lower,
+post-shock inlet with $\rho=0.077$ kg m$^{-3}$, $v=(1.58\times10^3,\ 0.35\times10^3)$
+(units of the second component not printed), $T=234.67$ K, obtained
+from the Rankine–Hugoniot relations to match the experiment. With
+$R=287$ J/(kg K) and $\gamma=1.4$, which the paper does not print, the
+upper stream is Mach 8.03, the free-stream Mach number of Liu et al. (2023b)'s
+run above, and the lower one Mach 5.27 turned by $12.5^\circ$
+*(compiler check, not in the sources)*. They run fourth-order DG with
+Godunov-type finite-volume subcells reconstructed by the non-uniform
+[ROUND](/methods/round-scheme.md) scheme on $43\times94$ curvilinear
+elements (circumferential × radial) with a cubic boundary, BR2 viscous
+fluxes in the DG cells. The time-averaged wall pressure agrees well with
+the experiment; the heat flux follows the measured trend but its peak is
+under-predicted, and glitches after the peak are tentatively linked to
+"shock anomalies"; the maximum wall pressure and heat flux are tracked
+in time, normalized by the undisturbed stagnation values (Figs. 20–23).
+The authors note that their finite-volume metrics, taken from the DG
+transformation, "may lead to the violation of the free-stream
+preservation or the geometric conservation law", which they do not fix
+(§4.7); see [free-stream preservation](/properties/free-stream-preservation.md)
+and [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
 
 **Reacting air and immersed walls.** [Başkaya et al. (2024)](/sources/baskaya-2024.md)
 §4.5 (author preprint) run the HEG cylinder of Knight et al. (2012),
@@ -318,3 +345,4 @@ the trend with Mach number is captured (Fig. D.25).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §4.5, Tables 6–7, Figs. 7–11; §5, Fig. 18 (author preprint).
 - [Nguyen et al. (2024)](/sources/nguyen-2024.md) — §2.2, §3, §4.3, §4.5, Figs. 9–12, 17–22 (arXiv v1).
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §5.8, Fig. 17 (HAL preprint).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.7, Figs. 20–23.

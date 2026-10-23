@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Burgers equation tests"
-description: "The inviscid Burgers equation as test bed: sine data for accuracy before the shock and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, 2D Riemann and sine data, the latter on adaptive Active Flux grids, and gamma = 3 Euler data reducing to Burgers; setups, breaking times, orders."
+description: "The inviscid Burgers equation as test bed: 1D to 3D sine data for accuracy before the shock and shock capturing after, energy and entropy tests of split forms, discontinuous data, a slow shock across a block interface, Burgers balance laws with source terms, 2D Riemann data, and gamma = 3 Euler data reducing to Burgers; setups, breaking times, orders."
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Burgers equation tests
@@ -18,7 +18,8 @@ $t_{\mathrm b}=-1/\min_xu_0'(x)$ (page-local symbol), so a single
 initial profile serves two tests: an accuracy test at $t<t_{\mathrm b}$,
 where the exact solution follows from characteristics, and a
 shock-capturing test at $t>t_{\mathrm b}$. The sources also use
-discontinuous data, a slow shock across a block interface, a two-dimensional Riemann problem, and Euler data
+discontinuous data, a slow shock across a block interface, balance laws
+with a source term, a two-dimensional Riemann problem, and Euler data
 that reduce exactly to Burgers.
 
 ## Sine data: accuracy and shock formation
@@ -30,7 +31,7 @@ that reduce exactly to Burgers.
 | [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) Ex. 3.1 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 10–320 cells; $10^2$–$320^2$ | — |
 | [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) §4.1, §4.3.1 | $u_0=0.5-0.25\sin(\pi x)$ | $[0,2]$, periodic | $1$, $\Delta t=h,10h,50h$ | $2$, 256 cells, $\Delta t=3h,5h$ |
 | [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) §4.1 | $u_0=\sin(\pi x)+0.01$ | $[0,2]$, periodic | — | $3$, 8 elements, $N=4,5$, RK4, $\Delta t=10^{-4}$ |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P_4$ on 15 and $\mathbb P_{14}$ on 5 elements |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.1 | $u_0=\sin(2\pi x)+2$ | $[0,1]$, periodic | — | $0.5$, $\mathbb P^4$ on 15 and $\mathbb P^{14}$ on 5 elements |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.2 | $u_0=\sin(2\pi x)$, flux printed $u^2$ | $[0,1]$ | — | $0.3$, 80 elements |
 | [Sousa & Scalo (2022)](/sources/sousa-2022.md) §2.3 | $u_0=1+\tfrac12\sin(\pi x)$ | $[-1,1]$, periodic | — | $1$, Fourier pseudo-spectral, 128 points, RK4 |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 5 | $u_0=0.5+\sin(\pi x)$ | $[0,2]$, periodic | $0.15$, 20–320 cells | $0.5$, 20 and 40 cells, reference WENO-JS on 10000 |
@@ -39,12 +40,23 @@ that reduce exactly to Burgers.
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.1–3.2 | IC0 $u_0=\sin(2\pi x)$; IC1 $u_0=\sin(2\pi x-\pi/2)$ | $[0,1]$, periodic | $0.07$, $N_x=39$–$7995$ | $0.2$, $2.0$ (IC0), $0.17$ (IC1); Fourier, RK4 |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.1 | $u_0=0.5+\sin(\pi(x+y)/2)$ | $[-2,2]^2$, periodic, triangles | $0.5/\pi$, 58–14848 cells | — |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.1–3.2 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $[0,2]$; $[0,4]^2$, periodic | $0.5/\pi$, 100–200 points or cells; $100^2$–$200^2$ | — |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.1, 3.3 | $u_0=0.5+\sin(\pi x)$; 2D $u_0=0.5+\sin(\pi(x+y)/2)$ | $(0,2)$; $(0,4)^2$, periodic | $0.5/\pi$, 40–240 cells; $40^2$–$240^2$ | — |
+| [Danis et al. (2025)](/sources/danis-2025.md) §5.2 | $u_0=0.5+0.5\sin(2\pi(x+y+z))$, 3D flux $(u^2/2,u^2/2,u^2/2)$ | $[0,1]^3$, periodic | $1/(12\pi)$, up to $320^3$, $\Delta t=h^{5/3}$ | — |
+| [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §3.4, §4.2.1 | $u_0=\sin(2\pi(x+y))$, 2D flux $(u^2/2,u^2/2)$ | $[0,1]^2$, periodic, triangles | — | $0.5$, $\mathbb P^5$ on 576 and $\mathbb P^3$ on 242 triangles |
 
 For $u_0=0.5+\sin(\pi x)$, $t_{\mathrm b}=1/\pi$ (stated by Zhong et
 al.); along the diagonal the
 two-dimensional data have the same breaking time (the data of Li, Shu
-& Qiu, also run by Fan et al., by Zhang & Zhu and, on $[-2,2]^2$, by Lin
-& Zhu); for $u_0=\sin(2\pi x)$, Kolluru et al. state
+& Qiu, also run by Fan et al. (2023) and Fan et al. (2025), by Zhang &
+Zhu and, on $[-2,2]^2$, by Lin & Zhu); Danis et al. call their final
+time "well before the breaking time": along $\xi=x+y+z$ their equation
+is $\partial_tu+3u\,\partial_\xi u=0$ with $\max\lvert\partial_\xi u_0\rvert=\pi$,
+so $t_{\mathrm b}=1/(3\pi)$ and $1/(12\pi)$ is a quarter of it; for
+Vilar & Abgrall's data, $\partial_tu+2u\,\partial_\xi u=0$ along
+$\xi=x+y$ gives $t_{\mathrm b}=1/(4\pi)\approx0.08$, and the two shocks form
+on the lines $x+y=0.5$ and $x+y=1.5$ where $u_0$ decreases through zero,
+the stationary shocks the authors state *(compiler check, not in the
+sources)*; for $u_0=\sin(2\pi x)$, Kolluru et al. state
 $t_{\mathrm b}=1/(2\pi)\simeq0.159$, the shock forming at $x=0.5$; for Calhoun et al.'s two-dimensional
 data, whose characteristics carry the Jacobian
 $1+t\,(\partial_xu_0+\partial_yu_0)$ and
@@ -112,6 +124,29 @@ $\Delta t\sim(\Delta x)^{\nu/3}$ for a scheme of order $\nu$ to keep the
 third-order Runge–Kutta error below the spatial one, and GMR-WENO
 reaches a given error in less CPU time (Figs. 3.1–3.4).
 
+**Hermite WENO with unified stencils.** Fan et al. (2025) run the same
+sine data with their fifth-order moment-based
+[Hermite WENO](/methods/hermite-weno.md) HWENO-U, which obtains the
+point values and the high-order modification of the first moment from
+one reconstruction on one set of stencils (CFL 0.6, a modified SSP-RK3).
+HWENO-U, HWENO-M (two stencil sets) and WENO-ZQ are all fifth order,
+and so are HWENO-U's first moments (Tables 1–2, 4–5); at 240 cells the
+$L^1$ errors are $6.97\times10^{-10}$, $7.58\times10^{-10}$ and
+$8.95\times10^{-9}$. On meshes of at least 200 cells HWENO-U costs 1.516
+times the CPU time of WENO-ZQ for an $L^1$ error 12.800 times smaller,
+HWENO-M 2.319 times for 11.777 times smaller; in 2D the ratios are
+1.312 and $1/59.905$ for HWENO-U, 1.601 and $1/75.842$ for HWENO-M
+(§3.1).
+
+**Tensor-train WENO.** Danis et al. solve the three-dimensional data with
+fifth-order finite-difference WENO-JS in
+[tensor-train format](/methods/tensor-train-weno.md), with the
+truncation tolerance set by their dynamic rule with $C_\varepsilon=10$
+(page-local: the problem-dependent constant of that rule). The
+tensor-train and full-tensor errors nearly coincide, $9.01\times10^{-10}$
+against $9.03\times10^{-10}$ at $320^3$ with order 4.96 (§5.2, Table 2;
+arXiv v1).
+
 **Symmetric smoothness indicators.** Zhong et al.'s fifth-order
 finite-volume IMWENO-P, whose smoothness indicators satisfy their
 mirror-symmetry condition (see
@@ -142,14 +177,30 @@ check, not in the sources)*.
 use the shocked sine to show that their residual-based
 [artificial viscosity](/methods/artificial-viscosity.md) with $c_\mu=1$
 resolves the shock over 4–5 solution points without spurious
-oscillations at $\mathbb P_{14}$ on 5 elements, at a width similar to
-$\mathbb P_4$ on 15 elements, with the viscosity localized at the shock:
+oscillations at $\mathbb P^{14}$ on 5 elements, at a width similar to
+$\mathbb P^4$ on 15 elements, with the viscosity localized at the shock:
 "the proposed approach does not suffer with increasing approximation
 order" (§5.1.1, Fig. 1). Yu & Hesthaven capture the discontinuity
 without spurious oscillations on 80 elements with ANN-predicted
 viscosity, whose peak decreases with the degree; a slight asymmetry of
 the viscosity is attributed to the randomness of the training samples
 (§5.2, Figs. 5–6).
+
+**A posteriori subcell correction.** Vilar & Abgrall use the
+two-dimensional data, with its two stationary shocks, to compare two
+versions of their a posteriori local subcell correction of
+$\mathbb P^5$ DG on 576 triangles ([MOOD-type limiting](/methods/mood-a-posteriori-limiting.md),
+recast through the [DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md)).
+The new version blends the first-order and reconstructed subcell fluxes
+with coefficients $1,\tfrac34,\tfrac12,\tfrac14$ decreasing with the
+distance from a troubled subcell. It corrects 14% of the subcells on
+average against 10% for the original, but needs 1.46 correction
+iterations on average (at most 3) against 2.86 (at most 6), and runs in
+2 min 15 s against 2 min 22 s, hardware not stated (§3.4, Figs. 6–9).
+Uncorrected sixth-order DG oscillates at the shocks (Fig. 28); the
+corrected scheme captures them at sixth order on 576 cells and at fourth
+order on 242 cells with four subcell subdivisions (§4.2.1, Figs.
+29–32; HAL preprint).
 
 **Spectral make-up of added dissipation.** Sousa & Scalo filter the
 shocked sine with a sharp spectral filter and compute the exact
@@ -232,7 +283,8 @@ discontinuity:
   (79) is $u=\mu_1$ left of the shock and $u=\mu_2(z-1)/(1+\mu_2t)$
   right of it, and the shock path (80) starts at $z=0$ and accelerates.
   On 72 right triangles whose hypotenuses cross the shock, with
-  $p=q=1,2,3$, the discontinuity is mostly tracked after 20 iterations;
+  solution and mesh degrees $p=q=1,2,3$ (page-local; the registry's
+  $N$ for the solution degree), the discontinuity is mostly tracked after 20 iterations;
   re-initializing oscillatory elements is needed for $p=3$, without
   which the solver stalls (Figs. 17–19). Under refinement (Table 2) the
   solution error $E_\phi$ along $z=0.8$ decreases with segment slopes
@@ -353,6 +405,21 @@ $[-1,1]$:
   interact) and $1$ (after): Q3P1 is non-oscillatory and sharper than
   implicit Euler (Fig. 9).
 
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 2 call
+$u_0=2$ on $\lvert x\rvert\le0.2$, $-1$ otherwise, on periodic
+$[-1,1]$ the "self-steepening shock" and run it to $t=0.5$ on 200 cells
+with their bound-preserving [PAMPA scheme](/methods/pampa-scheme.md)
+(SSP-RK3, CFL 0.2), with strict bounds $[-1,2]$ and relaxed bounds
+$[-1.003,2.003]$. Without the bound-preserving blending the point values
+develop a spike; with either set of bounds there is none (Fig. 2). The
+results are "obtained without sonic point transition that is described
+in" Duan, Barsukow & Klingenberg's generalized Active Flux, which needs
+flux vector splitting at sonic points, and the authors state that their
+scheme does not exhibit the transonic issues of that work (§1). The jump
+at $x=-0.2$ from $-1$ to $2$ opens a transonic rarefaction through the
+sonic value $u=0$, and the jump at $x=0.2$ from $2$ to $-1$ is a shock of
+speed $\tfrac12(2-1)=\tfrac12$ *(compiler check, not in the sources)*.
+
 **Slow shock across a block interface.** [Qin et al.](/sources/qin-2023.md)
 §3.2 start from $u_0=1.02$ for $x<0.1$ and $u_0=-1$ otherwise, a shock
 of speed $0.01$, on $[0,1]$ split at $x=0.5$ into two blocks of 160 and
@@ -362,6 +429,37 @@ they cite Pärt-Enander & Sjögreen and Sebastian & Shu for the
 stagnation and oscillation of slow shocks at non-conservative
 interfaces. A two-dimensional Euler version (shock speed $0.015$) is
 recorded on [shock-capturing boundary closures](/methods/shock-capturing-boundary-closure.md).
+
+## Burgers balance laws
+
+[Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) §7.1 test
+their [AENO-C reconstruction](/methods/aeno-reconstruction.md) inside
+[ADER](/methods/ader-scheme.md) finite volumes on two Burgers balance
+laws:
+
+- $\partial_tu+\partial_x(u^2/2)=\beta_{\mathrm B}u^2$ with
+  $\beta_{\mathrm B}=-2$ (page-local; their $\beta$), $u_0=\sin(2\pi x)$ on
+  periodic $[-1,1]$, to $t=0.05$ before the shock, CFL 0.95. The exact
+  solution follows from characteristics,
+  $u=u_0(x_0)/\big(1-\beta_{\mathrm B}tu_0(x_0)\big)$ with
+  $x=x_0-\ln\big(1-\beta_{\mathrm B}tu_0(x_0)\big)/\beta_{\mathrm B}$
+  (Eqs. 58–59): along $dx/dt=u$ the source gives $du/dt=\beta_{\mathrm B}u^2$,
+  whose solution integrates to that $x$ *(compiler check, not in the
+  sources)*. ADER with AENO-C reaches the expected order at essentially
+  every order from 2 to 10 in all norms (Table 3).
+- $\partial_tu+\partial_x(u^2/2)=e^{-u}$ with $u=e^{-2(x-1/5)^2}$ for
+  $x<0$ and $u=\tfrac14e^{-2(x+1/5)^2}$ for $x>0$, transmissive
+  boundaries, a generalized Riemann problem whose shock accelerates;
+  ninth-order ADER with AENO-C on 800 cells at CFL 0.95 reproduces the
+  $x$–$t$ picture of Demattè et al.'s earlier computation, as the authors
+  state from a qualitative comparison; the final time is not printed
+  (Fig. 12).
+
+The authors argue that ENO-type reconstructions give a closed-form
+polynomial that can be evaluated anywhere in the cell, an advantage over
+WENO for the space–time Gaussian quadrature of source terms, because
+WENO's linear weights at generic Gauss points are not trivial to
+obtain (§7.1).
 
 ## Two-dimensional Riemann problem
 
@@ -421,7 +519,7 @@ in the sources)*, matching Zheng et al.'s statement.
   sub-table, against a coarser grid that is not listed; their Fig. 7
   caption gives $t=5$ for a test that ends at $t=0.5$.
 - Cicchino et al. write that "all schemes yield the expected
-  convergence rates of $p+1$", while their split form with $c_+$ at
+  convergence rates" of $N+1$ (their "$p+1$"), while their split form with $c_+$ at
   $N=5$ gives 5.70–5.76 (Tables 5, 7); they define $c_+$ as the value at
   which an order is about to be lost, which explains the rates but not
   the sentence.
@@ -459,6 +557,15 @@ in the sources)*, matching Zheng et al.'s statement.
   read as the centred difference $q_{i,j+1}-q_{i,j-1}$ is the
   non-trivial one; both are printed without absolute values. They are
   read in the arXiv v2 preprint.
+- Fan et al. (2025) print HWENO-M's $L^\infty$ errors and orders at
+  $160^2$, $200^2$ and $240^2$ in Table 4 identical to HWENO-U's
+  ($7.18\times10^{-8}$, $2.38\times10^{-8}$, $9.52\times10^{-9}$), while
+  the $L^1$ errors of the two schemes differ; the paper does not say
+  whether the coincidence is real.
+- Vilar & Abgrall's Fig. 28 caption gives 576 cells for the uncorrected
+  sixth-order solution that the text places on 242 cells; they also
+  write that the dimension of $\mathbb P^5$ is 20, whereas their own
+  count $(k+1)(k+2)/2$ gives 21 subcells for $k=5$.
 - The accuracy tests of Zheng et al. use $\Delta t=O(\Delta x^{5/3})$;
   the other sources' accuracy runs state CFL 0.6 with a reduced time
   step (Li, Shu & Qiu) or prescribed multiples of $h$ (Puppo et al.).
@@ -484,3 +591,8 @@ in the sources)*, matching Zheng et al.'s statement.
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.1, Table 3.2.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.1.1–5.1.3, Eqs. (46)–(51), Figs. 9–14.
 - [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) — §3, Ex. 3.1–3.2, Table 3.2, Figs. 3.1–3.4.
+- [Fan et al. (2025)](/sources/fan-2025.md) — §3.1, Ex. 3.1 and 3.3, Tables 1–2, 4–5.
+- [Danis et al. (2025)](/sources/danis-2025.md) — §5.2, Table 2 (arXiv v1).
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §3.4, §4.2.1, Figs. 5–9, 28–32 (HAL preprint).
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1, §4, Ex. 2, Fig. 2.
+- [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.1, Eqs. (57)–(60), Table 3, Fig. 12.

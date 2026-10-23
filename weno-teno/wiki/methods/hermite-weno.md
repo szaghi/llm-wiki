@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hermite WENO"
-description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plus derivative or first-moment data on compact stencils; the page covers moment-based finite-volume HWENO with moment modification, positivity preservation and the OE-HWENO filter, Hermite candidates for spectral-difference limiting, finite-difference HWENO-R, and HWENO as a finite-element sensor."
+description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plus derivative or first-moment data on compact stencils; the page covers moment-based finite-volume HWENO with moment modification, unified stencils (HWENO-U), positivity preservation and the OE-HWENO filter, Hermite candidates for spectral-difference limiting, finite-difference HWENO-R, and HWENO as a finite-element sensor."
 status: established
-aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO]
+aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO, HWENO-U, HWENO-M, unified-stencil HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Hermite WENO
@@ -239,6 +239,65 @@ runs without the positivity limiter, and [Leblanc](/benchmarks/leblanc-shock-tub
 [jet](/benchmarks/high-mach-astrophysical-jet.md) with it, where standard HWENO with the positivity limiter
 shows "obvious" non-physical oscillations (Ex. 7–12). No timings are reported.
 
+## Unified stencils without the central moment (HWENO-U)
+
+Fan, Qiu & Zhao (2025) build a fifth-order moment-based HWENO in which **one** nonlinear
+procedure gives both the point values and the high-order modification of the first moment,
+whereas the HWENO-M of Zhao & Qiu needs two sequential procedures on different stencils (§1,
+Remark 2.3, Fig. 1); the moment equations are those of the moment-based HWENO above.
+
+- **Data and candidates** (§2.1, Eqs. (2.5)–(2.7), App. A). On $I_i$ the reconstruction uses
+  $\bar u_{i-1},\bar u_i,\bar u_{i+1},\bar u^{(1)}_{i-1},\bar u^{(1)}_{i+1}$, **not** the central
+  moment $\bar u^{(1)}_i$: a quartic $p_0$ matching these five values and the linear $p_1$, $p_2$ on
+  $\{I_{i-1},I_i\}$ and $\{I_i,I_{i+1}\}$, combined in the [CWENO](/methods/cweno.md) form
+  $\omega_0\big(p_0-d_1p_1-d_2p_2\big)/d_0+\omega_1p_1+\omega_2p_2$ with arbitrary positive linear
+  weights, $d_1=d_2=\tfrac1{400}$ in the tests, Jiang–Shu indicators and scale-invariant WENO-ZQ-type
+  weights ([smoothness indicators](/definitions/smoothness-indicator.md),
+  [scale invariance](/properties/scale-invariance.md)). The interface value of the quartic is
+  $$p_0(x_{i+1/2})=-\tfrac{79}{456}\bar u_{i-1}+\tfrac7{12}\bar u_i+\tfrac{269}{456}\bar u_{i+1}-\tfrac{63}{76}\bar u^{(1)}_{i-1}-\tfrac{177}{76}\bar u^{(1)}_{i+1}$$
+  *(compiler check, not in the sources: recomputed from the Hermite conditions; the paper prints,
+  under this name, the mirror value $p_0(x_{i-1/2})$, see Qualifications)*.
+- **Moment modification** (Eq. (2.12)). The same weights applied to the first moments of the
+  candidates give $\hat u^{(1)}_i$ (page-local), the first moment of the reconstructed polynomial;
+  for the linear scheme it is
+  $\hat u^{(1)}_i=\tfrac5{76}(\bar u_{i+1}-\bar u_{i-1})-\tfrac{11}{38}(\bar u^{(1)}_{i+1}+\bar u^{(1)}_{i-1})$
+  (§2.3). *(Compiler check, not in the sources: these are the coefficients of the moment
+  modification of Li, Shu & Qiu (2022d) above, as both come from the same quartic.)*
+- **Moment modification in the time stages only** (Eq. (2.13)). In each stage of SSP-RK3 the
+  "old" first moment in every convex combination is replaced by $\hat u^{(1)}$, while the spatial
+  operator is evaluated with the evolved moments; the cell averages are advanced normally. The
+  authors present this as the analogue of Lax–Friedrichs averaging, which stabilizes the
+  forward-time centred scheme (§1, Eq. (1.1)).
+- **Linear stability** (§2.3, Theorems 2.1–2.2). For $u_t+u_x=0$ with the linear reconstruction,
+  von Neumann analysis evaluated on 10000 wavenumbers shows that without the modification the scheme
+  is unconditionally unstable with forward Euler or SSP-RK3 (e.g. spectral radius
+  $1+3.158\times10^{-12}$ at $\Delta t/\Delta x=10^{-12}$), and with it the necessary condition is
+  $0<\Delta t/\Delta x\lesssim0.824$; the tests run at CFL 0.6. Here every cell is modified, whereas
+  the hybrid HWENO-M modified only KXRCF-flagged cells; the comparator HWENO-M of the paper is run
+  with all cells modified (Remark 2.5).
+- **2D** (§2.2, Eqs. (2.15)–(2.23)). On the $3\times3$ block the central cell's two moments are
+  again left out; the quartic matches the nine averages and the four face neighbours' normal
+  moments, 13 conditions exactly and the rest in least squares, and four linear polynomials on
+  L-shaped triples complete the candidates. The reconstruction is truly two-dimensional, which the
+  authors present as suited to unstructured meshes, unlike the dimension-by-dimension moment
+  modification of HWENO-M (Ex. 3.4, §4).
+
+Results (§3; Fortran 95, Intel Xeon Gold 6130): fifth order for the cell averages and first moments
+on 1D and 2D [Burgers](/benchmarks/burgers-equation-tests.md) and Euler
+[density waves](/benchmarks/density-wave-advection.md) (Tables 1–6); against WENO-ZQ the CPU ratio is
+1.31–1.71 for $L^1$ errors 12–60 times smaller, against 1.55–2.49 for HWENO-M with errors 12–76 times smaller, the
+extra cost staying within about 55 % because interface fluxes are reused (§3.1). On shock problems
+HWENO-U is cheaper than HWENO-M and dearer than WENO-ZQ (e.g. double Mach reflection
+$6.339\times10^4$, $7.582\times10^4$, $5.181\times10^4$ s; Table 7), sharper than both on the
+[Woodward–Colella](/benchmarks/woodward-colella-blast-wave.md) problem, and similar to WENO-ZQ on
+Shu–Osher. The [double rarefaction](/benchmarks/double-rarefaction-problem.md) runs without a
+positivity limiter; the 1D and 2D [Sedov](/benchmarks/sedov-blast-wave.md) problems and the Mach 2000
+[jet](/benchmarks/high-mach-astrophysical-jet.md) need the
+[Zhang–Shu](/methods/zhang-shu-scaling-limiter.md) positivity limiter (Ex. 3.8–3.13). The authors
+contrast HWENO-U with the oscillation-free OF-HWENO of Zhao & Qiu, sixth order with less storage but
+with an empirical, problem-dependent damping parameter and stiff damping that needs small steps or
+exponential Runge–Kutta on extreme problems (Remark 2.2).
+
 ## Hermite candidates for nodal spectral-difference limiting
 
 Chen & Fu (2024) build a compact limiter for the nodal spectral difference (SD) method at third and
@@ -323,9 +382,9 @@ von Neumann neighbours $e'$ (sharing a point, edge or face; at least $d+1$ of th
   so that the candidate has the cell's mean and the neighbour's derivatives; the cell's own
   polynomial is the candidate $l=0$ (page-local index $l$, mean operator $\pi_e$);
 - the candidates are blended with linear weights that favour the central candidate,
-  $\tilde\omega_0=1-m_e\cdot10^{-3}$, $\tilde\omega_l=10^{-3}$ ($m_e$ non-central candidates;
-  $\tilde\omega_l=0.2$ for all five candidates in the KPP test), and Jiang–Shu-type nonlinear weights
-  $\omega_l\propto\tilde\omega_l/(\epsilon+\beta_l)^2$, $\epsilon=10^{-6}$, with
+  $d_0=1-m_e\cdot10^{-3}$, $d_l=10^{-3}$ ($m_e$ non-central candidates;
+  $d_l=0.2$ for all five candidates in the KPP test), and Jiang–Shu-type nonlinear weights
+  $\omega_l\propto d_l/(\epsilon+\beta_l)^2$, $\epsilon=10^{-6}$, with
   $\beta_l=\|u^e_{h,l}\|_e^{\mathsf q}$ a power of the scaled Sobolev seminorm of the candidate
   (page-local sensor exponent $\mathsf q\ge1$, $\mathsf q=1$ by default; not the registry's weight
   exponent $q$)
@@ -449,6 +508,16 @@ are given in the ingested sources.
   others; Li, Shu & Qiu report sixth order (5.96–6.49) for HWENO6-M5-I, whose modification acts only in flagged
   cells, and fifth order only when every cell is modified (Tables 3.1–3.4). The two statements are
   compatible: the first concerns the modification when it is active, the second smooth tests where it is not.
+- **HWENO-U slips** (Fan, Qiu & Zhao 2025). The interface value printed as $u^-_{i+1/2}$ after
+  Eq. (2.25) is $\tfrac{269}{456}\bar u_{i-1}+\tfrac7{12}\bar u_i-\tfrac{79}{456}\bar u_{i+1}+\tfrac{177}{76}\bar u^{(1)}_{i-1}+\tfrac{63}{76}\bar u^{(1)}_{i+1}$,
+  which is $p_0(x_{i-1/2})$; the stability matrices that follow are consistent with the correct
+  value above *(compiler check, not in the sources)*. The first square of $\beta_0$ in Eq. (2.9) carries
+  the wrong coefficient index ([smoothness indicators](/definitions/smoothness-indicator.md)). Table 6
+  prints the HWENO-M CPU time at $120\times120$ as $1.30\times10^3$ s, below its $80\times80$ value of
+  $2.29\times10^3$ s; Table 4 prints HWENO-M $L^\infty$ errors and orders at $160^2$–$240^2$ identical to
+  HWENO-U's while their $L^1$ errors differ. The forward-step domain is printed as
+  $[0,0.6]\times[0,1]\cup[0.6,1]\times[0.2,1]$ with a $960\times320$ mesh, an aspect mismatch. The
+  stability results are necessary conditions from a linear analysis.
 - **OE-HWENO slips** (Fan & Wu 2024, arXiv v1). The printed optimal decomposition weight,
   $\big[\tfrac{14}3+\tfrac23\sqrt{78\varkappa^2+46}\cos\big(\tfrac13\arccos\frac{1476\varkappa^2-244}{78\varkappa^2+46}\big)\big]^{-1}$
   with the anisotropy $\varkappa$ of the decomposition, is undefined at $\varkappa=0$, where the arccos argument is $-244/46$.
@@ -482,3 +551,4 @@ are given in the ingested sources.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1, Eqs. (3.2)–(3.8), Remarks 3.2–3.4; Lemma 3.2, Theorem 3.1; §4, Theorem 4.1, Apps. A–B; §5, Examples 5.2–5.9, Tables 4–5 (arXiv v1).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §1; §2.1–2.4, Eqs. (2.2)–(2.57), Theorems 1–11, Remarks 1–5; §3, Tables 3.1–3.2, Examples 1–12; App. A–C (arXiv v1).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §1; §2, Eq. (3); §5, Eqs. (36)–(69); §6–§7, Eqs. (70)–(75); §9.1, Table 1.
+- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §1; §2.1–2.3, Eqs. (2.2)–(2.33), Theorems 2.1–2.2, Remarks 2.1–2.5; §3, Tables 1–7, Examples 3.1–3.13; §4; App. A.

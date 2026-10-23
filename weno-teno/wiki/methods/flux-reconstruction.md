@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux reconstruction and energy-stable FR"
-description: "Flux reconstruction corrects the discontinuous interpolated flux of each element with correction functions that carry the interface flux jumps, recovering nodal DG for one choice; energy-stable FR is a DG scheme filtered by a one-parameter correction operator, and Cicchino et al. make its split form nonlinearly stable by filtering the volume terms too."
+description: "Flux reconstruction corrects the discontinuous interpolated flux of each element with correction functions that carry the interface flux jumps, recovering nodal DG for one choice; energy-stable FR is a DG scheme filtered by a one-parameter correction operator, and Cicchino et al. make its split form nonlinearly stable, up to 3D Euler on curvilinear grids, by filtering the volume terms too."
 status: established
-aliases: [FR, CPR, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
+aliases: [FR, CPR, NSFR, nonlinearly stable flux reconstruction, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
 tags: [flux-reconstruction, dg, entropy-stable, software, immersed-boundary]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Flux reconstruction and energy-stable FR
@@ -258,6 +258,73 @@ overintegration.
 The authors state that the extension to 3D is straightforward (§1); the
 proof is 1D and scalar.
 
+## Nonlinearly stable FR for Euler on curvilinear grids
+
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) carry the
+nonlinearly stable FR (NSFR) of the 2022 paper to the three-dimensional
+Euler equations on curvilinear hexahedra, for a modal or nodal
+tensor-product basis of degree $N$ on any quadrature exact to degree at
+least $2N-1$ and any ESFR correction parameter (§1, §6). Three ingredients
+enter.
+
+- **ESFR as DG with a modified mass matrix.** In 3D the correction
+  operator of element $K$ is the sum, over the mixed derivatives
+  $\partial^{(s,v,w)}$ with $s,v,w\in\{0,N\}$ and $s+v+w\ge N$, of
+  $c_{(s,v,w)}\,(D^{(s,v,w)})^\top M_KD^{(s,v,w)}$ with
+  $c_{(s,v,w)}=c_{\mathrm{FR}}^{(s+v+w)/N}$, which recovers the VCJH schemes
+  exactly on linear elements (Eqs. (30)–(35)). All FR contributions then sit
+  in $M_K+K_{\mathrm{FR}}$ (Eq. (36)).
+- **Hybridized flux differencing on entropy-projected states.** The volume
+  term is Chan's hybridized skew-symmetric operator
+  $\tilde Q-\tilde Q^\top$ on volume and surface nodes, applied in Hadamard
+  form to two-point fluxes
+  $f^{\mathrm{ec}}(\tilde u_i,\tilde u_j)\,\tfrac12\big(Ja(\xi_i)+Ja(\xi_j)\big)$
+  (Eqs. (37)–(40); [flux differencing](/methods/flux-differencing.md),
+  [entropy projection](/methods/entropy-projection.md)). Placing the
+  metric average inside the reference two-point flux, rather than in a
+  physical skew-symmetric operator, is equivalent but keeps the tensor
+  product needed for a sum-factorized Hadamard product (§3.3).
+- **Weight-adjusted inverse.** On curvilinear elements $M_K+K_{\mathrm{FR}}$
+  is dense and element-specific. Generalizing Chan–Wilcox, they
+  approximate
+  $$(M_K+K_{\mathrm{FR}})^{-1}\approx\tilde\Pi\,(\mathsf WJ)^{-1}\,\tilde\Pi^\top,\qquad\tilde\Pi=\tilde\Pi_\xi\otimes\tilde\Pi_\eta\otimes\tilde\Pi_\zeta,\quad\tilde\Pi_\xi=(M+K_{\mathrm{FR}})_{\mathrm{1D}}^{-1}\chi^\top\mathsf W,$$
+  with $\mathsf W$ the diagonal matrix of quadrature weights and $\chi$ the
+  basis at the volume nodes (page-local), so only a diagonal matrix is
+  inverted per element (Eqs. (43)–(47)). Theorem 4.1 states that the
+  approximation keeps the order $O(h^{N+1})$ for $c_{\mathrm{FR}}\le c_+$;
+  its proof uses Chan–Wilcox's estimate and the numerical observation,
+  from earlier works, that the ESFR projection has DG order for
+  $c_{\mathrm{FR}}\le c_+$ (§4).
+
+**Theorems** (Cicchino & Nadarajah 2025, §6): free-stream preservation
+when the metric identities hold discretely (Thm. 6.1;
+[free-stream preservation](/properties/free-stream-preservation.md)), local
+and, with a telescoping flux, global conservation (Thm. 6.2, Remark 6.1;
+[local conservation](/results/local-conservation-flux-form.md)), and
+discrete entropy conservation in the $(M_K+K_{\mathrm{FR}})$ norm when the
+volume flux satisfies Tadmor's condition and the surface flux is
+entropy-conservative on entropy-projected states (Thm. 6.3;
+[entropy stability](/properties/entropy-stability.md)). In the NSFR
+entropy statement $(M_K+K_{\mathrm{FR}})(M_K+K_{\mathrm{FR}})^{-1}$ multiplies
+volume and surface terms and cancels. In the classical ESFR flux
+differencing of Ranocha et al. and Abe et al., which corrects the surface
+only, the volume term keeps $(M_K+K_{\mathrm{FR}})M_K^{-1}$, "which renders it
+unstable" (Eqs. (55)–(56)). This is the 3D, vector-valued counterpart of the
+1D Burgers argument above. Entropy dissipation is added through a Roe-type
+term in the jump of the projected entropy variables (§6.3). Theorem 6.4, an
+impossibility result for exact kinetic-energy preservation on uncollocated
+nodes, is on the
+[kinetic-energy preservation](/properties/kinetic-energy-preservation.md)
+page.
+
+**Cost** (§5). Sum-factorized interpolation costs $dn^{d+1}$ flops with
+$n=N+1$, instead of $n^{2d}$; applying the weight-adjusted inverse costs
+$2dn^{d+1}+n^d$, against $n^{2d}$ to build, $n^{3d}$ to invert and $n^{2d}$ to
+apply a dense mass matrix. With the authors' sum-factorized Hadamard
+product (volume block $dn^{d+1}$, each surface block $dn^d$), NSFR differs
+from conservative strong DG only in the cost of evaluating the two-point
+flux.
+
 **Huynh's $g_2$ scheme.** Huynh's lumped-Lobatto scheme chooses the
 correction on Gauss nodes so that $M_{\mathrm{GL}}+K_{\mathrm{HU}}$ is the
 lumped LGL mass matrix; with the flux evaluated on LGL nodes it is
@@ -288,6 +355,41 @@ elements, $N=4$ and $5$, RK4 with $\Delta t=10^{-4}$ (§4;
   all schemes reach $N+1$ (§4.2); at $N=5$ with $c_+$ the tables show
   about 5.7, consistent with the definition of $c_+$ as the value at which
   an order is about to be lost (§2.2).
+
+Cicchino & Nadarajah (2025), PHiLiP code, 3D Euler (§7):
+
+- **Accuracy.** On a non-symmetrically warped curvilinear grid with the
+  manufactured solution of Gassner et al., weight-adjusted NSFR with an
+  entropy-conservative flux plus Roe dissipation converges at $N+1$ for
+  $N=3,4,5$ with $c_{\mathrm{DG}}$ and $c_+$; $c_+$ gives slightly larger
+  errors (§7.1, Fig. 2;
+  [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md)).
+- **Time step.** The largest stable CFL number on $4^3$ elements is, for
+  $N=3$, 0.18 ($c_{\mathrm{DG}}$, Gauss), 0.21 ($c_+$, Gauss), 0.22
+  ($c_{\mathrm{HU}}$, Gauss), 0.16 ($c_{\mathrm{DG}}$, LGL), 0.24 ($c_+$, LGL);
+  for $N=4$, 0.17, 0.29, 0.24, 0.14, 0.28; for $N=5$, 0.17, 0.22, 0.23, 0.16,
+  0.20 (Table 1). The gain from $c_{\mathrm{DG}}$ to $c_+$ is smaller than in
+  the linear analysis of Vincent et al., and $c_{\mathrm{HU}}$ beats $c_+$ at
+  $N=3$ and $5$; the authors conclude that the best parameter for
+  nonlinear fluxes may lie slightly below $c_+$, pending a nonlinear von
+  Neumann analysis. Unlike Gassner & Kopriva, LGL nodes give no larger
+  step than Gauss nodes except at $N=3$ with $c_+$, which the authors
+  attribute to the lost integration strength of LGL for a rational flux on
+  a curvilinear mesh (§7.2). With Gauss integration and an LGL Lagrange
+  basis, $c_{\mathrm{HU}}$ makes the modified mass matrix the LGL collocated
+  one, so NSFR with $c_{\mathrm{HU}}$ is the nonlinear extension of the
+  Gassner–Kopriva time-step gain (§7.2).
+- **Inviscid Taylor–Green vortex** ($4^3$ elements, $N=4,5$, Cartesian and
+  warped grids): the entropy change stays at $O(10^{-13})$ on Gauss and LGL
+  nodes, with and without overintegration, for $c_{\mathrm{DG}}$ and $c_+$;
+  conservation and free-stream preservation hold to $O(10^{-16})$; the
+  conservative DG scheme on Gauss nodes diverges (Tables 2–3, Fig. 3;
+  [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)).
+- **Cost.** CPU time grows as $O(N^{d+1})$ for conservative DG,
+  overintegrated DG and NSFR (Fig. 6). To $t=14$ on $4^3$ and $8^3$ warped
+  grids, $N=3$–5, NSFR with $c_{\mathrm{DG}}$ took about 13 % more CPU time
+  and 12 % more wall-clock time than conservative DG, and conservative DG
+  at $N=5$ diverged at $t=9.06$ ($4^3$) and $t=6.70$ ($8^3$) (§7.4, Table 4).
 
 The PyFR implementation runs nodal DG through FR at $\mathbb P^2$–$\mathbb P^{14}$
 on 1D, 2D and 3D Euler, MHD and Navier–Stokes problems, among them the
@@ -324,6 +426,16 @@ evidence in the paper.
   the integration by parts of the non-conservative volume term of (28)
   produces; the two are equivalent as printed only on collocated LGL
   nodes. The JCP version may differ.
+- Cicchino & Nadarajah (2025) write that overintegrated conservative DG
+  "took 364% longer CPU time and 365% longer wall clock time" than NSFR
+  (§7.4). From their Table 4 the mean ratios over the six cases are 3.64
+  (CPU) and 3.65 (wall clock), that is, about 264 % longer; the 13 % and
+  12 % figures agree with the table (ratios 1.13 and 1.12 over the four
+  cases where conservative DG completed) *(compiler check, not in the
+  sources)*.
+- The proof of Cicchino & Nadarajah's Theorem 4.1 rests on numerical
+  evidence from earlier works (Castonguay's thesis and Cicchino et al.)
+  that the ESFR projection has DG order for $c_{\mathrm{FR}}\le c_+$.
 
 # Citations
 
@@ -334,3 +446,4 @@ evidence in the paper.
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §2.2 Eqs. (6)–(16), §2.3 Eqs. (18)–(19) (arXiv v2).
 - [Funada & Imamura (2023)](/sources/funada-2023.md) — §2.1 Eqs. (1)–(12), §2.2 Fig. 3, §2.3, §2.4, §3.1 Fig. 10.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §4.1–4.3 Figs. 1–3, §4.5.1 (arXiv v1).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §1, §3.2–3.3 Eqs. (30)–(40), §4 Eqs. (43)–(47) Thm. 4.1, §5, §6 Thms. 6.1–6.3 Eqs. (55)–(56), §7.1–7.4 Tables 1–4, Figs. 2–3, 6.

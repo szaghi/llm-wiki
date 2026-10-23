@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Solid-body rotation
@@ -21,8 +21,10 @@ discontinuity at once: the $L^1$ error measures dissipation, and the
 range of the computed solution against $[0,1]$ measures over- and
 undershoots, a [bound-preservation](/properties/bound-preservation.md)
 test for the scalar maximum principle. Pazner, Kuzmin & Vedral and
-Ji, Liang & Fu attribute it to LeVeque, and so do Maltsev et al.; two
-more sources rotate a single smooth profile for different purposes.
+Ji, Liang & Fu attribute it to LeVeque, and so do Maltsev et al. and
+Vilar & Abgrall; one source rotates a Jiang–Shu-type set of four
+profiles, and two more rotate a single smooth profile for different
+purposes.
 
 ## Setup
 
@@ -47,6 +49,8 @@ $v=(0.5-y,\ x-0.5)$ to $t_f=2\pi$, but state the domain as "again a
 $[0,10]\times[0,10]$ square"; the rotation centre $(0.5,0.5)$, the body
 centres and $r_0=0.15$ place the bodies in the unit square, as in the
 other sources *(compiler check, not in the sources)*.
+[Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.1.2 (HAL preprint)
+run the same three bodies with $v=(\tfrac12-y,\ x-\tfrac12)$ to $t=2\pi$.
 
 ## Runs and results
 
@@ -60,6 +64,7 @@ other sources *(compiler check, not in the sources)*.
 | Kuzmin & Vedral (2023) | CG with low-order (LO) artificial viscosity, $\mathbb Q^1$ | uniform | $129^2$ | $1.10\times10^{-1}$ | non-oscillatory, very diffusive |
 | Kuzmin & Vedral (2023) | [WENO-stabilized CG](/methods/weno-stabilized-continuous-galerkin.md), $\mathbb Q^1$ | uniform | $129^2$ | $2.68\times10^{-2}$ | $[-0.001,\ 0.993]$ |
 | Kuzmin & Vedral (2023) | WENO-stabilized CG, $\mathbb Q^4$ | uniform | $129^2$ | $2.76\times10^{-2}$ | $[0.000,\ 0.998]$ |
+| Vilar & Abgrall (2024) §4.1.2 | $\mathbb P^5$ DG with a posteriori local subcell correction | 576 triangles | $576\times21=12{,}096$ | not printed | $[6.7\times10^{-10},\ 0.97]$ |
 
 Pazner's runs use $N=3$ on $64^2$ elements of 16 Gauss–Lobatto nodes,
 i.e. $256^2=65{,}536$ degrees of freedom, about four times Kuzmin &
@@ -86,6 +91,17 @@ discrete-maximum-principle margin and bounds from direct neighbours
 ("limited") or from the whole reconstruction stencil ("extended")
 (Figs. 5–7); no error norm or range is printed.
 
+Vilar & Abgrall's sixth-order DG corrects only the subcells flagged by
+a positivity and relaxed discrete-maximum-principle check, replacing
+their reconstructed fluxes by first-order finite-volume fluxes
+([MOOD-type correction](/methods/mood-a-posteriori-limiting.md);
+[DG–subcell equivalence](/results/dg-subcell-finite-volume-equivalence.md)),
+with a uniform structured subdivision of each triangle into 21 subcells
+(Figs. 22–23); they also run fourth order for five rotations with four
+subdivisions (Figs. 24–26). The degrees of freedom are $576$ cells
+times the dimension $21$ of $\mathbb P^5$ *(compiler check, not in the
+sources)*.
+
 ## Findings across sources
 
 **Bounds versus $L^1$ error.** In both papers the scheme with the
@@ -108,6 +124,14 @@ table. In the sequel all TENO-D orders preserve the shapes well, and
 reconstruction accuracy order" from four to seven (Ji, Liang & Fu 2023,
 §4.2, Fig. 2).
 
+**Subcell correction keeps the global bounds.** Vilar & Abgrall's
+corrected solution keeps the global maximum principle, with minimum
+$6.7\times10^{-10}$ and maximum $0.97$ after one rotation (Fig. 22). On
+their linear-advection tests with correction, uniform subdivisions
+resolve the profiles much better than non-uniform ones, which they
+attribute mainly to the dependence of their numerical admissibility
+detector on the subcell aspect ratio (§4.1.1, Figs. 19–21).
+
 **Troubled-cell switches.** Maltsev et al. find that extended bounds
 flag fewer troubled cells than limited ones, especially in smooth
 regions, while limited bounds over-diffuse the profiles; that the
@@ -127,6 +151,27 @@ widens the computed range from $[0,0.95]$ to $[0,1]$, i.e. it reduces
 peak clipping (§4.4, Fig. 6). See
 [convex limiting](/methods/convex-limiting.md) and
 [troubled-cell indicators](/definitions/troubled-cell-indicator.md).
+
+## Rotating complex waves
+
+[Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.1, Eq. (4.1)
+rotate four profiles of the Jiang–Shu type on $[0,4]^2$ with
+$v=(0.5y-1,\ 1-0.5x)$: a cone $1-5r_1$ for $r_1\le0.2$, a square of
+height 1 on $\lvert x-2\rvert\le0.4$, $2.8\le y\le3.6$, a Gaussian
+composite and an elliptic composite (their $G$ and $F$ with
+$\delta=0.01$, $\alpha=5$), with $r_1=0.5\sqrt{(x-3.2)^2+(y-2)^2}$,
+$r_2=0.5\sqrt{(x-2)^2+(y-0.8)^2}$, $r_3=\sqrt{(x-0.8)^2+(y-2)^2}$
+(page-local), to $t=2$, "after one period", with a pure finite-volume
+scheme on $200\times200$ uniform cells or on non-uniform cells equal
+to the Gauss-weight subcells of $50\times50$ fourth-order DG elements.
+Their non-uniform-grid [ROUND](/methods/round-scheme.md)
+reconstruction is far less dissipative than TVD limiters, the van Leer
+limiter distorting the shapes even on the uniform grid, keeps the
+shapes on the strongly non-uniform grid, and along $y=3.25$ is less
+dissipative than WENO5-JS on the uniform grid, which overshoots
+(Figs. 5–7); the same holds on grids matching fifth-order DG on
+$40\times40$ and sixth-order on $34\times34$ elements (Fig. 8). No error
+norm is printed.
 
 ## Rotating smooth bump
 
@@ -188,6 +233,12 @@ caption of $t=2$, a full rotation of the period-2 flow.
   diffused solution; it reads as a slip for $2.67\times10^{-2}$, and no
   $\mathbb Q^2$ value is entered in the table.
 - None of the papers reports errors for the three bodies separately.
+- Deng, Jiang & Yan's field $v=(0.5y-1,\ 1-0.5x)$ rotates about $(2,2)$
+  with angular speed $0.5$, a period of $4\pi\approx12.6$, not the
+  printed $t=2$ "after one period"; and they print the Gaussian
+  parameter as $\beta=\log_2(36\delta^2)$, negative for $\delta=0.01$
+  ($-8.1$), which makes $\exp(-\beta r^2)$ grow away from its centre
+  *(compiler check, not in the sources)*.
 - Maltsev et al. run their other unit-scale scalar tests (square-wave
   advection) on a domain also printed as $[0,10]^2$.
 
@@ -200,3 +251,5 @@ caption of $t=2$, a full rotation of the period-2 flow.
 - [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md) — §4.1, Eq. (43), Table 1 (arXiv v4).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §3.2, Figs. 5–7.
 - [Calhoun, Chudzik & Helzel (2023)](/sources/calhoun-2023.md) — §4.2, Eqs. (16)–(21), Remark 4.1, Table 2, Fig. 8 (arXiv v2).
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.1, §4.1.2, Figs. 19–26 (HAL preprint).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.1, Eqs. (4.1)–(4.2), Figs. 3–8.

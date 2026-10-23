@@ -5,7 +5,7 @@ description: "Ideal and relativistic MHD robustness test in which a strong plana
 status: established
 aliases: [shock–cloud interaction, cloud–shock interaction, Dai–Woodward shock–cloud problem, magnetized cloud–shock interaction]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # MHD shock–cloud interaction
@@ -47,7 +47,7 @@ on a one-element-deep hexahedral mesh to carry $B_3$.
 |---|---|---|---|---|---|
 | Berta et al. (2024) §5.8, Eq. (57) | unit cube, as above; jump at $x=0.6$ | $(39.5052,0,0,0,0,0,1.9753,129.72386)$ | $(1,-\sqrt{0.99},0,0,0,0,0.5,10^{-3})$ | sphere $\rho=10$, radius 0.15, centre $(0.8,0.5,0.5)$ | 4/3, 0.6 |
 | [Duan & Tang (2022)](/sources/duan-2022.md) Exs. 6.6, 6.10 (from He & Tang) | $[-0.2,1.2]\times[0,1]$ (and $\times[0,1]$ in 3D); inflow left, outflow elsewhere; shock at $x=0.05$ moving right | printed under the header $(\rho,v,p,B)$: $(3.86859,0.68,0,0,1.25115,0,0.84981,-0.84981)$ | same header: $(1,0,0,0,0,0.16106,0.16106,0.05)$ | disc (sphere in 3D) $\rho=30$, radius 0.15, centre $(0.25,0.5)$ ($(0.25,0.5,0.5)$) | 5/3 (the paper's default), 1.2 |
-| [Ding & Wu (2024)](/sources/ding-2024-b.md) Ex. 5.7 (setup of He & Tang and of Wu & Tang, as cited) | $[-0.2,1.2]\times[0,1]$, $560\times400$; inflow left, outflow elsewhere; shock at $x=0.05$ moving right | $(3.86859,0.68,0,0,0,0.8498108108786,-0.8498108108786,1.251148954517)$ | $(1,0,0,0,0,0.1610642582333,0.1610642582333,0.05)$ | disc $\rho=30$, radius 0.15, centre $(0.25,0.5)$ | ideal, $\gamma=5/3$, 1.2 |
+| [Ding & Wu (2024b)](/sources/ding-2024-b.md) Ex. 5.7 (setup of He & Tang and of Wu & Tang, as cited) | $[-0.2,1.2]\times[0,1]$, $560\times400$; inflow left, outflow elsewhere; shock at $x=0.05$ moving right | $(3.86859,0.68,0,0,0,0.8498108108786,-0.8498108108786,1.251148954517)$ | $(1,0,0,0,0,0.1610642582333,0.1610642582333,0.05)$ | disc $\rho=30$, radius 0.15, centre $(0.25,0.5)$ | ideal, $\gamma=5/3$, 1.2 |
 
 Berta et al.'s 3D MHD states are the 2D states of the literature with
 the cloud made spherical. In both of their setups the pre-shock medium
@@ -55,7 +55,7 @@ streams in the $-x$ direction onto the shocked region, in the
 relativistic one at $v_1=-\sqrt{0.99}$, a Lorentz factor of 10
 *(compiler check, not in the sources)*.
 
-Ding & Wu print their states in the order $(\rho,v,B,p)$. Their left
+Ding & Wu (2024b) print their states in the order $(\rho,v,B,p)$. Their left
 state is Duan & Tang's read under Duan & Tang's printed header
 $(\rho,v,p,B)$, and their right state is Duan & Tang's read in the order
 $(\rho,v,B,p)$, to more digits *(compiler check, not in the sources)*;
@@ -103,7 +103,7 @@ comparable to the finer uniform one, at 10.5 % (2D) and a printed
 table the 3D ratio is $11397/125209=9.10\,\%$ *(compiler check, not in
 the sources)*.
 
-**Bound-preserving central DG.** Ding & Wu's $\mathbb P^2$ locally
+**Bound-preserving central DG.** Ding & Wu (2024b)'s $\mathbb P^2$ locally
 divergence-free central DG scheme for relativistic MHD (SSP-RK3, CFL
 0.25, locally divergence-free WENO limiter in troubled cells, then the
 bound-preserving limiter) fails at the first time step without the
@@ -131,7 +131,7 @@ relative local error of zero (Fig. 7c); see
   while the left state has $B_1=0$; read as $(\rho,v,B,p)$ it has
   $B=(0,0.16106,0.16106)$ and $p=0.05$, consistent with the left
   state's normal field *(compiler check, not in the sources)*. The left
-  state is consistent only under the printed header. Ding & Wu's states,
+  state is consistent only under the printed header. Ding & Wu (2024b)'s states,
   printed in the order $(\rho,v,B,p)$, coincide with this reading of
   both states.
 - Duan & Tang's text refers to "iso-surfaces of $\rho=1.52$" where the
@@ -141,11 +141,11 @@ relative local error of zero (Fig. 7c); see
   another paper); no source reports an error norm or a conservation
   measure for this test.
 - Berta et al. are read as arXiv v4, Dzanic & Witherden as arXiv v2,
-  Duan & Tang as arXiv v1, Ding & Wu as the version of record.
+  Duan & Tang as arXiv v1, Ding & Wu (2024b) as the version of record.
 
 # Citations
 
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.8, Eqs. (56)–(57), Fig. 14 (arXiv v4).
 - [Dzanic & Witherden (2023)](/sources/dzanic-2023.md) — §5.4, Eqs. (44)–(45), Figs. 7–9 (arXiv v2).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.6, 6.10, Tables 6.1–6.2, Figs. 6.10–6.12, 6.18–6.20 (arXiv v1).
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Example 5.7, Figs. 7c, 9.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Example 5.7, Figs. 7c, 9.

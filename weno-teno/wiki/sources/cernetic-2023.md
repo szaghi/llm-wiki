@@ -157,9 +157,10 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunk 8 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–9 (2026-10-23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
+* [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)

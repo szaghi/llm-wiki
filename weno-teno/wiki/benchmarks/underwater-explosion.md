@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Underwater explosion"
-description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface: a two-dimensional test of two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by a sharp-interface DG solver, an equilibrium model and a Lagrangian particle method; plus a spherically symmetric one-dimensional explosion bubble."
+description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 0.3 m below a free water–air surface: a two-dimensional test of two-phase solvers at density ratios near 1000 and pressure ratios near 10⁴, run by sharp-interface DG, equilibrium-model and particle solvers; plus a non-dimensional variant above a wall and a spherical explosion bubble."
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Underwater explosion
@@ -87,6 +87,28 @@ shocks; Jiang et al. present it, with the cavitation bubble near a wall,
 as a flow with strong shocks and large volume changes. None reports a
 failure, a positivity fix specific to this case or an error norm.
 
+## A non-dimensional variant above a wall
+
+[Chu et al. (2025b)](/sources/chu-2025-b.md) Example 5, after a
+central-upwind multifluid paper they cite, run a non-dimensional
+cylindrical explosion between a water–air surface and a solid wall: in
+$(\rho,v_1,v_2,p;\gamma,p_\infty)$, explosive gas
+$(1.27,0,0,8290;2,0)$ in the disc $(x-5)^2+(y-2)^2<1$, air
+$(0.02,0,0,1;1.4,0)$ for $y>4$ and water $(1,0,0,1;7.15,3309)$
+elsewhere, on $[0,10]\times[0,6]$ with a solid wall at the bottom and
+free boundaries elsewhere, to $t=0.02$, on $\Delta x=\Delta y=1/80$, in
+the $\gamma$-based multifluid model. The disc lies one radius below the
+free surface and one radius above the wall *(compiler check, not in the
+sources)*, so the reflection from the wall enters the flow, unlike the
+other setups. Their second-order
+[LCD-based path-conservative central-upwind scheme](/methods/lcd-central-upwind-scheme.md)
+on $1/80$ gives results close to those of the scalar
+[path-conservative central-upwind](/methods/path-conservative-scheme.md)
+scheme on $1/160$ (Figs. 5.6–5.7). The water constants
+$(7.15,3309)$ are those of Zheng et al.'s underwater shock on the
+[shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
+page.
+
 ## A spherically symmetric variant
 
 [Paula et al. (2023)](/sources/paula-2023.md) §7.4.3 run a different,
@@ -125,6 +147,11 @@ converges from below (Fig. 16).
   bubble-collapse case (§3.5), which prints only $\gamma$ and
   $p_\infty$; the heat capacities that their temperature form of the
   stiffened gas needs are not given for either case.
+- Chu et al. (2025b)'s variant is non-dimensional, with a pressure
+  ratio of 8290 and a gas-to-water density ratio of 1.27, against
+  $10^9/101325\approx9870$ and $1.25$ in the dimensional setups
+  *(compiler check, not in the sources)*; its geometry and water law
+  differ.
 - The related problem of a shock collapsing a gas bubble in water is on
   the [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md)
   page; the one-dimensional water–air problems are the
@@ -136,3 +163,4 @@ converges from below (Fig. 16).
 - [Nguyen et al. (2022)](/sources/nguyen-2022.md) — §3.3, Table 2, Figs. 11–15.
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.4.3, Fig. 16: spherically symmetric explosion bubble.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.2.2, Figs. 11–12; §§3.1–3.3, §4.1: Lagrangian WLS particle method with WENO-Z-type reconstruction.
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.1, Example 5, Figs. 5.6–5.7: non-dimensional explosion above a wall, LCD path-conservative central-upwind scheme.

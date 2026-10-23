@@ -156,7 +156,7 @@ found apart from the repeated in-text citation "[70, 71, 15, 15]".
 
 # Pages created or updated
 
-Chunk 7 (2026-10-23), cited further in chunk 8 (2026-10-23). This source is cited on:
+Chunk 7 (2026-10-23), cited further in chunks 8–9 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md)
@@ -174,9 +174,11 @@ Chunk 7 (2026-10-23), cited further in chunk 8 (2026-10-23). This source is cite
 * [MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md)
+* [PLUTO](/software/pluto.md)
 * [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)
 * [Special relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)
 * [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md)
+* [Tearing-mode instability](/benchmarks/tearing-mode-instability.md)
 * [Troubled-cell and shock indicators](/definitions/troubled-cell-indicator.md)
 * [WENO-JS reconstruction](/methods/weno-js-reconstruction.md)
 * [WENO-Z weights](/methods/weno-z.md)

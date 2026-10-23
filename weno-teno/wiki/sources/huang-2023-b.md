@@ -150,13 +150,14 @@ duplicates were found.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-23), cited further in chunks 5–8 (2026-10-23). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–9 (2026-10-22/23). This source is cited on:
 
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)
 * [Conservative finite-difference scheme](/definitions/conservative-finite-difference-scheme.md)
 * [Double Mach reflection](/benchmarks/double-mach-reflection.md)
+* [Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)

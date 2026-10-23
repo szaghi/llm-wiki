@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Two-dimensional Riemann problems
@@ -58,6 +58,8 @@ The sources use three placements and several final times:
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 13 ("a similar version of Configuration 3") | $[0,1]^2$, $(0.8,0.8)$, zero gradient | $400\times400$, CFL 0.5 | 0.8 | fifth-order FV IMWENO-P vs WENO-JS, WENO-Z, WENO-NS, WENO-P, MWENO-P |
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.5 | $[0,1]^2$, $(0.8,0.8)$, boundary conditions not stated | $400\times400$, CFL 0.6 | 0.8 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs [MR-WENO](/methods/multi-resolution-weno.md) |
 | [De Vanna et al. (2023b)](/sources/devanna-2023-b.md) App. A.3 | box $L_0\times L_0$, quadrants split at $x=y=0$, extrapolation | $1600\times1600$ | $t/t_0=0.3$ | [WENO-Z](/methods/weno-z.md)5, WENO-Z7, TENO5, [TENO-A5](/methods/adaptive-teno.md) in [URANOS](/software/uranos.md) |
+| [Chu et al. (2025a)](/sources/chu-2025.md) Example 4 | $[0,1.2]^2$, $(1,1)$, free boundaries | $\Delta x=\Delta y=3/2500$, SSP-RK3, CFL 0.4 | 1 | adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM, A-WLR vs LDCU (arXiv v1) |
+| [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.4, Eq. (4.8), case 1 | $[-0.5,0.5]^2$, $(0.3,0.3)$, non-reflecting | $200\times200$ elements of fourth-order DG ($800\times800$ DOFs) | 0.8 | DG with non-uniform [ROUND](/methods/round-scheme.md) subcell limiting |
 
 The two Chamarthi papers print the states as fractions,
 $(33/62,\,4/\sqrt{11},\,0,\,0.3)$, $(77/558,\,4/\sqrt{11},\,4/\sqrt{11},\,9/310)$;
@@ -65,7 +67,11 @@ $33/62=0.53226$, $4/\sqrt{11}=1.20605$, $77/558=0.13799$ and
 $9/310=0.029032$ round to the decimals of the table *(compiler check,
 not in the sources)*.
 
-Contours: Deng 40 from 0.14 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
+Chu et al. (2025a) use Chertock et al.'s placement and grid, $1000^2$
+cells, and Deng, Jiang & Yan's placement is the $[0,1]^2$ one with split
+$(0.8,0.8)$ shifted by $-0.5$ *(compiler check, not in the sources)*.
+
+Contours: Deng 40 from 0.14 to 1.7, Deng, Jiang & Yan 31 from 0.2 to 1.7, Luo & Wu 40 from 0.14 to 1.7,
 Huang et al. 43 from 0.135 to 1.75, Wang et al. (2023b) 35 from 0.1 to 1.8.
 Boscarino et al.'s placement puts the split at $(0.8,0.8)$ of
 $[-1,1]^2$, so the low-pressure quadrant covers $[-1,0.8]^2$ and the
@@ -169,7 +175,11 @@ Riemann problem II", citing Lax & Liu without a configuration number:
 The pressure is uniform and the four initial discontinuities are
 contacts, which roll up into a spiral; $t=0.3$. The data are not
 symmetric under $x\leftrightarrow y$, $v_1\leftrightarrow v_2$ *(compiler
-check, not in the sources)*.
+check, not in the sources)*. [Deng, Jiang & Yan (2025)](/sources/deng-2025.md)
+§4.4, Eq. (4.9), case 2, print the same four states on
+$[-0.5,0.5]^2$ with the split at the origin, $t=0.3$, fourth-order DG on
+$300^2$ and $400^2$ elements: Li, Duan & Tang's problem shifted by $-0.5$
+*(compiler check, not in the sources)*.
 
 [Boscarino et al. (2022)](/sources/boscarino-2022.md) Ex. 5.4(b), citing
 Lax & Liu's configuration 5, print on $[-1,1]^2$ with the split at
@@ -251,6 +261,20 @@ print the same four states and find that a higher WENO order and TENO
 resolve additional shear-layer instabilities and more detail of the
 central plume, compared qualitatively with Guo & Shi (App. A.3,
 Fig. 13).
+
+Chu et al. (2025a) find both adaptive central-upwind schemes, which
+switch to an overcompressive slope limiter in flagged cells, capturing
+the sideband instability of the jet and the instability along its neck
+better than the Minmod2-limited LDCU scheme; their weak-local-residual
+indicator (constant 4) applies the sharp limiter only in a small region,
+mostly around the shocks (Figs. 4.5–4.6). Deng, Jiang & Yan's DG/FV-ROUND keeps the symmetry of
+configuration 3 "without introducing extra reconstruction strategies",
+which they credit to the scalar-structure-preserving property of ROUND
+and to their troubled-element indicator, and captures the shocks within
+fewer than four non-uniform subcells, i.e. within one element (Fig. 14);
+on the four-contact case with $400^2$ elements the result is comparable
+to a sixth-order finite-volume solution with space-time AMR they cite,
+with Kelvin–Helmholtz roll-ups along the shear layers (Fig. 15).
 
 Zuo & Zhu (2024a) find their hybrid MMR-WENO giving "more delicate
 roll-up structures" and "smaller numerical dissipations and higher
@@ -469,3 +493,5 @@ reaches $O(1)$, while the density is visually the same (Figs. 4–5); see
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — Remark 3.3; Exs. 5.6–5.7, Figs. 6–7 (arXiv v1).
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.5, Figs. 3.6–3.7, Table 3.1.
 - [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §7, Ex. 7.4, Fig. 24.
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §4.2, Example 4, Figs. 4.5–4.6 (arXiv v1).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.4, Eqs. (4.8)–(4.9), Figs. 14–15.

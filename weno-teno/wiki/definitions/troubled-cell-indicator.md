@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Troubled-cell and shock indicators"
-description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines the sources' modal, KXRCF-type, TVB, admissibility, time-reversibility, residual, WENO- and TENO-type, undivided-difference, derivative-ratio, divergence and physical indicators, with parameters and limits."
+description: "A troubled-cell (shock, discontinuity) indicator is a cheap local functional of the discrete solution that decides where a high-order scheme is limited, blended or switched; the page defines modal, KXRCF-type, TVB, minmod-jump, BVD, admissibility, time-reversibility, residual, WENO- and TENO-type, undivided-difference, derivative-ratio, divergence and physical (discontinuity-feedback) indicators, with parameters and limits."
 status: established
-aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor]
+aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor, minmod-based smoothness indicator, weak local residual, relaxed BVD indicator, discontinuity feedback factor, PAD, NAD]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Troubled-cell and shock indicators
@@ -867,6 +867,154 @@ fifth-order rates where the non-hybrid scheme's rates oscillate
 (2.52–8.66 in $L^1$ in 2D, Table 3.3). Both papers call their indicators
 free of problem-dependent parameters (Abstracts).
 
+## Finite-volume and subcell indicators
+
+**Minmod-jump roughness indicator (limiter switching).** [Chu et al.
+(2025a)](/sources/chu-2025.md) (arXiv v1, §2.2.1, §3.2.1) modify the shock
+indicator of Wang et al. (as they state) to choose the slope limiter of
+their adaptive
+[low-dissipation central-upwind scheme](/methods/low-dissipation-central-upwind-scheme.md).
+With the density averages and the page-local
+$s_i=\mathrm{minmod}(\bar\rho_{i+1}-\bar\rho_i,\ \bar\rho_i-\bar\rho_{i-1})$, cell
+$I_i$ is "rough" if
+$$\lvert s_i\rvert>\max\{\lvert s_{i-1}\rvert,\lvert s_{i+1}\rvert\}+\delta_{\mathrm{MM}},\qquad\delta_{\mathrm{MM}}=10^{-4}$$
+($\delta_{\mathrm{MM}}$ page-local, "a size of a jump in $\rho$, which we
+neglect"), that is, where the limited density jump has a local maximum. The
+authors state that the result "is not very sensitive" to $\delta_{\mathrm{MM}}$
+and use $10^{-4}$ throughout. In 2D the test is applied direction by
+direction ($s^x$ along $x$, $s^y$ along $y$), and only the slopes in the
+flagged direction switch. A flagged cell takes the overcompressive SBM
+limiter, every other cell the dissipative Minmod2 one. $\delta_{\mathrm{MM}}$ is
+an absolute density increment, so the flag changes under a rescaling of the
+density *(compiler check, not in the sources)*.
+
+**Weak local residual (limiter switching).** As recalled by Chu et al.
+(2025a) from Kurganov & Liu (§2.2.2, Eqs. (2.7)–(2.9)), the weak local
+residual of the density equation over $[t^{n-2},t^{n-1}]$ is (page-local
+$\mathcal W_{i+1/2}$; the source writes $\varepsilon^{n-3/2}_{j+1/2}$)
+$$\begin{aligned}
+\mathcal W_{i+1/2}={}&\frac{\Delta x}{6}\Big[\rho^{n-1}_{i+3/2}-\rho^{n-2}_{i+3/2}+4\big(\rho^{n-1}_{i+1/2}-\rho^{n-2}_{i+1/2}\big)+\rho^{n-1}_{i-1/2}-\rho^{n-2}_{i-1/2}\Big]\\
+&+\frac{\Delta t^{n-2}}{4}\Big[(\rho v)^{n-1}_{i+3/2}-(\rho v)^{n-1}_{i-1/2}+(\rho v)^{n-2}_{i+3/2}-(\rho v)^{n-2}_{i-1/2}\Big],
+\end{aligned}$$
+built from cell averages at three time levels and reconstructed interface
+values ($u^-_{i+1/2}$ is used; the authors find no visible difference with
+$u^+_{i+1/2}$ or the average, Remark 2.2). After the smoothing
+$\bar{\mathcal W}_{i+1/2}=\tfrac16(\mathcal W_{i-1/2}+4\mathcal W_{i+1/2}+\mathcal W_{i+3/2})$
+a cell is rough if $\bar{\mathcal W}>C_{\mathrm{W}}\Delta x^2$, with a
+problem-dependent constant $C_{\mathrm{W}}$ (page-local). The expected size,
+recalled from Kurganov & Liu for second-order schemes, is $\sim\Delta$ near
+shocks, $\Delta^{\alpha_{\mathrm W}}$ with $1<\alpha_{\mathrm W}\le2$ near contacts and
+$\Delta^4$ in smooth regions, $\Delta=\max\{\Delta t,\Delta x\}$ (Eq. (2.8);
+$\alpha_{\mathrm W}$ page-local). The space bracket is Simpson's rule over
+$[x_{i-1/2},x_{i+3/2}]$ and the time bracket the trapezoidal rule, both with
+half their natural weights, a common factor that only rescales $C_{\mathrm W}$
+*(compiler check, not in the sources)*. The constants used are
+$C_{\mathrm W}=0.1$, $0.35$ and $0.1$ in the 1D examples and $4$, $5$ and $3$
+in the 2D ones (§4). The 2D version uses tensor Simpson weights, corner
+values averaged from the four adjacent cells, a normalization by
+$\max\{\Delta t,\Delta x,\Delta y\}$ absent in 1D, and the threshold
+$C_{\mathrm W}\max\{\Delta x^2,\Delta y^2\}$ (§3.2.2).
+
+The authors compare the two indicators on six Euler problems (§4–5): the
+weak-residual scheme gives the sharpest blast-wave contact, but a constant
+tuned on a coarse mesh produces staircases on a fine one ($C_{\mathrm W}=0.2$
+smooth at $\Delta x=1/40$, staircases at $1/200$ on the Shu–Osher problem,
+Fig. 4.3), and a small $C_{\mathrm W}$ gives "severe instabilities" at
+$\Delta x=1/2000$ on the implosion. The minmod indicator flags more cells in
+2D and is judged the robust choice (§4.2, §5). The evidence is visual; no
+error tables or timings are given.
+
+**Relaxed BVD indicator on non-uniform subcells (DG/FV switching).**
+[Deng et al. (2025)](/sources/deng-2025.md) (§3.3, Eqs. (3.7)–(3.9)) flag
+discontinuities with the total boundary variation of two reconstructions on
+the Gauss–Legendre subcells of a modal DG element,
+$$\mathrm{TBV}^{\mathrm U}_i=\lvert\bar u_i-\bar u_{i-1}\rvert+\lvert\bar u_i-\bar u_{i+1}\rvert,\qquad
+\mathrm{TBV}^{\mathrm P}_i=\big\lvert[\![u^{\mathrm P}]\!]_{i-1/2}\big\rvert+\big\lvert[\![u^{\mathrm P}]\!]_{i+1/2}\big\rvert,$$
+the first from first-order upwind values, the second from the third-order
+linear (quadratic) reconstruction on the non-uniform stencil (page-local
+$\mathrm{TBV}$, $u^{\mathrm P}$). Subcell $i$ is discontinuous if
+$\mathrm{TBV}^{\mathrm P}_i-\mathrm{TBV}^{\mathrm U}_i>\epsilon_{\mathrm{BVD}}$,
+$\epsilon_{\mathrm{BVD}}=\max\big(10^{-6},10^{-4}(\lvert\bar u_{i-1}\rvert+\lvert\bar u_i\rvert+\lvert\bar u_{i+1}\rvert)\big)$
+(page-local). A 1D element is troubled if any subcell is flagged, a 2D
+element if more than half of them are; the test runs at every Runge–Kutta
+stage and drives a hard switch to the
+[ROUND](/methods/round-scheme.md) subcell scheme
+([subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+The rationale, recalled from the
+[BVD](/definitions/boundary-variation-diminishing.md) literature, is that the
+high-order linear reconstruction has the smaller boundary variation where
+the data are smooth and the larger one at discontinuities. The authors
+present it as a cheaper, compact form of Jiang et al.'s indicator, which
+compared a fifth-order linear with a non-polynomial reconstruction; which
+Euler variables it is applied to is not stated. On the isentropic vortex
+1–10 % of the elements are troubled (more on coarser meshes) and the
+third-order scheme gives $L^2$ density orders $2.69$, $3.40$, $3.41$, $2.65$;
+with 5 % of the elements forced troubled at random the orders fall to
+$2.60$, $2.42$, $2.47$, $2.13$ (Tables 1–2). The threshold depends on the
+magnitude of the data, which the authors give as the reason why
+DG/FV-ROUND is not scale-invariant although ROUND is (§3.3).
+
+**Discontinuity feedback factor (reconstruction switching).**
+[Zhang et al. (2024d)](/sources/zhang-2024-d.md) (arXiv v1, §3.2, Eqs.
+(40)–(41)) use the factor of Ji, Shyy & Xu, in an improved form of later
+work, as recalled: for a quadrilateral cell with two Gauss points on each of
+its four edges,
+$$\alpha^{\mathrm{DF}}_{i,j}=\prod_{e=1}^4\prod_{g=1}^2\frac1{1+\mathcal D_{e,g}^2},\qquad
+\mathcal D=\frac{\lvert p^--p^+\rvert}{p^-}+\frac{\lvert p^--p^+\rvert}{p^+}+\big(M^-_n-M^+_n\big)^2+\big(M^-_t-M^+_t\big)^2,$$
+with $p^\mp$ the two reconstructed pressures at the Gauss point and $M_n$,
+$M_t$ the Mach numbers of the normal and tangential velocities
+($\alpha^{\mathrm{DF}}$, $\mathcal D$, $M_n$, $M_t$ page-local;
+$\alpha^{\mathrm{DF}}\in(0,1]$, 1 = smooth). It is computed from the state at
+the end of a step and used in the next one (Algorithm 1), so it predicts
+the cells that a discontinuity will enter. If
+$\max\{\alpha^{\mathrm{DF}}_{i-1,j},\alpha^{\mathrm{DF}}_{i,j},\alpha^{\mathrm{DF}}_{i+1,j}\}<0.5$,
+the reconstruction along $x$ switches from [WENO-AO](/methods/weno-ao.md) to
+the central quadratic, whose non-constant part is multiplied by
+$\alpha^{\mathrm{DF}}_{i,j}$, so the interface value tends to $\bar u_{i,j}$ (first
+order) as $\alpha^{\mathrm{DF}}_{i,j}\to0$ (Eqs. (42)–(43); the tangential
+sweep uses the same test along $y$). Fifth-order WENO-AO is kept as soon as
+one of the three cells has $\alpha^{\mathrm{DF}}\ge0.5$. The threshold is said to
+balance robustness (near 0) against resolution (near 1) (Remark 1); no
+parameter study is shown. The indicator is the switch of a
+[hybrid WENO](/methods/hybrid-weno.md) scheme run with a
+[gas-kinetic](/methods/gas-kinetic-scheme.md) and a Lax–Friedrichs flux;
+its measured gain is the largest Mach number a computation survives
+(double rarefaction: $6.0\to31.5$ with the gas-kinetic flux, $7.9\to84.1$
+with Lax–Friedrichs; hurricane-like problem: $2.0\to16.0$ and $1.4\to7.0$;
+Tables 5–6), where the second-order van Leer reconstruction with
+Lax–Friedrichs survives $119.5$ on the double rarefaction, more than the
+hybrid.
+
+**Admissibility of subcell mean values (a posteriori subcell
+correction).** [Vilar & Abgrall (2024)](/sources/vilar-2024.md) (HAL
+preprint, §3.2, Eqs. (3.3)–(3.6), (4.3), (4.6)) apply MOOD's two detectors
+to the subcell mean values of a $\mathbb P^N$ DG solution on triangles (the
+subcell form of DG is the
+[DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md)).
+The physical detector checks the admissible set $G$ (maximum principle for
+scalar laws, positive density and internal energy for Euler) and NaN
+values. The numerical detector is a relaxed discrete maximum principle on
+subcell means with margin
+$\delta_{\mathrm N}=\max\big(10^{-4},10^{-3}(\max_{\mathcal N}\bar u-\min_{\mathcal N}\bar u)\big)$
+(page-local), where the neighbourhood $\mathcal N$ (page-local) is all the
+subcells of the cell and of its face neighbours for linear problems, and
+the face- and node-neighbouring subcells for nonlinear ones; a larger set
+makes the test softer (Remark 5). The test is relaxed at smooth extrema by a
+vertex-based criterion inspired by Kuzmin's hierarchical slope limiter: the
+linearized derivatives $\overline{\partial_xu_h}+\overline{\nabla\partial_xu_h}\cdot(x-x_c)$
+(and the same in $y$) must lie, at every vertex, within the range of the
+values the neighbouring cells sharing that vertex give there (Eqs.
+(3.4)–(3.6)); the relaxation is used at subcell level in all tests (Remark
+6). For Euler the numerical detector acts on the total energy only (§4.3).
+On a smooth advection at sixth order the correction never activates and
+the observed orders are $6.00$, $5.97$ in $L^1$ (Table 1). The flagged
+subcells receive first-order fluxes
+([MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)). The
+authors attribute the better results of uniform over non-uniform subcell
+subdivisions mainly to this detector, which is "highly dependent" on the
+subcell aspect ratio; with the physical detector alone the difference is
+slight (§4.1.1, Figs. 19–21).
+
 ## Indicators that only select cells
 
 Two sources replace the indicator by the quantity they control.
@@ -952,6 +1100,16 @@ Several sources use an indicator without defining or analysing it:
   weakens a guarantee instead of triggering a stabilization: in smooth
   cells only the global bounds hold *(compiler check, not in the sources:
   $\varepsilon_K=0$ in the relaxation formula above)*.
+- **Tuning that does not transfer across meshes.** Chu et al. (2025a)
+  report that tuning the weak-local-residual constant on a coarse mesh and
+  reusing it on a finer one, the strategy Kurganov & Liu used for adaptive
+  artificial viscosity, is "not robust" when the indicator switches limiters
+  (§4.1, Fig. 4.3); they prefer the minmod indicator, whose single constant
+  they keep fixed.
+- **Scale dependence of thresholds.** Deng et al. (2025) state that their
+  BVD threshold is scale-dependent, so that DG/FV-ROUND is not
+  scale-invariant although ROUND is (§3.3); Chu et al.'s (2025a)
+  $\delta_{\mathrm{MM}}$ and Zuo & Zhu's (2024a) margin share the property (above).
 - **Against highest-mode sensors.** [Yu & Hesthaven (2022)](/sources/yu-2022.md)
   state that the Persson–Peraire indicator, which assumes that the highest
   mode scales as $1/N^2$, "tends to underestimate the smoothness", and that
@@ -1141,3 +1299,7 @@ Several sources use an indicator without defining or analysing it:
 - [Wei & Xia (2024)](/sources/wei-2024.md) — §3.1–3.2, Eqs. (7)–(14); §4, Tables 1–5, Figs. 9–20; §5.
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §1; §2.2, Eqs. (2.21)–(2.33), Algorithm 1, Remarks 1–2; §3, Table 3.1.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §1; §2.2, Eqs. (2.15)–(2.19), Algorithm 1, Remarks 1–3; §3, Tables 3.1, 3.3.
+- [Chu et al. (2025a)](/sources/chu-2025.md) — arXiv v1: §2.2.1–2.2.2, Eqs. (2.7)–(2.9), Remark 2.2; §3.2; §4, Figs. 4.3–4.10; §5.
+- [Deng et al. (2025)](/sources/deng-2025.md) — §3.3, Eqs. (3.7)–(3.9), Remark 3.1; §4.2, Tables 1–2.
+- [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — arXiv v1: §3.2–3.3, Eqs. (40)–(43), Remark 1, Algorithm 1; §4.3, Tables 5–6.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint: §3.2, Eqs. (3.3)–(3.6), Remarks 5–6; §4.1.1, Table 1, Figs. 19–21; §4.3, Eqs. (4.3), (4.6).

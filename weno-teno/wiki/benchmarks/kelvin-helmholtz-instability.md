@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Kelvin–Helmholtz instability"
-description: "Periodic two-dimensional shear-layer benchmark: Euler variants with sharp, exponentially smoothed and tanh-smoothed layers serve as a visual dissipation gauge, a positivity stress test for high-order DG and a probe of the non-convergence of inviscid shear flow; low-Mach Euler and MHD variants check all-Mach schemes; guiding-center Vlasov and viscous Navier–Stokes variants serve as convergence tests."
+description: "Periodic shear-layer benchmark: Euler variants with sharp and smoothed layers serve as a visual dissipation gauge, a robustness test for high-order and entropy-corrected DG and a probe of non-convergence; low-Mach and MHD variants check all-Mach schemes; relativistic MHD runs measure growth rates; Vlasov and viscous variants serve as convergence tests."
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Kelvin–Helmholtz instability
@@ -75,9 +75,9 @@ conditions are not stated.
 
 **Tanh-smoothed layers.**
 [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md)
-§5.2.1: on $[-1,1]^2$, with $B=\tanh(15y+7.5)-\tanh(15y-7.5)$ (a
+§5.2.1: on $[-1,1]^2$, with $\mathcal B=\tanh(15y+7.5)-\tanh(15y-7.5)$ (a
 page-local symbol, not the magnetic field),
-$\rho=\tfrac12+\tfrac34B$, $p=1$, $v_1=\tfrac12(B-1)$,
+$\rho=\tfrac12+\tfrac34\mathcal B$, $p=1$, $v_1=\tfrac12(\mathcal B-1)$,
 $v_2=\tfrac1{10}\sin(2\pi x)$; $\gamma$ not stated in that subsection;
 $64\times64$ elements of degree $N=7$, $t=10$, Mach number up to about
 0.6. [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.2,
@@ -86,6 +86,18 @@ CFL 0.9, again without stating $\gamma$ in the subsection.
 [Lin & Chan (2024)](/sources/lin-2024.md) §4.3 run the same data on
 $80\times80$ elements of degree $N=3$ to $T=10$, boundary conditions not
 printed.
+[Alberti et al. (2025)](/sources/alberti-2025.md) §3.1.2, Eq. (54),
+following Chan et al., print the same layer profile,
+$f=\tfrac12[\tanh(15y+7.5)-\tanh(15y-7.5)]=\tfrac12\mathcal B$, with
+$v_1=f-\tfrac12$, $v_2=\tfrac1{10}\sin(2\pi x)$, $p=1$ on the doubly
+periodic $[-1,1]^2$, but a density $\rho=\rho_1+f(\rho_2-\rho_1)$,
+$\rho_1=1$, at Atwood number $(\rho_2-\rho_1)/(\rho_1+\rho_2)=0.75$,
+i.e. $\rho_2=7$ and $\rho=1+3\mathcal B$, against $\rho=\tfrac12+\tfrac34\mathcal B$
+(density ratio 4) of the runs above *(compiler check, not in the
+sources)*. They run it to $t=14$ with modal DG of degree $N=4$–7 on quadrilateral $2^4\times2^4$ and $2^5\times2^5$ grids
+and on triangular grids made from the same subdivisions, with the
+entropy-stable Godunov flux, CFL $2.5\times10^{-2}$ and no limiter, as a
+robustness test.
 
 **Viscous smooth layers with a passive dye.**
 [Cernetic et al. (2023)](/sources/cernetic-2023.md) §6 (arXiv v2) run
@@ -154,6 +166,30 @@ magnetic helicity $\tfrac12\int\mathsf A\cdot B$ and of the cross
 helicity $\tfrac12\int v\cdot B$ ($\mathsf A$ the vector potential) and
 the magnetic divergence, against an explicit Godunov scheme with
 staggered constrained transport.
+
+**Viscous high-Atwood variant.** Alberti et al. (2025) §3.2.2 rerun
+their setup as a Navier–Stokes problem at Atwood number 0.99
+($\rho_2/\rho_1=199$) on the $2^4\times2^4$ quadrilateral grid, degree
+3, CFL $5\times10^{-3}$, to $t=10/\sqrt\gamma$, with the dynamic
+viscosity $\sqrt\gamma\,\mathrm{Re}^{-1}$ in the light fluid and
+$\sqrt\gamma\,\mathrm{Re}^{-1}\rho_2^{-\beta_\mu}$ in the heavy one
+($\beta_\mu$ page-local, their $\beta$): $\mathrm{Re}=100$ with
+$\beta_\mu=3/4$, so the heavy fluid's viscosity is about
+$199^{-0.75}\approx0.02$ of the light one's *(compiler check, not in
+the sources)*, and $\beta_\mu=0$ with $\mathrm{Re}$ up to 500.
+
+**Relativistic resistive MHD variant.** [Mignone et al. (2024)](/sources/mignone-2024.md)
+§4.6, Eqs. (68)–(69), after their second-order Paper I: a
+three-dimensional double shear layer of relativistic MHD with shear
+velocity $\tfrac12$, layer thickness $a_{\mathrm s}=0.01$ (page-local)
+and profile in $\phi_{\mathrm s}=(\lvert y\rvert-\tfrac12)/a_{\mathrm s}$,
+seeded by a perturbation of amplitude 0.1 with random phases localized
+by $e^{-\phi_{\mathrm s}^2a_{\mathrm s}^2/0.1^2}$, a magnetic field with
+poloidal and toroidal magnetization parameters $0.01$ and $1$, and
+resistivity $\eta=10^{-5}$, on $[-\tfrac12,\tfrac12]\times[-1,1]\times[-\tfrac12,\tfrac12]$
+with $N_x\times2N_x\times N_x$ zones, $N_x=128,256$, to $t=30$, in [PLUTO](/software/pluto.md) with
+the MHLLC solver and SSP(4,3,3) IMEX stepping with a linear fallback at
+discontinuities.
 
 **Guiding-center Vlasov variant.**
 [Zheng, Cai, Qiu & Qiu (2022)](/sources/zheng-2022.md) Ex. 4.6 solve
@@ -300,6 +336,37 @@ numerical check of the asymptotic-preserving property of their MHD
 scheme (Fig. 5.7); the vorticity is computed with fourth-order central
 differences.
 
+**Entropy correction and BR2 projection in modal DG.** Alberti et al.
+(2025) use the inviscid case to compare their entropy-projection DG
+(STD) with five discrete entropy-balance (DEEB) corrections: every DEEB
+variant completes more runs than STD, the variants they label a and b
+are the more robust on triangles, and on the fine triangular grids,
+they state, all DEEB variants complete up to degree 3 while STD fails
+above degree 1 (Fig. 4; see
+[entropy projection](/methods/entropy-projection.md)). The DEEB variants
+cost 1.2–1.5 times STD on $2^5\times2^5$ for degrees 3–7, on two
+cluster nodes of two Intel Xeon E5-2620 v4 each, 32 MPI processes
+(Table 2). In the viscous runs only their entropy-projected
+[BR2](/methods/bassi-rebay-viscous-discretization.md) discretization
+$\Pi_{\mathrm{BR2}}$ reaches the final time at $\mathrm{Re}=100$,
+$\beta_\mu=3/4$, and produces the least entropy in the common time
+window; it fails for a penalty $\eta_F<2$ (page-local, the BR2 penalty).
+With $\beta_\mu=0$ all schemes complete for $\mathrm{Re}<500$, at
+$\mathrm{Re}=500$ only $\Pi_{\mathrm{BR2}}$, with the penalty threshold
+$\eta_F=4$ (Figs. 9–12). $\Pi_{\mathrm{BR2}}$ costs 1.34, 1.42, 1.52,
+1.58 and 1.62 times BR2 for degrees 3–7, an overhead that the authors
+say "tends to hinder its applicability in production-grade solvers"
+(Table 4, §4). They also note that a globally increasing entropy does
+not guarantee a consistent entropy evolution in each element (§3.2.2).
+
+**Growth rates at fourth order in relativistic MHD.** Mignone et al.
+(2024) measure growth rates of about 2.94 and 2.14 with the
+second-order scheme of Paper I (low and high resolution) and about 2.17
+and 2.31 with their fourth-order finite-volume scheme; the fourth-order
+run at $N_x=128$ "already outperforms" the second-order one at twice the
+resolution, and resolves the large-scale modes better, as the density
+spectra $P(k_x)$ at $t=15$ show (Figs. 7–8).
+
 **Convergence and operator splitting on the guiding-center variant.**
 Zheng et al. compare their non-split
 [conservative semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
@@ -337,11 +404,26 @@ convergent flow, and the benchmark measures an error.
   in the table's caption; the paper does not resolve which was used.
   The second-to-last rate 7.22 of the non-split scheme is printed
   without comment.
+- Alberti et al. (2025) caption their CPU-time Table 2 "KHI, $A=0.33$",
+  degrees 3–7, and their viscous Table 4 "$A=0.95$", while the text runs
+  the inviscid robustness tests at Atwood number 0.75 (degrees 4–7)
+  and the viscous ones at 0.99.
+- Mignone et al. (2024) print the density of Eq. (68) with $\rho_h$ in
+  both terms and give no density values, nor the $p$ and $\sigma$ that
+  enter their magnetic field (where $\sigma$ is also $1/\eta$); and their
+  text says that higher resolution or accuracy gives "a gradual
+  reduction of the growth rate", while their fourth-order rates rise
+  from about 2.17 to 2.31 with resolution.
 - Kelvin–Helmholtz roll-up also appears as a secondary feature of other
   benchmarks: on the interface of the [shock–bubble interaction](/benchmarks/shock-bubble-interaction.md),
   where [Tsoutsanis et al. (2021)](/sources/tsoutsanis-2021.md) §4.6
   find it sharpens with mesh refinement in 2D and is not captured on
-  their 3D mesh, and in the two-material tri-point problem of
+  their 3D mesh, and where [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+  Ex. 4.11 see it on the shocked helium bubble of their OEDG runs;
+  along the shear layers of the second two-dimensional Riemann problem
+  of [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.4 (see
+  [two-dimensional Riemann problems](/benchmarks/two-dimensional-riemann-problems.md));
+  and in the two-material tri-point problem of
   [Li, Duan & Tang (2022)](/sources/li-2022-c.md) Ex. 5.7, resolved by
   the moving-mesh scheme. These are not runs of the benchmark itself.
 - The roll-up of the slip line of the
@@ -386,3 +468,7 @@ convergent flow, and the benchmark measures an error.
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §6, Figs. 11–15 (arXiv v2).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §4.3, Figs. 4–5.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.3.2, Figs. 15–16.
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.1.2, §3.2.2, Eq. (54), Tables 2 and 4, Figs. 4, 9–12.
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §4.6, Eqs. (68)–(70), Figs. 7–8.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.11 (roll-up on a shocked bubble only).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.4 (roll-up in a Riemann problem only).

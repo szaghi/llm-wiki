@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Hybrid central-WENO schemes"
-description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost or restore order, but hinge on the sensor and its threshold."
+description: "Hybrid schemes use a cheap linear (central, energy-preserving or optimal upwind) reconstruction where a sensor declares the stencil smooth and a nonlinear WENO or TENO reconstruction elsewhere, or switch between flux and state reconstruction; they cut dissipation and cost, restore order or add robustness by a first-order fallback, but hinge on the sensor and its threshold."
 status: established
 aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Hybrid central-WENO schemes
@@ -310,6 +310,54 @@ keeping the WENO values; a positivity- and boundedness-preserving blend with the
 interface switch, $\theta$ the limiter factor, page-local here; [bound preservation](/properties/bound-preservation.md),
 [five-equation model](/definitions/five-equation-model.md)).
 
+## A discontinuity-feedback fallback for robustness
+
+Zhang, Ji & Xu (2024d; arXiv v1, three authors, the version of record lists five) hybridize for
+robustness rather than for dissipation or cost. Their target is the case where a strong
+discontinuity lies in every candidate stencil of a fifth-order finite-volume
+[WENO-AO](/methods/weno-ao.md) reconstruction on a 2D structured mesh, e.g. when the target cell and
+both neighbours contain it, so that the nonlinear weights have no smooth stencil to fall back on
+(§1, §3.3, Fig. 1). The sensor is the **discontinuity feedback factor** of Ji, Shyy & Xu, in an improved
+form recalled from a later paper (§3.2, Eqs. (40)–(41)):
+
+$$\mathfrak d_{i,j}=\prod_{\text{4 faces}}\ \prod_{\text{2 Gauss points}}\frac1{1+\mathcal D^2},\qquad
+\mathcal D=\frac{\lvert p^--p^+\rvert}{p^-}+\frac{\lvert p^--p^+\rvert}{p^+}+\big(M_n^--M_n^+\big)^2+\big(M_t^--M_t^+\big)^2,$$
+
+over the two Gauss points of each of the four faces, with the left and right pressures and the
+normal and tangential Mach numbers of the reconstructed interface states (page-local
+$\mathfrak d_{i,j}\in[0,1]$, 1 meaning smooth, and $\mathcal D$). It is computed at the end of each step
+from the new interface values and used in the next one, as a prediction of the cells a
+discontinuity will enter (Algorithm 1).
+
+**Switch** (§3.3, Eqs. (42)–(43), Remark 1). If $\max(\mathfrak d_{i-1,j},\mathfrak d_{i,j},\mathfrak d_{i+1,j})<0.5$,
+the reconstruction in $x$ replaces WENO-AO by the central quadratic candidate $P_1$ of the three cells written
+about its mean, with its non-constant part multiplied by $\mathfrak d_{i,j}$; as $\mathfrak d_{i,j}\to0$
+the interface value tends to the cell average, i.e. to first order. Otherwise WENO-AO is kept, so a
+single unflagged cell among the three suffices for fifth order. The same test is applied in the
+tangential sweep to the Gauss points. The threshold 0.5 is said to balance robustness (near 0
+"means more discontinuity") and resolution, without a parameter study.
+
+**Evidence** (§4). With a second-order gas-kinetic flux and two-stage fourth-order stepping, and with
+a local Lax–Friedrichs flux and SSP-RK3 ([gas-kinetic schemes](/methods/gas-kinetic-scheme.md)),
+the hybrid keeps about fifth order on 1D and 2D density waves (Tables 1–4) and is similar to
+WENO-AO on Shu–Osher and Lax–Liu configuration 6, sharper in the shear layers of configuration 3.
+Robustness is measured as the largest Mach number a scheme survives:
+
+| test | GKS: WENO-AO / hybrid | LF: WENO-AO / hybrid / van Leer |
+|---|---|---|
+| 123 problem, 100 cells | 6.0 / 31.5 (van Leer 31.5) | 7.9 / 84.1 / 119.5 |
+| hurricane-like vacuum problem, 50 steps | 2.0 / 16.0 | 1.4 / 7.0 |
+| 2D Riemann configuration 2 (planar rarefactions) | 1.8 / 2.1 | 18.1 / 24.8 |
+
+(Tables 5–7; [double rarefaction](/benchmarks/double-rarefaction-problem.md),
+[2D Riemann problems](/benchmarks/two-dimensional-riemann-problems.md)). The gain is large against
+WENO-AO in the strong rarefactions and "limited" in configuration 2, where the flagged cells sit where
+rarefactions meet shocks (Fig. 14); with the LF solver the second-order van Leer reconstruction survives
+a higher Mach number than the hybrid on the 123 problem. The authors state that the LF flux with
+SSP-RK "has the positive-preserving property", so that robustness depends only on the reconstruction
+(§2.3, §4), and that the idea generalizes to arbitrary order and unstructured meshes (§5); neither is
+shown, and no positivity limiter is used ([bound preservation](/properties/bound-preservation.md)).
+
 ## Blends with a first-order flux
 
 A second kind of hybrid blends a WENO flux with a **first-order** one through a limiter function,
@@ -394,6 +442,15 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - McQuaid & Brehm (2024) attribute the residual heating differences of their capsule cases (slight leeward
   over-prediction at 8°, lower peak temperature on AS-202) to the first-order fallback at the shock; this is their
   interpretation, not a tested result (§4.1, §4.3).
+- Zhang et al. (2024d, §4.3.1) write that the hybrid "achieves the same robustness as using the van
+  Leer limiter, similarly under the L-F solver", while their Table 5 gives 84.1 against 119.5 with LF.
+  The positivity of the LF solver with high-order reconstruction is asserted without a limiter or
+  proof, whereas the positivity results recorded on the
+  [Zhang–Shu limiter](/methods/zhang-shu-scaling-limiter.md) page rest on a limiter of the
+  reconstructed states. Remark 2 infers long-time positivity from surviving the first 50 steps of
+  the hurricane problem, without proof. Their Table 2
+  ($L_2$, $20\to40$) prints order 4.87 and Table 4 ($L_\infty$, $20\to40$) 4.92. *(Compiler check, not in
+  the sources: the printed errors give 4.97 and 5.56.)*
 - The factor-four speed-up of the hybrid TENO is quoted from earlier work in a review; neither the
   hardware nor the share of flagged points is given in the review.
 
@@ -423,3 +480,4 @@ regions; the gain comes from the choice of that scheme, which TENO papers optimi
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §1; §2.2, Eqs. (2.21)–(2.33), Algorithm 1, Remarks 1–2; §3, Tables 3.1–3.4, Examples 3.4–3.7.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §1; §2.2, Eqs. (2.15)–(2.19), Algorithm 1, Remarks 1–3; §3, Tables 3.1–3.4.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, Eqs. (46)–(49), Algorithm 1.
+- [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — §1; §2.3; §3.2–3.3, Eqs. (40)–(43), Remark 1, Algorithm 1; §4, Tables 1–7, Figs. 3–14; §5 (arXiv v1).

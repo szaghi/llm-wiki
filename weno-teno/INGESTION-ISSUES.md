@@ -6,6 +6,129 @@ named page), printed inconsistencies, identity and metadata problems,
 bundle-fit suggestions, and questions left to the human. Not part of the
 OKF wiki; maintained by the compiler at every chunk.
 
+## Chunk 9 — PAMPA, tensor-train and AENO reconstruction, entropy projection, central-upwind and relativistic MHD schemes (2026-10-23)
+
+Sources (20): abgrall-2026, alberti-2025, bader-2025, chu-2025,
+chu-2025-b, ching-2025, cicchino-2025, crinbarat-2026, danis-2025,
+deng-2025, ding-2024, fan-2025, komissarov-2024, mignone-2024,
+salvadore-2025, schwarz-2025, vilar-2024, yajaman-2025, yan-2024,
+zhang-2024-d. 179 of 207 ingested, 212 concept pages plus the registry,
+5027 bibliography entries.
+
+### Decisions for the human
+
+1. **Slug renamed — abgrall-2025 → `abgrall-2026`.** The PAMPA paper's
+   page 1 and Crossref's journal-issue record give the January 2026 issue
+   (Commun. Comput. Phys. 39:1); Crossref's online date is 2025-11-07.
+   Bundle law keys by the published issue, so the planned slug became
+   `abgrall-2026`; the key `abgrall-2025` now belongs to a cited,
+   non-ingested work (Abgrall, Lin & Liu, Beijing J. Pure Appl. Math.
+   2:1-33).
+2. **Dates corrected.** Chunks 4 and 5 were committed on 2026-10-22
+   (9324881 at 16:24Z, a001f6a at 19:46Z), not 2026-10-23 as the Source
+   audit lines, this file's headings and the bundle status said; all three
+   are corrected. The append-only log keeps its original groupings. Page
+   timestamps were corrected separately (f8ad46e).
+3. **No new contradictions.** The five open entries stay open (TENO
+   $\tau_K$; conservation of WCNS; entropy-filter tolerance; cost of WENO-Z
+   against mapped WENO; order of TENO at a second-order critical point).
+   Recorded as qualifications after checking both sides: Chertock et al.
+   (2023) against Chu et al. (2025b) on reconstruction variables (different
+   limiter parameters, 2 against 1.3); Chu et al. (2025b)'s "no method
+   preserves general 2D steady states" against Active Flux stationarity
+   (different systems); Komissarov & Phillips (GLM as accurate as CT, ideal
+   MHD) against Mignone et al. (CT more robust, resistive relativistic
+   MHD); Yajaman et al.'s internally inconsistent statements on AENO
+   orders.
+4. **Bibliography rulings to confirm:** Jin's 2010 lecture notes folded
+   into the 2012 paper again (as in chunk 4), although crinbarat-2026
+   prints both; book printings merged as year variants (Drew 2006, Kee
+   2005, Xu 2014, the Castonguay thesis 2012), while Ferziger 1999 and
+   Kuzmin 2005 stay distinct editions; the master key `chen-2020-c` belongs
+   to a Cheng J. et al. paper (left unchanged).
+5. **Bundle fit (no D17 copy made):** crinbarat-2026 (hypocoercivity of
+   linear partially dissipative systems) and bader-2025 (AFiD, incompressible
+   Boussinesq MHD convection) are peripheral and are cited only where they
+   bear on a page's concept; komissarov-2024, mignone-2024 and ding-2024
+   also fit astrophysical-simulation-codes; salvadore-2025 is a two-page
+   STREAmS-2.1 release note.
+6. **Still open from chunks 1–8:** the archive re-download (Feng 2026, Li
+   2024, Wu 2023); the label convention; wrong-year keys; the berberich and
+   karniadakis pairs; book printings.
+
+### Identity and metadata
+
+- Versions read that are not the version of record: arXiv preprints
+  danis-2025 (2405.12301v1), chu-2025 (2307.13356v1; two authors, the
+  version of record adds Menshov), ding-2024 (2305.14820v1), crinbarat-2026
+  (2404.06380v2), schwarz-2025 (2504.00173v1), zhang-2024-d (2402.10914v1;
+  three authors, the version of record five), komissarov-2024
+  (2409.03637v3); HAL preprint vilar-2024 (hal-03910148v1); mignone-2024 is
+  the HAL deposit of the version of record (different cover title).
+- Citation labels: Ding & Wu 2024a/b (`ding-2024`, `ding-2024-b`), Zhang
+  et al. 2024d (`zhang-2024-d`), Chu et al. 2025a/b (`chu-2025`,
+  `chu-2025-b`), applied on every page except the append-only log.
+- Wrong attribution caught in the audit: Chu et al. (2025b) build their
+  global fluxes and well-balancing proof on Cao, Kurganov, Liu & Xin (2022,
+  Thm 2.1), not on Kurganov et al. (2023); fixed on three pages.
+- A reader-note error caught in the audit: Komissarov & Phillips call the
+  DER step a "3rd-order approximation for $\nabla\cdot f$" (§3 (iv)), not
+  a fourth-order correction; fixed on four pages.
+- Merge: 4666 → 5027 entries, 183 aliases, 26 verified silences, 3 folds
+  (`boris-1973`, `gottlieb-1988`, `jin-2010` → `jin-2012`), `FLAGS: 0`;
+  citations re-keyed away from planned slugs (`kurganov-2023-c`,
+  `chamarthi-2023-d`, `chen-2023-e`, `li-2023-g`, `ji-2021-b`,
+  `abgrall-2023-d`, `abgrall-2024-b`, `liu-2025-d`/`-e`); undated LANL
+  report keyed `danis-2024`; the GQL review's preprint and in-press forms
+  stay `wu-2021-e` and `wu-2022`; wrong merges caught before writing (de
+  Hoffmann & Teller vs `fu-2019-e`, same vol:page in different journals;
+  Dolbeault vs a Jin entry). Crossref: Dolbeault et al. 2015 is TAMS
+  367:3807, printed by crinbarat-2026 with another paper's title;
+  `vanleer-1997-b` reprint, `ha-2020`, `mignone-2012`, `toro-2023` settled.
+
+### Printed slips (the Source pages list them in full)
+
+- chu-2025: Ex. 1 labelled Mach 1.1 is a Mach 1.3 state (yajaman-2025
+  prints the same state with the same label); density 1.51695 drops a
+  digit.
+- chu-2025-b: Table 5.4 1.65e-3 for 1.65e-2; App. A.1 $R^{-1}R$, App. A.2
+  missing row, §5.1 sign of $B$.
+- yan-2024: RMI and helium-bubble post-shock velocities (0.4275, 105.5 by
+  Rankine–Hugoniot against the printed 0.39, 113.5); "Mach 200" holds
+  against the ambient gas only.
+- cicchino-2025: "364 % longer" is 264 % by Table 4; §8 stricter than
+  Theorem 6.4 and Remark 6.2.
+- komissarov-2024: Harris σ 54500 for 5×10⁴; FS5A and FS9 text values
+  against Table 4; ABC wavenumber; tearing length scale 0.009 against
+  0.0109.
+- abgrall-2026: LeBlanc "shock at x=8" fits γ=5/3, not the γ=1.4 of §4.2;
+  Sedov grid and point pressure.
+- alberti-2025: Eq. (42) BR2 bound signs. schwarz-2025: Taylor–Green Eq.
+  (28) not solenoidal; hybridized SBP dimension slips. deng-2025: Eqs.
+  (2.20)–(2.24) (results unaffected), rotation period, Gaussian β.
+- fan-2025: Eq. (2.9), §2.3 interface value. zhang-2024-d: Table 2/4
+  orders (4.97, 5.56). ding-2024: rotor $r_0$. bader-2025: α=γ+ρ, Eq. (17),
+  $Re_m$. crinbarat-2026: Eq. (8.4) Jin–Xin sign. vilar-2024: "20
+  subcells" for 21. ching-2025: Remark 3, App. B signs. danis-2025: rank
+  of $\rho u$ listed twice.
+
+### Candidates for later pages
+
+- Discontinuity feedback factor (zhang-2024-d), SBM limiter and weak local
+  residual (chu-2025), numerical resistivity (komissarov-2024,
+  berta-2024), weight-adjusted mass matrix and sum factorization
+  (cicchino-2025), vector-potential and projection cleaning (bader-2025,
+  dao-2022), linear-advection crenel/square tests (vilar-2024,
+  yajaman-2025), the Stanford 3D diffuser (schwarz-2025).
+- Registry: §10 now lists the MHD $\mathcal E$ (and $\mathfrak E$ where the
+  vortex strength is also used), $\mathfrak q$, $\eta_{\mathrm m}$,
+  $w_{\mathrm h}$, $a^\nu$, SBM and weak-residual symbols, $Q_{\mathrm h}$,
+  $V_f$, $\tau_{\mathrm{ZQ}}$, $\mathsf b$.
+- Tag near-synonyms for a whole-bundle pass: filtering/solution-filtering/
+  entropy-filtering, compact-scheme/compact-stencil, positivity/
+  bound-preserving, efficiency/performance, high-order/very-high-order,
+  split-form/flux-differencing, riemann-problem/riemann-solver.
+
 ## Chunk 8 — multi-resolution WENO, TENO and THINC variants, DG limiters, MHD and shallow-water schemes (2026-10-23)
 
 Sources (20): chen-2024, chudzik-2024, delgrosso-2024, dematte-2024,
@@ -320,7 +443,7 @@ entries.
   positivity/bound-preserving, high-order/very-high-order,
   entropy-filtering/solution-filtering, multicomponent/multiphase.
 
-## Chunk 5 — gradient-based schemes, wall-modelled LES, structure-preserving MHD, GPU codes (2026-10-23)
+## Chunk 5 — gradient-based schemes, wall-modelled LES, structure-preserving MHD, GPU codes (2026-10-22)
 
 Sources (20): bernardini-2023, bezgin-2023, devanna-2023-b,
 lopezmiralles-2023, bielawski-2023, chamarthi-2023, chandravamsi-2023,
@@ -445,7 +568,7 @@ plus the registry, 3291 bibliography entries.
   entropy-filtering/solution-filtering, multicomponent/multiphase,
   cut-cell/ghost-cell/immersed-boundary, sharp-interface/level-set.
 
-## Chunk 4 — TENO variants, positivity for Navier–Stokes, shock tracking, all-Mach IMEX, codes (2026-10-23)
+## Chunk 4 — TENO variants, positivity for Navier–Stokes, shock tracking, all-Mach IMEX, codes (2026-10-22)
 
 Sources (20): fan-2022, huang-2022, hu-2022, jain-2022, jeong-2022,
 kou-2022, li-2022, liang-2022, wan-2022, dao-2022, hong-2022, ji-2022,

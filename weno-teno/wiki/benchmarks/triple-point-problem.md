@@ -5,7 +5,7 @@ description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in whi
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Triple-point problem
@@ -74,6 +74,17 @@ right and $1.4$ in the lower right, $c_v=1$ and $c_p=\gamma$ for both
 species, slip adiabatic walls on all sides, $\mathbb P_3$ DG on
 $2800\times1200$ uniform quadrilaterals, density at $t=1,\dots,6$.
 
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) Ex. 4.13 run the
+two-material version, after a gas-kinetic computation they cite, in the
+Kapila [five-equation model](/definitions/five-equation-model.md): in
+$(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, $(1,1,0,0,1,1-10^{-6})$ for $x\le1$,
+$(1,1,0,0,0.1,10^{-6})$ for $x>1$, $y<1.5$ and
+$(0.125,1,0,0,0.1,1-10^{-6})$ elsewhere, $\gamma_1=1.5$, $\gamma_2=1.4$,
+so phase 1 fills the left strip and the upper right and phase 2 the
+lower right, as in Li, Duan & Tang; walls top and bottom, outflow left
+and right, $840\times360$ cells, $t=2.4$ and $5$, with their
+bound-preserving [OEDG](/methods/oedg.md) scheme at CFL $1/(2N+1)$.
+
 ## Findings
 
 **Low-dissipation TENO.** Liang et al. compare their TENO scheme with a
@@ -132,9 +143,18 @@ resolves the Kelvin–Helmholtz roll-up well, and they state that the
 results "compare favourably" with Kolev & Rieben, without a
 side-by-side figure (Figs. 10–11).
 
+**Bound preservation in two-phase DG.** Yan, Abgrall & Wu show the
+roll-up at the triple point at $t=2.4$ and 5 (Figs. 19–20). For this
+case they also plot the two ratios of their time-step bounds: the
+volume-fraction source term contributes a bound far less restrictive
+than the flux one, and the ratio of the two bound-preserving CFL limits
+is close to or above 1 in 2D, which they read as showing that the
+proved bounds are not restrictive (Fig. 21; see
+[bound preservation](/properties/bound-preservation.md)).
+
 ## Qualifications
 
-- All six sources judge by density, vorticity or schlieren-type
+- All seven sources judge by density, vorticity or schlieren-type
   contours; no error measure is given.
 - Ji, Liang & Fu (2023) print at the end of their §4.8 a sentence on
   final time $t=0.25$ and a tetrahedral mesh that belongs to their 3D
@@ -154,3 +174,4 @@ side-by-side figure (Figs. 10–11).
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.5, Figs. 17–18.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.8, Figs. 18–20.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.5, Figs. 10–11 (arXiv v1).
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.13, Figs. 19–21.

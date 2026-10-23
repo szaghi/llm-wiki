@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Orszag–Tang vortex
@@ -58,6 +58,11 @@ to $t=2\pi$, the unit-square $t=1$ under the scaling below; their
 relativistic-MHD version halves the velocity,
 $(v_1,v_2)=(-0.5\sin y,\ 0.5\sin x)$, citing earlier relativistic
 papers.
+[Ding & Wu (2024a)](/sources/ding-2024.md) Ex. 4.2 (arXiv v1) print the
+$2\pi$-periodic data again, $(\rho,v,B,p)=(\gamma^2,\ -\sin y,\ \sin x,\ 0,\
+-\sin y,\ \sin2x,\ 0,\ \gamma)$ with $\gamma=5/3$, on $200^2$ cells,
+with density at $t=2$ and $4$ and the history of the discrete
+divergence to $t=4$.
 
 The two are one problem up to a rescaling *(compiler check, not in the
 sources)*. Multiplying $\rho$, $p$ and $|B|^2$ of the unit-square data
@@ -94,7 +99,7 @@ under the $2\pi$ time scaling. In the rescaling above this is the
 $2\pi$-periodic problem shrunk to the unit square *(compiler check,
 not in the sources)*.
 
-**Relativistic single-fluid version.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+**Relativistic single-fluid version.** [Ding & Wu (2024b)](/sources/ding-2024-b.md)
 Example 5.5 run relativistic MHD on periodic $[0,2\pi]^2$ with
 $\rho=1$, $v=A(-\sin y,\ \sin x,\ 0)$, $A=0.99/\sqrt2$, so the maximum
 Lorentz factor is about $7.09$, $B=(-\sin y,\ \sin2x,\ 0)$, $p=10$, and
@@ -171,7 +176,8 @@ constraint.
 | [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md) §6.2.1 | [entropy-stable](/properties/entropy-stability.md) finite differences, orders 3 and 4, IMEX | $200^2$ | hyperbolic (perfectly hyperbolic Maxwell) cleaning |
 | [Berta et al. (2024)](/sources/berta-2024.md) §5.6 | fourth-order finite volume, pointwise MP5 or WENO-Z (LINEAR second-order comparison), Roe or HLLD with UCT-HLLD (MHD), GFORCE with UCT-GFORCE (RMHD), SSPRK(5,4), CFL 0.5 | MHD $64^2$, $512^2$; RMHD $128^2$, $1024^2$ | upwind constrained transport |
 | [Dematté et al. (2024)](/sources/dematte-2024.md) §4.1.5, §4.5 | cell-centred [semi-implicit all-Mach](/methods/semi-implicit-all-mach-scheme.md) finite volume, explicit Rusanov advection with MUSCL–Hancock, implicit pressure sub-system by Picard iterations and GMRES, CFL 0.8 on the flow speed | $1000^2$ | unstaggered constrained transport from a vector potential |
-| [Ding & Wu (2024)](/sources/ding-2024-b.md) Ex. 5.5 | $\mathbb P^2$ bound-preserving, locally divergence-free central DG for relativistic MHD, SSP-RK3, CFL 0.25, locally divergence-free WENO limiter in troubled cells | $600^2$ | locally divergence-free spaces plus a symmetrization source on the jumps of the normal field |
+| [Ding & Wu (2024a)](/sources/ding-2024.md) Ex. 4.2 | fifth-order finite-volume WENO-Z with characteristic decomposition at four Gauss–Lobatto points per edge, Lax–Friedrichs flux, SSP-RK3, CFL 0.3, positivity-preserving scaling limiter on the point values | $200^2$ | discretely divergence-free projection of the interface values plus an interface-jump Godunov–Powell source |
+| [Ding & Wu (2024b)](/sources/ding-2024-b.md) Ex. 5.5 | $\mathbb P^2$ bound-preserving, locally divergence-free central DG for relativistic MHD, SSP-RK3, CFL 0.25, locally divergence-free WENO limiter in troubled cells | $600^2$ | locally divergence-free spaces plus a symmetrization source on the jumps of the normal field |
 | [Lesur et al. (2023)](/sources/lesur-2023.md) §4.2, §5 | second-order Godunov finite volume of [IDEFIX](/software/idefix.md), primitive reconstruction (linear, LimO3, PPM), HLLD or Roe, RK2/RK3 | $128^2$, reference $1024^2$ (as captioned) | constrained transport |
 
 ## Findings
@@ -304,13 +310,26 @@ $10^{-12}$ and $10^{-4}$ with two iterations per loop, and the GMRES
 solves of the magnetic and pressure systems need fewer than ten
 iterations per step (§4.5, Figs. 21–22).
 
-**Bound preservation in relativistic MHD.** Ding & Wu's central DG code
+**Bound preservation in relativistic MHD.** Ding & Wu (2024b)'s central DG code
 fails at $t\approx2.196$ without the bound-preserving limiter; with it,
 the relative global divergence error, which adds the normal jumps of
 $B$ across cell edges to the divergence inside the cells, stays at order $10^{-4}$, and the relative local
 error, inside the cells, stays zero (Figs. 6, 7a, 7d; see
 [bound preservation](/properties/bound-preservation.md),
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+
+**Discrete divergence and positivity in finite volumes.** Ding & Wu
+(2024a) run their fifth-order scheme with and without its two
+ingredients (Figs. 4.1, 4.2a). With the discretely divergence-free
+projection the divergence error
+$\max_{i,j}\lvert\nabla_h\cdot B_{ij}\rvert$ (their quadrature divergence
+of each cell's interior traces) stays at round-off level to $t=4$;
+without it the solution shows "obvious oscillations" and is severely
+unstable at $t=4$; without both the projection and the
+positivity-preserving limiter the fifth-order WENO code breaks down at
+$t=3.11$. See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+and [bound preservation](/properties/bound-preservation.md).
 
 **Adaptive dissipation at high order.** Fu (2023) shows TENO5-A to
 TENO8-A on $200^2$ against WENO5-JS on $512^2$, as evidence that the
@@ -319,7 +338,7 @@ adaptive TENO family carries over to MHD with constrained transport
 
 ## Qualifications
 
-- All fourteen sources compare contour plots or slices; none reports an
+- All fifteen sources compare contour plots or slices; none reports an
   error norm (Berta et al.'s normalized pressure maximum is a scalar
   proxy, not an error). Rueda-Ramírez et al. (2021) compare with another code,
   Dzanic et al. with another paper's slice.
@@ -357,4 +376,5 @@ adaptive TENO family carries over to MHD with constrained transport
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.3, Figs. 4–7.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.6, Figs. 9–10 (arXiv v4).
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.1.5, §4.5, Figs. 9, 21–22.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Example 5.5, Figs. 6–7.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.2, Figs. 4.1, 4.2a (arXiv v1).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Example 5.5, Figs. 6–7.

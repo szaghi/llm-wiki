@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 514:113229"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Dematté_An_all_Mach_number_scheme_for_visco-resistive_magnetically-d.pdf"
 tags: [mhd, semi-implicit, all-mach, finite-volume, navier-stokes]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:19:00Z
 ---
 
 # Summary
@@ -66,7 +66,7 @@ figure numbers cited here are those of this version.
 Registry notation (see the notation map): the source's velocity
 $u=(u,v,w)$ is $v=(v_1,v_2,v_3)$, its sound speed $a$ is $c$, its kinetic
 energy $k$ is $\kappa$, its CFL number is $\nu$, its resistivity $\eta$ is
-written $\eta_{\mathrm r}$.
+written $\eta_{\mathrm m}$.
 
 1. The flux-vector splitting adopted (Eq. (15)) gives an advective sub-system with eigenvalues $0$ (double) and $v_1$ (Eq. (17)) and a pressure sub-system with eigenvalues $0,0,\mp\lvert B_x\rvert/\sqrt\rho$ and $\tfrac12\big[v_1\mp\sqrt{v_1^2+4(c^2+(\gamma-1)(B_y^2+B_z^2)/\rho)}\big]$ (Eq. (19)); the pressure sub-system is always subsonic (§2.1). **Stated** (eigenstructure referred to Balsara, Montecinos and Toro)
 2. Nothing guarantees that the "fast" eigenvalues of the pressure sub-system bracket the true fast magnetosonic speeds; for Toro–Vázquez in Euler, $(v_1+\sqrt{v_1^2+4c^2})/2>v_1+c$ "does not always hold true" (§2.1). **Stated**
@@ -170,7 +170,7 @@ written $\eta_{\mathrm r}$.
 | $\sigma$ | kept | Picard tolerance; also a Gaussian width in §4.4 |
 | $E_z$, $\bar E_z$, $\tilde E_z$ | kept | corner, averaged and cell electric field; **$E$ also the total energy** |
 | $A$ | kept | $z$-component of the vector potential; **$A$ is the flux Jacobian in the registry** |
-| $\mu$, $\lambda$, $\eta$ | kept, kept, $\eta_{\mathrm r}$ | viscosity, conductivity, resistivity; **$\mu$ collides with the affine translation, $\lambda$ with the eigenvalues, $\eta$ with the entropy** |
+| $\mu$, $\lambda$, $\eta$ | kept, kept, $\eta_{\mathrm m}$ | viscosity, conductivity, resistivity; **$\mu$ collides with the affine translation, $\lambda$ with the eigenvalues, $\eta$ with the entropy** |
 | $\tau$, $\Phi$, $R$, $\Pi$ | kept | viscous stress, viscous work, resistive tensor, resistive work |
 | $T$, $c_v$ | kept | temperature $p/(c_v(\gamma-1)\rho)$, heat capacity |
 | CFL | $\nu$ | 0.8 by default |
@@ -189,7 +189,7 @@ No printed duplicates and no unparseable items.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Constrained transport for the induction equation](/methods/constrained-transport.md)

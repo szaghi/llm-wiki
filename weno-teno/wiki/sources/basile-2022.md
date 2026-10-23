@@ -144,8 +144,9 @@ unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–8 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–9 (2026-10-22/23). This source is cited on:
 
+* [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [h- and hp-adaptation for DG](/methods/hp-adaptation.md)
 * [Roe approximate Riemann solver](/methods/roe-riemann-solver.md)

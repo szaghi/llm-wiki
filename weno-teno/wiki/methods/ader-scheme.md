@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "ADER schemes"
-description: "ADER schemes advance a DG or finite-volume solution in one step: an element-local space–time predictor, solved by fixed-point iteration without neighbour data, feeds a corrector that integrates fluxes in time by quadrature; the page gives the two ADER-DG formulations of the sources, their time-step limits, a posteriori subcell limiting and the uses of the predictor."
+description: "ADER schemes advance a DG or finite-volume solution in one step: an element-local space–time predictor, solved by fixed-point iteration without neighbour data, feeds a corrector that integrates fluxes in time by quadrature; the page gives the two ADER-DG formulations, their time-step limits, a posteriori subcell limiting, the uses of the predictor and GRP-based finite-volume ADER to tenth order."
 status: established
 aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # ADER schemes
@@ -24,7 +24,10 @@ co-workers ([Ciallella et al. (2024)](/sources/ciallella-2024.md), §3.3;
 [Gaburro et al. (2024)](/sources/gaburro-2024.md), §3.1–3.3; both arXiv v1).
 Neither paper presents ADER as a contribution: both use it as the time
 discretization on which their contribution, a boundary treatment and a
-primitive-variable formulation respectively, is built.
+primitive-variable formulation respectively, is built. The finite-volume
+branch of the family, ADER with a generalized Riemann problem solver at each
+interface instead of a cell-local predictor, is run to tenth order in 1D by
+[Yajaman et al. (2025)](/sources/yajaman-2025.md) (section below).
 
 Page-local symbols: $q_h$ the predictor and $\hat q_\ell$ its modal
 coefficients; $\mathsf b_\ell(x,t)$ the space–time basis functions;
@@ -123,6 +126,60 @@ subcell corrector to the conservative variables in shock cells, which
 removes the conservation defect of the primitive scheme there (§4.4; see
 [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md)).
 
+## ADER finite volumes with a generalized Riemann problem solver
+
+The original finite-volume ADER of Toro, Millington and Nejad, as recalled by
+[Yajaman et al. (2025)](/sources/yajaman-2025.md) (§2, Eqs. (2)–(20)), starts from the exact
+space–time integral of $\partial_tu+\partial_xf(u)=S(u)$ over $I_i\times[t^n,t^{n+1}]$,
+
+$$\bar u^{n+1}_i=\bar u^n_i-\frac{\Delta t}{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big)+\Delta t\,\bar S_i,$$
+
+with $\hat f_{i+1/2}$ the time average of the interface flux and $\bar S_i$ the space–time average
+of the source (Eqs. (3)–(4)). It has two ingredients: one high-order nonlinear reconstruction per
+step, polynomials of degree $n_{\mathrm d}$ in each cell (page-local), and the solution of the
+[generalized Riemann problem](/methods/generalized-riemann-problem.md) $\mathrm{GRP}_{n_{\mathrm d}}$
+at each interface. With the Toro–Titarev solver the interface state is a Taylor polynomial in
+time whose coefficients come from a classical Riemann problem and from linearized Riemann problems
+for the spatial derivatives, converted to time derivatives by the Cauchy–Kovalevskaya
+procedure; the flux is its Gauss quadrature in time,
+$\hat f_{i+1/2}=\sum_q\mathsf w^t_qf\big(u_{\mathrm{GRP}}(t_q)\big)$ (Eqs. (16)–(17); $u_{\mathrm{GRP}}$
+page-local). The source average uses a cell-local space–time Taylor expansion of the
+reconstruction, again by Cauchy–Kovalevskaya, integrated by tensor Gauss quadrature (Eqs.
+(18)–(20)). The scheme is one-step and of arbitrary order in space and time; Yajaman et al. label
+their schemes ADER-2 to ADER-10 by order.
+
+Yajaman et al. run this ADER-FV scheme at orders 2–10 with four reconstructions, ENO,
+[Jiang–Shu WENO](/methods/weno-js-reconstruction.md) (exponent 2), AENO and their AENO-C
+([AENO reconstruction](/methods/aeno-reconstruction.md)). They use Jiang–Shu WENO rather than
+the Dumbser–Käser WENO "widely used" in ADER because "in our experience, we found that the
+performance of WENO-DK degrades beyond the sixth-order" (§2.2; no data shown). Their findings
+on ADER itself:
+
+- **Cost of the Cauchy–Kovalevskaya procedure.** Profiling the Euler density wave ($200$ cells,
+  CFL 0.9, $t=5$, serial, one CPU, hardware not named), the Cauchy–Kovalevskaya step takes
+  37 %, 59.6 %, 74.1 % and 85.2 % of the total AENO-C run time at orders 7, 8, 9 and 10, and the
+  reconstruction less than 7 % at order 10 (§8, Table 5). The authors conclude that GRP solvers
+  avoiding Cauchy–Kovalevskaya (ADER-DET, ADER-TR, which they cite) are desirable at very high
+  order (§8–§9).
+- **Superconvergence of WENO on coarse meshes.** ADER-WENO converges faster than design order on
+  coarse meshes, which the authors explain by the spatial accuracy $2n_{\mathrm d}+1$ of the WENO
+  polynomial dominating the temporal one there (Table A.7; e.g. $L_1$ order 14.13 from 32 to 64
+  cells at order 10).
+- **Robustness at very high order.** On the left half of the
+  [Woodward–Colella blast waves](/benchmarks/woodward-colella-blast-wave.md) (pressure ratio
+  $10^5$, 200 cells, CFL 0.9), ADER-WENO at orders 7–10 fails with negative pressures or
+  densities for every CFL tried in $[0.2,0.9]$, ADER-AENO-C does not; the full blast-wave
+  problem gives negative pressures with the high-order schemes, AENO-C included, near the
+  shock collision at $t\approx0.028$, so only the left half is run (§7.2, Fig. 15).
+- **Closed-form polynomials and sources.** ENO-type reconstructions give a polynomial that can be
+  evaluated anywhere in the cell, which the authors call an advantage for the space–time Gauss
+  quadrature of source terms, since WENO linear weights at generic Gauss points are non-trivial
+  (§7.1).
+
+The authors call theirs "the first study to investigate the Euler equations using non-linear
+ADER schemes of order 8 or higher" (§9), against earlier nonlinear ADER studies to order 7 and
+linear ADER to order 16 that they cite.
+
 ## Uses of the space–time predictor
 
 The predictor is a space–time polynomial available before any flux is
@@ -190,7 +247,12 @@ $h\approx0.9$–$1.9$ (Table 1).
   degree); their $N=2$ rates on conformal meshes stay at 2.60–2.97 (Table 6)
   and the embedded rates oscillate (Table 7), which they attribute to the
   way the surrogate boundary cuts the background mesh.
-- **Scope.** Both sources are 2D, explicit and on unstructured triangles or
+- **Yajaman et al.'s claims are 1D and serial.** The cost shares and the efficiency comparisons
+  are measured in one serial 1D code; the priority claim for order 8 and above is restricted to
+  nonlinear-reconstruction finite volumes. Their text gives the onset of WENO's efficiency
+  advantage on Euler as "beyond the seventh-order" (§7.2) and the loss of efficiency as "above the
+  eighth-order" (§8), and cites ADER-TR once to a journal paper and once to a thesis.
+- **Scope.** The two ADER-DG sources are 2D, explicit and on unstructured triangles or
   polygons; neither compares ADER with Runge–Kutta time stepping at equal
   cost, and the cost statement above concerns the boundary treatment, not
   the time discretization.
@@ -200,3 +262,4 @@ $h\approx0.9$–$1.9$ (Table 1).
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.2–3.4 Eqs. (6)–(14), Remark 1; §5.2 Eqs. (30)–(33), Fig. 3; §6.1 Tables 6–7.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §1; §3.1–3.4 Eqs. (19)–(41); §4.4; §5 Table 1, Figs. 3, 6, 8.
 - [Balsara et al. (2023)](/sources/balsara-2023.md) — §7.
+- [Yajaman et al. (2025)](/sources/yajaman-2025.md) — §2 (Eqs. (2)–(20)), §2.2, §6, §7.1–7.2 (Fig. 15), §8 (Table 5), §9, Table A.7.

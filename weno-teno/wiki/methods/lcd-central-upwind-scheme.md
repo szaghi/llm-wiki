@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "LCD central-upwind scheme"
-description: "Chertock et al. replace the scalar diffusion coefficients of the central-upwind flux by field-wise ones built from the one-sided characteristic speeds, in a local characteristic decomposition; the scheme becomes exactly upwind for every linear system and resolves contacts and instabilities more sharply."
+description: "Chertock et al. replace the scalar diffusion coefficients of the central-upwind flux by field-wise ones built from the one-sided characteristic speeds, in a local characteristic decomposition; the scheme becomes exactly upwind for every linear system and resolves contacts and instabilities more sharply; Chu et al. (2025b) extend it to non-conservative balance laws through flux globalization."
 status: established
 aliases: [local characteristic decomposition based central-upwind scheme, New CU, LCD-based CU scheme]
 tags: [central-scheme, characteristic, numerical-flux, finite-volume, low-dissipation]
-timestamp: 2026-10-21T00:00:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # LCD central-upwind scheme
@@ -84,10 +84,53 @@ CU versus the CU scheme of Kurganov–Noelle–Petrova in 1D and of Kurganov–T
   $1/2500$, which costs the same CPU time, and matches the old one on $3/10000$; no timings or
   hardware are given (Ex. 7).
 
+## The modified scheme of Chu, Herty and Kurganov
+
+[Chu et al. (2025b)](/sources/chu-2025-b.md) (§2) restate a slightly modified second-order
+LCD-CU scheme. They write the flux without the central average,
+
+$$\hat f_{i+1/2}=R\mathcal PL\,f(u^-_{i+1/2})+R\mathcal ML\,f(u^+_{i+1/2})+R\mathcal QL\big(u^+_{i+1/2}-u^-_{i+1/2}\big)\qquad\text{(Eq. (2.2))},$$
+
+which they state is identical to Chertock et al.'s flux after the simplification
+$\mathcal P+\mathcal M=I$ (Remark 2.1, Eq. (2.9)). They change two ingredients:
+
+- **Desingularization** (Eq. (2.8), $\varepsilon_0=10^{-18}$ page-local): field-wise coefficients
+  $(\lambda^+_l,-\lambda^-_l,\lambda^+_l\lambda^-_l)/(\lambda^+_l-\lambda^-_l)$ if
+  $\lambda^+_l-\lambda^-_l>\varepsilon_0$; otherwise the scalar central-upwind coefficients
+  $(a^+,-a^-,a^+a^-)/(a^+-a^-)$ if $a^+-a^->\varepsilon_0$; otherwise $(\tfrac12,\tfrac12,0)$. They
+  call it "more robust" than the earlier strategy in their experiments, without showing the
+  comparison (Remark 2.3).
+- **Reconstruction variables**: piecewise linear in conservative variables with the generalized
+  minmod limiter, parameter $1.3$, instead of characteristic variables; it caused no substantial
+  spurious oscillations in any of their examples and is cheaper (Remark 2.2; no timing given).
+
+*(compiler check, not in the sources: with every branch of (2.8) $\mathcal P_l+\mathcal M_l=1$,
+so Eq. (2.2) equals the central-average form above with $\bar f_{i+1/2}$ cancelled. In Chertock et
+al.'s zero branch $\mathcal P_l=\mathcal M_l=0$ instead, so for a field with
+$\lambda^+_l=\lambda^-_l$ the two schemes differ: Chertock et al. give that field the central
+average of the cell-average fluxes, Chu et al. (2025b) the average of the reconstructed-state fluxes, or the
+scalar CU coefficients when $a^+>a^-$.)*
+
+Chu et al. (2025b) then extend the scheme to non-conservative balance laws by applying it to the
+flux-globalized system $\partial_tu+\partial_xK=0$, with $R$ and the field speeds taken from
+$A+\mathcal C$, the flux Jacobian plus the matrix of the non-conservative product in this bundle's
+sign, and with modified states
+$\check u^\pm$ in the diffusion term: the **LCD-PCCU** scheme (§3–§4), written out on
+[path-conservative schemes](/methods/path-conservative-scheme.md) and
+[flux globalization](/methods/flux-globalization.md), and proved well-balanced in 1D on
+[well-balancing](/properties/well-balancing.md). Its closed-form eigenvector matrices for the
+two-fluid and the thermal rotating shallow-water systems are in their Appendices A–B (see
+[characteristic decomposition](/methods/characteristic-decomposition.md)).
+
 ## Qualifications
 
 - "More upwinding" is proved only for constant-coefficient linear systems; no positivity,
   entropy or stability analysis is given for the nonlinear scheme.
+- On the variables of the reconstruction the sources differ in experience, not in a claim about
+  the same setting: Chertock et al. reconstruct in characteristic variables because minmod
+  (the generalized minmod with factor 2) on conservative variables "typically leads to large oscillations" (§2.1);
+  Chu et al. (2025b) see no substantial oscillations with conservative variables and the
+  parameter $1.3$ instead of $2$.
 - Printed slips of the arXiv v2 (none changes the result): in the proof of Lemma 3.1 the
   matrix $\mathcal M$ is printed with the sign opposite to its definition (3.8) and
   the printed identity between $\mathcal M$ times the eigenvalue matrix and the negative
@@ -100,3 +143,4 @@ CU versus the CU scheme of Kurganov–Noelle–Petrova in 1D and of Kurganov–T
 # Citations
 
 - [Chertock et al. (2023)](/sources/chertock-2023.md) — §1, §2.1 (Eqs. (2.5)–(2.8)), §3 (Eqs. (3.5)–(3.12), Lemma 3.1), §4, §5 (Exs. 1–9), Apps. A–B (arXiv v2).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §2 (Eqs. (2.2)–(2.9), Remarks 2.1–2.3), §3–§4, Apps. A–B.

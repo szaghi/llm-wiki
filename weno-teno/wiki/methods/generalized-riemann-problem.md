@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Generalized Riemann problem (GRP) solvers"
-description: "A generalized Riemann problem has piecewise-linear (or piecewise-smooth) data across a jump; its approximate HLL solution gives the interface flux and its time derivative, hence a one-step second-order flux; Liu, Feng and Wang carry the HLL-GRP solver to multidimensional ideal MHD through rotational invariance."
+description: "A generalized Riemann problem has piecewise-linear (or piecewise-smooth) data across a jump; its approximate HLL solution gives the interface flux and its time derivative, hence a one-step second-order flux; Liu, Feng and Wang carry the HLL-GRP solver to multidimensional ideal MHD through rotational invariance, and the Toro–Titarev solver reaches arbitrary order through the Cauchy–Kovalevskaya procedure."
 status: established
 aliases: [GRP, HLL-GRP, HLL-type generalized Riemann problem solver, generalized Riemann problem, rotational gradient]
 tags: [riemann-solver, numerical-flux, finite-volume, mhd]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Generalized Riemann problem (GRP) solvers
@@ -21,14 +21,14 @@ with $u^\pm$ the reconstructed interface states and $\partial_xu^\pm$ their norm
 **associated Riemann problem** is the same problem with the linear terms dropped (§3.2.1). A
 GRP solver returns not only the interface state at $t=0^+$, as a Riemann solver does, but also
 its time derivative there, so the time-averaged flux over a step can be expanded to second
-order in one stage. As recalled by Liu et al. (§1), this lets GRP-based schemes reduce the
+order in one stage. As recalled by Liu et al. (2023a) (§1), this lets GRP-based schemes reduce the
 number of [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) stages and guide mesh motion in ALE
 codes, and the HLL-type GRP solvers (HLL-, HLLC-, HLLD-GRP of Goetz, Balsara and Dumbser;
 HLLI-GRP of Balsara, Li and Montecinos) had been applied to one-dimensional systems only.
 
 ## The HLL-GRP solver
 
-As recalled by Liu et al. (§3.2.1, Eqs. (57)–(66), after Goetz, Balsara and Dumbser and
+As recalled by Liu et al. (2023a) (§3.2.1, Eqs. (57)–(66), after Goetz, Balsara and Dumbser and
 Balsara, Li and Montecinos), the HLL fan of the associated Riemann problem has the left,
 intermediate and right states $u^-$, $u^{\mathrm{HLL}}$, $u^+$, separated by the speeds $s^-\le s^+$,
 with $u^{\mathrm{HLL}}$ and the subsonic flux as on
@@ -51,6 +51,44 @@ $\partial_t\tilde u=-A\,\partial_xu_\bullet$ at $\xi=0$, the result is
 $$h^{\mathrm{GRP}}=\begin{cases}f(u^-)-A(u^-)^2\,\partial_xu^-\,\dfrac{\Delta t}2,&s^->0,\\ h^{\mathrm{HLL}}(u^-,u^+)-A(u^{\mathrm{HLL}})^2\,\partial_xu^{\mathrm{HLL}}\,\dfrac{\Delta t}2,&s^-\le0\le s^+,\\ f(u^+)-A(u^+)^2\,\partial_xu^+\,\dfrac{\Delta t}2,&s^+<0\end{cases}$$
 
 (Eq. (66); page-local $h^{\mathrm{GRP}}$). The update is a single forward stage with this flux.
+
+## Arbitrary order: $\mathrm{GRP}_{n_{\mathrm d}}$ and the Toro–Titarev solver
+
+[Yajaman et al. (2025)](/sources/yajaman-2025.md) (§2.1, Eqs. (5)–(15)) recall the
+higher-order problem: $\mathrm{GRP}_{n_{\mathrm d}}$ is the initial-value problem for the balance
+law $\partial_tu+\partial_xf(u)=S(u)$ with data equal to the reconstruction polynomial of cell
+$i$ left of $x_{i+1/2}$ and of cell $i+1$ right of it, polynomials of degree $n_{\mathrm d}$
+(page-local) with $n_{\mathrm d}$ non-trivial derivatives. The Toro–Titarev solver writes the
+interface state as a Taylor polynomial in time (after LeFloch and Raviart),
+
+$$u_{\mathrm{GRP}}(t)=u(x_{i+1/2},0^+)+\sum_{k=1}^{n_{\mathrm d}}\partial_t^{(k)}u(x_{i+1/2},0^+)\,\frac{t^k}{k!}$$
+
+(Eq. (6); $u_{\mathrm{GRP}}$ page-local), and obtains the coefficients in five steps:
+
+1. the **leading term** is the classical Riemann problem with the interface limits of the two
+   polynomials, sampled at $x/t=0$, by any exact or approximate Riemann solver (Eqs. (8)–(9));
+2. the **Cauchy–Kovalevskaya** procedure writes every time derivative as a function of spatial
+   derivatives, source terms included, $\partial_t^{(k)}u=\mathsf H^{(k)}(u,\partial_xu,\dots,\partial_x^{(k)}u)$
+   (Eq. (10); $\mathsf H^{(k)}$ page-local);
+3. the spatial derivatives obey evolution equations
+   $\partial_t(\partial_x^{(k)}u)+A(u)\partial_x(\partial_x^{(k)}u)=\cdot$, which are linearized
+   with $A$ frozen at the leading-term state and the right-hand side dropped (Eqs. (11)–(12));
+4. each **derivative Riemann problem** is linear, with the one-sided derivatives of the two
+   polynomials as data, and its solution at $x/t=0$ gives $\partial_x^{(k)}u(x_{i+1/2},0^+)$
+   (Eqs. (13)–(14));
+5. the coefficients are assembled through $\mathsf H^{(k)}$ (Eq. (15)), and the ADER flux is the
+   Gauss quadrature in time of $f(u_{\mathrm{GRP}}(t))$ (Eqs. (16)–(17)).
+
+This is the solver of [ADER finite volumes](/methods/ader-scheme.md). Yajaman et al. list
+other $\mathrm{GRP}_{n_{\mathrm d}}$ solvers (§2.1): the HEOC solver of Castro and Toro, a
+reinterpretation of Harten–Engquist–Osher–Chakravarthy; the locally implicit solver of
+Montecinos and Toro for stiff sources; ADER-DET of Dumbser, Enaux and Toro, which avoids
+Cauchy–Kovalevskaya; and the time-reconstruction ADER-TR of Demattè et al. With the
+Toro–Titarev solver at orders 7–10 the Cauchy–Kovalevskaya step takes 37–85 % of the run time
+(§8, Table 5), which they give as the reason to prefer the solvers without it at very high order.
+On a Burgers generalized Riemann problem with source $e^{-u}$ and an accelerating shock, their
+ninth-order scheme reproduces a published reference figure (§7.1, Fig. 12;
+[Burgers-equation tests](/benchmarks/burgers-equation-tests.md)).
 
 ## Multidimensional MHD by rotational invariance
 
@@ -82,7 +120,7 @@ HLL-GRP implementation (§1). The ingredients (§2–§3):
 - **Wave speeds and time step**: the Wu–Shu estimates, with $0$ included in the
   minimum and maximum for the source weights and without it for $s^\pm$ of the GRP (Eqs.
   (10)–(15), (59)–(60)), and the Wu–Shu CFL-type step, which in Wu and Shu's analysis gives a
-  provably positivity-preserving HLL scheme; Liu et al. apply it "without making a rigorous
+  provably positivity-preserving HLL scheme; Liu et al. (2023a) apply it "without making a rigorous
   proof" for their own scheme (§2.2, Eqs. (16)–(18)).
 - **Least squares**: every least-squares problem (reconstruction and Eq. (64)) is solved by
   truncated SVD with threshold $10^{-10}$ times the largest singular value, because the matrices
@@ -123,7 +161,7 @@ the same reconstruction.
 - No positivity proof is claimed: the "PP limiter" is a local-extremum limiter at edge
   midpoints, not a [Zhang–Shu scaling](/methods/zhang-shu-scaling-limiter.md) of the update
   ([bound preservation](/properties/bound-preservation.md)).
-- Liu et al. label the plotted blast-wave quantity "magnetic pressure $\lvert B\rvert$", while
+- Liu et al. (2023a) label the plotted blast-wave quantity "magnetic pressure $\lvert B\rvert$", while
   other figures use $\lvert B\rvert^2/2$ (§4.4, Figs. 8–9). *(compiler check, not in the
   sources: the printed colour range $[21,34]$ contains the initial
   $\lvert B\rvert=100/\sqrt{4\pi}\approx28.2$ and not $\lvert B\rvert^2/2\approx398$, so the plotted
@@ -139,3 +177,4 @@ the same reconstruction.
 
 - [Liu et al. (2023a)](/sources/liu-2023.md) — §1, §2 (Eqs. (1)–(18)), §3 (Eqs. (19)–(77)), §4 (Table 1, Figs. 3–20), §5, Apps. A–B.
 - [Liu et al. (2021)](/sources/liu-2021.md) — the WLS-ENO reconstruction reused by Liu et al. (2023a).
+- [Yajaman et al. (2025)](/sources/yajaman-2025.md) — §2.1 (Eqs. (5)–(17)), §7.1 (Fig. 12), §8 (Table 5).

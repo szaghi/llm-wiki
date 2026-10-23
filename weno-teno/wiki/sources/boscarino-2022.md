@@ -158,7 +158,7 @@ No item is unparseable.
 
 # Pages created or updated
 
-Chunk 4 (2026-10-23), cited further in chunks 5–8 (2026-10-23). This source is cited on:
+Chunk 4 (2026-10-22), cited further in chunks 5–9 (2026-10-22/23). This source is cited on:
 
 * [Asymptotic preservation](/properties/asymptotic-preservation.md)
 * [Characteristic decomposition](/methods/characteristic-decomposition.md)

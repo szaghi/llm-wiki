@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "MOOD a posteriori limiting"
-description: "MOOD-type limiting computes a candidate high-order update, checks it for admissibility (positivity, NaN, maximum principle), and recomputes only flagged cells with a robust low-order scheme; the page records a kinetic scheme, deferred correction, the a posteriori subcell finite-volume limiter of ADER-DG with a conservative shock correction, PAD and NAD applied a priori, and the contrast with a priori limiting."
+description: "MOOD-type limiting computes a candidate high-order update, checks it for admissibility (positivity, NaN, maximum principle), and recomputes only flagged cells with a robust low-order scheme; the page records a kinetic scheme, deferred correction, a posteriori subcell limiters of ADER-DG and unstructured DG (local subcell flux correction), PAD and NAD used a priori, and the a priori contrast."
 status: established
-aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting]
+aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting, APLSC, a posteriori local subcell correction]
 tags: [limiting, positivity, bound-preserving, finite-difference, dg]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # MOOD a posteriori limiting
@@ -23,7 +23,9 @@ criterion, and fall back directly to first order; a third uses the
 classical MOOD criteria, physical and numerical admissibility, but before
 the step rather than after it; and the ADER-DG sources recompute flagged
 cells on a subcell grid with a second-order finite-volume scheme, after
-physical, numerical and (in one of them) shock criteria.
+physical, numerical and (in one of them) shock criteria; Vilar & Abgrall
+replace, after the same criteria, only the fluxes on the faces of troubled
+subcells inside a DG cell.
 [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) present
 their version as inspired by two earlier a posteriori methods (their
 refs. [14] and [25], §3.2.2).
@@ -167,6 +169,84 @@ order; on a shock–cylinder interaction on an embedded mesh the only
 residual disturbances lie in these limiter-flagged boundary cells (§6.3,
 Fig. 9).
 
+## A posteriori local subcell correction of DG
+
+[Vilar & Abgrall (2024)](/sources/vilar-2024.md) (§3, HAL preprint v1)
+correct a modal DG scheme on 2D unstructured and polygonal grids inside
+the cell, at the level of subcell fluxes, rather than replacing the cell
+polynomial. The DG scheme of degree $N$ is first written exactly as a
+finite-volume scheme on $n_N=(N+1)(N+2)/2$ subcell means with
+reconstructed fluxes $\hat F_{mp}$ on the interior subcell faces
+([DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md);
+page-local $n_N$, $\bar u_m$, $\hat F_{mp}$). Each forward-Euler stage of
+SSP-RK3 then follows the MOOD loop (§3.3):
+
+1. compute the DG candidate and project it onto submeans $\bar u_m$;
+2. **detect** troubled subcells with a physical admissibility detector
+   (maximum principle for scalar laws, positive density and internal
+   energy for Euler, NaN) and a numerical one, the relaxed discrete
+   maximum principle on submeans with margin
+   $\max\big(10^{-4},\ 10^{-3}(\max-\min)\big)$ over a neighbourhood that is
+   cell-wise (all subcells of the cell and its face neighbours) for linear
+   problems and subcell-wise (face and node neighbour subcells) for
+   nonlinear ones; for Euler the numerical check uses the total energy only
+   (Eqs. (3.3), (4.3), (4.6), §4.3);
+3. **relax** the numerical check at smooth extrema with a vertex-based
+   test on linearized derivatives, after Kuzmin's hierarchical slope
+   limiter, applied at subcell level in all tests (Eqs. (3.4)–(3.6),
+   Remark 6);
+4. **correct**: on every face of a troubled subcell replace $\hat F_{mp}$ by
+   a first-order finite-volume flux (global Lax–Friedrichs) between the two
+   submeans, recompute only the troubled subcells and their face
+   neighbours, map back to moments with $P^{-1}$ and iterate the detection.
+
+The correction is conservative at subcell level by construction, and with
+a first-order fallback it enforces the maximum principle or positivity,
+provided the initial data are set from subcell integrals and not by nodal
+interpolation or $L^2$ projection (Remark 8;
+[bound preservation](/properties/bound-preservation.md)). The authors
+state, "up to our knowledge", that it is the only technique on fully
+unstructured grids that modifies the scheme locally at subcell level
+without affecting the rest of the cell, and contrast it with subcell
+limiters that discard the whole DG polynomial of a troubled cell, "a
+waste of information" (§1, §3;
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md)).
+Second-order TVD or WENO fallback fluxes are possible but not used here
+(Remark 7).
+
+**Blended correction** (new in this paper, Eq. (3.7)). The corrected flux
+is $\theta_{mp}$ times the first-order flux plus $(1-\theta_{mp})\hat F_{mp}$,
+with "very naive" weights (page-local $\theta_{mp}$, not the Zhang–Shu
+factor): 1 on the faces of the troubled subcell, $3/4$ on the remaining
+faces of its face neighbours, $1/2$ on the not-yet-corrected faces of its
+node neighbours, and $1/4$ on the remaining faces of the face neighbours of
+those (Fig. 4). The 1D version had instead suppressed the remaining
+subcell oscillations by also marking, for $N\ge3$, the face neighbours of a
+troubled subcell (§3.3–3.4). On 2D Burgers at sixth order ($\mathbb P^5$, 576 triangles) it
+corrects 14 % of subcells on average against 10 %, needs 1.46 correction
+iterations on average (maximum 3) against 2.86 (maximum 6), runs in 2 min
+15 s against 2 min 22 s, and gives a sharper, less oscillatory shock (§3.4,
+Figs. 5–9; hardware not stated). An a priori, FCT-type version is announced
+([convex limiting](/methods/convex-limiting.md)).
+
+**Evidence** (§4, mostly $\mathbb P^5$ on 100–1054 triangles): smooth
+advection keeps sixth order with the correction never active ($L^1$ rates
+6.00 and 5.97 at $h=1/10,1/20,1/40$; Table 1); a crenel advected one period
+stays in $[8.5\times10^{-6},1]$ against $[-0.06,1.06]$ uncorrected (Fig. 12);
+solid-body rotation keeps the global maximum principle (Fig. 22;
+[solid-body rotation](/benchmarks/solid-body-rotation.md)); the KPP
+problem gives the entropic spiral where uncorrected DG does not (Fig. 33;
+[KPP rotating wave](/benchmarks/kpp-rotating-wave.md)); Sedov with the
+energy in one subcell and background pressure $10^{-14}$ runs on 271 cells,
+where "any scheme lacking positivity-preserving property or a rigorous
+stabilization technique would fail" (stated; Figs. 38–39;
+[Sedov blast wave](/benchmarks/sedov-blast-wave.md)); and the Mach 3
+[forward-facing step](/benchmarks/forward-facing-step.md) runs on 680
+cells without corner refinement or scheme modification (Fig. 41). With the
+correction active, uniform subdivisions resolve better than non-uniform
+ones, which the authors attribute to the numerical detector's dependence on
+the subcell aspect ratio (§4.1.1, Figs. 19–21).
+
 ## PAD and NAD criteria used a priori
 
 [Maltsev et al. (2023)](/sources/maltsev-2023.md) (§2.5, Eqs. 36–37,
@@ -277,4 +357,5 @@ an a priori switch in the sense of this page
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.4, Remark 1, Eq. (14); §5.3.2; §6.3, Fig. 9.
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §3.4 (a priori "fallback").
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §4.3; §7.2 (a priori contrast).
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint v1: §1; §3.1–3.4, Eqs. (3.3)–(3.7), Remarks 6–8, Figs. 4–9; §4.1–4.3, Table 1, Figs. 12, 19–22, 33, 38–39, 41.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §1; §2.4, Eq. (34); §2.5, Eqs. (36)–(37); §3.1–3.4, Table 1, Figs. 4, 6–11; Appendices A–C.

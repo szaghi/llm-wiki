@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Density-wave advection
@@ -35,14 +35,16 @@ property, and conserves entropy.
 | Zhao et al. §4.4 | $1+0.5\,e^{-\ln2\,x^2/b^2}$, $b=2$ and $1.5$ | 1, 1 | $[-800,1000]$, free-flow | $h=1$, $t=400$, CFL 0.4 and 0.8 | long-time propagation |
 | [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) §5 | $1+\exp(\sin(2\pi x/L))$, $L=1$ | 1, 1 | $[0,1]$, periodic | 61 points, RK4 at CFL 0.01, to $t=100$ | pressure equilibrium and entropy |
 | [Peyvan et al. (2023)](/sources/peyvan-2023.md) §4.4 | temperature $9000+200\sin(2\pi x)$ K, equilibrium five-species composition | 11450 m/s, 195256 Pa | $[0,1]$, periodic | 170 elements, $P=3$, $t=0.1$ | entropy conservation of two-point fluxes |
-| [Jiang et al. (2024)](/sources/jiang-2024.md) §4.1.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $N=100$, 200, 400 particles, fixed; $t=2$ | accuracy of a Lagrangian particle scheme |
+| [Jiang et al. (2024)](/sources/jiang-2024.md) §4.1.1 | $1+0.2\sin(\pi x)$ | 1, 1 | $[0,2]$, periodic | $N_{\mathrm p}=100$, 200, 400 particles (page-local), fixed; $t=2$ | accuracy of a Lagrangian particle scheme |
 | Jiang et al. §4.1.2 | $1+0.2\sin(x+y)$ | $(1,1)$, 1 | $[0,2\pi]^2$, periodic | $51^2$, $101^2$, $201^2$ particles (and a non-uniform set); $t=1$ | 2D accuracy |
 | [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) §3.1 | $2+0.98\sin(2\pi(x+y))$ | $(0.1,0.2)$, 20 | $[-1,1]^2$ | $N_e=4$–$32$ elements per direction, $N=3,4$, CFL 0.9; final time not printed | accuracy under convex limiting with global and local bounds |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.2 | $1+0.2\sin(\pi(x+y))$ | $(0.5,0.5)$, 1 | $[0,2]^2$, periodic, triangles | 58–14848 cells; $t=2$ | accuracy of unstructured WENO |
 | [Zhang & Zhu (2024)](/sources/zhang-2024-c.md) Ex. 3.3–3.4 | $1+0.2\sin x$; 2D $1+0.2\sin(x+y)$ | 1; $(1,1)$, 1 | $[0,2\pi]$; $[0,2\pi]^2$, periodic | 40–140 points or cells; $40^2$–$140^2$; $t=2$ | accuracy, finite differences and finite volumes |
-| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.1–3.3; [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.1–3.3 | $1+0.2\sin x$; $1+0.2\sin(x+y)$; $1+0.2\sin(x+y+z)$ | 1; $(1,1)$; $(0.3,0.3,0.4)$; $p_0=1$ | $[0,2\pi]^d$, periodic | $N=100,110,\dots,150$; $10^2$–$60^2$; $10^3$–$60^3$; $t=2$ | orders 5, 7, 9 of hybrid multi-resolution WENO |
+| [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.1–3.3; [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.1–3.3 | $1+0.2\sin x$; $1+0.2\sin(x+y)$; $1+0.2\sin(x+y+z)$ | 1; $(1,1)$; $(0.3,0.3,0.4)$; $p_0=1$ | $[0,2\pi]^d$, periodic | $N_x=100,110,\dots,150$; $10^2$–$60^2$; $10^3$–$60^3$; $t=2$ | orders 5, 7, 9 of hybrid multi-resolution WENO |
 | [Chudzik et al. (2024)](/sources/chudzik-2024.md) Ex. 6.2, 7.1 | $\tfrac52\exp\!\big(-40((x+0.31)^2+(y+0.31)^2)\big)+\tfrac1{10}$ | Ex. 6.2: perturbation $v=(1,1)$, $p=1$ on background $\rho'=c'=1$, $v'=(0.5,0.5)$ to $t=4$ or $(1,1)$ to $t=2$; Ex. 7.1: two velocity cases | $[-1,1]^2$, periodic | $32^2$–$256^2$, CFL 0.275 | third-order Active Flux, linearized and nonlinear Euler |
-| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P_1$–$\mathbb P_5$; $t=1$ | accuracy and positivity near vacuum |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.2, 3.4 | $1+0.2\sin(\pi x)$; 2D $1+0.2\sin(\pi(x+y))$ | 1; $(1,1)$, 1 | $[0,2]$; $[0,4]^2$, periodic | $t=2$ (Tables 3, 6) | fifth-order accuracy and cost of Hermite WENO, CFL 0.6 |
+| [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) Eq. (66) | $2+\sin^4(\pi x)$ | 1, 1 | $[-1,1]$, periodic | 16–128 cells, CFL 0.9; $t=2$ (one period); efficiency runs to $t=10$, profiling on 200 cells to $t=5$ | orders 2–10 of ADER finite volumes |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.1 | two species, $\rho=e^{-500x^2}+4\epsilon_{\mathrm v}$, species fraction $\tfrac12(\sin(2\pi x)+1)$ | 1, $2\epsilon_{\mathrm v}$ | $[-0.5,0.5]\times[-0.05,0.05]$, periodic | $N_x=8$–512 elements, $\mathbb P^1$–$\mathbb P^5$; $t=1$ | accuracy and positivity near vacuum |
 
 All with $\gamma=1.4$ (Lin & Zhu and Zhang & Zhu print no $\gamma$; Chudzik
 et al.'s background primes, page-local, are those of their linearized
@@ -179,11 +181,11 @@ $6.57\times10^{-5}$ against $8.23\times10^{-4}$ on $20^2$). In 1D the
 MR-WENO5 $L^\infty$ orders are 7.10, 5.29, 5.65, 6.53, 5.41 against 5.19,
 4.96, 5.16, 5.05, 5.05 for MMR-WENO5 (2024a, Table 3.2), and HMR-WENO5
 has the same $L^1$ errors as MR-WENO5 but smaller $L^\infty$ errors
-($1.81\times10^{-8}$ against $4.13\times10^{-8}$ at $N=100$; 2024b,
+($1.81\times10^{-8}$ against $4.13\times10^{-8}$ at $N_x=100$; 2024b,
 Table 3.2). In 3D the MR-WENO5 orders are again irregular (2024a: $L^\infty$
 4.73, 5.11, 6.41, 6.32, 6.08; 2024b: $L^1$ 4.73, 5.69, 7.60, 5.00,
 4.98) while the hybrids stay at 4.88–5.00 (Tables 3.4). The
-ninth-order 1D errors reach about $2.5\times10^{-16}$ at $N=150$ (2024a),
+ninth-order 1D errors reach about $2.5\times10^{-16}$ at $N_x=150$ (2024a),
 i.e. round-off. Neither paper states a reduced time step for the
 accuracy tests, although with third-order Runge–Kutta at a fixed CFL
 number the time error $O(\Delta t^3)$ would dominate the seventh- and
@@ -215,7 +217,7 @@ to recover high order. See [convex limiting](/methods/convex-limiting.md).
 **Positivity at near vacuum.** Trojak & Dzanic's positivity-preserving
 entropy filter for two-species DG (flux reconstruction in PyFR)
 converges at fitted rates 2.28, 3.16, 3.93, 5.17 and 6.61 in $L^\infty$
-for $\mathbb P_1$–$\mathbb P_5$ with their pressure-jump entropy switch,
+for $\mathbb P^1$–$\mathbb P^5$ with their pressure-jump entropy switch,
 and at 2.28, 3.16, 3.93, 5.22 and 6.47 with the entropy constraint
 active everywhere, with nearly identical errors (Tables 1–2): the
 authors observe $p+1$ convergence "even at smooth extrema" and conclude
@@ -223,10 +225,47 @@ that the scheme keeps its high-order accuracy with the entropy
 constraints active. See [entropy filtering](/methods/entropy-filtering.md)
 and [bound preservation](/properties/bound-preservation.md).
 
+**Hermite WENO with unified stencils.** Fan et al. (2025) find fifth
+order for their moment-based [Hermite WENO](/methods/hermite-weno.md)
+HWENO-U, for HWENO-M and for WENO-ZQ in 1D and 2D (Tables 3, 6). Against
+WENO-ZQ, HWENO-U costs 1.711 times the CPU time for an $L^1$ error
+11.871 times smaller in 1D and 1.463 times for 59.034 times smaller in
+2D; HWENO-M costs 2.488 and 1.547 times for errors 11.904 and 76.366
+times smaller (§3.1). The authors attribute the moderate overhead, at
+most 55% over WENO-ZQ in 2D despite two extra moment equations, to the
+reuse of interface fluxes, and the similar 2D cost of HWENO-M to its
+dimension-by-dimension modification of the first moments, which they
+call hard to extend to unstructured meshes (Ex. 3.4).
+
+**Very high orders with ADER.** Yajaman, Toro & Demattè's
+[ADER](/methods/ader-scheme.md) finite volumes with their
+[AENO-C reconstruction](/methods/aeno-reconstruction.md) reach the
+expected order at every order from 2 to 10 except order 4 (Table 4;
+ENO, WENO and AENO in Tables B.9–B.11). To an $L_1$ error of $10^{-8}$
+at $t=10$, ENO is the least efficient, AENO-C beats AENO at every order
+and is almost as efficient as WENO up to order 7, and beyond order 7 it
+falls behind WENO (Fig. 13), which the authors attribute to the
+Cauchy–Kovalevskaya procedure. Their serial profile on 200 cells to
+$t=5$ examines that cause: the AENO-C reconstruction costs a fraction of
+WENO's at every order (4.36 s at order 10 against 16.02 s for WENO at
+order 7), while the Cauchy–Kovalevskaya procedure takes 37%, 59.6%,
+74.1% and 85.2% of the AENO-C run time at orders 7–10 (Table 5); the
+authors conclude that generalized Riemann problem solvers without
+Cauchy–Kovalevskaya expansion are desirable at very high order (§8).
+
 ## Qualifications
 
+- Yajaman et al.'s text announces "a sequence of five meshes" for the
+  density wave, while their Table 4 prints four (16–128 cells), as its
+  caption says.
+- Fan et al. (2025) print HWENO-M's CPU time at $120^2$ in Table 6 as
+  1.30E+03 s, below its $80^2$ time (2.29E+03 s) and an order of
+  magnitude off the times of the two other schemes at $120^2$
+  (1.43E+04 s, 8.83E+03 s); the paper gives no other value to settle
+  the entry.
+
 - Trojak & Dzanic's printed rates are least-squares slopes over all
-  grids; pairwise rates are irregular (for example 5.85 for $\mathbb P_3$
+  grids; pairwise rates are irregular (for example 5.85 for $\mathbb P^3$
   from 32 to 64 elements), so the data are pre-asymptotic *(compiler
   check, not in the sources)*. The paper is read as arXiv v1.
 - Jiang et al.'s Table 2b prints the $L_2$ error $3.95\times10^{-4}$ on
@@ -282,3 +321,5 @@ and [bound preservation](/properties/bound-preservation.md).
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §3, Ex. 3.1–3.3, Tables 3.2–3.4.
 - [Chudzik et al. (2024)](/sources/chudzik-2024.md) — §6, Ex. 6.2, Ex. 7.1, Tables 6 and 8.
+- [Fan et al. (2025)](/sources/fan-2025.md) — §3.1, Ex. 3.2 and 3.4, Tables 3 and 6.
+- [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, §8, Eq. (66), Tables 4–5, B.9–B.11, Fig. 13.

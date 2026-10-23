@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:16:00Z
 ---
 
 # Conservative finite-difference scheme
@@ -15,7 +15,7 @@ values** $u_i\approx u(x_i)$ on a uniform grid by the flux-difference form
 
 $$\frac{du_i}{dt}=-\frac{1}{\Delta x}\big(\hat f_{i+1/2}-\hat f_{i-1/2}\big),$$
 
-(Li et al. 2022, Eq. (2); Fu 2023, Eq. (2); Takagi et al. 2022, Eq. (4); Fu 2021, Eq. (8)). The
+(Li et al. 2022b, Eq. (2); Fu 2023, Eq. (2); Takagi et al. 2022, Eq. (4); Fu 2021, Eq. (8)). The
 fluxes telescope, so the sum of $u_i\Delta x$ changes only through boundary fluxes. The difference
 from a finite-volume scheme lies in what $\hat f_{i+1/2}$ must approximate: in FD the flux difference
 divided by $\Delta x$ must equal $\partial_xf$ at $x_i$ to high order, whereas a finite-volume flux is
@@ -61,7 +61,7 @@ the viscous terms (App. A, Tables A.1–A.2).
 The same construction, in the same form, is the stated background of further finite-difference sources: Hong, Ye & Ye (2022, Eqs. (3)–(5)), Huang, Liang & Fu (2023, Eqs. (2)–(5)) and Liang et
 al. (2022, Eqs. (3)–(5)) for TENO variants, Wan & Xia (2022, Eqs. (2.2)–(2.4)), who call $\phi$ the
 "sliding function", for a steady-state hybrid WENO, Jeong, Yang & Yoon (2022, Eqs. (3)–(5)) for an
-RBF-based WENO, and Li, Chen & Ren (2022, Eqs. (2)–(4)) for linear six-point fluxes
+RBF-based WENO, and Li, Chen & Ren (2022a, Eqs. (2)–(4)) for linear six-point fluxes
 ([MDCD schemes](/methods/mdcd-scheme.md)). Three extensions of the construction appear:
 
 - **Order and the approximation space.** Jeong et al. (2022, Remark 2.1) note that the order survives
@@ -101,7 +101,7 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
 - **Alternative formulation.** The flux is a monotone two-point flux of *interpolated* states plus
   even-derivative corrections,
   $\hat f_{i+1/2}=h(u^-_{i+1/2},u^+_{i+1/2})-\tfrac1{24}\Delta x^2(\partial_x^2f)_{i+1/2}+\tfrac{7}{5760}\Delta x^4(\partial_x^4f)_{i+1/2}+\dots$
-  (Ye et al. 2022, Eqs. (11)–(13); Wang et al. 2023, Eqs. (2)–(4)). Any Riemann solver can be used
+  (Ye et al. 2022, Eqs. (11)–(13); Wang et al. 2023b, Eqs. (2)–(4)). Any Riemann solver can be used
   and any variables interpolated ([alternative WENO](/methods/alternative-weno.md),
   [AFTENO](/methods/afteno.md)). Ye et al. (2022, §1) draw the load-bearing distinction: classical
   WENO/TENO *reconstruct* split fluxes, the alternative family *interpolates* states. Chu, Kurganov
@@ -112,6 +112,24 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   $K(u)=f(u)+\int^x\mathcal C(u)\,\partial_\xi u\,d\xi$ (page-local $K$): the two-point flux of $K$
   is a [path-conservative](/methods/path-conservative-scheme.md) [central-upwind](/methods/central-upwind-scheme.md) flux, and the derivative corrections of $K$ split into finite
   differences of $f$ and of $\mathcal C(u)\partial_xu$ (Eq. (4.1)).
+- **Interpolated primitives, HLL fluxes and a fourth-order correction.** Komissarov & Phillips
+  (2024, §3.2, §3.5, Eqs. (55)–(65); arXiv v3) use a scheme close to the ECHO code of Del Zanna et
+  al. for relativistic MHD: primitive variables are interpolated to the interfaces by a third-order
+  WENO ([mapped WENO](/methods/mapped-weno.md)), because interpolating conserved variables "may yield
+  an unphysical state"; an HLL flux $\hat f^{\mathrm{HLL}}_{i+1/2}$ is evaluated there
+  ([HLL-family solvers](/methods/hll-riemann-solvers.md)); and the flux divergence is obtained, as
+  the paper's "3rd-order approximation for $\nabla\cdot f$" (§3 (iv)), by the DER operator,
+  $$\hat f_{i+1/2}=-\tfrac1{24}\hat f^{\mathrm{HLL}}_{i+3/2}+\tfrac{26}{24}\hat f^{\mathrm{HLL}}_{i+1/2}-\tfrac1{24}\hat f^{\mathrm{HLL}}_{i-1/2},$$
+  equivalently $\partial_xf_i\approx\tfrac98\frac{\hat f^{\mathrm{HLL}}_{i+1/2}-\hat f^{\mathrm{HLL}}_{i-1/2}}{\Delta x}-\tfrac18\frac{\hat f^{\mathrm{HLL}}_{i+3/2}-\hat f^{\mathrm{HLL}}_{i-3/2}}{3\Delta x}$.
+  *(Compiler check, not in the sources: the two forms agree, $\tfrac{27}{24}=\tfrac98$, and the first is
+  $\hat f^{\mathrm{HLL}}_{i+1/2}-\tfrac1{24}$ times the undivided second difference of the interface
+  fluxes, the discrete form of the $-\tfrac1{24}\Delta x^2\partial_x^2f$ correction of the alternative
+  formulation above.)* The scheme conserves $\sum_iu_i\Delta x$ exactly (Eq. (64)). DER is "neither
+  upwind nor ENO/WENO" and oscillates at strong shocks, so it is replaced by the plain difference
+  $(\hat f^{\mathrm{HLL}}_{i+1/2}-\hat f^{\mathrm{HLL}}_{i-1/2})/\Delta x$, and optionally WENO by a TVD
+  interpolation, at points flagged by a compression and total-pressure-jump detector with thresholds
+  0.5 (Eq. (65)); for the tearing tests and later DER is off altogether. The observed order on a
+  high-magnetization Alfvén wave is three (Table 1).
 - **Weighted compact nonlinear schemes.** Fu (2023, §3.7) recalls the three steps of WCNS:
   nonlinear node-to-interface interpolation, interface flux evaluation, compact interface-to-node
   flux differencing, and names the lack of conservation as the main flaw of the family
@@ -171,7 +189,7 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
 
 ## Moving meshes and two-medium flows
 
-- **Curvilinear moving meshes.** Li, Duan & Tang (2022, §§2–3, after Duan & Tang) write the
+- **Curvilinear moving meshes.** Li, Duan & Tang (2022c, §§2–3, after Duan & Tang) write the
   conservation law in time-dependent curvilinear coordinates and evolve $(Ju)_i$ by
   $\frac{d}{dt}(Ju)_i=-\sum_k\frac1{\Delta\xi_k}\big(\hat F_{k,i+1/2}-\hat F_{k,i-1/2}\big)$ in each
   computational direction $\xi_k$ (page-local $\xi_k$, $\hat F_k$; $J$ the Jacobian of the map), with
@@ -220,7 +238,7 @@ dimension-by-dimension FD scheme keeps pointwise accuracy in several dimensions 
   of two-point arithmetic averages (quadratic, cubic, and new quartic and quintic splits), i.e. a
   second-order central flux-difference scheme ([split convective forms](/methods/split-convective-forms.md),
   [kinetic energy preservation](/properties/kinetic-energy-preservation.md)).
-- **Curvilinear grids.** Li, Chen & Ren (2022, §3.4 Remark, Eqs. (62)–(69)) apply the 1-D flux along
+- **Curvilinear grids.** Li, Chen & Ren (2022a, §3.4 Remark, Eqs. (62)–(69)) apply the 1-D flux along
   each computational direction to the transformed flux $J(\xi_xf+\xi_yg)$ (page-local metrics) and show
   that on smooth periodic grids its modified wavenumber equals the Cartesian one, so their dispersion
   optimization carries over; the metrics are fourth-order central differences and the geometric
@@ -248,7 +266,7 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 ## Qualifications
 
 - The flux-difference form makes a scheme conservative; it does not by itself make it high order.
-  Wang et al. (2023, §1) stress that in the FD context a standard finite-volume two-point flux is
+  Wang et al. (2023b, §1) stress that in the FD context a standard finite-volume two-point flux is
   limited to second order, and that the high order of A-WENO comes from the derivative corrections.
 - Balsara et al. (2024, §II) reject the naive nonlinear upgrade of the linear upwind FD scheme
   (frozen $A(u_i)^\pm$) because it cannot preserve a stationary contact; their fluctuation form
@@ -268,7 +286,7 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - Chamarthi (2023a, Eqs. (14)–(15)) writes the scheme on "cells" $I_{i,j,k}$ but evolves "point values at cell
   centers (not cell averages)"; the paper's §2.1 calls the system two-dimensional while Eq. (1) carries $z$ fluxes.
 - Hong et al. (2022, Eq. (2)) print $\partial_tu_i=\partial_xf|_{x_i}$ without the minus sign that their
-  Eqs. (1) and (3) require; Li, Chen & Ren (2022, Eqs. (7), (34)) print the numerical flux with an
+  Eqs. (1) and (3) require; Li, Chen & Ren (2022a, Eqs. (7), (34)) print the numerical flux with an
   extra factor $1/\Delta x$ ([MDCD schemes](/methods/mdcd-scheme.md)).
 - Abgrall & Nassajian Mojarrad (2024, §3.1) print the first-order flux as $f_{i+1}$ for $\delta f=f_i-f_{i-1}$, and a
   fourth-order centred flux whose difference does not reproduce their centred derivative (neither is
@@ -289,7 +307,7 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Coppola & Veldman (2023)](/sources/coppola-2023.md) — §2.4–2.5, Eqs. (18)–(26); App. A.1, Lemma A.1; §3.4; §7.2.
 - [Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md) — §3, Eqs. (18)–(35).
 - [Wong et al. (2021)](/sources/wong-2021.md) — §4.1, Eqs. (73)–(80); §5.2.
-- [Li, Duan & Tang (2022)](/sources/li-2022-c.md) — §2, Eqs. (2.2)–(2.3); §3, Eqs. (3.1)–(3.10), Remark 3.1.
+- [Li, Duan & Tang (2022c)](/sources/li-2022-c.md) — §2, Eqs. (2.2)–(2.3); §3, Eqs. (3.1)–(3.10), Remark 3.1.
 - [Zheng, Shu & Qiu (2021)](/sources/zheng-2021.md) — §1; §2.2–2.3, Eqs. (4)–(5); §3.2.
 - [Wang et al. (2021)](/sources/wang-2021.md) — §3.1, Eq. (3.1); §3.1.2, Eqs. (3.29)–(3.30).
 - [Browne et al. (2022)](/sources/browne-2022.md) — §2.2, Eqs. (16)–(22), (34)–(36); App. A, Tables A.1–A.2.
@@ -301,7 +319,7 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Liang et al. (2022)](/sources/liang-2022.md) — §2.1, Eqs. (3)–(6).
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §2.1, Eqs. (2.2)–(2.9).
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §2.1, Eqs. (3)–(5), Remark 2.1.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2, Eqs. (2)–(7); §3.4, Eqs. (62)–(69).
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §2, Eqs. (2)–(7); §3.4, Eqs. (62)–(69).
 - [Fan, Zhao, Xiong & Qiu (2023)](/sources/fan-2023.md) — §2.1, Eqs. (2.2)–(2.3).
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §2.1; §3.1–3.2, Eqs. (3.1)–(3.11), Theorem 1, Remark 3.3; §4, Theorem 2.
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §1; §3.3.
@@ -309,3 +327,4 @@ physical flux, is assumed rather than proved at this generality (§2.4, Eq. (22)
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Eqs. (31)–(42).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — §2, Eqs. (14)–(15); §3.2, Eqs. (42)–(45); §4, Table 3; §5.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §2, Eqs. (5)–(7); §2.4, Eqs. (28)–(32); §3, Table 1.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.2–3.5, Eqs. (55)–(65); §4.1, Table 1 (arXiv v3).

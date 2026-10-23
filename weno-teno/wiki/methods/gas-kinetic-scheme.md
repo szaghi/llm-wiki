@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Gas-kinetic schemes"
-description: "Gas-kinetic schemes take the interface flux, and its time derivative, from moments of a BGK solution instead of a Riemann solver; the bundle's sources build a compact high-order scheme on it that evolves cell-averaged gradients with a nonlinearly limited two-stage fourth-order step, and a discrete-velocity variant that couples convective and viscous fluxes on unstructured grids."
+description: "Gas-kinetic schemes take the interface flux, and its time derivative, from moments of a BGK solution instead of a Riemann solver; the bundle's sources build a compact high-order scheme on it that evolves cell-averaged gradients with a nonlinearly limited two-stage fourth-order step, a discrete-velocity variant coupling convective and viscous fluxes on unstructured grids, and a robustness-switched fifth-order scheme."
 status: established
 aliases: [GKS, BGK scheme, gas-kinetic flux solver, compact gas-kinetic scheme, compact GKS, discrete gas-kinetic flux solver, DGKFS, direct modeling]
 tags: [numerical-flux, finite-volume, compact-scheme, weno]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T14:55:00Z
 ---
 
 # Gas-kinetic schemes
@@ -118,6 +118,52 @@ wall density than third-order CPR-GKS on $1/500$, which needs troubled-cell dete
 lid-driven cavity at $\mathrm{Re}=1000$; the [Shu–Osher problem](/benchmarks/shu-osher-problem.md)
 runs on 200 points at CFL $0.4$ and $0.8$.
 
+## Second-order GKS flux under a robustness-switched reconstruction
+
+[Zhang et al. (2024d)](/sources/zhang-2024-d.md) (arXiv v1) use the second-order GKS flux as one
+of two interchangeable flux solvers of a fifth-order finite-volume scheme on structured meshes,
+the other being the local [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md) with SSP-RK3
+(§2.2–§2.3). The GKS side, recalled from Xu and from Zhao et al. (§2.2, Eqs. (9)–(29)):
+
+- the BGK model and integral solution above, with the time-accurate interface distribution
+  (Eq. (14)) built from left, right and kinetically weighted equilibrium states, the equilibrium
+  state $u^{\mathrm e}=\int_{\mathsf v_1>0}\varphi_{\mathrm c}\mathsf g^-+\int_{\mathsf v_1<0}\varphi_{\mathrm c}\mathsf g^+$
+  (Eq. (44));
+- collision time $\tau_{\mathrm c}=0.01\,\Delta t+5\big\lvert\frac{p^--p^+}{p^-+p^+}\big\rvert\Delta t$
+  (Eq. (20); Zhao et al. use $0.05$ for the first constant), with the remark that the factor
+  $e^{-1/5}=0.8187$ produced by the constant 5 is "advantageous for the robustness";
+- the S2O4 step of the previous section, with the flux linearized in time on each interface
+  Gauss point, $\hat f(t)=\hat f^n+t\,\partial_t\hat f^n$, and the two coefficients fitted to the
+  time integrals $\mathbb F(\delta)=\int_0^\delta\hat f\,dt$ over $\Delta t/2$ and $\Delta t$:
+  $\hat f^n=\big(4\mathbb F(\Delta t/2)-\mathbb F(\Delta t)\big)/\Delta t$,
+  $\partial_t\hat f^n=4\big(\mathbb F(\Delta t)-2\mathbb F(\Delta t/2)\big)/\Delta t^2$ (Eqs. (22)–(25);
+  $\mathbb F$ page-local);
+- the nonlinear temporal limiter of [Zhao et al. (2023)](/sources/zhao-2023.md) above, in the
+  same form, with $\epsilon=10^{-6}$ (Eqs. (27)–(29); Zhao et al. print $10^{-5}$).
+
+The reconstruction is characteristic-wise [WENO-AO](/methods/weno-ao.md)(5,3) with WENO-Z-type
+weights, switched to a scaled central quadratic, down to first order, in cells where the
+[discontinuity feedback factor](/definitions/troubled-cell-indicator.md) of Ji, Shyy and Xu
+flags all three cells of the stencil row (§3.2–§3.3; written out on
+[hybrid central-WENO schemes](/methods/hybrid-weno.md)). The GKS needs both values and
+derivatives of the reconstruction at the Gauss points (Algorithm 1).
+
+**Evidence** (§4). Fifth order on 1D and 2D density-wave advection with both solvers (Tables
+1–4). Robustness is measured as the largest reference Mach number a scheme survives:
+
+| test | GKS: WENO-AO / DF-hybrid / van Leer | L-F: WENO-AO / DF-hybrid / van Leer |
+|---|---|---|
+| [123 problem](/benchmarks/double-rarefaction-problem.md), 100 cells, $t=0.14$ (Table 5) | 6.0 / 31.5 / 31.5 | 7.9 / 84.1 / 119.5 |
+| hurricane-like problem, $\Delta x=1/100$, 50 steps (Table 6) | 2.0 / 16.0 / – | 1.4 / 7.0 / – |
+| planar-rarefaction 2D Riemann configuration 2, $\Delta x=1/400$ (Table 7) | 1.8 / 2.1 / – | 18.1 / 24.8 / – |
+
+With either reconstruction the Lax–Friedrichs solver survives higher Mach numbers than the GKS
+solver on the 123 problem and on configuration 2, the GKS solver higher ones on the hurricane-like
+problem. The authors attribute the robustness of the Lax–Friedrichs runs only to the
+reconstruction, stating that the solver with SSP Runge–Kutta "has the positive-preserving
+property" (§2.3; no proof or limiter given). The text calls the hybrid as robust as van Leer
+"similarly under the L-F solver" (§4.3.1), which Table 5 (84.1 against 119.5) does not show.
+
 ## Discrete gas-kinetic flux on unstructured grids
 
 [Liu et al. (2023b)](/sources/liu-2023-b.md) (§3.1.2, Eqs. (18)–(25)) use the discrete
@@ -175,6 +221,13 @@ high-order WENO ([bound preservation](/properties/bound-preservation.md)).
   $P^3=b_0+b_1t+b_2t^2/2+b_3t^3/6$ gives the printed $b_2$, $b_3$ with powers of $\Delta t$, and
   $\int_0^{\Delta t}P^3=\Delta tb_0+\tfrac16\Delta t^2b_1+\tfrac13\Delta t^2\mathcal L^{n+1/2}_t$, the
   S2O4 update above.)*
+- **Printed slips** (Zhang et al. (2024d), arXiv v1): the second time-integral condition (24)
+  prints its first term as $\tfrac12\partial_t\hat f^n\Delta t$; *(compiler check, not in the
+  sources: integrating $\hat f^n+t\,\partial_t\hat f^n$ over $[0,\Delta t/2]$ gives
+  $\tfrac12\hat f^n\Delta t+\tfrac18\partial_t\hat f^n\Delta t^2$, and the printed Eq. (25) solves this
+  corrected system)*. The interface distribution (14) carries $e^{t/\tau}$ in its last two terms
+  where the integral solution has $e^{-t/\tau}$, a dropped minus sign. The version of record has
+  five authors against the three of the preprint read.
 - Liu et al. (2023b) state that DGKFS is locally $O(\delta_t^2)$ and that "the overall accuracy
   would not be affected"; their fourth-order convergence test is inviscid and uses Roe, so the
   high-order accuracy of the viscous DGKFS path is not measured (§3.1.2, §5.1).
@@ -185,3 +238,4 @@ high-order WENO ([bound preservation](/properties/bound-preservation.md)).
 - [Liu et al. (2023b)](/sources/liu-2023-b.md) — §1, §3.1.2 (Eqs. (18)–(25)), §5 (Tables 1–2, Figs. 13, 17–18).
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — §5.1 (Ex. 1.2, Remark 5.2) (arXiv v1).
 - [Fan et al. (2022)](/sources/fan-2022.md) — §1.1.
+- [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — §2.2–§2.3 (Eqs. (9)–(32)), §3.2–§3.3, Algorithm 1, §4 (Tables 1–7) (arXiv v1).

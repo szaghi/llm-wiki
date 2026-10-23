@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Smoothness indicators
@@ -273,6 +273,17 @@ with $\tau^{\mathrm{ref}}_5=(u_i''')^2\Delta x^6+O(\Delta x^8)$ (App. B, Eq. (B.
 it is not the WENO-Z $\tau_5=|\beta_0-\beta_2|$ of the registry). *(Compiler check, not in the sources: the closed form
 was recomputed from the integral; it agrees.)*
 
+**Floored two-point indicators.** For the third-order interpolation of their relativistic MHD
+code, [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (App. A, Eqs. (A3)–(A10);
+arXiv v3) start from Falle's TVD indicators $(u_i-u_{i-1})^2$ and $(u_{i+1}-u_i)^2$, "the same as
+in Jiang & Shu (1996) for a 3rd-order WENO", and add a scale-aware floor,
+$\beta_\pm=(u_i-u_{i\pm1})^2+U^2/n_{\mathrm{sm}}^2+\epsilon$, $U$ the largest $\lvert u\rvert$ on the
+three points, $n_{\mathrm{sm}}=10$, $\epsilon=10^{-25}$ (page-local), so that critical points are
+not taken for shocks ([critical-point accuracy](/properties/critical-point-accuracy.md),
+[mapped WENO](/methods/mapped-weno.md)). *(Compiler check, not in the sources: the floor scales
+like the squared differences under $u\mapsto\sigma u$, so the weights are scale-invariant up to
+$\epsilon$, but $U$ changes when a constant is added, so they are not affine-invariant.)*
+
 **Wider stencils for sensors.** Zheng, Shu & Qiu (2021, §2.2.4) evaluate Jiang–Shu indicators with
 derivatives up to fifth order over $[x_i,x_{i+1}]$, not over a cell, for the quintic on
 $\{x_{i-2},\dots,x_{i+3}\}$ and the four quadratics on its three-point substencils; the quintic's
@@ -392,6 +403,17 @@ the Jiang–Shu form over the target cell (Eq. (56); [Hermite WENO](/methods/her
   $f_{i-1}-f_{i+1}$, $(h_{i-1}+h_{i+1})\Delta x$, $f_{i-1}-2f_i+f_{i+1}$ and $(h_{i-1}-h_{i+1})\Delta x$
   (page-local $h_j$ the derivative fluxes), with prefactors $\tfrac1{16}$, $\tfrac{781}{320}$,
   $\tfrac1{3900}$, $\tfrac{1421461}{36400}$, and squared differences for the two linear candidates
+  ([Hermite WENO](/methods/hermite-weno.md)).
+- **Hermite data in finite volumes.** For the quartic of the moment-based HWENO-U, fitted to
+  three cell averages and the first moments of the two neighbours, Fan, Qiu & Zhao (2025, §2.1,
+  Eqs. (2.8)–(2.9)) print, with $p_0=\sum_l\mathsf c_l\xi^l$, $\xi=(x-x_i)/\Delta x$ (page-local
+  coefficients),
+  $\beta_0=(\mathsf c_1+\tfrac14\mathsf c_4)^2+\tfrac{13}3(\mathsf c_2+\tfrac{63}{130}\mathsf c_4)^2+\tfrac{781}{20}\mathsf c_3^2+\tfrac{1421461}{2275}\mathsf c_4^2$,
+  and squared slopes for the two linear candidates. *(Compiler check, not in the sources: the
+  Jiang–Shu integral of the quartic gives $(\mathsf c_1+\tfrac14\mathsf c_3)^2$ as first square, the
+  other three terms as printed; the prefactors $1,\tfrac{13}3,\tfrac{781}{20},\tfrac{1421461}{2275}$ are
+  those of the quartic indicator of Wang et al. (2021) and Li, Duan & Tang (2022c) above.)* Their weights normalize the indicators by
+  the stencil's mean absolute average for [scale invariance](/properties/scale-invariance.md)
   ([Hermite WENO](/methods/hermite-weno.md)).
 - **Central candidates.** In third-order [CWENO](/methods/cweno.md), Puppo et al. (2023, Eq. (9))
   compute the central indicator from the coefficients of the optimal parabola
@@ -600,3 +622,5 @@ Several sources use "smoothness indicator" for quantities of a different kind:
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.3, Eq. (27); §3.4, Eqs. (28)–(32).
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §2.4–2.5, Eqs. (11), (16); §5.1, Eq. (36).
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §4.2, Eqs. (15)–(20); §5.4.1, Eq. (56).
+- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §2.1, Eqs. (2.8)–(2.11); §2.2, Eqs. (2.19)–(2.22).
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — App. A, Eqs. (A3)–(A10) (arXiv v3).

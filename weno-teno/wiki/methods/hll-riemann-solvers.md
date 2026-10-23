@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "HLL-family approximate Riemann solvers"
-description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates for single- and multi-component and curvilinear flows, positivity proofs, the entropy-stable relaxation solver, radiative HLL, carbuncle behaviour, dissipation on turbulence, and solver switching."
+description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes as the bundle's sources use them: the single-state HLL form and its non-conservative and anti-diffusive extensions, HLLC star states and wave-speed estimates for single- and multi-component and curvilinear flows, positivity proofs, the entropy-stable relaxation solver, radiative and relativistic resistive-MHD HLL, carbuncle behaviour, dissipation on turbulence, and solver switching."
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # HLL-family approximate Riemann solvers
@@ -318,8 +318,40 @@ $3.224\times10^{-7}$ at 512 cells); MP5 with a five-stage fourth-order SSP Runge
 orders 4.83–5.05 with HLLD (error $9.006\times10^{-12}$ at 512 cells). The paper does not discuss
 why the fourth-order time integrator does not limit the observed order at CFL 0.3.
 
+In resistive relativistic MHD, [Mignone et al. (2024)](/sources/mignone-2024.md) (§3.6, Eqs.
+(43)–(48)) use the MHLLC solver of their Paper I. At an $x$-interface Maxwell's equations decouple
+from the gas: the transverse fields take the upwind (characteristic, light-speed) states
+$\tilde B_2=\{\!\{B_2\}\!\}+\tfrac12[\![\mathcal E_3]\!]$, $\tilde B_3=\{\!\{B_3\}\!\}-\tfrac12[\![\mathcal E_2]\!]$,
+$\tilde{\mathcal E}_2=\{\!\{\mathcal E_2\}\!\}-\tfrac12[\![B_3]\!]$, $\tilde{\mathcal E}_3=\{\!\{\mathcal E_3\}\!\}+\tfrac12[\![B_2]\!]$, with
+$B_1$, $\mathcal E_1$ continuous (Eq. (43); $\mathcal E$ the electric field as in registry §10, light speed $1$; $E_k$ above stays the phase energy); the gas part is the
+relativistic HLLC flux of Mignone and Bodo, four-region with outer speeds $s^\mp$ and contact speed
+$s^*$ the negative root of a quadratic in the HLL-averaged energy and momentum (Eqs. (44)–(46));
+the electromagnetic stress and Poynting flux are then evaluated from the tilde states and added
+(Eq. (47)). The point flux is converted to a face average by
+$\big(1+(\Delta_2+\Delta_3)/24\big)$, with $\Delta_d$ the undivided three-point Laplacian along the face
+(Eq. (48); page-local; see [cell-average and point-value conversion](/operators/cell-average-point-value-conversion.md)).
+On their resistive rotor at $\eta_{\mathrm m}=10^{-1}$ ($\eta_{\mathrm m}$ the resistivity, page-local) spurious $m=4$ modes appear, an
+artefact of the Cartesian mesh that they find "more evident" with MHLLC than with a more
+diffusive solver (§4.3).
+
 ## Positivity and the bound-preserving CFL
 
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) (§2.1, Eqs. (2.3)–(2.8); §3) use the HLL
+  flux in a bound-preserving [OEDG](/methods/oedg.md) scheme for the Kapila
+  [five-equation model](/definitions/five-equation-model.md), with the volume-fraction equation
+  rewritten as $\partial_t\phi_1+\partial_x(\phi_1v)=\chi_1\phi_1\partial_xv$ ($\chi_1$ page-local, a
+  ratio of $1/(\rho_kc_k^2)$ terms). The speeds are $s^-=\min\{v^+-c^+,v^--c^-,0\}$ and
+  $s^+=\max\{v^++c^+,v^-+c^-,0\}$ with $c$ the Wood mixture sound speed, chosen "to ensure the
+  positivity of partial densities and mixture pressure" (Eqs. (2.4)–(2.5)). The same speeds split
+  the velocity jump of the non-conservative term between the two cells, with weights
+  $-s^-/(s^+-s^-)$ to the left cell and $s^+/(s^+-s^-)$ to the right (Eq. (2.8)), which keeps the scheme
+  uniformly high order, unlike an earlier averaging approach, and makes the $\phi_1$ and
+  $\phi_2=1-\phi_1$ updates symmetric. With
+  [geometric quasilinearization](/methods/geometric-quasilinearization.md) they prove that the
+  cell averages stay admissible, $0\le\phi_1\le1$ included, under a CFL condition involving the
+  first Gauss–Lobatto weight and $\max(s^+-s^-)$ (Thms. 2.7, 2.12, Eq. (2.37); flux inequalities
+  Lemma 2.11 with $\min\{v-c,0\}$ and $\max\{v+c,0\}$). See
+  [bound preservation](/properties/bound-preservation.md).
 - [Wong et al. (2021)](/sources/wong-2021.md) (§3.3, Eqs. (46)–(70)) prove that the
   first-order HLLC scheme above keeps partial densities non-negative, the volume
   fraction in $[0,1]$ and $\rho e-\bar p_\infty>0$ (page-local mixture stiffening
@@ -547,3 +579,5 @@ the text's general statement that Cartesian fluxes are 5–20 % faster.
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §2.2 (Eqs. (11)–(13)).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.3, §4, §5.4–5.7, App. B (Eqs. (B.1)–(B.6)) (arXiv v4).
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.3 (Eqs. (37)–(44)), App. A (Eqs. (A.3)–(A.5)).
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §3.6 (Eqs. (43)–(48)), §4.3: MHLLC for resistive relativistic MHD.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.1 (Eqs. (2.3)–(2.8)), Lemma 2.11, Thms. 2.7 and 2.12, §3: HLL speeds for a bound-preserving five-equation OEDG scheme.

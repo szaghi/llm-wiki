@@ -5,7 +5,7 @@ description: "Two-point fluxes satisfying Tadmor's jump condition conserve entro
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T14:57:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes
@@ -60,6 +60,23 @@ two such pairings:
   the KPP problem (§5.1);
 - the Chandrashekar flux in the volume with a Rusanov surface flux for Euler
   (§5.2).
+
+In a modal DG scheme solved in conservative variables and evaluated at
+projected entropy variables, the EC flux enters only at the interfaces.
+[Alberti et al. (2025)](/sources/alberti-2025.md) state Tadmor's condition,
+in their orientation of the jump, as
+$[\![w_h]\!]^\top h-[\![\psi_d]\!]n_d\ge0$, with equality for an EC flux, and
+show that once the quadrature error of each element is removed by an
+[entropy correction term](/methods/entropy-correction-term.md), the scheme
+is entropy conservative or stable exactly when the interface flux
+satisfies it (§2.1.1, Eqs. (19), (25)). On the isentropic vortex the
+Ismail–Roe EC flux gives exact (machine-level) entropy conservation and
+order $N$, one below the $N+1$ of an entropy-stable Godunov flux with an
+exact Riemann solver, whose entropy error converges at $2N+1$ (§3.1.1,
+Figs. 1–2). They prefer EC fluxes to the alternative correction of
+Abgrall, Öffner & Ranocha, which is EC for any flux but needs a numerical
+entropy flux and gives a larger correction, and keep that alternative for
+cases with no EC flux, such as real-gas equations of state (§2.1.1).
 
 ## Fluxes for the compressible Euler equations
 
@@ -613,3 +630,4 @@ Table 2).
 - [De Michele & Coppola (2023a)](/sources/demichele-2023.md) — §1, §4.2.5 (arXiv v1).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §1–§6, Eqs. (1)–(15), Figs. 1–2 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §3 Eqs. (60)–(91), §4.4 Fig. 4 (arXiv v1).
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §2.1.1 Eqs. (19), (25)–(26), §3.1.1 Figs. 1–2.

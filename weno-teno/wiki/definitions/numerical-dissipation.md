@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Numerical dissipation and anti-dissipation
@@ -88,6 +88,27 @@ jumps.
   oscillatory. Chu et al. also state that the original finite-difference WENO relies on flux
   splitting, "which is quite diffusive", and motivate [A-WENO](/methods/alternative-weno.md),
   which uses finite-volume fluxes without splitting (§1); no comparison is run.
+- **Limiter compression switched by a roughness test.** In the adaptive
+  [low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md) of
+  [Chu et al. (2025a)](/sources/chu-2025.md) (§2, Eq. (2.6); arXiv v1, two authors) the flux keeps
+  its built-in anti-diffusion, and the amount of dissipation is moved into the slope limiter. The
+  two-parameter SBM limiter of Lie & Noelle,
+  $\psi^{\mathrm{SBM}}(r)=\min\{\beta r,\,1+\tau_{\mathrm S}(r-1)\}$ on $0<r\le1$, $0$ for $r<0$ and
+  $r\,\psi^{\mathrm{SBM}}(1/r)$ otherwise ($\beta\in[1,2]$ and $\tau_{\mathrm S}$ page-local, the
+  source's $\theta$ and $\tau$, as on the [TVD](/definitions/total-variation-diminishing.md) page;
+  $r$ the slope ratio), is classified, after Lie & Noelle, as dissipative for $\tau_{\mathrm S}\ge0.5$ (contacts
+  smeared in time), compressive for $0\le\tau_{\mathrm S}<0.5$ (contacts sharp, smooth extrema
+  compressed into kinks) and overcompressive for $\tau_{\mathrm S}<0$ (contacts very sharp,
+  smooth profiles turned into staircases or artificial $O(1)$ jumps); larger $\beta$ is less
+  dissipative and in general more oscillatory (§2.1.1). With $\beta=2$, $\tau_{\mathrm S}=0.5$
+  is the Minmod2 limiter. The adaptive scheme uses $\tau_{\mathrm S}=-0.25$ only in cells a
+  roughness indicator flags and Minmod2 elsewhere, in local characteristic variables; it
+  resolves the smooth parts of shock–wave interactions, the blast-wave contact and 2D
+  instabilities better than Minmod2 everywhere (§4, figures only). With a weak-local-residual
+  indicator whose threshold constant is tuned on a coarse mesh, the overcompressive limiter
+  reaches smooth regions on a fine mesh and staircases appear (Example 2, Fig. 4.3), the
+  failure that the paper's own classification predicts for the overcompressive setting in
+  smooth flow.
 - **Where the dissipation belongs in a disturbance formulation.**
   [Browne et al. (2022)](/sources/browne-2022.md) (§2.2) argue that in equations for the
   disturbance about a baseflow the Rusanov dissipation should be the full spectral radius times
@@ -215,6 +236,14 @@ $\tilde u_i$ the normalised cell average). Two consequences:
 - on the diagram, curves below the third-order line P3 are diffusive and curves
   above it anti-diffusive (§5).
 
+On a non-uniform three-cell stencil the same rule holds with grid-dependent constants: a
+second-order linear operator is diffusive when its intercept and the normalised cell average lie
+on the same side of the third-order intercept and of the abscissa of the accuracy point, and
+anti-diffusive otherwise ([Deng, Jiang & Yan (2025)](/sources/deng-2025.md), Proposition 3,
+Eq. (2.22); formulas on the [normalised-variable diagram](/definitions/normalised-variable-diagram.md)).
+Their non-uniform ROUND curve is built to lie wholly in the dissipative region for
+$0<\tilde u<1$ (§2.4; [ROUND](/methods/round-scheme.md)).
+
 For the odd-order Lerat–Corre schemes the leading truncation error is
 $\frac{\mathsf a_P}{2}\Delta x^{2P+3}\partial_x^{2(P+2)}u$, an even-order derivative, which
 the authors call dissipative ([Sciacovelli et al. (2021)](/sources/sciacovelli-2021.md), §3,
@@ -286,7 +315,7 @@ of the local resolution.
   waves at marginally resolved wavenumbers ([Hong, Ye & Ye (2022)](/sources/hong-2022.md), §1,
   §5.1; see [targeted ENO](/methods/targeted-eno.md)).
 - **A dissipation parameter set by a scale sensor.** In the MDCD flux of
-  [Li, Chen & Ren (2022)](/sources/li-2022.md) dissipation enters only through the parameter
+  [Li, Chen & Ren (2022a)](/sources/li-2022.md) dissipation enters only through the parameter
   $c_{\mathrm{diss}}$ of the [approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
   page. Their MDAD scheme sets it per interface, from $0.001$ where a
   [scale sensor](/definitions/scale-sensor.md) reports a reduced wavenumber of at most 1 (more
@@ -372,6 +401,20 @@ kinetic-energy-preserving forms of Kennedy–Gruber/Kuya and Chandrashekar diver
 divergence-form mass flux and inconsistent momentum or kinetic-energy fluxes (§4, Figs. 4–8;
 App. C–D). See [kinetic energy preservation](/properties/kinetic-energy-preservation.md) and
 [split convective forms](/methods/split-convective-forms.md).
+
+The linear analysis of [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) (arXiv v2)
+gives the semi-discrete counterpart for the central difference
+$D_hv_i=(v_{i+1}-v_{i-1})/(2\Delta x)$ on an infinite grid (page-local $D_h$ and $\ell^2$ inner
+product $\langle\cdot,\cdot\rangle$): it satisfies the discrete integration
+by parts $\langle u,D_hv\rangle=-\langle D_hu,v\rangle$, hence $\langle u,D_hu\rangle=0$
+(Proposition 3.5), and it is $\ell^2$-stable for every symmetric flux matrix, whereas the one-sided
+differences are stable only for one sign of the matrix (Proposition 3.4). For their partially
+dissipative linear relaxation systems $\partial_tu+A\partial_xu=-\mathsf Bu$, the semi-discrete
+solution decays at the rate $(1+t)^{-1/2}$ with a constant independent of $\Delta x$ under the
+Kalman rank condition (Theorem 2.1; $A$ symmetric, $\mathsf B$ the page-local symmetric damping matrix;
+[asymptotic preservation](/properties/asymptotic-preservation.md)). *(Compiler check, not in the
+sources: $\langle u,D_hu\rangle=0$ means the central semi-discretization adds no $\ell^2$
+numerical dissipation, so the decay comes from the damping term $-\mathsf Bu$ alone.)*
 
 ## Explicit dissipation: artificial viscosity and its spectral shape
 
@@ -494,6 +537,25 @@ maximum $\max(p)/\langle p\rangle$ at the end of the run ($\langle p\rangle$ the
 pressure, page-local), which "generally increases with better resolution", as a proxy for the
 decrease of numerical dissipation (§5.6).
 
+**Numerical resistivity.** [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (§4.3,
+Eqs. (87)–(95); arXiv v3) measure the dissipation of their third-order relativistic MHD scheme
+as a resistivity, from the decay rate $\nu_{\mathrm d}=\eta_{\mathrm m}k_w^2$ of a degenerate Alfvén wave with the
+telegraph equation of resistive MHD (page-local decay rate $\nu_{\mathrm d}$ and resistivity $\eta_{\mathrm m}$, as in the Berta et al. paragraph above). Accumulating a local
+truncation error $\propto n_L^{-(\mathsf r+1)}$ ($n_L$ points per field length scale $L$, $\mathsf r$ the order, page-local)
+over the resistive time $L^2/\eta_{\mathrm m}$ gives the ansatz
+
+$$\eta_{\mathrm{num}}=A_\eta\,L\,\frac{\Delta x}{\Delta t}\Big(\frac{\Delta x}{L}\Big)^{\mathsf r},$$
+
+with $L$ defined by $\partial_x^2B=B/L^2$ (page-local $\eta_{\mathrm{num}}$, $A_\eta$); the
+authors call it heuristic. With $\mathsf r=3$ the measured $\eta_{\mathrm{num}}$ falls from
+$4.9\times10^{-3}$ to $4.8\times10^{-6}$ for 10 to 80 points per wavelength (orders 3.75, 3.1, 3)
+and $A_\eta\approx0.031$ from 40 points on (Table 3, Fig. 6). On a field at 45° to the grid the
+resistivity is halved for the same $\lvert k_w\rvert$, modelled as $\tfrac14(3+\cos4\vartheta_{\mathrm g})\eta_0$
+with $\vartheta_{\mathrm g}$ the angle to the grid (page-local; Eq. (98), Table 5). They use the
+ansatz to set an effective Lundquist number in tearing-instability runs
+([tearing-mode instability](/benchmarks/tearing-mode-instability.md)) and liken it to anomalous
+resistivity, since $\eta_{\mathrm{num}}\propto L^{-2}$ (§6).
+
 ## Reading dissipation off 2D results
 
 Without a closed-form measure, the 2D sources compare dissipation through flow
@@ -551,6 +613,12 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
   opposite to the measured friction trend.)* The page records the measured
   trends. Their argument is qualitative and is not tested separately from the
   runs.
+- Komissarov & Phillips (2024, Table 5) label a row "$2\eta k^2$" with $k=2\sqrt2\pi$ while
+  their resistivity row equals that rate divided by $2(2\pi)^2$, the per-axis wavenumber, which
+  is the reading their text adopts; they call the oblique and aligned resistivities "exactly the
+  same" where the tables give $0.50\times10^{-2}$ and $0.49\times10^{-2}$ at 10 points. The paper
+  also calls truncation error "rounding error" throughout.
+- Chu et al. (2025a) judge dissipation from figures only; no error norms or timings are given.
 - Bielawski et al.'s ranking comes from a second-order unstructured solver with
   limited reconstruction. Their §3 describes approximate Riemann solvers as
   giving "near minimal possible dissipation across discontinuities while
@@ -588,7 +656,7 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Dao & Nazarov (2022)](/sources/dao-2022.md) — §4, Eq. (4.10): Galerkin as central differencing, residual viscosity (arXiv v1).
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §3.4, §5, §6: WENO weighting dissipation, unstructured TENO (preprint).
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1, §5.1: order traded for dissipation.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §2.3, Eq. (38); §4.4, Tables 4–5, Figs. 27–30: scale-adaptive dissipation and Taylor–Green evidence.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §2.3, Eq. (38); §4.4, Tables 4–5, Figs. 27–30: scale-adaptive dissipation and Taylor–Green evidence.
 - [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) — §1, §3.2: wavenumber-adaptive cut-off (arXiv v1).
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1, §3.2, Fig. 6: dissipation of THINC's cell-average constraint.
 - [Jain & Moin (2022)](/sources/jain-2022.md) — §3, Theorems 3.1–3.2, Lemma 3.1; §4, App. C–D: non-dissipative consistent two-phase scheme (arXiv v1).
@@ -600,5 +668,9 @@ dissipative", the evidence being a delayed interface evolution in the shock–bu
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1, §3.2.1, Eq. (26): flux dissipation term and BVD motivation.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §3.2, §5.2, Figs. 5, 13: nonlinear dissipation only, band-wise cut-offs.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §3.2, §4.7, Figs. 3, 12(b): adaptive kernel shape as dissipation control.
-- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.6: dissipation read off vortex resolution.
+- [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.6: dissipation judged from vortex resolution.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §9, Fig. 13: TENO-A against WENO limiters, effect of the cut-off.
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §2.1–2.2, Eq. (2.6); §4, Examples 1–6, Figs. 4.1–4.10: SBM limiter classes and adaptive overcompression (arXiv v1).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §2.2, Proposition 3, Eq. (2.22); §2.4: diffusion sign on non-uniform grids.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §4.3, Eqs. (87)–(95), Table 3, Fig. 6; §5.2, Eq. (98), Table 5; §6: numerical-resistivity ansatz and anisotropy (arXiv v3).
+- [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) — §3.3–3.4, Propositions 3.4–3.5; §2.1, Theorem 2.1: skew-adjoint central difference (arXiv v2).

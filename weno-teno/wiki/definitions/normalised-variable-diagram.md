@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Normalised-variable diagram"
-description: "The normalised-variable diagram plots the normalised interface value of a three-cell compact reconstruction against the normalised cell average; Deng's unified version (UND) adds the accuracy point, the third-order line, diffusion and anti-diffusion regions, a CFL-dependent CBC-TVD region and ENO and high-resolution regions, on which TVD, NVD, WENO3, THINC, ROUND and learned schemes are compared."
+description: "The normalised-variable diagram plots the normalised interface value of a three-cell compact reconstruction against the normalised cell average; Deng's unified version (UND), extended to non-uniform grids, adds the accuracy point, the third-order line, diffusion and anti-diffusion regions, a CFL-dependent CBC-TVD region and ENO and high-resolution regions, on which TVD, NVD, WENO3, THINC, ROUND and learned schemes are compared."
 status: established
 aliases: [NVD, normalized variable diagram, unified normalised-variable diagram, UND]
 tags: [reconstruction, finite-volume, limiting, weno, low-dissipation]
-timestamp: 2026-10-22T09:49:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Normalised-variable diagram
@@ -108,6 +108,44 @@ $\mathcal R=\tilde u+\tfrac12\psi\big(\tilde u/(1-\tilde u)\big)(1-\tilde u)$,
 gives $\mathcal R=2\tilde u$ and $\mathcal R=1$: the $k=2$ and DW boundaries are
 Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
 
+## Non-uniform grids
+
+[Deng, Jiang & Yan (2025)](/sources/deng-2025.md) (§2.2–2.3) extend the diagram to three
+cells of arbitrary widths; write $h_-=\Delta x_{i-1}$, $h_0=\Delta x_i$, $h_+=\Delta x_{i+1}$
+(page-local) and $H=h_-+h_0+h_+$. The normalised variables are unchanged; the linear
+operators become, in normalised form (Eqs. (2.13)–(2.15)),
+
+$$\mathrm{UW}:\ \frac{h_-+2h_0}{h_-+h_0}\tilde u,\qquad
+\mathrm{CD}:\ \frac{h_+}{h_0+h_+}\tilde u+\frac{h_0}{h_0+h_+},\qquad
+\mathrm P:\ \mu_1^{\mathrm P}\tilde u+\mu_0^{\mathrm P},$$
+
+$$\mu_0^{\mathrm P}=\frac{h_0(h_-+h_0)}{(h_0+h_+)H},\qquad
+\mu_1^{\mathrm P}=\frac{h_+\big(h_-^2+3h_-h_0+3h_0^2+h_-h_++2h_0h_+\big)}{(h_-+h_0)(h_0+h_+)H},$$
+
+P being the quadratic reconstruction from the three averages (page-local $\mu^{\mathrm P}_0$,
+$\mu^{\mathrm P}_1$). The results generalize Propositions 3–5 above:
+
+- *Proposition 1.* A linear operator $\mu_1\tilde u+\mu_0$ is at least second order iff its line
+  passes through the **accuracy point**
+  $\big(\theta_{\mathrm A},\tfrac{h_-+2h_0}{h_-+2h_0+h_+}\big)$,
+  $\theta_{\mathrm A}=\tfrac{h_-+h_0}{h_-+2h_0+h_+}$ (page-local), through which UW, CD and P all pass
+  (Eq. (2.18)).
+- *Proposition 2.* It is uniformly third order iff $(\mu_0,\mu_1)=(\mu_0^{\mathrm P},\mu_1^{\mathrm P})$.
+- *Proposition 3* (Eq. (2.22)). A second-order operator is diffusive if $\mu_0>\mu_0^{\mathrm P}$ and
+  $\tilde u>\theta_{\mathrm A}$, or $\mu_0<\mu_0^{\mathrm P}$ and $\tilde u<\theta_{\mathrm A}$, and
+  anti-diffusive in the two mixed cases, assuming no critical point in the stencil.
+
+On a uniform grid these reduce to UW2, CD2, P3, the point $(1/2,3/4)$ and Deng's Proposition 5
+(Remark 2.1). The non-uniform UND (Fig. 1(a)) keeps the elements listed above: accuracy point and
+P line, diffusion and anti-diffusion regions, an ENO region on $0\le\tilde u\le1$ bounded by
+first-order downwind ($\mathcal R=1$), first-order upwind ($\mathcal R=\tilde u$) and a line
+$\mathcal R=k\tilde u$ with "CFL $<1/k$" called a safe choice, and high-resolution regions
+outside $[0,1]$; no formula is printed for the latter. The ROUND operator drawn on it is on the
+[ROUND](/methods/round-scheme.md) page.
+*(Compiler check, not in the sources: on the cells $[-h_-,0]$, $[0,h_0]$, $[h_0,h_0+h_+]$, the
+normalised forms, the common point, Propositions 1–2 and the sign rule of Proposition 3 were
+recomputed by Taylor expansion and agree; P errs on a cubic by $h_0h_+(h_-+h_0)u'''/24$.)*
+
 ## Schemes on the diagram
 
 - **TVD limiters.** MinMod and SuperBee bound Sweby's second-order TVD region;
@@ -158,6 +196,19 @@ Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
   $\epsilon$ the WENO3-NN weights are functions of $\tilde u_i$ alone and, by
   Deng's Proposition 6, the scheme is normalisable; the section Huang et al.
   plot is then the whole scheme.)*
+- **Printed slips in the non-uniform proofs.** Deng, Jiang & Yan (2025) print
+  $\frac{u''}{u'}=\frac{3(2h_0+h_-h_0+h_+h_0)^2}{(h_-+h_0)(h_-+h_+)H}\big(\theta_{\mathrm A}-\tilde u\big)$
+  (Eq. (2.24), in registry and page-local notation), whose numerator mixes lengths and squared
+  lengths, and an error prefactor $\tfrac16(\mu_0^{\mathrm P}-\mu_0)h^2$ in Eq. (2.23).
+  *(Compiler check, not in the sources: the expansion gives
+  $\frac{u''}{u'}=\frac{3(h_-+2h_0+h_+)^2}{(h_-+h_0)(h_0+h_+)H}(\theta_{\mathrm A}-\tilde u)$, $4/\Delta x$ on a
+  uniform grid like the printed one, and an error coefficient of $u''$ proportional to
+  $(\mu_0^{\mathrm P}-\mu_0)(h_0+h_+)H/6$; both prefactors are positive, so Proposition 3 is
+  unaffected.)* The first-order brackets of the expansions also carry slips: Eq. (2.20)
+  prints $\mu_0\big(1+\tfrac{h_+}{h_0}+\tfrac{h_-}{h_0}\big)$ and Eq. (2.21) prints the factor
+  $\tfrac{h_-}{h_+}$, where the expansion gives $\mu_0\big(2+\tfrac{h_+}{h_0}+\tfrac{h_-}{h_0}\big)$ (the
+  $2\mu_0$ of (2.21)) and $\tfrac{h_-}{h_0}$ *(compiler check, not in the sources)*; the
+  second-order condition and Propositions 1–2 agree with the compiler check above.
 - The CBC–CFL link ($k\leftrightarrow$ CFL $<1/k$) is stated, not derived, in both
   sources; Deng also reports, after Giuliani and Krivodonova, that the TVD bound
   CFL $<0.5$ is "overly stringent" with high-order SSP Runge–Kutta stepping.
@@ -171,3 +222,4 @@ Sweby's bounds $\psi\le2r$ and $\psi\le2$.)*
 - [Deng (2023)](/sources/deng-2023.md) — §§2–5, Definitions 1–8, Lemmas 1–2, Propositions 1–6, Table 1, Figs. 2–9, Eqs. (3.1)–(4.33).
 - [Huang et al. (2026)](/sources/huang-2026.md) — §2.2, Eqs. (2.6)–(2.13); §3.4, Fig. 2.
 - [Bezgin, Schmidt & Adams (2022)](/sources/bezgin-2022.md) — §2, Eqs. (6)–(10); §3.2, Eqs. (14)–(15).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §2.2–2.3, Eqs. (2.13)–(2.25), Propositions 1–3, Remark 2.1, Fig. 1.

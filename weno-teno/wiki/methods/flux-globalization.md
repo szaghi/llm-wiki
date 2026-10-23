@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Flux globalization for balance laws"
-description: "Flux globalization absorbs the integral of the source or non-conservative product into a global flux $K$, so that steady states, moving and discontinuous ones included, are states of constant $K$; Kurganov et al. build a well-balanced path-conservative central-upwind scheme on it, Ciallella et al. an arbitrary-order WENO finite-volume scheme."
+description: "Flux globalization absorbs the integral of the source or non-conservative product into a global flux $K$, so that steady states, moving and discontinuous ones included, are states of constant $K$; Kurganov et al. build a well-balanced path-conservative central-upwind scheme on it, Ciallella et al. an arbitrary-order WENO finite-volume scheme, Chu et al. (2025b) a variant with field-wise characteristic diffusion."
 status: established
 aliases: [global flux, global flux formulation, flux-globalization-based scheme, GF-WENO, flux-globalized central-upwind scheme, quasi-conservative form]
 tags: [well-balanced, finite-volume, central-scheme, weno, numerical-flux]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Flux globalization for balance laws
@@ -174,6 +174,32 @@ balanced with respect to all analytically computable equilibria" (§1). Ciallell
 that the simple averaging of the global part used by Cheng et al. "is not enough to reach more
 than second order of accuracy" (§3).
 
+## Field-wise diffusion on the global flux: LCD-PCCU
+
+[Chu et al. (2025b)](/sources/chu-2025-b.md) (§1, Eqs. (1.1)–(1.3)) globalize both a source and
+a non-conservative product, $\mathcal G=\int_{x_{\mathrm b}}^x\big(S-\mathcal C\,\partial_\xi u\big)d\xi$
+in this page's sign (their $W$, with the product written on the right-hand side as $BU_x$), and
+replace the scalar central-upwind flux of Kurganov et al. by the field-wise
+[LCD central-upwind](/methods/lcd-central-upwind-scheme.md) flux of the global flux (§3,
+Eqs. (3.1)–(3.2)):
+
+$$\hat K_{i+1/2}=R\mathcal PL\,K^-_{i+1/2}+R\mathcal ML\,K^+_{i+1/2}+R\mathcal QL\big(\check u^+_{i+1/2}-\check u^-_{i+1/2}\big),$$
+
+with $K^\pm$ computed "the same as in" Cao, Kurganov, Liu and Xin (2022) (§3; path-conservative
+accumulation of $\mathcal G$),
+reconstruction of the equilibrium variables, the modified states $\check u^\pm$, and $R$, $L$ and
+the field speeds from $A+\mathcal C$ at an averaged state ($\mathcal P,\mathcal M,\mathcal Q$
+as on the LCD page). The authors state that the LCD extension to balance laws "is not
+straightforward" without flux globalization and that the approach is "equivalent to a very
+specific discretization of the source and nonconservative product terms, which could be hard to
+develop without the flux globalization approach" (§1). In 2D (§4, Eqs. (4.1)–(4.4)) each
+direction has its own global flux, $K^{(1)}$ in $x$ and $K^{(2)}$ in $y$ (page-local labels; the
+source's $K$, $L$), each integrating its directional source and product along its own
+coordinate. Well-balancing is proved in 1D and holds in 2D only for steady states with
+$K^{(1)}$ independent of $x$ and $K^{(2)}$ independent of $y$ (Remarks 3.1, 4.1; see
+[well-balancing](/properties/well-balancing.md)). For the two-fluid tests there is no source,
+no equilibrium variables are needed and $\check u^\pm=u^\pm$ (Remark 5.1).
+
 ## Evidence
 
 - **Kurganov et al. (2023)** (§7; second order, [SSP-RK3](/methods/ssp-runge-kutta.md), CFL
@@ -200,6 +226,15 @@ than second order of accuracy" (§3).
   tests, and on a transcritical flow with a shock, a step bottom and Manning friction
   $n_{\mathrm M}=0.05$ (page-local Manning coefficient) the standard WENO5 oscillates while the
   global-flux scheme does not (Figs. 11, 16–19).
+- **Chu et al. (2025b)** (§5; second order, SSP-RK3, CFL $0.45$, generalized minmod with $\theta=1.3$, LCD-PCCU
+  against the scalar flux-globalized PCCU scheme). On the Ripa system the constant-pressure
+  discontinuous equilibrium $(h,v,b)=(2,0,1)$ / $(1,0,4)$ is preserved by both schemes with zero
+  errors in $h$ and $b$ (Ex. 6). $L^1$ errors are smaller for LCD-PCCU in every table: in $h$ for
+  the perturbed equilibrium ($8.16\times10^{-2}$, $4.72\times10^{-2}$, $2.49\times10^{-2}$ for PCCU
+  against $1.25\times10^{-2}$, $8.55\times10^{-3}$, $5.05\times10^{-3}$ on $\Delta x=1/20,1/40,1/80$,
+  Table 5.3, with lower observed rates for LCD-PCCU, 0.548 and 0.760 against 0.790 and 0.923), and
+  in $h+Z$ for a dam break over a non-flat bottom (Table 5.4; $Z$ the bottom, page-local). In 2D
+  the thermal rotating shallow-water tests show sharper $h$ and $b$ (Exs. 8–10).
 
 ## Qualifications
 
@@ -229,6 +264,11 @@ than second order of accuracy" (§3).
 - Ciallella et al.'s Table 1 orders reproduce exactly when $N_x-1$ replaces $N_x$ in the
   spacing, and the non-well-balanced WENO3 orders settle at 3.5–3.7, above 3, although the text
   says they match the reconstruction order (§5.1).
+- Chu et al. (2025b) print in Table 5.4 the LCD-PCCU error on $\Delta x=1/200$ as
+  $1.65\times10^{-3}$ between $2.99\times10^{-2}$ and $7.50\times10^{-3}$. *(compiler check, not in
+  the sources: the printed rates 0.858 and 1.137 follow from $1.65\times10^{-2}$,
+  $\log_2(2.99/1.65)=0.858$, $\log_2(1.65/0.750)=1.138$, while $1.65\times10^{-3}$ would give 4.18 and
+  $-2.18$; the entry is a slip for $1.65\times10^{-2}$.)*
 - Kurganov et al. report no convergence-order study; "second order" is the formal order of the
   piecewise-linear reconstruction.
 
@@ -237,3 +277,4 @@ than second order of accuracy" (§3).
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1 (Eqs. (1.1), (1.4)–(1.8)), §2 (Remark 2.2), §3 (Eqs. (3.2)–(3.5)), §4 (Eqs. (4.1)–(4.19), Theorem 4.1, Remarks 4.2–4.3), §5, §6 (Algorithm 6.1), §7 (Table 7.1, Exs. 1–7), §8, Apps. A–C.
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §1, §2 (Eqs. (1)–(9)), §3 (Eqs. (11)–(40), Props. 3.1, 3.3, Remarks 3.2, 3.4), §4, §5 (Table 1, Figs. 7–19), Apps. A–B (author manuscript).
 - [Chu et al. (2022)](/sources/chu-2022.md) — §4, §8.
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §1 (Eqs. (1.1)–(1.3)), §3 (Eqs. (3.1)–(3.4), Remark 3.1), §4 (Eqs. (4.1)–(4.4), Remark 4.1), §5 (Remark 5.1, Tables 5.3–5.4, Exs. 6–10).

@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Mach 3 forward-facing step
@@ -17,8 +17,8 @@ top, and a triple point forms on the upper wall from which a vortex
 sheet trails downstream. The expansion corner of the step is a
 singularity that strains robustness, and the vortex sheet is
 Kelvin–Helmholtz unstable, so the benchmark measures both whether a
-scheme survives and how much small-scale structure it resolves. Nineteen
-sources of the bundle run it, six of them on triangles (one of these
+scheme survives and how much small-scale structure it resolves.
+Twenty-one sources of the bundle run it, seven of them on triangles (one of these
 in a relativistic version), one on polygons and one as a steady-state
 problem; those
 that name an origin attribute it to Woodward & Colella.
@@ -64,6 +64,13 @@ $960\times320$ mesh gives square cells only for a tunnel of length 3,
 and the contour levels are those of the length-3 runs above, so the
 mesh and the contours fit a tunnel of length 3, not the printed upper
 bound 1 *(compiler check, not in the sources)*.
+[Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.11, from the same group,
+print the same domain, Mach 3 inflow, $t=4$ and $960\times320$ mesh,
+with the same mismatch between the printed length 1 and the 3:1 mesh.
+[Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.3.3 (HAL preprint)
+print the tunnel $3\times1$ with a step of height 0.2 at $x=0.6$,
+$\gamma=7/5$, $\rho_0=1.4$, $p_0=1$, $v_0=(3,0)$, inflow on the left,
+to $t=4$.
 
 [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 16 print the domain
 as $[0,0.6]\times[0,1]\cup[0.6,3]\times[0.2,1]$ with $(1.4,3.0,0,1.0)$,
@@ -129,7 +136,9 @@ fix at the corner.
 | [Tang (2024)](/sources/tang-2024.md) §4.4.7 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; finite difference, global LF splitting, TVD-RK3 | $720\times240$ | 0.45 |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.9 | finite-volume ALW-MR-WENO-3/4/5 on triangles vs [MR-WENO](/methods/multi-resolution-weno.md), characteristic-wise | triangles, boundary mesh size 1/160; $t=4$; 30 contours 0.32–6.15 | 0.6 |
 | [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) Ex. 3.6 | [hybrid](/methods/hybrid-weno.md) HMR-WENO5/7/9 vs MR-WENO; third-order TVD Runge–Kutta | $600\times200$; $t=4$; 30 contours 0.32–6.15 | 0.6 |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $P_2$, $P_3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.11 | moment-based [HWENO](/methods/hermite-weno.md) with unified stencils HWENO-U vs HWENO-M, WENO-ZQ; modified SSP-RK3 | $960\times320$ | 0.6 |
+| [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.3.3 | $\mathbb P^5$ DG with a posteriori local subcell correction ([MOOD-type](/methods/mood-a-posteriori-limiting.md)), first-order FV fallback | 680 triangles, no refinement at the corner | — |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.6 | quasi-conservative [ADER](/methods/ader-scheme.md)-DG $\mathbb P^2$, $\mathbb P^3$ in primitive variables, a posteriori subcell FV limiter with conservative correction in shock cells | polygons, $h=1/80$ | 0.5 after 10 steps at 0.1 |
 
 ## What the benchmark measures
 
@@ -141,9 +150,13 @@ WENO-Z9 on the [double Mach reflection](/benchmarks/double-mach-reflection.md),
 so the two problems together expose a stability margin that design
 order alone does not show.
 
-**The corner without a fix.** Four sources describe no
-Woodward–Colella corner treatment: Yu & Hesthaven, Chen & Wu and Zhao
-et al. say so, Du et al. mention only local mesh refinement. Zhao et
+**The corner without a fix.** Five sources describe no
+Woodward–Colella corner treatment: Yu & Hesthaven, Chen & Wu, Zhao
+et al. and Vilar & Abgrall say so, Du et al. mention only local mesh
+refinement. Vilar & Abgrall run sixth-order DG on only 680 triangles,
+with no special treatment beyond their subcell correction (no
+corner refinement, no change of the scheme), and show the solution at
+$t=4$ (Fig. 41). Zhao et
 al.'s compact gas-kinetic scheme at CFL 0.8 captures the slip-line
 instability without a corner fix (Fig. 9). Du et al. see a spurious Mach stem at
 the bottom wall, caused by the corner, in the $P^2$ result with the
@@ -187,11 +200,15 @@ $65782/19774=3.33$ and $65782/40217=1.64$ *(compiler check, not in the
 sources)*, which the paper describes as "almost a factor 3" and "about
 1.6". Their finer FV subcells ($N_{\mathrm{FV}}=2N+1$) almost completely
 suppress the acoustic waves that DG/FV interfaces emit with
-$N_{\mathrm{FV}}=N+1$ (§8.7, Fig. 16). Fan et al.'s HWENO-R and HWENO-L
+$N_{\mathrm{FV}}=N+1$ (§8.7, Fig. 16). Fan et al. (2023)'s HWENO-R and HWENO-L
 resolve the flow better than WENO-ZQ, owing to their more compact
 stencils, HWENO-R slightly better than HWENO-L (Fig. 3.13); the total
 CPU times are 29093.92 s, 31945.12 s and 20542.55 s, ratios 1.416 and
 1.555 to WENO-ZQ, in Fortran 95 on an Intel Xeon Gold 6130 (Ex. 3.9).
+Fan et al. (2025) find the results of HWENO-U and HWENO-M comparable
+(Fig. 16), on the same hardware; over their shock tests the total CPU
+time of HWENO-U always lies between those of WENO-ZQ and HWENO-M
+(Table 7).
 
 **Vortex-sheet roll-up.** Li et al. find that all schemes capture the
 shocks and that WENO-ZN gives the clearest Kelvin–Helmholtz roll-up of
@@ -273,3 +290,5 @@ troubled cells flagged by their modified KXRCF indicator are plotted
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.6, Fig. 5 (arXiv v1).
 - [Lin & Zhu (2024)](/sources/lin-2024-b.md) — §3, Case 3.9, Figs. 3.15–3.17, Table 3.1.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — §3, Ex. 3.6, Figs. 3.9–3.10, Table 3.1.
+- [Fan et al. (2025)](/sources/fan-2025.md) — §3, Ex. 3.11, Fig. 16, Table 7.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.3.3, Fig. 41 (HAL preprint).

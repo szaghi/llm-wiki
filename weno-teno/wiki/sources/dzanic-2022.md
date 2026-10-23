@@ -136,9 +136,10 @@ page range "107–107"; [1] keeps Hopf's printed equation in the title. No print
 
 # Pages created or updated
 
-Chunk 3 (2026-10-22), cited further in chunks 4–8 (2026-10-23). This source is cited on:
+Chunk 3 (2026-10-22), cited further in chunks 4–9 (2026-10-22/23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
+* [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)
 * [Discontinuous Galerkin method](/methods/discontinuous-galerkin.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)

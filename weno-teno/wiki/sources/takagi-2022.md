@@ -137,7 +137,7 @@ preprint, [24] a conference contribution and [63] a book. No item is unparseable
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–9 (2026-10-22/23). This source is cited on:
 
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)
 * [Bound preservation](/properties/bound-preservation.md)
@@ -149,6 +149,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source
 * [ENO property](/definitions/eno-property.md)
 * [High-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md)
 * [Hybrid central-WENO schemes](/methods/hybrid-weno.md)
+* [Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Mapped WENO](/methods/mapped-weno.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)

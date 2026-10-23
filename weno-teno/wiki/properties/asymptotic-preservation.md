@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Asymptotic preservation"
-description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; the bundle has four cases: relaxation limits of Euler with gravity and friction, the incompressible limits of full Euler and of ideal MHD, and the hydrodynamic limit of discrete kinetic schemes."
+description: "A scheme for a singularly perturbed problem is asymptotic preserving if, as the perturbation parameter vanishes, it becomes a consistent scheme for the limit problem under parameter-independent stability constraints; the bundle has relaxation limits of Euler with gravity and friction and of linear partially dissipative systems, the incompressible limits of Euler and ideal MHD, and discrete kinetic schemes."
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
 tags: [asymptotic-preserving, well-balanced, finite-volume, mhd]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T15:06:00Z
 ---
 
 # Asymptotic preservation
@@ -165,6 +165,58 @@ conserved update is a DeC discretization of the limit conservation law (Prop. 2)
 relaxation source is implicit in form but computed explicitly, because the projection onto the
 conserved variables annihilates it. The tests do not state the value of $\varepsilon$.
 
+## Diffusive relaxation of a linear partially dissipative system
+
+[Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) (arXiv v2 read) prove
+asymptotic properties for the simplest semi-discretization of a linear
+system $\partial_tu+A\,\partial_xu=-\mathsf Bu$ on the whole line, with $A$
+symmetric and the damping matrix $\mathsf B=\mathrm{diag}(0,\tilde{\mathsf B})$
+acting only on a block of the unknowns through a positive definite
+$\tilde{\mathsf B}$ (page-local $\mathsf B$, $\tilde{\mathsf B}$; §1.1). The
+discretization is the second-order central difference
+$\delta_hu_i=(u_{i+1}-u_{i-1})/(2\Delta x)$ (page-local) on an infinite uniform
+grid, with time left continuous. Among the three two-point differences it is
+the only one stable for every symmetric $A$, and it satisfies the
+summation-by-parts identity $\langle u,\delta_hv\rangle=-\langle\delta_hu,v\rangle$
+in $\ell^2$, the only structure the first proof uses (Props 3.4–3.5;
+[summation-by-parts operators](/operators/summation-by-parts-operator.md)).
+"Asymptotic preserving" is used in two senses, which must be kept apart:
+
+1. **Large-time decay, uniformly in $\Delta x$** (Thm 2.1). Under the Kalman rank
+   condition on $(A,\mathsf B)$, the semi-discrete solution satisfies
+   $\lVert u_2(t)\rVert+\lVert\delta_hu(t)\rVert\le C(1+t)^{-1/2}\lVert u_0\rVert_{h^1}$
+   with $C$ independent of $\Delta x$, $t$ and $u_0$ ($u_2$ the damped block,
+   $h^1$ a discrete Sobolev norm), the discrete counterpart of the continuous
+   hypocoercive decay; proof by a time-weighted Lyapunov functional with a
+   Beauchard–Zuazua corrector (§4).
+2. **Diffusive relaxation limit, uniformly in $\Delta x$** (Thm 2.6, Cor. 2.7).
+   For the damped linearized Euler system in diffusive scaling,
+   $\partial_t\rho^\varepsilon+\delta_hv^\varepsilon=0$,
+   $\varepsilon^2\partial_tv^\varepsilon+\delta_h\rho^\varepsilon+v^\varepsilon=0$, the
+   solution converges to the discrete heat equation
+   $\partial_t\rho-\delta_h^2\rho=0$ with the discrete Darcy law $v=-\delta_h\rho$ at
+   rate $O(\varepsilon^2)$ in discrete Besov, Sobolev and maximum norms, with
+   constants independent of $\Delta x$, $\varepsilon$ and $T$. The tool is a
+   discrete Littlewood–Paley decomposition whose dyadic bands are defined by
+   the symbol $\sin(\vartheta)/\Delta x$ of $\delta_h$ ($\vartheta$ the reduced
+   wavenumber, registry §9) rather than by $\lvert k_w\rvert$, which gives
+   Bernstein estimates uniform in $\Delta x$ (Prop. 3.8), with low and high
+   frequencies split at $\kappa_{\mathrm s}/\varepsilon$ (page-local small
+   constant $\kappa_{\mathrm s}$; §1.3, §3.5).
+
+The second sense is closer to Jin's definition above, but it concerns the
+space semi-discretization only: with continuous time there is no time-step
+constraint to be independent of $\varepsilon$. The authors contrast their
+frequency-based route with IMEX Runge–Kutta AP schemes (§2.2.2). Numerically
+(Python), the decay is "exactly $(1+t)^{-1/2}$" at $\Delta x=2^{-4}$ (Fig. 3), the
+relaxation error falls as $O(\varepsilon^2)$ (Fig. 5), and at $\varepsilon=2^{-5}$,
+$T=5$ the maximum error of $\rho^\varepsilon-\rho$ is $1.3758\times10^{-5}$,
+$1.3761\times10^{-5}$, $1.3763\times10^{-5}$ for $\Delta x=2^{-4},2^{-5},2^{-6}$, i.e.
+uniform in $\Delta x$ (Fig. 6 table; §7). The time integrator and the domain
+truncation of the experiments are not stated. A discrete Jin–Xin relaxation
+and general partially dissipative systems are sketched as extensions,
+without proof (§8; [discrete kinetic relaxation](/methods/discrete-kinetic-relaxation-scheme.md)).
+
 ## Stiff sources without an AP claim
 
 Stiffness alone does not make a scheme asymptotic preserving in the sense above, which
@@ -187,6 +239,17 @@ same step returns NaN on $N=10,20$ and runs with $\tfrac25\Delta t$ (Table 6.2).
 equation and no $c$-uniform stability statement are given, and the paper does not use the term
 asymptotic preserving.
 
+In resistive relativistic MHD, [Mignone et al. (2024)](/sources/mignone-2024.md)
+integrate the stiff Ohm's-law source, proportional to the inverse
+resistivity, with [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) schemes on
+point values (§3.2–3.4). Their implicit update starts the Newton–Broyden
+iteration from the ideal-MHD solution when the stage-scaled resistivity is
+below one (§3.4), but the paper states no limit scheme and makes no AP claim;
+its evidence on the stiff regime is that the fourth-order ARK4 becomes
+unstable at small resistivity (below $10^{-4}$ on a charged vortex, failing at
+$10^{-6}$ on a rotor) while the third-order SSP3(4,3,3) runs (§4.2–4.3, §5;
+[relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)).
+
 In relativistic radiation MHD, [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md)
 meet the optically thick (diffusion) regime of the radiation moments: on a diffusing
 radiation pulse with cell optical depths 5, 100 and 1000, first-order reconstruction, an
@@ -204,11 +267,22 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
 - The AP property is shown by limit arguments on the scheme's formulas and by figures; the
   $\varepsilon$-independent stability is asserted with reference to earlier work, not
   proved or measured.
-- Across the four cases the evidence is of the same kind: formal limits of the
+- Across the four nonlinear cases the evidence is of the same kind: formal limits of the
   time-semi-discrete or fully discrete formulas (Arun et al., Thm. 3.2 and 4.3; Boscarino et
   al., Thm. 4.1 and Prop. 4.4; Chen, Wu & Xiong, Thms. 4.1–4.2; Abgrall & Nassajian Mojarrad,
   Prop. 2), with tests at one or a few fixed values of the small parameter; none measures
-  stability uniformly in it.
+  stability uniformly in it. Crin-Barat & Manea's case is different in kind: rigorous
+  estimates uniform in $\Delta x$ and $\varepsilon$, but for a linear constant-coefficient system,
+  a central semi-discretization without shock capturing and no time discretization.
+- Crin-Barat & Manea call $\delta_h$ a "first-order" operator in the sense of a
+  first-derivative approximation (§3.2, §8); it is second-order accurate *(compiler check,
+  not in the sources)*. The Jin–Xin approximation they recall for the extension (Eq. (8.4), §8.2) prints
+  $\varepsilon^2(\partial_tv^\varepsilon+\partial_x\rho^\varepsilon)=v^\varepsilon-f(\rho^\varepsilon)$, with which
+  $v-f(\rho)$ grows like $e^{t/\varepsilon^2}$; relaxation of $v$ towards $f(\rho)$ needs
+  $f(\rho^\varepsilon)-v^\varepsilon$ on the right *(compiler check, not in the sources)*. Their
+  Prop. 3.4 proof bounds the exponential of the $A$ part alone, while $A$ and $\mathsf B$ need
+  not commute; the result follows from an energy estimate since $-\mathsf B$ is
+  non-positive *(compiler check, not in the sources)*.
 - The time step still carries a parabolic $\Delta x^2$ restriction for $\beta_{\mathrm{ms}}=1$;
   "uniform in $\varepsilon$" does not mean hyperbolic-CFL.
 - The printed fully discrete scheme (Eqs. (4.17)–(4.18)) omits a factor $\Delta t$ on the
@@ -224,3 +298,5 @@ integrated with an [IMEX](/methods/imex-runge-kutta.md) extension of third-order
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §1, §2.2 (Props. 1–2), §5.
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §2.2–2.3 (Eqs. (2.6)–(2.14)), §4 (Thms. 4.1–4.2), §5 (Tables 5.2, 5.4, Ex. 5.9) (arXiv v1).
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1–3.3, §4.1.4, §5 (arXiv v1).
+- [Crin-Barat & Manea (2026)](/sources/crinbarat-2026.md) — arXiv v2: §1.1–1.3; §2.1–2.2 (Thms 2.1, 2.3, 2.6, Cor. 2.7); §3.2–3.5 (Props 3.4, 3.5, 3.8); §4; §7 (Figs. 3, 5, 6); §8 (Eq. (8.4)).
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §3.2–3.4; §4.2–4.3; §5.

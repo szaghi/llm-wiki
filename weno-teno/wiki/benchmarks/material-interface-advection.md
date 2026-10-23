@@ -1,18 +1,18 @@
 ---
 type: Benchmark
 title: "Material-interface advection tests"
-description: "Uniform-velocity, uniform-pressure advection of material interfaces between gases or between gas and liquid, in 1D and 2D with up to five materials, and of a single-gas contact over many crossings, with pure translation as exact solution; it checks that multi-component and multi-phase schemes keep pressure and velocity in equilibrium, conserve mass and keep interfaces thin."
+description: "Uniform-velocity, uniform-pressure advection of material interfaces between gases or between gas and liquid, in 1D and 2D with up to five materials, and of a single-gas contact over many crossings, with pure translation as exact solution; it checks that multi-component and multi-phase schemes keep pressure and velocity in equilibrium, conserve mass and keep interfaces thin; a diffusing variant tests convergence."
 status: established
 aliases: [interface advection, advection of a material interface, interface translation test, water disk advection, smooth interface advection]
 tags: [benchmark, multiphase, interface-capturing, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Material-interface advection tests
 
 A material interface between two fluids of different density and
 equation of state is carried by a uniform velocity at uniform pressure,
-usually on a periodic domain. The exact solution is the initial data
+in most of the sources on a periodic domain. The exact solution is the initial data
 translated, with pressure and velocity unchanged everywhere. The test
 therefore isolates the one defect it is designed to expose: a
 conservative scheme whose ratio of specific heats, or whose
@@ -113,6 +113,30 @@ Chakravarthy, MC, Koren) against THINC, each followed by their
 "thermodynamic-dependent update" of the interface density from the
 equation of state.
 
+**Smooth interface in the five-equation (Kapila) model, Abgrall's
+test.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) Ex. 4.2 advect,
+on periodic $[-0.5,0.5]$ with 200 cells to $t=1$ (one period; reference
+on 1000 cells), two fluids with $\gamma_1=5/3$ and $\gamma_2=1.4$ at
+$v=1$, $p=1/1.4$: for $\lvert x\rvert<0.25$ the phase densities
+$(\rho_1,\rho_2)=(2+0.4\sin(\pi(x+0.5)),\ 1)$ with volume fraction
+$\phi_1=1-10^{-10}$, and elsewhere $(1,\ 1-0.4\sin(\pi(x+0.5)))$ with
+$\phi_1=10^{-10}$, so that each phase density also varies smoothly in
+space. The test checks what they call the Abgrall condition: uniform
+velocity and pressure stay uniform.
+
+**Diffusing multicomponent interface.**
+[Ching et al. (2025)](/sources/ching-2025.md) §5.1 advect a "thermal
+bubble" of hydrogen in oxygen at $v_1=1$ m/s and $p=1$ bar on the
+periodic $[-25,25]$ m, $Y_{\mathrm{H_2}}=\tfrac12[1-\tanh(\lvert x\rvert-10)]$,
+$Y_{\mathrm{O_2}}=1-Y_{\mathrm{H_2}}$, temperature $T_{\mathrm{K}}=1200-900\tanh(\lvert x\rvert-10)$ K (page-local; $T$ is the period above),
+with the multicomponent Navier–Stokes equations (mixture-averaged
+species diffusion, thermally perfect gases), no artificial viscosity,
+CFL 0.1, on meshes $h=2$ m to $h/8$ with DG degrees 1–3; the "exact"
+solution is a degree-3 run on $h/256$, and the $L^2$ error of the
+normalized state is taken at $t=5$ s. With diffusion the solution is no
+longer a translation, so the test measures convergence, not
+equilibrium preservation.
+
 **Single-gas contact over a hundred crossings.**
 [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.4 (arXiv v2) run
 the supersonic top-hat of Schaal et al.: in 2D, density 4 inside a
@@ -137,16 +161,27 @@ equilibrium to machine precision for their own schemes (Zhang et al.
 | Paula et al. | RDEMIC | 2D, two materials | $1.1\times10^{-14}$ | $2.3\times10^{-15}$ |
 | Paula et al. | RDEMIC | 2D, five materials | $1.2\times10^{-14}$ | $8.4\times10^{-15}$ |
 | Huang & Johnsen | five-equation-type model with phase field, MUSCL–HLLC | 2D water disk | round-off | round-off |
+| Yan, Abgrall & Wu | bound-preserving [OEDG](/methods/oedg.md), $\mathbb P^2$ and $\mathbb P^3$ | 1D Kapila model, $t=1$ | within $\pm1.5\times10^{-12}$ | within $\pm1.5\times10^{-12}$ |
 
 (Fujiwara et al. Figs. 2–3, 7; Paula et al. Table 1; Huang & Johnsen
-Fig. 7.) The mechanisms differ. Fujiwara et al. obtain it from a
+Fig. 7; Yan et al. Figs. 3–4.) The mechanisms differ. Fujiwara et al. obtain it from a
 discrete compatibility condition on the half-point values of a fully
 conservative central flux, with no extra transport equation; Paula et
 al. from the [discrete-equations method](/methods/discrete-equations-method.md),
 whose non-conservative interface terms come from Lagrangian fluxes
 across contact waves; Huang & Johnsen from consistency conditions
 between the reconstruction and phase-field fluxes of mass and volume
-fraction.
+fraction. Yan et al. prove it for their scheme: the semi-discrete DG
+scheme with forward Euler keeps uniform velocity and pressure uniform
+(Lemma 2.5), and so does the fully discrete OEDG scheme with SSP
+Runge–Kutta (Thm 2.6), because the oscillation-eliminating damping is
+linearity-invariant, mapping any state on which a linear functional is
+constant to such a state (Thm 2.3), and so is their bound-preserving
+limiter (Thms 2.13–2.14). In 2D they preserve only the special
+condition of a constant velocity vector; with a constant normal and a
+jumping tangential velocity across a contact the 2D scheme does not, in
+general, preserve the condition, even for a grid-aligned contact
+(Remark 3.5).
 
 **What fails without the equilibrium property.** Fujiwara et al.
 compare four other schemes on the 1D test: a fully conservative
@@ -199,6 +234,15 @@ $10^{-4}$ to $10^{-6}$ damps the ringing at the discontinuities at the
 cost of a slightly wider front (Fig. 9); see
 [artificial viscosity](/methods/artificial-viscosity.md).
 
+**Order with diffusion.** Ching et al.'s DG converges at the optimal
+order $N+1$ for degrees $N=1$–3 with both the BR2 and the
+Lax–Friedrichs-type viscous flux, except on the coarse grids at degree
+1 (Fig. 5.1). On meshes $h$ and $h/2$ both their positivity and entropy
+limiters activate at every degree, and on $h/4$ at degree 1 only the
+positivity limiter, so the limiters act on this smooth problem without
+destroying the order (§5.1); see
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md).
+
 **Order on smooth profiles.** Paula et al. find first order for their
 first-order scheme and second order for the "nominally third-order
 WENO3", which they call "well-known", with nearly the same density
@@ -248,3 +292,5 @@ faces.
 - [Jiao et al. (2024)](/sources/jiao-2024.md) — §4.1, Tables 4.1–4.2, Figs. 4.1–4.3.
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — §5.4, Figs. 9–10 (arXiv v2).
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3, §4, §4.1, Table 1, Table 2, Figs. 3–4.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Lemma 2.5, Thms 2.3, 2.6, 2.13–2.14, Remark 3.5, Ex. 4.2, Figs. 3–4.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §5.1, Eq. (5.1), Fig. 5.1.

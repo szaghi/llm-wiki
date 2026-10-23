@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Buckley–Leverett problem"
-description: "Scalar conservation law with the non-convex S-shaped flux used to model porous-media flow, run as Riemann or step data against fine reference solutions; used to show that explicit DG with subcell convex limiting, implicit CWENO at Courant numbers near ten and a multi-block WCNS crossing a block interface converge without overshoots or a spurious solution."
+description: "Scalar conservation law with the non-convex S-shaped flux used to model porous-media flow, run as Riemann or step data against fine reference solutions; used to show that subcell-limited DG, implicit CWENO at Courant numbers near ten, a multi-block WCNS and a bound-preserving PAMPA scheme converge without overshoots or a spurious solution."
 status: established
 aliases: [Buckley–Leverett equation, Buckley–Leverett test]
 tags: [benchmark, limiting, cweno, dg]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T15:03:00Z
 ---
 
 # Buckley–Leverett problem
@@ -35,6 +35,7 @@ a fine reference solution.
 |---|---|---|---|---|---|
 | [Pazner (2021)](/sources/pazner-2021.md) §5.3, Eq. (75) | $1/4$ (printed as $4u^2/(4u^2+(1-u)^2)$) | Riemann data, printed $u_0=-3$ for $x<0$, $3$ for $x\ge0$ | not stated (plots on $[-1,1]$) | 256 DOFs, $N=0,1,3,7$; reference $N=0$ on 10,000 elements | 0.25 |
 | [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) §4.4, Eqs. (38)–(39) | $1/3$ | $u_0=0.5$ on $-0.25\le x\le0.25$, $0$ otherwise | "periodic domain $\Omega=[0,1]$" | 100 cells, $\Delta t=1.1h$ and $4.4h$ | 0.085 |
+| [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 3 | $1/4$ (printed as $4u^2/(4u^2+(1-u)^2)$) | $u_0=1$ on $[-\tfrac12,0]$, $0$ otherwise | $[-1,1]$, periodic | 200 cells, SSP-RK3, CFL 0.2 | 0.4 |
 | [Qin et al. (2023)](/sources/qin-2023.md) §3.3, Eqs. (30)–(31) | $1/4$ (printed as $4u^2/(4u^2+(1-u)^2)$) | $u_0=1$ on $[-0.5,1]$, $0$ elsewhere | $[-1,1]$, two blocks with interface at $x=0.5$ | 160 points on $[-1,0.5]$, 80 on $[0.5,1]$; reference: 4000 points, single block | 0.31, 0.4 |
 
 Puppo et al. take the setup from Arbogast et al. ("the same setup as
@@ -73,6 +74,15 @@ smooth, and the discontinuities are "well captured" at $t=0.4$ (Fig. 5). The
 scalar runs use Lax–Friedrichs flux splitting and SSP-RK3 (Eq. (23)) at
 CFL 0.4.
 
+**A bound-preserving point–average scheme.** Abgrall et al. (2026) run
+the problem with their bound-preserving
+[PAMPA scheme](/methods/pampa-scheme.md), which evolves cell averages
+and point values and blends high- and low-order fluxes and
+residuals so that both stay within the global bounds $[0,1]$ (strict
+or slightly relaxed); the result agrees with that of Zhang & Shu, as
+they cite it (Fig. 3). Their step data, like Qin et al.'s, lie in
+$[0,1]$, with the flux of Pazner and Qin et al.
+
 ## Qualifications
 
 - Pazner's printed Riemann data, $\mp3$, lie outside the range $[0,1]$
@@ -83,10 +93,13 @@ CFL 0.4.
   $[0,0.25]\cup[0.75,1]$, and their Fig. 10 is plotted on $[0,1]$.
 - Qin et al. use the same flux as Pazner ($M_{\mathrm{BL}}=1/4$) but data
   in $[0,1]$, so their run, unlike Pazner's, can be read from the paper.
-- Evidence in all three papers is visual.
+- Evidence in all four papers is visual. Abgrall et al.'s Fig. 3
+  caption writes "restrict GMP" for the strict global maximum
+  principle.
 
 # Citations
 
 - [Pazner (2021)](/sources/pazner-2021.md) — §5.3, Eq. (75), Fig. 9 (arXiv v1).
 - [Puppo, Semplice & Visconti (2023)](/sources/puppo-2023.md) — §4.4, Eqs. (38)–(39), Fig. 10 (arXiv v2).
 - [Qin et al. (2023)](/sources/qin-2023.md) — §3.3, Eqs. (30)–(31), Fig. 5: two-block WCNS run.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §3, §4, Ex. 3, Fig. 3.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Magnetized (MHD) vortex"
-description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, in which centrifugal force, magnetic tension and pressure balance radially, advected or held static on a periodic box as convergence-order tests: Balsara's iso-density vortex, a relativistic iso-enthalpy vortex, a three-dimensional low-Mach vortex run up to tenth order, and the near-vacuum vortex used to test positivity-preserving DG."
+description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, in which centrifugal force, magnetic tension and pressure balance radially, advected or held static as convergence-order tests: Balsara's iso-density vortex, a relativistic iso-enthalpy vortex, a 3D low-Mach vortex run up to tenth order, near-vacuum vortices for positivity, and a resistive charged vortex."
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:19:00Z
 ---
 
 # Magnetized (MHD) vortex
@@ -105,6 +105,36 @@ $(B_1,B_2)$ against the solution translated with velocity $(1,1)$,
 inconsistent with the stated minimum pressure, as recorded on the
 [isentropic vortex](/benchmarks/isentropic-vortex.md) page.
 
+[Ding & Wu (2024a)](/sources/ding-2024.md) Ex. 4.1 (arXiv v1) print the
+vortex "with low pressure" of Christlieb et al. and Wu & Shu, as they
+cite it, explicitly: on $[-10,10]^2$, periodic, $\gamma=5/3$, $\rho=1$,
+$v=(1,1,0)+\frac{\mu_{\mathrm v}}{\sqrt2\pi}e^{\frac12(1-r^2)}(-y,x,0)$,
+$B=\frac{\mu_{\mathrm v}}{2\pi}e^{\frac12(1-r^2)}(-y,x,0)$,
+$p=1-\frac{\mu_{\mathrm v}^2(1+r^2)}{8\pi^2}e^{1-r^2}$ with
+$\mu_{\mathrm v}=5.389489439$, to $t=0.05$ on $N_x^2$ cells,
+$N_x=20,\dots,1280$; they state a lowest pressure of about
+$5.3\times10^{-12}$. The centre value $1-\mu_{\mathrm v}^2e/(8\pi^2)$ is
+$5.34\times10^{-12}$ with their $\mu_{\mathrm v}$, and $2.0\times10^{-8}$ with
+Dzanic & Witherden's $5.38948938512$: the two sources' last digits of
+$\mu_{\mathrm v}$ set the near-vacuum depth *(compiler check, not in the
+sources)*.
+
+**Stationary charged vortex of resistive relativistic MHD.**
+[Mignone et al. (2024)](/sources/mignone-2024.md) §4.2, Eq. (60): an
+exact equilibrium of resistive relativistic MHD that does not depend on
+the resistivity $\eta$, with radial electric field
+$\mathcal E_r=\frac{q_0}2\frac{r}{r^2+1}$ (page-local $\mathcal E$, the
+electric field of the registry's MHD row; no vortex strength $\mathcal E$
+on this page), axial field
+$B_3=\sqrt{(r^2+1)^2-q_0^2/4}\,/(r^2+1)$, azimuthal velocity
+$v_\phi=-\frac{q_0}2\,r/\sqrt{(r^2+1)^2-q_0^2/4}$, charge density
+$\mathfrak q=q_0/(r^2+1)^2$ and the pressure of their Eq. (60), with
+$q_0=0.7$, $p_0=0.1$, $\rho=1$ (page-local $q_0$, $\mathfrak q$, $p_0$),
+on $[-10,10]^2$ with the boundaries held at the equilibrium, to $t=5$,
+cuts on $256^2$. The charge is the divergence of the electric field:
+$\frac1r\frac{d}{dr}(r\mathcal E_r)=q_0/(r^2+1)^2$ *(compiler check,
+not in the sources)*.
+
 The same page records two further magnetized vortices: the Wu–Shu-type
 vortex of [Dao & Nazarov (2022)](/sources/dao-2022.md) and the
 relativistic-MHD vortex of [Duan & Tang (2022)](/sources/duan-2022.md),
@@ -187,13 +217,37 @@ factor of order 10" (§4.1).
 **Positivity-filtered DG near vacuum.** Dzanic & Witherden's nodal
 DG / flux reconstruction with positivity-preserving
 [entropy filtering](/methods/entropy-filtering.md) converges at
-2.89, 3.80, 4.62 and 5.23 for $\mathbb P_2$–$\mathbb P_5$ on $20^2$ to
-$67^2$ elements, "on the order of $p$ to $p+1$" ($\mathbb P_2$:
-$2.29\times10^{-4}$ to $6.92\times10^{-6}$; $\mathbb P_5$:
+2.89, 3.80, 4.62 and 5.23 for $\mathbb P^2$–$\mathbb P^5$ on $20^2$ to
+$67^2$ elements, between $N$ and $N+1$ (their "on the order of $p$ to $p+1$") ($\mathbb P^2$:
+$2.29\times10^{-4}$ to $6.92\times10^{-6}$; $\mathbb P^5$:
 $4.04\times10^{-7}$ to $6.51\times10^{-10}$; Table 1), with the filter
 "essentially negligible for smooth solutions" (Table 2). Their
-$\mathbb P_2$ errors are "marginally lower" than those of Wu & Shu's
+$\mathbb P^2$ errors are "marginally lower" than those of Wu & Shu's
 positivity-preserving DG, which they compare against.
+
+**Positivity with a discrete divergence-free projection.** Ding & Wu
+(2024a)'s positivity-preserving finite volumes, which project the
+interface point values of $B$ onto a discretely divergence-free set and
+add a Godunov–Powell-type source, keep their design order with the
+positivity limiter active: the second-order scheme reaches orders
+2.42–2.59 on the finest grids and the fifth-order one ([WENO-Z](/methods/weno-z.md),
+characteristic, four-point Gauss–Lobatto face quadrature) 4.80–5.05 at
+$N_x=1280$, with $l^1$ errors $2.50\times10^{-11}$ ($v_2$),
+$1.61\times10^{-11}$ ($B_1$) and $2.04\times10^{-11}$ ($p$) (Table 4.1);
+the authors conclude that neither the projection nor the limiter
+degrades the accuracy. See
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
+and [geometric quasilinearization](/methods/geometric-quasilinearization.md).
+
+**Fourth order in resistive relativistic MHD.** On the charged vortex
+Mignone et al. (2024)'s fourth-order finite-volume scheme, run in
+[PLUTO](/software/pluto.md) with IMEX time stepping, reduces the charge
+error "by two orders of magnitude" against the second-order scheme of
+their Paper I; the
+SSP(4,3,3) and ARK4 integrators "yield nearly identical results", but
+ARK4 becomes unstable for $\eta\lesssim10^{-4}$. The pressure converges
+at fourth order with both integrators, against second order for Paper I
+(§4.2, Fig. 3).
 
 ## Qualifications
 
@@ -218,8 +272,14 @@ positivity-preserving DG, which they compare against.
 - Dzanic & Witherden's run is short ($t=0.05$, a translation of
   $0.05\sqrt2$), and their error is measured against the translated
   exact solution.
+- Mignone et al. (2024) give the ARK4 stability threshold as
+  $\eta\lesssim10^{-4}$ here, report its failure at $\eta=10^{-6}$ on
+  their rotor and call SSP more robust for $\eta\lesssim10^{-5}$ in their
+  summary. Their Fig. 3 caption gives the charge cuts at $t=3$ and
+  "pressure" maps where the panels read $t=2$ and $\rho$.
 - Berta et al. are read as the arXiv v4 preprint, Dzanic & Witherden
-  as arXiv v2.
+  as arXiv v2, Ding & Wu (2024a) as arXiv v1; Mignone et al. (2024) as
+  the version of record deposited on HAL.
 
 # Citations
 
@@ -229,3 +289,5 @@ positivity-preserving DG, which they compare against.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4.1.2–4.1.3, Eq. (65), Table 2, Figs. 4–5.
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §4.1, Eqs. (36), (66)–(69), Tables 2–3 (arXiv v2).
 - [Duan & Tang (2022)](/sources/duan-2022.md) — Exs. 6.1, 6.7 (arXiv v1).
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.1, Table 4.1 (arXiv v1).
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §4.2, Eq. (60), Fig. 3.

@@ -1,11 +1,11 @@
 ---
 type: Property
 title: "Kinetic energy preservation"
-description: "A semi-discretization is kinetic-energy-preserving when its convective terms neither create nor destroy discrete kinetic energy, which Coppola and Veldman reduce to the skew-symmetry of C − ½diag(d_mass); the page gives that criterion, face-flux conditions, the second-order barrier, SBP proofs including the rotational form, correction terms, and DG two-point fluxes."
+description: "A semi-discretization is kinetic-energy-preserving when its convective terms neither create nor destroy discrete kinetic energy, which Coppola and Veldman reduce to the skew-symmetry of C − ½diag(d_mass); the page gives that criterion, face-flux conditions, the second-order barrier, SBP proofs including the rotational form, correction terms, DG two-point fluxes, and the impossibility of exact KEP on uncollocated nodes."
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T14:55:00Z
 ---
 
 # Kinetic energy preservation
@@ -349,6 +349,55 @@ that split-form DGSEM with the Chandrashekar flux plus subcell finite-volume
 blending is more stable on under-resolved turbulence with shocks than
 standard DGSEM/FV, and needs less low-order blending (§4).
 
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) use the
+Chandrashekar flux with Ranocha's pressure fix, named KEP, in nonlinearly
+stable [flux reconstruction](/methods/flux-reconstruction.md) (§3.3), and
+[Schwarz et al. (2025)](/sources/schwarz-2025.md) the Chandrashekar flux in
+LGL and Gauss collocation DGSEM, where the choice of the two-point flux
+enforces kinetic-energy preservation "in Jameson's sense" or entropy
+conservation (§3.3).
+
+### An impossibility result on uncollocated nodes
+
+Cicchino & Nadarajah (2025) prove that a KEP volume flux is not enough
+when the quadrature is not collocated.
+
+**Theorem 6.4.** An uncollocated high-order discretization cannot be
+exactly discretely kinetic-energy preserving if the surface quadrature
+nodes are not a subset of the volume quadrature nodes.
+
+The argument: entropy conservation on uncollocated nodes needs the
+surface states to be conservative variables mapped back from the projected
+entropy variables ([entropy projection](/methods/entropy-projection.md)).
+The analogous construction for kinetic energy would use the
+kinetic-energy variables
+
+$$\frac{\partial\kappa}{\partial u}=\Big(-\tfrac12\lvert v\rvert^2,\ v_1,\ v_2,\ v_3,\ 0\Big),$$
+
+whose kinetic-energy potential is zero, but the zero energy component means
+that no map from these variables back to $u$ exists, so the surface flux
+cannot be evaluated at kinetic-energy-projected states. When the surface
+nodes are a subset of the volume nodes (LGL), the interpolation and
+projection reduce to the identity and the obstruction disappears (§6.3,
+Eq. (59)). Remark 6.2 exempts collocated schemes on Gauss–Legendre nodes,
+which can be KEP, as recalled from Ortleb (§6.3).
+
+On the inviscid [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md)
+($4^3$ elements, $N=4,5$, Cartesian and warped grids) the kinetic energy
+minus the pressure work is conserved to $O(10^{-12})$ with LGL nodes and not
+with Gauss nodes, while the volume kinetic-energy identity, the sum of the
+kinetic-energy variables against the volume two-point flux and pressure-work
+terms, holds to machine precision on both (§7.3, Figs. 4–5). Their
+conclusion states the result more narrowly, that discrete kinetic-energy
+preservation is achievable "only for the collocated case on
+Gauss-Legendre-Lobatto quadrature nodes" (§8), whereas the theorem with
+Remark 6.2 leaves collocated Gauss schemes open.
+
+Schwarz et al. (2025) recall that Ortleb's KEP DG on Gauss–Legendre points
+was more accurate than on Gauss–Lobatto points for viscous flows, the
+precedent for their own Gauss-node comparison (§1;
+[DGSEM](/methods/dgsem.md)).
+
 ## KEP fluxes inside shock-capturing hybrids
 
 Two sources use a KEP central flux where the flow is smooth and switch in
@@ -431,3 +480,5 @@ off:
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — §2 Eqs. (2)–(4), §5 Fig. 1 (arXiv v2).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (25)–(30), §3.1–3.2 Algorithm 1, §4, §4.10 Figs. 17–18.
 - [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §1, §2 Eqs. (4)–(8).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.3, §6.3 Thm. 6.4, Eq. (59), Remark 6.2, §7.3 Figs. 4–5, §8.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §1, §3.3 (arXiv v1).

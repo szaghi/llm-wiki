@@ -19,7 +19,7 @@ exponent, $\tau$ the WENO-Z global indicator, $C_T$ and $\delta_k$ the TENO
 cut-off, $N$ the DG degree, $(\eta,F_\eta)$ the entropy pair), and the
 [update log](/log.md).
 
-**Corpus:** chunks 1–8 of 11 ingested (159 of 207 sources). Chunk 1, the reviews and the
+**Corpus:** chunks 1–9 of 11 ingested (179 of 207 sources). Chunk 1, the reviews and the
 papers that fix the vocabulary: the TENO review of
 [Fu (2023)](/sources/fu-2023.md), the geometric quasilinearization of
 [Wu & Shu (2023)](/sources/wu-2023-b.md), the compact-stencil framework of
@@ -76,7 +76,16 @@ hybrid DG limiters, entropy-bounded subcell limiting for DGSEM, GQL bound-preser
 central DG for relativistic MHD, Active Flux by bicharacteristics, cost-efficient
 high-order constrained-transport MHD, all-Mach visco-resistive MHD, multi-dimensional
 well-balanced shallow water, space-time implicit shock tracking, optimal-transport mesh
-adaptation and spectral relaxation against tygers. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
+adaptation and spectral relaxation against tygers. Chunk 9 (2024–2026 papers): the
+PAMPA scheme, tensor-train WENO, AENO reconstruction for ADER, Hermite WENO on a single stencil set,
+hybrid reconstruction with a discontinuity feedback factor, adaptive low-dissipation and LCD
+path-conservative central-upwind schemes, entropy projection on Gauss and uncollocated nodes,
+Bassi–Rebay viscous terms with entropy projection, nonlinearly stable flux reconstruction,
+DG as subcell finite volumes with a posteriori correction, positivity and entropy bounds for
+reacting Navier–Stokes, OEDG for the five-equation model, divergence-free positivity-preserving
+finite volumes for MHD, force-free splitting and resistive relativistic MHD, the ROUND scheme on
+non-uniform grids, STREAmS-2.1, an incompressible MHD dynamo code and hypocoercive
+relaxation analysis. The remaining chunks follow the archive's order; the [Sources](/sources/index.md) index
 lists what is in.
 
 ## Reading guide
@@ -100,7 +109,8 @@ weight families follow: [WENO-Z](/methods/weno-z.md),
 [CWENO](/methods/cweno.md), [Hermite WENO](/methods/hermite-weno.md),
 [hybrid central-WENO schemes](/methods/hybrid-weno.md) and
 [learned WENO weights](/methods/learned-weno-weights.md), with
-[RBF-based WENO](/methods/rbf-weno.md) and the
+[RBF-based WENO](/methods/rbf-weno.md), [AENO reconstruction](/methods/aeno-reconstruction.md),
+[tensor-train WENO](/methods/tensor-train-weno.md) and the
 [MDCD schemes](/methods/mdcd-scheme.md) driven by
 [scale sensors](/definitions/scale-sensor.md). The
 [semi-Lagrangian finite-volume WENO](/methods/semi-lagrangian-finite-volume.md)
@@ -145,7 +155,8 @@ yields the [ROUND schemes](/methods/round-scheme.md).
 [carbuncle phenomenon](/definitions/carbuncle-phenomenon.md);
 [characteristic decomposition](/methods/characteristic-decomposition.md);
 [central-upwind schemes](/methods/central-upwind-scheme.md), their
-[LCD variant](/methods/lcd-central-upwind-scheme.md) and the
+[LCD variant](/methods/lcd-central-upwind-scheme.md), the
+[low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md) and the
 [adaptive-diffusion Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md);
 [unstaggered central schemes](/methods/unstaggered-central-scheme.md);
 [MUSCL and MUSCL–Hancock schemes](/methods/muscl-hancock.md);
@@ -168,12 +179,14 @@ as in [wall-modelled large-eddy simulation](/methods/wall-modeled-les.md).
 **5. Discontinuous Galerkin and structure preservation.** The
 [discontinuous Galerkin method](/methods/discontinuous-galerkin.md) and
 [DGSEM](/methods/dgsem.md) on [summation-by-parts operators](/operators/summation-by-parts-operator.md),
+with [Bassi–Rebay viscous discretizations](/methods/bassi-rebay-viscous-discretization.md),
 and [flux reconstruction](/methods/flux-reconstruction.md) with its code
 [PyFR](/software/pyfr.md), and the nodal [spectral difference method](/methods/spectral-difference-method.md);
 [flux differencing](/methods/flux-differencing.md) with
 [entropy-conservative and kinetic-energy-preserving fluxes](/methods/entropy-conservative-flux.md)
 (built on the [logarithmic mean](/operators/logarithmic-mean.md)) gives
-[entropy stability](/properties/entropy-stability.md), and
+[entropy stability](/properties/entropy-stability.md), extended to uncollocated nodes by
+[entropy projection](/methods/entropy-projection.md), and
 [TeCNO schemes](/methods/tecno-scheme.md) carry it to high-order reconstruction;
 [entropy correction terms](/methods/entropy-correction-term.md) restore it a
 posteriori; on the
@@ -192,7 +205,8 @@ the codes [Trixi.jl](/software/trixi-jl.md), [FLUXO](/software/fluxo.md) and
 decide where to act; [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
 [convex limiting](/methods/convex-limiting.md), [OEDG](/methods/oedg.md),
 [artificial viscosity](/methods/artificial-viscosity.md),
-[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md),
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md) (with a subcell
+correction built on the [equivalence of DG and subcell finite volumes](/results/dg-subcell-finite-volume-equivalence.md)),
 [quasi-spectral viscosity](/methods/quasi-spectral-viscosity.md),
 [entropy filtering](/methods/entropy-filtering.md),
 [WENO limiters for DG](/methods/weno-limiter-dg.md) and
@@ -205,10 +219,12 @@ and, for viscous flows, the
 [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md),
 whose time-step bound the [optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)
 sharpens; MHD adds the [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md),
-kept exactly by [constrained transport](/methods/constrained-transport.md)
+kept exactly by [constrained transport](/methods/constrained-transport.md) or damped by
+[GLM divergence cleaning](/methods/glm-divergence-cleaning.md)
 (on AMR hierarchies, [divergence-preserving prolongation](/methods/divergence-preserving-prolongation.md)),
 and [special relativistic hydrodynamics and MHD](/definitions/relativistic-hydrodynamics.md)
-add the recovery of primitive variables.
+add the recovery of primitive variables; at high magnetization the
+[force-free splitting](/methods/force-free-splitting-rmhd.md) separates the field from the plasma.
 
 **7. Multiphase and multicomponent flows.** The
 [five- and six-equation models](/definitions/five-equation-model.md), the
@@ -222,14 +238,15 @@ add the recovery of primitive variables.
 [immersed-boundary and cut-cell methods](/methods/immersed-boundary-method.md);
 [block-structured adaptive mesh refinement](/methods/adaptive-mesh-refinement.md);
 the solvers [MFC](/software/mfc.md), [AMROC](/software/amroc.md),
-[UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md),
+[UCNS3D](/software/ucns3d.md), [IDEFIX](/software/idefix.md), [PLUTO](/software/pluto.md),
 [ADAM](/software/adam.md), [URANOS](/software/uranos.md),
 [STREAmS](/software/streams.md), [JAX-Fluids](/software/jax-fluids.md),
 [TENET](/software/tenet.md), [ForestClaw](/software/forestclaw.md) and the [OpenFOAM-based solvers](/software/openfoam.md);
 [operator splitting](/methods/operator-splitting.md) of stiff chemistry; verification
 by the [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md).
 
-**8. Beyond method-of-lines reconstruction.** [Active Flux](/methods/active-flux.md),
+**8. Beyond method-of-lines reconstruction.** [Active Flux](/methods/active-flux.md)
+and its bound-preserving generalization [PAMPA](/methods/pampa-scheme.md),
 [ADER schemes](/methods/ader-scheme.md),
 the [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) behind every
 conservative scheme, [SSP Runge–Kutta time stepping](/methods/ssp-runge-kutta.md),
@@ -241,7 +258,8 @@ implicit CWENO stepping of [Quinpi](/methods/quinpi.md).
 
 **9. Benchmarks.** Scalar: [Burgers equation tests](/benchmarks/burgers-equation-tests.md),
 the [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md) and
-[solid-body rotation](/benchmarks/solid-body-rotation.md). One-dimensional:
+[solid-body rotation](/benchmarks/solid-body-rotation.md), with the
+[Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md). One-dimensional:
 [Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md), the
 [Leblanc shock tube](/benchmarks/leblanc-shock-tube.md), the
 [double rarefaction problem](/benchmarks/double-rarefaction-problem.md),
@@ -286,8 +304,9 @@ and MHD: the [KPP rotating wave](/benchmarks/kpp-rotating-wave.md), the
 [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md), the
 [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md),
 [magnetic field-loop advection](/benchmarks/field-loop-advection.md), the
-[magnetized vortex](/benchmarks/magnetized-vortex.md) and the
-[MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md).
+[magnetized vortex](/benchmarks/magnetized-vortex.md), the
+[MHD shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md) and the
+[tearing-mode instability](/benchmarks/tearing-mode-instability.md).
 Shallow water: [flow over a bump and lake at rest](/benchmarks/flow-over-a-bump.md) and
 [dam-break problems](/benchmarks/dam-break-problem.md).
 Turbulence: [compressible isotropic turbulence](/benchmarks/compressible-isotropic-turbulence.md),

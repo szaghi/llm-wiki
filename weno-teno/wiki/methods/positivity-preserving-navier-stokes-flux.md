@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Positivity-preserving numerical fluxes for Navier–Stokes"
-description: "Zhang's Lax–Friedrichs-type flux of the total (advective minus diffusive) Navier–Stokes flux, with a coefficient that includes viscous stress and heat flux, keeps density and internal energy positive; the page gives its finite-volume, finite-difference-splitting and multicomponent LDG forms, its use as graph viscosity in entropy-stable nodal DG, the CFL conditions, the halve-and-restart time stepping and the evidence."
+description: "Zhang's Lax–Friedrichs-type Navier–Stokes flux, with a coefficient that includes viscous stress and heat flux, keeps density and internal energy positive; the page gives its total-flux finite-volume, finite-difference-splitting and LDG forms, Ching et al.'s multicomponent form on the viscous flux alone, graph-viscosity use in nodal DG, CFL conditions, adaptive time stepping and evidence."
 status: established
-aliases: [positivity-preserving viscous flux, positivity-preserving Navier–Stokes flux, Zhang's positivity-preserving flux, positivity-preserving convection–diffusion flux splitting, total-flux Lax–Friedrichs flux]
+aliases: [positivity-preserving viscous flux, positivity-preserving Navier–Stokes flux, Zhang's positivity-preserving flux, positivity-preserving convection–diffusion flux splitting, total-flux Lax–Friedrichs flux, separated viscous Lax–Friedrichs flux, gradient limiting]
 tags: [positivity, bound-preserving, numerical-flux, finite-difference, finite-volume, dg]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:20:00Z
 ---
 
 # Positivity-preserving numerical fluxes for Navier–Stokes
@@ -27,6 +27,9 @@ viscous stress and the heat flux. The admissible set is
 $G=\{\rho>0,\ \rho e>0\}$ with $\rho e=E-\tfrac12\rho\lvert v\rvert^2$,
 convex because $\rho e$ is concave in $u$ for $\rho>0$
 ([bound preservation](/properties/bound-preservation.md)).
+A fifth source, [Ching et al. (2025)](/sources/ching-2025.md), applies the
+same kind of flux to the **viscous** flux alone and keeps a separate
+inviscid flux (section below).
 
 Page-local symbols: $\tau_{\mathrm v}$ and $q_{\mathrm h}$ the viscous
 stress and heat flux (their normal components in multi-D), $N_{\mathrm{GL}}$ the
@@ -204,6 +207,89 @@ condition, which the positivity step does not imply; the hyperbolic step
 scales as $O(h)$ and the parabolic one as $O(h^2\mathrm{Re})$, "not overly
 restrictive" for $h=O(1/\mathrm{Re})$ (§1, Remark 2, §5).
 
+## The viscous flux alone: multicomponent reacting Navier–Stokes
+
+[Ching et al. (2025)](/sources/ching-2025.md) extend Zhang's flux to the
+multicomponent, chemically reacting Navier–Stokes equations with thermally
+perfect gases, in a primal DG scheme whose conserved species variables are
+molar concentrations $\mathsf C_k$ (page-local; partial density $W_k\mathsf C_k$). Unlike
+Zhang and Du & Yang, they penalize only the viscous flux, with
+$\delta^\nu=\tfrac{a^\nu}2(u^+-u^-)$ ($\delta^\nu$, $a^\nu$ page-local; the source
+writes $\beta$), and keep an invariant-region-preserving inviscid flux, HLLC in
+practice, which they find more accurate than Lax–Friedrichs (§1, §4.1, Remark 5;
+[HLL-family solvers](/methods/hll-riemann-solvers.md)). Separating the two is what
+lets them enforce an entropy bound on the convective part only, and changes the
+admissible coefficient (Remark 5).
+
+**Lemma 1** (§4.1, Eqs. (4.4)–(4.5)). Let $e^*=e-e\vert_{T=0}$ (page-local), so
+that $e^*>0$ iff $T>0$, and $G=\{\rho>0,\ \rho e^*>0,\ \mathsf C_k\ge0\}$, convex because
+$\rho e^*$ is concave. If $u\in G$ with every $\mathsf C_k>0$, then
+$u\pm f^\nu\cdot n/a^\nu\in G$ for every unit $n$ when
+$$a^\nu>\max\Big\{\max_k\frac{\lvert f^\nu_{\mathsf C_k}\cdot n\rvert}{\mathsf C_k},\ a_T\Big\},\qquad
+a_T=\frac{\lvert b_T\rvert+\sqrt{b_T^2+2\rho^2e^*\lvert f^\nu_{\rho v}\cdot n\rvert^2}}{2\rho^2e^*},\qquad
+b_T=\rho\,f^\nu_E\cdot n-\rho v\cdot\big(f^\nu_{\rho v}\cdot n\big),$$
+with $f^\nu_{\rho v}$, $f^\nu_E$, $f^\nu_{\mathsf C_k}$ the momentum, energy and species
+components of the viscous flux ($a_T$, $b_T$ page-local); the mass-conservation
+correction of the diffusion velocities makes the net diffusive mass flux vanish,
+which removes the remaining terms of the quadratic (Eqs. (4.7)–(4.8), Remark 4).
+It is stated as sufficient, where Du & Yang state their (total-flux) condition as an
+equivalence. Without species diffusion it recovers Zhang's monocomponent condition
+(Remark 3). The species bound $\lvert V_k\cdot n\rvert$ ($V_k$ the diffusion velocity)
+can blow up as $\mathsf C_k\to0$, and at $\mathsf C_k=0$ with a nonzero species flux no finite
+coefficient works, because the species flux is not proportional to $\mathsf C_k$
+(Remarks 2–3); the authors state that this holds whether the fluxes are treated
+together or separately (§1).
+
+**Split update** (§4.2–4.4). The forward-Euler cell-average update is written as
+the mean of a convective and a viscous update, each with the doubled step
+$\Delta t^*=2\Delta t$. The convective half stays in the entropy-bounded set under
+$\Delta t^*a/h\le\tfrac12\min\{\theta_{\mathrm L},\theta_{\mathrm R}\}$ (from their
+inviscid work), and the viscous half in $G$ under
+$\Delta t^*/h\le\min\{\theta_{\mathrm L}/a^\nu_{\mathrm L},\theta_{\mathrm R}/a^\nu_{\mathrm R}\}$
+(Thm 6), with $\theta_{\mathrm{L,R}}$ (page-local, not the Zhang–Shu factor) the endpoint weights of a Lv–Ihme-type
+decomposition for an arbitrary positive quadrature; Theorem 8 is the
+multidimensional version on curved elements
+([optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+For $N=0$ the viscous half is a convex combination for any positive coefficient,
+even with zero concentrations (Eq. (4.16)). Boundary penalties and the modified
+flux interpolation of Johnson & Kercher add their own constraints (§4.4.4, §4.5).
+The entropy bound is enforced only on the convective half, because the minimum
+entropy principle fails for Navier–Stokes with nonzero thermal diffusivity, as
+they recall (§1; [entropy stability](/properties/entropy-stability.md)); the
+limiter then scales density, species, $\rho e^*$ and, on the convective half
+only, the entropy ([Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+
+**Adaptive time stepping** (§4.6). The default viscous flux is BR2
+([Bassi–Rebay discretizations](/methods/bassi-rebay-viscous-discretization.md)),
+which does not guarantee positivity; if a stage leaves the admissible sets the step
+is halved once and recomputed with BR2, and only if it fails again is it recomputed
+with the Lax–Friedrichs-type viscous flux at all interfaces. A smaller step or a
+flux switch is needed in "typically no more than ten percent of time steps".
+
+**Gradient limiting at zero concentration** (§4.7, Eqs. (4.46)–(4.50)). A cell with
+zero concentration and zero traces of species $k$ still turns negative under a net
+inward diffusive flux, whatever the coefficient, because the limiter makes $\mathsf C_k\ge0$
+only at finitely many points (Remark 11, Fig. 4.1). Since the species flux is
+homogeneous in the gradient, the gradient in the viscous interface flux is
+multiplied by a factor $\omega_{\mathrm g}\in[0,1]$ (page-local), computed pointwise
+so that the species average stays non-negative; the coefficient then needs only
+$a_T$ and need not be recomputed. It is applied where the step would otherwise be
+halved three or more times; in the tests it acts only at the first step of the two
+Lax–Friedrichs-type 2D detonation runs, where without it the step "would need to be
+halved approximately thirty times". A projection to $N=0$ is a foolproof but
+low-fidelity alternative (Remark 12).
+
+**Evidence** (§5). Thermal-bubble advection–diffusion converges at order $N+1$ for
+$N=1$–3 with BR2 and with the Lax–Friedrichs-type flux at CFL 0.1. In an H$_2$/O$_2$
+premixed flame the scheme agrees "much more closely" with Cantera than species
+clipping does. In a multicomponent viscous shock tube the entropy limiter damps
+large-scale oscillations "significantly better" than the positivity limiter alone,
+and the Lax–Friedrichs-type flux gives a smaller temperature overshoot than BR2
+(Fig. 5.6); in a 2D H$_2$–O$_2$–Ar detonation with no-slip walls BR2 shows "much
+smaller nonphysical instabilities" (Figs. 5.7–5.9), the result the authors follow
+in preferring BR2 as default. Without the entropy limiter the minimum temperature of
+the detonation approaches zero before 50 μs (Fig. 5.12).
+
 ## Evidence
 
 - **Accuracy with the limiter active.** Fan et al. (2022), at
@@ -274,6 +360,20 @@ restrictive" for $h=O(1/\mathrm{Re})$ (§1, Remark 2, §5).
   *(compiler check, not in the sources:
   $\log_2(2.305\times10^{-2}/9.858\times10^{-3})=1.23$,
   $\log_2(9.858\times10^{-3}/3.382\times10^{-3})=1.54$)*.
+- **Printed forms in Ching et al. (2025).** Substituting the viscous flux into
+  $b_T$ gives the heat-flux term with the sign opposite to the one printed in
+  Remark 3, $b_T=\rho q_{\mathrm h}\cdot n+\dots$; only $\lvert b_T\rvert$ enters $a_T$ in
+  the monocomponent limit, so that case is unaffected *(compiler check, not in the
+  sources)*. Their Appendix B prints the quadratic of Lemma 14 with the sign of its
+  linear term opposite to what the expansion and the printed root need, and with
+  $e$ where $e^*$ is meant.
+- **Which viscous flux is better.** Ching et al.'s evidence is mixed: the
+  Lax–Friedrichs-type flux gives the smaller overshoot in 1D, BR2 the smaller
+  oscillations in 2D (§5.3–5.4); the authors choose BR2 from the 2D runs.
+- **Convexity assumed.** Ching et al. assume the entropy-bounded set convex
+  throughout, although the entropy constraint is concave only when every
+  concentration is positive; they state that this "does not seem to have any
+  discernible negative effects" (§4).
 - No source compares the cost of the finite-difference scheme with the
   finite-volume or DG versions; Fan et al. (2022) state that it is
   cheaper and easier to implement (§1.3).
@@ -298,3 +398,4 @@ restrictive" for $h=O(1/\mathrm{Re})$ (§1, Remark 2, §5).
 - [Fan, Zhang & Qiu (2022)](/sources/fan-2022.md) — §1.1–1.3; §2.2, Eqs. (2.7)–(2.9); §3.1–3.5, Eqs. (3.1)–(3.24), Theorem 1, Remarks 3.2–3.5, Algorithms 1–2; §4, Theorem 2; §5, Tables 5.1–5.2, Ex. 5.2–5.8.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §5, Eqs. (16)–(28), Lemma 5.1, Theorem 5.2, Remarks 1–2; §6.2, Theorem 6.1, Eq. (45); §8.1.2, Tables 2–5; §8.5, Figs. 12–14.
 - [Du & Yang (2022)](/sources/du-2022-b.md) — §3.1, Eqs. (3.4)–(3.5), Def. 3.1, Thm 3.1; §4.2, Lemma 4.1; §5, Lemma 5.1; §6, Eqs. (6.1)–(6.2), Figs. 6.1–6.3.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §1; §4.1, Lemma 1, Eqs. (4.4)–(4.10), Remarks 2–5; §4.2–4.5, Thms 6, 8, Eqs. (4.12)–(4.44); §4.6; §4.7, Eqs. (4.45)–(4.50), Remarks 11–12; §5, Figs. 4.1, 5.1–5.12; App. B.

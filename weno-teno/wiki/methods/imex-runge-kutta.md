@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "IMEX Runge–Kutta schemes"
-description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau for the non-stiff terms with a diagonally implicit one for the stiff terms; the page records the type A/CK/ARS classification, stiff accuracy, the partitioned semi-implicit form used for all-Mach Euler and MHD, the SI-IMEX(4,4,3) and (3,3,2) tableaux and their order check, and additive schemes with stiff local sources solved cell by cell."
+description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau for the non-stiff terms with a diagonally implicit one for the stiff terms; the page records the A/CK/ARS types, stiff accuracy, the partitioned semi-implicit form, the SI-IMEX(4,4,3) and (3,3,2) tableaux and their order check, and additive schemes with stiff local sources solved cell by cell, and a fourth-order split with implicit point-value stages."
 status: established
 aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, ARK-IMEX, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta, IMEX TVD Runge–Kutta]
 tags: [asymptotic-preserving, imex, semi-implicit, finite-difference, relativistic, mhd]
-timestamp: 2026-10-22T19:46:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # IMEX Runge–Kutta schemes
@@ -176,6 +176,45 @@ energy and momentum follow from conservation of the totals, so total energy and 
 conserved by the implicit step. The paper calls the scheme "IMEX third-order TVD Runge-Kutta"
 but does not analyse its order or stiff accuracy.
 
+**Resistive relativistic MHD** ([Mignone et al. (2024)](/sources/mignone-2024.md), §3.2,
+§3.4, App. A). The stiff term is the relaxation source $-\tilde{\mathcal E}/\eta_{\mathrm m}$ of Ampère's
+law ($\eta_{\mathrm m}$ the resistivity and $\tilde{\mathcal E}$ the rest-frame electric field, page-local);
+everything else, fluxes, constrained-transport update and the charge source, is explicit. In a
+fourth-order finite-volume scheme the authors split each stage in two (Eq. (24)): the explicit
+part acts on **cell averages**, the implicit part on **point values** at cell centres,
+
+$$\langle u\rangle^{(k*)}=\langle u\rangle^n+\Delta t\sum_{j<k}\big(\tilde{\mathsf a}_{kj}\hat{\mathcal R}^{(j)}+\mathsf a_{kj}\langle S\rangle^{(j)}\big),\qquad u^{(k)}_c=u^{(k*)}_c+\Delta t\,\mathsf a_{kk}S^{(k)}_c,$$
+
+with $\langle\cdot\rangle$ a cell average, $u_c$ the point value obtained by the
+$1-\Delta/24$ correction, $\hat{\mathcal R}$ the explicit right-hand side and $S_c$ the stiff source
+at the cell centre (page-local; [cell-average and point-value conversion](/operators/cell-average-point-value-conversion.md)).
+They state, citing Boscarino, Russo and Semplice, that the pointwise evaluation of the stiff source
+is "crucial to achieve accuracy beyond the second order" (§1). Each implicit stage reduces to a
+$3\times3$ nonlinear system for the four-velocity per cell, solved by Newton–Broyden with an
+analytic Jacobian in 2–5 iterations at relative tolerance $10^{-11}$; the same solve recovers the
+primitive variables (§3.4, Eqs. (30)–(40)). Two tableaux are printed in full (App. A):
+
+- **SSP3(4,3,3)** of Pareschi and Russo (four implicit, three explicit stages; L-stable as
+  stated): explicit rows $(0,0,0,0)$, $(0,0,0,0)$, $(0,1,0,0)$, $(0,\tfrac14,\tfrac14,0)$; implicit rows
+  $(\alpha_{\mathrm I},0,0,0)$, $(-\alpha_{\mathrm I},\alpha_{\mathrm I},0,0)$, $(0,1-\alpha_{\mathrm I},\alpha_{\mathrm I},0)$,
+  $(\beta_{\mathrm I},\eta_{\mathrm I},\tfrac12-\beta_{\mathrm I}-\eta_{\mathrm I}-\alpha_{\mathrm I},\alpha_{\mathrm I})$;
+  $\tilde{\mathsf b}=\mathsf b=(0,\tfrac16,\tfrac16,\tfrac23)$; $\alpha_{\mathrm I}=0.24169426078821$,
+  $\beta_{\mathrm I}=0.06042356519705$, $\eta_{\mathrm I}=0.12915286960590$ (page-local; the source
+  writes $\alpha$, $\beta$, $\eta$, the last clashing with its resistivity). *(compiler check, not in
+  the sources: with these values both tableaux satisfy the four third-order conditions and the two
+  coupling conditions $\mathsf b^\top\tilde{\mathsf A}\mathsf c=\mathsf b^\top\mathsf A\tilde{\mathsf c}=\tfrac16$
+  to about $10^{-14}$.)* This is the scheme that [Balsara et al. (2024)](/sources/balsara-2024.md)
+  use for stiff relaxation (table below).
+- **ARK4(3)7L[2]SA1** of Kennedy and Carpenter (seven stages, L-stable, stiffly accurate,
+  diagonal $0.1235$), printed as rationals with decimals (Eqs. (A2)–(A6)).
+
+Their findings: ARK4 keeps fourth order for smooth problems (telegraph equation, stationary charged
+vortex, §4.1–§4.2), but it "becomes unstable for $\eta\lesssim10^{-4}$" ($\eta=\eta_{\mathrm m}$) on the vortex (§4.2), and
+on the resistive rotor only SSP3(4,3,3) completes the run at $\eta_{\mathrm m}=10^{-6}$, which the authors
+read as "the reduced stability of the fourth-order method, which is not SSP" (§4.3). They
+conclude that the third-order SSP scheme "is more robust for lower values of the resistivity,
+$\eta\lesssim10^{-5}$, and thus preferable for highly stiff problems" (§5).
+
 **Partitioned form for MHD.** [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) (§3.2) use the
 partitioned semi-implicit form above for the low-Mach ideal MHD equations with constrained
 transport, with the third-order stiffly accurate scheme of Boscarino et al. (2022) and of
@@ -192,6 +231,7 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
 | [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) | third-order SA SI-IMEX-RK of Boscarino et al. | acoustic pressure and enthalpy flux of ideal MHD at sonic Mach number $\varepsilon$ | 3 (first-order scheme analysed) |
 | [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) | Pareschi–Russo L-stable ARK2; Kennedy–Carpenter ARK3, ARK4 | Lorentz-force and resistive sources of two-fluid relativistic plasma | 2, 3, 4 |
 | [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) | IMEX extension of Shu–Osher SSP-RK3 | radiation four-force (absorption, scattering) | not analysed |
+| [Mignone et al. (2024)](/sources/mignone-2024.md) | SSP3(4,3,3) of Pareschi & Russo; ARK4(3)7L[2]SA1 of Kennedy & Carpenter | resistive relaxation of the electric field in relativistic MHD | 3, 4 (fourth order observed in space and time with ARK4) |
 
 ## Qualifications
 
@@ -211,6 +251,10 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
   same loss as Boscarino et al. for MHD: at $\varepsilon=10^{-2}$ the 1D orders are 2.78, 1.11,
   1.72, 1.60 and the 2D errors do not decrease between $N=16$ and $N=64$, while the scheme is
   about fifth order at $\varepsilon=1$, $10^{-6}$ and $0$.
+- **Stability thresholds of ARK4.** Mignone et al. (2024) give three values: unstable for
+  $\eta_{\mathrm m}\lesssim10^{-4}$ (vortex, §4.2), failure at $\eta_{\mathrm m}=10^{-6}$ (rotor, §4.3), and SSP3(4,3,3)
+  preferable for $\eta_{\mathrm m}\lesssim10^{-5}$ (§5); the attribution to the missing SSP property is not
+  analysed. Their Eqs. (21) and (24) omit the stage superscript on the explicit right-hand side.
 - **Printed ARK3 weights.** In Bhoriya et al.'s Table 5 the stiff weights $\mathsf b$
   (row $b^{[S]}$) differ from the non-stiff weights $\tilde{\mathsf b}$, which equal the last
   implicit row. *(compiler check, not in the sources: with the printed $\mathsf c=(0,\ 1767732205903/2027836641118,\ \tfrac35,\ 1)$,
@@ -229,3 +273,4 @@ asymptotic-accuracy theorem (Thm. 4.2; [semi-implicit all-Mach schemes](/methods
 - [Bhoriya et al. (2023)](/sources/bhoriya-2023.md) — §5.1–5.2, §6.1 (Tables 2–4), App. C (Table 5) (arXiv v2).
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — §3.1 (Eqs. (18)–(22)), §3.3 (Eqs. (39)–(43)) (arXiv v1).
 - [Chen, Wu & Xiong (2023)](/sources/chen-2023-b.md) — §3.2 (Eqs. (3.7)–(3.10)), Thm. 4.2, Tables 5.2, 5.4 (arXiv v1).
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §1, §3.2 (Eqs. (21)–(24)), §3.4 (Eqs. (30)–(40)), §4.1–§4.3, §5, App. A (Eqs. (A1)–(A6)).

@@ -251,7 +251,7 @@ There are no printed duplicates.
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–9 (2026-10-22/23). This source is cited on:
 
 * [Bound preservation](/properties/bound-preservation.md)
 * [Convex limiting and invariant-domain-preserving schemes](/methods/convex-limiting.md)
@@ -260,9 +260,11 @@ Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
+* [Equivalence of DG and subcell finite volumes](/results/dg-subcell-finite-volume-equivalence.md)
 * [Flux differencing and split-form DG](/methods/flux-differencing.md)
 * [FLUXO](/software/fluxo.md)
 * [Free-stream preservation](/properties/free-stream-preservation.md)
+* [GLM divergence cleaning](/methods/glm-divergence-cleaning.md)
 * [High-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md)
 * [HLL-family approximate Riemann solvers](/methods/hll-riemann-solvers.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)

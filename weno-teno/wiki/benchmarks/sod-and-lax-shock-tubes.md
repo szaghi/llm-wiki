@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Sod and Lax shock tubes
@@ -61,6 +61,8 @@ the right half.
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9c) | Chebyshev with a mapping, $N_x=615$ | not stated | on $[-1,1]$, reflecting walls; spectral relaxation; reference HyPar characteristic WENO5 on 8000 (arXiv v2) |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.4 | triangles, $201\times11$ vertices | 2 | strip $[-5,5]\times[-0.025,0.025]$, jump at $x=0$; ALW-MR-WENO-3/4/5 vs [MR-WENO](/methods/multi-resolution-weno.md); fourth entries printed $2.5$ and $0.25$, see Qualifications |
 | [Naudet & Zahr (2024)](/sources/naudet-2024.md) §5.3.1, Eq. (57) | six space-time slabs, 65 simplices ($q=1$, $p=2$) in the first | 1 | walls at $x=0$ and $1$; space-time [implicit shock tracking](/methods/implicit-shock-tracking.md); reference second-order FV (superbee) on over $10^5$ elements, adaptive RK4 |
+| [Danis et al. (2025)](/sources/danis-2025.md) §5.5 | $N^3$ with $N=5\cdot2^n$, $n=1,\dots,7$ (to $640^3$), CFL 0.5 | 0.2 | on $[0,1]^3$, jump at $x=0.5$; [tensor-train](/methods/tensor-train-weno.md) FD WENO5-JS with global LF splitting (arXiv v1) |
+| [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 5 | 200 cells | 0.16 | bound-preserving [PAMPA](/methods/pampa-scheme.md), SSP-RK3 at CFL 0.2 |
 
 Abgrall & Barsukow run Sod with three Active Flux variants: sixth order
 at CFL 0.25 (Fig. 19); a fifth-order point setup with a third-order
@@ -85,6 +87,16 @@ Sod's, whose left gas is at rest. With $N=300$ at $t=0.2$ they find
 IMWENO-P, WENO-NS, WENO-P and MWENO-P capturing the discontinuities
 better than WENO-JS and WENO-Z, and IMWENO-P slightly ahead of the other
 three (Fig. 5).
+
+[Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) Eq. (68)
+run the same moving left state with the diaphragm at $x=0.3$ of $[0,1]$,
+after Toro, transmissive boundaries, $t=0.2$, 100 cells, CFL 0.9, to
+test entropy satisfaction at the sonic rarefaction with ADER schemes of
+orders 5 to 10: [AENO](/methods/aeno-reconstruction.md) reconstruction
+oscillates significantly near the rarefaction tail at orders 7–10,
+AENO-C does not; at orders 9 and 10, in their words, "the tail of the
+rarefaction appears slightly disconnected", which a CFL number of about
+0.75–0.8 resolves (§7.2, Fig. 14).
 
 [Lin & Chan (2024)](/sources/lin-2024.md) §4.1.1 run the same modified
 left state, after Toro's §6.4, with the diaphragm at $x=0.3$:
@@ -143,6 +155,8 @@ $[-\tfrac12,\tfrac12]$, and $[-5,5]$.
 | [Kolluru et al. (2024)](/sources/kolluru-2024.md) §3.4, Eq. (9d) | $[-1,1]$, reflecting walls | Chebyshev, $N_x=615$ | first output 0.02 | printed in conserved variables $(0.445,0.311,8.928)$ and $(0.5,0,1.4275)$ |
 | [Lin & Zhu (2024)](/sources/lin-2024-b.md) Case 3.3 | $[-0.5,0.5]$ strip, width 0.05, periodic in $y$, $x$-boundary condition not specified | triangles, $201\times11$ vertices | 0.16 | ALW-MR-WENO vs MR-WENO |
 | [Zuo & Zhu (2024a)](/sources/zuo-2024.md) Ex. 3.4 | $[-0.5,0.5]$ | 200 | 0.16 | [hybrid](/methods/hybrid-weno.md) MMR-WENO5/7/9 vs MR-WENO and the SHUS-WENO indicator; troubled-cell maps |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.5 | $[-0.5,0.5]$, outflow | not stated in the text | 0.16 | [HWENO-U](/methods/hermite-weno.md) vs HWENO-M, WENO-ZQ; also data scaled to $(\zeta\rho,v,\zeta p)$, $\zeta\in\{10^{-7},1,10^7\}$ (page-local) |
+| [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.3, Eq. (4.7) | $[-5,5]$ | third order, 60 elements (180 DOFs) | 1.6 | DG/FV-[ROUND](/methods/round-scheme.md) on non-uniform subcells vs DG/FV with WENO5-JS on uniform subcells |
 
 The $[-5,5]$ placement at $t=1.3$ corresponds to the $[0,1]$ placement
 at $t=0.13$ under the scaling $x\mapsto(x+5)/10$, $t\mapsto t/10$
@@ -352,6 +366,21 @@ positivity limiter, so they attribute the stability on this problem to
 the first-moment limiter; a small velocity dent is a numerical artifact
 also seen in an earlier finite-volume WENO (Fig. 4.2, Table 4.2).
 
+Fan et al. (2025) find that WENO-ZQ, whose nonlinear weights are not
+scale-invariant, over- and undershoots on the unscaled Lax tube, and
+that with the scaled data the original weights give oscillations at
+$\zeta=10^{-7}$ and extra dissipation at $\zeta=10^7$, while their weights,
+with $\tau$, $\beta_k$ and $\epsilon$ normalized by a local mean of
+$\lvert\bar u\rvert$, remove both (Figs. 8–9; see below). Deng, Jiang &
+Yan find their DG/FV-ROUND less dissipative and less oscillatory on the
+Lax tube than the same DG with fifth-order WENO-JS on uniform subcells
+(Fig. 13). Abgrall et al. (2026) show the bound-preserving PAMPA Sod
+solution (Fig. 5). Danis et al. (2025) capture the shock and contact
+sharply in three dimensions; on this rank-1 problem their tensor-train
+solver is "more than 1000" times faster than the full-tensor one at
+$640^3$, against full-tensor timings extrapolated beyond $160^3$, with a
+memory compression below $10^{-5}$ (Fig. 9).
+
 **Scale invariance.** Li, Li, Don & Wang scale the Lax data, density
 and pressure, by $\lambda\in\{1,10^{-7}\}$ (page-local symbol), after
 Wang & Don: the earlier multi-resolution A-WENO (MR-AWENO) oscillates
@@ -437,7 +466,20 @@ single-gas Euler equations.
   \mathrm K,0,10\ \mathrm{atm},1,0)$ for $x\le0.4$ m and $(300\ \mathrm
   K,0,1\ \mathrm{atm},0,1)$ beyond, on 1000 cells to $t=300\,\mu$s, where
   without the limiter $Y_2$ turns negative within $0.5085\,\mu$s and the
-  code blows up (Ex. 6.2, Figs. 6.1–6.2). See
+  code blows up (Ex. 6.2, Figs. 6.1–6.2).
+  [Ching et al. (2025)](/sources/ching-2025.md) §5.3 run the same
+  He/N$_2$ tube, after Houim & Kuo, with the reacting-flow
+  Navier–Stokes equations and walls at both ends of $[0,1]$ m, $t=300\,\mu$s,
+  CFL 0.1: DG of degree 3 on 200 elements without artificial viscosity,
+  against a degree-2 reference on 2000 elements. Their entropy limiter
+  damps the large-scale pressure, temperature and entropy instabilities
+  "significantly better" than the positivity limiter alone, whose
+  instabilities are much larger than in single-gas tubes, and the
+  Lax–Friedrichs-type viscous flux gives a smaller temperature overshoot
+  at the shock than BR2; artificial viscosity alone gives negative
+  concentrations, as stated (Figs. 5.5–5.6; see
+  [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md)).
+  See
   [multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)
   and [bound preservation](/properties/bound-preservation.md).
 - **Two materials on a Lagrangian mesh.** [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md)
@@ -509,7 +551,15 @@ single-gas Euler equations.
   and leaves over- and undershoots at the shock, while the limiter
   removes the overshoot and reduces the undershoot (Figs. 8–9). The
   three-dimensional spherical version of Li, Duan & Tang is listed
-  above; the two-dimensional and spherical explosions of other sources
+  above. [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.3.1 (HAL
+  preprint) run a polar Sod tube on the sector
+  $(r,\theta)\in[0,1]\times[0,\pi/4]$ of unstructured triangles,
+  $(1,0,1)$ for $r<0.5$ and $(0.125,0,0.1)$ beyond, $\gamma=1.4$,
+  symmetry on the sector sides and outflow at $r=1$, the final time not
+  printed in the text, with $\mathbb P^5$ DG and their
+  [a posteriori local subcell correction](/methods/mood-a-posteriori-limiting.md)
+  on 230 cells and at third order on 10571 cells (Figs. 35–37). The
+  two-dimensional and spherical explosions of other sources
   are on the [explosion and implosion page](/benchmarks/explosion-and-implosion-problems.md).
 - **Relativistic tubes.** [Chen & Wu (2022)](/sources/chen-2022-b.md)
   Exs. 4.2–4.5 (arXiv v1) run quasi-one-dimensional
@@ -526,6 +576,16 @@ single-gas Euler equations.
   weights give $O(10^{-1})$ and $O(10^{-2})$ and overshoot (Ex. 4.4,
   Figs. 6–8), the relativistic counterpart of the Lax scaling test
   above.
+- **Two-phase Lax tube.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+  Ex. 4.6 run the Lax states in the Kapila
+  [five-equation model](/definitions/five-equation-model.md), with
+  phase densities $0.445$ and $0.5$ on both sides and a volume fraction
+  varying linearly, $\phi_1=x+0.5$, on $[-0.5,0.5]$: in
+  $(\rho_1,\rho_2,v,p,\phi_1)$, $(0.445,0.5,0.698,3.528,x+0.5)$ for $x<0$
+  and $(0.445,0.5,0,0.571,x+0.5)$ for $x>0$, $\gamma_1=1.4$, $\gamma_2=1.6$,
+  outflow, 1000 cells, $t=0.17$; both their bound-preserving
+  [OEDG](/methods/oedg.md) scheme and its averaging-based variant agree
+  with a VFRoe reference on 100,000 cells (Fig. 8).
 - **Gas–liquid tubes.** [Wong et al. (2021)](/sources/wong-2021.md) §6.3
   run a water–air "Sod" problem with pressure ratio $10^9/10^5$;
   [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.2 an air–water tube
@@ -610,6 +670,9 @@ single-gas Euler equations.
   Euler system, without the internal-energy factor, and state no output
   times for Sod; Naudet & Zahr state no $\gamma$ for Sod (1.4 is given
   for their Shu–Osher run).
+- Danis et al. compute full-tensor reference timings only up to
+  $160^3$ and extrapolate them to $320^3$ and $640^3$; their "1000 times"
+  speedup rests on the extrapolation.
 - Du & Yang print the H$_2$/O$_2$/Ar diaphragm at $x=0.5$ cm of a 10 cm
   domain, Peng et al. at the middle of their 100 mm tube.
 
@@ -675,3 +738,11 @@ single-gas Euler equations.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §4.1.1, Fig. 2.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §5.3.1, Eq. (57), Figs. 16–18.
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.4, Figs. 3.4–3.5, Table 3.1.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §4.3.1, Figs. 35–37 (HAL preprint).
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.6, Fig. 8.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §5.3, Eq. (5.4), Figs. 5.5–5.6.
+- [Danis et al. (2025)](/sources/danis-2025.md) — §5.5, Fig. 9 (arXiv v1).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.3, Eq. (4.7), Fig. 13.
+- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.5, Figs. 8–9.
+- [Yajaman, Toro & Demattè (2025)](/sources/yajaman-2025.md) — §7.2, Eq. (68), Fig. 14.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Ex. 5, Fig. 5.

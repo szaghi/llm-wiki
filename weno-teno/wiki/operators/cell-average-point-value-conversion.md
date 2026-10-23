@@ -6,7 +6,7 @@ status: established
 symbol: "$\\mathsf C_{2p}$, $\\mathsf C_{2p}^{-1}$"
 aliases: [average-to-point transformation, AtoP, PtoA, point-value passage, Laplacian correction, deconvolution of cell averages, McCorquodale–Colella correction]
 tags: [finite-volume, mhd, reconstruction]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:06:00Z
 ---
 
 # Cell-average to point-value conversion
@@ -87,6 +87,49 @@ values at cell centres, converted to primitive variables pointwise, and reconstr
 point-value interpolation formulas (a pointwise WENO-Z, MP5 or WENO3), with one Riemann problem per
 interface and the transverse Laplacian for the flux average (§3.1–3.2, Eq. (30)).
 
+[Mignone et al. (2024)](/sources/mignone-2024.md) (§3.2–3.8) extend this
+pipeline to resistive relativistic MHD and add a reason for the point
+values: the stiff Ohm's-law source must be evaluated on them. With the
+undivided Laplacian $\Delta_{\mathrm u}$ over all three directions they recover
+cell-centre point values by $u_i=(1-\tfrac1{24}\Delta_{\mathrm u})\bar u_i+O(\Delta x^4)$
+(Eqs. (25)–(27)), face-centre values of the staggered normal field with the
+transverse Laplacian only (Eq. (28)), and the cell-centre field by Felker &
+Stone's unlimited interpolation $\tfrac9{16}(\cdot)-\tfrac1{16}(\cdot)$ of the face
+values (Eq. (29), the same as Berta et al.'s). The inverse corrections turn
+point fluxes into face averages, $(1+\tfrac1{24}\Delta_{\mathrm u,\perp})$ over
+the two transverse directions (Eq. (48)), edge electric fields into line
+averages, $(1+\tfrac1{24}\Delta_{\mathrm u,\parallel})$ along the edge (Eq. (53)),
+and the explicit source $-\mathfrak q v$ into a cell average,
+$(1+\tfrac1{24}\Delta_{\mathrm u})(\mathfrak q v)_i$ with $\mathfrak q$ the charge
+density from a fourth-order central divergence of the electric field
+(Eqs. (54)–(56); $\mathfrak q$, $\Delta_{\mathrm u,\perp}$, $\Delta_{\mathrm u,\parallel}$
+page-local). In each [IMEX Runge–Kutta](/methods/imex-runge-kutta.md) stage
+the explicit part updates cell averages and the implicit part acts on the
+converted point values, $u^{(k)}_i=u^{(k*)}_i+\Delta t\,a_{kk}S(u^{(k)}_i)$
+(Eq. (24); $a_{kk}$ the diagonal coefficient of the implicit tableau,
+page-local). The authors call the pointwise treatment of the stiff source
+"crucial to achieve accuracy beyond the second order" within IMEX, citing
+Boscarino, Russo & Semplice (§1). The implicit step also performs the
+conversion to primitive variables, so it runs on three ghost layers, and the
+whole stage needs two boundary calls (§3.4, §3.10).
+
+**Mixed point-value and average unknowns.** In the
+[PAMPA scheme](/methods/pampa-scheme.md) of
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) no conversion is needed,
+because point values at the interfaces and cell averages are both carried
+as unknowns and evolved by two different forms of the equation. They are
+tied together by the parabola through the two interface values and the
+average of each cell,
+$u(x)=u_j\ell_0(\xi)+\bar u_{j+1/2}\ell_{1/2}(\xi)+u_{j+1}\ell_1(\xi)$ on
+$[x_j,x_{j+1}]$ with $\xi=(x-x_j)/\Delta x$, $\ell_0=(1-\xi)(1-3\xi)$,
+$\ell_{1/2}=6\xi(1-\xi)$, $\ell_1=\xi(3\xi-2)$ (page-local; the source's
+half-integer cell index), whose basis has $\int_0^1\ell_0=\int_0^1\ell_1=0$ and
+$\int_0^1\ell_{1/2}=1$ (Eq. (2.8)). Its interface derivative,
+$\partial_xu(x_j^+)=\tfrac2{\Delta x}(-2u_j+3\bar u_{j+1/2}-u_{j+1})$, drives the
+point-value update (Eq. (2.9)). *(Compiler check, not in the sources: the
+basis reproduces the stated values and integrals, and the derivative follows
+by differentiating at $\xi=0$.)*
+
 ## Evidence
 
 - **Necessity.** On a 3-D MHD vortex advected one period, Teissier et al.'s S8 without the point-value passage
@@ -101,16 +144,28 @@ interface and the transverse Laplacian for the flux average (§3.1–3.2, Eq. (3
 - **Cost.** Per step relative to S2: 1.3, 1.6, 2.2, 5.9 for S4–S10; to a fixed time, 1.3, 2.0, 3.5, 5.3
   ($512^3$, hardware not stated; Table 3). S6 at $96^3$ matches the energy loss of S4 at $192^3$ at about
   1.5 times S4's cost per cell to a fixed time, which the authors count as a gain "of order 10" (§4.1).
+- **Accuracy with a stiff source.** Mignone et al. (2024) obtain fourth order
+  on the telegraph equation (conductivities 1, 10, 20) and on a
+  stationary charged vortex, where the charge error is two orders of
+  magnitude below their earlier second-order scheme's (§4.1–4.2, Figs. 2–3);
+  on the ideal [tearing mode](/benchmarks/tearing-mode-instability.md) the
+  growth rate reaches the expected 0.27 at about half the resolution of the
+  second-order scheme (Table 1).
 - **Near discontinuities.** Berta et al. (2024, §3.4, Eq. (33)) note that the correction "may easily produce
   unphysical values such as negative energies or densities" at discontinuities, and switch it off there with a
   shock flag, falling back to $u=\bar u$ ([troubled-cell indicators](/definitions/troubled-cell-indicator.md));
   Teissier et al. treat smooth subsonic flows only and leave shocks, flattening and positivity to future work
-  (§1, §5).
+  (§1, §5). Mignone et al. (2024, §3.3, §3.9) repeat that the correction "may produce unphysical states" near
+  sharp gradients and use the same shock flag at the start of each step: in flagged cells the Laplacian
+  corrections of Eqs. (25) and (48) are dropped and the reconstruction falls back to WENO3 or linear, with
+  a five-zone stencil that needs no additional ghost zones.
 
 ## Qualifications
 
-- The formulas are exact only on polynomial data and unlimited; neither source bounds them near steep
-  gradients beyond the switch-off of Berta et al.
+- The formulas are exact only on polynomial data and unlimited; no source bounds them near steep
+  gradients beyond the switch-off of Berta et al. and Mignone et al. Mignone et al.'s central divergence of
+  the electric field is unlimited as well and "may lead to the appearance of spurious oscillations in the
+  presence of strong gradients" (§3.8).
 - Teissier et al. print every area-average factor in Eqs. (55), (76) and (77) as
   $(e^{\mathrm ik\Delta/2}-e^{\mathrm ik\Delta/2})$, with equal signs, which vanishes identically. *(Compiler check, not in the
   sources: the cell average of $e^{\mathrm ikx}$ over a width $\Delta$ is $(e^{\mathrm ik\Delta/2}-e^{-\mathrm ik\Delta/2})/(\mathrm ik\Delta)$, the
@@ -122,3 +177,5 @@ interface and the transverse Laplacian for the flux average (§3.1–3.2, Eq. (3
 
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §1; §3.1–3.7, Eqs. (18)–(65); §4.1–4.2, Tables 2–3, Fig. 11; §5; App. A, Eqs. (83)–(120) (arXiv v2).
 - [Berta et al. (2024)](/sources/berta-2024.md) — §3.1–3.2, Eqs. (16)–(30); §3.4, Eq. (33); App. A.
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §1; §3.2–3.10, Eqs. (24)–(29), (48), (53)–(56); §4.1–4.2, §4.5, Table 1.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §2, Eqs. (2.8)–(2.9).

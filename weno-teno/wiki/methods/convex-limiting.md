@@ -3,9 +3,9 @@ type: Method
 title: "Convex limiting and invariant-domain-preserving schemes"
 description: "Convex limiting blends a high-order update with a bound-preserving low-order update, adding as much antidiffusive flux as target bounds allow; the page gives the FCT form, graph viscosity and bar states, sparse low-order DG operators, Zalesak and convex limiters, element- versus subcell-wise blending, bound relaxation, subcell Rusanov finite volumes as sparse IDP DG, and semi-discrete monolithic convex limiting."
 status: established
-aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL]
+aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL, residual blending]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes
@@ -390,6 +390,39 @@ stated; [Trixi.jl](/software/trixi-jl.md)).
   can be expected for MCL but not for FCT schemes in problems that need
   stabilization" (§4).
 
+## Blending residuals of a non-conservative update
+
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) (§3) apply the construction to
+the [PAMPA scheme](/methods/pampa-scheme.md), whose interface point values are
+evolved by residuals that need not be conservative. The cell averages follow the
+pattern above: the flux is the local Lax–Friedrichs flux plus a fraction
+$\mathsf e_{i+1/2}=1-\alpha$ (page-local, the weight of the high-order part) of the
+antidiffusive flux $f(u_{i+1/2})-\hat f^{\mathrm{LO}}_{i+1/2}$, and under
+$\Delta t\le\Delta x/(a_{i-1/2}+a_{i+1/2})$ the update is a convex combination of
+the old average and two intermediate states, each a Lax–Friedrichs bar state
+shifted by $\pm\mathsf e\,\Delta\hat f/a$ (Eqs. (3.1)–(3.4)). The point values are
+limited the same way but per residual: each of the two residuals a node receives
+has its own coefficient, which is allowed because the point update carries no
+conservation constraint, and the update is again a convex combination of
+node bar states shifted by the limited residual differences (Eqs. (3.7)–(3.12)).
+The coefficients come in closed form, as the largest values that keep every
+intermediate state inside global bounds (Props. 3.1–3.2, Eqs. (3.5), (3.13)–(3.14))
+or inside local bounds built from the old average and its two bar states
+(Eq. (3.18), the formula of Kuzmin and Vilar, as the authors state). The local
+bounds are relaxed in cells that a derivative-based smooth-extrema detector marks
+as smooth, and the tests run the bounds either strict or widened by
+$\max\big(10^{-4},10^{-3}(u_{\max}-u_{\min})\big)$. With strict global bounds the
+linear-advection rates fall to about $2.2$–$2.6$ ($L^2$, $L^1$) and $1.8$
+($L^\infty$), with the relaxed ones they are $3.00$ (Tables 1–2); the authors
+attribute the loss to the strict global bounds, the local ones being switched off
+by the detector (Ex. 1, Remark 4.1), so it is not the local-bound order barrier of
+Pazner and Rueda-Ramírez et al. (2024) recorded under Qualifications.
+For the Euler equations the nonlinear internal-energy constraint is made linear by
+[geometric quasilinearization](/methods/geometric-quasilinearization.md), so the
+coefficient is again a closed-form ratio, minimized over the auxiliary velocity by
+an eigenvalue formula (§3.4, Appendix A), instead of the Newton-type line searches
+used for nonlinear bounds above.
+
 ## A nonlinear relative: constraint-driven modal filtering
 
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) (§3.1, Remark
@@ -552,3 +585,4 @@ nodes (Pazner, §3.1).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.1–2.2 (Eqs. (5)–(45), Remarks 2, 6–9); §3.1–3.5 (Tables 1–5, Figs. 1–9); §4.
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — arXiv v2: §1; §3.2, Eqs. (9)–(11); §5, Eqs. (16)–(24), Lemma 5.1, Theorem 5.2; §6.1–6.2, Eqs. (37)–(45), Theorems 6.1–6.2; Table 1, Fig. 3; App. B, Eqs. (70)–(81); footnotes 3–4.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3.1–3.2, Eqs. (25), (46), Thms 3.1–3.3; §4.3–4.4, Eqs. (62)–(68).
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §3.1–3.4, Eqs. (3.1)–(3.18), Props. 3.1–3.2; Appendix A; §4, Tables 1–2.

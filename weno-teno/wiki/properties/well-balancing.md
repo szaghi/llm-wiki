@@ -5,7 +5,7 @@ description: "A scheme for a balance law is well-balanced if it preserves a stea
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Well-balancing
@@ -112,7 +112,7 @@ system (§1, §4).
 ## Moving and discontinuous equilibria: flux globalization
 
 Writing $\partial_tu+\partial_xK=0$ with a global flux $K=f-\int^xS$ (page-local) makes every steady state a
-state of constant $K$ ([flux globalization](/methods/flux-globalization.md)). Two sources build
+state of constant $K$ ([flux globalization](/methods/flux-globalization.md)). Three sources build
 well-balanced schemes on it, with different discrete notions of the preserved state.
 
 - **Equilibrium variables** ([Kurganov et al. (2023)](/sources/kurganov-2023.md), §4). For
@@ -135,6 +135,24 @@ well-balanced schemes on it, with different discrete notions of the preserved st
   balanced with respect to all analytically computable equilibria" (§1); on moving equilibria
   its errors are 2 to 5 orders of magnitude below a standard WENO scheme at orders 3 and 5, and
   $q$ and $K$ are kept to about $10^{-9}$ (§5.3).
+
+- **Field-wise diffusion with equilibrium variables** ([Chu et al. (2025b)](/sources/chu-2025-b.md),
+  Remark 3.1). The LCD-PCCU scheme keeps the global fluxes, the equilibrium-variable
+  reconstruction and the modified states $\check u^\pm$ of Kurganov et al. and replaces the
+  scalar diffusion by the field-wise one of the
+  [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md). The proof follows
+  that of Theorem 2.1 of Cao, Kurganov, Liu and Xin (2022), as the authors state: at discrete data with $\mathsf E_i\equiv$ const,
+  $K^+_{i+1/2}=K^-_{i+1/2}=K^+_{i-1/2}$ is a constant $\hat K$ (Eq. (3.4)); with
+  $\mathcal P+\mathcal M=I$ and $\check u^+=\check u^-$ the numerical flux is $\hat K$ at every
+  interface, so the right-hand side vanishes. In 2D (Remark 4.1, proof omitted) the
+  dimension-by-dimension scheme preserves only steady states whose $x$-global flux does not
+  depend on $x$ and whose $y$-global flux does not depend on $y$; genuinely 2D steady states are
+  not preserved, and the authors add that "to the best of our knowledge, no existing numerical
+  method is capable of exactly preserving general 2-D steady states, even the smooth ones". On
+  the Ripa (thermal shallow-water) system a discontinuous constant-pressure equilibrium,
+  $(h,v,b)=(2,0,1)$ for $y<0$ and $(1,0,4)$ otherwise ($h$ the depth, $b$ the buoyancy,
+  page-local), is preserved by PCCU and LCD-PCCU with zero errors in $h$ and $b$ (§5.2.1,
+  Ex. 6) *(compiler check, not in the sources: $\tfrac12bh^2=2$ on both sides)*.
 
 Ciallella et al. do not compare with still-water well-balanced WENO schemes, citing earlier
 work that such methods "do not provide better performances on moving-water equilibria" (§5).
@@ -398,6 +416,11 @@ the authors call preservation of all steady states "fully well-balanced" and lea
 
 ## Qualifications
 
+- Chu et al. (2025b)'s claim that no existing method preserves general 2D steady states exactly
+  (Remark 4.1) is a belief "to the best of our knowledge", made for their balance laws; the
+  stationarity preservation of Active Flux recalled above (Calhoun et al. (2023)) preserves discrete
+  representations of all stationary states of linear acoustics, a different system and a
+  discrete notion, so the two statements do not collide as printed.
 - Wang & Don's "well-balanced for any $\epsilon$" rests on two values of $\epsilon$; it follows
   from their Thm. 1 in exact arithmetic. The claim that characteristic-wise WB WENO is also
   well-balanced for the Euler equations under gravity without linearization is stated but not
@@ -411,7 +434,7 @@ the authors call preservation of all steady states "fully well-balanced" and lea
   ($\approx10^{-33}$ to $10^{-34}$ in quadruple precision); Arun et al. state that the challenge is to resolve perturbations
   "up to machine precision" (§1) but report $L^1$ errors of $10^{-6}$ to $10^{-4}$ on 100
   cells; they interpolate the exact equilibrium onto the grid (§5.2.1); Kanbar et al. print
-  no magnitude; Chu et al. print no lake-at-rest round-off test either, only the
+  no magnitude; Chu et al. (2022) print no lake-at-rest round-off test either, only the
   perturbation plots. *(compiler check, not in the sources: the errors fall by about 100 per
   tenfold refinement, i.e. second order; and for $\gamma=1$, $\varepsilon=1$, $\phi=x$ the
   interpolated state $\rho_i=e^{x_i}$ misses the discrete equilibrium (4.16) by
@@ -453,3 +476,4 @@ the authors call preservation of all steady states "fully well-balanced" and lea
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.3 (Eqs. (2), (14)–(19), (26)–(36), Remark 2.1), §3 (Figs. 3–24) (HAL wrap of the version of record).
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §2.1 (Table 1, Property 2.1), §3 (Def. 3.1, Thms. 3.1–3.2, Eqs. (3.18)–(3.23)), §4 (Thms. 4.1–4.3, Lemma 4.1, Alg. 1), §5 (arXiv v1).
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — §2, §3.5.1 (Eq. (34)), §3.5.3, §4.5 (Eq. (48)), §4.6 (Eq. (60)), §5.2 (Figs. 5–6) (HAL preprint).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — Remark 3.1 (Eq. (3.4)), Remark 4.1, §5.2.1 (Ex. 6).

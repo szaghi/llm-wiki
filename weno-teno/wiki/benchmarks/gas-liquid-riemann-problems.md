@@ -5,7 +5,7 @@ description: "One-dimensional gas–liquid Riemann problems with exact or refere
 status: established
 aliases: [gas–water Riemann problem, gas–liquid shock tube, water–air shock tube, Cocchi gas–liquid Riemann problem, two-medium Riemann problems]
 tags: [benchmark, multiphase, interface-capturing, riemann-solver]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Gas–liquid Riemann problems
@@ -76,7 +76,7 @@ $p=10^5$ Pa), at rest, with water $(\gamma,p_\infty)=(4.4,\ 6\times10^8\ \mathrm
 extrapolation boundaries; $N_x=128$ and $512$ to $t=240\,\mu$s against WENO5IS-THINC on
 12800 cells.
 
-**Shock on a water–air interface (Shukla).** Zhang et al. §§4.3–4.4 (Tables 4–5) run two
+**Shock on a water–air interface (Shukla).** Zhang et al. (2024a) §§4.3–4.4 (Tables 4–5) run two
 cases on $[0,5]$ m with the same water constants. *Static interface:* shocked water
 ($\phi_1\rho_1=1230$, $v=432.7$ m/s, $p=10^9$ Pa) on $0<x<1.31$, water
 $(1000,0,10^5)$ on $1.31<x<2$, air $(1,0,10^5)$ beyond, $t=1000\,\mu$s, $N_x=128$ and
@@ -223,6 +223,23 @@ with 200 cells to $t=0.15$. They use the sharp-interface
 [JAX-Fluids](/software/jax-fluids.md) and HLLC, and do not print the
 initial states.
 
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) run two gas–gas
+problems in the five-equation (Kapila) model, with states in
+$(\rho_1,\rho_2,v,p,\phi_1)$ (phase densities, volume fraction of
+fluid 1):
+
+- a shock–interface interaction with pressure ratio 100 (Ex. 4.4, after
+  Liu et al. as they cite it): $(0.3884,\ 1,\ 27.1123\sqrt{10^5},\ 10^7,\ 10^{-10})$
+  for $x<0.2$, $(0.1,1,0,10^5,10^{-10})$ on $0.2<x<0.3$ and
+  $(0.1,1,0,10^5,1-10^{-10})$ for $x>0.3$, $\gamma_1=5/3$,
+  $\gamma_2=1.4$, on $[0,1]$ with 200 cells and outflow boundaries, to
+  $t=10^{-4}$;
+- a two-phase Lax tube (Ex. 4.6): $(0.445,0.5,0.698,3.528)$ for $x<0$
+  and $(0.445,0.5,0,0.571)$ for $x>0$, with the volume fraction
+  $\phi_1=x+0.5$ varying linearly across $[-0.5,0.5]$, $\gamma_1=1.4$,
+  $\gamma_2=1.6$, 1000 cells, outflow, $t=0.17$, against a VFRoe-ncv
+  reference on 100,000 cells.
+
 ## Findings across sources
 
 **Holding the interface thickness.** Huang & Johnsen's
@@ -261,7 +278,7 @@ $2.6\times10^{-6}$ m for water, is unresolved on 2000 cells, without
 spurious waves or instability (§4.1.2, §4.1.4).
 
 **THINC hybrids against plain WENO and MUSCL.** On the $10^9$ Pa water–air tube,
-Zhang et al.'s WENO5IS-THINC sharpens the interface and places the shock and rarefaction
+Zhang et al. (2024a)'s WENO5IS-THINC sharpens the interface and places the shock and rarefaction
 more accurately than WENO5IS alone and the MUSCL-THINC of Garrick et al. (§4.2, Fig. 5).
 On the shocked static interface WENO5IS alone oscillates at the transmitted shock and the
 head of the rarefaction, and both THINC hybrids suppress this; on the moving interface the
@@ -294,7 +311,14 @@ Eqs. (93)–(95)). Bezgin et
 al.'s sharp-interface run places the interface and the shock correctly and
 shows slight density oscillations at the interface. They call these
 consistent with the original method of Hu et al., since no isobaric fix is
-applied (§5.2.1).
+applied (§5.2.1). Yan et al.'s bound-preserving
+[OEDG](/methods/oedg.md) scheme shows no visible oscillations at the
+interface on the shock–interface problem (Fig. 6), and on the two-phase
+Lax tube both their scheme and its variant with the averaged
+discretization of the non-conservative source (AVE) agree with the
+reference (Fig. 8); on the shock–interface run the ratio of the
+interior-source part to the flux part of their bound-preserving
+time-step bound stays far below one, as the authors state (Fig. 9).
 
 **Interface location.** Zheng et al.'s conservative sharp-interface
 scheme ([level-set methods](/methods/level-set-method.md)) gets the
@@ -357,7 +381,7 @@ cost in conservation is discussed under
 - Wakimura et al.'s text calls $\rho_2=1150$ kg/m³ "the gas density" of the cavitation
   tube; their Eq. (46) and the liquid volume fraction $0.99$ make it the liquid density
   $\rho_1$, as the table above reads it.
-- Zhang et al.'s water ($\gamma=4.4$, $p_\infty=6\times10^8$ Pa) has the $\gamma$ of Nguyen
+- Zhang et al. (2024a)'s water ($\gamma=4.4$, $p_\infty=6\times10^8$ Pa) has the $\gamma$ of Nguyen
   et al.'s version of the same tube, whose $p_\infty$ is not printed, and differs from the
   $\gamma=5.5$, $6.12$, $7.15$ fits listed above.
 - Nguyen et al.'s Fig. 10 labels the pressure axis in MPa with a
@@ -393,3 +417,4 @@ cost in conservation is discussed under
 - [Long et al. (2023)](/sources/long-2023.md) — §2.2, §4.1, Eqs. (28)–(32), Figs. 4–5: liquid–vapour tubes with evaporation and condensation.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §§4.2–4.4, Tables 3–5, Figs. 5–8: water–air tube, shock on static and moving water–air interfaces, $L_1$ convergence.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §§4.1–4.2, Eqs. (46)–(47), Figs. 1–3: cavitation tube and mainly-vapour shock tube with phase change.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.4, 4.6, Figs. 6, 8–9: gas–gas shock–interface problem and two-phase Lax tube in the Kapila model (gas–gas only).

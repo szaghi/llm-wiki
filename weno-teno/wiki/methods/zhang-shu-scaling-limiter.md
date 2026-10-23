@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T14:55:00Z
 ---
 
 # Zhang–Shu scaling limiter
@@ -147,7 +147,7 @@ scaling acting on the result of the previous one, with the density first:
   $g(u)=E-\tfrac12\big(\lvert\rho v\rvert^2/\rho+\lvert B\rvert^2\big)$,
   used in place of the pressure, which is not concave in $u$ when $\gamma$
   depends on the mass fractions (Eq. (6.3)).
-- **Relativistic MHD, central DG** ([Ding & Wu (2024)](/sources/ding-2024-b.md),
+- **Relativistic MHD, central DG** ([Ding & Wu (2024b)](/sources/ding-2024-b.md),
   §3.3, §4.5, Eqs. (33)–(36), Remarks 4–6, 8). Three successive scalings
   into the shrunk set $\{D\ge\varepsilon_D,\ q\ge\varepsilon_q,\ \Phi_\varepsilon\ge0\}$,
   with $q=E-\sqrt{D^2+\lvert m\rvert^2}$ and $\Phi$ the closed-form third
@@ -182,6 +182,51 @@ scaling acting on the result of the previous one, with the density first:
   $\epsilon=\min\{10^{-13},\bar u_i\}$, applied to "the reconstructed
   polynomials of density and thermal pressure"; how the pressure polynomial
   is obtained from the reconstructed conservative variables is not stated.
+
+- **Reacting Navier–Stokes in molar concentrations** ([Ching et al. (2025)](/sources/ching-2025.md),
+  §4.3). Four successive scalings at the end of every Runge–Kutta stage, on the
+  volume and surface quadrature points: the species concentrations $C_k$
+  (page-local) toward their means by
+  $\theta_1=(\rho(\bar u)-\varepsilon)/(\rho(\bar u)-\min\rho)$ if the density falls below
+  $\varepsilon$ ($10^{-10}$, for example); each $C_k$ by its own
+  $\bar C_k/(\bar C_k-\min C_k)$ where it is negative; the whole state by the
+  same ratio form for $\rho e^*$, the internal energy shifted by its value at $T=0$
+  (concave, so positivity follows); and, on the convective half of their split
+  update only, the whole state by $\chi(\bar u)/(\chi(\bar u)-\min\chi)$ with
+  $\chi=\rho s-\rho s_{\mathrm b}$ and $s_{\mathrm b}$ the local minimum of the
+  specific entropy over the cell and its neighbours at the previous step
+  (page-local $\chi$, $s_{\mathrm b}$). The new state is the mean of the limited
+  convective and viscous halves
+  ([positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
+  The authors state that the limiter "is not expected to suppress all small-scale
+  instabilities" and run it with artificial viscosity.
+- **Ideal MHD on finite-volume point values with a discrete divergence
+  constraint** ([Ding & Wu (2024a)](/sources/ding-2024.md), §2.4, Eqs.
+  (37)–(39), Thm 2.9, arXiv v1). The limiter acts on the interface quadrature
+  values of a WENO reconstruction, with no polynomial: first the density alone,
+  $\theta_1=\min\{(\bar\rho-\varepsilon_1)/(\bar\rho-\rho_{\min}),1\}$,
+  $\varepsilon_1=\min\{10^{-13},\bar\rho\}$, then the whole state with the same form
+  for the internal energy $E-\tfrac12(\lvert\rho v\rvert^2/\rho+\lvert B\rvert^2)$. For
+  order $k\ge3$ the minima include the interior remainder state of the
+  Gauss–Lobatto decomposition, written from the point values. The second step
+  also scales $B$ toward its cell average, and the limited values keep the
+  discrete divergence condition of the cell because the discrete divergence is
+  linear and vanishes for a constant state (Thm 2.9). On a low-pressure vortex
+  (minimum pressure about $5.3\times10^{-12}$) the fifth-order scheme with the
+  limiter reaches orders $4.80$–$5.05$ (Table 4.1); without it the blast and jet
+  computations stop on negative pressure (Ex. 4.4–4.5;
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
+- **Five-equation two-phase model** ([Yan, Abgrall & Wu (2024)](/sources/yan-2024.md),
+  Eqs. (2.39)–(2.40), (3.33)–(3.34), Thms 2.13–2.14). On the union of the Gauss and
+  Gauss–Lobatto points, first one factor for the whole state, the smallest of
+  $\min\{(1-\bar\phi_1)/(\max\phi_1-\bar\phi_1),\ \bar\phi_1/(\bar\phi_1-\min\phi_1),\ 1\}$
+  for the volume fraction and of the density-type factors for the two partial
+  densities (floors $\min\{\overline{\phi_k\rho_k},10^{-13}\}$), then a second factor for
+  the internal energy with floor $\min\{\rho e(\bar u),10^{-13}\}$. The limiter maps
+  $u$ to $\bar u+\theta_2\theta_1(u-\bar u)$ and is therefore invariant under linear
+  identities $\Lambda u\equiv c$ (Thm 2.13, proof omitted), which is how it keeps
+  uniform velocity and pressure at a material interface (Thm 2.14;
+  [OEDG](/methods/oedg.md)).
 
 **Iterated halving for the pressure.** In the GPU discontinuous Galerkin
 code [TENET](/software/tenet.md), [Cernetic et al. (2023)](/sources/cernetic-2023.md)
@@ -425,6 +470,12 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
   not $p>0$ (Eq. (83)) *(compiler check, not in the sources)*; the density
   floor is written $\epsilon_\rho$ in the equation and $\varepsilon_\rho$
   in the text.
+- **Point values that a constraint couples.** Ding & Wu (2024a) state that the
+  coupling of the interface values by their discrete divergence condition
+  "invalidates" the classical convex-decomposition proof of Zhang & Shu, and prove
+  positivity of the averages with
+  [geometric quasilinearization](/methods/geometric-quasilinearization.md) instead
+  (§3); the limiter itself is unchanged in form.
 - **Scope.** The guarantee is on cell averages and on the chosen point set;
   between points the polynomial may leave $G$.
 
@@ -448,5 +499,8 @@ in practice and is more convenient for FD schemes" (§1, Remark 2.3).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §3.1.3, Eq. (3.9); Lemma 3.2; Remark 3.4; §4.1 (2D point set).
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §4.2, Eq. (47).
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2, Eqs. (31)–(35).
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §3.3, Eqs. (33)–(36), Remarks 4–6; §4.5, Eq. (75), Remark 8; §5.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §3.3, Eqs. (33)–(36), Remarks 4–6; §4.5, Eq. (75), Remark 8; §5.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §5.6, Eqs. (66)–(69); §8, Eqs. (80)–(84); §9, Fig. 4.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §4.3 (limiting procedure); Remark 9.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — arXiv v1: §2.4, Eqs. (37)–(39), Thm 2.9; §3 intro; §4, Table 4.1, Ex. 4.4–4.5.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Eqs. (2.39)–(2.40), (3.33)–(3.35); Thms 2.13–2.14.

@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "MHD blast wave and rotor"
-description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, a 3D blast, relativistic (up to a field of 2000), two-fluid and radiative counterparts, and the first and second rotor problems, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
+description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer blast wave (plasma beta about 2.5×10^-4), an extreme variant at pressure ratio 10^5, 3D, relativistic (fields up to 10^4), resistive, two-fluid and radiative counterparts, and the first, second and relativistic rotors, which probe pressure positivity and divergence errors; plus a smooth weak magnetic blast verifying entropy conservation of DG."
 status: established
-aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
+aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast, cylindrical explosion, resistive relativistic rotor]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:21:00Z
 ---
 
 # MHD blast wave and rotor
@@ -37,6 +37,22 @@ Godunov–Powell source term and a Zhang–Shu-type
 [scaling limiter](/methods/zhang-shu-scaling-limiter.md) on density and
 pressure, produces no negative pressure, and its density is
 "significantly smoother" than earlier published results (Fig. 13).
+
+**Discretely divergence-free positivity preservation.** [Ding & Wu (2024a)](/sources/ding-2024.md)
+Ex. 4.4 (arXiv v1) run the Balsara–Spicer data as Liu et al. ($\gamma=1.4$,
+$[-0.5,0.5]^2$, $B_1=100/\sqrt{4\pi}$, $p=10^3$ for $r\le0.1$ and $0.1$
+otherwise) on $200^2$ cells; the final time is not stated in the text.
+Their second-order (van Albada) and fifth-order (finite-volume WENO-Z)
+schemes with the discretely divergence-free projection and the
+positivity-preserving limiter, Lax–Friedrichs flux and SSP-RK3 at CFL
+0.3, are robust; the fifth-order WENO scheme without the projection
+shows oscillations and nonphysical structures, and with the limiter
+switched off it breaks down on a negative pressure (Figs. 4.2c, 4.5).
+Their positivity theorem (Thm 2.1) requires the projection, the
+limiter and their interface-jump discretization of the Godunov–Powell
+source together; see
+[bound preservation](/properties/bound-preservation.md) and
+[divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
 **One-step HLL-GRP.** [Liu, Feng & Wang (2023a)](/sources/liu-2023.md)
 §4.4 run the same data (same domain, outgoing boundaries, $\gamma=1.4$,
@@ -138,7 +154,7 @@ this test (see [troubled-cell indicators](/definitions/troubled-cell-indicator.m
 
 ### Relativistic MHD blast
 
-[Ding & Wu (2024)](/sources/ding-2024-b.md) Example 5.8 run the same
+[Ding & Wu (2024b)](/sources/ding-2024-b.md) Example 5.8 run the same
 relativistic blast geometry ($[-6,6]^2$, $\rho=10^{-2}$, $p=1$ for $r<0.8$,
 $\rho=10^{-4}$, $p=5\times10^{-4}$ for $r>1$, a linear taper in between,
 $v=0$, $B=(B_{\mathrm a},0,0)$, $t=4$, outflow boundaries) with the
@@ -167,6 +183,48 @@ above. Their fifth-order entropy-stable scheme on an
 $150^2$ cells (2 min 3 s on 4 cores) is much better than the uniform
 $150^2$ mesh (30 s) and comparable to the uniform $600^2$ mesh
 (28 min 14 s), i.e. at 7.26 % of its CPU time (Table 6.1, Fig. 6.9).
+
+**Cylindrical explosion at extreme magnetization.** [Komissarov & Phillips (2024)](/sources/komissarov-2024.md)
+§5.3 (arXiv v3) run the relativistic cylindrical explosion of
+Komissarov (1999) with their
+[force-free splitting](/methods/force-free-splitting-rmhd.md) of ideal
+relativistic MHD: ambient $\rho=10^{-4}$, $p=3\times10^{-5}$, a
+cylinder of radius $0.9$ with $\rho=10^{-2}$, $p=1$, joined by a tanh
+profile of width $0.03$; $(-6,6)^2$, $400^2$ points, $\gamma=4/3$,
+$t=4$, uniform field $B_0\in\{0.01,0.1,1,10^3,10^4\}$. They print the
+magnetization $\lvert B\rvert^2/w_{\mathrm h}$ ($w_{\mathrm h}$ the relativistic enthalpy
+density, page-local) of the cylinder and of the ambient medium as
+$2.5\times10^{-5}$ and $0.45$ for $B_0=0.01$, up to $2.5\times10^5$ and
+$4.5\times10^9$ for $B_0=10^3$; with $w_{\mathrm h}=\rho+4p$ the ambient
+$0.1^2/(2.2\times10^{-4})=45$ for $B_0=0.1$ is reproduced *(compiler
+check, not in the sources)*. Their third-order finite-difference
+scheme (third-order WENO interpolation of the primitive variables, HLL,
+SSP-RK3, [GLM cleaning](/methods/glm-divergence-cleaning.md)) gives
+results visually indistinguishable from the unsplit "standard" mode at
+$B_0=0.01$ and $0.1$; at $B_0=1$ the standard mode crashes, and the
+authors could not reproduce the earlier published $B_0=1$ result of
+Komissarov (1999), "indicating some unusual undocumented tweaking of
+the code"; the split scheme runs at $B_0=10^3$ with Courant number 0.1
+for the first steps and is compared with a 1D hydrodynamic solution
+along $y=0$ (Figs. 14–15). On $200^2$ at $B_0=0.1$ the run to $t=4$ takes 24
+CPU seconds (134 steps, one Apple M2 core), the standard mode is about
+20 % faster and the conversion to primitive variables takes about 36 %
+of the run time. Their error parameter, the relative field error times
+magnetization over $W^2$ estimated from $\nabla\cdot B$, is about 4 for
+the $B_0=1$ explosion and at most about 0.3 for $B_0=0.1$, where the
+standard mode succeeds (§5.6, Fig. 22).
+
+**Resistive relativistic MHD.** [Mignone et al. (2024)](/sources/mignone-2024.md)
+§4.4 run a 3D blast after their earlier resistive paper, on $[-6,6]^3$
+with $B=0.1\,\hat e_x$ and a tapered over-pressurized sphere of radius
+$0.8$, whose inner and outer $\rho$ and $p$ are not printed in the
+paper; resistivity $10^{-6}$, $t=4$, CFL 0.3, zero-gradient
+boundaries. Their fourth-order finite-volume scheme (pointwise WENO-Z,
+MHLLC flux, fourth-order constrained transport, the IMEX
+SSP3(4,3,3) stepper, fallback to linear reconstruction in flagged
+cells) keeps the forward shock almost radial, with maximum Lorentz
+factor about 5.4 (Fig. 5); see [PLUTO](/software/pluto.md) and
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md).
 
 **Two-fluid relativistic plasma.** [Bhoriya, Kumar & Chandrashekar (2023)](/sources/bhoriya-2023.md)
 §6.2.2 (arXiv v2) split the same data between ion and electron fluids:
@@ -232,6 +290,18 @@ overshoots of the third-order scheme in $B_1$ and $B_2$ slices
 against the second-order $600^2$ one as showing "the superiority of
 higher-order methods".
 
+Ding & Wu (2024a) Ex. 4.3 run the second rotor with the same
+$\gamma=5/3$, $B=(2.5/\sqrt{4\pi},0,0)$, $p=0.5$ and disk speed 1 at
+$r=0.1$, taper to $r=0.115$, on $[0,1]^2$ with outflow boundaries
+(not periodic), $400^2$ cells, $t=0.295$. With the discretely
+divergence-free projection the divergence error is about $10^{-13}$;
+without it the error grows quickly and nonphysical structures appear
+in the Mach number (Figs. 4.2b, 4.3, 4.4). They print the taper
+function as $(r_2-r)/(r_2-r_0)$ with $r_0$ undefined (their radii are
+$r_1=0.1$, $r_2=0.115$); continuity of the density $1+9\varphi$ with
+the disk value 10 requires the denominator $r_2-r_1$, as in Liu et
+al. *(compiler check, not in the sources)*.
+
 Dematté et al. (2024) §4.1.4 run a rotor with the second-rotor
 kinematics (disk of density 10 rotating with $v=(5-10y,\ 10x-5)$, edge speed
 $1$ at $r=0.1$, Tóth's taper $(23-200r)/3$ up to $r=0.115$) but $p=1$,
@@ -285,7 +355,7 @@ leave invariant-domain preservation out of scope.
 
 ### Relativistic rotor
 
-Ding & Wu (2024) Example 5.6 run a relativistic rotor after its
+Ding & Wu (2024b) Example 5.6 run a relativistic rotor after its
 relativistic extension in the literature they cite, with the
 equation of state they label RC,
 $h=(12p^2+8p\rho+2\rho^2)/(3p\rho+2\rho^2)$ (their Eq. (89)): on $[-0.5,0.5]^2$ with
@@ -296,6 +366,22 @@ outside; $B=(1,0,0)$, $p=1$ everywhere; $\alpha_{\mathrm r}=9.95$
 (page-local), so the disk edge moves at $0.995$ *(compiler check, not in the sources)*; $400^2$ cells, $t=0.4$
 (Fig. 8). The bound-preserving central DG scheme runs with zero local
 divergence error (Fig. 7b, 7e).
+
+### Resistive relativistic rotor
+
+Mignone et al. (2024) §4.3 run a resistive variant of the relativistic
+rotor they attribute to Del Zanna, Bucciantini & Londrillo (2003): a
+disk of density 10 and radius 0.1 spinning with angular velocity 8.5
+(edge speed 0.85 *(compiler check, not in the sources)*) in a medium
+with $\rho=1$, $p=1$, $\gamma=4/3$, $B=(1,0,0)$, on $[-0.5,0.5]^2$ with
+$400^2$ cells to $t=0.3$, for resistivities $10^{-6}$, $10^{-3}$ and
+$10^{-1}$, with fallback to WENO3 in flagged cells (Fig. 4). Only the
+third-order SSP3(4,3,3) IMEX stepper completes the run at resistivity
+$10^{-6}$, the fourth-order ARK4(3)7L[2]SA1 does not, which they take
+to confirm "the reduced stability of the fourth-order method, which is
+not SSP"; at $10^{-1}$ spurious $m=4$ modes appear, an artefact of the
+Cartesian grid more evident with MHLLC than with a more diffusive
+solver.
 
 ### Rotor in polar coordinates
 
@@ -344,6 +430,13 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - Dzanic & Witherden define the magnetic pressure as
   $\tfrac12(\gamma-1)\lvert B\rvert^2$ (§2.1), not the $\tfrac12\lvert B\rvert^2$
   of their own flux (Eq. 2) and plasma beta $2p/\lvert B\rvert^2$.
+- Komissarov & Phillips's tests use units with $c=1$ and no $4\pi$;
+  their ambient-to-cylinder magnetization ratio is set by the ambient
+  enthalpy $w_{\mathrm h}=\rho+4p$, not by a plasma beta.
+- Mignone et al. (2024) state the ARK4 stability limit three ways:
+  unstable for resistivity $\lesssim10^{-4}$ (charged vortex, §4.2),
+  failure at $10^{-6}$ (rotor, §4.3) and SSP3(4,3,3) "more robust" for
+  $\lesssim10^{-5}$ (§5).
 - The blast-wave comparison with earlier results is visual, against
   figures of other papers; so are the rotor runs of Dao & Nazarov and
   Lesur et al.
@@ -366,5 +459,8 @@ itself is visibly distorted at $t=0.5$, $N=6$ (Fig. 4). See
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.2.1, Figs. 8–10 (arXiv v1).
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §§4.4–4.6, Figs. 8–20.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §4, §4.1.4, §4.1.6, Figs. 6–8, 10.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — Examples 5.6, 5.8, Figs. 7–8, 10–11.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — Ex. 4.3–4.4, Thm 2.1, Figs. 4.2b–c, 4.3–4.5 (arXiv v1).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — Examples 5.6, 5.8, Figs. 7–8, 10–11.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §5.3, §5.6, Eq. (99), Figs. 14–15, 22 (arXiv v3).
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §§4.3–4.4, §5, Figs. 4–5.
 - [Berta et al. (2024)](/sources/berta-2024.md) — §5.7, Eq. (55), Table 3, Figs. 11–13 (arXiv v4).

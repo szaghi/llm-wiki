@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Optimal cell-average decomposition
@@ -169,7 +169,7 @@ in new schemes and print the closed forms of $\varpi_\star(\varkappa)$
 beyond $\mathbb P^{2,3}$.
 
 - **Relativistic MHD, central DG on overlapping meshes**
-  ([Ding & Wu (2024)](/sources/ding-2024-b.md), §4.3, §4.6, Eqs.
+  ([Ding & Wu (2024b)](/sources/ding-2024-b.md), §4.3, §4.6, Eqs.
   (53)–(60), Cors. 4.1–4.2). A central-DG solution of one mesh is
   discontinuous inside the cells of the other, so they split each target
   cell into four quarter cells and apply a general feasible symmetric
@@ -212,7 +212,7 @@ beyond $\mathbb P^{2,3}$.
 
 ## Classic decompositions in other sources
 
-Five further sources of the bundle prove bound preservation with classic
+Six further sources of the bundle prove bound preservation with classic
 decompositions, and their CFL numbers show what an optimal one would
 change.
 
@@ -313,6 +313,35 @@ change.
   $\alpha_{21}/\beta_{21}=\alpha_{32}/\beta_{32}=0.79298$, $\alpha_{10}/\beta_{10}=1.41404$,
   the others infinite)*.
 
+- **DG with an arbitrary positive quadrature, reacting Navier–Stokes**
+  ([Ching et al. (2025)](/sources/ching-2025.md), §4.2.2, §4.4, Eqs.
+  (4.17)–(4.23), (4.33)–(4.39)). Following Lv & Ihme, as recalled, the
+  cell average of a DG solution with a positive volume quadrature
+  $\{x_q,\mathsf w_q\}$ that need not contain the endpoints is written
+  $\bar u_K=\sum_q\theta_q u_h(x_q)+\theta_{\mathrm L}u_h(x_{\mathrm L})+\theta_{\mathrm R}u_h(x_{\mathrm R})$
+  (page-local $\theta_q$, $\theta_{\mathrm L}$, $\theta_{\mathrm R}$, not the Zhang–Shu
+  factor): if the endpoints are quadrature points, $\theta_{\mathrm{L,R}}$ are their
+  weights; otherwise $\theta_q=\mathsf w_q-\theta_{\mathrm L}\psi_q(x_{\mathrm L})-\theta_{\mathrm R}\psi_q(x_{\mathrm R})$,
+  with $\psi_q$ the Lagrange polynomials on a subset of the points, and
+  positive endpoint weights with $\theta_q\ge0$ exist. The endpoint weights
+  then set the time step: for the viscous half of their split update
+  $\Delta t^*/h\le\min\{\theta_{\mathrm L}/a^\nu_{\mathrm L},\theta_{\mathrm R}/a^\nu_{\mathrm R}\}$
+  (Thm 6, Eq. (4.23)), for the convective half
+  $\Delta t^*a/h\le\tfrac12\min\{\theta_{\mathrm L},\theta_{\mathrm R}\}$ (Eq. (4.21), from
+  their inviscid work), with $\Delta t^*=2\Delta t$ and $a^\nu_{\mathrm{L,R}}$ the
+  coefficients at the two endpoints of a Lax–Friedrichs penalty on the viscous
+  flux alone (page-local, the source's $\beta$; unlike the total-flux
+  $a^{\mathrm{NS}}$ above it has no convective part; see the
+  [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md)
+  page). In multi-D, on curved elements with a varying Jacobian, the face points
+  carry $\theta_{f,l}=\lvert J_{f,l}\rvert\mathsf w_{f,l}/(\lvert K\rvert N_{f,l})$, $J_{f,l}$ the element Jacobian at point $l$ of face $f$, when they
+  are volume points ($N_{f,l}$ the number of faces sharing the point; page-local)
+  and the condition becomes
+  $\Delta t^*/\lvert K\rvert\le\min_{f,l}\theta_{f,l}/(a^\nu_{f,l}\nu^\partial_{f,l})$, with
+  $\nu^\partial_{f,l}$ the surface weight times the surface Jacobian (Thm 8, Eq.
+  (4.39); page-local). The quadrature-free form is covered because its basis
+  integrals are the weights of a generalized Newton–Cotes rule (§4.4.3).
+
 ## Qualifications
 
 - Optimality is within decompositions of the Zhang–Shu form, whose boundary
@@ -336,11 +365,11 @@ change.
 
 - **A printed exponent.** Fan & Wu print the argument of the arccos as
   $(1476\varkappa^2-244)/(78\varkappa^2+46)$, without the exponent $3/2$
-  that Ding & Wu print; at $\varkappa=0$ the printed argument is
+  that Ding & Wu (2024b) print; at $\varkappa=0$ the printed argument is
   $-244/46\approx-5.30$, outside the domain of the arccos, while with the
   exponent it is $-0.782$ and the formula returns their own value
   $2-\sqrt{14}/2$ *(compiler check, not in the sources)*.
-- Ding & Wu's tests run at a step above the proved bound
+- Ding & Wu's (2024b) tests run at a step above the proved bound
   ([bound preservation](/properties/bound-preservation.md), Qualifications).
 
 # Citations
@@ -352,5 +381,6 @@ change.
 - [Renac (2021)](/sources/renac-2021.md) — arXiv v3: Thm 6.1 (Eq. (66)), Rem. 6.1, App. A.
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: Rem. 3.4 (Eq. (44)); Thm 3.1 (Eqs. (57)–(59)).
 - [Du & Yang (2022)](/sources/du-2022-b.md) — Thm 4.1; Thm 4.3 (Eq. (4.17)); Thms 5.4–5.6; Rem. 5.1.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §4.3 (Eqs. (53)–(60), Fig. 2); §4.6 (Cors. 4.1–4.2, Eqs. (54)–(56), (76)–(77), Fig. 1, Remark 9).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §4.3 (Eqs. (53)–(60), Fig. 2); §4.6 (Cors. 4.1–4.2, Eqs. (54)–(56), (76)–(77), Fig. 1, Remark 9).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §2.4, Eqs. (2.52)–(2.57), Thm 11, Remark 5.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §4.2.2, Eqs. (4.17)–(4.23); §4.4, Eqs. (4.27)–(4.39), Thms 6, 8.

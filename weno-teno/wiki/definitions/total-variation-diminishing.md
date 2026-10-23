@@ -5,7 +5,7 @@ description: "TVD reconstruction limits the interface value of a second-order sc
 status: established
 aliases: [TVD, TVD limiter, flux limiter, slope limiter, MUSCL limiter, minmod]
 tags: [limiting, reconstruction, finite-volume, central-scheme]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Total variation diminishing (TVD) and slope limiters
@@ -130,7 +130,9 @@ $z_j<0$, $0$ otherwise, is the reconstruction of the second-order
 central-upwind schemes ([Chertock et al. (2023)](/sources/chertock-2023.md),
 §2.1, Eqs. (2.5)–(2.7)). The same minmod function enters the
 anti-diffusion correction of the CURH flux
-([Wang et al. (2023b)](/sources/wang-2023-b.md), §3, Eq. (5)).
+([Wang et al. (2023b)](/sources/wang-2023-b.md), §3, Eq. (5)). [Chu et al. (2025b)](/sources/chu-2025-b.md)
+(§2, Eqs. (2.5)–(2.6)) use the same three-argument form with factor $\beta=1.3$ (their $\theta$)
+on conservative or equilibrium variables, as Kurganov et al. (2023) do.
 
 **Slopes on stretched and mapped meshes.** [Peng et al. (2022)](/sources/peng-2022.md)
 (§2.4, Eqs. (15)–(20)) use minmod-limited MUSCL in a MUSCL–Hancock finite-volume scheme on
@@ -177,6 +179,23 @@ $\tilde u_{i+1/2}=\tilde u_i+\tfrac12\psi\big(\tilde u_i/(1-\tilde u_i)\big)(1-\
 ref. [26], a classification of limiters into dissipative, compressive and
 overcompressive (compressive ones may create kinks, overcompressive ones jumps),
 with minmod "the most compressive out of dissipative limiters".
+[Chu et al. (2025a)](/sources/chu-2025.md) (§2.1.1, Eq. (2.6)) give this classification a
+one-parameter form through the **SBM limiter** of Lie and Noelle, as they recall it, with
+parameters $\beta\in[1,2]$ and $\tau_{\mathrm S}$ (page-local; the source's $\theta$, $\tau$):
+
+$$\psi^{\mathrm{SBM}}(r)=0\ (r<0),\qquad \psi^{\mathrm{SBM}}(r)=\min\{\beta r,\ 1+\tau_{\mathrm S}(r-1)\}\ (0<r\le1),\qquad \psi^{\mathrm{SBM}}(r)=r\,\psi^{\mathrm{SBM}}(1/r)\ (r>1).$$
+
+$\tau_{\mathrm S}\ge0.5$ is dissipative (contacts smeared in time), $0\le\tau_{\mathrm S}<0.5$
+compressive (sharp contacts, smooth extrema compressed into kinks), $\tau_{\mathrm S}<0$
+overcompressive (very sharp contacts, artificial $O(1)$ jumps in smooth flow); larger $\beta$ is
+less dissipative and more oscillatory. With $\beta=2$, $\tau_{\mathrm S}=0.5$ it is the
+generalized minmod with factor 2 below ("Minmod2", §2.2). *(compiler check, not in the sources:
+for $0<r\le1$ both give $\min\{2r,(1+r)/2\}$, for $r>1$ both $\min\{2,(1+r)/2\}$; the third branch
+makes the limiter symmetric, $\psi(r)/r=\psi(1/r)$. For every $\tau_{\mathrm S}$, $\psi(1)=1$; with $\beta=2$,
+$\tau_{\mathrm S}=-0.25$ the limiter exceeds SuperBee ($=1$ there) for $1/2<r<1$, where it equals
+$\min\{2r,\,1.25-0.25r\}>1$, yet stays inside Sweby's region $\psi\le\min\{2r,2\}$.)* Chu et al. (2025a) switch between the overcompressive setting $\tau_{\mathrm S}=-0.25$ in
+cells flagged rough and Minmod2 elsewhere, in characteristic variables
+([low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md)).
 
 ## Roles of limiters in high-order schemes
 
@@ -315,3 +334,5 @@ bounds to global ones in cells flagged smooth by a modal indicator restores
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §4.2: MinMod TVD subcell finite volumes in FLEXI.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §3.2.1, §5.2.2, Figs. 8–9: flux limitation of kinetic upwind differences.
 - [Boscarino et al. (2022)](/sources/boscarino-2022.md) — §3.3, Ex. 5.4: TVB reconstruction in S2T2 (arXiv v2).
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §2.1.1–§2.2, Eq. (2.6): SBM limiter, dissipative/compressive/overcompressive settings, Minmod2 (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §2, Eqs. (2.5)–(2.6): generalized minmod with factor 1.3.

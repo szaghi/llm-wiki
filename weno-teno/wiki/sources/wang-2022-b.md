@@ -142,7 +142,7 @@ is merged complete into the [bibliography](/bibliography.md) with `citedby`
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–9 (2026-10-22/23). This source is cited on:
 
 * [Accuracy at critical points](/properties/critical-point-accuracy.md)
 * [Affine-invariant WENO weights](/methods/affine-invariant-weno.md)
@@ -151,6 +151,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source
 * [Double rarefaction (123) problem](/benchmarks/double-rarefaction-problem.md)
 * [ENO property](/definitions/eno-property.md)
 * [High-Mach astrophysical jets](/benchmarks/high-mach-astrophysical-jet.md)
+* [Jiang–Shu composite-wave advection](/benchmarks/jiang-shu-composite-advection.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Positivity-preserving flux limiter (Hu–Adams–Shu)](/methods/positivity-preserving-flux-limiter.md)
 * [Scale and affine invariance](/properties/scale-invariance.md)

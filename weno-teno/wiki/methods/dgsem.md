@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)
@@ -299,6 +299,50 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
   $\tilde f^{(d)}=Ja^{(d)}\cdot f$, an explicit four-stage Runge–Kutta
   method and a step proportional to $\Delta x/\big((2N+1)a\big)$
   (maximum signal speed $a$; §3, Eqs. (5)–(18)).
+- **Gauss against LGL collocation for turbulence.**
+  [Schwarz et al. (2025)](/sources/schwarz-2025.md) compare the two
+  entropy-stable collocation DGSEMs in FLEXI for compressible, wall-bounded
+  turbulence, which they call the first such comparison (Abstract, §1).
+  Both use BR1 for the viscous terms
+  ([Bassi–Rebay](/methods/bassi-rebay-viscous-discretization.md)), a Roe
+  surface flux with Harten–Hyman entropy fix (Lax–Friedrichs at
+  $M_0=0.1$), the Chandrashekar volume flux, metric terms in Kopriva's
+  conservative curl form and the five-stage fourth-order low-storage
+  Runge–Kutta method of Carpenter & Kennedy at CFL 0.9 (§3.1–3.4). The LGL
+  scheme is the diagonal-norm SBP flux-differencing form $(2Q\circ\mathcal
+  F^\#)\mathbf 1$ (page-local Hadamard notation) with $Q+Q^\top$ the
+  boundary matrix (Eq. (20)); the Gauss scheme uses Chan's hybridized SBP
+  operator and [entropy-projected](/methods/entropy-projection.md) face
+  states (Eqs. (23)–(25); [flux differencing](/methods/flux-differencing.md)).
+  They recall that Gauss quadrature integrates degree $2N+1$ exactly and LGL
+  only $2N-1$, so the diagonal mass matrix is exact on Gauss nodes and a
+  lumping on LGL nodes, and that LGL nodes allow a larger explicit step and
+  avoid the projection (§3.1–3.2). Findings (§4):
+  - both reach $N+1$ under $h$-refinement ($N=3$) and spectral convergence
+    under $p$-refinement ($N=2$–8, $4^3$ elements) on curved meshes, the LGL
+    scheme being less accurate (Fig. 1;
+    [method of manufactured solutions](/definitions/method-of-manufactured-solutions.md));
+  - on the [Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at
+    $\mathrm{Re}=1600$ the Gauss scheme converges faster to the reference at
+    $M_0=0.1$ ($N=7$, $64^3$–$512^3$ DOF) and is less dissipative with
+    sharper, less oscillatory shocks at $M_0=1.25$ ($N=3$, with
+    [subcell blending](/methods/subcell-finite-volume-limiting.md))
+    (Figs. 2–8);
+  - in an LES of the 3D Stanford diffuser at $\mathrm{Re}=10\,000$ and
+    diffuser-inflow Mach 0.208, the pressure recovery is 0.574 (Gauss, $N=5$)
+    and 0.602 (LGL, $N=5$) against 0.527 measured by Cherry et al., an error
+    reduction of 37 %, and the LGL scheme needs $N=7$ (0.560) to approach the
+    Gauss result in $C_p$; LGL pressure fluctuations show unphysical kinks
+    at element boundaries (Table 1, Figs. 10–11). At Mach 0.703 the Gauss
+    scheme at $N=5$ is converged in $C_p$ and the LGL one not even at $N=7$
+    (§4.3.3, Fig. 12);
+  - the Gauss scheme costs about twice the LGL one at fixed $N$ in all tests
+    (27 890 against 62 080 CPU hours for the compressible diffuser), which
+    the authors attribute to the entropy projection and the extra surface
+    fluxes; because the LGL scheme needs a higher $N$, with a smaller step,
+    for comparable accuracy, they conclude that the Gauss scheme is the more
+    efficient one (§4.4, §5). The paper prints no CPU time for the LGL
+    scheme at $N=7$.
 - **Variable degree.** Mossier et al. let the degree vary from element to
   element. A face between degrees $N<M$ (page-local $M$) is evaluated at
   the $M+1$ nodes of the higher degree, after interpolating the lower
@@ -462,5 +506,6 @@ al. (§1, §7.2; [subcell finite-volume limiting](/methods/subcell-finite-volume
 - [Cicchino, Nadarajah & Del Rey Fernández (2022)](/sources/cicchino-2022.md) — §3.1, Remark 3.1 (arXiv v1).
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1, §3 Eqs. (5)–(18), §4 Eqs. (19)–(30) Fig. 2, §7.2, §8.2 Table 2, §9.
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §1, §2.3 Eqs. (42)–(59), §4.1–4.3 Figs. 1–3, §5 (arXiv v1).
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §1, §3.1–3.5 Eqs. (15)–(25), §4.1–4.4 Table 1, Figs. 1–12, §5 (arXiv v1).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §2.1–2.3 Eqs. (5)–(18), §3, §4.1–4.3 Figs. 2–5.
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §1, §2.1 Eqs. (3)–(8), Remarks 1–3, §2.2 Eqs. (9)–(25), Remarks 5–6, §3 Tables 1–5, Figs. 1–8 (arXiv v1).

@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:08:00Z
 ---
 
 # Bound preservation
@@ -39,20 +39,22 @@ and the absence of oscillations of the low-order scheme (§1, §2).
 |---|---|---|
 | scalar law | $[U_{\min},U_{\max}]$ (global maximum principle); any interval is an invariant set | Cui et al. (2024), §1; Pazner (2021), Def. 1 |
 | linear transport, Vlasov–Poisson | $u\ge0$ | Zheng et al. (2022), Prop. 3.2 |
-| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1 |
+| Euler / Navier–Stokes | $\{\rho>0,\ \rho e>0\}$; $\rho e$ is concave in $u$ for $\rho>0$ | Wu & Shu (2023), Eq. (2.2); Cui et al. (2024), Rem. 8.1; Fan et al. (2021), Eqs. (3.7), (3.25); Lin et al. (2023), Eq. (3); Gu et al. (2023), §2.6.1; Abgrall et al. (2026), Eq. (1.2) |
 | Euler with a minimum principle on the specific entropy | $\{\rho>0,\ \rho e>0,\ s\ge s_{\min}\}$, i.e. $p\rho^{-\gamma}\ge\exp(s_{\min})$; Pazner writes the specific entropy as $\ln(e^{1/(\gamma-1)}\rho^{-1})$ | Wu & Shu (2023), Eq. (2.3), Thm 4.7; Pazner (2021), Eq. (65) |
 | Euler with a local minimum of $\rho s$ at the solution nodes | $\{\rho\ge\rho_{\min},\ p\ge p_{\min},\ \rho s\ge(\rho s)^K_{\min}\}$, floors $10^{-8}$, bound over the element and its face neighbours | Dzanic & Witherden (2022), §3.2, §4.1 |
 | multicomponent Euler (mixture of $n_c$ ideal gases) | $\{0\le Y_k\le1,\ \rho>0,\ e>0\}$ ($Y_k$ mass fractions) | Renac (2021), Eq. (9) |
+| reacting multicomponent Navier–Stokes, thermally perfect species, molar concentrations $C_k$ | $\{\rho>0,\ \rho e^*>0,\ C_k\ge0\}$ with $e^*=e-e\vert_{T=0}$, convex; with an entropy bound, $\{\dots,\ \rho s-\rho s_{\mathrm b}\ge0\}$, concave only for all $C_k>0$ and assumed convex (page-local $C_k$, $e^*$, $s_{\mathrm b}$) | Ching et al. (2025), Eqs. (4.1)–(4.3) |
 | reacting multicomponent Navier–Stokes, calorically perfect species | $\{\rho\ge0,\ P(u)\ge0,\ \rho Y_k\ge0\}$, $P=E-\sum_k\rho Y_kh_k(0)-\tfrac12\rho\lvert v\rvert^2=p/(\gamma(u)-1)$ ($h_k(0)$ formation enthalpies, page-local); $Y_k\le1$ is not in $G$ | Du & Yang (2022), §4.1, Eq. (4.1) |
 | multi-species Euler / Navier–Stokes in thermal equilibrium, nodal DG | $\{\rho>0,\ p>0,\ \text{every partial density}\ \ge0\}$, plus a local minimum of the mixture entropy where a pressure-jump sensor fires | Trojak & Dzanic (2024), Eqs. (22)–(25) |
 | shallow water with topography, wet states only, unstructured grids | $\{h>0\}$ ($h$ the depth, page-local) | Del Grosso et al. (2024), §2, §4.2 |
 | barotropic Euler / shallow water on staggered grids | $\{\rho\ge0\}$, dry states $\rho=0$ included | Goudon & Minjeaud (2024), §2.2 |
 | five-equation two-phase model, stiffened gases | $\{0\le\phi_1\le1,\ \phi_k\rho_k\ge0,\ \rho e-\bar p_\infty>0\}$ ($\phi_k$ volume fractions, $\bar p_\infty$ mixture stiffness, page-local) | Wong et al. (2021), Eqs. (10), (12) |
+| Kapila five-equation model, ideal-gas phases | $\{\phi_1\rho_1\ge0,\ \phi_2\rho_2\ge0,\ \rho e>0,\ 0\le\phi_1\le1\}$, $\rho e=E-\lvert\rho v\rvert^2/(2\rho)$ concave | Yan, Abgrall & Wu (2024), Eq. (2.29) |
 | two-phase diffuse-interface model, phase-field step | $\{0\le\phi_1\le1,\ \phi_1\rho_1\ge0,\ (1-\phi_1)\rho_2\ge0\}$ | Huang & Johnsen (2023), Thm 3.2 |
 | special relativistic hydrodynamics | $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0\}=\{\rho>0,\ p>0,\ \lvert v\rvert<1\}$ ($D=\rho W$ the relativistic mass density, $m$ the momentum, $E$ the relativistic energy) | Wu & Shu (2023), Thm 4.9; Chen & Wu (2022), Lemmas 2.1–2.2; Cui et al. (2024), Ex. 4–5; Cai et al. (2024), Eqs. (1.5)–(1.6) |
-| special relativistic MHD, general equation of state satisfying a Taub-type inequality and causality | $\{D>0,\ p>0,\ \lvert v\rvert<1\}$, convex; GQL form linear in $u$ | Ding & Wu (2024), Eq. (8), Lemmas 2.1–2.2 |
+| special relativistic MHD, general equation of state satisfying a Taub-type inequality and causality | $\{D>0,\ p>0,\ \lvert v\rvert<1\}$, convex; GQL form linear in $u$ | Ding & Wu (2024b), Eq. (8), Lemmas 2.1–2.2 |
 | ten-moment Gaussian closure | positive-definite pressure tensor | Wu & Shu (2023), Thm 4.11 |
-| ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4 |
+| ideal MHD | $\{\rho>0,\ E-\tfrac12\rho\lvert v\rvert^2-\tfrac12\lvert B\rvert^2>0\}$ | Wu & Shu (2023), Thm 4.12; Liu et al. (2021), §3.3.4; Ding & Wu (2024a), Eq. (4) |
 | ideal MHD with a local minimum of $p\rho^{-\gamma}$ at the solution nodes | $\{\rho>\epsilon_{\mathrm f},\ p>\epsilon_{\mathrm f},\ p\rho^{-\gamma}>(p\rho^{-\gamma})^K_{\min}+\epsilon_{\mathrm f}\}$, tolerance $\epsilon_{\mathrm f}=10^{-8}$ (page-local), bound over the element and its face neighbours from the previous stage | Dzanic & Witherden (2023), Eqs. (21)–(22), §4 |
 | multicomponent MHD | $0\le Y_k\le1$, $\rho>0$, $p>0$ | Wu & Shu (2023), Eq. (6.4) |
 
@@ -72,7 +74,11 @@ Sources: [Fan, Zhang & Qiu (2021)](/sources/fan-2021.md),
 [Trojak & Dzanic (2024)](/sources/trojak-2024.md),
 [Goudon & Minjeaud (2024)](/sources/goudon-2024.md),
 [Del Grosso et al. (2024)](/sources/delgrosso-2024.md),
-[Ding & Wu (2024)](/sources/ding-2024-b.md). The multicomponent and
+[Ding & Wu (2024b)](/sources/ding-2024-b.md),
+[Ding & Wu (2024a)](/sources/ding-2024.md),
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md),
+[Ching et al. (2025)](/sources/ching-2025.md),
+[Abgrall et al. (2026)](/sources/abgrall-2026.md). The multicomponent and
 two-phase models are on the
 [multicomponent Euler](/definitions/multicomponent-euler-equations.md) and
 [five-equation model](/definitions/five-equation-model.md) pages, the
@@ -310,7 +316,7 @@ check, not in the sources: ratios of the tabulated weights)*.
   Proposition 3.7" of the authors' earlier paper, and dry states are
   preserved ([well-balancing](/properties/well-balancing.md)).
 
-- *Relativistic MHD with central DG* ([Ding & Wu (2024)](/sources/ding-2024-b.md),
+- *Relativistic MHD with central DG* ([Ding & Wu (2024b)](/sources/ding-2024-b.md),
   §3–§4). Central DG evolves a primal and a dual (half-cell-shifted)
   solution and needs no Riemann solver. In 1D, where $B_1$ stays constant
   exactly, the cell averages stay in $G$ if the point values at the
@@ -365,6 +371,48 @@ check, not in the sources: ratios of the tabulated weights)*.
   $l_{pcf}$ and Eulerian wave speeds $\Lambda$). Only wet states are
   treated. The second-order extension with limited least-squares slopes is
   stated to keep the property, without proof (§4.6).
+- *Viscous flux alone, reacting Navier–Stokes, DG* ([Ching et al. (2025)](/sources/ching-2025.md),
+  §4, Lemma 1, Thms 6, 8). The cell-average update is split into a convective
+  and a viscous half with doubled step; the convective half, with an
+  invariant-region-preserving inviscid flux (HLLC), keeps the averages in the
+  entropy-bounded set, and the viscous half, with a Lax–Friedrichs-type penalty
+  on the viscous flux alone, keeps them in $G$, under CFL conditions set by the
+  endpoint weights of a decomposition for an arbitrary positive quadrature, on
+  curved elements in multi-D. The entropy bound is imposed on the convective half
+  only, because the minimum entropy principle fails with heat conduction; at zero
+  species concentration no viscous coefficient suffices and the authors scale the
+  interface gradients instead (§4.7;
+  [positivity-preserving Navier–Stokes fluxes](/methods/positivity-preserving-navier-stokes-flux.md)).
+- *A non-conservative two-phase model on DG* ([Yan, Abgrall & Wu (2024)](/sources/yan-2024.md),
+  Thms 2.7, 2.12, 3.6, 3.10). For the Kapila model, with the volume-fraction
+  equation written as $\partial_t\phi_1+\partial_x(\phi_1v)=\chi_1\phi_1\partial_xv$
+  ($\chi_1$ page-local, the ratio of the phase compressibility to the Wood mixture
+  value), the cell averages satisfy $0\le\bar\phi_1\le1$ and stay in $G$ if the
+  solution is admissible at the Gauss and Gauss–Lobatto points, under
+  $\frac{\Delta t}{\Delta x}\le\min\big\{1/(\mathcal A_1+\mathcal A_2),\ \varpi/\max(s^+-s^-)\big\}$,
+  with $s^\pm$ the HLL speeds clipped at zero and $\mathcal A_1$, $\mathcal A_2$
+  (page-local) bounds of the interior source and of the interface terms. The
+  source is discretized by Gauss quadrature in the cell plus a split of the
+  interface velocity jump between the two cells in the ratio of the HLL speeds;
+  the resulting update for $\phi_2=1-\phi_1$ has the same form as for $\phi_1$,
+  which gives $\phi_1\le1$ by the same argument as $\phi_1\ge0$ (Eq. (2.35),
+  Remark 2.9). The positivity part uses the GQL form of the set (Lemmas 2.10–2.11).
+  The authors find the ratio $\mathcal A_1/\mathcal A_2\ll1$ in their tests (Figs. 9,
+  21), and state that the improved 2D decompositions of Cui, Ding & Wu would relax
+  the 2D condition (Remark 3.11). The earlier averaging of the source by Zhang &
+  Cheng is second order, as that paper itself states, which Yan et al.'s accuracy
+  tables show ([OEDG](/methods/oedg.md)).
+- *Finite-volume MHD with a discretely divergence-free field* ([Ding & Wu (2024a)](/sources/ding-2024.md),
+  Thm 2.1, arXiv v1). The forward-Euler update of a high-order finite-volume scheme
+  for the Godunov–Powell system with a Lax–Friedrichs flux and Gauss or
+  Gauss–Lobatto edge quadrature keeps the averages in $G$ if the interface values
+  are admissible, satisfy a discrete divergence-free condition, and (order $k\ge3$)
+  give an admissible interior remainder, under
+  $\Delta t\big(a^{(1)}/\Delta x+a^{(2)}/\Delta y\big)<\varpi$, $\varpi=1/(N_{\mathrm{GL}}(N_{\mathrm{GL}}-1))$,
+  with the Lax–Friedrichs coefficient enlarged by the jump term
+  $\max\lvert[\![B_1]\!]\rvert/(2\sqrt{\{\!\{\rho\}\!\}})$ over the face quadrature points
+  (Eqs. (15)–(16)); the authors call the condition milder than in Wu & Shu's earlier
+  schemes but print no comparison (§2.1). See the MHD section below.
 
 **Time stepping.** The sources extend the forward-Euler result to
 [SSP Runge–Kutta](/methods/ssp-runge-kutta.md) and SSP multistep methods,
@@ -422,6 +470,16 @@ the bounds.
   through invariant-domain bounds built from bar states (Eqs. (47)–(48)).
   Details on [convex limiting](/methods/convex-limiting.md) and
   [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+- **Blending fluxes and residuals of an Active-Flux scheme.**
+  [Abgrall et al. (2026)](/sources/abgrall-2026.md) make the third-order 1D
+  [PAMPA scheme](/methods/pampa-scheme.md) bound preserving by blending the
+  average flux with a local Lax–Friedrichs flux and each point-value residual with
+  a first-order residual; both updates become convex combinations of intermediate
+  states, and the largest coefficients that keep these states in global or local
+  bounds come in closed form (Props. 3.1–3.2, Eq. (3.18)), for Euler through the
+  GQL form with an eigenvalue formula (§3.4, Appendix A). Strict global bounds
+  lower the linear-advection rates to about $1.8$–$2.6$; relaxed ones restore
+  $3.00$ (Tables 1–2).
 - **Elementwise blending with a low-order DG scheme.**
   [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) blend, with one
   parameter $\mathsf l_K$ per element $K$ ($1$ = high order, so $\alpha=1-\mathsf l_K$), an entropy-stable nodal DG update with a
@@ -507,6 +565,17 @@ the flagged elements are few and at the discontinuities (§5.2.3,
 Fig. 10). [Abgrall, Öffner & Ranocha (2022)](/sources/abgrall-2022.md)
 use MOOD positivity enforcement for their fourth-order DeC radial Sod
 runs (Fig. 5).
+[Vilar & Abgrall (2024)](/sources/vilar-2024.md) (HAL preprint, §3, Remark 8)
+recompute, after a DG step on triangles, only the subcells whose mean values
+fail the admissibility or relaxed maximum-principle test and their face
+neighbours, with first-order finite-volume fluxes on the faces of the failed
+subcells (§3.3); the maximum principle (scalar) or
+positivity (Euler) of the subcell means then holds by construction, provided the
+initial subcell means are obtained by integration over the subcells, not by nodal
+interpolation or $L^2$ projection, which do not guarantee admissible submeans. A
+sixth-order Sedov problem with the energy in one subcell and background pressure
+$10^{-14}$ runs on 271 cells (§4.3.2). The subcell form is the
+[DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md).
 
 ## Route 5: constraint-driven filtering
 
@@ -586,7 +655,7 @@ Dzanic & Witherden (2023) state the converse gap for nodal DG with a
 Powell source: the BP argument for the element mean needs a divergence-free
 field, which their discretization does not have, and their positivity is
 therefore observed, not proved (§3.2; Route 5).
-[Ding & Wu (2024)](/sources/ding-2024-b.md) (§4.4, §4.7) state the
+[Ding & Wu (2024b)](/sources/ding-2024-b.md) (§4.4, §4.7) state the
 same dependence for relativistic MHD with central DG: in their proof the
 flux term contributes $-(v_*\cdot B_*)$ times a quadrature divergence of the
 dual-mesh field on the outer cell boundary, and a discretized
@@ -599,6 +668,17 @@ discrete divergence-free conditions (Thm 4.2), which the local scaling
 limiter does not keep; enforcing both is "unresolved" (§4.7). On their
 Mach 50 jets the code "would quickly break down" without any one of the
 limiter, the source and the locally divergence-free space (Ex. 5.9).
+[Ding & Wu (2024a)](/sources/ding-2024.md) (arXiv v1, §2–3) give the
+finite-volume counterpart for ideal MHD: a minimal-norm projection of the
+reconstructed normal-field interface values makes the quadrature divergence of
+each cell's own traces vanish exactly at any order (Thms 2.6–2.7), a source built
+from the normal-field jumps at the face quadrature points replaces earlier Powell
+discretizations, and in the GQL proof the divergence terms then cancel exactly
+([geometric quasilinearization](/methods/geometric-quasilinearization.md)). The
+authors state that each of the three ingredients, projection, scaling limiter and
+source, is essential (§2.1); without the projection and the limiter their
+fifth-order WENO code fails on the Orszag–Tang vortex at $t=3.11$, and without the
+limiter on the blast and the jet (Ex. 4.2, 4.4–4.5).
 The details are on
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
@@ -613,7 +693,7 @@ The details are on
   is not borne out by their Table 3, where Chen & Wu's hybrid-linear
   recovery (33.876 s) and NR-I (35.504 s) are faster than hybrid Newton
   (37.629 s).
-- **Proved and tested steps, central DG.** Ding & Wu (2024) run all tests
+- **Proved and tested steps, central DG.** Ding & Wu (2024b) run all tests
   with $\Delta t=0.25\,\Delta x$ in 1D and $\Delta t=0.25/(1/\Delta x+1/\Delta y)$
   in 2D, and state that the theoretical bound is sufficient but not
   necessary (§5); with $\varpi_\star=1/4$ and $\alpha_\ell=1$ (normal-field
@@ -778,7 +858,9 @@ The details are on
   the Mach 2000 jet and double Mach reflection without mentioning a
   positivity limiter and claims no bound preservation
   ([Peng, Sun & Wu (2024)](/sources/peng-2024.md), Ex. 5.17–5.18;
-  [OEDG](/methods/oedg.md)).
+  [OEDG](/methods/oedg.md)). Yan, Abgrall & Wu (2024) obtain a bound-preserving
+  OEDG scheme by adding a scaling limiter after the OE step, which they prove
+  keeps the interface equilibrium (Thms 2.13–2.14).
 - **Accuracy of the limiter.** That the scaling limiter keeps high-order
   accuracy is cited, not shown, in Wu & Shu (2023) (App. B) and Fan et al.
   (2021) (Rems. 3.2, 3.4); Cui et al. (2024) show it numerically for
@@ -825,7 +907,12 @@ The details are on
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — §2.1–2.2, Eqs. (5)–(18), pp. 1267, 1271–1272.
 - [Rueda-Ramírez et al. (2024)](/sources/ruedaramirez-2024.md) — arXiv v1: §2.2.2–2.2.4, Eqs. (31)–(36), (43)–(45); §3.2.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1; §3.1–3.3, Eqs. (17)–(30); §4, Eqs. (31)–(33); §5.1.1, Tables 1–2.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §2 (Eq. (8), Lemmas 2.1–2.4); §3.2 (Thm 3.1); §4.4 (Thm 4.1, Eqs. (62)–(74)); §4.6 (Cors. 4.1–4.2); §4.7 (Thm 4.2); §5 (Ex. 5.2–5.9).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §2 (Eq. (8), Lemmas 2.1–2.4); §3.2 (Thm 3.1); §4.4 (Thm 4.1, Eqs. (62)–(74)); §4.6 (Cors. 4.1–4.2); §4.7 (Thm 4.2); §5 (Ex. 5.2–5.9).
 - [Fan & Wu (2024)](/sources/fan-2024.md) — arXiv v1: §2.4, Eqs. (2.51)–(2.59), Thm 11, Remark 5.
 - [Del Grosso et al. (2024)](/sources/delgrosso-2024.md) — HAL preprint: §2; §3.5.2, Eqs. (35)–(36), Remark 1; §4.2, Eqs. (49)–(52); §4.6.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3, Thms 3.1, 3.3; §4.3–4.4, Eqs. (62)–(68), Fig. 6.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — arXiv v1: §1; §2.1, Eqs. (4), (9)–(16), Thm 2.1; §2.3, Thms 2.6–2.7; §3; §4, Ex. 4.2, 4.4–4.5.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Eq. (2.29); Thms 2.7, 2.12, 2.13–2.14, 3.6, 3.10; Eq. (2.35), Remarks 2.2, 2.9, 3.11; Figs. 9, 21.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §1; §4, Eqs. (4.1)–(4.3), Lemma 1, Thms 6, 8; §4.7.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint: §3, Remark 8; §4.3.2.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — Eq. (1.2); §3, Props. 3.1–3.2, Eq. (3.18); §3.4, Appendix A; Tables 1–2.

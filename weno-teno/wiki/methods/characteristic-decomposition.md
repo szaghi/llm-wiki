@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Characteristic decomposition
@@ -95,6 +95,23 @@ they print the factorization as $A=L\Lambda R$, where $A=R\Lambda L$ is meant.
   oscillate (Remark 3.1) and credit the decomposition with "substantially less oscillatory
   behavior" than an earlier second-order central-upwind computation (§7.2, Ex. 7;
   [path-conservative schemes](/methods/path-conservative-scheme.md)).
+  [Chu et al. (2025b)](/sources/chu-2025-b.md) (§3–§4, Apps. A–B) do the same for the
+  flux-globalized LCD-PCCU scheme, with the matrix $A+\mathcal C$ (their $\partial F/\partial U-B$,
+  the product written on the right-hand side as $B\,\partial_xU$) at an average of primitive-type
+  quantities, and print closed forms.
+  For the $\gamma$-based two-fluid system with stiffened gas the eigenvalues are $v-c$, $v$ (three
+  times in 1D, four in 2D), $v+c$, with $c=\sqrt{\gamma(p+p_\infty)/\rho}$ from averaged $\gamma$,
+  $p$, $p_\infty$, $\rho$; for the thermal rotating shallow-water system they are $v\mp\sqrt{bh}$ and
+  $v$ (twice), $b$ the buoyancy and $h$ the depth (page-local). Unlike Chu et al. (2022) they
+  apply the projection only in the numerical flux, through the field-wise coefficients, and
+  reconstruct conservative (or equilibrium) variables (Remark 2.2; see [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md)).
+- **Arithmetic mean of conservative averages.** In the adaptive
+  [low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md)
+  of [Chu et al. (2025a)](/sources/chu-2025.md) (§2.1, App. A) $R_{i+1/2}$ diagonalizes
+  $A\big(\tfrac12(\bar u_i+\bar u_{i+1})\big)$, and the four averages $\bar u_{i-1},\dots,\bar u_{i+2}$
+  are projected with it before the SBM-limited piecewise-linear reconstruction; the stated
+  purpose is to reduce the oscillations of the compressive and overcompressive limiters near
+  shocks and contacts (§1). The Euler matrices are taken from Chertock et al. (2023).
 - **Several directions per cell on unstructured meshes.** On triangles,
   [Chen & Wu (2022)](/sources/chen-2022-b.md) (§3.2.2, Eq. (38)) project the stencil averages onto
   the eigenvectors of the normal Jacobian for each of the three edge normals of the target cell,
@@ -364,6 +381,17 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - Chertock et al. evaluate the field speeds at the reconstructed states while $R$
   diagonalizes the Jacobian at a third state; for nonlinear systems the per-field quantities
   are therefore an approximation, not an exact diagonalization.
+- Chu et al. (2025b), App. A, print for the 1D two-fluid system an $R_{i+1/2}$ and an
+  $R^{-1}_{i+1/2}$ that are not inverse to each other. *(compiler check, not in the sources:
+  symbolically, the printed $R$ diagonalizes the printed matrix (A.1),
+  $(\text{A.1})\,R=R\,\mathrm{diag}(v-c,v,v,v,v+c)$, but the printed inverse gives $R^{-1}R=\mathrm{diag}(1,1,1,-1,1)$;
+  flipping the sign of entry (4,5) of $R^{-1}$, or taking column 4 of $R$ as $(0,0,0,1,-p)^\top$
+  as in their 2D matrix, restores $R^{-1}R=I$. Their 2D $R^{-1}$ prints five rows of six; with the
+  row $(0,0,0,0,0,-1/p)$ inserted as the fifth, $R^{-1}R=I$. The printed (A.1) equals
+  $\partial f/\partial u$ plus $\mathrm{diag}(0,0,0,v,v)$, which matches the advection
+  $\partial_t\Gamma=-v\partial_x\Gamma$ of their Eq. (5.2), so the printed
+  $B=\mathrm{diag}(0,0,0,0,v,v)$ of §5.1 has the wrong sign.)* The thermal shallow-water
+  matrices of App. B invert and diagonalize exactly *(same check)*.
 - [Fu (2023)](/sources/fu-2023.md) calls the splitting with a global per-field maximum speed
   "Rusanov"; most of the literature calls it global Lax–Friedrichs (naming convention, see
   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
@@ -414,3 +442,5 @@ to that choice (§4.2, Fig. 6; [IDEFIX](/software/idefix.md)).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.3 (Step 2), Remark 3.3, Ex. 5.7 (Fig. 7) (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3, §3.2 (Algorithm 1), §4.4, §4.6.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §6 (Eqs. (70)–(72)), §7 (Algorithm 1, Eq. (73)), Eq. (51).
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §1, §2.1 (Eqs. (2.4)–(2.5)), App. A (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — Remark 2.2, §3–§4, §5.1 (Eq. (5.2)), Apps. A–B.

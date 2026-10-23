@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T14:51:00Z
 ---
 
 # Geometric quasilinearization (GQL)
@@ -119,7 +119,7 @@ Wu & Shu derive (§4.2):
   first found algebraically by Wu in 2018.
 - **Relativistic MHD** (Thm 4.13): an explicit family linear in $u$ and
   indexed by $(v_*,B_*)$, although $p(u)$ and $v(u)$ are implicit.
-  [Ding & Wu (2024)](/sources/ding-2024-b.md) (Lemma 2.2, as recalled from
+  [Ding & Wu (2024b)](/sources/ding-2024-b.md) (Lemma 2.2, as recalled from
   Wu & Tang and Wu & Shu) write it, for a general equation of state with
   a Taub-type inequality and causality, in the ordering $u=(D,m,B,E)$, as
   $u\cdot n_1>0$ and
@@ -130,6 +130,16 @@ Wu & Shu derive (§4.2):
   auxiliary magnetic pressure).
 - **Multicomponent MHD** (Eqs. (6.4)–(6.5)): the ideal-MHD family plus
   linear constraints on the partial densities.
+- **Kapila five-equation two-phase model.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+  (Lemma 2.10, 2D Lemma 3.8, via Thm 4.1 of Wu & Shu) write the admissible
+  set $\{\phi_1\rho_1\ge0,\ \phi_2\rho_2\ge0,\ \rho e>0,\ 0\le\phi_1\le1\}$ of the
+  [five-equation model](/definitions/five-equation-model.md), in the ordering
+  $u=(\phi_1\rho_1,\phi_2\rho_2,\rho v,E,\phi_1)$, as the linear constraints
+  $u\cdot n_1\ge0$, $u\cdot n_2\ge0$, $0\le\phi_1\le1$ and $u\cdot n_*>0$ for all
+  $v_*\in\mathbb R$, with $n_*=(v_*^2/2,\,v_*^2/2,\,-v_*,\,1,\,0)^\top$ and $n_1$,
+  $n_2$ the first two unit vectors (page-local); in 2D $v_*\in\mathbb R^2$ and
+  $\lvert v_*\rvert^2$. It is the Euler family above with the density split
+  into the two partial densities.
 
 ## Bound-preservation proofs built on GQL
 
@@ -175,7 +185,37 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   (Thms 6.1–6.4); see
   [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
-- **Relativistic MHD with central DG.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+- **Ideal MHD, finite volumes with a discretely divergence-free field.**
+  [Ding & Wu (2024a)](/sources/ding-2024.md) (arXiv v1, §3, Lemmas 3.1–3.4,
+  Thm 2.1) prove a high-order finite-volume WENO scheme for the
+  Godunov–Powell form of ideal MHD positivity preserving with the
+  Thm 4.12 representation. Recalled lemmas bound the Lax–Friedrichs flux
+  difference of two admissible states with the extra term
+  $(B_\ell-\tilde B_\ell)(v_*\cdot B_*)$ for a Lax–Friedrichs coefficient above Wu's wave-speed bound
+  (Lemma 3.2, Cor. 3.3), and the source term by
+  $-\xi\,S(u)\cdot n_*\ge\xi(v_*\cdot B_*)-\frac{\lvert\xi\rvert}{\sqrt\rho}\big(u\cdot n_*+\tfrac12\lvert B_*\rvert^2\big)$
+  (Lemma 3.4; $S(u)=(0,B,v,v\cdot B)^\top$ the Powell source vector, $\xi$
+  page-local). Summed over the cell, the divergence terms leave
+  $\Delta t\,(v_*\cdot B_*)\big(\tfrac12\widehat{[\![B]\!]}-\nabla_h\cdot\{\!\{B\}\!\}\big)=-\Delta t\,(v_*\cdot B_*)\nabla_h\cdot B_{ij}$,
+  which vanishes when the discrete divergence of the cell's own interface
+  traces is zero (§3.2; page-local $\nabla_h\cdot$, $\widehat{[\![B]\!]}$; the
+  identity checks term by term, *compiler check, not in the sources*). The
+  authors use GQL because the divergence condition couples the point values
+  and, they state, invalidates the classical convex-decomposition argument of
+  Zhang & Shu (§3); see
+  [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
+- **Kapila model with HLL fluxes on DG.** Yan et al. (2024) (Lemma 2.11, 2D
+  Lemma 3.9) show $f(u)\cdot n>\sigma^-\,u\cdot n$ and $-f(u)\cdot n>-\sigma^+\,u\cdot n$
+  for $n=n_1,n_2,n_*$ with $\sigma^-=\min\{v-c,0\}$, $\sigma^+=\max\{v+c,0\}$
+  ($c$ the Wood sound speed; page-local $\sigma^\pm$), through
+  $\tfrac12\rho(v-v_*)^2+\rho e\ge\lvert v-v_*\rvert\rho\sqrt{2e}$; the step
+  $p/(\rho\sqrt{2e})<c$ is not shown, and holds because
+  $\big(p/(\rho\sqrt{2e})\big)^2=(\gamma-1)p/(2\rho)$ with the mixture $\gamma$ while
+  $c^2=p/\big(\rho\sum_k\phi_k/\gamma_k\big)$ and $(\gamma-1)\sum_k\phi_k/\gamma_k<1$
+  *(compiler check, not in the sources)*. With these bounds the cell averages of
+  their [OEDG](/methods/oedg.md) scheme stay admissible under explicit CFL
+  conditions (Thms 2.12, 3.10, App. A).
+- **Relativistic MHD with central DG.** [Ding & Wu (2024b)](/sources/ding-2024-b.md)
   (§2, Lemmas 2.3–2.4, Cors. 2.1–2.2; Thms 3.1, 4.1–4.2) derive from the
   recalled flux bound
   $(u+\vartheta_{\mathrm s}f_\ell(u))\cdot n_*+p^*_{\mathrm m}+\vartheta_{\mathrm s}\big(v_{*\ell}p^*_{\mathrm m}-B_\ell(v_*\cdot B_*)\big)\ge0$,
@@ -197,6 +237,21 @@ $\pm f(u)\cdot n_*$ by a multiple of $u\cdot n_*$:
   $G=\{D>0,\ q(u)>0,\ \Phi(u)>0\}$ with
   $q=E-\sqrt{D^2+\lvert m\rvert^2}$ and a closed-form $\Phi$ (Lemma 3.2,
   recalled; [Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)).
+
+## Closed-form blending coefficients
+
+In convex limiting the GQL form turns the internal-energy constraint on an
+intermediate state $u^*+\mathsf e\,\Delta u$ into a family of linear inequalities in
+the blending coefficient $\mathsf e$ (page-local), so the largest admissible
+coefficient is $\min_{v_*}u^*\cdot n_*/\lvert\Delta u\cdot n_*\rvert$.
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) (§3.4, Appendix A) evaluate it
+in closed form for the 1D Euler family above: numerator and denominator are
+quadratics in $v_*$, and with $v_*=p/q$ the minimum is a ratio of quadratic forms
+in $(p,q)$, equal to the inverse spectral radius of $\mathsf B^{-1/2}\mathsf A\mathsf B^{-1/2}$,
+$\mathsf A$, $\mathsf B$ the $2\times2$ matrices of the two quadratics ($\mathsf B$
+positive definite; page-local). They use it for the flux and residual coefficients
+of the bound-preserving [PAMPA scheme](/methods/pampa-scheme.md) and state that the
+analysis extends to several dimensions (§1).
 
 ## Relation to cell-average decompositions
 
@@ -227,7 +282,7 @@ quasilinearization (§3.7, Fig. 4); see
   Lemma 3.7, where their own Lemma 3.4 and the proof of Lemma 3.6 give
   $u^\pm\cdot n_*>0$; the inequalities that follow use the positive sign.
 
-- Ding & Wu (2024) print the auxiliary magnetic pressure of Lemma 2.2 as
+- Ding & Wu (2024b) print the auxiliary magnetic pressure of Lemma 2.2 as
   $\tfrac12\big((1-\lvert v_*\rvert^2)B_*+(v_*\cdot B_*)^2\big)$, with the
   vector $B_*$ where the scalar $\lvert B_*\rvert^2$ is needed, by analogy
   with their $p_{\mathrm m}=\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$
@@ -239,4 +294,7 @@ quasilinearization (§3.7, Fig. 4); see
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — arXiv v1: Def. 3.1; Thm 3.2; Assumption 3.4; Thms 3.9, 3.10 (App. A, Eqs. (3.12)–(3.15)); Rems. 3.3, 3.12; Thms 4.1, 4.2 (Eq. (4.6)); §4.1.3; Thms 4.4, 4.7–4.13 and Rem. 4.6; §5 (Eqs. (5.11), (5.16)–(5.18)); §6 (Thms 6.1–6.4).
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — arXiv v1: §3.7, Fig. 4 (link to GQL).
 - [Chen & Wu (2022)](/sources/chen-2022-b.md) — arXiv v1: §3.5 (Lemmas 3.4–3.7, Eqs. (48), (52), Thm 3.1, Eq. (57)).
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §1; §2 (Eqs. (7)–(16), Lemmas 2.1–2.4, Cors. 2.1–2.2); §3.2–3.3 (Thm 3.1, Lemma 3.2); §4.4 (Thm 4.1, Eqs. (70)–(74)); §4.7 (Thm 4.2).
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §1; §2 (Eqs. (7)–(16), Lemmas 2.1–2.4, Cors. 2.1–2.2); §3.2–3.3 (Thm 3.1, Lemma 3.2); §4.4 (Thm 4.1, Eqs. (70)–(74)); §4.7 (Thm 4.2).
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — arXiv v1: §2.1 (Thm 2.1); §3.1 (Lemmas 3.1–3.4); §3.2 (proof of Thm 2.1).
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Lemmas 2.10–2.11, 3.8–3.9; Thms 2.12, 3.10; App. A.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §1; §3.4, Eq. (3.19); Appendix A.

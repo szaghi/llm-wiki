@@ -5,21 +5,23 @@ description: "Constrained transport stores face averages of the normal magnetic 
 status: established
 aliases: [CT, staggered constrained transport, Evans–Hawley constrained transport, upwind constrained transport, UCT, UCT-GFORCE, Gardiner–Stone constrained transport, staggered mesh MHD, MPACT]
 tags: [mhd, finite-volume, relativistic, numerical-flux]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:19:00Z
 ---
 
 # Constrained transport for the induction equation
 
 **Constrained transport** (CT) discretizes the induction equation
 $\partial_tB+\nabla\times\mathcal E=0$, with the electric field
-$\mathcal E=-v\times B$ of ideal MHD plus $\eta_{\mathrm r}\nabla\times B$
-in resistive MHD ($\mathcal E$ and the resistivity $\eta_{\mathrm r}$
+$\mathcal E=-v\times B$ of ideal MHD plus $\eta_{\mathrm m}\nabla\times B$
+in resistive MHD ($\mathcal E$ and the resistivity $\eta_{\mathrm m}$
 page-local; $\mathcal E$ is not the vortex strength of registry §10, and
 the electric field is written $\mathcal E$ as on the
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 page), on a staggered layout: each component of $B$ is stored as an average
 over the cell faces normal to it, and $\mathcal E$ as averages along the
-cell edges. Integrating the induction equation over a face and applying
+cell edges. In resistive relativistic MHD the electric field is an
+evolved variable of its own, and CT is applied to $B$ with that field
+([Mignone et al. (2024)](/sources/mignone-2024.md), below). Integrating the induction equation over a face and applying
 Stokes' theorem gives an update of each face average by the circulation of
 $\mathcal E$ around the face's edges. Every edge is shared by the faces of
 a cell twice with opposite orientation, so the face-based discrete
@@ -105,7 +107,7 @@ the largest of the four adjacent face speeds of the one-dimensional
 efficiency (page-local $S$; the authors write that one should ideally take
 the maximum speed among the four reconstructed states). The corner fields are built in
 steps: point values of $-v\times B$ from the face point values, conversion
-to face averages, the resistive part added when $\eta_{\mathrm r}>0$, WENO
+to face averages, the resistive part added when $\eta_{\mathrm m}>0$, WENO
 reconstruction from face to edge in each transverse direction, and the
 average of the two values obtained by the $x$-then-$y$ and $y$-then-$x$
 paths, "assuming discontinuities only at cell boundaries". The resistive
@@ -134,6 +136,32 @@ on point values, three layers of transverse ghost zones suffice instead of
 four (§4). Details of the HLL-family coefficients are on
 [HLL-family solvers](/methods/hll-riemann-solvers.md).
 
+**CT-Maxwell average for resistive relativistic MHD** (Mignone et al.
+2024, §3.6–3.7, Eqs. (43), (49)–(53), Fig. 1). The electric field is a
+cell-averaged unknown evolved by Ampère's law with a stiff Ohm's-law source,
+and only $B$ is staggered. The face fluxes come from the authors' MHLLC
+solver, whose Maxwell part uses the jump conditions of the linear Maxwell
+system for the transverse $B$ and $\mathcal E$. The face-centre values of
+$\mathcal E_3$ (one per face, the mean of its left and right states) and of
+the normal field are reconstructed to the edge from the two transverse
+directions, giving N, S values from $x$-faces and E, W values from $y$-faces,
+and combined by
+$$\mathcal E_3=\tfrac14\big(\mathcal E_3^{\mathrm N}+\mathcal E_3^{\mathrm S}+\mathcal E_3^{\mathrm E}+\mathcal E_3^{\mathrm W}\big)+\tfrac12\big(B_2^{\mathrm E}-B_2^{\mathrm W}\big)-\tfrac12\big(B_1^{\mathrm N}-B_1^{\mathrm S}\big),$$
+then turned into a line average by adding $\tfrac1{24}$ of the undivided
+second difference along the edge (Eq. (53)). *(Compiler check, not in the
+sources: this has the weights of Teissier et al.'s multidimensional
+Lax–Friedrichs average above with $S=1$, the light speed, which bounds the
+Maxwell wave speeds; the four averaged values are edge reconstructions of
+face values, not corner states.)* The reconstruction now starts from face values;
+their earlier second-order scheme started from cell centres with linear
+interpolation and applied CT to both $B$ and $\mathcal E$ (§1, §3.7).
+Here $\nabla\cdot\mathcal E$ is not constrained, the charge being replaced by
+the fourth-order central divergence of the cell-centred field; citing
+"extensive testing (not part of this work)", the authors state that
+they have not found "any appreciable evidence of loss of accuracy or
+stability" (§1, §3.1, §3.8). The
+scheme needs three ghost zones and two boundary calls per stage (§3.10).
+
 **Inside an implicit iteration** (Dematté et al., §3.3.1, Eqs.
 (41)–(47), adapting Gardiner and Stone). In a semi-implicit all-Mach
 scheme the corner field is the average of the four adjacent face values
@@ -147,7 +175,7 @@ pressure-subsystem flux, $\mathcal E_{3,i+1/2,j}=-(F^{\mathrm a}_{[B_2]}+F^{\mat
 (Eq. (43); $F^{\mathrm a}$, $F^{\mathrm p}$ the advective and pressure parts
 of the split flux, page-local), recomputed at every inner Picard iteration
 of the [semi-implicit all-Mach scheme](/methods/semi-implicit-all-mach-scheme.md);
-the resistive case adds $\eta_{\mathrm r}$ times differences of the four
+the resistive case adds $\eta_{\mathrm m}$ times differences of the four
 cell-centred field values around the corner, divided by $2\Delta x$ and $2\Delta y$ (Eq. (61)).
 The cell-centred field is then replaced by the mean of its two face values
 in each direction, which satisfies the corner-centred divergence
@@ -228,6 +256,22 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
   states, a choice the authors state is made for efficiency (§3.2.3); their
   Lax–Friedrichs speed estimate is valid only for ideal MHD and is replaced
   by a diffusion speed in their diffusion-only tests (§3.2.1, §4.2).
+- **Printed slips in Mignone et al. (2024).** Eq. (52) prints the last term
+  as $-\tfrac12(B_1^{\mathrm N}-B_2^{\mathrm S})$ (the source's $B^S_y$), although only
+  $B_1^{\mathrm S}$ is defined (Eq. (51)); Eq. (51) writes the operators that
+  carry the $y$-face values of $B_2$ to the edge as $y$-reconstructions,
+  where Fig. 1 and the parallel Eq. (49) have reconstructions along $x$. The
+  formula above uses the consistent reading. Footnote 1 corrects a typo in
+  Eq. (48) of their earlier paper ("the arithmetic average operator
+  $\langle.\rangle_z$ is not needed").
+- **A critique of CT.** [Komissarov & Phillips (2024)](/sources/komissarov-2024.md)
+  (§1, arXiv v3) prefer [GLM cleaning](/methods/glm-divergence-cleaning.md)
+  for relativistic MHD: in CT the face-based and the cell-centred fields are
+  two different discrete solutions that diverge, the energy corrections
+  proposed for this lack an analysis, and of one iterative correction they
+  write that "the mathematical problem supposed to be solved ... is actually
+  not posed". They cite, without testing, that GLM gives accuracy similar to
+  CT in ideal MHD.
 - Other constrained-transport variants of the bundle (Touma's unstaggered
   CTM in a central scheme, the IDEFIX GPU code, vector potentials in
   finite-difference WENO, divergence-preserving prolongation on adaptive
@@ -239,4 +283,6 @@ divergence (§3.5, Eq. (55); initial fields likewise, Eqs. (76)–(77)).
 
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — arXiv v2: §2.3, Eqs. (12)–(17); §3.1.1, Eqs. (18)–(24); §3.2.1, Eqs. (31)–(33); §3.2.3, Eqs. (50)–(51); §3.4.2, Eq. (53); §3.5, Eq. (55); §4.1, Table 2; §4.2, Eqs. (76)–(77); §5.
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2, Eqs. (11)–(15); §3.1, Eqs. (21)–(22); §4, Eqs. (38)–(40); App. B, Eqs. (B.1)–(B.6); §5.2–5.4, Tables 1–2.
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §1; §3.1, Eqs. (15)–(20); §3.6–3.8, Eqs. (43), (49)–(56), Fig. 1, footnote 1; §3.10.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — arXiv v3: §1, §3.
 - [Dematté et al. (2024)](/sources/dematte-2024.md) — §3.3.1, Eqs. (39)–(47); §3.3.2, Eqs. (48)–(51); §3.4, Eq. (61); §4.1.2, Table 2; §4.1.4, Fig. 8.

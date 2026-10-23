@@ -152,7 +152,7 @@ printed duplicates.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
 
 * [Adaptive TENO (TENO-A, TENO-AA)](/methods/adaptive-teno.md)
 * [Approximate dispersion relation](/definitions/approximate-dispersion-relation.md)

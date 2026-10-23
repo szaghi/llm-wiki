@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Leblanc shock tube"
-description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and density ratio 10^3 or 2×10^3, printed in two inequivalent versions under one name, plus a rescaled copy and a gamma = 1.4 variant of the first; a near-vacuum robustness test for positivity limiters, DG blending and ALE remapping, judged against fine or exact references."
+description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and density ratio 10^3 or 2×10^3, printed in two inequivalent versions under one name, plus a rescaled copy, gamma = 1.4 variants and a two-phase copy of the first; a near-vacuum robustness test for positivity limiters, DG blending, bound-preserving schemes and ALE remapping."
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Leblanc shock tube
@@ -54,6 +54,27 @@ boundaries, reflective walls elsewhere, $t=6$. With $p=(\gamma-1)\rho e$
 the pressures are $0.04$ and $4\times10^{-11}$: the pressure and density
 ratios are unchanged, but the sound speeds and wave positions differ
 from the $\gamma=5/3$ version *(compiler check, not in the sources)*.
+[Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 7 print
+$(\rho,v,p)=(1,0,0.1(\gamma-1))$ for $x\le3$ and
+$(0.001,0,10^{-7}(\gamma-1))$ otherwise on $[0,9]$, to $t=6$, on 500
+cells (and 1000 and 5000 for convergence), with $\gamma=1.4$ by the
+general rule of their §4.2; their right pressure is $4\times10^{-8}$,
+a thousand times Gu et al.'s, because the density factor $0.001$ of
+$p=(\gamma-1)\rho e$ is absent. The right pressure hardly matters to
+the waves: an exact Riemann solve gives a shock speed of $0.6865$ for
+these data against $0.6864$ for Gu et al.'s, with $p^*=3.93\times10^{-4}$
+*(compiler check, not in the sources)*.
+
+**Two-phase copy.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+Ex. 4.5 run the problem in the five-equation (Kapila) model with
+$\gamma_1=\gamma_2=5/3$: phase densities $(\rho_1,\rho_2)=(1,0.001)$,
+$v=0$, specific internal energy $0.1$ and volume fraction
+$\phi_1=1-10^{-10}$ for $x<3$, energy $10^{-7}$ and
+$\phi_1=10^{-10}$ otherwise, on $[0,9]$ with 400 cells and outflow
+boundaries to $t=6$, against a $\mathbb P^2$ reference on 10,000 cells.
+With equal $\gamma$ the two phases form one ideal gas with Deng's
+states, so this is the $\gamma=5/3$ version carried as two phases
+*(compiler check, not in the sources)*.
 
 ## Version on $[-10,10]$, $\gamma=1.4$
 
@@ -147,6 +168,19 @@ steps, without moving the nodes at the shock and contact fronts
 agrees better with the exact solution in the shape and position of the
 contact and the shock.
 
+**Bound-preserving PAMPA and OEDG.** Abgrall et al. (2026) state that
+without bound-preserving limiting it is "challenging or even
+impossible" to run this problem above first order; their
+bound-preserving [PAMPA scheme](/methods/pampa-scheme.md), with positive
+density and internal energy enforced through
+[geometric quasilinearization](/methods/geometric-quasilinearization.md)
+and a relaxed local maximum principle on the density averages, runs it
+on 500 cells, and a study on 500, 1000 and 5000 cells converges to
+the exact solution (Figs. 7–8). Yan, Abgrall &
+Wu's bound-preserving [OEDG](/methods/oedg.md) scheme resolves the
+two-phase copy better than its variant with the averaged
+(second-order) discretization of the non-conservative source (Fig. 7).
+
 **Low dissipation.** Deng finds low-dissipation
 [ROUND](/methods/round-scheme.md) "much less dissipative and less
 oscillatory" than WENO-JS5 on 200 cells (Fig. 34).
@@ -175,9 +209,11 @@ almost no cells are troubled (Table 4.2).
 
 - The two versions share a name and the pressure ratio only; results
   on one say nothing directly about the other.
-- The two versions and the two relatives (Lin, Chan & Tomas's rescaled
-  copy, Gu et al.'s $\gamma=1.4$ variant) give four sets of wave
-  positions; only the rescaled copy is equivalent to a printed version.
+- The two versions and the relatives (Lin, Chan & Tomas's rescaled
+  copy, the $\gamma=1.4$ variants of Gu et al. and Abgrall et al.)
+  give four sets of wave positions; the rescaled copy and Yan et al.'s
+  two-phase copy are equivalent to the $\gamma=5/3$ version, and the two
+  $\gamma=1.4$ variants nearly coincide.
 - Evidence is visual against fine-grid or exact references, except Lin,
   Chan & Tomas's $L^1$ errors against the exact solution.
 - Peyvan et al. write that "the pressure ratio is $10^9$ and the
@@ -196,6 +232,12 @@ almost no cells are troubled (Table 4.2).
   sources)*; the printed time is either a slip or a run in which the
   rarefaction leaves through the boundary.
 - Deng states neither the CFL number nor the Runge–Kutta variant.
+- Abgrall et al. (2026) write that "at time $t=6$, the shock wave should
+  be located at $x=8$", the position for $\gamma=5/3$: an exact solve of
+  their printed data gives the shock at $x\approx7.98$ with $\gamma=5/3$
+  but at $x\approx7.12$ with the $\gamma=1.4$ their §4.2 assigns to the
+  example *(compiler check, not in the sources)*; the paper does not
+  say which $\gamma$ its exact solution in Figs. 7–8 uses.
 - Chamarthi (2023a) and (2023b) are read as arXiv preprints; both run at
   CFL 0.2.
 
@@ -212,3 +254,5 @@ almost no cells are troubled (Table 4.2).
 - [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) — §8.1.1, Eq. (61), Table 1, Figs. 2–3 (arXiv v2).
 - [Peyvan et al. (2023)](/sources/peyvan-2023.md) — §4.1, Fig. 1 (arXiv v1).
 - [Gu, Li, Cheng & Shu (2023)](/sources/gu-2023.md) — §3.5.4, Fig. 19.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §4.2, Ex. 7, Figs. 7–8.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.5, Fig. 7.

@@ -5,7 +5,7 @@ description: "Two-dimensional scalar conservation law with the nonconvex flux (s
 status: established
 aliases: [KPP problem, Kurganov–Petrova–Popov problem, rotating wave problem]
 tags: [benchmark, entropy-stable, dg, limiting]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # KPP rotating wave
@@ -26,7 +26,7 @@ entropy solution is a rotating spiral wave (a "composite wave
 structure", Dzanic et al.). Its diagnostic value is that
 oscillation control and entropy stability come apart: a scheme can be
 free of overshoots and still converge to a nonentropic weak solution.
-The four sources use it as a test of whether a shock-capturing device
+The five sources use it as a test of whether a shock-capturing device
 selects the entropy solution of high-order schemes; see
 [entropy stability](/properties/entropy-stability.md).
 
@@ -36,17 +36,24 @@ selects the entropy solution of high-order schemes; see
 |---|---|---|---|
 | [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) §7.4, Eqs. (26)–(27) | $(-2,2)\times(-2.5,1.5)$ | continuous $\mathbb Q^p$ finite elements, $p\in\{1,2,4\}$, with [dissipation-based WENO stabilization](/methods/weno-stabilized-continuous-galerkin.md) | $N_h=129^2$ degrees of freedom |
 | [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) §5.1, Eqs. (37)–(38) | $[-2,2]^2$ (boundary conditions not stated) | [DGSEM](/methods/dgsem.md), $N=3$, element-wise [subcell FV blending](/methods/subcell-finite-volume-limiting.md) with $\alpha_{\max}=0.5$ | $32^2$ to $256^2$ elements |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.2 | $[-2,2]^2$, periodic | flux reconstruction, $\mathbb P_9$, residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=6$ | $16^2$ to $64^2$ elements |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.1.2 | $[-2,2]^2$, periodic | flux reconstruction, $\mathbb P^9$, residual-based [artificial viscosity](/methods/artificial-viscosity.md), $c_\mu=6$ | $16^2$ to $64^2$ elements |
+| [Vilar & Abgrall (2024)](/sources/vilar-2024.md) §4.2.2 | $[-2,2]\times[-2.5,1.5]$; $u_0=7\pi/2$ "if $x<\tfrac12$", $\pi/4$ otherwise (as printed) | $\mathbb P^5$ DG on unstructured triangles with a posteriori local subcell correction ([MOOD-type](/methods/mood-a-posteriori-limiting.md)); also $\mathbb P^3$ with structured and Voronoi-type subcells | 1054 triangles, $t=1$ |
 | [Lin & Chan (2024)](/sources/lin-2024.md) §4.1.2 | $[0,2]^2$ as printed; initial condition as in Rueda-Ramírez et al.; final time not printed | DGSEM, $N=3$, blended with the Hennemann et al. shock-capturing function, with and without their cell-entropy subcell limiter | $K_{1D}=64$ and $128$ elements per direction |
 
-The domains differ: Kuzmin & Vedral shift the box downwards to
-$y\in(-2.5,1.5)$, Rueda-Ramírez et al. and Dzanic et al. use the square
+The domains differ: Kuzmin & Vedral and Vilar & Abgrall shift the box
+downwards to $y\in(-2.5,1.5)$, Rueda-Ramírez et al. and Dzanic et al. use the square
 $[-2,2]^2$, the latter with periodic boundaries; Dzanic et al. write
 the data as $3.5\pi$ and $\pi/4$.
 Kuzmin & Vedral set the linear weights of all five candidates to 0.2
 and the low-order viscosity factor $\lambda_e$ (page-local) to $2$ (instead of the bound
 1) for this test, and run the plain Galerkin comparison with a lumped
 mass matrix. Rueda-Ramírez et al. run it in [Trixi.jl](/software/trixi-jl.md).
+Vilar & Abgrall (HAL preprint) print the data as $7\pi/2$ "if $x<\tfrac12$"
+and $\pi/4$ "if $x>\tfrac12$" with a non-bold $x$; read as the
+distance from the origin it is a disc of radius $\tfrac12$, half the unit
+radius of the other sources, and read as the coordinate it is a
+half-plane, so in either reading their data differ from the others'
+*(compiler check, not in the sources)*.
 
 ## Agreement: absence of oscillations does not select the entropy solution
 
@@ -93,7 +100,7 @@ oscillations.
 A third mechanism passes the test. Dzanic, Trojak & Witherden's
 artificial viscosity, computed from the defect of a forward–backward
 time step (time reversibility fails at entropy-producing shocks), gives
-the expected wave structure at $\mathbb P_9$ on $32^2$ elements with
+the expected wave structure at $\mathbb P^9$ on $32^2$ elements with
 sub-element resolution and no oscillations; the viscosity is localized
 and "roughly proportional to the magnitude of the discontinuity", and
 the solution converges qualitatively from $16^2$ to $64^2$ elements
@@ -108,6 +115,19 @@ enforces a semi-discrete cell entropy inequality on the subcell fluxes
 by a linear program for the limiting factors
 ([subcell limiting](/methods/subcell-finite-volume-limiting.md)),
 makes the solution entropic (§4.1.2, Fig. 3).
+
+The fifth source runs it on a very coarse unstructured mesh. Vilar &
+Abgrall's sixth-order DG without correction is non-entropic and highly
+oscillatory on 1054 triangles; their a posteriori local subcell
+correction, which replaces the reconstructed fluxes of troubled
+subcells by first-order finite-volume fluxes, captures the entropic
+spiral without spurious oscillations, and the corrected subcells track
+the spiral discontinuity (Fig. 33). At fourth order the structured and
+Voronoi-type subdivisions give similar results (Fig. 34). The
+guarantee the authors state is the maximum principle, enforced by the
+first-order fallback by construction (§3, Remark 8); the entropic
+solution is shown on this test, not proved. See
+[DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md).
 
 ## Qualifications
 
@@ -133,3 +153,4 @@ makes the solution entropic (§4.1.2, Fig. 3).
 - [Rueda-Ramírez, Pazner & Gassner (2022)](/sources/ruedaramirez-2022.md) — §5.1, Eqs. (37)–(39), Figs. 2–3 (arXiv v2).
 - [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) — §5.1.2, Figs. 2–3 (arXiv v2).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §3, §4.1.2, Fig. 3.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §3, §4.2.2, Remark 8, Figs. 33–34 (HAL preprint).

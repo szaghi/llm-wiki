@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Subcell finite-volume limiting for DG"
-description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the entropy-stable blending lemma, semi-discrete monolithic convex limiting, element switching on finer equidistant subcells, and the measured effect of each choice."
+description: "Subcell finite-volume limiting makes a nodal DGSEM robust by convexly blending it, per element or per subcell interface, with a compatible low-order finite-volume scheme on the LGL subcells; the page gives the flux-differencing form, the four mix-and-match ingredients, the entropy-stable blending lemma, semi-discrete monolithic convex limiting, switching on equidistant or Gauss-weight subcells, Gauss-node blending, and measured effects."
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Subcell finite-volume limiting for DG
@@ -434,7 +434,104 @@ limited. With $p$-adaptation the authors call the result "hp-adaptive";
 see [h- and hp-adaptation](/methods/hp-adaptation.md). They do not use
 split-form DG, to isolate the stabilizing effect of the subcells (§9).
 
+## Subcells on Legendre–Gauss nodes
+
+Two sources build the subcells on Legendre–Gauss nodes, which exclude the
+element boundary, and size them by the Gauss weights.
+
+**Hard switching with a compact subcell reconstruction.**
+[Deng et al. (2025)](/sources/deng-2025.md) couple a modal Legendre DG
+scheme of degree $N$ (Gauss quadrature, SSP-RK3, BR2 viscous terms;
+[Bassi–Rebay](/methods/bassi-rebay-viscous-discretization.md)) to a
+finite-volume scheme on non-uniform subcells (§3.1–3.2, Fig. 2):
+
+- the subcell values are the DG values at the Gauss points, the subcell
+  widths the Gauss weights ($\mathsf w_i\times\mathsf w_j$ in 2D), and the
+  point value is *treated as* the subcell average, without exact
+  averaging; the way back to modal coefficients solves the mass-matrix
+  system with the Gauss-weighted point values on the right (Eq. (3.6));
+- the subcell reconstruction is their non-uniform-grid
+  [ROUND](/methods/round-scheme.md) scheme, third order away from
+  $\tilde u_i\approx0,1$ and free of smoothness indicators; viscous terms on
+  the subcells use second-order central differences;
+- the subcell face fluxes at element boundaries coincide with the DG
+  surface Gauss points, are stored, and are used directly by the DG
+  neighbour on DG–FV interfaces;
+- a troubled element is switched as a whole, at every Runge–Kutta stage,
+  by a relaxed [BVD](/definitions/boundary-variation-diminishing.md)
+  criterion: a subcell is discontinuous if the total boundary variation
+  of the third-order linear reconstruction exceeds that of the first-order
+  one by more than $\max\big(10^{-6},10^{-4}(\lvert\bar u_{i-1}\rvert+\lvert\bar u_i\rvert+\lvert\bar u_{i+1}\rvert)\big)$;
+  an element is troubled if any subcell (1D) or more than half of them
+  (2D) are (Eqs. (3.7)–(3.9);
+  [troubled-cell indicator](/definitions/troubled-cell-indicator.md));
+- an a posteriori positivity fix recomputes the subcells with a
+  first-order Godunov scheme where negative density or pressure appears at
+  Gauss points; on the viscous shock tube at $\mathrm{Re}=1000$ it was needed,
+  and triggered only, at the start (§4.6;
+  [viscous shock tube](/benchmarks/viscous-shock-tube.md)).
+
+They classify subcell methods as hard switching, a priori or a posteriori
+(MOOD), against seamless convex blending, and as equidistant subcells
+reached by projection against quadrature-sized subcells; they side with
+Hennemann et al. that projecting onto equidistant subcells gives a
+non-conservative blended form, and add that equidistant subcells change
+the data structure, break compactness and add cost and load imbalance
+(§1, §3.2). Mass, momentum and energy are conserved to $O(10^{-16})$ over a
+vortex run on
+$40\times40$ elements (Table 3). Comparisons at matched degrees of freedom
+(§4): on the [Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)
+third order with 130 elements (390 DOFs) is competitive with Vilar's
+ninth-order DG with first-order subcell correction at 540 DOFs (Fig. 9); on
+the [Shu–Osher problem](/benchmarks/shu-osher-problem.md) third order with
+300 DOFs is comparable to or better than Hennemann et al.'s fifth-order DG
+with first-order subcells at 320 and 640 DOFs (Fig. 10); and on the
+[double Mach reflection](/benchmarks/double-mach-reflection.md) at fourth
+order on $480\times120$ elements the resolution is better than Hennemann et
+al. at similar DOFs, with small acoustic waves the authors attribute to
+excessive DG/FV switching (Figs. 16–17). A third-order isentropic-vortex
+study gives $L^2$ density orders 2.69, 3.40, 3.41, 2.65 with the indicator
+and 2.60, 2.42, 2.47, 2.13 when 5 % of the elements are forced troubled
+(Tables 1–2). On curvilinear grids the subcell metrics are taken from the
+DG mapping, which "may lead to the violation of the free-stream
+preservation", and is not fixed (§4.7;
+[free-stream preservation](/properties/free-stream-preservation.md)).
+
+**Convex blending on Gauss and LGL nodes.**
+[Schwarz et al. (2025)](/sources/schwarz-2025.md) blend the entropy-stable
+collocation DGSEM in [FLEXI](/software/flexi.md), on LGL or on Gauss
+nodes, with a second-order TVD finite-volume scheme on the nodal subcells,
+$(Jq)_t=\alpha\,(Jq)_t^{\mathrm{FV}}+(1-\alpha)\,(Jq)_t^{\mathrm{DG}}$, with
+the nodal values read as subcell means, piecewise-linear reconstruction
+with a generalized minmod limiter, $\alpha$ from Hennemann et al.'s
+modified Persson–Peraire modal indicator on $\rho p$ with minimum and
+maximum blending 0.01 and 0.04 at every resolution, and $\alpha_f=\max(\alpha^-,\alpha^+)$
+at interfaces after Rueda-Ramírez et al. (§3.5, Eq. (26)). Only the volume
+term needs blending if both schemes have the same interface solution. This
+is trivially true for first-order FV on LGL nodes; for second-order FV,
+or on Gauss nodes, it must be enforced by blending the surface term as
+well or, on LGL nodes, by zero slopes in the outer subcells (§3.5). They
+use the blend only on the compressible
+[Taylor–Green vortex](/benchmarks/taylor-green-vortex.md) at $M_0=1.25$,
+$N=3$, where the Gauss-node scheme gives sharper and less oscillatory
+shocks than the LGL one; oscillations of the dilatational dissipation at
+$256^3$ and $512^3$ DOF are attributed to Gibbs oscillations under the
+minimal blending (§4.2.2, Figs. 5–8). The paper does not claim the blend
+is entropy stable on Gauss nodes.
+
 ## Other limiter classes
+
+**Local correction of subcell fluxes.**
+[Vilar & Abgrall (2024)](/sources/vilar-2024.md) write a modal DG cell on
+2D unstructured or polygonal grids exactly as a subcell finite-volume
+scheme with reconstructed fluxes
+([DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md))
+and, a posteriori, replace those fluxes by first-order ones only on the
+faces of troubled subcells, so that the DG solution is kept in the
+admissible subcells of the same cell; they contrast this with the subcell
+limiters above, which change or discard the whole DG polynomial of a
+troubled cell, "a waste of information" (§1, §3; see
+[MOOD a posteriori limiting](/methods/mood-a-posteriori-limiting.md)).
 
 **A posteriori recomputation on subcells.** In ADER-DG,
 [Gaburro et al. (2024)](/sources/gaburro-2024.md) (§3.4) and
@@ -548,4 +645,7 @@ DG modes of troubled cells by a same-order CWENOZ reconstruction instead
 - [Cernetic et al. (2023)](/sources/cernetic-2023.md) — accepted manuscript: §1.
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.4.
 - [Mossier, Beck & Munz (2022)](/sources/mossier-2022.md) — §1; §3.3, Eq. (18); §4.1–4.3, Eqs. (19)–(31), Fig. 2; §7.2; §8.1, §8.6–§8.9, Tables 1, 3, 6, Figs. 13, 16; §9.
+- [Deng et al. (2025)](/sources/deng-2025.md) — §1; §3.1–3.3, Eqs. (3.6)–(3.9), Fig. 2; §4.2–4.7, Tables 1–3, Figs. 9–10, 16–17.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — arXiv v1: §3.5, Eq. (26); §4.2.2, Figs. 5–8.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — HAL preprint v1: §1; §3.
 - [Lin & Chan (2024)](/sources/lin-2024.md) — §1; §2.3; §3.1–3.4, Eqs. (15)–(51), Thms 3.1–3.3, Algorithms 1–3; §4.1–4.4, Tables 1–3, Figs. 2–7, A.8; footnotes 1, 8, 9.

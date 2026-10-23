@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Scale and affine invariance
@@ -156,6 +156,27 @@ $(cr,l/c)$ with $c=\sqrt{|l|/|r|}$, which the authors find necessary to avoid os
 Riemann problem (Remark 3.3, Example 5.7); it is a fix of the arbitrary eigenvector scaling that Peng et al. identify below
 as a threat to invariance ([characteristic decomposition](/methods/characteristic-decomposition.md)).
 
+**Normalizing indicator, global indicator and $\epsilon$ together.** Fan, Qiu & Zhao (2025,
+§2.1, Eqs. (2.10)–(2.11), Remark 2.1; §2.2, Eq. (2.22)) take the step for the WENO-ZQ-type weights
+of their moment-based [Hermite WENO](/methods/hermite-weno.md), HWENO-U:
+
+$$\alpha_k=d_k\Big(1+\frac{\tau_{\mathrm{ZQ}}}{\beta_k\mathsf m^2+\epsilon\,\mathsf m^4}\Big),\qquad
+\tau_{\mathrm{ZQ}}=\Big(\tfrac12\big(\lvert\beta_0-\beta_1\rvert+\lvert\beta_0-\beta_2\rvert\big)\Big)^2,$$
+
+with $\epsilon=10^{-8}$ and $\mathsf m$ the mean absolute cell average of the stencil plus
+$10^{-40}$ (three cells in 1D, nine in 2D; page-local $\tau_{\mathrm{ZQ}}$, not the registry's $\tau_5$). They
+present it as extending Don et al., who scaled only $\epsilon$, by also normalizing $\tau_{\mathrm{ZQ}}$ and
+$\beta_k$; with $\mathsf m=1$ it is the original weight, which becomes
+$d_k\big(1+\sigma^4\tau_{\mathrm{ZQ}}/(\sigma^2\beta_k+\epsilon)\big)$ for data $\sigma u$ and is scale-dependent.
+*(Compiler check, not in the sources: $\tau_{\mathrm{ZQ}}$, $\beta_k\mathsf m^2$ and $\epsilon\mathsf m^4$ all scale
+as $\sigma^4$, so the weights are invariant up to the $10^{-40}$ floor; $\mathsf m$ changes when a
+constant is added, so they are not affine-invariant.)* For systems $\mathsf m$ is computed in the
+local characteristic variables (Remark 2.4). The original weights overshoot on the Lax problem,
+oscillate on it at small scale and add dissipation at large scale ($\sigma$ scaling of $\rho$ and $p$),
+and oscillate on the 2D Sedov problem even with a positivity limiter; the normalized ones do not,
+and the double Mach reflection with data scaled by $\sigma\in\{10^{-7},1,10^7\}$ gives consistent
+results (Ex. 3.5, 3.10, 3.12; Figs. 8–9, 15, 17).
+
 **Normalised variables.** In a compact three-cell stencil, a reconstruction that depends on the
 data only through the normalized cell average $\tilde u_i=(\bar u_i-\bar u_{i-1})/(\bar u_{i+1}-\bar u_{i-1})$
 is called *normalisable*, $\tilde u_{i+1/2}=\mathcal R(\tilde u_i)$, and Deng (2023, Proposition 2) proves
@@ -261,4 +282,5 @@ problem scaled by 100 OF-HWENO "excessively smears" (Ex. 9, Fig. 3.8).
 - [Maltsev et al. (2023)](/sources/maltsev-2023.md) — §2.2.2, Eqs. (22)–(23).
 - [Li, Li, Don & Wang (2023a)](/sources/li-2023.md) — §1, Def. 1; §2.3–2.5, Eqs. (36)–(46), Theorems 1–4, Figs. 1, 3–4; §4.2, Theorem 5.
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — §3.1.2–3.1.3, Eq. (3.8), Remarks 3.2–3.3; Example 5.7 (arXiv v1).
+- [Fan, Qiu & Zhao (2025)](/sources/fan-2025.md) — §2.1–2.2, Eqs. (2.10)–(2.11), (2.22), Remarks 2.1, 2.4; Examples 3.5, 3.10, 3.12.
 - [Fan & Wu (2024)](/sources/fan-2024.md) — §2.2.4–2.2.5, Defs. 1–3, Eqs. (2.30)–(2.33), Theorems 4–7; §2.3, Def. 4; Examples 3, 4, 9, Figs. 3.1, 3.2, 3.8 (arXiv v1).

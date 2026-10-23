@@ -5,7 +5,7 @@ description: "The special relativistic (magneto)hydrodynamics equations in lab-f
 status: established
 aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:19:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD
@@ -64,7 +64,7 @@ same system.)* They evolve it with a fourth-order finite-volume scheme with cons
 transport in PLUTO and do not describe their primitive recovery
 ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
 
-[Ding & Wu (2024)](/sources/ding-2024-b.md) (§2, Eqs. (1)–(3)) print the same RMHD system in the
+[Ding & Wu (2024b)](/sources/ding-2024-b.md) (§2, Eqs. (1)–(3)) print the same RMHD system in the
 ordering $u=(D,m,B,E)$, with magnetic pressure
 $\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$ and $E=\rho h_{\mathrm R}W^2-p_{\mathrm{tot}}+\lvert B\rvert^2$.
 *(compiler check, not in the sources: the magnetic pressure is $\tfrac12\lvert b\rvert^2$ above and
@@ -72,7 +72,7 @@ $\rho h_{\mathrm R}W^2=Dh_{\mathrm R}W$, so the system is Duan & Tang's.)*
 
 ## Equations of state
 
-Beyond the ideal law, Ding & Wu (2024) (§2, Eqs. (3)–(5), §5, Eqs. (86)–(89)) admit any
+Beyond the ideal law, Ding & Wu (2024b) (§2, Eqs. (3)–(5), §5, Eqs. (86)–(89)) admit any
 $h_{\mathrm R}=h_{\mathrm R}(p,\rho)$ that satisfies the inequality from relativistic kinetic theory
 $$h_{\mathrm R}\ge\sqrt{1+p^2/\rho^2}+p/\rho$$
 and the causality condition
@@ -96,7 +96,7 @@ For RHD the pressure is the root on $[0,\infty)$ of (Chen & Wu, Eqs. (7)–(8);
 page-local $\mathcal P_u$)
 $$\mathcal P_u(p)=\frac{p}{\gamma-1}-E+\frac{\lvert m\rvert^2}{E+p}+D\sqrt{1-\frac{\lvert m\rvert^2}{(E+p)^2}}=0,$$
 after which $v=m/(E+p)$ and $\rho=D\sqrt{1-\lvert v\rvert^2}$. For RMHD Duan &
-Tang state only that a nonlinear solve is needed (§1). Ding & Wu (2024) (§2.1, Eqs. (9)–(11), following
+Tang state only that a nonlinear solve is needed (§1). Ding & Wu (2024b) (§2.1, Eqs. (9)–(11), following
 earlier work) solve, for a general EOS, the scalar equation
 $$\xi-p\Big(\frac{D}{W(\xi)},\frac{\xi}{DW(\xi)}\Big)-\frac12\Big(\frac{\lvert B\rvert^2}{W^2(\xi)}+\frac{(m\cdot B)^2}{\xi^2}\Big)+\lvert B\rvert^2-E=0$$
 for $\xi=\rho h_{\mathrm R}W^2$ (page-local), with $W(\xi)$ an explicit function of $\xi$ and of
@@ -189,7 +189,7 @@ $\{D>0,\ E-\sqrt{D^2+\lvert m\rvert^2}>0,\ p(u)>0\}$ (Eq. (4.22), from Wu &
 Tang 2017) with an explicit GQL family indexed by $(v_*,B_*)$ (Thm 4.13).
 Schemes that keep $G$ are called **physical-constraint-preserving** (PCP)
 by Chen & Wu; it is [bound preservation](/properties/bound-preservation.md)
-for this $G$. For RMHD with a general EOS, Ding & Wu (2024) (§2.2, Lemmas 2.1–2.3, recalled
+for this $G$. For RMHD with a general EOS, Ding & Wu (2024b) (§2.2, Lemmas 2.1–2.3, recalled
 from earlier work of Wu and coauthors) write the GQL form of
 $G=\{D>0,\ p(u)>0,\ \lvert v(u)\rvert<1\}$ with free variables $\lvert v_*\rvert<1$ and $B_*\in\mathbb R^3$
 (page-local): $D>0$ and $u\cdot n_*+p_{m*}>0$ for all of them, with
@@ -257,7 +257,7 @@ degree one in $w$ (page-local $\Phi$), makes $(\eta,F_\eta)$ an entropy pair
 of the modified system (Eqs. (2.4)–(2.5), after Wu & Shu); the source
 vanishes for divergence-free fields
 ([divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)).
-Ding & Wu (2024) (§1, Eq. (7)) discretize the modified system
+Ding & Wu (2024b) (§1, Eq. (7)) discretize the modified system
 $\partial_tu+\nabla\cdot f(u)=-(\nabla\cdot B)\,S_{\mathrm G}(u)$ with
 $S_{\mathrm G}=\big(0,\ (1-\lvert v\rvert^2)B+(v\cdot B)v,\ v,\ v\cdot B\big)$ (page-local; ordering
 $(D,m,B,E)$), which they call the relativistic analogue of Godunov's symmetrizable MHD form, for a
@@ -271,6 +271,77 @@ fifth-order entropy-stable finite-difference schemes on adaptive moving
 meshes ([entropy-conservative flux](/methods/entropy-conservative-flux.md),
 [TeCNO schemes](/methods/tecno-scheme.md),
 [adaptive moving mesh](/methods/adaptive-moving-mesh.md)).
+
+## High magnetization
+
+The magnetization $\sigma_{\mathrm M}=\lvert b\rvert^2/(\rho h_{\mathrm R})$ (page-local)
+measures how much the field dominates the energy and momentum.
+[Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (§1, §2.1; arXiv v3)
+locate the failure of standard conservative RMHD schemes at
+$\sigma_{\mathrm M}\gg1$ in the integration of the induction equation: the plasma
+energy and momentum are the small difference between the conserved totals
+and the field part, and a relative field error of order
+$W^2/\sigma_{\mathrm M}$ already makes the plasma energy–momentum four-vector
+space-like, i.e. leaves no admissible primitive state (Eqs. (8)–(20)). Their
+remedy is to split the field into a force-free part and a plasma-inertia
+perturbation ([force-free splitting](/methods/force-free-splitting-rmhd.md)),
+with a recovery of the primitive variables adapted to the split variables:
+a secant iteration, with Brent–Dekker fallback, on the difference
+between the squared four-velocity and that of the force-free drift, each
+evaluation solving a cubic for $\rho h_{\mathrm R}W^2$ by a modified Cardano
+formula or Blinn's substitution (§3.6, App. B). It needs at most 10 secant
+iterations "when σ is not extremely large", up to 60 Brent–Dekker iterations
+in extreme cases, and failed in no case of a Monte-Carlo test (Fig. 1). With
+it they run, for example, a cylindrical explosion up to an ambient
+magnetization of $4.5\times10^9$ (§5.3). The approach gives up exact energy
+conservation, which the authors consider "inevitable for high-σ RMHD anyway"
+(§1); the admissible-set and GQL route of this page keeps conservation and
+limits instead.
+
+## Resistive relativistic MHD
+
+[Mignone et al. (2024)](/sources/mignone-2024.md) (§2, Eqs. (1)–(14)) evolve
+the electric field $\mathfrak E$ (page-local, as in the two-fluid section
+below) as an unknown: Maxwell's equations
+$\partial_tB+\nabla\times\mathfrak E=0$, $\partial_t\mathfrak E-\nabla\times B=-J$
+with $\nabla\cdot B=0$ and $\nabla\cdot\mathfrak E=\mathfrak q$ the charge
+density, and a scalar resistive Ohm's law giving
+$J=\mathfrak qv+\eta_{\mathrm m}^{-1}\big(W\mathfrak E+Wv\times B-W(\mathfrak E\cdot v)v\big)$
+(page-local current $J$ and resistivity $\eta_{\mathrm m}$). The eleven conserved
+variables are $D$, the momentum $m=\rho h_{\mathrm R}W^2v+\mathfrak E\times B$,
+the energy $\rho h_{\mathrm R}W^2-p+\tfrac12(\lvert\mathfrak E\rvert^2+\lvert B\rvert^2)$,
+$B$ and $\mathfrak E$; the source of the $\mathfrak E$ equation splits into a
+non-stiff part $-\mathfrak qv$ and the stiff part proportional to
+$1/\eta_{\mathrm m}$. As $\eta_{\mathrm m}\to0$ the electric field is not evolved
+and $\mathfrak E=-v\times B$, the ideal limit (§2).
+
+**Implicit update and primitive recovery** (contribution; §3.4, Eqs.
+(30)–(40)). In the implicit stage of an
+[IMEX Runge–Kutta](/methods/imex-runge-kutta.md) step the electric field is an
+explicit function of the four-velocity $\mathsf u=Wv$ (page-local), with
+$\tilde\eta=\eta_{\mathrm m}/(a_{kk}\Delta t)$ the stage-scaled resistivity
+($a_{kk}$ the diagonal tableau coefficient, page-local):
+$$(\tilde\eta+W)\,\mathfrak E(\mathsf u)=\tilde\eta\,\mathfrak E^*-\mathsf u\times B+\frac{\tilde\eta}{1+\tilde\eta W}(\mathfrak E^*\cdot\mathsf u)\,\mathsf u,$$
+$\mathfrak E^*$ the explicit predictor (Eq. (32)). Momentum conservation,
+$m-\rho h_{\mathrm R}W\mathsf u-\mathfrak E(\mathsf u)\times B=0$ at fixed $D$, $m$,
+energy and $B$, is then a $3\times3$ nonlinear system for $\mathsf u$, solved by
+Newton–Broyden with an analytic Jacobian (Eqs. (33)–(40)), started from the
+current time level when $\tilde\eta>1$ and from the ideal-MHD solution
+otherwise; it "converges in 2–5 iterations given a relative tolerance of
+$10^{-11}$" for standard applications. The same step performs the conversion
+to primitive variables, following Palenzuela et al. (subtract the
+electromagnetic parts, then the relativistic-hydrodynamics inversion), which
+differs from their earlier paper (§3.3). It is done on point values, after
+[cell-average to point-value conversion](/operators/cell-average-point-value-conversion.md),
+which the authors call "crucial" for accuracy beyond second order (§1).
+
+**Stability of the IMEX schemes** (§4.2–4.3, §5). The third-order SSP3(4,3,3)
+and the fourth-order ARK4(3)7L[2]SA1 give "nearly identical results" on a
+stationary charged vortex, "however, the ARK4 method becomes unstable" for
+$\eta_{\mathrm m}\lesssim10^{-4}$; on a resistive rotor only SSP3(4,3,3) completes the run
+at $\eta_{\mathrm m}=10^{-6}$, and the conclusion names SSP3(4,3,3) "more robust
+for lower values of the resistivity", $\eta_{\mathrm m}\lesssim10^{-5}$. The paper makes no
+asymptotic-preservation claim ([asymptotic preservation](/properties/asymptotic-preservation.md)).
 
 ## Two-fluid relativistic plasma
 
@@ -368,7 +439,7 @@ relativistic MHD versions of the 3D rotated shock tube, a new iso-enthalpy vorte
 [circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md) (observed
 $L_1$ order $4.00$ at 512 cells), [field-loop advection](/benchmarks/field-loop-advection.md), the
 [Orszag–Tang vortex](/benchmarks/orszag-tang-vortex.md), a 3D blast wave and a 3D
-[shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md). [Ding & Wu (2024)](/sources/ding-2024-b.md) (§5, $\mathbb P^2$ central DG, SSP-RK3,
+[shock–cloud interaction](/benchmarks/mhd-shock-cloud-interaction.md). [Ding & Wu (2024b)](/sources/ding-2024-b.md) (§5, $\mathbb P^2$ central DG, SSP-RK3,
 CFL 0.25, while the bound-preserving CFL conditions they prove, $\tau_{\max}\le\varpi\Delta x/2$ in 1D (Thm. 3.1) and
 $\tau_{\max}(\alpha_1/\Delta x+\alpha_2/\Delta y)\le\varpi/2$ with $\alpha_\ell\ge1$ in 2D (Thm. 4.1), are called sufficient,
 not necessary; $\tau_{\max}$ the maximum step of central DG, $\alpha_\ell$ page-local) run smooth RMHD Alfvén waves at $\lvert v\rvert=0.99$ with the TM EOS (third order in 1D
@@ -378,6 +449,19 @@ a Lorentz factor of 223.61), the Orszag–Tang vortex, a rotor, the shock–clou
 [jets](/benchmarks/high-mach-astrophysical-jet.md); without the bound-preserving limiter the code
 fails on the non-smooth tests, and for the jets also without the symmetrization source or the
 locally divergence-free discretization (Exs. 5.1–5.9).
+
+Komissarov & Phillips (2024, §4–§5) run a boosted large-amplitude Alfvén wave
+at $\sigma_{\mathrm M}=545$ (third order;
+[circularly polarized Alfvén wave](/benchmarks/circularly-polarized-alfven-wave.md)),
+rarefactions and fast and slow shocks between $\sigma_{\mathrm M}=10^{-4}$ and
+$10^3$, a moving Lundquist rope at $\sigma_{\mathrm M}\approx2000$, cylindrical
+[explosions](/benchmarks/mhd-blast-wave.md), Harris-sheet
+[tearing](/benchmarks/tearing-mode-instability.md) and an ABC grid of ropes.
+Mignone et al. (2024, §4) run the telegraph equation, a stationary charged
+vortex ([magnetized vortex](/benchmarks/magnetized-vortex.md)), a resistive
+relativistic rotor and a 3D blast wave, the ideal tearing mode and a 3D
+relativistic [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md),
+all in [PLUTO](/software/pluto.md).
 
 ## Qualifications
 
@@ -416,12 +500,22 @@ locally divergence-free discretization (Exs. 5.1–5.9).
   proof needs $\Delta t\le\tfrac1{12}\Delta x/a$ (§5; see
   [Lax–Friedrichs flux](/methods/lax-friedrichs-flux.md)).
 
-- Ding & Wu (2024) print the auxiliary magnetic pressure of their GQL form (Lemma 2.2, Eq. (12))
+- Ding & Wu (2024b) print the auxiliary magnetic pressure of their GQL form (Lemma 2.2, Eq. (12))
   as $p_{m*}=\tfrac12\big((1-\lvert v_*\rvert^2)B_*+(v_*\cdot B_*)^2\big)$, which adds a vector to a
   scalar; by analogy with their magnetic pressure
   $\tfrac12\big((1-\lvert v\rvert^2)\lvert B\rvert^2+(v\cdot B)^2\big)$ the first term should carry
   $\lvert B_*\rvert^2$ *(compiler check, not in the sources)*. They print the right state of their 1D
   Riemann problems on "$0.5<x\le0.5$", an empty set.
+- **IMEX thresholds.** Mignone et al. state ARK4's loss of stability at three
+  different resistivities, below $10^{-4}$ (§4.2), at $10^{-6}$ (§4.3) and below
+  $10^{-5}$ (§5), and attribute it to the scheme not being SSP without an
+  analysis. Printed slips of their edge-field formula are recorded on
+  [constrained transport](/methods/constrained-transport.md).
+- **Printed magnetizations.** Komissarov & Phillips print 54500 for the 1D
+  Harris sheet with $B_0=500$, $p_0=\rho_0=1$; with $\rho h_{\mathrm R}=\rho+4p=5$ for
+  $\gamma=4/3$ it is $5\times10^4$, the value they print for the same data in §5.4
+  *(compiler check, not in the sources)*. They use "rounding error" for
+  truncation error throughout.
 - Ding & Wu's statements that the ideal EOS is a poor approximation and that the conservative
   RMHD system may be ill-posed without $\nabla\cdot B=0$ are cited, not shown; Duan & Tang and
   Berta et al. on this page use the ideal EOS.
@@ -436,4 +530,6 @@ locally divergence-free discretization (Exs. 5.1–5.9).
 - [López-Miralles et al. (2023)](/sources/lopezmiralles-2023.md) — arXiv v1: §2 (Eqs. (1)–(17)); §3.2 (Eqs. (23)–(31)).
 - [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) — arXiv v1: §1; §2 (Eqs. (2.3)–(2.22), Defs. 2.1–2.2, Lemmas 2.1–2.8, Thms. 2.1–2.10, Algs. 2.1–2.4); §3 (Thm. 3.1, Remark 3.4); §4.3; §5 (Tables 1–3, Exs. 5.2–5.9).
 - [Berta et al. (2024)](/sources/berta-2024.md) — arXiv v4: §2 (Eq. (7)); §5.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §1 (Eq. (7)); §2 (Eqs. (1)–(11), Lemmas 2.1–2.4); §3.3 (Lemma 3.2, Remark 6); §4.7 (Thm. 4.2); §5 (Eqs. (86)–(89), Exs. 5.1–5.9).
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — arXiv v3: §1; §2.1 (Eqs. (8)–(20)); §3.6, App. B; §4–§5.
+- [Mignone et al. (2024)](/sources/mignone-2024.md) — §1; §2 (Eqs. (1)–(14)); §3.3–3.4 (Eqs. (25)–(40)); §4.1–4.6; §5.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §1 (Eq. (7)); §2 (Eqs. (1)–(11), Lemmas 2.1–2.4); §3.3 (Lemma 3.2, Remark 6); §4.7 (Thm. 4.2); §5 (Eqs. (86)–(89), Exs. 5.1–5.9).

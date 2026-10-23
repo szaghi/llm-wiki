@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Double rarefaction (123) problem"
-description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test, run by capturing schemes with and without positivity limiters and by a shock-tracking DG method; a two-phase water variant produces cavitation."
+description: "One-dimensional Euler Riemann problem of two gases receding from each other, whose two rarefactions leave a near-vacuum (Toro-type 123 data), a vacuum point or a vacuum region at the centre; a positivity and internal-energy robustness test for capturing schemes with and without positivity limiters and a shock-tracking DG method; two-phase variants test bound preservation and cavitation."
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum, water cavitation tube, two-phase expansion tube]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:03:00Z
 ---
 
 # Double rarefaction (123) problem
@@ -43,13 +43,18 @@ right of the centre.
 | [Tang (2024)](/sources/tang-2024.md) §4.3, Eq. (30) | $(1,\mp2,0.4)$, split at $x=0$ | $[-5,5]$ | 200 cells, reference WENO-JS on 4000 | 1.0 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.2, Eq. (31) | $(1,\mp2,0.4)$ | $[0,1]$ (stated for their Sod tube) | 200 cells | 0.15 |
 | [Zhong et al. (2023)](/sources/zhong-2023.md) Ex. 10, "low density and low internal energy" | $(1,\mp2,0.4)$, transmissive | $[0,1]$ | 300 cells; 30 cells | 0.15; 0.0295 |
+| [Fan et al. (2025)](/sources/fan-2025.md) Ex. 3.8 | $(7,\mp1,0.2)$, outflow | $(-1,1)$ | 400 cells | 0.6 |
+| [Abgrall et al. (2026)](/sources/abgrall-2026.md) Ex. 8, "1-2-3" | $(1,\mp2,0.4)$, $\gamma=5/3$ | $[0,1]$ | 400 cells, SSP-RK3, CFL 0.2 | 0.15 |
 | [Fu (2021)](/sources/fu-2021.md) §5.7.1, Eq. (42) | $(1,\mp2,0.1)$, split at $x=0.5$; $\gamma$ not printed | $[0,1]$ | 400 points, exact reference | 0.1 |
 
 The three data sets fall in the three regimes of the vacuum criterion
 *(compiler check, not in the sources)*:
 
 - $(1,\mp2,0.4)$: $c=0.748$, $2(c_{\mathrm L}+c_{\mathrm R})/(\gamma-1)=7.48>4$,
-  no vacuum; $p_{\mathrm m}=0.00189$, $\rho_{\mathrm m}=0.0219$.
+  no vacuum; $p_{\mathrm m}=0.00189$, $\rho_{\mathrm m}=0.0219$. With
+  Abgrall et al.'s $\gamma=5/3$ the same data give $c=0.816$, a
+  criterion value $4.90>4$, and a much deeper middle state,
+  $p_{\mathrm m}=8.3\times10^{-5}$, $\rho_{\mathrm m}=6.2\times10^{-3}$.
 - $(7,\mp1,0.2)$: $c=0.2$, $2(c_{\mathrm L}+c_{\mathrm R})/(\gamma-1)=2=2v_0$,
   the critical case, in which the two rarefaction tails meet in a
   single vacuum point; Wang et al. call it "double rarefaction with
@@ -71,6 +76,18 @@ $(Y_1,\rho,v,p)=(0.2,\ 0.99988,\ -1.99931,\ 0.4)$ and
 $(0.5,\ 0.99988,\ 1.99931,\ 0.4)$ with $Y_1$ the mass fraction of
 component 1, $\gamma_1=1.5$, $\gamma_2=1.3$, unit heat capacities,
 $t=0.15$, entropy-stable DGSEM with $N=3$ on 100 cells.
+
+A two-phase relative: [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+Ex. 4.3 run the receding flow in the five-equation (Kapila) model with
+a material interface at the centre: phase densities
+$(\rho_1,\rho_2)=(2,2)$, $p=0.2$, $v=\mp1$, volume fraction
+$\phi_1=1-10^{-10}$ on the left and $10^{-10}$ on the right, $\gamma_1=1.4$
+and $\gamma_2=4.4$, on $[-1,1]$ with 200 cells and outflow boundaries,
+$\mathbb P^2$, to $t=0.4$. For a Riemann problem between two ideal gases
+the two-rarefaction solution keeps a non-vacuum middle state when
+$2c_{\mathrm L}/(\gamma_{\mathrm L}-1)+2c_{\mathrm R}/(\gamma_{\mathrm R}-1)>2v_0$;
+here $1.871+0.390=2.26>2$, a near-vacuum case like the 123 data
+*(compiler check, not in the sources)*.
 
 ## Findings across sources
 
@@ -103,7 +120,29 @@ without the positivity flux and limiter all three WENO schemes blow up
 on this test, without showing the failed runs (§5). Fan, Zhao, Xiong &
 Qiu instead run their finite-difference HWENO with restricted
 derivatives (HWENO-R) and WENO-ZQ on the same data **without**
-positivity limiters, and both complete (Ex. 3.6).
+positivity limiters, and both complete (Ex. 3.6). Fan et al. (2025) do
+the same with their moment-based HWENO with unified stencils (HWENO-U),
+HWENO-M and WENO-ZQ: all three run without positivity limiters
+(Fig. 12), while their 1D Sedov problem needs them.
+
+**Bound-preserving point–average updates.** Abgrall et al. (2026) run
+the 123 data at $\gamma=5/3$ with their bound-preserving
+[PAMPA scheme](/methods/pampa-scheme.md), which enforces positive
+density and internal energy on cell averages and point values through
+a [geometric quasilinearization](/methods/geometric-quasilinearization.md)
+of the admissible set; the solution is non-oscillatory, with a
+near-vacuum centre (Fig. 9). They state that their bound-preserving
+technique cures the non-physical solutions that the Jacobian splitting
+of the point-value update can give for the Euler equations, observed
+by Duan, Barsukow & Klingenberg and by others (§2).
+
+**Two-phase bound preservation.** Yan, Abgrall & Wu's bound-preserving
+[OEDG](/methods/oedg.md) scheme keeps density and internal energy
+positive and the volume fraction in $[0,1]$ on their two-phase receding
+flow (Fig. 5); without the bound-preserving limiter the computation can
+terminate on negative density or pressure, which they state without a
+figure. See [bound preservation](/properties/bound-preservation.md).
+
 
 **Scale invariance and spurious oscillations.** Li, Li, Don & Wang run
 the no-vacuum data under the name of Einfeldt and find that the
@@ -222,6 +261,10 @@ condition is shown (§4.1).
   it to $\rho_1$.
 - Luo et al.'s claim that no other method avoids overheating is
   attributed to Liou and not tested in the paper.
+- Abgrall et al. (2026) set $\gamma=5/3$ for this example only by a
+  general statement of their §4.2 ("$\gamma=1.4$, except for Example 4
+  where $\gamma=3$, and Example 8 where $\gamma=5/3$"), so their run is a
+  deeper near-vacuum than the $\gamma=1.4$ runs of the same data.
 
 # Citations
 
@@ -238,3 +281,6 @@ condition is shown (§4.1).
 - [Zhong et al. (2023)](/sources/zhong-2023.md) — §4.3, Ex. 10, Figs. 9–12.
 - [Tang (2024)](/sources/tang-2024.md) — §4.3, Eq. (30), Fig. 8, Table 5.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §3.2.3–3.2.4, §4.1, Eq. (46), Table 1, Figs. 1–2.
+- [Fan et al. (2025)](/sources/fan-2025.md) — Ex. 3.8, Fig. 12.
+- [Abgrall et al. (2026)](/sources/abgrall-2026.md) — §2, §3.4, §4.2, Ex. 8, Fig. 9.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Ex. 4.3, Fig. 5.

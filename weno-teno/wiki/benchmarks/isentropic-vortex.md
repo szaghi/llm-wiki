@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Isentropic vortex
@@ -71,8 +71,8 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Chen et al. (2022)](/sources/chen-2022.md) §6.3, Eq. (32) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; density error on triangles with boundary spacing $h=0.4$ to $0.05$ (1966 to 122,204 cells); HLLC, four-stage RK, $\Delta t=0.002$ |
 | [Du, Shu & Zhong (2022)](/sources/du-2022.md) Exs. 4.2, 4.8 | $[0,14]^2$, centre $(7,7)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=0.2$; density errors, $h=14/10$ to $14/160$ (triangles) and point clouds |
 | [Yu & Hesthaven (2022)](/sources/yu-2022.md) §5.1.2 | $[-10,10]^2$, centre $(-5,-5)$ | 5 | $\rho_0=T_0=1$, stream $(1,1)$ | $t=10$; $L^2$, $L^\infty$ errors, $N_g=40$ to 640 triangles per direction |
-| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.3, Eq. (45) | $[-10,10]^2$, periodic quadrilaterals | Gaussian of width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$ | one convective period; $L^2$ density error, $N=20$ to 67 |
-| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.3 | as Dzanic, Trojak & Witherden | as above | as above | one pass; $L^2$ error with $(2p)^2$ Gauss–Legendre points per element, $N=20$ to 67; cost on a V100 |
+| [Dzanic, Trojak & Witherden (2022)](/sources/dzanic-2022.md) §5.2.3, Eq. (45) | $[-10,10]^2$, periodic quadrilaterals | Gaussian of width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$ | one convective period; $L^2$ density error, $N_x=20$ to 67 |
+| [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.1.3 | as Dzanic, Trojak & Witherden | as above | as above | one pass; $L^2$ error with $(2N)^2$ Gauss–Legendre points per element, $N_x=20$ to 67; cost on a V100 |
 | [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.3, Eq. (3.1) | $[-5,15]^2$, centre $(5,5)$, periodic | 10.0828 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=0.01$; $L^1$ errors and CPU time, $20^2$ to $640^2$, with and without positivity-preserving limiters |
 | [Ji, Liang & Fu (2022)](/sources/ji-2022.md) §5.2 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $L_\infty$ errors on triangles, $h\approx0.1$ to $0.01$ |
 | [Li, Li, Don & Wang (2023)](/sources/li-2023.md) §3.4 | $[0,10]^2$, centre $(5,5)$, exact boundary values | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=1$; $160^2$ to $640^2$ |
@@ -87,12 +87,15 @@ $\gamma=1.4$. The sources differ in normalization and strength:
 | [Lin, Chan & Tomas (2023)](/sources/lin-2023.md) §8.2.1 | $[0,20]\times[0,10]$, centre $(9,5)$, periodic | $\beta=8.5$ in their form, see below | $\rho_0=p_0=1$, stream $(1,0)$ | $T=2$; $L^2$ errors, $N=1$–$4$, $K_{1D}=2$–$32$ ($2K_{1D}\times K_{1D}$ elements, page-local), quadrilaterals (CFL 0.9) and triangles (CFL 0.5) |
 | [Lin & Chan (2024)](/sources/lin-2024.md) §4.2 | $[0,20]\times[0,10]$, $2K_{1D}\times K_{1D}$ elements, periodic | 5.0 in their normalization (analytic solution of §8.2.1 of their earlier paper) | not restated | $T=1$; relative $L^2$ error over $\rho,\rho v_1,\rho v_2,E$ (LGL quadrature), $N=1$–$4$, $K_{1D}=5$–$80$ |
 | [Liu et al. (2023b)](/sources/liu-2023-b.md) §5.1.2, Eqs. (43)–(45) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=2$; $L_\infty$, $L_1$ density errors on uniform triangles, 800 to 12800 points; with and without the PEEB limiter |
-| [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $e_{L^2}$, $e_{L^\infty}$ on triangular, hybrid and uniform meshes, 16–128 edges per side ($P_2$, $P_3$), 8–64 ($P_4$); CFL 0.5 |
+| [Maltsev et al. (2023)](/sources/maltsev-2023.md) §3.1 | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=10$; $e_{L^2}$, $e_{L^\infty}$ on triangular, hybrid and uniform meshes, 16–128 edges per side ($\mathbb P^2$, $\mathbb P^3$), 8–64 ($\mathbb P^4$); CFL 0.5 |
 | [Cernetic et al. (2023)](/sources/cernetic-2023.md) §5.1, Eqs. (48)–(51) | $[-5,5]^2$, centre at the origin, periodic | 5 | no stream; specific internal energy $1$ at infinity, see below | $t=10$; density $L_1$, degree 0 to 7, exponential in the degree |
-| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.1 | $[-20,30]^2$, centre $(5,5)$, wall boundaries | 5 | $\rho_0=p_0=1$, no stream | $t=1$; $L_2$ errors of $\rho$, $p$, $P_1$–$P_3$ on polygons |
+| [Gaburro et al. (2024)](/sources/gaburro-2024.md) §5.1.1 | $[-20,30]^2$, centre $(5,5)$, wall boundaries | 5 | $\rho_0=p_0=1$, no stream | $t=1$; $L_2$ errors of $\rho$, $p$, $\mathbb P^1$–$\mathbb P^3$ on polygons |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.1, Eq. (33) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=p_0=1$, stream $(1,1)$ | $t=100$, $\Delta x=0.2$; density along $y=5$ |
-| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.2, Eqs. (37a)–(37f) | $[-10,10]^2$, two species, periodic | Gaussian width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$, species fraction $\tfrac12\sin(\pi y/10)+\tfrac12$ | to $t=20$, velocity reversed, to $t=40$; $\mathbb P_4$, $20^2$–$80^2$ |
+| [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.2, Eqs. (37a)–(37f) | $[-10,10]^2$, two species, periodic | Gaussian width $R_{\mathrm v}=1.5$, strength $S_{\mathrm v}=13.5$ | Mach 0.4, stream $(0,1)$, species fraction $\tfrac12\sin(\pi y/10)+\tfrac12$ | to $t=20$, velocity reversed, to $t=40$; $\mathbb P^4$, $20^2$–$80^2$ |
 | [Edoh (2022)](/sources/edoh-2022.md) §4.1, Eqs. (27)–(28) | periodic, dimensional | 4 (dimensionless factor of $\sqrt{R_{\mathrm g}T_\infty}$), Gaussian exponent factor $\phi_{\mathrm v}=1$ | $\rho_\infty=1$ kg m$^{-3}$, $\rho v_{1,\infty}=200$ kg m$^{-2}$s$^{-1}$, $\rho e_{o,\infty}=305714.3$ | 100 vortex widths; 60 points per direction; density error, kinetic energy, entropy |
+| [Alberti et al. (2025)](/sources/alberti-2025.md) §3.1.1, Eq. (52) | $[0,10]^2$, centre $(5,5)$, periodic | 5 | $\rho_0=T_0=1$, stream $(\sqrt\gamma,\sqrt\gamma)$, Mach $\sqrt2$ | one period $t=10/\sqrt\gamma$; $25^2$, $50^2$, $100^2$ elements, modal DG degree $N=3,4$ |
+| [Danis et al. (2025)](/sources/danis-2025.md) §5.3 | $[0,10]^3$, centre $(5,5)$ in the $x$–$y$ plane, exact time-dependent boundary values | as in the paper they cite, not restated | not restated | $T=1$, $\Delta t=\tfrac12h^{5/3}$; $20^3$ to $320^3$; tensor-train ranks and cost |
+| [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) §4.2, Eq. (4.3) | $[0,1]^2$, centre $(0.5,0.5)$, periodic | $\epsilon_{\mathrm v}=0.3$, $r_{\mathrm c}=0.05$, $\alpha_{\mathrm v}=0.204$ (their form, page-local) | $\rho=p=1$, stream $(1,0)$ | $t=1$; third-order DG with ROUND subcells, $10^2$ to $50^2$ elements |
 
 Wang et al. print $\rho=\big(1-\frac{25(\gamma-1)}{8\gamma\pi^2}e^{1-r^2}\big)^{1/(\gamma-1)}$,
 which is the table's form with $\mathcal E=5$, $T_0=1$. Balsara et al.
@@ -117,7 +120,7 @@ and 9) use the same box. Chen et al. (2022), Du et al. and Yu &
 Hesthaven print the table's form with $\mathcal E=5$ and unit
 background; Du et al. write it through $\delta T$ with $T=p/\rho$ and
 zero entropy perturbation, as do Ji, Liang & Fu, Li, Li, Don & Wang and
-Wan & Xia with $\mathcal E=5$ on $[0,10]^2$, and Fan et al. with
+Wan & Xia with $\mathcal E=5$ on $[0,10]^2$, and Fan et al. (2023) with
 $\mathcal E=10.0828$. Abgrall & Nassajian Mojarrad write
 $\rho=\big[1-\frac{(\gamma-1)\beta_{\mathrm v}^2}{32\gamma\pi^2}e^{1-r^2}\big]^{1/(\gamma-1)}$
 and velocity perturbation
@@ -194,7 +197,7 @@ different heat capacities ($c_p=1.4$, $c_v=1$ and $c_p=2.8$, $c_v=2$).
 background the centre temperature is
 $1-\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e=2.28\times10^{-6}$,
 the density $7.83\times10^{-15}$ and the pressure $1.78\times10^{-20}$
-*(compiler check, not in the sources)*: Fan et al. print the minima
+*(compiler check, not in the sources)*: Fan et al. (2023) print the minima
 $7.8\times10^{-15}$ and $1.7\times10^{-20}$, the same strength as Chen &
 Wu's relativistic case below.
 
@@ -222,6 +225,26 @@ the centre temperature drops by $21.4\,\%$ and the minimum density is
 $0.5479$ kg m$^{-3}$, the value Edoh prints *(compiler check, not in the
 sources)*, which supports $\gamma=1.4$.
 
+Alberti et al. (2025) print
+$v=(\sqrt\gamma,\sqrt\gamma)+\frac{\alpha_{\mathrm A}}{2\pi}e^{\beta_{\mathrm A}(1-r^2)}(-\bar y,\bar x)$,
+$\rho=\big(1-\frac{\alpha_{\mathrm A}^2(\gamma-1)}{16\beta_{\mathrm A}\gamma\pi^2}e^{2\beta_{\mathrm A}(1-r^2)}\big)^{1/(\gamma-1)}$,
+$p=\rho^\gamma$, with $\alpha_{\mathrm A}=5$, $\beta_{\mathrm A}=\tfrac12$
+(page-local; their $\alpha$, $\beta$): for $\beta_{\mathrm A}=\tfrac12$ the
+table's form with $\mathcal E=5$ and $T_0=1$. The background sound
+speed is then $\sqrt\gamma$, so the stream has Mach number 1 per
+component and $\sqrt2$ in magnitude, as they state, and crosses the
+period 10 in each direction in $10/\sqrt\gamma$ *(compiler check, not in
+the sources)*. Deng, Jiang & Yan write the perturbations in units of a
+core radius $r_{\mathrm c}$, $\tau_{\mathrm v}=r/r_{\mathrm c}$:
+$(\delta v_1,\delta v_2)=\epsilon_{\mathrm v}\tau_{\mathrm v}e^{\alpha_{\mathrm v}(1-\tau_{\mathrm v}^2)}(\bar y,-\bar x)$,
+$\delta T=-\frac{(\gamma-1)\epsilon_{\mathrm v}^2}{4\alpha_{\mathrm v}\gamma}e^{2\alpha_{\mathrm v}(1-\tau_{\mathrm v}^2)}$,
+$\delta s=0$ ($\epsilon_{\mathrm v}$, $\alpha_{\mathrm v}$, $\tau_{\mathrm v}$
+page-local; their $\varepsilon$, $\alpha$, $\tau$), a vortex turning the
+other way, on a stream $(1,0)$; the printed formulas do not say
+whether $(\bar y,-\bar x)$ is normalized by $r$. Danis et al. compute the
+two-dimensional vortex on a three-dimensional grid, with the initial
+data of the paper they cite.
+
 ### MHD version
 
 [Dao & Nazarov (2022)](/sources/dao-2022.md) §5.1.1 run the smooth
@@ -236,11 +259,11 @@ which makes the pressure negative everywhere; the printed
 $\mu_{\mathrm v}$ gives $\delta p=-1.0000$ to ten digits at the centre,
 so a background $p_0=1$ would leave a centre pressure of about
 $5\times10^{-12}$ *(compiler check, not in the sources)*. On continuous
-$\mathbb P_1$–$\mathbb P_3$ elements with their residual-based
+$\mathbb P^1$–$\mathbb P^3$ elements with their residual-based
 [artificial viscosity](/methods/artificial-viscosity.md) the
-viscous and Galerkin solutions have nearly the same errors; $\mathbb P_3$
+viscous and Galerkin solutions have nearly the same errors; $\mathbb P^3$
 reaches about fourth order in $L^1$ (rates 3.81, 3.96, 3.71 for the
-velocity), $\mathbb P_2$ only second, which they call a known
+velocity), $\mathbb P^2$ only second, which they call a known
 suboptimality of continuous Galerkin (Table 1, Fig. 1). Their rates are
 computed from the degrees of freedom, not from a mesh halving.
 
@@ -262,8 +285,8 @@ and the stated minimum follows with $\varphi$ in place of $\varphi^2$
 in the sources)*, so one exponent is misprinted. On $20^2$ to $67^2$
 quadrilaterals their positivity-preserving
 [entropy filter](/methods/entropy-filtering.md) in nodal DG gives rates
-2.89, 3.80, 4.62, 5.23 for $\mathbb P_2$–$\mathbb P_5$ ($\mathbb P_2$:
-$2.29\times10^{-4}$ to $6.92\times10^{-6}$; $\mathbb P_5$:
+2.89, 3.80, 4.62, 5.23 for $\mathbb P^2$–$\mathbb P^5$ ($\mathbb P^2$:
+$2.29\times10^{-4}$ to $6.92\times10^{-6}$; $\mathbb P^5$:
 $4.04\times10^{-7}$ to $6.51\times10^{-10}$), with the filter strength
 $1-f$ at most $1.08\times10^{-4}$, i.e. negligible activity (Tables
 1–2).
@@ -343,7 +366,7 @@ finite-volume TENO3–6 on triangles in $L_\infty$, with the numbers
 shown only in a figure (§5.2, Fig. 2); see
 [TENO](/methods/targeted-eno.md) and [UCNS3D](/software/ucns3d.md).
 
-**Positivity limiters on a near-vacuum vortex.** Fan et al. run the
+**Positivity limiters on a near-vacuum vortex.** Fan et al. (2023) run the
 $\mathcal E=10.0828$ vortex with their finite-difference
 [Hermite WENO](/methods/hermite-weno.md) HWENO-R, HWENO-L and WENO-ZQ,
 with (WL) and without (WO) the [positivity-preserving flux
@@ -398,9 +421,9 @@ direction. See [discontinuous Galerkin](/methods/discontinuous-galerkin.md).
 **Primitive-variable DG with a posteriori limiting.** Gaburro et al.'s
 [ADER](/methods/ader-scheme.md)-DG in primitive variables on polygonal
 meshes, with the subcell limiter never activated, gives $L_2$ density
-errors $1.28\times10^{-1}$ to $9.86\times10^{-3}$ for $P_1$ (orders 2.3,
-2.4, 2.2), $4.43\times10^{-2}$ to $2.06\times10^{-3}$ for $P_2$ (2.6,
-2.9, 2.7) and $3.55\times10^{-2}$ to $2.73\times10^{-3}$ for $P_3$ (3.3,
+errors $1.28\times10^{-1}$ to $9.86\times10^{-3}$ for $\mathbb P^1$ (orders 2.3,
+2.4, 2.2), $4.43\times10^{-2}$ to $2.06\times10^{-3}$ for $\mathbb P^2$ (2.6,
+2.9, 2.7) and $3.55\times10^{-2}$ to $2.73\times10^{-3}$ for $\mathbb P^3$ (3.3,
 3.6, 3.8), with similar pressure errors, which they call the expected
 orders, "up to fourth order" (§5.1.1, Table 1).
 
@@ -413,7 +436,7 @@ it costs 0.98–1.01 of TENO-Z's time per step on $100\times100$ (Table 6).
 **Interface dissipation of a multi-species entropy filter.** Trojak &
 Dzanic run their positivity-preserving
 [entropy filter](/methods/entropy-filtering.md) for two-species DG at
-$\mathbb P_4$ to $t=20$, reverse the velocity and run to $t=40$, so that
+$\mathbb P^4$ to $t=20$, reverse the velocity and run to $t=40$, so that
 a reversible scheme would return the initial species field; there is
 no exact multi-species solution, and the irreversibility is their error
 proxy. With their pressure-jump entropy switch the species roll-up is
@@ -469,12 +492,12 @@ their limiter is shown numerically only, not proved (§4.2). See
 
 **Troubled-cell switching in hybrid DG–FV.** Maltsev et al. find pure
 DG close to design order, while CWENOZ finite volumes of the same
-polynomial order reach it only on finer meshes (quadrilateral $P_4$:
+polynomial order reach it only on finer meshes (quadrilateral $\mathbb P^4$:
 DG $e_{L^2}$ $2.97\times10^{-4}$ to $1.14\times10^{-9}$ from 8 to 64
 edges, FV $7.64\times10^{-2}$ to $7.20\times10^{-4}$); their MOOD-type
 switch flags cells in the vortex core, from 26–46 % of the cells on the
-coarsest meshes to 0.08–0.16 % on the finest $P_2$ and $P_3$ meshes
-(0.35–0.72 % for $P_4$ on 64 edges), and the hybrid then costs 1.26–1.56
+coarsest meshes to 0.08–0.16 % on the finest $\mathbb P^2$ and $\mathbb P^3$ meshes
+(0.35–0.72 % for $\mathbb P^4$ on 64 edges), and the hybrid then costs 1.26–1.56
 times pure DG on the coarsest and 1.01–1.06 times on the finest meshes
 (Table 1, Fig. 4). See
 [troubled-cell indicators](/definitions/troubled-cell-indicator.md).
@@ -492,14 +515,14 @@ fires only on the coarsest grid ($N_g=40$), giving inflated apparent
 orders on the first refinement ($P^4$: 10.2 in $L^2$), and is identical
 to the inviscid DG afterwards (Table 3). Dzanic, Trojak & Witherden's
 residual-based viscosity gives $L^2$ density rates that "met or
-exceeded" $p+1$: 3.30, 4.93, 5.53, 7.44, 7.79, 8.74 for
-$\mathbb P_2$–$\mathbb P_7$, with maximum viscosity components falling
-from $O(10^{-7})$ at $N=20$ to $O(10^{-9})$ at $N=40$ for $\mathbb P_7$
+exceeded" the optimal order $N+1$: 3.30, 4.93, 5.53, 7.44, 7.79, 8.74 for
+$\mathbb P^2$–$\mathbb P^7$, with maximum viscosity components falling
+from $O(10^{-7})$ at $N_x=20$ to $O(10^{-9})$ at $N_x=40$ for $\mathbb P^7$
 (§5.2.3, Table 2). Dzanic & Witherden's
 [entropy filter](/methods/entropy-filtering.md) gives rates
-"generally in the range of $p$ to $p+1$", 2.59, 4.00, 4.27, 6.73, 6.10,
+generally between $N$ and $N+1$ (their "$p$ to $p+1$"), 2.59, 4.00, 4.27, 6.73, 6.10,
 8.13 (Table 5), and costs 1.1, 1.7 and 2.0 % more time-to-solution for
-5, 10 and 20 bisection iterations ($N=40$, $\mathbb P_3$, V100, five
+5, 10 and 20 bisection iterations ($N_x=40$, $\mathbb P^3$, V100, five
 flow-throughs; §5.1.3). The unlimited schemes themselves fall below
 $N+1$ on some of these runs: Du et al.'s unlimited $P^2$ DG has $L^2$
 orders 2.64–2.70 on triangles (Table 4.5) and $P^1$ $L^\infty$ orders
@@ -619,9 +642,64 @@ Precomputing $\ln\rho$ and $\ln p$ speeds the volume terms up by about
 data, because near-constant states take the Taylor branch of the
 logarithmic mean (§7.2, Fig. 6).
 
+**Entropy-conservative and entropy-stable modal DG.** Alberti et al.
+(2025) use the vortex to check the entropy correction of their modal
+DG solver in entropy variables, with the
+[entropy projection](/methods/entropy-projection.md) and a discrete
+entropy-balance (DEEB) correction, against a strong-form pressure
+variant. With the entropy-stable Godunov (exact Riemann) flux every
+strategy converges at order $N+1$, and with the Ismail–Roe
+[entropy-conservative flux](/methods/entropy-conservative-flux.md) at
+order $N$, for $N=3,4$; the DEEB variant with an entropy-viscosity form
+slightly improves the errors of the entropy-conservative flux (Fig. 1).
+The entropy-conservation error converges at the superconvergent rate
+$2N+1$ with the entropy-stable flux and stays at machine level with the
+entropy-conservative flux, both for the DEEB correction and for the
+strong-form pressure, which the authors take as "numerical proof" that
+the pressure term causes the integration error; the strong-form
+pressure spoils momentum conservation, with an error of at least
+$O(h^{2N+d})$, $d$ the space dimension (Figs. 2–3). See
+[entropy stability](/properties/entropy-stability.md).
+
+**Tensor-train WENO and its tolerance.** Danis et al. run fifth-order
+finite-difference WENO-JS in [tensor-train format](/methods/tensor-train-weno.md)
+with the truncation tolerance set by their dynamic rule, whose constant
+$C_\varepsilon$ (page-local) is scaled by the volume $V$ of the domain.
+With $C_\varepsilon=2/\sqrt V$ the orders at the last refinement are
+5.12 ($\rho$), 5.15 ($\rho v_1$), 5.45 ($\rho v_2$) and 5.37 ($E$)
+(Table 3). $C_\varepsilon=1/\sqrt V$ and $2/\sqrt V$ match the
+full-tensor accuracy; $100/\sqrt V$ and $500/\sqrt V$ become "almost
+4th-order" with larger errors; $2/\sqrt V$ also keeps the ranks of the
+exact solution, while $1/\sqrt V$ gives larger ranks except on the
+finest grid (Fig. 4). The tensor-train and full-tensor solvers cost the
+same at $40^3$, and at $320^3$ the tensor-train one is 102 times faster
+with a density compression ratio of about $10^{-4}$, in serial runs on
+unstated hardware (Fig. 5; arXiv v1).
+
+**Third order of DG with ROUND subcells.** Deng, Jiang & Yan's
+third-order DG with Godunov-type finite-volume subcell limiting, whose
+subcells sit at Gauss points and use the non-uniform-grid
+[ROUND](/methods/round-scheme.md) reconstruction, give $L^2$ density
+orders 2.69, 3.40, 3.41 and 2.65 from $10^2$ to $50^2$ elements, with
+1–10 % of the elements troubled, more on coarse meshes (Table 1); with
+5 % of the elements chosen at random as troubled at every step the
+orders drop to 2.60, 2.42, 2.47 and 2.13 (Table 2). The mass, momentum
+and energy deviations stay at $0.84$–$5.09\times10^{-16}$ over all steps
+on $40^2$ elements (Table 3); see
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
+
 ## Qualifications
 
-- Fan et al. print the temperature perturbation as
+- Deng, Jiang & Yan print the temperature perturbation as
+  "$\delta=\dots$" without the $T$, and their orders stay below three on
+  the finest pair (2.65); their conservation
+  check takes the subcell point values at Gauss points as averages, an
+  approximation they state.
+- Danis et al.'s constant $C_\varepsilon$ is tuned per problem (500 for
+  linear advection, 10 for Burgers and the manufactured solution,
+  $2/\sqrt V$ here); the speed-up is for one serial MATLAB
+  implementation.
+- Fan et al. (2023) print the temperature perturbation as
   $+\frac{(\gamma-1)\mathcal E^2}{8\gamma\pi^2}e^{1-r^2}$ (Eq. (3.1)); with the
   plus sign the centre temperature would be about 2, and only the minus
   sign of Ji, Liang & Fu, Li, Li, Don & Wang and Wan & Xia gives their
@@ -630,9 +708,9 @@ logarithmic mean (§7.2, Fig. 6).
   initial data and $v_{2,\infty}=\sqrt3/2$ for the free stream that
   moves the centre; one of the two is a slip. They do not state the
   relaxation parameter or kinetic speeds used.
-- Dao & Nazarov label the second error block of the $\mathbb P_2$ and
-  $\mathbb P_3$ panels of Table 1 "$u$", where the caption and the
-  $\mathbb P_1$ panel indicate $B$.
+- Dao & Nazarov label the second error block of the $\mathbb P^2$ and
+  $\mathbb P^3$ panels of Table 1 "$u$", where the caption and the
+  $\mathbb P^1$ panel indicate $B$.
 - Wang et al. print "$r=(x-5)^2+(y-5)^2$" while the formulas use
   $e^{1-r^2}$; the formulas are consistent only with
   $r^2=(x-5)^2+(y-5)^2$, i.e. with $r$ the distance from the centre as
@@ -689,7 +767,7 @@ logarithmic mean (§7.2, Fig. 6).
   errors at "final time $t=10$"; with stream $(1,1)$ on the periodic
   $[0,10]^2$ one period is $t=10$ *(compiler check, not in the
   sources)*. Their Table 1 prints a DG $L^\infty$ order of 6.69 for
-  quadrilateral $P_4$ at 32 edges, where
+  quadrilateral $\mathbb P^4$ at 32 edges, where
   $\log_2(6.99\times10^{-5}/5.63\times10^{-7})=6.96$ *(compiler check,
   not in the sources)*.
 - Lin, Chan & Tomas are read as arXiv v2.
@@ -701,7 +779,7 @@ logarithmic mean (§7.2, Fig. 6).
   $N=3$ (above $N+1$) and 4.36 for $N=4$ (below $N+\tfrac12$), not all
   rates lie in the band $[N+\tfrac12,N+1]$ that their text states
   *(compiler check, not in the sources)*.
-- Gaburro et al.'s last $P_3$ orders, 3.8 ($\rho$) and 3.6 ($p$), are
+- Gaburro et al.'s last $\mathbb P^3$ orders, 3.8 ($\rho$) and 3.6 ($p$), are
   3.53 and 3.40 when recomputed from the printed errors and the printed
   $h=1.15$ and $0.92$; rounding $h$ to two digits moves them to at most
   3.69 and 3.56, which covers the printed 3.6 for $p$ but not the 3.8 for
@@ -756,3 +834,6 @@ logarithmic mean (§7.2, Fig. 6).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.1, Table 1 (arXiv v1).
 - [Tang (2024)](/sources/tang-2024.md) — §4.4.1, Eq. (33), Fig. 10, Table 6.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.1.2, Eqs. (37a)–(37f), Figs. 1–4 (arXiv v1).
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.1.1, Eq. (52), Figs. 1–3.
+- [Danis et al. (2025)](/sources/danis-2025.md) — §4.6, §5.3, Table 3, Figs. 4–5 (arXiv v1).
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §4.2, Eq. (4.3), Tables 1–3.

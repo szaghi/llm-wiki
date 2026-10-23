@@ -160,7 +160,7 @@ no item is unparseable.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–8 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–9 (2026-10-22/23). This source is cited on:
 
 * [Buckley–Leverett problem](/benchmarks/buckley-leverett-problem.md)
 * [Burgers equation tests](/benchmarks/burgers-equation-tests.md)

@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 488:112207"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Bhoriya_High-order_finite-difference_entropy_stable_schemes_for_two-.pdf"
 tags: [entropy-stable, relativistic, finite-difference, imex, stiff-source, mhd]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:19:00Z
 ---
 
 # Summary
@@ -129,7 +129,7 @@ $\phi_{\mathrm E}$ and $\psi_{\mathrm{GLM}}$.
 | $\Lambda^d_{\alpha k}$, $\Lambda^d_\alpha$ | $\lambda_l$, $\Lambda$ | eigenvalues, Rusanov diagonal |
 | $k$ (§4.1.2) | kept | ENO polynomial degree / order |
 | $F_{NS}$, $F_S$, $a^{[NS]}_{ml}$, $a^{[S]}_{ml}$, $b_l$, $c_l$ | kept | ARK splitting and Butcher coefficients |
-| $\eta$ (resistivity) | $\eta_{\mathrm R}$ (page-local) | **$\eta$ is the entropy in the registry** |
+| $\eta$ (resistivity) | $\eta_{\mathrm m}$ (page-local) | **$\eta$ is the entropy in the registry** |
 | $\omega_p$, $d_p$ | kept | plasma frequency, skin depth |
 
 # Reference list
@@ -144,11 +144,12 @@ No printed duplicates.
 
 # Pages created or updated
 
-Chunk 5 (2026-10-23), cited further in chunks 6–8 (2026-10-23). This source is cited on:
+Chunk 5 (2026-10-22), cited further in chunks 6–9 (2026-10-23). This source is cited on:
 
 * [Brio–Wu MHD shock tube](/benchmarks/brio-wu-shock-tube.md)
 * [Entropy stability](/properties/entropy-stability.md)
 * [Entropy-conservative and kinetic-energy-preserving two-point fluxes](/methods/entropy-conservative-flux.md)
+* [GLM divergence cleaning](/methods/glm-divergence-cleaning.md)
 * [IMEX Runge–Kutta schemes](/methods/imex-runge-kutta.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)

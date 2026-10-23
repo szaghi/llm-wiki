@@ -5,7 +5,7 @@ description: "Reacting-flow cases: Lehr's blunt-body experiments with a measured
 status: established
 aliases: [shock-induced combustion, Lehr blunt-body experiment, blunt-body shock-induced combustion, cellular detonation, H2–O2–Ar detonation, reflected-shock detonation, Chapman–Jouguet detonation, ZND detonation, real-gas detonation]
 tags: [benchmark, reacting-flows, bound-preserving, immersed-boundary]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Shock-induced combustion and detonation
@@ -98,6 +98,38 @@ bound-preserving limiter is applied (Figs. 6.4–6.5).
   gap they attribute, after others, to wall heat losses in the
   experiments (Fig. 11).
 
+**Viscous cellular detonation between no-slip walls.**
+[Ching et al. (2025)](/sources/ching-2025.md) §5.4 run the 2:1:7
+H$_2$–O$_2$–Ar detonation with the reacting
+[Navier–Stokes](/definitions/multicomponent-euler-equations.md)
+equations (thermally perfect gases, mixture-averaged diffusion) and
+adiabatic no-slip walls on all sides of $(0,0.45)\times(0,0.06)$ m:
+burnt gas $X_{\mathrm{Ar}}:X_{\mathrm H_2\mathrm O}:X_{\mathrm{OH}}=8:2:0.1$
+at $5.50\times10^5$ Pa and 3500 K for $x<0.012$ m and in two discs of
+radius $0.0035$ m about $(0.019,0.015)$ and $(0.020,0.044)$ m, fresh
+mixture $X_{\mathrm{Ar}}:X_{\mathrm O_2}:X_{\mathrm H_2}=7:1:2$ at
+$6.67\times10^3$ Pa and 300 K elsewhere, at rest, the jumps smoothed by
+tanh profiles; quadrilateral meshes $2h$, $8h$ and $64h$ with
+$h=9\times10^{-5}$ m clustered at the walls, also a curved quadratic
+$64h$ mesh; DG of degree $N=2$, SSPRK3 at CFL 0.4 (their DG CFL
+$\Delta t(2N+1)(\lvert v\rvert+c)/h$), $t=200\,\mu$s, with Strang
+splitting of the chemistry. Their positivity-preserving, entropy-bounded
+DG uses BR2 for the viscous flux by default and switches to the
+[positivity-preserving Lax–Friedrichs-type viscous flux](/methods/positivity-preserving-navier-stokes-flux.md)
+only when a cell average leaves the admissible set; BR2 gives solutions
+like those of the Lax–Friedrichs-type flux "but with much smaller
+nonphysical instabilities", and the latter shows a large temperature
+undershoot near the walls on $64h$ (Figs. 5.7–5.9). The curved mesh
+gives a solution "extremely similar" to the straight one (Fig. 5.11).
+Without the entropy limiter, with positivity only, the minimum entropy
+and temperature oscillate strongly, and before $50\,\mu$s the
+temperature approaches zero and the solver of the reaction step stalls;
+with it the minimum temperature stays near 300 K (Fig. 5.12; see
+[entropy stability](/properties/entropy-stability.md)). Their gradient
+scaling for species at zero concentration is needed only at the first
+time step of the two Lax–Friedrichs-type runs; without it the time
+step "would need to be halved approximately thirty times" (§4.7).
+
 **Detonations with real-gas thermodynamics.** [Weng & Mével (2023)](/sources/weng-2023.md)
 validate RSDFoam, an OpenFOAM 9 solver built from blastFoam and Cantera, on detonations at high
 pressure with ideal-gas and real-gas equations of state. Their real gases are Redlich–Kwong, and
@@ -188,6 +220,10 @@ incorrect cellular structures.
   uniform $\ell_{1/2}/20$ on a $150\times300\,\ell_{1/2}$ window with mesh recycling, against
   their full $1500\,\ell_{1/2}$ length. The agreement they report with Taileb et al. is in the
   mean cell width; the ranges of the widths differ (above).
+- Ching et al.'s burnt region ends at $x=0.012$ m, Du & Yang's at
+  $0.015$ m, and their hot spots have radii $3.5$ and $2.5$ mm; Du &
+  Yang add a 350 K layer, so the two runs are variants of one setup,
+  not the same problem.
 - Bielawski et al. print the RDRE mesh as 118 million cells in §6.1 and as 312 million in Table 2.
 
 # Citations
@@ -198,3 +234,4 @@ incorrect cellular structures.
 - [Fu (2023)](/sources/fu-2023.md) — §5.2, Fig. 18 (reproduced result).
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1; §§4.4–4.6, Figs. 11–16: real-gas Chapman–Jouguet, ZND and cellular detonations.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §§6.1–6.2, §6.4, Tables 2–3, Figs. 3–12: detonations as GPU performance tests and demonstrations (accepted manuscript).
+- [Ching et al. (2025)](/sources/ching-2025.md) — §4.6, §4.7, §5, §5.4, Eq. (5.5), Figs. 5.7–5.12.

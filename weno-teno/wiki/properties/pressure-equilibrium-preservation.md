@@ -5,7 +5,7 @@ description: "A discretization is pressure-equilibrium preserving when initial d
 status: established
 aliases: [PEP, pressure equilibrium preserving, KEEP-PE, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, multiphase, turbulence]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T14:56:00Z
 ---
 
 # Pressure-equilibrium preservation
@@ -299,10 +299,56 @@ interface keeps the phasic $p$ and $v$ in equilibrium without relaxation,
 because the two-phase Riemann problem enforces mechanical equilibrium, with
 small deviations only at the most diffused interface (§7.4.1).
 
-The three multiphase constructions differ in what they solve: Fujiwara et
-al. only the species conservation laws, Huang & Johnsen a non-conservative
-volume-fraction equation, Paula et al. phasic equations with
-non-conservative interface terms. No source compares them on a common
+**High-order DG for the Kapila model: linearity invariance.**
+[Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) prove Abgrall's condition
+(uniform $v_0$, $p_0$ stay uniform) for a bound-preserving
+[OEDG](/methods/oedg.md) discontinuous Galerkin scheme of the
+[five-equation model](/definitions/five-equation-model.md) with ideal-gas
+phases, in three steps (§2.2, §2.4):
+
+- the semi-discrete scheme with forward Euler preserves it (Lemma 2.5): with
+  uniform $v$ the velocity jumps and hence the non-conservative source
+  vanish, the pressure terms cancel by the exactness of the Gauss
+  quadrature, and the momentum and energy updates reduce to $v_0$ and $p_0$
+  times the mass and volume-fraction updates;
+- the oscillation-eliminating step, a modal damping solved exactly, is
+  **linearity-invariant** (Thm 2.3): if $\Lambda u_h\equiv c$ for a constant
+  matrix $\Lambda$ and vector $c$ (page-local), then the damped state satisfies
+  the same identity, because every mode of every component is damped by one
+  common factor. At equilibrium the state satisfies the two linear identities
+  $\rho v-v_0\rho=0$ and $E-\tfrac12v_0^2\rho=p_0\sum_k\phi_k/(\gamma_k-1)$, so the
+  step keeps them, and with them $v_0$ and $p_0$ (Thm 2.6);
+- the bound-preserving scaling limiter, $u\mapsto\bar u+\theta(u-\bar u)$ with one
+  factor for all components, is linearity-invariant for the same reason and
+  preserves the condition too (Thms 2.13–2.14).
+
+The argument covers SSP Runge–Kutta stages as convex combinations. In 2D only
+the "special" condition with a constant velocity vector is preserved; a
+contact with constant normal and discontinuous tangential velocity is not,
+even when aligned with the grid (Remark 3.5, Thm 3.4 with the proof omitted).
+On a 1D advected interface ($\gamma$ 5/3 against 1.4, 200 cells, $t=1$) the
+velocity and pressure errors of $\mathbb P^2$ and $\mathbb P^3$ stay within
+$\pm1.5\times10^{-12}$ (Ex. 4.2, Fig. 4).
+
+**Over-integrated DG for thermally perfect mixtures.**
+[Ching et al. (2025)](/sources/ching-2025.md) (§3, Eqs. (3.7)–(3.9), recalled
+from Johnson & Kercher) state that a nodal DG scheme for the multicomponent
+system keeps pressure equilibrium approximately when the flux is
+interpolated on the solution nodes and the integration points lie in the
+nodal set, and produces large spurious pressure oscillations with
+over-integration. The modified flux interpolation evaluates the flux at a
+modified state in which the internal energy is recomputed from the species
+concentrations and the nodal interpolant of the pressure, with momentum and
+species unchanged. Ching et al. show that this is compatible with
+their positivity-preserving viscous flux: with nodal sets that contain the
+element endpoints (equidistant, Gauss–Lobatto) nothing changes in 1D, while
+in multi-D an additional time-step condition is needed (§4.2.3, §4.4.4,
+Lemma 14; [positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md)).
+
+The multiphase constructions differ in what they solve: Fujiwara et
+al. only the species conservation laws, Huang & Johnsen and Yan et al. a
+non-conservative volume-fraction equation, Paula et al. phasic equations
+with non-conservative interface terms. No source compares them on a common
 test.
 
 **Primitive variables away from shocks (quasi-conservative).**
@@ -394,3 +440,5 @@ and [multicomponent Euler equations](/definitions/multicomponent-euler-equations
 - [Paula, Adami & Adams (2023)](/sources/paula-2023.md) — §7.1 Table 1, §7.4.1.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §1, §2.1 Eqs. (8)–(18), §4.1, §4.3.2 Prop. 5 Eqs. (63)–(64), §4.4, §5.2 Figs. 7–9, App. B.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — arXiv v1: §1, §5.1.3 Fig. 5.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.2 Lemma 2.5, Thms 2.3, 2.6; §2.4 Thms 2.13–2.14; §3 Thm 3.4, Remark 3.5; §4 Ex. 4.2 Fig. 4.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §3 Eqs. (3.7)–(3.9); §4.2.3; §4.4.4, Lemma 14.

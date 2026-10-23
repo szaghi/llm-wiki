@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Central-upwind schemes"
-description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/2}$ and no Riemann solver; the flux is algebraically the HLL form, it reduces to upwind only when all eigenvalues share a sign, and its dissipation is reduced by characteristic-wise diffusion, Rankine–Hugoniot speeds or smoothness switches.'
+description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/2}$ and no Riemann solver; the flux is algebraically the HLL form, it reduces to upwind only when all eigenvalues share a sign, and its dissipation is reduced by built-in anti-diffusion, characteristic-wise diffusion, Rankine–Hugoniot speeds or smoothness switches.'
 status: established
 aliases: [CU scheme, Kurganov–Noelle–Petrova flux, semi-discrete central-upwind scheme, Riemann-solver-free scheme]
 tags: [central-scheme, numerical-flux, finite-volume, characteristic, low-dissipation]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Central-upwind schemes
@@ -87,7 +87,16 @@ $$u^{\mathrm{HLL}}_{i+1/2}=\frac{a^+_{i+1/2}u^+_{i+1/2}-a^-_{i+1/2}u^-_{i+1/2}-\
 
 (Eq. (5); $\Delta^{\mathrm{ad}}$ and $u^{\mathrm{HLL}}$ page-local; minmod componentwise), and
 tightens $a^\pm$ with regularized Rankine–Hugoniot speeds and a smoothness switch.
-The same built-in anti-diffusion appears in the path-conservative CU flux of
+A third flux of this family is the
+[low-dissipation central-upwind (LDCU) flux](/methods/low-dissipation-central-upwind-scheme.md)
+of Kurganov and Xin, recalled by [Chu et al. (2025a)](/sources/chu-2025.md) (§2.1): the CU
+flux plus an anti-diffusion term built, for the Euler equations, from the minmod of the
+one-sided density jumps to the HLL intermediate state, carried by the contact vector
+$(1,v,v^2/2)$. Chu et al. (2025a) keep that flux and lower the dissipation further through the
+reconstruction: a characteristic-wise SBM slope limiter switched to an overcompressive setting
+in cells flagged rough by a minmod-based or weak-local-residual indicator (adaptive LDCU, A-MM
+and A-WLR), with Minmod2 elsewhere; all six Euler tests show sharper results than the LDCU flux
+with Minmod2 everywhere (§4). The same built-in anti-diffusion appears in the path-conservative CU flux of
 [Chu et al. (2022)](/sources/chu-2022.md) (Eqs. (2.2), (2.5)–(2.6)), who note that it "was
 switched off" in the second-order path-conservative CU scheme of Castro Díaz, Kurganov and
 Morales de Luna (2019) because that scheme was built on the earlier CU flux without it (§2).
@@ -149,6 +158,21 @@ Their second-order setting is piecewise-linear reconstruction with the generaliz
 limiter, parameter $1.3$ in the range $[1,2]$ (Chertock et al. use $2$, CFL $0.4$), three-stage
 SSP Runge–Kutta and CFL $1/2$, $\Delta t=\Delta x/(2\max_i\max(a^+_{i+1/2},-a^-_{i+1/2}))$ (§2, §7).
 
+[Chu et al. (2025b)](/sources/chu-2025-b.md) write the scalar flux-globalized PCCU flux in the
+three-matrix form $R\mathcal PLK^-+R\mathcal MLK^++R\mathcal QL(\check u^+-\check u^-)$ of its LCD variant, with diagonal coefficients
+$\big(a^+,-a^-,a^+a^-\big)/(a^+-a^-)$ when $a^+-a^->\varepsilon_0$ and $\big(\tfrac12,\tfrac12,0\big)$
+otherwise, $\varepsilon_0=10^{-18}$ (page-local), and use it as the baseline of all their comparisons
+(§5, opening). Their contribution replaces it by the field-wise coefficients of the
+[LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md), applied to the globalized
+system $\partial_tu+\partial_xK=0$ with the eigen-system of $A+\mathcal C$, the flux Jacobian plus
+the non-conservative matrix in this bundle's sign (LCD-PCCU; §3). On two-fluid and thermal rotating shallow-water tests
+the LCD-PCCU errors are smaller in every table, and at equal CPU time on the equatorial
+$\beta$-plane test (PCCU on the finer mesh, $\Delta x=\Delta y=1/9$ against $2/15$) LCD-PCCU is
+still more accurate (Ex. 10, Fig. 5.18; no absolute timings printed). The scheme is written out
+on [path-conservative schemes](/methods/path-conservative-scheme.md) and
+[flux globalization](/methods/flux-globalization.md). They also use the generalized-minmod parameter $1.3$,
+SSP-RK3 and CFL $0.45$ (§2, §5).
+
 ## In finite-volume codes
 
 Two OpenFOAM-based solvers of the bundle name the Kurganov-type central fluxes.
@@ -180,3 +204,5 @@ flows"), while the inviscid fluxes use HLLC; no formula for the viscous terms is
 - [Weng & Mével (2023)](/sources/weng-2023.md) — §3.1.
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1, §2 (Eqs. (2.2)–(2.4), Remark 2.2), §3 (Eq. (3.3)), §4.2 (Eqs. (4.13)–(4.16), Remark 4.3), §7.
 - [Bielawski et al. (2023)](/sources/bielawski-2023.md) — §3 (accepted manuscript).
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §2.1 (LDCU flux of Kurganov and Xin), §2.2, §4 (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §2 (Eqs. (2.2)–(2.8)), §3, §5 (scalar PCCU coefficients, Ex. 10).

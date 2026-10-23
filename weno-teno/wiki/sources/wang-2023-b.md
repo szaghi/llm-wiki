@@ -134,7 +134,7 @@ same-year pairs take suffixes in printed order (Kurganov 2021 [17]/[18], Schulz-
 
 # Pages created or updated
 
-Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source is cited on:
+Chunk 1 (2026-10-21), cited further in chunks 2–9 (2026-10-22/23). This source is cited on:
 
 * [Adaptive-diffusion central-upwind Rankine–Hugoniot flux](/methods/adaptive-diffusion-central-upwind-flux.md)
 * [Alternative WENO (A-WENO)](/methods/alternative-weno.md)
@@ -146,6 +146,7 @@ Chunk 1 (2026-10-21), cited further in chunks 2–8 (2026-10-22/23). This source
 * [Isentropic vortex](/benchmarks/isentropic-vortex.md)
 * [Kelvin–Helmholtz instability](/benchmarks/kelvin-helmholtz-instability.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
+* [Low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md)
 * [Numerical dissipation and anti-dissipation](/definitions/numerical-dissipation.md)
 * [Rankine–Hugoniot jump condition](/definitions/rankine-hugoniot-condition.md)
 * [Rayleigh–Taylor instability](/benchmarks/rayleigh-taylor-instability.md)

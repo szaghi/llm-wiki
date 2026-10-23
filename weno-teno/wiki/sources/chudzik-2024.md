@@ -157,7 +157,7 @@ no unparseable items.
 
 # Pages created or updated
 
-Chunk 8 (2026-10-23). This source is cited on:
+Chunk 8 (2026-10-23), cited further in chunk 9 (2026-10-23). This source is cited on:
 
 * [Active Flux](/methods/active-flux.md)
 * [Density-wave advection](/benchmarks/density-wave-advection.md)

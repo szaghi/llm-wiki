@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Discontinuous Galerkin method
@@ -150,7 +150,7 @@ Two further formulations appear:
   space–time projected Jacobian is the spatial one scaled by the length
   of the spatial part of the normal and shifted by its time component,
   with unchanged eigenvectors (§2.2–2.4, Eqs. (7)–(28)).
-- **Central DG on overlapping meshes.** [Ding & Wu (2024)](/sources/ding-2024-b.md)
+- **Central DG on overlapping meshes.** [Ding & Wu (2024b)](/sources/ding-2024-b.md)
   use the central DG (CDG) method, recalled from the literature they
   cite, which evolves two copies of the solution, on a primal mesh and
   on a dual mesh shifted by half a cell, and evaluates every flux on the
@@ -217,6 +217,57 @@ Further formulations and boundary treatments:
   (§3.2, Eqs. (29)–(36)). The projection is a precomputed sparse map, and
   exchanging the two partial sums costs no more communication than an
   average.
+- **Bassi–Rebay lifting for viscous terms.** The modal solver of
+  [Alberti et al. (2025)](/sources/alberti-2025.md) and the reacting
+  multicomponent solver of [Ching et al. (2025)](/sources/ching-2025.md)
+  use BR2, a primal form in which the interface viscous flux is the average
+  of the flux evaluated at the broken gradient plus a penalized face-local
+  lifting of the solution jump; Ching et al. write the primal form with a
+  generic penalty, either BR2 or a Lax–Friedrichs-type term
+  $\tfrac{\beta_{\mathrm v}}2(u^+-u^-)$, page-local coefficient $\beta_{\mathrm v}$
+  (§3, Eq. (3.2)). Alberti et al. make BR1 and BR2 entropy stable by an
+  extra projection of the viscous flux. See
+  [Bassi–Rebay viscous discretizations](/methods/bassi-rebay-viscous-discretization.md).
+- **Entropy-projected modal DG.** Alberti et al. (2025) solve for the
+  conservative variables in an orthonormal hierarchical physical-space
+  basis but evaluate every spatial operator at the $L^2$ projection of the
+  entropy variables, and remove the remaining quadrature error of the
+  entropy balance with an
+  [entropy correction term](/methods/entropy-correction-term.md); the
+  uncorrected projection scheme is already "much more robust" than their
+  conservative-variable DG (§2, §3.1.2;
+  [entropy projection](/methods/entropy-projection.md)).
+- **FR as DG with a modified mass matrix.** [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md)
+  write energy-stable flux reconstruction on curvilinear hexahedra as
+  conservative strong DG with $M_K$ replaced by $M_K+K_{\mathrm{FR}}$
+  (page-local correction operator) and approximate its inverse by a
+  weight-adjusted tensor-product projection, so that only a diagonal matrix
+  is inverted per element (§3.2, §4;
+  [flux reconstruction](/methods/flux-reconstruction.md)). Their baseline
+  conservative strong DG uses a Lagrange flux basis collocated on the
+  quadrature nodes (Eqs. (24)–(25)); on Gauss nodes at $N=5$ it diverges on
+  the inviscid Taylor–Green vortex where the entropy-conservative scheme
+  does not (§7.3–7.4).
+- **Non-conservative products in multiphase flow.**
+  [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) discretize the Kapila
+  five-equation model by modal DG on Cartesian meshes, writing the
+  volume-fraction equation as $\partial_t\phi_1+\nabla\cdot(\phi_1v)=\chi_1\phi_1\nabla\cdot v$
+  with page-local $\chi_1=1/(\rho_1c_1^2)\big/\big(\phi_1/(\rho_1c_1^2)+\phi_2/(\rho_2c_2^2)\big)$
+  (§2.1; [five-equation model](/definitions/five-equation-model.md)). The
+  source integral is split into the cell interior, where $v$ is
+  re-interpolated at $N+1$ Gauss–Lobatto nodes so that the Gauss quadrature
+  of $\partial_xv$ equals the jump $v^-_{i+1/2}-v^+_{i-1/2}$ exactly
+  although $v=\rho v/\rho$ is rational, and the interfaces, where the
+  velocity jump is shared between the two cells with HLL-speed weights
+  $-s^-/(s^+-s^-)$ and $s^+/(s^+-s^-)$ (Eqs. (2.8), (2.10), Remark 2.1;
+  [HLL solvers](/methods/hll-riemann-solvers.md)). The earlier averaging
+  discretization is formally second order; with it the $l^1$ orders of
+  $\mathbb P^2$ and $\mathbb P^3$ drop to about 1.7–2.0 in 1D, against 3.25–3.77
+  and 4.40–4.51 for the new form (Remark 2.2, Tables 2–3). With the new form the
+  scheme for $\phi_2=1-\phi_1$ has exactly the same form as that for
+  $\phi_1$ (what the authors call the symmetry of the volume fractions, not
+  a spatial symmetry), which is what proves $\phi_1\le1$, and the scheme keeps uniform velocity and pressure across an
+  isolated interface (Lemma 2.5, Thms. 2.6–2.7; [OEDG](/methods/oedg.md)).
 - **Primitive variables with a conservation defect.**
   [Gaburro et al. (2024)](/sources/gaburro-2024.md) evolve a non-conservative
   set of variables, $(\rho,v_1,v_2,p)$ plus a material marker, in both the
@@ -356,7 +407,36 @@ parameters (all three page-local). Their tests use the third-order case
 $N=2$. See
 [divergence-free magnetic field](/properties/divergence-free-magnetic-field.md).
 
-Ding & Wu (2024) carry the route to the central DG scheme above for
+Yan, Abgrall & Wu (2024) carry it to the Kapila model: if $\phi_1\in[0,1]$
+and the state lies in the admissible set at the Gauss and Gauss–Lobatto
+points of every cell, the forward-Euler cell average stays admissible under
+$\Delta t/\Delta x\le\min\big\{1/(\mathcal A_1+\mathcal A_2),\ \varpi/\max(s^+-s^-)\big\}$,
+with page-local $\mathcal A_1$, $\mathcal A_2$ the interior-source and
+interface CFL terms and $\varpi$ the boundary weight of their Gauss–Lobatto cell-average decomposition; the
+positivity part is proved through the
+[geometric quasilinearization](/methods/geometric-quasilinearization.md)
+of the admissible set (Thms. 2.7, 2.12; 2D Thms. 3.6, 3.10). Their tests
+use CFL $1/(2N+1)$ and report the ratio $\mathcal A_1/\mathcal A_2\ll1$, so
+the bound is not restrictive (§4, Figs. 9, 21).
+
+[Ching et al. (2025)](/sources/ching-2025.md) split the cell-average update
+of the Navier–Stokes equations into two halves,
+$\bar u^{n+1}=\tfrac12\big(\bar u^{n+1}_{\mathrm c}+\bar u^{n+1}_{\mathrm v}\big)$,
+a convective-only and a viscous-only update each with step $2\Delta t$
+(Eq. (4.12)). The convective half is kept in an entropy-bounded set by an
+invariant-region-preserving flux; the viscous half is a convex combination
+with a Lax–Friedrichs-type viscous penalty, proved positivity preserving
+for curved elements and any positive quadrature, with the cell-average
+decomposition of Lv & Ihme that need not contain the endpoints (Thms. 6, 8,
+Eqs. (4.17), (4.33);
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md),
+[optimal cell-average decomposition](/methods/optimal-cell-average-decomposition.md)).
+At a zero species concentration with inward diffusive flux no penalty
+keeps the update non-negative, since the positivity limiter acts only at
+finitely many points; they scale the interface gradient instead (§4.7,
+Remark 11).
+
+Ding & Wu (2024b) carry the route to the central DG scheme above for
 relativistic MHD, with the admissible set $D>0$, $p>0$, $\lvert v\rvert<1$
 written by [geometric quasilinearization](/methods/geometric-quasilinearization.md)
 as constraints linear in $u$. **Theorem 3.1 (1D):** if the cell averages
@@ -682,7 +762,7 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Peng, Sun & Wu (2024)](/sources/peng-2024.md) — §2.1 Eq. (2.2), Eq. (3.3), Prop. 4.6, Thm 4.1, §5.1 Table 1.
 - [Cui, Ding & Wu (2024)](/sources/cui-2024.md) — Eq. (1.5), Eq. (7.2), Thm 7.1, Remark 7.7, Table 1, §8.
 - [Wu & Shu (2023)](/sources/wu-2023-b.md) — Eqs. (6.6)–(6.8), Thm 6.4, §7.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §3.1 Eqs. (17)–(24), Remarks 1, 3, 6, Thm. 3.1; §4.3–4.7 Eqs. (57)–(74), Thms. 4.1–4.2, Cors. 4.1–4.2; §5.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §3.1 Eqs. (17)–(24), Remarks 1, 3, 6, Thm. 3.1; §4.3–4.7 Eqs. (57)–(74), Thms. 4.1–4.2, Cors. 4.1–4.2; §5.
 - [Naudet & Zahr (2024)](/sources/naudet-2024.md) — §2.2–2.4 Eqs. (7)–(28).
 - [Kuzmin & Vedral (2023)](/sources/kuzmin-2023.md) — §1, Remark 2, §8.
 - [Ranocha et al. (2023)](/sources/ranocha-2023.md) — §2, Ex. 2.3.
@@ -707,3 +787,7 @@ $N=1,2,3$ (§6.2, Table 10).
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — arXiv v1: §3.2, §4 Fig. 1, §6.1 Tables 2, 4, §6.2 Table 10.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — arXiv v1: §3.1–3.3 Eqs. (22)–(34), §4.1–4.4 Props. 1–5, Eq. (67).
 - [Huang & Fu (2024)](/sources/huang-2024.md) — §3 Eqs. (16)–(23), §4.3–4.4 Eqs. (32)–(50), §5.1–5.2, §6 Tables 1, 3.
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §2 Eqs. (7), (11)–(15), §3.1.2.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §3 Eq. (3.2), §4.2–4.4 Eqs. (4.12), (4.17), (4.33), Thms. 6, 8, §4.7 Remark 11.
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.2 Eqs. (24)–(25), (36), §4, §7.3–7.4.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §2.1 Eqs. (2.8), (2.10), Remarks 2.1–2.2, Lemma 2.5, Thms. 2.6–2.7, 2.12; §3 Thms. 3.6, 3.10; §4 Tables 2–3, Figs. 9, 21.

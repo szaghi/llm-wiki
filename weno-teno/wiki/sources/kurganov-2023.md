@@ -141,7 +141,7 @@ printed. No item is unparseable.
 
 # Pages created or updated
 
-Chunk 6 (2026-10-23), cited further in chunks 7–8 (2026-10-23). This source is cited on:
+Chunk 6 (2026-10-23), cited further in chunks 7–9 (2026-10-23). This source is cited on:
 
 * [Central-upwind schemes](/methods/central-upwind-scheme.md)
 * [Flux globalization for balance laws](/methods/flux-globalization.md)

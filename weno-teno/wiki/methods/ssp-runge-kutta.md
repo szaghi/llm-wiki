@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # SSP Runge–Kutta time stepping
@@ -76,6 +76,10 @@ with it:
 | [Liang & Fu (2024b)](/sources/liang-2024-b.md) | FD hybrid TENO-S | 0.4; Sod and a 2D Riemann problem "not very sensitive" to 0.4–0.6 (§4.2, §4.5.1, Figs. 4, 9) |
 | [Cai, Qiu & Wu (2024)](/sources/cai-2024.md) | FV Hermite WENO, relativistic | 0.6, definition not printed; PCP proved for $\Delta t\le\tfrac1{12}\Delta x/a$ (§3, §5) |
 | [Yu, Liu & Feng (2023)](/sources/yu-2023.md) | third-order RKDG, Euler with a singular source | $\sup\lvert\lambda_l\rvert\Delta t/\Delta x\le\tfrac12$ (§5) |
+| [Chu et al. (2025a)](/sources/chu-2025.md) | adaptive low-dissipation central-upwind FV | 0.4 (§4) |
+| [Chu et al. (2025b)](/sources/chu-2025-b.md) | LCD path-conservative central-upwind FV | 0.45 (§5) |
+| [Ding & Wu (2024a)](/sources/ding-2024.md) | divergence-free positivity-preserving FV WENO, MHD | 0.3; positivity proved for forward Euler and lifted to SSP-RK3 by convexity (Remark 2.2) |
+| [Fan et al. (2025)](/sources/fan-2025.md) | moment-based FV Hermite WENO with unified stencils (HWENO-U) | 0.6, with a modified scheme whose linear bound is about 0.824 (below) |
 
 [Fu (2023)](/sources/fu-2023.md), [Cui et al. (2024)](/sources/cui-2024.md) (Exs. 2–5) and
 the variants A and C of [Active Flux](/methods/active-flux.md)
@@ -94,6 +98,33 @@ and accumulate the stage fluxes so that every stage, and the final step, is a si
 conservative flux difference from $u^n$; this is what lets their cell merging and
 redistribution near a material interface stay conservative. *(compiler check, not in the
 sources: expanding the Shu–Osher form above gives exactly these two lines.)*
+
+**Modified stages for moment-based Hermite WENO.** [Fan et al. (2025)](/sources/fan-2025.md)
+(§2.1, Eq. (2.13); §2.3, Thms. 2.1–2.2) evolve the cell average $\bar u_i$ and the first moment
+$\bar u^{(1)}_i$ (registry §10) by the $\mathbb P^1$ DG weak form, but reconstruct on cell $i$ from
+$\{\bar u_{i-1},\bar u_i,\bar u_{i+1},\bar u^{(1)}_{i-1},\bar u^{(1)}_{i+1}\}$, without the central
+first moment ([Hermite WENO](/methods/hermite-weno.md)). For $\partial_tu+\partial_xu=0$ the linear
+version of that scheme is unconditionally unstable with forward Euler and with the Shu–Osher
+scheme: the spectral radius of the amplification matrix exceeds one for every $\Delta t>0$ tested,
+e.g. $1+3.158\times10^{-12}$ for forward Euler at $\Delta t/\Delta x=10^{-12}$ (Thm. 2.1, Eqs. (2.27)–(2.31)). Inspired by the
+Lax–Friedrichs scheme, they replace the first moment by its high-order HWENO modification
+$\hat u^{(1)}_i$, the first moment of the reconstructed polynomial (page-local), as the "old value"
+in every convex combination of the three stages, the cell average being advanced as usual
+(Eq. (2.13)):
+
+$$\begin{aligned}
+\bar u^{(1),[1]}_i&=\hat u^{(1),n}_i+\Delta t\,\mathcal L^{(1)}_i(u^n),\\
+\bar u^{(1),[2]}_i&=\tfrac34\hat u^{(1),n}_i+\tfrac14\big(\hat u^{(1),[1]}_i+\Delta t\,\mathcal L^{(1)}_i(u^{[1]})\big),\\
+\bar u^{(1),n+1}_i&=\tfrac13\hat u^{(1),n}_i+\tfrac23\big(\hat u^{(1),[2]}_i+\Delta t\,\mathcal L^{(1)}_i(u^{[2]})\big),
+\end{aligned}$$
+
+with stage superscripts in brackets, so that the first moment $\bar u^{(1)}$ is not read as the
+stage value $u^{(1)}$ of the Shu–Osher form above, and $\mathcal L^{(1)}$ the first-moment operator
+(page-local).
+For the linear scheme the necessary von Neumann condition becomes $0<\Delta t/\Delta x\lesssim0.824$,
+found by sampling $10^4$ wavenumbers (Thm. 2.2, Eq. (2.33)); the tests run at CFL $0.6$ (§3). The
+result is a necessary condition for the linear scheme only. The same replacement had been used in
+finite-difference HWENO, as the authors cite (§2.1).
 
 ## Why SSP: forward Euler suffices
 
@@ -414,3 +445,7 @@ sources: expanding the Shu–Osher form above gives exactly these two lines.)*
 - [Yu, Liu & Feng (2023)](/sources/yu-2023.md) — §5 (arXiv v1).
 - [Lin & Chan (2024)](/sources/lin-2024.md) — Eq. (52), footnote 7.
 - [Teissier et al. (2024)](/sources/teissier-2024.md) — §3.6 (Eqs. (60)–(65), Table 1), §4.1 (Tables 2–3) (arXiv v2).
+- [Fan et al. (2025)](/sources/fan-2025.md) — §2.1 (Eq. (2.13)), §2.3 (Thms. 2.1–2.2, Eqs. (2.25)–(2.33)), §3.
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §4 (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.
+- [Ding & Wu (2024a)](/sources/ding-2024.md) — Remark 2.2, §4 (arXiv v1).

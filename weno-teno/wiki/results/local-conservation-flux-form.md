@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Local conservation is equivalent to a flux form
@@ -103,6 +103,23 @@ i.e. the element integral changes only through the single-valued numerical face 
 local, hence global, conservation. *(compiler check, not in the sources: $\mathbf 1^\top K_{\mathrm{FR}}=0$
 because $D^N$ annihilates constants for $N\ge1$, so the left side is the time derivative of
 the element integral itself.)* All schemes of their tests conserve to $O(10^{-16})$ (§4).
+
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) prove the same for the 3D
+Euler version on curvilinear hexahedra, with the hybridized skew-symmetric flux-differencing
+volume term and the weight-adjusted approximation of $(M_K+K_{\mathrm{FR}})^{-1}$, $M_K$ the mass matrix of the curved element (Thm. 6.2).
+Left-multiplying by the coefficient vector of the constant function, the volume term vanishes
+by the skew-symmetry of $(\tilde Q-\tilde Q^\top)$ in its Hadamard product with the two-point
+fluxes, and the correction operator drops out because it annihilates constants (the source's
+$\hat 1K_m=0$), leaving the element integral driven by the surface fluxes alone (Eq. (53)).
+With a telescoping (single-valued) surface flux this gives global conservation (Remark 6.1).
+Their inviscid Taylor–Green runs conserve to $O(10^{-16})$ on Cartesian and warped grids
+(Tables 2–3; [flux reconstruction](/methods/flux-reconstruction.md)).
+
+The converse construction, from a DG element to fluxes between its subcells, is exact for
+any admissible subdivision: [Vilar & Abgrall (2024)](/sources/vilar-2024.md) write a
+$\mathbb P^N$ DG scheme on a polygonal cell as a finite-volume scheme on subcell means with
+explicit face fluxes, the cell-local version of the "vanishing sum, hence fluxes" step (Thm.
+2.1; [DG–subcell finite-volume equivalence](/results/dg-subcell-finite-volume-equivalence.md)).
 
 ## Zero sums turned into fluxes: limiting and blending
 
@@ -232,4 +249,6 @@ for periodic data (Prop. 3.1, Eq. (25)), observed at $O(10^{-13})$ (Figs. 13, 18
 - [Bai & Li (2022)](/sources/bai-2022.md) — §1 (p. 2), §2.5, Fig. 6.
 - [Abgrall & Nassajian Mojarrad (2024)](/sources/abgrall-2024.md) — §2.1 (Eqs. (15)–(16), Fig. 1), §3.1.
 - [Long et al. (2023)](/sources/long-2023.md) — §1, §2.3 (Eq. (5)), §3.2 (Eqs. (26)–(27), (34)).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §6.2 Thm. 6.2, Eq. (53), Remark 6.1, §7.3 Tables 2–3.
+- [Vilar & Abgrall (2024)](/sources/vilar-2024.md) — §2.1 Thm. 2.1 (HAL preprint v1).
 - [Başkaya et al. (2024)](/sources/baskaya-2024.md) — §3, §3.2, §4.5.2 (Table 7), §5 (Fig. 18) (author preprint).

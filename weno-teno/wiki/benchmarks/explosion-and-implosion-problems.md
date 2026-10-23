@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Two-dimensional explosion and implosion problems
@@ -59,8 +59,9 @@ Wendroff.
 | [Wang et al. (2023b)](/sources/wang-2023-b.md) Ex. 7 | same | $[0,0.3]^2$, solid walls | $\Delta x=3/4000$ | 2.5 |
 | [Liang et al. (2022)](/sources/liang-2022.md) §4.9 | $(0.125,0,0,0.14)$ for $\lvert x+y\rvert<0.15$ and $\lvert x-y\rvert<0.15$ | "periodic box" $[-0.3,0.3]^2$ | $800\times800$ | 0.8 |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.3, Eq. (35) | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[-0.3,0.3]^2$, reflecting | $400\times400$ | 2.5 |
+| [Chu et al. (2025a)](/sources/chu-2025.md) Ex. 5 | $(0.125,0,0,0.14)$ for $\lvert x\rvert+\lvert y\rvert<0.15$ | $[0,0.5]^2$ as printed, solid walls on all four sides | $\Delta x=1/2000$ | 2.5 |
 
-The ambient state is $(1,0,0,1)$ in all four. The two printed regions
+The ambient state is $(1,0,0,1)$ in all five. The two printed regions
 are the same diamond, since $\max(\lvert x+y\rvert,\lvert x-y\rvert)=\lvert x\rvert+\lvert y\rvert$,
 and Liang et al.'s $800\times800$ grid on a side of 0.6 has the spacing
 $3/4000$ of Wang et al. *(compiler check, not in the sources)*. A solution
@@ -72,6 +73,11 @@ evenness and period $0.6$ make $x=\pm0.3$ mirror lines as well as $x=0$
 problem; Liang et al. stop at $t=0.8$, the others at $t=2.5$. Tang's
 full box with reflecting walls is, for a symmetric solution, the same
 problem again, on a grid of spacing $3/2000$, twice that of Wang et al.
+*(compiler check, not in the sources)*. Chu et al. (2025a) print
+the quadrant as $[0,0.5]^2$, with the same diamond and walls on all four
+sides; the walls at $x=0.5$ and $y=0.5$ then lie farther from the
+diamond than the mirror lines $x,y=0.3$ of the other runs, so their
+problem is not the same after the waves reach the outer walls
 *(compiler check, not in the sources)*.
 
 What is measured differs. Chertock et al. and Wang et al. read the
@@ -93,6 +99,22 @@ so-called symmetry breaking issue … due to machine round-off errors"
 the adaptive-cut-off TENO-AZ builds finer and longer diagonal jets,
 while the TENO-Z and TENO-LAD results "show a large amount of noise"
 (§4.4.3, Fig. 12; see [adaptive TENO](/methods/adaptive-teno.md)).
+
+Chu et al. (2025a) (arXiv v1, two authors; the version of record
+adds Menshov) also measure how far the jet goes. Their adaptive
+[low-dissipation central-upwind schemes](/methods/low-dissipation-central-upwind-scheme.md)
+switch the reconstruction, in local characteristic variables, from the
+Minmod2 limiter to an overcompressive limiter in cells flagged as
+rough, either by a minmod-based detector (A-MM) or by a weak local
+residual above $C(\Delta x)^2$ (A-WLR, $C=5$ here; SSP-RK3, CFL 0.4). The
+jet goes much further with both adaptive schemes than with the
+Minmod2 scheme LDCU. A-MM "seems to contain even smaller amount of
+numerical diffusion" than A-WLR, which, the authors show, flags only
+cells along the shocks, and a smaller $C$ makes A-WLR sharp
+on coarse meshes but gives "severe instabilities" on $\Delta x=1/2000$
+(Figs. 4.7–4.8). Symmetry about $y=x$, lost to round-off in these
+low-dissipation schemes, is enforced by averaging mirrored cell values
+after each time step (Remark 4.1).
 
 **A training variant.** [Bezgin et al. (2023)](/sources/bezgin-2023.md)
 (§7.4, Eq. 49, arXiv v1) use a corner implosion on $[0,1]^2$ as the
@@ -138,7 +160,7 @@ $h=1/50$ and $1/215$, against a one-dimensional radial reference with
 geometric source terms. Their ADER-DG evolves primitive variables; applied
 everywhere, shocks included, it gives a wrong shock speed, and switching
 to a conservative finite-volume update only in the shock-triggered
-subcells "is enough to restore" the correct speed at $P_2$ and $P_3$
+subcells "is enough to restore" the correct speed at $\mathbb P^2$ and $\mathbb P^3$
 (Fig. 3). The switch follows from their modified
 [Lax–Wendroff theorem](/results/lax-wendroff-theorem.md) (§4): a
 scheme whose local conservation defect vanishes with $h$ converges, if
@@ -181,7 +203,12 @@ states $(\rho,v,p)=(1,0,1)$ for $r\le0.5$ and $(0.125,0,0.1)$ outside:
 
 A two-dimensional radial Sod problem and a three-dimensional spherical
 one on an adaptive moving mesh are recorded on
-[Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md).
+[Sod and Lax shock tubes](/benchmarks/sod-and-lax-shock-tubes.md). The
+two-fluid "cylindrical explosion" of
+[Chu et al. (2025b)](/sources/chu-2025-b.md) Ex. 5, a
+high-pressure gas bubble in water below a layer of air, is a
+gas–liquid problem and is recorded on
+[underwater explosion](/benchmarks/underwater-explosion.md).
 
 ## Qualifications
 
@@ -195,6 +222,10 @@ one on an adaptive moving mesh are recorded on
   al. against their own earlier adaptive diffusion central flux,
   Chertock et al. against the original central-upwind scheme.
 - Liang et al.'s final time is given only in the caption of Fig. 21.
+- Chu et al. (2025a)'s adaptive schemes depend on the constant $C$
+  of the residual threshold, tuned per problem; the authors conclude
+  that this hurts the robustness of A-WLR and that the minmod-based
+  detector gives the robust adaption strategy (§5).
 - Ji et al. print "$\lVert r\rVert\le0.5$" without restating the centre
   of the disc; the 3D domain is not printed. Ji, Liang & Fu (2023) print
   the disc as "a unit circle of radius $R=1$ centered at $[1,1]$" again.
@@ -211,3 +242,5 @@ one on an adaptive moving mesh are recorded on
 - [Ji, Liang & Fu (2023)](/sources/ji-2023.md) — §4.3, Eqs. (39)–(40), Figs. 3–6; §4.9, Eq. (45), Fig. 21.
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §5.1.4, Fig. 3 (arXiv v1).
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §4.2.2, Fig. 5.
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §2.2, §4.2, Example 5, Remark 4.1, Figs. 4.7–4.8 (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — Example 5 (cross-reference).

@@ -5,7 +5,7 @@ description: 'Path-conservative schemes discretize a non-conservative product $\
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Path-conservative schemes
@@ -149,6 +149,37 @@ the WENO global-flux scheme of [Ciallella et al. (2023)](/sources/ciallella-2023
 lake at rest; the authors call it "similar to classical strategies used in well-balanced path
 conservative methods" (§3.3).
 
+## LCD-PCCU: field-wise diffusion
+
+[Chu et al. (2025b)](/sources/chu-2025-b.md) keep the flux-globalized well-balanced PCCU scheme of
+Kurganov et al. (global fluxes $K^\pm$ accumulated "the same as in" Cao, Kurganov, Liu and Xin
+(2022), equilibrium
+variables, modified states $\check u^\pm$) and replace its scalar diffusion by the field-wise
+coefficients of the [LCD central-upwind scheme](/methods/lcd-central-upwind-scheme.md), computed
+on the eigen-system of $A+\mathcal C$ (their $\partial F/\partial U-B$) at an
+averaged state (§3–§4; formula on [flux globalization](/methods/flux-globalization.md)). They
+recall that weak solutions with non-conservative products are understood as Borel-measure
+solutions in the sense of Dal Maso, LeFloch and Murat (§1). Their baseline, the scalar PCCU
+scheme, is the same scheme with all field coefficients equal to
+$(a^+,-a^-,a^+a^-)/(a^+-a^-)$ (§5).
+
+The first test system is the $\gamma$-based two-fluid Euler system, with $\mathsf G=1/(\gamma-1)$ and
+$\mathsf A=\gamma p_\infty/(\gamma-1)$ (registry §10; the source's $\Gamma$, $\Pi$) advected
+non-conservatively, $\partial_t\mathsf G+v\cdot\nabla\mathsf G=0$, $\partial_t\mathsf A+v\cdot\nabla\mathsf A=0$
+(Eqs. (5.1)–(5.2)); the conservative alternative with $\rho\mathsf G$ and $\rho\mathsf A$ is rejected because under LCD-CU it "may" produce
+significant spurious velocity and pressure oscillations at material interfaces (Remark 5.2, citing
+Shyue). For the non-conservative form they state that LCD-PCCU satisfies Abgrall's principle
+(constant $v$ and $p$ near isolated contacts), "as one can easily prove", without the proof
+(Remark 5.2; see [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
+[multicomponent Euler equations](/definitions/multicomponent-euler-equations.md)). The second is
+the thermal rotating shallow-water system (Ripa system in 1D), whose source terms (bottom,
+Coriolis) are globalized ([shallow-water equations](/definitions/shallow-water-equations.md)).
+On 1D gas–gas and water–air [shock–bubble](/benchmarks/shock-bubble-interaction.md) problems the
+$L^1$ density errors of LCD-PCCU are 0.37–0.74 times those of PCCU at equal mesh (Tables
+5.1–5.2; *compiler check, not in the sources:* ratios of the printed errors), and the 2D shock–helium and shock–R22 bubbles and an
+[underwater explosion](/benchmarks/underwater-explosion.md) are resolved more sharply (Exs. 3–5;
+PCCU on $1/160$ is close to LCD-PCCU on $1/80$ in Ex. 5).
+
 ## Conservation laws evolved in primitive variables
 
 A conservation law can be rewritten, without any non-conservative physics, in a
@@ -194,7 +225,7 @@ terms, "where the conservative correction is not obvious", as open (§6).
 | stationary contacts | not claimed | discontinuous steady states preserved (Theorem 4.1) | preserved with HLLI anti-diffusion |
 | lake at rest | via equilibrium variables, asserted | special case of constant $\mathsf E$ *(compiler check, not in the sources: $q_1=q_2=0$ and constant layer energies give $h_1$, $h_2+b$ constant)* | passed "without any special modifications" |
 
-All three use the two-layer shallow-water equations as a test system. For lake-at-rest
+The LCD-PCCU scheme of Chu et al. (2025b) would share the column of Kurganov et al. except for its field-wise diffusion; it is not tested on two-layer shallow water. The three schemes of the table all use the two-layer shallow-water equations as a test system. For lake-at-rest
 preservation see [well-balancing](/properties/well-balancing.md); for exact stationary jumps
 see [stationary contact preservation](/properties/stationary-contact-preservation.md).
 
@@ -225,3 +256,4 @@ see [stationary contact preservation](/properties/stationary-contact-preservatio
 - [Kurganov et al. (2023)](/sources/kurganov-2023.md) — §1 (Eqs. (1.1), (1.4)–(1.5)), §2 (Eqs. (2.1)–(2.6), Remark 2.2), §4 (Eqs. (4.5)–(4.15), Theorem 4.1, Remark 4.2), §7 (Exs. 3, 5).
 - [Ciallella et al. (2023)](/sources/ciallella-2023.md) — §3.3 (Eq. (38)) (author manuscript).
 - [Gaburro et al. (2024)](/sources/gaburro-2024.md) — §1, §2 (Eqs. (4)–(5)), §3.3–3.4 (Eqs. (32)–(39)), §4.4, §5.1.4, §5.2, §6 (arXiv v1).
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §1, §3–§4, §5.1 (Eqs. (5.1)–(5.2), Remarks 5.1–5.2, Tables 5.1–5.2, Exs. 1–5), §5.2.

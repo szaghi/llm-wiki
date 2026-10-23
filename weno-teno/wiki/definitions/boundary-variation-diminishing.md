@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Boundary variation diminishing (BVD)"
-description: "BVD is the selection principle that, in each cell, picks among candidate reconstructions (polynomial WENO or TENO versus THINC) the one that minimizes the jump of reconstructed values at cell interfaces, and so the dissipation term of the Riemann flux; this page records how the sources define, use and contrast it, including an interface-wise variant inside a Riemann-solver dissipation term."
+description: "BVD is the selection principle that picks, cell by cell, the candidate reconstruction (polynomial WENO or TENO versus THINC) with the smallest jump of interface values, and so the least Riemann-flux dissipation; the page records its definitions and uses, an interface-wise variant inside a dissipation term, and a relaxed form used as a DG troubled-element test."
 status: established
 aliases: [BVD, BVD principle, boundary variation diminishing algorithm]
 tags: [reconstruction, low-dissipation, interface-capturing, finite-volume, riemann-solver]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Boundary variation diminishing (BVD)
@@ -34,7 +34,7 @@ jump with the wrong sign). The upwind dissipation of the flux is proportional to
 the interface jump, so the candidate with the smaller jump is the less
 dissipative one; [Deng (2023)](/sources/deng-2023.md) (Remark 7.2) accordingly
 describes BVD as minimizing "the absolute dissipation error at a cell boundary".
-*(Compiler check, not in the sources: the proportionality is read off the
+*(Compiler check, not in the sources: the proportionality follows from the
 printed flux form; the sources do not state a theorem on it.)*
 
 [Wakimura et al. (2024)](/sources/wakimura-2024.md) (§3.2.1, Eq. (26)) give the
@@ -112,6 +112,22 @@ uses both faces of the cell and all four neighbour combinations.
 - **A volume-fraction switch instead.** [Zhang et al. (2024a)](/sources/zhang-2024.md)
   (§3.3) cite symmetry-preserving BVD but switch their WENO–THINC multiphase hybrid by a
   volume-fraction test, not by boundary variation (see [THINC](/methods/thinc-reconstruction.md)).
+- **BVD as a troubled-element test.** [Deng, Jiang & Yan (2025)](/sources/deng-2025.md)
+  (§3.3, Eqs. (3.7)–(3.9)) use a relaxed BVD criterion not to select a reconstruction but to
+  flag DG elements for [subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md),
+  extending an indicator of Jiang et al. On each non-uniform subcell they compare the total
+  boundary variation of the first-order and of the third-order linear reconstruction,
+  $$\mathrm{TBV}^{\mathrm U}_i=\lvert\bar u_i-\bar u_{i-1}\rvert+\lvert\bar u_i-\bar u_{i+1}\rvert,\qquad
+  \mathrm{TBV}^{\mathrm P}_i=\lvert[\![u^{\mathrm P}]\!]_{i-1/2}\rvert+\lvert[\![u^{\mathrm P}]\!]_{i+1/2}\rvert$$
+  (page-local symbols; P the quadratic reconstruction of the non-uniform
+  [normalised-variable diagram](/definitions/normalised-variable-diagram.md)), and call the
+  subcell discontinuous when $\mathrm{TBV}^{\mathrm P}_i-\mathrm{TBV}^{\mathrm U}_i>\max\big(10^{-6},10^{-4}(\lvert\bar u_{i-1}\rvert+\lvert\bar u_i\rvert+\lvert\bar u_{i+1}\rvert)\big)$,
+  on the rationale, attributed to earlier BVD papers, that high-order linear schemes give the
+  smaller boundary variation in smooth regions and the larger one at discontinuities. A 1D element
+  is troubled if any subcell is, a 2D element if more than half are; the test runs at every
+  Runge–Kutta stage and switches whole elements to the [ROUND](/methods/round-scheme.md) scheme.
+  Which variables of the Euler system are tested is not stated, and the threshold makes the
+  method scale-dependent (§3.3; [troubled-cell indicators](/definitions/troubled-cell-indicator.md)).
 - **A contrast: ROUND.** [Deng (2023)](/sources/deng-2023.md) (Remark 7.2)
   sets BVD against the low-dissipative [ROUND schemes](/methods/round-scheme.md),
   which do not minimize the boundary jump but the *overall* error in a cell, by
@@ -148,3 +164,4 @@ uses both faces of the cell and all four neighbour combinations.
 - [Hu, Yuan & Zhao (2022)](/sources/hu-2022.md) — §4.2, Eqs. (4.7)–(4.9); §5, Figs. 5.1–5.7: interface-wise BVD of density in the HLLEM dissipation term.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §1; §3.2.1, Eq. (26); §3.2.4, Eqs. (35)–(36); §§4.1–4.4; Appendix A: canonical-flux rationale, minimum-total-boundary-variation selection, BVD in a six-equation model with phase change.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §3.3: volume-fraction switch in place of BVD.
+- [Deng, Jiang & Yan (2025)](/sources/deng-2025.md) — §3.3, Eqs. (3.7)–(3.9), Remark 3.1: relaxed-BVD troubled-element indicator for DG subcell limiting.

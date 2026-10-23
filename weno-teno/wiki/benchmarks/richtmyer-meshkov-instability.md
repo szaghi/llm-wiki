@@ -5,7 +5,7 @@ description: "A planar shock crossing a sinusoidally perturbed interface: single
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Richtmyer–Meshkov instability
@@ -27,7 +27,7 @@ the Atwood number $A=(\rho_{\mathrm h}-\rho_{\mathrm l})/(\rho_{\mathrm h}+\rho_
 
 ## Setups in the sources
 
-The five planar setups are two-dimensional and single-mode; a sixth source runs shocked bubbles under the same name, and a seventh a cavitating two-phase variant.
+The planar setups are two-dimensional and single-mode, one of them smoothed for an unlimited DG robustness test; one source runs shocked bubbles under the same name, and another a cavitating two-phase variant.
 
 **Air–SF$_6$, Mach 1.2.** [Bai & Li (2022)](/sources/bai-2022.md)
 §3.3.1, Table 2: domain $[-28,32]\times[-1.875,1.875]$ cm, symmetry
@@ -87,6 +87,35 @@ second-order TVD Runge–Kutta.
 print the same states and interface, with $\gamma=1.4$ "for both
 fluids", on $320\times80$ points to $t=9$, left and right boundaries
 fixed to the initial values, periodic top and bottom, CFL 0.2.
+
+**Two-phase air–SF$_6$ on the same geometry.** [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md)
+Ex. 4.10 keep the interface $x=2.9-0.1\sin(2\pi(y+0.25))$ and the shock
+at $x=3.2$ but make the heavy region a second material, in the Kapila
+[five-equation model](/definitions/five-equation-model.md): with
+$(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$ (phase 1 air, $\gamma_1=1.4$; phase 2
+SF$_6$, $\gamma_2=1.093$), SF$_6$ $(1,5.04,0,0,1,10^{-6})$, pre-shock air
+$(1,5.04,0,0,1,1-10^{-6})$ and post-shock air
+$(1.411,5.04,-0.39,0,1.628,1-10^{-6})$, a Mach 1.24 shock moving left;
+$[0,4]\times[0,1]$, $1000\times250$ cells, periodic top and bottom,
+outflow on the left, post-shock values on the right; snapshots at
+$t=2.31$, $4.62$, $6.93$ and $9.24$ with $\mathbb P^3$ (Fig. 13). Their
+scheme is the bound-preserving [OEDG](/methods/oedg.md) DG method with
+an HLL flux, CFL $1/(2N+1)$ and SSP-RK3.
+
+**Smooth single-gas variant for unlimited DG.** [Alberti et al. (2025)](/sources/alberti-2025.md)
+§3.1.2, Eqs. (55)–(56), use a tanh-smoothed setup they cite from the
+literature, with $v=0$,
+$p=4.9-1.95\,[1+\tanh(2\xi_1)]$,
+$\rho=4.22-1.985\,[2+\tanh(2\xi_1)+\tanh(2\xi_2)]$,
+$\xi_1=\lvert y-4\rvert-2$, $\xi_2=y-[18+2\cos(6\pi x/40)]$
+(page-local), on the half domain $x\in[0,40/6]$, $y\in[0,40]$ of the
+original $[0,40/3]\times[0,40]$ with a symmetry condition, to $t=42$, on
+$8\times48$ and $16\times96$ quadrilateral and triangular grids, DG
+degree $N=4,\dots,7$, CFL $2.5\times10^{-2}$ and no shock capturing. The
+high-pressure slab $\lvert y-4\rvert<2$ releases the shock that later
+reaches the perturbed density step near $y=18$ *(compiler check, not in
+the sources)*. The test measures robustness, as the completion index
+(the fraction of the final time reached, averaged over the runs).
 
 **Viscous air–SF$_6$, two materials.** Chamarthi (2023a) Ex. 4.18 solves
 the five-equation model with viscosity $\mu=10^{-4}$ on
@@ -171,6 +200,26 @@ experiment and its height is "slightly higher" after 0.75 ms (Figs.
 4–5). For the He bubble the trajectories of the upstream and downstream
 interface points agree with Haas & Sturtevant (Figs. 6–7).
 
+**Bound preservation and interface quality in two-phase DG.** Yan,
+Abgrall & Wu show the air–SF$_6$ interface rolling up through the four
+snapshots with their bound-preserving OEDG scheme, whose source
+discretization of the non-conservative volume-fraction equation keeps
+uniform high order and whose oscillation-eliminating step and limiter
+preserve constant velocity and pressure across the interface (Fig. 13;
+see [pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md),
+[bound preservation](/properties/bound-preservation.md)).
+
+**Robustness of entropy corrections.** Alberti et al. (2025) find on
+the smooth variant that, with the element entropy correction clipped
+to non-negative values, their Laplacian-type spreading DEEB$_a$
+completes every run and the entropy-viscosity form DEEB$_b$ crashes
+once (at $N=6$); without the clipping both lose robustness markedly,
+while the other spreading terms are insensitive to it, and the
+uncorrected entropy-projection scheme is the least stable, especially
+on triangles (Fig. 6; see
+[entropy correction term](/methods/entropy-correction-term.md),
+[entropy projection](/methods/entropy-projection.md)).
+
 **Riemann-solver ranking.** Hu et al. compare
 [HLL-type solvers](/methods/hll-riemann-solvers.md) (HLLE, HLLEM, HLLC
 and their RHLLEM-LD) in one second-order scheme and find the sharpest
@@ -213,9 +262,14 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
   shock strengths (Mach 1.2, 1.21, 2.5, about 1.24), the direction
   (light to heavy, heavy to light) and the presence of re-shock all
   differ, and only Bai & Li measure a growth rate.
-- Chamarthi's finding that TENO5 shows no roll-up rests on one grid
-  ($320\times80$) and the author's TENO5 implementation; no
-  other source runs TENO on this case.
+- Chamarthi (2023a)'s finding that TENO5 shows no roll-up comes from
+  one grid ($320\times80$) and the author's TENO5 implementation; no
+  other source on this page runs TENO on this case.
+- Yan, Abgrall & Wu's post-shock air density and pressure, $1.411$ and
+  $1.628$, are those of a Mach 1.24 shock into $(\rho,p)=(1,1)$ with
+  $\gamma=1.4$, whose post-shock speed is $0.4275$, not the printed
+  $0.39$; Hu et al. print $665/1556=0.4274$ for the same state
+  *(compiler check, not in the sources)*.
 - Hu et al.'s post-shock state is consistent with the Rankine–Hugoniot
   conditions into $(1,0,0,1)$ only to about $10^{-3}$: $p=1.628$ gives
   $M=1.24028$, $\rho=1.41164$, $\lvert v_1\rvert=0.42793$, whereas
@@ -252,3 +306,5 @@ third-order WENO and its low-dissipation variant finer than WENO5-JS
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.6, Fig. 9, Table 2 (arXiv v1).
 - [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) — §2 (Eqs. (6)–(9)), §3.1, Table 1, Figs. 1–7.
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — §4, §4.3, Eq. (48), Figs. 4–5.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — §4, Ex. 4.10, Fig. 13.
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.1.2, Eqs. (53), (55)–(56), Fig. 6.

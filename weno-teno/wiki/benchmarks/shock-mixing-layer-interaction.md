@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Shock–mixing-layer interaction"
-description: "Viscous two-dimensional (and three-dimensional) benchmark after Yee, Sandham & Djomehri (also run inviscid) in which an oblique shock impinges on a spatially developing, periodically forced mixing layer at Re 500, producing vortices, shocklets and acoustic waves; used to test shock detectors and the resolution of low-dissipation schemes."
+description: "Viscous two-dimensional (and three-dimensional) benchmark after Yee, Sandham & Djomehri (also run inviscid) in which an oblique shock impinges on a spatially developing, periodically forced mixing layer at Re 500, producing vortices, shocklets and acoustic waves; used to test shock detectors and low-dissipation schemes; a reacting hydrogen variant tests positivity-preserving DG."
 status: established
 aliases: [shock/mixing-layer interaction, shock–shear layer interaction, Yee–Sandham–Djomehri mixing layer, viscous shock–mixing layer]
 tags: [benchmark, low-dissipation, turbulence, weno]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Shock–mixing-layer interaction
@@ -76,6 +76,22 @@ to $[0,200]\times[-20,20]^2$ with symmetric boundaries in $z$ and the
 forcing $v_2'=\sum_ka_k\cos\big(2\pi k(t/T_{\mathrm f}+z/L_z)+\varphi_k\big)e^{-y^2/b}$,
 $L_z=40$, on $600\times120\times120$ points to $t=120$.
 
+**Reacting three-dimensional variant.** [Ching et al. (2025)](/sources/ching-2025.md)
+§5.5, after an NRL report and Ferrer et al., run a different, reacting
+configuration: a vitiated-air stream ($v_1=1634$ m/s, 1475 K,
+$Y_{\mathrm O_2}=0.278$, $Y_{\mathrm N_2}=0.552$, $Y_{\mathrm H_2\mathrm O}=0.17$
+and radical traces) over a fuel stream ($973$ m/s, 545 K,
+$Y_{\mathrm N_2}=0.95$, $Y_{\mathrm H_2}=0.05$) at $94232.25$ Pa, joined by
+tanh profiles whose centre and thickness are forced in time and in
+$x_3$ (their Eqs. (5.6)–(5.8)); supersonic inflow on the left,
+extrapolation on the right, slip walls top and bottom, periodic in
+$x_3$ over $1.44$ mm; unstructured tetrahedra, SSPRK3 at CFL 0.5,
+detailed hydrogen chemistry. The reacting
+[Navier–Stokes](/definitions/multicomponent-euler-equations.md) DG
+scheme with positivity and entropy bounds runs on the tetrahedra; the
+evidence is qualitative: OH isosurfaces and schlieren show roll-up
+upstream of the shock and smaller-scale compression waves (Fig. 5.15).
+
 ## Runs and findings
 
 | Source | Scheme | Grid | Reference |
@@ -137,6 +153,10 @@ i7-9700 (Table 6).
   not the same problem as theirs; the introduction says
   TENO-Z, TENO-A and TENO-LAD "fail at $CFL\ge0.3$" on $1000\times200$,
   while §4.4.6 has TENO-A running at 0.3.
+- Ching et al. print the temperature profile as
+  $\tfrac12\big((T_F+Y_O)+(T_F-T_O)\tanh(\cdot)\big)$; by the pattern of
+  their velocity and mass-fraction profiles the first term is
+  $T_F+T_O$ *(compiler check, not in the sources)*.
 - Wang et al. call the 3D case an "extension of the previous Example
   4.10"; the 2D case is their Example 5.10.
 
@@ -147,3 +167,4 @@ i7-9700 (Table 6).
 - [Chamarthi (2023a)](/sources/chamarthi-2023.md) — Ex. 4.2 (arXiv v2).
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — Ex. 3.11, Fig. 14 (arXiv v1).
 - [Tang (2024)](/sources/tang-2024.md) — §1, §4.4.6, Eq. (38), Figs. 15–16; §4.4.8, Table 6.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §5.5, Table 1, Eqs. (5.6)–(5.8), Fig. 5.15.

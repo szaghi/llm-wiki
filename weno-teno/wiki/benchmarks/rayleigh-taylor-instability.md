@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T15:02:00Z
 ---
 
 # Rayleigh–Taylor instability
@@ -19,14 +19,15 @@ spike whose flanks are Kelvin–Helmholtz unstable. The test serves two
 purposes: the amount of secondary roll-up is a visual gauge of
 [numerical dissipation](/definitions/numerical-dissipation.md), and the
 exact left–right mirror symmetry of the data probes
-[symmetry preservation](/properties/symmetry-preservation.md). Twenty-two
+[symmetry preservation](/properties/symmetry-preservation.md). Twenty-four
 sources of the bundle discuss it (one of them only in a
 three-dimensional magnetized variant, one only in a three-dimensional
 two-species viscous variant, one only in a diffuse-interface variant,
-and one with Lagrangian particles); Fu (2021), Takagi et al., Ye et al.,
+one in a spanwise-periodic three-dimensional extension, and one with
+Lagrangian particles); Fu (2021), Takagi et al., Ye et al.,
 Huang et al. (2026), Huang, Liang & Fu (2023) and Li, Chen & Ren (2022)
-cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) cite Shi, Zhang & Shu
-and Young et al.
+cite Xu & Shu for it, Li et al. (2022b, WENO-ZN) and Chu et al. (2025a)
+cite Shi, Zhang & Shu, Li et al. (2022b) also Young et al.
 
 ## Setup
 
@@ -45,7 +46,8 @@ The common data, printed by [Fu (2021)](/sources/fu-2021.md) §5.5.2,
 [Liang et al. (2022)](/sources/liang-2022.md) §4.10,
 [Fan et al. (2023)](/sources/fan-2023.md) Ex. 3.13 and
 [Zhou et al. (2023)](/sources/zhou-2023.md) §5.7, Eq. (42),
-[Tang (2024)](/sources/tang-2024.md) §4.4.5, Eq. (37) and, for a
+[Tang (2024)](/sources/tang-2024.md) §4.4.5, Eq. (37),
+[Chu et al. (2025a)](/sources/chu-2025.md) Example 6 (arXiv v1) and, for a
 particle method, [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1, with
 $c=\sqrt{\gamma p/\rho}$:
 
@@ -64,6 +66,14 @@ at $\mathrm{Re}=50000$; Tang states inflow and outflow at the bottom
 and top; Jiang et al. use reflective side walls where the WENO-SPH run
 they compare with used periodic ones, and run to $t=2.05$).
 
+**Three-dimensional extension.** [Danis et al. (2025)](/sources/danis-2025.md)
+§5.8, Eq. (42) (arXiv v1) print the same data with $v_3=0$ on
+$[0,0.25]\times[0,1]\times[0,0.25]$, periodic in $z$, reflecting
+vertical walls and top and bottom states from the initial data,
+$\gamma=5/3$, $t=1.95$, CFL 0.5, gravity as a source term; the data do
+not depend on $z$, so every $z$-slice carries the two-dimensional
+problem *(compiler check, not in the sources)*.
+
 **Gravity convention.** Chertock et al. and Wang et al. (2023b) state the
 gravity term explicitly: $+\rho$ in the $y$-momentum equation and
 $+\rho v_2$ in the energy equation, i.e. gravity of unit magnitude
@@ -80,6 +90,9 @@ and so do Zhou et al. ("added to the right-hand sides"), Zhong et al.
 (the zero right-hand side "is replaced by $(0,0,\rho,\rho v)^{T}$") and
 Wang et al. (2023c) (source terms $\rho$ and $\rho v_2$ in the third and
 fourth equations).
+[Chu et al. (2025a)](/sources/chu-2025.md) write the same terms ($\rho$
+in the $\rho v_2$ equation, $\rho v_2$ in the energy equation), with
+gravity "acting in the positive direction of the y-axis".
 [Huang, Liang & Fu (2023)](/sources/huang-2023-b.md) Eq. (48) print the
 source $(0,0,\rho g,\rho v_2g)$ with $g=1$ on the right-hand side, the
 same convention. [Li, Chen & Ren (2022)](/sources/li-2022.md) mention
@@ -139,6 +152,8 @@ width, as the common setup *(compiler check, not in the sources)*.
 | [Ramani & Shkoller (2023)](/sources/ramani-2023.md) §7.2 | simplified FD WENO ALE solver with C-method artificial viscosity on uniform grids and on a dynamic [adaptive moving mesh](/methods/adaptive-moving-mesh.md) (SAM-ALE) | uniform $64\times128$ to $512\times1024$; SAM-ALE $64\times128$ | 2.5 |
 | [Tang (2024)](/sources/tang-2024.md) §4.4.5 | [TENO-AZ](/methods/adaptive-teno.md) vs TENO-Z, TENO-A, TENO-LAD; global LF splitting, TVD-RK3 at CFL 0.5 | $256\times1024$ (timing on $240\times960$) | 1.95; 14 contours 0.9–2.2 |
 | [Jiang et al. (2024)](/sources/jiang-2024.md) §5.2.1 | Lagrangian weighted-least-squares particles with Roe-type pair states (LWLS-RR) or [WENO-Z](/methods/weno-z.md)-type reconstruction (LWLS-WENO-Z), vs RR-SPH and WENO-SPH; GPU | particle spacing $\Delta x_0=0.002$, $0.001$, $0.0005$ | 2.05 |
+| [Chu et al. (2025a)](/sources/chu-2025.md) Example 6 | second-order adaptive [low-dissipation central-upwind](/methods/low-dissipation-central-upwind-scheme.md) A-MM and A-WLR (overcompressive limiter in flagged cells) vs LDCU with Minmod2; SSP-RK3, CFL 0.4 | $\Delta x=\Delta y=1/1024$ | 1.95, 2.95 |
+| [Danis et al. (2025)](/sources/danis-2025.md) §5.8 | [tensor-train](/methods/tensor-train-weno.md) component-wise finite-difference WENO5-JS, global LF splitting, TT-SSPRK3 | $60\times240\times60$, $120\times480\times120$ | 1.95; 15 contours 0.952269–2.14589 |
 | [Bezgin et al. (2022)](/sources/bezgin-2022.md) §4.7 | [WENO3-NN](/methods/learned-weno-weights.md) vs WENO3-JS, WENO3-Z, WENO5-JS; LLF, characteristic | $128\times512$, $256\times1024$ | 1.95; 20 contours 0.85–2.25 |
 
 ## Findings across sources
@@ -194,6 +209,19 @@ steps on $125\times501$, $251\times1001$ and $501\times2001$ particles,
 and the WENO-Z-type reconstruction costs about five times the
 Riemann-solver variant (§5.2.1, Table 3).
 
+Chu et al. (2025a) find that their adaptive central-upwind schemes,
+which switch to an overcompressive slope limiter only in cells flagged
+by a minmod-based (A-MM) or weak-local-residual (A-WLR) indicator,
+resolve more small structures than the plain scheme at $t=1.95$ and
+$2.95$; A-MM applies the overcompressive limiter in more cells than
+A-WLR (with its tuned constant 3), as in their other two-dimensional
+tests (Figs. 4.9–4.10). Danis et al. (2025) report that their
+tensor-train solver keeps the symmetry and that its component-wise
+results are "in an excellent agreement" with characteristic-wise
+results in the literature they cite (Fig. 12); the solution's
+tensor-train ranks grow, and they name the single global truncation
+tolerance as a limitation for such localized features (§5.8).
+
 **Cost of resolution on adaptive meshes.** Ramani & Shkoller compare
 their SAM-ALE run on $64\times128$ (target mesh concentrated at the
 tracked interface, depth parameter $\delta=0.97$ of their target, page-local, with a large zoom-in homotopy at
@@ -241,6 +269,11 @@ report different outcomes for low-dissipation schemes:
 - Wang et al. (2023c) measure a symmetry error of the hybrid MR-WCNS of
   $1.07\times10^{-12}$ inviscid and $1.55\times10^{-14}$ at
   $\mathrm{Re}=50000$ (their Eq. (4.9)).
+- Chu et al. (2025a) enforce the symmetry about $x=1/8$ by replacing,
+  after each time step, every cell value by the average with its mirror
+  cell (with the sign of $\rho v_1$ reversed), following Wang et al.
+  (2020), because round-off breaks it in their low-dissipation schemes
+  (Remark 4.2).
 - Hong et al. raise the weight regularization to $\epsilon=10^{-4}$ on
   this case "to alleviate" round-off symmetry breaking, following
   Fu et al. (§5.5).
@@ -353,3 +386,5 @@ sources)*.
 - [Tang (2024)](/sources/tang-2024.md) — §4.4.5, Eqs. (32), (37), Fig. 14; §4.4.8, Table 6.
 - [Jiang et al. (2024)](/sources/jiang-2024.md) — §5.2.1, Table 3, Figs. 9–10.
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.1, Eqs. (38)–(40), Figs. 12–13 (arXiv v1).
+- [Chu et al. (2025a)](/sources/chu-2025.md) — §4.2, Example 6, Remark 4.2, Figs. 4.9–4.10 (arXiv v1).
+- [Danis et al. (2025)](/sources/danis-2025.md) — §5.8, Eq. (42), Fig. 12 (arXiv v1).

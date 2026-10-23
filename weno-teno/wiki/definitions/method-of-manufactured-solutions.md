@@ -1,11 +1,11 @@
 ---
 type: Definition
 title: "Method of manufactured solutions"
-description: "Code verification by a chosen smooth solution whose source term is added to the solver, the observed order being compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, a steady shock-capturing solver, curved-boundary conditions on unfitted meshes, a semi-discrete operator and a gradient reconstruction."
+description: "Code verification by a chosen smooth solution whose source term is added to the solver, the observed order being compared with the design order; the sources apply it to a full solver on mapped adaptive meshes, a steady shock-capturing solver, curved-boundary conditions on unfitted meshes, a semi-discrete operator, a gradient reconstruction, and viscous or curvilinear DG and FR schemes."
 status: established
 aliases: [MMS, manufactured solution, manufactured solutions, order-of-accuracy verification]
 tags: [benchmark, finite-volume, finite-difference, dg, immersed-boundary]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T14:56:00Z
 ---
 
 # Method of manufactured solutions
@@ -157,8 +157,56 @@ exact cell values and solve no equation (§6.2). The four observed
 orders therefore refer to an unsteady solution, a steady solution, a
 boundary closure, an operator and a reconstruction respectively *(compiler check, not in the sources)*.
 
+## Element methods: viscous terms and curved meshes
+
+Three DG and flux-reconstruction sources use manufactured solutions to
+verify the design order $N+1$ of new ingredients.
+
+**Viscous discretizations.** [Alberti et al. (2025)](/sources/alberti-2025.md)
+use the subsonic Navier–Stokes solution of Roy et al.: each of $\rho$,
+$v_1$, $v_2$, $p$ is
+$\psi=a_0+a_1f_1(b_1\pi x/L)+a_2f_2(b_2\pi y/L)+a_{12}f_{12}(b_{12}\pi xy/L^2)$
+with sine or cosine $f$ and constants from their Table 3 (e.g. for $p$:
+$a_0=10^5$, $a_1=-3\times10^4$, $a_2=2\times10^4$, $a_{12}=-2.5\times10^4$),
+on $[0,L]^2$, $L=1$ m, $\mathrm{Re}=100$ based on $a_0^\rho$ and the
+sound speed, $\mathrm{Pr}=0.72$, power-law viscosity exponent 0.75, $N=1$–6
+on $2^i\times2^i$ meshes, $i=1$–4, CFL $5\times10^{-2}$ (page-local
+constants; §3.2.1, Eq. (57)). BR1, BR2 and their projected entropy-stable
+variants all reach $N+1$ (Fig. 8;
+[Bassi–Rebay](/methods/bassi-rebay-viscous-discretization.md)).
+
+**Curvilinear Euler.** [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md)
+and [Schwarz et al. (2025)](/sources/schwarz-2025.md) use the same type of
+3D Euler field, after Gassner et al., a density wave travelling along the
+diagonal with unit velocity components and $E=\rho^2$:
+
+- Cicchino & Nadarajah: $\rho=2+\tfrac1{10}\sin\big(\pi(x+y+z-2t)\big)$ on
+  $[-1,1]^3$, warped non-symmetrically with amplitude $1/50$, to $t=2$, with
+  $\Delta t=0.2\Delta x/a$ and $\Delta x$ the mesh size divided by $N+1$; the
+  source term has five constants (Eq. (62)). Slopes 4, 5, 6 for $N=3,4,5$
+  with $c_{\mathrm{DG}}$ and $c_+$ (§7.1, Fig. 2;
+  [flux reconstruction](/methods/flux-reconstruction.md)). The same solution
+  to $t=1$ defines their maximum-CFL study: the CFL number is raised from 0.1
+  in steps of 0.01 until the pressure error departs from the CFL-0.1 value
+  in the seventh significant digit (§7.2, Table 1).
+- Schwarz et al.: $\rho=2+0.1\sin\big(2\pi(x_1+x_2+x_3-t)\big)$ on the unit
+  cube with a sinusoidally deformed mesh, density $L^2$ error; $h$-refinement
+  at $N=3$ and $p$-refinement at $N=2$–8 on $4^3$ elements. Both the LGL and
+  the Gauss collocation DGSEM reach $N+1$ and spectral convergence, the LGL
+  scheme being less accurate (§4.1, Eq. (27), Fig. 1;
+  [DGSEM](/methods/dgsem.md)).
+
 ## Qualifications
 
+- Cicchino & Nadarajah state "$l=2$" for the warping of the $[-1,1]^3$
+  manufactured-solution grid, while their Eq. (60) defines
+  $l=(x_R-x_L)/(2\pi)$, which is $1/\pi$ on that domain *(compiler check, not
+  in the sources)*; they print the third source constant as
+  "$\frac{\pi}{100},(\gamma-1)$" with a stray comma (§7.1).
+- Schwarz et al. state the $h$-refinement as "$4^3$ to $32^3$ elements" in
+  the text and "$2^3$ up to $32^3$" in the caption of Fig. 1, and print the
+  domain as "$\Omega\in[0,1]$" (§4.1); final time and CFL of the test are not
+  printed.
 - Browne et al.'s convective operator is built from fifth-order WENO
   but converges at about sixth order on their smooth fields; the paper
   calls this consistent with the design and does not discuss the extra
@@ -187,3 +235,6 @@ boundary closure, an operator and a reconstruction respectively *(compiler check
 - [Ciallella et al. (2024)](/sources/ciallella-2024.md) — §6.1, Eq. (37), Tables 1–7 (arXiv v1).
 - [Browne et al. (2022)](/sources/browne-2022.md) — Appendix A, Eqs. (A.1)–(A.3), Tables A.1–A.2, Fig. A.30.
 - [Chen et al. (2022)](/sources/chen-2022.md) — §6.2, Eq. (31), Figs. 11–12.
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §3.2.1, Eq. (57), Table 3, Fig. 8.
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §7.1 Eqs. (60)–(62), Fig. 2, §7.2 Table 1.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §4.1, Eq. (27), Fig. 1 (arXiv v1).

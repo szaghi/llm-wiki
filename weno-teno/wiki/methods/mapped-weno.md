@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "Mapped WENO"
-description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu nonlinear weights through a mapping function that fixes the linear weights, restoring the fifth-order condition at first-order critical points at a higher cost than WENO-JS; one source prints the mapping, inside a seventh-order WCNS."
+description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–Shu nonlinear weights through a mapping function that fixes the linear weights, restoring the fifth-order condition at first-order critical points at a higher cost than WENO-JS; one source prints the mapping inside a seventh-order WCNS, another maps second-order TVD weights to build a third-order WENO."
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T15:11:00Z
 ---
 
 # Mapped WENO
@@ -30,11 +30,41 @@ $g_k(0)=0$, $g_k(d_k)=d_k$ and $g_k(1)=1$; with the printed minus $g_k(d_k)=d_k(
 $-\tfrac{63}{3904}$ for $d_k=\tfrac1{64}$, so the printed map would not fix the linear weights on which the
 recovery of order rests.)*
 
+## A third-order mapping of TVD weights
+
+[Komissarov & Phillips (2024)](/sources/komissarov-2024.md) (§3.3, App. A, Eqs. (A1)–(A23);
+arXiv v3) build a third-order WENO interpolation of point values for their relativistic MHD
+code by mapping second-order TVD weights instead of Jiang–Shu weights, and present it as
+analogous to Henrick et al.'s mapped WENO5. The two linear interpolants
+$P_-=u_i+(u_i-u_{i-1})(x-x_i)/\Delta x$ and $P_+=u_i+(u_{i+1}-u_i)(x-x_i)/\Delta x$ are combined with
+Falle's TVD weights
+
+$$w_-=\frac{\beta_+}{\beta_-+\beta_+},\qquad w_+=\frac{\beta_-}{\beta_-+\beta_+},$$
+
+which favour the smaller gradient (page-local $w_\pm$, $\beta_\pm$; the indicators are on the
+[smoothness indicators](/definitions/smoothness-indicator.md) page). The combination equals the
+three-point quadratic at $x_{i+1/2}$ for $(w_-,w_+)=(\tfrac14,\tfrac34)$ and at $x_{i-1/2}$ for
+$(\tfrac34,\tfrac14)$, so the linear weights are $\tfrac14$ and $\tfrac34$. A mapping must send
+$w_+=\tfrac12$ (smooth data) to these values and leave $w_+\to0$ or $1$ unchanged; with the flat
+polynomial $g_n(x)=1-(1-2x)^n$, $n\ge2$ (page-local; Fig. A1 uses $n=4$), the weight at $x_{i+1/2}$ is
+
+$$w^{\mathrm r}_+=\begin{cases}\tfrac34\,g_n(w_+),&0\le w_+\le\tfrac12,\\ 1-\tfrac14\,g_n(1-w_+),&\tfrac12<w_+\le1,\end{cases}\qquad w^{\mathrm r}_-=1-w^{\mathrm r}_+,$$
+
+and the weight at $x_{i-1/2}$ has $\tfrac14$ and $\tfrac34$ exchanged. *(Compiler check, not in the
+sources: $\tfrac14P_-+\tfrac34P_+$ at $x_{i+1/2}$ is $(-u_{i-1}+6u_i+3u_{i+1})/8$, the quadratic
+interpolant; both branches give $\tfrac34$ at $w_+=\tfrac12$, and $1-g_n(w_+)=(1-2w_+)^n$, so a
+deviation $\delta$ of $w_+$ from $\tfrac12$ becomes a deviation $O(\delta^n)$ of the mapped weight.)*
+The scheme converges at third order on a high-magnetization Alfvén wave ($L_1(B_2)$ orders 3.5,
+3.1, 3.0, 3.1; Table 1); no test isolates critical points
+([critical-point accuracy](/properties/critical-point-accuracy.md)). The authors cite the WENO3 of
+Ha et al. as an alternative whose "test results look impressive, but the approach is not
+intuitive and hard to comprehend" (§3.3), a judgement without comparison.
+
 ## What the sources record
 
 - **Purpose: critical points.** WENO-M was designed because WENO-JS fails to recover the optimal
   order at critical points (Deng 2023, §1; Fu 2021, §1; Takagi et al. 2022, §1; Balsara et al. 2024,
-  §I). Li et al. (2022, §2) recall that it satisfies the fifth-order condition at first-order
+  §I). Li et al. (2022b, §2) recall that it satisfies the fifth-order condition at first-order
   critical points ([critical-point accuracy](/properties/critical-point-accuracy.md)). Wang et al.
   (2021, §1) describe it as one of "two important variants" for "achieving optimal order near critical
   points", whose "nonlinear weights are pushed smoothly to the optimal values by a regularization
@@ -61,7 +91,7 @@ recovery of order rests.)*
   [WENO-Z](/methods/weno-z.md) give the same $L^\infty$ error, $1.96\times10^{-8}$, against
   $1.62\times10^{-7}$ for WENO-JS (Table 1), and WENO-M costs 42.28 s against 40.30 s for WENO-JS and
   40.51 s for WENO-Z in MATLAB (Table 3) ([RBF-based WENO](/methods/rbf-weno.md)).
-- **Recalled in passing** by Hong, Ye & Ye (2022, §1), Li, Chen & Ren (2022, §1) and Liang et al.
+- **Recalled in passing** by Hong, Ye & Ye (2022, §1), Li, Chen & Ren (2022a, §1) and Liang et al.
   (2022, §1) as the first remedy for the critical-point defect, and by Zhou et al. (2023, §1) for its lower
   dissipation at critical points.
 
@@ -80,8 +110,9 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 ## Qualifications
 
 - The page records only what the ingested sources state about WENO-M; the proofs and the analysis of the
-  mapping belong to Henrick et al., which is not ingested. The mapping is printed once, in a comparator
-  scheme and with a sign slip; it is recorded above with the sign that fixes $d_k$.
+  mapping belong to Henrick et al., which is not ingested. The Henrick mapping is printed once, in a comparator
+  scheme and with a sign slip; it is recorded above with the sign that fixes $d_k$. The
+  third-order mapping of Komissarov & Phillips acts on TVD weights and is a different map.
 
 # Citations
 
@@ -98,7 +129,8 @@ raising the weights of non-smooth stencils, hybridization, spectral optimization
 - [Jeong, Yang & Yoon (2022)](/sources/jeong-2022.md) — §5, Tables 1–3.
 - [Wan & Xia (2022)](/sources/wan-2022.md) — §1.
 - [Hong, Ye & Ye (2022)](/sources/hong-2022.md) — §1.
-- [Li, Chen & Ren (2022)](/sources/li-2022.md) — §1.
+- [Li, Chen & Ren (2022a)](/sources/li-2022.md) — §1.
 - [Liang et al. (2022)](/sources/liang-2022.md) — §1.
 - [Chamarthi (2023b)](/sources/chamarthi-2023-b.md) — §3, Eqs. (43)–(48): the printed mapping in WCNS7M.
 - [Zhou, Ding, Huang & Luo (2023)](/sources/zhou-2023.md) — §1.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.3; §4.1, Table 1; App. A, Eqs. (A1)–(A23), Fig. A1: mapped TVD weights for third-order WENO (arXiv v3).

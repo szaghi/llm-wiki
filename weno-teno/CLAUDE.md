@@ -102,13 +102,20 @@ here, in this bundle's notation.
 
 ## Status
 
-**Chunk 8 staged 2026-10-23:** multi-resolution WENO, TENO and THINC
+**Chunk 9 staged 2026-10-23:** PAMPA, tensor-train and AENO
+reconstruction, entropy projection, central-upwind and relativistic MHD
+schemes; 179 of 207 ingested, 212 concept pages plus the registry, 5027
+bibliography entries, deep lint done, five contradictions open (TENO
+$\tau_K$; conservation of WCNS; entropy-filter tolerance; cost of WENO-Z
+against mapped WENO; order of TENO at a second-order critical point).
+Next: chunk 10.
+
+**Chunk 8 committed 2026-10-23 (22017c3):** multi-resolution WENO, TENO and THINC
 variants, DG limiters, MHD and shallow-water schemes; 159 of 207
 ingested, 200 concept pages plus the registry, 4666 bibliography
 entries, deep lint done, five contradictions open (TENO $\tau_K$;
 conservation of WCNS; entropy-filter tolerance; cost of WENO-Z against
-mapped WENO; order of TENO at a second-order critical point). Next:
-chunk 9.
+mapped WENO; order of TENO at a second-order critical point).
 
 **Chunk 7 committed 2026-10-23 (2dafcd9):** TENO variants, limiters, ADER,
 well-balanced and multiphase solvers; 139 of 207 ingested (wu-2023
@@ -121,12 +128,12 @@ concept pages plus the registry, 3765 bibliography entries, deep lint
 done, three contradictions open (TENO $\tau_K$; conservation of WCNS;
 entropy-filter tolerance).
 
-**Chunk 5 committed 2026-10-23 (a001f6a):** gradient-based schemes, wall-modelled LES,
+**Chunk 5 committed 2026-10-22 (a001f6a):** gradient-based schemes, wall-modelled LES,
 structure-preserving MHD, GPU codes; 100 of 207 ingested, 167 concept
 pages plus the registry, 3291 bibliography entries, deep lint done, two
 contradictions open (TENO $\tau_K$; conservation of WCNS).
 
-**Chunk 4 committed 2026-10-23 (9324881):** TENO variants, positivity for
+**Chunk 4 committed 2026-10-22 (9324881):** TENO variants, positivity for
 Navier–Stokes, shock tracking, all-Mach IMEX, codes.
 
 **Chunk 3 committed 2026-10-23 (0a9f822):** flux reconstruction, entropy

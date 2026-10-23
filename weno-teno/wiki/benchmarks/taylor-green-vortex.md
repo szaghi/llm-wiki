@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Taylor–Green vortex"
-description: "Periodic vortex flow that transitions to turbulence: inviscid at low Mach number to compare kinetic-energy loss and enstrophy growth, viscous at Re 1600 or 5000 and Mach up to 1.2 to compare dissipation rates with DNS, in 2D a robustness test of structure-preserving DG, with a density slab a two-phase test, and a GPU performance case."
+description: "Periodic vortex flow that transitions to turbulence: inviscid at low Mach number for kinetic-energy loss, enstrophy growth and discrete entropy conservation, viscous at Re 1600 or 5000 and Mach up to 1.25 against DNS dissipation rates, in 2D a robustness test of structure-preserving DG, with a density slab a two-phase test, and a GPU performance case."
 status: established
 aliases: [TGV, inviscid Taylor–Green vortex, Taylor–Green vortex at Re 1600, compressible Taylor–Green vortex]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Taylor–Green vortex
@@ -95,6 +95,15 @@ energy, initially and exactly $0.125$ in their statement, and $Q=0.5$
 iso-surfaces at $t=10$, without stating the end time of the energy
 history. The initial value $\tfrac1{(2\pi)^3}\int\tfrac12(v_1^2+v_2^2)\,dV=\tfrac18$
 holds for these data *(compiler check, not in the sources)*.
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) §7.3,
+Eq. (64), print the field with $\rho=1$, $\gamma=1.4$ and
+$p=\frac{100}\gamma+\frac1{16}(\cos2x\cos2z+2\cos2x+2\cos2y+\cos2y\cos2z)$,
+which is $\frac1{16}(\cos2x+\cos2y)(\cos2z+2)$ expanded
+*(compiler check, not in the sources)*, on periodic $[0,2\pi]^3$ to
+$t=14$, on Cartesian and on non-symmetrically warped curvilinear grids
+(warping amplitude $1/5$), with $4^3$ elements of degree $N=4$ and 5
+for the conservation tests and $4^3$ and $8^3$ elements of degree
+$N=3$ to 5 for timing, RK4 at an adaptive CFL 0.1, in the PHiLiP code.
 
 **Inviscid, supersonic.** Maltsev et al. §3.7 run the inviscid form
 of Lusher & Sandham's supersonic vortex: same domain and velocity,
@@ -139,6 +148,24 @@ $M=0.1$, $0.5$, $1$; grids $64^3$ to $1024^3$, third-order Runge–Kutta
 at CFL 0.5, up to $t=16$. This is Ye et al.'s field rescaled by the
 velocity instead of the sound speed (divide Ye et al.'s velocities by
 $M$ and pressure by $M^2$) *(compiler check, not in the sources)*.
+
+**Viscous, $\mathrm{Re}=1600$, Gauss against Gauss–Lobatto collocation.**
+[Schwarz et al. (2025)](/sources/schwarz-2025.md) §4.2, Eq. (28)
+(arXiv v1) run the field with $L=1$ on $[0,2\pi L]^3$,
+$p=p_0+\frac{\rho_0u_0^2}{16}(\cos2x+\cos2y)(2+\cos2z)$, $M_0=u_0\sqrt{\rho_0/(\gamma p_0)}$,
+$\mathrm{Re}=1600$, uniform initial temperature, at $M_0=0.1$
+(degree $N=7$, $64^3$ to $512^3$ DOFs, Lax–Friedrichs surface flux,
+against DeBonis' reference) and at $M_0=1.25$ (Sutherland viscosity,
+$N=3$, $64^3$ to $512^3$ DOFs, Roe flux with the Harten–Hyman entropy
+fix and FV/DG blending with bounds $(0.01,0.04)$, against Chapelier et
+al.), comparing entropy-stable [DGSEM](/methods/dgsem.md) on
+Gauss–Lobatto nodes with the Gauss-node variant that uses the
+[entropy projection](/methods/entropy-projection.md) of the face
+states, both in [FLEXI](/software/flexi.md) with
+[BR1](/methods/bassi-rebay-viscous-discretization.md) viscous fluxes,
+Chandrashekar's volume flux and a low-storage RK4-5 at CFL 0.9;
+diagnostics are the kinetic energy, the solenoidal and dilatational
+dissipation rates and Mach-number profiles.
 
 **Viscous, $\mathrm{Re}=1600$, element and compact schemes.**
 [Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md) §5.2.1 (arXiv v3)
@@ -198,7 +225,7 @@ two-phase flow (§4.1.2).
 
 **Two-species, viscous, $\mathrm{Re}=1600$.**
 [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.2.2, Eqs.
-(41)–(44) (arXiv v1) run the standard velocity field with $\rho=1$,
+(41)–(44) (arXiv v1) run the common velocity field with $\rho=1$,
 $p=p_0+\frac1{16}(\cos2x+\cos2y)(\cos2z+2)$, $p_0=1/(\gamma M^2)$,
 $\gamma=1.4$, $M=0.08$, $\mathrm{Re}=1600$, $\mathrm{Pr}=0.71$, as a
 two-species flow in which both species have the same heat capacities
@@ -248,6 +275,41 @@ underpredicts more than the sharp one (C), which they attribute, as a
 hypothesis, to aliasing errors of the nonlinear description of the
 interface, entropy constraints being known to mitigate aliasing
 (§5.2.2, Fig. 14).
+
+**Discrete conservation in nonlinearly stable flux reconstruction.**
+Cicchino & Nadarajah's weight-adjusted nonlinearly stable
+[flux reconstruction](/methods/flux-reconstruction.md), with
+Chandrashekar's flux and Ranocha's pressure fix on entropy-projected
+states, conserves the discrete entropy to $\mathcal O(10^{-13})$ on
+Gauss and Gauss–Lobatto quadrature, with and without
+over-integration, for the DG and $c_+$ correction parameters, and
+keeps global conservation and free-stream preservation at
+$\mathcal O(10^{-16})$, while conservative DG on Gauss nodes diverges
+(Tables 2–3, Fig. 3). The kinetic energy, net of pressure work, is
+conserved to $\mathcal O(10^{-12})$ only on Gauss–Lobatto nodes, as
+their theorem that an uncollocated scheme whose surface nodes are not
+volume nodes cannot be exactly kinetic-energy preserving predicts (Thm
+6.4, Fig. 5; see
+[kinetic energy preservation](/properties/kinetic-energy-preservation.md),
+[entropy stability](/properties/entropy-stability.md)). On the timing
+runs to $t=14$ (one node of eight AMD Rome 7532 processors, averages of
+four runs, Table 4), the entropy-conserving scheme takes about 13 % more
+CPU time and 12 % more wall-clock time than conservative DG, while
+conservative DG at $N=5$ diverges at $t=9.06$ on $4^3$ and $6.70$ on
+$8^3$ elements; over-integrated conservative DG is the most expensive
+(see Qualifications).
+
+**Gauss nodes against Gauss–Lobatto nodes.** Schwarz et al. find that
+at $M_0=0.1$ the Gauss-node scheme converges faster to the DeBonis
+reference in kinetic energy and solenoidal dissipation, agreeing "far
+better" on $64^3$ DOFs, at about twice the computing time of the
+Gauss–Lobatto scheme (§4.2.1, Figs. 2–3). At $M_0=1.25$ it captures
+small scales better, is less dissipative, converges faster to Chapelier
+et al.'s results and gives sharper, less oscillatory shocks in the Mach
+profiles at $t=2.5$; the oscillations of the dilatational dissipation
+on $256^3$ and $512^3$ are Gibbs oscillations they attribute to the
+minimal blending (§4.2.2, Figs. 5–8). See
+[subcell finite-volume limiting](/methods/subcell-finite-volume-limiting.md).
 
 **Kinetic-energy loss ranks the schemes; WENO-JS loses most.** Li et
 al. find that WENO-JS dissipates the most kinetic energy of the WENO
@@ -528,6 +590,18 @@ cells (§9, Figs. 21–24).
   cubic-split and quadratic-split forms, respectively" in §3.5, the
   reverse of their own definitions (QS is quadratic split), and write
   "QC" for QS in §4.1.2 and §4.2.
+- Cicchino & Nadarajah write that the over-integrated conservative DG
+  scheme "took 364% longer CPU time and 365% longer wall clock time"
+  than their scheme; the mean ratios of the six cases of their Table 4
+  are 3.64 (CPU) and 3.65 (wall clock), i.e. 264 % and 265 % longer
+  *(compiler check, not in the sources)*. Their 13 % and 12 % reproduce
+  from the four cases in which conservative DG completes *(compiler
+  check, not in the sources)*.
+- Schwarz et al. print the second velocity component as
+  $-u_0\cos(x/L)\cos(y/L)\cos(z/L)$; with it the initial field is not
+  divergence-free ($\partial_xv_1+\partial_yv_2=u_0\cos x\cos z(\cos y+\sin y)/L$),
+  and the $\sin(y/L)$ of every other source is meant *(compiler check,
+  not in the sources)*.
 - In the inviscid runs there is no converged reference: the sources
   compare schemes with each other (Li et al. also with a linear upwind
   scheme), not with an exact energy history.
@@ -557,3 +631,5 @@ cells (§9, Figs. 21–24).
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §5.2.2, Eqs. (41)–(44), Table 5, Fig. 14 (arXiv v1).
 - [Zuo & Zhu (2024a)](/sources/zuo-2024.md) — Ex. 3.7, Figs. 3.11–3.12, Table 3.1.
 - [Zuo & Zhu (2024b)](/sources/zuo-2024-b.md) — Ex. 3.7, Eq. (3.5), Figs. 3.11–3.12, Table 3.1.
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §7.3–7.4, Eq. (64), Thm 6.4, Tables 2–4, Figs. 3–6.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.5, §4.2, Eqs. (28)–(31), Figs. 2–8 (arXiv v1).

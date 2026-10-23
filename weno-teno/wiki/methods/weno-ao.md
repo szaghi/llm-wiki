@@ -1,11 +1,11 @@
 ---
 type: Method
 title: "WENO-AO (adaptive-order WENO)"
-description: "WENO-AO nonlinearly hybridizes one large central high-order stencil with the three small stencils of third-order WENO; Balsara et al. show that its weights need a higher power of the global indicator to reach orders 7 and 9, Wang et al. measure the cost of its four sub-stencils, and Zhao et al. use it in compact gas-kinetic schemes."
+description: "WENO-AO nonlinearly hybridizes one large central high-order stencil with the three small stencils of third-order WENO; the sources raise the power of its global indicator for orders 7 and 9, measure the cost of its four sub-stencils, use it in compact gas-kinetic schemes and expose its loss of robustness when all stencils are non-smooth."
 status: established
 aliases: [WENO-AO, combination of ENO and WENO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T03:53:00Z
+timestamp: 2026-10-23T12:03:00Z
 ---
 
 # WENO-AO (adaptive-order WENO)
@@ -55,7 +55,15 @@ $d_{\mathrm H}=\gamma_{\mathrm{Hi}}$ for the large stencil and
 $(1-\gamma_{\mathrm{Hi}})(1-\gamma_{\mathrm{Lo}})/2$, $(1-\gamma_{\mathrm{Hi}})\gamma_{\mathrm{Lo}}$,
 $(1-\gamma_{\mathrm{Hi}})(1-\gamma_{\mathrm{Lo}})/2$ for the three small stencils, with
 $\gamma_{\mathrm{Hi}}=\gamma_{\mathrm{Lo}}=0.85$ "the same as in" the original paper (page-local
-parameters; the paper does not say which small stencil takes which weight)
+parameters; the paper does not say which small stencil takes which weight).
+Zhang, Ji & Xu (2024d, §3.1, Eq. (35); arXiv v1) print the assignment: with
+$d_{\mathrm H}=\gamma_{\mathrm{Hi}}=0.85$ and $\gamma_{\mathrm{Lo}}=0.85$, the two outer stencils take
+$(1-\gamma_{\mathrm{Hi}})(1-\gamma_{\mathrm{Lo}})/2=0.01125$ and the central one
+$(1-\gamma_{\mathrm{Hi}})\gamma_{\mathrm{Lo}}=0.1275$, within a recommended range $[0.85,0.95]$ for both
+parameters. Their weights are the AO(5,3) ones above, with
+$\tau=\tfrac13\sum_k\lvert\beta_{\mathrm H}-\beta_k\rvert$ and the squared ratio (Eqs. (36)–(39)), and they
+print all four candidate polynomials in monomial form about the interface. *(Compiler check, not in
+the sources: $2\times0.01125+0.1275+0.85=1$.)*
 
 ## Compact gas-kinetic variant
 
@@ -108,6 +116,16 @@ the Rayleigh–Taylor instability (Examples 5.4–5.6, 5.9;
 [Sedov blast wave](/benchmarks/sedov-blast-wave.md),
 [Woodward–Colella blast wave](/benchmarks/woodward-colella-blast-wave.md)).
 
+## Robustness when every stencil is non-smooth
+
+WENO-AO falls back to the third-order small stencils, which does not help when the discontinuity
+lies in all of them. Zhang, Ji & Xu (2024d; arXiv v1) measure this in a characteristic-wise,
+dimension-by-dimension finite-volume WENO-AO(5,3) with a gas-kinetic or a Lax–Friedrichs flux: it
+survives the 123 problem only up to Mach 6.0 (gas-kinetic) or 7.9 (Lax–Friedrichs) and a
+hurricane-like vacuum problem up to Mach 2.0 or 1.4, where a first-order fallback driven by a
+discontinuity feedback factor raises these to 31.5, 84.1, 16.0 and 7.0 (Tables 5–6; see
+[hybrid schemes](/methods/hybrid-weno.md)).
+
 ## Other uses and comparisons
 
 - **Small stencils of third order.** Balsara, Samantaray & Subramanian (2023, §6.3), by an overlapping
@@ -139,3 +157,4 @@ the Rayleigh–Taylor instability (Examples 5.4–5.6, 5.9;
 - [Balsara, Samantaray & Subramanian (2023)](/sources/balsara-2023.md) — §3; §6.3.
 - [Ji, Liang & Fu (2022)](/sources/ji-2022.md) — §5.8.
 - [Zhao et al. (2023)](/sources/zhao-2023.md) — §3.4, Eqs. (28)–(32), Figs. 2–4; §4.1, Table 1.
+- [Zhang et al. (2024d)](/sources/zhang-2024-d.md) — §3.1, Eqs. (33)–(39); §4.3, Tables 5–6 (arXiv v1).

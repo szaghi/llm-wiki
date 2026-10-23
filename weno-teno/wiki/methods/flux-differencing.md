@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-23T05:41:00Z
+timestamp: 2026-10-23T14:54:00Z
 ---
 
 # Flux differencing and split-form DG
@@ -333,6 +333,45 @@ Eqs. (6.1)–(6.3)).
   interpolation and lifting (§6, footnote 4). J. Chan is an author of both
   papers.
 
+**Hybridized operator in the semi-discretization.**
+[Schwarz et al. (2025)](/sources/schwarz-2025.md) write the Gauss-node
+volume operator, after Chan and Mateo-Gabín et al., as
+$[I\ \ V_f^\top](Q_{\mathrm h}\circ\mathcal F^\#)\mathbf 1$, with $V_f$ the
+interpolation to the two face nodes of a line, $\mathcal F^\#$ the matrix of
+contravariant two-point fluxes with arithmetic-mean metric terms over the
+volume and face nodes, and the hybridized operator
+
+$$Q_{\mathrm h}=\begin{pmatrix}2MD-V_f^\top BV_f&V_f^\top B\\-BV_f&B\end{pmatrix}$$
+
+(Eqs. (21)–(24); page-local $V_f$, $Q_{\mathrm h}$, $\mathcal F^\#$, $B=\mathrm{diag}(-1,1)$
+here). The surface correction uses the two-point flux of the
+[entropy-projected](/methods/entropy-projection.md) face states. The LGL
+form is $(2Q\circ\mathcal F^\#)\mathbf 1$ (Eq. (20)). In FLEXI the Gauss
+form costs about twice the LGL one at fixed $N$ for the Taylor–Green vortex
+and the diffuser LES (§4.2.1, §4.4; [DGSEM](/methods/dgsem.md)).
+
+**Modal, uncollocated variant with flux reconstruction.**
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) use Chan's
+hybridized skew-symmetric operator for a modal basis on uncollocated volume
+and surface quadrature,
+
+$$\tilde Q-\tilde Q^\top=\begin{pmatrix}\mathsf W\nabla\phi_v-\nabla\phi_v^\top\mathsf W&\sum_f\phi_f^\top\mathsf W_f\,\mathrm{diag}(n_f)\\-\sum_f\mathsf W_f\,\mathrm{diag}(n_f)\,\phi_f&0\end{pmatrix},$$
+
+with the SBP-like property $\tilde Q+\tilde Q^\top=\mathrm{blockdiag}(0,\ \mathsf W_f\mathrm{diag}(n_f))$
+($\phi_v$, $\phi_f$ the flux basis at volume and face nodes, $\mathsf W$,
+$\mathsf W_f$ the quadrature weights; page-local), contracted in Hadamard
+form with two-point fluxes $f^{\mathrm{ec}}(\tilde u_i,\tilde u_j)\,\tfrac12\big(Ja(\xi_i)+Ja(\xi_j)\big)$
+over all volume and surface node pairs (Eqs. (37)–(41)). Putting the metric
+average inside the reference two-point flux rather than in a physical
+skew-symmetric operator is equivalent but keeps the tensor-product
+structure; their sum-factorized Hadamard product then evaluates the
+volume–volume block in $dn^{d+1}$ flops and each surface–volume block in
+$dn^d$, $n=N+1$, so that NSFR and conservative DG differ in cost only by
+the two-point flux evaluations (§3.3, §5, after their earlier work).
+Measured on the 3D Taylor–Green vortex, NSFR costs about 13 % more CPU time
+than conservative DG (§7.4, Table 4;
+[flux reconstruction](/methods/flux-reconstruction.md)).
+
 ## Qualifications
 
 - The cost figures are single-core CPU measurements on the compressible
@@ -345,6 +384,10 @@ Eqs. (6.1)–(6.3)).
   flux in 3D and a faster directional HLL flux in 3D. The text puts the
   precomputed rotated flux up to 2× slower, but the table's largest ratio is
   1.55. The table is the measurement.
+- Schwarz et al. print the lower-left block of the hybridized operator (23)
+  as $-V_fB$; with $V_f$ of size $2\times(N+1)$ and $B$ of size $2\times2$
+  only $-BV_f$ conforms, the form written above *(compiler check, not in
+  the sources)*.
 
 # Citations
 
@@ -360,3 +403,5 @@ Eqs. (6.1)–(6.3)).
 - [De Michele & Coppola (2023b)](/sources/demichele-2023-b.md) — App. A Eqs. (16)–(18), §5 (arXiv v2).
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.1 Eqs. (5)–(8), Remarks 1–3 (arXiv v1).
 - [Liang & Fu (2024b)](/sources/liang-2024-b.md) — §2.3 Eqs. (27)–(28), §3.3.1 Eqs. (40)–(42).
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §3.3–3.4 Eqs. (20)–(25), §4.2.1, §4.4 (arXiv v1).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §3.3 Eqs. (37)–(41), §5, §7.4 Table 4.

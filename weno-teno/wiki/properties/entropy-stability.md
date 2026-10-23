@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:13:00Z
 ---
 
 # Entropy stability
@@ -164,6 +164,23 @@ energy-conservative or local Lax–Friedrichs interface flux (Eqs. (23),
 (46)–(50); [flux reconstruction](/methods/flux-reconstruction.md)). Their
 numerical energy is conserved to $O(10^{-12})$ or decreases monotonically,
 while the classical split form does neither (Tables 1–3).
+[Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) carry the result to
+the 3D Euler equations on curvilinear hexahedra: with Chan's hybridized
+flux differencing on [entropy-projected](/methods/entropy-projection.md)
+states, an EC volume flux satisfying Tadmor's condition on all volume and
+surface node pairs and an EC surface flux, the scheme conserves entropy in
+the $(M_K+K_{\mathrm{FR}})$ norm (page-local $M_K$ the mass matrix of
+element $K$, $K_{\mathrm{FR}}$ the FR correction operator), for any correction parameter and any
+quadrature exact to degree $2N-1$ (Thm. 6.3, Eqs. (54)–(58)). For the
+classical ESFR flux differencing of Ranocha et al. and Abe et al. the volume
+term keeps a factor $(M_K+K_{\mathrm{FR}})M_K^{-1}$ in the entropy statement,
+"which renders it unstable" (Eq. (56)). Entropy dissipation is added through
+the jump of the projected entropy variables: as they recall from
+Chandrashekar, a positive scalar times the jump of the conservative
+variables does not provably dissipate entropy (§6.3). The inviscid
+Taylor–Green vortex keeps the entropy change at $O(10^{-13})$ on Gauss and
+LGL nodes, with and without overintegration, while conservative DG on Gauss
+nodes diverges (§7.3).
 
 On Legendre–Gauss nodes, entropy stability needs two further ingredients:
 
@@ -172,7 +189,12 @@ On Legendre–Gauss nodes, entropy stability needs two further ingredients:
   surface states.
 
 Ranocha et al. (2023) measure this variant at 1.5× to 5× the cost of the
-LGL scheme (§6). Ranocha et al. also state, citing the literature, that
+LGL scheme (§6). [Schwarz et al. (2025)](/sources/schwarz-2025.md) compare
+the two entropy-stable collocation DGSEMs, with the entropy pair
+$\eta=-\rho s/(\gamma-1)$, $F_\eta=\eta v$ and the Chandrashekar volume flux,
+on compressible turbulence in FLEXI: the Gauss scheme is more accurate at
+equal $N$ and about twice as expensive, and the authors judge it the more
+efficient per accuracy (§2.2, §3.3–3.4, §4; [DGSEM](/methods/dgsem.md)). Ranocha et al. also state, citing the literature, that
 flux differencing comes with stability guarantees that overintegration
 lacks, and that it stays stable where overintegration fails (§5).
 
@@ -180,6 +202,24 @@ As recalled by Rueda-Ramírez et al. (2022), the classical DG cell entropy
 inequality for the square entropy (Jiang–Shu) needs exact volume and surface
 integration. That is not feasible for the non-polynomial KPP flux, which is
 why the split form is used there (§5.1).
+
+**Modal DG with projected entropy variables.**
+[Alberti et al. (2025)](/sources/alberti-2025.md) target the global
+condition $\int_\Omega\partial_t\eta\,dx\le0$ (Eq. (16)) in a modal DG solved
+in conservative variables with all operators evaluated at the projected
+entropy variables. The convective part is made entropy conservative or
+stable by an [entropy correction term](/methods/entropy-correction-term.md)
+that removes the quadrature error of each element, together with a Tadmor
+interface flux (Eqs. (20)–(25)). The viscous part is made entropy stable by
+projecting the viscous flux onto the DG space before it enters the
+Bassi–Rebay surface terms: $\Pi_{\mathrm{BR1}}$ gives the exact production
+$-\sum_K\int_K(\partial w_h+R)^\top\mathsf K(\partial w_h+R)\le0$ and
+$\Pi_{\mathrm{BR2}}$ an upper bound (Eqs. (40)–(47); page-local lifting $R$ and
+viscous matrices $\mathsf K$;
+[Bassi–Rebay](/methods/bassi-rebay-viscous-discretization.md)). They add
+that a globally increasing $\rho s$ does not guarantee consistent entropy
+evolution in every element, and that only the projected viscous schemes
+control the local entropy production (§3.2.2).
 
 ## Which robustness steps keep it
 
@@ -612,6 +652,39 @@ for all free auxiliary $\rho_*>0$ and $v_*\in\mathbb R$. They give the relativis
 $e\rho^{1-\gamma}$ in the subcell limiting of Rueda-Ramírez et al. (2022) is
 a discrete, local relative of the same principle.
 
+[Ching et al. (2025)](/sources/ching-2025.md) enforce the local minimum
+entropy principle in positivity-preserving DG for the reacting
+multicomponent Navier–Stokes equations, with the physical specific entropy
+$s$ of the thermally perfect mixture bounded from below by its minimum over
+the quadrature points of the element and its face neighbours at the
+previous step, with "a small tolerance" (Eqs. (4.20), (4.38)). The bound
+is imposed only on the convective half of a split update, because the
+principle does not hold for Navier–Stokes with nonzero thermal
+diffusivity, as they recall for monocomponent, calorically perfect gases,
+and they "do not expect the conclusion to change" for multicomponent
+thermally perfect ones (§1). The forward-Euler cell-average update is
+written as half a convective-only update plus half a viscous-only update,
+each with step $2\Delta t$ (Eq. (4.12)); the convective half is kept in the
+entropy-bounded set by an invariant-region-preserving flux and an entropy
+scaling limiter, the viscous half only in the positivity set (§4.2–4.3;
+[positivity-preserving Navier–Stokes flux](/methods/positivity-preserving-navier-stokes-flux.md),
+[Zhang–Shu scaling limiter](/methods/zhang-shu-scaling-limiter.md)). The
+entropy constraint function $\rho s-\rho s_{\mathrm b}$ (page-local bound
+$s_{\mathrm b}$) is concave only when all concentrations are positive; the
+authors assume the constrained set convex throughout, an assumption that
+"does not seem to have any discernible negative effects" (§4). They contrast their half-sum with the
+sequential split of
+[Dzanic & Witherden (2022)](/sources/dzanic-2022-b.md), in which the viscous update starts
+from the entropy-limited convective state: that state "may not be" in the
+positivity set unless the viscous dissipation coefficient adds a further
+time-step constraint (§4.3). Evidence: in a 1D viscous N$_2$/He shock tube
+the entropy limiter damps large-scale pressure, temperature and entropy
+oscillations "significantly better" than positivity alone (§5.3, Figs.
+5.5–5.6); in a 2D H$_2$–O$_2$–Ar detonation without it the minimum
+temperature approaches zero before 50 μs and the chemistry solver stalls,
+while with it the minimum entropy stays roughly constant (§5.4, Fig. 5.12;
+[shock-induced combustion](/benchmarks/shock-induced-combustion.md)).
+
 Lin, Chan & Tomas (2023) do not impose a minimum entropy principle: they
 state that it is consistent with the compressible Euler equations but not
 with Navier–Stokes, and limit only density and internal energy (§1).
@@ -737,3 +810,7 @@ blend reduces the oscillations (§8.2–8.4).
 - [Rueda-Ramírez, Bolm, Kuzmin & Gassner (2024)](/sources/ruedaramirez-2024.md) — §2.2 Eqs. (37)–(39), Remark 9, §3.2 Eq. (51), App. A (arXiv v1).
 - [Goudon & Minjeaud (2024)](/sources/goudon-2024.md) — pp. 1272–1275 Eqs. (26)–(35) (HAL wrap of the version of record).
 - [Trojak & Dzanic (2024)](/sources/trojak-2024.md) — §2.2 Eqs. (7)–(12), §3.1–3.2 Eqs. (25)–(27), §4 Eq. (33) (arXiv v1).
+- [Cicchino & Nadarajah (2025)](/sources/cicchino-2025.md) — §6.3 Thm. 6.3, Eqs. (54)–(58), §7.3.
+- [Schwarz et al. (2025)](/sources/schwarz-2025.md) — §2.2 Eq. (4), §3.3–3.4, §4 (arXiv v1).
+- [Alberti et al. (2025)](/sources/alberti-2025.md) — §2 Eq. (16), §2.1.1 Eqs. (20)–(25), §2.1.2 Eqs. (40)–(47), §3.2.2.
+- [Ching et al. (2025)](/sources/ching-2025.md) — §1, §4 Eqs. (4.1), (4.12), (4.20), (4.38), §4.3, §5.3 Figs. 5.5–5.6, §5.4 Fig. 5.12.

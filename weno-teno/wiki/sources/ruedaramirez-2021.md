@@ -167,9 +167,10 @@ duplicates.
 
 # Pages created or updated
 
-Chunk 2 (2026-10-22), cited further in chunks 3–8 (2026-10-22/23). This source is cited on:
+Chunk 2 (2026-10-22), cited further in chunks 3–9 (2026-10-22/23). This source is cited on:
 
 * [Artificial viscosity and spectral viscosity](/methods/artificial-viscosity.md)
+* [Bassi–Rebay viscous discretizations (BR1, BR2)](/methods/bassi-rebay-viscous-discretization.md)
 * [Discontinuous Galerkin spectral element method (DGSEM)](/methods/dgsem.md)
 * [Divergence-free magnetic field](/properties/divergence-free-magnetic-field.md)
 * [Entropy stability](/properties/entropy-stability.md)
@@ -177,6 +178,7 @@ Chunk 2 (2026-10-22), cited further in chunks 3–8 (2026-10-22/23). This source
 * [Flux differencing and split-form DG](/methods/flux-differencing.md)
 * [FLUXO](/software/fluxo.md)
 * [Free-stream preservation](/properties/free-stream-preservation.md)
+* [GLM divergence cleaning](/methods/glm-divergence-cleaning.md)
 * [Lax–Friedrichs (Rusanov) flux and flux splitting](/methods/lax-friedrichs-flux.md)
 * [Logarithmic mean](/operators/logarithmic-mean.md)
 * [MHD blast wave and rotor](/benchmarks/mhd-blast-wave.md)

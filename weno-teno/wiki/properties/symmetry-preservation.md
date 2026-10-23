@@ -1,16 +1,16 @@
 ---
 type: Property
 title: "Symmetry preservation"
-description: "Symmetry preservation has three meanings in the sources: keeping the mirror symmetry of a symmetric flow under round-off or on an unstructured mesh, which low-dissipation schemes lose unless implemented consistently; preserving the skew-symmetry of the convective operator, which yields discrete kinetic-energy conservation; and mirror-symmetric coefficients of WENO smoothness indicators; this page states all three and the evidence on each."
+description: "Symmetry preservation has four meanings in the sources: the mirror symmetry of a symmetric flow, which low-dissipation schemes lose unless implemented consistently; the skew-symmetry of the convective operator, which yields kinetic-energy conservation; mirror-symmetric WENO smoothness indicators; and the identical discrete form of the two volume-fraction updates of a two-phase scheme."
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:06:00Z
 ---
 
 # Symmetry preservation
 
-The term covers three distinct properties, which a page or claim must keep apart.
+The term covers four distinct properties, which a page or claim must keep apart.
 
 1. **Solution (mirror) symmetry.** A problem whose data are symmetric under a
    reflection, such as the single-mode Rayleigh–Taylor instability or the 2D
@@ -27,6 +27,11 @@ The term covers three distinct properties, which a page or claim must keep apart
    [smoothness indicators](/definitions/smoothness-indicator.md) of a
    fifth-order WENO are symmetry-preserving if $\beta_{2-k}$ is the mirror
    image of $\beta_k$ about the centre cell (section 3 below).
+4. **Symmetry of the volume fractions.** In the sense of
+   [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md), a discretization of a
+   two-phase model with $\phi_1+\phi_2=1$ keeps this symmetry if the
+   discrete update of $\phi_2=1-\phi_1$ has exactly the same form as that of
+   $\phi_1$ (section 4 below).
 
 ## 1. Mirror symmetry of the solution
 
@@ -230,6 +235,28 @@ much below WENO-ZS (Figs. 11–12). This is the only quantified measure of
 solution symmetry on this page. The construction is limited to fifth order
 "if no further modifications are done" (§3.2).
 
+## 4. Symmetry of the volume fractions
+
+Yan, Abgrall & Wu (2024) write the volume-fraction equation of the Kapila
+[five-equation model](/definitions/five-equation-model.md) as an advection
+with a non-conservative source, $\partial_t\phi_1+\nabla\cdot(\phi_1v)=\chi_1\phi_1\nabla\cdot v$,
+whose companion for $\phi_2$ has the "similar (symmetric)" form with
+$\chi_2$, where $\chi_1\phi_1+\chi_2\phi_2=1$ (page-local $\chi_k$; §2.1). Their
+discontinuous Galerkin discretization of the source, Gauss quadrature of
+$\partial_xv$ inside the cell plus an HLL-weighted split of the interface
+velocity jump, "inherently ensures the symmetry of the volume fractions"
+(Abstract, §1): the update of $\phi_2$ derived from that of $\phi_1$
+collapses to the same form with $\chi_2$ (proof of Thm 2.7, Eq. (2.35)).
+This requires the discrete identity
+$\Delta x\sum_\nu\mathsf w_\nu(\partial_xv)^{[\nu]}=v^-_{i+1/2}-v^+_{i-1/2}$ (Eq. (2.10);
+$\mathsf w_\nu$ the normalized Gauss weights, $(\partial_xv)^{[\nu]}$ the derivative at
+Gauss point $\nu$, page-local), which they obtain by differentiating a
+Gauss–Lobatto interpolant of the velocity (Remark 2.1; 2D Remark 3.1). The
+property is structural, not a statement about solution symmetry: it is
+what lets the proof of $\phi_1\ge0$ also give $\phi_2\ge0$, i.e.
+$\phi_1\le1$ ([bound preservation](/properties/bound-preservation.md);
+2D Thm 3.6).
+
 ## Qualifications
 
 - Coefficient symmetry of the indicators (meaning 3) does not give mirror
@@ -244,7 +271,10 @@ solution symmetry on this page. The construction is limited to fifth order
   $\epsilon$; see [scale invariance](/properties/scale-invariance.md))*.
   The paper does not discuss it.
 
-- The two meanings are independent: a skew-symmetric (kinetic-energy-preserving)
+- Meaning 4 is unrelated to the other three: Yan et al. report no
+  mirror-symmetry measurement, and their symmetry is between two unknowns
+  of one cell, not between two cells.
+- Meanings 1 and 2 are independent: a skew-symmetric (kinetic-energy-preserving)
   central scheme can still break mirror symmetry by round-off, and a
   mirror-symmetric shock-capturing scheme is in general not skew-symmetric.
 - On mirror symmetry the evidence is the authors' visual inspection of
@@ -289,3 +319,4 @@ solution symmetry on this page. The construction is limited to fifth order
 - [Wakimura et al. (2024)](/sources/wakimura-2024.md) — Appendix A, Eqs. (A.3)–(A.5): operation-ordering rules for two-phase BVD with HLLC fluctuations.
 - [Liang & Fu (2024a)](/sources/liang-2024.md) — §4: round-off symmetry breaking and the Fleischmann et al. technique.
 - [Zhang et al. (2024b)](/sources/zhang-2024-b.md) — §6.3.2: symmetry breaking of low-dissipation TENO attributed to floating-point truncation.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Abstract; §1; §2.1, Eqs. (2.1), (2.10), Remark 2.1; Thm 2.7, Eq. (2.35); Remark 3.1, Thm 3.6: symmetry of the volume fractions.

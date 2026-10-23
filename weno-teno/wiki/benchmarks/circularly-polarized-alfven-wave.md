@@ -1,11 +1,11 @@
 ---
 type: Benchmark
 title: "Circularly polarized Alfvén wave"
-description: "Smooth exact travelling-wave solution of ideal and relativistic MHD whose transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected one period in 1D or along a rotated direction in 2D and 3D, it tests the convergence order of MHD schemes, from fifth-order WENO to second-order GRP finite volumes and bound-preserving central DG."
+description: "Smooth exact travelling-wave solution of ideal and relativistic MHD whose transverse velocity and magnetic field rotate along the propagation direction at constant density and pressure; advected one period in 1D or along a rotated direction in 2D and 3D, it tests convergence orders of MHD schemes, and its standing degenerate form measures numerical resistivity."
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:17:00Z
 ---
 
 # Circularly polarized Alfvén wave
@@ -21,7 +21,9 @@ against the initial (or translated) data measures the order in space
 and time. In 2D the wave is rotated to an oblique direction, which
 also tests the treatment of $\nabla\cdot B$; in special relativity a
 large-amplitude version of the same wave is an exact solution of
-relativistic MHD.
+relativistic MHD. Without a normal field the rotating field is a
+static force-free equilibrium (the degenerate Alfvén wave), whose decay
+on the grid measures the numerical resistivity of a scheme.
 
 ## Data
 
@@ -77,7 +79,7 @@ speed $v_a$ and wavelength $\lambda$); domain $[0,2\pi]$, $N=8$–$512$,
 one period $T=\lambda/v_a$; $L_1$ error of $v_3$ against the initial
 data.
 
-**Relativistic at $0.99c$, [Ding & Wu (2024)](/sources/ding-2024-b.md).**
+**Relativistic at $0.99c$, [Ding & Wu (2024b)](/sources/ding-2024-b.md).**
 Example 5.1, with the equation of state they label TM,
 $h=\tfrac{5p}{2\rho}+\sqrt{1+\tfrac94(p/\rho)^2}$. In 1D on $[0,1]$,
 periodic: $\rho=1$, $p=0.01$, $v_1=0$,
@@ -92,13 +94,33 @@ $(\cos\alpha,\sin\alpha)$ added to $\kappa_{\mathrm A}(v_1,v_2)$; $t=1$, error
 of $B_2$. They take the 1D setup from Wu & Tang and describe the 2D one
 as that of Wu & Shu with a lower pressure.
 
+**Relativistic, high magnetization, [Komissarov & Phillips (2024)](/sources/komissarov-2024.md).**
+§4.1 (arXiv v3). In its de Hoffmann–Teller frame the wave is stationary,
+with zero electric field and $v=\pm B/\sqrt{w+\lvert B\rvert^2}$, $w$
+the relativistic enthalpy density (page-local). The data are $p=\rho=1$,
+$B=(0.3B_0,\ B_0\cos\phi_{\mathrm A},\ B_0\sin\phi_{\mathrm A})$ with
+$\phi_{\mathrm A}=\arcsin(0.3\sin k_wx)$ (page-local rotation angle), so
+the transverse field keeps the magnitude $B_0$ but does not rotate
+uniformly along $x$; the state is Lorentz-boosted to $v=0.5$, with
+wavelength 2 in the laboratory frame, and run over $t\in[0,2]$ with
+Courant number $0.4$ and $\gamma=4/3$. With $B_0=50$ the magnetization
+$\sigma_{\mathrm m}=\lvert B\rvert^2/w$ (page-local) is 545: $\lvert B\rvert^2=1.09B_0^2=2725$
+and $w=\rho+\tfrac{\gamma}{\gamma-1}p=5$ *(compiler check, not in the sources)*.
+
+**Degenerate, standing, [Komissarov & Phillips (2024)](/sources/komissarov-2024.md).**
+§4.3: $v=0$, $p=\rho=1$, $B=B_0(0,\cos k_wx,\sin k_wx)$, $B_0=50$,
+$k_w=2\pi$, periodic $(0,1)$, Courant number 0.5. The field has no normal
+component and uniform magnitude, so it is a static equilibrium that
+decays only through numerical resistivity. §5.2 rotates it by $45^\circ$
+on the periodic $(0,1)^2$ with $k_w=2\sqrt2\pi$.
+
 ## Runs and findings
 
 **Fifth order with constrained transport.** Chen, Wu & Xiong's
 semi-implicit [IMEX](/methods/imex-runge-kutta.md) fifth-order
 finite-difference WENO scheme with constrained transport gives $L^1$
-errors of $\rho v_2$ from $6.24\times10^{-4}$ ($N=10$) to
-$6.27\times10^{-10}$ ($N=160$), orders 4.94, 4.99, 5.00, 5.00
+errors of $\rho v_2$ from $6.24\times10^{-4}$ ($N_x=10$) to
+$6.27\times10^{-10}$ ($N_x=160$), orders 4.94, 4.99, 5.00, 5.00
 (Table 5.1). In 2D the momentum converges at fifth order ($\rho v_1$:
 $1.54\times10^{-3}$ on $8^2$ to $1.84\times10^{-9}$ on $128^2$, orders
 4.75–5.00), but $B_1$ only at about fourth order (3.87, 4.33, 4.23,
@@ -167,36 +189,92 @@ Jacobian-free [polynomial viscosity matrix](/methods/polynomial-viscosity-matrix
 solver (PVM-int-8) and with several reconstructions (Tables 1–4,
 Fig. 1):
 
-- first order with Godunov's method (HLL, order 0.916 at $N=256\to512$);
+- first order with Godunov's method (HLL, order 0.916 at $N_x=256\to512$);
   second order with piecewise-linear limiters (MC 2.024, van Leer 2.094
   with HLL at the finest pair), MinMod giving the largest errors;
 - third order with [MP](/methods/monotonicity-preserving-limiter.md)3
   and three-stage Runge–Kutta (HLLD 2.998, PVM-int-8 2.999);
 - MP5 with the three-stage Runge–Kutta still third order (HLLD 3.005)
   but with errors almost two orders lower ($4.284\times10^{-9}$ against
-  $3.224\times10^{-7}$ at $N=512$);
+  $3.224\times10^{-7}$ at $N_x=512$);
 - MP5 with a five-step fourth-order SSP Runge–Kutta: orders 4.83–5.05,
-  error $9.006\times10^{-12}$ at $N=512$ (HLLD).
+  error $9.006\times10^{-12}$ at $N_x=512$ (HLLD).
 
 HLLC reproduces the earlier results of Martí (2015), HLLD behaves like
 HLLC on this smooth solution, and the PVM-int-8 errors are very close to
 HLLC's.
 
-**Third order of bound-preserving central DG.** Ding & Wu's $\mathbb P^2$
-central DG scheme for relativistic MHD with SSP-RK3 and CFL 0.25, with
+**Third order of bound-preserving central DG.** The $\mathbb P^2$
+central DG scheme of Ding & Wu (2024b) for relativistic MHD with SSP-RK3 and CFL 0.25, with
 the bound-preserving limiter active (and, in 2D, locally divergence-free
 spaces and the symmetrization source), converges at third order
 (Tables 1–2):
 
 | | coarsest | finest | $l^1$ orders |
 |---|---|---|---|
-| 1D, $v_2$ | 6.53e-05 ($N=20$) | 1.96e-09 ($N=640$) | 3.02, 3.00, 3.00, 3.00, 3.00 |
+| 1D, $v_2$ | 6.53e-05 ($N_x=20$) | 1.96e-09 ($N_x=640$) | 3.02, 3.00, 3.00, 3.00, 3.00 |
 | 2D, $B_2$ | 1.92e-03 ($20^2$) | 3.07e-08 ($640^2$) | 3.93, 3.01, 3.00, 3.00, 3.00 |
 
 The authors conclude that neither the limiter nor the discretized
 source terms degrade the accuracy (§5); see
 [discontinuous Galerkin](/methods/discontinuous-galerkin.md) and
 [bound preservation](/properties/bound-preservation.md).
+
+**Third order at high magnetization.** Komissarov & Phillips run the
+boosted wave with their [force-free splitting](/methods/force-free-splitting-rmhd.md)
+of relativistic MHD: a point-value finite-difference scheme with a
+third-order WENO interpolation of the primitive variables whose weights
+map modified second-order TVD weights, an HLL flux and
+[GLM cleaning](/methods/glm-divergence-cleaning.md). The $L_1$ errors at
+$N_x=20,40,80,160,320$ are (Table 1):
+
+| | $N_x=20$ | 40 | 80 | 160 | 320 |
+|---|---|---|---|---|---|
+| $B_2$ | 0.358e-1 | 0.307e-2 | 0.355e-3 | 0.447e-4 | 0.536e-5 |
+| $\rho$ | 0.388e+0 | 0.572e-1 | 0.755e-2 | 0.950e-3 | 0.119e-3 |
+| $p$ | 0.107e+1 | 0.133e+0 | 0.171e-1 | 0.214e-2 | 0.268e-3 |
+
+The $B_2$ orders are 3.5, 3.1, 3.0, 3.1, so the scheme is third order
+from $N_x=20$ up at $\sigma_{\mathrm m}=545$. Varying the field, the
+authors find $L_1(B_2)\propto\sqrt{\sigma_{\mathrm m}}$ and
+$L_1(\rho),L_1(p)\propto\sigma_{\mathrm m}$ for $\sigma_{\mathrm m}\gg1$:
+the plasma variables carry the largest errors, absolute errors of order
+one in $p=1$ at $N_x=20$ (§4.1, Fig. 2).
+
+**Numerical resistivity from the degenerate wave.** The standing field
+decays as $\exp(-\omega t)$, so its total magnetic energy decays
+exponentially at the rate $2\omega=2\eta_{\mathrm{num}}k_w^2$ (page-local
+$\omega$ and numerical resistivity $\eta_{\mathrm{num}}$), from which
+Komissarov & Phillips measure $\eta_{\mathrm{num}}$. They
+model it by the ansatz
+$\eta_{\mathrm{num}}=A_\eta L(\Delta x/\Delta t)(\Delta x/L)^{r_\eta}$ (Eq. 91;
+$A_\eta$ a normalization, $L$ the field length scale with
+$\lvert\partial_x^2B\rvert=\lvert B\rvert/L^2$, Eq. 94, and $r_\eta$
+page-local), obtained by
+accumulating a local truncation error of order $(\Delta x/L)^{r_\eta+1}$ over
+the resistive time, with $r_\eta=3$ for their third-order scheme
+(Table 3):
+
+| $N_x$ | 10 | 20 | 40 | 80 |
+|---|---|---|---|---|
+| $2\omega$ | 0.39 | 0.26e-1 | 0.30e-2 | 0.38e-3 |
+| $\eta_{\mathrm{num}}$ | 0.49e-2 | 0.33e-3 | 0.38e-4 | 0.48e-5 |
+| observed $r_\eta$ | – | 3.75 | 3.1 | 3 |
+| $A_\eta$ | 0.063 | 0.034 | 0.031 | 0.031 |
+| magnetic Reynolds number | 0.32e2 | 0.48e3 | 0.42e4 | 0.33e5 |
+
+So $\eta_{\mathrm{num}}\propto N_x^{-3}$ with $A_\eta\approx0.031$ from
+$N_x\approx20$, and the decay rate scales as $k_w^4$ (§4.3, Fig. 6).
+For a field at $45^\circ$ to the grid lines the resistivity is half
+the grid-aligned one at the same $\lvert k_w\rvert$, which the authors
+model as $\eta_{\mathrm{num}}=\tfrac{\eta_0}4(3+\cos4\theta_{\mathrm B})$
+($\eta_0$ the grid-aligned value, $\theta_{\mathrm B}$ the field angle,
+page-local; Eq. 98, which they present as the simplest admissible
+function) (§5.2,
+Table 5). The ansatz is "almost identical" to a special case of
+Rembiasz et al., who, the authors note, reported a negative resistivity
+for their scheme (§4.3). See
+[numerical dissipation](/definitions/numerical-dissipation.md).
 
 **Other sources.** [Liu et al. (2021)](/sources/liu-2021.md) use a
 smooth Alfvén wave as the order test of their
@@ -205,7 +283,7 @@ smooth Alfvén wave as the order test of their
 ## Qualifications
 
 - López-Miralles et al. observe fifth order with a fourth-order time
-  integrator at CFL 0.3 and do not comment on it. Their text says the runs use $N=16$–$512$,
+  integrator at CFL 0.3 and do not comment on it. Their text says the runs use $N_x=16$–$512$,
   their tables start at $N=8$.
 - Chen, Wu & Xiong scale $\Delta t$ with $\Delta x^{5/3}$ to observe the
   spatial order; their third-order IMEX scheme is not tested at
@@ -217,9 +295,9 @@ smooth Alfvén wave as the order test of their
 - Berta et al.'s fourth-order scheme uses a fifth-order interface
   interpolation; at $N_x\le64$ their orders lie between 4.01 and 4.34,
   above the design order.
-- Ding & Wu's 2D $l^1$ order on the coarsest pair, 3.93, and $l^2$ order
+- Ding & Wu (2024b)'s 2D $l^1$ order on the coarsest pair, 3.93, and $l^2$ order
   3.41 lie above three before settling at 3.00 (Table 2).
-- Ding & Wu run every test with $\Delta t=0.25\Delta x$ in 1D and
+- Ding & Wu (2024b) run every test with $\Delta t=0.25\Delta x$ in 1D and
   $\Delta t=0.25/(1/\Delta x+1/\Delta y)$ in 2D, while their
   bound-preserving conditions read $\tau_{\max}\le\tfrac{\varpi}{2}\Delta x$,
   $\varpi=\tfrac16$ for $N=2$ (1D), and
@@ -229,9 +307,18 @@ smooth Alfvén wave as the order test of their
   [discontinuous Galerkin](/methods/discontinuous-galerkin.md)); $\tau_{\max}$ and
   $\theta_{\mathrm C}$ of the runs are not printed. The authors state that the
   theoretical bound is sufficient but not always necessary (§5).
+- Komissarov & Phillips's Table 5 labels the row "$2\eta k^2$" for the
+  oblique wave with $k_w=2\sqrt2\pi$, but its $\eta_{\mathrm{num}}=0.50\times10^{-2}$
+  at $N_x=10$ equals $0.39/(2(2\pi)^2)$, i.e. uses the per-axis
+  wavenumber $2\pi$; with $k_w^2=8\pi^2$ the printed rate would give
+  $2.5\times10^{-3}$ *(compiler check, not in the sources)*. Their
+  conclusion, resistivity halved at $45^\circ$ for the same $\lvert k_w\rvert$,
+  is the per-axis reading; their text also calls the per-axis values
+  "exactly the same", while Tables 3 and 5 print 0.49e-2/0.063 and
+  0.50e-2/0.064 at $N_x=10$.
 - Chen, Wu & Xiong and López-Miralles et al. are read as arXiv v1
-  preprints, Berta et al. as arXiv v4; Liu, Feng & Wang and Ding & Wu
-  as versions of record.
+  preprints, Berta et al. as arXiv v4, Komissarov & Phillips as arXiv
+  v3; Liu, Feng & Wang and Ding & Wu (2024b) as versions of record.
 
 # Citations
 
@@ -240,4 +327,5 @@ smooth Alfvén wave as the order test of their
 - [López-Miralles, Martí & Perucho (2023)](/sources/lopezmiralles-2023.md) — §4.1.1, Eqs. 44–47, Tables 1–4, Fig. 1 (arXiv v1).
 - [Liu et al. (2021)](/sources/liu-2021.md) — §4.1, Table 1.
 - [Liu, Feng & Wang (2023a)](/sources/liu-2023.md) — §4.2, Table 1.
-- [Ding & Wu (2024)](/sources/ding-2024-b.md) — §5, Example 5.1, Eq. (88), Tables 1–2.
+- [Ding & Wu (2024b)](/sources/ding-2024-b.md) — §5, Example 5.1, Eq. (88), Tables 1–2.
+- [Komissarov & Phillips (2024)](/sources/komissarov-2024.md) — §3.3, §4.1, §4.3, §5.2, Eqs. (91), (98), Tables 1, 3, 5, Figs. 2, 6 (arXiv v3).

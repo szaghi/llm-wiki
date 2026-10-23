@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T11:06:00Z
+timestamp: 2026-10-23T15:15:00Z
 ---
 
 # Shock–bubble interaction
@@ -49,6 +49,26 @@ list as in preparation. Their [LCD central-upwind scheme](/methods/lcd-central-u
 is "sharper and less oscillatory" than the earlier
 [central-upwind scheme](/methods/central-upwind-scheme.md), which has
 lower shock resolution and an oscillation at the contact (Fig. 5.1).
+[Chu et al. (2025b)](/sources/chu-2025-b.md) Example 1 make the same
+data two-material: the bubble gas has $\gamma=5/3$, the surrounding gas
+$\gamma=1.4$ (the $\gamma$-based multifluid system with advected
+$1/(\gamma-1)$ and $\gamma p_\infty/(\gamma-1)$, $p_\infty=0$ here), on
+$[-1,2]$ with solid walls, $t=3$, $\Delta x=1/50$ to $1/200$, reference
+on $1/1000$. Their Example 2 is a water–air analogue: air
+$(\rho,v,p;\gamma,p_\infty)=(0.05,0,1;1.4,0)$ for $\lvert x-6\rvert<3$,
+shocked water $(1.325,-68.525,19153;4.4,6000)$ for $x>11.4$, water
+$(1,0,1;4.4,6000)$ otherwise, on $[0,18]$ with free boundaries,
+$t=0.045$, $\Delta x=1/10$ to $1/40$. Their
+[LCD-based path-conservative central-upwind scheme](/methods/lcd-central-upwind-scheme.md)
+(second order, generalized minmod with parameter 1.3, SSP-RK3 at CFL
+0.45) has the lower $L^1$ density errors on every grid: $8.53\times10^{-1}$,
+$4.21\times10^{-1}$, $1.96\times10^{-1}$ against $1.16$, $6.65\times10^{-1}$,
+$3.39\times10^{-1}$ for the scalar
+[path-conservative central-upwind](/methods/path-conservative-scheme.md)
+scheme in Example 1, and $1.93\times10^{-1}$, $1.05\times10^{-1}$,
+$5.70\times10^{-2}$ against $4.06\times10^{-1}$, $2.57\times10^{-1}$,
+$1.53\times10^{-1}$ in Example 2, with observed rates near 1 (Tables
+5.1–5.2), and a sharper contact near $x\approx3$ in the water–air case.
 
 **One-dimensional two-material slabs.** [Bai & Li (2022)](/sources/bai-2022.md)
 §3.1.3–3.1.4 run slab versions with two materials, as strips
@@ -90,7 +110,7 @@ post-shock state of the right one with $\gamma=1.4$
 sources)*.
 
 **Mach 1.22 air–helium (Haas & Sturtevant).** A Mach 1.22 shock in air
-hits a helium bubble of diameter 5 cm. Seventeen sources run it, in several
+hits a helium bubble of diameter 5 cm. Nineteen sources run it, in several
 models:
 
 | Source | Model and scheme | Setup as printed | Grid |
@@ -111,6 +131,8 @@ models:
 | [Trojak & Dzanic (2024)](/sources/trojak-2024.md) §5.1.4, Table 4 | conservative multi-species Euler, nodal DG $\mathbb P_3$ with positivity-preserving [entropy filtering](/methods/entropy-filtering.md) and a pressure-jump entropy switch ([PyFR](/software/pyfr.md)) | half of $[0,1]\times[-0.1,0.1]$ with symmetry; bubble radius $5/89$ at $(0.8,0)$, helium with 28 % air by mass; shock $M=1.22$ at $x=0.9$ moving left; air $(\rho,v_1,p)=(1,0,1)$, $\gamma=1.3986$; shocked air $(1.37636,-0.55957,1.5698)$; bubble $\rho=0.18187$, $\gamma=1.6467$ | unstructured triangles at three edge lengths (arXiv v1) |
 | [Duronio & Di Mascio (2024)](/sources/duronio-2024.md) §3.1 | multi-species Navier–Stokes in [OpenFOAM](/software/openfoam.md), kinetic-energy-preserving central flux plus Ducros-switched AUSM$^+$-up dissipation | helium circle $d=50$ mm in N$_2$ at $101325$ Pa, 273 K, shock moving right to left; shock Mach number not printed | three hexahedral grids, sizes not printed for this case |
 | [Chen & Fu (2024)](/sources/chen-2024.md) §9.8 | single-material Euler ($\gamma=1.4$ throughout), [spectral differences](/methods/spectral-difference-method.md) of third and fourth order with TENO-A and WENO limiters | $(\rho,v_1,v_2,p)$: $(1,0,0,1)$ outside, bubble $(0.1819,0,0,1)$ of radius 0.5 at $(3.5,0.89)$, post-shock $(1.3764,-0.3947,0,1.5698)$ for $x\ge4.5$; $[0,6.5]\times[0,1.78]$; inflow and outflow left and right, reflective top and bottom; $t=2.5$ | $1300\times356$ |
+| [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) Ex. 4.11 | Kapila [five-equation model](/definitions/five-equation-model.md), bound-preserving [OEDG](/methods/oedg.md) $\mathbb P^2$, $\mathbb P^3$, HLL, SSP-RK3, CFL $1/(2N+1)$ | $(\rho_1,\rho_2,v_1,v_2,p,\phi_1)$, phase 1 air ($\gamma_1=1.4$), phase 2 helium with 28 % air ($\gamma_2=1.648$): helium $(1.4,0.25463,0,0,10^5,10^{-6})$, pre-shock air $(1.4,0.25463,0,0,10^5,1-10^{-6})$, post-shock air $(1.92691,0.25463,-113.5,0,1.5698\times10^5,1-10^{-6})$; Mach 1.22 moving left; Haas–Sturtevant geometry in mm; walls top and bottom | $900\times267$; 32 to 983 µs after impact |
+| [Chu et al. (2025b)](/sources/chu-2025-b.md) Example 3 | $\gamma$-based multifluid Euler in non-conservative form, LCD path-conservative central-upwind, second order, SSP-RK3, CFL 0.45 | $(\rho,v_1,v_2,p;\gamma,p_\infty)$: helium $(4/29,0,0,1;5/3,0)$, air $(1,0,0,1;1.4,0)$, shocked air $(4/3,-0.3535,0,1.5;1.4,0)$; $[-3,1]\times[-0.5,0.5]$, walls top and bottom, free left and right; $t=3$ | $\Delta x=\Delta y=1/500$ |
 | [Nguyen et al. (2022)](/sources/nguyen-2022.md) §3.4 | multicomponent Euler in $p$–$T$ equilibrium, MUSCL with overbee limiter on volume fractions, HLLC | $325\times89$ mm; shock 25 mm from the bubble, moving right to left; pre-shock air $(\rho,p)=(1.4,10^5)$, post-shock $(1.92691,\ v_1=-114.42,\ 156{,}980)$; helium $\rho=0.25463$, $\gamma=1.648$ (SI values of their Table 3, whose column headers are misaligned with the rows) | $325\times90$, $650\times180$, $1300\times360$ (about 50, 100, 200 cells per diameter) |
 
 The post-shock pressure ratio $1.5698$ of Zheng et al. is that of a
@@ -131,10 +153,23 @@ the bubble at $59.7\,\mu$s, which equals the 25 mm gap divided by
 $1.22\sqrt{1.4\cdot101325/1.2041}$ m/s *(compiler check, not in the
 sources)*.
 
+Chu et al. (2025b)'s shocked air, $(4/3,-0.3535,1.5)$ into $(1,0,1)$
+with $\gamma=1.4$, is the Rankine–Hugoniot state of a Mach 1.195 shock
+(pressure ratio 1.5 gives $M^2=1.4286$, and with it density ratio
+$1.3333$ and speed $0.3535$), weaker than Haas & Sturtevant's Mach 1.22;
+their helium density $4/29=0.1379$ is Zheng et al.'s $0.138$
+*(compiler check, not in the sources)*. Yan, Abgrall & Wu's post-shock
+density and pressure ratios, $1.92691/1.4=1.3764$ and $1.5698$, are the
+Mach 1.22 values, while their speed $113.5$ is that of a Mach 1.22 shock
+into air at $\rho=1.225$, $p=101325$ (their R22 case below), not into
+their $\rho=1.4$, $p=10^5$, which gives $105.5$; Nguyen et al. print
+$114.42$ for the same pre-shock state *(compiler check, not in the
+sources)*.
+
 Gaburro et al.'s non-dimensional states, with pressure $1/\gamma$ and
 unit sound speed, are Zheng et al.'s with velocities scaled by the air
 sound speed: $0.3947/\sqrt{1.4}=0.3336$ *(compiler check, not in the
-sources)*; their helium state is Chamarthi's.
+sources)*; their helium state is Chamarthi (2023a)'s.
 
 **A square N$_2$ bubble in SF$_6$.** Duronio & Di Mascio §3.1 also run a
 square nitrogen bubble of edge $56.6$ mm in SF$_6$ on $[0,45]\times[0,14]$ cm
@@ -160,6 +195,19 @@ agree "excellent[ly]" with the experiment and with two computations,
 except the late downstream centreline jet, which runs ahead of the
 experiment; they attribute this to the missing viscous dissipation
 (Fig. 22).
+
+Yan, Abgrall & Wu (2024) Ex. 4.12 run the R22 case in the Kapila model
+with phase 1 R22 and phase 2 air: R22 bubble
+$(\rho_1,\rho_2,v_1,v_2,p,\phi_1)=(3.863,1.225,0,0,1.01325\times10^5,1-10^{-6})$,
+pre-shock air $(3.863,1.225,0,0,1.01325\times10^5,10^{-6})$, post-shock
+air $(3.863,1.686,-113.5,0,1.59\times10^5,10^{-6})$, Mach 1.22, on
+$900\times267$ cells to $1020\,\mu$s; their result agrees with the
+one-stage gas-kinetic computation they cite (Fig. 18). They print
+"$\gamma_1=1.249$ and $\gamma_2=1.4$ for air and R22 bubble,
+respectively", while in their data phase 1 is R22 and phase 2 air; the
+values belong to R22 ($1.249$) and air ($1.4$) as in Bai & Li and Paula
+et al. Chu et al. (2025b) Example 4 run R22 on their helium setup, with
+bubble $(3.1538,0,0,1;1.249,0)$ at $t=3$.
 
 **Three-phase bubble.** Paula et al. §7.6.3–7.6.4 put a helium core of
 diameter 30 mm inside an R22 shell of diameter 50 mm, in 2D and in 3D on a
@@ -395,6 +443,24 @@ observed orders 1.35 ($p$) and 1.46 ($\rho$) and grid-convergence
 indices of 1.1 % and 0.77 % for this bubble, 1.53 and 1.46 with 0.92 %
 and 0.97 % for the square one (Table 1).
 
+**Two-phase DG with bound preservation and LCD central-upwind
+schemes.** Yan, Abgrall & Wu's $\mathbb P^2$ and $\mathbb P^3$ runs show
+the jet, the vortex ring and the Kelvin–Helmholtz roll-up of the helium
+interface (Figs. 15–17). Their scheme proves the cell averages of the
+partial densities and internal energy positive and $\phi_1\in[0,1]$, and
+preserves constant velocity and pressure across an isolated interface;
+see [bound preservation](/properties/bound-preservation.md) and
+[pressure-equilibrium preservation](/properties/pressure-equilibrium-preservation.md).
+Chu et al. (2025b) find the LCD scheme resolving the bubble interface
+and its instabilities better than the scalar path-conservative
+central-upwind scheme at all output times, in agreement with the
+experiment and with the computations they cite (Figs. 5.4–5.5); they
+state that the scheme satisfies Abgrall's principle on the
+non-conservative multifluid system ("as one can easily prove",
+Remark 5.2) and that the conservative form with $\rho/(\gamma-1)$ and
+$\rho\gamma p_\infty/(\gamma-1)$ produces spurious oscillations at
+interfaces.
+
 **Limited spectral differences.** Chen & Fu's TENO-A limiter resolves more of the
 single-material roll-up than the WENO limiter at third order, but the fourth-order TENO-A
 does not significantly improve on the third-order result; their TENO troubled-cell
@@ -402,7 +468,7 @@ indicator marks only the fronts and tails of the interfaces and leaves the high-
 centre unmarked, and they judge it better than the KXRCF indicator here (§9.8, Figs. 23–25;
 [adaptive TENO](/methods/adaptive-teno.md),
 [troubled-cell indicators](/definitions/troubled-cell-indicator.md)). *(Compiler check, not
-in the sources: their states are Chamarthi's above with the pressures multiplied by $1.4$
+in the sources: their states are Chamarthi (2023a)'s above with the pressures multiplied by $1.4$
 and the velocity by $\sqrt{1.4}$, $0.3336\sqrt{1.4}=0.3947$, with a single $\gamma=1.4$, so
 the "bubble" differs from its surroundings in density only.)*
 
@@ -418,9 +484,9 @@ fraction creates mass spikes near the interface, up to $40\%$ in the second
 case (§5.1, Figs. 10–12).
 
 **Interface thickness at fixed grid.** Two chunk-5 sources run the same non-dimensional setup and
-compare schemes on one grid. Chamarthi (Ex. 4.16, Figs. 20–21) finds no noticeable spurious
+compare schemes on one grid. Chamarthi (2023a) (Ex. 4.16, Figs. 20–21) finds no noticeable spurious
 oscillations with the author's gradient-based schemes, and a material interface thinner with MIG4 than with
-MEG6 and TENO5. On $2600\times712$, more secondary instabilities appear at late times. Chamarthi states that
+MEG6 and TENO5. On $2600\times712$, more secondary instabilities appear at late times. Chamarthi (2023a) states that
 TENO "for the 5-equation model, is not presented in the open literature"
 ([targeted ENO](/methods/targeted-eno.md)). Zhou et al. (§5.8, Figs. 19–20) find that WCNS-SA and
 WCNS-LD capture more small-scale structures along the bubble than ONL6. *(Compiler check, not in the
@@ -554,3 +620,5 @@ qualitative claim with no reference comparison (Figs. 13–15).
 - [Paula et al. (2023)](/sources/paula-2023.md) — §7.6, Table 3, Figs. 20–25; §7.7, Table 4, Fig. 26.
 - [Chen & Fu (2024)](/sources/chen-2024.md) — §9.8, Figs. 23–25: single-material shock–bubble interaction with limited spectral differences.
 - [Zhang et al. (2024a)](/sources/zhang-2024.md) — §4.8, Table 9, Figs. 14–16: Mach 10 air-bubble collapse in water, mass conservation, limiter frequency.
+- [Yan, Abgrall & Wu (2024)](/sources/yan-2024.md) — Exs. 4.11–4.12, Figs. 14–18.
+- [Chu et al. (2025b)](/sources/chu-2025-b.md) — §5.1, Examples 1–4, Remark 5.2, Tables 5.1–5.2, Figs. 5.4–5.5.
