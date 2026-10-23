@@ -5,7 +5,7 @@ description: "A method is symplectic when its one-step map is a symplectic trans
 status: established
 aliases: [symplectic integrator, symplectic method, quadratic invariants, linear invariants, geometric integration]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Symplecticity and quadratic-invariant preservation

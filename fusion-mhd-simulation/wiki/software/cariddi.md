@@ -5,7 +5,7 @@ description: "3D magneto-quasi-static integral eddy-current code that discretize
 status: established
 aliases: [JOREK-CARIDDI]
 tags: [wall, free-boundary, vde, tearing, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # CARIDDI

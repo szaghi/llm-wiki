@@ -5,7 +5,7 @@ description: "Zhejiang University explicit 3D toroidal MHD code: fourth-order fi
 status: established
 aliases: [CLT code]
 tags: [full-mhd, finite-differences, gpu, tearing, kink, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # CLT

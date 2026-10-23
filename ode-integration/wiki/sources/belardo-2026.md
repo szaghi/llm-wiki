@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 563:115061"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_Izgin_On_Lyapunov_stability_of_positive_and_conservative_time_inte.pdf"
 tags: [runge-kutta, explicit, embedded-pair, step-size-control, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

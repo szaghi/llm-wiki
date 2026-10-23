@@ -9,7 +9,7 @@ year: 2026
 venue: "SIAM J. Sci. Comput. 48:A2884-A2909"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_SIAM_Journal_on_Scientific_Computing_Buvoli_Multirate_RungeKutta_for_Nonlinearly_Partitioned_Systems.pdf"
 tags: [multirate, imex, runge-kutta, order-conditions, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

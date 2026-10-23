@@ -5,7 +5,7 @@ description: "Pressure-driven, high-n MHD instability localized on the outboard 
 status: established
 aliases: [ideal ballooning mode, IBM, resistive ballooning mode, drift-ballooning mode, resistive drift-ballooning mode, RDBM, DWRBM, peeling-ballooning mode]
 tags: [ballooning, mhd, pedestal, edge, verification, stellarator, tokamak]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Ballooning mode

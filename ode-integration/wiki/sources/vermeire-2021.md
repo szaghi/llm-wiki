@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 429:110022"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Vermeire_Accelerated_implicit-explicit_Runge-Kutta_schemes_for_locally_stiff_systems.pdf"
 tags: [imex, optimal-stability-polynomial, diagonally-implicit, locally-stiff, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

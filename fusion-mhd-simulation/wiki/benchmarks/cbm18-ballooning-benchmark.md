@@ -5,7 +5,7 @@ description: "Linear ideal-ballooning test on the cbm18 series of shifted-circul
 status: established
 aliases: [cbm18, cbm18_dens8, CBM18 benchmark, ideal ballooning benchmark]
 tags: [benchmark, verification, ballooning, pedestal, edge, finite-differences, finite-elements]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # cbm18 ideal-ballooning benchmark

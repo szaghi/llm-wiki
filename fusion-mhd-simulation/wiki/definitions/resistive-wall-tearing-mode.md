@@ -5,7 +5,7 @@ description: "A resistive-wall tearing mode is a tearing mode that is stable wit
 status: established
 aliases: [RWTM, resistive wall tearing mode, wall-destabilized tearing mode]
 tags: [tearing, wall, disruption, mhd, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Resistive-wall tearing mode

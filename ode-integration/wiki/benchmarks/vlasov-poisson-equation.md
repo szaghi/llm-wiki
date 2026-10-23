@@ -5,7 +5,7 @@ description: "The electrostatic Vlasov–Poisson system for a plasma distributio
 status: established
 aliases: [Vlasov-Poisson system, Landau damping, two-stream instability, bump-on-tail instability, Penning trap]
 tags: [kinetic, parallel, exponential, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Vlasov–Poisson equation (Landau damping, two-stream instability)

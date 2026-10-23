@@ -5,7 +5,7 @@ description: "JOREK model in which atomic neutrals are Monte Carlo superparticle
 status: established
 aliases: [kinetic neutrals, Monte Carlo neutrals, JOREK kinetic neutral model]
 tags: [neutrals, particles, edge, divertor]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Kinetic (Monte Carlo) neutral model coupled to MHD

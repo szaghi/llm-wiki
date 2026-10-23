@@ -5,7 +5,7 @@ description: "The stability function R(z) is the factor by which a one-step meth
 status: established
 aliases: [linear stability function, amplification factor, stability polynomial, region of absolute stability, stability domain, linear stability region, real stability interval, real stability boundary]
 tags: [stability, runge-kutta, explicit, implicit]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Stability function, stability polynomial and stability region

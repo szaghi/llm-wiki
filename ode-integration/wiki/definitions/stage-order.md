@@ -5,7 +5,7 @@ description: "Stage order q is the largest integer for which the quadrature cond
 status: established
 aliases: [classical stage order, stage-order residual, C(η) condition, stiff order]
 tags: [runge-kutta, order-reduction, stiff, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Stage order

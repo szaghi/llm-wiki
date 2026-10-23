@@ -5,7 +5,7 @@ description: "In high-beta inward-shifted LHD equilibria, conventional MHD (MIPS
 status: established
 aliases: [LHD high-beta kinetic stabilization, KTI stabilization of LHD, trapped-ion precession stabilization]
 tags: [stellarator, hybrid-kinetic, ballooning, mhd, particles, energetic-particles]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Kinetic thermal ions confine LHD pressure-driven activity to the periphery

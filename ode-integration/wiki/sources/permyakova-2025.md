@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 520:113493"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Computational_Physics_Permyakova_High-order_schemes_of_exponential_time_differencing_for_stif.pdf"
 tags: [exponential, stiff, linear-algebra, explicit]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

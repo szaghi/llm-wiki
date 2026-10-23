@@ -5,7 +5,7 @@ description: "Linear full-MHD stability code for three-dimensional (stellarator 
 status: established
 aliases: [CASTOR-3D, CASTOR 3D]
 tags: [stellarator, tokamak, spectral, verification, tearing, ballooning]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # CASTOR3D

@@ -5,7 +5,7 @@ description: "Trixi.jl is a Julia DGSEM framework for hyperbolic and hyperbolicâ
 status: established
 aliases: [Trixi, Trixi.jl DGSEM]
 tags: [software, multirate, step-size-control, verification]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Trixi.jl

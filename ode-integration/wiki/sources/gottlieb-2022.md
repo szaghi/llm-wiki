@@ -9,7 +9,7 @@ year: 2022
 venue: "SIAM J. Numer. Anal. 60:423-449"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_SIAM_Journal_on_Numerical_Analysis_Gottlieb_High_Order_Strong_Stability_Preserving_MultiDerivative_Impli.pdf"
 tags: [ssp, multiderivative, imex, positivity, asymptotic-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

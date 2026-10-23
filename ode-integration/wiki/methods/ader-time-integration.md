@@ -5,7 +5,7 @@ description: "Modern ADER read as an ODE integrator: a Galerkin-in-time predicto
 status: established
 aliases: [ADER, modern ADER, ADER predictor, local space–time Galerkin predictor, space–time DG predictor, IMADER, implicit ADER, locally implicit ADER-DG, ADER-DG with local DG predictor, ADER-DG ODE solver]
 tags: [ader, deferred-correction, explicit, implicit, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # ADER as a time integrator

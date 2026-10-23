@@ -5,7 +5,7 @@ description: "Property of a stellarator field whose strength, in Boozer coordina
 status: established
 aliases: [QS, quasisymmetry, quasi-axisymmetry, QA, quasi-helical symmetry, QH]
 tags: [stellarator, equilibrium, bootstrap-current, mhd]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Quasi-symmetry

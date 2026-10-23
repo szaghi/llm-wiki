@@ -9,7 +9,7 @@ year: 2025
 venue: "ESAIM Math. Model. Numer. Anal. 59:729-748"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_de_Pseudo-energy-preserving_explicit_RungeKutta_methods.pdf"
 tags: [runge-kutta, explicit, structure-preserving, order-conditions, b-series, hamiltonian]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "The neoclassical parallel current driven by density and temperatur
 status: established
 aliases: [bootstrap current source, non-inductive current, Sauter bootstrap model, Redl bootstrap model]
 tags: [bootstrap-current, extended-mhd, tokamak, stellarator]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Bootstrap current and its MHD implementation

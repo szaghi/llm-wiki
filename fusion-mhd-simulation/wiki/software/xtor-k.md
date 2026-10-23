@@ -5,7 +5,7 @@ description: "Global hybrid code coupling two-fluid MHD to full-f, full-orbit (B
 status: established
 aliases: [XTOR-K code]
 tags: [hybrid-kinetic, extended-mhd, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # XTOR-K

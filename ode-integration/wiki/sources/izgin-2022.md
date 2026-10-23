@@ -9,7 +9,7 @@ year: 2022
 venue: "ESAIM: Math. Model. Numer. Anal. 56:1053-1080"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_Izgin_On_Lyapunov_stability_of_positive_and_conservative_time_integrators.pdf"
 tags: [positivity, structure-preserving, stability, stiff]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

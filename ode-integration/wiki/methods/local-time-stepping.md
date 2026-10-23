@@ -5,7 +5,7 @@ description: "Local time stepping lets regions, cells or subdomains of a locally
 status: established
 aliases: [LTS, local time-stepping, LF-LTS, stabilized LF-LTS, leapfrog local time stepping, asynchronous time integration, asynchronous Runge–Kutta, LESAULTS, clustered local time stepping, multi-time step, subcycling, Gravouil–Combescure method]
 tags: [multirate, local-time-stepping, explicit, stability, parallel, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Local time stepping

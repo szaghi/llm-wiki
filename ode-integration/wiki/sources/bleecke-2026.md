@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Sci. Comput. 106:18"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Scientific_Computing_Bleecke_Relaxation_Runge-Kutta_Methods_with_First-Same-as-Last_Struc.pdf"
 tags: [relaxation, embedded-pair, step-size-control, structure-preserving, explicit]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T11:55:00Z
 ---
 
 # Summary

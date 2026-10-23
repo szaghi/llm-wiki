@@ -5,7 +5,7 @@ description: "Sun, Wei and Wu prove that every diagonal $(m,m)$ Padé approximat
 status: established
 aliases: [unified energy law for diagonal Padé approximations, energy law of Gauss methods on linear problems, Sun–Wei–Wu theorem]
 tags: [stability, strong-stability, implicit, structure-preserving, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Unconditional strong stability of diagonal Padé schemes and its energy law

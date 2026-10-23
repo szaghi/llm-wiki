@@ -5,7 +5,7 @@ description: "The s-stage one-step method defined by a Butcher tableau (A, b, c)
 status: established
 aliases: [RK method, Butcher tableau, implicit Runge–Kutta, IRK, explicit Runge–Kutta, ERK]
 tags: [runge-kutta, explicit, implicit, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Runge–Kutta method

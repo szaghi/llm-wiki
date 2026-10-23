@@ -9,7 +9,7 @@ year: 2025
 venue: "Numer. Math. 157:1975-2016"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Numerische_Mathematik_Akrivis_RungeKutta_physics_informed_neural_networks_formulation_and.pdf"
 tags: [runge-kutta, implicit, energy-method, stability, parabolic]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

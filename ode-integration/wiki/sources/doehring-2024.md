@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 99:28"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Doehring_Many-Stage_Optimal_Stabilized_RungeKutta_Methods_for_Hyperbo.pdf"
 tags: [runge-kutta, explicit, stability, low-storage, ssp, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

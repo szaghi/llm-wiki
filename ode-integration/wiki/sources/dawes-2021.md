@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Fluids 214:104762"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Computers_amp_Fluids_Dawes_Some_properties_of_the_Runge-Kutta-Legendre_super-time-stepp.pdf"
 tags: [stabilized, runge-kutta, explicit, positivity, method-of-lines, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "A Runge–Kutta method has order p iff its elementary weights equa
 status: established
 aliases: [order conditions, Butcher order conditions, rooted-tree order conditions, simplifying assumptions, B(ξ), C(η)]
 tags: [runge-kutta, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Runge–Kutta order conditions and simplifying assumptions

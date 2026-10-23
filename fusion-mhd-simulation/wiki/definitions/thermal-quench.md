@@ -5,7 +5,7 @@ description: "The thermal quench is the disruption phase in which the plasma los
 status: established
 aliases: [TQ, radiative collapse, thermal collapse]
 tags: [disruption, impurities, mhd, tokamak]
-timestamp: 2026-10-16T23:55:00Z
+timestamp: 2026-10-16T18:38:00Z
 ---
 
 # Thermal quench

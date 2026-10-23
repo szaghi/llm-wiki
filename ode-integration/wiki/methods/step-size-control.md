@@ -5,7 +5,7 @@ description: "Adaptive time stepping: a scaled norm of the embedded local-error 
 status: established
 aliases: [adaptive time stepping, balanced adaptive time stepping, space–time error balancing, error control, PID controller, PI controller, digital-filter step-size controller, Gustafsson controller, CFL-based step size control, step size control stability, stability-limit detection, H-M controller, multirate step-size control, cost-based step-size control, LASA, adaptive SDC, Delta t-adaptivity, Delta t-k-adaptivity, p-adaptive deferred correction, order adaptivity]
 tags: [step-size-control, explicit, runge-kutta, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Step-size control: error-based controllers, PID filters and CFL control

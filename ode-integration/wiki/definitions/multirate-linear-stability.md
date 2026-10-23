@@ -5,7 +5,7 @@ description: "Defines the scalar and 2D (Gear) test problems for multirate and G
 status: established
 aliases: [scalar A-stability, 2D A-stability, Gear test problem, joint stability region, multirate stability function, partitioned Dahlquist equation, L-stability in the stiff limit]
 tags: [multirate, stability, imex, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Linear stability of multirate methods and joint stability regions

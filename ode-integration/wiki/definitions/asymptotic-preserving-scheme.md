@@ -5,7 +5,7 @@ description: "A discretization of a problem with small scale parameter ε is asy
 status: established
 aliases: [AP scheme, AP property, asymptotic preserving, AP in time, stochastic asymptotic-preserving, sAP, asymptotically accurate, AA scheme, strongly AP, weakly AP]
 tags: [asymptotic-preserving, stiff, imex, kinetic, splitting]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Asymptotic-preserving scheme

@@ -5,7 +5,7 @@ description: "The full (non-reduced) single-fluid resistive MHD system, with one
 status: established
 aliases: [full MHD, visco-resistive full MHD, single-fluid resistive MHD, viscoresistive MHD]
 tags: [full-mhd, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Single-fluid visco-resistive MHD model

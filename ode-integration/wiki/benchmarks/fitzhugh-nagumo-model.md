@@ -5,7 +5,7 @@ description: "The FitzHugh–Nagumo reaction–diffusion system of nerve conduct
 status: established
 aliases: [FitzHugh–Nagumo equation, FHN model, FINAG, nerve conduction equation]
 tags: [stiff, verification, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # FitzHugh–Nagumo model

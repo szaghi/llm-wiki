@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 100:22"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Popov_Arbitrary_High_Order_ADER-DG_Method_with_Local_DG_Predictor.pdf"
 tags: [ader, implicit, stability, stiff, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

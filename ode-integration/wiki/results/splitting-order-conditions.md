@@ -5,7 +5,7 @@ description: "The order conditions of splitting and composition methods, in four
 status: established
 aliases: [BCH order conditions, Lyndon multi-index conditions, splitting order conditions, composition order conditions, N-term BCH formula, N-split order conditions]
 tags: [splitting, order-conditions, geometric-integration]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Order conditions of splitting and composition methods

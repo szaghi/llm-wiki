@@ -5,7 +5,7 @@ description: "The planar two-body problem with three invariants (energy, angular
 status: established
 aliases: [two-body problem, Kepler two-body problem, perturbed Kepler problem]
 tags: [geometric-integration, structure-preserving, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Kepler problem

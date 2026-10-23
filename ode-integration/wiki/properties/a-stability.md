@@ -5,7 +5,7 @@ description: "Linear stability classes of one-step and linear multistep methods:
 status: established
 aliases: [A-stable, L-stable, A(alpha)-stability, L(alpha)-stability, strong A-stability, strongly A-stable, B-stability, algebraic stability, unconditional linear stability, unconditionally stable, absolute stability, stability angle]
 tags: [stability, stiff, implicit, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # A-, L-, A(α)- and algebraic stability

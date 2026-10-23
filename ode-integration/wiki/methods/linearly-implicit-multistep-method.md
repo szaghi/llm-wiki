@@ -5,7 +5,7 @@ description: "Glandon, Narayanamurthi and Sandu's linearly implicit multistep me
 status: established
 aliases: [Limm, Limm-W, Limm-w, linearly implicit multistep method, Rosenbrock multistep method, multistep W-method]
 tags: [linear-multistep, implicit, stiff, order-conditions, stability, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Linearly implicit multistep methods (Limm, Limm-W)

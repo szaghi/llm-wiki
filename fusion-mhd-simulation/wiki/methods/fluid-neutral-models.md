@@ -5,7 +5,7 @@ description: "Fluid treatments of atomic neutrals in MHD codes, from a single di
 status: established
 aliases: [diffusive neutral model, plasma-neutral model, Meier–Shumlak model, neutral fluid]
 tags: [neutrals, edge, divertor, mhd]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Fluid neutral models and plasma–neutral atomic sources

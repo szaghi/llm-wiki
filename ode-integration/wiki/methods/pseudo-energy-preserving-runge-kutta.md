@@ -5,7 +5,7 @@ description: "A Runge–Kutta method of classical order p is pseudo-energy-prese
 status: established
 aliases: [PEP method, PEP order, pseudo-energy-preserving method, PEP(s,p,q)]
 tags: [runge-kutta, explicit, structure-preserving, geometric-integration, order-conditions, hamiltonian]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Pseudo-energy-preserving explicit Runge–Kutta methods

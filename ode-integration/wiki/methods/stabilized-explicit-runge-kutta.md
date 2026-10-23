@@ -5,7 +5,7 @@ description: "Stabilized explicit Runge–Kutta methods fix a low order and use 
 status: established
 aliases: [explicit stabilized Runge–Kutta, ESRK, Runge–Kutta–Chebyshev, RKC, RKC1, RKC2, Runge–Kutta–Legendre, RKL, RKL1, RKL2, super-time-stepping, STS, monotonic RKC, MONO, Chebyshev methods]
 tags: [runge-kutta, explicit, stabilized, stability, stiff, positivity]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Stabilized explicit Runge–Kutta methods: Chebyshev, Legendre and super-time-stepping

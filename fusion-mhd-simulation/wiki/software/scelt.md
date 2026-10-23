@@ -5,7 +5,7 @@ description: "Symbolic computation aided eigenvalue and linear code for tokamaks
 status: established
 aliases: [symbolic computation aided eigenvalue and linear code for tokamaks]
 tags: [full-mhd, tokamak, spectral, finite-elements, tearing, kink, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # SCELT

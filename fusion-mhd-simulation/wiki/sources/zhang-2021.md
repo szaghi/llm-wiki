@@ -9,7 +9,7 @@ year: 2021
 venue: "Comput. Phys. Commun. 269:108134"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Computer_Physics_Communications_Zhang_Linear_and_nonlinear_benchmarks_between_the_CLT_code_and_the.pdf"
 tags: [full-mhd, tokamak, tearing, kink, finite-differences, finite-elements, time-integration, gpu, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

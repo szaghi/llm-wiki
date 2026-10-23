@@ -5,7 +5,7 @@ description: "The evolution equation for the width of a thin, single-helicity ma
 status: established
 aliases: [MRE, Rutherford equation, Rutherford regime, island width equation]
 tags: [tearing, extended-mhd, bootstrap-current]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Modified Rutherford equation

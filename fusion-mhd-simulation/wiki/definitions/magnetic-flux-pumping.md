@@ -5,7 +5,7 @@ description: "A saturated (1,1) helical core mode whose dynamo redistributes cur
 status: established
 aliases: [flux pumping, saturated (1,1) core, sawtooth-free helical core, hybrid scenario]
 tags: [kink, full-mhd, tokamak, stellarator]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Magnetic flux pumping

@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 514:113223"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Computational_Physics_Doehring_Multirate_time-integration_based_on_dynamic_ODE_partitioning.pdf"
 tags: [multirate, runge-kutta, explicit, ssp, stability, method-of-lines]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Summary

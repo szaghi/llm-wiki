@@ -9,7 +9,7 @@ year: 2025
 venue: "Nucl. Fusion 65:046006"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Nuclear_Fusion_Vannini_Runaway_electron_beam_formation_vertical_motion_termination.pdf"
 tags: [disruption, runaway-electrons, vde, wall, free-boundary, reduced-mhd, particles, tokamak]
-timestamp: 2026-10-16T23:59:00Z
+timestamp: 2026-10-16T18:46:00Z
 ---
 
 # Summary

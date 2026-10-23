@@ -5,7 +5,7 @@ description: "Energy proofs for BDF and IMEX-BDF on parabolic and relaxation pro
 status: established
 aliases: [multiplier technique, Nevanlinna–Odeh multiplier, energy technique for BDF, multiplier method, two-multiplier technique, Grenander–Szegő argument]
 tags: [linear-multistep, stability, stiff, implicit, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multiplier energy technique for multistep methods

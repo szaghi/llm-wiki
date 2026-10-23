@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A3628-A3657"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Conte_Stability_Theory_of_TASERungeKutta_Methods_with_Inexact_Jaco.pdf"
 tags: [stiff, stability, explicit, linear-algebra, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

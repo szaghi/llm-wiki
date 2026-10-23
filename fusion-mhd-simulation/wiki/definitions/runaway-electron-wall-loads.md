@@ -5,7 +5,7 @@ description: "The energy that a terminating runaway-electron beam deposits on pl
 status: established
 aliases: [RE wall loads, runaway beam deposition, sacrificial limiter, upper limiter, RE heat load]
 tags: [runaway-electrons, disruption, wall, particles, mhd]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Runaway-electron wall loads and sacrificial limiters

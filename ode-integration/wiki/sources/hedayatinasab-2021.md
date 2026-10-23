@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Sci. Comput. 89:11"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Scientific_Computing_Hedayati_Optimal_Runge-Kutta_Stability_Polynomials_for_Multidimension.pdf"
 tags: [runge-kutta, explicit, stability, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

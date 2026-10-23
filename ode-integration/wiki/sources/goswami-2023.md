@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 477:111922"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Computational_Physics_Goswami_Implementation_of_low-storage_Runge-Kutta_time_integration_s.pdf"
 tags: [low-storage, runge-kutta, explicit, parallel, hpc, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

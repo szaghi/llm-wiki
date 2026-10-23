@@ -5,7 +5,7 @@ description: "The two ways a hybrid kinetic-MHD code closes the bulk momentum eq
 status: established
 aliases: [pressure-coupling scheme, current-coupling scheme, Park coupling, CGL pressure coupling]
 tags: [hybrid-kinetic, energetic-particles, particles, mhd, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Pressure coupling and current coupling

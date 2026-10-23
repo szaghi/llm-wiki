@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Methods Appl. Mech. Engrg. 442:118037"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Orlando_A_quantitative_comparison_of_high-order_asymptotic-preservin.pdf"
 tags: [imex, asymptotic-preserving, implicit-stage-solvers, stiff, order-reduction, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

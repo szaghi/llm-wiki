@@ -5,7 +5,7 @@ description: "Pressure-driven instabilities localized at rational surfaces where
 status: established
 aliases: [interchange instability, Mercier criterion, Mercier stability, resistive interchange, quasi-interchange]
 tags: [stellarator, tokamak, equilibrium, verification, reduced-mhd, hybrid-kinetic]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Interchange modes and the Mercier criterion

@@ -9,7 +9,7 @@ year: 2025
 venue: "ACM Trans. Math. Softw. 51:1-27, Art. 17"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_ACM_Transactions_on_Mathematical_Software_Kirby_Extending_ttIrksomett.pdf"
 tags: [software, fully-implicit, implicit-stage-solvers, boundary-conditions, dae, finite-elements]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

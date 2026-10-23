@@ -9,7 +9,7 @@ year: 2021
 venue: "SIAM J. Numer. Anal. 59:2449-2472"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_SIAM_Journal_on_Numerical_Analysis_Akrivis_The_Energy_Technique_for_the_Six-Step_BDF_Method.pdf"
 tags: [linear-multistep, bdf, energy-method, stability, parabolic]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Summary

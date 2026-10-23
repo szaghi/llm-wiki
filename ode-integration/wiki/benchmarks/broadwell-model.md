@@ -5,7 +5,7 @@ description: "Three-velocity discrete kinetic model whose stiff collision term r
 status: established
 aliases: [Broadwell system, linearized Broadwell model, Broadwell discrete-velocity model]
 tags: [kinetic, asymptotic-preserving, imex, stiff, verification]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Broadwell model

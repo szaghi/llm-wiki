@@ -9,7 +9,7 @@ year: 2025
 venue: "Numer. Algorithms 100:369-393"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Numerical_Algorithms_Saupe_Adaptive_time_step_selection_for_spectral_deferred_correctio.pdf"
 tags: [deferred-correction, step-size-control, error-estimation, parallel, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

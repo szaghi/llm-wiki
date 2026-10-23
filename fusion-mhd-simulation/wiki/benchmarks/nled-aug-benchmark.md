@@ -5,7 +5,7 @@ description: "EUROfusion reference case built on ASDEX Upgrade discharge #31213 
 status: established
 aliases: [NLED-AUG, NLED AUG reference case, AUG-NLED, "AUG #31213 NLED case"]
 tags: [benchmark, verification, energetic-particles, hybrid-kinetic, alfven-eigenmode]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # NLED-AUG energetic-particle benchmark

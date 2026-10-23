@@ -5,7 +5,7 @@ description: "Wei and Shu prove a cell-by-cell square-entropy inequality for exp
 status: established
 aliases: [cell entropy inequality, local square entropy inequality, fully discrete local entropy inequality, splitting miracle, Wei–Shu theorem, RKDG entropy stability]
 tags: [entropy-stability, strong-stability, runge-kutta, explicit, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Fully discrete cell entropy inequality of third-order Runge–Kutta DG

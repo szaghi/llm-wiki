@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:056023"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Artola_Non-axisymmetric_MHD_simulations_of_the_current_quench_phase.pdf"
 tags: [disruption, vde, wall, free-boundary, reduced-mhd, tearing, tokamak]
-timestamp: 2026-10-16T23:59:00Z
+timestamp: 2026-10-16T18:46:00Z
 ---
 
 # Summary

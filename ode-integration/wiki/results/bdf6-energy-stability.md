@@ -5,7 +5,7 @@ description: "Akrivis, Chen, Yu and Zhou prove by the energy technique that six-
 status: established
 aliases: [BDF6 stability, six-step BDF energy estimate, BDF6 multiplier]
 tags: [linear-multistep, stability, stiff, implicit]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Energy stability of the six-step BDF method

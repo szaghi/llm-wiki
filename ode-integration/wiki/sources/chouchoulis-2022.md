@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Sci. Comput. 90:96"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Scientific_Computing_Chouchoulis_Jacobian-Free_Explicit_Multiderivative_RungeKutta_Methods_fo.pdf"
 tags: [multiderivative, lax-wendroff, explicit, stability, hyperbolic-conservation-laws]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

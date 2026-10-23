@@ -9,7 +9,7 @@ year: 2023
 venue: "SIAM J. Sci. Comput. 45:A2945-A2972"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_SIAM_Journal_on_Scientific_Computing_Buvoli_Additive_Polynomial_Time_Integrators_Part_I_main_paper.pdf"
 tags: [imex, polynomial-integrators, fully-implicit, order-reduction, general-linear-methods, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

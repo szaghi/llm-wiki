@@ -5,7 +5,7 @@ description: "Alfvénic mode whose existence and frequency are set by the energe
 status: established
 aliases: [EPM, energetic-particle mode, frequency chirping, chirping mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T23:55:00Z
+timestamp: 2026-10-16T18:38:00Z
 ---
 
 # Energetic particle mode (EPM) and frequency chirping

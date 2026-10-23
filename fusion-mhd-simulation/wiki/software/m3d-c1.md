@@ -5,7 +5,7 @@ description: "PPPL implicit 3D extended-MHD code with C1 reduced-quintic (Bell) 
 status: established
 aliases: [M3D-C^1]
 tags: [full-mhd, extended-mhd, reduced-mhd, tokamak, stellarator, finite-elements, time-integration, wall, bootstrap-current, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # M3D-C1

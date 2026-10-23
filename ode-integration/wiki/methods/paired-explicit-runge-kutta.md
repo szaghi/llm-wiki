@@ -5,7 +5,7 @@ description: "P-ERK families are explicit Runge–Kutta tableaux with a common s
 status: established
 aliases: [P-ERK, PERK, paired-explicit Runge–Kutta, embedded P-ERK, multirate P-ERK, P-ERK2, P-ERK3, P-ERK4, dynamically partitioned P-ERK]
 tags: [runge-kutta, explicit, multirate, stability, order-conditions, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Paired explicit Runge–Kutta (P-ERK) methods

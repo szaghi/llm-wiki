@@ -5,7 +5,7 @@ description: "First nonlinear M3D-C1 simulations of a reactor-scale two-field-pe
 status: established
 aliases: [QA reactor stellarator nonlinear MHD, Wright–Ferraro QA instability, optimized QA edge instability]
 tags: [stellarator, full-mhd, equilibrium, bootstrap-current]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Edge instabilities of an optimized quasi-axisymmetric reactor stellarator

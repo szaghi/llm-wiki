@@ -5,7 +5,7 @@ description: "MHD models that restrict the magnetic field to a poloidal flux fun
 status: established
 aliases: [RMHD, reduced magnetohydrodynamics, ansatz-based reduced MHD, Strauss reduced MHD]
 tags: [reduced-mhd, tokamak, kink]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Reduced MHD for tokamaks

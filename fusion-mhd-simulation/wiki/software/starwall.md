@@ -5,7 +5,7 @@ description: "Green's-function thin-wall code that supplies JOREK's free-boundar
 status: established
 aliases: [JOREK-STARWALL]
 tags: [wall, free-boundary, vde, disruption, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # STARWALL

@@ -9,7 +9,7 @@ year: 2026
 venue: "Appl. Numer. Math. 230:503-535"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Applied_Numerical_Mathematics_Nurkhametova_A_Patankar_predictor-corrector_approach_for_positivity-prese.pdf"
 tags: [positivity, structure-preserving, stiff, implicit, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

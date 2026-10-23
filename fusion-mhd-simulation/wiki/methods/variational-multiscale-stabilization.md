@@ -5,7 +5,7 @@ description: "Residual-based stabilization of the Galerkin weak form in which th
 status: established
 aliases: [VMS, variational multiscale method, residual-based stabilization, streamline diffusion, Taylor–Galerkin stabilization, TG2]
 tags: [stabilization, finite-elements, numerics, full-mhd, reduced-mhd]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Variational multiscale (VMS) stabilization for MHD finite elements

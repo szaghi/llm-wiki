@@ -5,7 +5,7 @@ description: "B-convergence of order r: for problems with a one-sided Lipschitz 
 status: established
 aliases: [B-convergent, B-convergence order, stiffness-independent convergence]
 tags: [stiff, order-reduction, stability, implicit, b-convergence]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T11:55:00Z
 ---
 
 # B-convergence

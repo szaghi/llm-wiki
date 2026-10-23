@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Appl. Math. Comput. 6:1629-1664"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Communications_on_Applied_Mathematics_and_Computation_Micalizzi_A_New_Efficient_Explicit_Deferred_Correction_Framework_Analy.pdf"
 tags: [deferred-correction, explicit, runge-kutta, stability, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

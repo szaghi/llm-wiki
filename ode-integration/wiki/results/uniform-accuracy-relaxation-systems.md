@@ -5,7 +5,7 @@ description: "For linear hyperbolic relaxation systems with Fourier–Galerkin s
 status: established
 aliases: [uniform accuracy in ε, uniformly accurate IMEX, uniform-in-ε convergence, no order reduction in the intermediate regime, uniform stability of IMEX-BDF, uniform accuracy of IMEX-RK]
 tags: [asymptotic-preserving, imex, order-reduction, stability, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Uniform accuracy of IMEX schemes for hyperbolic relaxation systems

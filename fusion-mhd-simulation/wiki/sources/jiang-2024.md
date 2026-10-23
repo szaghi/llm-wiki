@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:073904"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Jiang_Development_of_a_gyrokinetic-MHD_energetic_particle_simulati.pdf"
 tags: [reduced-mhd, hybrid-kinetic, energetic-particles, finite-differences, time-integration, ballooning, tearing, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

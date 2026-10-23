@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 464:111353"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Zeifang_Implicit_two-derivative_deferred_correction_time_discretizat.pdf"
 tags: [multiderivative, deferred-correction, implicit-stage-solvers, preconditioning, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

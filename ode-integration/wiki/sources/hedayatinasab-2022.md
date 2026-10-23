@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 468:111470"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Hedayati_Third-order_Paired_Explicit_Runge-Kutta_schemes_for_stiff_sy.pdf"
 tags: [runge-kutta, explicit, stability, multirate, method-of-lines, low-storage]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

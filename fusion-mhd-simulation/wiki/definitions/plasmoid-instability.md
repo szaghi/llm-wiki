@@ -5,7 +5,7 @@ description: "Break-up of a thin current sheet at high Lundquist number into cha
 status: established
 aliases: [plasmoid-mediated reconnection, current-sheet break-up, reconnection burst, plasmoid chain]
 tags: [elm, edge, pedestal, extended-mhd, tearing]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Plasmoid instability and plasmoid-mediated reconnection

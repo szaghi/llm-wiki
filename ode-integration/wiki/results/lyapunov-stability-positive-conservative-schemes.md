@@ -5,7 +5,7 @@ description: "Izgin, Kopecz and Meister prove that a positive, conservative map 
 status: established
 aliases: [Lyapunov stability of MPRK, centre manifold stability of Patankar schemes, stability function of MPRK22, unconditional stability of MPRK22, Izgin–Kopecz–Meister theorem]
 tags: [stability, positivity, structure-preserving, stiff]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Lyapunov stability of steady states of positive, conservative time integrators

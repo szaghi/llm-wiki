@@ -5,7 +5,7 @@ description: "The explicit–implicit–null method adds and subtracts a linear 
 status: established
 aliases: [EIN, explicit-implicit-null, EIN-FD, EIN-LDG, add-and-subtract stabilization, explicit–implicit–null IMEX]
 tags: [imex, stiff, stability, linear-algebra, exponential]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Explicit–implicit–null (EIN) time marching

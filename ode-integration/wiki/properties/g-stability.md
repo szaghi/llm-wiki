@@ -5,7 +5,7 @@ description: "G-stability of a multistep (one-leg) method: a positive definite m
 status: established
 aliases: [G-norm, G-stable, Dahlquist's equivalence theorem, one-leg method, G-stability identity]
 tags: [linear-multistep, stability, stiff, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # G-stability

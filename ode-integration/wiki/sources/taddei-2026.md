@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 567:115326"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_Physics_Taddei_High-order_implicit_RungeKutta_time_integrators_for_componen.pdf"
 tags: [runge-kutta, implicit, dae, order-reduction, implicit-stage-solvers]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

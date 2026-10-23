@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Plasmas 30:042509"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350135318title.pdf"
 tags: [neutrals, particles, edge, divertor, reduced-mhd, full-mhd, tokamak, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

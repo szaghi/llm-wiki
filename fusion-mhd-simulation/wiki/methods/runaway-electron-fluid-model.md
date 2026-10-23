@@ -5,7 +5,7 @@ description: "Fluid model in which runaway electrons are a separate species desc
 status: established
 aliases: [RE fluid model, JOREK runaway electron fluid]
 tags: [runaway-electrons, disruption, reduced-mhd, impurities, neutrals]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Runaway-electron fluid model coupled to MHD

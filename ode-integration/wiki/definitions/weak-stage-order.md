@@ -5,7 +5,7 @@ description: "The weak stage order $q_{\\mathrm w}$ of a Runge–Kutta method is
 status: established
 aliases: [WSO, parabolic order conditions, pseudostage order, BPR-consistency]
 tags: [runge-kutta, order-conditions, order-reduction, stiff]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # Weak stage order

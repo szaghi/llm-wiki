@@ -9,7 +9,7 @@ year: 2022
 venue: "Appl. Numer. Math. 182:117-147"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Applied_Numerical_Mathematics_Torlo_Issues_with_positivity-preserving_Patankar-type_schemes.pdf"
 tags: [positivity, structure-preserving, stiff, order-reduction, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

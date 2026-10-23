@@ -5,7 +5,7 @@ description: "Impurity model that evolves the charge-state distribution in time 
 status: established
 aliases: [non-equilibrium impurity model, CR impurity model, charge-state-resolved impurity model]
 tags: [impurities, particles, disruption, mhd]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Collisional-radiative (non-equilibrium) impurity model

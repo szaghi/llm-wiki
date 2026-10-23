@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Plasmas 30:092502"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Physics_of_Plasmas_Nardon_Non-linear_dynamics_of_the_double_tearing_mode.pdf"
 tags: [tearing, reduced-mhd, disruption, runaway-electrons, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

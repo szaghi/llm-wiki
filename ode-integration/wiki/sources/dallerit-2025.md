@@ -9,7 +9,7 @@ year: 2025
 venue: "BIT Numer. Math. 65:23"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_BIT_Numerical_Mathematics_Dallerit_Stiffness_resilient_exponential_integrators_and_varphi_-orde.pdf"
 tags: [exponential, stiff, order-conditions, b-series, order-reduction]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Three-dimensional MHD equilibrium code that does not assume nested
 status: established
 aliases: [HINT2, HINT code]
 tags: [equilibrium, stellarator]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # HINT

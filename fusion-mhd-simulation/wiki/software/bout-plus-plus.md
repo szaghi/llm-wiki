@@ -5,7 +5,7 @@ description: "Finite-difference plasma-fluid framework for 3D initial-value prob
 status: established
 aliases: [BOUT, BOUT++ framework]
 tags: [reduced-mhd, edge, pedestal, elm, ballooning, finite-differences, time-integration, linear-solver, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # BOUT++

@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:022507"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Howell_Growing_neoclassical_tearing_modes_seeded_via_transient-indu.pdf"
 tags: [mhd, tearing, bootstrap-current, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "In an equilibrium with N_fp field periods, a perturbation of toroi
 status: established
 aliases: [mode family, mode families, toroidal mode family, N_f families, helical mode coupling]
 tags: [stellarator, spectral, numerics, mhd, wall]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Toroidal mode families in stellarators

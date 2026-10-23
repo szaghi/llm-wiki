@@ -5,7 +5,7 @@ description: "A one-step method is strongly stable on $y'=Ly$ with $\\langle Lv,
 status: established
 aliases: [monotonicity, monotonicity-preserving, monotonicity stability, contractivity in an inner-product norm, L2 stability, weak(kappa) stability]
 tags: [stability, strong-stability, runge-kutta, structure-preserving, explicit, implicit]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Strong stability (monotonicity) of Runge–Kutta methods for linear seminegative problems

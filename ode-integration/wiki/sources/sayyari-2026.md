@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Appl. Math. 487:117735"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_and_Applied_Mathematics_Sayyari_Implicit_dual_time-stepping_positivity-preserving_entropy-st.pdf"
 tags: [positivity, entropy-stability, bdf, implicit-stage-solvers, dual-time-stepping, cfd]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

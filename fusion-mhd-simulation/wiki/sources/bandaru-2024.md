@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:082503"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Bandaru_Runaway_electron_fluid_model_extension_in_JOREK_and_ITER_rel.pdf"
 tags: [runaway-electrons, disruption, vde, impurities, neutrals, reduced-mhd, wall, free-boundary, tokamak, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

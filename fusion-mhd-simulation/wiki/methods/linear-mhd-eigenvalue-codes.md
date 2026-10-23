@@ -5,7 +5,7 @@ description: "Codes that linearize the MHD equations about an equilibrium and so
 status: established
 aliases: [eigenvalue code, linear stability code, spectral MHD code, MAS, SCELT, MARS, MINERVA]
 tags: [spectral, finite-elements, verification, numerics, tearing, kink, ballooning]
-timestamp: 2026-10-16T23:30:00Z
+timestamp: 2026-10-16T18:34:00Z
 ---
 
 # Linear MHD eigenvalue codes

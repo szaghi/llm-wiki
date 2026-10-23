@@ -5,7 +5,7 @@ description: "Current-driven resistive instability that reconnects the magnetic 
 status: established
 aliases: [tearing mode, 2/1 tearing mode, resistive tearing, FKR scaling]
 tags: [tearing, mhd, verification, tokamak, stellarator, wall]
-timestamp: 2026-10-16T23:00:00Z
+timestamp: 2026-10-16T18:31:00Z
 ---
 
 # Resistive tearing mode

@@ -5,7 +5,7 @@ description: "In JOREK simulations of neon-deuterium SPI into ITER L-mode, trans
 status: established
 aliases: [temperature hole, Te hole, cold spot along field lines, stochastic transport barrier, q=1 barrier, KAM barrier]
 tags: [disruption, impurities, mhd, kink, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Electron temperature hole and the stochastic barrier at q = 1 after SPI

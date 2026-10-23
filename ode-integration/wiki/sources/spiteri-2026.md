@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Phys. 566:115271"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_Physics_Spiteri_An_enumeration_of_second-order_N-split_operator-splitting_me.pdf"
 tags: [splitting, order-conditions, geometric-integration, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

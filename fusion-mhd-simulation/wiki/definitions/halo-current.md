@@ -5,7 +5,7 @@ description: "The halo current is the current that flows partly in the scrape-of
 status: established
 aliases: [halo currents, halo fraction, toroidal peaking factor, TPF, SOL current]
 tags: [disruption, vde, wall, edge, free-boundary]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Halo current

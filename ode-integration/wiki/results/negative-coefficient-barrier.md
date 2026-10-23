@@ -5,7 +5,7 @@ description: "Every splitting or composition method with real coefficients and o
 status: established
 aliases: [order barrier for splitting, Sheng–Suzuki theorem, Goldman–Kaper barrier, backward-step barrier]
 tags: [splitting, order-conditions, stability, geometric-integration]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # Negative-coefficient barrier for splitting methods

@@ -5,7 +5,7 @@ description: "Sandu's six-species oxygen–nitrogen stratospheric chemistry with
 status: established
 aliases: [stratospheric chemistry problem, stratospheric chemistry model, Sandu stratospheric problem]
 tags: [stiff, positivity, verification, structure-preserving]
-timestamp: 2026-10-20T08:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Stratospheric reaction problem

@@ -5,7 +5,7 @@ description: "The multirate Runge–Kutta–Chebyshev method applies an outer RK
 status: established
 aliases: [mRKC, multirate RKC, explicit stabilized multirate method, averaged force, modified equation with averaged force]
 tags: [multirate, stabilized, explicit, stiff, stability, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multirate Runge–Kutta–Chebyshev (mRKC) methods and the averaged-force modified equation

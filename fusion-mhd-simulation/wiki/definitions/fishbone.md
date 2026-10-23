@@ -5,7 +5,7 @@ description: "Energetic-particle-modified n = 1 internal kink that acquires a fi
 status: established
 aliases: [fishbone, fishbone mode, energetic-particle-driven internal kink, non-resonant fishbone]
 tags: [energetic-particles, hybrid-kinetic, kink, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Fishbone instability

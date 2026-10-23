@@ -5,7 +5,7 @@ description: "Models that advance the bulk plasma as an MHD fluid and a kinetic 
 status: established
 aliases: [kinetic-MHD hybrid, hybrid MHD-kinetic, hybrid MHD-gyrokinetic, MHD-kinetic hybrid model]
 tags: [hybrid-kinetic, energetic-particles, particles, mhd, alfven-eigenmode, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Hybrid kinetic-MHD models

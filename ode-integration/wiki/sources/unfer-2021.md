@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 440:110434"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Unfer_Third_order_asynchronous_time_integration_for_gas_dynamics.pdf"
 tags: [local-time-stepping, multirate, explicit, ssp, cfd, finite-volume]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

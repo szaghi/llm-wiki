@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A3282-A3304"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_González-Tabernero_Boundary_Treatment_for_High-Order_IMEX_RungeKutta_Local_Disc.pdf"
 tags: [imex, order-reduction, method-of-lines, runge-kutta]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Summary

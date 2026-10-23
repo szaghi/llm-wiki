@@ -5,7 +5,7 @@ description: "DifferentialEquations.jl (OrdinaryDiffEq.jl), the Julia/SciML inte
 status: established
 aliases: [OrdinaryDiffEq.jl, DiffEqDevTools.jl, SciMLBenchmarks.jl]
 tags: [software, stiff, step-size-control, runge-kutta]
-timestamp: 2026-10-19T18:00:00Z
+timestamp: 2026-10-19T11:55:00Z
 ---
 
 # DifferentialEquations.jl

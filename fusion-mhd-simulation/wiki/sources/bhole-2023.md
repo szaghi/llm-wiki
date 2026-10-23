@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Math. Appl. 142:225-256"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Computers_amp_Mathematics_with_Applications_Bhole_Stabilized_bi-cubic_Hermite_Bézier_finite_element_method_wit.pdf"
 tags: [full-mhd, reduced-mhd, finite-elements, stabilization, time-integration, disruption, impurities, tokamak, numerics]
-timestamp: 2026-10-16T22:00:00Z
+timestamp: 2026-10-16T18:30:00Z
 ---
 
 # Summary

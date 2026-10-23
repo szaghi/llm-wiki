@@ -5,7 +5,7 @@ description: "The periodic collapse of the core temperature inside an inversion 
 status: established
 aliases: [sawtooth, sawteeth, sawtooth-like crash, Kadomtsev model, Kadomtsev reconnection, inversion radius]
 tags: [kink, tearing, mhd, tokamak, stellarator]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Sawtooth crash and Kadomtsev reconnection

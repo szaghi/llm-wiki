@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:112508"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/0000_manual_no_journal_Unknown_10106350107048titleResistive.pdf"
 tags: [tearing, disruption, wall, mhd, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

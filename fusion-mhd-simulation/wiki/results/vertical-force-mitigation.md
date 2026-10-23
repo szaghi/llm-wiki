@@ -5,7 +5,7 @@ description: "Massive impurity injection during a VDE reduces the vertical wall 
 status: established
 aliases: [force mitigation, vertical force reduction, current-centroid decoupling]
 tags: [disruption, vde, wall, impurities]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Vertical-force mitigation by massive material injection

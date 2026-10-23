@@ -5,7 +5,7 @@ description: "Linear resistive MHD plasma-response and stability code used as th
 status: established
 aliases: [MARS F, MARS-F code]
 tags: [mhd, tokamak, verification, elm, free-boundary, wall, kink]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # MARS-F

@@ -5,7 +5,7 @@ description: "ParaDiag writes all time steps of a linear implicit scheme as one 
 status: established
 aliases: [ParaDiag, all-at-once method, diagonalization-based PinT, alpha-circulant preconditioner, circulant preconditioning, space-time matrix equation]
 tags: [parallel, linear-algebra, implicit, stiff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # ParaDiag: diagonalization-based parallel-in-time methods

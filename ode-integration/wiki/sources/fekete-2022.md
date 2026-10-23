@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Appl. Math. 412:114325"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_and_Applied_Mathematics_Fekete_Embedded_pairs_for_optimal_explicit_strong_stability_preserv.pdf"
 tags: [ssp, embedded-pair, step-size-control, runge-kutta, explicit, error-estimation]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

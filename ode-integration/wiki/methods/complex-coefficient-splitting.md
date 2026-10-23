@@ -5,7 +5,7 @@ description: "Splitting and composition methods with complex coefficients of pos
 status: established
 aliases: [complex splitting, complex composition, symmetric-conjugate splitting, complex triple jump, complex Lie–Trotter, CLT, Strang-CLT]
 tags: [splitting, order-conditions, stability, geometric-integration]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Splitting and composition with complex coefficients

@@ -5,7 +5,7 @@ description: "The Newmark family integrates second-order structural dynamics wit
 status: established
 aliases: [Newmark-β, Newmark scheme, constant average acceleration method, average acceleration method, trapezoidal rule (structural dynamics)]
 tags: [implicit, stability, verification]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Newmark method

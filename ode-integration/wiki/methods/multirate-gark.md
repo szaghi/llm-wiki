@@ -5,7 +5,7 @@ description: "Multirate GARK methods advance a slow partition with one macro ste
 status: established
 aliases: [MrGARK, multirate generalized additive Runge–Kutta, compound-fast MrGARK, multirate backward Euler, multirate implicit midpoint, implicit multirate GARK]
 tags: [multirate, runge-kutta, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multirate GARK methods (MrGARK, compound-fast, multirate backward Euler)

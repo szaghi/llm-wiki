@@ -5,7 +5,7 @@ description: "A passive non-axisymmetric (n = 1) coil driven by the loop voltage
 status: established
 aliases: [REMC, runaway electron mitigation coil, passive runaway coil, passive 3D coil]
 tags: [runaway-electrons, disruption, wall, free-boundary, mhd]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Runaway-electron mitigation coil

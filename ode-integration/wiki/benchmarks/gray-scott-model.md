@@ -5,7 +5,7 @@ description: "The two-species Gray–Scott reaction–diffusion system on a peri
 status: established
 aliases: [Gray–Scott reaction–diffusion model, Gray-Scott, 2D Gray–Scott]
 tags: [stiff, verification, exponential]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Gray–Scott model

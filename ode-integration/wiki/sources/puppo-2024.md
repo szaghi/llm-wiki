@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Comput. Phys. 36:30-70"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Communications_in_Computational_Physics_Puppo_Quinpi_Integrating_Stiff_Hyperbolic_Systems_with_Implicit_Hi.pdf"
 tags: [implicit, stiff, implicit-stage-solvers, hyperbolic-conservation-laws, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

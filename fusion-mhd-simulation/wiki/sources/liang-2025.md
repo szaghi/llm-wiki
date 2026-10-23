@@ -9,7 +9,7 @@ year: 2025
 venue: "Phys. Plasmas 32:012502"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Physics_of_Plasmas_Liang_Predictive_nonlinear_MHD_simulations_of_quiescent_H-mode_pla.pdf"
 tags: [elm, pedestal, edge, kink, reduced-mhd, extended-mhd, divertor, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

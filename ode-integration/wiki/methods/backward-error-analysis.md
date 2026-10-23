@@ -5,7 +5,7 @@ description: "Backward error analysis represents a one-step method as the exact 
 status: established
 aliases: [BEA, modified equation, modified vector field, modified Hamiltonian, modifying integrator]
 tags: [geometric-integration, structure-preserving, splitting, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Backward error analysis, modified equations and modifying integrators

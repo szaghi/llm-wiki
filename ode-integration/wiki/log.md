@@ -1,5 +1,9 @@
 # Update log
 
+## 2026-10-23
+
+* **Timestamps corrected (236 pages).** These pages carried `timestamp` values later than the commits that recorded them (planned times ahead of the actual edits). Each is now the time of the last commit that touched the page, in UTC to the minute. No content changed.
+
 ## 2026-10-20
 
 * **Chunk 6 ingested — archive complete (118 of 118 sources).** 18 sources: invariant-domain preserving explicit and IMEX time stepping, maximum-principle flux limiting for DIRK, modified Patankar multistep methods and the Lyapunov stability of Patankar schemes, fully discrete cell entropy inequalities, dual time stepping, additive polynomial (FIMEX) integrators, Irksome extensions, accelerated and optimized IMEX schemes, space–time error balancing, multirate Runge–Kutta–Chebyshev, asynchrony-tolerant low-storage schemes, N-split operator splitting, and learned integrators. Merged into the existing pages; nothing overwritten.

@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Sci. Comput. 92:102"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Scientific_Computing_Quezada_Maximum_Principle_Preserving_Space_and_Time_Flux_Limiting_fo.pdf"
 tags: [positivity, structure-preserving, implicit, ssp, runge-kutta, implicit-stage-solvers]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

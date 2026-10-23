@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 470:111580"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_NA_Analysis_and_design_of_a_local_time_stepping_scheme_for_LES.pdf"
 tags: [local-time-stepping, multirate, explicit, cfd, dispersion-analysis]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

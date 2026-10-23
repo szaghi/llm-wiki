@@ -5,7 +5,7 @@ description: "The scalar stiff test problem $y'=\\lambda(y-g(t))+g'(t)$, whose s
 status: established
 aliases: [Prothero–Robinson test equation, PR problem, Kværnø–Prothero–Robinson problem, KPR problem]
 tags: [stiff, order-reduction, verification, runge-kutta, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Prothero–Robinson problem

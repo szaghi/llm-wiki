@@ -5,7 +5,7 @@ description: "The one-dimensional Euler Riemann problem of Sod, whose solution h
 status: established
 aliases: [Sod problem, Sod's shock tube, Sod Riemann problem]
 tags: [verification, ssp, imex, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Sod shock tube

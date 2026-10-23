@@ -5,7 +5,7 @@ description: "The discrete tangent and adjoint of a Runge–Kutta time stepping 
 status: established
 aliases: [discrete adjoint, tangent linear model, discrete sensitivity, discretize-then-optimize, adjoint relaxation Runge–Kutta, linearized RRK, adjoint IDT]
 tags: [runge-kutta, structure-preserving, verification, relaxation, adjoint]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Discrete adjoints of Runge–Kutta and relaxation Runge–Kutta methods

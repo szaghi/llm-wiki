@@ -5,7 +5,7 @@ description: "The k-step BDF method differentiates the interpolant through the n
 status: established
 aliases: [BDF, BDFk, backward difference formula, Gear's method, BDF2, variable-step BDF2, variable-coefficient BDF]
 tags: [linear-multistep, implicit, stiff, stability, step-size-control, dae, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Backward differentiation formulas (BDF)

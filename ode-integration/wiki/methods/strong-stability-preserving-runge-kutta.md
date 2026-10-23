@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is SSP with coefficient $\\mathcal C$ when 
 status: established
 aliases: [SSP Runge–Kutta, SSPRK, SSPERK, TVD Runge–Kutta, monotonicity-preserving Runge–Kutta, contractivity-preserving Runge–Kutta]
 tags: [ssp, runge-kutta, stability, explicit, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Strong-stability-preserving (SSP) Runge–Kutta methods

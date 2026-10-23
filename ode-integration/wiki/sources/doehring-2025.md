@@ -9,7 +9,7 @@ year: 2025
 venue: "Comput. Sci. Eng. 2:1"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Computational_Science_and_Engineering_Doehring_Fourth-order_paired-explicit_Runge-Kutta_methods.pdf"
 tags: [runge-kutta, explicit, multirate, order-conditions, stability, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

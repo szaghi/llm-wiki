@@ -5,7 +5,7 @@ description: "Stationary incompressible vortex with piecewise-linear velocity, r
 status: established
 aliases: [Gresho–Chan vortex, triangular vortex, low-Mach Gresho vortex]
 tags: [imex, asymptotic-preserving, verification, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Gresho vortex

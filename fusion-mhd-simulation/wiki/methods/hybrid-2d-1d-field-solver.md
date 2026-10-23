@@ -5,7 +5,7 @@ description: "BOUT++ extension that inverts the vorticity–potential Helmholtz 
 status: established
 aliases: [hybrid field solver, 2D/1D Laplacian inversion, flute ordering, flute-ordering approximation, low-n field solver]
 tags: [finite-differences, linear-solver, numerics, ballooning, elm, pedestal, edge]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Hybrid 2D/1D field solver and the flute-ordering error

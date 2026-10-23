@@ -5,7 +5,7 @@ description: "Electrons accelerated to relativistic energies when the parallel e
 status: established
 aliases: [RE, runaway electron beam, RE beam]
 tags: [runaway-electrons, disruption]
-timestamp: 2026-10-16T23:55:00Z
+timestamp: 2026-10-16T18:38:00Z
 ---
 
 # Runaway electrons and their generation mechanisms

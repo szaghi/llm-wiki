@@ -1,5 +1,9 @@
 # Update log
 
+## 2026-10-23
+
+* **Timestamps corrected (145 pages).** These pages carried `timestamp` values later than the commits that recorded them (planned times ahead of the actual edits). Each is now the time of the last commit that touched the page, in UTC to the minute. No content changed.
+
 ## 2026-10-16
 
 * **Human decision: the sideways-force agreement in the 3D NSTX VDE benchmark stays Open** ([wall forces](/definitions/wall-forces.md), [NSTX benchmarks](/benchmarks/nstx-vde-benchmarks.md), [NIMROD](/software/nimrod.md)). Artola et al. (2021) report "good agreement in magnitude", while Hoelzl et al. (2021) summarize the same benchmark as "factor 2 smaller in NIMROD". The figure readings give a NIMROD/JOREK ratio of about 0.74.

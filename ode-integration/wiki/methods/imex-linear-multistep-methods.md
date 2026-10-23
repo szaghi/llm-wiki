@@ -5,7 +5,7 @@ description: "IMEX multistep methods treat a stiff part implicitly with BDF and 
 status: established
 aliases: [IMEX-BDF, SBDF, semi-implicit BDF, implicit-explicit multistep method, IMEX LMM, extrapolated BDF, linearly implicit BDF]
 tags: [linear-multistep, imex, implicit, stiff, asymptotic-preserving, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # IMEX linear multistep and IMEX-BDF methods

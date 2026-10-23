@@ -5,7 +5,7 @@ description: "Coordinates in which one coordinate follows the equilibrium field 
 status: established
 aliases: [field-aligned coordinates, twist-shift boundary condition, shifted metric, simple shifted metric, quasi-ballooning coordinates, flux-tube coordinates]
 tags: [finite-differences, numerics, ballooning]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Field-aligned coordinates, twist-shift condition and shifted metric

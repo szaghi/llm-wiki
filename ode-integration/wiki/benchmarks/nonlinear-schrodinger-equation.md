@@ -5,7 +5,7 @@ description: "The cubic nonlinear Schrödinger equation on periodic domains, Fou
 status: established
 aliases: [NLS, NLS equation, cubic nonlinear Schrödinger equation, focusing nonlinear Schrödinger equation]
 tags: [verification, exponential, parallel, stiff, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Nonlinear Schrödinger equation

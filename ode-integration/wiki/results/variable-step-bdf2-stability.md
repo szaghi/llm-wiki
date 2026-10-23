@@ -5,7 +5,7 @@ description: "Variable-step BDF2 is proved stable under bounds on the step ratio
 status: established
 aliases: [variable-step BDF2 stability, BDF2 step-ratio bound, BDF2 ratio restriction, 1.9398 bound]
 tags: [linear-multistep, stability, step-size-control, implicit, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Stability of variable-step BDF2 under step-ratio bounds

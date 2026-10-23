@@ -9,7 +9,7 @@ year: 2026
 venue: "Comput. Methods Appl. Mech. Engrg. 452:118717"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Pulicani_A_new_hybrid_strongly_coupled_multi-time_step_approach_with.pdf"
 tags: [local-time-stepping, multirate, partitioned, fluid-structure-interaction, ssp]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

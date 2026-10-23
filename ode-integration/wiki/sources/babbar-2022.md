@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 467:111423"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Babbar_Lax-Wendroff_flux_reconstruction_method_for_hyperbolic_conse.pdf"
 tags: [lax-wendroff, explicit, stability, hyperbolic-conservation-laws, ssp]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Summary

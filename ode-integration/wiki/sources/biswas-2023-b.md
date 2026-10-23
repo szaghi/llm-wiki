@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sci. Comput. 97:4"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Scientific_Computing_Biswas_Multiple-Relaxation_Runge_Kutta_Methods_for_Conservative_Dyn.pdf"
 tags: [relaxation, structure-preserving, geometric-integration, embedded-pair, imex]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Summary

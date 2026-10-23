@@ -9,7 +9,7 @@ year: 2021
 venue: "Phys. Plasmas 28:052511"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2021_Crossref_Physics_of_Plasmas_Artola_3D_simulations_of_vertical_displacement_events_in_tokamaks_A.pdf"
 tags: [reduced-mhd, full-mhd, tokamak, disruption, vde, wall, free-boundary, finite-elements, verification]
-timestamp: 2026-10-16T23:59:00Z
+timestamp: 2026-10-16T18:46:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "In BOUT++ full-annulus simulations a pedestal collapse driven by r
 status: established
 aliases: [two-stage ELM crash, two-step pedestal collapse, RDBM ELM crash, wedge-number effect on ELM crash]
 tags: [elm, pedestal, ballooning, tearing, reduced-mhd, finite-differences, edge]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Two-stage crash of resistive drift-ballooning ELMs

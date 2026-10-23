@@ -5,7 +5,7 @@ description: "M3D is a nonlinear 3D MHD code, distinct from its finite-element s
 status: established
 aliases: [M3D code, Multilevel 3D]
 tags: [mhd, wall, disruption, tearing]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # M3D

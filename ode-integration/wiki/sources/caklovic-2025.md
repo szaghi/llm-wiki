@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. 47:A430-A453"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Čaklović_Improving_Efficiency_of_Parallel_Across_the_Method_Spectral.pdf"
 tags: [deferred-correction, parallel, stiff, stability, implicit-stage-solvers]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

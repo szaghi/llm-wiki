@@ -5,7 +5,7 @@ description: "CVODE, the SUNDIALS variable-order variable-step multistep integra
 status: established
 aliases: [CVODES, IDA, IDAS]
 tags: [software, stiff, dae, step-size-control, implicit-stage-solvers]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # CVODE

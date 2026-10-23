@@ -5,7 +5,7 @@ description: "Fourier analysis of a fully discrete space–time scheme for a lin
 status: established
 aliases: [von Neumann analysis, Fourier stability analysis, Fourier analysis, amplification factor, amplification matrix, von Neumann criterion, critical CFL number, Fourier CFL number]
 tags: [stability, explicit, lax-wendroff, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Von Neumann (Fourier) stability analysis of fully discrete schemes

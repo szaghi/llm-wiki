@@ -5,7 +5,7 @@ description: "pySDC is the Python prototyping library for spectral deferred corr
 status: established
 aliases: [pySDC, Python SDC library]
 tags: [software, parallel, implicit, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # pySDC

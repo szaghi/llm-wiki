@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. 47:A2609-A2635"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Buvoli_A_New_Class_of_RungeKutta_Methods_for_Nonlinearly_Partitione.pdf"
 tags: [runge-kutta, imex, order-conditions, stability, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

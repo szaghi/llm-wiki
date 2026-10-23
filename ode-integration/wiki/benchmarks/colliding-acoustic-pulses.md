@@ -5,7 +5,7 @@ description: "Klein's low-Mach test of two acoustic pulses that collide on a per
 status: established
 aliases: [Klein's colliding pulses, two colliding acoustic pulses, Klein test I]
 tags: [verification, imex, implicit, asymptotic-preserving, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Colliding acoustic pulses

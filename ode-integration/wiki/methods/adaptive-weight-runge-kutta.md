@@ -5,7 +5,7 @@ description: "After the stages of a Runge–Kutta step are computed, a linear pr
 status: established
 aliases: [positivity-preserving adaptive Runge–Kutta, adaptive weights, weight adaptation, free adaptation, convex adaptation, bound-preserving adaptive Runge–Kutta]
 tags: [runge-kutta, positivity, structure-preserving, step-size-control, stiff]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Adaptive-weight (positivity-preserving) Runge–Kutta methods

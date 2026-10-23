@@ -5,7 +5,7 @@ description: "Irksome, the Firedrake library that turns a UFL semidiscrete varia
 status: established
 aliases: [irksome, Irksome TimeStepper, bc_method, stage_type]
 tags: [software, implicit, runge-kutta, implicit-stage-solvers, structure-preserving]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Irksome

@@ -5,7 +5,7 @@ description: "A k-step linear multistep method combines k past values and right-
 status: established
 aliases: [LMM, linear k-step method, multistep method, Adams methods, Adams–Bashforth, Adams–Moulton, variable-coefficient multistep method]
 tags: [linear-multistep, stability, stiff, implicit, explicit, step-size-control]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Linear multistep methods

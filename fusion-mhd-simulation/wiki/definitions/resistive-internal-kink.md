@@ -5,7 +5,7 @@ description: "The m/n = 1/1 mode resonant at the q = 1 surface: a rigid helical 
 status: established
 aliases: [resistive kink, internal kink, m=n=1 mode, 1/1 kink, Coppi scaling]
 tags: [kink, tearing, reduced-mhd, full-mhd, verification, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Resistive internal kink (m/n = 1/1)

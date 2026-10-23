@@ -9,7 +9,7 @@ year: 2023
 venue: "Phys. Rev. E 108:L043201"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Physical_Review_E_McDevitt_Runaway_electron_current_reconstitution_after_a_nonaxisymmet.pdf"
 tags: [runaway-electrons, disruption, impurities, particles, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

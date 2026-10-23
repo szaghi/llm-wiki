@@ -5,7 +5,7 @@ description: "Parallel-in-time methods distribute the time direction over proces
 status: established
 aliases: [PinT, time-parallel time integration, parallel in time, space-time parallelism, parallelism across the steps, parallelism across the method]
 tags: [parallel, linear-algebra, stiff, verification]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Parallel-in-time integration

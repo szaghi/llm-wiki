@@ -9,7 +9,7 @@ year: 2022
 venue: "Phys. Plasmas 29:122501"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Physics_of_Plasmas_Bogaarts_Development_and_application_of_a_hybrid_MHD-kinetic_model_in.pdf"
 tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, reduced-mhd, full-mhd, finite-elements, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "IMEX-MRI-GARK methods split the slow scale of a three-way additive
 status: established
 aliases: [IMEX-MRI-GARK, ImEx-MRI-GARK, implicit-explicit multirate infinitesimal GARK, IMEX-MRI-GARK3a, IMEX-MRI-GARK3b, IMEX-MRI-GARK4]
 tags: [multirate, imex, runge-kutta, order-conditions, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # IMEX multirate infinitesimal GARK methods

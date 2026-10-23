@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A906-A928"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Caliari_Accelerating_Exponential_Integrators_to_Efficiently_Solve_Se.pdf"
 tags: [exponential, lawson, stability, explicit-implicit-null, advection-diffusion-reaction]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

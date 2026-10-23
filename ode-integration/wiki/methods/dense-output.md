@@ -5,7 +5,7 @@ description: "Continuous extensions of a one-step method that give the solution 
 status: established
 aliases: [continuous extension, interpolant, continuous Runge–Kutta, dense-output formula, collocation polynomial, local DG solution, subgrid resolution]
 tags: [runge-kutta, stiff, software, step-size-control, exponential]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Dense output

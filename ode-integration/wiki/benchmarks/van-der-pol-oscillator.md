@@ -5,7 +5,7 @@ description: "The relaxation oscillator y1' = y2, y2' = mu (1 - y1^2) y2 - y1, f
 status: established
 aliases: [Van der Pol equation, van der Pol problem, VDPOL]
 tags: [stiff, verification, order-reduction, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Van der Pol oscillator

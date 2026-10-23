@@ -5,7 +5,7 @@ description: "BSeries.jl and RootedTrees.jl, the Julia packages that compute tru
 status: established
 aliases: [BSeries.jl, RootedTrees.jl]
 tags: [software, order-conditions, geometric-integration, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # BSeries.jl and RootedTrees.jl

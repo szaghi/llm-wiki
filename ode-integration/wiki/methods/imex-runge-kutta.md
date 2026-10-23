@@ -5,7 +5,7 @@ description: "Additive Runge–Kutta methods integrate y' = fE + fI with an expl
 status: established
 aliases: [IMEX, ImEx, IMEX-RK, ImEx-ARK, ARK, additive Runge–Kutta, implicit-explicit Runge–Kutta, type I IMEX, type II IMEX, type CK, type ARS, globally stiffly accurate IMEX, AIMEX, accelerated IMEX, IMEX3,2]
 tags: [imex, runge-kutta, stiff, implicit, explicit, asymptotic-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # IMEX and additive Runge–Kutta methods

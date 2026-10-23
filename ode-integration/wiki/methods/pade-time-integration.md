@@ -5,7 +5,7 @@ description: "Song and Eisenträger replace the matrix exponential of the exact 
 status: established
 aliases: [Padé time-stepping, Padé expansion time integration, rational approximation time stepping, O(M,M) scheme]
 tags: [implicit, linear-algebra, stability, exponential]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Padé-based high-order implicit time integration of structural dynamics

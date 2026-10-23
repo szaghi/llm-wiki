@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Plasma Phys. 89:955890303"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2023_Crossref_Journal_of_Plasma_Physics_Panici_The_DESC_stellarator_code_suite_Part_1_Quick_and_accurate_eq.pdf"
 tags: [equilibrium, stellarator, spectral, verification, numerics]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

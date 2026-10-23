@@ -9,7 +9,7 @@ year: 2024
 venue: "Numer. Algorithms 96:1243-1267"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Numerical_Algorithms_Zhang_An_explicit_16-stage_RungeKutta_method_of_order_10_discovere.pdf"
 tags: [runge-kutta, explicit, order-conditions, b-series, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

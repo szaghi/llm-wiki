@@ -5,7 +5,7 @@ description: "Runge–Kutta methods that also use higher time derivatives of the
 status: established
 aliases: [two-derivative Runge–Kutta, MDRK, SSP-iMDRK, implicit Taylor method, SSP IMEX multiderivative Runge–Kutta, explicit multiderivative Runge–Kutta, rDRKq-s, MDRKCAT, Jacobian-free multiderivative Runge–Kutta, compact approximate Taylor method, CAT, Taylor method, two-derivative Hermite–Birkhoff Runge–Kutta, HBRK, two-point Hermite rule, Obreshkov rule]
 tags: [multiderivative, ssp, implicit, imex, asymptotic-preserving, order-conditions, lax-wendroff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multiderivative Runge–Kutta methods and the backward derivative condition

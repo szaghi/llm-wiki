@@ -5,7 +5,7 @@ description: "The electromagnetic wall force is the integral of the Lorentz forc
 status: established
 aliases: [wall force, vertical force, sideways force, horizontal force, asymmetric VDE force]
 tags: [disruption, vde, wall, free-boundary]
-timestamp: 2026-10-16T23:59:30Z
+timestamp: 2026-10-16T18:47:00Z
 ---
 
 # Electromagnetic wall forces (vertical and sideways)

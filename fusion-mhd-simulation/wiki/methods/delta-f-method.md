@@ -5,7 +5,7 @@ description: "Marker method that evolves only the deviation of a kinetic distrib
 status: established
 aliases: [delta-f, δf PIC, delta-f particle-in-cell, perturbative particle method]
 tags: [hybrid-kinetic, energetic-particles, particles, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # The δf particle method

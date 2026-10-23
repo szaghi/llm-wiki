@@ -5,7 +5,7 @@ description: "The linearized three-level theta/xi scheme of JOREK (Crank–Nicol
 status: established
 aliases: [theta-xi scheme, Gear scheme, BDF2, Crank–Nicolson, linearized implicit scheme, block-Jacobi preconditioner, toroidal-harmonic preconditioner, mode groups]
 tags: [time-integration, linear-solver, numerics]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Implicit time integration and preconditioned Krylov solvers for nonlinear MHD

@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods whose weights are orthogonal to the
 status: established
 aliases: [high-WSO ERK, explicit RK alleviating order reduction, ERK312, ERK313]
 tags: [runge-kutta, explicit, order-reduction, order-conditions, ssp]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # Explicit Runge–Kutta methods with high weak stage order

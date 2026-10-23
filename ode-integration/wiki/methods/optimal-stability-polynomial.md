@@ -5,7 +5,7 @@ description: "Choosing the free coefficients of an explicit method's stability p
 status: established
 aliases: [stability-optimized Runge–Kutta, optimized explicit Runge–Kutta, Ketcheson–Ahmadia optimization, maximal stable step size optimization, pseudo-extrema, OSPREI]
 tags: [stability, explicit, runge-kutta, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Optimal stability polynomials for explicit Runge–Kutta methods

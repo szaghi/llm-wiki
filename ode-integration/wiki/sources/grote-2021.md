@@ -9,7 +9,7 @@ year: 2021
 venue: "Math. Comp. 90:2603-2643"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Mathematics_of_Computation_Grote_Stabilized_leapfrog_based_local_time-stepping_method_for_the.pdf"
 tags: [local-time-stepping, multirate, explicit, stability, wave-equation]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 518:113339"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Computational_Physics_Southworth_Implicit-explicit_Runge-Kutta_for_radiation_hydrodynamics_I.pdf"
 tags: [imex, runge-kutta, splitting, asymptotic-preserving, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

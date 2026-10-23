@@ -9,7 +9,7 @@ year: 2023
 venue: "BIT Numer. Math. 63:13"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_BIT_Numerical_Mathematics_Carrel_Low-rank_Parareal_a_low-rank_parallel-in-time_integrator.pdf"
 tags: [parallel, parareal, low-rank, parabolic, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

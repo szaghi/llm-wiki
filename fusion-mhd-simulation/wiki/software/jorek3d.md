@@ -5,7 +5,7 @@ description: "Stellarator extension of JOREK: a reduced MHD model built on the v
 status: established
 aliases: [JOREK stellarator extension]
 tags: [stellarator, reduced-mhd, finite-elements, spectral, equilibrium, tearing, ballooning, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # JOREK3D

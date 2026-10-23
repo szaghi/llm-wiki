@@ -5,7 +5,7 @@ description: "An extrapolation method combines several solutions of a low-order 
 status: established
 aliases: [Richardson extrapolation, Aitken–Neville extrapolation, Euler extrapolation, extrapolated Euler, backward Euler extrapolation, ExE-RK5, BE extrapolation, IEX4, implicit Euler extrapolation]
 tags: [runge-kutta, explicit, implicit, positivity, ssp]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Extrapolation methods (Richardson extrapolation of a base integrator)

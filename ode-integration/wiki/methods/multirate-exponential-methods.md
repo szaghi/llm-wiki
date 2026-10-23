@@ -5,7 +5,7 @@ description: "MERK and MERB methods turn the φ-function weights of an exponenti
 status: established
 aliases: [MERK, MERB, multirate exponential Runge–Kutta, multirate exponential Rosenbrock, MERB2, MERB3, MERB4, MERB5, MERB6]
 tags: [multirate, exponential, runge-kutta, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multirate exponential Runge–Kutta and Rosenbrock methods (MERK, MERB)

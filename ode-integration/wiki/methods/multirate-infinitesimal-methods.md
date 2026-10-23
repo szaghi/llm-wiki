@@ -5,7 +5,7 @@ description: "Multirate infinitesimal methods advance the slow partition with a 
 status: established
 aliases: [MRI, MRI-GARK, MIS, multirate infinitesimal step method, multirate infinitesimal GARK, infinitesimal multirate, MRIStep]
 tags: [multirate, runge-kutta, imex, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Multirate infinitesimal methods (MIS, MRI-GARK)

@@ -5,7 +5,7 @@ description: "Explicit Runge–Kutta methods whose coefficients let a step run i
 status: established
 aliases: [low-storage RK, LSERK, LSERK-AT, 2N methods, 2N-storage methods, 2R methods, 3S* methods, 3S*+ methods, Williamson methods, register-efficient Runge–Kutta]
 tags: [runge-kutta, explicit, low-storage, step-size-control, ssp, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Low-storage Runge–Kutta methods

@@ -5,7 +5,7 @@ description: "Sun and Shu enforce strong stability of an explicit Runge–Kutta 
 status: established
 aliases: [superviscosity filtering, hyperviscosity stabilization, modified method, filtering method, adaptive filtering method, anti-superviscosity]
 tags: [stability, runge-kutta, explicit, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Superviscosity-stabilized explicit Runge–Kutta methods

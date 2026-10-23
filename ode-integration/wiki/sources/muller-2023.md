@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 488:112234"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Computational_Physics_Müller_Exact_conservation_laws_for_neural_network_integrators_of_dy.pdf"
 tags: [structure-preserving, geometric-integration, hamiltonian, runge-kutta]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

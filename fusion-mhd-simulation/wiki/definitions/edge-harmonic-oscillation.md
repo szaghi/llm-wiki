@@ -5,7 +5,7 @@ description: "The quiescent H-mode is an ELM-free H-mode in which a saturated lo
 status: established
 aliases: [EHO, edge harmonic oscillation, QH-mode, quiescent H-mode, saturated kink-peeling mode]
 tags: [elm, pedestal, edge, kink, reduced-mhd, extended-mhd, tokamak]
-timestamp: 2026-10-16T23:55:00Z
+timestamp: 2026-10-16T18:38:00Z
 ---
 
 # Edge harmonic oscillation and QH-mode

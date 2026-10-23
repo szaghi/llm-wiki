@@ -5,7 +5,7 @@ description: "An exponential integrator spends its time on actions of φ-functio
 status: established
 aliases: [matrix-function action, φ-function action, phi-function evaluation, Leja interpolation, Leja method, Krylov exponential, KIOPS, phipm, phipm_simul_iom, EPIC, μ-mode integrator, auxiliary-problem integration, precomputed ETD matrices, Horner Taylor recursion]
 tags: [exponential, linear-algebra, stiff, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Evaluating φ-functions: Leja interpolation, Krylov and related methods

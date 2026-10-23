@@ -5,7 +5,7 @@ description: "TASE operators precondition the stiff linear(ized) part of a semi-
 status: established
 aliases: [TASE, TASE preconditioner, time-accurate and highly-stable explicit operators, RK+TASE, TASE-RK, TRK]
 tags: [stiff, explicit, stability, linear-algebra, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # TASE operators: time-accurate and highly stable explicit operators

@@ -5,7 +5,7 @@ description: "Lawson methods apply an explicit Runge–Kutta method to the equat
 status: established
 aliases: [Lawson scheme, integrating factor method, integrating-factor Runge–Kutta, IFRK, Lawson–Euler, stabilized Lawson, generalized Runge–Kutta of Lawson]
 tags: [exponential, explicit, stiff, stability, splitting]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Lawson (integrating-factor) methods

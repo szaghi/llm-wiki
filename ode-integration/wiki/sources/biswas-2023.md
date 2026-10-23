@@ -9,7 +9,7 @@ year: 2023
 venue: "Commun. Appl. Math. Comput. Sci. 18:1-28"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Communications_in_Applied_Mathematics_and_Computational_Scie_Biswas_Design_of_DIRK_schemes_with_high_weak_stage_order.pdf"
 tags: [runge-kutta, implicit, order-reduction, order-conditions, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

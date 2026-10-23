@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 100:67"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Scientific_Computing_Boscheri_A_Structure-Preserving_Semi-implicit_IMEX_Finite_Volume_Sche.pdf"
 tags: [imex, asymptotic-preserving, stiff, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

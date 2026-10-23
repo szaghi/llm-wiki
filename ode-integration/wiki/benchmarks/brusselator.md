@@ -5,7 +5,7 @@ description: "The one-dimensional advection–diffusion–reaction Brusselator, 
 status: established
 aliases: [advection–diffusion–reaction Brusselator, stiff Brusselator, 1D Brusselator, original Brusselator, six-species Brusselator]
 tags: [stiff, imex, multirate, software, verification, positivity]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Brusselator

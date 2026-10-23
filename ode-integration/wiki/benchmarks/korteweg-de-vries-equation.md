@@ -5,7 +5,7 @@ description: "The dispersive KdV equation u_t + 6uu_x + u_xxx = 0, its generaliz
 status: established
 aliases: [KdV equation, KdV, generalized KdV equation, Korteweg–de Vries, Kadomtsev–Petviashvili equation, KP equation, KP-I]
 tags: [verification, imex, structure-preserving, stiff, positivity, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Korteweg–de Vries equation

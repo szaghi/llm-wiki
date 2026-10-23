@@ -5,7 +5,7 @@ description: "A production–destruction system writes each component's right-ha
 status: established
 aliases: [PDS, production–destruction–rest system, PDRS, conservative production–destruction system, fully conservative PDS, graph Laplacian system]
 tags: [positivity, structure-preserving, stiff, verification]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Production–destruction systems

@@ -5,7 +5,7 @@ description: "Small non-axisymmetric fields applied by external or in-vessel coi
 status: established
 aliases: [RMP, RMPs, magnetic perturbation, MP, plasma response, RMP ELM suppression, ELM mitigation by RMP, density pump-out]
 tags: [elm, pedestal, edge, tokamak, extended-mhd, free-boundary, wall, tearing]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Resonant magnetic perturbations and plasma response

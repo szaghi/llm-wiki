@@ -5,7 +5,7 @@ description: "A single-step, single-stage Taylor (Cauchy–Kovalevskaya) time di
 status: established
 aliases: [LWFR, Lax–Wendroff flux reconstruction, LW-FR, Lax–Wendroff time discretization, approximate Lax–Wendroff procedure, single-stage Taylor time stepping, time-averaged flux, D2 dissipation, error-based time stepping for LWFR]
 tags: [lax-wendroff, explicit, stability, step-size-control, ader]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Lax–Wendroff flux reconstruction (single-stage Taylor time stepping)

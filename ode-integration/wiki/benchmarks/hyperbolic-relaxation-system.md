@@ -5,7 +5,7 @@ description: "Hyperbolic systems with a stiff relaxation source of strength 1/ε
 status: established
 aliases: [hyperbolic relaxation system, Jin–Xin relaxation system, linear relaxation system, stiff relaxation system, Chen–Levermore–Liu relaxation system]
 tags: [asymptotic-preserving, imex, stiff, verification, kinetic]
-timestamp: 2026-10-19T23:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Linear hyperbolic relaxation system

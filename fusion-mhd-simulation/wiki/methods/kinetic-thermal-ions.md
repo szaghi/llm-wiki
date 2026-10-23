@@ -5,7 +5,7 @@ description: "Extension of hybrid kinetic-MHD in which the bulk thermal ions, no
 status: established
 aliases: [KTI, kinetic thermal ions, thermal-ion kinetic-MHD, kinetic bulk ions, density and parallel-velocity synchronization]
 tags: [hybrid-kinetic, particles, mhd, energetic-particles, numerics, kink, tokamak, stellarator, ballooning]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Kinetic thermal ions in hybrid kinetic-MHD

@@ -9,7 +9,7 @@ year: 2024
 venue: "BIT Numer. Math. 64:14"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_BIT_Numerical_Mathematics_Akrivis_The_variable_two-step_BDF_method_for_parabolic_equations.pdf"
 tags: [linear-multistep, bdf, energy-method, stability, step-size-control, parabolic]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

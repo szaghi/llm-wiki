@@ -5,7 +5,7 @@ description: "The linear heat equation u_t = Delta u + g, semi-discretized to y'
 status: established
 aliases: [diffusion equation, linear diffusion, 2D heat equation, 1D heat equation]
 tags: [stiff, parallel, verification, linear-algebra]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Heat equation

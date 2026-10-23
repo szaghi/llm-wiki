@@ -5,7 +5,7 @@ description: "Phase-space diagnostic for frequency-chirping Alfvén modes that w
 status: established
 aliases: [action-angle chirping diagnostic, P2 slicing, wave-frame canonical transformation, phase-space bucket diagnostic]
 tags: [energetic-particles, alfven-eigenmode, hybrid-kinetic, particles, numerics]
-timestamp: 2026-10-16T23:55:00Z
+timestamp: 2026-10-16T18:38:00Z
 ---
 
 # Wave-frame action-angle diagnostic of chirping modes

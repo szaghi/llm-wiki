@@ -5,7 +5,7 @@ description: "Exact smooth compressible Euler solution, a vortex advected by a u
 status: established
 aliases: [isentropic Euler vortex, convecting vortex, Shu vortex, travelling vortex, low-Mach isentropic vortex]
 tags: [verification, runge-kutta, step-size-control, implicit, structure-preserving, imex]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Isentropic vortex

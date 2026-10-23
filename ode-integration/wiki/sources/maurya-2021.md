@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 446:110650"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Maurya_New_optimized_implicit-explicit_Runge-Kutta_methods_with_app.pdf"
 tags: [imex, semi-implicit, von-neumann-analysis, dispersion-relation-preserving, wave-propagation]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

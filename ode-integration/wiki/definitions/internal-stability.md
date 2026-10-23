@@ -5,7 +5,7 @@ description: "Internal stability is the stability of perturbations introduced at
 status: established
 aliases: [internal stability polynomials, internal amplification factor, maximum internal amplification factor, round-off propagation within a step, stage-wise stability]
 tags: [stability, explicit, runge-kutta, round-off]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Internal stability of explicit Runge–Kutta methods

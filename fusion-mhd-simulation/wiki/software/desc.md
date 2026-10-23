@@ -5,7 +5,7 @@ description: "Pseudospectral 3D ideal-MHD inverse equilibrium code in Python/JAX
 status: established
 aliases: [DESC stellarator code suite]
 tags: [equilibrium, stellarator, spectral, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # DESC

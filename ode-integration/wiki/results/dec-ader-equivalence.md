@@ -5,7 +5,7 @@ description: "Modern ADER is a deferred-correction scheme with low-order operato
 status: established
 aliases: [ADER is DeC, DeC–ADER equivalence, ADER–DeC convergence theorem]
 tags: [deferred-correction, ader, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Equivalence of DeC and ADER

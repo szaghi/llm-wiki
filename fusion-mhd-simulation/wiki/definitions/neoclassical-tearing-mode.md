@@ -5,7 +5,7 @@ description: "A tearing mode that is classically stable but metastable: once a s
 status: established
 aliases: [NTM, 2/1 NTM, neoclassical tearing, metastable tearing mode]
 tags: [tearing, extended-mhd, bootstrap-current, tokamak, disruption]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Neoclassical tearing mode

@@ -5,7 +5,7 @@ description: "Composition methods raise the order of a basic one-step map by cha
 status: established
 aliases: [triple jump, quintuple jump, Yoshida composition, Suzuki composition, symmetric composition, RKN splitting, force-gradient method, modified-potential splitting, near-integrable splitting, generalized order]
 tags: [splitting, geometric-integration, order-conditions, structure-preserving]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # Composition methods and Runge–Kutta–Nyström splittings

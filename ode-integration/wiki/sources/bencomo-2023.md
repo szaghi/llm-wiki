@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sci. Comput. 94:59"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Scientific_Computing_Bencomo_Discrete_Adjoint_Computations_for_Relaxation_RungeKutta_Meth.pdf"
 tags: [relaxation, adjoint, structure-preserving, runge-kutta, entropy-stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

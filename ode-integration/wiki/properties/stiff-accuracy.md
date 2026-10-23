@@ -5,7 +5,7 @@ description: "A Runge–Kutta method is stiffly accurate when the last row of A 
 status: established
 aliases: [stiffly accurate, SA, stiffly accurate form, globally stiffly accurate, GSA, implicitly stiffly accurate, ISA]
 tags: [stiff, runge-kutta, stability, dae, asymptotic-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Stiff accuracy

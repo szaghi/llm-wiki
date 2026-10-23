@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 434:110206"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Boscheri_High_order_pressure-based_semi-implicit_IMEX_schemes_for_the.pdf"
 tags: [imex, asymptotic-preserving, stiff, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Massive gas injection (MGI) is the disruption-mitigation scheme th
 status: established
 aliases: [MGI, gas injection, massive gas puff, multi-valve MGI]
 tags: [disruption, impurities, neutrals, mhd, tokamak]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Massive gas injection

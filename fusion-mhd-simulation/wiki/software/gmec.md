@@ -5,7 +5,7 @@ description: "Zhejiang University gyrokinetic-MHD energetic-particle code: linea
 status: established
 aliases: [GMEC_I, Gyro-kinetic MHD Energetic-particle Code]
 tags: [reduced-mhd, hybrid-kinetic, energetic-particles, alfven-eigenmode, finite-differences, ballooning, tearing, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # GMEC

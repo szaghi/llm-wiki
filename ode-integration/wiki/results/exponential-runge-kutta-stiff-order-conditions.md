@@ -5,7 +5,7 @@ description: "Stiff order conditions make an exponential Runge–Kutta or Rosenb
 status: established
 aliases: [stiff order conditions, Hochbruck–Ostermann order conditions, φ-order conditions, phi-order conditions, ϕ-order, stiffness resilience, stiffly accurate exponential integrator]
 tags: [exponential, order-conditions, stiff, order-reduction]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Stiff order conditions of exponential Runge–Kutta methods and φ-order conditions

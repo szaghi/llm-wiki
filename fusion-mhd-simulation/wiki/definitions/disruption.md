@@ -5,7 +5,7 @@ description: "A disruption is the rapid loss of thermal energy and then of plasm
 status: established
 aliases: [major disruption, current quench, CQ, plasma current spike, Ip spike, disruption mitigation]
 tags: [disruption, mhd, tokamak, runaway-electrons, wall, impurities]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Disruption: phases, current quench and current spike

@@ -5,7 +5,7 @@ description: "The Allen–Cahn reaction–diffusion equation, a stiff semilinear
 status: established
 aliases: [Allen-Cahn equation, phase-field equation, forced Allen–Cahn equation]
 tags: [stiff, parallel, imex, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Allen–Cahn equation

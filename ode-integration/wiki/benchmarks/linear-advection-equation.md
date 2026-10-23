@@ -5,7 +5,7 @@ description: "The constant- or variable-coefficient advection equation with its 
 status: established
 aliases: [linear advection, advection equation, scalar advection equation, transport equation, linear transport equation, travelling bump]
 tags: [verification, stability, positivity, order-reduction, ssp]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Linear advection equation

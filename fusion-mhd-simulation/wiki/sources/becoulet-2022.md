@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:066022"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Becoulet_Non-linear_MHD_modelling_of_edge_localized_modes_suppression.pdf"
 tags: [reduced-mhd, extended-mhd, elm, pedestal, tokamak, divertor, edge]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Summary

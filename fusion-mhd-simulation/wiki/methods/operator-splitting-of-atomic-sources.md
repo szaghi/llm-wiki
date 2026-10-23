@@ -5,7 +5,7 @@ description: "Ways of adding stiff, temperature-dependent ionization, recombinat
 status: established
 aliases: [Strang splitting of atomic sources, SS-field, SS-leapfrog+DR, CN-JFNK, CN-linear, T-in-n error, ODE/PDE splitting]
 tags: [time-integration, neutrals, numerics, edge]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Operator splitting and Newton–Krylov treatment of atomic-physics sources

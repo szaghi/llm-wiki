@@ -5,7 +5,7 @@ description: "Asymptotic-preserving time stepping for stiff kinetic collision op
 status: established
 aliases: [penalization method, Filbet–Jin penalization, BGK penalty, successive penalization]
 tags: [asymptotic-preserving, imex, kinetic, stiff]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # BGK penalization

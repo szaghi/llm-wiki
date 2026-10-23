@@ -9,7 +9,7 @@ year: 2025
 venue: "SIAM J. Sci. Comput. S311-S336"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_SIAM_Journal_on_Scientific_Computing_Muralikrishnan_Error_Analysis_and_Parallel_Scaling_Study_of_a_Parareal_Para.pdf"
 tags: [parallel, parareal, kinetic, hpc, order-reduction]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

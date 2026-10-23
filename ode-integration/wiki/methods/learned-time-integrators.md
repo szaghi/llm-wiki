@@ -5,7 +5,7 @@ description: "Learned time integrators put a trained neural network into time st
 status: established
 aliases: [neural network integrators, neural ODE surrogates, Lagrangian neural networks, neural operator surrogate, DeepONet surrogate, AMORE, Runge–Kutta PINN, RK-PINN, time-discrete PINN]
 tags: [learned-integrators, runge-kutta, structure-preserving, stiff, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Learned time integrators: neural surrogates and physics-informed Runge–Kutta networks

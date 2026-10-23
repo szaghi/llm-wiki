@@ -5,7 +5,7 @@ description: "Code-to-code benchmark of a vertical displacement event of an NSTX
 status: established
 aliases: [NSTX VDE benchmark, 3D VDE benchmark, Krebs 2020 VDE benchmark]
 tags: [benchmark, verification, vde, disruption, wall, free-boundary]
-timestamp: 2026-10-16T23:59:30Z
+timestamp: 2026-10-16T18:47:00Z
 ---
 
 # NSTX VDE benchmarks of JOREK, M3D-C1 and NIMROD (axisymmetric and 3D)

@@ -5,7 +5,7 @@ description: "Methods that close a nonlinear MHD model with the vacuum field and
 status: established
 aliases: [free-boundary MHD, resistive wall, JOREK-STARWALL, JOREK-CARIDDI, vacuum response, virtual casing]
 tags: [free-boundary, wall, vde, numerics]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Free-boundary and resistive-wall coupling

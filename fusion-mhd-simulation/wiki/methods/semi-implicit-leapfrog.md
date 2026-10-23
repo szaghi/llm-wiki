@@ -5,7 +5,7 @@ description: "NIMROD's time advance: velocity staggered half a step from density
 status: established
 aliases: [implicit leapfrog, mixed implicit/semi-implicit leapfrog, staggered semi-implicit advance, NIMROD time advance]
 tags: [time-integration, numerics, full-mhd]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Semi-implicit leapfrog

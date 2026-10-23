@@ -9,7 +9,7 @@ year: 2026
 venue: "BIT Numer. Math. 66:38"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_BIT_Numerical_Mathematics_Bazavov_2N-storage_Runge-Kutta_methods_Order_conditions_general_prop.pdf"
 tags: [runge-kutta, explicit, low-storage, order-conditions, embedded-pair]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

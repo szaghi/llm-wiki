@@ -9,7 +9,7 @@ year: 2022
 venue: "Comput. Phys. Commun. 274:108288"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Computer_Physics_Communications_Taheri_Time-discretization_of_a_plasma-neutral_MHD_model_with_a_sem.pdf"
 tags: [mhd, neutrals, time-integration, finite-elements, spectral, edge, verification, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "A differential-algebraic equation couples differential equations w
 status: established
 aliases: [DAE, index-1 DAE, index-2 DAE, semi-explicit DAE, implicit ODE, singular mass matrix]
 tags: [dae, stiff, implicit, order-reduction, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Differential-algebraic equations and their Runge–Kutta treatment

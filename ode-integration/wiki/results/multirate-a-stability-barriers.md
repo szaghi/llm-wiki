@@ -5,7 +5,7 @@ description: "Two impossibility theorems for multirate and GARK methods: no cons
 status: established
 aliases: [decoupled multirate A-stability barrier, internally consistent multirate barrier]
 tags: [multirate, stability, stiff, implicit]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # A-stability barriers for decoupled and internally consistent multirate methods

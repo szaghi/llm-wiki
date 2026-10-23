@@ -9,7 +9,7 @@ year: 2022
 venue: "Nucl. Fusion 62:036025"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2022_Crossref_Nuclear_Fusion_Hezaveh_Simulation_of_convective_transport_during_frequency_chirping.pdf"
 tags: [mhd, hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, tokamak, finite-differences]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

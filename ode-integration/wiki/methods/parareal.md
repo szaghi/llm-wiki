@@ -5,7 +5,7 @@ description: "Parareal iterates a cheap serial coarse propagator and an accurate
 status: established
 aliases: [parareal algorithm, Lions–Maday–Turinici algorithm, low-rank Parareal, exponential Parareal, ERK Parareal, optimized coarse propagator, OCP, multi-block parareal, windowed parareal]
 tags: [parallel, stiff, exponential, stability, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Parareal

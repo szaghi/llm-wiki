@@ -5,7 +5,7 @@ description: "A β limit set not by disruptive MHD but by enhanced transport fro
 status: established
 aliases: [soft beta limit, soft β-limit, W7-AS beta limit]
 tags: [stellarator, reduced-mhd, ballooning, verification, hybrid-kinetic]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Soft β limit of stellarators

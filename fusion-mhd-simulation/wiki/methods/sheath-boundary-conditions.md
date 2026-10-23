@@ -5,7 +5,7 @@ description: "Boundary conditions for MHD codes where field lines intersect a ma
 status: established
 aliases: [Bohm boundary condition, sheath BC, Bohm–Chodura condition, sheath heat transmission]
 tags: [edge, divertor, wall, mhd, numerics]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Sheath (Bohm) boundary conditions

@@ -9,7 +9,7 @@ year: 2022
 venue: "BIT Numer. Math. 62:139-170"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_BIT_Numerical_Mathematics_Koyaguerebo-Imé_Arbitrary_high_order_A-stable_and_B-convergent_numerical_met.pdf"
 tags: [deferred-correction, implicit, stiff, stability, b-convergence]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

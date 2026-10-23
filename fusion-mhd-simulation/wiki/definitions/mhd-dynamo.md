@@ -5,7 +5,7 @@ description: "The axisymmetric electromotive force produced by correlated non-ax
 status: established
 aliases: [dynamo, fluctuation-induced emf, mean-field dynamo, negative dynamo, fast dynamo, slow dynamo, parallel dynamo emf]
 tags: [full-mhd, kink, elm, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # MHD dynamo effect

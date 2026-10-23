@@ -5,7 +5,7 @@ description: "Nonlinear full-MHD initial-value code on a cylindrical (R, φ, Z) 
 status: established
 aliases: [MIPS code]
 tags: [full-mhd, finite-differences, tokamak, stellarator, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # MIPS

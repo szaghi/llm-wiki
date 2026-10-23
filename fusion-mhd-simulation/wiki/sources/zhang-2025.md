@@ -9,7 +9,7 @@ year: 2025
 venue: "Nucl. Fusion 65:066001"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2025_Crossref_Nuclear_Fusion_Zhang_Quantitative_magnetohydrodynamic_modelling_of_flux_pumping_i.pdf"
 tags: [full-mhd, kink, tearing, bootstrap-current, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Polynomial time integrators build every coefficient from interpola
 status: established
 aliases: [polynomial block method, PBM, additive polynomial block method, FIMEX, FIMEX-Radau, FIMEX-Radau*, fully implicit–explicit method, ODE polynomial, polynomial iterator, composite polynomial method]
 tags: [imex, implicit, runge-kutta, order-reduction, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Additive polynomial time integrators and FIMEX collocation methods

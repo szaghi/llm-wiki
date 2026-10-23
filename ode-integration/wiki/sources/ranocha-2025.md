@@ -9,7 +9,7 @@ year: 2025
 venue: "Commun. Appl. Math. Comput. 7:3-39"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Communications_on_Applied_Mathematics_and_Computation_Ranocha_On_Error-Based_Step_Size_Control_for_Discontinuous_Galerkin.pdf"
 tags: [runge-kutta, explicit, step-size-control, embedded-pair, ssp, cfd]
-timestamp: 2026-10-19T20:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Summary

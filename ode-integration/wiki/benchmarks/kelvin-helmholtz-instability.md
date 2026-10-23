@@ -5,7 +5,7 @@ description: "A periodic shear layer whose perturbation rolls up into vortices; 
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [verification, multirate, step-size-control, exponential, positivity]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Kelvin–Helmholtz instability

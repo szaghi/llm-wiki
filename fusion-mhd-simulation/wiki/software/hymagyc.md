@@ -5,7 +5,7 @@ description: "Hybrid code coupling linear resistive full MHD (an initial-value d
 status: established
 aliases: [HYMAGYC code]
 tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, time-integration, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # HYMAGYC

@@ -9,7 +9,7 @@ year: 2023
 venue: "ACM Trans. Math. Softw. 49:1-23"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_ACM_Transactions_on_Mathematical_Software_Ketcheson_Computing_with_B-series.pdf"
 tags: [order-conditions, geometric-integration, runge-kutta, software, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

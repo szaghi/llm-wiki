@@ -9,7 +9,7 @@ year: 2026
 venue: "J. Comput. Appl. Math. 476:117061"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2026_Crossref_Journal_of_Computational_and_Applied_Mathematics_Faleichik_Explicit_RungeKuttaChebyshev_methods_of_second_order_with_mo.pdf"
 tags: [stabilized, runge-kutta, explicit, stability, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

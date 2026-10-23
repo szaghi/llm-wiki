@@ -5,7 +5,7 @@ description: "How time-dependent Dirichlet data are imposed on the internal stag
 status: established
 aliases: [stage boundary conditions, boundary treatment of stage values, boundary treatment for IMEX Runge–Kutta, stage Dirichlet data, DAE-type boundary conditions, ODE-type boundary conditions]
 tags: [order-reduction, imex, runge-kutta, verification]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Boundary conditions for Runge–Kutta stages

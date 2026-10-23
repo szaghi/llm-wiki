@@ -5,7 +5,7 @@ description: "ARKODE, the SUNDIALS package for one-step methods: a shared time-l
 status: established
 aliases: [ARKode, ERKStep, ARKStep, MRIStep]
 tags: [software, imex, multirate, step-size-control, runge-kutta]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # ARKODE

@@ -5,7 +5,7 @@ description: "Discrete maximal parabolic L2 regularity holds for arbitrary step 
 status: established
 aliases: [discrete maximal L2 regularity, maximal parabolic regularity of time discretizations, discrete MR estimate]
 tags: [stability, runge-kutta, implicit, parabolic, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Discrete maximal regularity of variable-step Galerkin and Runge–Kutta time stepping

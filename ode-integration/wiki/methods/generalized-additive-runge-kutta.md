@@ -5,7 +5,7 @@ description: "GARK methods give each additive partition of the right-hand side i
 status: established
 aliases: [GARK, generalized-structure additive Runge–Kutta, generalized additively partitioned Runge–Kutta, internal consistency]
 tags: [runge-kutta, imex, multirate, order-conditions, stability, gark]
-timestamp: 2026-10-20T03:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Generalized additive Runge–Kutta (GARK) methods and internal consistency

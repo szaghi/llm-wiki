@@ -5,7 +5,7 @@ description: "The toroidal asymmetry of the power radiated during a mitigated th
 status: established
 aliases: [radiation peaking, toroidal peaking factor of radiation, TPF of radiated power, radiation asymmetry, energy impact, heat-flux factor]
 tags: [disruption, impurities, wall, mhd, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Toroidal radiation asymmetry and first-wall energy impact

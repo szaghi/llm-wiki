@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with lower-triangular Butcher matrix, so eac
 status: established
 aliases: [DIRK, SDIRK, ESDIRK, EDIRK, GEDIRK, singly diagonally implicit Runge–Kutta]
 tags: [runge-kutta, implicit, stiff, stage-order, linear-algebra]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Diagonally implicit Runge–Kutta methods (DIRK, SDIRK, ESDIRK)

@@ -9,7 +9,7 @@ year: 2024
 venue: "SIAM J. Sci. Comput. 46:A697-A718"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_SIAM_Journal_on_Scientific_Computing_Gander_A_New_ParaDiag_Time-Parallel_Time_Integration_Method.pdf"
 tags: [parallel, paradiag, linear-algebra, implicit-stage-solvers, bdf, parabolic]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

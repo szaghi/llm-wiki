@@ -5,7 +5,7 @@ description: "Fully implicit nonlinear extended-MHD code for tokamak X-point pla
 status: established
 aliases: [JOREK 2]
 tags: [reduced-mhd, full-mhd, extended-mhd, tokamak, finite-elements, spectral, time-integration, linear-solver, disruption, elm, free-boundary, wall]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # JOREK

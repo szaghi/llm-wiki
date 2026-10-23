@@ -5,7 +5,7 @@ description: "Ern and Guermond rewrite any explicit or IMEX Runge–Kutta tablea
 status: established
 aliases: [IDP time stepping, IDP-ERK, IDP-IMEX, invariant-domain-preserving Runge–Kutta, incremental form of the Butcher tableau, efficiency ratio, Ern–Guermond time stepping]
 tags: [positivity, structure-preserving, runge-kutta, imex, explicit, ssp]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Invariant-domain preserving high-order time stepping (explicit and IMEX)

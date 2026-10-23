@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 522:113622"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Computational_Physics_Babbar_Lax-Wendroff_flux_reconstruction_on_adaptive_curvilinear_mes.pdf"
 tags: [lax-wendroff, step-size-control, positivity, hyperbolic-conservation-laws, software]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

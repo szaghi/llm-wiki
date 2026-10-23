@@ -5,7 +5,7 @@ description: "Initial-value extended-MHD code with high-order C0 nodal spectral 
 status: established
 aliases: [NIMROD code]
 tags: [full-mhd, extended-mhd, finite-elements, spectral, time-integration, neutrals, wall, vde, verification]
-timestamp: 2026-10-16T23:59:30Z
+timestamp: 2026-10-16T18:47:00Z
 ---
 
 # NIMROD

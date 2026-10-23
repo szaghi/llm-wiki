@@ -5,7 +5,7 @@ description: "Inviscid Burgers u_t + (u²/2)_x = 0 and viscous Burgers with manu
 status: established
 aliases: [inviscid Burgers equation, viscous Burgers equation, Bateman–Burgers equation]
 tags: [structure-preserving, order-reduction, verification, stiff]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Burgers equation

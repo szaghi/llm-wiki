@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Sci. Comput. 91:21"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Scientific_Computing_Kuzmin_Bound-preserving_Flux_Limiting_for_High-Order_Explicit_Runge.pdf"
 tags: [positivity, ssp, structure-preserving, explicit, hyperbolic-conservation-laws]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

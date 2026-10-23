@@ -5,7 +5,7 @@ description: "After a low-Z purge triggers large-scale MHD that stochastizes the
 status: established
 aliases: [benign termination, runaway beam flush, RE reconstitution, trapped runaway seed]
 tags: [runaway-electrons, disruption, tearing, kink]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Runaway current reconstitution after an MHD flush

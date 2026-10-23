@@ -5,7 +5,7 @@ description: "Massive material injection (MMI) is the deliberate injection of la
 status: established
 aliases: [SPI, MMI, massive material injection, disruption mitigation system, DMS]
 tags: [disruption, impurities, runaway-electrons, mhd]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Shattered pellet injection and massive material injection

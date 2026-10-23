@@ -5,7 +5,7 @@ description: "JOREK's spatial discretization: isoparametric bicubic Bézier patc
 status: established
 aliases: [Hermite-Bézier elements, bicubic Bézier elements, Czarny–Huysmans elements, JOREK finite elements, G1 Bézier elements]
 tags: [finite-elements, spectral, numerics]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Bézier–Hermite finite elements with toroidal Fourier harmonics

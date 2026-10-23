@@ -9,7 +9,7 @@ year: 2021
 venue: "J. Comput. Phys. 424:109847"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Journal_of_Computational_Physics_Bassenne_Time-Accurate_and_highly-Stable_Explicit_operators_for_stiff.pdf"
 tags: [stiff, explicit, runge-kutta, stability, preconditioning, method-of-lines]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

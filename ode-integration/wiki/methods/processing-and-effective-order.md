@@ -5,7 +5,7 @@ description: "A kernel $\\psi_h$ has effective order $p$ if a near-identity proc
 status: established
 aliases: [effective order, processed method, conjugate method, kernel and processor, starting and finishing procedures, corrector]
 tags: [splitting, order-conditions, geometric-integration, runge-kutta]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # Processing and effective order

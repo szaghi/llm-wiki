@@ -5,7 +5,7 @@ description: "Plasmoid drift is the major-radius-outward E×B motion of a dense,
 status: established
 aliases: [plasmoid drift, ablation cloud drift, pellet cloud drift, E×B drift of plasmoids, LFS drift]
 tags: [disruption, impurities, neutrals, mhd, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Plasmoid drift of ablation clouds

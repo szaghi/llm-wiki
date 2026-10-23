@@ -9,7 +9,7 @@ year: 2025
 venue: "J. Comput. Phys. 529:113889"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2025_Crossref_Journal_of_Computational_Physics_Orlando_Asymptotic-preserving_IMEX_schemes_for_the_Euler_equations_o.pdf"
 tags: [imex, asymptotic-preserving, stiff, stability, order-reduction, cfd]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

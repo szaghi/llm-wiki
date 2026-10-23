@@ -5,7 +5,7 @@ description: "Codes that compute 3D ideal-MHD equilibria with nested flux surfac
 status: established
 aliases: [inverse equilibrium, 3D equilibrium codes, VMEC-type solvers, fixed-boundary 3D equilibrium]
 tags: [equilibrium, stellarator, spectral, verification]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Three-dimensional inverse equilibrium solvers

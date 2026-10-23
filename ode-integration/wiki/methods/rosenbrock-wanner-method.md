@@ -5,7 +5,7 @@ description: "Linearly implicit one-step methods that replace the nonlinear stag
 status: established
 aliases: [ROW method, Rosenbrock method, linearly implicit Runge–Kutta, W-method, Rodas, ROS3P]
 tags: [stiff, implicit, dae, order-reduction, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Rosenbrock–Wanner (ROW) and W-methods

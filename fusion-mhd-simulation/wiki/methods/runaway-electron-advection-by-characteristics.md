@@ -5,7 +5,7 @@ description: "Semi-Lagrangian solution of the runaway-electron continuity equati
 status: established
 aliases: [method of characteristics for runaway electrons, semi-Lagrangian RE advection, pseudo-particle RE advection, modified Boris algorithm]
 tags: [runaway-electrons, numerics, time-integration, particles, finite-elements, gpu]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Runaway-electron advection by the method of characteristics

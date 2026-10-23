@@ -5,7 +5,7 @@ description: "Neural operators that learn the snapshot-to-snapshot map of 2D pol
 status: established
 aliases: [FNO, Fourier neural operator, multi-variable FNO, ST-FNO, sparsified time-dependent FNO, neural-operator surrogate, data-driven surrogate]
 tags: [verification, numerics, machine-learning, reduced-mhd, extended-mhd, edge]
-timestamp: 2026-10-16T18:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Fourier neural operator surrogates of MHD simulations

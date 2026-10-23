@@ -5,7 +5,7 @@ description: "Impurity model for MHD codes in which one advected impurity densit
 status: established
 aliases: [coronal equilibrium, CE impurity model, coronal impurity fluid]
 tags: [impurities, disruption, mhd]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Coronal-equilibrium impurity model

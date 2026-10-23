@@ -5,7 +5,7 @@ description: "The energy method writes $\\lVert y_{n+1}\\rVert^2-\\lVert y_n\\rV
 status: established
 aliases: [energy analysis of Runge–Kutta methods, discrete energy law, discrete energy identity, discrete integration by parts]
 tags: [stability, runge-kutta, structure-preserving, implicit, explicit, imex]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Energy method for Runge–Kutta stability

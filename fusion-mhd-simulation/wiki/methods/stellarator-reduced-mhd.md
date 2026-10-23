@@ -5,7 +5,7 @@ description: "Generalization of tokamak reduced MHD in which the fixed toroidal 
 status: established
 aliases: [stellarator RMHD, Nikulsin reduced MHD, JOREK3D reduced MHD]
 tags: [reduced-mhd, stellarator, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Reduced MHD for stellarators

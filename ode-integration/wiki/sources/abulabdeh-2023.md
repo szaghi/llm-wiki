@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 478:111961"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Journal_of_Computational_Physics_Abu-Labdeh_Monolithic_multigrid_for_implicit_RungeKutta_discretizations.pdf"
 tags: [runge-kutta, implicit, implicit-stage-solvers, preconditioning, dae, cfd]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Mixed-precision explicit Runge–Kutta methods evaluate most right
 status: established
 aliases: [order-preserving mixed precision, q-order-preserving scheme, mixed-precision RKC, mixed-precision Runge–Kutta–Chebyshev, low-precision time integration, bfloat16 time stepping]
 tags: [explicit, runge-kutta, stabilized, stability, stiff, round-off, mixed-precision]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Mixed-precision explicit Runge–Kutta methods

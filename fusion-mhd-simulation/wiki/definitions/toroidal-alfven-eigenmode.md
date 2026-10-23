@@ -5,7 +5,7 @@ description: "Discrete shear-Alfvén eigenmode in the toroidicity-induced gap be
 status: established
 aliases: [TAE, toroidicity-induced Alfvén eigenmode, gap mode]
 tags: [alfven-eigenmode, energetic-particles, hybrid-kinetic, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Toroidal Alfvén eigenmode (TAE)

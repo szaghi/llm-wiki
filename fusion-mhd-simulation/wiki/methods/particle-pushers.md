@@ -5,7 +5,7 @@ description: "Orbit integrators that advance the markers of the kinetic modules 
 status: established
 aliases: [Boris pusher, Boris–Buneman, slow manifold Boris, guiding-centre pusher, gyrocentre pusher, orbit integrator]
 tags: [particles, energetic-particles, hybrid-kinetic, numerics, time-integration, gpu]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Particle pushers: Boris, slow-manifold Boris, guiding-centre and gyrokinetic

@@ -5,7 +5,7 @@ description: "Construction of MHD solvers by symbolic computation: the vector eq
 status: established
 aliases: [symbolic computation, automatic discretization, code generation, Compile-time Symbolic Solver, CSS, symbolic vector analysis]
 tags: [numerics, finite-elements, finite-differences, spectral]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Symbolic derivation and automatic discretization of MHD operators

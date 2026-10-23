@@ -5,7 +5,7 @@ description: "Arbitrarily high-order integrators that correct a cheap low-order 
 status: established
 aliases: [DeC, deferred correction method, Abgrall's DeC, explicit DeC, IMDeC, implicit deferred correction, DC2j, deferred correction for the implicit midpoint rule, difference correction, spectral deferred correction, SDC, multirate SDC, MRSDC, bDeC, sDeC, alpha-DeC, αDeC, bDeCu, bDeCdu, sDeCu, sDeCdu, efficient DeC, p-adaptive DeC, mPDeC, MPDeC, modified Patankar deferred correction, HBPC, Hermite–Birkhoff predictor–corrector, two-derivative deferred correction, Picard SDC, adaptive SDC]
 tags: [deferred-correction, explicit, implicit, stiff, order-conditions, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Deferred correction (DeC)

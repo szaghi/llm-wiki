@@ -5,7 +5,7 @@ description: "The source models that MHD codes use for shattered pellet injectio
 status: established
 aliases: [NGS ablation, neutral gas shielding, pellet ablation model, statistical fragmentation model, SPI source model, fragment ablation]
 tags: [disruption, impurities, numerics, mhd]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Pellet ablation and fragmentation models

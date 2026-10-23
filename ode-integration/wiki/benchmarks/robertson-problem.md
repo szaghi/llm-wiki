@@ -5,7 +5,7 @@ description: "Robertson's three-species chemical kinetics system, with rate cons
 status: established
 aliases: [Robertson chemical kinetics, ROBER, Robertson (1966) problem]
 tags: [stiff, verification, implicit, deferred-correction, positivity]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Robertson problem

@@ -9,7 +9,7 @@ year: 2024
 venue: "Phys. Plasmas 31:123902"
 local_file: "/home/stefano/papers/mosaic/fusion-mhd-simulation/2024_Crossref_Physics_of_Plasmas_Rahman_Sparsified_time-dependent_Fourier_neural_operators_for_fusio.pdf"
 tags: [machine-learning, extended-mhd, hybrid-kinetic, particles, pedestal, kink, tokamak, linear-solver, gpu]
-timestamp: 2026-10-16T23:59:00Z
+timestamp: 2026-10-16T18:46:00Z
 ---
 
 # Summary

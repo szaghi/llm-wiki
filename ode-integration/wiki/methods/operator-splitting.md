@@ -5,7 +5,7 @@ description: "Splitting methods advance $y'=f^{[1]}(y)+f^{[2]}(y)$ by composing 
 status: established
 aliases: [splitting method, N-split splitting, OS22mu, Strang-OS22mu, Lie splitting, Godunov splitting, Strang–Marchuk splitting, Störmer–Verlet, leapfrog, split-step Fourier, time-splitting spectral method, ADI, LOD, fractional step method, projector-splitting integrator]
 tags: [splitting, geometric-integration, order-reduction, multirate, asymptotic-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Operator splitting: Lie–Trotter, Strang and dimensional splitting

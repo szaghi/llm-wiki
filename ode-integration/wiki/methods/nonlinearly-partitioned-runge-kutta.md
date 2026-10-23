@@ -5,7 +5,7 @@ description: "NPRK methods integrate y' = F(y,y) for any two-argument splitting 
 status: established
 aliases: [NPRK, IMEX-NPRK, IMIM-NPRK, MR-NPRK, multirate NPRK, nonlinearly partitioned IMEX, sequentially coupled NPRK, implicitly wrapped MR-NPRK]
 tags: [runge-kutta, imex, multirate, order-conditions, stability, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Nonlinearly partitioned Runge–Kutta (NPRK) methods

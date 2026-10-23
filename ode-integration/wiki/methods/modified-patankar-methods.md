@@ -5,7 +5,7 @@ description: "Patankar-type schemes weight each production and destruction term 
 status: established
 aliases: [Patankar-type methods, Patankar trick, modified Patankar schemes, modified Patankar–Runge–Kutta, MPRK, MPRK22, MPRK22ncs, MPRK43, MPRKSO, SSPMPRK, MPE, modified Patankar–Euler, Patankar–Euler, modified Patankar deferred correction, mPDeC, MPDeC, modified Patankar linear multistep, MPLM, modified Patankar multistep, MPMS2, MPMS3, Patankar predictor–corrector, Patankar weight denominator]
 tags: [positivity, structure-preserving, stiff, implicit, deferred-correction, linear-multistep]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Modified Patankar methods (MPRK, MPDeC, MP linear multistep, Patankar predictor–corrector)

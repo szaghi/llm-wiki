@@ -9,7 +9,7 @@ year: 2023
 venue: "Appl. Math. Comput. 440:127644"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2023_Crossref_Applied_Mathematics_and_Computation_Gaburro_High_order_entropy_preserving_ADER-DG_schemes.pdf"
 tags: [ader, relaxation, entropy-stability, structure-preserving, hyperbolic-conservation-laws]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

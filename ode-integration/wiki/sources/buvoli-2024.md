@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 497:112623"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_Journal_of_Computational_Physics_Buvoli_Exponential_Runge-Kutta_Parareal_for_non-diffusive_equations.pdf"
 tags: [parallel, parareal, exponential, stability, hpc]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

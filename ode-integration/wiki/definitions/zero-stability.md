@@ -5,7 +5,7 @@ description: "A linear multistep method is zero-stable when the roots of its fir
 status: established
 aliases: [root condition, D-stability, stability at the origin, variable-step zero-stability]
 tags: [linear-multistep, stability, step-size-control]
-timestamp: 2026-10-20T01:00:00Z
+timestamp: 2026-10-19T13:16:00Z
 ---
 
 # Zero-stability

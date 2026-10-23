@@ -5,7 +5,7 @@ description: "Kinetic-MHD hybrid built on M3D-C1: δf energetic-particle markers
 status: established
 aliases: [M3D-C^1-K]
 tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, gpu, finite-elements, verification]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # M3D-C1-K

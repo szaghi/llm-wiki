@@ -5,7 +5,7 @@ description: "A B-series is a formal expansion over rooted trees of elementary d
 status: established
 aliases: [Butcher series, B-series method, Butcher group, composition law, substitution law, NB-series, P-series]
 tags: [runge-kutta, order-conditions, geometric-integration]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # B-series, composition and substitution laws

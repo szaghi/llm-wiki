@@ -9,7 +9,7 @@ year: 2021
 venue: "Commun. Appl. Math. Comput. Sci. 16:155-179"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2021_Crossref_Communications_in_Applied_Mathematics_and_Computational_Scie_Nüßlein_Positivity-preserving_adaptive_RungeKutta_methods.pdf"
 tags: [positivity, structure-preserving, runge-kutta, embedded-pair, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Repetitive edge MHD instability of the H-mode pedestal, set off by
 status: established
 aliases: [ELM, type-I ELM, ELM crash, pedestal collapse, QH-mode, EDA H-mode, QCE, ELM suppression, quasi-coherent mode, QCM]
 tags: [elm, pedestal, edge, ballooning, extended-mhd, tokamak]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # Edge-localized mode (ELM) and ELM-free regimes

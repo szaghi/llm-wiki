@@ -5,7 +5,7 @@ description: "PETSc's TS time-stepping component as the sources report it: expli
 status: established
 aliases: [PETSc/TS, TS]
 tags: [software, step-size-control, multirate, parallel]
-timestamp: 2026-10-19T18:00:00Z
+timestamp: 2026-10-19T11:55:00Z
 ---
 
 # PETSc TS

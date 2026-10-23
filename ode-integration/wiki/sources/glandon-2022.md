@@ -9,7 +9,7 @@ year: 2022
 venue: "SIAM J. Sci. Comput. 44:A3437-A3462"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_SIAM_Journal_on_Scientific_Computing_Glandon_Linearly_Implicit_Multistep_Methods_for_Time_Integration.pdf"
 tags: [linear-multistep, implicit, stiff, order-conditions, b-series, step-size-control]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

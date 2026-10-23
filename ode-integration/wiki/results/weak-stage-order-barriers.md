@@ -5,7 +5,7 @@ description: "Order barriers relating stages $s$, order $p$, weak stage order $q
 status: established
 aliases: [WSO order barriers, stage bound for weak stage order]
 tags: [runge-kutta, order-conditions, order-reduction, stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Weak-stage-order barriers

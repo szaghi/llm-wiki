@@ -5,7 +5,7 @@ description: "Diagonal SDC sweeps the collocation problem of one step with a dia
 status: established
 aliases: [diagonal SDC, parallel SDC, parallel-across-the-method SDC, MIN-SR-NS, MIN-SR-S, MIN-SR-FLEX, VDHS, IEpar, parallel diagonally iterated Runge–Kutta, PDIRK]
 tags: [parallel, implicit, stiff, stability, linear-algebra]
-timestamp: 2026-10-20T10:00:00Z
+timestamp: 2026-10-20T03:57:00Z
 ---
 
 # Parallel-across-the-method spectral deferred correction (diagonal SDC)

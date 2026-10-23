@@ -5,7 +5,7 @@ description: "Runge–Kutta methods with a full Butcher matrix built on Gauss, R
 status: established
 aliases: [IRK, fully implicit Runge–Kutta, Gauss–Legendre, Radau IIA, Lobatto IIIC, Lobatto IIIA, collocation methods, Radau-Right, ADER-DG ODE solver]
 tags: [runge-kutta, implicit, stiff, stability, linear-algebra, geometric-integration, parallel]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Fully implicit collocation Runge–Kutta methods (Gauss, Radau IIA, Lobatto IIIC)

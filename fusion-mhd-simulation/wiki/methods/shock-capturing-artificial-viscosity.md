@@ -5,7 +5,7 @@ description: "Solution-dependent, field-aligned artificial diffusion added to th
 status: established
 aliases: [shock capturing, discontinuity capturing, artificial viscosity, pressure-sensor shock capturing]
 tags: [stabilization, finite-elements, numerics, full-mhd, disruption, impurities]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Shock-capturing artificial viscosity for MHD finite elements

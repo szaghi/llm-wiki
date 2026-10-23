@@ -5,7 +5,7 @@ description: "Relaxation rescales each Runge–Kutta update by a scalar root γn
 status: established
 aliases: [RRK, relaxation RK, relaxation method, incremental direction technique, IDT, multiple-relaxation Runge–Kutta, MRRK, FSAL-R, R-FSAL, global relaxation, local relaxation]
 tags: [runge-kutta, structure-preserving, explicit, imex, multirate, step-size-control, relaxation, entropy-stability]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Relaxation Runge–Kutta methods

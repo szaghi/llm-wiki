@@ -5,7 +5,7 @@ description: "Quinpi integrates stiff hyperbolic systems with a third-order SDIR
 status: established
 aliases: [implicit CWENO, Quinpi scheme, Q3, Q3I3, predictor-linearized implicit WENO]
 tags: [implicit, runge-kutta, stiff, linear-algebra, structure-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Quinpi: implicit high-order finite-volume time stepping with a-posteriori time limiting

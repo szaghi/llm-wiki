@@ -5,7 +5,7 @@ description: "Code-to-code tests of the JOREK runaway-electron fluid model: RE b
 status: established
 aliases: [JOREK-GO benchmark, JOREK-DINA RE benchmark]
 tags: [benchmark, verification, runaway-electrons, disruption, vde]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # ITER runaway-electron benchmarks (JOREK–GO, JOREK–DINA)

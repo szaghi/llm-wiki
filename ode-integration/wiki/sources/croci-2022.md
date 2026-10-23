@@ -9,7 +9,7 @@ year: 2022
 venue: "J. Comput. Phys. 464:111349"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Journal_of_Computational_Physics_Croci_Mixed-precision_explicit_stabilized_RungeKutta_methods_for_s.pdf"
 tags: [mixed-precision, stabilized, runge-kutta, explicit, multirate, stiff]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

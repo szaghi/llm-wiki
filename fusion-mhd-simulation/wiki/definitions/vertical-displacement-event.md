@@ -5,7 +5,7 @@ description: "A vertical displacement event is the axisymmetric vertical instabi
 status: established
 aliases: [VDE, hot VDE, cold VDE, asymmetric VDE, vertical instability]
 tags: [disruption, vde, wall, free-boundary, kink, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Vertical displacement event (hot and cold VDE)

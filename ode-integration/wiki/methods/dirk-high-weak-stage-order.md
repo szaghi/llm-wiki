@@ -5,7 +5,7 @@ description: "Diagonally implicit Runge–Kutta schemes designed to have weak st
 status: established
 aliases: [high-WSO DIRK, DIRK-(7,4,4), DIRK-(12,5,4), DIRK-(12,5,5)]
 tags: [runge-kutta, implicit, order-reduction, stiff, order-conditions]
-timestamp: 2026-10-19T12:00:00Z
+timestamp: 2026-10-19T07:44:00Z
 ---
 
 # DIRK schemes with high weak stage order

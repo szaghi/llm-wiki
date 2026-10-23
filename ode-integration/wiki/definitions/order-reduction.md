@@ -5,7 +5,7 @@ description: "Order reduction is the drop of the observed convergence rate of a 
 status: established
 aliases: [stiff order reduction, stiff order]
 tags: [order-reduction, stiff, runge-kutta, stage-order, dae]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Order reduction

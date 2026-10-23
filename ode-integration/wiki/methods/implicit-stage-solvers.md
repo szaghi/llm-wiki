@@ -5,7 +5,7 @@ description: "How the nonlinear and linear systems of implicit Runge–Kutta sta
 status: established
 aliases: [stage solver, Newton iteration for implicit stages, simplified Newton, modified Newton, IRK preconditioning, stage-parallel preconditioner, implicit predictors, stage-parallel IRK, SPIRK, monolithic multigrid for IRK, Vanka relaxation, Picard iteration for stages, static condensation, frozen-coefficient predictor, block back substitution, extended block-Jacobi preconditioner, BJext, Jacobian-free Newton–Krylov, JFNK, matrix-free Newton–Krylov, inexact SDC, Jacobi iteration for Patankar systems, dual time stepping, pseudo-time stepping, pseudo-transient iteration, Rana preconditioner, IA splitting, Butcher transformed stage variables, stage-value formulation]
 tags: [implicit, linear-algebra, stiff, runge-kutta, software, parallel]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Solving the stage equations of implicit Runge–Kutta methods

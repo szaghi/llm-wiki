@@ -5,7 +5,7 @@ description: "A time integrator is positivity preserving if nonnegative data giv
 status: established
 aliases: [positivity-preserving time stepping, positivity preserving coefficient, nonnegativity preservation, unconditional positivity, monotone linear scheme, bound preservation, invariant domain preservation, admissibility preservation]
 tags: [positivity, structure-preserving, ssp, stiff, asymptotic-preserving, kinetic]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Positivity preservation in time integration

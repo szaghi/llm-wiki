@@ -5,7 +5,7 @@ description: "The constraint ∇·B = 0 and how the MHD codes of this bundle hol
 status: established
 aliases: [solenoidal magnetic field, div B = 0, magnetic divergence constraint]
 tags: [mhd, numerics, finite-elements, stellarator]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Divergence-free magnetic field

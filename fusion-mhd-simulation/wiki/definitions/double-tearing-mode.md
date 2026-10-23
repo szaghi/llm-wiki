@@ -5,7 +5,7 @@ description: "A tearing mode with two resonant surfaces of the same helicity in 
 status: established
 aliases: [DTM, 4/1 double tearing mode, double tearing]
 tags: [tearing, reduced-mhd, runaway-electrons, disruption, tokamak]
-timestamp: 2026-10-16T20:00:00Z
+timestamp: 2026-10-16T16:51:00Z
 ---
 
 # Double tearing mode

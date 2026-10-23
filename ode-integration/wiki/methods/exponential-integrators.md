@@ -5,7 +5,7 @@ description: "Exponential integrators treat a stiff linear part exactly through 
 status: established
 aliases: [phi-functions, exponential Runge–Kutta, ExpRK, exponential time differencing, ETD, ETD2RK, ETD3RK, ETD4RK, ETDRK4, Cox–Matthews scheme, Krogstad scheme, repartitioned exponential integrator, exponential Rosenbrock, ExpRB, EXPRB, EPIRK, exponential Euler, exponential Rosenbrock–Euler, stiffness resilient exponential integrators, SREXP, integrating factor method, Magnus integrator, commutator-free quasi-Magnus, CFQM, exponential midpoint rule, precise integration method]
 tags: [exponential, stiff, kinetic, asymptotic-preserving, multirate, order-conditions]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Exponential integrators and φ-functions

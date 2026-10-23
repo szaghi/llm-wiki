@@ -5,7 +5,7 @@ description: "A fully discrete scheme is entropy stable when a convex entropy of
 status: established
 aliases: [entropy conservation, entropy dissipation, fully discrete entropy stability, energy stability, invariant preservation, entropy-stable time integration, cell entropy inequality, local entropy inequality]
 tags: [structure-preserving, stability, runge-kutta, geometric-integration, entropy-stability, relaxation]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Entropy stability and conservation of the fully discrete scheme

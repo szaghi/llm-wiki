@@ -5,7 +5,7 @@ description: "The fourth-order Cahn–Hilliard phase-field equation, whose free 
 status: established
 aliases: [Cahn-Hilliard equation, convective Cahn–Hilliard equation, CHE]
 tags: [stiff, verification, implicit, exponential, structure-preserving]
-timestamp: 2026-10-20T14:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Cahn–Hilliard equation

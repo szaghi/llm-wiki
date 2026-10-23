@@ -9,7 +9,7 @@ year: 2024
 venue: "Int. J. High Perform. Comput. Appl. 38:263-281"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2024_Crossref_The_International_Journal_of_High_Performance_Computing_Appl_Loffeld_Performance_of_explicit_and_IMEX_MRI_multirate_methods_on_co.pdf"
 tags: [multirate, imex, hpc, software, implicit-stage-solvers, cfd]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # Summary

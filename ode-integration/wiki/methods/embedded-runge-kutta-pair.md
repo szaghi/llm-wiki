@@ -5,7 +5,7 @@ description: "An embedded pair adds a second weight vector to a Runge–Kutta ta
 status: established
 aliases: [embedded pair, embedded method, Runge–Kutta pair, p(p-hat) pair, FSAL, first same as last, local extrapolation, null rule, nested Runge–Kutta methods]
 tags: [runge-kutta, step-size-control, explicit, ssp, embedded-pair]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Embedded Runge–Kutta pairs and the FSAL property

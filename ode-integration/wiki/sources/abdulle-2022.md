@@ -9,7 +9,7 @@ year: 2022
 venue: "Math. Comp. 91:2681-2714"
 local_file: "/home/stefano/papers/mosaic/ode-integration/2022_Crossref_Mathematics_of_Computation_Abdulle_Explicit_stabilized_multirate_method_for_stiff_differential.pdf"
 tags: [multirate, stabilized, explicit, stiff, stability, local-time-stepping]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "Hybrid code coupling nonlinear visco-resistive full MHD to drift-k
 status: established
 aliases: [MEGA code]
 tags: [hybrid-kinetic, energetic-particles, alfven-eigenmode, particles, verification, stellarator]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # MEGA

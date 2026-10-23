@@ -5,7 +5,7 @@ description: "Semi-implicit IMEX Runge–Kutta methods write y' = H(y, y) with a
 status: established
 aliases: [SI-IMEX, SI-IMEX-RK, LIMEX-RK, linearly implicit IMEX Runge–Kutta, semi-implicit IMEX Runge–Kutta, partitioned-argument IMEX, Boscarino–Filbet–Russo semi-implicit Runge–Kutta, ALIMEX-RK, OPIRK, optimized partially implicit–explicit Runge–Kutta]
 tags: [imex, runge-kutta, stiff, linear-algebra, asymptotic-preserving]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Semi-implicit and linearly implicit IMEX Runge–Kutta methods

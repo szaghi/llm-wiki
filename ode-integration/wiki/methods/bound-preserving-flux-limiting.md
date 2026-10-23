@@ -5,7 +5,7 @@ description: "Writing a high-order Runge–Kutta update as a low-order Euler upd
 status: established
 aliases: [GMC limiter, global monolithic convex limiting, space-time flux limiting, flux-corrected transport in time, FCT, monolithic convex limiting, internal SSP, maximum principle preserving flux limiting, MPP flux limiting, SSP stages]
 tags: [positivity, ssp, explicit, implicit, structure-preserving, runge-kutta]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Bound-preserving flux limiting of Runge–Kutta stages and updates

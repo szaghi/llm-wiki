@@ -5,7 +5,7 @@ description: "Woodward and Colella's Mach 10 shock reflecting off a 30-degree we
 status: established
 aliases: [DMR, double Mach reflection problem, Woodward–Colella double Mach reflection]
 tags: [verification, step-size-control, ssp, multirate]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Double Mach reflection

@@ -5,7 +5,7 @@ description: "Variational moments equilibrium code: 3D ideal-MHD inverse equilib
 status: established
 aliases: [variational moments equilibrium code, NEMEC]
 tags: [equilibrium, stellarator, spectral, finite-differences]
-timestamp: 2026-10-16T23:45:00Z
+timestamp: 2026-10-16T18:35:00Z
 ---
 
 # VMEC

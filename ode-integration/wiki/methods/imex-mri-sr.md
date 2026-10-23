@@ -5,7 +5,7 @@ description: "IMEX-MRI-SR methods restart every fast sub-problem at the start of
 status: established
 aliases: [IMEX-MRI-SR, MRI-SR, multirate infinitesimal stage-restart, IMEX-MRI-SR2(1), IMEX-MRI-SR3(2), IMEX-MRI-SR4(3)]
 tags: [multirate, imex, runge-kutta, order-conditions, stability, step-size-control]
-timestamp: 2026-10-20T05:00:00Z
+timestamp: 2026-10-19T19:14:00Z
 ---
 
 # IMEX multirate infinitesimal stage-restart (IMEX-MRI-SR) methods

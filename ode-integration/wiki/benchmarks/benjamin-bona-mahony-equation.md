@@ -5,7 +5,7 @@ description: "The BBM equation u_t + u_x + u u_x − u_txx = 0 with periodic sol
 status: established
 aliases: [BBM equation, BBM solitary wave, regularized long-wave equation]
 tags: [structure-preserving, geometric-integration, verification]
-timestamp: 2026-10-20T16:00:00Z
+timestamp: 2026-10-20T06:18:00Z
 ---
 
 # Benjamin–Bona–Mahony equation
