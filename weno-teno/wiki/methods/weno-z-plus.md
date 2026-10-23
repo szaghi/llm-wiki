@@ -5,7 +5,7 @@ description: "WENO-Z+ adds to the WENO-Z weight a term proportional to (β_k+ε)
 status: established
 aliases: [WENO-Z+, WENO-Z+M, WENO-ZP, WENO-P+, Acker–Borges–Costa WENO]
 tags: [weno, reconstruction, low-dissipation, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # WENO-Z+ and WENO-Z+M

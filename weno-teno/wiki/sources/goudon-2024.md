@@ -9,7 +9,7 @@ year: 2024
 venue: "ESAIM Math. Model. Numer. Anal. 58:1263-1299"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_ESAIM_Mathematical_Modelling_and_Numerical_Analysis_Goudon_An_explicit_well-balanced_scheme_on_staggered_grids_for_baro.pdf"
 tags: [well-balanced, finite-volume, positivity, entropy-stable, shallow-water]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

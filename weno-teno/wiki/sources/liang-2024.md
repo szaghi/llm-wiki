@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 497:112618"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Liang_A_new_type_of_non-polynomial_based_TENO_scheme_for_hyperboli.pdf"
 tags: [teno, rbf, finite-difference, low-dissipation, thinc, spectral-analysis]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

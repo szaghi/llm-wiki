@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 270:106134"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Fluids_Başkaya_Assessment_of_immersed_boundary_methods_for_hypersonic_flows.pdf"
 tags: [immersed-boundary, finite-volume, amr, reacting-flows, benchmark]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

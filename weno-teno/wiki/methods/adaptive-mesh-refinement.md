@@ -5,7 +5,7 @@ description: "Hierarchical h-refinement of Cartesian or mapped meshes in nested 
 status: established
 aliases: [AMR, SAMR, block-structured AMR, structured adaptive mesh refinement, patch-based AMR, tree-based AMR, quadtree AMR, octree AMR]
 tags: [amr, finite-volume, finite-difference, software, gpu, mhd]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Block-structured adaptive mesh refinement

@@ -5,7 +5,7 @@ description: "Cell-centred finite volumes on unstructured meshes reconstruct a c
 status: established
 aliases: [constrained least-squares reconstruction, VWLSQ, VWLSQ-ITER, vertex-based weighted least squares, node-averaging Green–Gauss, NAGG, WLSQ, least-squares gradient, nonlinear weighting strategy, NW, WLSQ-GCC, ghost-cell constraint, WLSQ-EC, WLSQ-EA, WLSQ-WA, curvature-corrected symmetry technique, Gauss gradient, volume-normalized Taylor basis]
 tags: [finite-volume, reconstruction, limiting, weno]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Gradient reconstruction on unstructured meshes

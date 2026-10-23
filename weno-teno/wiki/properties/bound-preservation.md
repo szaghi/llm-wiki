@@ -5,7 +5,7 @@ description: "A scheme is bound-preserving when its discrete solution stays in t
 status: established
 aliases: [bound-preserving scheme, positivity preservation, invariant-region preservation, invariant-domain preservation, physical-constraint preservation, BP, PP, IDP, PCP]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Bound preservation

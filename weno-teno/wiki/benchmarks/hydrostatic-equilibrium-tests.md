@@ -5,7 +5,7 @@ description: "Suite of Euler-with-gravity tests for well-balanced schemes: isoth
 status: established
 aliases: [hydrostatic steady state, isothermal equilibrium, polytropic equilibrium, Lane–Emden polytrope, Sod under gravity, stratified atmosphere]
 tags: [benchmark, well-balanced, asymptotic-preserving]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Hydrostatic equilibrium tests under gravity

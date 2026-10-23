@@ -5,7 +5,7 @@ description: 'Path-conservative schemes discretize a non-conservative product $\
 status: established
 aliases: [path-conservative method, PCCU scheme, path-conservative central-upwind scheme, A-WENO PCCU scheme, Dal Maso–LeFloch–Murat path]
 tags: [numerical-flux, central-scheme, riemann-solver, finite-volume, finite-difference, well-balanced]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Path-conservative schemes

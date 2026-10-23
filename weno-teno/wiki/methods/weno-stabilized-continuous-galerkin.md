@@ -5,7 +5,7 @@ description: "The CG-WENO method of Kuzmin and Vedral uses a Hermite WENO recons
 status: established
 aliases: [CG-WENO, dissipation-based WENO stabilization, WENO-based nonlinear stabilization]
 tags: [weno, limiting, low-dissipation, mhd]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Dissipation-based WENO stabilization of continuous finite elements

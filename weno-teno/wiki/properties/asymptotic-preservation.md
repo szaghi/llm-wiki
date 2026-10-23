@@ -5,7 +5,7 @@ description: "A scheme for a singularly perturbed problem is asymptotic preservi
 status: established
 aliases: [AP, AP scheme, asymptotic-preserving scheme, unified asymptotic preserving scheme, asymptotic accuracy, AA]
 tags: [asymptotic-preserving, well-balanced, finite-volume, mhd]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Asymptotic preservation

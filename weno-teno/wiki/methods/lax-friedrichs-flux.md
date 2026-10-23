@@ -5,7 +5,7 @@ description: 'The Lax–Friedrichs two-point flux and the Lax–Friedrichs flux 
 status: established
 aliases: [Rusanov flux, local Lax–Friedrichs, LLF, global Lax–Friedrichs, GLF, Lax–Friedrichs flux splitting, Rusanov flux splitting]
 tags: [numerical-flux, finite-difference, bound-preserving, weno, teno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Lax–Friedrichs (Rusanov) flux and flux splitting

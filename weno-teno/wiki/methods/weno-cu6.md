@@ -5,7 +5,7 @@ description: "WENO-CU6 (Hu et al.) is a sixth-order central-upwind WENO that add
 status: established
 aliases: [WENO-CU6, sixth-order central-upwind WENO, WENO-CU6-M1, EWENO-CU6, EWENO-CU]
 tags: [weno, reconstruction, low-dissipation, finite-difference, turbulence]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # WENO-CU6

@@ -5,7 +5,7 @@ description: "The modified-wavenumber characterization of a possibly nonlinear s
 status: established
 aliases: [ADR, spectral analysis, modified wavenumber analysis, dispersion and dissipation analysis]
 tags: [low-dissipation, reconstruction, weno, teno, finite-difference]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Approximate dispersion relation

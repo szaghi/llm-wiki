@@ -5,7 +5,7 @@ description: "The two most often run one-dimensional Euler Riemann problems with
 status: established
 aliases: [Sod problem, Sod shock tube, Lax problem, Lax shock tube, Riemann problem of Lax, Lax–Harden problem]
 tags: [benchmark, weno, teno, riemann-solver]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Sod and Lax shock tubes

@@ -5,7 +5,7 @@ description: "BVD is the selection principle that, in each cell, picks among can
 status: established
 aliases: [BVD, BVD principle, boundary variation diminishing algorithm]
 tags: [reconstruction, low-dissipation, interface-capturing, finite-volume, riemann-solver]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Boundary variation diminishing (BVD)

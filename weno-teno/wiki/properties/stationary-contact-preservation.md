@@ -5,7 +5,7 @@ description: "A scheme preserves stationary contacts when an isolated discontinu
 status: established
 aliases: [exact capture of stationary contact discontinuities, preservation of stationary linearly degenerate discontinuities, stationary discontinuity preservation]
 tags: [riemann-solver, finite-difference, well-balanced, multiphase, dg]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Stationary contact preservation

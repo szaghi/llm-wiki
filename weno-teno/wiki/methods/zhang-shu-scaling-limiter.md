@@ -5,7 +5,7 @@ description: "The Zhang–Shu limiter scales a high-order polynomial linearly to
 status: established
 aliases: [scaling limiter, bound-preserving limiter, positivity-preserving limiter, maximum-principle-satisfying limiter, BP limiter, simplified BP limiter, PP limiter]
 tags: [bound-preserving, positivity, limiting, dg, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Zhang–Shu scaling limiter

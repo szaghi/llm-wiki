@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Methods Appl. Mech. Eng. 421:116795"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Huang_A_new_troubled_cell_indicator_and_a_new_limiter_based_on_TEN.pdf"
 tags: [dg, teno, limiting, troubled-cell, smoothness-indicator, low-dissipation]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

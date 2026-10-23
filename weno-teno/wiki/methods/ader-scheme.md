@@ -5,7 +5,7 @@ description: "ADER schemes advance a DG or finite-volume solution in one step: a
 status: established
 aliases: [ADER, ADER-DG, ADER-FV, ADER predictor–corrector, local space–time predictor, one-step ADER]
 tags: [dg, finite-volume, limiting, immersed-boundary, multiphase]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # ADER schemes

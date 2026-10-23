@@ -5,7 +5,7 @@ description: "Learned WENO weights replace the smoothness-indicator formula of a
 status: established
 aliases: [WENO3-NN, WENO3-NN1, WENO3-NN2, WENO5-NN, neural-network WENO, data-driven WENO weights, machine-learned reconstruction, data-driven shock capturing]
 tags: [machine-learning, weno, reconstruction, finite-volume, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Learned WENO weights

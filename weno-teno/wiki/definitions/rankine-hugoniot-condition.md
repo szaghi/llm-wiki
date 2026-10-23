@@ -5,7 +5,7 @@ description: "The Rankine–Hugoniot condition ties the speed of a discontinuity
 status: established
 aliases: [Rankine–Hugoniot condition, jump condition, interface condition, interface conservation, discrete Rankine–Hugoniot speed]
 tags: [shock-tracking, riemann-solver, numerical-flux, central-scheme]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Rankine–Hugoniot jump condition

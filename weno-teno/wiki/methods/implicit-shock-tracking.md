@@ -5,7 +5,7 @@ description: "Implicit shock tracking makes the mesh geometry an unknown and mov
 status: established
 aliases: [MDG-ICE, MDG+ICE, HOIST, space-time HOIST, slab-based HOIST, high-order implicit shock tracking, moving discontinuous Galerkin with interface condition enforcement, moving discontinuous Galerkin with interface conservation enforcement, implicit discontinuity tracking, shock fitting by optimization]
 tags: [shock-tracking, dg, numerical-flux]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Implicit shock tracking and moving DG (MDG-ICE)

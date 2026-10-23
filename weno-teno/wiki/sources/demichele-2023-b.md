@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 492:112439"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_De_Asymptotically_entropy-conservative_and_kinetic-energy_prese.pdf"
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, central-scheme, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

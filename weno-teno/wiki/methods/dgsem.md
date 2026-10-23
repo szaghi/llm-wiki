@@ -5,7 +5,7 @@ description: "The DGSEM is nodal collocation DG on tensor-product Legendre–Gau
 status: established
 aliases: [LGL-DGSEM, DG spectral element method, nodal DGSEM, split-form DGSEM, collocation DG on Gauss–Lobatto nodes]
 tags: [dg, entropy-stable, kinetic-energy-preserving, limiting, software]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Discontinuous Galerkin spectral element method (DGSEM)

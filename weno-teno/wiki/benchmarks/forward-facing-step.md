@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark of Mach 3 flow in a wind tunnel wi
 status: established
 aliases: [forward-facing step, wind tunnel with a step, Mach 3 wind tunnel]
 tags: [benchmark, low-dissipation, weno]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Mach 3 forward-facing step

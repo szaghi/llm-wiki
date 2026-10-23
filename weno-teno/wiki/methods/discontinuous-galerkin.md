@@ -5,7 +5,7 @@ description: "The discontinuous Galerkin (DG) semi-discretization of a conservat
 status: established
 aliases: [DG, RKDG, central DG, CDG, Runge–Kutta discontinuous Galerkin, modal DG, nodal DG, space–time DG, LDG, local discontinuous Galerkin, discontinuous spectral element method, DSEM]
 tags: [dg, numerical-flux, limiting, bound-preserving]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Discontinuous Galerkin method

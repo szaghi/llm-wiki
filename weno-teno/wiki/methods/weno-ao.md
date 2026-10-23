@@ -5,7 +5,7 @@ description: "WENO-AO nonlinearly hybridizes one large central high-order stenci
 status: established
 aliases: [WENO-AO, combination of ENO and WENO, adaptive-order WENO, WENO-AO-(5,3), WENO-AO-(7,3), WENO-AO-(9,3), WENOAO5]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # WENO-AO (adaptive-order WENO)

@@ -5,7 +5,7 @@ description: "Three sources build compressible-flow solvers in the unstructured 
 status: established
 aliases: [OpenFOAM, rhoCentralFoam, blastFoam, RSDFoam, UMReactingFlow]
 tags: [software, finite-volume, gpu, kinetic-energy-preserving, numerical-flux]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # OpenFOAM-based compressible solvers

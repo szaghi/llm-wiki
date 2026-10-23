@@ -5,7 +5,7 @@ description: "The one- and two-layer, one- and two-dimensional shallow-water (Sa
 status: established
 aliases: [Saint-Venant equations, SWE, shallow water equations, two-layer shallow-water equations, lake at rest, moving-water equilibrium]
 tags: [well-balanced, finite-volume, central-scheme, benchmark, shallow-water]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Shallow-water equations

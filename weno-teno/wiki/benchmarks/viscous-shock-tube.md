@@ -5,7 +5,7 @@ description: "Two-dimensional Navier–Stokes shock tube of Daru and Tenaud in a
 status: established
 aliases: [Daru–Tenaud viscous shock tube, viscous shock-tube problem, shock–boundary-layer interaction in a shock tube]
 tags: [benchmark, low-dissipation, finite-difference, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Viscous shock tube (Daru–Tenaud)

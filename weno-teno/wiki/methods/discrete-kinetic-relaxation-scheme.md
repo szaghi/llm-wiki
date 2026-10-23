@@ -5,7 +5,7 @@ description: "A discrete kinetic (Jin–Xin, BGK-type) scheme replaces a system 
 status: established
 aliases: [discrete BGK scheme, kinetic scheme, Jin–Xin relaxation scheme, discrete kinetic approximation, four-wave model]
 tags: [asymptotic-preserving, finite-difference, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Discrete kinetic relaxation schemes

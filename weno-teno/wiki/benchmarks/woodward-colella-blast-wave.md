@@ -5,7 +5,7 @@ description: "One-dimensional Euler problem of two strong blast waves between re
 status: established
 aliases: [interacting blast waves, two blast waves interaction, Woodward–Colella blast wave, blast wave problem]
 tags: [benchmark, weno, teno, low-dissipation, positivity]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Woodward–Colella interacting blast waves

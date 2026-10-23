@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 498:112672"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Zhang_A_hybrid_WENO5IS-THINC_reconstruction_scheme_for_compressibl.pdf"
 tags: [multiphase, interface-capturing, thinc, finite-volume, bound-preserving]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

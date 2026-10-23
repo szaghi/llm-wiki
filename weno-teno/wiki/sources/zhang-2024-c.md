@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 504:112890"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Zhang_Finite_difference_and_finite_volume_ghost_multi-resolution_W.pdf"
 tags: [weno, cweno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

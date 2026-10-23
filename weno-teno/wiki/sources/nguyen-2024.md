@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 508:113005"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Nguyen_Optimal_transport_for_mesh_adaptivity_and_shock_capturing_of.pdf"
 tags: [artificial-viscosity, moving-mesh, dg, shock-capturing, hypersonic, unstructured-mesh]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

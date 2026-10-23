@@ -5,7 +5,7 @@ description: "The α-damping viscous flux computes the interface gradient as the
 status: established
 aliases: [alpha-damping scheme, α-damping interface gradient, α-EG, α-IG, gradient sharing, interface-gradient viscous flux]
 tags: [finite-difference, compact-scheme, low-dissipation, navier-stokes, gradient-based-reconstruction]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # α-damping viscous flux discretization

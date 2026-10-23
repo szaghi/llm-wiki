@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 285:108644"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computer_Physics_Communications_Bernardini_STREAmS-20_Supersonic_turbulent_accelerated_Navier-Stokes_so.pdf"
 tags: [software, gpu, finite-difference, turbulence, kinetic-energy-preserving, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

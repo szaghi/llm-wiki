@@ -5,7 +5,7 @@ description: "Smooth exact travelling-wave solution of ideal and relativistic MH
 status: established
 aliases: [Alfvén wave test, circularly polarised Alfvén wave, rotated Alfvén wave, large-amplitude Alfvén wave]
 tags: [benchmark, mhd, relativistic]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Circularly polarized Alfvén wave

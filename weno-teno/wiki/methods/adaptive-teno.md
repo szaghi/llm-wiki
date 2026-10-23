@@ -5,7 +5,7 @@ description: "Adaptive TENO varies the TENO cut-off locally through a discontinu
 status: established
 aliases: [TENO-A, TENO-AA, TENO5-A, TENO6-A, TENO8-AA, TENO10-AA, TENO-AZ, TENO-LAD, TENO6-SA, scale-adaptive TENO, adaptive dissipation TENO, adaptive cut-off TENO, TENO with adaptive accuracy order]
 tags: [teno, reconstruction, low-dissipation, turbulence, finite-difference]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Adaptive TENO (TENO-A, TENO-AA)

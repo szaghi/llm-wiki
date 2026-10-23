@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 502:112793"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Zhang_A_finite_difference_scale-adaptive_TENO_scheme_for_turbulenc.pdf"
 tags: [teno, low-dissipation, spectral-analysis, finite-difference, turbulence]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

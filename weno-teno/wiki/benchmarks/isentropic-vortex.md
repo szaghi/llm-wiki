@@ -5,7 +5,7 @@ description: "Smooth exact solution of the Euler equations, an isentropic vortex
 status: established
 aliases: [isentropic vortex advection, isentropic vortex evolution, vortex convection, steady isentropic vortex]
 tags: [benchmark, weno, dg, entropy-stable, finite-volume]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Isentropic vortex

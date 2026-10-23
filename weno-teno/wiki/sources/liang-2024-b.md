@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Phys. Commun. 302:109236"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computer_Physics_Communications_Liang_A_new_high-order_shock-capturing_TENO_scheme_combined_with_s.pdf"
 tags: [teno, hybrid-scheme, kinetic-energy-preserving, split-form, troubled-cell, spectral-analysis]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

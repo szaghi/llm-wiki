@@ -5,7 +5,7 @@ description: "Qin, Chen, Lin and Deng close a fifth-order staggered WCNS at bloc
 status: established
 aliases: [shock-capturing boundary closure, nonlinear boundary closure, conservative boundary closure, WCNS-MR boundary closure, conservative solution points, semi-uniform grid]
 tags: [finite-difference, compact-scheme, weno, reconstruction, limiting]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Shock-capturing boundary closure for multi-block finite differences

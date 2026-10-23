@@ -5,7 +5,7 @@ description: "A positivity-preserving flux limiter blends, interface by interfac
 status: established
 aliases: [PP flux limiter, Hu–Adams–Shu limiter, positivity-preserving limiter, positivity- and boundedness-preserving flux limiter, parametrized flux limiter]
 tags: [positivity, bound-preserving, limiting, finite-difference, numerical-flux]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Positivity-preserving flux limiter (Hu–Adams–Shu)

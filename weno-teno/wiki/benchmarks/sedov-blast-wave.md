@@ -5,7 +5,7 @@ description: "Point-explosion benchmark: the energy of one or a few cells drives
 status: established
 aliases: [Sedov problem, Sedov–Taylor blast wave, point explosion, Sedov blast]
 tags: [benchmark, positivity, bound-preserving, weno]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Sedov blast wave

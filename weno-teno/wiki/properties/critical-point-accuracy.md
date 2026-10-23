@@ -5,7 +5,7 @@ description: "A nonlinear reconstruction keeps its design order at a critical po
 status: established
 aliases: [critical-point accuracy, accuracy near critical points, Cp-property, order degeneracy at extrema]
 tags: [weno, reconstruction, finite-difference, critical-points]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Accuracy at critical points

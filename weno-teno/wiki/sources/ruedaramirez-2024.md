@@ -9,7 +9,7 @@ year: 2024
 venue: "Commun. Appl. Math. Comput. 6:1860-1898"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Communications_on_Applied_Mathematics_and_Computation_Rueda-Ramírez_Monolithic_Convex_Limiting_for_Legendre-Gauss-Lobatto_Discon.pdf"
 tags: [dg, limiting, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "A generalized Riemann problem has piecewise-linear (or piecewise-s
 status: established
 aliases: [GRP, HLL-GRP, HLL-type generalized Riemann problem solver, generalized Riemann problem, rotational gradient]
 tags: [riemann-solver, numerical-flux, finite-volume, mhd]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Generalized Riemann problem (GRP) solvers

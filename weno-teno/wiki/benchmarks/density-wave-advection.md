@@ -5,7 +5,7 @@ description: "Smooth density (entropy) wave carried at uniform velocity and pres
 status: established
 aliases: [density wave, entropy wave advection, sine density wave, advection of an entropy wave, density perturbation advection]
 tags: [benchmark, kinetic-energy-preserving, entropy-stable, low-dissipation, weno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Density-wave advection

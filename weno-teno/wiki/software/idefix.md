@@ -5,7 +5,7 @@ description: "Lesur et al.'s performance-portable C++17 Kokkos code for astrophy
 status: established
 aliases: [IDEFIX, Idefix]
 tags: [software, gpu, mhd, finite-volume, riemann-solver]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # IDEFIX

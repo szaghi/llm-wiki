@@ -5,7 +5,7 @@ description: "One-dimensional ideal-MHD Riemann problem with a constant normal f
 status: established
 aliases: [Brio–Wu problem, Brio–Wu tube, MHD shock tube, Brio and Wu shock tube]
 tags: [benchmark, mhd, riemann-solver, central-scheme, relativistic]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Brio–Wu MHD shock tube

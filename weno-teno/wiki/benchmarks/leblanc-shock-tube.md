@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem with pressure ratio 10^9 and
 status: established
 aliases: [LeBlanc problem, Le Blanc shock tube, LeBlanc shock tube]
 tags: [benchmark, positivity, bound-preserving, low-dissipation]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Leblanc shock tube

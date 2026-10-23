@@ -6,7 +6,7 @@ status: established
 symbol: "$\\mathsf C_{2p}$, $\\mathsf C_{2p}^{-1}$"
 aliases: [average-to-point transformation, AtoP, PtoA, point-value passage, Laplacian correction, deconvolution of cell averages, McCorquodale–Colella correction]
 tags: [finite-volume, mhd, reconstruction]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Cell-average to point-value conversion

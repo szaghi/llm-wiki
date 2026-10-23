@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sci. Comput. 94:54"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Scientific_Computing_Calhoun_The_Cartesian_Grid_Active_Flux_Method_with_Adaptive_Mesh_Ref.pdf"
 tags: [active-flux, amr, finite-volume, free-stream-preservation, software]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

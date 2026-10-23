@@ -5,7 +5,7 @@ description: "Flux differencing replaces the DG volume term D f by symmetric two
 status: established
 aliases: [flux-differencing DG, split-form DG, split-form DGSEM, two-point flux volume integral, entropy-conservative DG volume term, LeFloch–Mercier–Rohde flux, Hadamard-product form]
 tags: [dg, finite-difference, entropy-stable, kinetic-energy-preserving, numerical-flux, software]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Flux differencing and split-form DG

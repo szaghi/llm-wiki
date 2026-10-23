@@ -5,7 +5,7 @@ description: "An r-adaptive scheme moves a fixed number of grid points, by varia
 status: established
 aliases: [moving mesh method, r-adaptivity, adaptive moving mesh, mesh redistribution, MM-WENOMR, MM-O5, MM-O6, smooth adaptive meshing, SAM, SAM-ALE, optimal-transport mesh adaptation, Monge–Ampère mesh adaptation]
 tags: [finite-difference, entropy-stable, multiphase, relativistic, weno, moving-mesh]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Adaptive moving mesh finite differences

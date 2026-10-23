@@ -5,7 +5,7 @@ description: "Adaptive DG refines the mesh (h) or raises the polynomial degree (
 status: established
 aliases: [hp-adaptivity, h-adaptation, p-adaptation, p-refinement, metric-based mesh adaptation, a posteriori error estimation, SSED estimator, hp-shock capturing]
 tags: [dg, amr, entropy-stable, limiting, turbulence]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # h- and hp-adaptation for DG

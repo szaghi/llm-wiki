@@ -4,7 +4,7 @@ title: "Notation registry"
 description: "Normative symbol registry — every concept page writes mathematics in this notation, never in paper-native symbols."
 status: established
 tags: [notation, meta]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Notation registry

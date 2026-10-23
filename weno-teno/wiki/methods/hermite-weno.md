@@ -5,7 +5,7 @@ description: "Hermite WENO (HWENO) builds WENO candidates from cell averages plu
 status: established
 aliases: [HWENO, Hermite WENO reconstruction, HWENO-R, HWENO-L, finite-difference HWENO, Zhong–Shu HWENO, moment-based HWENO, multi-resolution HWENO, MR-HWENO, hybrid HWENO, PCP HWENO, HWENO6-M5-I, HTENO, Hermite TENO, OE-HWENO, oscillation-eliminating HWENO]
 tags: [weno, reconstruction, finite-volume, dg, compact-scheme]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Hermite WENO

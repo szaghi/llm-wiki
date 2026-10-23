@@ -5,7 +5,7 @@ description: "Triply periodic turbulence box. In the decaying form a random sole
 status: established
 aliases: [decaying compressible isotropic turbulence, decaying isotropic turbulence, compressible homogeneous isotropic turbulence, compressible HIT, decaying HIT, forced compressible turbulence, driven subsonic turbulence]
 tags: [benchmark, turbulence, low-dissipation, teno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Compressible isotropic turbulence

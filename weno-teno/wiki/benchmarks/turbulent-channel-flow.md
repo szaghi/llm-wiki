@@ -5,7 +5,7 @@ description: "Pressure-driven compressible flow between two isothermal no-slip w
 status: established
 aliases: [plane channel flow, turbulent plane channel, compressible channel flow, channel between immersed blocks]
 tags: [benchmark, turbulence, gpu, immersed-boundary]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Turbulent channel flow

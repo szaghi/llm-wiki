@@ -5,7 +5,7 @@ description: "Convex limiting blends a high-order update with a bound-preserving
 status: established
 aliases: [flux-corrected transport, FCT, algebraic flux correction, AFC, invariant-domain-preserving limiting, IDP limiting, a posteriori blending, Zalesak limiter, sparse IDP DG, subcell convex limiting, monolithic convex limiting, MCL]
 tags: [limiting, bound-preserving, positivity, dg, entropy-stable]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Convex limiting and invariant-domain-preserving schemes

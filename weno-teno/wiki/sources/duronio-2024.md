@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 274:106240"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Fluids_Duronio_Implementation_and_assessment_of_a_low-dissipative_OpenFOAM.pdf"
 tags: [software, finite-volume, kinetic-energy-preserving, hybrid-scheme, multiphase, unstructured-mesh]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

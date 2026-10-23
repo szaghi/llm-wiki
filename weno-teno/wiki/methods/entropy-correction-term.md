@@ -5,7 +5,7 @@ description: "An entropy correction term adds to each element of a residual-dist
 status: established
 aliases: [Abgrall correction, entropy correction, entropy fix of residual distribution schemes, kinetic-energy correction term]
 tags: [entropy-stable, kinetic-energy-preserving, dg, finite-difference]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-22T09:49:00Z
 ---
 
 # Entropy correction terms

@@ -5,7 +5,7 @@ description: "Multi-dimensional Euler tests with Sod-type circular, spherical an
 status: established
 aliases: [explosion problem, implosion problem, cylindrical explosion, spherical explosion, 2D explosion, Liska–Wendroff implosion]
 tags: [benchmark, low-dissipation, central-scheme, teno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Two-dimensional explosion and implosion problems

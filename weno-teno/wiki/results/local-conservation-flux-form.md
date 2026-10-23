@@ -5,7 +5,7 @@ description: "Coppola and Veldman prove that a banded periodic matrix has vanish
 status: established
 aliases: [global conservation implies local conservation, flux-form equivalence, finite-difference finite-volume equivalence, discrete main theorem of calculus]
 tags: [finite-difference, finite-volume, kinetic-energy-preserving, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Local conservation is equivalent to a flux form

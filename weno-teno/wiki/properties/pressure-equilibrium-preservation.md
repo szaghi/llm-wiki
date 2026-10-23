@@ -5,7 +5,7 @@ description: "A discretization is pressure-equilibrium preserving when initial d
 status: established
 aliases: [PEP, pressure equilibrium preserving, KEEP-PE, interface equilibrium, preservation of constant velocity and pressure, compatibility condition, FC/PE scheme]
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, multiphase, turbulence]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Pressure-equilibrium preservation

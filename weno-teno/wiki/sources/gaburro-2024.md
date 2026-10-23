@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Methods Appl. Mech. Eng. 431:117311"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Gaburro_Discontinuous_Galerkin_schemes_for_hyperbolic_systems_in_non.pdf"
 tags: [dg, limiting, non-conservative-systems, path-conservative, multiphase, unstructured-mesh]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

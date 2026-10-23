@@ -5,7 +5,7 @@ description: "Numerical dissipation is the part of a scheme's error that damps r
 status: established
 aliases: [numerical diffusion, numerical viscosity, anti-diffusion, negative dissipation, ND, high-order artificial dissipation, JST dissipation]
 tags: [low-dissipation, numerical-flux, reconstruction, central-scheme]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Numerical dissipation and anti-dissipation

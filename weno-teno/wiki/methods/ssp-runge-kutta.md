@@ -5,7 +5,7 @@ description: "Strong-stability-preserving Runge–Kutta methods are convex combi
 status: established
 aliases: [SSP-RK, SSP-RK3, TVD Runge–Kutta, TVD-RK3, Shu–Osher Runge–Kutta, strong-stability-preserving time integration]
 tags: [bound-preserving, limiting, weno, dg]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # SSP Runge–Kutta time stepping

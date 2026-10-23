@@ -5,7 +5,7 @@ description: 'Central-upwind fluxes use only one-sided local speeds $a^\pm_{i+1/
 status: established
 aliases: [CU scheme, Kurganov–Noelle–Petrova flux, semi-discrete central-upwind scheme, Riemann-solver-free scheme]
 tags: [central-scheme, numerical-flux, finite-volume, characteristic, low-dissipation]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Central-upwind schemes

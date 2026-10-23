@@ -5,7 +5,7 @@ description: "STREAmS is a GPLv3 Fortran and CUDA finite-difference solver for d
 status: established
 aliases: [STREAmS-2.0, Supersonic turbulent accelerated Navier-Stokes solver]
 tags: [software, gpu, finite-difference, kinetic-energy-preserving, weno, turbulence]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # STREAmS

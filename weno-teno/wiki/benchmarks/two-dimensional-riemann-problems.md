@@ -5,7 +5,7 @@ description: "Four-quadrant Riemann problems of the two-dimensional Euler equati
 status: established
 aliases: [2D Riemann problem, four-quadrant Riemann problem, Lax–Liu configuration 3, Lax–Liu configuration 12, Lax–Liu configuration 7]
 tags: [benchmark, low-dissipation, weno, teno, central-scheme]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Two-dimensional Riemann problems

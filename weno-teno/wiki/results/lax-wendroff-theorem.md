@@ -5,7 +5,7 @@ description: "The Lax–Wendroff theorem makes conservation in flux form, with c
 status: established
 aliases: [Lax–Wendroff convergence theorem, Lax–Wendroff consistency condition, conservation and convergence to weak solutions]
 tags: [finite-volume, finite-difference, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Lax–Wendroff theorem

@@ -5,7 +5,7 @@ description: "PVM solvers write the numerical flux as a central average minus a 
 status: established
 aliases: [PVM, PVM-int-8, Jacobian-free PVM, polynomial viscosity matrix, internal polynomial PVM, viscosity-matrix flux]
 tags: [riemann-solver, numerical-flux, relativistic, mhd, finite-volume]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Polynomial viscosity matrix (PVM) Riemann solver

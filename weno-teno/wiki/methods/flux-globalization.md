@@ -5,7 +5,7 @@ description: "Flux globalization absorbs the integral of the source or non-conse
 status: established
 aliases: [global flux, global flux formulation, flux-globalization-based scheme, GF-WENO, flux-globalized central-upwind scheme, quasi-conservative form]
 tags: [well-balanced, finite-volume, central-scheme, weno, numerical-flux]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Flux globalization for balance laws

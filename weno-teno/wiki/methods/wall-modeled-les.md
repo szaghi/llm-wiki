@@ -5,7 +5,7 @@ description: "Equilibrium wall-modelled LES solves thin-boundary-layer ODEs betw
 status: established
 aliases: [WMLES, wall-modeled LES, equilibrium wall-stress model, unified WR/WMLES, IBM+WMLES]
 tags: [turbulence, immersed-boundary, numerical-flux, low-dissipation, weno, teno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Wall-modelled large-eddy simulation

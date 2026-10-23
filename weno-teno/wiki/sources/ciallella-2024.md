@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Math. Appl. 175:1-18"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Mathematics_with_Applications_Ciallella_Very_high_order_treatment_of_embedded_curved_boundaries_in_c.pdf"
 tags: [dg, immersed-boundary, unstructured-mesh, very-high-order, space-time]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

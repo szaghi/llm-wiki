@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 503:112829"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Del_A_well-balanced_positive_entropy-stable_and_multi-dimensiona.pdf"
 tags: [shallow-water, well-balanced, entropy-stable, positivity, unstructured-mesh, carbuncle]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

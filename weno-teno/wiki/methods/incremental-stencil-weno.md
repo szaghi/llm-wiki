@@ -5,7 +5,7 @@ description: "Incremental-stencil WENO (WENO-IS, WENO5IS) of Wang, Xiang and Hu 
 status: established
 aliases: [WENO-IS, WENO5IS, IS-WENO, incremental-stencil WENO interpolation, WCNS-IS interpolation]
 tags: [weno, reconstruction, multiphase, interface-capturing]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Incremental-stencil WENO

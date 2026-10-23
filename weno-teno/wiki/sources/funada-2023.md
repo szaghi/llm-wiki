@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 265:105986"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_Funada_High-order_immersed_boundary_method_for_inviscid_flows_appli.pdf"
 tags: [immersed-boundary, flux-reconstruction, dg, compressible-flow, benchmark]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

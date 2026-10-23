@@ -5,7 +5,7 @@ description: "A scale sensor estimates the local reduced wavenumber of the data,
 status: established
 aliases: [scale sensor, effective scaled wavenumber, ESW, estimated scaled wavenumber, k_ESW, K_ESW, wavenumber sensor, second-derivative sensor, Li sensor, optimized scale sensor, phase-independent scale sensor, TENO6-SA sensor]
 tags: [low-dissipation, teno, finite-difference, limiting]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Scale sensors and the effective scaled wavenumber

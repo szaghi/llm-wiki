@@ -5,7 +5,7 @@ description: "Steady Mach 2 Euler flow through a channel containing a diamond-sh
 status: established
 aliases: [diamond wedge in a channel, Mach 2 diamond, diamond airfoil in a tunnel, supersonic diamond]
 tags: [benchmark, shock-tracking, dg]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Supersonic flow in a diamond-wedge channel

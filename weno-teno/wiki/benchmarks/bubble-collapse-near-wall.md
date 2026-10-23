@@ -5,7 +5,7 @@ description: "A gas or vapour bubble in high-pressure liquid next to a rigid wal
 status: established
 aliases: [cavitation bubble collapse near a wall, CBNW, near-wall bubble collapse, vapour bubble collapse near a wall, gas bubble collapse near a wall, Lauer bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, cavitation]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Bubble collapse near a wall

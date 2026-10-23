@@ -5,7 +5,7 @@ description: "URANOS is a BSD-licensed Fortran 90, OpenACC and MPI finite-differ
 status: established
 aliases: [Unsteady Robust All-around Navier-StOkes Solver, URANOS GPU]
 tags: [software, gpu, finite-difference, teno, turbulence, immersed-boundary]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # URANOS

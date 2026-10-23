@@ -5,7 +5,7 @@ description: "Hybrid schemes use a cheap linear (central, energy-preserving or o
 status: established
 aliases: [hybrid WENO, TENO-S, hybrid central/WENO, hybrid compact-WENO, hybrid TENO, hybrid linear–nonlinear scheme, WENO-H, MDAD-HY, TENO-HY, three-region hybrid, hybrid EP–WENO, hybrid EP–TENO, flux/state hybrid, ADADF-HY, hybrid MR-WCNS, MMR-WENO, HMR-WENO, modified MR-WENO, WENO5IS-THINC]
 tags: [weno, teno, reconstruction, low-dissipation, turbulence, limiting]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Hybrid central-WENO schemes

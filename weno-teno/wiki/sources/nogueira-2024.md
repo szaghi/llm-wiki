@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Math. Appl. 168:84-99"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Mathematics_with_Applications_Nogueira_Machine_learning-based_WENO5_scheme.pdf"
 tags: [machine-learning, weno, smoothness-indicator, spectral-analysis, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

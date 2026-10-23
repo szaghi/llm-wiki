@@ -5,7 +5,7 @@ description: "TENET is a modal discontinuous Galerkin code for astrophysical com
 status: established
 aliases: [TENETGPU, TENET GPU]
 tags: [software, gpu, dg, artificial-viscosity, turbulence]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # TENET

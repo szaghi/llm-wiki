@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 265:105972"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_Bielawski_Highly-scalable_GPU-accelerated_compressible_reacting_flow_s.pdf"
 tags: [software, gpu, finite-volume, reacting-flows, unstructured-mesh, performance]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

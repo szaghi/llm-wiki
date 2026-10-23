@@ -5,7 +5,7 @@ description: "ForestClaw is a quadtree patch-based adaptive mesh refinement code
 status: established
 aliases: [ForestClaw, forest-of-quadtrees AMR, p4est patch AMR]
 tags: [software, finite-volume, amr]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # ForestClaw

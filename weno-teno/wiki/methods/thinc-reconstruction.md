@@ -5,7 +5,7 @@ description: "THINC reconstructs a cell's data by a hyperbolic-tangent jump prof
 status: established
 aliases: [THINC, tangent of hyperbola for interface capturing, tanh reconstruction]
 tags: [interface-capturing, reconstruction, low-dissipation, finite-volume, finite-difference]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # THINC reconstruction

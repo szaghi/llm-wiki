@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD robustness tests: the Balsara–Spicer b
 status: established
 aliases: [magnetic blast wave, MHD blast, Balsara–Spicer blast wave, MHD rotor, second rotor problem, weak magnetic blast]
 tags: [benchmark, mhd, positivity, entropy-stable]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # MHD blast wave and rotor

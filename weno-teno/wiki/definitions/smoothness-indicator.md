@@ -5,7 +5,7 @@ description: "A smoothness indicator β_k is a quadratic functional of the data 
 status: established
 aliases: [smoothness indicator, local smoothness indicator, LSI, IS_k, Jiang–Shu indicator, global smoothness indicator, oscillation indicator, reference smoothness indicator, symmetry-preserving indicators, L1-type indicators, IMWENO-P, WENO-NS]
 tags: [reconstruction, weno, teno, cweno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Smoothness indicators

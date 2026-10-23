@@ -5,7 +5,7 @@ description: "Viscous flow in a square cavity driven by its sliding top wall, ru
 status: established
 aliases: [lid-driven cavity flow, driven cavity, MHD lid-driven cavity, accelerating-lid cavity]
 tags: [benchmark, mhd, asymptotic-preserving, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Lid-driven cavity

@@ -5,7 +5,7 @@ description: "The normalised-variable diagram plots the normalised interface val
 status: established
 aliases: [NVD, normalized variable diagram, unified normalised-variable diagram, UND]
 tags: [reconstruction, finite-volume, limiting, weno, low-dissipation]
-timestamp: 2026-10-22T18:00:00Z
+timestamp: 2026-10-22T09:49:00Z
 ---
 
 # Normalised-variable diagram

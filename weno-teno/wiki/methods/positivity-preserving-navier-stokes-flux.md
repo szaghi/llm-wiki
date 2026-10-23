@@ -5,7 +5,7 @@ description: "Zhang's Lax–Friedrichs-type flux of the total (advective minus d
 status: established
 aliases: [positivity-preserving viscous flux, positivity-preserving Navier–Stokes flux, Zhang's positivity-preserving flux, positivity-preserving convection–diffusion flux splitting, total-flux Lax–Friedrichs flux]
 tags: [positivity, bound-preserving, numerical-flux, finite-difference, finite-volume, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Positivity-preserving numerical fluxes for Navier–Stokes

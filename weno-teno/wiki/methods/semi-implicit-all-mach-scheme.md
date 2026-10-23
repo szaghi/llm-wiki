@@ -5,7 +5,7 @@ description: "Semi-implicit all-Mach schemes split the Euler or MHD equations in
 status: established
 aliases: [all-Mach scheme, all-speed semi-implicit scheme, low-Mach semi-implicit scheme, SI-IMEX WENO, S4T3, all sonic Mach MHD scheme, AP WENO-CT, pressure-based semi-implicit MHD, flux-vector-splitting semi-implicit scheme]
 tags: [asymptotic-preserving, imex, semi-implicit, all-mach, finite-difference, weno, characteristic, low-dissipation, mhd]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Semi-implicit all-Mach schemes

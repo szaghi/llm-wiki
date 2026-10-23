@@ -5,7 +5,7 @@ description: "Two-dimensional vortex in exact equilibrium between a piecewise-li
 status: established
 aliases: [Gresho–Chan vortex, triangular vortex, low-Mach Gresho vortex]
 tags: [benchmark, low-dissipation, asymptotic-preserving, machine-learning]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Gresho vortex

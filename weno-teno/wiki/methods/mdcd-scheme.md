@@ -5,7 +5,7 @@ description: "MDCD schemes are six-point fourth-order finite-difference fluxes w
 status: established
 aliases: [MDCD, MDAD, MDAD-WENO, MDAD-HY, MDCD-HY, minimized dispersion and adaptive dissipation, Sun–Ren MDCD scheme, WCNS-SA, WCNS-opt, ADADF, ADADF-HY]
 tags: [finite-difference, low-dissipation, weno, turbulence]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Minimized-dispersion and controllable-dissipation (MDCD) schemes

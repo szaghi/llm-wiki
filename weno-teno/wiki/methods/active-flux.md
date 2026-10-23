@@ -5,7 +5,7 @@ description: "Active Flux evolves cell averages conservatively with fluxes from 
 status: established
 aliases: [AF, active point value method, high-order Active Flux, Cartesian Active Flux, AF with evolution-Galerkin operators]
 tags: [finite-volume, reconstruction, characteristic, limiting]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Active Flux

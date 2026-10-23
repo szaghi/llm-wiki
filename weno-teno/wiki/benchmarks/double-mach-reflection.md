@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark in which a Mach 10 shock at 60° t
 status: established
 aliases: [DMR, double Mach reflection of a strong shock, Woodward–Colella double Mach reflection]
 tags: [benchmark, low-dissipation, weno, teno, dg]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Double Mach reflection

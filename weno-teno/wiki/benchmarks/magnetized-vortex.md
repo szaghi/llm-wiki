@@ -5,7 +5,7 @@ description: "Smooth exact equilibrium vortices of ideal and relativistic MHD, i
 status: established
 aliases: [MHD vortex, magnetized vortex, iso-density vortex, iso-enthalpy vortex, near-vacuum magnetized vortex, Balsara vortex]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Magnetized (MHD) vortex

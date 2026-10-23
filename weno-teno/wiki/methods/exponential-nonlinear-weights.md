@@ -5,7 +5,7 @@ description: "Chen and Deng's exponential nonlinear weights d_k exp(-β_k^λ/λ)
 status: established
 aliases: [WCNS-EXP, exponential mapping weights, exponential-mapping nonlinear weights, unconditionally optimal weights, EXP weights]
 tags: [weno, reconstruction, finite-difference, compact-scheme]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Exponential nonlinear weights (WCNS-EXP)

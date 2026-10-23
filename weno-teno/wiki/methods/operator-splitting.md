@@ -5,7 +5,7 @@ description: "Operator splitting advances the transport part of a balance law wi
 status: established
 aliases: [Strang splitting, fractional-step method, convection–chemistry splitting, constant-volume reactor step, relaxation splitting, infinite-rate relaxation]
 tags: [finite-volume, software, gpu, reacting-flows, stiff-source, well-balanced, multiphase]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Operator splitting for stiff source terms

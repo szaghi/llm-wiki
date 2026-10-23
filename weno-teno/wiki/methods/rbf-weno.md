@@ -5,7 +5,7 @@ description: "RBF-based WENO and TENO replace polynomial candidates by radial-ba
 status: established
 aliases: [RBF-WENO, WENO-G, Gaussian RBF WENO, radial basis function WENO, RBF-ENO, non-polynomial TENO, Gaussian RBF TENO]
 tags: [weno, teno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # RBF-based WENO

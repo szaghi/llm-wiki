@@ -5,7 +5,7 @@ description: "A discretization on curvilinear or moving grids is free-stream pre
 status: established
 aliases: [freestream preservation, free-stream preserving, discrete metric identities, geometric conservation law, GCL, watertight subcell discretization, constant-state preservation]
 tags: [dg, finite-difference, limiting, entropy-stable, reconstruction]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Free-stream preservation

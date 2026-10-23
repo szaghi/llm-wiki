@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 499:112701"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Berta_A_4th-order_accurate_finite_volume_method_for_ideal_classica.pdf"
 tags: [mhd, relativistic, finite-volume, weno, troubled-cell, reconstruction]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

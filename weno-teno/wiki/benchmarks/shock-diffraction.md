@@ -5,7 +5,7 @@ description: "Shock-diffraction benchmarks: the 2D Mach 5.09 corner problem, its
 status: established
 aliases: [shock diffraction problem, shock diffraction at a corner, shock diffraction around a backward-facing step, Mach 5.09 shock diffraction, Mach 10 shock reflection and diffraction]
 tags: [benchmark, positivity, bound-preserving, dg, relativistic, gpu]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Shock diffraction

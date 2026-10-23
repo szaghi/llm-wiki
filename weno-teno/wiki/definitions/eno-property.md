@@ -5,7 +5,7 @@ description: "A reconstruction has the ENO property when, near a discontinuity, 
 status: established
 aliases: [ENO-property, essentially non-oscillatory property, ENO condition]
 tags: [reconstruction, weno, teno, limiting]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # ENO property

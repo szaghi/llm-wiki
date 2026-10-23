@@ -5,7 +5,7 @@ description: "Flux reconstruction corrects the discontinuous interpolated flux o
 status: established
 aliases: [FR, CPR, correction procedure via reconstruction, ESFR, VCJH, Vincent–Castonguay–Jameson–Huynh schemes, energy-stable flux reconstruction, Huynh g2 lumped-Lobatto scheme]
 tags: [flux-reconstruction, dg, entropy-stable, software, immersed-boundary]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Flux reconstruction and energy-stable FR

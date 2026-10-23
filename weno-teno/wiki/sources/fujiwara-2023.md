@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 478:111973"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Fujiwara_Fully_conservative_and_pressure-equilibrium_preserving_schem.pdf"
 tags: [multiphase, kinetic-energy-preserving, central-scheme, numerical-flux, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

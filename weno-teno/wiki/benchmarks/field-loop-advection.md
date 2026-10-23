@@ -5,7 +5,7 @@ description: "Two-dimensional ideal-MHD test in which a weak cylindrical magneti
 status: established
 aliases: [field loop advection, advection of a magnetic field loop, current loop advection, Gardiner–Stone field loop]
 tags: [benchmark, mhd, relativistic, low-dissipation]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Magnetic field-loop advection

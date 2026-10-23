@@ -5,7 +5,7 @@ description: "Split forms write the convective terms of mass and momentum as wei
 status: established
 aliases: [split forms, skew-symmetric form, Feiereisen splitting, Kennedy–Gruber splitting, KGP splitting, supraconservative discretization, dual-sided discretization, rotational form, Div-rot, Div-str, EMAC, Morinishi splitting, Rozema splitting, Ducros splitting, quadratic split, cubic split, quartic split, quintic split, Jameson–Pirozzoli form, KEEP scheme, energy-equation splitting]
 tags: [kinetic-energy-preserving, finite-difference, finite-volume, multiphase, turbulence, low-dissipation]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Split convective forms

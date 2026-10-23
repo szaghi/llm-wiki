@@ -5,7 +5,7 @@ description: "A phase-field flux added to the volume-fraction equation of a diff
 status: established
 aliases: [phase-field method, Phase-Field mechanism, conservative Allen–Cahn, consistent and conservative phase-field method, reduction-consistent formulation, interface regularization]
 tags: [interface-capturing, multiphase, bound-preserving, finite-volume, positivity]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Conservative phase-field interface methods

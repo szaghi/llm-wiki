@@ -5,7 +5,7 @@ description: "Steady inviscid Mach 1.4 flow through a channel of length 3 and he
 status: established
 aliases: [supersonic bump, supersonic channel bump, 4% bump, circular-arc bump channel]
 tags: [benchmark, finite-difference, dg, shock-tracking]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Supersonic flow over a circular-arc bump

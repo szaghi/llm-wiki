@@ -5,7 +5,7 @@ description: "A semi-Lagrangian finite-volume scheme updates each cell average a
 status: established
 aliases: [semi-Lagrangian finite volume, SL FV WENO, non-splitting semi-Lagrangian WENO, conservative semi-Lagrangian scheme, SLWENO]
 tags: [finite-volume, weno, cweno, positivity, reconstruction]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T04:49:00Z
 ---
 
 # Conservative semi-Lagrangian finite-volume WENO

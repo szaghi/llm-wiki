@@ -5,7 +5,7 @@ description: "JAX-Fluids is an MIT-licensed Python/JAX Cartesian finite-volume s
 status: established
 aliases: [JAX-FLUIDS, JAXFLUIDS]
 tags: [software, machine-learning, gpu, finite-volume, weno, multiphase]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # JAX-Fluids

@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 250:105709"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_De_Numerical_treatment_of_the_energy_equation_in_compressible_f.pdf"
 tags: [kinetic-energy-preserving, finite-difference, central-scheme, entropy-stable, turbulence]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

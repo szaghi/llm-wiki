@@ -5,7 +5,7 @@ description: "Cold gas at unit speed converging on a point, line or plane forms 
 status: established
 aliases: [Noh problem, Noh implosion, Noh shock implosion, 2D Noh, 3D Noh]
 tags: [benchmark, positivity, bound-preserving, shock-tracking]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Noh implosion problem

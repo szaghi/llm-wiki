@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 514:113229"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Dematté_An_all_Mach_number_scheme_for_visco-resistive_magnetically-d.pdf"
 tags: [mhd, semi-implicit, all-mach, finite-volume, navier-stokes]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

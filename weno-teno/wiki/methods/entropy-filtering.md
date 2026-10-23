@@ -5,7 +5,7 @@ description: "Entropy filtering applies, after every Runge–Kutta stage, an ele
 status: established
 aliases: [adaptive filtering, entropy-based adaptive filtering, positivity-preserving entropy filtering, constraint-driven modal filtering]
 tags: [dg, flux-reconstruction, limiting, positivity, entropy-stable, mhd]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Entropy filtering for DG and FR

@@ -5,7 +5,7 @@ description: "A gas bubble at a gigapascal and 1250 kg/m³, 0.24 m in diameter, 
 status: established
 aliases: [underwater explosion near a free surface, explosion bubble under a free surface, gas bubble explosion in water]
 tags: [benchmark, multiphase, interface-capturing, positivity]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Underwater explosion

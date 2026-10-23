@@ -5,7 +5,7 @@ description: "Artificial viscosity adds solution-dependent dissipation instead o
 status: established
 aliases: [artificial diffusion, artificial diffusivity, artificial dissipation, nonlinear stabilization, spectral viscosity, spectral vanishing viscosity, SVV, modal filtering, damping, JST-type dissipation, Jameson–Schmidt–Turkel dissipation, graph viscosity, time-reversibility viscosity, TR viscosity, local artificial diffusivity, LAD, residual-based viscosity, RV, residual viscosity, time-dependent artificial viscosity, viscosity switch]
 tags: [limiting, dg, low-dissipation, finite-difference, weno, machine-learning]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Artificial viscosity and spectral viscosity

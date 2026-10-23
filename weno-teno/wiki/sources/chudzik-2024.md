@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Sci. Comput. 99:16"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Scientific_Computing_Chudzik_Active_Flux_Methods_for_Hyperbolic_Systems_Using_the_Method.pdf"
 tags: [active-flux, finite-volume, euler-equations, compressible-flow]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

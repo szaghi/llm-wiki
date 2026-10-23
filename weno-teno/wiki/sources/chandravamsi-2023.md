@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 258:105859"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_Chandravamsi_On_the_application_of_gradient_based_reconstruction_for_flow.pdf"
 tags: [reconstruction, finite-difference, gpu, turbulence, low-dissipation]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

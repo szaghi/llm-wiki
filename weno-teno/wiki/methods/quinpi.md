@@ -5,7 +5,7 @@ description: "Quinpi is an implicit finite-volume framework that freezes CWENO w
 status: established
 aliases: [Quinpi, CWENO implicit, Q3P1, D3P1, implicit CWENO, predictor-based nonlinear weights]
 tags: [cweno, finite-volume, reconstruction, limiting]
-timestamp: 2026-10-22T12:00:00Z
+timestamp: 2026-10-22T04:49:00Z
 ---
 
 # Quinpi — implicit CWENO time stepping

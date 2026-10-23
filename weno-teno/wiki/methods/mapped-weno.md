@@ -5,7 +5,7 @@ description: "Mapped WENO (WENO-M, Henrick, Aslam & Powers) passes the Jiang–S
 status: established
 aliases: [WENO-M, mapped weights, Henrick mapping, mapping-function-free WENO-M]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Mapped WENO

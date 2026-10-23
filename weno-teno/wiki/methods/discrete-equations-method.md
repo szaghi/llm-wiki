@@ -5,7 +5,7 @@ description: "The discrete equations method builds a multiphase Godunov scheme f
 status: established
 aliases: [DEM, discrete-equations method, Abgrall–Saurel DEM, RDEMIC, robust DEM for interface capturing]
 tags: [multiphase, finite-volume, riemann-solver, interface-capturing, reconstruction]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Discrete equations method (DEM)

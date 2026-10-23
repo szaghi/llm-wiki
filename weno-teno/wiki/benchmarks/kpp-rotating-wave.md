@@ -5,7 +5,7 @@ description: "Two-dimensional scalar conservation law with the nonconvex flux (s
 status: established
 aliases: [KPP problem, Kurganov–Petrova–Popov problem, rotating wave problem]
 tags: [benchmark, entropy-stable, dg, limiting]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # KPP rotating wave

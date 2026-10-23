@@ -5,7 +5,7 @@ description: "FLEXI is the open-source (GNU GPL v3.0) DGSEM framework of Krais e
 status: established
 aliases: [Flexi, os-FLEXI, hp-FLEXI]
 tags: [software, dg, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # FLEXI

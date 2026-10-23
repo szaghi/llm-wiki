@@ -5,7 +5,7 @@ description: "One-dimensional Euler Riemann problem of two gases receding from e
 status: established
 aliases: [123 problem, receding flow, double rarefaction, double rarefaction with vacuum, water cavitation tube, two-phase expansion tube]
 tags: [benchmark, positivity, bound-preserving, riemann-solver]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Double rarefaction (123) problem

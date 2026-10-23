@@ -5,7 +5,7 @@ description: "The Ducros sensor flags compressions by the share of dilatation in
 status: established
 aliases: [Ducros sensor, modified Ducros sensor, improved Ducros sensor, Ducros dilatation–vorticity sensor, Ducros level, dilatation-to-vorticity ratio]
 tags: [central-scheme, teno, weno, finite-difference, turbulence]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Ducros shock sensor

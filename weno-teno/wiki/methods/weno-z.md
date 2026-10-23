@@ -5,7 +5,7 @@ description: "WENO-Z replaces the Jiang–Shu weights by α_k = d_k[1+(τ/(β_k+
 status: established
 aliases: [WENO-Z, WENO5-Z, WENO-Z3, WENO7-Z, WENO9-Z, WENO-Z5, WENO-Z7, Borges WENO]
 tags: [weno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # WENO-Z weights

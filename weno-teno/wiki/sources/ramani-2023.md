@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 490:112280"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Ramani_A_fast_dynamic_smooth_adaptive_meshing_scheme_with_applicati.pdf"
 tags: [moving-mesh, finite-difference, artificial-viscosity, free-stream-preservation, weno]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

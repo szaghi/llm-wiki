@@ -5,7 +5,7 @@ description: "A semi-discretization is kinetic-energy-preserving when its convec
 status: established
 aliases: [KEP, kinetic-energy-preserving, KEEP, kinetic energy conservation, energy-preserving discretization]
 tags: [kinetic-energy-preserving, finite-volume, finite-difference, dg, multiphase, turbulence]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Kinetic energy preservation

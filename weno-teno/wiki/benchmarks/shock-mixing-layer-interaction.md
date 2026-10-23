@@ -5,7 +5,7 @@ description: "Viscous two-dimensional (and three-dimensional) benchmark after Ye
 status: established
 aliases: [shock/mixing-layer interaction, shock–shear layer interaction, Yee–Sandham–Djomehri mixing layer, viscous shock–mixing layer]
 tags: [benchmark, low-dissipation, turbulence, weno]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Shock–mixing-layer interaction

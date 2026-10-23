@@ -5,7 +5,7 @@ description: "The special relativistic (magneto)hydrodynamics equations in lab-f
 status: established
 aliases: [RHD, RMHD, relativistic hydrodynamics, relativistic MHD, special relativistic hydrodynamics, special relativistic magnetohydrodynamics, physical-constraint-preserving, PCP, two-fluid relativistic plasma, relativistic radiation MHD, Rad-RMHD, M1 closure]
 tags: [relativistic, mhd, bound-preserving, positivity, entropy-stable]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Special relativistic hydrodynamics and MHD

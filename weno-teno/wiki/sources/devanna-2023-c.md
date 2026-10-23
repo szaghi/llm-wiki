@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 266:106058"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_De_On_the_coupling_between_wall-modeled_LES_and_immersed_bounda.pdf"
 tags: [immersed-boundary, turbulence, teno, gpu, software]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

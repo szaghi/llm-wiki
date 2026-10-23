@@ -5,7 +5,7 @@ description: "Spatially developing flat-plate turbulent boundary layer at free-s
 status: established
 aliases: [spatially developing supersonic boundary layer, compressible flat-plate boundary layer, hypersonic turbulent boundary layer, Mach 2 boundary layer]
 tags: [benchmark, turbulence, low-dissipation, teno, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Supersonic turbulent boundary layer

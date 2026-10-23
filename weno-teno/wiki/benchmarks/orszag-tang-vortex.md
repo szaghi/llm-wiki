@@ -5,7 +5,7 @@ description: "Periodic two-dimensional ideal-MHD benchmark in which smooth vorti
 status: established
 aliases: [Orszag–Tang, Orszag–Tang MHD vortex, OT vortex]
 tags: [benchmark, mhd, dg, teno, limiting, relativistic]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Orszag–Tang vortex

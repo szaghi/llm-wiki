@@ -5,7 +5,7 @@ description: "Scalar conservation law with the non-convex S-shaped flux used to 
 status: established
 aliases: [Buckley–Leverett equation, Buckley–Leverett test]
 tags: [benchmark, limiting, cweno, dg]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # Buckley–Leverett problem

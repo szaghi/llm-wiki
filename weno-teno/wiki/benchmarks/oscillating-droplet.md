@@ -5,7 +5,7 @@ description: "A two-dimensional elliptic drop at rest relaxes under surface tens
 status: established
 aliases: [oscillating ellipsoidal drop, oscillating elliptic droplet, droplet oscillation test, Rayleigh drop oscillation]
 tags: [benchmark, multiphase, interface-capturing, surface-tension]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Oscillating droplet

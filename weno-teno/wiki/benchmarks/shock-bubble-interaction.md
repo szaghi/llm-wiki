@@ -5,7 +5,7 @@ description: "A planar shock hitting a circular or spherical region of different
 status: established
 aliases: [shock–bubble, shock-bubble interaction, shocked bubble, shock–helium bubble, shock–R22 bubble, Haas–Sturtevant experiment, shock-induced bubble collapse]
 tags: [benchmark, multiphase, interface-capturing, central-scheme, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Shock–bubble interaction

@@ -5,7 +5,7 @@ description: "Reacting-flow cases: Lehr's blunt-body experiments with a measured
 status: established
 aliases: [shock-induced combustion, Lehr blunt-body experiment, blunt-body shock-induced combustion, cellular detonation, H2–O2–Ar detonation, reflected-shock detonation, Chapman–Jouguet detonation, ZND detonation, real-gas detonation]
 tags: [benchmark, reacting-flows, bound-preserving, immersed-boundary]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Shock-induced combustion and detonation

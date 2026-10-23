@@ -5,7 +5,7 @@ description: "Shallow-water Riemann problems with water at rest at two depths se
 status: established
 aliases: [dam break, dam-break problem, shallow-water dam break, circular dam break, radial dam break, cylindrical dam break]
 tags: [benchmark, shallow-water, riemann-problem, shock-tracking]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Dam-break problems

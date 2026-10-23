@@ -5,7 +5,7 @@ description: "Prolongation of a face-collocated vector field with a divergence c
 status: established
 aliases: [divergence-free prolongation, divergence-preserving prolongation, constraint-preserving prolongation, WENO-ADP, WENO-ADPT, almost divergence-preserving WENO, divergence-preserving reconstruction, divergence-free reconstruction]
 tags: [mhd, weno, reconstruction, finite-volume]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Divergence-preserving prolongation and reconstruction for AMR

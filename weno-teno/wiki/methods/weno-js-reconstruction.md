@@ -5,7 +5,7 @@ description: "The Jiang–Shu weighted ENO reconstruction: a convex combination 
 status: established
 aliases: [WENO-JS, WENO5-JS, classical WENO, Jiang–Shu WENO, WENO3-JS]
 tags: [weno, reconstruction, finite-difference, finite-volume]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # WENO-JS reconstruction

@@ -5,7 +5,7 @@ description: "One-dimensional Euler benchmark of a Mach 3 shock running into a s
 status: established
 aliases: [Shu–Osher problem, shock–density wave interaction, shock–entropy wave interaction, Titarev–Toro problem]
 tags: [benchmark, low-dissipation, weno, teno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Shu–Osher shock–entropy-wave problem

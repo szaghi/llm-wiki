@@ -5,7 +5,7 @@ description: "MOOD-type limiting computes a candidate high-order update, checks 
 status: established
 aliases: [MOOD, multi-dimensional optimal order detection, a posteriori limiting, a posteriori stabilization, a posteriori subcell limiting]
 tags: [limiting, positivity, bound-preserving, finite-difference, dg]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # MOOD a posteriori limiting

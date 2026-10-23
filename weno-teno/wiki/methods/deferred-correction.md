@@ -5,7 +5,7 @@ description: "Deferred correction reaches a high-order implicit collocation-type
 status: established
 aliases: [DeC, defect correction, deferred correction method, DeC(p,K), Abgrall's DeC]
 tags: [asymptotic-preserving, entropy-stable, finite-difference, limiting]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Deferred correction (DeC) time integration

@@ -6,7 +6,7 @@ status: established
 symbol: "$\\{\\!\\{a\\}\\!\\}_{\\log}$"
 aliases: [log mean, Ismail–Roe mean, inverse logarithmic mean]
 tags: [entropy-stable, numerical-flux, dg, kinetic-energy-preserving]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Logarithmic mean

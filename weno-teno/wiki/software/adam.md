@@ -5,7 +5,7 @@ description: "ADAM is a Fortran 2003 object-oriented library for block-based oct
 status: established
 aliases: [ADAM AMR library, NASTO]
 tags: [software, gpu, finite-difference, weno, immersed-boundary, amr]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # ADAM

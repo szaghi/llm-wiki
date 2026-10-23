@@ -5,7 +5,7 @@ description: "Steady isentropic, irrotational supersonic flow between two concen
 status: established
 aliases: [supersonic vortex, isentropic supersonic vortex, supersonic vortex flow, vortex between concentric arcs, quarter-annulus supersonic vortex]
 tags: [benchmark, finite-volume, dg, immersed-boundary, boundary-conditions]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Supersonic vortex between concentric arcs

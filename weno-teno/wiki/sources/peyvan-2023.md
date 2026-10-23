@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 490:112310"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Peyvan_High-order_methods_for_hypersonic_flows_with_strong_shocks_a.pdf"
 tags: [dg, entropy-stable, multicomponent, hypersonic, numerical-flux, shock-capturing]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

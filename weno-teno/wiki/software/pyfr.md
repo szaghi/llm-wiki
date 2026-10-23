@@ -5,7 +5,7 @@ description: "PyFR is an unstructured high-order flux-reconstruction solver for 
 status: established
 aliases: [PyFR solver, Py-FR]
 tags: [software, flux-reconstruction, dg, gpu]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # PyFR

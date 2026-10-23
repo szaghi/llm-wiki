@@ -5,7 +5,7 @@ description: "Implicit–explicit Runge–Kutta schemes pair an explicit tableau
 status: established
 aliases: [IMEX-RK, implicit-explicit Runge–Kutta, additive Runge–Kutta, ARK-IMEX, SI-IMEX, semi-implicit IMEX Runge–Kutta, partitioned IMEX Runge–Kutta, IMEX TVD Runge–Kutta]
 tags: [asymptotic-preserving, imex, semi-implicit, finite-difference, relativistic, mhd]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # IMEX Runge–Kutta schemes

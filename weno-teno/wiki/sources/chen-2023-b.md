@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 488:112240"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Chen_High_order_asymptotic_preserving_finite_difference_WENO_sche.pdf"
 tags: [asymptotic-preserving, all-mach, semi-implicit, mhd, finite-difference, weno]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

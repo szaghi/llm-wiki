@@ -5,7 +5,7 @@ description: "Quasi-spectral viscosity (QSV) is one explicit eddy/artificial vis
 status: established
 aliases: [QSV, QSV closure, quasi-spectral eddy viscosity]
 tags: [low-dissipation, turbulence, finite-difference, compact-scheme, central-scheme]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-22T09:49:00Z
 ---
 
 # Quasi-spectral viscosity

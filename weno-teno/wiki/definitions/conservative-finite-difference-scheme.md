@@ -5,7 +5,7 @@ description: "A conservative finite-difference scheme evolves point values by di
 status: established
 aliases: [conservative FD scheme, Shu–Osher finite difference, FD-WENO, finite-difference flux reconstruction, flux-difference form]
 tags: [finite-difference, reconstruction, weno, teno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Conservative finite-difference scheme

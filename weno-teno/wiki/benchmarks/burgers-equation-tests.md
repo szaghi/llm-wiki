@@ -5,7 +5,7 @@ description: "The inviscid Burgers equation as test bed: sine data for accuracy 
 status: established
 aliases: [Burgers equation, inviscid Burgers test, Burgers sine wave, two-dimensional Burgers Riemann problem]
 tags: [benchmark, weno, cweno, dg]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Burgers equation tests

@@ -9,7 +9,7 @@ year: 2024
 venue: "J. Comput. Phys. 501:112792"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Journal_of_Computational_Physics_Naudet_A_space-time_high-order_implicit_shock_tracking_method_for_s.pdf"
 tags: [shock-tracking, dg, space-time, amr, numerical-flux, unstructured-mesh]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

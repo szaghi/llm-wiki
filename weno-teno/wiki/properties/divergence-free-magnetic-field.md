@@ -5,7 +5,7 @@ description: "The magnetic field of MHD obeys div B = 0; discretizations enforce
 status: established
 aliases: [div B = 0, solenoidal constraint, discrete divergence-free condition, DDF, divergence cleaning, GLM-MHD, constrained transport, CTM, upwind constrained transport, UCT, locally divergence-free DG, locally divergence-free reconstruction, Powell source term, Godunov–Powell source term, projection cleaning, vector-potential formulation, divergence-preserving prolongation]
 tags: [mhd, bound-preserving, positivity, dg, finite-volume, relativistic]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Divergence-free magnetic field

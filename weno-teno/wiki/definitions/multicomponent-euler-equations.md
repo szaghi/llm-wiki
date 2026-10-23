@@ -5,7 +5,7 @@ description: "The fully conservative Euler system for a mixture of several gases
 status: established
 aliases: [multi-component Euler equations, multispecies Euler equations, compressible multicomponent Euler system, HRM model (as named by Renac)]
 tags: [multiphase, entropy-stable, positivity, bound-preserving, dg, finite-difference]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Multicomponent Euler equations

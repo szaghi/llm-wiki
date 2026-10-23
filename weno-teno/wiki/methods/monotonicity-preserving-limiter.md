@@ -5,7 +5,7 @@ description: "The Suresh–Huynh monotonicity-preserving limiter keeps a high-or
 status: established
 aliases: [MP limiter, MP5, MP3, MP reconstruction, Suresh–Huynh limiter, monotonicity-preserving scheme, monotonicity-preserving reconstruction, improved MP5 limiter, pointwise MP5]
 tags: [limiting, reconstruction, finite-difference, finite-volume, relativistic, mhd]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Monotonicity-preserving (MP) limiter

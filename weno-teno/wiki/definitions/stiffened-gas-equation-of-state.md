@@ -5,7 +5,7 @@ description: "The stiffened-gas law, an ideal gas shifted by a constant stiffeni
 status: established
 aliases: [stiffened gas EOS, stiffened equation of state, Tait EOS (as named by Zheng et al.), SG EOS]
 tags: [multiphase, interface-capturing, positivity, entropy-stable]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Stiffened-gas equation of state

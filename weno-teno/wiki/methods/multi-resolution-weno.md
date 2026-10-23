@@ -5,7 +5,7 @@ description: "Multi-resolution WENO combines polynomials on nested central stenc
 status: established
 aliases: [multi-resolution WENO, multiresolution WENO, MR-WENO, WENO-MR, WENOZS5, New WENO5, WENOMR, Zhu–Shu WENO, MRWENO, MR-AWENO, MR-AWENO-Si, WCNS-MR, MR-WCNS, hybrid MR-WCNS, GMR-WENO, ghost multi-resolution WENO, MMR-WENO, HMR-WENO]
 tags: [weno, cweno, reconstruction, finite-difference]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Multi-resolution WENO

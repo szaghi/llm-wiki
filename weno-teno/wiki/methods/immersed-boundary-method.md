@@ -5,7 +5,7 @@ description: "Treatments of walls and interfaces off the mesh: ghost-cell immers
 status: established
 aliases: [immersed boundary method, IBM, ghost-cell method, GCM, ghost-cell immersed boundary, cut-cell method, CCM, embedded boundary, HBCGCM, BCGCM, volume penalization, Brinkman penalization, IDW-IP, image line, HO-e, discrete forcing, eikonal extrapolation]
 tags: [immersed-boundary, finite-volume, flux-reconstruction, interface-capturing, multiphase]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Immersed-boundary and cut-cell methods

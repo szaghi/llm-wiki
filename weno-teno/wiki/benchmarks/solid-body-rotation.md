@@ -5,7 +5,7 @@ description: "LeVeque's two-dimensional linear-advection test in which a smooth 
 status: established
 aliases: [LeVeque solid body rotation, slotted cylinder test, hump–cone–slotted-cylinder rotation]
 tags: [benchmark, limiting, bound-preserving, dg]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Solid-body rotation

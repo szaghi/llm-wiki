@@ -5,7 +5,7 @@ description: "A TeCNO-type flux adds to an entropy-conservative flux a dissipati
 status: established
 aliases: [TeCNO, TVD-ES, sign property, entropy-stable reconstruction, ENO-based entropy-stable scheme, Fjordholm–Mishra–Tadmor scheme]
 tags: [entropy-stable, reconstruction, numerical-flux, weno, dg, relativistic]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-22T19:46:00Z
 ---
 
 # TeCNO schemes — entropy-stable reconstruction with the sign property

@@ -5,7 +5,7 @@ description: "A scheme for a balance law is well-balanced if it preserves a stea
 status: established
 aliases: [well-balanced scheme, C-property, lake-at-rest property, exact preservation of still water, hydrostatic reconstruction, subtraction technique, perturbation well-balancing, fully well-balanced scheme, moving-equilibria preservation, stationarity preservation]
 tags: [well-balanced, weno, finite-difference, finite-volume, central-scheme, asymptotic-preserving]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Well-balancing

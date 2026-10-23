@@ -5,7 +5,7 @@ description: "The alternative formulation of finite-difference WENO evaluates a 
 status: established
 aliases: [A-WENO, AFWENO, alternative formulation of WENO, alternative flux formulation, Jiang–Shu–Zhang scheme]
 tags: [weno, finite-difference, numerical-flux, reconstruction, multiphase]
-timestamp: 2026-10-23T08:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Alternative WENO (A-WENO)

@@ -5,7 +5,7 @@ description: "Subcell finite-volume limiting makes a nodal DGSEM robust by conve
 status: established
 aliases: [subcell limiting, subcell FV shock capturing, hybrid DG/FV blending, element-wise blending, subcell-wise blending, native LGL finite volumes, FV subcell switching]
 tags: [dg, limiting, finite-volume, positivity, entropy-stable]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Subcell finite-volume limiting for DG

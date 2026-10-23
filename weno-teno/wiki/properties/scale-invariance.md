@@ -5,7 +5,7 @@ description: "A reconstruction or limiter is scale-invariant when it commutes wi
 status: established
 aliases: [scale-invariant, affine-invariant, Ai-property, Si-property, homogeneity of a reconstruction, normalisable scheme, homogeneity of the evolution operator]
 tags: [reconstruction, weno, limiting, dg]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Scale and affine invariance

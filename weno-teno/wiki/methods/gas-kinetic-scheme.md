@@ -5,7 +5,7 @@ description: "Gas-kinetic schemes take the interface flux, and its time derivati
 status: established
 aliases: [GKS, BGK scheme, gas-kinetic flux solver, compact gas-kinetic scheme, compact GKS, discrete gas-kinetic flux solver, DGKFS, direct modeling]
 tags: [numerical-flux, finite-volume, compact-scheme, weno]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Gas-kinetic schemes

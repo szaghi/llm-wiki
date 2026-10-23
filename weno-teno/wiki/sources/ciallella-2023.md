@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Sci. Comput. 96:53"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Scientific_Computing_Ciallella_Arbitrary_High_Order_WENO_Finite_Volume_Scheme_with_Flux_Glo.pdf"
 tags: [well-balanced, weno, finite-volume, stiff-source]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

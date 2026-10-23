@@ -5,7 +5,7 @@ description: "Single-velocity diffuse-interface models of compressible two-phase
 status: established
 aliases: [five-equation model, 5-equation model, Kapila model, Allaire–Clerc–Kokh model, six-equation model, 6-equation model, diffuse-interface model, quasi-conservative two-phase model]
 tags: [multiphase, interface-capturing, finite-volume, positivity, bound-preserving]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Five- and six-equation diffuse-interface models

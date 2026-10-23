@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 491:112350"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Zhong_An_improved_fifth-order_WENO_scheme_with_symmetry-preserving.pdf"
 tags: [weno, smoothness-indicator, weno-weights, critical-points, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

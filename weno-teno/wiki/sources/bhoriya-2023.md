@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 488:112207"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Bhoriya_High-order_finite-difference_entropy_stable_schemes_for_two-.pdf"
 tags: [entropy-stable, relativistic, finite-difference, imex, stiff-source, mhd]
-timestamp: 2026-10-23T12:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

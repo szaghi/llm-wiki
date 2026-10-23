@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 477:111877"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Wang_An_efficient_hybrid_multi-resolution_WCNS_scheme_for_solving.pdf"
 tags: [compact-scheme, multi-resolution, hybrid-scheme, smoothness-indicator, troubled-cell, finite-difference]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

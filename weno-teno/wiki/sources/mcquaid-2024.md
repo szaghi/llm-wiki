@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 269:106121"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Fluids_McQuaid_Heat_flux_predictions_for_hypersonic_flows_with_an_overset_n.pdf"
 tags: [hypersonic, weno-z, hybrid-scheme, ducros-sensor, amr, overset-grid]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

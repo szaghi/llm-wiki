@@ -5,7 +5,7 @@ description: "HLL, HLLE, HLLC, HLLEM/HLLI, HLLD and relaxation two-point fluxes 
 status: established
 aliases: [HLL flux, HLLE, HLLC, HLLEM, HLLI, RHLLEM, HLLD, Harten–Lax–van Leer solver, relaxation Riemann solver, Suliciu relaxation solver, radiative HLL, Rad-HLL, shock-stable HLLC, HLLC-LM]
 tags: [riemann-solver, numerical-flux, finite-volume, positivity, multiphase, entropy-stable]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # HLL-family approximate Riemann solvers

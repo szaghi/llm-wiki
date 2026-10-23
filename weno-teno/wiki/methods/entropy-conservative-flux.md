@@ -5,7 +5,7 @@ description: "Two-point fluxes satisfying Tadmor's jump condition conserve entro
 status: established
 aliases: [EC flux, entropy-conservative flux, entropy-dissipative flux, ED flux, Tadmor flux, KEP flux, KEEP flux, Ranocha flux, Shima flux, AEC flux, asymptotically entropy-conservative flux]
 tags: [entropy-stable, kinetic-energy-preserving, numerical-flux, dg]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Entropy-conservative and kinetic-energy-preserving two-point fluxes

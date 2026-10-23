@@ -5,7 +5,7 @@ description: "TENO-THINC is a finite-difference hybrid that uses TENO5 everywher
 status: established
 aliases: [TENO5-THINC, hybrid TENO-THINC scheme]
 tags: [teno, interface-capturing, low-dissipation, finite-difference, reconstruction]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # TENO-THINC

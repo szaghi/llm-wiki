@@ -5,7 +5,7 @@ description: "Ideal and relativistic MHD robustness test in which a strong plana
 status: established
 aliases: [shock–cloud interaction, cloud–shock interaction, Dai–Woodward shock–cloud problem, magnetized cloud–shock interaction]
 tags: [benchmark, mhd, relativistic, positivity]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # MHD shock–cloud interaction

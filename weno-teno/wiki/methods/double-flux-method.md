@@ -5,7 +5,7 @@ description: "The double-flux method removes the spurious pressure oscillations 
 status: established
 aliases: [double flux, double-flux algorithm, Abgrall–Karni double flux, quasi-conservative double-flux method]
 tags: [multiphase, finite-difference, numerical-flux, interface-capturing]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Double-flux method

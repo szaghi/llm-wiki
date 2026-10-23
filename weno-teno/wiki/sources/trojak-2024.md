@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Fluids 280:106343"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computers_amp_Fluids_Trojak_Positivity-preserving_discontinuous_spectral_element_methods.pdf"
 tags: [dg, flux-reconstruction, positivity, multiphase, entropy-stable, gpu]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

@@ -5,7 +5,7 @@ description: "The cell-average decomposition writes a cell average as a positive
 status: established
 aliases: [cell average decomposition, CAD, OCAD, optimal CAD, quasi-optimal CAD, convex decomposition of the cell average]
 tags: [bound-preserving, positivity, dg, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Optimal cell-average decomposition

@@ -5,7 +5,7 @@ description: "A WENO limiter replaces the DG polynomial of a troubled cell by a 
 status: established
 aliases: [simple WENO limiter, compact WENO limiter, improved simple WENO limiter, WENO limiter for RKDG, Qiu–Shu WENO limiter, HWENO limiter, TENO limiter for RKDG]
 tags: [dg, weno, teno, limiting, characteristic]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # WENO limiters for discontinuous Galerkin

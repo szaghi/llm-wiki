@@ -9,7 +9,7 @@ year: 2023
 venue: "Mon. Not. R. Astron. Soc. 522:982-1008"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Monthly_Notices_of_the_Royal_Astronomical_Society_Cernetic_High-order_discontinuous_Galerkin_hydrodynamics_with_sub-cel.pdf"
 tags: [dg, artificial-viscosity, gpu, software, turbulence, troubled-cell]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

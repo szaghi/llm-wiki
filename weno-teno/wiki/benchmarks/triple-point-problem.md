@@ -5,7 +5,7 @@ description: "Two-dimensional three-state Riemann problem on [0,7]×[0,3] in whi
 status: established
 aliases: [tri-point problem, triple point shock interaction, three-state Riemann problem]
 tags: [benchmark, low-dissipation, multiphase, teno]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Triple-point problem

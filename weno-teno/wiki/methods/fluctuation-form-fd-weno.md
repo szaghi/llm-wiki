@@ -5,7 +5,7 @@ description: "Balsara, Bhoriya, Shu and Kumar write point-value FD-WENO as an in
 status: established
 aliases: [FD-WENO in fluctuation form, path-conservative FD-WENO, FD-WENO with non-conservative products, HLLI FD-WENO]
 tags: [finite-difference, weno, riemann-solver, multiphase, well-balanced]
-timestamp: 2026-10-22T20:00:00Z
+timestamp: 2026-10-22T09:49:00Z
 ---
 
 # Fluctuation-form finite-difference WENO for non-conservative systems

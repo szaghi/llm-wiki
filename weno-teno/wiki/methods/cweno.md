@@ -5,7 +5,7 @@ description: "Central WENO schemes subtract weighted low-order candidates from o
 status: established
 aliases: [CWENO, central WENO, CWENOZ, compact central WENO, CWENO3, WENO-ZQ, unstructured CWENO, CWENO implicit, ALW-MR-WENO, adaptive linear weights]
 tags: [weno, cweno, reconstruction, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Central WENO (CWENO)

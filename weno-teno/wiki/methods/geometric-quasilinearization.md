@@ -5,7 +5,7 @@ description: "Geometric quasilinearization rewrites every nonlinear constraint o
 status: established
 aliases: [GQL, geometric quasi-linearization, GQL representation]
 tags: [bound-preserving, positivity, mhd, relativistic]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Geometric quasilinearization (GQL)

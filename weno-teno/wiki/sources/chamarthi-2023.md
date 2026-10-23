@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 250:105706"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_Chamarthi_Gradient_based_reconstruction_Inviscid_and_viscous_flux_disc.pdf"
 tags: [reconstruction, finite-difference, limiting, multiphase, low-dissipation]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

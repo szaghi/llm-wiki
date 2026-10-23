@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 287:108717"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computer_Physics_Communications_De_URANOS_A_GPU_accelerated_Navier-Stokes_solver_for_compressib.pdf"
 tags: [software, gpu, finite-difference, turbulence, teno, hybrid-scheme]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

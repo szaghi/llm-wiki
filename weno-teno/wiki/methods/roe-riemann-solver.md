@@ -5,7 +5,7 @@ description: "Roe's solver upwinds every characteristic field of a linearized fl
 status: established
 aliases: [Roe flux, Roe scheme, Roe solver, linearized Riemann solver, Roe–Harten flux]
 tags: [riemann-solver, numerical-flux, characteristic, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Roe approximate Riemann solver

@@ -5,7 +5,7 @@ description: "Constrained transport stores face averages of the normal magnetic 
 status: established
 aliases: [CT, staggered constrained transport, Evans–Hawley constrained transport, upwind constrained transport, UCT, UCT-GFORCE, Gardiner–Stone constrained transport, staggered mesh MHD, MPACT]
 tags: [mhd, finite-volume, relativistic, numerical-flux]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Constrained transport for the induction equation

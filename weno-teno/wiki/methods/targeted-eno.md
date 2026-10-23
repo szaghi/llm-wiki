@@ -5,7 +5,7 @@ description: "TENO builds a K-point reconstruction from candidate stencils of in
 status: established
 aliases: [TENO, targeted essentially non-oscillatory scheme, TENO5, TENO6, TENO7, TENO8]
 tags: [teno, reconstruction, finite-difference, low-dissipation, turbulence]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Targeted ENO (TENO)

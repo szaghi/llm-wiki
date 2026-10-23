@@ -6,7 +6,7 @@ status: established
 symbol: "$Q+Q^\\top=B$"
 aliases: [SBP operator, SBP property, diagonal-norm SBP, generalized SBP, discrete integration by parts]
 tags: [dg, entropy-stable, kinetic-energy-preserving, finite-difference]
-timestamp: 2026-10-23T20:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Summation-by-parts operator

@@ -5,7 +5,7 @@ description: "Periodic two-dimensional shear-layer benchmark: Euler variants wit
 status: established
 aliases: [KHI, Kelvin–Helmholtz, shear-layer instability]
 tags: [benchmark, low-dissipation, central-scheme, dg, positivity, finite-volume]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Kelvin–Helmholtz instability

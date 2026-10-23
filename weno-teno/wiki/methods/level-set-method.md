@@ -5,7 +5,7 @@ description: "Methods that locate a material interface or rigid wall by the zero
 status: established
 aliases: [level set, level-set function, ghost fluid method, GFM, original ghost fluid method, OGFM, sharp-interface method, conservative sharp-interface scheme, real–ghost mixing, DGCCGF]
 tags: [interface-capturing, multiphase, finite-difference, weno, dg, immersed-boundary]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Level-set and ghost-fluid interface methods

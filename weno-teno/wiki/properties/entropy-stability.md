@@ -5,7 +5,7 @@ description: "A scheme is entropy stable when its discrete total entropy obeys t
 status: established
 aliases: [entropy-stable scheme, entropy dissipative, ES, ED, discrete entropy inequality, entropy-stable DG, ESDG, energy stability, semi-discrete entropy stability, fully discrete entropy stability]
 tags: [entropy-stable, dg, numerical-flux, bound-preserving, limiting]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Entropy stability

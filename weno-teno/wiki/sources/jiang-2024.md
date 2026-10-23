@@ -9,7 +9,7 @@ year: 2024
 venue: "Comput. Methods Appl. Mech. Eng. 430:117209"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2024_Crossref_Computer_Methods_in_Applied_Mechanics_and_Engineering_Jiang_Embedment_of_WENO-Z_reconstruction_in_Lagrangian_WLS_scheme.pdf"
 tags: [weno-z, particle-method, multiphase, gpu, riemann-solver]
-timestamp: 2026-10-23T23:45:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

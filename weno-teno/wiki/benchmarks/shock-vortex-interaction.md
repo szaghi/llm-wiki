@@ -5,7 +5,7 @@ description: "An isentropic vortex advected through a stationary Mach 1.1 shock 
 status: established
 aliases: [shock–vortex, vortex–shock interaction, shock/vortex interaction]
 tags: [benchmark, weno, dg, bound-preserving, multiphase]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Shock–vortex interaction

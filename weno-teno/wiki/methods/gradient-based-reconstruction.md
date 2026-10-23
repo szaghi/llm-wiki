@@ -5,7 +5,7 @@ description: "Gradient-based reconstruction interpolates point values to the int
 status: established
 aliases: [GBR, GRB, gradient based reconstruction, MEG6, MIG4, MEG7, EG6, IG4H, MEG7-cons, MEG7-prim, monotonicity-preserving explicit gradient reconstruction, monotonicity-preserving implicit gradient reconstruction]
 tags: [reconstruction, finite-difference, limiting, low-dissipation, gpu]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Gradient-based reconstruction (MEG/MIG schemes)

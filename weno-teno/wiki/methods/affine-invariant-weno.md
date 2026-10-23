@@ -5,7 +5,7 @@ description: "Wang & Don's Ai-WENO weights multiply the sensitivity parameter ε
 status: established
 aliases: [Ai-WENO, Ai-WENO-Z, Ai-WENO-D, Ai-WENO-JS, affine-invariant WENO operator]
 tags: [weno, reconstruction, well-balanced, finite-difference]
-timestamp: 2026-10-23T10:00:00Z
+timestamp: 2026-10-22T16:24:00Z
 ---
 
 # Affine-invariant WENO weights

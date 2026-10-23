@@ -5,7 +5,7 @@ description: "A troubled-cell (shock, discontinuity) indicator is a cheap local 
 status: established
 aliases: [shock indicator, shock sensor, shock detector, discontinuity indicator, discontinuity sensor, smoothness sensor, flattener, troubled-cell detector, KXRCF indicator, Persson–Peraire indicator, Ducros sensor, modal decay indicator, time-reversibility indicator, TR indicator, residual indicator, Ren sensor, TVB minmod indicator, TENO-based troubled-cell indicator, Jameson sensor, derivatives-ratio detector, interface jump convergence sensor]
 tags: [limiting, dg, teno, finite-difference, low-dissipation, machine-learning]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Troubled-cell and shock indicators

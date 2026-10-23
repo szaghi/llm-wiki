@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Phys. Commun. 282:108527"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computer_Physics_Communications_Bezgin_JAX-Fluids_A_fully-differentiable_high-order_computational_f.pdf"
 tags: [software, machine-learning, finite-volume, multiphase, level-set, gpu]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

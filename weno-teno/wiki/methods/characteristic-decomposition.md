@@ -5,7 +5,7 @@ description: "Local characteristic decomposition projects stencil data onto the 
 status: established
 aliases: [local characteristic decomposition, LCD, characteristic-wise reconstruction, characteristic projection, reconstruction in characteristic variables, primitive-variable reconstruction]
 tags: [characteristic, reconstruction, weno, teno, central-scheme, multiphase]
-timestamp: 2026-10-23T23:50:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Characteristic decomposition

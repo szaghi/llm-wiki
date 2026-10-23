@@ -5,7 +5,7 @@ description: "Symmetry preservation has three meanings in the sources: keeping t
 status: established
 aliases: [mirror symmetry preservation, symmetry breaking, symmetry-preserving discretization, skew-symmetry]
 tags: [low-dissipation, teno, weno, kinetic-energy-preserving]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Symmetry preservation

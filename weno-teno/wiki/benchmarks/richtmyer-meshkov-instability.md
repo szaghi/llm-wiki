@@ -5,7 +5,7 @@ description: "A planar shock crossing a sinusoidally perturbed interface: single
 status: established
 aliases: [RMI, Richtmyer–Meshkov, shock-accelerated interface, reshocked Richtmyer–Meshkov instability, single-mode Richtmyer–Meshkov instability]
 tags: [benchmark, multiphase, interface-capturing, dg]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Richtmyer–Meshkov instability

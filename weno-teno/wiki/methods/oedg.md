@@ -5,7 +5,7 @@ description: "OEDG follows every Runge–Kutta stage of a DG scheme with an exac
 status: established
 aliases: [OEDG, oscillation-eliminating DG, OE procedure, OE step, OE-HWENO, oscillation-eliminating Hermite WENO]
 tags: [dg, limiting, low-dissipation, weno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Oscillation-eliminating discontinuous Galerkin (OEDG)

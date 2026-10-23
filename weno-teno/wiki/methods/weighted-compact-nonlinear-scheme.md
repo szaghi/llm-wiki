@@ -5,7 +5,7 @@ description: "WCNS are finite-difference shock-capturing schemes in three steps 
 status: established
 aliases: [WCNS, WCNS-Z, WCNS-JS, TCNS, targeted compact nonlinear scheme, WCNS-T, HWCNS, WCNS-IS, PP-WCNS-IS, explicit WCNS, WCNS-SA, WCNS-opt, WCNS-LD, ONL6, WCNS-MR, WCNS7M, MND scheme, WCNS-EXP, hybrid MR-WCNS]
 tags: [compact-scheme, finite-difference, weno, teno, numerical-flux, multiphase]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T03:53:00Z
 ---
 
 # Weighted compact nonlinear schemes (WCNS)

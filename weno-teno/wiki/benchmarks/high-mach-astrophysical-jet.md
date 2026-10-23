@@ -5,7 +5,7 @@ description: "Mach 80 and Mach 2000 gas jets injected into a light ambient mediu
 status: established
 aliases: [Mach 2000 jet, Mach 80 jet, astrophysical jet, high Mach number jet]
 tags: [benchmark, positivity, bound-preserving, relativistic, mhd]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # High-Mach astrophysical jets

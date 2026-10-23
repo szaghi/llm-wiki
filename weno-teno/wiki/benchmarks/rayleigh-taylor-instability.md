@@ -5,7 +5,7 @@ description: "Two-dimensional Euler benchmark with gravity, in the Xu–Shu sett
 status: established
 aliases: [RTI, Rayleigh–Taylor, single-mode Rayleigh–Taylor instability]
 tags: [benchmark, low-dissipation, teno, weno, central-scheme]
-timestamp: 2026-10-23T23:30:00Z
+timestamp: 2026-10-23T05:41:00Z
 ---
 
 # Rayleigh–Taylor instability

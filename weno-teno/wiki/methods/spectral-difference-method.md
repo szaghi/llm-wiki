@@ -5,7 +5,7 @@ description: "The spectral difference method is a nodal high-order discontinuous
 status: established
 aliases: [SD, SD method, spectral difference, nodal spectral difference, SD3, SD4]
 tags: [dg, flux-reconstruction, limiting, teno]
-timestamp: 2026-10-23T23:55:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Spectral difference method

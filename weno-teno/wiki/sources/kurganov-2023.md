@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 474:111773"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Kurganov_Well-balanced_path-conservative_central-upwind_schemes_based.pdf"
 tags: [well-balanced, central-scheme, path-conservative, non-conservative-systems, finite-volume]
-timestamp: 2026-10-23T23:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

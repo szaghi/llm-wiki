@@ -9,7 +9,7 @@ year: 2023
 venue: "J. Comput. Phys. 486:112119"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Journal_of_Computational_Physics_Chamarthi_Efficient_high-order_gradient-based_reconstruction_for_compr.pdf"
 tags: [finite-difference, reconstruction, low-dissipation, hybrid-scheme, troubled-cell, compact-scheme]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary

@@ -9,7 +9,7 @@ year: 2023
 venue: "Comput. Fluids 266:106040"
 local_file: "/home/stefano/papers/mosaic/weno-teno/2023_Crossref_Computers_amp_Fluids_Zaghi_Efficient_GPU_parallelization_of_adaptive_mesh_refinement_te.pdf"
 tags: [software, amr, gpu, immersed-boundary, finite-difference, weno]
-timestamp: 2026-10-23T16:00:00Z
+timestamp: 2026-10-23T11:06:00Z
 ---
 
 # Summary
